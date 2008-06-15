@@ -69,7 +69,7 @@ class SdpNmfEngine {
 	   fx_set_param_int(l_bfgs_module_, "num_of_points", result.n_cols());
 		 fx_set_param_int(l_bfgs_module_, "new_dimension", result.n_rows());
 
-     for(double sigma=1.0; sigma<=1e4; sigma*=4) {
+     for(double sigma=1.0; sigma<=1e6; sigma*=2) {
        engine_=new LBfgs<SdpNmfObjective>();
        engine_->Init(&opt_function_, l_bfgs_module_);
        engine_->set_coordinates(result);
@@ -83,10 +83,14 @@ class SdpNmfEngine {
      w_mat_.CopyColumnFromMat(0, 0, num_of_rows_, result); 
      h_mat_.CopyColumnFromMat(0, 
          num_of_rows_, num_of_columns_, result);
+     OptUtils::NonNegativeProjection(&h_mat_);
+     OptUtils::NonNegativeProjection(&w_mat_);
+ 
      data::Save("result.csv", result);
      // now compute reconstruction error
      Matrix v_rec;
      la::MulTransAInit(w_mat_, h_mat_, &v_rec);
+   
      double error=0;
      double v_sum=0;
      for(index_t i=0; i<values_.size(); i++) {

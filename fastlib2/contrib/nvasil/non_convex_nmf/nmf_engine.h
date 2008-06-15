@@ -36,65 +36,17 @@ class NmfEngine {
 	   
 	 };
 	 void ComputeNmf() {
-		  Matrix init_data;
-			opt_function_.GiveInitMatrix(&init_data);
-		  engine_.set_coordinates(init_data);
-	    engine_.ComputeLocalOptimumBFGS();
-      Matrix result;
-      engine_.GetResults(&result);
-			w_mat_.Init(num_of_rows_, new_dim_);
-			h_mat_.Init(new_dim_, num_of_columns_);
-      Vector s;
-      Matrix u_mat, vt_mat;
-      success_t success=la::SVDInit(result, &s, &u_mat, &vt_mat);
-      if (success==SUCCESS_PASS) {
-        NOTIFY("Svd success full...\n");
-        std::string temp;
-        char buffer[64];
-        for(index_t i=0; i<s.length(); i++) {
-          sprintf(buffer, "%lg ", s[i]);
-          temp.append(buffer);
-        }
-        NOTIFY("Singular values: %s", temp.c_str());
-      } else {
-        FATAL("Svd failed something is wrong...\n");
-      }
-      bool negative_flag=false;
-      index_t positives=0;
-      index_t negatives=0;
-      index_t zeros=0;
-      for (index_t i=0; i<vt_mat.n_cols(); i++) {
-        if (vt_mat.get(0, i)<0) {
-          negative_flag=true;
-          negatives++;
-        }  
-        if (vt_mat.get(0,i)>0) {
-          positives++;
-        }
-         if (vt_mat.get(0, i)==0) {
-          zeros++;
-        }     
-     } 
-      
-     data::Save("result.csv", result);
-     data::Save("vt_mat.csv", vt_mat);
-     NOTIFY("We found %i positives, %i negatives and %i zeros", 
-         positives, negatives, zeros);
-     if (negatives>=positives) {
-       la::Scale(-1, &vt_mat);
-     }
-     OptUtils::NonNegativeProjection(&vt_mat);
-     for(index_t i=0; i<num_of_rows_; i++) {
-		   for(index_t j=0; j<new_dim_; j++) {
-			   w_mat_.set(i, j, s[0]*vt_mat.get(0, i*new_dim_+j));
-			 }
-		 }
-		 index_t offset_h=num_of_rows_*new_dim_;
-		 for(index_t i=0; i<num_of_columns_; i++) {
-		   for(index_t j=0; j<new_dim_; j++) {
-			   h_mat_.set(j, i , s[0]*vt_mat.get(0, offset_h+i*new_dim_+j));
-			 }
-		 }
+     Matrix init_data;
+		 opt_function_.GiveInitMatrix(&init_data);
+		 engine_.set_coordinates(init_data);
+	   engine_.ComputeLocalOptimumBFGS();
+     Matrix result;
+     engine_.GetResults(&result);
+     w_mat_.Init(num_of_rows_, new_dim_);
+		 h_mat_.Init(new_dim_, num_of_columns_);
+     w_mat_.CopyColumnFromMat(0, 0, num_of_rows_, result);
+     h_mat_.CopyColumnFromMat(0, num_of_rows_, num_of_columns_, result);
+
      // now compute reconstruction error
      Matrix v_rec;
      la::MulInit(w_mat_, h_mat_, &v_rec);

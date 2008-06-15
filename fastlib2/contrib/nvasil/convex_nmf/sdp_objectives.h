@@ -56,6 +56,7 @@ class SmallSdpNmf {
   index_t number_of_cones_;
   double desired_duality_gap_;
   double gradient_tolerance_;
+  double v_accuracy_;
 };
 
 #include "sdp_objectives_impl.h"

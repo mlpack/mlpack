@@ -24,6 +24,7 @@ void SmallSdpNmf::Init(fx_module *module,
 	new_dim_=fx_param_int(module_, "new_dim", 5); 
   desired_duality_gap_=fx_param_double(module_, "desired_duality_gap", 1e-4);
   gradient_tolerance_=fx_param_double(module_, "gradient_tolerance", 1);
+  v_accuracy_=fx_param_double(module_, "v_accuracy", 1e-4);
   rows_.InitCopy(rows);
 	columns_.InitCopy(columns);
 	values_.InitCopy(values);
@@ -35,7 +36,7 @@ void SmallSdpNmf::Init(fx_module *module,
   offset_th_ = offset_tw_ + num_of_rows_;
   offset_v_ = offset_th_ + num_of_columns_;
   number_of_cones_ = values_.size()*new_dim_ // sdp cones
-     +values_.size(); // LP cones;
+     +2*values_.size(); // LP cones;
   objective_factor_.Init(new_dim_,  2*(num_of_rows_+num_of_columns_)+values_.size());
   objective_factor_.SetAll(1.0);
   // W
@@ -66,7 +67,7 @@ void SmallSdpNmf::Init(fx_module *module,
   // v
   for(index_t i=offset_v_; i<offset_v_+values_.size(); i++) {
     for(index_t j=0; j<new_dim_; j++) {
-      objective_factor_.set(j, i, 1.0);
+      objective_factor_.set(j, i, 0.0);
     }
   }
  
@@ -74,19 +75,62 @@ void SmallSdpNmf::Init(fx_module *module,
 
 void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
   // from the objective functions
-  gradient->CopyValues(objective_factor_);
+  // gradient->CopyValues(objective_factor_);
+  // la::Scale(sigma_, gradient);
+   
+  // super objective starts here
+
+  for(index_t i=0; i<num_of_rows_; i++) {
+    index_t w_i=i;
+    index_t t1_i=offset_tw_+i;
+    for(index_t j=0; j<new_dim_; j++) {
+      double w=coordinates.get(j, w_i);
+      double t1=coordinates.get(j, t1_i);
+      double dw=-1.0;
+      double dt1=0.5*math::Pow<-1,2>(t1);
+      gradient->set(j, w_i, dw);
+      gradient->set(j, t1_i, dt1);
+    }
+  }
+  
+   for(index_t i=0; i<num_of_columns_; i++) {
+    index_t h_i=offset_h_+i;
+    index_t t2_i=offset_th_+i;
+    for(index_t j=0; j<new_dim_; j++) {
+      double h=coordinates.get(j, h_i);
+      double t2=coordinates.get(j, t2_i);
+      double dh=-1.0;
+      double dt2=0.5*math::Pow<-1,2>(t2);
+      gradient->set(j, h_i, dh);
+      gradient->set(j, t2_i, dt2);
+    }
+  }
+
+    for(index_t i=0; i< new_dim_*values_.size(); i++) {
+      gradient->GetColumnPtr(offset_v_)[i]=0;
+    }
   la::Scale(sigma_, gradient);
-  // from the LP cones
+  
+ // end of the super objective 
+ // from the LP cones
   for(index_t i=0; i<values_.size(); i++) {
     index_t v_i=offset_v_+i;
     double diff=0;
     for(index_t j=0; j<new_dim_; j++) {
       diff+=coordinates.get(j, v_i);
     }
-    diff-=values_[i];
+    double diff1=diff-(values_[i]-v_accuracy_);
+    double diff2=-diff+(values_[i]+v_accuracy_);
     //NOTIFY("diff:%lg", diff);
-    for(index_t j=0; j<new_dim_; j++) {
-      gradient->set(j, v_i, gradient->get(j, v_i)-1.0/diff);
+    if (diff1<=0 || diff2<=0) {
+      for(index_t j=0; j<new_dim_; j++) {
+        gradient->set(j, v_i, DBL_MAX);
+      }
+      return;
+    } else {    
+      for(index_t j=0; j<new_dim_; j++) {
+        gradient->set(j, v_i, gradient->get(j, v_i)-1.0/diff1+1.0/diff2);
+      }
     }     
   } 
   // from the SDP cones
@@ -140,8 +184,37 @@ void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
 }
 
 void SmallSdpNmf::ComputeObjective(Matrix &coordinates, double *objective) {
-  *objective=la::Dot(objective_factor_.n_elements(), 
-      objective_factor_.ptr(), coordinates.ptr());
+  // *objective=la::Dot(objective_factor_.n_elements(), 
+  //    objective_factor_.ptr(), coordinates.ptr());
+ 
+  
+  //super objective starts here
+  *objective=0.0;
+  for(index_t i=0; i<num_of_rows_; i++) {
+    index_t w_i=i;
+    index_t t1_i=offset_tw_+i;
+    for(index_t j=0; j<new_dim_; j++) {
+      double w=coordinates.get(j, w_i);
+      double t1=coordinates.get(j, t1_i);
+      *objective+=math::Pow<1,2>(t1)-w;
+    }
+  }
+  for(index_t i=0; i<num_of_columns_; i++) {
+    index_t h_i=offset_h_+i;
+    index_t t2_i=offset_th_+i;
+    for(index_t j=0; j<new_dim_; j++) {
+      double h=coordinates.get(j, h_i);
+      double t2=coordinates.get(j, t2_i);
+      *objective+=math::Pow<1,2>(t2)-h;
+    }
+  }
+  //Vector temp;
+  //temp.Init(new_dim_*values_.size());
+  //temp.SetAll(1);
+  // *objective+=la::Dot(new_dim_*values_.size(), 
+   //   coordinates.GetColumnPtr(offset_v_),
+    //  temp.ptr());    
+   
 }
 
 void SmallSdpNmf::ComputeFeasibilityError(Matrix &coordinates, double *error) {
@@ -167,11 +240,13 @@ double SmallSdpNmf::ComputeLagrangian(Matrix &coordinates) {
     for(index_t j=0; j<new_dim_; j++) {
       diff+=coordinates.get(j, v_i);
     }
-    diff-=values_[i];
-    if unlikely(diff<0) {
+    double diff1=diff-(values_[i]-v_accuracy_);
+    double diff2=-diff+(values_[i]+v_accuracy_);
+ 
+    if unlikely(diff1<=0 || diff2<=0) {
       return DBL_MAX;
     }
-    temp_prod*=diff;
+    temp_prod*=diff1*diff2;
   }
   lagrangian-=log(temp_prod);   
   // from the SDP cones
@@ -218,7 +293,7 @@ void SmallSdpNmf::UpdateLagrangeMult(Matrix &coordinates) {
 }
 
 void SmallSdpNmf::Project(Matrix *coordinates) {
-  //OptUtils::NonNegativeProjection(coordinates);
+ OptUtils::NonNegativeProjection(coordinates);
 }
 
 void SmallSdpNmf::set_sigma(double sigma) {
@@ -230,7 +305,7 @@ void SmallSdpNmf::GiveInitMatrix(Matrix *init_data) {
       2*(num_of_rows_+num_of_columns_)+values_.size());
   for(index_t i=0; i<num_of_rows_+num_of_columns_; i++) {
     for(index_t j=0; j<new_dim_; j++) {
-      init_data->set(j, i, 0*math::Random(0.0, 1.0));
+      init_data->set(j, i, 0.1);
     }
   }
   for(index_t i=0; i<values_.size(); i++) {
@@ -244,8 +319,8 @@ void SmallSdpNmf::GiveInitMatrix(Matrix *init_data) {
       double h=init_data->get(j, h_i);
      
       // ensure that Sum w_ij*hij > v_ij 
-      init_data->set(j, v_i, std::max(w*h+math::Random(), 
-            values_[i]+math::Random()));
+      double total_weight=new_dim_*(new_dim_+1)/2;
+      init_data->set(j, v_i, values_[i]/new_dim_);
       double v=init_data->get(j, v_i);
       init_data->set(j, t1_i, std::max(fabs(w*h-v)+w*w+math::Random(), 
             init_data->get(j, t1_i)+math::Random()));

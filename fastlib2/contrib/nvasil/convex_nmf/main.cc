@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
 	fx_root=fx_init(argc, argv, NULL);
 	fx_module *nmf_module=fx_submodule(fx_root, "/engine");
   SdpNmfEngine<SmallSdpNmf> engine;
-  fx_set_param_str(nmf_module, "data_file", "5.csv");
+  fx_set_param_str(nmf_module, "data_file", "5.csv");//"../non_convex_nmf/v.csv");
   //    "/net/hg200/nvasil/dataset/orl_faces/orl_test_faces_100.csv");
   fx_set_param_int(nmf_module, "new_dim", 2);
 	fx_set_param_double(nmf_module, "l_bfgs/sigma", 1);
@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
   fx_set_param_double(nmf_module, "l_bfgs/wolfe_sigma2", 0.99);
   fx_set_param_double(nmf_module, "l_bfgs/wolfe_sigma1", 1e-4);
   fx_set_param_double(nmf_module, "l_bfgs/use_default_termination", false);
-  fx_set_param_int(nmf_module, "l_bfgs/mem_bfgs", 4); 
+  fx_set_param_int(nmf_module, "l_bfgs/mem_bfgs", 10); 
   fx_set_param_double(nmf_module, "optfun/desired_duality_gap", 1e-4); 
 	fx_set_param_double(nmf_module, "optfun/gradient_tolerance", 1e-2);
   engine.Init(nmf_module);
