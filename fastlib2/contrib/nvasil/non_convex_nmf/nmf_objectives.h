@@ -28,7 +28,7 @@ class BigSdpNmfObjectiveMaxVar {
 	index_t new_dim_;
 	index_t rank_;
 	index_t offset_h_;
-	index_t offset_h_mat_; // we need this to know wher h matrix starts 
+	index_t offset_h_mat_; // we need this to know where h matrix starts 
 	ArrayList<index_t> rows_;
 	ArrayList<index_t> columns_;
   ArrayList<double>  values_;
@@ -99,6 +99,42 @@ class BigSdpNmfObjectiveMinVarIneq {
   ArrayList<double>  values_;
   Vector ineq_lagrange_mult_; 
 };
+
+class BigSdpNmfObjectiveMinVarDiagonalDominance {
+ public:
+	void Init(fx_module *module, 
+			ArrayList<index_t> &rows,
+			ArrayList<index_t> &columns,
+      ArrayList<double>  &values);
+  void Destruct();
+  void ComputeGradient(Matrix &coordinates, Matrix *gradient);
+  void ComputeObjective(Matrix &coordinates, double *objective);
+  void ComputeFeasibilityError(Matrix &coordinates, double *error);
+  double ComputeLagrangian(Matrix &coordinates);
+  void UpdateLagrangeMult(Matrix &coordinates);
+  void Project(Matrix *coordinates);
+  void set_sigma(double sigma); 
+  void GiveInitMatrix(Matrix *init_data);
+	bool IsDiverging(double objective); 
+ 
+ private:
+  fx_module *module_;
+  double sigma_;
+	index_t num_of_columns_;
+	index_t num_of_rows_;
+	index_t new_dim_;
+	index_t rank_;
+	index_t offset_h_;
+	index_t offset_h_mat_; // we need this to know wher h matrix starts 
+	ArrayList<index_t> rows_;
+	ArrayList<index_t> columns_;
+  ArrayList<double>  values_;
+  // this is for the equality for the values of the V
+  Vector eq_lagrange_mult_;
+  // Inequality for the diagonal dominance
+  Vector ineq_lagrange_mult_; 
+};
+
 
 class  ClassicNmfObjective {
  public:

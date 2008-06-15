@@ -356,6 +356,196 @@ bool BigSdpNmfObjectiveMinVarIneq::IsDiverging(double objective) {
 } 
 
 ////////////////////////////////////////////////////////////////////////
+void BigSdpNmfObjectiveMinVarDiagonalDominance::Init(fx_module *module, 
+			ArrayList<index_t> &rows,
+			ArrayList<index_t> &columns,
+      ArrayList<double>  &values) {
+  module_=module;
+	new_dim_=fx_param_int(module_, "new_dim", 5); 
+  rank_=fx_param_int(module_, "rank", 3);
+  rows_.InitCopy(rows);
+	columns_.InitCopy(columns);
+	values_.InitCopy(values);
+	num_of_rows_=*std::max_element(rows_.begin(), rows_.end())+1;
+	num_of_columns_=*std::max_element(columns_.begin(), columns_.end())+1;
+	eq_lagrange_mult_.Init(values_.size());
+  eq_lagrange_mult_.SetAll(0.0);
+  ineq_lagrange_mult_.Init(num_of_columns_+num_of_rows_);
+  ineq_lagrange_mult_.SetAll(1.0);
+	offset_h_ = num_of_rows_*new_dim_;
+}
+
+void  BigSdpNmfObjectiveMinVarDiagonalDominance::Destruct() {
+  rows_.Renew();
+	columns_.Renew();
+  values_.Renew();
+  eq_lagrange_mult_.Destruct();
+	ineq_lagrange_mult_.Destruct();
+}
+
+void BigSdpNmfObjectiveMinVarDiagonalDominance::ComputeGradient(Matrix &coordinates, 
+    Matrix *gradient) {
+  // gradient of the variance
+  gradient->CopyValues(coordinates);
+	la::Scale(2.0, gradient);
+  // Gradient on the equalities and inequalities  
+	for(index_t i=0; i<values_.size(); i++) {
+    index_t w =rows_[i]*new_dim_;
+    index_t h =offset_h_+columns_[i]*new_dim_;
+    double diff=la::Dot(rank_*new_dim_,
+				                coordinates.GetColumnPtr(w),
+												coordinates.GetColumnPtr(h))-values_[i];
+	  la::AddExpert(rank_*new_dim_, -eq_lagrange_mult_[i]+2*sigma_*diff,
+	      coordinates.GetColumnPtr(w), gradient->GetColumnPtr(h));	
+		la::AddExpert(rank_*new_dim_, -eq_lagrange_mult_[i]+2*sigma_*diff, 
+				coordinates.GetColumnPtr(h), gradient->GetColumnPtr(w));
+  }	
+  // for the diagonal dominance
+  Matrix ones;
+  ones.Init(num_of_rows_+num_of_columns_, 1);
+  ones.SetAll(1.0);
+  Matrix sums1;
+  la::MulInit(coordinates, ones, &sums1);
+  Matrix sums2;
+  la::MulTransAInit(coordinates, sums1, &sums2);
+  Vector diagonal_offset;
+  diagonal_offset.Init(new_dim_);
+  Matrix augmented_gradient;
+  augmented_gradient.Init(coordinates.n_rows(), coordinates.n_cols());
+  augmented_gradient.SetAll(0.0);
+  for(index_t i=0; i<coordinates.n_cols(); i++) {
+    double diagonal_element=la::Dot(new_dim_, 
+        coordinates.GetColumnPtr(i), coordinates.GetColumnPtr(i));
+    double diff=2*diagonal_element-sums2.get(i, 0);
+    if (sigma_*diff <= ineq_lagrange_mult_[i]) {
+      diagonal_offset.SetAll(2*diagonal_element);
+      la::AddExpert(new_dim_, -ineq_lagrange_mult_[i]+sigma_*diff,
+          diagonal_offset.ptr(), augmented_gradient.ptr());
+    }
+  }
+}
+
+void BigSdpNmfObjectiveMinVarDiagonalDominance::ComputeObjective(Matrix &coordinates, 
+    double *objective) {
+  *objective=0;	
+  for(index_t i=0; i<coordinates.n_cols(); i++) {
+	   *objective+=la::Dot(coordinates.n_rows(), 
+				 coordinates.GetColumnPtr(i), coordinates.GetColumnPtr(i));
+	}
+}
+
+void BigSdpNmfObjectiveMinVarDiagonalDominance::ComputeFeasibilityError(Matrix &coordinates, 
+    double *error) {
+  *error=0;
+	for(index_t i=0; i<values_.size(); i++) {
+    index_t w =rows_[i]*new_dim_;
+    index_t h =offset_h_+columns_[i]*new_dim_;
+    double diff=la::Dot(rank_*new_dim_,
+				                coordinates.GetColumnPtr(w),
+												coordinates.GetColumnPtr(h))-values_[i];
+    if (diff < 0) {
+		  *error=std::max(*error, fabs(diff));
+ 	  }
+  }
+}
+
+
+double BigSdpNmfObjectiveMinVarDiagonalDominance::ComputeLagrangian(Matrix &coordinates) {
+  double lagrangian=0;
+  ComputeObjective(coordinates, &lagrangian);
+  for(index_t i=0; i<values_.size(); i++) {
+    // equalities
+    index_t w =rows_[i]*new_dim_;
+    index_t h =offset_h_+columns_[i]*new_dim_;
+    double diff=la::Dot(rank_*new_dim_,
+				                coordinates.GetColumnPtr(w),
+												coordinates.GetColumnPtr(h))-values_[i];
+		if (sigma_*diff <= eq_lagrange_mult_[i]) {
+      lagrangian+=(sigma_*diff-eq_lagrange_mult_[i])*diff;
+    } else {
+      lagrangian+=-math::Pow<2,1>(eq_lagrange_mult_[i])/sigma_;
+    }
+	}
+  // diagonal dominance
+  Matrix ones;
+  ones.Init(num_of_rows_+num_of_columns_, 1);
+  ones.SetAll(1.0);
+  Matrix sums1;
+  la::MulInit(coordinates, ones, &sums1);
+  Matrix  sums2;
+  la::MulTransAInit(coordinates, sums1, &sums2);
+  double diagonal_element;
+  for(index_t i=0; i<coordinates.n_cols(); i++) {
+    diagonal_element=la::Dot(new_dim_, 
+        coordinates.GetColumnPtr(i), coordinates.GetColumnPtr(i));
+    double diff=2*diagonal_element-sums2.get(0, i);
+  	if (sigma_*diff <= ineq_lagrange_mult_[i]) {
+      lagrangian+=(sigma_*diff-ineq_lagrange_mult_[i])*diff;
+    } else {
+      lagrangian+=-math::Pow<2,1>(ineq_lagrange_mult_[i])/sigma_;
+    }
+  }
+  
+	return lagrangian;
+}
+
+void BigSdpNmfObjectiveMinVarDiagonalDominance::UpdateLagrangeMult(Matrix &coordinates) {
+  for(index_t i=0; i<values_.size(); i++) {
+    index_t w =rows_[i]*new_dim_;
+    index_t h =offset_h_+columns_[i]*new_dim_;
+    // equalities
+    double diff=la::Dot(rank_*new_dim_,
+				                coordinates.GetColumnPtr(w),
+												coordinates.GetColumnPtr(h))-values_[i];
+		eq_lagrange_mult_[i]=eq_lagrange_mult_[i]-sigma_*diff;
+ 	}
+  // diagonal dominance
+  for(index_t i=0; i<ineq_lagrange_mult_.length(); i++) {
+    Matrix ones;
+    ones.Init(num_of_rows_+num_of_columns_, 1);
+    ones.SetAll(1.0);
+    Matrix sums1;
+    la::MulInit(coordinates, ones, &sums1);
+    Matrix sums2;
+    la::MulTransAInit(coordinates, sums1, &sums2);
+    double diagonal_element=la::Dot(new_dim_, 
+        coordinates.GetColumnPtr(i), coordinates.GetColumnPtr(i));
+    double diff=2*diagonal_element-sums2.get(i, 0);
+    ineq_lagrange_mult_[i]=std::max(ineq_lagrange_mult_[i]-sigma_*diff, 0.0);
+  }
+}
+
+void BigSdpNmfObjectiveMinVarDiagonalDominance::Project(Matrix *coordinates) {
+  OptUtils::NonNegativeProjection(coordinates);
+}
+
+void BigSdpNmfObjectiveMinVarDiagonalDominance::set_sigma(double sigma) {
+  sigma_=sigma;
+}
+
+void BigSdpNmfObjectiveMinVarDiagonalDominance::GiveInitMatrix(Matrix *init_data) {
+  init_data->Init(rank_, (num_of_rows_+num_of_columns_)*new_dim_);
+  double	mean_value=0.0;
+  for(index_t i=0; i<values_.size(); i++) {
+    mean_value+=values_[i];
+  }
+  mean_value/=values_.size();
+  for(index_t i=0; i<init_data->n_rows(); i++) {
+	  for(index_t j=0; j<init_data->n_cols(); j++) {
+		  init_data->set(i, j, math::Random(0, 1e-5));
+		}
+	}
+}
+
+
+bool BigSdpNmfObjectiveMinVarDiagonalDominance::IsDiverging(double objective) {
+  return false;
+} 
+
+
+
+
+////////////////////////////////////////////////////////////////////////
 void ClassicNmfObjective::Init(fx_module *module, 
 			ArrayList<index_t> &rows,
 			ArrayList<index_t> &columns,
