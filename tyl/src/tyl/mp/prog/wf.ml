@@ -1,10 +1,12 @@
 open Ast 
 open List
 
+let (%) f g = \x -> f (g x)
+
 let wfType t = true
 
 let rec isOfType ctxt e t = match e,t with 
-  | EVar x                  , t'    -> Ctxt.contains ctxt x t
+  | EVar x                  , _     -> Ctxt.contains ctxt x t
   | EConst (Bool _)         , TBool -> true
   | EConst (Real _)         , TReal -> true
   | EUnaryOp (Neg,e')       , TReal -> isOfType ctxt e' TReal
@@ -20,11 +22,10 @@ let rec wfProp ctxt c = match c with
   | CBoolVal _        -> true
   | CIsTrue e         -> isOfType ctxt e TBool
   | CNumRel (_,e1,e2) -> isOfType ctxt e1 TReal && isOfType ctxt e2 TReal
-  | CPropOp (_,cc)    -> for_all (wfProp ctxt) cc
+  | CPropOp (_,cs)    -> for_all (wfProp ctxt) cs
   | CQuant (_,x,t,c') -> wfType t && wfProp (Ctxt.add ctxt x t) c'
 
 let wfProg p = match p with 
-  | PMain (_,xx,e,c) -> 
-      let ctxt = Ctxt.fromList xx in 
-      let (_,tt) = split xx in 
-        for_all wfType tt && isOfType ctxt e TReal && wfProp ctxt c
+  | PMain (_,xts,e,c) -> 
+      let ctxt = Ctxt.fromList xts in 
+        for_all (wfType % snd) xts && isOfType ctxt e TReal && wfProp ctxt c
