@@ -360,7 +360,7 @@ private:
    * Compute the total number of n-tuples by recursively splitting up
    * the i-th node 
    */
-  double two_ttn(int b, ArrayList<Tree *> nodes, int i) {
+  double two_ttn(int b, ArrayList<Tree *> &nodes, int i) {
 
     double result = 0.0;
     Tree *kni = nodes[i];
@@ -373,7 +373,7 @@ private:
   }
 
   /** Compute the total number of n-tuples */
-  double ttn(int b, ArrayList<Tree *> nodes) {
+  double ttn(int b, ArrayList<Tree *> &nodes) {
     
     Tree *bkn = nodes[b];
     double result;
@@ -447,7 +447,7 @@ private:
   }
 
   /** Heuristic for node splitting - find the node with most points */
-  int FindSplitNode(ArrayList<Tree *> nodes) {
+  int FindSplitNode(ArrayList<Tree *> &nodes) {
 
     int global_index = -1;
     int global_min = 0;
@@ -483,7 +483,7 @@ private:
   }
 
   /** Pruning rule */
-  int Prunable(ArrayList<Tree *> nodes, double num_tuples, 
+  int Prunable(ArrayList<Tree *> &nodes, double num_tuples, 
 	       double *allowed_err) {
 
     double pos_min_potential, pos_max_potential;
@@ -540,7 +540,7 @@ private:
   }
 
   /** Pruning rule for series approxiamation approach */
-  int PrunableSeriesExpansion(ArrayList<Tree *> nodes, double num_tuples,
+  int PrunableSeriesExpansion(ArrayList<Tree *> &nodes, double num_tuples,
 			      double allowed_err) {
 
     if(nodes[0] != nodes[1] && nodes[0] != nodes[2] && nodes[1] != nodes[2]) {
@@ -634,7 +634,7 @@ private:
   }
 
   /** Pruning rule for series approxiamation second approach */
-  int PrunableSeriesExpansion2(ArrayList<Tree *> nodes, double num_tuples,
+  int PrunableSeriesExpansion2(ArrayList<Tree *> &nodes, double num_tuples,
 			       double allowed_err) {
 
     if(nodes[0] != nodes[1] && nodes[0] != nodes[2] && nodes[1] != nodes[2]) {
@@ -714,7 +714,7 @@ private:
   }
 
   /** Base exhaustive case */
-  void MTMultibodyBase(ArrayList<Tree *> nodes, int level) {
+  void MTMultibodyBase(ArrayList<Tree *> &nodes, int level) {
 
     int start_index;
     int num_nodes = nodes.size();
@@ -754,7 +754,7 @@ private:
   }
 
   /** Main multitree recursion */
-  void MTMultibody(ArrayList<Tree *> nodes, double num_tuples) {
+  void MTMultibody(ArrayList<Tree *> &nodes, double num_tuples) {
     
     double allowed_err = 0;
     NumNodesExpanded_++;
@@ -771,7 +771,7 @@ private:
     non_leaf_indices_.Resize(0);
     for(index_t i = 0; i < 3; i++) {
       if(!(nodes[i]->is_leaf())) {
-	non_leaf_indices_.AddBackItem(i);
+	non_leaf_indices_.PushBackCopy(i);
       }
     }
     
