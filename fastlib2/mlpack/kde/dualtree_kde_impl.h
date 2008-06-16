@@ -26,7 +26,6 @@ void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
     used_error_[q] += qnode->stat().postponed_used_error_;
     squared_used_error_[q] += qnode->stat().postponed_squared_used_error_;
     n_pruned_[q] += qnode->stat().postponed_n_pruned_;
-    extra_probability_[q] += qnode->stat().postponed_extra_probability_;
 
     // Get query point.
     const double *q_col = qset_.GetColumnPtr(q);
@@ -70,7 +69,6 @@ void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
   qnode->stat().postponed_used_error_ = 0;
   qnode->stat().postponed_squared_used_error_ = 0;
   qnode->stat().postponed_n_pruned_ = 0;
-  qnode->stat().postponed_extra_probability_ = 0;
 }
 
 template<typename TKernelAux>
@@ -110,12 +108,18 @@ bool DualtreeKde<TKernelAux>::PrunableEnhanced_
   double new_squared_used_error = qstat.squared_used_error_ +
     qstat.postponed_squared_used_error_;
   double new_n_pruned = qstat.n_pruned_ + qstat.postponed_n_pruned_;
-  double allowed_err = (probability == 1) ?
+  double allowed_err = (probability >= 1) ?
     (tau_ * new_mass_l - new_used_error) /
     ((double) rroot_->count() - new_n_pruned):
     sqrt(math::Sqr(tau_ * new_mass_l) - new_squared_used_error) /
     ((double) rroot_->count() - new_n_pruned);
-  
+
+  // If the allowed error is not defined (NaN), then we cannot
+  // approximate.
+  if(isnan(allowed_err)) {
+    return false;
+  }
+
   // Get the order of approximations.
   order_farfield_to_local = 
     farfield_expansion.OrderForConvertingToLocal
@@ -152,7 +156,7 @@ bool DualtreeKde<TKernelAux>::PrunableEnhanced_
     n_pruned = rnode->count();
     order_farfield = order_local = -1;
     num_farfield_to_local_prunes_++;
-      return true;
+    return true;
   }
   
   if(cost_farfield == min_cost) {
@@ -246,13 +250,8 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
 
     // Compute the required standard score for the given one-sided
     // probability.
-    double two_sided_probability = 
-      std::max(probability -
-	       (extra_probability_[q] + 
-		qnode->stat().postponed_extra_probability_), 0.0);
     double standard_score = 
-      InverseNormalCDF::Compute
-      (two_sided_probability + 0.5 * (1 - two_sided_probability));
+      InverseNormalCDF::Compute(probability + 0.5 * (1 - probability));
 
     // Get the pointer to the current query point.
     const double *query_point = 
@@ -349,11 +348,9 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
   if(flag) {
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
       densities_e_[q] += query_kernel_sums_scratch_space_[q];
-      extra_probability_[q] = 0;
     }
     de = 0;
     used_error = max_used_error;
-    qnode->stat().postponed_extra_probability_ = 0;
     return true;
   }
   return false;
@@ -390,7 +387,7 @@ bool DualtreeKde<TKernelAux>::Prunable_
     stat.postponed_squared_used_error_;
   double new_n_pruned = stat.n_pruned_ + stat.postponed_n_pruned_;
   
-  double allowed_err = (probability == 1) ?
+  double allowed_err = (probability >= 1) ?
     (tau_ * new_mass_l - new_used_error) *
     num_references / ((double) rroot_->count() - new_n_pruned):
     sqrt(math::Sqr(tau_ * new_mass_l) - new_squared_used_error) *
@@ -407,7 +404,7 @@ bool DualtreeKde<TKernelAux>::Prunable_
 
   // If the error bound is satisfied by the hard error bound, it is
   // safe to prune.
-  return (used_error <= allowed_err);
+  return (!isnan(allowed_err)) && (used_error <= allowed_err);
 }
 
 template<typename TKernelAux>
@@ -555,12 +552,6 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
       qnode->stat().postponed_n_pruned_;
     (qnode->right()->stat()).postponed_n_pruned_ += 
       qnode->stat().postponed_n_pruned_;
-
-    // Push down extra probability to the child nodes.
-    qnode->left()->stat().postponed_extra_probability_ +=
-      qnode->stat().postponed_extra_probability_;
-    qnode->right()->stat().postponed_extra_probability_ +=
-      qnode->stat().postponed_extra_probability_;
     
     // Clear out the postponed info after being passed down.
     qnode->stat().postponed_l_ = qnode->stat().postponed_u_ = 0;
@@ -568,7 +559,6 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
     qnode->stat().postponed_used_error_ = 0;
     qnode->stat().postponed_squared_used_error_ = 0;
     qnode->stat().postponed_n_pruned_ = 0;
-    qnode->stat().postponed_extra_probability_ = 0;
     
     // For a leaf reference node, expand query node
     if(rnode->is_leaf()) {
