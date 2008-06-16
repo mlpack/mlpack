@@ -107,10 +107,15 @@ bool DualtreeKde<TKernelAux>::PrunableEnhanced_
   // Refine the lower bound using the new lower bound info
   double new_mass_l = qstat.mass_l_ + qstat.postponed_l_ + dl;
   double new_used_error = qstat.used_error_ + qstat.postponed_used_error_;
+  double new_squared_used_error = qstat.squared_used_error_ +
+    qstat.postponed_squared_used_error_;
   double new_n_pruned = qstat.n_pruned_ + qstat.postponed_n_pruned_;
-  double allowed_err = (tau_ * new_mass_l - new_used_error) /
+  double allowed_err = (probability == 1) ?
+    (tau_ * new_mass_l - new_used_error) /
+    ((double) rroot_->count() - new_n_pruned):
+    sqrt(math::Sqr(tau_ * new_mass_l) - new_squared_used_error) /
     ((double) rroot_->count() - new_n_pruned);
-
+  
   // Get the order of approximations.
   order_farfield_to_local = 
     farfield_expansion.OrderForConvertingToLocal
