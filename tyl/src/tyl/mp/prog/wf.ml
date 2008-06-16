@@ -1,7 +1,7 @@
 open Ast 
 open List
 
-let (%) f g = \x -> f (g x)
+let (%) f g x = f (g x)
 
 let wfType t = true
 
