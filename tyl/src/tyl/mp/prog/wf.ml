@@ -1,9 +1,7 @@
 open Ast 
 open List
 
-let (%) f g x = f (g x)
-
-let wfType t = true
+let isType t = true
 
 let rec isOfType ctxt e t = match e,t with 
   | EVar x                  , _     -> Ctxt.contains ctxt x t
@@ -18,14 +16,48 @@ let rec isOfType ctxt e t = match e,t with
   | EBinaryOp (And,e1,e2)   , TBool -> isOfType ctxt e1 TBool && isOfType ctxt e2 TBool
   | _ -> false
 
-let rec wfProp ctxt c = match c with 
+let rec isProp ctxt c = match c with 
   | CBoolVal _        -> true
   | CIsTrue e         -> isOfType ctxt e TBool
   | CNumRel (_,e1,e2) -> isOfType ctxt e1 TReal && isOfType ctxt e2 TReal
-  | CPropOp (_,cs)    -> for_all (wfProp ctxt) cs
-  | CQuant (_,x,t,c') -> wfType t && wfProp (Ctxt.add ctxt x t) c'
+  | CPropOp (_,cs)    -> for_all (isProp ctxt) cs
+  | CQuant (_,x,t,c') -> isType t && isProp (Ctxt.add ctxt x t) c'
 
-let wfProg p = match p with 
+let isMP p = match p with 
   | PMain (_,xts,e,c) -> 
       let ctxt = Ctxt.fromList xts in 
-        for_all (wfType % snd) xts && isOfType ctxt e TReal && wfProp ctxt c
+        for_all (fun (_,t) -> isType t) xts && isOfType ctxt e TReal && isProp ctxt c
+
+(* The following functions assume 'pre: e is boolean' *)
+
+let rec isLiteral e = match e with
+  | EVar _            -> true
+  | EConst (Bool _)   -> true
+  | EUnaryOp (Not,e') -> isLiteral e'
+  | _ -> false
+
+let rec isDLF e = isLiteral e || match e with 
+  | EBinaryOp (Or,e1,e2) -> isDLF e1 && isDLF e2
+  | _ -> false
+
+let rec isCNF e = isDLF e || match e with 
+  | EBinaryOp (And,e1,e2) -> isCNF e1 && isCNF e2
+  | _ -> false
+
+let isConj e = isCNF e && not (isDLF e)
+
+let rec toCNF e = if isCNF e then e else toCNF' e
+and toCNF' e = 
+  let (&.) e1 e2 = EBinaryOp(And,e1,e2) in
+  let (|.) e1 e2 = EBinaryOp(Or,e1,e2) in
+  let nt e1 = EUnaryOp(Not,e1) in
+    match e with 
+      | EUnaryOp (Not,EUnaryOp(Not,e1))          -> toCNF e1
+      | EUnaryOp (Not,EBinaryOp(Or,e1,e2))       -> toCNF (nt e1 &. nt e2)
+      | EUnaryOp (Not,EBinaryOp(And,e1,e2))      -> toCNF (nt e1 |. nt e2)
+      | EBinaryOp (Or,EBinaryOp(And,e11,e12),e2) -> toCNF ((e11 |. e2) &. (e12 |. e2))
+      | EBinaryOp (Or,e1,EBinaryOp(And,e21,e22)) -> toCNF ((e21 |. e1) &. (e22 |. e1))
+      | EBinaryOp (Or,e1,e2)                     -> toCNF (toCNF e1 |. toCNF e2)
+      | EBinaryOp (And,e1,e2)                    -> toCNF (toCNF e1 &. toCNF e2)
+      | _ -> failwith "FIXME"
+
