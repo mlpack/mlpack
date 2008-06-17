@@ -36,5 +36,5 @@ module Ctxt = struct
   type t = (Id.t * typ) list
   let add ctxt x t = (x,t)::ctxt
   let fromList xx = xx
-  let contains ctxt x t = mem (x,t) ctxt
+  let contains ctxt x t = exists (fun (x',t') -> Id.equal x x' && t == t') ctxt
 end
