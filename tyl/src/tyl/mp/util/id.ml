@@ -1,3 +1,5 @@
+open List
+
 type t = String of string
   
 let expose (String s) = s
@@ -5,13 +7,11 @@ let expose (String s) = s
 let equal i j = expose i = expose j
 let compare i j = String.compare (expose i) (expose j)
 
-type temp = t
-module IdOrd = struct 
-  type t = temp
-  let compare = compare 
+type t' = t
+module Set = struct
+  include Set.Make(struct type t = t' let compare = compare end)
+  let union' = fold_left union empty
 end
-
-module Set = Set.Make(IdOrd)
 
 let (++) i j = String (expose i ^ expose j)
 
