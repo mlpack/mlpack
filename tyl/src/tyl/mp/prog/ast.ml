@@ -8,10 +8,14 @@ type numRel = Equal | Lte | Gte
 type propOp = Disj | Conj
 type quant = Exists
 type direction = Min | Max
-    
+
+(* type 'a interval = Bounded of 'a * 'a | Lower of 'a | Upper of 'a | Unbounded *)
+(* type refinedReal = RInt of int interval | RReal of float interval *)
+(* type refinedBool = RSingleton of bool | RBool *)
+
 type typ = 
-  | TReal
-  | TBool
+  | TReal (* of refinedReal *)
+  | TBool (* of refinedBool *)
       
 and expr = 
   | EVar of Id.t
@@ -31,6 +35,10 @@ and prop =
       
 and prog = 
   | PMain of direction * ((Id.t * typ) list) * expr * prop
+
+(* Aliases for the unrefined types *)
+(* let real' = TReal (RReal Unbounded) *)
+(* let bool' = TBool RBool *)
 
 module Ctxt = struct
   type t = (Id.t * typ) list
