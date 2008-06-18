@@ -50,4 +50,5 @@ module Ctxt : sig
   val add : t -> Id.t -> typ -> t
   val fromList : (Id.t * typ) list -> t
   val contains : t -> Id.t -> typ -> bool
+  val lookup : t -> Id.t -> typ
 end

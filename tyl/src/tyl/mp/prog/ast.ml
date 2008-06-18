@@ -35,6 +35,7 @@ and prog =
 module Ctxt = struct
   type t = (Id.t * typ) list
   let add ctxt x t = (x,t)::ctxt
-  let fromList xx = xx
+  let fromList xts = xts
   let contains ctxt x t = exists (fun (x',t') -> Id.equal x x' && t == t') ctxt
+  let lookup ctxt x = snd (find (fun (x',_) -> x=x') ctxt)
 end
