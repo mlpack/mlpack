@@ -8,7 +8,7 @@ librule(
 
 librule(
 	name = "scf_solver",
-	headers = ["scf_solver.h"],
+	headers = ["scf_solver.h", "naive_fock_matrix.h"],
 	sources = ["scf_solver.cc"],
 	deplibs = ["fastlib:fastlib", ":dual_tree_integrals"],
 	tests = ["scf_solver_test.cc"]

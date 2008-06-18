@@ -11,6 +11,7 @@
 
 #include <fastlib/fastlib.h>
 #include "dual_tree_integrals.h"
+#include "naive_fock_matrix.h"
 
 /**
  * Algorithm class for the SCF part of the HF computation.  This class assumes 
@@ -70,6 +71,10 @@ class SCFSolver {
   
   DualTreeIntegrals integrals_;
   
+  NaiveFockMatrix naive_integrals_;
+  
+  bool do_naive_;
+  
   ArrayList<index_t> occupied_indices_;
   
   ArrayList<index_t> old_from_new_centers_;
@@ -105,20 +110,43 @@ class SCFSolver {
     
     struct datanode* integral_mod = fx_submodule(module_, "integrals", 
                                                 "integrals");
+                                                
+    struct datanode* naive_mod = fx_submodule(module_, "naive_integrals", 
+                                              "naive_integrals");
     
     bandwidth_ = fx_param_double(module_, "bandwidth", 0.1);
     
-    integrals_.Init(basis_centers, integral_mod, bandwidth_);
+    do_naive_ = fx_param_exists(NULL, "naive");
     
-    // Need to get out the permutation from the integrals_, then use it to 
-    // permute the basis centers
+    if (do_naive_) {
     
-    integrals_.GetPermutation(&old_from_new_centers_);
+      naive_integrals_.Init(basis_centers, naive_mod, density, bandwidth_);
+      basis_centers_.Copy(basis_centers);
+      density_matrix_.Copy(density);
     
-    PermuteMatrix_(basis_centers, &basis_centers_, old_from_new_centers_);
-    PermuteMatrix_(density, &density_matrix_, old_from_new_centers_);
+    }
+    else {
     
-    integrals_.SetDensity(density_matrix_);
+      integrals_.Init(basis_centers, integral_mod, bandwidth_);
+      
+      // Need to get out the permutation from the integrals_, then use it to 
+      // permute the basis centers
+      
+      integrals_.GetPermutation(&old_from_new_centers_);
+      //ot::Print(old_from_new_centers_);
+      
+      PermuteMatrix_(basis_centers, &basis_centers_, old_from_new_centers_);
+      /*
+      printf("Old basis:\n");
+      basis_centers.PrintDebug();
+      printf("New basis:\n");
+      basis_centers_.PrintDebug();
+      */
+      PermuteMatrix_(density, &density_matrix_, old_from_new_centers_);
+      
+      integrals_.SetDensity(density_matrix_);
+      
+    }
     
     nuclear_centers_.Copy(nuclear);
     
@@ -282,6 +310,7 @@ class SCFSolver {
     FillOrbitals_();
     
     ot::Print(occupied_indices_);
+    energy_vector_.PrintDebug();
     
     density_matrix_frobenius_norm_ = 0.0;
     
@@ -296,9 +325,8 @@ class SCFSolver {
         // Occupied orbitals
         double this_sum = 0.0;
         for (index_t occupied_index = 0; 
-             occupied_index < occupied_indices_.size(); occupied_index++) {
+             occupied_index < number_to_fill_; occupied_index++) {
           
-          // By multiplying by 2, I'm assuming all the orbitals are full
           this_sum = this_sum + (
               coefficient_matrix_.ref(
                   density_row, occupied_indices_[occupied_index]) * 
@@ -308,31 +336,21 @@ class SCFSolver {
         } // occupied_index
         
         double this_entry = density_matrix_.ref(density_row, density_column);
-        double this_diff = this_sum - this_entry;
-        // I think this is necessary, but not sure
-        /*if (likely(density_row != density_column)) {
-          this_sum = 2 * this_sum;
-          this_diff = 2 * this_diff;
-        }*/
-                
+        
         // Leach says there is a factor of 2 here
         this_sum = 2 * this_sum;
         
+        double this_diff = this_sum - this_entry;
         
         // Computing the frobenius norm of the difference between this 
         // iteration's density matrix and the previous one for testing 
         // convergence
         
-        density_matrix_frobenius_norm_ = density_matrix_frobenius_norm_ + 
-            (this_sum - this_entry) * (this_sum - this_entry); 
+        density_matrix_frobenius_norm_ += (this_diff * this_diff); 
             
         
         density_matrix_.set(density_row, density_column, this_sum);
-        // set the lower triangle as well
-        /*if (likely(density_row != density_column)) {
-          density_matrix_.set(density_column, density_row, this_sum);        
-        }*/
-        
+
       } // density_column
       
     } //density_row
@@ -359,6 +377,31 @@ class SCFSolver {
     
     la::SVDInit(fock_matrix_, &energy_vector_, &coefficients_prime, 
                 &right_vectors_trans);
+                
+#ifdef DEBUG
+
+    Matrix right_vectors;
+    la::TransposeInit(right_vectors_trans, &right_vectors);
+    
+    for (index_t i = 0; i < number_of_basis_functions_; i++) {
+    
+      Vector i_vec;
+      coefficients_prime.MakeColumnVector(i, &i_vec);
+    
+      for (index_t j = 0; j < number_of_basis_functions_; j++) {
+        
+        DEBUG_APPROX_DOUBLE(fabs(coefficients_prime.ref(i,j)), 
+                            fabs(right_vectors.ref(i,j)), 0.001);
+                            
+        Vector j_vec;
+        right_vectors.MakeColumnVector(j, &j_vec);
+        DEBUG_APPROX_DOUBLE(fabs(la::Dot(i_vec, j_vec)), (i == j), 0.001);
+        
+      } // j
+    
+    } // i
+
+#endif
     
     
     for (index_t i = 0; i < number_of_basis_functions_; i++) {
@@ -455,7 +498,7 @@ class SCFSolver {
         max_energy_kept = new_max;
         DEBUG_ASSERT(!isinf(max_energy_kept));
         DEBUG_ASSERT(next_to_go >= 0);
-        DEBUG_ASSERT(next_to_go < number_of_basis_functions_);
+        DEBUG_ASSERT(next_to_go < number_to_fill_);
       }
       
     }
@@ -542,9 +585,12 @@ class SCFSolver {
     // Leach says there is a factor of 1/2
     total_energy = (0.5 * total_energy) + nuclear_repulsion_energy_;
     
-    one_electron_energy_ = 0.5 * one_electron_energy_;
+    // No factor of two because there's no overcounting of electrons
+    one_electron_energy_ = one_electron_energy_;
     two_electron_energy_ = 0.5 * two_electron_energy_;
     
+    printf("one_electron_energy: %g\n", one_electron_energy_);
+    printf("two_electron_energy: %g\n", two_electron_energy_);
     
     return total_energy;
     
@@ -569,9 +615,6 @@ class SCFSolver {
     printf("density_matrix_frobenius_norm_: %g\n", 
            density_matrix_frobenius_norm_);
            
-    printf("one_electron_energy: %g\n", one_electron_energy_);
-    printf("nuclear_repulsion_energy: %g\n", nuclear_repulsion_energy_);
-    printf("two_electron_energy: %g\n", two_electron_energy_);
     
     printf("total_energy_[%d]: %g\n", current_iteration_, 
            total_energy_[current_iteration_]);
@@ -609,18 +652,28 @@ class SCFSolver {
   
   void UpdateFockMatrix_() {
 
-    // Needs to call something from the object, preferably updating it first?
+    if (do_naive_) {
     
-    integrals_.UpdateMatrices(density_matrix_);
+      naive_integrals_.UpdateMatrices(density_matrix_);
+      
+      naive_integrals_.ComputeFockMatrix();
+      
+      Matrix new_fock;
+      
+      naive_integrals_.PrintFockMatrix(&new_fock, NULL, NULL);
+      
+      la::AddOverwrite(core_matrix_, new_fock, &fock_matrix_);
     
-    integrals_.ComputeFockMatrix();
+    }
+    else {
     
-    /*
-    printf("Integrals Fock Matrix\n");
-    integrals_.FockMatrix().PrintDebug();
-    */
+      integrals_.UpdateMatrices(density_matrix_);
     
-    la::AddOverwrite(core_matrix_, integrals_.FockMatrix(), &fock_matrix_);
+      integrals_.ComputeFockMatrix();
+    
+      la::AddOverwrite(core_matrix_, integrals_.FockMatrix(), &fock_matrix_);
+    
+    }
 
   }
   
@@ -630,6 +683,11 @@ class SCFSolver {
   void FindSCFSolution_() {
     
     bool converged = false;
+    
+    /*
+    printf("Matrix permutation:\n");
+    ot::Print(old_from_new_centers_);
+    */
     
     while (!converged) {
       
@@ -703,6 +761,10 @@ class SCFSolver {
     DiagonalizeFockMatrix_();
     
     ComputeDensityMatrix_();
+    
+    //data::Save("27_H_initial_density.csv", density_matrix_);
+    
+    double this_energy = ComputeElectronicEnergy_();
     
   } //Setup_
 

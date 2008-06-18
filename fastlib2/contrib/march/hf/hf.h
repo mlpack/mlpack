@@ -8,6 +8,7 @@
 
 #ifndef HF_H
 #define HF_H
+
 #include "dual_tree_integrals.h"
 #include "scf_solver.h"
 #include <fastlib/fastlib.h>
