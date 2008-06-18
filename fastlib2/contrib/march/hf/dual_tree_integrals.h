@@ -306,6 +306,8 @@ class DualTreeIntegrals {
     // are negative.  If the density lower bound is negative, then the lower 
     // bound becomes the largest integral times the density lower bound, 
     // instead of the smallest integral and vice versa.  
+    
+    double old_up_bound = up_bound;
     if (rho_sigma->stat().density_upper_bound() >= 0.0) {
       up_bound = up_bound * rho_sigma->stat().density_upper_bound();
     }
@@ -316,7 +318,7 @@ class DualTreeIntegrals {
       low_bound = low_bound * rho_sigma->stat().density_lower_bound();
     }
     else {
-      low_bound = up_bound * rho_sigma->stat().density_lower_bound();
+      low_bound = old_up_bound * rho_sigma->stat().density_lower_bound();
     }
     
     
@@ -685,12 +687,13 @@ class DualTreeIntegrals {
             // once in each of the four integrals
             
             
-            double this_integral = density_matrix_.get(rho_index, sigma_index) * 
+            double this_integral = density_matrix_.ref(rho_index, sigma_index) * 
                 ComputeSingleIntegral_(mu_vec, nu_vec, rho_vec, sigma_vec);
               
             // this line gets it right
             // double this_integral = ComputeSingleIntegral_(mu_vec, nu_vec, rho_vec, sigma_vec);
             if (rho != sigma) {
+              
               this_integral = this_integral * 2;
             }
             
@@ -793,8 +796,12 @@ class DualTreeIntegrals {
             integral_value = integral_value + kl_integral;
               
             // Account for the rho-sigma partial symmetry
-            // Need to make this rectangle safe
+            // No need to make this rectangle safe - base cases are square on 
+            // diagonal
             if (rho != sigma) {  
+              
+              DEBUG_ASSERT(density_matrix_.ref(rho_index, sigma_index) == 
+                           density_matrix_.ref(sigma_index, rho_index));
             
               double lk_integral = density_matrix_.ref(sigma_index, rho_index) * 
                 ComputeSingleIntegral_(mu_vec, sigma_vec, nu_vec, rho_vec) * 0.5;
@@ -974,7 +981,6 @@ class DualTreeIntegrals {
       
       PropagateBoundsDown_(mu_nu);
       
-      // this doesn't hold because I haven't propagated them down this far
       DEBUG_ASSERT(mu_nu->stat().remaining_references() ==
                    mu_nu->left()->stat().remaining_references());
       
@@ -1451,7 +1457,6 @@ public:
     
     ResetTree_(square_tree_);
     
-    
     SetEntryBounds_();
   
   }
@@ -1522,6 +1527,7 @@ public:
   
     //printf("number_of_approximations_ = %d\n", number_of_approximations_);
     //printf("number_of_base_cases_ = %d\n\n", number_of_base_cases_);
+    fx_format_result(module_, "bandwidth", "%g", bandwidth_);
     fx_format_result(module_, "epsilon_coulomb", "%g", epsilon_coulomb_);
     fx_format_result(module_, "epsilon_exchange", "%g", epsilon_exchange_);
     fx_format_result(module_, "coulomb_approximations", "%d", 

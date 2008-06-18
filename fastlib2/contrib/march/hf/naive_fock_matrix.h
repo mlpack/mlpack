@@ -37,8 +37,6 @@ class NaiveFockMatrix {
   // -1/2 * the exchange part of the matrix
   Matrix exchange_matrix_;
   
-  Matrix core_matrix_;
-  
   // The total fock matrix = repulsion + exchange
   Matrix fock_matrix_;
   
@@ -130,13 +128,11 @@ class NaiveFockMatrix {
    * Initialize the class 
    */
   void Init(const Matrix& centers_in, struct datanode* mod, 
-            const Matrix& density_in, const Matrix& core_in, double band) {
+            const Matrix& density_in, double band) {
     
     centers_.Copy(centers_in);
     
     densities_.Copy(density_in);
-    
-    core_matrix_.Copy(core_in);
     
     module_ = mod;
     
@@ -144,7 +140,7 @@ class NaiveFockMatrix {
     
     number_of_basis_functions_ = centers_.n_cols();
     
-    /*coulomb_matrix_.Init(number_of_basis_functions_, 
+    coulomb_matrix_.Init(number_of_basis_functions_, 
                            number_of_basis_functions_);
     
     coulomb_matrix_.SetAll(0.0);
@@ -153,12 +149,29 @@ class NaiveFockMatrix {
                           number_of_basis_functions_);
     
     exchange_matrix_.SetAll(0.0);
-    */
+    
+    fock_matrix_.Init(number_of_basis_functions_, 
+                         number_of_basis_functions_);
+    
+    fock_matrix_.SetAll(0.0);
+    
     normalization_constant_fourth_ = pow((2 * bandwidth_ / math::PI), 3);
     fx_format_result(module_, "normalization", "%g", 
                      normalization_constant_fourth_);
+    fx_format_result(module_, "bandwidth", "%g", bandwidth_);
+    
     
   } // Init()
+  
+  void UpdateMatrices(const Matrix& new_density) {
+    
+    densities_.CopyValues(new_density);
+    
+    coulomb_matrix_.Destruct();
+    exchange_matrix_.Destruct();
+    fock_matrix_.Destruct();
+    
+  } 
   
 
   /**
@@ -171,6 +184,7 @@ class NaiveFockMatrix {
                                             "/dev/null/blah");
     const char* exchange_file = fx_param_str(module_, "exchange_output", 
                                              "/dev/null/blah");
+    
     
     if (data::Load(coulomb_file, &coulomb_matrix_) == SUCCESS_FAIL) {
     
@@ -227,12 +241,9 @@ class NaiveFockMatrix {
       
       } // i
       
-      la::Scale(-0.5, &exchange_matrix_);
-      
-     
+      la::Scale(0.5, &exchange_matrix_);
       
       data::Save(coulomb_file, coulomb_matrix_);
-      
                                                
       data::Save(exchange_file, exchange_matrix_);
       
@@ -243,15 +254,15 @@ class NaiveFockMatrix {
       
     }
     
-    la::AddInit(coulomb_matrix_, exchange_matrix_, &fock_matrix_);
-    la::AddTo(core_matrix_, &fock_matrix_);
-    
+    la::SubInit(exchange_matrix_, coulomb_matrix_, &fock_matrix_);
+
   } // ComputeFockMatrix()
   
   /**
    * Output the Fock Matrix for comparison to my algorithm
    */
-  void PrintFockMatrix(Matrix* coulomb_out, Matrix* exchange_out) {
+  void PrintFockMatrix(Matrix* fock_out, Matrix* coulomb_out, 
+                       Matrix* exchange_out) {
   
     double average_value = 0.0;
     for (index_t i = 0; i < number_of_basis_functions_; i++) {
@@ -263,7 +274,8 @@ class NaiveFockMatrix {
       }
     }
     
-    average_value = average_value/(number_of_basis_functions_ * number_of_basis_functions_);
+    average_value = 
+        average_value/(number_of_basis_functions_ * number_of_basis_functions_);
     
     fx_format_result(module_, "average_matrix_value", "%g", average_value);
   
@@ -273,10 +285,16 @@ class NaiveFockMatrix {
     printf("Naive Exchange:\n");
     exchange_matrix_.PrintDebug();
     */
-    coulomb_out->Copy(coulomb_matrix_);
-    exchange_out->Copy(exchange_matrix_);
+    if (fock_out) {
+      fock_out->Copy(fock_matrix_);
+    }
+    if (coulomb_out) {
+      coulomb_out->Copy(coulomb_matrix_);
+    }
+    if (exchange_out) {
+      exchange_out->Copy(exchange_matrix_);
+    }
     
-    //fock_matrix_.PrintDebug();
   
   } // PrintFockMatrix()
 

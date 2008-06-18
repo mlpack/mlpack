@@ -257,7 +257,9 @@ public:
     
     solver_->PermuteMatrix_(permute_me, &unpermuted, perm);
     
-    
+    for (index_t i = 0; i < 5; i++) {
+      TEST_ASSERT(unpermuted.ref(0, i) == i);
+    }
     
     Destruct();
     
@@ -324,6 +326,8 @@ public:
     TestFillOrbitals();
     
     TestComputeOneElectronMatrices();
+    
+    TestPermuteMatrix();
     
     // TestDiagonalizeFockMatrix();
     

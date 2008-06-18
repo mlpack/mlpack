@@ -6,6 +6,28 @@ class FockMatrixTest {
   
 public:
   
+  void PermuteMatrix(const Matrix& old_mat, Matrix* new_mat, 
+                      const ArrayList<index_t>& perm) {
+    
+    index_t num_cols = old_mat.n_cols();
+    DEBUG_ASSERT(num_cols == perm.size());
+    
+    new_mat->Init(old_mat.n_rows(), num_cols);
+    
+    for (index_t i = 0; i < num_cols; i++) {
+      
+      Vector old_vec;
+      old_mat.MakeColumnVector(perm[i], &old_vec);
+      Vector new_vec;
+      new_mat->MakeColumnVector(i, &new_vec);
+      
+      new_vec.CopyValues(old_vec);
+      
+    }
+    
+  } // PermuteMatrix()
+  
+  
   void Setup(const char* centers_name, const char* density_name, 
              struct datanode* multi_mod, struct datanode* naive_mod, 
              double band) {
@@ -15,17 +37,34 @@ public:
     
     Matrix test_density;
     data::Load(density_name, &test_density);
+    
+    for (index_t i = 0; i < test_density.n_rows(); i++) {
+    
+      for (index_t j = 0; j < test_density.n_cols(); j++) {
+      
+        DEBUG_ASSERT(test_density.ref(i,j) == test_density.ref(j,i));
+      
+      }
+    
+    } 
         
-    Matrix test_core;
-    test_core.Init(test_centers.n_cols(), test_centers.n_cols());
-    test_core.SetZero();
+    DEBUG_ASSERT(test_centers.n_cols() == test_density.n_rows());
+    DEBUG_ASSERT(test_centers.n_cols() == test_density.n_cols());
     
     multi_ = new DualTreeIntegrals();
     multi_->Init(test_centers, multi_mod, band);
+    //ot::Print(multi_->old_from_new_centers_);
+    
+    /*Matrix perm_density;
+    PermuteMatrix(test_density, &perm_density, multi_->old_from_new_centers_);
+    
+    multi_->SetDensity(perm_density);
+    */
+    
     multi_->SetDensity(test_density);
     
     naive_ = new NaiveFockMatrix();
-    naive_->Init(test_centers, naive_mod, test_density, test_core, band);
+    naive_->Init(test_centers, naive_mod, test_density, band);
                      
   } // Setup
   
@@ -265,6 +304,40 @@ public:
   
   } // TestMatricesMidPrune
   
+  void TestMatricesHNoprune() {
+  
+    struct datanode* h_mod_noprune = fx_submodule(NULL, "H_noprune", 
+                                                  "H_noprune");
+  
+    fx_set_param(h_mod_noprune, "hybrid_cutoff", "100000");
+    fx_set_param(h_mod_noprune, "epsilon_absolute", "0");
+    fx_set_param(h_mod_noprune, "leaf_size", "1");
+    
+    struct datanode* naive_h_mod_noprune = fx_submodule(NULL, "naive_h_noprune", 
+                                                        "naive_h_noprune");
+  
+    fx_set_param(naive_h_mod_noprune, "coulomb_output", 
+                 "naive_coulomb_h_27_04.csv");
+    fx_set_param(naive_h_mod_noprune, "exchange_output", 
+                 "naive_exchange_h_27_04.csv");
+  
+    Setup("27_H.csv", "27_H_initial_density.csv", h_mod_noprune, naive_h_mod_noprune, 
+          0.4);
+              
+    multi_->ComputeFockMatrix();
+    Matrix cou;
+    Matrix exc;
+    multi_->OutputFockMatrix(NULL, &cou, &exc, &old_from_new);
+    
+    naive_->ComputeFockMatrix();
+    
+    ot::Print(old_from_new);
+    CompareMatrices(h_mod_noprune);
+    
+    Destruct();    
+    
+  } // TestMatricesHNoprune()
+  
   void TestMatricesLarge() {
   
     struct datanode* multi_mod_large = fx_submodule(NULL, "multi_large", 
@@ -315,6 +388,9 @@ public:
     
     NONFATAL("PRUNE Test\n");
     TestMatricesMidPrune();
+    
+    NONFATAL("H Noprune\n");
+    TestMatricesHNoprune();
     
     
     if (fx_param_exists(NULL, "large")) {
