@@ -2,7 +2,8 @@
 librule(
     name = "dualtree_kde",
     sources = [],
-    headers = ["dataset_scaler.h",
+    headers = ["bandwidth_lscv.h",
+               "dataset_scaler.h",
                "dualtree_kde.h",
                "dualtree_kde_impl.h",
                "inverse_normal_cdf.h",
@@ -80,6 +81,16 @@ binrule(
     sources = ["original_ifgt_main.cc"],              
     headers = [],                            
     deplibs = [":original_ifgt",
+               "fastlib:fastlib_int"]
+    )
+
+# The driver for the bandwidth cross-validator.
+binrule(
+    name = "kde_bandwidth_cv_bin",
+    sources = ["kde_bandwidth_cv_main.cc"],
+    headers = [],
+    deplibs = [":dualtree_kde",
+               "../series_expansion:series_expansion",
                "fastlib:fastlib_int"]
     )
 
