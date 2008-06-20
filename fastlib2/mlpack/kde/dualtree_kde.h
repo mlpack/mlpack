@@ -83,7 +83,7 @@ const fx_entry_doc kde_main_entries[] = {
 };
 
 const fx_entry_doc kde_entries[] = {
-  {"bandwidth", FX_REQUIRED, FX_DOUBLE, NULL,
+  {"bandwidth", FX_PARAM, FX_DOUBLE, NULL,
    "  The bandwidth parameter.\n"},
   {"do_naive", FX_PARAM, FX_BOOL, NULL,
    "  Whether to perform naive computation as well.\n"},
@@ -93,7 +93,7 @@ const fx_entry_doc kde_entries[] = {
    "  Whether to do O(p^D) kernel expansion instead of O(D^p).\n"},
   {"probability", FX_PARAM, FX_DOUBLE, NULL,
    "  The probability guarantee that the relative error accuracy holds.\n"},
-  {"relative_error", FX_REQUIRED, FX_DOUBLE, NULL,
+  {"relative_error", FX_PARAM, FX_DOUBLE, NULL,
    "  The required relative error accuracy.\n"},
   {"scaling", FX_PARAM, FX_STR, NULL,
    "  The scaling option.\n"},
@@ -505,7 +505,8 @@ class DualtreeKde {
     query_squared_kernel_sums_scratch_space_.Init(qset_.n_cols());
     query_squared_kernel_sums_scratch_space_.SetZero();
 
-    printf("\nStarting fast KDE...\n");
+    printf("\nStarting fast KDE on bandwidth value of %g...\n",
+	   sqrt(ka_.kernel_.bandwidth_sq()));
     fx_timer_start(NULL, "fast_kde_compute");
 
     // Preprocessing step for initializing series expansion objects
@@ -546,7 +547,7 @@ class DualtreeKde {
     get_density_estimates(results);
   }
 
-  void Init(Matrix &queries, Matrix &references, 
+  void Init(const Matrix &queries, const Matrix &references, 
 	    bool queries_equal_references, struct datanode *module_in) {
 
     // point to the incoming module
@@ -596,7 +597,7 @@ class DualtreeKde {
     squared_used_error_.Init(qset_.n_cols());
     n_pruned_.Init(qset_.n_cols());
 
-    // initialize the kernel
+    // Initialize the kernel.
     double bandwidth = fx_param_double_req(module_, "bandwidth");
 
     // initialize the series expansion object
