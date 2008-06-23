@@ -9,7 +9,7 @@
    c - prop
    z - prop type
    x - variable
-   xx,cc - plural (sets/lists of things)
+   cs,xts - plural (sets/lists of things)
 *)
 
 open Util
