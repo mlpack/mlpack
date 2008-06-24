@@ -58,6 +58,8 @@ class SCFSolver {
   
   ArrayList<double> total_energy_;
   index_t current_iteration_;
+  ArrayList<double> density_matrix_norms_;
+  
   
   static const index_t expected_number_of_iterations_ = 40;
   
@@ -178,6 +180,7 @@ class SCFSolver {
     energy_vector_.Init(number_of_basis_functions_);
     
     total_energy_.Init(expected_number_of_iterations_);
+    density_matrix_norms_.Init(expected_number_of_iterations_);
     
     density_convergence_ = fx_param_double(module_, "density_convergence", 0.1);
     energy_convergence_ = fx_param_double(module_, "energy_convergence", 0.1);
@@ -309,8 +312,10 @@ class SCFSolver {
     
     FillOrbitals_();
     
+    /*
     ot::Print(occupied_indices_);
     energy_vector_.PrintDebug();
+    */
     
     density_matrix_frobenius_norm_ = 0.0;
     
@@ -354,6 +359,8 @@ class SCFSolver {
       } // density_column
       
     } //density_row
+    
+    density_matrix_norms_[current_iteration_] = density_matrix_frobenius_norm_;
     
   } // ComputeDensityMatrix_
   
