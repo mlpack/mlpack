@@ -1,0 +1,94 @@
+\documentclass[letterpaper,12pt]{article}
+\usepackage[numbers]{natbib}
+
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{bm}
+\usepackage{amssymb}
+\usepackage{stmaryrd}
+\usepackage{multicol}
+\usepackage{epsfig}
+\usepackage{subfigure}
+\usepackage{graphicx}
+
+\newtheorem{theorem}{Theorem}
+
+\author{Dongryeol Lee}
+\title{Axilrod-Teller Potential}
+
+\begin{document}
+\maketitle
+
+Define the followings:
+\begin{align*}
+V(r_i, r_j) =& \frac{3 \nu}{8 ||r_i - r_j||} \Biggl( \frac{-8}{||r_i -
+r_j||^4 ||r_i - r_k||^3 ||r_j - r_k||^3} - \frac{1}{||r_i - r_k||^5
+||r_j - r_k||^5} + \\ & \frac{5||r_i - r_k||}{||r_i - r_j||^6 ||r_j -
+r_k||^5} + \frac{5||r_j - r_k||}{||r_i - r_j||^6 ||r_i - r_k||^5} -\\
+& \frac{1}{||r_i - r_j||^2 ||r_i - r_k||^3 ||r_j - r_k||^5} -
+ \frac{1}{||r_i - r_j||^2 ||r_i - r_k||^5 ||r_j - r_k||^3} -\\
+& \frac{3}{||r_i - r_j||^4 ||r_i - r_k|| ||r_j - r_k||^5} -
+ \frac{3}{||r_i - r_j||^4 ||r_i - r_k||^5 ||r_j - r_k||} -\\
+& \frac{5}{||r_i - r_j||^6 ||r_i - r_k|| ||r_j - r_k||^3} -
+\frac{5}{||r_i - r_j||^6 ||r_i - r_k||^3 ||r_j - r_k||} +\\
+&\frac{6}{||r_i - r_j||^4 ||r_i - r_k||^3 ||r_j - r_k||^3}
+ \Biggr )
+\end{align*}
+\begin{align*}
+V(r_i, r_k) =& \frac{3 \nu}{8 ||r_i - r_k||} \Biggl( \frac{-8}{||r_i -
+r_k||^4 ||r_i - r_j||^3 ||r_j - r_k||^3} - \frac{1}{||r_i - r_j||^5
+||r_j - r_k||^5} + \\ & \frac{5||r_i - r_j||}{||r_i - r_k||^6 ||r_j -
+r_k||^5} + \frac{5||r_j - r_k||}{||r_i - r_k||^6 ||r_i - r_j||^5} -\\
+& \frac{1}{||r_i - r_k||^2 ||r_i - r_j||^3 ||r_j - r_k||^5} -
+ \frac{1}{||r_i - r_k||^2 ||r_i - r_j||^5 ||r_j - r_k||^3} -\\
+& \frac{3}{||r_i - r_k||^4 ||r_i - r_j|| ||r_j - r_k||^5} -
+ \frac{3}{||r_i - r_k||^4 ||r_i - r_j||^5 ||r_j - r_k||} -\\
+& \frac{5}{||r_i - r_k||^6 ||r_i - r_j|| ||r_j - r_k||^3} -
+\frac{5}{||r_i - r_k||^6 ||r_i - r_j||^3 ||r_j - r_k||} +\\
+&\frac{6}{||r_i - r_k||^4 ||r_i - r_j||^3 ||r_j - r_k||^3}
+ \Biggr )
+\end{align*}
+\begin{align*}
+V(r_j, r_k) &= \frac{3 \nu}{8 ||r_j - r_k||} \Biggl( \frac{-8}{||r_j -
+r_k||^4 ||r_i - r_k||^3 ||r_i - r_j||^3} - \frac{1}{||r_i - r_k||^5
+||r_i - r_j||^5} + \\ & \frac{5||r_i - r_k||}{||r_j - r_k||^6 ||r_i -
+r_j||^5} + \frac{5||r_i - r_j||}{||r_j - r_k||^6 ||r_i - r_k||^5} -\\
+& \frac{1}{||r_j - r_k||^2 ||r_i - r_k||^3 ||r_i - r_j||^5} -
+ \frac{1}{||r_j - r_k||^2 ||r_i - r_k||^5 ||r_i - r_j||^3} -\\
+& \frac{3}{||r_j - r_k||^4 ||r_i - r_k|| ||r_i - r_j||^5} -
+ \frac{3}{||r_j - r_k||^4 ||r_i - r_k||^5 ||r_i - r_j||} -\\
+& \frac{5}{||r_j - r_k||^6 ||r_i - r_k|| ||r_i - r_j||^3} -
+\frac{5}{||r_j - r_k||^6 ||r_i - r_k||^3 ||r_i - r_j||} +\\
+&\frac{6}{||r_j - r_k||^4 ||r_i - r_k||^3 ||r_i - r_j||^3}
+ \Biggr )
+\end{align*}
+Given a triple of atoms $r_i$, $r_j$ and $r_k$, the force contribution
+due to $r_j$ and $r_k$ on $r_i$ is:
+\begin{align*}
+F_x(r_i, (r_j, r_k)) &= -(r_i[x] - r_j[x]) V(r_i, r_j) - (r_i[x] -
+r_k[x]) V(r_i, r_k)\\
+F_y(r_i, (r_j, r_k)) &= -(r_i[y] - r_j[y]) V(r_i, r_j) - (r_i[y] -
+r_k[y]) V(r_i, r_k)\\
+F_z(r_i, (r_j, r_k)) &= -(r_i[z] - r_j[z]) V(r_i, r_j) - (r_i[z] -
+r_k[z]) V(r_i, r_k)
+\end{align*}
+Similarly, the force contribution due to $r_i$ and $r_k$ on $r_j$ is:
+\begin{align*}
+F_x(r_j, (r_i, r_k)) &= (r_i[x] - r_j[x]) V(r_i, r_j) - (r_j[x] -
+r_k[x]) V(r_j, r_k)\\
+F_y(r_j, (r_i, r_k)) &= (r_i[y] - r_j[y]) V(r_i, r_j) - (r_j[y] -
+r_k[y]) V(r_j, r_k)\\
+F_z(r_j, (r_i, r_k)) &= (r_i[z] - r_j[z]) V(r_i, r_j) - (r_j[z] -
+r_k[z]) V(r_j, r_k)
+\end{align*}
+Finally, the force contribution due to $r_i$ and $r_j$ on $r_k$ is:
+\begin{align*}
+F_x(r_k, (r_i, r_j)) &= (r_i[x] - r_k[x]) V(r_i, r_k) + (r_j[x] -
+r_k[x]) V(r_j, r_k)\\
+F_y(r_k, (r_i, r_j)) &= (r_i[y] - r_k[y]) V(r_i, r_k) + (r_j[y] -
+r_k[y]) V(r_j, r_k)\\
+F_z(r_k, (r_i, r_j)) &= (r_i[z] - r_k[z]) V(r_i, r_k) + (r_j[z] -
+r_k[z]) V(r_j, r_k)
+\end{align*}
+Note that these expressions obey the Newton's third law of motion.
+\end{document}
