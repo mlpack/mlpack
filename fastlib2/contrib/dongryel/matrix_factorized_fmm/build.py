@@ -7,7 +7,8 @@ librule(
                "matrix_factorized_fmm_stat.h",
                "naive_kde.h"],
     deplibs = ["fastlib:fastlib_int",
-               "mlpack/series_expansion:series_expansion"]
+               "mlpack/series_expansion:series_expansion",
+               "contrib/dongryel/proximity_project:proximity_project"]
     )
 
 # Test driver for series expansion library

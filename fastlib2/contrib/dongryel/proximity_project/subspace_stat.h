@@ -7,7 +7,7 @@ class SubspaceStat {
   
  private:
 
-  static const double epsilon_ = 0.1;
+  static const double epsilon_ = 0.2;
 
   static void ComputeResidualBasis_(const Matrix &first_basis,
 				    const Matrix &second_basis,
@@ -236,7 +236,7 @@ class SubspaceStat {
       for(index_t i = 0; i < eigen_count; i++) {
 	singular_values_arg[i] = sqrt(tmp_eigen_values[i]);
 	la::Scale(mean_centered.n_rows(), 1.0 / singular_values_arg[i],
-		left_singular_vectors_arg.GetColumnPtr(i));
+		  left_singular_vectors_arg.GetColumnPtr(i));
       }
       
       // Now compute the right singular vectors from the left singular
@@ -287,35 +287,31 @@ class SubspaceStat {
    */
   double max_l2_norm_reconstruction_error_;
 
-  /** @brief The radius encompassing the projected points. With
-   *         mean_vector_, this defines the bounding hypersphere that
-   *         lives in the subspace spanned by the left singular
-   *         vectors.
+  /** @brief Dimension-reduced data with repsect to the mean vector.
    */
-  double radius_;
+  Matrix dimension_reduced_data_;
 
   // Member functions
 
   void ComputeMaxL2NormReconstructionError(const Matrix &dataset) {
     
-    Vector diff_vector, proj_vector, reconstructed_vector;
+    Vector diff_vector, reconstructed_vector;
     diff_vector.Init(dataset.n_rows());
     reconstructed_vector.Init(dataset.n_rows());
-    proj_vector.Init(left_singular_vectors_.n_cols());
+    dimension_reduced_data_.Init(left_singular_vectors_.n_cols(), count_);
 
     max_l2_norm_reconstruction_error_ = 0;
-    radius_ = 0;
     for(index_t i = start_; i < start_ + count_; i++) {
       
+      // Get the reference to the projected vector to be computed.
+      Vector proj_vector;
+      dimension_reduced_data_.MakeColumnVector(i - start_, &proj_vector);
+
       // Compute the projection of each point and its reconstruction
       // error.
       la::SubOverwrite(dataset.n_rows(), mean_vector_.ptr(), 
 		       dataset.GetColumnPtr(i), diff_vector.ptr());
-      la::MulOverwrite(diff_vector, left_singular_vectors_,
-		       &proj_vector);
-
-      // Compute the length of the projected vector.
-      radius_ = std::max(radius_, la::LengthEuclidean(proj_vector));
+      la::MulOverwrite(diff_vector, left_singular_vectors_, &proj_vector);
       
       la::MulOverwrite(left_singular_vectors_, proj_vector,
 		       &reconstructed_vector);
@@ -342,14 +338,40 @@ class SubspaceStat {
       left_singular_vectors_.SetZero();
       singular_values_.Init(1);
       singular_values_.SetZero();
+      ComputeMaxL2NormReconstructionError(dataset);
       return;
     }
 
-    Matrix mean_centered, right_singular_vectors_tmp;
-    
+    Matrix mean_centered, tmp_left_singular_vectors;
+    Vector tmp_singular_values;
+
     // Compute the mean vector owned by this node.
     ComputeColumnMean_(dataset, start, count, &mean_vector_);
+    ColumnMeanCenter_(dataset, start, count, mean_vector_, &mean_centered);
+    Matrix right_singular_vectors;
 
+    // Compute the SVD of the covariance matrix.
+    la::SVDInit(mean_centered, &tmp_singular_values, 
+		&tmp_left_singular_vectors, &right_singular_vectors);
+    
+    // Take square root of the returned values so that the proper
+    // singular values can be computed.
+    int subspace_count = 0;
+    for(index_t i = 0; i < tmp_singular_values.length(); i++) {
+      tmp_singular_values[i] = sqrt(tmp_singular_values[i]);
+      if(tmp_singular_values[i] >= epsilon_ * tmp_singular_values[0]) {
+	subspace_count++;
+      }
+    }
+    singular_values_.Init(subspace_count);
+    for(index_t i = 0; i < subspace_count; i++) {
+      singular_values_[i] = tmp_singular_values[i];
+    }
+    left_singular_vectors_.Copy(tmp_left_singular_vectors.GetColumnPtr(0), 
+				tmp_left_singular_vectors.n_rows(),
+				subspace_count);
+    
+    /*
     // Determine which dimension is longer: the row or the column...
     // If there are more columns than rows, then we do
     // column-sampling.
@@ -372,11 +394,12 @@ class SubspaceStat {
 			       left_singular_vectors_,
 			       right_singular_vectors_tmp);
     }
+    */
 
     ComputeMaxL2NormReconstructionError(dataset);
   }
 
-  /** Merge two eigenspaces into one.
+  /** @brief Merge two eigenspaces into one.
    */
   void Init(const Matrix& dataset, index_t &start, index_t &count,
 	    const SubspaceStat& left_stat, const SubspaceStat& right_stat) {

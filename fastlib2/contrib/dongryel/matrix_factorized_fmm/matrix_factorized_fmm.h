@@ -13,6 +13,7 @@
 
 #include "contrib/dongryel/proximity_project/general_spacetree.h"
 #include "contrib/dongryel/proximity_project/gen_metric_tree.h"
+#include "mlpack/series_expansion/bounds_aux.h"
 #include "mlpack/series_expansion/matrix_factorized_farfield_expansion.h"
 #include "mlpack/series_expansion/matrix_factorized_local_expansion.h"
 #include "fastlib/fastlib.h"
@@ -63,6 +64,10 @@ class MatrixFactorizedFMM {
    */
   double relative_error_;
 
+  /** @brief The number of prunes.
+   */
+  int num_prunes_;
+
   ////////// Private Member Functions //////////
   
   /** @brief The exhaustive base case for evaluating the reference
@@ -80,7 +85,7 @@ class MatrixFactorizedFMM {
   void CanonicalCase_(const Matrix &query_set,
 		      const ArrayList<index_t> &query_index_permutation,
 		      QueryTree *query_node, ReferenceTree *reference_node,
-		      Vector &query_kernel_sums) const;
+		      Vector &query_kernel_sums);
 
   /** @brief Traverse the FASTLib tree to get the list of leaf nodes.
    */
