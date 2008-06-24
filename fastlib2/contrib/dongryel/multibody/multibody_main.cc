@@ -1,5 +1,11 @@
+/** @file multibody_main.cc
+ *
+ *  @author Dongryeol Lee (dongryel)
+ */
+
 #include "multibody.h"
 #include "multibody_kernel.h"
+#include "naive_multibody.h"
 
 int main(int argc, char *argv[])
 {

@@ -3,14 +3,15 @@ librule(
     name = "multibody",                      # this line can be safely omitted
     sources = [],                            # files that must be compiled
     headers = ["multibody.h",
-               "multibody_kernel.h"],        # include files part of the 'lib'
+               "multibody_kernel.h",
+               "naive_multibody.h"],         # include files part of the 'lib'
     deplibs = ["mlpack/series_expansion:series_expansion",
                "fastlib:fastlib_int"]        # dependency
     )
 
 binrule(
     name = "multibody_bin",                  # the executable name
-    sources = ["main.cc"],                   # compile multibody.cc
+    sources = ["multibody_main.cc"],         # compile multibody.cc
     headers = [],                            # no extra headers
     deplibs = [":multibody",
                "mlpack/series_expansion:series_expansion",
