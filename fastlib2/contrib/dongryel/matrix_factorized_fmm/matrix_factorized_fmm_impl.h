@@ -7,10 +7,7 @@ void MatrixFactorizedFMM<TKernelAux>::BaseCase_
 (const Matrix &query_set, const ArrayList<index_t> &query_index_permutation,
  QueryTree *query_node, const ReferenceTree *reference_node,
  Vector &query_kernel_sums) const {
-
-  // Clear the lower bound info on the query node.
-  query_node->stat().mass_l_ = DBL_MAX;
-
+ 
   // Loop over each query point in the query node.
   for(index_t q = query_node->begin(); q < query_node->end(); q++) {
     
@@ -25,20 +22,15 @@ void MatrixFactorizedFMM<TKernelAux>::BaseCase_
       const double *reference_point = reference_set_.GetColumnPtr(r);
       
       // Compute the pairwise distance and kernel value.
-      double squared_distance = la::DistanceSqEuclidean(query_set.n_rows(), 
-							query_point,
-							reference_point);
+      double squared_distance = 
+	la::DistanceSqEuclidean(query_set.n_rows(), query_point,
+				reference_point);
       double weighted_kernel_value = reference_weights_[r] *
 	ka_.kernel_.EvalUnnormOnSq(squared_distance);
       
       query_kernel_sums[query_index_permutation[q]] += weighted_kernel_value;
       
     } // end of iterating over each reference point.
-
-    // Refine the lower bound on the kernel sum.
-    query_node->stat().mass_l_ = 
-      std::min(query_node->stat().mass_l_,
-	       query_kernel_sums[query_index_permutation[q]]);
 
   } // end of looping over each query point.
 }
@@ -47,7 +39,7 @@ template<typename TKernelAux>
 void MatrixFactorizedFMM<TKernelAux>::CanonicalCase_
 (const Matrix &query_set, const ArrayList<index_t> &query_index_permutation,
  QueryTree *query_node, ReferenceTree *reference_node,
- Vector &query_kernel_sums) const {
+ Vector &query_kernel_sums) {
 
   // If the current query/reference node is prunable, then
   // approximate.
@@ -57,14 +49,17 @@ void MatrixFactorizedFMM<TKernelAux>::CanonicalCase_
   double max_allowed_error =
     ((double) reference_node->count()) / 
     ((double) reference_tree_root_->count()) *
-    relative_error_ * (query_node->stat().mass_l_);
+    relative_error_ * 
+    (query_node->stat().local_expansion_.estimated_min_kernel_sum_l());
 
   if(reference_node_expected_max_absolute_error <= max_allowed_error &&
-     query_node->count() * reference_node->count() >
+     2 * query_node->count() * reference_node->count() >
      query_node->stat().local_expansion_.incoming_skeleton().size() *
      reference_node->stat().farfield_expansion_.outgoing_skeleton().size()) {
+
     reference_node->stat().farfield_expansion_.TranslateToLocal
       (query_node->stat().local_expansion_, -1, &reference_set_, &query_set);
+    num_prunes_++;
     return;
   }
 
@@ -112,11 +107,6 @@ void MatrixFactorizedFMM<TKernelAux>::CanonicalCase_
       CanonicalCase_(query_set, query_index_permutation, query_node->right(),
 		     reference_node->right(), query_kernel_sums);
     }
-    
-    // Refine the bound based on the recursion results...
-    query_node->stat().mass_l_ =
-      std::min(query_node->left()->stat().mass_l_,
-	       query_node->right()->stat().mass_l_);
   }
 }
 
@@ -284,6 +274,8 @@ void MatrixFactorizedFMM<TKernelAux>::Compute
   ArrayList<QueryTree *> query_leaf_nodes;
   query_leaf_nodes.Init();
   GetLeafNodes_(query_tree_root, query_leaf_nodes);
+
+  printf("Got %d leaf nodes...\n", query_leaf_nodes.size());
   fx_timer_stop(fx_root, "query_tree_construction");
   printf("Finished constructing the query tree...\n");
 
@@ -305,14 +297,15 @@ void MatrixFactorizedFMM<TKernelAux>::Compute
 
   printf("Starting computation...\n");
   fx_timer_start(fx_root, "computation_time");
+  num_prunes_ = 0;
   CanonicalCase_(query_set, old_from_new_queries, query_tree_root,
 		 reference_tree_root_, *query_kernel_sums);
-
 
   PostProcessQueryTree_(query_set, old_from_new_queries, query_tree_root, 
 			*query_kernel_sums);
   fx_timer_stop(fx_root, "computation_time");
   printf("Computation finished...\n");
+  printf("Number of prunes: %d\n", num_prunes_);
 
   // Delete the query tree after the computation...
   delete query_tree_root;

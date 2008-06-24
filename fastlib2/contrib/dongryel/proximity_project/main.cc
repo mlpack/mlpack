@@ -28,21 +28,20 @@ int main(int argc, char *argv[]) {
   
   fx_timer_stop(NULL, "pca tree");
 
-  (root_->stat().singular_values_).PrintDebug();
-  (root_->stat().left_singular_vectors_).PrintDebug();
+  printf("Got %d components...\n",
+	 (root_->stat().singular_values_).length());
   printf("Reconstruction error: %g\n",
 	 (root_->stat()).max_l2_norm_reconstruction_error_);
 
   printf("Finished constructing the tree...\n");
 
   // exhaustively compute PCA
-  printf("Exhaustive PCA\n");
-  fx_timer_start(NULL, "exhaustive pca");
-  Vector eigen_values;
-  Matrix principal_components;
-  Pca::EigenDecomposeCovariance(data_, &eigen_values, &principal_components);
-  principal_components.PrintDebug();
-  fx_timer_stop(NULL, "exhaustive pca");
+  //printf("Exhaustive PCA\n");
+  //fx_timer_start(NULL, "exhaustive pca");
+  //Vector eigen_values;
+  //Matrix principal_components;
+  //Pca::EigenDecomposeCovariance(data_, &eigen_values, &principal_components);
+  //fx_timer_stop(NULL, "exhaustive pca");
 
   // Clean up the memory used by the tree...
   delete root_;
