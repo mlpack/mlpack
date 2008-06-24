@@ -1,5 +1,6 @@
 type t
 
+val make : string -> t
 val equal : t -> t -> bool
 
 module Set : sig

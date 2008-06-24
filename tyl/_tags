@@ -2,4 +2,4 @@
 <src/tyl/mp.cmx>: for-pack(Tyl)
 <src/tyl/mp/{prog,util}.cmx>: for-pack(Tyl.Mp)
 <src/tyl/mp/util/id.cmx>: for-pack(Tyl.Mp.Util)
-<src/tyl/mp/prog/{ast,vars,wf,compiler}.cmx>: for-pack(Tyl.Mp.Prog)
+<src/tyl/mp/prog/{ast,vars,wf,compiler,edsl}.cmx>: for-pack(Tyl.Mp.Prog)

@@ -22,33 +22,39 @@ type propOp = Disj | Conj
 type quant = Exists
 type direction = Min | Max
     
+type 'a interval = 'a option * 'a option
+type refinedReal = IntInterval of int interval | RealInterval of float interval
+type refinedBool = bool option
+
+(* this representation for 'typ' was chosen so that the data
+   constructors are also the course types of the object language *)
 type typ = 
-  | TReal
-  | TBool
+  | TReal of refinedReal
+  | TBool of refinedBool
       
-and expr = 
+type prop_typ = 
+  | ZProp
+
+type expr = 
   | EVar of Id.t
   | EConst of nullOp
   | EUnaryOp of unaryOp * expr
   | EBinaryOp of binaryOp * expr * expr
       
-and prop_typ = 
-  | ZProp
-
-and prop = 
+type prop = 
   | CBoolVal of bool
   | CIsTrue of expr
   | CNumRel of numRel * expr * expr
   | CPropOp of propOp * prop list
   | CQuant of quant * Id.t * typ * prop
       
-and prog = 
+type prog = 
   | PMain of direction * ((Id.t * typ) list) * expr * prop
 
 module Ctxt : sig
   type t 
   val add : t -> Id.t -> typ -> t
   val fromList : (Id.t * typ) list -> t
-  val contains : t -> Id.t -> typ -> bool
+  val coarseContains : t -> Id.t -> typ -> bool
   val lookup : t -> Id.t -> typ
 end
