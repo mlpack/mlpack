@@ -1,7 +1,7 @@
 open Util 
 open List
 
-type nullOp = Real of float | Bool of bool
+type nullOp = Bool of bool | Int of int | Real of float
 type unaryOp = Neg | Not 
 type binaryOp = Plus | Minus | Mult | Or | And
 type numRel = Equal | Lte | Gte
@@ -11,7 +11,7 @@ type direction = Min | Max
 
 
 type 'a interval = 'a option * 'a option
-type refinedReal = IntInterval of int interval | RealInterval of float interval 
+type refinedReal = Discrete of int interval | Continuous of float interval 
 type refinedBool = bool option
 
 type typ = 
@@ -37,8 +37,9 @@ type prop =
 type prog = 
   | PMain of direction * ((Id.t * typ) list) * expr * prop
 
-module Ctxt = struct
+module Context = struct
   type t = (Id.t * typ) list
+  let empty = []
   let add ctxt x t = (x,t)::ctxt
   let fromList xts = xts
   let coarseContains ctxt x t = 

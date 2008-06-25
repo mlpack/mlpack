@@ -3,7 +3,7 @@
 open Ast
 
 val isType : typ -> bool
-val isOfType : Ctxt.t -> expr -> typ -> bool
-val isProp : Ctxt.t -> prop -> bool
+val isOfType : Context.t -> expr -> typ -> bool
+val isProp : Context.t -> prop -> bool
 val isMP : prog -> bool
 
