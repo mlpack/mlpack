@@ -135,7 +135,7 @@ and scalee e e' = match e' with
   | EConst (Real _) -> E.( * ) e e'
   | EUnaryOp (Neg,e'') -> E.neg (scalee e e'')
   | EBinaryOp (Plus,e1,e2) -> E.(+) (scalee e e1) (scalee e e2)
-  | EBinaryOp (Minus,e1,e2) -> E.(-) (sca lee e e1) (scalee e e2)
+  | EBinaryOp (Minus,e1,e2) -> E.(-) (scalee e e1) (scalee e e2)
   | EBinaryOp (Mult, EVar _, _) -> e'
   | EBinaryOp (Mult, _, EVar _) -> e'
   | EBinaryOp (Mult, e1, e2) -> 
