@@ -1,16 +1,21 @@
 open Ast
 module Id = Util.Id
 
-let continuous lo hi = TReal (RealInterval (Some lo, Some hi))
-let discrete lo hi = TReal (IntInterval (Some lo, Some hi))
-let real = TReal (RealInterval (None,None))
+let continuous lo hi = TReal (Continuous (Some lo, Some hi))
+let discrete lo hi = TReal (Discrete (Some lo, Some hi))
+let real = TReal (Continuous (None,None))
 let bool = TBool None
+let int = TReal (Discrete (None,None))
+let real' = TReal (Continuous (Some 0.0, None))
+let int' = TReal (Discrete (Some 0, None))
 
 let boolT = EConst (Bool true)
 let boolF = EConst (Bool false)
-let lit r = EConst (Real r)
-let zero = lit 0.0
-let one = lit 1.0
+let litB b = EConst (Bool b)
+let litR r = EConst (Real r)
+let litI n = EConst (Int n)
+let zero = litI 0
+let one = litI 1
 let neg e = EUnaryOp (Neg,e)
 let not e = EUnaryOp (Not,e)
 let ( + ) e1 e2 = EBinaryOp (Plus,e1,e2)
@@ -40,13 +45,3 @@ let minimize e _ ets _ c = optimize Min e ets c
 let maximize e _ ets _ c = optimize Max e ets c
 
 let name x = EVar (Id.make x)
-
-(****************)
-
-let x = name "x"
-let w = name "w"
-
-let example = 
-  minimize ( x + w ) 
-    where [(x,real);(w,real)] 
-    subject_to ((x <= w) |/ (x >= w + lit 4.0))

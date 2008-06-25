@@ -14,7 +14,7 @@
 
 open Util
 
-type nullOp = Real of float | Bool of bool
+type nullOp = Bool of bool | Int of int | Real of float
 type unaryOp = Neg | Not 
 type binaryOp = Plus | Minus | Mult | Or | And
 type numRel = Equal | Lte | Gte
@@ -23,11 +23,11 @@ type quant = Exists
 type direction = Min | Max
     
 type 'a interval = 'a option * 'a option
-type refinedReal = IntInterval of int interval | RealInterval of float interval
+type refinedReal = Discrete of int interval | Continuous of float interval
 type refinedBool = bool option
 
 (* this representation for 'typ' was chosen so that the data
-   constructors are also the course types of the object language *)
+   constructors are also the coarse types of the object language *)
 type typ = 
   | TReal of refinedReal
   | TBool of refinedBool
@@ -51,8 +51,9 @@ type prop =
 type prog = 
   | PMain of direction * ((Id.t * typ) list) * expr * prop
 
-module Ctxt : sig
+module Context : sig
   type t 
+  val empty : t
   val add : t -> Id.t -> typ -> t
   val fromList : (Id.t * typ) list -> t
   val coarseContains : t -> Id.t -> typ -> bool
