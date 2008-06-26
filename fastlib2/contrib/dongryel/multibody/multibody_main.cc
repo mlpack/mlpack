@@ -20,48 +20,32 @@ int main(int argc, char *argv[])
   do_naive = fx_param_exists(NULL, "do_naive");
   bandwidth = fx_param_double(NULL, "bandwidth", 0.1);
   tau = fx_param_double(NULL, "tau", 0.1);
-  kernel = fx_param_str(NULL, "kernel", "gaussianthreebody");
+  kernel = fx_param_str(NULL, "kernel", "axilrodteller");
   
   // Multibody computation
   printf("Starting multitree multibody...\n");
 
-  if(!strcmp(kernel, "gaussianthreebody")) {
+  if(!strcmp(kernel, "axilrodteller")) {
     fx_timer_start(NULL, "multibody");
-    MultitreeMultibody<GaussianThreeBodyKernel, GaussianKernelAux> mtmb;
+    MultitreeMultibody<AxilrodTellerForceKernel> mtmb;
     mtmb.Init(bandwidth);
     mtmb.Compute(tau);
     fx_timer_stop(NULL, "multibody");
     printf("multitree multibody completed...\n");
-    
+    mtmb.PrintDebug();
+
     // NAIVE
+    /*
     if (do_naive) {
       printf("Starting naive multibody...\n");
       fx_timer_start(NULL, "naive_multibody");
-      NaiveMultibody<GaussianThreeBodyKernel> nmb;
+      NaiveMultibody<AxilrodTellerForceKernel> nmb;
       nmb.Init(mtmb.get_data(), bandwidth);
       nmb.Compute();
       fx_timer_stop(NULL, "naive_multibody");
       printf("finished naive multibody...\n");
     }
-  }
-  else if(!strcmp(kernel, "axilrodteller")) {
-    fx_timer_start(NULL, "multibody");
-    MultitreeMultibody<AxilrodTellerKernel, GaussianKernelAux> mtmb;
-    mtmb.Init(bandwidth);
-    mtmb.Compute(tau);
-    fx_timer_stop(NULL, "multibody");
-    printf("multitree multibody completed...\n");
-    
-    // NAIVE
-    if (do_naive) {
-      printf("Starting naive multibody...\n");
-      fx_timer_start(NULL, "naive_multibody");
-      NaiveMultibody<AxilrodTellerKernel> nmb;
-      nmb.Init(mtmb.get_data(), bandwidth);
-      nmb.Compute();
-      fx_timer_stop(NULL, "naive_multibody");
-      printf("finished naive multibody...\n");
-    }
+    */
   }
 
   fx_done(NULL);

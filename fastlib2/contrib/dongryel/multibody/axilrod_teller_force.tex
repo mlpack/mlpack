@@ -97,11 +97,49 @@ contribution on each $r_i \in R_I$ due to $R_J$ and $R_K$ is:
 \begin{align*}
 & \sum\limits_{r_j \in R_J} \sum\limits_{r_k \in R_K} F(r_i, \{ (r_j,
 r_k) \}) \\
-=& \sum\limits_{r_j \in R_J} \sum\limits_{r_k \in R_K} -(r_i[x] -
-r_j[x]) V(r_i, r_j) - (r_i[x] - r_k[x]) V(r_i, r_k)\\
-=& \sum\limits_{r_j \in R_J} \sum\limits_{r_k \in R_K} -(r_i[x] -
-r_j[x]) V(r_i, r_j) - \sum\limits_{r_j \in R_J} \sum\limits_{r_k \in
-  R_K} (r_i[x] - r_k[x]) V(r_i, r_k)\\
+=& \sum\limits_{r_j \in R_J} \sum\limits_{r_k \in R_K} -(r_i -
+r_j) V(r_i, r_j) - (r_i - r_k) V(r_i, r_k)\\
+=& \sum\limits_{r_j \in R_J} \sum\limits_{r_k \in R_K} -(r_i -
+r_j) V(r_i, r_j) - \sum\limits_{r_j \in R_J} \sum\limits_{r_k \in
+  R_K} (r_i - r_k) V(r_i, r_k)\\
+=&- r_i \left( \sum\limits_{r_j \in R_J} \sum\limits_{r_k \in R_K} V(r_i, r_j) 
++ V(r_i, r_k) \right) +
+\sum\limits_{r_k \in R_K} \left( \sum\limits_{r_j \in R_J} r_j \right)
+V(r_i, r_j) +\\
+& \sum\limits_{r_j \in R_J} \left( \sum\limits_{r_k \in R_K} r_k \right)
+V(r_i, r_k)
+\end{align*}
+Similarly, the total force contribution on each $r_j \in R_J$ due to
+$R_I$ and $R_K$ is:
+\begin{align*}
+& \sum\limits_{r_i \in R_I} \sum\limits_{r_k \in R_K} F(r_j, \{ (r_i,
+r_k) \})\\
+=& \sum\limits_{r_i \in R_I} \sum\limits_{r_k \in R_K} (r_i - r_j)
+V(r_i, r_j) - (r_j - r_k) V(r_j, r_k)\\
+=& \sum\limits_{r_i \in R_I} \sum\limits_{r_k \in R_K} (r_i - r_j)
+V(r_i, r_j) - \sum\limits_{r_i \in R_I} \sum\limits_{r_k \in R_K} (r_j
+- r_k) V(r_j, r_k)\\
+=&- r_j \left( \sum\limits_{r_i \in R_I} \sum\limits_{r_k \in R_K}
+V(r_i, r_j) + V(r_j, r_k) \right) + \sum\limits_{r_k \in R_K} \left(
+\sum\limits_{r_i \in R_I} r_i \right) V(r_i, r_j) +\\ 
+& \sum\limits_{r_i \in R_I} \left( \sum\limits_{r_k \in R_K} r_k \right)
+V(r_j, r_k)
+\end{align*}
+Finally, the total force contribution on each $r_k \in R_K$ due to
+$R_I$ and $R_J$ is:
+\begin{align*}
+& \sum\limits_{r_i \in R_I} \sum\limits_{r_j \in R_J} F(r_k, \{ (r_i,
+r_j) \})\\
+=& \sum\limits_{r_i \in R_I} \sum\limits_{r_j \in R_J} (r_i - r_k)
+V(r_i, r_k) + (r_j - r_k) V(r_j, r_k)\\
+=& \sum\limits_{r_i \in R_I} \sum\limits_{r_j \in R_J} (r_i - r_k)
+V(r_i, r_k) + \sum\limits_{r_i \in R_I} \sum\limits_{r_j \in R_J} (r_j
+- r_k) V(r_j, r_k)\\
+=&- r_k \left( \sum\limits_{r_i \in R_I} \sum\limits_{r_j \in R_J}
+V(r_i, r_k) + V(r_j, r_k) \right) + \sum\limits_{r_j \in R_J} \left(
+\sum\limits_{r_i \in R_I} r_i \right) V(r_i, r_k) +\\ 
+& \sum\limits_{r_i \in R_I} \left( \sum\limits_{r_j \in R_J} r_j \right)
+V(r_j, r_k)
 \end{align*}
 
 \end{document}

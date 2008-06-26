@@ -3,7 +3,9 @@ librule(
     name = "multibody",                      # this line can be safely omitted
     sources = [],                            # files that must be compiled
     headers = ["multibody.h",
+               "multibody_impl.h",
                "multibody_kernel.h",
+               "multibody_stat.h",
                "naive_multibody.h"],         # include files part of the 'lib'
     deplibs = ["mlpack/series_expansion:series_expansion",
                "fastlib:fastlib_int"]        # dependency
