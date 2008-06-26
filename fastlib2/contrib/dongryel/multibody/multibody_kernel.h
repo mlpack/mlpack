@@ -344,6 +344,28 @@ class AxilrodTellerForceKernel {
 		      positive_force2_l, positive_force2_e);
   }
 
+  template<typename TTree>
+  bool Eval(ArrayList<TTree *> &tree_nodes) {
+
+    // Temporary variables.
+    double min_negative_gradient1, max_negative_gradient1, 
+      min_positive_gradient1, max_positive_gradient1, min_negative_gradient2, 
+      max_negative_gradient2, min_positive_gradient2, max_positive_gradient2,
+      min_negative_gradient3, max_negative_gradient3, min_positive_gradient3, 
+      max_positive_gradient3;
+
+    // First, compute the pairwise distance among the three nodes.
+    EvalMinMaxSquaredDistances(tree_nodes);
+
+    // Then, evaluate the gradients.
+    EvalGradients(distmat_, min_negative_gradient1, &max_negative_gradient1, 
+		  min_positive_gradient1, &max_positive_gradient1, 
+		  min_negative_gradient2, &max_negative_gradient2, 
+		  min_positive_gradient2, &max_positive_gradient2, 
+		  min_negative_gradient3, &max_negative_gradient3, 
+		  min_positive_gradient3, &max_positive_gradient3);
+  }
+
 };
 
 #endif

@@ -108,43 +108,16 @@ int MultitreeMultibody<TMultibodyKernel>::FindSplitNode
 (ArrayList<Tree *> &nodes) {
   
   int global_index = -1;
-  int global_min = 0;
+  int global_max = 0;
   
   for(index_t i = 0; i < non_leaf_indices_.size(); i++) {
-    
-    /*
-      int non_leaf_index = non_leaf_indices_[i];
-      double minimum_side_length = MAXDOUBLE;
-      
-      // find out the minimum side length
-      for(index_t j = 0; j < data_.n_rows(); j++) {
-      
-      DRange range = nodes[non_leaf_index]->bound().get(j);
-      double side_length = range.width();
-      
-      if(side_length < minimum_side_length) {
-      minimum_side_length = side_length;
-      }
-      }
-      if(minimum_side_length > global_min) {
-      global_min = minimum_side_length;
-      global_index = non_leaf_index;
-      }
-    */
     int non_leaf_index = non_leaf_indices_[i];
-    if(nodes[non_leaf_index]->count() > global_min) {
-      global_min = nodes[non_leaf_index]->count();
+    if(nodes[non_leaf_index]->count() > global_max) {
+      global_max = nodes[non_leaf_index]->count();
       global_index = non_leaf_index;
     }
   }
   return global_index;
-}
-
-template<typename TMultibodyKernel>
-bool MultitreeMultibody<TMultibodyKernel>::Prunable
-(ArrayList<Tree *> &nodes, double num_tuples, double *allowed_err) {
-
-  return 0;
 }
 
 template<typename TMultibodyKernel>
@@ -296,6 +269,13 @@ void MultitreeMultibody<TMultibodyKernel>::PostProcess(Tree *node) {
     PostProcess(node->left());
     PostProcess(node->right());
   }
+}
+
+template<typename TMultibodyKernel>
+bool MultitreeMultibody<TMultibodyKernel>::Prunable
+(ArrayList<Tree *> &nodes, double num_tuples, double *allowed_err) {
+
+  return mkernel_.Eval(nodes);
 }
 
 template<typename TMultibodyKernel>
