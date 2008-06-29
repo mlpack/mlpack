@@ -2,6 +2,7 @@ type t
 
 val make : string -> t
 val equal : t -> t -> bool
+val toString : t -> string
 
 module Set : sig
   include Set.S
