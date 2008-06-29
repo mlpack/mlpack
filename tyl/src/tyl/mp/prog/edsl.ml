@@ -45,3 +45,11 @@ let minimize e _ ets _ c = optimize Min e ets c
 let maximize e _ ets _ c = optimize Max e ets c
 
 let name x = EVar (Id.make x)
+
+let x = name "x"
+let w = name "w"
+
+let example = 
+  minimize (x + w) 
+    where [(x,real);(w,real)]
+    subject_to ((x <= w) |/ (x >= w + litR 4.0))

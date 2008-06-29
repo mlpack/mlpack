@@ -3,7 +3,8 @@ open List
 type t = String of string
   
 let expose (String s) = s
- 
+let toString = expose
+
 let make s = String s
 let equal i j = expose i = expose j
 let compare i j = String.compare (expose i) (expose j)
