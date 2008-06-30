@@ -22,7 +22,7 @@ let rec isOfType ctxt e t = match e,t with
   | EBinaryOp (Plus,e1,e2)  , TReal _ -> isOfType ctxt e1 E.real && isOfType ctxt e2 E.real
   | EBinaryOp (Minus,e1,e2) , TReal _ -> isOfType ctxt e1 E.real && isOfType ctxt e2 E.real
   | EBinaryOp (Mult,e1,e2)  , TReal _ -> isOfType ctxt e1 E.real && isOfType ctxt e2 E.real
-  | EBinaryOp (Or,e1,e2)    , TBool _ -> isOfType ctxt e1 E.real && isOfType ctxt e2 E.bool
+  | EBinaryOp (Or,e1,e2)    , TBool _ -> isOfType ctxt e1 E.bool && isOfType ctxt e2 E.bool
   | EBinaryOp (And,e1,e2)   , TBool _ -> isOfType ctxt e1 E.bool && isOfType ctxt e2 E.bool
   | _ -> false
 
