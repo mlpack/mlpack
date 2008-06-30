@@ -1,4 +1,6 @@
-open Edsl
+open Tyl.Mp.Edsl
+open Tyl.Mp.Show
+open Printf
 
 let x = name "x"
 let w = name "w"
@@ -13,3 +15,7 @@ let example1 =
     where [(x,real);(w,real)]
     subject_to ((x <= w) |/ (x >= w + litR 4.0))
 
+;;
+
+printf "%s\n\n" (showp example0) ;;
+printf "%s\n\n" (showp example1) ;;
