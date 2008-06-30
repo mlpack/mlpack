@@ -516,10 +516,10 @@ class AllkFN {
   void Destruct() {
     queries_.Destruct();
     references_.Destruct();
-    old_from_new_queries_.Destruct();
-    old_from_new_references_.Destruct();
+    old_from_new_queries_.Renew();
+    old_from_new_references_.Renew();
     neighbor_distances_.Destruct();
-    neighbor_indices_.Destruct();
+    neighbor_indices_.Renew();
     if (query_tree_ != NULL) {
       delete query_tree_;
       query_tree_=NULL;
