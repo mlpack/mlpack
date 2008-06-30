@@ -25,6 +25,8 @@ let rec showe e = match e with
       sprintf "(%s%s)" 
         (match op with Neg -> "-" | Not -> "not ") 
         (showe e')
+  | EBinaryOp (Mult,e1,e2) -> 
+      sprintf "%s * %s" (showe e1) (showe e2)
   | EBinaryOp (op,e1,e2) ->
       sprintf "(%s %s %s)" 
         (showe e1) 
@@ -43,7 +45,7 @@ let rec showc c = match c with
         (showe e2)
   | CPropOp (op,cs) -> 
       let opstr = match op with Disj -> " disj " | Conj -> " conj " in
-        "(" ^ String.concat opstr (map showc cs) ^ ")"
+        "(" ^ String.concat ("\n"^opstr) (map showc cs) ^ ")"
   | CQuant (Exists,x,t,c) -> sprintf "(exists %s . %s)" (showxt (x,t)) (showc c)
 
 let showp p = match p with

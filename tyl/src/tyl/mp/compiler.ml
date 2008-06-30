@@ -24,7 +24,7 @@ let rec compileDLF e =
     | _ -> assert false
 
 let rec compileProp ctxt c = 
-  assert (disjVarsBounded ctxt c) ;
+  assert (disjVarsBounded ctxt c) ; 
   match c with 
     | CBoolVal _ -> c
     | CIsTrue e -> let e' = toCNF e in 
@@ -107,7 +107,7 @@ and compileDisj ctxt c =
         
 let compile (PMain (d,xts,e,c) as p) = 
   let ctxt = C.fromList xts in
-    assert (isMP p && disjVarsBounded ctxt c) ;
+(*     assert (isMP p && disjVarsBounded ctxt c) ;  *)
     let xts' = map (fun (x,t) -> (x,compileType t)) xts in 
     let c' = compileProp ctxt c in
       PMain (d,xts',e,c')

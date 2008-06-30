@@ -46,3 +46,6 @@ let minimize e _ ets _ c = optimize Min e ets c
 let maximize e _ ets _ c = optimize Max e ets c
 
 let name x = EVar (Id.make x)
+
+let sum (x::xs) = List.fold_left (+) x xs
+let ( <*> ) xs ys = List.map2 ( * ) xs ys
