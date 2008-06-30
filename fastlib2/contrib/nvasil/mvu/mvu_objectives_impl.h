@@ -80,8 +80,8 @@ void MaxVariance::Init(datanode *module, Matrix &data) {
 
 void MaxVariance::Destruct() {
   allknn_.Destruct();
-  nearest_neighbor_pairs_.Destruct();
-  nearest_distances_.Destruct();
+  nearest_neighbor_pairs_.Renew();
+  nearest_distances_.Renew();
   eq_lagrange_mult_.Destruct();
 
 }
@@ -269,12 +269,12 @@ void MaxVarianceInequalityOnFurthest::Init(datanode *module, Matrix &data) {
 void MaxVarianceInequalityOnFurthest::Destruct() {
   allknn_.Destruct();
   allkfn_.Destruct();
-  nearest_neighbor_pairs_.Destruct();
-  nearest_distances_.Destruct();
+  nearest_neighbor_pairs_.Renew();
+  nearest_distances_.Renew();
   eq_lagrange_mult_.Destruct();
   ineq_lagrange_mult_.Destruct();
-  furthest_neighbor_pairs_.Destruct();
-  furthest_distances_.Destruct(); 
+  furthest_neighbor_pairs_.Renew();
+  furthest_distances_.Renew(); 
 }
 
 void MaxVarianceInequalityOnFurthest::ComputeGradient(Matrix &coordinates, 
@@ -524,11 +524,11 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
 void MaxFurthestNeighbors::Destruct() {
   allknn_.Destruct();
   allkfn_.Destruct();
-  nearest_neighbor_pairs_.Destruct();
-  nearest_distances_.Destruct();
+  nearest_neighbor_pairs_.Renew();
+  nearest_distances_.Renew();
   eq_lagrange_mult_.Destruct();
-  furthest_neighbor_pairs_.Destruct();
-  furthest_distances_.Destruct();
+  furthest_neighbor_pairs_.Renew();
+  furthest_distances_.Renew();
 }
 
 void MaxFurthestNeighbors::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
