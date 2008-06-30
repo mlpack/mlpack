@@ -1,8 +1,7 @@
 open Ast
 open List
 
-module Id = Util.Id
-module S = Util.Id.Set
+module S = Id.Set
 
 let (--) = S.diff
 let set_of_list xs = fold_left (fun s x -> S.add x s) S.empty xs

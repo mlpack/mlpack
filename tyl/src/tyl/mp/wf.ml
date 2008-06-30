@@ -4,7 +4,7 @@ open Vars
 
 module C = Context
 module E = Edsl
-module S = Util.Id.Set
+module S = Id.Set
 
 (* sanity checking on intervals *)
 let isType t = match t with

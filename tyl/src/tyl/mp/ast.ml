@@ -9,7 +9,6 @@
    cs,xts - plural (sets/lists of things)
 *)
 
-open Util 
 open List
 
 type nullOp = Bool of bool | Int of int | Real of float
