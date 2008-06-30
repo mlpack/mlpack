@@ -517,6 +517,20 @@ class AllkNN {
    * Initializes the AllNN structure for naive computation.  
    * This means that we simply ignore the tree building.
    */
+  void Destruct() {
+    if (query_tree_ != NULL) {
+      delete query_tree_;
+    }
+    if (reference_tree_ != NULL) {
+      delete reference_tree_;
+    }
+    queries_.Destruct();
+    references_.Destruct();
+    old_from_new_queries_.Renew();
+    old_from_new_references_.Renew();
+    neighbor_distances_.Destruct();
+    neighbor_indices_.Renew();
+  }
   void InitNaive(const Matrix& queries_in, 
       const Matrix& references_in, index_t knns){
     
