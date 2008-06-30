@@ -1,5 +1,4 @@
 open Ast
-open Util
 
 val freeVarse : expr -> Id.Set.t
 val freeVarsc : prop -> Id.Set.t

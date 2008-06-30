@@ -1,5 +1,3 @@
-open Util
-
 type nullOp = Bool of bool | Int of int | Real of float
 type unaryOp = Neg | Not 
 type binaryOp = Plus | Minus | Mult | Or | And

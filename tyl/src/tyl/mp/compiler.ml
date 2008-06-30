@@ -4,9 +4,8 @@ open Vars
 open Wf
 open Cnf
 
-module Id = Util.Id
 module C = Context
-module S = Util.Id.Set
+module S = Id.Set
 module E = Edsl
 
 let compileType t = match t with 

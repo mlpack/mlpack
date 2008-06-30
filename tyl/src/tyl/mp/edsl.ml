@@ -1,5 +1,4 @@
 open Ast
-module Id = Util.Id
 
 let continuous lo hi = TReal (Continuous (Some lo, Some hi))
 let discrete lo hi = TReal (Discrete (Some lo, Some hi))

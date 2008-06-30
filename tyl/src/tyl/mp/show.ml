@@ -2,8 +2,6 @@ open Ast
 open Printf
 open List
 
-module Id = Util.Id
-
 let showt t = match t with
   | TBool None -> "bool"
   | TBool (Some b) -> sprintf "{%b}" b
