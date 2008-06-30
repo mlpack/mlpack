@@ -32,6 +32,8 @@ let ( <= ) e1 e2 = CNumRel (Lte,e1,e2)
 let ( >= ) e1 e2 = CNumRel (Gte,e1,e2)
 let ( |/ ) c1 c2 = CPropOp (Disj,[c1;c2])
 let ( /| ) c1 c2 = CPropOp (Conj,[c1;c2])
+let disj cs = CPropOp (Disj,cs)
+let conj cs = CPropOp (Conj,cs)
 let exists (EVar x,t) c = CQuant (Exists,x,t,c)
 
 let where = 0
@@ -45,11 +47,3 @@ let minimize e _ ets _ c = optimize Min e ets c
 let maximize e _ ets _ c = optimize Max e ets c
 
 let name x = EVar (Id.make x)
-
-let x = name "x"
-let w = name "w"
-
-let example = 
-  minimize (x + w) 
-    where [(x,real);(w,real)]
-    subject_to ((x <= w) |/ (x >= w + litR 4.0))

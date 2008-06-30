@@ -1,5 +1,3 @@
-(* Sections 4.2.2 & 4.2.3 *)
-
 open Ast
 open Util
 

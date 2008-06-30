@@ -2,73 +2,12 @@ open Ast
 open List
 open Vars
 open Wf
+open Cnf
 
 module Id = Util.Id
 module C = Context
 module S = Util.Id.Set
 module E = Edsl
-
-(* The following functions assume e consists of only boolean syntax *)
-
-let rec isLiteral e = match e with
-  | EVar _            -> true
-  | EConst (Bool _)   -> true
-  | EUnaryOp (Not,e') -> isLiteral e'
-  | _ -> false
-
-let rec isDLF e = isLiteral e || match e with 
-  | EBinaryOp (Or,e1,e2) -> isDLF e1 && isDLF e2
-  | _ -> false
-
-let rec isCNF e = isDLF e || match e with 
-  | EBinaryOp (And,e1,e2) -> isCNF e1 && isCNF e2
-  | _ -> false
-
-let isConj e = isCNF e && not (isDLF e)
-
-let rec toCNF e = 
-  let rec toCNF' e' =     
-    match e' with 
-      | EUnaryOp (Not,EUnaryOp(Not,e1))          -> toCNF e1
-      | EUnaryOp (Not,EBinaryOp(Or,e1,e2))       -> toCNF (E.(&&) (E.not e1) (E.not e2))
-      | EUnaryOp (Not,EBinaryOp(And,e1,e2))      -> toCNF (E.(||) (E.not e1) (E.not e2))
-      | EBinaryOp (Or,EBinaryOp(And,e11,e12),e2) -> toCNF (E.(&&) (E.(||) e11 e2) (E.(||) e12 e2))
-      | EBinaryOp (Or,e1,EBinaryOp(And,e21,e22)) -> toCNF (E.(&&) (E.(||) e21 e1) (E.(||) e22 e1))
-      | EBinaryOp (Or,e1,e2)                     -> toCNF (E.(||) (toCNF e1) (toCNF e2))
-      | EBinaryOp (And,e1,e2)                    -> toCNF (E.(&&) (toCNF e1) (toCNF e2))
-      | _ -> failwith "toCNF: expression contains non-boolean syntax"
-  in
-    if isCNF e then e else toCNF' e
-
-(* *)
-
-let bounded t = assert (isType t) ; 
-  match t with 
-  | TReal (Discrete (Some _, Some _))
-  | TReal (Continuous (Some _, Some _))
-  | TBool _ -> true
-  | _       -> false
-
-let rec existVarsBounded c = match c with 
-  | CBoolVal _ 
-  | CIsTrue _ 
-  | CNumRel _              -> true
-  | CPropOp (_,cs)         -> for_all existVarsBounded cs
-  | CQuant (Exists,_,t,c') -> bounded t && existVarsBounded c'
-
-let rec disjVarsBounded ctxt c = match c with
-  | CBoolVal _
-  | CIsTrue _
-  | CNumRel _              -> true
-  | CPropOp (Disj,cs)      -> 
-      let xs = S.elements (S.union' (map freeVarsc cs)) in
-      let ts = map (C.lookup ctxt) xs in
-        for_all bounded ts && for_all existVarsBounded cs 
-  | CPropOp (Conj,cs)      -> for_all (disjVarsBounded ctxt) cs 
-  | CQuant (Exists,x,t,c') -> disjVarsBounded (C.add ctxt x t) c'
-
-
-(* Compilation *)
 
 let compileType t = match t with 
   | TBool None -> E.discrete 0 1
@@ -164,8 +103,7 @@ and scalec e c = match c with
 and compileDisj ctxt c = 
   assert (disjVarsBounded ctxt c) ;
   match c with 
-    | CPropOp (Disj,cA::cB::_) -> assert false
-        
+    | CPropOp (Disj,cs) -> assert false        
     | _ -> failwith "compileDisj: proposition is not a disjunction"
         
 let compile (PMain (d,xts,e,c) as p) = 
