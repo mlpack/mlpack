@@ -1,3 +1,14 @@
+(* Naming conventions:
+   i - index
+   e - expr
+   t - type
+   p - prog
+   c - prop
+   z - prop type
+   x - variable/id
+   cs,xts - plural (sets/lists of things)
+*)
+
 open Util 
 open List
 
@@ -14,6 +25,8 @@ type 'a interval = 'a option * 'a option
 type refinedReal = Discrete of int interval | Continuous of float interval 
 type refinedBool = bool option
 
+(* this representation for 'typ' was chosen so that the data
+   constructors are also the coarse types of the object language *)
 type typ = 
   | TReal of refinedReal
   | TBool of refinedBool

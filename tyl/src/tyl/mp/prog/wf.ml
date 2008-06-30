@@ -1,8 +1,10 @@
 open Ast 
 open List
+open Vars
 
 module C = Context
 module E = Edsl
+module S = Util.Id.Set
 
 (* sanity checking on intervals *)
 let isType t = match t with
@@ -35,3 +37,30 @@ let isMP p = match p with
   | PMain (_,xts,e,c) -> 
       let ctxt = C.fromList xts in 
         for_all (fun (_,t) -> isType t) xts && isOfType ctxt e E.real && isProp ctxt c
+
+(* misc type operations *)
+
+let bounded t = assert (isType t) ; 
+  match t with 
+  | TReal (Discrete (Some _, Some _))
+  | TReal (Continuous (Some _, Some _))
+  | TBool _ -> true
+  | _       -> false
+
+let rec existVarsBounded c = match c with 
+  | CBoolVal _ 
+  | CIsTrue _ 
+  | CNumRel _              -> true
+  | CPropOp (_,cs)         -> for_all existVarsBounded cs
+  | CQuant (Exists,_,t,c') -> bounded t && existVarsBounded c'
+
+let rec disjVarsBounded ctxt c = match c with
+  | CBoolVal _
+  | CIsTrue _
+  | CNumRel _              -> true
+  | CPropOp (Disj,cs)      -> 
+      let xs = S.elements (S.union' (map freeVarsc cs)) in
+      let ts = map (C.lookup ctxt) xs in
+        for_all bounded ts && for_all existVarsBounded cs 
+  | CPropOp (Conj,cs)      -> for_all (disjVarsBounded ctxt) cs 
+  | CQuant (Exists,x,t,c') -> disjVarsBounded (C.add ctxt x t) c'
