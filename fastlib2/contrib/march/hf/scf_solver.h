@@ -58,10 +58,19 @@ class SCFSolver {
   
   ArrayList<double> total_energy_;
   index_t current_iteration_;
-  ArrayList<double> density_matrix_norms_;
+  Matrix density_matrix_norms_;
+  
+  ArrayList<Matrix> density_matrices_;
+  ArrayList<Matrix> density_matrix_errors_;
+  ArrayList<double> iteration_density_norms_;
+  
+  index_t diis_count_;
+  index_t diis_index_;
+  
+  Vector diis_rhs_;
   
   
-  static const index_t expected_number_of_iterations_ = 40;
+  static const index_t expected_number_of_iterations_ = 20;
   
   double density_convergence_;
   double energy_convergence_;
@@ -120,6 +129,20 @@ class SCFSolver {
     
     do_naive_ = fx_param_exists(NULL, "naive");
     
+    // Set to 1 to perform no diis iterations
+    diis_count_ = fx_param_int(NULL, "diis_states", 1);
+    diis_index_ = 0;
+    
+    density_matrices_.Init(diis_count_);
+    density_matrix_errors_.Init(diis_count_);
+    density_matrix_norms_.Init(diis_count_ + 1, diis_count_ + 1);
+    density_matrix_norms_.SetZero();
+    
+    diis_rhs_.Init(diis_count_ + 1);
+    diis_rhs_.SetZero();
+    diis_rhs_[diis_count_] = -1;
+    
+        
     if (do_naive_) {
     
       naive_integrals_.Init(basis_centers, naive_mod, density, bandwidth_);
@@ -164,6 +187,19 @@ class SCFSolver {
     
     number_of_basis_functions_ = basis_centers_.n_cols();
     
+    for (index_t i = 0; i < diis_count_; i++) {
+      
+      density_matrices_[i].Init(number_of_basis_functions_, 
+                                number_of_basis_functions_);
+      density_matrix_errors_[i].Init(number_of_basis_functions_, 
+                                     number_of_basis_functions_);
+      
+      density_matrix_norms_.set(diis_count_, i, -1);
+      density_matrix_norms_.set(i, diis_count_, -1);
+      
+    }
+    
+    
     DEBUG_ASSERT(number_of_basis_functions_ >= number_to_fill_);
     
     // Empty inits to prevent errors on closing
@@ -180,7 +216,7 @@ class SCFSolver {
     energy_vector_.Init(number_of_basis_functions_);
     
     total_energy_.Init(expected_number_of_iterations_);
-    density_matrix_norms_.Init(expected_number_of_iterations_);
+    iteration_density_norms_.Init(expected_number_of_iterations_);
     
     density_convergence_ = fx_param_double(module_, "density_convergence", 0.1);
     energy_convergence_ = fx_param_double(module_, "energy_convergence", 0.1);
@@ -360,9 +396,141 @@ class SCFSolver {
       
     } //density_row
     
-    density_matrix_norms_[current_iteration_] = density_matrix_frobenius_norm_;
+    iteration_density_norms_[current_iteration_] = 
+        density_matrix_frobenius_norm_;
     
   } // ComputeDensityMatrix_
+  
+  /**
+   * Pulay's DIIS method, as described by David
+   *
+   * Need to check convergence and write a function for solving the linear 
+   * system.
+   *
+   * Don't forget to fill in the Init fn. and the linear system solver
+   */ 
+  void ComputeDensityMatrixDIIS_() {
+  
+    FillOrbitals_();
+    
+    density_matrix_norms_.SetZero();
+    
+    // Rows of density_matrix
+    for (index_t density_row = 0; density_row < number_of_basis_functions_;
+         density_row++) {
+      
+      // Columns of density matrix
+      for (index_t density_column = 0; 
+           density_column < number_of_basis_functions_; density_column++) {
+        
+        // Occupied orbitals
+        double this_sum = 0.0;
+        
+        for (index_t occupied_index = 0; 
+             occupied_index < number_to_fill_; occupied_index++) {
+          
+          this_sum = this_sum + (coefficient_matrix_.ref(density_row, 
+                                     occupied_indices_[occupied_index]) * 
+                                 coefficient_matrix_.ref(density_column, 
+                                     occupied_indices_[occupied_index]));
+          
+        } // occupied_index
+        
+        this_sum = 2 * this_sum;
+        
+        density_matrices_[diis_index_].set(density_row, density_column, 
+                                           this_sum);
+                                           
+        double this_error = this_sum - 
+                            density_matrix_.ref(density_row, density_column);
+                                           
+        density_matrix_errors_[diis_index_].set(density_row, density_column, 
+                                                this_error);
+        /*                                  
+        for (index_t other_matrix = 0; other_matrix < diis_count_; 
+             other_matrix++) {
+          
+          double this_val = density_matrix_norms_.ref(diis_index_, 
+                                                      other_matrix);
+                                                      
+          this_val = this_sum * this_val;
+          
+          density_matrix_norms_.set(diis_index_, other_matrix, this_val);
+          
+          density_matrix_norms_.set(other_matrix, diis_index_, this_val);
+                                    
+        } // other_matrix
+        */
+        
+      } // density_column
+      
+    } //density_row
+    
+    const double* err_ptr = density_matrix_errors_[diis_index_].ptr();
+    
+    index_t len = number_of_basis_functions_ * number_of_basis_functions_;
+    
+    for (index_t i = 0; i < diis_count_; i++) {
+    
+      const double* this_err_ptr = density_matrix_errors_[i].ptr();
+      
+      double this_norm = la::Dot(len, err_ptr, this_err_ptr);
+      
+      density_matrix_norms_.set(diis_index_, i, this_norm);
+      density_matrix_norms_.set(i, diis_index_, this_norm);
+    
+      density_matrix_norms_.set(diis_count_, i, -1);
+      density_matrix_norms_.set(i, diis_count_, -1);
+    
+    }
+    
+    DIISSolver_();
+    
+    diis_index_++;
+    diis_index_ = diis_index_ % diis_count_;
+                              
+  } // ComputeDensityMatrixDIIS_()
+  
+  /**
+   * Given that the array density_matrices_ and the matrix density_matrix_norms_
+   * are full, this performs the DIIS step to get the best linear combination of 
+   * the matrices in density_matrices_ and puts it in density_matrix_
+   */
+  void DIISSolver_() {
+    
+    Vector diis_coeffs;
+    
+    la::SolveInit(density_matrix_norms_, diis_rhs_, &diis_coeffs);
+    
+    Matrix old_density;
+    old_density.Copy(density_matrix_);
+    
+    density_matrix_.SetZero();
+    
+    if (likely(current_iteration_ > diis_count_)) {
+    
+      for (index_t i = 0; i < diis_count_; i++) {
+        
+        // Should scale density_matrices_[i] by the right value and add to 
+        // the overall density matrix
+        la::AddExpert(diis_coeffs[i], density_matrices_[i], &density_matrix_);
+      
+      }
+    
+    }
+    else {
+    
+      density_matrix_.CopyValues(density_matrices_[diis_index_]);
+    
+    }
+    
+    density_matrix_frobenius_norm_ = la::Dot(number_of_basis_functions_ * 
+                                             number_of_basis_functions_, 
+                                             old_density.ptr(), 
+                                             density_matrix_.ptr());
+  
+  } // DIISSolver_()
+  
   
   /**
     * Given that the Fock matrix has been transformed to the orthonormal basis
@@ -375,12 +543,9 @@ class SCFSolver {
     
     Matrix coefficients_prime;
     
-    
     Matrix right_vectors_trans;
     
-    
     //la::EigenvectorsInit(fock_matrix_, &energy_vector_, &coefficients_prime);
-    
     
     la::SVDInit(fock_matrix_, &energy_vector_, &coefficients_prime, 
                 &right_vectors_trans);
@@ -726,7 +891,7 @@ class SCFSolver {
       DiagonalizeFockMatrix_();
       
       //Step 4f.
-      ComputeDensityMatrix_();
+      ComputeDensityMatrixDIIS_();
       
       // Step 4g.
       converged = TestConvergence_();
@@ -767,7 +932,7 @@ class SCFSolver {
     
     DiagonalizeFockMatrix_();
     
-    ComputeDensityMatrix_();
+    ComputeDensityMatrixDIIS_();
     
     //data::Save("27_H_initial_density.csv", density_matrix_);
     
