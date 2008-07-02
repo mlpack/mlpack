@@ -38,9 +38,9 @@ let exists (EVar x,t) c = CQuant (Exists,x,t,c)
 let where = 0
 let subject_to = 0
 
-let optimize d e ets c = 
-  let xts = List.map (fun (EVar x,t) -> (x,t)) ets in
-    PMain (d,xts,e,c)
+let optimize d e ctxt c = 
+  let ctxt' = List.map (fun (EVar x,t) -> (x,t)) ctxt in
+    PMain (d,ctxt',e,c)
 
 let minimize e _ ets _ c = optimize Min e ets c
 let maximize e _ ets _ c = optimize Max e ets c

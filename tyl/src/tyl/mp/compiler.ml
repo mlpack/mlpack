@@ -4,7 +4,6 @@ open Vars
 open Wf
 open Cnf
 
-module C = Context
 module S = Id.Set
 module E = Edsl
 
@@ -12,6 +11,8 @@ let compileType t = match t with
   | TBool None -> E.discrete 0 1
   | TBool (Some a) -> let b = if a then 1 else 0 in E.discrete b b 
   | _ -> t (* numeric types are left unchanged *)
+
+let compileContext ctxt = map (fun (x,t) -> (x,compileType t)) ctxt
 
 let rec compileDLF e = 
   assert (isDLF e) ;
@@ -34,19 +35,19 @@ let rec compileProp ctxt c =
     | CPropOp (Conj,cs) -> CPropOp (Conj, map (compileProp ctxt) cs)
     | CQuant (Exists,x,t,c) -> 
         let t' = compileType t in
-        let c' = compileProp (C.add ctxt x t') c in
+        let c' = compileProp ((x,t')::ctxt) c in
           CQuant (Exists,x,t',c')
 
 and compileConj e = 
   assert (isConj e) ; 
   match e with 
     | EBinaryOp (And,e1,e2) -> 
-        let c1 = compileProp C.empty (E.isTrue e1) in
-        let c2 = compileProp C.empty (E.isTrue e2) in 
+        let c1 = compileProp [] (E.isTrue e1) in
+        let c2 = compileProp [] (E.isTrue e2) in 
           E.(/|) c1 c2
     | _ -> assert false
 
-and typeAsProp (x',t) = let x = EVar x' in
+and typeAsBoundingProp (x',t) = let x = EVar x' in
   match t with
     | TReal (Continuous (Some lo, Some hi)) -> E.(/|) (E.(<=) (E.litR lo) x) (E.(<=) x (E.litR hi))
     | TReal (Continuous (Some lo, None   )) ->        (E.(<=) (E.litR lo) x)              
@@ -60,10 +61,10 @@ and typeAsProp (x',t) = let x = EVar x' in
     | TBool (Some false) -> E.isTrue (E.not x)
     | TBool None         -> E.propT
 
-and typesAsProp ctxt c = 
+and addBoundingProps ctxt c = 
   let xs = S.elements (freeVarsc c) in 
-  let ts = map (C.lookup ctxt) xs in
-  let cs = map typeAsProp (combine xs ts) in
+  let ts = map (lookup ctxt) xs in
+  let cs = map typeAsBoundingProp (combine xs ts) in
     CPropOp (Conj,c::cs)
 
 (* pre: e and e' are numeric expressions *) 
@@ -102,12 +103,18 @@ and scalec e c = match c with
 and compileDisj ctxt c = 
   assert (disjVarsBounded ctxt c) ;
   match c with 
-    | CPropOp (Disj,cs) -> assert false        
+    | CPropOp (Disj,cs) -> 
+        let cs' = map (compileProp ctxt) cs in
+        let ctxt' = compileContext ctxt in
+        let cs'' = map (addBoundingProps ctxt') cs' in
+        let xss = assert false in
+        let ys = assert false in
+        let cs''' = map () cs'' in
+          assert false
     | _ -> failwith "compileDisj: proposition is not a disjunction"
         
-let compile (PMain (d,xts,e,c) as p) = 
-  let ctxt = C.fromList xts in
-    assert (isMP p && disjVarsBounded ctxt c) ;  
-    let xts' = map (fun (x,t) -> (x,compileType t)) xts in 
-    let c' = compileProp ctxt c in
-      PMain (d,xts',e,c')
+let compile (PMain (d,ctxt,e,c) as p) = 
+  assert (isMP p && disjVarsBounded ctxt c) ;
+  let ctxt' = compileContext ctxt in 
+  let c' = compileProp ctxt c in
+    PMain (d,ctxt',e,c')

@@ -33,11 +33,6 @@ type prop =
 type prog = 
   | PMain of direction * ((Id.t * typ) list) * expr * prop
 
-module Context : sig
-  type t 
-  val empty : t
-  val add : t -> Id.t -> typ -> t
-  val fromList : (Id.t * typ) list -> t
-  val coarseContains : t -> Id.t -> typ -> bool
-  val lookup : t -> Id.t -> typ
-end
+type context = (Id.t * typ) list
+val coarseContains : context -> Id.t -> typ -> bool
+val lookup : context -> Id.t -> typ
