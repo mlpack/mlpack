@@ -1,5 +1,5 @@
 open Ast
-open Printf
+open Format
 open List
 
 let showt t = match t with
@@ -22,13 +22,9 @@ let rec showe e = match e with
   | EConst (Real r) -> sprintf "%f" r
   | EConst (Int n) -> sprintf "%d" n
   | EUnaryOp (op,e') -> 
-      sprintf "(%s%s)" 
-        (match op with Neg -> "-" | Not -> "not ") 
-        (showe e')
-  | EBinaryOp (Mult,e1,e2) -> 
-      sprintf "%s * %s" (showe e1) (showe e2)
+      sprintf "%s%s" (match op with Neg -> "-" | Not -> "not ") (showe e')
   | EBinaryOp (op,e1,e2) ->
-      sprintf "(%s %s %s)" 
+      sprintf "(@[%s %s@ %s@])"
         (showe e1) 
         (match op with Plus -> "+" | Minus -> "-" | Mult -> "*" | Or -> "||" | And -> "&&")
         (showe e2)
@@ -37,19 +33,19 @@ let showxt (x,t) = sprintf "%s:%s" (Id.toString x) (showt t)
 
 let rec showc c = match c with
   | CBoolVal b -> if b then "T" else "F"
-  | CIsTrue e -> sprintf "(isTrue %s)" (showe e)
+  | CIsTrue e -> sprintf "(@[isTrue %s@])" (showe e)
   | CNumRel (op,e1,e2) ->
-      sprintf "(%s %s %s)" 
+      sprintf "(@[%s %s %s@])" 
         (showe e1) 
         (match op with Lte -> "<=" | Equal -> "==" | Gte -> ">=")
         (showe e2)
   | CPropOp (op,cs) -> 
       let opstr = match op with Disj -> " disj " | Conj -> " conj " in
-        "(" ^ String.concat ("\n"^opstr) (map showc cs) ^ ")"
-  | CQuant (Exists,x,t,c) -> sprintf "(exists %s . %s)" (showxt (x,t)) (showc c)
+        sprintf "(@[%s@])" (String.concat opstr (map showc cs))
+  | CQuant (Exists,x,t,c) -> sprintf "(@[exists %s .@ %s@])" (showxt (x,t)) (showc c)
 
 let showp p = match p with
-  | PMain (d,xts,e,c) -> 
-      let vars = String.concat "\n" (map showxt xts) in 
+  | PMain (d,ctxt,e,c) -> 
+      let vars = String.concat "\n" (map showxt ctxt) in 
       let dirxn = (match d with Min -> "min" | Max -> "max") in
         sprintf "%s\n\n%s %s\nsubject_to %s" vars dirxn (showe e) (showc c)

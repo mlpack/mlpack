@@ -2,7 +2,6 @@ open Ast
 open List
 open Vars
 
-module C = Context
 module E = Edsl
 module S = Id.Set
 
@@ -13,7 +12,7 @@ let isType t = match t with
   | _ -> true
 
 let rec isOfType ctxt e t = match e,t with 
-  | EVar x                  , _       -> C.coarseContains ctxt x t
+  | EVar x                  , _       -> coarseContains ctxt x t
   | EConst (Bool _)         , TBool _ -> true
   | EConst (Int _)          , TReal _ -> true
   | EConst (Real _)         , TReal _ -> true
@@ -31,12 +30,11 @@ let rec isProp ctxt c = match c with
   | CIsTrue e         -> isOfType ctxt e E.bool
   | CNumRel (_,e1,e2) -> isOfType ctxt e1 E.real && isOfType ctxt e2 E.real
   | CPropOp (_,cs)    -> for_all (isProp ctxt) cs
-  | CQuant (_,x,t,c') -> isType t && isProp (C.add ctxt x t) c'
+  | CQuant (_,x,t,c') -> isType t && isProp ((x,t)::ctxt) c'
 
 let isMP p = match p with 
-  | PMain (_,xts,e,c) -> 
-      let ctxt = C.fromList xts in 
-        for_all (fun (_,t) -> isType t) xts && isOfType ctxt e E.real && isProp ctxt c
+  | PMain (_,ctxt,e,c) -> 
+      for_all (fun (_,t) -> isType t) ctxt && isOfType ctxt e E.real && isProp ctxt c
 
 (* misc type operations *)
 
@@ -60,7 +58,7 @@ let rec disjVarsBounded ctxt c = match c with
   | CNumRel _              -> true
   | CPropOp (Disj,cs)      -> 
       let xs = S.elements (S.union' (map freeVarsc cs)) in
-      let ts = map (C.lookup ctxt) xs in
+      let ts = map (lookup ctxt) xs in
         for_all bounded ts && for_all existVarsBounded cs 
   | CPropOp (Conj,cs)      -> for_all (disjVarsBounded ctxt) cs 
-  | CQuant (Exists,x,t,c') -> disjVarsBounded (C.add ctxt x t) c'
+  | CQuant (Exists,x,t,c') -> disjVarsBounded ((x,t)::ctxt) c'

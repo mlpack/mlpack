@@ -6,7 +6,7 @@
    c - prop
    z - prop type
    x - variable/id
-   cs,xts - plural (sets/lists of things)
+   cs,xs - plural (sets/lists of things)
 *)
 
 open List
@@ -49,18 +49,16 @@ type prop =
 type prog = 
   | PMain of direction * ((Id.t * typ) list) * expr * prop
 
-module Context = struct
-  type t = (Id.t * typ) list
-  let empty = []
-  let add ctxt x t = (x,t)::ctxt
-  let fromList xts = xts
-  let coarseContains ctxt x t = 
-    let coarseEqual (x',t') = Id.equal x x' &&
-      match t,t' with
-        | TReal _ , TReal _ -> true
-        | TBool _ , TBool _ -> true
-        | _ -> false
-    in 
-      exists coarseEqual ctxt
-  let lookup ctxt x = snd (find (fun (x',_) -> Id.equal x x') ctxt)
-end
+type context = (Id.t * typ) list
+
+let coarseContains ctxt x t = 
+  let coarseEqual (x',t') = Id.equal x x' &&
+    match t,t' with
+      | TReal _ , TReal _ -> true
+      | TBool _ , TBool _ -> true
+      | _ -> false
+  in 
+    exists coarseEqual ctxt
+      
+(* pre: context contains x ; fails otherwise *)
+let lookup ctxt x = snd (find (fun (x',_) -> Id.equal x x') ctxt)

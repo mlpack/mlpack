@@ -39,7 +39,7 @@ let diet =
 
 (* boolean examples *)
 
-let [b1;b2] = map name ["b1";"b2"]
+let (b1,b2) = (name "b1",name "b2")
 
 let dlf_example = 
   minimize (x + w)

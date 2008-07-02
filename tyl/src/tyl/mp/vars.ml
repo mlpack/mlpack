@@ -5,7 +5,7 @@ module S = Id.Set
 
 let (--) = S.diff
 let set_of_list xs = fold_left (fun s x -> S.add x s) S.empty xs
-let getIds xts = set_of_list (fst (split xts))
+let getIds ctxt = set_of_list (fst (split ctxt))
 
 let rec freeVarse e = match e with 
   | EVar x              -> S.singleton x
@@ -21,7 +21,7 @@ let rec freeVarsc c = match c with
   | CQuant (_,x,_,c') -> freeVarsc c' -- S.singleton x
 
 let freeVarsp p = match p with 
-  | PMain (_,xts,e,c) -> S.union' [freeVarse e; freeVarsc c] -- getIds xts
+  | PMain (_,ctxt,e,c) -> S.union' [freeVarse e; freeVarsc c] -- getIds ctxt
 
 let isClosede e = S.is_empty (freeVarse e)
 let isClosedc c = S.is_empty (freeVarsc c)
