@@ -26,9 +26,12 @@ class SCFSolver {
   
  private:
   
+  // Columns are the coordinates of centers of basis functions
   Matrix basis_centers_;
+  // Centers of the nuclei
   Matrix nuclear_centers_;  
   
+  // Charge of nuclei, needs to be renamed
   Vector nuclear_masses_;
   
   Matrix core_matrix_; // T + V
@@ -37,7 +40,6 @@ class SCFSolver {
   
   Matrix coefficient_matrix_; // C or C'
   
-  // Consider changing this name to reflect that it's the change of basis matrix
   Matrix overlap_matrix_; // S 
   Matrix change_of_basis_matrix_; // S^{-1/2} 
   Matrix density_matrix_; // D
@@ -47,35 +49,46 @@ class SCFSolver {
   
   index_t number_of_basis_functions_; // N
   index_t number_of_electrons_; // K
-  index_t number_of_nuclei_; 
-  index_t number_to_fill_;
+  index_t number_of_nuclei_;
+  // Number of orbitals to fill, i.e. K/2 
+  index_t number_to_fill_; 
   
-  // I think I'll have to compute this in the beginning
   double nuclear_repulsion_energy_;
   
   double one_electron_energy_;
   double two_electron_energy_;
   
+  // The total energy in each iteration
   ArrayList<double> total_energy_;
+  
   index_t current_iteration_;
+  
+  // The density matrix error norms for use in DIIS
   Matrix density_matrix_norms_;
   
-  ArrayList<Matrix> density_matrices_;
-  ArrayList<Matrix> density_matrix_errors_;
+  // The frobenius norm of the density matrix after each iteration
   ArrayList<double> iteration_density_norms_;
   
+  // Past density matrices and matrix errors for DIIS
+  ArrayList<Matrix> density_matrices_;
+  ArrayList<Matrix> density_matrix_errors_;
+  
+  // The total number of matrices to store for DIIS
   index_t diis_count_;
+  // The current position in the DIIS arrays
   index_t diis_index_;
   
+  // The right hand side of the linear system for the DIIS solution
   Vector diis_rhs_;
   
-  
+  // Initial size of the density norm and total energy arrays
   static const index_t expected_number_of_iterations_ = 20;
   
+  // Convergence tolerances
   double density_convergence_;
   double energy_convergence_;
   
-  // Used for computing the convergence of the density matrix on the fly
+  // The norm of the difference between this density matrix and the previous one
   double density_matrix_frobenius_norm_;
   
   struct datanode* module_;
@@ -142,18 +155,18 @@ class SCFSolver {
     diis_rhs_.SetZero();
     diis_rhs_[diis_count_] = -1;
     
-        
+    naive_integrals_.Init(basis_centers, naive_mod, density, bandwidth_);
+    
+    integrals_.Init(basis_centers, integral_mod, bandwidth_);
+            
     if (do_naive_) {
     
-      naive_integrals_.Init(basis_centers, naive_mod, density, bandwidth_);
       basis_centers_.Copy(basis_centers);
       density_matrix_.Copy(density);
     
     }
     else {
     
-      integrals_.Init(basis_centers, integral_mod, bandwidth_);
-      
       // Need to get out the permutation from the integrals_, then use it to 
       // permute the basis centers
       
@@ -191,8 +204,12 @@ class SCFSolver {
       
       density_matrices_[i].Init(number_of_basis_functions_, 
                                 number_of_basis_functions_);
+                                
+      density_matrices_[i].SetZero();
+      
       density_matrix_errors_[i].Init(number_of_basis_functions_, 
                                      number_of_basis_functions_);
+      density_matrix_errors_[i].SetZero();
       
       density_matrix_norms_.set(diis_count_, i, -1);
       density_matrix_norms_.set(i, diis_count_, -1);
@@ -413,7 +430,7 @@ class SCFSolver {
   
     FillOrbitals_();
     
-    density_matrix_norms_.SetZero();
+    //density_matrix_norms_.SetZero();
     
     // Rows of density_matrix
     for (index_t density_row = 0; density_row < number_of_basis_functions_;
@@ -478,11 +495,16 @@ class SCFSolver {
       
       density_matrix_norms_.set(diis_index_, i, this_norm);
       density_matrix_norms_.set(i, diis_index_, this_norm);
-    
+
+      /*
       density_matrix_norms_.set(diis_count_, i, -1);
       density_matrix_norms_.set(i, diis_count_, -1);
-    
+       */
+       
     }
+    
+    printf("diis_index: %d\n", diis_index_);
+    density_matrix_norms_.PrintDebug();
     
     DIISSolver_();
     
@@ -498,16 +520,17 @@ class SCFSolver {
    */
   void DIISSolver_() {
     
-    Vector diis_coeffs;
-    
-    la::SolveInit(density_matrix_norms_, diis_rhs_, &diis_coeffs);
-    
     Matrix old_density;
     old_density.Copy(density_matrix_);
     
-    density_matrix_.SetZero();
+    // Make this plus one, since the first entry doesn't mean much
+    if (likely(current_iteration_ > diis_count_ + 1)) {
     
-    if (likely(current_iteration_ > diis_count_)) {
+      Vector diis_coeffs;
+      
+      la::SolveInit(density_matrix_norms_, diis_rhs_, &diis_coeffs);
+    
+      density_matrix_.SetZero();
     
       for (index_t i = 0; i < diis_count_; i++) {
         
@@ -516,19 +539,33 @@ class SCFSolver {
         la::AddExpert(diis_coeffs[i], density_matrices_[i], &density_matrix_);
       
       }
+      
+      diis_coeffs.PrintDebug();
+
+      //density_matrix_frobenius_norm_ = diis_coeffs[diis_count_];
+      
+
     
     }
     else {
     
+      
       density_matrix_.CopyValues(density_matrices_[diis_index_]);
-    
+
+          
     }
+
+    la::SubFrom(density_matrix_, &old_density);
     
     density_matrix_frobenius_norm_ = la::Dot(number_of_basis_functions_ * 
                                              number_of_basis_functions_, 
                                              old_density.ptr(), 
-                                             density_matrix_.ptr());
-  
+                                             old_density.ptr());
+    
+
+    iteration_density_norms_[current_iteration_] = 
+      density_matrix_frobenius_norm_;    
+     
   } // DIISSolver_()
   
   
@@ -900,7 +937,9 @@ class SCFSolver {
       
     } // end while
     
-    total_energy_[current_iteration_] = ComputeElectronicEnergy_();
+    current_iteration_--;
+    
+    //total_energy_[current_iteration_] = ComputeElectronicEnergy_();
     
   } // FindSCFSolution_
   
@@ -936,7 +975,7 @@ class SCFSolver {
     
     //data::Save("27_H_initial_density.csv", density_matrix_);
     
-    double this_energy = ComputeElectronicEnergy_();
+    //double this_energy = ComputeElectronicEnergy_();
     
   } //Setup_
 
