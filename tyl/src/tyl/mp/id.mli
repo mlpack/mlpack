@@ -7,8 +7,9 @@ val toString : t -> string
 module Set : sig
   include Set.S
   val union' : t list -> t
+  val addAll : elt list -> t -> t
 end with type elt = t
 
-(* return an id not in set, using input id as root of returned it *)
 val fresh : Set.t -> t -> t 
-
+val fresh' : int -> Set.t -> t -> t list
+val fresh'' : int -> Set.t -> t list -> t list list

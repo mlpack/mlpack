@@ -102,16 +102,19 @@ and scalec e c = match c with
 
 and compileDisj ctxt c = 
   assert (disjVarsBounded ctxt c) ;
-  match c with 
-    | CPropOp (Disj,cs) -> 
-        let cs' = map (compileProp ctxt) cs in
-        let ctxt' = compileContext ctxt in
-        let cs'' = map (addBoundingProps ctxt') cs' in
-        let xss = assert false in
-        let ys = assert false in
-        let cs''' = map () cs'' in
-          assert false
-    | _ -> failwith "compileDisj: proposition is not a disjunction"
+  let freeVars = freeVarsc c in
+  let xs = S.elements freeVars in
+    match c with 
+      | CPropOp (Disj,cs) -> 
+          let n = length cs in
+          let ys = Id.fresh' n freeVars (Id.make "y") in
+          let xss = Id.fresh'' n (S.addAll ys freeVars) xs in
+          let ctxt' = compileContext ctxt in
+          let cs' = map (compileProp ctxt) cs in
+          let cs'' = map (addBoundingProps ctxt') cs' in
+          let cs''' = map (assert false) cs'' in
+            assert false
+      | _ -> failwith "compileDisj: proposition is not a disjunction"
         
 let compile (PMain (d,ctxt,e,c) as p) = 
   assert (isMP p && disjVarsBounded ctxt c) ;
