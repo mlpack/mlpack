@@ -40,7 +40,7 @@ let rec showc c = match c with
         (match op with Lte -> "<=" | Equal -> "==" | Gte -> ">=")
         (showe e2)
   | CPropOp (op,cs) -> 
-      let opstr = match op with Disj -> " disj " | Conj -> " conj " in
+      let opstr = match op with Disj -> " disj " | Conj -> "\n conj " in
         sprintf "(@[%s@])" (String.concat opstr (map showc cs))
   | CQuant (Exists,x,t,c) -> sprintf "(@[exists %s .@ %s@])" (showxt (x,t)) (showc c)
 
@@ -48,4 +48,4 @@ let showp p = match p with
   | PMain (d,ctxt,e,c) -> 
       let vars = String.concat "\n" (map showxt ctxt) in 
       let dirxn = (match d with Min -> "min" | Max -> "max") in
-        sprintf "%s\n\n%s %s\nsubject_to %s" vars dirxn (showe e) (showc c)
+        sprintf "%s\n\n%s %s subject_to\n\n%s" vars dirxn (showe e) (showc c)

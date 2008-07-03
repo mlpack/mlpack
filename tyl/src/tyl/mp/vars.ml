@@ -43,3 +43,7 @@ let rec subec e x c = match c with
       else if not (S.mem x' (freeVarse e))  then CQuant (q,x',t,subec e x c')
       else let x'' = Id.fresh (S.union' [freeVarse e; freeVarsc c']) x' in 
         subec e x (CQuant (q, x'', t, subec (EVar x'') x' c'))
+
+let rec subec' es xs c = match es,xs with
+  | e::es',x::xs' -> subec' es' xs' (subec e x c)
+  | _ -> c

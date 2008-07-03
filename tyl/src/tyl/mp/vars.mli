@@ -10,4 +10,4 @@ val isClosedp : prog -> bool
 
 val subee : expr -> Id.t -> expr -> expr
 val subec : expr -> Id.t -> prop -> prop
-
+val subec' : expr list -> Id.t list -> prop -> prop
