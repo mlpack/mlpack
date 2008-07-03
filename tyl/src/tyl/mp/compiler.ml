@@ -3,14 +3,27 @@ open List
 open Vars
 open Wf
 open Cnf
+open Printf
 
 module S = Id.Set
 module E = Edsl
+
+let (%) f g x = f (g x)
+
+let rec map3 f xs ys zs = match xs,ys,zs with
+  | x::xs',y::ys',z::zs' -> f x y z :: map3 f xs' ys' zs'
+  | _ -> []
 
 let compileType t = match t with 
   | TBool None -> E.discrete 0 1
   | TBool (Some a) -> let b = if a then 1 else 0 in E.discrete b b 
   | _ -> t (* numeric types are left unchanged *)
+
+(* adapted from the Haskell stdlib *)
+let rec transpose xss = match xss with 
+  | [] -> [] 
+  | []::xss' -> transpose xss'      
+  | (x::xs) :: xss' -> (x :: map hd xss') :: transpose (xs :: map tl xss')
 
 let compileContext ctxt = map (fun (x,t) -> (x,compileType t)) ctxt
 
@@ -104,16 +117,22 @@ and compileDisj ctxt c =
   assert (disjVarsBounded ctxt c) ;
   let freeVars = freeVarsc c in
   let xs = S.elements freeVars in
+  let ts = map (lookup ctxt) xs in
     match c with 
       | CPropOp (Disj,cs) -> 
           let n = length cs in
+          let var x = EVar x in
+          let vars = map var in
           let ys = Id.fresh' n freeVars (Id.make "y") in
           let xss = Id.fresh'' n (S.addAll ys freeVars) xs in
           let ctxt' = compileContext ctxt in
           let cs' = map (compileProp ctxt) cs in
           let cs'' = map (addBoundingProps ctxt') cs' in
-          let cs''' = map (assert false) cs'' in
-            assert false
+          let cs''' = map3 (fun yj xjs cj'' -> scalec (var yj) (subec' (vars xjs) xs cj'')) ys (transpose xss) cs'' in
+          let foo = E.conj (cs''' @ [E.(==) E.one (E.sum (vars ys))] @ map2 (fun z zs -> E.(==) (var z) (E.sum (vars zs))) xs xss) in
+          let rec makeExists xts c = match xts with (x,t)::xts' -> makeExists xts' (CQuant(Exists,x,t,c)) | _ -> c in
+          let ysAdded = makeExists (map (fun y -> (y,E.discrete 0 1)) ys) foo in
+            fold_left2 (fun c xs' t -> makeExists (map (fun x -> (x,t)) xs') c) ysAdded xss ts
       | _ -> failwith "compileDisj: proposition is not a disjunction"
         
 let compile (PMain (d,ctxt,e,c) as p) = 

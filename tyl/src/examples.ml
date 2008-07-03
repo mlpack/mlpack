@@ -14,7 +14,7 @@ let example0 =
 
 let example1 = 
   minimize (x + w) 
-    where [(x,real);(w,real)]
+    where [(x,continuous 10.0 100.0);(w,continuous 2.0 50.0)]
     subject_to ((x <= w) |/ (x >= w + litR 4.0))
 
 (* the diet problem *) 
@@ -56,11 +56,11 @@ let conj_example =
                      (isTrue (b1 && b2))  ))
 
 
-let print' p = printf "*********\n\n%s\n\n%s\n\n" (showp p) (showp (compile p))
+let print' p = printf "++++++++++++++++\n\n%s\n\n================\n\n%s\n\n" (showp p) (showp (compile p))
 
-;; print' example0
-(* ;; print' example1 *)
-;; print' diet
-;; print' dlf_example
-;; print' conj_example
+;; print' example1 
+(* ;; print' example0 *)
+(* ;; print' diet *)
+(* ;; print' dlf_example *)
+(* ;; print' conj_example *)
 
