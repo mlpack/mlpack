@@ -93,7 +93,7 @@ and scalee e e' = match e' with
   | EBinaryOp (Mult, e1, e2) -> 
       let (x1s,x2s) = (freeVarse e1, freeVarse e2) in
         if S.is_empty x1s && S.is_empty x2s
-        then e' 
+        then E.( * ) e e' 
         else 
           if not (S.is_empty x1s)
           then E.( * ) e1 (scalee e e2)
