@@ -18,14 +18,19 @@
 
 #include "fastlib/fastlib.h"
 #include "sdp_nmf_engine.h"
+#include "geometric_nmf_engine.h"
 
 int main(int argc, char *argv[]) {
   fx_module *fx_root;
 	fx_root=fx_init(argc, argv, NULL);
 	fx_module *nmf_module=fx_submodule(fx_root, "/engine");
-  SdpNmfEngine<SmallSdpNmf> engine;
-  fx_set_param_str(nmf_module, "data_file", "5.csv");//"../non_convex_nmf/v.csv");
-  //    "/net/hg200/nvasil/dataset/orl_faces/orl_test_faces_100.csv");
+  
+  //SdpNmfEngine<SmallSdpNmf> engine;
+  GeometricNmfEngine<GeometricNmf> engine;
+  fx_set_param_str(nmf_module, "data_file", 
+    //"5.csv");
+    //"../non_convex_nmf/v.csv");
+     "/net/hg200/nvasil/dataset/orl_faces/orl_test_faces_100.csv");
   fx_set_param_int(nmf_module, "new_dim", 2);
 	fx_set_param_double(nmf_module, "l_bfgs/sigma", 1);
   fx_set_param_double(nmf_module, "l_bfgs/gamma", 2);

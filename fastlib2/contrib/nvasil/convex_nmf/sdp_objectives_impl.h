@@ -84,7 +84,7 @@ void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
     index_t w_i=i;
     index_t t1_i=offset_tw_+i;
     for(index_t j=0; j<new_dim_; j++) {
-      double w=coordinates.get(j, w_i);
+      //double w=coordinates.get(j, w_i);
       double t1=coordinates.get(j, t1_i);
       double dw=-1.0;
       double dt1=0.5*math::Pow<-1,2>(t1);
@@ -97,7 +97,7 @@ void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
     index_t h_i=offset_h_+i;
     index_t t2_i=offset_th_+i;
     for(index_t j=0; j<new_dim_; j++) {
-      double h=coordinates.get(j, h_i);
+     // double h=coordinates.get(j, h_i);
       double t2=coordinates.get(j, t2_i);
       double dh=-1.0;
       double dt2=0.5*math::Pow<-1,2>(t2);
@@ -319,7 +319,7 @@ void SmallSdpNmf::GiveInitMatrix(Matrix *init_data) {
       double h=init_data->get(j, h_i);
      
       // ensure that Sum w_ij*hij > v_ij 
-      double total_weight=new_dim_*(new_dim_+1)/2;
+      //double total_weight=new_dim_*(new_dim_+1)/2;
       init_data->set(j, v_i, values_[i]/new_dim_);
       double v=init_data->get(j, v_i);
       init_data->set(j, t1_i, std::max(fabs(w*h-v)+w*w+math::Random(), 
