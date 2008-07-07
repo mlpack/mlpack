@@ -933,7 +933,7 @@ void fx_reset_timer(fx_module *mod, const char *key);
  *   fx_module *r_mod = fx_submodule(root, "r");
  *   int leaf_size = fx_param_int(r_mod, "leaf_size", 30);
  *   int split_median = fx_param_bool(r_mod, "split_median", 0);
- * @code
+ * @endcode
  *
  * Note that submodules may also have values.  It is possible to
  * obtain the value of "r" from r_mod with @c fx_param_str(r_mod, ".")
