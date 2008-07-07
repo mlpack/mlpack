@@ -226,8 +226,8 @@ static void fx__write_path(fx_module *entry, FILE *stream)
 
 COMPILER_NO_RETURN
 static void fx__print_fatal_msg(const char *file, const char *func, int line,
-				const char *prefix, fx_module *entry,
-				const char *suffix, ...)
+                                const char *prefix, fx_module *entry,
+                                const char *suffix, ...)
 {
   va_list vl;
 
@@ -247,8 +247,8 @@ static void fx__print_fatal_msg(const char *file, const char *func, int line,
 }
 
 static void fx__print_msg(const char *file, const char *func, int line,
-			  fl_msg_t msg_type, const char *prefix,
-			  fx_module *entry, const char *suffix, ...)
+                          fl_msg_t msg_type, const char *prefix,
+                          fx_module *entry, const char *suffix, ...)
 {
   va_list vl;
 
@@ -304,16 +304,16 @@ int fx_module_is_type(fx_module *entry, fx_mod_t mod_type)
 }
 
 static success_t fx__check_mod_type(const char *header, fx_mod_t mod_type,
-				    fx_module *entry)
+                                    fx_module *entry)
 {
   if (unlikely(!fx_module_is_type(entry, mod_type))) {
     if (entry->mod_type < FX_PARAM) {
       FX__NONFATAL("%s %s \"", entry, "\" is not documented.",
-	  header, fx_mod_name[mod_type]);
+          header, fx_mod_name[mod_type]);
       return SUCCESS_WARN;
     } else {
       FX__NONFATAL("%s %s \"", entry, "\" is documented as a %s.",
-	  header, fx_mod_name[mod_type], fx_mod_name[entry->mod_type]);
+          header, fx_mod_name[mod_type], fx_mod_name[entry->mod_type]);
       return SUCCESS_FAIL;
     }
   }
@@ -321,16 +321,16 @@ static success_t fx__check_mod_type(const char *header, fx_mod_t mod_type,
 }
 
 static success_t fx__check_val_type(const char *header, fx_val_t val_type,
-				    fx_module *entry)
+                                    fx_module *entry)
 {
   if (unlikely(entry->val_type != val_type)) {
     if (entry->val_type < 0) {
       FX__NONFATAL("%s %s \"", entry, "\" is of custom type.",
-	  header, fx_val_name[val_type]);
+          header, fx_val_name[val_type]);
       return SUCCESS_FAIL;
     } else {
       FX__NONFATAL("%s %s \"", entry, "\" is of type %s.",
-	  header, fx_val_name[val_type], fx_val_name[entry->val_type]);
+          header, fx_val_name[val_type], fx_val_name[entry->val_type]);
       return SUCCESS_WARN;
     }
   }
@@ -340,39 +340,39 @@ static success_t fx__check_val_type(const char *header, fx_val_t val_type,
 
 
 static double fx__scan_double_impl(fx_module *entry, const char *val,
-				   success_t *success_ptr, int list)
+                                   success_t *success_ptr, int list)
 {
   double retval = 0.0;
 
   if (unlikely(sscanf(val, "%lf", &retval) != 1)) {
     FX__SEMIFATAL(success_ptr,
-	"%c%s \"", entry, "\" is not a double%s: \"%s\".",
-	toupper(*fx_mod_name[entry->mod_type]),
-	fx_mod_name[entry->mod_type] + 1,
-	list ? " list" : "", entry->val);
+        "%c%s \"", entry, "\" is not a double%s: \"%s\".",
+        toupper(*fx_mod_name[entry->mod_type]),
+        fx_mod_name[entry->mod_type] + 1,
+        list ? " list" : "", entry->val);
   }
 
   return retval;
 }
 
 static long long fx__scan_int_impl(fx_module *entry, const char *val,
-				   success_t *success_ptr, int list)
+                                   success_t *success_ptr, int list)
 {
   long long retval = 0;
 
   if (sscanf(val, "%lld", &retval) != 1) {
     FX__SEMIFATAL(success_ptr,
-	"%c%s \"", entry, "\" is not an int%s: \"%s\".",
-	toupper(*fx_mod_name[entry->mod_type]),
-	fx_mod_name[entry->mod_type] + 1,
-	list ? " list" : "", entry->val);
+        "%c%s \"", entry, "\" is not an int%s: \"%s\".",
+        toupper(*fx_mod_name[entry->mod_type]),
+        fx_mod_name[entry->mod_type] + 1,
+        list ? " list" : "", entry->val);
   }
 
   return retval;
 }
 
 static int fx__scan_bool_impl(fx_module *entry, const char *val,
-			      success_t *success_ptr, int list)
+                              success_t *success_ptr, int list)
 {
   int retval = 0;
 
@@ -380,10 +380,10 @@ static int fx__scan_bool_impl(fx_module *entry, const char *val,
     retval = 1;
   } else if (!strchr("0fFnN", val[0])) {
     FX__SEMIFATAL(success_ptr,
-	"%c%s \"", entry, "\" is not a bool%s: \"%s\".",
-	toupper(*fx_mod_name[entry->mod_type]),
-	fx_mod_name[entry->mod_type] + 1,
-	list ? " list" : "", entry->val);
+        "%c%s \"", entry, "\" is not a bool%s: \"%s\".",
+        toupper(*fx_mod_name[entry->mod_type]),
+        fx_mod_name[entry->mod_type] + 1,
+        list ? " list" : "", entry->val);
   }
 
   return retval;
@@ -408,8 +408,8 @@ static int fx__scan_bool(fx_module *entry)
 
 
 
-static const size_t fx__list_size(fx_module *entry, size_t req_size,
-				  success_t *success_ptr)
+static size_t fx__list_size(fx_module *entry, size_t req_size,
+                            success_t *success_ptr)
 {
   char *val = entry->val;
   size_t count = 1;
@@ -421,17 +421,17 @@ static const size_t fx__list_size(fx_module *entry, size_t req_size,
 
   if (req_size && count != req_size) {
     FX__SEMIFATAL(success_ptr,
-	"%c%s \"", entry, "\" is not of length %d: \"%s\".",
-	toupper(*fx_mod_name[entry->mod_type]),
-	fx_mod_name[entry->mod_type] + 1,
-	req_size, entry->val);
+        "%c%s \"", entry, "\" is not of length %d: \"%s\".",
+        toupper(*fx_mod_name[entry->mod_type]),
+        fx_mod_name[entry->mod_type] + 1,
+        req_size, entry->val);
   }
 
   return count;
 }
 
 static const char **fx__scan_str_list(fx_module *mod, size_t *size_ptr,
-				      success_t *success_ptr)
+                                      success_t *success_ptr)
 {
   char **retval;
   char **elem;
@@ -467,7 +467,7 @@ static const char **fx__scan_str_list(fx_module *mod, size_t *size_ptr,
 }
 
 static double *fx__scan_double_list(fx_module *mod, size_t *size_ptr,
-				    success_t *success_ptr)
+                                    success_t *success_ptr)
 {
   double *retval;
   double *elem;
@@ -496,7 +496,7 @@ static double *fx__scan_double_list(fx_module *mod, size_t *size_ptr,
 }
 
 static long long *fx__scan_int_list(fx_module *mod, size_t *size_ptr,
-				    success_t *success_ptr)
+                                    success_t *success_ptr)
 {
   long long *retval;
   long long *elem;
@@ -525,7 +525,7 @@ static long long *fx__scan_int_list(fx_module *mod, size_t *size_ptr,
 }
 
 static int *fx__scan_bool_list(fx_module *mod, size_t *size_ptr,
-			       success_t *success_ptr)
+                               success_t *success_ptr)
 {
   int *retval;
   int *elem;
@@ -805,7 +805,7 @@ static fx_module *fx__lookup(fx_module *mod, const char *key)
 }
 
 static void fx__check_lookup(fx_mod_t mod_type, fx_val_t val_type,
-			     fx_module *entry)
+                             fx_module *entry)
 {
   if (PASSED(fx__check_mod_type("Requested", mod_type, entry))) {
     fx__check_val_type("Requested", val_type, entry);
@@ -813,7 +813,7 @@ static void fx__check_lookup(fx_mod_t mod_type, fx_val_t val_type,
 }
 
 static fx_module *fx__get_entry(fx_module *mod, const char *key,
-				fx_mod_t mod_type, fx_val_t val_type)
+                                fx_mod_t mod_type, fx_val_t val_type)
 {
   fx_module *retval = fx__lookup(mod, key);
   DEBUG_ONLY(fx__check_lookup(mod_type, val_type, retval));
@@ -823,7 +823,7 @@ static fx_module *fx__get_entry(fx_module *mod, const char *key,
 
 
 static fx_module *fx__param(fx_module *mod, const char *key,
-			    fx_val_t val_type)
+                            fx_val_t val_type)
 {
   fx_module *retval = fx__get_entry(mod, key, FX_PARAM, val_type);
 
@@ -839,7 +839,7 @@ static fx_module *fx__param(fx_module *mod, const char *key,
 }
 
 static fx_module *fx__param_req(fx_module *mod, const char *key,
-				fx_val_t val_type)
+                                fx_val_t val_type)
 {
   fx_module *retval = fx__get_entry(mod, key, FX_REQUIRED, val_type);
 
@@ -875,28 +875,28 @@ int fx_param_bool_req(fx_module *mod, const char *key)
 
 
 const char **fx_param_str_list_req(fx_module *mod, const char *key,
-				   size_t *size_ptr)
+                                   size_t *size_ptr)
 {
   fx_module *param = fx__param_req(mod, key, FX_STR_LIST);
   return fx__scan_str_list(param, size_ptr, NULL);
 }
 
 double *fx_param_double_list_req(fx_module *mod, const char *key,
-				 size_t *size_ptr)
+                                 size_t *size_ptr)
 {
   fx_module *param = fx__param_req(mod, key, FX_DOUBLE_LIST);
   return fx__scan_double_list(param, size_ptr, NULL);
 }
 
 long long *fx_param_int_list_req(fx_module *mod, const char *key,
-				 size_t *size_ptr)
+                                 size_t *size_ptr)
 {
   fx_module *param = fx__param_req(mod, key, FX_INT_LIST);
   return fx__scan_int_list(param, size_ptr, NULL);
 }
 
 int *fx_param_bool_list_req(fx_module *mod, const char *key,
-			    size_t *size_ptr)
+                            size_t *size_ptr)
 {
   fx_module *param = fx__param_req(mod, key, FX_BOOL_LIST);
   return fx__scan_bool_list(param, size_ptr, NULL);
@@ -957,7 +957,7 @@ int fx_param_bool(fx_module *mod, const char *key, int def)
 
 
 const char **fx_param_str_list(fx_module *mod, const char *key,
-			       size_t *size_ptr, size_t def_size, ...)
+                               size_t *size_ptr, size_t def_size, ...)
 {
   fx_module *param = fx__param(mod, key, FX_STR_LIST);
 
@@ -973,7 +973,7 @@ const char **fx_param_str_list(fx_module *mod, const char *key,
 }
 
 double *fx_param_double_list(fx_module *mod, const char *key,
-			     size_t *size_ptr, size_t def_size, ...)
+                             size_t *size_ptr, size_t def_size, ...)
 {
   fx_module *param = fx__param(mod, key, FX_DOUBLE_LIST);
 
@@ -989,7 +989,7 @@ double *fx_param_double_list(fx_module *mod, const char *key,
 }
 
 long long *fx_param_int_list(fx_module *mod, const char *key,
-			     size_t *size_ptr, size_t def_size, ...)
+                             size_t *size_ptr, size_t def_size, ...)
 {
   fx_module *param = fx__param(mod, key, FX_INT_LIST);
 
@@ -1005,7 +1005,7 @@ long long *fx_param_int_list(fx_module *mod, const char *key,
 }
 
 int *fx_param_bool_list(fx_module *mod, const char *key,
-			size_t *size_ptr, size_t def_size, ...)
+                        size_t *size_ptr, size_t def_size, ...)
 {
   fx_module *param = fx__param(mod, key, FX_BOOL_LIST);
 
@@ -1023,8 +1023,8 @@ int *fx_param_bool_list(fx_module *mod, const char *key,
 
 
 const char **fx_param_str_array(fx_module *mod, const char *key,
-				size_t *size_ptr, size_t def_size,
-				const char *const *def_array)
+                                size_t *size_ptr, size_t def_size,
+                                const char *const *def_array)
 {
   fx_module *param = fx__param(mod, key, FX_STR_LIST);
 
@@ -1036,8 +1036,8 @@ const char **fx_param_str_array(fx_module *mod, const char *key,
 }
 
 double *fx_param_double_array(fx_module *mod, const char *key,
-			      size_t *size_ptr, size_t def_size,
-			      const double *def_array)
+                              size_t *size_ptr, size_t def_size,
+                              const double *def_array)
 {
   fx_module *param = fx__param(mod, key, FX_DOUBLE_LIST);
 
@@ -1049,8 +1049,8 @@ double *fx_param_double_array(fx_module *mod, const char *key,
 }
 
 long long *fx_param_int_array(fx_module *mod, const char *key,
-			      size_t *size_ptr, size_t def_size,
-			      const long long *def_array)
+                              size_t *size_ptr, size_t def_size,
+                              const long long *def_array)
 {
   fx_module *param = fx__param(mod, key, FX_INT_LIST);
 
@@ -1062,8 +1062,8 @@ long long *fx_param_int_array(fx_module *mod, const char *key,
 }
 
 int *fx_param_bool_array(fx_module *mod, const char *key,
-			 size_t *size_ptr, size_t def_size,
-			 const int *def_array)
+                         size_t *size_ptr, size_t def_size,
+                         const int *def_array)
 {
   fx_module *param = fx__param(mod, key, FX_BOOL_LIST);
 
@@ -1111,7 +1111,7 @@ void fx_set_param_bool(fx_module *mod, const char *key, int val)
 
 
 void fx_set_param_str_list(fx_module *mod, const char *key,
-			   size_t size, ...)
+                           size_t size, ...)
 {
   va_list vl;
   fx_module *param = fx__get_entry(mod, key, FX_RESERVED, FX_STR_LIST);
@@ -1123,7 +1123,7 @@ void fx_set_param_str_list(fx_module *mod, const char *key,
 }
 
 void fx_set_param_double_list(fx_module *mod, const char *key,
-			      size_t size, ...)
+                              size_t size, ...)
 {
   va_list vl;
   fx_module *param = fx__get_entry(mod, key, FX_RESERVED, FX_DOUBLE_LIST);
@@ -1135,7 +1135,7 @@ void fx_set_param_double_list(fx_module *mod, const char *key,
 }
 
 void fx_set_param_int_list(fx_module *mod, const char *key,
-			   size_t size, ...)
+                           size_t size, ...)
 {
   va_list vl;
   fx_module *param = fx__get_entry(mod, key, FX_RESERVED, FX_INT_LIST);
@@ -1147,7 +1147,7 @@ void fx_set_param_int_list(fx_module *mod, const char *key,
 }
 
 void fx_set_param_bool_list(fx_module *mod, const char *key,
-			    size_t size, ...)
+                            size_t size, ...)
 {
   va_list vl;
   fx_module *param = fx__get_entry(mod, key, FX_RESERVED, FX_BOOL_LIST);
@@ -1161,7 +1161,7 @@ void fx_set_param_bool_list(fx_module *mod, const char *key,
 
 
 void fx_set_param_str_array(fx_module *mod, const char *key,
-			    size_t size, const char *const *array)
+                            size_t size, const char *const *array)
 {
   fx_module *param = fx__get_entry(mod, key, FX_RESERVED, FX_STR_LIST);
 
@@ -1170,7 +1170,7 @@ void fx_set_param_str_array(fx_module *mod, const char *key,
 }
 
 void fx_set_param_double_array(fx_module *mod, const char *key,
-			       size_t size, const double *array)
+                               size_t size, const double *array)
 {
   fx_module *param = fx__get_entry(mod, key, FX_RESERVED, FX_DOUBLE_LIST);
 
@@ -1179,7 +1179,7 @@ void fx_set_param_double_array(fx_module *mod, const char *key,
 }
 
 void fx_set_param_int_array(fx_module *mod, const char *key,
-			    size_t size, const long long *array)
+                            size_t size, const long long *array)
 {
   fx_module *param = fx__get_entry(mod, key, FX_RESERVED, FX_INT_LIST);
 
@@ -1188,7 +1188,7 @@ void fx_set_param_int_array(fx_module *mod, const char *key,
 }
 
 void fx_set_param_bool_array(fx_module *mod, const char *key,
-			     size_t size, const int *array)
+                             size_t size, const int *array)
 {
   fx_module *param = fx__get_entry(mod, key, FX_RESERVED, FX_BOOL_LIST);
 
@@ -1199,7 +1199,7 @@ void fx_set_param_bool_array(fx_module *mod, const char *key,
 
 
 void fx_default_param(fx_module *mod, const char *key,
-		      const char *def_format, ...)
+                      const char *def_format, ...)
 {
   fx_module *param = fx__param(mod, key, FX_STR);
 
@@ -1213,7 +1213,7 @@ void fx_default_param(fx_module *mod, const char *key,
 }
 
 void fx_default_param_list(fx_module *mod, const char *key,
-			   size_t *size_ptr, size_t def_size, ...)
+                           size_t *size_ptr, size_t def_size, ...)
 {
   fx_module *param = fx__param(mod, key, FX_STR_LIST);
 
@@ -1227,7 +1227,7 @@ void fx_default_param_list(fx_module *mod, const char *key,
 }
 
 void fx_format_param(fx_module *mod, const char *key,
-		     const char *format, ...)
+                     const char *format, ...)
 {
   va_list vl;
   fx_module *param = fx__get_entry(mod, key, FX_RESERVED, FX_STR);
@@ -1239,7 +1239,7 @@ void fx_format_param(fx_module *mod, const char *key,
 }
 
 void fx_format_param_list(fx_module *mod, const char *key,
-			  size_t size, ...)
+                          size_t size, ...)
 {
   va_list vl;
   fx_module *param = fx__get_entry(mod, key, FX_RESERVED, FX_STR_LIST);
@@ -1280,7 +1280,7 @@ int fx_param_exists(fx_module *mod, const char *key)
 
 
 static fx_module *fx__get_result(fx_module *mod, const char *key,
-				 fx_val_t val_type)
+                                 fx_val_t val_type)
 {
   fx_module *retval = fx__get_entry(mod, key, FX_RESULT, val_type);
 
@@ -1316,28 +1316,28 @@ int fx_get_result_bool(fx_module *mod, const char *key)
 
 
 const char **fx_get_result_str_list(fx_module *mod, const char *key,
-				    size_t *size_ptr)
+                                    size_t *size_ptr)
 {
   fx_module *result = fx__get_result(mod, key, FX_STR_LIST);
   return fx__scan_str_list(result, size_ptr, NULL);
 }
 
 double *fx_get_result_double_list(fx_module *mod, const char *key,
-				  size_t *size_ptr)
+                                  size_t *size_ptr)
 {
   fx_module *result = fx__get_result(mod, key, FX_DOUBLE_LIST);
   return fx__scan_double_list(result, size_ptr, NULL);
 }
 
 long long *fx_get_result_int_list(fx_module *mod, const char *key,
-				  size_t *size_ptr)
+                                  size_t *size_ptr)
 {
   fx_module *result = fx__get_result(mod, key, FX_INT_LIST);
   return fx__scan_int_list(result, size_ptr, NULL);
 }
 
 int *fx_get_result_bool_list(fx_module *mod, const char *key,
-			     size_t *size_ptr)
+                             size_t *size_ptr)
 {
   fx_module *result = fx__get_result(mod, key, FX_BOOL_LIST);
   return fx__scan_bool_list(result, size_ptr, NULL);
@@ -1380,7 +1380,7 @@ void fx_result_bool(fx_module *mod, const char *key, int val)
 
 
 void fx_result_str_list(fx_module *mod, const char *key,
-			size_t size, ...)
+                        size_t size, ...)
 {
   va_list vl;
   fx_module *result = fx__get_entry(mod, key, FX_RESULT, FX_STR_LIST);
@@ -1392,7 +1392,7 @@ void fx_result_str_list(fx_module *mod, const char *key,
 }
 
 void fx_result_double_list(fx_module *mod, const char *key,
-			   size_t size, ...)
+                           size_t size, ...)
 {
   va_list vl;
   fx_module *result = fx__get_entry(mod, key, FX_RESULT, FX_DOUBLE_LIST);
@@ -1404,7 +1404,7 @@ void fx_result_double_list(fx_module *mod, const char *key,
 }
 
 void fx_result_int_list(fx_module *mod, const char *key,
-			size_t size, ...)
+                        size_t size, ...)
 {
   va_list vl;
   fx_module *result = fx__get_entry(mod, key, FX_RESULT, FX_INT_LIST);
@@ -1416,7 +1416,7 @@ void fx_result_int_list(fx_module *mod, const char *key,
 }
 
 void fx_result_bool_list(fx_module *mod, const char *key,
-			 size_t size, ...)
+                         size_t size, ...)
 {
   va_list vl;
   fx_module *result = fx__get_entry(mod, key, FX_RESULT, FX_BOOL_LIST);
@@ -1430,7 +1430,7 @@ void fx_result_bool_list(fx_module *mod, const char *key,
 
 
 void fx_result_str_array(fx_module *mod, const char *key,
-			 size_t size, const char *const *array)
+                         size_t size, const char *const *array)
 {
   fx_module *result = fx__get_entry(mod, key, FX_RESULT, FX_STR_LIST);
 
@@ -1439,7 +1439,7 @@ void fx_result_str_array(fx_module *mod, const char *key,
 }
 
 void fx_result_double_array(fx_module *mod, const char *key,
-			    size_t size, const double *array)
+                            size_t size, const double *array)
 {
   fx_module *result = fx__get_entry(mod, key, FX_RESULT, FX_DOUBLE_LIST);
 
@@ -1448,7 +1448,7 @@ void fx_result_double_array(fx_module *mod, const char *key,
 }
 
 void fx_result_int_array(fx_module *mod, const char *key,
-			 size_t size, const long long *array)
+                         size_t size, const long long *array)
 {
   fx_module *result = fx__get_entry(mod, key, FX_RESULT, FX_INT_LIST);
 
@@ -1457,7 +1457,7 @@ void fx_result_int_array(fx_module *mod, const char *key,
 }
 
 void fx_result_bool_array(fx_module *mod, const char *key,
-			  size_t size, const int *array)
+                          size_t size, const int *array)
 {
   fx_module *result = fx__get_entry(mod, key, FX_RESULT, FX_BOOL_LIST);
 
@@ -1468,7 +1468,7 @@ void fx_result_bool_array(fx_module *mod, const char *key,
 
 
 void fx_format_result(fx_module *mod, const char *key,
-		      const char *format, ...)
+                      const char *format, ...)
 {
   va_list vl;
   fx_module *result = fx__get_entry(mod, key, FX_RESULT, FX_STR);
@@ -1480,7 +1480,7 @@ void fx_format_result(fx_module *mod, const char *key,
 }
 
 void fx_format_result_list(fx_module *mod, const char *key,
-			   size_t size, ...)
+                           size_t size, ...)
 {
   va_list vl;
   fx_module *result = fx__get_entry(mod, key, FX_RESULT, FX_STR_LIST);
@@ -1559,7 +1559,7 @@ fx_module *fx_submodule(fx_module *mod, const char *key)
 }
 
 fx_module *fx_copy_module(fx_module *mod, const char *src_key,
-			  const char *dest_format, ...)
+                          const char *dest_format, ...)
 {
   va_list vl;
   char *dest_key;
@@ -1577,7 +1577,7 @@ fx_module *fx_copy_module(fx_module *mod, const char *src_key,
       fx_module *parent = dest_mod;
 
       while ((parent = parent->parent) && parent->mod_type == FX_UNKNOWN) {
-	parent->mod_type = FX_MODULE;
+        parent->mod_type = FX_MODULE;
       }
     }
   }
@@ -1600,7 +1600,7 @@ static const char *fx__match_prefix(const char *key, const char *prefix)
     size_t len = slash ? slash - prefix : strlen(prefix);
 
     if (strncmp(key, prefix, len) == 0
-	&& (key[len] == '\0' || key[len] == '/')) {
+        && (key[len] == '\0' || key[len] == '/')) {
       for (key += len; *key == '/'; ++key);
       for (prefix += len; *prefix == '/'; ++prefix);
     } else {
@@ -1631,18 +1631,18 @@ success_t fx_help(const fx_module_doc *doc, const char *key)
 
     for (entry_doc = doc->entries; entry_doc->key; ++entry_doc) {
       if (entry_doc->text) {
-	if (fx__match_prefix(entry_doc->key, key)) {
-	  retval = SUCCESS_PASS;
-	  if (entry_doc->val_type < 0) {
-	    printf("\"%s\", %s:\n", entry_doc->key,
-		   fx_mod_name[entry_doc->mod_type]);
-	  } else {
-	    printf("\"%s\", %s (%s):\n", entry_doc->key,
-		   fx_mod_name[entry_doc->mod_type],
-		   fx_val_name[entry_doc->val_type]);
-	  }
-	  printf("%s\n", entry_doc->text);
-	}
+        if (fx__match_prefix(entry_doc->key, key)) {
+          retval = SUCCESS_PASS;
+          if (entry_doc->val_type < 0) {
+            printf("\"%s\", %s:\n", entry_doc->key,
+                   fx_mod_name[entry_doc->mod_type]);
+          } else {
+            printf("\"%s\", %s (%s):\n", entry_doc->key,
+                   fx_mod_name[entry_doc->mod_type],
+                   fx_val_name[entry_doc->val_type]);
+          }
+          printf("%s\n", entry_doc->text);
+        }
       }
     }
   }
@@ -1658,12 +1658,12 @@ success_t fx_help(const fx_module_doc *doc, const char *key)
       const char *match = fx__match_prefix(key, submod_doc->key);
 
       if (match) {
-	retval |= fx_help(submod_doc->doc, match);
+        retval |= fx_help(submod_doc->doc, match);
       } else if (submod_doc->text) {
-	if (fx__match_prefix(submod_doc->key, key)) {
-	  retval = SUCCESS_PASS;
-	  printf("\"%s\":\n%s\n", submod_doc->key, submod_doc->text);
-	}
+        if (fx__match_prefix(submod_doc->key, key)) {
+          retval = SUCCESS_PASS;
+          printf("\"%s\":\n%s\n", submod_doc->key, submod_doc->text);
+        }
       }
     }
   }
@@ -1673,7 +1673,7 @@ success_t fx_help(const fx_module_doc *doc, const char *key)
 
 COMPILER_NO_RETURN
 static void fx__std_help(const char *prog, const char *help,
-			 const fx_module_doc *doc)
+                         const fx_module_doc *doc)
 {
   success_t success;
 
@@ -1711,7 +1711,7 @@ static void fx__fill_docs(fx_module *mod, const fx_module_doc *doc)
       fx__fill_docs(submod, submod_doc->doc);
 
       while ((submod = submod->parent) && submod->mod_type == FX_UNKNOWN) {
-	submod->mod_type = FX_MODULE;
+        submod->mod_type = FX_MODULE;
       }
     }
   }
@@ -1727,14 +1727,14 @@ static void fx__fill_docs(fx_module *mod, const fx_module_doc *doc)
       DEBUG_ASSERT(entry_doc->mod_type != FX_DEFAULT);
 
       DEBUG_ASSERT(entry_doc->mod_type != FX_PARAM
-		   || entry_doc->val_type != FX_CUSTOM);
+                   || entry_doc->val_type != FX_CUSTOM);
 
       entry->mod_type = entry_doc->mod_type;
       entry->val_type = entry_doc->val_type;
       entry->meta = entry_doc->meta;
 
       while ((entry = entry->parent) && entry->mod_type == FX_UNKNOWN) {
-	entry->mod_type = FX_MODULE;
+        entry->mod_type = FX_MODULE;
       }
     }
   }
@@ -1753,18 +1753,18 @@ static void fx__parse_cmd_line(fx_module *root, int argc, char *argv[])
       fx_module *entry;
 
       if (val) {
-	*val++ = '\0';
-	unhex_in_place(val);
+        *val++ = '\0';
+        unhex_in_place(val);
       } else {
-	val = "";
+        val = "";
       }
       unhex_in_place(arg);
 
       entry = datanode_lookup_expert(root, arg, 1);
       if (entry->val) {
-	FX__NONFATAL("Repeated \"--", entry, "=%s\" overwriting \"%s\".",
-	    val, entry->val);
-	free(entry->val);
+        FX__NONFATAL("Repeated \"--", entry, "=%s\" overwriting \"%s\".",
+            val, entry->val);
+        free(entry->val);
       }
       entry->val = strdup(val);
 
@@ -1904,7 +1904,7 @@ fx_module *fx_init(int argc, char *argv[], const fx_module_doc *doc)
     }
 
     MUST_NOT_FAIL_MSG(fx__check_inputs(root),
-	"There were problems with input parameters; try --help.");
+        "There were problems with input parameters; try --help.");
 
     fx__report_sys(fx_submodule(root, "info/sys"));
     fx__read_debug_params(fx_submodule(root, "debug"));
@@ -1928,7 +1928,7 @@ static void fx__timer_double(fx_module *mod, const char *key, double val)
   DEBUG_ONLY(fx__check_lookup(FX_TIMER, FX_DOUBLE, timer));
 
   free(timer->val);
-  timer->val = fx__alloc_int(val);
+  timer->val = fx__alloc_double(val);
 }
 
 #ifdef HAVE_RDTSC
@@ -1964,9 +1964,9 @@ static void fx__stop_timers(fx_module *mod, struct timestamp *now)
 #endif
     fx__timer_double(mod, "real", timer->total.micros / 1e6);
     fx__timer_double(mod, "user",
-	timer->total.cpu.tms_utime / sysconf(_SC_CLK_TCK));
+        (double) timer->total.cpu.tms_utime / sysconf(_SC_CLK_TCK));
     fx__timer_double(mod, "sys",
-	timer->total.cpu.tms_stime / sysconf(_SC_CLK_TCK));
+        (double) timer->total.cpu.tms_stime / sysconf(_SC_CLK_TCK));
   }
 }
 
