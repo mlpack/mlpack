@@ -1960,7 +1960,7 @@ static void fx__stop_timers(fx_module *mod, struct timestamp *now)
     fx__fill_docs(mod, &fx__timer_doc);
 
 #ifdef HAVE_RDTSC
-    fx__timer_int(mod, "cylces", timer->total.cycles);
+    fx__timer_int(mod, "cycles", timer->total.cycles);
 #endif
     fx__timer_double(mod, "real", timer->total.micros / 1e6);
     fx__timer_double(mod, "user",
