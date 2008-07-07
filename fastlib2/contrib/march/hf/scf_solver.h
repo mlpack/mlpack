@@ -132,11 +132,9 @@ class SCFSolver {
     module_ = mod;
     number_of_electrons_ = num_electrons;
     
-    struct datanode* integral_mod = fx_submodule(module_, "integrals", 
-                                                "integrals");
+    struct datanode* integral_mod = fx_submodule(module_, "integrals");
                                                 
-    struct datanode* naive_mod = fx_submodule(module_, "naive_integrals", 
-                                              "naive_integrals");
+    struct datanode* naive_mod = fx_submodule(module_, "naive_integrals");
     
     bandwidth_ = fx_param_double(module_, "bandwidth", 0.1);
     

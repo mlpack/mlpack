@@ -10,11 +10,11 @@
 
 int main(int argc, char *argv[]) {
  
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
   
   const double angstroms_to_bohr = 1.889725989;
   
-  struct datanode* mod = fx_submodule(NULL, "hf", "hf");
+  struct datanode* mod = fx_submodule(NULL, "hf");
   
   int num_electrons = fx_param_int_req(NULL, "num_electrons");
   
@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
   
   solver.ComputeWavefunction();
   
-  fx_done();
+  fx_done(NULL);
   
   return 0;
   
