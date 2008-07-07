@@ -197,9 +197,11 @@ class NaiveFockMatrix {
                             number_of_basis_functions_);
       
       exchange_matrix_.SetZero();
-    
+
+      /*
       double largest_integral = 0.0;
       double smallest_integral = DBL_MAX;
+       */
     
       for (int i = 0; i < number_of_basis_functions_; i++) {
       
@@ -212,15 +214,15 @@ class NaiveFockMatrix {
             for (int l = 0; l < number_of_basis_functions_; l++) {
             
               double one_integral = SingleIntegral_(i, j, k, l);
-             // printf("(%d, %d | %d, %d): %g\n", i, j, k, l, one_integral);
-            
+
+              /*
               if (one_integral > largest_integral) {
                 largest_integral = one_integral;
               }
               if (one_integral < smallest_integral) {
                 smallest_integral = one_integral;
               }
-              
+              */
               current_integral = current_integral + 
                                  (densities_.ref(k, l) * one_integral);
                                  
@@ -242,11 +244,11 @@ class NaiveFockMatrix {
       } // i
       
       la::Scale(0.5, &exchange_matrix_);
-      
+      /*
       data::Save(coulomb_file, coulomb_matrix_);
                                                
       data::Save(exchange_file, exchange_matrix_);
-      
+      */
     }
     else {
     
@@ -263,7 +265,7 @@ class NaiveFockMatrix {
    */
   void PrintFockMatrix(Matrix* fock_out, Matrix* coulomb_out, 
                        Matrix* exchange_out) {
-  
+  /*
     double average_value = 0.0;
     for (index_t i = 0; i < number_of_basis_functions_; i++) {
      
@@ -278,7 +280,7 @@ class NaiveFockMatrix {
         average_value/(number_of_basis_functions_ * number_of_basis_functions_);
     
     fx_format_result(module_, "average_matrix_value", "%g", average_value);
-  
+  */
     /*printf("Coulomb (naive):\n");
     coulomb_matrix_.PrintDebug();
     
