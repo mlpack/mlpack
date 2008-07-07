@@ -29,11 +29,22 @@ int main(int argc, char *argv[]) {
   Matrix nuclear;
   data::Load(nuclear_file, &nuclear);
   
-  const char* nuclear_mass_file = fx_param_str(NULL, "nuclear_masses", 
-                                               "test_nuclear_masses.csv");
+  const char* nuclear_mass_file = fx_param_str(NULL, "nuclear_masses", "");
                                                
   Matrix nuclear_masses;
-  data::Load(nuclear_mass_file, &nuclear_masses);
+  
+  if (SUCCESS_PASS == data::Load(nuclear_mass_file, &nuclear_masses)) {
+  
+    
+  
+  }
+  else {
+    
+    nuclear_masses.Destruct();
+    nuclear_masses.Init(nuclear.n_cols(), 1);
+    nuclear_masses.SetAll(1);
+    
+  }
   
   // Need to double check if this is right
   if (nuclear.n_cols() != nuclear_masses.n_rows()) {

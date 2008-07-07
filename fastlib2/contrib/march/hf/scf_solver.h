@@ -457,27 +457,13 @@ class SCFSolver {
         
         density_matrices_[diis_index_].set(density_row, density_column, 
                                            this_sum);
-                                           
+                   
+        // find the difference between this matrix and last iterations soln.
         double this_error = this_sum - 
                             density_matrix_.ref(density_row, density_column);
                                            
         density_matrix_errors_[diis_index_].set(density_row, density_column, 
                                                 this_error);
-        /*                                  
-        for (index_t other_matrix = 0; other_matrix < diis_count_; 
-             other_matrix++) {
-          
-          double this_val = density_matrix_norms_.ref(diis_index_, 
-                                                      other_matrix);
-                                                      
-          this_val = this_sum * this_val;
-          
-          density_matrix_norms_.set(diis_index_, other_matrix, this_val);
-          
-          density_matrix_norms_.set(other_matrix, diis_index_, this_val);
-                                    
-        } // other_matrix
-        */
         
       } // density_column
       
@@ -542,10 +528,6 @@ class SCFSolver {
       
       diis_coeffs.PrintDebug();
 
-      //density_matrix_frobenius_norm_ = diis_coeffs[diis_count_];
-      
-
-    
     }
     else {
     
@@ -577,9 +559,7 @@ class SCFSolver {
   void DiagonalizeFockMatrix_() {
     
     energy_vector_.Destruct();
-    
     Matrix coefficients_prime;
-    
     Matrix right_vectors_trans;
     
     //la::EigenvectorsInit(fock_matrix_, &energy_vector_, &coefficients_prime);
@@ -672,6 +652,9 @@ class SCFSolver {
    *
    * Now that I'm using SVD, the eigenvalues are in order up to signs.  So, I 
    * should be able to use that info to make this code more efficient.
+   *
+   * Maybe make two passes: 1 for negative e-vals, one for positive.  They're
+   * both sorted.  
    */
   void FillOrbitals_() {
     
@@ -746,7 +729,7 @@ class SCFSolver {
       
       total_energy += density_matrix_.ref(i,i) * 
           (core_matrix_.ref(i,i) + fock_matrix_.ref(i,i));
-          
+      /*    
       if (fock_matrix_.ref(i, i) > fock_max_) {
         fock_max_ = fock_matrix_.ref(i,i);
       }
@@ -759,7 +742,7 @@ class SCFSolver {
       if (density_matrix_.ref(i,i) < density_min_) {
         density_min_ = density_matrix_.ref(i,i);
       } 
-      
+      */
       
       for (index_t j = i+1; j < number_of_basis_functions_; j++) {
       
@@ -774,6 +757,7 @@ class SCFSolver {
             
         total_energy = total_energy + this_energy;
 
+        /*
         if (fock_matrix_.ref(i, j) > fock_max_) {
           fock_max_ = fock_matrix_.ref(i,j);
         }
@@ -786,6 +770,7 @@ class SCFSolver {
         if (density_matrix_.ref(i,j) < density_min_) {
           density_min_ = density_matrix_.ref(i,j);
         } 
+        */
         
       } // j
     
@@ -795,11 +780,13 @@ class SCFSolver {
     total_energy = (0.5 * total_energy) + nuclear_repulsion_energy_;
     
     // No factor of two because there's no overcounting of electrons
-    one_electron_energy_ = one_electron_energy_;
+    //one_electron_energy_ = one_electron_energy_;
     two_electron_energy_ = 0.5 * two_electron_energy_;
     
+    /*
     printf("one_electron_energy: %g\n", one_electron_energy_);
     printf("two_electron_energy: %g\n", two_electron_energy_);
+    */
     
     return total_energy;
     
@@ -819,28 +806,23 @@ class SCFSolver {
                               total_energy_[(current_iteration_ - 1)]);
     
    
+    printf("\n");
     printf("current_iteration: %d\n", current_iteration_);
     
     printf("density_matrix_frobenius_norm_: %g\n", 
            density_matrix_frobenius_norm_);
            
-    
     printf("total_energy_[%d]: %g\n", current_iteration_, 
            total_energy_[current_iteration_]);
     printf("energy_diff: %g\n", energy_diff);
-    
-    
     
     if (likely(density_matrix_frobenius_norm_ > density_convergence_)) {
       return false;
     }
     
-    //printf("energy_convergence: %g\n", energy_convergence_);
     if (likely(energy_diff > energy_convergence_)) {
       return false;
     }
-    
-    //density_matrix_frobenius_norm_ = 0.0;
     
     return true;
     
@@ -917,6 +899,8 @@ class SCFSolver {
       // Step 4b.
       if (unlikely(current_iteration_ >= total_energy_.size())) {
         total_energy_.EnsureSizeAtLeast(2*total_energy_.size());
+        iteration_density_norms_.EnsureSizeAtLeast(
+            2*iteration_density_norms_.size());
       }
       
       total_energy_[current_iteration_] = ComputeElectronicEnergy_();
@@ -973,8 +957,6 @@ class SCFSolver {
     
     ComputeDensityMatrixDIIS_();
     
-    //data::Save("27_H_initial_density.csv", density_matrix_);
-    
     //double this_energy = ComputeElectronicEnergy_();
     
   } //Setup_
@@ -1007,12 +989,14 @@ class SCFSolver {
     
     fx_format_result(module_, "density_matrix_norm", "%g", 
                      density_matrix_frobenius_norm_);
-                     
+    
+    /*
     fx_format_result(module_, "fock_max", "%g", fock_max_);
     fx_format_result(module_, "fock_min", "%g", fock_min_);
     fx_format_result(module_, "density_max", "%g", density_max_);
     fx_format_result(module_, "density_min", "%g", density_min_);
-                     
+    */
+    
     fx_format_result(module_, "nuclear_repulsion", "%g", 
                      nuclear_repulsion_energy_);
                      
