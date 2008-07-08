@@ -387,8 +387,9 @@ class DualTreeIntegrals {
     
     // For hybrid error 
     // assuming epsilon coulomb is the relative error tolerance
-    if ((fabs(mu_nu->stat().entry_upper_bound()) <= hybrid_cutoff_) && 
-        (fabs(mu_nu->stat().entry_lower_bound()) <= hybrid_cutoff_)) {
+    // took out the <=, just in case
+    if ((fabs(mu_nu->stat().entry_upper_bound()) < hybrid_cutoff_) && 
+        (fabs(mu_nu->stat().entry_lower_bound()) < hybrid_cutoff_)) {
       
       // set my allowed_error to be the absolute bound
       my_allowed_error = my_allowed_error * epsilon_coulomb_absolute_ / 
@@ -588,8 +589,9 @@ class DualTreeIntegrals {
     
     // For hybrid error 
     // assuming epsilon coulomb is the relative error tolerance
-    if ((fabs(mu_nu->stat().entry_upper_bound()) <= hybrid_cutoff_) && 
-        (fabs(mu_nu->stat().entry_lower_bound()) <= hybrid_cutoff_)) {
+    // took out <= here too
+    if ((fabs(mu_nu->stat().entry_upper_bound()) < hybrid_cutoff_) && 
+        (fabs(mu_nu->stat().entry_lower_bound()) < hybrid_cutoff_)) {
       
       DEBUG_ASSERT(mu_nu->stat().entry_upper_bound() >= 
                    mu_nu->stat().entry_lower_bound());
