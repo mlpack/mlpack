@@ -7,15 +7,21 @@ let compile = Tyl.Mp.Compiler.compile
 let x = name "x"
 let w = name "w"
 
-let example0 = 
-  minimize (x + w + litR 2.0 * x)
-    where [(x,real);(w,real)]
-    subject_to (x <= w)
+(* disjunction examples *)
 
-let example1 = 
+let example0 = 
   minimize (x + w) 
     where [(x,continuous 10.0 100.0);(w,continuous 2.0 50.0)]
     subject_to ((x <= w) |/ (x >= w + litR 4.0))
+
+let xA = name "xA"
+let xB = name "xB"
+
+let example1 = 
+  minimize (xA + xB) 
+    where [(xA,continuous 0.0 10.0) ; (xB,continuous 0.0 10.0)]
+    subject_to (disj [ conj [xA >= litR 1.0; xB >= litR 1.0; xA + xB <= litR 5.0] 
+                     ; conj [litR 5.0 <= xA; xA <= litR 8.0; litR 4.0 <= xB; xB <= litR 7.0]  ])
 
 (* the diet problem *) 
 
@@ -58,8 +64,8 @@ let conj_example =
 
 let print' p = printf "++++++++++++++++\n\n%s\n\n================\n\n%s\n\n" (showp p) (showp (compile p))
 
+;; print' example0 
 ;; print' example1 
-(* ;; print' example0 *)
 (* ;; print' diet *)
 (* ;; print' dlf_example *)
 (* ;; print' conj_example *)
