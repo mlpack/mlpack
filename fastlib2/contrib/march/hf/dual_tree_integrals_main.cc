@@ -29,7 +29,9 @@ int main(int argc, char* argv[]) {
   
   integrals.SetDensity(density);
   
+  fx_timer_start(NULL, "nbody_time");
   integrals.ComputeFockMatrix();
+  fx_timer_stop(NULL, "nbody_time");
   
   integrals.OutputFockMatrix(NULL, NULL, NULL, NULL);
 
