@@ -426,7 +426,6 @@ class DualTreeIntegrals {
       
     }
     
-    
     return can_prune;
     
   } // CanApproximateCoulomb_
