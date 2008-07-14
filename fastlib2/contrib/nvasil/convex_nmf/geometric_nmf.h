@@ -46,12 +46,12 @@ class GeometricNmf {
  private:
   fx_module *module_;
   double sigma_;
-  AllkNN allknn_;
+  //AllkNN allknn_;
   index_t leaf_size_;
-  ArrayList<double> nearest_dot_products_;
-  ArrayList<double> nearest_distances_;
-  ArrayList<std::pair<index_t, index_t> >  nearest_neighbor_pairs_;
-  index_t num_of_nearest_pairs_;
+ // ArrayList<double> nearest_dot_products_;
+ // ArrayList<double> nearest_distances_;
+ //  ArrayList<std::pair<index_t, index_t> >  nearest_neighbor_pairs_;
+ // index_t num_of_nearest_pairs_;
   index_t knns_;
 	index_t num_of_columns_;
 	index_t num_of_rows_;
@@ -64,8 +64,7 @@ class GeometricNmf {
 	ArrayList<index_t> rows_;
 	ArrayList<index_t> columns_;
   ArrayList<double>  values_;
-  Matrix objective_factor_;
-  index_t number_of_constriants_;
+  index_t number_of_constraints_;
   double desired_duality_gap_;
   double gradient_tolerance_;
   double v_accuracy_;
