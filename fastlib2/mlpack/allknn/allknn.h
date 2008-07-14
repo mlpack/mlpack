@@ -196,34 +196,33 @@ class AllkNN {
       for (index_t reference_index = reference_node->begin(); 
            reference_index < reference_node->end(); reference_index++) {
 
-	// Confirm that points do not identify themselves as neighbors
-	// in the monochromatic case
+	      // Confirm that points do not identify themselves as neighbors
+	      // in the monochromatic case
         if (likely(reference_node != query_node ||
-		   reference_index != query_index)) {
-	  Vector reference_point;
-	  references_.MakeColumnVector(reference_index, &reference_point);
-	  
-	  // We'll use lapack to find the distance between the two vectors
-	  double distance =
-	      la::DistanceSqEuclidean(query_point, reference_point);
-	  // If the reference point is closer than the current candidate, 
-	  // we'll update the candidate
-	  if (distance < neighbor_distances_[ind+knns_-1]) {
-	    neighbors.push_back(std::make_pair(distance, reference_index));
-	  }
-	}
+		       reference_index != query_index)) {
+	        Vector reference_point;
+	        references_.MakeColumnVector(reference_index, &reference_point);
+	        // We'll use lapack to find the distance between the two vectors
+	        double distance =
+	        la::DistanceSqEuclidean(query_point, reference_point);
+	        // If the reference point is closer than the current candidate, 
+	        // we'll update the candidate
+	        if (distance < neighbor_distances_[ind+knns_-1]) {
+	          neighbors.push_back(std::make_pair(distance, reference_index));
+	        }
+	      }
       } // for reference_index
      // if ((index_t)neighbors.size()>knns_) {
-        std::sort(neighbors.begin(), neighbors.end());
-        for(index_t i=0; i<knns_; i++) {
-          neighbor_distances_[ind+i] = neighbors[i].first;
-          neighbor_indices_[ind+i]  = neighbors[i].second;
-        }
-        neighbors.resize(knns_);
-        // We need to find the upper bound distance for this query node
-        if (neighbor_distances_[ind+knns_-1] > query_max_neighbor_distance) {
-          query_max_neighbor_distance = neighbor_distances_[ind+knns_-1]; 
-        }
+      std::sort(neighbors.begin(), neighbors.end());
+      for(index_t i=0; i<knns_; i++) {
+        neighbor_distances_[ind+i] = neighbors[i].first;
+        neighbor_indices_[ind+i]  = neighbors[i].second;
+      }
+      neighbors.resize(knns_);
+      // We need to find the upper bound distance for this query node
+      if (neighbor_distances_[ind+knns_-1] > query_max_neighbor_distance) {
+        query_max_neighbor_distance = neighbor_distances_[ind+knns_-1]; 
+      }
     //  }
       
     } // for query_index 

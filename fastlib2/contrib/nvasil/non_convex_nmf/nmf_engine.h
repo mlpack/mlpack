@@ -31,6 +31,8 @@ class NmfEngine {
 		 fx_set_param_int(l_bfgs_module, "new_dimension", init_data.n_rows());
      engine_.Init(&opt_function_, l_bfgs_module);
 	 	 engine_.set_coordinates(init_data);
+     w_mat_.Init(new_dim_, num_of_rows_);
+		 h_mat_.Init(new_dim_, num_of_columns_);
 	 }
 	 void Destruct() {
 	   
@@ -42,14 +44,13 @@ class NmfEngine {
 	   engine_.ComputeLocalOptimumBFGS();
      Matrix result;
      engine_.GetResults(&result);
-     w_mat_.Init(num_of_rows_, new_dim_);
-		 h_mat_.Init(new_dim_, num_of_columns_);
+     //OptUtils::NonNegativeProjection(&result);
      w_mat_.CopyColumnFromMat(0, 0, num_of_rows_, result);
      h_mat_.CopyColumnFromMat(0, num_of_rows_, num_of_columns_, result);
 
      // now compute reconstruction error
      Matrix v_rec;
-     la::MulInit(w_mat_, h_mat_, &v_rec);
+     la::MulTransAInit(w_mat_, h_mat_, &v_rec);
      double error=0;
      double v_sum=0;
      for(index_t i=0; i<values_.size(); i++) {

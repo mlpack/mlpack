@@ -108,7 +108,7 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
     success_t success=ComputeBFGS_(&step_, gradient_, i);
     if (success==SUCCESS_FAIL) {
       NOTIFY("LBFGS failed to find a direction, continuing with gradient descent\n");
-      //ComputeWolfeStep_(&step_, gradient_);
+      ComputeWolfeStep_(&step_, gradient_);
     }
     optimized_function_->ComputeGradient(coordinates_, &gradient_);
     UpdateBFGS_();
@@ -146,11 +146,11 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
           gradient_.ptr(), gradient_.ptr());
       num_of_iterations_++;
       if (success_bfgs==SUCCESS_FAIL){
-         NOTIFY("LBFGS failed to find a direction, continuing with gradient descent\n");
+        // NOTIFY("LBFGS failed to find a direction, continuing with gradient descent\n");
         // if  (ComputeWolfeStep_(&step_, gradient_)==SUCCESS_FAIL) {
         //   NONFATAL("Gradient descent failed too");
         // }
-        break;
+        //break;
       }
       if (silent_==false) {
         ReportProgressFile_();
@@ -182,7 +182,11 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
        // break;
       }
     }
-    NOTIFY("Inner loop done, increasing sigma...");
+    
+    if (silent_==false) {
+      NOTIFY("Inner loop done, increasing sigma...");
+    }
+
     if (use_default_termination_==true) {
       if (fabs(old_feasibility_error - feasibility_error)
           /(old_feasibility_error+1e-20) < feasibility_tolerance_ ||
@@ -317,7 +321,7 @@ success_t LBfgs<OptimizedFunction>::ComputeWolfeStep_(double *step, Matrix &dire
     beta *=wolfe_beta_;
     wolfe_factor *=wolfe_beta_;
   }
-  //optimized_function_->Project(&temp_coordinates); 
+ // optimized_function_->Project(&temp_coordinates); 
 
   if (beta<=min_beta_/(1.0+sigma_)) {
     *step=0;

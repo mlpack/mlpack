@@ -287,11 +287,16 @@ class MemoryManager {
   void Init() {
 		// do not use a file just use virtual memory
     if (pool_name_.empty()) {
-       pool_ = (char*)mmap(NULL, capacity_, PROT_READ | PROT_WRITE, 
+#ifdef MAP_ANONYMOUS       
+      pool_ = (char*)mmap(NULL, capacity_, PROT_READ | PROT_WRITE, 
                    MAP_ANONYMOUS | MAP_SHARED, -1, 0);
       if (pool_==MAP_FAILED) {
         FATAL("Memory mapping error, %s\n", strerror(errno));
-      }
+      }    
+#else
+     FATAL("MAP_ANONYMOUS is not defined for the particular platoform, currently not"
+           "supporting virtual memory allocation for this platform")      
+#endif 
     } else {
       struct stat info;
       int fd;

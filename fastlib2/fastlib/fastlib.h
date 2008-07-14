@@ -26,6 +26,8 @@
 #include "tree/bounds.h"
 #include "tree/statistic.h"
 #include "tree/kdtree.h"
+#include "tree/bounds_mmap.h"
+#include "tree/kdtree_mmap.h"
 
 #endif
 
