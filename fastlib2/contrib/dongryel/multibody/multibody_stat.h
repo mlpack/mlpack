@@ -15,6 +15,10 @@ class MultibodyStat {
    */
   Vector coordinate_sum_;
 
+  /** @brief The L1 norm of the total coordinate sum.
+   */
+  double l1_norm_coordinate_sum_;
+
   /** @brief The maximum negative gradient (first component).
    */
   double negative_gradient1_u;
@@ -115,9 +119,13 @@ class MultibodyStat {
     Init();
 
     coordinate_sum_.SetZero();
+    l1_norm_coordinate_sum_ = 0;
     for(index_t i = start; i < start + count; i++) {
       la::AddTo(dataset.n_rows(), dataset.GetColumnPtr(i), 
 		coordinate_sum_.ptr());
+    }
+    for(index_t d = 0; d < dataset.n_rows(); d++) {
+      l1_norm_coordinate_sum_ += coordinate_sum_[d];
     }
     SetZero();
   }
@@ -131,6 +139,8 @@ class MultibodyStat {
 
     la::AddOverwrite(left_stat.coordinate_sum_, right_stat.coordinate_sum_,
 		     &coordinate_sum_);
+    l1_norm_coordinate_sum_ = left_stat.l1_norm_coordinate_sum_ +
+      right_stat.l1_norm_coordinate_sum_;
     SetZero();
   }
 

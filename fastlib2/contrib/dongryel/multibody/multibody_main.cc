@@ -7,6 +7,8 @@
 #include "multibody_kernel.h"
 #include "naive_multibody.h"
 
+typedef BinarySpaceTree<DHrectBound<2>, Matrix, MultibodyStat > Tree;
+
 int main(int argc, char *argv[])
 {
   bool do_naive;
@@ -27,7 +29,7 @@ int main(int argc, char *argv[])
 
   if(!strcmp(kernel, "axilrodteller")) {
     fx_timer_start(NULL, "multibody");
-    MultitreeMultibody<AxilrodTellerForceKernel> mtmb;
+    MultitreeMultibody<AxilrodTellerForceKernel<Tree, DHrectBound<2> >, Tree > mtmb;
     mtmb.Init(bandwidth);
     mtmb.Compute(tau);
     fx_timer_stop(NULL, "multibody");
