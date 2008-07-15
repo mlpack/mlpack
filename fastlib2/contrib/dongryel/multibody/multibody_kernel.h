@@ -412,8 +412,6 @@ class AxilrodTellerForceKernel {
     // First, compute the pairwise distance among the three nodes.
     EvalMinMaxSquaredDistances(tree_nodes);
 
-    distmat_.PrintDebug();
-
     // Then, evaluate the gradients.
     EvalGradients(distmat_, min_negative_gradient1, &max_negative_gradient1, 
 		  min_positive_gradient1, &max_positive_gradient1, 
@@ -629,50 +627,50 @@ class AxilrodTellerForceKernel {
 
       // Then the k-th node.
       tree_nodes[2]->stat().postponed_negative_gradient1_e += 
-	num_ik_pairs * 0.5 * (min_negative_gradient1 + max_negative_gradient1 +
+	num_ij_pairs * 0.5 * (min_negative_gradient2 + max_negative_gradient2 +
 			      min_negative_gradient3 + max_negative_gradient3);
       tree_nodes[2]->stat().postponed_negative_gradient1_u += 
-	num_ik_pairs * (max_negative_gradient1 + max_negative_gradient3);
+	num_ij_pairs * (max_negative_gradient2 + max_negative_gradient3);
       tree_nodes[2]->stat().postponed_positive_gradient1_l += 
-	num_ik_pairs * (min_positive_gradient1 + min_positive_gradient3);
+	num_ij_pairs * (min_positive_gradient2 + min_positive_gradient3);
       tree_nodes[2]->stat().postponed_positive_gradient1_e += 
-	num_ik_pairs * 0.5 * (min_positive_gradient1 + max_positive_gradient1 +
+	num_ij_pairs * 0.5 * (min_positive_gradient2 + max_positive_gradient2 +
 			      min_positive_gradient3 + max_positive_gradient3);
       la::AddExpert
-	(tree_nodes[2]->count() *
-	 0.5 * (min_negative_gradient1 + max_negative_gradient1),
+	(tree_nodes[1]->count() *
+	 0.5 * (min_negative_gradient2 + max_negative_gradient2),
 	 tree_nodes[0]->stat().coordinate_sum_,
 	 &(tree_nodes[2]->stat().postponed_negative_gradient2_e));
       la::AddExpert
 	(tree_nodes[0]->count() *
 	 0.5 * (min_negative_gradient3 + max_negative_gradient3),
-	 tree_nodes[2]->stat().coordinate_sum_,
+	 tree_nodes[1]->stat().coordinate_sum_,
 	 &(tree_nodes[2]->stat().postponed_negative_gradient2_e));
       la::AddExpert
-	(tree_nodes[2]->count() *
-	 max_negative_gradient1, tree_nodes[0]->stat().coordinate_sum_,
+	(tree_nodes[1]->count() *
+	 max_negative_gradient2, tree_nodes[0]->stat().coordinate_sum_,
 	 &(tree_nodes[2]->stat().postponed_negative_gradient2_u));
       la::AddExpert
 	(tree_nodes[0]->count() *
-	 max_negative_gradient3, tree_nodes[2]->stat().coordinate_sum_,
+	 max_negative_gradient3, tree_nodes[1]->stat().coordinate_sum_,
 	 &(tree_nodes[2]->stat().postponed_negative_gradient2_u));
       la::AddExpert
-	(tree_nodes[2]->count() *
-	 min_positive_gradient1, tree_nodes[0]->stat().coordinate_sum_,
+	(tree_nodes[1]->count() *
+	 min_positive_gradient2, tree_nodes[0]->stat().coordinate_sum_,
 	 &(tree_nodes[2]->stat().postponed_positive_gradient2_l));
       la::AddExpert
 	(tree_nodes[0]->count() *
-	 min_positive_gradient3, tree_nodes[2]->stat().coordinate_sum_,
+	 min_positive_gradient3, tree_nodes[1]->stat().coordinate_sum_,
 	 &(tree_nodes[2]->stat().postponed_positive_gradient2_l));
       la::AddExpert
-	(tree_nodes[2]->count() *
-	 0.5 * (min_positive_gradient1 + max_positive_gradient1),
+	(tree_nodes[1]->count() *
+	 0.5 * (min_positive_gradient2 + max_positive_gradient2),
 	 tree_nodes[0]->stat().coordinate_sum_,
 	 &(tree_nodes[2]->stat().postponed_positive_gradient2_e));
       la::AddExpert
 	(tree_nodes[0]->count() *
 	 0.5 * (min_positive_gradient3 + max_positive_gradient3),
-	 tree_nodes[2]->stat().coordinate_sum_,
+	 tree_nodes[1]->stat().coordinate_sum_,
 	 &(tree_nodes[2]->stat().postponed_positive_gradient2_e));
     }
 

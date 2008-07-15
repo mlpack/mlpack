@@ -4,6 +4,7 @@
 #include <values.h>
 
 #include "fastlib/fastlib.h"
+#include "mlpack/kde/dataset_scaler.h"
 #include "mlpack/series_expansion/farfield_expansion.h"
 #include "mlpack/series_expansion/local_expansion.h"
 #include "mlpack/series_expansion/series_expansion_aux.h"
@@ -80,11 +81,15 @@ class MultitreeMultibody {
     const char *fname = fx_param_str(NULL, "data", NULL);
     int leaflen = fx_param_int(NULL, "leaflen", 20);
      
-    // Read in the dataset and build a kd-tree.
+    // Read in the dataset and translate it to be in the positive
+    // quadrant. This is due to the limitation of the pruning
+    // rule. Then build a kd-tree.
     fx_timer_start(NULL, "tree_d");
     Dataset dataset_;
     dataset_.InitFromFile(fname);
     data_.Own(&(dataset_.matrix()));
+    DatasetScaler::TranslateDataByMin(data_, data_, true);
+    
     root_ = tree::MakeKdTreeMidpoint<TTree>(data_, leaflen, NULL);
 
     // Initialize the multibody kernel.
