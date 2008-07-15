@@ -18,7 +18,10 @@ class NaiveMultibody {
   /** multibody kernel function */
   TMultibodyKernel mkernel_;
 
-  /** potential estimate */
+  /** @brief Negative force vector component.
+   */
+  Matrix negative_force
+  
   double neg_potential_e_;
   double pos_potential_e_;
 

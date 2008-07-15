@@ -241,7 +241,6 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibodyBase
 template<typename TMultibodyKernel, typename TTree>
 void MultitreeMultibody<TMultibodyKernel, TTree>::PostProcess(TTree *node) {
 
-  // 
   // For a leaf node,
   if(node->is_leaf()) {
     for(index_t q = node->begin(); q < node->end(); q++) {
@@ -286,6 +285,41 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::PostProcess(TTree *node) {
     PostProcess(node->left());
     PostProcess(node->right());
   }
+}
+
+template<typename TMultibodyKernel, typename TTree>
+void MultitreeMultibody<TMultibodyKernel, TTree>::PostProcessNaive_
+(TTree *node) {
+
+  for(index_t q = node->begin(); q < node->end(); q++) {
+    
+    // Add postponed contribution to each point's force vector.
+    AddPostponed(node, q);
+    
+    // Now, reconstruct the force vector from the complete
+    // approximations.
+    double *query_total_force_e = total_force_e_.GetColumnPtr(q);
+    for(index_t d = 0; d < data_.n_rows(); d++) {
+      
+      // First, add in the negative contributions then the positive
+      // contributions.
+      if(data_.get(d, q) < 0) {
+	query_total_force_e[d] += (-data_.get(d, q) * negative_force1_e_[q] +
+				   negative_force2_e_.get(d, q));
+	query_total_force_e[d] += (-data_.get(d, q) * positive_force1_e_[q] +
+				   positive_force2_e_.get(d, q));
+      }
+      else {
+	query_total_force_e[d] += (-data_.get(d, q) * positive_force1_e_[q] +
+				   negative_force2_e_.get(d, q));
+	query_total_force_e[d] += (-data_.get(d, q) * negative_force1_e_[q] +
+				   positive_force2_e_.get(d, q));
+      }
+    } // end of iterating over each dimension...
+  } // end of iterating over each query point...
+  
+    // Clear postponed information.
+  node->stat().SetZero();
 }
 
 template<typename TMultibodyKernel, typename TTree>

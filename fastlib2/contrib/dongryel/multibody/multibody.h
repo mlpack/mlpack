@@ -39,6 +39,39 @@ class MultitreeMultibody {
 
   ////////// User-level Functions //////////
 
+  /** @brief The main naive computation procedure.
+   */
+  void NaiveCompute() {
+
+    ArrayList<TTree *> root_nodes;
+    root_nodes.Init(mkernel_.order());
+
+    // Set the root node pointers for starting the computation.
+    for(index_t i = 0; i < mkernel_.order(); i++) {
+      root_nodes[i] = root_;
+    }
+    
+    total_num_tuples_ = math::BinomialCoefficient(data_.n_cols(),
+						  mkernel_.order());
+    total_n_minus_one_num_tuples_ = 
+      math::BinomialCoefficient(data_.n_cols() - 1, mkernel_.order());
+
+    // Initialize intermediate computation spaces to zero.
+    negative_force1_e_.SetZero();
+    negative_force1_u_.SetZero();
+    positive_force1_l_.SetZero();
+    positive_force1_e_.SetZero();
+    negative_force2_e_.SetZero();
+    negative_force2_u_.SetZero();
+    positive_force2_l_.SetZero();
+    positive_force2_e_.SetZero();
+    total_force_e_.SetZero();
+
+    // Run and do timing for multitree multibody
+    MTMultibodyBase(root_nodes, 0);
+    PostProcessNaive_(root_);
+  }
+
   /** @brief The main computation procedure.
    */
   void Compute(double relative_error) {
@@ -116,9 +149,16 @@ class MultitreeMultibody {
 
   /** @brief Outputs the force vectors to the file.
    */
-  void PrintDebug() {
+  void PrintDebug(bool naive_print_out) {
     
-    FILE *stream = fopen("force_vectors.txt", "w+");
+    FILE *stream = NULL;
+
+    if(naive_print_out) {
+      stream = fopen("naive_force_vectors.txt", "w+");
+    }
+    else {
+      stream = fopen("force_vectors.txt", "w+");
+    }
     for(index_t q = 0; q < data_.n_cols(); q++) {
       for(index_t d = 0; d < data_.n_rows(); d++) {
 	fprintf(stream, "%g ", total_force_e_.get(d, q));
@@ -260,6 +300,11 @@ private:
    *         approximations.
    */
   void PostProcess(TTree *node);  
+
+  /** @brief The post-processing function to push down all unclaimed
+   *         approximations (for naive algorithm).
+   */
+  void PostProcessNaive_(TTree *node);
 
   /** @brief The main multitree recursion.
    */
