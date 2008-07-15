@@ -14,14 +14,12 @@
 
 
 
-template<typename TMultibodyKernel>
+template<typename TMultibodyKernel, typename TTree>
 class MultitreeMultibody {
 
   FORBID_ACCIDENTAL_COPIES(MultitreeMultibody);
 
  public:
-
-  typedef BinarySpaceTree<DHrectBound<2>, Matrix, MultibodyStat > Tree;
   
   typedef TMultibodyKernel MultibodyKernel;
 
@@ -44,7 +42,7 @@ class MultitreeMultibody {
    */
   void Compute(double relative_error) {
     
-    ArrayList<Tree *> root_nodes;
+    ArrayList<TTree *> root_nodes;
     root_nodes.Init(mkernel_.order());
 
     // Set the root node pointers for starting the computation.
@@ -54,6 +52,9 @@ class MultitreeMultibody {
     
     total_num_tuples_ = math::BinomialCoefficient(data_.n_cols(),
 						  mkernel_.order());
+    total_n_minus_one_num_tuples_ = 
+      math::BinomialCoefficient(data_.n_cols() - 1, mkernel_.order());
+
     relative_error_ = relative_error;
 
     // Initialize intermediate computation spaces to zero.
@@ -84,7 +85,7 @@ class MultitreeMultibody {
     Dataset dataset_;
     dataset_.InitFromFile(fname);
     data_.Own(&(dataset_.matrix()));
-    root_ = tree::MakeKdTreeMidpoint<Tree>(data_, leaflen, NULL);
+    root_ = tree::MakeKdTreeMidpoint<TTree>(data_, leaflen, NULL);
 
     // Initialize the multibody kernel.
     mkernel_.Init(bandwidth);
@@ -129,6 +130,10 @@ private:
    */
   double total_num_tuples_;
 
+  /** @brief The total number of (n - 1) tuples.
+   */
+  double total_n_minus_one_num_tuples_;
+
   /** @brief The multibody kernel function.
    */
   MultibodyKernel mkernel_;
@@ -152,7 +157,7 @@ private:
 
   /** @brief The pointer to the root of the tree.
    */
-  Tree *root_;
+  TTree *root_;
 
   /** @brief The dataset for the tree.
    */
@@ -214,46 +219,46 @@ private:
   /** @brief Adds the postponed information from a leaf node to the
    *         point's contribution.
    */
-  void AddPostponed(Tree *node, index_t destination);
+  void AddPostponed(TTree *node, index_t destination);
 
   /** @brief Adds the postponed information from a node to another.
    */
-  void AddPostponed(Tree *source_node, Tree *destination_node);
+  void AddPostponed(TTree *source_node, TTree *destination_node);
 
   /** @brief Tests whether node a is an ancestor node of node b.
    */
-  int as_indexes_strictly_surround_bs(Tree *a, Tree *b);
+  int as_indexes_strictly_surround_bs(TTree *a, TTree *b);
 
   /** @brief Compute the total number of n-tuples by recursively
    *         splitting up the i-th node
    */
-  double two_ttn(int b, ArrayList<Tree *> &nodes, int i);
+  double two_ttn(int b, ArrayList<TTree *> &nodes, int i);
 
   /** @brief Compute the total number of n-tuples.
    */
-  double ttn(int b, ArrayList<Tree *> &nodes);
+  double ttn(int b, ArrayList<TTree *> &nodes);
 
   /** @brief Heuristic for node splitting - find the node with most
    *         points.
    */
-  int FindSplitNode(ArrayList<Tree *> &nodes);
+  int FindSplitNode(ArrayList<TTree *> &nodes);
 
   /** Pruning rule */
-  bool Prunable(ArrayList<Tree *> &nodes, double num_tuples, 
+  bool Prunable(ArrayList<TTree *> &nodes, double num_tuples, 
 		double *allowed_err);
 
   /** @brief The base exhaustive computations.
    */
-  void MTMultibodyBase(const ArrayList<Tree *> &nodes, int level);
+  void MTMultibodyBase(const ArrayList<TTree *> &nodes, int level);
   
   /** @brief The post-processing function to push down all unclaimed
    *         approximations.
    */
-  void PostProcess(Tree *node);  
+  void PostProcess(TTree *node);  
 
   /** @brief The main multitree recursion.
    */
-  void MTMultibody(ArrayList<Tree *> &nodes, double num_tuples);
+  void MTMultibody(ArrayList<TTree *> &nodes, double num_tuples);
 
 };
 

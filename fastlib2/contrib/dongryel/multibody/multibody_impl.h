@@ -6,19 +6,19 @@
 #define MULTIBODY_IMPL_H
 
 
-template<typename TMultibodyKernel>
-int MultitreeMultibody<TMultibodyKernel>::as_indexes_strictly_surround_bs
-(Tree *a, Tree *b) {
+template<typename TMultibodyKernel, typename TTree>
+int MultitreeMultibody<TMultibodyKernel, TTree>::
+as_indexes_strictly_surround_bs(TTree *a, TTree *b) {
 
   return (a->begin() < b->begin() && a->end() >= b->end()) ||
     (a->begin() <= b->begin() && a->end() > b->end());
 }
 
-template<typename TMultibodyKernel>
-double MultitreeMultibody<TMultibodyKernel>::ttn(int b, 
-						 ArrayList<Tree *> &nodes) {
+template<typename TMultibodyKernel, typename TTree>
+double MultitreeMultibody<TMultibodyKernel, TTree>::ttn
+(int b, ArrayList<TTree *> &nodes) {
       
-  Tree *bkn = nodes[b];
+  TTree *bkn = nodes[b];
   double result;
   int n = nodes.size();
   
@@ -33,7 +33,7 @@ double MultitreeMultibody<TMultibodyKernel>::ttn(int b,
     result = (double) bkn->count();
     
     for(j = b + 1 ; j < n && !conflict; j++) {
-      Tree *knj = nodes[j];
+      TTree *knj = nodes[j];
       
       if (bkn->begin() >= knj->end() - 1) {
 	conflict = 1;
@@ -58,7 +58,7 @@ double MultitreeMultibody<TMultibodyKernel>::ttn(int b,
       // lowest j > b such that nodes[j] is different from
       // bkn	
       for(j = b + 1; jdiff < 0 && j < n; j++) {
-	Tree *knj = nodes[j];
+	TTree *knj = nodes[j];
 	if(bkn->begin() != knj->begin() ||
 	   bkn->end() - 1 != knj->end() - 1) {
 	  jdiff = j;
@@ -69,7 +69,7 @@ double MultitreeMultibody<TMultibodyKernel>::ttn(int b,
 	result = math::BinomialCoefficient(bkn->count(), n - b);
       }
       else {
-	Tree *dkn = nodes[jdiff];
+	TTree *dkn = nodes[jdiff];
 	
 	if(dkn->begin() >= bkn->end() - 1) {
 	  result = math::BinomialCoefficient(bkn->count(), jdiff - b);
@@ -89,12 +89,12 @@ double MultitreeMultibody<TMultibodyKernel>::ttn(int b,
   return result;
 }
 
-template<typename TMultibodyKernel>
-double MultitreeMultibody<TMultibodyKernel>::two_ttn
-(int b, ArrayList<Tree *> &nodes, int i) {
+template<typename TMultibodyKernel, typename TTree>
+double MultitreeMultibody<TMultibodyKernel, TTree>::two_ttn
+(int b, ArrayList<TTree *> &nodes, int i) {
 
   double result = 0.0;
-  Tree *kni = nodes[i];
+  TTree *kni = nodes[i];
   nodes[i] = kni->left();
   result += ttn(b, nodes);
   nodes[i] = kni->right();
@@ -103,9 +103,9 @@ double MultitreeMultibody<TMultibodyKernel>::two_ttn
   return result;
 }
 
-template<typename TMultibodyKernel>
-int MultitreeMultibody<TMultibodyKernel>::FindSplitNode
-(ArrayList<Tree *> &nodes) {
+template<typename TMultibodyKernel, typename TTree>
+int MultitreeMultibody<TMultibodyKernel, TTree>::FindSplitNode
+(ArrayList<TTree *> &nodes) {
   
   int global_index = -1;
   int global_max = 0;
@@ -120,9 +120,9 @@ int MultitreeMultibody<TMultibodyKernel>::FindSplitNode
   return global_index;
 }
 
-template<typename TMultibodyKernel>
-void MultitreeMultibody<TMultibodyKernel>::AddPostponed
-(Tree *source_node, Tree *destination_node) {
+template<typename TMultibodyKernel, typename TTree>
+void MultitreeMultibody<TMultibodyKernel, TTree>::AddPostponed
+(TTree *source_node, TTree *destination_node) {
 
   destination_node->stat().postponed_negative_gradient1_e +=
     source_node->stat().postponed_negative_gradient1_e;
@@ -147,9 +147,9 @@ void MultitreeMultibody<TMultibodyKernel>::AddPostponed
 	    destination_node->stat().postponed_positive_gradient2_e.ptr());
 }
 
-template<typename TMultibodyKernel>
-void MultitreeMultibody<TMultibodyKernel>::AddPostponed(Tree *node,
-							index_t destination) {
+template<typename TMultibodyKernel, typename TTree>
+void MultitreeMultibody<TMultibodyKernel, TTree>::AddPostponed
+(TTree *node, index_t destination) {
   
   negative_force1_e_[destination] += 
     node->stat().postponed_negative_gradient1_e;
@@ -169,12 +169,22 @@ void MultitreeMultibody<TMultibodyKernel>::AddPostponed(Tree *node,
 	    positive_force2_e_.GetColumnPtr(destination));
 }
 
-template<typename TMultibodyKernel>
-void MultitreeMultibody<TMultibodyKernel>::MTMultibodyBase
-(const ArrayList<Tree *> &nodes, int level) {
+template<typename TMultibodyKernel, typename TTree>
+void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibodyBase
+(const ArrayList<TTree *> &nodes, int level) {
   
   int start_index;
   int num_nodes = nodes.size();
+
+  // Before recursing on the 0-th level, clear node statistics.
+  if(level == 0) {
+    for(index_t i = 0; i < num_nodes; i++) {
+      nodes[i]->stat().negative_gradient1_u = 0;
+      nodes[i]->stat().positive_gradient1_l = 0;
+      nodes[i]->stat().negative_gradient2_u.SetZero();
+      nodes[i]->stat().positive_gradient2_l.SetZero();
+    }
+  }
 
   // Recurse to get a $n$ tuple.
   if(level < num_nodes) {
@@ -202,7 +212,9 @@ void MultitreeMultibody<TMultibodyKernel>::MTMultibodyBase
     // Incorporate postponed force contribution for the given triple
     // of atoms.
     for(index_t i = 0; i < nodes.size(); i++) {
-      AddPostponed(nodes[i], exhaustive_indices_[i]);
+      if(i == 0 || nodes[i] != nodes[i - 1]) {
+	AddPostponed(nodes[i], exhaustive_indices_[i]);
+      }
     }
 
     // Complete the contribution among three atoms.
@@ -213,16 +225,21 @@ void MultitreeMultibody<TMultibodyKernel>::MTMultibodyBase
 		  positive_force2_l_, positive_force2_e_);
   }
 
-  // Clear all postponed force contribution after incorporating.
+  // Clear all postponed force contribution after incorporating and
+  // refine node statistics.
   if(level == 0) {
     for(index_t i = 0; i < nodes.size(); i++) {
       nodes[i]->stat().SetZero();
+
+      for(index_t r = nodes[i]->begin(); r < nodes[i]->end(); r++) {
+	
+      }
     }
   }
 }
 
-template<typename TMultibodyKernel>
-void MultitreeMultibody<TMultibodyKernel>::PostProcess(Tree *node) {
+template<typename TMultibodyKernel, typename TTree>
+void MultitreeMultibody<TMultibodyKernel, TTree>::PostProcess(TTree *node) {
 
   // 
   // For a leaf node,
@@ -271,24 +288,22 @@ void MultitreeMultibody<TMultibodyKernel>::PostProcess(Tree *node) {
   }
 }
 
-template<typename TMultibodyKernel>
-bool MultitreeMultibody<TMultibodyKernel>::Prunable
-(ArrayList<Tree *> &nodes, double num_tuples, double *allowed_err) {
+template<typename TMultibodyKernel, typename TTree>
+bool MultitreeMultibody<TMultibodyKernel, TTree>::Prunable
+(ArrayList<TTree *> &nodes, double num_tuples, double *allowed_err) {
 
-  return mkernel_.Eval(nodes);
+  return mkernel_.Eval(nodes, relative_error_, total_n_minus_one_num_tuples_);
 }
 
-template<typename TMultibodyKernel>
-void MultitreeMultibody<TMultibodyKernel>::MTMultibody
-(ArrayList<Tree *> &nodes, double num_tuples) {
+template<typename TMultibodyKernel, typename TTree>
+void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
+(ArrayList<TTree *> &nodes, double num_tuples) {
     
   double allowed_err = 0;
   
-  /*
-    if(Prunable(nodes, num_tuples, &allowed_err)) {
+  if(Prunable(nodes, num_tuples, &allowed_err)) {
     return;
-    }
-  */
+  }
   
   // Figure out which ones are non-leaves.
   non_leaf_indices_.Resize(0);
@@ -310,7 +325,7 @@ void MultitreeMultibody<TMultibodyKernel>::MTMultibody
     double new_num_tuples;
     
     // Copy to new nodes list before recursing.
-    ArrayList<Tree *> new_nodes;
+    ArrayList<TTree *> new_nodes;
     new_nodes.Init(mkernel_.order());
     for(index_t i = 0; i < mkernel_.order(); i++) {
       new_nodes[i] = nodes[i];

@@ -4,7 +4,7 @@
 #include "fastlib/fastlib.h"
 #include "mlpack/series_expansion/kernel_aux.h"
 
-
+template<typename TTree, typename TBound>
 class AxilrodTellerForceKernel {
   
  private:
@@ -27,6 +27,45 @@ class AxilrodTellerForceKernel {
   ArrayList<index_t> index_orders_;
   
   ////////// Private Member Functions //////////
+
+  /** @brief Computes the L1 norm of a vector. This probably needs to
+   *         be part of the LaPack library.
+   */
+  double L1Norm_(const Vector &v) {
+    double length = 0;
+
+    for(index_t i = 0; i < v.length(); i++) {
+      length += fabs(v[i]);
+    }
+    return length;
+  }
+
+  /** @brief Computes error due to finite difference approximation.
+   */
+  void ComputeApproximationError_
+  (double min_negative_gradient1, double max_negative_gradient1,
+   double min_positive_gradient1, double max_positive_gradient1,
+   double min_negative_gradient2, double max_negative_gradient2,
+   double min_positive_gradient2, double max_positive_gradient2,
+   double min_negative_gradient3, double max_negative_gradient3,
+   double min_positive_gradient3, double max_positive_gradient3,
+   double &negative_gradient1_error, double &positive_gradient1_error,
+   double &negative_gradient2_error, double &positive_gradient2_error,
+   double &negative_gradient3_error, double &positive_gradient3_error) {
+    
+    negative_gradient1_error = 
+      (max_negative_gradient1 - min_negative_gradient1) * 0.5;
+    positive_gradient1_error =
+      (max_positive_gradient1 - min_positive_gradient1) * 0.5;
+    negative_gradient2_error = 
+      (max_negative_gradient2 - min_negative_gradient2) * 0.5;
+    positive_gradient2_error =
+      (max_positive_gradient2 - min_positive_gradient2) * 0.5;
+    negative_gradient3_error = 
+      (max_negative_gradient3 - min_negative_gradient3) * 0.5;
+    positive_gradient3_error =
+      (max_positive_gradient3 - min_positive_gradient3) * 0.5;    
+  }
 
   void force_(const Matrix &data, const ArrayList<index_t> &indices, 
 	      double &negative_gradient1, double &positive_gradient1, 
@@ -189,8 +228,7 @@ class AxilrodTellerForceKernel {
 
   /** @brief Computes the pairwise distance among FastLib tree nodes.
    */
-  template<typename TTree, typename TBound>
-  void EvalMinMaxSquaredDistances(const ArrayList<TTree *> &tree_nodes) {
+  void EvalMinMaxSquaredDistances(ArrayList<TTree *> &tree_nodes) {
 
     int num_nodes = tree_nodes.size();
 
@@ -198,7 +236,7 @@ class AxilrodTellerForceKernel {
       const TBound &node_i_bound = tree_nodes[i]->bound();
 
       for(index_t j = i + 1; j < num_nodes; j++) {
-        const TBound &node_j_bound = tree_nodes[j]->bound();
+	const TBound &node_j_bound = tree_nodes[j]->bound();
         double min_squared_distance = node_i_bound.MinDistanceSq(node_j_bound);
         double max_squared_distance = node_i_bound.MaxDistanceSq(node_j_bound);
 
@@ -344,8 +382,25 @@ class AxilrodTellerForceKernel {
 		      positive_force2_l, positive_force2_e);
   }
 
-  template<typename TTree>
-  bool Eval(ArrayList<TTree *> &tree_nodes) {
+  /** @brief
+   *
+   *  WARNING: This function assumes that each tree node contains a
+   *  bounding box in three dimensions.
+   */
+  bool Eval(ArrayList<TTree *> &tree_nodes, double relative_error,
+	    double total_n_minus_one_num_tuples) {
+
+    // Do not prune if any of the tree nodes are equal or any of the
+    // minimum distances is zero.
+    for(index_t i = 1; i < tree_nodes.size(); i++) {
+      if(tree_nodes[i] == tree_nodes[i - 1] ||
+	 distmat_.get(i - 1, i) == 0) {
+	return false;
+      }
+    }
+
+    // The result of pruning
+    bool prunable = false;
 
     // Temporary variables.
     double min_negative_gradient1, max_negative_gradient1, 
@@ -357,6 +412,8 @@ class AxilrodTellerForceKernel {
     // First, compute the pairwise distance among the three nodes.
     EvalMinMaxSquaredDistances(tree_nodes);
 
+    distmat_.PrintDebug();
+
     // Then, evaluate the gradients.
     EvalGradients(distmat_, min_negative_gradient1, &max_negative_gradient1, 
 		  min_positive_gradient1, &max_positive_gradient1, 
@@ -364,6 +421,262 @@ class AxilrodTellerForceKernel {
 		  min_positive_gradient2, &max_positive_gradient2, 
 		  min_negative_gradient3, &max_negative_gradient3, 
 		  min_positive_gradient3, &max_positive_gradient3);
+
+    // If any of the components is computed to be NaN's or Inf's, then
+    // do not attempt to approximate.
+    if(isnan(min_negative_gradient1) || isnan(max_negative_gradient1) ||
+       isnan(min_positive_gradient1) || isnan(max_positive_gradient1) ||
+       isnan(min_negative_gradient2) || isnan(max_negative_gradient2) ||
+       isnan(min_positive_gradient2) || isnan(max_positive_gradient2) ||
+       isnan(min_negative_gradient3) || isnan(max_negative_gradient3) ||
+       isnan(min_positive_gradient3) || isnan(max_positive_gradient3) ||
+       isinf(min_negative_gradient1) || isinf(max_negative_gradient1) ||
+       isinf(min_positive_gradient1) || isinf(max_positive_gradient1) ||
+       isinf(min_negative_gradient2) || isinf(max_negative_gradient2) ||
+       isinf(min_positive_gradient2) || isinf(max_positive_gradient2) ||
+       isinf(min_negative_gradient3) || isinf(max_negative_gradient3) ||
+       isinf(min_positive_gradient3) || isinf(max_positive_gradient3)) {
+      return false;
+    }
+
+    // Compute approximation error.
+    double negative_gradient1_error, positive_gradient1_error,
+      negative_gradient2_error, positive_gradient2_error,
+      negative_gradient3_error, positive_gradient3_error;
+    ComputeApproximationError_
+      (min_negative_gradient1, max_negative_gradient1,
+       min_positive_gradient1, max_positive_gradient1,
+       min_negative_gradient2, max_negative_gradient2,
+       min_positive_gradient2, max_positive_gradient2,
+       min_negative_gradient3, max_negative_gradient3,
+       min_positive_gradient3, max_positive_gradient3,
+       negative_gradient1_error, positive_gradient1_error,
+       negative_gradient2_error, positive_gradient2_error,
+       negative_gradient3_error, positive_gradient3_error);
+    
+    // Now determine whether all three nodes satisfy the pruning
+    // conditions.
+    double num_ik_pairs = tree_nodes[0]->count() * tree_nodes[2]->count();
+    double num_ij_pairs = tree_nodes[0]->count() * tree_nodes[1]->count();
+    double num_jk_pairs = tree_nodes[1]->count() * tree_nodes[2]->count();
+    bool first_node_prunable =
+      ((negative_gradient1_error + negative_gradient2_error) <=
+       (relative_error / (double) total_n_minus_one_num_tuples) *
+       fabs(tree_nodes[0]->stat().negative_gradient1_u)) 
+      &&
+      ((positive_gradient1_error + positive_gradient2_error) <=
+       (relative_error / (double) total_n_minus_one_num_tuples) *
+       tree_nodes[0]->stat().positive_gradient1_l) 
+      &&
+      (tree_nodes[2]->count() * tree_nodes[1]->stat().l1_norm_coordinate_sum_ *
+       negative_gradient1_error +
+       tree_nodes[1]->count() * tree_nodes[2]->stat().l1_norm_coordinate_sum_ *
+       negative_gradient2_error <=
+       relative_error * num_jk_pairs / total_n_minus_one_num_tuples *
+       L1Norm_(tree_nodes[0]->stat().negative_gradient2_u)) 
+      &&
+      (tree_nodes[2]->count() * tree_nodes[1]->stat().l1_norm_coordinate_sum_ *
+       positive_gradient1_error +
+       tree_nodes[1]->count() * tree_nodes[2]->stat().l1_norm_coordinate_sum_ *
+       positive_gradient2_error <=
+       relative_error * num_jk_pairs / total_n_minus_one_num_tuples *
+       L1Norm_(tree_nodes[0]->stat().positive_gradient2_l));
+    bool second_node_prunable =
+      ((negative_gradient1_error + negative_gradient3_error) <=
+       (relative_error / (double) total_n_minus_one_num_tuples) *
+       fabs(tree_nodes[1]->stat().negative_gradient1_u)) 
+      &&
+      ((positive_gradient1_error + positive_gradient3_error) <=
+       (relative_error / (double) total_n_minus_one_num_tuples) *
+       tree_nodes[1]->stat().positive_gradient1_l) 
+      &&
+      (tree_nodes[2]->count() * tree_nodes[0]->stat().l1_norm_coordinate_sum_ *
+       negative_gradient1_error +
+       tree_nodes[0]->count() * tree_nodes[2]->stat().l1_norm_coordinate_sum_ *
+       negative_gradient3_error <=
+       relative_error * num_ik_pairs / total_n_minus_one_num_tuples *
+       L1Norm_(tree_nodes[1]->stat().negative_gradient2_u)) 
+      &&
+      (tree_nodes[2]->count() * tree_nodes[0]->stat().l1_norm_coordinate_sum_ *
+       positive_gradient1_error +
+       tree_nodes[0]->count() * tree_nodes[2]->stat().l1_norm_coordinate_sum_ *
+       positive_gradient3_error <=
+       relative_error * num_ik_pairs / total_n_minus_one_num_tuples *
+       L1Norm_(tree_nodes[1]->stat().positive_gradient2_l));
+    bool third_node_prunable =
+      ((negative_gradient2_error + negative_gradient3_error) <=
+       (relative_error / (double) total_n_minus_one_num_tuples) *
+       fabs(tree_nodes[2]->stat().negative_gradient1_u)) 
+      &&
+      ((positive_gradient2_error + positive_gradient3_error) <=
+       (relative_error / (double) total_n_minus_one_num_tuples) *
+       tree_nodes[2]->stat().positive_gradient1_l) 
+      &&
+      (tree_nodes[1]->count() * tree_nodes[0]->stat().l1_norm_coordinate_sum_ *
+       negative_gradient2_error +
+       tree_nodes[0]->count() * tree_nodes[1]->stat().l1_norm_coordinate_sum_ *
+       negative_gradient3_error <=
+       relative_error * num_ij_pairs / total_n_minus_one_num_tuples *
+       L1Norm_(tree_nodes[2]->stat().negative_gradient2_u)) 
+      &&
+      (tree_nodes[1]->count() * tree_nodes[0]->stat().l1_norm_coordinate_sum_ *
+       positive_gradient2_error +
+       tree_nodes[0]->count() * tree_nodes[1]->stat().l1_norm_coordinate_sum_ *
+       positive_gradient3_error <=
+       relative_error * num_ij_pairs / total_n_minus_one_num_tuples *
+       L1Norm_(tree_nodes[2]->stat().positive_gradient2_l));
+    
+    // Prune only if all three nodes can be approximated.
+    prunable = first_node_prunable && second_node_prunable &&
+      third_node_prunable;
+    if(prunable) {
+      
+      // First the i-th node.
+      tree_nodes[0]->stat().postponed_negative_gradient1_e += 
+	num_jk_pairs * 0.5 * (min_negative_gradient1 + max_negative_gradient1 +
+			      min_negative_gradient2 + max_negative_gradient2);
+      tree_nodes[0]->stat().postponed_negative_gradient1_u += 
+	num_jk_pairs * (max_negative_gradient1 + max_negative_gradient2);
+      tree_nodes[0]->stat().postponed_positive_gradient1_l += 
+	num_jk_pairs * (min_positive_gradient1 + min_positive_gradient2);
+      tree_nodes[0]->stat().postponed_positive_gradient1_e += 
+	num_jk_pairs * 0.5 * (min_positive_gradient1 + max_positive_gradient1 +
+			      min_positive_gradient2 + max_positive_gradient2);
+      la::AddExpert
+	(tree_nodes[2]->count() *
+	 0.5 * (min_negative_gradient1 + max_negative_gradient1),
+	 tree_nodes[1]->stat().coordinate_sum_,
+	 &(tree_nodes[0]->stat().postponed_negative_gradient2_e));
+      la::AddExpert
+	(tree_nodes[1]->count() *
+	 0.5 * (min_negative_gradient2 + max_negative_gradient2),
+	 tree_nodes[2]->stat().coordinate_sum_,
+	 &(tree_nodes[0]->stat().postponed_negative_gradient2_e));
+      la::AddExpert
+	(tree_nodes[2]->count() *
+	 max_negative_gradient1, tree_nodes[1]->stat().coordinate_sum_,
+	 &(tree_nodes[0]->stat().postponed_negative_gradient2_u));
+      la::AddExpert
+	(tree_nodes[1]->count() *
+	 max_negative_gradient2, tree_nodes[2]->stat().coordinate_sum_,
+	 &(tree_nodes[0]->stat().postponed_negative_gradient2_u));
+      la::AddExpert
+	(tree_nodes[2]->count() *
+	 min_positive_gradient1, tree_nodes[1]->stat().coordinate_sum_,
+	 &(tree_nodes[0]->stat().postponed_positive_gradient2_l));
+      la::AddExpert
+	(tree_nodes[1]->count() *
+	 min_positive_gradient2, tree_nodes[2]->stat().coordinate_sum_,
+	 &(tree_nodes[0]->stat().postponed_positive_gradient2_l));
+      la::AddExpert
+	(tree_nodes[2]->count() *
+	 0.5 * (min_positive_gradient1 + max_positive_gradient1),
+	 tree_nodes[1]->stat().coordinate_sum_,
+	 &(tree_nodes[0]->stat().postponed_positive_gradient2_e));
+      la::AddExpert
+	(tree_nodes[1]->count() *
+	 0.5 * (min_positive_gradient2 + max_positive_gradient2),
+	 tree_nodes[2]->stat().coordinate_sum_,
+	 &(tree_nodes[0]->stat().postponed_positive_gradient2_e));
+
+      // Then the j-th node.
+      tree_nodes[1]->stat().postponed_negative_gradient1_e += 
+	num_ik_pairs * 0.5 * (min_negative_gradient1 + max_negative_gradient1 +
+			      min_negative_gradient3 + max_negative_gradient3);
+      tree_nodes[1]->stat().postponed_negative_gradient1_u += 
+	num_ik_pairs * (max_negative_gradient1 + max_negative_gradient3);
+      tree_nodes[1]->stat().postponed_positive_gradient1_l += 
+	num_ik_pairs * (min_positive_gradient1 + min_positive_gradient3);
+      tree_nodes[1]->stat().postponed_positive_gradient1_e += 
+	num_ik_pairs * 0.5 * (min_positive_gradient1 + max_positive_gradient1 +
+			      min_positive_gradient3 + max_positive_gradient3);
+      la::AddExpert
+	(tree_nodes[2]->count() *
+	 0.5 * (min_negative_gradient1 + max_negative_gradient1),
+	 tree_nodes[0]->stat().coordinate_sum_,
+	 &(tree_nodes[1]->stat().postponed_negative_gradient2_e));
+      la::AddExpert
+	(tree_nodes[0]->count() *
+	 0.5 * (min_negative_gradient3 + max_negative_gradient3),
+	 tree_nodes[2]->stat().coordinate_sum_,
+	 &(tree_nodes[1]->stat().postponed_negative_gradient2_e));
+      la::AddExpert
+	(tree_nodes[2]->count() *
+	 max_negative_gradient1, tree_nodes[0]->stat().coordinate_sum_,
+	 &(tree_nodes[1]->stat().postponed_negative_gradient2_u));
+      la::AddExpert
+	(tree_nodes[0]->count() *
+	 max_negative_gradient3, tree_nodes[2]->stat().coordinate_sum_,
+	 &(tree_nodes[1]->stat().postponed_negative_gradient2_u));
+      la::AddExpert
+	(tree_nodes[2]->count() *
+	 min_positive_gradient1, tree_nodes[0]->stat().coordinate_sum_,
+	 &(tree_nodes[1]->stat().postponed_positive_gradient2_l));
+      la::AddExpert
+	(tree_nodes[0]->count() *
+	 min_positive_gradient3, tree_nodes[2]->stat().coordinate_sum_,
+	 &(tree_nodes[1]->stat().postponed_positive_gradient2_l));
+      la::AddExpert
+	(tree_nodes[2]->count() *
+	 0.5 * (min_positive_gradient1 + max_positive_gradient1),
+	 tree_nodes[0]->stat().coordinate_sum_,
+	 &(tree_nodes[1]->stat().postponed_positive_gradient2_e));
+      la::AddExpert
+	(tree_nodes[0]->count() *
+	 0.5 * (min_positive_gradient3 + max_positive_gradient3),
+	 tree_nodes[2]->stat().coordinate_sum_,
+	 &(tree_nodes[1]->stat().postponed_positive_gradient2_e));
+
+      // Then the k-th node.
+      tree_nodes[2]->stat().postponed_negative_gradient1_e += 
+	num_ik_pairs * 0.5 * (min_negative_gradient1 + max_negative_gradient1 +
+			      min_negative_gradient3 + max_negative_gradient3);
+      tree_nodes[2]->stat().postponed_negative_gradient1_u += 
+	num_ik_pairs * (max_negative_gradient1 + max_negative_gradient3);
+      tree_nodes[2]->stat().postponed_positive_gradient1_l += 
+	num_ik_pairs * (min_positive_gradient1 + min_positive_gradient3);
+      tree_nodes[2]->stat().postponed_positive_gradient1_e += 
+	num_ik_pairs * 0.5 * (min_positive_gradient1 + max_positive_gradient1 +
+			      min_positive_gradient3 + max_positive_gradient3);
+      la::AddExpert
+	(tree_nodes[2]->count() *
+	 0.5 * (min_negative_gradient1 + max_negative_gradient1),
+	 tree_nodes[0]->stat().coordinate_sum_,
+	 &(tree_nodes[2]->stat().postponed_negative_gradient2_e));
+      la::AddExpert
+	(tree_nodes[0]->count() *
+	 0.5 * (min_negative_gradient3 + max_negative_gradient3),
+	 tree_nodes[2]->stat().coordinate_sum_,
+	 &(tree_nodes[2]->stat().postponed_negative_gradient2_e));
+      la::AddExpert
+	(tree_nodes[2]->count() *
+	 max_negative_gradient1, tree_nodes[0]->stat().coordinate_sum_,
+	 &(tree_nodes[2]->stat().postponed_negative_gradient2_u));
+      la::AddExpert
+	(tree_nodes[0]->count() *
+	 max_negative_gradient3, tree_nodes[2]->stat().coordinate_sum_,
+	 &(tree_nodes[2]->stat().postponed_negative_gradient2_u));
+      la::AddExpert
+	(tree_nodes[2]->count() *
+	 min_positive_gradient1, tree_nodes[0]->stat().coordinate_sum_,
+	 &(tree_nodes[2]->stat().postponed_positive_gradient2_l));
+      la::AddExpert
+	(tree_nodes[0]->count() *
+	 min_positive_gradient3, tree_nodes[2]->stat().coordinate_sum_,
+	 &(tree_nodes[2]->stat().postponed_positive_gradient2_l));
+      la::AddExpert
+	(tree_nodes[2]->count() *
+	 0.5 * (min_positive_gradient1 + max_positive_gradient1),
+	 tree_nodes[0]->stat().coordinate_sum_,
+	 &(tree_nodes[2]->stat().postponed_positive_gradient2_e));
+      la::AddExpert
+	(tree_nodes[0]->count() *
+	 0.5 * (min_positive_gradient3 + max_positive_gradient3),
+	 tree_nodes[2]->stat().coordinate_sum_,
+	 &(tree_nodes[2]->stat().postponed_positive_gradient2_e));
+    }
+
+    return prunable;
   }
 
 };
