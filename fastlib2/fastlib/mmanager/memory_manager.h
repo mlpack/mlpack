@@ -564,11 +564,7 @@ class MemoryManager {
   }
   
  
-  template<typename T>
-  inline void Advise(T *ptr, size_t length, int advice) {
-    Advise(ptr, length*sizeof(T), advice); 
-  }
-  /**
+ /**
    * Advises a sequence of pages
    * advice: MADV_NORMAL
    *         MADV_RANDOM
@@ -583,7 +579,7 @@ class MemoryManager {
         + length)/system_page_size_;
     if (unlikely(madvise(pool_+page * system_page_size_, num_of_pages*system_page_size_,
                   advice)<0)) {
-      NONFATAL("Warning: Encountered %s error while advising\n", 
+      NONFATAL("Warning: Encountered ...%s... error  while advising\n", 
                 strerror(errno));
     }  
   }

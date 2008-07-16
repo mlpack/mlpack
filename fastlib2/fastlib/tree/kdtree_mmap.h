@@ -17,7 +17,7 @@
 #include "fastlib/base/base.h"
 #include "fastlib/mmanager/memory_manager.h"
 
-#include "spacetree.h"
+#include "spacetree_mmap.h"
 #include "bounds.h"
 
 #include "fastlib/col/arraylist.h"
@@ -69,10 +69,10 @@ namespace tree_mmap {
       
     node->Init(0, matrix.n_cols());
     node->bound().Init(split_dimensions.length());
-    tree_kdtree_private::SelectFindBoundFromMatrix(matrix, split_dimensions,
+    tree_kdtree_mmap_private::SelectFindBoundFromMatrix(matrix, split_dimensions,
         0, matrix.n_cols(), &node->bound());
 
-    tree_kdtree_private::SelectSplitKdTreeMidpoint(matrix, split_dimensions, 
+    tree_kdtree_mmap_private::SelectSplitKdTreeMidpoint(matrix, split_dimensions, 
 	node, leaf_size, old_from_new_ptr);
     
     if (new_from_old) {
@@ -102,6 +102,6 @@ namespace tree_mmap {
 };
 
 /** Basic KD tree structure. @experimental */
-typedef BinarySpaceTree<DHrectBoundMmap<2>, Matrix> BasicKdTreeMmap;
+typedef BinarySpaceTreeMmap<DHrectBoundMmap<2>, Matrix> BasicKdTreeMmap;
 
 #endif

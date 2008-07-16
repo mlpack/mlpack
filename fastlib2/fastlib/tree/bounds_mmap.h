@@ -41,10 +41,10 @@ class DHrectBoundMmap {
   }
 
  public:
-  void *operator new(size_t size) {
+  static void* operator new(size_t size) {
     return  mmapmm::MemoryManager<false>::allocator_->Alloc<DHrectBoundMmap>();
   }
-  void operator delete(void *) {
+  static void operator delete(void *) {
   
   }
   /**
