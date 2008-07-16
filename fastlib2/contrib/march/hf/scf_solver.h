@@ -567,8 +567,17 @@ class SCFSolver {
                 
 #ifdef DEBUG
 
+    printf("Fock Matrix\n");
+    fock_matrix_.PrintDebug();
+    
+    printf("Coefficients prime\n");
+    coefficients_prime.PrintDebug();
+
     Matrix right_vectors;
     la::TransposeInit(right_vectors_trans, &right_vectors);
+    
+    printf("Right vectors\n");
+    right_vectors.PrintDebug();
     
     for (index_t i = 0; i < number_of_basis_functions_; i++) {
     
@@ -812,6 +821,7 @@ class SCFSolver {
            
     printf("total_energy_[%d]: %g\n", current_iteration_, 
            total_energy_[current_iteration_]);
+           
     printf("energy_diff: %g\n", energy_diff);
     
     if (likely(density_matrix_frobenius_norm_ > density_convergence_)) {
@@ -912,6 +922,8 @@ class SCFSolver {
       //Step 4f.
       ComputeDensityMatrixDIIS_();
       
+      density_matrix_.PrintDebug();
+      
       // Step 4g.
       converged = TestConvergence_();
       
@@ -939,6 +951,8 @@ class SCFSolver {
   void Setup_() {
     
     nuclear_repulsion_energy_ = ComputeNuclearRepulsion_();
+    
+    printf("nuclear_repulsion_energy: %g\n", nuclear_repulsion_energy_);
     
     ComputeOneElectronMatrices_();
     
