@@ -42,12 +42,11 @@ class TestDiskAllNN {
  }
 
   void Destruct() {
-
-   delete data_for_tree_;
-   delete data_for_naive_;
-   delete disk_allnn_; 
-   delete naive_;
-   mmapmm::MemoryManager<false>::allocator_->Destruct();
+    delete data_for_tree_;
+    delete data_for_naive_;
+    delete disk_allnn_; 
+    delete naive_;
+    mmapmm::MemoryManager<false>::allocator_->Destruct();
   }
 
   void TestTreeVsNaive1() {

@@ -86,14 +86,18 @@ class DiskAllNN {
     ptrdiff_t right_usage_;
     
    public:
-    void *operator new(size_t size) {
+    static void *operator new(size_t size) {
       return  mmapmm::MemoryManager<false>::allocator_->Alloc<QueryStat>();
     } 
 
-    void operator delete(void *p) {
+    static void operator delete(void *p) {
     
     } 
-    
+    QueryStat() {
+      left_usage_=0;
+      right_usage_=0;
+ 
+    }   
     double max_distance_so_far() {
       return max_distance_so_far_;
     }
@@ -128,7 +132,7 @@ class DiskAllNN {
     void Init(const Matrix& matrix, index_t start, index_t count) {
       // The bound starts at infinity
       max_distance_so_far_ = DBL_MAX;
-    }
+   }
 
     /**
      * An Init function required by BinarySpaceTree to build
@@ -149,7 +153,7 @@ class DiskAllNN {
   // 2-norm, and Matrix specifies the storage type of our data.
 
   /** kd-tree (binary with hrect bounds) with stats for queries. */
-  typedef BinarySpaceTree<DHrectBoundMmap<2>, Matrix, QueryStat> TreeType;
+  typedef BinarySpaceTreeMmap<DHrectBoundMmap<2>, Matrix, QueryStat> TreeType;
 
   ////////// Members Variables ///////////////////////////////////////
 
