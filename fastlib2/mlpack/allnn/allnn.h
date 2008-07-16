@@ -164,8 +164,6 @@ class AllNN {
   /** Number of node-pairs pruned by the dual-tree algorithm. */
   index_t number_of_prunes_;
   
-  /** if memory is less than this limit then no advice is given */
-  ptrdiff_t advice_limit_;
   /** Debug-mode test whether an AllNN object is initialized. */
   bool initialized_;
   /** Debug-mode test whether an AllNN object is used twice. */
