@@ -14,7 +14,7 @@
 #include <vector>
 //#include "fastlib/fastlib.h"
 #include "fastlib/base/common.h"
-
+#include "fastlib/fx/fx.h"
 namespace mmapmm {
 
 template<bool Logmode, int32 page_size>
@@ -237,6 +237,7 @@ class MemoryManager {
 	//  ((PageChunk *)pool_)[page_num];
 	//}
   uint64 frequency_of_logged_page_;
+  fx_module *module_;
   
  public:
   MemoryManager() {
@@ -250,6 +251,7 @@ class MemoryManager {
 		last_page_logged_ = 0;
     log_flag_ = false;	
 		frequency_of_logged_page_ = 0;
+    module_=NULL;
   }
 
   MemoryManager(std::string pool_name, uint64 capacity, std::string page_access_filename) {
@@ -349,6 +351,10 @@ class MemoryManager {
                strerror(errno), page_access_filename_.c_str());
       }	          
     }                
+  }
+  void Init(fx_module *module) {
+    module_=module;
+    Init();
   }
   /**
    * Reallocate will try to remap but keep pool_ in the same address
@@ -531,7 +537,8 @@ class MemoryManager {
    * This is an important function. It advises the kernel which pages to keep and 
    * which to discard from the cache. Use of Advise can speed up memory accesss
    */
-  void Advise(std::vector<uint64> &pages_needed, std::vector<uint64> &pages_not_needed) {
+  inline void Advise(std::vector<uint64> &pages_needed, std::vector<uint64> &pages_not_needed) {
+    fx_timer_start(module_, "advise");
     for(uint32 i=0; i< pages_not_needed.size(); i++) {
       if (unlikely(madvise(pool_+pages_not_needed[i] * system_page_size_, system_page_size_,
                   MADV_DONTNEED)<0)) {
@@ -546,6 +553,7 @@ class MemoryManager {
                 strerror(errno));
       } 	          	
     }
+    fx_timer_stop(module_, "advise");  
   }
   /**
    * Advises a sequence of pages
@@ -556,11 +564,13 @@ class MemoryManager {
    *         MADV_DONTNEED
    */ 
   inline void Advise(uint64 page, uint64 number_of_pages, int advice) {
+    fx_timer_start(module_, "advise");  
     if (unlikely(madvise(pool_+page * system_page_size_, number_of_pages*system_page_size_,
                   advice)<0)) {
       NONFATAL("Warning: Encountered %s error while advising\n", 
                 strerror(errno));
     }     
+    fx_timer_stop(module_, "advise");  
   }
   
  
@@ -574,6 +584,7 @@ class MemoryManager {
    */ 
   inline void Advise(void *ptr, size_t length, int advice) {
     // locate the page the start address_begins
+    fx_timer_start(module_, "advise");  
     index_t page = (ptrdiff_t)((char*)ptr-pool_)/system_page_size_;
     index_t num_of_pages = ((ptrdiff_t)((char*)ptr-pool_)%system_page_size_
         + length)/system_page_size_;
@@ -582,9 +593,11 @@ class MemoryManager {
       NONFATAL("Warning: Encountered ...%s... error  while advising\n", 
                 strerror(errno));
     }  
+    fx_timer_stop(module_, "advise");  
   }
   inline void Advise(void *ptr1, void *ptr2, int advice) {
-     // locate the page the start address_begins
+    // locate the page the start address_begins
+    fx_timer_start(module_, "advise");  
     index_t page = (ptrdiff_t)((char*)ptr1-pool_)/system_page_size_;
     index_t num_of_pages = (ptrdiff_t)((char*)ptr1-(char*)ptr2)/system_page_size_;
     if (unlikely(madvise(pool_+page * system_page_size_, num_of_pages*system_page_size_,
@@ -592,16 +605,19 @@ class MemoryManager {
       NONFATAL("Warning: Encountered %s error while advising\n", 
                 strerror(errno));
     }     
+    fx_timer_stop(module_, "advise");    
   }
    
   /**
    * This one advises the whole pool
    */
   void Advise(int advice) {
+    fx_timer_start(module_, "advise");  
     if (unlikely(madvise(pool_, capacity_, advice)<0)) {
       NONFATAL("Warning: Encountered %s error while advising\n", 
              strerror(errno));
     }	
+    fx_timer_stop(module_, "advise");  
   }
   /**
    *  Verify to see if your system really took your advice into consideration
