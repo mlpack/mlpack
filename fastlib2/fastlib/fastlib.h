@@ -28,6 +28,7 @@
 #include "tree/kdtree.h"
 #include "tree/bounds_mmap.h"
 #include "tree/kdtree_mmap.h"
+#include "tree/spacetree_mmap.h"
 
 #endif
 

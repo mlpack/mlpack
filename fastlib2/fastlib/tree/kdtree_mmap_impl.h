@@ -154,7 +154,7 @@ namespace tree_kdtree_mmap_private {
   }
 
   template<typename TKdTree>
-    void SelectSplitKdTreeMidpoint(Matrix& matrix, Vector& split_dimensions,
+  void SelectSplitKdTreeMidpoint(Matrix& matrix, Vector& split_dimensions,
       TKdTree *node, index_t leaf_size, index_t *old_from_new) {
     TKdTree *left = NULL;
     TKdTree *right = NULL;
@@ -202,12 +202,12 @@ namespace tree_kdtree_mmap_private {
             node->bound().get(split_dim).hi);
 
         // This should never happen if max_width > 0
-        DEBUG_ASSERT(left->count() != 0 && right->count() != 0);
+        //DEBUG_ASSERT(left->count() != 0 && right->count() != 0);
 
         left = new TKdTree();
         left->Init(node->begin(), split_col - node->begin());
         left->bound().Init(split_dimensions.length());
-        left->bound.Copy(left_static_bound);
+        left->bound().Copy(left_static_bound);
         SelectSplitKdTreeMidpoint(matrix, split_dimensions, left, leaf_size, 
 				  old_from_new);
         ptrdiff_t usage2 = mmapmm::MemoryManager<false>::allocator_->get_usage();
