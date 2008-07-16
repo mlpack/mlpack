@@ -10,6 +10,7 @@
 #include "fastlib/col/string.h"
 #include "fastlib/la/matrix.h"
 #include "fastlib/math/discrete.h"
+#include "fastlib/file/textfile.h"
 
 class TextLineReader;
 class TextWriter;
@@ -625,6 +626,58 @@ namespace data {
    * @param matrix a pointer to an uninitialized matrix to load
    */
   success_t Load(const char *fname, Matrix *matrix);
+   /**
+   * Loads a matrix from a file.
+   * The Matrix is Statically Initialized from a memory mapped file
+   *
+   * This supports only CSV Datasets
+   *
+   * @code
+   * Matrix A;
+   * data::LargeLoad("foo.csv", &A);
+   * @endcode
+   *
+   * @param fname the file name to load
+   * @param matrix a pointer to an uninitialized matrix to load
+   */
+  template<typename Precision>
+  success_t LargeLoad(const char *fname, GenMatrix<Precision> *matrix) {
+    TextLineReader *reader = new TextLineReader();
+    if (reader->Open(fname)==SUCCESS_FAIL) {
+      reader->Error("Couldn't open %s", fname);
+      return SUCCESS_FAIL;
+    } 
+    index_t dimension=0;
+    while (reader->Gobble()) {
+      String line=reader->Peek();
+      ArrayList<String> result;
+      result.Init();
+      line.Split(",", &result);
+      dimension=std::max(result.size(), dimension);
+    }
+    matrix->StaticInit(dimension, reader->line_num());
+    matrix->SetAll(0.0);
+    delete reader;
+    reader = new TextLineReader();
+    reader->Open(fname);
+    while (true) {
+      String line=reader->Peek();
+      ArrayList<String> result;
+      result.Init();
+      line.Split(",", &result);
+      for(index_t i=0; i<result.size(); i++) {
+        Precision num;
+        sscanf(result[i].c_str(), "%lf", &num);
+        matrix->set(i, reader->line_num()-1, (Precision)num);
+      }
+      if (reader->Gobble()==false) {
+        break;
+      }
+    }
+    return SUCCESS_PASS;  
+  }
+
+
   /**
    * Saves a matrix to a file.
    *

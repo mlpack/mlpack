@@ -5,7 +5,6 @@
  */
 
 #include "fastlib/base/base.h"
-#include "fastlib/file/textfile.h"
 
 #include "dataset.h"
 
