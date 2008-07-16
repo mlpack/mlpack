@@ -22,14 +22,15 @@
 int main (int argc, char *argv[]) {
   fx_module *fx_root=fx_init(argc, argv, NULL);
   mmapmm::MemoryManager<false>::allocator_= new mmapmm::MemoryManager<false>();
-  mmapmm::MemoryManager<false>::allocator_->set_capacity(1073741824);
- mmapmm::MemoryManager<false>::allocator_->set_pool_name("/scratch/gtg739c/temp_mem");
-  mmapmm::MemoryManager<false>::allocator_->Init();
+  mmapmm::MemoryManager<false>::allocator_->set_capacity(4294967296);
+  std::string memfile=fx_param_str(fx_root, "memfile", "/scratch/gtg739c/temp_mem");
+  mmapmm::MemoryManager<false>::allocator_->set_pool_name(memfile.c_str());
+  mmapmm::MemoryManager<false>::allocator_->Init(fx_root);
   DiskAllNN disk_allnn;
   Matrix data_for_tree;
   std::string filename=fx_param_str_req(fx_root, "file");
   NOTIFY("Loading file...");
-  data::Load(filename.c_str(), &data_for_tree);
+  data::LargeLoad(filename.c_str(), &data_for_tree);
   NOTIFY("File loaded...");
   disk_allnn.Init(data_for_tree, fx_root);
   GenVector<index_t> resulting_neighbors_tree;
