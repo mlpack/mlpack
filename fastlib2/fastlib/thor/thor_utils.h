@@ -11,6 +11,7 @@
 #define THOR_UTILS_H
 
 #include "kdtree.h"
+#include "kdbtree.h"
 #include "sched.h"
 #include "rpc.h"
 
@@ -49,6 +50,7 @@ class ThreadedDualTreeSolver {
   DistributedCache *r_points_cache_;
   DistributedCache *r_nodes_cache_;
   DistributedCache *q_results_cache_;
+  DistributedCache *q_mutables_cache_;
   typename GNP::GlobalResult global_result_;
   DualTreeRecursionStats stats_;
   Mutex mutex_;
@@ -72,7 +74,8 @@ class ThreadedDualTreeSolver {
       const typename GNP::Param& param,
       DistributedCache *q_points_cache_in, DistributedCache *q_nodes_cache_in,
       DistributedCache *r_points_cache_in, DistributedCache *r_nodes_cache_in,
-      DistributedCache *q_results_cache_in);
+      DistributedCache *q_results_cache_in,
+      DistributedCache *q_mutables_cache_in);
 
   /**
    * Gets the GNP's global-result of the entire computation.
@@ -184,7 +187,7 @@ index_t ReadPoints(
 template<typename GNP, typename SerialSolver, typename QTree, typename RTree>
 void RpcDualTree(datanode *module, int base_channel,
     const typename GNP::Param& param, QTree *q, RTree *r,
-    DistributedCache *q_results,
+    DistributedCache *q_results, DistributedCache *q_mutables,
     typename GNP::GlobalResult *global_result_out);
 
 /**

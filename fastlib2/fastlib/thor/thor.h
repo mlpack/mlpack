@@ -12,6 +12,7 @@
 #include "rbfs.h"
 #include "thor_utils.h"
 #include "kdtree.h"
+#include "kdbtree.h"
 
 #include "fastlib/tree/bounds.h"
 

@@ -244,6 +244,16 @@ class ThorTree {
   template<typename Result>
   void CreateResultCacheWorker(int channel,
       double megs, DistributedCache *results);
+
+  template<typename Mutable>
+  void CreateMutableCache(int channel, const Mutable& default_mutable,
+      double megs, DistributedCache *mutables);
+  template<typename Mutable>
+  void CreateMutableCacheMaster(int channel, const Mutable& default_mutable,
+      double megs, DistributedCache *mutables);
+  template<typename Mutable>
+  void CreateMutableCacheWorker(int channel,
+      double megs, DistributedCache *mutables);
 };
 
 /**

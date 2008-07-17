@@ -12,6 +12,8 @@ distribcache.h
 gnp.h
 kdtree.h
 kdtree_impl.h
+kdbtree.h
+kdbtree_impl.h
 rpc_base.h
 rpc.h
 rpc_sock.h

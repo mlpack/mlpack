@@ -6,7 +6,7 @@
  * TODO: Currently doesn't output anything.
  */
 
-#include "thor/thor.h"
+#include "fastlib/thor/thor.h"
 #include "fastlib/fastlib.h"
 
 /**
@@ -83,6 +83,7 @@ class Allnn {
         const QPostponed& postponed,
         const QPoint& q_point,
         index_t q_index) {}
+    void Seed(const Param& param, const QPoint& q_point) {}
   };
 
   struct QSummaryResult {
@@ -120,6 +121,8 @@ class Allnn {
     }
 
     void FinishReaccumulate(const Param& param, const QNode& q_node) {}
+
+    void Seed(const Param& param, const QNode& q_node) {}
   };
 
   /**
@@ -138,6 +141,7 @@ class Allnn {
         const QPoint& q_point,
         index_t q_index,
         const RNode& r_node,
+        const Delta& delta,
         const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
         GlobalResult* global_result) {
@@ -196,7 +200,7 @@ class Allnn {
      */
     static bool ConsiderPairIntrinsic(const Param& param,
         const QNode& q_node, const RNode& r_node,
-        Delta* delta,
+        const Delta& parent_delta, Delta* delta,
         GlobalResult* global_result, QPostponed* q_postponed) {
       return true;
     }

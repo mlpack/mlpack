@@ -17,7 +17,7 @@ template<typename GNP>
 class DualTreeDepthFirst {
   FORBID_ACCIDENTAL_COPIES(DualTreeDepthFirst);
 
- private:
+ public:
   struct QMutables {
     typename GNP::QSummaryResult summary_result;
     typename GNP::QPostponed postponed;
@@ -35,7 +35,7 @@ class DualTreeDepthFirst {
   CacheArray<typename GNP::QPoint> q_points_;
   CacheArray<typename GNP::QNode> q_nodes_;
   CacheArray<typename GNP::QResult> q_results_;
-  SubsetArray<QMutables> q_mutables_;
+  CacheArray<QMutables> q_mutables_; // SubsetArray
 
   CacheArray<typename GNP::RPoint> r_points_;
   CacheArray<typename GNP::RNode> r_nodes_;
@@ -64,7 +64,8 @@ class DualTreeDepthFirst {
       DistributedCache *q_nodes,
       DistributedCache *r_points,
       DistributedCache *r_nodes,
-      DistributedCache *q_results);
+      DistributedCache *q_results,
+      DistributedCache *q_mutables); //
 
   /**
    * Gets the global result after computation.

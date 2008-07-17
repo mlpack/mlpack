@@ -6,7 +6,8 @@ void thor::ThreadedDualTreeSolver<GNP, Solver>::Doit(
     const typename GNP::Param& param,
     DistributedCache *q_points_cache_in, DistributedCache *q_nodes_cache_in,
     DistributedCache *r_points_cache_in, DistributedCache *r_nodes_cache_in,
-    DistributedCache *q_results_cache_in) {
+    DistributedCache *q_results_cache_in,
+    DistributedCache *q_mutables_cache_in) { //
   param_ = &param;
   work_queue_ = work_queue_in;
   rank_ = rank;
@@ -16,6 +17,7 @@ void thor::ThreadedDualTreeSolver<GNP, Solver>::Doit(
   r_points_cache_ = r_points_cache_in;
   r_nodes_cache_ = r_nodes_cache_in;
   q_results_cache_ = q_results_cache_in;
+  q_mutables_cache_ = q_mutables_cache_in; //
 
   global_result_.Init(*param_);
   stats_.Init();
@@ -59,7 +61,7 @@ void thor::ThreadedDualTreeSolver<GNP, Solver>::ThreadBody_() {
           work[i].node_index, work[i].node_end_index,
           q_points_cache_, q_nodes_cache_,
           r_points_cache_, r_nodes_cache_,
-          q_results_cache_);
+	  q_results_cache_, q_mutables_cache_); //
 
       mutex_.Lock();
       stats_.Add(solver.stats());
@@ -159,7 +161,7 @@ index_t thor::ReadPoints(const Param& param, int points_channel,
 template<typename GNP, typename SerialSolver, typename QTree, typename RTree>
 void thor::RpcDualTree(datanode *module, int base_channel,
     const typename GNP::Param& param, QTree *q, RTree *r,
-    DistributedCache *q_results,
+    DistributedCache *q_results, DistributedCache *q_mutables, //
     typename GNP::GlobalResult *global_result_out) {
   int n_threads = fx_param_int(module, "n_threads", 2);
   RemoteSchedulerBackend *work_backend = NULL;
@@ -191,7 +193,8 @@ void thor::RpcDualTree(datanode *module, int base_channel,
   fx_timer_start(module, "gnp");
   ThreadedDualTreeSolver<GNP, SerialSolver> solver;
   solver.Doit(n_threads, rpc::rank(), work_queue, param,
-      &q->points(), &q->nodes(), &r->points(), &r->nodes(), q_results);
+      &q->points(), &q->nodes(), &r->points(), &r->nodes(),
+      q_results, q_mutables); //
   rpc::Barrier(base_channel + 2);
   fx_timer_stop(module, "gnp");
 
@@ -203,6 +206,7 @@ void thor::RpcDualTree(datanode *module, int base_channel,
     r->nodes().StartSync();
   }
   q_results->StartSync();
+  q_mutables->StartSync(); //
   q->points().WaitSync(fx_submodule(io_module, "q_points"));
   q->nodes().WaitSync(fx_submodule(io_module, "q_nodes"));
   if (!mem::PtrsEqual(q, r)) {
@@ -210,6 +214,7 @@ void thor::RpcDualTree(datanode *module, int base_channel,
     r->nodes().WaitSync(fx_submodule(io_module, "r_nodes"));
   }
   q_results->WaitSync(fx_submodule(io_module, "q_results"));
+  q_mutables->WaitSync(fx_submodule(io_module, "q_mutables")); //
   fx_timer_stop(module, "write_results");
 
 #ifdef DEBUG
@@ -249,6 +254,7 @@ void thor::MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
   index_t n_points;
   ThorTree<typename GNP::Param, typename GNP::QPoint, typename GNP::QNode> tree;
   DistributedCache q_results;
+  DistributedCache q_mutables; //
   typename GNP::Param param;
 
   rpc::Init();
@@ -271,7 +277,7 @@ void thor::MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
 
   fx_timer_start(module, "tree");
   CreateKdTree<typename GNP::QPoint, typename GNP::QNode>(
-      param, DATA_CHANNEL + 2, DATA_CHANNEL + 3,
+      param, DATA_CHANNEL + 2, DATA_CHANNEL + 3, // DATA_CHANNEL + 4,
       fx_submodule(module, "tree"), n_points, points_cache, &tree);
   fx_timer_stop(module, "tree");
 
@@ -280,10 +286,17 @@ void thor::MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
   tree.CreateResultCache(Q_RESULTS_CHANNEL, default_result,
         results_megs, &q_results);
 
+  // Alert!  Temporary hack; does not support rbfs
+  typename Solver::QMutables default_mutable; // 
+  default_mutable.summary_result.Init(param); //
+  default_mutable.postponed.Init(param); //
+  tree.CreateMutableCache(Q_RESULTS_CHANNEL + 1, default_mutable, //
+        results_megs, &q_mutables);
+
   typename GNP::GlobalResult global_result;
   RpcDualTree<GNP, Solver>(
       fx_submodule(module, "gnp"), GNP_CHANNEL, param,
-      &tree, &tree, &q_results, &global_result);
+      &tree, &tree, &q_results, &q_mutables, &global_result);
 
   rpc::Done();
 }
