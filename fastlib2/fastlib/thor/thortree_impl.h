@@ -55,6 +55,54 @@ void ThorTree<TParam, TPoint, TNode>::CreateResultCache(
 }
 
 template<typename TParam, typename TPoint, typename TNode>
+template<typename Mutable>
+void ThorTree<TParam, TPoint, TNode>::CreateMutableCacheMaster(
+    int channel, const Mutable& default_mutable,
+    double megs, DistributedCache *mutables) {
+  DEBUG_ASSERT_MSG(rpc::rank() == 0, "Only master calls this");
+  index_t block_size = CacheArray<Point>::GetNumBlockElements(nodes_);
+  CacheArray<Mutable>::CreateCacheMaster(channel,
+      block_size, default_mutable, megs, mutables);
+
+  for (int i = 0; i < rpc::n_peers(); i++) {
+    const TreeGrain *grain = &decomp_.grain_by_owner(i);
+    if (grain->is_valid()) {
+      BlockDevice::blockid_t begin_block =
+          (grain->node_index + block_size - 1) / block_size;
+      BlockDevice::blockid_t end_block =
+          (grain->node_end_index + block_size - 1) / block_size;
+      DEBUG_ASSERT(mutables->n_blocks() == begin_block);
+      mutables->AllocBlocks(end_block - begin_block, i);
+    }
+  }
+
+  mutables->StartSync();
+  mutables->WaitSync();
+}
+
+template<typename TParam, typename TPoint, typename TNode>
+template<typename Mutable>
+void ThorTree<TParam, TPoint, TNode>::CreateMutableCacheWorker(
+    int channel, double megs, DistributedCache *mutables) {
+  DEBUG_ASSERT_MSG(rpc::rank() != 0, "Only workers call this");
+  CacheArray<Mutable>::CreateCacheWorker(channel, megs, mutables);
+  mutables->StartSync();
+  mutables->WaitSync();
+}
+
+template<typename TParam, typename TPoint, typename TNode>
+template<typename Mutable>
+void ThorTree<TParam, TPoint, TNode>::CreateMutableCache(
+    int channel, const Mutable& default_mutable,
+    double megs, DistributedCache *mutables) {
+  if (rpc::rank() == 0) {
+    CreateResultCacheMaster(channel, default_mutable, megs, mutables);
+  } else {
+    CreateResultCacheWorker<Mutable>(channel, megs, mutables);
+  }
+}
+
+template<typename TParam, typename TPoint, typename TNode>
 template<typename Result, typename Visitor>
 void ThorTree<TParam, TPoint, TNode>::Update(
     DistributedCache *results_cache, Visitor *visitor) {

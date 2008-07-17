@@ -18,14 +18,36 @@ void DualTreeDepthFirst<GNP>::Doit(
     DistributedCache *q_nodes,
     DistributedCache *r_points,
     DistributedCache *r_nodes,
-    DistributedCache *q_results) {
+    DistributedCache *q_results,
+    DistributedCache *q_mutables) { //
   param_.Copy(param_in);
 
-  q_nodes_.Init(q_nodes, BlockDevice::M_READ);
-  r_points_.Init(r_points, BlockDevice::M_READ);
   r_nodes_.Init(r_nodes, BlockDevice::M_READ);
+  r_points_.Init(r_points, BlockDevice::M_READ);
+
+  q_mutables_.Init(q_mutables, BlockDevice::M_OVERWRITE,
+      q_root_index, q_end_index); //
+  q_nodes_.Init(q_nodes, BlockDevice::M_READ);
+
+  //QMutables default_mutable;
+  //default_mutable.summary_result.Init(param_);
+  //default_mutable.postponed.Init(param_);
+  //q_mutables_.Init(default_mutable, q_root_index, q_end_index);
+
+  // Seed summary_results
+  {
+    CacheWriteIter<QMutables> q_mutables_iter(&q_mutables_, //
+        q_root_index);
+    CacheReadIter<typename GNP::QNode> q_nodes_iter(&q_nodes_,
+        q_root_index);
+    for (int i = q_root_index; i < q_end_index; ++i,
+           q_mutables_iter.Next(), q_nodes_iter.Next()) {
+      q_mutables_iter->summary_result.Seed(param_, *q_nodes_iter);
+    }
+  }
 
   const typename GNP::QNode *q_root = q_nodes_.StartRead(q_root_index);
+
   q_results_.Init(q_results, BlockDevice::M_OVERWRITE,
       q_root->begin(), q_root->end());
   q_points_.Init(q_points, BlockDevice::M_READ,
@@ -39,25 +61,11 @@ void DualTreeDepthFirst<GNP>::Doit(
         q_root->begin());
     for (int i = q_root->begin(); i < q_root->end(); ++i,
            q_results_iter.Next(), q_points_iter.Next()) {
-      (*q_results_iter).Seed(param_, *q_points_iter);
+      q_results_iter->Seed(param_, *q_points_iter);
     }
   }
 
   q_nodes_.StopRead(q_root_index);
-
-  QMutables default_mutable;
-  default_mutable.summary_result.Init(param_);
-  default_mutable.postponed.Init(param_);
-  q_mutables_.Init(default_mutable, q_root_index, q_end_index);
-
-  // Seed summary_results
-  {
-    CacheReadIter<typename GNP::QNode> q_nodes_iter(&q_nodes_,
-        q_root_index);
-    for (int i = q_root_index; i < q_end_index; ++i, q_nodes_iter.Next()) {
-      q_mutables_[i].summary_result.Seed(param_, *q_nodes_iter);
-    }
-  }
 
   global_result_.Init(param_);
 
@@ -73,7 +81,8 @@ void DualTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
   typename GNP::Delta delta;
   typename GNP::Delta empty_delta;
   CacheRead<typename GNP::QNode> q_root(&q_nodes_, q_root_index);
-  QMutables *q_root_mut = &q_mutables_[q_root_index];
+  //QMutables *q_root_mut = &q_mutables_[q_root_index];
+  CacheWrite<QMutables> q_root_mut(&q_mutables_, q_root_index);
 
   empty_delta.Init(param_);
   delta.Init(param_);
@@ -118,7 +127,8 @@ void DualTreeDepthFirst<GNP>::PushDownPostprocess_(
   } else {
     for (index_t k = 0; k < 2; k++) {
       index_t q_child_i = q_node->child(k);
-      QMutables *q_child_mut = &q_mutables_[q_child_i];
+      //QMutables *q_child_mut = &q_mutables_[q_child_i];
+      CacheWrite<QMutables> q_child_mut(&q_mutables_, q_child_i);
 
       q_child_mut->postponed.ApplyPostponed(param_, q_node_mut->postponed);
 
@@ -169,7 +179,8 @@ void DualTreeDepthFirst<GNP>::Pair_(
         typename GNP::Delta child_delta;
         index_t q_child_i = q_node->child(k);
         CacheRead<typename GNP::QNode> q_child(&q_nodes_, q_child_i);
-        QMutables *q_child_mut = &q_mutables_[q_child_i];
+        //QMutables *q_child_mut = &q_mutables_[q_child_i];
+	CacheWrite<QMutables> q_child_mut(&q_mutables_, q_child_i);
 
         child_delta.Init(param_);
         q_child_mut->postponed.ApplyPostponed(

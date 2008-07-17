@@ -7,6 +7,8 @@
 #ifndef THOR_THORSTRUCT_H
 #define THOR_THORSTRUCT_H
 
+#define LIT_DISK_TREES
+
 #include "cachearray.h"
 
 #include "fastlib/la/matrix.h"
@@ -46,19 +48,41 @@ class ThorNode {
 
   index_t children_[t_cardinality];
 
+#ifdef LIT_DISK_TREES
+  index_t end_;
+  index_t parent_;
+  index_t subnodes_in_page_;
+#endif LIT_DISK_TREES
+
   OT_DEF_BASIC(ThorNode) {
     OT_MY_OBJECT(begin_);
     OT_MY_OBJECT(count_);
     OT_MY_OBJECT(bound_);
     OT_MY_OBJECT(stat_);
     OT_MY_ARRAY(children_);
+#ifdef LIT_DISK_TREES
+    OT_MY_OBJECT(end_);
+    OT_MY_OBJECT(parent_);
+    OT_MY_OBJECT(subnodes_in_page_);
+#endif LIT_DISK_TREES
   }
 
  public:
   void set_range(index_t begin_in, index_t count_in) {
     begin_ = begin_in;
     count_ = count_in;
+#ifdef LIT_DISK_TREES
+    end_ = begin_ + count_;
+#endif
   }
+
+#ifdef LIT_DISK_TREES
+  void set_range(index_t begin_in, index_t end_in, index_t count_in) {
+    begin_ = begin_in;
+    count_ = count_in;
+    end_ = end_in;
+  }
+#endif
 
   const Bound& bound() const {
     return bound_;
@@ -89,6 +113,24 @@ class ThorNode {
     children_[0] = -index_t(1);
   }
 
+#ifdef LIT_DISK_TREES
+ index_t parent() const {
+   return parent_;
+ }
+
+ void set_parent(index_t parent_index) {
+   parent_ = parent_index;
+ }
+
+ index_t subnodes_in_page() const {
+   return subnodes_in_page_;
+ }
+
+ void set_subnodes_in_page(index_t subnodes) {
+   subnodes_in_page_ = subnodes;
+ }
+#endif
+
   bool is_leaf() const {
     return children_[0] == -index_t(1);
   }
@@ -104,7 +146,11 @@ class ThorNode {
    * Gets the index one beyond the last index in the series.
    */
   index_t end() const {
+#ifdef LIT_DISK_TREES
+    return end_;
+#else
     return begin_ + count_;
+#endif
   }
 
   /**
@@ -123,7 +169,7 @@ class ThorNode {
 
   void PrintSelf() const {
     printf("node: %d to %d: %d points total\n",
-       begin_, begin_ + count_ - 1, count_);
+       begin(), end() - 1, count());
   }
 };
 
@@ -243,7 +289,7 @@ class ThorSkeletonNode {
    *
    * @param array the array to read information from if the node is not
    *        already in the skeleton tree
-   * @param k child number (k.e. 0 for left and 1 for right)
+   * @param k child number (i.e. 0 for left and 1 for right)
    */
   ThorSkeletonNode *GetChild(CacheArray<Node> *array, int k) {
     if (children_[k] == NULL && !node_.is_leaf()) {

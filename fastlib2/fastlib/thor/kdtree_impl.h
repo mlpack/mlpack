@@ -20,6 +20,9 @@ index_t thor::Partition(
     index_t begin, index_t count,
     PointCache* points,
     Bound* left_bound, Bound* right_bound) {
+  static index_t processed_tot = 0;
+  static index_t processed_cur = 0;
+
   index_t left_i = begin;
   index_t right_i = begin + count - 1;
 
@@ -37,6 +40,7 @@ index_t thor::Partition(
       }
       *left_bound |= left_v->vec();
       left_i++;
+      processed_cur++; //
     }
 
     for (;;) {
@@ -48,12 +52,22 @@ index_t thor::Partition(
       }
       *right_bound |= right_v->vec();
       right_i--;
+      processed_cur++; //
     }
 
     points->Swap(left_i, right_i);
 
     DEBUG_ASSERT(left_i <= right_i);
     right_i--;
+    processed_cur++; //
+
+    //
+    if (processed_cur > 10000000) {
+      processed_tot += processed_cur;
+      processed_cur = 0;
+      NOTIFY("Partitioned %"LI"d points total...", processed_tot);
+    }
+    //
   }
 }
 
