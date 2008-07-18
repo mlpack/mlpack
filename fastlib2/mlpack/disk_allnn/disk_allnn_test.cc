@@ -68,8 +68,30 @@ class TestDiskAllNN {
     Destruct();
   }
  
+  void TestTreeVsNaive2() {
+    Init();
+    fx_set_param_str(module_, "splits", "median");
+    disk_allnn_->Init(*data_for_tree_, module_);
+    naive_->InitNaive(*data_for_naive_, module_);
+ 
+    GenVector<index_t> resulting_neighbors_tree;
+    GenVector<double> resulting_distances_tree;
+    disk_allnn_->ComputeNeighbors(&resulting_neighbors_tree, &resulting_distances_tree);
+    GenVector<index_t> resulting_neighbors_naive;
+    GenVector<double> resulting_distances_naive;
+    naive_->ComputeNaive(&resulting_neighbors_naive, &resulting_distances_naive);
+    for(index_t i=0; i<resulting_neighbors_tree.length(); i++) {
+      TEST_ASSERT(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
+      TEST_DOUBLE_APPROX(resulting_distances_tree[i], resulting_distances_naive[i], 1e-5);
+    }
+    NOTIFY("DiskAllknn test 2 passed");
+    Destruct();
+  }
+ 
+
   void TestAll() {
     TestTreeVsNaive1();
+    TestTreeVsNaive2();
  }
  
  private:
