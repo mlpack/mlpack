@@ -226,4 +226,111 @@ namespace tree_kdtree_mmap_private {
 
     node->set_children(matrix, left, right);
   }
+  template<typename TKdTree>
+  void SelectSplitKdTreeMedian(Matrix& matrix, Vector& split_dimensions,
+      TKdTree *node, index_t leaf_size, index_t *old_from_new) {
+    TKdTree *left = NULL;
+    TKdTree *right = NULL;
+    
+    SelectFindBoundFromMatrix(matrix, split_dimensions, node->begin(), 
+			      node->count(), &node->bound());
+
+    if (node->count() > leaf_size) {
+      index_t split_dim = BIG_BAD_NUMBER;
+      double split_value;
+      double max_width = -1;
+
+      for (index_t d = 0; d < split_dimensions.length(); d++) {
+        double w = node->bound().get(d).width();
+	
+        if (w > max_width) {	
+          max_width = w;
+          split_dim = d;
+        }
+      }
+
+
+      if (max_width == 0) {
+        // Okay, we can't do any splitting, because all these points are the
+        // same.  We have to give up.
+      } else {    
+         ptrdiff_t usage1=mmapmm::MemoryManager<false>::allocator_->get_usage();
+
+        typename TKdTree::Bound::StaticBound left_static_bound;
+        typename TKdTree::Bound::StaticBound right_static_bound;
+        left_static_bound.Init(split_dimensions.length());
+        right_static_bound.Init(split_dimensions.length());
+
+        Quicksort(matrix, split_dim, node->begin(), 
+            node->begin()+node->count());
+        index_t split_col=node->count()/2;
+        split_value=matrix.get(split_dim, node->begin()+split_col);
+        SelectFindBoundFromMatrix(matrix, split_dimensions, node->begin(), 
+			     split_col, &left_static_bound);
+        SelectFindBoundFromMatrix(matrix, split_dimensions, 
+            node->begin()+split_col, 
+			     node->count()-split_col, &right_static_bound);
+     /* 
+        index_t split_col = SelectMatrixPartition(matrix, split_dimensions, 
+	     (int)split_dimensions[split_dim], split_val,
+            node->begin(), node->count(),
+            &left_static_bound, &right_static_bound,
+            old_from_new);
+    */    
+        VERBOSE_MSG(3.0,"split (%d,[%d],%d) dim %d on %f (between %f, %f)",
+            node->begin(), split_col,
+            node->begin() + node->count(), (int)split_dimensions[split_dim], 
+		        split_value,
+            node->bound().get(split_dim).lo,
+            node->bound().get(split_dim).hi);
+
+        // This should never happen if max_width > 0
+        //DEBUG_ASSERT(left->count() != 0 && right->count() != 0);
+
+        left = new TKdTree();
+        left->Init(node->begin(), split_col);
+        left->bound().Init(split_dimensions.length());
+        left->bound().Copy(left_static_bound);
+        SelectSplitKdTreeMedian(matrix, split_dimensions, left, leaf_size, 
+				  old_from_new);
+        ptrdiff_t usage2 = mmapmm::MemoryManager<false>::allocator_->get_usage();
+        node->stat().set_left_usage(usage2-usage1);
+        
+        right = new TKdTree();
+        right->Init(node->begin() + split_col, node->count()-split_col);
+        right->bound().Init(split_dimensions.length());
+        right->bound().Copy(right_static_bound);
+        SelectSplitKdTreeMedian(matrix, split_dimensions, right, leaf_size, 
+				  old_from_new);
+        ptrdiff_t usage3=mmapmm::MemoryManager<false>::allocator_->get_usage();
+        node->stat().set_right_usage(usage3-usage2);
+      }
+    }
+
+    node->set_children(matrix, left, right);
+  }
+  template<typename T>
+  void Quicksort (GenMatrix<T> &a, index_t split_dim, 
+     index_t lo, index_t hi) {
+    //  lo is the lower index, hi is the upper index
+    //  of the region of array a that is to be sorted
+    index_t i=lo, j=hi;
+    T x=a.get(split_dim, (lo+hi)/2);
+    T h[a.n_rows()];
+    //  partition
+    do {    
+      while (a.get(split_dim, i)<x) i++; 
+      while (a.get(split_dim, j)>x) j--;
+      if (i<=j) {
+        memcpy(h, a.GetColumnPtr(i), a.n_rows()*sizeof(T));
+        memcpy(a.GetColumnPtr(i), a.GetColumnPtr(j), a.n_rows()*sizeof(T));
+        memcpy(a.GetColumnPtr(j), h, a.n_rows()*sizeof(T));
+        // h=a[i]; a[i]=a[j]; a[j]=h;
+        i++; j--;
+      }
+    } while (i<=j);
+    //  recursion
+    if (lo<j) Quicksort(a, split_dim, lo, j);
+    if (i<hi) Quicksort(a, split_dim, i, hi);
+  }
 };

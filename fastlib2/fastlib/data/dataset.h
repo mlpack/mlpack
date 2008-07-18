@@ -648,12 +648,12 @@ namespace data {
       return SUCCESS_FAIL;
     } 
     index_t dimension=0;
+    String line=reader->Peek();
+    ArrayList<String> result;
+    result.Init();
+    line.Split(",", &result);
+    dimension=result.size();
     while (reader->Gobble()) {
-      String line=reader->Peek();
-      ArrayList<String> result;
-      result.Init();
-      line.Split(",", &result);
-      dimension=std::max(result.size(), dimension);
     }
     matrix->StaticInit(dimension, reader->line_num());
     matrix->SetAll(0.0);

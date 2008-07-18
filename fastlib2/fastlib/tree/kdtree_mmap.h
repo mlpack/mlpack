@@ -99,6 +99,60 @@ namespace tree_mmap {
 		   leaf_size, old_from_new, new_from_old);
     return result;
   }
+  
+  template<typename TKdTree>
+  TKdTree *MakeKdTreeMedianSelective(Matrix& matrix, Vector split_dimensions,
+      index_t leaf_size,
+      GenVector<index_t> *old_from_new = NULL,
+      GenVector<index_t> *new_from_old = NULL) {
+    TKdTree *node = new TKdTree();
+    index_t *old_from_new_ptr;
+   
+    if (old_from_new) {
+      old_from_new->StaticInit(matrix.n_cols());
+      
+      for (index_t i = 0; i < matrix.n_cols(); i++) {
+        (*old_from_new)[i] = i;
+      }
+      
+      old_from_new_ptr = old_from_new->ptr();
+    } else {
+      old_from_new_ptr = NULL;
+    }
+      
+    node->Init(0, matrix.n_cols());
+    node->bound().Init(split_dimensions.length());
+    tree_kdtree_mmap_private::SelectFindBoundFromMatrix(matrix, split_dimensions,
+        0, matrix.n_cols(), &node->bound());
+
+    tree_kdtree_mmap_private::SelectSplitKdTreeMedian(matrix, split_dimensions, 
+	node, leaf_size, old_from_new_ptr);
+    
+    if (new_from_old) {
+      new_from_old->StaticInit(matrix.n_cols());
+      for (index_t i = 0; i < matrix.n_cols(); i++) {
+        (*new_from_old)[(*old_from_new)[i]] = i;
+      }
+    }    
+    return node;
+  }
+
+  template<typename TKdTree>
+    TKdTree *MakeKdTreeMedian(Matrix& matrix, index_t leaf_size,
+				GenVector<index_t> *old_from_new = NULL,
+				GenVector<index_t> *new_from_old = NULL) {  
+    Vector split_dimensions;
+    split_dimensions.Init(matrix.n_rows());
+    int i;
+    for (i = 0; i < matrix.n_rows(); i++){
+      split_dimensions[i] = i;
+    }
+    TKdTree *result;
+    result = MakeKdTreeMedianSelective<TKdTree>(matrix, split_dimensions,
+		   leaf_size, old_from_new, new_from_old);
+    return result;
+  }
+
 };
 
 /** Basic KD tree structure. @experimental */

@@ -1,6 +1,7 @@
 # tree is currently an internal-only feature
 
 librule(
+    name = "tree",
     sources = [],
     headers = [
         "kdtree.h", "kdtree_impl.h", "bounds.h",

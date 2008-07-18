@@ -542,15 +542,15 @@ class MemoryManager {
     for(uint32 i=0; i< pages_not_needed.size(); i++) {
       if (unlikely(madvise(pool_+pages_not_needed[i] * system_page_size_, system_page_size_,
                   MADV_DONTNEED)<0)) {
-        NONFATAL("Warning: Encountered %s error while advising\n", 
-               strerror(errno));
+        NONFATAL("Warning: Encountered ...%s... error (%i) while advising\n", 
+               strerror(errno), errno);
       }   	          	
     }
     for(uint32 i=0; i< pages_needed.size(); i++) {
       if (unlikely(madvise(pool_+pages_not_needed[i] * system_page_size_, system_page_size_,
                   MADV_WILLNEED)<0)) {
-        NONFATAL("Warning: Encountered %s error while advising\n",
-                strerror(errno));
+        NONFATAL("Warning: Encountered ...%s... error (%i) while advising\n",
+                strerror(errno), errno);
       } 	          	
     }
     fx_timer_stop(module_, "advise");  
@@ -567,8 +567,8 @@ class MemoryManager {
     fx_timer_start(module_, "advise");  
     if (unlikely(madvise(pool_+page * system_page_size_, number_of_pages*system_page_size_,
                   advice)<0)) {
-      NONFATAL("Warning: Encountered %s error while advising\n", 
-                strerror(errno));
+      NONFATAL("Warning: Encountered ...%s...  error (%i) while advising\n", 
+                strerror(errno), errno);
     }     
     fx_timer_stop(module_, "advise");  
   }
@@ -590,8 +590,8 @@ class MemoryManager {
         + length)/system_page_size_;
     if (unlikely(madvise(pool_+page * system_page_size_, num_of_pages*system_page_size_,
                   advice)<0)) {
-      NONFATAL("Warning: Encountered ...%s... error  while advising\n", 
-                strerror(errno));
+      NONFATAL("Warning: Encountered ...%s... error (%i)  while advising\n", 
+                strerror(errno), errno);
     }  
     fx_timer_stop(module_, "advise");  
   }
@@ -602,8 +602,8 @@ class MemoryManager {
     index_t num_of_pages = (ptrdiff_t)((char*)ptr1-(char*)ptr2)/system_page_size_;
     if (unlikely(madvise(pool_+page * system_page_size_, num_of_pages*system_page_size_,
                   advice)<0)) {
-      NONFATAL("Warning: Encountered %s error while advising\n", 
-                strerror(errno));
+      NONFATAL("Warning: Encountered ...%s... error (%i) while advising\n", 
+                strerror(errno), errno);
     }     
     fx_timer_stop(module_, "advise");    
   }
@@ -614,8 +614,8 @@ class MemoryManager {
   void Advise(int advice) {
     fx_timer_start(module_, "advise");  
     if (unlikely(madvise(pool_, capacity_, advice)<0)) {
-      NONFATAL("Warning: Encountered %s error while advising\n", 
-             strerror(errno));
+      NONFATAL("Warning: Encountered ...%s... error (%i) while advising\n", 
+             strerror(errno), errno);
     }	
     fx_timer_stop(module_, "advise");  
   }
@@ -627,8 +627,8 @@ class MemoryManager {
     uint32 num_of_pages = (capacity_ + system_page_size_ - 1)/system_page_size_;
     unsigned char vec[num_of_pages];
     if (mincore(pool_, capacity_, vec) <0) {
-      NONFATAL("Warning: Encountered %s error while executing mincore\n",
-              strerror(errno));
+      NONFATAL("Warning: Encountered ...%s... error (%i) while executing mincore\n",
+              strerror(errno), errno);
     }
     uint32 correct_pages=0;
     for(uint32 i=0; i < pages_needed.size(); i++) {

@@ -193,8 +193,12 @@ class DiskAllNN {
   /** Number of node-pairs pruned by the dual-tree algorithm. */
   index_t number_of_prunes_;
   
+  /** if memory is more than this limit then no advice is given */
+  ptrdiff_t advice_limit_upper_;
+
   /** if memory is less than this limit then no advice is given */
-  ptrdiff_t advice_limit_;
+  ptrdiff_t advice_limit_lower_;
+
   /** Debug-mode test whether an AllNN object is initialized. */
   bool initialized_;
   /** Debug-mode test whether an AllNN object is used twice. */
@@ -368,40 +372,52 @@ class DiskAllNN {
        */
       if (left_distance < right_distance) {
         // Prefetching directives
-        if (reference_node->stat().left_usage() > advice_limit_) {
+#ifdef PREFETCH
+        if (reference_node->stat().left_usage() > advice_limit_lower_
+            && reference_node->stat().left_usage() < advice_limit_upper_) {
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->left(), 
               reference_node->stat().left_usage(), MADV_SEQUENTIAL);
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->right(), 
               reference_node->stat().right_usage(), MADV_DONTNEED);
         }
-        // GNP part
+#endif
+      // GNP part
         GNPRecursion_(query_node, reference_node->left(), left_distance);
         // Prefetching directives
-        if (reference_node->stat().right_usage()>advice_limit_) {
+#ifdef PREFETCH
+        if (reference_node->stat().right_usage() > advice_limit_lower_
+          && reference_node->stat().right_usage() < advice_limit_upper_) {
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->right(),
               reference_node->stat().right_usage(), MADV_SEQUENTIAL);
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->left(),
               reference_node->stat().left_usage(), MADV_DONTNEED);
         }
+#endif        
         // GNP part
         GNPRecursion_(query_node, reference_node->right(), right_distance);
       } else {
         // Prefetching directives
-        if (reference_node->stat().right_usage()  > advice_limit_) {
+#ifdef PREFETCH
+        if (reference_node->stat().right_usage()  > advice_limit_lower_
+            && reference_node->stat().right_usage() < advice_limit_upper_) {
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->right(),
               reference_node->stat().right_usage(), MADV_SEQUENTIAL);
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->left(),
               reference_node->stat().left_usage(), MADV_DONTNEED);     
         }
+#endif
         // GNP part
         GNPRecursion_(query_node, reference_node->right(), right_distance);
         // Prefetching directives
-        if (reference_node->stat().left_usage() > advice_limit_) {
+#ifdef PREFETCH
+        if (reference_node->stat().left_usage() > advice_limit_lower_
+            && reference_node->stat().left_usage() < advice_limit_upper_) {
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->left(), 
               reference_node->stat().left_usage(), MADV_SEQUENTIAL);
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->right(), 
               reference_node->stat().right_usage(), MADV_DONTNEED);       
         }
+#endif
         // GNP part
         GNPRecursion_(query_node, reference_node->left(), left_distance);
       }
@@ -416,20 +432,28 @@ class DiskAllNN {
 
       /* Order of recursion does not matter */
       // Prefetching directives
-      if (query_node->stat().left_usage() > advice_limit_) {
+
+#ifdef PREFETCH
+      if (query_node->stat().left_usage() > advice_limit_lower_
+          && query_node->stat().left_usage() < advice_limit_upper_) {
         mmapmm::MemoryManager<false>::allocator_->Advise(query_node->left(), 
             query_node->stat().left_usage(), MADV_SEQUENTIAL);
         mmapmm::MemoryManager<false>::allocator_->Advise(query_node->right(), 
             query_node->stat().right_usage(), MADV_DONTNEED);    
       }
+#endif
       // GNP part 
       GNPRecursion_(query_node->left(), reference_node, left_distance);
-      if (query_node->stat().right_usage() > advice_limit_) {
+
+#ifdef PREFETCH
+      if (query_node->stat().right_usage() > advice_limit_lower_
+          && query_node->stat().right_usage() < advice_limit_upper_) {
         mmapmm::MemoryManager<false>::allocator_->Advise(query_node->right(), 
             query_node->stat().right_usage(), MADV_SEQUENTIAL);
         mmapmm::MemoryManager<false>::allocator_->Advise(query_node->left(), 
             query_node->stat().left_usage(), MADV_DONTNEED);        
       }
+#endif
       GNPRecursion_(query_node->right(), reference_node, right_distance);
 
       /* Update upper bound nn distance base new child bounds */
@@ -454,67 +478,84 @@ class DiskAllNN {
 
       if (left_distance < right_distance) {
         // Prefetching directives
-        if (query_node->stat().left_usage() > advice_limit_) {
+#ifdef PREFETCH
+        if (query_node->stat().left_usage() > advice_limit_lower_ 
+            && query_node->stat().left_usage() < advice_limit_upper_) {
           mmapmm::MemoryManager<false>::allocator_->Advise(query_node->left(), 
               query_node->stat().left_usage(), MADV_SEQUENTIAL);
           mmapmm::MemoryManager<false>::allocator_->Advise(query_node->right(), 
               query_node->stat().right_usage(), MADV_DONTNEED);    
         }
-        if (reference_node->stat().left_usage() > advice_limit_) {
+        if (reference_node->stat().left_usage() > advice_limit_lower_
+            && reference_node->stat().left_usage() < advice_limit_upper_) {
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->left(), 
               reference_node->stat().left_usage(), MADV_SEQUENTIAL);
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->right(), 
               reference_node->stat().right_usage(), MADV_DONTNEED);    
         }
+#endif
         // GNP part        
         GNPRecursion_(query_node->left(),
             reference_node->left(), left_distance);
         // Prefetching directives
-        if (query_node->stat().left_usage() > advice_limit_) {
+
+#ifdef PREFETCH
+        if (query_node->stat().left_usage() > advice_limit_lower_
+            && query_node->stat().left_usage() < advice_limit_upper_) {
           mmapmm::MemoryManager<false>::allocator_->Advise(query_node->left(), 
               query_node->stat().left_usage(), MADV_SEQUENTIAL);
           mmapmm::MemoryManager<false>::allocator_->Advise(query_node->right(), 
               query_node->stat().right_usage(), MADV_DONTNEED);    
         }
-        if (reference_node->stat().right_usage() > advice_limit_) {
+        if (reference_node->stat().right_usage() > advice_limit_lower_
+            && reference_node->stat().right_usage() < advice_limit_upper_) {
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->right(), 
               reference_node->stat().right_usage(), MADV_SEQUENTIAL);
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->left(), 
               reference_node->stat().left_usage(), MADV_DONTNEED);    
         }
+#endif
         // GNP part         
         GNPRecursion_(query_node->left(),
             reference_node->right(), right_distance);
       } else {
         // Prefetching directives
-        if (query_node->stat().left_usage() > advice_limit_) {
+#ifdef PREFETCH
+        if (query_node->stat().left_usage() > advice_limit_lower_
+            && query_node->stat().left_usage() < advice_limit_upper_) {
           mmapmm::MemoryManager<false>::allocator_->Advise(query_node->left(), 
               query_node->stat().left_usage(), MADV_SEQUENTIAL);
           mmapmm::MemoryManager<false>::allocator_->Advise(query_node->right(), 
               query_node->stat().right_usage(), MADV_DONTNEED);    
         }
-        if (reference_node->stat().right_usage() > advice_limit_) {
+        if (reference_node->stat().right_usage() > advice_limit_lower_
+            && reference_node->stat().right_usage() < advice_limit_upper_) {
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->right(), 
               reference_node->stat().right_usage(), MADV_SEQUENTIAL);
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->left(), 
               reference_node->stat().left_usage(), MADV_DONTNEED);    
         }
+#endif
         // GNP part          
         GNPRecursion_(query_node->left(),
             reference_node->right(), right_distance);
         // Prefetching directives
-        if (query_node->stat().left_usage() > advice_limit_) {
+#ifdef PREFETCH
+        if (query_node->stat().left_usage() > advice_limit_lower_
+            && query_node->stat().left_usage() < advice_limit_upper_) {
           mmapmm::MemoryManager<false>::allocator_->Advise(query_node->left(), 
               query_node->stat().left_usage(), MADV_SEQUENTIAL);
           mmapmm::MemoryManager<false>::allocator_->Advise(query_node->right(), 
               query_node->stat().right_usage(), MADV_DONTNEED);    
         }
-        if (reference_node->stat().left_usage() > advice_limit_) {
+        if (reference_node->stat().left_usage() > advice_limit_lower_
+            && reference_node->stat().left_usage() < advice_limit_upper_) {
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->left(), 
               reference_node->stat().left_usage(), MADV_SEQUENTIAL);
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->right(), 
               reference_node->stat().right_usage(), MADV_DONTNEED);    
         }
+#endif
         // GNP part         
         GNPRecursion_(query_node->left(),
             reference_node->left(), left_distance);
@@ -532,34 +573,44 @@ class DiskAllNN {
             reference_node->right(), right_distance);
       } else {
         // Prefetching directives
-        if (query_node->stat().right_usage() > advice_limit_) {
+
+#ifdef PREFETCH
+        if (query_node->stat().right_usage() > advice_limit_lower_
+            && query_node->stat().right_usage() < advice_limit_upper_) {
           mmapmm::MemoryManager<false>::allocator_->Advise(query_node->right(), 
               query_node->stat().right_usage(), MADV_SEQUENTIAL);
           mmapmm::MemoryManager<false>::allocator_->Advise(query_node->left(), 
               query_node->stat().left_usage(), MADV_DONTNEED);    
         }
-        if (reference_node->stat().right_usage() > advice_limit_) {
+        if (reference_node->stat().right_usage() > advice_limit_lower_
+            && reference_node->stat().right_usage() < advice_limit_upper_) {
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->right(), 
               reference_node->stat().right_usage(), MADV_SEQUENTIAL);
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->left(), 
               reference_node->stat().left_usage(), MADV_DONTNEED);    
         }
+#endif
         // GNP part         
         GNPRecursion_(query_node->right(),
             reference_node->right(), right_distance);
         // Prefetching directives
-        if (query_node->stat().right_usage()) {
+
+#ifdef PREFETCH
+        if (query_node->stat().right_usage() > advice_limit_lower_
+            && query_node->stat().right_usage() < advice_limit_upper_) {
           mmapmm::MemoryManager<false>::allocator_->Advise(query_node->right(), 
               query_node->stat().right_usage(), MADV_SEQUENTIAL);
           mmapmm::MemoryManager<false>::allocator_->Advise(query_node->left(), 
               query_node->stat().left_usage(), MADV_DONTNEED);    
         }
-        if (reference_node->stat().left_usage() > advice_limit_) {
+        if (reference_node->stat().left_usage() > advice_limit_lower_
+            && reference_node->stat().left_usage() < advice_limit_upper_) {
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->left(), 
               reference_node->stat().left_usage(), MADV_SEQUENTIAL);
           mmapmm::MemoryManager<false>::allocator_->Advise(reference_node->right(), 
               reference_node->stat().right_usage(), MADV_DONTNEED);    
         }
+#endif
         // GNP part          
         GNPRecursion_(query_node->right(),
             reference_node->left(), left_distance);
@@ -608,8 +659,13 @@ class DiskAllNN {
     leaf_size_ = fx_param_int(module_, "leaf_size", 20);
     DEBUG_ASSERT(leaf_size_ > 0);
 
-    advice_limit_ = fx_param_int(module_, "advice_limit", 67108864);
-    DEBUG_ASSERT(advice_limit_ > 0);
+    advice_limit_upper_ = fx_param_int(module_, "advice_limit_upper", 67108864);
+    DEBUG_ASSERT(advice_limit_upper_ > 0);
+
+    advice_limit_lower_ = fx_param_int(module_, "advice_limit", 409600);
+    DEBUG_ASSERT(advice_limit_lower_ > 0);
+    
+    std::string splits = fx_param_str(module_, "splits", "midpoint"); 
     
     // Timers are another handy tool provided by FASTexec.  These are
     // emitted automatically once you call fx_done.
@@ -622,10 +678,18 @@ class DiskAllNN {
     // initialize the reverse of said.
 
     /* Build the trees */
-    query_tree_ = tree_mmap::MakeKdTreeMidpoint<TreeType>(
-	  queries_, leaf_size_, &old_from_new_queries_, NULL);
-    reference_tree_ = tree_mmap::MakeKdTreeMidpoint<TreeType>(
-        references_, leaf_size_, &old_from_new_references_, NULL);
+    if (splits==std::string("midpoint")) {
+      query_tree_ = tree_mmap::MakeKdTreeMidpoint<TreeType>(
+	    queries_, leaf_size_, &old_from_new_queries_, NULL);
+      reference_tree_ = tree_mmap::MakeKdTreeMidpoint<TreeType>(
+          references_, leaf_size_, &old_from_new_references_, NULL);
+    }
+    if (splits==std::string("median")) {
+      query_tree_ = tree_mmap::MakeKdTreeMedian<TreeType>(
+	    queries_, leaf_size_, &old_from_new_queries_, NULL);
+      reference_tree_ = tree_mmap::MakeKdTreeMedian<TreeType>(
+          references_, leaf_size_, &old_from_new_references_, NULL);
+    }
 
     // While we don't make use of this here, it is possible to start
     // timers after stopping them.  They continue where they left off.
@@ -658,8 +722,13 @@ class DiskAllNN {
     leaf_size_ = fx_param_int(module_, "leaf_size", 20);
     DEBUG_ASSERT(leaf_size_ > 0);
 
-    advice_limit_ = fx_param_int(module_, "advice_limit", 67108864);
-    DEBUG_ASSERT(advice_limit_ > 0);
+    advice_limit_upper_ = fx_param_int(module_, "advice_limit_upper", 67108864);
+    DEBUG_ASSERT(advice_limit_upper_ > 0);
+
+    advice_limit_lower_ = fx_param_int(module_, "advice_limit_lower", 409600);
+    DEBUG_ASSERT(advice_limit_lower_ > 0);
+
+    std::string splits = fx_param_str(module_, "splits", "midpoint"); 
 
     // Timers are another handy tool provided by FASTexec.  These are
     // emitted automatically once you call fx_done.
@@ -672,8 +741,15 @@ class DiskAllNN {
     // initialize the reverse of said.
 
     /* Build the trees */
-    query_tree_ = tree_mmap::MakeKdTreeMidpoint<TreeType>(
-	      queries_, leaf_size_, &old_from_new_queries_, NULL);
+    if (splits==std::string("midpoint")) {
+      query_tree_ = tree_mmap::MakeKdTreeMidpoint<TreeType>(
+	        queries_, leaf_size_, &old_from_new_queries_, NULL);
+    }
+    if (splits==std::string("median")) {
+      query_tree_ = tree_mmap::MakeKdTreeMedian<TreeType>(
+	        queries_, leaf_size_, &old_from_new_queries_, NULL);
+    }
+
     reference_tree_ = query_tree_; 
     old_from_new_references_.Alias(old_from_new_queries_);
 
