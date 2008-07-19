@@ -40,7 +40,7 @@ int main(int argc, char *argv[]){
   bool pca_preprocess=fx_param_bool(fx_root, "opts/pca_pre", false);
   index_t pca_dimension=fx_param_int(fx_root, "opts/pca_dim", 5);
   bool pca_init=fx_param_bool(fx_root, "opts/pca_init", false);
-  Matrix *initial_data;
+  Matrix *initial_data=NULL;
   if (pca_preprocess==true) {
     NOTIFY("Preprocessing with pca");
     Matrix temp;
