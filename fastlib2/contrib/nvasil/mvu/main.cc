@@ -22,7 +22,7 @@
 #include "../l_bfgs/l_bfgs.h"
 
 int main(int argc, char *argv[]){
-  fx_init(argc, argv);
+  fx_module *fx_root=fx_init(argc, argv, NULL);
   std::string optimized_function=fx_param_str(NULL, "opts/optfun", "mvu");
   std::string data_file=fx_param_str_req(NULL, "opts/data_file");
   Matrix data_mat;
@@ -32,14 +32,14 @@ int main(int argc, char *argv[]){
   NOTIFY("Removing the mean., centering data...");
   OptUtils::RemoveMean(&data_mat);
   
-  datanode *optfun_node;
-  datanode *l_bfgs_node;
-  l_bfgs_node=fx_submodule(NULL, "opts/l_bfgs", "l_bfgs");
-  optfun_node=fx_submodule(NULL, "opts/optfun", "optfun");
+  fx_module *optfun_node;
+  fx_module *l_bfgs_node;
+  l_bfgs_node=fx_submodule(fx_root, "opts/l_bfgs");
+  optfun_node=fx_submodule(fx_root, "opts/optfun");
   
-  bool pca_preprocess=fx_param_bool(NULL, "opts/pca_pre", false);
-  index_t pca_dimension=fx_param_int(NULL, "opts/pca_dim", 5);
-  bool pca_init=fx_param_bool(NULL, "opts/pca_init", false);
+  bool pca_preprocess=fx_param_bool(fx_root, "opts/pca_pre", false);
+  index_t pca_dimension=fx_param_int(fx_root, "opts/pca_dim", 5);
+  bool pca_init=fx_param_bool(fx_root, "opts/pca_init", false);
   Matrix *initial_data;
   if (pca_preprocess==true) {
     NOTIFY("Preprocessing with pca");
@@ -57,9 +57,7 @@ int main(int argc, char *argv[]){
  
   
   //we need to insert the number of points
-  char buffer[128];
-  sprintf(buffer, "%i", data_mat.n_cols());
-  fx_set_param(l_bfgs_node, "num_of_points", buffer);
+  fx_set_param_int(l_bfgs_node, "num_of_points", data_mat.n_cols());
   std::string result_file=fx_param_str(NULL, "opts/result_file", "result.csv");
   bool done=false;
     
@@ -123,5 +121,5 @@ int main(int argc, char *argv[]){
   if (pca_init==true) {
     delete initial_data;
   }
-  fx_done();
+  fx_done(fx_root);
 }

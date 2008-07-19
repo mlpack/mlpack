@@ -36,6 +36,10 @@ class MaxVariance {
   void Project(Matrix *coordinates);
   void set_sigma(double sigma); 
   bool IsDiverging(double objective); 
+  bool IsOptimizationOver(Matrix &coordinates, 
+      Matrix &gradient, double step) { return false;}
+  bool IsIntermediateStepOver(Matrix &coordinates, 
+      Matrix &gradient, double step) {return false;}
  
  private:
   datanode *module_;
@@ -63,7 +67,11 @@ class MaxVarianceInequalityOnFurthest {
   void Project(Matrix *coordinates);
   void set_sigma(double sigma);
   bool IsDiverging(double objective); 
-  
+  bool IsOptimizationOver(Matrix &coordinates, 
+      Matrix &gradient, double step) {return false;}
+  bool IsIntermediateStepOver(Matrix &coordinates, 
+      Matrix &gradient, double step) {return false;}
+ 
  private:
   datanode *module_;
   AllkNN allknn_;
@@ -96,6 +104,10 @@ public:
   void set_sigma(double sigma); 
   void set_lagrange_mult(double val);
   bool IsDiverging(double objective); 
+  bool IsOptimizationOver(Matrix &coordinates, 
+      Matrix &gradient, double step) {return false;}
+  bool IsIntermediateStepOver(Matrix &coordinates, 
+      Matrix &gradient, double step) {return false;}
  
 private:
   datanode *module_;
