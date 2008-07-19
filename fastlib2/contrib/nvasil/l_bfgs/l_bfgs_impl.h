@@ -74,8 +74,8 @@ void LBfgs<OptimizedFunction>::Destruct() {
   fx_format_result(module_, "feasibility_error", "%lg", feasibility_error);
   fx_format_result(module_, "final_sigma", "%lg", sigma_);
   fx_format_result(module_, "objective","%lg", objective);
-  s_bfgs_.Destruct();
-  y_bfgs_.Destruct();
+  s_bfgs_.Renew();
+  y_bfgs_.Renew();
   ro_bfgs_.Destruct();
   coordinates_.Destruct();
   previous_coordinates_.Destruct();
