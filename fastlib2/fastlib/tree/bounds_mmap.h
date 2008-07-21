@@ -60,7 +60,7 @@ class DHrectBoundMmap {
   }
   void Copy(DHrectBound<t_pow> & bound) {
     for(index_t i=0; i<dim_; i++) {
-      bounds_[i]=get(i);
+      bounds_[i]=bound.get(i);
     }
   }
   /**

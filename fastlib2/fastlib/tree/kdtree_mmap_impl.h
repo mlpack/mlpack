@@ -1,7 +1,11 @@
 /* Implementation for the regular pointer-style kd-tree builder. */
+#ifndef KDTREE_MMAP_IMPL_H_
+#define KDTREE_MMAP_IMPL_H_
 
 namespace tree_kdtree_mmap_private {
-  Vector MakeBoundVector(Vector point, Vector bound_dimensions){
+  template<typename T>
+  GenVector<T> MakeBoundVector(GenVector<T> &point, 
+      GenVector<T> &bound_dimensions){
     int i;
     Vector bound_vector;
     bound_vector.Init(bound_dimensions.length());
@@ -159,8 +163,8 @@ namespace tree_kdtree_mmap_private {
     TKdTree *left = NULL;
     TKdTree *right = NULL;
     
-    SelectFindBoundFromMatrix(matrix, split_dimensions, node->begin(), 
-			      node->count(), &node->bound());
+//    SelectFindBoundFromMatrix(matrix, split_dimensions, node->begin(), 
+//			      node->count(), &node->bound());
 
     if (node->count() > leaf_size) {
       index_t split_dim = BIG_BAD_NUMBER;
@@ -232,8 +236,8 @@ namespace tree_kdtree_mmap_private {
     TKdTree *left = NULL;
     TKdTree *right = NULL;
     
-    SelectFindBoundFromMatrix(matrix, split_dimensions, node->begin(), 
-			      node->count(), &node->bound());
+//    SelectFindBoundFromMatrix(matrix, split_dimensions, node->begin(), 
+//			      node->count(), &node->bound());
 
     if (node->count() > leaf_size) {
       index_t split_dim = BIG_BAD_NUMBER;
@@ -261,8 +265,9 @@ namespace tree_kdtree_mmap_private {
         left_static_bound.Init(split_dimensions.length());
         right_static_bound.Init(split_dimensions.length());
 
-        Quicksort(matrix, split_dim, node->begin(), 
-            node->begin()+node->count());
+        Quicksort(&matrix, split_dim, old_from_new,
+            node->begin(), 
+            node->begin()+node->count()-1);
         index_t split_col=node->count()/2;
         split_value=matrix.get(split_dim, node->begin()+split_col);
         SelectFindBoundFromMatrix(matrix, split_dimensions, node->begin(), 
@@ -310,27 +315,32 @@ namespace tree_kdtree_mmap_private {
     node->set_children(matrix, left, right);
   }
   template<typename T>
-  void Quicksort (GenMatrix<T> &a, index_t split_dim, 
+  void Quicksort(GenMatrix<T> *a, index_t split_dim, index_t *old_from_new, 
      index_t lo, index_t hi) {
     //  lo is the lower index, hi is the upper index
     //  of the region of array a that is to be sorted
     index_t i=lo, j=hi;
-    T x=a.get(split_dim, (lo+hi)/2);
-    T h[a.n_rows()];
+    T x=a->get(split_dim, (lo+hi)/2);
+    T h[a->n_rows()];
     //  partition
     do {    
-      while (a.get(split_dim, i)<x) i++; 
-      while (a.get(split_dim, j)>x) j--;
+      while (a->get(split_dim, i)<x) i++; 
+      while (a->get(split_dim, j)>x) j--;
       if (i<=j) {
-        memcpy(h, a.GetColumnPtr(i), a.n_rows()*sizeof(T));
-        memcpy(a.GetColumnPtr(i), a.GetColumnPtr(j), a.n_rows()*sizeof(T));
-        memcpy(a.GetColumnPtr(j), h, a.n_rows()*sizeof(T));
+        memcpy(h, a->GetColumnPtr(i), a->n_rows()*sizeof(T));
+        memcpy(a->GetColumnPtr(i), a->GetColumnPtr(j), a->n_rows()*sizeof(T));
+        memcpy(a->GetColumnPtr(j), h, a->n_rows()*sizeof(T));
+        index_t t=old_from_new[i];
+        old_from_new[i]=old_from_new[j];
+        old_from_new[j]=t;
         // h=a[i]; a[i]=a[j]; a[j]=h;
         i++; j--;
       }
     } while (i<=j);
     //  recursion
-    if (lo<j) Quicksort(a, split_dim, lo, j);
-    if (i<hi) Quicksort(a, split_dim, i, hi);
+    if (lo<j) Quicksort(a, split_dim, old_from_new, lo, j);
+    if (i<hi) Quicksort(a, split_dim, old_from_new, i, hi);
   }
 };
+
+#endif
