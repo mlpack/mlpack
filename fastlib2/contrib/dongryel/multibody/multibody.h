@@ -83,7 +83,8 @@ class MultitreeMultibody {
     for(index_t i = 0; i < mkernel_.order(); i++) {
       root_nodes[i] = root_;
     }
-    
+
+    num_prunes_ = 0;
     total_num_tuples_ = math::BinomialCoefficient(data_.n_cols(),
 						  mkernel_.order());
     total_n_minus_one_num_tuples_ = 
@@ -105,6 +106,8 @@ class MultitreeMultibody {
     // Run and do timing for multitree multibody
     MTMultibody(root_nodes, total_num_tuples_);
     PostProcess(root_);
+
+    printf("%d n-tuples have been pruned...\n", num_prunes_);
   }
 
   /** @brief Initialize the kernel object, and build the tree.
@@ -123,7 +126,8 @@ class MultitreeMultibody {
     data_.Own(&(dataset_.matrix()));
     DatasetScaler::TranslateDataByMin(data_, data_, true);
     
-    root_ = tree::MakeKdTreeMidpoint<TTree>(data_, leaflen, NULL);
+    root_ = tree::MakeKdTreeMidpoint<TTree>(data_, leaflen, 
+					    (GenVector<index_t> *)NULL, NULL);
 
     // Initialize the multibody kernel.
     mkernel_.Init(bandwidth);
@@ -174,6 +178,10 @@ private:
   /** @brief The total number of n-tuples.
    */
   double total_num_tuples_;
+
+  /** @brief The total number of n-tuple  prunes.
+   */
+  int num_prunes_;
 
   /** @brief The total number of (n - 1) tuples.
    */
@@ -260,6 +268,10 @@ private:
   
 
   /////////// Helper Functions //////////
+
+  void RefineStatistics_(int point_index, TTree *destination_node);
+
+  void RefineStatistics_(TTree *internal_node);
 
   /** @brief Adds the postponed information from a leaf node to the
    *         point's contribution.
