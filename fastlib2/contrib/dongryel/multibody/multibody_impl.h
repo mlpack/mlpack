@@ -5,7 +5,6 @@
 #ifndef MULTIBODY_IMPL_H
 #define MULTIBODY_IMPL_H
 
-
 template<typename TMultibodyKernel, typename TTree>
 int MultitreeMultibody<TMultibodyKernel, TTree>::
 as_indexes_strictly_surround_bs(TTree *a, TTree *b) {
@@ -121,6 +120,60 @@ int MultitreeMultibody<TMultibodyKernel, TTree>::FindSplitNode
 }
 
 template<typename TMultibodyKernel, typename TTree>
+void MultitreeMultibody<TMultibodyKernel, TTree>::RefineStatistics_
+(int point_index, TTree *destination_node) {
+  
+  destination_node->stat().negative_gradient1_u =
+    std::max(destination_node->stat().negative_gradient1_u,
+	     negative_force1_u_[point_index]);
+  destination_node->stat().positive_gradient1_l =
+    std::min(destination_node->stat().positive_gradient1_l,
+	     positive_force1_l_[point_index]);
+  
+  for(index_t d = 0; d < negative_force2_e_.n_rows(); d++) {
+    destination_node->stat().negative_gradient2_u[d] =
+      std::max(destination_node->stat().negative_gradient2_u[d],
+	       negative_force2_u_.get(d, point_index));
+    destination_node->stat().positive_gradient2_l[d] =
+      std::max(destination_node->stat().positive_gradient2_l[d],
+	       positive_force2_l_.get(d, point_index));
+  }
+}
+
+template<typename TMultibodyKernel, typename TTree>
+void MultitreeMultibody<TMultibodyKernel, TTree>::RefineStatistics_
+(TTree *node) {
+
+  TTree *left_node = node->left();
+  TTree *right_node = node->right();
+
+  // Take the left and the right node's bound and combine.
+  node->stat().negative_gradient1_u = 
+    std::max(left_node->stat().negative_gradient1_u +
+	     left_node->stat().postponed_negative_gradient1_u,
+	     right_node->stat().negative_gradient1_u +
+	     right_node->stat().postponed_negative_gradient1_u);
+  node->stat().positive_gradient1_l =
+    std::min(left_node->stat().positive_gradient1_l +
+	     left_node->stat().postponed_positive_gradient1_l,
+	     right_node->stat().positive_gradient1_l +
+	     right_node->stat().postponed_positive_gradient1_l);
+  
+  for(index_t d = 0; d < negative_force2_e_.n_rows(); d++) {
+    node->stat().negative_gradient2_u[d] =
+      std::max(left_node->stat().negative_gradient2_u[d] +
+	       left_node->stat().postponed_negative_gradient2_u[d],
+	       right_node->stat().negative_gradient2_u[d] +
+	       right_node->stat().postponed_negative_gradient2_u[d]);
+    node->stat().positive_gradient2_l[d] =
+      std::min(left_node->stat().positive_gradient2_l[d] +
+	       left_node->stat().postponed_positive_gradient2_l[d],
+	       right_node->stat().positive_gradient2_l[d] +
+	       right_node->stat().postponed_positive_gradient2_l[d]);
+  }
+}
+
+template<typename TMultibodyKernel, typename TTree>
 void MultitreeMultibody<TMultibodyKernel, TTree>::AddPostponed
 (TTree *source_node, TTree *destination_node) {
 
@@ -229,10 +282,14 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibodyBase
   // refine node statistics.
   if(level == 0) {
     for(index_t i = 0; i < nodes.size(); i++) {
+
+      if(i != 0 && nodes[i] == nodes[i - 1]) {
+	break;
+      }
       nodes[i]->stat().SetZero();
 
       for(index_t r = nodes[i]->begin(); r < nodes[i]->end(); r++) {
-	
+	RefineStatistics_(r, nodes[i]);
       }
     }
   }
@@ -336,6 +393,7 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
   double allowed_err = 0;
   
   if(Prunable(nodes, num_tuples, &allowed_err)) {
+    num_prunes_++;
     return;
   }
   
@@ -391,6 +449,9 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
     if(new_num_tuples > 0) {
       MTMultibody(new_nodes, new_num_tuples);
     }
+
+    // Refine statistics after recursing.
+    RefineStatistics_(nodes[split_index]);
   }
 }
 

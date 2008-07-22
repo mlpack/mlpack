@@ -451,12 +451,13 @@ class AxilrodTellerForceKernel {
        negative_gradient1_error, positive_gradient1_error,
        negative_gradient2_error, positive_gradient2_error,
        negative_gradient3_error, positive_gradient3_error);
-    
+
     // Now determine whether all three nodes satisfy the pruning
     // conditions.
     double num_ik_pairs = tree_nodes[0]->count() * tree_nodes[2]->count();
     double num_ij_pairs = tree_nodes[0]->count() * tree_nodes[1]->count();
     double num_jk_pairs = tree_nodes[1]->count() * tree_nodes[2]->count();
+
     bool first_node_prunable =
       ((negative_gradient1_error + negative_gradient2_error) <=
        (relative_error / (double) total_n_minus_one_num_tuples) *
@@ -479,6 +480,7 @@ class AxilrodTellerForceKernel {
        positive_gradient2_error <=
        relative_error * num_jk_pairs / total_n_minus_one_num_tuples *
        L1Norm_(tree_nodes[0]->stat().positive_gradient2_l));
+    
     bool second_node_prunable =
       ((negative_gradient1_error + negative_gradient3_error) <=
        (relative_error / (double) total_n_minus_one_num_tuples) *
@@ -528,7 +530,7 @@ class AxilrodTellerForceKernel {
     prunable = first_node_prunable && second_node_prunable &&
       third_node_prunable;
     if(prunable) {
-      
+
       // First the i-th node.
       tree_nodes[0]->stat().postponed_negative_gradient1_e += 
 	num_jk_pairs * 0.5 * (min_negative_gradient1 + max_negative_gradient1 +

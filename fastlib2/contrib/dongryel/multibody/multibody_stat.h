@@ -78,10 +78,10 @@ class MultibodyStat {
   /** @brief Resets the statistics to zero.
    */
   void SetZero() {
-    negative_gradient1_u = 0;
-    positive_gradient1_l = 0;
-    negative_gradient2_u.SetZero();
-    positive_gradient2_l.SetZero();
+    negative_gradient1_u = -DBL_MAX;
+    positive_gradient1_l = DBL_MAX;
+    negative_gradient2_u.SetAll(-DBL_MAX);
+    positive_gradient2_l.SetAll(DBL_MAX);
 
     postponed_negative_gradient1_e = 0;
     postponed_negative_gradient1_u = 0;
