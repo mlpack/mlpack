@@ -27,18 +27,19 @@ int main(int argc, char *argv[]) {
   // The reference data file is a required parameter.
   const char* references_file_name = fx_param_str
     (NULL, "data", 
-     "/net/hc293/dongryel/Research/RegressionDatasets/alldata_deltacolors_stdized");
+     "references1.txt");
   
   // The file containing the reference target values is a required
   // parameter.
   const char* reference_targets_file_name = 
     fx_param_str
     (NULL, "dtarget", 
-     "/net/hc293/dongryel/Research/RegressionDatasets/alldata_zs");
+     "targets1.txt");
 
   // The query data file defaults to the references.
   const char* queries_file_name =
-    fx_param_str(NULL, "query", references_file_name);
+    fx_param_str(NULL, "query", 
+    "queries_1a0k_.txt");
 
   // query and reference datasets and target training values.
   Matrix references;
@@ -50,12 +51,18 @@ int main(int argc, char *argv[]) {
   data::Load(queries_file_name, &queries);
   data::Load(reference_targets_file_name, &reference_targets);
 
+  printf("references dim: %d X %d \n", references.n_rows(), 
+		references.n_cols());
+  printf("reference_targets dim: %d X %d \n", reference_targets.n_rows(), 
+		reference_targets.n_cols());
+  printf("queries dim: %d X %d \n", queries.n_rows(), queries.n_cols());
+
   // We assume that the reference dataset lies in the positive
   // quadrant for simplifying the algorithmic implementation. Scale
   // the datasets to fit in the hypercube. This should be replaced
   // with more general dataset scaling operation, requested by the
   // users.
-  DatasetScaler::ScaleDataByMinMax(queries, references, false);
+  //DatasetScaler::ScaleDataByMinMax(queries, references, false);
 
   // Store the results computed by the tree-based results.
   Vector fast_lpr_results;
@@ -90,7 +97,9 @@ int main(int argc, char *argv[]) {
   }
   else if(!strcmp(fx_param_str_req(lpr_module, "method"), 
 		  "dt-dense-relative")) {
-
+    la::Scale(100.0, &reference_targets);	
+    reference_targets.PrintDebug();
+    
     printf("Running the DT-DENSE-LPR algorithm with relative prune rule.\n");
     DenseLpr<EpanKernel, RelativePruneLpr> fast_lpr;
     fast_lpr.Init(references, reference_targets, lpr_module);
@@ -102,6 +111,38 @@ int main(int argc, char *argv[]) {
 	    fast_lpr.root_mean_square_deviation()));
     fast_lpr_has_run = true;
     fast_lpr.get_confidence_bands(&fast_lpr_confidence_bands);
+    printf("Model Training Done!\n");
+    
+    	Vector query_regression_estimates ;
+	ArrayList<DRange> query_confidence_bands;
+	Vector query_magnitude_weight_diagrams;
+	printf("before: queries dim: %d X %d \n", queries.n_rows(), queries.n_cols());
+
+	fast_lpr.Compute(queries, &query_regression_estimates,
+		 &query_confidence_bands, &query_magnitude_weight_diagrams);
+        printf("after: queries dim: %d X %d \n", queries.n_rows(), queries.n_cols());
+
+	index_t queries_length = queries.n_cols();
+	printf("prediction on the queries (%d) done!\n", queries_length);
+
+	const char* query_debugfile_name = 
+		"estimates_1a0k_";
+	FILE  *fp;
+	fp = fopen(query_debugfile_name, "w");
+	query_regression_estimates.PrintDebug("query_estimates", fp);
+	for(index_t i = 0; i < query_regression_estimates.length(); i++) {
+	  printf("%g\n", query_regression_estimates[i]);
+	}
+	double *ptr = query_regression_estimates.ptr();
+	printf("%f\t%f\n", ptr[0], ptr[queries_length-1] );
+
+	//Matrix query_regression_estimates_mat;
+	//query_regression_estimates_mat.AliasColVector(*query_regression_estimates);
+	const char* query_outfile_name = 
+		"estimations_1a0k_";
+	//data::Save(query_outfile_name, query_regression_estimates_mat);	
+	fast_lpr.PrintDebug();
+
   }
   else if(!strcmp(fx_param_str_req(lpr_module, "method"), 
 		  "st-dense-relative")) {
@@ -120,6 +161,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Do naive algorithm.
+  /*
   printf("Running the naive algorithm...\n");
   Vector naive_lpr_results;
   NaiveLpr<EpanKernel> naive_lpr;
@@ -173,6 +215,7 @@ int main(int argc, char *argv[]) {
     fast_lpr_results.Init(0);
     fast_lpr_confidence_bands.Init();
   }
+  */
 
   // Finalize FastExec and print output results.
   fx_done(NULL);
