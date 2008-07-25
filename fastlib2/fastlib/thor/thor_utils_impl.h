@@ -250,6 +250,7 @@ void thor::MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
   const int Q_RESULTS_CHANNEL = 120;
   const int GNP_CHANNEL = 200;
   double results_megs = fx_param_double(module, "results/megs", 1000);
+  double mutables_megs = fx_param_double(module, "mutables/megs", 1000); //
   DistributedCache *points_cache;
   index_t n_points;
   ThorTree<typename GNP::Param, typename GNP::QPoint, typename GNP::QNode> tree;
@@ -291,7 +292,7 @@ void thor::MonochromaticDualTreeMain(datanode *module, const char *gnp_name) {
   default_mutable.summary_result.Init(param); //
   default_mutable.postponed.Init(param); //
   tree.CreateMutableCache(Q_RESULTS_CHANNEL + 1, default_mutable, //
-        results_megs, &q_mutables);
+        mutables_megs, &q_mutables); //
 
   typename GNP::GlobalResult global_result;
   RpcDualTree<GNP, Solver>(

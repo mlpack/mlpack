@@ -78,6 +78,8 @@ template<typename T>
 void CacheArray<T>::CreateCacheMaster(int channel,
     index_t n_block_elems, const Element& default_elem, double megs,
     DistributedCache *cache) {
+//  DEBUG_ASSERT_MSG(n_block_elems & (n_block_elems_ - 1) == 0,
+//      "Number of block elements must be a pwoer of 2");
   CacheArrayBlockHandler<Element> *handler =
       new CacheArrayBlockHandler<Element>();
   handler->Init(default_elem);
