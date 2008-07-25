@@ -4,9 +4,18 @@
 librule(
     name = "svd_lpr",
     sources = [],
-    headers = ["svd_lpr.h"],
+    headers = ["svd_lpr.h",
+               "svd_lpr_user_level_impl.h"],
     deplibs = ["contrib/dongryel/proximity_project:proximity_project",
                "fastlib:fastlib_int"]        # dependency
+    )
+
+binrule(
+    name = "svd_lpr_bin",
+    sources = ["svd_lpr_main.cc"],
+    headers = [],
+    deplibs = [":svd_lpr",
+               "fastlib:fastlib_int"]
     )
 
 # to build:
