@@ -99,7 +99,6 @@ double DualTreeIntegrals::ComputeSingleIntegral_(const Vector& mu_center,
   
   return_value = return_value * 
     exp(-0.5 * bandwidth_ * between_centers_dists);
-  
   //printf("computing integral: %g\n", return_value);
   
   // printf("between centers dist: %g, integral: %g\n", between_centers_dists, return_value);

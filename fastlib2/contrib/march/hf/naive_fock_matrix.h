@@ -140,7 +140,8 @@ class NaiveFockMatrix {
     
     number_of_basis_functions_ = centers_.n_cols();
     
-    coulomb_matrix_.Init(number_of_basis_functions_, 
+    
+    /*coulomb_matrix_.Init(number_of_basis_functions_, 
                            number_of_basis_functions_);
     
     coulomb_matrix_.SetAll(0.0);
@@ -154,6 +155,7 @@ class NaiveFockMatrix {
                          number_of_basis_functions_);
     
     fock_matrix_.SetAll(0.0);
+    */
     
     normalization_constant_fourth_ = pow((2 * bandwidth_ / math::PI), 3);
     fx_format_result(module_, "normalization", "%g", 

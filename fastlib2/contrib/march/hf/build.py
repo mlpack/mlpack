@@ -16,7 +16,7 @@ librule(
 
 binrule(
 	name = "dual_tree_integrals_main",
-	headers = ["dual_tree_integrals.h"],
+	headers = ["dual_tree_integrals.h", "naive_fock_matrix.h"],
 	deplibs = ["fastlib:fastlib", ":dual_tree_integrals"],
 	sources = ["dual_tree_integrals_main.cc"]
 )
