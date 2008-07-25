@@ -308,19 +308,27 @@ class SCFSolver {
     Vector eigenvalues;
     Matrix right_vectors_trans;
     
+    printf("Overlap Matrix:\n");
+    overlap_matrix_.PrintDebug();
+    
     la::SVDInit(overlap_matrix_, &eigenvalues, &left_vectors, 
                 &right_vectors_trans);
     
 #ifdef DEBUG
+
+    eigenvalues.PrintDebug();
     
     for (index_t i = 0; i < eigenvalues.length(); i++) {
       DEBUG_ASSERT_MSG(!isnan(eigenvalues[i]), 
                        "Complex eigenvalue in diagonalizing overlap matrix.\n");
                        
+      DEBUG_WARN_MSG_IF(fabs(eigenvalues[i]) < 0.001, 
+                        "near-zero eigenvalue in overlap_matrix");
+                       
       Vector eigenvec;
       left_vectors.MakeColumnVector(i, &eigenvec);
       double len = la::LengthEuclidean(eigenvec);
-      DEBUG_APPROX_DOUBLE(len, 1.0, 0.01);
+      DEBUG_APPROX_DOUBLE(len, 1.0, 0.001);
       
       for (index_t j = i+1; j < eigenvalues.length(); j++) {
         
@@ -328,7 +336,7 @@ class SCFSolver {
         left_vectors.MakeColumnVector(j, &eigenvec2);
         
         double dotprod = la::Dot(eigenvec, eigenvec2);
-        DEBUG_APPROX_DOUBLE(dotprod, 0.0, 0.01);
+        DEBUG_APPROX_DOUBLE(dotprod, 0.0, 0.001);
         
       }
     }
@@ -348,6 +356,8 @@ class SCFSolver {
     la::MulInit(left_vectors, lambda_times_u_transpose, 
                      &change_of_basis_matrix_);
     
+    printf("Change Of Basis Matrix:\n");
+    change_of_basis_matrix_.PrintDebug();
                    
     
   } // FormChangeOfBasisMatrix_()
@@ -567,17 +577,23 @@ class SCFSolver {
                 
 #ifdef DEBUG
 
+    /*
     printf("Fock Matrix\n");
     fock_matrix_.PrintDebug();
     
     printf("Coefficients prime\n");
     coefficients_prime.PrintDebug();
-
+     */
     Matrix right_vectors;
     la::TransposeInit(right_vectors_trans, &right_vectors);
     
+    /*
     printf("Right vectors\n");
     right_vectors.PrintDebug();
+    
+    printf("Singular Values:\n");
+    energy_vector_.PrintDebug();
+    */
     
     for (index_t i = 0; i < number_of_basis_functions_; i++) {
     
@@ -586,12 +602,13 @@ class SCFSolver {
     
       for (index_t j = 0; j < number_of_basis_functions_; j++) {
         
-        DEBUG_APPROX_DOUBLE(fabs(coefficients_prime.ref(i,j)), 
-                            fabs(right_vectors.ref(i,j)), 0.001);
-                            
         Vector j_vec;
         right_vectors.MakeColumnVector(j, &j_vec);
         DEBUG_APPROX_DOUBLE(fabs(la::Dot(i_vec, j_vec)), (i == j), 0.001);
+        
+        DEBUG_APPROX_DOUBLE(fabs(coefficients_prime.ref(i,j)), 
+                            fabs(right_vectors.ref(i,j)), 0.001);
+        
         
       } // j
     

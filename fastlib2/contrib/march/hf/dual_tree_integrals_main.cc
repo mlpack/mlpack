@@ -1,4 +1,5 @@
 #include "dual_tree_integrals.h"
+#include "naive_fock_matrix.h"
 
 int main(int argc, char* argv[]) {
 
@@ -34,6 +35,19 @@ int main(int argc, char* argv[]) {
   fx_timer_stop(NULL, "nbody_time");
   
   integrals.OutputFockMatrix(NULL, NULL, NULL, NULL);
+  
+  if (fx_param_exists(NULL, "do_naive")) {
+    
+    struct datanode* naive_mod = fx_submodule(NULL, "naive");
+  
+    NaiveFockMatrix naive;
+    naive.Init(centers, naive_mod, density, bandwidth);
+    
+    fx_timer_start(NULL, "naive_time");
+    naive.ComputeFockMatrix();
+    fx_timer_stop(NULL, "naive_time");
+  
+  }
 
   fx_done(NULL);
 
