@@ -91,11 +91,11 @@ void MaxVariance::Init(fx_module *module) {
   }
   nearest_neighbor_pairs_.Init();
   nearest_distances_.Init();
-  index_t num_of_points_=0;
+  num_of_points_=0;
   while(!feof(fp)) {
     index_t n1, n2;
     double distance;
-    fscanf(fp,"%i %i %g", &n1, &n2, &distance);
+    fscanf(fp,"%i %i %lg", &n1, &n2, &distance);
     nearest_neighbor_pairs_.PushBackCopy(std::make_pair(n1, n2));
     nearest_distances_.PushBackCopy(distance);
     if (n1>num_of_points_) {
@@ -107,6 +107,7 @@ void MaxVariance::Init(fx_module *module) {
   }
   num_of_points_++;
   fclose(fp);   
+  num_of_nearest_pairs_=nearest_neighbor_pairs_.size(); 
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult_.SetAll(1.0);
   double max_nearest_distance=0;
@@ -115,7 +116,6 @@ void MaxVariance::Init(fx_module *module) {
   }
   sum_of_furthest_distances_=-max_nearest_distance*
       num_of_points_*num_of_points_;
- 
   NOTIFY("Lower bound for optimization %lg", sum_of_furthest_distances_);
   fx_format_result(module_, "num_of_constraints", "%i", num_of_nearest_pairs_);
   fx_format_result(module_, "lower_optimal_bound", "%lg", sum_of_furthest_distances_);
@@ -583,10 +583,11 @@ void MaxFurthestNeighbors::Init(fx_module *module) {
   }
   nearest_neighbor_pairs_.Init();
   nearest_distances_.Init();
+  num_of_points_=0;
   while(!feof(fp)) {
     index_t n1, n2;
     double distance;
-    fscanf(fp,"%i %i %g", &n1, &n2, &distance);
+    fscanf(fp,"%i %i %lg", &n1, &n2, &distance);
     nearest_neighbor_pairs_.PushBackCopy(std::make_pair(n1, n2));
     nearest_distances_.PushBackCopy(distance);
     if (n1>num_of_points_) {
@@ -597,6 +598,7 @@ void MaxFurthestNeighbors::Init(fx_module *module) {
     }
   }
   num_of_points_++;
+  num_of_nearest_pairs_=nearest_neighbor_pairs_.size();
   fclose(fp);
   fp=fopen(furthest_neighbor_file.c_str(), "r");
   if (fp==NULL) {
@@ -608,11 +610,12 @@ void MaxFurthestNeighbors::Init(fx_module *module) {
   while(!feof(fp)) {
     index_t n1, n2;
     double distance;
-    fscanf(fp,"%i %i %g", &n1, &n2, &distance);
+    fscanf(fp,"%i %i %lg", &n1, &n2, &distance);
     furthest_neighbor_pairs_.PushBackCopy(std::make_pair(n1, n2));
     furthest_distances_.PushBackCopy(distance);
   }
   fclose(fp);
+  num_of_furthest_pairs_=furthest_neighbor_pairs_.size();
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult_.SetAll(1.0);
   double max_nearest_distance=0;

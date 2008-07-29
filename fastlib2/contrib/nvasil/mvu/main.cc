@@ -76,7 +76,6 @@ int main(int argc, char *argv[]){
       if (data::Save(result_file.c_str(), result)==SUCCESS_FAIL) {
         FATAL("Didn't manage to save %s", result_file.c_str());
       }
-      engine.Destruct();
       done=true;
     }
     if (optimized_function=="mvuineq") {
@@ -93,7 +92,6 @@ int main(int argc, char *argv[]){
       if (data::Save(result_file.c_str(), result)==SUCCESS_FAIL) {
         FATAL("Didn't manage to save %s", result_file.c_str());
       }
-      engine.Destruct();
       done=true;
     }
     if (optimized_function == "mvfu"){
@@ -112,7 +110,6 @@ int main(int argc, char *argv[]){
       if (data::Save(result_file.c_str(), result)==SUCCESS_FAIL) {
         FATAL("Didn't manage to save %s", result_file.c_str());
       }
-      engine.Destruct();
       done=true;
     }
     if (done==false) {
@@ -144,7 +141,6 @@ int main(int argc, char *argv[]){
       if (data::Save(result_file.c_str(), result)==SUCCESS_FAIL) {
         FATAL("Didn't manage to save %s", result_file.c_str());
       }
-      engine.Destruct();
       done=true;
     }
     if (optimized_function == "mvfu"){
@@ -164,7 +160,6 @@ int main(int argc, char *argv[]){
       if (data::Save(result_file.c_str(), result)==SUCCESS_FAIL) {
         FATAL("Didn't manage to save %s", result_file.c_str());
       }
-      engine.Destruct();
       done=true;
     }
     if (done==false) {
