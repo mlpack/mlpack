@@ -78,6 +78,50 @@ void MaxVariance::Init(datanode *module, Matrix &data) {
   fx_format_result(module_, "lower_optimal_bound", "%lg", sum_of_furthest_distances_);
 }
 
+void MaxVariance::Init(fx_module *module) {
+  module_=module;
+  std::string nearest_neighbor_file=fx_param_str_req(module, 
+      "nearest_neighbor_file");
+  std::string furthest_neighbor_file=fx_param_str_req(module, 
+      "furthest_neighbor_file");
+  FILE *fp=fopen(nearest_neighbor_file.c_str(), "r");
+  if (fp==NULL) {
+    FATAL("Error while opening %s...%s", nearest_neighbor_file.c_str(),
+        strerror(errno));
+  }
+  nearest_neighbor_pairs_.Init();
+  nearest_distances_.Init();
+  index_t num_of_points_=0;
+  while(!feof(fp)) {
+    index_t n1, n2;
+    double distance;
+    fscanf(fp,"%i %i %g", &n1, &n2, &distance);
+    nearest_neighbor_pairs_.PushBackCopy(std::make_pair(n1, n2));
+    nearest_distances_.PushBackCopy(distance);
+    if (n1>num_of_points_) {
+      num_of_points_=n1;
+    }
+    if (n2>num_of_points_) {
+      num_of_points_=n2;
+    }
+  }
+  num_of_points_++;
+  fclose(fp);   
+  eq_lagrange_mult_.Init(num_of_nearest_pairs_);
+  eq_lagrange_mult_.SetAll(1.0);
+  double max_nearest_distance=0;
+  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+    max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
+  }
+  sum_of_furthest_distances_=-max_nearest_distance*
+      num_of_points_*num_of_points_;
+ 
+  NOTIFY("Lower bound for optimization %lg", sum_of_furthest_distances_);
+  fx_format_result(module_, "num_of_constraints", "%i", num_of_nearest_pairs_);
+  fx_format_result(module_, "lower_optimal_bound", "%lg", sum_of_furthest_distances_);
+}
+
+
 void MaxVariance::Destruct() {
   allknn_.Destruct();
   nearest_neighbor_pairs_.Renew();
@@ -184,6 +228,11 @@ bool MaxVariance::IsDiverging(double objective) {
 void MaxVariance::Project(Matrix *coordinates) {
   OptUtils::RemoveMean(coordinates);
 }
+
+index_t  MaxVariance::num_of_points() {
+  return num_of_points_;
+}
+
 ////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 void MaxVarianceInequalityOnFurthest::Init(datanode *module, Matrix &data) {
@@ -439,7 +488,7 @@ void MaxVarianceInequalityOnFurthest::Project(Matrix *coordinates) {
   OptUtils::RemoveMean(coordinates);
 }
 
-////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
   module_=module;
@@ -518,6 +567,63 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
       data.n_cols()*num_of_furthest_pairs_;
  
   NOTIFY("Lower bound for optimization %lg", sum_of_furthest_distances_);
+  fx_format_result(module_, "lower_optimal_bound", "%lg", sum_of_furthest_distances_);
+}
+
+void MaxFurthestNeighbors::Init(fx_module *module) {
+  module_=module;
+  std::string nearest_neighbor_file=fx_param_str_req(module, 
+      "nearest_neighbor_file");
+  std::string furthest_neighbor_file=fx_param_str_req(module, 
+      "furthest_neighbor_file");
+  FILE *fp=fopen(nearest_neighbor_file.c_str(), "r");
+  if (fp==NULL) {
+    FATAL("Error while opening %s...%s", nearest_neighbor_file.c_str(),
+        strerror(errno));
+  }
+  nearest_neighbor_pairs_.Init();
+  nearest_distances_.Init();
+  while(!feof(fp)) {
+    index_t n1, n2;
+    double distance;
+    fscanf(fp,"%i %i %g", &n1, &n2, &distance);
+    nearest_neighbor_pairs_.PushBackCopy(std::make_pair(n1, n2));
+    nearest_distances_.PushBackCopy(distance);
+    if (n1>num_of_points_) {
+      num_of_points_=n1;
+    }
+    if (n2>num_of_points_) {
+      num_of_points_=n2;
+    }
+  }
+  num_of_points_++;
+  fclose(fp);
+  fp=fopen(furthest_neighbor_file.c_str(), "r");
+  if (fp==NULL) {
+    FATAL("Error while opening %s...%s", furthest_neighbor_file.c_str(),
+        strerror(errno));
+  }
+  furthest_neighbor_pairs_.Init();
+  furthest_distances_.Init();
+  while(!feof(fp)) {
+    index_t n1, n2;
+    double distance;
+    fscanf(fp,"%i %i %g", &n1, &n2, &distance);
+    furthest_neighbor_pairs_.PushBackCopy(std::make_pair(n1, n2));
+    furthest_distances_.PushBackCopy(distance);
+  }
+  fclose(fp);
+  eq_lagrange_mult_.Init(num_of_nearest_pairs_);
+  eq_lagrange_mult_.SetAll(1.0);
+  double max_nearest_distance=0;
+  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+    max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
+  }
+  sum_of_furthest_distances_=-max_nearest_distance*
+      num_of_points_*num_of_points_;
+ 
+  NOTIFY("Lower bound for optimization %lg", sum_of_furthest_distances_);
+  fx_format_result(module_, "num_of_constraints", "%i", num_of_nearest_pairs_);
   fx_format_result(module_, "lower_optimal_bound", "%lg", sum_of_furthest_distances_);
 }
 
@@ -650,6 +756,11 @@ void MaxFurthestNeighbors::Project(Matrix *coordinates) {
   OptUtils::RemoveMean(coordinates);
 }
 
+index_t  MaxFurthestNeighbors::num_of_points() {
+  return num_of_points_;
+}
+
+///////////////////////////////////////////////////////////////
 void MaxVarianceUtils::ConsolidateNeighbors(ArrayList<index_t> &from_tree_ind,
    ArrayList<double>  &from_tree_dist,
     index_t num_of_neighbors,
