@@ -26,7 +26,8 @@
 class MaxVariance {
  public:
   static const index_t MAX_KNNS=30;
-  void Init(datanode *module, Matrix &data);
+  void Init(fx_module *module, Matrix &data);
+  void Init(fx_module *module);
   void Destruct();
   void ComputeGradient(Matrix &coordinates, Matrix *gradient);
   void ComputeObjective(Matrix &coordinates, double *objective);
@@ -40,7 +41,8 @@ class MaxVariance {
       Matrix &gradient, double step) { return false;}
   bool IsIntermediateStepOver(Matrix &coordinates, 
       Matrix &gradient, double step) {return false;}
- 
+ index_t num_of_points();
+
  private:
   datanode *module_;
   AllkNN allknn_;
@@ -52,6 +54,7 @@ class MaxVariance {
   index_t num_of_nearest_pairs_;
   double sigma_;
   double sum_of_furthest_distances_;
+  index_t num_of_points_;
 };
 
 class MaxVarianceInequalityOnFurthest {
@@ -93,7 +96,8 @@ class MaxVarianceInequalityOnFurthest {
 class MaxFurthestNeighbors {
 public:
   static const index_t MAX_KNNS=30;
-  void Init(datanode *module, Matrix &data);
+  void Init(fx_module *module, Matrix &data);
+  void Init(fx_module *module);
   void Destruct();
   void ComputeGradient(Matrix &coordinates, Matrix *gradient);
   void ComputeObjective(Matrix &coordinates, double *objective);
@@ -108,6 +112,7 @@ public:
       Matrix &gradient, double step) {return false;}
   bool IsIntermediateStepOver(Matrix &coordinates, 
       Matrix &gradient, double step) {return false;}
+  index_t num_of_points();
  
 private:
   datanode *module_;
@@ -124,6 +129,7 @@ private:
   ArrayList<double> furthest_distances_;
   double sum_of_furthest_distances_;
   double sigma_;
+  index_t num_of_points_;
 };
 
 class MaxVarianceUtils {
