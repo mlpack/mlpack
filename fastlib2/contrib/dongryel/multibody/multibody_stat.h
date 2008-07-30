@@ -75,14 +75,9 @@ class MultibodyStat {
    */
   Vector postponed_positive_gradient2_e;
 
-  /** @brief Resets the statistics to zero.
+  /** @brief Resets the postponed statistics to zero.
    */
   void SetZero() {
-    negative_gradient1_u = -DBL_MAX;
-    positive_gradient1_l = DBL_MAX;
-    negative_gradient2_u.SetAll(-DBL_MAX);
-    positive_gradient2_l.SetAll(DBL_MAX);
-
     postponed_negative_gradient1_e = 0;
     postponed_negative_gradient1_u = 0;
     postponed_positive_gradient1_l = 0;
