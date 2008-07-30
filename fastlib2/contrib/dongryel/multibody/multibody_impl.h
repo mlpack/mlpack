@@ -135,7 +135,7 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::RefineStatistics_
       std::max(destination_node->stat().negative_gradient2_u[d],
 	       negative_force2_u_.get(d, point_index));
     destination_node->stat().positive_gradient2_l[d] =
-      std::max(destination_node->stat().positive_gradient2_l[d],
+      std::min(destination_node->stat().positive_gradient2_l[d],
 	       positive_force2_l_.get(d, point_index));
   }
 }
@@ -267,10 +267,12 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibodyBase
   if(level == 0) {
     for(index_t i = 0; i < nodes.size(); i++) {
 
+      // Skip, if the current node is the same as the previous one.
       if(i != 0 && nodes[i] == nodes[i - 1]) {
 	continue;
       }
 
+      // Reset lower/upper bound information.
       nodes[i]->stat().negative_gradient1_u = -DBL_MAX;
       nodes[i]->stat().positive_gradient1_l = DBL_MAX;
       nodes[i]->stat().negative_gradient2_u.SetAll(-DBL_MAX);
