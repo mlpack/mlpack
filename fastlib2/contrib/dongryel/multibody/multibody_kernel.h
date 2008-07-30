@@ -390,12 +390,15 @@ class AxilrodTellerForceKernel {
   bool Eval(ArrayList<TTree *> &tree_nodes, double relative_error,
 	    double total_n_minus_one_num_tuples) {
 
-    // Do not prune if any of the tree nodes are equal or any of the
-    // minimum distances is zero.
-    for(index_t i = 1; i < tree_nodes.size(); i++) {
-      if(tree_nodes[i] == tree_nodes[i - 1] ||
-	 distmat_.get(i - 1, i) == 0) {
-	return false;
+    // First, compute the pairwise distance among the three nodes.
+    EvalMinMaxSquaredDistances(tree_nodes);
+
+    // Do not prune if any of the minimum distances is zero.
+    for(index_t i = 0; i < tree_nodes.size() - 1; i++) {
+      for(index_t j = i + 1; j < tree_nodes.size(); j++) {
+	if(distmat_.get(i, j) == 0) {
+	  return false;
+	}
       }
     }
 
@@ -408,9 +411,6 @@ class AxilrodTellerForceKernel {
       max_negative_gradient2, min_positive_gradient2, max_positive_gradient2,
       min_negative_gradient3, max_negative_gradient3, min_positive_gradient3, 
       max_positive_gradient3;
-
-    // First, compute the pairwise distance among the three nodes.
-    EvalMinMaxSquaredDistances(tree_nodes);
 
     // Then, evaluate the gradients.
     EvalGradients(distmat_, min_negative_gradient1, &max_negative_gradient1, 
