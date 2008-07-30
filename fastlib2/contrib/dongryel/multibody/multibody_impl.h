@@ -229,16 +229,6 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibodyBase
   int start_index;
   int num_nodes = nodes.size();
 
-  // Before recursing on the 0-th level, clear node statistics.
-  if(level == 0) {
-    for(index_t i = 0; i < num_nodes; i++) {
-      nodes[i]->stat().negative_gradient1_u = 0;
-      nodes[i]->stat().positive_gradient1_l = 0;
-      nodes[i]->stat().negative_gradient2_u.SetZero();
-      nodes[i]->stat().positive_gradient2_l.SetZero();
-    }
-  }
-
   // Recurse to get a $n$ tuple.
   if(level < num_nodes) {
     
@@ -260,15 +250,9 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibodyBase
       MTMultibodyBase(nodes, level + 1);
     }
   }
-  else {
 
-    // Incorporate postponed force contribution for the given triple
-    // of atoms.
-    for(index_t i = 0; i < nodes.size(); i++) {
-      if(i == 0 || nodes[i] != nodes[i - 1]) {
-	AddPostponed(nodes[i], exhaustive_indices_[i]);
-      }
-    }
+  // $n$-tuple is chosen.
+  else {
 
     // Complete the contribution among three atoms.
     mkernel_.Eval(data_, exhaustive_indices_,
@@ -278,19 +262,25 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibodyBase
 		  positive_force2_l_, positive_force2_e_);
   }
 
-  // Clear all postponed force contribution after incorporating and
-  // refine node statistics.
+  // Add and clear all postponed force contribution after
+  // incorporating and refine node statistics.
   if(level == 0) {
     for(index_t i = 0; i < nodes.size(); i++) {
 
       if(i != 0 && nodes[i] == nodes[i - 1]) {
-	break;
+	continue;
       }
-      nodes[i]->stat().SetZero();
+
+      nodes[i]->stat().negative_gradient1_u = -DBL_MAX;
+      nodes[i]->stat().positive_gradient1_l = DBL_MAX;
+      nodes[i]->stat().negative_gradient2_u.SetAll(-DBL_MAX);
+      nodes[i]->stat().positive_gradient2_l.SetAll(DBL_MAX);
 
       for(index_t r = nodes[i]->begin(); r < nodes[i]->end(); r++) {
+	AddPostponed(nodes[i], r);
 	RefineStatistics_(r, nodes[i]);
       }
+      nodes[i]->stat().SetZero();
     }
   }
 }
@@ -375,7 +365,7 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::PostProcessNaive_
     } // end of iterating over each dimension...
   } // end of iterating over each query point...
   
-    // Clear postponed information.
+  // Clear postponed information.
   node->stat().SetZero();
 }
 
