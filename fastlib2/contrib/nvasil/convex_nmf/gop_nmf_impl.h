@@ -44,7 +44,7 @@ void RelaxedNmf::Init(ArrayList<index_t> &rows,
     index_t h=col+h_offset_;
     double convex_part=0;
     for(index_t j=0; j<new_dim_; j++) {
-      convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
+      convex_part+=exp(x_lower_bound_.get(j, w)+x_lower_bound_.get(j, h));
     }
     soft_lower_bound_+=convex_part*convex_part;
     for(index_t j=0; j<new_dim_; j++) {
