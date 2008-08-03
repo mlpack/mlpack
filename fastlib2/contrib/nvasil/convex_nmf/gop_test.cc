@@ -33,7 +33,7 @@ class GopNmfEngineTest {
   void Test1() {
     Matrix data_points;
     data::Load("v.csv", &data_points);
-    engine_->Init(module_, &data_points); 
+    engine_->Init(module_, data_points); 
     engine_->ComputeGlobalOptimum();
   }
   void TestAll();

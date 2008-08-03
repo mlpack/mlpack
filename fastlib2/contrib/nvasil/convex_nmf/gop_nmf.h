@@ -17,6 +17,7 @@
  */
 #ifndef GOP_NMF_ENGINE_H_
 #define GOP_NMF_ENGINE_H_
+#include <map>
 #include "fastlib/fastlib.h"
 #include "../l_bfgs/l_bfgs.h"
 
@@ -26,6 +27,7 @@ class RelaxedNmf {
             ArrayList<index_t> &columns,
             ArrayList<double> &values,
             index_t new_dim,
+            double grad_tolerance,
             Matrix &x_lower_bound,
             Matrix &x_upper_bound
            );
@@ -49,18 +51,18 @@ class RelaxedNmf {
     
  private:
   index_t num_of_rows_;
-  index_t num_of_cols_;
+  index_t num_of_columns_;
+  index_t h_offset_;
   index_t new_dim_;
-  Vector x_lower_bound_;
-  Vector x_upper_bound_;
-  Vector A_linear_term_;
-  Vector B_linear_term_;
+  Vector a_linear_term_;
+  Vector b_linear_term_;
   ArrayList<index_t> rows_;
   ArrayList<index_t> columns_;
   ArrayList<double> values_;
   Matrix x_lower_bound_;
-  Matrix y_upper_bound_;
+  Matrix x_upper_bound_;
   double soft_lower_bound_;
+  double grad_tolerance_;
 };
 
 class GopNmfEngine {
@@ -72,7 +74,6 @@ class GopNmfEngine {
      ~SolutionPack() {
        
      }
-     SolutionPack();
      Matrix solution_;
      std::pair<Matrix, Matrix> box_; 
   };
@@ -85,20 +86,22 @@ class GopNmfEngine {
   fx_module *module_;
   fx_module *l_bfgs_module_;
   Matrix x_upper_bound_;
-  Matric x_lower_bound_;
+  Matrix x_lower_bound_;
   double desired_global_optimum_gap_;
   double grad_tolerance_;
   std::map<double, SolutionPack> lower_solution_;
   std::pair<double, Matrix> upper_solution_;
-  ArrayList<double> rows_;
-  ArrayList<double> columns_;
+  ArrayList<index_t> rows_;
+  ArrayList<index_t> columns_;
   ArrayList<double> values_;
   index_t num_of_rows_;
   index_t num_of_columns_;
+  index_t new_dim_;
   index_t prunes_;
+  
   void Split(Matrix &lower_bound, Matrix &upper_bound, 
           Matrix *left_lower_bound, Matrix *left_upper_bound,
-          Matrix *right_lower_bound, Matrix *right_upper_bound) 
+          Matrix *right_lower_bound, Matrix *right_upper_bound); 
   void PreprocessData(Matrix &data_mat);
 };
 

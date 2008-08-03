@@ -5,7 +5,7 @@ librule(name="nmflib",
               "geometric_nmf_engine.h","geometric_nmf_seq_engine.h"],
     deplibs=["fastlib:fastlib", "mlpack/allknn:allknn", "contrib/nvasil/l_bfgs:l_bfgs"] )
 
-librule(name="gopnmflib"
+librule(name="gopnmflib",
     headers=["gop_nmf.h", "gop_nmf_impl.h"],
     tests=["gop_test.cc"],
     deplibs=["fastlib:fastlib", "contrib/nvasil/l_bfgs:l_bfgs" ]);
