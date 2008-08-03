@@ -31,10 +31,12 @@ void RelaxedNmf::Init(ArrayList<index_t> &rows,
   num_of_columns_=*std::max(columns_.begin(), columns_.end());
   h_offset_=num_of_rows_;
   values_.InitCopy(values);
+  values_sq_norm_=la::Dot(values_.size(), values_.begin(), values_.begin());
   x_lower_bound_.Copy(x_lower_bound);
   x_upper_bound_.Copy(x_upper_bound);
-  soft_lower_bound_=0;
+  soft_lower_bound_=values_sq_norm_;
   // Generate the linear terms
+  // and compute the soft lower bound
   a_linear_term_.Init(new_dim_*values_.size());
   b_linear_term_.Init(new_dim_*values_.size());
   for(index_t i=0; i<values_.size(); i++) {
@@ -44,20 +46,18 @@ void RelaxedNmf::Init(ArrayList<index_t> &rows,
     index_t h=col+h_offset_;
     double convex_part=0;
     for(index_t j=0; j<new_dim_; j++) {
-      convex_part+=exp(x_lower_bound_.get(j, w)+x_lower_bound_.get(j, h));
-    }
-    soft_lower_bound_+=convex_part*convex_part;
-    for(index_t j=0; j<new_dim_; j++) {
       double y_lower=x_lower_bound_.get(j, w) + x_lower_bound_.get(j, h);
       double y_upper=x_upper_bound_.get(j, w) + x_upper_bound_.get(i, h);      
       a_linear_term_[new_dim_*i+j]=
           (y_upper*exp(y_lower)-y_lower*exp(y_upper))/(y_upper-y_lower);
       b_linear_term_[new_dim_*i+j]=(exp(y_upper)-exp(y_lower))/
           (y_upper-y_lower);
-      soft_lower_bound_+=-2*values_[i]*(
-                             a_linear_term_[new_dim_*i+j]
-                             +b_linear_term_[new_dim_*i+j]*y_upper);
+      convex_part+=exp(y_lower);
+      soft_lower_bound_+= -2*values_[i]*(
+                            a_linear_term_[new_dim_*i+j]
+                            +b_linear_term_[new_dim_*i+j]*y_upper);
     }
+    soft_lower_bound_+=convex_part*convex_part;
   }
 }
 
@@ -75,6 +75,7 @@ void RelaxedNmf::Destruct() {
   x_lower_bound_.Destruct();
   x_upper_bound_.Destruct();
   soft_lower_bound_=-DBL_MAX;
+  values_sq_norm_=-DBL_MAX;
 } 
 
 
@@ -101,7 +102,7 @@ void RelaxedNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
 }
 
 void RelaxedNmf::ComputeObjective(Matrix &coordinates, double *objective) {
-  *objective=0;
+  *objective=values_sq_norm_;
   for(index_t i=0; i<values_.size(); i++) {
     index_t row=rows_[i];
     index_t col=columns_[i];
@@ -109,20 +110,19 @@ void RelaxedNmf::ComputeObjective(Matrix &coordinates, double *objective) {
     index_t h=col+h_offset_;
     double convex_part=0;
     for(index_t j=0; j<new_dim_; j++) {
-      convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
-    }
-    *objective+=convex_part*convex_part;
-    for(index_t j=0; j<new_dim_; j++) {
       *objective+=-2*values_[i]*(a_linear_term_[new_dim_*i+j]
                                 +b_linear_term_[new_dim_*i]
                                  *(coordinates.get(j, w)+coordinates.get(j, h)));
+
+      convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
     }
+    *objective+=convex_part*convex_part;
   } 
 }
 
 void RelaxedNmf::ComputeNonRelaxedObjective(Matrix &coordinates, 
                                             double *objective) {
-  *objective=0;
+  *objective=values_sq_norm_;
   for(index_t i=0; i<values_.size(); i++) {
     index_t row=rows_[i];
     index_t col=columns_[i];
@@ -212,7 +212,7 @@ double RelaxedNmf::GetSoftLowerBound() {
 }
 
 //////////////////////////////////////////////////////////////////////
-//GlobalNmfEngine/////////////////////////////////////////////////////
+//GopNmfEngine/////////////////////////////////////////////////////
 void GopNmfEngine::Init(fx_module *module, Matrix &data_points) {
   module_=module;
   l_bfgs_module_=fx_submodule(module_, "l_bfgs");
@@ -245,22 +245,21 @@ void GopNmfEngine::ComputeGlobalOptimum() {
   opt_fun.ComputeNonRelaxedObjective(init_data, &new_upper_global_optimum);
   double new_lower_global_optimum;
   opt_fun.ComputeObjective(init_data, &new_lower_global_optimum);
-  if (new_lower_global_optimum > upper_solution_.first) {
-    return;
-  }
-  if (new_upper_global_optimum <upper_solution_.first) {
-    upper_solution_.first=new_upper_global_optimum;
-    upper_solution_.second.Destruct();
-    upper_solution_.second.Own(optimizer.coordinates());
-  }
+  upper_solution_.first=new_upper_global_optimum;
+  upper_solution_.second.Destruct();
+  upper_solution_.second.Own(optimizer.coordinates());
+  
   SolutionPack pack;
   pack.solution_.Copy(*optimizer.coordinates());
   pack.box_.first.Own(&upper_bound);
   pack.box_.second.Own(&lower_bound);
   lower_solution_.insert(
       std::make_pair(new_lower_global_optimum,pack));
-  
+  iteration_=0;
+  NOTIFY("%i: upper global optimum:%lg lower global optimum:%lg",
+      iteration_, upper_solution_.first, lower_solution_.begin()->first); 
   while (true) {
+    // these bounds correspond to the optimization variables
     Matrix left_upper_bound;
     Matrix left_lower_bound;
     Matrix right_upper_bound;
@@ -291,12 +290,16 @@ void GopNmfEngine::ComputeGlobalOptimum() {
         upper_solution_.second.Destruct();
         upper_solution_.second.Own(optimizer.coordinates());
       }
-      SolutionPack pack;
-      pack.solution_.Own(optimizer.coordinates());
-      pack.box_.first.Own(&upper_bound);
-      pack.box_.second.Own(&lower_bound);
-      lower_solution_.insert(
-          std::make_pair(new_lower_global_optimum,pack));
+      double new_lower_global_optimum;
+      opt_fun.ComputeObjective(*optimizer.coordinates(), &new_lower_global_optimum);
+      if (new_lower_global_optimum < upper_solution_.first) {
+        SolutionPack pack;
+        pack.solution_.Own(optimizer.coordinates());
+        pack.box_.first.Own(&upper_bound);
+        pack.box_.second.Own(&lower_bound);
+        lower_solution_.insert(
+            std::make_pair(new_lower_global_optimum,pack));
+      }
     }
 
     // optimize right
@@ -322,12 +325,16 @@ void GopNmfEngine::ComputeGlobalOptimum() {
         upper_solution_.second.Destruct();
         upper_solution_.second.Own(optimizer.coordinates());
       }
-      SolutionPack pack;
-      pack.solution_.Own(optimizer.coordinates());
-      pack.box_.first.Own(&upper_bound);
-      pack.box_.second.Own(&lower_bound);
-      lower_solution_.insert(
-          std::make_pair(new_lower_global_optimum,pack));
+      double new_lower_global_optimum;
+      opt_fun.ComputeObjective(*optimizer.coordinates(), &new_lower_global_optimum);
+      if (new_lower_global_optimum < upper_solution_.first) {
+        SolutionPack pack;
+        pack.solution_.Own(optimizer.coordinates());
+        pack.box_.first.Own(&upper_bound);
+        pack.box_.second.Own(&lower_bound);
+        lower_solution_.insert(
+            std::make_pair(new_lower_global_optimum,pack));
+      }
     }
      
     // Check for convergence
@@ -337,6 +344,7 @@ void GopNmfEngine::ComputeGlobalOptimum() {
       fx_result_double(module_, "upper_global_optimum", upper_solution_.first);
       fx_result_double(module_, "lower_global_optimum", lower_solution_.begin()->first);
       fx_result_int(module_, "prunes", prunes_);
+      fx_result_int(module_, "iterations", iteration);
       return;
     }    
     

@@ -36,7 +36,11 @@ class GopNmfEngineTest {
     engine_->Init(module_, data_points); 
     engine_->ComputeGlobalOptimum();
   }
-  void TestAll();
+  void TestAll() {
+    Init();
+    Test1();
+    Destruct();
+  }
 
  private:
   fx_module *module_;
