@@ -110,7 +110,8 @@ class GopNmfEngine {
   index_t num_of_rows_;
   index_t num_of_columns_;
   index_t new_dim_;
-  index_t prunes_;
+  index_t soft_prunes_;
+  index_t hard_prunes_;
   index_t iteration_;
 
   void Split(Matrix &lower_bound, Matrix &upper_bound, 
