@@ -53,6 +53,7 @@ void RelaxedNmf::Init(ArrayList<index_t> &rows,
           (y_upper*exp(y_lower)-y_lower*exp(y_upper))/(y_upper-y_lower);
       b_linear_term_[new_dim_*i+j]=(exp(y_upper)-exp(y_lower))/
           (y_upper-y_lower);
+      DEBUG_ASSERT(b_linear_term_[new_dim_*i+j]>=0);
       convex_part+=exp(y_lower);
       soft_lower_bound_+= -2*values_[i]*(
                             a_linear_term_[new_dim_*i+j]
@@ -110,7 +111,7 @@ void RelaxedNmf::ComputeObjective(Matrix &coordinates, double *objective) {
     double convex_part=0;
     for(index_t j=0; j<new_dim_; j++) {
       *objective+=-2*values_[i]*(a_linear_term_[new_dim_*i+j]
-                                +b_linear_term_[new_dim_*i]
+                                +b_linear_term_[new_dim_*i+j]
                                  *(coordinates.get(j, w)+coordinates.get(j, h)));
 
       convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
@@ -188,7 +189,7 @@ bool RelaxedNmf::IsOptimizationOver(Matrix &coordinates,
   double norm_gradient=la::Dot(gradient.n_elements(), 
                                gradient.ptr(), 
                                gradient.ptr());
-  if (norm_gradient < grad_tolerance_) {
+  if (norm_gradient*step < grad_tolerance_) {
     return true;
   }
   return false;
@@ -200,7 +201,7 @@ bool RelaxedNmf::IsIntermediateStepOver(Matrix &coordinates,
   double norm_gradient=la::Dot(gradient.n_elements(), 
                                gradient.ptr(), 
                                gradient.ptr());
-  if (norm_gradient < grad_tolerance_) {
+  if (norm_gradient*step < grad_tolerance_) {
     return true;
   }
   return false;
@@ -215,12 +216,15 @@ double RelaxedNmf::GetSoftLowerBound() {
 void GopNmfEngine::Init(fx_module *module, Matrix &data_points) {
   module_=module;
   l_bfgs_module_=fx_submodule(module_, "l_bfgs");
-  new_dim_ = fx_param_int(module_, "new_dim", 5);
+  new_dim_ = fx_param_int(module_, "new_dimension", 5);
   grad_tolerance_ = fx_param_double(module_, "grad_tolerance", 1e-3);
   desired_global_optimum_gap_= fx_param_double(module_, "opt_gap", 1e-1);
   PreprocessData(data_points);
   fx_set_param_int(l_bfgs_module_, "new_dimension", new_dim_);
   fx_set_param_int(l_bfgs_module_, "num_of_points", num_of_rows_+num_of_columns_);
+  fx_set_param_int(l_bfgs_module_, "mem_bfgs", 3);
+  fx_set_param_bool(l_bfgs_module_, "use_default_termination", false);
+  fx_set_param_bool(l_bfgs_module_, "silent", true);
 }
 
 void GopNmfEngine::ComputeGlobalOptimum() {
@@ -250,15 +254,17 @@ void GopNmfEngine::ComputeGlobalOptimum() {
   upper_solution_.first=new_upper_global_optimum;
   upper_solution_.second.Own(optimizer.coordinates());
   
-  SolutionPack pack;
+/*  SolutionPack pack;
   pack.solution_.Copy(*optimizer.coordinates());
-  pack.box_.first.Copy(upper_bound);
-  pack.box_.second.Copy(lower_bound);
+  pack.box_.first.Copy(lower_bound);
+  pack.box_.second.Copy(upper_bound);
   lower_solution_.insert(
       std::make_pair(new_lower_global_optimum,pack));
+*/
+
   iteration_=0;
   NOTIFY("iteration:%i upper_global_optimum:%lg lower_global_optimum:%lg",
-      iteration_, upper_solution_.first, lower_solution_.begin()->first); 
+      iteration_, upper_solution_.first, new_lower_global_optimum); 
   while (true) {
     // these bounds correspond to the optimization variables
     Matrix left_upper_bound;
@@ -303,9 +309,11 @@ void GopNmfEngine::ComputeGlobalOptimum() {
       } else {
         hard_prunes_++;
       }
-      NOTIFY("left_iteration:%i upper_global_optimum:%lg lower_global_optimum:%lg",
-          iteration_, upper_solution_.first, lower_solution_.begin()->first);
-    }
+      NOTIFY("left_iteration:%i upper_global_optimum:%lg lower_global_optimum:%lg "
+             "upper_bound:%lg lower_bound:%lg",
+          iteration_, upper_solution_.first, lower_solution_.begin()->first,
+          new_upper_global_optimum, new_lower_global_optimum);
+   }
 
     // optimize right
     optimizer.Destruct();
@@ -342,8 +350,11 @@ void GopNmfEngine::ComputeGlobalOptimum() {
       } else {
         hard_prunes_++;
       }
-      NOTIFY("right_iteration:%i upper_global_optimum:%lg lower_global_optimum:%lg",
-          iteration_, upper_solution_.first, lower_solution_.begin()->first);
+      NOTIFY("right_iteration:%i upper_global_optimum:%lg lower_global_optimum:%lg "
+             "upper_bound:%lg lower_bound:%lg",
+          iteration_, upper_solution_.first, lower_solution_.begin()->first,
+          new_upper_global_optimum, new_lower_global_optimum);
+      NOTIFY("hard_prunes:%i soft_prunes:%i", hard_prunes_, soft_prunes_);
 
     }
      
@@ -357,6 +368,12 @@ void GopNmfEngine::ComputeGlobalOptimum() {
       fx_result_int(module_, "soft_prunes", soft_prunes_);
       fx_result_int(module_, "hard_prunes", hard_prunes_);
       fx_result_int(module_, "iterations", iteration_);
+      for(index_t i=0; i<upper_solution_.second.n_rows(); i++) {
+        for(index_t j=0; j<upper_solution_.second.n_cols(); j++) {
+          upper_solution_.second.set(i, j, exp(upper_solution_.second.get(i, j)));
+        }
+      }
+      data::Save("result.csv", upper_solution_.second);
       return;
     }    
     
@@ -365,6 +382,7 @@ void GopNmfEngine::ComputeGlobalOptimum() {
     lower_bound.Own(&lower_solution_.begin()->second.box_.first);
     upper_bound.Destruct();
     upper_bound.Own(&lower_solution_.begin()->second.box_.second);  
+    DEBUG_ASSERT(lower_solution_.size()>0);
     lower_solution_.erase(lower_solution_.begin()); 
     iteration_++;
   }
@@ -417,11 +435,45 @@ void GopNmfEngine::PreprocessData(Matrix &data_mat) {
   num_of_rows_=*std::max_element(rows_.begin(), rows_.end())+1;
   num_of_columns_=*std::max_element(columns_.begin(), columns_.end())+1;
   x_lower_bound_.Init(new_dim_, num_of_rows_+num_of_columns_);
-  x_lower_bound_.SetAll(0.0);
+  x_lower_bound_.SetAll(-0.1);
   x_upper_bound_.Init(new_dim_, num_of_rows_+num_of_columns_);
-  x_upper_bound_.SetAll(0.0);
   x_upper_bound_.SetAll(
-      *std::max_element(values_.begin(), values_.end()));
+     log(*std::max_element(values_.begin(), values_.end())+1e-10));
+  x_upper_bound_.SetAll(1.5);
+ /* 
+  x_lower_bound_.set(0,0, log(1)-15);
+  x_upper_bound_.set(0,0, log(1)+15);
+  x_lower_bound_.set(1,0, log(2)-15);
+  x_upper_bound_.set(1,0, log(2)+15);
+  x_lower_bound_.set(0,1, log(3)-15);
+  x_upper_bound_.set(0,1, log(3)+15);
+  x_lower_bound_.set(1,1, log(4)-15);
+  x_upper_bound_.set(1,1, log(4)+15);
+  x_lower_bound_.set(0,2, log(1)-15);
+  x_upper_bound_.set(0,2, log(1)+15);
+  x_lower_bound_.set(1,2, log(2)-15);
+  x_upper_bound_.set(1,2, log(2)+15);
+  x_lower_bound_.set(0,3, log(2)-15);
+  x_upper_bound_.set(0,3, log(2)+15);
+  x_lower_bound_.set(1,3, log(1)-15);
+  x_upper_bound_.set(1,3, log(1)+15);
+*/
+  x_lower_bound_.set(0,0, log(math::Random(0.1,1))-5);
+  x_upper_bound_.set(0,0, log(math::Random(0.1,1))+5);
+  x_lower_bound_.set(1,0, log(math::Random(0.1,1))-5);
+  x_upper_bound_.set(1,0, log(math::Random(0.1,1))+5);
+  x_lower_bound_.set(0,1, log(math::Random(0.1,1))-5);
+  x_upper_bound_.set(0,1, log(math::Random(0.1,1))+5);
+  x_lower_bound_.set(1,1, log(math::Random(0.1,1))-5);
+  x_upper_bound_.set(1,1, log(math::Random(0.1,1))+5);
+  x_lower_bound_.set(0,2, log(math::Random(0.1,1))-5);
+  x_upper_bound_.set(0,2, log(math::Random(0.1,1))+5);
+  x_lower_bound_.set(1,2, log(math::Random(0.1,1))-5);
+  x_upper_bound_.set(1,2, log(math::Random(0.1,1))+5);
+  x_lower_bound_.set(0,3, log(math::Random(0.1,1))-5);
+  x_upper_bound_.set(0,3, log(math::Random(0.1,1))+5);
+  x_lower_bound_.set(1,3, log(math::Random(0.1,1))-5);
+  x_upper_bound_.set(1,3, log(math::Random(0.1,1))+5);
 
 }
 
