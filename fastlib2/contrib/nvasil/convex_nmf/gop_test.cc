@@ -32,7 +32,8 @@ class GopNmfEngineTest {
   }
   void Test1() {
     Matrix data_points;
-    data::Load("v.csv", &data_points);
+    data::Load("4.csv", &data_points);
+    fx_set_param_int(module_, "new_dimension",2);
     engine_->Init(module_, data_points); 
     engine_->ComputeGlobalOptimum();
   }
