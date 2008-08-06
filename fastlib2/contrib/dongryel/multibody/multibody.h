@@ -92,8 +92,9 @@ class MultitreeMultibody {
 
     relative_error_ = relative_error;
    
-    // Set the probability requirement to 90 %.
-    probability_ = 0.9;
+    // Set the probability requirement to 90 %, which gives the
+    // standard z-score to be the following.
+    z_score_ = 1.28;
 
     // Initialize intermediate computation spaces to zero.
     negative_force1_e_.SetZero();
@@ -197,7 +198,7 @@ private:
   /** @brief The probability requirement that the componentwise
    *         relative error bound holds.
    */
-  double probability_;
+  double z_score_;
 
   /** @brief The accuracy requirement: componentwise relative error
    *         bound.
