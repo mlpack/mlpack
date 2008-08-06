@@ -30,7 +30,7 @@ class LBfgs {
   void ComputeLocalOptimumBFGS();
   void ReportProgress();
   void ReportProgressFile(std::string file);
-  void GetResults(Matrix *result);
+  void CopyCoordinates(Matrix *result);
   void Reset(); 
   void set_coordinates(Matrix &coordinates);
   void set_desired_feasibility(double desired_feasibility);
