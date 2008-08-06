@@ -74,7 +74,7 @@ class OptUtils {
       double energy_kept=0;
       double total_energy=0;
       for(index_t i=0; i<components_to_keep; i++) {
-        printf("%lg ", s[i]);
+       NOTIFY("%lg ", s[i]);
         energy_kept+=s[i];
       }
       printf("\n");

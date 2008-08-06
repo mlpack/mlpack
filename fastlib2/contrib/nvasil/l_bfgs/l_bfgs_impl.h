@@ -55,7 +55,7 @@ void LBfgs<OptimizedFunction>::Init(OptimizedFunction *optimized_function,
   min_beta_ = fx_param_double(module_, "min_beta", 1e-20);
   max_iterations_ = fx_param_int(module_, "max_iterations", 10000);
   // the memory of bfgs 
-  mem_bfgs_ = fx_param_int(module_, "mem_bfgs", 120);
+  mem_bfgs_ = fx_param_int(module_, "mem_bfgs", 20);
   std::string log_file=fx_param_str(module_, "log_file", "opt_log");
   fp_log_=fopen(log_file.c_str(), "w");
   optimized_function_->set_sigma(sigma_);
@@ -87,10 +87,11 @@ void LBfgs<OptimizedFunction>::Destruct() {
 template<typename OptimizedFunction>
 void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
   double feasibility_error;
-
-  NOTIFY("Starting optimization ...\n");
-  // Run a few iterations with gradient descend to fill the memory of BFGS
-  NOTIFY("Initializing BFGS");
+  if (silent_==false) {
+    NOTIFY("Starting optimization ...\n");
+    // Run a few iterations with gradient descend to fill the memory of BFGS
+    NOTIFY("Initializing BFGS");
+  }
    index_bfgs_=0;
   // You have to compute also the previous_gradient_ and previous_coordinates_
   // tha are needed only by BFGS
@@ -107,7 +108,9 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
   for(index_t i=0; i<mem_bfgs_; i++) {
     success_t success=ComputeBFGS_(&step_, gradient_, i);
     if (success==SUCCESS_FAIL) {
-      NOTIFY("LBFGS failed to find a direction, continuing with gradient descent\n");
+      if (silent_==false) {
+        NOTIFY("LBFGS failed to find a direction, continuing with gradient descent\n");
+      }
       ComputeWolfeStep_(&step_, gradient_);
     }
     optimized_function_->ComputeGradient(coordinates_, &gradient_);
@@ -134,8 +137,9 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
     }
 */
   }
- 
-  NOTIFY("Now starting optimizing with BFGS...\n");
+  if (silent_==false) {
+    NOTIFY("Now starting optimizing with BFGS...\n");
+  }
   for(index_t it1=0; it1<max_iterations_; it1++) {  
     for(index_t it2=0; it2<max_iterations_; it2++) {
       success_t success_bfgs = ComputeBFGS_(&step_, gradient_, mem_bfgs_); 
@@ -207,7 +211,7 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
 }
 
 template<typename OptimizedFunction>
-void LBfgs<OptimizedFunction>::GetResults(Matrix *result) {
+void LBfgs<OptimizedFunction>::CopyCoordinates(Matrix *result) {
   result->Copy(coordinates_);
 }
 
@@ -247,7 +251,9 @@ void LBfgs<OptimizedFunction>::InitOptimization_() {
   if (unlikely(new_dimension_<0)) {
     FATAL("You forgot to set the new dimension\n");
   }
-  NOTIFY("Initializing optimization ...\n");
+  if (silent_==false) {
+    NOTIFY("Initializing optimization ...\n");
+  }
   coordinates_.Init(new_dimension_, num_of_points_);
   previous_coordinates_.Init(new_dimension_, num_of_points_);
   gradient_.Init(new_dimension_, num_of_points_);
