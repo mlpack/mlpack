@@ -67,6 +67,59 @@ class AxilrodTellerForceKernel {
       (max_positive_gradient3 - min_positive_gradient3) * 0.5;    
   }
 
+  /** @brief Computes error due to Monte Carlo approximation.
+   */
+  void ComputeMonteCarloApproximationError_
+  (double negative_gradient1_sum, double negative_gradient1_squared_sum,
+   double positive_gradient1_sum, double positive_gradient1_squared_sum,
+   double negative_gradient2_sum, double negative_gradient2_squared_sum,
+   double positive_gradient2_sum, double positive_gradient2_squared_sum,
+   double negative_gradient3_sum, double negative_gradient3_squared_sum,
+   double positive_gradient3_sum, double positive_gradient3_squared_sum,
+   int num_samples, double z_score,
+   double &negative_gradient1_error, double &positive_gradient1_error,
+   double &negative_gradient2_error, double &positive_gradient2_error,
+   double &negative_gradient3_error, double &positive_gradient3_error) {
+
+    double inverse_factor = 1.0 / ((double) num_samples - 1.0);
+    
+    // First compute the variance component.
+    negative_gradient1_error = 
+      inverse_factor * (negative_gradient1_squared_sum - 
+			negative_gradient1_sum * negative_gradient1_sum / 
+			((double) num_samples));
+    positive_gradient1_error =
+      inverse_factor * (positive_gradient1_squared_sum -
+			positive_gradient1_sum * positive_gradient1_sum /
+			((double) num_samples));
+    negative_gradient2_error = 
+      inverse_factor * (negative_gradient2_squared_sum - 
+			negative_gradient2_sum * negative_gradient2_sum / 
+			((double) num_samples));
+    positive_gradient2_error =
+      inverse_factor * (positive_gradient2_squared_sum -
+			positive_gradient2_sum * positive_gradient2_sum /
+			((double) num_samples));
+    negative_gradient3_error = 
+      inverse_factor * (negative_gradient3_squared_sum - 
+			negative_gradient3_sum * negative_gradient3_sum / 
+			((double) num_samples));
+    positive_gradient3_error =
+      inverse_factor * (positive_gradient3_squared_sum -
+			positive_gradient3_sum * positive_gradient3_sum /
+			((double) num_samples));    
+
+    // Then transform each variance into the actual confidence
+    // interval range (for sample variance, not the sample mean
+    // variance).
+    negative_gradient1_error = z_score * sqrt(negative_gradient1_error);
+    positive_gradient1_error = z_score * sqrt(positive_gradient1_error);
+    negative_gradient2_error = z_score * sqrt(negative_gradient2_error);
+    positive_gradient2_error = z_score * sqrt(positive_gradient2_error);
+    negative_gradient3_error = z_score * sqrt(negative_gradient3_error);
+    positive_gradient3_error = z_score * sqrt(positive_gradient3_error);    
+  }
+
   void force_(const Matrix &data, const ArrayList<index_t> &indices, 
 	      double &negative_gradient1, double &positive_gradient1, 
 	      double &negative_gradient2, double &positive_gradient2,
@@ -463,17 +516,17 @@ class AxilrodTellerForceKernel {
 
       // All three nodes are equal...
       if(nodes[1] == nodes[2]) {
-	num_jk_pairs = 0;
-	num_ik_pairs = 0;
-	num_ij_pairs = 0;
+	num_jk_pairs = math::BinomialCoefficient(nodes[0]->count() - 1, 2);
+	num_ik_pairs = num_jk_pairs;
+	num_ij_pairs = num_jk_pairs;
       }
 
       // i-th node equals j-th node, but j-th node does not equal k-th
       // node.
       else {
-	num_jk_pairs = 0;
-	num_ik_pairs = 0;
-	num_ij_pairs = 0;	
+	num_jk_pairs = (nodes[0]->count() - 1) * (nodes[2]->count());
+	num_ik_pairs = num_jk_pairs;
+	num_ij_pairs = math::BinomialCoefficient(nodes[0]->count(), 2);	
       }
     }
     else {
@@ -481,16 +534,16 @@ class AxilrodTellerForceKernel {
       // i-th node does not equal j-th node, but j-th node equals k-th
       // node.
       if(nodes[1] == nodes[2]) {
-	num_jk_pairs = 0;
-	num_ik_pairs = 0;
-	num_ij_pairs = 0;
+	num_jk_pairs = math::BinomialCoefficient(nodes[1]->count(), 2);
+	num_ik_pairs = (nodes[0]->count()) * (nodes[2]->count() - 1);
+	num_ij_pairs = (nodes[0]->count()) * (nodes[1]->count() - 1);
       }
 
       // All three nodes are disjoint in this case...
       else {
-	num_jk_pairs = 0;
-	num_ik_pairs = 0;
-	num_ij_pairs = 0;
+	num_jk_pairs = (nodes[1]->count()) * (nodes[2]->count());
+	num_ik_pairs = (nodes[0]->count()) * (nodes[2]->count());
+	num_ij_pairs = (nodes[0]->count()) * (nodes[1]->count());
       }
     }
   }
@@ -500,9 +553,13 @@ class AxilrodTellerForceKernel {
    */
   bool MonteCarloEval(const Matrix &data, ArrayList<index_t> &indices,
 		      ArrayList<TTree *> &nodes,
-		      double relative_error, 
+		      double relative_error, double z_score,
 		      double total_n_minus_one_num_tuples) {
 
+    // Compute the number of (n - 1) tuples.
+    double num_jk_pairs, num_ik_pairs, num_ij_pairs;
+    ComputeNumTwoTuples_(nodes, num_jk_pairs, num_ik_pairs, num_ij_pairs);
+  
     // boolean flag for stating whether the three nodes are prunable,
     // and whether we should try pruning.
     bool prunable = false;
@@ -514,232 +571,83 @@ class AxilrodTellerForceKernel {
     double negative_gradient1, positive_gradient1, negative_gradient2,
       positive_gradient2, negative_gradient3, positive_gradient3;
 
-    // Loop over each point over i-th node.
-    for(index_t i = nodes[0]->begin(); i < nodes[0]->end(); i++) {
+
+    // Currently running order statistics and the raw sum and the
+    // squared sums..
+    double min_negative_gradient1 = 0, max_negative_gradient1 = -DBL_MAX;
+    double min_positive_gradient1 = DBL_MAX, max_positive_gradient1 = 0;
+    double negative_gradient1_sum = 0;
+    double negative_gradient1_squared_sum = 0;
+    double positive_gradient1_sum = 0;
+    double positive_gradient1_squared_sum = 0;
+    double min_negative_gradient2 = 0, max_negative_gradient2 = -DBL_MAX;
+    double min_positive_gradient2 = DBL_MAX, max_positive_gradient2 = 0;
+    double negative_gradient2_sum = 0;
+    double negative_gradient2_squared_sum = 0;
+    double positive_gradient2_sum = 0;
+    double positive_gradient2_squared_sum = 0;
+    double min_negative_gradient3 = 0, max_negative_gradient3 = -DBL_MAX;
+    double min_positive_gradient3 = DBL_MAX, max_positive_gradient3 = 0;
+    double negative_gradient3_sum = 0;
+    double negative_gradient3_squared_sum = 0;
+    double positive_gradient3_sum = 0;
+    double positive_gradient3_squared_sum = 0;
+    
+    // Sample a random 3-tuple from the i-th node, the j-th node and
+    // the k-th node.
+    do {
       
-      // i-th particle is fixed...
-      indices[0] = i;
-
-      // Currently running order statistics and the raw sum and the
-      // squared sums..
-      double min_negative_gradient1 = 0, max_negative_gradient1 = -DBL_MAX;
-      double min_positive_gradient1 = DBL_MAX, max_positive_gradient1 = 0;
-      double negative_gradient1_sum = 0;
-      double negative_gradient1_squared_sum = 0;
-      double positive_gradient1_sum = 0;
-      double positive_gradient1_squared_sum = 0;
-      double min_negative_gradient2 = 0, max_negative_gradient2 = -DBL_MAX;
-      double min_positive_gradient2 = DBL_MAX, max_positive_gradient2 = 0;
-      double negative_gradient2_sum = 0;
-      double negative_gradient2_squared_sum = 0;
-      double positive_gradient2_sum = 0;
-      double positive_gradient2_squared_sum = 0;
-      double min_negative_gradient3 = 0, max_negative_gradient3 = -DBL_MAX;
-      double min_positive_gradient3 = DBL_MAX, max_positive_gradient3 = 0;
-      double negative_gradient3_sum = 0;
-      double negative_gradient3_squared_sum = 0;
-      double positive_gradient3_sum = 0;
-      double positive_gradient3_squared_sum = 0;
- 
-      // Sample a point from the j-th node and a point from the k-th
-      // node.
-      do {
-	
-	indices[1] = math::RandInt(nodes[1]->begin(), nodes[1]->end());
-	indices[2] = math::RandInt(nodes[2]->begin(), nodes[2]->end());
-
-	// Continue until a valid sample is chosen.
-	if(!(indices[0] < indices[1] && indices[1] < indices[2])) {
-	  continue;
-	}
-	
-	// Compute the pairwise distances among three particles to
-	// complete the distance tables.
-	EvalMinMaxSquaredDistances(data, indices);
-
-	// Evaluate the three components required for force vector for
-	// the current particle.
-	EvalGradients(distmat_,negative_gradient1, NULL,
-		      positive_gradient1, NULL, negative_gradient2, NULL, 
-		      positive_gradient2, NULL, negative_gradient3, NULL, 
-		      positive_gradient3, NULL);
-	
-	// Update the current statistics for all three components.
-	UpdateStatistics_
-	  (negative_gradient1, positive_gradient1,
-	   negative_gradient2, positive_gradient2,
-	   negative_gradient3, positive_gradient3,
-	   min_negative_gradient1, max_negative_gradient1,
-	   min_positive_gradient1, max_positive_gradient1,
-	   negative_gradient1_sum, negative_gradient1_squared_sum,
-	   positive_gradient1_sum, positive_gradient1_squared_sum,
-	   min_negative_gradient2, max_negative_gradient2,
-	   min_positive_gradient2, max_positive_gradient2,
-	   negative_gradient2_sum, negative_gradient2_squared_sum,
-	   positive_gradient2_sum, positive_gradient2_squared_sum,
-	   min_negative_gradient3, max_negative_gradient3,
-	   min_positive_gradient3, max_positive_gradient3,
-	   negative_gradient3_sum, negative_gradient3_squared_sum,
-	   positive_gradient3_sum, positive_gradient3_squared_sum);
-
-	// Compute the current error.
-	
-	
-	// Decrement the number of samples required, and recompute how
-	// many more to take.
-
-      } while(num_sample_trials_remaining > 0);
-    }
-
-    // Loop over each point over j-th node if and only if it is not
-    // the same as the i-th node.
-    if(nodes[1] != nodes[0]) {
-      for(index_t j = nodes[1]->begin(); j < nodes[1]->end(); j++) {
-
-	// j-th particle is fixed.
-	indices[1] = j;
-	
-	// Currently running order statistics and the raw sum and the
-	// squared sums..
-	double min_negative_gradient1 = 0, max_negative_gradient1 = -DBL_MAX;
-	double min_positive_gradient1 = DBL_MAX, max_positive_gradient1 = 0;
-	double negative_gradient1_sum = 0;
-	double negative_gradient1_squared_sum = 0;
-	double positive_gradient1_sum = 0;
-	double positive_gradient1_squared_sum = 0;
-	double min_negative_gradient2 = 0, max_negative_gradient2 = -DBL_MAX;
-	double min_positive_gradient2 = DBL_MAX, max_positive_gradient2 = 0;
-	double negative_gradient2_sum = 0;
-	double negative_gradient2_squared_sum = 0;
-	double positive_gradient2_sum = 0;
-	double positive_gradient2_squared_sum = 0;
-	double min_negative_gradient3 = 0, max_negative_gradient3 = -DBL_MAX;
-	double min_positive_gradient3 = DBL_MAX, max_positive_gradient3 = 0;
-	double negative_gradient3_sum = 0;
-	double negative_gradient3_squared_sum = 0;
-	double positive_gradient3_sum = 0;
-	double positive_gradient3_squared_sum = 0;
-
-	do {
-	  // Sample a point from the i-th node and a point from the k-th
-	  // node.
-	  indices[0] = math::RandInt(nodes[0]->begin(), nodes[0]->end());
-	  indices[2] = math::RandInt(nodes[2]->begin(), nodes[2]->end());
-	  
-	  // Continue until a valid sample is chosen.
-	  if(!(indices[0] < indices[1] && indices[1] < indices[2])) {
-	    continue;
-	  }
-	  
-	  // Compute the pairwise distances among three particles to
-	  // complete the distance tables.
-	  EvalMinMaxSquaredDistances(data, indices);
-	  
-	  // Evaluate the three components required for force vector for
-	  // the current particle.
-	  EvalGradients(distmat_,negative_gradient1, NULL,
-			positive_gradient1, NULL, negative_gradient2, NULL, 
-			positive_gradient2, NULL, negative_gradient3, NULL, 
-			positive_gradient3, NULL);
-	  
-	  // Update the current statistics for all three components.
-	  UpdateStatistics_
-	    (negative_gradient1, positive_gradient1,
-	     negative_gradient2, positive_gradient2,
-	     negative_gradient3, positive_gradient3,
-	     min_negative_gradient1, max_negative_gradient1,
-	     min_positive_gradient1, max_positive_gradient1,
-	     negative_gradient1_sum, negative_gradient1_squared_sum,
-	     positive_gradient1_sum, positive_gradient1_squared_sum,
-	     min_negative_gradient2, max_negative_gradient2,
-	     min_positive_gradient2, max_positive_gradient2,
-	     negative_gradient2_sum, negative_gradient2_squared_sum,
-	     positive_gradient2_sum, positive_gradient2_squared_sum,
-	     min_negative_gradient3, max_negative_gradient3,
-	     min_positive_gradient3, max_positive_gradient3,
-	     negative_gradient3_sum, negative_gradient3_squared_sum,
-	     positive_gradient3_sum, positive_gradient3_squared_sum);
-
-	} while(num_sample_trials_remaining > 0);
-      } // end of iterating over each point in the j-th node...
-    } // do this if and only if the j-th node is not the same as the
-      // i-th node.
-
-    // Loop over each point over k-th node if and only if it is not
-    // the same as the j-th node.
-    if(nodes[2] != nodes[1]) {
-      for(index_t k = nodes[2]->begin(); k < nodes[2]->end(); k++) {
-
-	// k-th particle is fixed.
-	indices[2] = k;
-
-	// Currently running order statistics and the raw sum and the
-	// squared sums..
-	double min_negative_gradient1 = 0, max_negative_gradient1 = -DBL_MAX;
-	double min_positive_gradient1 = DBL_MAX, max_positive_gradient1 = 0;
-	double negative_gradient1_sum = 0;
-	double negative_gradient1_squared_sum = 0;
-	double positive_gradient1_sum = 0;
-	double positive_gradient1_squared_sum = 0;
-	double min_negative_gradient2 = 0, max_negative_gradient2 = -DBL_MAX;
-	double min_positive_gradient2 = DBL_MAX, max_positive_gradient2 = 0;
-	double negative_gradient2_sum = 0;
-	double negative_gradient2_squared_sum = 0;
-	double positive_gradient2_sum = 0;
-	double positive_gradient2_squared_sum = 0;
-	double min_negative_gradient3 = 0, max_negative_gradient3 = -DBL_MAX;
-	double min_positive_gradient3 = DBL_MAX, max_positive_gradient3 = 0;
-	double negative_gradient3_sum = 0;
-	double negative_gradient3_squared_sum = 0;
-	double positive_gradient3_sum = 0;
-	double positive_gradient3_squared_sum = 0;
-
-	do {
-	  // Sample a point from the i-th node and a point from the j-th
-	  // node.
-	  indices[0] = math::RandInt(nodes[0]->begin(), nodes[0]->end());
-	  indices[1] = math::RandInt(nodes[1]->begin(), nodes[1]->end());
-	  
-	  // Continue until a valid sample is chosen.
-	  if(!(indices[0] < indices[1] && indices[1] < indices[2])) {
-	    continue;
-	  }
-	  
-	  // Compute the pairwise distances among three particles to
-	  // complete the distance tables.
-	  EvalMinMaxSquaredDistances(data, indices);
-	  
-	  // Evaluate the three components required for force vector for
-	  // the current particle.
-	  EvalGradients(distmat_,negative_gradient1, NULL,
-			positive_gradient1, NULL, negative_gradient2, NULL, 
-			positive_gradient2, NULL, negative_gradient3, NULL, 
-			positive_gradient3, NULL);
-	  
-	  
-	  // Update the current statistics for all three components.
-	  UpdateStatistics_
-	    (negative_gradient1, positive_gradient1,
-	     negative_gradient2, positive_gradient2,
-	     negative_gradient3, positive_gradient3,
-	     min_negative_gradient1, max_negative_gradient1,
-	     min_positive_gradient1, max_positive_gradient1,
-	     negative_gradient1_sum, negative_gradient1_squared_sum,
-	     positive_gradient1_sum, positive_gradient1_squared_sum,
-	     min_negative_gradient2, max_negative_gradient2,
-	     min_positive_gradient2, max_positive_gradient2,
-	     negative_gradient2_sum, negative_gradient2_squared_sum,
-	     positive_gradient2_sum, positive_gradient2_squared_sum,
-	     min_negative_gradient3, max_negative_gradient3,
-	     min_positive_gradient3, max_positive_gradient3,
-	     negative_gradient3_sum, negative_gradient3_squared_sum,
-	     positive_gradient3_sum, positive_gradient3_squared_sum);
-	  
-	} while(num_sample_trials_remaining > 0);
-
-      } // end of iterating over each point in the k-th node...
-    } // do this if and only if the k-th node is not the same as the
-      // j-th node.
+      indices[0] = math::RandInt(nodes[0]->begin(), nodes[0]->end());
+      indices[1] = math::RandInt(nodes[1]->begin(), nodes[1]->end());
+      indices[2] = math::RandInt(nodes[2]->begin(), nodes[2]->end());
+      
+      // Continue until a valid sample is chosen.
+      if(!(indices[0] < indices[1] && indices[1] < indices[2])) {
+	continue;
+      }
+      
+      // Compute the pairwise distances among three particles to
+      // complete the distance tables.
+      EvalMinMaxSquaredDistances(data, indices);
+      
+      // Evaluate the three components required for force vector for
+      // the current particle.
+      EvalGradients(distmat_,negative_gradient1, NULL,
+		    positive_gradient1, NULL, negative_gradient2, NULL, 
+		    positive_gradient2, NULL, negative_gradient3, NULL, 
+		    positive_gradient3, NULL);
+      
+      // Update the current statistics for all three components.
+      UpdateStatistics_
+	(negative_gradient1, positive_gradient1,
+	 negative_gradient2, positive_gradient2,
+	 negative_gradient3, positive_gradient3,
+	 min_negative_gradient1, max_negative_gradient1,
+	 min_positive_gradient1, max_positive_gradient1,
+	 negative_gradient1_sum, negative_gradient1_squared_sum,
+	 positive_gradient1_sum, positive_gradient1_squared_sum,
+	 min_negative_gradient2, max_negative_gradient2,
+	 min_positive_gradient2, max_positive_gradient2,
+	 negative_gradient2_sum, negative_gradient2_squared_sum,
+	 positive_gradient2_sum, positive_gradient2_squared_sum,
+	 min_negative_gradient3, max_negative_gradient3,
+	 min_positive_gradient3, max_positive_gradient3,
+	 negative_gradient3_sum, negative_gradient3_squared_sum,
+	 positive_gradient3_sum, positive_gradient3_squared_sum);
+      
+      // Compute the current error.
+      
+      // Decrement by one from the number of sample trials and
+      // increment by one the number of total samples collected.
+      num_sample_trials_remaining--;
+      current_num_samples++;
+      
+      // If the number of samples remaining is zero, then
+      // recompute how many more to compute.
+      if(num_sample_trials_remaining == 0) {
+      }
+      
+    } while(num_sample_trials_remaining > 0);
 
     return prunable;
   }
