@@ -54,7 +54,7 @@ class MultitreeMultibody {
     total_num_tuples_ = math::BinomialCoefficient(data_.n_cols(),
 						  mkernel_.order());
     total_n_minus_one_num_tuples_ = 
-      math::BinomialCoefficient(data_.n_cols() - 1, mkernel_.order());
+      math::BinomialCoefficient(data_.n_cols() - 1, mkernel_.order() - 1);
 
     // Initialize intermediate computation spaces to zero.
     negative_force1_e_.SetZero();
@@ -88,9 +88,12 @@ class MultitreeMultibody {
     total_num_tuples_ = math::BinomialCoefficient(data_.n_cols(),
 						  mkernel_.order());
     total_n_minus_one_num_tuples_ = 
-      math::BinomialCoefficient(data_.n_cols() - 1, mkernel_.order());
+      math::BinomialCoefficient(data_.n_cols() - 1, mkernel_.order() - 1);
 
     relative_error_ = relative_error;
+   
+    // Set the probability requirement to 90 %.
+    probability_ = 0.9;
 
     // Initialize intermediate computation spaces to zero.
     negative_force1_e_.SetZero();
@@ -190,6 +193,11 @@ private:
   /** @brief The multibody kernel function.
    */
   MultibodyKernel mkernel_;
+
+  /** @brief The probability requirement that the componentwise
+   *         relative error bound holds.
+   */
+  double probability_;
 
   /** @brief The accuracy requirement: componentwise relative error
    *         bound.
