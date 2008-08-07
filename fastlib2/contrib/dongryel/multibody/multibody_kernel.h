@@ -843,7 +843,6 @@ class AxilrodTellerForceKernel {
     // boolean flag for stating whether the three nodes are prunable,
     // and whether we should try pruning.
     bool prunable = false;
-    bool should_try = true;
     index_t current_num_samples = 0;
     index_t num_sample_trials_remaining = 25;
 
@@ -939,10 +938,40 @@ class AxilrodTellerForceKernel {
 	   negative_gradient1_error, positive_gradient1_error,
 	   negative_gradient2_error, positive_gradient2_error,
 	   negative_gradient3_error, positive_gradient3_error);
-	
-      }
+
+	// If not prunable, recompute the required number of samples
+	// to try again.
+	prunable = Prunable_
+	  (nodes, negative_gradient1_error, 
+	   positive_gradient1_error, negative_gradient2_error,
+	   positive_gradient2_error, negative_gradient3_error,
+	   positive_gradient3_error, num_jk_pairs, num_ik_pairs,
+	   num_ij_pairs, relative_error, total_n_minus_one_num_tuples);
+
+	if(!prunable){
+	  break;
+	}
+      } // end of checking whether the sample trials have run out...
       
     } while(num_sample_trials_remaining > 0);
+
+    // If the three node tuple was prunable, then prune.
+    if(prunable) {
+      negative_gradient1_sum /= ((double) current_num_samples);
+      positive_gradient1_sum /= ((double) current_num_samples);
+      negative_gradient2_sum /= ((double) current_num_samples);
+      positive_gradient2_sum /= ((double) current_num_samples);
+      negative_gradient3_sum /= ((double) current_num_samples);
+      positive_gradient3_sum /= ((double) current_num_samples);
+
+      Prune_(nodes, negative_gradient1_sum, negative_gradient1_sum,
+	     positive_gradient1_sum, positive_gradient1_sum,
+	     negative_gradient2_sum, negative_gradient2_sum,
+	     positive_gradient2_sum, positive_gradient2_sum,
+	     negative_gradient3_sum, negative_gradient3_sum,
+	     positive_gradient3_sum, positive_gradient3_sum, num_jk_pairs,
+	     num_ik_pairs, num_ij_pairs);      
+    }
 
     return prunable;
   }
