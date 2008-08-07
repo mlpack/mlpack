@@ -373,20 +373,18 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::PostProcessNaive_
 
 template<typename TMultibodyKernel, typename TTree>
 bool MultitreeMultibody<TMultibodyKernel, TTree>::Prunable
-(ArrayList<TTree *> &nodes, double num_tuples, double *allowed_err) {
+(ArrayList<TTree *> &nodes, double num_tuples) {
 
-  return mkernel_.Eval(data_, exhaustive_indices_, nodes, 
-		       relative_error_, z_score_,
-		       total_n_minus_one_num_tuples_);
+  return mkernel_.MonteCarloEval(data_, exhaustive_indices_, nodes, 
+				 relative_error_, z_score_,
+				 total_n_minus_one_num_tuples_);
 }
 
 template<typename TMultibodyKernel, typename TTree>
 void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
 (ArrayList<TTree *> &nodes, double num_tuples) {
-    
-  double allowed_err = 0;
   
-  if(Prunable(nodes, num_tuples, &allowed_err)) {
+  if(Prunable(nodes, num_tuples)) {
     num_prunes_++;
     return;
   }
