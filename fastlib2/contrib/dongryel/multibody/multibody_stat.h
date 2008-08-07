@@ -19,6 +19,16 @@ class MultibodyStat {
    */
   double l1_norm_coordinate_sum_;
 
+  /** @brief The leave-one-out lower bound on the L1 norm of the total
+   *         coordinate sum.
+   */
+  double l1_norm_coordinate_sum_l_;
+
+  /** @brief The maximum L1 norm of the points owned by this
+   *         statistics.
+   */
+  double max_l1_norm_;
+
   /** @brief The maximum negative gradient (first component).
    */
   double negative_gradient1_u;
@@ -92,7 +102,7 @@ class MultibodyStat {
    */
   void Init() {
 
-    coordinate_sum_.Init(3);
+    coordinate_sum_.Init(3);    
     negative_gradient1_u = 0;
     positive_gradient1_l = 0;
     negative_gradient2_u.Init(3);
@@ -115,13 +125,22 @@ class MultibodyStat {
 
     coordinate_sum_.SetZero();
     l1_norm_coordinate_sum_ = 0;
+    max_l1_norm_ = 0;
     for(index_t i = start; i < start + count; i++) {
-      la::AddTo(dataset.n_rows(), dataset.GetColumnPtr(i), 
-		coordinate_sum_.ptr());
+      const double *point = dataset.GetColumnPtr(i);
+
+      la::AddTo(dataset.n_rows(), point, coordinate_sum_.ptr());
+      double l1_norm = 0;
+      for(index_t d = 0; d < dataset.n_rows(); d++) {
+	l1_norm += point[d];
+      }
+      max_l1_norm_ = std::max(max_l1_norm_, l1_norm);
     }
     for(index_t d = 0; d < dataset.n_rows(); d++) {
       l1_norm_coordinate_sum_ += coordinate_sum_[d];
     }
+    l1_norm_coordinate_sum_l_ = l1_norm_coordinate_sum_ - max_l1_norm_;
+
     SetZero();
   }
 
@@ -136,6 +155,8 @@ class MultibodyStat {
 		     &coordinate_sum_);
     l1_norm_coordinate_sum_ = left_stat.l1_norm_coordinate_sum_ +
       right_stat.l1_norm_coordinate_sum_;
+    max_l1_norm_ = std::max(left_stat.max_l1_norm_, right_stat.max_l1_norm_);
+    l1_norm_coordinate_sum_l_ = l1_norm_coordinate_sum_ - max_l1_norm_;
     SetZero();
   }
 
