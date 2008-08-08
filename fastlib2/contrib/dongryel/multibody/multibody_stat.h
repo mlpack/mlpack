@@ -132,7 +132,7 @@ class MultibodyStat {
       la::AddTo(dataset.n_rows(), point, coordinate_sum_.ptr());
       double l1_norm = 0;
       for(index_t d = 0; d < dataset.n_rows(); d++) {
-	l1_norm += point[d];
+	l1_norm += fabs(point[d]);
       }
       max_l1_norm_ = std::max(max_l1_norm_, l1_norm);
     }

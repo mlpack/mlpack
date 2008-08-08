@@ -375,9 +375,10 @@ template<typename TMultibodyKernel, typename TTree>
 bool MultitreeMultibody<TMultibodyKernel, TTree>::Prunable
 (ArrayList<TTree *> &nodes, double num_tuples) {
 
-  return mkernel_.MonteCarloEval(data_, exhaustive_indices_, nodes, 
-				 relative_error_, z_score_,
-				 total_n_minus_one_num_tuples_);
+  return 
+    mkernel_.MonteCarloEval(data_, exhaustive_indices_, nodes, 
+			    relative_error_, z_score_,
+			    total_n_minus_one_num_tuples_);
 }
 
 template<typename TMultibodyKernel, typename TTree>

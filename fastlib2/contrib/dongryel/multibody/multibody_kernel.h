@@ -40,6 +40,20 @@ class AxilrodTellerForceKernel {
     return length;
   }
 
+  /** @brief Computes the leave-one-out node count and the 2-tuple
+   *         counts.
+   *
+   *  @param nodes The set of nodes (3 for Axilrod-Teller).
+   *  @param leave_one_out_node_j_count_for_node_i
+   *  @param leave_one_out_node_k_count_for_node_i
+   *  @param leave_one_out_node_i_count_for_node_j
+   *  @param leave_one_out_node_k_count_for_node_j
+   *  @param leave_one_out_node_i_count_for_node_k
+   *  @param leave_one_out_node_j_count_for_node_k
+   *  @param num_jk_pairs
+   *  @param num_ik_pairs
+   *  @param num_ij_pairs
+   */
   void ComputeNumTwoTuples_(ArrayList<TTree *> &nodes,
 			    double &leave_one_out_node_j_count_for_node_i,
 			    double &leave_one_out_node_k_count_for_node_i,
@@ -141,10 +155,12 @@ class AxilrodTellerForceKernel {
     node_i_additional_positive_gradient1_l =
       num_jk_pairs * (min_positive_gradient1 + min_positive_gradient2);
     node_i_additional_l1_norm_negative_gradient2_u =
-      leave_one_out_node_k_count_for_node_i * 
-      (nodes[1]->stat().l1_norm_coordinate_sum_l_) * max_negative_gradient1 +
-      leave_one_out_node_j_count_for_node_i * 
-      (nodes[2]->stat().l1_norm_coordinate_sum_l_) * max_negative_gradient2;
+      fabs(leave_one_out_node_k_count_for_node_i * 
+	   (nodes[1]->stat().l1_norm_coordinate_sum_l_) * 
+	   max_negative_gradient1 +
+	   leave_one_out_node_j_count_for_node_i * 
+	   (nodes[2]->stat().l1_norm_coordinate_sum_l_) * 
+	   max_negative_gradient2);
     node_i_additional_l1_norm_positive_gradient2_l = 
       leave_one_out_node_k_count_for_node_i * 
       (nodes[1]->stat().l1_norm_coordinate_sum_l_) * min_positive_gradient1 +
@@ -159,10 +175,12 @@ class AxilrodTellerForceKernel {
       node_j_additional_positive_gradient1_l =
 	num_ik_pairs * (min_positive_gradient1 + min_positive_gradient3);
       node_j_additional_l1_norm_negative_gradient2_u =
-	leave_one_out_node_k_count_for_node_j * 
-	(nodes[0]->stat().l1_norm_coordinate_sum_l_) * max_negative_gradient1 +
-	leave_one_out_node_i_count_for_node_j * 
-	(nodes[2]->stat().l1_norm_coordinate_sum_l_) * max_negative_gradient3;
+	fabs(leave_one_out_node_k_count_for_node_j * 
+	     (nodes[0]->stat().l1_norm_coordinate_sum_l_) * 
+	     max_negative_gradient1 +
+	     leave_one_out_node_i_count_for_node_j * 
+	     (nodes[2]->stat().l1_norm_coordinate_sum_l_) * 
+	     max_negative_gradient3);
       node_j_additional_l1_norm_positive_gradient2_l = 
 	leave_one_out_node_k_count_for_node_j * 
 	(nodes[0]->stat().l1_norm_coordinate_sum_l_) * min_positive_gradient1 +
@@ -188,10 +206,12 @@ class AxilrodTellerForceKernel {
       node_k_additional_positive_gradient1_l =
 	num_ij_pairs * (min_positive_gradient2 + min_positive_gradient3);
       node_k_additional_l1_norm_negative_gradient2_u =
-	leave_one_out_node_j_count_for_node_k * 
-	(nodes[0]->stat().l1_norm_coordinate_sum_l_) * max_negative_gradient2 +
-	leave_one_out_node_i_count_for_node_k * 
-	(nodes[1]->stat().l1_norm_coordinate_sum_l_) * max_negative_gradient3;
+	fabs(leave_one_out_node_j_count_for_node_k * 
+	     (nodes[0]->stat().l1_norm_coordinate_sum_l_) * 
+	     max_negative_gradient2 +
+	     leave_one_out_node_i_count_for_node_k * 
+	     (nodes[1]->stat().l1_norm_coordinate_sum_l_) * 
+	     max_negative_gradient3);
       node_k_additional_l1_norm_positive_gradient2_l = 
 	leave_one_out_node_j_count_for_node_k * 
 	(nodes[0]->stat().l1_norm_coordinate_sum_l_) * min_positive_gradient2 +
@@ -200,13 +220,13 @@ class AxilrodTellerForceKernel {
     }
     else {
       node_k_additional_negative_gradient1_u = 
-	node_i_additional_negative_gradient1_u;
+	node_j_additional_negative_gradient1_u;
       node_k_additional_positive_gradient1_l =
-	node_i_additional_positive_gradient1_l;
+	node_j_additional_positive_gradient1_l;
       node_k_additional_l1_norm_negative_gradient2_u =
-	node_i_additional_l1_norm_negative_gradient2_u;
+	node_j_additional_l1_norm_negative_gradient2_u;
       node_k_additional_l1_norm_positive_gradient2_l = 
-	node_i_additional_l1_norm_positive_gradient2_l;
+	node_j_additional_l1_norm_positive_gradient2_l;
     }
   }
 
@@ -605,7 +625,7 @@ class AxilrodTellerForceKernel {
     positive_gradient3_error =
       inverse_factor * (positive_gradient3_squared_sum -
 			positive_gradient3_sum * positive_gradient3_sum /
-			((double) num_samples));    
+			((double) num_samples));
 
     // Then transform each variance into the actual confidence
     // interval range (for sample variance, not the sample mean
@@ -1018,7 +1038,8 @@ class AxilrodTellerForceKernel {
       negative_gradient2_avg, positive_gradient2_avg, negative_gradient3_avg,
       positive_gradient3_avg;
 
-    // Compute the number of (n - 1) tuples.
+    // Compute the number of (n - 1) tuples and leave-one-out
+    // quantities.
     double num_jk_pairs, num_ik_pairs, num_ij_pairs;
     double leave_one_out_node_j_count_for_node_i,
       leave_one_out_node_k_count_for_node_i,
@@ -1084,7 +1105,7 @@ class AxilrodTellerForceKernel {
       
       // Evaluate the three components required for force vector for
       // the current particle.
-      EvalGradients(distmat_,negative_gradient1, NULL,
+      EvalGradients(distmat_, negative_gradient1, NULL,
 		    positive_gradient1, NULL, negative_gradient2, NULL, 
 		    positive_gradient2, NULL, negative_gradient3, NULL, 
 		    positive_gradient3, NULL);
@@ -1121,6 +1142,7 @@ class AxilrodTellerForceKernel {
 	  negative_gradient2_error, positive_gradient2_error,
 	  negative_gradient3_error, positive_gradient3_error;
 
+	/*
 	ComputeMonteCarloGradientComponentError_
 	  (negative_gradient1_sum, negative_gradient1_squared_sum,
 	   positive_gradient1_sum, positive_gradient1_squared_sum,
@@ -1132,15 +1154,21 @@ class AxilrodTellerForceKernel {
 	   negative_gradient1_error, positive_gradient1_error,
 	   negative_gradient2_error, positive_gradient2_error,
 	   negative_gradient3_error, positive_gradient3_error);
-
-	// Compute current average...
-	ComputeCurrentAverages_(negative_gradient1_sum, positive_gradient1_sum,
-				negative_gradient2_sum, positive_gradient2_sum,
-				negative_gradient3_sum, positive_gradient3_sum,
-				current_num_samples, negative_gradient1_avg,
-				positive_gradient1_avg, negative_gradient2_avg,
-				positive_gradient2_avg, negative_gradient3_avg,
-				positive_gradient3_avg);
+	*/
+	
+	// HACK: Need to put this in a function...
+	negative_gradient1_error = 0.5 * 
+	  (max_negative_gradient1 - min_negative_gradient1);
+	positive_gradient1_error = 0.5 *
+	  (max_positive_gradient1 - min_positive_gradient1);
+	negative_gradient2_error = 0.5 * 
+	  (max_negative_gradient2 - min_negative_gradient2);
+	positive_gradient2_error = 0.5 *
+	  (max_positive_gradient2 - min_positive_gradient2);
+	negative_gradient3_error = 0.5 * 
+	  (max_negative_gradient3 - min_negative_gradient3);
+	positive_gradient3_error = 0.5 *
+	  (max_positive_gradient3 - min_positive_gradient3);
 
 	double node_i_additional_negative_gradient1_u,
 	  node_i_additional_positive_gradient1_l,
@@ -1154,7 +1182,7 @@ class AxilrodTellerForceKernel {
 	  node_k_additional_positive_gradient1_l,
 	  node_k_additional_l1_norm_negative_gradient2_u,
 	  node_k_additional_l1_norm_positive_gradient2_l;
-	
+
 	// Additional bound changes due to sampling...
 	ComputeAdditionalBoundChanges_
 	  (nodes, max_negative_gradient1, min_positive_gradient1,
@@ -1165,7 +1193,7 @@ class AxilrodTellerForceKernel {
 	   leave_one_out_node_i_count_for_node_j,
 	   leave_one_out_node_k_count_for_node_j,
 	   leave_one_out_node_i_count_for_node_k,
-	   leave_one_out_node_j_count_for_node_k,	   
+	   leave_one_out_node_j_count_for_node_k,
 	   num_jk_pairs, num_ik_pairs, num_ij_pairs,
 	   node_i_additional_negative_gradient1_u,
 	   node_i_additional_positive_gradient1_l,
@@ -1179,7 +1207,25 @@ class AxilrodTellerForceKernel {
 	   node_k_additional_positive_gradient1_l,
 	   node_k_additional_l1_norm_negative_gradient2_u,
 	   node_k_additional_l1_norm_positive_gradient2_l);
-	  
+
+	/*
+	printf("%g %g %g %g %g %g %g %g %g %g %g %g\n",
+	       node_i_additional_negative_gradient1_u,
+	       node_i_additional_positive_gradient1_l,
+	       node_i_additional_l1_norm_negative_gradient2_u,
+	       node_i_additional_l1_norm_positive_gradient2_l,
+	       node_j_additional_negative_gradient1_u,
+	       node_j_additional_positive_gradient1_l,
+	       node_j_additional_l1_norm_negative_gradient2_u,
+	       node_j_additional_l1_norm_positive_gradient2_l,
+	       node_k_additional_negative_gradient1_u,
+	       node_k_additional_positive_gradient1_l,
+	       node_k_additional_l1_norm_negative_gradient2_u,
+	       node_k_additional_l1_norm_positive_gradient2_l);
+
+	exit(0);
+	*/
+
 	// If not prunable, recompute the required number of samples
 	// to try again.
 	prunable = Prunable_
@@ -1210,6 +1256,7 @@ class AxilrodTellerForceKernel {
 
     // If the three node tuple was prunable, then prune.
     if(prunable) {
+      /*
       ComputeCurrentAverages_(negative_gradient1_sum, positive_gradient1_sum,
 			      negative_gradient2_sum, positive_gradient2_sum,
 			      negative_gradient3_sum, positive_gradient3_sum,
@@ -1217,12 +1264,13 @@ class AxilrodTellerForceKernel {
 			      positive_gradient1_avg, negative_gradient2_avg,
 			      positive_gradient2_avg, negative_gradient3_avg,
 			      positive_gradient3_avg);
-      Prune_(nodes, negative_gradient1_avg, negative_gradient1_avg,
-	     positive_gradient1_avg, positive_gradient1_avg,
-	     negative_gradient2_avg, negative_gradient2_avg,
-	     positive_gradient2_avg, positive_gradient2_avg,
-	     negative_gradient3_avg, negative_gradient3_avg,
-	     positive_gradient3_avg, positive_gradient3_avg, num_jk_pairs,
+      */
+      Prune_(nodes, min_negative_gradient1, max_negative_gradient1,
+	     min_positive_gradient1, max_positive_gradient1,
+	     min_negative_gradient2, max_negative_gradient2,
+	     min_positive_gradient2, max_positive_gradient2,
+	     min_negative_gradient3, max_negative_gradient3,
+	     min_positive_gradient3, max_positive_gradient3, num_jk_pairs,
 	     num_ik_pairs, num_ij_pairs);      
     }
 
