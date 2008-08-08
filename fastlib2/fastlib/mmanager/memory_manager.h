@@ -297,7 +297,7 @@ class MemoryManager {
       }    
 #else
      FATAL("MAP_ANONYMOUS is not defined for the particular platoform, currently not"
-           "supporting virtual memory allocation for this platform")      
+           "supporting virtual memory allocation for this platform");    
 #endif 
     } else {
       struct stat info;
