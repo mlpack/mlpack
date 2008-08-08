@@ -378,9 +378,13 @@ class MemoryManager {
         FATAL("Error while trying to close file %s\n", 
                pool_name_.c_str());
       }
-    } 
+    }
+#ifdef MREMAP_MAYMOVE    
     pool_ = (char*)mremap(pool_, capacity_, capacity_+realloc_chunk_, 
 				                  !MREMAP_MAYMOVE);
+#else
+   pool_=MAP_FAILED;    
+#endif
     capacity_+=realloc_chunk_;
     if (pool_==MAP_FAILED) {
       FATAL("You are trying to increase the memory size but "
