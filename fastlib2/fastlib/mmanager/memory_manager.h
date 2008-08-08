@@ -15,6 +15,7 @@
 //#include "fastlib/fastlib.h"
 #include "fastlib/base/common.h"
 #include "fastlib/fx/fx.h"
+
 namespace mmapmm {
 
 template<bool Logmode, int32 page_size>
