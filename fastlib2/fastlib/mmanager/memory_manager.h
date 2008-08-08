@@ -383,7 +383,7 @@ class MemoryManager {
     pool_ = (char*)mremap(pool_, capacity_, capacity_+realloc_chunk_, 
 				                  !MREMAP_MAYMOVE);
 #else
-   pool_=MAP_FAILED;    
+   pool_=(char*)MAP_FAILED;    
 #endif
     capacity_+=realloc_chunk_;
     if (pool_==MAP_FAILED) {
