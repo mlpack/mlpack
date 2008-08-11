@@ -254,7 +254,9 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
       double right_hand_side = 
 	(std::max(tau_ * new_mass_l, threshold_) - new_used_error) / 
 	(rroot_->count() - new_n_pruned);
-
+      
+      // NOTE: It is very important that the following pruning rule is
+      // a strict inequality!
       if(sqrt(sample_variance) * standard_score < right_hand_side) {
 	kernel_sums = kernel_sums / ((double) total_samples) * rnode->count();
 	max_used_error = rnode->count() * standard_score * sqrt(sample_variance);
@@ -384,6 +386,7 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
 			      kernel_value_range, dl, de, du, 
 			      used_error, n_pruned)) {
     qnode->stat().postponed_l_ += dl;
+    qnode->stat().postponed_e_ += de;
     qnode->stat().postponed_u_ += du;
     qnode->stat().postponed_used_error_ += used_error;
     qnode->stat().postponed_n_pruned_ += n_pruned;
