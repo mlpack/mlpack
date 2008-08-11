@@ -338,7 +338,7 @@ void DualtreeKde<TKernelAux>::BestNodePartners
   double d1 = nd->bound().MinDistanceSq(nd1->bound());
   double d2 = nd->bound().MinDistanceSq(nd2->bound());
 
-  // I should fix the following lines to work with arbitrary bounds...
+  // Prioritized traversal based on the squared distance bounds.
   if(d1 <= d2) {
     *partner1 = nd1;
     *probability1 = sqrt(probability);
