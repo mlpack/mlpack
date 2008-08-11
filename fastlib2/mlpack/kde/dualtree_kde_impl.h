@@ -203,6 +203,9 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
     // The initial number of samples is equal to the default.
     int num_samples = num_initial_samples_per_query_;
     int total_samples = 0;
+    
+    // The minimum pairwise sampled kernel value.
+    double min_kernel_value = DBL_MAX;
 
     do {
       for(index_t s = 0; s < num_samples; s++) {
@@ -228,6 +231,7 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
 	double weighted_kernel_value = 
 	  ka_.kernel_.EvalUnnormOnSq(squared_distance);
 
+	min_kernel_value = std::min(min_kernel_value, weighted_kernel_value);
 	kernel_sums += weighted_kernel_value;
 	squared_kernel_sums += weighted_kernel_value * weighted_kernel_value;
 
@@ -242,7 +246,10 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
       double sample_variance =
 	(squared_kernel_sums - total_samples * sample_mean * sample_mean) / 
 	((double) total_samples - 1);
-      
+
+      printf("I would like to compare %g against %g\n",
+	     min_kernel_value, kernel_value_range.lo);
+
       // Compute the current threshold for guaranteeing the relative
       // error bound.
       double new_used_error = stat.used_error_ +
@@ -259,7 +266,8 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
       // a strict inequality!
       if(sqrt(sample_variance) * standard_score < right_hand_side) {
 	kernel_sums = kernel_sums / ((double) total_samples) * rnode->count();
-	max_used_error = rnode->count() * standard_score * sqrt(sample_variance);
+	max_used_error = rnode->count() * standard_score * 
+	  sqrt(sample_variance);
 	break;
       }
       else {
