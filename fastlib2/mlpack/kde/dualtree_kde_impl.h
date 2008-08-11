@@ -427,16 +427,16 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
     return;
   }
   
-  // for leaf query node
+  // For a leaf query node,
   if(qnode->is_leaf()) {
     
-      // for leaf pairs, go exhaustive
+    // For leaf pairs, do exhaustive computations.
     if(rnode->is_leaf()) {
       DualtreeKdeBase_(qnode, rnode, probability);
       return;
     }
     
-    // for non-leaf reference, expand reference node
+    // For a non-leaf reference, expand reference node,
     else {
       Tree *rnode_first = NULL, *rnode_second = NULL;
       double probability_first = 0, probability_second = 0;
@@ -449,7 +449,7 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
     }
   }
   
-  // for non-leaf query node
+  // For a non-leaf query node,
   else {
     
     // Push down postponed bound changes owned by the current query
@@ -487,7 +487,8 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
       DualtreeKdeCanonical_(qnode_second, rnode, probability);
     }
     
-    // for non-leaf reference node, expand both query and reference nodes
+    // For a non-leaf reference node, expand both query and reference
+    // nodes.
     else {
       Tree *rnode_first = NULL, *rnode_second = NULL;
       double probability_first = 0, probability_second = 0;
@@ -526,6 +527,7 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
 	       (qnode->right()->stat()).n_pruned_);
     return;
   } // end of the case: non-leaf query node.
+
 } // end of DualtreeKdeCanonical_
 
 template<typename TKernelAux>
@@ -541,22 +543,22 @@ void DualtreeKde<TKernelAux>::PreProcess(Tree *node) {
   (node->stat().local_expansion_.get_center())->CopyValues
     (bounding_box_center);
   
-  // initialize lower bound to 0
+  // Initialize lower bound to 0.
   node->stat().mass_l_ = 0;
   
-  // set the upper bound to the number of reference points
+  // Set the upper bound to the number of reference points.
   node->stat().mass_u_ = rset_.n_cols();
   
   node->stat().used_error_ = 0;
   node->stat().n_pruned_ = 0;
   
-  // postponed lower and upper bound density changes to 0
+  // Postponed lower and upper bound density changes to 0.
   node->stat().postponed_l_ = node->stat().postponed_u_ = 0;
   
-  // set the finite difference approximated amounts to 0
+  // Set the finite difference approximated amounts to 0.
   node->stat().postponed_e_ = 0;
   
-  // set the error incurred to 0
+  // Set the error incurred to 0.
   node->stat().postponed_used_error_ = 0;
   
   // set the number of pruned reference points to 0
