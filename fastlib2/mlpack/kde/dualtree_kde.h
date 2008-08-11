@@ -457,7 +457,8 @@ class DualtreeKde {
 
     // Set accuracy parameters.
     tau_ = fx_param_double(module_, "relative_error", 0.1);
-    threshold_ = fx_param_double(module_, "threshold", 0);
+    threshold_ = fx_param_double(module_, "threshold", 0) *
+      ka_.kernel_.CalcNormConstant(qset_.n_rows());
     
     // initialize the lower and upper bound densities
     densities_l_.SetZero();
