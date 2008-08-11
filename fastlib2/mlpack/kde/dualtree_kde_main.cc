@@ -153,7 +153,7 @@ int main(int argc, char *argv[]) {
 		    kde_module);
       fast_kde.Compute(&fast_kde_results);
       
-      if(fx_param_exists(kde_module, "fast_kde_output")) {
+      if(true || fx_param_exists(kde_module, "fast_kde_output")) {
 	fast_kde.PrintDebug();
       }
     }
@@ -163,7 +163,7 @@ int main(int argc, char *argv[]) {
       naive_kde.Init(queries, references, kde_module);
       naive_kde.Compute();
       
-      if(fx_param_exists(kde_module, "naive_kde_output")) {
+      if(true || fx_param_exists(kde_module, "naive_kde_output")) {
 	naive_kde.PrintDebug();
       }
       naive_kde.ComputeMaximumRelativeError(fast_kde_results);

@@ -13,7 +13,6 @@ void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
   qnode->stat().mass_l_ = DBL_MAX;
   qnode->stat().mass_u_ = -DBL_MAX;
   qnode->stat().used_error_ = 0;
-  qnode->stat().squared_used_error_ = 0;
   qnode->stat().n_pruned_ = rset_.n_cols();
 
   // Compute unnormalized sum for each query point.
@@ -24,7 +23,6 @@ void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
     densities_e_[q] += qnode->stat().postponed_e_;
     densities_u_[q] += qnode->stat().postponed_u_;
     used_error_[q] += qnode->stat().postponed_used_error_;
-    squared_used_error_[q] += qnode->stat().postponed_squared_used_error_;
     n_pruned_[q] += qnode->stat().postponed_n_pruned_;
 
     // Get query point.
@@ -42,6 +40,7 @@ void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
       densities_l_[q] += kernel_value;
       densities_e_[q] += kernel_value;
       densities_u_[q] += kernel_value;
+
     } // end of iterating over each reference point.
     
     // Each query point has taken care of all reference points.
@@ -56,18 +55,15 @@ void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
     qnode->stat().mass_u_ = std::max(qnode->stat().mass_u_, densities_u_[q]);
     qnode->stat().used_error_ = std::max(qnode->stat().used_error_,
 					 used_error_[q]);
-    qnode->stat().squared_used_error_ = 
-      std::max(qnode->stat().squared_used_error_, squared_used_error_[q]);
     qnode->stat().n_pruned_ = std::min(qnode->stat().n_pruned_, 
 				       n_pruned_[q]);
 
   } // end of looping over each query point.
-  
+
   // clear postponed information
   qnode->stat().postponed_l_ = qnode->stat().postponed_u_ = 0;
   qnode->stat().postponed_e_ = 0;
   qnode->stat().postponed_used_error_ = 0;
-  qnode->stat().postponed_squared_used_error_ = 0;
   qnode->stat().postponed_n_pruned_ = 0;
 }
 
@@ -105,13 +101,9 @@ bool DualtreeKde<TKernelAux>::PrunableEnhanced_
   // Refine the lower bound using the new lower bound info
   double new_mass_l = qstat.mass_l_ + qstat.postponed_l_ + dl;
   double new_used_error = qstat.used_error_ + qstat.postponed_used_error_;
-  double new_squared_used_error = qstat.squared_used_error_ +
-    qstat.postponed_squared_used_error_;
   double new_n_pruned = qstat.n_pruned_ + qstat.postponed_n_pruned_;
-  double allowed_err = (probability >= 1) ?
-    (tau_ * new_mass_l - new_used_error) /
-    ((double) rroot_->count() - new_n_pruned):
-    sqrt(math::Sqr(tau_ * new_mass_l) - new_squared_used_error) /
+  double allowed_err =
+    (std::max(tau_ * new_mass_l, threshold_) - new_used_error) /
     ((double) rroot_->count() - new_n_pruned);
 
   // If the allowed error is not defined (NaN), then we cannot
@@ -186,7 +178,8 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
  DRange &kernel_value_range, double &dl, double &de, double &du, 
  double &used_error, double &n_pruned) {
 
-  if(num_initial_samples_per_query_ * 2 >= rnode->count()) {
+  // If the reference node contains too few points, then return.
+  if(rnode->count() < num_initial_samples_per_query_) {
     return false;
   }
 
@@ -194,72 +187,18 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
   KdeStat &stat = qnode->stat();
   double max_used_error = 0;
 
-  // The reference basis sets.
-  const Matrix &reference_basis_sets =
-    (rnode->stat()).subspace_.left_singular_vectors_;
-  const Vector &reference_basis_center =
-    (rnode->stat()).subspace_.mean_vector_;
-
-  // Stores the query projection and the projection residual vector.
-  Vector residual_vector, query_projection;
-  residual_vector.Init(qset_.n_rows());
-  
-  // Flag that decides whether using the PCA projection or the raw
-  // data.
-  bool use_pca_projection =
-    (reference_basis_sets.n_cols() < (int) sqrt(qset_.n_rows()));
-
-  // I turned it off temporariliy...
-  use_pca_projection = false;
-
-  if(use_pca_projection) {
-    query_projection.Init(reference_basis_sets.n_cols() + 1);
-  }
-  else {
-    query_projection.Init(qset_.n_rows() + 1);
-  }
-
-  // For each query point in the query node, take samples and
-  // determine how many more samples are needed.
+  // Take random query/reference pair samples and determine how many
+  // more samples are needed.
   bool flag = true;
   
-  for(index_t q = qnode->begin(); q < qnode->end() && flag; q++) {
+  // Reset the current position of the scratch space to zero.
+  double kernel_sums = 0;
+  double squared_kernel_sums = 0;
 
-    if(use_pca_projection) {
-      
-      // First compute the coordinate of the query point in terms of the
-      // reference frame.
-      la::SubOverwrite(qset_.n_rows(), reference_basis_center.ptr(),
-		       qset_.GetColumnPtr(q), residual_vector.ptr());
-      
-      for(index_t b = 0; b < reference_basis_sets.n_cols(); b++) {
-	double dot_product = la::Dot(qset_.n_rows(), residual_vector.ptr(), 
-				     reference_basis_sets.GetColumnPtr(b));
-	query_projection[b] = dot_product;
-	
-	// Subtract off the projected component.
-	la::AddExpert(residual_vector.length(), -dot_product,
-		      reference_basis_sets.GetColumnPtr(b),
-		      residual_vector.ptr());
-      }
-      
-      // Stores the residual squared distances.
-      query_projection[reference_basis_sets.n_cols()] =
-	la::Dot(residual_vector, residual_vector);
-    }
-
-    // Compute the required standard score for the given one-sided
-    // probability.
+  // Commence sampling...
+  {
     double standard_score = 
       InverseNormalCDF::Compute(probability + 0.5 * (1 - probability));
-
-    // Get the pointer to the current query point.
-    const double *query_point = 
-      (use_pca_projection) ? query_projection.ptr():qset_.GetColumnPtr(q);
-
-    // Reset the current position of the scratch space to zero.
-    query_kernel_sums_scratch_space_[q] = 0;
-    query_squared_kernel_sums_scratch_space_[q] = 0;
 
     // The initial number of samples is equal to the default.
     int num_samples = num_initial_samples_per_query_;
@@ -267,89 +206,72 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
 
     do {
       for(index_t s = 0; s < num_samples; s++) {
+	
+	index_t random_query_point_index =
+	  math::RandInt(qnode->begin(), qnode->end());
 	index_t random_reference_point_index = 
 	  math::RandInt(rnode->begin(), rnode->end());
+
+	// Get the pointer to the current query point.
+	const double *query_point = 
+	  qset_.GetColumnPtr(random_query_point_index);
 	
 	// Get the pointer to the current reference point.
 	const double *reference_point = 
-	  (use_pca_projection) ?
-	  rnode->stat().subspace_.dimension_reduced_data_.
-	  GetColumnPtr(random_reference_point_index - rnode->begin()):
 	  rset_.GetColumnPtr(random_reference_point_index);
 	
 	// Compute the pairwise distance and kernel value.
-	double squared_distance = 
-	  (use_pca_projection) ?
-	  la::DistanceSqEuclidean(reference_basis_sets.n_cols(), query_point,
-				  reference_point) +
-	  query_projection[reference_basis_sets.n_cols()]:
-	  la::DistanceSqEuclidean(rset_.n_rows(), query_point,
-				  reference_point);
+	double squared_distance = la::DistanceSqEuclidean(rset_.n_rows(), 
+							  query_point,
+							  reference_point);
 
 	double weighted_kernel_value = 
 	  ka_.kernel_.EvalUnnormOnSq(squared_distance);
 
-	query_kernel_sums_scratch_space_[q] += weighted_kernel_value;
-	query_squared_kernel_sums_scratch_space_[q] +=
-	  weighted_kernel_value * weighted_kernel_value;
-      }
+	kernel_sums += weighted_kernel_value;
+	squared_kernel_sums += weighted_kernel_value * weighted_kernel_value;
+
+      } // end of taking samples for this roune...
 
       // Increment total number of samples.
       total_samples += num_samples;
 
       // Compute the current estimate of the sample mean and the
       // sample variance.
-      double sample_mean = query_kernel_sums_scratch_space_[q] / 
-	((double) total_samples);
+      double sample_mean = kernel_sums / ((double) total_samples);
       double sample_variance =
-	(query_squared_kernel_sums_scratch_space_[q] -
-	 total_samples * sample_mean * sample_mean) / 
+	(squared_kernel_sums - total_samples * sample_mean * sample_mean) / 
 	((double) total_samples - 1);
       
       // Compute the current threshold for guaranteeing the relative
       // error bound.
-      double new_squared_used_error = squared_used_error_[q] +
-	stat.postponed_squared_used_error_;
-      double new_n_pruned = n_pruned_[q] + stat.postponed_n_pruned_;
-      int threshold =
-	(int) ceil(sample_variance *
-		   math::Sqr(standard_score *
-			     (rroot_->count() - new_n_pruned
-			      + tau_ * rnode->count()) /
-			     (tau_ * (densities_l_[q] + stat.postponed_l_ + 
-				      sample_mean * rnode->count()) -
-			      sqrt(new_squared_used_error))));
-      
-      num_samples = threshold - total_samples;
+      double new_used_error = stat.used_error_ +
+	stat.postponed_used_error_;
+      double new_n_pruned = stat.n_pruned_ + stat.postponed_n_pruned_;
 
-      // If it will require too many samples, give up.
-      if(num_samples > (int) sqrt(rset_.n_rows()) *
-	 rnode->count() || (!flag)) {	
+      // The currently proven lower bound.
+      double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
+      double right_hand_side = 
+	(std::max(tau_ * new_mass_l, threshold_) - new_used_error) / 
+	(rroot_->count() - new_n_pruned);
+
+      if(sqrt(sample_variance) * standard_score < right_hand_side) {
+	kernel_sums = kernel_sums / ((double) total_samples) * rnode->count();
+	max_used_error = rnode->count() * standard_score * sqrt(sample_variance);
+	break;
+      }
+      else {
 	flag = false;
 	break;
       }
-      
-      // If we are done, then move onto the next query.
-      else if(num_samples <= 0) {
-	query_kernel_sums_scratch_space_[q] = 
-	  query_kernel_sums_scratch_space_[q] / ((double) total_samples) *
-	  rnode->count();
-	max_used_error = std::max(max_used_error,
-				  rnode->count() * standard_score *
-				  sqrt(sample_variance / 
-				       ((double) total_samples)));
-	break;
-      }
 
-    } while(1);
-  } // end of looping over each query...
+    } while(true);
+
+  } // end of sampling...
 
   // If all queries can be pruned, then add the approximations.
   if(flag) {
-    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
-      densities_e_[q] += query_kernel_sums_scratch_space_[q];
-    }
-    de = 0;
+    de = kernel_sums;
     used_error = max_used_error;
     return true;
   }
@@ -383,21 +305,19 @@ bool DualtreeKde<TKernelAux>::Prunable_
   // refine the lower bound using the new lower bound info
   double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
   double new_used_error = stat.used_error_ + stat.postponed_used_error_;
-  double new_squared_used_error = stat.squared_used_error_ +
-    stat.postponed_squared_used_error_;
   double new_n_pruned = stat.n_pruned_ + stat.postponed_n_pruned_;
   
-  double allowed_err = (probability >= 1) ?
-    (tau_ * new_mass_l - new_used_error) *
-    num_references / ((double) rroot_->count() - new_n_pruned):
-    sqrt(math::Sqr(tau_ * new_mass_l) - new_squared_used_error) *
+  double allowed_err;
+
+  // Compute the allowed error.
+  allowed_err = (std::max(tau_ * new_mass_l, threshold_) - new_used_error) *
     num_references / ((double) rroot_->count() - new_n_pruned);
-  
-  // this is error per each query/reference pair for a fixed query
-  double m = 0.5 * (kernel_value_range.hi - kernel_value_range.lo);
+
+  // This is error per each query/reference pair for a fixed query
+  double kernel_diff = 0.5 * (kernel_value_range.hi - kernel_value_range.lo);
   
   // this is total error for each query point
-  used_error = m * num_references;
+  used_error = kernel_diff * num_references;
   
   // number of reference points for possible pruning.
   n_pruned = rnode->count();
@@ -419,15 +339,15 @@ void DualtreeKde<TKernelAux>::BestNodePartners
   // I should fix the following lines to work with arbitrary bounds...
   if(d1 <= d2) {
     *partner1 = nd1;
-    *probability1 = (probability);
+    *probability1 = sqrt(probability);
     *partner2 = nd2;
-    *probability2 = (probability);
+    *probability2 = sqrt(probability);
   }
   else {
     *partner1 = nd2;
-    *probability1 = (probability);
+    *probability1 = sqrt(probability);
     *partner2 = nd1;
-    *probability2 = (probability);
+    *probability2 = sqrt(probability);
   }
 }
 
@@ -453,7 +373,6 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
     qnode->stat().postponed_e_ += de;
     qnode->stat().postponed_u_ += du;
     qnode->stat().postponed_used_error_ += used_error;
-    qnode->stat().postponed_squared_used_error_ += math::Sqr(used_error);
     qnode->stat().postponed_n_pruned_ += n_pruned;
     num_finite_difference_prunes_++;
     return;
@@ -462,12 +381,11 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
   // Then Monte Carlo-based pruning.
   else if(probability < 1 &&
 	  MonteCarloPrunable_(qnode, rnode, probability, dsqd_range, 
-			      kernel_value_range, dl, de, du, used_error, 
-			      n_pruned)) {
+			      kernel_value_range, dl, de, du, 
+			      used_error, n_pruned)) {
     qnode->stat().postponed_l_ += dl;
     qnode->stat().postponed_u_ += du;
     qnode->stat().postponed_used_error_ += used_error;
-    qnode->stat().postponed_squared_used_error_ += math::Sqr(used_error);
     qnode->stat().postponed_n_pruned_ += n_pruned;
     num_monte_carlo_prunes_++;
     return;
@@ -502,7 +420,6 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
     qnode->stat().postponed_l_ += dl;
     qnode->stat().postponed_u_ += du;
     qnode->stat().postponed_used_error_ += used_error;
-    qnode->stat().postponed_squared_used_error_ += math::Sqr(used_error);
     qnode->stat().postponed_n_pruned_ += n_pruned;
     return;
   }
@@ -544,10 +461,6 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
       qnode->stat().postponed_used_error_;
     (qnode->right()->stat()).postponed_used_error_ += 
       qnode->stat().postponed_used_error_;
-    (qnode->left()->stat()).postponed_squared_used_error_ += 
-      qnode->stat().postponed_squared_used_error_;
-    (qnode->right()->stat()).postponed_squared_used_error_ += 
-      qnode->stat().postponed_squared_used_error_;
     (qnode->left()->stat()).postponed_n_pruned_ += 
       qnode->stat().postponed_n_pruned_;
     (qnode->right()->stat()).postponed_n_pruned_ += 
@@ -557,7 +470,6 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
     qnode->stat().postponed_l_ = qnode->stat().postponed_u_ = 0;
     qnode->stat().postponed_e_ = 0;
     qnode->stat().postponed_used_error_ = 0;
-    qnode->stat().postponed_squared_used_error_ = 0;
     qnode->stat().postponed_n_pruned_ = 0;
     
     // For a leaf reference node, expand query node
@@ -590,7 +502,7 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
       DualtreeKdeCanonical_(qnode->right(), rnode_second, probability_second);
     }
     
-    // reaccumulate the summary statistics.
+    // Reaccumulate the summary statistics.
     qnode->stat().mass_l_ = std::min((qnode->left()->stat()).mass_l_ +
 				     (qnode->left()->stat()).postponed_l_,
 				     (qnode->right()->stat()).mass_l_ +
@@ -604,11 +516,6 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
 	       (qnode->left()->stat()).postponed_used_error_,
 	       (qnode->right()->stat()).used_error_ +
 	       (qnode->right()->stat()).postponed_used_error_);
-    qnode->stat().squared_used_error_ =
-      std::max((qnode->left()->stat()).squared_used_error_ +
-	       (qnode->left()->stat()).postponed_squared_used_error_,
-	       (qnode->right()->stat()).squared_used_error_ +
-	       (qnode->right()->stat()).postponed_squared_used_error_);
     qnode->stat().n_pruned_ = 
       std::min((qnode->left()->stat()).n_pruned_ +
 	       (qnode->left()->stat()).postponed_n_pruned_,
@@ -648,7 +555,6 @@ void DualtreeKde<TKernelAux>::PreProcess(Tree *node) {
   
   // set the error incurred to 0
   node->stat().postponed_used_error_ = 0;
-  node->stat().postponed_squared_used_error_ = 0;
   
   // set the number of pruned reference points to 0
   node->stat().postponed_n_pruned_ = 0;

@@ -95,6 +95,8 @@ const fx_entry_doc kde_entries[] = {
    "  The probability guarantee that the relative error accuracy holds.\n"},
   {"relative_error", FX_PARAM, FX_DOUBLE, NULL,
    "  The required relative error accuracy.\n"},
+  {"threshold", FX_PARAM, FX_DOUBLE, NULL,
+   "  If less than this value, then absolute error bound.\n"},
   {"scaling", FX_PARAM, FX_STR, NULL,
    "  The scaling option.\n"},
   FX_ENTRY_DOC_DONE
@@ -170,11 +172,6 @@ class DualtreeKde {
      */
     double used_error_;
 
-    /** @brief Upper bound on the squared used error for the query
-     *         points owned by this node.
-     */
-    double squared_used_error_;
-
     /** @brief Lower bound on the number of reference points taken
      *         care of for query points owned by this node.
      */
@@ -196,11 +193,6 @@ class DualtreeKde {
      *         points that must be propagated downwards.
      */
     double postponed_used_error_;
-
-    /** @brief The total amount of squared error used in approximation
-     *         for all query points that must be propagated downwards.
-     */
-    double postponed_squared_used_error_;
 
     /** @brief The number of reference points that were taken care of
      *         for all query points under this node; this information
@@ -227,14 +219,12 @@ class DualtreeKde {
       mass_l_ = 0;
       mass_u_ = 0;
       used_error_ = 0;
-      squared_used_error_ = 0;
       n_pruned_ = 0;     
      
       postponed_l_ = 0;
       postponed_e_ = 0;
       postponed_u_ = 0;
       postponed_used_error_ = 0;
-      postponed_squared_used_error_ = 0;
       postponed_n_pruned_ = 0;
     }
     
@@ -328,10 +318,6 @@ class DualtreeKde {
    */
   Vector used_error_;
 
-  /** @brief The amount of squared used error for each query.
-   */
-  Vector squared_used_error_;
-
   /** @brief The number of reference points taken care of for each
    *         query.
    */
@@ -342,6 +328,12 @@ class DualtreeKde {
    */
   double tau_;
 
+  /** @brief The accuracy parameter: if the true sum is less than this
+   *         value, then relative error is not guaranteed. Instead the
+   *         sum is guaranteed an absolute error bound.
+   */
+  double threshold_;
+  
   /** @brief The number of far-field to local conversions.
    */
   int num_farfield_to_local_prunes_;
@@ -372,16 +364,6 @@ class DualtreeKde {
    */
   ArrayList<index_t> old_from_new_references_;
 
-  /** @brief Temporary scratch space to use for accumulating Monte
-   *         Carlo kernel sums.
-   */
-  Vector query_kernel_sums_scratch_space_;
-
-  /** @brief Temporary scratch space to use for accumulating Monte
-   *         Carlo squared kernel sums.
-   */
-  Vector query_squared_kernel_sums_scratch_space_;
-
   ////////// Private Member Functions //////////
 
   /** @brief The exhaustive base KDE case.
@@ -397,14 +379,6 @@ class DualtreeKde {
 			 double &used_error, double &n_pruned,
 			 int &order_farfield_to_local,
 			 int &order_farfield, int &order_local);
-
-  /** @brief Checking whether it is able to prune the query and the
-   *         reference pair using Monte Carlo sampling.
-   */
-  bool MonteCarloTrial_(Tree *qnode, Tree *rnode, double probability,
-			DRange &dsqd_range, DRange &kernel_value_range, 
-			double &dl, double &de, double &du, 
-			double &used_error, double &n_pruned);
 
   /** @brief Checking whether it is able to prune the query and the
    *         reference pair using Monte Carlo sampling.
@@ -481,29 +455,23 @@ class DualtreeKde {
     mult_const_ = 1.0 / (ka_.kernel_.CalcNormConstant(qset_.n_rows()) *
 			 rset_.n_cols());
 
-    // set accuracy parameter
+    // Set accuracy parameters.
     tau_ = fx_param_double(module_, "relative_error", 0.1);
+    threshold_ = fx_param_double(module_, "threshold", 0);
     
     // initialize the lower and upper bound densities
     densities_l_.SetZero();
     densities_e_.SetZero();
     densities_u_.SetAll(rset_.n_cols());
 
-    // set zero for error accounting stuff
+    // Set zero for error accounting stuff.
     used_error_.SetZero();
-    squared_used_error_.SetZero();
     n_pruned_.SetZero();
 
     // Reset prune statistics.
     num_finite_difference_prunes_ = num_monte_carlo_prunes_ =
       num_farfield_to_local_prunes_ = num_farfield_prunes_ = 
       num_local_prunes_ = 0;
-
-    // Allocate temporary scratch space.
-    query_kernel_sums_scratch_space_.Init(qset_.n_cols());
-    query_kernel_sums_scratch_space_.SetZero();
-    query_squared_kernel_sums_scratch_space_.Init(qset_.n_cols());
-    query_squared_kernel_sums_scratch_space_.SetZero();
 
     printf("\nStarting fast KDE on bandwidth value of %g...\n",
 	   sqrt(ka_.kernel_.bandwidth_sq()));
@@ -592,9 +560,8 @@ class DualtreeKde {
     densities_e_.Init(qset_.n_cols());
     densities_u_.Init(qset_.n_cols());
 
-    // initialize the error accounting stufff
+    // Initialize the error accounting stuff.
     used_error_.Init(qset_.n_cols());
-    squared_used_error_.Init(qset_.n_cols());
     n_pruned_.Init(qset_.n_cols());
 
     // Initialize the kernel.
@@ -623,7 +590,8 @@ class DualtreeKde {
     FILE *stream = stdout;
     const char *fname = NULL;
 
-    if((fname = fx_param_str(module_, "fast_kde_output", NULL)) != NULL) {
+    if((fname = fx_param_str(module_, "fast_kde_output", 
+			     "fast_kde_output.txt")) != NULL) {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols(); q++) {
