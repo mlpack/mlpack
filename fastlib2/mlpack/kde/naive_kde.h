@@ -182,8 +182,9 @@ class NaiveKde {
     FILE *stream = stdout;
     const char *fname = NULL;
 
-    if(fx_param_exists(module_, "naive_kde_output")) {
-      fname = fx_param_str(module_, "naive_kde_output", NULL);
+    {
+      fname = fx_param_str(module_, "naive_kde_output", 
+			   "naive_kde_output.txt");
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols(); q++) {
@@ -224,7 +225,9 @@ class NaiveKde {
       if(rel_err > max_rel_err) {
 	max_rel_err = rel_err;
       }
-      if(rel_err < fx_param_double(module_, "relative_error", 0.01)) {
+      if(rel_err < fx_param_double(module_, "relative_error", 0.01) ||
+	 fabs(density_estimates[q] - densities_[q]) <=
+	 fx_param_double(module_, "threshold", 0)) {
 	within_limit++;
       }
 
