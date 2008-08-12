@@ -15,6 +15,71 @@
  * 
  * =====================================================================================
  */
+const fx_entry_doc lbfgs_entries[] = {
+  {"num_of_points", FX_PARAM, FX_INT, NULL,
+   "  The number of points for the optimization variable.\n"},
+  {"sigma", FX_PARAM, FX_DOUBLE, NULL,
+   "  The initial penalty parameter on the augmented lagrangian.\n"},
+  {"objective_factor", FX_PARAM, FX_DOUBLE, NULL,
+   "  obsolete.\n"},
+  {"eta", FX_PARAM, FX_DOUBLE, NULL,
+   "  wolfe parameter.\n"},
+  {"gamma", FX_PARAM, FX_DOUBLE, NULL,
+   "  sigma increase rate, after inner loop is done sigma is multiplied by gamma.\n"},
+  {"new_dimension", FX_PARAM, FX_INT, NULL,
+   "  The dimension of the points\n"},
+  {"desired_feasibility", FX_PARAM, FX_DOUBLE, NULL,
+   "  Since this is used with augmented lagrangian, we need to know "
+     "when the  feasibility is sufficient.\n"},
+  {"feasibility_tolerance", FX_PARAM, FX_DOUBLE, NULL,
+   "  if the feasibility is not improved by that quantity, then it stops.\n"},
+  {"wolfe_sigma1", FX_PARAM, FX_DOUBLE, NULL,
+   "  wolfe parameter.\n"},
+  {"wolfe_sigma2", FX_PARAM, FX_DOUBLE, NULL,
+   "  wolfe parameter.\n"},
+  {"min_beta", FX_PARAM, FX_DOUBLE, NULL,
+   "  wolfe parameter.\n"},
+  {"wolfe_beta", FX_PARAM, FX_DOUBLE, NULL,
+   "  wolfe parameter.\n"},
+  {"step_size", FX_PARAM, FX_DOUBLE, NULL,
+   "  Initial step size for the wolfe search.\n"},
+  {"silent", FX_PARAM, FX_BOOL, NULL,
+   "  if true then it doesn't emmit updates.\n"},
+  {"use_default_termination", FX_PARAM, FX_BOOL, NULL,
+   "  let this module decide where to terminate. If false then"
+   " the objective function decides .\n"},
+  {"norm_grad_tolerance", FX_PARAM, FX_DOUBLE, NULL,
+   "  If the norm of the gradient doesn't change more than "
+     "this quantity between two iterations and the use_default_termination "
+     "is set, the algorithm terminates.\n"},
+  {"max_iterations", FX_PARAM, FX_INT, NULL,
+   "  maximum number of iterations required.\n"},
+  {"mem_bfgs", FX_PARAM, FX_INT, NULL,
+   "  the limited memory of BFGS.\n"},
+  {"log_file", FX_PARAM, FX_STR, NULL,
+   " file to log the output.\n"},
+  {"iterations", FX_RESULT, FX_INT, NULL,
+   "  iterations until convergence.\n"},
+  {"feasibility_error", FX_RESULT, FX_DOUBLE, NULL,
+   "  the fesibility error achived by termination.\n"},
+  {"final_sigma", FX_RESULT, FX_DOUBLE, NULL,
+   "  the last penalty parameter used\n"},
+  {"objective", FX_RESULT, FX_DOUBLE, NULL,
+   "  the objective achieved by termination.\n"},
+  {"wolfe_step", FX_TIMER, FX_CUSTOM, NULL,
+   "  Time spent computing the wolfe step.\n"},
+  {"bfgs_step", FX_TIMER, FX_CUSTOM, NULL,
+   "  Time spent computing the bfgs step.\n"},
+  {"update_bfgs", FX_TIMER, FX_CUSTOM, NULL,
+   "  Time spent computing the bfgs updating.\n"},
+
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc lbfgs_doc = {
+  lbfgs_entries, NULL,
+  "The LBFGS module for optimization.\n"
+};
 
 template<typename OptimizedFunction>
 void LBfgs<OptimizedFunction>::Init(OptimizedFunction *optimized_function, 
@@ -70,10 +135,10 @@ void LBfgs<OptimizedFunction>::Destruct() {
   optimized_function_->ComputeFeasibilityError(coordinates_,
       &feasibility_error); 
   optimized_function_->ComputeObjective(coordinates_, &objective);
-  fx_format_result(module_, "iterations", "%i", num_of_iterations_);
-  fx_format_result(module_, "feasibility_error", "%lg", feasibility_error);
-  fx_format_result(module_, "final_sigma", "%lg", sigma_);
-  fx_format_result(module_, "objective","%lg", objective);
+  fx_result_int(module_, "iterations", num_of_iterations_);
+  fx_result_double(module_, "feasibility_error", feasibility_error);
+  fx_result_double(module_, "final_sigma", sigma_);
+  fx_result_double(module_, "objective", objective);
   s_bfgs_.Renew();
   y_bfgs_.Renew();
   ro_bfgs_.Destruct();
