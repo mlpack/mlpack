@@ -39,6 +39,37 @@ class MultitreeMultibody {
 
   ////////// User-level Functions //////////
 
+  /** @brief Copies the computed vectors.
+   */
+  void get_force_vectors(Matrix *destination) {
+    destination->Copy(total_force_e_);
+  }
+
+  /** @brief The computes the maximum L1 norm error of approximations
+   *         against the true values.
+   */
+  static double MaxRelativeL1NormError(const Matrix &approximations,
+				       const Matrix &exact_values) {
+    
+    double max_relative_l1_norm_error = 0;
+
+    for(index_t i = 0; i < approximations.n_cols(); i++) {
+      
+      // Get both vectors.
+      const double *approximated_vector = approximations.GetColumnPtr(i);
+      const double *exact_vector = exact_values.GetColumnPtr(i);
+      double error_l1_norm = 0;
+      double exact_l1_norm = 0;
+      
+      for(index_t j = 0; j < approximations.n_rows(); j++) {
+	error_l1_norm += fabs(approximated_vector[j] - exact_vector[j]);
+	exact_l1_norm += fabs(exact_vector[j]);
+      }
+      max_relative_l1_norm_error = error_l1_norm / exact_l1_norm;      
+    }
+    return max_relative_l1_norm_error;
+  }
+
   /** @brief The main naive computation procedure.
    */
   void NaiveCompute() {

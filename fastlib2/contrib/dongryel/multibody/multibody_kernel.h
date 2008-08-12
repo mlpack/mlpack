@@ -1032,7 +1032,7 @@ class AxilrodTellerForceKernel {
   bool MonteCarloEval(const Matrix &data, ArrayList<index_t> &indices,
 		      ArrayList<TTree *> &nodes,
 		      double relative_error, double z_score,
-		      double total_n_minus_one_num_tuples) {
+		      double total_n_minus_one_num_tuples, double num_tuples) {
 
     double negative_gradient1_avg, positive_gradient1_avg,
       negative_gradient2_avg, positive_gradient2_avg, negative_gradient3_avg,
@@ -1142,7 +1142,6 @@ class AxilrodTellerForceKernel {
 	  negative_gradient2_error, positive_gradient2_error,
 	  negative_gradient3_error, positive_gradient3_error;
 
-	/*
 	ComputeMonteCarloGradientComponentError_
 	  (negative_gradient1_sum, negative_gradient1_squared_sum,
 	   positive_gradient1_sum, positive_gradient1_squared_sum,
@@ -1154,21 +1153,6 @@ class AxilrodTellerForceKernel {
 	   negative_gradient1_error, positive_gradient1_error,
 	   negative_gradient2_error, positive_gradient2_error,
 	   negative_gradient3_error, positive_gradient3_error);
-	*/
-	
-	// HACK: Need to put this in a function...
-	negative_gradient1_error = 0.5 * 
-	  (max_negative_gradient1 - min_negative_gradient1);
-	positive_gradient1_error = 0.5 *
-	  (max_positive_gradient1 - min_positive_gradient1);
-	negative_gradient2_error = 0.5 * 
-	  (max_negative_gradient2 - min_negative_gradient2);
-	positive_gradient2_error = 0.5 *
-	  (max_positive_gradient2 - min_positive_gradient2);
-	negative_gradient3_error = 0.5 * 
-	  (max_negative_gradient3 - min_negative_gradient3);
-	positive_gradient3_error = 0.5 *
-	  (max_positive_gradient3 - min_positive_gradient3);
 
 	double node_i_additional_negative_gradient1_u,
 	  node_i_additional_positive_gradient1_l,
@@ -1256,7 +1240,6 @@ class AxilrodTellerForceKernel {
 
     // If the three node tuple was prunable, then prune.
     if(prunable) {
-      /*
       ComputeCurrentAverages_(negative_gradient1_sum, positive_gradient1_sum,
 			      negative_gradient2_sum, positive_gradient2_sum,
 			      negative_gradient3_sum, positive_gradient3_sum,
@@ -1264,13 +1247,12 @@ class AxilrodTellerForceKernel {
 			      positive_gradient1_avg, negative_gradient2_avg,
 			      positive_gradient2_avg, negative_gradient3_avg,
 			      positive_gradient3_avg);
-      */
-      Prune_(nodes, min_negative_gradient1, max_negative_gradient1,
-	     min_positive_gradient1, max_positive_gradient1,
-	     min_negative_gradient2, max_negative_gradient2,
-	     min_positive_gradient2, max_positive_gradient2,
-	     min_negative_gradient3, max_negative_gradient3,
-	     min_positive_gradient3, max_positive_gradient3, num_jk_pairs,
+      Prune_(nodes, negative_gradient1_avg, negative_gradient1_avg,
+	     positive_gradient1_avg, positive_gradient1_avg,
+	     negative_gradient2_avg, negative_gradient2_avg,
+	     positive_gradient2_avg, positive_gradient2_avg,
+	     negative_gradient3_avg, negative_gradient3_avg,
+	     positive_gradient3_avg, positive_gradient3_avg, num_jk_pairs,
 	     num_ik_pairs, num_ij_pairs);      
     }
 
