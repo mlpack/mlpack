@@ -377,7 +377,7 @@ bool MultitreeMultibody<TMultibodyKernel, TTree>::Prunable
 
   return 
     mkernel_.MonteCarloEval(data_, exhaustive_indices_, nodes, 
-			    relative_error_, z_score_,
+			    relative_error_, threshold_, z_score_,
 			    total_n_minus_one_num_tuples_, num_tuples);
 }
 
