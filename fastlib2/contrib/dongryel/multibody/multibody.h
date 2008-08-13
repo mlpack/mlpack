@@ -46,12 +46,20 @@ class MultitreeMultibody {
   }
 
   /** @brief The computes the maximum L1 norm error of approximations
-   *         against the true values.
+   *         against the true values (both relative and absolute).
    */
-  static double MaxRelativeL1NormError(const Matrix &approximations,
-				       const Matrix &exact_values) {
+  static void MaxL1NormError(const Matrix &approximations,
+			     const Matrix &exact_values, 
+			     double *max_relative_l1_norm_error,
+			     int *relative_error_under_threshold,
+			     double *max_absolute_l1_norm_error,
+			     int *absolute_error_under_threshold,
+			     double relative_error, double threshold) {
     
-    double max_relative_l1_norm_error = 0;
+    *max_relative_l1_norm_error = 0;
+    *relative_error_under_threshold = 0;
+    *max_absolute_l1_norm_error = 0;
+    *absolute_error_under_threshold = 0;
 
     for(index_t i = 0; i < approximations.n_cols(); i++) {
       
@@ -65,9 +73,17 @@ class MultitreeMultibody {
 	error_l1_norm += fabs(approximated_vector[j] - exact_vector[j]);
 	exact_l1_norm += fabs(exact_vector[j]);
       }
-      max_relative_l1_norm_error = error_l1_norm / exact_l1_norm;      
+      *max_relative_l1_norm_error = 
+	std::max(*max_relative_l1_norm_error, error_l1_norm / exact_l1_norm);
+      if(error_l1_norm / exact_l1_norm <= relative_error) {
+	(*relative_error_under_threshold)++;
+      }
+      *max_absolute_l1_norm_error =
+	std::max(*max_absolute_l1_norm_error, error_l1_norm);
+      if(error_l1_norm <= threshold) {
+	(*absolute_error_under_threshold)++;
+      }
     }
-    return max_relative_l1_norm_error;
   }
 
   /** @brief The main naive computation procedure.
@@ -105,7 +121,7 @@ class MultitreeMultibody {
 
   /** @brief The main computation procedure.
    */
-  void Compute(double relative_error) {
+  void Compute(double relative_error, double threshold) {
     
     ArrayList<TTree *> root_nodes;
     root_nodes.Init(mkernel_.order());
@@ -122,6 +138,11 @@ class MultitreeMultibody {
       math::BinomialCoefficient(data_.n_cols() - 1, mkernel_.order() - 1);
 
     relative_error_ = relative_error;
+
+    // Convert the absolute error threshold to an internal tolerance
+    // level. We divide by 4 here because the force vector is composed
+    // of 4 different parts and we bound errors on each separately.
+    threshold_ = threshold / 4.0;
    
     // Set the probability requirement to 90 %, which gives the
     // standard z-score to be the following.
@@ -235,6 +256,11 @@ private:
    *         bound.
    */
   double relative_error_;
+
+  /** @brief The absolute threshold: quantities below this will be
+   *         approximated with absolute error.
+   */
+  double threshold_;
 
   /** The current list of non-leaf indices */
   ArrayList<int> non_leaf_indices_;
