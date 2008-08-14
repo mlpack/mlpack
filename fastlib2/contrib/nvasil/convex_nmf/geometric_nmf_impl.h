@@ -15,7 +15,28 @@
  * 
  * =====================================================================================
  */
+const fx_entry_doc geometric_nmf_objective_entries[] = {
+  {"new_dimension", FX_PARAM, FX_INT, NULL,
+   "  New dimension for the nmf.\n"},
+  {"desired_duality_gap", FX_PARAM, FX_DOUBLE, NULL,
+   "  for the convex optimization.\n"},
+  {"gradient_tolerance", FX_PARAM, FX_DOUBLE, NULL,
+   "  tolerance for the gradient.\n"},
+  {"v_accuracy", FX_PARAM, FX_DOUBLE, NULL,
+   "  obsolete.\n"},
+  FX_ENTRY_DOC_DONE
+};
 
+const fx_module_doc geometric_nmf_objective_doc = {
+  geometric_nmf_objective_entries, NULL,
+  "The Geometric NMF module for optimization.\n"
+};
+
+
+GeometricNmf::GeometricNmf() {
+  lower_bound_=NULL;
+  upper_bound_=NULL;
+}
 void GeometricNmf::Init(fx_module *module, 
 			ArrayList<index_t> &rows,
 			ArrayList<index_t> &columns,
@@ -74,9 +95,9 @@ void GeometricNmf::Init(fx_module *module,
         data_mat.GetColumnPtr(p2)));
   }
   */
-	new_dim_=fx_param_int(module_, "new_dim", 5); 
-  desired_duality_gap_=fx_param_double(module_, "desired_duality_gap", 1e-4);
-  gradient_tolerance_=fx_param_double(module_, "gradient_tolerance", 1);
+	new_dim_=fx_param_int(module_, "new_dimension", 5); 
+  desired_duality_gap_=fx_param_double(module_, "desired_duality_gap", 1e-2);
+  gradient_tolerance_=fx_param_double(module_, "gradient_tolerance", 0.1);
   v_accuracy_=fx_param_double(module_, "v_accuracy", 1e-4);
 	// It assumes an N x new_dim_ array, where N=num_rows+num_columns
   
@@ -85,6 +106,19 @@ void GeometricNmf::Init(fx_module *module,
   num_of_logs_=values_.size()*new_dim_;//+nearest_dot_products_.size();
 }
 
+void GeometricNmf::Init(fx_module *module, 
+			ArrayList<index_t> &rows,
+			ArrayList<index_t> &columns,
+      ArrayList<double>  &values,
+      Matrix &lower_bound,
+      Matrix &upper_bound) {
+   
+  Init(module, rows, columns, values);
+  lower_bound_= new Matrix();
+  upper_bound_= new Matrix();
+  lower_bound_->Alias(lower_bound);
+  upper_bound_->Alias(upper_bound);
+}
 void GeometricNmf::ComputeGradient(Matrix &coordinates, 
     Matrix *gradient) {
   gradient->SetAll(0.0);
@@ -124,7 +158,19 @@ void GeometricNmf::ComputeGradient(Matrix &coordinates,
       gradient->set(j, h_i, grad_h);
     }
   }  
-
+  if (lower_bound_!=NULL) {
+    for(index_t i=0; i<coordinates.n_rows(); i++) {
+      for(index_t j=0; j<coordinates.n_cols(); j++) {
+        double denominator1=coordinates.get(i, j)-lower_bound_->get(i,j);
+        DEBUG_ERR_MSG_IF(denominator1<=1e-200, 
+            "Something is wrong I cought a denominator out of the interior" );
+        double denominator2=upper_bound_->get(i, j) - coordinates.get(i, j);
+        DEBUG_ERR_MSG_IF(denominator2<=1e-200, 
+            "Something is wrong I cought a denominator out of the interior" );
+        gradient->set(i, j, gradient->get(i,j)-1.0/denominator1+1.0/denominator2);
+      }
+    }
+  }
 /*
   // neighborhood constraints
   for(index_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
@@ -155,6 +201,19 @@ void GeometricNmf::ComputeGradient(Matrix &coordinates,
   }
 */
   
+}
+
+void GeometricNmf::Destruct() {
+	rows_.Renew();
+	columns_.Renew();
+  values_.Renew();
+  if (lower_bound_!=NULL) {
+    delete lower_bound_;
+  }
+  if (upper_bound_!=NULL) {
+    delete upper_bound_;
+  }
+
 }
 
 void GeometricNmf::ComputeObjective(Matrix &coordinates, 
@@ -207,6 +266,24 @@ double GeometricNmf::ComputeLagrangian(Matrix &coordinates) {
   }
   lagrangian+=-log(temp_prod);
   temp_prod=1;  
+  if (lower_bound_!=NULL) {
+    for(index_t i=0; i<coordinates.n_rows(); i++) {
+      for(index_t j=0; j<coordinates.n_cols(); j++) {
+        double diff1=coordinates.get(i, j)-lower_bound_->get(i,j);
+        double diff2=upper_bound_->get(i, j) - coordinates.get(i, j);
+        if (diff1<0 || diff2<0) {
+          return DBL_MAX;
+        }
+        if (unlikely(temp_prod<1e-50 || temp_prod > 1e50)) {
+          lagrangian+=-log(temp_prod);
+          temp_prod=1;
+        } else {
+          temp_prod*=diff1*diff2;
+        }
+      }
+    }
+  }
+  lagrangian+=-log(temp_prod);
 /*
   // neighborhood constraints
   for(index_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
@@ -239,19 +316,55 @@ void GeometricNmf::UpdateLagrangeMult(Matrix &coordinates) {
 }
 
 void GeometricNmf::Project(Matrix *coordinates) {
-  //OptUtils::NonNegativeProjection(coordinates);
-}
+/*
+  if (lower_bound_!= NULL) {
+    for(index_t i=0; i<coordinates->n_cols(); i++) {
+      for(index_t j=0; j<coordinates->n_rows(); j++) {
+        if (coordinates->get(j, i) < lower_bound_->get(j,i)) {
+          coordinates->set(j, i , lower_bound_->get(j, i));
+          continue;
+        }
+        if (coordinates->get(j, i) > upper_bound_->get(j,i)) {
+          coordinates->set(j, i , upper_bound_->get(j, i));
+          continue;
+        }
+      }
+    }
+  }
+*/  
+} 
 
 void GeometricNmf::set_sigma(double sigma) {
   sigma_=sigma;
 }
 
-void GeometricNmf::GiveInitMatrix(Matrix *init_data) {
-  init_data->Init(new_dim_, num_of_rows_+num_of_columns_);
-  double temp=(*std::min_element(values_.begin(), 
-      values_.end())-1)/new_dim_;
 
-  init_data->SetAll(temp);
+bool GeometricNmf::GiveInitMatrix(Matrix *init_data) {
+  init_data->Init(new_dim_, num_of_rows_+num_of_columns_);
+  if (lower_bound_!= NULL) {
+    for(index_t i=0; i<init_data->n_rows(); i++) {
+      for(index_t j=0; j<init_data->n_cols(); j++) {
+        init_data->set(i, j, lower_bound_->get(i, j)+1e-3); 
+      }
+    }
+    for(index_t i=0; i<values_.size(); i++) {
+      index_t w_i=rows_[i];
+      index_t h_i=columns_[i]+offset_h_;
+      double v=values_[i];
+      double new_v=0;
+      for(index_t j=0; j<new_dim_; j++) {
+        double w=init_data->get(j, w_i);
+        double h=init_data->get(j, h_i);
+        new_v+=exp(w+h-v);
+      }
+      if (1-new_v<=0) {
+        return false;
+      }
+    }
+  } else {
+    init_data->SetAll(-100);
+  }
+  return true;
 }
 
 bool GeometricNmf::IsDiverging(double objective) {
