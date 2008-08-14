@@ -15,8 +15,9 @@ double math::BinomialCoefficient(int n, int k) {
   double nchsk = 1;
   int i;
   
-  if(k > n)
+  if(k > n || k < 0) {
     return 0;
+  }
   
   if(k < n_k) {
     k = n_k;
