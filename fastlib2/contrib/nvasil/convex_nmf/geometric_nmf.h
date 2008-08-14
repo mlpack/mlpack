@@ -26,10 +26,17 @@
 
 class GeometricNmf {
  public:
+  GeometricNmf();
   void Init(fx_module *module, 
 			ArrayList<index_t> &rows,
 			ArrayList<index_t> &columns,
       ArrayList<double>  &values);
+  void Init(fx_module *module, 
+			ArrayList<index_t> &rows,
+			ArrayList<index_t> &columns,
+      ArrayList<double>  &values,
+      Matrix &lower_bound,
+      Matrix &upper_bound);
   void Destruct();
   void ComputeGradient(Matrix &coordinates, Matrix *gradient);
   void ComputeObjective(Matrix &coordinates, double *objective);
@@ -38,7 +45,8 @@ class GeometricNmf {
   void UpdateLagrangeMult(Matrix &coordinates);
   void Project(Matrix *coordinates);
   void set_sigma(double sigma); 
-  void GiveInitMatrix(Matrix *init_data);
+  // returns false if the problem is infeasible
+  bool GiveInitMatrix(Matrix *init_data);
 	bool IsDiverging(double objective); 
   bool IsOptimizationOver(Matrix &coordinates, Matrix &gradient, double step);
   bool IsIntermediateStepOver(Matrix &coordinates, Matrix &gradient, double step);
@@ -64,6 +72,8 @@ class GeometricNmf {
 	ArrayList<index_t> rows_;
 	ArrayList<index_t> columns_;
   ArrayList<double>  values_;
+  Matrix *lower_bound_;
+  Matrix *upper_bound_;
   index_t number_of_constraints_;
   double desired_duality_gap_;
   double gradient_tolerance_;

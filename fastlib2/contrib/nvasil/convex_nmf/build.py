@@ -8,7 +8,7 @@ librule(name="nmflib",
 librule(name="gopnmflib",
     headers=["gop_nmf.h", "gop_nmf_impl.h"],
     tests=["gop_test.cc"],
-    deplibs=["fastlib:fastlib", "contrib/nvasil/l_bfgs:l_bfgs" ]);
+    deplibs=["fastlib:fastlib",":nmflib", "contrib/nvasil/l_bfgs:l_bfgs" ]);
 
 binrule(name="nmf",
 		sources=["main.cc"],

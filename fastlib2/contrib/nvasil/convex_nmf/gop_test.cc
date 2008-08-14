@@ -32,12 +32,19 @@ class GopNmfEngineTest {
   }
   void Test1() {
     Matrix data_points;
-    data::Load("4.csv", &data_points);
-    fx_set_param_int(module_, "new_dimension",2);
+    data::Load("/net/hg200/nvasil/dataset/orl_faces/orl_test_faces_100.csv", &data_points);
+    fx_set_param_int(module_, "new_dimension",30);
     engine_->Init(module_, data_points); 
     engine_->ComputeGlobalOptimum();
   }
-  void TestAll() {
+  void Test2() {
+    Matrix data_points;
+    data::Load("/net/hg200/nvasil/dataset/orl_faces/orl_test_faces_100.csv", &data_points);
+    fx_set_param_int(module_, "new_dimension",30);
+    engine_->Init(module_, data_points); 
+    engine_->ComputeTighterGlobalOptimum();
+  }
+ void TestAll() {
     Init();
     Test1();
     Destruct();
@@ -50,7 +57,7 @@ class GopNmfEngineTest {
 };
 
 int main(int argc, char *argv[]) {
-  fx_module *fx_root=fx_init(argc, argv, NULL);
+  fx_module *fx_root=fx_init(argc, argv, &gop_nmf_engine_doc);
   GopNmfEngineTest test(fx_root);
   test.TestAll();
   fx_done(fx_root);
