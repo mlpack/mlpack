@@ -160,7 +160,7 @@ class MultitreeMultibody {
     total_force_e_.SetZero();
 
     // Run and do timing for multitree multibody
-    MTMultibody(root_nodes, total_num_tuples_);
+    MTMultibody(root_nodes, total_num_tuples_, 0.9);
     PostProcess(root_);
 
     printf("%d n-tuples have been pruned...\n", num_prunes_);
@@ -367,7 +367,8 @@ private:
   int FindSplitNode(ArrayList<TTree *> &nodes);
 
   /** Pruning rule */
-  bool Prunable(ArrayList<TTree *> &nodes, double num_tuples);
+  bool Prunable(ArrayList<TTree *> &nodes, double num_tuples,
+		double required_probability);
 
   /** @brief The base exhaustive computations.
    */
@@ -385,7 +386,8 @@ private:
 
   /** @brief The main multitree recursion.
    */
-  void MTMultibody(ArrayList<TTree *> &nodes, double num_tuples);
+  void MTMultibody(ArrayList<TTree *> &nodes, double num_tuples,
+		   double required_probability);
 
 };
 
