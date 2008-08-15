@@ -403,8 +403,16 @@ class DualtreeKde {
 			double *probability2);
 
   /** @brief Canonical dualtree KDE case.
+   *
+   *  @param qnode The query node.
+   *  @param rnode The reference node.
+   *  @param probability The required probability; 1 for exact
+   *         approximation.
+   *
+   *  @return true if the entire contribution of rnode has been
+   *          approximated using an exact method, false otherwise.
    */
-  void DualtreeKdeCanonical_(Tree *qnode, Tree *rnode, double probability);
+  bool DualtreeKdeCanonical_(Tree *qnode, Tree *rnode, double probability);
 
   /** @brief Pre-processing step - this wouldn't be necessary if the
    *         core fastlib supported a Init function for Stat objects
@@ -418,11 +426,16 @@ class DualtreeKde {
 
   public:
 
-  // constructor/destructor
+  ////////// Constructor/Destructor //////////
+
+  /** @brief The default constructor.
+   */
   DualtreeKde() {
     qroot_ = rroot_ = NULL;
   }
 
+  /** @brief The default destructor which deletes the trees.
+   */
   ~DualtreeKde() { 
     
     if(qroot_ != rroot_ ) {
@@ -499,8 +512,8 @@ class DualtreeKde {
     printf("F prunes: %d\n", num_farfield_prunes_);
     printf("L prunes: %d\n", num_local_prunes_);
 
-    // reshuffle the results to account for dataset reshuffling resulted
-    // from tree constructions
+    // Reshuffle the results to account for dataset reshuffling
+    // resulted from tree constructions.
     Vector tmp_q_results;
     tmp_q_results.Init(densities_e_.length());
     
@@ -512,7 +525,7 @@ class DualtreeKde {
       densities_e_[i] = tmp_q_results[i];
     }
 
-    // retrieve density estimates.
+    // Retrieve density estimates.
     get_density_estimates(results);
   }
 
