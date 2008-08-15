@@ -247,9 +247,6 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
 	(squared_kernel_sums - total_samples * sample_mean * sample_mean) / 
 	((double) total_samples - 1);
 
-      printf("I would like to compare %g against %g\n",
-	     min_kernel_value, kernel_value_range.lo);
-
       // Compute the current threshold for guaranteeing the relative
       // error bound.
       double new_used_error = stat.used_error_ +
@@ -362,7 +359,7 @@ void DualtreeKde<TKernelAux>::BestNodePartners
 }
 
 template<typename TKernelAux>
-void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
+bool DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
 (Tree *qnode, Tree *rnode, double probability) {
     
   // temporary variable for storing lower bound change.
@@ -385,7 +382,7 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
     qnode->stat().postponed_used_error_ += used_error;
     qnode->stat().postponed_n_pruned_ += n_pruned;
     num_finite_difference_prunes_++;
-    return;
+    return true;
   }
 
   // Then Monte Carlo-based pruning.
@@ -399,7 +396,7 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
     qnode->stat().postponed_used_error_ += used_error;
     qnode->stat().postponed_n_pruned_ += n_pruned;
     num_monte_carlo_prunes_++;
-    return;
+    return false;
   }
 
   else if(qset_.n_rows() <= 5 &&
@@ -432,7 +429,7 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
     qnode->stat().postponed_u_ += du;
     qnode->stat().postponed_used_error_ += used_error;
     qnode->stat().postponed_n_pruned_ += n_pruned;
-    return;
+    return true;
   }
   
   // For a leaf query node,
@@ -441,7 +438,7 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
     // For leaf pairs, do exhaustive computations.
     if(rnode->is_leaf()) {
       DualtreeKdeBase_(qnode, rnode, probability);
-      return;
+      return true;
     }
     
     // For a non-leaf reference, expand reference node,
@@ -451,15 +448,31 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
       BestNodePartners(qnode, rnode->left(), rnode->right(), probability,
 		       &rnode_first, &probability_first,
 		       &rnode_second, &probability_second);
-      DualtreeKdeCanonical_(qnode, rnode_first, probability_first);
-      DualtreeKdeCanonical_(qnode, rnode_second, probability_second);
-      return;
+      
+      bool first_result = 
+	DualtreeKdeCanonical_(qnode, rnode_first, probability_first);
+
+      // If the first recursion is computed exactly, then increment
+      // the probability tolerance for the second recursion.
+      if(first_result) {
+	probability_second -= std::max(1 - probability_first, 0.0);
+	probability_second = std::max(probability_second, 0.0);
+      }
+
+      bool second_result =
+	DualtreeKdeCanonical_(qnode, rnode_second, probability_second);
+      return first_result && second_result;
     }
   }
   
   // For a non-leaf query node,
   else {
-    
+
+    // The boolean flag that states that the contribution of the
+    // current reference node is computed exactly for the current
+    // query node.
+    bool result = true;
+
     // Push down postponed bound changes owned by the current query
     // node to the children of the query node and clear them.
     (qnode->left()->stat()).postponed_l_ += qnode->stat().postponed_l_;
@@ -491,8 +504,11 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
       BestNodePartners(rnode, qnode->left(), qnode->right(), probability,
 		       &qnode_first, &probability_first,
 		       &qnode_second, &probability_second);
-      DualtreeKdeCanonical_(qnode_first, rnode, probability);
-      DualtreeKdeCanonical_(qnode_second, rnode, probability);
+      bool first_result =
+	DualtreeKdeCanonical_(qnode_first, rnode, probability);
+      bool second_result =
+	DualtreeKdeCanonical_(qnode_second, rnode, probability);
+      result = first_result && second_result;
     }
     
     // For a non-leaf reference node, expand both query and reference
@@ -501,17 +517,44 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
       Tree *rnode_first = NULL, *rnode_second = NULL;
       double probability_first = 0, probability_second = 0;
   
+      // Fix the query node to be the left child, and recurse.
       BestNodePartners(qnode->left(), rnode->left(), rnode->right(), 
 		       probability, &rnode_first, &probability_first,
 		       &rnode_second, &probability_second);
-      DualtreeKdeCanonical_(qnode->left(), rnode_first, probability_first);
-      DualtreeKdeCanonical_(qnode->left(), rnode_second, probability_second);
+      bool left_first_result =
+	DualtreeKdeCanonical_(qnode->left(), rnode_first, probability_first);
+
+      // If the first recursion is carried out exactly, then increment
+      // the probability tolerance for the second recursion.
+      if(left_first_result) {
+	probability_second -= std::max(1 - probability_first, 0.0);
+	probability_second = std::max(probability_second, 0.0);
+      }
+
+      bool left_second_result = 
+	DualtreeKdeCanonical_(qnode->left(), rnode_second, probability_second);
       
+      // Fix the query node to be the right child, and recurse.
       BestNodePartners(qnode->right(), rnode->left(), rnode->right(), 
 		       probability, &rnode_first, &probability_first,
 		       &rnode_second, &probability_second);
-      DualtreeKdeCanonical_(qnode->right(), rnode_first, probability_first);
-      DualtreeKdeCanonical_(qnode->right(), rnode_second, probability_second);
+      bool right_first_result =
+	DualtreeKdeCanonical_(qnode->right(), rnode_first, probability_first);
+
+
+      // If the first recursion is carried out exactly, then increment
+      // the probability tolerance for the second recursion.
+      if(right_first_result) {
+	probability_second -= std::max(1 - probability_first, 0.0);
+	probability_second = std::max(probability_second, 0.0);
+      }
+
+      bool right_second_result =
+	DualtreeKdeCanonical_(qnode->right(), rnode_second,
+			      probability_second);
+
+      result = left_first_result && left_second_result &&
+	right_first_result && right_second_result;
     }
     
     // Reaccumulate the summary statistics.
@@ -533,7 +576,7 @@ void DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
 	       (qnode->left()->stat()).postponed_n_pruned_,
 	       (qnode->right()->stat()).n_pruned_ +
 	       (qnode->right()->stat()).n_pruned_);
-    return;
+    return result;
   } // end of the case: non-leaf query node.
 
 } // end of DualtreeKdeCanonical_
