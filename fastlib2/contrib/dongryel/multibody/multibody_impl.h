@@ -373,19 +373,20 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::PostProcessNaive_
 
 template<typename TMultibodyKernel, typename TTree>
 bool MultitreeMultibody<TMultibodyKernel, TTree>::Prunable
-(ArrayList<TTree *> &nodes, double num_tuples) {
+(ArrayList<TTree *> &nodes, double num_tuples, double required_probability) {
 
   return 
     mkernel_.MonteCarloEval(data_, exhaustive_indices_, nodes, 
 			    relative_error_, threshold_, z_score_,
-			    total_n_minus_one_num_tuples_, num_tuples);
+			    total_n_minus_one_num_tuples_, num_tuples,
+			    required_probability);
 }
 
 template<typename TMultibodyKernel, typename TTree>
 void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
-(ArrayList<TTree *> &nodes, double num_tuples) {
+(ArrayList<TTree *> &nodes, double num_tuples, double required_probability) {
   
-  if(Prunable(nodes, num_tuples)) {
+  if(Prunable(nodes, num_tuples, required_probability)) {
     num_prunes_++;
     return;
   }
@@ -431,7 +432,7 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
     
     // If the current node combination is valid, then recurse.
     if(new_num_tuples > 0) {
-      MTMultibody(new_nodes, new_num_tuples);
+      MTMultibody(new_nodes, new_num_tuples, (required_probability));
     }
     
     // Recurse to the right.
@@ -440,7 +441,7 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
     
     // If the current node combination is valid, then recurse.
     if(new_num_tuples > 0) {
-      MTMultibody(new_nodes, new_num_tuples);
+      MTMultibody(new_nodes, new_num_tuples, (required_probability));
     }
 
     // Refine statistics after recursing.
