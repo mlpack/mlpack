@@ -822,7 +822,7 @@ class AxilrodTellerForceKernel {
     double max_common_factor = 3.0 * AXILROD_TELLER_COEFF / (8.0 * min_dist1);
 
     minimum_negative_gradient = max_common_factor *
-      (-8.0 / (min_dqrt1 * min_dcub2 * min_dcub3)
+      (-2.0 / (min_dqrt1 * min_dcub2 * min_dcub3)
        - 1.0 / (min_dqui2 * min_dqui3)
        - 1.0 / (min_dsqd1 * min_dcub2 * min_dqui3)
        - 1.0 / (min_dsqd1 * min_dqui2 * min_dcub3)
@@ -833,7 +833,7 @@ class AxilrodTellerForceKernel {
     
     if(maximum_negative_gradient) {
       *maximum_negative_gradient = min_common_factor *
-	(-8.0 / (max_dqrt1 * max_dcub2 * max_dcub3)
+	(-2.0 / (max_dqrt1 * max_dcub2 * max_dcub3)
 	 - 1.0 / (max_dqui2 * max_dqui3)
 	 - 1.0 / (max_dsqd1 * max_dcub2 * max_dqui3)
 	 - 1.0 / (max_dsqd1 * max_dqui2 * max_dcub3)
@@ -845,14 +845,12 @@ class AxilrodTellerForceKernel {
 
     minimum_positive_gradient = min_common_factor *
       (5 * min_dist2 / (max_dsix1 * max_dqui3) +
-       5 * min_dist3 / (max_dsix1 * max_dqui2) +
-       6 / (max_dqrt1 * max_dcub2 * max_dcub3));
+       5 * min_dist3 / (max_dsix1 * max_dqui2));
 
     if(maximum_positive_gradient) {
       *maximum_positive_gradient = max_common_factor *
 	(5 * max_dist2 / (min_dsix1 * min_dqui3) +
-	 5 * max_dist3 / (min_dsix1 * min_dqui2) +
-	 6 / (min_dqrt1 * min_dcub2 * min_dcub3));
+	 5 * max_dist3 / (min_dsix1 * min_dqui2));
     }
   }
 

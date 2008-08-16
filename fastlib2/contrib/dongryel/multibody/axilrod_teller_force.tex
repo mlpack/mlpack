@@ -21,7 +21,7 @@
 
 Define the followings:
 \begin{align*}
-V(r_i, r_j) =& \frac{3 \nu}{8 ||r_i - r_j||} \Biggl( \frac{-8}{||r_i -
+V(r_i, r_j) =& \frac{3 \nu}{8 ||r_i - r_j||} \Biggl( \frac{-2}{||r_i -
 r_j||^4 ||r_i - r_k||^3 ||r_j - r_k||^3} - \frac{1}{||r_i - r_k||^5
 ||r_j - r_k||^5} + \\ & \frac{5||r_i - r_k||}{||r_i - r_j||^6 ||r_j -
 r_k||^5} + \frac{5||r_j - r_k||}{||r_i - r_j||^6 ||r_i - r_k||^5} -\\
@@ -30,12 +30,11 @@ r_k||^5} + \frac{5||r_j - r_k||}{||r_i - r_j||^6 ||r_i - r_k||^5} -\\
 & \frac{3}{||r_i - r_j||^4 ||r_i - r_k|| ||r_j - r_k||^5} -
  \frac{3}{||r_i - r_j||^4 ||r_i - r_k||^5 ||r_j - r_k||} -\\
 & \frac{5}{||r_i - r_j||^6 ||r_i - r_k|| ||r_j - r_k||^3} -
-\frac{5}{||r_i - r_j||^6 ||r_i - r_k||^3 ||r_j - r_k||} +\\
-&\frac{6}{||r_i - r_j||^4 ||r_i - r_k||^3 ||r_j - r_k||^3}
+\frac{5}{||r_i - r_j||^6 ||r_i - r_k||^3 ||r_j - r_k||}
  \Biggr )
 \end{align*}
 \begin{align*}
-V(r_i, r_k) =& \frac{3 \nu}{8 ||r_i - r_k||} \Biggl( \frac{-8}{||r_i -
+V(r_i, r_k) =& \frac{3 \nu}{8 ||r_i - r_k||} \Biggl( \frac{-2}{||r_i -
 r_k||^4 ||r_i - r_j||^3 ||r_j - r_k||^3} - \frac{1}{||r_i - r_j||^5
 ||r_j - r_k||^5} + \\ & \frac{5||r_i - r_j||}{||r_i - r_k||^6 ||r_j -
 r_k||^5} + \frac{5||r_j - r_k||}{||r_i - r_k||^6 ||r_i - r_j||^5} -\\
@@ -44,12 +43,11 @@ r_k||^5} + \frac{5||r_j - r_k||}{||r_i - r_k||^6 ||r_i - r_j||^5} -\\
 & \frac{3}{||r_i - r_k||^4 ||r_i - r_j|| ||r_j - r_k||^5} -
  \frac{3}{||r_i - r_k||^4 ||r_i - r_j||^5 ||r_j - r_k||} -\\
 & \frac{5}{||r_i - r_k||^6 ||r_i - r_j|| ||r_j - r_k||^3} -
-\frac{5}{||r_i - r_k||^6 ||r_i - r_j||^3 ||r_j - r_k||} +\\
-&\frac{6}{||r_i - r_k||^4 ||r_i - r_j||^3 ||r_j - r_k||^3}
+\frac{5}{||r_i - r_k||^6 ||r_i - r_j||^3 ||r_j - r_k||}
  \Biggr )
 \end{align*}
 \begin{align*}
-V(r_j, r_k) &= \frac{3 \nu}{8 ||r_j - r_k||} \Biggl( \frac{-8}{||r_j -
+V(r_j, r_k) &= \frac{3 \nu}{8 ||r_j - r_k||} \Biggl( \frac{-2}{||r_j -
 r_k||^4 ||r_i - r_k||^3 ||r_i - r_j||^3} - \frac{1}{||r_i - r_k||^5
 ||r_i - r_j||^5} + \\ & \frac{5||r_i - r_k||}{||r_j - r_k||^6 ||r_i -
 r_j||^5} + \frac{5||r_i - r_j||}{||r_j - r_k||^6 ||r_i - r_k||^5} -\\
@@ -58,8 +56,7 @@ r_j||^5} + \frac{5||r_i - r_j||}{||r_j - r_k||^6 ||r_i - r_k||^5} -\\
 & \frac{3}{||r_j - r_k||^4 ||r_i - r_k|| ||r_i - r_j||^5} -
  \frac{3}{||r_j - r_k||^4 ||r_i - r_k||^5 ||r_i - r_j||} -\\
 & \frac{5}{||r_j - r_k||^6 ||r_i - r_k|| ||r_i - r_j||^3} -
-\frac{5}{||r_j - r_k||^6 ||r_i - r_k||^3 ||r_i - r_j||} +\\
-&\frac{6}{||r_j - r_k||^4 ||r_i - r_k||^3 ||r_i - r_j||^3}
+\frac{5}{||r_j - r_k||^6 ||r_i - r_k||^3 ||r_i - r_j||}
  \Biggr )
 \end{align*}
 Given a triple of atoms $r_i$, $r_j$ and $r_k$, the force contribution
