@@ -7,6 +7,7 @@ librule(
                "dualtree_kde.h",
                "dualtree_kde_impl.h",
                "inverse_normal_cdf.h",
+               "kde_stat.h",
                "naive_kde.h"],
     deplibs = ["../series_expansion:series_expansion",
                "contrib/dongryel/proximity_project:proximity_project",

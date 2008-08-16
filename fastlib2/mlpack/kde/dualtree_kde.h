@@ -72,6 +72,7 @@
 #include "mlpack/series_expansion/kernel_aux.h"
 #include "contrib/dongryel/proximity_project/gen_metric_tree.h"
 #include "contrib/dongryel/proximity_project/subspace_stat.h"
+#include "kde_stat.h"
 
 ////////// Documentation stuffs //////////
 const fx_entry_doc kde_main_entries[] = {
@@ -147,118 +148,10 @@ template<typename TKernelAux>
 class DualtreeKde {
   
  public:
-
-  // forward declaration of KdeStat class
-  class KdeStat;
   
   // our tree type using the KdeStat
-  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix, KdeStat > Tree;
-  
-  class KdeStat {
-   public:
+  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix, KdeStat<TKernelAux> > Tree;
     
-    /** @brief The lower bound on the densities for the query points
-     *         owned by this node.
-     */
-    double mass_l_;
-    
-    /** @brief The upper bound on the densities for the query points
-     *         owned by this node
-     */
-    double mass_u_;
-
-    /** @brief Upper bound on the used error for the query points
-     *         owned by this node.
-     */
-    double used_error_;
-
-    /** @brief Lower bound on the number of reference points taken
-     *         care of for query points owned by this node.
-     */
-    double n_pruned_;
-
-    /** @brief The lower bound offset passed from above.
-     */
-    double postponed_l_;
-    
-    /** @brief Stores the portion pruned by finite difference.
-     */
-    double postponed_e_;
-
-    /** @brief The upper bound offset passed from above.
-     */
-    double postponed_u_;
-
-    /** @brief The total amount of error used in approximation for all query
-     *         points that must be propagated downwards.
-     */
-    double postponed_used_error_;
-
-    /** @brief The number of reference points that were taken care of
-     *         for all query points under this node; this information
-     *         must be propagated downwards.
-     */
-    double postponed_n_pruned_;
-
-    /** @brief The far field expansion created by the reference points
-     *         in this node.
-     */
-    typename TKernelAux::TFarFieldExpansion farfield_expansion_;
-    
-    /** @brief The local expansion stored in this node.
-     */
-    typename TKernelAux::TLocalExpansion local_expansion_;
-    
-    /** @brief The subspace associated with this node.
-     */
-    SubspaceStat subspace_;
-    
-    /** @brief Initialize the statistics.
-     */
-    void Init() {
-      mass_l_ = 0;
-      mass_u_ = 0;
-      used_error_ = 0;
-      n_pruned_ = 0;     
-     
-      postponed_l_ = 0;
-      postponed_e_ = 0;
-      postponed_u_ = 0;
-      postponed_used_error_ = 0;
-      postponed_n_pruned_ = 0;
-    }
-    
-    void Init(const TKernelAux &ka) {
-      farfield_expansion_.Init(ka);
-      local_expansion_.Init(ka);
-    }
-    
-    void Init(const Matrix& dataset, index_t &start, index_t &count) {
-      Init();
-      subspace_.Init(dataset, start, count);
-    }
-    
-    void Init(const Matrix& dataset, index_t &start, index_t &count,
-	      const KdeStat& left_stat,
-	      const KdeStat& right_stat) {
-      Init();
-      subspace_.Init(dataset, start, count, left_stat.subspace_,
-		     right_stat.subspace_);
-    }
-    
-    void Init(const Vector& center, const TKernelAux &ka) {
-      
-      farfield_expansion_.Init(center, ka);
-      local_expansion_.Init(center, ka);
-      Init();
-    }
-    
-    KdeStat() { }
-    
-    ~KdeStat() { }
-    
-  };
-  
  private:
 
   ////////// Private Constants //////////
@@ -388,6 +281,15 @@ class DualtreeKde {
 			   double &dl, double &de, double &du, 
 			   double &used_error, double &n_pruned);
 
+  /** @brief Checking whether it is able to prune the query and the
+   *         reference pair using Monte Carlo sampling.
+   */
+  bool MonteCarloPrunableByOrderStatistics_
+  (Tree *qnode, Tree *rnode, double probability,
+   DRange &dsqd_range, DRange &kernel_value_range, 
+   double &dl, double &de, double &du, 
+   double &used_error, double &n_pruned);
+
   /** @brief Checking for prunability of the query and the reference
    *         pair.
    */
@@ -424,7 +326,100 @@ class DualtreeKde {
    */
   void PostProcess(Tree *qnode);
 
-  public:
+  double BinomialCoefficient_(double n, double k) {
+
+    double n_k = n - k;
+    double nchsk = 1;
+    double i;
+
+    if(k > n || k < 0) {
+      return 0;
+    }
+    
+    if(k < n_k) {
+      k = n_k;
+      n_k = n - k;
+    }
+    
+    for(i = 1; i <= n_k; i += 1.0) {
+      k += 1.0;
+      nchsk *= k;
+      nchsk /= i;
+    }
+
+    return nchsk;
+  }
+
+  /** @brief Computes the outer confidence interval for the quantile
+   *         intervals.
+   */
+  double OuterConfidenceInterval_
+  (double population_size, double sample_size,
+   double sample_order_statistics_min_index,
+   double sample_order_statistics_max_index,
+   double population_order_statistics_min_index,
+   double population_order_statistics_max_index) {
+
+    double total_probability = 0;
+
+    for(double r_star = sample_order_statistics_min_index;
+	r_star <= sample_order_statistics_max_index; r_star += 1.0) {
+
+      for(double s_star = 0; s_star <= sample_order_statistics_max_index - 1.0;
+	  s_star += 1.0) {
+	
+	total_probability += 
+	  (BinomialCoefficient_(population_order_statistics_min_index, 
+				r_star) /
+	   BinomialCoefficient_(population_size, sample_size)) *
+	  BinomialCoefficient_(population_order_statistics_max_index - 1 -
+			       population_order_statistics_min_index,
+			       s_star - r_star) *
+	  BinomialCoefficient_(population_size - 
+			       population_order_statistics_max_index + 1,
+			       sample_size - s_star);
+      }
+    }
+    return total_probability;
+  }
+
+  template<typename T>
+  static int qsort_compar(const void *a, const void *b) {
+    
+    T *a_dbl = (T *) a;
+    T *b_dbl = (T *) b;
+    
+    if(*a_dbl < *b_dbl) {
+      return -1;
+    }
+    else if(*a_dbl > *b_dbl) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  }
+
+  /** @brief Refines the node statistics such that the minimum is set
+   *         to the order-th smallest value.
+   */
+  void RefineStatistics_(Tree *qnode, int order) {
+
+    Vector tmp_sorted;
+    tmp_sorted.Init(qnode->count());
+
+    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+      tmp_sorted[q - qnode->begin()] = densities_l_[q];
+    }
+    qsort(tmp_sorted.ptr(), qnode->count(), sizeof(double), 
+	  &qsort_compar<double>);
+    
+    // Quick-sort, then set the minimum lower bound to the order-th
+    // smallest value.
+    qnode->stat().mass_l_ = tmp_sorted[order];
+  }
+
+ public:
 
   ////////// Constructor/Destructor //////////
 

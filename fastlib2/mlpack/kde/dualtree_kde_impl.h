@@ -7,7 +7,7 @@
 template<typename TKernelAux>
 void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
 					       double probability) {
-  
+
   // Clear the summary statistics of the current query node so that we
   // can refine it to better bounds.
   qnode->stat().mass_l_ = DBL_MAX;
@@ -60,11 +60,8 @@ void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
 
   } // end of looping over each query point.
 
-  // clear postponed information
-  qnode->stat().postponed_l_ = qnode->stat().postponed_u_ = 0;
-  qnode->stat().postponed_e_ = 0;
-  qnode->stat().postponed_used_error_ = 0;
-  qnode->stat().postponed_n_pruned_ = 0;
+  // Clear postponed information.
+  qnode->stat().ClearPostponed();
 }
 
 template<typename TKernelAux>
@@ -89,8 +86,8 @@ bool DualtreeKde<TKernelAux>::PrunableEnhanced_
   int min_cost = 0;
   
   // query node and reference node statistics
-  KdeStat &qstat = qnode->stat();
-  KdeStat &rstat = rnode->stat();
+  KdeStat<TKernelAux> &qstat = qnode->stat();
+  KdeStat<TKernelAux> &rstat = rnode->stat();
   
   // expansion objects
   typename TKernelAux::TFarFieldExpansion &farfield_expansion = 
@@ -184,7 +181,7 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
   }
 
   // Refine the lower bound using the new lower bound info.
-  KdeStat &stat = qnode->stat();
+  KdeStat<TKernelAux> &stat = qnode->stat();
   double max_used_error = 0;
 
   // Take random query/reference pair samples and determine how many
@@ -203,9 +200,6 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
     // The initial number of samples is equal to the default.
     int num_samples = num_initial_samples_per_query_;
     int total_samples = 0;
-    
-    // The minimum pairwise sampled kernel value.
-    double min_kernel_value = DBL_MAX;
 
     do {
       for(index_t s = 0; s < num_samples; s++) {
@@ -230,8 +224,6 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
 
 	double weighted_kernel_value = 
 	  ka_.kernel_.EvalUnnormOnSq(squared_distance);
-
-	min_kernel_value = std::min(min_kernel_value, weighted_kernel_value);
 	kernel_sums += weighted_kernel_value;
 	squared_kernel_sums += weighted_kernel_value * weighted_kernel_value;
 
@@ -286,13 +278,132 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
 }
 
 template<typename TKernelAux>
+bool DualtreeKde<TKernelAux>::MonteCarloPrunableByOrderStatistics_
+(Tree *qnode, Tree *rnode, double probability, DRange &dsqd_range,
+ DRange &kernel_value_range, double &dl, double &de, double &du, 
+ double &used_error, double &n_pruned) {
+
+  // If the reference node contains too few points, then return.
+  if(rnode->count() < num_initial_samples_per_query_) {
+    return false;
+  }
+
+  // Refine the lower bound using the new lower bound info.
+  KdeStat<TKernelAux> &stat = qnode->stat();
+  double max_used_error = 0;
+
+  // Take random query/reference pair samples and determine how many
+  // more samples are needed.
+  bool flag = true;
+  double kernel_sums = 0;
+
+  // Commence sampling...
+  {
+    // The initial number of samples is equal to the default.
+    int num_samples = 70;
+    int total_samples = 0;
+
+    // Do not attempt sampling if the trial number of samples is
+    // insufficient to achieve the required probability level.
+    double achieved_probability = 
+      OuterConfidenceInterval_
+      (qnode->count() * rnode->count(), num_samples, 1, num_samples, 
+       ceil((1 - probability) * qnode->count() * rnode->count()),
+       ceil((probability + 0.5 * (1 - probability)) * qnode->count() * 
+	    rnode->count()));
+
+    if(isnan(achieved_probability) || achieved_probability <
+       fx_param_double(module_, "probability", 1)) {
+      return false;
+    }
+
+    // The minimum and maximum sampled pairwise kernel values.
+    double min_kernel_value = DBL_MAX;
+    double max_kernel_value = 0;
+
+    do {
+      for(index_t s = 0; s < num_samples; s++) {
+	
+	index_t random_query_point_index =
+	  math::RandInt(qnode->begin(), qnode->end());
+	index_t random_reference_point_index = 
+	  math::RandInt(rnode->begin(), rnode->end());
+
+	// Get the pointer to the current query point.
+	const double *query_point = 
+	  qset_.GetColumnPtr(random_query_point_index);
+	
+	// Get the pointer to the current reference point.
+	const double *reference_point = 
+	  rset_.GetColumnPtr(random_reference_point_index);
+	
+	// Compute the pairwise distance and kernel value.
+	double squared_distance = la::DistanceSqEuclidean(rset_.n_rows(), 
+							  query_point,
+							  reference_point);
+
+	double weighted_kernel_value = 
+	  ka_.kernel_.EvalUnnormOnSq(squared_distance);
+	min_kernel_value = std::min(min_kernel_value, weighted_kernel_value);
+	max_kernel_value = std::max(max_kernel_value, weighted_kernel_value);
+
+	printf("Observing %g\n", weighted_kernel_value);
+
+      } // end of taking samples for this roune...
+
+      // Increment total number of samples.
+      total_samples += num_samples;
+
+      // Compute the current threshold for guaranteeing the relative
+      // error bound.
+      double new_used_error = stat.used_error_ +
+	stat.postponed_used_error_;
+      double new_n_pruned = stat.n_pruned_ + stat.postponed_n_pruned_;
+
+      // The currently proven lower bound.
+      double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
+      double right_hand_side = 
+	(std::max(tau_ * new_mass_l, threshold_) - new_used_error) / 
+	(rroot_->count() - new_n_pruned);
+      
+      printf("Rough min: %g, rough max: %g\n", kernel_value_range.lo,
+	     kernel_value_range.hi);
+      printf("Min: %g, Max: %g\n", min_kernel_value, max_kernel_value);
+      exit(0);
+
+      if(0.5 * (max_kernel_value - min_kernel_value) <= right_hand_side) {
+	kernel_sums = 0.5 * (max_kernel_value + min_kernel_value) * 
+	  rnode->count();
+	max_used_error = 0.5 * (max_kernel_value - min_kernel_value) *
+	  rnode->count();
+	break;
+      }
+      else {
+	flag = false;
+	break;
+      }
+
+    } while(true);
+
+  } // end of sampling...
+
+  // If all queries can be pruned, then add the approximations.
+  if(flag) {
+    de = kernel_sums;
+    used_error = max_used_error;
+    return true;
+  }
+  return false;
+}
+
+template<typename TKernelAux>
 bool DualtreeKde<TKernelAux>::Prunable_
 (Tree *qnode, Tree *rnode, double probability, DRange &dsqd_range,
  DRange &kernel_value_range, double &dl, double &de, double &du, 
  double &used_error, double &n_pruned) {
   
   // The query node stat
-  KdeStat &stat = qnode->stat();
+  KdeStat<TKernelAux> &stat = qnode->stat();
   
   // number of reference points
   int num_references = rnode->count();
@@ -361,7 +472,7 @@ void DualtreeKde<TKernelAux>::BestNodePartners
 template<typename TKernelAux>
 bool DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
 (Tree *qnode, Tree *rnode, double probability) {
-    
+
   // temporary variable for storing lower bound change.
   double dl = 0, de = 0, du = 0;
   int order_farfield_to_local = -1, order_farfield = -1, order_local = -1;
@@ -387,9 +498,9 @@ bool DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
 
   // Then Monte Carlo-based pruning.
   else if(probability < 1 &&
-	  MonteCarloPrunable_(qnode, rnode, probability, dsqd_range, 
-			      kernel_value_range, dl, de, du, 
-			      used_error, n_pruned)) {
+	  MonteCarloPrunable_
+	  (qnode, rnode, probability, dsqd_range, 
+	   kernel_value_range, dl, de, du, used_error, n_pruned)) {
     qnode->stat().postponed_l_ += dl;
     qnode->stat().postponed_e_ += de;
     qnode->stat().postponed_u_ += du;
@@ -491,10 +602,7 @@ bool DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
       qnode->stat().postponed_n_pruned_;
     
     // Clear out the postponed info after being passed down.
-    qnode->stat().postponed_l_ = qnode->stat().postponed_u_ = 0;
-    qnode->stat().postponed_e_ = 0;
-    qnode->stat().postponed_used_error_ = 0;
-    qnode->stat().postponed_n_pruned_ = 0;
+    qnode->stat().ClearPostponed();
     
     // For a leaf reference node, expand query node
     if(rnode->is_leaf()) {
@@ -639,7 +747,7 @@ void DualtreeKde<TKernelAux>::PreProcess(Tree *node) {
 template<typename TKernelAux>
 void DualtreeKde<TKernelAux>::PostProcess(Tree *qnode) {
     
-  KdeStat &qstat = qnode->stat();
+  KdeStat<TKernelAux> &qstat = qnode->stat();
   
   // for leaf query node
   if(qnode->is_leaf()) {
