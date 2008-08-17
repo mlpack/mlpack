@@ -116,7 +116,7 @@ class MultitreeMultibody {
 
     // Run and do timing for multitree multibody
     MTMultibodyBase(root_nodes, 0);
-    PostProcessNaive_(root_);
+    PostProcess(root_);
   }
 
   /** @brief The main computation procedure.
