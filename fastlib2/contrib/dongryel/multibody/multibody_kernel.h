@@ -1095,18 +1095,23 @@ class AxilrodTellerForceKernel {
 
     // If Monte Carlo evaluation is not going to be done in a
     // reasonable amount of time, then don't even try.
-    index_t num_sample_trials_remaining = 70;
+    index_t num_sample_trials_remaining = 25;
+
+    /*
     double lower_end = (1 - required_probability) * 0.5;
-    double upper_end = required_probability + lower_end;
+    double upper_end = required_probability + lower_end;    
     double actual_coverage_probability = OuterConfidenceInterval_
       (num_tuples, num_sample_trials_remaining, 1, 
        num_sample_trials_remaining, ceil(num_tuples * lower_end),
        ceil(num_tuples * upper_end));
+    */
 
+    /*
     if(required_probability > actual_coverage_probability ||
        num_tuples < 2 * num_sample_trials_remaining) {
       return false;
     }
+    */
 
     // Compute the number of (n - 1) tuples and leave-one-out
     // quantities.
@@ -1146,15 +1151,13 @@ class AxilrodTellerForceKernel {
     // the k-th node.
     for(index_t current_num_samples = 0; current_num_samples <
 	num_sample_trials_remaining; current_num_samples++) {
-      
-      indices[0] = math::RandInt(nodes[0]->begin(), nodes[0]->end());
-      indices[1] = math::RandInt(nodes[1]->begin(), nodes[1]->end());
-      indices[2] = math::RandInt(nodes[2]->begin(), nodes[2]->end());
-      
-      // Continue until a valid sample is chosen.
-      if(!(indices[0] < indices[1] && indices[1] < indices[2])) {
-	continue;
-      }
+
+      // Select a valid 3-tuple sample.
+      do {
+	indices[0] = math::RandInt(nodes[0]->begin(), nodes[0]->end());
+	indices[1] = math::RandInt(nodes[1]->begin(), nodes[1]->end());
+	indices[2] = math::RandInt(nodes[2]->begin(), nodes[2]->end());
+      } while(!(indices[0] < indices[1] && indices[1] < indices[2]));
       
       // Compute the pairwise distances among three particles to
       // complete the distance tables.
@@ -1166,7 +1169,7 @@ class AxilrodTellerForceKernel {
 		    positive_gradient1, NULL, negative_gradient2, NULL, 
 		    positive_gradient2, NULL, negative_gradient3, NULL, 
 		    positive_gradient3, NULL);
-      
+
       // Update the current statistics for all three components.
       UpdateStatistics_
 	(negative_gradient1, positive_gradient1,
@@ -1198,7 +1201,7 @@ class AxilrodTellerForceKernel {
 				      min_negative_gradient3);
     positive_gradient3_error = 0.5 * (max_positive_gradient3 - 
 				      min_positive_gradient3);
-    
+
     double node_i_additional_negative_gradient1_u,
       node_i_additional_positive_gradient1_l,
       node_i_additional_l1_norm_negative_gradient2_u,
