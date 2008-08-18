@@ -106,12 +106,17 @@ class MultitreeMultibody {
     // Initialize intermediate computation spaces to zero.
     negative_force1_e_.SetZero();
     negative_force1_u_.SetZero();
+    negative_force1_used_error_.SetZero();
     positive_force1_l_.SetZero();
     positive_force1_e_.SetZero();
+    positive_force1_used_error_.SetZero();
     negative_force2_e_.SetZero();
     negative_force2_u_.SetZero();
+    negative_force2_used_error_.SetZero();
     positive_force2_l_.SetZero();
     positive_force2_e_.SetZero();
+    positive_force2_used_error_.SetZero();
+    n_pruned_.SetZero();
     total_force_e_.SetZero();
 
     // Run and do timing for multitree multibody
@@ -151,12 +156,17 @@ class MultitreeMultibody {
     // Initialize intermediate computation spaces to zero.
     negative_force1_e_.SetZero();
     negative_force1_u_.SetZero();
+    negative_force1_used_error_.SetZero();
     positive_force1_l_.SetZero();
     positive_force1_e_.SetZero();
+    positive_force1_used_error_.SetZero();
     negative_force2_e_.SetZero();
     negative_force2_u_.SetZero();
+    negative_force2_used_error_.SetZero();
     positive_force2_l_.SetZero();
     positive_force2_e_.SetZero();
+    positive_force2_used_error_.SetZero();
+    n_pruned_.SetZero();
     total_force_e_.SetZero();
 
     // Run and do timing for multitree multibody
@@ -194,16 +204,22 @@ class MultitreeMultibody {
     non_leaf_indices_.Init(mkernel_.order());
     distmat_.Init(mkernel_.order(), mkernel_.order());
     exhaustive_indices_.Init(mkernel_.order());
+    num_leave_one_out_tuples_.Init(mkernel_.order());
 
     // Initialize space for computation values.
     negative_force1_e_.Init(data_.n_cols());
     negative_force1_u_.Init(data_.n_cols());
+    negative_force1_used_error_.Init(data_.n_cols());
     positive_force1_l_.Init(data_.n_cols());
     positive_force1_e_.Init(data_.n_cols());
+    positive_force1_used_error_.Init(data_.n_cols());
     negative_force2_e_.Init(data_.n_rows(), data_.n_cols());
     negative_force2_u_.Init(data_.n_rows(), data_.n_cols());
+    negative_force2_used_error_.Init(data_.n_cols());
     positive_force2_l_.Init(data_.n_rows(), data_.n_cols());
     positive_force2_e_.Init(data_.n_rows(), data_.n_cols());
+    positive_force2_used_error_.Init(data_.n_cols());
+    n_pruned_.Init(data_.n_cols());
     total_force_e_.Init(data_.n_rows(), data_.n_cols());
   }
 
@@ -262,13 +278,18 @@ private:
    */
   double threshold_;
 
-  /** The current list of non-leaf indices */
+  /** @brief The current list of non-leaf indices. */
   ArrayList<int> non_leaf_indices_;
 
   /** @brief The temporary space for storing indices selected for
    *         exhaustive computation.
    */
   ArrayList<int> exhaustive_indices_;
+ 
+  /** @brief The number of leave-one-out (n - 1) tuples for each node
+   *         in the n-tuple sequence.
+   */
+  Vector num_leave_one_out_tuples_;
 
   /** @brief The temporary space for storing pairwise distances.
    */
@@ -293,6 +314,8 @@ private:
    */
   Vector negative_force1_u_;
 
+  Vector negative_force1_used_error_;
+
   /** @brief The lower bound on the positive force due to the
    *         multibody potential on each particle. Each column is a
    *         force vector on each particle.
@@ -303,6 +326,8 @@ private:
    *         particle. Each column is a force vector on each particle.
    */
   Vector positive_force1_e_;
+
+  Vector positive_force1_used_error_;
 
   /** @brief The negative force due to the multibody potential on each
    *         particle. Each column is a force vector on each particle.
@@ -315,6 +340,8 @@ private:
    */
   Matrix negative_force2_u_;
 
+  Vector negative_force2_used_error_;
+
   /** @brief The lower bound on the positive force due to the
    *         multibody potential on each particle. Each column is a
    *         force vector on each particle.
@@ -325,6 +352,12 @@ private:
    *         particle. Each column is a force vector on each particle.
    */
   Matrix positive_force2_e_;
+
+  Vector positive_force2_used_error_;
+
+  /** @brief The number of pruned (n - 1) tuples for each particle.
+   */
+  Vector n_pruned_;
 
   /** @brief The total estimated force due to the multibody potential
    *         on each particle. Each column is a force vector on each

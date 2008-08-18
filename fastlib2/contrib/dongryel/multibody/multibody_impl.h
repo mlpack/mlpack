@@ -53,9 +53,8 @@ double MultitreeMultibody<TMultibodyKernel, TTree>::ttn
     else {
       int jdiff = -1; 
       
-      // undefined... will eventually point to the
-      // lowest j > b such that nodes[j] is different from
-      // bkn	
+      // Undefined... will eventually point to the lowest j > b such
+      // that nodes[j] is different from bkn
       for(j = b + 1; jdiff < 0 && j < n; j++) {
 	TTree *knj = nodes[j];
 	if(bkn->begin() != knj->begin() ||
@@ -126,9 +125,15 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::RefineStatistics_
   destination_node->stat().negative_gradient1_u =
     std::max(destination_node->stat().negative_gradient1_u,
 	     negative_force1_u_[point_index]);
+  destination_node->stat().negative_gradient1_used_error =
+    std::max(destination_node->stat().negative_gradient1_used_error,
+	     negative_force1_used_error_[point_index]);
   destination_node->stat().positive_gradient1_l =
     std::min(destination_node->stat().positive_gradient1_l,
 	     positive_force1_l_[point_index]);
+  destination_node->stat().positive_gradient1_used_error =
+    std::max(destination_node->stat().positive_gradient1_used_error,
+	     positive_force1_used_error_[point_index]);
   
   for(index_t d = 0; d < negative_force2_e_.n_rows(); d++) {
     destination_node->stat().negative_gradient2_u[d] =
@@ -138,6 +143,15 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::RefineStatistics_
       std::min(destination_node->stat().positive_gradient2_l[d],
 	       positive_force2_l_.get(d, point_index));
   }
+  destination_node->stat().negative_gradient2_used_error =
+    std::max(destination_node->stat().negative_gradient2_used_error,
+	     negative_force2_used_error_[point_index]); 
+  destination_node->stat().positive_gradient2_used_error =
+    std::max(destination_node->stat().positive_gradient2_used_error,
+	     positive_force2_used_error_[point_index]);
+
+  destination_node->stat().n_pruned_ = 
+    std::min(destination_node->stat().n_pruned_, n_pruned_[point_index]);
 }
 
 template<typename TMultibodyKernel, typename TTree>
@@ -171,6 +185,35 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::RefineStatistics_
 	       right_node->stat().positive_gradient2_l[d] +
 	       right_node->stat().postponed_positive_gradient2_l[d]);
   }
+
+  // Refine the amount of error.
+  node->stat().negative_gradient1_used_error =
+    std::max(left_node->stat().negative_gradient1_used_error +
+	     left_node->stat().postponed_negative_gradient1_used_error,
+	     right_node->stat().negative_gradient1_used_error +
+	     right_node->stat().postponed_negative_gradient1_used_error);
+  node->stat().positive_gradient1_used_error =
+    std::max(left_node->stat().positive_gradient1_used_error +
+	     left_node->stat().postponed_positive_gradient1_used_error,
+	     right_node->stat().positive_gradient1_used_error +
+	     right_node->stat().postponed_positive_gradient1_used_error);
+  node->stat().negative_gradient2_used_error =
+    std::max(left_node->stat().negative_gradient2_used_error +
+	     left_node->stat().postponed_negative_gradient2_used_error,
+	     right_node->stat().negative_gradient2_used_error +
+	     right_node->stat().postponed_negative_gradient2_used_error);
+  node->stat().positive_gradient2_used_error =
+    std::max(left_node->stat().positive_gradient2_used_error +
+	     left_node->stat().postponed_positive_gradient2_used_error,
+	     right_node->stat().positive_gradient2_used_error +
+	     right_node->stat().postponed_positive_gradient2_used_error);
+
+  // Refine the number of (n - 1) tuples pruned.
+  node->stat().n_pruned_ =
+    std::min(left_node->stat().n_pruned_ + 
+	     left_node->stat().postponed_n_pruned_,
+	     right_node->stat().n_pruned_ +
+	     right_node->stat().postponed_n_pruned_);
 }
 
 template<typename TMultibodyKernel, typename TTree>
@@ -198,6 +241,19 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::AddPostponed
   la::AddTo(data_.n_rows(),
 	    source_node->stat().postponed_positive_gradient2_e.ptr(),
 	    destination_node->stat().postponed_positive_gradient2_e.ptr());
+
+  // Add up used error.
+  destination_node->stat().postponed_negative_gradient1_used_error +=
+    source_node->stat().postponed_negative_gradient1_used_error;
+  destination_node->stat().postponed_positive_gradient1_used_error +=
+    source_node->stat().postponed_positive_gradient1_used_error;
+  destination_node->stat().postponed_negative_gradient2_used_error +=
+    source_node->stat().postponed_negative_gradient2_used_error;
+  destination_node->stat().postponed_positive_gradient2_used_error +=
+    source_node->stat().postponed_positive_gradient2_used_error;
+  
+  destination_node->stat().postponed_n_pruned_ +=
+    source_node->stat().postponed_n_pruned_;
 }
 
 template<typename TMultibodyKernel, typename TTree>
@@ -220,6 +276,18 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::AddPostponed
 	    positive_force2_l_.GetColumnPtr(destination));
   la::AddTo(data_.n_rows(), node->stat().postponed_positive_gradient2_e.ptr(),
 	    positive_force2_e_.GetColumnPtr(destination));
+
+  // Add up used error.
+  negative_force1_used_error_[destination] +=
+    node->stat().postponed_negative_gradient1_used_error;
+  positive_force1_used_error_[destination] +=
+    node->stat().postponed_positive_gradient1_used_error;
+  negative_force2_used_error_[destination] +=
+    node->stat().postponed_negative_gradient2_used_error;
+  positive_force2_used_error_[destination] +=
+    node->stat().postponed_positive_gradient2_used_error;
+  
+  n_pruned_[destination] += node->stat().postponed_n_pruned_;
 }
 
 template<typename TMultibodyKernel, typename TTree>
@@ -265,20 +333,45 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibodyBase
   // Add and clear all postponed force contribution after
   // incorporating and refine node statistics.
   if(level == 0) {
+
+    // Each point in this node gets the valid number of (n - 1)
+    // tuples. This should really be generalized for general $n$-tuple
+    // computation.
+    double leave_one_out_node_j_count_for_node_i,
+      leave_one_out_node_k_count_for_node_i,
+      leave_one_out_node_i_count_for_node_j,
+      leave_one_out_node_k_count_for_node_j,
+      leave_one_out_node_i_count_for_node_k,
+      leave_one_out_node_j_count_for_node_k;
+
+    mkernel_.ComputeNumTwoTuples_
+      (nodes, leave_one_out_node_j_count_for_node_i,
+       leave_one_out_node_k_count_for_node_i,
+       leave_one_out_node_i_count_for_node_j,
+       leave_one_out_node_k_count_for_node_j,
+       leave_one_out_node_i_count_for_node_k,
+       leave_one_out_node_j_count_for_node_k, num_leave_one_out_tuples_[0], 
+       num_leave_one_out_tuples_[1], num_leave_one_out_tuples_[2]);
+    
     for(index_t i = 0; i < nodes.size(); i++) {
 
       // Skip, if the current node is the same as the previous one.
       if(i != 0 && nodes[i] == nodes[i - 1]) {
 	continue;
-      }
+      }      
 
       // Reset lower/upper bound information.
       nodes[i]->stat().negative_gradient1_u = -DBL_MAX;
       nodes[i]->stat().positive_gradient1_l = DBL_MAX;
       nodes[i]->stat().negative_gradient2_u.SetAll(-DBL_MAX);
       nodes[i]->stat().positive_gradient2_l.SetAll(DBL_MAX);
+      nodes[i]->stat().n_pruned_ = DBL_MAX;
 
       for(index_t r = nodes[i]->begin(); r < nodes[i]->end(); r++) {
+
+	// Each point in this node gets the valid (n - 1) tuples and
+	// the postponed (n - 1) tuples.
+	n_pruned_[r] += num_leave_one_out_tuples_[i];
 	AddPostponed(nodes[i], r);
 	RefineStatistics_(r, nodes[i]);
       }
@@ -288,7 +381,8 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibodyBase
 }
 
 template<typename TMultibodyKernel, typename TTree>
-void MultitreeMultibody<TMultibodyKernel, TTree>::PostProcess(TTree *node) {
+void MultitreeMultibody<TMultibodyKernel, TTree>::
+PostProcess(TTree *node) {
 
   // For a leaf node,
   if(node->is_leaf()) {
@@ -316,7 +410,9 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::PostProcess(TTree *node) {
 	  query_total_force_e[d] += (-data_.get(d, q) * negative_force1_e_[q] +
 				     positive_force2_e_.get(d, q));
 	}
+
       } // end of iterating over each dimension...
+
     } // end of iterating over each query point...
 
     // Clear postponed information.
@@ -376,10 +472,9 @@ bool MultitreeMultibody<TMultibodyKernel, TTree>::Prunable
 (ArrayList<TTree *> &nodes, double num_tuples, double required_probability) {
 
   return 
-    mkernel_.MonteCarloEval(data_, exhaustive_indices_, nodes, 
-			    relative_error_, threshold_, z_score_,
-			    total_n_minus_one_num_tuples_, num_tuples,
-			    required_probability);
+    mkernel_.Eval(data_, exhaustive_indices_, nodes, 
+		  relative_error_, threshold_, z_score_,
+		  total_n_minus_one_num_tuples_, num_tuples);
 }
 
 template<typename TMultibodyKernel, typename TTree>
@@ -387,7 +482,7 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
 (ArrayList<TTree *> &nodes, double num_tuples, double required_probability) {
   
   if(Prunable(nodes, num_tuples, required_probability)) {
-    num_prunes_++;
+    num_prunes_++;    
     return;
   }
   
