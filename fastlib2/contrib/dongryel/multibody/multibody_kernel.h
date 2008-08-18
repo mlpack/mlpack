@@ -97,90 +97,6 @@ class AxilrodTellerForceKernel {
     return length;
   }
 
-  /** @brief Computes the leave-one-out node count and the 2-tuple
-   *         counts.
-   *
-   *  @param nodes The set of nodes (3 for Axilrod-Teller).
-   *  @param leave_one_out_node_j_count_for_node_i
-   *  @param leave_one_out_node_k_count_for_node_i
-   *  @param leave_one_out_node_i_count_for_node_j
-   *  @param leave_one_out_node_k_count_for_node_j
-   *  @param leave_one_out_node_i_count_for_node_k
-   *  @param leave_one_out_node_j_count_for_node_k
-   *  @param num_jk_pairs
-   *  @param num_ik_pairs
-   *  @param num_ij_pairs
-   */
-  void ComputeNumTwoTuples_(ArrayList<TTree *> &nodes,
-			    double &leave_one_out_node_j_count_for_node_i,
-			    double &leave_one_out_node_k_count_for_node_i,
-			    double &leave_one_out_node_i_count_for_node_j,
-			    double &leave_one_out_node_k_count_for_node_j,
-			    double &leave_one_out_node_i_count_for_node_k,
-			    double &leave_one_out_node_j_count_for_node_k,
-			    double &num_jk_pairs, double &num_ik_pairs,
-			    double &num_ij_pairs) {
-
-    if(nodes[0] == nodes[1]) {
-
-      // All three nodes are equal...
-      if(nodes[1] == nodes[2]) {
-	leave_one_out_node_j_count_for_node_i = nodes[0]->count() - 1;
-	leave_one_out_node_k_count_for_node_i = nodes[0]->count() - 2;
-	leave_one_out_node_i_count_for_node_j = nodes[0]->count() - 1;
-	leave_one_out_node_k_count_for_node_j = nodes[0]->count() - 2;
-	leave_one_out_node_i_count_for_node_k = nodes[0]->count() - 1;
-	leave_one_out_node_j_count_for_node_k = nodes[0]->count() - 2;
-	num_jk_pairs = math::BinomialCoefficient(nodes[0]->count() - 1, 2);
-	num_ik_pairs = num_jk_pairs;
-	num_ij_pairs = num_jk_pairs;
-      }
-
-      // i-th node equals j-th node, but j-th node does not equal k-th
-      // node.
-      else {
-	leave_one_out_node_j_count_for_node_i = nodes[0]->count() - 1;
-	leave_one_out_node_k_count_for_node_i = nodes[2]->count();
-	leave_one_out_node_i_count_for_node_j = nodes[0]->count() - 1;
-	leave_one_out_node_k_count_for_node_j = nodes[2]->count();
-	leave_one_out_node_i_count_for_node_k = nodes[0]->count();
-	leave_one_out_node_j_count_for_node_k = nodes[0]->count() - 1;
-	num_jk_pairs = (nodes[0]->count() - 1) * (nodes[2]->count());
-	num_ik_pairs = num_jk_pairs;
-	num_ij_pairs = math::BinomialCoefficient(nodes[0]->count(), 2);	
-      }
-    }
-    else {
-      
-      // i-th node does not equal j-th node, but j-th node equals k-th
-      // node.
-      if(nodes[1] == nodes[2]) {
-	leave_one_out_node_j_count_for_node_i = nodes[1]->count();
-	leave_one_out_node_k_count_for_node_i = nodes[1]->count() - 1;
-	leave_one_out_node_i_count_for_node_j = nodes[0]->count();
-	leave_one_out_node_k_count_for_node_j = nodes[1]->count() - 1;
-	leave_one_out_node_i_count_for_node_k = nodes[0]->count();
-	leave_one_out_node_j_count_for_node_k = nodes[1]->count() - 1;
-	num_jk_pairs = math::BinomialCoefficient(nodes[1]->count(), 2);
-	num_ik_pairs = (nodes[0]->count()) * (nodes[2]->count() - 1);
-	num_ij_pairs = (nodes[0]->count()) * (nodes[1]->count() - 1);
-      }
-
-      // All three nodes are disjoint in this case...
-      else {
-	leave_one_out_node_j_count_for_node_i = nodes[1]->count();
-	leave_one_out_node_k_count_for_node_i = nodes[2]->count();
-	leave_one_out_node_i_count_for_node_j = nodes[0]->count();
-	leave_one_out_node_k_count_for_node_j = nodes[2]->count();
-	leave_one_out_node_i_count_for_node_k = nodes[0]->count();
-	leave_one_out_node_j_count_for_node_k = nodes[1]->count();
-	num_jk_pairs = (nodes[1]->count()) * (nodes[2]->count());
-	num_ik_pairs = (nodes[0]->count()) * (nodes[2]->count());
-	num_ij_pairs = (nodes[0]->count()) * (nodes[1]->count());
-      }
-    }
-  }
-
   void ComputeAdditionalBoundChanges_
   (ArrayList<TTree *> &nodes, double max_negative_gradient1, 
    double min_positive_gradient1, double max_negative_gradient2, 
@@ -315,7 +231,11 @@ class AxilrodTellerForceKernel {
    *         lower and upper bound is set to the same sampled mean
    *         quantity.
    */
-  void Prune_(ArrayList<TTree *> &tree_nodes, double min_negative_gradient1,
+  void Prune_(ArrayList<TTree *> &tree_nodes, 
+	      double negative_gradient1_error, double positive_gradient1_error,
+	      double negative_gradient2_error, double positive_gradient2_error,
+	      double negative_gradient3_error, double positive_gradient3_error,
+	      double min_negative_gradient1,
 	      double max_negative_gradient1, double min_positive_gradient1,
 	      double max_positive_gradient1, double min_negative_gradient2,
 	      double max_negative_gradient2, double min_positive_gradient2,
@@ -371,7 +291,25 @@ class AxilrodTellerForceKernel {
        0.5 * (min_positive_gradient2 + max_positive_gradient2),
        tree_nodes[2]->stat().coordinate_sum_,
        &(tree_nodes[0]->stat().postponed_positive_gradient2_e));
-    
+
+    tree_nodes[0]->stat().postponed_negative_gradient1_used_error += 
+      num_jk_pairs * (negative_gradient1_error + negative_gradient2_error);
+    tree_nodes[0]->stat().postponed_positive_gradient1_used_error += 
+      num_jk_pairs * (positive_gradient1_error + positive_gradient2_error);
+    tree_nodes[0]->stat().postponed_negative_gradient2_used_error += 
+      tree_nodes[2]->count() * tree_nodes[1]->stat().l1_norm_coordinate_sum_ *
+      negative_gradient1_error +
+      tree_nodes[1]->count() * tree_nodes[2]->stat().l1_norm_coordinate_sum_ *
+      negative_gradient2_error;
+    tree_nodes[0]->stat().postponed_positive_gradient2_used_error += 
+      tree_nodes[2]->count() * tree_nodes[1]->stat().l1_norm_coordinate_sum_ *
+      positive_gradient1_error +
+      tree_nodes[1]->count() * tree_nodes[2]->stat().l1_norm_coordinate_sum_ *
+      positive_gradient2_error;
+
+    // Increment the number of pruned (n - 1) tuples.
+    tree_nodes[0]->stat().postponed_n_pruned_ += num_jk_pairs;
+   
     // Then the j-th node, if it is not the same as the i-th node...
     if(tree_nodes[1] != tree_nodes[0]) {
       tree_nodes[1]->stat().postponed_negative_gradient1_e += 
@@ -420,6 +358,24 @@ class AxilrodTellerForceKernel {
 	 0.5 * (min_positive_gradient3 + max_positive_gradient3),
 	 tree_nodes[2]->stat().coordinate_sum_,
 	 &(tree_nodes[1]->stat().postponed_positive_gradient2_e));
+
+      tree_nodes[1]->stat().postponed_negative_gradient1_used_error += 
+	num_ik_pairs * (negative_gradient1_error + negative_gradient3_error);
+      tree_nodes[1]->stat().postponed_positive_gradient1_used_error += 
+	num_ik_pairs * (negative_gradient1_error + negative_gradient3_error);
+      tree_nodes[1]->stat().postponed_negative_gradient2_used_error += 
+	tree_nodes[2]->count() * 
+	tree_nodes[0]->stat().l1_norm_coordinate_sum_ *
+	negative_gradient1_error + tree_nodes[0]->count() * 
+	tree_nodes[2]->stat().l1_norm_coordinate_sum_ *
+	negative_gradient3_error;
+      tree_nodes[1]->stat().postponed_positive_gradient2_used_error +=
+	tree_nodes[2]->count() * 
+	tree_nodes[0]->stat().l1_norm_coordinate_sum_ *
+	positive_gradient1_error + tree_nodes[0]->count() * 
+	tree_nodes[2]->stat().l1_norm_coordinate_sum_ *
+	positive_gradient3_error;
+      tree_nodes[1]->stat().postponed_n_pruned_ += num_ik_pairs;
     }
 
     // Then the k-th node.
@@ -470,6 +426,25 @@ class AxilrodTellerForceKernel {
 	 0.5 * (min_positive_gradient3 + max_positive_gradient3),
 	 tree_nodes[1]->stat().coordinate_sum_,
 	 &(tree_nodes[2]->stat().postponed_positive_gradient2_e));
+
+      tree_nodes[2]->stat().postponed_negative_gradient1_used_error +=
+	num_ij_pairs * (negative_gradient2_error + negative_gradient3_error);
+      tree_nodes[2]->stat().postponed_positive_gradient1_used_error += 
+	num_ij_pairs * (positive_gradient2_error + positive_gradient3_error);
+      tree_nodes[2]->stat().postponed_negative_gradient2_used_error += 
+	tree_nodes[1]->count() * 
+	tree_nodes[0]->stat().l1_norm_coordinate_sum_ *
+	negative_gradient2_error + tree_nodes[0]->count() * 
+	tree_nodes[1]->stat().l1_norm_coordinate_sum_ *
+	negative_gradient3_error;
+      tree_nodes[2]->stat().postponed_positive_gradient2_used_error += 
+	tree_nodes[1]->count() * 
+	tree_nodes[0]->stat().l1_norm_coordinate_sum_ *
+	positive_gradient2_error + tree_nodes[0]->count() * 
+	tree_nodes[1]->stat().l1_norm_coordinate_sum_ *
+	positive_gradient3_error;
+
+      tree_nodes[2]->stat().postponed_n_pruned_ += num_ij_pairs;
     }
   }
 
@@ -501,44 +476,55 @@ class AxilrodTellerForceKernel {
 		 double total_n_minus_one_num_tuples) {
 
     bool first_node_prunable =
-      ((negative_gradient1_error + negative_gradient2_error) <
+      ((negative_gradient1_error + negative_gradient2_error) <=
        std::max
-       ((relative_error / (double) total_n_minus_one_num_tuples) *
-	fabs(tree_nodes[0]->stat().negative_gradient1_u +
-	     tree_nodes[0]->stat().postponed_negative_gradient1_u +
-	     node_i_additional_negative_force1_u),
+       ((relative_error *
+	 fabs(tree_nodes[0]->stat().negative_gradient1_u +
+	      tree_nodes[0]->stat().postponed_negative_gradient1_u +
+	      node_i_additional_negative_force1_u) -
+	 tree_nodes[0]->stat().negative_gradient1_used_error) /
+	(total_n_minus_one_num_tuples - tree_nodes[0]->stat().n_pruned_),
 	threshold / total_n_minus_one_num_tuples /
 	tree_nodes[0]->stat().max_l1_norm_))
       &&
-      ((positive_gradient1_error + positive_gradient2_error) <
-       std::max((relative_error / (double) total_n_minus_one_num_tuples) *
-		(tree_nodes[0]->stat().positive_gradient1_l +
-		 tree_nodes[0]->stat().postponed_positive_gradient1_l +
-		 node_i_additional_positive_force1_l),
-		threshold / total_n_minus_one_num_tuples /
-		tree_nodes[0]->stat().max_l1_norm_))
+      ((positive_gradient1_error + positive_gradient2_error) <=
+       std::max
+       ((relative_error *
+	(tree_nodes[0]->stat().positive_gradient1_l +
+	 tree_nodes[0]->stat().postponed_positive_gradient1_l +
+	 node_i_additional_positive_force1_l) - 
+	 tree_nodes[0]->stat().positive_gradient1_used_error) /
+	(total_n_minus_one_num_tuples - tree_nodes[0]->stat().n_pruned_),
+	threshold / total_n_minus_one_num_tuples /
+	tree_nodes[0]->stat().max_l1_norm_))
       &&
       (tree_nodes[2]->count() * tree_nodes[1]->stat().l1_norm_coordinate_sum_ *
        negative_gradient1_error +
        tree_nodes[1]->count() * tree_nodes[2]->stat().l1_norm_coordinate_sum_ *
-       negative_gradient2_error <
+       negative_gradient2_error <=
        std::max
-       (relative_error * num_jk_pairs / total_n_minus_one_num_tuples *
-	(L1Norm_(tree_nodes[0]->stat().negative_gradient2_u) +
-	 L1Norm_(tree_nodes[0]->stat().postponed_negative_gradient2_u) +
-	 node_i_additional_l1_norm_negative_force2_u),
+       (num_jk_pairs *
+	(relative_error *
+	 (L1Norm_(tree_nodes[0]->stat().negative_gradient2_u) +
+	  L1Norm_(tree_nodes[0]->stat().postponed_negative_gradient2_u) +
+	  node_i_additional_l1_norm_negative_force2_u) -
+	 tree_nodes[0]->stat().negative_gradient2_used_error) /
+	(total_n_minus_one_num_tuples - tree_nodes[0]->stat().n_pruned_),
 	threshold * num_jk_pairs / total_n_minus_one_num_tuples))
       &&
       (tree_nodes[2]->count() * tree_nodes[1]->stat().l1_norm_coordinate_sum_ *
        positive_gradient1_error +
        tree_nodes[1]->count() * tree_nodes[2]->stat().l1_norm_coordinate_sum_ *
-       positive_gradient2_error <
+       positive_gradient2_error <=
        std::max
-       (relative_error * num_jk_pairs / total_n_minus_one_num_tuples *
-	(L1Norm_(tree_nodes[0]->stat().positive_gradient2_l) +
-	 L1Norm_(tree_nodes[0]->stat().postponed_positive_gradient2_l) +
-	 node_i_additional_l1_norm_positive_force2_l),
-	threshold * num_jk_pairs / total_n_minus_one_num_tuples));
+       (num_jk_pairs *
+	(relative_error * 
+	 (L1Norm_(tree_nodes[0]->stat().positive_gradient2_l) +
+	  L1Norm_(tree_nodes[0]->stat().postponed_positive_gradient2_l) +
+	  node_i_additional_l1_norm_positive_force2_l) -
+	 tree_nodes[0]->stat().positive_gradient2_used_error) /
+	(total_n_minus_one_num_tuples - tree_nodes[0]->stat().n_pruned_),
+	 threshold * num_jk_pairs / total_n_minus_one_num_tuples));
     
     // Short circuit prunable decision...
     if(!first_node_prunable) {
@@ -547,46 +533,59 @@ class AxilrodTellerForceKernel {
 
     bool second_node_prunable =
       (tree_nodes[1] == tree_nodes[0]) ? first_node_prunable:
-      (((negative_gradient1_error + negative_gradient3_error) <
+      (((negative_gradient1_error + negative_gradient3_error) <=
 	std::max
-	((relative_error / (double) total_n_minus_one_num_tuples) *
-	 fabs(tree_nodes[1]->stat().negative_gradient1_u +
-	      tree_nodes[1]->stat().postponed_negative_gradient1_u +
-	      node_j_additional_negative_force1_u),
+	((relative_error *
+	  fabs(tree_nodes[1]->stat().negative_gradient1_u +
+	       tree_nodes[1]->stat().postponed_negative_gradient1_u +
+	       node_j_additional_negative_force1_u) -
+	  tree_nodes[1]->stat().negative_gradient1_used_error) /
+	 (total_n_minus_one_num_tuples - tree_nodes[1]->stat().n_pruned_),
 	 threshold / total_n_minus_one_num_tuples /
 	 tree_nodes[1]->stat().max_l1_norm_))
        &&
-       ((positive_gradient1_error + positive_gradient3_error) <
-	std::max((relative_error / (double) total_n_minus_one_num_tuples) *
-		 (tree_nodes[1]->stat().positive_gradient1_l +
-		  tree_nodes[1]->stat().postponed_positive_gradient1_l +
-		  node_j_additional_positive_force1_l),
-		 threshold / total_n_minus_one_num_tuples /
-		 tree_nodes[1]->stat().max_l1_norm_))
+       ((positive_gradient1_error + positive_gradient3_error) <=
+	std::max
+	((relative_error *
+	  (tree_nodes[1]->stat().positive_gradient1_l +
+	   tree_nodes[1]->stat().postponed_positive_gradient1_l +
+	   node_j_additional_positive_force1_l) -
+	  tree_nodes[1]->stat().positive_gradient1_used_error) /
+	 (total_n_minus_one_num_tuples - tree_nodes[1]->stat().n_pruned_),
+	 threshold / total_n_minus_one_num_tuples /
+	 tree_nodes[1]->stat().max_l1_norm_))
        &&
        (tree_nodes[2]->count() * 
 	tree_nodes[0]->stat().l1_norm_coordinate_sum_ *
 	negative_gradient1_error +
 	tree_nodes[0]->count() * 
 	tree_nodes[2]->stat().l1_norm_coordinate_sum_ *
-	negative_gradient3_error <
-	std::max(relative_error * num_ik_pairs / total_n_minus_one_num_tuples *
-		 (L1Norm_(tree_nodes[1]->stat().negative_gradient2_u) +
-		  L1Norm_
-		  (tree_nodes[1]->stat().postponed_negative_gradient2_u) +
-		  node_j_additional_l1_norm_negative_force2_u),
-		 threshold * num_ik_pairs / total_n_minus_one_num_tuples))
+	negative_gradient3_error <=
+	std::max
+	(num_ik_pairs * 
+	 (relative_error *
+	  (L1Norm_(tree_nodes[1]->stat().negative_gradient2_u) +
+	   L1Norm_
+	   (tree_nodes[1]->stat().postponed_negative_gradient2_u) +
+	   node_j_additional_l1_norm_negative_force2_u) -
+	  tree_nodes[1]->stat().negative_gradient2_used_error) /
+	 (total_n_minus_one_num_tuples - tree_nodes[1]->stat().n_pruned_),
+	 threshold * num_ik_pairs / total_n_minus_one_num_tuples))
        &&
       (tree_nodes[2]->count() * tree_nodes[0]->stat().l1_norm_coordinate_sum_ *
        positive_gradient1_error +
        tree_nodes[0]->count() * tree_nodes[2]->stat().l1_norm_coordinate_sum_ *
-       positive_gradient3_error <
-       std::max(relative_error * num_ik_pairs / total_n_minus_one_num_tuples *
-		(L1Norm_(tree_nodes[1]->stat().positive_gradient2_l) +
-		 L1Norm_
-		 (tree_nodes[1]->stat().postponed_positive_gradient2_l) +
-		 node_j_additional_l1_norm_positive_force2_l),
-		threshold * num_ik_pairs / total_n_minus_one_num_tuples)));
+       positive_gradient3_error <=
+       std::max
+       (num_ik_pairs *
+	(relative_error *
+	 (L1Norm_(tree_nodes[1]->stat().positive_gradient2_l) +
+	  L1Norm_
+	  (tree_nodes[1]->stat().postponed_positive_gradient2_l) +
+	  node_j_additional_l1_norm_positive_force2_l) -
+	 tree_nodes[1]->stat().positive_gradient2_used_error) /
+	(total_n_minus_one_num_tuples - tree_nodes[1]->stat().n_pruned_),
+	threshold * num_ik_pairs / total_n_minus_one_num_tuples)));
 
     // Short circuit prunable decision based on the second node result...
     if(!second_node_prunable) {
@@ -595,47 +594,61 @@ class AxilrodTellerForceKernel {
 
     bool third_node_prunable =
       (tree_nodes[2] == tree_nodes[1]) ? second_node_prunable:
-      (((negative_gradient2_error + negative_gradient3_error) <
-	std::max((relative_error / (double) total_n_minus_one_num_tuples) *
-		 fabs(tree_nodes[2]->stat().negative_gradient1_u +
-		      tree_nodes[2]->stat().postponed_negative_gradient1_u +
-		      node_k_additional_negative_force1_u),
-		 threshold / total_n_minus_one_num_tuples /
-		 tree_nodes[2]->stat().max_l1_norm_))
+      (((negative_gradient2_error + negative_gradient3_error) <=
+	std::max
+	((relative_error *
+	  fabs(tree_nodes[2]->stat().negative_gradient1_u +
+	       tree_nodes[2]->stat().postponed_negative_gradient1_u +
+	       node_k_additional_negative_force1_u) -
+	  tree_nodes[2]->stat().negative_gradient1_used_error) /
+	 (total_n_minus_one_num_tuples - tree_nodes[2]->stat().n_pruned_),
+	 threshold / total_n_minus_one_num_tuples /
+	 tree_nodes[2]->stat().max_l1_norm_))
        &&
-       ((positive_gradient2_error + positive_gradient3_error) <
-	std::max((relative_error / (double) total_n_minus_one_num_tuples) *
-		 (tree_nodes[2]->stat().positive_gradient1_l +
-		  tree_nodes[2]->stat().postponed_positive_gradient1_l +
-		  node_k_additional_positive_force1_l),
-		 threshold / total_n_minus_one_num_tuples /
-		 tree_nodes[2]->stat().max_l1_norm_))
+       ((positive_gradient2_error + positive_gradient3_error) <=
+	std::max
+	((relative_error *
+	 (tree_nodes[2]->stat().positive_gradient1_l +
+	  tree_nodes[2]->stat().postponed_positive_gradient1_l +
+	  node_k_additional_positive_force1_l) -
+	  tree_nodes[2]->stat().positive_gradient1_used_error) /
+	 (total_n_minus_one_num_tuples - tree_nodes[2]->stat().n_pruned_),
+	 threshold / total_n_minus_one_num_tuples /
+	 tree_nodes[2]->stat().max_l1_norm_))
        &&
        (tree_nodes[1]->count() * 
 	tree_nodes[0]->stat().l1_norm_coordinate_sum_ *
 	negative_gradient2_error +
 	tree_nodes[0]->count() * 
 	tree_nodes[1]->stat().l1_norm_coordinate_sum_ *
-	negative_gradient3_error <
-	std::max(relative_error * num_ij_pairs / total_n_minus_one_num_tuples *
-		 (L1Norm_(tree_nodes[2]->stat().negative_gradient2_u) +
-		  L1Norm_
-		  (tree_nodes[2]->stat().postponed_negative_gradient2_u) +
-		  node_k_additional_l1_norm_negative_force2_u),
-		 threshold * num_ij_pairs / total_n_minus_one_num_tuples))
+	negative_gradient3_error <=
+	std::max
+	(num_ij_pairs *
+	 (relative_error *
+	  (L1Norm_(tree_nodes[2]->stat().negative_gradient2_u) +
+	   L1Norm_
+	   (tree_nodes[2]->stat().postponed_negative_gradient2_u) +
+	   node_k_additional_l1_norm_negative_force2_u) -
+	  tree_nodes[2]->stat().negative_gradient2_used_error) /
+	 (total_n_minus_one_num_tuples - tree_nodes[2]->stat().n_pruned_),
+	 threshold * num_ij_pairs / total_n_minus_one_num_tuples))
        &&
        (tree_nodes[1]->count() * 
 	tree_nodes[0]->stat().l1_norm_coordinate_sum_ *
 	positive_gradient2_error +
 	tree_nodes[0]->count() * 
 	tree_nodes[1]->stat().l1_norm_coordinate_sum_ *
-	positive_gradient3_error <
-	std::max(relative_error * num_ij_pairs / total_n_minus_one_num_tuples *
-		 (L1Norm_(tree_nodes[2]->stat().positive_gradient2_l) +
-		  L1Norm_
-		  (tree_nodes[2]->stat().postponed_positive_gradient2_l) +
-		  node_k_additional_l1_norm_positive_force2_l),
-		 threshold * num_ij_pairs / total_n_minus_one_num_tuples)));
+	positive_gradient3_error <=
+	std::max
+	(num_ij_pairs *
+	 (relative_error *
+	  (L1Norm_(tree_nodes[2]->stat().positive_gradient2_l) +
+	   L1Norm_
+	   (tree_nodes[2]->stat().postponed_positive_gradient2_l) +
+	   node_k_additional_l1_norm_positive_force2_l) -
+	  tree_nodes[2]->stat().positive_gradient2_used_error) /
+	 (total_n_minus_one_num_tuples - tree_nodes[2]->stat().n_pruned_),
+	 threshold * num_ij_pairs / total_n_minus_one_num_tuples)));
        
     // Prunable if any only if all three nodes are prunable.
     return third_node_prunable;
@@ -889,6 +902,90 @@ class AxilrodTellerForceKernel {
     index_orders_.Init(3);
   }
 
+  /** @brief Computes the leave-one-out node count and the 2-tuple
+   *         counts.
+   *
+   *  @param nodes The set of nodes (3 for Axilrod-Teller).
+   *  @param leave_one_out_node_j_count_for_node_i
+   *  @param leave_one_out_node_k_count_for_node_i
+   *  @param leave_one_out_node_i_count_for_node_j
+   *  @param leave_one_out_node_k_count_for_node_j
+   *  @param leave_one_out_node_i_count_for_node_k
+   *  @param leave_one_out_node_j_count_for_node_k
+   *  @param num_jk_pairs
+   *  @param num_ik_pairs
+   *  @param num_ij_pairs
+   */
+  void ComputeNumTwoTuples_
+  (const ArrayList<TTree *> &nodes,
+   double &leave_one_out_node_j_count_for_node_i,
+   double &leave_one_out_node_k_count_for_node_i,
+   double &leave_one_out_node_i_count_for_node_j,
+   double &leave_one_out_node_k_count_for_node_j,
+   double &leave_one_out_node_i_count_for_node_k,
+   double &leave_one_out_node_j_count_for_node_k,
+   double &num_jk_pairs, double &num_ik_pairs, double &num_ij_pairs) {
+    
+    if(nodes[0] == nodes[1]) {
+
+      // All three nodes are equal...
+      if(nodes[1] == nodes[2]) {
+	leave_one_out_node_j_count_for_node_i = nodes[0]->count() - 1;
+	leave_one_out_node_k_count_for_node_i = nodes[0]->count() - 2;
+	leave_one_out_node_i_count_for_node_j = nodes[0]->count() - 1;
+	leave_one_out_node_k_count_for_node_j = nodes[0]->count() - 2;
+	leave_one_out_node_i_count_for_node_k = nodes[0]->count() - 1;
+	leave_one_out_node_j_count_for_node_k = nodes[0]->count() - 2;
+	num_jk_pairs = math::BinomialCoefficient(nodes[0]->count() - 1, 2);
+	num_ik_pairs = num_jk_pairs;
+	num_ij_pairs = num_jk_pairs;
+      }
+
+      // i-th node equals j-th node, but j-th node does not equal k-th
+      // node.
+      else {
+	leave_one_out_node_j_count_for_node_i = nodes[0]->count() - 1;
+	leave_one_out_node_k_count_for_node_i = nodes[2]->count();
+	leave_one_out_node_i_count_for_node_j = nodes[0]->count() - 1;
+	leave_one_out_node_k_count_for_node_j = nodes[2]->count();
+	leave_one_out_node_i_count_for_node_k = nodes[0]->count();
+	leave_one_out_node_j_count_for_node_k = nodes[0]->count() - 1;
+	num_jk_pairs = (nodes[0]->count() - 1) * (nodes[2]->count());
+	num_ik_pairs = num_jk_pairs;
+	num_ij_pairs = math::BinomialCoefficient(nodes[0]->count(), 2);	
+      }
+    }
+    else {
+      
+      // i-th node does not equal j-th node, but j-th node equals k-th
+      // node.
+      if(nodes[1] == nodes[2]) {
+	leave_one_out_node_j_count_for_node_i = nodes[1]->count();
+	leave_one_out_node_k_count_for_node_i = nodes[1]->count() - 1;
+	leave_one_out_node_i_count_for_node_j = nodes[0]->count();
+	leave_one_out_node_k_count_for_node_j = nodes[1]->count() - 1;
+	leave_one_out_node_i_count_for_node_k = nodes[0]->count();
+	leave_one_out_node_j_count_for_node_k = nodes[1]->count() - 1;
+	num_jk_pairs = math::BinomialCoefficient(nodes[1]->count(), 2);
+	num_ik_pairs = (nodes[0]->count()) * (nodes[2]->count() - 1);
+	num_ij_pairs = (nodes[0]->count()) * (nodes[1]->count() - 1);
+      }
+
+      // All three nodes are disjoint in this case...
+      else {
+	leave_one_out_node_j_count_for_node_i = nodes[1]->count();
+	leave_one_out_node_k_count_for_node_i = nodes[2]->count();
+	leave_one_out_node_i_count_for_node_j = nodes[0]->count();
+	leave_one_out_node_k_count_for_node_j = nodes[2]->count();
+	leave_one_out_node_i_count_for_node_k = nodes[0]->count();
+	leave_one_out_node_j_count_for_node_k = nodes[1]->count();
+	num_jk_pairs = (nodes[1]->count()) * (nodes[2]->count());
+	num_ik_pairs = (nodes[0]->count()) * (nodes[2]->count());
+	num_ij_pairs = (nodes[0]->count()) * (nodes[1]->count());
+      }
+    }
+  }
+
   /** @brief Computes the pairwise distance among FastLib tree nodes.
    */
   void EvalMinMaxSquaredDistances(ArrayList<TTree *> &tree_nodes) {
@@ -1095,23 +1192,19 @@ class AxilrodTellerForceKernel {
 
     // If Monte Carlo evaluation is not going to be done in a
     // reasonable amount of time, then don't even try.
-    index_t num_sample_trials_remaining = 25;
+    index_t num_sample_trials_remaining = 75;
 
-    /*
     double lower_end = (1 - required_probability) * 0.5;
     double upper_end = required_probability + lower_end;    
     double actual_coverage_probability = OuterConfidenceInterval_
       (num_tuples, num_sample_trials_remaining, 1, 
        num_sample_trials_remaining, ceil(num_tuples * lower_end),
        ceil(num_tuples * upper_end));
-    */
 
-    /*
-    if(required_probability > actual_coverage_probability ||
-       num_tuples < 2 * num_sample_trials_remaining) {
+    if(isnan(actual_coverage_probability) ||
+       required_probability > actual_coverage_probability) {
       return false;
     }
-    */
 
     // Compute the number of (n - 1) tuples and leave-one-out
     // quantities.
@@ -1130,6 +1223,7 @@ class AxilrodTellerForceKernel {
 			 leave_one_out_node_j_count_for_node_k,
 			 num_jk_pairs, num_ik_pairs, num_ij_pairs);
   
+
     // boolean flag for stating whether the three nodes are prunable,
     // and whether we should try pruning.
     bool prunable = false;
@@ -1263,7 +1357,10 @@ class AxilrodTellerForceKernel {
     
     // If the three node tuple was prunable, then prune.
     if(prunable) {
-      Prune_(nodes, min_negative_gradient1, max_negative_gradient1,
+      Prune_(nodes, negative_gradient1_error, positive_gradient1_error, 
+	     negative_gradient2_error, positive_gradient2_error, 
+	     negative_gradient3_error, positive_gradient3_error, 
+	     min_negative_gradient1, max_negative_gradient1,
 	     min_positive_gradient1, max_positive_gradient1,
 	     min_negative_gradient2, max_negative_gradient2,
 	     min_positive_gradient2, max_positive_gradient2,
@@ -1423,7 +1520,10 @@ class AxilrodTellerForceKernel {
     
     // Prune only if all three nodes can be approximated.
     if(prunable) {
-      Prune_(tree_nodes, min_negative_gradient1, max_negative_gradient1, 
+      Prune_(tree_nodes, negative_gradient1_error, positive_gradient1_error, 
+	     negative_gradient2_error, positive_gradient2_error, 
+	     negative_gradient3_error, positive_gradient3_error,  
+	     min_negative_gradient1, max_negative_gradient1, 
 	     min_positive_gradient1, max_positive_gradient1, 
 	     min_negative_gradient2, max_negative_gradient2, 
 	     min_positive_gradient2, max_positive_gradient2, 

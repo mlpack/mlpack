@@ -33,17 +33,39 @@ class MultibodyStat {
    */
   double negative_gradient1_u;
 
+  /** @brief The used error for the first negative gradient component.
+   */
+  double negative_gradient1_used_error;
+
   /** @brief The minimum positive gradient (first component).
    */
   double positive_gradient1_l;
+
+  /** @brief The used error for the first positive gradient component.
+   */
+  double positive_gradient1_used_error;
   
   /** @brief The maximum negative gradient (second component).
    */
   Vector negative_gradient2_u;
 
+  /** @brief The used error for the second negative gradient
+   *         component.
+   */
+  double negative_gradient2_used_error;
+  
   /** @brief The minimum positive gradient (second component).
    */
   Vector positive_gradient2_l;
+
+  /** @brief The used error for the second positive gradient component.
+   */
+  double positive_gradient2_used_error;
+
+  /** @brief The lower bound on the total number of (n - 1) tuples
+   *         pruned.
+   */
+  double n_pruned_;
 
   /** @brief The postponed estimate of the first component of the
    *         negative gradient.
@@ -55,6 +77,11 @@ class MultibodyStat {
    */
   double postponed_negative_gradient1_u;
 
+  /** @brief The postponed used error for the first component of the
+   *         negative gradient.
+   */
+  double postponed_negative_gradient1_used_error;
+
   /** @brief The postponed lower bound change to the first component
    *         of the positive gradient.
    */
@@ -64,6 +91,11 @@ class MultibodyStat {
    *         positive gradient.
    */
   double postponed_positive_gradient1_e;
+
+  /** @brief The postponed used error for the first component of the
+   *         positive gradient.
+   */
+  double postponed_positive_gradient1_used_error;
 
   /** @brief The postponed estimate of the second component of the
    *         negative gradient.
@@ -75,6 +107,11 @@ class MultibodyStat {
    */
   Vector postponed_negative_gradient2_u;
 
+  /** @brief The postponed used error for the second component of the
+   *         negative gradient.
+   */
+  double postponed_negative_gradient2_used_error;
+
   /** @brief The postponed lower bound change to the second component
    *         of the positive gradient.
    */
@@ -85,17 +122,31 @@ class MultibodyStat {
    */
   Vector postponed_positive_gradient2_e;
 
+  /** @brief The postponed used error for the second component of the
+   *         positive gradient.
+   */
+  double postponed_positive_gradient2_used_error;
+
+  /** @brief The postponed (n - 1) tuples that were pruned.
+   */
+  double postponed_n_pruned_;
+
   /** @brief Resets the postponed statistics to zero.
    */
   void SetZero() {
     postponed_negative_gradient1_e = 0;
     postponed_negative_gradient1_u = 0;
+    postponed_negative_gradient1_used_error = 0;
     postponed_positive_gradient1_l = 0;
     postponed_positive_gradient1_e = 0;
+    postponed_positive_gradient1_used_error = 0;
     postponed_negative_gradient2_e.SetZero();
     postponed_negative_gradient2_u.SetZero();
+    postponed_negative_gradient2_used_error = 0;
     postponed_positive_gradient2_l.SetZero();
     postponed_positive_gradient2_e.SetZero();
+    postponed_positive_gradient2_used_error = 0;
+    postponed_n_pruned_ = 0;
   }
 
   /** @brief Initialize the statistics.
@@ -104,18 +155,28 @@ class MultibodyStat {
 
     coordinate_sum_.Init(3);    
     negative_gradient1_u = 0;
+    negative_gradient1_used_error = 0;
     positive_gradient1_l = 0;
+    positive_gradient1_used_error = 0;
     negative_gradient2_u.Init(3);
+    negative_gradient2_used_error = 0;
     positive_gradient2_l.Init(3);
+    positive_gradient2_used_error = 0;
+    n_pruned_ = 0;
 
     postponed_negative_gradient1_e = 0;
     postponed_negative_gradient1_u = 0;
+    postponed_negative_gradient1_used_error = 0;
     postponed_positive_gradient1_l = 0;
     postponed_positive_gradient1_e = 0;
+    postponed_positive_gradient1_used_error = 0;
     postponed_negative_gradient2_e.Init(3);
     postponed_negative_gradient2_u.Init(3);
+    postponed_negative_gradient2_used_error = 0;
     postponed_positive_gradient2_l.Init(3);
     postponed_positive_gradient2_e.Init(3);
+    postponed_positive_gradient2_used_error = 0;
+    postponed_n_pruned_ = 0;
   }
 
   /** @brief The initialization for leaf stats.

@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
   if(!strcmp(kernel, "axilrodteller")) {
     fx_timer_start(fx_root, "multitree multibody");
-    MultitreeMultibody<AxilrodTellerForceKernel<Tree, DHrectBound<2> >, Tree > mtmb;
+    MultitreeMultibody<AxilrodTellerForceKernel<Tree, DHrectBound<2> >, Tree> mtmb;
     mtmb.Init(bandwidth);
     mtmb.Compute(relative_error, threshold);
     fx_timer_stop(fx_root, "multitree multibody");
