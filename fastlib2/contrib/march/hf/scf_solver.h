@@ -81,6 +81,8 @@ class SCFSolver {
   // The right hand side of the linear system for the DIIS solution
   Vector diis_rhs_;
   
+  Vector basis_energies_;
+  
   // Initial size of the density norm and total energy arrays
   static const index_t expected_number_of_iterations_ = 20;
   
@@ -246,6 +248,9 @@ class SCFSolver {
     fx_format_result(module_, "normalization", "%g", 
                      normalization_constant_squared_);
     
+    basis_energies_.Init(number_of_basis_functions_);
+    basis_energies_.SetZero();
+    
   } // Init()
   
  private:
@@ -308,9 +313,10 @@ class SCFSolver {
     Vector eigenvalues;
     Matrix right_vectors_trans;
     
+    /*
     printf("Overlap Matrix:\n");
     overlap_matrix_.PrintDebug();
-    
+    */
     la::SVDInit(overlap_matrix_, &eigenvalues, &left_vectors, 
                 &right_vectors_trans);
     
@@ -749,10 +755,12 @@ class SCFSolver {
       two_electron_energy_ += density_matrix_.ref(i,i) * 
                               (fock_matrix_.ref(i,i) - core_matrix_.ref(i,i));
                               
-      
-      
-      total_energy += density_matrix_.ref(i,i) * 
+      double current_energy = density_matrix_.ref(i,i) * 
           (core_matrix_.ref(i,i) + fock_matrix_.ref(i,i));
+      
+      total_energy += current_energy;
+          
+      basis_energies_[i] = current_energy;
       /*    
       if (fock_matrix_.ref(i, i) > fock_max_) {
         fock_max_ = fock_matrix_.ref(i,i);
@@ -780,6 +788,8 @@ class SCFSolver {
             (core_matrix_.ref(i, j) + fock_matrix_.ref(i, j));
             
         total_energy = total_energy + this_energy;
+        
+        basis_energies_[i] += this_energy;
 
         /*
         if (fock_matrix_.ref(i, j) > fock_max_) {
@@ -1015,6 +1025,13 @@ class SCFSolver {
     Matrix energy_vector_matrix;
     energy_vector_matrix.AliasColVector(energy_vector_);
     data::Save(energy_vector_file, energy_vector_matrix);
+    
+    const char* basis_vector_file = fx_param_str(module_, "basis_energy", 
+                                                 "basis_energies.csv");
+    
+    Matrix basis_energy_matrix;
+    basis_energy_matrix.AliasColVector(basis_energies_);
+    data::Save(basis_vector_file, basis_energy_matrix);
     
     fx_format_result(module_, "density_matrix_norm", "%g", 
                      density_matrix_frobenius_norm_);
