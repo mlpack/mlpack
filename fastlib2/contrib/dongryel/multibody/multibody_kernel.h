@@ -52,37 +52,72 @@ class AxilrodTellerForceKernel {
     return nchsk;
   }
 
-  /** @brief Computes the outer confidence interval for the quantile
-   *         intervals.
-   */
-  double OuterConfidenceInterval_
-  (double population_size, double sample_size,
-   double sample_order_statistics_min_index,
-   double sample_order_statistics_max_index,
-   double population_order_statistics_min_index,
-   double population_order_statistics_max_index) {
+  double BinomialCoefficientHelper_(double n3, double k3,
+				    double n1, double k1, 
+				    double n2, double k2,
+				    double n4, double k4) {
 
-    double total_probability = 0;
+    double n_k3 = n3 - k3;
+    double n_k1 = n1 - k1;
+    double n_k2 = n2 - k2;
+    double n_k4 = n4 - k4;
+    double nchsk = 1;
+    double i;
 
-    for(double r_star = sample_order_statistics_min_index;
-	r_star <= sample_order_statistics_max_index; r_star += 1.0) {
+    if(k3 > n3 || k3 < 0 || k1 > n1 || k1 < 0 || k2 > n2 || k2 < 0 ||
+       k4 > n4 || k4 < 0) {
+      return 0;
+    }
+    
+    if(k3 < n_k3) {
+      k3 = n_k3;
+      n_k3 = n3 - k3;
+    }
+    if(k1 < n_k1) {
+      k1 = n_k1;
+      n_k1 = n1 - k1;
+    }
+    if(k2 < n_k2) {
+      k2 = n_k2;
+      n_k2 = n2 - k2;
+    }
+    if(k4 < n_k4) {
+      k4 = n_k4;
+      n_k4 = n4 - k4;
+    }
 
-      for(double s_star = 0; s_star <= sample_order_statistics_max_index - 1.0;
-	  s_star += 1.0) {
-
-	total_probability += 
-	  (BinomialCoefficient_(population_order_statistics_min_index, 
-				r_star) /
-	   BinomialCoefficient_(population_size, sample_size)) *
-	  BinomialCoefficient_(population_order_statistics_max_index - 1 -
-			       population_order_statistics_min_index,
-			       s_star - r_star) *
-	  BinomialCoefficient_(population_size - 
-			       population_order_statistics_max_index + 1,
-			       sample_size - s_star);
+    double min_index = std::min(n_k1, n_k2);
+    double max_index = std::max(n_k1, n_k2);
+    for(i = 1; i <= min_index; i += 1.0) {
+      k1 += 1.0;
+      k2 += 1.0;
+      nchsk *= k1;
+      nchsk /= k2;
+    }
+    for(i = min_index + 1; i <= max_index; i += 1.0) {
+      if(n_k1 < n_k2) {
+	k2 += 1.0;
+	nchsk *= i;
+	nchsk /= k2;
+      }
+      else {
+	k1 += 1.0;
+	nchsk *= k1;
+	nchsk /= i;
       }
     }
-    return total_probability;
+    for(i = 1; i <= n_k3; i += 1.0) {
+      k3 += 1.0;
+      nchsk *= k3;
+      nchsk /= i;
+    }
+    for(i = 1; i <= n_k4; i += 1.0) {
+      k4 += 1.0;
+      nchsk *= k4;
+      nchsk /= i;
+    }
+
+    return nchsk;
   }
 
   /** @brief Computes the L1 norm of a vector. This probably needs to
@@ -902,6 +937,52 @@ class AxilrodTellerForceKernel {
     index_orders_.Init(3);
   }
 
+  /** @brief Computes the outer confidence interval for the quantile
+   *         intervals.
+   */
+  double OuterConfidenceInterval
+  (double population_size, double sample_size,
+   double sample_order_statistics_min_index,
+   double sample_order_statistics_max_index,
+   double population_order_statistics_min_index,
+   double population_order_statistics_max_index) {
+
+    double total_probability = 0;
+
+    for(double r_star = sample_order_statistics_min_index;
+	r_star <= sample_order_statistics_max_index; r_star += 1.0) {
+
+      if(population_order_statistics_min_index < r_star) {
+	continue;
+      }
+
+      for(double s_star = 0; s_star <= sample_order_statistics_max_index - 1.0;
+	  s_star += 1.0) {
+
+	// If any of the arguments to the binomial coefficient is
+	// invalid, then the contribution is zero.
+	if(population_order_statistics_max_index - 1 -
+	   population_order_statistics_min_index - s_star + r_star < 0 ||
+	   s_star < r_star ||
+	   population_size - population_order_statistics_max_index + 1 -
+	   sample_size + s_star < 0 ||
+	   sample_size - s_star < 0) {
+	  continue;
+	}
+
+	total_probability +=
+	  BinomialCoefficientHelper_
+	  (population_order_statistics_min_index, r_star,
+	   population_order_statistics_max_index - 1 -
+	   population_order_statistics_min_index,
+	   s_star - r_star, population_size, sample_size,
+	   population_size - population_order_statistics_max_index + 1,
+	   sample_size - s_star);
+      }
+    }
+    return total_probability;
+  }
+
   /** @brief Computes the leave-one-out node count and the 2-tuple
    *         counts.
    *
@@ -1187,24 +1268,8 @@ class AxilrodTellerForceKernel {
   bool MonteCarloEval(const Matrix &data, ArrayList<index_t> &indices,
 		      ArrayList<TTree *> &nodes,
 		      double relative_error, double threshold,
-		      double z_score, double total_n_minus_one_num_tuples, 
+		      int num_samples, double total_n_minus_one_num_tuples, 
 		      double num_tuples, double required_probability) {
-
-    // If Monte Carlo evaluation is not going to be done in a
-    // reasonable amount of time, then don't even try.
-    index_t num_sample_trials_remaining = 75;
-
-    double lower_end = (1 - required_probability) * 0.5;
-    double upper_end = required_probability + lower_end;    
-    double actual_coverage_probability = OuterConfidenceInterval_
-      (num_tuples, num_sample_trials_remaining, 1, 
-       num_sample_trials_remaining, ceil(num_tuples * lower_end),
-       ceil(num_tuples * upper_end));
-
-    if(isnan(actual_coverage_probability) ||
-       required_probability > actual_coverage_probability) {
-      return false;
-    }
 
     // Compute the number of (n - 1) tuples and leave-one-out
     // quantities.
@@ -1223,7 +1288,6 @@ class AxilrodTellerForceKernel {
 			 leave_one_out_node_j_count_for_node_k,
 			 num_jk_pairs, num_ik_pairs, num_ij_pairs);
   
-
     // boolean flag for stating whether the three nodes are prunable,
     // and whether we should try pruning.
     bool prunable = false;
@@ -1244,7 +1308,7 @@ class AxilrodTellerForceKernel {
     // Sample a random 3-tuple from the i-th node, the j-th node and
     // the k-th node.
     for(index_t current_num_samples = 0; current_num_samples <
-	num_sample_trials_remaining; current_num_samples++) {
+	num_samples; current_num_samples++) {
 
       // Select a valid 3-tuple sample.
       do {
@@ -1378,7 +1442,7 @@ class AxilrodTellerForceKernel {
    */
   bool Eval(const Matrix &data, ArrayList<index_t> &indices,
 	    ArrayList<TTree *> &tree_nodes, double relative_error, 
-	    double threshold, double z_score, 
+	    double threshold, 
 	    double total_n_minus_one_num_tuples, double num_tuples) {
 
     // First, compute the pairwise distance among the three nodes.
