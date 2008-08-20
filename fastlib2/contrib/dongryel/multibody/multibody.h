@@ -148,10 +148,6 @@ class MultitreeMultibody {
     // level. We divide by 4 here because the force vector is composed
     // of 4 different parts and we bound errors on each separately.
     threshold_ = threshold / 4.0;
-   
-    // Set the probability requirement to 90 %, which gives the
-    // standard z-score to be the following.
-    z_score_ = 1.28;
 
     // Initialize intermediate computation spaces to zero.
     negative_force1_e_.SetZero();
@@ -168,6 +164,15 @@ class MultitreeMultibody {
     positive_force2_used_error_.SetZero();
     n_pruned_.SetZero();
     total_force_e_.SetZero();
+
+    // Compute the coverage probability table.
+    for(index_t j = 0; j < coverage_probabilities_.length(); j++) {
+      coverage_probabilities_[j] = 
+	mkernel_.OuterConfidenceInterval
+	(ceil(total_num_tuples_),
+	 ceil(25 * (j + 1)), 1, ceil(25 * (j + 1)),
+	 ceil(total_num_tuples_ * 0.05), ceil(total_num_tuples_ * 0.95));
+    }
 
     // Run and do timing for multitree multibody
     MTMultibody(root_nodes, total_num_tuples_, 0.9);
@@ -203,6 +208,7 @@ class MultitreeMultibody {
     // More temporary variables initialization.
     non_leaf_indices_.Init(mkernel_.order());
     distmat_.Init(mkernel_.order(), mkernel_.order());
+    coverage_probabilities_.Init(10);
     exhaustive_indices_.Init(mkernel_.order());
     num_leave_one_out_tuples_.Init(mkernel_.order());
 
@@ -263,11 +269,6 @@ private:
    */
   MultibodyKernel mkernel_;
 
-  /** @brief The probability requirement that the componentwise
-   *         relative error bound holds.
-   */
-  double z_score_;
-
   /** @brief The accuracy requirement: componentwise relative error
    *         bound.
    */
@@ -294,6 +295,11 @@ private:
   /** @brief The temporary space for storing pairwise distances.
    */
   Matrix distmat_;
+
+  /** @brief The probabiliy lookup table for sample statistics
+   *         coverage.
+   */
+  Vector coverage_probabilities_;
 
   /** @brief The pointer to the root of the tree.
    */

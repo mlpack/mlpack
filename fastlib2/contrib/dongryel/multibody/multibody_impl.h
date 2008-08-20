@@ -471,10 +471,28 @@ template<typename TMultibodyKernel, typename TTree>
 bool MultitreeMultibody<TMultibodyKernel, TTree>::Prunable
 (ArrayList<TTree *> &nodes, double num_tuples, double required_probability) {
 
-  return 
-    mkernel_.Eval(data_, exhaustive_indices_, nodes, 
-		  relative_error_, threshold_, z_score_,
-		  total_n_minus_one_num_tuples_, num_tuples);
+  // Locate the minimum required number of samples to achieve the
+  // prescribed probability level.
+  int num_samples = 0;
+  for(index_t i = 0; i < coverage_probabilities_.length(); i++) {
+    if(coverage_probabilities_[i] > required_probability) {
+      num_samples = 25 * (i + 1);
+      break;
+    }
+  }
+
+  if(num_samples == 0) {
+    return
+      mkernel_.Eval(data_, exhaustive_indices_, nodes, relative_error_,
+		    threshold_, total_n_minus_one_num_tuples_, num_tuples);
+  }
+  else {
+    return 
+      mkernel_.MonteCarloEval(data_, exhaustive_indices_, nodes, 
+			      relative_error_, threshold_, num_samples,
+			      total_n_minus_one_num_tuples_, num_tuples,
+			      required_probability);
+  }
 }
 
 template<typename TMultibodyKernel, typename TTree>
@@ -527,7 +545,7 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
     
     // If the current node combination is valid, then recurse.
     if(new_num_tuples > 0) {
-      MTMultibody(new_nodes, new_num_tuples, (required_probability));
+      MTMultibody(new_nodes, new_num_tuples, sqrt(required_probability));
     }
     
     // Recurse to the right.
@@ -536,7 +554,7 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
     
     // If the current node combination is valid, then recurse.
     if(new_num_tuples > 0) {
-      MTMultibody(new_nodes, new_num_tuples, (required_probability));
+      MTMultibody(new_nodes, new_num_tuples, sqrt(required_probability));
     }
 
     // Refine statistics after recursing.
