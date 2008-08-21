@@ -41,7 +41,7 @@ void RelaxedNmfBoundTightener::Init(fx_module *module,
   x_lower_bound_=x_lower_bound;
   x_upper_bound_=x_upper_bound;
   soft_lower_bound_=values_sq_norm_;
-  new_dimension_=fx_param_int(module_, "new_dimension");
+  new_dimension_=fx_param_int(module_, "new_dimension",  5);
   grad_tolerance_=fx_param_double(module_, "grad_tolerance", 0.01);
   desired_duality_gap_=fx_param_double(module_, "duality_gap", 0.1);
   function_upper_bound_=function_upper_bound; 
@@ -50,35 +50,44 @@ void RelaxedNmfBoundTightener::Init(fx_module *module,
   opt_var_sign_=opt_var_sign;
   // Generate the linear terms
   // and compute the soft lower bound
-  a_linear_term_.Init(new_dim_*values_.size());
-  b_linear_term_.Init(new_dim_*values_.size());
+  a_linear_term_.Init(new_dimension_*values_.size());
+  b_linear_term_.Init(new_dimension_*values_.size());
   for(index_t i=0; i<values_.size(); i++) {
     index_t row=rows_[i];
     index_t col=columns_[i];
     index_t w=row+w_offset_;
     index_t h=col+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dim_; j++) {
+    for(index_t j=0; j<new_dimension_; j++) {
       double y_lower=x_lower_bound_->get(j, w) + x_lower_bound_->get(j, h);
       double y_upper=x_upper_bound_->get(j, w) + x_upper_bound_->get(j, h);      
-      a_linear_term_[new_dim_*i+j]=
+      a_linear_term_[new_dimension_*i+j]=
           (y_upper*exp(y_lower)-y_lower*exp(y_upper))/(y_upper-y_lower);
-      b_linear_term_[new_dim_*i+j]=(exp(y_upper)-exp(y_lower))/
+      b_linear_term_[new_dimension_*i+j]=(exp(y_upper)-exp(y_lower))/
           (y_upper-y_lower);
-      DEBUG_ASSERT(b_linear_term_[new_dim_*i+j]>=0);
+      DEBUG_ASSERT(b_linear_term_[new_dimension_*i+j]>=0);
       convex_part+=exp(y_lower);
       soft_lower_bound_+= -2*values_[i]*(
-                            a_linear_term_[new_dim_*i+j]
-                            +b_linear_term_[new_dim_*i+j]*y_upper);
+                            a_linear_term_[new_dimension_*i+j]
+                            +b_linear_term_[new_dimension_*i+j]*y_upper);
     }
     soft_lower_bound_+=convex_part*convex_part;
   }
 }
 
+void RelaxedNmfBoundTightener::SetOptVarRowColumn(index_t row, index_t column) {
+  opt_var_row_=row;
+  opt_var_column_=column;
+}
+
+void RelaxedNmfBoundTightener::SetOptVarSign(double sign) {
+  opt_var_sign_=sign;
+}
+
 void RelaxedNmfBoundTightener::Destruct() {
   num_of_rows_=-1;;
   num_of_columns_=-1;
-  new_dim_=-1;
+  new_dimension_=-1;
   rows_.Renew();
   columns_.Renew();
   values_.Renew();
@@ -100,16 +109,16 @@ void RelaxedNmfBoundTightener::ComputeGradient(Matrix &coordinates, Matrix *grad
     index_t w=row+w_offset_;
     index_t h=col+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dim_; j++) {
-      norm_error+=-2*values_[i]*(a_linear_term_[new_dim_*i+j]
-                                +b_linear_term_[new_dim_*i+j]
+    for(index_t j=0; j<new_dimension_; j++) {
+      norm_error+=-2*values_[i]*(a_linear_term_[new_dimension_*i+j]
+                                +b_linear_term_[new_dimension_*i+j]
                                  *(coordinates.get(j, w)+coordinates.get(j, h)));
 
       convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
     }
     norm_error+=convex_part*convex_part;
   } 
-  DEBUG_ASSERT_MESSAGE(norm_error >= function_upper_bound_, 
+  DEBUG_ASSERT_MSG(norm_error >= function_upper_bound_, 
       "Something is wrong, solution out of the interior!"); 
   
   
@@ -119,13 +128,13 @@ void RelaxedNmfBoundTightener::ComputeGradient(Matrix &coordinates, Matrix *grad
     index_t w=row+w_offset_;
     index_t h=col+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dim_; j++) {
+    for(index_t j=0; j<new_dimension_; j++) {
       convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
     }
-    for(index_t j=0; j<new_dim_; j++) {
+    for(index_t j=0; j<new_dimension_; j++) {
       double grad=2*convex_part*exp(coordinates.get(j, w)
                                     +coordinates.get(j, h))
-                      -2*values_[i]*b_linear_term_[new_dim_*i+j];
+                      -2*values_[i]*b_linear_term_[new_dimension_*i+j];
       gradient->set(j, w, gradient->get(j, w)+grad);
       gradient->set(j, h, gradient->get(j, h)+grad);
     }
@@ -155,7 +164,7 @@ void RelaxedNmfBoundTightener::ComputeNonRelaxedObjective(Matrix &coordinates,
     index_t w=row+w_offset_;
     index_t h=col+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dim_; j++) {
+    for(index_t j=0; j<new_dimension_; j++) {
       convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
     }
     *objective+=convex_part*(convex_part-2*values_[i]);
@@ -180,9 +189,9 @@ double RelaxedNmfBoundTightener::ComputeLagrangian(Matrix &coordinates) {
     index_t w=row+w_offset_;
     index_t h=col+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dim_; j++) {
-      norm_error+=-2*values_[i]*(a_linear_term_[new_dim_*i+j]
-                                +b_linear_term_[new_dim_*i+j]
+    for(index_t j=0; j<new_dimension_; j++) {
+      norm_error+=-2*values_[i]*(a_linear_term_[new_dimension_*i+j]
+                                +b_linear_term_[new_dimension_*i+j]
                                  *(coordinates.get(j, w)+coordinates.get(j, h)));
 
       convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
@@ -221,7 +230,7 @@ void RelaxedNmfBoundTightener::set_sigma(double sigma) {
 }
 
 void RelaxedNmfBoundTightener::GiveInitMatrix(Matrix *init_data) {
-  init_data->Init(new_dim_, num_of_rows_ + num_of_columns_);
+  init_data->Init(new_dimension_, num_of_rows_ + num_of_columns_);
   for(index_t i=0; i<init_data->n_rows(); i++) {
     for(index_t j=0; j<init_data->n_cols(); j++) {
       init_data->set(i, j, 
@@ -237,7 +246,15 @@ bool RelaxedNmfBoundTightener::IsDiverging(double objective) {
 bool RelaxedNmfBoundTightener::IsOptimizationOver(Matrix &coordinates, 
                                     Matrix &gradient, double step) {
 
-  double objective;
+  index_t num_of_constraints=1;
+  if (num_of_constraints/sigma_ > desired_duality_gap_) {
+    return true;
+  } else {
+    return false;
+  }
+ 
+}
+/*  double objective;
   ComputeObjective(coordinates, &objective);
   if (fabs(objective-previous_objective_)/objective<0.01) {
     previous_objective_=objective;
@@ -247,28 +264,23 @@ bool RelaxedNmfBoundTightener::IsOptimizationOver(Matrix &coordinates,
      return false;
    
   }
-/*  double norm_gradient=la::Dot(gradient.n_elements(), 
+*/  
+
+  
+
+
+bool RelaxedNmfBoundTightener::IsIntermediateStepOver(Matrix &coordinates, 
+                                        Matrix &gradient, 
+                                        double step) {
+  double norm_gradient=la::Dot(gradient.n_elements(), 
                                gradient.ptr(), 
                                gradient.ptr());
   if (norm_gradient*step < grad_tolerance_) {
     return true;
   }
   return false;
-*/
-  
-}
 
-bool RelaxedNmfBoundTightener::IsIntermediateStepOver(Matrix &coordinates, 
-                                        Matrix &gradient, 
-                                        double step) {
-  index_t num_of_constraints=1;
-  if (num_of_cnstraints/sigma_ > desired_duality_gap_) {
-    return true;
-  } else {
-    return false;
-  }
- 
-}
+
 /*
   double norm_gradient=la::Dot(gradient.n_elements(), 
                                gradient.ptr(), 
