@@ -481,7 +481,7 @@ bool MultitreeMultibody<TMultibodyKernel, TTree>::Prunable
     }
   }
 
-  if(num_samples == 0) {
+  if(num_samples == 0 || num_samples > num_tuples) {
     return
       mkernel_.Eval(data_, exhaustive_indices_, nodes, relative_error_,
 		    threshold_, total_n_minus_one_num_tuples_, num_tuples);

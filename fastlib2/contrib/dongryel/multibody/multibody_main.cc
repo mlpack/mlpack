@@ -11,7 +11,7 @@ typedef BinarySpaceTree<DHrectBound<2>, Matrix, MultibodyStat > Tree;
 int main(int argc, char *argv[])
 {
   bool do_naive;
-  double relative_error, threshold;
+  double relative_error, threshold, probability, centered_percentile_coverage;
   double bandwidth;
   const char *kernel;
   
@@ -22,6 +22,9 @@ int main(int argc, char *argv[])
   bandwidth = fx_param_double(fx_root, "bandwidth", 0.1);
   relative_error = fx_param_double(fx_root, "relative_error", 0.1);
   threshold = fx_param_double(fx_root, "threshold", 0);
+  centered_percentile_coverage = 
+    fx_param_double(fx_root, "centered_percentile_coverage", 100);
+  probability = fx_param_double(fx_root, "probability", 1);
   kernel = fx_param_str(fx_root, "kernel", "axilrodteller");
   
   // Multibody computation
@@ -31,7 +34,8 @@ int main(int argc, char *argv[])
     fx_timer_start(fx_root, "multitree multibody");
     MultitreeMultibody<AxilrodTellerForceKernel<Tree, DHrectBound<2> >, Tree> mtmb;
     mtmb.Init(bandwidth);
-    mtmb.Compute(relative_error, threshold);
+    mtmb.Compute(relative_error, threshold,
+		 centered_percentile_coverage, probability);
     fx_timer_stop(fx_root, "multitree multibody");
     printf("Multitree multibody completed...\n");
     mtmb.PrintDebug(false);
