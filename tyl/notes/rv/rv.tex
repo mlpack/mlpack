@@ -18,8 +18,9 @@
 \newcommand{\prob}[2]{\E{\T{prob(} #1 \ | \ #2 \T{)}}}
 \newcommand{\thereis}[3]{\E{\exists\ #1 : #2 \ . \ #3}}
 \newcommand{\Not}{\T{not}}
-\newcommand{\argmax}[2]{\E{\T{argmax}_{#1} #2}}
+\newcommand{\argmax}[2]{\E{\T{argmax}_{#1}\ #2}}
 \newcommand{\case}{\T{case}}
+\newcommand{\ite}[3]{\E{\T{if}\ #1\ \T{then}\ #2\ \T{else}\ #3}}
 
 \begin{document}
 \maketitle
@@ -39,8 +40,10 @@ e & ::= & x \ | \ r
     \ | \ e_1 * e_2 \ | \ e_1 / e_2 \ | \ e_1^{e_2} \\
 & & \ | \ \Not\ e \ | \ e_1 \vee e_2 \ | \ e_1 \wedge e_2 \\
 & & \ | \ e_1 \leq e_2 \ | \ e_1 = e_2 \ | \ e_1 \geq e_2 \\
+& & \ | \ \ite{e_1}{e_2}{e_3} \\
 & & \ | \ \rlet{x}{e_1}{e_2} \\
-& & \ | \ \prob{e_1}{e_2} 
+& & \ | \ \prob{e_1}{e_2} \\
+& & \ | \ \argmax{\vec{x}:\vec{t}}{e}
 \end{eqnarray*}
 
 \rbool, \rint, and \rreal\ are synonyms for $[0,1]$,
@@ -50,9 +53,14 @@ let}s in the object language to solve the RV 'identity' problem.
 Also, we disallow random variable literals (they would only be
 marginally useful)...RVs can only be introduced with \T{rlet}.
 
-Things to be added: \T{let}\ for multivariate/joint distributions,
-\pdf{e_1}{e_2}, \thereis{x}{t}{e}, \argmax{x_1:t_1,\ldots}{e}, \case,
-... indexing. \T{prob} is a special case of \T{pdf}.
+Notes: multivariate/joint distributions can (for now) be represented
+by the equivalent cascade of conditionals (i.e.\ $p(x,y,z) =
+p(x)p(y|x)p(z|x,y)$), hidden parameters (a.k.a.\ existentially
+quantified variables: \thereis{x}{t}{e}) can often be obviated (see
+2-Gaussian example, below),
+
+Things to be added: \pdf{e_1}{e_2}, ... indexing. \T{prob} is a
+special case of \T{pdf}.
 
 Currently, no distinction is made between random reals and normal
 reals, so that things like $f(x) = x^2 + 5$ operate on both.
@@ -67,9 +75,10 @@ reals, so that things like $f(x) = x^2 + 5$ operate on both.
 %
 \[ \thereis{\mu,\sigma}{\rreal}{\rlet{x}{N(\mu,\sigma)}{\prob{x\leq x^2}{}}} \]
 %
-\[ \argmax{\mu_j,\sigma_j:\rreal}{ %
-  \rlet{c_i,x_i}{\mathrm{Bernoulli}(1/2),\mathrm{Normal}(\mu_{c_i},\sigma_{c_i})}
-       {\pdf{\{x_i=d_i\}}{}}
+\[ \argmax{\mu_0,\mu_1,\sigma_0,\sigma_1:\rreal}{ %
+  \rlet{c_i,x_i}{\mathrm{Bernoulli}(1/2),\mathrm{Normal}(
+    \ite{c_i=0}{\mu_0}{\mu_1},\ite{c_i=0}{\sigma_0}{\sigma_1})}
+       {\pdf{\bigwedge_i x_i=r_i }{}}
 } \]
 
 \begin{verbatim}
@@ -77,7 +86,7 @@ reals, so that things like $f(x) = x^2 + 5$ operate on both.
 exists mu[j], sigma[j] : real in
 rlet c[i] ~ Bernoulli(1/2) in
 rlet x[i] ~ Normal(mu[c[i]],sigma[c[i]]) in
-argmax_{mu',sigma'} pdf( {x[i]=d[i]} | mu=mu' /\ sigma=sigma' )
+argmax_{mu',sigma'} pdf( {x[i]=r[i]} | mu=mu' /\ sigma=sigma' )
 \end{verbatim}
 
 \section{Type System}
