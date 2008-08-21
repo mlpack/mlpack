@@ -1,0 +1,123 @@
+\documentclass{article}
+\usepackage{fullpage}
+\title{A Syntax and Semantics for\\Probability and Statistics with Random Variables}
+\author{Sooraj Bhat}
+
+\parskip 0.7pc
+\parindent 0pc
+
+\newcommand{\E}[1]{\ensuremath{#1}}
+\newcommand{\T}[1]{\texttt{#1}}
+\newcommand{\rbool}{\T{bool}}
+\newcommand{\rint}{\T{int}}
+\newcommand{\rreal}{\T{real}}
+\newcommand{\true}{\T{true}}
+\newcommand{\false}{\T{false}}
+\newcommand{\rlet}[3]{\E{\T{let}\ #1 \sim #2 \ \T{in}\ #3}}
+\newcommand{\pdf}[2]{\E{\T{pdf(} #1 \ | \ #2 \T{)}}}
+\newcommand{\prob}[2]{\E{\T{prob(} #1 \ | \ #2 \T{)}}}
+\newcommand{\thereis}[3]{\E{\exists\ #1 : #2 \ . \ #3}}
+\newcommand{\Not}{\T{not}}
+\newcommand{\argmax}[2]{\E{\T{argmax}_{#1} #2}}
+\newcommand{\case}{\T{case}}
+
+\begin{document}
+\maketitle
+\section{Introduction}
+%
+why interesting, why unsolved, contributions.
+%
+\section{Syntax}
+% 
+\begin{eqnarray*}
+t & ::= & \rbool \ | \ \rint \ | \ \rreal \\ %\ | \ {\tt pdf} \\
+%\end{eqnarray*}
+& & \\
+%\begin{eqnarray*}
+e & ::= & x \ | \ r 
+    \ | \ -e \ | \ e_1 + e_2 \ | \ e_1 - e_2 
+    \ | \ e_1 * e_2 \ | \ e_1 / e_2 \ | \ e_1^{e_2} \\
+& & \ | \ \Not\ e \ | \ e_1 \vee e_2 \ | \ e_1 \wedge e_2 \\
+& & \ | \ e_1 \leq e_2 \ | \ e_1 = e_2 \ | \ e_1 \geq e_2 \\
+& & \ | \ \rlet{x}{e_1}{e_2} \\
+& & \ | \ \prob{e_1}{e_2} 
+\end{eqnarray*}
+
+\rbool, \rint, and \rreal\ are synonyms for $[0,1]$,
+$[-\infty,\infty]$, and $<-\infty,\infty>$. \true\ and \false\ are
+synonyms for 0 and 1.  For now, we are disallowing arbitrary {\tt
+let}s in the object language to solve the RV 'identity' problem.
+Also, we disallow random variable literals (they would only be
+marginally useful)...RVs can only be introduced with \T{rlet}.
+
+Things to be added: \T{let}\ for multivariate/joint distributions,
+\pdf{e_1}{e_2}, \thereis{x}{t}{e}, \argmax{x_1:t_1,\ldots}{e}, \case,
+... indexing. \T{prob} is a special case of \T{pdf}.
+
+Currently, no distinction is made between random reals and normal
+reals, so that things like $f(x) = x^2 + 5$ operate on both.
+
+\section{Examples}
+%
+\[ \rlet{x,y,z}{\mathrm{Normal}(0,1),\mathrm{Poisson}(x),\mathrm{Bernoulli}(3/4)}
+       {\prob{x+3\leq y \wedge \Not\ z}{x=y \ \vee \ z}} \]
+%
+\[ \rlet{x,y,z}{\cdot,\cdot,\pdf{x}{y}}
+   {\prob{x=3 \wedge y\leq\prob{x=2}{y=x}}{z}} \]
+%
+\[ \thereis{\mu,\sigma}{\rreal}{\rlet{x}{N(\mu,\sigma)}{\prob{x\leq x^2}{}}} \]
+%
+\[ \argmax{\mu_j,\sigma_j:\rreal}{ %
+  \rlet{c_i,x_i}{\mathrm{Bernoulli}(1/2),\mathrm{Normal}(\mu_{c_i},\sigma_{c_i})}
+       {\pdf{\{x_i=d_i\}}{}}
+} \]
+
+\begin{verbatim}
+-- j in [0..1], i in [1..n]
+exists mu[j], sigma[j] : real in
+rlet c[i] ~ Bernoulli(1/2) in
+rlet x[i] ~ Normal(mu[c[i]],sigma[c[i]]) in
+argmax_{mu',sigma'} pdf( {x[i]=d[i]} | mu=mu' /\ sigma=sigma' )
+\end{verbatim}
+
+\section{Type System}
+
+\rint\ and \rbool\ are refinements on \rreal.
+
+type checking for the arithmetic operations are on the coarse type, \rreal.  
+
+
+\section{Semantics}
+
+\section{Things to support}
+
+\begin{itemize}
+\item probability
+\item expectation
+\item variance 
+\item joint $\rightarrow$ marginalize
+\item joint 
+\item inequalities
+\item goodness-of-fit, normality tests
+\item order statistics
+\item bounds , hoeffding's bound , specific dist. $\rightarrow$ special bounds
+\item confidence intervals, hypothesis testing
+\item likelihood, posterior, prior, evidence
+\item convergence
+\item sampling
+\item mean, median, mode
+\end{itemize}
+
+\section{Related Work}
+
+\begin{itemize}
+\item PFP. Erwig.
+\item APPL. Diane Evans.
+\item Probability monads.
+\item CES. Thrun.
+\item Tyl. Agarwal.
+\end{itemize}
+
+
+\section{References}
+\end{document}
