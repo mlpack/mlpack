@@ -17,18 +17,23 @@
  */
 #ifndef RELAXED_NMF_BOUND_TIGHTENER_H_
 #define RELAXED_NMF_BOUND_TIGHTENER_H_
+#include "fastlib/fastlib.h"
 
 class RelaxedNmfBoundTightener {
  public:
   void Init(fx_module *module,
-            ArrayList<index_t> &rows,
-            ArrayList<index_t> &columns,
-            ArrayList<double> &values,
-            Matrix *x_lower_bound, // the initial lower bound for x (optimization variable)
-            Matrix *x_upper_bound  // the initial upper bound for x (optimization variable)
-            index_t opt_var_row,
-            index_t opt_var_column);
+                      ArrayList<index_t> &rows,
+                      ArrayList<index_t> &columns,
+                      ArrayList<double> &values,
+                      Matrix *x_lower_bound, 
+                      Matrix *x_upper_bound,  
+                      index_t opt_var_row,
+                      index_t opt_var_column,
+                      index_t opt_var_sign,
+                      double function_upper_bound);
   void Destruct();
+  void SetOptVarRowColumn(index_t row, index_t column);
+  void SetOptVarSign(double sign);
   // The following are required by LBFGS
   void ComputeGradient(Matrix &coordinates, Matrix *gradient);
   void ComputeObjective(Matrix &coordinates, double *objective);
@@ -67,17 +72,21 @@ class RelaxedNmfBoundTightener {
   ArrayList<index_t> rows_;
   ArrayList<index_t> columns_;
   ArrayList<double> values_;
+  index_t opt_var_row_;
+  index_t opt_var_column_;
+  double opt_var_sign_;
   double function_upper_bound_;
   // lower bound for the optimization variable
-  Matrix x_lower_bound_;
+  Matrix *x_lower_bound_;
   // upper bound for the optimization variable
-  Matrix x_upper_bound_;
+  Matrix *x_upper_bound_;
   // soft lower bound of the relaxation
   double soft_lower_bound_;
   // tolerance for the gradient norm
   double grad_tolerance_;
+  double sigma_;
   double desired_duality_gap_;
 };
 
-#include "relaxed_nmf_impl.h"
+#include "relaxed_nmf_bound_tightener_impl.h"
 #endif
