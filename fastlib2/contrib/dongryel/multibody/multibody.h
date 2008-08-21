@@ -126,7 +126,8 @@ class MultitreeMultibody {
 
   /** @brief The main computation procedure.
    */
-  void Compute(double relative_error, double threshold) {
+  void Compute(double relative_error, double threshold, 
+	       double centered_percentile_coverage, double probability) {
     
     ArrayList<TTree *> root_nodes;
     root_nodes.Init(mkernel_.order());
@@ -166,16 +167,22 @@ class MultitreeMultibody {
     total_force_e_.SetZero();
 
     // Compute the coverage probability table.
+    double lower_percentile = 0.5 * (100 - centered_percentile_coverage) / 
+      100.0;
+    double upper_percentile = lower_percentile +
+      centered_percentile_coverage / 100.0;
     for(index_t j = 0; j < coverage_probabilities_.length(); j++) {
       coverage_probabilities_[j] = 
 	mkernel_.OuterConfidenceInterval
 	(ceil(total_num_tuples_),
 	 ceil(25 * (j + 1)), 1, ceil(25 * (j + 1)),
-	 ceil(total_num_tuples_ * 0.05), ceil(total_num_tuples_ * 0.95));
+	 ceil(total_num_tuples_ * lower_percentile), 
+	 ceil(total_num_tuples_ * upper_percentile));
     }
+    coverage_probabilities_.PrintDebug();
 
     // Run and do timing for multitree multibody
-    MTMultibody(root_nodes, total_num_tuples_, 0.9);
+    MTMultibody(root_nodes, total_num_tuples_, probability_);
     PostProcess(root_);
 
     printf("%d n-tuples have been pruned...\n", num_prunes_);
@@ -208,7 +215,7 @@ class MultitreeMultibody {
     // More temporary variables initialization.
     non_leaf_indices_.Init(mkernel_.order());
     distmat_.Init(mkernel_.order(), mkernel_.order());
-    coverage_probabilities_.Init(10);
+    coverage_probabilities_.Init(10);    
     exhaustive_indices_.Init(mkernel_.order());
     num_leave_one_out_tuples_.Init(mkernel_.order());
 
@@ -268,6 +275,10 @@ private:
   /** @brief The multibody kernel function.
    */
   MultibodyKernel mkernel_;
+
+  /** @brief The probability requirement.
+   */
+  double probability_;
 
   /** @brief The accuracy requirement: componentwise relative error
    *         bound.
