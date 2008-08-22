@@ -21,6 +21,7 @@
 #include "fastlib/fastlib.h"
 #include "../l_bfgs/l_bfgs.h"
 #include "../convex_nmf/gop_nmf.h"
+#include "../non_convex_nmf/nmf_objectives.h"
 #include "relaxed_nmf_bound_tightener.h"
 
 class GopTightNmfEngine {
@@ -34,8 +35,10 @@ class GopTightNmfEngine {
   fx_module *module_;
   RelaxedNmf relaxed_nmf_;
   RelaxedNmfBoundTightener relaxed_nmf_bound_tightener_;
+  ClassicNmfObjective classic_nmf_objective_;
   LBfgs<RelaxedNmf>  relaxed_nmf_optimizer_;
   LBfgs<RelaxedNmfBoundTightener> bound_tightener_optimizer_;
+  LBfgs<ClassicNmfObjective> classic_nmf_optimizer_;
   GopNmfEngine gop_nmf_engine_;
   Matrix *current_solution_;
   ArrayList<index_t> rows_;
