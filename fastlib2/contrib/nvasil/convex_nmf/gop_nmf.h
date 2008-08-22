@@ -33,6 +33,13 @@ class RelaxedNmf {
             Matrix &x_lower_bound, // the initial lower bound for x (optimization variable)
             Matrix &x_upper_bound  // the initial upper bound for x (optimization variable)
            );
+  void Init(fx_module *module,
+            ArrayList<index_t> &rows,
+            ArrayList<index_t> &columns,
+            ArrayList<double> &values,
+            Matrix &x_lower_bound, // the initial lower bound for x (optimization variable)
+            Matrix &x_upper_bound  // the initial upper bound for x (optimization variable)
+           );
   void Destruct();
   // The following are required by LBFGS
   void ComputeGradient(Matrix &coordinates, Matrix *gradient);

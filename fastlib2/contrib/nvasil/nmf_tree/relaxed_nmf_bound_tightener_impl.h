@@ -24,12 +24,13 @@ void RelaxedNmfBoundTightener::Init(fx_module *module,
                       ArrayList<index_t> &rows,
                       ArrayList<index_t> &columns,
                       ArrayList<double> &values,
-                      Matrix *x_lower_bound, 
-                      Matrix *x_upper_bound,  
+                      Matrix &x_lower_bound, 
+                      Matrix &x_upper_bound,  
                       index_t opt_var_row,
                       index_t opt_var_column,
                       index_t opt_var_sign,
                       double function_upper_bound) {
+  module_=module;
   rows_.InitAlias(rows);
   num_of_rows_=*std::max_element(rows_.begin(), rows_.end())+1;
   columns_.InitAlias(columns);
@@ -38,12 +39,12 @@ void RelaxedNmfBoundTightener::Init(fx_module *module,
   h_offset_=0;
   values_.InitAlias(values);
   values_sq_norm_=la::Dot(values_.size(), values_.begin(), values_.begin());
-  x_lower_bound_=x_lower_bound;
-  x_upper_bound_=x_upper_bound;
+  x_lower_bound_.Copy(x_lower_bound);
+  x_upper_bound_.Copy(x_upper_bound);
   soft_lower_bound_=values_sq_norm_;
   new_dimension_=fx_param_int(module_, "new_dimension",  5);
   grad_tolerance_=fx_param_double(module_, "grad_tolerance", 0.01);
-  desired_duality_gap_=fx_param_double(module_, "duality_gap", 0.1);
+  desired_duality_gap_=fx_param_double(module_, "duality_gap", 0.001);
   function_upper_bound_=function_upper_bound; 
   opt_var_row_=opt_var_row;
   opt_var_column_=opt_var_column;
@@ -59,8 +60,8 @@ void RelaxedNmfBoundTightener::Init(fx_module *module,
     index_t h=col+h_offset_;
     double convex_part=0;
     for(index_t j=0; j<new_dimension_; j++) {
-      double y_lower=x_lower_bound_->get(j, w) + x_lower_bound_->get(j, h);
-      double y_upper=x_upper_bound_->get(j, w) + x_upper_bound_->get(j, h);      
+      double y_lower=x_lower_bound_.get(j, w) + x_lower_bound_.get(j, h);
+      double y_upper=x_upper_bound_.get(j, w) + x_upper_bound_.get(j, h);      
       a_linear_term_[new_dimension_*i+j]=
           (y_upper*exp(y_lower)-y_lower*exp(y_upper))/(y_upper-y_lower);
       b_linear_term_[new_dimension_*i+j]=(exp(y_upper)-exp(y_lower))/
@@ -118,8 +119,8 @@ void RelaxedNmfBoundTightener::ComputeGradient(Matrix &coordinates, Matrix *grad
     }
     norm_error+=convex_part*convex_part;
   } 
-  DEBUG_ASSERT_MSG(norm_error >= function_upper_bound_, 
-      "Something is wrong, solution out of the interior!"); 
+  DEBUG_ASSERT_MSG(norm_error <= function_upper_bound_, 
+                   "Something is wrong, solution out of the interior!"); 
   
   
   for(index_t i=0; i<values_.size(); i++) {
@@ -141,10 +142,12 @@ void RelaxedNmfBoundTightener::ComputeGradient(Matrix &coordinates, Matrix *grad
   }
 
  
+  la::Scale(function_upper_bound_-norm_error, gradient);
   // gradient from the objective
   // only for the particular variable that we are optimizing the bound
-  gradient->set(opt_var_row_, opt_var_column_, opt_var_sign_);
-  la::Scale(function_upper_bound_-norm_error, gradient);
+  gradient->set(opt_var_row_, opt_var_column_, 
+      gradient->get(opt_var_row_, opt_var_column_)+sigma_*opt_var_sign_);
+ 
   fx_timer_stop(NULL, "gradient");
 }
 
@@ -211,13 +214,13 @@ void RelaxedNmfBoundTightener::UpdateLagrangeMult(Matrix &coordinates) {
 
 void RelaxedNmfBoundTightener::Project(Matrix *coordinates) {
   fx_timer_start(NULL, "project");
-  for(index_t i=0; i<x_lower_bound_->n_rows(); i++) {
-    for(index_t j=0; j<x_lower_bound_->n_cols(); j++) {
-      if (coordinates->get(i, j) < x_lower_bound_->get(i, j)) {
-        coordinates->set(i, j, x_lower_bound_->get(i, j));
+  for(index_t i=0; i<x_lower_bound_.n_rows(); i++) {
+    for(index_t j=0; j<x_lower_bound_.n_cols(); j++) {
+      if (coordinates->get(i, j) < x_lower_bound_.get(i, j)) {
+        coordinates->set(i, j, x_lower_bound_.get(i, j));
       } else {
-        if (coordinates->get(i, j)> x_upper_bound_->get(i, j)) {
-          coordinates->set(i, j, x_upper_bound_->get(i, j));
+        if (coordinates->get(i, j)> x_upper_bound_.get(i, j)) {
+          coordinates->set(i, j, x_upper_bound_.get(i, j));
         }
       }
     }
@@ -234,7 +237,7 @@ void RelaxedNmfBoundTightener::GiveInitMatrix(Matrix *init_data) {
   for(index_t i=0; i<init_data->n_rows(); i++) {
     for(index_t j=0; j<init_data->n_cols(); j++) {
       init_data->set(i, j, 
-          (x_lower_bound_->get(i, j) + x_upper_bound_->get(i, j))/2);
+          (x_lower_bound_.get(i, j) + x_upper_bound_.get(i, j))/2);
     }
   }
 }
@@ -247,7 +250,7 @@ bool RelaxedNmfBoundTightener::IsOptimizationOver(Matrix &coordinates,
                                     Matrix &gradient, double step) {
 
   index_t num_of_constraints=1;
-  if (num_of_constraints/sigma_ > desired_duality_gap_) {
+  if (num_of_constraints/sigma_ < desired_duality_gap_) {
     return true;
   } else {
     return false;

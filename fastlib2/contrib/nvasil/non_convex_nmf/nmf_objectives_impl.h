@@ -922,7 +922,8 @@ void ClassicNmfObjective::Init(fx_module *module,
 			ArrayList<index_t> &columns,
       ArrayList<double>  &values) {
   module_=module;
-	new_dim_=fx_param_int(module_, "new_dim", 5); 
+	new_dim_=fx_param_int(module_, "new_dimension", 5); 
+  grad_tolerance_=fx_param_double(module_, "grad_tolerance_",0.01);
   rows_.InitCopy(rows);
 	columns_.InitCopy(columns);
 	values_.InitCopy(values);
@@ -1019,12 +1020,26 @@ bool ClassicNmfObjective::IsDiverging(double objective) {
 
 bool ClassicNmfObjective::IsOptimizationOver(
     Matrix &coordinates, Matrix &gradient, double step) {
- return false; 
+  double norm_gradient=la::Dot(gradient.n_elements(), 
+                               gradient.ptr(), 
+                               gradient.ptr());
+  if (norm_gradient*step < grad_tolerance_) {
+    return true;
+  }
+  return false;
+
 }
 
 bool ClassicNmfObjective::IsIntermediateStepOver(
     Matrix &coordinates, Matrix &gradient, double step) {
-  return false;  
+  double norm_gradient=la::Dot(gradient.n_elements(), 
+                               gradient.ptr(), 
+                               gradient.ptr());
+  if (norm_gradient*step < grad_tolerance_) {
+    return true;
+  }
+  return false;
+
 }
 
 

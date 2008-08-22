@@ -84,6 +84,18 @@ void RelaxedNmf::Init(ArrayList<index_t> &rows,
     soft_lower_bound_+=convex_part*convex_part;
   }
 }
+void RelaxedNmf::Init(fx_module *module,
+            ArrayList<index_t> &rows,
+            ArrayList<index_t> &columns,
+            ArrayList<double> &values,
+            Matrix &x_lower_bound, // the initial lower bound for x (optimization variable)
+            Matrix &x_upper_bound  // the initial upper bound for x (optimization variable)
+           ) {
+  grad_tolerance_=fx_param_double(module, "grad_tolerance", 0.1);
+  new_dim_=fx_param_int(module, "new_dimension", 5);
+  Init(rows, columns, values, new_dim_, grad_tolerance_, 
+       x_lower_bound, x_upper_bound);
+}
 
 void RelaxedNmf::Destruct() {
   num_of_rows_=-1;;
@@ -219,7 +231,7 @@ bool RelaxedNmf::IsDiverging(double objective) {
 bool RelaxedNmf::IsOptimizationOver(Matrix &coordinates, 
                                     Matrix &gradient, double step) {
 
-  double objective;
+/*  double objective;
   ComputeObjective(coordinates, &objective);
   if (fabs(objective-previous_objective_)/objective<0.01) {
     previous_objective_=objective;
@@ -229,31 +241,7 @@ bool RelaxedNmf::IsOptimizationOver(Matrix &coordinates,
      return false;
    
   }
-/*  double norm_gradient=la::Dot(gradient.n_elements(), 
-                               gradient.ptr(), 
-                               gradient.ptr());
-  if (norm_gradient*step < grad_tolerance_) {
-    return true;
-  }
-  return false;
 */
-  
-}
-
-bool RelaxedNmf::IsIntermediateStepOver(Matrix &coordinates, 
-                                        Matrix &gradient, 
-                                        double step) {
-  double objective;
-  ComputeObjective(coordinates, &objective);
-  if (fabs(objective-previous_objective_)/objective<0.01) {
-    previous_objective_=objective;
-    return true;
-  } else  {
-     previous_objective_=objective;
-     return false;
-   
-  }
-/*
   double norm_gradient=la::Dot(gradient.n_elements(), 
                                gradient.ptr(), 
                                gradient.ptr());
@@ -261,7 +249,31 @@ bool RelaxedNmf::IsIntermediateStepOver(Matrix &coordinates,
     return true;
   }
   return false;
+  
+}
+
+bool RelaxedNmf::IsIntermediateStepOver(Matrix &coordinates, 
+                                        Matrix &gradient, 
+                                        double step) {
+/*  double objective;
+  ComputeObjective(coordinates, &objective);
+  if (fabs(objective-previous_objective_)/objective<0.01) {
+    previous_objective_=objective;
+    return true;
+  } else  {
+     previous_objective_=objective;
+     return false;
+   
+  }
 */
+  double norm_gradient=la::Dot(gradient.n_elements(), 
+                               gradient.ptr(), 
+                               gradient.ptr());
+  if (norm_gradient*step < grad_tolerance_) {
+    return true;
+  }
+  return false;
+
 }
 
 double RelaxedNmf::GetSoftLowerBound() {

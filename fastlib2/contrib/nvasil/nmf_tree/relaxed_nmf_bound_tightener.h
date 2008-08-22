@@ -25,8 +25,8 @@ class RelaxedNmfBoundTightener {
                       ArrayList<index_t> &rows,
                       ArrayList<index_t> &columns,
                       ArrayList<double> &values,
-                      Matrix *x_lower_bound, 
-                      Matrix *x_upper_bound,  
+                      Matrix &x_lower_bound, 
+                      Matrix &x_upper_bound,  
                       index_t opt_var_row,
                       index_t opt_var_column,
                       index_t opt_var_sign,
@@ -77,9 +77,9 @@ class RelaxedNmfBoundTightener {
   double opt_var_sign_;
   double function_upper_bound_;
   // lower bound for the optimization variable
-  Matrix *x_lower_bound_;
+  Matrix x_lower_bound_;
   // upper bound for the optimization variable
-  Matrix *x_upper_bound_;
+  Matrix x_upper_bound_;
   // soft lower bound of the relaxation
   double soft_lower_bound_;
   // tolerance for the gradient norm
