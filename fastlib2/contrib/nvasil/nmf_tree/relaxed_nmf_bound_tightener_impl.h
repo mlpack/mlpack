@@ -142,7 +142,7 @@ void RelaxedNmfBoundTightener::ComputeGradient(Matrix &coordinates, Matrix *grad
   }
 
  
-  la::Scale(function_upper_bound_-norm_error, gradient);
+  la::Scale(1.0/(function_upper_bound_-norm_error), gradient);
   // gradient from the objective
   // only for the particular variable that we are optimizing the bound
   gradient->set(opt_var_row_, opt_var_column_, 
