@@ -190,7 +190,11 @@ class DualtreeKde {
   /** @brief The reference tree.
    */
   Tree *rroot_;
-  
+
+  /** @brief The precomputed coverage probabilities.
+   */
+  Vector coverage_probabilities_;
+
   /** @brief The reference weights.
    */
   Vector rset_weights_;
@@ -215,6 +219,14 @@ class DualtreeKde {
    *         query.
    */
   Vector n_pruned_;
+
+  /** @brief The maximum kernel value encountered for each query.
+   */
+  Vector max_kernel_value_;
+
+  /** @brief The sum of all reference weights.
+   */
+  double rset_weight_sum_;
 
   /** @brief The accuracy parameter specifying the relative error
    *         bound.
@@ -258,6 +270,23 @@ class DualtreeKde {
   ArrayList<index_t> old_from_new_references_;
 
   ////////// Private Member Functions //////////
+
+  /** @brief Adds the postponed node contributions to the given
+   *         individual point.
+   */
+  void AddPostponed_(Tree *node, index_t destination);
+
+  /** @brief Refines the bound statistics using the given point's
+   *         bound statistics.
+   */
+  void RefineBoundStatistics_(index_t source, Tree *destination);
+
+  /** @brief Shuffles the given vector according to the given
+   *         permutation.
+   */
+  void ShuffleAccordingToPermutation_(Vector &v, 
+				      const ArrayList<index_t> &permutation);
+
 
   /** @brief The exhaustive base KDE case.
    */
@@ -326,24 +355,68 @@ class DualtreeKde {
    */
   void PostProcess(Tree *qnode);
 
-  double BinomialCoefficient_(double n, double k) {
+  double BinomialCoefficientHelper_(double n3, double k3,
+				    double n1, double k1, 
+				    double n2, double k2,
+				    double n4, double k4) {
 
-    double n_k = n - k;
+    double n_k3 = n3 - k3;
+    double n_k1 = n1 - k1;
+    double n_k2 = n2 - k2;
+    double n_k4 = n4 - k4;
     double nchsk = 1;
     double i;
 
-    if(k > n || k < 0) {
+    if(k3 > n3 || k3 < 0 || k1 > n1 || k1 < 0 || k2 > n2 || k2 < 0 ||
+       k4 > n4 || k4 < 0) {
       return 0;
     }
     
-    if(k < n_k) {
-      k = n_k;
-      n_k = n - k;
+    if(k3 < n_k3) {
+      k3 = n_k3;
+      n_k3 = n3 - k3;
     }
-    
-    for(i = 1; i <= n_k; i += 1.0) {
-      k += 1.0;
-      nchsk *= k;
+    if(k1 < n_k1) {
+      k1 = n_k1;
+      n_k1 = n1 - k1;
+    }
+    if(k2 < n_k2) {
+      k2 = n_k2;
+      n_k2 = n2 - k2;
+    }
+    if(k4 < n_k4) {
+      k4 = n_k4;
+      n_k4 = n4 - k4;
+    }
+
+    double min_index = std::min(n_k1, n_k2);
+    double max_index = std::max(n_k1, n_k2);
+    for(i = 1; i <= min_index; i += 1.0) {
+      k1 += 1.0;
+      k2 += 1.0;
+      nchsk *= k1;
+      nchsk /= k2;
+    }
+    for(i = min_index + 1; i <= max_index; i += 1.0) {
+      if(n_k1 < n_k2) {
+	k2 += 1.0;
+	nchsk *= i;
+	nchsk /= k2;
+      }
+      else {
+	k1 += 1.0;
+	nchsk *= k1;
+	nchsk /= i;
+      }
+    }
+    for(i = 1; i <= n_k3; i += 1.0) {
+      k3 += 1.0;
+      nchsk *= k3;
+      nchsk /= i;
+    }
+    for(i = 1; i <= n_k4; i += 1.0) {
+      k4 += 1.0;
+      nchsk *= k4;
       nchsk /= i;
     }
 
@@ -353,7 +426,7 @@ class DualtreeKde {
   /** @brief Computes the outer confidence interval for the quantile
    *         intervals.
    */
-  double OuterConfidenceInterval_
+  double OuterConfidenceInterval
   (double population_size, double sample_size,
    double sample_order_statistics_min_index,
    double sample_order_statistics_max_index,
@@ -365,58 +438,35 @@ class DualtreeKde {
     for(double r_star = sample_order_statistics_min_index;
 	r_star <= sample_order_statistics_max_index; r_star += 1.0) {
 
+      if(population_order_statistics_min_index < r_star) {
+	continue;
+      }
+
       for(double s_star = 0; s_star <= sample_order_statistics_max_index - 1.0;
 	  s_star += 1.0) {
-	
-	total_probability += 
-	  (BinomialCoefficient_(population_order_statistics_min_index, 
-				r_star) /
-	   BinomialCoefficient_(population_size, sample_size)) *
-	  BinomialCoefficient_(population_order_statistics_max_index - 1 -
-			       population_order_statistics_min_index,
-			       s_star - r_star) *
-	  BinomialCoefficient_(population_size - 
-			       population_order_statistics_max_index + 1,
-			       sample_size - s_star);
+
+	// If any of the arguments to the binomial coefficient is
+	// invalid, then the contribution is zero.
+	if(population_order_statistics_max_index - 1 -
+	   population_order_statistics_min_index - s_star + r_star < 0 ||
+	   s_star < r_star ||
+	   population_size - population_order_statistics_max_index + 1 -
+	   sample_size + s_star < 0 ||
+	   sample_size - s_star < 0) {
+	  continue;
+	}
+
+	total_probability +=
+	  BinomialCoefficientHelper_
+	  (population_order_statistics_min_index, r_star,
+	   population_order_statistics_max_index - 1 -
+	   population_order_statistics_min_index,
+	   s_star - r_star, population_size, sample_size,
+	   population_size - population_order_statistics_max_index + 1,
+	   sample_size - s_star);
       }
     }
     return total_probability;
-  }
-
-  template<typename T>
-  static int qsort_compar(const void *a, const void *b) {
-    
-    T *a_dbl = (T *) a;
-    T *b_dbl = (T *) b;
-    
-    if(*a_dbl < *b_dbl) {
-      return -1;
-    }
-    else if(*a_dbl > *b_dbl) {
-      return 1;
-    }
-    else {
-      return 0;
-    }
-  }
-
-  /** @brief Refines the node statistics such that the minimum is set
-   *         to the order-th smallest value.
-   */
-  void RefineStatistics_(Tree *qnode, int order) {
-
-    Vector tmp_sorted;
-    tmp_sorted.Init(qnode->count());
-
-    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
-      tmp_sorted[q - qnode->begin()] = densities_l_[q];
-    }
-    qsort(tmp_sorted.ptr(), qnode->count(), sizeof(double), 
-	  &qsort_compar<double>);
-    
-    // Quick-sort, then set the minimum lower bound to the order-th
-    // smallest value.
-    qnode->stat().mass_l_ = tmp_sorted[order];
   }
 
  public:
@@ -461,7 +511,7 @@ class DualtreeKde {
 
     // compute normalization constant
     mult_const_ = 1.0 / (ka_.kernel_.CalcNormConstant(qset_.n_rows()) *
-			 rset_.n_cols());
+			 rset_weight_sum_);
 
     // Set accuracy parameters.
     tau_ = fx_param_double(module_, "relative_error", 0.1);
@@ -471,11 +521,12 @@ class DualtreeKde {
     // initialize the lower and upper bound densities
     densities_l_.SetZero();
     densities_e_.SetZero();
-    densities_u_.SetAll(rset_.n_cols());
+    densities_u_.SetAll(rset_weight_sum_);
 
     // Set zero for error accounting stuff.
     used_error_.SetZero();
     n_pruned_.SetZero();
+    max_kernel_value_.SetZero();
 
     // Reset prune statistics.
     num_finite_difference_prunes_ = num_monte_carlo_prunes_ =
@@ -492,6 +543,20 @@ class DualtreeKde {
       PreProcess(qroot_);
     }
     
+    // Preprocessing step for initializing the coverage probabilities.
+    /*
+    fx_timer_start(fx_root, "coverage_probability_precompute");
+    for(index_t j = 0; j < coverage_probabilities_.length(); j++) {
+      coverage_probabilities_[j] = 
+	OuterConfidenceInterval
+	(ceil(qset_.n_cols() * rset_.n_cols()),
+	 ceil(25 * (j + 1)), 1, ceil(25 * (j + 1)),
+	 ceil(qset_.n_cols() * rset_.n_cols() * 0.05), 
+	 ceil(qset_.n_cols() * rset_.n_cols() * 0.95));
+    }    
+    fx_timer_stop(fx_root, "coverage_probability_precompute");
+    */
+
     // Get the required probability guarantee for each query and call
     // the main routine.
     double probability = fx_param_double(module_, "probability", 1);
@@ -524,8 +589,9 @@ class DualtreeKde {
     get_density_estimates(results);
   }
 
-  void Init(const Matrix &queries, const Matrix &references, 
-	    bool queries_equal_references, struct datanode *module_in) {
+  void Init(const Matrix &queries, const Matrix &references,
+	    const Matrix &rset_weights, bool queries_equal_references, 
+	    struct datanode *module_in) {
 
     // point to the incoming module
     module_ = module_in;
@@ -533,13 +599,17 @@ class DualtreeKde {
     // read in the number of points owned by a leaf
     int leaflen = fx_param_int(module_in, "leaflen", 20);
 
-    // copy reference dataset and reference weights. Currently only supports
-    // uniformly weighted KDE...
+    // Copy reference dataset and reference weights and compute its
+    // sum.
     rset_.Copy(references);
-    rset_weights_.Init(rset_.n_cols());
-    rset_weights_.SetAll(1);
+    rset_weights_.Init(rset_weights.n_cols());
+    rset_weight_sum_ = 0;
+    for(index_t i = 0; i < rset_weights.n_cols(); i++) {
+      rset_weights_[i] = rset_weights.get(0, i);
+      rset_weight_sum_ += rset_weights_[i];
+    }
 
-    // copy query dataset.
+    // Copy query dataset.
     if(queries_equal_references) {
       qset_.Alias(rset_);
     }
@@ -547,11 +617,14 @@ class DualtreeKde {
       qset_.Copy(queries);
     }
 
-    // construct query and reference trees
+    // Construct query and reference trees. Shuffle the reference
+    // weights according to the permutation of the reference set in
+    // the reference tree.
     fx_timer_start(NULL, "tree_d");
     rroot_ = proximity::MakeGenMetricTree<Tree>(rset_, leaflen,
 						&old_from_new_references_, 
 						NULL);
+    ShuffleAccordingToPermutation_(rset_weights_, old_from_new_references_);
 
     if(queries_equal_references) {
       qroot_ = rroot_;
@@ -564,14 +637,18 @@ class DualtreeKde {
     }
     fx_timer_stop(NULL, "tree_d");
     
-    // initialize the density lists
+    // Initialize the density lists
     densities_l_.Init(qset_.n_cols());
     densities_e_.Init(qset_.n_cols());
     densities_u_.Init(qset_.n_cols());
 
+    // Initialize the coverage probability vector.
+    coverage_probabilities_.Init(10);
+
     // Initialize the error accounting stuff.
     used_error_.Init(qset_.n_cols());
     n_pruned_.Init(qset_.n_cols());
+    max_kernel_value_.Init(qset_.n_cols());
 
     // Initialize the kernel.
     double bandwidth = fx_param_double_req(module_, "bandwidth");

@@ -96,8 +96,9 @@ int main(int argc, char *argv[]) {
   const char* queries_file_name =
     fx_param_str(fx_root, "query", references_file_name);
 
-  // Query and reference datasets
+  // Query and reference datasets, reference weight dataset.
   Matrix references;
+  Matrix reference_weights;
   Matrix queries;
 
   // Flag for telling whether references are equal to queries
@@ -113,6 +114,16 @@ int main(int argc, char *argv[]) {
     data::Load(queries_file_name, &queries);
   }
   
+  // If the reference weight file name is specified, then read in,
+  // otherwise, initialize to uniform weights.
+  if(fx_param_exists(fx_root, "dwgts")) {
+    data::Load(fx_param_str(fx_root, "dwgts", NULL), &reference_weights);
+  }
+  else {
+    reference_weights.Init(1, queries.n_cols());
+    reference_weights.SetAll(1);
+  }
+
   // confirm whether the user asked for scaling of the dataset
   if(!strcmp(fx_param_str(kde_module, "scaling", "none"), "range")) {
     DatasetScaler::ScaleDataByMinMax(queries, references,
@@ -126,7 +137,7 @@ int main(int argc, char *argv[]) {
 
   // Optimize bandwidth using least squares cross-validation.
   if(!strcmp(fx_param_str(kde_module, "kernel", "gaussian"), "gaussian")) {
-    BandwidthLSCV::Optimize<GaussianKernelAux>(references);
+    BandwidthLSCV::Optimize<GaussianKernelAux>(references, reference_weights);
   }
   else if(!strcmp(fx_param_str(kde_module, "kernel", "epan"), "epan")) {
 
@@ -134,7 +145,7 @@ int main(int argc, char *argv[]) {
     // cross-validate for the optimal bandwidth using the Epanechnikov
     // kernel, so I will use cross-validation using the Gaussian
     // kernel with the equivalent kernel scaling.
-    BandwidthLSCV::Optimize<GaussianKernelAux>(references);
+    BandwidthLSCV::Optimize<GaussianKernelAux>(references, reference_weights);
   }
 
   fx_done(fx_root);

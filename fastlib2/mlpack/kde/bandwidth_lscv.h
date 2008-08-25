@@ -75,7 +75,8 @@ class BandwidthLSCV {
  public:
   
   template<typename TKernelAux>
-  static void Optimize(const Matrix &references) {
+  static void Optimize(const Matrix &references,
+		       const Matrix &reference_weights) {
     
     // Get the parameters.
     struct datanode *kde_module = fx_submodule(fx_root, "kde");
@@ -90,8 +91,6 @@ class BandwidthLSCV {
     double plugin_bandwidth = plugin_bandwidth_(references);
     double current_lower_search_limit = plugin_bandwidth * 0.001;
     double current_upper_search_limit = plugin_bandwidth * 1000;
-    double initial_width = current_upper_search_limit -
-      current_lower_search_limit;
     double min_bandwidth = DBL_MAX;
 
     do {
@@ -110,7 +109,8 @@ class BandwidthLSCV {
       DualtreeKde<TKernelAux> *fast_kde_on_bandwidth = 
 	new DualtreeKde<TKernelAux>();
       Vector results_on_bandwidth;
-      fast_kde_on_bandwidth->Init(references, references, true, kde_module);
+      fast_kde_on_bandwidth->Init(references, references, reference_weights,
+				  true, kde_module);
       fast_kde_on_bandwidth->Compute(&results_on_bandwidth);
       delete fast_kde_on_bandwidth;
 
@@ -118,7 +118,8 @@ class BandwidthLSCV {
       DualtreeKde<TKernelAux> *fast_kde_on_two_times_bandwidth =
 	new DualtreeKde<TKernelAux>();
       Vector results_on_two_times_bandwidth;
-      fast_kde_on_two_times_bandwidth->Init(references, references, true, 
+      fast_kde_on_two_times_bandwidth->Init(references, references, 
+					    reference_weights, true, 
 					    kde_module);
       fast_kde_on_two_times_bandwidth->Compute
 	(&results_on_two_times_bandwidth);

@@ -22,6 +22,7 @@
  * in a single command line:
  *
  * ./dualtree_kde_bin --data=name_of_the_reference_dataset
+ *                    --dwgts=name_of_the_reference_weight_dataset
  *                    --query=name_of_the_query_dataset 
  *                    --kde/kernel=gaussian
  *                    --kde/bandwidth=0.0130619
@@ -36,17 +37,21 @@
  *
  * 1. data (required): the name of the reference dataset
  *
- * 2. query (optional): the name of the query dataset (if missing, the
+ * 2. dwgts (optional): the name of the reference weight dataset. If
+ * missing, then assumes a uniformly weighted kernel density
+ * estimation.
+ *
+ * 3. query (optional): the name of the query dataset (if missing, the
  * query dataset is assumed to be the same as the reference dataset)
  *
- * 3. kde/kernel (optional): kernel function to use
+ * 4. kde/kernel (optional): kernel function to use
  * - gaussian: Gaussian kernel (default) 
  * - epan: Epanechnikov kernel
  *
- * 4. kde/bandwidth (required): smoothing parameter used for KDE; this
+ * 5. kde/bandwidth (required): smoothing parameter used for KDE; this
  * has to be positive.
  *
- * 5. kde/scaling (optional): whether to prescale the dataset 
+ * 6. kde/scaling (optional): whether to prescale the dataset 
  *
  * - range: scales both the query and the reference sets to be within
  * the unit hypercube [0, 1]^D where D is the dimensionality.
@@ -54,24 +59,24 @@
  * zero mean and unit variance.
  * - none: default value; no scaling
  *
- * 6. kde/multiplicative_expansion (optional): If this flag is
+ * 7. kde/multiplicative_expansion (optional): If this flag is
  * present, the series expansion for the Gaussian kernel uses O(p^D)
  * expansion. Otherwise, the Gaussian kernel uses O(D^p)
  * expansion. See kde.h for details.
  *
- * 7. kde/do_naive (optional): run the naive algorithm after the fast
+ * 8. kde/do_naive (optional): run the naive algorithm after the fast
  * algorithm.
  *
- * 8. kde/fast_kde_output (optional): if this flag is present, the
+ * 9. kde/fast_kde_output (optional): if this flag is present, the
  * approximated density estimates are output to the filename provided
  * after it.
  *
- * 9. kde/naive_kde_output (optional): if this flag is present, the
+ * 10. kde/naive_kde_output (optional): if this flag is present, the
  * exact density estimates computed by the naive algorithm are output
  * to the filename provided after it. This flag is not ignored if
  * --kde/do_naive flag is not present.
  *
- * 10. kde/relative_error (optional): relative error criterion for the
+ * 11. kde/relative_error (optional): relative error criterion for the
  * fast algorithm; default value is 0.1 (10 percent relative error for
  * all query density estimates).
  */
@@ -90,7 +95,7 @@ int main(int argc, char *argv[]) {
 
   // The reference data file is a required parameter.
   const char* references_file_name = fx_param_str_req(fx_root, "data");
-  
+
   // The query data file defaults to the references.
   const char* queries_file_name =
     fx_param_str(fx_root, "query", references_file_name);
@@ -98,11 +103,12 @@ int main(int argc, char *argv[]) {
   // flag for determining whether to compute naively
   bool do_naive = fx_param_exists(kde_module, "do_naive");
 
-  // query and reference datasets
+  // Query and reference datasets, reference weight dataset.
   Matrix references;
+  Matrix reference_weights;
   Matrix queries;
 
-  // flag for telling whether references are equal to queries
+  // Flag for telling whether references are equal to queries
   bool queries_equal_references = 
     !strcmp(queries_file_name, references_file_name);
 
@@ -113,6 +119,16 @@ int main(int argc, char *argv[]) {
   }
   else {
     data::Load(queries_file_name, &queries);
+  }
+
+  // If the reference weight file name is specified, then read in,
+  // otherwise, initialize to uniform weights.
+  if(fx_param_exists(fx_root, "dwgts")) {
+    data::Load(fx_param_str(fx_root, "dwgts", NULL), &reference_weights);
+  }
+  else {
+    reference_weights.Init(1, queries.n_cols());
+    reference_weights.SetAll(1);
   }
   
   // confirm whether the user asked for scaling of the dataset
@@ -135,8 +151,8 @@ int main(int argc, char *argv[]) {
       
       printf("O(p^D) expansion KDE\n");
       DualtreeKde<GaussianKernelMultAux> fast_kde;
-      fast_kde.Init(queries, references, queries_equal_references, 
-		    kde_module);
+      fast_kde.Init(queries, references, reference_weights,
+		    queries_equal_references, kde_module);
       fast_kde.Compute(&fast_kde_results);
       
       if(fx_param_exists(kde_module, "fast_kde_output")) {
@@ -149,8 +165,8 @@ int main(int argc, char *argv[]) {
       
       printf("O(D^p) expansion KDE\n");
       DualtreeKde<GaussianKernelAux> fast_kde;
-      fast_kde.Init(queries, references, queries_equal_references,
-		    kde_module);
+      fast_kde.Init(queries, references, reference_weights,
+		    queries_equal_references, kde_module);
       fast_kde.Compute(&fast_kde_results);
       
       if(true || fx_param_exists(kde_module, "fast_kde_output")) {
@@ -160,7 +176,7 @@ int main(int argc, char *argv[]) {
     
     if(do_naive) {
       NaiveKde<GaussianKernel> naive_kde;
-      naive_kde.Init(queries, references, kde_module);
+      naive_kde.Init(queries, references, reference_weights, kde_module);
       naive_kde.Compute();
       
       if(true || fx_param_exists(kde_module, "naive_kde_output")) {
@@ -174,7 +190,8 @@ int main(int argc, char *argv[]) {
     DualtreeKde<EpanKernelAux> fast_kde;
     Vector fast_kde_results;
 
-    fast_kde.Init(queries, references, queries_equal_references, kde_module);
+    fast_kde.Init(queries, references, reference_weights,
+		  queries_equal_references, kde_module);
     fast_kde.Compute(&fast_kde_results);
     
     if(fx_param_exists(kde_module, "fast_kde_output")) {
@@ -183,7 +200,7 @@ int main(int argc, char *argv[]) {
     
     if(do_naive) {
       NaiveKde<EpanKernel> naive_kde;
-      naive_kde.Init(queries, references, kde_module);
+      naive_kde.Init(queries, references, reference_weights, kde_module);
       naive_kde.Compute();
       
       if(fx_param_exists(kde_module, "naive_kde_output")) {
