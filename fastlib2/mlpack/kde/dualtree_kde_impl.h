@@ -5,58 +5,82 @@
 #include "inverse_normal_cdf.h"
 
 template<typename TKernelAux>
+void DualtreeKde<TKernelAux>::AddPostponed_(Tree *node, index_t destination) {
+  densities_l_[destination] += node->stat().postponed_l_;
+  densities_e_[destination] += node->stat().postponed_e_;
+  densities_u_[destination] += node->stat().postponed_u_;
+  used_error_[destination] += node->stat().postponed_used_error_;
+  n_pruned_[destination] += node->stat().postponed_n_pruned_; 
+}
+
+template<typename TKernelAux>
+void DualtreeKde<TKernelAux>::RefineBoundStatistics_(index_t q, Tree *qnode) {
+
+  qnode->stat().mass_l_ = std::min(qnode->stat().mass_l_, densities_l_[q]);
+  qnode->stat().mass_u_ = std::max(qnode->stat().mass_u_, densities_u_[q]);
+  qnode->stat().used_error_ = std::max(qnode->stat().used_error_,
+				       used_error_[q]);
+  qnode->stat().n_pruned_ = std::min(qnode->stat().n_pruned_, 
+				     n_pruned_[q]);  
+}
+
+template<typename TKernelAux>
+void DualtreeKde<TKernelAux>::ShuffleAccordingToPermutation_
+(Vector &v, const ArrayList<index_t> &permutation) {
+  
+  Vector v_tmp;
+  v_tmp.Init(v.length());
+  for(index_t i = 0; i < v_tmp.length(); i++) {
+    v_tmp[i] = v[permutation[i]];
+  }
+  v.CopyValues(v_tmp);
+}
+
+template<typename TKernelAux>
 void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
 					       double probability) {
 
   // Clear the summary statistics of the current query node so that we
   // can refine it to better bounds.
-  qnode->stat().mass_l_ = DBL_MAX;
-  qnode->stat().mass_u_ = -DBL_MAX;
-  qnode->stat().used_error_ = 0;
-  qnode->stat().n_pruned_ = rset_.n_cols();
+  qnode->stat().ResetBoundStatistics();
 
   // Compute unnormalized sum for each query point.
   for(index_t q = qnode->begin(); q < qnode->end(); q++) {
 
     // Incorporate the postponed information.
-    densities_l_[q] += qnode->stat().postponed_l_;
-    densities_e_[q] += qnode->stat().postponed_e_;
-    densities_u_[q] += qnode->stat().postponed_u_;
-    used_error_[q] += qnode->stat().postponed_used_error_;
-    n_pruned_[q] += qnode->stat().postponed_n_pruned_;
+    AddPostponed_(qnode, q);
 
-    // Get query point.
+    // Get the query point.
     const double *q_col = qset_.GetColumnPtr(q);
     for(index_t r = rnode->begin(); r < rnode->end(); r++) {
       
-      // get reference point
+      // Get the reference point.
       const double *r_col = rset_.GetColumnPtr(r);
       
       // pairwise distance and kernel value
-      double dsqd = la::DistanceSqEuclidean
-	(qset_.n_rows(), q_col, r_col);
+      double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
       double kernel_value = ka_.kernel_.EvalUnnormOnSq(dsqd);
+      double weighted_kernel_value = rset_weights_[r] * kernel_value;
       
-      densities_l_[q] += kernel_value;
-      densities_e_[q] += kernel_value;
-      densities_u_[q] += kernel_value;
+      densities_l_[q] += weighted_kernel_value;
+      densities_e_[q] += weighted_kernel_value;
+      densities_u_[q] += weighted_kernel_value;
+      
+      if(qnode != rnode || q != r) {
+	max_kernel_value_[q] = std::max(max_kernel_value_[q], kernel_value);
+      }
 
     } // end of iterating over each reference point.
     
     // Each query point has taken care of all reference points.
-    n_pruned_[q] += rnode->count();
+    n_pruned_[q] += rnode->stat().farfield_expansion_.get_weight_sum();
     
     // Subtract the number of reference points to undo the assumption
     // made in the function PreProcess.
-    densities_u_[q] -= rnode->count();
+    densities_u_[q] -= rnode->stat().farfield_expansion_.get_weight_sum();
     
     // Refine min and max summary statistics.
-    qnode->stat().mass_l_ = std::min(qnode->stat().mass_l_, densities_l_[q]);
-    qnode->stat().mass_u_ = std::max(qnode->stat().mass_u_, densities_u_[q]);
-    qnode->stat().used_error_ = std::max(qnode->stat().used_error_,
-					 used_error_[q]);
-    qnode->stat().n_pruned_ = std::min(qnode->stat().n_pruned_, 
-				       n_pruned_[q]);
+    RefineBoundStatistics_(q, qnode);
 
   } // end of looping over each query point.
 
@@ -101,7 +125,8 @@ bool DualtreeKde<TKernelAux>::PrunableEnhanced_
   double new_n_pruned = qstat.n_pruned_ + qstat.postponed_n_pruned_;
   double allowed_err =
     (std::max(tau_ * new_mass_l, threshold_) - new_used_error) /
-    ((double) rroot_->count() - new_n_pruned);
+    ((double) rroot_->stat().farfield_expansion_.get_weight_sum() - 
+     new_n_pruned);
 
   // If the allowed error is not defined (NaN), then we cannot
   // approximate.
@@ -141,24 +166,27 @@ bool DualtreeKde<TKernelAux>::PrunableEnhanced_
 		 min(cost_farfield, min(cost_local, cost_exhaustive)));
   
   if(cost_farfield_to_local == min_cost) {
-    used_error = rnode->count() * actual_err_farfield_to_local;
-    n_pruned = rnode->count();
+    used_error = rnode->stat().farfield_expansion_.get_weight_sum() * 
+      actual_err_farfield_to_local;
+    n_pruned = rnode->stat().farfield_expansion_.get_weight_sum();
     order_farfield = order_local = -1;
     num_farfield_to_local_prunes_++;
     return true;
   }
   
   if(cost_farfield == min_cost) {
-    used_error = rnode->count() * actual_err_farfield;
-    n_pruned = rnode->count();
+    used_error = rnode->stat().farfield_expansion_.get_weight_sum() * 
+      actual_err_farfield;
+    n_pruned = rnode->stat().farfield_expansion_.get_weight_sum();
     order_farfield_to_local = order_local = -1;
     num_farfield_prunes_++;
     return true;
   }
   
   if(cost_local == min_cost) {
-    used_error = rnode->count() * actual_err_local;
-    n_pruned = rnode->count();
+    used_error = rnode->stat().farfield_expansion_.get_weight_sum() * 
+      actual_err_local;
+    n_pruned = rnode->stat().farfield_expansion_.get_weight_sum();
     order_farfield_to_local = order_farfield = -1;
     num_local_prunes_++;
     return true;
@@ -176,7 +204,7 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
  double &used_error, double &n_pruned) {
 
   // If the reference node contains too few points, then return.
-  if(rnode->count() < num_initial_samples_per_query_) {
+  if(qnode->count() * rnode->count() < num_initial_samples_per_query_) {
     return false;
   }
 
@@ -249,14 +277,15 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
       double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
       double right_hand_side = 
 	(std::max(tau_ * new_mass_l, threshold_) - new_used_error) / 
-	(rroot_->count() - new_n_pruned);
+	(rroot_->stat().farfield_expansion_.get_weight_sum() - new_n_pruned);
       
       // NOTE: It is very important that the following pruning rule is
       // a strict inequality!
       if(sqrt(sample_variance) * standard_score < right_hand_side) {
-	kernel_sums = kernel_sums / ((double) total_samples) * rnode->count();
-	max_used_error = rnode->count() * standard_score * 
-	  sqrt(sample_variance);
+	kernel_sums = kernel_sums / ((double) total_samples) * 
+	  rnode->stat().farfield_expansion_.get_weight_sum();
+	max_used_error = rnode->stat().farfield_expansion_.get_weight_sum() * 
+	  standard_score * sqrt(sample_variance);
 	break;
       }
       else {
@@ -405,9 +434,6 @@ bool DualtreeKde<TKernelAux>::Prunable_
   // The query node stat
   KdeStat<TKernelAux> &stat = qnode->stat();
   
-  // number of reference points
-  int num_references = rnode->count();
-  
   // Try pruning after bound refinement: first compute distance/kernel
   // value bounds.
   dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
@@ -415,10 +441,12 @@ bool DualtreeKde<TKernelAux>::Prunable_
   kernel_value_range = ka_.kernel_.RangeUnnormOnSq(dsqd_range);
   
   // the new lower bound after incorporating new info
-  dl = kernel_value_range.lo * num_references;
-  de = 0.5 * num_references * 
+  dl = kernel_value_range.lo * 
+    rnode->stat().farfield_expansion_.get_weight_sum();
+  de = 0.5 * rnode->stat().farfield_expansion_.get_weight_sum() * 
     (kernel_value_range.lo + kernel_value_range.hi);
-  du = (kernel_value_range.hi - 1) * num_references;
+  du = (kernel_value_range.hi - 1) * 
+    rnode->stat().farfield_expansion_.get_weight_sum();
   
   // refine the lower bound using the new lower bound info
   double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
@@ -429,16 +457,19 @@ bool DualtreeKde<TKernelAux>::Prunable_
 
   // Compute the allowed error.
   allowed_err = (std::max(tau_ * new_mass_l, threshold_) - new_used_error) *
-    num_references / ((double) rroot_->count() - new_n_pruned);
+    rnode->stat().farfield_expansion_.get_weight_sum() / 
+    ((double) rroot_->stat().farfield_expansion_.get_weight_sum() - 
+     new_n_pruned);
 
   // This is error per each query/reference pair for a fixed query
   double kernel_diff = 0.5 * (kernel_value_range.hi - kernel_value_range.lo);
   
   // this is total error for each query point
-  used_error = kernel_diff * num_references;
+  used_error = kernel_diff * 
+    rnode->stat().farfield_expansion_.get_weight_sum();
   
   // number of reference points for possible pruning.
-  n_pruned = rnode->count();
+  n_pruned = rnode->stat().farfield_expansion_.get_weight_sum();
 
   // If the error bound is satisfied by the hard error bound, it is
   // safe to prune.
@@ -585,20 +616,8 @@ bool DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
 
     // Push down postponed bound changes owned by the current query
     // node to the children of the query node and clear them.
-    (qnode->left()->stat()).postponed_l_ += qnode->stat().postponed_l_;
-    (qnode->right()->stat()).postponed_l_ += qnode->stat().postponed_l_;
-    (qnode->left()->stat()).postponed_e_ += qnode->stat().postponed_e_;
-    (qnode->right()->stat()).postponed_e_ += qnode->stat().postponed_e_;
-    (qnode->left()->stat()).postponed_u_ += qnode->stat().postponed_u_;
-    (qnode->right()->stat()).postponed_u_ += qnode->stat().postponed_u_;
-    (qnode->left()->stat()).postponed_used_error_ += 
-      qnode->stat().postponed_used_error_;
-    (qnode->right()->stat()).postponed_used_error_ += 
-      qnode->stat().postponed_used_error_;
-    (qnode->left()->stat()).postponed_n_pruned_ += 
-      qnode->stat().postponed_n_pruned_;
-    (qnode->right()->stat()).postponed_n_pruned_ += 
-      qnode->stat().postponed_n_pruned_;
+    qnode->left()->stat().AddPostponed(qnode->stat());
+    qnode->right()->stat().AddPostponed(qnode->stat());
     
     // Clear out the postponed info after being passed down.
     qnode->stat().ClearPostponed();
@@ -663,24 +682,8 @@ bool DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
     }
     
     // Reaccumulate the summary statistics.
-    qnode->stat().mass_l_ = std::min((qnode->left()->stat()).mass_l_ +
-				     (qnode->left()->stat()).postponed_l_,
-				     (qnode->right()->stat()).mass_l_ +
-				     (qnode->right()->stat()).postponed_l_);
-    qnode->stat().mass_u_ = std::max((qnode->left()->stat()).mass_u_ +
-				     (qnode->left()->stat()).postponed_u_,
-				     (qnode->right()->stat()).mass_u_ +
-				     (qnode->right()->stat()).postponed_u_);
-    qnode->stat().used_error_ = 
-      std::max((qnode->left()->stat()).used_error_ +
-	       (qnode->left()->stat()).postponed_used_error_,
-	       (qnode->right()->stat()).used_error_ +
-	       (qnode->right()->stat()).postponed_used_error_);
-    qnode->stat().n_pruned_ = 
-      std::min((qnode->left()->stat()).n_pruned_ +
-	       (qnode->left()->stat()).postponed_n_pruned_,
-	       (qnode->right()->stat()).n_pruned_ +
-	       (qnode->right()->stat()).n_pruned_);
+    qnode->stat().RefineBoundStatistics(qnode->left()->stat(),
+					qnode->right()->stat());
     return result;
   } // end of the case: non-leaf query node.
 
@@ -702,11 +705,12 @@ void DualtreeKde<TKernelAux>::PreProcess(Tree *node) {
   // Initialize lower bound to 0.
   node->stat().mass_l_ = 0;
   
-  // Set the upper bound to the number of reference points.
-  node->stat().mass_u_ = rset_.n_cols();
+  // Set the upper bound to the sum of the reference weights.
+  node->stat().mass_u_ = rset_weight_sum_;
   
   node->stat().used_error_ = 0;
   node->stat().n_pruned_ = 0;
+  node->stat().max_kernel_value_l_ = 0;
   
   // Postponed lower and upper bound density changes to 0.
   node->stat().postponed_l_ = node->stat().postponed_u_ = 0;
@@ -726,7 +730,7 @@ void DualtreeKde<TKernelAux>::PreProcess(Tree *node) {
     PreProcess(node->left());
     PreProcess(node->right());
     
-    // translate multipole moments
+    // Translate the multipole moments.
     node->stat().farfield_expansion_.TranslateFromFarField
       (node->left()->stat().farfield_expansion_);
     node->stat().farfield_expansion_.TranslateFromFarField
@@ -734,7 +738,7 @@ void DualtreeKde<TKernelAux>::PreProcess(Tree *node) {
   }
   else {
     
-    // exhaustively compute multipole moments
+    // Exhaustively compute multipole moments.
     node->stat().farfield_expansion_.RefineCoeffs(rset_, rset_weights_,
 						  node->begin(), node->end(),
 						  ka_.sea_.get_max_order());
@@ -746,35 +750,55 @@ void DualtreeKde<TKernelAux>::PostProcess(Tree *qnode) {
     
   KdeStat<TKernelAux> &qstat = qnode->stat();
   
-  // for leaf query node
+  // For a leaf query node,
   if(qnode->is_leaf()) {
+
+    // Clear the summary statistics of the current query node so that
+    // we can refine it to better bounds.
+    qstat.ResetBoundStatistics();
+
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
-      densities_l_[q] += qstat.postponed_l_;
-      densities_e_[q] += qstat.local_expansion_.EvaluateField(qset_, q) +
-	qstat.postponed_e_;
-      densities_u_[q] += qstat.postponed_u_;
+
+      // Add all postponed quantities.
+      AddPostponed_(qnode, q);
+
+      // Finally evaluate the local expansion and add in the
+      // contributions.
+      densities_e_[q] += qstat.local_expansion_.EvaluateField(qset_, q);
       
-      // normalize densities
+      // Normalize the densities.
       densities_l_[q] *= mult_const_;
       densities_e_[q] *= mult_const_;
       densities_u_[q] *= mult_const_;
+
+      // Refine bound statistics using the finalized query point sum.
+      RefineBoundStatistics_(q, qnode);
     }
+
+    // Clear postponed approximations since they have been
+    // incorporated.
+    qstat.ClearPostponed();
   }
   else {
     
-    // push down approximations
-    (qnode->left()->stat()).postponed_l_ += qstat.postponed_l_;
-    (qnode->right()->stat()).postponed_l_ += qstat.postponed_l_;
-    (qnode->left()->stat()).postponed_e_ += qstat.postponed_e_;
-    (qnode->right()->stat()).postponed_e_ += qstat.postponed_e_;
+    // Push down approximations.
+    qnode->left()->stat().AddPostponed(qstat);
+    qnode->right()->stat().AddPostponed(qstat);
+
+    // Translate local expansions.
     qstat.local_expansion_.TranslateToLocal
       (qnode->left()->stat().local_expansion_);
     qstat.local_expansion_.TranslateToLocal
       (qnode->right()->stat().local_expansion_);
-    (qnode->left()->stat()).postponed_u_ += qstat.postponed_u_;
-    (qnode->right()->stat()).postponed_u_ += qstat.postponed_u_;
     
+    // Clear postponed approximations.
+    qstat.ClearPostponed();
+
+    // Recurse to the left and to the right.
     PostProcess(qnode->left());
     PostProcess(qnode->right());
+
+    // Refine statistics after recursing.
+    qstat.RefineBoundStatistics(qnode->left()->stat(), qnode->right()->stat());
   }
 }

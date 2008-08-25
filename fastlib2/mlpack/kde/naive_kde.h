@@ -21,9 +21,9 @@
  *    Vector results;
  *
  *    kde_module = fx_submodule(NULL, "kde", "kde_module");
- *    naive_kde.Init(queries, references, kde_module);
+ *    naive_kde.Init(queries, references, reference_weights, kde_module);
  *
- *    // important to make sure that you don't call Init on results!
+ *    // Important to make sure that you don't call Init on results!
  *    naive_kde.Compute(&results);
  *  @endcode
  */
@@ -44,13 +44,19 @@ class NaiveKde {
   
   /** @brief The column-oriented reference dataset. */
   Matrix rset_;
-  
+
+  /** @brief The vector containing the reference set weights. */
+  Vector rset_weights_;
+
   /** @brief The kernel function. */
   TKernel kernel_;
 
   /** @brief The computed densities. */
   Vector densities_;
-  
+
+  /** @brief The normalizing constant. */
+  double norm_const_;
+
  public:
 
   ////////// Constructor/Destructor //////////
@@ -90,24 +96,20 @@ class NaiveKde {
     printf("\nStarting naive KDE...\n");
     fx_timer_start(module_, "naive_kde_compute");
 
-    // compute unnormalized sum
     for(index_t q = 0; q < qset_.n_cols(); q++) {
       
       const double *q_col = qset_.GetColumnPtr(q);
+
+      // Compute unnormalized sum first.
       for(index_t r = 0; r < rset_.n_cols(); r++) {
 	const double *r_col = rset_.GetColumnPtr(r);
 	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
 	
-	densities_[q] += kernel_.EvalUnnormOnSq(dsqd);
+	densities_[q] += rset_weights_[r] * kernel_.EvalUnnormOnSq(dsqd);
       }
-    }
-    
-    // then normalize it
-    double norm_const = kernel_.CalcNormConstant(qset_.n_rows()) * 
-      rset_.n_cols();
 
-    for(index_t q = 0; q < qset_.n_cols(); q++) {
-      densities_[q] /= norm_const;
+      // Then normalize it.
+      densities_[q] /= norm_const_;
     }
     fx_timer_stop(module_, "naive_kde_compute");
     printf("\nNaive KDE completed...\n");
@@ -123,24 +125,19 @@ class NaiveKde {
     printf("\nStarting naive KDE...\n");
     fx_timer_start(module_, "naive_kde_compute");
 
-    // compute unnormalized sum
     for(index_t q = 0; q < qset_.n_cols(); q++) {
       
       const double *q_col = qset_.GetColumnPtr(q);
+      
+      // Compute unnormalized sum.
       for(index_t r = 0; r < rset_.n_cols(); r++) {
 	const double *r_col = rset_.GetColumnPtr(r);
 	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
 	
-	densities_[q] += kernel_.EvalUnnormOnSq(dsqd);
+	densities_[q] += rset_weights_[r] * kernel_.EvalUnnormOnSq(dsqd);
       }
-    }
-    
-    // then normalize it
-    double norm_const = kernel_.CalcNormConstant(qset_.n_rows()) * 
-      rset_.n_cols();
-
-    for(index_t q = 0; q < qset_.n_cols(); q++) {
-      densities_[q] /= norm_const;
+      // Then, normalize it.
+      densities_[q] /= norm_const_;
     }
     fx_timer_stop(module_, "naive_kde_compute");
     printf("\nNaive KDE completed...\n");
@@ -153,19 +150,31 @@ class NaiveKde {
    *  @param rset The column-oriented reference dataset.
    *  @param module_in The module holding the parameters.
    */
-  void Init(Matrix &qset, Matrix &rset, struct datanode *module_in) {
+  void Init(Matrix &qset, Matrix &rset, Matrix &reference_weights,
+	    struct datanode *module_in) {
 
-    // set the datanode module to be the incoming one
+    // Set the datanode module to be the incoming one.
     module_ = module_in;
 
-    // get datasets
+    // Get datasets.
     qset_.Copy(qset);
     rset_.Copy(rset);
+    rset_weights_.Init(reference_weights.n_cols());
+    for(index_t i = 0; i < rset_weights_.length(); i++) {
+      rset_weights_[i] = reference_weights.get(0, i);
+    }    
 
-    // get bandwidth
-    kernel_.Init(fx_param_double_req(module_, "bandwidth"));
+    // Compute the normalizing constant.
+    double weight_sum = 0;
+    for(index_t i = 0; i < rset_weights_.length(); i++) {
+      weight_sum += rset_weights_[i];
+    }
     
-    // allocate density storage
+    // Get bandwidth and compute the normalizing constant.
+    kernel_.Init(fx_param_double_req(module_, "bandwidth"));
+    norm_const_ = kernel_.CalcNormConstant(qset_.n_rows()) * weight_sum;
+
+    // Allocate density storage.
     densities_.Init(qset.n_cols());
     densities_.SetZero();
   }
