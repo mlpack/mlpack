@@ -20,8 +20,7 @@ void DualtreeKde<TKernelAux>::RefineBoundStatistics_(index_t q, Tree *qnode) {
   qnode->stat().mass_u_ = std::max(qnode->stat().mass_u_, densities_u_[q]);
   qnode->stat().used_error_ = std::max(qnode->stat().used_error_,
 				       used_error_[q]);
-  qnode->stat().n_pruned_ = std::min(qnode->stat().n_pruned_, 
-				     n_pruned_[q]);  
+  qnode->stat().n_pruned_ = std::min(qnode->stat().n_pruned_, n_pruned_[q]);
 }
 
 template<typename TKernelAux>
@@ -123,8 +122,10 @@ bool DualtreeKde<TKernelAux>::PrunableEnhanced_
   double new_mass_l = qstat.mass_l_ + qstat.postponed_l_ + dl;
   double new_used_error = qstat.used_error_ + qstat.postponed_used_error_;
   double new_n_pruned = qstat.n_pruned_ + qstat.postponed_n_pruned_;
+  double new_max_kernel_value_l = threshold_ *
+    std::max(qstat.max_kernel_value_l_, kernel_value_range.lo);
   double allowed_err =
-    (std::max(tau_ * new_mass_l, threshold_) - new_used_error) /
+    (std::max(tau_ * new_mass_l, new_max_kernel_value_l) - new_used_error) /
     ((double) rroot_->stat().farfield_expansion_.get_weight_sum() - 
      new_n_pruned);
 
@@ -275,8 +276,11 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
 
       // The currently proven lower bound.
       double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
+      double new_max_kernel_value_l = threshold_ *
+	std::max(qnode->stat().max_kernel_value_l_, kernel_value_range.lo);
       double right_hand_side = 
-	(std::max(tau_ * new_mass_l, threshold_) - new_used_error) / 
+	(std::max(tau_ * new_mass_l, new_max_kernel_value_l) - 
+	 new_used_error) / 
 	(rroot_->stat().farfield_expansion_.get_weight_sum() - new_n_pruned);
       
       // NOTE: It is very important that the following pruning rule is
@@ -286,125 +290,6 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
 	  rnode->stat().farfield_expansion_.get_weight_sum();
 	max_used_error = rnode->stat().farfield_expansion_.get_weight_sum() * 
 	  standard_score * sqrt(sample_variance);
-	break;
-      }
-      else {
-	flag = false;
-	break;
-      }
-
-    } while(true);
-
-  } // end of sampling...
-
-  // If all queries can be pruned, then add the approximations.
-  if(flag) {
-    de = kernel_sums;
-    used_error = max_used_error;
-    return true;
-  }
-  return false;
-}
-
-template<typename TKernelAux>
-bool DualtreeKde<TKernelAux>::MonteCarloPrunableByOrderStatistics_
-(Tree *qnode, Tree *rnode, double probability, DRange &dsqd_range,
- DRange &kernel_value_range, double &dl, double &de, double &du, 
- double &used_error, double &n_pruned) {
-
-  // If the reference node contains too few points, then return.
-  if(rnode->count() < num_initial_samples_per_query_) {
-    return false;
-  }
-
-  // Refine the lower bound using the new lower bound info.
-  KdeStat<TKernelAux> &stat = qnode->stat();
-  double max_used_error = 0;
-
-  // Take random query/reference pair samples and determine how many
-  // more samples are needed.
-  bool flag = true;
-  double kernel_sums = 0;
-
-  // Commence sampling...
-  {
-    // The initial number of samples is equal to the default.
-    int num_samples = 70;
-    int total_samples = 0;
-
-    // Do not attempt sampling if the trial number of samples is
-    // insufficient to achieve the required probability level.
-    double achieved_probability = 
-      OuterConfidenceInterval_
-      (qnode->count() * rnode->count(), num_samples, 1, num_samples, 
-       ceil((1 - probability) * qnode->count() * rnode->count()),
-       ceil((probability + 0.5 * (1 - probability)) * qnode->count() * 
-	    rnode->count()));
-
-    if(isnan(achieved_probability) || achieved_probability <
-       fx_param_double(module_, "probability", 1)) {
-      return false;
-    }
-
-    // The minimum and maximum sampled pairwise kernel values.
-    double min_kernel_value = DBL_MAX;
-    double max_kernel_value = 0;
-
-    do {
-      for(index_t s = 0; s < num_samples; s++) {
-	
-	index_t random_query_point_index =
-	  math::RandInt(qnode->begin(), qnode->end());
-	index_t random_reference_point_index = 
-	  math::RandInt(rnode->begin(), rnode->end());
-
-	// Get the pointer to the current query point.
-	const double *query_point = 
-	  qset_.GetColumnPtr(random_query_point_index);
-	
-	// Get the pointer to the current reference point.
-	const double *reference_point = 
-	  rset_.GetColumnPtr(random_reference_point_index);
-	
-	// Compute the pairwise distance and kernel value.
-	double squared_distance = la::DistanceSqEuclidean(rset_.n_rows(), 
-							  query_point,
-							  reference_point);
-
-	double weighted_kernel_value = 
-	  ka_.kernel_.EvalUnnormOnSq(squared_distance);
-	min_kernel_value = std::min(min_kernel_value, weighted_kernel_value);
-	max_kernel_value = std::max(max_kernel_value, weighted_kernel_value);
-
-	printf("Observing %g\n", weighted_kernel_value);
-
-      } // end of taking samples for this roune...
-
-      // Increment total number of samples.
-      total_samples += num_samples;
-
-      // Compute the current threshold for guaranteeing the relative
-      // error bound.
-      double new_used_error = stat.used_error_ +
-	stat.postponed_used_error_;
-      double new_n_pruned = stat.n_pruned_ + stat.postponed_n_pruned_;
-
-      // The currently proven lower bound.
-      double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
-      double right_hand_side = 
-	(std::max(tau_ * new_mass_l, threshold_) - new_used_error) / 
-	(rroot_->count() - new_n_pruned);
-      
-      printf("Rough min: %g, rough max: %g\n", kernel_value_range.lo,
-	     kernel_value_range.hi);
-      printf("Min: %g, Max: %g\n", min_kernel_value, max_kernel_value);
-      exit(0);
-
-      if(0.5 * (max_kernel_value - min_kernel_value) <= right_hand_side) {
-	kernel_sums = 0.5 * (max_kernel_value + min_kernel_value) * 
-	  rnode->count();
-	max_used_error = 0.5 * (max_kernel_value - min_kernel_value) *
-	  rnode->count();
 	break;
       }
       else {
@@ -456,7 +341,10 @@ bool DualtreeKde<TKernelAux>::Prunable_
   double allowed_err;
 
   // Compute the allowed error.
-  allowed_err = (std::max(tau_ * new_mass_l, threshold_) - new_used_error) *
+  double new_max_kernel_value_l = threshold_ *
+    std::max(qnode->stat().max_kernel_value_l_, kernel_value_range.lo);
+  allowed_err = (std::max(tau_ * new_mass_l, new_max_kernel_value_l) - 
+		 new_used_error) *
     rnode->stat().farfield_expansion_.get_weight_sum() / 
     ((double) rroot_->stat().farfield_expansion_.get_weight_sum() - 
      new_n_pruned);

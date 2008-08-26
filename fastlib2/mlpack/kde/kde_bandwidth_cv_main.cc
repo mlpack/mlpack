@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
     reference_weights.SetAll(1);
   }
 
-  // confirm whether the user asked for scaling of the dataset
+  // Confirm whether the user asked for scaling of the dataset.
   if(!strcmp(fx_param_str(kde_module, "scaling", "none"), "range")) {
     DatasetScaler::ScaleDataByMinMax(queries, references,
                                      queries_equal_references);
@@ -135,17 +135,45 @@ int main(int argc, char *argv[]) {
 				   queries_equal_references);
   }
 
-  // Optimize bandwidth using least squares cross-validation.
-  if(!strcmp(fx_param_str(kde_module, "kernel", "gaussian"), "gaussian")) {
-    BandwidthLSCV::Optimize<GaussianKernelAux>(references, reference_weights);
-  }
-  else if(!strcmp(fx_param_str(kde_module, "kernel", "epan"), "epan")) {
+  // There are two options: 1) do bandwidth optimization 2) output a
+  // goodness score of a given bandwidth.
+  if(!strcmp(fx_param_str(kde_module, "task", "optimize"), "optimize")) {
 
-    // Currently, I have not implemented the direct way to
-    // cross-validate for the optimal bandwidth using the Epanechnikov
-    // kernel, so I will use cross-validation using the Gaussian
-    // kernel with the equivalent kernel scaling.
-    BandwidthLSCV::Optimize<GaussianKernelAux>(references, reference_weights);
+    // Optimize bandwidth using least squares cross-validation.
+    if(!strcmp(fx_param_str(kde_module, "kernel", "gaussian"), "gaussian")) {
+      BandwidthLSCV::Optimize<GaussianKernelAux>(references, 
+						 reference_weights);
+    }
+    else if(!strcmp(fx_param_str(kde_module, "kernel", "epan"), "epan")) {
+      
+      // Currently, I have not implemented the direct way to
+      // cross-validate for the optimal bandwidth using the Epanechnikov
+      // kernel, so I will use cross-validation using the Gaussian
+      // kernel with the equivalent kernel scaling.
+      BandwidthLSCV::Optimize<GaussianKernelAux>(references, 
+						 reference_weights);
+    }
+  }
+  else if(!strcmp(fx_param_str(kde_module, "task", "lscvscore"), 
+		  "lscvscore")) {
+    
+    // Get the bandwidth.
+    double bandwidth = fx_param_double(kde_module, "bandwidth", 0.1);
+
+    // Optimize bandwidth using least squares cross-validation.
+    if(!strcmp(fx_param_str(kde_module, "kernel", "gaussian"), "gaussian")) {
+      BandwidthLSCV::ComputeLSCVScore<GaussianKernelAux>
+	(references, reference_weights, bandwidth);
+    }
+    else if(!strcmp(fx_param_str(kde_module, "kernel", "epan"), "epan")) {
+      
+      // Currently, I have not implemented the direct way to
+      // cross-validate for the optimal bandwidth using the Epanechnikov
+      // kernel, so I will use cross-validation using the Gaussian
+      // kernel with the equivalent kernel scaling.
+      BandwidthLSCV::ComputeLSCVScore<GaussianKernelAux>
+	(references, reference_weights, bandwidth);
+    }    
   }
 
   fx_done(fx_root);
