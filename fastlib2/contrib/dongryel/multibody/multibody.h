@@ -167,17 +167,13 @@ class MultitreeMultibody {
     total_force_e_.SetZero();
 
     // Compute the coverage probability table.
-    double lower_percentile = 0.5 * (100 - centered_percentile_coverage) / 
+    double lower_percentile = (100 - centered_percentile_coverage) / 
       100.0;
-    double upper_percentile = lower_percentile +
-      centered_percentile_coverage / 100.0;
     for(index_t j = 0; j < coverage_probabilities_.length(); j++) {
       coverage_probabilities_[j] = 
 	mkernel_.OuterConfidenceInterval
-	(ceil(total_num_tuples_),
-	 ceil(25 * (j + 1)), 1, ceil(25 * (j + 1)),
-	 ceil(total_num_tuples_ * lower_percentile), 
-	 ceil(total_num_tuples_ * upper_percentile));
+	(ceil(total_num_tuples_), ceil(25 * (j + 1)), 1,
+	 ceil(total_num_tuples_ * lower_percentile));
     }
     coverage_probabilities_.PrintDebug();
 
@@ -418,7 +414,7 @@ private:
 
   /** Pruning rule */
   bool Prunable(ArrayList<TTree *> &nodes, double num_tuples,
-		double required_probability);
+		double required_probability, bool *pruned_with_exact_method);
 
   /** @brief The base exhaustive computations.
    */
@@ -436,7 +432,7 @@ private:
 
   /** @brief The main multitree recursion.
    */
-  void MTMultibody(ArrayList<TTree *> &nodes, double num_tuples,
+  bool MTMultibody(ArrayList<TTree *> &nodes, double num_tuples,
 		   double required_probability);
 
 };

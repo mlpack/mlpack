@@ -54,18 +54,15 @@ class AxilrodTellerForceKernel {
 
   double BinomialCoefficientHelper_(double n3, double k3,
 				    double n1, double k1, 
-				    double n2, double k2,
-				    double n4, double k4) {
+				    double n2, double k2) {
 
     double n_k3 = n3 - k3;
     double n_k1 = n1 - k1;
     double n_k2 = n2 - k2;
-    double n_k4 = n4 - k4;
     double nchsk = 1;
     double i;
 
-    if(k3 > n3 || k3 < 0 || k1 > n1 || k1 < 0 || k2 > n2 || k2 < 0 ||
-       k4 > n4 || k4 < 0) {
+    if(k3 > n3 || k3 < 0 || k1 > n1 || k1 < 0 || k2 > n2 || k2 < 0) {
       return 0;
     }
     
@@ -80,10 +77,6 @@ class AxilrodTellerForceKernel {
     if(k2 < n_k2) {
       k2 = n_k2;
       n_k2 = n2 - k2;
-    }
-    if(k4 < n_k4) {
-      k4 = n_k4;
-      n_k4 = n4 - k4;
     }
 
     double min_index = std::min(n_k1, n_k2);
@@ -109,11 +102,6 @@ class AxilrodTellerForceKernel {
     for(i = 1; i <= n_k3; i += 1.0) {
       k3 += 1.0;
       nchsk *= k3;
-      nchsk /= i;
-    }
-    for(i = 1; i <= n_k4; i += 1.0) {
-      k4 += 1.0;
-      nchsk *= k4;
       nchsk /= i;
     }
 
@@ -943,42 +931,33 @@ class AxilrodTellerForceKernel {
   double OuterConfidenceInterval
   (double population_size, double sample_size,
    double sample_order_statistics_min_index,
-   double sample_order_statistics_max_index,
-   double population_order_statistics_min_index,
-   double population_order_statistics_max_index) {
+   double population_order_statistics_min_index) {
 
     double total_probability = 0;
 
     for(double r_star = sample_order_statistics_min_index;
-	r_star <= sample_order_statistics_max_index; r_star += 1.0) {
+	r_star <= std::min(population_order_statistics_min_index, sample_size);
+	r_star += 1.0) {
 
       if(population_order_statistics_min_index < r_star) {
 	continue;
       }
 
-      for(double s_star = 0; s_star <= sample_order_statistics_max_index - 1.0;
-	  s_star += 1.0) {
-
-	// If any of the arguments to the binomial coefficient is
-	// invalid, then the contribution is zero.
-	if(population_order_statistics_max_index - 1 -
-	   population_order_statistics_min_index - s_star + r_star < 0 ||
-	   s_star < r_star ||
-	   population_size - population_order_statistics_max_index + 1 -
-	   sample_size + s_star < 0 ||
-	   sample_size - s_star < 0) {
-	  continue;
-	}
-
-	total_probability +=
-	  BinomialCoefficientHelper_
-	  (population_order_statistics_min_index, r_star,
-	   population_order_statistics_max_index - 1 -
-	   population_order_statistics_min_index,
-	   s_star - r_star, population_size, sample_size,
-	   population_size - population_order_statistics_max_index + 1,
-	   sample_size - s_star);
+      // If any of the arguments to the binomial coefficient is
+      // invalid, then the contribution is zero.
+      if(r_star > population_order_statistics_min_index ||
+	 sample_size - r_star < 0 || 
+	 population_size - population_order_statistics_min_index < 0 ||
+	 sample_size - r_star >
+	 population_size - population_order_statistics_min_index) {
+	continue;
       }
+      
+      total_probability +=
+	BinomialCoefficientHelper_
+	(population_order_statistics_min_index, r_star,
+	 population_size - population_order_statistics_min_index,
+	 sample_size - r_star, population_size, sample_size);
     }
     return total_probability;
   }
@@ -1338,7 +1317,7 @@ class AxilrodTellerForceKernel {
 	 min_negative_gradient2, max_negative_gradient2,
 	 min_positive_gradient2, max_positive_gradient2,
 	 min_negative_gradient3, max_negative_gradient3,
-	 min_positive_gradient3, max_positive_gradient3);     
+	 min_positive_gradient3, max_positive_gradient3);
     } // end of sampling...
 
     // Compute the current error and see if the error is satisifed and
@@ -1595,7 +1574,6 @@ class AxilrodTellerForceKernel {
 	     min_positive_gradient3, max_positive_gradient3,    
 	     num_jk_pairs, num_ik_pairs, num_ij_pairs);
     }
-
     return prunable;
   }
 

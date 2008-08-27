@@ -381,8 +381,7 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibodyBase
 }
 
 template<typename TMultibodyKernel, typename TTree>
-void MultitreeMultibody<TMultibodyKernel, TTree>::
-PostProcess(TTree *node) {
+void MultitreeMultibody<TMultibodyKernel, TTree>::PostProcess(TTree *node) {
 
   // For a leaf node,
   if(node->is_leaf()) {
@@ -469,39 +468,53 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::PostProcessNaive_
 
 template<typename TMultibodyKernel, typename TTree>
 bool MultitreeMultibody<TMultibodyKernel, TTree>::Prunable
-(ArrayList<TTree *> &nodes, double num_tuples, double required_probability) {
+(ArrayList<TTree *> &nodes, double num_tuples, double required_probability,
+ bool *pruned_with_exact_method) {
 
-  // Locate the minimum required number of samples to achieve the
-  // prescribed probability level.
-  int num_samples = 0;
-  for(index_t i = 0; i < coverage_probabilities_.length(); i++) {
-    if(coverage_probabilities_[i] > required_probability) {
-      num_samples = 25 * (i + 1);
-      break;
+  bool exact_prunable =
+    mkernel_.Eval(data_, exhaustive_indices_, nodes, relative_error_,
+		  threshold_, total_n_minus_one_num_tuples_, num_tuples);
+
+  *pruned_with_exact_method = true;
+
+  if(!exact_prunable && required_probability < 1) {
+
+    // Locate the minimum required number of samples to achieve the
+    // prescribed probability level.
+    int num_samples = 0;
+    for(index_t i = 0; i < coverage_probabilities_.length(); i++) {
+      if(coverage_probabilities_[i] > required_probability) {
+	num_samples = 25 * (i + 1);
+	break;
+      }
+    }
+    
+    if(num_samples == 0 || num_samples > num_tuples) {
+      return false;
+    }
+    else {
+      *pruned_with_exact_method = false;
+      return
+	mkernel_.MonteCarloEval(data_, exhaustive_indices_, nodes, 
+				relative_error_, threshold_, num_samples,
+				total_n_minus_one_num_tuples_, num_tuples,
+				required_probability);
     }
   }
-
-  if(num_samples == 0 || num_samples > num_tuples) {
-    return
-      mkernel_.Eval(data_, exhaustive_indices_, nodes, relative_error_,
-		    threshold_, total_n_minus_one_num_tuples_, num_tuples);
-  }
   else {
-    return 
-      mkernel_.MonteCarloEval(data_, exhaustive_indices_, nodes, 
-			      relative_error_, threshold_, num_samples,
-			      total_n_minus_one_num_tuples_, num_tuples,
-			      required_probability);
+    return exact_prunable;
   }
 }
 
 template<typename TMultibodyKernel, typename TTree>
-void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
+bool MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
 (ArrayList<TTree *> &nodes, double num_tuples, double required_probability) {
   
-  if(Prunable(nodes, num_tuples, required_probability)) {
-    num_prunes_++;    
-    return;
+  bool pruned_with_exact_method = true;
+  if(Prunable(nodes, num_tuples, required_probability, 
+	      &pruned_with_exact_method)) {
+    num_prunes_++;
+    return pruned_with_exact_method;
   }
   
   // Figure out which ones are non-leaves.
@@ -515,7 +528,7 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
   // All leaves, then base case.
   if(non_leaf_indices_.size() == 0) {
     MTMultibodyBase(nodes, 0);
-    return;
+    return true;
   }
   
   // Else, split an internal node and recurse.
@@ -544,8 +557,10 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
     new_num_tuples = ttn(0, new_nodes);
     
     // If the current node combination is valid, then recurse.
+    bool left_result = true;
     if(new_num_tuples > 0) {
-      MTMultibody(new_nodes, new_num_tuples, sqrt(required_probability));
+      left_result = 
+	MTMultibody(new_nodes, new_num_tuples, sqrt(required_probability));
     }
     
     // Recurse to the right.
@@ -553,12 +568,23 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
     new_num_tuples = ttn(0, new_nodes);
     
     // If the current node combination is valid, then recurse.
+    bool right_result = true;
     if(new_num_tuples > 0) {
-      MTMultibody(new_nodes, new_num_tuples, sqrt(required_probability));
+
+      if(left_result) {
+	right_result =
+	  MTMultibody(new_nodes, new_num_tuples, required_probability);
+      }
+      else {
+	right_result =
+	  MTMultibody(new_nodes, new_num_tuples, sqrt(required_probability));
+      }
     }
 
     // Refine statistics after recursing.
     RefineStatistics_(nodes[split_index]);
+
+    return left_result && right_result;
   }
 }
 

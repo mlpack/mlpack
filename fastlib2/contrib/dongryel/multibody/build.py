@@ -7,6 +7,7 @@ librule(
                "multibody_kernel.h",
                "multibody_stat.h"],         # include files part of the 'lib'
     deplibs = ["mlpack/series_expansion:series_expansion",
+               "contrib/dongryel/proximity_project:proximity_project", 
                "fastlib:fastlib_int"]        # dependency
     )
 
@@ -16,6 +17,7 @@ binrule(
     headers = [],                            # no extra headers
     deplibs = [":multibody",
                "mlpack/series_expansion:series_expansion",
+               "contrib/dongryel/proximity_project:proximity_project",
                "fastlib:fastlib_int"]
     )
 
