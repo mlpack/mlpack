@@ -209,7 +209,7 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeSingleTree_
 
     // Construct the query tree.
     QueryTree *qroot = tree::MakeKdTreeMidpoint<QueryTree>
-      (qset, leaflen, NULL, NULL);
+      (qset, leaflen, (ArrayList<index_t> *) NULL, (ArrayList<index_t> *) NULL);
     
     // Three steps: initialize the query tree, then call dualtree,
     // then final postprocess.
