@@ -5,6 +5,93 @@
 #include "inverse_normal_cdf.h"
 
 template<typename TKernelAux>
+double DualtreeKde<TKernelAux>::OuterConfidenceInterval
+(double population_size, double sample_size,
+ double sample_order_statistics_min_index,
+ double population_order_statistics_min_index) {
+  
+  double total_probability = 0;
+
+  for(double r_star = sample_order_statistics_min_index;
+      r_star <= std::min(population_order_statistics_min_index, sample_size);
+      r_star += 1.0) {
+    
+    // If any of the arguments to the binomial coefficient is
+    // invalid, then the contribution is zero.
+    if(r_star > population_order_statistics_min_index ||
+       sample_size - r_star < 0 || 
+       population_size - population_order_statistics_min_index < 0 ||
+       sample_size - r_star >
+       population_size - population_order_statistics_min_index) {
+      continue;
+    }
+    
+    total_probability +=
+      BinomialCoefficientHelper_
+      (population_order_statistics_min_index, r_star,
+       population_size - population_order_statistics_min_index,
+       sample_size - r_star, population_size, sample_size);
+  }
+  return std::max(std::min(total_probability, 1.0), 0.0);
+}
+
+template<typename TKernelAux>
+double DualtreeKde<TKernelAux>::BinomialCoefficientHelper_
+(double n3, double k3, double n1, double k1, double n2, double k2) {
+  
+  double n_k3 = n3 - k3;
+  double n_k1 = n1 - k1;
+  double n_k2 = n2 - k2;
+  double nchsk = 1;
+  double i;
+  
+  if(k3 > n3 || k3 < 0 || k1 > n1 || k1 < 0 || k2 > n2 || k2 < 0) {
+    return 0;
+  }
+  
+  if(k3 < n_k3) {
+    k3 = n_k3;
+    n_k3 = n3 - k3;
+  }
+  if(k1 < n_k1) {
+    k1 = n_k1;
+    n_k1 = n1 - k1;
+  }
+  if(k2 < n_k2) {
+    k2 = n_k2;
+    n_k2 = n2 - k2;
+  }
+  
+  double min_index = std::min(n_k1, n_k2);
+  double max_index = std::max(n_k1, n_k2);
+  for(i = 1; i <= min_index; i += 1.0) {
+    k1 += 1.0;
+    k2 += 1.0;
+    nchsk *= k1;
+    nchsk /= k2;
+  }
+  for(i = min_index + 1; i <= max_index; i += 1.0) {
+    if(n_k1 < n_k2) {
+      k2 += 1.0;
+      nchsk *= i;
+      nchsk /= k2;
+    }
+    else {
+      k1 += 1.0;
+      nchsk *= k1;
+      nchsk /= i;
+    }
+  }
+  for(i = 1; i <= n_k3; i += 1.0) {
+    k3 += 1.0;
+    nchsk *= k3;
+    nchsk /= i;
+  }
+  
+  return nchsk;
+}
+
+template<typename TKernelAux>
 void DualtreeKde<TKernelAux>::AddPostponed_(Tree *node, index_t destination) {
   densities_l_[destination] += node->stat().postponed_l_;
   densities_e_[destination] += node->stat().postponed_e_;
@@ -196,6 +283,87 @@ bool DualtreeKde<TKernelAux>::PrunableEnhanced_
   order_farfield_to_local = order_farfield = order_local = -1;
   dl = du = used_error = n_pruned = 0;
   return false;
+}
+
+template<typename TKernelAux>
+bool DualtreeKde<TKernelAux>::MonteCarloPrunableByOrderStatistics_
+(Tree *qnode, Tree *rnode, double probability, DRange &dsqd_range,
+ DRange &kernel_value_range, double &dl, double &de, double &du, 
+ double &used_error, double &n_pruned) {
+
+  KdeStat<TKernelAux> &stat = qnode->stat();
+
+  // Currently running minimum/maximum kernel values.
+  double min_kernel_value = DBL_MAX;
+  double max_kernel_value = -DBL_MAX;
+
+  // Locate the minimum required number of samples to achieve the
+  // prescribed probability level.
+  int num_samples = 0;
+  for(index_t i = 0; i < coverage_probabilities_.length(); i++) {
+    if(coverage_probabilities_[i] >= probability) {
+      num_samples = sample_multiple_ * (i + 1);
+      break;
+    }
+  }
+  if(num_samples == 0 || num_samples > qnode->count() * rnode->count()) {
+    return false;
+  }
+  
+  for(index_t s = 0; s < num_samples; s++) {
+    
+    index_t random_query_point_index =
+      math::RandInt(qnode->begin(), qnode->end());
+    index_t random_reference_point_index = 
+      math::RandInt(rnode->begin(), rnode->end());
+    
+    // Get the pointer to the current query point.
+    const double *query_point = 
+      qset_.GetColumnPtr(random_query_point_index);
+    
+    // Get the pointer to the current reference point.
+    const double *reference_point = 
+      rset_.GetColumnPtr(random_reference_point_index);
+    
+    // Compute the pairwise distance and kernel value.
+    double squared_distance = la::DistanceSqEuclidean(rset_.n_rows(), 
+						      query_point,
+						      reference_point);
+    
+    double kernel_value = ka_.kernel_.EvalUnnormOnSq(squared_distance);
+    min_kernel_value = std::min(min_kernel_value, kernel_value);
+    max_kernel_value = std::max(max_kernel_value, kernel_value);
+    
+  } // end of taking samples for this roune...
+  
+  // Compute the current threshold for guaranteeing the relative
+  // error bound.
+  double new_used_error = stat.used_error_ +
+    stat.postponed_used_error_;
+  double new_n_pruned = stat.n_pruned_ + stat.postponed_n_pruned_;
+  
+  // The currently proven lower bound.
+  double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
+  double new_max_kernel_value_l = threshold_ *
+    std::max(qnode->stat().max_kernel_value_l_, kernel_value_range.lo);
+  double left_hand_side = 0.5 * (max_kernel_value - min_kernel_value);
+  double right_hand_side = 
+    (std::max(tau_ * new_mass_l, new_max_kernel_value_l) - 
+     new_used_error) / 
+    (rroot_->stat().farfield_expansion_.get_weight_sum() - new_n_pruned);
+  
+  // NOTE: It is very important that the following pruning rule is
+  // a strict inequality!
+  if(left_hand_side < right_hand_side) {
+    de = 0.5 * (min_kernel_value + max_kernel_value) * 
+      rnode->stat().farfield_expansion_.get_weight_sum();
+    used_error = rnode->stat().farfield_expansion_.get_weight_sum() *
+      0.5 * (max_kernel_value - min_kernel_value);
+    return true;
+  }
+  else {
+    return false;
+  }
 }
 
 template<typename TKernelAux>
@@ -417,7 +585,7 @@ bool DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
 
   // Then Monte Carlo-based pruning.
   else if(probability < 1 &&
-	  MonteCarloPrunable_
+	  MonteCarloPrunableByOrderStatistics_
 	  (qnode, rnode, probability, dsqd_range, 
 	   kernel_value_range, dl, de, du, used_error, n_pruned)) {
     qnode->stat().postponed_l_ += dl;
