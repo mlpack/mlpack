@@ -161,6 +161,8 @@ class DualtreeKde {
    */
   static const int num_initial_samples_per_query_ = 25;
 
+  static const int sample_multiple_ = 10;
+
   ////////// Private Member Variables //////////
 
   /** @brief The pointer to the module holding the parameters.
@@ -357,118 +359,15 @@ class DualtreeKde {
 
   double BinomialCoefficientHelper_(double n3, double k3,
 				    double n1, double k1, 
-				    double n2, double k2,
-				    double n4, double k4) {
-
-    double n_k3 = n3 - k3;
-    double n_k1 = n1 - k1;
-    double n_k2 = n2 - k2;
-    double n_k4 = n4 - k4;
-    double nchsk = 1;
-    double i;
-
-    if(k3 > n3 || k3 < 0 || k1 > n1 || k1 < 0 || k2 > n2 || k2 < 0 ||
-       k4 > n4 || k4 < 0) {
-      return 0;
-    }
-    
-    if(k3 < n_k3) {
-      k3 = n_k3;
-      n_k3 = n3 - k3;
-    }
-    if(k1 < n_k1) {
-      k1 = n_k1;
-      n_k1 = n1 - k1;
-    }
-    if(k2 < n_k2) {
-      k2 = n_k2;
-      n_k2 = n2 - k2;
-    }
-    if(k4 < n_k4) {
-      k4 = n_k4;
-      n_k4 = n4 - k4;
-    }
-
-    double min_index = std::min(n_k1, n_k2);
-    double max_index = std::max(n_k1, n_k2);
-    for(i = 1; i <= min_index; i += 1.0) {
-      k1 += 1.0;
-      k2 += 1.0;
-      nchsk *= k1;
-      nchsk /= k2;
-    }
-    for(i = min_index + 1; i <= max_index; i += 1.0) {
-      if(n_k1 < n_k2) {
-	k2 += 1.0;
-	nchsk *= i;
-	nchsk /= k2;
-      }
-      else {
-	k1 += 1.0;
-	nchsk *= k1;
-	nchsk /= i;
-      }
-    }
-    for(i = 1; i <= n_k3; i += 1.0) {
-      k3 += 1.0;
-      nchsk *= k3;
-      nchsk /= i;
-    }
-    for(i = 1; i <= n_k4; i += 1.0) {
-      k4 += 1.0;
-      nchsk *= k4;
-      nchsk /= i;
-    }
-
-    return nchsk;
-  }
+				    double n2, double k2);
 
   /** @brief Computes the outer confidence interval for the quantile
    *         intervals.
    */
-  double OuterConfidenceInterval
-  (double population_size, double sample_size,
-   double sample_order_statistics_min_index,
-   double sample_order_statistics_max_index,
-   double population_order_statistics_min_index,
-   double population_order_statistics_max_index) {
-
-    double total_probability = 0;
-
-    for(double r_star = sample_order_statistics_min_index;
-	r_star <= sample_order_statistics_max_index; r_star += 1.0) {
-
-      if(population_order_statistics_min_index < r_star) {
-	continue;
-      }
-
-      for(double s_star = 0; s_star <= sample_order_statistics_max_index - 1.0;
-	  s_star += 1.0) {
-
-	// If any of the arguments to the binomial coefficient is
-	// invalid, then the contribution is zero.
-	if(population_order_statistics_max_index - 1 -
-	   population_order_statistics_min_index - s_star + r_star < 0 ||
-	   s_star < r_star ||
-	   population_size - population_order_statistics_max_index + 1 -
-	   sample_size + s_star < 0 ||
-	   sample_size - s_star < 0) {
-	  continue;
-	}
-
-	total_probability +=
-	  BinomialCoefficientHelper_
-	  (population_order_statistics_min_index, r_star,
-	   population_order_statistics_max_index - 1 -
-	   population_order_statistics_min_index,
-	   s_star - r_star, population_size, sample_size,
-	   population_size - population_order_statistics_max_index + 1,
-	   sample_size - s_star);
-      }
-    }
-    return total_probability;
-  }
-
+  double OuterConfidenceInterval(double population_size, double sample_size,
+				 double sample_order_statistics_min_index,
+				 double population_order_statistics_min_index);
+    
  public:
 
   ////////// Constructor/Destructor //////////
@@ -544,19 +443,20 @@ class DualtreeKde {
     }
     
     // Preprocessing step for initializing the coverage probabilities.
-    /*
     fx_timer_start(fx_root, "coverage_probability_precompute");
+    double lower_percentile =
+      (100.0 - fx_param_double(module_, "coverage_percentile", 100.0)) / 100.0;
+
     for(index_t j = 0; j < coverage_probabilities_.length(); j++) {
       coverage_probabilities_[j] = 
 	OuterConfidenceInterval
-	(ceil(qset_.n_cols() * rset_.n_cols()),
-	 ceil(25 * (j + 1)), 1, ceil(25 * (j + 1)),
-	 ceil(qset_.n_cols() * rset_.n_cols() * 0.05), 
-	 ceil(qset_.n_cols() * rset_.n_cols() * 0.95));
+	(ceil(qset_.n_cols()) * ceil(rset_.n_cols()), 
+	 ceil(sample_multiple_ * (j + 1)), 1,
+	 ceil(qset_.n_cols()) * ceil(rset_.n_cols()) * lower_percentile);
     }    
     fx_timer_stop(fx_root, "coverage_probability_precompute");
-    */
-
+    coverage_probabilities_.PrintDebug();
+    
     // Get the required probability guarantee for each query and call
     // the main routine.
     double probability = fx_param_double(module_, "probability", 1);
