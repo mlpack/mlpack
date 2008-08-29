@@ -11,7 +11,7 @@ class NmfEngine {
  		 module_=module;
 	   std::string data_file=fx_param_str_req(module_, "data_file");
      sdp_rank_=fx_param_int(module_,  "sdp_rank", 5);
-		 new_dim_=fx_param_int(module_, "new_dim", 3);
+		 new_dim_=fx_param_int(module_, "new_dimension", 3);
 		 Matrix data_mat;
 		 if (data::Load(data_file.c_str(), &data_mat)==SUCCESS_FAIL) {
        FATAL("Terminating...");
@@ -22,7 +22,7 @@ class NmfEngine {
 		 PreprocessData(data_mat);
 		 fx_module *opt_function_module=fx_submodule(module_, "optfun");
      fx_set_param_int(opt_function_module, "rank", sdp_rank_);
-		 fx_set_param_int(opt_function_module, "new_dim", new_dim_);
+		 fx_set_param_int(opt_function_module, "new_dimension", new_dim_);
 		 opt_function_.Init(opt_function_module, rows_, columns_, values_);
 		 fx_module *l_bfgs_module=fx_submodule(module_, "l_bfgs");
      Matrix init_data;
@@ -31,8 +31,8 @@ class NmfEngine {
 		 fx_set_param_int(l_bfgs_module, "new_dimension", init_data.n_rows());
      engine_.Init(&opt_function_, l_bfgs_module);
 	 	 engine_.set_coordinates(init_data);
-     w_mat_.Init(new_dim_, num_of_rows_);
-		 h_mat_.Init(new_dim_, num_of_columns_);
+     w_mat_.Init(new_dim_, num_of_columns_);
+		 h_mat_.Init(new_dim_, num_of_rows_);
 	 }
 	 void Destruct() {
 	   
@@ -43,14 +43,14 @@ class NmfEngine {
 		 engine_.set_coordinates(init_data);
 	   engine_.ComputeLocalOptimumBFGS();
      Matrix result;
-     engine_.GetResults(&result);
+     engine_.CopyCoordinates(&result);
      //OptUtils::NonNegativeProjection(&result);
-     w_mat_.CopyColumnFromMat(0, 0, num_of_rows_, result);
-     h_mat_.CopyColumnFromMat(0, num_of_rows_, num_of_columns_, result);
+     w_mat_.CopyColumnFromMat(0, num_of_rows_, num_of_columns_ , result);
+     h_mat_.CopyColumnFromMat(0, 0, num_of_rows_, result);
 
      // now compute reconstruction error
      Matrix v_rec;
-     la::MulTransAInit(w_mat_, h_mat_, &v_rec);
+     la::MulTransAInit(h_mat_, w_mat_, &v_rec);
      double error=0;
      double v_sum=0;
      for(index_t i=0; i<values_.size(); i++) {
