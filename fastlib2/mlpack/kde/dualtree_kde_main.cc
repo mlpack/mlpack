@@ -8,6 +8,7 @@
 #include "fastlib/fastlib.h"
 #include "dataset_scaler.h"
 #include "dualtree_kde.h"
+#include "dualtree_vkde.h"
 #include "naive_kde.h"
 
 /**

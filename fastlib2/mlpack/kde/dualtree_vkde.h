@@ -1,14 +1,10 @@
-/** @file dualtree_kde.h
+/** @file dualtree_vkde.h
  *
- *  This file contains an implementation of kernel density estimation
- *  for a linkable library component. It implements a rudimentary
- *  depth-first dual-tree algorithm with finite difference and
- *  series-expansion approximations, using the formalized GNP
- *  framework by Ryan and Garry. Currently, it supports a
- *  fixed-bandwidth, uniform weight kernel density estimation with no
- *  multi-bandwidth optimizations. We assume that users will be able
- *  to cross-validate for the optimal bandwidth using a black-box
- *  optimizer which is not implemented in this code.
+ *  This file contains an implementation of the variable-bandwidth
+ *  kernel density estimation for a linkable library component. It
+ *  implements a rudimentary depth-first dual-tree algorithm with
+ *  finite difference, using the formalized GNP framework by Ryan and
+ *  Garry.
  *
  *  For more details on mathematical derivations, please take a look at
  *  the published conference papers (in chronological order):
@@ -59,70 +55,18 @@
  *  @bug No known bugs.
  */
 
-#ifndef DUALTREE_KDE_H
-#define DUALTREE_KDE_H
+#ifndef DUALTREE_VKDE_H
+#define DUALTREE_VKDE_H
 
-#define INSIDE_DUALTREE_KDE_H
+#define INSIDE_DUALTREE_VKDE_H
 
 #include "fastlib/fastlib.h"
-#include "mlpack/series_expansion/farfield_expansion.h"
-#include "mlpack/series_expansion/local_expansion.h"
-#include "mlpack/series_expansion/mult_farfield_expansion.h"
-#include "mlpack/series_expansion/mult_local_expansion.h"
-#include "mlpack/series_expansion/kernel_aux.h"
 #include "contrib/dongryel/proximity_project/gen_metric_tree.h"
-#include "contrib/dongryel/proximity_project/subspace_stat.h"
 #include "kde_stat.h"
+#include "mlpack/allknn/allknn.h"
 
-////////// Documentation stuffs //////////
-const fx_entry_doc kde_main_entries[] = {
-  {"data", FX_REQUIRED, FX_STR, NULL,
-   "  A file containing reference data.\n"},
-  {"query", FX_PARAM, FX_STR, NULL,
-   "  A file containing query data (defaults to data).\n"},
-  FX_ENTRY_DOC_DONE
-};
-
-const fx_entry_doc kde_entries[] = {
-  {"bandwidth", FX_PARAM, FX_DOUBLE, NULL,
-   "  The bandwidth parameter.\n"},
-  {"do_naive", FX_PARAM, FX_BOOL, NULL,
-   "  Whether to perform naive computation as well.\n"},
-  {"fast_kde_output", FX_PARAM, FX_STR, NULL,
-   "  A file to receive the results of computation.\n"},
-  {"multiplicative_expansion", FX_PARAM, FX_BOOL, NULL,
-   "  Whether to do O(p^D) kernel expansion instead of O(D^p).\n"},
-  {"probability", FX_PARAM, FX_DOUBLE, NULL,
-   "  The probability guarantee that the relative error accuracy holds.\n"},
-  {"relative_error", FX_PARAM, FX_DOUBLE, NULL,
-   "  The required relative error accuracy.\n"},
-  {"threshold", FX_PARAM, FX_DOUBLE, NULL,
-   "  If less than this value, then absolute error bound.\n"},
-  {"scaling", FX_PARAM, FX_STR, NULL,
-   "  The scaling option.\n"},
-  FX_ENTRY_DOC_DONE
-};
-
-const fx_module_doc kde_doc = {
-  kde_entries, NULL,
-  "Performs dual-tree kernel density estimate computation.\n"
-};
-
-const fx_submodule_doc kde_main_submodules[] = {
-  {"kde", &kde_doc,
-   "  Responsible for dual-tree kernel density estimate computation.\n"},
-  FX_SUBMODULE_DOC_DONE
-};
-
-const fx_module_doc kde_main_doc = {
-  kde_main_entries, kde_main_submodules,
-  "This is the driver for the kernel density estimator.\n"
-};
-
-
-
-/** @brief A computation class for dual-tree based kernel density
- *         estimation.
+/** @brief A computation class for dual-tree based variable-bandwidth
+ *         kernel density estimation.
  *
  *  This class builds trees for input query and reference sets on Init.
  *  The KDE computation is then performed by calling Compute.
@@ -132,7 +76,7 @@ const fx_module_doc kde_main_doc = {
  *  Example use:
  *
  *  @code
- *    DualtreeKde fast_kde;
+ *    DualtreeVKde fast_kde;
  *    struct datanode* kde_module;
  *    Vector results;
  *
@@ -144,13 +88,13 @@ const fx_module_doc kde_main_doc = {
  *    fast_kde.Compute(&results);
  *  @endcode
  */
-template<typename TKernelAux>
-class DualtreeKde {
+template<typename TKernel>
+class DualtreeVKde {
   
  public:
   
-  // our tree type using the KdeStat
-  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix, KdeStat<TKernelAux> > Tree;
+  // our tree type using the VKdeStat
+  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix, VKdeStat > Tree;
     
  private:
 
@@ -173,9 +117,9 @@ class DualtreeKde {
    */
   double mult_const_;
 
-  /** @brief The series expansion auxililary object.
+  /** @brief The kernel objects, one for each reference point.
    */
-  TKernelAux ka_;
+  ArrayList<TKernel> kernels_;
 
   /** @brief The query dataset.
    */
@@ -237,18 +181,6 @@ class DualtreeKde {
    */
   double threshold_;
   
-  /** @brief The number of far-field to local conversions.
-   */
-  int num_farfield_to_local_prunes_;
-
-  /** @brief The number of far-field evaluations.
-   */
-  int num_farfield_prunes_;
-  
-  /** @brief The number of local accumulations.
-   */
-  int num_local_prunes_;
-  
   /** @brief The number of finite difference prunes.
    */
   int num_finite_difference_prunes_;
@@ -285,10 +217,9 @@ class DualtreeKde {
   void ShuffleAccordingToPermutation_(Vector &v, 
 				      const ArrayList<index_t> &permutation);
 
-
   /** @brief The exhaustive base KDE case.
    */
-  void DualtreeKdeBase_(Tree *qnode, Tree *rnode, double probability);
+  void DualtreeVKdeBase_(Tree *qnode, Tree *rnode, double probability);
 
   /** @brief Checking for prunability of the query and the reference
    *         pair using four types of pruning methods.
@@ -341,7 +272,7 @@ class DualtreeKde {
    *  @return true if the entire contribution of rnode has been
    *          approximated using an exact method, false otherwise.
    */
-  bool DualtreeKdeCanonical_(Tree *qnode, Tree *rnode, double probability);
+  bool DualtreeVKdeCanonical_(Tree *qnode, Tree *rnode, double probability);
 
   /** @brief Pre-processing step - this wouldn't be necessary if the
    *         core fastlib supported a Init function for Stat objects
@@ -370,13 +301,13 @@ class DualtreeKde {
 
   /** @brief The default constructor.
    */
-  DualtreeKde() {
+  DualtreeVKde() {
     qroot_ = rroot_ = NULL;
   }
 
   /** @brief The default destructor which deletes the trees.
    */
-  ~DualtreeKde() { 
+  ~DualtreeVKde() { 
     
     if(qroot_ != rroot_ ) {
       delete qroot_; 
@@ -404,14 +335,14 @@ class DualtreeKde {
 
   void Compute(Vector *results) {
 
-    // compute normalization constant
-    mult_const_ = 1.0 / (ka_.kernel_.CalcNormConstant(qset_.n_rows()) *
+    // compute normalization constant: TO BE FIXED!!!!
+    mult_const_ = 1.0 / (kernels_[0].CalcNormConstant(qset_.n_rows()) *
 			 rset_weight_sum_);
 
     // Set accuracy parameters.
     tau_ = fx_param_double(module_, "relative_error", 0.1);
     threshold_ = fx_param_double(module_, "threshold", 0) *
-      ka_.kernel_.CalcNormConstant(qset_.n_rows());
+      kernels_[0].CalcNormConstant(qset_.n_rows());
     
     // initialize the lower and upper bound densities
     densities_l_.SetZero();
@@ -423,12 +354,10 @@ class DualtreeKde {
     n_pruned_.SetZero();
 
     // Reset prune statistics.
-    num_finite_difference_prunes_ = num_monte_carlo_prunes_ =
-      num_farfield_to_local_prunes_ = num_farfield_prunes_ = 
-      num_local_prunes_ = 0;
+    num_finite_difference_prunes_ = num_monte_carlo_prunes_ = 0;
 
     printf("\nStarting fast KDE on bandwidth value of %g...\n",
-	   sqrt(ka_.kernel_.bandwidth_sq()));
+	   sqrt(kernels_[0].bandwidth_sq()));
     fx_timer_start(NULL, "fast_kde_compute");
 
     // Preprocessing step for initializing series expansion objects
@@ -455,7 +384,7 @@ class DualtreeKde {
     // Get the required probability guarantee for each query and call
     // the main routine.
     double probability = fx_param_double(module_, "probability", 1);
-    DualtreeKdeCanonical_(qroot_, rroot_, probability);
+    DualtreeVKdeCanonical_(qroot_, rroot_, probability);
 
     // Postprocessing step for finalizing the sums.
     PostProcess(qroot_);
@@ -463,9 +392,6 @@ class DualtreeKde {
     printf("\nFast KDE completed...\n");
     printf("Finite difference prunes: %d\n", num_finite_difference_prunes_);
     printf("Monte Carlo prunes: %d\n", num_monte_carlo_prunes_);
-    printf("F2L prunes: %d\n", num_farfield_to_local_prunes_);
-    printf("F prunes: %d\n", num_farfield_prunes_);
-    printf("L prunes: %d\n", num_local_prunes_);
 
     // Reshuffle the results to account for dataset reshuffling
     // resulted from tree constructions.
@@ -544,24 +470,17 @@ class DualtreeKde {
     used_error_.Init(qset_.n_cols());
     n_pruned_.Init(qset_.n_cols());
 
-    // Initialize the kernel.
-    double bandwidth = fx_param_double_req(module_, "bandwidth");
-
-    // initialize the series expansion object
-    if(qset_.n_rows() <= 2) {
-      ka_.Init(bandwidth, fx_param_int(module_, "order", 7), qset_.n_rows());
-    }
-    else if(qset_.n_rows() <= 3) {
-      ka_.Init(bandwidth, fx_param_int(module_, "order", 5), qset_.n_rows());
-    }
-    else if(qset_.n_rows() <= 5) {
-      ka_.Init(bandwidth, fx_param_int(module_, "order", 3), qset_.n_rows());
-    }
-    else if(qset_.n_rows() <= 6) {
-      ka_.Init(bandwidth, fx_param_int(module_, "order", 1), qset_.n_rows());
-    }
-    else {
-      ka_.Init(bandwidth, fx_param_int(module_, "order", 0), qset_.n_rows());
+    // Initialize the kernels for each reference point.
+    int knns = fx_param_int_req(module_, "knn");
+    AllkNN all_knn;
+    kernels_.Init(rset_.n_cols());
+    all_knn.Init(rset_, 20, knns);
+    ArrayList<index_t> resulting_neighbors;
+    ArrayList<double> distances;    
+    all_knn.ComputeNeighbors(&resulting_neighbors, &distances);
+    
+    for(index_t i = 0; i < distances.size(); i += knns) {
+      kernels_[i / knns].Init(sqrt(distances[i + knns - 1]));
     }
   }
 
@@ -585,7 +504,7 @@ class DualtreeKde {
 
 };
 
-#include "dualtree_kde_impl.h"
-#undef INSIDE_DUALTREE_KDE_H
+#include "dualtree_vkde_impl.h"
+#undef INSIDE_DUALTREE_VKDE_H
 
 #endif
