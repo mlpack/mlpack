@@ -6,6 +6,8 @@ librule(
                "dataset_scaler.h",
                "dualtree_kde.h",
                "dualtree_kde_impl.h",
+               "dualtree_vkde.h",
+               "dualtree_vkde_impl.h",
                "inverse_normal_cdf.h",
                "kde_stat.h",
                "naive_kde.h"],
