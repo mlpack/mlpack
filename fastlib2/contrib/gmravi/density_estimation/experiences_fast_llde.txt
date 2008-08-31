@@ -1,0 +1,227 @@
+Ok! So I am coding up fast local likelihood density estimation. Nothing special actually just that i use an epan kernel in order to prune out a lot of calculations and do store necessary calculations in statistics of the reference node and use them appropriately. This time I dont want to get into tree trouble once again. So I will check my code at every strep and make sure things are all fine.So lets start
+
+1) So all parameters are being correctly accepted and beign sent to the function Init. The data has been properly sucked in. 
+
+2) So i shall build both the trees now and initialize the statistics. This is the most important step. This step has been done succesfully
+
+3) Build the STATISTICS. I mean initialize the statistics. Taking a lot of time. I hope to finish it up fully,debug if required by 1300hrs. Nice closing to completion. No seg faults. Though need to check if the statistics are correctly beign formed or not.
+
+4) I am done with statistics building. Now to the most important Compute function
+
+In another half an hour. I should complete base case. Base Case Partially completed. Will look into it later................................
+
+11:30 PM Will continue wih the base case. Should be done in half an hour or so. 
+
+12:00 Done with the base case. 
+
+12:50 So looks like the skeleton is working right. Let me test it with a small test set and see how my calculations turn out to be. 
+
+1:30 Before going to the most important calculation. Lets write a small post-processing module that comines the exponential and non-exsponential parts to give the one unified density result. This should be done in half an hour
+
+2:20 JUst finished this post-processing step. Need to check it if it is working fine. Quick luch first !! 
+
+3:03 Back from lunch. Lets make sure that the postprocess function works and works fine. 
+
+3:45 Yes! It works fine. I Guess I Shouldnt Be Divinding By Nh^D. I Think It Should Only Be Divison By N.
+
+
+4:30 Lets go on to the set of calculations that use statistic. This is the heart of everything. I need to be extra careful. U bastard start working!!!
+
+5:15 The non-exponential term has been updated. Feeling pretty stron. Will now update the exponential term
+
+6:10 I am done with this module too. I am feeling confident about it. Though it is definitely worth checking it atleast once.
+
+
+6:31 Break over. I need to get back to work.
+
+8:00 I am frustrated, the code is not working, and thanks to some ppl in the lab. I am happy i worked pretty efficiently today. But yeah! End of the day
+
+May 24 ,2008
+
+10:30 AM: I am back. Lets start. So there is an error in the code as a result of which the non_exponential term is coming out to be negative. Clearly that is wrong. So looks like I am adding kernel contributions of those reference points that whose bandwidth region doesn't encompass the query point. Will look into this to start with
+
+10:50 The skeleton seems to be fine. So I think the problem is that part of calculation where I am calculating the kernel contribution due to all points , as they fall in the bandwidth region
+
+11:00 As expected there was a mistake in the function "CaclculateKernelContributions_()". I have fixed that. I now need to see why the exponential_term is coming out wrong. The interesting thing is that only the second coordinate is wrong.
+
+11:15 Done!!! I fixed it. It is fine now. Lets test it with a bigger dataset. But before that i would like to make sure that the postprocessing step is fine
+
+11:20. So the postprocess seems fine. I removed the h^D term , because the normalization constant takes care of that. Lets test it with a bigger dataset. Lets use the standard normal dataset.
+
+12:50 Worked like a lazy ass. Anyways looks like there is a mistake somewhere
+
+3:35 I think i should not compare it with the actual densities for the time being. Instead I should concentrate on comparing it with different value of the bandwidth.  Loooks like there is a mistake because when i run with leaf size=3000 and with leaf size=10 there is a lot of error. 
+
+4:05 Works fine with 400 points as the leaf size
+
+4:08 Doesnt work with 200 points set as the leaf size.
+
+4:17 I think it is worth checking the statistics fromed. 
+
+4:43 So the statistics are bing formed correctly. Where is the mistake then??
+
+5:50 So! I think the mistake is in the calculation of the exponential term. Lets take a qucik look at it and see if there are any apparent mistakes. I dont think that there may be a mistake in the actual caclulation of the expoential bias
+
+7:00 Now i have the naive local likelihood code too. And what is confirmed is for leaflen >400 (approx) I have correct result.  The conclusion is that the exponential terms are being caclculated wrong, infact they are being underestimated. So will have to see why. END OF THE DAY!!! WE SHALL START BY SEEING WHY THE EXPONENTIAL TERMS ARE BEING WRONGLY CALCULATED
+ 
+May 25th
+
+8:36 AM: Let me start by checking if there is a clear mistake in claculating the exponential term
+
+9:08 AM: I am confused, the results look very hapazard. 
+
+9:19 AM: They start making sense to me. All the while I was thinking that there is something wrong with arrays new_from_old and old_from_new. But now I have concluded that, they are all fine. Instead my calculations are kind of getting swapped somewhere. Pretty sure a small mistake in indexing somewhere. I was wrong, all the way i was thinking that there is a mistake in the exponential_part only. But it is clear now that there is a mistake in the non-exponential part too..
+
+10:25 AM: I think i have pinned down the mistake. Lets see. 
+
+10:50 Not really :(( Something stil wrong
+
+12:30 Done finally......hopefully. I am still not sure where I was going wrong, but it looks fine now
+
+.........................................................................
+
+May 27th
+
+So after a good 2-day break I am back. So the code seems to be working now. all i need to do is make sure that the caclulations are correct.That is the value being calculated by our algorithm is the same as the true density
+
+10:20 AAh! Looks like i am not genrerating the true density values correctly. Note I am using a standard gaussian to generate my points, and it looks as if the density values at the test points are not correct.
+
+10:45 Naah! I was wrong. There is something wrong with my code. Looks like the train set and test set are becoming the same somewhere
+
+10:55 Aah! Nothing wrong with my code. My commnadline was wrong. I was mixing up the query and reference set :)
+
+11:10 Things look fine. THe results seem to be fine. Will clean up stuff and make it in a presentable format, which include depermuting the results and a print routine to write the results onto a file.
+
+11:37 Done!!! Fully. Will do a final cleanup and check for timing results
+
+12:40 Cleaned up the code, and now running local-likelihood crossvalidation. Will then run fast local likelihood for timing results. I am using 50K points for crossvalidation. So i got the [possible test bandwidths by using the plugin bandwidth h*, and will now use an interval of [0.25 h*,1.5h*]. In case it takes a lot of time then will use h*=hplugin=0.1037
+
+Lets take a detour to logistic regression
+
+4:30 PM The optimal bandwidth by crossvalidation is 0.06. So lets time for h=0.06...
+
+May 28th...........................
+
+9:50 I realised late last nite that my code for local likelihood density estimation problem is not entirely correct, and the reason is that the epan kernel is not by itself a multiplicative kernel. The bad news is that if u consider the multiplicative kernel in D-dimensions, it has a monstorous expansion,a nd though u can use the same old technique that u used it before, the number of terms become exponential, and it becomes completely messy.So i dont think it is worth trying it out. Lets ask alex what to do?
+
+..........................................................
+June 2nd
+
+2:23PM Since my code works well only for a 1-D case I need to now rewrite it so that it works for a multidimensional case too. This is not an easy task and since this morning I have been trying to figure out how to easily represent the polynomial obtained by expanding the multiplicative kernel. It is messy but i havefigured out how to handle this polynomial. I shall maintain a 3^D array. This can be seen as a polynomial array of 3^D terms. How do you know what power does a particular element represent? Pretty simple use step down ternary counting starting from all 2's. What I mean by an all 2's term is something like q_^2 q_^2....qd^2. This will be the first element in the polynomial array. This is a polynomial expansion for a given reference point and this encompasses all dimensions. So this is the rough algorithm:
+
+1) For each reference point generate the coefficients of the polynomial expansion.This is completely reference point dependent, hence there cannot be any sharing of information.
+
+2) Build a D-dimensional vector whose 1-norm we shall be interested in.How do i fill this D-dimensional vector?? The trick is what I shall demonstrate now
+  
+  --- Remember we have the polynomial expansion for each point. To fill up one element of the D-dimensional vector i.e we are confining to one direction, use the polynomial expansion of the reference point and multiply it with r_id^2 and add it up for all the reference points.We also need the sum of the polynomial expansion for all points. Similarily multiply the polynomial for each reference point with r_d and add it up for all reference points.
+
+Roughly we need for each query point
+
+   --- A polynomial expansion of size 3^D
+   --- Multiply each points polynomial expansion with r_id^2 and sum up which 
+       is O(N3^D) cost
+   --- Multiply each reference point's polynomial expansion with r_d which is 
+       O(N.3^D) computation
+   
+This has to be done for D-dimensions and hence the total cost is O(N.3^D.D). The most interesting thing is that exclusive pruning will be lead to more cost savings in the higher dimensional case this is because the constants that are involved are higher(O(3^D)) for a higher dimensional case. So I think i shouldnot delete my old file instead copy the old file to a new one and start modifying it.
+
+
+3:30 PM: Lets start :)
+
+3:54 I have modified the main file  and have started to modify the .h file. Lets come up with a data-structure for the reference treestate
+
+4:30 I have set up the datastructure. There is no need to store the polynomial expansions explicitly. For i only need the sum of the polynomial expansions and other related parameters which depend on the indivudal polynomial expansions. So I can build a polynomial expansion for each ref point add up all these expansions, add up the scaled expansions etc... and finally purge all the individual expansions. So the individual expansions should be local variables of a function, rahter than members of the object. Before i try to code up the expansiosns , let make sure that everything is fine till now
+
+5:10PM Thijngs look fine. There were some small mistakes here ad there but it is all well set now.Lets fill up the statistics.
+
+5:37 PM Instead of using a ternary counter lets use a decimal counter. Subtraction on decimal counter is trivial, but i need to write a small code that converts decimal to base 3
+
+6:37 What a useless persom I am . I finally coded up the conversion from decimal to ternary but it took me a lot of time. I am unhappy with my speed of coding. Anyways lets get down to business.
+
+7:44 Aah! For some reason frustration is creeping in. so there is something interesting here. I cannot use the init function of the reference stat to intialize the reference tree statistics. The reason is that the reference tree stat has no access to the parameter bandwidth, which is required to build the coefficeints of the polynomial.There is one way to avert this and that is to use the full expansions of the coefficients of the polynomial which is definitely not a good thing to do for it breaks the beauty of the expressions and makes them unmanageable and very hard to code. So I am writing another function called preprocess whiich is a funcation call made from Compute function and this function takes in the bandwidth as the parameter. This way we dont need to break up the coefficients of the polynomial expansion and still get our job done.Good work!! 
+
+8:48 So I coded up the part of code that calculates the polynomial expansion for a point. Tommororows task will be:
+1) Make sure the poly expansionas are correct. THIS IS VERY IMPORTTANT
+1) Use the poly expansion to get relevant statistics
+2) Stich up statistics of the children node to form the statistics of the ref node.
+
+IT IS VERY IMPORTANT TO MAKE SURE THAT THE STATISTICS ARE BEING FORMED CORRECTLY
+END OF THE DAY......................................................
+
+
+June3 2008
+
+2:54 PM Work starts. Shall begin by checking for the correctness of the statistics formation. 
+
+4:15 PM There were a lot of mistakes. Looks like i have fixed them for now. I was using a 2-D dataset. Will check what happens with a 3-d dataset. But before that i need to make a small change in code, since the counter changes the same way for all the points hence at every counter step I should calculate the corresponding polynomial term rather than doing vice versa. Code modified. This code is more efficient than the previious one for it uses the counter information effectively. works for a 3-D dataset too. What abt a huge dataset?? This is an interesting check. Done no seg faults or anything like that. Nice !
+
+
+4:45 Lets contine wit building the ref stat. I already have the polynomial expansion for each point. Lets build the statistics using this info.
+
+5:02 Concentrate my dear boy :)
+
+5:33 So I am not concentrating, maybe i should take a small break. Nayways so My preprocess function si done for the leaf node. All that i need to do now is stich up these matrices in the preprocess function of the interanl referernce nodes.
+
+6:10 Done checked the preprocessing step. The more interesting part will be to check it with a large dataset, and see if it si working fine. That will be the most comprehensive test
+
+7:05 And preprocessing function finally comes to an end...... I am sure that it is working fine.
+
+7:40 Lets write the skeleton of the function FastLikelihood
+
+8:40 Done with skeleton, seems to be working fine. Lets now write the base case. Shouldnt take much time
+
+9:25 PM Done with the base case too. Havent checked for correctness, but there are no compilation errors. Tommorows task
+
+1) Check for the correctness of the base case
+2) Continue with the code
+
+June 4th 2008, 
+
+10:20 AM: Work begins. Check for the correctness of the base case. First make sure that the skeleton is rite. 
+
+11:12 AM Skeleton is fine
+
+1:10 PM Lets check for the correctness of the base case
+
+3:30 PM I get to work uninterrupted for some time now: First lets check for the correctness of the base case. ON  avery smal test case the base case seems fine.Lets go on to write the Inclusion  prune
+
+3:50 Lets start writing the inclusion prune
+
+5:50 Finished with writing the exclusion prune. Though need to check if it is correct.
+End of the day. Not much work done today
+Tomm work: start by checking the correctness of the Inclusion Prune
+
+........................................................................
+
+June 5th:
+
+
+11:15 Inclusive Prune is fine. Lets see if inclusive prune works fine or not
+ Non_exponential_term is fine
+What abt exponential term??
+
+11:50 Exponential term is not being calculated properly. Something wrong
+
+12:30 I am not able to track what is wrong with the calculation of the exponential term in inclusion prune. I think i need to check if the statistics are getiing caclulated properly 
+
+1:04 The statistics seem fine. So where is the mistake then?? Will recheck the inclusion prune function. 
+
+1:30 PM Well actually the code is rite. My manual calculations were wrong.
+
+2:45 I think I am done. I had written the post-processing routine long back and i can happily use that post-processing routine now.So letes bring it back to life and see how things fare
+
+6:15 PM Lets check with a 1-d dataset, to start with
+.........................................
+June 6th 
+
+10:50 PM I think i was done with this, but now it seems there is a mistake :((
+
+10:57 Lets first print out and verify that the exponential term is being calculated the right way. Compare it with the code previously written
+
+11:31 PM Base Case is fine........
+
+11:50 Lets check things one-by-one. Lets check if statistics are being correctly formed.
+
+11:55 Stats are fine. Now lets check if the exponential and the non-exponential terms are being formed correctly
+
+12:30 Structure of the prog looks fine. Then where the hell is the mistake??

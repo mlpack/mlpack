@@ -1,0 +1,13 @@
+function[]=PlotDensities()
+true_density=csvread('density_3_test.txt');
+fast_local=csvread('avod_fast_local_likelihood_multi.txt');
+naive_kde=csvread('avod_naive_kde.txt');
+points=csvread('points_mog3_test.txt');
+[num_of_points,num_of_dimensions]=size(points);
+%plot_matrix=zeros;
+plot_matrix=zeros(num_of_points,3);
+plot_matrix(1:end,1:1)=true_density;
+plot_matrix(1:end,2:2)=fast_local;
+plot_matrix(1:end,3:3)=naive_kde;
+plot(points,plot_matrix,'.');
+legend('true-density','fast-local','naive-kde');
