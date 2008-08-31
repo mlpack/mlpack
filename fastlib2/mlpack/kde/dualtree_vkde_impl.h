@@ -636,8 +636,8 @@ void DualtreeVKde<TKernel>::PreProcess(Tree *node) {
   }
   else {
     
-    node->stat().min_bandwidth_kernel_.Init(DBL_MAX);
-    node->stat().max_bandwidth_kernel_.Init(-DBL_MAX);
+    node->stat().min_bandwidth_kernel_.Init(sqrt(DBL_MAX));
+    node->stat().max_bandwidth_kernel_.Init(0);
     node->stat().weight_sum_ = 0;
 
     // Reset the minimum/maximum bandwidths owned by the node.
