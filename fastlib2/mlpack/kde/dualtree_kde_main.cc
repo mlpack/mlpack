@@ -11,6 +11,134 @@
 #include "dualtree_vkde.h"
 #include "naive_kde.h"
 
+void VariableBandwidthKde(Matrix &queries, Matrix &references, 
+			  Matrix &reference_weights, 
+			  bool queries_equal_references,
+			  struct datanode *kde_module) {
+
+  if(!strcmp(fx_param_str(kde_module, "kernel", "gaussian"), "gaussian")) {
+    
+    Vector fast_kde_results;
+    
+    // for O(p^D) expansion
+    if(fx_param_exists(kde_module, "multiplicative_expansion")) {
+      
+      printf("O(p^D) expansion KDE\n");
+      DualtreeVKde<GaussianKernel> fast_kde;
+      fast_kde.Init(queries, references, reference_weights,
+		    queries_equal_references, kde_module);
+      fast_kde.Compute(&fast_kde_results);
+      
+      if(fx_param_exists(kde_module, "fast_kde_output")) {
+	fast_kde.PrintDebug();
+      }
+    }
+    
+    // otherwise do O(D^p) expansion
+    else {
+      
+      printf("O(D^p) expansion KDE\n");
+      DualtreeVKde<GaussianKernel> fast_kde;
+      fast_kde.Init(queries, references, reference_weights,
+		    queries_equal_references, kde_module);
+      fast_kde.Compute(&fast_kde_results);
+      
+      if(true || fx_param_exists(kde_module, "fast_kde_output")) {
+	fast_kde.PrintDebug();
+      }
+    }
+  }
+  else if(!strcmp(fx_param_str(kde_module, "kernel", "epan"), "epan")) {
+    DualtreeVKde<EpanKernel> fast_kde;
+    Vector fast_kde_results;
+
+    fast_kde.Init(queries, references, reference_weights,
+		  queries_equal_references, kde_module);
+    fast_kde.Compute(&fast_kde_results);
+    
+    if(fx_param_exists(kde_module, "fast_kde_output")) {
+      fast_kde.PrintDebug();
+    }
+  }
+}
+
+void FixedBandwidthKde(Matrix &queries, Matrix &references, 
+		       Matrix &reference_weights, 
+		       bool queries_equal_references,
+		       struct datanode *kde_module) {
+
+  // flag for determining whether to compute naively
+  bool do_naive = fx_param_exists(kde_module, "do_naive");
+
+  if(!strcmp(fx_param_str(kde_module, "kernel", "gaussian"), "gaussian")) {
+    
+    Vector fast_kde_results;
+    
+    // for O(p^D) expansion
+    if(fx_param_exists(kde_module, "multiplicative_expansion")) {
+      
+      printf("O(p^D) expansion KDE\n");
+      DualtreeKde<GaussianKernelMultAux> fast_kde;
+      fast_kde.Init(queries, references, reference_weights,
+		    queries_equal_references, kde_module);
+      fast_kde.Compute(&fast_kde_results);
+      
+      if(fx_param_exists(kde_module, "fast_kde_output")) {
+	fast_kde.PrintDebug();
+      }
+    }
+    
+    // otherwise do O(D^p) expansion
+    else {
+      
+      printf("O(D^p) expansion KDE\n");
+      DualtreeKde<GaussianKernelAux> fast_kde;
+      fast_kde.Init(queries, references, reference_weights,
+		    queries_equal_references, kde_module);
+      fast_kde.Compute(&fast_kde_results);
+      
+      if(true || fx_param_exists(kde_module, "fast_kde_output")) {
+	fast_kde.PrintDebug();
+      }
+    }
+    
+    if(do_naive) {
+      NaiveKde<GaussianKernel> naive_kde;
+      naive_kde.Init(queries, references, reference_weights, kde_module);
+      naive_kde.Compute();
+      
+      if(true || fx_param_exists(kde_module, "naive_kde_output")) {
+	naive_kde.PrintDebug();
+      }
+      naive_kde.ComputeMaximumRelativeError(fast_kde_results);
+    }
+    
+  }
+  else if(!strcmp(fx_param_str(kde_module, "kernel", "epan"), "epan")) {
+    DualtreeKde<EpanKernelAux> fast_kde;
+    Vector fast_kde_results;
+
+    fast_kde.Init(queries, references, reference_weights,
+		  queries_equal_references, kde_module);
+    fast_kde.Compute(&fast_kde_results);
+    
+    if(fx_param_exists(kde_module, "fast_kde_output")) {
+      fast_kde.PrintDebug();
+    }
+    
+    if(do_naive) {
+      NaiveKde<EpanKernel> naive_kde;
+      naive_kde.Init(queries, references, reference_weights, kde_module);
+      naive_kde.Compute();
+      
+      if(fx_param_exists(kde_module, "naive_kde_output")) {
+	naive_kde.PrintDebug();
+      }
+      naive_kde.ComputeMaximumRelativeError(fast_kde_results);
+    }
+  }
+}
+
 /**
  * Main function which reads parameters and determines which
  * algorithms to run.
@@ -101,9 +229,6 @@ int main(int argc, char *argv[]) {
   const char* queries_file_name =
     fx_param_str(fx_root, "query", references_file_name);
   
-  // flag for determining whether to compute naively
-  bool do_naive = fx_param_exists(kde_module, "do_naive");
-
   // Query and reference datasets, reference weight dataset.
   Matrix references;
   Matrix reference_weights;
@@ -132,7 +257,7 @@ int main(int argc, char *argv[]) {
     reference_weights.SetAll(1);
   }
   
-  // confirm whether the user asked for scaling of the dataset
+  // Confirm whether the user asked for scaling of the dataset
   if(!strcmp(fx_param_str(kde_module, "scaling", "none"), "range")) {
     DatasetScaler::ScaleDataByMinMax(queries, references,
                                      queries_equal_references);
@@ -143,72 +268,13 @@ int main(int argc, char *argv[]) {
 				   queries_equal_references);
   }
 
-  if(!strcmp(fx_param_str(kde_module, "kernel", "gaussian"), "gaussian")) {
-    
-    Vector fast_kde_results;
-    
-    // for O(p^D) expansion
-    if(fx_param_exists(kde_module, "multiplicative_expansion")) {
-      
-      printf("O(p^D) expansion KDE\n");
-      DualtreeKde<GaussianKernelMultAux> fast_kde;
-      fast_kde.Init(queries, references, reference_weights,
-		    queries_equal_references, kde_module);
-      fast_kde.Compute(&fast_kde_results);
-      
-      if(fx_param_exists(kde_module, "fast_kde_output")) {
-	fast_kde.PrintDebug();
-      }
-    }
-    
-    // otherwise do O(D^p) expansion
-    else {
-      
-      printf("O(D^p) expansion KDE\n");
-      DualtreeKde<GaussianKernelAux> fast_kde;
-      fast_kde.Init(queries, references, reference_weights,
-		    queries_equal_references, kde_module);
-      fast_kde.Compute(&fast_kde_results);
-      
-      if(true || fx_param_exists(kde_module, "fast_kde_output")) {
-	fast_kde.PrintDebug();
-      }
-    }
-    
-    if(do_naive) {
-      NaiveKde<GaussianKernel> naive_kde;
-      naive_kde.Init(queries, references, reference_weights, kde_module);
-      naive_kde.Compute();
-      
-      if(true || fx_param_exists(kde_module, "naive_kde_output")) {
-	naive_kde.PrintDebug();
-      }
-      naive_kde.ComputeMaximumRelativeError(fast_kde_results);
-    }
-    
+  if(!strcmp(fx_param_str(kde_module, "mode", "variablebw"), "variablebw")) {
+    VariableBandwidthKde(queries, references, reference_weights, 
+			 queries_equal_references, kde_module);
   }
-  else if(!strcmp(fx_param_str(kde_module, "kernel", "epan"), "epan")) {
-    DualtreeKde<EpanKernelAux> fast_kde;
-    Vector fast_kde_results;
-
-    fast_kde.Init(queries, references, reference_weights,
-		  queries_equal_references, kde_module);
-    fast_kde.Compute(&fast_kde_results);
-    
-    if(fx_param_exists(kde_module, "fast_kde_output")) {
-      fast_kde.PrintDebug();
-    }
-    
-    if(do_naive) {
-      NaiveKde<EpanKernel> naive_kde;
-      naive_kde.Init(queries, references, reference_weights, kde_module);
-      naive_kde.Compute();
-      
-      if(fx_param_exists(kde_module, "naive_kde_output")) {
-	naive_kde.PrintDebug();
-      }
-      naive_kde.ComputeMaximumRelativeError(fast_kde_results);
-    }
+  else {
+    FixedBandwidthKde(queries, references, reference_weights, 
+		      queries_equal_references, kde_module);
   }
 
   fx_done(fx_root);

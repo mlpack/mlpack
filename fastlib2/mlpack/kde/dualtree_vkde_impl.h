@@ -155,11 +155,11 @@ void DualtreeVKde<TKernel>::DualtreeVKdeBase_(Tree *qnode, Tree *rnode,
     } // end of iterating over each reference point.
     
     // Each query point has taken care of all reference points.
-    n_pruned_[q] += rnode->stat().farfield_expansion_.get_weight_sum();
+    n_pruned_[q] += rnode->stat().weight_sum_;
     
     // Subtract the number of reference points to undo the assumption
     // made in the function PreProcess.
-    densities_u_[q] -= rnode->stat().farfield_expansion_.get_weight_sum();
+    densities_u_[q] -= rnode->stat().weight_sum_;
     
     // Refine min and max summary statistics.
     RefineBoundStatistics_(q, qnode);
@@ -176,7 +176,7 @@ bool DualtreeVKde<TKernel>::MonteCarloPrunableByOrderStatistics_
  DRange &kernel_value_range, double &dl, double &de, double &du, 
  double &used_error, double &n_pruned) {
 
-  VKdeStat &stat = qnode->stat();
+  VKdeStat<TKernel> &stat = qnode->stat();
 
   // Currently running minimum/maximum kernel values.
   double min_kernel_value = DBL_MAX;
@@ -230,20 +230,18 @@ bool DualtreeVKde<TKernel>::MonteCarloPrunableByOrderStatistics_
   
   // The currently proven lower bound.
   double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
-  double new_max_kernel_value_l = threshold_ *
-    std::max(qnode->stat().max_kernel_value_l_, kernel_value_range.lo);
+  double new_max_kernel_value_l = threshold_;
   double left_hand_side = 0.5 * (max_kernel_value - min_kernel_value);
   double right_hand_side = 
     (std::max(tau_ * new_mass_l, new_max_kernel_value_l) - 
-     new_used_error) / 
-    (rroot_->stat().farfield_expansion_.get_weight_sum() - new_n_pruned);
+     new_used_error) / (rroot_->stat().weight_sum_ - new_n_pruned);
   
   // NOTE: It is very important that the following pruning rule is
   // a strict inequality!
   if(left_hand_side < right_hand_side) {
     de = 0.5 * (min_kernel_value + max_kernel_value) * 
-      rnode->stat().farfield_expansion_.get_weight_sum();
-    used_error = rnode->stat().farfield_expansion_.get_weight_sum() *
+      rnode->stat().weight_sum_;
+    used_error = rnode->stat().weight_sum_ *
       0.5 * (max_kernel_value - min_kernel_value);
     return true;
   }
@@ -264,7 +262,7 @@ bool DualtreeVKde<TKernel>::MonteCarloPrunable_
   }
 
   // Refine the lower bound using the new lower bound info.
-  VKdeStat &stat = qnode->stat();
+  VKdeStat<TKernel> &stat = qnode->stat();
   double max_used_error = 0;
 
   // Take random query/reference pair samples and determine how many
@@ -370,21 +368,22 @@ bool DualtreeVKde<TKernel>::Prunable_
  double &used_error, double &n_pruned) {
   
   // The query node stat
-  VKdeStat &stat = qnode->stat();
+  VKdeStat<TKernel> &stat = qnode->stat();
   
   // Try pruning after bound refinement: first compute distance/kernel
   // value bounds.
   dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
   dsqd_range.hi = qnode->bound().MaxDistanceSq(rnode->bound());
-  kernel_value_range = kernels_[0].RangeUnnormOnSq(dsqd_range);
-  
+  kernel_value_range.lo = rnode->stat().min_bandwidth_kernel_.
+    EvalUnnormOnSq(dsqd_range.hi);
+  kernel_value_range.hi = rnode->stat().max_bandwidth_kernel_.
+    EvalUnnormOnSq(dsqd_range.lo);
+
   // the new lower bound after incorporating new info
-  dl = kernel_value_range.lo * 
-    rnode->stat().farfield_expansion_.get_weight_sum();
-  de = 0.5 * rnode->stat().farfield_expansion_.get_weight_sum() * 
-    (kernel_value_range.lo + kernel_value_range.hi);
-  du = (kernel_value_range.hi - 1) * 
-    rnode->stat().farfield_expansion_.get_weight_sum();
+  dl = kernel_value_range.lo * rnode->stat().weight_sum_;
+  de = 0.5 * rnode->stat().weight_sum_ * (kernel_value_range.lo + 
+					  kernel_value_range.hi);
+  du = (kernel_value_range.hi - 1) * rnode->stat().weight_sum_;
   
   // refine the lower bound using the new lower bound info
   double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
@@ -394,23 +393,19 @@ bool DualtreeVKde<TKernel>::Prunable_
   double allowed_err;
 
   // Compute the allowed error.
-  double new_max_kernel_value_l = threshold_ *
-    std::max(qnode->stat().max_kernel_value_l_, kernel_value_range.lo);
+  double new_max_kernel_value_l = threshold_;
   allowed_err = (std::max(tau_ * new_mass_l, new_max_kernel_value_l) - 
-		 new_used_error) *
-    rnode->stat().farfield_expansion_.get_weight_sum() / 
-    ((double) rroot_->stat().farfield_expansion_.get_weight_sum() - 
-     new_n_pruned);
+		 new_used_error) * rnode->stat().weight_sum_ / 
+    ((double) rroot_->stat().weight_sum_ - new_n_pruned);
 
   // This is error per each query/reference pair for a fixed query
   double kernel_diff = 0.5 * (kernel_value_range.hi - kernel_value_range.lo);
   
   // this is total error for each query point
-  used_error = kernel_diff * 
-    rnode->stat().farfield_expansion_.get_weight_sum();
+  used_error = kernel_diff * rnode->stat().weight_sum_;
   
   // number of reference points for possible pruning.
-  n_pruned = rnode->stat().farfield_expansion_.get_weight_sum();
+  n_pruned = rnode->stat().weight_sum_;
 
   // If the error bound is satisfied by the hard error bound, it is
   // safe to prune.
@@ -447,7 +442,6 @@ bool DualtreeVKde<TKernel>::DualtreeVKdeCanonical_
 
   // temporary variable for storing lower bound change.
   double dl = 0, de = 0, du = 0;
-  int order_farfield_to_local = -1, order_farfield = -1, order_local = -1;
   
   // temporary variables for holding used error for pruning.
   double used_error = 0, n_pruned = 0;
@@ -609,7 +603,6 @@ void DualtreeVKde<TKernel>::PreProcess(Tree *node) {
   
   node->stat().used_error_ = 0;
   node->stat().n_pruned_ = 0;
-  node->stat().max_kernel_value_l_ = 0;
   
   // Postponed lower and upper bound density changes to 0.
   node->stat().postponed_l_ = node->stat().postponed_u_ = 0;
@@ -624,17 +617,46 @@ void DualtreeVKde<TKernel>::PreProcess(Tree *node) {
   node->stat().postponed_n_pruned_ = 0;
   
   // for non-leaf node, recurse
-  if(!node->is_leaf()) {
-    
+  if(!node->is_leaf()) {    
     PreProcess(node->left());
     PreProcess(node->right());
+
+    // After recursing set the max/min bandwidth and the weight sum
+    // approproiately.
+    node->stat().min_bandwidth_kernel_.Init
+      (std::min
+       (sqrt(node->left()->stat().min_bandwidth_kernel_.bandwidth_sq()),
+	sqrt(node->right()->stat().min_bandwidth_kernel_.bandwidth_sq())));
+    node->stat().max_bandwidth_kernel_.Init
+      (std::max
+       (sqrt(node->left()->stat().max_bandwidth_kernel_.bandwidth_sq()),
+	sqrt(node->right()->stat().max_bandwidth_kernel_.bandwidth_sq())));
+    node->stat().weight_sum_ =
+      node->left()->stat().weight_sum_ + node->right()->stat().weight_sum_;
+  }
+  else {
+    
+    node->stat().min_bandwidth_kernel_.Init(DBL_MAX);
+    node->stat().max_bandwidth_kernel_.Init(-DBL_MAX);
+    node->stat().weight_sum_ = 0;
+
+    // Reset the minimum/maximum bandwidths owned by the node.
+    for(index_t i = node->begin(); i < node->end(); i++) {
+      node->stat().min_bandwidth_kernel_.Init
+	(std::min(sqrt(node->stat().min_bandwidth_kernel_.bandwidth_sq()),
+		  sqrt(kernels_[i].bandwidth_sq())));
+      node->stat().max_bandwidth_kernel_.Init
+	(std::max(sqrt(node->stat().max_bandwidth_kernel_.bandwidth_sq()),
+		  sqrt(kernels_[i].bandwidth_sq())));
+      node->stat().weight_sum_ += rset_weights_[i];
+    }
   }
 }
 
 template<typename TKernel>
 void DualtreeVKde<TKernel>::PostProcess(Tree *qnode) {
     
-  VKdeStat &qstat = qnode->stat();
+  VKdeStat<TKernel> &qstat = qnode->stat();
   
   // For a leaf query node,
   if(qnode->is_leaf()) {

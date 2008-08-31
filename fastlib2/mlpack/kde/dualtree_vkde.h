@@ -94,7 +94,7 @@ class DualtreeVKde {
  public:
   
   // our tree type using the VKdeStat
-  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix, VKdeStat > Tree;
+  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix, VKdeStat<TKernel> > Tree;
     
  private:
 
@@ -335,10 +335,6 @@ class DualtreeVKde {
 
   void Compute(Vector *results) {
 
-    // compute normalization constant: TO BE FIXED!!!!
-    mult_const_ = 1.0 / (kernels_[0].CalcNormConstant(qset_.n_rows()) *
-			 rset_weight_sum_);
-
     // Set accuracy parameters.
     tau_ = fx_param_double(module_, "relative_error", 0.1);
     threshold_ = fx_param_double(module_, "threshold", 0) *
@@ -356,8 +352,9 @@ class DualtreeVKde {
     // Reset prune statistics.
     num_finite_difference_prunes_ = num_monte_carlo_prunes_ = 0;
 
-    printf("\nStarting fast KDE on bandwidth value of %g...\n",
-	   sqrt(kernels_[0].bandwidth_sq()));
+    printf("\nStarting variable KDE using %d neighbors...\n",
+	   (int) fx_param_int_req(module_, "knn"));
+
     fx_timer_start(NULL, "fast_kde_compute");
 
     // Preprocessing step for initializing series expansion objects
@@ -421,7 +418,9 @@ class DualtreeVKde {
     int leaflen = fx_param_int(module_in, "leaflen", 20);
 
     // Copy reference dataset and reference weights and compute its
-    // sum.
+    // sum. rset_weight_sum_ should be the raw sum of the reference
+    // weights, ignoring the possibly different normalizing constants
+    // in the case of variable-bandwidth case.
     rset_.Copy(references);
     rset_weights_.Init(rset_weights.n_cols());
     rset_weight_sum_ = 0;
@@ -430,7 +429,7 @@ class DualtreeVKde {
       rset_weight_sum_ += rset_weights_[i];
     }
 
-    // Copy query dataset.
+    // Copy the query dataset.
     if(queries_equal_references) {
       qset_.Alias(rset_);
     }
@@ -476,12 +475,30 @@ class DualtreeVKde {
     kernels_.Init(rset_.n_cols());
     all_knn.Init(rset_, 20, knns);
     ArrayList<index_t> resulting_neighbors;
-    ArrayList<double> distances;    
-    all_knn.ComputeNeighbors(&resulting_neighbors, &distances);
-    
-    for(index_t i = 0; i < distances.size(); i += knns) {
-      kernels_[i / knns].Init(sqrt(distances[i + knns - 1]));
+    ArrayList<double> squared_distances;    
+
+    fx_timer_start(fx_root, "bandwidth_initialization");
+    all_knn.ComputeNeighbors(&resulting_neighbors, &squared_distances);
+
+    for(index_t i = 0; i < squared_distances.size(); i += knns) {
+      kernels_[i / knns].Init(sqrt(squared_distances[i + knns - 1]));
     }
+    fx_timer_stop(fx_root, "bandwidth_initialization");
+
+    // Renormalize the reference weights according to the bandwidths
+    // that have been chosen.
+    double min_norm_const = DBL_MAX;
+    for(index_t i = 0; i < rset_weights_.length(); i++) {
+      double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows());
+      min_norm_const = std::min(min_norm_const, norm_const);
+    }
+    for(index_t i = 0; i < rset_weights_.length(); i++) {
+      double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows());
+      rset_weights_[i] *= (min_norm_const / norm_const);
+    }
+
+    // Compute normalization constant.
+    mult_const_ = 1.0 / (rset_weight_sum_ * min_norm_const);
   }
 
   void PrintDebug() {

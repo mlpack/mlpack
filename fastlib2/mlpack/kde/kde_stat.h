@@ -1,9 +1,24 @@
 #ifndef KDE_STAT_H
 #define KDE_STAT_H
 
+template<typename TKernel>
 class VKdeStat {
  public:
-  
+
+  /** @brief The minimum bandwidth among the points owned by this
+   *         node.
+   */
+  TKernel min_bandwidth_kernel_;
+
+  /** @brief The maximum bandwidth among the points owned by this
+   *         node.
+   */
+  TKernel max_bandwidth_kernel_;
+
+  /** @brief The weight sum of the points owned by this node.
+   */
+  double weight_sum_;
+
   /** @brief The lower bound on the densities for the query points
    *         owned by this node.
    */
@@ -99,6 +114,7 @@ class VKdeStat {
   /** @brief Initialize the statistics.
    */
   void Init() {
+    weight_sum_ = 0;
     mass_l_ = 0;
     mass_u_ = 0;
     used_error_ = 0;
@@ -116,14 +132,15 @@ class VKdeStat {
   }
     
   void Init(const Matrix& dataset, index_t &start, index_t &count,
-	    const VKdeStat& left_stat,
-	    const VKdeStat& right_stat) {
+	    const VKdeStat& left_stat, const VKdeStat& right_stat) {
     Init();
   }
   
-  VKdeStat() { }
+  VKdeStat() {
+  }
     
-  ~VKdeStat() { }
+  ~VKdeStat() {
+  }
     
 };
 
