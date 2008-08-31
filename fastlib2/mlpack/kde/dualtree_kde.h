@@ -86,6 +86,10 @@ const fx_entry_doc kde_main_entries[] = {
 const fx_entry_doc kde_entries[] = {
   {"bandwidth", FX_PARAM, FX_DOUBLE, NULL,
    "  The bandwidth parameter.\n"},
+  {"coverage_percentile", FX_PARAM, FX_DOUBLE, NULL,
+   "  The upper percentile of the estimates for the error guarantee.\n"},
+  {"kernel", FX_PARAM, FX_STR, NULL,
+   "  The type of kernel to use.\n"},
   {"do_naive", FX_PARAM, FX_BOOL, NULL,
    "  Whether to perform naive computation as well.\n"},
   {"fast_kde_output", FX_PARAM, FX_STR, NULL,
