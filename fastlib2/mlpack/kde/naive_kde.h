@@ -177,7 +177,6 @@ class NaiveKde {
       // Initialize the kernels for each reference point.
       int knns = fx_param_int_req(module_, "knn");
       AllkNN all_knn;
-      kernels_.Init(rset_.n_cols());
       all_knn.Init(rset_, 20, knns);
       ArrayList<index_t> resulting_neighbors;
       ArrayList<double> squared_distances;    
