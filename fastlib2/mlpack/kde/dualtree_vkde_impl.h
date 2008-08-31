@@ -229,7 +229,7 @@ bool DualtreeVKde<TKernel>::MonteCarloPrunableByOrderStatistics_
   double new_n_pruned = stat.n_pruned_ + stat.postponed_n_pruned_;
 
   // The probabilistic lower bound change due to sampling.
-  dl = rnode->stat().farfield_expansion_.get_weight_sum() * min_kernel_value;
+  dl = rnode->stat().weight_sum_ * min_kernel_value;
   
   // The currently proven lower bound.
   double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
