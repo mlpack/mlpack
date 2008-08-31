@@ -49,7 +49,7 @@ class NaiveKde {
   Vector rset_weights_;
 
   /** @brief The kernel function. */
-  TKernel kernel_;
+  ArrayList<TKernel> kernels_;
 
   /** @brief The computed densities. */
   Vector densities_;
@@ -105,7 +105,7 @@ class NaiveKde {
 	const double *r_col = rset_.GetColumnPtr(r);
 	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
 	
-	densities_[q] += rset_weights_[r] * kernel_.EvalUnnormOnSq(dsqd);
+	densities_[q] += rset_weights_[r] * kernels_[r].EvalUnnormOnSq(dsqd);
       }
 
       // Then normalize it.
@@ -134,7 +134,7 @@ class NaiveKde {
 	const double *r_col = rset_.GetColumnPtr(r);
 	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
 	
-	densities_[q] += rset_weights_[r] * kernel_.EvalUnnormOnSq(dsqd);
+	densities_[q] += rset_weights_[r] * kernels_[r].EvalUnnormOnSq(dsqd);
       }
       // Then, normalize it.
       densities_[q] /= norm_const_;
@@ -171,8 +171,46 @@ class NaiveKde {
     }
     
     // Get bandwidth and compute the normalizing constant.
-    kernel_.Init(fx_param_double_req(module_, "bandwidth"));
-    norm_const_ = kernel_.CalcNormConstant(qset_.n_rows()) * weight_sum;
+    kernels_.Init(rset_.n_cols());
+    if(!strcmp(fx_param_str(module_, "mode", "variablebw"), "variablebw")) {
+
+      // Initialize the kernels for each reference point.
+      int knns = fx_param_int_req(module_, "knn");
+      AllkNN all_knn;
+      kernels_.Init(rset_.n_cols());
+      all_knn.Init(rset_, 20, knns);
+      ArrayList<index_t> resulting_neighbors;
+      ArrayList<double> squared_distances;    
+      
+      fx_timer_start(fx_root, "bandwidth_initialization");
+      all_knn.ComputeNeighbors(&resulting_neighbors, &squared_distances);
+      
+      for(index_t i = 0; i < squared_distances.size(); i += knns) {
+	kernels_[i / knns].Init(sqrt(squared_distances[i + knns - 1]));
+      }
+      fx_timer_stop(fx_root, "bandwidth_initialization");
+
+      // Renormalize the reference weights according to the bandwidths
+      // that have been chosen.
+      double min_norm_const = DBL_MAX;
+      for(index_t i = 0; i < rset_weights_.length(); i++) {
+	double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows());
+	min_norm_const = std::min(min_norm_const, norm_const);
+      }
+      for(index_t i = 0; i < rset_weights_.length(); i++) {
+	double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows());
+	rset_weights_[i] *= (min_norm_const / norm_const);
+      }
+      
+      // Compute normalization constant.
+      norm_const_ = weight_sum * min_norm_const;
+    }
+    else {
+      for(index_t i = 0; i < kernels_.size(); i++) {
+	kernels_[i].Init(fx_param_double_req(module_, "bandwidth"));
+      }
+      norm_const_ = kernels_[0].CalcNormConstant(qset_.n_rows()) * weight_sum;
+    }
 
     // Allocate density storage.
     densities_.Init(qset.n_cols());

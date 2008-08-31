@@ -336,6 +336,9 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunableByOrderStatistics_
     stat.postponed_used_error_;
   double new_n_pruned = stat.n_pruned_ + stat.postponed_n_pruned_;
   
+  // The probabilistic lower bound change due to sampling.
+  dl = rnode->stat().farfield_expansion_.get_weight_sum() * min_kernel_value;
+
   // The currently proven lower bound.
   double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
   double new_max_kernel_value_l = threshold_;
@@ -345,9 +348,7 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunableByOrderStatistics_
      new_used_error) / 
     (rroot_->stat().farfield_expansion_.get_weight_sum() - new_n_pruned);
   
-  // NOTE: It is very important that the following pruning rule is
-  // a strict inequality!
-  if(left_hand_side < right_hand_side) {
+  if(left_hand_side <= right_hand_side) {
     de = 0.5 * (min_kernel_value + max_kernel_value) * 
       rnode->stat().farfield_expansion_.get_weight_sum();
     used_error = rnode->stat().farfield_expansion_.get_weight_sum() *

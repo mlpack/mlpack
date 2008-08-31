@@ -16,6 +16,9 @@ void VariableBandwidthKde(Matrix &queries, Matrix &references,
 			  bool queries_equal_references,
 			  struct datanode *kde_module) {
 
+  // flag for determining whether to compute naively
+  bool do_naive = fx_param_exists(kde_module, "do_naive");
+
   if(!strcmp(fx_param_str(kde_module, "kernel", "gaussian"), "gaussian")) {
     
     Vector fast_kde_results;
@@ -47,6 +50,17 @@ void VariableBandwidthKde(Matrix &queries, Matrix &references,
 	fast_kde.PrintDebug();
       }
     }
+
+    if(do_naive) {
+      NaiveKde<GaussianKernel> naive_kde;
+      naive_kde.Init(queries, references, reference_weights, kde_module);
+      naive_kde.Compute();
+      
+      if(true || fx_param_exists(kde_module, "naive_kde_output")) {
+	naive_kde.PrintDebug();
+      }
+      naive_kde.ComputeMaximumRelativeError(fast_kde_results);
+    }
   }
   else if(!strcmp(fx_param_str(kde_module, "kernel", "epan"), "epan")) {
     DualtreeVKde<EpanKernel> fast_kde;
@@ -58,6 +72,17 @@ void VariableBandwidthKde(Matrix &queries, Matrix &references,
     
     if(fx_param_exists(kde_module, "fast_kde_output")) {
       fast_kde.PrintDebug();
+    }
+
+    if(do_naive) {
+      NaiveKde<EpanKernel> naive_kde;
+      naive_kde.Init(queries, references, reference_weights, kde_module);
+      naive_kde.Compute();
+      
+      if(fx_param_exists(kde_module, "naive_kde_output")) {
+	naive_kde.PrintDebug();
+      }
+      naive_kde.ComputeMaximumRelativeError(fast_kde_results);
     }
   }
 }
@@ -268,7 +293,8 @@ int main(int argc, char *argv[]) {
 				   queries_equal_references);
   }
 
-  if(!strcmp(fx_param_str(kde_module, "mode", "variablebw"), "variablebw")) {
+  // By default, we want to run the fixed-bandwidth KDE.
+  if(!strcmp(fx_param_str(kde_module, "mode", "fixedbw"), "variablebw")) {
     VariableBandwidthKde(queries, references, reference_weights, 
 			 queries_equal_references, kde_module);
   }
