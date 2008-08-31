@@ -1,0 +1,23 @@
+./fast_llde --fastlikelihood/query=points_mog1_test.txt --fastlikelihood/ref=points_mog1_train1.txt --fastlikelihood/bandwidth=0.30
+
+
+
+////////////FOR MULTIDIMENISIONAL CASE/////////////////
+./fast_llde_multi --fastlikelihood_multi/query=dummy_test_small.txt --fastlikelihood_multi/ref=dummy_train_small.txt --fastlikelihood_multi/bandwidth=13
+.
+
+./fast_llde_multi --fastlikelihood_multi/query=points_mog1_test.txt --fastlikelihood_multi/ref=points_mog1_train1.txt --fastlikelihood_multi/bandwidth=0.30
+
+
+./fast_llde_multi --fastlikelihood_multi/query=alldata_deltacolors_stdized --fastlikelihood_multi/ref=alldata_deltacolors_stdized --fastlikelihood_multi/bandwidth=0.30 
+
+
+
+////////////////////AVERAGE OVER DATASETS//////////////////////////////////////
+
+./avod --query=dummy_test_small.txt --ref1=dummy_train_small.txt --bandwidth=0.30 
+
+
+./avod --query=points_mog1_test.txt  --bandwidth=0.30 --ref1=points_mog1_train1.txt --ref2=points_mog1_train2.txt --ref3=points_mog1_train3.txt --ref4=points_mog1_train4.txt --ref5=points_mog1_train3.txt --ref6=points_mog1_train6.txt --ref7=points_mog1_train7.txt --ref8=points_mog1_train8.txt --ref9=points_mog1_train9.txt --ref10=points_mog1_train10.txt --num_of_datasets=10;
+
+./avod --query=points_mog3_test.txt  --bandwidth=0.30 --ref1=points_mog3_train1.txt --ref2=points_mog3_train2.txt --ref3=points_mog3_train3.txt --ref4=points_mog3_train4.txt --ref5=points_mog3_train5.txt  --num_of_datasets=5
