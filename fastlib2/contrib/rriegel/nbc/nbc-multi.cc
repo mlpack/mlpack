@@ -1422,15 +1422,15 @@ void NbcMain(datanode *module) {
 
   fx_timer_start(module, "read");
   param.no_labels = false;
-  param.no_priors = fx_param_exists(module, "r_no_priors");
+  param.no_priors = fx_param_bool(module, "r_no_priors", 0);
   r_points_cache = new DistributedCache();
   n_r_points = thor::ReadPoints<Nbc::RPoint>(
       param, DATA_CHANNEL + 0, DATA_CHANNEL + 1,
       fx_submodule(module, "r"),
       r_points_cache);
   if (fx_param_exists(module, "q")) {
-    param.no_labels = fx_param_exists(module, "q_no_labels");
-    param.no_priors = fx_param_exists(module, "q_no_priors");
+    param.no_labels = fx_param_bool(module, "q_no_labels", 0);
+    param.no_priors = fx_param_bool(module, "q_no_priors", 0);
     q_points_cache = new DistributedCache();
     n_q_points = thor::ReadPoints<Nbc::QPoint>(
         param, DATA_CHANNEL + 2, DATA_CHANNEL + 3,
@@ -1484,7 +1484,7 @@ void NbcMain(datanode *module) {
       q_tree, r_tree, &q_results, &global_result);
 
   // Emit the results; this needs to be folded into THOR
-  if (!fx_param_exists(module, "no_emit")) {
+  if (!fx_param_bool(module, "no_emit", 0)) {
     Matrix classifications;
     classifications.Init(1, n_q_points);
     if (rpc::is_root()) {
