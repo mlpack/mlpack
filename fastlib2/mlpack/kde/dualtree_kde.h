@@ -169,7 +169,7 @@ class DualtreeKde {
    */
   static const int num_initial_samples_per_query_ = 25;
 
-  static const int sample_multiple_ = 10;
+  static const int sample_multiple_ = 1;
 
   ////////// Private Member Variables //////////
 
@@ -454,7 +454,7 @@ class DualtreeKde {
       coverage_probabilities_[j] = 
 	OuterConfidenceInterval
 	(ceil(qset_.n_cols()) * ceil(rset_.n_cols()), 
-	 ceil(sample_multiple_ * (j + 1)), 1,
+	 ceil(sample_multiple_ * (j + 1)), ceil(sample_multiple_ * (j + 1)),
 	 ceil(qset_.n_cols()) * ceil(rset_.n_cols()) * lower_percentile);
     }    
     fx_timer_stop(fx_root, "coverage_probability_precompute");
@@ -546,7 +546,7 @@ class DualtreeKde {
     densities_u_.Init(qset_.n_cols());
 
     // Initialize the coverage probability vector.
-    coverage_probabilities_.Init(10);
+    coverage_probabilities_.Init(20);
 
     // Initialize the error accounting stuff.
     used_error_.Init(qset_.n_cols());
