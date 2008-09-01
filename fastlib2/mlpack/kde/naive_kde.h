@@ -271,9 +271,7 @@ class NaiveKde {
       if(rel_err > max_rel_err) {
 	max_rel_err = rel_err;
       }
-      if(rel_err < fx_param_double(module_, "relative_error", 0.01) ||
-	 fabs(density_estimates[q] - densities_[q]) <=
-	 fx_param_double(module_, "threshold", 0)) {
+      if(rel_err <= fx_param_double(module_, "relative_error", 0.01)) {
 	within_limit++;
       }
 
