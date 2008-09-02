@@ -230,6 +230,8 @@ class DualtreeKde {
    */
   Vector n_pruned_;
 
+  double lower_percentile_;
+
   /** @brief The sum of all reference weights.
    */
   double rset_weight_sum_;
@@ -286,7 +288,8 @@ class DualtreeKde {
    *         bound statistics.
    */
   void RefineBoundStatistics_(index_t source, Tree *destination);
-
+  void RefineBoundStatistics_(Tree *destination);
+  
   /** @brief Shuffles the given vector according to the given
    *         permutation.
    */
@@ -371,7 +374,24 @@ class DualtreeKde {
   double OuterConfidenceInterval(double population_size, double sample_size,
 				 double sample_order_statistics_min_index,
 				 double population_order_statistics_min_index);
+
+  /** @brief The comparison function used for the quick-sort.
+   */
+  static int qsort_comparator_(const void *a, const void *b) {
+    double *typecasted_a = (double *) a;
+    double *typecasted_b = (double *) b;
     
+    if(*typecasted_a < *typecasted_b) {
+      return -1;
+    }
+    else if(*typecasted_a > *typecasted_b) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  }
+
  public:
 
   ////////// Constructor/Destructor //////////
@@ -447,7 +467,7 @@ class DualtreeKde {
     
     // Preprocessing step for initializing the coverage probabilities.
     fx_timer_start(fx_root, "coverage_probability_precompute");
-    double lower_percentile =
+    lower_percentile_ =
       (100.0 - fx_param_double(module_, "coverage_percentile", 100.0)) / 100.0;
 
     for(index_t j = 0; j < coverage_probabilities_.length(); j++) {
@@ -455,7 +475,7 @@ class DualtreeKde {
 	OuterConfidenceInterval
 	(ceil(qset_.n_cols()) * ceil(rset_.n_cols()), 
 	 ceil(sample_multiple_ * (j + 1)), ceil(sample_multiple_ * (j + 1)),
-	 ceil(qset_.n_cols()) * ceil(rset_.n_cols()) * lower_percentile);
+	 ceil(qset_.n_cols()) * ceil(rset_.n_cols()) * lower_percentile_);
     }    
     fx_timer_stop(fx_root, "coverage_probability_precompute");
     coverage_probabilities_.PrintDebug();
