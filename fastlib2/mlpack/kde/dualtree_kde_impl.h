@@ -110,12 +110,25 @@ void DualtreeKde<TKernelAux>::AddPostponed_(Tree *node, index_t destination) {
 
 template<typename TKernelAux>
 void DualtreeKde<TKernelAux>::RefineBoundStatistics_(index_t q, Tree *qnode) {
-
   qnode->stat().mass_l_ = std::min(qnode->stat().mass_l_, densities_l_[q]);
   qnode->stat().mass_u_ = std::max(qnode->stat().mass_u_, densities_u_[q]);
   qnode->stat().used_error_ = std::max(qnode->stat().used_error_,
 				       used_error_[q]);
   qnode->stat().n_pruned_ = std::min(qnode->stat().n_pruned_, n_pruned_[q]);
+}
+
+template<typename TKernelAux>
+void DualtreeKde<TKernelAux>::RefineBoundStatistics_(Tree *qnode) {
+  
+  Vector v;
+  v.Init(qnode->count());
+  for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+    v[q - qnode->begin()] = densities_l_[q];
+  }
+  qsort((void *) v.ptr(), qnode->count(), sizeof(double), 
+	&DualtreeKde<GaussianKernelMultAux>::qsort_comparator_);
+
+  qnode->stat().mass_l_ = v[(int) floor(lower_percentile_ * qnode->count())];
 }
 
 template<typename TKernelAux>
@@ -175,6 +188,9 @@ void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
 
   // Clear postponed information.
   qnode->stat().ClearPostponed();
+
+  // Refine statistics again.
+  RefineBoundStatistics_(qnode);
 }
 
 template<typename TKernelAux>
