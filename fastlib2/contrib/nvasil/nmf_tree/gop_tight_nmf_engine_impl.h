@@ -63,18 +63,21 @@ void  GopTightNmfEngine::Init(fx_module *module, Matrix &data_matrix) {
   lower_bound_.Init(new_dimension_, num_of_rows_+num_of_columns_);
   lower_bound_.SetAll(fx_param_double(module_, "lower_bound", log(1e-6))); 
   upper_bound_.Init(new_dimension_, num_of_rows_+num_of_columns_);
-  upper_bound_.SetAll(fx_param_double(module_, "upper_bound", log(8)));
+  upper_bound_.SetAll(fx_param_double(module_, "upper_bound", log(100)));
   relaxed_nmf_.Init(relaxed_nmf_module, rows_, columns_, 
                     values_, lower_bound_, upper_bound_);
   relaxed_nmf_optimizer_.Init(&relaxed_nmf_, l_bfgs_module);
   Matrix init_data;
-/*  relaxed_nmf_.GiveInitMatrix(&init_data);
+  relaxed_nmf_.GiveInitMatrix(&init_data);
   relaxed_nmf_optimizer_.set_coordinates(init_data);
   relaxed_nmf_optimizer_.ComputeLocalOptimumBFGS();
   relaxed_nmf_.ComputeNonRelaxedObjective(
       *current_solution_,
       &objective_minimum_upper_bound_);
-*/
+  current_solution_= new Matrix();
+  current_solution_->Copy(*relaxed_nmf_optimizer_.coordinates());
+
+/*
   classic_nmf_objective_.Init(classic_nmf_module, 
                              rows_,
                              columns_,
@@ -87,6 +90,7 @@ void  GopTightNmfEngine::Init(fx_module *module, Matrix &data_matrix) {
   current_solution_->Copy(*classic_nmf_optimizer_.coordinates());
 
   classic_nmf_objective_.ComputeObjective(*current_solution_, &objective_minimum_upper_bound_);
+*/  
   // we need to convert it to logs
   for(index_t i=0; i<current_solution_->n_cols(); i++) {
     for(index_t j=0; j<current_solution_->n_rows(); j++) {

@@ -33,11 +33,11 @@ class GopTightNmfEngine {
   
  private:
   fx_module *module_;
-  RelaxedNmf relaxed_nmf_;
-  RelaxedNmfBoundTightener relaxed_nmf_bound_tightener_;
+  RelaxedNmfIsometric relaxed_nmf_;
+  RelaxedNmfIsometricBoundTightener relaxed_nmf_bound_tightener_;
   ClassicNmfObjective classic_nmf_objective_;
-  LBfgs<RelaxedNmf>  relaxed_nmf_optimizer_;
-  LBfgs<RelaxedNmfBoundTightener> bound_tightener_optimizer_;
+  LBfgs<RelaxedNmfIsometric>  relaxed_nmf_optimizer_;
+  LBfgs<RelaxedNmfIsometricBoundTightener> bound_tightener_optimizer_;
   LBfgs<ClassicNmfObjective> classic_nmf_optimizer_;
   GopNmfEngine gop_nmf_engine_;
   Matrix *current_solution_;
