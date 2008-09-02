@@ -91,7 +91,7 @@ void LBfgs<OptimizedFunction>::Init(OptimizedFunction *optimized_function,
   objective_factor_ = fx_param_double(module_, "objective_factor", 1.0);
   eta_ = fx_param_double(module_, "eta", 0.99);
   gamma_ = fx_param_double(module_, "gamma", 5);
-  new_dimension_ = fx_param_int(module, "new_dimension", 2);
+  new_dimension_ = fx_param_int(module_, "new_dimension", 2);
   feasibility_tolerance_ = fx_param_double(module_, "feasibility_tolerance", 0.01);
   desired_feasibility_ = fx_param_double(module_, "desired_feasibility", 100); 
   wolfe_sigma1_ = fx_param_double(module_, "wolfe_sigma1", 0.1);
@@ -117,7 +117,7 @@ void LBfgs<OptimizedFunction>::Init(OptimizedFunction *optimized_function,
   DEBUG_ASSERT(wolfe_sigma2_<1);
   norm_grad_tolerance_ = fx_param_double(module_, "norm_grad_tolerance", 0.1); 
   wolfe_beta_   = fx_param_double(module_, "wolfe_beta", 0.8);
-  min_beta_ = fx_param_double(module_, "min_beta", 1e-20);
+  min_beta_ = fx_param_double(module_, "min_beta", 1e-40);
   max_iterations_ = fx_param_int(module_, "max_iterations", 10000);
   // the memory of bfgs 
   mem_bfgs_ = fx_param_int(module_, "mem_bfgs", 20);
@@ -648,8 +648,8 @@ std::string LBfgs<OptimizedFunction>::ComputeProgress_() {
   double feasibility_error;
   optimized_function_->ComputeFeasibilityError(
       coordinates_, &feasibility_error);
-  double norm_grad=la::Dot(gradient_.n_elements(), 
-      gradient_.ptr(), gradient_.ptr());
+  double norm_grad=math::Pow<1,2>(la::Dot(gradient_.n_elements(), 
+      gradient_.ptr(), gradient_.ptr()));
   char buffer[1024];
   sprintf(buffer, "iteration:%i sigma:%lg lagrangian:%lg objective:%lg error:%lg "
       "grad_norm:%lg step:%lg",

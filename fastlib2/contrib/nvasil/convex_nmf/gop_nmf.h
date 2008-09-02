@@ -151,6 +151,78 @@ class RelaxedNmf1 {
   double sigma_;
 };
 
+class RelaxedNmfIsometric {
+ public:
+  void Init(fx_module *module,
+                      ArrayList<index_t> &rows,
+                      ArrayList<index_t> &columns,
+                      ArrayList<double> &values,
+                      Matrix &x_lower_bound, 
+                      Matrix &x_upper_bound);
+  void Destruct();
+  void SetOptVarRowColumn(index_t row, index_t column);
+  void SetOptVarSign(double sign);
+  // The following are required by LBFGS
+  void ComputeGradient(Matrix &coordinates, Matrix *gradient);
+  void ComputeObjective(Matrix &coordinates, double *objective);
+  // This class implements a convex relaxation of the nmf objective
+  // At some point we need to compute the original objective the non relaxed
+  void ComputeNonRelaxedObjective(Matrix &coordinates, double *objective);
+  void ComputeFeasibilityError(Matrix &coordinates, double *error);
+  double ComputeLagrangian(Matrix &coordinates);
+  void UpdateLagrangeMult(Matrix &coordinates);
+  void Project(Matrix *coordinates);
+  void set_sigma(double sigma); 
+  void GiveInitMatrix(Matrix *init_data);
+	bool IsDiverging(double objective); 
+  bool IsOptimizationOver(Matrix &coordinates, Matrix &gradient, double step);
+  bool IsIntermediateStepOver(Matrix &coordinates, Matrix &gradient, double step);
+   
+  // The following are required by the branch and bound
+  double GetSoftLowerBound();
+  bool IsInfeasible();
+    
+ private:
+  // holds all the info
+  fx_module *module_;
+  // number of rows of the original matrix
+  index_t num_of_rows_;
+  // number of columns of the original matrix
+  index_t num_of_columns_;
+  // offset of the H matrix on the coordinate variable
+  index_t h_offset_;
+  index_t w_offset_;
+  double values_sq_norm_;
+  index_t new_dimension_;
+  double desired_duality_gap_;
+  ArrayList<std::pair<index_t, index_t> > nearest_neighbor_pairs_;
+  ArrayList<double> nearest_distances_;
+  index_t num_of_nearest_pairs_;
+  // constant term for the LP relaxation part of the objective
+  Vector objective_a_linear_term_;
+  // linear term for the LP relaxation part of the objective
+  Vector objective_b_linear_term_;
+  // constant term for the LP relaxation part of the constraints
+  Vector constraint_a_linear_term_;
+  // linear term for the LP relaxation part of the constraints
+  Vector constraint_b_linear_term_;
+  AllkNN allknn_;
+  bool is_infeasible_;
+  
+  ArrayList<index_t> rows_;
+  ArrayList<index_t> columns_;
+  ArrayList<double> values_;
+  // lower bound for the optimization variable
+  Matrix x_lower_bound_;
+  // upper bound for the optimization variable
+  Matrix x_upper_bound_;
+  // soft lower bound of the relaxation
+  double soft_lower_bound_;
+  // tolerance for the gradient norm
+  double grad_tolerance_;
+  double sigma_;
+};
+
 
 class GopNmfEngine {
  public:
