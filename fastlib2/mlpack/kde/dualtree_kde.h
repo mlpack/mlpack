@@ -230,6 +230,10 @@ class DualtreeKde {
    */
   Vector n_pruned_;
 
+  /** @brief The temporary space to use for sorting.
+   */
+  Vector tmp_vector_for_sorting_;
+
   double lower_percentile_;
 
   /** @brief The sum of all reference weights.
@@ -571,6 +575,9 @@ class DualtreeKde {
     // Initialize the error accounting stuff.
     used_error_.Init(qset_.n_cols());
     n_pruned_.Init(qset_.n_cols());
+    
+    // Initialize the space used for sorting.
+    tmp_vector_for_sorting_.Init(leaflen);
 
     // Initialize the kernel.
     double bandwidth = fx_param_double_req(module_, "bandwidth");
