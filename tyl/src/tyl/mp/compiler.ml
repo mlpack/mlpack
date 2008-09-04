@@ -3,27 +3,15 @@ open List
 open Vars
 open Wf
 open Cnf
-open Printf
+open Util
 
 module S = Id.Set
 module E = Edsl
-
-let (%) f g x = f (g x)
-
-let rec map3 f xs ys zs = match xs,ys,zs with
-  | x::xs',y::ys',z::zs' -> f x y z :: map3 f xs' ys' zs'
-  | _ -> []
 
 let compileType t = match t with 
   | TBool None -> E.discrete 0 1
   | TBool (Some a) -> let b = if a then 1 else 0 in E.discrete b b 
   | _ -> t (* numeric types are left unchanged *)
-
-(* adapted from the Haskell stdlib *)
-let rec transpose xss = match xss with 
-  | [] -> [] 
-  | []::xss' -> transpose xss'      
-  | (x::xs) :: xss' -> (x :: map hd xss') :: transpose (xs :: map tl xss')
 
 let compileContext ctxt = map (fun (x,t) -> (x,compileType t)) ctxt
 
@@ -57,16 +45,16 @@ and compileConj e =
     | EBinaryOp (And,e1,e2) -> 
         let c1 = compileProp [] (E.isTrue e1) in
         let c2 = compileProp [] (E.isTrue e2) in 
-          E.(/|) c1 c2
+          E.conj [c1;c2]
     | _ -> assert false
 
 and typeAsBoundingProp (x',t) = let x = EVar x' in
   match t with
-    | TReal (Continuous (Some lo, Some hi)) -> E.(/|) (E.(<=) (E.litR lo) x) (E.(<=) x (E.litR hi))
+    | TReal (Continuous (Some lo, Some hi)) -> E.conj [E.(<=) (E.litR lo) x ; E.(<=) x (E.litR hi)]
     | TReal (Continuous (Some lo, None   )) ->        (E.(<=) (E.litR lo) x)              
     | TReal (Continuous (None   , Some hi)) ->                               (E.(<=) x (E.litR hi))
     | TReal (Continuous (None   , None   )) -> E.propT
-    | TReal (Discrete   (Some lo, Some hi)) -> E.(/|) (E.(<=) (E.litI lo) x) (E.(<=) x (E.litI hi))
+    | TReal (Discrete   (Some lo, Some hi)) -> E.conj [E.(<=) (E.litI lo) x ; E.(<=) x (E.litI hi)]
     | TReal (Discrete   (Some lo, None   )) ->        (E.(<=) (E.litI lo) x)              
     | TReal (Discrete   (None   , Some hi)) ->                               (E.(<=) x (E.litI hi))
     | TReal (Discrete   (None   , None   )) -> E.propT

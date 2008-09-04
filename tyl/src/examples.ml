@@ -12,7 +12,7 @@ let w = name "w"
 let example0 = 
   minimize (x + w) 
     where [(x,continuous 10.0 100.0);(w,continuous 2.0 50.0)]
-    subject_to ((x <= w) |/ (x >= w + litR 4.0))
+    subject_to (disj [x <= w ; x >= w + litR 4.0])
 
 let xA = name "xA"
 let xB = name "xB"
@@ -69,4 +69,10 @@ let print' p = printf "++++++++++++++++\n\n%s\n\n================\n\n%s\n\n" (sh
 (* ;; print' diet *)
 (* ;; print' dlf_example *)
 (* ;; print' conj_example *)
+
+
+let testc = conj [ exists (x,real) (x+w <= x)
+                 ; exists (xA,int) (x >= w) ]
+
+;; printf "%s\n\n%s\n\n" (showc testc) (showc (Tyl.Mp.Cnf.toPNF testc))
 

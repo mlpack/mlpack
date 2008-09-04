@@ -11,3 +11,6 @@ val isClosedp : prog -> bool
 val subee : expr -> Id.t -> expr -> expr
 val subec : expr -> Id.t -> prop -> prop
 val subec' : expr list -> Id.t list -> prop -> prop
+
+val alphaConverte : Id.t -> expr -> Id.Set.t -> Id.t * expr
+val alphaConvertc : Id.t -> prop -> Id.Set.t -> Id.t * prop
