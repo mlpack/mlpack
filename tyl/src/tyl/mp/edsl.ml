@@ -29,17 +29,15 @@ let isTrue e = CIsTrue e
 let ( == ) e1 e2 = CNumRel (Equal,e1,e2)
 let ( <= ) e1 e2 = CNumRel (Lte,e1,e2)
 let ( >= ) e1 e2 = CNumRel (Gte,e1,e2)
-let ( |/ ) c1 c2 = CPropOp (Disj,[c1;c2])
-let ( /| ) c1 c2 = CPropOp (Conj,[c1;c2])
 let disj cs = CPropOp (Disj,cs)
 let conj cs = CPropOp (Conj,cs)
-let exists (EVar x,t) c = CQuant (Exists,x,t,c)
+let exists (x',t) c = match x' with (EVar x) -> CQuant (Exists,x,t,c) | _ -> assert false
 
 let where = 0
 let subject_to = 0
 
 let optimize d e ctxt c = 
-  let ctxt' = List.map (fun (EVar x,t) -> (x,t)) ctxt in
+  let ctxt' = List.map (function (EVar x,t) -> (x,t) | _ -> assert false) ctxt in
     PMain (d,ctxt',e,c)
 
 let minimize e _ ets _ c = optimize Min e ets c
@@ -47,5 +45,5 @@ let maximize e _ ets _ c = optimize Max e ets c
 
 let name x = EVar (Id.make x)
 
-let sum (x::xs) = List.fold_left (+) x xs
+let sum = function (x::xs) -> List.fold_left (+) x xs | _ -> assert false
 let ( <*> ) xs ys = List.map2 ( * ) xs ys
