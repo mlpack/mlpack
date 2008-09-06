@@ -1,7 +1,7 @@
 open Ast
 
 val isType : typ -> bool
-val isOfType : context -> expr -> typ -> bool
+val isOfType : typ -> context -> expr -> bool
 val isProp : context -> prop -> bool
 val isMP : prog -> bool
 

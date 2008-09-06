@@ -34,9 +34,8 @@ let rec toPNF c = match c with
       let rec mergePNF op c1 c2 = (* pre: c1 and c2 are PNF *)
         match c1,c2 with
           | CQuant(Exists,x,t,c1'), _ -> CQuant(Exists,x,t,mergePNF op c1' c2)
-          | _, CQuant(Exists,x,t,c2') -> 
-              let (x',c2'') = alphaConvertc x c2' (freeVarsc c1) in
-                CQuant(Exists,x',t,mergePNF op c1 c2'')
+          | _, CQuant(Exists,x,t,c2') -> let (x',c2'') = alphaConvertc x c2' (freeVarsc c1) 
+            in CQuant(Exists,x',t,mergePNF op c1 c2'')
           | _,_                       -> CPropOp(op,[c1;c2])
       in 
-        foldl1 (mergePNF op) (List.map toPNF cs)
+        foldl1 (mergePNF op) (map toPNF cs)
