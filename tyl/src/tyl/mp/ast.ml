@@ -9,7 +9,7 @@
    cs,xs - plural (sets/lists of things)
 *)
 
-open List
+open Util
 
 type nullOp = Bool of bool | Int of int | Real of float
 type unaryOp = Neg | Not 
@@ -52,13 +52,8 @@ type prog =
 type context = (Id.t * typ) list
 
 let coarseContains ctxt x t = 
-  let coarseEqual (x',t') = Id.equal x x' &&
-    match t,t' with
-      | TReal _ , TReal _ -> true
-      | TBool _ , TBool _ -> true
-      | _ -> false
-  in 
-    exists coarseEqual ctxt
+  let eq (x',t') = Id.equal x x' && match t,t' with TReal _ , TReal _ -> true | TBool _ , TBool _ -> true | _ -> false
+  in any eq ctxt
       
 (* pre: context contains x ; fails otherwise *)
-let lookup ctxt x = snd (find (fun (x',_) -> Id.equal x x') ctxt)
+let lookup ctxt x = snd % List.find (Id.equal x % fst) $ ctxt

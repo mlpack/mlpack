@@ -1,5 +1,4 @@
 open Ast
-open List
 open Util
 
 module S = Id.Set
@@ -17,13 +16,13 @@ let rec freeVarsc c = match c with
   | CPropOp (_,cs)    -> S.union' (map freeVarsc cs)
   | CQuant (_,x,_,c') -> S.remove x (freeVarsc c')
 
-let freeVarsp p = 
-  let getIds = (fun xs -> fold_right S.add xs S.empty) @@ fst @@ split in
-    match p with PMain (_,ctxt,e,c) -> S.diff (S.union' [freeVarse e; freeVarsc c]) (getIds ctxt)
+let freeVarsp p = match p with PMain (_,ctxt,e,c) -> 
+  let ids = foldl (flip S.add) S.empty % fst % unzip in 
+    S.diff $ S.union' [freeVarse e; freeVarsc c] $ ids ctxt
 
-let isClosede e = S.is_empty (freeVarse e)
-let isClosedc c = S.is_empty (freeVarsc c)
-let isClosedp p = S.is_empty (freeVarsp p)
+let isClosede = S.is_empty % freeVarse
+let isClosedc = S.is_empty % freeVarsc 
+let isClosedp = S.is_empty % freeVarsp 
 
 let rec subee e x e' = match e' with 
   | EVar x'              -> if Id.equal x x' then e else e'

@@ -1,5 +1,4 @@
 open Ast
-open List
 open Vars
 open Wf
 open Cnf
@@ -65,7 +64,7 @@ and typeAsBoundingProp (x',t) = let x = EVar x' in
 and addBoundingProps ctxt c = 
   let xs = S.elements (freeVarsc c) in 
   let ts = map (lookup ctxt) xs in
-  let cs = map typeAsBoundingProp (combine xs ts) in
+  let cs = map typeAsBoundingProp (zip xs ts) in
     CPropOp (Conj,c::cs)
 
 (* pre: e and e' are numeric expressions *) 
@@ -108,7 +107,7 @@ and compileDisj ctxt c =
   let ts = map (lookup ctxt) xs in
     match c with 
       | CPropOp (Disj,cs) -> 
-          let n = length cs in
+          let n = List.length cs in
           let var x = EVar x in
           let vars = map var in
           let ys = Id.fresh' n freeVars (Id.make "y") in
@@ -117,10 +116,10 @@ and compileDisj ctxt c =
           let cs' = map (compileProp ctxt) cs in
           let cs'' = map (addBoundingProps ctxt') cs' in
           let cs''' = map3 (fun yj xjs cj'' -> scalec (var yj) (subec' (vars xjs) xs cj'')) ys (transpose xss) cs'' in
-          let foo = E.conj (cs''' @ [E.(==) E.one (E.sum (vars ys))] @ map2 (fun z zs -> E.(==) (var z) (E.sum (vars zs))) xs xss) in
+          let foo = E.conj (cs''' @ [E.(==) E.one (E.sum (vars ys))] @ List.map2 (fun z zs -> E.(==) (var z) (E.sum (vars zs))) xs xss) in
           let rec makeExists xts c = match xts with (x,t)::xts' -> makeExists xts' (CQuant(Exists,x,t,c)) | _ -> c in
           let ysAdded = makeExists (map (fun y -> (y,E.discrete 0 1)) ys) foo in
-            fold_left2 (fun c xs' t -> makeExists (map (fun x -> (x,t)) xs') c) ysAdded xss ts
+            List.fold_left2 (fun c xs' t -> makeExists (map (fun x -> (x,t)) xs') c) ysAdded xss ts
       | _ -> failwith "compileDisj: proposition is not a disjunction"
         
 let compile (PMain (d,ctxt,e,c) as p) = 
