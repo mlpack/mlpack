@@ -1,0 +1,69 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[colorlinks=true]{hyperref}
+
+\newcommand{\hilb}{\mathcal{H}}
+
+\begin{document}
+
+
+Consider a map from some input domain to a feature space
+\begin{equation}
+\phi: \mathcal{X} \mapsto \hilb, x \mapsto \phi(x)
+\end{equation}
+
+
+The formulation for kernelized linear regression estimator is
+\begin{equation}
+\hat{y}_i = \langle \beta, \phi(x_i) \rangle,
+\end{equation}
+
+for $y \in \mathbb{R}$, $\beta \in \hilb$.
+
+
+Without regularization we arrive at the objective
+\begin{equation}
+\min_\beta \sum_{i=1}^m (y - \langle \beta, \phi(x_i) \rangle)^2 
+\end{equation}
+
+for $\beta = \sum_{i=1}^m \alpha_i \phi(x_i)$, as per the representer theorem.
+
+Kernel ridge regression, or $L^2$-regularized kernelized linear regression, yields the objective
+\begin{equation}
+\min_\beta \sum_{i=1}^m (y - \langle \beta, \phi(x_i) \rangle)^2 + \lambda \| \beta \|_2^2
+\end{equation}
+
+L1-regularized kernelized linear regression yields the objective
+\begin{equation}
+\min_\beta \sum_{i=1}^m (y - \langle \beta, \phi(x_i) \rangle)^2 + \lambda \| \beta \|_1.
+\end{equation}
+
+Where we can define the $L_1$-norm as
+\begin{equation} \label{eqn:l1-exact}
+\| \beta \|_1 = \left\| \sum_{i=1}^m \alpha_i \phi(x_i) \right\| = \int \left| \sum_{i=1}^m \alpha_i k(x_i, x) \right| dx
+\end{equation}
+for $\beta \in \text{span}(\phi(x_1), \ldots, \phi(x_m))$.
+
+Since this form is likely very difficult to work with, we can instead upper bound the $L_1$-norm using the approximation $\sum_{i=1} | \alpha_i |$
+
+\begin{align*}
+  \| \beta \|_1 &= \left\| \sum_{i=1}^m \alpha_i \phi(x_i) \right\|_1 \\
+  &\leq \sum_{i=1}^m \| \alpha_i \phi(x_i) \|_1 = \sum_{i=1}^m | \alpha_i | \| \phi(x_i) \|_1 \\
+  & = m c \sum_{i=1}^m | \alpha_i |
+\end{align*}
+
+The other option would be to use Monte Carlo sampling to approximate \eqref{eqn:l1-exact}.
+
+
+The other part of the optimization involves:
+
+
+
+
+
+
+
+
+\end{document}
