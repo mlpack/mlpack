@@ -1,3 +1,4 @@
+let spf = Printf.sprintf
 let (%) f g x = f (g x)
 let ($) f x = f x
 let id x = x
@@ -22,3 +23,8 @@ let rec transpose xss = match xss with
 
 let foreach xs f = List.concat (List.map f xs)
 let rec enumFromTo a b = if a==b then [a] else a :: enumFromTo (a+1) b
+
+(* constructors as functions *)
+let some x = Some x
+let cons x xs = x::xs
+let pair x y = (x,y)
