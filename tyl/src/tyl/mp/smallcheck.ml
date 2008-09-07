@@ -1,46 +1,42 @@
 open Util
+module D = Dlist
 
-type 'a series = int -> 'a list 
+type 'a l = 'a list
+type 'a series = int -> 'a l
 
-let return x = fun d -> if d<=0 then [] else [x]
-let lift f a = map f % a
-let (++) a b d = a d @ b d
-let (><) a b d = if d<=0 then [] else foreach (a $ d-1) $ fun x -> foreach (b $ d-1) $ fun y -> [(x,y)]
-let (>>) x f = f x
+let pure x   = fun n -> if n<=0 then [] else [x]
+let (++) a b = fun n -> a n @ b n
+let (%%) f a = fun n ->
+  foreach (f n) $ fun f' ->
+    foreach (a $ n-1) $ fun a' ->
+      [f' a']
 
-(* constructors as functions *)
-let some x = Some x
-let cons (x,xs) = x::xs
+(* let pure x = fun n -> if n<=0 then D.empty else D.singleton x  *)
+(* let (++) a b = fun n -> D.append (a n) (b n) *)
+(* let (%%) f a = fun n -> D.empty  *)
 
 (* series generators for common types *)
-let ints        d = enumFromTo (-d) d
-let floats      d = assert false
-let units       d = d >> return () 
-let bools       d = d >> return true ++ return false
-let options a   d = d >> return None ++ lift some a 
-let rec lists a d = d >> return [] ++ lift cons (a >< lists a)
+let units       = pure () 
+let bools       = pure false ++ pure true
+let pairs a b   = pure pair %% a %% b
+let options a   = pure None ++ pure some %% a 
+let ints        = fun n -> enumFromTo (-n) n
+let floats      = fun n -> List.map float_of_int (ints n) 
+let rec lists a = fun n -> (pure [] ++ pure cons %% a %% lists a) n
 
 (* printing *)
+let show_unit x = "()"
+let show_bool x = if x then "true" else "false"
 let show_pair a b (x,y) = "(" ^ a x ^ "," ^ b y ^ ")"
 let show_option a x = match x with Some y -> "(Some " ^ a y ^")" | None -> "None" 
-let show_list a xs = "[" ^ String.concat "," (List.map a xs) ^ "]"
-let show_int = string_of_int
-let show_unit = const "()"
+let show_int x = string_of_int x
+let show_float x = string_of_float x
+let show_list a xs = "[" ^ String.concat "," (List.map a xs) ^ "]" 
 
 (* evaluate the proposition up to the specifies depth parameter *)
-let evaluate d prop = prop d
+let evaluate n prop = prop n
 
 (* given a series, a property, and a depth parameter, attempts to find a counterexample *) 
-let forAll a f = fun d -> try Some (List.find (not % f) (a d)) with Not_found -> None
-
-(* testing *)
-let rev = List.rev
-
- ;; Printf.printf "Counterexample: %s\n\n" % show_option (show_list show_int) % evaluate 5 $ forAll (lists ints) (fun xs -> (rev % rev) xs = xs)  
- ;; Printf.printf "%s\n\n" % show_list (show_option (show_option (show_unit))) $ (options (options units)) 3 
- ;; Printf.printf "%s\n\n" % show_list (            (show_option (show_unit))) $ (        (options units)) 2 
- ;; Printf.printf "%s\n\n" % show_list (show_list   (show_list   (show_unit))) $ (lists   (lists   units)) 3
- ;; Printf.printf "%s\n\n" % show_list (            (show_list   (show_unit))) $ (        (lists   units)) 3  
- ;; Printf.printf "%s\n\n" % show_list (            (show_list   (show_int ))) $ (        (lists    ints)) 3  
+let forAll a p = fun n -> try Some (List.find (not % p) (a n)) with Not_found -> None 
 
 
