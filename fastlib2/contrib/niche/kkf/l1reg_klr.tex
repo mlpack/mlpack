@@ -5,6 +5,7 @@
 \usepackage[colorlinks=true]{hyperref}
 
 \newcommand{\hilb}{\mathcal{H}}
+\renewcommand{\vec}[1]{\mathbf{#1}}
 
 \begin{document}
 
@@ -46,7 +47,9 @@ Where we can define the $L_1$-norm as
 \end{equation}
 for $\beta \in \text{span}(\phi(x_1), \ldots, \phi(x_m))$.
 
-Since this form is likely very difficult to work with, we can instead upper bound the $L_1$-norm using the approximation $\sum_{i=1} | \alpha_i |$
+The only obvious way to work with this form is to use Monte Carlo sampling to approximate \eqref{eqn:l1-exact}.
+
+We can instead upper bound the $L_1$-norm using the approximation $\sum_{i=1} | \alpha_i |$
 
 \begin{align*}
   \| \beta \|_1 &= \left\| \sum_{i=1}^m \alpha_i \phi(x_i) \right\|_1 \\
@@ -54,7 +57,45 @@ Since this form is likely very difficult to work with, we can instead upper boun
   & = m c \sum_{i=1}^m | \alpha_i |
 \end{align*}
 
-The other option would be to use Monte Carlo sampling to approximate \eqref{eqn:l1-exact}.
+One interpretation suggests that the upper bound provides the advantage that our solution will exhibit a sparsity in $\alpha_i$'s and hence a sparse representation in terms of our $\phi(x_i)$'s.
+
+Suppose that optimization of our objective involves
+\begin{align*} \label{eqn:linear_objective}
+\min_h \qquad & f(\beta + \vec{h}) \\
+\text{subject to} \qquad & \theta^T (\beta_\sigma + \vec{h}_\sigma) \leq t \\
+& \vec{h} = P^T
+\left( \begin{array}{c}
+  \vec{h}_\sigma \\
+  \vec{0}
+\end{array} \right)
+\end{align*}
+
+\begin{equation} \label{eqn:KKT}
+\left( \begin{array}{c c}
+\vec{X}^T_\sigma \vec{X}_\sigma & \theta_\sigma \\
+\theta_\sigma^T & 0
+\end{array} \right)
+\left( \begin{array}{c}
+\vec{h}_\sigma \\
+\mu
+\end{array} \right)
+=
+\left( \begin{array}{c}
+\vec{X}_\sigma^T (\vec{Y} - \vec{X}_\sigma \beta_\sigma) \\
+t - \theta_\sigma^T \beta_\sigma
+\end{array} \right)
+\end{equation}
+
+
+The solution to \eqref{eqn:linear_objective} is then
+\begin{equation}
+\vec{h}_\sigma = (\vec{X}_\sigma^T \vec{X}_\sigma)^{-1} (\vec{X}_\sigma^T (Y - \vec{X}_\sigma \beta_\sigma) - \mu \theta_\sigma),
+\end{equation}
+
+for
+\[
+\mu = \max \left( 0, \frac{\theta_\sigma^T (\vec{X}_\sigma^T \vec{X}_\sigma)^{-1} \vec{X}_\sigma^T \vec{Y} - t}{\theta_\sigma^T (\vec{X}_\sigma^T \vec{X}_\sigma)^{-1} \theta_\sigma} \right)
+\]
 
 
 The other part of the optimization involves:
