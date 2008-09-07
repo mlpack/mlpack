@@ -4,7 +4,6 @@ type t = string
   
 let make s = s
 let toString s = s 
-let make s = s
 let equal i j = i = j
 
 module Set = struct
