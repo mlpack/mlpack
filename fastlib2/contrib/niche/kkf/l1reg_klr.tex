@@ -60,15 +60,15 @@ We can instead upper bound the $L_1$-norm using the approximation $\sum_{i=1} | 
 One interpretation suggests that the upper bound provides the advantage that our solution will exhibit a sparsity in $\alpha_i$'s and hence a sparse representation in terms of our $\phi(x_i)$'s.
 
 Suppose that optimization of our objective involves
-\begin{align*} \label{eqn:linear_objective}
+\begin{align} \label{eqn:linear_objective}
 \min_h \qquad & f(\beta + \vec{h}) \\
-\text{subject to} \qquad & \theta^T (\beta_\sigma + \vec{h}_\sigma) \leq t \\
+\text{subject to} \qquad & \theta^T (\beta_\sigma + \vec{h}_\sigma) \leq t \nonumber \\
 & \vec{h} = P^T
 \left( \begin{array}{c}
-  \vec{h}_\sigma \\
+  \vec{h}_\sigma \nonumber \\
   \vec{0}
 \end{array} \right)
-\end{align*}
+\end{align}
 
 \begin{equation} \label{eqn:KKT}
 \left( \begin{array}{c c}
@@ -99,6 +99,7 @@ for
 
 
 The other part of the optimization involves:
+
 
 
 
