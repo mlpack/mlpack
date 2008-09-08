@@ -1,8 +1,10 @@
 open Ast
 open Format
-open List
+open Util
 
-let showt t = match t with
+(* naming convention: pp<typename> *)
+
+let pptyp t = match t with
   | TBool None -> "bool"
   | TBool (Some b) -> sprintf "{%b}" b
   | TReal (Discrete (None,None)) -> "int"
@@ -16,36 +18,36 @@ let showt t = match t with
       let upper = match hi with None -> "inf" | Some x -> sprintf "%f" x in
         sprintf "<%s,%s>" lower upper
 
-let rec showe e = match e with
+let rec ppexpr e = match e with
   | EVar x -> Id.toString x
   | EConst (Bool b) -> sprintf "%b" b
   | EConst (Real r) -> sprintf "%f" r
   | EConst (Int n) -> sprintf "%d" n
   | EUnaryOp (op,e') -> 
-      sprintf "%s%s" (match op with Neg -> "-" | Not -> "not ") (showe e')
+      sprintf "%s%s" (match op with Neg -> "-" | Not -> "not ") (ppexpr e')
   | EBinaryOp (op,e1,e2) ->
       sprintf "(@[%s %s@ %s@])"
-        (showe e1) 
+        (ppexpr e1) 
         (match op with Plus -> "+" | Minus -> "-" | Mult -> "*" | Or -> "||" | And -> "&&")
-        (showe e2)
+        (ppexpr e2)
 
-let showxt (x,t) = sprintf "%s:%s" (Id.toString x) (showt t)
+let ppcontext = String.concat "\n" % map (fun (x,t) -> sprintf "%s:%s" (Id.toString x) (pptyp t)) 
 
-let rec showc c = match c with
+let rec ppprop c = match c with
   | CBoolVal b -> if b then "T" else "F"
-  | CIsTrue e -> sprintf "(@[isTrue %s@])" (showe e)
+  | CIsTrue e -> sprintf "(@[isTrue %s@])" (ppexpr e)
   | CNumRel (op,e1,e2) ->
       sprintf "(@[%s %s %s@])" 
-        (showe e1) 
+        (ppexpr e1) 
         (match op with Lte -> "<=" | Equal -> "==" | Gte -> ">=")
-        (showe e2)
+        (ppexpr e2)
   | CPropOp (op,cs) -> 
       let opstr = match op with Disj -> " disj " | Conj -> "\n conj " in
-        sprintf "(@[%s@])" (String.concat opstr (map showc cs))
-  | CQuant (Exists,x,t,c) -> sprintf "(@[exists %s .@ %s@])" (showxt (x,t)) (showc c)
+        sprintf "(@[%s@])" (String.concat opstr (map ppprop cs))
+  | CQuant (Exists,x,t,c) -> sprintf "(@[exists %s:%s .@ %s@])" (Id.toString x) (pptyp t) (ppprop c)
 
-let showp p = match p with
+let ppprog p = match p with
   | PMain (d,ctxt,e,c) -> 
-      let vars = String.concat "\n" (map showxt ctxt) in 
+      let vars = ppcontext ctxt in 
       let dirxn = (match d with Min -> "min" | Max -> "max") in
-        sprintf "%s\n\n%s %s subject_to\n\n%s" vars dirxn (showe e) (showc c)
+        sprintf "%s\n\n%s %s subject_to\n\n%s" vars dirxn (ppexpr e) (ppprop c)
