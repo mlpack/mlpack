@@ -30,9 +30,6 @@ type typ =
   | TReal of refinedReal
   | TBool of refinedBool
       
-type prop_typ = 
-  | ZProp
-
 type expr = 
   | EVar of Id.t
   | EConst of nullOp
@@ -57,3 +54,22 @@ let coarseContains ctxt x t =
       
 (* pre: context contains x ; fails otherwise *)
 let lookup ctxt x = snd % List.find (Id.equal x % fst) $ ctxt
+
+(* constructors as functions *)
+let _Bool x = Bool x
+let _Int x = Int x
+let _Real x = Real x
+let _Discrete x = Discrete x
+let _Continuous x = Continuous x
+let _TReal x = TReal x
+let _TBool x = TBool x
+let _EVar x = EVar x
+let _EConst x = EConst x
+let _EUnaryOp x y = EUnaryOp (x,y)
+let _EBinaryOp x y z = EBinaryOp (x,y,z)
+let _CBoolVal x = CBoolVal x
+let _CIsTrue x = CIsTrue x
+let _CNumRel x y z = CNumRel (x,y,z)
+let _CPropOp x y = CPropOp (x,y)
+let _CQuant w x y z = CQuant (w,x,y,z)
+let _PMain w x y z = PMain (w,x,y,z)
