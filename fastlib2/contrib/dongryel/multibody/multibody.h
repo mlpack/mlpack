@@ -8,6 +8,8 @@
 #include "mlpack/series_expansion/farfield_expansion.h"
 #include "mlpack/series_expansion/local_expansion.h"
 #include "mlpack/series_expansion/series_expansion_aux.h"
+#include "mlpack/allknn/allknn.h"
+#include "contrib/nvasil/allkfn/allkfn.h"
 #include "multibody_kernel.h"
 
 #define INSIDE_MULTIBODY_H
@@ -166,13 +168,17 @@ class MultitreeMultibody {
     n_pruned_.SetZero();
     total_force_e_.SetZero();
 
+
+    // Set the sample multiple.
+    sample_multiple_ = 10;
+
     // Compute the coverage probability table.
     double lower_percentile = (100 - centered_percentile_coverage) / 
       100.0;
     for(index_t j = 0; j < coverage_probabilities_.length(); j++) {
       coverage_probabilities_[j] = 
 	mkernel_.OuterConfidenceInterval
-	(ceil(total_num_tuples_), ceil(25 * (j + 1)), 1,
+	(ceil(total_num_tuples_), ceil(sample_multiple_ * (j + 1)), 1,
 	 ceil(total_num_tuples_ * lower_percentile));
     }
     coverage_probabilities_.PrintDebug();
@@ -208,10 +214,34 @@ class MultitreeMultibody {
 
     fx_timer_stop(NULL, "tree_d");
 
+    // Compute the (k - 1) nearest neighbors of each point, where k is
+    // the order of the multibody kernel.
+    AllkNN all_knn;
+    all_knn.Init(data_, 20, 1);
+    ArrayList<index_t> resulting_neighbors;
+    ArrayList<double> squared_distances;
+
+    fx_timer_start(fx_root, "k_nn_dsqd_initialization");
+    all_knn.ComputeNeighbors(&resulting_neighbors, &squared_distances);
+    fx_timer_stop(fx_root, "k_nn_dsqd_initialization");
+
+    // Compute the (k - 1) farthest neighbors of each point, where k
+    // is the order of the multibody kernel.
+    AllkFN all_kfn;
+    all_kfn.Init(data_, 20, 1);
+    ArrayList<index_t> resulting_farthest_neighbors;
+    ArrayList<double> squared_farthest_distances;
+
+    fx_timer_start(fx_root, "k_fn_dsqd_initialization");
+    all_kfn.ComputeNeighbors(&resulting_farthest_neighbors, 
+			     &squared_farthest_distances);
+    PreProcess_(root_, squared_distances, squared_farthest_distances);
+    fx_timer_stop(fx_root, "k_fn_dsqd_initialization");
+
     // More temporary variables initialization.
     non_leaf_indices_.Init(mkernel_.order());
     distmat_.Init(mkernel_.order(), mkernel_.order());
-    coverage_probabilities_.Init(10);    
+    coverage_probabilities_.Init(20);    
     exhaustive_indices_.Init(mkernel_.order());
     num_leave_one_out_tuples_.Init(mkernel_.order());
 
@@ -259,6 +289,10 @@ private:
   /** @brief The total number of n-tuples.
    */
   double total_num_tuples_;
+
+  /** @brief The unit multiple of the number of samples to take.
+   */
+  int sample_multiple_;
 
   /** @brief The total number of n-tuple  prunes.
    */
@@ -380,6 +414,9 @@ private:
   
 
   /////////// Helper Functions //////////
+
+  void PreProcess_(TTree *node, const ArrayList<double> &knn_dsqds,
+		   const ArrayList<double> &kfn_dsqds);
 
   void RefineStatistics_(int point_index, TTree *destination_node);
 

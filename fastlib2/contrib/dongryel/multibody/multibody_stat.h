@@ -130,6 +130,14 @@ class MultibodyStat {
   /** @brief The postponed (n - 1) tuples that were pruned.
    */
   double postponed_n_pruned_;
+  
+  /** @brief The lower bounds on the k-nearest neighbor distances.
+   */
+  Vector knn_dsqds_lower_bounds_;
+
+  /** @brief The upper bounds on the k-farthest neighbor distances.
+   */
+  Vector kfn_dsqds_upper_bounds_;
 
   /** @brief Resets the postponed statistics to zero.
    */
@@ -177,6 +185,11 @@ class MultibodyStat {
     postponed_positive_gradient2_e.Init(3);
     postponed_positive_gradient2_used_error = 0;
     postponed_n_pruned_ = 0;
+
+    // Hard-coding for Axilrod-Teller: each point needs two nearest
+    // neighbor distances.
+    knn_dsqds_lower_bounds_.Init(1);
+    kfn_dsqds_upper_bounds_.Init(1);
   }
 
   /** @brief The initialization for leaf stats.

@@ -119,6 +119,37 @@ int MultitreeMultibody<TMultibodyKernel, TTree>::FindSplitNode
 }
 
 template<typename TMultibodyKernel, typename TTree>
+void MultitreeMultibody<TMultibodyKernel, TTree>::PreProcess_
+(TTree *node, const ArrayList<double> &knn_dsqds,
+ const ArrayList<double> &kfn_dsqds) {
+
+  if(node->is_leaf()) {    
+    node->stat().knn_dsqds_lower_bounds_[0] = DBL_MAX;
+    node->stat().kfn_dsqds_upper_bounds_[0] = 0;
+    
+    for(index_t j = node->begin(); j < node->end(); j++) {
+      node->stat().knn_dsqds_lower_bounds_[0] =
+	std::min(node->stat().knn_dsqds_lower_bounds_[0],
+		 knn_dsqds[j]);
+      node->stat().kfn_dsqds_upper_bounds_[0] =
+	std::max(node->stat().kfn_dsqds_upper_bounds_[0],
+		 kfn_dsqds[j]);
+    }
+  }
+  else {
+    PreProcess_(node->left(), knn_dsqds, kfn_dsqds);
+    PreProcess_(node->right(), knn_dsqds, kfn_dsqds);
+    
+    node->stat().knn_dsqds_lower_bounds_[0] =
+      std::min(node->left()->stat().knn_dsqds_lower_bounds_[0],
+	       node->right()->stat().knn_dsqds_lower_bounds_[0]);
+    node->stat().kfn_dsqds_upper_bounds_[0] =
+      std::max(node->left()->stat().kfn_dsqds_upper_bounds_[0],
+	       node->right()->stat().kfn_dsqds_upper_bounds_[0]);
+  }
+}
+
+template<typename TMultibodyKernel, typename TTree>
 void MultitreeMultibody<TMultibodyKernel, TTree>::RefineStatistics_
 (int point_index, TTree *destination_node) {
   
@@ -484,7 +515,7 @@ bool MultitreeMultibody<TMultibodyKernel, TTree>::Prunable
     int num_samples = 0;
     for(index_t i = 0; i < coverage_probabilities_.length(); i++) {
       if(coverage_probabilities_[i] > required_probability) {
-	num_samples = 25 * (i + 1);
+	num_samples = sample_multiple_ * (i + 1);
 	break;
       }
     }
