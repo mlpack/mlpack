@@ -96,6 +96,8 @@ const fx_entry_doc kde_entries[] = {
    "  A file to receive the results of computation.\n"},
   {"knn", FX_PARAM, FX_INT, NULL,
    "  The number of k-nearest neighbor to use for variable bandwidth.\n"},
+  {"loo", FX_PARAM, FX_BOOL, NULL,
+   "  Whether to output the density estimates using leave-one-out."},
   {"mode", FX_PARAM, FX_STR, NULL,
    "  Fixed bandwidth or variable bandwidth mode."},
   {"multiplicative_expansion", FX_PARAM, FX_BOOL, NULL,
@@ -176,6 +178,10 @@ class DualtreeKde {
   /** @brief The pointer to the module holding the parameters.
    */
   struct datanode *module_;
+
+  /** @brief The boolean flag to control the leave-one-out computation.
+   */
+  bool leave_one_out_;
 
   /** @brief The normalization constant.
    */
@@ -437,8 +443,7 @@ class DualtreeKde {
   void Compute(Vector *results) {
 
     // compute normalization constant
-    mult_const_ = 1.0 / (ka_.kernel_.CalcNormConstant(qset_.n_rows()) *
-			 rset_weight_sum_);
+    mult_const_ = 1.0 / ka_.kernel_.CalcNormConstant(qset_.n_rows());
 
     // Set accuracy parameters.
     tau_ = fx_param_double(module_, "relative_error", 0.1);
@@ -523,8 +528,13 @@ class DualtreeKde {
     // point to the incoming module
     module_ = module_in;
 
-    // read in the number of points owned by a leaf
+    // Set the flag for whether to perform leave-one-out computation.
+    leave_one_out_ = fx_param_exists(module_in, "loo") &&
+      (queries.ptr() == references.ptr());
+
+    // Read in the number of points owned by a leaf.
     int leaflen = fx_param_int(module_in, "leaflen", 20);
+    
 
     // Copy reference dataset and reference weights and compute its
     // sum.

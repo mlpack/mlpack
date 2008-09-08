@@ -113,6 +113,10 @@ class DualtreeVKde {
    */
   struct datanode *module_;
 
+  /** @brief The boolean flag to control the leave-one-out computation.
+   */
+  bool leave_one_out_;
+
   /** @brief The normalization constant.
    */
   double mult_const_;
@@ -414,6 +418,10 @@ class DualtreeVKde {
     // point to the incoming module
     module_ = module_in;
 
+    // Set the flag for whether to perform leave-one-out computation.
+    leave_one_out_ = fx_param_exists(module_in, "loo") &&
+      (queries.ptr() == references.ptr());
+
     // read in the number of points owned by a leaf
     int leaflen = fx_param_int(module_in, "leaflen", 20);
 
@@ -498,7 +506,7 @@ class DualtreeVKde {
     }
 
     // Compute normalization constant.
-    mult_const_ = 1.0 / (rset_weight_sum_ * min_norm_const);
+    mult_const_ = 1.0 / min_norm_const;
   }
 
   void PrintDebug() {

@@ -673,10 +673,24 @@ void DualtreeVKde<TKernel>::PostProcess(Tree *qnode) {
       // Add all postponed quantities.
       AddPostponed_(qnode, q);
 
-      // Normalize the densities.
-      densities_l_[q] *= mult_const_;
-      densities_e_[q] *= mult_const_;
-      densities_u_[q] *= mult_const_;
+      // If leave-one-out, then subtract the weight of the point from
+      // the accumulated sum.
+      if(leave_one_out_) {
+	densities_e_[q] -= rset_weights_[q];
+	
+	densities_l_[q] *= (mult_const_ / 
+			    (rset_weight_sum_ - rset_weights_[q]));
+	densities_e_[q] *= (mult_const_ / 
+			    (rset_weight_sum_ - rset_weights_[q]));
+	densities_u_[q] *= (mult_const_ / 
+			    (rset_weight_sum_ - rset_weights_[q]));
+      }
+      else {
+	// Normalize the densities.
+	densities_l_[q] *= (mult_const_ / rset_weight_sum_);
+	densities_e_[q] *= (mult_const_ / rset_weight_sum_);
+	densities_u_[q] *= (mult_const_ / rset_weight_sum_);
+      }
 
       // Refine bound statistics using the finalized query point sum.
       RefineBoundStatistics_(q, qnode);
