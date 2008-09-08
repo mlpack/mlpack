@@ -3,6 +3,7 @@ open Ast
 open Wf
 open Dlist
 open Util
+open Pprint
 open Show
 
 (* constructors as functions *)
