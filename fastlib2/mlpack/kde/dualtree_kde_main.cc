@@ -278,7 +278,7 @@ int main(int argc, char *argv[]) {
     data::Load(fx_param_str(fx_root, "dwgts", NULL), &reference_weights);
   }
   else {
-    reference_weights.Init(1, queries.n_cols());
+    reference_weights.Init(1, references.n_cols());
     reference_weights.SetAll(1);
   }
   
