@@ -62,4 +62,4 @@ let progs = pure pmain %% directions %% lists (pairs ids typs) %% exprs %% props
 
 let contexts = lists (pairs ids typs)
 
-;; Printf.printf "%s" % show_option showt $ evaluate 5 (forAll typs isType)
+;; Printf.printf "%s" % show_option pptyp $ evaluate 5 (forAll typs isType)
