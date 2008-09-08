@@ -830,10 +830,23 @@ void DualtreeKde<TKernelAux>::PostProcess(Tree *qnode) {
       // contributions.
       densities_e_[q] += qstat.local_expansion_.EvaluateField(qset_, q);
       
-      // Normalize the densities.
-      densities_l_[q] *= mult_const_;
-      densities_e_[q] *= mult_const_;
-      densities_u_[q] *= mult_const_;
+      // If leave-one-out, then subtract the weight of the point from
+      // the accumulated sum.
+      if(leave_one_out_) {
+	densities_e_[q] -= rset_weights_[q];
+	densities_l_[q] *= (mult_const_ / 
+			    (rset_weight_sum_ - rset_weights_[q]));
+	densities_e_[q] *= (mult_const_ /
+			    (rset_weight_sum_ - rset_weights_[q]));
+	densities_u_[q] *= (mult_const_ /
+			    (rset_weight_sum_ - rset_weights_[q]));
+      }
+      else {
+	// Normalize the densities.
+	densities_l_[q] *= (mult_const_ / rset_weight_sum_);
+	densities_e_[q] *= (mult_const_ / rset_weight_sum_);
+	densities_u_[q] *= (mult_const_ / rset_weight_sum_);
+      }
 
       // Refine bound statistics using the finalized query point sum.
       RefineBoundStatistics_(q, qnode);
