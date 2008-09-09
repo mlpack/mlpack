@@ -25,6 +25,7 @@ class NmfEngine {
 		 fx_set_param_int(opt_function_module, "new_dimension", new_dim_);
 		 opt_function_.Init(opt_function_module, rows_, columns_, values_);
 		 fx_module *l_bfgs_module=fx_submodule(module_, "l_bfgs");
+     fx_set_param_bool(l_bfgs_module, "use_default_termination", false);
      Matrix init_data;
 		 opt_function_.GiveInitMatrix(&init_data);
 	   fx_set_param_int(l_bfgs_module, "num_of_points", init_data.n_cols());
@@ -59,16 +60,22 @@ class NmfEngine {
        error+=fabs(v_rec.get(r, c)-values_[i]);
        v_sum+=values_[i];
      }
-     NOTIFY("Reconstruction error: %lg%%\n", error*100/v_sum);
+     reconstruction_error_=error*100/v_sum;
+     NOTIFY("Reconstruction error: %lg%%\n", reconstruction_error_);
 	 }
    
 	 void GetW(Matrix *w_mat) {
 	   w_mat->Copy(w_mat_);
 	 }
-	 void GetH(Matrix *h_mat) {
+	 
+   void GetH(Matrix *h_mat) {
 	   h_mat->Copy(h_mat_);
 	 }
 	 
+   double reconstruction_error() {
+    return reconstruction_error_;
+   }
+   
  private:
 	fx_module *module_;
   LBfgs<NmfObjective> engine_;
@@ -82,6 +89,7 @@ class NmfEngine {
 	Matrix h_mat_;
 	index_t num_of_rows_; // number of unique rows, otherwise the size of W
 	index_t num_of_columns_; // number of unique columns, otherwise the size of H
+  double reconstruction_error_;
  
 	void PreprocessData(Matrix &data_mat) {
 	  values_.Init();

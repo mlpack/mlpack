@@ -1324,7 +1324,7 @@ void BigSdpNmfObjectiveMaxFurthestIsometric::Init(fx_module *module,
   w_offset_=num_of_rows_;
   eq_lagrange_mult1_.Init(values_.size());
   eq_lagrange_mult1_.SetAll(1.0);
-  sigma_ratio_=10.0;
+  sigma_ratio_=fx_param_double(module_, "sigma_ratio", 10.0);
   infeasibility1_=0;
   previous_infeasibility1_=DBL_MAX;
   infeasibility2_=0;
@@ -1542,8 +1542,8 @@ void BigSdpNmfObjectiveMaxFurthestIsometric::ComputeFeasibilityError(Matrix &coo
 
   }
   infeasibility2_=math::Pow<1,2>(error2/sum_all_distances_)*100;
-  printf("dist_infeasibility:%lg %%\n", math::Pow<1,2>(error2/sum_all_distances_)*100);
-  printf("sigma_ratio:%lg\n", sigma_ratio_);
+  NOTIFY("dist_infeasibility:%lg %%\n", infeasibility2_);
+  NOTIFY("sigma_ratio:%lg\n", sigma_ratio_);
 //  sigma_ratio_=infeasibility2_/infeasibility1_;
 }
 
@@ -1857,7 +1857,7 @@ void NmfObjectiveIsometric::ComputeFeasibilityError(Matrix &coordinates,
 
   }
   infeasibility2_=math::Pow<1,2>(*error/sum_all_distances_)*100;
-  printf("dist_infeasibility:%lg %%\n", math::Pow<1,2>(*error/sum_all_distances_)*100);
+  printf("dist_infeasibility:%lg %%\n", infeasibility2_*100);
 }
 
 
