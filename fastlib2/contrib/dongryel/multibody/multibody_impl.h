@@ -155,9 +155,23 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::RefineStatisticsBase_
 
   // First the first negative component.
   for(index_t q = node->begin(); q < node->end(); q++) {
-    tmp_vector_for_sorting_[q - node->begin()] = negative_force1_u_[q];
+    tmp_vector_for_sorting_[q - node->begin()] = -negative_force1_u_[q];
   }
+  qsort((void *) tmp_vector_for_sorting_.ptr(), node->count(), sizeof(double),
+	&MultitreeMultibody<AxilrodTellerForceKernel<TTree, DHrectBound<2> >, TTree>::qsort_comparator_);
+  node->stat().negative_gradient1_u =
+    -tmp_vector_for_sorting_[(int) floor(lower_percentile_ * node->count())];
+
+  // Then, the first positive component.
+  for(index_t q = node->begin(); q < node->end(); q++) {
+    tmp_vector_for_sorting_[q - node->begin()] = positive_force1_l_[q];
+  }
+  qsort((void *) tmp_vector_for_sorting_.ptr(), node->count(), sizeof(double),
+	&MultitreeMultibody<AxilrodTellerForceKernel<TTree, DHrectBound<2> >, TTree>::qsort_comparator_);
+  node->stat().positive_gradient1_l =
+    tmp_vector_for_sorting_[(int) floor(lower_percentile_ * node->count())];
   
+  // Then, the second negative component.
   for(index_t q = node->begin(); q < node->end(); q++) {
     tmp_vector_for_sorting_[q - node->begin()] = 
       L1Norm_(negative_force2_u_.GetColumnPtr(q), data_.n_rows());
@@ -167,6 +181,17 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::RefineStatisticsBase_
 
   node->stat().l1_norm_negative_gradient2_u = 
     tmp_vector_for_sorting_[(int) floor(lower_percentile_ * node->count())];
+
+  // Then, the second positive component.
+  for(index_t q = node->begin(); q < node->end(); q++) {
+    tmp_vector_for_sorting_[q - node->begin()] = 
+      L1Norm_(positive_force2_l_.GetColumnPtr(q), data_.n_rows());
+  }
+  qsort((void *) tmp_vector_for_sorting_.ptr(), node->count(), sizeof(double),
+	&MultitreeMultibody<AxilrodTellerForceKernel<TTree, DHrectBound<2> >, TTree>::qsort_comparator_);
+
+  node->stat().l1_norm_positive_gradient2_l = 
+    tmp_vector_for_sorting_[(int) floor(lower_percentile_ * node->count())];  
 }
 
 template<typename TMultibodyKernel, typename TTree>
@@ -345,6 +370,7 @@ template<typename TMultibodyKernel, typename TTree>
 void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibodyBase
 (const ArrayList<TTree *> &nodes, int level) {
   
+  /*
   int start_index;
   int num_nodes = nodes.size();
 
@@ -380,58 +406,76 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibodyBase
 		  negative_force2_e_, negative_force2_u_,
 		  positive_force2_l_, positive_force2_e_);
   }
-
-  // Add and clear all postponed force contribution after
-  // incorporating and refine node statistics.
-  if(level == 0) {
-
-    // Each point in this node gets the valid number of (n - 1)
-    // tuples. This should really be generalized for general $n$-tuple
-    // computation.
-    double leave_one_out_node_j_count_for_node_i,
-      leave_one_out_node_k_count_for_node_i,
-      leave_one_out_node_i_count_for_node_j,
-      leave_one_out_node_k_count_for_node_j,
-      leave_one_out_node_i_count_for_node_k,
-      leave_one_out_node_j_count_for_node_k;
-
-    mkernel_.ComputeNumTwoTuples_
-      (nodes, leave_one_out_node_j_count_for_node_i,
-       leave_one_out_node_k_count_for_node_i,
-       leave_one_out_node_i_count_for_node_j,
-       leave_one_out_node_k_count_for_node_j,
-       leave_one_out_node_i_count_for_node_k,
-       leave_one_out_node_j_count_for_node_k, num_leave_one_out_tuples_[0], 
-       num_leave_one_out_tuples_[1], num_leave_one_out_tuples_[2]);
-    
-    for(index_t i = 0; i < nodes.size(); i++) {
-
-      // Skip, if the current node is the same as the previous one.
-      if(i != 0 && nodes[i] == nodes[i - 1]) {
-	continue;
-      }      
-
-      // Reset lower/upper bound information.
-      nodes[i]->stat().negative_gradient1_u = -DBL_MAX;
-      nodes[i]->stat().negative_gradient1_used_error = 0;
-      nodes[i]->stat().positive_gradient1_l = DBL_MAX;
-      nodes[i]->stat().positive_gradient1_used_error = 0;
-      nodes[i]->stat().l1_norm_negative_gradient2_u = DBL_MAX;
-      nodes[i]->stat().negative_gradient2_used_error = 0;
-      nodes[i]->stat().l1_norm_positive_gradient2_l = DBL_MAX;
-      nodes[i]->stat().positive_gradient2_used_error = 0;
-      nodes[i]->stat().n_pruned_ = DBL_MAX;
-
-      for(index_t r = nodes[i]->begin(); r < nodes[i]->end(); r++) {
-
-	// Each point in this node gets the valid (n - 1) tuples and
-	// the postponed (n - 1) tuples.
-	n_pruned_[r] += num_leave_one_out_tuples_[i];
-	AddPostponed(nodes[i], r);
-	RefineStatistics_(r, nodes[i]);
+  */
+  for(index_t i = nodes[0]->begin(); i < nodes[0]->end(); i++) {
+    exhaustive_indices_[0] = i;
+    for(index_t j = std::max(nodes[1]->begin(), i + 1); j < nodes[1]->end(); j++) {
+      exhaustive_indices_[1] = j;
+      for(index_t k = std::max(nodes[2]->begin(), j + 1); k < nodes[2]->end(); k++) {
+	exhaustive_indices_[2] = k;
+	mkernel_.Eval(data_, exhaustive_indices_,
+		      negative_force1_e_, negative_force1_u_,
+		      positive_force1_l_, positive_force1_e_,
+		      negative_force2_e_, negative_force2_u_,
+		      positive_force2_l_, positive_force2_e_);	
       }
-      RefineStatisticsBase_(nodes[i]);
-      nodes[i]->stat().SetZero();
+    }
+  }
+
+  if(!naive_compute_) {
+    // Add and clear all postponed force contribution after
+    // incorporating and refine node statistics.
+    if(level == 0) {
+      
+      // Each point in this node gets the valid number of (n - 1)
+      // tuples. This should really be generalized for general $n$-tuple
+      // computation.
+      double leave_one_out_node_j_count_for_node_i,
+	leave_one_out_node_k_count_for_node_i,
+	leave_one_out_node_i_count_for_node_j,
+	leave_one_out_node_k_count_for_node_j,
+	leave_one_out_node_i_count_for_node_k,
+	leave_one_out_node_j_count_for_node_k;
+      
+      mkernel_.ComputeNumTwoTuples_
+	(nodes, leave_one_out_node_j_count_for_node_i,
+	 leave_one_out_node_k_count_for_node_i,
+	 leave_one_out_node_i_count_for_node_j,
+	 leave_one_out_node_k_count_for_node_j,
+	 leave_one_out_node_i_count_for_node_k,
+	 leave_one_out_node_j_count_for_node_k, num_leave_one_out_tuples_[0], 
+	 num_leave_one_out_tuples_[1], num_leave_one_out_tuples_[2]);
+      
+      for(index_t i = 0; i < nodes.size(); i++) {
+	
+	// Skip, if the current node is the same as the previous one.
+	if(i != 0 && nodes[i] == nodes[i - 1]) {
+	  continue;
+	}      
+	
+	// Reset lower/upper bound information.
+	nodes[i]->stat().negative_gradient1_u = -DBL_MAX;
+	nodes[i]->stat().negative_gradient1_used_error = 0;
+	nodes[i]->stat().positive_gradient1_l = DBL_MAX;
+	nodes[i]->stat().positive_gradient1_used_error = 0;
+	nodes[i]->stat().l1_norm_negative_gradient2_u = DBL_MAX;
+	nodes[i]->stat().negative_gradient2_used_error = 0;
+	nodes[i]->stat().l1_norm_positive_gradient2_l = DBL_MAX;
+	nodes[i]->stat().positive_gradient2_used_error = 0;
+	nodes[i]->stat().n_pruned_ = DBL_MAX;
+	
+	for(index_t r = nodes[i]->begin(); r < nodes[i]->end(); r++) {
+	  
+	  // Each point in this node gets the valid (n - 1) tuples and
+	  // the postponed (n - 1) tuples.
+	  n_pruned_[r] += num_leave_one_out_tuples_[i];
+	  AddPostponed(nodes[i], r);
+	  RefineStatistics_(r, nodes[i]);
+	}
+	RefineStatisticsBase_(nodes[i]);
+	nodes[i]->stat().SetZero();
+	
+      } // looping over each node...
     }
   }
 }
@@ -465,6 +509,10 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::PostProcess(TTree *node) {
 	  query_total_force_e[d] += (-data_.get(d, q) * negative_force1_e_[q] +
 				     positive_force2_e_.get(d, q));
 	}
+	/*
+	query_total_force_e[d] *= 
+	  AxilrodTellerForceKernel::AXILROD_TELLER_COEFF;
+	*/
 
       } // end of iterating over each dimension...
 
@@ -565,7 +613,7 @@ bool MultitreeMultibody<TMultibodyKernel, TTree>::Prunable
 template<typename TMultibodyKernel, typename TTree>
 bool MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
 (ArrayList<TTree *> &nodes, double num_tuples, double required_probability) {
-  
+
   bool pruned_with_exact_method = true;
   if(Prunable(nodes, num_tuples, required_probability, 
 	      &pruned_with_exact_method)) {
