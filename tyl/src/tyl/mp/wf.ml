@@ -56,7 +56,7 @@ let rec disjVarsBounded ctxt c = match c with
   | CIsTrue _
   | CNumRel _              -> true
   | CPropOp (Disj,cs)      -> 
-      let xs = S.elements % S.union' $ map freeVarsc cs in
+      let xs = S.elements % S.unions $ map freeVarsc cs in
       let ts = map (lookup ctxt) xs in
         all bounded ts && all existVarsBounded cs 
   | CPropOp (Conj,cs)      -> all (disjVarsBounded ctxt) cs 

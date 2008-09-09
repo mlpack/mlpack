@@ -6,7 +6,7 @@ val toString : t -> string
 
 module Set : sig
   include Set.S
-  val union' : t list -> t
+  val unions : t list -> t
   val addAll : elt list -> t -> t
 end with type elt = t
 

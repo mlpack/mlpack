@@ -7,18 +7,18 @@ let rec freeVarse e = match e with
   | EVar x              -> S.singleton x
   | EConst _            -> S.empty
   | EUnaryOp (_,e')     -> freeVarse e'
-  | EBinaryOp (_,e1,e2) -> S.union' [freeVarse e1; freeVarse e2]
+  | EBinaryOp (_,e1,e2) -> S.unions [freeVarse e1; freeVarse e2]
 
 let rec freeVarsc c = match c with 
   | CBoolVal _        -> S.empty
   | CIsTrue e         -> freeVarse e
-  | CNumRel (_,e1,e2) -> S.union' [freeVarse e1; freeVarse e2]
-  | CPropOp (_,cs)    -> S.union' (map freeVarsc cs)
+  | CNumRel (_,e1,e2) -> S.unions [freeVarse e1; freeVarse e2]
+  | CPropOp (_,cs)    -> S.unions (map freeVarsc cs)
   | CQuant (_,x,_,c') -> S.remove x (freeVarsc c')
 
 let freeVarsp p = match p with PMain (_,ctxt,e,c) -> 
   let ids = foldl (flip S.add) S.empty % fst % unzip in 
-    S.diff $ S.union' [freeVarse e; freeVarsc c] $ ids ctxt
+    S.diff $ S.unions [freeVarse e; freeVarsc c] $ ids ctxt
 
 let isClosede = S.is_empty % freeVarse
 let isClosedc = S.is_empty % freeVarsc 
@@ -38,7 +38,7 @@ let rec subec e x c = match c with
   | CQuant (q,x',t,c')       -> (* use alphaConvert here ... *)
       if not (S.mem x (freeVarsc c'))       then c 
       else if not (S.mem x' (freeVarse e))  then CQuant (q,x',t,subec e x c')
-      else let x'' = Id.fresh (S.union' [freeVarse e; freeVarsc c']) x' in 
+      else let x'' = Id.fresh (S.unions [freeVarse e; freeVarsc c']) x' in 
         subec e x (CQuant (q, x'', t, subec (EVar x'') x' c'))
 
 let rec subec' es xs c = match es,xs with
