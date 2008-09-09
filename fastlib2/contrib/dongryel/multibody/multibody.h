@@ -174,14 +174,14 @@ class MultitreeMultibody {
     sample_multiple_ = 1;
 
     // Compute the coverage probability table.
-    double lower_percentile = (100 - centered_percentile_coverage) / 
+    lower_percentile_ = (100 - centered_percentile_coverage) / 
       100.0;
     for(index_t j = 0; j < coverage_probabilities_.length(); j++) {
       coverage_probabilities_[j] = 
 	mkernel_.OuterConfidenceInterval
 	(ceil(total_num_tuples_), ceil(sample_multiple_ * (j + 1)), 
 	 ceil(sample_multiple_ * (j + 1)),
-	 ceil(total_num_tuples_ * lower_percentile));
+	 ceil(total_num_tuples_ * lower_percentile_));
     }
     coverage_probabilities_.PrintDebug();
 
@@ -296,7 +296,7 @@ private:
   /** @brief The unit multiple of the number of samples to take.
    */
   int sample_multiple_;
-
+  
   /** @brief The total number of n-tuple  prunes.
    */
   int num_prunes_;
@@ -304,6 +304,10 @@ private:
   /** @brief The total number of (n - 1) tuples.
    */
   double total_n_minus_one_num_tuples_;
+
+  /** @brief The lower percentile to ignore for error bounds.
+   */
+  double lower_percentile_;
 
   /** @brief The multibody kernel function.
    */
@@ -463,6 +467,8 @@ private:
   
   void PreProcess_(TTree *node, const ArrayList<double> &knn_dsqds,
 		   const ArrayList<double> &kfn_dsqds);
+
+  void RefineStatisticsBase_(TTree *node);
 
   void RefineStatistics_(int point_index, TTree *destination_node);
 

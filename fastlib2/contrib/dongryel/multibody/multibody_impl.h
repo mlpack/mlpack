@@ -150,6 +150,26 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::PreProcess_
 }
 
 template<typename TMultibodyKernel, typename TTree>
+void MultitreeMultibody<TMultibodyKernel, TTree>::RefineStatisticsBase_
+(TTree *node) {
+
+  // First the first negative component.
+  for(index_t q = node->begin(); q < node->end(); q++) {
+    tmp_vector_for_sorting_[q - node->begin()] = negative_force1_u_[q];
+  }
+  
+  for(index_t q = node->begin(); q < node->end(); q++) {
+    tmp_vector_for_sorting_[q - node->begin()] = 
+      L1Norm_(negative_force2_u_.GetColumnPtr(q), data_.n_rows());
+  }
+  qsort((void *) tmp_vector_for_sorting_.ptr(), node->count(), sizeof(double),
+	&MultitreeMultibody<AxilrodTellerForceKernel<TTree, DHrectBound<2> >, TTree>::qsort_comparator_);
+
+  node->stat().l1_norm_negative_gradient2_u = 
+    tmp_vector_for_sorting_[(int) floor(lower_percentile_ * node->count())];
+}
+
+template<typename TMultibodyKernel, typename TTree>
 void MultitreeMultibody<TMultibodyKernel, TTree>::RefineStatistics_
 (int point_index, TTree *destination_node) {
   
@@ -393,9 +413,13 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibodyBase
 
       // Reset lower/upper bound information.
       nodes[i]->stat().negative_gradient1_u = -DBL_MAX;
+      nodes[i]->stat().negative_gradient1_used_error = 0;
       nodes[i]->stat().positive_gradient1_l = DBL_MAX;
+      nodes[i]->stat().positive_gradient1_used_error = 0;
       nodes[i]->stat().l1_norm_negative_gradient2_u = DBL_MAX;
+      nodes[i]->stat().negative_gradient2_used_error = 0;
       nodes[i]->stat().l1_norm_positive_gradient2_l = DBL_MAX;
+      nodes[i]->stat().positive_gradient2_used_error = 0;
       nodes[i]->stat().n_pruned_ = DBL_MAX;
 
       for(index_t r = nodes[i]->begin(); r < nodes[i]->end(); r++) {
@@ -406,6 +430,7 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibodyBase
 	AddPostponed(nodes[i], r);
 	RefineStatistics_(r, nodes[i]);
       }
+      RefineStatisticsBase_(nodes[i]);
       nodes[i]->stat().SetZero();
     }
   }
