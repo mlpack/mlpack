@@ -45,21 +45,9 @@ let rec subec' es xs c = match es,xs with
   | e::es',x::xs' -> subec' es' xs' (subec e x c)
   | _ -> c
 
-(* the rename/alphaConvert functions replace all *free* occurences of
-   x with x' ... pre: x' is not free in e *)
-
-let rec renamee x x' e = match e with 
-  | EVar x''             -> if Id.equal x x'' then EVar x' else e
-  | EConst _             -> e
-  | EUnaryOp (op,e')     -> EUnaryOp (op, renamee x x' e')
-  | EBinaryOp (op,e1,e2) -> EBinaryOp (op, renamee x x' e1, renamee x x' e2)
-  
-let rec renamec x x' c = match c with
-  | CBoolVal _               -> c
-  | CIsTrue e                -> CIsTrue (renamee x x' e)
-  | CNumRel (op,e1,e2)       -> CNumRel (op,renamee x x' e1,renamee x x' e2)
-  | CPropOp (op,cs)          -> CPropOp (op,map (renamec x x') cs)
-  | CQuant (Exists,x'',t,c') -> if Id.equal x'' x then c else CQuant (Exists,x'',t,renamec x x' c')
-
-let alphaConverte x e taboo = let x' = Id.fresh (S.union (freeVarse e) taboo) x in x', renamee x x' e
-let alphaConvertc x c taboo = let x' = Id.fresh (S.union (freeVarsc c) taboo) x in x', renamec x x' c
+(* alpha-conversion is a no-op on things that are not variable binders *)
+let alphaConvert c taboo = match c with 
+  | CQuant(q,x,t,c') -> 
+      let x' = Id.fresh (S.union (freeVarsc c) taboo) x 
+      in if Id.equal x x' then c else CQuant(q,x',t,subec (EVar x') x c')
+  | _ -> c

@@ -19,8 +19,7 @@ let fresh taboo prefix =
     let id = prefix ^ string_of_int k in
       if isFresh id then id else firstFreshFrom (k+1)
   in 
-    (* if isFresh prefix then prefix else firstFreshFrom 0 *)
-    firstFreshFrom 0
+    if isFresh prefix then prefix else firstFreshFrom 0
 
 (* returns a list of 'n' new names using 'prefix' *)
 let rec fresh' n taboo prefix = assert (n >= 0) ;
