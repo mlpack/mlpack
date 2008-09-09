@@ -166,14 +166,16 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::RefineStatistics_
     std::max(destination_node->stat().positive_gradient1_used_error,
 	     positive_force1_used_error_[point_index]);
   
-  for(index_t d = 0; d < negative_force2_e_.n_rows(); d++) {
-    destination_node->stat().negative_gradient2_u[d] =
-      std::max(destination_node->stat().negative_gradient2_u[d],
-	       negative_force2_u_.get(d, point_index));
-    destination_node->stat().positive_gradient2_l[d] =
-      std::min(destination_node->stat().positive_gradient2_l[d],
-	       positive_force2_l_.get(d, point_index));
-  }
+  // Be careful to take the minimum L1 norm vector here.
+  destination_node->stat().l1_norm_negative_gradient2_u =
+    std::min(destination_node->stat().l1_norm_negative_gradient2_u,
+	     L1Norm_(negative_force2_u_.GetColumnPtr(point_index),
+		     data_.n_rows()));
+  destination_node->stat().l1_norm_positive_gradient2_l =
+    std::min(destination_node->stat().l1_norm_positive_gradient2_l,
+	     L1Norm_(positive_force2_l_.GetColumnPtr(point_index),
+		     data_.n_rows()));
+
   destination_node->stat().negative_gradient2_used_error =
     std::max(destination_node->stat().negative_gradient2_used_error,
 	     negative_force2_used_error_[point_index]); 
@@ -204,18 +206,16 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::RefineStatistics_
 	     right_node->stat().positive_gradient1_l +
 	     right_node->stat().postponed_positive_gradient1_l);
   
-  for(index_t d = 0; d < negative_force2_e_.n_rows(); d++) {
-    node->stat().negative_gradient2_u[d] =
-      std::max(left_node->stat().negative_gradient2_u[d] +
-	       left_node->stat().postponed_negative_gradient2_u[d],
-	       right_node->stat().negative_gradient2_u[d] +
-	       right_node->stat().postponed_negative_gradient2_u[d]);
-    node->stat().positive_gradient2_l[d] =
-      std::min(left_node->stat().positive_gradient2_l[d] +
-	       left_node->stat().postponed_positive_gradient2_l[d],
-	       right_node->stat().positive_gradient2_l[d] +
-	       right_node->stat().postponed_positive_gradient2_l[d]);
-  }
+  node->stat().l1_norm_negative_gradient2_u =
+    std::min(left_node->stat().l1_norm_negative_gradient2_u +
+	     L1Norm_(left_node->stat().postponed_negative_gradient2_u),
+	     right_node->stat().l1_norm_negative_gradient2_u +
+	     L1Norm_(right_node->stat().postponed_negative_gradient2_u));
+  node->stat().l1_norm_positive_gradient2_l =
+    std::min(left_node->stat().l1_norm_positive_gradient2_l +
+	     L1Norm_(left_node->stat().postponed_positive_gradient2_l),
+	     right_node->stat().l1_norm_positive_gradient2_l +
+	     L1Norm_(right_node->stat().postponed_positive_gradient2_l));
 
   // Refine the amount of error.
   node->stat().negative_gradient1_used_error =
@@ -394,8 +394,8 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibodyBase
       // Reset lower/upper bound information.
       nodes[i]->stat().negative_gradient1_u = -DBL_MAX;
       nodes[i]->stat().positive_gradient1_l = DBL_MAX;
-      nodes[i]->stat().negative_gradient2_u.SetAll(-DBL_MAX);
-      nodes[i]->stat().positive_gradient2_l.SetAll(DBL_MAX);
+      nodes[i]->stat().l1_norm_negative_gradient2_u = DBL_MAX;
+      nodes[i]->stat().l1_norm_positive_gradient2_l = DBL_MAX;
       nodes[i]->stat().n_pruned_ = DBL_MAX;
 
       for(index_t r = nodes[i]->begin(); r < nodes[i]->end(); r++) {
@@ -513,8 +513,8 @@ bool MultitreeMultibody<TMultibodyKernel, TTree>::Prunable
     // Locate the minimum required number of samples to achieve the
     // prescribed probability level.
     int num_samples = 0;
-    for(index_t i = 0; i < coverage_probabilities_.length(); i++) {
-      if(coverage_probabilities_[i] > required_probability) {
+    for(index_t i = coverage_probabilities_.length() - 1; i >= 0; i--) {
+      if(coverage_probabilities_[i] >= required_probability) {
 	num_samples = sample_multiple_ * (i + 1);
 	break;
       }

@@ -146,6 +146,7 @@ class MultitreeMultibody {
       math::BinomialCoefficient(data_.n_cols() - 1, mkernel_.order() - 1);
 
     relative_error_ = relative_error;
+    probability_ = probability;
 
     // Convert the absolute error threshold to an internal tolerance
     // level. We divide by 4 here because the force vector is composed
@@ -170,7 +171,7 @@ class MultitreeMultibody {
 
 
     // Set the sample multiple.
-    sample_multiple_ = 10;
+    sample_multiple_ = 1;
 
     // Compute the coverage probability table.
     double lower_percentile = (100 - centered_percentile_coverage) / 
@@ -178,7 +179,8 @@ class MultitreeMultibody {
     for(index_t j = 0; j < coverage_probabilities_.length(); j++) {
       coverage_probabilities_[j] = 
 	mkernel_.OuterConfidenceInterval
-	(ceil(total_num_tuples_), ceil(sample_multiple_ * (j + 1)), 1,
+	(ceil(total_num_tuples_), ceil(sample_multiple_ * (j + 1)), 
+	 ceil(sample_multiple_ * (j + 1)),
 	 ceil(total_num_tuples_ * lower_percentile));
     }
     coverage_probabilities_.PrintDebug();
@@ -241,9 +243,10 @@ class MultitreeMultibody {
     // More temporary variables initialization.
     non_leaf_indices_.Init(mkernel_.order());
     distmat_.Init(mkernel_.order(), mkernel_.order());
-    coverage_probabilities_.Init(20);    
+    coverage_probabilities_.Init(40);
     exhaustive_indices_.Init(mkernel_.order());
     num_leave_one_out_tuples_.Init(mkernel_.order());
+    tmp_vector_for_sorting_.Init(leaflen);
 
     // Initialize space for computation values.
     negative_force1_e_.Init(data_.n_cols());
@@ -342,6 +345,10 @@ private:
    */
   Vector coverage_probabilities_;
 
+  /** @brief The temporary vector used for sorting.
+   */
+  Vector tmp_vector_for_sorting_;
+
   /** @brief The pointer to the root of the tree.
    */
   TTree *root_;
@@ -415,6 +422,45 @@ private:
 
   /////////// Helper Functions //////////
 
+  /** @brief The L1 norm of the vector.
+   */
+  double L1Norm_(const Vector &v) {
+
+    double l1_norm = 0;
+    for(index_t i = 0; i < v.length(); i++) {
+      l1_norm += fabs(v[i]);
+    }
+    return l1_norm;
+  }
+
+  /** @brief The L1 norm of the vector.
+   */
+  double L1Norm_(const double *v, int length) {
+
+    double l1_norm = 0;
+    for(index_t i = 0; i < length; i++) {
+      l1_norm += fabs(v[i]);
+    }
+    return l1_norm;
+  }
+
+  /** @brief The comparison function used for the quick-sort.
+   */
+  static int qsort_comparator_(const void *a, const void *b) {
+    double *typecasted_a = (double *) a;
+    double *typecasted_b = (double *) b;
+    
+    if(*typecasted_a < *typecasted_b) {
+      return -1;
+    }
+    else if(*typecasted_a > *typecasted_b) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  }
+  
   void PreProcess_(TTree *node, const ArrayList<double> &knn_dsqds,
 		   const ArrayList<double> &kfn_dsqds);
 
