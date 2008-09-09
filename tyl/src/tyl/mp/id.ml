@@ -8,7 +8,7 @@ let equal i j = i = j
 
 module Set = struct
   include Set.Make(String)
-  let union' = fold_left union empty
+  let unions = fold_left union empty
   let addAll xs set = fold_left (fun s x -> add x s) set xs
 end
 

@@ -1,4 +1,4 @@
 <src/**>: include
 <src/tyl/{base,mp}.cmx>: for-pack(Tyl)
-<src/tyl/base/{dlist,util,smallcheck,show}.cmx>: for-pack(Tyl.Base)
+<src/tyl/base/{util,smallcheck,show}.cmx>: for-pack(Tyl.Base)
 <src/tyl/mp/{tests,id,ast,vars,wf,cnf,compiler,edsl,pprint}.cmx>: for-pack(Tyl.Mp)
