@@ -25,6 +25,18 @@ let rec toCNF e =
   in
     if isCNF e then e else toCNF' e
 
+let rec containsQuantifier c = match c with
+  | CQuant _ -> true
+  | CPropOp (_,cs) -> any containsQuantifier cs
+  | _ -> false
+      
+let rec isPNF c = match c with
+  | CIsTrue _ -> true
+  | CBoolVal _ -> true
+  | CNumRel _ -> true
+  | CQuant (_,_,_,c') -> isPNF c'
+  | CPropOp (_,cs) -> not $ any containsQuantifier cs
+
 let rec toPNF c = match c with 
   | CIsTrue _ -> assert false
   | CBoolVal _ -> c
@@ -34,8 +46,9 @@ let rec toPNF c = match c with
       let rec mergePNF op c1 c2 = (* pre: c1 and c2 are PNF *)
         match c1,c2 with
           | CQuant(Exists,x,t,c1'), _ -> CQuant(Exists,x,t,mergePNF op c1' c2)
-          | _, CQuant(Exists,x,t,c2') -> let (x',c2'') = alphaConvertc x c2' (freeVarsc c1) 
-            in CQuant(Exists,x',t,mergePNF op c1 c2'')
+          | _, CQuant(Exists,x,t,c2') -> 
+              let (x',c2'') = alphaConvertc x c2' (freeVarsc c1) 
+              in CQuant(Exists,x',t,mergePNF op c1 c2'')
           | _,_                       -> CPropOp(op,[c1;c2])
       in 
         foldl1 (mergePNF op) (map toPNF cs)

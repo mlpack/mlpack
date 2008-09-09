@@ -1,5 +1,4 @@
 open Util
-module D = Dlist
 
 type 'a l = 'a list
 type 'a series = int -> 'a l 
@@ -29,3 +28,4 @@ let evaluate n prop = prop n
 
 (* given a series, a property, and a depth parameter, attempts to find a counterexample *) 
 let forAll a p = fun n -> try Some (List.find (not % p) (a n)) with Not_found -> None 
+(* TODO write my own 'find' so there is no more ambiguity over the source of Not_found (client code or our own List.find?) *)
