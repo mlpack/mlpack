@@ -92,6 +92,8 @@ class MultitreeMultibody {
    */
   void NaiveCompute() {
 
+    naive_compute_ = true;
+
     ArrayList<TTree *> root_nodes;
     root_nodes.Init(mkernel_.order());
 
@@ -131,6 +133,8 @@ class MultitreeMultibody {
   void Compute(double relative_error, double threshold, 
 	       double centered_percentile_coverage, double probability) {
     
+    naive_compute_ = false;
+
     ArrayList<TTree *> root_nodes;
     root_nodes.Init(mkernel_.order());
 
@@ -288,6 +292,11 @@ class MultitreeMultibody {
 private:
 
   ////////// Private Member Variables //////////
+ 
+  /** @brief The flag that tells whether the current computation for
+   *         the naive algorithm or not.
+   */
+  bool naive_compute_;
 
   /** @brief The total number of n-tuples.
    */

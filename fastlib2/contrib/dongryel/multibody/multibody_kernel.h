@@ -13,7 +13,7 @@ class AxilrodTellerForceKernel {
 
   /** @brief The "nu" constant in front of the potential.
    */
-  static const double AXILROD_TELLER_COEFF = 1e-9;
+  static const double AXILROD_TELLER_COEFF = -91;
 
   ////////// Private Member Variables //////////
 
@@ -860,8 +860,8 @@ class AxilrodTellerForceKernel {
     double max_dqui3 = max_dsqd3 * max_dcub3;
     
     // Common factor in front.
-    double min_common_factor = 3.0 * AXILROD_TELLER_COEFF / (8.0 * max_dist1);
-    double max_common_factor = 3.0 * AXILROD_TELLER_COEFF / (8.0 * min_dist1);
+    double min_common_factor = 3.0 / (8.0 * max_dist1);
+    double max_common_factor = 3.0 / (8.0 * min_dist1);
 
     minimum_negative_gradient = max_common_factor *
       (-2.0 / (min_dqrt1 * min_dcub2 * min_dcub3)
@@ -1440,15 +1440,6 @@ class AxilrodTellerForceKernel {
 
     // First, compute the pairwise distance among the three nodes.
     EvalMinMaxSquaredDistances(tree_nodes);
-
-    // Do not prune if any of the minimum distances is zero.
-    for(index_t i = 0; i < tree_nodes.size() - 1; i++) {
-      for(index_t j = i + 1; j < tree_nodes.size(); j++) {
-	if(distmat_.get(i, j) == 0) {
-	  return false;
-	}
-      }
-    }
 
     // The result of pruning
     bool prunable = false;
