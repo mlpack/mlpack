@@ -13,7 +13,7 @@ class AxilrodTellerForceKernel {
 
   /** @brief The "nu" constant in front of the potential.
    */
-  static const double AXILROD_TELLER_COEFF = 1e-18;
+  static const double AXILROD_TELLER_COEFF = 1e-9;
 
   ////////// Private Member Variables //////////
 
@@ -529,7 +529,7 @@ class AxilrodTellerForceKernel {
        negative_gradient2_error <=
        std::max
        ((relative_error *
-	 (L1Norm_(tree_nodes[0]->stat().negative_gradient2_u) +
+	 (tree_nodes[0]->stat().l1_norm_negative_gradient2_u +
 	  L1Norm_(tree_nodes[0]->stat().postponed_negative_gradient2_u) +
 	  node_i_additional_l1_norm_negative_force2_u) -
 	 tree_nodes[0]->stat().negative_gradient2_used_error) *
@@ -543,7 +543,7 @@ class AxilrodTellerForceKernel {
        positive_gradient2_error <=
        std::max
        ((relative_error * 
-	 (L1Norm_(tree_nodes[0]->stat().positive_gradient2_l) +
+	 (tree_nodes[0]->stat().l1_norm_positive_gradient2_l +
 	  L1Norm_(tree_nodes[0]->stat().postponed_positive_gradient2_l) +
 	  node_i_additional_l1_norm_positive_force2_l) -
 	 tree_nodes[0]->stat().positive_gradient2_used_error) *
@@ -590,7 +590,7 @@ class AxilrodTellerForceKernel {
 	negative_gradient3_error <=
 	std::max
 	((relative_error *
-	  (L1Norm_(tree_nodes[1]->stat().negative_gradient2_u) +
+	  (tree_nodes[1]->stat().l1_norm_negative_gradient2_u +
 	   L1Norm_
 	   (tree_nodes[1]->stat().postponed_negative_gradient2_u) +
 	   node_j_additional_l1_norm_negative_force2_u) -
@@ -605,7 +605,7 @@ class AxilrodTellerForceKernel {
        positive_gradient3_error <=
        std::max
        ((relative_error *
-	 (L1Norm_(tree_nodes[1]->stat().positive_gradient2_l) +
+	 (tree_nodes[1]->stat().l1_norm_positive_gradient2_l +
 	  L1Norm_
 	  (tree_nodes[1]->stat().postponed_positive_gradient2_l) +
 	  node_j_additional_l1_norm_positive_force2_l) -
@@ -653,7 +653,7 @@ class AxilrodTellerForceKernel {
 	negative_gradient3_error <=
 	std::max
 	((relative_error *
-	  (L1Norm_(tree_nodes[2]->stat().negative_gradient2_u) +
+	  (tree_nodes[2]->stat().l1_norm_negative_gradient2_u +
 	   L1Norm_
 	   (tree_nodes[2]->stat().postponed_negative_gradient2_u) +
 	   node_k_additional_l1_norm_negative_force2_u) -
@@ -670,7 +670,7 @@ class AxilrodTellerForceKernel {
 	positive_gradient3_error <=
 	std::max
 	((relative_error *
-	  (L1Norm_(tree_nodes[2]->stat().positive_gradient2_l) +
+	  (tree_nodes[2]->stat().l1_norm_positive_gradient2_l +
 	   L1Norm_
 	   (tree_nodes[2]->stat().postponed_positive_gradient2_l) +
 	   node_k_additional_l1_norm_positive_force2_l) -
@@ -1071,7 +1071,6 @@ class AxilrodTellerForceKernel {
 	  std::max(node_i_bound.MinDistanceSq(node_j_bound),
 		   std::min(tree_nodes[i]->stat().knn_dsqds_lower_bounds_[0],
 			    tree_nodes[j]->stat().knn_dsqds_lower_bounds_[0]));
-        //double max_squared_distance = node_i_bound.MaxDistanceSq(node_j_bound);
 	double max_squared_distance =
 	  std::min(node_i_bound.MaxDistanceSq(node_j_bound),
 		   std::max(tree_nodes[i]->stat().kfn_dsqds_upper_bounds_[0],
@@ -1223,43 +1222,31 @@ class AxilrodTellerForceKernel {
   (double negative_gradient1, double positive_gradient1,
    double negative_gradient2, double positive_gradient2,
    double negative_gradient3, double positive_gradient3,
-   double &min_negative_gradient1, double &max_negative_gradient1,
-   double &min_positive_gradient1, double &max_positive_gradient1,
-   double &min_negative_gradient2, double &max_negative_gradient2,
-   double &min_positive_gradient2, double &max_positive_gradient2,
-   double &min_negative_gradient3, double &max_negative_gradient3,
-   double &min_positive_gradient3, double &max_positive_gradient3) {
+   double &min_negative_gradient1, double &min_positive_gradient1,
+   double &min_negative_gradient2, double &min_positive_gradient2,
+   double &min_negative_gradient3, double &min_positive_gradient3) {
 
     min_negative_gradient1 = std::min(min_negative_gradient1,
 				      negative_gradient1);
-    max_negative_gradient1 = std::max(max_negative_gradient1,
-				      negative_gradient1);
-    min_positive_gradient1 = std::min(min_positive_gradient1,
-				      positive_gradient1);
-    max_positive_gradient1 = std::max(max_positive_gradient1,
+    min_positive_gradient1 = std::max(min_positive_gradient1,
 				      positive_gradient1);
     
     min_negative_gradient2 = std::min(min_negative_gradient2,
 				      negative_gradient2);
-    max_negative_gradient2 = std::max(max_negative_gradient2,
-				      negative_gradient2);
-    min_positive_gradient2 = std::min(min_positive_gradient2,
-				      positive_gradient2);
-    max_positive_gradient2 = std::max(max_positive_gradient2,
+    min_positive_gradient2 = std::max(min_positive_gradient2,
 				      positive_gradient2);
     
     min_negative_gradient3 = std::min(min_negative_gradient3,
 				      negative_gradient3);
-    max_negative_gradient3 = std::max(max_negative_gradient3,
-				      negative_gradient3);
-    min_positive_gradient3 = std::min(min_positive_gradient3,
-				      positive_gradient3);
-    max_positive_gradient3 = std::max(max_positive_gradient3,
+    min_positive_gradient3 = std::max(min_positive_gradient3,
 				      positive_gradient3);
   }
 
   /** @brief Tries to prune the given nodes using Monte Carlo
    *         sampling.
+   *
+   *         I am assuming this function gets called immediately after
+   *         the mkernel_.Eval function.
    */
   bool MonteCarloEval(const Matrix &data, ArrayList<index_t> &indices,
 		      ArrayList<TTree *> &nodes,
@@ -1276,6 +1263,10 @@ class AxilrodTellerForceKernel {
       leave_one_out_node_k_count_for_node_j,
       leave_one_out_node_i_count_for_node_k,
       leave_one_out_node_j_count_for_node_k;
+    double negative_gradient1_error, positive_gradient1_error,
+      negative_gradient2_error, positive_gradient2_error,
+      negative_gradient3_error, positive_gradient3_error;
+
     ComputeNumTwoTuples_(nodes, leave_one_out_node_j_count_for_node_i,
 			 leave_one_out_node_k_count_for_node_i,
 			 leave_one_out_node_i_count_for_node_j,
@@ -1300,6 +1291,15 @@ class AxilrodTellerForceKernel {
     double min_positive_gradient2 = DBL_MAX, max_positive_gradient2 = 0;
     double min_negative_gradient3 = 0, max_negative_gradient3 = -DBL_MAX;
     double min_positive_gradient3 = DBL_MAX, max_positive_gradient3 = 0;
+
+    // Evaluate the three components required for force vector using
+    // the pairwise squared distances among the three nodes.
+    EvalGradients(distmat_, min_negative_gradient1, &max_negative_gradient1,
+		  min_positive_gradient1, &max_positive_gradient1,
+		  min_negative_gradient2, &max_negative_gradient2,
+		  min_positive_gradient2, &max_positive_gradient2,
+		  min_negative_gradient3, &max_negative_gradient3,
+		  min_positive_gradient3, &max_positive_gradient3);
 
     // Sample a random 3-tuple from the i-th node, the j-th node and
     // the k-th node.
@@ -1329,91 +1329,88 @@ class AxilrodTellerForceKernel {
 	(negative_gradient1, positive_gradient1,
 	 negative_gradient2, positive_gradient2,
 	 negative_gradient3, positive_gradient3,
-	 min_negative_gradient1, max_negative_gradient1,
-	 min_positive_gradient1, max_positive_gradient1,
-	 min_negative_gradient2, max_negative_gradient2,
-	 min_positive_gradient2, max_positive_gradient2,
-	 min_negative_gradient3, max_negative_gradient3,
-	 min_positive_gradient3, max_positive_gradient3);
-    } // end of sampling...
+	 min_negative_gradient1, min_positive_gradient1, 
+	 min_negative_gradient2, min_positive_gradient2, 
+	 min_negative_gradient3, min_positive_gradient3);
+      
+      // Compute the current error and see if the error is satisifed and
+      // recompute how many more to compute.      
+      negative_gradient1_error = 0.5 * (max_negative_gradient1 - 
+					min_negative_gradient1);
+      positive_gradient1_error = 0.5 * (max_positive_gradient1 - 
+					min_positive_gradient1);
+      negative_gradient2_error = 0.5 * (max_negative_gradient2 - 
+					min_negative_gradient2);
+      positive_gradient2_error = 0.5 * (max_positive_gradient2 - 
+					min_positive_gradient2);
+      negative_gradient3_error = 0.5 * (max_negative_gradient3 - 
+					min_negative_gradient3);
+      positive_gradient3_error = 0.5 * (max_positive_gradient3 - 
+					min_positive_gradient3);
+      
+      double node_i_additional_negative_gradient1_u,
+	node_i_additional_positive_gradient1_l,
+	node_i_additional_l1_norm_negative_gradient2_u,
+	node_i_additional_l1_norm_positive_gradient2_l,
+	node_j_additional_negative_gradient1_u,
+	node_j_additional_positive_gradient1_l,
+	node_j_additional_l1_norm_negative_gradient2_u,
+	node_j_additional_l1_norm_positive_gradient2_l,
+	node_k_additional_negative_gradient1_u,
+	node_k_additional_positive_gradient1_l,
+	node_k_additional_l1_norm_negative_gradient2_u,
+	node_k_additional_l1_norm_positive_gradient2_l;
+      
+      // Additional bound changes due to sampling...
+      ComputeAdditionalBoundChanges_
+	(nodes, max_negative_gradient1, min_positive_gradient1,
+	 max_negative_gradient2, min_positive_gradient2,
+	 max_negative_gradient3, min_positive_gradient3,
+	 leave_one_out_node_j_count_for_node_i,
+	 leave_one_out_node_k_count_for_node_i,
+	 leave_one_out_node_i_count_for_node_j,
+	 leave_one_out_node_k_count_for_node_j,
+	 leave_one_out_node_i_count_for_node_k,
+	 leave_one_out_node_j_count_for_node_k,
+	 num_jk_pairs, num_ik_pairs, num_ij_pairs,
+	 node_i_additional_negative_gradient1_u,
+	 node_i_additional_positive_gradient1_l,
+	 node_i_additional_l1_norm_negative_gradient2_u,
+	 node_i_additional_l1_norm_positive_gradient2_l,
+	 node_j_additional_negative_gradient1_u,
+	 node_j_additional_positive_gradient1_l,
+	 node_j_additional_l1_norm_negative_gradient2_u,
+	 node_j_additional_l1_norm_positive_gradient2_l,
+	 node_k_additional_negative_gradient1_u,
+	 node_k_additional_positive_gradient1_l,
+	 node_k_additional_l1_norm_negative_gradient2_u,
+	 node_k_additional_l1_norm_positive_gradient2_l);
+      
+      // If not prunable, recompute the required number of samples
+      // to try again.
+      prunable = Prunable_
+	(nodes, negative_gradient1_error, positive_gradient1_error, 
+	 negative_gradient2_error, positive_gradient2_error, 
+	 negative_gradient3_error, positive_gradient3_error, 
+	 node_i_additional_negative_gradient1_u,
+	 node_i_additional_positive_gradient1_l,
+	 node_i_additional_l1_norm_negative_gradient2_u,
+	 node_i_additional_l1_norm_positive_gradient2_l,
+	 node_j_additional_negative_gradient1_u,
+	 node_j_additional_positive_gradient1_l,
+	 node_j_additional_l1_norm_negative_gradient2_u,
+	 node_j_additional_l1_norm_positive_gradient2_l,
+	 node_k_additional_negative_gradient1_u,
+	 node_k_additional_positive_gradient1_l,
+	 node_k_additional_l1_norm_negative_gradient2_u,
+	 node_k_additional_l1_norm_positive_gradient2_l,
+	 num_jk_pairs, num_ik_pairs, num_ij_pairs, relative_error, threshold,
+	 total_n_minus_one_num_tuples);
 
-    // Compute the current error and see if the error is satisifed and
-    // recompute how many more to compute.
-    double negative_gradient1_error, positive_gradient1_error,
-      negative_gradient2_error, positive_gradient2_error,
-      negative_gradient3_error, positive_gradient3_error;
-    
-    negative_gradient1_error = 0.5 * (max_negative_gradient1 - 
-				      min_negative_gradient1);
-    positive_gradient1_error = 0.5 * (max_positive_gradient1 - 
-				      min_positive_gradient1);
-    negative_gradient2_error = 0.5 * (max_negative_gradient2 - 
-				      min_negative_gradient2);
-    positive_gradient2_error = 0.5 * (max_positive_gradient2 - 
-				      min_positive_gradient2);
-    negative_gradient3_error = 0.5 * (max_negative_gradient3 - 
-				      min_negative_gradient3);
-    positive_gradient3_error = 0.5 * (max_positive_gradient3 - 
-				      min_positive_gradient3);
-
-    double node_i_additional_negative_gradient1_u,
-      node_i_additional_positive_gradient1_l,
-      node_i_additional_l1_norm_negative_gradient2_u,
-      node_i_additional_l1_norm_positive_gradient2_l,
-      node_j_additional_negative_gradient1_u,
-      node_j_additional_positive_gradient1_l,
-      node_j_additional_l1_norm_negative_gradient2_u,
-      node_j_additional_l1_norm_positive_gradient2_l,
-      node_k_additional_negative_gradient1_u,
-      node_k_additional_positive_gradient1_l,
-      node_k_additional_l1_norm_negative_gradient2_u,
-      node_k_additional_l1_norm_positive_gradient2_l;
-    
-    // Additional bound changes due to sampling...
-    ComputeAdditionalBoundChanges_
-      (nodes, max_negative_gradient1, min_positive_gradient1,
-       max_negative_gradient2, min_positive_gradient2,
-       max_negative_gradient3, min_positive_gradient3,
-       leave_one_out_node_j_count_for_node_i,
-       leave_one_out_node_k_count_for_node_i,
-       leave_one_out_node_i_count_for_node_j,
-       leave_one_out_node_k_count_for_node_j,
-       leave_one_out_node_i_count_for_node_k,
-       leave_one_out_node_j_count_for_node_k,
-       num_jk_pairs, num_ik_pairs, num_ij_pairs,
-       node_i_additional_negative_gradient1_u,
-       node_i_additional_positive_gradient1_l,
-       node_i_additional_l1_norm_negative_gradient2_u,
-       node_i_additional_l1_norm_positive_gradient2_l,
-       node_j_additional_negative_gradient1_u,
-       node_j_additional_positive_gradient1_l,
-       node_j_additional_l1_norm_negative_gradient2_u,
-       node_j_additional_l1_norm_positive_gradient2_l,
-       node_k_additional_negative_gradient1_u,
-       node_k_additional_positive_gradient1_l,
-       node_k_additional_l1_norm_negative_gradient2_u,
-       node_k_additional_l1_norm_positive_gradient2_l);
-    
-    // If not prunable, recompute the required number of samples
-    // to try again.
-    prunable = Prunable_
-      (nodes, negative_gradient1_error, positive_gradient1_error, 
-       negative_gradient2_error, positive_gradient2_error, 
-       negative_gradient3_error, positive_gradient3_error, 
-       node_i_additional_negative_gradient1_u,
-       node_i_additional_positive_gradient1_l,
-       node_i_additional_l1_norm_negative_gradient2_u,
-       node_i_additional_l1_norm_positive_gradient2_l,
-       node_j_additional_negative_gradient1_u,
-       node_j_additional_positive_gradient1_l,
-       node_j_additional_l1_norm_negative_gradient2_u,
-       node_j_additional_l1_norm_positive_gradient2_l,
-       node_k_additional_negative_gradient1_u,
-       node_k_additional_positive_gradient1_l,
-       node_k_additional_l1_norm_negative_gradient2_u,
-       node_k_additional_l1_norm_positive_gradient2_l,
-       num_jk_pairs, num_ik_pairs, num_ij_pairs, relative_error, threshold,
-       total_n_minus_one_num_tuples);
+      if(prunable) {
+	break;
+      }
+    }
     
     // If the three node tuple was prunable, then prune.
     if(prunable) {

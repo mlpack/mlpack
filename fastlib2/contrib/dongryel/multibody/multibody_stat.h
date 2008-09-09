@@ -45,18 +45,18 @@ class MultibodyStat {
    */
   double positive_gradient1_used_error;
   
-  /** @brief The maximum negative gradient (second component).
+  /** @brief The L1 norm of maximum negative gradient (second component).
    */
-  Vector negative_gradient2_u;
+  double l1_norm_negative_gradient2_u;
 
   /** @brief The used error for the second negative gradient
    *         component.
    */
   double negative_gradient2_used_error;
   
-  /** @brief The minimum positive gradient (second component).
+  /** @brief The L1 norm of minimum positive gradient (second component).
    */
-  Vector positive_gradient2_l;
+  double l1_norm_positive_gradient2_l;
 
   /** @brief The used error for the second positive gradient component.
    */
@@ -166,9 +166,9 @@ class MultibodyStat {
     negative_gradient1_used_error = 0;
     positive_gradient1_l = 0;
     positive_gradient1_used_error = 0;
-    negative_gradient2_u.Init(3);
+    l1_norm_negative_gradient2_u = 0;
     negative_gradient2_used_error = 0;
-    positive_gradient2_l.Init(3);
+    l1_norm_positive_gradient2_l = 0;
     positive_gradient2_used_error = 0;
     n_pruned_ = 0;
 
