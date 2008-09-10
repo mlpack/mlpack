@@ -596,7 +596,7 @@ bool DualtreeVKde<TKernel>::DualtreeVKdeCanonical_
 } // end of DualtreeVKdeCanonical_
 
 template<typename TKernel>
-void DualtreeVKde<TKernel>::PreProcess(Tree *node) {
+void DualtreeVKde<TKernel>::PreProcess(Tree *node, bool reference_side) {
 
   // Initialize lower bound to 0.
   node->stat().mass_l_ = 0;
@@ -621,37 +621,41 @@ void DualtreeVKde<TKernel>::PreProcess(Tree *node) {
   
   // for non-leaf node, recurse
   if(!node->is_leaf()) {    
-    PreProcess(node->left());
-    PreProcess(node->right());
+    PreProcess(node->left(), reference_side);
+    PreProcess(node->right(), reference_side);
 
-    // After recursing set the max/min bandwidth and the weight sum
-    // approproiately.
-    node->stat().min_bandwidth_kernel_.Init
-      (std::min
-       (sqrt(node->left()->stat().min_bandwidth_kernel_.bandwidth_sq()),
-	sqrt(node->right()->stat().min_bandwidth_kernel_.bandwidth_sq())));
-    node->stat().max_bandwidth_kernel_.Init
-      (std::max
-       (sqrt(node->left()->stat().max_bandwidth_kernel_.bandwidth_sq()),
-	sqrt(node->right()->stat().max_bandwidth_kernel_.bandwidth_sq())));
-    node->stat().weight_sum_ =
-      node->left()->stat().weight_sum_ + node->right()->stat().weight_sum_;
+    if(reference_side) {
+      // After recursing set the max/min bandwidth and the weight sum
+      // approproiately.
+      node->stat().min_bandwidth_kernel_.Init
+	(std::min
+	 (sqrt(node->left()->stat().min_bandwidth_kernel_.bandwidth_sq()),
+	  sqrt(node->right()->stat().min_bandwidth_kernel_.bandwidth_sq())));
+      node->stat().max_bandwidth_kernel_.Init
+	(std::max
+	 (sqrt(node->left()->stat().max_bandwidth_kernel_.bandwidth_sq()),
+	  sqrt(node->right()->stat().max_bandwidth_kernel_.bandwidth_sq())));
+      node->stat().weight_sum_ =
+	node->left()->stat().weight_sum_ + node->right()->stat().weight_sum_;
+    }
   }
   else {
     
-    node->stat().min_bandwidth_kernel_.Init(sqrt(DBL_MAX));
-    node->stat().max_bandwidth_kernel_.Init(0);
-    node->stat().weight_sum_ = 0;
+    if(reference_side) {
+      node->stat().min_bandwidth_kernel_.Init(sqrt(DBL_MAX));
+      node->stat().max_bandwidth_kernel_.Init(0);
+      node->stat().weight_sum_ = 0;
 
-    // Reset the minimum/maximum bandwidths owned by the node.
-    for(index_t i = node->begin(); i < node->end(); i++) {
-      node->stat().min_bandwidth_kernel_.Init
-	(std::min(sqrt(node->stat().min_bandwidth_kernel_.bandwidth_sq()),
-		  sqrt(kernels_[i].bandwidth_sq())));
-      node->stat().max_bandwidth_kernel_.Init
-	(std::max(sqrt(node->stat().max_bandwidth_kernel_.bandwidth_sq()),
-		  sqrt(kernels_[i].bandwidth_sq())));
-      node->stat().weight_sum_ += rset_weights_[i];
+      // Reset the minimum/maximum bandwidths owned by the node.
+      for(index_t i = node->begin(); i < node->end(); i++) {
+	node->stat().min_bandwidth_kernel_.Init
+	  (std::min(sqrt(node->stat().min_bandwidth_kernel_.bandwidth_sq()),
+		    sqrt(kernels_[i].bandwidth_sq())));
+	node->stat().max_bandwidth_kernel_.Init
+	  (std::max(sqrt(node->stat().max_bandwidth_kernel_.bandwidth_sq()),
+		    sqrt(kernels_[i].bandwidth_sq())));
+	node->stat().weight_sum_ += rset_weights_[i];
+      }
     }
   }
 }

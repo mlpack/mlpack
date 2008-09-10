@@ -282,7 +282,7 @@ class DualtreeVKde {
    *         core fastlib supported a Init function for Stat objects
    *         that take more arguments.
    */
-  void PreProcess(Tree *node);
+  void PreProcess(Tree *node, bool reference_side);
 
   /** @brief Post processing step.
    */
@@ -362,9 +362,9 @@ class DualtreeVKde {
     fx_timer_start(NULL, "fast_kde_compute");
 
     // Preprocessing step for initializing series expansion objects
-    PreProcess(rroot_);
+    PreProcess(rroot_, true);
     if(qroot_ != rroot_) {
-      PreProcess(qroot_);
+      PreProcess(qroot_, false);
     }
     
     // Preprocessing step for initializing the coverage probabilities.
