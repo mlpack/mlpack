@@ -162,6 +162,15 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::RefineStatisticsBase_
   node->stat().negative_gradient1_u =
     -tmp_vector_for_sorting_[(int) floor(lower_percentile_ * node->count())];
 
+  // Then the first negative component used error.
+  for(index_t q = node->begin(); q < node->end(); q++) {
+    tmp_vector_for_sorting_[q - node->begin()] = -negative_force1_used_error_[q];
+  }
+  qsort((void *) tmp_vector_for_sorting_.ptr(), node->count(), sizeof(double),
+	&MultitreeMultibody<AxilrodTellerForceKernel<TTree, DHrectBound<2> >, TTree>::qsort_comparator_);
+  node->stat().negative_gradient1_used_error =
+    -tmp_vector_for_sorting_[(int) floor(lower_percentile_ * node->count())];
+  
   // Then, the first positive component.
   for(index_t q = node->begin(); q < node->end(); q++) {
     tmp_vector_for_sorting_[q - node->begin()] = positive_force1_l_[q];
@@ -170,7 +179,16 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::RefineStatisticsBase_
 	&MultitreeMultibody<AxilrodTellerForceKernel<TTree, DHrectBound<2> >, TTree>::qsort_comparator_);
   node->stat().positive_gradient1_l =
     tmp_vector_for_sorting_[(int) floor(lower_percentile_ * node->count())];
-  
+
+  // Then the first positive component used error.
+  for(index_t q = node->begin(); q < node->end(); q++) {
+    tmp_vector_for_sorting_[q - node->begin()] = -positive_force1_used_error_[q];
+  }
+  qsort((void *) tmp_vector_for_sorting_.ptr(), node->count(), sizeof(double),
+	&MultitreeMultibody<AxilrodTellerForceKernel<TTree, DHrectBound<2> >, TTree>::qsort_comparator_);
+  node->stat().positive_gradient1_used_error =
+    -tmp_vector_for_sorting_[(int) floor(lower_percentile_ * node->count())];
+ 
   // Then, the second negative component.
   for(index_t q = node->begin(); q < node->end(); q++) {
     tmp_vector_for_sorting_[q - node->begin()] = 
@@ -182,6 +200,15 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::RefineStatisticsBase_
   node->stat().l1_norm_negative_gradient2_u = 
     tmp_vector_for_sorting_[(int) floor(lower_percentile_ * node->count())];
 
+  // Then the second negative component used error.
+  for(index_t q = node->begin(); q < node->end(); q++) {
+    tmp_vector_for_sorting_[q - node->begin()] = -negative_force2_used_error_[q];
+  }
+  qsort((void *) tmp_vector_for_sorting_.ptr(), node->count(), sizeof(double),
+	&MultitreeMultibody<AxilrodTellerForceKernel<TTree, DHrectBound<2> >, TTree>::qsort_comparator_);
+  node->stat().negative_gradient2_used_error =
+    -tmp_vector_for_sorting_[(int) floor(lower_percentile_ * node->count())];
+
   // Then, the second positive component.
   for(index_t q = node->begin(); q < node->end(); q++) {
     tmp_vector_for_sorting_[q - node->begin()] = 
@@ -189,8 +216,25 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::RefineStatisticsBase_
   }
   qsort((void *) tmp_vector_for_sorting_.ptr(), node->count(), sizeof(double),
 	&MultitreeMultibody<AxilrodTellerForceKernel<TTree, DHrectBound<2> >, TTree>::qsort_comparator_);
-
   node->stat().l1_norm_positive_gradient2_l = 
+    tmp_vector_for_sorting_[(int) floor(lower_percentile_ * node->count())];  
+
+  // Then the second positive component used error.
+  for(index_t q = node->begin(); q < node->end(); q++) {
+    tmp_vector_for_sorting_[q - node->begin()] = -positive_force2_used_error_[q];
+  }
+  qsort((void *) tmp_vector_for_sorting_.ptr(), node->count(), sizeof(double),
+	&MultitreeMultibody<AxilrodTellerForceKernel<TTree, DHrectBound<2> >, TTree>::qsort_comparator_);
+  node->stat().positive_gradient2_used_error =
+    -tmp_vector_for_sorting_[(int) floor(lower_percentile_ * node->count())];
+
+  // Then, the number of pruned tuples.
+  for(index_t q = node->begin(); q < node->end(); q++) {
+    tmp_vector_for_sorting_[q - node->begin()] = n_pruned_[q];
+  }
+  qsort((void *) tmp_vector_for_sorting_.ptr(), node->count(), sizeof(double),
+	&MultitreeMultibody<AxilrodTellerForceKernel<TTree, DHrectBound<2> >, TTree>::qsort_comparator_);
+  node->stat().n_pruned_ =
     tmp_vector_for_sorting_[(int) floor(lower_percentile_ * node->count())];  
 }
 
@@ -509,10 +553,8 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::PostProcess(TTree *node) {
 	  query_total_force_e[d] += (-data_.get(d, q) * negative_force1_e_[q] +
 				     positive_force2_e_.get(d, q));
 	}
-	/*
 	query_total_force_e[d] *= 
-	  AxilrodTellerForceKernel::AXILROD_TELLER_COEFF;
-	*/
+	  TMultibodyKernel::AXILROD_TELLER_COEFF;
 
       } // end of iterating over each dimension...
 
@@ -593,7 +635,7 @@ bool MultitreeMultibody<TMultibodyKernel, TTree>::Prunable
       }
     }
     
-    if(num_samples == 0 || num_samples > num_tuples) {
+    if(num_samples == 0 || ceil(num_samples) > num_tuples) {
       return false;
     }
     else {
