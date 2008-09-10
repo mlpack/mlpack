@@ -7,13 +7,15 @@
 template<typename TTree, typename TBound>
 class AxilrodTellerForceKernel {
   
- private:
+ public:
 
   ////////// Private Member Constants //////////
 
   /** @brief The "nu" constant in front of the potential.
    */
   static const double AXILROD_TELLER_COEFF = -91;
+
+ private:
 
   ////////// Private Member Variables //////////
 
@@ -1329,9 +1331,9 @@ class AxilrodTellerForceKernel {
 	(negative_gradient1, positive_gradient1,
 	 negative_gradient2, positive_gradient2,
 	 negative_gradient3, positive_gradient3,
-	 min_negative_gradient1, min_positive_gradient1, 
-	 min_negative_gradient2, min_positive_gradient2, 
-	 min_negative_gradient3, min_positive_gradient3);
+	 max_negative_gradient1, min_positive_gradient1, 
+	 max_negative_gradient2, min_positive_gradient2, 
+	 max_negative_gradient3, min_positive_gradient3);
       
       // Compute the current error and see if the error is satisifed and
       // recompute how many more to compute.      
@@ -1411,7 +1413,7 @@ class AxilrodTellerForceKernel {
 	break;
       }
     }
-    
+
     // If the three node tuple was prunable, then prune.
     if(prunable) {
       Prune_(nodes, negative_gradient1_error, positive_gradient1_error, 
@@ -1475,7 +1477,7 @@ class AxilrodTellerForceKernel {
        isinf(min_positive_gradient3) || isinf(max_positive_gradient3)) {
       return false;
     }
-
+    
     // Compute approximation error.
     double negative_gradient1_error, positive_gradient1_error,
       negative_gradient2_error, positive_gradient2_error,
