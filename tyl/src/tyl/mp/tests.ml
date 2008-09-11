@@ -1,7 +1,6 @@
 open Smallcheck
 open Ast
-
-(* series generators *)
+open Util
 
 let nullOps = pure _Bool %% bools ++ pure _Int %% ints ++ pure _Real %% floats
 let unaryOps = pure Neg ++ pure Not
@@ -17,20 +16,20 @@ let ids = pure (Id.make "a") ++ pure (Id.make "b") ++ pure (Id.make "c")
 
 let typs = pure _TReal %% refinedReals ++ pure _TBool %% refinedBools
 
-let (>-) x f = f x
+let rec exprs = {fold = fun n f b -> (
+                   pure _EVar %% ids 
+                   ++ pure _EConst %% nullOps 
+                   ++ pure _EUnaryOp %% unaryOps %% exprs
+                   ++ pure _EBinaryOp %% binaryOps %% exprs %% exprs
+                 ).fold n f b}
 
-let rec exprs = fun n -> n >-
-     pure _EVar %% ids 
-  ++ pure _EConst %% nullOps 
-  ++ pure _EUnaryOp %% unaryOps %% exprs
-  ++ pure _EBinaryOp %% binaryOps %% exprs %% exprs
-
-let rec props = fun n -> n >-
-     pure _CBoolVal %% bools 
-  ++ pure _CIsTrue %% exprs 
-  ++ pure _CNumRel %% numRels %% exprs %% exprs
-  ++ pure _CPropOp %% propOps %% lists props 
-  ++ pure _CQuant %% quants %% ids %% typs %% props
+let rec props = {fold = fun n f b -> (
+                   pure _CBoolVal %% bools 
+                   ++ pure _CIsTrue %% exprs 
+                   ++ pure _CNumRel %% numRels %% exprs %% exprs
+                   ++ pure _CPropOp %% propOps %% lists props 
+                   ++ pure _CQuant %% quants %% ids %% typs %% props
+                 ).fold n f b}
 
 let progs = pure _PMain %% directions %% lists (pairs ids typs) %% exprs %% props
 
