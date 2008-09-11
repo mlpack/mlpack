@@ -641,11 +641,38 @@ bool MultitreeMultibody<TMultibodyKernel, TTree>::Prunable
     else {
       *pruned_with_exact_method = false;
       return
-	mkernel_.MonteCarloEval(data_, exhaustive_indices_, nodes, 
-				relative_error_, threshold_, num_samples,
-				total_n_minus_one_num_tuples_, num_tuples,
-				required_probability);
+	mkernel_.MonteCarloEvalUsingOrderStatistics
+	(data_, exhaustive_indices_, nodes, relative_error_, threshold_, 
+	 num_samples, total_n_minus_one_num_tuples_, num_tuples,
+	 required_probability);
     }
+  }
+  else {
+    return exact_prunable;
+  }
+}
+
+template<typename TMultibodyKernel, typename TTree>
+bool MultitreeMultibody<TMultibodyKernel, TTree>::PrunableAlternative
+(ArrayList<TTree *> &nodes, double num_tuples, double required_probability,
+ bool *pruned_with_exact_method) {
+
+  bool exact_prunable =
+    mkernel_.Eval(data_, exhaustive_indices_, nodes, relative_error_,
+		  threshold_, total_n_minus_one_num_tuples_, num_tuples);
+
+  *pruned_with_exact_method = true;
+
+  if(!exact_prunable && required_probability < 1) {
+    
+    int num_samples = 25;
+
+    *pruned_with_exact_method = false;
+    return
+      mkernel_.MonteCarloEval
+      (data_, exhaustive_indices_, nodes, relative_error_, threshold_, 
+       num_samples, total_n_minus_one_num_tuples_, num_tuples,
+       required_probability);
   }
   else {
     return exact_prunable;
@@ -657,8 +684,8 @@ bool MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
 (ArrayList<TTree *> &nodes, double num_tuples, double required_probability) {
 
   bool pruned_with_exact_method = true;
-  if(Prunable(nodes, num_tuples, required_probability, 
-	      &pruned_with_exact_method)) {
+  if(PrunableAlternative(nodes, num_tuples, required_probability, 
+			 &pruned_with_exact_method)) {
     num_prunes_++;
     return pruned_with_exact_method;
   }

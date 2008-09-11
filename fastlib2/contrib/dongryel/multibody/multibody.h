@@ -511,6 +511,11 @@ private:
   int FindSplitNode(ArrayList<TTree *> &nodes);
 
   /** Pruning rule */
+  bool PrunableAlternative(ArrayList<TTree *> &nodes, double num_tuples,
+			   double required_probability, 
+			   bool *pruned_with_exact_method);
+
+  /** Pruning rule */
   bool Prunable(ArrayList<TTree *> &nodes, double num_tuples,
 		double required_probability, bool *pruned_with_exact_method);
 
