@@ -1,5 +1,4 @@
-type 'a l 
-type 'a series = int -> 'a l
+type 'a series = {fold : 'b . int -> ('b -> 'a -> 'b) -> 'b -> 'b }
 
 val pure : 'a -> 'a series
 val (%%) : ('a->'b) series -> 'a series -> 'b series
@@ -13,5 +12,4 @@ val pairs    : 'a series -> 'b series -> ('a * 'b) series
 val options  : 'a series -> ('a option) series
 val lists    : 'a series -> ('a list) series
 
-val evaluate : int -> (int -> 'a option) -> 'a option
-val forAll : 'a series -> ('a -> bool) -> int -> 'a option
+val forAll   : 'a series -> ('a -> bool) -> int -> ('a * exn) option
