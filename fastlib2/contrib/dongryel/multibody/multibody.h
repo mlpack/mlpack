@@ -57,7 +57,8 @@ class MultitreeMultibody {
 			     double *max_absolute_l1_norm_error,
 			     int *absolute_error_under_threshold,
 			     double relative_error, double threshold) {
-    
+ 
+    FILE *stream = fopen("relative_error_output.txt", "w+");  
     *max_relative_l1_norm_error = 0;
     *relative_error_under_threshold = 0;
     *max_absolute_l1_norm_error = 0;
@@ -85,7 +86,10 @@ class MultitreeMultibody {
       if(error_l1_norm <= threshold) {
 	(*absolute_error_under_threshold)++;
       }
+      fprintf(stream, "%g\n", error_l1_norm / exact_l1_norm);
     }
+
+    fclose(stream);
   }
 
   /** @brief The main naive computation procedure.
