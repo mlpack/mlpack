@@ -1,5 +1,3 @@
-open Lib2
-
 let msg ?(pre="MSG") ?pos msg =
   match pos with
     | None -> pre ^ ": " ^ msg
