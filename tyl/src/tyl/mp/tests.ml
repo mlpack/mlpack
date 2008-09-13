@@ -1,10 +1,16 @@
-open Smallcheck
+open SmallCheck
 open Ast
 open Util
 
-let nullOps = pure _Bool %% bools ++ pure _Int %% ints ++ pure _Real %% floats
-let unaryOps = pure Neg ++ pure Not
-let binaryOps = pure Plus ++ pure Minus ++ pure Mult ++ pure Or ++ pure And
+let boolNullOps = pure _Bool %% bools 
+let realNullOps = pure _Int %% ints ++ pure _Real %% floats
+let nullOps = boolNullOps ++ realNullOps 
+let boolUnaryOps = pure Not
+let realUnaryOps = pure Neg
+let unaryOps = boolUnaryOps ++ realUnaryOps
+let boolBinaryOps = pure Or ++ pure And
+let realBinaryOps = pure Plus ++ pure Minus ++ pure Mult
+let binaryOps = boolBinaryOps ++ realBinaryOps
 let numRels = pure Equal ++ pure Lte ++ pure Gte
 let propOps = pure Disj ++ pure Conj
 let quants = pure Exists
@@ -14,14 +20,25 @@ let refinedReals = pure _Discrete %% intervals ints ++ pure _Continuous %% inter
 let refinedBools = options bools
 let ids = pure (Id.make "a") ++ pure (Id.make "b") ++ pure (Id.make "c") 
 
-let typs = pure _TReal %% refinedReals ++ pure _TBool %% refinedBools
+let boolTyps = pure _TBool %% refinedBools
+let realTyps = pure _TReal %% refinedReals
+let typs = boolTyps ++ realTyps
 
-let rec exprs = {fold = fun n f b -> (
+let rec boolExprs = {fold = fun n f b -> (
                    pure _EVar %% ids 
-                   ++ pure _EConst %% nullOps 
-                   ++ pure _EUnaryOp %% unaryOps %% exprs
-                   ++ pure _EBinaryOp %% binaryOps %% exprs %% exprs
-                 ).fold n f b}
+                   ++ pure _EConst %% boolNullOps 
+                   ++ pure _EUnaryOp %% boolUnaryOps %% boolExprs
+                   ++ pure _EBinaryOp %% boolBinaryOps %% boolExprs %% boolExprs
+                     ).fold n f b}
+
+let rec realExprs = {fold = fun n f b -> (
+                   pure _EVar %% ids 
+                   ++ pure _EConst %% realNullOps 
+                   ++ pure _EUnaryOp %% realUnaryOps %% realExprs
+                   ++ pure _EBinaryOp %% realBinaryOps %% realExprs %% realExprs
+                     ).fold n f b}
+
+let exprs = boolExprs ++ realExprs 
 
 let rec props = {fold = fun n f b -> (
                    pure _CBoolVal %% bools 
