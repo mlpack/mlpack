@@ -222,25 +222,8 @@ class DualtreeVKde {
 			 int &order_farfield_to_local,
 			 int &order_farfield, int &order_local);
 
-  /** @brief Checking whether it is able to prune the query and the
-   *         reference pair using Monte Carlo sampling.
-   */
-  bool MonteCarloPrunable_(Tree *qnode, Tree *rnode, double probability,
-			   DRange &dsqd_range, DRange &kernel_value_range, 
-			   double &dl, double &de, double &du, 
-			   double &used_error, double &n_pruned);
-
   double EvalUnnormOnSq_(index_t reference_point_index,
 			 double squared_distance);
-
-  /** @brief Checking whether it is able to prune the query and the
-   *         reference pair using Monte Carlo sampling.
-   */
-  bool MonteCarloPrunableByOrderStatistics_
-  (Tree *qnode, Tree *rnode, double probability,
-   DRange &dsqd_range, DRange &kernel_value_range, 
-   double &dl, double &de, double &du, 
-   double &used_error, double &n_pruned);
 
   /** @brief Canonical dualtree KDE case.
    *

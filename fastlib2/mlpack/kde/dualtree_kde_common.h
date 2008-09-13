@@ -1,6 +1,8 @@
 #ifndef DUALTREE_KDE_COMMON_H
 #define DUALTREE_KDE_COMMON_H
 
+#include "inverse_normal_cdf.h"
+
 class DualtreeKdeCommon {
 
  public:
@@ -198,6 +200,116 @@ class DualtreeKdeCommon {
   }
 
   template<typename TTree, typename TAlgorithm>
+  bool MonteCarloPrunable_
+  (TTree *qnode, TTree *rnode, double probability, DRange &dsqd_range,
+   DRange &kernel_value_range, double &dl, double &de, double &du, 
+   double &used_error, double &n_pruned, TAlgorithm *kde_object) {
+    
+    // If the reference node contains too few points, then return.
+    if(qnode->count() * rnode->count() < 25) {
+      return false;
+    }
+    
+    // Refine the lower bound using the new lower bound info.
+    double max_used_error = 0;
+    
+    // Take random query/reference pair samples and determine how many
+    // more samples are needed.
+    bool flag = true;
+    
+    // Reset the current position of the scratch space to zero.
+    double kernel_sums = 0;
+    double squared_kernel_sums = 0;
+    
+    // Commence sampling...
+    {
+      double standard_score = 
+	InverseNormalCDF::Compute(probability + 0.5 * (1 - probability));
+      
+      // The initial number of samples is equal to the default.
+      int num_samples = 25;
+      int total_samples = 0;
+      
+      do {
+	for(index_t s = 0; s < num_samples; s++) {
+	  
+	  index_t random_query_point_index =
+	    math::RandInt(qnode->begin(), qnode->end());
+	  index_t random_reference_point_index = 
+	    math::RandInt(rnode->begin(), rnode->end());
+	  
+	  // Get the pointer to the current query point.
+	  const double *query_point = 
+	    (kde_object->qset_).GetColumnPtr(random_query_point_index);
+	  
+	  // Get the pointer to the current reference point.
+	  const double *reference_point = 
+	    (kde_object->rset_).GetColumnPtr(random_reference_point_index);
+	  
+	  // Compute the pairwise distance and kernel value.
+	  double squared_distance = la::DistanceSqEuclidean
+	    ((kde_object->rset_).n_rows(), query_point, reference_point);
+	  
+	  double weighted_kernel_value = 
+	    kde_object->EvalUnnormOnSq_(random_reference_point_index,
+					squared_distance);
+	  kernel_sums += weighted_kernel_value;
+	  squared_kernel_sums += weighted_kernel_value * weighted_kernel_value;
+	  
+	} // end of taking samples for this roune...
+	
+	// Increment total number of samples.
+	total_samples += num_samples;
+	
+	// Compute the current estimate of the sample mean and the
+	// sample variance.
+	double sample_mean = kernel_sums / ((double) total_samples);
+	double sample_variance =
+	  (squared_kernel_sums - total_samples * sample_mean * sample_mean) / 
+	  ((double) total_samples - 1);
+	
+	// Compute the current threshold for guaranteeing the relative
+	// error bound.
+	double new_used_error = qnode->stat().used_error_ +
+	  qnode->stat().postponed_used_error_;
+	double new_n_pruned = qnode->stat().n_pruned_ + 
+	  qnode->stat().postponed_n_pruned_;
+	
+	// The currently proven lower bound.
+	double new_mass_l = qnode->stat().mass_l_ + 
+	  qnode->stat().postponed_l_ + dl;
+	double right_hand_side = 
+	  (kde_object->relative_error_ * new_mass_l - new_used_error) /
+	  (kde_object->rroot_->stat().get_weight_sum() - new_n_pruned);
+	
+	// NOTE: It is very important that the following pruning rule is
+	// a strict inequality!
+	if(sqrt(sample_variance) * standard_score < right_hand_side) {
+	  kernel_sums = kernel_sums / ((double) total_samples) * 
+	    rnode->stat().get_weight_sum();
+	  max_used_error = rnode->stat().get_weight_sum() * 
+	    standard_score * sqrt(sample_variance);
+	  break;
+	}
+	else {
+	  flag = false;
+	  break;
+	}
+	
+      } while(true);
+      
+    } // end of sampling...
+    
+    // If all queries can be pruned, then add the approximations.
+    if(flag) {
+      de = kernel_sums;
+      used_error = max_used_error;
+      return true;
+    }
+    return false;
+  }
+
+  template<typename TTree, typename TAlgorithm>
   static bool MonteCarloPrunableByOrderStatistics_
   (TTree *qnode, TTree *rnode, double probability, DRange &dsqd_range,
    DRange &kernel_value_range, double &dl, double &de, double &du, 
@@ -245,7 +357,7 @@ class DualtreeKdeCommon {
 	(random_reference_point_index, squared_distance);
       min_kernel_value = std::max(min_kernel_value, kernel_value);
       
-    } // end of taking samples for this roune...
+    } // end of taking samples for this routine...
     
     // Compute the current threshold for guaranteeing the relative
     // error bound.
