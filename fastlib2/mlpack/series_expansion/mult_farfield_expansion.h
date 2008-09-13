@@ -78,6 +78,10 @@ class MultFarFieldExpansion {
   /** Get the maximum possible approximation order */
   int get_max_order() const { return sea_->get_max_order(); }
 
+  /** @brief Gets the weight sum.
+   */
+  double get_weight_sum() const { return coeffs_[0]; }
+
   /** Set the approximation order */
   void set_order(int new_order) { order_ = new_order; }
   
