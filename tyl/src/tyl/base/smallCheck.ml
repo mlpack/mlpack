@@ -1,5 +1,10 @@
 open Util
 
+(* possible TODOs: 
+    make it a lazy list instead to allow let recs (?)
+    make 'a series ordered strictly by depth values
+*)
+
 type 'a series = {fold : 'b . int -> ('b -> 'a -> 'b) -> 'b -> 'b}
 
 let pure a      = {fold = fun n f b -> if n<=0 then b else f b a}
