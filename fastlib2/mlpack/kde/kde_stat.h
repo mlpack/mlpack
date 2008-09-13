@@ -61,7 +61,13 @@ class VKdeStat {
    *         must be propagated downwards.
    */
   double postponed_n_pruned_;
-  
+
+  /** @brief Gets the weight sum.
+   */
+  double get_weight_sum() {
+    return weight_sum_;
+  }
+
   /** @brief Adds the other postponed contributions.
    */
   void AddPostponed(const VKdeStat& parent_stat) {
@@ -203,7 +209,13 @@ class KdeStat {
   /** @brief The subspace associated with this node.
    */
   SubspaceStat subspace_;
-  
+
+  /** @brief Gets the weight sum.
+   */
+  double get_weight_sum() {
+    return farfield_expansion_.get_weight_sum();
+  }
+ 
   /** @brief Adds the other postponed contributions.
    */
   void AddPostponed(const KdeStat& parent_stat) {
