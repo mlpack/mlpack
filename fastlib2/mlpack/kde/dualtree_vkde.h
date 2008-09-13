@@ -92,6 +92,8 @@
 template<typename TKernel>
 class DualtreeVKde {
   
+  friend class DualtreeKdeCommon;
+
  public:
   
   // our tree type using the VKdeStat
@@ -206,16 +208,6 @@ class DualtreeVKde {
 
   ////////// Private Member Functions //////////
 
-  /** @brief Adds the postponed node contributions to the given
-   *         individual point.
-   */
-  void AddPostponed_(Tree *node, index_t destination);
-
-  /** @brief Refines the bound statistics using the given point's
-   *         bound statistics.
-   */
-  void RefineBoundStatistics_(index_t source, Tree *destination);
-
   /** @brief The exhaustive base KDE case.
    */
   void DualtreeVKdeBase_(Tree *qnode, Tree *rnode, double probability);
@@ -254,12 +246,6 @@ class DualtreeVKde {
 		 DRange &dsqd_range, DRange &kernel_value_range, 
 		 double &dl, double &de, double &du, double &used_error, 
 		 double &n_pruned);
-
-  /** @brief Determine which of the node to expand first.
-   */
-  void BestNodePartners(Tree *nd, Tree *nd1, Tree *nd2, double probability,
-			Tree **partner1, double *probability1, Tree **partner2,
-			double *probability2);
 
   /** @brief Canonical dualtree KDE case.
    *

@@ -157,7 +157,9 @@ const fx_module_doc kde_main_doc = {
  */
 template<typename TKernelAux>
 class DualtreeKde {
-  
+
+  friend class DualtreeKdeCommon;
+
  public:
   
   // our tree type using the KdeStat
@@ -290,15 +292,6 @@ class DualtreeKde {
 
   ////////// Private Member Functions //////////
 
-  /** @brief Adds the postponed node contributions to the given
-   *         individual point.
-   */
-  void AddPostponed_(Tree *node, index_t destination);
-
-  /** @brief Refines the bound statistics using the given point's
-   *         bound statistics.
-   */
-  void RefineBoundStatistics_(index_t source, Tree *destination);
   void RefineBoundStatistics_(Tree *destination);
 
   /** @brief The exhaustive base KDE case.
@@ -340,12 +333,6 @@ class DualtreeKde {
 		 double &dl, double &de, double &du, double &used_error, 
 		 double &n_pruned);
 
-  /** @brief Determine which of the node to expand first.
-   */
-  void BestNodePartners(Tree *nd, Tree *nd1, Tree *nd2, double probability,
-			Tree **partner1, double *probability1, Tree **partner2,
-			double *probability2);
-
   /** @brief Canonical dualtree KDE case.
    *
    *  @param qnode The query node.
@@ -367,23 +354,6 @@ class DualtreeKde {
   /** @brief Post processing step.
    */
   void PostProcess(Tree *qnode);
-
-  /** @brief The comparison function used for the quick-sort.
-   */
-  static int qsort_comparator_(const void *a, const void *b) {
-    double *typecasted_a = (double *) a;
-    double *typecasted_b = (double *) b;
-    
-    if(*typecasted_a < *typecasted_b) {
-      return -1;
-    }
-    else if(*typecasted_a > *typecasted_b) {
-      return 1;
-    }
-    else {
-      return 0;
-    }
-  }
 
  public:
 

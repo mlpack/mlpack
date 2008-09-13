@@ -5,32 +5,13 @@
 #include "inverse_normal_cdf.h"
 
 template<typename TKernelAux>
-void DualtreeKde<TKernelAux>::AddPostponed_(Tree *node, index_t destination) {
-  densities_l_[destination] += node->stat().postponed_l_;
-  densities_e_[destination] += node->stat().postponed_e_;
-  densities_u_[destination] += node->stat().postponed_u_;
-  used_error_[destination] += node->stat().postponed_used_error_;
-  n_pruned_[destination] += node->stat().postponed_n_pruned_; 
-}
-
-template<typename TKernelAux>
-void DualtreeKde<TKernelAux>::RefineBoundStatistics_(index_t q, Tree *qnode) {
-  qnode->stat().mass_l_ = std::min(qnode->stat().mass_l_, densities_l_[q]);
-  qnode->stat().mass_u_ = std::max(qnode->stat().mass_u_, densities_u_[q]);
-  qnode->stat().used_error_ = std::max(qnode->stat().used_error_,
-				       used_error_[q]);
-  qnode->stat().n_pruned_ = std::min(qnode->stat().n_pruned_, n_pruned_[q]);
-}
-
-template<typename TKernelAux>
 void DualtreeKde<TKernelAux>::RefineBoundStatistics_(Tree *qnode) {
 
   for(index_t q = qnode->begin(); q < qnode->end(); q++) {
     tmp_vector_for_sorting_[q - qnode->begin()] = densities_l_[q];
   }
   qsort((void *) tmp_vector_for_sorting_.ptr(), qnode->count(),
-	sizeof(double), 
-	&DualtreeKde<GaussianKernelMultAux>::qsort_comparator_);
+	sizeof(double), &DualtreeKdeCommon::qsort_comparator);
 
   qnode->stat().mass_l_ = 
     tmp_vector_for_sorting_[(int) floor(lower_percentile_ * qnode->count())];
@@ -48,7 +29,7 @@ void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
   for(index_t q = qnode->begin(); q < qnode->end(); q++) {
 
     // Incorporate the postponed information.
-    AddPostponed_(qnode, q);
+    DualtreeKdeCommon::AddPostponed(qnode, q, this);
 
     // Get the query point.
     const double *q_col = qset_.GetColumnPtr(q);
@@ -75,7 +56,7 @@ void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
     densities_u_[q] -= rnode->stat().farfield_expansion_.get_weight_sum();
     
     // Refine min and max summary statistics.
-    RefineBoundStatistics_(q, qnode);
+    DualtreeKdeCommon::RefineBoundStatistics(q, qnode, this);
 
   } // end of looping over each query point.
 
@@ -435,30 +416,6 @@ bool DualtreeKde<TKernelAux>::Prunable_
 }
 
 template<typename TKernelAux>
-void DualtreeKde<TKernelAux>::BestNodePartners
-(Tree *nd, Tree *nd1, Tree *nd2, double probability,
- Tree **partner1, double *probability1, Tree **partner2, 
- double *probability2) {
-  
-  double d1 = nd->bound().MinDistanceSq(nd1->bound());
-  double d2 = nd->bound().MinDistanceSq(nd2->bound());
-
-  // Prioritized traversal based on the squared distance bounds.
-  if(d1 <= d2) {
-    *partner1 = nd1;
-    *probability1 = sqrt(probability);
-    *partner2 = nd2;
-    *probability2 = sqrt(probability);
-  }
-  else {
-    *partner1 = nd2;
-    *probability1 = sqrt(probability);
-    *partner2 = nd1;
-    *probability2 = sqrt(probability);
-  }
-}
-
-template<typename TKernelAux>
 bool DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
 (Tree *qnode, Tree *rnode, double probability) {
 
@@ -545,9 +502,9 @@ bool DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
     else {
       Tree *rnode_first = NULL, *rnode_second = NULL;
       double probability_first = 0, probability_second = 0;
-      BestNodePartners(qnode, rnode->left(), rnode->right(), probability,
-		       &rnode_first, &probability_first,
-		       &rnode_second, &probability_second);
+      DualtreeKdeCommon::BestNodePartners
+	(qnode, rnode->left(), rnode->right(), probability,
+	 &rnode_first, &probability_first, &rnode_second, &probability_second);
       
       bool first_result = 
 	DualtreeKdeCanonical_(qnode, rnode_first, probability_first);
@@ -585,9 +542,9 @@ bool DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
       Tree *qnode_first = NULL, *qnode_second = NULL;
       double probability_first = 0, probability_second = 0;
 
-      BestNodePartners(rnode, qnode->left(), qnode->right(), probability,
-		       &qnode_first, &probability_first,
-		       &qnode_second, &probability_second);
+      DualtreeKdeCommon::BestNodePartners
+	(rnode, qnode->left(), qnode->right(), probability,
+	 &qnode_first, &probability_first, &qnode_second, &probability_second);
       bool first_result =
 	DualtreeKdeCanonical_(qnode_first, rnode, probability);
       bool second_result =
@@ -602,9 +559,9 @@ bool DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
       double probability_first = 0, probability_second = 0;
   
       // Fix the query node to be the left child, and recurse.
-      BestNodePartners(qnode->left(), rnode->left(), rnode->right(), 
-		       probability, &rnode_first, &probability_first,
-		       &rnode_second, &probability_second);
+      DualtreeKdeCommon::BestNodePartners
+	(qnode->left(), rnode->left(), rnode->right(), probability, 
+	 &rnode_first, &probability_first, &rnode_second, &probability_second);
       bool left_first_result =
 	DualtreeKdeCanonical_(qnode->left(), rnode_first, probability_first);
 
@@ -618,9 +575,9 @@ bool DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
 	DualtreeKdeCanonical_(qnode->left(), rnode_second, probability_second);
       
       // Fix the query node to be the right child, and recurse.
-      BestNodePartners(qnode->right(), rnode->left(), rnode->right(), 
-		       probability, &rnode_first, &probability_first,
-		       &rnode_second, &probability_second);
+      DualtreeKdeCommon::BestNodePartners
+	(qnode->right(), rnode->left(), rnode->right(), probability, 
+	 &rnode_first, &probability_first, &rnode_second, &probability_second);
       bool right_first_result =
 	DualtreeKdeCanonical_(qnode->right(), rnode_first, probability_first);
 
@@ -717,7 +674,7 @@ void DualtreeKde<TKernelAux>::PostProcess(Tree *qnode) {
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
 
       // Add all postponed quantities.
-      AddPostponed_(qnode, q);
+      DualtreeKdeCommon::AddPostponed(qnode, q, this);
 
       // Finally evaluate the local expansion and add in the
       // contributions.
@@ -742,7 +699,7 @@ void DualtreeKde<TKernelAux>::PostProcess(Tree *qnode) {
       }
 
       // Refine bound statistics using the finalized query point sum.
-      RefineBoundStatistics_(q, qnode);
+      DualtreeKdeCommon::RefineBoundStatistics(q, qnode, this);
     }
 
     // Clear postponed approximations since they have been
