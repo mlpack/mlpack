@@ -105,6 +105,10 @@ class FarFieldExpansion {
    */
   int get_max_order() const { return sea_->get_max_order(); }
 
+  /** @brief Gets the weight sum.
+   */
+  double get_weight_sum() const { return coeffs_[0]; }
+
   /** @brief Sets the approximation order of the far-field expansion.
    *
    *  @param new_order The desired new order of the approximation.
