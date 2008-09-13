@@ -5,6 +5,94 @@ class DualtreeKdeCommon {
 
  public:
 
+  /** @brief The comparison function used for the quick-sort.
+   */
+  static int qsort_comparator(const void *a, const void *b) {
+    double *typecasted_a = (double *) a;
+    double *typecasted_b = (double *) b;
+    
+    if(*typecasted_a < *typecasted_b) {
+      return -1;
+    }
+    else if(*typecasted_a > *typecasted_b) {
+      return 1;
+    }
+    else {
+      return 0;
+    }
+  }
+ 
+  /** @brief Adds the postponed information for the given query node
+   *         to a given query point contribution.
+   *
+   *  @param node The query node.
+   *  @param destination The query index destination.
+   *  @param kde_object The KDE computation object that contains the query 
+   *                    point information.
+   */
+  template<typename TTree, typename TAlgorithm>
+  static void AddPostponed(TTree *node, index_t destination, 
+			   TAlgorithm *kde_object) {
+
+    kde_object->densities_l_[destination] += node->stat().postponed_l_;
+    kde_object->densities_e_[destination] += node->stat().postponed_e_;
+    kde_object->densities_u_[destination] += node->stat().postponed_u_;
+    kde_object->used_error_[destination] += node->stat().postponed_used_error_;
+    kde_object->n_pruned_[destination] += node->stat().postponed_n_pruned_; 
+  }
+
+  template<typename TTree>
+  static void BestNodePartners
+  (TTree *nd, TTree *nd1, TTree *nd2, double probability, 
+   TTree **partner1, double *probability1, 
+   TTree **partner2, double *probability2) {
+  
+  double d1 = nd->bound().MinDistanceSq(nd1->bound());
+  double d2 = nd->bound().MinDistanceSq(nd2->bound());
+
+  // Prioritized traversal based on the squared distance bounds.
+  if(d1 <= d2) {
+    *partner1 = nd1;
+    *probability1 = sqrt(probability);
+    *partner2 = nd2;
+    *probability2 = sqrt(probability);
+  }
+  else {
+    *partner1 = nd2;
+    *probability1 = sqrt(probability);
+    *partner2 = nd1;
+    *probability2 = sqrt(probability);
+  }
+}
+
+  /** @brief Refines the summary statistics of the given query node
+   *         using a newly updated information for the query point
+   *         $q$.
+   *
+   *  @param q The query point index.
+   *  @param qnode The query node.
+   *  @param kde_object The KDE computation object that contains the
+   *                    query point information.
+   */
+  template<typename TTree, typename TAlgorithm>
+  static void RefineBoundStatistics(index_t q, TTree *qnode, 
+				    TAlgorithm *kde_object) {
+    
+    qnode->stat().mass_l_ = std::min(qnode->stat().mass_l_, 
+				     kde_object->densities_l_[q]);
+    qnode->stat().mass_u_ = std::max(qnode->stat().mass_u_, 
+				     kde_object->densities_u_[q]);
+    qnode->stat().used_error_ = std::max(qnode->stat().used_error_,
+					 kde_object->used_error_[q]);
+    qnode->stat().n_pruned_ = std::min(qnode->stat().n_pruned_, 
+				       kde_object->n_pruned_[q]);
+  }
+
+  /** @brief Shuffles a vector according to a given permutation.
+   *
+   *  @param v The vector to be shuffled.
+   *  @param permutation The permutation.
+   */
   static void ShuffleAccordingToPermutation
   (Vector &v, const ArrayList<index_t> &permutation) {
     
