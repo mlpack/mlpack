@@ -230,6 +230,9 @@ class DualtreeVKde {
 			   double &dl, double &de, double &du, 
 			   double &used_error, double &n_pruned);
 
+  double EvalUnnormOnSq_(index_t reference_point_index,
+			 double squared_distance);
+
   /** @brief Checking whether it is able to prune the query and the
    *         reference pair using Monte Carlo sampling.
    */
