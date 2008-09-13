@@ -180,7 +180,7 @@ class DualtreeVKde {
   /** @brief The accuracy parameter specifying the relative error
    *         bound.
    */
-  double tau_;
+  double relative_error_;
 
   /** @brief The accuracy parameter: if the true sum is less than this
    *         value, then relative error is not guaranteed. Instead the
@@ -238,14 +238,6 @@ class DualtreeVKde {
    DRange &dsqd_range, DRange &kernel_value_range, 
    double &dl, double &de, double &du, 
    double &used_error, double &n_pruned);
-
-  /** @brief Checking for prunability of the query and the reference
-   *         pair.
-   */
-  bool Prunable_(Tree *qnode, Tree *rnode, double probability,
-		 DRange &dsqd_range, DRange &kernel_value_range, 
-		 double &dl, double &de, double &du, double &used_error, 
-		 double &n_pruned);
 
   /** @brief Canonical dualtree KDE case.
    *
@@ -310,7 +302,7 @@ class DualtreeVKde {
   void Compute(Vector *results) {
 
     // Set accuracy parameters.
-    tau_ = fx_param_double(module_, "relative_error", 0.1);
+    relative_error_ = fx_param_double(module_, "relative_error", 0.1);
     threshold_ = fx_param_double(module_, "threshold", 0) *
       kernels_[0].CalcNormConstant(qset_.n_rows());
     

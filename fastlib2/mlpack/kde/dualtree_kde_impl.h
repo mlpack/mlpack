@@ -103,7 +103,7 @@ bool DualtreeKde<TKernelAux>::PrunableEnhanced_
   double new_used_error = qstat.used_error_ + qstat.postponed_used_error_;
   double new_n_pruned = qstat.n_pruned_ + qstat.postponed_n_pruned_;
   double allowed_err =
-    (tau_ * new_mass_l - new_used_error) /
+    (relative_error_ * new_mass_l - new_used_error) /
     ((double) rroot_->stat().farfield_expansion_.get_weight_sum() - 
      new_n_pruned);
 
@@ -240,7 +240,7 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunableByOrderStatistics_
   double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
   double left_hand_side = 0.5 * (kernel_value_range.hi - min_kernel_value)
     * (1 - threshold_);
-  double right_hand_side = (tau_ * new_mass_l - new_used_error) / 
+  double right_hand_side = (relative_error_ * new_mass_l - new_used_error) / 
     (rroot_->stat().farfield_expansion_.get_weight_sum() - new_n_pruned);
   
   if(left_hand_side <= right_hand_side) {
@@ -334,7 +334,7 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
       // The currently proven lower bound.
       double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
       double right_hand_side = 
-	(tau_ * new_mass_l - new_used_error) /
+	(relative_error_ * new_mass_l - new_used_error) /
 	(rroot_->stat().farfield_expansion_.get_weight_sum() - new_n_pruned);
       
       // NOTE: It is very important that the following pruning rule is
@@ -365,74 +365,29 @@ bool DualtreeKde<TKernelAux>::MonteCarloPrunable_
 }
 
 template<typename TKernelAux>
-bool DualtreeKde<TKernelAux>::Prunable_
-(Tree *qnode, Tree *rnode, double probability, DRange &dsqd_range,
- DRange &kernel_value_range, double &dl, double &de, double &du, 
- double &used_error, double &n_pruned) {
-  
-  // The query node stat
-  KdeStat<TKernelAux> &stat = qnode->stat();
-  
-  // Try pruning after bound refinement: first compute distance/kernel
-  // value bounds.
-  dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
-  dsqd_range.hi = qnode->bound().MaxDistanceSq(rnode->bound());
-  kernel_value_range = ka_.kernel_.RangeUnnormOnSq(dsqd_range);
-  
-  // the new lower bound after incorporating new info
-  dl = kernel_value_range.lo * 
-    rnode->stat().farfield_expansion_.get_weight_sum();
-  de = 0.5 * rnode->stat().farfield_expansion_.get_weight_sum() * 
-    (kernel_value_range.lo + kernel_value_range.hi);
-  du = (kernel_value_range.hi - 1) * 
-    rnode->stat().farfield_expansion_.get_weight_sum();
-  
-  // refine the lower bound using the new lower bound info
-  double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
-  double new_used_error = stat.used_error_ + stat.postponed_used_error_;
-  double new_n_pruned = stat.n_pruned_ + stat.postponed_n_pruned_;
-  
-  double allowed_err;
-
-  // Compute the allowed error.
-  allowed_err = (tau_ * new_mass_l - new_used_error) *
-    rnode->stat().farfield_expansion_.get_weight_sum() / 
-    ((double) rroot_->stat().farfield_expansion_.get_weight_sum() - 
-     new_n_pruned);
-
-  // This is error per each query/reference pair for a fixed query
-  double kernel_diff = 0.5 * (kernel_value_range.hi - kernel_value_range.lo);
-  
-  // this is total error for each query point
-  used_error = kernel_diff * 
-    rnode->stat().farfield_expansion_.get_weight_sum();
-  
-  // number of reference points for possible pruning.
-  n_pruned = rnode->stat().farfield_expansion_.get_weight_sum();
-
-  // If the error bound is satisfied by the hard error bound, it is
-  // safe to prune.
-  return (!isnan(allowed_err)) && (used_error <= allowed_err);
-}
-
-template<typename TKernelAux>
 bool DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
 (Tree *qnode, Tree *rnode, double probability) {
 
-  // temporary variable for storing lower bound change.
+  // Temporary variable for storing lower bound change.
   double dl = 0, de = 0, du = 0;
   int order_farfield_to_local = -1, order_farfield = -1, order_local = -1;
   
-  // temporary variables for holding used error for pruning.
+  // Temporary variables for holding used error for pruning.
   double used_error = 0, n_pruned = 0;
   
-  // temporary variable for holding distance/kernel value bounds
+  // Temporary variable for holding distance/kernel value bounds.
   DRange dsqd_range;
   DRange kernel_value_range;
   
+  // First compute distance/kernel value bounds.
+  dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
+  dsqd_range.hi = qnode->bound().MaxDistanceSq(rnode->bound());
+  kernel_value_range = ka_.kernel_.RangeUnnormOnSq(dsqd_range);
+
   // Try finite difference pruning first.
-  if(Prunable_(qnode, rnode, probability, dsqd_range, kernel_value_range, dl, 
-	       de, du, used_error, n_pruned)) {
+  if(DualtreeKdeCommon::Prunable(qnode, rnode, probability, dsqd_range, 
+				 kernel_value_range, dl, de, du, used_error, 
+				 n_pruned, this)) {
     qnode->stat().postponed_l_ += dl;
     qnode->stat().postponed_e_ += de;
     qnode->stat().postponed_u_ += du;

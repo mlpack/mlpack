@@ -118,7 +118,7 @@ bool DualtreeVKde<TKernel>::MonteCarloPrunableByOrderStatistics_
   double new_max_kernel_value_l = threshold_;
   double left_hand_side = 0.5 * (max_kernel_value - min_kernel_value);
   double right_hand_side = 
-    (std::max(tau_ * new_mass_l, new_max_kernel_value_l) - 
+    (std::max(relative_error_ * new_mass_l, new_max_kernel_value_l) - 
      new_used_error) / (rroot_->stat().weight_sum_ - new_n_pruned);
   
   // NOTE: It is very important that the following pruning rule is
@@ -215,7 +215,7 @@ bool DualtreeVKde<TKernel>::MonteCarloPrunable_
       double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
       double new_max_kernel_value_l = threshold_;
       double right_hand_side = 
-	(std::max(tau_ * new_mass_l, new_max_kernel_value_l) - 
+	(std::max(relative_error_ * new_mass_l, new_max_kernel_value_l) - 
 	 new_used_error) / 
 	(rroot_->stat().farfield_expansion_.get_weight_sum() - new_n_pruned);
       
@@ -247,57 +247,6 @@ bool DualtreeVKde<TKernel>::MonteCarloPrunable_
 }
 
 template<typename TKernel>
-bool DualtreeVKde<TKernel>::Prunable_
-(Tree *qnode, Tree *rnode, double probability, DRange &dsqd_range,
- DRange &kernel_value_range, double &dl, double &de, double &du, 
- double &used_error, double &n_pruned) {
-  
-  // The query node stat
-  VKdeStat<TKernel> &stat = qnode->stat();
-  
-  // Try pruning after bound refinement: first compute distance/kernel
-  // value bounds.
-  dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
-  dsqd_range.hi = qnode->bound().MaxDistanceSq(rnode->bound());
-  kernel_value_range.lo = rnode->stat().min_bandwidth_kernel_.
-    EvalUnnormOnSq(dsqd_range.hi);
-  kernel_value_range.hi = rnode->stat().max_bandwidth_kernel_.
-    EvalUnnormOnSq(dsqd_range.lo);
-
-  // the new lower bound after incorporating new info
-  dl = kernel_value_range.lo * rnode->stat().weight_sum_;
-  de = 0.5 * rnode->stat().weight_sum_ * (kernel_value_range.lo + 
-					  kernel_value_range.hi);
-  du = (kernel_value_range.hi - 1) * rnode->stat().weight_sum_;
-  
-  // refine the lower bound using the new lower bound info
-  double new_mass_l = stat.mass_l_ + stat.postponed_l_ + dl;
-  double new_used_error = stat.used_error_ + stat.postponed_used_error_;
-  double new_n_pruned = stat.n_pruned_ + stat.postponed_n_pruned_;
-  
-  double allowed_err;
-
-  // Compute the allowed error.
-  double new_max_kernel_value_l = threshold_;
-  allowed_err = (std::max(tau_ * new_mass_l, new_max_kernel_value_l) - 
-		 new_used_error) * rnode->stat().weight_sum_ / 
-    ((double) rroot_->stat().weight_sum_ - new_n_pruned);
-
-  // This is error per each query/reference pair for a fixed query
-  double kernel_diff = 0.5 * (kernel_value_range.hi - kernel_value_range.lo);
-  
-  // this is total error for each query point
-  used_error = kernel_diff * rnode->stat().weight_sum_;
-  
-  // number of reference points for possible pruning.
-  n_pruned = rnode->stat().weight_sum_;
-
-  // If the error bound is satisfied by the hard error bound, it is
-  // safe to prune.
-  return (!isnan(allowed_err)) && (used_error <= allowed_err);
-}
-
-template<typename TKernel>
 bool DualtreeVKde<TKernel>::DualtreeVKdeCanonical_
 (Tree *qnode, Tree *rnode, double probability) {
 
@@ -311,9 +260,18 @@ bool DualtreeVKde<TKernel>::DualtreeVKdeCanonical_
   DRange dsqd_range;
   DRange kernel_value_range;
   
+  // First compute distance/kernel value bounds.
+  dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
+  dsqd_range.hi = qnode->bound().MaxDistanceSq(rnode->bound());
+  kernel_value_range.lo = rnode->stat().min_bandwidth_kernel_.
+    EvalUnnormOnSq(dsqd_range.hi);
+  kernel_value_range.hi = rnode->stat().max_bandwidth_kernel_.
+    EvalUnnormOnSq(dsqd_range.lo);
+
   // Try finite difference pruning first.
-  if(Prunable_(qnode, rnode, probability, dsqd_range, kernel_value_range, dl, 
-	       de, du, used_error, n_pruned)) {
+  if(DualtreeKdeCommon::Prunable(qnode, rnode, probability, dsqd_range, 
+				 kernel_value_range, dl, 
+				 de, du, used_error, n_pruned, this)) {
     qnode->stat().postponed_l_ += dl;
     qnode->stat().postponed_e_ += de;
     qnode->stat().postponed_u_ += du;

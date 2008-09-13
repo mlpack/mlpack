@@ -196,6 +196,49 @@ class DualtreeKdeCommon {
     
     return nchsk;
   }
+
+  template<typename TTree, typename TAlgorithm>
+  static bool Prunable(TTree *qnode, TTree *rnode, double probability, 
+		       DRange &dsqd_range, DRange &kernel_value_range, 
+		       double &dl, double &de, double &du, 
+		       double &used_error, double &n_pruned, 
+		       TAlgorithm *kde_object) {
+    
+    // the new lower bound after incorporating new info
+    dl = kernel_value_range.lo * rnode->stat().get_weight_sum();
+    de = 0.5 * rnode->stat().get_weight_sum() * 
+      (kernel_value_range.lo + kernel_value_range.hi);
+    du = (kernel_value_range.hi - 1) * rnode->stat().get_weight_sum();
+    
+    // refine the lower bound using the new lower bound info
+    double new_mass_l = qnode->stat().mass_l_ + 
+      qnode->stat().postponed_l_ + dl;
+    double new_used_error = qnode->stat().used_error_ + 
+      qnode->stat().postponed_used_error_;
+    double new_n_pruned = qnode->stat().n_pruned_ + 
+      qnode->stat().postponed_n_pruned_;
+    
+    double allowed_err;
+    
+    // Compute the allowed error.
+    allowed_err = (kde_object->relative_error_ * new_mass_l - new_used_error) *
+      rnode->stat().get_weight_sum() / 
+      ((double) kde_object->rroot_->stat().get_weight_sum() - new_n_pruned);
+    
+    // This is error per each query/reference pair for a fixed query
+    double kernel_diff = 0.5 * (kernel_value_range.hi - kernel_value_range.lo);
+    
+    // this is total error for each query point
+    used_error = kernel_diff * rnode->stat().get_weight_sum();
+    
+    // number of reference points for possible pruning.
+    n_pruned = rnode->stat().get_weight_sum();
+    
+    // If the error bound is satisfied by the hard error bound, it is
+    // safe to prune.
+    return (!isnan(allowed_err)) && (used_error <= allowed_err);
+  }
+  
 };
 
 #endif
