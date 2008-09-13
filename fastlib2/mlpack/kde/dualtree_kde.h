@@ -72,6 +72,7 @@
 #include "mlpack/series_expansion/kernel_aux.h"
 #include "contrib/dongryel/proximity_project/gen_metric_tree.h"
 #include "contrib/dongryel/proximity_project/subspace_stat.h"
+#include "dualtree_kde_common.h"
 #include "kde_stat.h"
 
 ////////// Documentation stuffs //////////
@@ -299,13 +300,6 @@ class DualtreeKde {
    */
   void RefineBoundStatistics_(index_t source, Tree *destination);
   void RefineBoundStatistics_(Tree *destination);
-  
-  /** @brief Shuffles the given vector according to the given
-   *         permutation.
-   */
-  void ShuffleAccordingToPermutation_(Vector &v, 
-				      const ArrayList<index_t> &permutation);
-
 
   /** @brief The exhaustive base KDE case.
    */
@@ -373,17 +367,6 @@ class DualtreeKde {
   /** @brief Post processing step.
    */
   void PostProcess(Tree *qnode);
-
-  double BinomialCoefficientHelper_(double n3, double k3,
-				    double n1, double k1, 
-				    double n2, double k2);
-
-  /** @brief Computes the outer confidence interval for the quantile
-   *         intervals.
-   */
-  double OuterConfidenceInterval(double population_size, double sample_size,
-				 double sample_order_statistics_min_index,
-				 double population_order_statistics_min_index);
 
   /** @brief The comparison function used for the quick-sort.
    */
@@ -481,7 +464,7 @@ class DualtreeKde {
 
     for(index_t j = 0; j < coverage_probabilities_.length(); j++) {
       coverage_probabilities_[j] = 
-	OuterConfidenceInterval
+	DualtreeKdeCommon::OuterConfidenceInterval
 	(ceil(qset_.n_cols()) * ceil(rset_.n_cols()), 
 	 ceil(sample_multiple_ * (j + 1)), ceil(sample_multiple_ * (j + 1)),
 	 ceil(qset_.n_cols()) * ceil(rset_.n_cols()) * lower_percentile_);
@@ -561,7 +544,8 @@ class DualtreeKde {
     rroot_ = proximity::MakeGenMetricTree<Tree>(rset_, leaflen,
 						&old_from_new_references_, 
 						NULL);
-    ShuffleAccordingToPermutation_(rset_weights_, old_from_new_references_);
+    DualtreeKdeCommon::ShuffleAccordingToPermutation
+      (rset_weights_, old_from_new_references_);
 
     if(queries_equal_references) {
       qroot_ = rroot_;

@@ -5,6 +5,7 @@ librule(
     headers = ["bandwidth_lscv.h",
                "dataset_scaler.h",
                "dualtree_kde.h",
+               "dualtree_kde_common.h",
                "dualtree_kde_impl.h",
                "dualtree_vkde.h",
                "dualtree_vkde_impl.h",
