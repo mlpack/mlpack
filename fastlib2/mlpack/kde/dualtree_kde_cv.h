@@ -235,8 +235,9 @@ class DualtreeKdeCV {
 			 int &order_farfield_to_local,
 			 int &order_farfield, int &order_local);
   
-  double EvalUnnormOnSq_(index_t reference_point_index,
-			 double squared_distance);
+  void EvalUnnormOnSq_(index_t reference_point_index, double squared_distance,
+		       double *first_kernel_value,
+		       double *second_kernel_value);
 
   /** @brief Canonical dualtree KDE case.
    *
