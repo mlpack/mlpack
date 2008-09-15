@@ -72,7 +72,7 @@ bool DualtreeKdeCV<TKernelAux>::DualtreeKdeCVCanonical_
   second_kernel_value_range = second_ka_.kernel_.RangeUnnormOnSq(dsqd_range);
 
   // Try finite difference pruning first.
-  if(DualtreeKdeCommon::Prunable
+  if(DualtreeKdeCVCommon::Prunable
      (qnode, rnode, probability, dsqd_range, first_kernel_value_range, 
       second_kernel_value_range, first_dl, first_de, first_du, 
       first_used_error, second_dl, second_de, second_du, second_used_error,
