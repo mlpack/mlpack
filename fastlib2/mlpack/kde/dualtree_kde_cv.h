@@ -52,7 +52,7 @@
  *   bibsource = {DBLP, http://dblp.uni-trier.de}
  *  }
  *
- *  @author Dongryeol Lee (dongryel)
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  *  @bug No known bugs.
  */
 

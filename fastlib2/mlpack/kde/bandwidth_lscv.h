@@ -34,12 +34,16 @@ class BandwidthLSCV {
     
     // Loop over the dataset again and compute variance along each
     // dimension.
-    for(index_t i = 0; i < num_data; i++) {
-      for(index_t j = 0; j < num_dims; j++) {
-	avg_sdev += math::Sqr(references.get(j, i) - mean_vector[j]);
+    for(index_t j = 0; j < num_dims; j++) {
+      double sdev = 0;
+      for(index_t i = 0; i < num_data; i++) {
+	sdev += math::Sqr(references.get(j, i) - mean_vector[j]);
       }
+      sdev /= ((double) num_data - 1);
+      sdev = sqrt(sdev);
+      avg_sdev += sdev;
     }
-    avg_sdev /= ((double) (num_data - 1) * num_dims);
+    avg_sdev /= ((double) num_dims);
 
     double plugin_bw = 
       pow((4.0 / (num_dims + 2.0)), 1.0 / (num_dims + 4.0)) * avg_sdev * 
@@ -137,8 +141,8 @@ class BandwidthLSCV {
 
     // The current lower and upper search limit.
     double plugin_bandwidth = plugin_bandwidth_(references);
-    double current_lower_search_limit = plugin_bandwidth * 0.001;
-    double current_upper_search_limit = plugin_bandwidth * 1000;
+    double current_lower_search_limit = plugin_bandwidth * 0.00001;
+    double current_upper_search_limit = plugin_bandwidth;
     double min_bandwidth = DBL_MAX;
 
     printf("Searching the optimal bandwidth in [%g %g]...\n",
