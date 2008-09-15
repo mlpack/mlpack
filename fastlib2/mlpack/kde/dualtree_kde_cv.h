@@ -280,7 +280,7 @@ class DualtreeKdeCV {
     // Compute normalization constant.
     first_mult_const_ = 1.0 / 
       (pow(sqrt(2), rset_.n_rows()) * 
-       first_ka_.kernel_.CalcNormConstant(rset_.n_rows()));
+       second_ka_.kernel_.CalcNormConstant(rset_.n_rows()));
     second_mult_const_ = 1.0 /
       second_ka_.kernel_.CalcNormConstant(rset_.n_rows());
 
