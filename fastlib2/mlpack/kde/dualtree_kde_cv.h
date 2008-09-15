@@ -69,7 +69,7 @@
 #include "mlpack/series_expansion/kernel_aux.h"
 #include "contrib/dongryel/proximity_project/gen_metric_tree.h"
 #include "contrib/dongryel/proximity_project/subspace_stat.h"
-#include "dualtree_kde_common.h"
+#include "dualtree_kde_cv_common.h"
 #include "kde_cv_stat.h"
 
 /** @brief A computation class for dual-tree based kernel density
@@ -98,6 +98,8 @@ template<typename TKernelAux>
 class DualtreeKdeCV {
 
   friend class DualtreeKdeCommon;
+  
+  friend class DualtreeKdeCVCommon;
 
  public:
   

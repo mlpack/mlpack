@@ -7,6 +7,7 @@ librule(
                "dualtree_kde.h",               
                "dualtree_kde_common.h",
                "dualtree_kde_cv.h",
+               "dualtree_kde_cv_common.h",
                "dualtree_kde_cv_impl.h",
                "dualtree_kde_impl.h",
                "dualtree_vkde.h",
