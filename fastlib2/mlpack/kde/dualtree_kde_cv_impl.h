@@ -44,7 +44,8 @@ void DualtreeKdeCV<TKernelAux>::DualtreeKdeCVBase_(Tree *qnode, Tree *rnode,
     (rnode->stat().get_weight_sum() / rset_weight_sum_);
 
   // Undo upper bound contributions.
-  
+  first_sum_u_ -= qnode->count() * rnode->stat().get_weight_sum();
+  second_sum_u_ -= qnode->count() * rnode->stat().get_weight_sum();
 }
 
 template<typename TKernelAux>
@@ -76,6 +77,15 @@ bool DualtreeKdeCV<TKernelAux>::DualtreeKdeCVCanonical_
       second_kernel_value_range, first_dl, first_de, first_du, 
       first_used_error, second_dl, second_de, second_du, second_used_error,
       n_pruned, this)) {
+    first_sum_l_ += first_dl;
+    first_sum_e_ += first_de;
+    first_sum_u_ += first_du;
+    first_used_error_ += first_used_error;
+    second_sum_l_ += second_dl;
+    second_sum_e_ += second_de;
+    second_sum_u_ += second_du;
+    second_used_error_ += second_used_error;
+    n_pruned_ += n_pruned;
     num_finite_difference_prunes_++;
     return true;
   }
