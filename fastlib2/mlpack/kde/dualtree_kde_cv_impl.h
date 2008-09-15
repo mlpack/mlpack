@@ -49,9 +49,11 @@ void DualtreeKdeCV<TKernelAux>::DualtreeKdeCVBase_(Tree *qnode, Tree *rnode,
 }
 
 template<typename TKernelAux>
-double DualtreeKdeCV<TKernelAux>::EvalUnnormOnSq_
-(index_t reference_point_index,	double squared_distance) {
-  return first_ka_.kernel_.EvalUnnormOnSq(squared_distance);
+void DualtreeKdeCV<TKernelAux>::EvalUnnormOnSq_
+(index_t reference_point_index,	double squared_distance,
+ double *first_kernel_value, double *second_kernel_value) {
+  *first_kernel_value = first_ka_.kernel_.EvalUnnormOnSq(squared_distance);
+  *second_kernel_value = second_ka_.kernel_.EvalUnnormOnSq(squared_distance);
 }
 
 template<typename TKernelAux>
@@ -88,6 +90,26 @@ bool DualtreeKdeCV<TKernelAux>::DualtreeKdeCVCanonical_
     n_pruned_ += n_pruned;
     num_finite_difference_prunes_++;
     return true;
+  }
+
+  // Then Monte Carlo-based pruning.
+  else if(probability < 1 &&
+	  DualtreeKdeCVCommon::MonteCarloPrunable
+	  (qnode, rnode, probability, dsqd_range, first_kernel_value_range,
+	   second_kernel_value_range, first_dl, first_de, first_du,
+	   first_used_error, second_dl, second_de, second_du,
+	   second_used_error, n_pruned, this)) {
+    first_sum_l_ += first_dl;
+    first_sum_e_ += first_de;
+    first_sum_u_ += first_du;
+    first_used_error_ += first_used_error;
+    second_sum_l_ += second_dl;
+    second_sum_e_ += second_de;
+    second_sum_u_ += second_du;
+    second_used_error_ += second_used_error;
+    n_pruned_ += n_pruned;
+    num_monte_carlo_prunes_++;
+    return false;
   }
   
   // For a leaf query node,
