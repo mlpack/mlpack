@@ -51,31 +51,6 @@ class BandwidthLSCV {
 
     return plugin_bw;
   }
-
-  template<typename TKernel>
-  static double lscv_score_
-  (const Vector &density_estimates_on_bandwidth,
-   const Vector &density_estimates_on_two_times_bandwidth,
-   const TKernel &kernel, int num_dims) {
-    
-    double lscv_score = 0;
-    double tmp_lscv_score = 0;
-
-    // M_1(h) score on page 50 of Density Estimation for Statistics
-    // and Data Analysis by B. W. Silverman.
-    for(index_t i = 0; i < density_estimates_on_bandwidth.length(); i++) {
-      lscv_score += density_estimates_on_two_times_bandwidth[i];
-      tmp_lscv_score += density_estimates_on_bandwidth[i];
-    }
-    lscv_score -= 2 * tmp_lscv_score;
-    lscv_score += 2 * kernel.EvalUnnormOnSq(0) /
-      kernel.CalcNormConstant(num_dims);
-
-    // Normalize score by dividing the number of points.
-    lscv_score /= ((double) density_estimates_on_bandwidth.length());
-
-    return lscv_score;
-  }
   
  public:
 
@@ -90,6 +65,9 @@ class BandwidthLSCV {
     // Kernel object.
     typename TKernelAux::TKernel kernel;
     
+    // LSCV score.
+    double lscv_score;
+
     // Set the bandwidth of the kernel.
     kernel.Init(bandwidth);
     
@@ -98,32 +76,13 @@ class BandwidthLSCV {
     // Need to run density estimates twice: on $h$ and $sqrt(2)
     // h$. Free memory after each run to minimize memory usage.
     fx_set_param_double(kde_module, "bandwidth", bandwidth);
-    DualtreeKde<TKernelAux> *fast_kde_on_bandwidth = 
+    DualtreeKdeCV<TKernelAux> *fast_kde_on_bandwidth = 
       new DualtreeKde<TKernelAux>();
-    Vector results_on_bandwidth;
-    fast_kde_on_bandwidth->Init(references, references, reference_weights,
-				true, kde_module);
-    fast_kde_on_bandwidth->Compute(&results_on_bandwidth);
+    fast_kde_on_bandwidth->Init(references, reference_weights, kde_module);
+    lscv_score = fast_kde_on_bandwidth->Compute();
     delete fast_kde_on_bandwidth;
     
-    fx_set_param_double(kde_module, "bandwidth", bandwidth * sqrt(2));
-    DualtreeKde<TKernelAux> *fast_kde_on_two_times_bandwidth =
-      new DualtreeKde<TKernelAux>();
-    Vector results_on_two_times_bandwidth;
-    fast_kde_on_two_times_bandwidth->Init(references, references, 
-					  reference_weights, true, 
-					  kde_module);
-    fast_kde_on_two_times_bandwidth->Compute
-      (&results_on_two_times_bandwidth);
-    delete fast_kde_on_two_times_bandwidth;
-    
-    // Compute LSCV score.
-    double lscv_score = lscv_score_(results_on_bandwidth,
-				    results_on_two_times_bandwidth,
-				    kernel, references.n_rows());
-    
-    printf("Least squares cross-validation score is %g...\n\n", lscv_score);
- 
+    printf("Least squares cross-validation score is %g...\n\n", lscv_score); 
   }
 
   template<typename TKernelAux>
@@ -160,31 +119,6 @@ class BandwidthLSCV {
       // Need to run density estimates twice: on $h$ and $sqrt(2)
       // h$. Free memory after each run to minimize memory usage.
       fx_set_param_double(kde_module, "bandwidth", bandwidth);
-      /*
-      DualtreeKde<TKernelAux> *fast_kde_on_bandwidth = 
-	new DualtreeKde<TKernelAux>();
-      Vector results_on_bandwidth;
-      fast_kde_on_bandwidth->Init(references, references, reference_weights,
-				  true, kde_module);
-      fast_kde_on_bandwidth->Compute(&results_on_bandwidth);
-      delete fast_kde_on_bandwidth;
-
-      fx_set_param_double(kde_module, "bandwidth", bandwidth * sqrt(2));
-      DualtreeKde<TKernelAux> *fast_kde_on_two_times_bandwidth =
-	new DualtreeKde<TKernelAux>();
-      Vector results_on_two_times_bandwidth;
-      fast_kde_on_two_times_bandwidth->Init(references, references, 
-					    reference_weights, true, 
-					    kde_module);
-      fast_kde_on_two_times_bandwidth->Compute
-	(&results_on_two_times_bandwidth);
-      delete fast_kde_on_two_times_bandwidth;
-
-      // Compute LSCV score.
-      double lscv_score = lscv_score_(results_on_bandwidth,
-				      results_on_two_times_bandwidth,
-				      kernel, references.n_rows());
-      */
       DualtreeKdeCV<TKernelAux> *fast_kde_on_bandwidth =
 	new DualtreeKdeCV<TKernelAux>();
       fast_kde_on_bandwidth->Init(references, reference_weights, kde_module);
