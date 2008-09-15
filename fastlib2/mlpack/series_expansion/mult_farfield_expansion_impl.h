@@ -250,14 +250,6 @@ double MultFarFieldExpansion<TKernelAux>::EvaluateField(const Vector& x_q,
 }
 
 template<typename TKernelAux>
-double MultFarFieldExpansion<TKernelAux>::EvaluateFieldByMonteCarlo
-(const Matrix& data, int row_num, int order, int num_samples) const {
-
-  // I need to implement this...
-  return 0;
-}
-
-template<typename TKernelAux>
 void MultFarFieldExpansion<TKernelAux>::Init(const Vector& center, 
 					     const TKernelAux &ka) {
   
@@ -309,24 +301,6 @@ int MultFarFieldExpansion<TKernelAux>::OrderForEvaluating
 					 min_dist_sqd_regions, 
 					 max_dist_sqd_regions, max_error,
 					 actual_error);
-}
-
-template<typename TKernelAux>
-template<typename TBound>
-int MultFarFieldExpansion<TKernelAux>::OrderForEvaluatingByMonteCarlo
-(const TBound &far_field_region,
- const TBound &local_field_region, double min_dist_sqd_regions,
- double max_dist_sqd_regions, double max_error, double *actual_error,
- int *num_samples) const {
-
-  int order = ka_->OrderForEvaluatingFarField(far_field_region,
-					      local_field_region,
-					      min_dist_sqd_regions,
-					      max_dist_sqd_regions, max_error,
-					      actual_error);
-  *num_samples = std::max((int) sqrt(coeffs_.length()), order + 1);
-
-  return order;
 }
 
 template<typename TKernelAux>

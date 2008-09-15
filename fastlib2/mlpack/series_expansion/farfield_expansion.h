@@ -181,10 +181,6 @@ class FarFieldExpansion {
   void AccumulateCoeffs(const Matrix& data, const Vector& weights,
 			int begin, int end, int order);
 
-  /*
-  void ComputeStratifiedLengthSquareDistribution();
-  */
-
   /** @brief Refine the far field moment that has been computed before
    *         up to a new order.
    */
@@ -195,13 +191,6 @@ class FarFieldExpansion {
    */
   double EvaluateField(const Matrix& data, int row_num, int order) const;
   double EvaluateField(const Vector &x_q, int order) const;
-
-  /*
-  double EvaluateFieldByMonteCarlo(const Matrix& data, int row_num, int order,
-				   int num_samples) const;
-  double EvaluateFieldByMonteCarlo(const Vector &x_q, int order,
-				   int num_samples) const;
-  */
 
   /** @brief Evaluates the two-way convolution mixed with exhaustive
    *         computations with two other far field expansions.
@@ -233,18 +222,6 @@ class FarFieldExpansion {
 			 double min_dist_sqd_regions,
 			 double max_dist_sqd_regions,
 			 double max_error, double *actual_error) const;
-
-  /** @brief Computes the required order for evaluating the far field
-   *         expansion for any query point within the specified region
-   *         for a given bound.
-   */
-  template<typename TBound>
-  int OrderForEvaluatingByMonteCarlo(const TBound &far_field_region,
-				     const TBound &local_field_region,
-				     double min_dist_sqd_regions,
-				     double max_dist_sqd_regions,
-				     double max_error, double *actual_error,
-				     int *num_samples) const;
 
   /** @brief Computes the required order for converting to the local
    *         expansion inside another region, so that the total error
