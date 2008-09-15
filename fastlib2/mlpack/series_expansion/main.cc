@@ -6,10 +6,8 @@
  */
 
 #include "fastlib/fastlib.h"
-#include "cur_decomposition.h"
 #include "kernel_aux.h"
 #include "farfield_expansion.h"
-#include "matrix_factorized_farfield_expansion.h"
 #include "mult_farfield_expansion.h"
 #include "local_expansion.h"
 #include "mult_local_expansion.h"
@@ -114,46 +112,6 @@ void ExtractLeafNodes(Tree *node, ArrayList<Tree *> &leaf_nodes) {
     ExtractLeafNodes(node->left(), leaf_nodes);
     ExtractLeafNodes(node->right(), leaf_nodes);
   }
-}
-
-int TestEvaluateMatrixFactorizedFarField(const Matrix &data, 
-					 const Vector &weights, int begin, 
-					 int end) {
-
-  double bandwidth = 5;
-  GaussianKernelAux ka;
-  ka.Init(bandwidth, 0, data.n_rows());
-  MatrixFactorizedFarFieldExpansion<GaussianKernelAux> mffe, mffe2, mffe3;
-  
-  Vector center;
-  center.Init(2);
-  center.SetZero();
-  mffe.Init(center, ka);
-  mffe2.Init(center, ka);
-  mffe3.Init(center, ka);
-  
-  // Build a query tree out of the data.  
-  Matrix query_data, reference_data;
-  query_data.Copy(data);
-  reference_data.Copy(data);
-  DatasetScaler::ScaleDataByMinMax(query_data, reference_data, false);
-  typedef BinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix > Tree;
-  Tree *query_root = proximity::MakeGenMetricTree<Tree>(query_data, 500);
-  Tree *reference_root = proximity::MakeGenMetricTree<Tree>(reference_data, 
-							    20);
-  ArrayList<Tree *> query_leaf_nodes;
-  query_leaf_nodes.Init();
-  ExtractLeafNodes(query_root, query_leaf_nodes);
-  mffe.AccumulateCoeffs<Tree>(reference_data, weights, begin, sqrt(end) / 2, 
-			      -1, &query_data, &query_leaf_nodes);
-  mffe2.AccumulateCoeffs<Tree>(reference_data, weights, sqrt(end) / 2,
-			       sqrt(end), -1, &query_data, &query_leaf_nodes);
-  mffe3.TranslateFromFarField(mffe);
-  mffe3.TranslateFromFarField(mffe2);
-    
-  delete query_root;
-  delete reference_root;
-  return 1;
 }
 
 int TestEvaluateFarField(const Matrix &data, const Vector &weights,
@@ -622,7 +580,7 @@ int TestMultEvaluateFarField(const Matrix &data, const Vector &weights,
 }
 
 int main(int argc, char *argv[]) {
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
 
   const char *datafile_name = fx_param_str(NULL, "data", NULL);
   Dataset dataset;
@@ -640,7 +598,6 @@ int main(int argc, char *argv[]) {
   weights.SetAll(1);
   begin = 0; end = data.n_cols();
 
-  /*
   // unit tests begin here!  
   DEBUG_ASSERT(TestInitAux(data) == 1);
   DEBUG_ASSERT(TestEvaluateFarField(data, weights, begin, end) == 1);
@@ -657,8 +614,6 @@ int main(int argc, char *argv[]) {
 
   DEBUG_ASSERT(TestMultInitAux(data) == 1);
   DEBUG_ASSERT(TestMultEvaluateFarField(data, weights, begin, end) == 1);
-  */
-  TestEvaluateMatrixFactorizedFarField(data, weights, begin, end);
 
-  fx_done();
+  fx_done(fx_root);
 }
