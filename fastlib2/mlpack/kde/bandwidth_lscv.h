@@ -77,7 +77,7 @@ class BandwidthLSCV {
     // h$. Free memory after each run to minimize memory usage.
     fx_set_param_double(kde_module, "bandwidth", bandwidth);
     DualtreeKdeCV<TKernelAux> *fast_kde_on_bandwidth = 
-      new DualtreeKde<TKernelAux>();
+      new DualtreeKdeCV<TKernelAux>();
     fast_kde_on_bandwidth->Init(references, reference_weights, kde_module);
     lscv_score = fast_kde_on_bandwidth->Compute();
     delete fast_kde_on_bandwidth;
