@@ -4,8 +4,10 @@ librule(
     sources = [],
     headers = ["bandwidth_lscv.h",
                "dataset_scaler.h",
-               "dualtree_kde.h",
+               "dualtree_kde.h",               
                "dualtree_kde_common.h",
+               "dualtree_kde_cv.h",
+               "dualtree_kde_cv_impl.h",
                "dualtree_kde_impl.h",
                "dualtree_vkde.h",
                "dualtree_vkde_impl.h",
@@ -90,7 +92,7 @@ binrule(
 
 # The driver for the bandwidth cross-validator.
 binrule(
-    name = "kde_bandwidth_cv_bin",
+    name = "kde_cv_bin",
     sources = ["kde_bandwidth_cv_main.cc"],
     headers = [],
     deplibs = [":dualtree_kde",
