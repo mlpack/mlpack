@@ -9,6 +9,8 @@
 #ifndef NAIVE_KDE_H
 #define NAIVE_KDE_H
 
+#include "mlpack/allknn/allknn.h"
+
 /** @brief A templatized class for computing the KDE naively.
  *
  *  This class is only intended to compute once per instantiation.

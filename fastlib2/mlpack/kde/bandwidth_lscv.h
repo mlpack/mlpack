@@ -9,6 +9,7 @@
 #define BANDWIDTH_LSCV_H
 
 #include "dualtree_kde.h"
+#include "dualtree_kde_cv.h"
 
 class BandwidthLSCV {
   
@@ -155,6 +156,7 @@ class BandwidthLSCV {
       // Need to run density estimates twice: on $h$ and $sqrt(2)
       // h$. Free memory after each run to minimize memory usage.
       fx_set_param_double(kde_module, "bandwidth", bandwidth);
+      /*
       DualtreeKde<TKernelAux> *fast_kde_on_bandwidth = 
 	new DualtreeKde<TKernelAux>();
       Vector results_on_bandwidth;
@@ -178,6 +180,12 @@ class BandwidthLSCV {
       double lscv_score = lscv_score_(results_on_bandwidth,
 				      results_on_two_times_bandwidth,
 				      kernel, references.n_rows());
+      */
+      DualtreeKdeCV<TKernelAux> *fast_kde_on_bandwidth =
+	new DualtreeKdeCV<TKernelAux>();
+      fast_kde_on_bandwidth->Init(references, reference_weights, kde_module);
+      double lscv_score = fast_kde_on_bandwidth->Compute();
+      delete fast_kde_on_bandwidth;
 
       printf("Least squares cross-validation score is %g...\n\n", lscv_score);
 

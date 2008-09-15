@@ -5,10 +5,10 @@
  *  depth-first dual-tree algorithm with finite difference and
  *  series-expansion approximations, using the formalized GNP
  *  framework by Ryan and Garry. Currently, it supports a
- *  fixed-bandwidth, uniform weight kernel density estimation with no
- *  multi-bandwidth optimizations. We assume that users will be able
- *  to cross-validate for the optimal bandwidth using a black-box
- *  optimizer which is not implemented in this code.
+ *  fixed-bandwidth kernel density estimation with no multi-bandwidth
+ *  optimizations. We assume that users will be able to cross-validate
+ *  for the optimal bandwidth using a black-box optimizer which is not
+ *  implemented in this code.
  *
  *  For more details on mathematical derivations, please take a look at
  *  the published conference papers (in chronological order):

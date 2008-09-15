@@ -431,6 +431,72 @@ class DualtreeKdeCommon {
     return (!isnan(allowed_err)) && (used_error <= allowed_err);
   }
   
+  template<typename TTree, typename TAlgorithm>
+  static bool Prunable(TTree *qnode, TTree *rnode, double probability, 
+		       DRange &dsqd_range, DRange &first_kernel_value_range,
+		       DRange &second_kernel_value_range,
+		       double &first_dl, double &first_de, double &first_du, 
+		       double &first_used_error, 
+		       double &second_dl, double &second_de, double &second_du,
+		       double &second_used_error, double &n_pruned,
+		       TAlgorithm *kde_object) {
+    
+    // the new lower bound after incorporating new info
+    first_dl = first_kernel_value_range.lo * qnode->count() * 
+      rnode->stat().get_weight_sum();
+    first_de = 0.5 * qnode->count() * rnode->stat().get_weight_sum() * 
+      (first_kernel_value_range.lo + first_kernel_value_range.hi);
+    first_du = (first_kernel_value_range.hi - 1) * qnode->count() *
+      rnode->stat().get_weight_sum();
+    second_dl = second_kernel_value_range.lo * qnode->count() *
+      rnode->stat().get_weight_sum();
+    second_de = 0.5 * qnode->count() * rnode->stat().get_weight_sum() * 
+      (second_kernel_value_range.lo + second_kernel_value_range.hi);
+    second_du = (second_kernel_value_range.hi - 1) * qnode->count() * 
+      rnode->stat().get_weight_sum();
+   
+    // Refine the lower bound using the new lower bound info.
+    double first_new_mass_l = (kde_object->first_sum_l_) + first_dl;
+    double second_new_mass_l = (kde_object-> second_sum_l_) + second_dl;
+    
+    // Compute the allowed error.
+    double proportion =  1.0 / (1.0 - n_pruned) * 
+      (((double)qnode->count()) / ((double) kde_object->rroot_->count())) *
+      (rnode->stat().get_weight_sum() / 
+       kde_object->rroot_->stat().get_weight_sum());
+    double first_allowed_err = 
+      (kde_object->relative_error_ * first_new_mass_l - 
+       kde_object->first_used_error_) *
+      proportion;
+    double second_allowed_err =
+      (kde_object->relative_error_ * second_new_mass_l - 
+       kde_object->second_used_error_) *
+      proportion;
+
+    // This is error per each query/reference pair for a fixed query
+    double first_kernel_diff = 
+      0.5 * (first_kernel_value_range.hi - first_kernel_value_range.lo);
+    double second_kernel_diff =
+      0.5 * (second_kernel_value_range.hi - second_kernel_value_range.lo);
+    
+    // this is total error for each query point
+    first_used_error = first_kernel_diff * qnode->count() * 
+      rnode->stat().get_weight_sum();
+    second_used_error = second_kernel_diff * qnode->count() *
+      rnode->stat().get_weight_sum();
+    
+    // number of reference points for possible pruning.
+    n_pruned = (((double) qnode->count()) / 
+		((double) kde_object->rroot_->count())) *
+      (rnode->stat().get_weight_sum() /
+       kde_object->rroot_->stat().get_weight_sum());
+    
+    // If the error bound is satisfied by the hard error bound, it is
+    // safe to prune.
+    return (!isnan(first_allowed_err)) && (!isnan(second_allowed_err)) &&
+      (first_used_error <= first_allowed_err) &&
+      (second_used_error <= second_allowed_err);
+  }
 };
 
 #endif
