@@ -128,10 +128,7 @@ class MultFarFieldExpansion {
 		  const MultFarFieldExpansion &fe3,
 		  int order2, int order3) const;
 
-  /** @brief Computes the squared coefficients for length-squared
-   *         sampling.
-   */
-  void ComputeStratifiedLengthSquareDistribution();
+  double ConvolveField(const MultFarFieldExpansion &fe, int order) const;
 
   /**
    * Evaluates the three-way convolution with two other far field

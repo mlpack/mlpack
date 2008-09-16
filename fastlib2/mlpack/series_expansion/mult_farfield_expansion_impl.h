@@ -94,14 +94,97 @@ void MultFarFieldExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
 }
 
 template<typename TKernelAux>
-void MultFarFieldExpansion<TKernelAux>::
-ComputeStratifiedLengthSquareDistribution() {
+double MultFarFieldExpansion<TKernelAux>::ConvolveField
+(const MultFarFieldExpansion &fe, int order) const {
+  
+  // The bandwidth factor and the multiindex mapping stuffs.
+  double bandwidth_factor = ka_->BandwidthFactor(bandwidth_sq());
+  const ArrayList<int> *multiindex_mapping = sea_->get_multiindex_mapping();
+  const ArrayList<int> *lower_mapping_index = sea_->get_lower_mapping_index();
+  
+  // Get the total number of coefficients and the coefficient themselves.
+  int total_num_coeffs = sea_->get_total_num_coeffs(order);
+  int dim = sea_->get_dimension();
+  Vector coeffs2;
+  coeffs2.Alias(fe.get_coeffs());
 
-  squared_coeffs_[0] = coeffs_[0] * coeffs_[0];
-  for(index_t i = 1; i < coeffs_.length(); i++) {
-    squared_coeffs_[i] = squared_coeffs_[i - 1] + coeffs_[i] * coeffs_[i];
+  // Actual accumulated sum.
+  double neg_sum = 0;
+  double pos_sum = 0;
+  double sum = 0;
+
+  // The partial derivatives table.
+  Matrix derivative_map_alpha;
+  derivative_map_alpha.Init(dim, order + 1);
+
+  // Compute the center difference and its table of partial
+  // derivatives.
+  Vector xI_xJ;
+  xI_xJ.Init(dim);
+  Vector xJ_center;
+  xJ_center.Alias(*(fe.get_center()));
+
+  for(index_t d = 0; d < dim; d++) {
+    xI_xJ[d] = (center_[d] - xJ_center[d]) / bandwidth_factor;
   }
-  squared_coeffs_.PrintDebug();
+  ka_->ComputeDirectionalDerivatives(xI_xJ, derivative_map_alpha);
+
+  // The inverse factorials.
+  Vector inv_multiindex_factorials;
+  inv_multiindex_factorials.Alias(sea_->get_inv_multiindex_factorials());
+
+  // The temporary space for computing the difference of two mappings.
+  ArrayList<index_t> alpha_minus_beta_mapping;
+  alpha_minus_beta_mapping.Init(dim);
+
+  // The main loop.
+  for(index_t alpha = 0; alpha < total_num_coeffs; alpha++) {
+
+    const ArrayList <int> &alpha_mapping = multiindex_mapping[alpha];
+    const ArrayList <int> &lower_mappings_for_alpha = 
+      lower_mapping_index[alpha];
+    double alpha_derivative = ka_->ComputePartialDerivative
+      (derivative_map_alpha, alpha_mapping);
+    
+    for(index_t beta = 0; beta < lower_mappings_for_alpha.size(); beta++) {
+      
+      const ArrayList <int> &beta_mapping = 
+	multiindex_mapping[lower_mappings_for_alpha[beta]];
+      
+      double n_choose_k_factor = sea_->get_n_multichoose_k_by_pos
+	(sea_->ComputeMultiindexPosition(alpha_mapping),
+	 sea_->ComputeMultiindexPosition(beta_mapping));
+
+      // Compute the sign-changes based on the multi-index map
+      // difference.
+      int map_difference = 0;
+
+      for(index_t d = 0; d < dim; d++) {
+	alpha_minus_beta_mapping[d] = alpha_mapping[d] - beta_mapping[d];
+	map_difference += alpha_minus_beta_mapping[d];
+      }
+      
+      // Current iteration's contribution to the sum.
+      double contribution = alpha_derivative * n_choose_k_factor *
+	coeffs_[sea_->ComputeMultiindexPosition(beta_mapping)] *
+	coeffs2[sea_->ComputeMultiindexPosition(alpha_minus_beta_mapping)];
+
+      // Flip the sign of the contribution if the map difference is an
+      // odd number.
+      if(map_difference % 2 == 1) {
+	contribution = -contribution;
+      }
+
+      if(contribution < 0) {
+	neg_sum += contribution;
+      }
+      else {
+	pos_sum += contribution;
+      }
+    }    
+  }
+  sum = pos_sum + neg_sum;
+  return sum;
 }
 
 template<typename TKernelAux>
@@ -288,6 +371,7 @@ template<typename TKernelAux>
   squared_coeffs_.Init(sea_->get_max_total_num_coeffs());
   squared_coeffs_.SetZero();
 }
+
 
 template<typename TKernelAux>
 template<typename TBound>
