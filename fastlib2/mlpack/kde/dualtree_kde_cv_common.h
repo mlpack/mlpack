@@ -13,10 +13,10 @@ class DualtreeKdeCVCommon {
    DRange &first_kernel_value_range, DRange &second_kernel_value_range,
    double &first_dl, double &first_de, double &first_du, 
    double &first_used_error, double &second_dl, double &second_de, 
-   double &second_du, double &second_used_error, double &n_pruned,
+   double &second_du, double &second_used_error, double &delta_n_pruned,
    TAlgorithm *kde_object) {
     
-    // If the reference node contains too few points, then return.
+    // If there are too few pairs, then return.
     if(qnode->count() * rnode->count() < 25) {
       return false;
     }
@@ -90,7 +90,7 @@ class DualtreeKdeCVCommon {
       second_mass_l_change;
     
     // Compute the allowed error.
-    double proportion =  1.0 / (1.0 - n_pruned) * 
+    double proportion =  1.0 / (1.0 - kde_object->n_pruned_) * 
       (((double)qnode->count()) / ((double) kde_object->rroot_->count())) *
       (rnode->stat().get_weight_sum() / 
        kde_object->rroot_->stat().get_weight_sum());
@@ -128,7 +128,7 @@ class DualtreeKdeCVCommon {
 		       double &first_dl, double &first_de, double &first_du, 
 		       double &first_used_error, 
 		       double &second_dl, double &second_de, double &second_du,
-		       double &second_used_error, double &n_pruned,
+		       double &second_used_error, double &delta_n_pruned,
 		       TAlgorithm *kde_object) {
     
     // the new lower bound after incorporating new info
@@ -150,7 +150,7 @@ class DualtreeKdeCVCommon {
     double second_new_mass_l = (kde_object-> second_sum_l_) + second_dl;
     
     // Compute the allowed error.
-    double proportion =  1.0 / (1.0 - n_pruned) * 
+    double proportion =  1.0 / (1.0 - kde_object->n_pruned_) * 
       (((double)qnode->count()) / ((double) kde_object->rroot_->count())) *
       (rnode->stat().get_weight_sum() / 
        kde_object->rroot_->stat().get_weight_sum());
@@ -176,8 +176,8 @@ class DualtreeKdeCVCommon {
       rnode->stat().get_weight_sum();
     
     // number of reference points for possible pruning.
-    n_pruned = (((double) qnode->count()) / 
-		((double) kde_object->rroot_->count())) *
+    delta_n_pruned = (((double) qnode->count()) / 
+		      ((double) kde_object->rroot_->count())) *
       (rnode->stat().get_weight_sum() /
        kde_object->rroot_->stat().get_weight_sum());
     
