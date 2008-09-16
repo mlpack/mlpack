@@ -57,12 +57,72 @@ void DualtreeKdeCV<TKernelAux>::EvalUnnormOnSq_
 }
 
 template<typename TKernelAux>
+bool DualtreeKdeCV<TKernelAux>::PrunableEnhanced_
+(Tree *qnode, Tree *rnode, double probability, DRange &dsqd_range,
+ DRange &first_kernel_value_range, DRange &second_kernel_value_range,
+ double &first_dl, double &first_de, double &first_du, 
+ double &first_used_error, int &first_order, double &second_dl, 
+ double &second_de, double &second_du, double &second_used_error, 
+ int &second_order, double &delta_n_pruned) {
+  
+  // Query node statistics.
+  KdeCVStat<TKernelAux> &qstat = qnode->stat();
+  
+  // Series-expansion objects of both nodes.
+  typename TKernelAux::TFarFieldExpansion &query_first_farfield_expansion = 
+    qstat.first_farfield_expansion_;
+  typename TKernelAux::TFarFieldExpansion &query_second_farfield_expansion = 
+    qstat.second_farfield_expansion_;
+  
+  // Refine the lower bound using the new lower bound info.
+  double first_new_mass_l = first_sum_l_ + first_dl;
+  double second_new_mass_l = second_sum_l_ + second_dl;
+  
+  // Compute the allowed error.
+  double proportion =  1.0 / (1.0 - n_pruned_) *
+    (1.0 / ((double) rroot_->count())) *
+    (1.0 / rroot_->stat().get_weight_sum());
+  double first_allowed_err = 
+    (relative_error_ * first_new_mass_l - first_used_error_) *
+    proportion;
+  double second_allowed_err = (relative_error_ * second_new_mass_l - 
+			       second_used_error_) * proportion;
+
+  // If the allowed error is not defined (NaN), then we cannot
+  // approximate.
+  if(isnan(first_allowed_err) || isnan(second_allowed_err)) {
+    return false;
+  }
+
+  // Get the order of approximations.
+  first_order = query_first_farfield_expansion.OrderForConvolving
+    (rnode->bound(), *(rnode->stat().first_farfield_expansion_.get_center()),
+     qnode->bound(), *(qnode->stat().first_farfield_expansion_.get_center()),
+     dsqd_range.lo, dsqd_range.hi, first_allowed_err, &first_used_error);
+  second_order = query_second_farfield_expansion.OrderForConvolving
+    (rnode->bound(), *(rnode->stat().first_farfield_expansion_.get_center()),
+     qnode->bound(), *(qnode->stat().first_farfield_expansion_.get_center()),
+     dsqd_range.lo, dsqd_range.hi, second_allowed_err, &second_used_error);
+  
+  if(first_order >= 0 && second_order >= 0) {
+    first_used_error *= qnode->count() * rnode->stat().get_weight_sum();
+    second_used_error *= qnode->count() * rnode->stat().get_weight_sum();
+    return true;
+  }
+
+  // If not prunable, then reset the order and return false.
+  first_order = second_order = -1;
+  return false;
+}
+
+template<typename TKernelAux>
 bool DualtreeKdeCV<TKernelAux>::DualtreeKdeCVCanonical_
 (Tree *qnode, Tree *rnode, double probability) {
   
   // Temporary variables for storing bound changes.
-  double first_dl, first_de, first_du, first_used_error, n_pruned;
+  double first_dl, first_de, first_du, first_used_error, delta_n_pruned;
   double second_dl, second_de, second_du, second_used_error;
+  int first_order = -1, second_order = -1;
 
   // Temporary variable for holding distance/kernel value bounds.
   DRange dsqd_range, first_kernel_value_range, second_kernel_value_range;
@@ -78,7 +138,7 @@ bool DualtreeKdeCV<TKernelAux>::DualtreeKdeCVCanonical_
      (qnode, rnode, probability, dsqd_range, first_kernel_value_range, 
       second_kernel_value_range, first_dl, first_de, first_du, 
       first_used_error, second_dl, second_de, second_du, second_used_error,
-      n_pruned, this)) {
+      delta_n_pruned, this)) {
     first_sum_l_ += first_dl;
     first_sum_e_ += first_de;
     first_sum_u_ += first_du;
@@ -87,8 +147,28 @@ bool DualtreeKdeCV<TKernelAux>::DualtreeKdeCVCanonical_
     second_sum_e_ += second_de;
     second_sum_u_ += second_du;
     second_used_error_ += second_used_error;
-    n_pruned_ += n_pruned;
+    n_pruned_ += delta_n_pruned;
     num_finite_difference_prunes_++;
+    return true;
+  }
+
+  else if(rset_.n_rows() <= 5 && PrunableEnhanced_
+	  (qnode, rnode, probability, dsqd_range, first_kernel_value_range, 
+	   second_kernel_value_range, first_dl, first_de, first_du, 
+	   first_used_error, first_order, second_dl, second_de, second_du, 
+	   second_used_error, second_order, delta_n_pruned)) {
+    first_sum_l_ += first_dl;
+    first_sum_e_ += qnode->stat().first_farfield_expansion_.ConvolveField
+      (rnode->stat().first_farfield_expansion_, first_order);
+    first_sum_u_ += first_du;
+    first_used_error_ += first_used_error;
+    second_sum_l_ += second_dl;
+    second_sum_e_ += qnode->stat().second_farfield_expansion_.ConvolveField
+      (rnode->stat().second_farfield_expansion_, second_order);
+    second_sum_u_ += second_du;
+    second_used_error_ += second_used_error;
+    n_pruned_ += delta_n_pruned;
+    num_farfield_to_local_prunes_++;
     return true;
   }
 
@@ -98,7 +178,7 @@ bool DualtreeKdeCV<TKernelAux>::DualtreeKdeCVCanonical_
 	  (qnode, rnode, probability, dsqd_range, first_kernel_value_range,
 	   second_kernel_value_range, first_dl, first_de, first_du,
 	   first_used_error, second_dl, second_de, second_du,
-	   second_used_error, n_pruned, this)) {
+	   second_used_error, delta_n_pruned, this)) {
     first_sum_l_ += first_dl;
     first_sum_e_ += first_de;
     first_sum_u_ += first_du;
@@ -107,7 +187,7 @@ bool DualtreeKdeCV<TKernelAux>::DualtreeKdeCVCanonical_
     second_sum_e_ += second_de;
     second_sum_u_ += second_du;
     second_used_error_ += second_used_error;
-    n_pruned_ += n_pruned;
+    n_pruned_ += delta_n_pruned;
     num_monte_carlo_prunes_++;
     return false;
   }
@@ -253,6 +333,6 @@ void DualtreeKdeCV<TKernelAux>::PreProcess(Tree *node) {
        first_ka_.sea_.get_max_order());
     node->stat().second_farfield_expansion_.RefineCoeffs
       (rset_, rset_weights_, node->begin(), node->end(),
-       first_ka_.sea_.get_max_order());    
+       second_ka_.sea_.get_max_order());    
   }
 }

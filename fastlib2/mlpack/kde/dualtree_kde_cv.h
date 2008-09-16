@@ -228,12 +228,14 @@ class DualtreeKdeCV {
   /** @brief Checking for prunability of the query and the reference
    *         pair using four types of pruning methods.
    */
-  bool PrunableEnhanced_(Tree *qnode, Tree *rnode, double probability,
-			 DRange &dsqd_range, DRange &kernel_value_range, 
-			 double &dl, double &du,
-			 double &used_error, double &n_pruned,
-			 int &order_farfield_to_local,
-			 int &order_farfield, int &order_local);
+  bool PrunableEnhanced_(Tree *qnode, Tree *rnode, double probability, 
+			 DRange &dsqd_range, DRange &first_kernel_value_range,
+			 DRange &second_kernel_value_range, double &first_dl,
+			 double &first_de, double &first_du, 
+			 double &first_used_error, int &first_order,
+			 double &second_dl, double &second_de,
+			 double &second_du, double &second_used_error, 
+			 int &second_order, double &n_pruned);
   
   void EvalUnnormOnSq_(index_t reference_point_index, double squared_distance,
 		       double *first_kernel_value,
