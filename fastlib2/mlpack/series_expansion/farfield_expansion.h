@@ -199,6 +199,11 @@ class FarFieldExpansion {
 		  int node2_begin, int node2_end, const FarFieldExpansion &fe2,
 		  const FarFieldExpansion &fe3, int order2, int order3) const;
 
+  /** @brief Evaluates the convolution with the other farfield
+   *         expansion.
+   */
+  double ConvolveField(const FarFieldExpansion &fe, int order) const;
+
   /** @brief Evaluates the three-way convolution with two other far
    *         field expansions.
    */
@@ -211,6 +216,15 @@ class FarFieldExpansion {
    */
   void Init(const Vector& center, const TKernelAux &ka);
   void Init(const TKernelAux &ka);
+
+  template<typename TBound>
+  int OrderForConvolving(const TBound &far_field_region,
+			 const Vector &far_field_region_centroid,
+			 const TBound &local_field_region,
+			 const Vector &local_field_region_centroid,
+			 double min_dist_sqd_regions,
+			 double max_dist_dsqd_regons,
+			 double max_error, double *actual_error) const;
 
   /** @brief Computes the required order for evaluating the far field
    *         expansion for any query point within the specified region
