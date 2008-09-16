@@ -40,8 +40,7 @@ void DualtreeKdeCV<TKernelAux>::DualtreeKdeCVBase_(Tree *qnode, Tree *rnode,
   } // end of looping over each query point.
 
   // Increment the number of pruned portions.
-  n_pruned_ += (((double) qnode->count()) / ((double) rroot_->count())) * 
-    (rnode->stat().get_weight_sum() / rset_weight_sum_);
+  n_pruned_ += qnode->count() * rnode->stat().get_weight_sum();
 
   // Undo upper bound contributions.
   first_sum_u_ -= qnode->count() * rnode->stat().get_weight_sum();
@@ -79,12 +78,10 @@ bool DualtreeKdeCV<TKernelAux>::PrunableEnhanced_
   double second_new_mass_l = second_sum_l_ + second_dl;
   
   // Compute the allowed error.
-  double proportion =  1.0 / (1.0 - n_pruned_) *
-    (1.0 / ((double) rroot_->count())) *
-    (1.0 / rroot_->stat().get_weight_sum());
+  double proportion = 1.0 / (rroot_->count() * 
+			     rroot_->stat().get_weight_sum() - n_pruned_);
   double first_allowed_err = 
-    (relative_error_ * first_new_mass_l - first_used_error_) *
-    proportion;
+    (relative_error_ * first_new_mass_l - first_used_error_) * proportion;
   double second_allowed_err = (relative_error_ * second_new_mass_l - 
 			       second_used_error_) * proportion;
 
