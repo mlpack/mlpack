@@ -17,7 +17,7 @@ class DualtreeKdeCVCommon {
    TAlgorithm *kde_object) {
     
     // If there are too few pairs, then return.
-    if(qnode->count() * rnode->count() < 25) {
+    if(qnode->count() * rnode->count() < 50) {
       return false;
     }
     
@@ -30,7 +30,7 @@ class DualtreeKdeCVCommon {
       InverseNormalCDF::Compute(probability + 0.5 * (1 - probability));
     
     // The initial number of samples is equal to the default.
-    int num_samples = 25;
+    int num_samples = 50;
     int total_samples = 0;
     
     for(index_t s = 0; s < num_samples; s++) {
@@ -90,18 +90,16 @@ class DualtreeKdeCVCommon {
       second_mass_l_change;
     
     // Compute the allowed error.
-    double proportion =  1.0 / (1.0 - kde_object->n_pruned_) * 
-      (((double)qnode->count()) / ((double) kde_object->rroot_->count())) *
-      (rnode->stat().get_weight_sum() / 
-       kde_object->rroot_->stat().get_weight_sum());
+    double proportion = 1.0 / (kde_object->rroot_->count() * 
+			       kde_object->rroot_->stat().get_weight_sum() -
+			       kde_object->n_pruned_);
     double first_allowed_err = 
       (kde_object->relative_error_ * first_new_mass_l - 
        kde_object->first_used_error_) * proportion;
     double second_allowed_err =
       (kde_object->relative_error_ * second_new_mass_l - 
        kde_object->second_used_error_) * proportion;
-    
-    
+        
     if(sqrt(first_sample_variance) * standard_score <= first_allowed_err &&
        sqrt(second_sample_variance) * standard_score <= second_allowed_err) {
       first_dl = std::max(first_dl, first_mass_l_change);
@@ -150,10 +148,10 @@ class DualtreeKdeCVCommon {
     double second_new_mass_l = (kde_object-> second_sum_l_) + second_dl;
     
     // Compute the allowed error.
-    double proportion =  1.0 / (1.0 - kde_object->n_pruned_) * 
-      (((double)qnode->count()) / ((double) kde_object->rroot_->count())) *
-      (rnode->stat().get_weight_sum() / 
-       kde_object->rroot_->stat().get_weight_sum());
+    double proportion = 
+      (qnode->count() * rnode->stat().get_weight_sum()) /
+      (kde_object->rroot_->count() * 
+       kde_object->rroot_->stat().get_weight_sum() - kde_object->n_pruned_);
     double first_allowed_err = 
       (kde_object->relative_error_ * first_new_mass_l - 
        kde_object->first_used_error_) *
@@ -176,10 +174,7 @@ class DualtreeKdeCVCommon {
       rnode->stat().get_weight_sum();
     
     // number of reference points for possible pruning.
-    delta_n_pruned = (((double) qnode->count()) / 
-		      ((double) kde_object->rroot_->count())) *
-      (rnode->stat().get_weight_sum() /
-       kde_object->rroot_->stat().get_weight_sum());
+    delta_n_pruned = qnode->count() * rnode->stat().get_weight_sum();
     
     // If the error bound is satisfied by the hard error bound, it is
     // safe to prune.
