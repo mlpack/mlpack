@@ -38,6 +38,18 @@ class InversePowDistSeriesExpansionAux {
 
  public:
 
+  int get_dimension() const { 
+    return dim_;
+  }
+
+  int get_max_order() const {
+    return max_order_;
+  }
+
+  void set_max_order(int new_order) {
+    max_order_ = new_order;
+  }
+
   void ComputeConstants() {
     
     double n_factorial = 1.0;
@@ -70,42 +82,14 @@ class InversePowDistSeriesExpansionAux {
     }
   }
 
-  int get_dimension() const { return dim_; }
-
-  int get_total_num_coeffs(int order) const;
-
-  int get_max_total_num_coeffs() const;
-
-  int get_max_order() const;
-
-  /** @brief Computes the position of the given multiindex.
-   */
-  int ComputeMultiindexPosition(const ArrayList<int> &multiindex) const;
-
-  /** @brief Computes the computational cost of evaluating a far-field
-   *         expansion of order p at a single query point.
-   */
-  double FarFieldEvaluationCost(int order) const;
-
-  /** @brief Computes the compuational cost of translating a far-field
-   *         moment of order p into a local moment of the same order.
-   */
-  double FarFieldToLocalTranslationCost(int order) const;
-
-  /** @brief Computes the computational cost of directly accumulating
-   *         a single reference point into a local moment of order p.
-   */
-  double DirectLocalAccumulationCost(int order) const;
-
   /** @brief Initialize the auxiliary object with precomputed
    *         quantities for order up to max_order for the given
    *         dimensionality.
    */
-  void Init(int max_order, int dim);
-
-  /** @brief Print useful information about this object.
-   */
-  void PrintDebug(const char *name="", FILE *stream=stderr) const;
+  void Init(int max_order, int dim) {
+    max_order_ = max_order;
+    dim_ = dim;
+  }
 
 };
 

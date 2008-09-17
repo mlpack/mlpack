@@ -73,4 +73,23 @@ double InversePowDistFarFieldExpansion::EvaluateField
   return 0;
 }
 
+void InversePowDistFarFieldExpansion::Init
+(const Vector &center, InversePowDistSeriesExpansionAux *sea) {
+
+  // Copy the center.
+  center_.Copy(center);
+
+  // Set the pointer to the auxiliary object.
+  sea_ = sea;
+
+  // Initialize the order of approximation.
+  order_ = -1;
+
+  // Allocate the space for storing the coefficients.
+  coeffs_.Init(sea_->get_max_order() + 1);
+  for(index_t n = 0; n <= sea_->get_max_order(); n++) {
+    coeffs_[n].Init(n + 1, n + 1);
+  } 
+}
+
 #endif

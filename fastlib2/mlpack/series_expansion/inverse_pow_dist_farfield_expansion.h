@@ -104,7 +104,7 @@ class InversePowDistFarFieldExpansion {
    * Initializes the current far field expansion object with the given
    * center.
    */
-  void Init(const Vector& center);
+  void Init(const Vector& center, InversePowDistSeriesExpansionAux *sea);
 
   /** @brief Computes the required order for evaluating the far field
    *         expansion for any query point within the specified region
