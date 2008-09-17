@@ -12,6 +12,7 @@
 #include "local_expansion.h"
 #include "mult_local_expansion.h"
 #include "mult_series_expansion_aux.h"
+#include "inverse_pow_dist_farfield_expansion.h"
 #include "series_expansion_aux.h"
 #include "contrib/dongryel/proximity_project/gen_metric_tree.h"
 #include "../kde/dataset_scaler.h"
@@ -579,6 +580,14 @@ int TestMultEvaluateFarField(const Matrix &data, const Vector &weights,
   return 1;
 }
 
+bool TestInversePowDistFarField(const Matrix &data, const Vector &weights,
+				int begin, int end) {
+
+  InversePowDistFarFieldExpansion fe;
+
+  return true;
+}
+
 int main(int argc, char *argv[]) {
   fx_init(argc, argv, NULL);
 
@@ -615,5 +624,7 @@ int main(int argc, char *argv[]) {
   DEBUG_ASSERT(TestMultInitAux(data) == 1);
   DEBUG_ASSERT(TestMultEvaluateFarField(data, weights, begin, end) == 1);
 
+  DEBUG_ASSERT(TestInversePowDistFarField(data, weights, begin, end));
+  
   fx_done(fx_root);
 }
