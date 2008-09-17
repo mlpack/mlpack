@@ -346,10 +346,6 @@ void MultFarFieldExpansion<TKernelAux>::Init(const Vector& center,
   // Initialize coefficient array
   coeffs_.Init(sea_->get_max_total_num_coeffs());
   coeffs_.SetZero();
-
-  // Initialize the list of squared coefficients for sampling.
-  squared_coeffs_.Init(sea_->get_max_total_num_coeffs());
-  squared_coeffs_.SetZero();
 }
 
 template<typename TKernelAux>
@@ -366,10 +362,6 @@ template<typename TKernelAux>
   // Initialize coefficient array.
   coeffs_.Init(sea_->get_max_total_num_coeffs());
   coeffs_.SetZero();
-
-  // Initialize the list of squared coefficients for sampling.
-  squared_coeffs_.Init(sea_->get_max_total_num_coeffs());
-  squared_coeffs_.SetZero();
 }
 
 
