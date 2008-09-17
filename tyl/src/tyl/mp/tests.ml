@@ -18,35 +18,35 @@ let directions = pure Min
 let intervals a = pairs (options a) (options a)
 let refinedReals = pure _Discrete %% intervals ints ++ pure _Continuous %% intervals floats
 let refinedBools = options bools
-let ids = pure (Id.make "a") ++ pure (Id.make "b") ++ pure (Id.make "c") 
+let ids = pure (Id.make "x") ++ pure (Id.make "w") ++ pure (Id.make "z")
 
 let boolTyps = pure _TBool %% refinedBools
 let realTyps = pure _TReal %% refinedReals
 let typs = boolTyps ++ realTyps
 
-let rec boolExprs = {fold = fun n f b -> (
-                   pure _EVar %% ids 
-                   ++ pure _EConst %% boolNullOps 
-                   ++ pure _EUnaryOp %% boolUnaryOps %% boolExprs
-                   ++ pure _EBinaryOp %% boolBinaryOps %% boolExprs %% boolExprs
-                     ).fold n f b}
+let rec boolExprs = fun () -> 
+  pure _EVar %% ids 
+  ++ pure _EConst %% boolNullOps 
+  ++ pure _EUnaryOp %% boolUnaryOps %% boolExprs
+  ++ pure _EBinaryOp %% boolBinaryOps %% boolExprs %% boolExprs
+    $ ()
 
-let rec realExprs = {fold = fun n f b -> (
-                   pure _EVar %% ids 
-                   ++ pure _EConst %% realNullOps 
-                   ++ pure _EUnaryOp %% realUnaryOps %% realExprs
-                   ++ pure _EBinaryOp %% realBinaryOps %% realExprs %% realExprs
-                     ).fold n f b}
+let rec realExprs = fun () -> 
+  pure _EVar %% ids 
+  ++ pure _EConst %% realNullOps 
+  ++ pure _EUnaryOp %% realUnaryOps %% realExprs
+  ++ pure _EBinaryOp %% realBinaryOps %% realExprs %% realExprs
+    $ ()
 
 let exprs = boolExprs ++ realExprs 
 
-let rec props = {fold = fun n f b -> (
-                   pure _CBoolVal %% bools 
-                   ++ pure _CIsTrue %% exprs 
-                   ++ pure _CNumRel %% numRels %% exprs %% exprs
-                   ++ pure _CPropOp %% propOps %% lists props 
-                   ++ pure _CQuant %% quants %% ids %% typs %% props
-                 ).fold n f b}
+let rec props = fun () -> 
+  pure _CBoolVal %% bools 
+  ++ pure _CIsTrue %% boolExprs 
+  ++ pure _CNumRel %% numRels %% realExprs %% realExprs
+  ++ pure _CPropOp %% propOps %% lists props 
+  ++ pure _CQuant %% quants %% ids %% typs %% props
+    $ ()
 
 let progs = pure _PMain %% directions %% lists (pairs ids typs) %% exprs %% props
 
