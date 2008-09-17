@@ -52,3 +52,15 @@ let rec toPNF c = match c with
           | _,_ -> CPropOp(op,[c1;c2])
       in 
         foldl1 (mergePNF op) (map toPNF cs)
+
+open Tests
+open Pprint
+open SmallCheck
+module X = Printexc
+
+;; fold boolExprs 3 () (fun _ -> Printf.printf "%s\n" % ppexpr) 
+
+;; let result = forAll props (isPNF % toPNF) 4 in 
+  match result with 
+    | None -> Printf.printf "None\n"
+    | Some (x,e) -> Printf.printf "%s , %s\n" (ppprop x) (X.to_string e)
