@@ -5,6 +5,8 @@ librule(
     headers = ["bounds_aux.h",
                "farfield_expansion.h",
                "farfield_expansion_impl.h",
+               "inverse_pow_dist_farfield_expansion.h",
+               "inverse_pow_dist_farfield_expansion_impl.h",
                "mult_farfield_expansion.h",
                "mult_farfield_expansion_impl.h",
                "kernel_aux.h",
