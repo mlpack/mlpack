@@ -34,9 +34,6 @@ class MultFarFieldExpansion {
   
   /** @brief The coefficients. */
   Vector coeffs_;
-  
-  /** @brief The squared coefficients (for sampling). */
-  Vector squared_coeffs_;
 
   /** @brief The order of approximation. */
   int order_;
@@ -53,7 +50,6 @@ class MultFarFieldExpansion {
   OT_DEF(MultFarFieldExpansion) {
     OT_MY_OBJECT(center_);
     OT_MY_OBJECT(coeffs_);
-    OT_MY_OBJECT(squared_coeffs_);
     OT_MY_OBJECT(order_);
   }
 
