@@ -584,7 +584,13 @@ bool TestInversePowDistFarField(const Matrix &data, const Vector &weights,
 				int begin, int end) {
 
   InversePowDistFarFieldExpansion fe;
-
+  InversePowDistSeriesExpansionAux sea;
+  Vector center;
+  center.Init(data.n_rows());
+  center.SetZero();
+  sea.Init(8, data.n_rows());
+  fe.Init(center, &sea);
+  fe.AccumulateCoeffs(data, weights, 0, data.n_cols(), 8);
   return true;
 }
 
