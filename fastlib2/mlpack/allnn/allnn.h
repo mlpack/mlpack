@@ -195,6 +195,12 @@ class AllNN {
 
   // Note that we don't delete the fx module; it's managed externally.
   ~AllNN() {
+    if (query_tree_ != NULL) {
+      delete query_tree_;
+    }
+    if (reference_tree_ != query_tree_) {
+      delete reference_tree_;
+    }
 
   }
 
@@ -542,7 +548,22 @@ class AllNN {
 
   } /* Init */
 
+   void Destruct() {
+    if (query_tree_ != NULL) {
+      delete query_tree_;
+    }
+    if (reference_tree_ != query_tree_) {
+      delete reference_tree_;
+    }
+    queries_.Destruct();
+    references_.Destruct();
+    old_from_new_queries_.Destruct();
+    old_from_new_references_.Destruct();
+    neighbor_distances_.Destruct();
+    neighbor_indices_.Destruct();
+  }
 
+  
   /**
    * Initializes the AllNN structure for naive computation.
    *
@@ -653,12 +674,11 @@ class AllNN {
     // will printed after calling fx_done or can be read back later.
     fx_result_int(module_, "number_of_prunes", number_of_prunes_);
 
-    if (results) {
+    if (results!=NULL) {
       EmitResults(results, distances);
     }
 
   } /* ComputeNeighbors */
-
 
   /**
    * Computes the nearest neighbors naively.
