@@ -591,13 +591,15 @@ bool TestInversePowDistFarField(const Matrix &data, const Vector &weights,
   sea.Init(8, data.n_rows());
   fe.Init(center, &sea);
   fe.AccumulateCoeffs(data, weights, 0, data.n_cols(), 8);
+
+  fe.PrintDebug();
   return true;
 }
 
 int main(int argc, char *argv[]) {
   fx_init(argc, argv, NULL);
 
-  const char *datafile_name = fx_param_str(NULL, "data", NULL);
+  const char *datafile_name = fx_param_str(fx_root, "data", NULL);
   Dataset dataset;
   Matrix data;
   Vector weights;
@@ -614,10 +616,9 @@ int main(int argc, char *argv[]) {
   begin = 0; end = data.n_cols();
 
   // unit tests begin here!  
+  /*
   DEBUG_ASSERT(TestInitAux(data) == 1);
   DEBUG_ASSERT(TestEvaluateFarField(data, weights, begin, end) == 1);
-  DEBUG_ASSERT(TestEvaluateFarFieldByMonteCarlo
-	       (data, weights, begin, end) == 1);
   DEBUG_ASSERT(TestEvaluateLocalField(data, weights, begin, end) == 1);
   DEBUG_ASSERT(TestTransFarToFar(data, weights, begin, end) == 1);
   DEBUG_ASSERT(TestTransLocalToLocal(data, weights, begin, end) == 1);
@@ -629,6 +630,7 @@ int main(int argc, char *argv[]) {
 
   DEBUG_ASSERT(TestMultInitAux(data) == 1);
   DEBUG_ASSERT(TestMultEvaluateFarField(data, weights, begin, end) == 1);
+  */
 
   DEBUG_ASSERT(TestInversePowDistFarField(data, weights, begin, end));
   

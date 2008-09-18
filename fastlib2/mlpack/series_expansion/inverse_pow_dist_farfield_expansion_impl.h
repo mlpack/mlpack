@@ -6,6 +6,7 @@
 #define INVERSE_POW_DIST_FARFIELD_EXPANSION_IMPL_H
 
 #include <complex>
+#include <iostream>
 
 void InversePowDistFarFieldExpansion::Accumulate(const Vector &v, 
 						 double weight, int order) {
@@ -17,14 +18,15 @@ void InversePowDistFarFieldExpansion::Accumulate(const Vector &v,
   double z_coord = v[2] - center_[2];
   double magnitude_of_vector_in_xy_plane =
     sqrt(math::Sqr(x_coord) + math::Sqr(y_coord));
-  std::complex<double> first_complex
-    (x_coord / magnitude_of_vector_in_xy_plane,
-     -y_coord / magnitude_of_vector_in_xy_plane);
-  double first_complex_arg = atan2(-y_coord, x_coord);
-  std::complex<double> second_complex
-    (x_coord / magnitude_of_vector_in_xy_plane,
-     y_coord / magnitude_of_vector_in_xy_plane);
-  double second_complex_arg = atan2(y_coord, x_coord);
+  std::complex<double> eta(x_coord / magnitude_of_vector_in_xy_plane,
+			   -y_coord / magnitude_of_vector_in_xy_plane);
+  std::complex<double> xi(x_coord / magnitude_of_vector_in_xy_plane,
+			  y_coord / magnitude_of_vector_in_xy_plane);
+
+  // Temporary variables used for exponentiation.
+  std::complex<double> power_of_eta(0.0, 0.0);
+  std::complex<double> power_of_xi(0.0, 0.0);
+  std::complex<double> contribution(0.0, 0.0);
 
   for(index_t n = 0; n <= order; n++) {
     
@@ -34,26 +36,28 @@ void InversePowDistFarFieldExpansion::Accumulate(const Vector &v,
     for(index_t a = 0; a <= n; a++) {
       
       // $(z_i)^{n - a}$
-      double power_of_z_coord = std::pow(z_coord, n - a);
+      double power_of_z_coord = pow(z_coord, n - a);
 
       for(index_t b = 0; b <= a; b++) {
 
-	std::complex<double> power_of_eta = 
-	  pow(magnitude_of_vector_in_xy_plane, b) *
-	  std::complex<double>(cos(b * first_complex_arg), 
-			       sin(b * first_complex_arg));
-	std::complex<double> power_of_xi = 
-	  pow(magnitude_of_vector_in_xy_plane, a - b) *
-	  std::complex<double>(cos((a - b) * second_complex_arg),
-			       sin((a - b) * second_complex_arg));
+	InversePowDistSeriesExpansionAux::PowWithRootOfUnity
+	  (eta, b, power_of_eta);
+	power_of_eta *= pow(magnitude_of_vector_in_xy_plane, b);
 
-	std::complex<double> contribution = 
-	  weight * power_of_z_coord * power_of_eta * power_of_xi;
+	InversePowDistSeriesExpansionAux::PowWithRootOfUnity
+	  (xi, a - b, power_of_xi);
+	power_of_xi *= pow(magnitude_of_vector_in_xy_plane, a - b);
+
+	contribution = weight * power_of_z_coord * power_of_eta * power_of_xi;
 	n_th_order_matrix.set(a, b, n_th_order_matrix.get(a, b) +
 			      contribution);
       }
     }
-  }
+  } // end of iterating over each order...
+
+  // Set the order to the max of the given order and the current
+  // order.
+  order_ = std::max(order_, order);
 }
 
 void InversePowDistFarFieldExpansion::AccumulateCoeffs
@@ -87,9 +91,36 @@ void InversePowDistFarFieldExpansion::Init
 
   // Allocate the space for storing the coefficients.
   coeffs_.Init(sea_->get_max_order() + 1);
+  printf("Set to %d\n", sea_->get_max_order() + 1);
   for(index_t n = 0; n <= sea_->get_max_order(); n++) {
     coeffs_[n].Init(n + 1, n + 1);
+    coeffs_[n].SetZero();
   } 
+}
+
+void InversePowDistFarFieldExpansion::PrintDebug
+(const char *name, FILE *stream) const {
+
+  fprintf(stream, "----- SERIESEXPANSION %s ------\n", name);
+  fprintf(stream, "Far field expansion\n");
+  fprintf(stream, "Center: ");
+  
+  for (index_t i = 0; i < center_.length(); i++) {
+    fprintf(stream, "%g ", center_[i]);
+  }
+  fprintf(stream, "\n");
+
+  for(index_t n = 0; n <= order_; n++) {
+
+    const GenMatrix< std::complex<double> > &n_th_order_matrix = coeffs_[n];
+    
+    for(index_t a = 0; a <= n; a++) {
+      for(index_t b = 0; b <= n; b++) {
+	std::cout << n_th_order_matrix.get(a, b) << " ";
+      }
+      std::cout << "\n";
+    }
+  }
 }
 
 #endif
