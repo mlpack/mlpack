@@ -6,6 +6,8 @@
 #ifndef INVERSE_POW_DIST_SERIES_EXPANSION_AUX
 #define INVERSE_POW_DIST_SERIES_EXPANSION_AUX
 
+#include <iostream>
+
 #include "fastlib/fastlib.h"
 
 /** @brief Series expansion class for the inverse distance power
@@ -91,6 +93,18 @@ class InversePowDistSeriesExpansionAux {
     dim_ = dim;
   }
 
+  /** @brief This function assumes that the base is a root of unity,
+   *         meaning its magnitude is exactly 1.
+   */
+  static void PowWithRootOfUnity(const std::complex<double> &base, int power, 
+				 std::complex<double> &result) {
+    
+    // Extract the arg part (angle in radians).
+    double complex_arg = atan2(base.imag(), base.real());
+
+    result.real() = cos(power * complex_arg);
+    result.imag() = sin(power * complex_arg);
+  }
 };
 
 #endif
