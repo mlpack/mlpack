@@ -28,10 +28,10 @@ int main (int argc, char *argv[]) {
   data::Load(filename.c_str(), &data_for_tree);
   NOTIFY("File loaded...");
   allnn.Init(data_for_tree, fx_root);
-  GenVector<index_t> resulting_neighbors_tree;
-  GenVector<double> resulting_distances_tree;
+  //GenVector<index_t> resulting_neighbors_tree;
+  //GenVector<double> resulting_distances_tree;
   NOTIFY("Computing Neighbors...");
-  allnn.ComputeNeighbors(&resulting_neighbors_tree, &resulting_distances_tree);
+  allnn.ComputeNeighbors(NULL, NULL);
   NOTIFY("Neighbors Computed...");
   fx_done(fx_root);
 }
