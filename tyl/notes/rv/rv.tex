@@ -48,17 +48,19 @@ e & ::= & x \ | \ r \ | \ \true \ | \ \false \\
 & & \ | \ \rlet{x}{t}{e_1}{e_2} 
 \end{eqnarray*}
 
-Thought experiment: (X+Y)+(X+Y) vs 2*(X+Y)
+Revelation: variables don't have values, context-senstive evaluation semantics.
+
+Thought experiement, (X+Y)+(X+Y) vs 2*(X+Y)
+
+\rint, and \rreal\ are synonyms for $[-\infty,\infty]$ and
+$<-\infty,\infty>$.  For now, we are disallowing arbitrary {\tt let}s
+in the object language to solve the RV 'identity' problem.  Also, we
+disallow random variable literals (they would only be marginally
+useful) ... RVs can only be introduced with \T{rlet}.
 
 must make distinction based on discrete vs.\ continuous, not int vs real, e.g.
 \rlet{x}{\rint}{\T{UniformInt(1,6)}}{\sqrt{x}} ... the distribution is still
 discrete even though the support are not integers.
-
-\rint, and \rreal\ are synonyms for $[0,1]$, $[-\infty,\infty]$, and
-$<-\infty,\infty>$. For now, we are disallowing arbitrary {\tt let}s
-in the object language to solve the RV 'identity' problem.  Also, we
-disallow random variable literals (they would only be marginally
-useful) ... RVs can only be introduced with \T{rlet}.
 
 Notes: multivariate/joint distributions can (for now) be represented
 by the equivalent cascade of conditionals (i.e.\ $p(x,y,z) =
