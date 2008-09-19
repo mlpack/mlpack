@@ -580,25 +580,38 @@ int TestMultEvaluateFarField(const Matrix &data, const Vector &weights,
   return 1;
 }
 
-bool TestInversePowDistFarField(const Matrix &data, const Vector &weights,
-				int begin, int end) {
+bool TestEvaluateInversePowDistFarField(const Matrix &data, 
+					const Vector &weights,
+					int begin, int end) {
 
   InversePowDistFarFieldExpansion fe;
   InversePowDistSeriesExpansionAux sea;
   Vector center;
+  double lambda = 3;
   center.Init(data.n_rows());
   center.SetZero();
-  sea.Init(3, 8, data.n_rows());
+  sea.Init(lambda, 8, data.n_rows());
   fe.Init(center, &sea);
   fe.AccumulateCoeffs(data, weights, 0, data.n_cols(), 8);
   Vector test_point;
   test_point.Init(data.n_rows());
   for(index_t i = 0; i < data.n_rows(); i++) {
-    test_point[i] = 100;
+    test_point[i] = 20;
   }
 
   test_point.PrintDebug();
   printf("Evaluated: %g\n", fe.EvaluateField(test_point, 7));
+
+  printf("Doing exhaustively to check the answer...\n");
+  double exhaustive_value = 0;
+  for(index_t i = 0; i < data.n_cols(); i++) {
+    double distance = sqrt(la::DistanceSqEuclidean
+			   (data.n_rows(), data.GetColumnPtr(i),
+			    test_point.ptr()));
+    exhaustive_value += weights[i] / pow(distance, lambda);
+  }
+  printf("Exhaustive value: %g\n", exhaustive_value);
+
   return true;
 }
 
@@ -638,7 +651,7 @@ int main(int argc, char *argv[]) {
   DEBUG_ASSERT(TestMultEvaluateFarField(data, weights, begin, end) == 1);
   */
 
-  DEBUG_ASSERT(TestInversePowDistFarField(data, weights, begin, end));
+  DEBUG_ASSERT(TestEvaluateInversePowDistFarField(data, weights, begin, end));
   
   fx_done(fx_root);
 }

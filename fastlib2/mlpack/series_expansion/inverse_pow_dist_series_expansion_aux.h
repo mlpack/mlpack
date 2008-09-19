@@ -223,10 +223,11 @@ class InversePowDistSeriesExpansionAux {
       // Apply the recurrence.
       for(index_t n = 2; n < evaluated_polynomials.n_rows(); n++) {
 	evaluated_polynomials.set
-	  (n, lambda_index, 2 * (n + effective_lambda - 1) * argument *
-	   evaluated_polynomials.get(n - 1, lambda_index) -
-	   (n + 2 * effective_lambda - 2) *
-	   evaluated_polynomials.get(n - 2, lambda_index));
+	  (n, lambda_index, 
+	   (2 * (n + effective_lambda - 1) * argument *
+	    evaluated_polynomials.get(n - 1, lambda_index) -
+	    (n + 2 * effective_lambda - 2) *
+	    evaluated_polynomials.get(n - 2, lambda_index)) / ((double) n));
       }
     }
   }
