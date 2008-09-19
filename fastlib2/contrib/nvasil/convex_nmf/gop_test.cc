@@ -18,6 +18,7 @@
 
 #include "fastlib/fastlib.h"
 #include "gop_nmf.h"
+#include "splitter.h"
 
 class GopNmfEngineTest {
  public:
@@ -25,26 +26,28 @@ class GopNmfEngineTest {
     module_=module;
   }
   void Init() {
-    engine_ = new GopNmfEngine();
+    engine_ = new GopNmfEngine<SimpleSplitter>();
   }
   void Destruct() {
     delete engine_;
+    delete splitter_;
   }
   void Test1() {
     Matrix data_points;
-    data::Load("/net/hg200/nvasil/dataset/orl_faces/orl_test_faces_100.csv", &data_points);
-    fx_set_param_int(module_, "new_dimension",30);
-    engine_->Init(module_, data_points); 
+    data::Load(
+        //"/net/hg200/nvasil/dataset/orl_faces/orl_test_faces_100.csv"
+        "6.csv"
+        , &data_points);
+    fx_set_param_int(module_, "new_dimension", 2);
+    fx_set_param_double(module_, "opt_gap", 0.001);
+    fx_set_param_double(module_, "/relaxed_nmf/grad_tolerance", 1e-4);
+    fx_set_param_double(module_, "/relaxed_nmf/scale_factor", 1);
+    splitter_ = new SimpleSplitter();
+    splitter_->Init();
+    engine_->Init(module_, splitter_, data_points); 
     engine_->ComputeGlobalOptimum();
   }
-  void Test2() {
-    Matrix data_points;
-    data::Load("/net/hg200/nvasil/dataset/orl_faces/orl_test_faces_100.csv", &data_points);
-    fx_set_param_int(module_, "new_dimension",30);
-    engine_->Init(module_, data_points); 
-    engine_->ComputeTighterGlobalOptimum();
-  }
- void TestAll() {
+void TestAll() {
     Init();
     Test1();
     Destruct();
@@ -52,8 +55,8 @@ class GopNmfEngineTest {
 
  private:
   fx_module *module_;
-  GopNmfEngine *engine_;
-   
+  GopNmfEngine<SimpleSplitter> *engine_;
+  SimpleSplitter *splitter_; 
 };
 
 int main(int argc, char *argv[]) {
