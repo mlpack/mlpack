@@ -66,12 +66,6 @@ class InversePowDistLocalExpansion {
   const Vector* get_center() const {
     return &center_;
   }
-
-  /** @brief Retrieves the coefficients.
-   */
-  const Vector& get_coeffs() const {
-    return coeffs_;
-  }
   
   /** @brief Retrieves the approximation order.
    */
@@ -99,6 +93,17 @@ class InversePowDistLocalExpansion {
    */
   void AccumulateCoeffs(const Matrix& data, const Vector& weights,
 			int begin, int end, int order);
+
+  /**
+   * Evaluates the far-field coefficients at the given point
+   */
+  double EvaluateField(const Matrix& data, int row_num, int order) const;
+  double EvaluateField(const double *x_q, int order) const;
+
+  /** @brief Initializes the current local expansion object with
+   *         the given center.
+   */
+  void Init(const Vector& center, InversePowDistSeriesExpansionAux *sea);
 
   /**
    * Prints out the series expansion represented by this object.

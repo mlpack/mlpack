@@ -70,7 +70,7 @@ void InversePowDistFarFieldExpansion::AccumulateCoeffs
   }
 }
 
-double InversePowDistFarFieldExpansion::EvaluateField(const Vector &v,
+double InversePowDistFarFieldExpansion::EvaluateField(const double *v,
 						      int order) const {
 
   double result = 0;
@@ -116,46 +116,7 @@ double InversePowDistFarFieldExpansion::EvaluateField(const Vector &v,
 
 double InversePowDistFarFieldExpansion::EvaluateField
 (const Matrix& data, int row_num, int order) const {
-
-  double result = 0;
-  std::complex<double> tmp(0, 0);
-  std::complex<double> partial_derivative(0, 0);
-  const ArrayList<Matrix> *multiplicative_constants = 
-    sea_->get_multiplicative_constants();
-
-  // First, complete a table of Gegenbauer polynomials for the
-  // evaluation point.
-  double x_diff = data.get(0, row_num) - center_[0];
-  double y_diff = data.get(1, row_num) - center_[1];
-  double z_diff = data.get(2, row_num) - center_[2];
-  double radius, theta, phi;
-  Matrix evaluated_polynomials;
-  evaluated_polynomials.Init(order + 1, order + 1);
-  InversePowDistSeriesExpansionAux::ConvertCartesianToSpherical
-    (x_diff, y_diff, z_diff, &radius, &theta, &phi);
-  sea_->GegenbauerPolynomials(cos(theta), evaluated_polynomials);
-    
-  for(index_t n = 0; n <= order; n++) {
-    
-    const GenMatrix< std::complex<double> > &n_th_order_matrix = coeffs_[n];
-    const Matrix &n_th_multiplicative_constants = 
-      (*multiplicative_constants)[n];
-
-    for(index_t a = 0; a <= n; a++) {
-      for(index_t b = 0; b <= a; b++) {
-	sea_->ComputePartialDerivativeFactor(n, a, b, radius, theta, phi, 
-					     evaluated_polynomials,
-					     partial_derivative);
-	std::complex<double> product = n_th_order_matrix.get(a, b) * 
-	  partial_derivative;
-
-	result += n_th_multiplicative_constants.get(a, b) * 
-	  partial_derivative.real();
-      }
-    }
-  }
-
-  return result;
+  return EvaluateField(data.GetColumnPtr(row_num), order);
 }
 
 void InversePowDistFarFieldExpansion::Init
@@ -174,7 +135,11 @@ void InversePowDistFarFieldExpansion::Init
   coeffs_.Init(sea_->get_max_order() + 1);
   for(index_t n = 0; n <= sea_->get_max_order(); n++) {
     coeffs_[n].Init(n + 1, n + 1);
-    coeffs_[n].SetZero();
+    for(index_t j = 0; j <= n; j++) {
+      for(index_t k = 0; k <= n; k++) {
+	coeffs_[n].set(j, k, std::complex<double>(0, 0));
+      }
+    }
   } 
 }
 

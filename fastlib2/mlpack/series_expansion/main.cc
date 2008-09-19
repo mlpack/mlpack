@@ -13,6 +13,7 @@
 #include "mult_local_expansion.h"
 #include "mult_series_expansion_aux.h"
 #include "inverse_pow_dist_farfield_expansion.h"
+#include "inverse_pow_dist_local_expansion.h"
 #include "series_expansion_aux.h"
 #include "contrib/dongryel/proximity_project/gen_metric_tree.h"
 #include "../kde/dataset_scaler.h"
@@ -600,7 +601,42 @@ bool TestEvaluateInversePowDistFarField(const Matrix &data,
   }
 
   test_point.PrintDebug();
-  printf("Evaluated: %g\n", fe.EvaluateField(test_point, 7));
+  printf("Evaluated: %g\n", fe.EvaluateField(test_point.ptr(), 7));
+
+  printf("Doing exhaustively to check the answer...\n");
+  double exhaustive_value = 0;
+  for(index_t i = 0; i < data.n_cols(); i++) {
+    double distance = sqrt(la::DistanceSqEuclidean
+			   (data.n_rows(), data.GetColumnPtr(i),
+			    test_point.ptr()));
+    exhaustive_value += weights[i] / pow(distance, lambda);
+  }
+  printf("Exhaustive value: %g\n", exhaustive_value);
+
+  return true;
+}
+
+bool TestEvaluateInversePowDistLocalField(const Matrix &data, 
+					  const Vector &weights,
+					  int begin, int end) {
+
+  InversePowDistLocalExpansion le;
+  InversePowDistSeriesExpansionAux sea;
+  Vector center;
+  double lambda = 3;
+  center.Init(data.n_rows());
+  center.SetAll(-9);
+  sea.Init(lambda, 8, data.n_rows());
+  le.Init(center, &sea);
+  le.AccumulateCoeffs(data, weights, 0, data.n_cols(), 8);
+  Vector test_point;
+  test_point.Init(data.n_rows());
+  for(index_t i = 0; i < data.n_rows(); i++) {
+    test_point[i] = -10;
+  }
+
+  test_point.PrintDebug();
+  printf("Evaluated: %g\n", le.EvaluateField(test_point.ptr(), 7));
 
   printf("Doing exhaustively to check the answer...\n");
   double exhaustive_value = 0;
@@ -652,6 +688,8 @@ int main(int argc, char *argv[]) {
   */
 
   DEBUG_ASSERT(TestEvaluateInversePowDistFarField(data, weights, begin, end));
-  
+  DEBUG_ASSERT(TestEvaluateInversePowDistLocalField(data, weights, begin, 
+						    end));
+
   fx_done(fx_root);
 }
