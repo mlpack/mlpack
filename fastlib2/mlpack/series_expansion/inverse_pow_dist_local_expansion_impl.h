@@ -5,7 +5,7 @@
 #ifndef INVERSE_POW_DIST_LOCAL_EXPANSION_IMPL_H
 #define INVERSE_POW_DIST_LOCAL_EXPANSION_IMPL_H
 
-void InversePowDistLocalExpansion::Accumulate(const Vector &v, 
+void InversePowDistLocalExpansion::Accumulate(const double *v, 
 					      double weight, int order) {
 
   // Convert the coordinates of v into ones with respect to the center
@@ -56,9 +56,7 @@ void InversePowDistLocalExpansion::AccumulateCoeffs(const Matrix& data,
 						    int begin, int end, 
 						    int order) {
   for(index_t p = begin; p < end; p++) {
-    Vector column_vector;
-    data.MakeColumnVector(p, &column_vector);
-    Accumulate(column_vector, weights[begin], order);
+    Accumulate(data.GetColumnPtr(p), weights[begin], order);
   }
 }
 
