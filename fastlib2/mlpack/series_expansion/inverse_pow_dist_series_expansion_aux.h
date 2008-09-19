@@ -123,7 +123,7 @@ class InversePowDistSeriesExpansionAux {
 
   void ComputeMultiplicativeConstants_() {
     
-    multiplicative_constants_.Init(max_order_);
+    multiplicative_constants_.Init(max_order_ + 1);
 
     for(index_t n = 0; n < multiplicative_constants_.size(); n++) {
       

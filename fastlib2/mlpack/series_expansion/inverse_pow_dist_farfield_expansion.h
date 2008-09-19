@@ -98,7 +98,7 @@ class InversePowDistFarFieldExpansion {
    * Evaluates the far-field coefficients at the given point
    */
   double EvaluateField(const Matrix& data, int row_num, int order) const;
-  double EvaluateField(const Vector& x_q, int order) const;
+  double EvaluateField(const double *x_q, int order) const;
   
   /**
    * Initializes the current far field expansion object with the given
