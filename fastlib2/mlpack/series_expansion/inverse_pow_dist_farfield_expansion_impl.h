@@ -106,8 +106,7 @@ double InversePowDistFarFieldExpansion::EvaluateField(const Vector &v,
 	std::complex<double> product = n_th_order_matrix.get(a, b) * 
 	  partial_derivative;
 
-	result += n_th_multiplicative_constants.get(a, b) * 
-	  partial_derivative.real();
+	result += n_th_multiplicative_constants.get(a, b) * product.real();
       }
     }
   }
