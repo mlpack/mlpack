@@ -66,6 +66,10 @@ class TreeOnWandHSplitter {
     module_=module;
     w_leaf_size_=fx_param_int(module_, "w_leaf_size", 10);
     h_leaf_size_=fx_param_int(module_, "h_leaf_size", 3);
+    w_offset_=fx_param_int_req(module_, "w_offset");
+    h_offset_=fx_param_int_req(module_, "h_offset");
+    h_length_=fx_param_int_req(module_, "h_length");
+    
     DEBUG_ASSERT(w_leaf_size_ > 0);
     DEBUG_ASSERT(h_leaf_size_ > 0);
     Matrix data_points;
@@ -110,7 +114,7 @@ class TreeOnWandHSplitter {
       // Make nodes for h
       Matrix data_points;
       data_points.Copy(opt_points.GetColumnPtr(h_offset_), opt_points.n_rows(), 
-         h_length);
+         h_length_);
       // you have to delete the tree first!!!!
       if (h_tree_!=NULL) {
         delete h_tree_;
@@ -153,6 +157,7 @@ class TreeOnWandHSplitter {
   index_t h_current_depth_;
   index_t w_tree_max_depth_;
   index_t h_tree_max_depth_;
+  index_t h_length_;
   // here we have the grouping of points 
   ArrayList<std::pair<index_t, index_t> >  w_point_nodes_;
   ArrayList<std::pair<index_t, index_t> >  h_point_nodes_;
