@@ -65,12 +65,12 @@ class InversePowDistSeriesExpansionAux {
 
   void ComputeAConstants_() {
 
-    a_constants_.Init(max_order_);
+    a_constants_.Init(max_order_ + 1);
 
     for(index_t n = 0; n < a_constants_.size(); n++) {
       
       // Allocate $(n + 1)$ by $(n + 1)$ matrix.
-      a_constants_[n].Init(n + 1, n + 1);
+      a_constants_[n].Init(n + 1, 2 * max_order_ + 1);
       a_constants_[n].SetZero();
 
       // The reference to the matrix.
@@ -79,7 +79,8 @@ class InversePowDistSeriesExpansionAux {
       double two_raised_to_m = 1.0;
       for(index_t m = 0; m <= n; m++) {
 
-	for(index_t lambda_index = 0; lambda_index <= m; lambda_index++) {
+	for(index_t lambda_index = 0; lambda_index <= 2 * max_order_; 
+	    lambda_index++) {
 	  n_th_order_matrix.set
 	    (m, lambda_index, Factorial_(n - m) * two_raised_to_m * 
 	     PochammerValue(lambda_ / 2.0 + n, m));
@@ -91,7 +92,7 @@ class InversePowDistSeriesExpansionAux {
 
 	two_raised_to_m *= 2.0;
       }
-    }    
+    }
   }
 
   void ComputeTConstants_() {
@@ -116,7 +117,7 @@ class InversePowDistSeriesExpansionAux {
     factorials_.Init(max_order_ + 1);
     factorials_[0] = 1;
     for(index_t i = 1; i < factorials_.length(); i++) {
-      factorials_[i] *= factorials_[i - 1] * i;      
+      factorials_[i] = factorials_[i - 1] * i;      
     }
   }
 
@@ -152,6 +153,10 @@ class InversePowDistSeriesExpansionAux {
 
  public:
 
+  const ArrayList<Matrix> *get_multiplicative_constants() const {
+    return &multiplicative_constants_;
+  }
+
   int get_dimension() const { 
     return dim_;
   }
@@ -168,7 +173,9 @@ class InversePowDistSeriesExpansionAux {
    *         quantities for order up to max_order for the given
    *         dimensionality.
    */
-  void Init(int max_order, int dim) {
+  void Init(double incoming_lambda, int max_order, int dim) {
+    
+    lambda_ = incoming_lambda;
     max_order_ = max_order;
     dim_ = dim;
 
@@ -202,8 +209,8 @@ class InversePowDistSeriesExpansionAux {
    *  @param evaluated_polynomials The table of evaluated polynomial values.
    */
   void GegenbauerPolynomials(double argument, 
-			     Matrix &evaluated_polynomials) {
-    
+			     Matrix &evaluated_polynomials) const {
+
     // lambda_index = lambda / 2 + 1, ...
     for(index_t lambda_index = 0; lambda_index < 
 	  evaluated_polynomials.n_cols(); lambda_index++) {
@@ -232,7 +239,7 @@ class InversePowDistSeriesExpansionAux {
   void ComputePFactor(double radius, double theta, double phi,
 		      int n, int m, double lambda,
 		      const Matrix &evaluated_polynomials,
-		      std::complex<double> &result) {
+		      std::complex<double> &result) const {
     
     // Common factor.
     double common_factor = pow(sin(theta), m) / pow(radius, n + lambda);
@@ -244,6 +251,18 @@ class InversePowDistSeriesExpansionAux {
     // Then compute the imaginary part.
     result.imag() = common_factor * sin(m * phi) *
       evaluated_polynomials.get(n - m, m);
+  }
+
+  /** @brief Converts a 3-D coordinate into its spherical coordinate
+   *         representation.
+   */
+  static void ConvertCartesianToSpherical(double x, double y, double z,
+					  double *radius, double *theta,
+					  double *phi) {
+
+    *radius = sqrt(math::Sqr(x) + math::Sqr(y) + math::Sqr(z));
+    *theta = atan2(sqrt(math::Sqr(x) + math::Sqr(y)), z);
+    *phi = atan2(y, x);
   }
 
   /** @brief This function assumes that the base is a root of unity,
@@ -258,6 +277,39 @@ class InversePowDistSeriesExpansionAux {
     result.real() = cos(power * complex_arg);
     result.imag() = sin(power * complex_arg);
   }
+
+  /** @brief This function comptues the partial derivative factor.
+   */
+  void ComputePartialDerivativeFactor
+  (int n, int a, int b, double radius, double theta, double phi,
+   const Matrix &evaluated_polynomials, std::complex<double> &result) const {
+    
+    int m = std::min(b, a - b);
+    std::complex<double> tmp;
+    result.real() = result.imag() = 0;
+
+    for(index_t k = 0; k <= m; k++) {
+      double common_factor = t_constants_.get(m, k) * 
+	a_constants_[n - 2 * k].get(abs(a - 2 * b), k);
+      int sign = 2 * b - a;
+      if(sign > 0) {
+	sign = 1;
+      }
+      else if(sign < 0) {
+	sign = -1;
+      }
+      else {
+	sign = 0;
+      }
+
+      ComputePFactor(radius, theta, sign * phi, n - 2 * k, abs(a - 2 * b),
+		     lambda_ + 2 * k, evaluated_polynomials, tmp);
+
+      result.real() += common_factor * tmp.real();
+      result.imag() += common_factor * tmp.imag();
+    }
+  }
+
 };
 
 #endif

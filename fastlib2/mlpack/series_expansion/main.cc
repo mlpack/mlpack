@@ -588,11 +588,17 @@ bool TestInversePowDistFarField(const Matrix &data, const Vector &weights,
   Vector center;
   center.Init(data.n_rows());
   center.SetZero();
-  sea.Init(8, data.n_rows());
+  sea.Init(3, 8, data.n_rows());
   fe.Init(center, &sea);
   fe.AccumulateCoeffs(data, weights, 0, data.n_cols(), 8);
+  Vector test_point;
+  test_point.Init(data.n_rows());
+  for(index_t i = 0; i < data.n_rows(); i++) {
+    test_point[i] = 100;
+  }
 
-  fe.PrintDebug();
+  test_point.PrintDebug();
+  printf("Evaluated: %g\n", fe.EvaluateField(test_point, 7));
   return true;
 }
 
