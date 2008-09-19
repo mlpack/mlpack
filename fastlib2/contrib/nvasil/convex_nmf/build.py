@@ -6,7 +6,7 @@ librule(name="nmflib",
     deplibs=["fastlib:fastlib", "mlpack/allknn:allknn", "contrib/nvasil/l_bfgs:l_bfgs"] )
 
 librule(name="gopnmflib",
-    headers=["gop_nmf.h", "gop_nmf_impl.h"],
+    headers=["gop_nmf.h", "gop_nmf_impl.h", "splitter.h"],
     tests=["gop_test.cc"],
     deplibs=["fastlib:fastlib",":nmflib", "contrib/nvasil/l_bfgs:l_bfgs" ]);
 
