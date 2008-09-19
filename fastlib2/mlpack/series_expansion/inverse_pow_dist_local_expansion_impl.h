@@ -143,4 +143,10 @@ void InversePowDistLocalExpansion::PrintDebug(const char *name,
 
 }
 
+void InversePowDistLocalExpansion::TranslateToLocal
+(InversePowDistLocalExpansion &se) {
+  
+  
+}
+
 #endif

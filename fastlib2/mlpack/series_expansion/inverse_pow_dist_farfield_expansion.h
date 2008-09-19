@@ -60,6 +60,18 @@ class InversePowDistFarFieldExpansion {
   Vector *get_center() { return &center_; }
 
   const Vector *get_center() const { return &center_; }
+
+  /** @brief Retrieves the set of coefficients.
+   */
+  ArrayList<GenMatrix<std::complex<double> > > *get_coeffs() {
+    return &coeffs_;
+  }
+
+  /** @brief Retrieves the set of coefficients.
+   */
+  const ArrayList<GenMatrix<std::complex<double> > > *get_coeffs() const {
+    return &coeffs_;
+  }
   
   /** Get the approximation order */
   int get_order() const { return order_; }
