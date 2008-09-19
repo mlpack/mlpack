@@ -122,6 +122,12 @@ class InversePowDistLocalExpansion {
    */
   void PrintDebug(const char *name="", FILE *stream=stderr) const;
 
+  /**
+   * Translate to the given local expansion. The translated coefficients
+   * are added up to the passed-in local expansion coefficients.
+   */
+  void TranslateToLocal(InversePowDistLocalExpansion &se);
+
 };
 
 #define INSIDE_INVERSE_POW_DIST_LOCAL_EXPANSION_H
