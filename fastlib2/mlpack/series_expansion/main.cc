@@ -651,7 +651,51 @@ bool TestEvaluateInversePowDistLocalField(const Matrix &data,
   return true;
 }
 
+bool TestTransInversePowDistFarToLocal(const Matrix &data, 
+				       const Vector &weights, int begin, 
+				       int end) {
+
+  // Form a farfield expansion.
+  InversePowDistFarFieldExpansion fe;
+  InversePowDistSeriesExpansionAux sea;
+  Vector far_center;
+  double lambda = 1;
+  far_center.Init(data.n_rows());
+  far_center.SetZero();
+  sea.Init(lambda, 14, data.n_rows());
+  fe.Init(far_center, &sea);
+  fe.AccumulateCoeffs(data, weights, 0, data.n_cols(), 14);
+
+  InversePowDistLocalExpansion le;
+  Vector local_center;
+  local_center.Init(data.n_rows());
+  local_center.SetAll(-20);
+  le.Init(local_center, &sea);
+  fe.TranslateToLocal(le, 14);
+  Vector test_point;
+  test_point.Init(data.n_rows());
+  for(index_t i = 0; i < data.n_rows(); i++) {
+    test_point[i] = -20.5;
+  }
+
+  test_point.PrintDebug();
+  printf("Evaluated: %g\n", le.EvaluateField(test_point.ptr(), 14));
+
+  printf("Doing exhaustively to check the answer...\n");
+  double exhaustive_value = 0;
+  for(index_t i = 0; i < data.n_cols(); i++) {
+    double distance = sqrt(la::DistanceSqEuclidean
+			   (data.n_rows(), data.GetColumnPtr(i),
+			    test_point.ptr()));
+    exhaustive_value += weights[i] / pow(distance, lambda);
+  }
+  printf("Exhaustive value: %g\n", exhaustive_value);
+
+  return true;
+}
+
 int main(int argc, char *argv[]) {
+
   fx_init(argc, argv, NULL);
 
   const char *datafile_name = fx_param_str(fx_root, "data", NULL);
@@ -690,6 +734,7 @@ int main(int argc, char *argv[]) {
   DEBUG_ASSERT(TestEvaluateInversePowDistFarField(data, weights, begin, end));
   DEBUG_ASSERT(TestEvaluateInversePowDistLocalField(data, weights, begin, 
 						    end));
+  DEBUG_ASSERT(TestTransInversePowDistFarToLocal(data, weights, begin, end));
 
   fx_done(fx_root);
 }

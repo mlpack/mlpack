@@ -65,7 +65,7 @@ class InversePowDistSeriesExpansionAux {
 
   void ComputeAConstants_() {
 
-    a_constants_.Init(max_order_ + 1);
+    a_constants_.Init(2 * (max_order_ + 1));
 
     for(index_t n = 0; n < a_constants_.size(); n++) {
       
@@ -77,9 +77,9 @@ class InversePowDistSeriesExpansionAux {
       Matrix &n_th_order_matrix = a_constants_[n];
 
       double two_raised_to_m = 1.0;
-      for(index_t m = 0; m <= n; m++) {
+      for(index_t m = 0; m < a_constants_[n].n_rows(); m++) {
 
-	for(index_t lambda_index = 0; lambda_index <= 2 * max_order_; 
+	for(index_t lambda_index = 0; lambda_index < a_constants_[n].n_cols(); 
 	    lambda_index++) {
 	  n_th_order_matrix.set
 	    (m, lambda_index, Factorial_(n - m) * two_raised_to_m * 
@@ -97,7 +97,7 @@ class InversePowDistSeriesExpansionAux {
 
   void ComputeTConstants_() {
 
-    t_constants_.Init(max_order_ + 1, max_order_ + 1);
+    t_constants_.Init(2 * (max_order_ + 1), 2 * (max_order_ + 1));
     t_constants_.SetZero();
 
     for(index_t m = 0; m < t_constants_.n_rows(); m++) {
@@ -114,7 +114,7 @@ class InversePowDistSeriesExpansionAux {
 
   void ComputeFactorials_() {
 
-    factorials_.Init(max_order_ + 1);
+    factorials_.Init(2 * (max_order_ + 1));
     factorials_[0] = 1;
     for(index_t i = 1; i < factorials_.length(); i++) {
       factorials_[i] = factorials_[i - 1] * i;      
@@ -123,7 +123,7 @@ class InversePowDistSeriesExpansionAux {
 
   void ComputeMultiplicativeConstants_() {
     
-    multiplicative_constants_.Init(max_order_ + 1);
+    multiplicative_constants_.Init(2 * (max_order_ + 1));
 
     for(index_t n = 0; n < multiplicative_constants_.size(); n++) {
       
@@ -210,6 +210,9 @@ class InversePowDistSeriesExpansionAux {
    */
   void GegenbauerPolynomials(double argument, 
 			     Matrix &evaluated_polynomials) const {
+
+    // First initialize the matrix to zeros.
+    evaluated_polynomials.SetZero();
 
     // lambda_index = lambda / 2 + 1, ...
     for(index_t lambda_index = 0; lambda_index < 

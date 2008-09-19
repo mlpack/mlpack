@@ -67,6 +67,18 @@ class InversePowDistLocalExpansion {
     return &center_;
   }
   
+  /** @brief Retrieves the set of coefficients.
+   */
+  ArrayList<GenMatrix<std::complex<double> > > *get_coeffs() {
+    return &coeffs_;
+  }
+
+  /** @brief Retrieves the set of coefficients.
+   */
+  const ArrayList<GenMatrix<std::complex<double> > > *get_coeffs() const {
+    return &coeffs_;
+  }
+
   /** @brief Retrieves the approximation order.
    */
   int get_order() const { 
@@ -85,7 +97,7 @@ class InversePowDistLocalExpansion {
     order_ = new_order;
   }
  
-  void Accumulate(const Vector &v, double weight, int order);
+  void Accumulate(const double *v, double weight, int order);
 
   /**
    * Accumulates the local moment represented by the given reference

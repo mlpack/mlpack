@@ -20,8 +20,6 @@
 #include "kernel_aux.h"
 #include "inverse_pow_dist_series_expansion_aux.h"
 
-class InversePowDistLocalExpansion;
-
 /** @brief The far field expansion class for the inverse power
  *         distance function.
  */
@@ -85,7 +83,7 @@ class InversePowDistFarFieldExpansion {
 
   // interesting functions...
 
-  void Accumulate(const Vector &v, double weight, int order);
+  void Accumulate(const double *v, double weight, int order);
   
   /**
    * Accumulates the far field moment represented by the given reference
@@ -149,6 +147,7 @@ class InversePowDistFarFieldExpansion {
    * Translate to the given local expansion. The translated coefficients
    * are added up to the passed-in local expansion coefficients.
    */
+  template<typename InversePowDistLocalExpansion>
   void TranslateToLocal(InversePowDistLocalExpansion &se, 
 			int truncation_order);
 
