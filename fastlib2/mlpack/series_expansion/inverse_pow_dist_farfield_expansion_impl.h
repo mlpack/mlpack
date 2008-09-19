@@ -70,11 +70,93 @@ void InversePowDistFarFieldExpansion::AccumulateCoeffs
   }
 }
 
+double InversePowDistFarFieldExpansion::EvaluateField(const Vector &v,
+						      int order) const {
+
+  double result = 0;
+  std::complex<double> tmp(0, 0);
+  std::complex<double> partial_derivative(0, 0);
+  const ArrayList<Matrix> *multiplicative_constants = 
+    sea_->get_multiplicative_constants();
+
+  // First, complete a table of Gegenbauer polynomials for the
+  // evaluation point.
+  double x_diff = v[0] - center_[0];
+  double y_diff = v[1] - center_[1];
+  double z_diff = v[2] - center_[2];
+  double radius, theta, phi;
+  Matrix evaluated_polynomials;
+  evaluated_polynomials.Init(order + 1, order + 1);
+  InversePowDistSeriesExpansionAux::ConvertCartesianToSpherical
+    (x_diff, y_diff, z_diff, &radius, &theta, &phi);
+  sea_->GegenbauerPolynomials(cos(theta), evaluated_polynomials);
+    
+  for(index_t n = 0; n <= order; n++) {
+    
+    const GenMatrix< std::complex<double> > &n_th_order_matrix = coeffs_[n];
+    const Matrix &n_th_multiplicative_constants = 
+      (*multiplicative_constants)[n];
+
+    for(index_t a = 0; a <= n; a++) {
+      for(index_t b = 0; b <= a; b++) {
+	sea_->ComputePartialDerivativeFactor(n, a, b, radius, theta, phi, 
+					     evaluated_polynomials,
+					     partial_derivative);
+
+	std::complex<double> product = n_th_order_matrix.get(a, b) * 
+	  partial_derivative;
+
+	result += n_th_multiplicative_constants.get(a, b) * 
+	  partial_derivative.real();
+      }
+    }
+  }
+
+  return result;
+}
+
 double InversePowDistFarFieldExpansion::EvaluateField
 (const Matrix& data, int row_num, int order) const {
 
-  // Please implement me!
-  return 0;
+  double result = 0;
+  std::complex<double> tmp(0, 0);
+  std::complex<double> partial_derivative(0, 0);
+  const ArrayList<Matrix> *multiplicative_constants = 
+    sea_->get_multiplicative_constants();
+
+  // First, complete a table of Gegenbauer polynomials for the
+  // evaluation point.
+  double x_diff = data.get(0, row_num) - center_[0];
+  double y_diff = data.get(1, row_num) - center_[1];
+  double z_diff = data.get(2, row_num) - center_[2];
+  double radius, theta, phi;
+  Matrix evaluated_polynomials;
+  evaluated_polynomials.Init(order + 1, order + 1);
+  InversePowDistSeriesExpansionAux::ConvertCartesianToSpherical
+    (x_diff, y_diff, z_diff, &radius, &theta, &phi);
+  sea_->GegenbauerPolynomials(cos(theta), evaluated_polynomials);
+    
+  for(index_t n = 0; n <= order; n++) {
+    
+    const GenMatrix< std::complex<double> > &n_th_order_matrix = coeffs_[n];
+    const Matrix &n_th_multiplicative_constants = 
+      (*multiplicative_constants)[n];
+
+    for(index_t a = 0; a <= n; a++) {
+      for(index_t b = 0; b <= a; b++) {
+	sea_->ComputePartialDerivativeFactor(n, a, b, radius, theta, phi, 
+					     evaluated_polynomials,
+					     partial_derivative);
+	std::complex<double> product = n_th_order_matrix.get(a, b) * 
+	  partial_derivative;
+
+	result += n_th_multiplicative_constants.get(a, b) * 
+	  partial_derivative.real();
+      }
+    }
+  }
+
+  return result;
 }
 
 void InversePowDistFarFieldExpansion::Init
@@ -91,7 +173,6 @@ void InversePowDistFarFieldExpansion::Init
 
   // Allocate the space for storing the coefficients.
   coeffs_.Init(sea_->get_max_order() + 1);
-  printf("Set to %d\n", sea_->get_max_order() + 1);
   for(index_t n = 0; n <= sea_->get_max_order(); n++) {
     coeffs_[n].Init(n + 1, n + 1);
     coeffs_[n].SetZero();
