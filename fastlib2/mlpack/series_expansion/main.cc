@@ -694,6 +694,44 @@ bool TestTransInversePowDistFarToLocal(const Matrix &data,
   return true;
 }
 
+bool TestTransInversePowDistFarToFar(const Matrix &data, const Vector &weights,
+				     int begin, int end) {
+
+  printf("\n----- TestTransInversePowDistFarToFar -----\n");
+
+  // Form a farfield expansion.
+  InversePowDistFarFieldExpansion fe;
+  InversePowDistSeriesExpansionAux sea;
+  Vector far_center;
+  double lambda = 1;
+  far_center.Init(data.n_rows());
+  far_center.SetZero();
+  sea.Init(lambda, 8, data.n_rows());
+  fe.Init(far_center, &sea);
+  fe.AccumulateCoeffs(data, weights, 0, data.n_cols(), 8);
+
+  Vector test_point;
+  test_point.Init(data.n_rows());
+  for(index_t i = 0; i < data.n_rows(); i++) {
+    test_point[i] = 20.5;
+  }
+
+  // Translate it to another center.
+  InversePowDistFarFieldExpansion another_fe;
+  Vector another_far_center;
+  another_far_center.Init(data.n_rows());
+  another_far_center.SetAll(-2);
+  another_fe.Init(another_far_center, &sea);
+  another_fe.TranslateFromFarField(fe);
+
+  printf("Evaluation at the original expansion: %g\n",
+	 fe.EvaluateField(test_point.ptr(), 8));
+  printf("Evaluation at the translated expansion: %g\n",
+	 another_fe.EvaluateField(test_point.ptr(), 8));
+  
+  return true;
+}
+
 int main(int argc, char *argv[]) {
 
   fx_init(argc, argv, NULL);
@@ -735,6 +773,7 @@ int main(int argc, char *argv[]) {
   DEBUG_ASSERT(TestEvaluateInversePowDistLocalField(data, weights, begin, 
 						    end));
   DEBUG_ASSERT(TestTransInversePowDistFarToLocal(data, weights, begin, end));
+  DEBUG_ASSERT(TestTransInversePowDistFarToFar(data, weights, begin, end));
 
   fx_done(fx_root);
 }
