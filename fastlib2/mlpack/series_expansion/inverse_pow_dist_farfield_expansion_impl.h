@@ -197,7 +197,11 @@ void InversePowDistFarFieldExpansion::TranslateFromFarField
     // Get the matrix reference to the coefficients to be stored.
     GenMatrix<std::complex<double> > &nprime_th_order_destination_matrix = 
       coeffs_[n_prime];
-    
+
+    // Get the $n'$-th matrix reference to the multiplicative constants.
+    const Matrix &n_prime_th_order_multiplicative_constants =
+      (*multiplicative_constants)[n_prime];
+
     for(index_t a_prime = 0; a_prime <= n_prime; a_prime++) {
       for(index_t b_prime = 0; b_prime <= a_prime; b_prime++) {
 	for(index_t n = 0; n <= n_prime; n++) {
@@ -243,7 +247,9 @@ void InversePowDistFarFieldExpansion::TranslateFromFarField
 		n_th_order_source_matrix.get(a, b) *
 		nprime_minus_n_th_order_multiplicative_constants.get
 		(a_prime - a, b_prime - b) *
-		n_th_order_multiplicative_constants.get(a, b) *
+		n_th_order_multiplicative_constants.get(a, b) /
+		n_prime_th_order_multiplicative_constants.get
+		(a_prime, b_prime) *
 		power_of_z_coord * power_of_eta * power_of_xi;
 	      nprime_th_order_destination_matrix.set
 		(a_prime, b_prime, nprime_th_order_destination_matrix.get

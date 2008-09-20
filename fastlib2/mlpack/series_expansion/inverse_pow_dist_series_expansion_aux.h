@@ -83,7 +83,7 @@ class InversePowDistSeriesExpansionAux {
 	    lambda_index++) {
 	  n_th_order_matrix.set
 	    (m, lambda_index, Factorial_(n - m) * two_raised_to_m * 
-	     PochammerValue(lambda_ / 2.0 + n, m));
+	     PochammerValue(lambda_ / 2.0 + lambda_index, m));
 	  if(n % 2 == 1) {
 	    n_th_order_matrix.set(m, lambda_index,
 				  -n_th_order_matrix.get(m, lambda_index));
@@ -106,7 +106,7 @@ class InversePowDistSeriesExpansionAux {
 	t_constants_.set(m, k, PochammerValue(lambda_ - 1, 2 * k) *
 			 math::BinomialCoefficient(m, k));
 	if((m + k) % 2 == 1) {
-	  t_constants_.set(m, k, t_constants_.get(m, k));
+	  t_constants_.set(m, k, -t_constants_.get(m, k));
 	}
       }
     }
