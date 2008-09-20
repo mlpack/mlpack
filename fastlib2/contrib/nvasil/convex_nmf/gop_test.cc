@@ -25,13 +25,13 @@ class GopNmfEngineTest {
   GopNmfEngineTest(fx_module *module) {
     module_=module;
   }
+  
   void Init() {
-    engine_ = new GopNmfEngine<SimpleSplitter>();
   }
+  
   void Destruct() {
-    delete engine_;
-    delete splitter_;
   }
+  
   void Test1() {
     Matrix data_points;
     data::Load(
@@ -42,21 +42,44 @@ class GopNmfEngineTest {
     fx_set_param_double(module_, "opt_gap", 0.001);
     fx_set_param_double(module_, "/relaxed_nmf/grad_tolerance", 1e-4);
     fx_set_param_double(module_, "/relaxed_nmf/scale_factor", 1);
-    splitter_ = new SimpleSplitter();
-    splitter_->Init();
-    engine_->Init(module_, splitter_, data_points); 
-    engine_->ComputeGlobalOptimum();
+
+    GopNmfEngine<SimpleSplitter> engine;
+    SimpleSplitter splitter; 
+    splitter.Init();
+    engine.Init(module_, &splitter, data_points); 
+    engine.ComputeGlobalOptimum();
   }
+  
+  void Test2() {
+    Matrix data_points;
+    data::Load("100_3_40_rand.csv", &data_points);
+    fx_set_param_int(module_, "new_dimension", 1);
+    fx_set_param_double(module_, "opt_gap", 0.001);
+    fx_set_param_double(module_, "/relaxed_nmf/grad_tolerance", 1e-4);
+    fx_set_param_double(module_, "/relaxed_nmf/scale_factor", 1);
+    fx_set_param_int(module_, "/splitter/w_leaf_size", 5);
+    fx_set_param_int(module_, "/splitter/h_leaf_size", 2);
+    fx_set_param_int(module_, "/splitter/w_offset", data_points.n_rows());
+    fx_set_param_int(module_, "/splitter/h_offset", 0);
+    fx_set_param_int(module_, "/splitter/h_length", data_points.n_rows());
+    
+    fx_module *splitter_module=fx_submodule(module_, "splitter");
+    GopNmfEngine<TreeOnWandHSplitter> engine; 
+    TreeOnWandHSplitter splitter; 
+    splitter.Init(splitter_module,  data_points);
+    engine.Init(module_, &splitter, data_points); 
+    engine.ComputeGlobalOptimum();
+    
+  }
+
 void TestAll() {
     Init();
-    Test1();
+    Test2();
     Destruct();
   }
 
  private:
   fx_module *module_;
-  GopNmfEngine<SimpleSplitter> *engine_;
-  SimpleSplitter *splitter_; 
 };
 
 int main(int argc, char *argv[]) {

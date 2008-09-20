@@ -85,6 +85,7 @@ class TreeOnWandHSplitter {
     w_current_depth_=0;
     h_current_depth_=-1;
     split_on_w_=true;
+    rehash_w_=false;
   }
   void Split(Matrix &lower_bound, Matrix &upper_bound, 
           Matrix *left_lower_bound, Matrix *left_upper_bound,
@@ -97,6 +98,7 @@ class TreeOnWandHSplitter {
                   w_offset_, 
                   left_lower_bound, left_upper_bound,
                   right_lower_bound, right_upper_bound);
+      split_on_w_=false;
     } else {
       SpitMatrix_(lower_bound, 
                   upper_bound, 
@@ -105,12 +107,13 @@ class TreeOnWandHSplitter {
                   h_offset_, 
                   left_lower_bound, left_upper_bound,
                   right_lower_bound, right_upper_bound);
+      split_on_w_=true;
     } 
   }
   // if it returns false it means that no further optimization can be done
   bool ChangeState(Matrix &opt_points) {
-    if (split_on_w_==true) {
-      split_on_w_=false;
+    if (rehash_w_==true) {
+      rehash_w_=false;
       // Make nodes for h
       Matrix data_points;
       data_points.Copy(opt_points.GetColumnPtr(h_offset_), opt_points.n_rows(), 
@@ -130,7 +133,7 @@ class TreeOnWandHSplitter {
       h_current_depth_++;
       return true;
     } else {
-      split_on_w_=true;
+      rehash_w_=true;
       w_point_nodes_.Renew();
       w_current_depth_++;
       if (w_current_depth_ >w_tree_max_depth_) {
@@ -162,7 +165,8 @@ class TreeOnWandHSplitter {
   ArrayList<std::pair<index_t, index_t> >  w_point_nodes_;
   ArrayList<std::pair<index_t, index_t> >  h_point_nodes_;
   bool split_on_w_;
-    
+  bool rehash_w_;  
+  
   void ComputeTreeDepth_(TreeType *tree_node, index_t *depth) {
     *depth=0;
     ComputeTreeDepthRecursion_(tree_node, 0, depth);
@@ -206,7 +210,7 @@ class TreeOnWandHSplitter {
 
     current_depth+=1;
     if (tree_node->is_leaf()==false 
-        || current_depth<desired_depth) {
+        && current_depth<desired_depth) {
       GoDownToDepthRecursion_(tree_node->left(),
                               current_depth,
                               desired_depth, 
@@ -254,6 +258,8 @@ class TreeOnWandHSplitter {
     index_t p=offset+old_from_new_points[point_nodes[widest_range_i].first];
     double split_value=(upper_bound.get(widest_range_j, p)
         +lower_bound.get(widest_range_j, p))/2; 
+    NOTIFY("interval length:%lg", split_value - lower_bound.get(widest_range_j, p));
+
     for(index_t i=point_nodes[widest_range_i].first; 
         i<point_nodes[widest_range_i].second; i++) {
       left_upper_bound->set(widest_range_j, offset+old_from_new_points[i], split_value);
