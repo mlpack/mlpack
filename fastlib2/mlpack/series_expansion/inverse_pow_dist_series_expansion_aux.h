@@ -241,7 +241,7 @@ class InversePowDistSeriesExpansionAux {
    *         polynomials using $cos(theta)$.
    */
   void ComputePFactor(double radius, double theta, double phi,
-		      int n, int m, double lambda,
+		      int n, int m, int k, double lambda,
 		      const Matrix &evaluated_polynomials,
 		      std::complex<double> &result) const {
     
@@ -250,11 +250,11 @@ class InversePowDistSeriesExpansionAux {
 
     // Compute the real part.
     result.real() = common_factor * cos(m * phi) * 
-      evaluated_polynomials.get(n - m, m);
+      evaluated_polynomials.get(n - m, k + m);
 
     // Then compute the imaginary part.
     result.imag() = common_factor * sin(m * phi) *
-      evaluated_polynomials.get(n - m, m);
+      evaluated_polynomials.get(n - m, k + m);
   }
 
   /** @brief Converts a 3-D coordinate into its spherical coordinate
@@ -306,7 +306,7 @@ class InversePowDistSeriesExpansionAux {
 	sign = 0;
       }
 
-      ComputePFactor(radius, theta, sign * phi, n - 2 * k, abs(a - 2 * b),
+      ComputePFactor(radius, theta, sign * phi, n - 2 * k, abs(a - 2 * b), k,
 		     lambda_ + 2 * k, evaluated_polynomials, tmp);
 
       result.real() += common_factor * tmp.real();

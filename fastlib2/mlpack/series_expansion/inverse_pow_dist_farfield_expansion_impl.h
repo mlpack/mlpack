@@ -177,9 +177,9 @@ void InversePowDistFarFieldExpansion::TranslateFromFarField
   // Compute the centered difference between the new center and the
   // old center.
   const Vector *old_center = se.get_center();
-  double x_diff = center_[0] - (*old_center)[0];
-  double y_diff = center_[1] - (*old_center)[1];
-  double z_diff = center_[2] - (*old_center)[2];
+  double x_diff = (center_[0] - (*old_center)[0]);
+  double y_diff = (center_[1] - (*old_center)[1]);
+  double z_diff = (center_[2] - (*old_center)[2]);
   double magnitude_of_vector_in_xy_plane =
     sqrt(math::Sqr(x_diff) + math::Sqr(y_diff));
   std::complex<double> eta(x_diff / magnitude_of_vector_in_xy_plane,
@@ -198,10 +198,6 @@ void InversePowDistFarFieldExpansion::TranslateFromFarField
     GenMatrix<std::complex<double> > &nprime_th_order_destination_matrix = 
       coeffs_[n_prime];
     
-    // Get the matrix reference to the multiplicative constants.
-    const Matrix &nprime_th_order_multiplicative_constants =
-      (*multiplicative_constants)[n_prime];
-
     for(index_t a_prime = 0; a_prime <= n_prime; a_prime++) {
       for(index_t b_prime = 0; b_prime <= a_prime; b_prime++) {
 	for(index_t n = 0; n <= n_prime; n++) {
@@ -215,13 +211,17 @@ void InversePowDistFarFieldExpansion::TranslateFromFarField
 	    (*coeffs_to_be_translated)[n];
 
 	  // Get the matrix reference to the multiplicative constants.
+	  const Matrix &n_th_order_multiplicative_constants =
+	    (*multiplicative_constants)[n];
+
+	  // Get the matrix reference to the multiplicative constants.
 	  const Matrix &nprime_minus_n_th_order_multiplicative_constants =
 	    (*multiplicative_constants)[n_prime - n];
 
 	  for(index_t a = l_a; a <= u_a; a++) {
 
 	    // $(z_i)^{n' - n - a' + a}$
-	    double power_of_z_coord = pow(z_diff, n_prime - n + a_prime - a);
+	    double power_of_z_coord = pow(z_diff, n_prime - n - a_prime + a);
 
 	    index_t l_b = std::max(0, b_prime + a - a_prime);
 	    index_t u_b = std::min(a, b_prime);
@@ -242,9 +242,8 @@ void InversePowDistFarFieldExpansion::TranslateFromFarField
 	      std::complex<double> contribution = 
 		n_th_order_source_matrix.get(a, b) *
 		nprime_minus_n_th_order_multiplicative_constants.get
-		(a_prime - a, b_prime - b) /
-		nprime_th_order_multiplicative_constants.get
-		(a_prime, b_prime) *
+		(a_prime - a, b_prime - b) *
+		n_th_order_multiplicative_constants.get(a, b) *
 		power_of_z_coord * power_of_eta * power_of_xi;
 	      nprime_th_order_destination_matrix.set
 		(a_prime, b_prime, nprime_th_order_destination_matrix.get
@@ -255,6 +254,9 @@ void InversePowDistFarFieldExpansion::TranslateFromFarField
       }
     }
   }
+
+  // Set the order to the max of the current order and given order.
+  order_ = std::max(order_, se.get_order());
 }
 
 template<typename InversePowDistLocalExpansion>
