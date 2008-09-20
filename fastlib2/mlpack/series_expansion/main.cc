@@ -706,9 +706,9 @@ bool TestTransInversePowDistFarToFar(const Matrix &data, const Vector &weights,
   double lambda = 1;
   far_center.Init(data.n_rows());
   far_center.SetZero();
-  sea.Init(lambda, 8, data.n_rows());
+  sea.Init(lambda, 5, data.n_rows());
   fe.Init(far_center, &sea);
-  fe.AccumulateCoeffs(data, weights, 0, data.n_cols(), 8);
+  fe.AccumulateCoeffs(data, weights, 0, data.n_cols(), 5);
 
   Vector test_point;
   test_point.Init(data.n_rows());
@@ -725,9 +725,9 @@ bool TestTransInversePowDistFarToFar(const Matrix &data, const Vector &weights,
   another_fe.TranslateFromFarField(fe);
 
   printf("Evaluation at the original expansion: %g\n",
-	 fe.EvaluateField(test_point.ptr(), 8));
+	 fe.EvaluateField(test_point.ptr(), 5));
   printf("Evaluation at the translated expansion: %g\n",
-	 another_fe.EvaluateField(test_point.ptr(), 8));
+	 another_fe.EvaluateField(test_point.ptr(), 5));
   
   return true;
 }
