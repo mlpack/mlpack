@@ -742,7 +742,7 @@ bool TestTransInversePowDistLocalToLocal(const Matrix &data,
   InversePowDistLocalExpansion another_le;
   InversePowDistSeriesExpansionAux sea;
   Vector center;
-  double lambda = 3;
+  double lambda = 1;
   center.Init(data.n_rows());
   center.SetAll(-9);
   Vector another_center;
@@ -761,7 +761,7 @@ bool TestTransInversePowDistLocalToLocal(const Matrix &data,
   Vector test_point;
   test_point.Init(data.n_rows());
   for(index_t i = 0; i < data.n_rows(); i++) {
-    test_point[i] = -11;
+    test_point[i] = -8.75;
   }
 
   test_point.PrintDebug();
