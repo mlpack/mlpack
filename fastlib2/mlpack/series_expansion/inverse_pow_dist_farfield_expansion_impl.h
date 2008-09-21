@@ -177,9 +177,9 @@ void InversePowDistFarFieldExpansion::TranslateFromFarField
   // Compute the centered difference between the new center and the
   // old center.
   const Vector *old_center = se.get_center();
-  double x_diff = (center_[0] - (*old_center)[0]);
-  double y_diff = (center_[1] - (*old_center)[1]);
-  double z_diff = (center_[2] - (*old_center)[2]);
+  double x_diff = -(center_[0] - (*old_center)[0]);
+  double y_diff = -(center_[1] - (*old_center)[1]);
+  double z_diff = -(center_[2] - (*old_center)[2]);
   double magnitude_of_vector_in_xy_plane =
     sqrt(math::Sqr(x_diff) + math::Sqr(y_diff));
   std::complex<double> eta(x_diff / magnitude_of_vector_in_xy_plane,
@@ -245,9 +245,9 @@ void InversePowDistFarFieldExpansion::TranslateFromFarField
 	      // Add the contribution.
 	      std::complex<double> contribution = 
 		n_th_order_source_matrix.get(a, b) *
+		n_th_order_multiplicative_constants.get(a, b) *
 		nprime_minus_n_th_order_multiplicative_constants.get
-		(a_prime - a, b_prime - b) *
-		n_th_order_multiplicative_constants.get(a, b) /
+		(a_prime - a, b_prime - b) /
 		n_prime_th_order_multiplicative_constants.get
 		(a_prime, b_prime) *
 		power_of_z_coord * power_of_eta * power_of_xi;
