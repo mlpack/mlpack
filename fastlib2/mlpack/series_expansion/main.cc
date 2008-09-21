@@ -659,7 +659,7 @@ bool TestTransInversePowDistFarToLocal(const Matrix &data,
   InversePowDistFarFieldExpansion fe;
   InversePowDistSeriesExpansionAux sea;
   Vector far_center;
-  double lambda = 1;
+  double lambda = 3;
   far_center.Init(data.n_rows());
   far_center.SetZero();
   sea.Init(lambda, 14, data.n_rows());
@@ -703,7 +703,7 @@ bool TestTransInversePowDistFarToFar(const Matrix &data, const Vector &weights,
   InversePowDistFarFieldExpansion fe;
   InversePowDistSeriesExpansionAux sea;
   Vector far_center;
-  double lambda = 1;
+  double lambda = 3;
   far_center.Init(data.n_rows());
   far_center.SetZero();
   sea.Init(lambda, 5, data.n_rows());
@@ -713,14 +713,14 @@ bool TestTransInversePowDistFarToFar(const Matrix &data, const Vector &weights,
   Vector test_point;
   test_point.Init(data.n_rows());
   for(index_t i = 0; i < data.n_rows(); i++) {
-    test_point[i] = 20.5;
+    test_point[i] = 3.5;
   }
 
   // Translate it to another center.
   InversePowDistFarFieldExpansion another_fe;
   Vector another_far_center;
   another_far_center.Init(data.n_rows());
-  another_far_center.SetAll(-2);
+  another_far_center.SetAll(0.25);
   another_fe.Init(another_far_center, &sea);
   another_fe.TranslateFromFarField(fe);
 
@@ -728,6 +728,56 @@ bool TestTransInversePowDistFarToFar(const Matrix &data, const Vector &weights,
 	 fe.EvaluateField(test_point.ptr(), 5));
   printf("Evaluation at the translated expansion: %g\n",
 	 another_fe.EvaluateField(test_point.ptr(), 5));
+  
+  return true;
+}
+
+bool TestTransInversePowDistLocalToLocal(const Matrix &data, 
+					 const Vector &weights,
+					 int begin, int end) {
+
+  printf("\n----- TestTransInversePowDistLocalToLocal -----\n");
+
+  InversePowDistLocalExpansion le;
+  InversePowDistLocalExpansion another_le;
+  InversePowDistSeriesExpansionAux sea;
+  Vector center;
+  double lambda = 3;
+  center.Init(data.n_rows());
+  center.SetAll(-9);
+  Vector another_center;
+  another_center.Init(data.n_rows());
+  another_center.SetAll(-8.5);
+
+  sea.Init(lambda, 8, data.n_rows());
+  le.Init(center, &sea);
+  le.AccumulateCoeffs(data, weights, 0, data.n_cols(), 8);
+  another_le.Init(another_center, &sea);
+  le.TranslateToLocal(another_le);
+
+  printf("Original expansion has order %d\n", le.get_order());
+  printf("Translated expansio has order %d\n", another_le.get_order());
+
+  Vector test_point;
+  test_point.Init(data.n_rows());
+  for(index_t i = 0; i < data.n_rows(); i++) {
+    test_point[i] = -11;
+  }
+
+  test_point.PrintDebug();
+  printf("Evaluated: %g\n", le.EvaluateField(test_point.ptr(), 7));
+  printf("Evaluated at another expansion: %g\n", 
+	 another_le.EvaluateField(test_point.ptr(), 7));
+
+  printf("Doing exhaustively to check the answer...\n");
+  double exhaustive_value = 0;
+  for(index_t i = 0; i < data.n_cols(); i++) {
+    double distance = sqrt(la::DistanceSqEuclidean
+			   (data.n_rows(), data.GetColumnPtr(i),
+			    test_point.ptr()));
+    exhaustive_value += weights[i] / pow(distance, lambda);
+  }
+  printf("Exhaustive value: %g\n", exhaustive_value);
   
   return true;
 }
@@ -774,6 +824,7 @@ int main(int argc, char *argv[]) {
 						    end));
   DEBUG_ASSERT(TestTransInversePowDistFarToLocal(data, weights, begin, end));
   DEBUG_ASSERT(TestTransInversePowDistFarToFar(data, weights, begin, end));
+  DEBUG_ASSERT(TestTransInversePowDistLocalToLocal(data, weights, begin, end));
 
   fx_done(fx_root);
 }

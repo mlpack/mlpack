@@ -145,10 +145,9 @@ void InversePowDistLocalExpansion::PrintDebug(const char *name,
 
 void InversePowDistLocalExpansion::TranslateToLocal
 (InversePowDistLocalExpansion &se) {
-  
-  /*
+
   // Get the pointer to the destination local moments.
-  const ArrayList<GenMatrix<std::complex<double> > > *dest_local_coeffs =
+  ArrayList<GenMatrix<std::complex<double> > > *dest_local_coeffs =
     se.get_coeffs();
 
   // Get the pointer to the multiplicative constants.
@@ -158,9 +157,9 @@ void InversePowDistLocalExpansion::TranslateToLocal
   // Compute the centered difference between the new center and the
   // old center.
   const Vector *new_center = se.get_center();
-  double x_diff = (new_center_[0] - center_[0]);
-  double y_diff = (new_center_[1] - center_[1]);
-  double z_diff = (new_center_[2] - center_[2]);
+  double x_diff = ((*new_center)[0] - center_[0]);
+  double y_diff = ((*new_center)[1] - center_[1]);
+  double z_diff = ((*new_center)[2] - center_[2]);
   double magnitude_of_vector_in_xy_plane =
     sqrt(math::Sqr(x_diff) + math::Sqr(y_diff));
   std::complex<double> eta(x_diff / magnitude_of_vector_in_xy_plane,
@@ -173,11 +172,11 @@ void InversePowDistLocalExpansion::TranslateToLocal
   std::complex<double> power_of_xi(0.0, 0.0);
   std::complex<double> contribution(0.0, 0.0);
 
-  for(index_t n_prime = 0; n_prime <= se.get_order(); n_prime++) {
+  for(index_t n_prime = 0; n_prime <= order_; n_prime++) {
 
     // Get the matrix reference to the coefficients to be stored.
     GenMatrix<std::complex<double> > &nprime_th_order_destination_matrix =
-      coeffs_[n_prime];
+      (*dest_local_coeffs)[n_prime];
 
     // Get the $n'$-th matrix reference to the multiplicative constants.
     const Matrix &n_prime_th_order_multiplicative_constants =
@@ -185,51 +184,44 @@ void InversePowDistLocalExpansion::TranslateToLocal
 
     for(index_t a_prime = 0; a_prime <= n_prime; a_prime++) {
       for(index_t b_prime = 0; b_prime <= a_prime; b_prime++) {
-        for(index_t n = 0; n <= n_prime; n++) {
-
-          index_t l_a = std::max(0, a_prime + n - n_prime);
-          index_t u_a = std::min(n, a_prime);
+        for(index_t n = n_prime; n <= order_; n++) {
 
           // Get the matrix reference to the coefficients to be
           // translated.
           const GenMatrix<std::complex<double> > &n_th_order_source_matrix =
-            (*coeffs_to_be_translated)[n];
+            coeffs_[n];
 
           // Get the matrix reference to the multiplicative constants.
-          const Matrix &n_th_order_multiplicative_constants =
-            (*multiplicative_constants)[n];
+          const Matrix &n_minus_n_prime_th_order_multiplicative_constants =
+            (*multiplicative_constants)[n - n_prime];
+	  const Matrix &n_th_order_multiplicative_constants =
+	    (*multiplicative_constants)[n];
 
-          // Get the matrix reference to the multiplicative constants.
-          const Matrix &nprime_minus_n_th_order_multiplicative_constants =
-            (*multiplicative_constants)[n_prime - n];
+          for(index_t a = a_prime; a <= n - n_prime + a_prime; a++) {
 
-          for(index_t a = l_a; a <= u_a; a++) {
+            // $(z_i)^{n - n' - a + a'}$
+            double power_of_z_coord = pow(z_diff, n - n_prime - a + a_prime);
 
-            // $(z_i)^{n' - n - a' + a}$
-            double power_of_z_coord = pow(z_diff, n_prime - n - a_prime + a);
-
-            index_t l_b = std::max(0, b_prime + a - a_prime);
-            index_t u_b = std::min(a, b_prime);
-
-            for(index_t b = l_b; b <= u_b; b++) {
+            for(index_t b = b_prime; b <= a - a_prime + b_prime; b++) {
 
 	      InversePowDistSeriesExpansionAux::PowWithRootOfUnity
-                (eta, b_prime - b, power_of_eta);
+                (eta, b - b_prime, power_of_eta);
               power_of_eta *= pow(magnitude_of_vector_in_xy_plane,
-                                  b_prime - b);
+                                  b - b_prime);
 
 	      InversePowDistSeriesExpansionAux::PowWithRootOfUnity
-                (xi, a_prime - a - b_prime + b, power_of_xi);
+                (xi, a - a_prime - b + b_prime, power_of_xi);
               power_of_xi *= pow(magnitude_of_vector_in_xy_plane,
-                                 a_prime - a - b_prime + b);
+                                 a - a_prime - b + b_prime);
 
               // Add the contribution.
 	      std::complex<double> contribution =
                 n_th_order_source_matrix.get(a, b) *
-                nprime_minus_n_th_order_multiplicative_constants.get
-                (a_prime - a, b_prime - b) /
+                n_minus_n_prime_th_order_multiplicative_constants.get
+                (a - a_prime, b - b_prime) *
                 n_prime_th_order_multiplicative_constants.get
-                (a_prime, b_prime) *
+                (a_prime, b_prime) /
+		n_th_order_multiplicative_constants.get(a, b) *
                 power_of_z_coord * power_of_eta * power_of_xi;
               nprime_th_order_destination_matrix.set
                 (a_prime, b_prime, nprime_th_order_destination_matrix.get
@@ -240,10 +232,10 @@ void InversePowDistLocalExpansion::TranslateToLocal
       }
     }
   }
-  */
 
-  // Set the order to the max of the current order and given order.
-  order_ = std::max(order_, se.get_order());
+  // Set the order of the destination local moments to the max of the
+  // current order and given order.
+  se.set_order(std::max(order_, se.get_order()));
 }
 
 #endif

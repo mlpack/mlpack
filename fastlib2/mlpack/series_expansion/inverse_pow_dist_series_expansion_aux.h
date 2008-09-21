@@ -76,21 +76,18 @@ class InversePowDistSeriesExpansionAux {
       // The reference to the matrix.
       Matrix &n_th_order_matrix = a_constants_[n];
 
-      double two_raised_to_m = 1.0;
       for(index_t m = 0; m < a_constants_[n].n_rows(); m++) {
 
 	for(index_t lambda_index = 0; lambda_index < a_constants_[n].n_cols(); 
 	    lambda_index++) {
 	  n_th_order_matrix.set
-	    (m, lambda_index, Factorial_(n - m) * two_raised_to_m * 
+	    (m, lambda_index, Factorial_(n - m) * pow(2, m) * 
 	     PochammerValue(lambda_ / 2.0 + lambda_index, m));
 	  if(n % 2 == 1) {
 	    n_th_order_matrix.set(m, lambda_index,
 				  -n_th_order_matrix.get(m, lambda_index));
 	  }
 	}
-
-	two_raised_to_m *= 2.0;
       }
     }
   }
@@ -134,19 +131,16 @@ class InversePowDistSeriesExpansionAux {
       // The reference to the matrix.
       Matrix &n_th_order_matrix = multiplicative_constants_[n];
 
-      double two_raised_to_a = 1.0;
       for(index_t a = 0; a <= n; a++) {
 
 	for(index_t b = 0; b <= a; b++) {
 	  n_th_order_matrix.set(a, b, math::BinomialCoefficient(n, a) * 
 				math::BinomialCoefficient(a, b) / 
-				(two_raised_to_a * factorials_[n]));
+				(pow(2, a) * factorials_[n]));
 	  if(n % 2 == 1) {
 	    n_th_order_matrix.set(a, b, -n_th_order_matrix.get(a, b));
 	  }
 	}
-
-	two_raised_to_a *= 2.0;
       }
     }
   }
