@@ -597,7 +597,7 @@ bool TestEvaluateInversePowDistFarField(const Matrix &data,
   Vector test_point;
   test_point.Init(data.n_rows());
   for(index_t i = 0; i < data.n_rows(); i++) {
-    test_point[i] = 20;
+    test_point[i] = 2.5;
   }
 
   test_point.PrintDebug();
