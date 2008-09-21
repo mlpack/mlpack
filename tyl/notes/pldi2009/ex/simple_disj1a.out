@@ -1,0 +1,7 @@
+ERROR: variable in disjunct must be bounded
+  variable: w
+  is of unbounded type: real
+
+ERROR: variable in disjunct must be bounded
+  variable: x
+  is of unbounded type: real
