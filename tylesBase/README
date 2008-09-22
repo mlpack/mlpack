@@ -1,0 +1,32 @@
+TylesBase is a library that is internally used by a few other
+projects. It is not meant to be distributed on its own.
+
+Design
+======
+File names suffixed with a "2"
+- These are extensions of other libraries, currently either the
+  Standard Library or ExtLib.
+- This is done because it's not possible to for example name a file
+  list.ml. The compiler complains.
+
+Files not named with a "2"
+- These are new modules that we want to include in TylesBase.
+
+tylesBase.ml
+- Packs all the modules.
+- Cannot use -pack option because we need to change the names of
+  modules named with a "2".
+- Also I don't know if you could extend Pervasives with -pack, which
+  is also done.
+
+Usage
+=====
+- Intended usage is to do "open TylesBase", which effectively makes
+  TylesBase your standard library.
+- Do not use modules directly, i.e. do not use List2, use
+  TylesBase.List. Ideally, we will be able to make this impossible.
+
+Contact
+=======
+Ashish Agarwal, agarwal1975@gmail.com
+http://homes.gersteinlab.org/people/ashish

@@ -64,20 +64,3 @@ let _ = dispatch begin function
         
   | _ -> ()
 end
-
-(*
-let _ = dispatch begin function
-  | After_rules ->
-      ocaml_lib ~extern:true ~dir:"+site-lib/extlib" "extLib";
-      ocaml_lib ~extern:true ~dir:"+site-lib/csv" "csv";
-      ocaml_lib ~extern:true "xml-light";
-      ocaml_lib ~extern:true ~dir:"+site-lib/pcre" "pcre";
-      ocaml_lib ~extern:true ~dir:"+site-lib/netsys" "netsys";
-      ocaml_lib ~extern:true ~dir:"+site-lib/netstring" "netstring";
-      ocaml_lib ~extern:true ~dir:"+site-lib/json-wheel" "jsonwheel";
-      flag ["link"; "ocaml"; "byte"] (A "-custom");
-      dep ["link"; "ocaml"; "use_mpm_C"] ["mpmC.o"];
-  | _ -> ()
-end
-*)
-
