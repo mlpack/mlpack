@@ -22,6 +22,7 @@
 #include "../l_bfgs/l_bfgs.h"
 #include "geometric_nmf.h"
 
+
 class RelaxedNmf {
  public:
   void Init(ArrayList<index_t> &rows,
@@ -291,26 +292,27 @@ class RelaxedNmfScaled {
   double epsilon_;
 };
 
+struct SolutionPack {
+ public:
+  SolutionPack() {
+  }
+  ~SolutionPack() {
+    
+  }
+  double relaxed_minimum_;
+  double non_relaxed_minimum_;
+  Matrix solution_;
+  std::pair<Matrix, Matrix> box_; 
+};
 
 template<typename SplitterClass>
 class GopNmfEngine {
  public:
-  struct SolutionPack {
-   public:
-     SolutionPack() {
-     }
-     ~SolutionPack() {
-       
-     }
-     Matrix solution_;
-     std::pair<Matrix, Matrix> box_; 
-  };
   
   typedef LBfgs<RelaxedNmf> LowerOptimizer; 
   typedef LBfgs<GeometricNmf> UpperOptimizer;
   void Init(fx_module *module, SplitterClass *splitter, Matrix &data_points);
   void ComputeGlobalOptimum();
-  void ComputeTighterGlobalOptimum();  
 
  private:
   fx_module *module_;
@@ -322,7 +324,7 @@ class GopNmfEngine {
   double desired_global_optimum_gap_;
   double grad_tolerance_;
   std::multimap<double, SolutionPack> lower_solution_;
-  std::pair<double, Matrix> upper_solution_;
+  SolutionPack upper_solution_;
   ArrayList<index_t> rows_;
   ArrayList<index_t> columns_;
   ArrayList<double> values_;

@@ -52,21 +52,37 @@ class GopNmfEngineTest {
   
   void Test2() {
     Matrix data_points;
-    data::Load("100_3_40_rand.csv", &data_points);
+    data::Load("100_1_40_rand.csv", &data_points);
     fx_set_param_int(module_, "new_dimension", 1);
     fx_set_param_double(module_, "opt_gap", 0.001);
-    fx_set_param_double(module_, "/relaxed_nmf/grad_tolerance", 1e-4);
+    fx_set_param_double(module_, "/relaxed_nmf/grad_tolerance", 1e-7);
     fx_set_param_double(module_, "/relaxed_nmf/scale_factor", 1);
-    fx_set_param_int(module_, "/splitter/w_leaf_size", 5);
-    fx_set_param_int(module_, "/splitter/h_leaf_size", 2);
+    fx_set_param_int(module_, "/splitter/w_leaf_size", 1);
+    fx_set_param_int(module_, "/splitter/h_leaf_size", 1);
     fx_set_param_int(module_, "/splitter/w_offset", data_points.n_rows());
     fx_set_param_int(module_, "/splitter/h_offset", 0);
     fx_set_param_int(module_, "/splitter/h_length", data_points.n_rows());
     
     fx_module *splitter_module=fx_submodule(module_, "splitter");
-    GopNmfEngine<TreeOnWandHSplitter> engine; 
-    TreeOnWandHSplitter splitter; 
+    GopNmfEngine<TreeOnWandTreeOnHSplitter> engine; 
+    TreeOnWandTreeOnHSplitter splitter; 
     splitter.Init(splitter_module,  data_points);
+    engine.Init(module_, &splitter, data_points); 
+    engine.ComputeGlobalOptimum();
+    
+  }
+  
+  void Test3() {
+    Matrix data_points;
+    data::Load("100_1_40_rand.csv", &data_points);
+    fx_set_param_int(module_, "new_dimension", 1);
+    fx_set_param_double(module_, "opt_gap", 0.001);
+    fx_set_param_double(module_, "/relaxed_nmf/grad_tolerance", 1e-7);
+    fx_set_param_double(module_, "/relaxed_nmf/scale_factor", 1);
+    
+    GopNmfEngine<SimpleSplitter> engine; 
+    SimpleSplitter splitter; 
+    splitter.Init();
     engine.Init(module_, &splitter, data_points); 
     engine.ComputeGlobalOptimum();
     
