@@ -321,6 +321,7 @@ class GopNmfEngine {
   Matrix x_upper_bound_;
   Matrix x_lower_bound_;
   SplitterClass *splitter_;
+  RelaxedNmf opt_fun_;
   double desired_global_optimum_gap_;
   double grad_tolerance_;
   std::multimap<double, SolutionPack> lower_solution_;
@@ -344,6 +345,7 @@ class GopNmfEngine {
 
   void PreprocessData(Matrix &data_mat);
   double ComputeVolume(Matrix &lower_bound, Matrix &upper_bound);
+  void ReportResults();
 };
 
 

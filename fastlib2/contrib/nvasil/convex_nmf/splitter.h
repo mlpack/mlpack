@@ -29,7 +29,7 @@ class SimpleSplitter {
  
   }
   
-  void Split(Matrix &lower_bound, Matrix &upper_bound, 
+  success_t Split(Matrix &lower_bound, Matrix &upper_bound, 
           Matrix *left_lower_bound, Matrix *left_upper_bound,
           Matrix *right_lower_bound, Matrix *right_upper_bound) {
     double widest_range=0;
@@ -54,19 +54,25 @@ class SimpleSplitter {
 
     left_upper_bound->set(widest_range_i, widest_range_j, split_value);
     right_lower_bound->set(widest_range_i, widest_range_j, split_value); 
+    return SUCCESS_PASS;
   }
   
-  void ChangeState(SolutionPack &solution) {
+  success_t ChangeState(SolutionPack &solution) {
+    return SUCCESS_PASS;
+  }
+  bool CanSplitMore() {
+    return false;
   }
 };
 
 /*
  * This version preserves the tree on w and it builds a tree on h on the fly
  */
+
+/*
 class TreeOnWandHSplitter {
  public: 
   typedef BinarySpaceTree<DHrectBound<2>, Matrix> TreeType;
- FILE *fp_; 
   void Init(fx_module *module, 
             Matrix &w_points) {
     module_=module;
@@ -101,44 +107,45 @@ class TreeOnWandHSplitter {
     h_tree_=NULL;   
     split_on_w_=true;
     rehash_w_=false;
-    fp_=fopen("temp", "w");
+    h_too_small_to_be_split_=false;
+    w_too_small_to_be_split_=false;
   }
-  void Split(Matrix &lower_bound, Matrix &upper_bound, 
+  success_t Split(Matrix &lower_bound, Matrix &upper_bound, 
           Matrix *left_lower_bound, Matrix *left_upper_bound,
           Matrix *right_lower_bound, Matrix *right_upper_bound) {
-    if (split_on_w_==true) {
-      SpitMatrix_(lower_bound, 
+    if (split_on_w_==true && w_too_small_to_be_split_==false) {
+      if (SpitMatrix_(lower_bound, 
                   upper_bound, 
                   w_old_from_new_points_, 
                   w_point_nodes_,
                   w_offset_, 
                   left_lower_bound, left_upper_bound,
-                  right_lower_bound, right_upper_bound);
-      for(index_t i=40; i<lower_bound.n_cols(); i++) {
-       fprintf(fp_, "%lg ", lower_bound.get(0,i));
+                  right_lower_bound, right_upper_bound)==SUCCESS_FAIL) {
+        w_too_small_to_be_split_=true;
       }
-      fprintf(fp_, "\n");
-      for(index_t i=40; i<upper_bound.n_cols(); i++) {
-       fprintf(fp_, "%lg ", upper_bound.get(0,i));
-      }
-      fprintf(fp_, "\n\n");
-
-      split_on_w_=false;
-    } else {
+    } 
+    if (split_on_w_==false && h_too_small_to_be_split_==true) {
       NOTIFY("Split on h");
-      SpitMatrix_(lower_bound, 
+      if (SpitMatrix_(lower_bound, 
                   upper_bound, 
                   h_old_from_new_points_, 
                   h_point_nodes_,
                   h_offset_, 
                   left_lower_bound, left_upper_bound,
-                  right_lower_bound, right_upper_bound);
+                  right_lower_bound, right_upper_bound)==SUCCESS_FAIL) {
+
+        h_too_small_to_be_split_=true;
+      }
       split_on_w_=true;
     }
-    
+    if (w_too_small_to_be_split_==true && h_too_small_to_be_split_) {
+      return SUCCESS_FAIL
+    } 
+    retrun SUCCESS_PASS;   
   }
+  
   // if it returns false it means that no further optimization can be done
-  bool ChangeState(SolutionPack &solution) {
+  success_t ChangeState(SolutionPack &solution) {
     Matrix opt_points;
     opt_points.Alias(solution.solution_);
     if (rehash_w_==false) {
@@ -157,7 +164,7 @@ class TreeOnWandHSplitter {
 				&h_old_from_new_points_, NULL);
       ComputeTreeDepth_(h_tree_, &h_tree_max_depth_);
       if (h_current_depth_>h_tree_max_depth_) {
-        return false;
+        return SUCCESS_FAIL;
       }
       h_point_nodes_.Renew();
       h_current_depth_++;
@@ -261,7 +268,7 @@ class TreeOnWandHSplitter {
     
   }
  
-  void SpitMatrix_(Matrix &lower_bound, Matrix &upper_bound, 
+  succees_t SpitMatrix_(Matrix &lower_bound, Matrix &upper_bound, 
           ArrayList<index_t> &old_from_new_points, 
           ArrayList<std::pair<index_t, index_t> > &point_nodes,
           index_t offset, 
@@ -297,6 +304,7 @@ class TreeOnWandHSplitter {
     }
   }
 };
+*/
 
 /* *****************************************************
  * *****************************************************
@@ -313,6 +321,7 @@ class TreeOnWandTreeOnHSplitter {
     w_offset_=fx_param_int_req(module_, "w_offset");
     h_offset_=fx_param_int_req(module_, "h_offset");
     h_length_=fx_param_int_req(module_, "h_length");
+    minimum_interval_length_=fx_param_double(module_, "minimum_interval_length", 1e-2);
     
     DEBUG_ASSERT(w_leaf_size_ > 0);
     DEBUG_ASSERT(h_leaf_size_ > 0);
@@ -340,60 +349,87 @@ class TreeOnWandTreeOnHSplitter {
                    h_current_depth_, 
                    &h_point_nodes_);
 
-
+    w_too_small_to_be_split_=false;
+    h_too_small_to_be_split_=false;
     split_on_w_=true;
+    split_on_h_=false;
     rehash_w_=false;
   }
-  void Split(Matrix &lower_bound, Matrix &upper_bound, 
+  
+  success_t Split(Matrix &lower_bound, Matrix &upper_bound, 
           Matrix *left_lower_bound, Matrix *left_upper_bound,
           Matrix *right_lower_bound, Matrix *right_upper_bound) {
-    if (split_on_w_==true) {
-      SpitMatrix_(lower_bound, 
+    if (split_on_w_==true && w_too_small_to_be_split_ == false) {
+      if (SpitMatrix_(lower_bound, 
                   upper_bound, 
                   w_old_from_new_points_, 
                   w_point_nodes_,
                   w_offset_, 
                   left_lower_bound, left_upper_bound,
-                  right_lower_bound, right_upper_bound);
-      split_on_w_=false;
-    } else {
-      NOTIFY("Split on h");
-      SpitMatrix_(lower_bound, 
-                  upper_bound, 
-                  h_old_from_new_points_, 
-                  h_point_nodes_,
-                  h_offset_, 
-                  left_lower_bound, left_upper_bound,
-                  right_lower_bound, right_upper_bound);
-      split_on_w_=true;
-    }
-    
-  }
-  // if it returns false it means that no further optimization can be done
-  bool ChangeState(SolutionPack &solution) {
-    Matrix opt_points;
-    opt_points.Alias(solution.solution_);
-//    if (rehash_w_==false) {
-      rehash_w_=true;
-      h_point_nodes_.Renew();
-      h_current_depth_++;
-      if (h_current_depth_ >h_tree_max_depth_) {
-        return false;
+                  right_lower_bound, right_upper_bound) == SUCCESS_FAIL) {
+        
+        w_too_small_to_be_split_=true;
       }
+      if (h_too_small_to_be_split_==false) {
+        split_on_w_=false;
+      } else {
+        split_on_w_=true;
+      }
+    } else { 
+      if (split_on_w_==false && h_too_small_to_be_split_ ==false) {
+        NOTIFY("Split on h");
+        if (SpitMatrix_(lower_bound, 
+                        upper_bound, 
+                        h_old_from_new_points_, 
+                        h_point_nodes_,
+                        h_offset_, 
+                        left_lower_bound, left_upper_bound,
+                        right_lower_bound, right_upper_bound)==SUCCESS_FAIL) {
+        
+          h_too_small_to_be_split_=true;
+        }
+        if (w_too_small_to_be_split_==false) {
+          split_on_w_=true;
+        } else {
+          split_on_w_=false;
+        }
+      }
+      if (w_too_small_to_be_split_ && h_too_small_to_be_split_) {
+        return SUCCESS_FAIL;
+      }
+    } 
+    return SUCCESS_PASS; 
+  }
+  
+  
+  // if it returns false it means that no further optimization can be done
+  success_t ChangeState(SolutionPack &solution) {
+      Matrix opt_points;
+    opt_points.Alias(solution.solution_);
+
+    w_too_small_to_split_=false;
+    h_too_small_to_split_=false;
+    rehash_w_=true;
+    h_current_depth_++;
+    if (h_current_depth_ < h_tree_max_depth_) {
       h_point_nodes_.Renew();
       GoDownToDepth_(h_tree_, h_current_depth_, &h_point_nodes_);
-//      return true;
-//    } else {
-      rehash_w_=false;
-      w_point_nodes_.Renew();
-      w_current_depth_++;
-      if (w_current_depth_ >w_tree_max_depth_) {
-        return false;
-      }
+    }
+    rehash_w_=false;
+    w_current_depth_++;
+    if (w_current_depth_ < w_tree_max_depth_) {
       w_point_nodes_.Renew();
       GoDownToDepth_(w_tree_, w_current_depth_, &w_point_nodes_);
+    }
+    return SUCCESS_PASS;
+  }
+
+  bool CanSplitMore() {
+    if (w_current_depth_<w_tree_max_depth_ || h_current_depth_<h_tree_max_depth_) {
       return true;
-//    } 
+    } else {
+      return false;
+    }
   }
   
  private:
@@ -415,7 +451,11 @@ class TreeOnWandTreeOnHSplitter {
   ArrayList<std::pair<index_t, index_t> >  w_point_nodes_;
   ArrayList<std::pair<index_t, index_t> >  h_point_nodes_;
   bool split_on_w_;
-  bool rehash_w_;  
+  bool split_on_h_;
+  bool rehash_w_; 
+  bool w_too_small_to_be_split_; 
+  bool h_too_small_to_be_split_;
+  double minimum_interval_length_;
   
   void ComputeTreeDepth_(TreeType *tree_node, index_t *depth) {
     *depth=-1;
@@ -480,7 +520,7 @@ class TreeOnWandTreeOnHSplitter {
     
   }
  
-  void SpitMatrix_(Matrix &lower_bound, Matrix &upper_bound, 
+  success_t SpitMatrix_(Matrix &lower_bound, Matrix &upper_bound, 
           ArrayList<index_t> &old_from_new_points, 
           ArrayList<std::pair<index_t, index_t> > &point_nodes,
           index_t offset, 
@@ -508,12 +548,18 @@ class TreeOnWandTreeOnHSplitter {
     index_t p=offset+old_from_new_points[point_nodes[widest_range_i].first];
     double split_value=(upper_bound.get(widest_range_j, p)
         +lower_bound.get(widest_range_j, p))/2; 
-    NOTIFY("interval length:%lg", split_value - lower_bound.get(widest_range_j, p));
+    double interval_length=split_value - lower_bound.get(widest_range_j, p);
+    if (interval_length < minimum_interval_length_) {
+      return SUCCESS_FAIL;
+    }
+    
+    NOTIFY("interval length:%lg", interval_length);
     for(index_t i=point_nodes[widest_range_i].first; 
         i<point_nodes[widest_range_i].second; i++) {
       left_upper_bound->set(widest_range_j, offset+old_from_new_points[i], split_value);
       right_lower_bound->set(widest_range_j, offset+old_from_new_points[i], split_value); 
     }
+    return SUCCESS_PASS;
   }
 };
 
