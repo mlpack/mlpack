@@ -2,13 +2,20 @@ TylesBase installation directions.
 
 Library
 =======
+Installation requires
+
+   ocaml
+   findlib
+   ocamldsort
+   extLib
+
 Let <tylesBase> refer to the source directory. Do
 
     cd <tylesBase>
     make all
 
 This will generate the files tylesBase.cm{o,a}. These will be under
-the <tylesBase>/_build directory, and you can link to them there.
+the <tylesBase>/_build/src directory, and you can link to them there.
 
 Documentation
 =============
