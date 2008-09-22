@@ -1,0 +1,21 @@
+TylesBase installation directions.
+
+Library
+=======
+Let <tylesBase> refer to the source directory. Do
+
+    cd <tylesBase>
+    make
+
+This will generate the files tylesBase.cm{o,a}. These will be under
+the <tylesBase>/_build directory, and you can link to them there.
+
+Documentation
+=============
+To make the documentation do
+
+   cd <tylesBase>
+   make doc
+
+This produces documentation in html format. The root is
+<tylesBase>/html/index.html.

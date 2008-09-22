@@ -1,5 +1,3 @@
-open TylesBase
-
 type t = {file:string option; line:int option; col:int option}
 
 exception Bad of string
@@ -39,16 +37,16 @@ let to_string t =
           None -> "" 
         | Some s -> (match t.line with None -> s | Some _ -> s ^ ":")
     in
-      
+    
     let l =
       match t.line with
           None -> "" 
         | Some k -> (match t.col with None -> string_of_int k | Some _ -> string_of_int k ^ ".")
     in
-      
+    
     let c =
       match t.col with
           None -> ""               
         | Some k -> string_of_int k
     in
-      f ^ l ^ c
+    f ^ l ^ c

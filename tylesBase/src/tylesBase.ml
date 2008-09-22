@@ -12,6 +12,17 @@ module String = String2
 
 module Msg = Msg
 module Pos = Pos
+module Test = Test
+module ArrayPrint = ArrayPrint
+
+module Fn = Fn
 module Tuple = Tuple
+module Order = Order
+module Ordered = Ordered
+
+module IntMap = IntMap
+module StringMap = StringMap
+module IntSet = IntSet
+module StringSet = StringSet
 
 include Pervasives2
