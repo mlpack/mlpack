@@ -24,7 +24,7 @@
 \setcounter{MaxMatrixCols}{30}
 %TCIDATA{OutputFilter=latex2.dll}
 %TCIDATA{Version=5.50.0.2953}
-%TCIDATA{LastRevised=Thursday, November 15, 2007 20:37:21}
+%TCIDATA{LastRevised=Monday, September 22, 2008 11:56:11}
 %TCIDATA{<META NAME="GraphicsSave" CONTENT="32">}
 %TCIDATA{<META NAME="SaveForMode" CONTENT="1">}
 %TCIDATA{BibliographyScheme=Manual}
@@ -49,23 +49,23 @@ frame=leftline,rulecolor=\color{gray}
 \setlength{\jot}{3.0\jot}
 \begin{document}
 %
-%TCIMACRO{\TeXButton{title}{\conferenceinfo{PLDI '08}%
-%{June 7--13, 2008, Tucson, Arizona, USA.}
-%\copyrightyear{2008}
+%TCIMACRO{\TeXButton{title}{\conferenceinfo{PLDI '09}%
+%{June 15--20, 2009, Dublin, Ireland.}
+%\copyrightyear{2009}
 %\copyrightdata{[to be supplied]}
 %\titlebanner{DRAFT---Do not distribute}
-%\preprintfooter{Preprint for PLDI '08}
+%\preprintfooter{Preprint for PLDI '09}
 %\title{Automating Mathematical Program Transformations}
 %\authorinfo{Author names omitted for review}
 %{ABC University}
 %{xy@abc.edu}
 %\maketitle}}%
 %BeginExpansion
-\conferenceinfo{PLDI '08}{June 7--13, 2008, Tucson, Arizona, USA.}
-\copyrightyear{2008}
+\conferenceinfo{PLDI '09}{June 15--20, 2009, Dublin, Ireland.}
+\copyrightyear{2009}
 \copyrightdata{[to be supplied]}
 \titlebanner{DRAFT---Do not distribute}
-\preprintfooter{Preprint for PLDI '08}
+\preprintfooter{Preprint for PLDI '09}
 \title{Automating Mathematical Program Transformations}
 \authorinfo{Author names omitted for review}
 {ABC University}
@@ -94,8 +94,8 @@ are actually written in. We begin by briefly reviewing an MP\ language
 previously developed by us, which includes several intuitive constraint forms
 that are however not accepted by state-of-the-art algorithms. Our main focus
 is on defining a transformation to pure mixed-integer programs, for which
-there are solvers. The principle result is a syntactic formalization of the
-convex-hull method for transforming disjunctive constraints into mixed-integer constraints.%
+there are solvers. The principle result is the syntactic formalization of the
+convex-hull method, big-M method, etc.%
 
 %TCIMACRO{\TeXButton{end abstract}{\end{abstract}}}%
 %BeginExpansion
@@ -114,6 +114,8 @@ convex-hull method for transforming disjunctive constraints into mixed-integer c
 
 
 \section{Introduction}
+
+NEED TO SHORTEN INTRO.
 
 The equations governing engineering systems rarely dictate a unique solution.
 Usually, a designer needs to find the optimal solution amongst a space of
@@ -387,6 +389,9 @@ Boolean expressions is also provided.
 
 \section{Mathematical Programming Language}
 
+DEFINITIONS OF THIS SECTION SHOULD BE IN A FIGURE. MINIMIZE DISCUSSION OF TYPE
+SYSTEM AND REAL COMPUTATION.
+
 Our mathematical programming language consists of types $\tau$, expressions
 $e$, constraints (called propositions in logic) $c$, and programs $p$. The
 syntax is%
@@ -581,6 +586,8 @@ This simply transforms each of the declared types in a context.
 
 \subsection{Conjunctive Normal Form}
 
+DELETE THIS SECTION. JUST MENTION THAT WE HAVE THIS.
+
 Boolean expressions can be converted into integer constraints, but producing
 linear integer constraints requires first converting to conjunctive normal
 form (CNF). We discuss this first, and in the next section show how Booleans
@@ -730,6 +737,8 @@ separate transformations we provide for \textsc{dlf} versus \textsc{conj}
 expressions produce linear inequalities.
 
 \subsection{Constraint Transformation}
+
+DELETE THIS DEFINITION. FOCUS INSTEAD ON SPECIFIC TRANSFORMATIONS.
 
 Let $\Upsilon\vdash c\overset{\text{\textsc{prop}}}{\longmapsto}%
 c^{\textsc{milp}}$ mean within context $\Upsilon$, constraint $c$ can be
@@ -944,11 +953,33 @@ _{j}^{\prime}\right\}  _{j=1}^{m}\qquad x_{1}\!:\!\rho_{1},\ldots
 }c^{\prime}}{\mathrm{max}_{x_{1}:\rho_{1},\ldots,x_{m}:\rho_{m}}\left\{  e\mid
 c\right\}  \overset{\text{\textsc{prog}}}{\longmapsto}\mathrm{max}%
 _{x_{1}\!:\!\rho_{1}^{\prime},\ldots,x_{m}\!:\!\rho_{m}^{\prime}}\left\{
-e\mid c^{\prime}\right\}  } \label{prog_compiler}%
+e\mid c^{\prime}\right\}  }\label{prog_compiler}%
 \end{equation}
 Since the objective $e$ must be of type $\mathtt{real}$, it is already in
 MILP\ form and need not be transformed. The types and constraints are
 transformed using their respective procedures.
+
+\section{Results}
+
+TO\ DO:
+
+\begin{itemize}
+\item Gather several interesting problems.
+
+\item Formulate each in our language, as well as in AMPL, OPL, and Mosel.
+Compare ease of formulation.
+
+\item Apply transformation procedures on each.
+
+\begin{itemize}
+\item compare size of source and target programs
+
+\item run each using CPLEX, compare computation times between our version and
+those formulated directly in AMPL, OPL, Mosel
+\end{itemize}
+\end{itemize}
+
+EXAMPLES BELOW ARE NOT GOOD.
 
 We give two examples: the transformation of a Boolean expression and a
 disjunctive constraint.
