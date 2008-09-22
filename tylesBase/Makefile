@@ -15,8 +15,8 @@ INCLUDE=$(foreach lib,$(LIB_PKGS),$(call lib_inc,$(lib))) $(patsubst %,-I _build
 .PHONY: all doc clean
 
 all:
-	ocamlbuild src/tylesBase.cmo
-	ocamlbuild src/tylesBase.cma
+	ocamlbuild tylesBase.cmo
+	ocamlbuild tylesBase.cma
 
 doc: src/*.mli
 	rm -rf html
