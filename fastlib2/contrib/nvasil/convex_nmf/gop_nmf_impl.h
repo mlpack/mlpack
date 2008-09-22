@@ -1251,7 +1251,6 @@ void GopNmfEngine<SplitterClass>::ComputeGlobalOptimum() {
    
   soft_prunes_=0;
   hard_prunes_=0;
-  bool need_to_split_w=false;
   double norm_values=la::Dot(values_.size(), values_.begin(), values_.begin());
   NOTIFY("Values norm:%lg", norm_values);
   // Solve for  this bounding box
@@ -1266,6 +1265,7 @@ void GopNmfEngine<SplitterClass>::ComputeGlobalOptimum() {
   opt_fun.Init(relaxed_nmf_module_,
                rows_, columns_, values_,   
                lower_bound, upper_bound); 
+  
   LowerOptimizer lower_optimizer;
   lower_optimizer.Init(&opt_fun, l_bfgs_module_);
   Matrix init_data;
@@ -1277,8 +1277,11 @@ void GopNmfEngine<SplitterClass>::ComputeGlobalOptimum() {
   opt_fun.ComputeNonRelaxedObjective(*lower_optimizer.coordinates(), &new_upper_global_optimum);
   double new_lower_global_optimum;
   opt_fun.ComputeObjective(*lower_optimizer.coordinates(), &new_lower_global_optimum);
-  upper_solution_.first=new_upper_global_optimum;
-  upper_solution_.second.Copy(*lower_optimizer.coordinates());
+  upper_solution_.relaxed_minimum_=new_lower_global_optimum;
+  upper_solution_.non_relaxed_minimum_=new_upper_global_optimum;
+  upper_solution_.solution_.Copy(*lower_optimizer.coordinates());
+  upper_solution_.box_.first.Copy(lower_bound);
+  upper_solution_.box_.second.Copy(upper_bound);
 /*  SolutionPack pack;
   pack.solution_.Copy(*optimizer.coordinates());
   pack.box_.first.Copy(lower_bound);
@@ -1289,11 +1292,12 @@ void GopNmfEngine<SplitterClass>::ComputeGlobalOptimum() {
 
   iteration_=0;
   NOTIFY("iteration:%i upper_global_optimum:%lg lower_global_optimum:%lg",
-      iteration_, upper_solution_.first, new_lower_global_optimum); 
-  if (upper_solution_.first-new_lower_global_optimum <desired_global_optimum_gap_) {
+      iteration_, upper_solution_.non_relaxed_minimum_, new_lower_global_optimum); 
+  if (upper_solution_.non_relaxed_minimum_-new_lower_global_optimum <desired_global_optimum_gap_) {
     NOTIFY("There is something wrong algorithm converged in the first step");
     return;
   }
+  index_t evil_counter=0;
   while (true) {
     // these bounds correspond to the optimization variables
     Matrix left_upper_bound;
@@ -1311,26 +1315,28 @@ void GopNmfEngine<SplitterClass>::ComputeGlobalOptimum() {
     opt_fun.Init(relaxed_nmf_module_, rows_, columns_, values_,  
                  left_lower_bound, left_upper_bound); 
     lower_optimizer.Init(&opt_fun, l_bfgs_module_);
-    if (opt_fun.GetSoftLowerBound() > upper_solution_.first 
+    if (opt_fun.GetSoftLowerBound() > upper_solution_.non_relaxed_minimum_
         || opt_fun.IsInfeasible()) {
       soft_prunes_++;
       //soft_pruned_volume_+=ComputeVolume(left_lower_bound, left_upper_bound);
     } else {
-      init_data.Destruct();
-      opt_fun.GiveInitMatrix(&init_data);
-      lower_optimizer.set_coordinates(init_data);
+      Matrix init_data_left;
+      opt_fun.GiveInitMatrix(&init_data_left);
+      lower_optimizer.set_coordinates(init_data_left);
       lower_optimizer.ComputeLocalOptimumBFGS();
       double new_upper_global_optimum;
       // Compute a new upper global maximum
-      opt_fun.ComputeNonRelaxedObjective(init_data, &new_upper_global_optimum);
-      if (new_upper_global_optimum <upper_solution_.first) {
-        upper_solution_.first=new_upper_global_optimum;
-        upper_solution_.second.Destruct();
-        upper_solution_.second.Copy(*lower_optimizer.coordinates());
-      }
+      opt_fun.ComputeNonRelaxedObjective(*lower_optimizer.coordinates(), &new_upper_global_optimum);
       double new_lower_global_optimum;
       opt_fun.ComputeObjective(*lower_optimizer.coordinates(), &new_lower_global_optimum);
-      if (new_lower_global_optimum < upper_solution_.first) {
+      if (new_upper_global_optimum <upper_solution_.non_relaxed_minimum_) {
+        upper_solution_.non_relaxed_minimum_=new_upper_global_optimum;
+        upper_solution_.relaxed_minimum_=new_lower_global_optimum;
+        upper_solution_.solution_.CopyValues(*lower_optimizer.coordinates());
+        upper_solution_.box_.first.CopyValues(left_lower_bound);
+        upper_solution_.box_.second.CopyValues(left_upper_bound);
+      }
+      if (new_lower_global_optimum <= upper_solution_.non_relaxed_minimum_) {
         SolutionPack pack;
         pack.box_.first.Init(1,1);
         pack.box_.second.Init(1, 1);
@@ -1353,41 +1359,41 @@ void GopNmfEngine<SplitterClass>::ComputeGlobalOptimum() {
       }
       NOTIFY("left_iteration:%i upper_global_optimum:%lg lower_global_optimum:%lg "
              "upper_bound:%lg lower_bound:%lg",
-          iteration_, upper_solution_.first, lower_solution_.begin()->first,
+          iteration_, upper_solution_.non_relaxed_minimum_, lower_solution_.begin()->first,
           new_upper_global_optimum, new_lower_global_optimum);
    }
 
     // optimize right
     lower_optimizer.Destruct();
     opt_fun.Destruct();
-    init_data.Destruct();
     opt_fun.Init(relaxed_nmf_module_, rows_, columns_, values_,  
                  right_lower_bound, right_upper_bound); 
     lower_optimizer.Init(&opt_fun, l_bfgs_module_);
-    opt_fun.GiveInitMatrix(&init_data);
-    lower_optimizer.set_coordinates(init_data);
-    if (opt_fun.GetSoftLowerBound() > upper_solution_.first
+    if (opt_fun.GetSoftLowerBound() > upper_solution_.non_relaxed_minimum_
         || opt_fun.IsInfeasible()) {
       soft_prunes_++;
       //soft_pruned_volume_+=ComputeVolume(right_lower_bound, right_upper_bound);
     } else {
-      init_data.Destruct();
-      opt_fun.GiveInitMatrix(&init_data);
-      lower_optimizer.set_coordinates(init_data);
+      Matrix init_data_right;
+      opt_fun.GiveInitMatrix(&init_data_right);
+      lower_optimizer.set_coordinates(init_data_right);
       lower_optimizer.Reset();
       lower_optimizer.ComputeLocalOptimumBFGS();
       double new_upper_global_optimum;
       // Compute a new upper global maximum
       opt_fun.ComputeNonRelaxedObjective(*lower_optimizer.coordinates(), 
           &new_upper_global_optimum);
-      if (new_upper_global_optimum <upper_solution_.first) {
-        upper_solution_.first=new_upper_global_optimum;
-        upper_solution_.second.Destruct();
-        upper_solution_.second.Copy(*lower_optimizer.coordinates());
-      }
       double new_lower_global_optimum;
       opt_fun.ComputeObjective(*lower_optimizer.coordinates(), &new_lower_global_optimum);
-      if (new_lower_global_optimum < upper_solution_.first) {
+
+      if (new_upper_global_optimum <upper_solution_.non_relaxed_minimum_) {
+        upper_solution_.non_relaxed_minimum_=new_upper_global_optimum;
+        upper_solution_.relaxed_minimum_=new_lower_global_optimum;
+        upper_solution_.solution_.CopyValues(*lower_optimizer.coordinates());
+        upper_solution_.box_.first.CopyValues(right_lower_bound);
+        upper_solution_.box_.second.CopyValues(right_upper_bound);
+     }
+     if (new_lower_global_optimum <= upper_solution_.non_relaxed_minimum_) {
         SolutionPack pack;
         pack.box_.first.Init(1,1);
         pack.box_.second.Init(1, 1);
@@ -1409,15 +1415,15 @@ void GopNmfEngine<SplitterClass>::ComputeGlobalOptimum() {
       }
       NOTIFY("right_iteration:%i upper_global_optimum:%lg lower_global_optimum:%lg "
              "upper_bound:%lg lower_bound:%lg",
-          iteration_, upper_solution_.first, lower_solution_.begin()->first,
+          iteration_, upper_solution_.non_relaxed_minimum_, lower_solution_.begin()->first,
           new_upper_global_optimum, new_lower_global_optimum);
       NOTIFY("hard_prunes:%i soft_prunes:%i", hard_prunes_, soft_prunes_);
 
     }
      
     // Check for convergence
-    DEBUG_ASSERT(upper_solution_.first - lower_solution_.begin()->first); 
-    if (upper_solution_.first - lower_solution_.begin()->first < 
+    DEBUG_ASSERT(upper_solution_.non_relaxed_minimum_ - lower_solution_.begin()->first); 
+    if (upper_solution_.non_relaxed_minimum_ - lower_solution_.begin()->first < 
         desired_global_optimum_gap_) {
       typename std::multimap<double, SolutionPack>::iterator it;
 //      for(it=lower_solution_.begin(); it!=lower_solution_.end(); it++) {
@@ -1425,7 +1431,7 @@ void GopNmfEngine<SplitterClass>::ComputeGlobalOptimum() {
 //            it->second.box_.second);
 //      }
       NOTIFY("Algorithm converged global optimum found");
-      fx_result_double(module_, "upper_global_optimum", upper_solution_.first);
+      fx_result_double(module_, "upper_global_optimum", upper_solution_.non_relaxed_minimum_);
       fx_result_double(module_, "lower_global_optimum", lower_solution_.begin()->first);
       fx_result_int(module_, "soft_prunes", soft_prunes_);
       fx_result_int(module_, "hard_prunes", hard_prunes_);
@@ -1439,15 +1445,15 @@ void GopNmfEngine<SplitterClass>::ComputeGlobalOptimum() {
           100.0*(hard_prunes_+soft_prunes_)/iteration_);
 
       Matrix final_solution;
-      final_solution.Copy(upper_solution_.second);
+      final_solution.Copy(upper_solution_.solution_);
       opt_fun.ComputeNonRelaxedObjective(final_solution, 
           &new_upper_global_optimum);
 
-      for(index_t i=0; i<upper_solution_.second.n_rows(); i++) {
-        for(index_t j=0; j<upper_solution_.second.n_cols(); j++) {
+      for(index_t i=0; i<upper_solution_.solution_.n_rows(); i++) {
+        for(index_t j=0; j<upper_solution_.solution_.n_cols(); j++) {
           final_solution.set(i, j, 
               (1-scale_factor_)*epsilon_ 
-              +scale_factor_*exp(upper_solution_.second.get(i, j)));
+              +scale_factor_*exp(upper_solution_.solution_.get(i, j)));
         }
       }
 
@@ -1483,26 +1489,25 @@ void GopNmfEngine<SplitterClass>::ComputeGlobalOptimum() {
       data::Save("result.csv", final_solution);
       return;
     }    
-   
-    if (lower_solution_.empty()) {
-      // we need more splits 
-      if (need_to_split_w==true) {
-        splitter_->ChangeState(upper_solution_.second);
-        //split W
-      } else {
-        // split H
-        splitter_->ChangeState(upper_solution_.second);
-        need_to_split_w=true;
-      }
-    } 
-    // choose next box to split and work   
-    lower_bound.Destruct(); 
-    lower_bound.Own(&lower_solution_.begin()->second.box_.first);
-    upper_bound.Destruct();
-    upper_bound.Own(&lower_solution_.begin()->second.box_.second);  
-    DEBUG_ASSERT(lower_solution_.size()>0);
-    lower_solution_.erase(lower_solution_.begin()); 
-    iteration_++;
+   // double volume=ComputeVolume(upper_solution_.box_.first, 
+   //                             upper_solution_.box_.second);
+    evil_counter++;
+    if (lower_solution_.empty() || evil_counter >150) {
+       splitter_->ChangeState(upper_solution_);
+      lower_solution_.clear();
+      lower_bound.CopyValues(upper_solution_.box_.first);
+      upper_bound.CopyValues(upper_solution_.box_.second);
+      evil_counter=0;   
+    } else { 
+      // choose next box to split and work   
+      lower_bound.Destruct(); 
+      lower_bound.Own(&lower_solution_.begin()->second.box_.first);
+      upper_bound.Destruct();
+      upper_bound.Own(&lower_solution_.begin()->second.box_.second);  
+      DEBUG_ASSERT(lower_solution_.size()>0);
+      lower_solution_.erase(lower_solution_.begin()); 
+    }
+      iteration_++;
   }
    
 }
@@ -1534,61 +1539,13 @@ void GopNmfEngine<SplitterClass>::PreprocessData(Matrix &data_mat) {
     }
   }
   double lower_limit=exp(-4.0);
-  double upper_limit=1.0;
+  double upper_limit=1;
   scale_factor_=fx_param_double_req(relaxed_nmf_module_, "scale_factor");
   double new_upper_limit=(upper_limit-lower_limit)/scale_factor_ + lower_limit;  
   x_lower_bound_.SetAll(log(lower_limit));
   x_upper_bound_.SetAll(log(new_upper_limit));
   epsilon_=lower_limit;
   fx_set_param_double(relaxed_nmf_module_, "epsilon", lower_limit); 
- /*  for(index_t i=0; i<num_of_rows_; i++) {
-    for(index_t j=0; j<new_dimension_; j++) {
-      x_upper_bound_.set(j, i, log(1.0));
-    }
-  }
- 
-  for(index_t i=num_of_rows_; i<num_of_rows_+num_of_columns_; i++) {
-    for(index_t j=0; j<new_dimension_; j++) {
-      x_upper_bound_.set(j, i, log(l1_norms[i-num_of_rows_]));
-    }
-  }
-*/ 
-/*  
-  x_lower_bound_.set(0,0, log(1)-5);
-  x_upper_bound_.set(0,0, log(1)+5);
-  x_lower_bound_.set(1,0, log(2)-5);
-  x_upper_bound_.set(1,0, log(2)+5);
-  x_lower_bound_.set(0,1, log(3)-5);
-  x_upper_bound_.set(0,1, log(3)+5);
-  x_lower_bound_.set(1,1, log(4)-5);
-  x_upper_bound_.set(1,1, log(4)+5);
-  x_lower_bound_.set(0,2, log(1)-5);
-  x_upper_bound_.set(0,2, log(1)+5);
-  x_lower_bound_.set(1,2, log(2)-5);
-  x_upper_bound_.set(1,2, log(2)+5);
-  x_lower_bound_.set(0,3, log(2)-5);
-  x_upper_bound_.set(0,3, log(2)+5);
-  x_lower_bound_.set(1,3, log(1)-5);
-  x_upper_bound_.set(1,3, log(1)+5);
-*/
-/*
-   x_lower_bound_.set(0,0, log(math::Random(0.1,1))-3);
-  x_upper_bound_.set(0,0, log(math::Random(0.1,1))+3);
-  x_lower_bound_.set(1,0, log(math::Random(0.1,1))-3);
-  x_upper_bound_.set(1,0, log(math::Random(0.1,1))+3);
-  x_lower_bound_.set(0,1, log(math::Random(0.1,1))-3);
-  x_upper_bound_.set(0,1, log(math::Random(0.1,1))+3);
-  x_lower_bound_.set(1,1, log(math::Random(0.1,1))-3);
-  x_upper_bound_.set(1,1, log(math::Random(0.1,1))+3);
-  x_lower_bound_.set(0,2, log(math::Random(0.1,1))-3);
-  x_upper_bound_.set(0,2, log(math::Random(0.1,1))+3);
-  x_lower_bound_.set(1,2, log(math::Random(0.1,1))-3);
-  x_upper_bound_.set(1,2, log(math::Random(0.1,1))+3);
-  x_lower_bound_.set(0,3, log(math::Random(0.1,1))-3);
-  x_upper_bound_.set(0,3, log(math::Random(0.1,1))+3);
-  x_lower_bound_.set(1,3, log(math::Random(0.1,1))-3);
-  x_upper_bound_.set(1,3, log(math::Random(0.1,1))+3);
- */
 }
 
 template<typename SplitterClass>
