@@ -713,14 +713,14 @@ bool TestTransInversePowDistFarToFar(const Matrix &data, const Vector &weights,
   Vector test_point;
   test_point.Init(data.n_rows());
   for(index_t i = 0; i < data.n_rows(); i++) {
-    test_point[i] = 3.5;
+    test_point[i] = 5.5;
   }
 
   // Translate it to another center.
   InversePowDistFarFieldExpansion another_fe;
   Vector another_far_center;
   another_far_center.Init(data.n_rows());
-  another_far_center.SetAll(0.25);
+  another_far_center.SetAll(-0.25);
   another_fe.Init(another_far_center, &sea);
   another_fe.TranslateFromFarField(fe);
 
