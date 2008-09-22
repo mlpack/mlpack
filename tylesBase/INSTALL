@@ -5,7 +5,7 @@ Library
 Let <tylesBase> refer to the source directory. Do
 
     cd <tylesBase>
-    make
+    make all
 
 This will generate the files tylesBase.cm{o,a}. These will be under
 the <tylesBase>/_build directory, and you can link to them there.
