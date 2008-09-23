@@ -1,10 +1,11 @@
-
 librule(
     name = "proximity_project",              # this line can be safely omitted
     sources = ["gen_range.cc"],              # files that must be compiled
     headers = ["subspace_stat.h",
                "../../../mlpack/kde/dataset_scaler.h",
                "general_type_bounds.h",
+               "gen_hypercube_tree.h",
+               "gen_hypercube_tree_impl.h",
                "gen_range.h",
                "gen_kdtree.h",
                "gen_kdtree_impl.h",
@@ -14,6 +15,14 @@ librule(
                "gen_metric_tree_impl.h",
                "general_spacetree.h"],       # include files part of the 'lib'
     deplibs = ["fastlib:fastlib_int"]        # dependency
+    )
+
+binrule(
+    name = "gen_hypercube_tree_test_bin",
+    sources = ["gen_hypercube_tree_test.cc"],
+    headers = [],
+    deplibs = [":proximity_project",
+               "fastlib:fastlib_int"]
     )
 
 binrule(
