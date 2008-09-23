@@ -444,6 +444,8 @@ class TreeOnWandBuildTreeOnHSplitter {
                                                  h_leaf_size_, 
 				                                         &h_old_from_new_points_, 
                                                  NULL);
+
+      ComputeTreeDepth_(h_tree_, &h_tree_max_depth_);
       if (h_current_depth_ <= h_tree_max_depth_) {
         h_point_nodes_.Renew();
         GoDownToDepth_(h_tree_, h_current_depth_, &h_point_nodes_);
@@ -707,10 +709,13 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
           h_points.set(i, j, exp(h_points.get(i, j)));
         }
       }
+     
       h_tree_=tree::MakeKdTreeMidpoint<TreeType>(h_points, 
                                                  h_leaf_size_, 
 				                                         &h_old_from_new_points_, 
                                                  NULL);
+      
+      ComputeTreeDepth_(h_tree_, &h_tree_max_depth_);
       if (h_current_depth_ <= h_tree_max_depth_) {
         h_point_nodes_.Renew();
         GoDownToDepth_(h_tree_, h_current_depth_, &h_point_nodes_);
@@ -730,12 +735,15 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
           w_points.set(i, j, exp(w_points.get(i, j)));
         }
       }
+      
       w_tree_=tree::MakeKdTreeMidpoint<TreeType>(w_points, 
                                                  w_leaf_size_, 
 				                                         &w_old_from_new_points_, 
                                                  NULL);
+      
+      ComputeTreeDepth_(w_tree_, &w_tree_max_depth_);
       if (w_current_depth_ <= w_tree_max_depth_) {
-        h_point_nodes_.Renew();
+        w_point_nodes_.Renew();
         GoDownToDepth_(w_tree_, w_current_depth_, &w_point_nodes_);
       }
     // }
