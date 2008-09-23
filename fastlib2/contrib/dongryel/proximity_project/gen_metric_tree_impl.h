@@ -1,4 +1,9 @@
-/* Implementation for the regular pointer-style spill kd-tree builder. */
+/** @file gen_metric_tree_impl.h
+ *
+ *  Implementation for the regular pointer-style ball-tree builder.
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
 
 #include "fastlib/fastlib_int.h"
 
