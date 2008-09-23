@@ -1288,7 +1288,8 @@ void GopNmfEngine<SplitterClass>::ComputeGlobalOptimum() {
   lower_solution_.insert(
       std::make_pair(new_lower_global_optimum,pack));
 */
-
+  index_t evil_counter=0;
+  bool evil_flag=false;
   iteration_=0;
   NOTIFY("iteration:%i upper_global_optimum:%lg lower_global_optimum:%lg",
       iteration_, upper_solution_.non_relaxed_minimum_, new_lower_global_optimum); 
@@ -1321,6 +1322,7 @@ void GopNmfEngine<SplitterClass>::ComputeGlobalOptimum() {
         Matrix init_data_left;
         opt_fun_.GiveInitMatrix(&init_data_left);
         lower_optimizer.set_coordinates(init_data_left);
+        lower_optimizer.Reset();
         lower_optimizer.ComputeLocalOptimumBFGS();
         double new_upper_global_optimum;
         // Compute a new upper global maximum
@@ -1333,6 +1335,7 @@ void GopNmfEngine<SplitterClass>::ComputeGlobalOptimum() {
           upper_solution_.solution_.CopyValues(*lower_optimizer.coordinates());
           upper_solution_.box_.first.CopyValues(left_lower_bound);
           upper_solution_.box_.second.CopyValues(left_upper_bound);
+          evil_flag=true;
         }
         if (new_lower_global_optimum <= upper_solution_.non_relaxed_minimum_) {
           SolutionPack pack;
@@ -1385,6 +1388,7 @@ void GopNmfEngine<SplitterClass>::ComputeGlobalOptimum() {
         opt_fun_.ComputeObjective(*lower_optimizer.coordinates(), &new_lower_global_optimum);
 
         if (new_upper_global_optimum <upper_solution_.non_relaxed_minimum_) {
+          evil_flag=true;
           upper_solution_.non_relaxed_minimum_=new_upper_global_optimum;
           upper_solution_.relaxed_minimum_=new_lower_global_optimum;
           upper_solution_.solution_.CopyValues(*lower_optimizer.coordinates());
@@ -1428,7 +1432,10 @@ void GopNmfEngine<SplitterClass>::ComputeGlobalOptimum() {
       }    
       // double volume=ComputeVolume(upper_solution_.box_.first, 
       //                             upper_solution_.box_.second);
-      if (lower_solution_.empty()) {
+      evil_counter++;
+      if (lower_solution_.empty() || (evil_counter >200 && evil_flag==true)) {
+        evil_counter=0;
+        evil_flag=false;
         splitter_->ChangeState(upper_solution_);
         lower_solution_.clear();
         lower_bound.CopyValues(upper_solution_.box_.first);
