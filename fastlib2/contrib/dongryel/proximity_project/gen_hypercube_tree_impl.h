@@ -2,6 +2,115 @@
 
 namespace tree_gen_hypercube_tree_private {
 
+  int BitInterleaving(const GenVector<unsigned int> &indices) {
+
+    int result = 0;
+    unsigned int offset = 0;
+    GenVector<unsigned int> indices_copy;
+    indices_copy.Copy(indices);
+
+    do {
+      unsigned int sum = 0;
+      for(index_t d = 0; d < indices_copy.length(); d++) {
+	sum += indices_copy[d];
+      }
+      if(sum == 0) {
+	break;
+      }
+
+      for(index_t d = 0; d < indices_copy.length(); d++) {
+	result += (indices_copy[d] % 2) << 
+	  (indices_copy.length() - d - 1 + offset);
+	indices_copy[d] = indices_copy[d] >> 1;
+      }
+      offset += indices_copy.length();
+
+    } while(true);
+
+    return result;
+  }
+
+  void BitDeinterleaving(unsigned int index, unsigned int level,
+			 GenVector<unsigned int> &indices) {
+    
+    for(index_t d = 0; d < indices.length(); d++) {
+      indices[d] = 0;
+    }
+    unsigned int loop = 0;
+    while(index > 0 || level > 0) {
+      for(index_t d = indices.length() - 1; d >= 0; d--) {
+	indices[d] = (1 << loop) * (index % 2) + indices[d];
+	index = index >> 1;
+      }      
+      level--;
+      loop++;
+    }
+  }
+
+  unsigned int FindParent(unsigned int index, index_t dimension) {
+    return index >> dimension;
+  }
+
+  unsigned int FindLowestDescendant(unsigned int index, index_t dimension) {
+    return index << dimension;
+  }
+
+  void RecursivelyChooseIndex(const GenVector<unsigned int> &lower_limit,
+			      const GenVector<unsigned int> &exclusion_index,
+			      const GenVector<unsigned int> &upper_limit,
+			      GenVector<unsigned int> &chosen_index, int level,
+			      bool valid_combination,
+			      ArrayList<unsigned int> &neighbor_indices) {
+
+    if(level < lower_limit.length()) {
+
+      // Choose the lower index.
+      chosen_index[level] = lower_limit[level];
+      RecursivelyChooseIndex(lower_limit, exclusion_index, upper_limit,
+			     chosen_index, level + 1, valid_combination ||
+			     (chosen_index[level] != exclusion_index[level]),
+			     neighbor_indices);
+
+      // Choose the upper index.
+      chosen_index[level] = upper_limit[level];
+      RecursivelyChooseIndex(lower_limit, exclusion_index, upper_limit,
+			     chosen_index, level + 1, valid_combination ||
+			     (chosen_index[level] != exclusion_index[level]),
+			     neighbor_indices);
+    }
+    else {
+
+      // If the chosen index is not equal to the exclusion index, then
+      // add the node number to the list.
+      if(valid_combination) {
+	neighbor_indices.PushBackCopy(BitInterleaving(chosen_index));
+      }
+    }
+  }
+
+  void FindNeighbors(unsigned int index, index_t level, 
+		     index_t dimension, 
+		     ArrayList<unsigned int> &neighbor_indices) {
+
+    // First, de-interleave the box index.
+    GenVector<unsigned int> tmp_vector, lower_limit, upper_limit;
+    tmp_vector.Init(dimension);
+    lower_limit.Init(dimension);
+    upper_limit.Init(dimension);
+    BitDeinterleaving(index, level, tmp_vector);
+    
+    for(index_t d = 0; d < dimension; d++) {
+      lower_limit[d] = std::max(tmp_vector[d] - 1, (unsigned int) 0);
+      upper_limit[d] = std::min(tmp_vector[d] + 1, 
+				(unsigned int) ((1 << level) - 1));
+    }
+
+    GenVector<unsigned int> chosen_index;
+    chosen_index.Init(dimension);
+    RecursivelyChooseIndex(lower_limit, tmp_vector, upper_limit, chosen_index,
+			   0, false, neighbor_indices);
+  }
+
   index_t MatrixPartition(Matrix& matrix, index_t dim, double splitvalue,
 			  index_t first, index_t count, 
 			  index_t *old_from_new) {
