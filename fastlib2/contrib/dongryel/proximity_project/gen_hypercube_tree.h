@@ -14,6 +14,7 @@ namespace proximity {
     
     Bound bound_;
     ArrayList<GenHypercubeTree *> *children_;
+    ArrayList<GenHypercubeTree *> *interaction_list_;
     index_t begin_;
     index_t count_;
     index_t level_;
@@ -45,15 +46,12 @@ namespace proximity {
       }
     }
 
-    void Init(index_t begin_in, index_t count_in, index_t &node_index_in) {
+    void Init(index_t begin_in, index_t count_in, index_t node_index_in) {
       DEBUG_ASSERT(begin_ == BIG_BAD_NUMBER);
       children_ = NULL;
       begin_ = begin_in;
       count_ = count_in;
       node_index_ = node_index_in;
-
-      // Increment the index.
-      node_index_in++;
     }
 
     const Bound& bound() const {
@@ -73,7 +71,7 @@ namespace proximity {
     }
 
     void set_child(int code, index_t first, index_t count, 
-		   index_t &node_index_in) {
+		   index_t node_index_in) {
       (*children_)[code] = new GenHypercubeTree();
       ((*children_)[code])->Init(first, count, node_index_in);
     }
@@ -92,6 +90,10 @@ namespace proximity {
       return begin_ + count_;
     }
     
+    index_t node_index() const {
+      return node_index_;
+    }
+
     /**
      * Gets the number of points in this subset.
      */
@@ -136,7 +138,9 @@ namespace proximity {
    * will map original indexes to new indices
    */
   GenHypercubeTree *MakeGenHypercubeTree
-  (Matrix& matrix, index_t leaf_size, ArrayList<index_t> *old_from_new = NULL,
+  (Matrix& matrix, index_t leaf_size,
+   ArrayList< ArrayList <GenHypercubeTree *> > *nodes_in_each_level,
+   ArrayList<index_t> *old_from_new = NULL,
    ArrayList<index_t> *new_from_old = NULL) {
     
     GenHypercubeTree *node = new GenHypercubeTree();
@@ -154,15 +158,22 @@ namespace proximity {
       old_from_new_ptr = NULL;
     }
     
-    index_t total_num_nodes = 0;
-    node->Init(0, matrix.n_cols(), total_num_nodes);
+    // Initialize the global list of nodes.
+    nodes_in_each_level->Init(1);    
 
+    // Initialize the root node.
+    node->Init(0, matrix.n_cols(), 0);
+    
     // Make the tightest cube bounding box you can fit around the
     // current set of points.
     tree_gen_hypercube_tree_private::ComputeBoundingHypercube(matrix, node);
 
+    // Put the root node into the initial list of level 0.
+    ((*nodes_in_each_level)[0]).Init();
+    ((*nodes_in_each_level)[0]).PushBackCopy(node);
+
     tree_gen_hypercube_tree_private::SplitGenHypercubeTree
-      (matrix, node, leaf_size, old_from_new_ptr, 0, total_num_nodes);
+      (matrix, node, leaf_size, nodes_in_each_level, old_from_new_ptr, 0);
 
     // Index shuffling business...
     if (new_from_old) {
