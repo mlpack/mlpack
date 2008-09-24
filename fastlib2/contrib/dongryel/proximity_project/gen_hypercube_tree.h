@@ -17,6 +17,7 @@ namespace proximity {
     index_t begin_;
     index_t count_;
     index_t level_;
+    index_t node_index_;
     
     OT_DEF(GenHypercubeTree) {
       OT_MY_OBJECT(bound_);
@@ -24,6 +25,7 @@ namespace proximity {
       OT_MY_OBJECT(begin_);
       OT_MY_OBJECT(count_);
       OT_MY_OBJECT(level_);
+      OT_MY_OBJECT(node_index_);
     }
     
    public:
@@ -43,11 +45,15 @@ namespace proximity {
       }
     }
 
-    void Init(index_t begin_in, index_t count_in) {
+    void Init(index_t begin_in, index_t count_in, index_t &node_index_in) {
       DEBUG_ASSERT(begin_ == BIG_BAD_NUMBER);
       children_ = NULL;
       begin_ = begin_in;
       count_ = count_in;
+      node_index_ = node_index_in;
+
+      // Increment the index.
+      node_index_in++;
     }
 
     const Bound& bound() const {
@@ -66,9 +72,10 @@ namespace proximity {
       level_ = level;
     }
 
-    void set_child(int code, index_t first, index_t count) {
+    void set_child(int code, index_t first, index_t count, 
+		   index_t &node_index_in) {
       (*children_)[code] = new GenHypercubeTree();
-      ((*children_)[code])->Init(first, count);
+      ((*children_)[code])->Init(first, count, node_index_in);
     }
 
     /**
@@ -147,14 +154,15 @@ namespace proximity {
       old_from_new_ptr = NULL;
     }
     
-    node->Init(0, matrix.n_cols());
+    index_t total_num_nodes = 0;
+    node->Init(0, matrix.n_cols(), total_num_nodes);
 
     // Make the tightest cube bounding box you can fit around the
     // current set of points.
     tree_gen_hypercube_tree_private::ComputeBoundingHypercube(matrix, node);
 
     tree_gen_hypercube_tree_private::SplitGenHypercubeTree
-      (matrix, node, leaf_size, old_from_new_ptr, 0);
+      (matrix, node, leaf_size, old_from_new_ptr, 0, total_num_nodes);
 
     // Index shuffling business...
     if (new_from_old) {
