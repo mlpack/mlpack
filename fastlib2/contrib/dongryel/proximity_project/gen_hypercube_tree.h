@@ -52,6 +52,7 @@ namespace proximity {
       begin_ = begin_in;
       count_ = count_in;
       node_index_ = node_index_in;
+      interaction_list_ = new ArrayList<GenHypercubeTree *>();
     }
 
     const Bound& bound() const {
