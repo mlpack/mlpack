@@ -58,7 +58,8 @@ namespace tree_gen_hypercube_tree_private {
   bool RecursiveMatrixPartition(Matrix &matrix, GenHypercubeTree *node,
 				index_t first, index_t count,
 				index_t *old_from_new, int level, 
-				unsigned int code) {
+				unsigned int code,
+				index_t &total_num_nodes) {
 
     if(level < matrix.n_rows()) {
       const DRange &range_in_this_dimension = node->bound().get(level);
@@ -76,13 +77,14 @@ namespace tree_gen_hypercube_tree_private {
       if(left_count > 0) {
 	left_result =
 	  RecursiveMatrixPartition(matrix, node, first, left_count, 
-				   old_from_new, level + 1, 2 * code);
+				   old_from_new, level + 1, 2 * code,
+				   total_num_nodes);
       }
       if(right_count > 0) {
 	right_result =
 	  RecursiveMatrixPartition(matrix, node, first + left_count, 
 				   right_count, old_from_new, level + 1, 
-				   2 * code + 1);
+				   2 * code + 1, total_num_nodes);
       }
       
       return left_result || right_result;
@@ -91,7 +93,7 @@ namespace tree_gen_hypercube_tree_private {
 
       // Create the child. From the code, also set the bounding cube
       // of half the side length.
-      node->set_child(code, first, count);
+      node->set_child(code, first, count, total_num_nodes);
       GenHypercubeTree *new_child = node->get_child(code);
       new_child->bound().Init(matrix.n_rows());
       
@@ -101,7 +103,8 @@ namespace tree_gen_hypercube_tree_private {
 
       for(index_t d = matrix.n_rows() - 1; d >= 0; d--) {
 	const DRange &range_in_this_dimension = node->bound().get(d);
-	if(code % 2 == 1) {
+
+	if(code & (1 << d) > 0) {
 	  lower_coord[d] = 0.5 * (range_in_this_dimension.lo +
 				  range_in_this_dimension.hi);
 	  upper_coord[d] = range_in_this_dimension.hi;
@@ -111,10 +114,10 @@ namespace tree_gen_hypercube_tree_private {
 	  upper_coord[d] = 0.5 * (range_in_this_dimension.lo +
 				  range_in_this_dimension.hi);
 	}
-	code = code >> 1;
       }
       new_child->bound() |= lower_coord;
       new_child->bound() |= upper_coord;
+
       return true;
     }
   }
@@ -153,7 +156,7 @@ namespace tree_gen_hypercube_tree_private {
 
   void SplitGenHypercubeTree(Matrix& matrix, GenHypercubeTree *node, 
 			     index_t leaf_size, index_t *old_from_new,
-			     index_t level) {
+			     index_t level, index_t &total_num_nodes) {
     
     // Set the level of this node.
     node->set_level(level);
@@ -172,14 +175,14 @@ namespace tree_gen_hypercube_tree_private {
       unsigned int code = 0;
       bool can_cut = RecursiveMatrixPartition(matrix, node, node->begin(),
 					      node->count(), old_from_new, 
-					      0, code);
+					      0, code, total_num_nodes);
 
       if(can_cut) {
 	for(index_t i = 0; i < node->num_children(); i++) {
 	  GenHypercubeTree *child_node = node->get_child(i);
 	  if(child_node != NULL) {
 	    SplitGenHypercubeTree(matrix, child_node, leaf_size, old_from_new,
-				  level + 1);
+				  level + 1, total_num_nodes);
 	  }
 	}
       }
