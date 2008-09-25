@@ -1,7 +1,8 @@
 librule(
     name = "fast_multipole_method",          # this line can be safely omitted
     sources = [],                            # files that must be compiled
-    headers = ["fast_multipole_method.h"],   # include files part of the 'lib'
+    headers = ["fast_multipole_method.h",
+               "fmm_stat.h"],                # include files part of the 'lib'
     deplibs = ["fastlib:fastlib_int",
                "contrib/dongryel/proximity_project:proximity_project"]    
     )
