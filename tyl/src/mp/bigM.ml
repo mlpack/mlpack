@@ -2,8 +2,8 @@ open Ast
 module E = Edsl
 
 (* lift functions into options *)
-liftO f a = match a with None -> None | Some x -> Some (f x)
-liftO2 f a b = match a with None -> None | Some x -> liftO (f x) b
+let liftO f a = match a with None -> None | Some x -> Some (f x)
+let liftO2 f a b = match a with None -> None | Some x -> liftO (f x) b
 
 (* pre: isNumExpr e 
    this impl keeps things 'int' as long as possible

@@ -1,0 +1,29 @@
+Installation Instructions
+=================================
+
+The recommended installation method is to use GODI (not yet implemented),
+which automatically downloads and installs for you. The directions
+below are needed only if you are not using GODI.
+
+First, make sure you have the following prerequisites:
+   
+   ocaml
+   findlib (for installation only)
+   ocamldsort (for installation only)
+   ...
+
+Assuming you have all the prerequisites installed, compile the code
+by typing
+
+   make all
+
+Then, install the code by typing
+
+   make install (not yet implemented)
+
+This step will require root permission if your ocaml distribution is
+installed in a system directory. Finally, to make documentation do
+
+   make doc
+
+The root of the documentation is doc/html/index.html.
