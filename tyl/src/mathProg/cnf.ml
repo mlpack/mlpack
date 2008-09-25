@@ -1,6 +1,4 @@
 open Ast
-open TylesBase.Util
-
 module E = Edsl
 
 (* The CNF functions assume e consists of only boolean syntax *)
