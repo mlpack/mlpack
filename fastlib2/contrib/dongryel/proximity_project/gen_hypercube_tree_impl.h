@@ -163,10 +163,12 @@ namespace tree_gen_hypercube_tree_private {
 
     return left;
   }
-  
+
+  template<typename TStatistic>
   bool RecursiveMatrixPartition
-  (Matrix &matrix, GenHypercubeTree *node, index_t first, index_t count,
-   ArrayList< ArrayList<GenHypercubeTree *> > *nodes_in_each_level,
+  (Matrix &matrix, GenHypercubeTree<TStatistic> *node, index_t first, 
+   index_t count, 
+   ArrayList< ArrayList<GenHypercubeTree<TStatistic> *> > *nodes_in_each_level,
    index_t *old_from_new, const int level, int recursion_level, 
    unsigned int code) {
 
@@ -204,9 +206,9 @@ namespace tree_gen_hypercube_tree_private {
 
       // Create the child. From the code, also set the bounding cube
       // of half the side length.
-      node->set_child(code, first, count, 
-		      (node->node_index() << matrix.n_rows()) + code);
-      GenHypercubeTree *new_child = node->get_child(code);
+      GenHypercubeTree<TStatistic> *new_child = 
+	node->set_child(first, count, 
+			(node->node_index() << matrix.n_rows()) + code);
 
       // Push the newly created child onto the list.
       ((*nodes_in_each_level)[level]).PushBackCopy(new_child);
@@ -237,7 +239,9 @@ namespace tree_gen_hypercube_tree_private {
     }
   }
 
-  void ComputeBoundingHypercube(Matrix &matrix, GenHypercubeTree *node) {
+  template<typename TStatistic>
+  void ComputeBoundingHypercube(Matrix &matrix, 
+				GenHypercubeTree<TStatistic> *node) {
 
     // Initialize the bound.
     node->bound().Init(matrix.n_rows());
@@ -269,16 +273,17 @@ namespace tree_gen_hypercube_tree_private {
     node->bound() |= new_upper_coordinate;
   }
 
+  template<typename TStatistic>
   void SplitGenHypercubeTree
-  (Matrix& matrix, GenHypercubeTree *node, index_t leaf_size,
-   ArrayList< ArrayList<GenHypercubeTree *> > *nodes_in_each_level,
+  (Matrix& matrix, GenHypercubeTree<TStatistic> *node, index_t leaf_size,
+   ArrayList< ArrayList<GenHypercubeTree<TStatistic> *> > *nodes_in_each_level,
    index_t *old_from_new, index_t level) {
     
     // Set the level of this node.
     node->set_level(level);
-    
+
     // If the node is just too small, then do not split.
-    if(node->count() < leaf_size) {
+    if(node->count() <= leaf_size) {
     }
     
     // Otherwise, attempt to split.
@@ -302,16 +307,11 @@ namespace tree_gen_hypercube_tree_private {
 
       if(can_cut) {
 	for(index_t i = 0; i < node->num_children(); i++) {
-	  GenHypercubeTree *child_node = node->get_child(i);
-	  if(child_node != NULL) {
-	    SplitGenHypercubeTree(matrix, child_node, leaf_size, 
-				  nodes_in_each_level, old_from_new,
-				  level + 1);
-	  }
+	  GenHypercubeTree<TStatistic> *child_node = node->get_child(i);
+	  SplitGenHypercubeTree(matrix, child_node, leaf_size, 
+				nodes_in_each_level, old_from_new,
+				level + 1);
 	}
-      }
-      else {
-	node->DeleteChildren();
       }
     }
   }

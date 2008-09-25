@@ -5,12 +5,14 @@
 
 namespace proximity {
 
+  template<class TStatistic>
   class GenHypercubeTree {
 
    public:
 
     typedef DHrectBound<2> Bound;
     typedef Matrix Dataset;
+    typedef TStatistic Statistic;
     
     Bound bound_;
     ArrayList<GenHypercubeTree *> *children_;
@@ -18,6 +20,7 @@ namespace proximity {
     index_t count_;
     index_t level_;
     index_t node_index_;
+    Statistic stat_;
     
     OT_DEF(GenHypercubeTree) {
       OT_MY_OBJECT(bound_);
@@ -26,23 +29,31 @@ namespace proximity {
       OT_MY_OBJECT(count_);
       OT_MY_OBJECT(level_);
       OT_MY_OBJECT(node_index_);
+      OT_MY_OBJECT(stat_);
     }
     
    public:
+    
+    const Statistic& stat() const {
+      return stat_;
+    }
+    
+    Statistic& stat() {
+      return stat_;
+    }
+
+    /** @brief Tests whether the current node is a leaf node
+     *         (childless).
+     *
+     *  @return true if childless, false otherwise.
+     */
+    bool is_leaf() {
+      return children_ == NULL;
+    }
 
     void AllocateChildren(index_t dim) {
       children_ = new ArrayList<GenHypercubeTree *>();
-      children_->Init(1 << dim);
-      for(index_t i = 0; i < children_->size(); i++) {
-	(*children_)[i] = NULL;
-      }
-    }
-    
-    void DeleteChildren() {
-      if(children_ != NULL) {
-	delete children_;
-	children_ = NULL;
-      }
+      children_->Init();
     }
 
     void Init(index_t begin_in, index_t count_in, index_t node_index_in) {
@@ -69,10 +80,14 @@ namespace proximity {
       level_ = level;
     }
 
-    void set_child(int code, index_t first, index_t count, 
-		   index_t node_index_in) {
-      (*children_)[code] = new GenHypercubeTree();
-      ((*children_)[code])->Init(first, count, node_index_in);
+    GenHypercubeTree *set_child(index_t first, index_t count, 
+				index_t node_index_in) {
+      
+      GenHypercubeTree *new_node = new GenHypercubeTree();
+      children_->PushBackCopy(new_node);
+      new_node->Init(first, count, node_index_in);
+
+      return new_node;
     }
 
     /**
@@ -136,13 +151,14 @@ namespace proximity {
    * @param new_from_old pointer to an unitialized arraylist; it
    * will map original indexes to new indices
    */
-  GenHypercubeTree *MakeGenHypercubeTree
+  template<typename TStatistic>
+  GenHypercubeTree<TStatistic> *MakeGenHypercubeTree
   (Matrix& matrix, index_t leaf_size,
-   ArrayList< ArrayList <GenHypercubeTree *> > *nodes_in_each_level,
+   ArrayList< ArrayList<GenHypercubeTree<TStatistic> *> > *nodes_in_each_level,
    ArrayList<index_t> *old_from_new = NULL,
    ArrayList<index_t> *new_from_old = NULL) {
     
-    GenHypercubeTree *node = new GenHypercubeTree();
+    GenHypercubeTree<TStatistic> *node = new GenHypercubeTree<TStatistic>();
     index_t *old_from_new_ptr;
     
     if (old_from_new) {
