@@ -1,4 +1,4 @@
-<base> or <mathProg>: include
+<mathProg>: include
 
 <**/*.{ml,mli,byte,native}>:debug, pkg_str, pkg_extlib, pkg_pcre, use_tylesBase
 
