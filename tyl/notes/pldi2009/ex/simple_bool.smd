@@ -1,2 +1,0 @@
-exists y1:bool . exists y2:bool . exists y3:bool .
-  isTrue ((y1 and y2) implies y3) and y1

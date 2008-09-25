@@ -1,2 +1,0 @@
-exists x:real . exists w:real .
-  (x <= w) disj (x >= w + 4.0)
