@@ -1,5 +1,0 @@
-<mathProg>: include
-
-<**/*.{ml,mli,byte,native}>:debug, pkg_str, pkg_extlib, pkg_pcre, use_tylesBase
-
-<mathProg/*.cmx>: for-pack(MathProg)
