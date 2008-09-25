@@ -1,6 +1,6 @@
+open TylesBase
 open Ast
 open Format
-open TylesBase.Util
 
 (* naming convention: pp<typename> *)
 
@@ -31,7 +31,7 @@ let rec ppexpr e = match e with
         (match op with Plus -> "+" | Minus -> "-" | Mult -> "*" | Or -> "||" | And -> "&&")
         (ppexpr e2)
 
-let ppcontext = String.concat "\n" % map (fun (x,t) -> sprintf "%s:%s" (Id.toString x) (pptyp t)) 
+let ppcontext = String.concat "\n" <<- List.map (fun (x,t) -> sprintf "%s:%s" (Id.toString x) (pptyp t)) 
 
 let rec ppprop c = match c with
   | CBoolVal b -> if b then "T" else "F"
@@ -43,7 +43,7 @@ let rec ppprop c = match c with
         (ppexpr e2)
   | CPropOp (op,cs) -> 
       let opstr = match op with Disj -> " disj " | Conj -> "\n conj " in
-        sprintf "(@[%s@])" (String.concat opstr (map ppprop cs))
+        sprintf "(@[%s@])" (String.concat opstr (List.map ppprop cs))
   | CQuant (Exists,x,t,c) -> sprintf "(@[exists %s:%s .@ %s@])" (Id.toString x) (pptyp t) (ppprop c)
 
 let ppprog p = match p with

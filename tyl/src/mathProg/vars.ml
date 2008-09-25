@@ -1,6 +1,5 @@
+open TylesBase
 open Ast
-open TylesBase.Util
-
 module S = Id.Set
 
 let rec freeVarse e = match e with 
@@ -13,16 +12,16 @@ let rec freeVarsc c = match c with
   | CBoolVal _        -> S.empty
   | CIsTrue e         -> freeVarse e
   | CNumRel (_,e1,e2) -> S.unions [freeVarse e1; freeVarse e2]
-  | CPropOp (_,cs)    -> S.unions (map freeVarsc cs)
+  | CPropOp (_,cs)    -> S.unions (List.map freeVarsc cs)
   | CQuant (_,x,_,c') -> S.remove x (freeVarsc c')
 
 let freeVarsp p = match p with PMain (_,ctxt,e,c) -> 
-  let ids = foldl (flip S.add) S.empty % fst % unzip in 
-    S.diff $ S.unions [freeVarse e; freeVarsc c] $ ids ctxt
+  let ids = List.fold_left (flip S.add) S.empty <<- fst <<- List.unzip in 
+   S.diff (S.unions [freeVarse e; freeVarsc c]) (ids ctxt)
 
-let isClosede = S.is_empty % freeVarse
-let isClosedc = S.is_empty % freeVarsc 
-let isClosedp = S.is_empty % freeVarsp 
+let isClosede = S.is_empty <<- freeVarse
+let isClosedc = S.is_empty <<- freeVarsc 
+let isClosedp = S.is_empty <<- freeVarsp
 
 let rec subee e x e' = match e' with 
   | EVar x'              -> if Id.equal x x' then e else e'
@@ -34,7 +33,7 @@ let rec subec e x c = match c with
   | CBoolVal _               -> c
   | CIsTrue e'               -> CIsTrue (subee e x e')
   | CNumRel (op,e1,e2)       -> CNumRel (op, subee e x e1, subee e x e2)
-  | CPropOp (op,cs)          -> CPropOp (op, map (subec e x) cs)
+  | CPropOp (op,cs)          -> CPropOp (op, List.map (subec e x) cs)
   | CQuant (q,x',t,c')       -> (* use alphaConvert here ... *)
       if not (S.mem x (freeVarsc c'))       then c 
       else if not (S.mem x' (freeVarse e))  then CQuant (q,x',t,subec e x c')

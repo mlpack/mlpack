@@ -1,6 +1,6 @@
-open Ast
+open TylesBase
 open TylesBase.SmallCheck
-open TylesBase.Util
+open Ast
 
 let boolNullOps = pure _Bool %% bools 
 let realNullOps = pure _Int %% ints ++ pure _Real %% floats
@@ -29,14 +29,14 @@ let rec boolExprs = fun () ->
   ++ pure _EConst %% boolNullOps 
   ++ pure _EUnaryOp %% boolUnaryOps %% boolExprs
   ++ pure _EBinaryOp %% boolBinaryOps %% boolExprs %% boolExprs
-    $ ()
+    & ()
 
 let rec realExprs = fun () -> 
   pure _EVar %% ids 
   ++ pure _EConst %% realNullOps 
   ++ pure _EUnaryOp %% realUnaryOps %% realExprs
   ++ pure _EBinaryOp %% realBinaryOps %% realExprs %% realExprs
-    $ ()
+    & ()
 
 let exprs = boolExprs ++ realExprs 
 
@@ -46,7 +46,7 @@ let rec props = fun () ->
   ++ pure _CNumRel %% numRels %% realExprs %% realExprs
   ++ pure _CPropOp %% propOps %% lists props 
   ++ pure _CQuant %% quants %% ids %% typs %% props
-    $ ()
+    & ()
 
 let progs = pure _PMain %% directions %% lists (pairs ids typs) %% exprs %% props
 

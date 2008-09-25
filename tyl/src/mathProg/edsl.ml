@@ -1,3 +1,4 @@
+open TylesBase
 open Ast
 
 let continuous lo hi = TReal (Continuous (Some lo, Some hi))

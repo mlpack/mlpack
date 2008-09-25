@@ -1,18 +1,22 @@
+open TylesBase
 open Ast
 open Vars
 open Wf
 open Cnf
-open TylesBase.Util
-
 module S = Id.Set
 module E = Edsl
+
+let rec transpose xss = match xss with 
+  | [] -> [] 
+  | []::xss' -> transpose xss'      
+  | (x::xs) :: xss' -> (x :: List.map List.hd xss') :: transpose (xs :: List.map List.tl xss')
 
 let compileType t = match t with 
   | TBool None -> E.discrete 0 1
   | TBool (Some a) -> let b = if a then 1 else 0 in E.discrete b b 
   | _ -> t (* numeric types are left unchanged *)
 
-let compileContext ctxt = map (fun (x,t) -> (x,compileType t)) ctxt
+let compileContext ctxt = List.map (fun (x,t) -> (x,compileType t)) ctxt
 
 let rec compileDLF e = 
   assert (isDLF e) ;
@@ -32,7 +36,7 @@ let rec compileProp ctxt c =
         if isDLF e' then E.(>=) (compileDLF e') E.one else compileConj e'
     | CNumRel _ -> c
     | CPropOp (Disj,_) -> compileDisj ctxt c
-    | CPropOp (Conj,cs) -> CPropOp (Conj, map (compileProp ctxt) cs)
+    | CPropOp (Conj,cs) -> CPropOp (Conj, List.map (compileProp ctxt) cs)
     | CQuant (Exists,x,t,c) -> 
         let t' = compileType t in
         let c' = compileProp ((x,t')::ctxt) c in
@@ -63,8 +67,8 @@ and typeAsBoundingProp (x',t) = let x = EVar x' in
 
 and addBoundingProps ctxt c = 
   let xs = S.elements (freeVarsc c) in 
-  let ts = map (lookup ctxt) xs in
-  let cs = map typeAsBoundingProp (zip xs ts) in
+  let ts = List.map (lookup ctxt) xs in
+  let cs = List.map typeAsBoundingProp (List.zip xs ts) in
     CPropOp (Conj,c::cs)
 
 (* pre: e and e' are numeric expressions *) 
@@ -91,7 +95,7 @@ and scalec e c = match c with
   | CBoolVal _ -> c
   | CIsTrue e' -> E.isTrue (scalee e e') 
   | CNumRel (op,e1,e2) -> CNumRel(op, scalee e e1, scalee e e2)
-  | CPropOp (op,cs) -> CPropOp(op, map (scalec e) cs)
+  | CPropOp (op,cs) -> CPropOp(op, List.map (scalec e) cs)
   | CQuant (Exists,x,t,c') -> 
       if not (S.mem x (freeVarse e)) 
       then CQuant (Exists,x,t,scalec e c')
@@ -104,22 +108,22 @@ and compileDisj ctxt c =
   assert (disjVarsBounded ctxt c) ;
   let freeVars = freeVarsc c in
   let xs = S.elements freeVars in
-  let ts = map (lookup ctxt) xs in
+  let ts = List.map (lookup ctxt) xs in
     match c with 
       | CPropOp (Disj,cs) -> 
           let n = List.length cs in
           let var x = EVar x in
-          let vars = map var in
+          let vars = List.map var in
           let ys = Id.fresh' n freeVars (Id.make "y") in
           let xss = Id.fresh'' n (S.addAll ys freeVars) xs in
           let ctxt' = compileContext ctxt in
-          let cs' = map (compileProp ctxt) cs in
-          let cs'' = map (addBoundingProps ctxt') cs' in
-          let cs''' = map3 (fun yj xjs cj'' -> scalec (var yj) (subec' (vars xjs) xs cj'')) ys (transpose xss) cs'' in
+          let cs' = List.map (compileProp ctxt) cs in
+          let cs'' = List.map (addBoundingProps ctxt') cs' in
+          let cs''' = List.map (fun (yj,xjs,cj'') -> scalec (var yj) (subec' (vars xjs) xs cj'')) (List.zip3 ys (transpose xss) cs'') in
           let foo = E.conj (cs''' @ [E.(==) E.one (E.sum (vars ys))] @ List.map2 (fun z zs -> E.(==) (var z) (E.sum (vars zs))) xs xss) in
           let rec makeExists xts c = match xts with (x,t)::xts' -> makeExists xts' (CQuant(Exists,x,t,c)) | _ -> c in
-          let ysAdded = makeExists (map (fun y -> (y,E.discrete 0 1)) ys) foo in
-            List.fold_left2 (fun c xs' t -> makeExists (map (fun x -> (x,t)) xs') c) ysAdded xss ts
+          let ysAdded = makeExists (List.map (fun y -> (y,E.discrete 0 1)) ys) foo in
+            List.fold_left2 (fun c xs' t -> makeExists (List.map (fun x -> (x,t)) xs') c) ysAdded xss ts
       | _ -> failwith "compileDisj: proposition is not a disjunction"
         
 let compile (PMain (d,ctxt,e,c) as p) = 
