@@ -35,7 +35,11 @@ class FastMultipoleMethod {
 
   /** @brief The octree containing the entire particle set.
    */
-  proximity::GenHypercubeTree tree_;
+  proximity::GenHypercubeTree *tree_;
+
+  /** @brief The list of nodes on each level.
+   */
+  ArrayList< ArrayList <proximity::GenHypercubeTree *> > nodes_in_each_level_;
 
   /** @brief The number of query particles in the particle set.
    */
@@ -85,7 +89,8 @@ class FastMultipoleMethod {
     // weights according to the permutation of the reference set in
     // the reference tree.
     fx_timer_start(NULL, "tree_d");
-
+    tree_ = proximity::MakeGenHypercubeTree(particle_set_, leaflen,
+					    &nodes_in_each_level_);
     fx_timer_stop(NULL, "tree_d");    
   }
 };
