@@ -1,5 +1,3 @@
-open List
-
 type t = string
   
 let make s = s
@@ -8,8 +6,8 @@ let equal i j = i = j
 
 module Set = struct
   include Set.Make(String)
-  let unions = fold_left union empty
-  let addAll xs set = fold_left (fun s x -> add x s) set xs
+  let unions = List.fold_left union empty
+  let addAll xs set = List.fold_left (fun s x -> add x s) set xs
 end
 
 (* return a new name not in 'taboo' *)
