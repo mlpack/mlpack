@@ -2,7 +2,7 @@ open Ast
 open Vars
 open Wf
 open Cnf
-open Util
+open TylesBase.Util
 
 module S = Id.Set
 module E = Edsl

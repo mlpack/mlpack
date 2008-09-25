@@ -1,5 +1,5 @@
 open Ast
-open Util
+open TylesBase.Util
 open Vars
 
 let rec containsQuantifier c = match c with

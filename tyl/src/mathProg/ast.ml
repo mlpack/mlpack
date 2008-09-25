@@ -9,7 +9,7 @@
    cs,xs - plural (sets/lists of things)
 *)
 
-open Util
+open TylesBase.Util
 
 type nullOp = Bool of bool | Int of int | Real of float
 type unaryOp = Neg | Not 

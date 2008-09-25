@@ -1,8 +1,8 @@
-open Tyl.Mp.Edsl
-open Tyl.Mp.Show
+open MathProg.Edsl
+open TylesBase.Show
 open Printf
 let map = List.map
-let compile = Tyl.Mp.Compiler.compile
+let compile = MathProg.Compiler.compile
 
 let x = name "x"
 let w = name "w"

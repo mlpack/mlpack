@@ -1,6 +1,6 @@
-open SmallCheck
 open Ast
-open Util
+open TylesBase.SmallCheck
+open TylesBase.Util
 
 let boolNullOps = pure _Bool %% bools 
 let realNullOps = pure _Int %% ints ++ pure _Real %% floats
