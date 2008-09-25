@@ -1,5 +1,5 @@
-<base> or <mp>: include
+<base> or <mathProg>: include
 
 <**/*.{ml,mli,byte,native}>:debug, pkg_str, pkg_extlib, pkg_pcre, use_tylesBase
 
-<mp/*.cmx>: for-pack(Mp)
+<mathProg/*.cmx>: for-pack(MathProg)
