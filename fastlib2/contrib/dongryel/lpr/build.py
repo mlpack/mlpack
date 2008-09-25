@@ -1,10 +1,15 @@
 librule(
     name = "lpr",
     sources = [],
-    headers = ["lpr.h",
-               "lpr_bandwidth_cv.h",
-               "lpr_bandwidth_cv_impl.h",
-               "lpr_impl.h"]
+    headers = ["dualtree_lpr.h",
+               "dualtree_lpr_impl.h"],
+    deplibs = ["fastlib:fastlib"]
+    )
+
+binrule(
+    name = "lpr_cv_bin",
+    sources = ["lpr_cv_main.cc"],
+    headers = [],
     deplibs = ["fastlib:fastlib"]
     )
 
