@@ -25,9 +25,7 @@ module StringMap = StringMap
 module IntSet = IntSet
 module StringSet = StringSet
 
-(* this is temporary ... I am in the middle of refactoring *)
 module Show = Show
-module Util = Util
 module SmallCheck = SmallCheck
 
 include Pervasives2
