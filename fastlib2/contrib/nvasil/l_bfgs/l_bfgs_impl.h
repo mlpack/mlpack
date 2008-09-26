@@ -319,7 +319,8 @@ void LBfgs<OptimizedFunction>::InitOptimization_() {
   if (silent_==false) {
     NOTIFY("Initializing optimization ...\n");
   }
-  coordinates_.Init(new_dimension_, num_of_points_);
+  optimized_function_->GiveInitMatrix(&coordinates_);
+  num_of_points_=coordinates_.n_cols();
   previous_coordinates_.Init(new_dimension_, num_of_points_);
   gradient_.Init(new_dimension_, num_of_points_);
   previous_gradient_.Init(new_dimension_, num_of_points_);
