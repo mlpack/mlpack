@@ -16,7 +16,7 @@ namespace proximity {
     typedef TStatistic Statistic;
     
     Bound bound_;
-    ArrayList<GenHypercubeTree *> *children_;
+    ArrayList<GenHypercubeTree *> children_;
     ArrayList<index_t> begin_;
     ArrayList<index_t> count_;
     index_t total_count_;
@@ -26,7 +26,7 @@ namespace proximity {
     
     OT_DEF(GenHypercubeTree) {
       OT_MY_OBJECT(bound_);
-      OT_PTR_NULLABLE(children_);
+      OT_MY_OBJECT(children_);
       OT_MY_OBJECT(begin_);
       OT_MY_OBJECT(count_);
       OT_MY_OBJECT(total_count_);
@@ -58,8 +58,7 @@ namespace proximity {
       begin_.Init(number_of_particle_sets);
       count_.Init(number_of_particle_sets);
       total_count_ = 0;
-      children_ = new ArrayList<GenHypercubeTree *>();
-      children_->Init();
+      children_.Init();
     }
 
     void Init(index_t particle_set_number, index_t begin_in, 
@@ -68,6 +67,11 @@ namespace proximity {
       begin_[particle_set_number] = begin_in;
       count_[particle_set_number] = count_in;
       total_count_ += count_in;
+    }
+
+    double side_length() const {
+      const DRange &range = bound_.get(0);
+      return range.hi - range.lo;
     }
 
     const Bound& bound() const {
@@ -79,7 +83,7 @@ namespace proximity {
     }
 
     GenHypercubeTree *get_child(int index) const {
-      return (*children_)[index];
+      return children_[index];
     }
 
     void set_level(index_t level) {
@@ -90,7 +94,7 @@ namespace proximity {
 				       index_t node_index_in) {
       
       GenHypercubeTree *new_node = new GenHypercubeTree();
-      children_->PushBackCopy(new_node);
+      children_.PushBackCopy(new_node);
       new_node->Init(number_of_particle_sets);
       node_index_ = node_index_in;
 
@@ -134,7 +138,7 @@ namespace proximity {
      * Gets the number of children.
      */
     index_t num_children() const {
-      return children_->size();
+      return children_.size();
     }
 
   };

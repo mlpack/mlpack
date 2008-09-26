@@ -2,6 +2,12 @@
 
 namespace tree_gen_hypercube_tree_private {
 
+  template<typename TStatistic>
+  void FindAdjacentChildren(GenHypercubeTree<TStatistic> *leaf_node,
+			    ArrayList<unsigned int> &adjacent_children) {
+    
+  }
+
   int BitInterleaving(const GenVector<unsigned int> &indices) {
 
     int result = 0;
@@ -88,9 +94,9 @@ namespace tree_gen_hypercube_tree_private {
     }
   }
 
-  void FindNeighbors(unsigned int index, index_t level, 
-		     index_t dimension, 
-		     ArrayList<unsigned int> &neighbor_indices) {
+  void FindNeighborsInNonAdaptiveGenHypercubeTree
+  (unsigned int index, index_t level, index_t dimension, 
+   ArrayList<unsigned int> &neighbor_indices) {
 
     // First, de-interleave the box index.
     GenVector<unsigned int> tmp_vector, lower_limit, upper_limit;
@@ -198,6 +204,7 @@ namespace tree_gen_hypercube_tree_private {
       right_child_begin.Init(matrices.size());
       right_child_count.Init(matrices.size());
 
+      // Divide each particle set.
       for(index_t particle_set_number = 0; 
 	  particle_set_number < matrices.size(); particle_set_number++) {
 
@@ -376,7 +383,7 @@ namespace tree_gen_hypercube_tree_private {
 	child_count[i] = node->count(i);
       }
 
-      bool can_cut = 
+      bool can_cut = (node->side_length() > DBL_EPSILON) &&
 	RecursiveMatrixPartition
 	(matrices, node, node->count(), child_begin, child_count,
 	 nodes_in_each_level, old_from_new, level, 0, code);
