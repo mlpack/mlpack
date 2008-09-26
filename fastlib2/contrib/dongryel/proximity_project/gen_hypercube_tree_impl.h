@@ -77,6 +77,13 @@ namespace tree_gen_hypercube_tree_private {
 			     (chosen_index[level] != exclusion_index[level]),
 			     neighbor_indices);
 
+      // Choose the exclusion index.
+      chosen_index[level] = exclusion_index[level];
+      RecursivelyChooseIndex(lower_limit, exclusion_index, upper_limit,
+			     chosen_index, level + 1, valid_combination ||
+			     (chosen_index[level] != exclusion_index[level]),
+			     neighbor_indices);
+
       // Choose the upper index.
       chosen_index[level] = upper_limit[level];
       RecursivelyChooseIndex(lower_limit, exclusion_index, upper_limit,
@@ -231,14 +238,14 @@ namespace tree_gen_hypercube_tree_private {
 	right_child_count[particle_set_number] = right_count;  
 	if(left_count > 0) {
 	  left_child_begin[particle_set_number] = 
-	    node->begin(particle_set_number);
+	    child_begin[particle_set_number];
 	}
 	else {
 	  left_child_begin[particle_set_number] = -1;
 	}
 	if(right_count > 0) {
 	  right_child_begin[particle_set_number] = 
-	    node->begin(particle_set_number) + left_count;
+	    child_begin[particle_set_number] + left_count;
 	}
 	else {
 	  right_child_begin[particle_set_number] = -1;

@@ -21,7 +21,7 @@ namespace proximity {
     ArrayList<index_t> count_;
     index_t total_count_;
     index_t level_;
-    index_t node_index_;
+    unsigned int node_index_;
     Statistic stat_;
     
     OT_DEF(GenHypercubeTree) {
@@ -58,6 +58,7 @@ namespace proximity {
       begin_.Init(number_of_particle_sets);
       count_.Init(number_of_particle_sets);
       total_count_ = 0;
+      node_index_ = 0;
       children_.Init();
     }
 
@@ -91,12 +92,12 @@ namespace proximity {
     }
 
     GenHypercubeTree *AllocateNewChild(index_t number_of_particle_sets,
-				       index_t node_index_in) {
+				       unsigned int node_index_in) {
       
       GenHypercubeTree *new_node = new GenHypercubeTree();
       children_.PushBackCopy(new_node);
       new_node->Init(number_of_particle_sets);
-      node_index_ = node_index_in;
+      new_node->node_index_ = node_index_in;
 
       return new_node;
     }
@@ -115,7 +116,7 @@ namespace proximity {
       return begin_[particle_set_number] + count_[particle_set_number];
     }
     
-    index_t node_index() const {
+    unsigned int node_index() const {
       return node_index_;
     }
 
@@ -143,7 +144,8 @@ namespace proximity {
 
     void Print() const {
       if (!is_leaf()) {
-	printf("internal node: %d points total\n", total_count_);
+	printf("internal node: %d points total on level %d\n", total_count_,
+	       level_);
 	for(index_t i = 0; i < begin_.size(); i++) {
 	  printf("   set %d: %d to %d: %d points total\n", i, 
 		 begin_[i], begin_[i] + count_[i] - 1, count_[i]);	  
@@ -153,7 +155,8 @@ namespace proximity {
 	}
       }
       else {
-	printf("leaf node: %d points total\n", total_count_);
+	printf("leaf node: %d points total on level %d\n", total_count_,
+	       level_);
 	for(index_t i = 0; i < begin_.size(); i++) {
 	  printf("   set %d: %d to %d: %d points total\n", i, 
 		 begin_[i], begin_[i] + count_[i] - 1, count_[i]);	  
