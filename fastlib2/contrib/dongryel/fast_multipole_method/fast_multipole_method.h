@@ -14,6 +14,7 @@
 
 #include "fastlib/fastlib.h"
 #include "fmm_stat.h"
+#include "mlpack/kde/dualtree_kde_common.h"
 #include "mlpack/series_expansion/inverse_pow_dist_farfield_expansion.h"
 #include "mlpack/series_expansion/inverse_pow_dist_local_expansion.h"
 #include "contrib/dongryel/proximity_project/gen_hypercube_tree.h"
@@ -45,6 +46,10 @@ class FastMultipoleMethod {
   /** @brief The shuffled reference particle set.
    */
   Matrix shuffled_reference_particle_set_;
+
+  /** @brief The shuffled reference particle charge set.
+   */
+  Vector shuffled_reference_particle_charge_set_;
 
   /** @brief The octree containing the entire particle set.
    */
@@ -103,17 +108,22 @@ class FastMultipoleMethod {
 	// If the current node is a leaf node, then compute
 	// exhaustively its far-field moments.
 	if(node->is_leaf()) {
-	  //node->stat().farfield_expansion_.AccumulateCoeffs();
+	  node->stat().farfield_expansion_.AccumulateCoeffs
+	    (shuffled_reference_particle_set_,
+	     shuffled_reference_particle_charge_set_,
+	     node->begin(0), node->end(0), sea_.get_max_order());
 	}
 	
-	// Otherwise, find out its children and translate their
-	// moments up.
+	// Otherwise, translate the moments owned by the children in a
+	// bottom-up fashion.
 	else {
-
+	  for(index_t child = 0; child < node->num_children(); child++) {
+	    node->stat().farfield_expansion_.TranslateFromFarField
+	      (node->get_child(child)->stat().farfield_expansion_);
+	  }
 	}
       }
     }
-
   }
 
  public:
@@ -122,6 +132,9 @@ class FastMultipoleMethod {
     
     // Upward pass: Form multipole expansions.
     FormMultipoleExpansions_();
+
+    // Downward pass
+    
   }
 
   void Init(const Matrix &queries, const Matrix &references,
@@ -157,6 +170,13 @@ class FastMultipoleMethod {
     else {
       shuffled_query_particle_set_.Alias(shuffled_reference_particle_set_);
     }
+
+    // Copy over the reference charge set.
+    shuffled_reference_particle_charge_set_.Init(rset_weights.n_cols());
+    for(index_t i = 0; i < rset_weights.n_cols(); i++) {
+      shuffled_reference_particle_charge_set_[i] = rset_weights.get(0, i);
+    }
+
     printf("Before permuting the reference set...\n");
     shuffled_reference_particle_set_.PrintDebug();
     printf("Before permuting the query set...\n");
@@ -183,6 +203,11 @@ class FastMultipoleMethod {
       }
       printf("\n");
     }
+
+    // Shuffle the reference particle charges according to the
+    // permutation of the reference particle set.
+    DualtreeKdeCommon::ShuffleAccordingToPermutation
+      (shuffled_reference_particle_charge_set_, old_from_new_index_[0]);
 
     // Retrieve the lambda order needed for expansion.
     lambda_ = fx_param_double(module_, "lambda", 1.0);
