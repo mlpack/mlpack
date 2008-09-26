@@ -111,7 +111,7 @@ class GopNmfEngineTest {
   void Test5() {
     Matrix data_points;
     data::Load("100_1_40_rand.csv", &data_points);
-    fx_set_param_int(module_, "new_dimension", 1);
+    fx_set_param_int(module_, "new_dimension", 3);
     fx_set_param_double(module_, "opt_gap", 0.001);
     fx_set_param_double(module_, "/relaxed_nmf/grad_tolerance", 1e-4);
     fx_set_param_double(module_, "/relaxed_nmf/scale_factor", 1);
@@ -123,6 +123,27 @@ class GopNmfEngineTest {
     fx_set_param_double(module_, "/splitter/minimum_interval_length", 1e-3); 
     fx_module *splitter_module=fx_submodule(module_, "splitter");
     GopNmfEngine<BuildTreeOnWandBuildTreeOnHSplitter> engine; 
+    BuildTreeOnWandBuildTreeOnHSplitter splitter; 
+    splitter.Init(splitter_module,  data_points);
+    engine.Init(module_, &splitter, data_points); 
+    engine.ComputeGlobalOptimum();
+    
+  }
+  void Test6() {
+    Matrix data_points;
+    data::Load("100_1_40_rand.csv", &data_points);
+    fx_set_param_int(module_, "new_dimension", 3);
+    fx_set_param_double(module_, "opt_gap", 0.001);
+    fx_set_param_double(module_, "/relaxed_nmf/grad_tolerance", 1e-4);
+    fx_set_param_double(module_, "/relaxed_nmf/scale_factor", 1);
+    fx_set_param_int(module_, "/splitter/w_leaf_size", 1);
+    fx_set_param_int(module_, "/splitter/h_leaf_size", 1);
+    fx_set_param_int(module_, "/splitter/w_offset", data_points.n_rows());
+    fx_set_param_int(module_, "/splitter/h_offset", 0);
+    fx_set_param_int(module_, "/splitter/h_length", data_points.n_rows());
+    fx_set_param_double(module_, "/splitter/minimum_interval_length", 1e-3); 
+    fx_module *splitter_module=fx_submodule(module_, "splitter");
+    GopNmfEngine<BuildTreeOnWandBuildTreeOnHSplitter, RelaxedRescaledNmfL1> engine; 
     BuildTreeOnWandBuildTreeOnHSplitter splitter; 
     splitter.Init(splitter_module,  data_points);
     engine.Init(module_, &splitter, data_points); 

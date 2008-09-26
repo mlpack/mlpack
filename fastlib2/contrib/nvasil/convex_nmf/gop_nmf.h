@@ -94,6 +94,85 @@ class RelaxedNmf {
 };
 
 /*
+ * This is an NMF resacaled and translated between  [0.5 1]
+ */
+class RelaxedRescaledNmfL1 {
+ public:
+  static const double LOWER_BOUND=0.5;
+  static const double UPPER_BOUND=1.0; 
+  static const double SCALE_FACTOR=2.0;
+  void Init(ArrayList<index_t> &rows,
+            ArrayList<index_t> &columns,
+            ArrayList<double> &values,
+            index_t new_dim, // new dimension of the factorization
+            double grad_tolerance, // if the norm gradient is less than the tolerance
+                                   // then it terminates
+            Matrix &x_lower_bound, // the initial lower bound for x (optimization variable)
+            Matrix &x_upper_bound  // the initial upper bound for x (optimization variable)
+           );
+  void Init(fx_module *module,
+            ArrayList<index_t> &rows,
+            ArrayList<index_t> &columns,
+            ArrayList<double> &values,
+            Matrix &x_lower_bound, // the initial lower bound for x (optimization variable)
+            Matrix &x_upper_bound  // the initial upper bound for x (optimization variable)
+           );
+  void Destruct();
+  // The following are required by LBFGS
+  void ComputeGradient(Matrix &coordinates, Matrix *gradient);
+  void ComputeObjective(Matrix &coordinates, double *objective);
+  // This class implements a convex relaxation of the nmf objective
+  // At some point we need to compute the original objective the non relaxed
+  void ComputeNonRelaxedObjective(Matrix &coordinates, double *objective);
+  void ComputeFeasibilityError(Matrix &coordinates, double *error);
+  double ComputeLagrangian(Matrix &coordinates);
+  void UpdateLagrangeMult(Matrix &coordinates);
+  void Project(Matrix *coordinates);
+  void set_sigma(double sigma); 
+  void GiveInitMatrix(Matrix *init_data);
+	bool IsDiverging(double objective); 
+  bool IsOptimizationOver(Matrix &coordinates, Matrix &gradient, double step);
+  bool IsIntermediateStepOver(Matrix &coordinates, Matrix &gradient, double step);
+  
+  // The following are required by the branch and bound
+  double GetSoftLowerBound();
+  bool IsInfeasible();
+    
+ private:
+  // number of rows of the original matrix
+  index_t num_of_rows_;
+  // number of columns of the original matrix
+  index_t num_of_columns_;
+  // offset of the H matrix on the coordinate variable
+  index_t h_offset_;
+  index_t w_offset_;
+  index_t e_offset_;
+  double values_sq_norm_;
+  index_t new_dimension_;
+  // constant term for the LP relaxation part
+  Vector a_linear_term_dot_prod_;
+  Vector a_linear_term_exp_;
+  // linear term for the LP relaxation part
+  Vector b_linear_term_dot_prod_;
+  Vector b_linear_term_exp_;
+  ArrayList<index_t> rows_;
+  ArrayList<index_t> columns_;
+  ArrayList<double> values_;
+  // lower bound for the optimization variable
+  Matrix x_lower_bound_;
+  // upper bound for the optimization variable
+  Matrix x_upper_bound_;
+  // soft lower bound of the relaxation
+  double soft_lower_bound_;
+  // tolerance for the gradient norm
+  double grad_tolerance_;
+  double opt_gap_;
+  double sigma_;
+  double previous_objective_;
+  double scale_correction_on_v_;
+};
+
+/*
  * The diffetence from the previous one is the use of log barriers for the bounds
  * but it is too slow
  */
@@ -305,7 +384,7 @@ struct SolutionPack {
   std::pair<Matrix, Matrix> box_; 
 };
 
-template<typename SplitterClass>
+template<typename SplitterClass, typename Objecivei=RelaxedNmf>
 class GopNmfEngine {
  public:
   
@@ -321,7 +400,7 @@ class GopNmfEngine {
   Matrix x_upper_bound_;
   Matrix x_lower_bound_;
   SplitterClass *splitter_;
-  RelaxedNmf opt_fun_;
+  Objective opt_fun_;
   double desired_global_optimum_gap_;
   double grad_tolerance_;
   std::multimap<double, SolutionPack> lower_solution_;
