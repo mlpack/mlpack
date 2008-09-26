@@ -283,7 +283,7 @@ namespace tree_gen_hypercube_tree_private {
       }
 
       // Push the newly created child onto the list.
-      ((*nodes_in_each_level)[level]).PushBackCopy(new_child);
+      ((*nodes_in_each_level)[level + 1]).PushBackCopy(new_child);
       new_child->bound().Init(matrices[0]->n_rows());
       
       Vector lower_coord, upper_coord;
@@ -367,9 +367,9 @@ namespace tree_gen_hypercube_tree_private {
     
       // Ensure that the node list for storing each level is at least
       // the size of the current level + 1.
-      nodes_in_each_level->SizeAtLeast(level + 1);
-      if(((*nodes_in_each_level)[level]).size() == BIG_BAD_NUMBER) {
-	((*nodes_in_each_level)[level]).Init();
+      nodes_in_each_level->SizeAtLeast(level + 2);
+      if(((*nodes_in_each_level)[level + 1]).size() == BIG_BAD_NUMBER) {
+	((*nodes_in_each_level)[level + 1]).Init();
       }
 
       // Recursively split each dimension.
