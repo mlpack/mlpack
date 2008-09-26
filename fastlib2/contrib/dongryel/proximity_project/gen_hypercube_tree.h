@@ -50,8 +50,8 @@ namespace proximity {
      *
      *  @return true if childless, false otherwise.
      */
-    bool is_leaf() {
-      return children_ == NULL;
+    bool is_leaf() const {
+      return children_.size() == 0;
     }
 
     void Init(index_t number_of_particle_sets) {
@@ -139,6 +139,26 @@ namespace proximity {
      */
     index_t num_children() const {
       return children_.size();
+    }
+
+    void Print() const {
+      if (!is_leaf()) {
+	printf("internal node: %d points total\n", total_count_);
+	for(index_t i = 0; i < begin_.size(); i++) {
+	  printf("   set %d: %d to %d: %d points total\n", i, 
+		 begin_[i], begin_[i] + count_[i] - 1, count_[i]);	  
+	}
+	for(index_t c = 0; c < children_.size(); c++) {
+	  children_[c]->Print();
+	}
+      }
+      else {
+	printf("leaf node: %d points total\n", total_count_);
+	for(index_t i = 0; i < begin_.size(); i++) {
+	  printf("   set %d: %d to %d: %d points total\n", i, 
+		 begin_[i], begin_[i] + count_[i] - 1, count_[i]);	  
+	}
+      }
     }
 
   };
