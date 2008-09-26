@@ -469,14 +469,14 @@ void RelaxedRescaledNmfL1::ComputeGradient(Matrix &coordinates, Matrix *gradient
       double grad_w=(math::Sqr(SCALE_FACTOR)*(
                     (+exp(coordinates.get(j, w) + coordinates.get(j, h))
                     -LOWER_BOUND*b_linear_term_exp_[w*new_dimension_+j])/left_ineq
-                    (-b_linear_term_dot_prod_[i*new_dimension_+j]
-                    +LOWER_BOUND*exp(coordinates.get(j, w))))/right_ineq);
+                    +(-b_linear_term_dot_prod_[i*new_dimension_+j]
+                      +LOWER_BOUND*exp(coordinates.get(j, w))))/right_ineq);
       
       double grad_h=(math::Sqr(SCALE_FACTOR)*(
                     (+exp(coordinates.get(j, w) + cooridnates.get(j, h))
                     -LOWER_BOUND*b_linear_term_exp_[h*new_dimension_+j])/left_ineq
-                    (-b_linear_term_dot_prod_[i*new_dimension_+j]
-                    +LOWER_BOUND*exp(coordinates.get(j, h))))/right_ineq);
+                    +(-b_linear_term_dot_prod_[i*new_dimension_+j]
+                      +LOWER_BOUND*exp(coordinates.get(j, h))))/right_ineq);
       gradient->set(j, w, gradient->get(j, w)+grad_w);
       gradient->set(j, h, gradient->get(j, h)+grad_h); 
     }
