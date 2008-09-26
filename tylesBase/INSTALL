@@ -1,28 +1,34 @@
-TylesBase installation directions.
+TylesBase Installation Instructions.
+====================================
 
-Library
-=======
-Installation requires
+Let <tylesBase> refer to the source directory. 
+
+1. Make sure you the following prerequisites installed:
 
    ocaml
    findlib
    ocamldsort
    extLib
 
-Let <tylesBase> refer to the source directory. Do
-
-    cd <tylesBase>
-    make all
-
-This will generate the files tylesBase.cm{o,a}. These will be under
-the <tylesBase>/_build/src directory, and you can link to them there.
-
-Documentation
-=============
-To make the documentation do
+2. Change to the <tylesBase> directory
 
    cd <tylesBase>
+
+3. To compile, type
+
+   make all
+
+   This will generate the files tylesBase.cm{i,a,xa}. These will be
+   under the src/_build directory, and you can link to them there.
+
+4. To make the documentation, type
+
    make doc
 
-This produces documentation in html format. The root is
-<tylesBase>/html/index.html.
+   This produces documentation in html format. The root is
+   doc/html/index.html.
+
+5. If needed, you can delete all automatically generated files by
+   typing
+   
+   make clean

@@ -1,5 +1,7 @@
 (** Intended usage is to do "open TylesBase", which replaces several third-party modules with modified versions, and provides some new modules. *)
 
+include Pervasives2
+
 module Array = Array2
 module Char = Char2
 module DynArray = DynArray2
@@ -19,6 +21,7 @@ module Fn = Fn
 module Tuple = Tuple
 module Order = Order
 module Ordered = Ordered
+module Lines = Lines
 
 module IntMap = IntMap
 module StringMap = StringMap
@@ -27,5 +30,3 @@ module StringSet = StringSet
 
 module Show = Show
 module SmallCheck = SmallCheck
-
-include Pervasives2
