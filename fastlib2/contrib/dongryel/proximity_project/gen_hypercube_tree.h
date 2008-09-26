@@ -2,10 +2,11 @@
 #define GEN_HYPERCUBE_TREE_H
 
 #include "fastlib/fastlib.h"
+#include "fastlib/tree/statistic.h"
 
 namespace proximity {
 
-  template<class TStatistic>
+  template<class TStatistic=EmptyStatistic<Matrix> >
   class GenHypercubeTree {
 
    public:
@@ -16,8 +17,9 @@ namespace proximity {
     
     Bound bound_;
     ArrayList<GenHypercubeTree *> *children_;
-    index_t begin_;
-    index_t count_;
+    ArrayList<index_t> begin_;
+    ArrayList<index_t> count_;
+    index_t total_count_;
     index_t level_;
     index_t node_index_;
     Statistic stat_;
@@ -27,6 +29,7 @@ namespace proximity {
       OT_PTR_NULLABLE(children_);
       OT_MY_OBJECT(begin_);
       OT_MY_OBJECT(count_);
+      OT_MY_OBJECT(total_count_);
       OT_MY_OBJECT(level_);
       OT_MY_OBJECT(node_index_);
       OT_MY_OBJECT(stat_);
@@ -51,17 +54,20 @@ namespace proximity {
       return children_ == NULL;
     }
 
-    void AllocateChildren(index_t dim) {
+    void Init(index_t number_of_particle_sets) {
+      begin_.Init(number_of_particle_sets);
+      count_.Init(number_of_particle_sets);
+      total_count_ = 0;
       children_ = new ArrayList<GenHypercubeTree *>();
       children_->Init();
     }
 
-    void Init(index_t begin_in, index_t count_in, index_t node_index_in) {
-      DEBUG_ASSERT(begin_ == BIG_BAD_NUMBER);
-      children_ = NULL;
-      begin_ = begin_in;
-      count_ = count_in;
-      node_index_ = node_index_in;
+    void Init(index_t particle_set_number, index_t begin_in, 
+	      index_t count_in) {
+
+      begin_[particle_set_number] = begin_in;
+      count_[particle_set_number] = count_in;
+      total_count_ += count_in;
     }
 
     const Bound& bound() const {
@@ -80,12 +86,13 @@ namespace proximity {
       level_ = level;
     }
 
-    GenHypercubeTree *set_child(index_t first, index_t count, 
-				index_t node_index_in) {
+    GenHypercubeTree *AllocateNewChild(index_t number_of_particle_sets,
+				       index_t node_index_in) {
       
       GenHypercubeTree *new_node = new GenHypercubeTree();
       children_->PushBackCopy(new_node);
-      new_node->Init(first, count, node_index_in);
+      new_node->Init(number_of_particle_sets);
+      node_index_ = node_index_in;
 
       return new_node;
     }
@@ -93,15 +100,15 @@ namespace proximity {
     /**
      * Gets the index of the begin point of this subset.
      */
-    index_t begin() const {
-      return begin_;
+    index_t begin(index_t particle_set_number) const {
+      return begin_[particle_set_number];
     }
     
     /**
      * Gets the index one beyond the last index in the series.
      */
-    index_t end() const {
-      return begin_ + count_;
+    index_t end(index_t particle_set_number) const {
+      return begin_[particle_set_number] + count_[particle_set_number];
     }
     
     index_t node_index() const {
@@ -111,8 +118,12 @@ namespace proximity {
     /**
      * Gets the number of points in this subset.
      */
+    index_t count(index_t particle_set_number) const {
+      return count_[particle_set_number];
+    }
+
     index_t count() const {
-      return count_;
+      return total_count_;
     }
 
     index_t level() const {
@@ -153,48 +164,54 @@ namespace proximity {
    */
   template<typename TStatistic>
   GenHypercubeTree<TStatistic> *MakeGenHypercubeTree
-  (Matrix& matrix, index_t leaf_size,
+  (ArrayList<Matrix *> &matrices, index_t leaf_size,
    ArrayList< ArrayList<GenHypercubeTree<TStatistic> *> > *nodes_in_each_level,
-   ArrayList<index_t> *old_from_new = NULL,
-   ArrayList<index_t> *new_from_old = NULL) {
+   ArrayList< ArrayList<index_t> > *old_from_new = NULL,
+   ArrayList< ArrayList<index_t> > *new_from_old = NULL) {
     
     GenHypercubeTree<TStatistic> *node = new GenHypercubeTree<TStatistic>();
-    index_t *old_from_new_ptr;
     
     if (old_from_new) {
-      old_from_new->Init(matrix.n_cols());
-      
-      for (index_t i = 0; i < matrix.n_cols(); i++) {
-	(*old_from_new)[i] = i;
+      old_from_new->Init(matrices.size());
+
+      for(index_t j = 0; j < matrices.size(); j++) {
+	(*old_from_new)[j].Init(matrices[j]->n_cols());
+	
+	for (index_t i = 0; i < matrices[j]->n_cols(); i++) {
+	  (*old_from_new)[j][i] = i;
+	}
       }
-      
-      old_from_new_ptr = old_from_new->begin();
-    } else {
-      old_from_new_ptr = NULL;
     }
     
     // Initialize the global list of nodes.
     nodes_in_each_level->Init(1);    
 
     // Initialize the root node.
-    node->Init(0, matrix.n_cols(), 0);
+    node->Init(matrices.size());
+    for(index_t i = 0; i < matrices.size(); i++) {
+      node->Init(i, 0, matrices[i]->n_cols());
+    }
     
     // Make the tightest cube bounding box you can fit around the
     // current set of points.
-    tree_gen_hypercube_tree_private::ComputeBoundingHypercube(matrix, node);
+    tree_gen_hypercube_tree_private::ComputeBoundingHypercube(matrices, node);
 
     // Put the root node into the initial list of level 0.
     ((*nodes_in_each_level)[0]).Init();
     ((*nodes_in_each_level)[0]).PushBackCopy(node);
 
     tree_gen_hypercube_tree_private::SplitGenHypercubeTree
-      (matrix, node, leaf_size, nodes_in_each_level, old_from_new_ptr, 0);
+      (matrices, node, leaf_size, nodes_in_each_level, old_from_new, 0);
 
     // Index shuffling business...
     if (new_from_old) {
-      new_from_old->Init(matrix.n_cols());
-      for (index_t i = 0; i < matrix.n_cols(); i++) {
-	(*new_from_old)[(*old_from_new)[i]] = i;
+      new_from_old->Init(matrices.size());
+
+      for(index_t j = 0; j < matrices.size(); j++) {
+	(*new_from_old)[j].Init(matrices[j]->n_cols());
+	for (index_t i = 0; i < matrices[j]->n_cols(); i++) {
+	  (*new_from_old)[j][(*old_from_new)[j][i]] = i;
+	}
       }
     }
     
