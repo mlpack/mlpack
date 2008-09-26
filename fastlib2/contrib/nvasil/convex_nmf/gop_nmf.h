@@ -25,6 +25,8 @@
 
 class RelaxedNmf {
  public:
+  static const double LOWER_BOUND=0.0183156389; // approximatelly exp(-4)
+  static const double UPPER_BOUND=1.0;
   void Init(ArrayList<index_t> &rows,
             ArrayList<index_t> &columns,
             ArrayList<double> &values,
@@ -178,6 +180,8 @@ class RelaxedRescaledNmfL1 {
  */
 class RelaxedNmf1 {
  public:
+  static const double LOWER_BOUND=0.0183156389; // approximatelly exp(-4)
+  static const double UPPER_BOUND=1.0;
   void Init(ArrayList<index_t> &rows,
             ArrayList<index_t> &columns,
             ArrayList<double> &values,
@@ -238,7 +242,9 @@ class RelaxedNmf1 {
 
 class RelaxedNmfIsometric {
  public:
-  void Init(fx_module *module,
+  static const double LOWER_BOUND=0.0183156389; // approximatelly exp(-4)
+  static const double UPPER_BOUND=1.0;
+ void Init(fx_module *module,
                       ArrayList<index_t> &rows,
                       ArrayList<index_t> &columns,
                       ArrayList<double> &values,
@@ -310,6 +316,9 @@ class RelaxedNmfIsometric {
 
 class RelaxedNmfScaled {
  public:
+  static const double LOWER_BOUND=0.0183156389; // approximatelly exp(-4)
+  static const double UPPER_BOUND=1.0;
+ 
   void Init(fx_module *module,
             ArrayList<index_t> &rows,
             ArrayList<index_t> &columns,
@@ -410,8 +419,6 @@ class GopNmfEngine {
   ArrayList<double> values_;
   index_t w_offset_;
   index_t h_offset_;
-  double epsilon_;
-  double scale_factor_;
   index_t num_of_rows_;
   index_t num_of_columns_;
   index_t new_dimension_;
