@@ -404,8 +404,8 @@ void RelaxedRescaledNmfL1::Init(fx_module *module,
       right_ineq+= -(+a_linear_term_dot_prod_[i*new_dimension_+j]
                      +b_linear_term_dot_prod_[i*new_dimension_+j]
                       *(x_upper_bound_.get(j, w) + x_upper_bound_.get(j, h)))
-                   +LOWER_BOUND*(exp(x_lower_bound_.get(j, w)
-                                 +exp(x_lower_bound_.get(j, h))));
+                   +LOWER_BOUND*(exp(x_lower_bound_.get(j, w))
+                                 +exp(x_lower_bound_.get(j, h)));
     }
     double const_term=-values_[i]+new_dimension_*math::Sqr(LOWER_BOUND*SCALE_FACTOR);
     double epsilon1=math::Sqr(SCALE_FACTOR)*left_ineq + const_term;
@@ -458,15 +458,15 @@ void RelaxedRescaledNmfL1::ComputeGradient(Matrix &coordinates, Matrix *gradient
       right_ineq+=(+a_linear_term_dot_prod_[i*new_dimension_+j]
                    +b_linear_term_dot_prod_[i*new_dimension_+j]
                       *(coordinates.get(j, w) + coordinates.get(j, h)))
-                   -LOWER_BOUND*(exp(coordinates.get(j, w)
-                                 +exp(coordinates.get(j, h))));
+                   -LOWER_BOUND*(exp(coordinates.get(j, w))
+                                 +exp(coordinates.get(j, h)));
      
     } 
     double const_term=-values_[i]+new_dimension_*math::Sqr(LOWER_BOUND*SCALE_FACTOR);
-    left_ineq+=math::Sqr(SCALE_FACTOR)*left_ineq + const_term-epsilons[i];
-    right_ineq+=math::Sqr(SCALE_FACTOR)*right_ineq - const_term-epsilons[i];
-    DEBUG_ASSERT_MSG(left_ineq<=0, "Something is wrong we are out of the interior");
-    DEBUG_ASSERT_MSG(right_ineq<=0, "Something is wrong we are out of the interior");
+    left_ineq+=math::Sqr(SCALE_FACTOR)*left_ineq -const_term+epsilons[i];
+    right_ineq+=math::Sqr(SCALE_FACTOR)*right_ineq + const_term+epsilons[i];
+    DEBUG_ASSERT_MSG(left_ineq>0, "Something is wrong we are out of the interior");
+    DEBUG_ASSERT_MSG(right_ineq>0, "Something is wrong we are out of the interior");
     for(index_t j=0; j<new_dimension_; j++) {
       double grad_w=(math::Sqr(SCALE_FACTOR)*(
                     (+exp(coordinates.get(j, w) + coordinates.get(j, h))
@@ -543,23 +543,23 @@ double RelaxedRescaledNmfL1::ComputeLagrangian(Matrix &coordinates) {
     double left_ineq=0;
     double right_ineq=0;
     for(index_t j=0; j<new_dimension_; j++) {
-       left_ineq+=-exp(coordinates.get(j, w)+coordinates.get(j, h))+
+      left_ineq+=-exp(coordinates.get(j, w)+coordinates.get(j, h))+
                  LOWER_BOUND*(+a_linear_term_exp_[w*new_dimension_+j]
                               +b_linear_term_exp_[w*new_dimension_+j]
                                *coordinates.get(j, w)
                               +a_linear_term_exp_[h*new_dimension_+j]
                               +b_linear_term_exp_[h*new_dimension_+j]
                                *coordinates.get(j, h));
-      right_ineq+=(+a_linear_term_dot_prod_[i*new_dimension_+j]
+     right_ineq+=(+a_linear_term_dot_prod_[i*new_dimension_+j]
                    +b_linear_term_dot_prod_[i*new_dimension_+j]
                       *(coordinates.get(j, w) + coordinates.get(j, h)))
-                   -LOWER_BOUND*(exp(coordinates.get(j, w)
-                                 +exp(coordinates.get(j, h))));
+                   -LOWER_BOUND*(exp(coordinates.get(j, w))
+                                 +exp(coordinates.get(j, h)));
      
     } 
     double const_term=-values_[i]+new_dimension_*math::Sqr(LOWER_BOUND*SCALE_FACTOR);
-    left_ineq+=math::Sqr(SCALE_FACTOR)*left_ineq + const_term-epsilons[i];
-    right_ineq+=math::Sqr(SCALE_FACTOR)*right_ineq - const_term-epsilons[i];
+    left_ineq+=math::Sqr(SCALE_FACTOR)*left_ineq - const_term+epsilons[i];
+    right_ineq+=math::Sqr(SCALE_FACTOR)*right_ineq + const_term+epsilons[i];
     if (left_ineq<=0 || right_ineq<=0) {
       return DBL_MAX;
     };
@@ -632,7 +632,7 @@ void RelaxedRescaledNmfL1::GiveInitMatrix(Matrix *init_data) {
     double const_term=-values_[i]+new_dimension_*math::Sqr(LOWER_BOUND*SCALE_FACTOR);
     double epsilon1=math::Sqr(SCALE_FACTOR)*left_ineq + const_term;
     double epsilon2=math::Sqr(SCALE_FACTOR)*right_ineq - const_term;
-    double epsilon=std::max(epsilon1, epsilon2)+1e-2;
+    double epsilon=std::max(epsilon1, epsilon2)+1e02;
     epsilons[i]=epsilon;  
   }
  
@@ -657,9 +657,9 @@ bool RelaxedRescaledNmfL1::IsOptimizationOver(Matrix &coordinates,
   }
 */
   if (2*values_.size()/sigma_ < opt_gap_ ) {
-    return false;
-  } else {
     return true;
+  } else {
+    return false;
   }
 }
 
@@ -1618,7 +1618,7 @@ void GopNmfEngine<SplitterClass, Objective>::Init(fx_module *module,
   fx_set_param_int(l_bfgs_module_, "num_of_points", num_of_rows_+num_of_columns_);
   fx_set_param_int(l_bfgs_module_, "mem_bfgs", 3);
   fx_set_param_bool(l_bfgs_module_, "use_default_termination", false);
-  fx_set_param_bool(l_bfgs_module_, "silent", true);
+  fx_set_param_bool(l_bfgs_module_, "silent", false);
 }
 
 template<typename SplitterClass, typename Objective>
@@ -1858,14 +1858,11 @@ void GopNmfEngine<SplitterClass, Objective>::PreprocessData(Matrix &data_mat) {
       l1_norms[i]+=data_mat.get(j, i);
     }
   }
-  double lower_limit=exp(-4.0);
-  double upper_limit=1;
-  scale_factor_=fx_param_double_req(relaxed_nmf_module_, "scale_factor");
-  double new_upper_limit=(upper_limit-lower_limit)/scale_factor_ + lower_limit;  
+  
+  double lower_limit=  Objective::LOWER_BOUND;
+  double upper_limit=  Objective::UPPER_BOUND;
   x_lower_bound_.SetAll(log(lower_limit));
-  x_upper_bound_.SetAll(log(new_upper_limit));
-  epsilon_=lower_limit;
-  fx_set_param_double(relaxed_nmf_module_, "epsilon", lower_limit); 
+  x_upper_bound_.SetAll(log(upper_limit));
 }
 
 template<typename SplitterClass, typename Objective>
@@ -1909,42 +1906,5 @@ void GopNmfEngine<SplitterClass, Objective>::ReportResults() {
   opt_fun_.ComputeNonRelaxedObjective(final_solution, 
                                      &new_upper_global_optimum);
 
-  for(index_t i=0; i<upper_solution_.solution_.n_rows(); i++) {
-    for(index_t j=0; j<upper_solution_.solution_.n_cols(); j++) {
-      final_solution.set(i, j, 
-                        (1-scale_factor_)*epsilon_ 
-                        +scale_factor_*exp(upper_solution_.solution_.get(i, j)));
-    }
-  }
-
-  double values_norm=la::Dot(values_.size(), &values_[0], &values_[0]);
-  fx_result_double(module_, "mean_square_relative_error", 
-         100*math::Pow<1,2>(new_upper_global_optimum/values_norm));
-  fx_result_double(module_, "mean_square_absolute_error", 
-                   new_upper_global_optimum);
-  double error=0;
-  double values_sum=0;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
-    Vector temp1;
-    Vector temp2;
-    temp1.Init(new_dimension_);
-    temp2.Init(new_dimension_);
-    for(index_t j=0; j<new_dimension_; j++) {
-      temp1[j]=final_solution.get(j, w);
-      temp2[j]=final_solution.get(j, h);
-    }
-    values_sum+=values_[i];
-    error+=fabs(values_[i]-la::Dot(temp1, temp2));
-  }
-
-  fx_result_double(module_, "mean_relative_error", 100.0*error/values_sum);
-     
-  NOTIFY("Absolute error:%lg, Mean square error:%lg%%", 
-          new_upper_global_optimum, 
-          100*math::Pow<1,2>(new_upper_global_optimum/values_norm));
-  data::Save("result.csv", final_solution);
+   data::Save("result.csv", final_solution);
 }
