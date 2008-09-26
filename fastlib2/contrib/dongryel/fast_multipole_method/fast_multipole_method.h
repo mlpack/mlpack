@@ -45,10 +45,6 @@ class FastMultipoleMethod {
   /** @brief The shuffled reference particle set.
    */
   Matrix shuffled_reference_particle_set_;
-  
-  /** @brief The combined particle set (to be permuted).
-   */
-  Matrix particle_set_;
 
   /** @brief The octree containing the entire particle set.
    */
@@ -69,25 +65,25 @@ class FastMultipoleMethod {
   /** @brief The permutation mapping indices of the particle indices
    *         to original order.
    */
-  ArrayList<index_t> old_from_new_index_;
+  ArrayList< ArrayList<index_t> > old_from_new_index_;
 
   /** @brief The permutation mapping indices of the shuffled indices
    *         from the original order.
    */
-  ArrayList<index_t> new_from_old_index_;
+  ArrayList< ArrayList<index_t> > new_from_old_index_;
 
   ////////// Private Member Functions //////////
   void FormMultipoleExpansions_() {
     
     Vector node_center;
-    node_center.Init(particle_set_.n_rows());
+    node_center.Init(shuffled_reference_particle_set_.n_rows());
 
     // Start from the most bottom level, and work your way up.
     for(index_t level = nodes_in_each_level_.size() - 1; level >= 0; level--) {
 
       // The references to the nodes on the current level.
-      ArrayList<proximity::GenHypercubeTree<FmmStat> *> &nodes_on_current_level =
-	nodes_in_each_level_[level];
+      ArrayList<proximity::GenHypercubeTree<FmmStat> *> 
+	&nodes_on_current_level = nodes_in_each_level_[level];
 
       // Iterate over each node in the list.
       for(index_t n = 0; n < nodes_on_current_level.size(); n++) {
@@ -95,7 +91,8 @@ class FastMultipoleMethod {
 	proximity::GenHypercubeTree<FmmStat> *node = nodes_on_current_level[n];
 	
 	// Compute the node center.
-	for(index_t i = 0; i < particle_set_.n_rows(); i++) {
+	for(index_t i = 0; i < shuffled_reference_particle_set_.n_rows(); 
+	    i++) {
 	  node_center[i] = 0.5 * (node->bound().get(i).lo +
 				  node->bound().get(i).hi);
 	}
@@ -147,66 +144,51 @@ class FastMultipoleMethod {
     num_query_particles_ = queries.n_cols();
     num_reference_particles_ = references.n_cols();
     
-    // Combine the two sets to form the global particle set.
-    particle_set_.Init(queries.n_rows(), (queries.ptr() == references.ptr()) ?
-		       num_reference_particles_:num_query_particles_ +
-		       num_reference_particles_);
-    for(index_t r = 0; r < references.n_cols(); r++) {
-      Vector reference_column_destination;
-      particle_set_.MakeColumnVector(r, &reference_column_destination);
-      reference_column_destination.CopyValues(references.GetColumnPtr(r));
-    }
+    // Approporiately initialize the query/reference sets.
+    ArrayList<Matrix *> particle_sets;
+    particle_sets.Init();
+    shuffled_reference_particle_set_.Copy(references);
+    particle_sets.PushBackCopy(&shuffled_reference_particle_set_);
+
     if(queries.ptr() != references.ptr()) {
-      for(index_t q = 0; q < queries.n_cols(); q++) {
-	Vector query_column_destination;
-	particle_set_.MakeColumnVector(references.n_cols() + q, 
-				       &query_column_destination);
-	query_column_destination.CopyValues(queries.GetColumnPtr(q));
-      }
+      shuffled_query_particle_set_.Copy(queries);
+      particle_sets.PushBackCopy(&shuffled_query_particle_set_);
     }
-    printf("Before permuting...\n");
-    particle_set_.PrintDebug();
+    else {
+      shuffled_query_particle_set_.Alias(shuffled_reference_particle_set_);
+    }
+    printf("Before permuting the reference set...\n");
+    shuffled_reference_particle_set_.PrintDebug();
+    printf("Before permuting the query set...\n");
+    shuffled_query_particle_set_.PrintDebug();
 
     // Construct query and reference trees. Shuffle the reference
     // weights according to the permutation of the reference set in
     // the reference tree.
     fx_timer_start(NULL, "tree_d");
-    tree_ = proximity::MakeGenHypercubeTree(particle_set_, leaflen,
+    tree_ = proximity::MakeGenHypercubeTree(particle_sets, leaflen,
 					    &nodes_in_each_level_,
 					    &old_from_new_index_,
 					    &new_from_old_index_);
     fx_timer_stop(NULL, "tree_d");
     
     printf("After permuting...\n");
-    particle_set_.PrintDebug();
-
-    printf("Printing indices...\n");
+    shuffled_reference_particle_set_.PrintDebug();
+    printf("After permuting the query set...\n");
+    shuffled_query_particle_set_.PrintDebug();
 
     for(index_t i = 0; i < old_from_new_index_.size(); i++) {
-      printf("%d ", old_from_new_index_[i]);
-    }
-    printf("\n");
-    for(index_t i = 0; i < new_from_old_index_.size(); i++) {
-      printf("%d ", new_from_old_index_[i]);
-    }
-    printf("\n");
-
-    // From the permuted particle set, recover the permuted query and
-    // the permuted reference set.
-    shuffled_reference_particle_set_.Init(references.n_rows(),
-					  references.n_cols());
-    if(queries.ptr() != references.ptr()) {
-      shuffled_query_particle_set_.Init(queries.n_rows(), queries.n_cols());
-    }
-    else {
-      shuffled_query_particle_set_.Alias(shuffled_reference_particle_set_);
+      for(index_t j = 0; j < old_from_new_index_[i].size(); j++) {
+	printf("%d ", old_from_new_index_[i][j]);
+      }
+      printf("\n");
     }
 
     // Retrieve the lambda order needed for expansion.
     lambda_ = fx_param_double(module_, "lambda", 1.0);
 
     // Initialize the series expansion auxliary object.
-    sea_.Init(lambda_, 8, particle_set_.n_rows());
+    sea_.Init(lambda_, 8, references.n_rows());
   }
 };
 
