@@ -154,7 +154,7 @@ class GopNmfEngineTest {
  
 void TestAll() {
     Init();
-    Test5();
+    Test6();
     Destruct();
   }
 
