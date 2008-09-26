@@ -437,7 +437,7 @@ void RelaxedRescaledNmfL1::ComputeGradient(Matrix &coordinates, Matrix *gradient
   fx_timer_start(NULL, "gradient");
   gradient->SetAll(0.0);
   Vector epsilons;
-  epsilons.Alias(*gradient->GetColumnPtr(e_offset_), values_.size());
+  epsilons.Alias(gradient->GetColumnPtr(e_offset_), values_.size());
   epsilons.SetAll(sigma_);
   // gradient from the objective
   for(index_t i=0; i<values_.size(); i++) {
@@ -473,7 +473,7 @@ void RelaxedRescaledNmfL1::ComputeGradient(Matrix &coordinates, Matrix *gradient
                       +LOWER_BOUND*exp(coordinates.get(j, w))))/right_ineq);
       
       double grad_h=(math::Sqr(SCALE_FACTOR)*(
-                    (+exp(coordinates.get(j, w) + cooridnates.get(j, h))
+                    (+exp(coordinates.get(j, w) + coordinates.get(j, h))
                     -LOWER_BOUND*b_linear_term_exp_[h*new_dimension_+j])/left_ineq
                     +(-b_linear_term_dot_prod_[i*new_dimension_+j]
                       +LOWER_BOUND*exp(coordinates.get(j, h))))/right_ineq);
@@ -490,7 +490,7 @@ void RelaxedRescaledNmfL1::ComputeObjective(Matrix &coordinates, double *objecti
   fx_timer_start(NULL, "objective");
   *objective=0.0;
   Vector epsilons;
-  epsilons.Alias(*gradient.GetColumnPt(e_offset_), values_.size());
+  epsilons.Alias(coordinates.GetColumnPtr(e_offset_), values_.size());
   for(index_t i=0; i<values_.size(); i++) {
     *objective+=epsilons[i];
   } 
@@ -506,26 +506,14 @@ void RelaxedRescaledNmfL1::ComputeNonRelaxedObjective(Matrix &coordinates,
     index_t col=columns_[i];
     index_t w=col+w_offset_;
     index_t h=row+h_offset_;
-    double left_ineq=0;
-    double right_ineq=0;
+    double ineq=0;
     for(index_t j=0; j<new_dimension_; j++) {
-      left_ineq+=exp(y_lower)-
-                 LOWER_BOUND*(+a_linear_term_exp_[w*new_dimension_+j]
-                              +b_linear_term_exp_[w*new_dimension_+j]
-                               *coordinates_.get(j, w)
-                              +a_linear_term_exp_[h*new_dimension_+j]
-                              +b_linear_term_exp_[h*new_dimension_+j]
-                               *coordinates.get(j, h));
-      right_ineq+= -(+a_linear_term_dot_prod_[i*new_dimension_+j]
-                     +b_linear_term_dot_prod_[i*new_dimension_+j]
-                      *(coordinates.get(j, w) + coordinates.get(j, h)))
-                   +LOWER_BOUND*(exp(coordinates.get(j, w)
-                                 +exp(coordinates.get(j, h))));
+      ineq+=exp(coordinates.get(j, w) + coordinates.get(j, h))
+            -LOWER_BOUND*(exp(coordinates.get(j, w)) + exp(coordinates.get(j, h)));
+
     }
-    double const_term=-values_[i]+new_dimension_*math::Sqr(LOWER_BOUND*SCALE_FACTOR);
-    double epsilon1=math::Sqr(SCALE_FACTOR)*left_ineq + const_term;
-    double epsilon2=math::Sqr(SCALE_FACTOR)*right_ineq - const_term;
-    double epsilon=std::max(epsilon1, epsilon2);
+    double const_term=values_[i]-new_dimension_*math::Sqr(LOWER_BOUND*SCALE_FACTOR);
+    double epsilon=fabs(const_term-ineq);
     *objective+= epsilon; 
   }
 
@@ -541,7 +529,7 @@ void RelaxedRescaledNmfL1::ComputeFeasibilityError(Matrix &coordinates,
 double RelaxedRescaledNmfL1::ComputeLagrangian(Matrix &coordinates) {
   double lagrangian;
   Vector epsilons;
-  epsilons.Alias(*gradient.GetColumnPt(e_offset_), values_.size());
+  epsilons.Alias(coordinates.GetColumnPtr(e_offset_), values_.size());
   ComputeObjective(coordinates, &lagrangian);
   lagrangian*=sigma_;
   double dot_prod=1.0;
@@ -550,11 +538,10 @@ double RelaxedRescaledNmfL1::ComputeLagrangian(Matrix &coordinates) {
     index_t col=columns_[i];
     index_t w=col+w_offset_;
     index_t h=row+h_offset_;
-    double convex_part=0;
-    left_ineq=0;
-    right_ineq=0;
+    double left_ineq=0;
+    double right_ineq=0;
     for(index_t j=0; j<new_dimension_; j++) {
-       left_ineq+=-exp(y_lower)+
+       left_ineq+=-exp(coordinates.get(j, w)+coordinates.get(j, h))+
                  LOWER_BOUND*(+a_linear_term_exp_[w*new_dimension_+j]
                               +b_linear_term_exp_[w*new_dimension_+j]
                                *coordinates.get(j, w)
@@ -569,8 +556,8 @@ double RelaxedRescaledNmfL1::ComputeLagrangian(Matrix &coordinates) {
      
     } 
     double const_term=-values_[i]+new_dimension_*math::Sqr(LOWER_BOUND*SCALE_FACTOR);
-    double left_ineq+=math::Sqr(SCALE_FACTOR)*left_ineq + const_term-epsilons[i];
-    double right_ineq+=math::Sqr(SCALE_FACTOR)*right_ineq - const_term-epsilons[i];
+    left_ineq+=math::Sqr(SCALE_FACTOR)*left_ineq + const_term-epsilons[i];
+    right_ineq+=math::Sqr(SCALE_FACTOR)*right_ineq - const_term-epsilons[i];
     dot_prod*=left_ineq*right_ineq;
     if (unlikely(dot_prod<1e-30 || dot_prod>1e30)) {
       lagrangian+=-log(dot_prod);
@@ -615,7 +602,7 @@ void RelaxedRescaledNmfL1::GiveInitMatrix(Matrix *init_data) {
     }
   }
   Vector epsilons;
-  epsilons.Alias(init_data.GetColumnPtr(e_offset_), values_.size());
+  epsilons.Alias(init_data->GetColumnPtr(e_offset_), values_.size());
   for(index_t i=0; i<values_.size(); i++) {
     index_t row=rows_[i];
     index_t col=columns_[i];
@@ -624,18 +611,18 @@ void RelaxedRescaledNmfL1::GiveInitMatrix(Matrix *init_data) {
     double left_ineq=0;
     double right_ineq=0;
     for(index_t j=0; j<new_dimension_; j++) {
-      left_ineq+=exp(y_lower)-
-                 LOWER_BOUND*(+a_linear_term_exp_[w*new_dimension_+j]
+      left_ineq+=exp(init_data->get(j, h)+init_data->get(j, h))
+                -LOWER_BOUND*(+a_linear_term_exp_[w*new_dimension_+j]
                               +b_linear_term_exp_[w*new_dimension_+j]
-                               *init_data.get(j, w)
+                               *init_data->get(j, w)
                               +a_linear_term_exp_[h*new_dimension_+j]
                               +b_linear_term_exp_[h*new_dimension_+j]
-                               *init_data.get(j, h));
+                               *init_data->get(j, h));
       right_ineq+= -(+a_linear_term_dot_prod_[i*new_dimension_+j]
                      +b_linear_term_dot_prod_[i*new_dimension_+j]
-                      *(init_data.get(j, w) + init_data.get(j, h)))
-                   +LOWER_BOUND*(exp(init_data.get(j, w)
-                                 +exp(init_data.get(j, h))));
+                      *(init_data->get(j, w) + init_data->get(j, h)))
+                   +LOWER_BOUND*(exp(init_data->get(j, w)
+                                 +exp(init_data->get(j, h))));
     }
     double const_term=-values_[i]+new_dimension_*math::Sqr(LOWER_BOUND*SCALE_FACTOR);
     double epsilon1=math::Sqr(SCALE_FACTOR)*left_ineq + const_term;
@@ -1609,7 +1596,7 @@ double RelaxedNmfScaled::GetSoftLowerBound() {
 
 //////////////////////////////////////////////////////////////////////
 //GopNmfEngine/////////////////////////////////////////////////////
-template<typename SplitterClass, typename Objetive=RelaxedNmf>
+template<typename SplitterClass, typename Objective>
 void GopNmfEngine<SplitterClass, Objective>::Init(fx_module *module, 
                                                   SplitterClass *splitter,
                                                   Matrix &data_points) {
@@ -1629,7 +1616,7 @@ void GopNmfEngine<SplitterClass, Objective>::Init(fx_module *module,
   fx_set_param_bool(l_bfgs_module_, "silent", true);
 }
 
-template<typename SplitterClass, Objective=RelaxedNmf>
+template<typename SplitterClass, typename Objective>
 void GopNmfEngine<SplitterClass, Objective>::ComputeGlobalOptimum() {
    
   soft_prunes_=0;
@@ -1840,7 +1827,7 @@ void GopNmfEngine<SplitterClass, Objective>::ComputeGlobalOptimum() {
   } 
 }
 
-template<typename SplitterClass, Objective=RelaxedNmf>
+template<typename SplitterClass, typename Objective>
 void GopNmfEngine<SplitterClass, Objective>::PreprocessData(Matrix &data_mat) {
   values_.Init();
 	rows_.Init();
@@ -1876,7 +1863,7 @@ void GopNmfEngine<SplitterClass, Objective>::PreprocessData(Matrix &data_mat) {
   fx_set_param_double(relaxed_nmf_module_, "epsilon", lower_limit); 
 }
 
-template<typename SplitterClass, Objective=RelaxedNmf>
+template<typename SplitterClass, typename Objective>
 double GopNmfEngine<SplitterClass, Objective>::ComputeVolume(Matrix &lower_bound, Matrix &upper_bound) {
   double volume=1.0;
   DEBUG_ASSERT(lower_bound.n_rows()==upper_bound.n_rows());
@@ -1891,7 +1878,7 @@ double GopNmfEngine<SplitterClass, Objective>::ComputeVolume(Matrix &lower_bound
   return volume;
 }
 
-template<typename SplitterClass, Objective=RelaxedNmf>
+template<typename SplitterClass, typename Objective>
 void GopNmfEngine<SplitterClass, Objective>::ReportResults() {
 //  typename std::multimap<double, SolutionPack>::iterator it;
 //  for(it=lower_solution_.begin(); it!=lower_solution_.end(); it++) {
