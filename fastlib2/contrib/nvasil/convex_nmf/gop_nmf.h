@@ -384,11 +384,11 @@ struct SolutionPack {
   std::pair<Matrix, Matrix> box_; 
 };
 
-template<typename SplitterClass, typename Objecivei=RelaxedNmf>
+template<typename SplitterClass, typename Objective=RelaxedNmf>
 class GopNmfEngine {
  public:
   
-  typedef LBfgs<RelaxedNmf> LowerOptimizer; 
+  typedef LBfgs<Objective> LowerOptimizer; 
   typedef LBfgs<GeometricNmf> UpperOptimizer;
   void Init(fx_module *module, SplitterClass *splitter, Matrix &data_points);
   void ComputeGlobalOptimum();
