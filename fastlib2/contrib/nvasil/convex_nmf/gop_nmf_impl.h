@@ -465,6 +465,8 @@ void RelaxedRescaledNmfL1::ComputeGradient(Matrix &coordinates, Matrix *gradient
     double const_term=-values_[i]+new_dimension_*math::Sqr(LOWER_BOUND*SCALE_FACTOR);
     left_ineq+=math::Sqr(SCALE_FACTOR)*left_ineq + const_term-epsilons[i];
     right_ineq+=math::Sqr(SCALE_FACTOR)*right_ineq - const_term-epsilons[i];
+    DEBUG_ASSERT_MSG(left_ineq<=0, "Something is wrong we are out of the interior");
+    DEBUG_ASSERT_MSG(right_ineq<=0, "Something is wrong we are out of the interior");
     for(index_t j=0; j<new_dimension_; j++) {
       double grad_w=(math::Sqr(SCALE_FACTOR)*(
                     (+exp(coordinates.get(j, w) + coordinates.get(j, h))
@@ -558,6 +560,9 @@ double RelaxedRescaledNmfL1::ComputeLagrangian(Matrix &coordinates) {
     double const_term=-values_[i]+new_dimension_*math::Sqr(LOWER_BOUND*SCALE_FACTOR);
     left_ineq+=math::Sqr(SCALE_FACTOR)*left_ineq + const_term-epsilons[i];
     right_ineq+=math::Sqr(SCALE_FACTOR)*right_ineq - const_term-epsilons[i];
+    if (left_ineq<=0 || right_ineq<=0) {
+      return DBL_MAX;
+    };
     dot_prod*=left_ineq*right_ineq;
     if (unlikely(dot_prod<1e-30 || dot_prod>1e30)) {
       lagrangian+=-log(dot_prod);
@@ -576,11 +581,11 @@ void RelaxedRescaledNmfL1::Project(Matrix *coordinates) {
   fx_timer_start(NULL, "project");
   for(index_t i=0; i<num_of_rows_+num_of_columns_; i++) {
     for(index_t j=0; j<new_dimension_; j++) {
-      if (coordinates->get(i, j) < x_lower_bound_.get(i, j)) {
-        coordinates->set(i, j, x_lower_bound_.get(i, j));
+      if (coordinates->get(j, i) < x_lower_bound_.get(j, i)) {
+        coordinates->set(j, i, x_lower_bound_.get(j, i));
       } else {
-        if (coordinates->get(i, j)> x_upper_bound_.get(i, j)) {
-          coordinates->set(i, j, x_upper_bound_.get(i, j));
+        if (coordinates->get(j, i)> x_upper_bound_.get(j, i)) {
+          coordinates->set(j, i, x_upper_bound_.get(j, i));
         }
       }
     }
@@ -596,9 +601,9 @@ void RelaxedRescaledNmfL1::GiveInitMatrix(Matrix *init_data) {
   index_t epsilon_columns=values_.size()/new_dimension_+1;
   init_data->Init(new_dimension_, num_of_rows_ + num_of_columns_+epsilon_columns);
   for(index_t i=0; i<num_of_rows_+num_of_columns_; i++) {
-    for(index_t j=0; new_dimension_; j++) {
+    for(index_t j=0; j<new_dimension_; j++) {
       init_data->set(j, i, 
-          (x_lower_bound_.get(i, j) + x_upper_bound_.get(i, j))/2);
+          (x_lower_bound_.get(j, i) + x_upper_bound_.get(j, i))/2);
     }
   }
   Vector epsilons;
