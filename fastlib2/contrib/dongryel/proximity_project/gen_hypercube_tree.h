@@ -6,7 +6,7 @@
 
 namespace proximity {
 
-  template<class TStatistic=EmptyStatistic<Matrix> >
+  template<class TStatistic>
   class GenHypercubeTree {
 
    public:
