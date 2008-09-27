@@ -59,7 +59,7 @@ namespace proximity {
       count_.Init(number_of_particle_sets);
       total_count_ = 0;
       node_index_ = 0;
-      children_.Init(0, 1 << dimension);
+      children_.Init();
     }
 
     void Init(index_t particle_set_number, index_t begin_in, 
@@ -96,7 +96,7 @@ namespace proximity {
 				       unsigned int node_index_in) {
       
       GenHypercubeTree *new_node = new GenHypercubeTree();
-      children_.PushBackCopy(new_node);
+      *(children_.PushBackRaw()) = new_node;
       new_node->Init(number_of_particle_sets, dimension);
       new_node->node_index_ = node_index_in;
 
@@ -212,10 +212,11 @@ namespace proximity {
     }
     
     // Initialize the global list of nodes.
-    nodes_in_each_level->Init(1);    
+    nodes_in_each_level->Init(1);
 
     // Initialize the root node.
     node->Init(matrices.size(), matrices[0]->n_rows());
+    node->set_level(0);
     for(index_t i = 0; i < matrices.size(); i++) {
       node->Init(i, 0, matrices[i]->n_cols());
     }
@@ -226,7 +227,7 @@ namespace proximity {
 
     // Put the root node into the initial list of level 0.
     ((*nodes_in_each_level)[0]).Init();
-    ((*nodes_in_each_level)[0]).PushBackCopy(node);
+    *(((*nodes_in_each_level)[0]).PushBackRaw()) = node;
 
     tree_gen_hypercube_tree_private::SplitGenHypercubeTree
       (matrices, node, leaf_size, nodes_in_each_level, old_from_new, 0);
