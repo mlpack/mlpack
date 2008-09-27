@@ -394,6 +394,12 @@ void RelaxedRescaledNmfL1::Init(fx_module *module,
           (y_upper-y_lower);
       
       DEBUG_ASSERT(b_linear_term_dot_prod_[new_dimension_*i+j]>=0);
+      right_ineq+= -(+a_linear_term_dot_prod_[i*new_dimension_+j]
+                     +b_linear_term_dot_prod_[i*new_dimension_+j]
+                      *(x_upper_bound_.get(j, w) + x_upper_bound_.get(j, h)))
+                   +LOWER_BOUND*(exp(x_lower_bound_.get(j, w))
+                                 +exp(x_lower_bound_.get(j, h)));
+ 
       left_ineq+=exp(y_lower)-
                  LOWER_BOUND*(+a_linear_term_exp_[w*new_dimension_+j]
                               +b_linear_term_exp_[w*new_dimension_+j]
@@ -401,11 +407,7 @@ void RelaxedRescaledNmfL1::Init(fx_module *module,
                               +a_linear_term_exp_[h*new_dimension_+j]
                               +b_linear_term_exp_[h*new_dimension_+j]
                                *x_upper_bound_.get(j, h));
-      right_ineq+= -(+a_linear_term_dot_prod_[i*new_dimension_+j]
-                     +b_linear_term_dot_prod_[i*new_dimension_+j]
-                      *(x_upper_bound_.get(j, w) + x_upper_bound_.get(j, h)))
-                   +LOWER_BOUND*(exp(x_lower_bound_.get(j, w))
-                                 +exp(x_lower_bound_.get(j, h)));
+
     }
     double const_term=-values_[i]+new_dimension_*math::Sqr(LOWER_BOUND*SCALE_FACTOR);
     double epsilon1=math::Sqr(SCALE_FACTOR)*left_ineq + const_term;
@@ -437,8 +439,10 @@ void RelaxedRescaledNmfL1::ComputeGradient(Matrix &coordinates, Matrix *gradient
   fx_timer_start(NULL, "gradient");
   gradient->SetAll(0.0);
   Vector epsilons;
-  epsilons.Alias(gradient->GetColumnPtr(e_offset_), values_.size());
-  epsilons.SetAll(sigma_);
+  epsilons.Alias(coordinates.GetColumnPtr(e_offset_), values_.size());
+  Vector grad_epsilons;
+  grad_epsilons.Alias(gradient->GetColumnPtr(e_offset_), values_.size());
+  grad_epsilons.SetAll(sigma_);
   // gradient from the objective
   for(index_t i=0; i<values_.size(); i++) {
     index_t row=rows_[i];
@@ -448,42 +452,44 @@ void RelaxedRescaledNmfL1::ComputeGradient(Matrix &coordinates, Matrix *gradient
     double left_ineq=0;
     double right_ineq=0;
     for(index_t j=0; j<new_dimension_; j++) {
-       left_ineq+=-exp(coordinates.get(j, w)+coordinates.get(j, h))
+      right_ineq+=+a_linear_term_dot_prod_[i*new_dimension_+j]
+                   +b_linear_term_dot_prod_[i*new_dimension_+j]
+                      *(coordinates.get(j, w) + coordinates.get(j, h))
+                   -LOWER_BOUND*(exp(coordinates.get(j, w))
+                                 +exp(coordinates.get(j, h)));
+ 
+      left_ineq+=-exp(coordinates.get(j, w)+coordinates.get(j, h))
                 +LOWER_BOUND*(+a_linear_term_exp_[w*new_dimension_+j]
                               +b_linear_term_exp_[w*new_dimension_+j]
                                *coordinates.get(j, w)
                               +a_linear_term_exp_[h*new_dimension_+j]
                               +b_linear_term_exp_[h*new_dimension_+j]
                                *coordinates.get(j, h));
-      right_ineq+=(+a_linear_term_dot_prod_[i*new_dimension_+j]
-                   +b_linear_term_dot_prod_[i*new_dimension_+j]
-                      *(coordinates.get(j, w) + coordinates.get(j, h)))
-                   -LOWER_BOUND*(exp(coordinates.get(j, w))
-                                 +exp(coordinates.get(j, h)));
-     
+    
     } 
     double const_term=-values_[i]+new_dimension_*math::Sqr(LOWER_BOUND*SCALE_FACTOR);
-    left_ineq+=math::Sqr(SCALE_FACTOR)*left_ineq -const_term+epsilons[i];
     right_ineq+=math::Sqr(SCALE_FACTOR)*right_ineq + const_term+epsilons[i];
+    left_ineq+=math::Sqr(SCALE_FACTOR)*left_ineq -const_term+epsilons[i];
     DEBUG_ASSERT_MSG(left_ineq>0, "Something is wrong we are out of the interior");
     DEBUG_ASSERT_MSG(right_ineq>0, "Something is wrong we are out of the interior");
+
     for(index_t j=0; j<new_dimension_; j++) {
-      double grad_w=(math::Sqr(SCALE_FACTOR)*(
-                    (+exp(coordinates.get(j, w) + coordinates.get(j, h))
-                    -LOWER_BOUND*b_linear_term_exp_[w*new_dimension_+j])/left_ineq
-                    +(-b_linear_term_dot_prod_[i*new_dimension_+j]
-                      +LOWER_BOUND*exp(coordinates.get(j, w))))/right_ineq);
+      double grad_w=math::Sqr(SCALE_FACTOR)*(
+                    (-b_linear_term_dot_prod_[i*new_dimension_+j]
+                      +LOWER_BOUND*exp(coordinates.get(j, w)))/right_ineq
+                    +(+exp(coordinates.get(j, w) + coordinates.get(j, h))
+                    -LOWER_BOUND*b_linear_term_exp_[w*new_dimension_+j])/left_ineq);
       
-      double grad_h=(math::Sqr(SCALE_FACTOR)*(
-                    (+exp(coordinates.get(j, w) + coordinates.get(j, h))
-                    -LOWER_BOUND*b_linear_term_exp_[h*new_dimension_+j])/left_ineq
-                    +(-b_linear_term_dot_prod_[i*new_dimension_+j]
-                      +LOWER_BOUND*exp(coordinates.get(j, h))))/right_ineq);
+      double grad_h=math::Sqr(SCALE_FACTOR)*(
+                    (-b_linear_term_dot_prod_[i*new_dimension_+j]
+                      +LOWER_BOUND*exp(coordinates.get(j, h)))/right_ineq
+                    +(+exp(coordinates.get(j, w) + coordinates.get(j, h))
+                    -LOWER_BOUND*b_linear_term_exp_[h*new_dimension_+j])/left_ineq);
       gradient->set(j, w, gradient->get(j, w)+grad_w);
       gradient->set(j, h, gradient->get(j, h)+grad_h); 
     }
     double grad_e=-1.0/left_ineq-1.0/right_ineq;
-    epsilons[i]+=grad_e;
+    grad_epsilons[i]+=grad_e;
   }
   fx_timer_stop(NULL, "gradient");
 }
@@ -529,7 +535,7 @@ void RelaxedRescaledNmfL1::ComputeFeasibilityError(Matrix &coordinates,
 }
 
 double RelaxedRescaledNmfL1::ComputeLagrangian(Matrix &coordinates) {
-  double lagrangian;
+  double lagrangian=0.0;
   Vector epsilons;
   epsilons.Alias(coordinates.GetColumnPtr(e_offset_), values_.size());
   ComputeObjective(coordinates, &lagrangian);
@@ -543,6 +549,13 @@ double RelaxedRescaledNmfL1::ComputeLagrangian(Matrix &coordinates) {
     double left_ineq=0;
     double right_ineq=0;
     for(index_t j=0; j<new_dimension_; j++) {
+      right_ineq+= +a_linear_term_dot_prod_[i*new_dimension_+j]
+                   +b_linear_term_dot_prod_[i*new_dimension_+j]
+                      *(coordinates.get(j, w) + coordinates.get(j, h))
+                   -LOWER_BOUND*(exp(coordinates.get(j, w))
+                                 +exp(coordinates.get(j, h)));
+     
+ 
       left_ineq+=-exp(coordinates.get(j, w)+coordinates.get(j, h))+
                  LOWER_BOUND*(+a_linear_term_exp_[w*new_dimension_+j]
                               +b_linear_term_exp_[w*new_dimension_+j]
@@ -550,26 +563,20 @@ double RelaxedRescaledNmfL1::ComputeLagrangian(Matrix &coordinates) {
                               +a_linear_term_exp_[h*new_dimension_+j]
                               +b_linear_term_exp_[h*new_dimension_+j]
                                *coordinates.get(j, h));
-     right_ineq+=(+a_linear_term_dot_prod_[i*new_dimension_+j]
-                   +b_linear_term_dot_prod_[i*new_dimension_+j]
-                      *(coordinates.get(j, w) + coordinates.get(j, h)))
-                   -LOWER_BOUND*(exp(coordinates.get(j, w))
-                                 +exp(coordinates.get(j, h)));
-     
     } 
     double const_term=-values_[i]+new_dimension_*math::Sqr(LOWER_BOUND*SCALE_FACTOR);
-    left_ineq+=math::Sqr(SCALE_FACTOR)*left_ineq - const_term+epsilons[i];
     right_ineq+=math::Sqr(SCALE_FACTOR)*right_ineq + const_term+epsilons[i];
+    left_ineq+=math::Sqr(SCALE_FACTOR)*left_ineq - const_term+epsilons[i];
     if (left_ineq<=0 || right_ineq<=0) {
       return DBL_MAX;
     };
     dot_prod*=left_ineq*right_ineq;
-    if (unlikely(dot_prod<1e-30 || dot_prod>1e30)) {
+    if (unlikely(dot_prod<1e-30 || dot_prod>1e+30)) {
       lagrangian+=-log(dot_prod);
       dot_prod=1.0;
     }
+    lagrangian+=-log(dot_prod);
   }
-  lagrangian+=-log(dot_prod);
   return lagrangian;
 }
 
@@ -590,6 +597,14 @@ void RelaxedRescaledNmfL1::Project(Matrix *coordinates) {
       }
     }
   }
+/*  Vector epsilons;
+  epsilons.Alias(coordinates->GetColumnPtr(e_offset_), values_.size());
+  for(index_t i=0; i<epsilons.length(); i++) {
+    if (epsilons[i]<0) {
+      epsilons[i]=0;
+    }
+  }
+*/  
   fx_timer_stop(NULL, "project");
 }
 
@@ -600,6 +615,9 @@ void RelaxedRescaledNmfL1::set_sigma(double sigma) {
 void RelaxedRescaledNmfL1::GiveInitMatrix(Matrix *init_data) {
   index_t epsilon_columns=values_.size()/new_dimension_+1;
   init_data->Init(new_dimension_, num_of_rows_ + num_of_columns_+epsilon_columns);
+  // very important there are some epsilons in the end that are not used
+  // and they are initialized with nan , that crashes everything
+  init_data->SetAll(0.0);
   for(index_t i=0; i<num_of_rows_+num_of_columns_; i++) {
     for(index_t j=0; j<new_dimension_; j++) {
       init_data->set(j, i, 
@@ -608,6 +626,7 @@ void RelaxedRescaledNmfL1::GiveInitMatrix(Matrix *init_data) {
   }
   Vector epsilons;
   epsilons.Alias(init_data->GetColumnPtr(e_offset_), values_.size());
+
   for(index_t i=0; i<values_.size(); i++) {
     index_t row=rows_[i];
     index_t col=columns_[i];
@@ -616,6 +635,12 @@ void RelaxedRescaledNmfL1::GiveInitMatrix(Matrix *init_data) {
     double left_ineq=0;
     double right_ineq=0;
     for(index_t j=0; j<new_dimension_; j++) {
+      right_ineq+= -(+a_linear_term_dot_prod_[i*new_dimension_+j]
+                     +b_linear_term_dot_prod_[i*new_dimension_+j]
+                      *(init_data->get(j, w) + init_data->get(j, h)))
+                   +LOWER_BOUND*(exp(init_data->get(j, w)
+                                 +exp(init_data->get(j, h))));
+
       left_ineq+=exp(init_data->get(j, h)+init_data->get(j, h))
                 -LOWER_BOUND*(+a_linear_term_exp_[w*new_dimension_+j]
                               +b_linear_term_exp_[w*new_dimension_+j]
@@ -623,16 +648,12 @@ void RelaxedRescaledNmfL1::GiveInitMatrix(Matrix *init_data) {
                               +a_linear_term_exp_[h*new_dimension_+j]
                               +b_linear_term_exp_[h*new_dimension_+j]
                                *init_data->get(j, h));
-      right_ineq+= -(+a_linear_term_dot_prod_[i*new_dimension_+j]
-                     +b_linear_term_dot_prod_[i*new_dimension_+j]
-                      *(init_data->get(j, w) + init_data->get(j, h)))
-                   +LOWER_BOUND*(exp(init_data->get(j, w)
-                                 +exp(init_data->get(j, h))));
+
     }
     double const_term=-values_[i]+new_dimension_*math::Sqr(LOWER_BOUND*SCALE_FACTOR);
     double epsilon1=math::Sqr(SCALE_FACTOR)*left_ineq + const_term;
     double epsilon2=math::Sqr(SCALE_FACTOR)*right_ineq - const_term;
-    double epsilon=std::max(epsilon1, epsilon2)+1e02;
+    double epsilon=std::max(fabs(epsilon1), fabs(epsilon2))+1e02;
     epsilons[i]=epsilon;  
   }
  
@@ -1616,9 +1637,10 @@ void GopNmfEngine<SplitterClass, Objective>::Init(fx_module *module,
   PreprocessData(data_points);
   fx_set_param_int(l_bfgs_module_, "new_dimension", new_dimension_);
   fx_set_param_int(l_bfgs_module_, "num_of_points", num_of_rows_+num_of_columns_);
+  fx_set_param_double(l_bfgs_module_, "sigma", 1000);
   fx_set_param_int(l_bfgs_module_, "mem_bfgs", 3);
   fx_set_param_bool(l_bfgs_module_, "use_default_termination", false);
-  fx_set_param_bool(l_bfgs_module_, "silent", false);
+  fx_set_param_bool(l_bfgs_module_, "silent", true);
 }
 
 template<typename SplitterClass, typename Objective>
