@@ -101,8 +101,8 @@ class RelaxedNmf {
 class RelaxedRescaledNmfL1 {
  public:
   static const double LOWER_BOUND=0.5;
-  static const double UPPER_BOUND=1.0; 
-  static const double SCALE_FACTOR=2.0;
+  static const double UPPER_BOUND=0.6; 
+  static const double SCALE_FACTOR=10.0;
   void Init(ArrayList<index_t> &rows,
             ArrayList<index_t> &columns,
             ArrayList<double> &values,
