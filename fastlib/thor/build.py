@@ -8,6 +8,8 @@ dfs.h
 dfs_impl.h
 rbfs.h
 rbfs_impl.h
+single.h
+single_impl.h
 distribcache.h
 gnp.h
 kdtree.h
