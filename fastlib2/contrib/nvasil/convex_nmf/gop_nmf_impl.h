@@ -1630,7 +1630,7 @@ void GopNmfEngine<SplitterClass, Objective>::Init(fx_module *module,
   fx_set_param_int(l_bfgs_module_, "num_of_points", num_of_rows_+num_of_columns_);
   fx_set_param_int(l_bfgs_module_, "mem_bfgs", 10);
   fx_set_param_bool(l_bfgs_module_, "use_default_termination", false);
-  fx_set_param_bool(l_bfgs_module_, "silent", true);
+  fx_set_param_bool(l_bfgs_module_, "silent", false);
 }
 
 template<typename SplitterClass, typename Objective>
