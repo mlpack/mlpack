@@ -6,6 +6,7 @@ librule(
                "general_type_bounds.h",
                "gen_hypercube_tree.h",
                "gen_hypercube_tree_impl.h",
+               "gen_hypercube_tree_util.h",
                "gen_range.h",
                "gen_kdtree.h",
                "gen_kdtree_impl.h",
