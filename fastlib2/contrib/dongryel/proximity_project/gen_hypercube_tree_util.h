@@ -35,28 +35,60 @@ namespace GenHypercubeTreeUtil {
   void NodeListSetDifference
   (const ArrayList<proximity::GenHypercubeTree<TStatistic> * > &first_list,
    const ArrayList<proximity::GenHypercubeTree<TStatistic> * > &second_list,
+   const ArrayList<proximity::GenHypercubeTree<TStatistic> * > &third_list,
+   const ArrayList<proximity::GenHypercubeTree<TStatistic> * > &filter_list,
    ArrayList<proximity::GenHypercubeTree<TStatistic> * > *set_difference) {
    
     // Initialize the set difference list.
     set_difference->Init();
     
-    for(index_t i = 0; i < first_list.size(); i++) {
+    for(index_t i = 0; i < filter_list.size(); i++) {
       
-      proximity::GenHypercubeTree<TStatistic> *node_from_first_list = 
-	first_list[i];
+      proximity::GenHypercubeTree<TStatistic> *node_from_filter_list = 
+	filter_list[i];
       bool flag = false;
+
+      for(index_t j = 0; j < first_list.size(); j++) {
+	proximity::GenHypercubeTree<TStatistic> *node_from_first_list = 
+	  first_list[j];
+
+	if(node_from_filter_list == node_from_first_list) {
+	  flag = true;
+	  break;
+	}
+      }
+      if(flag) {
+	continue;
+      }
       
       for(index_t j = 0; j < second_list.size(); j++) {
 	proximity::GenHypercubeTree<TStatistic> *node_from_second_list = 
 	  second_list[j];
 
-	if(node_from_first_list == node_from_second_list) {
+	if(node_from_filter_list == node_from_second_list) {
 	  flag = true;
 	  break;
 	}
       }
+      if(flag) {
+	continue;
+      }
+
+      for(index_t j = 0; j < third_list.size(); j++) {
+	proximity::GenHypercubeTree<TStatistic> *node_from_third_list = 
+	  third_list[j];
+
+	if(node_from_filter_list == node_from_third_list) {
+	  flag = true;
+	  break;
+	}
+      }
+      if(flag) {
+	continue;
+      }
+
       if(!flag) {
-	set_difference->PushBackCopy(node_from_first_list);
+	set_difference->PushBackCopy(node_from_filter_list);
       }
     }
   }
@@ -366,6 +398,26 @@ namespace GenHypercubeTreeUtil {
       }
     }
   }
+
+  template<typename TStatistic>
+  void FindFourthList
+  (const ArrayList< ArrayList<proximity::GenHypercubeTree<TStatistic> *> > 
+   &nodes_in_each_level, unsigned int index, index_t level, index_t dimension,
+   const ArrayList<proximity::GenHypercubeTree<TStatistic> * > &first_list,
+   const ArrayList<proximity::GenHypercubeTree<TStatistic> * > &second_list,
+   const ArrayList<proximity::GenHypercubeTree<TStatistic> * > &third_list,
+   ArrayList<proximity::GenHypercubeTree<TStatistic> * > *fourth_list) {
+
+    // First, find the parent of the given node.
+    ArrayList<proximity::GenHypercubeTree<TStatistic> * > neighbors_of_parent;
+    FindNeighborsInAdaptiveGenHypercubeTree
+      (nodes_in_each_level, index >> dimension, level - 1, dimension,
+       &neighbors_of_parent);
+
+    NodeListSetDifference(first_list, second_list, third_list, 
+			  neighbors_of_parent, fourth_list);
+  }
+
 };
 
 #endif
