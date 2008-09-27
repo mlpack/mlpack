@@ -52,6 +52,9 @@ int main(int argc, char *argv[]) {
   FastMultipoleMethod fmm_algorithm;
   fmm_algorithm.Init(queries, references, reference_weights,
 		     queries_equal_references, fmm_module);
+  
+  // Start computation.
+  fmm_algorithm.Compute();
 
   fx_done(NULL);
   return 0;
