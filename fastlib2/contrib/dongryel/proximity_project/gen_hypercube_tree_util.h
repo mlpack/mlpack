@@ -88,7 +88,7 @@ namespace GenHypercubeTreeUtil {
       }
 
       if(!flag) {
-	set_difference->PushBackCopy(node_from_filter_list);
+	*(set_difference->PushBackRaw()) = node_from_filter_list;
       }
     }
   }
@@ -133,7 +133,7 @@ namespace GenHypercubeTreeUtil {
 	  sqrt(node->bound().MinDistanceSq(child_node->bound()));
 	
 	if(min_distance > 0) {
-	  colleagues->PushBackCopy(child_node);
+	  *(colleagues->PushBackRaw()) = child_node;
 	}
       }
     }
@@ -160,12 +160,14 @@ namespace GenHypercubeTreeUtil {
     // reference node being considered, then add to the non-adjacent
     // list. Otherwise, it is adjacent.
     if(min_distance >= potentially_fake_leaf_neighbor_node->side_length()) {
-      non_adjacent_children->PushBackCopy(potentially_fake_leaf_neighbor_node);
+      *(non_adjacent_children->PushBackRaw()) =
+	potentially_fake_leaf_neighbor_node;
     }
     else {
       
       if(potentially_fake_leaf_neighbor_node->is_leaf()) {
-	adjacent_children->PushBackCopy(potentially_fake_leaf_neighbor_node);
+	*(adjacent_children->PushBackRaw()) =
+	  potentially_fake_leaf_neighbor_node;
       }
       else {
 	for(index_t i = 0; i < 
@@ -243,7 +245,7 @@ namespace GenHypercubeTreeUtil {
 	DEBUG_ASSERT(potential_candidate != NULL);
 
 	if(potential_candidate->is_leaf()) {
-	  adjacent_children->PushBackCopy(potential_candidate);
+	  *(adjacent_children->PushBackRaw()) = potential_candidate;
 	}
       }
     }
@@ -334,7 +336,7 @@ namespace GenHypercubeTreeUtil {
       // If the chosen index is not equal to the exclusion index, then
       // add the node number to the list.
       if(valid_combination) {
-	neighbor_indices.PushBackCopy(BitInterleaving(chosen_index));
+	*(neighbor_indices.PushBackRaw()) = BitInterleaving(chosen_index);
       }
     }
   }
@@ -394,7 +396,7 @@ namespace GenHypercubeTreeUtil {
 	FindNode(nodes_in_each_level, unfiltered_neighbor_indices[i], level);
       
       if(node != NULL) {
-	neighbor_nodes->PushBackCopy(node);
+	*(neighbor_nodes->PushBackRaw()) = node;
       }
     }
   }

@@ -161,6 +161,9 @@ namespace tree_gen_hypercube_tree_private {
 	node->AllocateNewChild(matrices.size(), matrices[0]->n_rows(),
 			       (node->node_index() << 
 				matrices[0]->n_rows()) + code);
+      
+      // Set the level one more of the parent.
+      new_child->set_level(node->level() + 1);
 
       // Appropriately set the membership in each particle set.
       for(index_t p = 0; p < matrices.size(); p++) {
@@ -168,15 +171,14 @@ namespace tree_gen_hypercube_tree_private {
       }
 
       // Push the newly created child onto the list.
-      ((*nodes_in_each_level)[level + 1]).PushBackCopy(new_child);
+      *(((*nodes_in_each_level)[level + 1]).PushBackRaw()) = new_child;
       new_child->bound().Init(matrices[0]->n_rows());
       
       Vector lower_coord, upper_coord;
       lower_coord.Init(matrices[0]->n_rows());
       upper_coord.Init(matrices[0]->n_rows());
 
-      for(index_t d = matrices[0]->n_rows() - 1; d >= 0; 
-	  d--) {
+      for(index_t d = matrices[0]->n_rows() - 1; d >= 0; d--) {
 	const DRange &range_in_this_dimension = node->bound().get(d);
 
 	if(code & (1 << d) > 0) {
@@ -239,9 +241,6 @@ namespace tree_gen_hypercube_tree_private {
    index_t leaf_size,
    ArrayList< ArrayList<GenHypercubeTree<TStatistic> *> > *nodes_in_each_level,
    ArrayList< ArrayList<index_t> > *old_from_new, index_t level) {
-    
-    // Set the level of this node.
-    node->set_level(level);
 
     // If the node is just too small, then do not split.
     if(node->count() <= leaf_size) {
