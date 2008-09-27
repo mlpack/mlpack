@@ -54,12 +54,12 @@ namespace proximity {
       return children_.size() == 0;
     }
 
-    void Init(index_t number_of_particle_sets) {
+    void Init(index_t number_of_particle_sets, index_t dimension) {
       begin_.Init(number_of_particle_sets);
       count_.Init(number_of_particle_sets);
       total_count_ = 0;
       node_index_ = 0;
-      children_.Init();
+      children_.Init(0, 1 << dimension);
     }
 
     void Init(index_t particle_set_number, index_t begin_in, 
@@ -92,11 +92,12 @@ namespace proximity {
     }
 
     GenHypercubeTree *AllocateNewChild(index_t number_of_particle_sets,
+				       index_t dimension,
 				       unsigned int node_index_in) {
       
       GenHypercubeTree *new_node = new GenHypercubeTree();
       children_.PushBackCopy(new_node);
-      new_node->Init(number_of_particle_sets);
+      new_node->Init(number_of_particle_sets, dimension);
       new_node->node_index_ = node_index_in;
 
       return new_node;
@@ -214,7 +215,7 @@ namespace proximity {
     nodes_in_each_level->Init(1);    
 
     // Initialize the root node.
-    node->Init(matrices.size());
+    node->Init(matrices.size(), matrices[0]->n_rows());
     for(index_t i = 0; i < matrices.size(); i++) {
       node->Init(i, 0, matrices[i]->n_cols());
     }

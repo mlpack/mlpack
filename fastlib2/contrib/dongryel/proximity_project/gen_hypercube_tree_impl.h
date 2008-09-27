@@ -158,7 +158,7 @@ namespace tree_gen_hypercube_tree_private {
       // Create the child. From the code, also set the bounding cube
       // of half the side length.
       GenHypercubeTree<TStatistic> *new_child =
-	node->AllocateNewChild(matrices.size(), 
+	node->AllocateNewChild(matrices.size(), matrices[0]->n_rows(),
 			       (node->node_index() << 
 				matrices[0]->n_rows()) + code);
 
