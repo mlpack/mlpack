@@ -18,6 +18,7 @@
 #include "mlpack/series_expansion/inverse_pow_dist_farfield_expansion.h"
 #include "mlpack/series_expansion/inverse_pow_dist_local_expansion.h"
 #include "contrib/dongryel/proximity_project/gen_hypercube_tree.h"
+#include "contrib/dongryel/proximity_project/gen_hypercube_tree_util.h"
 
 class FastMultipoleMethod {
 
@@ -77,7 +78,12 @@ class FastMultipoleMethod {
    */
   ArrayList< ArrayList<index_t> > new_from_old_index_;
 
+  /** @brief The accumulated potential for each query particle.
+   */
+  Vector potentials_;
+
   ////////// Private Member Functions //////////
+
   void FormMultipoleExpansions_() {
     
     Vector node_center;
@@ -105,6 +111,10 @@ class FastMultipoleMethod {
 	// Initialize the far-field expansion of the current node.
 	node->stat().farfield_expansion_.Init(node_center, &sea_);
 
+	// Also initialize the local expansion of the current node (to
+	// be used in the downward pass later).
+	node->stat().local_expansion_.Init(node_center, &sea_);
+
 	// If the current node is a leaf node, then compute
 	// exhaustively its far-field moments.
 	if(node->is_leaf()) {
@@ -126,6 +136,231 @@ class FastMultipoleMethod {
     }
   }
 
+  void EvaluateMultipoleExpansion_
+  (proximity::GenHypercubeTree<FmmStat> *query_node, 
+   proximity::GenHypercubeTree<FmmStat> *reference_node) {
+
+    index_t query_point_indexing = 
+      (shuffled_reference_particle_set_.ptr() == 
+       shuffled_query_particle_set_.ptr()) ? 0:1;
+
+    for(index_t q = query_node->begin(query_point_indexing); 
+	q < query_node->end(query_point_indexing); q++) {
+      
+      potentials_[q] += 
+	reference_node->stat().farfield_expansion_.EvaluateField
+	(shuffled_query_particle_set_, q, sea_.get_max_order());
+    }
+  }
+
+  void BaseCase_(proximity::GenHypercubeTree<FmmStat> *query_node,
+		 proximity::GenHypercubeTree<FmmStat> *reference_node) {
+    
+    index_t query_point_indexing = 
+      (shuffled_reference_particle_set_.ptr() == 
+       shuffled_query_particle_set_.ptr()) ? 0:1;
+
+    for(index_t q = query_node->begin(query_point_indexing); 
+	q < query_node->end(query_point_indexing); q++) {
+      
+      // Get the query point.
+      const double *q_col = shuffled_query_particle_set_.GetColumnPtr(q);
+
+      for(index_t r = reference_node->begin(0); r < reference_node->end(0);
+	  r++) {
+	
+	// Compute the pairwise distance, if the query and the
+	// reference are not the same particle.
+	if(leave_one_out_ && q == r) {
+	  continue;
+	}
+	const double *r_col = shuffled_reference_particle_set_.GetColumnPtr(r);
+	
+	double distance = sqrt(la::DistanceSqEuclidean
+			       (shuffled_query_particle_set_.n_rows(), q_col, 
+				r_col));
+	
+	potentials_[q] += shuffled_reference_particle_charge_set_[r] /
+	  pow(distance, lambda_);
+      }
+    }
+  }
+
+  void EvaluateLocalExpansion_
+  (proximity::GenHypercubeTree<FmmStat> *query_node) {
+
+    index_t query_point_indexing = 
+      (shuffled_reference_particle_set_.ptr() == 
+       shuffled_query_particle_set_.ptr()) ? 0:1;
+
+    for(index_t q = query_node->begin(query_point_indexing); 
+	q < query_node->end(query_point_indexing); q++) {
+
+      // Evaluate the local expansion at the current query point.
+      potentials_[q] += query_node->stat().local_expansion_.
+	EvaluateField(shuffled_query_particle_set_, q,
+		      sea_.get_max_order());
+    }    
+  }
+
+  void TransmitLocalExpansionToChildren_
+  (proximity::GenHypercubeTree<FmmStat> *query_node) {
+    
+    for(index_t c = 0; c < query_node->num_children(); c++) {
+      
+      // Query child.
+      proximity::GenHypercubeTree<FmmStat> *query_child_node =
+	query_node->get_child(c);
+      
+      query_node->stat().local_expansion_.TranslateToLocal
+	(query_child_node->stat().local_expansion_);
+    }
+  }
+
+  void DownwardPass_() {
+
+    index_t query_point_indexing = 
+      (shuffled_reference_particle_set_.ptr() ==
+       shuffled_query_particle_set_.ptr()) ? 0:1;
+
+    // Start from the top level and descend down the tree.
+    for(index_t level = 1; level < nodes_in_each_level_.size(); level++) {
+      
+      // Retrieve the nodes on the current level.
+      const ArrayList<proximity::GenHypercubeTree<FmmStat> * > 
+	&nodes_on_current_level = nodes_in_each_level_[level];
+      
+      // Iterate over each node in this level.
+      for(index_t n = 0; n < nodes_on_current_level.size(); n++) {
+
+	// The pointer to the current query node.
+	proximity::GenHypercubeTree<FmmStat> *node = nodes_on_current_level[n];
+
+	// If the node does not contain any query points, then skip
+	// it.
+	if(node->count(query_point_indexing) == 0) {
+	  continue;
+	}
+
+	// Compute the colleague nodes of the given node. This
+	// corresponds to Cheng, Greengard, and Rokhlin's List 2 in
+	// their description of the algorithm.
+	ArrayList<proximity::GenHypercubeTree<FmmStat> *> colleagues;
+	GenHypercubeTreeUtil::FindColleagues
+	  (shuffled_query_particle_set_.n_rows(), node, nodes_in_each_level_,
+	   &colleagues);
+
+	// Perform far-to-local translation for the colleague nodes.
+	for(index_t c = 0; c < colleagues.size(); c++) {
+
+	  proximity::GenHypercubeTree<FmmStat> *colleague_node = colleagues[c];
+
+	  colleague_node->stat().farfield_expansion_.TranslateToLocal
+	    (node->stat().local_expansion_, sea_.get_max_order());
+	  
+	} // end of iterating over each colleague...
+	 
+	// These correspond to the List 1 and List 3 of the same
+	// paper.
+	ArrayList<proximity::GenHypercubeTree<FmmStat> *> adjacent_leaves;
+	ArrayList<proximity::GenHypercubeTree<FmmStat> *> 
+	  non_adjacent_children;
+
+	// If the current query node is a leaf node, then compute List
+	// 1 and List 3 of the Cheng/Greengard/Rokhlin paper.
+	if(node->is_leaf()) {
+	  	  
+	  GenHypercubeTreeUtil::FindAdjacentLeafNode
+	    (shuffled_query_particle_set_.n_rows(), nodes_in_each_level_, node,
+	     &adjacent_leaves, &non_adjacent_children);
+
+	  // Iterate over each node in List 1 and directly compute the
+	  // contribution.
+	  for(index_t adjacent = 0; adjacent < adjacent_leaves.size(); 
+	      adjacent++) {
+	    
+	    proximity::GenHypercubeTree<FmmStat> *reference_leaf_node =
+	      adjacent_leaves[adjacent];
+	    
+	    DEBUG_ASSERT(reference_leaf_node->is_leaf());
+	    BaseCase_(node, reference_leaf_node);	    
+	  } // end of iterating over List 1...
+
+	  // Iterate over each node in List 3 and directly evaluate
+	  // its far-field expansion.
+	  for(index_t non_adjacent = 0; non_adjacent < 
+		non_adjacent_children.size(); non_adjacent++) {
+	    proximity::GenHypercubeTree<FmmStat> *reference_node =
+	      non_adjacent_children[non_adjacent];
+
+	    // This is the cut-off that determines whether exhaustive
+	    // base case of the direct far-field evaluation is
+	    // cheaper.
+	    if(reference_node->count(0) > 
+	       sea_.get_max_order() * sea_.get_max_order() * 
+	       sea_.get_max_order()) {
+	      EvaluateMultipoleExpansion_(node, reference_node);
+	    }
+	    else {
+	      BaseCase_(node, reference_node);
+	    }
+	    
+	  } // end of iterating over List 3...
+	}
+	else {
+	  adjacent_leaves.Init();
+	  non_adjacent_children.Init();	  
+	}
+
+	// Compute List 4.
+	ArrayList<proximity::GenHypercubeTree<FmmStat> * > fourth_list;
+	GenHypercubeTreeUtil::FindFourthList
+	  (nodes_in_each_level_, node->node_index(), node->level(),
+	   shuffled_query_particle_set_.n_rows(), adjacent_leaves, 
+	   colleagues, non_adjacent_children, &fourth_list);
+	
+	// Directly accumulate the contribution of each reference node
+	// in List 4.
+	for(index_t direct_accum = 0; direct_accum < fourth_list.size();
+	    direct_accum++) {
+	  
+	  proximity::GenHypercubeTree<FmmStat> *reference_node =
+	    fourth_list[direct_accum];
+	  
+	  // This is the cut-off that determines whether computing by
+	  // direct accumulation is cheaper with respect to the base
+	  // case method.
+	  if(node->count(query_point_indexing) >
+	     sea_.get_max_order() * sea_.get_max_order() * 
+	     sea_.get_max_order()) {
+	    
+	    node->stat().local_expansion_.AccumulateCoeffs
+	      (shuffled_reference_particle_set_,
+	       shuffled_reference_particle_charge_set_,
+	       reference_node->begin(0), reference_node->end(0),
+	       sea_.get_max_order());
+	  }
+	  else {
+	    BaseCase_(node, reference_node);
+	  }
+	}
+	
+	// If the current query node is a leaf node, then we have to
+	// evaluate its local expansion.
+	if(node->is_leaf()) {
+	  EvaluateLocalExpansion_(node);
+	}
+	
+	// Otherwise, we need to pass it down.
+	else {
+	  TransmitLocalExpansionToChildren_(node);
+	}
+
+      } // end of iterating over each query box node on this level...
+      
+    } // end of iterating over each level...
+  }
+
  public:
 
   void Compute() {
@@ -134,7 +369,7 @@ class FastMultipoleMethod {
     FormMultipoleExpansions_();
 
     // Downward pass
-    
+    DownwardPass_();
   }
 
   void Init(const Matrix &queries, const Matrix &references,
@@ -214,6 +449,11 @@ class FastMultipoleMethod {
 
     // Initialize the series expansion auxliary object.
     sea_.Init(lambda_, 8, references.n_rows());
+
+    // Allocate the vector for storing the accumulated potential.
+    potentials_.Init(shuffled_query_particle_set_.n_cols());
+
+    tree_->Print();
   }
 };
 
