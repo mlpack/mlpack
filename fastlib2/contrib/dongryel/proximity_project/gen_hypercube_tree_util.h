@@ -112,39 +112,38 @@ namespace GenHypercubeTreeUtil {
   (const proximity::GenHypercubeTree<TStatistic> *centered_node,
    proximity::GenHypercubeTree<TStatistic> 
    *potentially_fake_leaf_neighbor_node,
-   ArrayList<proximity::GenHypercubeTree<TStatistic> > *adjacent_children, 
-   ArrayList<proximity::GenHypercubeTree<TStatistic> > 
+   ArrayList<proximity::GenHypercubeTree<TStatistic> *> *adjacent_children, 
+   ArrayList<proximity::GenHypercubeTree<TStatistic> *> 
    *non_adjacent_children) {
 
-    if(potentially_fake_leaf_neighbor_node->is_leaf()) {
-
-      // Compute the minimum distance between the centered node and
-      // the current node being considered. I imagine this could be
-      // optimized using bit shuffling business, but I am currently
-      // not inclined to implementing this.
-      double min_distance = 
-	sqrt(centered_node->bound().MinDistanceSq
-	     (potentially_fake_leaf_neighbor_node->bound()));
+    // Compute the minimum distance between the centered node and
+    // the current node being considered. I imagine this could be
+    // optimized using bit shuffling business, but I am currently
+    // not inclined to implementing this.
+    double min_distance = 
+      sqrt(centered_node->bound().MinDistanceSq
+	   (potentially_fake_leaf_neighbor_node->bound()));
+    
+    // If the minimum distance at least the side length of the
+    // reference node being considered, then add to the non-adjacent
+    // list. Otherwise, it is adjacent.
+    if(min_distance >= potentially_fake_leaf_neighbor_node->side_length()) {
+      non_adjacent_children->PushBackCopy(potentially_fake_leaf_neighbor_node);
+    }
+    else {
       
-      // If the minimum distance at least the side length of the
-      // reference node being considered, then add to the non-adjacent
-      // list. Otherwise, it is adjacent.
-      if(min_distance < potentially_fake_leaf_neighbor_node->side_length()) {
+      if(potentially_fake_leaf_neighbor_node->is_leaf()) {
 	adjacent_children->PushBackCopy(potentially_fake_leaf_neighbor_node);
       }
       else {
-	non_adjacent_children->PushBackCopy
-	  (potentially_fake_leaf_neighbor_node);
-      }
-    }
-    else {
-      for(index_t i = 0; i < 
-	    potentially_fake_leaf_neighbor_node->num_children(); i++) {
-	
-	proximity::GenHypercubeTree<TStatistic> *potential_node =
-	  potentially_fake_leaf_neighbor_node->get_child(i);
-	RetrieveAdjacentLeafNode(centered_node, potential_node, 
-				 adjacent_children, non_adjacent_children);
+	for(index_t i = 0; i < 
+	      potentially_fake_leaf_neighbor_node->num_children(); i++) {
+	  
+	  proximity::GenHypercubeTree<TStatistic> *potential_node =
+	    potentially_fake_leaf_neighbor_node->get_child(i);
+	  RetrieveAdjacentLeafNode(centered_node, potential_node, 
+				   adjacent_children, non_adjacent_children);
+	}
       }
     }
   }
@@ -152,24 +151,25 @@ namespace GenHypercubeTreeUtil {
   template<typename TStatistic>
   void FindAdjacentLeafNode
   (index_t dimension,
-   ArrayList< ArrayList<proximity::GenHypercubeTree<TStatistic> *> > 
-   *nodes_in_each_level,
+   const ArrayList< ArrayList<proximity::GenHypercubeTree<TStatistic> *> > 
+   &nodes_in_each_level,
    proximity::GenHypercubeTree<TStatistic> *leaf_node,
-   ArrayList<proximity::GenHypercubeTree<TStatistic> > *adjacent_children,
-   ArrayList<proximity::GenHypercubeTree<TStatistic> > *non_adjacent_children) {
+   ArrayList<proximity::GenHypercubeTree<TStatistic> *> 
+   *adjacent_children,
+   ArrayList<proximity::GenHypercubeTree<TStatistic> *> 
+   *non_adjacent_children) {
     
     // Initialize the list to be returned.
     adjacent_children->Init();
     non_adjacent_children->Init();
 
-    ArrayList<index_t> neighbor_indices_to_be_filtered;
-    neighbor_indices_to_be_filtered.Init();
+    ArrayList<unsigned int> neighbor_indices_to_be_filtered;
 
     // First, find the neighbors of the given leaf node on the same
     // level it is on.
     FindNeighborsInNonAdaptiveGenHypercubeTree
       (leaf_node->node_index(), leaf_node->level(), dimension, 
-       neighbor_indices_to_be_filtered);
+       &neighbor_indices_to_be_filtered);
 
     // Traverse each fake neighbor and expand to find the real
     // neighboring nodes.
@@ -196,7 +196,7 @@ namespace GenHypercubeTreeUtil {
 	unsigned int potential_node_index = 
 	  neighbor_indices_to_be_filtered[potentially_fake_leaf_neighbor];
 	proximity::GenHypercubeTree<TStatistic> *potential_candidate = NULL;
-
+	
 	do {
 	  
 	  potential_node_index = potential_node_index >> dimension;
@@ -204,11 +204,15 @@ namespace GenHypercubeTreeUtil {
 	  potential_candidate = FindNode
 	    (nodes_in_each_level, potential_node_index, current_level);
 
-	} while(current_level >= 0 && potential_candidate == NULL);
+	} while(potential_candidate == NULL);
 
-	// We are guaranteed here that we have a candidate to add.
+	// We are guaranteed here that we have a non-NULL node, but
+	// need to check whether it is actually a leaf or not!
 	DEBUG_ASSERT(potential_candidate != NULL);
-	adjacent_children->PushBackCopy(potential_candidate);
+
+	if(potential_candidate->is_leaf()) {
+	  adjacent_children->PushBackCopy(potential_candidate);
+	}
       }
     }
 
@@ -276,18 +280,22 @@ namespace GenHypercubeTreeUtil {
 			     neighbor_indices);
 
       // Choose the exclusion index.
-      chosen_index[level] = exclusion_index[level];
-      RecursivelyChooseIndex(lower_limit, exclusion_index, upper_limit,
-			     chosen_index, level + 1, valid_combination ||
-			     (chosen_index[level] != exclusion_index[level]),
-			     neighbor_indices);
+      if(exclusion_index[level] != lower_limit[level]) {
+	chosen_index[level] = exclusion_index[level];      
+	RecursivelyChooseIndex(lower_limit, exclusion_index, upper_limit,
+			       chosen_index, level + 1, valid_combination ||
+			       (chosen_index[level] != exclusion_index[level]),
+			       neighbor_indices);
+      }
 
       // Choose the upper index.
-      chosen_index[level] = upper_limit[level];
-      RecursivelyChooseIndex(lower_limit, exclusion_index, upper_limit,
-			     chosen_index, level + 1, valid_combination ||
-			     (chosen_index[level] != exclusion_index[level]),
-			     neighbor_indices);
+      if(upper_limit[level] != exclusion_index[level]) {
+	chosen_index[level] = upper_limit[level];
+	RecursivelyChooseIndex(lower_limit, exclusion_index, upper_limit,
+			       chosen_index, level + 1, valid_combination ||
+			       (chosen_index[level] != exclusion_index[level]),
+			       neighbor_indices);
+      }
     }
     else {
 
@@ -300,7 +308,7 @@ namespace GenHypercubeTreeUtil {
   }
 
   void FindNeighborsInNonAdaptiveGenHypercubeTree
-  (unsigned int index, index_t level, index_t dimension, 
+  (unsigned int index, unsigned int level, index_t dimension, 
    ArrayList<unsigned int> *neighbor_indices) {
 
     // Initialize the neighbor indices.
@@ -314,9 +322,18 @@ namespace GenHypercubeTreeUtil {
     BitDeinterleaving(index, level, tmp_vector);
     
     for(index_t d = 0; d < dimension; d++) {
-      lower_limit[d] = std::max(tmp_vector[d] - 1, (unsigned int) 0);
-      upper_limit[d] = std::min(tmp_vector[d] + 1, 
-				(unsigned int) ((1 << level) - 1));
+      if(tmp_vector[d] > 0) {
+	lower_limit[d] = tmp_vector[d] - 1;
+      }
+      else {
+	lower_limit[d] = 0;
+      }
+      if(tmp_vector[d] < (unsigned int) ((1 << level) - 1)) {
+	upper_limit[d] = tmp_vector[d] + 1;
+      }
+      else {
+	upper_limit[d] = (1 << level) - 1;
+      }
     }
 
     GenVector<unsigned int> chosen_index;
