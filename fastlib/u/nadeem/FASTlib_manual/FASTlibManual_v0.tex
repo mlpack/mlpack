@@ -327,6 +327,8 @@ In order to build FASTlib, you will need the following tools:
 \item gcc, g++, and g77 3.4.6; later versions and gfortran should work
 \item python 2.2 or later
 \item (optional) doxygen and graphviz's dot, for formatted documentation
+\item curl
+\item GNU make
 \end {itemize}
 
 FASTlib is maintained in a Subversion repository at Georgia Tech, but
@@ -351,14 +353,14 @@ You will need to close and reopen your terminal to enact the change.
 Type \verb@fl-build@ to confirm things are working; this should print
 usage information for FASTlib's build system.  Next, try:
 \begin{verbatim}
-  cd $FASTLIBPATH/u/example
-  fl-build main
-  ./main --data=fake.arff
+  cd $FASTLIBPATH/examples/platonic_allnn
+  fl-build allnn_main
+  ./allnn_main --r=../../fastlib/data/test/fake.csv
 \end{verbatim}
-This performs 10-fold cross-validation for $k$-nearest-neighbors.  At
-the end of the output, you should see
-\verb@/kfold/results/p_correct 1.000@; \verb@fake.arff@ was engineered
-to be easy.
+This finds the (degenerate) nearest neighbors of points in {\tt
+fake.csv}, which are the points themselves except when multiple points
+occur at the same location.  You can see the results in {\tt
+output.txt}.
 
 \section {Code Organization}
 The following summarizes the current code organization of FASTlib
@@ -793,7 +795,7 @@ There are a handful of compilation modes supported by fl-build, specified by the
 \begin{itemize}
 \item verbose: tracking the execution of a program when it's infeasible to step through manually. disables optimizations, enables printing of verbosity messages
 \item debug: allow best use with gdb for tracking bugs. disables optimization, enables all debug checks, enables highest level of gdb.
-\item check (default mode): regular development. enables code optimizations and leaves in debug checks, at a 25% or so penalty. gdb symbols are compiled in but may be inaccurate due to optimizations.
+\item check (default mode): regular development. enables code optimizations and leaves in debug checks, at a 25\% or so penalty. gdb symbols are compiled in but may be inaccurate due to optimizations.
 \item fast: timing runs, for the fairest timing comparisons. debug symbols still enabled but may be inaccurate.
 \item unsafe: optimizations that might alter correctness, and often will slow the program down.
 \item profile: speed profiling. compile with --mode=profile, run your program, and run gprof ./binaryfile | less to see what the bottleneck is. 
