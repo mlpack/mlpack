@@ -333,7 +333,7 @@ void RelaxedRescaledNmfL1::Init(fx_module *module,
            ) {
   grad_tolerance_=fx_param_double(module, "grad_tolerance", 0.1);
   new_dimension_=fx_param_int(module, "new_dimension", 5);
-  opt_gap_=fx_param_double(module, "opt_gap", 0.01);
+  opt_gap_=fx_param_double(module, "opt_gap", 0.1);
   previous_objective_=DBL_MAX;
   rows_.InitCopy(rows);
   num_of_rows_=*std::max_element(rows_.begin(), rows_.end())+1;
@@ -521,7 +521,7 @@ void RelaxedRescaledNmfL1::ComputeNonRelaxedObjective(Matrix &coordinates,
 
     }
     double const_term=values_[i]-new_dimension_*math::Sqr(LOWER_BOUND*SCALE_FACTOR);
-    double epsilon=fabs(const_term-ineq);
+    double epsilon=fabs(const_term-math::Sqr(SCALE_FACTOR)*ineq);
     *objective+= epsilon; 
   }
 
@@ -575,8 +575,8 @@ double RelaxedRescaledNmfL1::ComputeLagrangian(Matrix &coordinates) {
       lagrangian+=-log(dot_prod);
       dot_prod=1.0;
     }
-    lagrangian+=-log(dot_prod);
   }
+  lagrangian+=-log(dot_prod);
   return lagrangian;
 }
 
@@ -597,14 +597,14 @@ void RelaxedRescaledNmfL1::Project(Matrix *coordinates) {
       }
     }
   }
-/*  Vector epsilons;
+  Vector epsilons;
   epsilons.Alias(coordinates->GetColumnPtr(e_offset_), values_.size());
   for(index_t i=0; i<epsilons.length(); i++) {
     if (epsilons[i]<0) {
       epsilons[i]=0;
     }
   }
-*/  
+  
   fx_timer_stop(NULL, "project");
 }
 
@@ -666,22 +666,13 @@ bool RelaxedRescaledNmfL1::IsDiverging(double objective) {
 bool RelaxedRescaledNmfL1::IsOptimizationOver(Matrix &coordinates, 
                                     Matrix &gradient, double step) {
 
-/*  double objective;
-  ComputeObjective(coordinates, &objective);
-  if (fabs(objective-previous_objective_)/objective<0.01) {
-    previous_objective_=objective;
-    return true;
-  } else  {
-     previous_objective_=objective;
-     return false;
-   
-  }
-*/
   if (2*values_.size()/sigma_ < opt_gap_ ) {
     return true;
   } else {
     return false;
   }
+
+//  return true;  
 }
 
 bool RelaxedRescaledNmfL1::IsIntermediateStepOver(Matrix &coordinates, 
@@ -701,7 +692,7 @@ bool RelaxedRescaledNmfL1::IsIntermediateStepOver(Matrix &coordinates,
   double norm_gradient=la::Dot(gradient.n_elements(), 
                                gradient.ptr(), 
                                gradient.ptr());
-  if (norm_gradient*step < grad_tolerance_) {
+  if (math::Pow<1,2>(norm_gradient)*step < grad_tolerance_) {
     return true;
   }
   return false;
@@ -1637,8 +1628,7 @@ void GopNmfEngine<SplitterClass, Objective>::Init(fx_module *module,
   PreprocessData(data_points);
   fx_set_param_int(l_bfgs_module_, "new_dimension", new_dimension_);
   fx_set_param_int(l_bfgs_module_, "num_of_points", num_of_rows_+num_of_columns_);
-  fx_set_param_double(l_bfgs_module_, "sigma", 1000);
-  fx_set_param_int(l_bfgs_module_, "mem_bfgs", 3);
+  fx_set_param_int(l_bfgs_module_, "mem_bfgs", 10);
   fx_set_param_bool(l_bfgs_module_, "use_default_termination", false);
   fx_set_param_bool(l_bfgs_module_, "silent", true);
 }
@@ -1648,7 +1638,11 @@ void GopNmfEngine<SplitterClass, Objective>::ComputeGlobalOptimum() {
    
   soft_prunes_=0;
   hard_prunes_=0;
-  double norm_values=la::Dot(values_.size(), values_.begin(), values_.begin());
+//  double norm_values=la::Dot(values_.size(), values_.begin(), values_.begin());
+  double norm_values=0.0;
+  for(index_t i=0; i<values_.size(); i++) {
+    norm_values+=values_[i];
+  }
   NOTIFY("Values norm:%lg", norm_values);
   // Solve for  this bounding box
   Matrix lower_bound;
