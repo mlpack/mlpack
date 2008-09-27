@@ -792,7 +792,13 @@ class Nbc {
     double density_neg;
 
    public:
-    void Init(const Param& param) {}
+    void Init(const Param& param) {
+#if 1
+      /* Unnecessary, except in mock single-tree */
+      density_pos = 0.0;
+      density_neg = 0.0;
+#endif
+    }
 
     // notes
     // - this function must assume that global_result is incomplete (which is
@@ -830,8 +836,11 @@ class Nbc {
 	return false;
       }
 
+#if 0
+      /* Critical to reset for each next point */
       density_pos = 0.0;
       density_neg = 0.0;
+#endif
 
       return true;
     }
@@ -1089,8 +1098,10 @@ void NbcMain(datanode *module) {
   Nbc::GlobalResult global_result;
 #if 0
   thor::RpcDualTree<Nbc, DualTreeDepthFirst<Nbc> >(
-#else
+#elif 0
   thor::RpcDualTree<Nbc, DualTreeRecursiveBreadth<Nbc> >(
+#else
+  thor::RpcDualTree<Nbc, SingleTreeBreadth<Nbc> >(
 #endif
       fx_submodule(module, "gnp", "gnp"), GNP_CHANNEL, param,
       q_tree, r_tree, &q_results, &global_result);
