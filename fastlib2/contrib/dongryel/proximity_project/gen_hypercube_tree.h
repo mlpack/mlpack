@@ -17,6 +17,7 @@ namespace proximity {
     
     Bound bound_;
     ArrayList<GenHypercubeTree *> children_;
+    index_t num_children_;
     ArrayList<index_t> begin_;
     ArrayList<index_t> count_;
     index_t total_count_;
@@ -24,19 +25,20 @@ namespace proximity {
     unsigned int node_index_;
     Statistic stat_;
     
-    OT_DEF(GenHypercubeTree) {
-      OT_MY_OBJECT(bound_);
-      OT_MY_OBJECT(children_);
-      OT_MY_OBJECT(begin_);
-      OT_MY_OBJECT(count_);
-      OT_MY_OBJECT(total_count_);
-      OT_MY_OBJECT(level_);
-      OT_MY_OBJECT(node_index_);
-      OT_MY_OBJECT(stat_);
-    }
     
    public:
-    
+
+    GenHypercubeTree() {
+    }
+
+    ~GenHypercubeTree() {
+      if(children_.size() > 0) {
+	for(index_t i = 0; i < children_.size(); i++) {
+	  delete children_[i];
+	}
+      }      
+    }
+
     const Statistic& stat() const {
       return stat_;
     }
@@ -51,7 +53,7 @@ namespace proximity {
      *  @return true if childless, false otherwise.
      */
     bool is_leaf() const {
-      return children_.size() == 0;
+      return num_children_ == 0;
     }
 
     void Init(index_t number_of_particle_sets, index_t dimension) {
@@ -60,6 +62,7 @@ namespace proximity {
       total_count_ = 0;
       node_index_ = 0;
       children_.Init();
+      num_children_ = 0;
     }
 
     void Init(index_t particle_set_number, index_t begin_in, 
@@ -97,6 +100,8 @@ namespace proximity {
       
       GenHypercubeTree *new_node = new GenHypercubeTree();
       *(children_.PushBackRaw()) = new_node;
+      num_children_++;
+
       new_node->Init(number_of_particle_sets, dimension);
       new_node->node_index_ = node_index_in;
 
@@ -140,7 +145,7 @@ namespace proximity {
      * Gets the number of children.
      */
     index_t num_children() const {
-      return children_.size();
+      return num_children_;
     }
 
     void Print() const {
@@ -151,7 +156,7 @@ namespace proximity {
 	  printf("   set %d: %d to %d: %d points total\n", i, 
 		 begin_[i], begin_[i] + count_[i] - 1, count_[i]);	  
 	}
-	for(index_t c = 0; c < children_.size(); c++) {
+	for(index_t c = 0; c < num_children_; c++) {
 	  children_[c]->Print();
 	}
       }
@@ -212,7 +217,10 @@ namespace proximity {
     }
     
     // Initialize the global list of nodes.
-    nodes_in_each_level->Init(1);
+    nodes_in_each_level->Init(100);
+    for(index_t i = 0; i < nodes_in_each_level->size(); i++) {
+      ((*nodes_in_each_level)[i]).Init();
+    }
 
     // Initialize the root node.
     node->Init(matrices.size(), matrices[0]->n_rows());
@@ -226,7 +234,6 @@ namespace proximity {
     tree_gen_hypercube_tree_private::ComputeBoundingHypercube(matrices, node);
 
     // Put the root node into the initial list of level 0.
-    ((*nodes_in_each_level)[0]).Init();
     *(((*nodes_in_each_level)[0]).PushBackRaw()) = node;
 
     tree_gen_hypercube_tree_private::SplitGenHypercubeTree
