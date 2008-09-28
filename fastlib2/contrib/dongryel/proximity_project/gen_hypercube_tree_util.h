@@ -33,7 +33,8 @@ namespace GenHypercubeTreeUtil {
 
   template<typename TStatistic>
   void NodeListSetDifference
-  (const ArrayList<proximity::GenHypercubeTree<TStatistic> * > &first_list,
+  (index_t dimension,
+   const ArrayList<proximity::GenHypercubeTree<TStatistic> * > &first_list,
    const ArrayList<proximity::GenHypercubeTree<TStatistic> * > &second_list,
    const ArrayList<proximity::GenHypercubeTree<TStatistic> * > &third_list,
    const ArrayList<proximity::GenHypercubeTree<TStatistic> * > &filter_list,
@@ -52,7 +53,17 @@ namespace GenHypercubeTreeUtil {
 	proximity::GenHypercubeTree<TStatistic> *node_from_first_list = 
 	  first_list[j];
 
-	if(node_from_filter_list == node_from_first_list) {
+	int level_difference = node_from_first_list->level() -
+	  node_from_filter_list->level();
+	DEBUG_ASSERT(level_difference >= 0);
+
+	bool is_descendant = (((node_from_first_list->node_index() >> 
+				(dimension * level_difference)) ^
+			       node_from_filter_list->node_index()) == 0);
+
+	// Filter the node if it is a descendant of the filter
+	// candidate.
+	if(is_descendant) {
 	  flag = true;
 	  break;
 	}
@@ -64,8 +75,14 @@ namespace GenHypercubeTreeUtil {
       for(index_t j = 0; j < second_list.size(); j++) {
 	proximity::GenHypercubeTree<TStatistic> *node_from_second_list = 
 	  second_list[j];
+	int level_difference = node_from_second_list->level() -
+	  node_from_filter_list->level();
+	DEBUG_ASSERT(level_difference >= 0);
+	bool is_descendant = (((node_from_second_list->node_index() >> 
+				(dimension * level_difference)) ^
+			       node_from_filter_list->node_index()) == 0);
 
-	if(node_from_filter_list == node_from_second_list) {
+	if(is_descendant) {
 	  flag = true;
 	  break;
 	}
@@ -77,8 +94,14 @@ namespace GenHypercubeTreeUtil {
       for(index_t j = 0; j < third_list.size(); j++) {
 	proximity::GenHypercubeTree<TStatistic> *node_from_third_list = 
 	  third_list[j];
+	int level_difference = node_from_third_list->level() -
+	  node_from_filter_list->level();
+	
+	bool is_descendant = (((node_from_third_list->node_index() >> 
+				(dimension * level_difference)) ^
+			       node_from_filter_list->node_index()) == 0);
 
-	if(node_from_filter_list == node_from_third_list) {
+	if(is_descendant) {
 	  flag = true;
 	  break;
 	}
@@ -412,11 +435,14 @@ namespace GenHypercubeTreeUtil {
 
     // First, find the parent of the given node.
     ArrayList<proximity::GenHypercubeTree<TStatistic> * > neighbors_of_parent;
+
+    // Then, find the neighbors of the parent of the given node.
     FindNeighborsInAdaptiveGenHypercubeTree
       (nodes_in_each_level, index >> dimension, level - 1, dimension,
        &neighbors_of_parent);
 
-    NodeListSetDifference(first_list, second_list, third_list, 
+    // Filter the list based on the first three lists.
+    NodeListSetDifference(dimension, first_list, second_list, third_list, 
 			  neighbors_of_parent, fourth_list);
   }
 
