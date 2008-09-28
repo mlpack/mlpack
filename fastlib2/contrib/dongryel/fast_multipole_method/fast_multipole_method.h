@@ -281,8 +281,11 @@ class FastMultipoleMethod {
 
 	  proximity::GenHypercubeTree<FmmStat> *colleague_node = colleagues[c];
 
+	  /*
 	  colleague_node->stat().farfield_expansion_.TranslateToLocal
 	    (node->stat().local_expansion_, sea_.get_max_order());
+	  */
+	  BaseCase_(node, colleague_node, potentials_);
 	  
 	} // end of iterating over each colleague...
 	 
@@ -322,7 +325,7 @@ class FastMultipoleMethod {
 	    // This is the cut-off that determines whether exhaustive
 	    // base case of the direct far-field evaluation is
 	    // cheaper.
-	    if(reference_node->count(0) > 
+	    if(0 && reference_node->count(0) > 
 	       sea_.get_max_order() * sea_.get_max_order() * 
 	       sea_.get_max_order()) {
 	      EvaluateMultipoleExpansion_(node, reference_node);
@@ -356,7 +359,7 @@ class FastMultipoleMethod {
 	  // This is the cut-off that determines whether computing by
 	  // direct accumulation is cheaper with respect to the base
 	  // case method.
-	  if(node->count(query_point_indexing) >
+	  if(0 && node->count(query_point_indexing) >
 	     sea_.get_max_order() * sea_.get_max_order() * 
 	     sea_.get_max_order()) {
 	    
@@ -372,9 +375,10 @@ class FastMultipoleMethod {
 	}
 	
 	// If the current query node is a leaf node, then we have to
-	// evaluate its local expansion.
+	// evaluate its local expansion, plus the self-interaction!
 	if(node->is_leaf()) {
 	  EvaluateLocalExpansion_(node);
+	  BaseCase_(node, node, potentials_);
 	}
 	
 	// Otherwise, we need to pass it down.
