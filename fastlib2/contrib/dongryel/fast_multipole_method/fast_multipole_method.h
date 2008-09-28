@@ -363,6 +363,16 @@ class FastMultipoleMethod {
 
  public:
 
+  FastMultipoleMethod() {
+  }
+
+  ~FastMultipoleMethod() {
+    if(tree_ != NULL) {
+      delete tree_;
+      tree_ = NULL;
+    }
+  }
+
   void Compute() {
     
     // Upward pass: Form multipole expansions.
@@ -396,11 +406,11 @@ class FastMultipoleMethod {
     ArrayList<Matrix *> particle_sets;
     particle_sets.Init();
     shuffled_reference_particle_set_.Copy(references);
-    particle_sets.PushBackCopy(&shuffled_reference_particle_set_);
+    *(particle_sets.PushBackRaw()) = &shuffled_reference_particle_set_;
 
     if(queries.ptr() != references.ptr()) {
       shuffled_query_particle_set_.Copy(queries);
-      particle_sets.PushBackCopy(&shuffled_query_particle_set_);
+      *(particle_sets.PushBackRaw()) = &shuffled_query_particle_set_;
     }
     else {
       shuffled_query_particle_set_.Alias(shuffled_reference_particle_set_);
@@ -412,11 +422,6 @@ class FastMultipoleMethod {
       shuffled_reference_particle_charge_set_[i] = rset_weights.get(0, i);
     }
 
-    printf("Before permuting the reference set...\n");
-    shuffled_reference_particle_set_.PrintDebug();
-    printf("Before permuting the query set...\n");
-    shuffled_query_particle_set_.PrintDebug();
-
     // Construct query and reference trees. Shuffle the reference
     // weights according to the permutation of the reference set in
     // the reference tree.
@@ -426,19 +431,9 @@ class FastMultipoleMethod {
 					    &old_from_new_index_,
 					    &new_from_old_index_);
     fx_timer_stop(NULL, "tree_d");
+
+    printf("Constructed the tree...\n");
     
-    printf("After permuting...\n");
-    shuffled_reference_particle_set_.PrintDebug();
-    printf("After permuting the query set...\n");
-    shuffled_query_particle_set_.PrintDebug();
-
-    for(index_t i = 0; i < old_from_new_index_.size(); i++) {
-      for(index_t j = 0; j < old_from_new_index_[i].size(); j++) {
-	printf("%d ", old_from_new_index_[i][j]);
-      }
-      printf("\n");
-    }
-
     // Shuffle the reference particle charges according to the
     // permutation of the reference particle set.
     DualtreeKdeCommon::ShuffleAccordingToPermutation
@@ -453,7 +448,6 @@ class FastMultipoleMethod {
     // Allocate the vector for storing the accumulated potential.
     potentials_.Init(shuffled_query_particle_set_.n_cols());
 
-    tree_->Print();
   }
 };
 
