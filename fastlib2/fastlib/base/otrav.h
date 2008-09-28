@@ -942,7 +942,7 @@
 
 /**
  * Fills a function to be called by the DEBUG_MODIFY_OK macro, which
- * is meant to ensure that no change are made by aliases that might
+ * is meant to ensure that no changes are made by aliases that might
  * invalidate the originals.
  *
  * If aliasing is defined for your class, the default behavior of this
@@ -1058,7 +1058,7 @@
  * your class's members should occur in one of OBJECT_TRAVERSAL or
  * OT_TRANSIENTS.  Destruction of transients occurs before that of
  * other members, meaning, e.g., transient arrays may have
- * non-transient lengths.
+ * non-transient lengths but not vice versa.
  *
  * Example (declaring a parent pointer):
  * @code
@@ -1078,11 +1078,10 @@
  * transient pointers that should be freed and those that reference
  * other memory.  In the latter case, it is appropriate to use OT_OBJ.
  *
- * While it rarely matters, transients must technically be declared in
- * destruction order.  For example, if some transient array's length
- * is stored in an allocated transient pointer, the array should be
- * declared before the pointer.  Note that this is the opposite of
- * OBJECT_TRAVERSAL.
+ * While it rarely matters, transients must be declared in destruction
+ * order.  For example, if some transient array's length is stored in
+ * an allocated transient pointer, the array should be declared before
+ * the pointer.  Note that this is the opposite of OBJECT_TRAVERSAL.
  *
  * @param C the name of your class
  * @param following_code a block containing macro declarations for
@@ -1143,7 +1142,7 @@
  * @param following_code a block containing macro declarations for
  *        your class's members; e.g. OT_OBJ
  *
- * @see OBJECT_TRAVERSAL, OBJECT_TRAVERSAL_NO_COPY
+ * @see OBJECT_TRAVERSAL, OBJECT_TRAVERSAL_NO_COPIES
  */
 #define OBJECT_TRAVERSAL_CORE(C) \
     OT_RENEW_METHOD(C) \
@@ -1163,12 +1162,9 @@
  * In order to use object traversal features, your class's overall
  * structure must have the following properties:
  *
- * @li No cyclical pointers (that cannot be reconstructed as so-called
- *     transients), directed or otherwise
- * @li No inheritance or polymorphism, i.e. virtual functions (TODO:
- *     test whether this may be OK in some situations)
- * @li No need for a specialized (or disabled) default constructor,
- *     instead using Init functions
+ * @li No cyclical pointers that cannot be modeled as transients
+ * @li No polymorphic inheritance or virtual functions
+ * @li Minimally specialied constructors and destructors
  * @li Use untraversed member types at your own risk
  *
  * Example (custom linked list):
@@ -1672,7 +1668,7 @@ namespace ot {
    *
    * You should not use this freeze semi-objects in place because this
    * precludes properly destructing their transients.  Instead,
-   * bit-copy the semi-object to a new location and freeze it their,
+   * bit-copy the semi-object to a new location and freeze it there,
    * or use ot::SemiFreezeDestruct.  It is OK for the original
    * location to have already been freed.
    *
@@ -1726,9 +1722,9 @@ namespace ot {
   }
 
   /**
-   * Re-freezes a semi-object after destructing its transients.
+   * Re-freezes a semi-object and destructs its transients.
    *
-   * @param obj the semi-object to destroy
+   * @param obj the semi-object to re-freeze
    * @return obj recast to a char pointer
    *
    * @see Freeze, SemiDestruct, SemiFreeze
