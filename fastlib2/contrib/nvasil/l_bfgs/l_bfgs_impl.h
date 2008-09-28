@@ -45,6 +45,8 @@ const fx_entry_doc lbfgs_entries[] = {
    "  Initial step size for the wolfe search.\n"},
   {"silent", FX_PARAM, FX_BOOL, NULL,
    "  if true then it doesn't emmit updates.\n"},
+  {"show_warnings", FX_PARAM, FX_BOOL, NULL,
+   "  if true then it does show warnings.\n"},
   {"use_default_termination", FX_PARAM, FX_BOOL, NULL,
    "  let this module decide where to terminate. If false then"
    " the objective function decides .\n"},
@@ -98,6 +100,7 @@ void LBfgs<OptimizedFunction>::Init(OptimizedFunction *optimized_function,
   wolfe_sigma2_ = fx_param_double(module_, "wolfe_sigma2", 0.9);
   step_size_=fx_param_double(module_, "step_size", 3.0);
   silent_=fx_param_bool(module_, "silent", false);
+  show_warnings_=fx_param_bool(module_, "show_warnings", true);
   use_default_termination_=fx_param_bool(module_, "use_default_termination", true);
   if (unlikely(wolfe_sigma1_>=wolfe_sigma2_)) {
     FATAL("Wolfe sigma1 %lg should be less than sigma2 %lg", 
@@ -324,12 +327,6 @@ void LBfgs<OptimizedFunction>::InitOptimization_() {
   previous_coordinates_.Init(new_dimension_, num_of_points_);
   gradient_.Init(new_dimension_, num_of_points_);
   previous_gradient_.Init(new_dimension_, num_of_points_);
-  for(index_t i=0; i< coordinates_.n_rows(); i++) {
-    for(index_t j=0; j<coordinates_.n_cols(); j++) {
-      coordinates_.set(i, j, math::Random(0.1, 1.0));
-    }
-  }
-  optimized_function_->Project(&coordinates_);
   if (unlikely(mem_bfgs_<0)) {
     FATAL("You forgot to initialize the memory for BFGS\n");
   }
@@ -437,7 +434,7 @@ success_t LBfgs<OptimizedFunction>::ComputeBFGS_(double *step, Matrix &grad, ind
   double y_y = la::Dot(num_of_points_* 
                    new_dimension_, y_bfgs_[index_bfgs_].ptr(),
                    y_bfgs_[index_bfgs_].ptr());
-  if (unlikely(y_y<1e-40)){
+  if ( show_warnings_==true && unlikely(y_y<1e-40)){
     NONFATAL("Gradient differences close to singular...norm=%lg\n", y_y);
   } 
   double norm_scale=s_y/(y_y+1e-40);
@@ -498,8 +495,10 @@ success_t LBfgs<OptimizedFunction>::UpdateBFGS_(index_t index_bfgs) {
       temp_y_bfgs.ptr(), temp_y_bfgs.ptr());
   if (temp_ro<1e-70*y_norm) {
     fx_timer_stop(module_, "update_bfgs");
-    NONFATAL("Rejecting s, y they don't satisfy curvature condition "
-        "s*y=%lg < 1e-70 *||y||^2=%lg", temp_ro,1e-70*y_norm);
+    if (show_warnings_==true) {
+      NONFATAL("Rejecting s, y they don't satisfy curvature condition "
+          "s*y=%lg < 1e-70 *||y||^2=%lg", temp_ro,1e-70*y_norm);
+    }
     return SUCCESS_FAIL;
   } 
   s_bfgs_[index_bfgs].CopyValues(temp_s_bfgs);

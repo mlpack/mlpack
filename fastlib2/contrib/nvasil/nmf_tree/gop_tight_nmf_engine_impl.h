@@ -23,16 +23,16 @@
 void  GopTightNmfEngine::Init(fx_module *module, Matrix &data_matrix) {
   module_=module;
   // get the modules
-  // module for the bound tightener
-  fx_module *relaxed_nmf_bound_tightener_module=fx_submodule(module_, 
+  // module for the box tightener
+  fx_module *relaxed_nmf_box_tightener_module=fx_submodule(module_, 
       "relaxed_nmf_tightener");
-  // module for the branch and bound optimization
+  // module for the branch and box optimization
   fx_module *gop_nmf_engine_module=fx_submodule(module_,"gop_nmf_engine");
   // module for the l_bfgs, we will need that for the tightenng
-  // and for getting a universal upper_bound
+  // and for getting a universal upper_box
   fx_module *l_bfgs_module=fx_submodule(module_, "l_bfgs");
   // module for the relaxed_nmf_objective_function
-  // we use that for the first upper bound in global optimization
+  // we use that for the first upper box in global optimization
   fx_module *relaxed_nmf_module=fx_submodule(module_, "relaxed_nmf");
   // module for the classic nmf objective
   fx_module *classic_nmf_module=fx_submodule(module_, "classic_nmf");
@@ -41,7 +41,7 @@ void  GopTightNmfEngine::Init(fx_module *module, Matrix &data_matrix) {
   new_dimension_=fx_param_int(module_, "new_dimension", 2);
   fx_set_param_int(gop_nmf_engine_module, "new_dimension", new_dimension_);
   fx_set_param_int(relaxed_nmf_module, "new_dimension", new_dimension_);
-  fx_set_param_int(relaxed_nmf_bound_tightener_module, "new_dimension", new_dimension_);
+  fx_set_param_int(relaxed_nmf_box_tightener_module, "new_dimension", new_dimension_);
   fx_set_param_int(classic_nmf_module, "new_dimension", new_dimension_);
 
   
@@ -59,24 +59,32 @@ void  GopTightNmfEngine::Init(fx_module *module, Matrix &data_matrix) {
   num_of_rows_=*std::max_element(rows_.begin(), rows_.end())+1;
   num_of_columns_=*std::max_element(columns_.begin(), columns_.end())+1;
   fx_set_param_int(l_bfgs_module, "num_of_points", num_of_rows_+num_of_columns_);
-  // initialize the lower and upper bounds
-  lower_bound_.Init(new_dimension_, num_of_rows_+num_of_columns_);
-  lower_bound_.SetAll(fx_param_double(module_, "lower_bound", log(1e-6))); 
-  upper_bound_.Init(new_dimension_, num_of_rows_+num_of_columns_);
-  upper_bound_.SetAll(fx_param_double(module_, "upper_bound", log(100)));
+  // initialize the lower and upper boxes
+  lower_box_.Init(new_dimension_);
+  lower_box_.SetAll(fx_param_double(module_, "lower_box", log(1e-7))); 
+  upper_box_.Init(new_dimension_);
+  upper_box_.SetAll(fx_param_double(module_, "upper_box", log(1.0)));
+
+  
+  Matrix lo, hi;
+  lo.Init(new_dimension_, num_of_rows_+num_of_columns_);
+  hi.Init(new_dimension_, num_of_rows_+num_of_columns_);
+  lo.SetAll(lower_box_[0]);
+  hi.SetAll(upper_box_[0]);
   relaxed_nmf_.Init(relaxed_nmf_module, rows_, columns_, 
-                    values_, lower_bound_, upper_bound_);
+                    values_, lo, hi);
   relaxed_nmf_optimizer_.Init(&relaxed_nmf_, l_bfgs_module);
   Matrix init_data;
   relaxed_nmf_.GiveInitMatrix(&init_data);
   relaxed_nmf_optimizer_.set_coordinates(init_data);
   relaxed_nmf_optimizer_.ComputeLocalOptimumBFGS();
-  relaxed_nmf_.ComputeNonRelaxedObjective(
-      *current_solution_,
-      &objective_minimum_upper_bound_);
   current_solution_= new Matrix();
   current_solution_->Copy(*relaxed_nmf_optimizer_.coordinates());
-
+  relaxed_nmf_.ComputeObjective(
+      *current_solution_,
+      &objective_minimum_upper_bound_);
+  objective_minimum_upper_bound_+=10;
+  
 /*
   classic_nmf_objective_.Init(classic_nmf_module, 
                              rows_,
@@ -89,51 +97,85 @@ void  GopTightNmfEngine::Init(fx_module *module, Matrix &data_matrix) {
   current_solution_= new Matrix();
   current_solution_->Copy(*classic_nmf_optimizer_.coordinates());
 
-  classic_nmf_objective_.ComputeObjective(*current_solution_, &objective_minimum_upper_bound_);
-*/  
+  classic_nmf_objective_.ComputeObjective(*current_solution_, &objective_minimum_upper_box_);
+  
   // we need to convert it to logs
   for(index_t i=0; i<current_solution_->n_cols(); i++) {
     for(index_t j=0; j<current_solution_->n_rows(); j++) {
       current_solution_->set(j, i, log(std::max(current_solution_->get(j, i), 1e-6)));
     }
   }
-  relaxed_nmf_bound_tightener_.Init(relaxed_nmf_bound_tightener_module,
-                                    rows_, 
-                                    columns_, 
-                                    values_,
-                                    lower_bound_, 
-                                    upper_bound_,
-                                    0, 
-                                    0,
-                                    1,
-                                    objective_minimum_upper_bound_);
-
-  bound_tightener_optimizer_.Init(&relaxed_nmf_bound_tightener_, l_bfgs_module);
+*/  
+  relaxed_nmf_box_tightener_.Init(relaxed_nmf_box_tightener_module,
+                                  rows_, 
+                                  columns_, 
+                                  values_,
+                                  lower_box_, 
+                                  upper_box_,
+                                  1,
+                                  objective_minimum_upper_bound_);
+  //relaxed_nmf_box_tightener_.GiveInitMatrix(current_solution_);  
+  box_tightener_optimizer_.Init(&relaxed_nmf_box_tightener_, l_bfgs_module);
   gop_nmf_engine_.Init(gop_nmf_engine_module, data_matrix);
 }
 
 void GopTightNmfEngine::TightenBounds() {
-  for(index_t i=0; i< lower_bound_.n_rows(); i++) {
-    for(index_t j=0; j<lower_bound_.n_cols(); j++) {
-      // find the lower bound for the i, j variable
-      relaxed_nmf_bound_tightener_.SetOptVarRowColumn(i, j);
-      relaxed_nmf_bound_tightener_.SetOptVarSign(1.0);
-      bound_tightener_optimizer_.set_coordinates(*current_solution_);
-      bound_tightener_optimizer_.Reset();
-      bound_tightener_optimizer_.ComputeLocalOptimumBFGS();
-       current_solution_->CopyValues(*bound_tightener_optimizer_.coordinates());
-      // lower bound update
-      lower_bound_.set(i, j, current_solution_->get(i, j));
-      // find the upper bound for the i, j variable
-      relaxed_nmf_bound_tightener_.SetOptVarSign(-1.0);
-      bound_tightener_optimizer_.set_coordinates(*current_solution_);
-      bound_tightener_optimizer_.Reset();
-      bound_tightener_optimizer_.ComputeLocalOptimumBFGS();
-      current_solution_->CopyValues(*bound_tightener_optimizer_.coordinates());
-      // upper bound update
-      upper_bound_.set(i, j, current_solution_->get(i, j));
+/*  for(index_t i=0; i< lower_box_.n_rows(); i++) {
+    for(index_t j=0; j<lower_box_.n_cols(); j++) {
+      // find the lower box for the i, j variable
+      relaxed_nmf_box_tightener_.SetOptVarRowColumn(i, j);
+      relaxed_nmf_box_tightener_.SetOptVarSign(1.0);
+      box_tightener_optimizer_.set_coordinates(*current_solution_);
+      box_tightener_optimizer_.Reset();
+      box_tightener_optimizer_.ComputeLocalOptimumBFGS();
+       current_solution_->CopyValues(*box_tightener_optimizer_.coordinates());
+      // lower box update
+      lower_box_.set(i, j, current_solution_->get(i, j));
+      // find the upper box for the i, j variable
+      relaxed_nmf_box_tightener_.SetOptVarSign(-1.0);
+      box_tightener_optimizer_.set_coordinates(*current_solution_);
+      box_tightener_optimizer_.Reset();
+      box_tightener_optimizer_.ComputeLocalOptimumBFGS();
+      current_solution_->CopyValues(*box_tightener_optimizer_.coordinates());
+      // upper box update
+      upper_box_.set(i, j, current_solution_->get(i, j));
     }
   }
+*/
+  relaxed_nmf_box_tightener_.SetOptVarSign(1.0);
+  box_tightener_optimizer_.set_coordinates(*current_solution_);
+  box_tightener_optimizer_.Reset();
+  box_tightener_optimizer_.ComputeLocalOptimumBFGS();
+  current_solution_->CopyValues(*box_tightener_optimizer_.coordinates());
+  for(index_t j=0; j<current_solution_->n_rows(); j++) {
+    double min_value=DBL_MAX;
+    for(index_t i=0; i<current_solution_->n_cols(); i++) {
+       if (current_solution_->get(j, i)<min_value) {
+         min_value = current_solution_->get(j, i);
+       }
+    }
+    NOTIFY("Minimum value for %i:%lg", j, min_value);
+  }
+  // lower box update
+  // lower_box_;
+  // find the upper box for the i, j variable
+  relaxed_nmf_box_tightener_.SetOptVarSign(-1.0);
+  box_tightener_optimizer_.set_coordinates(*current_solution_);
+  box_tightener_optimizer_.Reset();
+  box_tightener_optimizer_.ComputeLocalOptimumBFGS();
+  current_solution_->CopyValues(*box_tightener_optimizer_.coordinates());
+  // upper box update
+  // upper_box_;
+   for(index_t j=0; j<current_solution_->n_rows(); j++) {
+    double max_value=-DBL_MAX;
+    for(index_t i=0; i<current_solution_->n_cols(); i++) {
+       if (current_solution_->get(j, i)>max_value) {
+         max_value = current_solution_->get(j, i);
+       }
+    }
+    NOTIFY("Maximum value for %i:%lg", j, max_value);
+  }
+  
   NOTIFY("Bounds tightened!!");
 }
 

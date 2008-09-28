@@ -105,6 +105,9 @@ void Execute(fx_module *module) {
 			    num_of_restarts, resulting_score);
   fx_result_double_array(module, "perencentage_neighborhood_error", 
           num_of_restarts, resulting_neighborhood_error);
+  double best_error=*std::min_element(resulting_score, resulting_score+num_of_restarts);
+  fx_result_double(module, "best_error", best_error);
+
 }
 
 void ComputeSpectrum(Matrix &w_mat, Matrix &h_mat, Matrix *spectrum) {
@@ -125,7 +128,7 @@ void ComputeSpectrum(Matrix &w_mat, Matrix &h_mat, Matrix *spectrum) {
     }
   }
   for(index_t i=0; i<h_norms.n_rows(); i++) {
-    spectrum->set(i, 0, spectrum->get(i, 0)/h_norms.get(i,0));
+    spectrum->set(i, 0, spectrum->get(i, 0)/math::Pow<1,2>(h_norms.get(i,0)));
   }
   std::sort(spectrum->ptr(), 
             spectrum->ptr()+spectrum->n_rows(), 

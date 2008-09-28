@@ -1525,7 +1525,6 @@ void BigSdpNmfObjectiveMaxFurthestIsometric::ComputeFeasibilityError(Matrix &coo
 		*error+=diff*diff;
   }
   infeasibility1_=math::Pow<1,2>(*error/v_norm_)*100;
-  printf("dot_infeasibility:%lg%% ", math::Pow<1,2>(*error/v_norm_)*100); ;
   // local isometry
   double error2=0;
   for(index_t i=0; i<num_of_nearest_pairs_; i++) {
@@ -1542,8 +1541,9 @@ void BigSdpNmfObjectiveMaxFurthestIsometric::ComputeFeasibilityError(Matrix &coo
 
   }
   infeasibility2_=math::Pow<1,2>(error2/sum_all_distances_)*100;
-  NOTIFY("dist_infeasibility:%lg %%\n", infeasibility2_);
-  NOTIFY("sigma_ratio:%lg\n", sigma_ratio_);
+  NOTIFY("dot_infeasibility:%lg%% dist_infeasibility:%lg %%", 
+      infeasibility1_, infeasibility2_);
+  // NOTIFY("sigma_ratio:%lg\n", sigma_ratio_);
 //  sigma_ratio_=infeasibility2_/infeasibility1_;
 }
 
