@@ -597,14 +597,14 @@ void RelaxedRescaledNmfL1::Project(Matrix *coordinates) {
       }
     }
   }
-  Vector epsilons;
+/*  Vector epsilons;
   epsilons.Alias(coordinates->GetColumnPtr(e_offset_), values_.size());
   for(index_t i=0; i<epsilons.length(); i++) {
     if (epsilons[i]<0) {
       epsilons[i]=0;
     }
   }
-  
+*/  
   fx_timer_stop(NULL, "project");
 }
 
@@ -651,9 +651,9 @@ void RelaxedRescaledNmfL1::GiveInitMatrix(Matrix *init_data) {
 
     }
     double const_term=-values_[i]+new_dimension_*math::Sqr(LOWER_BOUND*SCALE_FACTOR);
-    double epsilon1=math::Sqr(SCALE_FACTOR)*left_ineq + const_term;
-    double epsilon2=math::Sqr(SCALE_FACTOR)*right_ineq - const_term;
-    double epsilon=std::max(fabs(epsilon1), fabs(epsilon2))+1e02;
+    double epsilon1=math::Sqr(SCALE_FACTOR)*left_ineq - const_term;
+    double epsilon2=math::Sqr(SCALE_FACTOR)*right_ineq + const_term;
+    double epsilon=std::max(fabs(epsilon1), fabs(epsilon2))+1e-2;
     epsilons[i]=epsilon;  
   }
  
@@ -666,27 +666,35 @@ bool RelaxedRescaledNmfL1::IsDiverging(double objective) {
 bool RelaxedRescaledNmfL1::IsOptimizationOver(Matrix &coordinates, 
                                     Matrix &gradient, double step) {
 
-  if (2*values_.size()/sigma_ < opt_gap_ ) {
+/*  if (2*values_.size()/sigma_ < opt_gap_ ) {
     return true;
   } else {
     return false;
   }
-
+*/
+  double objective;
+  ComputeObjective(coordinates, &objective);
+  if ((2*values_.size()/sigma_)/fabs(objective)<0.01) {
+    return true;   
+  } else {
+    return false;
+  }
 //  return true;  
 }
 
 bool RelaxedRescaledNmfL1::IsIntermediateStepOver(Matrix &coordinates, 
                                         Matrix &gradient, 
                                         double step) {
-/*  double objective;
+/*
+  double objective;
   ComputeObjective(coordinates, &objective);
-  if (fabs(objective-previous_objective_)/objective<0.01) {
+  NOTIFY("** %lg", fabs((objective-previous_objective_)/objective));
+  if (fabs((objective-previous_objective_)/objective)<0.001) {
     previous_objective_=objective;
     return true;
   } else  {
      previous_objective_=objective;
-     return false;
-   
+     return false;   
   }
 */
   double norm_gradient=la::Dot(gradient.n_elements(), 
@@ -1628,9 +1636,10 @@ void GopNmfEngine<SplitterClass, Objective>::Init(fx_module *module,
   PreprocessData(data_points);
   fx_set_param_int(l_bfgs_module_, "new_dimension", new_dimension_);
   fx_set_param_int(l_bfgs_module_, "num_of_points", num_of_rows_+num_of_columns_);
-  fx_set_param_int(l_bfgs_module_, "mem_bfgs", 10);
+  fx_set_param_int(l_bfgs_module_, "mem_bfgs", 5);
   fx_set_param_bool(l_bfgs_module_, "use_default_termination", false);
-  fx_set_param_bool(l_bfgs_module_, "silent", false);
+ // fx_set_param_bool(l_bfgs_module_, "silent", true);
+ // fx_set_param_bool(l_bfgs_module_, "show_warnings", false);
 }
 
 template<typename SplitterClass, typename Objective>
