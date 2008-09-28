@@ -5,7 +5,8 @@ librule(
                "fmm_stat.h",
                "inverse_dist_kernel.h"],     # include files part of the 'lib'
     deplibs = ["fastlib:fastlib_int",
-               "contrib/dongryel/proximity_project:proximity_project"]    
+               "contrib/dongryel/proximity_project:proximity_project",
+               "mlpack/series_expansion:series_expansion"]
     )
 
 binrule(
