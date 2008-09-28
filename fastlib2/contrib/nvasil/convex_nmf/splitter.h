@@ -616,6 +616,7 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
     w_offset_=fx_param_int_req(module_, "w_offset");
     h_offset_=fx_param_int_req(module_, "h_offset");
     h_length_=fx_param_int_req(module_, "h_length");
+    w_length_=fx_param_int_req(module_, "w_length");
     minimum_interval_length_=fx_param_double(module_, "minimum_interval_length", 1e-2);
     
     DEBUG_ASSERT(w_leaf_size_ > 0);
@@ -729,7 +730,7 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
       w_old_from_new_points_.Renew();
       Matrix w_points;
       w_points.Copy(solution.solution_.GetColumnPtr(w_offset_), 
-                    solution.solution_.n_rows(), solution.solution_.n_cols()-h_length_);
+                    solution.solution_.n_rows(), w_length_);
       for(index_t i=0; i<w_points.n_rows(); i++) {
         for(index_t j=0; j<w_points.n_cols(); j++) {
           w_points.set(i, j, exp(w_points.get(i, j)));
@@ -773,6 +774,7 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
   index_t w_tree_max_depth_;
   index_t h_tree_max_depth_;
   index_t h_length_;
+  index_t w_length_;
   // here we have the grouping of points 
   ArrayList<std::pair<index_t, index_t> >  w_point_nodes_;
   ArrayList<std::pair<index_t, index_t> >  h_point_nodes_;
