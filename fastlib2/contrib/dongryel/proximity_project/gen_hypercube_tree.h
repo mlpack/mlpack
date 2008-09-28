@@ -17,7 +17,6 @@ namespace proximity {
     
     Bound bound_;
     ArrayList<GenHypercubeTree *> children_;
-    index_t num_children_;
     ArrayList<index_t> begin_;
     ArrayList<index_t> count_;
     index_t total_count_;
@@ -53,7 +52,7 @@ namespace proximity {
      *  @return true if childless, false otherwise.
      */
     bool is_leaf() const {
-      return num_children_ == 0;
+      return children_.size() == 0;
     }
 
     void Init(index_t number_of_particle_sets, index_t dimension) {
@@ -62,7 +61,6 @@ namespace proximity {
       total_count_ = 0;
       node_index_ = 0;
       children_.Init();
-      num_children_ = 0;
     }
 
     void Init(index_t particle_set_number, index_t begin_in, 
@@ -100,7 +98,6 @@ namespace proximity {
       
       GenHypercubeTree *new_node = new GenHypercubeTree();
       *(children_.PushBackRaw()) = new_node;
-      num_children_++;
 
       new_node->Init(number_of_particle_sets, dimension);
       new_node->node_index_ = node_index_in;
@@ -145,24 +142,32 @@ namespace proximity {
      * Gets the number of children.
      */
     index_t num_children() const {
-      return num_children_;
+      return children_.size();
     }
 
     void Print() const {
       if (!is_leaf()) {
 	printf("internal node: %d points total on level %d\n", total_count_,
 	       level_);
+	printf("  bound:\n");
+	for(index_t i = 0; i < bound_.dim(); i++) {
+	  printf("%g %g\n", bound_.get(i).lo, bound_.get(i).hi);
+	}
 	for(index_t i = 0; i < begin_.size(); i++) {
 	  printf("   set %d: %d to %d: %d points total\n", i, 
 		 begin_[i], begin_[i] + count_[i] - 1, count_[i]);	  
 	}
-	for(index_t c = 0; c < num_children_; c++) {
+	for(index_t c = 0; c < children_.size(); c++) {
 	  children_[c]->Print();
 	}
       }
       else {
 	printf("leaf node: %d points total on level %d\n", total_count_,
 	       level_);
+	printf("  bound:\n");
+	for(index_t i = 0; i < bound_.dim(); i++) {
+	  printf("%g %g\n", bound_.get(i).lo, bound_.get(i).hi);
+	}
 	for(index_t i = 0; i < begin_.size(); i++) {
 	  printf("   set %d: %d to %d: %d points total\n", i, 
 		 begin_[i], begin_[i] + count_[i] - 1, count_[i]);	  
