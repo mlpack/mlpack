@@ -248,13 +248,6 @@ namespace tree_gen_hypercube_tree_private {
     
     // Otherwise, attempt to split.
     else {
-    
-      // Ensure that the node list for storing each level is at least
-      // the size of the current level + 1.
-      nodes_in_each_level->SizeAtLeast(level + 2);
-      if(((*nodes_in_each_level)[level + 1]).size() == BIG_BAD_NUMBER) {
-	((*nodes_in_each_level)[level + 1]).Init();
-      }
 
       // Recursively split each dimension.
       unsigned int code = 0;
