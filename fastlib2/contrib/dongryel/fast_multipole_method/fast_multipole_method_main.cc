@@ -56,6 +56,9 @@ int main(int argc, char *argv[]) {
   // Start computation.
   fmm_algorithm.Compute();
 
+  Vector naive_results;
+  fmm_algorithm.NaiveCompute(&naive_results);
+
   fx_done(NULL);
   return 0;
 }

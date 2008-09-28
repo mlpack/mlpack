@@ -14,6 +14,7 @@
 
 #include "fastlib/fastlib.h"
 #include "fmm_stat.h"
+#include "inverse_dist_kernel.h"
 #include "mlpack/kde/dualtree_kde_common.h"
 #include "mlpack/series_expansion/inverse_pow_dist_farfield_expansion.h"
 #include "mlpack/series_expansion/inverse_pow_dist_local_expansion.h"
@@ -36,7 +37,11 @@ class FastMultipoleMethod {
    */
   bool leave_one_out_;
 
-  /** @brief The series expansino auxilary object.
+  /** @brief The inverse distance kernel object.
+   */
+  InverseDistKernel kernel_;
+
+  /** @brief The series expansion auxilary object.
    */
   InversePowDistSeriesExpansionAux sea_;
 
@@ -84,13 +89,34 @@ class FastMultipoleMethod {
 
   ////////// Private Member Functions //////////
 
+  void ReshuffleResults_(Vector &to_be_reshuffled) {
+
+    index_t query_point_indexing = 
+      (shuffled_reference_particle_set_.ptr() == 
+       shuffled_query_particle_set_.ptr()) ? 0:1;
+
+    // Reshuffle the results to account for dataset reshuffling
+    // resulted from tree constructions.
+    Vector tmp_results;
+    tmp_results.Init(to_be_reshuffled.length());
+    
+    for(index_t i = 0; i < tmp_results.length(); i++) {
+      tmp_results[old_from_new_index_[query_point_indexing][i]] =
+	to_be_reshuffled[i];
+    }
+    for(index_t i = 0; i < tmp_results.length(); i++) {
+      to_be_reshuffled[i] = tmp_results[i];
+    }
+  }
+
   void FormMultipoleExpansions_() {
     
     Vector node_center;
     node_center.Init(shuffled_reference_particle_set_.n_rows());
 
-    // Start from the most bottom level, and work your way up.
-    for(index_t level = nodes_in_each_level_.size() - 1; level >= 0; level--) {
+    // Start from the most bottom level, and work your way up to the
+    // direct children of the root node.
+    for(index_t level = nodes_in_each_level_.size() - 1; level >= 1; level--) {
 
       // The references to the nodes on the current level.
       ArrayList<proximity::GenHypercubeTree<FmmStat> *> 
@@ -154,7 +180,8 @@ class FastMultipoleMethod {
   }
 
   void BaseCase_(proximity::GenHypercubeTree<FmmStat> *query_node,
-		 proximity::GenHypercubeTree<FmmStat> *reference_node) {
+		 proximity::GenHypercubeTree<FmmStat> *reference_node,
+		 Vector &potentials) {
     
     index_t query_point_indexing = 
       (shuffled_reference_particle_set_.ptr() == 
@@ -176,12 +203,11 @@ class FastMultipoleMethod {
 	}
 	const double *r_col = shuffled_reference_particle_set_.GetColumnPtr(r);
 	
-	double distance = sqrt(la::DistanceSqEuclidean
-			       (shuffled_query_particle_set_.n_rows(), q_col, 
-				r_col));
+	double sq_dist = la::DistanceSqEuclidean
+	  (shuffled_query_particle_set_.n_rows(), q_col, r_col);
 	
-	potentials_[q] += shuffled_reference_particle_charge_set_[r] /
-	  pow(distance, lambda_);
+	potentials[q] += shuffled_reference_particle_charge_set_[r] *
+	  kernel_.EvalUnnormOnSq(sq_dist);
       }
     }
   }
@@ -283,7 +309,7 @@ class FastMultipoleMethod {
 	      adjacent_leaves[adjacent];
 	    
 	    DEBUG_ASSERT(reference_leaf_node->is_leaf());
-	    BaseCase_(node, reference_leaf_node);	    
+	    BaseCase_(node, reference_leaf_node, potentials_);
 	  } // end of iterating over List 1...
 
 	  // Iterate over each node in List 3 and directly evaluate
@@ -302,7 +328,7 @@ class FastMultipoleMethod {
 	      EvaluateMultipoleExpansion_(node, reference_node);
 	    }
 	    else {
-	      BaseCase_(node, reference_node);
+	      BaseCase_(node, reference_node, potentials_);
 	    }
 	    
 	  } // end of iterating over List 3...
@@ -341,7 +367,7 @@ class FastMultipoleMethod {
 	       sea_.get_max_order());
 	  }
 	  else {
-	    BaseCase_(node, reference_node);
+	    BaseCase_(node, reference_node, potentials_);
 	  }
 	}
 	
@@ -361,6 +387,15 @@ class FastMultipoleMethod {
     } // end of iterating over each level...
   }
 
+  void OutputResultsToFile_(const Vector &results, const char *fname) {
+
+    FILE *stream = fopen(fname, "w+");
+    for(index_t q = 0; q < results.length(); q++) {
+      fprintf(stream, "%g\n", results[q]);
+    }    
+    fclose(stream);
+  }
+
  public:
 
   FastMultipoleMethod() {
@@ -373,13 +408,59 @@ class FastMultipoleMethod {
     }
   }
 
+  void NaiveCompute(Vector *naively_computed_potentials) {
+    
+    printf("Starting the naive computation...\n");
+
+    naively_computed_potentials->Init(shuffled_query_particle_set_.n_cols());
+
+    fx_timer_start(NULL, "naive_fmm_compute");
+
+    // Call the base case...
+    naively_computed_potentials->SetZero();
+    BaseCase_(tree_, tree_, *naively_computed_potentials);
+
+    fx_timer_stop(NULL, "naive_fmm_compute");
+
+    printf("Finished the naive computation...\n");
+
+    // Reshuffle the results according to the permutation.
+    ReshuffleResults_(*naively_computed_potentials);
+
+    // Output the results to the file.
+    OutputResultsToFile_(*naively_computed_potentials, "naive_fmm_output.txt");
+  }
+
   void Compute() {
     
+    printf("Starting the computation...\n");
+
+    fx_timer_start(NULL, "fmm_compute");
+
+    // Reset the accumulated sum.
+    potentials_.SetZero();
+
     // Upward pass: Form multipole expansions.
     FormMultipoleExpansions_();
 
     // Downward pass
-    DownwardPass_();
+    if(tree_->is_leaf()) {
+      BaseCase_(tree_, tree_, potentials_);
+    }
+    else {
+      DownwardPass_();
+    }
+
+    fx_timer_stop(NULL, "fmm_compute");
+
+    printf("Finished the computation...\n");
+
+    // Reshuffle the results to account for dataset reshuffling
+    // resulted from tree constructions.
+    ReshuffleResults_(potentials_);
+
+    // Output the results to the file.
+    OutputResultsToFile_(potentials_, "fast_fmm_output.txt");
   }
 
   void Init(const Matrix &queries, const Matrix &references,
@@ -390,12 +471,11 @@ class FastMultipoleMethod {
     module_ = module_in;
     
     // Set the flag for whether to perform leave-one-out computation.
-    leave_one_out_ = fx_param_exists(module_in, "loo") &&
-      (queries.ptr() == references.ptr());
+    leave_one_out_ = (queries.ptr() == references.ptr());
 
     // Read in the number of points owned by a leaf.
     int leaflen = std::max((long long int) 3, 
-			   fx_param_int(module_in, "leaflen", 20));
+			   fx_param_int(module_in, "leaflen", 40));
 
     // Set the number of query particles and reference particles
     // accordingly.
@@ -442,12 +522,14 @@ class FastMultipoleMethod {
     // Retrieve the lambda order needed for expansion.
     lambda_ = fx_param_double(module_, "lambda", 1.0);
 
+    // Initialize the kernel.
+    kernel_.Init(lambda_);
+
     // Initialize the series expansion auxliary object.
-    sea_.Init(lambda_, 8, references.n_rows());
+    sea_.Init(lambda_, 5, references.n_rows());
 
     // Allocate the vector for storing the accumulated potential.
     potentials_.Init(shuffled_query_particle_set_.n_cols());
-
   }
 };
 
