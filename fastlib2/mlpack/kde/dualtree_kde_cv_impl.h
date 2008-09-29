@@ -101,7 +101,13 @@ bool DualtreeKdeCV<TKernelAux>::PrunableEnhanced_
      qnode->bound(), *(qnode->stat().first_farfield_expansion_.get_center()),
      dsqd_range.lo, dsqd_range.hi, second_allowed_err, &second_used_error);
   
-  if(first_order >= 0 && second_order >= 0) {
+  // If the approximation can be done, and it is cheaper than
+  // brute-force, then do it. Otherwise, don't do it.
+  if(first_order >= 0 && second_order >= 0 &&
+     first_ka_.sea_.FarFieldToLocalTranslationCost(first_order) <=
+     qnode->count() * rnode->count() &&
+     second_ka_.sea_.FarFieldToLocalTranslationCost(second_order) <=
+     qnode->count() * rnode->count()) {
     first_used_error *= qnode->count() * rnode->stat().get_weight_sum();
     second_used_error *= qnode->count() * rnode->stat().get_weight_sum();
     return true;
