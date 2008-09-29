@@ -6,8 +6,6 @@
  */
 
 #include "fx.h"
-#include "datanode.h"
-#include "stopwatch.h"
 
 #include "fastlib/base/debug.h"
 

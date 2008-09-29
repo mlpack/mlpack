@@ -13,6 +13,7 @@
 #define FX_H
 
 #include "datanode.h"
+#include "stopwatch.h"
 
 #include "fastlib/base/common.h"
 
@@ -639,8 +640,8 @@ void fx_format_param(fx_module *mod, const char *key,
  *
  * @see fx_set_param_str_list, fx_default_param_list, fx_format_param
  */
-void fx_format_param_format(fx_module *mod, const char *key,
-			    size_t size, ...);
+void fx_format_param_list(fx_module *mod, const char *key,
+			  size_t size, ...);
 
 /**
  * Unsets a parameter's value, effectively removing the entry.
