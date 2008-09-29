@@ -24,8 +24,51 @@ success_t train_baumwelch();
 success_t train_viterbi();
 void usage();
 
+const fx_entry_doc hmm_train_main_entries[] = {
+  {"type", FX_REQUIRED, FX_STR, NULL,
+   "  HMM type : discrete | gaussian | mixture.\n"},
+  {"algorithm", FX_REQUIRED, FX_STR, NULL,
+   "  Training algoritm: baumwelch | viterbi.\n"},
+  {"seqfile", FX_REQUIRED, FX_STR, NULL,
+   "  Output file for the data sequences.\n"},
+  {"guess", FX_PARAM, FX_STR, NULL,
+   "  File containing guessing HMM model profile.\n"},
+  {"numstate", FX_PARAM, FX_INT, NULL,
+   "  If no guessing profile specified, at least provide the number of states.\n"},
+  {"profile", FX_REQUIRED, FX_STR, NULL,
+   "  Output file containing trained HMM profile.\n"},
+  {"maxiter", FX_PARAM, FX_INT, NULL,
+   "  Maximum number of iterations, default = 500.\n"},
+  {"tolerance", FX_PARAM, FX_STR, NULL,
+   "  Error tolerance on log-likelihood as a stopping criteria.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_submodule_doc hmm_train_main_submodules[] = {
+  FX_SUBMODULE_DOC_DONE
+};
+
+const fx_module_doc hmm_train_main_doc = {
+  hmm_train_main_entries, hmm_train_main_submodules,
+  "This is a program training HMM models from data sequences. \n"
+};
+
+void usage() {
+  printf("\nUsage:\n"
+	 "  train --type=={discrete|gaussian|mixture} OPTION\n"
+	 "[OPTIONS]\n"
+	 "  --algorithm={baumwelch|viterbi} : algorithm used for training, default Baum-Welch\n"
+	 "  --seqfile=file   : file contains input sequences\n"
+	 "  --guess=file     : file contains guess HMM profile\n"
+	 "  --numstate=NUM   : if no guess profile is specified, at least specify the number of state\n"
+	 "  --profile=file   : output file for estimated HMM profile\n"
+	 "  --maxiter=NUM    : maximum number of iteration, default=500\n"
+	 "  --tolerance=NUM  : error tolerance on log-likelihood, default=1e-3\n"
+	 );
+}
+
 int main(int argc, char* argv[]) {
-  fx_init(argc, argv);
+  fx_init(argc, argv, &hmm_train_main_doc);
   success_t s = SUCCESS_PASS;
   if (fx_param_exists(NULL,"type")) {
     const char* algorithm = fx_param_str(NULL, "algorithm", "baumwelch");
@@ -43,7 +86,7 @@ int main(int argc, char* argv[]) {
     s = SUCCESS_FAIL;
   }
   if (!PASSED(s)) usage();
-  fx_done();
+  fx_done(NULL);
 }
 
 success_t train_baumwelch_discrete();
@@ -80,20 +123,6 @@ success_t train_viterbi() {
     printf("Unrecognized type: must be: discrete | gaussian | mixture !!!\n");
     return SUCCESS_FAIL;
   }
-}
-
-void usage() {
-  printf("\nUsage:\n"
-	 "  train --type=={discrete|gaussian|mixture} OPTION\n"
-	 "[OPTIONS]\n"
-	 "  --algorithm={baumwelch|viterbi} : algorithm used for training, default Baum-Welch\n"
-	 "  --seqfile=file   : file contains input sequences\n"
-	 "  --guess=file     : file contains guess HMM profile\n"
-	 "  --numstate=NUM   : if no guess profile is specified, at least specify the number of state\n"
-	 "  --profile=file   : output file for estimated HMM profile\n"
-	 "  --maxiter=NUM    : maximum number of iteration, default=500\n"
-	 "  --tolerance=NUM  : error tolerance on log-likelihood, default=1e-3\n"
-	 );
 }
 
 success_t train_baumwelch_mixture() {

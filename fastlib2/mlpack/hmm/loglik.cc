@@ -23,8 +23,30 @@ success_t loglik_gaussian();
 success_t loglik_mixture();
 void usage();
 
+const fx_entry_doc hmm_loglik_main_entries[] = {
+  {"type", FX_REQUIRED, FX_STR, NULL,
+   "  HMM type : discrete | gaussian | mixture.\n"},
+  {"profile", FX_REQUIRED, FX_STR, NULL,
+   "  A file containing HMM profile.\n"},
+  {"seqfile", FX_PARAM, FX_STR, NULL,
+   "  Output file for the data sequences.\n"},
+  {"logfile", FX_PARAM, FX_STR, NULL,
+   "  Output file for the computed log-likelihood of the sequences.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_submodule_doc hmm_loglik_main_submodules[] = {
+  FX_SUBMODULE_DOC_DONE
+};
+
+const fx_module_doc hmm_loglik_main_doc = {
+  hmm_loglik_main_entries, hmm_loglik_main_submodules,
+  "This is a program computing log-likelihood of data sequences \n"
+  "from HMM models.\n"
+};
+
 int main(int argc, char* argv[]) {
-  fx_init(argc, argv);
+  fx_init(argc, argv, &hmm_loglik_main_doc);
   success_t s = SUCCESS_PASS;
   if (fx_param_exists(NULL,"type")) {
     const char* type = fx_param_str_req(NULL, "type");
@@ -44,7 +66,7 @@ int main(int argc, char* argv[]) {
     s = SUCCESS_FAIL;
   }
   if (!PASSED(s)) usage();
-  fx_done();
+  fx_done(NULL);
 }
 
 void usage() {
