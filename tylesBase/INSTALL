@@ -3,7 +3,7 @@ TylesBase Installation Instructions.
 
 Let <tylesBase> refer to the source directory. 
 
-1. Make sure you the following prerequisites installed:
+1. Make sure the following prerequisites are installed:
 
    ocaml
    findlib
@@ -19,7 +19,7 @@ Let <tylesBase> refer to the source directory.
    make all
 
    This will generate the files tylesBase.cm{i,a,xa}. These will be
-   under the src/_build directory, and you can link to them there.
+   under the _build/src directory, and you can link to them there.
 
 4. To make the documentation, type
 

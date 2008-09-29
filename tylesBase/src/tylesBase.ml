@@ -30,3 +30,5 @@ module StringSet = StringSet
 
 module Show = Show
 module SmallCheck = SmallCheck
+
+module About = About
