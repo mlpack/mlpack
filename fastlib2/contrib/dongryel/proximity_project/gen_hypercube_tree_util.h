@@ -227,7 +227,7 @@ namespace GenHypercubeTreeUtil {
     FindNeighborsInNonAdaptiveGenHypercubeTree
       (leaf_node->node_index(), leaf_node->level(), dimension, 
        &neighbor_indices_to_be_filtered);
-
+    
     // Traverse each fake neighbor and expand to find the real
     // neighboring nodes.
     for(index_t potentially_fake_leaf_neighbor = 0;
@@ -239,7 +239,7 @@ namespace GenHypercubeTreeUtil {
 	*potentially_fake_leaf_neighbor_node =
 	FindNode(nodes_in_each_level, neighbor_indices_to_be_filtered
 		 [potentially_fake_leaf_neighbor], leaf_node->level());
-      
+	     
       // In this case, we traverse down.
       if(potentially_fake_leaf_neighbor_node != NULL) {
 	RetrieveAdjacentLeafNode(leaf_node,
@@ -268,7 +268,20 @@ namespace GenHypercubeTreeUtil {
 	DEBUG_ASSERT(potential_candidate != NULL);
 
 	if(potential_candidate->is_leaf()) {
-	  *(adjacent_children->PushBackRaw()) = potential_candidate;
+
+	  // Check to see whether there is no duplicate...
+	  bool duplicate_flag = false;
+	  for(index_t duplicate = 0; duplicate < adjacent_children->size();
+	      duplicate++) {
+	    if(potential_candidate == (*adjacent_children)[duplicate]) {
+	      duplicate_flag = true;
+	      break;
+	    }
+	  }
+
+	  if(!duplicate_flag) {
+	    *(adjacent_children->PushBackRaw()) = potential_candidate;
+	  }
 	}
       }
     }
