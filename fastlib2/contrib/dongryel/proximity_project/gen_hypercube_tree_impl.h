@@ -179,17 +179,20 @@ namespace tree_gen_hypercube_tree_private {
       upper_coord.Init(matrices[0]->n_rows());
 
       for(index_t d = matrices[0]->n_rows() - 1; d >= 0; d--) {
-	const DRange &range_in_this_dimension = node->bound().get(d);
+	const DRange &range_in_this_dimension = 
+	  node->bound().get(matrices[0]->n_rows() - 1 - d);
 
-	if(code & (1 << d) > 0) {
-	  lower_coord[d] = 0.5 * (range_in_this_dimension.lo +
-				  range_in_this_dimension.hi);
-	  upper_coord[d] = range_in_this_dimension.hi;
+	if((code & (1 << d)) > 0) {
+	  lower_coord[matrices[0]->n_rows() - 1 - d] = 0.5 * 
+	    (range_in_this_dimension.lo + range_in_this_dimension.hi);
+	  upper_coord[matrices[0]->n_rows() - 1 - d] = 
+	    range_in_this_dimension.hi;
 	}
 	else {
-	  lower_coord[d] = range_in_this_dimension.lo;
-	  upper_coord[d] = 0.5 * (range_in_this_dimension.lo +
-				  range_in_this_dimension.hi);
+	  lower_coord[matrices[0]->n_rows() - 1 - d] = 
+	    range_in_this_dimension.lo;
+	  upper_coord[matrices[0]->n_rows() - 1 - d] = 
+	    0.5 * (range_in_this_dimension.lo + range_in_this_dimension.hi);
 	}
       }
       new_child->bound() |= lower_coord;
