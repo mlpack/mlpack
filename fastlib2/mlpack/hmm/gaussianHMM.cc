@@ -20,18 +20,18 @@ void GaussianHMM::setModel(const Matrix& transmission,  const ArrayList<Vector>&
     DEBUG_ASSERT(list_mean_vec[0].length() == list_mean_vec[i].length());
   }
   transmission_.Destruct();
-  list_mean_vec_.Destruct();
-  list_covariance_mat_.Destruct();
+  list_mean_vec_.Renew();
+  list_covariance_mat_.Renew();
   transmission_.Copy(transmission);
-  list_mean_vec_.Copy(list_mean_vec);
-  list_covariance_mat_.Copy(list_covariance_mat);
+  list_mean_vec_.InitCopy(list_mean_vec);
+  list_covariance_mat_.InitCopy(list_covariance_mat);
   CalculateInverse();
 }
 
 void GaussianHMM::Init(const Matrix& transmission,  const ArrayList<Vector>& list_mean_vec,const ArrayList<Matrix>& list_covariance_mat) {
   transmission_.Copy(transmission);
-  list_mean_vec_.Copy(list_mean_vec);
-  list_covariance_mat_.Copy(list_covariance_mat);
+  list_mean_vec_.InitCopy(list_mean_vec);
+  list_covariance_mat_.InitCopy(list_covariance_mat);
   DEBUG_ASSERT(transmission.n_rows() == transmission.n_cols());
   DEBUG_ASSERT(transmission.n_rows() == list_mean_vec.size());
   DEBUG_ASSERT(transmission.n_rows() == list_covariance_mat.size());
@@ -46,14 +46,14 @@ void GaussianHMM::Init(const Matrix& transmission,  const ArrayList<Vector>& lis
 void GaussianHMM::InitFromFile(const char* profile) {
   if (!PASSED(GaussianHMM::LoadProfile(profile, &transmission_, &list_mean_vec_, &list_covariance_mat_)))
     FATAL("Couldn't open '%s' for reading.", profile);
-  list_inverse_cov_mat_.Copy(list_covariance_mat_);
+  list_inverse_cov_mat_.InitCopy(list_covariance_mat_);
   gauss_const_vec_.Init(list_covariance_mat_.size());
   CalculateInverse();
 }
 
 void GaussianHMM::InitFromData(const ArrayList<Matrix>& list_data_seq, int numstate) {
   GaussianHMM::InitGaussParameter(numstate, list_data_seq, &transmission_, &list_mean_vec_, &list_covariance_mat_);
-  list_inverse_cov_mat_.Copy(list_covariance_mat_);
+  list_inverse_cov_mat_.InitCopy(list_covariance_mat_);
   gauss_const_vec_.Init(list_covariance_mat_.size());
   CalculateInverse();
 }
@@ -66,9 +66,9 @@ void GaussianHMM::InitFromData(const Matrix& data_seq, const Vector& state_seq) 
 
 void GaussianHMM::LoadProfile(const char* profile) {
   transmission_.Destruct();
-  list_mean_vec_.Destruct();
-  list_covariance_mat_.Destruct();
-  list_inverse_cov_mat_.Destruct();
+  list_mean_vec_.Renew();
+  list_covariance_mat_.Renew();
+  list_inverse_cov_mat_.Renew();
   gauss_const_vec_.Destruct();
   InitFromFile(profile);
 }
@@ -92,8 +92,8 @@ void GaussianHMM::GenerateSequence(int L, Matrix* data_seq, Vector* state_seq) c
 
 void GaussianHMM::EstimateModel(const Matrix& data_seq, const Vector& state_seq) {
   transmission_.Destruct();
-  list_mean_vec_.Destruct();
-  list_covariance_mat_.Destruct();
+  list_mean_vec_.Renew();
+  list_covariance_mat_.Renew();
   GaussianHMM::EstimateInit(data_seq, state_seq, &transmission_, 
 			    &list_mean_vec_, &list_covariance_mat_);
   CalculateInverse();
@@ -101,8 +101,8 @@ void GaussianHMM::EstimateModel(const Matrix& data_seq, const Vector& state_seq)
 
 void GaussianHMM::EstimateModel(int numstate, const Matrix& data_seq, const Vector& state_seq) {
   transmission_.Destruct();
-  list_mean_vec_.Destruct();
-  list_covariance_mat_.Destruct();
+  list_mean_vec_.Renew();
+  list_covariance_mat_.Renew();
   GaussianHMM::EstimateInit(numstate, data_seq, state_seq, &transmission_, 
 			    &list_mean_vec_, &list_covariance_mat_);
   CalculateInverse();
@@ -164,7 +164,7 @@ void GaussianHMM::ComputeLogLikelihood(const ArrayList<Matrix>& list_data_seq, A
     double loglik = 0;
     for (int t = 0; t < L; t++)
       loglik += log(sc[t]);
-    list_likelihood->AddBackItem(loglik);
+    list_likelihood->PushBack() = loglik;
   }
 }
 
@@ -203,8 +203,8 @@ success_t GaussianHMM::LoadProfile(const char* profile, Matrix* trans, ArrayList
     DEBUG_ASSERT(matlst[i+1].n_rows()==N && matlst[i+1].n_cols()==N);
     Vector m;
     matlst[i].MakeColumnVector(0, &m);
-    means->AddBackItem(m);
-    covs->AddBackItem(matlst[i+1]);
+    means->PushBack() = m;
+    covs->PushBack() = matlst[i+1];
   }
   return SUCCESS_PASS;
 }
@@ -301,11 +301,11 @@ void GaussianHMM::EstimateInit(int numStates, const Matrix& seq, const Vector& s
   for (int i = 0; i < M; i++) {
     Vector m;
     m.Init(N); m.SetZero();
-    mean_.AddBackItem(m);
+    mean_.PushBack() =  m;
 
     Matrix c;
     c.Init(N, N); c.SetZero();
-    cov_.AddBackItem(c);
+    cov_.PushBack() = c;
   }
 
   stateSum.SetZero();
@@ -517,7 +517,7 @@ void GaussianHMM::InitGaussParameter(int M, const ArrayList<Matrix>& seqs, Matri
   for (int i = 0; i < M; i++) {
     Matrix m;
     m.Init(N, N); m.SetZero();
-    gCO.AddBackItem(m);
+    gCO.PushBack() = m;
   }
   //printf("---2---\n");
 
@@ -577,9 +577,9 @@ void GaussianHMM::TrainViterbi(const ArrayList<Matrix>& seqs, Matrix* guessTR, A
   ArrayList<Matrix> INV_CO; // inverse matrix of the covariance
   Vector DET; // the determinant * constant of the Normal PDF formula
   TR.Init(M, M);
-  ME.Copy(gME);
-  CO.Copy(gCO);
-  INV_CO.Copy(CO);
+  ME.InitCopy(gME);
+  CO.InitCopy(gCO);
+  INV_CO.InitCopy(CO);
   DET.Init(M);
 
   Matrix emis_prob;
@@ -680,9 +680,9 @@ void GaussianHMM::Train(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayLis
   ArrayList<Matrix> INV_CO; // inverse matrix of the covariance
   Vector DET; // the determinant * constant of the Normal PDF formula
   TR.Init(M, M);
-  ME.Copy(gME);
-  CO.Copy(gCO);
-  INV_CO.Copy(CO);
+  ME.InitCopy(gME);
+  CO.InitCopy(gCO);
+  INV_CO.InitCopy(CO);
   DET.Init(M);
 
   Matrix ps, fs, bs, emis_prob; // to hold hmm_decodeG results

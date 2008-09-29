@@ -23,8 +23,35 @@ success_t generate_gaussian();
 success_t generate_mixture();
 void usage();
 
+const fx_entry_doc hmm_generate_main_entries[] = {
+  {"type", FX_REQUIRED, FX_STR, NULL,
+   "  HMM type : discrete | gaussian | mixture.\n"},
+  {"profile", FX_REQUIRED, FX_STR, NULL,
+   "  A file containing HMM profile.\n"},
+  {"length", FX_PARAM, FX_INT, NULL,
+   "  Sequence length, default = 10.\n"},
+  {"lenmax", FX_PARAM, FX_INT, NULL,
+   "  Maximum sequence length, default = length\n"},
+  {"numseq", FX_PARAM, FX_INT, NULL,
+   "  Number of sequance, default = 10.\n"},
+  {"seqfile", FX_PARAM, FX_STR, NULL,
+   "  Output file for the generated sequences.\n"},
+  {"state", FX_PARAM, FX_STR, NULL,
+   "  Output file for the generated state sequences.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_submodule_doc hmm_generate_main_submodules[] = {
+  FX_SUBMODULE_DOC_DONE
+};
+
+const fx_module_doc hmm_generate_main_doc = {
+  hmm_generate_main_entries, hmm_generate_main_submodules,
+  "This is a program generating sequences from HMM models.\n"
+};
+
 int main(int argc, char* argv[]) {
-  fx_init(argc, argv);
+  fx_init(argc, argv, &hmm_generate_main_doc );
   success_t s = SUCCESS_PASS;
   if (fx_param_exists(NULL,"type")) {
     const char* type = fx_param_str_req(NULL, "type");
@@ -44,7 +71,7 @@ int main(int argc, char* argv[]) {
     s = SUCCESS_FAIL;
   }
   if (!PASSED(s)) usage();
-  fx_done();
+  fx_done(NULL);
 }
 
 void usage() {
