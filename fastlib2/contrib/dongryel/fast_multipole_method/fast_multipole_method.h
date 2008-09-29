@@ -116,7 +116,7 @@ class FastMultipoleMethod {
 
     // Start from the most bottom level, and work your way up to the
     // direct children of the root node.
-    for(index_t level = nodes_in_each_level_.size() - 1; level >= 1; level--) {
+    for(index_t level = nodes_in_each_level_.size() - 1; level >= 0; level--) {
 
       // The references to the nodes on the current level.
       ArrayList<proximity::GenHypercubeTree<FmmStat> *> 
@@ -285,7 +285,9 @@ class FastMultipoleMethod {
 	  colleague_node->stat().farfield_expansion_.TranslateToLocal
 	    (node->stat().local_expansion_, sea_.get_max_order());
 	  */
-	  BaseCase_(node, colleague_node, potentials_);
+	  if(colleague_node->count(0) > 0) {
+	    BaseCase_(node, colleague_node, potentials_);
+	  }
 	  
 	} // end of iterating over each colleague...
 	 
@@ -312,7 +314,10 @@ class FastMultipoleMethod {
 	      adjacent_leaves[adjacent];
 	    
 	    DEBUG_ASSERT(reference_leaf_node->is_leaf());
-	    BaseCase_(node, reference_leaf_node, potentials_);
+	    if(reference_leaf_node->count(0) > 0) {
+	      BaseCase_(node, reference_leaf_node, potentials_);
+	    }
+
 	  } // end of iterating over List 1...
 
 	  // Iterate over each node in List 3 and directly evaluate
@@ -325,13 +330,16 @@ class FastMultipoleMethod {
 	    // This is the cut-off that determines whether exhaustive
 	    // base case of the direct far-field evaluation is
 	    // cheaper.
-	    if(0 && reference_node->count(0) > 
-	       sea_.get_max_order() * sea_.get_max_order() * 
-	       sea_.get_max_order()) {
-	      EvaluateMultipoleExpansion_(node, reference_node);
-	    }
-	    else {
-	      BaseCase_(node, reference_node, potentials_);
+	    
+	    if(reference_node->count(0) > 0) {
+	      if(0 && reference_node->count(0) > 
+		 sea_.get_max_order() * sea_.get_max_order() * 
+		 sea_.get_max_order()) {
+		EvaluateMultipoleExpansion_(node, reference_node);
+	      }
+	      else {
+		BaseCase_(node, reference_node, potentials_);
+	      }
 	    }
 	    
 	  } // end of iterating over List 3...
@@ -359,18 +367,20 @@ class FastMultipoleMethod {
 	  // This is the cut-off that determines whether computing by
 	  // direct accumulation is cheaper with respect to the base
 	  // case method.
-	  if(0 && node->count(query_point_indexing) >
-	     sea_.get_max_order() * sea_.get_max_order() * 
-	     sea_.get_max_order()) {
-	    
-	    node->stat().local_expansion_.AccumulateCoeffs
-	      (shuffled_reference_particle_set_,
-	       shuffled_reference_particle_charge_set_,
-	       reference_node->begin(0), reference_node->end(0),
-	       sea_.get_max_order());
-	  }
-	  else {
-	    BaseCase_(node, reference_node, potentials_);
+	  if(reference_node->count(0) > 0) {
+	    if(0 && node->count(query_point_indexing) >
+	       sea_.get_max_order() * sea_.get_max_order() * 
+	       sea_.get_max_order()) {
+	      
+	      node->stat().local_expansion_.AccumulateCoeffs
+		(shuffled_reference_particle_set_,
+		 shuffled_reference_particle_charge_set_,
+		 reference_node->begin(0), reference_node->end(0),
+		 sea_.get_max_order());
+	    }
+	    else {
+	      BaseCase_(node, reference_node, potentials_);
+	    }
 	  }
 	}
 	
@@ -378,13 +388,57 @@ class FastMultipoleMethod {
 	// evaluate its local expansion, plus the self-interaction!
 	if(node->is_leaf()) {
 	  EvaluateLocalExpansion_(node);
-	  BaseCase_(node, node, potentials_);
+
+	  // If the node contains any reference points, then we have
+	  // to do the self-interactions among the node.
+	  if(node->count(0) > 0) {
+	    BaseCase_(node, node, potentials_);
+	  }
 	}
 	
 	// Otherwise, we need to pass it down.
 	else {
 	  TransmitLocalExpansionToChildren_(node);
 	}
+
+
+
+
+
+	// DEBUGGING!!!!
+
+	printf("Node %u on level %u's interaction:\n", node->node_index(),
+	       node->level());
+	printf("I am a leaf node %d\n", node->is_leaf());
+	printf("List 1\n");
+	for(index_t i = 0; i < adjacent_leaves.size(); i++) {
+	  proximity::GenHypercubeTree<FmmStat> *adjacent_leaf =
+	    adjacent_leaves[i];
+	  printf("Node %u on level %u\n", adjacent_leaf->node_index(), 
+		 adjacent_leaf->level());
+	}
+	printf("List 2\n");
+	for(index_t i = 0; i < colleagues.size(); i++) {
+	  proximity::GenHypercubeTree<FmmStat> *colleague =
+	    colleagues[i];
+	  printf("Node %u on level %u\n", colleague->node_index(),
+		 colleague->level());
+	}
+	printf("List 3\n");
+	for(index_t i = 0; i < non_adjacent_children.size(); i++) {
+	  proximity::GenHypercubeTree<FmmStat> *non_adjacent_child =
+	    non_adjacent_children[i];
+	  printf("Node %u on level %u\n", non_adjacent_child->node_index(),
+		 non_adjacent_child->level());
+	}
+	printf("List 4\n");
+	for(index_t i = 0; i < fourth_list.size(); i++) {
+	  proximity::GenHypercubeTree<FmmStat> *fourth_list_child =
+	    fourth_list[i];
+	  printf("Node %u on level %u\n", fourth_list_child->node_index(),
+		 fourth_list_child->level());
+	}
+	printf("\n\n");
 
       } // end of iterating over each query box node on this level...
       
