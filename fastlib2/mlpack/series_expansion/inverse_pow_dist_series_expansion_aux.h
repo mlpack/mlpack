@@ -308,6 +308,19 @@ class InversePowDistSeriesExpansionAux {
     }
   }
 
+  static void ConvertToComplexForm
+  (double x_coord, double y_coord, double &magnitude_of_vector_in_xy_plane,
+   std::complex<double> &eta, std::complex<double> &xi) {
+    
+    magnitude_of_vector_in_xy_plane =
+      sqrt(math::Sqr(x_coord) + math::Sqr(y_coord));
+    
+    eta.real() = x_coord / magnitude_of_vector_in_xy_plane;
+    eta.imag() = -y_coord / magnitude_of_vector_in_xy_plane;
+    xi.real() = x_coord / magnitude_of_vector_in_xy_plane;
+    xi.imag() = y_coord / magnitude_of_vector_in_xy_plane;
+  }
+
 };
 
 #endif
