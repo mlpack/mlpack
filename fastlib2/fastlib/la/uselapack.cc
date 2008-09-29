@@ -248,7 +248,7 @@ success_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
   for (index_t j = 0; j < n; j++) {
     double *r_col = R->GetColumnPtr(j);
     double *q_col = A_in_Q_out->GetColumnPtr(j);
-    int i = std::min(j + 1, k);
+    int i = std::min(j + 1, index_t(k));
     mem::Copy(r_col, q_col, i);
     mem::Zero(r_col + i, k - i);
   }
