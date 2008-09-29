@@ -281,12 +281,9 @@ class FastMultipoleMethod {
 
 	  proximity::GenHypercubeTree<FmmStat> *colleague_node = colleagues[c];
 
-	  /*
-	  colleague_node->stat().farfield_expansion_.TranslateToLocal
-	    (node->stat().local_expansion_, sea_.get_max_order());
-	  */
 	  if(colleague_node->count(0) > 0) {
-	    BaseCase_(node, colleague_node, potentials_);
+	    colleague_node->stat().farfield_expansion_.TranslateToLocal
+	      (node->stat().local_expansion_, sea_.get_max_order());
 	  }
 	  
 	} // end of iterating over each colleague...
@@ -332,7 +329,7 @@ class FastMultipoleMethod {
 	    // cheaper.
 	    
 	    if(reference_node->count(0) > 0) {
-	      if(0 && reference_node->count(0) > 
+	      if(reference_node->count(0) > 
 		 sea_.get_max_order() * sea_.get_max_order() * 
 		 sea_.get_max_order()) {
 		EvaluateMultipoleExpansion_(node, reference_node);
@@ -368,7 +365,7 @@ class FastMultipoleMethod {
 	  // direct accumulation is cheaper with respect to the base
 	  // case method.
 	  if(reference_node->count(0) > 0) {
-	    if(0 && node->count(query_point_indexing) >
+	    if(node->count(query_point_indexing) >
 	       sea_.get_max_order() * sea_.get_max_order() * 
 	       sea_.get_max_order()) {
 	      
@@ -400,45 +397,6 @@ class FastMultipoleMethod {
 	else {
 	  TransmitLocalExpansionToChildren_(node);
 	}
-
-
-
-
-
-	// DEBUGGING!!!!
-
-	printf("Node %u on level %u's interaction:\n", node->node_index(),
-	       node->level());
-	printf("I am a leaf node %d\n", node->is_leaf());
-	printf("List 1\n");
-	for(index_t i = 0; i < adjacent_leaves.size(); i++) {
-	  proximity::GenHypercubeTree<FmmStat> *adjacent_leaf =
-	    adjacent_leaves[i];
-	  printf("Node %u on level %u\n", adjacent_leaf->node_index(), 
-		 adjacent_leaf->level());
-	}
-	printf("List 2\n");
-	for(index_t i = 0; i < colleagues.size(); i++) {
-	  proximity::GenHypercubeTree<FmmStat> *colleague =
-	    colleagues[i];
-	  printf("Node %u on level %u\n", colleague->node_index(),
-		 colleague->level());
-	}
-	printf("List 3\n");
-	for(index_t i = 0; i < non_adjacent_children.size(); i++) {
-	  proximity::GenHypercubeTree<FmmStat> *non_adjacent_child =
-	    non_adjacent_children[i];
-	  printf("Node %u on level %u\n", non_adjacent_child->node_index(),
-		 non_adjacent_child->level());
-	}
-	printf("List 4\n");
-	for(index_t i = 0; i < fourth_list.size(); i++) {
-	  proximity::GenHypercubeTree<FmmStat> *fourth_list_child =
-	    fourth_list[i];
-	  printf("Node %u on level %u\n", fourth_list_child->node_index(),
-		 fourth_list_child->level());
-	}
-	printf("\n\n");
 
       } // end of iterating over each query box node on this level...
       
