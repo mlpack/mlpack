@@ -13,12 +13,11 @@ void InversePowDistFarFieldExpansion::Accumulate(const double *v,
   double x_coord = v[0] - center_[0];
   double y_coord = v[1] - center_[1];
   double z_coord = v[2] - center_[2];
-  double magnitude_of_vector_in_xy_plane =
-    sqrt(math::Sqr(x_coord) + math::Sqr(y_coord));
-  std::complex<double> eta(x_coord / magnitude_of_vector_in_xy_plane,
-			   -y_coord / magnitude_of_vector_in_xy_plane);
-  std::complex<double> xi(x_coord / magnitude_of_vector_in_xy_plane,
-			  y_coord / magnitude_of_vector_in_xy_plane);
+  double magnitude_of_vector_in_xy_plane;
+  std::complex<double> eta;
+  std::complex<double> xi;
+  InversePowDistSeriesExpansionAux::ConvertToComplexForm
+    (x_coord, y_coord, magnitude_of_vector_in_xy_plane, eta, xi);
 
   // Temporary variables used for exponentiation.
   std::complex<double> power_of_eta(0.0, 0.0);
@@ -180,12 +179,11 @@ void InversePowDistFarFieldExpansion::TranslateFromFarField
   double x_diff = -(center_[0] - (*old_center)[0]);
   double y_diff = -(center_[1] - (*old_center)[1]);
   double z_diff = -(center_[2] - (*old_center)[2]);
-  double magnitude_of_vector_in_xy_plane =
-    sqrt(math::Sqr(x_diff) + math::Sqr(y_diff));
-  std::complex<double> eta(x_diff / magnitude_of_vector_in_xy_plane,
-			   -y_diff / magnitude_of_vector_in_xy_plane);
-  std::complex<double> xi(x_diff / magnitude_of_vector_in_xy_plane,
-			  y_diff / magnitude_of_vector_in_xy_plane);
+  double magnitude_of_vector_in_xy_plane;
+  std::complex<double> eta;
+  std::complex<double> xi;
+  InversePowDistSeriesExpansionAux::ConvertToComplexForm
+    (x_diff, y_diff, magnitude_of_vector_in_xy_plane, eta, xi);
 
   // Temporary variables used for exponentiation.
   std::complex<double> power_of_eta(0.0, 0.0);
@@ -280,6 +278,7 @@ void InversePowDistFarFieldExpansion::TranslateToLocal
   // First, complete a table of Gegenbauer polynomials for the
   // evluation point
   const Vector *local_expansion_center = se.get_center();
+  
   double x_diff = -((*local_expansion_center)[0] - center_[0]);
   double y_diff = -((*local_expansion_center)[1] - center_[1]);
   double z_diff = -((*local_expansion_center)[2] - center_[2]);

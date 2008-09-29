@@ -69,13 +69,12 @@ double InversePowDistLocalExpansion::EvaluateField(const double *v,
   double x_diff = v[0] - center_[0];
   double y_diff = v[1] - center_[1];
   double z_diff = v[2] - center_[2];
-  double magnitude_of_vector_in_xy_plane =
-    sqrt(math::Sqr(x_diff) + math::Sqr(y_diff));
-  std::complex<double> eta(x_diff / magnitude_of_vector_in_xy_plane,
-			   -y_diff / magnitude_of_vector_in_xy_plane);
-  std::complex<double> xi(x_diff / magnitude_of_vector_in_xy_plane,
-			  y_diff / magnitude_of_vector_in_xy_plane);
-
+  double magnitude_of_vector_in_xy_plane;
+  std::complex<double> eta;
+  std::complex<double> xi;
+  InversePowDistSeriesExpansionAux::ConvertToComplexForm
+    (x_diff, y_diff, magnitude_of_vector_in_xy_plane, eta, xi);
+  
   // Temporary variables used for exponentiation.
   std::complex<double> power_of_eta(0.0, 0.0);
   std::complex<double> power_of_xi(0.0, 0.0);
@@ -92,11 +91,23 @@ double InversePowDistLocalExpansion::EvaluateField(const double *v,
       for(index_t b = 0; b <= a; b++) {
 	InversePowDistSeriesExpansionAux::PowWithRootOfUnity
 	  (eta, b, power_of_eta);
-	power_of_eta *= pow(magnitude_of_vector_in_xy_plane, b);
+
+	if(magnitude_of_vector_in_xy_plane == 0) {
+	  power_of_eta.real() = power_of_eta.imag() = 0;
+	}
+	else {
+	  power_of_eta *= pow(magnitude_of_vector_in_xy_plane, b);
+	}
 
 	InversePowDistSeriesExpansionAux::PowWithRootOfUnity
 	  (xi, a - b, power_of_xi);
-	power_of_xi *= pow(magnitude_of_vector_in_xy_plane, a - b);
+	
+	if(magnitude_of_vector_in_xy_plane == 0) {
+	  power_of_xi.real() = power_of_xi.imag() = 0;
+	}
+	else {
+	  power_of_xi *= pow(magnitude_of_vector_in_xy_plane, a - b);
+	}
 	
 	std::complex<double> product = n_th_order_matrix.get(a, b) *
 	  power_of_eta * power_of_xi;
@@ -160,12 +171,11 @@ void InversePowDistLocalExpansion::TranslateToLocal
   double x_diff = ((*new_center)[0] - center_[0]);
   double y_diff = ((*new_center)[1] - center_[1]);
   double z_diff = ((*new_center)[2] - center_[2]);
-  double magnitude_of_vector_in_xy_plane =
-    sqrt(math::Sqr(x_diff) + math::Sqr(y_diff));
-  std::complex<double> eta(x_diff / magnitude_of_vector_in_xy_plane,
-                           -y_diff / magnitude_of_vector_in_xy_plane);
-  std::complex<double> xi(x_diff / magnitude_of_vector_in_xy_plane,
-                          y_diff / magnitude_of_vector_in_xy_plane);
+  double magnitude_of_vector_in_xy_plane;
+  std::complex<double> eta;
+  std::complex<double> xi;
+  InversePowDistSeriesExpansionAux::ConvertToComplexForm
+    (x_diff, y_diff, magnitude_of_vector_in_xy_plane, eta, xi);
 
   // Temporary variables used for exponentiation.
   std::complex<double> power_of_eta(0.0, 0.0);
