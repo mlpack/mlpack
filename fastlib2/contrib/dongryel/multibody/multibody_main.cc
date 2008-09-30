@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     fx_timer_stop(fx_root, "multitree multibody");
     printf("Multitree multibody completed...\n");
     mtmb.PrintDebug(false);
-    
+
     // Do naive algorithm if requested.
     if (do_naive) {
 
@@ -55,6 +55,21 @@ int main(int argc, char *argv[])
 
       // Get the exact vectors from the naive algorithm.
       mtmb.get_force_vectors(&exact);
+      
+      // Compute the net force from the naively computed vectors.
+      Vector naive_net_force;
+      naive_net_force.Init(exact.n_rows());
+      naive_net_force.SetZero();
+      for(index_t i = 0; i < exact.n_cols(); i++) {
+	for(index_t d = 0; d < exact.n_rows(); d++) {
+	  naive_net_force[d] += exact.get(d, i);
+	}
+      }
+      printf("Naive net force:\n");
+      for(index_t i = 0; i < naive_net_force.length(); i++) {
+	printf("%g ", naive_net_force[i]);
+      }
+      printf("\n");
             
       double max_relative_l1_norm_error;
       int relative_error_under_threshold;

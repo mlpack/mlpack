@@ -278,6 +278,9 @@ class MultitreeMultibody {
   void PrintDebug(bool naive_print_out) {
     
     FILE *stream = NULL;
+    Vector net_force;
+    net_force.Init(data_.n_rows());
+    net_force.SetZero();
 
     if(naive_print_out) {
       stream = fopen("naive_force_vectors.txt", "w+");
@@ -288,9 +291,16 @@ class MultitreeMultibody {
     for(index_t q = 0; q < data_.n_cols(); q++) {
       for(index_t d = 0; d < data_.n_rows(); d++) {
 	fprintf(stream, "%g ", total_force_e_.get(d, q));
+	net_force[d] += total_force_e_.get(d, q);
       }
       fprintf(stream, "\n");
     }
+
+    printf("Net force:\n");
+    for(index_t d = 0; d < data_.n_rows(); d++) {
+      printf("%g ", net_force[d]);
+    }
+    printf("\n");
   }
 
 private:
@@ -498,16 +508,17 @@ private:
 
   /** @brief Tests whether node a is an ancestor node of node b.
    */
-  int as_indexes_strictly_surround_bs(TTree *a, TTree *b);
+  int first_node_indices_strictly_surround_second_node_indices_(TTree *a, 
+								TTree *b);
 
   /** @brief Compute the total number of n-tuples by recursively
    *         splitting up the i-th node
    */
-  double two_ttn(int b, ArrayList<TTree *> &nodes, int i);
+  double RecursiveTotalNumTuples_(int b, ArrayList<TTree *> &nodes, int i);
 
   /** @brief Compute the total number of n-tuples.
    */
-  double ttn(int b, ArrayList<TTree *> &nodes);
+  double TotalNumTuples_(int b, ArrayList<TTree *> &nodes);
 
   /** @brief Heuristic for node splitting - find the node with most
    *         points.

@@ -7,20 +7,25 @@
 
 template<typename TMultibodyKernel, typename TTree>
 int MultitreeMultibody<TMultibodyKernel, TTree>::
-as_indexes_strictly_surround_bs(TTree *a, TTree *b) {
+first_node_indices_strictly_surround_second_node_indices_
+(TTree *first_node, TTree *second_node) {
 
-  return (a->begin() < b->begin() && a->end() >= b->end()) ||
-    (a->begin() <= b->begin() && a->end() > b->end());
+  return (first_node->begin() < second_node->begin() && 
+	  first_node->end() >= second_node->end()) ||
+    (first_node->begin() <= second_node->begin() && 
+     first_node->end() > second_node->end());
 }
 
 template<typename TMultibodyKernel, typename TTree>
-double MultitreeMultibody<TMultibodyKernel, TTree>::ttn
+double MultitreeMultibody<TMultibodyKernel, TTree>::TotalNumTuples_
 (int b, ArrayList<TTree *> &nodes) {
       
   TTree *bkn = nodes[b];
   double result;
   int n = nodes.size();
-  
+
+  // If this is the last node in the list, then the result is the
+  // number of points contained in this node.
   if(b == n - 1) {
     result = (double) bkn->count();
   }
@@ -72,14 +77,16 @@ double MultitreeMultibody<TMultibodyKernel, TTree>::ttn
 	if(dkn->begin() >= bkn->end() - 1) {
 	  result = math::BinomialCoefficient(bkn->count(), jdiff - b);
 	  if(result > 0.0) {
-	    result *= ttn(jdiff, nodes);
+	    result *= TotalNumTuples_(jdiff, nodes);
 	  }
 	}
-	else if(as_indexes_strictly_surround_bs(bkn, dkn)) {
-	  result = two_ttn(b, nodes, b);
+	else if(first_node_indices_strictly_surround_second_node_indices_
+		(bkn, dkn)) {
+	  result = RecursiveTotalNumTuples_(b, nodes, b);
 	}
-	else if(as_indexes_strictly_surround_bs(dkn, bkn)) {
-	  result = two_ttn(b, nodes, jdiff);
+	else if(first_node_indices_strictly_surround_second_node_indices_
+		(dkn, bkn)) {
+	  result = RecursiveTotalNumTuples_(b, nodes, jdiff);
 	}
       }
     }
@@ -88,15 +95,15 @@ double MultitreeMultibody<TMultibodyKernel, TTree>::ttn
 }
 
 template<typename TMultibodyKernel, typename TTree>
-double MultitreeMultibody<TMultibodyKernel, TTree>::two_ttn
-(int b, ArrayList<TTree *> &nodes, int i) {
+double MultitreeMultibody<TMultibodyKernel, TTree>::
+RecursiveTotalNumTuples_(int b, ArrayList<TTree *> &nodes, int i) {
 
   double result = 0.0;
   TTree *kni = nodes[i];
   nodes[i] = kni->left();
-  result += ttn(b, nodes);
+  result += TotalNumTuples_(b, nodes);
   nodes[i] = kni->right();
-  result += ttn(b, nodes);
+  result += TotalNumTuples_(b, nodes);
   nodes[i] = kni;
   return result;
 }
@@ -727,7 +734,7 @@ bool MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
 
     // Recurse to the left.
     new_nodes[split_index] = nodes[split_index]->left();
-    new_num_tuples = ttn(0, new_nodes);
+    new_num_tuples = TotalNumTuples_(0, new_nodes);
     
     // If the current node combination is valid, then recurse.
     bool left_result = true;
@@ -738,7 +745,7 @@ bool MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
     
     // Recurse to the right.
     new_nodes[split_index] = nodes[split_index]->right();
-    new_num_tuples = ttn(0, new_nodes);
+    new_num_tuples = TotalNumTuples_(0, new_nodes);
     
     // If the current node combination is valid, then recurse.
     bool right_result = true;
