@@ -11,6 +11,50 @@
 
 #include <fastlib/fastlib.h>
 
+const fx_entry_doc opt_entries[] = {
+  {"method", FX_PARAM, FX_STR, NULL,
+   " The method used to optimize.\n"},
+  {"param_space_dim", FX_PARAM, FX_INT, NULL,
+   " The dimension of the parameter space.\n"},
+  {"init_opt", FX_TIMER, FX_CUSTOM, NULL,
+   " The time taken to initialize the optimizer.\n"},
+  {"get_init_pt", FX_TIMER, FX_CUSTOM, NULL,
+   " The time taken to generate the initial point.\n"},
+  {"get_init_pts", FX_TIMER, FX_CUSTOM, NULL,
+   " The time taken to obtain the 'dim+1' points required"
+   " to use the NelderMead optimizer.\n"},
+  {"optimizing", FX_TIMER, FX_CUSTOM, NULL,
+   " The time taken to get to the optimal value.\n"},
+  {"tolerance", FX_PARAM, FX_DOUBLE, NULL,
+   " The tolerance value for the parameters"
+   " (defaults to 1.0e-5).\n"},
+  {"MAX_FUNC_EVAL", FX_PARAM, FX_INT, NULL,
+   " The maximum number of function evaluations"
+   " allowed to the NelderMead optimizer (defaults"
+   " to 50000).\n"},
+  {"func_evals", FX_RESULT, FX_INT, NULL,
+   " The number of function evaluations taken by the algorithm.\n"},
+  {"EPSILON", FX_PARAM, FX_DOUBLE, NULL,
+   " Value of epsilon.\n"},
+  {"TOLERANCE", FX_PARAM, FX_DOUBLE, NULL,
+   " Tolerance for the minimum movement for the parameter value.\n"},
+  {"gtol", FX_PARAM, FX_DOUBLE, NULL,
+   " Tolerance value for the gradient of the function.\n"},
+  {"MAX_STEP_SIZE", FX_PARAM, FX_DOUBLE, NULL,
+   " The maximum step size in the direction of the gradient.\n"},
+  {"MAX_ITERS", FX_PARAM, FX_INT, NULL,
+   " The maximum number of iterations allowed to the function.\n"},
+  {"iters", FX_RESULT, FX_INT, NULL,
+   " The number of iterations the algorithm actually went through"
+   " before reaching the apparent optimum.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc opt_doc = {
+  opt_entries, NULL,
+  " This file containes two optimizers.\n"
+};
+
 /**
  * An optimizer using the Nelder Mead method,
  * also known as the polytope or the simplex
@@ -35,7 +79,7 @@
  * opt.Init(obj_function, data, dim_param_space, opt_module);
  * ...
  * opt.Eval(init_pts);
- * // init_pts[0] contains the optimal point found
+ * // init_pts[0] contaings the optimal point found
  * @endcode
  *
  */
