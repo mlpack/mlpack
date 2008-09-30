@@ -27,18 +27,42 @@
  */
 #include "simple_nbc.h"
 
+const fx_entry_doc parm_nbc_main_entries[] = {
+  {"train", FX_REQUIRED, FX_STR, NULL,
+   " A file containing the training set\n"},
+  {"test", FX_REQUIRED, FX_STR, NULL,
+   " A file containing the test set\n"},
+  {"output", FX_PARAM, FX_STR, NULL,
+   " The file in which the output of the test would be "
+   "written (defaults to 'output.csv')\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_submodule_doc parm_nbc_main_submodules[] = {
+  {"nbc", &parm_nbc_doc,
+   " Trains on a given set and number of classes and "
+   "tests them on a given set\n"},
+  FX_SUBMODULE_DOC_DONE
+};
+
+const fx_module_doc parm_nbc_main_doc = {
+  parm_nbc_main_entries, parm_nbc_main_submodules,
+  "This program test drives the Parametric Naive Bayes \n"
+  "Classifier assuming that the features are sampled \n"
+  "from a Gaussian distribution.\n"
+};
 
 int main(int argc, char* argv[]) {
 
-  fx_init(argc, argv);
+  fx_module *root = fx_init(argc, argv, &parm_nbc_main_doc);
 
   ////// READING PARAMETERS AND LOADING DATA //////
 
-  const char *training_data_filename = fx_param_str_req(NULL, "train");
+  const char *training_data_filename = fx_param_str_req(root, "train");
   Matrix training_data;
   data::Load(training_data_filename, &training_data);
 
-  const char *testing_data_filename = fx_param_str_req(NULL, "test");
+  const char *testing_data_filename = fx_param_str_req(root, "test");
   Matrix testing_data;
   data::Load(testing_data_filename, &testing_data);
 
@@ -47,7 +71,7 @@ int main(int argc, char* argv[]) {
   ////// Declaration of an object of the class SimpleNaiveBayesClassifier
   SimpleNaiveBayesClassifier nbc;
 
-  struct datanode* nbc_module = fx_submodule(NULL, "nbc", "nbc");
+  struct datanode* nbc_module = fx_submodule(root, "nbc");
   
   ////// Timing the training of the Naive Bayes Classifier //////
   fx_timer_start(nbc_module, "training");
@@ -70,7 +94,7 @@ int main(int argc, char* argv[]) {
 
   ////// OUTPUT RESULTS //////
 
-  const char *output_filename = fx_param_str(NULL, "output", "output.csv");
+  const char *output_filename = fx_param_str(root, "output", "output.csv");
 
   FILE *output_file = fopen(output_filename, "w");
 
@@ -78,7 +102,7 @@ int main(int argc, char* argv[]) {
 
   fclose(output_file);
 
-  fx_done();
+  fx_done(root);
 
   return 1;
 }

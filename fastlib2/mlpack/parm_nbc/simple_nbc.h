@@ -15,6 +15,33 @@
 #include "phi.h"
 #include "math_functions.h"
 
+const fx_entry_doc parm_nbc_entries[] ={
+  {"training", FX_TIMER, FX_CUSTOM, NULL,
+   " The timer to record the training time\n"},
+  {"testing", FX_TIMER, FX_CUSTOM, NULL,
+   " The timer to record the testing time\n"},
+  {"classes", FX_PARAM, FX_INT, NULL,
+   " The number of classes present in the data\n"},
+  {"features", FX_PARAM, FX_INT, NULL,
+   " The number of features in the data\n"},
+  {"examples", FX_RESULT, FX_INT, NULL,
+   " The number of examples in the training set\n"},
+  {"tests", FX_RESULT, FX_INT, NULL,
+   " The number of data points in the test set\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_submodule_doc parm_nbc_submodules[] = {
+  FX_SUBMODULE_DOC_DONE
+};
+
+const fx_module_doc parm_nbc_doc = {
+  parm_nbc_entries, parm_nbc_submodules,
+  " Trains the classifier using the training set and "
+  "outputs the results for the test set\n"
+};
+  
+
 /**
  * A classification class. The class labels are assumed
  * to be positive integers - 0,1,2,....
