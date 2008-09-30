@@ -12,6 +12,22 @@
 
 #include <fastlib/fastlib.h>
 
+const fx_entry_doc mog_l2e_entries[] = {
+  {"K", FX_PARAM, FX_INT, NULL,
+   " The number of Gaussians in the mixture model."
+   " (defaults to 1)\n"},
+  {"D", FX_PARAM, FX_INT, NULL,
+   " The number of dimensions of the data on which the"
+   " the mixture model is to be fit.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc mog_l2e_doc = {
+  mog_l2e_entries, NULL,
+  " This program defines a Gaussian mixture model"
+  " and calculates the L2 error for the present"
+  " parameter setting to be used by an optimizer.\n"
+};
 
 /**
  * A Gaussian mixture model class.

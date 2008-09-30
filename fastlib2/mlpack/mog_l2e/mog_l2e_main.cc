@@ -24,28 +24,53 @@
 #include "mog.h"
 #include "../opt/optimizers.h"
 
+const fx_entry_doc mog_l2e_main_entries[] = {
+  {"data", FX_REQUIRED, FX_STR, NULL,
+   " A file containing the data on which the model"
+   " has to be fit.\n"},
+  {"output", FX_PARAM, FX_STR, NULL,
+   " The file into which the output is to be written into.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_submodule_doc mog_l2e_main_submodules[] = {
+  {"mog_l2e", &mog_l2e_doc,
+   " Responsible for intializing the model and"
+   " computing the parameters.\n"},
+   {"opt", &opt_doc,
+    " Responsible for minimizing the L2 loss function"
+    " and obtaining the parameter values.\n"},
+  FX_SUBMODULE_DOC_DONE
+};
+
+const fx_module_doc mog_l2e_main_doc = {
+  mog_l2e_main_entries, mog_l2e_main_submodules,
+  " This program test drives the parametric estimation "
+  "of a Gaussian mixture model using L2 loss function.\n"
+};
 
 int main(int argc, char* argv[]) {
 
-  fx_init(argc, argv);
+  fx_module *root = 
+    fx_init(argc, argv, &mog_l2e_main_doc);
 
   ////// READING PARAMETERS AND LOADING DATA //////
   
-  const char *data_filename = fx_param_str_req(NULL, "data");
+  const char *data_filename = fx_param_str_req(root, "data");
 
   Matrix data_points;
   data::Load(data_filename, &data_points);
 
   ////// MIXTURE OF GAUSSIANS USING L2 ESTIMATION //////
 
-  datanode *mog_l2e_module = fx_submodule(NULL, "mog_l2e", "mog_l2e");
+  datanode *mog_l2e_module = fx_submodule(root, "mog_l2e");
   index_t number_of_gaussians = fx_param_int(mog_l2e_module, "K", 1);
   fx_format_param(mog_l2e_module, "D", "%d", data_points.n_rows());
   index_t dimension = fx_param_int_req(mog_l2e_module, "D");;
   
   ////// RUNNING AN OPTIMIZER TO MINIMIZE THE L2 ERROR //////
 
-  datanode *opt_module = fx_submodule(NULL, "opt", "opt");
+  datanode *opt_module = fx_submodule(root, "opt");
   const char *opt_method = fx_param_str(opt_module, "method", "QuasiNewton");
   index_t param_dim = (number_of_gaussians*(dimension+1)*(dimension+2)/2 - 1);
   fx_param_int(opt_module, "param_space_dim", param_dim);
@@ -53,7 +78,6 @@ int main(int argc, char* argv[]) {
   index_t optim_flag = (strcmp(opt_method, "NelderMead") == 0 ? 1 : 0);
   MoGL2E mog;
 
-  
   if (optim_flag == 1) {
 
     ////// OPTIMIZER USING NELDER MEAD METHOD //////
@@ -133,7 +157,7 @@ int main(int argc, char* argv[]) {
   
   ot::Print(results, output_file);
   fclose(output_file);
-  fx_done();
+  fx_done(root);
 
   return 1;
 }
