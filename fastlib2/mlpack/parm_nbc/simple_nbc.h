@@ -20,9 +20,9 @@ const fx_entry_doc parm_nbc_entries[] ={
    " The timer to record the training time\n"},
   {"testing", FX_TIMER, FX_CUSTOM, NULL,
    " The timer to record the testing time\n"},
-  {"classes", FX_PARAM, FX_INT, NULL,
+  {"classes", FX_REQUIRED, FX_INT, NULL,
    " The number of classes present in the data\n"},
-  {"features", FX_PARAM, FX_INT, NULL,
+  {"features", FX_RESULT, FX_INT, NULL,
    " The number of features in the data\n"},
   {"examples", FX_RESULT, FX_INT, NULL,
    " The number of examples in the training set\n"},
@@ -138,8 +138,8 @@ class SimpleNaiveBayesClassifier {
     }
     NOTIFY("%"LI"d examples with %"LI"d features each\n",
 	   number_examples, number_features);
-    fx_format_param(nbc_module_, "features", "%d", number_features);
-    fx_format_result(nbc_module_, "examples", "%d", number_examples);
+    fx_result_int(nbc_module_, "features", number_features);
+    fx_result_int(nbc_module_, "examples", number_examples);
 
     // calculating the class probabilities as well as the 
     // sample mean and variance for each of the features
@@ -197,7 +197,7 @@ class SimpleNaiveBayesClassifier {
     NOTIFY("%"LI"d test cases with %"LI"d features each\n",
 	   test_data.n_cols(), number_features);
 
-    fx_format_result(nbc_module_,"tests", "%d", test_data.n_cols());
+    fx_result_int(nbc_module_,"tests", test_data.n_cols());
     // Calculating the joint probability for each of the data points
     // for each of the classes
 

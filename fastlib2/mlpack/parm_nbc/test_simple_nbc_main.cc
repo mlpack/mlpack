@@ -2,6 +2,8 @@
 #include "fastlib/base/test.h"
 
 const fx_entry_doc test_simple_nbc_main_entries[] = {
+  {"nbc/classes", FX_RESERVED, FX_INT, NULL,
+   "Set during testing."},
   FX_ENTRY_DOC_DONE
 };
 
@@ -50,7 +52,7 @@ class TestClassSimpleNBC{
     data::Load(filename_train_, &train_data);
     data::Load(train_result_, &train_res); 
     struct datanode* nbc_module = fx_submodule(root,"nbc");
-    fx_format_param(nbc_module, "classes", "%d", 2);
+    fx_set_param_int(nbc_module, "classes", 2);
     nbc_test_->InitTrain(train_data, nbc_module);
     index_t number_of_features = nbc_test_->means_.n_rows();
     calc_mat.Init(2*number_of_features + 1, number_of_classes_);
