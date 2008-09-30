@@ -11,6 +11,28 @@
 
 #include <fastlib/fastlib.h>
 
+const fx_entry_doc mog_em_entries[] = {
+  {"K", FX_PARAM, FX_INT, NULL,
+   " The number of Gaussians in the mixture model."
+   " (defaults to 1)\n"},
+  {"D", FX_PARAM, FX_INT, NULL,
+   " The number of dimensions of the data on which the"
+   " the mixture model is to be fit.\n"},
+  {"model_init", FX_TIMER, FX_CUSTOM, NULL,
+   " The time required to initialize the mixture model.\n"},
+  {"EM", FX_TIMER, FX_CUSTOM, NULL,
+   " The time required for the EM algorithm to obtain"
+   " the parameter values.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc mog_em_doc = {
+  mog_em_entries, NULL,
+  " This program defines a Gaussian mixture model"
+  " and estimates the parameters using maximum"
+  " likelihood via the EM algorithm.\n"
+};
+
 /**
  * A Gaussian mixture model class.
  * 
