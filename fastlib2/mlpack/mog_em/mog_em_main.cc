@@ -1,9 +1,9 @@
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
- * @file mog_l2e_main.cc
+ * @file mog_em_main.cc
  * 
- * This program test drives the L2 estimation
- * of a Gaussian Mixture model.
+ * This program test drives the parametric estimation
+ * of a Gaussian Mixture model using maximum likelihood.
  * 
  * PARAMETERS TO BE INPUT:
  * 
@@ -23,14 +23,36 @@
 
 #include "mog.h"
 
+const fx_entry_doc mog_em_main_entries[] = {
+  {"data", FX_REQUIRED, FX_STR, NULL,
+   " A file containing the data on which the model"
+   " has to be fit.\n"},
+  {"output", FX_PARAM, FX_STR, NULL,
+   " The file into which the output is to be written into.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_submodule_doc mog_em_main_submodules[] = {
+  {"mog_em", &mog_em_doc,
+   " Responsible for intializing the model and"
+   " computing the parameters.\n"},
+  FX_SUBMODULE_DOC_DONE
+};
+
+const fx_module_doc mog_em_main_doc = {
+  mog_em_main_entries, mog_em_main_submodules,
+  " This program test drives the parametric estimation "
+  "of a Gaussian mixture model using maximum likelihood.\n"
+};
 
 int main(int argc, char* argv[]) {
 
-  fx_init(argc, argv);
+  fx_module *root = 
+    fx_init(argc, argv, &mog_em_main_doc);
 
   ////// READING PARAMETERS AND LOADING DATA //////
   
-  const char *data_filename = fx_param_str_req(NULL, "data");
+  const char *data_filename = fx_param_str_req(root, "data");
 
   Matrix data_points;
   data::Load(data_filename, &data_points);
@@ -39,7 +61,8 @@ int main(int argc, char* argv[]) {
 
   MoGEM mog;
 
-  struct datanode* mog_em_module = fx_submodule(NULL, "mog_em", "mog_em");
+  struct datanode* mog_em_module = 
+    fx_submodule(root, "mog_em");
   fx_param_int(mog_em_module, "K", 1);
   fx_format_param(mog_em_module, "D", "%d", data_points.n_rows());
 
@@ -66,7 +89,7 @@ int main(int argc, char* argv[]) {
 
   ot::Print(results, output_file);
   fclose(output_file);
-  fx_done();
+  fx_done(root);
 
   return 1;
 }
