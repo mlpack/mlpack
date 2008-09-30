@@ -1,6 +1,22 @@
 #include "simple_nbc.h"
 #include "fastlib/base/test.h"
 
+const fx_entry_doc test_simple_nbc_main_entries[] = {
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_submodule_doc test_simple_nbc_main_submodules[] = {
+  {"nbc", &parm_nbc_doc,
+   " Trains on a given set and number of classes and "
+   "tests them on a given set\n"},
+  FX_SUBMODULE_DOC_DONE
+};
+
+const fx_module_doc test_simple_nbc_main_doc = {
+  test_simple_nbc_main_entries, test_simple_nbc_main_submodules,
+  " Tests the simple nbc class.\n"
+};
+
 class TestClassSimpleNBC{
  private:
   SimpleNaiveBayesClassifier *nbc_test_;
@@ -10,7 +26,9 @@ class TestClassSimpleNBC{
 
  public:
 
-  void Init(const char *filename_train, const char *filename_test, const char *train_result, const char *test_result, const int number_of_classes) {
+  void Init(const char *filename_train, const char *filename_test,
+	    const char *train_result, const char *test_result,
+	    const int number_of_classes) {
     nbc_test_ = new SimpleNaiveBayesClassifier();
     filename_train_ = filename_train;
     filename_test_ = filename_test;
@@ -27,11 +45,11 @@ class TestClassSimpleNBC{
     delete test_result_;
   }
 
-  void TestInitTrain() {
+  void TestInitTrain(fx_module *root) {
     Matrix train_data, train_res, calc_mat;
     data::Load(filename_train_, &train_data);
     data::Load(train_result_, &train_res); 
-    struct datanode* nbc_module = fx_submodule(NULL,"nbc","nbc");
+    struct datanode* nbc_module = fx_submodule(root,"nbc");
     fx_format_param(nbc_module, "classes", "%d", 2);
     nbc_test_->InitTrain(train_data, nbc_module);
     index_t number_of_features = nbc_test_->means_.n_rows();
@@ -69,26 +87,27 @@ class TestClassSimpleNBC{
     NONFATAL("Test Classify passed...\n");
   }
 
-  void TestAll() {
-    TestInitTrain();
+  void TestAll(fx_module *root) {
+    TestInitTrain(root);
     TestClassify();
   }
 };
 
 int main(int argc, char *argv[]) {
 
-  fx_init(argc, argv);
+  fx_module *root =
+    fx_init(argc, argv, &test_simple_nbc_main_doc);
 
   TestClassSimpleNBC test;
 
-  const char *train_data = fx_param_str(NULL, "training_set", "trainSet.arff");
-  const char *train_res = fx_param_str(NULL, "training_results", "trainRes.arff");
-  const char *test_data = fx_param_str(NULL, "testing_set", "testSet.arff");
-  const char *test_res = fx_param_str(NULL, "testing_results", "testRes.arff");
-  const int num_classes = fx_param_int(NULL, "num_classes", 2);
+  const char *train_data = "trainSet.arff";
+  const char *train_res = "trainRes.arff";
+  const char *test_data = "testSet.arff";
+  const char *test_res = "testRes.arff";
+  const int num_classes = 2;
 
   test.Init(train_data, test_data, train_res, test_res, num_classes);
-  test.TestAll();
+  test.TestAll(root);
   
-  fx_done();
+  fx_done(root);
 }
