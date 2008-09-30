@@ -131,7 +131,8 @@ class GopNmfEngineTest {
   }
   void Test6() {
     Matrix data_points;
-    data::Load("4_1_5_rand.csv", &data_points);
+    data::Load(
+        "/net/hu15/gtg739c/fastlib3/fastlib2/contrib/nvasil/convex_nmf/v_5_1_4.csv", &data_points);
     fx_set_param_int(module_, "new_dimension", 1);
     fx_set_param_double(module_, "opt_gap", 0.001);
     fx_set_param_double(module_, "/l_bfgs/sigma", 1);
@@ -140,6 +141,7 @@ class GopNmfEngineTest {
     fx_set_param_double(module_, "/l_bfgs/show_warnings", false);
     fx_set_param_double(module_, "/relaxed_nmf/grad_tolerance", 1e-2);
     fx_set_param_double(module_, "/relaxed_nmf/scale_factor", 1);
+    fx_set_param_double(module_, "/relaxed_nmf/opt_gap", 1e-9);
     fx_set_param_int(module_, "/splitter/w_leaf_size", 1);
     fx_set_param_int(module_, "/splitter/h_leaf_size", 1);
     fx_set_param_int(module_, "/splitter/w_offset", data_points.n_rows());
@@ -156,6 +158,42 @@ class GopNmfEngineTest {
     
   }
  
+   void Test7() {
+    Matrix data_points;
+    data::Load(
+        "/net/hu15/gtg739c/fastlib3/fastlib2/contrib/nvasil/convex_nmf/v_5_1_4.csv", &data_points);
+    Matrix h_solution;
+    Matrix w_solution;
+    data::Load(
+        "/net/hu15/gtg739c/fastlib3/fastlib2/contrib/nvasil/convex_nmf/w_5_1_4.csv", 
+        &w_solution);
+    data::Load(
+        "/net/hu15/gtg739c/fastlib3/fastlib2/contrib/nvasil/convex_nmf/h_5_1_4.csv", 
+        &h_solution);
+    fx_set_param_int(module_, "new_dimension", 1);
+    fx_set_param_double(module_, "opt_gap", 0.001);
+    fx_set_param_double(module_, "/l_bfgs/sigma", 1);
+    fx_set_param_double(module_, "/l_bfgs/gamma", 1.5); 
+    fx_set_param_double(module_, "/l_bfgs/silent", true);
+    fx_set_param_double(module_, "/l_bfgs/show_warnings", false);
+    fx_set_param_double(module_, "/relaxed_nmf/grad_tolerance", 1e-2);
+    fx_set_param_double(module_, "/relaxed_nmf/opt_gap", 1e-9);
+    fx_set_param_double(module_, "/relaxed_nmf/scale_factor", 1);
+    fx_set_param_int(module_, "/splitter/w_leaf_size", 1);
+    fx_set_param_int(module_, "/splitter/h_leaf_size", 1);
+    fx_set_param_int(module_, "/splitter/w_offset", data_points.n_rows());
+    fx_set_param_int(module_, "/splitter/h_offset", 0);
+    fx_set_param_int(module_, "/splitter/h_length", data_points.n_rows());
+    fx_set_param_int(module_, "/splitter/w_length", data_points.n_cols());
+    fx_set_param_double(module_, "/splitter/minimum_interval_length", 1e-5); 
+    fx_module *splitter_module=fx_submodule(module_, "splitter");
+    GopNmfEngine<TreeSplitterDemo, RelaxedRescaledNmfL1> engine; 
+    TreeSplitterDemo splitter; 
+    splitter.Init(splitter_module,  data_points, w_solution, h_solution);
+    engine.Init(module_, &splitter, data_points); 
+    engine.ComputeGlobalOptimum();
+    
+  }
  
 void TestAll() {
     Init();

@@ -468,8 +468,11 @@ void RelaxedRescaledNmfL1::ComputeGradient(Matrix &coordinates, Matrix *gradient
     
     } 
     double const_term=-values_[i]+new_dimension_*math::Sqr(LOWER_BOUND*SCALE_FACTOR);
-    right_ineq+=math::Sqr(SCALE_FACTOR)*right_ineq + const_term+epsilons[i];
-    left_ineq+=math::Sqr(SCALE_FACTOR)*left_ineq -const_term+epsilons[i];
+//    NOTIFY("%lg %lg %lg", epsilons[i], 
+//        -math::Sqr(SCALE_FACTOR)*right_ineq - const_term, 
+//        -math::Sqr(SCALE_FACTOR)*left_ineq +const_term);
+    right_ineq=math::Sqr(SCALE_FACTOR)*right_ineq + const_term+epsilons[i];
+    left_ineq=math::Sqr(SCALE_FACTOR)*left_ineq -const_term+epsilons[i];
     DEBUG_ASSERT_MSG(left_ineq>0, "Something is wrong we are out of the interior");
     DEBUG_ASSERT_MSG(right_ineq>0, "Something is wrong we are out of the interior");
 
@@ -491,6 +494,7 @@ void RelaxedRescaledNmfL1::ComputeGradient(Matrix &coordinates, Matrix *gradient
     double grad_e=-1.0/left_ineq-1.0/right_ineq;
     grad_epsilons[i]+=grad_e;
   }
+
   fx_timer_stop(NULL, "gradient");
 }
 
@@ -565,8 +569,8 @@ double RelaxedRescaledNmfL1::ComputeLagrangian(Matrix &coordinates) {
                                *coordinates.get(j, h));
     } 
     double const_term=-values_[i]+new_dimension_*math::Sqr(LOWER_BOUND*SCALE_FACTOR);
-    right_ineq+=math::Sqr(SCALE_FACTOR)*right_ineq + const_term+epsilons[i];
-    left_ineq+=math::Sqr(SCALE_FACTOR)*left_ineq - const_term+epsilons[i];
+    right_ineq=math::Sqr(SCALE_FACTOR)*right_ineq + const_term+epsilons[i];
+    left_ineq=math::Sqr(SCALE_FACTOR)*left_ineq - const_term+epsilons[i];
     if (left_ineq<=0 || right_ineq<=0) {
       return DBL_MAX;
     };
@@ -638,10 +642,10 @@ void RelaxedRescaledNmfL1::GiveInitMatrix(Matrix *init_data) {
       right_ineq+= -(+a_linear_term_dot_prod_[i*new_dimension_+j]
                      +b_linear_term_dot_prod_[i*new_dimension_+j]
                       *(init_data->get(j, w) + init_data->get(j, h)))
-                   +LOWER_BOUND*(exp(init_data->get(j, w)
-                                 +exp(init_data->get(j, h))));
+                   +LOWER_BOUND*(exp(init_data->get(j, w))
+                                 +exp(init_data->get(j, h)));
 
-      left_ineq+=exp(init_data->get(j, h)+init_data->get(j, h))
+      left_ineq+=exp(init_data->get(j, h)+init_data->get(j, w))
                 -LOWER_BOUND*(+a_linear_term_exp_[w*new_dimension_+j]
                               +b_linear_term_exp_[w*new_dimension_+j]
                                *init_data->get(j, w)
@@ -651,9 +655,10 @@ void RelaxedRescaledNmfL1::GiveInitMatrix(Matrix *init_data) {
 
     }
     double const_term=-values_[i]+new_dimension_*math::Sqr(LOWER_BOUND*SCALE_FACTOR);
-    double epsilon1=math::Sqr(SCALE_FACTOR)*left_ineq - const_term;
-    double epsilon2=math::Sqr(SCALE_FACTOR)*right_ineq + const_term;
-    double epsilon=std::max(fabs(epsilon1), fabs(epsilon2))+1e-2;
+    double epsilon1=math::Sqr(SCALE_FACTOR)*right_ineq - const_term;
+    double epsilon2=math::Sqr(SCALE_FACTOR)*left_ineq + const_term;
+    double epsilon=std::max(epsilon1, epsilon2)+1e-2;
+//    NOTIFY("%lg %lg %lg", epsilon, epsilon1, epsilon2);
     epsilons[i]=epsilon;  
   }
  
@@ -666,19 +671,20 @@ bool RelaxedRescaledNmfL1::IsDiverging(double objective) {
 bool RelaxedRescaledNmfL1::IsOptimizationOver(Matrix &coordinates, 
                                     Matrix &gradient, double step) {
 
-/*  if (2*values_.size()/sigma_ < opt_gap_ ) {
+  if (2*values_.size()/sigma_ < opt_gap_ ) {
     return true;
   } else {
     return false;
   }
-*/
-  double objective;
+
+/*  double objective;
   ComputeObjective(coordinates, &objective);
   if ((2*values_.size()/sigma_)/fabs(objective)<0.01) {
     return true;   
   } else {
     return false;
   }
+*/
 //  return true;  
 }
 
@@ -1657,7 +1663,29 @@ void GopNmfEngine<SplitterClass, Objective>::ComputeGlobalOptimum() {
   Matrix lower_bound;
   Matrix upper_bound;
   lower_bound.Copy(x_lower_bound_);
+/*
+  lower_bound.set(0, 0, log((0.7621-1e-4)/2+0.5));
+  lower_bound.set(0, 1, log((0.4565-1e-4)/2+0.5));
+  lower_bound.set(0, 2, log((0.0185-1e-4)/2+0.5));
+  lower_bound.set(0, 3, log((0.8214-1e-4)/2+0.5));
+  lower_bound.set(0, 4, log((0.9501-1e-4)/2+0.5));
+  lower_bound.set(0, 5, log((0.2311-1e-4)/2+0.5));
+  lower_bound.set(0, 6, log((0.6068-1e-4)/2+0.5));
+  lower_bound.set(0, 7, log((0.486-1e-4)/2+0.5));
+  lower_bound.set(0, 8, log((0.8913-1e-4)/2+0.5));
+*/
   upper_bound.Copy(x_upper_bound_);
+/*  
+  upper_bound.set(0, 0, log((0.7621+1e-4)/2+0.5));
+  upper_bound.set(0, 1, log((0.4565+1e-4)/2+0.5));
+  upper_bound.set(0, 2, log((0.0185+1e-4)/2+0.5));
+  upper_bound.set(0, 3, log((0.8214+1e-4)/2+0.5));
+  upper_bound.set(0, 4, log((0.9501+1e-4)/2+0.5));
+  upper_bound.set(0, 5, log((0.2311+1e-4)/2+0.5));
+  upper_bound.set(0, 6, log((0.6068+1e-4)/2+0.5));
+  upper_bound.set(0, 7, log((0.486+1e-4)/2+0.5));
+  upper_bound.set(0, 8, log((0.8913+1e-4)/2+0.5));
+*/
   total_volume_=ComputeVolume(lower_bound, upper_bound);
   soft_pruned_volume_=0.0;
   hard_pruned_volume_=0.0;  
@@ -1833,13 +1861,19 @@ void GopNmfEngine<SplitterClass, Objective>::ComputeGlobalOptimum() {
       // double volume=ComputeVolume(upper_solution_.box_.first, 
       //                             upper_solution_.box_.second);
       evil_counter++;
-      if (lower_solution_.empty() || (evil_counter >200 && evil_flag==true)) {
+      if (lower_solution_.empty()) { // || (evil_counter >200 && evil_flag==true)) {
         evil_counter=0;
         evil_flag=false;
+        if (splitter_->CanSplitMore()==false) {
+          ReportResults();
+          return;
+        }
         splitter_->ChangeState(upper_solution_);
         lower_solution_.clear();
-        lower_bound.CopyValues(upper_solution_.box_.first);
-        upper_bound.CopyValues(upper_solution_.box_.second);
+        // lower_bound.CopyValues(upper_solution_.box_.first);
+        // upper_bound.CopyValues(upper_solution_.box_.second);
+        lower_bound.Copy(x_lower_bound_);
+        upper_bound.Copy(x_upper_bound_);
       } else { 
         // choose next box to split and work   
         lower_bound.Destruct(); 
@@ -1851,8 +1885,15 @@ void GopNmfEngine<SplitterClass, Objective>::ComputeGlobalOptimum() {
       }
       iteration_++;
     } else {
-      ReportResults();
-      return;
+      if (splitter_->CanSplitMore()==false) {
+        ReportResults();
+        return;
+      } else {
+        lower_solution_.clear();
+        splitter_->ChangeState(upper_solution_);
+        lower_bound.CopyValues(upper_solution_.box_.first);
+        upper_bound.CopyValues(upper_solution_.box_.second);
+      }
     }
   } 
 }
