@@ -128,7 +128,7 @@ class MultitreeMultibody {
     total_force_e_.SetZero();
 
     // Run and do timing for multitree multibody
-    MTMultibodyBase(root_nodes, 0);
+    MultibodyBase(root_nodes, 0);
     PostProcess(root_);
   }
 
@@ -194,7 +194,7 @@ class MultitreeMultibody {
     coverage_probabilities_.PrintDebug();
 
     // Run and do timing for multitree multibody
-    MTMultibody(root_nodes, total_num_tuples_, probability_);
+    MultibodyCanonical_(root_nodes, total_num_tuples_, probability_);
     PostProcess(root_);
 
     printf("%d n-tuples have been pruned...\n", num_prunes_);
@@ -536,7 +536,7 @@ private:
 
   /** @brief The base exhaustive computations.
    */
-  void MTMultibodyBase(const ArrayList<TTree *> &nodes, int level);
+  void MultibodyBase(const ArrayList<TTree *> &nodes, int level);
   
   /** @brief The post-processing function to push down all unclaimed
    *         approximations.
@@ -550,8 +550,8 @@ private:
 
   /** @brief The main multitree recursion.
    */
-  bool MTMultibody(ArrayList<TTree *> &nodes, double num_tuples,
-		   double required_probability);
+  bool MultibodyCanonical_(ArrayList<TTree *> &nodes, double num_tuples,
+			   double required_probability);
 
 };
 
