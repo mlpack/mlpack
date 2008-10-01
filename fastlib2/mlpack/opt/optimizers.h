@@ -14,7 +14,7 @@
 const fx_entry_doc opt_entries[] = {
   {"method", FX_PARAM, FX_STR, NULL,
    " The method used to optimize.\n"},
-  {"param_space_dim", FX_PARAM, FX_INT, NULL,
+  {"param_space_dim", FX_RESERVED, FX_INT, NULL,
    " The dimension of the parameter space.\n"},
   {"init_opt", FX_TIMER, FX_CUSTOM, NULL,
    " The time taken to initialize the optimizer.\n"},
@@ -214,7 +214,7 @@ class NelderMead {
       }
       else --num_func_eval;
     }
-    fx_format_result(opt_module_, "func_evals", "%d", num_func_eval);
+    fx_result_int(opt_module_, "func_evals", num_func_eval);
     return;
   }
 
@@ -316,8 +316,7 @@ class QuasiNewton {
     Vector pold, pnew;
     Matrix hessian;
     double EPSILON = fx_param_double(opt_module_, "EPSILON", 3.0e-8);
-    fx_format_param(opt_module_, "TOLERANCE", "%lf", 1.0e-5);
-    double TOLERANCE = fx_param_double_req(opt_module_, "TOLERANCE");
+    double TOLERANCE = fx_param_double(opt_module_, "TOLERANCE", 1.0e-5);
     double MAX_STEP_SIZE = fx_param_double(opt_module_, "MAX_STEP_SIZE", 100.0);
     double g_tol = fx_param_double(opt_module_, "gtol", 1.0e-7);
 
@@ -367,7 +366,7 @@ class QuasiNewton {
       }
       if(test < TOLERANCE) {
 	iters = its;
-	fx_format_result(opt_module_, "iters", "%d", iters);
+	fx_result_int(opt_module_, "iters", iters);
 	return;
       }
 
@@ -384,7 +383,7 @@ class QuasiNewton {
       }
       if(test < g_tol) {
 	iters = its;
-	fx_format_result(opt_module_, "iters", "%d", iters);
+	fx_result_int(opt_module_, "iters", iters);
 	return;
       }
 
