@@ -11,6 +11,7 @@ module PMap = PMap2
 module Set = Set2
 module Stream = Stream2
 module String = String2
+module Option = Option2
 
 module Msg = Msg
 module Pos = Pos
