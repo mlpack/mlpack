@@ -64,7 +64,7 @@ int main(int argc, char* argv[]) {
   struct datanode* mog_em_module = 
     fx_submodule(root, "mog_em");
   fx_param_int(mog_em_module, "K", 1);
-  fx_format_param(mog_em_module, "D", "%d", data_points.n_rows());
+  fx_set_param_int(mog_em_module, "D", data_points.n_rows());
 
   ////// Timing the initialization of the mixture model //////
   fx_timer_start(mog_em_module, "model_init");
