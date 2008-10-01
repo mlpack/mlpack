@@ -418,7 +418,7 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::AddPostponed
 }
 
 template<typename TMultibodyKernel, typename TTree>
-void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibodyBase
+void MultitreeMultibody<TMultibodyKernel, TTree>::MultibodyBase
 (const ArrayList<TTree *> &nodes, int level) {
   
   /*
@@ -443,7 +443,7 @@ void MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibodyBase
     
     for(index_t i = start_index; i < (nodes[level])->end(); i++) {	
       exhaustive_indices_[level] = i;
-      MTMultibodyBase(nodes, level + 1);
+      MultibodyBase(nodes, level + 1);
     }
   }
 
@@ -687,7 +687,7 @@ bool MultitreeMultibody<TMultibodyKernel, TTree>::PrunableAlternative
 }
 
 template<typename TMultibodyKernel, typename TTree>
-bool MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
+bool MultitreeMultibody<TMultibodyKernel, TTree>::MultibodyCanonical_
 (ArrayList<TTree *> &nodes, double num_tuples, double required_probability) {
 
   bool pruned_with_exact_method = true;
@@ -707,7 +707,7 @@ bool MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
   
   // All leaves, then base case.
   if(non_leaf_indices_.size() == 0) {
-    MTMultibodyBase(nodes, 0);
+    MultibodyBase(nodes, 0);
     return true;
   }
   
@@ -740,7 +740,8 @@ bool MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
     bool left_result = true;
     if(new_num_tuples > 0) {
       left_result = 
-	MTMultibody(new_nodes, new_num_tuples, sqrt(required_probability));
+	MultibodyCanonical_(new_nodes, new_num_tuples, 
+			    sqrt(required_probability));
     }
     
     // Recurse to the right.
@@ -753,11 +754,12 @@ bool MultitreeMultibody<TMultibodyKernel, TTree>::MTMultibody
 
       if(left_result) {
 	right_result =
-	  MTMultibody(new_nodes, new_num_tuples, required_probability);
+	  MultibodyCanonical_(new_nodes, new_num_tuples, required_probability);
       }
       else {
 	right_result =
-	  MTMultibody(new_nodes, new_num_tuples, sqrt(required_probability));
+	  MultibodyCanonical_(new_nodes, new_num_tuples, 
+			      sqrt(required_probability));
       }
     }
 
