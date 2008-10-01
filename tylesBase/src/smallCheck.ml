@@ -24,4 +24,4 @@ exception Counterexample_found
 let forAll sa p n = 
   let curr = ref None in
   let test () a = curr := Some a ; if not (p a) then raise Counterexample_found else () in
-    try fold sa n () test ; None with e -> let Some c = !curr in Some (c,e)
+    try fold sa n () test ; None with e -> match !curr with Some c -> Some (c,e) | _ -> assert false
