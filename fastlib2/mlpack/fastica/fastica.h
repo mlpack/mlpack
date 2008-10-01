@@ -26,6 +26,38 @@
 #define SYMMETRIC 0
 #define DEFLATION 1
 
+const fx_entry_doc fastica_entries[] = {
+  {"seed", FX_PARAM, FX_INT, NULL,
+   "  Seed for the random number generator.\n"},
+  {"approach", FX_PARAM, FX_STR, NULL,
+   "  Independent component recovery approach: 'deflation' or 'symmetric'.\n"},
+  {"nonlinearity", FX_PARAM, FX_STR, NULL,
+   "  Nonlinear function to use: 'logcosh', 'gauss', 'kurtosis', or 'skew'.\n"},
+  {"fine_tune", FX_PARAM, FX_BOOL, NULL,
+   "  Enable fine tuning.\n"},
+  {"a1", FX_PARAM, FX_DOUBLE, NULL,
+   "  Numeric constant for logcosh nonlinearity.\n"},
+  {"a2", FX_PARAM, FX_DOUBLE, NULL,
+   "  Numeric constant for gauss nonlinearity.\n"},
+  {"mu", FX_PARAM, FX_DOUBLE, NULL,
+   "  Numeric constant for fine-tuning Newton-Raphson method.\n"},
+  {"stabilization", FX_PARAM, FX_BOOL, NULL,
+   "  Use stabilization.\n"},
+  {"epsilon", FX_PARAM, FX_DOUBLE, NULL,
+   "  Threshold for convergence.\n"},
+  {"max_num_iterations", FX_PARAM, FX_INT, NULL,
+   "  Maximum number of iterations of fixed-point iterations.\n"},
+  {"max_fine_tune", FX_PARAM, FX_INT, NULL,
+   "  Maximum number of fine-tuning iterations.\n"},
+  {"percent_cut", FX_PARAM, FX_DOUBLE, NULL,
+   "  Number in [0,1] indicating percent data to use in stabilization updates.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc fastica_doc = {
+  fastica_entries, NULL,
+  "Performs fastica.\n"
+};
 
 using namespace linalg__private;
 
