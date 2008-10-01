@@ -16,7 +16,7 @@ const fx_entry_doc mog_l2e_entries[] = {
   {"K", FX_PARAM, FX_INT, NULL,
    " The number of Gaussians in the mixture model."
    " (defaults to 1)\n"},
-  {"D", FX_PARAM, FX_INT, NULL,
+  {"D", FX_RESERVED, FX_INT, NULL,
    " The number of dimensions of the data on which the"
    " the mixture model is to be fit.\n"},
   FX_ENTRY_DOC_DONE
