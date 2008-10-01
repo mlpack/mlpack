@@ -44,8 +44,32 @@
  *
  * Note: Compile with verbose mode to display convergence-related values
  */
+
+const fx_entry_doc fastica_main_entries[] = {
+  {"data", FX_REQUIRED, FX_STR, NULL,
+   "  A file containing data.\n"},
+  {"ic_filename", FX_PARAM, FX_STR, NULL,
+   "  Filename to which independent components are written.\n"},
+  {"unmixing_filename", FX_PARAM, FX_STR, NULL,
+   "  Filename to which unmixing matrix is written.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_submodule_doc fastica_main_submodules[] = {
+  {"fastica", &fastica_doc,
+   " Responsible for performing fastica.\n"},
+  FX_SUBMODULE_DOC_DONE
+};
+
+const fx_module_doc fastica_main_doc = {
+  fastica_main_entries, fastica_main_submodules,
+  "This program performs fastica.\n"
+};
+
+
+
 int main(int argc, char *argv[]) {
-  fx_init(argc, argv);
+  fx_module* root = fx_init(argc, argv, &fastica_main_doc);
 
   Matrix X;
   const char* data = fx_param_str_req(NULL, "data");
@@ -55,7 +79,7 @@ int main(int argc, char *argv[]) {
   const char* unmixing_filename =
     fx_param_str(NULL, "unmixing_filename", "unmixing.dat");
   struct datanode* fastica_module =
-    fx_submodule(NULL, "fastica", "fastica_module");
+    fx_submodule(root, "fastica");
 
   FastICA fastica;
 
@@ -75,7 +99,7 @@ int main(int argc, char *argv[]) {
     VERBOSE_ONLY( printf("FAILED!\n") );
   }
 
-  fx_done();
+  fx_done(root);
 
   return success_status;
 }
