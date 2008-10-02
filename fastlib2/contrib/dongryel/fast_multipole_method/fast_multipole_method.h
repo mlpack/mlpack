@@ -14,10 +14,10 @@
 
 #include "fastlib/fastlib.h"
 #include "fmm_stat.h"
-#include "inverse_dist_kernel.h"
-#include "mlpack/kde/dualtree_kde_common.h"
+#include "mlpack/series_expansion/inverse_pow_dist_kernel.h"
 #include "mlpack/series_expansion/inverse_pow_dist_farfield_expansion.h"
 #include "mlpack/series_expansion/inverse_pow_dist_local_expansion.h"
+#include "mlpack/kde/dualtree_kde_common.h"
 #include "contrib/dongryel/proximity_project/gen_hypercube_tree.h"
 #include "contrib/dongryel/proximity_project/gen_hypercube_tree_util.h"
 
@@ -39,7 +39,7 @@ class FastMultipoleMethod {
 
   /** @brief The inverse distance kernel object.
    */
-  InverseDistKernel kernel_;
+  InversePowDistKernel kernel_;
 
   /** @brief The series expansion auxilary object.
    */
