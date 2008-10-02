@@ -7,6 +7,7 @@ librule(
                "farfield_expansion_impl.h",
                "inverse_pow_dist_farfield_expansion.h",
                "inverse_pow_dist_farfield_expansion_impl.h",
+               "inverse_pow_dist_kernel.h",
                "inverse_pow_dist_local_expansion.h",
                "inverse_pow_dist_local_expansion_impl.h",
                "inverse_pow_dist_series_expansion_aux.h",

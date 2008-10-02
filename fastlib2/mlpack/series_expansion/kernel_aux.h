@@ -19,6 +19,13 @@
 #include "mult_farfield_expansion.h"
 #include "mult_local_expansion.h"
 
+/** @brief The auxilrary class for $1 / r^{\lambda}$ kernels using
+ *         $O(D^p)$ expansion.
+ */
+class InversePowDistKernelAux {
+
+};
+
 /**
  * Auxiliary class for multiplicative p^D expansion for Gaussian
  * kernel.
