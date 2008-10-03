@@ -10,7 +10,7 @@
 #define LA_MATRIX_H
 
 #include "fastlib/base/base.h"
-#ifdef ENABLE_DISK_MATRIX
+#ifndef DISABLE_DISK_MATRIX
 #include "fastlib/mmanager/memory_manager.h"
 #endif
 
@@ -114,7 +114,7 @@ class GenVector {
    * initialize the values in it. This vector will not be freed!
    */
   void StaticInit(index_t in_length) {
-#ifdef ENABLE_DISK_MATRIX
+#ifndef DISABLE_DISK_MATRIX
     ptr_ = mmapmm::MemoryManager<false>::allocator_->Alloc<T>(in_length);
     length_ = in_length;
     should_free_ = false;
@@ -179,7 +179,7 @@ class GenVector {
    * @param in_length the number of doubles in the array
    */
   void StaticCopy(const T *doubles, index_t in_length) {
-#ifdef ENABLE_DISK_MATRIX
+#ifndef DISABLE_DISK_MATRIX
     DEBUG_ONLY(AssertUninitialized_());
     
     ptr_ = mmapmm::MemoryManager<false>::allocator_->Alloc<T>(in_length);
@@ -255,7 +255,7 @@ class GenVector {
    * @param other a pointer to the vector whose contents will be owned
    */
   void StaticOwn(GenVector* other) {
-#ifdef ENABLE_DISK_MATRIX
+#ifndef DISABLE_DISK_MATRIX
     StaticOwn(other->ptr_, other->length());
 #else
     Own(other);
@@ -267,7 +267,7 @@ class GenVector {
    * statically.
    */
   void StaticOwn(T *in_ptr, index_t in_length) {
-#ifdef ENABLE_DISK_MATRIX
+#ifndef DISABLE_DISK_MATRIX
     DEBUG_ONLY(AssertUninitialized_());
     
     ptr_ = in_ptr;
@@ -516,7 +516,7 @@ class GenMatrix {
    * size statically. This matrix is not freed!
    */
   void StaticInit(index_t in_rows, index_t in_cols) {
-#ifdef ENABLE_DISK_MATRIX
+#ifndef DISABLE_DISK_MATRIX
     DEBUG_ONLY(AssertUninitialized_());
     ptr_ = mmapmm::MemoryManager<false>::allocator_->Alloc<T>
       (in_rows * in_cols);
@@ -609,7 +609,7 @@ class GenMatrix {
    * @param n_cols_in the number of columns
    */
   void StaticCopy(const T *ptr_in, index_t n_rows_in, index_t n_cols_in) {
-#ifdef ENABLE_DISK_MATRIX
+#ifndef DISABLE_DISK_MATRIX
     DEBUG_ONLY(AssertUninitialized_());
 
     ptr_ = mmapmm::MemoryManager<false>::allocator_->Alloc<T>
@@ -723,7 +723,7 @@ class GenMatrix {
    * @param other a pointer to the other matrix
    */
   void StaticOwn(GenMatrix* other) {
-#ifdef ENABLE_DISK_MATRIX
+#ifndef DISABLE_DISK_MATRIX
     StaticOwn(other->ptr(), other->n_rows(), other->n_cols());
 #else
     Own(other);
@@ -740,7 +740,7 @@ class GenMatrix {
    * @param n_cols_in the number of columns
    */
   void StaticOwn(T *ptr_in, index_t n_rows_in, index_t n_cols_in) {
-#ifdef ENABLE_DISK_MATRIX
+#ifndef DISABLE_DISK_MATRIX
     DEBUG_ONLY(AssertUninitialized_());
     
     ptr_ = ptr_in;
