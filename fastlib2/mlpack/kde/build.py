@@ -49,8 +49,7 @@ librule(
 binrule(
     name = "fft_kde_bin",
     sources = ["fft_kde_main.cc"],
-    headers = ["fft_kde.h",
-               "kde.h"],
+    headers = ["fft_kde.h"],
     deplibs = ["fastlib:fastlib_int"]
     )
 
@@ -60,16 +59,6 @@ binrule(
     sources = ["fgt_kde_main.cc"],
     headers = ["fgt_kde.h"],
     deplibs = ["fastlib:fastlib_int"]
-    )
-
-# The test-driver for the THOR-basd KDE
-binrule(
-    name = "thor_kde_bin",
-    sources = ["thor_kde_main.cc"],
-    headers = ["thor_kde.h"],
-    deplibs = ["../series_expansion:series_expansion",
-               "fastlib:fastlib_int",
-               "fastlib/thor:thor"]
     )
 
 # The test-driver for the original dualtree KDE

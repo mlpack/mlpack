@@ -144,10 +144,6 @@ class DualtreeVKde {
    */
   Tree *rroot_;
 
-  /** @brief The precomputed coverage probabilities.
-   */
-  Vector coverage_probabilities_;
-
   /** @brief The reference weights.
    */
   Vector rset_weights_;
@@ -315,21 +311,6 @@ class DualtreeVKde {
       PreProcess(qroot_, false);
     }
     
-    // Preprocessing step for initializing the coverage probabilities.
-    fx_timer_start(fx_root, "coverage_probability_precompute");
-    double lower_percentile =
-      (100.0 - fx_param_double(module_, "coverage_percentile", 100.0)) / 100.0;
-
-    for(index_t j = 0; j < coverage_probabilities_.length(); j++) {
-      coverage_probabilities_[j] = 
-	DualtreeKdeCommon::OuterConfidenceInterval
-	(ceil(qset_.n_cols()) * ceil(rset_.n_cols()), 
-	 ceil(sample_multiple_ * (j + 1)), 1,
-	 ceil(qset_.n_cols()) * ceil(rset_.n_cols()) * lower_percentile);
-    }    
-    fx_timer_stop(fx_root, "coverage_probability_precompute");
-    coverage_probabilities_.PrintDebug();
-    
     // Get the required probability guarantee for each query and call
     // the main routine.
     double probability = fx_param_double(module_, "probability", 1);
@@ -418,9 +399,6 @@ class DualtreeVKde {
     densities_l_.Init(qset_.n_cols());
     densities_e_.Init(qset_.n_cols());
     densities_u_.Init(qset_.n_cols());
-
-    // Initialize the coverage probability vector.
-    coverage_probabilities_.Init(10);
 
     // Initialize the error accounting stuff.
     used_error_.Init(qset_.n_cols());
