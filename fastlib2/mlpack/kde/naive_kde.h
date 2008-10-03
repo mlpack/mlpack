@@ -145,6 +145,16 @@ class NaiveKde {
     printf("\nNaive KDE completed...\n");
   }
 
+  void Init(Matrix &qset, Matrix &rset, struct datanode *module_in) {
+
+    // Use the uniform weights for a moment.
+    Matrix uniform_weights;
+    uniform_weights.Init(1, rset.n_cols());
+    uniform_weights.SetAll(1.0);
+
+    Init(qset, rset, uniform_weights, module_in);
+  }
+
   /** @brief Initialize the naive KDE algorithm object with the query and the
    *         reference datasets and the parameter list.
    *

@@ -217,7 +217,7 @@ bool DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
 
   // Then Monte Carlo-based pruning.
   else if(probability < 1 &&
-	  DualtreeKdeCommon::MonteCarloPrunableByOrderStatistics_
+	  DualtreeKdeCommon::MonteCarloPrunable_
 	  (qnode, rnode, probability, dsqd_range, 
 	   kernel_value_range, dl, de, du, used_error, n_pruned, this)) {
     qnode->stat().postponed_l_ += dl;

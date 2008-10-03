@@ -18,6 +18,9 @@
  *  Year = "1991",
  *  Pages = "79-94" }
  *
+ *  TO-DO: Extend this code to nonuniform weights, and also replace
+ *  all series expansion calls with those in series expansion library.
+ *
  *  @author Dongryeol Lee (dongryel)
  *  @bug No known bugs.
  */
@@ -306,7 +309,7 @@ class FGTKde {
       int ongrid = IsOngrid_(new_coords, -kdis, new_coords, nsides);
       
       if(ongrid) {
-	*(ret.AddBack()) = 
+	*(ret.PushBackRaw()) = 
 	  MultiDimIndexInSingleArray_(new_coords, nsides);
       }
       
@@ -353,7 +356,7 @@ class FGTKde {
 	binnum = max(0, min(binnum, nside - 1));
 	boxnum = boxnum * nside + binnum;
       }
-      *(references_assigned[boxnum].AddBack()) = r;
+      *(references_assigned[boxnum].PushBackRaw()) = r;
     }
 
     // Assign the query points
@@ -369,7 +372,7 @@ class FGTKde {
 	binnum = max(0, min(binnum, nside - 1));
 	boxnum = boxnum * nside + binnum;
       }
-      *(queries_assigned[boxnum].AddBack()) = r;
+      *(queries_assigned[boxnum].PushBackRaw()) = r;
     }
   
     // Create centers for all boxes.

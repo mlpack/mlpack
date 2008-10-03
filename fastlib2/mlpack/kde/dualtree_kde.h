@@ -87,8 +87,6 @@ const fx_entry_doc kde_main_entries[] = {
 const fx_entry_doc kde_entries[] = {
   {"bandwidth", FX_PARAM, FX_DOUBLE, NULL,
    "  The bandwidth parameter.\n"},
-  {"coverage_percentile", FX_PARAM, FX_DOUBLE, NULL,
-   "  The upper percentile of the estimates for the error guarantee.\n"},
   {"do_naive", FX_PARAM, FX_BOOL, NULL,
    "  Whether to perform naive computation as well.\n"},
   {"fast_kde_output", FX_PARAM, FX_STR, NULL,
@@ -209,10 +207,6 @@ class DualtreeKde {
   /** @brief The reference tree.
    */
   Tree *rroot_;
-
-  /** @brief The precomputed coverage probabilities.
-   */
-  Vector coverage_probabilities_;
 
   /** @brief The reference weights.
    */
@@ -405,21 +399,6 @@ class DualtreeKde {
       PreProcess(qroot_);
     }
     
-    // Preprocessing step for initializing the coverage probabilities.
-    fx_timer_start(fx_root, "coverage_probability_precompute");
-    lower_percentile_ =
-      (100.0 - fx_param_double(module_, "coverage_percentile", 100.0)) / 100.0;
-
-    for(index_t j = 0; j < coverage_probabilities_.length(); j++) {
-      coverage_probabilities_[j] = 
-	DualtreeKdeCommon::OuterConfidenceInterval
-	(ceil(qset_.n_cols()) * ceil(rset_.n_cols()), 
-	 ceil(sample_multiple_ * (j + 1)), ceil(sample_multiple_ * (j + 1)),
-	 ceil(qset_.n_cols()) * ceil(rset_.n_cols()) * lower_percentile_);
-    }    
-    fx_timer_stop(fx_root, "coverage_probability_precompute");
-    coverage_probabilities_.PrintDebug();
-    
     // Get the required probability guarantee for each query and call
     // the main routine.
     double probability = fx_param_double(module_, "probability", 1);
@@ -510,9 +489,6 @@ class DualtreeKde {
     densities_l_.Init(qset_.n_cols());
     densities_e_.Init(qset_.n_cols());
     densities_u_.Init(qset_.n_cols());
-
-    // Initialize the coverage probability vector.
-    coverage_probabilities_.Init(20);
 
     // Initialize the error accounting stuff.
     used_error_.Init(qset_.n_cols());

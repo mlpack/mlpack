@@ -64,7 +64,7 @@
 int main(int argc, char *argv[]) {
 
   // initialize FastExec (parameter handling stuff)
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
   
   ////////// READING PARAMETERS AND LOADING DATA /////////////////////
 
@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
   // root directory (NULL) for the Kde object to work inside.  Here,
   // we initialize it with all parameters defined "--kde/...=...".
   struct datanode *ifgt_kde_module =
-    fx_submodule(NULL, "kde", "ifgt_kde_module");
+    fx_submodule(fx_root, "kde");
 
   // The reference data file is a required parameter.
   const char* references_file_name = fx_param_str_req(NULL, "data");
@@ -131,6 +131,6 @@ int main(int argc, char *argv[]) {
     naive_kde.ComputeMaximumRelativeError(ifgt_kde_results);
   }
 
-  fx_done();
+  fx_done(NULL);
   return 0;
 }
