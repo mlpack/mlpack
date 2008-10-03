@@ -3,6 +3,26 @@
 
 #include "fastlib/fastlib.h"
 
+class InversePowDistGradientKernel {
+
+ private:
+  double lambda_;
+  
+  index_t dimension_;
+
+ public:
+  
+  void Init(double lambda_in, index_t dimension_in) {
+    lambda_ = lambda_in;
+    dimension_ = dimension_in;
+  }
+
+  double EvalUnnorm(index_t dimension, const double *point) const {
+    double sqdist = la::Dot(dimension, point, point);
+    return point[dimension] / pow(sqdist, lambda_ / 2.0);
+  }
+};
+
 class InversePowDistKernel {
   
  private:
