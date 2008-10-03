@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
 
   // Always initialize FASTexec with main's inputs at the beggining of
   // your program.  This reads the command line, among other things.
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
 
   // Initialize Nick's memory manager...
   std::string pool_name("/scratch/temp_mem");
@@ -151,8 +151,8 @@ int main(int argc, char *argv[]) {
       printf("Both methods have different results...\n");
     }
   }
-  timer *tree_range_search_time = fx_timer(NULL, "tree_range_search");
-  timer *naive_search_time = fx_timer(NULL, "naive_search");
+  fx_timer *tree_range_search_time = fx_get_timer(NULL, "tree_range_search");
+  fx_timer *naive_search_time = fx_get_timer(NULL, "naive_search");
 	 
   fx_format_result(NULL, "speedup", "%g", 
 		   ((double)(naive_search_time->total).micros) / 
@@ -161,6 +161,6 @@ int main(int argc, char *argv[]) {
   // Destroy Nick's memory manager...
   mmapmm::MemoryManager<false>::allocator_->Destruct();
   delete mmapmm::MemoryManager<false>::allocator_;
-  fx_done();
+  fx_done(NULL);
   return 0;
 }
