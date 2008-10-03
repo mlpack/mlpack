@@ -206,7 +206,7 @@ class DualtreeKdeCommon {
    double &used_error, double &n_pruned, TAlgorithm *kde_object) {
     
     // If the reference node contains too few points, then return.
-    if(qnode->count() * rnode->count() < 25) {
+    if(qnode->count() * rnode->count() < 50) {
       return false;
     }
     
