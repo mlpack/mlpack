@@ -54,6 +54,13 @@ int SeriesExpansionAux::ComputeMultiindexPosition
   int index = 0;
 
   for(index_t j = 0; j < dim; j++) {
+
+    // If any of the index is negative, then it does not exist!
+    if(multiindex[j] < 0) {
+      index = -1;
+      break;
+    }
+    
     mapping_sum += multiindex[j];
   }
   for(index_t j = 0; j < dim; j++) {
