@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import util
 import fx
@@ -8,6 +8,7 @@ import sys
 
 source_dir = fx.param_str("source_dir")
 genfiles_dir = fx.param_str("genfiles_dir")
+cflags = fx.param_str("cflags")
 
 base_in = os.path.join(source_dir, "base")
 base_out = os.path.join(genfiles_dir, "base")
@@ -33,7 +34,8 @@ util.shell(
     ["gcc",
      os.path.join(base_in, "config/template_types.c"),
      "-o",
-     os.path.join(base_out, "_template_types")])
+     os.path.join(base_out, "_template_types"),
+     cflags])
 
 util.shell(
     [os.path.join(base_out, "_template_types")],
