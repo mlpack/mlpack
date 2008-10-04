@@ -22,7 +22,7 @@
  */
 
 #include "mog.h"
-#include "mlpack/opt/optimizers.h"
+#include "mlpack/optimization/optimizers.h"
 
 const fx_entry_doc mog_l2e_main_entries[] = {
   {"data", FX_REQUIRED, FX_STR, NULL,
