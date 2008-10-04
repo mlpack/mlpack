@@ -5,19 +5,6 @@
 #include "inverse_normal_cdf.h"
 
 template<typename TKernelAux>
-void DualtreeKde<TKernelAux>::RefineBoundStatistics_(Tree *qnode) {
-
-  for(index_t q = qnode->begin(); q < qnode->end(); q++) {
-    tmp_vector_for_sorting_[q - qnode->begin()] = densities_l_[q];
-  }
-  qsort((void *) tmp_vector_for_sorting_.ptr(), qnode->count(),
-	sizeof(double), &DualtreeKdeCommon::qsort_comparator);
-
-  qnode->stat().mass_l_ = 
-    tmp_vector_for_sorting_[(int) floor(lower_percentile_ * qnode->count())];
-}
-
-template<typename TKernelAux>
 void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
 					       double probability) {
 
@@ -62,9 +49,6 @@ void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
 
   // Clear postponed information.
   qnode->stat().ClearPostponed();
-
-  // Refine statistics again.
-  RefineBoundStatistics_(qnode);
 }
 
 template<typename TKernelAux>

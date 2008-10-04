@@ -89,6 +89,9 @@ const fx_entry_doc kde_entries[] = {
    "  The bandwidth parameter.\n"},
   {"do_naive", FX_PARAM, FX_BOOL, NULL,
    "  Whether to perform naive computation as well.\n"},
+  {"dwgts", FX_PARAM, FX_STR, NULL,
+   "  A file that contains the weight of each point. If missing, will\
+ assume uniform weight\n"},
   {"fast_kde_output", FX_PARAM, FX_STR, NULL,
    "  A file to receive the results of computation.\n"},
   {"kernel", FX_PARAM, FX_STR, NULL,
@@ -232,12 +235,6 @@ class DualtreeKde {
    *         query.
    */
   Vector n_pruned_;
-
-  /** @brief The temporary space to use for sorting.
-   */
-  Vector tmp_vector_for_sorting_;
-
-  double lower_percentile_;
 
   /** @brief The sum of all reference weights.
    */
@@ -493,9 +490,6 @@ class DualtreeKde {
     // Initialize the error accounting stuff.
     used_error_.Init(qset_.n_cols());
     n_pruned_.Init(qset_.n_cols());
-    
-    // Initialize the space used for sorting.
-    tmp_vector_for_sorting_.Init(leaflen);
 
     // Initialize the kernel.
     double bandwidth = fx_param_double_req(module_, "bandwidth");
