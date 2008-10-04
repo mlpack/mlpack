@@ -1,13 +1,13 @@
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
- * @file mog.cc
+ * @file mog_em.cc
  *
  * Implementation for the loglikelihood function, the EM algorithm
  * and also computes the K-means for getting an initial point
  *
  */
 
-#include "mog.h"
+#include "mog_em.h"
 #include "phi.h"
 #include "math_functions.h"
 

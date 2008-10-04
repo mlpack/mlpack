@@ -1,13 +1,13 @@
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
- * @file mog.cc
+ * @file mog_l2e.cc
  *
  * Implementation for L2 loss function, and 
  * also some initial points generator
  *
  */
 
-#include "mog.h"
+#include "mog_l2e.h"
 #include "phi.h"
 
 long double MoGL2E::L2Error(const Matrix& data, Vector *gradients) {

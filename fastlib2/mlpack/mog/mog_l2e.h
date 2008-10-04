@@ -1,14 +1,14 @@
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
- * @file mog.h
+ * @file mog_l2e.h
  *
  * Defines a Gaussian Mixture model and
  * estimates the parameters of the model
  * 
  */
 
-#ifndef MOGL2E_H
-#define MOGL2E_H
+#ifndef MOG_L2E_H
+#define MOG_L2E_H
 
 #include <fastlib/fastlib.h>
 
