@@ -54,8 +54,8 @@ class InversePowDistGradientKernelAux {
   }
 
   void ComputeDirectionalDerivatives(const Vector &x, 
-				     Matrix &derivative_map, int order) const {
-    
+				     Matrix *derivative_map, int order) const {
+        
     // Allocate the derivative map to be a long vector.
     derivative_map.Init(order, 1);
     derivative_map.SetZero();
