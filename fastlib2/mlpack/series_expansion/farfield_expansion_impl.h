@@ -254,7 +254,7 @@ double FarFieldExpansion<TKernelAux>::EvaluateField(const Matrix& data,
   
   // computed derivative map
   Matrix derivative_map;
-  derivative_map.Init(dim, order + 1);
+  ka_->AllocateDerivativeMap(dim, order, &derivative_map);
 
   // temporary variable
   Vector arrtmp;
@@ -271,7 +271,7 @@ double FarFieldExpansion<TKernelAux>::EvaluateField(const Matrix& data,
   }
 
   // compute deriative maps based on coordinate difference.
-  ka_->ComputeDirectionalDerivatives(x_q_minus_x_R, derivative_map);
+  ka_->ComputeDirectionalDerivatives(x_q_minus_x_R, &derivative_map, order);
 
   // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2)) ((x_r - x_R)/h)^{\alpha}
   for(index_t j = 0; j < total_num_coeffs; j++) {
@@ -311,7 +311,7 @@ double FarFieldExpansion<TKernelAux>::EvaluateField(const Vector &x_q,
   
   // computed derivative map
   Matrix derivative_map;
-  derivative_map.Init(dim, order + 1);
+  ka_->AllocateDerivativeMap(dim, order, &derivative_map);
 
   // temporary variable
   Vector arrtmp;
@@ -327,7 +327,7 @@ double FarFieldExpansion<TKernelAux>::EvaluateField(const Vector &x_q,
   }
 
   // compute deriative maps based on coordinate difference.
-  ka_->ComputeDirectionalDerivatives(x_q_minus_x_R, derivative_map);
+  ka_->ComputeDirectionalDerivatives(x_q_minus_x_R, &derivative_map, order);
 
   // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2)) ((x_r - x_R)/h)^{\alpha}
   for(index_t j = 0; j < total_num_coeffs; j++) {
@@ -388,9 +388,9 @@ double FarFieldExpansion<TKernelAux>::MixField(const Matrix &data,
 
   // partial derivatives table
   Matrix derivative_map_beta;
-  derivative_map_beta.Init(dim, order2 + 1);
+  ka_->AllocateDerivativeMap(dim, order2, &derivative_map_beta);
   Matrix derivative_map_gamma;
-  derivative_map_gamma.Init(dim, order3 + 1);
+  ka_->AllocateDerivativeMap(dim, order3, &derivative_map_gamma);
   
   // compute center differences and complete the table of partial derivatives
   Vector xI_xK, xJ_xK;
@@ -404,8 +404,8 @@ double FarFieldExpansion<TKernelAux>::MixField(const Matrix &data,
     xI_xK[d] = (center_[d] - xK_center[d]) / bandwidth_factor;
     xJ_xK[d] = (xJ_center[d] - xK_center[d]) / bandwidth_factor;
   }
-  ka_->ComputeDirectionalDerivatives(xI_xK, derivative_map_beta);
-  ka_->ComputeDirectionalDerivatives(xJ_xK, derivative_map_gamma);
+  ka_->ComputeDirectionalDerivatives(xI_xK, &derivative_map_beta, order2);
+  ka_->ComputeDirectionalDerivatives(xJ_xK, &derivative_map_gamma, order3);
 
   // inverse factorials
   Vector inv_multiindex_factorials;
@@ -549,7 +549,7 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
 
   // The partial derivatives table.
   Matrix derivative_map_alpha;
-  derivative_map_alpha.Init(dim, order + 1);
+  ka_->AllocateDerivativeMap(dim, order, &derivative_map_alpha);
 
   // Compute the center difference and its table of partial
   // derivatives.
@@ -561,7 +561,7 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
   for(index_t d = 0; d < dim; d++) {
     xI_xJ[d] = (center_[d] - xJ_center[d]) / bandwidth_factor;
   }
-  ka_->ComputeDirectionalDerivatives(xI_xJ, derivative_map_alpha);
+  ka_->ComputeDirectionalDerivatives(xI_xJ, &derivative_map_alpha, order);
 
   // The inverse factorials.
   Vector inv_multiindex_factorials;
@@ -665,11 +665,11 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
 
   // partial derivatives table
   Matrix derivative_map_alpha;
-  derivative_map_alpha.Init(dim, order1 + 1);
+  ka_->AllocateDerivativeMap(dim, order1, &derivative_map_alpha);
   Matrix derivative_map_beta;
-  derivative_map_beta.Init(dim, order2 + 1);
+  ka_->AllocateDerivativeMap(dim, order2, &derivative_map_beta);
   Matrix derivative_map_gamma;
-  derivative_map_gamma.Init(dim, order3 + 1);
+  ka_->AllocateDerivativeMap(dim, order3, &derivative_map_gamma);
   
   // compute center differences and complete the table of partial derivatives
   Vector xI_xJ, xI_xK, xJ_xK;
@@ -685,9 +685,9 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
     xI_xK[d] = (center_[d] - xK_center[d]) / bandwidth_factor;
     xJ_xK[d] = (xJ_center[d] - xK_center[d]) / bandwidth_factor;
   }
-  ka_->ComputeDirectionalDerivatives(xI_xJ, derivative_map_alpha);
-  ka_->ComputeDirectionalDerivatives(xI_xK, derivative_map_beta);
-  ka_->ComputeDirectionalDerivatives(xJ_xK, derivative_map_gamma);
+  ka_->ComputeDirectionalDerivatives(xI_xJ, &derivative_map_alpha, order1);
+  ka_->ComputeDirectionalDerivatives(xI_xK, &derivative_map_beta, order2);
+  ka_->ComputeDirectionalDerivatives(xJ_xK, &derivative_map_gamma, order3);
 
   // inverse factorials
   Vector inv_multiindex_factorials;
@@ -1030,13 +1030,14 @@ void FarFieldExpansion<TKernelAux>::TranslateToLocal
   
   Vector pos_arrtmp, neg_arrtmp;
   Matrix derivative_map;
+  ka_->AllocateDerivativeMap(sea_->get_dimension(), 2 * truncation_order,
+			     &derivative_map);
   Vector local_center;
   Vector cent_diff;
   Vector local_coeffs;
   int local_order = se.get_order();
   int dimension = sea_->get_dimension();
   int total_num_coeffs = sea_->get_total_num_coeffs(truncation_order);
-  int limit;
   double bandwidth_factor = ka_->BandwidthFactor(se.bandwidth_sq());
 
   // get center and coefficients for local expansion
@@ -1051,8 +1052,6 @@ void FarFieldExpansion<TKernelAux>::TranslateToLocal
   }
 
   // compute Gaussian derivative
-  limit = 2 * truncation_order + 1;
-  derivative_map.Init(dimension, limit);
   pos_arrtmp.Init(total_num_coeffs);
   neg_arrtmp.Init(total_num_coeffs);
 
@@ -1062,7 +1061,8 @@ void FarFieldExpansion<TKernelAux>::TranslateToLocal
   }
 
   // compute required partial derivatives
-  ka_->ComputeDirectionalDerivatives(cent_diff, derivative_map);
+  ka_->ComputeDirectionalDerivatives(cent_diff, &derivative_map, 
+				     2 * truncation_order);
   ArrayList<int> beta_plus_alpha;
   beta_plus_alpha.Init(dimension);
 

@@ -26,7 +26,7 @@ void LocalExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
 
   // declare deritave mapping
   Matrix derivative_map;
-  derivative_map.Init(dim, order + 1);
+  ka_->AllocateDerivativeMap(dim, order, &derivative_map);
   
   // some temporary variables
   Vector arrtmp;
@@ -47,7 +47,7 @@ void LocalExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
     }
     
     // precompute necessary partial derivatives based on coordinate difference
-    ka_->ComputeDirectionalDerivatives(x_r_minus_x_Q, derivative_map);
+    ka_->ComputeDirectionalDerivatives(x_r_minus_x_Q, &derivative_map, order);
     
     // compute h_{beta}((x_r - x_Q) / sqrt(2h^2))
     for(index_t j = 0; j < total_num_coeffs; j++) {
@@ -276,6 +276,8 @@ void LocalExpansion<TKernelAux>::TranslateFromFarField
   Vector cent_diff;
   Vector far_coeffs;
   int dimension = sea_->get_dimension();
+  ka_->AllocateDerivativeMap(dimension, 2 * order_, &derivative_map);
+
   int far_order = se.get_order();
   int total_num_coeffs = sea_->get_total_num_coeffs(far_order);
   int limit;
@@ -293,8 +295,6 @@ void LocalExpansion<TKernelAux>::TranslateFromFarField
   }
 
   // compute Gaussian derivative
-  limit = 2 * order_ + 1;
-  derivative_map.Init(dimension, limit);
   pos_arrtmp.Init(total_num_coeffs);
   neg_arrtmp.Init(total_num_coeffs);
 
@@ -304,7 +304,7 @@ void LocalExpansion<TKernelAux>::TranslateFromFarField
   }
 
   // compute required partial derivatives
-  ka_->ComputeDirectionalDerivatives(cent_diff, derivative_map);
+  ka_->ComputeDirectionalDerivatives(cent_diff, &derivative_map, 2 * order_);
   ArrayList<int> beta_plus_alpha;
   beta_plus_alpha.Init(dimension);
 

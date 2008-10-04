@@ -115,7 +115,7 @@ double MultFarFieldExpansion<TKernelAux>::ConvolveField
 
   // The partial derivatives table.
   Matrix derivative_map_alpha;
-  derivative_map_alpha.Init(dim, order + 1);
+  ka_->AllocateDerivativeMap(dim, order, &derivative_map_alpha);
 
   // Compute the center difference and its table of partial
   // derivatives.
@@ -127,7 +127,7 @@ double MultFarFieldExpansion<TKernelAux>::ConvolveField
   for(index_t d = 0; d < dim; d++) {
     xI_xJ[d] = (center_[d] - xJ_center[d]) / bandwidth_factor;
   }
-  ka_->ComputeDirectionalDerivatives(xI_xJ, derivative_map_alpha);
+  ka_->ComputeDirectionalDerivatives(xI_xJ, &derivative_map_alpha, order);
 
   // The inverse factorials.
   Vector inv_multiindex_factorials;
@@ -230,7 +230,7 @@ double MultFarFieldExpansion<TKernelAux>::EvaluateField(const Matrix& data,
   
   // computed derivative map
   Matrix derivative_map;
-  derivative_map.Init(dim, order_ + 1);
+  ka_->AllocateDerivativeMap(dim, order_, &derivative_map);
 
   // temporary variable
   Vector arrtmp;
@@ -246,7 +246,7 @@ double MultFarFieldExpansion<TKernelAux>::EvaluateField(const Matrix& data,
   }
 
   // compute deriative maps based on coordinate difference.
-  ka_->ComputeDirectionalDerivatives(x_q_minus_x_R, derivative_map);
+  ka_->ComputeDirectionalDerivatives(x_q_minus_x_R, &derivative_map, order_);
   
   // get the order of traversal for the given order of approximation
   const ArrayList<int> &traversal_order = sea_->traversal_mapping_[order_];
@@ -291,7 +291,7 @@ double MultFarFieldExpansion<TKernelAux>::EvaluateField(const Vector& x_q,
   
   // computed derivative map
   Matrix derivative_map;
-  derivative_map.Init(dim, order_ + 1);
+  ka_->AllocateDerivativeMap(dim, order_, &derivative_map);
 
   // temporary variable
   Vector arrtmp;
@@ -307,7 +307,7 @@ double MultFarFieldExpansion<TKernelAux>::EvaluateField(const Vector& x_q,
   }
 
   // compute deriative maps based on coordinate difference.
-  ka_->ComputeDirectionalDerivatives(x_q_minus_x_R, derivative_map);
+  ka_->ComputeDirectionalDerivatives(x_q_minus_x_R, &derivative_map, order_);
   
   // get the order of traversal for the given order of approximation
   ArrayList<int> traversal_order = sea_->traversal_mapping_[order_];
@@ -552,8 +552,9 @@ void MultFarFieldExpansion<TKernelAux>::TranslateToLocal
   int local_order = se.get_order();
   int dimension = sea_->get_dimension();
   int total_num_coeffs = sea_->get_total_num_coeffs(truncation_order);
-  int limit;
   double bandwidth_factor = ka_->BandwidthFactor(se.bandwidth_sq());
+
+  ka_->AllocateDerivativeMap(dimension, 2 * truncation_order, &derivative_map);
 
   // get center and coefficients for local expansion
   local_center.Alias(*(se.get_center()));
@@ -567,8 +568,6 @@ void MultFarFieldExpansion<TKernelAux>::TranslateToLocal
   }
 
   // compute Gaussian derivative
-  limit = 2 * truncation_order + 1;
-  derivative_map.Init(dimension, limit);
   pos_arrtmp.Init(sea_->get_max_total_num_coeffs());
   neg_arrtmp.Init(sea_->get_max_total_num_coeffs());
 
@@ -578,7 +577,8 @@ void MultFarFieldExpansion<TKernelAux>::TranslateToLocal
   }
 
   // compute required partial derivatives
-  ka_->ComputeDirectionalDerivatives(cent_diff, derivative_map);
+  ka_->ComputeDirectionalDerivatives(cent_diff, &derivative_map, 
+				     2 * truncation_order);
   ArrayList<int> beta_plus_alpha;
   beta_plus_alpha.Init(dimension);
 
