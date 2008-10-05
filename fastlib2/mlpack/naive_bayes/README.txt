@@ -27,8 +27,8 @@ The files are the following:
 7. build.py - you might want to take a look at them for the purpose of seeing what all files are used where.
 
 -> An example run would the following:
-fl-build simple_nbc_main
-./simple_nbc_main --train=trainSet.arff  --nbc/classes=2 --test=testSet.arff --output=output_example.csv
+fl-build nbc_main
+./nbc_main --train=trainSet.arff  --nbc/classes=2 --test=testSet.arff --output=output_example.csv
 
 -> An example run of the testing class would be the following:
 fl-build test_simple_nbc_main
