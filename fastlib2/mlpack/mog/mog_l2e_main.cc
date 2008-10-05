@@ -21,7 +21,7 @@
  *
  */
 
-#include "mog.h"
+#include "mog_l2e.h"
 #include "mlpack/optimization/optimizers.h"
 
 const fx_entry_doc mog_l2e_main_entries[] = {
