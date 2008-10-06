@@ -6,7 +6,7 @@
  * This file contains main routines for performing  
  * 0. multiclass SVM classification (one-vs-one method is employed).
  * 1. SVM regression (epsilon-insensitive loss i.e. epsilon-SVR).
- * 2. SVM density estimation (one-class SVM)
+ * 2. one-class SVM (TODO)
  *
  * It provides four modes:
  * "cv": cross validation;
@@ -22,6 +22,43 @@
 
 #include "svm.h"
 #include "fastlib/math/statistics.h"
+
+const fx_entry_doc svm_main_entries_doc[] = {
+  {"learner_name", FX_REQUIRED, FX_STR, NULL,
+   "  The name of the support vecotr learner, values: \"svm_c\" for classification, \"svm_r\" for regression, \"svm_de\" for one class SVM\n"},
+  {"mode", FX_REQUIRED, FX_STR, NULL,
+   "  The mode of svm_main, values: \"cv\", \"train\", \"train_test\", \"test\".\n"},
+  {"k_cv", FX_PARAM, FX_INT, NULL,
+   "  The number of folds for cross validation, only required under \"cv\" mode.\n"},
+  {"cv_data", FX_PARAM, FX_STR, NULL,
+   "  The file name for cross validation data, only required under \"cv\" mode.\n"},
+  {"train_data", FX_PARAM, FX_STR, NULL,
+   "  The file name for training data, only required under \"train\" or \"train_test\" mode.\n"},
+  {"test_data", FX_PARAM, FX_STR, NULL,
+   "  The file name for testing data, only required under \"test\" or \"train_test\" mode.\n"},
+  {"kernel", FX_REQUIRED, FX_STR, NULL,
+   "  Kernel name, values:\"linear\", \"gaussian\".\n"},
+  {"sigma", FX_PARAM, FX_DOUBLE, NULL,
+   "  (for Gaussian kernel) sigma in the gaussian kernel k(x1,x2)=exp(-(x1-x2)^2/(2sigma^2)), only required when using \"guassian\" kernel\n"},
+  {"c", FX_PARAM, FX_DOUBLE, NULL,
+   "  (for SVM_C) the weight (0~1) that controls compromise between large margins and small margin violations. Default value: 10.0.\n"},
+  {"c_p", FX_PARAM, FX_DOUBLE, NULL,
+   "  (for SVM_C) the weight (0~1) for the positive class (y==1). Default value: c.\n"},
+  {"c_n", FX_PARAM, FX_DOUBLE, NULL,
+   "  (for SVM_C) the weight (0~1) for the negative class (y==-1). Default value: c.\n"},
+  {"epsilon", FX_PARAM, FX_DOUBLE, NULL,
+   "  (for SVM_R) the epsilon in SVM regression of epsilon-insensitive loss. Default value: 0.1.\n"},
+  {"wss", FX_PARAM, FX_INT, NULL,
+   "  Working set selection scheme. 1 for 1st order expansion; 2 for 2nd order expansion. Default value: 1.\n"},
+  {"normalize", FX_PARAM, FX_BOOL, NULL,
+   "  Whether need to do data normalization before training/testing, values: \"0\" for no normalize, \"1\" for normalize.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc svm_main_doc = {
+  svm_main_entries_doc, NULL,
+  "These are the implementations for Support Vector Machines (SVM), including Multiclass classification, Regression, and One Class SVM)\n"
+};
 
 /**
 * Data Normalization
@@ -170,12 +207,13 @@ int LoadData(Dataset* dataset, String datafilename){
 * @param: argv
 */
 int main(int argc, char *argv[]) {
-  fx_init(argc, argv, NULL);
+  //fx_init(argc, argv, NULL);
+  fx_module *root = fx_init(argc, argv, &svm_main_doc);
   srand(time(NULL));
 
   String mode = fx_param_str_req(NULL, "mode");
   String kernel = fx_param_str_req(NULL, "kernel");
-  String learner_name = fx_param_str_req(NULL,"learner_name");
+  String learner_name = fx_param_str_req(root,"learner_name");
   int learner_typeid;
   
   if (learner_name == "svm_c") { // Support Vector Classfication
@@ -184,7 +222,7 @@ int main(int argc, char *argv[]) {
   else if (learner_name == "svm_r") { // Support Vector Regression
     learner_typeid = 1;
   }
-  else if (learner_name == "svm_de") { // Support Vector Density Estimation
+  else if (learner_name == "svm_de") { // One Class Support Vector Machine
     learner_typeid = 2;
   }
   else {

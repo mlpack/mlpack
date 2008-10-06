@@ -92,7 +92,7 @@ class SVM {
    * Type id of the SVM learner: 
    *  0:SVM Classification (svm_c);
    *  1:SVM Regression (svm_r);
-   *  2:SVM density estimation (svm_de);
+   *  2:One class SVM (svm_de);
    * Developers may add more learner types if necessary
    */
   int learner_typeid_;
@@ -227,7 +227,7 @@ void SVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *mo
   param_.kernel_.GetName(&param_.kernelname_);
   param_.kerneltypeid_ = param_.kernel_.GetTypeId();
   // budget parameter, contorls # of support vectors; default: # of data samples (use all)
-  param_.b_ = fx_param_int(NULL, "b", dataset.n_points());
+  //param_.b_ = fx_param_int(NULL, "b", dataset.n_points());
   // working set selection scheme. default: 1st order expansion
   param_.wss_ = fx_param_int(NULL, "wss", 1);
 
@@ -261,7 +261,7 @@ void SVM<TKernel>::InitTrain(int learner_typeid, const Dataset& dataset, datanod
   else if (learner_typeid == 1) { // SVM Regression
     SVM_R_Train_(learner_typeid, dataset, module);
   }
-  else if (learner_typeid == 2) { // SVM Density Estimation
+  else if (learner_typeid == 2) { // One Class SVM
     SVM_DE_Train_(learner_typeid, dataset, module);
   }
   
@@ -284,7 +284,6 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
   num_classes_ = dataset.n_labels();
   /* Group labels, split the training dataset for training bi-class SVM classifiers */
   dataset.GetLabels(train_labels_list_, train_labels_index_, train_labels_ct_, train_labels_startpos_);
-
   /* Train num_classes*(num_classes-1)/2 binary class(labels:-1, 1) models using SMO */
   index_t ct = 0;
   index_t i, j;
@@ -432,7 +431,6 @@ void SVM<TKernel>::SVM_R_Train_(int learner_typeid, const Dataset& dataset, data
   models_[0].bias_ = smo.Bias();
   models_[0].coef_.Init();
   smo.GetSVM(dataset_index, models_[0].coef_, trainset_sv_indicator_);
-
   /* Get index list of support vectors */
   for (i = 0; i < n_data_; i++) {
     if (trainset_sv_indicator_[i]) {
@@ -458,7 +456,7 @@ void SVM<TKernel>::SVM_R_Train_(int learner_typeid, const Dataset& dataset, data
 }
 
 /**
-* Training for SVM Density Estimation
+* Training for One Class SVM
 *
 * @param: type id of the learner
 * @param: training set
@@ -487,7 +485,7 @@ double SVM<TKernel>::Predict(int learner_typeid, const Vector& datum) {
   else if (learner_typeid == 1) { // SVM Regression
     predicted_value = SVM_R_Predict_(datum);
   }
-  else if (learner_typeid == 2) { // SVM Density Estimation
+  else if (learner_typeid == 2) { // One class SVM
     predicted_value = SVM_DE_Predict_(datum);
   }
   return predicted_value;
@@ -571,11 +569,11 @@ double SVM<TKernel>::SVM_R_Predict_(const Vector& datum) {
 }
 
 /**
-* SVM Density Estimation Prediction for one testing vector
+* One class SVM Prediction for one testing vector
 *
 * @param: testing vector
 *
-* @return: estimated density value
+* @return: estimated value
 */
 template<typename TKernel>
 double SVM<TKernel>::SVM_DE_Predict_(const Vector& datum) {
