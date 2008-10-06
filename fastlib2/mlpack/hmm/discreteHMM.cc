@@ -33,8 +33,8 @@ void DiscreteHMM::InitFromFile(const char* profile) {
     FATAL("Number of matrices in the file should be at least 2.");
   else if (list_mat.size() > 2)
     NONFATAL("Number of matrices in the file should be 2.");
-  transmission_.Own(&list_mat[0]);
-  emission_.Own(&list_mat[1]);
+  transmission_.Copy(list_mat[0]);
+  emission_.Copy(list_mat[1]);
   DEBUG_ASSERT(transmission_.n_rows() == transmission_.n_cols());
   DEBUG_ASSERT(transmission_.n_rows() == emission_.n_rows());
 }
@@ -131,7 +131,7 @@ void DiscreteHMM::ComputeLogLikelihood(const ArrayList<Vector>& list_data_seq, A
     double loglik = 0;
     for (int t = 0; t < L; t++)
       loglik += log(sc[t]);
-    list_likelihood->AddBackItem(loglik);
+    list_likelihood->PushBackCopy(loglik);
   }
 }
 

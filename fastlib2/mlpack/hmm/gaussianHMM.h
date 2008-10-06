@@ -37,6 +37,13 @@ class GaussianHMM {
   /** Vector of constant in the gaussian density fomular */
   Vector gauss_const_vec_;
 
+  OT_DEF(GaussianHMM) {
+    OT_MY_OBJECT(transmission_);
+    OT_MY_OBJECT(list_mean_vec_);
+    OT_MY_OBJECT(list_covariance_mat_);
+    OT_MY_OBJECT(list_inverse_cov_mat_);
+  }
+
   /** Calculate the inverse covariance and the constant in gaussian fomular */
   void CalculateInverse();
  public:

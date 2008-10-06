@@ -30,6 +30,11 @@ class DiscreteHMM {
   /** Emission probabilities in each state */
   Matrix emission_;
 
+  OT_DEF(DiscreteHMM) {
+    OT_MY_OBJECT(transmission_);
+    OT_MY_OBJECT(emission_);
+  }
+
  public:
   /** Basic getters */
   const Matrix& transmission() const { return transmission_; }

@@ -27,8 +27,13 @@ class MixtureofGaussianHMM {
 
   /** List of Mixture of Gaussian objects corresponding to each state */
   ArrayList<MixtureGauss> list_mixture_gauss_;
+
+  OT_DEF(MixtureofGaussianHMM) {
+    OT_MY_OBJECT(transmission_);
+    OT_MY_OBJECT(list_mixture_gauss_);
+  }
  public:
-  /** Gettters */
+  /** Getters */
   const Matrix& transmission() const { return transmission_; }
   const ArrayList<MixtureGauss>& list_mixture_gauss() const { return list_mixture_gauss_; }
 

@@ -43,6 +43,18 @@ class MixtureGauss {
 
   /** The total denominator to divide by after accumulating complete*/
   double total;
+
+  OT_DEF(MixtureGauss) {
+    OT_MY_OBJECT(means);
+    OT_MY_OBJECT(covs);
+    OT_MY_OBJECT(prior);
+    OT_MY_OBJECT(inv_covs);
+    OT_MY_OBJECT(det_covs);
+    OT_MY_OBJECT(ACC_means);
+    OT_MY_OBJECT(ACC_covs);
+    OT_MY_OBJECT(ACC_prior);
+    OT_MY_OBJECT(total);
+  }
  public:
   /** Init the mixture from file */
   void InitFromFile(const char* mean_fn, const char* covs_fn = NULL, const char* prior_fn = NULL);

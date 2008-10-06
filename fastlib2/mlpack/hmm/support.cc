@@ -270,7 +270,7 @@ namespace hmm_support {
     for (int i = 0; i < n; i++) {
       Vector seq;
       a.MakeColumnVector(i, &seq);
-      s_.AddBackItem(seq);
+      s_.PushBackCopy(seq);
     }
   }
 
@@ -281,7 +281,7 @@ namespace hmm_support {
     for (int i = 0; i < n; i+=N) {
       Matrix b;
       a.MakeColumnSlice(i, N, &b);
-      s_.AddBackItem(b);
+      s_.PushBackCopy(b);
     }
   }
 
@@ -317,7 +317,7 @@ namespace hmm_support {
 
      for(;;) { // read each rows
        n_rows++;
-       double* point = num_double.AddBack(n_cols);
+       // deprecated: double* point = num_double.AddBack(n_cols);
        ArrayList<String> num_str;
        num_str.Init();
        reader.Peek().Split(", \t", &num_str);
@@ -325,7 +325,7 @@ namespace hmm_support {
        DEBUG_ASSERT(num_str.size() == n_cols);
 
        for (int i = 0; i < n_cols; i++)
-	 *(point+i) = strtod(num_str[i], NULL);
+	 num_double.PushBackCopy(strtod(num_str[i], NULL));
 
        is_done = false;
 
@@ -349,7 +349,7 @@ namespace hmm_support {
 
        if (is_done) {
 	 num_double.Trim();
-	 matrix->Own(num_double.ReleasePointer(), n_cols, n_rows);
+	 matrix->Own(num_double.ReleasePtr(), n_cols, n_rows);
 	 return SUCCESS_PASS;
        }
      }
@@ -372,10 +372,10 @@ namespace hmm_support {
 	num_str.Init();
 	reader.Peek().Split(", \t", &num_str);
 
-	double* point = num_double.AddBack(num_str.size());
+	// deprecated: double* point = num_double.AddBack(num_str.size());
 
 	for (int i = 0; i < num_str.size(); i++)
-	  *(point+i) = strtod(num_str[i], NULL);
+	  num_double.PushBackCopy(strtod(num_str[i], NULL));
 
 	reader.Gobble();
 
@@ -398,7 +398,7 @@ namespace hmm_support {
 	if (is_done) {
 	  num_double.Trim();
 	  int length = num_double.size();
-	  vec->Own(num_double.ReleasePointer(), length);
+	  vec->Own(num_double.ReleasePtr(), length);
 	  return SUCCESS_PASS;
 	}
       }
@@ -412,7 +412,7 @@ namespace hmm_support {
     do {
       Matrix tmp;
       if (read_matrix(reader, &tmp) == SUCCESS_PASS) {
-	matlst->AddBackItem(tmp);
+	matlst->PushBackCopy(tmp);
       }
       else break;
     } while (1);
@@ -426,7 +426,7 @@ namespace hmm_support {
     do {
       Vector vec;
       if (read_vector(reader, &vec) == SUCCESS_PASS) {
-	veclst->AddBackItem(vec);
+	veclst->PushBackCopy(vec);
       }
       else break;
     } while (1);
