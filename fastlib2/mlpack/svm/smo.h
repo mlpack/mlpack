@@ -498,8 +498,8 @@ template<typename TKernel>
 bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
   double grad_max = -INFINITY;
   double grad_min =  INFINITY;
-  int idx_i = -1;
-  int idx_j = -1;
+  int idx_i = 0;
+  int idx_j = 0;
   
   // Find i using maximal violating pair scheme
   index_t t;

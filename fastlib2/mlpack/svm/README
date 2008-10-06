@@ -1,14 +1,14 @@
 @author Hua Ouyang
 @file README
 
-Support Vector Machines (Multiclass classification; Regression; Density estimation)
+Support Vector Machines (Multiclass classification; Regression; One class SVM(TODO))
 
 Files in this folder:
 README: this file
 # Source codes:
 build.py: build scripts
 svm_main.cc: contains main function of SVM
-svm.h: contains classification/regression/density estimation main routines
+svm.h: contains classification/regression/one class svm main routines
 smo.h: sequential minimal optimization
 
 # Unit test data:
@@ -37,23 +37,23 @@ Explanation of arguments:
 8. c (for SVM_C,optional): the weight (0~1) that controls compromise between large margins and small margin violations. Default value: 10.0.
 9. c_p (for SVM_C,optional): the weight (0~1) for the positive class (y==1). Default value: c.
 10. c_n (for SVM_C,optional): the weight (0~1) for the negative class (y==-1). Default value: c.
-11. epsilon (for SVM_R,optional): the epsilon in SVM regression. Default value: 0.1.
+11. epsilon (for SVM_R,optional): the epsilon in SVM regression of epsilon-insensitive loss. Default value: 0.1.
 12. wss (optional): working set selection scheme. 1 for 1st order expansion; 2 for 2nd order expansion. Default value: 1.
-13. normalize (optional): where need to do data normalization before training/testing, values: "0" for no normalize, "1" for normalize.
+13. normalize (optional): whether need to do data normalization before training/testing, values: "0" for no normalize, "1" for normalize.
 
 Examples:
 --------------------------------------------------- SVM Classificaation ------------------------------------------------
 a1.Support Vector Classification, Stratified cross validation mode
-svm_main --learner_name=svm_c --mode=cv --k_cv=4 --cv_data=c_traindata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
-svm_main --learner_name=svm_c --mode=cv --k_cv=4 --cv_data=c_traindata3.csv --kernel=linear --c=10 --normalize=0
+svm_main --learner_name=svm_c --mode=cv --k_cv=4 --cv_data=c_traindata3.csv --wss=2 --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --learner_name=svm_c --mode=cv --k_cv=4 --cv_data=c_traindata3.csv --wss=2 --kernel=linear --c=10 --normalize=0
 
 a2.Support Vector Classification, Training mode (model will be saved as "svm_model")
-svm_main --learner_name=svm_c --mode=train --train_data=c_traindata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
-svm_main --learner_name=svm_c --mode=train --train_data=c_traindata3.csv --kernel=linear --c=10 --normalize=0
+svm_main --learner_name=svm_c --mode=train --train_data=c_traindata3.csv --wss=2 --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --learner_name=svm_c --mode=train --train_data=c_traindata3.csv --wss=2 --kernel=linear --c=10 --normalize=0
 
 a3.Support Vector Classification, Training+testing mode
-svm_main --learner_name=svm_c --mode=train_test --train_data=c_traindata3.csv --test_data=c_testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
-svm_main --learner_name=svm_c --mode=train_test --train_data=c_traindata3.csv --test_data=c_testdata3.csv --kernel=linear --c=10 --normalize=0
+svm_main --learner_name=svm_c --mode=train_test --train_data=c_traindata3.csv --wss=2 --test_data=c_testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --learner_name=svm_c --mode=train_test --train_data=c_traindata3.csv --wss=2 --test_data=c_testdata3.csv --kernel=linear --c=10 --normalize=0
 
 a4.Support Vector Classification, Testing mode (the model file "svm_model" should exist)
 svm_main --learner_name=svm_c --mode=test --test_data=c_testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
@@ -61,20 +61,20 @@ svm_main --learner_name=svm_c --mode=test --test_data=c_testdata3.csv --kernel=l
 
 --------------------------------------------------- SVM Regression  -------------------------------------------------------
 b1.Support Vector Regression, Cross validation mode
-svm_main --learner_name=svm_r --mode=cv --k_cv=4 --cv_data=r_traindata.csv --kernel=gaussian --sigma=0.1 --epsilon=0.1 --c=10 --normalize=0
-svm_main --learner_name=svm_r --mode=cv --k_cv=4 --cv_data=r_traindata.csv --kernel=linear --epsilon=0.1 --c=10 --normalize=0
+svm_main --learner_name=svm_r --mode=cv --k_cv=4 --cv_data=r_traindata.csv --wss=2 --kernel=gaussian --sigma=0.1 --epsilon=0.1 --c=10 --normalize=0
+svm_main --learner_name=svm_r --mode=cv --k_cv=4 --cv_data=r_traindata.csv --wss=2 --kernel=linear --epsilon=0.1 --c=10 --normalize=0
 
 b2.Support Vector Regression, Training mode (model will be saved as "svm_model")
-svm_main --learner_name=svm_r --mode=train --train_data=r_traindata.csv --kernel=gaussian --sigma=0.1 --epsilon=0.1 --c=10 --normalize=0
-svm_main --learner_name=svm_r --mode=train --train_data=r_traindata.csv --kernel=linear --epsilon=0.1 --c=10 --normalize=0
+svm_main --learner_name=svm_r --mode=train --train_data=r_traindata.csv --wss=2 --kernel=gaussian --sigma=0.1 --epsilon=0.1 --c=10 --normalize=0
+svm_main --learner_name=svm_r --mode=train --train_data=r_traindata.csv --wss=2 --kernel=linear --epsilon=0.1 --c=10 --normalize=0
 
 b3.Support Vector Regression, Training+testing mode
-svm_main --learner_name=svm_r --mode=train_test --train_data=r_traindata.csv --test_data=r_testdata.csv --kernel=gaussian --sigma=0.1 --epsilon=0.1 --c=10 --normalize=0
-svm_main --learner_name=svm_r --mode=train_test --train_data=r_traindata.csv --test_data=r_testdata.csv --kernel=linear --epsilon=0.1 --c=10 --normalize=0
+svm_main --learner_name=svm_r --mode=train_test --train_data=r_traindata.csv --wss=2 --test_data=r_testdata.csv --kernel=gaussian --sigma=0.1 --epsilon=0.1 --c=10 --normalize=0
+svm_main --learner_name=svm_r --mode=train_test --train_data=r_traindata.csv --wss=2 --test_data=r_testdata.csv --kernel=linear --epsilon=0.1 --c=10 --normalize=0
 
 b4.Support Vector Regression, Testing mode (the model file "svm_model" should exist)
 svm_main --learner_name=svm_r --mode=test --test_data=r_testdata.csv --kernel=gaussian --sigma=0.1 --epsilon=0.1 --c=10 --normalize=0
 svm_main --learner_name=svm_r --mode=test --test_data=r_testdata.csv --kernel=linear --epsilon=0.1 --c=10 --normalize=0
 
---------------------------------------------------- SVM Density Estimation --------------------------------------------------
+--------------------------------------------------- One Class SVM --------------------------------------------------
 c1... TODO
