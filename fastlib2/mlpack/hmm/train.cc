@@ -27,7 +27,7 @@ void usage();
 const fx_entry_doc hmm_train_main_entries[] = {
   {"type", FX_REQUIRED, FX_STR, NULL,
    "  HMM type : discrete | gaussian | mixture.\n"},
-  {"algorithm", FX_REQUIRED, FX_STR, NULL,
+  {"algorithm", FX_PARAM, FX_STR, NULL,
    "  Training algoritm: baumwelch | viterbi.\n"},
   {"seqfile", FX_REQUIRED, FX_STR, NULL,
    "  Output file for the data sequences.\n"},
@@ -39,7 +39,7 @@ const fx_entry_doc hmm_train_main_entries[] = {
    "  Output file containing trained HMM profile.\n"},
   {"maxiter", FX_PARAM, FX_INT, NULL,
    "  Maximum number of iterations, default = 500.\n"},
-  {"tolerance", FX_PARAM, FX_STR, NULL,
+  {"tolerance", FX_PARAM, FX_DOUBLE, NULL,
    "  Error tolerance on log-likelihood as a stopping criteria.\n"},
   FX_ENTRY_DOC_DONE
 };

@@ -36,7 +36,7 @@ const fx_entry_doc hmm_generate_main_entries[] = {
    "  Number of sequance, default = 10.\n"},
   {"seqfile", FX_PARAM, FX_STR, NULL,
    "  Output file for the generated sequences.\n"},
-  {"state", FX_PARAM, FX_STR, NULL,
+  {"statefile", FX_PARAM, FX_STR, NULL,
    "  Output file for the generated state sequences.\n"},
   FX_ENTRY_DOC_DONE
 };
@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
       s = generate_discrete();
     else if (strcmp(type, "gaussian")==0) 
       s = generate_gaussian();
-    else if (strcmp(type, "mixture")==0) 
+    else if (strcmp(type, "mixture")==0)
       s = generate_mixture();
     else {
       printf("Unrecognized type: must be: discrete | gaussian | mixture !!!\n");
@@ -71,6 +71,7 @@ int main(int argc, char* argv[]) {
     s = SUCCESS_FAIL;
   }
   if (!PASSED(s)) usage();
+
   fx_done(NULL);
 }
 
@@ -130,6 +131,7 @@ success_t generate_mixture() {
     sprintf(s, "%% state sequence %d", i);
     print_vector(w_state, states, s, "%.0f,");    
   }
+
   //printf("---END---");
   return SUCCESS_PASS;
 }

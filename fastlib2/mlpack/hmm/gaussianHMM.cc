@@ -164,7 +164,7 @@ void GaussianHMM::ComputeLogLikelihood(const ArrayList<Matrix>& list_data_seq, A
     double loglik = 0;
     for (int t = 0; t < L; t++)
       loglik += log(sc[t]);
-    list_likelihood->PushBack() = loglik;
+    list_likelihood->PushBackCopy(loglik);
   }
 }
 
@@ -203,8 +203,8 @@ success_t GaussianHMM::LoadProfile(const char* profile, Matrix* trans, ArrayList
     DEBUG_ASSERT(matlst[i+1].n_rows()==N && matlst[i+1].n_cols()==N);
     Vector m;
     matlst[i].MakeColumnVector(0, &m);
-    means->PushBack() = m;
-    covs->PushBack() = matlst[i+1];
+    means->PushBackCopy(m);
+    covs->PushBackCopy(matlst[i+1]);
   }
   return SUCCESS_PASS;
 }
@@ -301,11 +301,11 @@ void GaussianHMM::EstimateInit(int numStates, const Matrix& seq, const Vector& s
   for (int i = 0; i < M; i++) {
     Vector m;
     m.Init(N); m.SetZero();
-    mean_.PushBack() =  m;
+    mean_.PushBackCopy(m);
 
     Matrix c;
     c.Init(N, N); c.SetZero();
-    cov_.PushBack() = c;
+    cov_.PushBackCopy(c);
   }
 
   stateSum.SetZero();
@@ -517,7 +517,7 @@ void GaussianHMM::InitGaussParameter(int M, const ArrayList<Matrix>& seqs, Matri
   for (int i = 0; i < M; i++) {
     Matrix m;
     m.Init(N, N); m.SetZero();
-    gCO.PushBack() = m;
+    gCO.PushBackCopy(m);
   }
   //printf("---2---\n");
 

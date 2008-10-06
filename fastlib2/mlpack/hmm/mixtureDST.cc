@@ -15,7 +15,7 @@ void MixtureGauss::Init(int K, int N) {
   for (int i = 0; i < K; i++) {
     Vector v;
     RAND_NORMAL_01_INIT(N, &v);
-    means.AddBackItem(v);
+    means.PushBackCopy(v);
   }
   
   covs.Init();
@@ -23,16 +23,16 @@ void MixtureGauss::Init(int K, int N) {
     Matrix m;
     m.Init(N, N); m.SetZero();
     for (int j = 0; j < N; j++) m.ref(j, j) = 1.0;
-    covs.AddBackItem(m);
+    covs.PushBackCopy(m);
   }
 
   prior.Init(means.size());
   for (int i = 0; i < prior.length(); i++) prior[i] = 1.0/K;
 
-  ACC_means.Copy(means);
-  ACC_covs.Copy(covs);
+  ACC_means.InitCopy(means);
+  ACC_covs.InitCopy(covs);
   ACC_prior.Init(K);
-  inv_covs.Copy(covs);
+  inv_covs.InitCopy(covs);
   det_covs.Init(covs.size());
   for (int i = 0; i < K; i++) {
     double det = la::Determinant(covs[i]);
@@ -47,22 +47,22 @@ void MixtureGauss::Init(int K, const Matrix& data, const ArrayList<int>& labels)
   for (int i = 0; i < K; i++) {
     Vector v;
     v.Init(N);
-    means.AddBackItem(v);
+    means.PushBackCopy(v);
   }
   
   covs.Init();
   for (int i = 0; i < means.size(); i++) {
     Matrix m;
     m.Init(N, N);
-    covs.AddBackItem(m);
+    covs.PushBackCopy(m);
   }
 
   prior.Init(means.size());
 
-  ACC_means.Copy(means);
-  ACC_covs.Copy(covs);
+  ACC_means.InitCopy(means);
+  ACC_covs.InitCopy(covs);
   ACC_prior.Init(K);
-  inv_covs.Copy(covs);
+  inv_covs.InitCopy(covs);
   det_covs.Init(covs.size());
   start_accumulate();
   //printf("cols = %d rows = %d\n", data.n_cols(), data.n_rows()); 
@@ -93,7 +93,7 @@ void MixtureGauss::InitFromFile(const char* mean_fn, const char* covs_fn, const 
       Matrix m;
       m.Init(N, N); m.SetZero();
       for (int j = 0; j < N; j++) m.ref(j, j) = 1.0;
-      covs.AddBackItem(m);
+      covs.PushBackCopy(m);
     }
   }
   if (prior_fn != NULL) {
@@ -108,10 +108,10 @@ void MixtureGauss::InitFromFile(const char* mean_fn, const char* covs_fn, const 
     for (int i = 0; i < prior.length(); i++) prior[i] = 1.0/K;
   }
   
-  ACC_means.Copy(means);
-  ACC_covs.Copy(covs);
+  ACC_means.InitCopy(means);
+  ACC_covs.InitCopy(covs);
   ACC_prior.Init(K);
-  inv_covs.Copy(covs);
+  inv_covs.InitCopy(covs);
   det_covs.Init(covs.size());
   for (int i = 0; i < K; i++) {
     double det = la::Determinant(covs[i]);
@@ -126,6 +126,8 @@ void MixtureGauss::InitFromProfile(const ArrayList<Matrix>& matlst, int start, i
   matlst[start].MakeColumnVector(0, &tmp);
   prior.Copy(tmp);
 
+  // DEBUG: print_vector(prior, "  prior = ");
+
   means.Init();
   covs.Init();
   int K = prior.length();
@@ -134,13 +136,13 @@ void MixtureGauss::InitFromProfile(const ArrayList<Matrix>& matlst, int start, i
     DEBUG_ASSERT(matlst[i+1].n_rows()==N && matlst[i+1].n_cols()==N);
     Vector m;
     matlst[i].MakeColumnVector(0, &m);
-    means.AddBackItem(m);
-    covs.AddBackItem(matlst[i+1]);    
+    means.PushBackCopy(m);
+    covs.PushBackCopy(matlst[i+1]);    
   }
-  ACC_means.Copy(means);
-  ACC_covs.Copy(covs);
+  ACC_means.InitCopy(means);
+  ACC_covs.InitCopy(covs);
   ACC_prior.Init(K);
-  inv_covs.Copy(covs);
+  inv_covs.InitCopy(covs);
   det_covs.Init(covs.size());
   for (int i = 0; i < K; i++) {
     double det = la::Determinant(covs[i]);
