@@ -14,7 +14,6 @@ class TestInfomaxICA {
   void Init(){
     // load some test data that has been verified using the matlab
     // implementation of infomax
-    //testdata_.InitFromFile("../../example/fake.arff");
     data::Load("../../fastlib/fake.arff",&testdata_);
     lambda_=0.001;
     b_=5;

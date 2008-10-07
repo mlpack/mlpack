@@ -23,10 +23,6 @@ const fx_entry_doc infomax_ica_main_entries[] = {
 };
 
 const fx_submodule_doc infomax_ica_main_submodules[] = {
-//   {"allnn", &allnn_doc,
-//    "  Responsible for dual-tree computation.\n"},
-//   {"naive", &allnn_naive_doc,
-//    "  Stores results for naive computation.\n"},
   FX_SUBMODULE_DOC_DONE
 };
 
@@ -42,8 +38,6 @@ int main(int argc, char *argv[]) {
   double lambda = fx_param_double(root,"lambda",0.001);
   int B = fx_param_int(root,"B",5);
   double epsilon = fx_param_double(root,"epsilon",0.001);
-  //Dataset dataset;
-  //dataset.InitFromFile(data);
   Matrix dataset;
   data::Load(data_file_name,&dataset);
   InfomaxICA *ica = new InfomaxICA(lambda, B, epsilon);
