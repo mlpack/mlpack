@@ -23,9 +23,43 @@
 
 class TestInfomaxICA; // forward reference
 
+const fx_entry_doc infomax_ica_entries[] = {
+  {"lambda", FX_PARAM, FX_DOUBLE, NULL,
+   "  Learning rate for infomax method.\n"},
+  {"B", FX_PARAM, FX_INT, NULL,
+   "  Infomax data window size.\n"},
+  {"epsilon", FX_PARAM, FX_DOUBLE, NULL,
+   "  Infomax algorithm stop threshold.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc infomax_ica_doc = {
+  infomax_ica_entries, NULL,
+  "Performs ICA decomposition using Infomax method.\n"
+};
+
+/* const fx_entry_doc allnn_naive_entries[] = { */
+/*   {"naive_time", FX_TIMER, FX_CUSTOM, NULL, */
+/*    "  Time spend performing the naive computation.\n"}, */
+/*   FX_ENTRY_DOC_DONE */
+/* }; */
+
+/* const fx_module_doc allnn_naive_doc = { */
+/* /\*   infomax_ica_entries, NULL, *\/ */
+/*   "Performs ICA decomposition using Informax method.\n" */
+/* }; */
+
 /**
- * Infomax ICA. Given an observation matrix, return the
- * corresponding unmixming matrix, W. 
+ * Infomax ICA. Given an observation matrix and input parameters,
+ * return the corresponding unmixming matrix, W.
+ * Exmaple use:
+ *
+ * @code
+ *   InfomaxICA *ica = new InfomaxICA(lambda, B, epsilon);
+ *   Matrix west;
+ *   ica->applyICA(dataset);  
+ *   ica->getUnmixing(west);
+ * @endcode
  */
 
 class InfomaxICA {
@@ -35,7 +69,8 @@ class InfomaxICA {
  public:
   InfomaxICA();
   InfomaxICA(double lambda, int B, double epsilon);
-  void applyICA(const Dataset& dataset);
+  //void applyICA(const Dataset& dataset);
+  void applyICA(const Matrix &dataset);
   void evaluateICA();
   void displayMatrix(const Matrix &m);
   void displayVector(const Vector &m);

@@ -10,21 +10,21 @@ binrule(
     name = "infomax_ica_main",                 # the executable name
     sources = ["main.cc"],         # compile main.cc
     headers = [],                  # no extra headers
-    linkables = [":infomax_ica"]       # depends on InfomaxICA in this folder
+    deplibs = [":infomax_ica"]       # depends on InfomaxICA in this folder
     )
 
 binrule(
     name = "infomax_ica_test_main",                 # the executable name
     sources = ["test_main.cc"],         # compile main.cc
     headers = [],                  # no extra headers
-    linkables = [":infomax_ica"]       # depends on InfomaxICA in this folder
+    deplibs = [":infomax_ica"]       # depends on InfomaxICA in this folder
     )
 
 # to build:
 # 1. make sure have environment variables set up:
 #    $ source /full/path/to/fastlib/script/fl-env /full/path/to/fastlib
 #    (you might want to put this in bashrc)
-# 2. fl-build infomaxica_main
+# 2. fl-build infomax_ica_main
 #    - this automatically will assume --mode=check, the default
 #    - type fl-build --help for help
 # 3. ./main

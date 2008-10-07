@@ -3,6 +3,8 @@
  * @author Chip Mappus
  *
  * Methods for InfomaxICA.
+ *
+ * @see infomax_ica.h
  */
 
 #include "infomax_ica.h"
@@ -25,11 +27,13 @@ InfomaxICA::InfomaxICA(double lambda, int b, double epsilon):
  * Sphere the data, apply ica. This is the first function to call
  * after initializing the variables.
  */
-void InfomaxICA::applyICA(const Dataset& dataset){
+//void InfomaxICA::applyICA(const Dataset& dataset){
+void InfomaxICA::applyICA(const Matrix &dataset){
   double current_cos=DBL_MAX;
   w_.Init(b_,b_);
-  data_.Init(dataset.n_features(),dataset.n_points());
-  la::ScaleOverwrite(1.0,dataset.matrix(),&data_);
+  data_.Init(dataset.n_rows(),dataset.n_cols());
+  //data_.Init(dataset.n_features(),dataset.n_points());
+  la::ScaleOverwrite(1.0,dataset,&data_);
   if (b_<data_.n_cols()){
     sphere(data_);
     // initial estimate for w is Id

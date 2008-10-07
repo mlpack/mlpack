@@ -14,7 +14,8 @@ class TestInfomaxICA {
   void Init(){
     // load some test data that has been verified using the matlab
     // implementation of infomax
-    testdata_.InitFromFile("../../example/fake.arff");
+    //testdata_.InitFromFile("../../example/fake.arff");
+    data::Load("../../fastlib/fake.arff",&testdata_);
     lambda_=0.001;
     b_=5;
     epsilon_=0.001;
@@ -26,11 +27,11 @@ class TestInfomaxICA {
   }    
 
   void TestCov(){
-    ica_->sampleCovariance(testdata_.matrix());
+    ica_->sampleCovariance(testdata_);
   }
   
   void TestSqrtm(){
-    Matrix intermediate = ica_->sampleCovariance(testdata_.matrix());
+    Matrix intermediate = ica_->sampleCovariance(testdata_);
     ica_->sqrtm(intermediate);
   }
 
@@ -49,7 +50,7 @@ class TestInfomaxICA {
 
  private:
   InfomaxICA *ica_;
-  Dataset testdata_;
+  Matrix testdata_;
   double lambda_;
   int b_;
   double epsilon_;
