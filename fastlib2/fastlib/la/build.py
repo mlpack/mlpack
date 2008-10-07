@@ -1,5 +1,6 @@
 # Scroll down to see the main part.
 # (This first part is dedicated to compiling and installing LAPACK.)
+import commands;
 
 wgetrule(
     name = "blaspack_tgz",
@@ -10,6 +11,17 @@ wgetrule(
     name = "complex_blaspack_tgz",
     type = Types.ANY,
     url = "http://www.cc.gatech.edu/~gtg739c/complex_blaspack.tgz")
+
+wgetrule(
+    name = "blas_lock",
+    type = Types.ANY,
+		url = "/blas.lock")
+
+wgetrule(
+    name = "lapack_lock",
+    type = Types.ANY,
+		url = "/lapack.lock")
+
 
 def gen_compile_complex_lapack(sysentry, files, params):
   blaspack_tgz = files["complex_blaspack_tgz"].single(Types.ANY)
@@ -72,6 +84,96 @@ def gen_compile_lapack(sysentry, files, params):
   sysentry.command("echo '*** Done with LAPACK and BLAS!'")
   return [(Types.LINKABLE, libblaspack)]
 
+def make_blas(sysentry, files, params):
+	libblas = sysentry.file("KEEP/libblas.a", "arch", "kernel", "compiler")
+	if commands.getoutput("ls blas.lock")=="blas.lock":
+		return [(Types.LINKABLE, libblas)]
+	else:
+		print "First time installing BLAS, Here are your options:"
+		print "1)Press 1 if you want fastlib to download and install it from Netlib website"
+		print "2)Press 2 if you think you have a better version already installed press 2"
+		print "  You will be asked to give the full path along with the library name (/path/libexample.a)"
+		print "  if after giving the path you realize that it is wrong or it doesn't work"
+		print "  delete the $instalation_dir/fastlib/lapack.lock file and build your code again"
+		resp=0;
+		while resp!=1 and resp!=2:
+			resp=input("Give me your choice now: ");
+			if resp!=1 and resp!=2:
+				print "You chose "+str(resp)+ " which is not a valid choice"
+		if resp==2:
+			lapack_lib=input("Give me now the full path with the BLAS library name in quotes ie \"/usr/lib/libblas.a\": ");
+			print "I am creating a symbolic link to "+ str(lapack_lib)
+			print commands.getoutput("ln -s "+str(lapack_lib)+ " "+ sq(libblas.name));
+		else:
+			print "Now I will download BLAS from netlib.org"
+			workspace_dir = os.path.join(os.path.dirname(libblas.name), "netlib_workspace1")
+			# Make sure we won't rm -rf anything bad
+			assert "netlib_workspace1" in workspace_dir
+			sysentry.command("echo '... Extracting  files...'")
+			sysentry.command("mkdir -p %s" % sq(workspace_dir))
+			sysentry.command("cd %s && wget http://www.netlib.org/blas/blas.tgz" % (sq(workspace_dir)))
+			sysentry.command("cd %s && tar -xzf %s" % (sq(workspace_dir), sq("blas.tgz")))
+			sysentry.command("echo '*** Compiling  BLAS from netlib.org'")
+			sysentry.command("echo '!!! BLAS WARNING: For better performance, install ATLAS or Intel MKL.'")
+			sysentry.command("echo '... This may take several minutes (about 800 FORTRAN files).'")
+			sysentry.command("cd %s/BLAS && make all" % (sq(workspace_dir)))
+			sysentry.command("echo '... Almost done with BLAS...'")
+			sysentry.command("cd %s/BLAS && mv blas*.a %s" % (sq(workspace_dir), sq(libblas.name)))
+			sysentry.command("echo '... Created archive, cleaning up.'")
+			sysentry.command("rm -rf %s" % sq(workspace_dir))
+			sysentry.command("echo '*** Done with  and BLAS!'")
+	print "Generating a blas.lock file, if you want to reinstall differently delete it"
+	print commands.getoutput("echo lock"  + " >blas.lock");
+	return [(Types.LINKABLE, libblas)]
+
+
+
+def make_lapack(sysentry, files, params):
+	liblapack = sysentry.file("KEEP/liblapack.a", "arch", "kernel", "compiler");
+	if commands.getoutput("ls lapack.lock")=="lapack.lock":
+		return [(Types.LINKABLE, liblapack)]
+	else:
+		print "First time installing LAPACK, Here are your options:"
+		print "1)Press 1 if you want fastlib to download and install it from Netlib website"
+		print "2)Press 2 if you think you have a better version already installed press 2"
+		print "  You will be asked to give the full path along with the library name (/path/libexample.a)"
+		print "  if after giving the path you realize that it is wrong or it doesn't work"
+		print "  delete the $instalation_dir/fastlib/lapack.lock file and build your code again"
+		resp=0;
+		while resp!=1 and resp!=2:
+			resp=input("Give me your choice now: ");
+			if resp!=1 and resp!=2:
+				print "You chose "+str(resp)+ " which is not a valid choice"
+		if resp==2:
+			lapack_lib=input("Give me now the full path with the LAPACK library name in quotes ie \"/usr/lib/liblapack.a\": ");
+			print "I am creating a symbolic link to "+ str(lapack_lib)
+			print commands.getoutput("ln -s "+str(lapack_lib)+ " " + sq(liblapack.name));
+		else:
+			print "Now I will download LAPACK from netlib.org"
+			workspace_dir = os.path.join(os.path.dirname(liblapack.name), "netlib_workspace2")
+			compiler_info = compilers[params["compiler"]]
+			compiler = compiler_info.compiler_program("f")
+			# Make sure we won't rm -rf anything bad
+			assert "netlib_workspace2" in workspace_dir
+			sysentry.command("echo '... Extracting  files...'")
+			sysentry.command("mkdir -p %s" % sq(workspace_dir))
+			sysentry.command("cd %s && wget http://www.netlib.org/lapack/lapack.tgz" % (sq(workspace_dir)))
+			sysentry.command("cd %s && tar -xzf %s" % (sq(workspace_dir), sq("lapack.tgz")))
+			sysentry.command("echo '*** Compiling  LAPACK  from netlib.org'")
+			sysentry.command("echo '!!! LAPACK WARNING: For better performance, install ATLAS or Intel MKL.'")
+			sysentry.command("echo '... This may take several minutes (about 800 FORTRAN files).'")
+			sysentry.command("cd %s/lapack* && mv make.inc.example make.inc" % (sq(workspace_dir)) )
+			sysentry.command("cd %s/lapack* && make lapacklib" % (sq(workspace_dir)))
+			sysentry.command("echo '... Almost done with LAPACK...'")
+			sysentry.command("cd %s/lapack* && mv lapack*.a %s" % (sq(workspace_dir), sq(liblapack.name)))
+			sysentry.command("echo '... Created archive, cleaning up.'")
+			sysentry.command("rm -rf %s" % sq(workspace_dir))
+			sysentry.command("echo '*** Done with LAPACK !'")
+	print "Generating a lapack.lock file, if you want to reinstall differently delete it"
+	print commands.getoutput("echo lock"  + " >lapack.lock");
+	return [(Types.LINKABLE, liblapack)]
+
+
 
 customrule(
     name = "libcomplexblaspack",
@@ -84,10 +186,23 @@ customrule(
     dependencies = {"blaspack_tgz": [find(":blaspack_tgz")]},
     doit_fn = gen_compile_lapack)
 
+customrule(
+    name="netlib_blas",
+    dependencies = {"blas_lock": [find(":blas_lock")]},
+    doit_fn = make_blas
+		)
+
+customrule(
+    name="netlib_lapack",
+    dependencies = {"lapack_lock": [find(":lapack_lock")]},
+    doit_fn = make_lapack
+    )
+
 #---- This is the main part of LA package
 
 librule(
     sources = ["uselapack.cc"],
     headers = ["matrix.h", "la.h", "uselapack.h", "clapack.h", "blas.h"],
     tests = ["uselapack_test.cc"],
-    deplibs = ["fastlib/base:base", "fastlib/col:col", ":libblaspack", "fastlib/math:math"])
+    deplibs = ["fastlib/base:base", "fastlib/col:col",
+							":netlib_blas", ":netlib_lapack"])
