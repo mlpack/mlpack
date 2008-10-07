@@ -15,12 +15,12 @@ wgetrule(
 wgetrule(
     name = "blas_lock",
     type = Types.ANY,
-		url = "/blas.lock")
+		url = "www.gatech.edu/blas.lock")
 
 wgetrule(
     name = "lapack_lock",
     type = Types.ANY,
-		url = "/lapack.lock")
+		url = "www.gatech.edu/lapack.lock")
 
 
 def gen_compile_complex_lapack(sysentry, files, params):
@@ -86,7 +86,8 @@ def gen_compile_lapack(sysentry, files, params):
 
 def make_blas(sysentry, files, params):
 	libblas = sysentry.file("KEEP/libblas.a", "arch", "kernel", "compiler")
-	if commands.getoutput("ls blas.lock")=="blas.lock":
+	blas_lock = files["blas_lock"].single(Types.ANY)
+	if commands.getoutput("ls " + sq(blas_lock.name))==sq(blas_lock.name):
 		return [(Types.LINKABLE, libblas)]
 	else:
 		print "First time installing BLAS, Here are your options:"
@@ -103,6 +104,7 @@ def make_blas(sysentry, files, params):
 		if resp==2:
 			lapack_lib=input("Give me now the full path with the BLAS library name in quotes ie \"/usr/lib/libblas.a\": ");
 			print "I am creating a symbolic link to "+ str(lapack_lib)
+			commands.getoutput("rm -f " + sq(libblas.name));
 			print commands.getoutput("ln -s "+str(lapack_lib)+ " "+ sq(libblas.name));
 		else:
 			print "Now I will download BLAS from netlib.org"
@@ -130,7 +132,8 @@ def make_blas(sysentry, files, params):
 
 def make_lapack(sysentry, files, params):
 	liblapack = sysentry.file("KEEP/liblapack.a", "arch", "kernel", "compiler");
-	if commands.getoutput("ls lapack.lock")=="lapack.lock":
+	lapack_lock = files["lapack_lock"].single(Types.ANY)
+	if commands.getoutput("ls "+ sq(lapack_lock.name))==sq(lapack_lock.name):
 		return [(Types.LINKABLE, liblapack)]
 	else:
 		print "First time installing LAPACK, Here are your options:"
@@ -147,6 +150,7 @@ def make_lapack(sysentry, files, params):
 		if resp==2:
 			lapack_lib=input("Give me now the full path with the LAPACK library name in quotes ie \"/usr/lib/liblapack.a\": ");
 			print "I am creating a symbolic link to "+ str(lapack_lib)
+			commands.getoutput("rm -f " + sq(liblapack.name));
 			print commands.getoutput("ln -s "+str(lapack_lib)+ " " + sq(liblapack.name));
 		else:
 			print "Now I will download LAPACK from netlib.org"
