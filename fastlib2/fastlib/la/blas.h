@@ -3,7 +3,7 @@
 
 #include "fastlib/base/fortran.h"
 #include "fastlib/base/compiler.h"
-namespace la {
+//namespace la {
 
 EXTERN_C_BEGIN
 
@@ -154,5 +154,5 @@ f77_ret_void F77_FUNC(ztrmm)(const char *, const char *, const char *, const cha
 f77_ret_void F77_FUNC(ztrsm)(const char *, const char *, const char *, const char *, f77_integer CONST_REF, f77_integer CONST_REF, const f77_doublecomplex *, const f77_doublecomplex *, f77_integer CONST_REF, f77_doublecomplex *, f77_integer CONST_REF);
 
 EXTERN_C_END
-};
+//};
 #endif
