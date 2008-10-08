@@ -125,7 +125,7 @@ def make_blas(sysentry, files, params):
 			sysentry.command("rm -rf %s" % sq(workspace_dir))
 			sysentry.command("echo '*** Done with  and BLAS!'")
 	print "Generating a blas.lock file, if you want to reinstall differently delete it"
-	print commands.getoutput("echo lock"  + " >blas.lock");
+	print commands.getoutput("echo lock"  + " >"+sq(blas_lock.name));
 	return [(Types.LINKABLE, libblas)]
 
 
@@ -174,7 +174,7 @@ def make_lapack(sysentry, files, params):
 			sysentry.command("rm -rf %s" % sq(workspace_dir))
 			sysentry.command("echo '*** Done with LAPACK !'")
 	print "Generating a lapack.lock file, if you want to reinstall differently delete it"
-	print commands.getoutput("echo lock"  + " >lapack.lock");
+	print commands.getoutput("echo lock"  + " > " + sq(lapack_lock.name));
 	return [(Types.LINKABLE, liblapack)]
 
 
