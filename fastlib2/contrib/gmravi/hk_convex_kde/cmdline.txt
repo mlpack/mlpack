@@ -1,0 +1,15 @@
+
+ ==cflags="-I/net/app2/x86_64/matlab7/extern/include" --ise/train='points_mog3_train.txt' --ise/sigma_h=0.5 --ise/sigma=0.5 --ise/lambda=0.5
+
+fl-build hk_convex_ise --cflags="-I/net/app2/x86_64/matlab7/extern/include/" --ise/train='points_mog3_train.txt' --ise/sigma_h=0.5 --ise/sigma=0.5 --ise/lambda=0.5
+
+
+g++ -I/net/app2/x86_64/matlab7/sys/os/glnxa64 du mmy.cc -I/net/app2/x86_64/matlab7/extern/include -L/net/app2/x86_64/matlab7/bin/ glnxa64-leng -lm
+
+
+ gcc32 -L/net/app2/x86_64/matlab7/sys/os/glnxa64 dummy.cc -o dummy -I/net/app2/x86_64/matlab7/extern/include -L/net/app2/x86_64/matlab7/bin/glnxa64 -leng -lm -lstdc++
+
+gcc4 dummy.cc -o dummy /usr/lib64/libstdc++.so.5 -I/net/app2/x86_64/matlab7/extern/include -L/net/app2/x86_64/matlab7/bin/glnxa64 -leng -lm
+
+
+fl-build hk_convex_ise --cflags="/usr/lib64/libstdc++.so.5 -I/net/app2/x86_64/matlab7/extern/include -L/net/app2/x86_64/matlab7/bin/glnxa64 -leng -lm" --ise/sigma_h=0.5 --ise/sigma=0.5 --ise/lambda=0.5
