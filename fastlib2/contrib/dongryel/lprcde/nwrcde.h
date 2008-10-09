@@ -25,11 +25,14 @@
 #include "mlpack/series_expansion/kernel_aux.h"
 #include "contrib/dongryel/proximity_project/gen_metric_tree.h"
 #include "contrib/dongryel/proximity_project/subspace_stat.h"
+#include "nwrcde_results.h"
 
 ////////// Documentation stuffs //////////
 const fx_entry_doc nwrcde_main_entries[] = {
   {"data", FX_REQUIRED, FX_STR, NULL,
    "  A file containing reference data.\n"},
+  {"dtarget", FX_REQUIRED, FX_STR, NULL,
+   "  A file containing reference target training values.\n"},
   {"query", FX_PARAM, FX_STR, NULL,
    "  A file containing query data (defaults to data).\n"},
   FX_ENTRY_DOC_DONE
@@ -88,40 +91,43 @@ class NWRCde {
 
  public:
     
+  /** @brief The type of our query tree.
+   */
+  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector >, Matrix > QueryTree;
+
+  /** @brief The type of our reference tree.
+   */
+  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector >, Matrix > ReferenceTree;
+
  private:
 
   ////////// Private Constants //////////
 
   ////////// Private Member Variables //////////
 
+  /** @brief The kernel function.
+   */
+  TKernel kernel_;
+
   /** @brief The pointer to the module holding the parameters.
    */
   struct datanode *module_;
 
-  /** @brief The boolean flag to control the leave-one-out computation.
-   */
-  bool leave_one_out_;
-
-  /** @brief The query dataset.
-   */
-  Matrix qset_;
-
-  /** @brief The query tree.
-   */
-  Tree *qroot_;
-
   /** @brief The reference dataset.
    */
   Matrix rset_;
-  
+
+  /** @brief The reference targets.
+   */
+  Vector rset_targets_;
+
+  /** @brief The sum of the reference targets.
+   */
+  double rset_target_sum_;
+
   /** @brief The reference tree.
    */
   Tree *rroot_;
-
-  /** @brief The permutation mapping indices of queries_ to original
-   *         order.
-   */
-  ArrayList<index_t> old_from_new_queries_;
   
   /** @brief The permutation mapping indices of references_ to
    *         original order.
@@ -132,24 +138,19 @@ class NWRCde {
 
   void RefineBoundStatistics_(Tree *destination);
 
-  /** @brief The exhaustive base KDE case.
+  /** @brief The exhaustive base Nadaraya-Watson regression and
+   *         conditional density estimation.
    */
-  void DualtreeKdeBase_(Tree *qnode, Tree *rnode, double probability);
-
-  /** @brief Checking for prunability of the query and the reference
-   *         pair using four types of pruning methods.
-   */
-  bool PrunableEnhanced_(Tree *qnode, Tree *rnode, double probability,
-			 DRange &dsqd_range, DRange &kernel_value_range, 
-			 double &dl, double &du,
-			 double &used_error, double &n_pruned,
-			 int &order_farfield_to_local,
-			 int &order_farfield, int &order_local);
+  void NWRCdeBase_(const Matrix &qset, Tree *qnode, Tree *rnode, 
+		   double probability, Vector &numerator_sum_l,
+		   Vector &numerator_sum_e, Vector &denominator_sum_l,
+		   Vector &denominator_sum_e);
   
   double EvalUnnormOnSq_(index_t reference_point_index,
 			 double squared_distance);
 
-  /** @brief Canonical dualtree KDE case.
+  /** @brief Canonical dual-tree Nadaraya-Watson regression and
+   *         conditional density estimation.
    *
    *  @param qnode The query node.
    *  @param rnode The reference node.
@@ -159,7 +160,8 @@ class NWRCde {
    *  @return true if the entire contribution of rnode has been
    *          approximated using an exact method, false otherwise.
    */
-  bool DualtreeKdeCanonical_(Tree *qnode, Tree *rnode, double probability);
+  bool NWRCdeCanonical_(const Matrix &qset, Tree *qnode, Tree *rnode,
+			double probability, NWRCdeResults &query_results);
 
   /** @brief Pre-processing step - this wouldn't be necessary if the
    *         core fastlib supported a Init function for Stat objects
@@ -178,39 +180,61 @@ class NWRCde {
   /** @brief The default constructor.
    */
   NWRCde() {
-    qroot_ = rroot_ = NULL;
+    rroot_ = NULL;
   }
 
   /** @brief The default destructor which deletes the trees.
    */
-  ~NWRCde() { 
-    
-    if(qroot_ != rroot_ ) {
-      delete qroot_; 
-      delete rroot_; 
-    } 
-    else {
-      delete rroot_;
-    }
-
+  ~NWRCde() {
+    delete rroot_;
   }
 
   ////////// User Level Functions //////////
 
-  void Compute(Vector *regression_estimates) {
+  void Compute(const Matrix &queries, NWRCdeResults *query_results) {
 
-    // Initialize the temporary sum accumulators to zero.
-    nwr_numerator_sum_l_.SetZero();
-    nwr_numerator_sum_e_.SetZero();
+    // Initialize the temporary sum accumulators to zero.    
+    query_results->Init();
+
+    // Build the query tree.
+    Tree *qroot = proximity::MakeGenMetricTree<Tree>(qset, leaflen,
+						     &old_from_new_queries
+						     NULL);
     
-    
+    // Compute the estimates using a dual-tree based algorithm.
+    NWRCdeCanonical_(qset, qroot, rroot_, probability, *query_results);
+
+    PostProcess_(qroot, *query_results);
   }
 
-  void Init(const Matrix &queries, const Matrix &references,
-	    const Matrix &rset_weights, bool queries_equal_references, 
+  void Init(const Matrix &references, const Matrix &reference_targets,
 	    struct datanode *module_in) {
 
+    // Set the module pointer.
+    module_ = module_in;
+
+    // Construct the reference tree.
+    int leaflen = fx_param_int(module_in, "leaflen", 20);
+
+    // Copy the reference dataset and construct the reference tree.
+    rset_.Copy(references);
+    DEBUG_ASSERT(references.n_cols() == reference_targets.n_cols());
+    rset_targets_.Init(reference_targets.n_cols());
+    rset_target_sum_ = 0;
+    for(index_t i = 0; i < rset_targets_.n_cols(); i++) {
+      rset_targets_[i] = reference_targets.get(0, i);
+      rset_target_sum_ += rset_targets_[i];
+    }
     
+    fx_timer_start(module_, "reference_tree_construct");
+    rroot_ = proximity::MakeGenMetricTree<Tree>(rset_, leaflen,
+						&old_from_new_references_,
+						NULL);
+    fx_timer_stop(module_, "reference_tree_construct");
+
+    // Initialize the kernel.
+    double bandwidth = fx_param_double_req(module_, "bandwidth");
+    kernel_.Init(bandwidth);
   }
 
   void PrintDebug();
