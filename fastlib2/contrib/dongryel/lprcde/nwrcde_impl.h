@@ -54,10 +54,13 @@ void NWRCde<TKernel>::NWRCdeCanonical_(const Matrix &qset, Tree *qnode,
 				       Tree *rnode, double probability,
 				       NWRCdeResults &query_results) {
 
+  // This is the delta change due to the current query and reference
+  // node pair.
+  NWRCdeDelta delta;
+  delta.Compute(qnode, rnode);
+
   // Try finite difference pruning first.
-  if(DualtreeKdeCommon::Prunable(qnode, rnode, probability, dsqd_range, 
-				 kernel_value_range, dl, de, du, used_error, 
-				 n_pruned, this)) {
+  if(NWRCdeCommon::ConsiderPairExact(qnode, rnode, probability, delta)) {
     num_finite_difference_prunes_++;
     return true;
   }
@@ -117,7 +120,7 @@ void NWRCde<TKernel>::NWRCdeCanonical_(const Matrix &qset, Tree *qnode,
     else {
       Tree *rnode_first = NULL, *rnode_second = NULL;
       double probability_first = 0, probability_second = 0;
-      NWRCdeCommon::BestNodePartners
+      NWRCdeCommon::Heuristic
 	(qnode, rnode->left(), rnode->right(), probability,
 	 &rnode_first, &probability_first, &rnode_second, &probability_second);
       
@@ -159,7 +162,7 @@ void NWRCde<TKernel>::NWRCdeCanonical_(const Matrix &qset, Tree *qnode,
       Tree *qnode_first = NULL, *qnode_second = NULL;
       double probability_first = 0, probability_second = 0;
 
-      NWRCdeCommon::BestNodePartners
+      NWRCdeCommon::Heuristic
 	(rnode, qnode->left(), qnode->right(), probability,
 	 &qnode_first, &probability_first, &qnode_second, &probability_second);
       bool first_result =
@@ -177,7 +180,7 @@ void NWRCde<TKernel>::NWRCdeCanonical_(const Matrix &qset, Tree *qnode,
       double probability_first = 0, probability_second = 0;
   
       // Fix the query node to be the left child, and recurse.
-      NWRCdeCommon::BestNodePartners
+      NWRCdeCommon::Heuristic
 	(qnode->left(), rnode->left(), rnode->right(), probability, 
 	 &rnode_first, &probability_first, &rnode_second, &probability_second);
       bool left_first_result =
@@ -195,7 +198,7 @@ void NWRCde<TKernel>::NWRCdeCanonical_(const Matrix &qset, Tree *qnode,
 			 query_results);
       
       // Fix the query node to be the right child, and recurse.
-      NWRCdeCommon::BestNodePartners
+      NWRCdeCommon::Heuristic
 	(qnode->right(), rnode->left(), rnode->right(), probability, 
 	 &rnode_first, &probability_first, &rnode_second, &probability_second);
       bool right_first_result =
