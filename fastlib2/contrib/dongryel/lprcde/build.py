@@ -3,12 +3,12 @@ librule(
     sources = [],                            # files that must be compiled
     headers = ["nwrcde_common.h",
                "nwrcde_delta.h",
-               "nwrcde.h"
+               "nwrcde.h",
                "nwrcde_impl.h",
                "nwrcde_query_postponed.h",
                "nwrcde_query_result.h",
                "nwrcde_query_summary.h",
-               "nwrcde_stat.h"]         ,    # include files part of the 'lib'
+               "nwrcde_stat.h"],             # include files part of the 'lib'
     deplibs = ["fastlib:fastlib_int",
                "contrib/dongryel/proximity_project:proximity_project",
                "mlpack/series_expansion:series_expansion"]
