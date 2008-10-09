@@ -35,8 +35,8 @@ class NWRCdeCommon {
    *                    point information.
    */
   template<typename TTree>
-  static void AddPostponed(TTree *node, NWRCdeQueryResult &query_results,
-			   index_t destination) {
+  static void ApplyPostponed(TTree *node, NWRCdeQueryResult &query_results,
+			     index_t destination) {
 
     query_results.numerator_sum_l[destination] += 
       node->stat().postponed.nwr_numerator_sum_l;

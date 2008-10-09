@@ -25,7 +25,11 @@
 #include "mlpack/series_expansion/kernel_aux.h"
 #include "contrib/dongryel/proximity_project/gen_metric_tree.h"
 #include "contrib/dongryel/proximity_project/subspace_stat.h"
-#include "nwrcde_results.h"
+#include "nwrcde_delta.h"
+#include "nwrcde_query_postponed.h"
+#include "nwrcde_query_result.h"
+#include "nwrcde_query_summary.h"
+
 
 ////////// Documentation stuffs //////////
 const fx_entry_doc nwrcde_main_entries[] = {
@@ -75,8 +79,7 @@ const fx_module_doc nwrcde_doc = {
 
 const fx_submodule_doc nwrcde_main_submodules[] = {
   {"nwrcde", &nwrcde_doc,
-   "  Responsible for Nadaraya-Watson regression and conditional density
-  estimate computation.\n"},
+   "  Responsible for Nadaraya-Watson regression and conditional density estimate computation.\n"},
   FX_SUBMODULE_DOC_DONE
 };
 
@@ -127,7 +130,7 @@ class NWRCde {
 
   /** @brief The reference tree.
    */
-  Tree *rroot_;
+  ReferenceTree *rroot_;
   
   /** @brief The permutation mapping indices of references_ to
    *         original order.
@@ -136,12 +139,10 @@ class NWRCde {
 
   ////////// Private Member Functions //////////
 
-  void RefineBoundStatistics_(Tree *destination);
-
   /** @brief The exhaustive base Nadaraya-Watson regression and
    *         conditional density estimation.
    */
-  void NWRCdeBase_(const Matrix &qset, Tree *qnode, Tree *rnode, 
+  void NWRCdeBase_(const Matrix &qset, QueryTree *qnode, ReferenceTree *rnode, 
 		   double probability, Vector &numerator_sum_l,
 		   Vector &numerator_sum_e, Vector &denominator_sum_l,
 		   Vector &denominator_sum_e);
@@ -160,18 +161,19 @@ class NWRCde {
    *  @return true if the entire contribution of rnode has been
    *          approximated using an exact method, false otherwise.
    */
-  bool NWRCdeCanonical_(const Matrix &qset, Tree *qnode, Tree *rnode,
-			double probability, NWRCdeResults &query_results);
+  bool NWRCdeCanonical_(const Matrix &qset, QueryTree *qnode, 
+			ReferenceTree *rnode, double probability, 
+			NWRCdeQueryResult &query_results);
 
   /** @brief Pre-processing step - this wouldn't be necessary if the
    *         core fastlib supported a Init function for Stat objects
    *         that take more arguments.
    */
-  void PreProcess(Tree *node);
+  void PreProcessReferenceTree(ReferenceTree *node);
 
   /** @brief Post processing step.
    */
-  void PostProcess(Tree *qnode);
+  void PostProcessQueryTree(QueryTree *qnode);
 
  public:
 
@@ -191,20 +193,27 @@ class NWRCde {
 
   ////////// User Level Functions //////////
 
-  void Compute(const Matrix &queries, NWRCdeResults *query_results) {
+  void Compute(const Matrix &queries, NWRCdeQueryResult *query_results) {
+
+    index_t leaflen = fx_param_int(module_, "leaflen", 20);
+    double probability = fx_param_double(module_, "probability", 1.0);
+
+    // Make a copy of the query set.
+    Matrix qset;
+    qset.Copy(queries);
 
     // Initialize the temporary sum accumulators to zero.    
     query_results->Init();
 
     // Build the query tree.
-    Tree *qroot = proximity::MakeGenMetricTree<Tree>(qset, leaflen,
-						     &old_from_new_queries
-						     NULL);
+    ArrayList<index_t> old_from_new_queries;
+    QueryTree *qroot = proximity::MakeGenMetricTree<QueryTree>
+      (qset, leaflen, &old_from_new_queries, NULL);
     
     // Compute the estimates using a dual-tree based algorithm.
     NWRCdeCanonical_(qset, qroot, rroot_, probability, *query_results);
 
-    PostProcess_(qroot, *query_results);
+    //PostProcess_(qroot, *query_results);
   }
 
   void Init(const Matrix &references, const Matrix &reference_targets,
@@ -221,15 +230,14 @@ class NWRCde {
     DEBUG_ASSERT(references.n_cols() == reference_targets.n_cols());
     rset_targets_.Init(reference_targets.n_cols());
     rset_target_sum_ = 0;
-    for(index_t i = 0; i < rset_targets_.n_cols(); i++) {
+    for(index_t i = 0; i < rset_targets_.length(); i++) {
       rset_targets_[i] = reference_targets.get(0, i);
       rset_target_sum_ += rset_targets_[i];
     }
     
     fx_timer_start(module_, "reference_tree_construct");
-    rroot_ = proximity::MakeGenMetricTree<Tree>(rset_, leaflen,
-						&old_from_new_references_,
-						NULL);
+    rroot_ = proximity::MakeGenMetricTree<ReferenceTree>
+      (rset_, leaflen, &old_from_new_references_, NULL);
     fx_timer_stop(module_, "reference_tree_construct");
 
     // Initialize the kernel.
