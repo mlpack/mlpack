@@ -22,12 +22,13 @@ void NWRCde<TKernel>::NWRCdeBase_(const Matrix &qset, QueryTree *qnode,
     for(index_t r = rnode->begin(); r < rnode->end(); r++) {
       
       // Get the reference point.
-      const double *r_col = rset_.GetColumnPtr(r);
+      const double *r_col = parameters_.rset.GetColumnPtr(r);
       
       // pairwise distance and kernel value
       double dsqd = la::DistanceSqEuclidean(qset.n_rows(), q_col, r_col);
-      double kernel_value = kernel_.EvalUnnormOnSq(dsqd);
-      double weighted_kernel_value = rset_targets_[r] * kernel_value;
+      double kernel_value = parameters_.kernel.EvalUnnormOnSq(dsqd);
+      double weighted_kernel_value = parameters_.rset_targets[r] * 
+	kernel_value;
       
       query_results.nwr_numerator_sum_l[q] += weighted_kernel_value;
       query_results.nwr_numerator_sum_e[q] += weighted_kernel_value;
@@ -38,8 +39,8 @@ void NWRCde<TKernel>::NWRCdeBase_(const Matrix &qset, QueryTree *qnode,
     
     // Each query point has taken care of all reference points.
     query_results.nwr_numerator_n_pruned[q] += 
-      rnode->stat().farfield_expansion_.get_weight_sum();
-    query_results.nwr_denominator_n_pruned[q] += ;
+      rnode->stat().sum_of_target_values;
+    query_results.nwr_denominator_n_pruned[q] += rnode->count();
     
     // Refine min and max summary statistics.
     qnode->stat().summary.Accumulate(query_results, q);
@@ -54,17 +55,18 @@ template<typename TKernel>
 bool NWRCde<TKernel>::NWRCdeCanonical_(const Matrix &qset, QueryTree *qnode,
 				       ReferenceTree *rnode, 
 				       double probability,
-				       NWRCdeResults &query_results) {
+				       NWRCdeQueryResult &query_results) {
 
   // This is the delta change due to the current query and reference
   // node pair.
   NWRCdeDelta delta;
-  delta.Compute(qnode, rnode, kernel_);
+  delta.Compute(parameters_, qnode, rnode);
 
   // Try finite difference pruning first.
-  if(NWRCdeCommon::ConsiderPairExact(qnode, rnode, probability, delta)) {
+  if(NWRCdeCommon::ConsiderPairExact(parameters_, qnode, rnode, probability, 
+				     delta)) {
     qnode->stat().postponed.ApplyDelta(delta);
-    num_finite_difference_prunes_++;    
+    query_results.num_finite_difference_prunes++;    
     return true;
   }
   

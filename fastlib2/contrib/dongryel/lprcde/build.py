@@ -3,7 +3,9 @@ librule(
     sources = [],                            # files that must be compiled
     headers = ["nwrcde_common.h",
                "nwrcde_delta.h",
+               "nwrcde_error.h",
                "nwrcde.h",
+               "nwrcde_global.h",
                "nwrcde_impl.h",
                "nwrcde_query_postponed.h",
                "nwrcde_query_result.h",
