@@ -25,11 +25,12 @@
 #include "mlpack/series_expansion/kernel_aux.h"
 #include "contrib/dongryel/proximity_project/gen_metric_tree.h"
 #include "contrib/dongryel/proximity_project/subspace_stat.h"
+#include "nwrcde_common.h"
 #include "nwrcde_delta.h"
 #include "nwrcde_query_postponed.h"
 #include "nwrcde_query_result.h"
 #include "nwrcde_query_summary.h"
-
+#include "nwrcde_global.h"
 
 ////////// Documentation stuffs //////////
 const fx_entry_doc nwrcde_main_entries[] = {
@@ -108,34 +109,10 @@ class NWRCde {
 
   ////////// Private Member Variables //////////
 
-  /** @brief The kernel function.
+  /** @brief The list of parameters.
    */
-  TKernel kernel_;
+  NWRCdeGlobal<TKernel, ReferenceTree> parameters_;
 
-  /** @brief The pointer to the module holding the parameters.
-   */
-  struct datanode *module_;
-
-  /** @brief The reference dataset.
-   */
-  Matrix rset_;
-
-  /** @brief The reference targets.
-   */
-  Vector rset_targets_;
-
-  /** @brief The sum of the reference targets.
-   */
-  double rset_target_sum_;
-
-  /** @brief The reference tree.
-   */
-  ReferenceTree *rroot_;
-  
-  /** @brief The permutation mapping indices of references_ to
-   *         original order.
-   */
-  ArrayList<index_t> old_from_new_references_;
 
   ////////// Private Member Functions //////////
 
@@ -143,9 +120,7 @@ class NWRCde {
    *         conditional density estimation.
    */
   void NWRCdeBase_(const Matrix &qset, QueryTree *qnode, ReferenceTree *rnode, 
-		   double probability, Vector &numerator_sum_l,
-		   Vector &numerator_sum_e, Vector &denominator_sum_l,
-		   Vector &denominator_sum_e);
+		   double probability, NWRCdeQueryResult &query_results);
   
   double EvalUnnormOnSq_(index_t reference_point_index,
 			 double squared_distance);
@@ -182,21 +157,22 @@ class NWRCde {
   /** @brief The default constructor.
    */
   NWRCde() {
-    rroot_ = NULL;
+    parameters_.rroot = NULL;
   }
 
   /** @brief The default destructor which deletes the trees.
    */
   ~NWRCde() {
-    delete rroot_;
+    delete parameters_.rroot;
   }
 
   ////////// User Level Functions //////////
 
   void Compute(const Matrix &queries, NWRCdeQueryResult *query_results) {
 
-    index_t leaflen = fx_param_int(module_, "leaflen", 20);
-    double probability = fx_param_double(module_, "probability", 1.0);
+    index_t leaflen = fx_param_int(parameters_.module, "leaflen", 20);
+    double probability = 
+      fx_param_double(parameters_.module, "probability", 1.0);
 
     // Make a copy of the query set.
     Matrix qset;
@@ -209,9 +185,10 @@ class NWRCde {
     ArrayList<index_t> old_from_new_queries;
     QueryTree *qroot = proximity::MakeGenMetricTree<QueryTree>
       (qset, leaflen, &old_from_new_queries, NULL);
-    
+
     // Compute the estimates using a dual-tree based algorithm.
-    NWRCdeCanonical_(qset, qroot, rroot_, probability, *query_results);
+    NWRCdeCanonical_(qset, qroot, parameters_.rroot, probability, 
+		     *query_results);
 
     //PostProcess_(qroot, *query_results);
   }
@@ -220,29 +197,30 @@ class NWRCde {
 	    struct datanode *module_in) {
 
     // Set the module pointer.
-    module_ = module_in;
+    parameters_.module = module_in;
 
     // Construct the reference tree.
     int leaflen = fx_param_int(module_in, "leaflen", 20);
 
     // Copy the reference dataset and construct the reference tree.
-    rset_.Copy(references);
+    parameters_.rset_.Copy(references);
     DEBUG_ASSERT(references.n_cols() == reference_targets.n_cols());
-    rset_targets_.Init(reference_targets.n_cols());
-    rset_target_sum_ = 0;
-    for(index_t i = 0; i < rset_targets_.length(); i++) {
-      rset_targets_[i] = reference_targets.get(0, i);
-      rset_target_sum_ += rset_targets_[i];
+    parameters_.rset_targets_.Init(reference_targets.n_cols());
+    parameters_.rset_target_sum_ = 0;
+    for(index_t i = 0; i < parameters_.rset_targets_.length(); i++) {
+      parameters_.rset_targets_[i] = reference_targets.get(0, i);
+      parameters_.rset_target_sum_ += parameters_.rset_targets_[i];
     }
     
-    fx_timer_start(module_, "reference_tree_construct");
-    rroot_ = proximity::MakeGenMetricTree<ReferenceTree>
-      (rset_, leaflen, &old_from_new_references_, NULL);
-    fx_timer_stop(module_, "reference_tree_construct");
-
+    fx_timer_start(parameters_.module, "reference_tree_construct");
+    parameters_.rroot = proximity::MakeGenMetricTree<ReferenceTree>
+      (parameters_.rset, leaflen, &(parameters_.old_from_new_references),
+       NULL);
+    fx_timer_stop(parameters_.module, "reference_tree_construct");
+    
     // Initialize the kernel.
-    double bandwidth = fx_param_double_req(module_, "bandwidth");
-    kernel_.Init(bandwidth);
+    double bandwidth = fx_param_double_req(parameters_.module, "bandwidth");
+    parameters_.kernel_.Init(parameters_.bandwidth);
   }
 
   void PrintDebug();

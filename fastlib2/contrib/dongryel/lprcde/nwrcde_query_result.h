@@ -16,6 +16,8 @@ class NWRCdeQueryResult {
   Vector nwr_numerator_used_error;
   Vector nwr_denominator_used_error;
   
+  int num_finite_difference_prunes;
+
  public:
   
   void ApplyPostponed(const NWRCdeQueryPostponed &postponed_in, 
@@ -57,6 +59,7 @@ class NWRCdeQueryResult {
     nwr_denominator_n_pruned.SetZero();
     nwr_numerator_used_error.SetZero();
     nwr_denominator_used_error.SetZero();
+    num_finite_difference_prunes = 0;
   }
   
 };
