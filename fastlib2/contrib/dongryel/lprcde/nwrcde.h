@@ -140,15 +140,18 @@ class NWRCde {
 			ReferenceTree *rnode, double probability, 
 			NWRCdeQueryResult &query_results);
 
+  void PreProcessQueryTree_(QueryTree *node);
+
   /** @brief Pre-processing step - this wouldn't be necessary if the
    *         core fastlib supported a Init function for Stat objects
    *         that take more arguments.
    */
-  void PreProcessReferenceTree(ReferenceTree *node);
+  void PreProcessReferenceTree_(ReferenceTree *node);
 
   /** @brief Post processing step.
    */
-  void PostProcessQueryTree(QueryTree *qnode);
+  void PostProcessQueryTree_(QueryTree *qnode, 
+			     NWRCdeQueryResult &query_results);
 
  public:
 
@@ -187,10 +190,10 @@ class NWRCde {
       (qset, leaflen, &old_from_new_queries, NULL);
 
     // Compute the estimates using a dual-tree based algorithm.
+    PreProcessQueryTree_(qroot);
     NWRCdeCanonical_(qset, qroot, parameters_.rroot, probability, 
 		     *query_results);
-
-    //PostProcess_(qroot, *query_results);
+    PostProcessQueryTree_(qroot, *query_results);
   }
 
   void Init(const Matrix &references, const Matrix &reference_targets,

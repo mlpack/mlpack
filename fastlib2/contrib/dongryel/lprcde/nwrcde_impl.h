@@ -198,3 +198,45 @@ bool NWRCde<TKernel>::NWRCdeCanonical_(const Matrix &qset, QueryTree *qnode,
 
   } // end of the case: non-leaf query node.
 }
+
+template<typename TKernel>
+void NWRCde<TKernel>::PreProcessQueryTree_(QueryTree *node) {
+
+  // Reset summary statistics and postponed quantities.
+  node->stat().postponed.SetZero();
+  node->stat().summary.SetZero();
+
+  if(!node->is_leaf()) {
+    PreProcessQueryTree_(node->left());
+    PreProcessQueryTree_(node->right());
+  }
+
+}
+
+template<typename TKernel>
+void NWRCde<TKernel>::PreProcessReferenceTree_(ReferenceTree *node) {
+
+  
+  if(!node->is_leaf()) {
+    PreProcessReferenceTree_(node->left());
+    PreProcessReferenceTree_(node->right());
+  }
+
+}
+
+template<typename TKernel>
+void NWRCde<TKernel>::PostProcessQueryTree_(QueryTree *node, 
+					    NWRCdeQueryResult &query_results) {
+
+  if(node->is_leaf()) {
+    for(index_t q = node->begin(); q < node->end(); q++) {
+      query_results.ApplyPostponed(node->stat().postponed, q);
+    }    
+  }
+  else {
+    PostProcessQueryTree_(node->left(), query_results);
+    PostProcessQueryTree_(node->right(), query_results);
+  }
+
+  node->stat().postponed.SetZero();
+}
