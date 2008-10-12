@@ -208,6 +208,7 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
   if (silent_==false) {
     NOTIFY("Now starting optimizing with BFGS...\n");
   }
+//  index_t failed_tries=0;
   for(index_t it1=0; it1<max_iterations_; it1++) {  
     for(index_t it2=0; it2<max_iterations_; it2++) {
       success_t success_bfgs = ComputeBFGS_(&step_, gradient_, mem_bfgs_); 
@@ -241,7 +242,14 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
           break;
         }
       }
-      UpdateBFGS_();
+/*      if (unlikely(UpdateBFGS_()==SUCCESS_FAIL)) {
+        failed_tries++;
+        if (failed_tries==mem_bfgs_) {
+          failed_tries=0;
+          break;
+        }
+      };
+*/      
       previous_coordinates_.CopyValues(coordinates_);
       previous_gradient_.CopyValues(gradient_);
       // Do this check to make sure the method has not started diverging
@@ -324,6 +332,7 @@ void LBfgs<OptimizedFunction>::InitOptimization_() {
   }
   optimized_function_->GiveInitMatrix(&coordinates_);
   num_of_points_=coordinates_.n_cols();
+  new_dimension_=coordinates_.n_rows();
   previous_coordinates_.Init(new_dimension_, num_of_points_);
   gradient_.Init(new_dimension_, num_of_points_);
   previous_gradient_.Init(new_dimension_, num_of_points_);
