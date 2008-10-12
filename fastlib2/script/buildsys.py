@@ -12,6 +12,7 @@ import util
 import glob
 
 import os
+import sys
 
 def sq(str):
   """escape a string for use in a shell"""
@@ -468,6 +469,27 @@ class Loader:
     elif posttext:
       print "XXX Ignored Post-text: ", posttext
 
+    if rule_name == "VERYSPECIALPYTHONSTRING":
+      dependencies = {}
+      for target_string in self.loader_map[fake_path]:
+        cur_rule_object = Loader.find_rule(self, ":" + target_string,
+                                           cur_real_path, cur_fake_path,
+                                           posttext)
+        if not target_string in dependencies:
+          dependencies[target_string] = [cur_rule_object]
+        else:
+          dependencies[target_string] += [cur_rule_object]
+
+      def convert_to_list(sysentry, files, params):
+        ret = []
+        for file_key in files:
+          ret += files[file_key].to_pairs()
+        return ret
+      
+      new_custom_rule = dep.CustomRule(dependencies, convert_to_list)
+      self.loader_map[fake_path][rule_name] = new_custom_rule
+      return new_custom_rule
+    
     if not rule_name in self.loader_map[fake_path]:
       raise Exception("Rule '%s' not found in '%s'." % (rule_name, real_path))
     #print "Found [%s][%s] aka [%s]" % (fullname, defaultpath, path)
