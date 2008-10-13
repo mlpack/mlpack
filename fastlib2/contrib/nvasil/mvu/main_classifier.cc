@@ -19,6 +19,12 @@
 #include "mvu_classification.h"
 #include "../l_bfgs/l_bfgs.h"
 
+double  ComputeClassificationScore(fx_module *module, 
+                                   Matrix &labeled_data_points,
+                                   Matrix &labels,
+                                   Matrix &unlabeled_data_points, 
+                                   Matrix *classification_results);
+ 
 int main(int argc, char *argv[]) {
   fx_module *fx_root=fx_init(argc, argv, NULL);  
   std::string labeled_points_file = fx_param_str_req(fx_root, "labeled_points_file");
@@ -40,33 +46,65 @@ int main(int argc, char *argv[]) {
             i, index_t(labels.get(0, i)), num_of_classes);
     }
   }
-
+  NOTIFY("sanity check passed");
+  
+  if (fx_param_exists(fx_root, "validation_file")) {
+    // Do a validation test with nearest neighbors only
+    NOTIFY("Validating the classification score with simple allknn");
+    Matrix classification_results;
+    double total_score = ComputeClassificationScore(fx_root, 
+                                                    labeled_data_points,
+                                                    labels,
+                                                    unlabeled_data_points, 
+                                                    &classification_results);
+    fx_result_double(fx_root, "classification_score", total_score);
+    NOTIFY("Simple Classification Results %lg%%", total_score);
+  }
   fx_module *opt_fun_module = fx_submodule(fx_root, "opt_fun");
   fx_module *l_bfgs_module = fx_submodule(fx_root, "l_bfgs");
+  fx_set_param_double(l_bfgs_module, "use_default_termination", false);
   opt_fun.Init(opt_fun_module, labeled_data_points, unlabeled_data_points);
   engine.Init(&opt_fun, l_bfgs_module);
   engine.ComputeLocalOptimumBFGS();
-  
-  labeled_data_points.CopyColumnFromMat(0, 
-                                        0, 
-                                        labeled_data_points.n_rows(), 
-                                        *engine.coordinates());  
+ 
+  index_t new_dimension =fx_param_int_req(fx_root, "/opt_fun/new_dimension");
+  index_t num1=labeled_data_points.n_cols();
+  labeled_data_points.Destruct(); 
+  labeled_data_points.Copy(engine.coordinates()->GetColumnPtr(0), new_dimension, num1);  
+  index_t num2=unlabeled_data_points.n_cols();
+  unlabeled_data_points.Destruct();
+  unlabeled_data_points.Copy(engine.coordinates()->GetColumnPtr(num1), 
+      new_dimension, num2);  
+  if (fx_param_exists(fx_root, "validation_file")) {
+    Matrix classification_results;
+    NOTIFY("Computing the unfolded optimization score");
+    double total_score = ComputeClassificationScore(fx_root, 
+                                                    labeled_data_points,
+                                                    labels,
+                                                    unlabeled_data_points, 
+                                                    &classification_results);
+    data::Save("classification_results", classification_results);
+    fx_result_double(fx_root, "classification_score", total_score);
+    NOTIFY("Unfolded Classification Results %lg%%", total_score);
+  }
+  fx_done(fx_root);
+}
 
-  unlabeled_data_points.CopyColumnFromMat(labeled_data_points.n_cols(), 
-                                          0, 
-                                          unlabeled_data_points.n_rows(), 
-                                          *engine.coordinates());  
-   
+double  ComputeClassificationScore(fx_module *module, 
+                                   Matrix &labeled_data_points,
+                                   Matrix &labels,
+                                   Matrix &unlabeled_data_points, 
+                                   Matrix *classification_results) {
   AllkNN allknn;
-  fx_module *allknn_module = fx_submodule(fx_root, "allknn");
+  fx_module *allknn_module = fx_submodule(module, "allknn");
   index_t knns=fx_param_int(allknn_module, "knns", 5);
+  index_t num_of_classes=fx_param_int_req(module, "num_of_classes");
   allknn.Init(unlabeled_data_points, labeled_data_points, allknn_module);
   ArrayList<index_t> neighbors;
   ArrayList<double> distances;
   allknn.ComputeNeighbors(&neighbors, &distances);
   // now do the knn classification
-  Matrix classification_results;
-  classification_results.Init(1, unlabeled_data_points.n_cols());
+  classification_results->Init(1, unlabeled_data_points.n_cols());
   for(index_t i=0; i<unlabeled_data_points.n_cols(); i++) {
     index_t score[num_of_classes];
     memset(score, 0, num_of_classes*sizeof(index_t));
@@ -75,23 +113,21 @@ int main(int argc, char *argv[]) {
       score[index_t(labels.get(0,n))]+=1;
     }
     ptrdiff_t winner = std::max_element(score, score+num_of_classes)-score;
-    classification_results.set(0, i, winner);
+    classification_results->set(0, i, winner);
   }
-  data::Save("classification_results", classification_results);
   index_t total_hits=0;
-  if (fx_param_exists(fx_root, "validation_file")) {
+  if (fx_param_exists(module, "validation_file")) {
     // find the classification score
-    std::string validation_file =fx_param_str_req(fx_root, "validation_file");
+    std::string validation_file =fx_param_str_req(module, "validation_file");
     Matrix validation_labels;
     data::Load(validation_file.c_str(), &validation_labels);
-    for(index_t i=0; i<classification_results.n_cols(); i++) {
-      if (classification_results.get(0, i) == validation_labels.get(0, i)) {
+    for(index_t i=0; i<classification_results->n_cols(); i++) {
+      if (classification_results->get(0, i) == validation_labels.get(0, i)) {
         total_hits+=1;
       }
     }
   }
-  double total_score=100.0*total_hits/classification_results.n_cols();
-  fx_result_double(fx_root, "classification_score", total_score);
-  NOTIFY("Classification Results %lg%%", total_score);
-  fx_done(fx_root);
+  double total_score=100.0*total_hits/classification_results->n_cols();
+  return total_score;
 }
+ 
