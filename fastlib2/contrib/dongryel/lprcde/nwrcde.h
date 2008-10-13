@@ -167,7 +167,7 @@ class NWRCde {
   /** @brief The default destructor which deletes the trees.
    */
   ~NWRCde() {
-    delete parameters_.rroot;
+    //delete parameters_.rroot;
   }
 
   ////////// User Level Functions //////////
@@ -179,6 +179,10 @@ class NWRCde {
     // Get the relative error desired.
     parameters_.relative_error = fx_param_double(parameters_.module,
 						 "relative_error", 0.1);
+
+    // This adjustment is due to the error propagation rule.
+    parameters_.relative_error = parameters_.relative_error / 
+      (parameters_.relative_error + 2.0);
 
     index_t leaflen = fx_param_int(parameters_.module, "leaflen", 20);
     double probability = 
@@ -194,9 +198,10 @@ class NWRCde {
     // Build the query tree.
     fx_timer_start(parameters_.module, "query_tree_build");
     ArrayList<index_t> old_from_new_queries;
+    ArrayList<index_t> new_from_old_queries;
     QueryTree *qroot = proximity::MakeGenMetricTree<QueryTree>
-      (qset, leaflen, &old_from_new_queries, NULL);
-    fx_timer_stop(parameters_.module, "query_time_build");
+      (qset, leaflen, &old_from_new_queries, &new_from_old_queries);
+    fx_timer_stop(parameters_.module, "query_tree_build");
 
     // Compute the estimates using a dual-tree based algorithm.
     fx_timer_start(parameters_.module, "nwrcde_compute");
@@ -209,7 +214,10 @@ class NWRCde {
 
     // Shuffle back to the original ordering.
     NWRCdeCommon::ShuffleAccordingToPermutation
-      (query_results->final_nwr_estimates, old_from_new_queries);
+      (query_results->final_nwr_estimates, new_from_old_queries);
+
+    // Delete the query tree.
+    delete qroot;
 
     printf("Finished computation...\n");
   }
@@ -218,8 +226,7 @@ class NWRCde {
 
     printf("Starting naive computation...\n");
 
-    index_t leaflen = fx_param_int(parameters_.module, "leaflen", 
-				   queries.n_cols() + 1);
+    index_t leaflen = queries.n_cols() + 1;
     double probability = 1.0;
 
     // Make a copy of the query set.
@@ -239,6 +246,9 @@ class NWRCde {
     NWRCdeBase_(qset, qroot, parameters_.rroot, probability, *naive_results);
     PostProcessQueryTree_(qroot, *naive_results);
     fx_timer_stop(parameters_.module, "naive_nwrcde_compute");
+
+    // Delete the query tree.
+    delete qroot;
 
     printf("Finished naive computation...\n");
   }
