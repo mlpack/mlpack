@@ -87,7 +87,7 @@ const fx_submodule_doc nwrcde_main_submodules[] = {
 
 const fx_module_doc nwrcde_main_doc = {
   nwrcde_main_entries, nwrcde_main_submodules,
-  "This is the driver for the kernel density estimator.\n"
+  "This is the driver for the Nadaraya-Watson regression and conditional density estimator.\n"
 };
 
 
@@ -174,6 +174,8 @@ class NWRCde {
 
   void Compute(const Matrix &queries, NWRCdeQueryResult *query_results) {
 
+    printf("Starting computation...\n");
+
     // Get the relative error desired.
     parameters_.relative_error = fx_param_double(parameters_.module,
 						 "relative_error", 0.1);
@@ -190,23 +192,31 @@ class NWRCde {
     query_results->Init(qset.n_cols());
 
     // Build the query tree.
+    fx_timer_start(parameters_.module, "query_tree_build");
     ArrayList<index_t> old_from_new_queries;
     QueryTree *qroot = proximity::MakeGenMetricTree<QueryTree>
       (qset, leaflen, &old_from_new_queries, NULL);
+    fx_timer_stop(parameters_.module, "query_time_build");
 
     // Compute the estimates using a dual-tree based algorithm.
+    fx_timer_start(parameters_.module, "nwrcde_compute");
     PreProcessQueryTree_(qroot);
     PreProcessReferenceTree_(parameters_.rroot);
     NWRCdeCanonical_(qset, qroot, parameters_.rroot, probability, 
 		     *query_results);
     PostProcessQueryTree_(qroot, *query_results);
+    fx_timer_stop(parameters_.module, "nwrcde_compute");
 
     // Shuffle back to the original ordering.
     NWRCdeCommon::ShuffleAccordingToPermutation
       (query_results->final_nwr_estimates, old_from_new_queries);
+
+    printf("Finished computation...\n");
   }
 
   void NaiveCompute(const Matrix &queries, NWRCdeQueryResult *naive_results) {
+
+    printf("Starting naive computation...\n");
 
     index_t leaflen = fx_param_int(parameters_.module, "leaflen", 
 				   queries.n_cols() + 1);
@@ -217,7 +227,7 @@ class NWRCde {
     qset.Copy(queries);
 
     // Initialize the temporary sum accumulators to zero.    
-    naive_results->Init();
+    naive_results->Init(queries.n_cols());
 
     // Build the query tree.
     QueryTree *qroot = proximity::MakeGenMetricTree<QueryTree>
@@ -225,8 +235,12 @@ class NWRCde {
 
     // Compute the estimates using a dual-tree based algorithm.
     PreProcessQueryTree_(qroot);
+    fx_timer_start(parameters_.module, "naive_nwrcde_compute");
     NWRCdeBase_(qset, qroot, parameters_.rroot, probability, *naive_results);
-    PostProcessQueryTree_(qroot, *naive_results);    
+    PostProcessQueryTree_(qroot, *naive_results);
+    fx_timer_stop(parameters_.module, "naive_nwrcde_compute");
+
+    printf("Finished naive computation...\n");
   }
 
   void Init(const Matrix &references, const Matrix &reference_targets,
