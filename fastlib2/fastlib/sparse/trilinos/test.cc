@@ -21,9 +21,9 @@
 #ifdef F77_FUNC
 #undef F77_FUNC
 #endif
-#include "trilinos/include/Epetra_SerialDenseMatrix.h"
-#include "trilinos/include/Epetra_SerialComm.h"
-#include "trilinos/include/Epetra_Version.h"
+#include "include/Epetra_SerialDenseMatrix.h"
+#include "include/Epetra_SerialComm.h"
+#include "include/Epetra_Version.h"
 
 
 int main(int argc, char *argv[]) {
