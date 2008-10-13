@@ -54,6 +54,26 @@ class NWRCdeQuerySummary {
 	       query_results.nwr_denominator_used_error[q_index]);
   }
 
+  void Accumulate(const NWRCdeQuerySummary &other_summary_results) {
+    nwr_numerator_sum_l = std::min(nwr_numerator_sum_l,
+				   other_summary_results.nwr_numerator_sum_l);
+    nwr_denominator_sum_l = 
+      std::min(nwr_denominator_sum_l, 
+	       other_summary_results.nwr_denominator_sum_l);
+    nwr_numerator_n_pruned_l = 
+      std::min(nwr_numerator_n_pruned_l,
+	       other_summary_results.nwr_numerator_n_pruned_l);
+    nwr_denominator_n_pruned_l =
+      std::min(nwr_denominator_n_pruned_l,
+	       other_summary_results.nwr_denominator_n_pruned_l);
+    nwr_numerator_used_error_u =
+      std::max(nwr_numerator_used_error_u,
+	       other_summary_results.nwr_numerator_used_error_u);
+    nwr_denominator_used_error_u = 
+      std::max(nwr_denominator_used_error_u,
+	       other_summary_results.nwr_denominator_used_error_u);
+  }
+
   void ApplyDelta(const NWRCdeDelta &delta_in) {
     nwr_numerator_sum_l += delta_in.nwr_numerator_sum_l;
     nwr_denominator_sum_l += delta_in.nwr_denominator_sum_l;

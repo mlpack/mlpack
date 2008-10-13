@@ -31,6 +31,7 @@
 #include "nwrcde_query_result.h"
 #include "nwrcde_query_summary.h"
 #include "nwrcde_global.h"
+#include "nwrcde_stat.h"
 
 ////////// Documentation stuffs //////////
 const fx_entry_doc nwrcde_main_entries[] = {
@@ -97,11 +98,11 @@ class NWRCde {
     
   /** @brief The type of our query tree.
    */
-  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector >, Matrix > QueryTree;
+  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector >, Matrix, NWRCdeQueryStat > QueryTree;
 
   /** @brief The type of our reference tree.
    */
-  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector >, Matrix > ReferenceTree;
+  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector >, Matrix, NWRCdeReferenceStat > ReferenceTree;
 
  private:
 
@@ -173,6 +174,10 @@ class NWRCde {
 
   void Compute(const Matrix &queries, NWRCdeQueryResult *query_results) {
 
+    // Get the relative error desired.
+    parameters_.relative_error = fx_param_double(parameters_.module,
+						 "relative_error", 0.1);
+
     index_t leaflen = fx_param_int(parameters_.module, "leaflen", 20);
     double probability = 
       fx_param_double(parameters_.module, "probability", 1.0);
@@ -182,7 +187,7 @@ class NWRCde {
     qset.Copy(queries);
 
     // Initialize the temporary sum accumulators to zero.    
-    query_results->Init();
+    query_results->Init(qset.n_cols());
 
     // Build the query tree.
     ArrayList<index_t> old_from_new_queries;
@@ -191,9 +196,37 @@ class NWRCde {
 
     // Compute the estimates using a dual-tree based algorithm.
     PreProcessQueryTree_(qroot);
+    PreProcessReferenceTree_(parameters_.rroot);
     NWRCdeCanonical_(qset, qroot, parameters_.rroot, probability, 
 		     *query_results);
     PostProcessQueryTree_(qroot, *query_results);
+
+    // Shuffle back to the original ordering.
+    NWRCdeCommon::ShuffleAccordingToPermutation
+      (query_results->final_nwr_estimates, old_from_new_queries);
+  }
+
+  void NaiveCompute(const Matrix &queries, NWRCdeQueryResult *naive_results) {
+
+    index_t leaflen = fx_param_int(parameters_.module, "leaflen", 
+				   queries.n_cols() + 1);
+    double probability = 1.0;
+
+    // Make a copy of the query set.
+    Matrix qset;
+    qset.Copy(queries);
+
+    // Initialize the temporary sum accumulators to zero.    
+    naive_results->Init();
+
+    // Build the query tree.
+    QueryTree *qroot = proximity::MakeGenMetricTree<QueryTree>
+      (qset, leaflen, NULL, NULL);
+
+    // Compute the estimates using a dual-tree based algorithm.
+    PreProcessQueryTree_(qroot);
+    NWRCdeBase_(qset, qroot, parameters_.rroot, probability, *naive_results);
+    PostProcessQueryTree_(qroot, *naive_results);    
   }
 
   void Init(const Matrix &references, const Matrix &reference_targets,
@@ -205,25 +238,29 @@ class NWRCde {
     // Construct the reference tree.
     int leaflen = fx_param_int(module_in, "leaflen", 20);
 
-    // Copy the reference dataset and construct the reference tree.
-    parameters_.rset_.Copy(references);
+    // Copy the reference dataset and reference target values.
+    parameters_.rset.Copy(references);
     DEBUG_ASSERT(references.n_cols() == reference_targets.n_cols());
-    parameters_.rset_targets_.Init(reference_targets.n_cols());
-    parameters_.rset_target_sum_ = 0;
-    for(index_t i = 0; i < parameters_.rset_targets_.length(); i++) {
-      parameters_.rset_targets_[i] = reference_targets.get(0, i);
-      parameters_.rset_target_sum_ += parameters_.rset_targets_[i];
+    parameters_.rset_targets.Init(reference_targets.n_cols());
+    parameters_.rset_target_sum = 0;
+    for(index_t i = 0; i < parameters_.rset_targets.length(); i++) {
+      parameters_.rset_targets[i] = reference_targets.get(0, i);
+      parameters_.rset_target_sum += parameters_.rset_targets[i];
     }
     
+    // Construct the reference tree and shuffle the target values
+    // according to its permutation.
     fx_timer_start(parameters_.module, "reference_tree_construct");
     parameters_.rroot = proximity::MakeGenMetricTree<ReferenceTree>
       (parameters_.rset, leaflen, &(parameters_.old_from_new_references),
        NULL);
+    NWRCdeCommon::ShuffleAccordingToPermutation
+      (parameters_.rset_targets, parameters_.old_from_new_references);
     fx_timer_stop(parameters_.module, "reference_tree_construct");
     
     // Initialize the kernel.
     double bandwidth = fx_param_double_req(parameters_.module, "bandwidth");
-    parameters_.kernel_.Init(parameters_.bandwidth);
+    parameters_.kernel.Init(bandwidth);
   }
 
   void PrintDebug();
