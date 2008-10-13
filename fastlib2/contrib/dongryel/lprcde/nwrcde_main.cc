@@ -45,6 +45,9 @@ int main(int argc, char *argv[]) {
 
   // Declare the computation object.
   NWRCde<GaussianKernel> algorithm;
+  NWRCdeQueryResult query_results;
+  algorithm.Init(references, reference_targets, nwrcde_module);
+  algorithm.Compute(queries, &query_results);
 
   // Finalize FastExec and print output results.
   fx_done(fx_root);

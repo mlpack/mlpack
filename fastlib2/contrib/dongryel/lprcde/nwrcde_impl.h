@@ -48,7 +48,7 @@ void NWRCde<TKernel>::NWRCdeBase_(const Matrix &qset, QueryTree *qnode,
   } // end of looping over each query point.
 
   // Clear postponed information.
-  qnode->stat().postponed.Reset();
+  qnode->stat().postponed.SetZero();
 }
 
 template<typename TKernel>
@@ -118,7 +118,7 @@ bool NWRCde<TKernel>::NWRCdeCanonical_(const Matrix &qset, QueryTree *qnode,
     qnode->right()->stat().postponed.ApplyPostponed(qnode->stat().postponed);
     
     // Clear out the postponed info after being passed down.
-    qnode->stat().postponed.Reset();
+    qnode->stat().postponed.SetZero();
     
     // For a leaf reference node, expand query node
     if(rnode->is_leaf()) {
@@ -216,10 +216,22 @@ void NWRCde<TKernel>::PreProcessQueryTree_(QueryTree *node) {
 template<typename TKernel>
 void NWRCde<TKernel>::PreProcessReferenceTree_(ReferenceTree *node) {
 
-  
-  if(!node->is_leaf()) {
+  if(node->is_leaf()) {
+
+    // Compute the target sum for the leaf node.
+    node->stat().PostInit(parameters_.rset_targets, node->begin(), 
+			  node->count());
+  }
+  else {
+
+    // Recurse both to the left and to the right.
     PreProcessReferenceTree_(node->left());
     PreProcessReferenceTree_(node->right());
+
+    // Merge the two sums.
+    node->stat().PostInit(parameters_.rset_targets, node->begin(), 
+			  node->count(), node->left()->stat(), 
+			  node->right()->stat());
   }
 
 }
@@ -231,9 +243,16 @@ void NWRCde<TKernel>::PostProcessQueryTree_(QueryTree *node,
   if(node->is_leaf()) {
     for(index_t q = node->begin(); q < node->end(); q++) {
       query_results.ApplyPostponed(node->stat().postponed, q);
+      query_results.Postprocess(q);
     }    
   }
   else {
+    
+    // Push down postponed contributions to the left and the right.
+    node->left()->stat().postponed.ApplyPostponed(node->stat().postponed);
+    node->right()->stat().postponed.ApplyPostponed(node->stat().postponed);
+    
+    // and recurse to the left and the right.
     PostProcessQueryTree_(node->left(), query_results);
     PostProcessQueryTree_(node->right(), query_results);
   }

@@ -13,7 +13,11 @@ class NWRCdeGlobal {
   /** @brief The kernel function.
    */
   TKernel kernel;
- 
+
+  /** @brief The relative error desired.
+   */
+  double relative_error;
+
   /** @brief The reference dataset.
    */
   Matrix rset;
@@ -38,6 +42,7 @@ class NWRCdeGlobal {
   OT_DEF_BASIC(NWRCdeGlobal) {
     OT_PTR_NULLABLE(module);
     OT_MY_OBJECT(kernel);
+    OT_MY_OBJECT(relative_error);
     OT_MY_OBJECT(rset);
     OT_MY_OBJECT(rset_targets);
     OT_MY_OBJECT(rset_target_sum);

@@ -28,11 +28,11 @@ class NWRCdeCommon {
     v.CopyValues(v_tmp);
   }
 
-  template<typename TTree>
+  template<typename Tree1, typename Tree2>
   static void Heuristic
-  (TTree *nd, TTree *nd1, TTree *nd2, double probability, 
-   TTree **partner1, double *probability1, 
-   TTree **partner2, double *probability2) {
+  (Tree1 *nd, Tree2 *nd1, Tree2 *nd2, double probability, 
+   Tree2 **partner1, double *probability1, 
+   Tree2 **partner2, double *probability2) {
     
     double d1 = nd->bound().MinDistanceSq(nd1->bound());
     double d2 = nd->bound().MinDistanceSq(nd2->bound());
@@ -60,7 +60,7 @@ class NWRCdeCommon {
     
     // Refine the lower bound using the new lower bound info.
     NWRCdeQuerySummary new_summary;
-    new_summary(qnode->stat().summary);
+    new_summary.Copy(qnode->stat().summary);
     new_summary.ApplyPostponed(qnode->stat().postponed);
     new_summary.ApplyDelta(delta);
     

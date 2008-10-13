@@ -18,6 +18,11 @@ class NWRCdeQueryResult {
   
   int num_finite_difference_prunes;
 
+  /** @brief The estimated Nadaraya-Watson regression estimates,
+   *         computed in the postprocessing phrase.
+   */
+  Vector final_nwr_estimates;
+
  public:
   
   void ApplyPostponed(const NWRCdeQueryPostponed &postponed_in, 
@@ -45,11 +50,19 @@ class NWRCdeQueryResult {
     nwr_denominator_n_pruned.Init(num_queries);
     nwr_numerator_used_error.Init(num_queries);
     nwr_denominator_used_error.Init(num_queries);
+
+    final_nwr_estimates.Init(num_queries);
     
     // Reset the sums to zero.
     SetZero();
   }
-  
+
+  void Postprocess(index_t q_index) {
+    
+    final_nwr_estimates[q_index] = nwr_numerator_sum_e[q_index] /
+      nwr_denominator_sum_e[q_index];
+  }
+
   void SetZero() {
     nwr_numerator_sum_l.SetZero();
     nwr_numerator_sum_e.SetZero();
@@ -60,6 +73,8 @@ class NWRCdeQueryResult {
     nwr_numerator_used_error.SetZero();
     nwr_denominator_used_error.SetZero();
     num_finite_difference_prunes = 0;
+    
+    final_nwr_estimates.SetZero();
   }
   
 };
