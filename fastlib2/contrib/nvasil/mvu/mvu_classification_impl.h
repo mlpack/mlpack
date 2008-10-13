@@ -21,16 +21,21 @@ void MaxFurthestNeighborsSemiSupervised::Init(fx_module *module, Matrix &labeled
   module_=module;
   knns_ = fx_param_int(module_, "knns", 5);
   leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+  grad_tolerance_ = fx_param_double(module_, "grad_tolerance", 1e-3);
+  desired_feasibility_error_ = fx_param_double(module_, "desired_feasibility_error", 10);
+  new_dimension_=fx_param_int_req(module_, "new_dimension");
   num_of_labeled_ = labeled_data.n_cols();
   num_of_unlabeled_ = unlabeled_data.n_cols();
+  num_of_points_=num_of_labeled_+num_of_unlabeled_;
+  previous_infeasibility1_=DBL_MAX;
   labeled_offset_=0;
   unlabeled_offset_=num_of_labeled_;
   DEBUG_ASSERT_MSG(labeled_data.n_rows()==unlabeled_data.n_rows(), 
       "Labeled data points don't have the same dimension with unlabeled");
   Matrix  data_points;
   data_points.Init(labeled_data.n_rows(), num_of_labeled_+num_of_unlabeled_);
-  data_points.CopyColumnFromMat(labeled_offset_, 0, labeled_data.n_rows(), labeled_data);
-  data_points.CopyColumnFromMat(unlabeled_offset_, 0, unlabeled_data.n_rows(), unlabeled_data);
+  data_points.CopyColumnFromMat(labeled_offset_, 0, labeled_data.n_cols(), labeled_data);
+  data_points.CopyColumnFromMat(unlabeled_offset_, 0, unlabeled_data.n_cols(), unlabeled_data);
 
   NOTIFY("Nearest neighbor constraints ...\n");
   NOTIFY("Building tree with data ...\n");
@@ -74,8 +79,13 @@ void MaxFurthestNeighborsSemiSupervised::Init(fx_module *module, Matrix &labeled
         &nearest_distances_,
         &num_of_nearest_pairs_);
   }
- 
- fx_format_result(module_, "num_of_constraints", "%i", num_of_nearest_pairs_);
+  sum_of_nearest_distances_=0;
+  for(index_t i=0; i<nearest_distances_.size(); i++) {
+   sum_of_nearest_distances_+=math::Pow<1,2>(nearest_distances_[i]);
+  }
+  NOTIFY("Sum of all nearest distances:%lg", sum_of_nearest_distances_);
+  fx_result_double(module_, "sum_of_nearest_distances", sum_of_nearest_distances_);
+  fx_format_result(module_, "num_of_constraints", "%i", num_of_nearest_pairs_);
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult_.SetAll(1.0);
   NOTIFY("Furtherst neighbor constraints ...\n");
@@ -241,8 +251,9 @@ void MaxFurthestNeighborsSemiSupervised::ComputeFeasibilityError(Matrix &coordin
     double dist_diff = la::DistanceSqEuclidean(dimension, 
                                                point1, point2) 
                            -nearest_distances_[i];
-    *error+=dist_diff*dist_diff;
+    *error+=fabs(dist_diff);
   }
+  *error = *error *100.0/sum_of_nearest_distances_;
 }
 
 double MaxFurthestNeighborsSemiSupervised::ComputeLagrangian(Matrix &coordinates) {
@@ -294,6 +305,45 @@ bool MaxFurthestNeighborsSemiSupervised::IsDiverging(double objective) {
 
 void MaxFurthestNeighborsSemiSupervised::Project(Matrix *coordinates) {
   OptUtils::RemoveMean(coordinates);
+}
+
+bool MaxFurthestNeighborsSemiSupervised::IsOptimizationOver(
+    Matrix &coordinates, Matrix &gradient, double step) {
+  
+  ComputeFeasibilityError(coordinates, &infeasibility1_);
+  if (infeasibility1_<desired_feasibility_error_ || 
+      fabs(infeasibility1_-previous_infeasibility1_)<0.1)  {
+    NOTIFY("Optimization is over");
+    return true;
+  } else {
+    previous_infeasibility1_=infeasibility1_;
+    return false; 
+  }
+}
+
+bool MaxFurthestNeighborsSemiSupervised::IsIntermediateStepOver(
+    Matrix &coordinates, Matrix &gradient, double step) {
+  double norm_gradient=math::Pow<1,2>(la::Dot(gradient.n_elements(), 
+                               gradient.ptr(), 
+                               gradient.ptr()));
+  double feasibility_error;
+  ComputeFeasibilityError(coordinates, &feasibility_error);
+
+  if (norm_gradient*step < grad_tolerance_ 
+      ||  feasibility_error<desired_feasibility_error_) {
+    return true;
+  }
+  return false;
+
+}
+
+void MaxFurthestNeighborsSemiSupervised::GiveInitMatrix(Matrix *init_matrix) {
+  init_matrix->Init(new_dimension_, num_of_points_);
+  for(index_t i=0; i<num_of_points_; i++) {
+    for(index_t j=0; j<new_dimension_; j++) {
+      init_matrix->set(j, i, math::Random(0.0, 1.0));
+    }
+  }
 }
 
 index_t  MaxFurthestNeighborsSemiSupervised::num_of_points() {
