@@ -10,7 +10,7 @@
 int main(int argc, char *argv[]) {
   
   // Initialize FastExec...
-  fx_init(argc, argv, NULL);
+  fx_init(argc, argv, &nwrcde_main_doc);
 
   ////////// READING PARAMETERS AND LOADING DATA /////////////////////
 
@@ -33,6 +33,10 @@ int main(int argc, char *argv[]) {
   const char* queries_file_name = fx_param_str(fx_root, "query",
 					       references_file_name);
 
+  // Output file name for the fast algorithm.
+  const char *output_file_name = fx_param_str(nwrcde_module, "output",
+					      "nwrcde_results.txt");
+
   // query and reference datasets and target training values.
   Matrix references;
   Matrix reference_targets;
@@ -48,6 +52,18 @@ int main(int argc, char *argv[]) {
   NWRCdeQueryResult query_results;
   algorithm.Init(references, reference_targets, nwrcde_module);
   algorithm.Compute(queries, &query_results);
+  query_results.PrintDebug(output_file_name);
+
+  // If the do_naive flag is specified, then run the naive algorithm
+  // as well.
+  if(fx_param_exists(nwrcde_module, "do_naive")) {
+    NWRCdeQueryResult naive_query_results;
+    const char *naive_output_file_name = 
+      fx_param_str(nwrcde_module, "naive_output", "naive_nwrcde_results.txt");
+
+    algorithm.NaiveCompute(queries, &naive_query_results);
+    naive_query_results.PrintDebug(naive_output_file_name);
+  }
 
   // Finalize FastExec and print output results.
   fx_done(fx_root);

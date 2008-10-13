@@ -63,6 +63,16 @@ class NWRCdeQueryResult {
       nwr_denominator_sum_e[q_index];
   }
 
+  void PrintDebug(const char *output_file_name) const {
+    FILE *stream = fopen(output_file_name, "w+");
+
+    for(index_t q = 0; q < final_nwr_estimates.length(); q++) {
+      fprintf(stream, "%g\n", final_nwr_estimates[q]);
+    }
+    
+    fclose(stream);
+  }
+
   void SetZero() {
     nwr_numerator_sum_l.SetZero();
     nwr_numerator_sum_e.SetZero();
