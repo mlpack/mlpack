@@ -53,7 +53,7 @@ class MonomialKernelAux {
 
   void AllocateDerivativeMap(int dim, int order, 
 			     Matrix *derivative_map) const {
-    derivative_map->Init(order, 1);
+    derivative_map->Init(sea_.get_total_num_coeffs(order), 1);
   }
 
   void ComputeDirectionalDerivatives(const Vector &x, 
@@ -107,6 +107,9 @@ class MonomialKernelAux {
 	SubFrom_(d, 2, multiindex, tmp_multiindex);
 	index_t n_minus_two_e_d_position =
 	  sea_.ComputeMultiindexPosition(tmp_multiindex);
+
+	printf("Position is %d vs %d\n", n_minus_two_e_d_position, i);
+
 	if(n_minus_two_e_d_position >= 0) {
 	  double factor;
 	  if(d == 0) {
