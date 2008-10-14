@@ -1,17 +1,14 @@
 /**
  * @file approx_nn.h
  *
- * Defines AllNN class to perform all-nearest-neighbors on two specified 
- * data sets.
+ * Defines ApproxNN class to perform all-nearest-neighbors on two specified 
+ * data sets, but obtain the approximate rank nearest neighbor with a 
+ * given probability.
  */
 
-// inclusion guards, please add them to your .h files
 #ifndef APPROX_NN_H
 #define APPROX_NN_H
 
-// We need to include fastlib.  If you want to use fastlib, 
-// you need to have this line in addition to
-// the deplibs section of your build.py
 #include <fastlib/fastlib.h>
 #include <vector>
 
@@ -35,25 +32,52 @@ class ApproxNN {
       // Include this line for all non-pointer members
       // There are other versions for arrays and pointers, see base/otrav.h
       OT_MY_OBJECT(max_distance_so_far_); 
+      OT_MY_OBJECT(total_points_);
+      OT_MY_OBJECT(samples_);
     } // OT_DEF_BASIC
     
   private:
-    
-    /**
-     * The upper bound on the node's nearest neighbor distances.
-     */
+    // The upper bound on the node's nearest neighbor distances.
     double max_distance_so_far_;
+    // Number of points considered
+    index_t total_points;
+    // Number of points sampled
+    index_t samples;
     
   public:
-    
+    // getters
     double max_distance_so_far() {
       return max_distance_so_far_; 
     } 
-    
-    
+
+    index_t total_points() {
+      return total_points_;
+    }
+
+    index_t samples() {
+      return samples_;
+    }
+
+    // setters
     void set_max_distance_so_far(double new_dist) {
       max_distance_so_far_ = new_dist; 
     } 
+
+    void set_total_points(index_t points) {
+      total_points_ = points;
+    }
+
+    void add_total_points(index_t points) {
+      total_points_ += points;
+    }
+
+    void set_samples(index_t points) {
+      samples_ = points;
+    }
+
+    void add_samples(index_t points) {
+      samples_ += points;
+    }
     
     // In addition to any member variables for the statistic, all stat 
     // classes need two Init 
@@ -67,8 +91,12 @@ class ApproxNN {
     void Init(const Matrix& matrix, index_t start, index_t count) {
       // The bound starts at infinity
       max_distance_so_far_ = DBL_MAX;
+      // The points considered starts at zero
+      total_points_ = 0;
+      // The number of samples starts at zero
+      samples_ = 0;
     } 
-    
+     
     /**
      * Initialization function used in tree-building when 
      * initializing a non-leaf node.  For other algorithms,
@@ -80,7 +108,7 @@ class ApproxNN {
       Init(matrix, start, count);
     } 
     
-  }; //class AllNNStat  
+  }; //class QueryStat
   
   // TreeType are BinarySpaceTrees where the data are bounded by 
   // Euclidean bounding boxes, the data are stored in a Matrix, 
@@ -92,6 +120,8 @@ class ApproxNN {
 private:
   // These will store our data sets.
   Matrix queries_;
+  // This will store the query for the single tree run
+  Matrix query_;
   Matrix references_;
   // Pointers to the roots of the two trees.
   vector<TreeType*> query_trees_;
@@ -111,9 +141,11 @@ private:
   index_t knns_; 
   // The module containing the parameters for this computation. 
   struct datanode* module_;
-  // The vector containing the sample sizes for the corresponding
+  // The array containing the sample sizes for the corresponding
   // set sizes
-  GenVector<index_t> sample_sizes_;
+  ArrayList<index_t> sample_sizes_;
+  // The rank approximation
+  index_t epsilon_;
   
   
   /////////////////////////////// Constructors ////////////////////////
@@ -132,6 +164,7 @@ public:
   ApproxNN() {
     // query_tree_ = NULL;
     reference_tree_ = NULL;
+    query_trees_.clear();
   } 
   
   /**
@@ -148,6 +181,7 @@ public:
 	delete *it;
       }
     }
+    query_trees_.clear();
     if (reference_tree_ != NULL) {
       delete reference_tree_;
     }
@@ -204,11 +238,11 @@ private:
    * required to obtain the approximate rank with
    * a given probability (1-alpha).
    * 
-   * It assumes that the GenVector<index_t> *samples
-   * has been initialized to be of length N.
+   * It assumes that the ArrayList<index_t> *samples
+   * has been initialized to length N.
    */
   void ComputeSampleSizes_(index_t epsilon, double alpha,
-			   GenVector<index_t> *samples) {
+			   ArrayList<index_t> *samples) {
     index_t set_size = samples->length(),
       n = samples->length();
     double prob;
@@ -233,6 +267,9 @@ private:
     // Check that we really should be in the base case
     DEBUG_WARN_IF(!query_node->is_leaf());
     DEBUG_WARN_IF(!reference_node->is_leaf());
+
+    DEBUG_ASSERT(query_node->end()
+		 - query_node->begin() == 1);
     
     // Used to find the query node's new upper bound
     double query_max_neighbor_distance = -1.0;
@@ -244,7 +281,8 @@ private:
        
       // Get the query point from the matrix
       Vector query_point;
-      queries_.MakeColumnVector(query_index, &query_point);
+//       queries_.MakeColumnVector(query_index, &query_point);
+      query_.MakeColumnVector(query_index, &query_point);
       
       index_t ind = query_index*knns_;
       for(index_t i=0; i<knns_; i++) {
@@ -405,6 +443,255 @@ private:
     }
   } // ComputeNeighborsRecursion_
   
+  /**
+   * Performs exhaustive approximate computation
+   * between two nodes.
+   */
+  void ComputeApproxBaseCase_(TreeType* query_node,
+			      TreeType* reference_node) {
+   
+    // Check that the pointers are not NULL
+    DEBUG_ASSERT(query_node != NULL);
+    DEBUG_ASSERT(reference_node != NULL);
+    // Probably don't need this since hopefully they won't
+    // be both leaves (only query should be).
+    // Just notify if in reference leaf.
+    // Check that we really should be in the base case
+    DEBUG_WARN_IF(!query_node->is_leaf());
+    DEBUG_WARN_MSG_IF(reference_node->is_leaf(),"Reference leaf");
+    DEBUG_ASSERT(query_node->end()
+		 - query_node->begin() == 1);
+    
+    // Obtain the number of samples to be obtained
+    index_t set_size
+      = reference_node->end() - reference_node->begin();
+    index_t sample_size = sample_sizes_[set_size];
+    DEBUG_WARN_IF(sample_size > leaf_size_);
+    DEBUG_ASSERT(sample_size <= set_size);
+
+    // Used to find the query node's new upper bound
+    double query_max_neighbor_distance = -1.0;
+    std::vector<std::pair<double, index_t> > neighbors(knns_);
+    // node->begin() is the index of the first point in the node, 
+    // node->end is one past the last index
+    for (index_t query_index = query_node->begin(); 
+         query_index < query_node->end(); query_index++) {
+       
+      // Get the query point from the matrix
+      Vector query_point;
+//       queries_.MakeColumnVector(query_index, &query_point);
+      query_.MakeColumnVector(query_index, &query_point);
+      
+      index_t ind = query_index*knns_;
+      for(index_t i=0; i<knns_; i++) {
+        neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
+                                    neighbor_indices_[ind+i]);
+      }
+      // We'll do the same for the references
+      // but on the sample size number of points
+      for (index_t reference_index = reference_node->begin(); 
+           reference_index < reference_node->begin()
+	     + sample_size; reference_index++) {
+
+	// Confirm that points do not identify themselves as neighbors
+	// in the monochromatic case
+        if (likely(reference_node != query_node ||
+		   reference_index != query_index)) {
+	  Vector reference_point;
+	  references_.MakeColumnVector(reference_index, &reference_point);
+	  // We'll use lapack to find the distance between the two vectors
+	  double distance =
+	    la::DistanceSqEuclidean(query_point, reference_point);
+	  // If the reference point is closer than the current candidate, 
+	  // we'll update the candidate
+	  if (distance < neighbor_distances_[ind+knns_-1]) {
+	    neighbors.push_back(std::make_pair(distance, reference_index));
+	  }
+	}
+      } // for reference_index
+      // if ((index_t)neighbors.size()>knns_) {
+      std::sort(neighbors.begin(), neighbors.end());
+      for(index_t i=0; i<knns_; i++) {
+        neighbor_distances_[ind+i] = neighbors[i].first;
+        neighbor_indices_[ind+i]  = neighbors[i].second;
+      }
+      neighbors.resize(knns_);
+      // We need to find the upper bound distance for this query node
+      if (neighbor_distances_[ind+knns_-1] > query_max_neighbor_distance) {
+        query_max_neighbor_distance = neighbor_distances_[ind+knns_-1]; 
+      }
+      //  }
+      
+    } // for query_index 
+    // Update the upper bound for the query_node
+    query_node->stat().set_max_distance_so_far(query_max_neighbor_distance);
+
+    // update the number of points considered and points sampled
+    query_node->stat().add_total_points(set_size);
+    query_node->stat().add_samples(sample_size);
+         
+  } // ComputeApproxBaseCase_
+
+  inline bool is_base(TreeType* tree) {
+    index_t set_size = tree->end() - tree->begin();
+    index_t sample_size = sample_sizes_[set_size];
+    if (sample_size > leaf_size_) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  /**
+   * The recursive function for the approximate computation
+   */
+  void ComputeApproxRecursion_(TreeType* query_node,
+			       TreeType* reference_node, 
+			       double lower_bound_distance) {
+    // A DEBUG statement with no predefined message
+    DEBUG_ASSERT(query_node != NULL);
+    // A DEBUG statement with a predefined message
+    DEBUG_ASSERT_MSG(reference_node != NULL, "reference node is null");
+    // Make sure the bounding information is correct
+    DEBUG_ASSERT(lower_bound_distance == MinNodeDistSq_(query_node, 
+							reference_node));
+    DEBUG_ASSERT(query_node->end()
+		 - query_node->begin() == 1);
+    
+    if (lower_bound_distance > query_node->stat().max_distance_so_far()) {
+      // Pruned by distance
+      number_of_prunes_++;
+    } else if (query_node->is_leaf() && reference_node->is_leaf()) {
+      // Base Case
+      ComputeApproxBaseCase_(query_node, reference_node);
+    } else if (query_node->is_leaf()) {
+      // Only query is a leaf
+      
+      // We'll order the computation by distance 
+      double left_distance = MinNodeDistSq_(query_node,
+					    reference_node->left());
+      double right_distance = MinNodeDistSq_(query_node,
+					     reference_node->right());
+      
+      if (left_distance < right_distance) {
+
+	if(is_base(reference_node->left())
+	   && left_distance < query_node->stat().max_distance_so_far()) {
+	  ComputeApproxBaseCase_(query_node, reference_node->left());
+	} else {
+	  ComputeApproxRecursion_(query_node, reference_node->left(), 
+				  left_distance);
+	}
+	if(is_base(reference_node->right())
+	   && right_distance < query_node->stat().max_distance_so_far()) {
+	  ComputeApproxBaseCase_(query_node, reference_node->right());
+	} else {
+	  ComputeApproxRecursion_(query_node, reference_node->right(), 
+				  right_distance);
+	}
+      } else {
+	if(is_base(reference_node->right())
+	   && right_distance < query_node->stat().max_distance_so_far()) {
+	  ComputeApproxBaseCase_(query_node, reference_node->right());
+	} else {
+	  ComputeApproxRecursion_(query_node, reference_node->right(), 
+				  right_distance);
+	}
+	if(is_base(reference_node->left())
+	   && left_distance < query_node->stat().max_distance_so_far()) {
+	  ComputeApproxBaseCase_(query_node, reference_node->left());
+	} else {
+	  ComputeApproxRecursion_(query_node, reference_node->left(), 
+				     left_distance);
+	}
+      }
+    } else if (reference_node->is_leaf()) {
+      // This part of the recursion is not yet correct since
+      // we don't know how to deal with the query tree
+      // traversal.
+      // Only reference is a leaf 
+      double left_distance
+	= MinNodeDistSq_(query_node->left(), reference_node);
+      double right_distance
+	= MinNodeDistSq_(query_node->right(), reference_node);
+      
+      ComputeApproxRecursion_(query_node->left(), reference_node, 
+			      left_distance);
+      ComputeApproxRecursion_(query_node->right(), reference_node, 
+			      right_distance);
+      
+      // We need to update the upper bound based on the new upper bounds of 
+      // the children
+      query_node->stat().set_max_distance_so_far(max(query_node->left()->stat().max_distance_so_far(),
+						     query_node->right()->stat().max_distance_so_far()));
+
+      // updating the number of points considered
+      // and number of samples taken
+      query_node->stat().set_total_points(query_node->left()->stat().total_points()
+					  + query_node->right()->stat().total_points());
+      query_node->stat().set_samples(query_node->left()->stat().samples()
+				     + query_node->right()->stat().samples());
+    } else {
+      // Same for this branch of the recursion.
+      // dual tree traversal not supported yet
+
+      // Recurse on both as above
+      double left_distance = MinNodeDistSq_(query_node->left(), 
+					    reference_node->left());
+      double right_distance = MinNodeDistSq_(query_node->left(), 
+					     reference_node->right());
+      
+      if (left_distance < right_distance) {
+        ComputeApproxRecursion_(query_node->left(),
+				reference_node->left(), 
+				left_distance);
+        ComputeApproxRecursion_(query_node->left(),
+				reference_node->right(), 
+				right_distance);
+      } else {
+        ComputeApproxRecursion_(query_node->left(),
+				reference_node->right(), 
+				right_distance);
+        ComputeApproxRecursion_(query_node->left(),
+				reference_node->left(), 
+				left_distance);
+      }
+
+      left_distance = MinNodeDistSq_(query_node->right(),
+				     reference_node->left());
+      right_distance = MinNodeDistSq_(query_node->right(), 
+				      reference_node->right());
+      
+      if (left_distance < right_distance) {
+        ComputeApproxRecursion_(query_node->right(),
+				reference_node->left(), 
+				left_distance);
+        ComputeApproxRecursion_(query_node->right(),
+				reference_node->right(), 
+				right_distance);
+      } else {
+        ComputeApproxRecursion_(query_node->right(),
+				reference_node->right(), 
+				right_distance);
+        ComputeApproxRecursion_(query_node->right(),
+				reference_node->left(), 
+				left_distance);
+      }
+      
+      // Update the upper bound as above
+      query_node->stat().set_max_distance_so_far(max(query_node->left()->stat().max_distance_so_far(),
+						     query_node->right()->stat().max_distance_so_far()));
+
+      // updating the number of points considered
+      // and number of samples taken
+      query_node->stat().set_total_points(query_node->left()->stat().total_points()
+					  + query_node->right()->stat().total_points());
+      query_node->stat().set_samples(query_node->left()->stat().samples()
+				     + query_node->right()->stat().samples());
+      
+    }
+  } // ComputeApproxRecursion_
+
   /////////////// Public Functions ////////////////////
 public:
   /**
@@ -435,7 +722,7 @@ public:
     DEBUG_SAME_SIZE(queries_.n_rows(), references_.n_rows());
     
     // K-nearest neighbors initialization
-    knns_ = fx_param_int(module_, "knns", 5);
+    knns_ = fx_param_int(module_, "knns", 1);
   
     // Initialize the list of nearest neighbor candidates
     neighbor_indices_.Init(queries_.n_cols() * knns_);
@@ -477,14 +764,14 @@ public:
     // table
     fx_timer_start(module_, "computing_sample_sizes");
 
-    // initialize the sample_sizes vector
+    // initialize the sample_sizes array
     sample_sizes_.Init(references_.n_cols());
 
     // compute the sample sizes
     double alpha = fx_param_double(module_, "alpha", 0.90);
-    index_t epsilon = fx_param_int(module_, "epsilon", 5);
+    epsilon_ = fx_param_int(module_, "epsilon", 5);
 
-    ComputeSampleSizes_(epsilon, alpha, &sample_sizes_);
+    ComputeSampleSizes_(epsilon_, alpha, &sample_sizes_);
 
     fx_timer_stop(module_, "computing_sample_sizes");
 
@@ -540,7 +827,8 @@ public:
 
   void Init(const Matrix& queries_in,
 	    const Matrix& references_in, 
-	    index_t leaf_size, index_t knns) {
+	    index_t leaf_size, index_t knns,
+	    index_t epsilon, double alpha) {
     
     // track the number of prunes
     number_of_prunes_ = 0;
@@ -598,14 +886,12 @@ public:
     // table
     fx_timer_start(module_, "computing_sample_sizes");
 
-    // initialize the sample_sizes vector
+    // initialize the sample_sizes array
     sample_sizes_.Init(references_.n_cols());
+    epsilon_ = epsilon;
 
     // compute the sample sizes
-    double alpha = fx_param_double(module_, "alpha", 0.90);
-    index_t epsilon = fx_param_int(module_, "epsilon", 5);
-
-    ComputeSampleSizes_(epsilon, alpha, &sample_sizes_);
+    ComputeSampleSizes_(epsilon_, alpha, &sample_sizes_);
 
     fx_timer_stop(module_, "computing_sample_sizes");
 
@@ -753,6 +1039,9 @@ public:
     index_t query = 0;
     for (vector::iterator query_tree = query_trees_.begin();
 	 query_tree < query_trees.end(); ++query_tree, ++query) {
+      // Making the query matrix for this single tree run
+      queries_.MakeColumnSlice(query, 1, &query_);
+
       ComputeNeighborsRecursion_(*query_tree, reference_tree_, 
 				 MinNodeDistSq_(*query_tree,
 						reference_tree_));
@@ -763,6 +1052,9 @@ public:
       (*resulting_neighbors)[query]
 	= old_from_new_references_[neighbor_indices_[0]];
       (*distances)[query] = neighbor_distances_[0];
+
+      // destructing the query_ matrix for the next run
+      query_.Destruct();
     }
 
 //     // We need to map the indices back from how they have 
@@ -800,6 +1092,10 @@ public:
     index_t query = 0;
     for (vector::iterator query_tree = query_trees_.begin();
 	 query_tree < query_trees.end(); ++query_tree, ++query) {
+
+      // Making the query matrix for this single tree run
+      queries_.MakeColumnSlice(query, 1, &query_);
+
       ComputeBaseCase_(*query_tree, reference_tree_);
       // since the results would always be stored in the first
       // index, we use that. The only thing to worry here is that
@@ -808,6 +1104,9 @@ public:
       (*resulting_neighbors)[query]
 	= old_from_new_references_[neighbor_indices_[0]];
       (*distances)[query] = neighbor_distances_[0];
+
+      // destructing the query_ matrix for the next run
+      query_.Destruct();
     }
 //     if (query_tree_!=NULL) {
 //       ComputeBaseCase_(query_tree_, reference_tree_);
@@ -833,7 +1132,41 @@ public:
    * rank NN
    */
   void ComputeApprox(ArrayList<index_t>* resulting_neighbors,
-		     ArrayList<double>*  distances) {
+		     ArrayList<double>*  distances,
+		     ArrayList<double>* probabilities) {
+    // We need to initialize the results list before filling it
+    resulting_neighbors->Init(neighbor_indices_.size());
+    distances->Init(neighbor_distances_.length());
+    probabilities->Init(queries_.n_cols());
+    
+    // Start on the root of each tree
+    index_t query = 0;
+    for (vector::iterator query_tree = query_trees_.begin();
+	 query_tree < query_trees.end(); ++query_tree, ++query) {
+
+      // Making the query matrix for this single tree run
+      queries_.MakeColumnSlice(query, 1, &query_);
+
+      ComputeApproxRecursion_(*query_tree, reference_tree_, 
+			      MinNodeDistSq_(*query_tree,
+					     reference_tree_));
+      // since the results would always be stored in the first
+      // index, we use that. The only thing to worry here is that
+      // the old_from_new_queries_ might have to be destroyed
+      // before every tree building
+      (*resulting_neighbors)[query]
+	= old_from_new_references_[neighbor_indices_[0]];
+      (*distances)[query] = neighbor_distances_[0];
+
+      // compute the probability
+      (*probabilities)[query]
+	= ComputeProbability_((*query_node)->stat().total_points(),
+			      (*query_node)->stat().samples(),
+			      epsilon_);
+
+      // destructing the query_ matrix for the next run
+      query_.Destruct();
+    }
 
   }
 
