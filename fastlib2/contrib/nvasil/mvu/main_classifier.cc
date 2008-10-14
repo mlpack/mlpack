@@ -31,8 +31,7 @@ int main(int argc, char *argv[]) {
   std::string labels_file = fx_param_str_req(fx_root, "labels_file");
   std::string unlabeled_points_file=fx_param_str_req(fx_root, "unlabeled_points_file");
   index_t num_of_classes = fx_param_int_req(fx_root, "num_of_classes");
-  MaxFurthestNeighborsSemiSupervised opt_fun;
-  LBfgs<MaxFurthestNeighborsSemiSupervised> engine;
+  std::string mode = fx_param_str(fx_root, "mode", "svm");
   Matrix labeled_data_points;
   data::Load(labeled_points_file.c_str(), &labeled_data_points);
   Matrix unlabeled_data_points;
@@ -63,28 +62,76 @@ int main(int argc, char *argv[]) {
   fx_module *opt_fun_module = fx_submodule(fx_root, "opt_fun");
   fx_module *l_bfgs_module = fx_submodule(fx_root, "l_bfgs");
   fx_set_param_double(l_bfgs_module, "use_default_termination", false);
-  opt_fun.Init(opt_fun_module, labeled_data_points, unlabeled_data_points);
-  engine.Init(&opt_fun, l_bfgs_module);
-  engine.ComputeLocalOptimumBFGS();
+  Matrix result;
+  if (mode == "mvu") {
+    MaxFurthestNeighborsSemiSupervised opt_fun;
+    LBfgs<MaxFurthestNeighborsSemiSupervised> engine;
+    opt_fun.Init(opt_fun_module, labeled_data_points, unlabeled_data_points);
+    engine.Init(&opt_fun, l_bfgs_module);
+    engine.ComputeLocalOptimumBFGS();
+    result.Copy(*engine.coordinates());
+  } else {
+    if (mode == "svm") {
+      MaxFurthestNeighborsSvmSemiSupervised opt_fun;
+      LBfgs<MaxFurthestNeighborsSvmSemiSupervised> engine;
+      opt_fun.Init(opt_fun_module, 
+                   labeled_data_points, 
+                   unlabeled_data_points, 
+                   labels);
+      engine.Init(&opt_fun, l_bfgs_module);
+      engine.ComputeLocalOptimumBFGS();
+      result.Copy(*engine.coordinates());
+    } else {
+      FATAL("This mode (%s) is not supported", mode.c_str());
+    }
+  }
  
   index_t new_dimension =fx_param_int_req(fx_root, "/opt_fun/new_dimension");
   index_t num1=labeled_data_points.n_cols();
   labeled_data_points.Destruct(); 
-  labeled_data_points.Copy(engine.coordinates()->GetColumnPtr(0), new_dimension, num1);  
+  labeled_data_points.Copy(result.GetColumnPtr(0), new_dimension, num1);  
   index_t num2=unlabeled_data_points.n_cols();
   unlabeled_data_points.Destruct();
-  unlabeled_data_points.Copy(engine.coordinates()->GetColumnPtr(num1), 
-      new_dimension, num2);  
+  unlabeled_data_points.Copy(result.GetColumnPtr(num1), 
+      new_dimension, num2);   
+  double total_score;
   if (fx_param_exists(fx_root, "validation_file")) {
     Matrix classification_results;
     NOTIFY("Computing the unfolded optimization score");
-    double total_score = ComputeClassificationScore(fx_root, 
-                                                    labeled_data_points,
-                                                    labels,
-                                                    unlabeled_data_points, 
-                                                    &classification_results);
+    if (mode=="mvu") {
+      total_score = ComputeClassificationScore(fx_root, 
+                                               labeled_data_points,
+                                               labels,
+                                               unlabeled_data_points, 
+                                               &classification_results);
+    } else {
+      if (mode=="svm") {
+        // find the classification score
+        std::string validation_file =fx_param_str_req(fx_root, "validation_file");
+        Matrix validation_labels;
+        data::Load(validation_file.c_str(), &validation_labels);
+        total_score=0.0;
+        index_t anchor_point=0;
+        double anchor_label=labels.get(0, 0);
+        double *p1=labeled_data_points.GetColumnPtr(anchor_point);
+        for(index_t i=0; i<validation_labels.n_cols(); i++)  {
+          double *p2=unlabeled_data_points.GetColumnPtr(i);
+          double dot_product=la::Dot(new_dimension, p1, p2);
+          if (dot_product >=0  and anchor_label==validation_labels.get(0, i)) {
+            total_score+=1;
+          } else {
+            if (dot_product <=0  and anchor_label!=validation_labels.get(0, i)) {
+              total_score+=1;
+            }
+          }
+        }
+        total_score = 100.0 * total_score/validation_labels.n_cols();
+      } else {
+        FATAL("This mode (%s) is not supported", mode.c_str());
+      }
+    }
     data::Save("classification_results", classification_results);
-    fx_result_double(fx_root, "classification_score", total_score);
+    fx_result_double(fx_root, "unfolded_classification_score", total_score);
     NOTIFY("Unfolded Classification Results %lg%%", total_score);
   }
   fx_done(fx_root);
