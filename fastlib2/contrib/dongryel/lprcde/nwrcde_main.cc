@@ -63,6 +63,33 @@ int main(int argc, char *argv[]) {
 
     algorithm.NaiveCompute(queries, &naive_query_results);
     naive_query_results.PrintDebug(naive_output_file_name);
+
+    // Compute the difference between the naively computed estimates
+    // and the approximated estimates.
+    Vector difference;
+    la::SubInit(naive_query_results.final_nwr_estimates, 
+		query_results.final_nwr_estimates, &difference);
+    
+    // The maximum relative error.
+    double max_relative_error = 0;
+    int within_limit = 0;
+    for(index_t i = 0; i < queries.n_cols(); i++) {
+      double relative_error = 
+	(naive_query_results.final_nwr_estimates[i] == 
+	 query_results.final_nwr_estimates[i]) ?
+	0:(fabs(difference[i]) / 
+	   fabs(naive_query_results.final_nwr_estimates[i]));
+      max_relative_error = std::max(max_relative_error, relative_error);
+
+      if(relative_error < fx_param_double(nwrcde_module, "relative_error",
+					  0.1)) {
+	within_limit++;
+      }
+    }
+    fx_format_result(nwrcde_module, "max_relative_error", "%g",
+		     max_relative_error);
+    fx_format_result(nwrcde_module, "under_relative_error_limit", "%d",
+		     within_limit);
   }
 
   // Finalize FastExec and print output results.
