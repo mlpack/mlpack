@@ -112,7 +112,7 @@ class MultFarFieldExpansion {
    * Evaluates the far-field coefficients at the given point
    */
   double EvaluateField(const Matrix& data, int row_num, int order) const;
-  double EvaluateField(const Vector& x_q, int order) const;
+  double EvaluateField(const double *x_q, int order) const;
 
   /**
    * Evaluates the two-way convolution mixed with exhaustive computations

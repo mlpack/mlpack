@@ -190,7 +190,7 @@ class FarFieldExpansion {
   /** @brief Evaluates the far-field coefficients at the given point.
    */
   double EvaluateField(const Matrix& data, int row_num, int order) const;
-  double EvaluateField(const Vector &x_q, int order) const;
+  double EvaluateField(const double *x_q, int order) const;
 
   /** @brief Evaluates the two-way convolution mixed with exhaustive
    *         computations with two other far field expansions.
