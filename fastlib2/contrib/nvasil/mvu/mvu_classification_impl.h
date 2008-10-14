@@ -522,15 +522,17 @@ void MaxFurthestNeighborsSvmSemiSupervised::ComputeGradient(Matrix &coordinates,
     double dot_prod=la::Dot(coordinates.n_rows(),
                             coordinates.GetColumnPtr(anchor_point_),
                             coordinates.GetColumnPtr(i)) * svm_signs_[i];
-    if (sigma_*dot_prod*svm_signs_[i] <= ineq_lagrange_mult_[i] ) {
+    if (sigma_*dot_prod <= ineq_lagrange_mult_[i] ) {
       double *p1=coordinates.GetColumnPtr(anchor_point_);
       double *p2=coordinates.GetColumnPtr(i);
-      la::Scale(coordinates.n_rows(), -2*ineq_lagrange_mult_[i]+ sigma_*dot_prod, p1);
-      la::Scale(coordinates.n_rows(), -2*ineq_lagrange_mult_[i]+ sigma_*dot_prod, p2);
-      la::SubFrom(coordinates.n_rows(), p1, gradient->GetColumnPtr(anchor_point_));
-      la::SubFrom(coordinates.n_rows(), p2, gradient->GetColumnPtr(i));
+      double factor=-2*ineq_lagrange_mult_[i]+ sigma_*dot_prod;
+      la::AddExpert(coordinates.n_rows(), factor, p2, 
+          gradient->GetColumnPtr(anchor_point_));
+      la::AddExpert(coordinates.n_rows(), factor, p1, 
+          gradient->GetColumnPtr(i));
     }
   }
+  // End of computations
 }
 
 void MaxFurthestNeighborsSvmSemiSupervised::ComputeObjective(Matrix &coordinates, 
@@ -561,16 +563,19 @@ void MaxFurthestNeighborsSvmSemiSupervised::ComputeFeasibilityError(Matrix &coor
     *error+=fabs(dist_diff);
   }
   *error = *error *100.0/sum_of_nearest_distances_;
+  NOTIFY("Feasibility error:%lg", *error);
   double error1=0;
   for(index_t i=0; i<svm_signs_.length(); i++) {
     double dot_prod=la::Dot(coordinates.n_rows(),
                             coordinates.GetColumnPtr(anchor_point_),
-                            coordinates.GetColumnPtr(i)) * svm_signs_[i]; 
+                            coordinates.GetColumnPtr(i)) ; 
     if (dot_prod!=svm_signs_[i]) {
       error1+=1;
     } 
   }
-  NOTIFY("Classification Error:%lg",100.0 * error1/svm_signs_.length());
+  error1=100.0 * error1/svm_signs_.length();
+  *error=(*error+error1)/2.0;
+  NOTIFY("Classification Error:%lg", error1);
 }
 
 double MaxFurthestNeighborsSvmSemiSupervised::ComputeLagrangian(Matrix &coordinates) {
@@ -584,10 +589,10 @@ double MaxFurthestNeighborsSvmSemiSupervised::ComputeLagrangian(Matrix &coordina
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
                            -nearest_distances_[i];
-    lagrangian+=dist_diff*dist_diff*sigma_/2
+    lagrangian+=dist_diff*dist_diff*sigma_/2.0
         -eq_lagrange_mult_[i]*dist_diff;
   }
-  for(index_t i=0; i<=ineq_lagrange_mult_.length(); i++) {
+  for(index_t i=0; i<ineq_lagrange_mult_.length(); i++) {
     double dot_prod=la::Dot(coordinates.n_rows(),
                             coordinates.GetColumnPtr(anchor_point_),
                             coordinates.GetColumnPtr(i)) * svm_signs_[i]; 
