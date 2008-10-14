@@ -832,6 +832,7 @@ int main(int argc, char *argv[]) {
   Matrix derivative_map;
   kernel_aux.AllocateDerivativeMap(4, 5, &derivative_map);
   Vector x;
+  x.Init(4);
   x.SetAll(3);
   kernel_aux.ComputeDirectionalDerivatives(x, &derivative_map, 5);
   derivative_map.PrintDebug();

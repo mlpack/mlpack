@@ -63,9 +63,11 @@ int SeriesExpansionAux::ComputeMultiindexPosition
     
     mapping_sum += multiindex[j];
   }
-  for(index_t j = 0; j < dim; j++) {
-    index += (int) get_n_choose_k(mapping_sum + dim - j - 1, dim - j);
-    mapping_sum -= multiindex[j];
+  if(index >= 0) {
+    for(index_t j = 0; j < dim; j++) {
+      index += (int) get_n_choose_k(mapping_sum + dim - j - 1, dim - j);
+      mapping_sum -= multiindex[j];
+    }
   }
   
   return index;
