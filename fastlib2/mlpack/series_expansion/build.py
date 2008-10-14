@@ -7,21 +7,22 @@ librule(
                "farfield_expansion_impl.h",
                "inverse_pow_dist_farfield_expansion.h",
                "inverse_pow_dist_farfield_expansion_impl.h",
-               "inverse_pow_dist_kernel.h",
                "inverse_pow_dist_kernel_aux.h",
+               "inverse_pow_dist_kernel.h",
                "inverse_pow_dist_local_expansion.h",
                "inverse_pow_dist_local_expansion_impl.h",
                "inverse_pow_dist_series_expansion_aux.h",
-               "mult_farfield_expansion.h",
-               "mult_farfield_expansion_impl.h",
                "kernel_aux.h",
                "local_expansion.h",
-               "local_expansion_impl.h",
+               "local_expansion_imp.h"
+               "monomial_kernel_aux.h",
+               "monomial_kernel.h",
+               "mult_farfield_expansion.h",
+               "mult_farfield_expansion_impl.h",
                "mult_local_expansion.h",
                "mult_local_expansion_impl.h",
                "mult_series_expansion_aux.h",
-               "series_expansion_aux.h",
-               "mult_series_expansion_aux.h"],
+               "series_expansion_aux.h"],    
     deplibs = ["fastlib:fastlib_int"]
     )
 
