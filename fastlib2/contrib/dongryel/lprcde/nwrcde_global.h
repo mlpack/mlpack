@@ -39,8 +39,9 @@ class NWRCdeGlobal {
    */
   ArrayList<index_t> old_from_new_references;
 
+  // It is important not to include the module pointer because it will
+  // be freed by fx_done()!
   OT_DEF_BASIC(NWRCdeGlobal) {
-    OT_PTR_NULLABLE(module);
     OT_MY_OBJECT(kernel);
     OT_MY_OBJECT(relative_error);
     OT_MY_OBJECT(rset);
