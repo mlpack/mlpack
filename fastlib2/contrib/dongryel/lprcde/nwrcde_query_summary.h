@@ -79,6 +79,8 @@ class NWRCdeQuerySummary {
     nwr_denominator_sum_l += delta_in.nwr_denominator_sum_l;
     nwr_numerator_n_pruned_l += delta_in.nwr_numerator_n_pruned;
     nwr_denominator_n_pruned_l += delta_in.nwr_denominator_n_pruned;
+    nwr_numerator_used_error_u += delta_in.nwr_numerator_used_error_u;
+    nwr_denominator_used_error_u += delta_in.nwr_denominator_used_error_u;
   }
 
   void ApplyPostponed(const NWRCdeQueryPostponed &postponed_in) {
