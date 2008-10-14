@@ -237,62 +237,11 @@ template<typename TKernelAux>
 double FarFieldExpansion<TKernelAux>::EvaluateField(const Matrix& data, 
 						    int row_num, 
 						    int order) const {
-  
-  // dimension
-  int dim = sea_->get_dimension();
-
-  // total number of coefficients
-  int total_num_coeffs = sea_->get_total_num_coeffs(order);
-
-  // square root times bandwidth
-  double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
-  
-  // the evaluated sum
-  double pos_multipole_sum = 0;
-  double neg_multipole_sum = 0;
-  double multipole_sum = 0;
-  
-  // computed derivative map
-  Matrix derivative_map;
-  ka_->AllocateDerivativeMap(dim, order, &derivative_map);
-
-  // temporary variable
-  Vector arrtmp;
-  arrtmp.Init(total_num_coeffs);
-
-  // (x_q - x_R) scaled by bandwidth
-  Vector x_q_minus_x_R;
-  x_q_minus_x_R.Init(dim);
-
-  // compute (x_q - x_R) / (sqrt(2h^2))
-  for(index_t d = 0; d < dim; d++) {
-    x_q_minus_x_R[d] = (data.get(d, row_num) - center_[d]) / 
-      bandwidth_factor;
-  }
-
-  // compute deriative maps based on coordinate difference.
-  ka_->ComputeDirectionalDerivatives(x_q_minus_x_R, &derivative_map, order);
-
-  // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2)) ((x_r - x_R)/h)^{\alpha}
-  for(index_t j = 0; j < total_num_coeffs; j++) {
-    const ArrayList<int> &mapping = sea_->get_multiindex(j);
-    double arrtmp = ka_->ComputePartialDerivative(derivative_map, mapping);
-    double prod = coeffs_[j] * arrtmp;
-    
-    if(prod > 0) {
-      pos_multipole_sum += prod;
-    }
-    else {
-      neg_multipole_sum += prod;
-    }
-  }
-
-  multipole_sum = pos_multipole_sum + neg_multipole_sum;
-  return multipole_sum;
+  return EvaluateField(data.GetColumnPtr(row_num), order);
 }
 
 template<typename TKernelAux>
-double FarFieldExpansion<TKernelAux>::EvaluateField(const Vector &x_q, 
+double FarFieldExpansion<TKernelAux>::EvaluateField(const double *x_q, 
 						    int order) const {
   
   // dimension

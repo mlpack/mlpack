@@ -55,7 +55,7 @@ int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
   // evaluate the series expansion
   printf("Evaluated the expansion at (%g %g) is %g...\n",
 	 evaluate_here[0], evaluate_here[1],
-	 se.EvaluateField(evaluate_here, 2));
+	 se.EvaluateField(evaluate_here.ptr(), 2));
 
   // check with exhaustive method
   double exhaustive_sum = 0;
@@ -154,7 +154,7 @@ int TestEvaluateFarField(const Matrix &data, const Vector &weights,
   // evaluate the series expansion
   printf("Evaluated the expansion at (%g %g) is %g...\n",
 	 evaluate_here[0], evaluate_here[1],
-	 se.EvaluateField(evaluate_here, 10));
+	 se.EvaluateField(evaluate_here.ptr(), 10));
 
   // check with exhaustive method
   double exhaustive_sum = 0;
