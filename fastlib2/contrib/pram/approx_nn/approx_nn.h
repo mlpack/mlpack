@@ -462,6 +462,7 @@ public:
 					     &old_from_new_queries_,
 					     NULL);
       query_trees_.push_back(single_point_tree);
+      old_from_new_queries_.Renew();
     }
     reference_tree_
       = tree::MakeKdTreeMidpoint<TreeType>(references_, 
@@ -582,6 +583,7 @@ public:
 					     &old_from_new_queries_,
 					     NULL);
       query_trees_.push_back(single_point_tree);
+      old_from_new_queries_.Renew();
     }
     reference_tree_
       = tree::MakeKdTreeMidpoint<TreeType>(references_, 
@@ -697,6 +699,7 @@ public:
 					     &old_from_new_queries_,
 					     NULL);
       query_trees_.push_back(single_point_tree);
+      old_from_new_queries_.Renew();
     }
     
 //     query_tree_
@@ -741,38 +744,45 @@ public:
    */
   void ComputeNeighbors(ArrayList<index_t>* resulting_neighbors,
                         ArrayList<double>* distances) {
-    
-    // Start on the root of each tree
-    for (vector::iterator query_tree = query_trees_.begin();
-	 query_tree < query_trees.end(); ++query_tree) {
-      ComputeNeighborsRecursion_(*query_tree, reference_tree_, 
-				 MinNodeDistSq_(*query_tree,
-						reference_tree_));
-    }
-    
-    // FIX HOW THE RESULTS ARE BEING STORED
 
     // We need to initialize the results list before filling it
     resulting_neighbors->Init(neighbor_indices_.size());
     distances->Init(neighbor_distances_.length());
-    // We need to map the indices back from how they have 
-    // been permuted
-    if (query_tree_ != NULL) {
-      for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-        (*resulting_neighbors)[old_from_new_queries_[i/knns_]*knns_+ i%knns_]
-	  = old_from_new_references_[neighbor_indices_[i]];
-        (*distances)[old_from_new_queries_[i/knns_]*knns_+ i%knns_]
-	  = neighbor_distances_[i];
-      }
-    } else {
-      for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-        (*resulting_neighbors)[old_from_new_references_[i/knns_]
-			       *knns_+ i%knns_]
-	  = old_from_new_references_[neighbor_indices_[i]];
-        (*distances)[old_from_new_references_[i/knns_]*knns_+ i%knns_]
-	  = neighbor_distances_[i];
-      }
+    
+    // Start on the root of each tree
+    index_t query = 0;
+    for (vector::iterator query_tree = query_trees_.begin();
+	 query_tree < query_trees.end(); ++query_tree, ++query) {
+      ComputeNeighborsRecursion_(*query_tree, reference_tree_, 
+				 MinNodeDistSq_(*query_tree,
+						reference_tree_));
+      // since the results would always be stored in the first
+      // index, we use that. The only thing to worry here is that
+      // the old_from_new_queries_ might have to be destroyed
+      // before every tree building
+      (*resulting_neighbors)[query]
+	= old_from_new_references_[neighbor_indices_[0]];
+      (*distances)[query] = neighbor_distances_[0];
     }
+
+//     // We need to map the indices back from how they have 
+//     // been permuted
+//     if (query_tree_ != NULL) {
+//       for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+//         (*resulting_neighbors)[old_from_new_queries_[i/knns_]*knns_+ i%knns_]
+// 	  = old_from_new_references_[neighbor_indices_[i]];
+//         (*distances)[old_from_new_queries_[i/knns_]*knns_+ i%knns_]
+// 	  = neighbor_distances_[i];
+//       }
+//     } else {
+//       for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+//         (*resulting_neighbors)[old_from_new_references_[i/knns_]
+// 			       *knns_+ i%knns_]
+// 	  = old_from_new_references_[neighbor_indices_[i]];
+//         (*distances)[old_from_new_references_[i/knns_]*knns_+ i%knns_]
+// 	  = neighbor_distances_[i];
+//       }
+//     }
   } // ComputeNeighbors
   
   
@@ -781,23 +791,41 @@ public:
    */
   void ComputeNaive(ArrayList<index_t>* resulting_neighbors,
                     ArrayList<double>*  distances) {
-    if (query_tree_!=NULL) {
-      ComputeBaseCase_(query_tree_, reference_tree_);
-    } else {
-      ComputeBaseCase_(reference_tree_, reference_tree_);
-    }
 
-    // The same code as above
+    // We need to initialize the results list before filling it
     resulting_neighbors->Init(neighbor_indices_.size());
     distances->Init(neighbor_distances_.length());
-    // We need to map the indices back from how they have 
-    // been permuted
-    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-      (*resulting_neighbors)[old_from_new_references_[i/knns_]*knns_+ i%knns_]
-	= old_from_new_references_[neighbor_indices_[i]];
-      (*distances)[old_from_new_references_[i/knns_]*knns_+ i%knns_]
-	=  neighbor_distances_[i];
+    
+    // Start on the root of each tree
+    index_t query = 0;
+    for (vector::iterator query_tree = query_trees_.begin();
+	 query_tree < query_trees.end(); ++query_tree, ++query) {
+      ComputeBaseCase_(*query_tree, reference_tree_);
+      // since the results would always be stored in the first
+      // index, we use that. The only thing to worry here is that
+      // the old_from_new_queries_ might have to be destroyed
+      // before every tree building
+      (*resulting_neighbors)[query]
+	= old_from_new_references_[neighbor_indices_[0]];
+      (*distances)[query] = neighbor_distances_[0];
     }
+//     if (query_tree_!=NULL) {
+//       ComputeBaseCase_(query_tree_, reference_tree_);
+//     } else {
+//       ComputeBaseCase_(reference_tree_, reference_tree_);
+//     }
+
+//     // The same code as above
+//     resulting_neighbors->Init(neighbor_indices_.size());
+//     distances->Init(neighbor_distances_.length());
+//     // We need to map the indices back from how they have 
+//     // been permuted
+//     for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+//       (*resulting_neighbors)[old_from_new_references_[i/knns_]*knns_+ i%knns_]
+// 	= old_from_new_references_[neighbor_indices_[i]];
+//       (*distances)[old_from_new_references_[i/knns_]*knns_+ i%knns_]
+// 	=  neighbor_distances_[i];
+//     }
   }
 
   /**
