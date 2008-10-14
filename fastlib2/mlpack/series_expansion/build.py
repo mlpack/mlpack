@@ -14,7 +14,7 @@ librule(
                "inverse_pow_dist_series_expansion_aux.h",
                "kernel_aux.h",
                "local_expansion.h",
-               "local_expansion_imp.h"
+               "local_expansion_impl.h",
                "monomial_kernel_aux.h",
                "monomial_kernel.h",
                "mult_farfield_expansion.h",

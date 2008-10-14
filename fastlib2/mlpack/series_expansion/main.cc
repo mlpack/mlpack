@@ -7,6 +7,7 @@
 
 #include "fastlib/fastlib.h"
 #include "kernel_aux.h"
+#include "monomial_kernel_aux.h"
 #include "farfield_expansion.h"
 #include "mult_farfield_expansion.h"
 #include "local_expansion.h"
@@ -825,6 +826,15 @@ int main(int argc, char *argv[]) {
   DEBUG_ASSERT(TestTransInversePowDistFarToLocal(data, weights, begin, end));
   DEBUG_ASSERT(TestTransInversePowDistFarToFar(data, weights, begin, end));
   DEBUG_ASSERT(TestTransInversePowDistLocalToLocal(data, weights, begin, end));
+
+  MonomialKernelAux kernel_aux;
+  kernel_aux.Init(2, 8, 4);
+  Matrix derivative_map;
+  kernel_aux.AllocateDerivativeMap(4, 5, &derivative_map);
+  Vector x;
+  x.SetAll(3);
+  kernel_aux.ComputeDirectionalDerivatives(x, &derivative_map, 5);
+  derivative_map.PrintDebug();
 
   fx_done(fx_root);
 }
