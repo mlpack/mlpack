@@ -22,12 +22,7 @@
 #define LLE_H
 
 #include <fastlib/fastlib.h>
-
-// this path is already included in the build pathname, 
-// so no change is required in the file pathname
 #include "mlpack/allknn/allknn.h"
-
-// changed as per review
 #define LEAF_LENGTH 20
 
 /**

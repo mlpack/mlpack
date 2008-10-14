@@ -1,17 +1,17 @@
 
 librule(
     name = "lle",                    # this line can be safely omitted
-    sources = [],            # files that must be compiled
-    headers = ["lle.h"],# include files part of the 'lib'
-    deplibs = ["fastlib:fastlib"],         # depends on fastlib core
-    #tests = ["lle_tests.cc"]        # this file contains a main with test functions
+    sources = [],                    # files that must be compiled
+    headers = ["lle.h"],             # include files part of the 'lib'
+    deplibs = ["fastlib:fastlib"],   # depends on fastlib core
+    #tests = ["lle_tests.cc"]
     )
 
 binrule(
-    name = "lle_main",                  # the executable name
-    sources = ["lle_main.cc"],          # compile main.cc
+    name = "lle_main",                   # the executable name
+    sources = ["lle_main.cc"],           # compile main.cc
     #headers = [],                       # no extra headers
-    deplibs = [":lle", "fastlib:fastlib"]    #
+    deplibs = [":lle", "fastlib:fastlib"]#
     )
 
 # to build:
