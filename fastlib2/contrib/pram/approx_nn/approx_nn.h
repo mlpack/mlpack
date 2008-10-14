@@ -129,7 +129,7 @@ public:
    * responsible for ensuring that the object is ready
    * to be destroyed safely.  
    */
-  AllkNN() {
+  ApproxNN() {
     // query_tree_ = NULL;
     reference_tree_ = NULL;
   } 
@@ -138,7 +138,7 @@ public:
    * The tree is the only member we are responsible for deleting.
    * The others will take care of themselves.  
    */
-  ~AllkNN() {
+  ~ApproxNN() {
 //     if (query_tree_ != NULL) {
 //       delete query_tree_;
 //     }
@@ -647,8 +647,11 @@ public:
 //   }
 
   void Destruct() {
-    if (query_tree_ != NULL) {
-      delete query_tree_;
+    for (vector::iterator it = query_trees_.begin();
+	 it < query_trees.end(); it++) {
+      if (*it != NULL) {
+	delete *it;
+      }
     }
     if (reference_tree_ != NULL) {
       delete reference_tree_;
