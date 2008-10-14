@@ -5,6 +5,22 @@
 
 class MonomialKernelAux {
 
+ private:
+
+  void SubFrom_(index_t dimension, int decrement,
+		const ArrayList<int> &subtract_from, 
+		ArrayList<int> &result) const {
+    
+    for(index_t d = 0; d < subtract_from.size(); d++) {
+      if(d == dimension) {
+	result[d] = subtract_from[d] - decrement;
+      }
+      else {
+	result[d] = subtract_from[d];
+      }
+    }
+  }
+
  public:
   
   typedef MonomialKernel TKernel;
@@ -69,7 +85,7 @@ class MonomialKernelAux {
 
       // Compute the contribution of $D_{x}^{n - e_d} \phi_{\nu,
       // d}(x)$ component for each $d$.
-      for(index_t d = 0; d < v.length(); d++) {
+      for(index_t d = 0; d < x.length(); d++) {
 	
 	// Subtract 1 from the given dimension.
 	SubFrom_(d, 1, multiindex, tmp_multiindex);
@@ -94,7 +110,8 @@ class MonomialKernelAux {
 	if(n_minus_two_e_d_position >= 0) {
 	  double factor;
 	  if(d == 0) {
-	    factor = (multiindex[d] - 1) * (multiindex[d] - 2 - kernel_.power);
+	    factor = (multiindex[d] - 1) * 
+	      (multiindex[d] - 2 - kernel_.power_);
 	  }
 	  else {
 	    factor = multiindex[d] * (multiindex[d] - 1);
