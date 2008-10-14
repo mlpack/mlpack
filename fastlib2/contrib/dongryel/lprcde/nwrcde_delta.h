@@ -15,7 +15,6 @@ class NWRCdeDelta {
   double nwr_denominator_sum_l;
   double nwr_numerator_sum_e;
   double nwr_denominator_sum_e;
-  double nwr_denominator_sum_u;
   double nwr_numerator_n_pruned;
   double nwr_denominator_n_pruned;
   double nwr_numerator_used_error;
@@ -42,7 +41,6 @@ class NWRCdeDelta {
     nwr_numerator_sum_e = rnode->stat().sum_of_target_values *
       kernel_value_range.mid();
     nwr_denominator_sum_e = rnode->count() * kernel_value_range.mid();
-    nwr_denominator_sum_u = rnode->count() * (kernel_value_range.hi - 1.0);
     nwr_numerator_n_pruned = rnode->stat().sum_of_target_values;
     nwr_denominator_n_pruned = rnode->count();
     nwr_numerator_used_error = rnode->stat().sum_of_target_values * 
@@ -57,7 +55,6 @@ class NWRCdeDelta {
     nwr_denominator_sum_l = 0;
     nwr_numerator_sum_e = 0;
     nwr_denominator_sum_e = 0;
-    nwr_denominator_sum_u = 0;
     nwr_numerator_n_pruned = 0;
     nwr_denominator_n_pruned = 0;
     nwr_numerator_used_error = 0;

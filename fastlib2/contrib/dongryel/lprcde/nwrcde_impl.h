@@ -34,7 +34,6 @@ void NWRCde<TKernel>::NWRCdeBase_(const Matrix &qset, QueryTree *qnode,
       query_results.nwr_numerator_sum_e[q] += weighted_kernel_value;
       query_results.nwr_denominator_sum_l[q] += kernel_value;
       query_results.nwr_denominator_sum_e[q] += kernel_value;
-      query_results.nwr_denominator_sum_u[q] += kernel_value;
 
     } // end of iterating over each reference point.
     
@@ -42,10 +41,6 @@ void NWRCde<TKernel>::NWRCdeBase_(const Matrix &qset, QueryTree *qnode,
     query_results.nwr_numerator_n_pruned[q] += 
       rnode->stat().sum_of_target_values;
     query_results.nwr_denominator_n_pruned[q] += rnode->count();
-    
-    // Subtract from the upper bound the upper bound kernel sum, which
-    // is assumed to be one.
-    query_results.nwr_denominator_sum_u[q] -= rnode->count();
 
     // Refine min and max summary statistics.
     qnode->stat().summary.Accumulate(query_results, q);
