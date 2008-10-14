@@ -164,10 +164,11 @@ class NWRCde {
     parameters_.rroot = NULL;
   }
 
-  /** @brief The default destructor which deletes the trees.
+  /** @brief The default destructor which does nothing. The tree will
+   *         be freed by the object traversal of NWRCdeGlobal object
+   *         class.
    */
   ~NWRCde() {
-    //delete parameters_.rroot;
   }
 
   ////////// User Level Functions //////////
