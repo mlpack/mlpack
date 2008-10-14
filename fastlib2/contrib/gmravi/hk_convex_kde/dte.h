@@ -242,13 +242,6 @@ template<typename TKernel> class DTreeEvaluation{
    
     if(total_error<allowed_error){
 
-      //printf("Min distance is %f..\n",min_dist);
-      // printf("Max distance is %f..\n",max_dist);
-      
-      // printf("The point in qnode is ..\n");
-      // printf("dl is %f..\n",*dl);
-      //printf("*du is %f...\n",*du);
-
       number_of_prunes_++;
       return 1;
     }
@@ -285,6 +278,9 @@ template<typename TKernel> class DTreeEvaluation{
     UpdateBounds_(qnode,qnode->stat().owed_l,qnode->stat().owed_u);
 
     //Flush owed_l and owed_u
+
+    qnode->stat().owed_l=0;
+    qnode->stat().owed_u=0;
 
     //Check For prunability
 
@@ -381,10 +377,8 @@ template<typename TKernel> class DTreeEvaluation{
   ~DTreeEvaluation(){
 
     delete(qroot_);
-
-    printf("Delete query tree...\n");
     delete(rroot_);
-    printf("Delete Ref tree...\n");
+  
     
   }
 
@@ -404,35 +398,17 @@ template<typename TKernel> class DTreeEvaluation{
     
     row_p.CopyValues(temp);
 
-    printf("Number of prunes that happened are %d...\n",number_of_prunes_);
+    //    printf("Number of Prunes:%d. ...\n",number_of_prunes_);
 
-  }
-  
-  /* void MakeFinalEstimates_(){
-     /* printf("density_estimates_l is...\n");
-     density_estimates_l_.PrintDebug();
-     
-     printf("density_estimates_u is...\n");
-     density_estimates_u_.PrintDebug();*/
-  
-  /*la::AddOverwrite(density_estimates_l_,
-    density_estimates_u_,&density_estimates_e_);
-    
-    la::Scale(0.5,&density_estimates_e_);
-    }*/
 
+  }  
 
   void PostProcess_(Tree *qnode){
     
     UpdateBounds_(qnode,qnode->stat().owed_l,qnode->stat().owed_u);
+
     if(qnode->is_leaf()){
       for(index_t i=qnode->begin();i<qnode->end();i++){
-	
-	printf("density estimates_l is %f...\n",density_estimates_l_[i]);
-	printf("more_l is %f...\n",qnode->stat().more_l);
-
-	printf("density estimates_u is %f...\n",density_estimates_u_[i]);
-	printf("more_u is %f...\n",qnode->stat().more_u);
 	
 	density_estimates_e_[i]=
 	  (density_estimates_l_[i]+qnode->stat().more_l
@@ -444,12 +420,6 @@ template<typename TKernel> class DTreeEvaluation{
       PostProcess_(qnode->right());   
     }
   }
-  
-  /* void NormalizeEstimates_(){
-    
-  double norm_const=kernel_.CalcNormConstant(rset_.n_rows());
-  la::Scale(1.0/norm_const,&density_estimates_e_);
-  }*/
   
   void FastDTreeEvaluationBase_(Tree *qnode,Tree *rnode){
     
@@ -511,13 +481,9 @@ template<typename TKernel> class DTreeEvaluation{
     
     PostProcess_(qroot_);
     
-    //MakeFinalEstimates_();
-    
     //Note my equations do not require me to multiply with a
     //normalization consant and hence I shall not perform the
     //normalization operation
-
-    //NormalizeEstimates_();
     
   }
   
@@ -527,12 +493,6 @@ template<typename TKernel> class DTreeEvaluation{
     
     qset_.Copy(qset);
     rset_.Copy(rset);
-
-    //printf("qset is....\n");
-    //qset_.PrintDebug();
-
-    //printf("rset is ...\n");
-    //rset_.PrintDebug();
 
     //Copy the bandwdith
     bandwidth_=bandwidth;
@@ -546,18 +506,13 @@ template<typename TKernel> class DTreeEvaluation{
 					     &old_from_new_r_,
 					     &new_from_old_r_);
 
-    //printf("query set is ....\n");
-    //qset_.PrintDebug();
-
-    printf("Set up the reference trees....\n");
     qroot_=tree::MakeKdTreeMidpoint <Tree> (qset_, LEAFLEN, &old_from_new_q_, 
 					    &new_from_old_q_);
 
 
-    printf("Set up the query trees..\n");
+    //printf("Built both query and reference trees...\n");
+
     kernel_.Init(bandwidth_);
-    
-    printf("Everything has been iniitlaized....\n");
 
     density_estimates_l_.Init(qset_.n_cols());
     density_estimates_u_.Init(qset_.n_cols());
@@ -571,6 +526,5 @@ template<typename TKernel> class DTreeEvaluation{
     density_estimates_e_.SetZero();
     
   }
-
 }; ///Definition of class DTreeEvaluation ends here.........
 #endif
