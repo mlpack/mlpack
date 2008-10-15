@@ -12,6 +12,69 @@
 #include <fastlib/fastlib.h>
 #include <vector>
 
+const fx_entry_doc approx_nn_entries[] = {
+//   {"dim", FX_PARAM, FX_INT, NULL,
+//    " The dimension of the data we are dealing with.\n"},
+//   {"qsize", FX_PARAM, FX_INT, NULL,
+//    " The number of points in the query set.\n"},
+//   {"rsize", FX_PARAM, FX_INT, NULL, 
+//    " The number of points in the reference set.\n"},
+  {"knns", FX_PARAM, FX_INT, NULL, 
+   " The number of nearest neighbors we need to compute"
+   " (defaults to 1).\n"},
+  {"epsilon", FX_PARAM, FX_INT, NULL,
+   " Rank approximation.\n"},
+  {"alpha", FX_PARAM, FX_DOUBLE, NULL,
+   " The error probability.\n"},
+  {"leaf_size", FX_PARAM, FX_INT, NULL,
+   " The leaf size for the kd-tree.\n"},
+  {"naive_init", FX_TIMER, FX_CUSTOM, NULL,
+   "Naive initialization time.\n"},
+  {"naive", FX_TIMER, FX_CUSTOM, NULL,
+   "Naive computation time.\n"},
+  {"exact_init", FX_TIMER, FX_CUSTOM, NULL,
+   "Exact initialization time.\n"},
+  {"exact", FX_TIMER, FX_CUSTOM, NULL,
+   "Exact computation time.\n"},
+  {"approx_init", FX_TIMER, FX_CUSTOM, NULL,
+   "Approx initialization time.\n"},
+  {"approx", FX_TIMER, FX_CUSTOM, NULL,
+   "Approximate computation time.\n"},
+  {"tree_building", FX_TIMER, FX_CUSTOM, NULL,
+   " The timer to record the time taken to build" 
+   " the query and the reference tree.\n"},
+  {"tree_building_approx", FX_TIMER, FX_CUSTOM, NULL,
+   " The timer to record the time taken to build" 
+   " the query and the reference tree for InitApprox.\n"},
+  {"computing_sample_sizes", FX_TIMER, FX_CUSTOM, NULL,
+   " The timer to compute the sample sizes.\n"},
+//   {"rbfs", FX_TIMER, FX_CUSTOM, NULL,
+//    " The timer to record the time taken to do"
+//    " the recursive breadth first computation.\n"},
+//   {"dfs", FX_TIMER, FX_CUSTOM, NULL, 
+//    " The timer to record the time taken to do"
+//    " the depth first computation.\n"},
+//   {"brute", FX_TIMER, FX_CUSTOM, NULL, 
+//    " The timer to record the time taken to do"
+//    " the brute nearest neighbor computation.\n"},
+//   {"ec", FX_PARAM, FX_DOUBLE, NULL,
+//    " The expansion constant we will be using"
+//    " to make the tree (defaults to 1.3).\n"},
+//   {"print_tree", FX_PARAM, FX_BOOL, NULL,
+//    " The variable to decide whether to print"
+//    " the tree made or not (defaults to false).\n"},
+//   {"do_gonzy", FX_PARAM, FX_BOOL, NULL,
+//    " This tells us whether we use gonzalez algorithm"
+//    " to form the tree of not (defaults to false)"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc approx_nn_doc = {
+  approx_nn_entries, NULL,
+  " Performs approximate nearest neighbors computation"
+  " - exact, approximate, brute.\n"
+};
+
 /**
  * Performs all-nearest-neighbors.  This class will build the trees and 
  * perform the recursive  computation.
@@ -202,7 +265,7 @@ private:
 
   /**
    * This function computes the probability of
-   * a particular quantile
+   * a particular quantile given the set and sample sizes
    */
   double ComputeProbability_(index_t set_size,
 			     index_t sample_size,
@@ -229,7 +292,9 @@ private:
     prob *= sum;
 
     // asserting that the probability is <= 1.0
-    DEBUG_ASSERT(prob <= 1.0);
+    DEBUG_ASSERT_MSG(prob <= 1.0,
+		     "prob = %lf, N = %"LI"d, n = %"LI"d",
+		     prob, set_size, sample_size);
     return prob;
   }
   
@@ -245,14 +310,18 @@ private:
 			   ArrayList<index_t> *samples) {
     index_t set_size = samples->size(),
       n = samples->size();
+    NOTIFY("N = %"LI"d", set_size);
     double prob;
-    while (set_size > 0) {
+    while (set_size > epsilon) {
       do {
 	n--;
 	prob = ComputeProbability_(set_size, n, epsilon);
       } while (prob >= alpha);
       (*samples)[--set_size] = ++n;
     }  // end while
+    while (set_size > 0) {
+      (*samples)[--set_size] = 1;
+    }
   }
 
   /**
@@ -917,6 +986,7 @@ public:
       delete reference_tree_;
     }
     queries_.Destruct();
+    query_.Destruct();
     references_.Destruct();
     old_from_new_queries_.Renew();
     old_from_new_references_.Renew();
