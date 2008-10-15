@@ -5,7 +5,7 @@
 
 class InversePowDistGradientKernel {
 
- private:
+ public:
   double lambda_;
   
   index_t dimension_;
@@ -25,13 +25,21 @@ class InversePowDistGradientKernel {
 
 class InversePowDistKernel {
   
- private:
+ public:
   double lambda_;
   
+  index_t dimension_;
+
  public:
 
-  void Init(double lambda_in) {
+  void Init(double lambda_in, index_t dimension_in) {
     lambda_ = lambda_in;
+    dimension_ = dimension_in;
+  }
+
+  double EvalUnnorm(const double *point) const {
+    double sqdist = la::Dot(dimension_, point, point);
+    return 1.0 / pow(sqdist, lambda_ / 2.0);
   }
 
   double EvalUnnorm(double dist) const {
