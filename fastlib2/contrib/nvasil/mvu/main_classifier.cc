@@ -96,14 +96,15 @@ int main(int argc, char *argv[]) {
       new_dimension, num2);   
   double total_score;
   if (fx_param_exists(fx_root, "validation_file")) {
-    Matrix classification_results;
     NOTIFY("Computing the unfolded optimization score");
     if (mode=="mvu") {
+      Matrix classification_results;
       total_score = ComputeClassificationScore(fx_root, 
                                                labeled_data_points,
                                                labels,
                                                unlabeled_data_points, 
                                                &classification_results);
+    data::Save("classification_results", classification_results);
     } else {
       if (mode=="svm") {
         // find the classification score
@@ -130,7 +131,6 @@ int main(int argc, char *argv[]) {
         FATAL("This mode (%s) is not supported", mode.c_str());
       }
     }
-    data::Save("classification_results", classification_results);
     fx_result_double(fx_root, "unfolded_classification_score", total_score);
     NOTIFY("Unfolded Classification Results %lg%%", total_score);
   }
