@@ -52,3 +52,20 @@ int main (int argc, char *argv[]) {
 
   fx_done(fx_root);
 }
+
+/*
+ranlib blas_LINUX.a
+make[1]: Leaving directory `/net/hc292/pram/work_space/fastlib2/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/netlib_workspace1/BLAS'
+... Almost done with BLAS...
+... Created archive, cleaning up.
+*** Done with  and BLAS!
+
+Traceback (most recent call last):
+  File "/net/hc292/pram/work_space/fastlib2/script/fl-build", line 141, in ?
+    errfile = None)
+  File "/net/hc292/pram/work_space/fastlib2/script/util.py", line 338, in spawn_redirect
+make: *** [/net/hc292/pram/work_space/fastlib2/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/liblapack.a] Interrupt
+    (p, status) = os.waitpid(pid, 0)
+KeyboardInterrupt
+
+*/
