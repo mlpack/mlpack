@@ -15,8 +15,6 @@ librule(
                "kernel_aux.h",
                "local_expansion.h",
                "local_expansion_impl.h",
-               "monomial_kernel_aux.h",
-               "monomial_kernel.h",
                "mult_farfield_expansion.h",
                "mult_farfield_expansion_impl.h",
                "mult_local_expansion.h",

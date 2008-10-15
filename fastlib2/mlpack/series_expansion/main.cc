@@ -7,7 +7,6 @@
 
 #include "fastlib/fastlib.h"
 #include "kernel_aux.h"
-#include "monomial_kernel_aux.h"
 #include "farfield_expansion.h"
 #include "mult_farfield_expansion.h"
 #include "local_expansion.h"
@@ -15,6 +14,7 @@
 #include "mult_series_expansion_aux.h"
 #include "inverse_pow_dist_farfield_expansion.h"
 #include "inverse_pow_dist_local_expansion.h"
+#include "inverse_pow_dist_kernel_aux.h"
 #include "series_expansion_aux.h"
 #include "contrib/dongryel/proximity_project/gen_metric_tree.h"
 #include "../kde/dataset_scaler.h"
@@ -827,15 +827,16 @@ int main(int argc, char *argv[]) {
   DEBUG_ASSERT(TestTransInversePowDistFarToFar(data, weights, begin, end));
   DEBUG_ASSERT(TestTransInversePowDistLocalToLocal(data, weights, begin, end));
 
-  MonomialKernelAux kernel_aux;
-  kernel_aux.Init(2, 8, 4);
+  InversePowDistKernelAux kernel_aux;
+  kernel_aux.Init(-2, 2, 4);
   Matrix derivative_map;
-  kernel_aux.AllocateDerivativeMap(4, 5, &derivative_map);
+  kernel_aux.AllocateDerivativeMap(4, 2, &derivative_map);
   Vector x;
   x.Init(4);
   x.SetAll(3);
-  kernel_aux.ComputeDirectionalDerivatives(x, &derivative_map, 5);
+  kernel_aux.ComputeDirectionalDerivatives(x, &derivative_map, 2);
   derivative_map.PrintDebug();
+  kernel_aux.sea_.PrintDebug();
 
   fx_done(fx_root);
 }
