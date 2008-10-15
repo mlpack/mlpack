@@ -40,9 +40,9 @@ class ApproxNN {
     // The upper bound on the node's nearest neighbor distances.
     double max_distance_so_far_;
     // Number of points considered
-    index_t total_points;
+    index_t total_points_;
     // Number of points sampled
-    index_t samples;
+    index_t samples_;
     
   public:
     // getters
@@ -124,7 +124,7 @@ private:
   Matrix query_;
   Matrix references_;
   // Pointers to the roots of the two trees.
-  vector<TreeType*> query_trees_;
+  std::vector<TreeType*> query_trees_;
   TreeType* reference_tree_;
   // The total number of prunes.
   index_t number_of_prunes_;
@@ -152,7 +152,7 @@ private:
   
   // Add this at the beginning of a class to prevent accidentally
   // calling the copy constructor
-  FORBID_ACCIDENTAL_COPIES(AllkNN);
+  FORBID_ACCIDENTAL_COPIES(ApproxNN);
   
 public:
   /**
@@ -175,8 +175,8 @@ public:
 //     if (query_tree_ != NULL) {
 //       delete query_tree_;
 //     }
-    for (vector::iterator it = query_trees_.begin();
-	 it < query_trees.end(); it++) {
+    for (std::vector<TreeType*>::iterator it = query_trees_.begin();
+	 it < query_trees_.end(); it++) {
       if (*it != NULL) {
 	delete *it;
       }
@@ -243,8 +243,8 @@ private:
    */
   void ComputeSampleSizes_(index_t epsilon, double alpha,
 			   ArrayList<index_t> *samples) {
-    index_t set_size = samples->length(),
-      n = samples->length();
+    index_t set_size = samples->size(),
+      n = samples->size();
     double prob;
     while (set_size > 0) {
       do {
@@ -760,21 +760,8 @@ public:
     // Stop the timer we started above
     fx_timer_stop(module_, "tree_building");
 
-    // We will time the initialization of the sample size
-    // table
-    fx_timer_start(module_, "computing_sample_sizes");
-
-    // initialize the sample_sizes array
-    sample_sizes_.Init(references_.n_cols());
-
-    // compute the sample sizes
-    double alpha = fx_param_double(module_, "alpha", 0.90);
-    epsilon_ = fx_param_int(module_, "epsilon", 5);
-
-    ComputeSampleSizes_(epsilon_, alpha, &sample_sizes_);
-
-    fx_timer_stop(module_, "computing_sample_sizes");
-
+    // initializing the sample_sizes_
+    sample_sizes_.Init();
   } // Init
 
 //   /** Use this if you want to run allknn it on a single dataset 
@@ -827,8 +814,7 @@ public:
 
   void Init(const Matrix& queries_in,
 	    const Matrix& references_in, 
-	    index_t leaf_size, index_t knns,
-	    index_t epsilon, double alpha) {
+	    index_t leaf_size, index_t knns) {
     
     // track the number of prunes
     number_of_prunes_ = 0;
@@ -878,23 +864,9 @@ public:
 					   leaf_size_,
 					   &old_from_new_references_,
 					   NULL);
-    
-    // Stop the timer we started above
-    fx_timer_stop(module_, "tree_building");
 
-    // We will time the initialization of the sample size
-    // table
-    fx_timer_start(module_, "computing_sample_sizes");
-
-    // initialize the sample_sizes array
-    sample_sizes_.Init(references_.n_cols());
-    epsilon_ = epsilon;
-
-    // compute the sample sizes
-    ComputeSampleSizes_(epsilon_, alpha, &sample_sizes_);
-
-    fx_timer_stop(module_, "computing_sample_sizes");
-
+    // initializing the sample_sizes_
+    sample_sizes_.Init();
   } // Init
 
 //   void Init(const Matrix& references_in,
@@ -935,8 +907,8 @@ public:
 //   }
 
   void Destruct() {
-    for (vector::iterator it = query_trees_.begin();
-	 it < query_trees.end(); it++) {
+    for (std::vector<TreeType*>::iterator it = query_trees_.begin();
+	 it < query_trees_.end(); it++) {
       if (*it != NULL) {
 	delete *it;
       }
@@ -950,6 +922,8 @@ public:
     old_from_new_references_.Renew();
     neighbor_distances_.Destruct();
     neighbor_indices_.Renew();
+
+    sample_sizes_.Renew();
   }
 
   /**
@@ -998,7 +972,9 @@ public:
 					   leaf_size_,
 					   &old_from_new_references_,
 					   NULL);
-        
+
+    // initialiazing the sample_sizes_
+    sample_sizes_.Init();
   } // InitNaive
   
 //   void InitNaive(const Matrix& references_in, index_t knns){
@@ -1024,6 +1000,146 @@ public:
 //     // This is an annoying feature of fastlib
 //     old_from_new_queries_.Init();
 //   } // InitNaive
+
+  void InitApprox(const Matrix& queries_in,
+		  const Matrix& references_in,
+		  struct datanode* module_in) {
+    
+    // set the module
+    module_ = module_in;
+    
+    // track the number of prunes
+    number_of_prunes_ = 0;
+    
+    // Get the leaf size from the module
+    leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+    // Make sure the leaf size is valid
+    DEBUG_ASSERT(leaf_size_ > 0);
+    
+    // Copy the matrices to the class members since they will be rearranged.  
+    queries_.Copy(queries_in);
+    references_.Copy(references_in);
+    
+    // The data sets need to have the same number of points
+    DEBUG_SAME_SIZE(queries_.n_rows(), references_.n_rows());
+    
+    // K-nearest neighbors initialization
+    knns_ = fx_param_int(module_, "knns", 1);
+  
+    // Initialize the list of nearest neighbor candidates
+    neighbor_indices_.Init(queries_.n_cols() * knns_);
+    
+    // Initialize the vector of upper bounds for each point.  
+    neighbor_distances_.Init(queries_.n_cols() * knns_);
+    neighbor_distances_.SetAll(DBL_MAX);
+
+    // We'll time tree building
+    fx_timer_start(module_, "tree_building_approx");
+
+    // This call makes each tree from a matrix, leaf size, and two arrays 
+    // that record the permutation of the data points
+    // Instead of NULL, it is possible to specify an array new_from_old_
+
+    // Here we need to change the query tree into N single-point
+    // query trees
+    for (index_t i = 0; i < queries_.n_cols(); i++) {
+      Matrix single_point;
+      queries_.MakeColumnSlice(i, 1, &single_point);
+      TreeType *single_point_tree
+	= tree::MakeKdTreeMidpoint<TreeType>(single_point,
+					     leaf_size_, 
+					     &old_from_new_queries_,
+					     NULL);
+      query_trees_.push_back(single_point_tree);
+      old_from_new_queries_.Renew();
+    }
+    reference_tree_
+      = tree::MakeKdTreeMidpoint<TreeType>(references_, 
+					   leaf_size_,
+					   &old_from_new_references_,
+					   NULL);
+    
+    // Stop the timer we started above
+    fx_timer_stop(module_, "tree_building_approx");
+
+    // We will time the initialization of the sample size
+    // table
+    fx_timer_start(module_, "computing_sample_sizes");
+
+    // initialize the sample_sizes array
+    sample_sizes_.Init(references_.n_cols());
+
+    // compute the sample sizes
+    double alpha = fx_param_double(module_, "alpha", 0.90);
+    epsilon_ = fx_param_int(module_, "epsilon", 5);
+
+    ComputeSampleSizes_(epsilon_, alpha, &sample_sizes_);
+
+    fx_timer_stop(module_, "computing_sample_sizes");
+
+  } // InitApprox
+
+  void InitApprox(const Matrix& queries_in,
+		  const Matrix& references_in, 
+		  index_t leaf_size, index_t knns,
+		  index_t epsilon, double alpha) {
+    
+    // track the number of prunes
+    number_of_prunes_ = 0;
+    
+    // Make sure the leaf size is valid
+    leaf_size_ = leaf_size;
+    DEBUG_ASSERT(leaf_size_ > 0);
+    
+    // Make sure the knns is valid
+    knns_ = knns;
+    DEBUG_ASSERT(knns_ > 0);
+    // Copy the matrices to the class members since they will be rearranged.  
+    queries_.Copy(queries_in);
+    references_.Copy(references_in);
+    
+    // The data sets need to have the same number of points
+    DEBUG_SAME_SIZE(queries_.n_rows(), references_.n_rows());
+    
+  
+    // Initialize the list of nearest neighbor candidates
+    neighbor_indices_.Init(queries_.n_cols() * knns_);
+    
+    // Initialize the vector of upper bounds for each point.  
+    neighbor_distances_.Init(queries_.n_cols() * knns_);
+    neighbor_distances_.SetAll(DBL_MAX);
+
+
+    // This call makes each tree from a matrix, leaf size, and two arrays 
+    // that record the permutation of the data points
+    // Instead of NULL, it is possible to specify an array new_from_old_
+
+    // Here we need to change the query tree into N single-point
+    // query trees
+    for (index_t i = 0; i < queries_.n_cols(); i++) {
+      Matrix single_point;
+      queries_.MakeColumnSlice(i, 1, &single_point);
+      TreeType *single_point_tree
+	= tree::MakeKdTreeMidpoint<TreeType>(single_point,
+					     leaf_size_, 
+					     &old_from_new_queries_,
+					     NULL);
+      query_trees_.push_back(single_point_tree);
+      old_from_new_queries_.Renew();
+    }
+    reference_tree_
+      = tree::MakeKdTreeMidpoint<TreeType>(references_, 
+					   leaf_size_,
+					   &old_from_new_references_,
+					   NULL);
+
+    // initialize the sample_sizes array
+    sample_sizes_.Init(references_.n_cols());
+    epsilon_ = epsilon;
+    // compute the sample sizes
+    ComputeSampleSizes_(epsilon_, alpha, &sample_sizes_);
+
+  } // Init
   
   /**
    * Computes the nearest neighbors and stores them in *results
@@ -1037,8 +1153,8 @@ public:
     
     // Start on the root of each tree
     index_t query = 0;
-    for (vector::iterator query_tree = query_trees_.begin();
-	 query_tree < query_trees.end(); ++query_tree, ++query) {
+    for (std::vector<TreeType*>::iterator query_tree = query_trees_.begin();
+	 query_tree < query_trees_.end(); ++query_tree, ++query) {
       // Making the query matrix for this single tree run
       queries_.MakeColumnSlice(query, 1, &query_);
 
@@ -1090,8 +1206,8 @@ public:
     
     // Start on the root of each tree
     index_t query = 0;
-    for (vector::iterator query_tree = query_trees_.begin();
-	 query_tree < query_trees.end(); ++query_tree, ++query) {
+    for (std::vector<TreeType*>::iterator query_tree = query_trees_.begin();
+	 query_tree < query_trees_.end(); ++query_tree, ++query) {
 
       // Making the query matrix for this single tree run
       queries_.MakeColumnSlice(query, 1, &query_);
@@ -1141,8 +1257,8 @@ public:
     
     // Start on the root of each tree
     index_t query = 0;
-    for (vector::iterator query_tree = query_trees_.begin();
-	 query_tree < query_trees.end(); ++query_tree, ++query) {
+    for (std::vector<TreeType*>::iterator query_tree = query_trees_.begin();
+	 query_tree < query_trees_.end(); ++query_tree, ++query) {
 
       // Making the query matrix for this single tree run
       queries_.MakeColumnSlice(query, 1, &query_);
@@ -1160,8 +1276,8 @@ public:
 
       // compute the probability
       (*probabilities)[query]
-	= ComputeProbability_((*query_node)->stat().total_points(),
-			      (*query_node)->stat().samples(),
+	= ComputeProbability_((*query_tree)->stat().total_points(),
+			      (*query_tree)->stat().samples(),
 			      epsilon_);
 
       // destructing the query_ matrix for the next run
