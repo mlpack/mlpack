@@ -2,6 +2,7 @@
 #define ICHOL_H
 #include "fastlib/fastlib.h"
 #include "hyperkernels.h"
+#include "special_la.h"
 #include <math.h>
 
 
@@ -54,6 +55,8 @@ class IChol{
 
   ArrayList <index_t> perm_;
 
+  Matrix M_mat_;
+
   
    void ComputeDiagonalElements_(){
      
@@ -66,22 +69,22 @@ class IChol{
 	 row++;
        }
      }
-  }
+     }
   
 
-   /*void ComputeDiagonalElements_(){
+   /* void ComputeDiagonalElements_(){ */
    
-   index_t row=0;
-   for(index_t p=0;p<num_train_points_;p++){
-     for(index_t q=0;q<num_train_points_;q++){
+/*    index_t row=0; */
+/*    for(index_t p=0;p<num_train_points_;p++){ */
+/*      for(index_t q=0;q<num_train_points_;q++){ */
        
-       diagonal_elements_[row]=M_mat_.get(row,row);
-       row++;
-     }
-     }
-   printf("The diagoanl eleements are...\n");
-   diagonal_elements_.PrintDebug();
-   }*/
+/*        diagonal_elements_[row]=M_mat_.get(row,row); */
+/*        row++; */
+/*      } */
+/*      } */
+/*    printf("The diagoanl eleements are...\n"); */
+/*    diagonal_elements_.PrintDebug(); */
+/*    } */
 
  public:
 
@@ -102,6 +105,8 @@ class IChol{
     index_t start_col=0;
     index_t i;
     i=0;
+
+    printf("Start row is %d\n",start_row);
 
     for(index_t row=start_row;row<end_row;row++){
       
@@ -200,7 +205,32 @@ class IChol{
   }
 
 
+  /*void  ExtractRowOfOriginalMatrix_(index_t row,index_t start_index_of_perm_vector,Vector &temp){
+    
+    //This function forms a vector by accessing the original elements ie we neeed
+    
+    //We should probably make use of a caching scheme to make it more efficient
+    index_t i=0;
+    row=perm_[row];
+    for(index_t j=start_index_of_perm_vector;j<sqd_num_train_points_;j++){
+      
+      index_t col=perm_[j];
+      
+      //Having got the row and column number find p,q,r,s
+      //index_t p=row/num_train_points_;
+      //index_t q=row%num_train_points_;
+      //index_t r=col/num_train_points_;
+      //index_t s=col%num_train_points_;
+      temp[i]=M_mat_.get(row,col);;
+      i++;
+      }
+    }*/
+
+
   double ComputeElementOfMMatrix_(index_t p, index_t q,index_t r,index_t s){
+
+
+    //printf("p=%d,q=%d,r=%d,s=%d...\n",p,q,r,s);
 
     //$M(p,q,r,s)=K'/m^2 +\lambda K$
     
@@ -240,8 +270,9 @@ class IChol{
 
     //gaussian kernels between x_p x_q and x_r x_s
     double gk_x_p_x_q=gk.EvalUnnormOnSq(sqd_x_p_x_q)/gk.CalcNormConstant(num_dims_);
-    double gk_x_r_x_s=gk.EvalUnnormOnSq(sqd_x_r_x_s)/gk.CalcNormConstant(num_dims_);;
+    double gk_x_r_x_s=gk.EvalUnnormOnSq(sqd_x_r_x_s)/gk.CalcNormConstant(num_dims_);
 
+    
     //calculate constants that depend on the dimensions p,q,r,s only
 
     //Since this is a one dimensional setting we shall make use of the
@@ -262,7 +293,17 @@ class IChol{
 
     double c=gk_x_p_x_q*gk_x_r_x_s/c9;
 
-
+    /* printf("c1=%f\n",c1); */
+/*     printf("c2=%f\n",c2); */
+/*     printf("c3=%f\n",c3); */
+/*     printf("c4=%f\n",c4); */
+/*     printf("c5=%f\n",c5); */
+/*     printf("c6=%f\n",c6); */
+/*     printf("c7=%f\n",c7); */
+/*     printf("c8=%f\n",c8); */
+/*     printf("c9=%f\n",c9); */
+/*     printf("c=%f\n",c); */
+    
     //We shall need the values of sigma^4, sigma^2, sigma_h^2 and
     //sigma_h^4. Hence lets compute and store them
 
@@ -294,9 +335,10 @@ class IChol{
 
 	double gamma=(x_i[0]-x_j[0])*(x_i[0]-x_j[0]);
 	
-	theta_x=alpha*sigma_4+beta*sigma_h_2*sigma_2+4*gamma*sigma_h_4;
+	theta_x=alpha*sigma_4+4*beta*sigma_h_2*sigma_2+4*gamma*sigma_h_4;
 	theta_x*=-1/temp;
 	k_prime_val+=pow(math::E,theta_x);
+	//printf("alpha=%f,beta=%f,gamma=%f,theta_x=%f..\n",alpha,beta,gamma,theta_x);
       }
     }
     
@@ -312,14 +354,28 @@ class IChol{
     double sqd_dist_between_means=la::DistanceSqEuclidean(mean_x_p_x_q,
 							  mean_x_r_x_s);
     
-    double k_val=gk_x_p_x_q*gk_x_r_x_s*gk.EvalUnnorm(sqd_dist_between_means);
+    double k_val=gk_x_p_x_q*gk_x_r_x_s*gk.EvalUnnormOnSq(sqd_dist_between_means);
     k_val/=gk.CalcNormConstant(num_dims_);
 
+    //printf("Gausian between x_p x_q is %f\n..",gk_x_p_x_q);
+    //printf("Gausian between x_r x_s is %f\n..",gk_x_r_x_s);
+    //printf("Gaussian between means is %f\n",
+    //   gk.EvalUnnormOnSq(sqd_dist_between_means)/gk.CalcNormConstant(num_dims_));
+    //printf("Squared distance between means is %f...\n",sqd_dist_between_means);
+    //printf("Nomrlaization constatnt=%f..\n",gk.CalcNormConstant(num_dims_));
+
+    //printf("k_val =%f..\n",k_val);
+    //printf("k_prime val=%f...\n",k_prime_val);
+    //printf("temp=%f..\n",temp);
+
     double m_val=(c*k_prime_val/sqd_num_train_points_)+lambda_*k_val;
+    //printf("m_val=%f..\n",m_val);
     return m_val;
   }
 
 
+  //First column of the matrix is same as the first row
+  //as the matrix is symmetric
   void GetFirstColOfMMatrix_(Vector &first_col){
     
     
@@ -336,10 +392,11 @@ class IChol{
       }
     }     
   } 
-
-  index_t CheckIfLastColumnIsZeros(index_t rank){
-
-    double  EPSILON=pow(10,-10);
+  
+  /*  index_t CheckIfLastColumnIsZeros(index_t rank){
+    
+    double  EPSILON;
+    EPSILON=pow(10,-10);
 
     index_t FAILURE=-1;
     index_t SUCCESS=1;
@@ -362,51 +419,46 @@ class IChol{
     }
 
     return SUCCESS;
-  }
+    }*/
   
-  /*void GetFirstColOfMMatrix_(Vector &first_col){
+/*   void GetFirstColOfMMatrix_(Vector &first_col){ */
 
-     
-  for(index_t p=0;p<num_train_points_;p++){
+/*     printf("Squared number of train points are  %d\n",sqd_num_train_points_); */
+
+
+/*     for(index_t p=0;p<sqd_num_train_points_;p++){ */
+      
+/*       double val=M_mat_.get(p,0); */
+   
+/*       first_col[p]=val;  */
+/*     }   */
+/*   } */
   
-  for(index_t q=0;q<num_train_points_;q++){
-  
-  index_t row1=p*num_train_points_+q;
-  index_t row2=q*num_train_points_+p;
-  double val=M_mat_.get(row1,0);
-  
-  first_col[row1]=val;
-  first_col[row2]=val;
-  
-  }
-  }    
-  
-  }*/
   
    void Compute(Matrix &chol_factor_in,ArrayList <index_t> &perm_in){
      
-      Matrix M_mat;
-     M_mat.Init(sqd_num_train_points_,sqd_num_train_points_);
-     printf("Wil do incomplete cholesky now...\n");
+     /*   printf("Wil do incomplete cholesky now...\n");
      
      
-	for(index_t p=0;p<num_train_points_;p++){
+      for(index_t p=0;p<num_train_points_;p++){
 	
-	  for(index_t q=0;q<num_train_points_;q++){
+	for(index_t q=0;q<num_train_points_;q++){
 	    
-	    index_t row_num1=p*num_train_points_+q;
-	    index_t row_num2=q*num_train_points_+p;
+	  index_t row_num1=p*num_train_points_+q;
+	  index_t row_num2=q*num_train_points_+p;
 	    
-	    for(index_t r=0;r<num_train_points_;r++){
+	  for(index_t r=0;r<num_train_points_;r++){
 	      
-	      for(index_t s=0;s<num_train_points_;s++){
+	    for(index_t s=0;s<num_train_points_;s++){
 		
 		index_t col_num1=r*num_train_points_+s;
 		index_t col_num2=s*num_train_points_+r;
 		
 		double val=ComputeElementOfMMatrix_(p,q,r,s);
+
+		printf("row_num1=%d,col_num1=%d..\n",row_num1,col_num1);
 		
-		M_mat.set(row_num1,col_num1,val); //p,q,r,s 1,2,3,4
+		M_mat_.set(row_num1,col_num1,val); //p,q,r,s 1,2,3,4
 		//m.set(row_num1,col_num2,val); //p,q,s,r 1,2,4,3
 		//m.set(row_num2,col_num1,val); //q,p,r,s 2,1,3,4
 		//m.set(row_num2,col_num2,val); //q,p,s,r 2,1,4,3
@@ -418,14 +470,21 @@ class IChol{
 	      }
 	    }
 	  }
-	}
+	  }
 	
 	
-	FILE *fp;
-	fp=fopen("m_matrix.txt","w");
-	M_mat.PrintDebug(NULL,fp);
-	printf("Computed the matrix also....\n");
-	ComputeIncompleteCholesky(chol_factor_in,perm_in);
+     FILE *fp;
+     fp=fopen("m_matrix.txt","w");
+     M_mat_.PrintDebug(NULL,fp);
+     printf("Computed the matrix also....\n");*/
+
+     //Matrix temp;
+     //temp.Init(train_set_.n_rows(),train_set_.n_cols());
+     //temp.CopyValues(train_set_);
+     //la::MulTransBOverwrite(temp,temp,&M_mat_);
+     //printf("M matrix is...\n");
+     //M_mat_.PrintDebug();
+     ComputeIncompleteCholesky(chol_factor_in,perm_in);
    }
    
    void ComputeIncompleteCholesky(Matrix &chol_factor_in,
@@ -437,8 +496,8 @@ class IChol{
      
      ComputeDiagonalElements_();
 
-     printf("The diagonal elements are...\n");
-     diagonal_elements_.PrintDebug();
+     // printf("The diagonal elements are...\n");
+     //diagonal_elements_.PrintDebug();
      
      //Set the first column of chol factor to the first column of the
      //matrix M_mat_
@@ -447,6 +506,11 @@ class IChol{
      first_col.Init(sqd_num_train_points_);
      
      GetFirstColOfMMatrix_(first_col);
+
+     // printf("The first column is...\n");
+     //first_col.PrintDebug();
+
+     //Set the first column
      
      for(index_t j=0;j<sqd_num_train_points_;j++){
        
@@ -454,6 +518,7 @@ class IChol{
      }
      
      index_t i;
+     
      for(i=0;i<sqd_num_train_points_;i++){
        
        if(i>=1){
@@ -469,9 +534,12 @@ class IChol{
 	   
 	   chol_factor_.set(j,j,diagonal_elements_[perm_[j]]-squared_vector[j-i]);
 	}
+
+	 //printf("Squared vector is ...\n");
+	 //squared_vector.PrintDebug();
        }
        
-       else{
+       else{ //this is for i=0
 	 
 	 for(index_t j=0;j<sqd_num_train_points_;j++){
 	   
@@ -480,20 +548,23 @@ class IChol{
 	 
        }
        
-       //printf("chol factor after initial subtraction is...\n");
+       //printf("chol factor after initial subtraction is %d...\n",i);
        //chol_factor_.PrintDebug();
        
        if(SumOfDiagonalElementsOfCholFactor_(i)<=epsilon_){
 	 
 	break;
        }
-       else{
+       else{ //THis is for the continuation of the algorithm
 	 
 	 //Find the maximum diagonal element from i to m
 	 
 	 index_t max_index;
 	 double max_value;
 	 FindMaxDiagonalElementInCholFactor_(i,&max_index,&max_value);
+	 //printf("The max index is %d..\n",max_index);
+	 //	 printf("The starting element of the cholesky factor is %f,%f\n",chol_factor_.get(0,0));
+	
 	 
 	 //Take care of the permutations
 	 
@@ -511,14 +582,28 @@ class IChol{
 	index_t row2=max_index;
 	index_t tillcol=i;
 	SwapRowsOfCholFactor_(row1,row2,tillcol);
+
+	//printf("Before taking square root the mnax value %d is %f..\n",i,max_value);
 	max_value=sqrt(max_value);
+
+	//printf("Max value %d is %f\n",i,max_value);
+
 	chol_factor_.set(i,i,max_value);
 	
 	Vector temp1;
 	temp1.Init(sqd_num_train_points_-i-1);
 	
 	index_t start_index_of_perm_vector=i+1;
+	//printf("Permutation matrix at this point is..\n");
+	/*for(index_t q=i;q<sqd_num_train_points_;q++){
+
+	  printf("Permutation[%d]=%d",q,perm_[q]);
+	  }*/
+	printf("\n...");
 	ExtractRowOfOriginalMatrix_(i,start_index_of_perm_vector,temp1);
+
+	//printf("Extracted matrix is..\n");
+	//temp1.PrintDebug();
 	
 	if(i>=1){
 	  index_t start_row=i+1;
@@ -540,10 +625,7 @@ class IChol{
 	    
 	    temp2[j]=chol_factor_.get(i,j);
 	  }
-	 
-	  printf("Chol factor after intial subtraction is...\n");
-	  chol_factor_.PrintDebug();
-	  
+	       
 	  if(temp_mat.n_rows()!=0&&temp_mat.n_cols()!=0&&temp2.length()!=0){
 	    
 	    Vector temp3_prod;	   
@@ -551,16 +633,22 @@ class IChol{
 	    
 	    Vector temp4;
 	    la::SubInit(temp3_prod,temp1,&temp4);
+
+	    //printf("The subtractant is %d...\n",i);
+	    //temp3_prod.PrintDebug();
 	    
-	    //L(i+1:m,i) <- temp4
+	    //L(i+1:m,i)*L(i,1:i-1) <- temp4
 	    index_t k=0;
 	    
-	    // printf("Doing final stuff on chol factor ...\n");
+	    //printf("Doing final stuff on chol factor ...\n");
 	    for(index_t row=i+1;row<sqd_num_train_points_;row++){
 	      
 	      chol_factor_.set(row,i,temp4[k]/max_value);
 	      k++;	   
 	    }
+
+	    //printf("Chol factor after final  subtraction is i=%d...\n",i);
+	    //chol_factor_.PrintDebug();
 	  }
 	  
 	  else{
@@ -571,11 +659,16 @@ class IChol{
 	      chol_factor_.set(row,i,temp1[k]/max_value);
 	      k++;	   
 	    }
+	    //printf("The subtractant is %d.......\n",i);
+	    //printf("0000000000 vector........\n");
+	    
+	    //printf("Chol factor after final subtraction is i=%d...\n",i);
+	    //chol_factor_.PrintDebug();
 	  }
 	}
-	else{
+	///...................
+	else{//This happens when i=0
 
-	  //This happend when i=0
 	  
 	  //Fill this up
 	  index_t k=0;
@@ -584,15 +677,22 @@ class IChol{
 	    
 	    
 	    chol_factor_.set(row,i,temp1[k]/max_value);
-
-	    printf("Chol factor after initial subtraction..\n");
-	    chol_factor_.PrintDebug();
 	    k++;	   
 	  }
+
+	  // printf("The part from the original matrix is..\n");
+	  //temp1.PrintDebug();
+
+	  //printf("The subtractant is  %d.......\n",i);
+	  //printf("00000000000 vector.....\n");
+
+	  //printf("Chol factor after final subtraction %d..\n",i);
+	  //chol_factor_.PrintDebug();
 	}
        }
      }
      
+     //END OF THE ALGORITHM...............
     
      //Determine the rank of the matrix
      
@@ -606,13 +706,13 @@ class IChol{
        rank=sqd_num_train_points_;
      }
 
-     printf("The rank of the matrix M is %d..\n",rank);
+     //printf("The rank of the matrix M is %d..\n",rank);
      
      //It can happen that the last column is full of 0's in which case
      //we just chop off the column.
 
      
-     index_t flag=CheckIfLastColumnIsZeros(rank);
+     /*index_t flag=CheckIfLastColumnIsZeros(rank);
 
      if(flag==1){
 
@@ -624,10 +724,50 @@ class IChol{
 
        //Copy the sliced cholesky factor and the permutation arraylist
        chol_factor_.MakeColumnSlice(0,rank,&chol_factor_in);
+       }*/
+
+     chol_factor_.MakeColumnSlice(0,rank,&chol_factor_in);
+
+     for(index_t i=0;i<sqd_num_train_points_;i++){
+
+       perm_in[i]=perm_[i];
      }
 
-    
-     perm_in.Copy(perm_);
+     //printf("Cholesky factor is..\n");
+     // chol_factor_in.PrintDebug();
+
+     //make sure all calculations are fine
+
+     /*     Matrix PL;
+     special_la::PreMultiplyMatrixWithPermutationMatrixInit(perm_,chol_factor_,&PL);
+     
+     Matrix chol_factor_trans,PL_chol_factor_trans;
+     la::TransposeInit(chol_factor_,&chol_factor_trans);
+     la::MulInit(PL,chol_factor_trans,&PL_chol_factor_trans); //PLL^T
+     
+     ArrayList<index_t> perm_in_trans;
+     special_la::PermutationMatrixTransposeInit(perm_,&perm_in_trans); //P^T
+     
+     Matrix PL_chol_factor_trans_P_trans;
+     special_la::PostMultiplyMatrixWithPermutationMatrixInit(PL_chol_factor_trans,perm_in_trans,
+     &PL_chol_factor_trans_P_trans); //PLL^TP^T
+     
+     printf("Post multiplication with permutation matrix done..\n");
+     
+     Matrix temp1;
+     la::SubInit(PL_chol_factor_trans_P_trans,M_mat_,&temp1);
+     
+     double trace=0;
+     for(index_t i=0;i<sqd_num_train_points_;i++){
+     
+     trace+=temp1.get(i,i);
+     }
+     
+     for(index_t i=0;i<sqd_num_train_points_;i++){
+     
+     printf("Permutation is %d..\n",perm_[i]);
+     }
+     printf("Trace is %15f....\n",trace);*/
    }
 
 
@@ -660,9 +800,10 @@ class IChol{
       perm_[i]=i;      
     }
 
-    epsilon_=0.000001;
+    epsilon_=0.0000001;
 
     num_dims_=train_set_.n_rows();
+    //M_mat_.Init(sqd_num_train_points_,sqd_num_train_points_);
   }
 
 };
