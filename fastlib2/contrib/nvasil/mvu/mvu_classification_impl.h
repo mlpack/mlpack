@@ -524,9 +524,9 @@ void MaxFurthestNeighborsSvmSemiSupervised::ComputeGradient(Matrix &coordinates,
     double *p2=coordinates.GetColumnPtr(i);
     double dot_prod=la::Dot(dimension,
                             p1,
-                            p2) * svm_signs_[i];
-    if (sigma_*dot_prod <= ineq_lagrange_mult_[i] ) {
-      double factor=-ineq_lagrange_mult_[i]+ sigma_*dot_prod;
+                            p2);
+    if (sigma_*dot_prod*svm_signs_[i] <= ineq_lagrange_mult_[i] ) {
+      double factor=-ineq_lagrange_mult_[i]*svm_signs_[i]+ sigma_*dot_prod;
       la::AddExpert(dimension, factor, p2, 
           gradient->GetColumnPtr(anchor_point_));
       la::AddExpert(dimension, factor, p1, 
