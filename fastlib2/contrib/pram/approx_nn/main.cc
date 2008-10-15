@@ -1,8 +1,44 @@
 #include <string>
 #include "approx_nn.h"
 
+const fx_entry_doc approx_nn_main_entries[] = {
+  {"r", FX_REQUIRED, FX_STR, NULL,
+   " A file containing the reference set.\n"},
+  {"q", FX_REQUIRED, FX_STR, NULL,
+   " A file containing the query set"
+   " (defaults to the reference set).\n"},
+//   {"donaive", FX_PARAM, FX_BOOL, NULL,
+//    " A variable which decides whether we do"
+//    " the naive computation(defaults to false).\n"},
+//   {"dorbfs", FX_PARAM, FX_BOOL, NULL,
+//    " A variable which decides whether we do"
+//    " the recursive breadth first computation"
+//    "(defaults to true).\n"},
+//   {"dodfs", FX_PARAM, FX_BOOL, NULL,
+//    " A variable which decides whether we do"
+//    " the depth first computation(defaults to false).\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_submodule_doc approx_nn_main_submodules[] = {
+  {"ann", &approx_nn_doc,
+   " Responsible for doing approximate nearest neighbor"
+   " search using sampling on kd-trees.\n"},
+  FX_SUBMODULE_DOC_DONE
+};
+
+const fx_module_doc approx_nn_main_doc = {
+  approx_nn_main_entries, approx_nn_main_submodules,
+  "This is a program to test run the approx "
+  " nearest neighbors using sampling on kd-trees.\n"
+  "It performs the exact, approximate"
+  " and the naive computation.\n"
+};
+
+
 int main (int argc, char *argv[]) {
-  fx_module *root = fx_init(argc, argv, NULL);
+  fx_module *root
+    = fx_init(argc, argv, &approx_nn_main_doc);
 
   ApproxNN approx_nn, naive_nn, exact_nn;
   Matrix qdata, rdata;
@@ -23,49 +59,41 @@ int main (int argc, char *argv[]) {
   ArrayList<double> din, die, dia;
 
   // Naive computation
+  NOTIFY("Naive");
+  NOTIFY("Init");
   fx_timer_start(ann_module, "naive_init");
   naive_nn.InitNaive(qdata, rdata, 1);
   fx_timer_stop(ann_module, "naive_init");
 
-  fx_timer_start(ann_module, "naive");
-  naive_nn.ComputeNaive(&nac, &din);
-  fx_timer_start(ann_module, "naive");
+//   NOTIFY("Compute");
+//   fx_timer_start(ann_module, "naive");
+//   naive_nn.ComputeNaive(&nac, &din);
+//   fx_timer_start(ann_module, "naive");
 
   // Exact computation
+  NOTIFY("Exact");
+  NOTIFY("Init");
   fx_timer_start(ann_module, "exact_init");
   exact_nn.Init(qdata, rdata, ann_module);
   fx_timer_stop(ann_module, "exact_init");
 
-  fx_timer_start(ann_module, "exact");
-  exact_nn.ComputeNeighbors(&exc, &die);
-  fx_timer_stop(ann_module, "exact");
+//   NOTIFY("Compute");
+//   fx_timer_start(ann_module, "exact");
+//   exact_nn.ComputeNeighbors(&exc, &die);
+//   fx_timer_stop(ann_module, "exact");
 
   // Approximate computation
+  NOTIFY("Approx");
+  NOTIFY("Init");
   fx_timer_start(ann_module, "approx_init");
-  approx_nn.Init(qdata, rdata, ann_module);
+  approx_nn.InitApprox(qdata, rdata, ann_module);
   fx_timer_stop(ann_module, "approx_init");
 
-  ArrayList<double> prob;
-  fx_timer_start(ann_module, "approx");
-  approx_nn.ComputeApprox(&apc, &dia, &prob);
-  fx_timer_stop(ann_module, "approx");
+//   NOTIFY("Compute");
+//   ArrayList<double> prob;
+//   fx_timer_start(ann_module, "approx");
+//   approx_nn.ComputeApprox(&apc, &dia, &prob);
+//   fx_timer_stop(ann_module, "approx");
 
   fx_done(fx_root);
 }
-
-/*
-ranlib blas_LINUX.a
-make[1]: Leaving directory `/net/hc292/pram/work_space/fastlib2/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/netlib_workspace1/BLAS'
-... Almost done with BLAS...
-... Created archive, cleaning up.
-*** Done with  and BLAS!
-
-Traceback (most recent call last):
-  File "/net/hc292/pram/work_space/fastlib2/script/fl-build", line 141, in ?
-    errfile = None)
-  File "/net/hc292/pram/work_space/fastlib2/script/util.py", line 338, in spawn_redirect
-make: *** [/net/hc292/pram/work_space/fastlib2/bin_keep/x86_64_Linux_COMMON_gcc_COMMON/liblapack.a] Interrupt
-    (p, status) = os.waitpid(pid, 0)
-KeyboardInterrupt
-
-*/
