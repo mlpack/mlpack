@@ -16,6 +16,7 @@
 #include "bounds_aux.h"
 #include "farfield_expansion.h"
 #include "local_expansion.h"
+#include "inverse_pow_dist_kernel_aux.h"
 #include "mult_farfield_expansion.h"
 #include "mult_local_expansion.h"
 
@@ -595,9 +596,12 @@ class EpanKernelAux {
   
   TSeriesExpansionAux sea_;
 
+  InversePowDistKernelAux squared_component_;
+
   OT_DEF_BASIC(EpanKernelAux) {
     OT_MY_OBJECT(kernel_);
     OT_MY_OBJECT(sea_);
+    OT_MY_OBJECT(squared_component_);
   }
 
  public:
@@ -605,6 +609,9 @@ class EpanKernelAux {
   void Init(double bandwidth, int max_order, int dim) {
     kernel_.Init(bandwidth);
     sea_.Init(max_order, dim);
+
+    // This is for doing an expansion on $||x||^2$ part.
+    squared_component_.Init(-2, max_order, dim);
   }
 
   double BandwidthFactor(double bandwidth_sq) const {
@@ -613,65 +620,25 @@ class EpanKernelAux {
 
   void AllocateDerivativeMap(int dim, int order, 
 			     Matrix *derivative_map) const {
-    derivative_map->Init(dim, order + 1);
+    derivative_map->Init(sea_.get_total_num_coeffs(order), 1);
   }
 
   void ComputeDirectionalDerivatives(const Vector &x, 
 				     Matrix *derivative_map, int order) const {
-
-    int dim = x.length();
     
-    // precompute necessary Hermite polynomials based on coordinate difference
-    for(index_t d = 0; d < dim; d++) {
-      
-      double coord_div_band = x[d];
-      
-      derivative_map->set(d, 0, coord_div_band * coord_div_band);
+    // Compute the derivatives for $||x||^2$ and negate it. Then, add
+    // $(1, 0, 0, ... 0)$ to it.
+    squared_component_.ComputeDirectionalDerivatives(x, derivative_map, order);
+    
+    la::Scale(derivative_map->n_rows(), -1, derivative_map->GetColumnPtr(0));
 
-      if(order > 0) {
-	derivative_map->set(d, 1, 2 * coord_div_band);
-	
-	if(order > 1) {
-	  derivative_map->set(d, 2, -2);
-
-	  for(index_t k = 3; k <= order; k++) {
-	    derivative_map->set(d, k, 0);
-	  }
-	}
-      }
-
-    } // end of looping over each dimension
+    (derivative_map->GetColumnPtr(0))[0] += 1.0;
   }
 
   double ComputePartialDerivative(const Matrix &derivative_map,
 				  const ArrayList<int> &mapping) const {
-    
-    int nonzero_count = 0;
-    int nonzero_index = 0;
 
-    // this is for checking whether the mapping represents a 
-    // mixed partial derivative, which zero for Epanechnikov Kernel
-    for(index_t d = 0; d < mapping.size(); d++) {
-      if(mapping[d] > 0) {
-	nonzero_count++;
-	nonzero_index = d;
-      }
-
-      if(nonzero_count > 1) {
-	return 0;
-      }
-    }
-    
-    // if it is not a mixed partial derivative, then compute
-    if(nonzero_count == 0) {
-      double prod = 0;
-      for(index_t d = 0; d < mapping.size(); d++) {
-	prod += derivative_map.get(d, 0);
-      }
-      return 1.0 - prod;
-    }
-    
-    return derivative_map.get(nonzero_index, mapping[nonzero_index]);
+    return derivative_map.get(sea_.ComputeMultiindexPosition(mapping), 0);
   }
 
   template<typename TBound>
