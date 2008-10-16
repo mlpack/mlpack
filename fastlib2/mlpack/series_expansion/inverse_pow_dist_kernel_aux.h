@@ -258,7 +258,12 @@ class InversePowDistKernelAux {
       // Set the final contribution for this multiindex.
       derivative_map->set(i, 0, -contribution / squared_l2_norm /
 			  sum_of_indices / inv_multiindex_factorials[i]);
-      
+
+      // Negate the final result, if the sum of the indices is odd.
+      if(sum_of_indices % 2 == 1) {
+	derivative_map->set(i, 0, -derivative_map->get(i, 0));
+      }
+
     } // end of iterating over all required multiindex positions...
   }
   
