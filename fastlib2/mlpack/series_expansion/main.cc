@@ -105,6 +105,92 @@ int TestEpanKernelEvaluateFarField(const Matrix &data, const Vector &weights,
   return 1;
 }
 
+int TestEpanKernelEvaluateLocalField(const Matrix &data, const Vector &weights,
+				     int begin, int end) {
+  
+  printf("\n----- TestEpanKernelEvaluateLocalField -----\n");
+
+  // bandwidth of 10 Epanechnikov kernel
+  double bandwidth = 10;
+
+  // declare auxiliary object and initialize
+  EpanKernelAux ka;
+  ka.Init(bandwidth, 10, data.n_rows());
+
+  // declare center at the origin
+  Vector center;
+  center.Init(2);
+  center.SetZero();
+
+  // to-be-evaluated point
+  Vector evaluate_here;
+  evaluate_here.Init(2);
+  evaluate_here[0] = evaluate_here[1] = 0.1;
+
+  // declare expansion object
+  LocalExpansion<EpanKernelAux> se;
+
+  // initialize expansion objects with respective center and the bandwidth
+  se.Init(center, ka);
+
+  // compute up to 2-nd order multivariate polynomial.
+  se.AccumulateCoeffs(data, weights, begin, end, 2);
+
+  // print out the objects
+  se.PrintDebug();               // expansion at (0, 0)
+
+  // evaluate the series expansion
+  printf("Evaluated the expansion at (%g %g) is %g...\n",
+	 evaluate_here[0], evaluate_here[1],
+	 se.EvaluateField(evaluate_here.ptr()));
+
+  // check with exhaustive method
+  double exhaustive_sum = 0;
+  for(index_t i = begin; i < end; i++) {
+    int row_num = i;
+    double dsqd = (evaluate_here[0] - data.get(0, row_num)) * 
+      (evaluate_here[0] - data.get(0, row_num)) +
+      (evaluate_here[1] - data.get(1, row_num)) * 
+      (evaluate_here[1] - data.get(1, row_num));
+    
+    exhaustive_sum += ka.kernel_.EvalUnnormOnSq(dsqd);
+
+  }
+  printf("Exhaustively evaluated sum: %g\n", exhaustive_sum);
+
+  // now recompute using the old expansion formula...
+  double first_moment0 = 0;
+  double first_moment1 = 0;
+  double second_moment0 = 0;
+  double second_moment1 = 0;
+
+  for(index_t i = begin; i < end; i++) {
+    int row_num = i;
+
+    double diff0 = (data.get(0, row_num) - center[0]) / 
+      sqrt(ka.kernel_.bandwidth_sq());
+    double diff1 = (data.get(1, row_num) - center[1]) / 
+      sqrt(ka.kernel_.bandwidth_sq());
+
+    first_moment0 += diff0;
+    first_moment1 += diff1;
+    second_moment0 += diff0 * diff0;
+    second_moment1 += diff1 * diff1;
+  }
+  double diff_coord0 = (evaluate_here[0] - center[0]) / 
+    sqrt(ka.kernel_.bandwidth_sq());
+  double diff_coord1 = (evaluate_here[1] - center[1]) / 
+    sqrt(ka.kernel_.bandwidth_sq());
+  
+  printf("Old formula got: %g\n",
+	 end - (second_moment0 - 2 * first_moment0 * diff_coord0 + 
+		end * diff_coord0 * diff_coord0) - 
+	 (second_moment1 - 2 * first_moment1 * diff_coord1 + 
+	  end * diff_coord1 * diff_coord1));
+
+  return 1;
+}
+
 template<typename Tree>
 void ExtractLeafNodes(Tree *node, ArrayList<Tree *> &leaf_nodes) {
 
@@ -837,6 +923,9 @@ int main(int argc, char *argv[]) {
   kernel_aux.ComputeDirectionalDerivatives(x, &derivative_map, 2);
   derivative_map.PrintDebug();
   kernel_aux.sea_.PrintDebug();
+
+  TestEpanKernelEvaluateFarField(data, weights, begin, end);
+  TestEpanKernelEvaluateLocalField(data, weights, begin, end);
 
   fx_done(fx_root);
 }
