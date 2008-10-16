@@ -682,9 +682,16 @@ class EpanKernelAux {
   (const TBound &far_field_region, const TBound &local_field_region, 
    double min_dist_sqd_regions, double max_dist_sqd_regions, double max_error, 
    double *actual_error) const {
-    
-    // currently, disabled but might be worth putting in...
-    return -1;
+        
+    // first check that the maximum distances between the two regions are
+    // within the bandwidth, otherwise the expansion is not valid
+    if(max_dist_sqd_regions > kernel_.bandwidth_sq()) {
+      return -1;
+    }
+    else {
+      *actual_error = 0;
+      return 2;
+    }
   }
   
   template<typename TBound>
