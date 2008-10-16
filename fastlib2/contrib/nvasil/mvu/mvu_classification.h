@@ -136,6 +136,7 @@ private:
   ArrayList<double> furthest_distances_;
   double sum_of_furthest_distances_;
   double sigma_;
+  double sigma1_;
   index_t num_of_points_;
   index_t new_dimension_;
   double grad_tolerance_;
