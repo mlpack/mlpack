@@ -312,34 +312,14 @@ class HKInteriorPointPredictorCorrector{
       //step
       double val;
       val=gamma_vector_[i];
-      if(val<EPSILON){
 
-	printf("Value was small$$$$$$$$$$$$$$$$$$$$$$$...\n");
-	
-	v2_vector_[i]=-beta_vector_[i];
-      }
+      double product=
+	delta_beta_vector_[i]*delta_gamma_vector_[i];
 
-      else{
-	double product=
-	  delta_beta_vector_[i]*delta_gamma_vector_[i];
+      double numerator=mu_-beta_vector_[i]*gamma_vector_[i]-product;
 	
-	
-	//printf("Product=%f, ...\n",product);
-	if(product>EPSILON){
-	  
-	  product/=gamma_vector_[i];
-	}
-	else{
-	  product=0;
-	}
-
-	
-	
-	v2_vector_[i]=(mu_/gamma_vector_[i])-beta_vector_[i]-product;
-      }
+      v2_vector_[i]=min(numerator/val,1000.0); // I am clipping it at 1000
     }
-    printf("v2 vector is...\n");
-    v2_vector_.PrintDebug();
   }
 
   void FormVectorv1_(){
@@ -387,6 +367,9 @@ class HKInteriorPointPredictorCorrector{
     Vector v1_minus_2M_v2;
     la::SubInit(two_M_v2,v1_vector_,&v1_minus_2M_v2);
 
+    printf("v1_minus_2M_v2 is...\n");
+    v1_minus_2M_v2.PrintDebug();
+
     //printf("v1_minus_2_v2 is...\n");
     //v1_minus_2M_v2.PrintDebug();
 
@@ -403,10 +386,11 @@ class HKInteriorPointPredictorCorrector{
 					      D_vector_,v1_minus_2M_v2,
 					      &temp1);
 
-    //printf("Matrix inverse times a vector comes out to...\n");
-    //temp1.PrintDebug();
+    printf("Matrix inverse times a vector comes out to...\n");
+    temp1.PrintDebug();
 
     double temp2=la::Dot(v_vector_,temp1);
+    printf("temp2 is %f..\n",temp2);
     
 
     //Check to see if denominator_delta_psi=0. if it is then recompute it
@@ -436,7 +420,7 @@ class HKInteriorPointPredictorCorrector{
     
     double v_trans_v2=la::Dot(v_vector_,v2_vector_);
 
-    //    printf("Numerator of my calculations are %f..\n",v_trans_v2-s1_+temp2);
+    printf("Numerator of my calculations are %f..\n",v_trans_v2-s1_+temp2);
     delta_psi_=(v_trans_v2-s1_+temp2)/temp4;
   }
 
@@ -452,17 +436,24 @@ class HKInteriorPointPredictorCorrector{
     Vector v1_minus_delta_psi_v;
     la::SubInit(delta_psi_v,v1_vector_,&v1_minus_delta_psi_v); //v1-\delta psi v
 
-    //printf("v1_minus_delta_psiv comes to ..\n");
-    //v1_minus_delta_psi_v.PrintDebug();
+    printf("v1_minus_delta_psiv comes to ..\n");
+    v1_minus_delta_psi_v.PrintDebug();
 
   
     //prod1 <-D(v1-\delta psi v)
     Vector prod1;
     special_la::PreMultiplyVectorWithDiagonalMatrixInit(v1_minus_delta_psi_v,D_vector_,&prod1);
 
+    printf("product of D and v1_minus_delta_psi v is..\n");
+    prod1.PrintDebug();
+
+
 
     Vector sum_of_v2_prod1;
     la::AddInit(prod1,v2_vector_,&sum_of_v2_prod1); //With this we have v_2+D\left(v_1-\delta_psi\right)v
+
+    printf("Sum of v2 and prod1 is...\n");
+    sum_of_v2_prod1.PrintDebug();
 
     // Form A^TDA. 
 
@@ -476,15 +467,18 @@ class HKInteriorPointPredictorCorrector{
 
     la::MulTransAInit(permuted_chol_factor_,DA,&A_tDA);//We now have A^TDA
 
+    printf("DA is...\n");
+    DA.PrintDebug();
+
+    printf("A_tDA is...\n");
+    A_tDA.PrintDebug();
+
     //Add identity matrix to A^TDA
     for(index_t i=0;i<A_tDA.n_rows();i++){
 
       double val=A_tDA.get(i,i);
       A_tDA.set(i,i,val+1);
     }
-
-    printf("Befoer Inverting I have..\n");
-    A_tDA.PrintDebug();
     //We invert this matrix. Remember this is an in-place inversion 
 
     index_t flag=
@@ -518,24 +512,40 @@ class HKInteriorPointPredictorCorrector{
     permuted_chol_factor_trans_sum_of_v2_prod1.Init(permuted_chol_factor_.n_rows());
     la::MulInit(sum_of_v2_prod1,permuted_chol_factor_,&permuted_chol_factor_trans_sum_of_v2_prod1);
 
+    printf("permuted_chol_factor_trans_sum_of_v2_prod1 is..\n");
+    permuted_chol_factor_trans_sum_of_v2_prod1.PrintDebug();
+
     //Small inverse times A^T(v2+D(v1-delta psi v))
 
     Vector temp1;
 
     la::MulInit(A_tDA,permuted_chol_factor_trans_sum_of_v2_prod1,&temp1);
 
+    printf("temp1 is...\n");
+    temp1.PrintDebug();
+
     Vector A_temp1;
 
     la::MulInit(permuted_chol_factor_,temp1,&A_temp1);
+
+    printf("A times temp1 is...\n");
+    A_temp1.PrintDebug();
 
     Vector D_A_temp1;
 
     special_la::PreMultiplyVectorWithDiagonalMatrixInit(D_vector_,A_temp1,
 							&D_A_temp1);
 
+    printf("DA temp1 is..\n");
+    D_A_temp1.PrintDebug();
+
     //delta beta is D_A_temp1+sum_of_v2_prod1
 
     la::AddOverwrite(sum_of_v2_prod1,D_A_temp1,&delta_beta_vector_);
+
+    printf("Delta beta is..\n");
+    delta_beta_vector_.PrintDebug();
+
   }
 
   //delta gamma =D'(v2-delta \beta)
@@ -550,7 +560,7 @@ class HKInteriorPointPredictorCorrector{
      Vector two_M_delta_beta;
 
      special_la::PostMultiplyMatrixWithVectorGivenCholesky(chol_factor_,perm_mat_,
-					       delta_beta_vector_,&two_M_delta_beta);
+							   delta_beta_vector_,&two_M_delta_beta);
 	
      //Lets find 2M\delta \beta +\delta psi v
 
@@ -562,8 +572,15 @@ class HKInteriorPointPredictorCorrector{
      la::AddInit(two_M_delta_beta,delta_psi_v,
 		      &two_M_delta_beta_plus_delta_psi_v);
 
+     printf("two_M_delta_beta_plus_delta_psi_v is...\n");
+     two_M_delta_beta_plus_delta_psi_v.PrintDebug();
+
+
      //Finally subtract v1
      la::SubOverwrite(v1_vector_,two_M_delta_beta_plus_delta_psi_v,&delta_gamma_vector_);
+
+     printf("delta gamma is..\n");
+     delta_gamma_vector_.PrintDebug();
    }
 
   void GetTheStartPoint_(){
@@ -573,7 +590,7 @@ class HKInteriorPointPredictorCorrector{
     //\beta,\gamma \psi
 
     beta_vector_.SetAll(1);
-    gamma_vector_.SetAll(1);
+    gamma_vector_.SetAll(2);
     psi_=1;
     mu_=1;
   }
@@ -614,6 +631,8 @@ class HKInteriorPointPredictorCorrector{
     //The corrector step involves updating v2 and resolving equations
 
     FormVectorv2_(); 
+    printf("Vector v2 becomes...\n");
+    v2_vector_.PrintDebug();
  
     //Resolve the equations
 
@@ -659,7 +678,7 @@ class HKInteriorPointPredictorCorrector{
     
 
     //Iterator over beta
-     double min_over_beta=DBL_MAX;
+    double min_over_beta=DBL_MAX;
     double min_over_gamma=DBL_MAX;
 
     for(index_t i=0;i<sqd_num_train_points_;i++){
@@ -675,11 +694,11 @@ class HKInteriorPointPredictorCorrector{
 	
 	min_over_gamma=frac_gamma;
       }
+      printf("frac_beta=%f,frac_gamma=%f..\n",frac_beta,frac_gamma);
     }
+    printf("Min-over_beta=%f,min_over_gamma=%f..\n",min_over_beta,min_over_gamma);
 
     double temp=-20.0;
-    printf("Min over beta is %f...\n",min_over_beta);
-    printf("Min over gamma is %f..\n",min_over_gamma);
     double lambda_inv=max(max(1.0,temp*min_over_beta),temp*min_over_gamma);
     return 1.0/lambda_inv;
   }
@@ -708,10 +727,19 @@ class HKInteriorPointPredictorCorrector{
 
     Vector beta_temp;
     Vector gamma_temp;
+    printf("min lambda is %f..\n",min_lambda);
     
+    printf("delta beta predictor is...\n");
+    delta_beta_predictor_vector_.PrintDebug();
     la::Scale(min_lambda,&delta_beta_predictor_vector_);
+
+    printf("Scaled delta beta vector is...\n");
+    delta_beta_predictor_vector_.PrintDebug();
  
     //\beta <- \beta+delta_beta
+
+    printf("beta vector is...\n");
+    beta_vector_.PrintDebug();
     
     la::AddInit(delta_beta_predictor_vector_,beta_vector_,&beta_temp);
 
@@ -720,6 +748,12 @@ class HKInteriorPointPredictorCorrector{
     //\gamma <-\gamma+delta \gamma
 
     la::AddInit(delta_gamma_vector_,gamma_vector_,&gamma_temp);
+
+    printf("beta temp is...\n");
+    beta_temp.PrintDebug();
+
+    printf("gamma temp is...\n");
+    gamma_temp.PrintDebug();
 
     //$mu=
     //\frac{\beta^T\gamma}{m^2} \left(\frac{1-\lambda+epsilon}{10+\lambda}\right)$
@@ -790,9 +824,19 @@ class HKInteriorPointPredictorCorrector{
     //and the correctors steps, v2 changes for the corrector step
     
     GetTheStartPoint_();
-    FormVectorv1_();
-    FormVectorv2_();
+    //FormVectorv1_();
+    //FormVectorv2_();
     FormScalars1_();
+
+    printf("v1 vector is..\n");
+    v1_vector_.PrintDebug();
+
+    printf("v2 vector is..\n");
+    v2_vector_.PrintDebug();
+
+    printf("Scalar s1=%f..\n",s1_);
+
+
     printf("Starting vector is..\n");
 
     printf("Beta vector is...\n");
@@ -803,7 +847,7 @@ class HKInteriorPointPredictorCorrector{
 
     printf("psi=%f mu_=%f..\n",psi_,mu_);
 
-    while(num_iterations_<200){ 
+    while(num_iterations_<2){ 
 
 
       printf("ITERATION NUMBER=%d\n",num_iterations_);
@@ -818,14 +862,16 @@ class HKInteriorPointPredictorCorrector{
       D_vector_.PrintDebug(); 
       
       TakePredictorStep_(&denominator_delta_psi,&flag);
+      printf("Done with perdictor step...\n");
 
+      printf("delta psi is %f..\n",delta_psi_);
       //COpy the predictor values
 
       delta_beta_predictor_vector_.CopyValues(delta_beta_vector_);
 
       delta_gamma_predictor_vector_.CopyValues(delta_gamma_vector_);
 
-      printf("Finished Predcitor Step...\n");
+      printf("Finished Predcitor Step...\n\n\n");
       
       //Since predictor step has calculated the quantity denominator_delta_psi 
       //set the flag
@@ -849,7 +895,11 @@ class HKInteriorPointPredictorCorrector{
       printf("Delta gamma vector is..\n");
       delta_gamma_vector_.PrintDebug();
 
-      
+
+      //Update mu is being called first so that it can make use of
+      //predictor update to the beta vector
+
+      UpdateMu_(min_lambda);
       
       UpdatePrimalAndDualVariables_(min_lambda);
 
@@ -860,7 +910,7 @@ class HKInteriorPointPredictorCorrector{
       printf("Gamma vector is...\n");
       gamma_vector_.PrintDebug();
 
-      UpdateMu_(min_lambda);
+     
 
       printf("Psi=%f,mu=%f..\n",psi_,mu_);
 
@@ -868,6 +918,8 @@ class HKInteriorPointPredictorCorrector{
       FlushUpdates_();
       num_iterations_++;
       CalculateGap_();
+      printf("Finished everything...\n");
+    
     }
 
     printf("At the end of iterations we have beta_vector...\n");
@@ -911,7 +963,7 @@ class HKInteriorPointPredictorCorrector{
     //We will mostly use the cholesky factor of 2M. This can be
     //achieved by multiplying the chol factor with sqrt(2)
     
-    //la::Scale(sqrt(2),&chol_factor_);
+    la::Scale(sqrt(2),&chol_factor_);
     
     
     //Also we use the permuted chol factor which is=PL
@@ -927,19 +979,59 @@ class HKInteriorPointPredictorCorrector{
 
     //The algorithm solves a QP which involves a linar term in the
     //objective and a linear constraint. Lets first get both these vectors
-    GetLinearPartOfObjectiveAndLinearConstraintVectors_();
+
+
+    //GetLinearPartOfObjectiveAndLinearConstraintVectors_();
 
     
     //Get the Cholesky factiorization of the matrix M
 
-    GetCholeskyFactorizationOfMMatrix_();
+    //GetCholeskyFactorizationOfMMatrix_();
     
     printf("Preprocessing steps are all done..\n");
+
+
+    //THESE ARE TEMPORARY ARRANGMENTS
+
+    v1_vector_[0]=1;
+    v1_vector_[1]=2;
+    v1_vector_[2]=3;
+
+
+    v2_vector_[0]=4;
+    v2_vector_[1]=5;
+    v2_vector_[2]=6;
+
+    v_vector_[0]=1;
+    v_vector_[1]=2;
+    v_vector_[2]=3;
+
+    a_vector_[0]=7;
+    a_vector_[1]=8;
+    a_vector_[2]=9;
+    
+
+    perm_mat_[0]=1;
+    perm_mat_[1]=0;
+    perm_mat_[2]=2;
+
+    chol_factor_.Init(3,1);
+    chol_factor_.set(0,0,2);
+    chol_factor_.set(1,0,1);
+    chol_factor_.set(2,0,3);
+
+    special_la::
+      PreMultiplyMatrixWithPermutationMatrixInit(perm_mat_,chol_factor_,&permuted_chol_factor_);
+
+    printf("permuted cholesky factor is...\n");
+    permuted_chol_factor_.PrintDebug();
+
+
      
     //having obtained the vectors the algorithm works by taking a
     //predictor step and followed by a corrector step
     
-    PredictorCorrectorSteps_();
+     PredictorCorrectorSteps_();
 
   }
 
@@ -999,8 +1091,8 @@ class HKInteriorPointPredictorCorrector{
 
     //THIS IS A TEMPORARY ARRANGEMENT..........
 
-    // sqd_num_train_points_=3;                 /* */
-    //num_train_points_=2;                    /*  */
+    sqd_num_train_points_=3;                 
+    num_train_points_=2;                    
 
 
     //............................................
