@@ -277,12 +277,6 @@ class GaussianKernelMultAux {
     *actual_error = ret2;
     return p_alpha;
   }
-  
-  double UpperBoundOnDerivative(double min_dist_sqd_regions, int order) const {
-    
-    return exp(-min_dist_sqd_regions / (4 * kernel_.bandwidth_sq())) *
-      pow(2, order / 2.0) * sea_.factorial(order);
-  }
 };
 
 /** @brief Auxiliary class for Gaussian kernel
@@ -569,12 +563,6 @@ class GaussianKernelAux {
     *actual_error = ret;
     return p_alpha;
   }
-
-  double UpperBoundOnDerivative(double min_dist_sqd_regions, int order) const {
-
-    // Please implement me...
-    return DBL_MAX;
-  }
 };
 
 /**
@@ -706,14 +694,46 @@ class EpanKernelAux {
    double min_dist_sqd_regions, double max_dist_sqd_regions, 
    double max_error, double *actual_error) const {
     
-    // currrently disabled buy might be worth putting in
-    return -1;
-  }
+    // first check that the maximum distances between the two regions are
+    // within the bandwidth, otherwise the expansion is not valid
+    if(max_dist_sqd_regions > kernel_.bandwidth_sq()) {
+      return -1;
+    }
 
-  double UpperBoundOnDerivative(double min_dist_sqd_regions, int order) const {
-    
-    // Please implement me...
-    return DBL_MAX;
+    // Find out the widest dimension and its length of the local
+    // region.
+    double widest_width =
+      bounds_aux::MaxSideLengthOfBoundingBox(local_field_region);
+  
+    // Find out the max distance between query and reference region in L1
+    // sense
+    int dim;
+    double farthest_distance_manhattan =
+      bounds_aux::MaxL1Distance(far_field_region, local_field_region, &dim);
+
+    // divide by the two times the bandwidth to find out how wide it is
+    // in terms of the bandwidth
+    double two_bandwidth = 2 * sqrt(kernel_.bandwidth_sq());
+    double r = widest_width / two_bandwidth;
+    farthest_distance_manhattan /= sqrt(kernel_.bandwidth_sq());
+
+    // try the 0-th order approximation first
+    double error = 2 * dim * farthest_distance_manhattan * r;
+    if(error < max_error) {
+      *actual_error = error;
+      return 0;
+    }
+
+    // try the 1st order approximation later
+    error = dim * r * r;
+    if(error < max_error) {
+      *actual_error = error;
+      return 1;
+    }
+
+    // failing all above, take up to 2nd terms
+    *actual_error = 0;
+    return 2;
   }
 };
 
