@@ -48,24 +48,6 @@ const fx_entry_doc approx_nn_entries[] = {
    " the query and the reference tree for InitApprox.\n"},
   {"computing_sample_sizes", FX_TIMER, FX_CUSTOM, NULL,
    " The timer to compute the sample sizes.\n"},
-//   {"rbfs", FX_TIMER, FX_CUSTOM, NULL,
-//    " The timer to record the time taken to do"
-//    " the recursive breadth first computation.\n"},
-//   {"dfs", FX_TIMER, FX_CUSTOM, NULL, 
-//    " The timer to record the time taken to do"
-//    " the depth first computation.\n"},
-//   {"brute", FX_TIMER, FX_CUSTOM, NULL, 
-//    " The timer to record the time taken to do"
-//    " the brute nearest neighbor computation.\n"},
-//   {"ec", FX_PARAM, FX_DOUBLE, NULL,
-//    " The expansion constant we will be using"
-//    " to make the tree (defaults to 1.3).\n"},
-//   {"print_tree", FX_PARAM, FX_BOOL, NULL,
-//    " The variable to decide whether to print"
-//    " the tree made or not (defaults to false).\n"},
-//   {"do_gonzy", FX_PARAM, FX_BOOL, NULL,
-//    " This tells us whether we use gonzalez algorithm"
-//    " to form the tree of not (defaults to false)"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -183,9 +165,9 @@ class ApproxNN {
 private:
   // These will store our data sets.
   Matrix queries_;
-  // This will store the query for the single tree run
-  Matrix query_;
   Matrix references_;
+  // This will store the query for the single tree run
+  index_t query_;
   // Pointers to the roots of the two trees.
   std::vector<TreeType*> query_trees_;
   TreeType* reference_tree_;
@@ -273,18 +255,19 @@ private:
     double sum;
     Vector temp_a, temp_b;
 
-    temp_a.Init(epsilon);
+    temp_a.Init(epsilon+1);
     temp_a.SetAll(1.0);
-    temp_b.Init(epsilon);
+    temp_b.Init(epsilon+1);
 
     // calculating the temp_b
-    temp_b[epsilon-1] = 1;
-    for (index_t i = epsilon-2, j = 1;
-	 i >= 0; i--, j++) {
+    temp_b[epsilon] = 1;
+    index_t i, j = 1;
+    for (i = epsilon-1; i > -1; i--, j++) {
       double frac = (double)(set_size-(sample_size-1)-j)
 	/ (double)(set_size - j);
       temp_b[i] = temp_b[i+1]*frac;
     }
+    DEBUG_ASSERT(j == epsilon + 1);
 
     // computing the sum and the product with n/N
     sum = la::Dot(temp_a, temp_b);
@@ -316,8 +299,12 @@ private:
       do {
 	n--;
 	prob = ComputeProbability_(set_size, n, epsilon);
+// 	if (set_size == 900) {
+// 	  printf("%"LI"d, %"LI"d, %lf\n", set_size, n, prob);
+// 	}
       } while (prob >= alpha);
       (*samples)[--set_size] = ++n;
+      printf("%"LI"d,%"LI"d\n",set_size+1,n);
     }  // end while
     while (set_size > 0) {
       (*samples)[--set_size] = 1;
@@ -351,7 +338,7 @@ private:
       // Get the query point from the matrix
       Vector query_point;
 //       queries_.MakeColumnVector(query_index, &query_point);
-      query_.MakeColumnVector(query_index, &query_point);
+      queries_.MakeColumnVector(query_, &query_point);
       
       index_t ind = query_index*knns_;
       for(index_t i=0; i<knns_; i++) {
@@ -549,7 +536,7 @@ private:
       // Get the query point from the matrix
       Vector query_point;
 //       queries_.MakeColumnVector(query_index, &query_point);
-      query_.MakeColumnVector(query_index, &query_point);
+      queries_.MakeColumnVector(query_, &query_point);
       
       index_t ind = query_index*knns_;
       for(index_t i=0; i<knns_; i++) {
@@ -810,10 +797,10 @@ public:
     // Here we need to change the query tree into N single-point
     // query trees
     for (index_t i = 0; i < queries_.n_cols(); i++) {
-      Matrix single_point;
-      queries_.MakeColumnSlice(i, 1, &single_point);
+      Matrix query;
+      queries_.MakeColumnSlice(i, 1, &query);
       TreeType *single_point_tree
-	= tree::MakeKdTreeMidpoint<TreeType>(single_point,
+	= tree::MakeKdTreeMidpoint<TreeType>(query,
 					     leaf_size_, 
 					     &old_from_new_queries_,
 					     NULL);
@@ -918,10 +905,10 @@ public:
     // Here we need to change the query tree into N single-point
     // query trees
     for (index_t i = 0; i < queries_.n_cols(); i++) {
-      Matrix single_point;
-      queries_.MakeColumnSlice(i, 1, &single_point);
+      Matrix query;
+      queries_.MakeColumnSlice(i, 1, &query);
       TreeType *single_point_tree
-	= tree::MakeKdTreeMidpoint<TreeType>(single_point,
+	= tree::MakeKdTreeMidpoint<TreeType>(query,
 					     leaf_size_, 
 					     &old_from_new_queries_,
 					     NULL);
@@ -986,7 +973,6 @@ public:
       delete reference_tree_;
     }
     queries_.Destruct();
-    query_.Destruct();
     references_.Destruct();
     old_from_new_queries_.Renew();
     old_from_new_references_.Renew();
@@ -1021,10 +1007,10 @@ public:
     // Here we need to change the query tree into N single-point
     // query trees
     for (index_t i = 0; i < queries_.n_cols(); i++) {
-      Matrix single_point;
-      queries_.MakeColumnSlice(i, 1, &single_point);
+      Matrix query;
+      queries_.MakeColumnSlice(i, 1, &query);
       TreeType *single_point_tree
-	= tree::MakeKdTreeMidpoint<TreeType>(single_point,
+	= tree::MakeKdTreeMidpoint<TreeType>(query,
 					     leaf_size_, 
 					     &old_from_new_queries_,
 					     NULL);
@@ -1113,10 +1099,10 @@ public:
     // Here we need to change the query tree into N single-point
     // query trees
     for (index_t i = 0; i < queries_.n_cols(); i++) {
-      Matrix single_point;
-      queries_.MakeColumnSlice(i, 1, &single_point);
+      Matrix query;
+      queries_.MakeColumnSlice(i, 1, &query);
       TreeType *single_point_tree
-	= tree::MakeKdTreeMidpoint<TreeType>(single_point,
+	= tree::MakeKdTreeMidpoint<TreeType>(query,
 					     leaf_size_, 
 					     &old_from_new_queries_,
 					     NULL);
@@ -1187,10 +1173,10 @@ public:
     // Here we need to change the query tree into N single-point
     // query trees
     for (index_t i = 0; i < queries_.n_cols(); i++) {
-      Matrix single_point;
-      queries_.MakeColumnSlice(i, 1, &single_point);
+      Matrix query;
+      queries_.MakeColumnSlice(i, 1, &query);
       TreeType *single_point_tree
-	= tree::MakeKdTreeMidpoint<TreeType>(single_point,
+	= tree::MakeKdTreeMidpoint<TreeType>(query,
 					     leaf_size_, 
 					     &old_from_new_queries_,
 					     NULL);
@@ -1222,11 +1208,11 @@ public:
     distances->Init(neighbor_distances_.length());
     
     // Start on the root of each tree
-    index_t query = 0;
+    // the index of the query in the queries_ matrix
+    query_ = 0;
+    DEBUG_ASSERT((index_t)query_trees_.size() == queries_.n_cols());
     for (std::vector<TreeType*>::iterator query_tree = query_trees_.begin();
-	 query_tree < query_trees_.end(); ++query_tree, ++query) {
-      // Making the query matrix for this single tree run
-      queries_.MakeColumnSlice(query, 1, &query_);
+	 query_tree < query_trees_.end(); ++query_tree, ++query_) {
 
       ComputeNeighborsRecursion_(*query_tree, reference_tree_, 
 				 MinNodeDistSq_(*query_tree,
@@ -1235,12 +1221,9 @@ public:
       // index, we use that. The only thing to worry here is that
       // the old_from_new_queries_ might have to be destroyed
       // before every tree building
-      (*resulting_neighbors)[query]
+      (*resulting_neighbors)[query_]
 	= old_from_new_references_[neighbor_indices_[0]];
-      (*distances)[query] = neighbor_distances_[0];
-
-      // destructing the query_ matrix for the next run
-      query_.Destruct();
+      (*distances)[query_] = neighbor_distances_[0];
     }
 
 //     // We need to map the indices back from how they have 
@@ -1275,24 +1258,20 @@ public:
     distances->Init(neighbor_distances_.length());
     
     // Start on the root of each tree
-    index_t query = 0;
+    // the index of the query in the queries_ matrix
+    query_ = 0;
+    DEBUG_ASSERT((index_t)query_trees_.size() == queries_.n_cols());
     for (std::vector<TreeType*>::iterator query_tree = query_trees_.begin();
-	 query_tree < query_trees_.end(); ++query_tree, ++query) {
-
-      // Making the query matrix for this single tree run
-      queries_.MakeColumnSlice(query, 1, &query_);
+	 query_tree < query_trees_.end(); ++query_tree, ++query_) {
 
       ComputeBaseCase_(*query_tree, reference_tree_);
       // since the results would always be stored in the first
       // index, we use that. The only thing to worry here is that
       // the old_from_new_queries_ might have to be destroyed
       // before every tree building
-      (*resulting_neighbors)[query]
+      (*resulting_neighbors)[query_]
 	= old_from_new_references_[neighbor_indices_[0]];
-      (*distances)[query] = neighbor_distances_[0];
-
-      // destructing the query_ matrix for the next run
-      query_.Destruct();
+      (*distances)[query_] = neighbor_distances_[0];
     }
 //     if (query_tree_!=NULL) {
 //       ComputeBaseCase_(query_tree_, reference_tree_);
@@ -1326,12 +1305,11 @@ public:
     probabilities->Init(queries_.n_cols());
     
     // Start on the root of each tree
-    index_t query = 0;
+    // the index of the query in the queries_ matrix
+    query_ = 0;
+    DEBUG_ASSERT((index_t)query_trees_.size() == queries_.n_cols());
     for (std::vector<TreeType*>::iterator query_tree = query_trees_.begin();
-	 query_tree < query_trees_.end(); ++query_tree, ++query) {
-
-      // Making the query matrix for this single tree run
-      queries_.MakeColumnSlice(query, 1, &query_);
+	 query_tree < query_trees_.end(); ++query_tree, ++query_) {
 
       ComputeApproxRecursion_(*query_tree, reference_tree_, 
 			      MinNodeDistSq_(*query_tree,
@@ -1340,18 +1318,15 @@ public:
       // index, we use that. The only thing to worry here is that
       // the old_from_new_queries_ might have to be destroyed
       // before every tree building
-      (*resulting_neighbors)[query]
+      (*resulting_neighbors)[query_]
 	= old_from_new_references_[neighbor_indices_[0]];
-      (*distances)[query] = neighbor_distances_[0];
+      (*distances)[query_] = neighbor_distances_[0];
 
       // compute the probability
-      (*probabilities)[query]
+      (*probabilities)[query_]
 	= ComputeProbability_((*query_tree)->stat().total_points(),
 			      (*query_tree)->stat().samples(),
 			      epsilon_);
-
-      // destructing the query_ matrix for the next run
-      query_.Destruct();
     }
 
   }
