@@ -209,7 +209,7 @@ int TestEvaluateLocalField(const Matrix &data, const Vector &weights,
   // evaluate the series expansion
   printf("Evaluated the expansion at (%g %g) is %g...\n",
 	 evaluate_here[0], evaluate_here[1],
-         se.EvaluateField(evaluate_here));
+         se.EvaluateField(evaluate_here.ptr()));
   
   // check with exhaustive method
   double exhaustive_sum = 0;
@@ -344,9 +344,9 @@ int TestTransLocalToLocal(const Matrix &data, const Vector &weights,
   Vector evaluate_here;
   evaluate_here.Init(2);
   evaluate_here[0] = evaluate_here[1] = 3.75;
-  double original_sum = se.EvaluateField(evaluate_here);
+  double original_sum = se.EvaluateField(evaluate_here.ptr());
   double translated_sum = 
-    se_translated.EvaluateField(evaluate_here);
+    se_translated.EvaluateField(evaluate_here.ptr());
 
   printf("Evaluating both expansions at (%g %g)...\n", evaluate_here[0],
 	 evaluate_here[1]);

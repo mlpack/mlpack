@@ -34,7 +34,7 @@ void LocalExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
   Vector x_r_minus_x_Q;
   x_r_minus_x_Q.Init(dim);
   
-  // sqrt two times bandwidth
+  // The bandwidth factor to be divided along each dimension.
   double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
   
   // for each data point,
@@ -104,66 +104,11 @@ void LocalExpansion<TKernelAux>::PrintDebug(const char *name,
 template<typename TKernelAux>
 double LocalExpansion<TKernelAux>::EvaluateField(const Matrix& data, 
 						 int row_num) const {
-  
-  // if there are no local expansion here, then return 0
-  if(order_ < 0) {
-    return 0;
-  }
-
-  index_t k, t, tail;
-  
-  // total number of coefficient
-  int total_num_coeffs = sea_->get_total_num_coeffs(order_);
-
-  // number of dimensions
-  int dim = sea_->get_dimension();
-
-  // evaluated sum to be returned
-  double sum = 0;
-  
-  // sqrt two bandwidth
-  double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
-
-  // temporary variable
-  Vector x_Q_to_x_q;
-  x_Q_to_x_q.Init(dim);
-  Vector tmp;
-  tmp.Init(total_num_coeffs);
-  ArrayList<int> heads;
-  heads.Init(dim + 1);
-  
-  // compute (x_q - x_Q) / (sqrt(2h^2))
-  for(index_t i = 0; i < dim; i++) {
-    x_Q_to_x_q[i] = (data.get(i, row_num) - center_[i]) / bandwidth_factor;
-  }
-  
-  for(index_t i = 0; i < dim; i++)
-    heads[i] = 0;
-  heads[dim] = MAXINT;
-
-  tmp[0] = 1.0;
-
-  for(k = 1, t = 1, tail = 1; k <= order_; k++, tail = t) {
-
-    for(index_t i = 0; i < dim; i++) {
-      int head = heads[i];
-      heads[i] = t;
-
-      for(index_t j = head; j < tail; j++, t++) {
-        tmp[t] = tmp[j] * x_Q_to_x_q[i];
-      }
-    }
-  }
-
-  for(index_t i = 0; i < total_num_coeffs; i++) {
-    sum += coeffs_[i] * tmp[i];
-  }
-
-  return sum;
+  return EvaluateField(data.GetColumnPtr(row_num));
 }
 
 template<typename TKernelAux>
-double LocalExpansion<TKernelAux>::EvaluateField(const Vector& x_q) const {
+double LocalExpansion<TKernelAux>::EvaluateField(const double *x_q) const {
   
   // if there are no local expansion here, then return 0
   if(order_ < 0) {
@@ -197,9 +142,10 @@ double LocalExpansion<TKernelAux>::EvaluateField(const Vector& x_q) const {
     x_Q_to_x_q[i] = (x_q[i] - center_[i]) / bandwidth_factor;
   }
   
-  for(index_t i = 0; i < dim; i++)
+  for(index_t i = 0; i < dim; i++) {
     heads[i] = 0;
-  heads[dim] = MAXINT;
+  }
+  heads[dim] = INT_MAX;
 
   tmp[0] = 1.0;
 

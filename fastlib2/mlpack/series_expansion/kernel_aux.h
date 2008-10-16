@@ -725,7 +725,7 @@ class EpanKernelAux {
     }
 
     // try the 1st order approximation later
-    error = dim * r * r;
+    error = dim * math::Sqr(farthest_distance_manhattan);
     if(error < max_error) {
       *actual_error = error;
       return 1;

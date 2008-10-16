@@ -96,7 +96,7 @@ class LocalExpansion {
    * Evaluates the local coefficients at the given point
    */
   double EvaluateField(const Matrix& data, int row_num) const;
-  double EvaluateField(const Vector& x_q) const;
+  double EvaluateField(const double *x_q) const;
   
   /**
    * Initializes the current local expansion object with the given
