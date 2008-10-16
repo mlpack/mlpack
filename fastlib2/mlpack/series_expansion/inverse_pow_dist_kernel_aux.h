@@ -176,8 +176,8 @@ class InversePowDistKernelAux {
 
   ////////// Public Functions //////////
 
-  void Init(double bandwidth, int max_order, int dim) {
-    kernel_.Init(bandwidth, dim);
+  void Init(double power, int max_order, int dim) {
+    kernel_.Init(power, dim);
     sea_.Init(max_order, dim);
   }
 
