@@ -5,7 +5,7 @@
  */
 
 #include "arraylist.h"
-#include "string.h"
+#include "col_string.h"
 
 #include <stdarg.h>
 

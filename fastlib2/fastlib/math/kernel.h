@@ -11,7 +11,7 @@
 
 #include "fastlib/base/base.h"
 #include "fastlib/math/geometry.h"
-#include "fastlib/math/math.h"
+#include "fastlib/math/math_lib.h"
 
 #include <math.h>
 

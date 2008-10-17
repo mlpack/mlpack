@@ -7,7 +7,7 @@
 #ifndef DATA_DATASET_H
 #define DATA_DATASET_H
 
-#include "fastlib/col/string.h"
+#include "fastlib/col/col_string.h"
 #include "fastlib/la/matrix.h"
 #include "fastlib/math/discrete.h"
 #include "fastlib/file/textfile.h"

@@ -11,7 +11,7 @@
 #define FILE_TEXTFILE_H
 
 #include "fastlib/base/base.h"
-#include "fastlib/col/string.h"
+#include "fastlib/col/col_string.h"
 
 #include <cstdio>
 #include <ctype.h>
