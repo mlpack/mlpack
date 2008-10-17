@@ -35,6 +35,13 @@ const fx_module_doc approx_nn_main_doc = {
   " and the naive computation.\n"
 };
 
+/**
+ * This function checks if the neighbors computed 
+ * by two different methods is the same.
+ */
+void compare_neighbors(ArrayList<index_t>*, ArrayList<double>*, 
+                       ArrayList<index_t>*, ArrayList<double>*);
+
 
 int main (int argc, char *argv[]) {
   fx_module *root
@@ -66,10 +73,10 @@ int main (int argc, char *argv[]) {
     naive_nn.InitNaive(qdata, rdata, 1);
     fx_timer_stop(ann_module, "naive_init");
 
-  //   NOTIFY("Compute");
-  //   fx_timer_start(ann_module, "naive");
-  //   naive_nn.ComputeNaive(&nac, &din);
-  //   fx_timer_start(ann_module, "naive");
+    NOTIFY("Compute");
+    fx_timer_start(ann_module, "naive");
+    naive_nn.ComputeNaive(&nac, &din);
+    fx_timer_stop(ann_module, "naive");
   }
 
   // Exact computation
@@ -81,11 +88,13 @@ int main (int argc, char *argv[]) {
     exact_nn.Init(qdata, rdata, ann_module);
     fx_timer_stop(ann_module, "exact_init");
 
-  //   NOTIFY("Compute");
-  //   fx_timer_start(ann_module, "exact");
-  //   exact_nn.ComputeNeighbors(&exc, &die);
-  //   fx_timer_stop(ann_module, "exact");
+    NOTIFY("Compute");
+    fx_timer_start(ann_module, "exact");
+    exact_nn.ComputeNeighbors(&exc, &die);
+    fx_timer_stop(ann_module, "exact");
   }
+
+  compare_neighbors(&nac, &din, &exc, &die);
 
   // Approximate computation
   if (fx_param_bool(root, "doapprox", true)) {
@@ -96,13 +105,31 @@ int main (int argc, char *argv[]) {
     approx_nn.InitApprox(qdata, rdata, ann_module);
     fx_timer_stop(ann_module, "approx_init");
 
-  //   NOTIFY("Compute");
-  //   ArrayList<double> prob;
-  //   fx_timer_start(ann_module, "approx");
-  //   approx_nn.ComputeApprox(&apc, &dia, &prob);
-  //   fx_timer_stop(ann_module, "approx");
+    NOTIFY("Compute");
+    ArrayList<double> prob;
+    fx_timer_start(ann_module, "approx");
+    approx_nn.ComputeApprox(&apc, &dia, &prob);
+    fx_timer_stop(ann_module, "approx");
   }
 
   fx_param_bool(root, "fx/silent", true);
   fx_done(fx_root);
+}
+
+void compare_neighbors(ArrayList<index_t> *a, 
+                       ArrayList<double> *da,
+                       ArrayList<index_t> *b, 
+                       ArrayList<double> *db) {
+  
+  NOTIFY("Comparing results");
+  DEBUG_SAME_SIZE(a->size(), b->size());
+  index_t *x = a->begin();
+  index_t *y = a->end();
+  index_t *z = b->begin();
+
+  for(index_t i = 0; x != y; x++, z++, i++) {
+    DEBUG_WARN_MSG_IF(*x != *z || (*da)[i] != (*db)[i], 
+                      "point %"LI"d brute: %"LI"d:%lf fast: %"LI"d:%lf",
+                      i, *z, (*db)[i], *x, (*da)[i]);
+  }
 }
