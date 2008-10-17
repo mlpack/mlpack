@@ -37,16 +37,16 @@ class NWRCdeQuerySummary {
     OT_MY_OBJECT(nwr_numerator_used_error_u);
     OT_MY_OBJECT(nwr_denominator_used_error_u);
   }
-
- public:
-
-  template<typename TKernel, typename ReferenceTree>
-  void Init(const NWRCdeGlobal<TKernel, ReferenceTree> &globals) {
+  
+public:
+  
+  template<typename TKernelAux, typename ReferenceTree>
+  void Init(const NWRCdeGlobal<TKernelAux, ReferenceTree> &globals) {
     
     // Reset the postponed quantities to zero.
     SetZero(globals);
   }
-
+  
   void Accumulate(const NWRCdeQueryResult &query_results, index_t q_index) {
     nwr_numerator_sum_l = 
       std::min(nwr_numerator_sum_l,
@@ -111,8 +111,8 @@ class NWRCdeQuerySummary {
     nwr_denominator_used_error_u = 0;
   }
   
-  template<typename TKernel, typename ReferenceTree>
-  void SetZero(const NWRCdeGlobal<TKernel, ReferenceTree> &globals) {
+  template<typename TKernelAux, typename ReferenceTree>
+  void SetZero(const NWRCdeGlobal<TKernelAux, ReferenceTree> &globals) {
     nwr_numerator_sum_l = 0;
     nwr_denominator_sum_l = 0;
     nwr_numerator_n_pruned_l = 0;

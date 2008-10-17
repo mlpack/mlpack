@@ -52,9 +52,9 @@ class NWRCdeCommon {
     }
   }
 
-  template<typename TKernel, typename QueryTree, typename ReferenceTree>
+  template<typename TKernelAux, typename QueryTree, typename ReferenceTree>
   static bool ConsiderPairExact
-  (const NWRCdeGlobal<TKernel, ReferenceTree> &parameters,
+  (const NWRCdeGlobal<TKernelAux, ReferenceTree> &parameters,
    QueryTree *qnode, ReferenceTree *rnode, double probability, 
    NWRCdeDelta &delta) {
     
