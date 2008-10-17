@@ -374,7 +374,7 @@ void MaxFurthestNeighborsSvmSemiSupervised::Init(fx_module *module,
   unlabeled_offset_=num_of_labeled_;
   svm_signs_.Init(labels.n_cols());
   ineq_lagrange_mult_.Init(svm_signs_.length());
-  ineq_lagrange_mult_.SetAll(1.0);
+  ineq_lagrange_mult_.SetAll(100.0);
   for(index_t i=0; i<labels.n_cols(); i++) {
     if (labels.get(0, i)==labels.get(0, anchor_point_)) {
       svm_signs_[i]=1.0;
@@ -526,7 +526,7 @@ void MaxFurthestNeighborsSvmSemiSupervised::ComputeGradient(Matrix &coordinates,
     double dot_prod=la::Dot(dimension,
                             p1,
                             p2);
-    double ineq=dot_prod*svm_signs_[i]-1.0;
+    double ineq=dot_prod*svm_signs_[i]-MARGIN;
     if (sigma1_*ineq <= ineq_lagrange_mult_[i] ) {
       double factor=(-ineq_lagrange_mult_[i]+ sigma1_*ineq)*svm_signs_[i];
       la::AddExpert(dimension, factor, p2, 
@@ -603,7 +603,7 @@ double MaxFurthestNeighborsSvmSemiSupervised::ComputeLagrangian(Matrix &coordina
     double dot_prod=la::Dot(dimension,
                             coordinates.GetColumnPtr(anchor_point_),
                             coordinates.GetColumnPtr(i)); 
-    double ineq=dot_prod*svm_signs_[i]-1.0;
+    double ineq=dot_prod*svm_signs_[i]-MARGIN;
     if (sigma1_ * ineq  <= ineq_lagrange_mult_[i]) {
       lagrangian+=(-ineq_lagrange_mult_[i] + sigma1_/2*ineq)*ineq;
     } else {
@@ -630,7 +630,7 @@ void MaxFurthestNeighborsSvmSemiSupervised::UpdateLagrangeMult(Matrix &coordinat
     double dot_prod=la::Dot(dimension,
                             coordinates.GetColumnPtr(anchor_point_),
                             coordinates.GetColumnPtr(i));
-    double ineq=dot_prod*svm_signs_[i]-1.0; 
+    double ineq=dot_prod*svm_signs_[i]-MARGIN; 
     ineq_lagrange_mult_[i] = std::max(ineq_lagrange_mult_[i]
                                       -sigma1_*ineq, 0.0);
   }
@@ -656,14 +656,14 @@ bool MaxFurthestNeighborsSvmSemiSupervised::IsDiverging(double objective) {
 }
 
 void MaxFurthestNeighborsSvmSemiSupervised::Project(Matrix *coordinates) {
-  //OptUtils::RemoveMean(coordinates);
+  OptUtils::RemoveMean(coordinates);
 }
 
 bool MaxFurthestNeighborsSvmSemiSupervised::IsOptimizationOver(
   Matrix &coordinates, Matrix &gradient, double step) {
   ComputeFeasibilityError(coordinates, &infeasibility1_);
   if (infeasibility1_<desired_feasibility_error_ || 
-      fabs(infeasibility1_-previous_infeasibility1_)<0.1)  {
+      fabs(infeasibility1_-previous_infeasibility1_)<0.001)  {
     NOTIFY("Optimization is over");
     return true;
   } else {
