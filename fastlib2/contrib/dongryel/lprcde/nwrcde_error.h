@@ -20,9 +20,9 @@ class NWRCdeError {
 
  public:
 
-  template<typename TKernel, typename ReferenceTree>
+  template<typename TKernelAux, typename ReferenceTree>
   void ComputeAllowableError
-  (const NWRCdeGlobal<TKernel, ReferenceTree> &parameters,
+  (const NWRCdeGlobal<TKernelAux, ReferenceTree> &parameters,
    const NWRCdeQuerySummary &new_summary, ReferenceTree *rnode) {
 
     nwr_numerator_error = 

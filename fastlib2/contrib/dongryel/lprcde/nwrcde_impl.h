@@ -2,11 +2,11 @@
 #error "This is not a public header file!"
 #endif
 
-template<typename TKernel>
-void NWRCde<TKernel>::NWRCdeBase_(const Matrix &qset, QueryTree *qnode, 
-				  ReferenceTree *rnode, double probability, 
-				  NWRCdeQueryResult &query_results) {
-
+template<typename TKernelAux>
+void NWRCde<TKernelAux>::NWRCdeBase_(const Matrix &qset, QueryTree *qnode, 
+				     ReferenceTree *rnode, double probability, 
+				     NWRCdeQueryResult &query_results) {
+  
   // Clear the summary statistics of the current query node so that we
   // can refine it to better bounds.
   qnode->stat().summary.StartReaccumulate();
@@ -52,12 +52,12 @@ void NWRCde<TKernel>::NWRCdeBase_(const Matrix &qset, QueryTree *qnode,
   qnode->stat().postponed.SetZero();
 }
 
-template<typename TKernel>
-bool NWRCde<TKernel>::NWRCdeCanonical_(const Matrix &qset, QueryTree *qnode,
-				       ReferenceTree *rnode, 
-				       double probability,
-				       NWRCdeQueryResult &query_results) {
-
+template<typename TKernelAux>
+bool NWRCde<TKernelAux>::NWRCdeCanonical_(const Matrix &qset, QueryTree *qnode,
+					  ReferenceTree *rnode, 
+					  double probability,
+					  NWRCdeQueryResult &query_results) {
+  
   // This is the delta change due to the current query and reference
   // node pair.
   NWRCdeDelta delta;
@@ -200,8 +200,8 @@ bool NWRCde<TKernel>::NWRCdeCanonical_(const Matrix &qset, QueryTree *qnode,
   } // end of the case: non-leaf query node.
 }
 
-template<typename TKernel>
-void NWRCde<TKernel>::PreProcessQueryTree_(QueryTree *node) {
+template<typename TKernelAux>
+void NWRCde<TKernelAux>::PreProcessQueryTree_(QueryTree *node) {
 
   // Reset summary statistics and postponed quantities.
   node->stat().postponed.SetZero();
@@ -214,8 +214,8 @@ void NWRCde<TKernel>::PreProcessQueryTree_(QueryTree *node) {
 
 }
 
-template<typename TKernel>
-void NWRCde<TKernel>::PreProcessReferenceTree_(ReferenceTree *node) {
+template<typename TKernelAux>
+void NWRCde<TKernelAux>::PreProcessReferenceTree_(ReferenceTree *node) {
 
   if(node->is_leaf()) {
 
@@ -237,9 +237,9 @@ void NWRCde<TKernel>::PreProcessReferenceTree_(ReferenceTree *node) {
 
 }
 
-template<typename TKernel>
-void NWRCde<TKernel>::PostProcessQueryTree_(QueryTree *node, 
-					    NWRCdeQueryResult &query_results) {
+template<typename TKernelAux>
+void NWRCde<TKernelAux>::PostProcessQueryTree_
+(QueryTree *node, NWRCdeQueryResult &query_results) {
 
   if(node->is_leaf()) {
     for(index_t q = node->begin(); q < node->end(); q++) {
