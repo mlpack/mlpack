@@ -374,7 +374,7 @@ void MaxFurthestNeighborsSvmSemiSupervised::Init(fx_module *module,
   unlabeled_offset_=num_of_labeled_;
   svm_signs_.Init(labels.n_cols());
   ineq_lagrange_mult_.Init(svm_signs_.length());
-  ineq_lagrange_mult_.SetAll(100.0);
+  ineq_lagrange_mult_.SetAll(100);
   for(index_t i=0; i<labels.n_cols(); i++) {
     if (labels.get(0, i)==labels.get(0, anchor_point_)) {
       svm_signs_[i]=1.0;
@@ -439,7 +439,7 @@ void MaxFurthestNeighborsSvmSemiSupervised::Init(fx_module *module,
   fx_result_double(module_, "sum_of_nearest_distances", sum_of_nearest_distances_);
   fx_format_result(module_, "num_of_constraints", "%i", num_of_nearest_pairs_);
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
-  eq_lagrange_mult_.SetAll(1.0);
+  eq_lagrange_mult_.SetAll(0.0);
   NOTIFY("Furtherst neighbor constraints ...\n");
   NOTIFY("Building tree with data ...\n");
   allkfn_.Init(data_points, leaf_size_, 1); 
