@@ -7,7 +7,7 @@
 #include "mlpack/series_expansion/kernel_aux.h"
 #include "nwrcde.h"
 
-template<typename TKernel>
+template<typename TKernelAux>
 void StartComputation(const Matrix &queries, const Matrix &references,
 		      const Matrix &reference_targets,
 		      struct datanode *nwrcde_module) {
@@ -17,7 +17,7 @@ void StartComputation(const Matrix &queries, const Matrix &references,
                                               "nwrcde_results.txt");
 
   // Declare the computation object.
-  NWRCde<TKernel> algorithm;
+  NWRCde<TKernelAux> algorithm;
   NWRCdeQueryResult query_results;
   algorithm.Init(references, reference_targets, nwrcde_module);
   algorithm.Compute(queries, &query_results);
@@ -100,12 +100,12 @@ int main(int argc, char *argv[]) {
 
   // Run the appropriate algorithm based on the kernel type.
   if(!strcmp(fx_param_str(nwrcde_module, "kernel", "gaussian"), "gaussian")) {
-    StartComputation<GaussianKernel>(queries, references, reference_targets,
-				     nwrcde_module);
+    StartComputation<GaussianKernelAux>(queries, references, reference_targets,
+					nwrcde_module);
   }
   else if(!strcmp(fx_param_str(nwrcde_module, "kernel", "epan"), "epan")) {
-    StartComputation<EpanKernel>(queries, references, reference_targets,
-				 nwrcde_module);
+    StartComputation<EpanKernelAux>(queries, references, reference_targets,
+				    nwrcde_module);
   }
 
   // Finalize FastExec and print output results.
