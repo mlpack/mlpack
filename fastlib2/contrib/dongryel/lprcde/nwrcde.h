@@ -98,7 +98,7 @@ class NWRCde {
     
   /** @brief The type of our query tree.
    */
-  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector >, Matrix, NWRCdeQueryStat > QueryTree;
+  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector >, Matrix, NWRCdeQueryStat<TKernelAux> > QueryTree;
 
   /** @brief The type of our reference tree.
    */

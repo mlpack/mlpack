@@ -204,7 +204,7 @@ template<typename TKernelAux>
 void NWRCde<TKernelAux>::PreProcessQueryTree_(QueryTree *node) {
 
   // Reset summary statistics and postponed quantities.
-  node->stat().postponed.SetZero();
+  node->stat().postponed.Init(node->bound(), parameters_.kernel_aux);
   node->stat().summary.SetZero(parameters_);
 
   if(!node->is_leaf()) {
