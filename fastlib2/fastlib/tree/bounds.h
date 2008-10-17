@@ -17,7 +17,7 @@
 #include "fastlib/la/matrix.h"
 #include "fastlib/la/la.h"
 
-#include "fastlib/math/math.h"
+#include "fastlib/math/math_lib.h"
 
 /**
  * Hyper-rectangle bound for an L-metric.

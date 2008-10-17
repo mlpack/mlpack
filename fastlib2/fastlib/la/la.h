@@ -14,7 +14,7 @@
 #include "matrix.h"
 #include "uselapack.h"
 
-#include "fastlib/math/math.h"
+#include "fastlib/math/math_lib.h"
 
 #include <math.h>
 

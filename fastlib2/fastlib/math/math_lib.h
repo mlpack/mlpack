@@ -1,13 +1,13 @@
 // Copyright 2007 Georgia Institute of Technology. All rights reserved.
 // ABSOLUTELY NOT FOR DISTRIBUTION
 /**
- * @file math.h
+ * @file math_lib.h
  *
  * Includes all basic FASTlib non-vector math utilities.
  */
 
-#ifndef MATH_MATH_H
-#define MATH_MATH_H
+#ifndef MATH_MATH_LIB_H
+#define MATH_MATH_LIB_H
 
 #include "fastlib/base/base.h"
 
@@ -114,7 +114,7 @@ namespace math {
   }
 };
 
-#include "math_impl.h"
+#include "math_lib_impl.h"
 
 namespace math {
   /**

@@ -18,7 +18,7 @@
 #include "fastlib/la/la.h"
 #include "fastlib/mmanager/memory_manager.h"
 
-#include "fastlib/math/math.h"
+#include "fastlib/math/math_lib.h"
 #include "bounds.h"
 
 /**

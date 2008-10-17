@@ -1,7 +1,7 @@
 
 librule(
     sources = ["col.cc"],
-    headers = ["arraylist.h", "heap.h", "string.h",
+    headers = ["arraylist.h", "heap.h", "col_string.h",
                "fastalloc.h", "intmap.h", "rangeset.h", "queue.h"],
     deplibs = ["fastlib/base:base"]
     )

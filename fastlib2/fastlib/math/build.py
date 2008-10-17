@@ -1,7 +1,11 @@
 
 librule(
     sources = ["discrete.cc", "geometry.cc", "statistics.cc"],
-    headers = ["discrete.h", "geometry.h", "statistics.h", "kernel.h", "math.h"],
+    headers = ["discrete.h",
+               "geometry.h",
+               "statistics.h",
+               "kernel.h",
+               "math_lib.h"],
     deplibs = ["fastlib/base:base", "fastlib/col:col"]
     )
 
