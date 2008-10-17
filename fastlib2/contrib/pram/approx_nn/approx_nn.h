@@ -304,7 +304,7 @@ private:
 // 	}
       } while (prob >= alpha);
       (*samples)[--set_size] = ++n;
-      printf("%"LI"d,%"LI"d\n",set_size+1,n);
+//       printf("%"LI"d,%"LI"d\n",set_size+1,n);
     }  // end while
     while (set_size > 0) {
       (*samples)[--set_size] = 1;
