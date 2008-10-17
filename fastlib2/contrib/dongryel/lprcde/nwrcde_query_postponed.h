@@ -21,12 +21,7 @@ class NWRCdeQueryPostponed {
   double nwr_denominator_n_pruned;
   double nwr_numerator_used_error;
   double nwr_denominator_used_error;
- 
-  /** @brief The far field expansion created by the reference points
-   *         in this node.
-   */
-  typename TKernelAux::TFarFieldExpansion farfield_expansion;
-  
+   
   /** @brief The local expansion stored in this node.
    */
   typename TKernelAux::TLocalExpansion local_expansion;
@@ -56,7 +51,6 @@ class NWRCdeQueryPostponed {
   }
 
   void Init(const TKernelAux &kernel_aux_in) {
-    farfield_expansion.Init(kernel_aux_in);
     local_expansion.Init(kernel_aux_in);
   }
 
@@ -69,7 +63,6 @@ class NWRCdeQueryPostponed {
     Vector bounding_box_center;
     Init(kernel_aux_in);
     bounding_primitive.CalculateMidpoint(&bounding_box_center);
-    (farfield_expansion.get_center())->CopyValues(bounding_box_center);
     (local_expansion.get_center())->CopyValues(bounding_box_center);
    
     // Reset the postponed quantities to zero.

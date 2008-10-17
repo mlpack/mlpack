@@ -102,7 +102,7 @@ class NWRCde {
 
   /** @brief The type of our reference tree.
    */
-  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector >, Matrix, NWRCdeReferenceStat > ReferenceTree;
+  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector >, Matrix, NWRCdeReferenceStat<TKernelAux> > ReferenceTree;
 
  private:
 
