@@ -1,7 +1,7 @@
 #ifndef NWRCDE_GLOBAL_H
 #define NWRCDE_GLOBAL_H
 
-template<typename TKernel, typename ReferenceTree>
+template<typename TKernelAux, typename ReferenceTree>
 class NWRCdeGlobal {
 
  public:
@@ -12,7 +12,7 @@ class NWRCdeGlobal {
 
   /** @brief The kernel function.
    */
-  TKernel kernel;
+  TKernelAux kernel_aux;
 
   /** @brief The relative error desired.
    */
@@ -42,7 +42,7 @@ class NWRCdeGlobal {
   // It is important not to include the module pointer because it will
   // be freed by fx_done()!
   OT_DEF_BASIC(NWRCdeGlobal) {
-    OT_MY_OBJECT(kernel);
+    OT_MY_OBJECT(kernel_aux);
     OT_MY_OBJECT(relative_error);
     OT_MY_OBJECT(rset);
     OT_MY_OBJECT(rset_targets);

@@ -22,15 +22,16 @@ class NWRCdeDelta {
   
  public:
   
-  template<typename TKernel, typename QueryTree, typename ReferenceTree>
-  void Compute(const NWRCdeGlobal<TKernel, ReferenceTree> &parameters,
+  template<typename TKernelAux, typename QueryTree, typename ReferenceTree>
+  void Compute(const NWRCdeGlobal<TKernelAux, ReferenceTree> &parameters,
 	       QueryTree *qnode, ReferenceTree *rnode) {
 
     double finite_difference_error;
 
     dsqd_range.lo = qnode->bound().MinDistanceSq(rnode->bound());
     dsqd_range.hi = qnode->bound().MaxDistanceSq(rnode->bound());
-    kernel_value_range = parameters.kernel.RangeUnnormOnSq(dsqd_range);
+    kernel_value_range = 
+      parameters.kernel_aux.kernel_.RangeUnnormOnSq(dsqd_range);
 
     finite_difference_error = 0.5 * kernel_value_range.width();
 

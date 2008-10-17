@@ -91,7 +91,7 @@ const fx_module_doc nwrcde_main_doc = {
 };
 
 
-template<typename TKernel>
+template<typename TKernelAux>
 class NWRCde {
 
  public:
@@ -112,7 +112,7 @@ class NWRCde {
 
   /** @brief The list of parameters.
    */
-  NWRCdeGlobal<TKernel, ReferenceTree> parameters_;
+  NWRCdeGlobal<TKernelAux, ReferenceTree> parameters_;
 
 
   ////////// Private Member Functions //////////
@@ -285,7 +285,33 @@ class NWRCde {
     
     // Initialize the kernel.
     double bandwidth = fx_param_double_req(parameters_.module, "bandwidth");
-    parameters_.kernel.Init(bandwidth);
+
+    // Initialize the series expansion object.
+    if(references.n_rows() <= 2) {
+      parameters_.kernel_aux.Init
+	(bandwidth, fx_param_int(parameters_.module, "order", 7),
+	 references.n_rows());
+    }
+    else if(references.n_rows() <= 3) {
+      parameters_.kernel_aux.Init
+	(bandwidth, fx_param_int(parameters_.module, "order", 5),
+	 references.n_rows());
+    }
+    else if(references.n_rows() <= 5) {
+      parameters_.kernel_aux.Init
+	(bandwidth, fx_param_int(parameters_.module, "order", 3),
+	 references.n_rows());
+    }
+    else if(references.n_rows() <= 6) {
+      parameters_.kernel_aux.Init
+	(bandwidth, fx_param_int(parameters_.module, "order", 1),
+	 references.n_rows());
+    }
+    else {
+      parameters_.kernel_aux.Init
+	(bandwidth, fx_param_int(parameters_.module, "order", 0),
+	 references.n_rows());
+    }
   }
 
   void PrintDebug();

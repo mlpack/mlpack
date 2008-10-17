@@ -26,7 +26,8 @@ void NWRCde<TKernel>::NWRCdeBase_(const Matrix &qset, QueryTree *qnode,
       
       // pairwise distance and kernel value
       double dsqd = la::DistanceSqEuclidean(qset.n_rows(), q_col, r_col);
-      double kernel_value = parameters_.kernel.EvalUnnormOnSq(dsqd);
+      double kernel_value = 
+	parameters_.kernel_aux.kernel_.EvalUnnormOnSq(dsqd);
       double weighted_kernel_value = parameters_.rset_targets[r] * 
 	kernel_value;
 
