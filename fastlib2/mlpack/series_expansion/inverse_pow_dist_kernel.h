@@ -39,7 +39,13 @@ class InversePowDistKernel {
 
   double EvalUnnorm(const double *point) const {
     double sqdist = la::Dot(dimension_, point, point);
-    return 1.0 / pow(sqdist, lambda_ / 2.0);
+
+    if(lambda_ > 0) {
+      return 1.0 / pow(sqdist, lambda_ / 2.0);
+    }
+    else {
+      return pow(sqdist, -lambda_ / 2.0);
+    }
   }
 
   double EvalUnnorm(double dist) const {
@@ -47,7 +53,12 @@ class InversePowDistKernel {
   }
 
   double EvalUnnormOnSq(double sqdist) const {
-    return 1.0 / pow(sqdist, lambda_ / 2.0);
+    if(lambda_ > 0) {
+      return 1.0 / pow(sqdist, lambda_ / 2.0);
+    }
+    else {
+      return pow(sqdist, -lambda_ / 2.0);
+    }
   }
 
   DRange RangeUnnormOnSq(const DRange &range) const {
