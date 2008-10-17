@@ -118,10 +118,10 @@ int main(int argc, char *argv[]) {
         for(index_t i=0; i<validation_labels.n_cols(); i++)  {
           double *p2=unlabeled_data_points.GetColumnPtr(i);
           double dot_product=la::Dot(new_dimension, p1, p2);
-          if (dot_product >=0  and anchor_label==validation_labels.get(0, i)) {
+          if (dot_product >= 0.0  and anchor_label==validation_labels.get(0, i)) {
             total_score+=1;
           } else {
-            if (dot_product <=0  and anchor_label!=validation_labels.get(0, i)) {
+            if (dot_product <=0.0 and anchor_label!=validation_labels.get(0, i)) {
               total_score+=1;
             }
           }
