@@ -685,7 +685,8 @@ class EpanKernelAux {
         
     // first check that the maximum distances between the two regions are
     // within the bandwidth, otherwise the expansion is not valid
-    if(max_dist_sqd_regions > kernel_.bandwidth_sq()) {
+    if(max_dist_sqd_regions > kernel_.bandwidth_sq() ||
+       min_dist_sqd_regions == 0) {
       return -1;
     }
     else {
