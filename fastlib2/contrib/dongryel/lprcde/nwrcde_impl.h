@@ -220,8 +220,9 @@ void NWRCde<TKernelAux>::PreProcessReferenceTree_(ReferenceTree *node) {
   if(node->is_leaf()) {
 
     // Compute the target sum for the leaf node.
-    node->stat().PostInit(parameters_.rset_targets, node->begin(), 
-			  node->count());
+    node->stat().PostInit(node->bound(), parameters_.kernel_aux, 
+			  parameters_.rset, parameters_.rset_targets, 
+			  node->begin(), node->count());
   }
   else {
 
@@ -230,7 +231,8 @@ void NWRCde<TKernelAux>::PreProcessReferenceTree_(ReferenceTree *node) {
     PreProcessReferenceTree_(node->right());
 
     // Merge the two sums.
-    node->stat().PostInit(parameters_.rset_targets, node->begin(), 
+    node->stat().PostInit(node->bound(), parameters_.kernel_aux,
+			  parameters_.rset_targets, node->begin(), 
 			  node->count(), node->left()->stat(), 
 			  node->right()->stat());
   }
