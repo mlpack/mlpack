@@ -539,7 +539,7 @@ class FastMultipoleMethod {
     lambda_ = fx_param_double(module_, "lambda", 1.0);
 
     // Initialize the kernel.
-    kernel_.Init(lambda_);
+    kernel_.Init(lambda_, queries.n_rows());
 
     // Initialize the series expansion auxliary object.
     sea_.Init(lambda_, fx_param_int(module_, "order", 5), references.n_rows());
