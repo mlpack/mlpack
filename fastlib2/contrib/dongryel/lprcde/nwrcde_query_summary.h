@@ -93,7 +93,8 @@ public:
     nwr_denominator_sum_l += delta_in.nwr_denominator_sum_l;
   }
 
-  void ApplyPostponed(const NWRCdeQueryPostponed &postponed_in) {
+  template<typename TKernelAux>
+  void ApplyPostponed(const NWRCdeQueryPostponed<TKernelAux> &postponed_in) {
     nwr_numerator_sum_l += postponed_in.nwr_numerator_sum_l;
     nwr_denominator_sum_l += postponed_in.nwr_denominator_sum_l;
     nwr_numerator_n_pruned_l += postponed_in.nwr_numerator_n_pruned;

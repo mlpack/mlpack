@@ -4,10 +4,11 @@
 #include "nwrcde_query_postponed.h"
 #include "nwrcde_query_summary.h"
 
+template<typename TKernelAux>
 class NWRCdeQueryStat {
  public:
 
-  NWRCdeQueryPostponed postponed;
+  NWRCdeQueryPostponed<TKernelAux> postponed;
 
   NWRCdeQuerySummary summary;
 
