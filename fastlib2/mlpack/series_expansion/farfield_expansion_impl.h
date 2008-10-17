@@ -1000,16 +1000,16 @@ void FarFieldExpansion<TKernelAux>::TranslateToLocal
     se.set_order(truncation_order);
   }
 
-  // compute Gaussian derivative
+  // Compute derivatives.
   pos_arrtmp.Init(total_num_coeffs);
   neg_arrtmp.Init(total_num_coeffs);
 
-  // compute center difference divided by bw_times_sqrt_two;
+  // Compute center difference divided by the bandwidth factor.
   for(index_t j = 0; j < dimension; j++) {
     cent_diff[j] = (local_center[j] - center_[j]) / bandwidth_factor;
   }
 
-  // compute required partial derivatives
+  // Compute required partial derivatives.
   ka_->ComputeDirectionalDerivatives(cent_diff, &derivative_map, 
 				     2 * truncation_order);
   ArrayList<int> beta_plus_alpha;
