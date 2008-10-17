@@ -60,7 +60,7 @@ class NWRCdeCommon {
     
     // Refine the lower bound using the new lower bound info.
     NWRCdeQuerySummary new_summary;
-    new_summary.Copy(qnode->stat().summary);
+    new_summary.InitCopy(qnode->stat().summary);
     new_summary.ApplyPostponed(qnode->stat().postponed);
     new_summary.ApplyDelta(delta);
     
