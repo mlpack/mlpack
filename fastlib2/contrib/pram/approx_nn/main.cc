@@ -121,7 +121,7 @@ void compare_neighbors(ArrayList<index_t> *a,
                        ArrayList<index_t> *b, 
                        ArrayList<double> *db) {
   
-  NOTIFY("Comparing results");
+  NOTIFY("Comparing results for %"LI"d queries", a->size());
   DEBUG_SAME_SIZE(a->size(), b->size());
   index_t *x = a->begin();
   index_t *y = a->end();

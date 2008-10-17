@@ -341,9 +341,12 @@ private:
       queries_.MakeColumnVector(query_, &query_point);
       
       index_t ind = query_index*knns_;
+      DEBUG_ASSERT(ind == 0);
       for(index_t i=0; i<knns_; i++) {
-        neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
-                                    neighbor_indices_[ind+i]);
+//         neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
+//                                     neighbor_indices_[ind+i]);
+        neighbors[i]=std::make_pair(neighbor_distances_[query_+i],
+                                    neighbor_indices_[query_+i]);
       }
       // We'll do the same for the references
       for (index_t reference_index = reference_node->begin(); 
@@ -360,7 +363,8 @@ private:
 	    la::DistanceSqEuclidean(query_point, reference_point);
 	  // If the reference point is closer than the current candidate, 
 	  // we'll update the candidate
-	  if (distance < neighbor_distances_[ind+knns_-1]) {
+// 	  if (distance < neighbor_distances_[ind+knns_-1]) {
+	  if (distance < neighbor_distances_[query_+knns_-1]) {
 	    neighbors.push_back(std::make_pair(distance, reference_index));
 	  }
 	}
@@ -368,13 +372,18 @@ private:
       // if ((index_t)neighbors.size()>knns_) {
       std::sort(neighbors.begin(), neighbors.end());
       for(index_t i=0; i<knns_; i++) {
-        neighbor_distances_[ind+i] = neighbors[i].first;
-        neighbor_indices_[ind+i]  = neighbors[i].second;
+//         neighbor_distances_[ind+i] = neighbors[i].first;
+//         neighbor_indices_[ind+i]  = neighbors[i].second;
+	neighbor_distances_[query_+i] = neighbors[i].first;
+	neighbor_indices_[query_+i] = neighbors[i].second;
       }
       neighbors.resize(knns_);
       // We need to find the upper bound distance for this query node
-      if (neighbor_distances_[ind+knns_-1] > query_max_neighbor_distance) {
-        query_max_neighbor_distance = neighbor_distances_[ind+knns_-1]; 
+//       if (neighbor_distances_[ind+knns_-1] > query_max_neighbor_distance) {
+//         query_max_neighbor_distance = neighbor_distances_[ind+knns_-1]; 
+//       }
+      if (neighbor_distances_[query_+knns_-1] > query_max_neighbor_distance) {
+	query_max_neighbor_distance = neighbor_distances_[query_+knns_-1];
       }
       //  }
       
@@ -539,9 +548,12 @@ private:
       queries_.MakeColumnVector(query_, &query_point);
       
       index_t ind = query_index*knns_;
+      DEBUG_ASSERT(ind == 0);
       for(index_t i=0; i<knns_; i++) {
-        neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
-                                    neighbor_indices_[ind+i]);
+//         neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
+//                                     neighbor_indices_[ind+i]);
+        neighbors[i]=std::make_pair(neighbor_distances_[query_+i],
+                                    neighbor_indices_[query_+i]);
       }
       // We'll do the same for the references
       // but on the sample size number of points
@@ -560,7 +572,8 @@ private:
 	    la::DistanceSqEuclidean(query_point, reference_point);
 	  // If the reference point is closer than the current candidate, 
 	  // we'll update the candidate
-	  if (distance < neighbor_distances_[ind+knns_-1]) {
+// 	  if (distance < neighbor_distances_[ind+knns_-1]) {
+	  if (distance < neighbor_distances_[query_+knns_-1]) {
 	    neighbors.push_back(std::make_pair(distance, reference_index));
 	  }
 	}
@@ -568,13 +581,18 @@ private:
       // if ((index_t)neighbors.size()>knns_) {
       std::sort(neighbors.begin(), neighbors.end());
       for(index_t i=0; i<knns_; i++) {
-        neighbor_distances_[ind+i] = neighbors[i].first;
-        neighbor_indices_[ind+i]  = neighbors[i].second;
+//         neighbor_distances_[ind+i] = neighbors[i].first;
+//         neighbor_indices_[ind+i]  = neighbors[i].second;
+        neighbor_distances_[query_+i] = neighbors[i].first;
+        neighbor_indices_[query_+i]  = neighbors[i].second;
       }
       neighbors.resize(knns_);
       // We need to find the upper bound distance for this query node
-      if (neighbor_distances_[ind+knns_-1] > query_max_neighbor_distance) {
-        query_max_neighbor_distance = neighbor_distances_[ind+knns_-1]; 
+//       if (neighbor_distances_[ind+knns_-1] > query_max_neighbor_distance) {
+//         query_max_neighbor_distance = neighbor_distances_[ind+knns_-1]; 
+//       }
+      if (neighbor_distances_[query_+knns_-1] > query_max_neighbor_distance) {
+        query_max_neighbor_distance = neighbor_distances_[query_+knns_-1]; 
       }
       //  }
       
