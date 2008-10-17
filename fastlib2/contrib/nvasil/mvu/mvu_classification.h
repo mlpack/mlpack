@@ -87,6 +87,7 @@ private:
 class MaxFurthestNeighborsSvmSemiSupervised {
 public:
   static const index_t MAX_KNNS=30;
+  static const double MARGIN=0.001;
   /**
    * Initialize with this one if you want to load points from matrices
    * and then compute neighbors
