@@ -96,6 +96,9 @@ class NWRCdeCommon {
       default:
 	break;
     }
+
+    // Lastly, we need to add on the rest of the delta contributions.
+    qnode->stat().postponed.ApplyDelta(delta);
   }
 
   template<typename TGlobal, typename QueryTree, typename ReferenceTree,
@@ -120,22 +123,27 @@ class NWRCdeCommon {
     // If the error bound is satisfied by the hard error bound, it is
     // safe to prune.
     if((!isnan(allowed_error.nwr_numerator.error)) && 
-       (!isnan(allowed_error.nwr_denominator.error)) &&
-       (delta.nwr_numerator.used_error <= allowed_error.nwr_numerator.error) &&
-       (delta.nwr_denominator.used_error <= 
-	allowed_error.nwr_denominator.error)) {
+       (!isnan(allowed_error.nwr_denominator.error))) {
 
-      qnode->stat().postponed.ApplyDelta(delta);
-      query_results.num_finite_difference_prunes++; 
-      return true;
-    }
-
-    // Try series expansion.
-    else if(delta.ComputeSeriesExpansion(parameters, qnode, rnode, 
-					 allowed_error)) {
-      ApplySeriesExpansion(parameters, qset, qnode, rnode, query_results,
-			   delta);
-      return true;
+      if((delta.nwr_numerator.used_error <= allowed_error.nwr_numerator.error)
+	 && (delta.nwr_denominator.used_error <= 
+	     allowed_error.nwr_denominator.error)) {
+	
+	qnode->stat().postponed.ApplyDelta(delta);
+	query_results.num_finite_difference_prunes++; 
+	return true;
+      }
+      
+      // Try series expansion.
+      else if(delta.ComputeSeriesExpansion(parameters, qnode, rnode, 
+					   allowed_error)) {
+	ApplySeriesExpansion(parameters, qset, qnode, rnode, query_results,
+			     delta);
+	return true;
+      }
+      else {
+	return false;
+      }
     }
     else {
       return false;

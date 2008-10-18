@@ -34,6 +34,19 @@ class NWRCdeQueryResult {
 
  public:
   
+  template<typename TQueryStat>
+  void FinalPush(const Matrix &qset, const TQueryStat &query_stat, 
+		 index_t q_index) {
+    
+    ApplyPostponed(query_stat.postponed, q_index);
+    
+    // Evaluate the local expansion.
+    nwr_numerator_sum_e[q_index] += 
+      query_stat.nwr_numerator_local_expansion.EvaluateField(qset, q_index);
+    nwr_denominator_sum_e[q_index] +=
+      query_stat.nwr_denominator_local_expansion.EvaluateField(qset, q_index);
+  }
+
   template<typename TQueryPostponed>
   void ApplyPostponed(const TQueryPostponed &postponed_in, 
 		      index_t q_index) {
@@ -69,8 +82,14 @@ class NWRCdeQueryResult {
 
   void Postprocess(index_t q_index) {
     
-    final_nwr_estimates[q_index] = nwr_numerator_sum_e[q_index] /
-      nwr_denominator_sum_e[q_index];
+    if(nwr_denominator_sum_e[q_index] == 0 &&
+       nwr_numerator_sum_e[q_index] == 0) {
+      final_nwr_estimates[q_index] = 0;
+    }
+    else {
+      final_nwr_estimates[q_index] = nwr_numerator_sum_e[q_index] /
+	nwr_denominator_sum_e[q_index];
+    }
   }
 
   void PrintDebug(const char *output_file_name) const {

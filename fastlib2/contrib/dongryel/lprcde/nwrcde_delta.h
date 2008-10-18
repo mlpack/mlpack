@@ -92,10 +92,11 @@ class NWRCdeDelta {
     void Init(const TGlobal &parameters, QueryTree *qnode,
 	      ReferenceTree *rnode) {
       
-      // Initialize the member variables.
+      // Initialize the member variables. The threshold exhaustive
+      // cost is half of what is for single summation.
       Reset();
       cost_exhaustive = parameters.rset.n_rows() * qnode->count() * 
-	rnode->count();
+	rnode->count() / 2;
     }
 
     void Reset() {
@@ -140,8 +141,7 @@ class NWRCdeDelta {
   (const TGlobal &parameters,
    QueryTree *qnode, TLocalExpansion &local_expansion, ReferenceTree *rnode,
    TFarFieldExpansion &farfield_expansion,
-   const TErrorComponent &allowed_error,
-   NWRCdeApproximation &approximation) {
+   const TErrorComponent &allowed_error, NWRCdeApproximation &approximation) {
     
     approximation.order_farfield_to_local =
       farfield_expansion.OrderForConvertingToLocal
@@ -190,7 +190,7 @@ class NWRCdeDelta {
       approximation.sum_e = 0;
     }
     
-    if(approximation.cost_farfield == approximation.min_cost) {
+    else if(approximation.cost_farfield == approximation.min_cost) {
 
       approximation.approx_type = DIRECT_FARFIELD;
       approximation.used_error = farfield_expansion.get_weight_sum() * 
@@ -200,7 +200,7 @@ class NWRCdeDelta {
       approximation.sum_e = 0;
     }
     
-    if(approximation.cost_local == approximation.min_cost) {
+    else if(approximation.cost_local == approximation.min_cost) {
 
       approximation.approx_type = DIRECT_LOCAL;
       approximation.used_error = farfield_expansion.get_weight_sum() * 
@@ -259,15 +259,14 @@ class NWRCdeDelta {
     nwr_denominator.used_error = rnode->count() * finite_difference_error;
   }
   
-  template<typename TKernelAux, typename TGlobal,
-	   typename QueryTree, typename ReferenceTree>
-  void SetZero(const TGlobal &parameters, QueryTree *qnode,
-	       ReferenceTree *rnode) {
-
+  template<typename TGlobal, typename QueryTree, typename ReferenceTree>
+  void Reset(const TGlobal &parameters, QueryTree *qnode,
+	     ReferenceTree *rnode) {
+    
     dsqd_range.Reset(DBL_MAX, -DBL_MAX);
     kernel_value_range.Reset(DBL_MAX, -DBL_MAX);
     nwr_numerator.Init(parameters, qnode, rnode);
-    nwr_denominator.Init(parameters.qnode, rnode);
+    nwr_denominator.Init(parameters, qnode, rnode);
   }
   
 };

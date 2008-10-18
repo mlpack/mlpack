@@ -152,7 +152,7 @@ class NWRCde {
 
   /** @brief Post processing step.
    */
-  void PostProcessQueryTree_(QueryTree *qnode, 
+  void PostProcessQueryTree_(const Matrix &qset, QueryTree *qnode, 
 			     NWRCdeQueryResult &query_results);
 
  public:
@@ -211,7 +211,7 @@ class NWRCde {
     PreProcessReferenceTree_(parameters_.rroot);
     NWRCdeCanonical_(qset, qroot, parameters_.rroot, probability, 
 		     *query_results);
-    PostProcessQueryTree_(qroot, *query_results);
+    PostProcessQueryTree_(qset, qroot, *query_results);
     fx_timer_stop(parameters_.module, "nwrcde_compute");
 
     // Shuffle back to the original ordering.
@@ -246,7 +246,7 @@ class NWRCde {
     PreProcessQueryTree_(qroot);
     fx_timer_start(parameters_.module, "naive_nwrcde_compute");
     NWRCdeBase_(qset, qroot, parameters_.rroot, probability, *naive_results);
-    PostProcessQueryTree_(qroot, *naive_results);
+    PostProcessQueryTree_(qset, qroot, *naive_results);
     fx_timer_stop(parameters_.module, "naive_nwrcde_compute");
 
     // Delete the query tree.

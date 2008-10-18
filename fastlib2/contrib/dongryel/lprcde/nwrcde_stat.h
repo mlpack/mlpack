@@ -22,6 +22,14 @@ class NWRCdeQueryStat {
 
  public:
 
+  void FinalPush(NWRCdeQueryStat &child_stat) {
+    child_stat.postponed.ApplyPostponed(postponed);
+    nwr_numerator_local_expansion.TranslateToLocal
+      (child_stat.nwr_numerator_local_expansion);
+    nwr_denominator_local_expansion.TranslateToLocal
+      (child_stat.nwr_denominator_local_expansion);
+  }
+
   void SetZero() {
     postponed.SetZero();
     summary.SetZero();
@@ -140,8 +148,7 @@ class NWRCdeReferenceStat {
    */
   template<typename TBound>
   void PostInit(const TBound &bounding_primitive,
-		const TKernelAux &kernel_aux_in,
-		const Matrix &reference_set,
+		const TKernelAux &kernel_aux_in, const Matrix &reference_set,
 		const Vector &nwr_numerator_weights,
 		const Vector &nwr_denominator_weights, 
 		index_t start, index_t count, 
