@@ -24,12 +24,14 @@ class NWRCdeGlobal {
   
   /** @brief The reference targets.
    */
-  Vector rset_targets;
-  
+  Vector nwr_numerator_weights;
+    
   /** @brief The sum of the reference targets.
    */
   double rset_target_sum;
   
+  Vector nwr_denominator_weights;
+
   /** @brief The reference tree.
    */
   ReferenceTree *rroot;
@@ -45,8 +47,9 @@ class NWRCdeGlobal {
     OT_MY_OBJECT(kernel_aux);
     OT_MY_OBJECT(relative_error);
     OT_MY_OBJECT(rset);
-    OT_MY_OBJECT(rset_targets);
+    OT_MY_OBJECT(nwr_numerator_weights);
     OT_MY_OBJECT(rset_target_sum);
+    OT_MY_OBJECT(nwr_denominator_weights);
     OT_PTR_NULLABLE(rroot);
     OT_MY_OBJECT(old_from_new_references);
   }

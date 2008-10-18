@@ -8,7 +8,6 @@
 #include "mlpack/series_expansion/mult_local_expansion.h"
 #include "mlpack/series_expansion/kernel_aux.h"
 
-template<typename TKernelAux>
 class NWRCdeQueryPostponed {
   
  public:
@@ -21,10 +20,6 @@ class NWRCdeQueryPostponed {
   double nwr_denominator_n_pruned;
   double nwr_numerator_used_error;
   double nwr_denominator_used_error;
-   
-  /** @brief The local expansion stored in this node.
-   */
-  typename TKernelAux::TLocalExpansion local_expansion;
 
  public:
 
@@ -48,25 +43,6 @@ class NWRCdeQueryPostponed {
     nwr_denominator_n_pruned += postponed_in.nwr_denominator_n_pruned;
     nwr_numerator_used_error += postponed_in.nwr_numerator_used_error;
     nwr_denominator_used_error += postponed_in.nwr_denominator_used_error;
-  }
-
-  void Init(const TKernelAux &kernel_aux_in) {
-    local_expansion.Init(kernel_aux_in);
-  }
-
-  template<typename TBound>
-  void Init(const TBound &bounding_primitive,
-	    const TKernelAux &kernel_aux_in) {
- 
-    // Initialize the center of expansions and bandwidth for series
-    // expansion.
-    Vector bounding_box_center;
-    Init(kernel_aux_in);
-    bounding_primitive.CalculateMidpoint(&bounding_box_center);
-    (local_expansion.get_center())->CopyValues(bounding_box_center);
-   
-    // Reset the postponed quantities to zero.
-    SetZero();
   }
   
   void SetZero() {
