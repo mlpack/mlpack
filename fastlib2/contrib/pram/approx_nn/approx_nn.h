@@ -680,6 +680,7 @@ private:
 	}
       }
     } else if (reference_node->is_leaf()) {
+      NOTIFY("Here!");
       // This part of the recursion is not yet correct since
       // we don't know how to deal with the query tree
       // traversal.
@@ -708,6 +709,7 @@ private:
     } else {
       // Same for this branch of the recursion.
       // dual tree traversal not supported yet
+      NOTIFY("And Here!!");
 
       // Recurse on both as above
       double left_distance = MinNodeDistSq_(query_node->left(), 
@@ -1240,8 +1242,8 @@ public:
       // the old_from_new_queries_ might have to be destroyed
       // before every tree building
       (*resulting_neighbors)[query_]
-	= old_from_new_references_[neighbor_indices_[0]];
-      (*distances)[query_] = neighbor_distances_[0];
+	= old_from_new_references_[neighbor_indices_[query_]];
+      (*distances)[query_] = neighbor_distances_[query_];
     }
 
 //     // We need to map the indices back from how they have 
@@ -1288,8 +1290,8 @@ public:
       // the old_from_new_queries_ might have to be destroyed
       // before every tree building
       (*resulting_neighbors)[query_]
-	= old_from_new_references_[neighbor_indices_[0]];
-      (*distances)[query_] = neighbor_distances_[0];
+	= old_from_new_references_[neighbor_indices_[query_]];
+      (*distances)[query_] = neighbor_distances_[query_];
     }
 //     if (query_tree_!=NULL) {
 //       ComputeBaseCase_(query_tree_, reference_tree_);
@@ -1337,8 +1339,8 @@ public:
       // the old_from_new_queries_ might have to be destroyed
       // before every tree building
       (*resulting_neighbors)[query_]
-	= old_from_new_references_[neighbor_indices_[0]];
-      (*distances)[query_] = neighbor_distances_[0];
+	= old_from_new_references_[neighbor_indices_[query_]];
+      (*distances)[query_] = neighbor_distances_[query_];
 
       // compute the probability
       (*probabilities)[query_]

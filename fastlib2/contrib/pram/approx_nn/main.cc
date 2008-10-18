@@ -112,7 +112,6 @@ int main (int argc, char *argv[]) {
     fx_timer_stop(ann_module, "approx");
   }
 
-  fx_param_bool(root, "fx/silent", true);
   fx_done(fx_root);
 }
 
