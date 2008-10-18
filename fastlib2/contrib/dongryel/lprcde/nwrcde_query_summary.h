@@ -40,11 +40,10 @@ class NWRCdeQuerySummary {
   
 public:
   
-  template<typename TKernelAux, typename ReferenceTree>
-  void Init(const NWRCdeGlobal<TKernelAux, ReferenceTree> &globals) {
+  void Init() {
     
     // Reset the postponed quantities to zero.
-    SetZero(globals);
+    SetZero();
   }
   
   void Accumulate(const NWRCdeQueryResult &query_results, index_t q_index) {
@@ -93,8 +92,7 @@ public:
     nwr_denominator_sum_l += delta_in.nwr_denominator_sum_l;
   }
 
-  template<typename TKernelAux>
-  void ApplyPostponed(const NWRCdeQueryPostponed<TKernelAux> &postponed_in) {
+  void ApplyPostponed(const NWRCdeQueryPostponed &postponed_in) {
     nwr_numerator_sum_l += postponed_in.nwr_numerator_sum_l;
     nwr_denominator_sum_l += postponed_in.nwr_denominator_sum_l;
     nwr_numerator_n_pruned_l += postponed_in.nwr_numerator_n_pruned;
@@ -112,8 +110,7 @@ public:
     nwr_denominator_used_error_u = 0;
   }
   
-  template<typename TKernelAux, typename ReferenceTree>
-  void SetZero(const NWRCdeGlobal<TKernelAux, ReferenceTree> &globals) {
+  void SetZero() {
     nwr_numerator_sum_l = 0;
     nwr_denominator_sum_l = 0;
     nwr_numerator_n_pruned_l = 0;

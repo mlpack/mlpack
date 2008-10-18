@@ -36,8 +36,7 @@ class NWRCdeQueryResult {
 
  public:
   
-  template<typename TKernelAux>
-  void ApplyPostponed(const NWRCdeQueryPostponed<TKernelAux> &postponed_in, 
+  void ApplyPostponed(const NWRCdeQueryPostponed &postponed_in, 
 		      index_t q_index) {
     
     nwr_numerator_sum_l[q_index] += postponed_in.nwr_numerator_sum_l;

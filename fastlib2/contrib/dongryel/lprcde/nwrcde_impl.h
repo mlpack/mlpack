@@ -28,7 +28,7 @@ void NWRCde<TKernelAux>::NWRCdeBase_(const Matrix &qset, QueryTree *qnode,
       double dsqd = la::DistanceSqEuclidean(qset.n_rows(), q_col, r_col);
       double kernel_value = 
 	parameters_.kernel_aux.kernel_.EvalUnnormOnSq(dsqd);
-      double weighted_kernel_value = parameters_.rset_targets[r] * 
+      double weighted_kernel_value = parameters_.nwr_numerator_weights[r] * 
 	kernel_value;
 
       query_results.nwr_numerator_sum_l[q] += weighted_kernel_value;
@@ -204,8 +204,7 @@ template<typename TKernelAux>
 void NWRCde<TKernelAux>::PreProcessQueryTree_(QueryTree *node) {
 
   // Reset summary statistics and postponed quantities.
-  node->stat().postponed.Init(node->bound(), parameters_.kernel_aux);
-  node->stat().summary.SetZero(parameters_);
+  node->stat().Init(node->bound(), parameters_.kernel_aux);
 
   if(!node->is_leaf()) {
     PreProcessQueryTree_(node->left());
@@ -221,7 +220,8 @@ void NWRCde<TKernelAux>::PreProcessReferenceTree_(ReferenceTree *node) {
 
     // Compute the target sum for the leaf node.
     node->stat().PostInit(node->bound(), parameters_.kernel_aux, 
-			  parameters_.rset, parameters_.rset_targets, 
+			  parameters_.rset, parameters_.nwr_numerator_weights,
+			  parameters_.nwr_denominator_weights,
 			  node->begin(), node->count());
   }
   else {
@@ -232,8 +232,10 @@ void NWRCde<TKernelAux>::PreProcessReferenceTree_(ReferenceTree *node) {
 
     // Merge the two sums.
     node->stat().PostInit(node->bound(), parameters_.kernel_aux,
-			  parameters_.rset_targets, node->begin(), 
-			  node->count(), node->left()->stat(), 
+			  parameters_.rset,
+			  parameters_.nwr_numerator_weights,
+			  parameters_.nwr_denominator_weights,
+			  node->begin(), node->count(), node->left()->stat(), 
 			  node->right()->stat());
   }
 

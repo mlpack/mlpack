@@ -266,13 +266,18 @@ class NWRCde {
     // Copy the reference dataset and reference target values.
     parameters_.rset.Copy(references);
     DEBUG_ASSERT(references.n_cols() == reference_targets.n_cols());
-    parameters_.rset_targets.Init(reference_targets.n_cols());
+    parameters_.nwr_numerator_weights.Init(reference_targets.n_cols());
     parameters_.rset_target_sum = 0;
-    for(index_t i = 0; i < parameters_.rset_targets.length(); i++) {
-      parameters_.rset_targets[i] = reference_targets.get(0, i);
-      parameters_.rset_target_sum += parameters_.rset_targets[i];
+    for(index_t i = 0; i < parameters_.nwr_numerator_weights.length(); i++) {
+      parameters_.nwr_numerator_weights[i] = reference_targets.get(0, i);
+      parameters_.rset_target_sum += parameters_.nwr_numerator_weights[i];
     }
     
+    // Initialize the denominator weights, but this should really be
+    // changed for variable-bandwidth implementation.
+    parameters_.nwr_denominator_weights.Init(reference_targets.n_cols());
+    parameters_.nwr_denominator_weights.SetAll(1);
+
     // Construct the reference tree and shuffle the target values
     // according to its permutation.
     fx_timer_start(parameters_.module, "reference_tree_construct");
@@ -280,7 +285,10 @@ class NWRCde {
       (parameters_.rset, leaflen, &(parameters_.old_from_new_references),
        NULL);
     NWRCdeCommon::ShuffleAccordingToPermutation
-      (parameters_.rset_targets, parameters_.old_from_new_references);
+      (parameters_.nwr_numerator_weights, parameters_.old_from_new_references);
+    NWRCdeCommon::ShuffleAccordingToPermutation
+      (parameters_.nwr_denominator_weights, 
+       parameters_.old_from_new_references);
     fx_timer_stop(parameters_.module, "reference_tree_construct");
     
     // Initialize the kernel.
