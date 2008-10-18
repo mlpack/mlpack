@@ -61,13 +61,13 @@ bool NWRCde<TKernelAux>::NWRCdeCanonical_(const Matrix &qset, QueryTree *qnode,
   // This is the delta change due to the current query and reference
   // node pair.
   NWRCdeDelta delta;
-  delta.Compute(parameters_, qnode, rnode);
+  NWRCdeError allowed_error;
+  NWRCdeQuerySummary new_summary;
 
   // Try finite difference pruning first.
-  if(NWRCdeCommon::ConsiderPairExact(parameters_, qnode, rnode, probability, 
-				     delta)) {
-    qnode->stat().postponed.ApplyDelta(delta);
-    query_results.num_finite_difference_prunes++;    
+  if(NWRCdeCommon::ConsiderPairExact(parameters_, qset, qnode, rnode,
+				     probability, query_results, new_summary,
+				     delta, allowed_error)) {
     return true;
   }
   

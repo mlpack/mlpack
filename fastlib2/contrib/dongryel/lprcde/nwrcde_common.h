@@ -3,11 +3,6 @@
 
 #include "fastlib/fastlib.h"
 
-#include "nwrcde_delta.h"
-#include "nwrcde_error.h"
-#include "nwrcde_global.h"
-#include "nwrcde_query_summary.h"
-
 class NWRCdeCommon {
 
  public:
@@ -52,29 +47,99 @@ class NWRCdeCommon {
     }
   }
 
-  template<typename TKernelAux, typename QueryTree, typename ReferenceTree>
+  template<typename TGlobal, typename QueryTree, typename ReferenceTree,
+	   typename TQueryResult, typename TDelta>
+  static void ApplySeriesExpansion(const TGlobal &globals, const Matrix &qset,
+				   QueryTree *qnode, ReferenceTree *rnode, 
+				   TQueryResult &query_results,
+				   const TDelta &delta) {
+
+    switch(delta.nwr_numerator.approx_type) {
+      case TDelta::FAR_TO_LOCAL:
+	rnode->stat().nwr_numerator_farfield_expansion.TranslateToLocal
+	  (qnode->stat().nwr_numerator_local_expansion, 
+	   delta.nwr_numerator.order_farfield_to_local);
+	break;
+      case TDelta::DIRECT_FARFIELD:
+	for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+	  query_results.nwr_numerator_sum_e[q] += 
+	    rnode->stat().nwr_numerator_farfield_expansion.EvaluateField
+	    (qset, q, delta.nwr_numerator.order_farfield);
+	}
+	break;
+      case TDelta::DIRECT_LOCAL:
+	qnode->stat().nwr_numerator_local_expansion.AccumulateCoeffs
+	  (globals.rset, globals.nwr_numerator_weights, rnode->begin(), 
+	   rnode->end(), delta.nwr_numerator.order_local);
+	break;
+      default:
+	break;
+    }
+    switch(delta.nwr_denominator.approx_type) {
+      case TDelta::FAR_TO_LOCAL:
+	rnode->stat().nwr_denominator_farfield_expansion.TranslateToLocal
+	  (qnode->stat().nwr_denominator_local_expansion, 
+	   delta.nwr_denominator.order_farfield_to_local);
+	break;
+      case TDelta::DIRECT_FARFIELD:
+	for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+	  query_results.nwr_denominator_sum_e[q] += 
+	    rnode->stat().nwr_denominator_farfield_expansion.EvaluateField
+	    (qset, q, delta.nwr_denominator.order_farfield);
+	}	
+	break;
+      case TDelta::DIRECT_LOCAL:
+	qnode->stat().nwr_denominator_local_expansion.AccumulateCoeffs
+	  (globals.rset, globals.nwr_denominator_weights, rnode->begin(),
+	   rnode->end(), delta.nwr_numerator.order_local);
+	break;
+      default:
+	break;
+    }
+  }
+
+  template<typename TGlobal, typename QueryTree, typename ReferenceTree,
+	   typename TQueryResult, typename TQuerySummary, typename TDelta,
+	   typename TError>
   static bool ConsiderPairExact
-  (const NWRCdeGlobal<TKernelAux, ReferenceTree> &parameters,
-   QueryTree *qnode, ReferenceTree *rnode, double probability, 
-   NWRCdeDelta &delta) {
+  (const TGlobal &parameters, const Matrix &qset, QueryTree *qnode,
+   ReferenceTree *rnode, double probability, TQueryResult &query_results,
+   TQuerySummary &new_summary, TDelta &delta, TError &allowed_error) {
     
+    // Compute the bound changes due to a finite-difference approximation.
+    delta.ComputeFiniteDifference(parameters, qnode, rnode);
+
     // Refine the lower bound using the new lower bound info.
-    NWRCdeQuerySummary new_summary;
     new_summary.InitCopy(qnode->stat().summary);
     new_summary.ApplyPostponed(qnode->stat().postponed);
     new_summary.ApplyDelta(delta);
     
     // Compute the allowable error.
-    NWRCdeError allowed_error;
     allowed_error.ComputeAllowableError(parameters, new_summary, rnode);
 
     // If the error bound is satisfied by the hard error bound, it is
     // safe to prune.
-    return (!isnan(allowed_error.nwr_numerator_error)) && 
-      (!isnan(allowed_error.nwr_denominator_error)) &&
-      (delta.nwr_numerator_used_error <= allowed_error.nwr_numerator_error) &&
-      (delta.nwr_denominator_used_error <= 
-       allowed_error.nwr_denominator_error);
+    if((!isnan(allowed_error.nwr_numerator.error)) && 
+       (!isnan(allowed_error.nwr_denominator.error)) &&
+       (delta.nwr_numerator.used_error <= allowed_error.nwr_numerator.error) &&
+       (delta.nwr_denominator.used_error <= 
+	allowed_error.nwr_denominator.error)) {
+
+      qnode->stat().postponed.ApplyDelta(delta);
+      query_results.num_finite_difference_prunes++; 
+      return true;
+    }
+
+    // Try series expansion.
+    else if(delta.ComputeSeriesExpansion(parameters, qnode, rnode, 
+					 allowed_error)) {
+      ApplySeriesExpansion(parameters, qset, qnode, rnode, query_results,
+			   delta);
+      return true;
+    }
+    else {
+      return false;
+    }
   }
 
 };
