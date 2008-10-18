@@ -50,8 +50,8 @@ void StartComputation(const Matrix &queries, const Matrix &references,
            fabs(naive_query_results.final_nwr_estimates[i]));
       max_relative_error = std::max(max_relative_error, relative_error);
 
-      if(relative_error < fx_param_double(nwrcde_module, "relative_error",
-                                          0.1)) {
+      if(relative_error <= fx_param_double(nwrcde_module, "relative_error",
+					   0.1)) {
         within_limit++;
       }
     }

@@ -61,6 +61,7 @@ bool NWRCde<TKernelAux>::NWRCdeCanonical_(const Matrix &qset, QueryTree *qnode,
   // This is the delta change due to the current query and reference
   // node pair.
   NWRCdeDelta delta;
+  delta.Reset(parameters_, qnode, rnode);
   NWRCdeError allowed_error;
   NWRCdeQuerySummary new_summary;
 
@@ -243,23 +244,23 @@ void NWRCde<TKernelAux>::PreProcessReferenceTree_(ReferenceTree *node) {
 
 template<typename TKernelAux>
 void NWRCde<TKernelAux>::PostProcessQueryTree_
-(QueryTree *node, NWRCdeQueryResult &query_results) {
+(const Matrix &qset, QueryTree *node, NWRCdeQueryResult &query_results) {
 
   if(node->is_leaf()) {
     for(index_t q = node->begin(); q < node->end(); q++) {
-      query_results.ApplyPostponed(node->stat().postponed, q);
+      query_results.FinalPush(qset, node->stat(), q);
       query_results.Postprocess(q);
     }    
   }
   else {
     
     // Push down postponed contributions to the left and the right.
-    node->left()->stat().postponed.ApplyPostponed(node->stat().postponed);
-    node->right()->stat().postponed.ApplyPostponed(node->stat().postponed);
+    node->stat().FinalPush(node->left()->stat());
+    node->stat().FinalPush(node->right()->stat());
     
     // and recurse to the left and the right.
-    PostProcessQueryTree_(node->left(), query_results);
-    PostProcessQueryTree_(node->right(), query_results);
+    PostProcessQueryTree_(qset, node->left(), query_results);
+    PostProcessQueryTree_(qset, node->right(), query_results);
   }
 
   node->stat().postponed.SetZero();
