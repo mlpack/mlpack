@@ -1,16 +1,13 @@
 #ifndef NWRCDE_STAT_H
 #define NWRCDE_STAT_H
 
-#include "nwrcde_query_postponed.h"
-#include "nwrcde_query_summary.h"
-
-template<typename TKernelAux>
+template<typename TKernelAux, typename TQueryPostponed, typename TQuerySummary>
 class NWRCdeQueryStat {
  public:
 
-  NWRCdeQueryPostponed postponed;
+  TQueryPostponed postponed;
 
-  NWRCdeQuerySummary summary;
+  TQuerySummary summary;
 
   typename TKernelAux::TLocalExpansion nwr_numerator_local_expansion;
   

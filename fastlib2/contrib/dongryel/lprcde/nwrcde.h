@@ -27,10 +27,11 @@
 #include "contrib/dongryel/proximity_project/subspace_stat.h"
 #include "nwrcde_common.h"
 #include "nwrcde_delta.h"
+#include "nwrcde_error.h"
+#include "nwrcde_global.h"
 #include "nwrcde_query_postponed.h"
 #include "nwrcde_query_result.h"
 #include "nwrcde_query_summary.h"
-#include "nwrcde_global.h"
 #include "nwrcde_stat.h"
 
 ////////// Documentation stuffs //////////
@@ -98,7 +99,7 @@ class NWRCde {
     
   /** @brief The type of our query tree.
    */
-  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector >, Matrix, NWRCdeQueryStat<TKernelAux> > QueryTree;
+  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector >, Matrix, NWRCdeQueryStat<TKernelAux, NWRCdeQueryPostponed, NWRCdeQuerySummary> > QueryTree;
 
   /** @brief The type of our reference tree.
    */

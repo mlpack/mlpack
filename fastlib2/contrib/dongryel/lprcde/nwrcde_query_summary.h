@@ -3,9 +3,6 @@
 
 #include "fastlib/fastlib.h"
 
-#include "nwrcde_query_result.h"
-#include "nwrcde_global.h"
-
 class NWRCdeQuerySummary {
   
  public:
@@ -46,7 +43,8 @@ public:
     SetZero();
   }
   
-  void Accumulate(const NWRCdeQueryResult &query_results, index_t q_index) {
+  template<typename TQueryResult>
+  void Accumulate(const TQueryResult &query_results, index_t q_index) {
     nwr_numerator_sum_l = 
       std::min(nwr_numerator_sum_l,
 	       query_results.nwr_numerator_sum_l[q_index]);
@@ -67,7 +65,8 @@ public:
 	       query_results.nwr_denominator_used_error[q_index]);
   }
 
-  void Accumulate(const NWRCdeQuerySummary &other_summary_results) {
+  template<typename TQuerySummary>
+  void Accumulate(const TQuerySummary &other_summary_results) {
     nwr_numerator_sum_l = std::min(nwr_numerator_sum_l,
 				   other_summary_results.nwr_numerator_sum_l);
     nwr_denominator_sum_l = 
@@ -87,12 +86,14 @@ public:
 	       other_summary_results.nwr_denominator_used_error_u);
   }
 
-  void ApplyDelta(const NWRCdeDelta &delta_in) {
-    nwr_numerator_sum_l += delta_in.nwr_numerator_sum_l;
-    nwr_denominator_sum_l += delta_in.nwr_denominator_sum_l;
+  template<typename TDelta>
+  void ApplyDelta(const TDelta &delta_in) {
+    nwr_numerator_sum_l += delta_in.nwr_numerator.sum_l;
+    nwr_denominator_sum_l += delta_in.nwr_denominator.sum_l;
   }
 
-  void ApplyPostponed(const NWRCdeQueryPostponed &postponed_in) {
+  template<typename TQueryPostponed>
+  void ApplyPostponed(const TQueryPostponed &postponed_in) {
     nwr_numerator_sum_l += postponed_in.nwr_numerator_sum_l;
     nwr_denominator_sum_l += postponed_in.nwr_denominator_sum_l;
     nwr_numerator_n_pruned_l += postponed_in.nwr_numerator_n_pruned;

@@ -1,8 +1,6 @@
 #ifndef NWRCDE_QUERY_RESULT_H
 #define NWRCDE_QUERY_RESULT_H
 
-#include "nwrcde_query_postponed.h"
-
 class NWRCdeQueryResult {
   
  public:
@@ -36,7 +34,8 @@ class NWRCdeQueryResult {
 
  public:
   
-  void ApplyPostponed(const NWRCdeQueryPostponed &postponed_in, 
+  template<typename TQueryPostponed>
+  void ApplyPostponed(const TQueryPostponed &postponed_in, 
 		      index_t q_index) {
     
     nwr_numerator_sum_l[q_index] += postponed_in.nwr_numerator_sum_l;
