@@ -63,10 +63,10 @@ class SeriesExpansionAux {
  public:
 
   void ComputeFactorials() {
-    factorials_.Init(max_order_ + 1);
+    factorials_.Init(2 * max_order_ + 1);
 
     factorials_[0] = 1;
-    for(index_t t = 1; t <= max_order_; t++) {
+    for(index_t t = 1; t < factorials_.length(); t++) {
       factorials_[t] = t * factorials_[t - 1];
     }
   }
@@ -76,14 +76,16 @@ class SeriesExpansionAux {
     ArrayList<int> diff;
     diff.Init(dim_);
 
-    // initialize the index
-    lower_mapping_index_.Init(list_total_num_coeffs_[max_order_]);
+    int limit = 2 * max_order_;
 
-    for(index_t i = 0; i < list_total_num_coeffs_[max_order_]; i++) {
+    // initialize the index
+    lower_mapping_index_.Init(list_total_num_coeffs_[limit]);
+
+    for(index_t i = 0; i < list_total_num_coeffs_[limit]; i++) {
       const ArrayList<int> &outer_mapping = multiindex_mapping_[i];
       lower_mapping_index_[i].Init();
 
-      for(index_t j = 0; j < list_total_num_coeffs_[max_order_]; j++) {
+      for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
 	const ArrayList<int> &inner_mapping = multiindex_mapping_[j];
 	int flag = 0;
 
@@ -105,15 +107,16 @@ class SeriesExpansionAux {
 
   void ComputeMultiindexCombination() {
 
-    multiindex_combination_.Init(list_total_num_coeffs_[max_order_],
-				 list_total_num_coeffs_[max_order_]);
+    int limit = 2 * max_order_;
+    multiindex_combination_.Init(list_total_num_coeffs_[limit],
+				 list_total_num_coeffs_[limit]);
 
-    for(index_t j = 0; j < list_total_num_coeffs_[max_order_]; j++) {
+    for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
       
       // beta mapping
       const ArrayList<int> &beta_mapping = multiindex_mapping_[j];
       
-      for(index_t k = 0; k < list_total_num_coeffs_[max_order_]; k++) {
+      for(index_t k = 0; k < list_total_num_coeffs_[limit]; k++) {
 	
 	// alpha mapping
 	const ArrayList<int> &alpha_mapping = multiindex_mapping_[k];
@@ -135,17 +138,18 @@ class SeriesExpansionAux {
 
   void ComputeUpperMappingIndex() {
     
+    int limit = 2 * max_order_;
     ArrayList<int> diff;
     diff.Init(dim_);
     
     // initialize the index
-    upper_mapping_index_.Init(list_total_num_coeffs_[max_order_]);
+    upper_mapping_index_.Init(list_total_num_coeffs_[limit]);
     
-    for(index_t i = 0; i < list_total_num_coeffs_[max_order_]; i++) {
+    for(index_t i = 0; i < list_total_num_coeffs_[limit]; i++) {
       const ArrayList<int> &outer_mapping = multiindex_mapping_[i];
       upper_mapping_index_[i].Init();
       
-      for(index_t j = 0; j < list_total_num_coeffs_[max_order_]; j++) {
+      for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
 	const ArrayList<int> &inner_mapping = multiindex_mapping_[j];
 	int flag = 0;
 	

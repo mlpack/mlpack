@@ -71,10 +71,10 @@ class MultSeriesExpansionAux {
  public:
 
   void ComputeFactorials() {
-    factorials_.Init(max_order_ + 1);
+    factorials_.Init(2 * max_order_ + 1);
 
     factorials_[0] = 1;
-    for(index_t t = 1; t <= max_order_; t++) {
+    for(index_t t = 1; t < factorials_.length(); t++) {
       factorials_[t] = t * factorials_[t - 1];
     }
   }
@@ -82,13 +82,14 @@ class MultSeriesExpansionAux {
   void ComputeTraversalMapping() {
 
     // initialize the index
-    traversal_mapping_.Init(max_order_ + 1);
+    int limit = 2 * max_order_;
+    traversal_mapping_.Init(limit + 1);
 
     for(index_t i = 0; i <= max_order_; i++) {
 
       traversal_mapping_[i].Init();
 
-      for(index_t j = 0; j < list_total_num_coeffs_[max_order_]; j++) {
+      for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
 	
         const ArrayList<int> &mapping = multiindex_mapping_[j];
         int flag = 0;
@@ -113,13 +114,14 @@ class MultSeriesExpansionAux {
     diff.Init(dim_);
 
     // initialize the index
-    lower_mapping_index_.Init(list_total_num_coeffs_[max_order_]);
+    int limit = 2 * max_order_;
+    lower_mapping_index_.Init(list_total_num_coeffs_[limit]);
 
-    for(index_t i = 0; i < list_total_num_coeffs_[max_order_]; i++) {
+    for(index_t i = 0; i < list_total_num_coeffs_[limit]; i++) {
       const ArrayList<int> &outer_mapping = multiindex_mapping_[i];
       lower_mapping_index_[i].Init();
 
-      for(index_t j = 0; j < list_total_num_coeffs_[max_order_]; j++) {
+      for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
         const ArrayList<int> &inner_mapping = multiindex_mapping_[j];
         int flag = 0;
 
@@ -141,15 +143,16 @@ class MultSeriesExpansionAux {
 
   void ComputeMultiindexCombination() {
 
-    multiindex_combination_.Init(list_total_num_coeffs_[max_order_],
-                                 list_total_num_coeffs_[max_order_]);
+    int limit = 2 * max_order_;
+    multiindex_combination_.Init(list_total_num_coeffs_[limit],
+                                 list_total_num_coeffs_[limit]);
 
-    for(index_t j = 0; j < list_total_num_coeffs_[max_order_]; j++) {
+    for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
 
       // beta mapping
       const ArrayList<int> &beta_mapping = multiindex_mapping_[j];
 
-      for(index_t k = 0; k < list_total_num_coeffs_[max_order_]; k++) {
+      for(index_t k = 0; k < list_total_num_coeffs_[limit]; k++) {
 
         // alpha mapping
         const ArrayList<int> &alpha_mapping = multiindex_mapping_[k];
@@ -175,13 +178,14 @@ class MultSeriesExpansionAux {
     diff.Init(dim_);
 
     // initialize the index
-    upper_mapping_index_.Init(list_total_num_coeffs_[max_order_]);
+    int limit = 2 * max_order_;
+    upper_mapping_index_.Init(list_total_num_coeffs_[limit]);
 
-    for(index_t i = 0; i < list_total_num_coeffs_[max_order_]; i++) {
+    for(index_t i = 0; i < list_total_num_coeffs_[limit]; i++) {
       const ArrayList<int> &outer_mapping = multiindex_mapping_[i];
       upper_mapping_index_[i].Init();
 
-      for(index_t j = 0; j < list_total_num_coeffs_[max_order_]; j++) {
+      for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
         const ArrayList<int> &inner_mapping = multiindex_mapping_[j];
         int flag = 0;
 
@@ -206,7 +210,6 @@ class MultSeriesExpansionAux {
 
   int get_dimension() const { return dim_; }
 
-  /** this needs to be fixed... */
   int get_total_num_coeffs(int order) const { 
     return list_total_num_coeffs_[order]; 
   }
@@ -261,7 +264,7 @@ class MultSeriesExpansionAux {
     
     // using Horner's rule
     for(index_t i = 0; i < dim_; i++) {
-      index *= (max_order_ + 1);
+      index *= (2 * max_order_ + 1);
       index += multiindex[i];
     }
     return index;
@@ -300,9 +303,10 @@ class MultSeriesExpansionAux {
   
     // compute the list of total number of coefficients for p-th order 
     // expansion
-    list_total_num_coeffs_.Init(max_order + 1);
+    int limit = 2 * max_order_;
+    list_total_num_coeffs_.Init(limit + 1);
     list_total_num_coeffs_[0] = 1;
-    for(index_t p = 1; p <= max_order; p++) {
+    for(index_t p = 1; p <= limit; p++) {
       list_total_num_coeffs_[p] = (int) pow(p + 1, dim);
     }
 
@@ -312,14 +316,14 @@ class MultSeriesExpansionAux {
     // allocate space for inverse factorial and 
     // negative inverse factorials and multiindex mapping and n_choose_k 
     // and multiindex_combination precomputed factors
-    inv_multiindex_factorials_.Init(list_total_num_coeffs_[max_order]);  
-    neg_inv_multiindex_factorials_.Init(list_total_num_coeffs_[max_order]);
-    multiindex_mapping_.Init(list_total_num_coeffs_[max_order]);
+    inv_multiindex_factorials_.Init(list_total_num_coeffs_[limit]);  
+    neg_inv_multiindex_factorials_.Init(list_total_num_coeffs_[limit]);
+    multiindex_mapping_.Init(list_total_num_coeffs_[limit]);
     (multiindex_mapping_[0]).Init(dim_);
     for(index_t j = 0; j < dim; j++) {
       (multiindex_mapping_[0])[j] = 0;
     }
-    n_choose_k_.Init(dim * (max_order + 1), dim * (max_order + 1));
+    n_choose_k_.Init(dim * (limit + 1), dim * (limit + 1));
     n_choose_k_.SetZero();
 
     // compute inverse factorial and negative inverse factorials and
@@ -329,18 +333,18 @@ class MultSeriesExpansionAux {
     if(max_order > 0) {
       index_t boundary, i, k, step;
 
-      for(boundary = list_total_num_coeffs_[max_order], k = 0, 
-	    step = list_total_num_coeffs_[max_order] / (max_order + 1);
-	  step >= 1; step /= (max_order + 1), 
-	    boundary /= (max_order + 1), k++) {
+      for(boundary = list_total_num_coeffs_[limit], k = 0, 
+	    step = list_total_num_coeffs_[limit] / (limit + 1);
+	  step >= 1; step /= (limit + 1), 
+	    boundary /= (limit + 1), k++) {
 
-	for(i = 0; i < list_total_num_coeffs_[max_order]; ) {
-	  int limit = i + boundary;
+	for(i = 0; i < list_total_num_coeffs_[limit]; ) {
+	  int inner_limit = i + boundary;
 	  int div = 1;
 	  
 	  i += step;
 	  
-	  for( ; i < limit; i += step) {
+	  for( ; i < inner_limit; i += step) {
 	    
 	    inv_multiindex_factorials_[i] = 
 	      inv_multiindex_factorials_[i - step] / div;
