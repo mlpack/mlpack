@@ -39,6 +39,7 @@ double SeriesExpansionAux::get_n_multichoose_k_by_pos(int n, int k) const {
 }
 
 int SeriesExpansionAux::get_total_num_coeffs(int order) const {
+
   return list_total_num_coeffs_[order];
 }
 
@@ -96,8 +97,9 @@ void SeriesExpansionAux::Init(int max_order, int dim) {
   max_order_ = max_order;
   
   // compute the list of total number of coefficients for p-th order expansion
-  list_total_num_coeffs_.Init(max_order + 1);
-  for(p = 0; p <= max_order; p++) {
+  int limit = 2 * max_order + 1;
+  list_total_num_coeffs_.Init(limit);
+  for(p = 0; p <= limit; p++) {
     list_total_num_coeffs_[p] = (int) math::BinomialCoefficient(p + dim, dim);
   }
 
@@ -107,19 +109,19 @@ void SeriesExpansionAux::Init(int max_order, int dim) {
   // allocate space for inverse factorial and 
   // negative inverse factorials and multiindex mapping and n_choose_k 
   // and multiindex_combination precomputed factors
-  inv_multiindex_factorials_.Init(list_total_num_coeffs_[max_order]);  
-  neg_inv_multiindex_factorials_.Init(list_total_num_coeffs_[max_order]);
-  multiindex_mapping_.Init(list_total_num_coeffs_[max_order]);
+  inv_multiindex_factorials_.Init(list_total_num_coeffs_[limit - 1]);  
+  neg_inv_multiindex_factorials_.Init(list_total_num_coeffs_[limit - 1]);
+  multiindex_mapping_.Init(list_total_num_coeffs_[limit - 1]);
   (multiindex_mapping_[0]).Init(dim_);
   for(j = 0; j < dim; j++) {
     (multiindex_mapping_[0])[j] = 0;
   }
-  n_choose_k_.Init(max_order + dim + 1, max_order + dim + 1);
+  n_choose_k_.Init((limit - 1) + dim + 1, (limit - 1) + dim + 1);
   n_choose_k_.SetZero();
 
   // initialization of temporary variables for computation...
   heads.Init(dim + 1);
-  cinds.Init(list_total_num_coeffs_[max_order]);
+  cinds.Init(list_total_num_coeffs_[limit - 1]);
 
   for(i = 0; i < dim; i++) {
     heads[i] = 0;
@@ -131,7 +133,7 @@ void SeriesExpansionAux::Init(int max_order, int dim) {
   // multiindex mappings...
   inv_multiindex_factorials_[0] = 1.0;
   neg_inv_multiindex_factorials_[0] = 1.0;
-  for(k = 1, t = 1, tail = 1; k <= max_order; k++, tail = t) {
+  for(k = 1, t = 1, tail = 1; k <= 2 * max_order_; k++, tail = t) {
     for(i = 0; i < dim; i++) {
       int head = (int) heads[i];
       heads[i] = t;
@@ -149,8 +151,8 @@ void SeriesExpansionAux::Init(int max_order, int dim) {
   }
 
   // compute n choose k's
-  for(j = 0; j <= max_order + dim; j++) {
-    for(k = 0; k <= max_order + dim; k++) {
+  for(j = 0; j <= 2 * max_order + dim; j++) {
+    for(k = 0; k <= 2 * max_order + dim; k++) {
       n_choose_k_.set(j, k, math::BinomialCoefficient(j, k));
     }
   }
