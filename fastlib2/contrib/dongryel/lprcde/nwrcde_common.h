@@ -59,6 +59,7 @@ class NWRCdeCommon {
 	rnode->stat().nwr_numerator_farfield_expansion.TranslateToLocal
 	  (qnode->stat().nwr_numerator_local_expansion, 
 	   delta.nwr_numerator.order_farfield_to_local);
+	query_results.num_far_to_local_prunes++;
 	break;
       case TDelta::DIRECT_FARFIELD:
 	for(index_t q = qnode->begin(); q < qnode->end(); q++) {
@@ -66,11 +67,13 @@ class NWRCdeCommon {
 	    rnode->stat().nwr_numerator_farfield_expansion.EvaluateField
 	    (qset, q, delta.nwr_numerator.order_farfield);
 	}
+	query_results.num_direct_far_prunes++;
 	break;
       case TDelta::DIRECT_LOCAL:
 	qnode->stat().nwr_numerator_local_expansion.AccumulateCoeffs
 	  (globals.rset, globals.nwr_numerator_weights, rnode->begin(), 
 	   rnode->end(), delta.nwr_numerator.order_local);
+	query_results.num_direct_local_prunes++;
 	break;
       default:
 	break;
@@ -80,18 +83,21 @@ class NWRCdeCommon {
 	rnode->stat().nwr_denominator_farfield_expansion.TranslateToLocal
 	  (qnode->stat().nwr_denominator_local_expansion, 
 	   delta.nwr_denominator.order_farfield_to_local);
+	query_results.num_far_to_local_prunes++;
 	break;
       case TDelta::DIRECT_FARFIELD:
 	for(index_t q = qnode->begin(); q < qnode->end(); q++) {
 	  query_results.nwr_denominator_sum_e[q] += 
 	    rnode->stat().nwr_denominator_farfield_expansion.EvaluateField
 	    (qset, q, delta.nwr_denominator.order_farfield);
-	}	
+	}
+	query_results.num_direct_far_prunes++;
 	break;
       case TDelta::DIRECT_LOCAL:
 	qnode->stat().nwr_denominator_local_expansion.AccumulateCoeffs
 	  (globals.rset, globals.nwr_denominator_weights, rnode->begin(),
 	   rnode->end(), delta.nwr_numerator.order_local);
+	query_results.num_direct_local_prunes++;
 	break;
       default:
 	break;
