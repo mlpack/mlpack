@@ -60,6 +60,16 @@ void StartComputation(const Matrix &queries, const Matrix &references,
     fx_format_result(nwrcde_module, "under_relative_error_limit", "%d",
                      within_limit);
   }
+
+  // Output the prune statistics as well for the fast algorithm.
+  fx_format_result(nwrcde_module, "num_finite_difference_prunes", "%d",
+		   query_results.num_finite_difference_prunes);
+  fx_format_result(nwrcde_module, "num_far_to_local_prunes", "%d",
+		   query_results.num_far_to_local_prunes);
+  fx_format_result(nwrcde_module, "num_direct_far_prunes", "%d",
+		   query_results.num_direct_far_prunes);
+  fx_format_result(nwrcde_module, "num_direct_local_prunes", "%d",
+		   query_results.num_direct_local_prunes);
 }
 
 int main(int argc, char *argv[]) {

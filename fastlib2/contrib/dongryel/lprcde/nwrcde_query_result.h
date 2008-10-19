@@ -16,6 +16,12 @@ class NWRCdeQueryResult {
   
   int num_finite_difference_prunes;
 
+  int num_far_to_local_prunes;
+  
+  int num_direct_far_prunes;
+  
+  int num_direct_local_prunes;
+
   /** @brief The estimated Nadaraya-Watson regression estimates,
    *         computed in the postprocessing phrase.
    */
@@ -30,6 +36,10 @@ class NWRCdeQueryResult {
     OT_MY_OBJECT(nwr_denominator_n_pruned);
     OT_MY_OBJECT(nwr_numerator_used_error);
     OT_MY_OBJECT(nwr_denominator_used_error);
+    OT_MY_OBJECT(num_finite_difference_prunes);
+    OT_MY_OBJECT(num_far_to_local_prunes);
+    OT_MY_OBJECT(num_direct_far_prunes);
+    OT_MY_OBJECT(num_direct_local_prunes);
   }
 
  public:
@@ -112,6 +122,9 @@ class NWRCdeQueryResult {
     nwr_numerator_used_error.SetZero();
     nwr_denominator_used_error.SetZero();
     num_finite_difference_prunes = 0;
+    num_far_to_local_prunes = 0;
+    num_direct_far_prunes = 0;
+    num_direct_local_prunes = 0;
     
     final_nwr_estimates.SetZero();
   }
