@@ -4,7 +4,8 @@ USAGE = """
 fl-build-all: Builds all rules specified in build.py under the current
               directory.
               
-   (usage: fl-build-all [--mode={verbose|debug|check|fast|unsafe}])
+   (usage: fl-build-all [--mode={verbose|debug|check|fast|unsafe}]
+                        [--recursive] )
 
 This builds the specified target rule and places links to generated files
 and a Makefile in the current directory.  I assume that FASTlib is
@@ -34,6 +35,8 @@ OPTIONAL COMMAND LINE OPTIONS
        *[check]* assertions and fast   [fast]  usually fastest
        [unsafe]  bad optimizations     [small] code size
   --j={1|2|3...} = number of CPU's to compile with
+  --recursive = whether to apply fl-build-all recursively under all
+                subdirectories
 """
 
 import buildsys # buildsys.py contains the build system
@@ -41,7 +44,7 @@ import os
 import sys
 import fx
 import util
-
+  
 # figure out where fastlib is
 fl_build_path = sys.argv[0]
 script_path = os.path.realpath(os.path.dirname(fl_build_path))
@@ -51,6 +54,10 @@ fastlib_path = os.path.dirname(script_path)
 code_path = os.path.realpath(fastlib_path).rstrip(os.sep) + os.sep
 curdir = os.path.realpath(os.getcwd()).rstrip(os.sep) + os.sep
 
+if fx.param_exists("help"):
+  print USAGE % code_path
+  sys.exit(1)
+  
 if curdir.startswith(code_path):
   # When building inside build system, use relative paths from root
   # of build system.
@@ -104,25 +111,38 @@ fx.param_default("lib", "fastlib:fastlib")
 lib = fx.param_str("lib")
 posttext = ""
 
-target = loader.find_rule(target_name, real_path, fake_path, posttext)
-linkrule = buildsys.SymlinkRule([target], curdir)
-linkrule.generate(loader.thebuildsys, params)
-
-# TODO: Make symbolic link to result
-makefile_lines = loader.thebuildsys.to_makefile()
-
-print "*** Running Makefile"
-
-processors = fx.param_int("j")
-
-util.writelines(makefile_path, makefile_lines)
-
-retval = util.spawn_redirect(
+def build_all(real_subpath, fake_subpath, target_name, posttext):
+  target = loader.find_rule(target_name, real_subpath, fake_subpath, posttext)
+  linkrule = buildsys.SymlinkRule([target], real_subpath)
+  linkrule.generate(loader.thebuildsys, params)
+  
+  # TODO: Make symbolic link to result
+  makefile_lines = loader.thebuildsys.to_makefile()
+  
+  print "*** Running Makefile"
+  
+  processors = fx.param_int("j")
+  
+  util.writelines(makefile_path, makefile_lines)
+  
+  retval = util.spawn_redirect(
     os.path.abspath("."),
     ["make", "-j%d" % processors],
     infile = None,
     outfile = None,
     errfile = None)
+  return retval
 
-sys.exit(retval)
-
+if fx.param_exists("recursive"):
+  print "Recursive build-all..."
+  for (subpath, subdirs, subfiles) in os.walk(curdir):
+    if 'build.py' in subfiles:
+      real_subpath = subpath.rstrip(os.sep)
+      fake_subpath = subpath[len(code_path):].replace(os.sep, "/").rstrip("/")
+      build_all(real_subpath, fake_subpath, target_name, posttext)
+else:
+  print "Non-recursive build-all..."
+  if "build.py" in os.listdir(curdir):
+    build_all(real_path, fake_path, target_name, posttext)
+  else:
+    print "build.py file not found..."
