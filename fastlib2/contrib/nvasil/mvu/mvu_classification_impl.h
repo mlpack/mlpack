@@ -387,8 +387,9 @@ void MaxFurthestNeighborsSvmSemiSupervised::Init(fx_module *module,
   Matrix  data_points;
   data_points.Init(labeled_data.n_rows(), num_of_labeled_+num_of_unlabeled_);
   data_points.CopyColumnFromMat(labeled_offset_, 0, labeled_data.n_cols(), labeled_data);
-  data_points.CopyColumnFromMat(unlabeled_offset_, 0, unlabeled_data.n_cols(), unlabeled_data);
-
+  if (unlabeled_data.n_cols()!=0) {
+    data_points.CopyColumnFromMat(unlabeled_offset_, 0, unlabeled_data.n_cols(), unlabeled_data);
+  }
   NOTIFY("Nearest neighbor constraints ...\n");
   NOTIFY("Building tree with data ...\n");
   if (knns_==0) {
