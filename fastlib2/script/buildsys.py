@@ -278,8 +278,18 @@ class ArchiveRule(dep.Metarule):
     if len(objects) != 0:
       libfile = realrule.file("lib" + self.name + ".a",
           "arch", "kernel", "mode", "compiler")
-      realrule.command("ar r %s %s" % (sq(libfile),
-          " ".join([sq(x.name) for x in objects])))
+      archive_and_export_rule = "ar r %s %s" % \
+                                (sq(libfile), \
+                                 " ".join([sq(x.name) for x in objects]))
+      if params["prefix"] != "":
+        destination_parent_dir = params["prefix"].rstrip("/").rstrip(os.sep) \
+                                 + "/lib/"
+        archive_and_export_rule += \
+                                " && mkdir -p " + \
+                                destination_parent_dir + \
+                                " && cp " + sq(libfile) + " " + \
+                                destination_parent_dir
+      realrule.command(archive_and_export_rule)
       return [(Types.LINKABLE, libfile)]
     else:
       # no compilable code was found -- just don't create an object
@@ -292,7 +302,32 @@ class HeaderSummaryRule(dep.Metarule):
     self.name = name
   def doit(self, realrule, files, params):
     libfile = realrule.file("lib" + self.name + ".h")
-    realrule.command("touch %s" % (sq(libfile)))
+    generate_header_rule = "touch %s" % (sq(libfile))
+    # If the user specified the --prefix option, then export the header files.
+    if params["prefix"] != "":
+      for each_header in files["objects"].to_names():
+        destination_subpath = each_header \
+                              [len(os.path.realpath \
+                                   (os.path.dirname \
+                                    (os.path.realpath \
+                                     (os.path.dirname \
+                                      (sys.argv[0])))).rstrip(os.sep) \
+                                   + os.sep):]
+        destination_subdir = os.path.dirname(destination_subpath)
+        destination_parent_dir = params["prefix"].rstrip("/").rstrip(os.sep) \
+                                 + "/include/fastlib2/"
+        destination_newdir = destination_parent_dir + destination_subdir
+        # This seems like a hack, but I do not have a good clean
+        # solution.
+        if os.path.basename(each_header) == "basic_types.h":
+          destination_newdir = os.path.dirname \
+                               (os.path.dirname \
+                                (os.path.dirname(destination_newdir))) + \
+                                "/fastlib/base/base"
+        generate_header_rule += " && mkdir -p " + destination_newdir + \
+                                " && cp " + each_header + " " + \
+                                destination_newdir
+    realrule.command(generate_header_rule)
     return [(Types.PLACEHOLDER, libfile)]
 
 class BinRule(dep.Metarule):

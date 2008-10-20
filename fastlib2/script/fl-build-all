@@ -83,6 +83,7 @@ fx.param_default("cflags", "")
 fx.param_default("mode", "check")
 fx.param_default("compiler", "gcc")
 fx.param_default("j", "2")
+fx.param_default("prefix", "")
 target_name = ":VERYSPECIALPYTHONSTRING"
 
 implicit = True
@@ -96,12 +97,14 @@ cflags = fx.param_str("cflags")
 (kernel, nodename, release, version, arch) = os.uname()
 arch = util.sanitize_basename(arch)
 kernel = util.sanitize_basename(kernel)
+prefix = fx.param_str("prefix")
 
 # Dispatch
 
 print "*** Generating Makefile in current directory"
 
-params = dict(arch=arch,kernel=kernel,mode=mode,compiler=compiler,cflags=cflags)
+params = dict(arch=arch,kernel=kernel,mode=mode,compiler=compiler, \
+              cflags=cflags,prefix=prefix)
 
 print "*** Target Rule: '%s'" % target_name
 
