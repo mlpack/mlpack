@@ -50,6 +50,11 @@ def gen_compile_complex_lapack(sysentry, files, params):
   sysentry.command("cd %s && ar r %s *.o" % (sq(workspace_dir), sq(libblaspack.name)))
   sysentry.command("echo '... Created archive, cleaning up.'")
   sysentry.command("rm -rf %s" % sq(workspace_dir))
+  # Export it if the user requested.
+  if params["prefix"] != "":
+    destination_parent_dir = params["prefix"].rstrip("/").rstrip(os.sep) + "/lib/"
+    sysentry.command("mkdir -p " + destination_parent_dir)
+    sysentry.command("cp -f " + (sq(libblaspack.name)) + " " + destination_parent_dir)
   sysentry.command("echo '*** Done with LAPACK and BLAS!'")
   return [(Types.LINKABLE, libblaspack)]
 
@@ -81,6 +86,10 @@ def gen_compile_lapack(sysentry, files, params):
   sysentry.command("cd %s && ar r %s *.o" % (sq(workspace_dir), sq(libblaspack.name)))
   sysentry.command("echo '... Created archive, cleaning up.'")
   sysentry.command("rm -rf %s" % sq(workspace_dir))
+  if params["prefix"] != "":
+    destination_parent_dir = params["prefix"].rstrip("/").rstrip(os.sep) + "/lib/"
+    sysentry.command("mkdir -p " + destination_parent_dir)
+    sysentry.command("cp -f " + (sq(libblaspack.name)) + " " + destination_parent_dir)
   sysentry.command("echo '*** Done with LAPACK and BLAS!'")
   return [(Types.LINKABLE, libblaspack)]
 
@@ -123,7 +132,11 @@ def make_blas(sysentry, files, params):
 			sysentry.command("cd %s/BLAS && mv blas*.a %s" % (sq(workspace_dir), sq(libblas.name)))
 			sysentry.command("echo '... Created archive, cleaning up.'")
 			sysentry.command("rm -rf %s" % sq(workspace_dir))
-			sysentry.command("echo '*** Done with  and BLAS!'")
+                        if params["prefix"] != "":
+                          destination_parent_dir = params["prefix"].rstrip("/").rstrip(os.sep) + "/lib/"
+                          sysentry.command("mkdir -p " + destination_parent_dir)
+                          sysentry.command("cp -f " + (sq(libblas.name)) + " " + destination_parent_dir)
+                        sysentry.command("echo '*** Done with  and BLAS!'")
 	print "Generating a blas.lock file, if you want to reinstall differently delete it"
 	print commands.getoutput("echo lock"  + " >"+sq(blas_lock.name));
 	return [(Types.LINKABLE, libblas)]
@@ -172,6 +185,10 @@ def make_lapack(sysentry, files, params):
 			sysentry.command("cd %s/lapack* && mv lapack*.a %s" % (sq(workspace_dir), sq(liblapack.name)))
 			sysentry.command("echo '... Created archive, cleaning up.'")
 			sysentry.command("rm -rf %s" % sq(workspace_dir))
+                        if params["prefix"] != "":
+                          destination_parent_dir = params["prefix"].rstrip("/").rstrip(os.sep) + "/lib/"
+                          sysentry.command("mkdir -p " + destination_parent_dir)
+                          sysentry.command("cp -f " + (sq(liblapack.name)) + " " + destination_parent_dir)
 			sysentry.command("echo '*** Done with LAPACK !'")
 	print "Generating a lapack.lock file, if you want to reinstall differently delete it"
 	print commands.getoutput("echo lock"  + " > " + sq(lapack_lock.name));
