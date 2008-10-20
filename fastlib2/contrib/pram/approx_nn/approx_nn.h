@@ -28,6 +28,9 @@ const fx_entry_doc approx_nn_entries[] = {
    " The error probability.\n"},
   {"leaf_size", FX_PARAM, FX_INT, NULL,
    " The leaf size for the kd-tree.\n"},
+  {"sample_limit", FX_PARAM, FX_INT, NULL,
+   " The maximum number of samples"
+   " allowed to be made from a single node.\n"},
   {"naive_init", FX_TIMER, FX_CUSTOM, NULL,
    "Naive initialization time.\n"},
   {"naive", FX_TIMER, FX_CUSTOM, NULL,
@@ -191,6 +194,8 @@ private:
   ArrayList<index_t> sample_sizes_;
   // The rank approximation
   index_t epsilon_;
+  // The maximum number of points to be sampled
+  index_t sample_limit_;
   
   
   /////////////////////////////// Constructors ////////////////////////
@@ -274,10 +279,12 @@ private:
     double prob = (double) sample_size / (double) set_size;
     prob *= sum;
 
-    // asserting that the probability is <= 1.0
-    DEBUG_ASSERT_MSG(prob <= 1.0,
-		     "prob = %lf, N = %"LI"d, n = %"LI"d",
-		     prob, set_size, sample_size);
+//     // asserting that the probability is <= 1.0
+//     DEBUG_ASSERT_MSG(!(prob > 1),
+// 		     "prob = %lf, N = %"LI"d, n = %"LI"d",
+// 		     prob, set_size, sample_size);
+// This may not be the case when 'n' is close to 'N' and 
+// 'epsilon' is large enough to make N-1-epsilon+i < n-1
     return prob;
   }
   
@@ -295,6 +302,7 @@ private:
       n = samples->size();
     NOTIFY("N = %"LI"d", set_size);
     double prob;
+    DEBUG_ASSERT(alpha <= 1.0);
     while (set_size > epsilon) {
       do {
 	n--;
@@ -523,16 +531,19 @@ private:
     // Just notify if in reference leaf.
     // Check that we really should be in the base case
     DEBUG_WARN_IF(!query_node->is_leaf());
-    DEBUG_WARN_MSG_IF(reference_node->is_leaf(),"Reference leaf");
     DEBUG_ASSERT(query_node->end()
 		 - query_node->begin() == 1);
     
     // Obtain the number of samples to be obtained
+    // Need to fix how we decide node size!!!!!!!!!!
+
     index_t set_size
       = reference_node->end() - reference_node->begin();
-    index_t sample_size = sample_sizes_[set_size];
-    DEBUG_WARN_IF(sample_size > leaf_size_);
-    DEBUG_ASSERT(sample_size <= set_size);
+    index_t sample_size = sample_sizes_[set_size - 1];
+    DEBUG_WARN_IF(sample_size > sample_limit_);
+    DEBUG_ASSERT_MSG(sample_size <= set_size,
+		     "n = %"LI"d, N = %"LI"d",
+		     sample_size, set_size);
 
     // Used to find the query node's new upper bound
     double query_max_neighbor_distance = -1.0;
@@ -606,10 +617,11 @@ private:
          
   } // ComputeApproxBaseCase_
 
+  // Need to fix how we decide node size!!!!!!!!!!
   inline bool is_base(TreeType* tree) {
     index_t set_size = tree->end() - tree->begin();
-    index_t sample_size = sample_sizes_[set_size];
-    if (sample_size > leaf_size_) {
+    index_t sample_size = sample_sizes_[set_size - 1];
+    if (sample_size > sample_limit_) {
       return false;
     } else {
       return true;
@@ -646,11 +658,18 @@ private:
 					    reference_node->left());
       double right_distance = MinNodeDistSq_(query_node,
 					     reference_node->right());
+
+      ///// Need to fix how we decide node size!!!!!!!!!!
+      // Also another error is that even though the error probability
+      // is increased, the query time hasn't gone down. Is this related?
+      // If not how do I find out what is causing it?
       
       if (left_distance < right_distance) {
 
 	if(is_base(reference_node->left())
 	   && left_distance < query_node->stat().max_distance_so_far()) {
+	  NOTIFY("%"LI"d points", reference_node->left()->end()
+		 - reference_node->left()->begin());
 	  ComputeApproxBaseCase_(query_node, reference_node->left());
 	} else {
 	  ComputeApproxRecursion_(query_node, reference_node->left(), 
@@ -658,6 +677,8 @@ private:
 	}
 	if(is_base(reference_node->right())
 	   && right_distance < query_node->stat().max_distance_so_far()) {
+	  NOTIFY("%"LI"d points", reference_node->right()->end()
+		 - reference_node->right()->begin());
 	  ComputeApproxBaseCase_(query_node, reference_node->right());
 	} else {
 	  ComputeApproxRecursion_(query_node, reference_node->right(), 
@@ -666,6 +687,8 @@ private:
       } else {
 	if(is_base(reference_node->right())
 	   && right_distance < query_node->stat().max_distance_so_far()) {
+	  NOTIFY("%"LI"d points", reference_node->right()->end()
+		 - reference_node->right()->begin());
 	  ComputeApproxBaseCase_(query_node, reference_node->right());
 	} else {
 	  ComputeApproxRecursion_(query_node, reference_node->right(), 
@@ -673,6 +696,8 @@ private:
 	}
 	if(is_base(reference_node->left())
 	   && left_distance < query_node->stat().max_distance_so_far()) {
+	  NOTIFY("%"LI"d points", reference_node->left()->end()
+		 - reference_node->left()->begin());
 	  ComputeApproxBaseCase_(query_node, reference_node->left());
 	} else {
 	  ComputeApproxRecursion_(query_node, reference_node->left(), 
@@ -1083,6 +1108,10 @@ public:
     
     // set the module
     module_ = module_in;
+
+    // Check if the probability is <=1
+    double alpha = fx_param_double(module_, "alpha", 1.0);
+    DEBUG_ASSERT(alpha <= 1.0);
     
     // track the number of prunes
     number_of_prunes_ = 0;
@@ -1091,6 +1120,9 @@ public:
     leaf_size_ = fx_param_int(module_, "leaf_size", 20);
     // Make sure the leaf size is valid
     DEBUG_ASSERT(leaf_size_ > 0);
+
+    // Getting the sample_limit
+    sample_limit_ = fx_param_int(module_, "sample_limit", 20);
     
     // Copy the matrices to the class members since they will be rearranged.  
     queries_.Copy(queries_in);
@@ -1146,8 +1178,7 @@ public:
     sample_sizes_.Init(references_.n_cols());
 
     // compute the sample sizes
-    double alpha = fx_param_double(module_, "alpha", 0.90);
-    epsilon_ = fx_param_int(module_, "epsilon", 5);
+    epsilon_ = fx_param_int(module_, "epsilon", 0);
 
     ComputeSampleSizes_(epsilon_, alpha, &sample_sizes_);
 
@@ -1160,6 +1191,9 @@ public:
 		  index_t leaf_size, index_t knns,
 		  index_t epsilon, double alpha) {
     
+    // Check if the probability is <=1
+    DEBUG_ASSERT(alpha <= 1.0);
+
     // track the number of prunes
     number_of_prunes_ = 0;
     
@@ -1318,7 +1352,7 @@ public:
    */
   void ComputeApprox(ArrayList<index_t>* resulting_neighbors,
 		     ArrayList<double>*  distances,
-		     ArrayList<double>* probabilities) {
+		     Vector* probabilities) {
     // We need to initialize the results list before filling it
     resulting_neighbors->Init(neighbor_indices_.size());
     distances->Init(neighbor_distances_.length());
