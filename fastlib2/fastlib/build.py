@@ -1,6 +1,6 @@
 
 librule(
-    headers = ["fastlib.h"],
+    headers = ["fastlib.h", "fastlib_int.h"],
     deplibs = ["fastlib/la:la", "fastlib/base:base",
              "fastlib/fx:fx", "fastlib/file:file", "fastlib/col:col",
              "fastlib/data:data", "fastlib/math:math"
@@ -10,7 +10,7 @@ librule(
 
 librule(
     name = "fastlib_int",
-    headers = ["fastlib.h"],
+    headers = ["fastlib.h", "fastlib_int.h"],
     deplibs = ["fastlib/la:la", "fastlib/base:base",
              "fastlib/fx:fx", "fastlib/file:file_int", "fastlib/col:col",
              "fastlib/data:data", "fastlib/math:math",

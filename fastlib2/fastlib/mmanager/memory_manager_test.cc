@@ -16,7 +16,7 @@
  * =====================================================================================
  */
 #include "memory_manager.h"
-#include "fastlib/math/math.h"
+#include "fastlib/math/math_lib.h"
 
 class MemoryManagerTest {
  public:

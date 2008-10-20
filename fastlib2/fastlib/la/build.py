@@ -209,4 +209,4 @@ librule(
     headers = ["matrix.h", "la.h", "uselapack.h", "clapack.h", "blas.h"],
     tests = ["uselapack_test.cc"],
     deplibs = ["fastlib/base:base", "fastlib/col:col",
-							":netlib_blas", ":netlib_lapack"])
+               "fastlib/mmanager:mmapmm", ":netlib_blas", ":netlib_lapack"])
