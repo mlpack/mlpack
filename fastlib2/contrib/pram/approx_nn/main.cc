@@ -42,6 +42,8 @@ const fx_module_doc approx_nn_main_doc = {
 void compare_neighbors(ArrayList<index_t>*, ArrayList<double>*, 
                        ArrayList<index_t>*, ArrayList<double>*);
 
+void count_mismatched_neighbors(ArrayList<index_t>*, ArrayList<double>*, 
+				  ArrayList<index_t>*, ArrayList<double>*);
 
 int main (int argc, char *argv[]) {
   fx_module *root
@@ -57,9 +59,6 @@ int main (int argc, char *argv[]) {
 
   struct datanode *ann_module
     = fx_submodule(root, "ann");
-
-  fx_param_int(ann_module, "epsilon", 5);
-  fx_param_double(ann_module, "alpha", 0.90);  
 
   ArrayList<index_t> nac, exc, apc;
   ArrayList<double> din, die, dia;
@@ -94,7 +93,7 @@ int main (int argc, char *argv[]) {
     fx_timer_stop(ann_module, "exact");
   }
 
-  compare_neighbors(&nac, &din, &exc, &die);
+//   compare_neighbors(&nac, &din, &exc, &die);
 
   // Approximate computation
   if (fx_param_bool(root, "doapprox", true)) {
@@ -106,11 +105,15 @@ int main (int argc, char *argv[]) {
     fx_timer_stop(ann_module, "approx_init");
 
     NOTIFY("Compute");
-    ArrayList<double> prob;
+    Vector prob;
     fx_timer_start(ann_module, "approx");
     approx_nn.ComputeApprox(&apc, &dia, &prob);
     fx_timer_stop(ann_module, "approx");
+
+//     prob.PrintDebug();
   }
+  
+//   count_mismatched_neighbors(&nac, &din, &apc, &dia);
 
   fx_done(fx_root);
 }
@@ -131,4 +134,24 @@ void compare_neighbors(ArrayList<index_t> *a,
                       "point %"LI"d brute: %"LI"d:%lf fast: %"LI"d:%lf",
                       i, *z, (*db)[i], *x, (*da)[i]);
   }
+}
+
+void count_mismatched_neighbors(ArrayList<index_t> *a, 
+				ArrayList<double> *da,
+				ArrayList<index_t> *b, 
+				ArrayList<double> *db) {
+
+  NOTIFY("Comparing results for %"LI"d queries", a->size());
+  DEBUG_SAME_SIZE(a->size(), b->size());
+  index_t *x = a->begin();
+  index_t *y = a->end();
+  index_t *z = b->begin();
+  index_t count_mismatched = 0;
+
+  for(index_t i = 0; x != y; x++, z++, i++) {
+    if (*x != *z || (*da)[i] != (*db)[i]) {
+      ++count_mismatched;
+    }
+  }
+  NOTIFY("%"LI"d/%"LI"d errors", count_mismatched, a->size());
 }
