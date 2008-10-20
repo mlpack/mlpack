@@ -29,12 +29,15 @@ int main(int argc, char *argv[]) {
   fx_module *fx_root=fx_init(argc, argv, NULL);  
   std::string labeled_points_file = fx_param_str_req(fx_root, "labeled_points_file");
   std::string labels_file = fx_param_str_req(fx_root, "labels_file");
-  std::string unlabeled_points_file=fx_param_str_req(fx_root, "unlabeled_points_file");
+  std::string unlabeled_points_file=fx_param_str(fx_root, "unlabeled_points_file", "");
   index_t num_of_classes = fx_param_int_req(fx_root, "num_of_classes");
   std::string mode = fx_param_str(fx_root, "mode", "svm");
   Matrix labeled_data_points;
   data::Load(labeled_points_file.c_str(), &labeled_data_points);
   Matrix unlabeled_data_points;
+  if (unlabeled_points_file.empty()) {
+    unlabeled_data_points.Init(labeled_data_points.n_rows(), 0);
+  }
   data::Load(unlabeled_points_file.c_str(), &unlabeled_data_points);
   Matrix labels;
   data::Load(labels_file.c_str(), &labels);
@@ -90,6 +93,7 @@ int main(int argc, char *argv[]) {
   index_t num1=labeled_data_points.n_cols();
   labeled_data_points.Destruct(); 
   labeled_data_points.Copy(result.GetColumnPtr(0), new_dimension, num1);  
+  data::Save("unfolded.csv", labeled_data_points);
   index_t num2=unlabeled_data_points.n_cols();
   unlabeled_data_points.Destruct();
   unlabeled_data_points.Copy(result.GetColumnPtr(num1), 
@@ -104,7 +108,7 @@ int main(int argc, char *argv[]) {
                                                labels,
                                                unlabeled_data_points, 
                                                &classification_results);
-    data::Save("classification_results", classification_results);
+      data::Save("classification_results", classification_results);
     } else {
       if (mode=="svm") {
         // find the classification score
