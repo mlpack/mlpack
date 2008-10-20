@@ -535,8 +535,6 @@ private:
 		 - query_node->begin() == 1);
     
     // Obtain the number of samples to be obtained
-    // Need to fix how we decide node size!!!!!!!!!!
-
     index_t set_size
       = reference_node->end() - reference_node->begin();
     index_t sample_size = sample_sizes_[set_size - 1];
@@ -568,9 +566,14 @@ private:
       }
       // We'll do the same for the references
       // but on the sample size number of points
-      for (index_t reference_index = reference_node->begin(); 
-           reference_index < reference_node->begin()
-	     + sample_size; reference_index++) {
+
+      // Here we need to permute the reference set randomly
+      ArrayList<index_t> perm_vec;
+      math::MakeRandomPermutation(set_size, &perm_vec);
+      for (index_t i = 0; i < sample_size; i++) {
+
+	index_t reference_index = reference_node->begin() + perm_vec[i];
+	DEBUG_ASSERT(reference_index < reference_node->end());
 
 	// Confirm that points do not identify themselves as neighbors
 	// in the monochromatic case
@@ -668,8 +671,8 @@ private:
 
 	if(is_base(reference_node->left())
 	   && left_distance < query_node->stat().max_distance_so_far()) {
-	  NOTIFY("%"LI"d points", reference_node->left()->end()
-		 - reference_node->left()->begin());
+// 	  NOTIFY("%"LI"d points", reference_node->left()->end()
+// 		 - reference_node->left()->begin());
 	  ComputeApproxBaseCase_(query_node, reference_node->left());
 	} else {
 	  ComputeApproxRecursion_(query_node, reference_node->left(), 
@@ -677,8 +680,8 @@ private:
 	}
 	if(is_base(reference_node->right())
 	   && right_distance < query_node->stat().max_distance_so_far()) {
-	  NOTIFY("%"LI"d points", reference_node->right()->end()
-		 - reference_node->right()->begin());
+// 	  NOTIFY("%"LI"d points", reference_node->right()->end()
+// 		 - reference_node->right()->begin());
 	  ComputeApproxBaseCase_(query_node, reference_node->right());
 	} else {
 	  ComputeApproxRecursion_(query_node, reference_node->right(), 
@@ -687,8 +690,8 @@ private:
       } else {
 	if(is_base(reference_node->right())
 	   && right_distance < query_node->stat().max_distance_so_far()) {
-	  NOTIFY("%"LI"d points", reference_node->right()->end()
-		 - reference_node->right()->begin());
+// 	  NOTIFY("%"LI"d points", reference_node->right()->end()
+// 		 - reference_node->right()->begin());
 	  ComputeApproxBaseCase_(query_node, reference_node->right());
 	} else {
 	  ComputeApproxRecursion_(query_node, reference_node->right(), 
@@ -696,8 +699,8 @@ private:
 	}
 	if(is_base(reference_node->left())
 	   && left_distance < query_node->stat().max_distance_so_far()) {
-	  NOTIFY("%"LI"d points", reference_node->left()->end()
-		 - reference_node->left()->begin());
+// 	  NOTIFY("%"LI"d points", reference_node->left()->end()
+// 		 - reference_node->left()->begin());
 	  ComputeApproxBaseCase_(query_node, reference_node->left());
 	} else {
 	  ComputeApproxRecursion_(query_node, reference_node->left(), 
