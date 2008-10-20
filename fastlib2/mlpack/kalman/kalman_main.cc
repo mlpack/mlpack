@@ -38,7 +38,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
  
   ///////////LOADING DATA AND SETTING PARAMETERS//////////////////////////
 
@@ -239,5 +239,5 @@ int main(int argc, char* argv[]) {
   data::Save("inno_cov_end_out", inno_cov[t_tot]);
   data::Save("k_gain_end_out", k_gain_end_trans);             
   
-  fx_done();
+  fx_done(fx_root);
 }; /* main */
