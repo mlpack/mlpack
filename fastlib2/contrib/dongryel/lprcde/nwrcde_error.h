@@ -36,7 +36,7 @@ class NWRCdeError {
     nwr_numerator.error_per_pair = 
       (parameters.relative_error * new_summary.nwr_numerator_sum_l -
        new_summary.nwr_numerator_used_error_u) /
-      (parameters.rset_target_sum - new_summary.nwr_numerator_n_pruned_l);
+      (parameters.rset_target_sum[0] - new_summary.nwr_numerator_n_pruned_l);
     nwr_numerator.error = nwr_numerator.error_per_pair *
       rnode->stat().sum_of_target_values;
     

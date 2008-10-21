@@ -267,11 +267,14 @@ class NWRCde {
     // Copy the reference dataset and reference target values.
     parameters_.rset.Copy(references);
     DEBUG_ASSERT(references.n_cols() == reference_targets.n_cols());
-    parameters_.nwr_numerator_weights.Init(reference_targets.n_cols());
-    parameters_.rset_target_sum = 0;
-    for(index_t i = 0; i < parameters_.nwr_numerator_weights.length(); i++) {
-      parameters_.nwr_numerator_weights[i] = reference_targets.get(0, i);
-      parameters_.rset_target_sum += parameters_.nwr_numerator_weights[i];
+    la::TransposeInit(reference_targets, &(parameters_.nwr_numerator_weights));
+    parameters_.rset_target_sum.Init(reference_targets.n_rows());
+    parameters_.rset_target_sum.SetZero();
+    for(index_t i = 0; i < parameters_.rset_target_sum.length(); i++) {
+      for(index_t j = 0; j < parameters_.nwr_numerator_weights.n_rows(); j++) {
+	parameters_.rset_target_sum[i] +=
+	  parameters_.nwr_numerator_weights.get(j, i);
+      }
     }
     
     // Initialize the denominator weights, but this should really be
