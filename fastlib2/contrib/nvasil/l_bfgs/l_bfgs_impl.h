@@ -125,14 +125,14 @@ void LBfgs<OptimizedFunction>::Init(OptimizedFunction *optimized_function,
   // the memory of bfgs 
   mem_bfgs_ = fx_param_int(module_, "mem_bfgs", 20);
   std::string log_file=fx_param_str(module_, "log_file", "opt_log");
-  fp_log_=fopen(log_file.c_str(), "w");
+  // fp_log_=fopen(log_file.c_str(), "w");
   optimized_function_->set_sigma(sigma_);
   InitOptimization_();
 }
 
 template<typename OptimizedFunction>
 void LBfgs<OptimizedFunction>::Destruct() {
- fclose(fp_log_);
+// fclose(fp_log_);
   double objective;
   double feasibility_error;
   optimized_function_->ComputeFeasibilityError(coordinates_,
@@ -671,5 +671,5 @@ template<typename OptimizedFunction>
 void LBfgs<OptimizedFunction>::ReportProgressFile_() {
   std::string progress = ComputeProgress_();
   NOTIFY("%s\n", progress.c_str());
-  fprintf(fp_log_, "%s\n", progress.c_str());
+  // fprintf(fp_log_, "%s\n", progress.c_str());
 }
