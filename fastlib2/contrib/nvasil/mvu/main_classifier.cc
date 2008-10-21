@@ -37,10 +37,17 @@ int main(int argc, char *argv[]) {
   Matrix unlabeled_data_points;
   if (unlabeled_points_file.empty()) {
     unlabeled_data_points.Init(labeled_data_points.n_rows(), 0);
+  } else {
+    data::Load(unlabeled_points_file.c_str(), &unlabeled_data_points);
   }
-  data::Load(unlabeled_points_file.c_str(), &unlabeled_data_points);
   Matrix labels;
   data::Load(labels_file.c_str(), &labels);
+  if (labels.n_cols()==1) {
+    Matrix labels1;
+    la::TransposeInit(labels, &labels1);
+    labels.Destruct();
+    labels.Own(&labels1);
+  }
   NOTIFY("Doing a sanity check on the labels");
   for(index_t i=0; i<labels.n_cols(); i++) {
     if (labels.get(0, i)<0 || labels.get(0, i)>=num_of_classes) {
@@ -95,9 +102,11 @@ int main(int argc, char *argv[]) {
   labeled_data_points.Copy(result.GetColumnPtr(0), new_dimension, num1);  
   data::Save("unfolded.csv", labeled_data_points);
   index_t num2=unlabeled_data_points.n_cols();
-  unlabeled_data_points.Destruct();
-  unlabeled_data_points.Copy(result.GetColumnPtr(num1), 
-      new_dimension, num2);   
+  if (!unlabeled_points_file.empty()) {
+    unlabeled_data_points.Destruct();
+    unlabeled_data_points.Copy(result.GetColumnPtr(num1), 
+        new_dimension, num2); 
+  }  
   double total_score;
   if (fx_param_exists(fx_root, "validation_file")) {
     NOTIFY("Computing the unfolded optimization score");

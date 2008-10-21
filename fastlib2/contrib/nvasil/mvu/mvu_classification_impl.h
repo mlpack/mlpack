@@ -577,7 +577,7 @@ void MaxFurthestNeighborsSvmSemiSupervised::ComputeFeasibilityError(Matrix &coor
       error1+=1;
     } 
   }
-  error1=100.0 * error1/svm_signs_.length();
+  error1=(100.0 * error1)/svm_signs_.length();
   *error=(*error+error1)/2.0;
   NOTIFY("Classification Error:%lg", error1);
 }
