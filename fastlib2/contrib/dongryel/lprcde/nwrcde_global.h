@@ -24,11 +24,11 @@ class NWRCdeGlobal {
   
   /** @brief The reference targets.
    */
-  Vector nwr_numerator_weights;
+  Matrix nwr_numerator_weights;
     
   /** @brief The sum of the reference targets.
    */
-  double rset_target_sum;
+  Vector rset_target_sum;
   
   Vector nwr_denominator_weights;
 

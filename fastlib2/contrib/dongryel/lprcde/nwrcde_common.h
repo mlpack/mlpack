@@ -23,6 +23,21 @@ class NWRCdeCommon {
     v.CopyValues(v_tmp);
   }
 
+  /** @brief Shuffles a vector according to a given permutation.
+   *
+   *  @param v The vector to be shuffled.
+   *  @param permutation The permutation.
+   */
+  static void ShuffleAccordingToPermutation
+  (Matrix &v, const ArrayList<index_t> &permutation) {
+    
+    for(index_t i = 0; i < v.n_cols(); i++) {
+      Vector column_vector;
+      v.MakeColumnVector(i, &column_vector);
+      NWRCdeCommon::ShuffleAccordingToPermutation(column_vector, permutation);
+    }
+  }
+
   template<typename Tree1, typename Tree2>
   static void Heuristic
   (Tree1 *nd, Tree2 *nd1, Tree2 *nd2, double probability, 
@@ -54,6 +69,11 @@ class NWRCdeCommon {
 				   TQueryResult &query_results,
 				   const TDelta &delta) {
 
+    // FIX ME for multi-target NWR code!
+    Vector nwr_numerator_weights_alias;
+    globals.nwr_numerator_weights.MakeColumnVector
+      (0, &nwr_numerator_weights_alias);
+
     switch(delta.nwr_numerator.approx_type) {
       case TDelta::FAR_TO_LOCAL:
 	DEBUG_ASSERT(delta.nwr_numerator.order_farfield_to_local >= 0);
@@ -74,7 +94,7 @@ class NWRCdeCommon {
       case TDelta::DIRECT_LOCAL:
 	DEBUG_ASSERT(delta.nwr_numerator.order_local >= 0);
 	qnode->stat().nwr_numerator_local_expansion.AccumulateCoeffs
-	  (globals.rset, globals.nwr_numerator_weights, rnode->begin(), 
+	  (globals.rset, nwr_numerator_weights_alias, rnode->begin(), 
 	   rnode->end(), delta.nwr_numerator.order_local);
 	query_results.num_direct_local_prunes++;
 	break;

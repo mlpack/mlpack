@@ -28,8 +28,8 @@ void NWRCde<TKernelAux>::NWRCdeBase_(const Matrix &qset, QueryTree *qnode,
       double dsqd = la::DistanceSqEuclidean(qset.n_rows(), q_col, r_col);
       double kernel_value = 
 	parameters_.kernel_aux.kernel_.EvalUnnormOnSq(dsqd);
-      double weighted_kernel_value = parameters_.nwr_numerator_weights[r] * 
-	kernel_value;
+      double weighted_kernel_value = 
+	parameters_.nwr_numerator_weights.get(0, r) * kernel_value;
 
       query_results.nwr_numerator_sum_l[q] += weighted_kernel_value;
       query_results.nwr_numerator_sum_e[q] += weighted_kernel_value;

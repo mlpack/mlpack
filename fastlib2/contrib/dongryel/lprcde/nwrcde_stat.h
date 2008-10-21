@@ -1,6 +1,8 @@
 #ifndef NWRCDE_STAT_H
 #define NWRCDE_STAT_H
 
+#include "fastlib/fastlib.h"
+
 template<typename TKernelAux, typename TQueryPostponed, typename TQuerySummary>
 class NWRCdeQueryStat {
  public:
@@ -123,15 +125,17 @@ class NWRCdeReferenceStat {
   void PostInit(const TBound &bounding_primitive,
 		const TKernelAux &kernel_aux_in,
 		const Matrix &reference_set, 
-		const Vector &nwr_numerator_weights,
+		const Matrix &nwr_numerator_weights,
 		const Vector &nwr_denominator_weights,
 		index_t start, index_t count) {
 
     PostInitCommon(bounding_primitive, kernel_aux_in);
 
     // Exhaustively compute multipole moments.
+    Vector nwr_numerator_weights_alias;
+    nwr_numerator_weights.MakeColumnVector(0, &nwr_numerator_weights_alias);
     nwr_numerator_farfield_expansion.AccumulateCoeffs
-      (reference_set, nwr_numerator_weights, start, start + count,
+      (reference_set, nwr_numerator_weights_alias, start, start + count,
        kernel_aux_in.sea_.get_max_order());
     nwr_denominator_farfield_expansion.AccumulateCoeffs
       (reference_set, nwr_denominator_weights, start, start + count,
@@ -139,7 +143,7 @@ class NWRCdeReferenceStat {
 
     sum_of_target_values = 0;
     for(index_t i = start; i < start + count; i++) {
-      sum_of_target_values += nwr_numerator_weights[i];
+      sum_of_target_values += nwr_numerator_weights.get(0, i);
     }
   }
     
@@ -149,7 +153,7 @@ class NWRCdeReferenceStat {
   template<typename TBound>
   void PostInit(const TBound &bounding_primitive,
 		const TKernelAux &kernel_aux_in, const Matrix &reference_set,
-		const Vector &nwr_numerator_weights,
+		const Matrix &nwr_numerator_weights,
 		const Vector &nwr_denominator_weights, 
 		index_t start, index_t count, 
 		const NWRCdeReferenceStat& left_stat, 
