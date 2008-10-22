@@ -124,6 +124,10 @@ def make_blas(sysentry, files, params):
 			sysentry.command("mkdir -p %s" % sq(workspace_dir))
 			sysentry.command("cd %s && wget http://www.netlib.org/blas/blas.tgz" % (sq(workspace_dir)))
 			sysentry.command("cd %s && tar -xzf %s" % (sq(workspace_dir), sq("blas.tgz")))
+                        compiler_info = compilers[params["compiler"]]
+			compiler = compiler_info.compiler_program("f")
+                        if compiler == "gfortran":
+                          sysentry.command("cd %s/BLAS && sed -i.backup -e 's/g77/gfortran/' make.inc" % (sq(workspace_dir)))
 			sysentry.command("echo '*** Compiling  BLAS from netlib.org'")
 			sysentry.command("echo '!!! BLAS WARNING: For better performance, install ATLAS or Intel MKL.'")
 			sysentry.command("echo '... This may take several minutes (about 800 FORTRAN files).'")
@@ -179,6 +183,8 @@ def make_lapack(sysentry, files, params):
 			sysentry.command("echo '*** Compiling  LAPACK  from netlib.org'")
 			sysentry.command("echo '!!! LAPACK WARNING: For better performance, install ATLAS or Intel MKL.'")
 			sysentry.command("echo '... This may take several minutes (about 800 FORTRAN files).'")
+                        if compiler == "gfortran":
+                          sysentry.command("cd %s/lapack* && sed -i.backup -e 's/g77/gfortran/' make.inc.example" % (sq(workspace_dir)))
 			sysentry.command("cd %s/lapack* && mv make.inc.example make.inc" % (sq(workspace_dir)) )
 			sysentry.command("cd %s/lapack* && make lapacklib" % (sq(workspace_dir)))
 			sysentry.command("echo '... Almost done with LAPACK...'")
