@@ -30,7 +30,8 @@ class InversePowDistGradientKernelAux {
   
   typedef SeriesExpansionAux TSeriesExpansionAux;
   
-  typedef FarFieldExpansion<InversePowDistGradientKernelAux> TFarFieldExpansion;
+  typedef FarFieldExpansion<InversePowDistGradientKernelAux> \
+  TFarFieldExpansion;
 
   typedef LocalExpansion<InversePowDistGradientKernelAux> TLocalExpansion;
 
@@ -126,6 +127,24 @@ class InversePowDistGradientKernelAux {
       derivative_map->set(i, 0, -contribution / squared_l2_norm);
       
     } // end of iterating over all required multiindex positions...
+
+    // Iterate again, and invert the sum if the sum of the indices of
+    // the current mapping is odd.
+    for(index_t i = 1; i < derivative_map->n_rows(); i++) {
+
+      // Retrieve the multiindex mapping.
+      const ArrayList<int> &multiindex = sea_.get_multiindex(i);
+
+      // The sum of the indices.
+      index_t sum_of_indices = 0;
+      for(index_t d = 0; d < x.length(); d++) {
+        sum_of_indices += multiindex[d];
+      }
+
+      if(sum_of_indices % 2 == 1) {
+        derivative_map->set(i, 0, -derivative_map->get(i, 0));
+      }
+    }
   }
   
   double ComputePartialDerivative(const Matrix &derivative_map,
