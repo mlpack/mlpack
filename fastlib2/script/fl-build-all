@@ -84,6 +84,7 @@ fx.param_default("mode", "check")
 fx.param_default("compiler", "gcc")
 fx.param_default("j", "2")
 fx.param_default("prefix", "")
+fx.param_default("downloader", "/usr/bin/curl")
 target_name = ":VERYSPECIALPYTHONSTRING"
 
 implicit = True
@@ -98,13 +99,26 @@ cflags = fx.param_str("cflags")
 arch = util.sanitize_basename(arch)
 kernel = util.sanitize_basename(kernel)
 prefix = fx.param_str("prefix")
+downloader = fx.param_str("downloader")
+
+# Get the downloader.
+check_curl_existence = os.popen("which curl")
+check_downloader_existence_result = check_curl_existence.read()
+check_curl_existence.close()
+check_downloader_existence_result = check_downloader_existence_result[:len(check_downloader_existence_result) - 1]
+if len(check_downloader_existence_result) == 0:
+  check_wget_existence = os.popen("which wget")
+  check_downloader_existence_result = check_wget_existence.read()
+  check_wget_existence.close()
+  check_downloader_existence_result = check_downloader_existence_result[:len(check_downloader_existence_result) - 1]
+downloader = check_downloader_existence_result
 
 # Dispatch
 
 print "*** Generating Makefile in current directory"
 
 params = dict(arch=arch,kernel=kernel,mode=mode,compiler=compiler, \
-              cflags=cflags,prefix=prefix)
+              cflags=cflags,prefix=prefix,downloader=downloader)
 
 print "*** Target Rule: '%s'" % target_name
 
