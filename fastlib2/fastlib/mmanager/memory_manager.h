@@ -497,11 +497,12 @@ class MemoryManager {
 			  struct timeval t2;
 			  gettimeofday(&t2, NULL);
         unsigned char flag=0;
-				if (mincore(pool_+system_page_size_*page, 
+#ifndef __CYGWIN__				
+        if (mincore(pool_+system_page_size_*page, 
 							      system_page_size_, &flag)!=0) {
 				  NONFATAL("Warning mincore failed %s\n", strerror(errno));
 				}
-
+#endif
 				fprintf(fp_log_, "%li %lu %lu %lu ", last_page_logged_, 
 						                          frequency_of_logged_page_,
 					                            t2.tv_usec-
@@ -512,16 +513,20 @@ class MemoryManager {
 				} else {
 				  struct timeval t1;
 					gettimeofday(&t1, NULL);
+#ifdef MADV_WILLNEED          
 					madvise(pool_+system_page_size_*page, 1, MADV_WILLNEED);
-					struct timeval t2;
+#endif
+          struct timeval t2;
 					gettimeofday(&t2, NULL);
           *(pool_+system_page_size_*page)+=0;
 					struct timeval t3;
           gettimeofday(&t3, NULL);
+#ifndef __CYGWIN__          
 	        if (mincore(pool_+system_page_size_*page, 
 								      system_page_size_, &flag)!=0) {
 				    NONFATAL("Warning mincore failed %s\n", strerror(errno));
 				  }
+#endif          
 	      	if (flag<<7!=128) {
 		        FATAL("Error page wasn't fetched\n");
 					}
@@ -545,18 +550,22 @@ class MemoryManager {
   inline void Advise(std::vector<uint64> &pages_needed, std::vector<uint64> &pages_not_needed) {
     fx_timer_start(module_, "advise");
     for(uint32 i=0; i< pages_not_needed.size(); i++) {
+#ifdef MADV_DONTNEED      
       if (unlikely(madvise(pool_+pages_not_needed[i] * system_page_size_, system_page_size_,
                   MADV_DONTNEED)<0)) {
         NONFATAL("Warning: Encountered ...%s... error (%i) while advising\n", 
                strerror(errno), errno);
-      }   	          	
+      }   	        
+#endif      
     }
     for(uint32 i=0; i< pages_needed.size(); i++) {
+#ifdef MADV_WILLNEED      
       if (unlikely(madvise(pool_+pages_not_needed[i] * system_page_size_, system_page_size_,
                   MADV_WILLNEED)<0)) {
         NONFATAL("Warning: Encountered ...%s... error (%i) while advising\n",
                 strerror(errno), errno);
-      } 	          	
+      }
+#endif      
     }
     fx_timer_stop(module_, "advise");  
   }
@@ -570,11 +579,13 @@ class MemoryManager {
    */ 
   inline void Advise(uint64 page, uint64 number_of_pages, int advice) {
     fx_timer_start(module_, "advise");  
+#ifndef __CYGWIN__    
     if (unlikely(madvise(pool_+page * system_page_size_, number_of_pages*system_page_size_,
                   advice)<0)) {
       NONFATAL("Warning: Encountered ...%s...  error (%i) while advising\n", 
                 strerror(errno), errno);
     }     
+#endif
     fx_timer_stop(module_, "advise");  
   }
   
@@ -593,11 +604,13 @@ class MemoryManager {
     index_t page = (ptrdiff_t)((char*)ptr-pool_)/system_page_size_;
     index_t num_of_pages = ((ptrdiff_t)((char*)ptr-pool_)%system_page_size_
         + length)/system_page_size_;
+#ifndef __CYGWIN__
     if (unlikely(madvise(pool_+page * system_page_size_, num_of_pages*system_page_size_,
                   advice)<0)) {
       NONFATAL("Warning: Encountered ...%s... error (%i)  while advising\n", 
                 strerror(errno), errno);
     }  
+#endif
     fx_timer_stop(module_, "advise");  
   }
   inline void Advise(void *ptr1, void *ptr2, int advice) {
@@ -605,11 +618,13 @@ class MemoryManager {
     fx_timer_start(module_, "advise");  
     index_t page = (ptrdiff_t)((char*)ptr1-pool_)/system_page_size_;
     index_t num_of_pages = (ptrdiff_t)((char*)ptr1-(char*)ptr2)/system_page_size_;
+#ifndef __CYGWIN__    
     if (unlikely(madvise(pool_+page * system_page_size_, num_of_pages*system_page_size_,
                   advice)<0)) {
       NONFATAL("Warning: Encountered ...%s... error (%i) while advising\n", 
                 strerror(errno), errno);
     }     
+#endif
     fx_timer_stop(module_, "advise");    
   }
    
@@ -618,10 +633,12 @@ class MemoryManager {
    */
   void Advise(int advice) {
     fx_timer_start(module_, "advise");  
+#ifndef __CYGWIN__
     if (unlikely(madvise(pool_, capacity_, advice)<0)) {
       NONFATAL("Warning: Encountered ...%s... error (%i) while advising\n", 
              strerror(errno), errno);
     }	
+#endif    
     fx_timer_stop(module_, "advise");  
   }
   /**
@@ -631,10 +648,12 @@ class MemoryManager {
                        std::vector<uint64> pages_not_needed) {
     uint32 num_of_pages = (capacity_ + system_page_size_ - 1)/system_page_size_;
     unsigned char vec[num_of_pages];
+#ifndef __CYGWIN__    
     if (mincore(pool_, capacity_, vec) <0) {
       NONFATAL("Warning: Encountered ...%s... error (%i) while executing mincore\n",
               strerror(errno), errno);
     }
+#endif    
     uint32 correct_pages=0;
     for(uint32 i=0; i < pages_needed.size(); i++) {
       if ((vec[pages_needed[i]] >> 1) ==1) {
