@@ -7,7 +7,9 @@
 
 #include "datanode.h"
 
-
+#ifndef LINE_MAX
+#define LINE_MAX 2048
+#endif
 
 static void datanode__reset(struct datanode *node)
 {
