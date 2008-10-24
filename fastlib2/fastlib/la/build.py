@@ -1,6 +1,7 @@
 # Scroll down to see the main part.
 # (This first part is dedicated to compiling and installing LAPACK.)
 import commands;
+import sys
 
 wgetrule(
     name = "blaspack_tgz",
@@ -122,7 +123,10 @@ def make_blas(sysentry, files, params):
 			assert "netlib_workspace1" in workspace_dir
 			sysentry.command("echo '... Extracting  files...'")
 			sysentry.command("mkdir -p %s" % sq(workspace_dir))
-			sysentry.command("cd %s && wget http://www.netlib.org/blas/blas.tgz" % (sq(workspace_dir)))
+                        if os.path.basename(params["downloader"]) == "wget":
+                          sysentry.command("cd %s && %s http://www.netlib.org/blas/blas.tgz" % ((sq(workspace_dir)), sq(params["downloader"])))
+                        else:
+                          sysentry.command("cd %s && %s http://www.netlib.org/blas/blas.tgz -o blas.tgz" % ((sq(workspace_dir)), sq(params["downloader"])))
 			sysentry.command("cd %s && tar -xzf %s" % (sq(workspace_dir), sq("blas.tgz")))
                         compiler_info = compilers[params["compiler"]]
 			compiler = compiler_info.compiler_program("f")
@@ -178,7 +182,10 @@ def make_lapack(sysentry, files, params):
 			assert "netlib_workspace2" in workspace_dir
 			sysentry.command("echo '... Extracting  files...'")
 			sysentry.command("mkdir -p %s" % sq(workspace_dir))
-			sysentry.command("cd %s && wget http://www.netlib.org/lapack/lapack.tgz" % (sq(workspace_dir)))
+                        if os.path.basename(params["downloader"]) == "wget":
+                          sysentry.command("cd %s && %s http://www.netlib.org/lapack/lapack.tgz" % ((sq(workspace_dir)), params["downloader"]))
+                        else:
+                          sysentry.command("cd %s && %s http://www.netlib.org/lapack/lapack.tgz -o lapack.tgz" % ((sq(workspace_dir)), params["downloader"]))
 			sysentry.command("cd %s && tar -xzf %s" % (sq(workspace_dir), sq("lapack.tgz")))
 			sysentry.command("echo '*** Compiling  LAPACK  from netlib.org'")
 			sysentry.command("echo '!!! LAPACK WARNING: For better performance, install ATLAS or Intel MKL.'")
