@@ -21,6 +21,12 @@ class InversePowDistGradientKernel {
     double sqdist = la::Dot(dimension_, point, point);
     return point[dimension_] / pow(sqdist, lambda_ / 2.0);
   }
+  
+  double EvalUnnorm(const double *point1, const double *point2,
+		    double squared_distance) const {
+    return (point1[dimension_] - point2[dimension_]) / 
+      pow(squared_distance, lambda_ / 2.0);
+  }
 };
 
 class InversePowDistKernel {
