@@ -8,11 +8,26 @@ librule(
                "mlpack/series_expansion:series_expansion"]
     )
 
+librule(
+    name = "multibody",
+    sources = [],
+    headers = ["multibody_force_problem.h",
+               "multibody_kernel.h"],
+    deplibs = ["contrib/dongryel/multitree_template:multitree_template"]
+    )
+
 binrule(
     name = "fast_multipole_method_bin",
     sources = ["fast_multipole_method_main.cc"],
     headers = [],
     deplibs = [":fast_multipole_method"]
+    )
+
+binrule(
+    name = "multibody_bin",
+    sources = ["multibody_main.cc"],
+    headers = [],
+    deplibs = [":multibody"]
     )
 
 # to build:
