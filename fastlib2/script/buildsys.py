@@ -410,9 +410,14 @@ class WgetRule(dep.Metarule):
     dep.Metarule.__init__(self)
   def doit(self, realrule, files, params):
     (real_dir, filename) = os.path.split(self.real_path)
-    realrule.command("echo 'Downloading the file using curl...'")
-    realrule.command("cd %s && curl -L -o %s %s" % (
-        sq(real_dir), sq(filename), sq(self.url)))
+    echo_message = "Downloading the file using " + params["downloader"] + "..."
+    realrule.command("echo '" + echo_message + "'")
+    if os.path.basename(params["downloader"]) == "wget":
+      realrule.command("cd %s && %s %s" % (
+        sq(real_dir), params["downloader"], sq(filename)))
+    else:
+      realrule.command("cd %s && %s %s -o %s" % (
+        sq(real_dir), params["downloader"], sq(filename), sq(self.url)))
     return [(self.type, realrule.source_file(self.real_path, self.fake_path))]
 
 # Parameter loader
