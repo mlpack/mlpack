@@ -8,6 +8,7 @@
 #define NOT_CALCULATED 0
 #define UPDATE_FRACTION 0.05
 #define EPSILON 0.0001
+#define NUM_ITERATIONS 10
 class HKInteriorPointPredictorCorrector{
   
  private:
@@ -71,7 +72,6 @@ class HKInteriorPointPredictorCorrector{
   
   double primal_constant_;
  
-
   //The primal and the dual variables
   Vector beta_vector_;
   Vector delta_beta_vector_;
@@ -118,6 +118,14 @@ class HKInteriorPointPredictorCorrector{
 
   index_t sqd_num_train_points_;
 
+  //Number of test points
+  index_t num_test_points_;
+
+
+  //ISE of train set 
+
+  double ise_train_set_;
+
 
  public:
 
@@ -142,7 +150,7 @@ class HKInteriorPointPredictorCorrector{
     double constant=2.0/(num_train_points_*(num_train_points_-1));
     printf("Constant is ....%f\n",constant);
     
-    //THIS HAS TO CHANGE WHEN I USE A MULTIPLICATIVE KERNEL
+    //THIS HAS TO CHANGE WHEN I USE A MULTIPLICATIVE KERComputeNEL
     GaussianKernel gpq; //This is the gaussian kernel between x_p,x_q
     gpq.Init(sigma_*sqrt(2),num_dims_);
     
@@ -290,6 +298,113 @@ class HKInteriorPointPredictorCorrector{
     }
   }
 
+  //////////////////////////THE PREPROCESSING STAGE/////////////////////////////////
+
+  //This is the function that makes use of the beta vector to
+  //calculate densities
+  void ComputeDensitiesOfTestPoints_(){
+    
+    GaussianHyperKernel ghk;
+    ghk.Init(sigma_,sigma_h_,num_dims_);
+
+    GaussianKernel gk;
+    gk.Init(sigma_*sqrt(2));
+
+    //$ \hat{f}\left(x\right)=\frac{1}{m}\sum_{i=1}^m \langle
+    //x,x_i\rangle \sum_{p=1}^m\sum_{q=1}^m \beta_{p,q}\langle
+    //x_p,x_q\rangle_\sigma^2 \langle
+    //(x+x_i)/2,(x_p+x_q)/2_{\sigma^2+\sigma_h^2
+
+    //A bunch of normalization constants
+
+    double norm_const_hyperkernel=ghk.CalcNormConstant();
+
+    printf("Normalization constant us %f...\n",norm_const_hyperkernel);
+
+    for(index_t test_pt=0;test_pt<num_test_points_;test_pt++){
+      
+      //Compute density for each test point
+      
+      //get the test point first
+
+      double *x=test_set_.GetColumnPtr(test_pt);
+
+      double total_contrib=0;
+      for(index_t i=0;i<num_train_points_;i++){
+
+	double *x_i=train_set_.GetColumnPtr(i);
+	double sqd_dist_x_x_i=la::DistanceSqEuclidean (num_dims_,x,x_i);
+	double gaussian_due_to_x_x_i=gk.EvalUnnormOnSq(sqd_dist_x_x_i);
+	double contrib_due_to_x_i=0;      
+
+	//Contribution due to x_i
+	for(index_t p=0;p<num_train_points_;p++){
+
+	  double *x_p=train_set_.GetColumnPtr(p);
+	  
+	  for(index_t q=0;q<num_train_points_;q++){
+	    
+	    double *x_q=train_set_.GetColumnPtr(q);
+
+	    index_t index=
+	      p*num_train_points_+q;
+	    	    
+	    double partial_hyperkernel_val=
+	      ghk.EvalUnnormPartial1(num_dims_,x,x_i,x_p,x_q);
+	    
+	    contrib_due_to_x_i+=
+	      beta_vector_[index]*partial_hyperkernel_val;
+	  }
+	}
+
+	//Contrib due to x_i calculated
+
+	contrib_due_to_x_i*=(gaussian_due_to_x_x_i/norm_const_hyperkernel);
+	total_contrib+=contrib_due_to_x_i;
+      }
+      
+      //total contrib calculated.....
+      computed_test_densities_[test_pt]=total_contrib/num_train_points_;
+    }
+
+    printf("calculated test densities are...\n");
+    computed_test_densities_.PrintDebug();
+  }
+
+
+  //To calculate ISE we need to find the cholesky factor of
+  //\underline{K}
+
+  void ComputeISETrainSet_(){
+
+    
+    IChol ichol;
+
+    Matrix chol_factor_K_matrix;
+    ArrayList <index_t> perm_mat_K_matrix;
+    ichol.Init(train_set_,sigma_h_,sigma_,0);
+    perm_mat_K_matrix.Init(sqd_num_train_points_);
+    ichol.Compute(chol_factor_K_matrix,perm_mat_K_matrix);
+
+    printf("Cholesky of the K -matrix found..\n");
+
+    Matrix permuted_chol_factor_K_matrix;
+    special_la::
+      PreMultiplyMatrixWithPermutationMatrixInit(perm_mat_K_matrix,chol_factor_K_matrix,&permuted_chol_factor_K_matrix);
+    
+    Vector A_trans_beta;
+    la::MulInit(beta_vector_,permuted_chol_factor_K_matrix,&A_trans_beta); //$A^T\beta$
+
+    double quad_value;
+
+    quad_value=la::Dot(A_trans_beta,A_trans_beta); //quad value is \beta^TAA^T\beta
+
+    double linear_value=la::Dot(beta_vector_,a_vector_);
+
+    ise_train_set_=quad_value-linear_value;
+
+    printf("The ise is of the train set is %f...\n",ise_train_set_);
+  }
 
   void FormScalars1_(){
 
@@ -307,6 +422,7 @@ class HKInteriorPointPredictorCorrector{
 
     double product=0.0;
     double val=1.0;
+
     for(index_t i=0;i<sqd_num_train_points_;i++){
 
       //the product of the delta terms.  This should be 0 for the
@@ -320,7 +436,7 @@ class HKInteriorPointPredictorCorrector{
 
       double numerator=mu_-(beta_vector_[i]*gamma_vector_[i])-product;
 	
-      v2_vector_[i]=numerator/val; // I am clipping it at 1000
+      v2_vector_[i]=numerator/val;
     }
 
     printf("Formed vector v2 to get..\n");
@@ -328,23 +444,23 @@ class HKInteriorPointPredictorCorrector{
   }
 
   void FormVectorv1_(){
+
     //v1=a+\gamma-\psi v-2M\beta
 
     Vector a_plus_gamma;
     la::AddInit(a_vector_,gamma_vector_,&a_plus_gamma);
 
 
-    //Get -psi_v
+    //Get psi_v
     Vector psi_v;
-    la::ScaleInit(-psi_,v_vector_,&psi_v);
+    la::ScaleInit(psi_,v_vector_,&psi_v);
 
 
     Vector a_plus_gamma_minus_psi_v;
-    la::AddInit(a_plus_gamma,psi_v,&a_plus_gamma_minus_psi_v);
+    la::SubInit(psi_v,a_plus_gamma,
+		&a_plus_gamma_minus_psi_v);
 
- 
-    Vector two_M_beta;
-    
+    Vector two_M_beta;    
     special_la::
       PostMultiplyMatrixWithVectorGivenCholeskyInit(chol_factor_,
 						    perm_mat_,
@@ -352,8 +468,8 @@ class HKInteriorPointPredictorCorrector{
 						    &two_M_beta);
     
     //v1 <-a+\gamma-\psiv-2M\beta
-    la::SubOverwrite(two_M_beta,a_plus_gamma_minus_psi_v,&v1_vector_);
-    
+    la::SubOverwrite(two_M_beta,a_plus_gamma_minus_psi_v,
+		     &v1_vector_);
   }
   
   //The first step of the primal-dual path following method. This
@@ -374,18 +490,14 @@ class HKInteriorPointPredictorCorrector{
     Vector v1_minus_2M_v2;
     la::SubInit(two_M_v2,v1_vector_,&v1_minus_2M_v2);
 
-    //printf("v1_minus_2_v2 is...\n");
-    //v1_minus_2M_v2.PrintDebug();
-
-    //printf("D_prime_vector is..\n");
-    //D_prime_vector_.PrintDebug();
 
     //We need to do (2M+D')^-1 (v1-2MV2). Lets call this results temp1
 
-    //D' it the diagonal matrix with elements \frac{\gamma_i}{\beta_i}
+    //D' it the diagonal matrix with elements
+    //\frac{\gamma_i}{\beta_i}. However since SMW update requires only
+    //D=D'^-1, we never need to calculate D'
 
     Vector temp1;
-
     special_la:: MatrixInverseTimesVectorInit(permuted_chol_factor_,
 					      D_vector_,v1_minus_2M_v2,
 					      &temp1);
@@ -407,8 +519,6 @@ class HKInteriorPointPredictorCorrector{
 						&temp3);
       temp4=la::Dot(v_vector_,temp3);
       *denominator_delta_psi=temp4;
-
-      //printf("Denominator freshly calculated %f..\n",*denominator_delta_psi);
     }
     
     double v_trans_v2=la::Dot(v_vector_,v2_vector_);
@@ -418,10 +528,10 @@ class HKInteriorPointPredictorCorrector{
   }
 
 
-
   //delta \beta=(2M+D')^-1 D'(v2+D(v1-\delta psi v))
   void EvaluateDeltaBeta_(){
     
+    printf("In evaluate delta beta...\n");
     
     Vector delta_psi_v;
     la::ScaleInit(delta_psi_,v_vector_,&delta_psi_v);
@@ -457,6 +567,7 @@ class HKInteriorPointPredictorCorrector{
       double val=A_tDA.get(i,i);
       A_tDA.set(i,i,val+1);
     }
+
     //We invert this matrix. Remember this is an in-place inversion 
 
     index_t flag=
@@ -487,8 +598,32 @@ class HKInteriorPointPredictorCorrector{
 
     Vector permuted_chol_factor_trans_sum_of_v2_prod1;
 
-    permuted_chol_factor_trans_sum_of_v2_prod1.Init(permuted_chol_factor_.n_rows());
-    la::MulInit(sum_of_v2_prod1,permuted_chol_factor_,&permuted_chol_factor_trans_sum_of_v2_prod1);
+    //permuted_chol_factor_trans_sum_of_v2_prod1.Init(permuted_chol_factor_.n_rows());
+
+    //This operation does the transpose and multiplies with a vector
+
+    //Remember we are doing a matrix transpose times vector
+    //la::MulInit (const Vector &x, const Matrix &A, Vector *y)	 //y<-A'x
+
+    printf("About to do matrix transpose times vector..\n");						
+
+    // printf("permuted chol factor is....\n");
+    //permuted_chol_factor_.PrintDebug();
+
+    la::MulInit(sum_of_v2_prod1,permuted_chol_factor_,
+		&permuted_chol_factor_trans_sum_of_v2_prod1); 
+
+    //printf("Sum of v2_prod1 is..\n");
+    //sum_of_v2_prod1.PrintDebug();
+
+    // printf(" permuted Chol factor is..\n");
+    //permuted_chol_factor_.PrintDebug();
+    
+
+    //printf("Matrix transpose times vector multiplication comes out to..\n");
+    //permuted_chol_factor_trans_sum_of_v2_prod1.PrintDebug();
+
+    printf("permuted_chol_factor_trans_sum_of_v2_prod formed....\n");
 
     //Small inverse times A^T(v2+D(v1-delta psi v))
 
@@ -537,7 +672,6 @@ class HKInteriorPointPredictorCorrector{
 		 &two_M_delta_beta_plus_delta_psi_v);
 
     
-
      //Finally subtract v1
      la::SubOverwrite(v1_vector_,two_M_delta_beta_plus_delta_psi_v,&delta_gamma_vector_);
    }
@@ -550,34 +684,59 @@ class HKInteriorPointPredictorCorrector{
      
      beta_vector_.SetAll(1);
      gamma_vector_.SetAll(1);
-     psi_=1;
+     psi_=5;
      mu_=1;
 
+     //An intelligent choice
+
+     double temp=primal_constant_/sqd_num_train_points_;
+
+     double total_sum=0;
+     
+     for(index_t i=0;i<sqd_num_train_points_-1;i++){
+       
+       if(v_vector_[i]>temp){
+
+	 beta_vector_[i]=0;
+       }
+       else{
+
+	 beta_vector_[i]=1;
+	 total_sum+=v_vector_[i];
+       }
+     }
+     beta_vector_[sqd_num_train_points_-1]=(primal_constant_-total_sum)/v_vector_[sqd_num_train_points_-1];
+
+     printf("beta vector is...\n");
+     beta_vector_.PrintDebug();
+     
+     printf("gamma vector is...\n");
+     gamma_vector_.PrintDebug();
+     
+     
      // We shall obtain the starting point by solving a regularized KKT
      /*v1_vector_.CopyValues(a_vector_);
-     s1_=primal_constant_;
-     v2_vector_.SetZero();
-
-     double val;
-     val=0;
-
-     index_t flag=NOT_CALCULATED;
-
-     EvaluateDeltaPsi_(&val,&flag);
-     EvaluateDeltaBeta_();
-     EvaluateDeltaGamma_();
-     
-     //In order to get positivity constraints
-     
-     for(index_t i=0;i<sqd_num_train_points_;i++){
-     
-     beta_vector_[i]=max(delta_beta_vector_[i],1.0);
-     gamma_vector_[i]=max(delta_gamma_vector_[i],1.0);
-     }
-     
-     psi_=delta_psi_;*/
-
-    
+       s1_=primal_constant_;
+       v2_vector_.SetZero();
+       
+       double val;
+       val=0;
+       
+       index_t flag=NOT_CALCULATED;
+       
+       EvaluateDeltaPsi_(&val,&flag);
+       EvaluateDeltaBeta_();
+       EvaluateDeltaGamma_();
+       
+       //In order to get positivity constraints
+       
+       for(index_t i=0;i<sqd_num_train_points_;i++){
+       
+       beta_vector_[i]=max(delta_beta_vector_[i],1.0);
+       gamma_vector_[i]=max(delta_gamma_vector_[i],1.0);
+       }
+       
+       psi_=delta_psi_;*/ 
    }
    
    void GetDVector_(){
@@ -593,6 +752,7 @@ class HKInteriorPointPredictorCorrector{
        
        double val=
 	 beta_vector_[i]/gamma_vector_[i];
+
        D_vector_[i]=val;
        
      } 
@@ -601,13 +761,20 @@ class HKInteriorPointPredictorCorrector{
    void TakePredictorStep_(double *denominator_delta_psi,index_t flag){
      
      EvaluateDeltaPsi_(denominator_delta_psi,flag);
+
+     printf("Evaluated delta psi..\n");
      EvaluateDeltaBeta_();
+     
+     printf("Evlauated delta beta...\n");
      EvaluateDeltaGamma_();
+     
+     printf("Evaluated delta gamma...\n");
    }
    
    void TakeCorrectorStep_(double *denominator_delta_psi,index_t flag){
      
      //The corrector step involves updating v2 and resolving equations
+     //Hence calculate v2
      
      FormVectorv2_(); 
        
@@ -622,34 +789,34 @@ class HKInteriorPointPredictorCorrector{
    double FindStepSize_(){
      
      /*  double min_lambda=1.0;
-     double lambda;
-     //Run an iterator over beta values and find min lambda
-     for(index_t i=0;i<sqd_num_train_points_;i++){
-       
-       if(delta_beta_vector_[i]<0){
+	 double lambda;
+	 //Run an iterator over beta values and find min lambda
+	 for(index_t i=0;i<sqd_num_train_points_;i++){
+	 
+	 if(delta_beta_vector_[i]<0){
 	 lambda=
-	   beta_vector_[i]*(UPDATE_FRACTION-1)/delta_beta_vector_[i];
-       }
-       if(lambda<min_lambda){
+	 beta_vector_[i]*(UPDATE_FRACTION-1)/delta_beta_vector_[i];
+	 }
+	 if(lambda<min_lambda){
 	 
 	 min_lambda=lambda;
-       }
-     }
-     
-     for(index_t i=0;i<sqd_num_train_points_;i++){
-       
-       if(delta_gamma_vector_[i]<0){
+	 }
+	 }
+	 
+	 for(index_t i=0;i<sqd_num_train_points_;i++){
+	 
+	 if(delta_gamma_vector_[i]<0){
 	 lambda=
-	   gamma_vector_[i]*(UPDATE_FRACTION-1)/delta_gamma_vector_[i];
-       }
-       
-       if(lambda<min_lambda){
+	 gamma_vector_[i]*(UPDATE_FRACTION-1)/delta_gamma_vector_[i];
+	 }
+	 
+	 if(lambda<min_lambda){
 	 
 	 min_lambda=lambda;
 	 
-       }
-     }
-     return min_lambda;*/
+	 }
+	 }
+	 return min_lambda;*/
      
      
      //Iterator over beta
@@ -701,23 +868,27 @@ class HKInteriorPointPredictorCorrector{
 
     double small_number=0.00001;
 
-    Vector beta_temp;
-    Vector gamma_temp;
+    //Vector beta_temp;
+    //Vector gamma_temp;
    
     
-    delta_beta_predictor_vector_.PrintDebug();
-    la::Scale(min_lambda,&delta_beta_predictor_vector_);
+    //delta_beta_predictor_vector_.PrintDebug();
+    //la::Scale(min_lambda,&delta_beta_predictor_vector_);
+
+    //la::Scale(min_lambda,&delta_beta_vector_);
  
     //\beta <- \beta+delta_beta
 
       
-    la::AddInit(delta_beta_predictor_vector_,beta_vector_,&beta_temp);
+    //la::AddInit(delta_beta_vector_,beta_vector_,&beta_temp);
 
-    la::Scale(min_lambda,&delta_gamma_vector_);
+    // la::Scale(min_lambda,&delta_gamma_predictor_vector_);
+
+    //la::Scale(min_lambda,&delta_gamma_vector_);
 
     //\gamma <-\gamma+delta \gamma
 
-    la::AddInit(delta_gamma_vector_,gamma_vector_,&gamma_temp);
+    //la::AddInit(delta_gamma_vector_,gamma_vector_,&gamma_temp);
 
 
     //$mu=
@@ -725,7 +896,7 @@ class HKInteriorPointPredictorCorrector{
 
     double dot_product_between_beta_and_gamma;
 
-    dot_product_between_beta_and_gamma=la::Dot(beta_temp,gamma_temp);
+    dot_product_between_beta_and_gamma=la::Dot(beta_vector_,gamma_vector_);
 
     double frac=(1-min_lambda+small_number)/(10+min_lambda);
  
@@ -759,11 +930,20 @@ class HKInteriorPointPredictorCorrector{
 
     
     Vector A_trans_beta;
-    la::MulInit(beta_vector_,permuted_chol_factor_,&A_trans_beta); //A^T
+    la::MulInit(beta_vector_,permuted_chol_factor_,&A_trans_beta); //$A^T\beta$
+
+    printf("A_trans beta is...\n");
+    A_trans_beta.PrintDebug();
+
 
     double quad_value;
 
-    quad_value=la::Dot(A_trans_beta,A_trans_beta);
+    quad_value=la::Dot(A_trans_beta,A_trans_beta); //quad value is \beta^TAA^T\beta
+
+    //Since A is the permuted cholesky factor of 2M and not M, the
+    //quad _value obtained above is twice the actual value
+
+    quad_value/=2;
 
     double beta_trans_a;
 
@@ -773,67 +953,80 @@ class HKInteriorPointPredictorCorrector{
 
     double denominator=fabs(2*function_val+gap);
 
+    printf("Quad value is %f..\n",quad_value);
+
+    printf("Linear value is %f..\n",beta_trans_a);
+
     printf("Gap is %f..\n",gap);
 
     printf("Ratio is %f..\n",gap/denominator);
 
     printf("Beta gamma product is %f..\n",beta_trans_gamma);
+
+    printf("The objective function value is %f..\n",function_val);
     printf("..................................\n");
 
   }
 
   void PredictorCorrectorSteps_(){
+
     
-    //We compute vectors v1,v2, psi, before taking the predictor
-    //corrector steps. While v1,psi are same for both the predictor
-    //and the correctors steps, v2 changes for the corrector step
-    
+    //Get the starting values for beta and gamma and \psi
+
     GetTheStartPoint_();
-    FormVectorv1_();
-    FormVectorv2_();
-    FormScalars1_();
-
-    printf("v1 vector is..\n");
-    v1_vector_.PrintDebug();
-
-    printf("v2 vector is..\n");
-    v2_vector_.PrintDebug();
-
-    printf("Scalar s1=%f..\n",s1_);
-
-    printf("Starting vector is..\n");
-
-    printf("Beta vector is...\n");
-    beta_vector_.PrintDebug();
-
-    printf("Gamma vector is...\n");
-    gamma_vector_.PrintDebug();
-
     printf("psi=%f mu_=%f..\n",psi_,mu_);
 
-    while(num_iterations_<43){ 
+
+    index_t flag;
+    while(num_iterations_<NUM_ITERATIONS){ 
+
+
+      //We compute vectors v1,v2, s1, before taking the predictor
+      //corrector steps. While v1,s1 are same for both the predictor
+      //and the correctors steps, v2 changes for the corrector
+      //step. Also we need the D_vector
+
+
+      GetDVector_();
+
+      printf("D vector is...\n");
+      D_vector_.PrintDebug();
+      
+      FormVectorv1_();
+      FormVectorv2_();
+      FormScalars1_();
+
+      printf("v1 vector is..\n");
+      v1_vector_.PrintDebug();
+      
+      printf("v2 vector is..\n");
+      v2_vector_.PrintDebug();
 
 
       double denominator_delta_psi=0;
       
-      // This forces the program to calculate the quantity denominator_delta_psi
+      // This forces the program to calculate the quantity
+      // denominator_delta_psi
       
-      index_t flag=NOT_CALCULATED; 
-      
-      GetDVector_();
-      printf("D vector is...\n");
-      D_vector_.PrintDebug(); 
+      flag=NOT_CALCULATED; 
       
       TakePredictorStep_(&denominator_delta_psi,flag);
+
       printf("Done with perdictor step...\n");
 
       printf("delta psi is %f..\n",delta_psi_);
 
-      //COpy the predictor values. We shall use these values to
+      //Copy the predictor values. We shall use these values to
       //calculate the update in mu
 
-      delta_beta_predictor_vector_.CopyValues(delta_beta_vector_);
+      printf("Delta beta after the predictor step is...\n");
+      delta_beta_vector_.PrintDebug();
 
+      printf("Delta gamma after predictor step is..\n");
+      delta_gamma_vector_.PrintDebug();
+
+
+      delta_beta_predictor_vector_.CopyValues(delta_beta_vector_);
       delta_gamma_predictor_vector_.CopyValues(delta_gamma_vector_);
 
       printf("Finished Predcitor Step...\n");
@@ -841,58 +1034,58 @@ class HKInteriorPointPredictorCorrector{
       //Since predictor step has calculated the quantity denominator_delta_psi 
       //set the flag
       
-      flag=CALCULATED;
+
+      //TODO: Chnage this
+      //flag=CALCULATED;
+
+      flag=NOT_CALCULATED;
       
       TakeCorrectorStep_(&denominator_delta_psi,flag);
       
-
       double min_lambda=FindStepSize_();
 
-
       printf("Delta psi is %f...\n",delta_psi_);
-      
-     
-
+           
       printf("Delta beta vector is..\n");
       delta_beta_vector_.PrintDebug();
 
       printf("Delta gamma vector is..\n");
       delta_gamma_vector_.PrintDebug();
 
-
-      //Update mu is being called first so that it can make use of
-      //predictor update to the beta vector
-
-      UpdateMu_(min_lambda);
-
-      //Having got the step size update the primal and the dual variables
+      
+      //Having got the step size update the primal and the dual
+      //variables
       
       UpdatePrimalAndDualVariables_(min_lambda);
-
       
-      printf("Beta vector is..\n");
+      //Update mu
+      
+      UpdateMu_(min_lambda);
+      
+      printf("New Beta vector is..\n");
       beta_vector_.PrintDebug();
-
-      printf("Gamma vector is...\n");
+      
+      printf("New Gamma vector is...\n");
       gamma_vector_.PrintDebug();
-
+      
       printf("Min lambda came out to  %f..\n",min_lambda);
-
+      
       printf("Psi=%f,mu=%f..\n",psi_,mu_);
       
       FlushUpdates_();
+      
       CalculateGap_();
+      
       printf("Finished ITERATION=%d...\n\n",num_iterations_);
       num_iterations_++;
-    
     }
 
     printf("At the end of iterations we have beta_vector...\n");
     beta_vector_.PrintDebug();
 
     printf("Mu is %f..\n",mu_);
-
-    
+    printf("Primal constant is %f..\n",primal_constant_);
+ 
   }
     
   void GetLinearPartOfObjectiveAndLinearConstraintVectors_(){
@@ -923,47 +1116,40 @@ class HKInteriorPointPredictorCorrector{
 
     IChol ichol;
     ichol.Init(train_set_,sigma_h_,sigma_,lambda_);
-    ichol.Compute(chol_factor_,perm_mat_);
-
-    printf("Chol factor is...\n");
-    chol_factor_.PrintDebug();
-
-
+    ichol.Compute(chol_factor_,perm_mat_);  
+    
     //We need the cholesky factorization of 2M everywhere.  hence we
     //shall scale the cholesky factor of M with sqrt(2).  It is
     //imperative to do the scaling now itself, so that the scaling
     //gets reflected in the permuted cholesky factor also
+    
+    printf("Chsolesky is....\n");
+    chol_factor_.PrintDebug();
 
+    for(index_t i=0;i<sqd_num_train_points_;i++){
+     
+      printf("Permutation matrix[%d]=%d...\n",i,perm_mat_[i]);
+    }
 
     la::Scale(sqrt(2),&chol_factor_);
-
-    //printf("Scaled cholesky factor is...\n");
-    //chol_factor_.PrintDebug();
-
-    //printf("Permutation matrix is..\n");
-    
-    /*for(index_t i=0;i<perm_mat_.size();i++){
-      
-    printf("permutation matrix [%d]=%d\n",i,perm_mat_[i]);
-    
-    }*/
+    chol_factor_.PrintDebug();
     
     //Also we use the permuted chol factor which is M=PL
-   
+    
     special_la::
-      PreMultiplyMatrixWithPermutationMatrixInit(perm_mat_,chol_factor_,&permuted_chol_factor_);  
-
-    //printf("Permuted cholesky factor is...\n");
-    //permuted_chol_factor_.PrintDebug();    
+    PreMultiplyMatrixWithPermutationMatrixInit(perm_mat_,
+					       chol_factor_,
+					       &permuted_chol_factor_);  
   }
   
+
   //This function drives the whole algorithm
   void ComputeOptimalSolution(){
     
     
     //The algorithm solves a QP which involves a linar term in the
     //objective and a linear constraint. Lets first get both these vectors
-
+    
     
     GetLinearPartOfObjectiveAndLinearConstraintVectors_();
     
@@ -973,44 +1159,13 @@ class HKInteriorPointPredictorCorrector{
     GetCholeskyFactorizationOfMMatrix_();
      
     printf("Preprocessing steps are all done..\n");
-    
-    //THESE ARE TEMPORARY ARRANGMENTS
-
-    /* v1_vector_[0]=1;
-    v1_vector_[1]=2;
-    v1_vector_[2]=3;
-
-
-    v2_vector_[0]=4;
-    v2_vector_[1]=5;
-    v2_vector_[2]=6;
-
-    v_vector_[0]=1;
-    v_vector_[1]=2;
-    v_vector_[2]=3;
-
-    a_vector_[0]=7;
-    a_vector_[1]=8;
-    a_vector_[2]=9;
-    
-
-    perm_mat_[0]=1;
-    perm_mat_[1]=0;
-    perm_mat_[2]=2;
-
-    chol_factor_.Init(3,1);
-    chol_factor_.set(0,0,2);
-    chol_factor_.set(1,0,1);
-    chol_factor_.set(2,0,3);
-
-    special_la::
-    PreMultiplyMatrixWithPermutationMatrixInit(perm_mat_,chol_factor_,&permuted_chol_factor_); */
 
     //having obtained the vectors the algorithm works by taking a
     //predictor step and followed by a corrector step
     
     PredictorCorrectorSteps_();
-    
+    ComputeDensitiesOfTestPoints_();
+    ComputeISETrainSet_(); 
   }
 
   //We shall initialize all variables and set up for the primal dual
@@ -1021,15 +1176,15 @@ class HKInteriorPointPredictorCorrector{
     //set the module to the incoming module
     module_=module_in;
     train_set_.Alias(train_set);
-    
     num_train_points_=train_set_.n_cols();
     
     //Check for the existence of a query set and accordingly read data
-    if(fx_param_exists(module_,"query")){
+    if(fx_param_exists(module_,"test")){
       
       //Load the dataset
-      const char *test_file=fx_param_str_req(module_,"query");
+      const char *test_file=fx_param_str_req(module_,"test");
       data::Load(test_file,&test_set_);
+      num_test_points_=test_set_.n_cols();
       
       //Since there is a  test file hence we shall compute the test densities
       computed_test_densities_.Init(test_set_.n_cols());
@@ -1038,6 +1193,7 @@ class HKInteriorPointPredictorCorrector{
       
       test_set_.Init(0,0); //This avoids segmentation fault
       computed_test_densities_.Init(0);
+      num_test_points_=0;
     }
     
     if(fx_param_exists(module_,"true")){
@@ -1058,6 +1214,8 @@ class HKInteriorPointPredictorCorrector{
     sigma_=fx_param_double_req(module_,"sigma");
     sigma_h_=fx_param_double_req(module_,"sigma_h");
     lambda_=fx_param_double_req(module_,"lambda");
+
+    //The dimensionality of the dataset
     num_dims_=train_set_.n_rows();
 
     sqd_num_train_points_=num_train_points_*num_train_points_;
@@ -1067,7 +1225,7 @@ class HKInteriorPointPredictorCorrector{
     //THIS IS A TEMPORARY ARRANGEMENT..........
 
     //............................................
-    //Initialize vectors that are being used
+    //Initialize vectors that will be used
 
     v1_vector_.Init(sqd_num_train_points_);
     v2_vector_.Init(sqd_num_train_points_);
@@ -1078,12 +1236,16 @@ class HKInteriorPointPredictorCorrector{
     delta_beta_vector_.Init(sqd_num_train_points_);
     delta_gamma_vector_.Init(sqd_num_train_points_);
 
-
     delta_beta_predictor_vector_.Init(sqd_num_train_points_);
     delta_gamma_predictor_vector_.Init(sqd_num_train_points_);
+
+    //The permutation matrix. This will be used along with the chol
+    //factor in calculations
+
     perm_mat_.Init(sqd_num_train_points_);
     D_vector_.Init(sqd_num_train_points_);
 
+    //chol factor will be initialized in the routine GetCholFactor
 
     //Set delta_beta, delta_gamma and delta_psi to 0
     delta_beta_vector_.SetZero();
