@@ -18,6 +18,148 @@ class MultiTreeDepthFirst {
 
   typename MultiTreeProblem::MultiTreeGlobal globals_;
 
+
+  template<int start, int end>
+  class MultiTreeHelper_ {
+   public:
+    static void NestedLoop(typename MultiTreeProblem::MultiTreeGlobal &globals,
+			   const ArrayList<Matrix *> &sets, 
+			   ArrayList<Tree *> &nodes,
+			   typename MultiTreeProblem::MultiTreeQueryResult
+			   &query_results) {
+      
+      for(index_t i = nodes[start]->begin(); i < nodes[start]->end(); i++) {
+	globals.chosen_indices[start] = i;
+	MultiTreeHelper_<start + 1, end>::NestedLoop(globals, sets, nodes,
+						     query_results);
+      }
+    }
+  };
+
+  template<int end>
+  class MultiTreeHelper_<end, end> {
+   public:
+    static void NestedLoop(typename MultiTreeProblem::MultiTreeGlobal &globals,
+			   const ArrayList<Matrix *> &sets, 
+			   ArrayList<Tree *> &nodes,
+			   typename MultiTreeProblem::MultiTreeQueryResult
+			   &query_results) {
+      
+      // Exhaustively compute the contribution due to the selected
+      // tuple.
+      globals.kernel_aux.Evaluate(sets, globals);
+    }
+  };
+
+  int first_node_indices_strictly_surround_second_node_indices_
+  (Tree *first_node, Tree *second_node) {
+    
+    return (first_node->begin() < second_node->begin() && 
+	    first_node->end() >= second_node->end()) ||
+      (first_node->begin() <= second_node->begin() && 
+       first_node->end() > second_node->end());
+  }
+
+  double TotalNumTuplesHelper_(int b, ArrayList<Tree *> &nodes) {
+    
+    Tree *bkn = nodes[b];
+    double result;
+    int n = nodes.size();
+    
+    // If this is the last node in the list, then the result is the
+    // number of points contained in this node.
+    if(b == n - 1) {
+      result = (double) bkn->count();
+    }
+    else {
+      int j;
+      int conflict = 0;
+      int simple_product = 1;
+    
+      result = (double) bkn->count();
+      
+      for(j = b + 1 ; j < n && !conflict; j++) {
+	Tree *knj = nodes[j];
+	
+	if (bkn->begin() >= knj->end() - 1) {
+	  conflict = 1;
+	}
+	else if(nodes[j - 1]->end() - 1 > knj->begin()) {
+	  simple_product = 0;
+	}
+      }
+      
+      if(conflict) {
+	result = 0.0;
+      }
+      else if(simple_product) {
+	for(j = b + 1; j < n; j++) {
+	  result *= nodes[j]->count();
+	}
+      }
+      else {
+	int jdiff = -1; 
+	
+	// Undefined... will eventually point to the lowest j > b such
+	// that nodes[j] is different from bkn
+	for(j = b + 1; jdiff < 0 && j < n; j++) {
+	  Tree *knj = nodes[j];
+	  if(bkn->begin() != knj->begin() ||
+	     bkn->end() - 1 != knj->end() - 1) {
+	    jdiff = j;
+	  }
+	}
+	
+	if(jdiff < 0) {
+	  result = math::BinomialCoefficient(bkn->count(), n - b);
+	}
+	else {
+	  Tree *dkn = nodes[jdiff];
+	  
+	  if(dkn->begin() >= bkn->end() - 1) {
+	    result = math::BinomialCoefficient(bkn->count(), jdiff - b);
+	    if(result > 0.0) {
+	      result *= TotalNumTuplesHelper_(jdiff, nodes);
+	    }
+	  }
+	  else if(first_node_indices_strictly_surround_second_node_indices_
+		  (bkn, dkn)) {
+	    result = RecursiveTotalNumTuplesHelper_(b, nodes, b);
+	  }
+	  else if(first_node_indices_strictly_surround_second_node_indices_
+		  (dkn, bkn)) {
+	    result = RecursiveTotalNumTuplesHelper_(b, nodes, jdiff);
+	  }
+	}
+      }
+    }
+    return result;
+  }
+
+  double RecursiveTotalNumTuplesHelper_(int b, ArrayList<Tree *> &nodes, 
+					int i) {
+    
+    double result = 0.0;
+    Tree *kni = nodes[i];
+    nodes[i] = kni->left();
+    result += TotalNumTuplesHelper_(b, nodes);
+    nodes[i] = kni->right();
+    result += TotalNumTuplesHelper_(b, nodes);
+    nodes[i] = kni;
+    return result;
+  }
+
+  /** @brief Returns the total number of valid $n$-tuples, in which
+   *         the indices are chosen in the depth-first order.
+   */
+  double TotalNumTuples(ArrayList<Tree *> &nodes) {
+
+    return TotalNumTuplesHelper_(0, nodes);
+  }
+  
+  void CopyNodeSet_(const ArrayList<Tree *> &source_list,
+		    ArrayList<Tree *> *destination_list);
+
   void Heuristic_(const ArrayList<Tree *> &nodes, 
 		  index_t *max_count_among_non_leaf, index_t *split_index);
 
@@ -29,7 +171,18 @@ class MultiTreeDepthFirst {
   (const ArrayList<Matrix *> &sets, ArrayList<Tree *> &trees,
    typename MultiTreeProblem::MultiTreeQueryResult &query_results);
 
+  void PreProcessTree_(Tree *node);
+
  public:
+
+  MultiTreeDepthFirst() {
+  }
+  
+  ~MultiTreeDepthFirst() {
+
+    // This must be fixed...
+    delete trees_[0];
+  }
 
   void Compute(typename MultiTreeProblem::MultiTreeQueryResult
 	       *query_results) {
@@ -63,6 +216,9 @@ class MultiTreeDepthFirst {
     for(index_t i = 1; i < MultiTreeProblem::order; i++) {
       trees_[i] = trees_[0];
     }
+    
+    // Initialize the global parameters.
+    globals_.Init();
   }
 
 };

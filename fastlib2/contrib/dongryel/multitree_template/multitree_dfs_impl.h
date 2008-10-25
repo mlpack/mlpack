@@ -2,9 +2,14 @@ template<typename MultiTreeProblem>
 void MultiTreeDepthFirst<MultiTreeProblem>::Heuristic_
 (const ArrayList<Tree *> &nodes, index_t *max_count_among_non_leaf, 
  index_t *split_index) {
-
-  MultiTreeCommon::MultiTreeHelper<0, MultiTreeProblem::order>::HeuristicLoop
-    (nodes, max_count_among_non_leaf, split_index);
+  
+  for(int start = 0; start < MultiTreeProblem::order; start++) {
+    if(!(nodes[start]->is_leaf()) &&
+       nodes[start]->count() > *max_count_among_non_leaf) {
+      *max_count_among_non_leaf = nodes[start]->count();
+      *split_index = start;
+    }
+  }
 }
 
 template<typename MultiTreeProblem>
@@ -12,8 +17,19 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
 (const ArrayList<Matrix *> &sets, ArrayList<Tree *> &nodes,
  typename MultiTreeProblem::MultiTreeQueryResult &query_results) {
 
-  MultiTreeCommon::MultiTreeHelper<0, MultiTreeProblem::order>::BaseLoop
+  MultiTreeHelper_<0, MultiTreeProblem::order>::NestedLoop
     (globals_, sets, nodes, query_results);
+}
+
+template<typename MultiTreeProblem>
+void MultiTreeDepthFirst<MultiTreeProblem>::CopyNodeSet_
+(const ArrayList<Tree *> &source_list, ArrayList<Tree *> *destination_list) {
+
+  destination_list->Init(source_list.size());
+
+  for(index_t i = 0; i < MultiTreeProblem::order; i++) {
+    (*destination_list)[i] = source_list[i];
+  }
 }
 
 template<typename MultiTreeProblem>
@@ -42,8 +58,7 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
     
     // Copy to new nodes list before recursing.
     ArrayList<Tree *> new_nodes;
-    MultiTreeCommon::CopyNodeSet<MultiTreeProblem::order, Tree>(nodes,
-								&new_nodes);
+    CopyNodeSet_(nodes, &new_nodes);
     
     // Push down approximations downward for the node that is to be
     // expanded.
@@ -55,7 +70,7 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
 
     // Recurse to the left.
     new_nodes[split_index] = nodes[split_index]->left();
-    new_num_tuples = MultiTreeCommon::TotalNumTuples(new_nodes);
+    new_num_tuples = TotalNumTuples(new_nodes);
     
     // If the current node combination is valid, then recurse.
     if(new_num_tuples > 0) {
@@ -64,7 +79,7 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
     
     // Recurse to the right.
     new_nodes[split_index] = nodes[split_index]->right();
-    new_num_tuples = MultiTreeCommon::TotalNumTuples(new_nodes);
+    new_num_tuples = TotalNumTuples(new_nodes);
     
     // If the current node combination is valid, then recurse.
     if(new_num_tuples > 0) {
@@ -87,5 +102,17 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
     nodes[split_index]->stat().summary.Accumulate(tmp_right_child_summary);
     
     return;
+  }
+}
+
+template<typename MultiTreeProblem>
+void MultiTreeDepthFirst<MultiTreeProblem>::PreProcessTree_(Tree *node) {
+
+  // Reset summary statistics and postponed quantities.
+  node->stat().Init(node->bound(), globals_.kernel_aux);
+  
+  if(!node->is_leaf()) {
+    PreProcessTree_(node->left());
+    PreProcessTree_(node->right());
   }
 }
