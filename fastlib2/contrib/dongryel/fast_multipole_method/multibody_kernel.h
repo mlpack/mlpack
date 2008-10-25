@@ -335,76 +335,115 @@ class AxilrodTellerForceKernelAux {
     double *positive_force_vector_first_particle =
       query_results.positive_force_vector_e.GetColumnPtr
       (globals.chosen_indices[0]);
+    double &l1_norm_positive_force_vector_l_first_particle =
+      query_results.l1_norm_positive_force_vector_l[globals.chosen_indices[0]];
     double *negative_force_vector_first_particle =
       query_results.negative_force_vector_e.GetColumnPtr
       (globals.chosen_indices[0]);
+    double &l1_norm_negative_force_vector_u_first_particle =
+      query_results.l1_norm_negative_force_vector_u[globals.chosen_indices[0]];
+
     double *positive_force_vector_second_particle =
       query_results.positive_force_vector_e.GetColumnPtr
       (globals.chosen_indices[1]);
+    double &l1_norm_positive_force_vector_l_second_particle =
+      query_results.l1_norm_positive_force_vector_l[globals.chosen_indices[1]];
     double *negative_force_vector_second_particle =
       query_results.negative_force_vector_e.GetColumnPtr
       (globals.chosen_indices[1]);
+    double &l1_norm_negative_force_vector_u_second_particle =
+      query_results.l1_norm_negative_force_vector_u[globals.chosen_indices[1]];
+
     double *positive_force_vector_third_particle =
       query_results.positive_force_vector_e.GetColumnPtr
       (globals.chosen_indices[2]);
+    double &l1_norm_positive_force_vector_l_third_particle =
+      query_results.l1_norm_positive_force_vector_l[globals.chosen_indices[2]];
     double *negative_force_vector_third_particle =
       query_results.negative_force_vector_e.GetColumnPtr
       (globals.chosen_indices[2]);
+    double &l1_norm_negative_force_vector_u_third_particle =
+      query_results.l1_norm_negative_force_vector_u[globals.chosen_indices[2]];
 
     // Temporary variable...
     double tmp_contrib;
 
     for(index_t i = 0; i < dimension_; i++) {
       
+      // Check positive contributions...
       if((tmp_contrib = positive_contributions_.get(i, 0)) > 0) {
 	negative_force_vector_first_particle[i] += (-tmp_contrib);
+	l1_norm_negative_force_vector_u_first_particle += tmp_contrib;
 	positive_force_vector_second_particle[i] += tmp_contrib;
+	l1_norm_positive_force_vector_l_second_particle += tmp_contrib;
       }
       else {
 	positive_force_vector_first_particle[i] += (-tmp_contrib);
+	l1_norm_positive_force_vector_l_first_particle += (-tmp_contrib);
 	negative_force_vector_second_particle[i] += tmp_contrib;
+	l1_norm_negative_force_vector_u_second_particle += (-tmp_contrib);
       }
       if((tmp_contrib = positive_contributions_.get(i, 1)) > 0) {
 	negative_force_vector_first_particle[i] += (-tmp_contrib);
+	l1_norm_negative_force_vector_u_first_particle += tmp_contrib;
 	positive_force_vector_third_particle[i] += tmp_contrib;
+	l1_norm_positive_force_vector_l_third_particle += tmp_contrib;;
       }
       else {
 	positive_force_vector_first_particle[i] += (-tmp_contrib);
+	l1_norm_positive_force_vector_l_first_particle += (-tmp_contrib);
 	negative_force_vector_third_particle[i] += tmp_contrib;
+	l1_norm_negative_force_vector_u_third_particle += (-tmp_contrib);
       }
       if((tmp_contrib = positive_contributions_.get(i, 2)) > 0) {
 	negative_force_vector_second_particle[i] += (-tmp_contrib);
+	l1_norm_negative_force_vector_u_second_particle += tmp_contrib;
 	positive_force_vector_third_particle[i] += tmp_contrib;
+	l1_norm_positive_force_vector_l_third_particle += tmp_contrib;
       }
       else {
 	positive_force_vector_second_particle[i] += (-tmp_contrib);
+	l1_norm_positive_force_vector_l_second_particle += (-tmp_contrib);
 	negative_force_vector_third_particle[i] += tmp_contrib;
-      }      
+	l1_norm_negative_force_vector_u_third_particle += (-tmp_contrib);
+      }
       
       // Check negative contribution accumulations...
       if((tmp_contrib = negative_contributions_.get(i, 0)) > 0) {
 	negative_force_vector_first_particle[i] += (-tmp_contrib);
+	l1_norm_negative_force_vector_u_first_particle += tmp_contrib;
 	positive_force_vector_second_particle[i] += tmp_contrib;
+	l1_norm_positive_force_vector_l_second_particle += tmp_contrib;
       }
       else {
 	positive_force_vector_first_particle[i] += (-tmp_contrib);
+	l1_norm_positive_force_vector_l_first_particle += (-tmp_contrib);
 	negative_force_vector_second_particle[i] += tmp_contrib;
+	l1_norm_negative_force_vector_u_second_particle += (-tmp_contrib);
       }
       if((tmp_contrib = negative_contributions_.get(i, 1)) > 0) {
 	negative_force_vector_first_particle[i] += (-tmp_contrib);
+	l1_norm_negative_force_vector_u_first_particle += tmp_contrib;
 	positive_force_vector_third_particle[i] += tmp_contrib;
+	l1_norm_positive_force_vector_l_third_particle += tmp_contrib;
       }
       else {
 	positive_force_vector_first_particle[i] += (-tmp_contrib);
+	l1_norm_positive_force_vector_l_first_particle += (-tmp_contrib);
 	negative_force_vector_third_particle[i] += tmp_contrib;
+	l1_norm_negative_force_vector_u_third_particle += (-tmp_contrib);
       }
       if((tmp_contrib = negative_contributions_.get(i, 2)) > 0) {
 	negative_force_vector_second_particle[i] += (-tmp_contrib);
+	l1_norm_negative_force_vector_u_second_particle += tmp_contrib;
 	positive_force_vector_third_particle[i] += tmp_contrib;
+	l1_norm_positive_force_vector_l_third_particle += tmp_contrib;
       }
       else {
 	positive_force_vector_second_particle[i] += (-tmp_contrib);
+	l1_norm_positive_force_vector_l_second_particle += (-tmp_contrib);
 	negative_force_vector_third_particle[i] += tmp_contrib;
+	l1_norm_negative_force_vector_u_third_particle += (-tmp_contrib);
       }
     }
   }
