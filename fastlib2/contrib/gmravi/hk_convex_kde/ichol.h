@@ -55,21 +55,18 @@ class IChol{
 
   ArrayList <index_t> perm_;
 
-  Matrix M_mat_;
-
-  
-   void ComputeDiagonalElements_(){
-     
-     index_t row=0;
-     for(index_t p=0;p<num_train_points_;p++){
-       for(index_t q=0;q<num_train_points_;q++){
-	 
-	 double val_diag=ComputeElementOfMMatrix_(p,q,p,q); //r=p,s=q
-	 diagonal_elements_[row]=val_diag;
-	 row++;
-       }
-     }
-     }
+  void ComputeDiagonalElements_(){
+    
+    index_t row=0;
+    for(index_t p=0;p<num_train_points_;p++){
+      for(index_t q=0;q<num_train_points_;q++){
+	
+	double val_diag=ComputeElementOfMMatrix_(p,q,p,q); //r=p,s=q
+	diagonal_elements_[row]=val_diag;
+	row++;
+      }
+    }
+  }
   
 
    /* void ComputeDiagonalElements_(){ */
@@ -97,6 +94,8 @@ class IChol{
   ~IChol(){
 
   }
+
+ private:
   
   void  CreateSquaredVectorFromCholFactor_(index_t start_row,
 					   index_t end_col,
@@ -105,8 +104,6 @@ class IChol{
     index_t start_col=0;
     index_t i;
     i=0;
-
-    printf("Start row is %d\n",start_row);
 
     for(index_t row=start_row;row<end_row;row++){
       
@@ -393,33 +390,32 @@ class IChol{
     }     
   } 
   
-  /*  index_t CheckIfLastColumnIsZeros(index_t rank){
+  index_t CheckIfLastColumnIsZeros_(index_t rank){
     
-    double  EPSILON;
-    EPSILON=pow(10,-10);
-
-    index_t FAILURE=-1;
-    index_t SUCCESS=1;
-
+    double  epsilon;
+    epsilon=pow(10,-6);
+    
+    
     double *last_chol;
     last_chol=chol_factor_.GetColumnPtr(rank-1);
-
+    
     Vector v;
     v.Alias(last_chol,sqd_num_train_points_);
-
+    
     printf("The last column is...\n");
     v.PrintDebug();
-
+    
     for(index_t i=0;i<sqd_num_train_points_;i++){
       
-      if(fabs(v[i])>EPSILON){
-
-	return FAILURE;
+      if(fabs(v[i])>epsilon){
+	
+	printf("i=%d,value=%6f..\n",i,v[i]);
+	return -1;
       }
     }
 
-    return SUCCESS;
-    }*/
+    return 1;
+  }
   
 /*   void GetFirstColOfMMatrix_(Vector &first_col){ */
 
@@ -434,60 +430,8 @@ class IChol{
 /*     }   */
 /*   } */
   
-  
-   void Compute(Matrix &chol_factor_in,ArrayList <index_t> &perm_in){
-     
-     /*   printf("Wil do incomplete cholesky now...\n");
-     
-     
-      for(index_t p=0;p<num_train_points_;p++){
-	
-	for(index_t q=0;q<num_train_points_;q++){
-	    
-	  index_t row_num1=p*num_train_points_+q;
-	  index_t row_num2=q*num_train_points_+p;
-	    
-	  for(index_t r=0;r<num_train_points_;r++){
-	      
-	    for(index_t s=0;s<num_train_points_;s++){
-		
-		index_t col_num1=r*num_train_points_+s;
-		index_t col_num2=s*num_train_points_+r;
-		
-		double val=ComputeElementOfMMatrix_(p,q,r,s);
-
-		printf("row_num1=%d,col_num1=%d..\n",row_num1,col_num1);
-		
-		M_mat_.set(row_num1,col_num1,val); //p,q,r,s 1,2,3,4
-		//m.set(row_num1,col_num2,val); //p,q,s,r 1,2,4,3
-		//m.set(row_num2,col_num1,val); //q,p,r,s 2,1,3,4
-		//m.set(row_num2,col_num2,val); //q,p,s,r 2,1,4,3
-		
-		//m.set(col_num1,row_num1,val); //r,s,p,q 3,4,1,2
-		//m.set(col_num1,row_num2,val); //r,s,q,p 3,4,2,1
-		//m.set(col_num2,row_num1,val); //s,r,p,q 4,3,1,2
-		//m.set(col_num2,row_num2,val); //s,r,q,p 4,3,2,1
-	      }
-	    }
-	  }
-	  }
-	
-	
-     FILE *fp;
-     fp=fopen("m_matrix.txt","w");
-     M_mat_.PrintDebug(NULL,fp);
-     printf("Computed the matrix also....\n");*/
-
-     //Matrix temp;
-     //temp.Init(train_set_.n_rows(),train_set_.n_cols());
-     //temp.CopyValues(train_set_);
-     //la::MulTransBOverwrite(temp,temp,&M_mat_);
-     //printf("M matrix is...\n");
-     //M_mat_.PrintDebug();
-     ComputeIncompleteCholesky(chol_factor_in,perm_in);
-   }
    
-   void ComputeIncompleteCholesky(Matrix &chol_factor_in,
+   void ComputeIncompleteCholesky_(Matrix &chol_factor_in,
 				  ArrayList<index_t> &perm_in){
      
      
@@ -711,65 +655,95 @@ class IChol{
      //It can happen that the last column is full of 0's in which case
      //we just chop off the column.
 
-     
-     /*index_t flag=CheckIfLastColumnIsZeros(rank);
 
+     printf("Uncut Cholesky is...\n");
+
+     Matrix art;
+     chol_factor_.MakeColumnSlice(0,rank,&art);
+     art.PrintDebug();
+     
+     index_t flag=CheckIfLastColumnIsZeros_(rank);
+
+     Matrix temp;
      if(flag==1){
 
        
        //Copy the sliced cholesky factor and the permutation arraylist
-       chol_factor_.MakeColumnSlice(0,rank-1,&chol_factor_in);
+       chol_factor_.MakeColumnSlice(0,rank-1,&temp);
      }
      else{
 
        //Copy the sliced cholesky factor and the permutation arraylist
-       chol_factor_.MakeColumnSlice(0,rank,&chol_factor_in);
-       }*/
+       chol_factor_.MakeColumnSlice(0,rank,&temp);
+     }
 
-     chol_factor_.MakeColumnSlice(0,rank,&chol_factor_in);
-
+     
      for(index_t i=0;i<sqd_num_train_points_;i++){
 
        perm_in[i]=perm_[i];
      }
 
-     //printf("Cholesky factor is..\n");
-     // chol_factor_in.PrintDebug();
-
-     //make sure all calculations are fine
-
-     /*     Matrix PL;
-     special_la::PreMultiplyMatrixWithPermutationMatrixInit(perm_,chol_factor_,&PL);
-     
-     Matrix chol_factor_trans,PL_chol_factor_trans;
-     la::TransposeInit(chol_factor_,&chol_factor_trans);
-     la::MulInit(PL,chol_factor_trans,&PL_chol_factor_trans); //PLL^T
-     
-     ArrayList<index_t> perm_in_trans;
-     special_la::PermutationMatrixTransposeInit(perm_,&perm_in_trans); //P^T
-     
-     Matrix PL_chol_factor_trans_P_trans;
-     special_la::PostMultiplyMatrixWithPermutationMatrixInit(PL_chol_factor_trans,perm_in_trans,
-     &PL_chol_factor_trans_P_trans); //PLL^TP^T
-     
-     printf("Post multiplication with permutation matrix done..\n");
-     
-     Matrix temp1;
-     la::SubInit(PL_chol_factor_trans_P_trans,M_mat_,&temp1);
-     
-     double trace=0;
-     for(index_t i=0;i<sqd_num_train_points_;i++){
-     
-     trace+=temp1.get(i,i);
-     }
-     
-     for(index_t i=0;i<sqd_num_train_points_;i++){
-     
-     printf("Permutation is %d..\n",perm_[i]);
-     }
-     printf("Trace is %15f....\n",trace);*/
+     //chol_factor_in.Init(temp.n_rows(),temp.n_cols());
+     chol_factor_in.Copy(temp);
    }
 
+ public:
+
+   void Compute(Matrix &chol_factor_in,ArrayList <index_t> &perm_in){
+
+   /*  Matrix M_mat_;
+     M_mat_.Init(sqd_num_train_points_,sqd_num_train_points_);
+     
+     printf("Wil do incomplete cholesky now...\n");
+     
+     
+     for(index_t p=0;p<num_train_points_;p++){
+       
+       for(index_t q=0;q<num_train_points_;q++){
+	 
+	 index_t row_num1=p*num_train_points_+q;
+	 index_t row_num2=q*num_train_points_+p;
+	 
+	 for(index_t r=0;r<num_train_points_;r++){
+	   
+	   for(index_t s=0;s<num_train_points_;s++){
+	     
+	     index_t col_num1=r*num_train_points_+s;
+	     index_t col_num2=s*num_train_points_+r;
+	     
+	     double val=ComputeElementOfMMatrix_(p,q,r,s);
+	     
+	     printf("row_num1=%d,col_num1=%d..\n",row_num1,col_num1);
+	     
+	     M_mat_.set(row_num1,col_num1,val); //p,q,r,s 1,2,3,4
+	     //m.set(row_num1,col_num2,val); //p,q,s,r 1,2,4,3
+	     //m.set(row_num2,col_num1,val); //q,p,r,s 2,1,3,4
+	     //m.set(row_num2,col_num2,val); //q,p,s,r 2,1,4,3
+	     
+	     //m.set(col_num1,row_num1,val); //r,s,p,q 3,4,1,2
+	     //m.set(col_num1,row_num2,val); //r,s,q,p 3,4,2,1
+	     //m.set(col_num2,row_num1,val); //s,r,p,q 4,3,1,2
+	     //m.set(col_num2,row_num2,val); //s,r,q,p 4,3,2,1
+	   }
+	 }
+       }
+     }
+     
+     
+     FILE *fp;
+     fp=fopen("m_matrix.txt","w");
+     M_mat_.PrintDebug(NULL,fp);
+     printf("Computed the matrix also....\n");
+     
+     //Matrix temp;
+     //temp.Init(train_set_.n_rows(),train_set_.n_cols());
+     //temp.CopyValues(train_set_);
+     //la::MulTransBOverwrite(temp,temp,&M_mat_);
+     //printf("M matrix is...\n");
+     M_mat_.PrintDebug(); */
+
+     ComputeIncompleteCholesky_(chol_factor_in,perm_in);
+   }
 
   void Init(Matrix &train_set,double sigma_h,double sigma,double lambda){
     
@@ -800,7 +774,7 @@ class IChol{
       perm_[i]=i;      
     }
 
-    epsilon_=0.0000001;
+    epsilon_=0;
 
     num_dims_=train_set_.n_rows();
     //M_mat_.Init(sqd_num_train_points_,sqd_num_train_points_);
