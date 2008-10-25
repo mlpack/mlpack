@@ -116,3 +116,18 @@ void MultiTreeDepthFirst<MultiTreeProblem>::PreProcessTree_(Tree *node) {
     PreProcessTree_(node->right());
   }
 }
+
+template<typename MultiTreeProblem>
+void MultiTreeDepthFirst<MultiTreeProblem>::PostProcessTree_
+(Tree *node, typename MultiTreeProblem::MultiTreeQueryResult &query_results) {
+  
+  if(node->is_leaf()) {
+    for(index_t i = node->begin(); i < node->end(); i++) {
+      query_results.PostProcess(i);
+    }
+  }
+  else {
+    PostProcessTree_(node->left(), query_results);
+    PostProcessTree_(node->right(), query_results);
+  }
+}

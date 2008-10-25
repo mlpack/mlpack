@@ -28,7 +28,21 @@ class MultiTreeDepthFirst {
 			   typename MultiTreeProblem::MultiTreeQueryResult
 			   &query_results) {
       
-      for(index_t i = nodes[start]->begin(); i < nodes[start]->end(); i++) {
+      index_t starting_point_index = 0;
+      index_t ending_point_index = nodes[start]->end();
+      if(start == 0) {
+	starting_point_index = nodes[start]->begin();
+      }
+      else {
+	if(nodes[start - 1] == nodes[start]) {
+	  starting_point_index = globals.chosen_indices[start - 1] + 1;
+	}
+	else {
+	  starting_point_index = nodes[start]->begin();
+	}
+      }
+
+      for(index_t i = starting_point_index; i < ending_point_index; i++) {
 	globals.chosen_indices[start] = i;
 	MultiTreeHelper_<start + 1, end>::NestedLoop(globals, sets, nodes,
 						     query_results);
@@ -47,7 +61,7 @@ class MultiTreeDepthFirst {
       
       // Exhaustively compute the contribution due to the selected
       // tuple.
-      globals.kernel_aux.Evaluate(sets, globals);
+      globals.kernel_aux.EvaluateMain(globals, sets, query_results);
     }
   };
 
@@ -172,6 +186,9 @@ class MultiTreeDepthFirst {
    typename MultiTreeProblem::MultiTreeQueryResult &query_results);
 
   void PreProcessTree_(Tree *node);
+  
+  void PostProcessTree_
+  (Tree *node, typename MultiTreeProblem::MultiTreeQueryResult &query_results);
 
  public:
 
@@ -198,6 +215,7 @@ class MultiTreeDepthFirst {
 
     // Postprocess the query trees, also postprocessing the final
     // query results.
+    PostProcessTree_(trees_[0], *query_results);
   }
 
   void Init(const ArrayList<Matrix *> &sets) {
