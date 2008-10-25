@@ -288,6 +288,9 @@ class AxilrodTellerForceProblem {
 	for(index_t d = 0; d < 3; d++) {
 	  fprintf(stream, "%g ", force_vector_e_column[d]);
 	}
+
+	fprintf(stream, "%g %g", l1_norm_positive_force_vector_l[q],
+		l1_norm_negative_force_vector_u[q]);
 	fprintf(stream, "\n");
       }
       
