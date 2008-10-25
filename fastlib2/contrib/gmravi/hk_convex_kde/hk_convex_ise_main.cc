@@ -1,6 +1,6 @@
 #include "hk_convex_ise.h"
 #include "fastlib/fastlib_int.h"
-#include "engine.h"
+#include "/net/hc295/gmravi/home/fastlib/fastlib2_int/fastlib2/mlpack/kde"
 int main(int argc, char *argv[]){
   
   //Initalize FastExec
@@ -25,6 +25,7 @@ int main(int argc, char *argv[]){
   
   hk_convex_ise.Init(train_data,ise_module);
   hk_convex_ise.ComputeOptimalKernel();
-  //fx_done(NULL);
+
+  fx_done(NULL);
   //  fx_silence(NULL);
 }
