@@ -78,7 +78,7 @@ class MultiTreeDepthFirst {
     
     Tree *bkn = nodes[b];
     double result;
-    int n = nodes.size();
+    int n = MultiTreeProblem::order;
     
     // If this is the last node in the list, then the result is the
     // number of points contained in this node.
