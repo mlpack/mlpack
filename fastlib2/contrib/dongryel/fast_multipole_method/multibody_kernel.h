@@ -196,10 +196,9 @@ class AxilrodTellerForceKernelAux {
     third_index[1] = 1;
     third_index[2] = 0;
   }
-  
+
   void EvaluateHelper
-  (const ArrayList<Matrix *> &sets,
-   const ArrayList<index_t> &indices,
+  (const ArrayList<Matrix *> &sets, const ArrayList<index_t> &indices,
    const Matrix &squared_distances) {
 
     for(index_t p = 0; p < order_; p++) {
@@ -273,13 +272,14 @@ class AxilrodTellerForceKernelAux {
 	   distance_second_third,
 	   distance_second_third_pow_three,
 	   distance_second_third_pow_five);
-      }
+
+      } // iterating over each dimension (row-wise)...
     }
   };
 
   template<typename Global>
-  void Evaluate(const ArrayList<Matrix *> &sets,
-		const Matrix &squared_distances, Global &globals) {
+  void Evaluate(const Global &globals, const ArrayList<Matrix *> &sets,
+		const Matrix &squared_distances) {
 
     // Clear the contribution accumulator.
     positive_contributions_.SetZero();
@@ -309,22 +309,104 @@ class AxilrodTellerForceKernelAux {
 	   first_set->GetColumnPtr(indices[first_index]),
 	   second_set->GetColumnPtr(indices[second_index]));
 	squared_distances.set(first_index, second_index, squared_distance);
+
+	// Mirror the distances across diagonals, just in case you
+	// need it.
+	squared_distances.set(second_index, first_index, squared_distance);
       }
     }
   }
 
   /** @brief Evaluate the kernel given the chosen indices exhaustively.
    */
-  template<typename Global>
-  void Evaluate(const ArrayList<Matrix *> &sets, Global &globals) {
+  template<typename Global, typename MultiTreeQueryResult>
+  void EvaluateMain(const Global &globals, const ArrayList<Matrix *> &sets,
+		    MultiTreeQueryResult &query_results) {
     
     // Evaluate the pairwise distances.    
     PairwiseEvaluateLoop(sets, globals.chosen_indices,
 			 lower_bound_squared_distances_);
     
     // Add the contribution...
-    Evaluate(sets, lower_bound_squared_distances_, globals);
+    Evaluate(globals, sets, lower_bound_squared_distances_);
     
+    // Get the positive/negative force vector for the first, second,
+    // third particle in the list.
+    double *positive_force_vector_first_particle =
+      query_results.positive_force_vector_e.GetColumnPtr
+      (globals.chosen_indices[0]);
+    double *negative_force_vector_first_particle =
+      query_results.negative_force_vector_e.GetColumnPtr
+      (globals.chosen_indices[0]);
+    double *positive_force_vector_second_particle =
+      query_results.positive_force_vector_e.GetColumnPtr
+      (globals.chosen_indices[1]);
+    double *negative_force_vector_second_particle =
+      query_results.negative_force_vector_e.GetColumnPtr
+      (globals.chosen_indices[1]);
+    double *positive_force_vector_third_particle =
+      query_results.positive_force_vector_e.GetColumnPtr
+      (globals.chosen_indices[2]);
+    double *negative_force_vector_third_particle =
+      query_results.negative_force_vector_e.GetColumnPtr
+      (globals.chosen_indices[2]);
+
+    // Temporary variable...
+    double tmp_contrib;
+
+    for(index_t i = 0; i < dimension_; i++) {
+      
+      if((tmp_contrib = positive_contributions_.get(i, 0)) > 0) {
+	negative_force_vector_first_particle[i] += (-tmp_contrib);
+	positive_force_vector_second_particle[i] += tmp_contrib;
+      }
+      else {
+	positive_force_vector_first_particle[i] += (-tmp_contrib);
+	negative_force_vector_second_particle[i] += tmp_contrib;
+      }
+      if((tmp_contrib = positive_contributions_.get(i, 1)) > 0) {
+	negative_force_vector_first_particle[i] += (-tmp_contrib);
+	positive_force_vector_third_particle[i] += tmp_contrib;
+      }
+      else {
+	positive_force_vector_first_particle[i] += (-tmp_contrib);
+	negative_force_vector_third_particle[i] += tmp_contrib;
+      }
+      if((tmp_contrib = positive_contributions_.get(i, 2)) > 0) {
+	negative_force_vector_second_particle[i] += (-tmp_contrib);
+	positive_force_vector_third_particle[i] += tmp_contrib;
+      }
+      else {
+	positive_force_vector_second_particle[i] += (-tmp_contrib);
+	negative_force_vector_third_particle[i] += tmp_contrib;
+      }      
+      
+      // Check negative contribution accumulations...
+      if((tmp_contrib = negative_contributions_.get(i, 0)) > 0) {
+	negative_force_vector_first_particle[i] += (-tmp_contrib);
+	positive_force_vector_second_particle[i] += tmp_contrib;
+      }
+      else {
+	positive_force_vector_first_particle[i] += (-tmp_contrib);
+	negative_force_vector_second_particle[i] += tmp_contrib;
+      }
+      if((tmp_contrib = negative_contributions_.get(i, 1)) > 0) {
+	negative_force_vector_first_particle[i] += (-tmp_contrib);
+	positive_force_vector_third_particle[i] += tmp_contrib;
+      }
+      else {
+	positive_force_vector_first_particle[i] += (-tmp_contrib);
+	negative_force_vector_third_particle[i] += tmp_contrib;
+      }
+      if((tmp_contrib = negative_contributions_.get(i, 2)) > 0) {
+	negative_force_vector_second_particle[i] += (-tmp_contrib);
+	positive_force_vector_third_particle[i] += tmp_contrib;
+      }
+      else {
+	positive_force_vector_second_particle[i] += (-tmp_contrib);
+	negative_force_vector_third_particle[i] += tmp_contrib;
+      }
+    }
   }
   
 };
