@@ -35,11 +35,27 @@ class GaussianHyperKernel{
     //Calculate the normalization constant
     
       double norm_const1=gk_inter_.CalcNormConstant(num_dims_);
+      printf("norm constant1 is %f..\n",norm_const1);
       double norm_const2=gk_intra_.CalcNormConstant(num_dims_);
-      double norm_const=norm_const1*norm_const1*norm_const2;
+      printf("Norm const2 is %f..\n",norm_const2);
+      double norm_const=norm_const2*norm_const2*norm_const1;
 
       printf("The normalization constant is %f\n",norm_const);
       return norm_const;
+  }
+
+  //Calculate the partial normalization constant. This is the
+  //normalization constant
+
+  double CalcNormConstantpartial1(){
+    //Calculate the normalization constant
+    
+    double norm_const1=gk_inter_.CalcNormConstant(num_dims_);
+    double norm_const2=gk_intra_.CalcNormConstant(num_dims_);
+    double norm_const=norm_const1*norm_const2;
+    
+    printf("The normalization constant is %f\n",norm_const);
+    return norm_const;
   }
   
   double EvalUnnorm(Vector &x_p, Vector &x_q,Vector &x_r,Vector &x_s){
@@ -104,10 +120,26 @@ class GaussianHyperKernel{
     return -1; //error statement
   }
 
+  double EvalUnnorm(index_t num_dim,double *x_p, double *x_q,double *x_r,double *x_s){
+    
+    Vector vec_x_p;
+    Vector vec_x_q;
+    Vector vec_x_r;
+    Vector vec_x_s;
+
+    vec_x_p.Alias (x_p,num_dim);
+    vec_x_q.Alias(x_q,num_dim);
+    vec_x_r.Alias(x_r,num_dim);
+    vec_x_s.Alias(x_s,num_dim);
+    double val;
+    val=EvalUnnorm(vec_x_p,vec_x_q,vec_x_r,vec_x_s);
+    return val;
+  }
+
 
   //This is a special function that has been created only to optimize
   //calculations. Here the hyperkernel will be calculated as the
-  //product of kernels on r,s andbetween the mean of the points
+  //product of kernels on r,s and between the mean of the points
   
   double EvalUnnormPartial1(Vector &x_p, Vector &x_q,Vector &x_r,Vector &x_s){
     
@@ -145,5 +177,21 @@ class GaussianHyperKernel{
     double hyperkernel_val=unnorm_val2*unnorm_val3;
     return hyperkernel_val;
   }
+
+
+  double EvalUnnormPartial1(index_t num_dim,double *x_p, double *x_q,double *x_r,double *x_s){
+    
+    Vector vec_x_p;
+    Vector vec_x_q;
+    Vector vec_x_r;
+    Vector vec_x_s;
+    
+    vec_x_p.Alias (x_p,num_dim);
+    vec_x_q.Alias(x_q,num_dim);
+    vec_x_r.Alias(x_r,num_dim);
+    vec_x_s.Alias(x_s,num_dim);
+    double val=EvalUnnormPartial1(vec_x_p,vec_x_q,vec_x_r,vec_x_s);
+    return val;
+ }
 };
 #endif
