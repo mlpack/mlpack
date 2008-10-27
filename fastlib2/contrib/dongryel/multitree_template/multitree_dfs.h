@@ -179,11 +179,13 @@ class MultiTreeDepthFirst {
 
   void MultiTreeDepthFirstBase_
   (const ArrayList<Matrix *> &sets, ArrayList<Tree *> &trees,
-   typename MultiTreeProblem::MultiTreeQueryResult &query_results);
+   typename MultiTreeProblem::MultiTreeQueryResult &query_results,
+   double total_num_tuples);
 
   void MultiTreeDepthFirstCanonical_
   (const ArrayList<Matrix *> &sets, ArrayList<Tree *> &trees,
-   typename MultiTreeProblem::MultiTreeQueryResult &query_results);
+   typename MultiTreeProblem::MultiTreeQueryResult &query_results,
+   double total_num_tuples);
 
   void PreProcessTree_(Tree *node);
   
@@ -211,7 +213,12 @@ class MultiTreeDepthFirst {
     
 
     // Call the canonical algorithm.
-    MultiTreeDepthFirstCanonical_(sets_, trees_, *query_results);
+    double total_num_tuples = TotalNumTuples(trees_);
+    printf("There are %g tuples...\n",
+	   math::BinomialCoefficient((sets_[0])->n_cols() - 1, 
+				     MultiTreeProblem::order));
+    MultiTreeDepthFirstCanonical_(sets_, trees_, *query_results,
+				  total_num_tuples);
 
     // Postprocess the query trees, also postprocessing the final
     // query results.
@@ -236,7 +243,7 @@ class MultiTreeDepthFirst {
     }
     
     // Initialize the global parameters.
-    globals_.Init();
+    globals_.Init((sets_[0])->n_cols());
   }
 
 };
