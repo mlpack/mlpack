@@ -19,6 +19,32 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
 
   MultiTreeHelper_<0, MultiTreeProblem::order>::NestedLoop
     (globals_, sets, nodes, query_results);
+
+  // Add the postponed information to each point, without causing any
+  // duplicate information transmission.
+  for(index_t i = 0; i < MultiTreeProblem::order; i++) {
+    if(i > 0 && nodes[i] == nodes[i - 1]) {
+      continue;
+    }
+    
+    Tree *qnode = nodes[i];
+
+    // Clear the summary statistics of the current query node so that
+    // we can refine it to better bounds.
+    qnode->stat().summary.StartReaccumulate();
+
+    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+
+      // Apply postponed to each point.
+      query_results.ApplyPostponed(qnode->stat().postponed, q);
+
+      // Increment the number of (n - 1) tuples pruned. FIX ME!
+      query_results.n_pruned[q] += 0;
+    }
+
+    // Clear postponed information.
+    qnode->stat().postponed.SetZero();
+  }
 }
 
 template<typename MultiTreeProblem>
@@ -123,11 +149,19 @@ void MultiTreeDepthFirst<MultiTreeProblem>::PostProcessTree_
   
   if(node->is_leaf()) {
     for(index_t i = node->begin(); i < node->end(); i++) {
+      query_results.ApplyPostponed(node->stat().postponed, i);
       query_results.PostProcess(i);
     }
   }
   else {
+
+    // Push down postponed contributions to the left and the right.
+    node->left()->stat().postponed.ApplyPostponed(node->stat().postponed);
+    node->right()->stat().postponed.ApplyPostponed(node->stat().postponed);
+    
     PostProcessTree_(node->left(), query_results);
     PostProcessTree_(node->right(), query_results);
   }
+
+  node->stat().postponed.SetZero();
 }
