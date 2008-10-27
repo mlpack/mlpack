@@ -1,6 +1,6 @@
 #ifndef INTERIOR_POINT_PRED_CORR_H
 #define INTERIOR_POINT_PRED_CORR_H
-#include "ichol.h"
+#include "ichol_dynamic.h"
 #include "fastlib/fastlib.h"
 #include "dte.h"
 #include "special_la.h"
@@ -8,7 +8,7 @@
 #define NOT_CALCULATED 0
 #define UPDATE_FRACTION 0.05
 #define EPSILON 0.0001
-#define NUM_ITERATIONS 10
+#define NUM_ITERATIONS 15
 class HKInteriorPointPredictorCorrector{
   
  private:
@@ -75,11 +75,12 @@ class HKInteriorPointPredictorCorrector{
   //The primal and the dual variables
   Vector beta_vector_;
   Vector delta_beta_vector_;
-  Vector delta_beta_predictor_vector_;
+  
+  //The previous beta vector
+  Vector beta_vector_previous_;
 
   Vector gamma_vector_;
   Vector delta_gamma_vector_;
-  Vector delta_gamma_predictor_vector_;
 
   Vector D_vector_; //D<-\frac{\beta_i}{\gamma_i}
 
@@ -126,21 +127,60 @@ class HKInteriorPointPredictorCorrector{
 
   double ise_train_set_;
 
+  //Maximum gap ratio that you want before the predictor-corrector iteration stop
+
+  double max_gap_ratio_;
+
 
  public:
 
-  HKInteriorPointPredictorCorrector(){
+  //getter and setter functions
 
+  void get_test_densities(Vector test_densities_ext){
 
+    test_densities_ext.CopyValues(test_densities_ext);
   }
 
+  double get_negative_log_likelihood_test(){
 
+    double likelihood=1;
+    for(index_t i=0;i<num_test_points_;i++){
+
+      likelihood*=computed_test_densities_[i];      
+    }
+
+    return -log(likelihood);
+  }
+
+  double get_rmse_test(){
+
+    if(num_test_points_>0){
+
+      return DBL_MAX;
+    }
+    
+    double rmse=0;
+    for(index_t i=0;i<num_test_points_;i++){
+
+      double diff=computed_test_densities_[i]-true_test_densities_.get(0,i);
+      rmse=diff*diff;
+    }
+
+    return sqrt(rmse/num_test_points_);
+  }
+  
+  HKInteriorPointPredictorCorrector(){
+    
+    
+  }
 
   ~HKInteriorPointPredictorCorrector(){
 
 
   }
 
+ private:
+  
   void GetLinearPartOfObjective_(){
     
     GaussianHyperKernel ghk;
@@ -298,7 +338,7 @@ class HKInteriorPointPredictorCorrector{
     }
   }
 
-  //////////////////////////THE PREPROCESSING STAGE/////////////////////////////////
+  //////////////////////////THE PREPROCESSING STAGE/////////////////
 
   //This is the function that makes use of the beta vector to
   //calculate densities
@@ -319,7 +359,9 @@ class HKInteriorPointPredictorCorrector{
 
     double norm_const_hyperkernel=ghk.CalcNormConstant();
 
-    printf("Normalization constant us %f...\n",norm_const_hyperkernel);
+    printf("Normalization constant is %f...\n",norm_const_hyperkernel);
+
+    printf("Number of test points are %d..\n",num_test_points_);
 
     for(index_t test_pt=0;test_pt<num_test_points_;test_pt++){
       
@@ -376,36 +418,37 @@ class HKInteriorPointPredictorCorrector{
   //\underline{K}
 
   void ComputeISETrainSet_(){
-
     
-    IChol ichol;
+    ICholDynamic ichol_dynamic;
+    Matrix chol_factor_K_prime_matrix;
+    ArrayList <index_t> perm_mat_K_prime_matrix;
 
-    Matrix chol_factor_K_matrix;
-    ArrayList <index_t> perm_mat_K_matrix;
-    ichol.Init(train_set_,sigma_h_,sigma_,0);
-    perm_mat_K_matrix.Init(sqd_num_train_points_);
-    ichol.Compute(chol_factor_K_matrix,perm_mat_K_matrix);
-
+    ichol_dynamic.Init(train_set_,sigma_h_,sigma_,0); //lambda =0
+    perm_mat_K_prime_matrix.Init(sqd_num_train_points_);
+    ichol_dynamic.Compute(chol_factor_K_prime_matrix,perm_mat_K_prime_matrix);
+    
     printf("Cholesky of the K -matrix found..\n");
-
-    Matrix permuted_chol_factor_K_matrix;
+    
+    Matrix permuted_chol_factor_K_prime_matrix;
     special_la::
-      PreMultiplyMatrixWithPermutationMatrixInit(perm_mat_K_matrix,chol_factor_K_matrix,&permuted_chol_factor_K_matrix);
+      PreMultiplyMatrixWithPermutationMatrixInit(perm_mat_K_prime_matrix,
+						 chol_factor_K_prime_matrix,
+						 &permuted_chol_factor_K_prime_matrix);
     
     Vector A_trans_beta;
-    la::MulInit(beta_vector_,permuted_chol_factor_K_matrix,&A_trans_beta); //$A^T\beta$
-
+    la::MulInit(beta_vector_,permuted_chol_factor_K_prime_matrix,&A_trans_beta); //$A^T\beta$
+    
     double quad_value;
-
+    
     quad_value=la::Dot(A_trans_beta,A_trans_beta); //quad value is \beta^TAA^T\beta
-
+    
     double linear_value=la::Dot(beta_vector_,a_vector_);
-
+    
     ise_train_set_=quad_value-linear_value;
-
+    
     printf("The ise is of the train set is %f...\n",ise_train_set_);
   }
-
+  
   void FormScalars1_(){
 
     //s1<-c-\beta^Tv
@@ -439,8 +482,8 @@ class HKInteriorPointPredictorCorrector{
       v2_vector_[i]=numerator/val;
     }
 
-    printf("Formed vector v2 to get..\n");
-    v2_vector_.PrintDebug();
+    /*printf("Formed vector v2 to get..\n");
+      v2_vector_.PrintDebug();*/
   }
 
   void FormVectorv1_(){
@@ -541,11 +584,13 @@ class HKInteriorPointPredictorCorrector{
 
     //prod1 <-D(v1-\delta psi v)
     Vector prod1;
-    special_la::PreMultiplyVectorWithDiagonalMatrixInit(v1_minus_delta_psi_v,D_vector_,&prod1);
+    special_la::PreMultiplyVectorWithDiagonalMatrixInit(v1_minus_delta_psi_v,
+							D_vector_,&prod1);
 
    
     Vector sum_of_v2_prod1;
-    la::AddInit(prod1,v2_vector_,&sum_of_v2_prod1); //With this we have v_2+D\left(v_1-\delta_psi\right)v
+    la::AddInit(prod1,v2_vector_,&sum_of_v2_prod1); 
+    //With this we have v_2+D\left(v_1-\delta_psi\right)v
 
 
     // Form A^TDA. 
@@ -656,8 +701,10 @@ class HKInteriorPointPredictorCorrector{
 
      Vector two_M_delta_beta;
 
-     special_la::PostMultiplyMatrixWithVectorGivenCholesky(chol_factor_,perm_mat_,
-							   delta_beta_vector_,&two_M_delta_beta);
+     special_la::PostMultiplyMatrixWithVectorGivenCholesky(chol_factor_,
+							   perm_mat_,
+							   delta_beta_vector_,
+							   &two_M_delta_beta);
 	
      //Lets find 2M\delta \beta +\delta psi v
 
@@ -673,7 +720,9 @@ class HKInteriorPointPredictorCorrector{
 
     
      //Finally subtract v1
-     la::SubOverwrite(v1_vector_,two_M_delta_beta_plus_delta_psi_v,&delta_gamma_vector_);
+     la::SubOverwrite(v1_vector_,
+		      two_M_delta_beta_plus_delta_psi_v,
+		      &delta_gamma_vector_);
    }
 
    void GetTheStartPoint_(){
@@ -707,11 +756,11 @@ class HKInteriorPointPredictorCorrector{
      }
      beta_vector_[sqd_num_train_points_-1]=(primal_constant_-total_sum)/v_vector_[sqd_num_train_points_-1];
 
-     printf("beta vector is...\n");
-     beta_vector_.PrintDebug();
+     //printf("beta vector is...\n");
+     //beta_vector_.PrintDebug();
      
-     printf("gamma vector is...\n");
-     gamma_vector_.PrintDebug();
+     //printf("gamma vector is...\n");
+     //gamma_vector_.PrintDebug();
      
      
      // We shall obtain the starting point by solving a regularized KKT
@@ -868,29 +917,7 @@ class HKInteriorPointPredictorCorrector{
 
     double small_number=0.00001;
 
-    //Vector beta_temp;
-    //Vector gamma_temp;
    
-    
-    //delta_beta_predictor_vector_.PrintDebug();
-    //la::Scale(min_lambda,&delta_beta_predictor_vector_);
-
-    //la::Scale(min_lambda,&delta_beta_vector_);
- 
-    //\beta <- \beta+delta_beta
-
-      
-    //la::AddInit(delta_beta_vector_,beta_vector_,&beta_temp);
-
-    // la::Scale(min_lambda,&delta_gamma_predictor_vector_);
-
-    //la::Scale(min_lambda,&delta_gamma_vector_);
-
-    //\gamma <-\gamma+delta \gamma
-
-    //la::AddInit(delta_gamma_vector_,gamma_vector_,&gamma_temp);
-
-
     //$mu=
     //\frac{\beta^T\gamma}{m^2} \left(\frac{1-\lambda+epsilon}{10+\lambda}\right)$
 
@@ -915,7 +942,7 @@ class HKInteriorPointPredictorCorrector{
   }
 
 
-  void CalculateGap_(){
+  void CalculateGap_(double *gap,double *gap_ratio){
 
     //gap =-\beta^T \gamma+\psi(\beta^Tv-c);
 
@@ -926,14 +953,14 @@ class HKInteriorPointPredictorCorrector{
     double beta_trans_v;
     beta_trans_v=la::Dot(beta_vector_,v_vector_);
 
-    double gap=beta_trans_gamma-psi_*(beta_trans_v-primal_constant_);
+   *gap=beta_trans_gamma-psi_*(beta_trans_v-primal_constant_);
 
     
     Vector A_trans_beta;
     la::MulInit(beta_vector_,permuted_chol_factor_,&A_trans_beta); //$A^T\beta$
 
-    printf("A_trans beta is...\n");
-    A_trans_beta.PrintDebug();
+    //printf("A_trans beta is...\n");
+    //A_trans_beta.PrintDebug();
 
 
     double quad_value;
@@ -951,21 +978,51 @@ class HKInteriorPointPredictorCorrector{
 
     double function_val=quad_value-beta_trans_a;
 
-    double denominator=fabs(2*function_val+gap);
+    double denominator=fabs(2*function_val+*gap);
 
+    *gap_ratio=*gap/denominator;
+    
     printf("Quad value is %f..\n",quad_value);
-
+    
     printf("Linear value is %f..\n",beta_trans_a);
+    
+    printf("Gap is %f..\n",*gap);
 
-    printf("Gap is %f..\n",gap);
-
-    printf("Ratio is %f..\n",gap/denominator);
+    printf("Ratio is %f..\n",*gap/denominator);
 
     printf("Beta gamma product is %f..\n",beta_trans_gamma);
 
     printf("The objective function value is %f..\n",function_val);
     printf("..................................\n");
 
+  }
+
+  void CheckIfSolutionIsPositive_(){
+    
+    index_t beta_counter=0;
+    index_t gamma_counter=0;
+    for(index_t i=0;i<sqd_num_train_points_;i++){
+
+      if(beta_vector_[i]<0){
+
+	beta_counter++;
+	
+	printf("This beta vector beciame negative %f...\n",beta_vector_[i]);
+      }
+      
+      if(gamma_vector_[i]<0){
+	
+	gamma_counter++;	
+	printf("This gamma vector became negative %f...\n",gamma_vector_[i]);
+      }
+    }
+    printf("beta counter=%d and gamma counter=%d..\n",beta_counter,gamma_counter);
+    if(beta_counter>=1 ||gamma_counter>=1){
+      printf("OPtimization wasnt successful....\n");
+      exit(0);
+
+    }
+       
   }
 
   void PredictorCorrectorSteps_(){
@@ -978,7 +1035,10 @@ class HKInteriorPointPredictorCorrector{
 
 
     index_t flag;
-    while(num_iterations_<NUM_ITERATIONS){ 
+
+    double gap;
+    double gap_ratio=100;
+    while(gap_ratio>max_gap_ratio_){ 
 
 
       //We compute vectors v1,v2, s1, before taking the predictor
@@ -988,20 +1048,10 @@ class HKInteriorPointPredictorCorrector{
 
 
       GetDVector_();
-
-      printf("D vector is...\n");
-      D_vector_.PrintDebug();
       
       FormVectorv1_();
       FormVectorv2_();
       FormScalars1_();
-
-      printf("v1 vector is..\n");
-      v1_vector_.PrintDebug();
-      
-      printf("v2 vector is..\n");
-      v2_vector_.PrintDebug();
-
 
       double denominator_delta_psi=0;
       
@@ -1012,47 +1062,18 @@ class HKInteriorPointPredictorCorrector{
       
       TakePredictorStep_(&denominator_delta_psi,flag);
 
-      printf("Done with perdictor step...\n");
-
-      printf("delta psi is %f..\n",delta_psi_);
-
-      //Copy the predictor values. We shall use these values to
-      //calculate the update in mu
-
-      printf("Delta beta after the predictor step is...\n");
-      delta_beta_vector_.PrintDebug();
-
-      printf("Delta gamma after predictor step is..\n");
-      delta_gamma_vector_.PrintDebug();
-
-
-      delta_beta_predictor_vector_.CopyValues(delta_beta_vector_);
-      delta_gamma_predictor_vector_.CopyValues(delta_gamma_vector_);
-
-      printf("Finished Predcitor Step...\n");
-      
       //Since predictor step has calculated the quantity denominator_delta_psi 
       //set the flag
       
-
-      //TODO: Chnage this
-      //flag=CALCULATED;
-
-      flag=NOT_CALCULATED;
+      flag=CALCULATED;
       
       TakeCorrectorStep_(&denominator_delta_psi,flag);
       
       double min_lambda=FindStepSize_();
-
-      printf("Delta psi is %f...\n",delta_psi_);
-           
-      printf("Delta beta vector is..\n");
-      delta_beta_vector_.PrintDebug();
-
-      printf("Delta gamma vector is..\n");
-      delta_gamma_vector_.PrintDebug();
-
       
+      //Copy the previous beta vector
+
+      beta_vector_previous_.CopyValues(beta_vector_);
       //Having got the step size update the primal and the dual
       //variables
       
@@ -1062,30 +1083,26 @@ class HKInteriorPointPredictorCorrector{
       
       UpdateMu_(min_lambda);
       
-      printf("New Beta vector is..\n");
-      beta_vector_.PrintDebug();
-      
-      printf("New Gamma vector is...\n");
-      gamma_vector_.PrintDebug();
-      
-      printf("Min lambda came out to  %f..\n",min_lambda);
-      
-      printf("Psi=%f,mu=%f..\n",psi_,mu_);
-      
       FlushUpdates_();
       
-      CalculateGap_();
+      CalculateGap_(&gap,&gap_ratio);
+      
+      //Check to see if gap_ratio has become negative. In such a case
+      //revert back to the original values.
+
+      if(gap_ratio<0){
+
+	beta_vector_.CopyValues(beta_vector_previous_);
+	printf("Gamma vector and psi are stale.....\n");
+	break;
+      }
       
       printf("Finished ITERATION=%d...\n\n",num_iterations_);
       num_iterations_++;
     }
 
-    printf("At the end of iterations we have beta_vector...\n");
-    beta_vector_.PrintDebug();
-
-    printf("Mu is %f..\n",mu_);
-    printf("Primal constant is %f..\n",primal_constant_);
- 
+    CheckIfSolutionIsPositive_();
+    
   }
     
   void GetLinearPartOfObjectiveAndLinearConstraintVectors_(){
@@ -1102,47 +1119,42 @@ class HKInteriorPointPredictorCorrector{
     //constraint as the v_vector_
     
     GetLinearConstraint_();
-
-    printf("V vector is...\n");
-    v_vector_.PrintDebug();
-
-
-    printf("a vector is..\n");
-    a_vector_.PrintDebug();
+    
+    //printf("V vector is...\n");
+    //v_vector_.PrintDebug();
+    
+    
+    //printf("a vector is..\n");
+    //a_vector_.PrintDebug();
   }
   
   
   void GetCholeskyFactorizationOfMMatrix_(){
 
-    IChol ichol;
-    ichol.Init(train_set_,sigma_h_,sigma_,lambda_);
-    ichol.Compute(chol_factor_,perm_mat_);  
+    ICholDynamic ichol_dynamic;
+    ichol_dynamic.Init(train_set_,sigma_h_,sigma_,lambda_);
+    ichol_dynamic.Compute(chol_factor_,perm_mat_);  
     
     //We need the cholesky factorization of 2M everywhere.  hence we
     //shall scale the cholesky factor of M with sqrt(2).  It is
     //imperative to do the scaling now itself, so that the scaling
     //gets reflected in the permuted cholesky factor also
     
-    printf("Chsolesky is....\n");
-    chol_factor_.PrintDebug();
-
-    for(index_t i=0;i<sqd_num_train_points_;i++){
-     
-      printf("Permutation matrix[%d]=%d...\n",i,perm_mat_[i]);
-    }
 
     la::Scale(sqrt(2),&chol_factor_);
-    chol_factor_.PrintDebug();
+    //chol_factor_.PrintDebug();
     
-    //Also we use the permuted chol factor which is M=PL
+    //Also we use the permuted chol factor which is A=PL
     
     special_la::
-    PreMultiplyMatrixWithPermutationMatrixInit(perm_mat_,
-					       chol_factor_,
-					       &permuted_chol_factor_);  
+      PreMultiplyMatrixWithPermutationMatrixInit(perm_mat_,
+						 chol_factor_,
+						 &permuted_chol_factor_);  
   }
   
 
+ public:
+  
   //This function drives the whole algorithm
   void ComputeOptimalSolution(){
     
@@ -1150,51 +1162,43 @@ class HKInteriorPointPredictorCorrector{
     //The algorithm solves a QP which involves a linar term in the
     //objective and a linear constraint. Lets first get both these vectors
     
-    
+    fx_timer_start(NULL,"preprocess");
     GetLinearPartOfObjectiveAndLinearConstraintVectors_();
     
     
     //Get the Cholesky factiorization of the matrix M
     
-    GetCholeskyFactorizationOfMMatrix_();
+     GetCholeskyFactorizationOfMMatrix_();
      
+
+    fx_timer_stop(NULL,"preprocess");
     printf("Preprocessing steps are all done..\n");
 
     //having obtained the vectors the algorithm works by taking a
     //predictor step and followed by a corrector step
     
+    fx_timer_start(NULL,"opt");
     PredictorCorrectorSteps_();
+    fx_timer_stop(NULL,"opt");
+
+
+    printf("Optimization over...\n");
     ComputeDensitiesOfTestPoints_();
-    ComputeISETrainSet_(); 
+    ComputeISETrainSet_();
+    printf("Postprocessing step over...\n");
+
+
   }
 
   //We shall initialize all variables and set up for the primal dual
   //iteration
 
-  void Init(Matrix &train_set, struct datanode *module_in){
+  void Init(Matrix &train_set, Matrix &test_data,struct datanode *module_in){
     
     //set the module to the incoming module
     module_=module_in;
     train_set_.Alias(train_set);
     num_train_points_=train_set_.n_cols();
-    
-    //Check for the existence of a query set and accordingly read data
-    if(fx_param_exists(module_,"test")){
-      
-      //Load the dataset
-      const char *test_file=fx_param_str_req(module_,"test");
-      data::Load(test_file,&test_set_);
-      num_test_points_=test_set_.n_cols();
-      
-      //Since there is a  test file hence we shall compute the test densities
-      computed_test_densities_.Init(test_set_.n_cols());
-    }
-    else{
-      
-      test_set_.Init(0,0); //This avoids segmentation fault
-      computed_test_densities_.Init(0);
-      num_test_points_=0;
-    }
     
     if(fx_param_exists(module_,"true")){
       
@@ -1206,6 +1210,21 @@ class HKInteriorPointPredictorCorrector{
     else{
       true_test_densities_.Init(0,0);
     }
+
+    if(fx_param_exists(module_,"test")){
+     
+      num_test_points_=test_set_.n_cols();
+      
+      //Since there is a test file hence we shall compute the test
+      //densities
+      computed_test_densities_.Init(test_set_.n_cols());
+    }
+    else{
+      
+      test_set_.Init(0,0); //This avoids segmentation fault
+      computed_test_densities_.Init(0);
+      num_test_points_=0;
+    }
     
     //This ends the necessaary file reading routines. Lets read the
     //parameters of the gaussian kernel and the regularization
@@ -1214,6 +1233,11 @@ class HKInteriorPointPredictorCorrector{
     sigma_=fx_param_double_req(module_,"sigma");
     sigma_h_=fx_param_double_req(module_,"sigma_h");
     lambda_=fx_param_double_req(module_,"lambda");
+
+ 
+    max_gap_ratio_=fx_param_double(module_,"max_gap_ratio",0.00001);
+    
+    
 
     //The dimensionality of the dataset
     num_dims_=train_set_.n_rows();
@@ -1236,8 +1260,9 @@ class HKInteriorPointPredictorCorrector{
     delta_beta_vector_.Init(sqd_num_train_points_);
     delta_gamma_vector_.Init(sqd_num_train_points_);
 
-    delta_beta_predictor_vector_.Init(sqd_num_train_points_);
-    delta_gamma_predictor_vector_.Init(sqd_num_train_points_);
+    //Initialize the beta_vector_previous too
+
+    beta_vector_previous_.Init(sqd_num_train_points_);
 
     //The permutation matrix. This will be used along with the chol
     //factor in calculations
