@@ -14,34 +14,52 @@ class AxilrodTellerForceProblem {
   class MultiTreeDelta {
 
    public:
-    Vector negative_force_vector_e;
 
-    double l1_norm_negative_force_vector_u;
+    Matrix negative_force_vector_e;
 
-    double l1_norm_positive_force_vector_l;
+    Vector l1_norm_negative_force_vector_u;
 
-    Vector positive_force_vector_e;
+    Vector l1_norm_positive_force_vector_l;
 
-    double n_pruned;
+    Matrix positive_force_vector_e;
+
+    Vector n_pruned;
     
-    double used_error;
+    Vector used_error;
     
    public:
+
+    template<typename TGlobal, typename Tree>
+    bool ComputeFiniteDifference(TGlobal &globals,
+				 ArrayList<Tree *> &nodes) {
+
+      // If any of the distance evaluation resulted in zero minimum
+      // distance, then return false.
+      return globals.kernel_aux.ComputeFiniteDifference
+	(globals, nodes, negative_force_vector_e,
+	 l1_norm_negative_force_vector_u, l1_norm_positive_force_vector_l,
+	 positive_force_vector_e, n_pruned, used_error);
+    }
+
     void SetZero() {
       negative_force_vector_e.SetZero();
-      l1_norm_negative_force_vector_u = 0;
-      l1_norm_positive_force_vector_l = 0;
+      l1_norm_negative_force_vector_u.SetZero();
+      l1_norm_positive_force_vector_l.SetZero();
       positive_force_vector_e.SetZero();
-      n_pruned = 0;
-      used_error = 0;
+      n_pruned.SetZero();
+      used_error.SetZero();
     }
 
     void Init() {
 
       // Hard-codes to use 3-dimensional vectors.
-      negative_force_vector_e.Init(3);
-      positive_force_vector_e.Init(3);
-
+      negative_force_vector_e.Init(3, 3);
+      l1_norm_negative_force_vector_u.Init(3);
+      l1_norm_positive_force_vector_l.Init(3);
+      positive_force_vector_e.Init(3, 3);
+      n_pruned.Init(3);
+      used_error.Init(3);
+            
       // Initializes to zeros...
       SetZero();
     }    
@@ -63,17 +81,17 @@ class AxilrodTellerForceProblem {
     
     double used_error;
 
-    void ApplyDelta(const MultiTreeDelta &delta_in) {
-      la::AddTo(3, delta_in.negative_force_vector_e.ptr(),
+    void ApplyDelta(const MultiTreeDelta &delta_in, index_t node_index) {
+      la::AddTo(3, delta_in.negative_force_vector_e.GetColumnPtr(node_index),
 		negative_force_vector_e.ptr());
       l1_norm_negative_force_vector_u += 
-	delta_in.l1_norm_negative_force_vector_u;
+	delta_in.l1_norm_negative_force_vector_u[node_index];
       l1_norm_positive_force_vector_l +=
-	delta_in.l1_norm_positive_force_vector_l;
-      la::AddTo(3, delta_in.positive_force_vector_e.ptr(),
+	delta_in.l1_norm_positive_force_vector_l[node_index];
+      la::AddTo(3, delta_in.positive_force_vector_e.GetColumnPtr(node_index),
 		positive_force_vector_e.ptr());
-      n_pruned += delta_in.n_pruned;
-      used_error += delta_in.used_error;
+      n_pruned += delta_in.n_pruned[node_index];
+      used_error += delta_in.used_error[node_index];
     }
 
     void ApplyPostponed(const MultiTreeQueryPostponed &postponed_in) {
@@ -120,6 +138,13 @@ class AxilrodTellerForceProblem {
     
     double used_error_u;
 
+    OT_DEF_BASIC(MultiTreeQuerySummary) {
+      OT_MY_OBJECT(l1_norm_negative_force_vector_u);
+      OT_MY_OBJECT(l1_norm_positive_force_vector_l);
+      OT_MY_OBJECT(n_pruned_l);
+      OT_MY_OBJECT(used_error_u);
+    }
+
    public:
 
     void SetZero() {
@@ -129,6 +154,14 @@ class AxilrodTellerForceProblem {
       used_error_u = 0;
     }
     
+    void ApplyDelta(const MultiTreeDelta &delta_in, index_t delta_index) {
+      
+      l1_norm_negative_force_vector_u +=
+	delta_in.l1_norm_negative_force_vector_u[delta_index];
+      l1_norm_positive_force_vector_l +=
+	delta_in.l1_norm_positive_force_vector_l[delta_index];      
+    }
+
     void ApplyPostponed(const MultiTreeQueryPostponed &postponed_in) {
       l1_norm_negative_force_vector_u += 
 	postponed_in.l1_norm_negative_force_vector_u;
@@ -238,12 +271,18 @@ class AxilrodTellerForceProblem {
 
     Matrix force_vector_e;
 
+    Vector n_pruned;
+    
+    Vector used_error;
+
     OT_DEF_BASIC(MultiTreeQueryResult) {
       OT_MY_OBJECT(l1_norm_positive_force_vector_l);
       OT_MY_OBJECT(positive_force_vector_e);
       OT_MY_OBJECT(negative_force_vector_e);
       OT_MY_OBJECT(l1_norm_negative_force_vector_u);
       OT_MY_OBJECT(force_vector_e);
+      OT_MY_OBJECT(n_pruned);
+      OT_MY_OBJECT(used_error);
     }
 
    public:
@@ -259,6 +298,8 @@ class AxilrodTellerForceProblem {
 		negative_force_vector_e.GetColumnPtr(q_index));
       l1_norm_negative_force_vector_u[q_index] +=
 	postponed_in.l1_norm_negative_force_vector_u;
+      n_pruned[q_index] += postponed_in.n_pruned;
+      used_error[q_index] += postponed_in.used_error;
     }
 
     void Init(int num_queries) {
@@ -267,6 +308,8 @@ class AxilrodTellerForceProblem {
       negative_force_vector_e.Init(3, num_queries);
       l1_norm_negative_force_vector_u.Init(num_queries);
       force_vector_e.Init(3, num_queries);
+      n_pruned.Init(num_queries);
+      used_error.Init(num_queries);
 
       SetZero();
     }
@@ -303,6 +346,8 @@ class AxilrodTellerForceProblem {
       negative_force_vector_e.SetZero();
       l1_norm_negative_force_vector_u.SetZero();
       force_vector_e.SetZero();
+      n_pruned.SetZero();
+      used_error.SetZero();
     }
   };
 
@@ -321,26 +366,65 @@ class AxilrodTellerForceProblem {
      */
     ArrayList<index_t> chosen_indices;
 
+    /** @brief The total number of 3-tuples that contain a particular
+     *         particle.
+     */
+    double total_n_minus_one_tuples;
+
    public:
 
-    void Init() {
+    void Init(index_t total_num_particles) {
 
       kernel_aux.Init();
       chosen_indices.Init(AxilrodTellerForceProblem::order);
+      
+      total_n_minus_one_tuples = 
+	math::BinomialCoefficient(total_num_particles - 1,
+				  AxilrodTellerForceProblem::order - 1);
     }
 
   };
 
-  /** @brief The order of interaction is 3-tuple problem.
+  /** @brief The order of interaction is 3-tuple problem. I
    */
   static const int order = 3;
 
   template<typename MultiTreeGlobal, typename Tree>
-  static bool ConsiderTupleExact(const MultiTreeGlobal &globals,
+  static bool ConsiderTupleExact(MultiTreeGlobal &globals,
 				 ArrayList<Tree *> &nodes) {
     
+    if(nodes[0] == nodes[1] || nodes[0] == nodes[2] &&
+       nodes[1] == nodes[2]) {
+      return false;
+    }
+    
     // Need to fill this out...
-    return false;
+    MultiTreeDelta delta;
+    delta.Init();
+    if(!delta.ComputeFiniteDifference(globals, nodes)) {
+      return false;
+    }
+
+    // Consider each node in turn whether it can be pruned or not.
+    for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
+
+      // Refine the summary statistics from the new info...
+      AxilrodTellerForceProblem::MultiTreeQuerySummary new_summary;
+      new_summary.InitCopy(nodes[i]->stat().summary);
+      new_summary.ApplyPostponed(nodes[i]->stat().postponed);
+      new_summary.ApplyDelta(delta, i);
+
+      if(delta.used_error[i] > 1) {
+	return false;
+      }
+    }
+
+    // In this case, add the delta contributions to the postponed
+    // slots of each node.
+    for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
+      nodes[i]->stat().postponed.ApplyDelta(delta, i);
+    }
+    return true;
   }
 
 };
