@@ -24,7 +24,7 @@ int main(int argc, char *argv[]){
   
   lower_triang.set(1,1,4);
 
-  usual_mat.Init(3,2);
+  usual_mat.Init(3,3);
 
   usual_mat.set(0,0,1);
   usual_mat.set(1,0,2);
@@ -34,6 +34,9 @@ int main(int argc, char *argv[]){
   usual_mat.set(1,1,4);
   usual_mat.set(2,1,5);
 
+  usual_mat.set(0,2,4);
+  usual_mat.set(1,2,5);
+  usual_mat.set(2,2,6);
 
 
 
@@ -51,8 +54,8 @@ int main(int argc, char *argv[]){
 
 
 
-  printf("Upper triangular matrix is..\n");
-  upper_triang_mat.PrintDebug();
+  //printf("Upper triangular matrix is..\n");
+  //upper_triang_mat.PrintDebug();
 
 
   printf("usual matrix is...\n");
@@ -83,11 +86,7 @@ int main(int argc, char *argv[]){
   L_mat.set(2,0,3);
 
   ArrayList <index_t> perm;
-  perm.Init(3);
-
-  perm[0]=0;
-  perm[1]=1;
-  perm[2]=2;
+ 
 
   Vector diag;
   diag.Init(3);
@@ -102,8 +101,8 @@ int main(int argc, char *argv[]){
   alpha[1]=2;
   alpha[2]=3;
 
-  printf("Everything initialized. Will do matrix inverse vector calculation...\n");
-  Vector res;
+  //printf("Everything initialized. Will do matrix inverse vector calculation...\n");
+  
   //special_la::MatrixInverseTimesVectorInit(L_mat,diag,alpha,&res);
  
 
@@ -120,8 +119,8 @@ int main(int argc, char *argv[]){
   perm_mat[2]=1;
    
   
-  special_la::PostMultiplyMatrixWithVectorGivenCholeskyInit(chol_factor,perm_mat,alpha,&res);
-
+  //special_la::PostMultiplyMatrixWithVectorGivenCholeskyInit(chol_factor,perm_mat,alpha,&res);
+    
   Vector test;
   test.Init(3);
   test[0]=1;
@@ -129,4 +128,12 @@ int main(int argc, char *argv[]){
   test[2]=3;
 
   test.PrintDebug();
+
+  usual_mat.PrintDebug();
+
+  Matrix res;
+  special_la::PreMultiplyMatrixWithPermutationMatrixInit(perm_mat,usual_mat,&res);
+
+  printf("Result of pre multiplication with a permutation matrix is...\n");
+  res.PrintDebug();
 }
