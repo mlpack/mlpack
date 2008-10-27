@@ -147,6 +147,20 @@ class AxilrodTellerForceProblem {
 
    public:
 
+    template<typename TQueryResult>
+    void Accumulate(const TQueryResult &query_results, index_t q_index) {
+      l1_norm_negative_force_vector_u =
+	std::min(l1_norm_negative_force_vector_u,
+		 query_results.l1_norm_negative_force_vector_u[q_index]);
+      l1_norm_positive_force_vector_l =
+	std::min(l1_norm_positive_force_vector_l,
+		 query_results.l1_norm_positive_force_vector_l[q_index]);
+      n_pruned_l =
+	std::min(n_pruned_l, query_results.n_pruned[q_index]);
+      used_error_u =
+	std::max(used_error_u, query_results.used_error[q_index]);
+    }
+
     void SetZero() {
       l1_norm_negative_force_vector_u = 0;
       l1_norm_positive_force_vector_l = 0;
@@ -332,8 +346,8 @@ class AxilrodTellerForceProblem {
 	  fprintf(stream, "%g ", force_vector_e_column[d]);
 	}
 
-	fprintf(stream, "%g %g", l1_norm_positive_force_vector_l[q],
-		l1_norm_negative_force_vector_u[q]);
+	fprintf(stream, "%g %g %g", l1_norm_positive_force_vector_l[q],
+		l1_norm_negative_force_vector_u[q], n_pruned[q]);
 	fprintf(stream, "\n");
       }
       
@@ -391,7 +405,8 @@ class AxilrodTellerForceProblem {
 
   template<typename MultiTreeGlobal, typename Tree>
   static bool ConsiderTupleExact(MultiTreeGlobal &globals,
-				 ArrayList<Tree *> &nodes) {
+				 ArrayList<Tree *> &nodes,
+				 double total_num_tuples) {
     
     if(nodes[0] == nodes[1] || nodes[0] == nodes[2] &&
        nodes[1] == nodes[2]) {
@@ -414,7 +429,7 @@ class AxilrodTellerForceProblem {
       new_summary.ApplyPostponed(nodes[i]->stat().postponed);
       new_summary.ApplyDelta(delta, i);
 
-      if(delta.used_error[i] > 1) {
+      if(true) {
 	return false;
       }
     }

@@ -283,14 +283,6 @@ class AxilrodTellerForceKernelAux {
 
   Matrix upper_bound_negative_contributions_;
 
-  Vector negative_contributions_error_;
-  
-  Vector positive_contributions_error_;
-
-  Vector l1_norm_negative_change_;
-
-  Vector l1_norm_positive_change_;
-
   GenVector<int> first_index;
   GenVector<int> second_index;
   GenVector<int> third_index;
@@ -325,9 +317,6 @@ class AxilrodTellerForceKernelAux {
     upper_bound_positive_contributions_.Init(3, 3);
     lower_bound_negative_contributions_.Init(3, 3);
     upper_bound_negative_contributions_.Init(3, 3);
-
-    l1_norm_negative_change_.Init(3);
-    l1_norm_positive_change_.Init(3);
 
     // Index permutation stuff...
     first_index.Init(3);
