@@ -15,7 +15,8 @@ void MultiTreeDepthFirst<MultiTreeProblem>::Heuristic_
 template<typename MultiTreeProblem>
 void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
 (const ArrayList<Matrix *> &sets, ArrayList<Tree *> &nodes,
- typename MultiTreeProblem::MultiTreeQueryResult &query_results) {
+ typename MultiTreeProblem::MultiTreeQueryResult &query_results,
+ double total_num_tuples) {
 
   MultiTreeHelper_<0, MultiTreeProblem::order>::NestedLoop
     (globals_, sets, nodes, query_results);
@@ -33,13 +34,37 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
     // we can refine it to better bounds.
     qnode->stat().summary.StartReaccumulate();
 
+    double factor = 1.0;
+    int numerator = nodes[i]->count();
+    int equal_count = 0;
+    for(index_t j = i; j >= 0; j--) {
+      if(nodes[j] == nodes[i]) {
+	equal_count++;
+      }
+      else {
+	break;
+      }
+    }
+    for(index_t j = i + 1; j < MultiTreeProblem::order; j++) {
+      if(nodes[j] == nodes[i]) {
+	equal_count++;
+      }
+      else {
+	break;
+      }
+    }
+    factor = ((double) numerator) / ((double) equal_count);
+
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
 
       // Apply postponed to each point.
       query_results.ApplyPostponed(qnode->stat().postponed, q);
 
-      // Increment the number of (n - 1) tuples pruned. FIX ME!
-      query_results.n_pruned[q] += 0;
+      // Refine statistics.
+      qnode->stat().summary.Accumulate(query_results, q);
+
+      // Increment the number of (n - 1) tuples pruned.
+      query_results.n_pruned[q] += total_num_tuples / factor;
     }
 
     // Clear postponed information.
@@ -61,9 +86,10 @@ void MultiTreeDepthFirst<MultiTreeProblem>::CopyNodeSet_
 template<typename MultiTreeProblem>
 void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
 (const ArrayList<Matrix *> &sets, ArrayList<Tree *> &nodes,
- typename MultiTreeProblem::MultiTreeQueryResult &query_results) {
+ typename MultiTreeProblem::MultiTreeQueryResult &query_results,
+ double total_num_tuples) {
   
-  if(MultiTreeProblem::ConsiderTupleExact(globals_, nodes)) {
+  if(MultiTreeProblem::ConsiderTupleExact(globals_, nodes, total_num_tuples)) {
     return;
   }
 
@@ -74,7 +100,7 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
   
   // All leaves, then base case.
   if(split_index < 0) {
-    MultiTreeDepthFirstBase_(sets, nodes, query_results);
+    MultiTreeDepthFirstBase_(sets, nodes, query_results, total_num_tuples);
     return;
   }
   
@@ -100,7 +126,8 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
     
     // If the current node combination is valid, then recurse.
     if(new_num_tuples > 0) {
-      MultiTreeDepthFirstCanonical_(sets, new_nodes, query_results);
+      MultiTreeDepthFirstCanonical_(sets, new_nodes, query_results,
+				    new_num_tuples);
     }
     
     // Recurse to the right.
@@ -109,7 +136,8 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
     
     // If the current node combination is valid, then recurse.
     if(new_num_tuples > 0) {
-      MultiTreeDepthFirstCanonical_(sets, new_nodes, query_results);
+      MultiTreeDepthFirstCanonical_(sets, new_nodes, query_results,
+				    new_num_tuples);
     }
     
     // Apply the postponed changes for both child nodes.
