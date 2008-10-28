@@ -146,6 +146,29 @@ class MultiTreeDepthFirst {
     PostProcessTree_(trees_[0], *query_results);
   }
 
+  void NaiveCompute(typename MultiTreeProblem::MultiTreeQueryResult
+		    *query_results) {
+    
+    // Assume that the query is the 0-th index.
+    query_results->Init((sets_[0])->n_cols());
+
+    // Preprocess the query trees.
+    
+
+    // Call the canonical algorithm.
+    double total_num_tuples = TotalNumTuples(trees_);
+    total_n_minus_one_tuples_root_ = total_n_minus_one_tuples_[0];
+
+    printf("There are %g tuples...\n",
+	   math::BinomialCoefficient((sets_[0])->n_cols() - 1, 
+				     MultiTreeProblem::order));
+    MultiTreeDepthFirstBase_(sets_, trees_, *query_results, total_num_tuples);
+
+    // Postprocess the query trees, also postprocessing the final
+    // query results.
+    PostProcessTree_(trees_[0], *query_results);
+  }
+
   void Init(const ArrayList<Matrix *> &sets) {
     
     // Copy the dataset and build the trees.
