@@ -42,11 +42,15 @@ int main(int argc, char *argv[]) {
   fx_timer_stop(fx_root, "multitree");
 
   results.PrintDebug("force_vectors.txt");
+  printf("Got %d finite difference prunes...\n",
+	 results.num_finite_difference_prunes);
   
   fx_timer_start(fx_root, "naive_code");
   algorithm.NaiveCompute(&naive_results);
   fx_timer_stop(fx_root, "naive_code");
   naive_results.PrintDebug("naive_force_vectors.txt");
+  printf("Maximum relative error: %g\n",
+	 naive_results.MaximumRelativeError(results));
 
   fx_done(fx_root);
   return 0;

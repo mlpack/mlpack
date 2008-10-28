@@ -290,6 +290,10 @@ class AxilrodTellerForceProblem {
     
     Vector used_error;
 
+    /** @brief The number of finite-difference prunes.
+     */
+    int num_finite_difference_prunes;
+
     OT_DEF_BASIC(MultiTreeQueryResult) {
       OT_MY_OBJECT(l1_norm_positive_force_vector_l);
       OT_MY_OBJECT(positive_force_vector_e);
@@ -298,10 +302,31 @@ class AxilrodTellerForceProblem {
       OT_MY_OBJECT(force_vector_e);
       OT_MY_OBJECT(n_pruned);
       OT_MY_OBJECT(used_error);
+      OT_MY_OBJECT(num_finite_difference_prunes);
     }
 
    public:
-    
+
+    double MaximumRelativeError(const MultiTreeQueryResult &other_results) {
+      double max_relative_error = 0;
+      
+      for(index_t i = 0; i < used_error.length(); i++) {
+	double l1_norm_error = 
+	  la::RawLMetric<1>(force_vector_e.n_rows(),
+			    force_vector_e.GetColumnPtr(i),
+			    other_results.force_vector_e.GetColumnPtr(i));
+	double l1_norm_exact = 0;
+	const double *exact_vector = force_vector_e.GetColumnPtr(i);
+	for(index_t d = 0; d < force_vector_e.n_rows(); d++) {
+	  l1_norm_exact += fabs(exact_vector[d]);
+	}
+	
+	max_relative_error = std::max(max_relative_error,
+				      l1_norm_error / l1_norm_exact);
+      }
+      return max_relative_error;
+    }
+
     void ApplyPostponed(const MultiTreeQueryPostponed &postponed_in, 
 			index_t q_index) {
       
@@ -363,6 +388,7 @@ class AxilrodTellerForceProblem {
       force_vector_e.SetZero();
       n_pruned.SetZero();
       used_error.SetZero();
+      num_finite_difference_prunes = 0;
     }
   };
 
@@ -405,8 +431,10 @@ class AxilrodTellerForceProblem {
   static const int order = 3;
   static const double relative_error_ = 0.1;
 
-  template<typename MultiTreeGlobal, typename Tree>
+  template<typename MultiTreeGlobal, typename MultiTreeQueryResult,
+	   typename Tree>
   static bool ConsiderTupleExact(MultiTreeGlobal &globals,
+				 MultiTreeQueryResult &results,
 				 ArrayList<Tree *> &nodes,
 				 double total_num_tuples,
 				 double total_n_minus_one_tuples_root,
@@ -452,6 +480,8 @@ class AxilrodTellerForceProblem {
     for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
       nodes[i]->stat().postponed.ApplyDelta(delta, i);
     }
+    
+    results.num_finite_difference_prunes++;
     return true;
   }
 
