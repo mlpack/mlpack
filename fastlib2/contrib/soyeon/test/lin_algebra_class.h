@@ -11,7 +11,8 @@ class QuadraticObjective {
   void ComputeHessian(Vector &x, Matrix *hessian);
  private:
   Matrix quadratic_term_;
-  Vector linear_term_; 
+  Vector linear_term_;
+  Matrix sum_quad_;
 };
 
 

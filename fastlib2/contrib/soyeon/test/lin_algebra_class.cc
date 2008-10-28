@@ -14,6 +14,21 @@ void QuadraticObjective::ComputeObjective(Vector &x, double *objective) {
   DEBUG_SAME_SIZE(x.length(), quadratic_term_.n_rows()); 
   Vector temp1;
   la::MulInit(x, quadratic_term_, &temp1);
-  *objective = la::Dot(x, temp1) + la::Dot(linear_term, x);
+  *objective = la::Dot(temp1, x) + la::Dot(linear_term, x);
+}
+
+void ComputeGradient(Vector &x, Vector *gradient){
+  Matrix quadratic_trans;
+  la::TransposeInit(&quadratic_term, *quadratic_trans);
+  //Matrix sum_quad;
+  la::AddInit(&quadratic_term, &quadratic_trans, *sum_quad);
+  Vector temp2;
+  la::MulInit(&sum_quad, &x, *temp2);
+  la::AddInit(&linear_term, &temp2, *gradient);
+
+}
+
+void ComputeHessian(Vector &x, Matrix *hessian){
+  *hessian = &sum_quad;
 }
 
