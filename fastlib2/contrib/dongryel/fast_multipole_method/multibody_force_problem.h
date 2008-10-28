@@ -403,6 +403,7 @@ class AxilrodTellerForceProblem {
   /** @brief The order of interaction is 3-tuple problem. I
    */
   static const int order = 3;
+  static const double relative_error_ = 0.1;
 
   template<typename MultiTreeGlobal, typename Tree>
   static bool ConsiderTupleExact(MultiTreeGlobal &globals,
@@ -437,10 +438,10 @@ class AxilrodTellerForceProblem {
       double ratio = total_n_minus_one_tuples[i] / 
 	(total_n_minus_one_tuples_root - new_summary.n_pruned_l);
       
-      if((0.01 * (new_summary.l1_norm_negative_force_vector_u +
-		  new_summary.l1_norm_positive_force_vector_l) -
-	  new_summary.used_error_u) * ratio <
-	 delta.used_error[i]) {
+      if((AxilrodTellerForceProblem::relative_error_ *
+	  (new_summary.l1_norm_negative_force_vector_u +
+	   new_summary.l1_norm_positive_force_vector_l) -
+	  new_summary.used_error_u) * ratio < delta.used_error[i]) {
 	
 	return false;
       }

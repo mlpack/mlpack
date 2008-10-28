@@ -34,6 +34,7 @@ int main(int argc, char *argv[]) {
 
   MultiTreeDepthFirst<AxilrodTellerForceProblem> algorithm;
   AxilrodTellerForceProblem::MultiTreeQueryResult results;
+  AxilrodTellerForceProblem::MultiTreeQueryResult naive_results;
   algorithm.Init(sets);
 
   fx_timer_start(fx_root, "multitree");
@@ -42,6 +43,11 @@ int main(int argc, char *argv[]) {
 
   results.PrintDebug("force_vectors.txt");
   
+  fx_timer_start(fx_root, "naive_code");
+  algorithm.NaiveCompute(&naive_results);
+  fx_timer_stop(fx_root, "naive_code");
+  naive_results.PrintDebug("naive_force_vectors.txt");
+
   fx_done(fx_root);
   return 0;
 }
