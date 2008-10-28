@@ -3,8 +3,8 @@ binrule(name="hello",
         deplibs=["fastlib:fastlib"])
 
 librule(name="lin_test",
-        headers=["linear_algebra_class.h"],
-        sources=["linear_algebra_class.cc"],
+        headers=["lin_algebra_class.h"],
+        sources=["lin_algebra_class.cc"],
         deplibs=["fastlib:fastlib"])
 
 binrule(name="main", 

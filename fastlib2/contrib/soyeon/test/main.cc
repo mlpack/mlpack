@@ -3,24 +3,34 @@
 
 int main(int argc, char *argv[]) {
 
-  fx_init(argc,argv);
+  fx_module *fx_root = fx_init(argc, argv, NULL);
 
-  QuadraticAlgebraClass my_objective;
+  QuadraticObjective my_objective;
 
-  const char* current_x_file_name = fx_param_str_req(NULL, "xdata");
-  const char* quadratic_term_file_name = fx_param_str_req(NULL, "qdata");
-  const char* linear_term_file_name = fx_param_str_req(NULL, "ldata");
 
-  Vector current_x;
-  Matrix quad;
-  Vector lin;
+  const char* initial_solution_file = fx_param_str(fx_root, "xinit_file", "xinit.csv");
+  const char* quadratic_term_file = fx_param_str_req(fx_root, "qdata");
+  const char* linear_term_file = fx_param_str_req(fx_root, "ldata");
+  index_t problem_id = fx_param_int_req(fx_root, "problem_id");
 
-  data::Load(current_x_file_name, &current_x);  
-  data::Load(quadratic_term_file_name, &quad);
-  data::Load(linear_term_file_name, &lin);
+  Vector initial_x;
+  Matrix quadratic_term;
+  Vector linear_term;
+  Matrix initial_x_mat;
+  if (data::Load(initial_solution_file, &initial_x_mat)==SUCCESS_FAIL) {
+    FATAL("File %s not found", initial_solution_file);
+  };  
+  initial_x_mat.MakeColumnVector(0, &initial_x);
+  if (data::Load(quadratic_term_file, &quadratic_term)==SUCCESS_FAIL) {
+    FATAL("File %s not found", quadratic_term_file);
+  } 
+  Matrix linear_term_mat;
+  data::Load(linear_term_file, &linear_term_mat);
+  linear_term_mat.MakeColumnVector(0, &linear_term);
 
-  my_objective.Init(quad, lin);
-  my_objective.ComputeObjective()
+  my_objective.Init(quadratic_term, linear_term);
+  double dummy_objective;
+  my_objective.ComputeObjective(initial_x, &dummy_objective);
 
 
 }
