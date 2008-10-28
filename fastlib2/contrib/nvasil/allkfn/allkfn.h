@@ -114,7 +114,7 @@ class AllkFN {
   // The indices of the candidate nearest neighbor for each query
   ArrayList<index_t> neighbor_indices_;
   // number of nearest neighbrs
-  index_t knns_; 
+  index_t kfns_; 
    // The module containing the parameters for this computation. 
   struct datanode* module_;
   
@@ -178,7 +178,7 @@ class AllkFN {
     
     // Used to find the query node's new upper bound
     double query_min_neighbor_distance = DBL_MAX;
-    std::vector<std::pair<double, index_t> > neighbors(knns_);
+    std::vector<std::pair<double, index_t> > neighbors(kfns_);
     // node->begin() is the index of the first point in the node, 
     // node->end is one past the last index
     for (index_t query_index = query_node->begin(); 
@@ -188,8 +188,8 @@ class AllkFN {
       Vector query_point;
       queries_.MakeColumnVector(query_index, &query_point);
       
-      index_t ind = query_index*knns_;
-      for(index_t i=0; i<knns_; i++) {
+      index_t ind = query_index*kfns_;
+      for(index_t i=0; i<kfns_; i++) {
         neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
                                     neighbor_indices_[ind+i]);
       }
@@ -208,21 +208,21 @@ class AllkFN {
 	        la::DistanceSqEuclidean(query_point, reference_point);
 	        // If the reference point is closer than the current candidate, 
 	        // we'll update the candidate
-	        if (distance > neighbor_distances_[ind+knns_-1]) {
+	        if (distance > neighbor_distances_[ind+kfns_-1]) {
 	          neighbors.push_back(std::make_pair(distance, reference_index));
           }
 	      }
 	    } // for reference_index
       std::sort(neighbors.begin(), neighbors.end(),
          std::greater<std::pair<double, index_t> >());
-      for(index_t i=0; i<knns_; i++) {
+      for(index_t i=0; i<kfns_; i++) {
         neighbor_distances_[ind+i] = neighbors[i].first;
         neighbor_indices_[ind+i]  = neighbors[i].second;
       }
-      neighbors.resize(knns_);
+      neighbors.resize(kfns_);
       // We need to find the lower bound distance for this query node
-      if (neighbor_distances_[ind+knns_-1] < query_min_neighbor_distance) {
-        query_min_neighbor_distance = neighbor_distances_[ind+knns_-1]; 
+      if (neighbor_distances_[ind+kfns_-1] < query_min_neighbor_distance) {
+        query_min_neighbor_distance = neighbor_distances_[ind+kfns_-1]; 
       }
     }
     // for query_index 
@@ -373,13 +373,13 @@ class AllkFN {
     DEBUG_SAME_SIZE(queries_.n_rows(), references_.n_rows());
     
 		// K-nearest neighbors initialization
-		knns_ = fx_param_int(module_, "knns", 5);
+		kfns_ = fx_param_int(module_, "kfns", 1);
   
     // Initialize the list of nearest neighbor candidates
-    neighbor_indices_.Init(queries_.n_cols() * knns_);
+    neighbor_indices_.Init(queries_.n_cols() * kfns_);
     
 		// Initialize the vector of upper bounds for each point.  
-    neighbor_distances_.Init(queries_.n_cols() * knns_);
+    neighbor_distances_.Init(queries_.n_cols() * kfns_);
     neighbor_distances_.SetAll(0);
 
     // We'll time tree building
@@ -418,13 +418,13 @@ class AllkFN {
     references_.Copy(references_in);
     queries_.Alias(references_);    
 		// K-nearest neighbors initialization
-		knns_ = fx_param_int(module_, "knns", 5);
+		kfns_ = fx_param_int(module_, "kfns", 1);
   
     // Initialize the list of nearest neighbor candidates
-    neighbor_indices_.Init(references_.n_cols() * knns_);
+    neighbor_indices_.Init(references_.n_cols() * kfns_);
     
 		// Initialize the vector of upper bounds for each point.  
-    neighbor_distances_.Init(references_.n_cols() * knns_);
+    neighbor_distances_.Init(references_.n_cols() * kfns_);
     neighbor_distances_.SetAll(0.0);
 
     // We'll time tree building
@@ -442,7 +442,7 @@ class AllkFN {
 
   }
   void Init(const Matrix& queries_in, const Matrix& references_in, 
-      index_t leaf_size, index_t knns) {
+      index_t leaf_size, index_t kfns) {
     
     // track the number of prunes
     number_of_prunes_ = 0;
@@ -451,9 +451,9 @@ class AllkFN {
     leaf_size_ = leaf_size;
     DEBUG_ASSERT(leaf_size_ > 0);
     
-    // Make sure the knns is valid
-    knns_ = knns;
-    DEBUG_ASSERT(knns_ > 0);
+    // Make sure the kfns is valid
+    kfns_ = kfns;
+    DEBUG_ASSERT(kfns_ > 0);
     // Copy the matrices to the class members since they will be rearranged.  
     queries_.Copy(queries_in);
     references_.Copy(references_in);
@@ -463,10 +463,10 @@ class AllkFN {
     
   
     // Initialize the list of nearest neighbor candidates
-    neighbor_indices_.Init(queries_.n_cols() * knns_);
+    neighbor_indices_.Init(queries_.n_cols() * kfns_);
     
     // Initialize the vector of upper bounds for each point.  
-    neighbor_distances_.Init(queries_.n_cols() * knns_);
+    neighbor_distances_.Init(queries_.n_cols() * kfns_);
     neighbor_distances_.SetAll(0);
 
 
@@ -480,7 +480,7 @@ class AllkFN {
 
   } // Init
 
-  void Init(const Matrix& references_in, index_t leaf_size, index_t knns) {
+  void Init(const Matrix& references_in, index_t leaf_size, index_t kfns) {
     // track the number of prunes
     number_of_prunes_ = 0;
     
@@ -488,18 +488,18 @@ class AllkFN {
     leaf_size_ = leaf_size;
     DEBUG_ASSERT(leaf_size_ > 0);
     
-    // Make sure the knns is valid
-    knns_ = knns;
-    DEBUG_ASSERT(knns_ > 0);
+    // Make sure the kfns is valid
+    kfns_ = kfns;
+    DEBUG_ASSERT(kfns_ > 0);
     // Copy the matrices to the class members since they will be rearranged.  
     references_.Copy(references_in);
     queries_.Alias(references_); 
   
     // Initialize the list of nearest neighbor candidates
-    neighbor_indices_.Init(references_.n_cols() * knns_);
+    neighbor_indices_.Init(references_.n_cols() * kfns_);
     
     // Initialize the vector of upper bounds for each point.  
-    neighbor_distances_.Init(references_.n_cols() * knns_);
+    neighbor_distances_.Init(references_.n_cols() * kfns_);
     neighbor_distances_.SetAll(0.0);
 
 
@@ -535,16 +535,16 @@ class AllkFN {
    * This means that we simply ignore the tree building.
    */
   void InitNaive(const Matrix& queries_in, 
-      const Matrix& references_in, index_t knns){
+      const Matrix& references_in, index_t kfns){
     
     queries_.Copy(queries_in);
     references_.Copy(references_in);
-    knns_=knns;
+    kfns_=kfns;
     
     DEBUG_SAME_SIZE(queries_.n_rows(), references_.n_rows());
     
-    neighbor_indices_.Init(queries_.n_cols()*knns_);
-    neighbor_distances_.Init(queries_.n_cols()*knns_);
+    neighbor_indices_.Init(queries_.n_cols()*kfns_);
+    neighbor_distances_.Init(queries_.n_cols()*kfns_);
     neighbor_distances_.SetAll(0.0);
     
     // The only difference is that we set leaf_size_ to be large enough 
@@ -558,14 +558,14 @@ class AllkFN {
         
   } // InitNaive
   
-   void InitNaive(const Matrix& references_in, index_t knns){
+   void InitNaive(const Matrix& references_in, index_t kfns){
     
     references_.Copy(references_in);
     queries_.Alias(references_);
-    knns_=knns;
+    kfns_=kfns;
     
-    neighbor_indices_.Init(references_.n_cols()*knns_);
-    neighbor_distances_.Init(references_.n_cols()*knns_);
+    neighbor_indices_.Init(references_.n_cols()*kfns_);
+    neighbor_distances_.Init(references_.n_cols()*kfns_);
     neighbor_distances_.SetAll(0.0);
     
     // The only difference is that we set leaf_size_ to be large enough 
@@ -602,19 +602,19 @@ class AllkFN {
     if (query_tree_ != NULL) {
       for (index_t i = 0; i < neighbor_indices_.size(); i++) {
         (*resulting_neighbors)[
-          old_from_new_queries_[i/knns_]*knns_+ i%knns_] = 
+          old_from_new_queries_[i/kfns_]*kfns_+ i%kfns_] = 
           old_from_new_references_[neighbor_indices_[i]];
         (*distances)[
-          old_from_new_queries_[i/knns_]*knns_+ i%knns_] = 
+          old_from_new_queries_[i/kfns_]*kfns_+ i%kfns_] = 
           neighbor_distances_[i];
       }
     } else {
       for (index_t i = 0; i < neighbor_indices_.size(); i++) {
         (*resulting_neighbors)[
-          old_from_new_references_[i/knns_]*knns_+ i%knns_] = 
+          old_from_new_references_[i/kfns_]*kfns_+ i%kfns_] = 
           old_from_new_references_[neighbor_indices_[i]];
         (*distances)[
-          old_from_new_references_[i/knns_]*knns_+ i%knns_] = 
+          old_from_new_references_[i/kfns_]*kfns_+ i%kfns_] = 
           neighbor_distances_[i];
       }
     }
@@ -639,10 +639,10 @@ class AllkFN {
     // been permuted
     for (index_t i = 0; i < neighbor_indices_.size(); i++) {
       (*resulting_neighbors)[
-        old_from_new_references_[i/knns_]*knns_+ i%knns_] = 
+        old_from_new_references_[i/kfns_]*kfns_+ i%kfns_] = 
         old_from_new_references_[neighbor_indices_[i]];
       (*distances)[
-        old_from_new_references_[i/knns_]*knns_+ i%knns_] = 
+        old_from_new_references_[i/kfns_]*kfns_+ i%kfns_] = 
         neighbor_distances_[i];
 
     }
