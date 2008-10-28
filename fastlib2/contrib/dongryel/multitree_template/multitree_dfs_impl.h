@@ -1,4 +1,102 @@
 template<typename MultiTreeProblem>
+double MultiTreeDepthFirst<MultiTreeProblem>::LeaveOneOutTuplesBase_
+(const ArrayList<Tree *> &nodes) {
+  
+  // Compute the total number of tuples formed among the nodes.
+  Tree *current_node = nodes[0];
+  int numerator = current_node->count();
+  int denominator = 1;
+  double total_num_tuples = numerator;
+  for(index_t i = 1; i < MultiTreeProblem::order; i++) {
+    if(current_node == nodes[i]) {
+      if(numerator == 1) {
+	total_num_tuples = 0;
+	return total_num_tuples;
+      }
+      else {
+	numerator--;
+	denominator++;
+	total_num_tuples *= ((double) numerator) / ((double) denominator);
+      }
+    }
+    else {
+      current_node = nodes[i];
+      numerator = current_node->count();
+      denominator = 1;
+      total_num_tuples *= ((double) numerator) / ((double) denominator);
+    }
+  }
+
+  for(index_t i = 0; i < MultiTreeProblem::order; i++) {
+    int numerator = nodes[i]->count();
+    int equal_count = 0;
+    for(index_t j = i; j >= 0; j--) {
+      if(nodes[j] == nodes[i]) {
+	equal_count++;
+      }
+      else {
+	break;
+      }
+    }
+    for(index_t j = i + 1; j < MultiTreeProblem::order; j++) {
+      if(nodes[j] == nodes[i]) {
+	equal_count++;
+      }
+      else {
+	break;
+      }
+    }
+    total_n_minus_one_tuples_[i] += total_num_tuples /
+      ((double) numerator) * ((double) equal_count);
+  }
+  
+  return total_num_tuples;
+}
+
+template<typename MultiTreeProblem>
+double MultiTreeDepthFirst<MultiTreeProblem>::RecursiveLeaveOneOutTuples_
+(ArrayList<Tree *> &nodes, index_t examine_index_start) {
+  
+  // Test if all the nodes are equal or disjoint.
+  bool equal_or_disjoint_flag = true;
+  for(index_t i = examine_index_start + 1; i < MultiTreeProblem::order; i++) {
+
+    // If there is a conflict, then return immediately.
+    if(nodes[i]->end() <= nodes[i - 1]->begin()) {
+      return 0;
+    }
+    
+    // If there is a subsumption, then record the first index that
+    // happens so.
+    if(first_node_indices_strictly_surround_second_node_indices_
+       (nodes[i - 1], nodes[i]) ||
+       first_node_indices_strictly_surround_second_node_indices_
+       (nodes[i], nodes[i - 1])) {
+      examine_index_start = i;
+      equal_or_disjoint_flag = false;
+    }
+  }
+
+  // If everything is either disjoint, or equal, then we can call the
+  // base case.
+  if(equal_or_disjoint_flag) {
+    return LeaveOneOutTuplesBase_(nodes);
+  }
+  else {
+    Tree *node_saved = nodes[examine_index_start];
+    nodes[examine_index_start] = node_saved->left();
+    double left_count = RecursiveLeaveOneOutTuples_(nodes,
+						    examine_index_start);
+    nodes[examine_index_start] = node_saved->right();
+    double right_count = RecursiveLeaveOneOutTuples_(nodes,
+						     examine_index_start);
+    nodes[examine_index_start] = node_saved;
+    return left_count + right_count;
+  }
+
+}
+
+template<typename MultiTreeProblem>
 void MultiTreeDepthFirst<MultiTreeProblem>::Heuristic_
 (const ArrayList<Tree *> &nodes, index_t *max_count_among_non_leaf, 
  index_t *split_index) {
@@ -34,27 +132,6 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
     // we can refine it to better bounds.
     qnode->stat().summary.StartReaccumulate();
 
-    double factor = 1.0;
-    int numerator = nodes[i]->count();
-    int equal_count = 0;
-    for(index_t j = i; j >= 0; j--) {
-      if(nodes[j] == nodes[i]) {
-	equal_count++;
-      }
-      else {
-	break;
-      }
-    }
-    for(index_t j = i + 1; j < MultiTreeProblem::order; j++) {
-      if(nodes[j] == nodes[i]) {
-	equal_count++;
-      }
-      else {
-	break;
-      }
-    }
-    factor = ((double) numerator) / ((double) equal_count);
-
     for(index_t q = qnode->begin(); q < qnode->end(); q++) {
 
       // Apply postponed to each point.
@@ -64,7 +141,7 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
       qnode->stat().summary.Accumulate(query_results, q);
 
       // Increment the number of (n - 1) tuples pruned.
-      query_results.n_pruned[q] += total_num_tuples / factor;
+      query_results.n_pruned[q] += total_n_minus_one_tuples_[i];
     }
 
     // Clear postponed information.
@@ -108,10 +185,6 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
   else {
     double new_num_tuples;
     
-    // Copy to new nodes list before recursing.
-    ArrayList<Tree *> new_nodes;
-    CopyNodeSet_(nodes, &new_nodes);
-    
     // Push down approximations downward for the node that is to be
     // expanded.
     nodes[split_index]->left()->stat().postponed.ApplyPostponed
@@ -121,24 +194,28 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
     nodes[split_index]->stat().postponed.SetZero();
 
     // Recurse to the left.
-    new_nodes[split_index] = nodes[split_index]->left();
-    new_num_tuples = TotalNumTuples(new_nodes);
+    Tree *node_saved = nodes[split_index];
+    nodes[split_index] = node_saved->left();
+    new_num_tuples = TotalNumTuples(nodes);
     
     // If the current node combination is valid, then recurse.
     if(new_num_tuples > 0) {
-      MultiTreeDepthFirstCanonical_(sets, new_nodes, query_results,
+      MultiTreeDepthFirstCanonical_(sets, nodes, query_results,
 				    new_num_tuples);
     }
     
     // Recurse to the right.
-    new_nodes[split_index] = nodes[split_index]->right();
-    new_num_tuples = TotalNumTuples(new_nodes);
+    nodes[split_index] = node_saved->right();
+    new_num_tuples = TotalNumTuples(nodes);
     
     // If the current node combination is valid, then recurse.
     if(new_num_tuples > 0) {
-      MultiTreeDepthFirstCanonical_(sets, new_nodes, query_results,
+      MultiTreeDepthFirstCanonical_(sets, nodes, query_results,
 				    new_num_tuples);
     }
+
+    // Put back the saved node back into the list.
+    nodes[split_index] = node_saved;
     
     // Apply the postponed changes for both child nodes.
     typename MultiTreeProblem::MultiTreeQuerySummary tmp_left_child_summary

@@ -18,6 +18,7 @@ class MultiTreeDepthFirst {
 
   typename MultiTreeProblem::MultiTreeGlobal globals_;
 
+  Vector total_n_minus_one_tuples_;
 
   template<int start, int end>
   class MultiTreeHelper_ {
@@ -74,101 +75,17 @@ class MultiTreeDepthFirst {
        first_node->end() > second_node->end());
   }
 
-  double TotalNumTuplesHelper_(int b, ArrayList<Tree *> &nodes) {
-    
-    Tree *bkn = nodes[b];
-    double result;
-    int n = MultiTreeProblem::order;
-    
-    // If this is the last node in the list, then the result is the
-    // number of points contained in this node.
-    if(b == n - 1) {
-      result = (double) bkn->count();
-    }
-    else {
-      int j;
-      int conflict = 0;
-      int simple_product = 1;
-    
-      result = (double) bkn->count();
-      
-      for(j = b + 1 ; j < n && !conflict; j++) {
-	Tree *knj = nodes[j];
-	
-	if (bkn->begin() >= knj->end() - 1) {
-	  conflict = 1;
-	}
-	else if(nodes[j - 1]->end() - 1 > knj->begin()) {
-	  simple_product = 0;
-	}
-      }
-      
-      if(conflict) {
-	result = 0.0;
-      }
-      else if(simple_product) {
-	for(j = b + 1; j < n; j++) {
-	  result *= nodes[j]->count();
-	}
-      }
-      else {
-	int jdiff = -1; 
-	
-	// Undefined... will eventually point to the lowest j > b such
-	// that nodes[j] is different from bkn
-	for(j = b + 1; jdiff < 0 && j < n; j++) {
-	  Tree *knj = nodes[j];
-	  if(bkn->begin() != knj->begin() ||
-	     bkn->end() - 1 != knj->end() - 1) {
-	    jdiff = j;
-	  }
-	}
-	
-	if(jdiff < 0) {
-	  result = math::BinomialCoefficient(bkn->count(), n - b);
-	}
-	else {
-	  Tree *dkn = nodes[jdiff];
-	  
-	  if(dkn->begin() >= bkn->end() - 1) {
-	    result = math::BinomialCoefficient(bkn->count(), jdiff - b);
-	    if(result > 0.0) {
-	      result *= TotalNumTuplesHelper_(jdiff, nodes);
-	    }
-	  }
-	  else if(first_node_indices_strictly_surround_second_node_indices_
-		  (bkn, dkn)) {
-	    result = RecursiveTotalNumTuplesHelper_(b, nodes, b);
-	  }
-	  else if(first_node_indices_strictly_surround_second_node_indices_
-		  (dkn, bkn)) {
-	    result = RecursiveTotalNumTuplesHelper_(b, nodes, jdiff);
-	  }
-	}
-      }
-    }
-    return result;
-  }
+  double LeaveOneOutTuplesBase_(const ArrayList<Tree *> &nodes);
 
-  double RecursiveTotalNumTuplesHelper_(int b, ArrayList<Tree *> &nodes, 
-					int i) {
-    
-    double result = 0.0;
-    Tree *kni = nodes[i];
-    nodes[i] = kni->left();
-    result += TotalNumTuplesHelper_(b, nodes);
-    nodes[i] = kni->right();
-    result += TotalNumTuplesHelper_(b, nodes);
-    nodes[i] = kni;
-    return result;
-  }
+  double RecursiveLeaveOneOutTuples_(ArrayList<Tree *> &nodes,
+				     int examine_start_index);
 
   /** @brief Returns the total number of valid $n$-tuples, in which
    *         the indices are chosen in the depth-first order.
    */
   double TotalNumTuples(ArrayList<Tree *> &nodes) {
-
-    return TotalNumTuplesHelper_(0, nodes);
+    total_n_minus_one_tuples_.SetZero();
+    return RecursiveLeaveOneOutTuples_(nodes, 0);
   }
   
   void CopyNodeSet_(const ArrayList<Tree *> &source_list,
@@ -244,6 +161,10 @@ class MultiTreeDepthFirst {
     
     // Initialize the global parameters.
     globals_.Init((sets_[0])->n_cols());
+
+    // Initialize the total number of (n - 1) tuples for each node
+    // index.
+    total_n_minus_one_tuples_.Init(sets.size());
   }
 
 };
