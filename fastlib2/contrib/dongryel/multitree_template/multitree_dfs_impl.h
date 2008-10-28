@@ -166,7 +166,9 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
  typename MultiTreeProblem::MultiTreeQueryResult &query_results,
  double total_num_tuples) {
   
-  if(MultiTreeProblem::ConsiderTupleExact(globals_, nodes, total_num_tuples)) {
+  if(MultiTreeProblem::ConsiderTupleExact(globals_, nodes, total_num_tuples,
+					  total_n_minus_one_tuples_root_,
+					  total_n_minus_one_tuples_)) {
     return;
   }
 
