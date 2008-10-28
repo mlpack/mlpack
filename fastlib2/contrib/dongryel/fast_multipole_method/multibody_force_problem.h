@@ -46,11 +46,10 @@ class AxilrodTellerForceProblem {
       l1_norm_negative_force_vector_u.SetZero();
       l1_norm_positive_force_vector_l.SetZero();
       positive_force_vector_e.SetZero();
-      n_pruned.SetZero();
       used_error.SetZero();
     }
 
-    void Init() {
+    void Init(const Vector &total_n_minus_one_tuples) {
 
       // Hard-codes to use 3-dimensional vectors.
       negative_force_vector_e.Init(3, 3);
@@ -59,7 +58,9 @@ class AxilrodTellerForceProblem {
       positive_force_vector_e.Init(3, 3);
       n_pruned.Init(3);
       used_error.Init(3);
-            
+
+      n_pruned.CopyValues(total_n_minus_one_tuples);
+
       // Initializes to zeros...
       SetZero();
     }    
@@ -406,7 +407,9 @@ class AxilrodTellerForceProblem {
   template<typename MultiTreeGlobal, typename Tree>
   static bool ConsiderTupleExact(MultiTreeGlobal &globals,
 				 ArrayList<Tree *> &nodes,
-				 double total_num_tuples) {
+				 double total_num_tuples,
+				 double total_n_minus_one_tuples_root,
+				 const Vector &total_n_minus_one_tuples) {
     
     if(nodes[0] == nodes[1] || nodes[0] == nodes[2] &&
        nodes[1] == nodes[2]) {
@@ -415,11 +418,11 @@ class AxilrodTellerForceProblem {
     
     // Need to fill this out...
     MultiTreeDelta delta;
-    delta.Init();
+    delta.Init(total_n_minus_one_tuples);
     if(!delta.ComputeFiniteDifference(globals, nodes)) {
       return false;
     }
-
+    
     // Consider each node in turn whether it can be pruned or not.
     for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
 
@@ -428,8 +431,17 @@ class AxilrodTellerForceProblem {
       new_summary.InitCopy(nodes[i]->stat().summary);
       new_summary.ApplyPostponed(nodes[i]->stat().postponed);
       new_summary.ApplyDelta(delta, i);
-
-      if(true) {
+      
+      // Compute the L1 norm of the positive component and the
+      // negative component.
+      double ratio = total_n_minus_one_tuples[i] / 
+	(total_n_minus_one_tuples_root - new_summary.n_pruned_l);
+      
+      if((0.01 * (new_summary.l1_norm_negative_force_vector_u +
+		  new_summary.l1_norm_positive_force_vector_l) -
+	  new_summary.used_error_u) * ratio <
+	 delta.used_error[i]) {
+	
 	return false;
       }
     }
