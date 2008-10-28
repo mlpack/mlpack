@@ -114,7 +114,9 @@ class AllkNN {
   ArrayList<index_t> neighbor_indices_;
   // number of nearest neighbrs
   index_t knns_; 
-   // The module containing the parameters for this computation. 
+  // if this flag is true then only the k-neighbor and distance are computed
+   bool k_only_;
+  // The module containing the parameters for this computation. 
   struct datanode* module_;
   
   
