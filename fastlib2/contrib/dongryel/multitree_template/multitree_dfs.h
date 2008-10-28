@@ -20,6 +20,8 @@ class MultiTreeDepthFirst {
 
   Vector total_n_minus_one_tuples_;
 
+  double total_n_minus_one_tuples_root_;
+
   template<int start, int end>
   class MultiTreeHelper_ {
    public:
@@ -131,6 +133,8 @@ class MultiTreeDepthFirst {
 
     // Call the canonical algorithm.
     double total_num_tuples = TotalNumTuples(trees_);
+    total_n_minus_one_tuples_root_ = total_n_minus_one_tuples_[0];
+
     printf("There are %g tuples...\n",
 	   math::BinomialCoefficient((sets_[0])->n_cols() - 1, 
 				     MultiTreeProblem::order));
