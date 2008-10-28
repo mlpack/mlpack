@@ -192,6 +192,8 @@ def make_lapack(sysentry, files, params):
 			sysentry.command("echo '... This may take several minutes (about 800 FORTRAN files).'")
                         if compiler == "gfortran":
                           sysentry.command("cd %s/lapack* && sed -i.backup -e 's/g77/gfortran/' make.inc.example" % (sq(workspace_dir)))
+                        # This is fixing Bill's problem.
+                        sysentry.command("cd %s/lapack* && echo 'TIMER = INT_CPU_TIME' >> make.inc.example" % (sq(workspace_dir)))
 			sysentry.command("cd %s/lapack* && mv make.inc.example make.inc" % (sq(workspace_dir)) )
 			sysentry.command("cd %s/lapack* && make lapacklib" % (sq(workspace_dir)))
 			sysentry.command("echo '... Almost done with LAPACK...'")
