@@ -526,11 +526,9 @@ private:
     // Check that the pointers are not NULL
     DEBUG_ASSERT(query_node != NULL);
     DEBUG_ASSERT(reference_node != NULL);
-    // Probably don't need this since hopefully they won't
-    // be both leaves (only query should be).
-    // Just notify if in reference leaf.
-    // Check that we really should be in the base case
-    DEBUG_WARN_IF(!query_node->is_leaf());
+
+    // This is just for now when we are dealing with
+    // single trees
     DEBUG_ASSERT(query_node->end()
 		 - query_node->begin() == 1);
     
@@ -542,6 +540,12 @@ private:
     DEBUG_ASSERT_MSG(sample_size <= set_size,
 		     "n = %"LI"d, N = %"LI"d",
 		     sample_size, set_size);
+
+    index_t query_samples_needed
+      = sample_sizes_[references_.n_cols()-1]
+      - query_node->stat().samples();
+
+    sample_size = min(sample_size, query_samples_needed);
 
     // Used to find the query node's new upper bound
     double query_max_neighbor_distance = -1.0;
@@ -568,11 +572,9 @@ private:
       // but on the sample size number of points
 
       // Here we need to permute the reference set randomly
-      ArrayList<index_t> perm_vec;
-      math::MakeRandomPermutation(set_size, &perm_vec);
       for (index_t i = 0; i < sample_size; i++) {
-
-	index_t reference_index = reference_node->begin() + perm_vec[i];
+	index_t reference_index = reference_node->begin()
+	  + math::RandInt(set_size);
 	DEBUG_ASSERT(reference_index < reference_node->end());
 
 	// Confirm that points do not identify themselves as neighbors
@@ -617,10 +619,10 @@ private:
     // update the number of points considered and points sampled
     query_node->stat().add_total_points(set_size);
     query_node->stat().add_samples(sample_size);
-         
   } // ComputeApproxBaseCase_
 
-  // Need to fix how we decide node size!!!!!!!!!!
+  // decides whether a reference node is small enough
+  // to approximate by sampling
   inline bool is_base(TreeType* tree) {
     index_t set_size = tree->end() - tree->begin();
     index_t sample_size = sample_sizes_[set_size - 1];
@@ -628,6 +630,28 @@ private:
       return false;
     } else {
       return true;
+    }
+  }
+
+  // decides whether a query node has enough
+  // samples that we can approximate the rest by
+  // just picking a small number of samples
+  inline bool is_almost_satisfied(TreeType* tree) {
+    if (tree->stat().samples() + sample_limit_
+	>= sample_sizes_[references_.n_cols()-1]) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  // check if the query node has enough samples
+  inline bool is_done(TreeType* tree) {
+    if (tree->stat().samples()
+	>= sample_sizes_[references_.n_cols()-1]) {
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -646,78 +670,65 @@ private:
 							reference_node));
     DEBUG_ASSERT(query_node->end()
 		 - query_node->begin() == 1);
+
+    if (is_done(query_node)) {
+      return;
+    }
     
     if (lower_bound_distance > query_node->stat().max_distance_so_far()) {
       // Pruned by distance
       number_of_prunes_++;
+
+      // since we pruned this node, we can say that we encountered
+      // all the points in that node
+      index_t reference_size
+	= reference_node->end() - reference_node->begin();
+      query_node->stat().add_total_points(reference_size);
+      query_node->stat().add_samples(reference_size);
+
     } else if (query_node->is_leaf() && reference_node->is_leaf()) {
       // Base Case
-      ComputeApproxBaseCase_(query_node, reference_node);
-    } else if (query_node->is_leaf()) {
-      // Only query is a leaf
-      
-      // We'll order the computation by distance 
-      double left_distance = MinNodeDistSq_(query_node,
-					    reference_node->left());
-      double right_distance = MinNodeDistSq_(query_node,
-					     reference_node->right());
+      // first check if we can do exact. If so then we do so
+      // and add the number of samples encountered.
+      ComputeBaseCase_(query_node, reference_node);
+      index_t reference_size
+	= reference_node->end() - reference_node->begin();
+      query_node->stat().add_total_points(reference_size);
+      query_node->stat().add_samples(reference_size);
 
-      ///// Need to fix how we decide node size!!!!!!!!!!
-      // Also another error is that even though the error probability
-      // is increased, the query time hasn't gone down. Is this related?
-      // If not how do I find out what is causing it?
-      
-      if (left_distance < right_distance) {
-
-	if(is_base(reference_node->left())
-	   && left_distance < query_node->stat().max_distance_so_far()) {
-// 	  NOTIFY("%"LI"d points", reference_node->left()->end()
-// 		 - reference_node->left()->begin());
-	  ComputeApproxBaseCase_(query_node, reference_node->left());
-	} else {
-	  ComputeApproxRecursion_(query_node, reference_node->left(), 
-				  left_distance);
-	}
-	if(is_base(reference_node->right())
-	   && right_distance < query_node->stat().max_distance_so_far()) {
-// 	  NOTIFY("%"LI"d points", reference_node->right()->end()
-// 		 - reference_node->right()->begin());
-	  ComputeApproxBaseCase_(query_node, reference_node->right());
-	} else {
-	  ComputeApproxRecursion_(query_node, reference_node->right(), 
-				  right_distance);
-	}
-      } else {
-	if(is_base(reference_node->right())
-	   && right_distance < query_node->stat().max_distance_so_far()) {
-// 	  NOTIFY("%"LI"d points", reference_node->right()->end()
-// 		 - reference_node->right()->begin());
-	  ComputeApproxBaseCase_(query_node, reference_node->right());
-	} else {
-	  ComputeApproxRecursion_(query_node, reference_node->right(), 
-				  right_distance);
-	}
-	if(is_base(reference_node->left())
-	   && left_distance < query_node->stat().max_distance_so_far()) {
-// 	  NOTIFY("%"LI"d points", reference_node->left()->end()
-// 		 - reference_node->left()->begin());
-	  ComputeApproxBaseCase_(query_node, reference_node->left());
-	} else {
-	  ComputeApproxRecursion_(query_node, reference_node->left(), 
-				     left_distance);
-	}
-      }
     } else if (reference_node->is_leaf()) {
-      NOTIFY("Here!");
-      // This part of the recursion is not yet correct since
-      // we don't know how to deal with the query tree
-      // traversal.
       // Only reference is a leaf 
       double left_distance
 	= MinNodeDistSq_(query_node->left(), reference_node);
       double right_distance
 	= MinNodeDistSq_(query_node->right(), reference_node);
-      
+
+      // Passing the information down to the children if it 
+      // encountered some pruning earlier
+      DEBUG_ASSERT_MSG(query_node->left()->stat().total_points()
+		       == query_node->right()->stat().total_points(),
+		       "The children of the query node should have "
+		       "encountered the same number of points.");
+      // if the parent has encountered extra points, pass
+      // that information down to the children.
+      index_t extra_points_encountered
+	= query_node->stat().total_points()
+	- query_node->left()->stat().total_points();
+      DEBUG_ASSERT(extra_points_encountered > -1);
+
+      if (extra_points_encountered > 0) {
+	query_node->left()->stat().add_total_points(extra_points_encountered);
+	query_node->right()->stat().add_total_points(extra_points_encountered);
+	index_t extra_points_sampled
+	  = query_node->stat().samples()
+	  - min(query_node->left()->stat().samples(),
+		query_node->right()->stat().samples());
+	DEBUG_ASSERT(extra_points_sampled > -1);
+	query_node->left()->stat().add_samples(extra_points_sampled);
+	query_node->right()->stat().add_samples(extra_points_sampled);
+      }
+
+      // recurse down the query tree      
       ComputeApproxRecursion_(query_node->left(), reference_node, 
 			      left_distance);
       ComputeApproxRecursion_(query_node->right(), reference_node, 
@@ -730,20 +741,90 @@ private:
 
       // updating the number of points considered
       // and number of samples taken
-      query_node->stat().set_total_points(query_node->left()->stat().total_points()
-					  + query_node->right()->stat().total_points());
-      query_node->stat().set_samples(query_node->left()->stat().samples()
-				     + query_node->right()->stat().samples());
+
+      // both the children of the query node have encountered
+      // the same number of reference points. So making sure of
+      // that.
+      DEBUG_ASSERT_MSG(query_node->left()->stat().total_points()
+		       == query_node->right()->stat().total_points(),
+		       "The children of the query node should have "
+		       "encountered the same number of points.");
+      query_node->stat().set_total_points(query_node->left()->stat().total_points());
+
+      // the number of samples made for each of the query points
+      // is actually the minimum of both the children. And we 
+      // are setting it instead of adding because we don't want
+      // to have repetitions (since the information goes bottom up)
+      query_node->stat().set_samples(min(query_node->left()->stat().samples(),
+					 query_node->right()->stat().samples()));
+
+    } else if (is_base(reference_node)) {
+      // if the reference set is small enough to be
+      // approximated by sampling.
+      ComputeApproxBaseCase_(query_node, reference_node);
+
+    } else if (is_almost_satisfied(query_node)) {
+      // query node has almost enough samples,
+      // just pick some samples from the reference
+      // set.
+      ComputeApproxBaseCase_(query_node, reference_node);
+
+    } else if (query_node->is_leaf()) {
+      // Only query is a leaf
+      
+      // We'll order the computation by distance 
+      double left_distance = MinNodeDistSq_(query_node,
+					    reference_node->left());
+      double right_distance = MinNodeDistSq_(query_node,
+					     reference_node->right());
+
+      if (left_distance < right_distance) {
+	ComputeApproxRecursion_(query_node, reference_node->left(), 
+				left_distance);
+	ComputeApproxRecursion_(query_node, reference_node->right(), 
+				right_distance);
+      } else {
+	ComputeApproxRecursion_(query_node, reference_node->right(), 
+				right_distance);
+	ComputeApproxRecursion_(query_node, reference_node->left(), 
+				left_distance);
+      }
     } else {
-      // Same for this branch of the recursion.
-      // dual tree traversal not supported yet
-      NOTIFY("And Here!!");
+      // This is the initial idea for the dual tree
+      // traversal. It is an upperbound on the number
+      // of points required to be samples made for
+      // the particular number of points encountered
+      // to maintain the probability bound for the error
 
       // Recurse on both as above
       double left_distance = MinNodeDistSq_(query_node->left(), 
 					    reference_node->left());
       double right_distance = MinNodeDistSq_(query_node->left(), 
 					     reference_node->right());
+      // Passing the information down to the children if it 
+      // encountered some pruning earlier
+      DEBUG_ASSERT_MSG(query_node->left()->stat().total_points()
+		       == query_node->right()->stat().total_points(),
+		       "The children of the query node should have "
+		       "encountered the same number of points.");
+      // if the parent has encountered extra points, pass
+      // that information down to the children.
+      index_t extra_points_encountered
+	= query_node->stat().total_points()
+	- query_node->left()->stat().total_points();
+      DEBUG_ASSERT(extra_points_encountered > -1);
+
+      if (extra_points_encountered > 0) {
+	query_node->left()->stat().add_total_points(extra_points_encountered);
+	query_node->right()->stat().add_total_points(extra_points_encountered);
+	index_t extra_points_sampled
+	  = query_node->stat().samples()
+	  - min(query_node->left()->stat().samples(),
+		query_node->right()->stat().samples());
+	DEBUG_ASSERT(extra_points_sampled > -1);
+	query_node->left()->stat().add_samples(extra_points_sampled);
+	query_node->right()->stat().add_samples(extra_points_sampled);
+      }
       
       if (left_distance < right_distance) {
         ComputeApproxRecursion_(query_node->left(),
@@ -786,13 +867,21 @@ private:
       query_node->stat().set_max_distance_so_far(max(query_node->left()->stat().max_distance_so_far(),
 						     query_node->right()->stat().max_distance_so_far()));
 
-      // updating the number of points considered
-      // and number of samples taken
-      query_node->stat().set_total_points(query_node->left()->stat().total_points()
-					  + query_node->right()->stat().total_points());
-      query_node->stat().set_samples(query_node->left()->stat().samples()
-				     + query_node->right()->stat().samples());
-      
+      // both the children of the query node have encountered
+      // the same number of reference points. So making sure of
+      // that.
+      DEBUG_ASSERT_MSG(query_node->left()->stat().total_points()
+		       == query_node->right()->stat().total_points(),
+		       "The children of the query node should have "
+		       "encountered the same number of points.");
+      query_node->stat().set_total_points(query_node->left()->stat().total_points());
+
+      // the number of samples made for each of the query points
+      // is actually the minimum of both the children. And we 
+      // are setting it instead of adding because we don't want
+      // to have repetitions (since the information goes bottom up)
+      query_node->stat().set_samples(min(query_node->left()->stat().samples(),
+					 query_node->right()->stat().samples()));
     }
   } // ComputeApproxRecursion_
 
