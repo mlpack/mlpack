@@ -14,6 +14,7 @@
 // the deplibs section of your build.py
 #include <fastlib/fastlib.h>
 #include <vector>
+#include <string>
 /**
  * Forward declaration for the tester class
  */
@@ -116,6 +117,8 @@ class AllkNN {
   index_t knns_; 
   // if this flag is true then only the k-neighbor and distance are computed
    bool k_only_;
+   // This can be either "single" or "dual" referring to dual tree and single tree algorithm
+   std::string mode_;
   // The module containing the parameters for this computation. 
   struct datanode* module_;
   
@@ -235,9 +238,9 @@ class AllkNN {
   
   
   /**
-   * The recursive function
+   * The recursive function for dual tree
    */
-  void ComputeNeighborsRecursion_ (TreeType* query_node, TreeType* reference_node, 
+  void ComputeDualNeighborsRecursion_(TreeType* query_node, TreeType* reference_node, 
       double lower_bound_distance) {
    
     // DEBUG statements should be used frequently, 
@@ -268,15 +271,15 @@ class AllkNN {
       double right_distance = MinNodeDistSq_(query_node, reference_node->right());
       
       if (left_distance < right_distance) {
-        ComputeNeighborsRecursion_(query_node, reference_node->left(), 
+        ComputeDualNeighborsRecursion_(query_node, reference_node->left(), 
             left_distance);
-        ComputeNeighborsRecursion_(query_node, reference_node->right(), 
+        ComputeDualNeighborsRecursion_(query_node, reference_node->right(), 
             right_distance);
       }
       else {
-        ComputeNeighborsRecursion_(query_node, reference_node->right(), 
+        ComputeDualNeighborsRecursion_(query_node, reference_node->right(), 
             right_distance);
-        ComputeNeighborsRecursion_(query_node, reference_node->left(), 
+        ComputeDualNeighborsRecursion_(query_node, reference_node->left(), 
             left_distance);
       }
       
@@ -288,9 +291,9 @@ class AllkNN {
       double left_distance = MinNodeDistSq_(query_node->left(), reference_node);
       double right_distance = MinNodeDistSq_(query_node->right(), reference_node);
       
-      ComputeNeighborsRecursion_(query_node->left(), reference_node, 
+      ComputeDualNeighborsRecursion_(query_node->left(), reference_node, 
           left_distance);
-      ComputeNeighborsRecursion_(query_node->right(), reference_node, 
+      ComputeDualNeighborsRecursion_(query_node->right(), reference_node, 
           right_distance);
       
       // We need to update the upper bound based on the new upper bounds of 
@@ -307,15 +310,15 @@ class AllkNN {
           reference_node->right());
       
       if (left_distance < right_distance) {
-        ComputeNeighborsRecursion_(query_node->left(), reference_node->left(), 
+        ComputeDualNeighborsRecursion_(query_node->left(), reference_node->left(), 
             left_distance);
-        ComputeNeighborsRecursion_(query_node->left(), reference_node->right(), 
+        ComputeDualNeighborsRecursion_(query_node->left(), reference_node->right(), 
             right_distance);
       }
       else {
-        ComputeNeighborsRecursion_(query_node->left(), reference_node->right(), 
+        ComputeDualNeighborsRecursion_(query_node->left(), reference_node->right(), 
             right_distance);
-        ComputeNeighborsRecursion_(query_node->left(), reference_node->left(), 
+        ComputeDualNeighborsRecursion_(query_node->left(), reference_node->left(), 
             left_distance);
       }
       left_distance = MinNodeDistSq_(query_node->right(), reference_node->left());
@@ -323,15 +326,15 @@ class AllkNN {
           reference_node->right());
       
       if (left_distance < right_distance) {
-        ComputeNeighborsRecursion_(query_node->right(), reference_node->left(), 
+        ComputeDualNeighborsRecursion_(query_node->right(), reference_node->left(), 
             left_distance);
-        ComputeNeighborsRecursion_(query_node->right(), reference_node->right(), 
+        ComputeDualNeighborsRecursion_(query_node->right(), reference_node->right(), 
             right_distance);
       }
       else {
-        ComputeNeighborsRecursion_(query_node->right(), reference_node->right(), 
+        ComputeDualNeighborsRecursion_(query_node->right(), reference_node->right(), 
             right_distance);
-        ComputeNeighborsRecursion_(query_node->right(), reference_node->left(), 
+        ComputeDualNeighborsRecursion_(query_node->right(), reference_node->left(), 
             left_distance);
       }
       
@@ -342,11 +345,77 @@ class AllkNN {
       
     }
     
-  } // ComputeNeighborsRecursion_
+  } // ComputeDualNeighborsRecursion_
   
   
-   
-  
+  void ComputeSingleNeighborsRecursion_(index_t point_id, 
+      Vector &point, TreeType* reference_node, 
+      double *min_dist_so_far) {
+     
+    // A DEBUG statement with a predefined message
+    DEBUG_ASSERT_MSG(reference_node != NULL, "reference node is null");
+    // Make sure the bounding information is correct
+    
+    // node->is_leaf() works as one would expect
+    if (reference_node->is_leaf()) {
+      // Base Case
+      std::vector<std::pair<double, index_t> > neighbors(knns_);
+      index_t ind = point_id*knns_;
+      for(index_t i=0; i<knns_; i++) {
+        neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
+                                    neighbor_indices_[ind+i]);
+      }
+      // We'll do the same for the references
+      for (index_t reference_index = reference_node->begin(); 
+           reference_index < reference_node->end(); reference_index++) {
+	      // Confirm that points do not identify themselves as neighbors
+	      // in the monochromatic case
+        if (likely(!(references_.ptr()==queries_.ptr() &&
+		      reference_index == point_id))) {
+	        Vector reference_point;
+	        references_.MakeColumnVector(reference_index, &reference_point);
+	        // We'll use lapack to find the distance between the two vectors
+	        double distance =
+	        la::DistanceSqEuclidean(point, reference_point);
+	        // If the reference point is closer than the current candidate, 
+	        // we'll update the candidate
+	        if (distance < neighbor_distances_[ind+knns_-1]) {
+	          neighbors.push_back(std::make_pair(distance, reference_index));
+	        }
+	      }
+      } // for reference_index
+      std::sort(neighbors.begin(), neighbors.end());
+      for(index_t i=0; i<knns_; i++) {
+        neighbor_distances_[ind+i] = neighbors[i].first;
+        neighbor_indices_[ind+i]  = neighbors[i].second;
+      }
+      *min_dist_so_far=neighbor_distances_[ind+knns_-1];
+    } else {
+      // We'll order the computation by distance 
+      double left_distance = reference_node->left()->bound().MinDistanceSq(point);
+      double right_distance = reference_node->right()->bound().MinDistanceSq(point);
+      
+      if (left_distance < right_distance) {
+        ComputeSingleNeighborsRecursion_(point_id, point, reference_node->left(), 
+            min_dist_so_far);
+        if (*min_dist_so_far <right_distance){
+          number_of_prunes_++;
+          return;
+        }
+        ComputeSingleNeighborsRecursion_(point_id, point, reference_node->right(), 
+            min_dist_so_far);
+      } else {
+        ComputeSingleNeighborsRecursion_(point_id, point, reference_node->right(), 
+            min_dist_so_far);
+        if (*min_dist_so_far <left_distance){
+          number_of_prunes_++;
+          return;
+        }
+        ComputeSingleNeighborsRecursion_(point_id, point, reference_node->left(), 
+            min_dist_so_far);
+      }
+    }    
+  }  
   ////////////////////////////////// Public Functions ////////////////////////////////////////////////
   
   /**
@@ -362,6 +431,7 @@ class AllkNN {
     // track the number of prunes
     number_of_prunes_ = 0;
     
+    mode_=fx_param_str(module_, "mode", "dual"); 
     // Get the leaf size from the module
     leaf_size_ = fx_param_int(module_, "leaf_size", 20);
     // Make sure the leaf size is valid
@@ -390,8 +460,12 @@ class AllkNN {
     // This call makes each tree from a matrix, leaf size, and two arrays 
 		// that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
-    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(queries_, leaf_size_, 
-				&old_from_new_queries_, NULL);
+    if (mode_=="dual") {
+      query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(queries_, leaf_size_, 
+			  	&old_from_new_queries_, NULL);
+    } else {
+      query_tree_=NULL;
+    }
     reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_, 
 				leaf_size_, &old_from_new_references_, NULL);
     
@@ -407,7 +481,9 @@ class AllkNN {
      
     // set the module
     module_ = module_in;
-    
+  
+    mode_=fx_param_str(module_, "mode", "dual"); 
+   
     // track the number of prunes
     number_of_prunes_ = 0;
     
@@ -444,11 +520,12 @@ class AllkNN {
 
   }
   void Init(const Matrix& queries_in, const Matrix& references_in, 
-      index_t leaf_size, index_t knns) {
+      index_t leaf_size, index_t knns, const char *mode="dual") {
     
     // track the number of prunes
     number_of_prunes_ = 0;
-    
+    mode_=mode;
+     
     // Make sure the leaf size is valid
     leaf_size_ = leaf_size;
     DEBUG_ASSERT(leaf_size_ > 0);
@@ -475,17 +552,23 @@ class AllkNN {
     // This call makes each tree from a matrix, leaf size, and two arrays 
     // that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
-    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(queries_, leaf_size_, 
-        &old_from_new_queries_, NULL);
+    if (mode_=="dual") {
+      query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(queries_, leaf_size_, 
+          &old_from_new_queries_, NULL);
+    } else {
+      query_tree_=NULL;
+    }
     reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_, 
         leaf_size_, &old_from_new_references_, NULL);
 
   } // Init
 
-  void Init(const Matrix& references_in, index_t leaf_size, index_t knns) {
+  void Init(const Matrix& references_in, index_t leaf_size, 
+            index_t knns, const char *mode="dual") {
     // track the number of prunes
     number_of_prunes_ = 0;
-    
+    mode_=mode; 
+     
     // Make sure the leaf size is valid
     leaf_size_ = leaf_size;
     DEBUG_ASSERT(leaf_size_ > 0);
@@ -582,14 +665,36 @@ class AllkNN {
    */
   void ComputeNeighbors(ArrayList<index_t>* resulting_neighbors,
                         ArrayList<double>* distances) {
-    
-    // Start on the root of each tree
-    if (query_tree_!=NULL) {
-      ComputeNeighborsRecursion_(query_tree_, reference_tree_, 
-          MinNodeDistSq_(query_tree_, reference_tree_));
+     
+    if (mode_=="dual") {
+      // Start on the root of each tree
+      if (query_tree_!=NULL) {
+        ComputeDualNeighborsRecursion_(query_tree_, reference_tree_, 
+            MinNodeDistSq_(query_tree_, reference_tree_));
+      } else {
+         ComputeDualNeighborsRecursion_(reference_tree_, reference_tree_, 
+            MinNodeDistSq_(reference_tree_, reference_tree_));
+      }
     } else {
-       ComputeNeighborsRecursion_(reference_tree_, reference_tree_, 
-          MinNodeDistSq_(reference_tree_, reference_tree_));
+      index_t chunk = queries_.n_cols()/10;
+      printf("Progress:00%%");
+      for(index_t i=0; i<10; i++) {
+        for(index_t j=0; j<chunk; j++) {
+          Vector point;
+          point.Alias(queries_.GetColumnPtr(i*chunk+j), queries_.n_rows());
+          double min_dist_so_far=DBL_MAX;
+          ComputeSingleNeighborsRecursion_(i*chunk+j, point, reference_tree_, &min_dist_so_far);
+        }
+        printf("\b\b\b%02"LI"d%%", (i+1)*10);  
+      }
+      for(index_t i=0; i<queries_.n_cols() % 10; i++) {
+        index_t ind = (queries_.n_cols()/10)*10+i;
+        Vector point;
+        point.Alias(queries_.GetColumnPtr(ind), queries_.n_rows());
+        double min_dist_so_far=DBL_MAX;
+        ComputeSingleNeighborsRecursion_(i, point, reference_tree_, &min_dist_so_far);
+      }
+      printf("\n");
     }
     
     // We need to initialize the results list before filling it
