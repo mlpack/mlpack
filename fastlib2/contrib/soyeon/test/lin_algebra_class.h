@@ -9,7 +9,9 @@ class QuadraticObjective {
   void ComputeObjective(Vector &x, double *objective);
   void ComputeGradient(Vector &x, Vector *gradient);
   void ComputeHessian(Vector &x, Matrix *hessian);
- private:
+ 
+private:
+  //memeber variable with _(under score)
   Matrix quadratic_term_;
   Vector linear_term_;
   Matrix sum_quad_;
