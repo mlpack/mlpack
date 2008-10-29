@@ -2,6 +2,7 @@
 #include "gm.h"
 #include <fastlib/fastlib.h>
 
+
 FactorGraph constructExampleFactorGraph() {
   String n0syms[] = {"rain", "sunny", "cloud"};
   String n1syms[] = {"hot", "cold"};
@@ -51,16 +52,71 @@ FactorGraph constructExampleFactorGraph() {
   return fg;
 }
 
+FactorGraph constructExampleFactorGraph1() {
+  String n0syms[] = {"rain", "sunny", "cloud"};
+  String n1syms[] = {"hot", "cold"};
+
+  Node nodes[2];
+  nodes[0].Init(n0syms, 3);
+  nodes[1].Init(n1syms, 2);  
+
+  ArrayList<Node> nodes_list;
+  nodes_list.InitCopy(nodes, 2);
+
+  index_t f0ranges[] = {3, 2};
+
+  double f0vals[] = {1,2,3,4,5,6};
+
+  Factor factors[1];
+  factors[0].Init(f0ranges, 2, f0vals);
+
+  ArrayList<Factor> factors_list;
+  factors_list.InitCopy(factors, 1);
+
+  index_t f0nodes[] = {0, 1};
+
+  ArrayList<index_t> factor2node[1];
+  factor2node[0].InitCopy(f0nodes, 2);
+
+  ArrayList<ArrayList<index_t> > factor2node_list;
+  factor2node_list.InitCopy(factor2node,1);
+
+  FactorGraph fg;
+  fg.Init(nodes_list, factors_list, factor2node_list);
+
+  return fg;
+}
+
 int main() {
+  FILE* logfile = fopen("LOG", "w");
   FactorGraph fg = constructExampleFactorGraph();
-  //ot::Print(fg, "factor graph", stdout);
 
   String syms[] = {"sunny", "cold", "1", "d"};
+  //String syms[] = {"sunny", "cold"};
   ArrayList<String> syms_list;
   syms_list.InitCopy(syms, 4);
 
   fg.SetObserveds(syms_list);
-  ot::Print(fg.jointProduct(), "joint product", stdout);
+  ot::Print(fg.jointProduct(), "joint product", logfile);
+
+  fg.PassMessages(false);
+  fg.PassMessages(true);
+
+
+  ArrayList<ArrayList<double> > s;
+  ArrayList<double> Z;
+  s.Init(4);
+  Z.Init(4);
+  for (int i = 0; i < 4; i++)
+    Z[i] = fg.NodeMarginalSum(i, &s[i]);
+
+  ot::Print(s, "marginal sum", logfile);
+  ot::Print(Z, "normalization constant", logfile);
+
+  ot::Print(fg, "factor graph", logfile);
+
+  fclose(logfile);
+
   return 0;
 }
 
