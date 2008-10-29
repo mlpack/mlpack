@@ -1,7 +1,7 @@
 #include <string>
 #include "approx_nn_dual.h"
 
-const fx_entry_doc approx_nn_main_entries[] = {
+const fx_entry_doc approx_nn_main_dual_entries[] = {
   {"r", FX_REQUIRED, FX_STR, NULL,
    " A file containing the reference set.\n"},
   {"q", FX_REQUIRED, FX_STR, NULL,
@@ -20,15 +20,15 @@ const fx_entry_doc approx_nn_main_entries[] = {
   FX_ENTRY_DOC_DONE
 };
 
-const fx_submodule_doc approx_nn_main_submodules[] = {
-  {"ann", &approx_nn_doc,
+const fx_submodule_doc approx_nn_main_dual_submodules[] = {
+  {"ann", &approx_nn_dual_doc,
    " Responsible for doing approximate nearest neighbor"
    " search using sampling on kd-trees.\n"},
   FX_SUBMODULE_DOC_DONE
 };
 
-const fx_module_doc approx_nn_main_doc = {
-  approx_nn_main_entries, approx_nn_main_submodules,
+const fx_module_doc approx_nn_main_dual_doc = {
+  approx_nn_main_dual_entries, approx_nn_main_dual_submodules,
   "This is a program to test run the approx "
   " nearest neighbors using sampling on kd-trees.\n"
   "It performs the exact, approximate"
@@ -47,7 +47,7 @@ void count_mismatched_neighbors(ArrayList<index_t>*, ArrayList<double>*,
 
 int main (int argc, char *argv[]) {
   fx_module *root
-    = fx_init(argc, argv, &approx_nn_main_doc);
+    = fx_init(argc, argv, &approx_nn_main_dual_doc);
 
   Matrix qdata, rdata;
   std::string qfile = fx_param_str_req(root, "q");
@@ -112,7 +112,7 @@ int main (int argc, char *argv[]) {
 //     prob.PrintDebug();
   }
   
-  count_mismatched_neighbors(&exc, &die, &apc, &dia);
+  //  count_mismatched_neighbors(&exc, &die, &apc, &dia);
 
   fx_done(fx_root);
 }
