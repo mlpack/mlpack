@@ -1,0 +1,79 @@
+Fastlib meetings
+
+10/21 Tues. (1:30p) Nick - general idea
+
+10/23 Thur. (1:30p) Nick - Install fastlib/cygwin
+
+10/24 Fri.  (10:30a) Nick - Install fastlib/cygwin
+			 Intro to how to use cygwin
+				>svn add soyeon
+				>cd /cygdrive/c/fastlib2/fastlib2/contrib/soyeon
+				>vim file.cc (#include "fastlib/fastlib.h"
+				>mkdir test
+				>svn add test
+				>svn add file.cc
+				>vim build.py (binrule/librule) 
+					librule(name="lin_test",
+					        headers=["linear_algebra_class.h"],
+					        sources=["linear_algebra_class.cc"],
+					        deplibs=["fastlib:fastlib"])
+					binrule(name="main", 
+					        sources=["main.cc"], 
+					        deplibs=[":lin_test"])
+				>fl-build --mode ==fast... or ==debug file.cc
+				>./file
+				>svn list
+				>svn commit -m "msg"
+				>svn log
+				>svn update
+					        
+10/27 Mon. (1:00p) Ryan - general idea
+			1. Manual update
+			2. Optimization tool: Trust region w/ w/o constraints 
+					      Quadratic programming 
+			3. One-dim Integration approx. by sum
+			4, Random samplinig idea for keeping selected r.n
+			
+ 	       (3:00p) Nick - Toy problem f=x'Ax+b'x / gradient / Hessian
+ 				1. >vim lin_algebra_class.h (public: initializer/deconstructor/var&fn
+ 				...
+ 				>svn add in_algebra_class.cc main.cc
+ 				>svn commit -m "Added a more advanced result"
+ 				
+ 				2. Linear algebra Doxygen-> Namespacelist -> la
+ 				http://www.cc.gatech.edu/~pram/doc/html/namespaces.html
+ 				
+ 				3. Debug msg Doxygen->filemember->Debug
+ 				DEBUG_ASSERT_MSG
+ 				DEBUG_SAME_SIZE
+ 				
+ 				4. Operator &(ampersand) vs. *(asterisk)
+ 				5. .Copy vs. alias?
+ 				
+10/28 Tues. (2:00p) Nick - Compile Toy problem
+				1. main function 
+					fx_module *fx_root=fx_init(argc, argv, NULL) //parsing
+					fx_param_str_req vs. fx_param_str
+					fx_result
+					
+				2. >fl_build --mode=debug main 
+				>./main --qdata=qterm.csv --ldata=
+				>svn add *.csv //for test, up to 1000 points?
+				3. >fx_done(fx_root)
+				
+				4. Debugging
+					4-1) Always check TYPO
+					4-2) Be careful with continued lines
+					4-3) reference(&) vs. pointer(*): ref1-p267
+					- References cannot be reassigned -> Must use pointer!!
+					- References cannot be null -> Must use pointer!!
+					- Reference is always an alias to some other object
+					4-4) fastlib load data as MATRIX ONLY //need to be fixed?
+				5. Passing function arguments by the value vs. pointer or references
+				-ref1-p250~
+				
+				
+					
+				
+				
+ 				

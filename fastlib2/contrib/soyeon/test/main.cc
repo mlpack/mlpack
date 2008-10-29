@@ -1,5 +1,6 @@
 #include "fastlib/fastlib.h"
 #include "lin_algebra_class.h"
+#include "iostream.h"
 
 int main(int argc, char *argv[]) {
 
@@ -45,9 +46,37 @@ int main(int argc, char *argv[]) {
   linear_term_mat.MakeColumnVector(0, &linear_term);
 
   my_objective.Init(quadratic_term, linear_term);
-  double dummy_objective;
-  my_objective.ComputeObjective(initial_x, &dummy_objective);
   
+	double dummy_objective;
+  my_objective.ComputeObjective(initial_x, &dummy_objective);
+	Vector dummy_gradient;
+  my_objective.ComputeGradient(initial_x, &dummy_gradient);
+	
+	Matrix dummy_hessian;
+	my_objective.ComputeHessian(initial_x, &dummy_hessian);
+  
+	cout<<"Objective function value: "<< dummy_objective << "\n";
+
+	int i,j,k;
+	cout<<"Gradient vector: ";
+	for (i=0; i<dummy_gradient.length(); i++)
+	{
+		cout<<dummy_gradient[i]<<" ";
+	}
+	cout<<endl;
+	
+	cout<<"Hessian matrix: ";
+	for (j=0; j<dummy_hessian.n_rows(); j++)
+	{
+		for (k=0; k<dummy_hessian.n_rows(); k++)
+		{
+			cout<<dummy_hessian[j][k] <<"  ";
+			//cout<<dummy_hessian.get(j,k) <<"  ";
+			cout<<endl;
+		}
+	}
+	
+	data::Save("Hessian.csv", dummy_hessian);
 
   fx_done(fx_root);
 
