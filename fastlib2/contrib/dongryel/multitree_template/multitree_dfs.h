@@ -195,24 +195,6 @@ class MultiTreeDepthFirst {
     // Initialize the total number of (n - 1) tuples for each node
     // index.
     total_n_minus_one_tuples_.Init(sets.size());
-
-    // Compute the nearest neighbor of each point.
-    AllkNN all_knn;
-    all_knn.Init(*(sets_[0]), 20, 1);
-    ArrayList<index_t> resulting_neighbors;
-    ArrayList<double> squared_distances;
-    AllkFN all_kfn;
-    all_kfn.Init(*(sets_[0]), 20, 1);
-    ArrayList<index_t> resulting_farthest_neighbors;
-    ArrayList<double> squared_farthest_distances;
-
-    fx_timer_start(fx_root, "k_nn_dsqd_initialization");
-    all_knn.ComputeNeighbors(&resulting_neighbors, &squared_distances);
-    all_kfn.ComputeNeighbors(&resulting_farthest_neighbors,
-			     &squared_farthest_distances);
-    fx_timer_stop(fx_root, "k_nn_dsqd_initialization");
-
-    PreProcessTree_(trees_[0], squared_distances, squared_farthest_distances);
   }
 
 };
