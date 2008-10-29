@@ -594,20 +594,16 @@ class AxilrodTellerForceKernelAux {
 	  second_index++) {
 
 	double min_squared_distance =
-	  std::max(nodes[first_index]->bound().MinDistanceSq
-		   (nodes[second_index]->bound()),
-		   std::min(nodes[first_index]->stat().min_squared_nn_dist,
-			    nodes[second_index]->stat().min_squared_nn_dist));
+	  nodes[first_index]->bound().MinDistanceSq
+	  (nodes[second_index]->bound());
 
 	if(min_squared_distance == 0) {
 	  return true;
 	}
 
 	double max_squared_distance =
-	  std::min(nodes[first_index]->bound().MaxDistanceSq
-		   (nodes[second_index]->bound()),
-		   std::max(nodes[first_index]->stat().max_squared_fn_dist,
-			    nodes[second_index]->stat().max_squared_fn_dist));
+	  nodes[first_index]->bound().MaxDistanceSq
+	  (nodes[second_index]->bound());
 
 	lower_bound_squared_distances.set(first_index, second_index,
 					  min_squared_distance);
