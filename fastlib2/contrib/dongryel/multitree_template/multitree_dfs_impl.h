@@ -166,7 +166,8 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
  typename MultiTreeProblem::MultiTreeQueryResult &query_results,
  double total_num_tuples) {
   
-  if(MultiTreeProblem::ConsiderTupleExact(globals_, nodes, total_num_tuples,
+  if(MultiTreeProblem::ConsiderTupleExact(globals_, query_results,
+					  nodes, total_num_tuples,
 					  total_n_minus_one_tuples_root_,
 					  total_n_minus_one_tuples_)) {
     return;
@@ -239,14 +240,29 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
 }
 
 template<typename MultiTreeProblem>
-void MultiTreeDepthFirst<MultiTreeProblem>::PreProcessTree_(Tree *node) {
+void MultiTreeDepthFirst<MultiTreeProblem>::PreProcessTree_
+(Tree *node, const ArrayList<double> &squared_distances,
+ const ArrayList<double> &squared_fn_distances) {
 
-  // Reset summary statistics and postponed quantities.
-  node->stat().Init(node->bound(), globals_.kernel_aux);
-  
-  if(!node->is_leaf()) {
-    PreProcessTree_(node->left());
-    PreProcessTree_(node->right());
+  if(node->is_leaf()) {
+    node->stat().min_squared_nn_dist = DBL_MAX;
+    node->stat().max_squared_fn_dist = 0;
+    for(index_t q = node->begin(); q < node->end(); q++) {
+      node->stat().min_squared_nn_dist = 
+	std::min(node->stat().min_squared_nn_dist, squared_distances[q]);
+      node->stat().max_squared_fn_dist =
+	std::max(node->stat().max_squared_fn_dist, squared_fn_distances[q]);
+    }
+  }
+  else {
+    PreProcessTree_(node->left(), squared_distances, squared_fn_distances);
+    PreProcessTree_(node->right(), squared_distances, squared_fn_distances);
+    node->stat().min_squared_nn_dist =
+      std::min(node->left()->stat().min_squared_nn_dist,
+	       node->right()->stat().min_squared_nn_dist);
+    node->stat().max_squared_fn_dist =
+      std::max(node->left()->stat().max_squared_fn_dist,
+	       node->right()->stat().max_squared_fn_dist);
   }
 }
 
