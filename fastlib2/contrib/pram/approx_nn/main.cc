@@ -93,7 +93,7 @@ int main (int argc, char *argv[]) {
     fx_timer_stop(ann_module, "exact");
   }
 
-//   compare_neighbors(&nac, &din, &exc, &die);
+  //  compare_neighbors(&nac, &din, &exc, &die);
 
   // Approximate computation
   if (fx_param_bool(root, "doapprox", true)) {
@@ -105,15 +105,14 @@ int main (int argc, char *argv[]) {
     fx_timer_stop(ann_module, "approx_init");
 
     NOTIFY("Compute");
-    Vector prob;
     fx_timer_start(ann_module, "approx");
-    approx_nn.ComputeApprox(&apc, &dia, &prob);
+    approx_nn.ComputeApprox(&apc, &dia);
     fx_timer_stop(ann_module, "approx");
 
 //     prob.PrintDebug();
   }
   
-//   count_mismatched_neighbors(&exc, &die, &apc, &dia);
+  count_mismatched_neighbors(&exc, &die, &apc, &dia);
 
   fx_done(fx_root);
 }
