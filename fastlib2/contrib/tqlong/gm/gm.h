@@ -47,6 +47,10 @@ class Node {
       if (symbols_[i] == sym) return i;
     return -1; // not found;
   }
+
+  index_t GetRange() {
+    return symbols_.size();
+  }
 };
 
 class Factor {
@@ -141,6 +145,9 @@ class Factor {
     vals_.Copy(vals, len);
   }
 
+  index_t n_args() {
+    return ranges_.size();
+  }
 };
 
 class FactorGraph {
@@ -164,17 +171,25 @@ class FactorGraph {
 
 
   /** Define an edge as a pair of intergers
-   *  (x,y) = (node -> factor) if x < nodes_.size()
-              and factor index = y - nodes_size()
-   *  (x,y) = (factor -> node) if x >= nodes_.size()
-   *          and factor index = x - nodes_size()
+   *  (x,edge) = (node -> factor) if x < nodes_.size()
+   *  (x,edge) = (factor -> node) if x >= nodes_.size()
+   *         
    */
   typedef std::pair<index_t, index_t> Edge;
 
-  /** Edge order in which message is passed in first step,
+  /** Edge order in which message are passed in first step,
    *  the edge order for second step is in reverse
    */
   ArrayList<Edge> order_;
+
+  /** Message from node to factor */
+  ArrayList<ArrayList<ArrayList<double> > > msg_node2factor_;
+
+  /** Message from factor to node */
+  ArrayList<ArrayList<ArrayList<double> > > msg_factor2node_;
+
+  /** The Z constant - common denominator - normalization constant */
+  double Z;
 
   OT_DEF(FactorGraph) {
     OT_MY_OBJECT(nodes_);
@@ -184,6 +199,9 @@ class FactorGraph {
     OT_MY_OBJECT(node2factor_);
     OT_MY_OBJECT(factor2node_);
     OT_MY_OBJECT(order_);
+    OT_MY_OBJECT(msg_node2factor_);
+    OT_MY_OBJECT(msg_factor2node_);
+    OT_MY_OBJECT(Z);
   }
 
  public:
@@ -205,26 +223,57 @@ class FactorGraph {
 
     factor2node_.InitCopy(factor2node);
 
+    // initialize connection from node to factor
+    // based on connection from factor to node
     node2factor_.Init(nodes_.size());
     for (index_t i_node = 0; i_node < node2factor_.size(); i_node++)
       node2factor_[i_node].Init();
 
     index_t n_edge = 0;
     for (index_t i_factor = 0; i_factor < factor2node_.size(); i_factor++) {
+      DEBUG_ASSERT(factors_[i_factor].ranges_.size() ==
+		   factor2node_[i_factor].size());
       for (index_t i_edge = 0; i_edge < factor2node_[i_factor].size(); i_edge++) {
 	index_t i_node = factor2node[i_factor][i_edge];
+	DEBUG_ASSERT(factors_[i_factor].ranges_[i_edge] ==
+		     nodes_[i_node].symbols_.size());
 	n_edge++;
 	DEBUG_ASSERT(i_node < nodes_.size());
 	node2factor_[i_node].PushBackCopy(i_factor);
       }
     }
+
+    // prepare spaces for messages between factor and node and vice versa
+    msg_factor2node_.Init(factor2node_.size());
+    for (index_t i_factor = 0; i_factor < factor2node_.size(); i_factor++) {
+      msg_factor2node_[i_factor].Init(factor2node[i_factor].size());
+      for (index_t i_edge = 0; 
+	   i_edge < factor2node_[i_factor].size(); i_edge++)
+	msg_factor2node_[i_factor][i_edge].Init
+	  (factors_[i_factor].ranges_[i_edge]);
+    }
+
+    msg_node2factor_.Init(node2factor_.size());
+    for (index_t i_node = 0; i_node < node2factor_.size(); i_node++) {
+      msg_node2factor_[i_node].Init(node2factor_[i_node].size());
+      for (index_t i_edge = 0; 
+	   i_edge < node2factor_[i_node].size(); i_edge++)
+	msg_node2factor_[i_node][i_edge].Init
+	  (nodes_[i_node].symbols_.size());
+    }
+    
+    // choose an order in which messages are passed inside the graph
     order_.Init(n_edge);
     CalculateOrder();
+
+    Z = 1; // initialize the normalization factor
   }
 
   /** Calculate factor value using arguments stored in args_ */
   double GetFactor(index_t i_factor) {
-    return factors_[i_factor].GetVal(args_[i_factor]);
+    double val = factors_[i_factor].GetVal(args_[i_factor]);
+    //printf("    getval = %f\n", val);
+    return val;
   }
 
   /** Set arguments */
@@ -276,7 +325,7 @@ class FactorGraph {
     std::queue<index_t> q_visit;
     q_visit.push(0);        // visit the first node as root
     not_visited[0] = false; // and make it visited
-    index_t n = order_.size()-1;
+    index_t n = 0;
 
     while (!q_visit.empty()) {
       index_t x = q_visit.front(); q_visit.pop();
@@ -284,7 +333,7 @@ class FactorGraph {
 	for (index_t i_edge = 0; i_edge < node2factor_[x].size(); i_edge++) {
 	  index_t y = node2factor_[x][i_edge]+nodes_.size();
 	  if (not_visited[y]) {
-	    order_[n--] = Edge(x, y);
+	    order_[n++] = Edge(x, i_edge);
 	    q_visit.push(y);
 	    not_visited[y] = false;
 	  }
@@ -295,16 +344,136 @@ class FactorGraph {
 	for (index_t i_edge = 0; i_edge < factor2node_[xx].size(); i_edge++) {
 	  index_t y = factor2node_[xx][i_edge];
 	  if (not_visited[y]) {
-	    order_[n--] = Edge(x, y);
+	    order_[n++] = Edge(x, i_edge);
 	    q_visit.push(y);
 	    not_visited[y] = false;
 	  }
 	}
       }
     }
-    DEBUG_ASSERT(n == -1); // for a tree graph
+    DEBUG_ASSERT(n == order_.size()); // for a tree graph
     //ot::Print(order_, "order", stdout);
   }
+
+  /** Find a node in a factor */
+  index_t FindNode(index_t i_factor, index_t i_node) {
+    for (index_t i_edge = 0; i_edge < factor2node_[i_factor].size(); i_edge++)
+      if (factor2node_[i_factor][i_edge] == i_node) return i_edge;
+    return -1;
+  }
+
+  /** Find a factor of a node */
+  index_t FindFactor(index_t i_node, index_t i_factor) {
+    for (index_t i_edge = 0; i_edge < node2factor_[i_node].size(); i_edge++)
+      if (node2factor_[i_node][i_edge] == i_factor) return i_edge;
+    return -1;
+  }
+
+  /** Message passing from node to factor */
+  void PassMessageNode2Factor(index_t i_node, index_t i_edge) {
+    for (index_t val = 0; val < nodes_[i_node].GetRange(); val++) {
+      double s = 1;
+      for (index_t i = 0; i < node2factor_[i_node].size(); i++)
+	if (i != i_edge) {
+	  index_t i_factor = node2factor_[i_node][i];
+	  index_t c_edge = FindNode(i_factor, i_node);
+	  s *= msg_factor2node_[i_factor][c_edge][val];
+	}
+      msg_node2factor_[i_node][i_edge][val] = s;
+      //printf("  val = %d s = %f\n", val, s);
+    }
+  }
+
+  /** Message passing from factor to node */
+  void PassMessageFactor2Node(index_t i_factor, index_t i_edge) {
+    index_t i_node = factor2node_[i_factor][i_edge];
+    for (index_t val = 0; val < nodes_[i_node].GetRange(); val++) {
+      args_[i_factor][i_edge] = val;
+      double s = 0;
+      VisitFactorArg(i_factor, i_edge, 0, 1, s);
+      msg_factor2node_[i_factor][i_edge][val] = s;
+      //printf("  val = %d s = %f\n", val, s);
+    }
+  }
+
+  /** Recursive procedure to calculate the message from
+   *  factor to node
+   */
+  void VisitFactorArg(index_t i_factor, index_t i_edge, index_t i, 
+		      double term, double& sum) {
+    if (i >= factors_[i_factor].n_args()) {
+      sum += term*GetFactor(i_factor);
+      return;
+    }
+    if (i_edge != i) {
+      index_t i_node = factor2node_[i_factor][i];
+      index_t c_edge = FindFactor(i_node, i_factor);
+      for (index_t val = 0; val < nodes_[i_node].GetRange(); val++) {
+	args_[i_factor][i] = val;
+	VisitFactorArg(i_factor, i_edge, i+1, 
+		       term*msg_node2factor_[i_node][c_edge][val], sum);
+      }
+    }
+    else
+      VisitFactorArg(i_factor, i_edge, i+1, term, sum);
+  }
+
+  /** Pass messages through entire graph using order */
+  void PassMessages(bool reverse) {
+    if (reverse) {
+      for (index_t i = 0; i < order_.size(); i++) {
+	index_t x = order_[i].first;
+	index_t y = order_[i].second;
+	//printf("x = %d y = %d\n", x, y);
+	if (x < nodes_.size())
+	  PassMessageNode2Factor(x, y);
+	else 
+	  PassMessageFactor2Node(x-nodes_.size(), y);
+      }
+    }
+    else {
+      for (index_t i = order_.size()-1; i >= 0; i--) {
+	index_t x = order_[i].first;
+	index_t y = order_[i].second;
+	//printf("x = %d y = %d\n", x, y);
+	if (x < nodes_.size()) {
+	  index_t i_factor = node2factor_[x][y];
+	  index_t c_edge = FindNode(i_factor, x);
+	  //printf("i_factor = %d c_edge = %d\n", i_factor, c_edge);
+	  PassMessageFactor2Node(i_factor, c_edge);
+	}
+	else {
+	  index_t i_node = factor2node_[x-nodes_.size()][y];
+	  index_t c_edge = FindFactor(i_node, x-nodes_.size());
+	  //printf("i_node = %d c_edge = %d\n", i_node, c_edge);
+	  PassMessageNode2Factor(i_node, c_edge);
+	}
+      }
+    }
+  }
+
+  /** Calculate marginal sum at each node
+   *  assuming that messages are passed through the graph
+   *  on every edge in both direction
+   *  return constant Z
+   */
+
+  double NodeMarginalSum(index_t i_node, ArrayList<double>* sum) {
+    Z = 0;
+    sum->Init(nodes_[i_node].GetRange());
+    for (index_t val = 0; val < nodes_[i_node].GetRange(); val++) {
+      double s = 1;
+      for (index_t i_edge = 0; i_edge < node2factor_[i_node].size(); i_edge++){
+	index_t i_factor = node2factor_[i_node][i_edge];
+	index_t c_edge = FindNode(i_factor, i_node);
+	s *= msg_factor2node_[i_factor][c_edge][val];
+      }
+      (*sum)[val] = s;
+      Z += s;
+    }
+    return Z;
+  } 
+  
 };
 
 #endif
