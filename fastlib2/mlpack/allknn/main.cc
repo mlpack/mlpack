@@ -28,14 +28,18 @@ int main(int argc, char *argv[]) {
   Matrix reference_data;
   ArrayList<index_t> neighbors;
   ArrayList<double> distances;
-  data::Load(reference_file.c_str(), &reference_data);
+  if (data::Load(reference_file.c_str(), &reference_data)==SUCCESS_FAIL) {
+    FATAL("Reference file %s not found", reference_file.c_str());
+  }
   NOTIFY("Loaded reference data from file %s", reference_file.c_str());
  
   AllkNN allknn; 
   if (fx_param_exists(module, "query_file")) {
     std::string query_file=fx_param_str_req(module, "query_file");
     Matrix query_data;
-    data::Load(query_file.c_str(), &query_data);
+    if (data::Load(query_file.c_str(), &query_data)==SUCCESS_FAIL) {
+      FATAL("Query file %s not found", query_file.c_str());
+    }
     NOTIFY("Query data loaded from %s", query_file.c_str());
     NOTIFY("Building query and reference tree"); 
     allknn.Init(query_data, reference_data, module);
@@ -60,4 +64,5 @@ int main(int argc, char *argv[]) {
     }
   }
   fclose(fp);
+  fx_done(module);
 }
