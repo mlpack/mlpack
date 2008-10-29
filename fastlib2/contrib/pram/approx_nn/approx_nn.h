@@ -217,7 +217,6 @@ public:
    * to be destroyed safely.  
    */
   ApproxNN() {
-    // query_tree_ = NULL;
     reference_tree_ = NULL;
     query_trees_.clear();
   } 
@@ -227,9 +226,6 @@ public:
    * The others will take care of themselves.  
    */
   ~ApproxNN() {
-//     if (query_tree_ != NULL) {
-//       delete query_tree_;
-//     }
     for (std::vector<TreeType*>::iterator it = query_trees_.begin();
 	 it < query_trees_.end(); it++) {
       if (*it != NULL) {
@@ -250,8 +246,6 @@ private:
    * bounding boxes of two nodes
    */
   double MinNodeDistSq_ (TreeType* query_node, TreeType* reference_node) {
-    // node->bound() gives us the DHrectBound class for the node
-    // It has a function MinDistanceSq which takes another DHrectBound
     return query_node->bound().MinDistanceSq(reference_node->bound());
   } 
 
@@ -286,9 +280,6 @@ private:
     prob *= sum;
 
 //     // asserting that the probability is <= 1.0
-//     DEBUG_ASSERT_MSG(!(prob > 1),
-// 		     "prob = %lf, N = %"LI"d, n = %"LI"d",
-// 		     prob, set_size, sample_size);
 // This may not be the case when 'n' is close to 'N' and 
 // 'rank_approx' is large enough to make N-1-rank_approx+i < n-1
     return prob;
@@ -313,12 +304,8 @@ private:
       do {
 	n--;
 	prob = ComputeProbability_(set_size, n, rank_approx);
-// 	if (set_size == 900) {
-// 	  printf("%"LI"d, %"LI"d, %lf\n", set_size, n, prob);
-// 	}
       } while (prob >= alpha);
       (*samples)[--set_size] = ++n;
-//       printf("%"LI"d,%"LI"d\n",set_size+1,n);
     }  // end while
     while (set_size > 0) {
       (*samples)[--set_size] = 1;
@@ -338,29 +325,24 @@ private:
     DEBUG_WARN_IF(!query_node->is_leaf());
     DEBUG_WARN_IF(!reference_node->is_leaf());
 
+    // just checking for the single tree version
     DEBUG_ASSERT(query_node->end()
 		 - query_node->begin() == 1);
     
     // Used to find the query node's new upper bound
     double query_max_neighbor_distance = -1.0;
     std::vector<std::pair<double, index_t> > neighbors(knns_);
-    // node->begin() is the index of the first point in the node, 
-    // node->end is one past the last index
     for (index_t query_index = query_node->begin(); 
          query_index < query_node->end(); query_index++) {
        
       // Get the query point from the matrix
       Vector query_point;
-//       queries_.MakeColumnVector(query_index, &query_point);
       queries_.MakeColumnVector(query_, &query_point);
       
-      index_t ind = query_index*knns_;
-      DEBUG_ASSERT(ind == 0);
+      index_t ind = query_*knns_;
       for(index_t i=0; i<knns_; i++) {
-//         neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
-//                                     neighbor_indices_[ind+i]);
-        neighbors[i]=std::make_pair(neighbor_distances_[query_+i],
-                                    neighbor_indices_[query_+i]);
+	neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
+				    neighbor_indices_[ind+i]);
       }
       // We'll do the same for the references
       for (index_t reference_index = reference_node->begin(); 
@@ -377,30 +359,22 @@ private:
 	    la::DistanceSqEuclidean(query_point, reference_point);
 	  // If the reference point is closer than the current candidate, 
 	  // we'll update the candidate
-// 	  if (distance < neighbor_distances_[ind+knns_-1]) {
-	  if (distance < neighbor_distances_[query_+knns_-1]) {
+ 	  if (distance < neighbor_distances_[ind+knns_-1]) {
 	    neighbors.push_back(std::make_pair(distance, reference_index));
 	  }
 	}
       } // for reference_index
-      // if ((index_t)neighbors.size()>knns_) {
+
       std::sort(neighbors.begin(), neighbors.end());
       for(index_t i=0; i<knns_; i++) {
-//         neighbor_distances_[ind+i] = neighbors[i].first;
-//         neighbor_indices_[ind+i]  = neighbors[i].second;
-	neighbor_distances_[query_+i] = neighbors[i].first;
-	neighbor_indices_[query_+i] = neighbors[i].second;
+	neighbor_distances_[ind+i] = neighbors[i].first;
+	neighbor_indices_[ind+i]  = neighbors[i].second;
       }
       neighbors.resize(knns_);
       // We need to find the upper bound distance for this query node
-//       if (neighbor_distances_[ind+knns_-1] > query_max_neighbor_distance) {
-//         query_max_neighbor_distance = neighbor_distances_[ind+knns_-1]; 
-//       }
-      if (neighbor_distances_[query_+knns_-1] > query_max_neighbor_distance) {
-	query_max_neighbor_distance = neighbor_distances_[query_+knns_-1];
+      if (neighbor_distances_[ind+knns_-1] > query_max_neighbor_distance) {
+	query_max_neighbor_distance = neighbor_distances_[ind+knns_-1]; 
       }
-      //  }
-      
     } // for query_index 
     // Update the upper bound for the query_node
     query_node->stat().set_max_distance_so_far(query_max_neighbor_distance);
@@ -414,13 +388,16 @@ private:
   void ComputeNeighborsRecursion_(TreeType* query_node,
 				  TreeType* reference_node, 
 				  double lower_bound_distance) {
-    // A DEBUG statement with no predefined message
+
     DEBUG_ASSERT(query_node != NULL);
-    // A DEBUG statement with a predefined message
-    DEBUG_ASSERT_MSG(reference_node != NULL, "reference node is null");
-    // Make sure the bounding information is correct
-    DEBUG_ASSERT(lower_bound_distance == MinNodeDistSq_(query_node, 
-							reference_node));
+    DEBUG_ASSERT(reference_node != NULL);
+
+    DEBUG_ASSERT(lower_bound_distance
+		 == MinNodeDistSq_(query_node, reference_node));
+
+    // just checking for the single tree version
+    DEBUG_ASSERT(query_node->end()
+		 - query_node->begin() == 1);
     
     if (lower_bound_distance > query_node->stat().max_distance_so_far()) {
       // Pruned by distance
@@ -555,23 +532,18 @@ private:
     // Used to find the query node's new upper bound
     double query_max_neighbor_distance = -1.0;
     std::vector<std::pair<double, index_t> > neighbors(knns_);
-    // node->begin() is the index of the first point in the node, 
-    // node->end is one past the last index
+
     for (index_t query_index = query_node->begin(); 
          query_index < query_node->end(); query_index++) {
        
       // Get the query point from the matrix
       Vector query_point;
-//       queries_.MakeColumnVector(query_index, &query_point);
       queries_.MakeColumnVector(query_, &query_point);
       
-      index_t ind = query_index*knns_;
-      DEBUG_ASSERT(ind == 0);
+      index_t ind = query_*knns_;
       for(index_t i=0; i<knns_; i++) {
-//         neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
-//                                     neighbor_indices_[ind+i]);
-        neighbors[i]=std::make_pair(neighbor_distances_[query_+i],
-                                    neighbor_indices_[query_+i]);
+	neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
+				    neighbor_indices_[ind+i]);
       }
       // We'll do the same for the references
       // but on the sample size number of points
@@ -593,29 +565,22 @@ private:
 	    la::DistanceSqEuclidean(query_point, reference_point);
 	  // If the reference point is closer than the current candidate, 
 	  // we'll update the candidate
-// 	  if (distance < neighbor_distances_[ind+knns_-1]) {
-	  if (distance < neighbor_distances_[query_+knns_-1]) {
+ 	  if (distance < neighbor_distances_[ind+knns_-1]) {
 	    neighbors.push_back(std::make_pair(distance, reference_index));
 	  }
 	}
       } // for reference_index
-      // if ((index_t)neighbors.size()>knns_) {
+
       std::sort(neighbors.begin(), neighbors.end());
       for(index_t i=0; i<knns_; i++) {
-//         neighbor_distances_[ind+i] = neighbors[i].first;
-//         neighbor_indices_[ind+i]  = neighbors[i].second;
-        neighbor_distances_[query_+i] = neighbors[i].first;
-        neighbor_indices_[query_+i]  = neighbors[i].second;
+	neighbor_distances_[ind+i] = neighbors[i].first;
+	neighbor_indices_[ind+i]  = neighbors[i].second;
       }
       neighbors.resize(knns_);
       // We need to find the upper bound distance for this query node
-//       if (neighbor_distances_[ind+knns_-1] > query_max_neighbor_distance) {
-//         query_max_neighbor_distance = neighbor_distances_[ind+knns_-1]; 
-//       }
-      if (neighbor_distances_[query_+knns_-1] > query_max_neighbor_distance) {
-        query_max_neighbor_distance = neighbor_distances_[query_+knns_-1]; 
+      if (neighbor_distances_[ind+knns_-1] > query_max_neighbor_distance) {
+	query_max_neighbor_distance = neighbor_distances_[ind+knns_-1]; 
       }
-      //  }
       
     } // for query_index 
     // Update the upper bound for the query_node
@@ -664,20 +629,20 @@ private:
   void ComputeApproxRecursion_(TreeType* query_node,
 			       TreeType* reference_node, 
 			       double lower_bound_distance) {
-    // A DEBUG statement with no predefined message
+
     DEBUG_ASSERT(query_node != NULL);
     DEBUG_ASSERT(reference_node != NULL);
     // Make sure the bounding information is correct
-    DEBUG_ASSERT(lower_bound_distance == MinNodeDistSq_(query_node, 
-							reference_node));
+    DEBUG_ASSERT(lower_bound_distance
+		 == MinNodeDistSq_(query_node, reference_node));
     DEBUG_ASSERT(query_node->end()
 		 - query_node->begin() == 1);
 
     if (is_done(query_node)) {
-      return;
-    }
-    
-    if (lower_bound_distance > query_node->stat().max_distance_so_far()) {
+      query_node->stat().add_total_points(reference_node->end()
+					  - reference_node->begin());
+    } else if (lower_bound_distance
+	       > query_node->stat().max_distance_so_far()) {
       // Pruned by distance
       number_of_prunes_++;
 
@@ -1379,33 +1344,13 @@ public:
       ComputeNeighborsRecursion_(*query_tree, reference_tree_, 
 				 MinNodeDistSq_(*query_tree,
 						reference_tree_));
-      // since the results would always be stored in the first
-      // index, we use that. The only thing to worry here is that
-      // the old_from_new_queries_ might have to be destroyed
-      // before every tree building
-      (*resulting_neighbors)[query_]
-	= old_from_new_references_[neighbor_indices_[query_]];
-      (*distances)[query_] = neighbor_distances_[query_];
     }
-
-//     // We need to map the indices back from how they have 
-//     // been permuted
-//     if (query_tree_ != NULL) {
-//       for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-//         (*resulting_neighbors)[old_from_new_queries_[i/knns_]*knns_+ i%knns_]
-// 	  = old_from_new_references_[neighbor_indices_[i]];
-//         (*distances)[old_from_new_queries_[i/knns_]*knns_+ i%knns_]
-// 	  = neighbor_distances_[i];
-//       }
-//     } else {
-//       for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-//         (*resulting_neighbors)[old_from_new_references_[i/knns_]
-// 			       *knns_+ i%knns_]
-// 	  = old_from_new_references_[neighbor_indices_[i]];
-//         (*distances)[old_from_new_references_[i/knns_]*knns_+ i%knns_]
-// 	  = neighbor_distances_[i];
-//       }
-//     }
+    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+      index_t query = i/knns_;
+      (*resulting_neighbors)[query*knns_+ i%knns_]
+	= old_from_new_references_[neighbor_indices_[i]];
+      (*distances)[query*knns_+ i%knns_] = neighbor_distances_[i];
+    }
   } // ComputeNeighbors
   
   
@@ -1427,31 +1372,13 @@ public:
 	 query_tree < query_trees_.end(); ++query_tree, ++query_) {
 
       ComputeBaseCase_(*query_tree, reference_tree_);
-      // since the results would always be stored in the first
-      // index, we use that. The only thing to worry here is that
-      // the old_from_new_queries_ might have to be destroyed
-      // before every tree building
-      (*resulting_neighbors)[query_]
-	= old_from_new_references_[neighbor_indices_[query_]];
-      (*distances)[query_] = neighbor_distances_[query_];
     }
-//     if (query_tree_!=NULL) {
-//       ComputeBaseCase_(query_tree_, reference_tree_);
-//     } else {
-//       ComputeBaseCase_(reference_tree_, reference_tree_);
-//     }
-
-//     // The same code as above
-//     resulting_neighbors->Init(neighbor_indices_.size());
-//     distances->Init(neighbor_distances_.length());
-//     // We need to map the indices back from how they have 
-//     // been permuted
-//     for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-//       (*resulting_neighbors)[old_from_new_references_[i/knns_]*knns_+ i%knns_]
-// 	= old_from_new_references_[neighbor_indices_[i]];
-//       (*distances)[old_from_new_references_[i/knns_]*knns_+ i%knns_]
-// 	=  neighbor_distances_[i];
-//     }
+    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+      index_t query = i/knns_;
+      (*resulting_neighbors)[query*knns_+ i%knns_]
+	= old_from_new_references_[neighbor_indices_[i]];
+      (*distances)[query*knns_+ i%knns_] = neighbor_distances_[i];
+    }
   }
 
   /**
@@ -1475,13 +1402,12 @@ public:
       ComputeApproxRecursion_(*query_tree, reference_tree_, 
 			      MinNodeDistSq_(*query_tree,
 					     reference_tree_));
-      // since the results would always be stored in the first
-      // index, we use that. The only thing to worry here is that
-      // the old_from_new_queries_ might have to be destroyed
-      // before every tree building
-      (*resulting_neighbors)[query_]
-	= old_from_new_references_[neighbor_indices_[query_]];
-      (*distances)[query_] = neighbor_distances_[query_];
+    }
+    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+      index_t query = i/knns_;
+      (*resulting_neighbors)[query*knns_+ i%knns_]
+	= old_from_new_references_[neighbor_indices_[i]];
+      (*distances)[query*knns_+ i%knns_] = neighbor_distances_[i];
     }
   }
 }; //class AllkNN
