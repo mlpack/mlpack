@@ -31,14 +31,17 @@ class AxilrodTellerForceProblem {
 
     template<typename TGlobal, typename Tree>
     bool ComputeFiniteDifference(TGlobal &globals,
-				 ArrayList<Tree *> &nodes) {
+				 ArrayList<Tree *> &nodes,
+				 const Vector &total_n_minus_one_tuples) {
 
       // If any of the distance evaluation resulted in zero minimum
       // distance, then return false.
-      return globals.kernel_aux.ComputeFiniteDifference
-	(globals, nodes, negative_force_vector_e,
+      bool flag = globals.kernel_aux.ComputeFiniteDifference
+	(globals, nodes, total_n_minus_one_tuples, negative_force_vector_e,
 	 l1_norm_negative_force_vector_u, l1_norm_positive_force_vector_l,
 	 positive_force_vector_e, n_pruned, used_error);
+
+      return flag;
     }
 
     void SetZero() {
@@ -450,11 +453,12 @@ class AxilrodTellerForceProblem {
 				 double total_num_tuples,
 				 double total_n_minus_one_tuples_root,
 				 const Vector &total_n_minus_one_tuples) {
-    
-    // Need to fill this out...
+
+    // Compute delta change for each node...
     MultiTreeDelta delta;
     delta.Init(total_n_minus_one_tuples);
-    if(!delta.ComputeFiniteDifference(globals, nodes)) {
+    if(!delta.ComputeFiniteDifference(globals, nodes,
+				      total_n_minus_one_tuples)) {
       return false;
     }
     
@@ -472,7 +476,7 @@ class AxilrodTellerForceProblem {
 	// negative component.
 	double ratio = total_n_minus_one_tuples[i] / 
 	  (total_n_minus_one_tuples_root - new_summary.n_pruned_l);
-	
+
 	if((AxilrodTellerForceProblem::relative_error_ *
 	    (new_summary.l1_norm_negative_force_vector_u +
 	     new_summary.l1_norm_positive_force_vector_l) -

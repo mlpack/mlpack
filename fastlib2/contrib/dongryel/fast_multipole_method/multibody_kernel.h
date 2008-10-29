@@ -743,6 +743,7 @@ class AxilrodTellerForceKernelAux {
   template<typename TGlobal, typename Tree>
   bool ComputeFiniteDifference
   (TGlobal &globals, ArrayList<Tree *> &nodes,
+   const Vector &total_n_minus_one_tuples,
    Matrix &negative_force_vector_e, Vector &l1_norm_negative_force_vector_u,
    Vector &l1_norm_positive_force_vector_l, Matrix &positive_force_vector_e,
    Vector &n_pruned, Vector &used_error) {
@@ -771,6 +772,24 @@ class AxilrodTellerForceKernelAux {
 		 l1_norm_positive_force_vector_l, positive_force_vector_e,
 		 n_pruned, used_error);
 
+    // Scale the error and delta contributions by the number of (n -
+    // 1) tuples for each node.
+    for(index_t i = 0; i < order_; i++) {
+      if(i == 0 || nodes[i] != nodes[i - 1]) {
+	double *negative_force_vector_e_column =
+	  negative_force_vector_e.GetColumnPtr(i);
+	la::Scale(dimension_, total_n_minus_one_tuples[i],
+		  negative_force_vector_e_column);
+	l1_norm_negative_force_vector_u[i] *= total_n_minus_one_tuples[i];
+	l1_norm_positive_force_vector_l[i] *= total_n_minus_one_tuples[i];
+	double *positive_force_vector_e_column = 
+	  positive_force_vector_e.GetColumnPtr(i);
+	la::Scale(dimension_, total_n_minus_one_tuples[i],
+		  positive_force_vector_e_column);
+	used_error[i] *= total_n_minus_one_tuples[i];
+      }
+    }
+    
     return true;
   }
 
