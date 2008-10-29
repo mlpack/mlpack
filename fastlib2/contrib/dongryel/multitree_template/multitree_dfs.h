@@ -4,6 +4,8 @@
 #include "fastlib/fastlib.h"
 #include "contrib/dongryel/proximity_project/general_spacetree.h"
 #include "contrib/dongryel/proximity_project/gen_kdtree.h"
+#include "mlpack/allknn/allknn.h"
+#include "contrib/nvasil/allkfn/allkfn.h"
 
 template<typename MultiTreeProblem>
 class MultiTreeDepthFirst {
@@ -106,7 +108,8 @@ class MultiTreeDepthFirst {
    typename MultiTreeProblem::MultiTreeQueryResult &query_results,
    double total_num_tuples);
 
-  void PreProcessTree_(Tree *node);
+  void PreProcessTree_(Tree *node, const ArrayList<double> &squared_nn_dists,
+		       const ArrayList<double> &squared_fn_dists);
   
   void PostProcessTree_
   (Tree *node, typename MultiTreeProblem::MultiTreeQueryResult &query_results);
@@ -192,6 +195,24 @@ class MultiTreeDepthFirst {
     // Initialize the total number of (n - 1) tuples for each node
     // index.
     total_n_minus_one_tuples_.Init(sets.size());
+
+    // Compute the nearest neighbor of each point.
+    AllkNN all_knn;
+    all_knn.Init(*(sets_[0]), 20, 1);
+    ArrayList<index_t> resulting_neighbors;
+    ArrayList<double> squared_distances;
+    AllkFN all_kfn;
+    all_kfn.Init(*(sets_[0]), 20, 1);
+    ArrayList<index_t> resulting_farthest_neighbors;
+    ArrayList<double> squared_farthest_distances;
+
+    fx_timer_start(fx_root, "k_nn_dsqd_initialization");
+    all_knn.ComputeNeighbors(&resulting_neighbors, &squared_distances);
+    all_kfn.ComputeNeighbors(&resulting_farthest_neighbors,
+			     &squared_farthest_distances);
+    fx_timer_stop(fx_root, "k_nn_dsqd_initialization");
+
+    PreProcessTree_(trees_[0], squared_distances, squared_farthest_distances);
   }
 
 };
