@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
   fx_timer_stop(fx_root, "naive_code");
   naive_results.PrintDebug("naive_force_vectors.txt");
   printf("Maximum relative error: %g\n",
-	 naive_results.MaximumRelativeError(results));
+  	 naive_results.MaximumRelativeError(results));
 
   fx_done(fx_root);
   return 0;
