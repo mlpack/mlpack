@@ -276,9 +276,6 @@ private:
     prob *= sum;
 
 //     // asserting that the probability is <= 1.0
-//     DEBUG_ASSERT_MSG(!(prob > 1),
-// 		     "prob = %lf, N = %"LI"d, n = %"LI"d",
-// 		     prob, set_size, sample_size);
 // This may not be the case when 'n' is close to 'N' and 
 // 'rank_approx' is large enough to make N-1-rank_approx+i < n-1
     return prob;
@@ -303,12 +300,8 @@ private:
       do {
 	n--;
 	prob = ComputeProbability_(set_size, n, rank_approx);
-// 	if (set_size == 900) {
-// 	  printf("%"LI"d, %"LI"d, %lf\n", set_size, n, prob);
-// 	}
       } while (prob >= alpha);
       (*samples)[--set_size] = ++n;
-//       printf("%"LI"d,%"LI"d\n",set_size+1,n);
     }  // end while
     while (set_size > 0) {
       (*samples)[--set_size] = 1;
@@ -321,10 +314,9 @@ private:
   void ComputeBaseCase_(TreeType* query_node,
 			TreeType* reference_node) {
    
-    // Check that the pointers are not NULL
     DEBUG_ASSERT(query_node != NULL);
     DEBUG_ASSERT(reference_node != NULL);
-    // Check that we really should be in the base case
+
     DEBUG_WARN_IF(!query_node->is_leaf());
     DEBUG_WARN_IF(!reference_node->is_leaf());
 
@@ -387,10 +379,9 @@ private:
   void ComputeNeighborsRecursion_(TreeType* query_node,
 				  TreeType* reference_node, 
 				  double lower_bound_distance) {
-    // A DEBUG statement with no predefined message
+
     DEBUG_ASSERT(query_node != NULL);
-    // A DEBUG statement with a predefined message
-    DEBUG_ASSERT_MSG(reference_node != NULL, "reference node is null");
+    DEBUG_ASSERT(reference_node != NULL);
     // Make sure the bounding information is correct
     DEBUG_ASSERT(lower_bound_distance == MinNodeDistSq_(query_node, 
 							reference_node));
@@ -398,16 +389,11 @@ private:
     if (lower_bound_distance > query_node->stat().max_distance_so_far()) {
       // Pruned by distance
       number_of_prunes_++;
-    }
-    // node->is_leaf() works as one would expect
-    else if (query_node->is_leaf() && reference_node->is_leaf()) {
+    } else if (query_node->is_leaf() && reference_node->is_leaf()) {
       // Base Case
       ComputeBaseCase_(query_node, reference_node);
-    }
-    else if (query_node->is_leaf()) {
-      // Only query is a leaf
-      
-      // We'll order the computation by distance 
+    } else if (query_node->is_leaf()) {
+     
       double left_distance = MinNodeDistSq_(query_node,
 					    reference_node->left());
       double right_distance = MinNodeDistSq_(query_node,
@@ -418,17 +404,14 @@ private:
 				   left_distance);
         ComputeNeighborsRecursion_(query_node, reference_node->right(), 
 				   right_distance);
-      }
-      else {
+      } else {
         ComputeNeighborsRecursion_(query_node, reference_node->right(), 
 				   right_distance);
         ComputeNeighborsRecursion_(query_node, reference_node->left(), 
 				   left_distance);
       }
-    }
-    
-    else if (reference_node->is_leaf()) {
-      // Only reference is a leaf 
+    } else if (reference_node->is_leaf()) {
+     
       double left_distance
 	= MinNodeDistSq_(query_node->left(), reference_node);
       double right_distance
@@ -629,10 +612,8 @@ private:
     if (is_done(query_node)) {
       query_node->stat().add_total_points(reference_node->end()
 					  - reference_node->begin());
-      return;
-    }
-    
-    if (lower_bound_distance > query_node->stat().max_distance_so_far()) {
+    } else if (lower_bound_distance
+	       > query_node->stat().max_distance_so_far()) {
       // Pruned by distance
       number_of_prunes_++;
 
