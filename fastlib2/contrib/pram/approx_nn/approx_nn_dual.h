@@ -7,12 +7,12 @@
  */
 
 #ifndef APPROX_NN_DUAL_H
-#define APPROX_NN_DUALH
+#define APPROX_NN_DUAL_H
 
 #include <fastlib/fastlib.h>
 #include <vector>
 
-const fx_entry_doc approx_nn_entries[] = {
+const fx_entry_doc approx_nn_dual_entries[] = {
   {"dim", FX_PARAM, FX_INT, NULL,
    " The dimension of the data we are dealing with.\n"},
   {"qsize", FX_PARAM, FX_INT, NULL,
@@ -56,8 +56,8 @@ const fx_entry_doc approx_nn_entries[] = {
   FX_ENTRY_DOC_DONE
 };
 
-const fx_module_doc approx_nn_doc = {
-  approx_nn_entries, NULL,
+const fx_module_doc approx_nn_dual_doc = {
+  approx_nn_dual_entries, NULL,
   " Performs approximate nearest neighbors computation"
   " - exact, approximate, brute.\n"
 };
@@ -1302,9 +1302,9 @@ public:
 				 MinNodeDistSq_(query_tree_,
 						reference_tree_));
     } else {
-       ComputeNeighborsRecursion_(reference_tree_, reference_tree_, 
-				  MinNodeDistSq_(reference_tree_,
-						 reference_tree_));
+      ComputeNeighborsRecursion_(reference_tree_, reference_tree_, 
+				 MinNodeDistSq_(reference_tree_,
+						reference_tree_));
     }
  
     // We need to initialize the results list before filling it

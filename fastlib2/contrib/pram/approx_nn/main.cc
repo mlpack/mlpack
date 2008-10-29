@@ -112,7 +112,7 @@ int main (int argc, char *argv[]) {
 //     prob.PrintDebug();
   }
   
-  count_mismatched_neighbors(&exc, &die, &apc, &dia);
+  //  count_mismatched_neighbors(&exc, &die, &apc, &dia);
 
   fx_done(fx_root);
 }
