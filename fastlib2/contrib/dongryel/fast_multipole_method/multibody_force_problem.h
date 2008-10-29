@@ -213,6 +213,10 @@ class AxilrodTellerForceProblem {
     
     MultiTreeQuerySummary summary;
 
+    double min_squared_nn_dist;
+
+    double max_squared_fn_dist;
+
     //GaussianKernelAux::TFarFieldExpansion farfield_expansion;
 
     //GaussianKernelAux::TLocalExpansion local_expansion;
@@ -220,6 +224,8 @@ class AxilrodTellerForceProblem {
     OT_DEF_BASIC(MultiTreeStat) {
       OT_MY_OBJECT(postponed);
       OT_MY_OBJECT(summary);
+      OT_MY_OBJECT(min_squared_nn_dist);
+      OT_MY_OBJECT(max_squared_fn_dist);
       //OT_MY_OBJECT(farfield_expansion);
       //OT_MY_OBJECT(local_expansion);
     }
@@ -234,6 +240,8 @@ class AxilrodTellerForceProblem {
     void SetZero() {
       postponed.SetZero();
       summary.SetZero();
+      min_squared_nn_dist = 0;
+      max_squared_fn_dist = 0;
     }
     
     void Init(const Matrix& dataset, index_t &start, index_t &count) {
@@ -308,6 +316,7 @@ class AxilrodTellerForceProblem {
    public:
 
     double MaximumRelativeError(const MultiTreeQueryResult &other_results) {
+      FILE *relative_error_output = fopen("relative_error.txt", "w+");
       double max_relative_error = 0;
       
       for(index_t i = 0; i < used_error.length(); i++) {
@@ -321,9 +330,11 @@ class AxilrodTellerForceProblem {
 	  l1_norm_exact += fabs(exact_vector[d]);
 	}
 	
+	fprintf(relative_error_output, "%g\n", l1_norm_error / l1_norm_exact);
 	max_relative_error = std::max(max_relative_error,
 				      l1_norm_error / l1_norm_exact);
       }
+      fclose(relative_error_output);
       return max_relative_error;
     }
 
@@ -440,11 +451,6 @@ class AxilrodTellerForceProblem {
 				 double total_n_minus_one_tuples_root,
 				 const Vector &total_n_minus_one_tuples) {
     
-    if(nodes[0] == nodes[1] || nodes[0] == nodes[2] &&
-       nodes[1] == nodes[2]) {
-      return false;
-    }
-    
     // Need to fill this out...
     MultiTreeDelta delta;
     delta.Init(total_n_minus_one_tuples);
@@ -456,29 +462,33 @@ class AxilrodTellerForceProblem {
     for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
 
       // Refine the summary statistics from the new info...
-      AxilrodTellerForceProblem::MultiTreeQuerySummary new_summary;
-      new_summary.InitCopy(nodes[i]->stat().summary);
-      new_summary.ApplyPostponed(nodes[i]->stat().postponed);
-      new_summary.ApplyDelta(delta, i);
-      
-      // Compute the L1 norm of the positive component and the
-      // negative component.
-      double ratio = total_n_minus_one_tuples[i] / 
-	(total_n_minus_one_tuples_root - new_summary.n_pruned_l);
-      
-      if((AxilrodTellerForceProblem::relative_error_ *
-	  (new_summary.l1_norm_negative_force_vector_u +
-	   new_summary.l1_norm_positive_force_vector_l) -
-	  new_summary.used_error_u) * ratio < delta.used_error[i]) {
+      if(i == 0 || nodes[i] != nodes[i - 1]) {
+	AxilrodTellerForceProblem::MultiTreeQuerySummary new_summary;
+	new_summary.InitCopy(nodes[i]->stat().summary);
+	new_summary.ApplyPostponed(nodes[i]->stat().postponed);
+	new_summary.ApplyDelta(delta, i);
 	
-	return false;
+	// Compute the L1 norm of the positive component and the
+	// negative component.
+	double ratio = total_n_minus_one_tuples[i] / 
+	  (total_n_minus_one_tuples_root - new_summary.n_pruned_l);
+	
+	if((AxilrodTellerForceProblem::relative_error_ *
+	    (new_summary.l1_norm_negative_force_vector_u +
+	     new_summary.l1_norm_positive_force_vector_l) -
+	    new_summary.used_error_u) * ratio < delta.used_error[i]) {
+	  
+	  return false;
+	}
       }
     }
 
     // In this case, add the delta contributions to the postponed
     // slots of each node.
     for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
-      nodes[i]->stat().postponed.ApplyDelta(delta, i);
+      if(i == 0 || nodes[i] != nodes[i - 1]) {
+	nodes[i]->stat().postponed.ApplyDelta(delta, i);
+      }
     }
     
     results.num_finite_difference_prunes++;

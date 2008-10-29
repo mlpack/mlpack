@@ -512,7 +512,7 @@ class AxilrodTellerForceKernelAux {
 	distance_second_third_pow_three;
 
       for(index_t counter = 0; counter < dimension_; counter++) {
-	positive_contribution[counter] += 
+	double positive_kernel_evaluate = 
 	  AxilrodTellerForceKernelPositiveEvaluate
 	  (counter, first_point, second_point,
 	   distance_first_second,
@@ -526,7 +526,7 @@ class AxilrodTellerForceKernelAux {
 	   distance_second_third_pow_three,
 	   distance_second_third_pow_five);
 
-	negative_contribution[counter] += 
+	double negative_kernel_evaluate =
 	  AxilrodTellerForceKernelNegativeEvaluate
 	  (counter, first_point, second_point,
 	   distance_first_second,
@@ -539,6 +539,19 @@ class AxilrodTellerForceKernelAux {
 	   distance_second_third,
 	   distance_second_third_pow_three,
 	   distance_second_third_pow_five);
+	
+	if(positive_kernel_evaluate > 0) {
+	  positive_contribution[counter] += positive_kernel_evaluate;
+	}
+	else {
+	  negative_contribution[counter] += positive_kernel_evaluate;
+	}
+	if(negative_kernel_evaluate > 0) {
+	  positive_contribution[counter] += negative_kernel_evaluate;
+	}
+	else {
+	  negative_contribution[counter] += negative_kernel_evaluate;
+	}
 
       } // iterating over each dimension (row-wise)...
     }
@@ -581,16 +594,20 @@ class AxilrodTellerForceKernelAux {
 	  second_index++) {
 
 	double min_squared_distance =
-	  nodes[first_index]->bound().MinDistanceSq
-	  (nodes[second_index]->bound());
+	  std::max(nodes[first_index]->bound().MinDistanceSq
+		   (nodes[second_index]->bound()),
+		   std::min(nodes[first_index]->stat().min_squared_nn_dist,
+			    nodes[second_index]->stat().min_squared_nn_dist));
 
 	if(min_squared_distance == 0) {
 	  return true;
 	}
 
 	double max_squared_distance =
-	  nodes[first_index]->bound().MaxDistanceSq
-	  (nodes[second_index]->bound());
+	  std::min(nodes[first_index]->bound().MaxDistanceSq
+		   (nodes[second_index]->bound()),
+		   std::max(nodes[first_index]->stat().max_squared_fn_dist,
+			    nodes[second_index]->stat().max_squared_fn_dist));
 
 	lower_bound_squared_distances.set(first_index, second_index,
 					  min_squared_distance);
@@ -818,80 +835,43 @@ class AxilrodTellerForceKernelAux {
     for(index_t i = 0; i < dimension_; i++) {
       
       // Check positive contributions...
-      if((tmp_contrib = lower_bound_positive_contributions_.get(i, 0)) > 0) {
-	negative_force_vector_first_particle[i] += (-tmp_contrib);
-	l1_norm_negative_force_vector_u_first_particle += tmp_contrib;
-	positive_force_vector_second_particle[i] += tmp_contrib;
-	l1_norm_positive_force_vector_l_second_particle += tmp_contrib;
-      }
-      else {
-	positive_force_vector_first_particle[i] += (-tmp_contrib);
-	l1_norm_positive_force_vector_l_first_particle += (-tmp_contrib);
-	negative_force_vector_second_particle[i] += tmp_contrib;
-	l1_norm_negative_force_vector_u_second_particle += (-tmp_contrib);
-      }
-      if((tmp_contrib = lower_bound_positive_contributions_.get(i, 1)) > 0) {
-	negative_force_vector_first_particle[i] += (-tmp_contrib);
-	l1_norm_negative_force_vector_u_first_particle += tmp_contrib;
-	positive_force_vector_third_particle[i] += tmp_contrib;
-	l1_norm_positive_force_vector_l_third_particle += tmp_contrib;;
-      }
-      else {
-	positive_force_vector_first_particle[i] += (-tmp_contrib);
-	l1_norm_positive_force_vector_l_first_particle += (-tmp_contrib);
-	negative_force_vector_third_particle[i] += tmp_contrib;
-	l1_norm_negative_force_vector_u_third_particle += (-tmp_contrib);
-      }
-      if((tmp_contrib = lower_bound_positive_contributions_.get(i, 2)) > 0) {
-	negative_force_vector_second_particle[i] += (-tmp_contrib);
-	l1_norm_negative_force_vector_u_second_particle += tmp_contrib;
-	positive_force_vector_third_particle[i] += tmp_contrib;
-	l1_norm_positive_force_vector_l_third_particle += tmp_contrib;
-      }
-      else {
-	positive_force_vector_second_particle[i] += (-tmp_contrib);
-	l1_norm_positive_force_vector_l_second_particle += (-tmp_contrib);
-	negative_force_vector_third_particle[i] += tmp_contrib;
-	l1_norm_negative_force_vector_u_third_particle += (-tmp_contrib);
-      }
+      tmp_contrib = lower_bound_positive_contributions_.get(i, 0);
+      negative_force_vector_first_particle[i] += (-tmp_contrib);
+      l1_norm_negative_force_vector_u_first_particle += tmp_contrib;
+      positive_force_vector_second_particle[i] += tmp_contrib;
+      l1_norm_positive_force_vector_l_second_particle += tmp_contrib;
+
+      tmp_contrib = lower_bound_positive_contributions_.get(i, 1);
+      negative_force_vector_first_particle[i] += (-tmp_contrib);
+      l1_norm_negative_force_vector_u_first_particle += tmp_contrib;
+      positive_force_vector_third_particle[i] += tmp_contrib;
+      l1_norm_positive_force_vector_l_third_particle += tmp_contrib;
+
+      tmp_contrib = lower_bound_positive_contributions_.get(i, 2);
+      negative_force_vector_second_particle[i] += (-tmp_contrib);
+      l1_norm_negative_force_vector_u_second_particle += tmp_contrib;
+      positive_force_vector_third_particle[i] += tmp_contrib;
+      l1_norm_positive_force_vector_l_third_particle += tmp_contrib;
       
       // Check negative contribution accumulations...
-      if((tmp_contrib = upper_bound_negative_contributions_.get(i, 0)) > 0) {
-	negative_force_vector_first_particle[i] += (-tmp_contrib);
-	l1_norm_negative_force_vector_u_first_particle += tmp_contrib;
-	positive_force_vector_second_particle[i] += tmp_contrib;
-	l1_norm_positive_force_vector_l_second_particle += tmp_contrib;
-      }
-      else {
-	positive_force_vector_first_particle[i] += (-tmp_contrib);
-	l1_norm_positive_force_vector_l_first_particle += (-tmp_contrib);
-	negative_force_vector_second_particle[i] += tmp_contrib;
-	l1_norm_negative_force_vector_u_second_particle += (-tmp_contrib);
-      }
-      if((tmp_contrib = upper_bound_negative_contributions_.get(i, 1)) > 0) {
-	negative_force_vector_first_particle[i] += (-tmp_contrib);
-	l1_norm_negative_force_vector_u_first_particle += tmp_contrib;
-	positive_force_vector_third_particle[i] += tmp_contrib;
-	l1_norm_positive_force_vector_l_third_particle += tmp_contrib;
-      }
-      else {
-	positive_force_vector_first_particle[i] += (-tmp_contrib);
-	l1_norm_positive_force_vector_l_first_particle += (-tmp_contrib);
-	negative_force_vector_third_particle[i] += tmp_contrib;
-	l1_norm_negative_force_vector_u_third_particle += (-tmp_contrib);
-      }
-      if((tmp_contrib = upper_bound_negative_contributions_.get(i, 2)) > 0) {
-	negative_force_vector_second_particle[i] += (-tmp_contrib);
-	l1_norm_negative_force_vector_u_second_particle += tmp_contrib;
-	positive_force_vector_third_particle[i] += tmp_contrib;
-	l1_norm_positive_force_vector_l_third_particle += tmp_contrib;
-      }
-      else {
-	positive_force_vector_second_particle[i] += (-tmp_contrib);
-	l1_norm_positive_force_vector_l_second_particle += (-tmp_contrib);
-	negative_force_vector_third_particle[i] += tmp_contrib;
-	l1_norm_negative_force_vector_u_third_particle += (-tmp_contrib);
-      }
+      tmp_contrib = upper_bound_negative_contributions_.get(i, 0);
+      positive_force_vector_first_particle[i] += (-tmp_contrib);
+      l1_norm_positive_force_vector_l_first_particle += (-tmp_contrib);
+      negative_force_vector_second_particle[i] += tmp_contrib;
+      l1_norm_negative_force_vector_u_second_particle += (-tmp_contrib);
+
+      tmp_contrib = upper_bound_negative_contributions_.get(i, 1);
+      positive_force_vector_first_particle[i] += (-tmp_contrib);
+      l1_norm_positive_force_vector_l_first_particle += (-tmp_contrib);
+      negative_force_vector_third_particle[i] += tmp_contrib;
+      l1_norm_negative_force_vector_u_third_particle += (-tmp_contrib);
+
+      tmp_contrib = upper_bound_negative_contributions_.get(i, 2);
+      positive_force_vector_second_particle[i] += (-tmp_contrib);
+      l1_norm_positive_force_vector_l_second_particle += (-tmp_contrib);
+      negative_force_vector_third_particle[i] += tmp_contrib;
+      l1_norm_negative_force_vector_u_third_particle += (-tmp_contrib);
+
     } // end of looping over each dimension...
   }
   
