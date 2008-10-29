@@ -216,10 +216,6 @@ class AxilrodTellerForceProblem {
     
     MultiTreeQuerySummary summary;
 
-    double min_squared_nn_dist;
-
-    double max_squared_fn_dist;
-
     //GaussianKernelAux::TFarFieldExpansion farfield_expansion;
 
     //GaussianKernelAux::TLocalExpansion local_expansion;
@@ -227,8 +223,6 @@ class AxilrodTellerForceProblem {
     OT_DEF_BASIC(MultiTreeStat) {
       OT_MY_OBJECT(postponed);
       OT_MY_OBJECT(summary);
-      OT_MY_OBJECT(min_squared_nn_dist);
-      OT_MY_OBJECT(max_squared_fn_dist);
       //OT_MY_OBJECT(farfield_expansion);
       //OT_MY_OBJECT(local_expansion);
     }
@@ -243,8 +237,6 @@ class AxilrodTellerForceProblem {
     void SetZero() {
       postponed.SetZero();
       summary.SetZero();
-      min_squared_nn_dist = 0;
-      max_squared_fn_dist = 0;
     }
     
     void Init(const Matrix& dataset, index_t &start, index_t &count) {
