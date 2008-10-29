@@ -29,6 +29,9 @@ void QuadraticObjective::ComputeGradient(Vector &x, Vector *gradient){
 }
 
 void QuadraticObjective::ComputeHessian(Vector &x, Matrix *hessian){
-  hessian = &sum_quad_;
+	//Be careful!!
+  hessian = &sum_quad_; //hessian: address, *hessian: value at address
+	//*hessian = sum_quad_;
+	
 }
 

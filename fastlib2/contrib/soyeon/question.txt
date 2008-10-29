@@ -1,0 +1,7 @@
+1. Is there a function for printing matrix in fastlib?
+2. How to save the result and print? (fx_result)-> see the example
+3. error "no match for 'operator[]' in cout<<dummy_hessian[j][k]?
+4. ot::print
+5. How to make several classes & global variables(public?)
+6. void destruct?
+7. template<typename Objective>?
