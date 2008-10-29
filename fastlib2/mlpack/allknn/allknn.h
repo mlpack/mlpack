@@ -678,6 +678,7 @@ class AllkNN {
     } else {
       index_t chunk = queries_.n_cols()/10;
       printf("Progress:00%%");
+      fflush(stdout);
       for(index_t i=0; i<10; i++) {
         for(index_t j=0; j<chunk; j++) {
           Vector point;
@@ -686,6 +687,7 @@ class AllkNN {
           ComputeSingleNeighborsRecursion_(i*chunk+j, point, reference_tree_, &min_dist_so_far);
         }
         printf("\b\b\b%02"LI"d%%", (i+1)*10);  
+        fflush(stdout);
       }
       for(index_t i=0; i<queries_.n_cols() % 10; i++) {
         index_t ind = (queries_.n_cols()/10)*10+i;
