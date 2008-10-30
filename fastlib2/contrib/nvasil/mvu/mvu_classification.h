@@ -99,6 +99,7 @@ public:
    * the furthest neighbors from a file
    */
   void Init(fx_module *module);
+  void Init(fx_module *module, Matrix &labels);
   void Destruct();
   void ComputeGradient(Matrix &coordinates, Matrix *gradient);
   void ComputeObjective(Matrix &coordinates, double *objective);
