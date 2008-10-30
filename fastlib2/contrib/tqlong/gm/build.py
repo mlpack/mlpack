@@ -1,6 +1,6 @@
 librule(
 	name = "gm",
-	headers = ["gm.h","bipartie.h"],
+	headers = ["gm.h","bipartie.h","factor_graph.h"],
         sources = ["gm.cc"],
       	deplibs = ["fastlib:fastlib"],
 	#tests = ["quic_svd_test.cc"]
