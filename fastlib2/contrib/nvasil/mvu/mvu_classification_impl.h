@@ -479,6 +479,84 @@ void MaxFurthestNeighborsSvmSemiSupervised::Init(fx_module *module,
   fx_format_result(module_, "lower_optimal_bound", "%lg", sum_of_furthest_distances_);
 }
 
+void MaxFurthestNeighborsSvmSemiSupervised::Init(fx_module *module, 
+                                                 Matrix &labels) {
+
+  module_=module;
+  knns_ = fx_param_int(module_, "knns", 5);
+  leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+  grad_tolerance_ = fx_param_double(module_, "grad_tolerance", 1e-3);
+  desired_feasibility_error_ = fx_param_double(module_, "desired_feasibility_error", 10);
+  new_dimension_=fx_param_int_req(module_, "new_dimension");
+  num_of_labeled_ = labels.n_cols();
+  num_of_points_=num_of_labeled_+num_of_unlabeled_;
+  previous_infeasibility1_=DBL_MAX;
+  labeled_offset_=0;
+  unlabeled_offset_=num_of_labeled_;
+  // get the number of classes
+  num_of_classes_ = index_t(*std::max_element(labels.ptr(), labels.ptr()+labels.n_cols()))+1;
+  svm_signs_.Init(num_of_classes_, labels.n_cols());
+  anchors_.Init(num_of_classes_);
+  for(index_t i=0; i<num_of_classes_; i++) {
+    double *p = std::find(labels.ptr(), labels.ptr()+labels.n_cols(), double(i));
+    anchors_[i] = ptrdiff_t(p - labels.ptr());
+  }
+  
+  ineq_lagrange_mult_.Init(num_of_classes_ *  num_of_labeled_);
+  ineq_lagrange_mult_.SetAll(100);
+  for(index_t i=0; i<num_of_classes_; i++) {
+    for(index_t j=0; j<labels.n_cols(); j++) {
+      if (labels.get(0, j)==labels.get(0, anchors_[i])) {
+        svm_signs_.set(i, j ,1.0);
+      } else {
+        svm_signs_.set(i, j ,-1.0);
+      }
+    }
+  }
+  std::string nearest_neighbor_file=fx_param_str_req(module, 
+      "nearest_neighbor_file");
+  std::string furthest_neighbor_file=fx_param_str_req(module, 
+      "furthest_neighbor_file");
+  FILE *fp=fopen(nearest_neighbor_file.c_str(), "r");
+  if (fp==NULL) {
+    FATAL("Error while opening %s...%s", nearest_neighbor_file.c_str(),
+        strerror(errno));
+  }
+  nearest_neighbor_pairs_.Init();
+  nearest_distances_.Init();
+  num_of_points_=0;
+  while(!feof(fp)) {
+    index_t n1, n2;
+    double distance;
+    fscanf(fp,"%i %i %lg", &n1, &n2, &distance);
+    nearest_neighbor_pairs_.PushBackCopy(std::make_pair(n1, n2));
+    nearest_distances_.PushBackCopy(distance);
+    if (n1>num_of_points_) {
+      num_of_points_=n1;
+    }
+    if (n2>num_of_points_) {
+      num_of_points_=n2;
+    }
+  }
+  num_of_points_++;
+  fclose(fp);
+  num_of_unlabeled_ = num_of_points_-num_of_labeled_;  
+  num_of_nearest_pairs_=nearest_neighbor_pairs_.size(); 
+  eq_lagrange_mult_.Init(num_of_nearest_pairs_);
+  eq_lagrange_mult_.SetAll(1.0);
+  double max_nearest_distance=0;
+  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+    max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
+  }
+  sum_of_furthest_distances_=-max_nearest_distance*
+      num_of_points_*num_of_points_;
+  NOTIFY("Lower bound for optimization %lg", sum_of_furthest_distances_);
+  fx_format_result(module_, "num_of_constraints", "%i", num_of_nearest_pairs_);
+  fx_format_result(module_, "lower_optimal_bound", "%lg", sum_of_furthest_distances_);
+
+}
+
+
 void MaxFurthestNeighborsSvmSemiSupervised::Destruct() {
   allknn_.Destruct();
   allkfn_.Destruct();
