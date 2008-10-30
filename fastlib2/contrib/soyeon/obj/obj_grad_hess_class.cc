@@ -1,6 +1,6 @@
 #include "obj_grad_hess_class.h"
 
-void Init(int num_points_t){
+void Init(int &num_points_t){
 	num_points_t_.Copy(num_points_t);
 }
 
