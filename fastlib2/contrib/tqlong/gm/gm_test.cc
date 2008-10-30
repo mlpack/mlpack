@@ -102,6 +102,7 @@ int main() {
   fg.PassMessages(false);
   fg.PassMessages(true);
 
+  printf("Messages passed\n");
 
   ArrayList<ArrayList<double> > s;
   ArrayList<double> Z;
@@ -115,7 +116,7 @@ int main() {
 
   ot::Print(fg, "factor graph", logfile);
 
-  fclose(logfile);
+  //fclose(logfile);
 
   return 0;
 }
