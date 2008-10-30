@@ -41,6 +41,7 @@ class MaxVariance {
       Matrix &gradient, double step) { return false;}
   bool IsIntermediateStepOver(Matrix &coordinates, 
       Matrix &gradient, double step) {return false;}
+  void GiveInitMatrix(Matrix *init_data);
  index_t num_of_points();
 
  private:
@@ -55,6 +56,7 @@ class MaxVariance {
   double sigma_;
   double sum_of_furthest_distances_;
   index_t num_of_points_;
+  index_t new_dimension_;
 };
 
 class MaxVarianceInequalityOnFurthest {
@@ -74,7 +76,8 @@ class MaxVarianceInequalityOnFurthest {
       Matrix &gradient, double step) {return false;}
   bool IsIntermediateStepOver(Matrix &coordinates, 
       Matrix &gradient, double step) {return false;}
- 
+  void GiveInitMatrix(Matrix *init_data);
+
  private:
   datanode *module_;
   AllkNN allknn_;
@@ -91,6 +94,7 @@ class MaxVarianceInequalityOnFurthest {
   ArrayList<double> furthest_distances_;
   double sigma_;
   double sum_of_furthest_distances_;
+  index_t new_dimension_;
 };
 
 class MaxFurthestNeighbors {
@@ -109,11 +113,12 @@ public:
   void set_lagrange_mult(double val);
   bool IsDiverging(double objective); 
   bool IsOptimizationOver(Matrix &coordinates, 
-      Matrix &gradient, double step) {return false;}
+      Matrix &gradient, double step) ;
   bool IsIntermediateStepOver(Matrix &coordinates, 
-      Matrix &gradient, double step) {return false;}
+      Matrix &gradient, double step); 
   index_t num_of_points();
- 
+  void GiveInitMatrix(Matrix *init_data);
+
 private:
   datanode *module_;
   AllkNN allknn_;
@@ -130,6 +135,13 @@ private:
   double sum_of_furthest_distances_;
   double sigma_;
   index_t num_of_points_;
+  index_t new_dimension_;
+  double infeasibility1_;
+  double previous_infeasibility1_;
+  double desired_feasibility_error_;
+  double infeasibility_tolerance_;
+  double sum_of_nearest_distances_;
+  double grad_tolerance_;
 };
 
 class MaxVarianceUtils {

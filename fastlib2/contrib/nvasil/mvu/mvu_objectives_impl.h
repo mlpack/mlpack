@@ -20,6 +20,7 @@ void MaxVariance::Init(datanode *module, Matrix &data) {
   module_=module;
   knns_ = fx_param_int(module_, "knns", 5);
   leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+  new_dimension_ = fx_param_int_req(module_, "new_dimension");
   NOTIFY("Data loaded ...\n");
   NOTIFY("Nearest neighbor constraints ...\n");
   NOTIFY("Building tree with data ...\n");
@@ -80,6 +81,8 @@ void MaxVariance::Init(datanode *module, Matrix &data) {
 
 void MaxVariance::Init(fx_module *module) {
   module_=module;
+  new_dimension_ = fx_param_int_req(module_, "new_dimension");
+
   std::string nearest_neighbor_file=fx_param_str_req(module, 
       "nearest_neighbor_file");
   std::string furthest_neighbor_file=fx_param_str_req(module, 
@@ -233,12 +236,22 @@ index_t  MaxVariance::num_of_points() {
   return num_of_points_;
 }
 
+void MaxVariance::GiveInitMatrix(Matrix *init_data) {
+  init_data->Init(new_dimension_, num_of_points_);
+  for(index_t i=0; i<num_of_points_; i++) {
+    for(index_t j=0; j<new_dimension_ ; j++) {
+      init_data->set(j, i,math::Random(0, 1) );
+    }
+  }
+}
+
 ////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 void MaxVarianceInequalityOnFurthest::Init(datanode *module, Matrix &data) {
   module_=module;
   knns_ = fx_param_int(module_, "knns", 5);
   leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+  new_dimension_ = fx_param_int_req(module_, "new_dimension");
   NOTIFY("Data loaded ...\n");
   NOTIFY("Nearest neighbor constraints ...\n");
   NOTIFY("Building tree with data ...\n");
@@ -488,10 +501,22 @@ void MaxVarianceInequalityOnFurthest::Project(Matrix *coordinates) {
   OptUtils::RemoveMean(coordinates);
 }
 
+void MaxVarianceInequalityOnFurthest::GiveInitMatrix(Matrix *init_data) {
+  FATAL("Error this has not been implemented yet");
+}
+
+
+
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
   module_=module;
+  new_dimension_ = fx_param_int_req(module_, "new_dimension");
+  infeasibility1_=DBL_MAX;
+  previous_infeasibility1_=DBL_MAX;
+  desired_feasibility_error_ = fx_param_double(module_, "desired_feasibility_error", 1);
+  grad_tolerance_ = fx_param_double(module_, "grad_tolerance", 0.1);
+  infeasibility_tolerance_=  fx_param_double(module_, "infeasibility_tolerance", 0.01);
   knns_ = fx_param_int(module_, "knns", 5);
   leaf_size_ = fx_param_int(module_, "leaf_size", 20);
   NOTIFY("Data loaded ...\n");
@@ -537,8 +562,9 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
         &nearest_distances_,
         &num_of_nearest_pairs_);
   }
- 
- fx_format_result(module_, "num_of_constraints", "%i", num_of_nearest_pairs_);
+  sum_of_nearest_distances_=math::Pow<1,2>(la::Dot(nearest_distances_.size(), 
+      &nearest_distances_[0], &nearest_distances_[0]));
+  fx_format_result(module_, "num_of_constraints", "%i", num_of_nearest_pairs_);
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult_.SetAll(1.0);
   NOTIFY("Furtherst neighbor constraints ...\n");
@@ -572,6 +598,12 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
 
 void MaxFurthestNeighbors::Init(fx_module *module) {
   module_=module;
+  new_dimension_ = fx_param_int_req(module_, "new_dimension");
+  infeasibility1_=DBL_MAX;
+  previous_infeasibility1_=DBL_MAX;
+  desired_feasibility_error_ = fx_param_double(module_, "desired_feasibility_error", 1);
+  grad_tolerance_ = fx_param_double(module_, "grad_tolerance", 0.1);
+  infeasibility_tolerance_=  fx_param_double(module_, "infeasibility_tolerance", 0.01);
   std::string nearest_neighbor_file=fx_param_str_req(module, 
       "nearest_neighbor_file");
   std::string furthest_neighbor_file=fx_param_str_req(module, 
@@ -599,6 +631,9 @@ void MaxFurthestNeighbors::Init(fx_module *module) {
   }
   num_of_points_++;
   num_of_nearest_pairs_=nearest_neighbor_pairs_.size();
+  sum_of_nearest_distances_=math::Pow<1,2>(la::Dot(nearest_distances_.size(), 
+      &nearest_distances_[0], &nearest_distances_[0]));
+
   fclose(fp);
   fp=fopen(furthest_neighbor_file.c_str(), "r");
   if (fp==NULL) {
@@ -706,6 +741,7 @@ void MaxFurthestNeighbors::ComputeFeasibilityError(Matrix &coordinates, double *
                            -nearest_distances_[i];
     *error+=dist_diff*dist_diff;
   }
+  *error= 100 * math::Pow<1,2>(*error)/sum_of_nearest_distances_;
 }
 
 double MaxFurthestNeighbors::ComputeLagrangian(Matrix &coordinates) {
@@ -759,9 +795,48 @@ void MaxFurthestNeighbors::Project(Matrix *coordinates) {
   OptUtils::RemoveMean(coordinates);
 }
 
-index_t  MaxFurthestNeighbors::num_of_points() {
+index_t MaxFurthestNeighbors::num_of_points() {
   return num_of_points_;
 }
+
+void MaxFurthestNeighbors::GiveInitMatrix(Matrix *init_data) {
+  init_data->Init(new_dimension_, num_of_points_);
+  for(index_t i=0; i<num_of_points_; i++) {
+    for(index_t j=0; j<new_dimension_ ; j++) {
+      init_data->set(j, i,math::Random(0, 1) );
+    }
+  }
+}
+bool MaxFurthestNeighbors::IsOptimizationOver(Matrix &coordinates, 
+      Matrix &gradient, double step) { 
+  ComputeFeasibilityError(coordinates, &infeasibility1_);
+  if (infeasibility1_<desired_feasibility_error_ || 
+      fabs(infeasibility1_-previous_infeasibility1_)<infeasibility_tolerance_)  {
+    NOTIFY("Optimization is over");
+    return true;
+  } else {
+    previous_infeasibility1_=infeasibility1_;
+    return false; 
+  }
+
+}
+
+bool MaxFurthestNeighbors::IsIntermediateStepOver(Matrix &coordinates, 
+      Matrix &gradient, double step) {
+   double norm_gradient=math::Pow<1,2>(la::Dot(gradient.n_elements(), 
+                               gradient.ptr(), 
+                               gradient.ptr()));
+  double feasibility_error;
+  ComputeFeasibilityError(coordinates, &feasibility_error);
+  if (norm_gradient*step < grad_tolerance_ 
+      ||  feasibility_error<desired_feasibility_error_) {
+    return true;
+  }
+  return false;
+
+
+} 
+
 
 ///////////////////////////////////////////////////////////////
 void MaxVarianceUtils::ConsolidateNeighbors(ArrayList<index_t> &from_tree_ind,

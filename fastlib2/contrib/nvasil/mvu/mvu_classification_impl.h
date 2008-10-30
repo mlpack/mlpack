@@ -359,7 +359,6 @@ void MaxFurthestNeighborsSvmSemiSupervised::Init(fx_module *module,
     Matrix &unlabeled_data,
     Matrix &labels) {
 
-  anchor_point_=0;
   module_=module;
   knns_ = fx_param_int(module_, "knns", 5);
   leaf_size_ = fx_param_int(module_, "leaf_size", 20);
@@ -372,14 +371,24 @@ void MaxFurthestNeighborsSvmSemiSupervised::Init(fx_module *module,
   previous_infeasibility1_=DBL_MAX;
   labeled_offset_=0;
   unlabeled_offset_=num_of_labeled_;
-  svm_signs_.Init(labels.n_cols());
-  ineq_lagrange_mult_.Init(svm_signs_.length());
+  // get the number of classes
+  num_of_classes_ = index_t(*std::max_element(labels.ptr(), labels.ptr()+labels.n_cols()))+1;
+  svm_signs_.Init(num_of_classes_, labels.n_cols());
+  anchors_.Init(num_of_classes_);
+  for(index_t i=0; i<num_of_classes_; i++) {
+    double *p = std::find(labels.ptr(), labels.ptr()+labels.n_cols(), double(i));
+    anchors_[i] = ptrdiff_t(p - labels.ptr());
+  }
+  
+  ineq_lagrange_mult_.Init(num_of_classes_ *  num_of_labeled_);
   ineq_lagrange_mult_.SetAll(100);
-  for(index_t i=0; i<labels.n_cols(); i++) {
-    if (labels.get(0, i)==labels.get(0, anchor_point_)) {
-      svm_signs_[i]=1.0;
-    } else {
-      svm_signs_[i]=-1.0;
+  for(index_t i=0; i<num_of_classes_; i++) {
+    for(index_t j=0; j<labels.n_cols(); j++) {
+      if (labels.get(0, j)==labels.get(0, anchors_[i])) {
+        svm_signs_.set(i, j ,1.0);
+      } else {
+        svm_signs_.set(i, j ,-1.0);
+      }
     }
   }
   DEBUG_ASSERT_MSG(labeled_data.n_rows()==unlabeled_data.n_rows(), 
@@ -521,19 +530,21 @@ void MaxFurthestNeighborsSvmSemiSupervised::ComputeGradient(Matrix &coordinates,
   }
   
   // inequality constraints
-  for(index_t i=0; i<ineq_lagrange_mult_.length(); i++) {
-    double *p1=coordinates.GetColumnPtr(anchor_point_);
-    double *p2=coordinates.GetColumnPtr(i);
-    double dot_prod=la::Dot(dimension,
-                            p1,
-                            p2);
-    double ineq=dot_prod*svm_signs_[i]-MARGIN;
-    if (sigma1_*ineq <= ineq_lagrange_mult_[i] ) {
-      double factor=(-ineq_lagrange_mult_[i]+ sigma1_*ineq)*svm_signs_[i];
-      la::AddExpert(dimension, factor, p2, 
-          gradient->GetColumnPtr(anchor_point_));
-      la::AddExpert(dimension, factor, p1, 
-          gradient->GetColumnPtr(i));
+  for(index_t i=0; i<num_of_classes_; i++) {
+    for(index_t j=0; j<num_of_labeled_; j++) {
+      double *p1=coordinates.GetColumnPtr(anchors_[i]);
+      double *p2=coordinates.GetColumnPtr(j);
+      double dot_prod=la::Dot(dimension,
+                              p1,
+                              p2);
+      double ineq=dot_prod*svm_signs_.get(i, j)-MARGIN;
+      if (sigma1_*ineq <= ineq_lagrange_mult_[i*num_of_labeled_+j] ) {
+        double factor=(-ineq_lagrange_mult_[i*num_of_labeled_+j]+ sigma1_*ineq)*svm_signs_.get(i, j);
+        la::AddExpert(dimension, factor, p2, 
+            gradient->GetColumnPtr(anchors_[i]));
+        la::AddExpert(dimension, factor, p1, 
+            gradient->GetColumnPtr(j));
+      }
     }
   }
   // End of computations
@@ -569,15 +580,17 @@ void MaxFurthestNeighborsSvmSemiSupervised::ComputeFeasibilityError(Matrix &coor
   *error = *error *100.0/sum_of_nearest_distances_;
   NOTIFY("Feasibility error:%lg", *error);
   double error1=0;
-  for(index_t i=0; i<svm_signs_.length(); i++) {
-    double dot_prod=la::Dot(dimension,
-                            coordinates.GetColumnPtr(anchor_point_),
-                            coordinates.GetColumnPtr(i)) ; 
-    if (dot_prod*svm_signs_[i]<0) {
-      error1+=1;
+  for(index_t i=0; i<num_of_classes_; i++) {
+    for(index_t j=0; j<num_of_labeled_; j++) {
+      double dot_prod=la::Dot(dimension,
+                              coordinates.GetColumnPtr(anchors_[i]),
+                              coordinates.GetColumnPtr(j)) ; 
+      if (dot_prod*svm_signs_.get(i, j)<0) {
+        error1+=1;
+      }
     } 
   }
-  error1=(100.0 * error1)/svm_signs_.length();
+  error1=(100.0 * error1)/svm_signs_.n_elements();
   *error=(*error+error1)/2.0;
   NOTIFY("Classification Error:%lg", error1);
 }
@@ -600,15 +613,17 @@ double MaxFurthestNeighborsSvmSemiSupervised::ComputeLagrangian(Matrix &coordina
   }
 
   // inequality constraint
-  for(index_t i=0; i<ineq_lagrange_mult_.length(); i++) {
-    double dot_prod=la::Dot(dimension,
-                            coordinates.GetColumnPtr(anchor_point_),
-                            coordinates.GetColumnPtr(i)); 
-    double ineq=dot_prod*svm_signs_[i]-MARGIN;
-    if (sigma1_ * ineq  <= ineq_lagrange_mult_[i]) {
-      lagrangian+=(-ineq_lagrange_mult_[i] + sigma1_/2*ineq)*ineq;
-    } else {
-      lagrangian+=-math::Pow<2,1>(ineq_lagrange_mult_[i])/(2*sigma1_);
+  for(index_t i=0; i<num_of_classes_; i++) {
+    for(index_t j=0; j<num_of_labeled_; j++) {
+      double dot_prod=la::Dot(dimension,
+                              coordinates.GetColumnPtr(anchors_[i]),
+                              coordinates.GetColumnPtr(j)); 
+      double ineq=dot_prod*svm_signs_.get(i, j)-MARGIN;
+      if (sigma1_ * ineq  <= ineq_lagrange_mult_[i*num_of_labeled_+j]) {
+        lagrangian+=(-ineq_lagrange_mult_[i*num_of_labeled_+j] + sigma1_/2*ineq)*ineq;
+      } else {
+        lagrangian+=-math::Pow<2,1>(ineq_lagrange_mult_[i*num_of_labeled_+j])/(2*sigma1_);
+      }
     }   
   }
   
@@ -627,13 +642,15 @@ void MaxFurthestNeighborsSvmSemiSupervised::UpdateLagrangeMult(Matrix &coordinat
     eq_lagrange_mult_[i]-=sigma_*dist_diff;
   }
   
-  for(index_t i=0; i<ineq_lagrange_mult_.length(); i++) {
-    double dot_prod=la::Dot(dimension,
-                            coordinates.GetColumnPtr(anchor_point_),
-                            coordinates.GetColumnPtr(i));
-    double ineq=dot_prod*svm_signs_[i]-MARGIN; 
-    ineq_lagrange_mult_[i] = std::max(ineq_lagrange_mult_[i]
-                                      -sigma1_*ineq, 0.0);
+  for(index_t i=0; i<num_of_classes_; i++) {
+    for(index_t j=0; j<num_of_labeled_; j++) {
+      double dot_prod=la::Dot(dimension,
+                              coordinates.GetColumnPtr(anchors_[i]),
+                              coordinates.GetColumnPtr(j));
+      double ineq=dot_prod*svm_signs_.get(i, j)-MARGIN; 
+      ineq_lagrange_mult_[i*num_of_labeled_+j] = 
+          std::max(ineq_lagrange_mult_[i*num_of_labeled_+j]-sigma1_*ineq, 0.0);
+    }
   }
 }
 

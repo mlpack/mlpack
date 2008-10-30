@@ -87,7 +87,7 @@ private:
 class MaxFurthestNeighborsSvmSemiSupervised {
 public:
   static const index_t MAX_KNNS=30;
-  static const double MARGIN=0.001;
+  static const double MARGIN=0.01;
   /**
    * Initialize with this one if you want to load points from matrices
    * and then compute neighbors
@@ -126,7 +126,7 @@ private:
   index_t num_of_unlabeled_;
   index_t labeled_offset_;
   index_t unlabeled_offset_;
-  Vector svm_signs_;
+  Matrix svm_signs_;
   ArrayList<std::pair<index_t, index_t> > nearest_neighbor_pairs_;
   ArrayList<double> nearest_distances_;
   Vector eq_lagrange_mult_;
@@ -139,13 +139,15 @@ private:
   double sigma_;
   double sigma1_;
   index_t num_of_points_;
+  index_t num_of_classes_;
   index_t new_dimension_;
   double grad_tolerance_;
   double desired_feasibility_error_;
   double infeasibility1_;
   double previous_infeasibility1_;
   double sum_of_nearest_distances_;
-  index_t anchor_point_;
+  ArrayList<index_t> anchors_;
+  
 };
 
 
