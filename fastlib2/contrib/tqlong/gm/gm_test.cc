@@ -2,8 +2,9 @@
 #include "gm.h"
 #include <fastlib/fastlib.h>
 
+typedef SumProductPassingAlgorithm::FactorGraphType FactorGraphType;
 
-FactorGraph constructExampleFactorGraph() {
+FactorGraphType constructExampleFactorGraph() {
   String n0syms[] = {"rain", "sunny", "cloud"};
   String n1syms[] = {"hot", "cold"};
   String n2syms[] = {"0", "1"};
@@ -46,13 +47,13 @@ FactorGraph constructExampleFactorGraph() {
   ArrayList<ArrayList<index_t> > factor2node_list;
   factor2node_list.InitCopy(factor2node,3);
 
-  FactorGraph fg;
+  FactorGraphType fg;
   fg.Init(nodes_list, factors_list, factor2node_list);
 
   return fg;
 }
 
-FactorGraph constructExampleFactorGraph1() {
+FactorGraphType constructExampleFactorGraph1() {
   String n0syms[] = {"rain", "sunny", "cloud"};
   String n1syms[] = {"hot", "cold"};
 
@@ -81,7 +82,7 @@ FactorGraph constructExampleFactorGraph1() {
   ArrayList<ArrayList<index_t> > factor2node_list;
   factor2node_list.InitCopy(factor2node,1);
 
-  FactorGraph fg;
+  FactorGraphType fg;
   fg.Init(nodes_list, factors_list, factor2node_list);
 
   return fg;
@@ -89,7 +90,8 @@ FactorGraph constructExampleFactorGraph1() {
 
 int main() {
   FILE* logfile = fopen("LOG", "w");
-  FactorGraph fg = constructExampleFactorGraph();
+  SumProductPassingAlgorithm algo;
+  FactorGraphType fg = constructExampleFactorGraph();
 
   String syms[] = {"sunny", "cold", "1", "d"};
   //String syms[] = {"sunny", "cold"};
@@ -99,8 +101,10 @@ int main() {
   fg.SetObserveds(syms_list);
   ot::Print(fg.jointProduct(), "joint product", logfile);
 
-  fg.PassMessages(false);
-  fg.PassMessages(true);
+  algo.InitMessages(fg);
+  algo.CreateOrder(fg);
+  algo.PassMessages(fg, false);
+  algo.PassMessages(fg, true);
 
   printf("Messages passed\n");
 
@@ -109,14 +113,14 @@ int main() {
   s.Init(4);
   Z.Init(4);
   for (int i = 0; i < 4; i++)
-    Z[i] = fg.NodeMarginalSum(i, &s[i]);
+    Z[i] = algo.NodeMarginalSum(fg, i, &s[i]);
 
   ot::Print(s, "marginal sum", logfile);
   ot::Print(Z, "normalization constant", logfile);
 
   ot::Print(fg, "factor graph", logfile);
 
-  //fclose(logfile);
+  fclose(logfile);
 
   return 0;
 }

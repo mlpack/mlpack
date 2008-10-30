@@ -36,11 +36,6 @@ class BipartieGraph {
   ArrayList<ArrayList<index_t> > factor2node_;
   ArrayList<ArrayList<index_t> > factor2node_cedge_;
   
-  /** Edge order in which message are passed
-   *  the edge order for second step is in reverse
-   */
-  ArrayList<Edge> order_;
-
   /** Message from node to factor */
   ArrayList<ArrayList<MessageNode2FactorType> > msg_node2factor_;
 
@@ -53,7 +48,6 @@ class BipartieGraph {
     OT_MY_OBJECT(node2factor_cedge_);
     OT_MY_OBJECT(factor2node_);
     OT_MY_OBJECT(factor2node_cedge_);
-    OT_MY_OBJECT(order_);
     OT_MY_OBJECT(msg_node2factor_);
     OT_MY_OBJECT(msg_factor2node_);
   }
@@ -116,10 +110,6 @@ class BipartieGraph {
     return n_edges_;
   }
 
-  inline index_t n_orderedges() {
-    return order_.size();
-  }
-
   inline index_t factor(index_t i_node, index_t i_edge) {
     return node2factor_[i_node][i_edge];
   }
@@ -148,17 +138,17 @@ class BipartieGraph {
    *  A breath first search procedure to find order of edges
    */
 
-  void BreadthFirstSearchOrder() {
+  void CreateBFSOrder(ArrayList<Edge>& order, index_t root) {
     ArrayList<bool> not_visited;
 
     not_visited.InitRepeat(true, n_nodes()+n_factors());
 
     std::queue<index_t> q_visit;
-    q_visit.push(0);        // visit the first node as root
-    not_visited[0] = false; // and make it visited
+    q_visit.push(root);        // visit the first node as root
+    not_visited[root] = false; // and make it visited
     index_t n = 0;
 
-    order_.Init(n_edges_);
+    order.Init(n_edges_);
 
     while (!q_visit.empty()) {
       index_t x = q_visit.front(); q_visit.pop();
@@ -166,7 +156,7 @@ class BipartieGraph {
 	for (index_t i_edge = 0; i_edge < n_nodefactors(x); i_edge++) {
 	  index_t y = node2factor_[x][i_edge]+n_nodes();
 	  if (not_visited[y]) {
-	    order_[n++] = Edge(x, i_edge);
+	    order[n++] = Edge(x, i_edge);
 	    q_visit.push(y);
 	    not_visited[y] = false;
 	  }
@@ -177,7 +167,7 @@ class BipartieGraph {
 	for (index_t i_edge = 0; i_edge < n_factornodes(xx); i_edge++) {
 	  index_t y = factor2node_[xx][i_edge];
 	  if (not_visited[y]) {
-	    order_[n++] = Edge(x, i_edge);
+	    order[n++] = Edge(x, i_edge);
 	    q_visit.push(y);
 	    not_visited[y] = false;
 	  }
@@ -185,17 +175,7 @@ class BipartieGraph {
       }
     }
     DEBUG_ASSERT(n == n_edges()); // for a tree graph
-    //ot::Print(order_, "order", stdout);
-  }
-
-  inline index_t GetOrderEdgeFirst(index_t i_order) {
-    DEBUG_ASSERT(i_order < n_orderedges());
-    return order_[i_order].first;
-  }
-
-  inline index_t GetOrderEdgeSecond(index_t i_order) {
-    DEBUG_ASSERT(i_order < n_orderedges());
-    return order_[i_order].second;
+    //ot::Print(order, "order", stdout);
   }
 
 };
