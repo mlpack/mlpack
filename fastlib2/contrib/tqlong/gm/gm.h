@@ -82,43 +82,15 @@ class Factor {
 
  public:
   /** Initialize the factor with ranges specified */
-  void Init(const ArrayList<index_t>& ranges) {
-    index_t len = 1;
-
-    for (int i = 0; i < ranges.size(); i++)
-      len *= ranges[i];
-
-    ranges_.InitCopy(ranges);
-    vals_.Init(len);
-    args_.Init(ranges_.size());
-  }
+  void Init(const ArrayList<RangeType>& ranges);
 
   /** Initialize the factor with ranges and probabilities/values specified */
-  void Init(const ArrayList<RangeType>& ranges, const Vector& vals) {
-    index_t len = 1;
-
-    for (int i = 0; i < ranges.size(); i++)
-      len *= ranges[i];
-
-    DEBUG_ASSERT(len == vals.length());
-
-    ranges_.InitCopy(ranges);
-    vals_.Copy(vals);
-    args_.Init(ranges_.size());
-  }
+  void Init(const ArrayList<RangeType>& ranges, const Vector& vals);
 
   /** Initialize the factor with ranges and probabilities/values specified */
-  void Init(const index_t* ranges, index_t n_nodes, const double* vals) {
-    index_t len = 1;
+  void Init(const index_t* ranges, index_t n_nodes, const double* vals);
 
-    for (int i = 0; i < n_nodes; i++)
-      len *= ranges[i];
-
-    ranges_.InitCopy(ranges, n_nodes);
-    vals_.Copy(vals, len);
-    args_.Init(ranges_.size());
-  }
-
+  /** Get the number of arguments */
   RangeType n_args() const {
     return ranges_.size();
   }
@@ -126,19 +98,7 @@ class Factor {
   /** Calculate index from position which is stored 
    *  in column-wise manner
    */
-  index_t GetIndex(const ArrayList<index_t>& pos) {
-    DEBUG_ASSERT(pos.size() == ranges_.size());
-
-    index_t n = pos.size()-1;
-    index_t rpos = pos[n];
-    DEBUG_ASSERT(pos[n] < ranges_[n] && pos[n] >= 0);
-    for (int i = n-1; i >= 0; i--) {
-      DEBUG_ASSERT(pos[i] < ranges_[i] && pos[i] >= 0);
-      rpos = rpos*ranges_[i]+pos[i];
-    }
-
-    return rpos;
-  }
+  index_t GetIndex(const ArrayList<index_t>& pos);
 
   /** Get probability/value at a position in the table */
   double GetVal(const ArrayList<RangeType>& args) {
@@ -166,16 +126,21 @@ class Factor {
     vals_[pos] = val;
   }
 
+  /** Get the range of an argument which will be compared to the 
+   *  corresponding node's range
+   */
   RangeType GetRange(index_t i_arg) {
     DEBUG_ASSERT(i_arg < n_args());
     return ranges_[i_arg];
   }
 
+  /** Get an argument */
   RangeType GetArg(index_t i_arg) {
     DEBUG_ASSERT(i_arg < n_args());
     return args_[i_arg];
   }
 
+  /** Set an argument */
   void SetArg(index_t i_arg, RangeType val) {
     DEBUG_ASSERT(i_arg < n_args());
     args_[i_arg] = val;
@@ -190,160 +155,65 @@ class SumProductPassingAlgorithm {
     MessageNode2FactorType, MessageFactor2NodeType> FactorGraphType;
   typedef FactorGraphType::BGraphType BGraphType;
  private:
+  /** Any message passing algorithm should maintain an order
+   *  in which the messages are passed throughout the graph
+   */
   ArrayList<BGraphType::Edge> order_;
- public:
-  void Init() {
-    order_.Init();
-  }
 
-  void InitMessages(FactorGraphType& fg) {
-    BGraphType& bgraph = fg.GetBGraph();
-
-    // prepare spaces for messages between factor and node
-    for (index_t i_factor = 0; i_factor < bgraph.n_factors(); i_factor++)
-      for (index_t i_edge = 0; i_edge < bgraph.n_factornodes(i_factor); i_edge++)
-	bgraph.msg_factor2node(i_factor, i_edge).Init
-	  (fg.GetFactor(i_factor).GetRange(i_edge));
-
-    for (index_t i_node = 0; i_node < bgraph.n_nodes(); i_node++) {
-      for (index_t i_edge = 0; i_edge < bgraph.n_nodefactors(i_node); i_edge++)
-	bgraph.msg_node2factor(i_node, i_edge).Init
-	  (fg.GetNode(i_node).GetRange());
-    }    
-  }
-
-  void CreateOrder(FactorGraphType& fg) {
-    order_.Renew();
-    fg.GetBGraph().CreateBFSOrder(order_, 0); // BFS from the first node
-  }  
-
+ private:
+  /** Get the first end of an edge in the list */
   inline index_t GetOrderEdgeFirst(index_t i_order) {
     DEBUG_ASSERT(i_order < n_orderedges());
     return order_[i_order].first;
   }
 
+  /** Get the second end of an edge in the list */
   inline index_t GetOrderEdgeSecond(index_t i_order) {
     DEBUG_ASSERT(i_order < n_orderedges());
     return order_[i_order].second;
   }
 
+  /** Get the number of edges in the list */
   inline index_t n_orderedges() {
     return order_.size();
   }
 
   /** Message passing from node to factor */
-  void PassMessageNode2Factor(FactorGraphType& fg, index_t i_node, index_t i_edge) {
-    BGraphType& bgraph = fg.GetBGraph();
-    for (index_t val = 0; val < fg.GetNode(i_node).GetRange(); val++) {
-      double s = 1;
-      for (index_t i = 0; i < bgraph.n_nodefactors(i_node); i++)
-	if (i != i_edge) {
-	  index_t i_factor = bgraph.factor(i_node, i);
-	  index_t c_edge = bgraph.factor_cedge(i_node, i);
-	  s *= bgraph.msg_factor2node(i_factor, c_edge)[val];
-	}
-      bgraph.msg_node2factor(i_node, i_edge)[val] = s;
-      //printf("  val = %d s = %f\n", val, s);
-    }
-  }
+  void PassMessageNode2Factor(FactorGraphType& fg, index_t i_node, index_t i_edge);
 
   /** Message passing from factor to node */
-  void PassMessageFactor2Node(FactorGraphType& fg, index_t i_factor, index_t i_edge) {
-    BGraphType& bgraph = fg.GetBGraph();
-    index_t i_node = bgraph.node(i_factor, i_edge);
-    for (index_t val = 0; val < fg.GetNode(i_node).GetRange(); val++) {
-      fg.GetFactor(i_factor).SetArg(i_edge, val);
-      double s = 0;
-      VisitFactorArg(fg, i_factor, i_edge, 0, 1, s);
-      bgraph.msg_factor2node(i_factor, i_edge)[val] = s;
-      //printf("  val = %d s = %f\n", val, s);
-    }
-  }
+  void PassMessageFactor2Node(FactorGraphType& fg, index_t i_factor, index_t i_edge);
 
   /** Recursive procedure to calculate the message from
    *  factor to node
    */
   void VisitFactorArg(FactorGraphType& fg, index_t i_factor, index_t i_edge, 
-		      index_t i, double term, double& sum) {
-    BGraphType& bgraph = fg.GetBGraph();
-    if (i >= fg.GetFactor(i_factor).n_args()) {
-      sum += term*fg.GetFactorVal(i_factor);
-      return;
-    }
-    if (i_edge != i) {
-      index_t i_node = bgraph.node(i_factor, i);
-      index_t c_edge = bgraph.node_cedge(i_factor, i);
-      for (index_t val = 0; val < fg.GetNode(i_node).GetRange(); val++) {
-	fg.GetFactor(i_factor).SetArg(i, val);
-	VisitFactorArg(fg, i_factor, i_edge, i+1, 
-		       term*bgraph.msg_node2factor(i_node, c_edge)[val], sum);
-      }
-    }
-    else
-      VisitFactorArg(fg, i_factor, i_edge, i+1, term, sum);
+		      index_t i, double term, double& sum);
+
+ public:
+  void Init() {
+    order_.Init();
   }
+
+  /** Prepare the space for the messages */
+  void InitMessages(FactorGraphType& fg);
+
+  /** Use the graph helper function to create BFS edge order */
+  void CreateOrder(FactorGraphType& fg) {
+    order_.Renew();
+    fg.GetBGraph().CreateBFSOrder(order_, 0); // BFS from the first node
+  }  
 
   /** Pass messages through entire graph using order */
-  void PassMessages(FactorGraphType& fg, bool reverse) {
-    BGraphType& bgraph = fg.GetBGraph();
-
-    if (reverse) {
-      for (index_t i = 0; i < n_orderedges(); i++) {
-	index_t x = GetOrderEdgeFirst(i);
-	index_t y = GetOrderEdgeSecond(i);
-	//printf("x = %d y = %d\n", x, y);
-	if (x < bgraph.n_nodes())
-	  PassMessageNode2Factor(fg, x, y);
-	else 
-	  PassMessageFactor2Node(fg, x-bgraph.n_nodes(), y);
-      }
-    }
-    else {
-      for (index_t i = n_orderedges()-1; i >= 0; i--) {
-	index_t x = GetOrderEdgeFirst(i);
-	index_t y = GetOrderEdgeSecond(i);
-	//printf("x = %d y = %d\n", x, y);
-	if (x < bgraph.n_nodes()) {
-	  index_t i_factor = bgraph.factor(x, y);
-	  index_t c_edge = bgraph.factor_cedge(x, y);
-	  //printf("i_factor = %d c_edge = %d\n", i_factor, c_edge);
-	  PassMessageFactor2Node(fg, i_factor, c_edge);
-	}
-	else {
-	  index_t i_node = bgraph.node(x-bgraph.n_nodes(), y);
-	  index_t c_edge = bgraph.node_cedge(x-bgraph.n_nodes(), y);
-	  //printf("i_node = %d c_edge = %d\n", i_node, c_edge);
-	  PassMessageNode2Factor(fg, i_node, c_edge);
-	}
-      }
-    }
-  }
+  void PassMessages(FactorGraphType& fg, bool reverse);
 
   /** Calculate marginal sum at each node
-   *  assuming that messages are passed through the graph
+   *  assuming that messages are already passed through the graph
    *  on every edge in both direction
    *  return constant Z
    */
 
-  double NodeMarginalSum(FactorGraphType& fg, index_t i_node, ArrayList<double>* sum){
-    BGraphType& bgraph = fg.GetBGraph();
-    double Z = 0;
-    sum->Init(fg.GetNode(i_node).GetRange());
-    for (index_t val = 0; val < fg.GetNode(i_node).GetRange(); val++) {
-      double s = 1;
-      for (index_t i_edge = 0; 
-	   i_edge < bgraph.n_nodefactors(i_node); i_edge++){
-	index_t i_factor = bgraph.factor(i_node, i_edge);
-	index_t c_edge = bgraph.factor_cedge(i_node, i_edge);
-	s *= bgraph.msg_factor2node(i_factor, c_edge)[val];
-      }
-      (*sum)[val] = s;
-      Z += s;
-    }
-    fg.SetZ(Z);
-    return Z;
-  } 
-
+  double NodeMarginalSum(FactorGraphType& fg, index_t i_node, ArrayList<double>* sum);
 };
 
 #endif

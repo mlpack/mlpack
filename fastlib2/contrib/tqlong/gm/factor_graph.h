@@ -10,7 +10,6 @@
 
 #include "bipartie.h"
 #include <fastlib/fastlib.h>
-#include <queue>
 
 /** A factor graph is a bipartie graph with nodes on the left
  *  and factors on the right. Messages are passed back and forth
