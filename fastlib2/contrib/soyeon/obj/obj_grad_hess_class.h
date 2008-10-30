@@ -4,12 +4,10 @@
 
 class ObjectGradientHessian {
  public:
-  void Init(int num_points_t); 
+  void Init(int &num_points_t); 
   void Destruct();
 	void ApproxBetafnNominator(int num_points_t, *beta_nominator);
-  //void ComputeObjective(Vector &random_alpha, Vector &random_t);
-  //void ComputeGradient(Vector &x, Vector *gradient);
-  //void ComputeHessian(Vector &x, Matrix *hessian);
+ 
  
 private:
 	int num_points_t_;
