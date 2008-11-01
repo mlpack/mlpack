@@ -68,12 +68,17 @@ double MultiTreeDepthFirst<MultiTreeProblem>::RecursiveLeaveOneOutTuples_
     
     // If there is a subsumption, then record the first index that
     // happens so.
-    if(first_node_indices_strictly_surround_second_node_indices_
-       (nodes[i - 1], nodes[i]) ||
-       first_node_indices_strictly_surround_second_node_indices_
-       (nodes[i], nodes[i - 1])) {
-      examine_index_start = i;
-      equal_or_disjoint_flag = false;
+    if(equal_or_disjoint_flag) {
+      if(first_node_indices_strictly_surround_second_node_indices_
+	 (nodes[i - 1], nodes[i])) {
+	examine_index_start = i - 1;
+	equal_or_disjoint_flag = false;
+      }
+      else if(first_node_indices_strictly_surround_second_node_indices_
+	      (nodes[i], nodes[i - 1])) {
+	examine_index_start = i;
+	equal_or_disjoint_flag = false;
+      }
     }
   }
 
@@ -165,14 +170,34 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
 (const ArrayList<Matrix *> &sets, ArrayList<Tree *> &nodes,
  typename MultiTreeProblem::MultiTreeQueryResult &query_results,
  double total_num_tuples) {
-  
-  if(MultiTreeProblem::ConsiderTupleExact(globals_, query_results,
-					  nodes, total_num_tuples,
-					  total_n_minus_one_tuples_root_,
-					  total_n_minus_one_tuples_)) {
-    return;
+
+  bool no_ancestor_relationship = true;
+  for(index_t i = 0; i < MultiTreeProblem::order - 1; i++) {
+    for(index_t j = i + 1; j < MultiTreeProblem::order; j++) {
+      if(first_node_indices_strictly_surround_second_node_indices_
+	 (nodes[i], nodes[j]) ||
+	 first_node_indices_strictly_surround_second_node_indices_
+	 (nodes[j], nodes[i])) {
+	no_ancestor_relationship = false;
+	break;
+      }
+    }
   }
 
+  if(no_ancestor_relationship) {
+    if(MultiTreeProblem::ConsiderTupleExact(globals_, query_results,
+					    nodes, total_num_tuples,
+					    total_n_minus_one_tuples_root_,
+					    total_n_minus_one_tuples_)) {
+      return;
+    }
+    else if(MultiTreeProblem::ConsiderTupleProbabilistic
+	    (globals_, query_results, sets, nodes, total_num_tuples,
+	     total_n_minus_one_tuples_root_, total_n_minus_one_tuples_)) {
+      return;
+    }
+  }
+    
   // Figure out which ones are non-leaves.
   index_t split_index = -1;
   index_t max_count_among_non_leaf = 0;
