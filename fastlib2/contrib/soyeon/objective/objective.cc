@@ -1,5 +1,6 @@
 #include "objective.h"
-
+#include <cmath>
+    
 Objective::Init(fx_module *module) {
 
 }
@@ -49,24 +50,78 @@ double Objecitve::ComputeTerm3_() {
   return term3;
 }
 
+
 void Objective::ComputePostponedProbability_(Vector &betas, 
                                              double p, 
                                              double q) {
   postponed_probability_.SetZero(); 
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+
+	double alpha_temp=0;
+	double beta_function_temp=0;
+	double numerator=0;
+	//need to specify
+	num_of_alphas_=10;
+	alpha_weight_=1/num_of_alphas;
+  
+	for(index_t n=0; n<first_stage_x_.size; n++){
+		for(index_t l=0; l<num_of_alphas; ;++){
+			alpha_temp=(l+1)*(alpha_weight_);
+		
+			beta_function_temp=pow(alpha_temp, p-1)*pow((1-alpha_temp), q-1);
+
+		
+			//Calculate x^2_{ni}(alpha_l)
+			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
+				int count=0;
+				for(index_t j=ind_unk_x_[0]; j<ind_unk_x_[ind_unk_x_.size()]; j++){
+					count+=1;
+					exponential_temp=alpha_temp*first_stage_x_[n].get(i, j)
+													+(alpha_temp)*(1-alpha_temp)*unk_x_past[i].get(count-1,1)
+													+(alpha_temp)*pow((1-alpha_temp),2)*unk_x_past[i].get(count-1,2);
+					second_stage_x_[n].set(j, i, exponential_temp);
+				}	//j
+			}	//i
+
+			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
+				numerator+=exp(la::Dot(betas.size(), betas.ptr(),
+											 second_stage_x_[n].GetColumnPtr(i) ));
+			}
+			//conditional_postponed_probability_[n]
+			postponed_probability_[n]+=( (numerator/(exp_betas_times_x1_+ numerator))
+																*beta_function_temp );			
+		}	//alpha
+		postponed_probability_[n]*=alpha_wieght_;	
+	}	//n
+
+  /*for(index_t n=0; n<first_stage_x_.size(); n++) {
+		double alpha_temp=0;
+		double alpha_weight_=1/num_of_alphas;
+		ArrayList<index
     for(index_t l=0; l<num_of_alphas_; l++) {
-      double numerator=0;
-      for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
-        nominator+=exp(la::Dot(betas.size(), betas.ptr(),
-															 second_stage_y_[n].GetColumnPtr(i) ));
-      }
+      double exp_betas_times_x2_bar=0;
+			alpha_temp=(1+l)*(alpha_weight_);
+
+			for(index t 
+			if (ind_unk_k>0) {
+				 temp=alpha_temp*unk_x_past_[
+				second_stage_x_bar_
+			}
+
+			postponed_probability[n]+=(exp_betas_times_x2_tilde_+
+      //for(index_t i=0; i<second_stage_x_bar_[n].n_cols(); i++) {
+      //  nominator+=exp(la::Dot(betas.size(), betas.ptr(),
+			//												 second_stage_x_bar_[n].GetColumnPtr(i) ));
+      //}
+			//nominator=exp_betas_times_x2_tilde+
+			
       postponed_probability[n]+=numerator/(exp_betas_times_x1_+ numerator);
     }
     posponed_probability_*=alpha_wieght_;
   }
+	*/
 }
 
-void ComputeExpBetasTimesX1_(Vector &betas) {
+void Objective::ComputeExpBetasTimesX1_(Vector &betas) {
   exp_betas_times_x1_.SetZero();
   //double sum=0;
 	for(index_t n=0; n<first_stage_x_.size(); n++){
@@ -76,4 +131,32 @@ void ComputeExpBetasTimesX1_(Vector &betas) {
 															first_stage_y_[n].GetColumnPtr(j)));
 		}
   }
+}
+
+/*void Objective::ComputeExpBetasTimesX2_tilde_(Vector &betas) {
+  exp_betas_times_x2_tilde_.SetZero();
+  
+	for(index_t n=0; n<second_stage_x_tilde_.size(); n++){
+		for(index_t j=0; j<second_stage_x__tilde_[n].n_cols(); j++) {
+			exp_betas_times_x2_tilde_[n]+=exp(la::Dot(betas.length(), 
+															beta.ptr(), 
+															second_stage_y_[n].GetColumnPtr(j)));
+		}
+  }
+}
+*/
+
+void Objective::ComputeDeumeratorBetaFunction_(double p, doulbe q){
+	denumerator_beta_function_=0;
+	//Need to choose number of t points to approximate integral
+	num_of_t_beta_fn_=10;
+	double t_weight_=1/(num_of_t_beta_fn);
+	double t_temp;
+	for(index t tnum=0; tnum<num_of_t_beta_fn_; tnum++){
+		t_temp=(tnum+1)*(t_weight_);
+
+		//double pow( double base, double exp );
+		denumerator_beta_function_+=pow(temp, p-1)*pow((1-t_temp), q-1);
+	}
+	denumerator*=(t_weight_);
 }
