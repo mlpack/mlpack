@@ -789,6 +789,333 @@ class AxilrodTellerForceKernelAux {
     return true;
   }
 
+  /** @brief Tries to compute using Monte Carlo sampling.
+   */
+  template<typename TGlobal, typename Tree>
+  void ComputeMonteCarloEstimates
+  (TGlobal &globals, const ArrayList<Matrix *> &sets, ArrayList<Tree *> &nodes,
+   const Vector &total_n_minus_one_tuples,
+   Matrix &negative_force_vector_e, Vector &l1_norm_negative_force_vector_u,
+   Vector &l1_norm_positive_force_vector_l, Matrix &positive_force_vector_e,
+   Vector &n_pruned, Vector &used_error) {
+
+    // Get the positive/negative force vector for the first, second,
+    // third particle in the list.
+    Vector positive_force_vector_first_particle;
+    Vector squared_positive_force_vector_first_particle;
+    positive_force_vector_first_particle.Init(3);
+    squared_positive_force_vector_first_particle.Init(3);
+    positive_force_vector_first_particle.SetZero();
+    squared_positive_force_vector_first_particle.SetZero();
+    double l1_norm_positive_force_vector_l_first_particle = 0;
+    Vector negative_force_vector_first_particle;
+    Vector squared_negative_force_vector_first_particle;
+    negative_force_vector_first_particle.Init(3);
+    squared_negative_force_vector_first_particle.Init(3);
+    negative_force_vector_first_particle.SetZero();
+    squared_negative_force_vector_first_particle.SetZero();
+    double l1_norm_negative_force_vector_u_first_particle = 0;
+
+    Vector positive_force_vector_second_particle;
+    Vector squared_positive_force_vector_second_particle;
+    positive_force_vector_second_particle.Init(3);
+    squared_positive_force_vector_second_particle.Init(3);
+    positive_force_vector_second_particle.SetZero();
+    squared_positive_force_vector_second_particle.SetZero();
+    double l1_norm_positive_force_vector_l_second_particle = 0;
+    Vector negative_force_vector_second_particle;
+    Vector squared_negative_force_vector_second_particle;
+    negative_force_vector_second_particle.Init(3);
+    squared_negative_force_vector_second_particle.Init(3);
+    negative_force_vector_second_particle.SetZero();
+    squared_negative_force_vector_second_particle.SetZero();
+    double l1_norm_negative_force_vector_u_second_particle = 0;
+
+    Vector positive_force_vector_third_particle;
+    Vector squared_positive_force_vector_third_particle;
+    positive_force_vector_third_particle.Init(3);
+    squared_positive_force_vector_third_particle.Init(3);
+    positive_force_vector_third_particle.SetZero();
+    squared_positive_force_vector_third_particle.SetZero();
+    double l1_norm_positive_force_vector_l_third_particle = 0;
+    Vector negative_force_vector_third_particle;
+    Vector squared_negative_force_vector_third_particle;
+    negative_force_vector_third_particle.Init(3);
+    squared_negative_force_vector_third_particle.Init(3);
+    negative_force_vector_third_particle.SetZero();
+    squared_negative_force_vector_third_particle.SetZero();
+    double l1_norm_negative_force_vector_u_third_particle = 0;
+
+    const int num_samples = 30;
+    const double z_score = 3;
+
+    for(index_t i = 0; i < num_samples; i++) {
+      
+      // Randomly choose a 3-tuple...
+      do {
+	for(index_t i = 0; i < order_; i++) {
+	  globals.chosen_indices[i] = 
+	    math::RandInt(nodes[i]->begin(), nodes[i]->end());
+	}
+      } while(globals.chosen_indices[0] == globals.chosen_indices[1] ||
+	      globals.chosen_indices[0] == globals.chosen_indices[2] ||
+	      globals.chosen_indices[1] == globals.chosen_indices[2]);
+
+      // Evaluate the pairwise distances.    
+      PairwiseEvaluateLoop(sets, globals.chosen_indices,
+			   lower_bound_squared_distances_);
+
+      // Clear the contribution accumulator.
+      lower_bound_positive_contributions_.SetZero();
+      upper_bound_negative_contributions_.SetZero();
+
+      // Evaluate contribution of the three tuples...
+      EvaluateHelper(sets, globals.chosen_indices, 
+		     lower_bound_squared_distances_);
+
+      ExtractContribution
+	(negative_force_vector_first_particle.ptr(),
+	 squared_negative_force_vector_first_particle.ptr(),
+	 l1_norm_negative_force_vector_u_first_particle,
+	 l1_norm_positive_force_vector_l_first_particle,
+	 positive_force_vector_first_particle.ptr(),
+	 squared_positive_force_vector_first_particle.ptr(),
+	 negative_force_vector_second_particle.ptr(),
+	 squared_negative_force_vector_second_particle.ptr(),
+	 l1_norm_negative_force_vector_u_second_particle,
+	 l1_norm_positive_force_vector_l_second_particle,
+	 positive_force_vector_second_particle.ptr(),
+	 squared_positive_force_vector_second_particle.ptr(),
+	 negative_force_vector_third_particle.ptr(),
+	 squared_negative_force_vector_third_particle.ptr(),
+	 l1_norm_negative_force_vector_u_third_particle,
+	 l1_norm_positive_force_vector_l_third_particle,
+	 positive_force_vector_third_particle.ptr(),
+	 squared_positive_force_vector_third_particle.ptr());
+      
+    } // end of looping over each sample...
+    
+    // Compute the average of each quantity.
+    double inverse_factor = 1.0 / ((double) num_samples);
+    double inverse_factor_dof = 1.0 / ((double) num_samples - 1);
+
+    // I think at this point, used_error should not contain
+    // anything...
+    for(index_t i = 0; i < dimension_; i++) {
+      
+      // Copy over the Monte Carlo estimates.
+      negative_force_vector_e.set(i, 0, total_n_minus_one_tuples[0] *
+				  negative_force_vector_first_particle[i] *
+				  inverse_factor);
+      positive_force_vector_e.set(i, 0, total_n_minus_one_tuples[0] *
+				  positive_force_vector_first_particle[i] *
+				  inverse_factor);
+      negative_force_vector_e.set(i, 1, total_n_minus_one_tuples[1] *
+				  negative_force_vector_second_particle[i] *
+				  inverse_factor);
+      positive_force_vector_e.set(i, 1, total_n_minus_one_tuples[1] *
+				  positive_force_vector_second_particle[i] *
+				  inverse_factor);
+      negative_force_vector_e.set(i, 2, total_n_minus_one_tuples[2] *
+				  negative_force_vector_third_particle[i] *
+				  inverse_factor);
+      positive_force_vector_e.set(i, 2, total_n_minus_one_tuples[2] *
+				  positive_force_vector_third_particle[i] *
+				  inverse_factor);
+
+      // Compute the variance (error) in this dimension for each
+      // particle for each force component.
+      double negative_variance_first_particle = 
+	z_score * total_n_minus_one_tuples[0] *
+        sqrt(std::max
+	     (inverse_factor_dof *
+	      (squared_negative_force_vector_first_particle[i] -
+	       (negative_force_vector_first_particle[i] *
+		inverse_factor) * negative_force_vector_first_particle[i]),
+	      0.0));
+      double positive_variance_first_particle =
+	z_score * total_n_minus_one_tuples[0] *
+        sqrt(std::max
+	     (inverse_factor_dof *
+	      (squared_positive_force_vector_first_particle[i] -
+	       (positive_force_vector_first_particle[i] *
+		inverse_factor) * positive_force_vector_first_particle[i]),
+	      0.0));
+      double negative_variance_second_particle =
+	z_score * total_n_minus_one_tuples[1] *
+        sqrt(std::max
+	     (inverse_factor_dof *
+	      (squared_negative_force_vector_second_particle[i] -
+	       (negative_force_vector_second_particle[i] *
+		inverse_factor) * negative_force_vector_second_particle[i]),
+	      0.0));
+      double positive_variance_second_particle =
+	z_score * total_n_minus_one_tuples[1] *
+        sqrt(std::max
+	     (inverse_factor_dof *
+	      (squared_positive_force_vector_second_particle[i] -
+	       (positive_force_vector_second_particle[i] *
+		inverse_factor) * positive_force_vector_second_particle[i]),
+	      0.0));
+      double negative_variance_third_particle =
+	z_score * total_n_minus_one_tuples[2] *
+        sqrt(std::max
+	     (inverse_factor_dof *
+	      (squared_negative_force_vector_third_particle[i] -
+	       (negative_force_vector_third_particle[i] *
+		inverse_factor) * negative_force_vector_third_particle[i]),
+	      0.0));
+      double positive_variance_third_particle =
+	z_score * total_n_minus_one_tuples[2] *
+        sqrt(std::max
+	     (inverse_factor_dof *
+	      (squared_positive_force_vector_third_particle[i] -
+	       (positive_force_vector_third_particle[i] *
+		inverse_factor) * positive_force_vector_third_particle[i]),
+	      0.0));
+	     
+      used_error[0] += negative_variance_first_particle;
+      used_error[0] += positive_variance_first_particle;
+      used_error[1] += negative_variance_second_particle;
+      used_error[1] += positive_variance_second_particle;
+      used_error[2] += negative_variance_third_particle;
+      used_error[2] += positive_variance_third_particle;
+      
+      l1_norm_negative_force_vector_u[0] += 
+	std::max(((-negative_force_vector_e.get(i, 0)) - 
+		  negative_variance_first_particle), 0.0);
+      l1_norm_negative_force_vector_u[1] += 
+	std::max(((-negative_force_vector_e.get(i, 1)) -
+		  negative_variance_second_particle), 0.0);
+      l1_norm_negative_force_vector_u[2] +=
+	std::max(((-negative_force_vector_e.get(i, 2)) -
+		  negative_variance_third_particle), 0.0);
+      l1_norm_positive_force_vector_l[0] +=
+	std::max((positive_force_vector_e.get(i, 0) -
+		  positive_variance_first_particle), 0.0);
+      l1_norm_positive_force_vector_l[1] +=
+	std::max((positive_force_vector_e.get(i, 1) -
+		  positive_variance_second_particle), 0.0);
+      l1_norm_positive_force_vector_l[2] +=
+	std::max((positive_force_vector_e.get(i, 2) -
+		  positive_variance_third_particle), 0.0);
+    }
+  }
+
+  void ExtractContribution
+  (double *negative_force_vector_first_particle,
+   double *squared_negative_force_vector_first_particle,
+   double &l1_norm_negative_force_vector_u_first_particle,
+   double &l1_norm_positive_force_vector_l_first_particle,
+   double *positive_force_vector_first_particle,
+   double *squared_positive_force_vector_first_particle,
+   double *negative_force_vector_second_particle,
+   double *squared_negative_force_vector_second_particle,
+   double &l1_norm_negative_force_vector_u_second_particle,
+   double &l1_norm_positive_force_vector_l_second_particle,
+   double *positive_force_vector_second_particle,
+   double *squared_positive_force_vector_second_particle,
+   double *negative_force_vector_third_particle,
+   double *squared_negative_force_vector_third_particle,
+   double &l1_norm_negative_force_vector_u_third_particle,
+   double &l1_norm_positive_force_vector_l_third_particle,
+   double *positive_force_vector_third_particle,
+   double *squared_positive_force_vector_third_particle) {
+       
+    // Temporary variable...
+    double tmp_contrib;
+    
+    for(index_t i = 0; i < dimension_; i++) {
+      
+      // Check positive contributions...
+      tmp_contrib = lower_bound_positive_contributions_.get(i, 0);
+      negative_force_vector_first_particle[i] += (-tmp_contrib);
+      if(squared_negative_force_vector_first_particle != NULL) {
+	squared_negative_force_vector_first_particle[i] += 
+	  math::Sqr(-tmp_contrib);
+      }
+      l1_norm_negative_force_vector_u_first_particle += tmp_contrib;
+      positive_force_vector_second_particle[i] += tmp_contrib;
+      if(squared_positive_force_vector_second_particle != NULL) {
+	squared_positive_force_vector_second_particle[i] += 
+	  math::Sqr(tmp_contrib);
+      }
+      l1_norm_positive_force_vector_l_second_particle += tmp_contrib;
+
+      tmp_contrib = lower_bound_positive_contributions_.get(i, 1);
+      negative_force_vector_first_particle[i] += (-tmp_contrib);
+      if(squared_negative_force_vector_first_particle != NULL) {
+	squared_negative_force_vector_first_particle[i] += 
+	  math::Sqr(-tmp_contrib);
+      }
+      l1_norm_negative_force_vector_u_first_particle += tmp_contrib;
+      positive_force_vector_third_particle[i] += tmp_contrib;
+      if(squared_positive_force_vector_third_particle != NULL) {
+	squared_positive_force_vector_third_particle[i] += 
+	  math::Sqr(tmp_contrib);
+      }
+      l1_norm_positive_force_vector_l_third_particle += tmp_contrib;
+
+      tmp_contrib = lower_bound_positive_contributions_.get(i, 2);
+      negative_force_vector_second_particle[i] += (-tmp_contrib);
+      if(squared_negative_force_vector_second_particle != NULL) {
+	squared_negative_force_vector_second_particle[i] +=
+	  math::Sqr(-tmp_contrib);
+      }
+      l1_norm_negative_force_vector_u_second_particle += tmp_contrib;
+      positive_force_vector_third_particle[i] += tmp_contrib;
+      if(squared_positive_force_vector_third_particle != NULL) {
+	squared_positive_force_vector_third_particle[i] +=
+	  math::Sqr(tmp_contrib);
+      }
+      l1_norm_positive_force_vector_l_third_particle += tmp_contrib;
+      
+      // Check negative contribution accumulations...
+      tmp_contrib = upper_bound_negative_contributions_.get(i, 0);
+      positive_force_vector_first_particle[i] += (-tmp_contrib);
+      if(squared_positive_force_vector_first_particle != NULL) {
+	squared_positive_force_vector_first_particle[i] += 
+	  math::Sqr(-tmp_contrib);
+      }
+      l1_norm_positive_force_vector_l_first_particle += (-tmp_contrib);
+      negative_force_vector_second_particle[i] += tmp_contrib;
+      if(squared_negative_force_vector_second_particle != NULL) {
+	squared_negative_force_vector_second_particle[i] += 
+	  math::Sqr(tmp_contrib);
+      }
+      l1_norm_negative_force_vector_u_second_particle += (-tmp_contrib);
+
+      tmp_contrib = upper_bound_negative_contributions_.get(i, 1);
+      positive_force_vector_first_particle[i] += (-tmp_contrib);
+      if(squared_positive_force_vector_first_particle != NULL) {
+	squared_positive_force_vector_first_particle[i] += 
+	  math::Sqr(-tmp_contrib);
+      }
+      l1_norm_positive_force_vector_l_first_particle += (-tmp_contrib);
+      negative_force_vector_third_particle[i] += tmp_contrib;
+      if(squared_negative_force_vector_third_particle != NULL) {
+	squared_negative_force_vector_third_particle[i] += 
+	  math::Sqr(tmp_contrib);
+      }
+      l1_norm_negative_force_vector_u_third_particle += (-tmp_contrib);
+
+      tmp_contrib = upper_bound_negative_contributions_.get(i, 2);
+      positive_force_vector_second_particle[i] += (-tmp_contrib);
+      if(squared_positive_force_vector_second_particle != NULL) {
+	squared_positive_force_vector_second_particle[i] +=
+	  math::Sqr(-tmp_contrib);
+      }
+      l1_norm_positive_force_vector_l_second_particle += (-tmp_contrib);
+      negative_force_vector_third_particle[i] += tmp_contrib;
+      if(squared_negative_force_vector_third_particle != NULL) {
+	squared_negative_force_vector_third_particle[i] += 
+	  math::Sqr(tmp_contrib);
+      }
+      l1_norm_negative_force_vector_u_third_particle += (-tmp_contrib);
+
+    } // end of looping over each dimension...
+  }
+
   /** @brief Evaluate the kernel given the chosen indices exhaustively.
    */
   template<typename Global, typename MultiTreeQueryResult>
@@ -844,52 +1171,20 @@ class AxilrodTellerForceKernelAux {
     double &l1_norm_negative_force_vector_u_third_particle =
       query_results.l1_norm_negative_force_vector_u[globals.chosen_indices[2]];
 
-    // Temporary variable...
-    double tmp_contrib;
-
-    for(index_t i = 0; i < dimension_; i++) {
-      
-      // Check positive contributions...
-      tmp_contrib = lower_bound_positive_contributions_.get(i, 0);
-      negative_force_vector_first_particle[i] += (-tmp_contrib);
-      l1_norm_negative_force_vector_u_first_particle += tmp_contrib;
-      positive_force_vector_second_particle[i] += tmp_contrib;
-      l1_norm_positive_force_vector_l_second_particle += tmp_contrib;
-
-      tmp_contrib = lower_bound_positive_contributions_.get(i, 1);
-      negative_force_vector_first_particle[i] += (-tmp_contrib);
-      l1_norm_negative_force_vector_u_first_particle += tmp_contrib;
-      positive_force_vector_third_particle[i] += tmp_contrib;
-      l1_norm_positive_force_vector_l_third_particle += tmp_contrib;
-
-      tmp_contrib = lower_bound_positive_contributions_.get(i, 2);
-      negative_force_vector_second_particle[i] += (-tmp_contrib);
-      l1_norm_negative_force_vector_u_second_particle += tmp_contrib;
-      positive_force_vector_third_particle[i] += tmp_contrib;
-      l1_norm_positive_force_vector_l_third_particle += tmp_contrib;
-      
-      // Check negative contribution accumulations...
-      tmp_contrib = upper_bound_negative_contributions_.get(i, 0);
-      positive_force_vector_first_particle[i] += (-tmp_contrib);
-      l1_norm_positive_force_vector_l_first_particle += (-tmp_contrib);
-      negative_force_vector_second_particle[i] += tmp_contrib;
-      l1_norm_negative_force_vector_u_second_particle += (-tmp_contrib);
-
-      tmp_contrib = upper_bound_negative_contributions_.get(i, 1);
-      positive_force_vector_first_particle[i] += (-tmp_contrib);
-      l1_norm_positive_force_vector_l_first_particle += (-tmp_contrib);
-      negative_force_vector_third_particle[i] += tmp_contrib;
-      l1_norm_negative_force_vector_u_third_particle += (-tmp_contrib);
-
-      tmp_contrib = upper_bound_negative_contributions_.get(i, 2);
-      positive_force_vector_second_particle[i] += (-tmp_contrib);
-      l1_norm_positive_force_vector_l_second_particle += (-tmp_contrib);
-      negative_force_vector_third_particle[i] += tmp_contrib;
-      l1_norm_negative_force_vector_u_third_particle += (-tmp_contrib);
-
-    } // end of looping over each dimension...
-  }
-  
+    ExtractContribution
+      (negative_force_vector_first_particle, NULL,
+       l1_norm_negative_force_vector_u_first_particle,
+       l1_norm_positive_force_vector_l_first_particle,
+       positive_force_vector_first_particle, NULL,
+       negative_force_vector_second_particle, NULL,
+       l1_norm_negative_force_vector_u_second_particle,
+       l1_norm_positive_force_vector_l_second_particle,
+       positive_force_vector_second_particle, NULL,
+       negative_force_vector_third_particle, NULL,
+       l1_norm_negative_force_vector_u_third_particle,
+       l1_norm_positive_force_vector_l_third_particle,
+       positive_force_vector_third_particle, NULL);
+  }  
 };
 
 #endif
