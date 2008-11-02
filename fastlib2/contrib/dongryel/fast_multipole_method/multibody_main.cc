@@ -49,8 +49,14 @@ int main(int argc, char *argv[]) {
   algorithm.NaiveCompute(&naive_results);
   fx_timer_stop(fx_root, "naive_code");
   naive_results.PrintDebug("naive_force_vectors.txt");
-  printf("Maximum relative error: %g\n",
-  	 naive_results.MaximumRelativeError(results));
+  double max_relative_error, positive_max_relative_error,
+    negative_max_relative_error;
+  naive_results.MaximumRelativeError(results, &max_relative_error,
+				     &negative_max_relative_error,
+				     &positive_max_relative_error);
+  printf("Maximum relative error: %g\n", max_relative_error);
+  printf("Positive max relative error: %g\n", positive_max_relative_error);
+  printf("Negative max relative error: %g\n", negative_max_relative_error);
 
   fx_done(fx_root);
   return 0;

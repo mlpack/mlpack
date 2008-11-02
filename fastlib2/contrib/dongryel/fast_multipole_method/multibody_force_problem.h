@@ -30,6 +30,22 @@ class AxilrodTellerForceProblem {
    public:
 
     template<typename TGlobal, typename Tree>
+    void ComputeMonteCarloEstimates(TGlobal &globals,
+				    const ArrayList<Matrix *> &sets,
+				    ArrayList<Tree *> &nodes,
+				    const Vector &total_n_minus_one_tuples) {
+      
+      // If any of the distance evaluation resulted in zero minimum
+      // distance, then return false.
+      globals.kernel_aux.ComputeMonteCarloEstimates
+	(globals, sets, nodes, total_n_minus_one_tuples,
+	 negative_force_vector_e, l1_norm_negative_force_vector_u,
+	 l1_norm_positive_force_vector_l, positive_force_vector_e, n_pruned,
+	 used_error);
+      
+    }
+
+    template<typename TGlobal, typename Tree>
     bool ComputeFiniteDifference(TGlobal &globals,
 				 ArrayList<Tree *> &nodes,
 				 const Vector &total_n_minus_one_tuples) {
@@ -310,10 +326,15 @@ class AxilrodTellerForceProblem {
 
    public:
 
-    double MaximumRelativeError(const MultiTreeQueryResult &other_results) {
+    void MaximumRelativeError(const MultiTreeQueryResult &other_results,
+			      double *max_relative_error,
+			      double *negative_max_relative_error,
+			      double *positive_max_relative_error) {
       FILE *relative_error_output = fopen("relative_error.txt", "w+");
-      double max_relative_error = 0;
-      
+      *max_relative_error = 0;
+      *negative_max_relative_error = 0;
+      *positive_max_relative_error = 0;
+
       for(index_t i = 0; i < used_error.length(); i++) {
 	double l1_norm_error = 
 	  la::RawLMetric<1>(force_vector_e.n_rows(),
@@ -325,12 +346,46 @@ class AxilrodTellerForceProblem {
 	  l1_norm_exact += fabs(exact_vector[d]);
 	}
 	
-	fprintf(relative_error_output, "%g\n", l1_norm_error / l1_norm_exact);
-	max_relative_error = std::max(max_relative_error,
-				      l1_norm_error / l1_norm_exact);
+	fprintf(relative_error_output, "%g ", l1_norm_error / l1_norm_exact);
+	*max_relative_error = std::max(*max_relative_error,
+				       l1_norm_error / l1_norm_exact);
+        double positive_l1_norm_error =
+          la::RawLMetric<1>(positive_force_vector_e.n_rows(),
+                            positive_force_vector_e.GetColumnPtr(i),
+                            other_results.positive_force_vector_e.GetColumnPtr
+			    (i));
+        double positive_l1_norm_exact = 0;
+        const double *positive_exact_vector = 
+	  positive_force_vector_e.GetColumnPtr(i);
+        for(index_t d = 0; d < positive_force_vector_e.n_rows(); d++) {
+          positive_l1_norm_exact += fabs(positive_exact_vector[d]);
+        }
+	
+	double negative_l1_norm_error =
+	  la::RawLMetric<1>(negative_force_vector_e.n_rows(),
+			    negative_force_vector_e.GetColumnPtr(i),
+                            other_results.negative_force_vector_e.GetColumnPtr
+			    (i));
+	double negative_l1_norm_exact = 0;
+        const double *negative_exact_vector =
+          negative_force_vector_e.GetColumnPtr(i);
+        for(index_t d = 0; d < negative_force_vector_e.n_rows(); d++) {
+          negative_l1_norm_exact += fabs(negative_exact_vector[d]);
+        }
+
+	fprintf(relative_error_output, "%g ", positive_l1_norm_error /
+		positive_l1_norm_exact);
+	*positive_max_relative_error = std::max(*positive_max_relative_error,
+						positive_l1_norm_error /
+						positive_l1_norm_exact);
+	fprintf(relative_error_output, "%g\n", negative_l1_norm_error /
+		negative_l1_norm_exact);
+	*negative_max_relative_error = std::max(*negative_max_relative_error,
+						negative_l1_norm_error /
+						negative_l1_norm_exact);
       }
+
       fclose(relative_error_output);
-      return max_relative_error;
     }
 
     void ApplyPostponed(const MultiTreeQueryPostponed &postponed_in, 
@@ -491,6 +546,63 @@ class AxilrodTellerForceProblem {
     return true;
   }
 
+  template<typename MultiTreeGlobal, typename MultiTreeQueryResult,
+	   typename Tree>
+  static bool ConsiderTupleProbabilistic(MultiTreeGlobal &globals,
+					 MultiTreeQueryResult &results,
+					 const ArrayList<Matrix *> &sets,
+					 ArrayList<Tree *> &nodes,
+					 double total_num_tuples,
+					 double total_n_minus_one_tuples_root,
+					 const Vector
+					 &total_n_minus_one_tuples) {
+    
+    if(total_num_tuples < 30) {      
+      return false;
+    }
+
+    // Compute delta change for each node...
+    MultiTreeDelta delta;
+    delta.Init(total_n_minus_one_tuples);
+    delta.ComputeMonteCarloEstimates(globals, sets, nodes,
+				     total_n_minus_one_tuples);
+
+    // Consider each node in turn whether it can be pruned or not.
+    for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
+
+      // Refine the summary statistics from the new info...
+      if(i == 0 || nodes[i] != nodes[i - 1]) {
+	AxilrodTellerForceProblem::MultiTreeQuerySummary new_summary;
+	new_summary.InitCopy(nodes[i]->stat().summary);
+	new_summary.ApplyPostponed(nodes[i]->stat().postponed);
+	new_summary.ApplyDelta(delta, i);
+	
+	// Compute the L1 norm of the positive component and the
+	// negative component.
+	double ratio = total_n_minus_one_tuples[i] / 
+	  (total_n_minus_one_tuples_root - new_summary.n_pruned_l);
+
+	if((AxilrodTellerForceProblem::relative_error_ *
+	    (new_summary.l1_norm_negative_force_vector_u +
+	     new_summary.l1_norm_positive_force_vector_l) -
+	    new_summary.used_error_u) * ratio < delta.used_error[i]) {
+	  
+	  return false;
+	}
+      }
+    }
+
+    // In this case, add the delta contributions to the postponed
+    // slots of each node.
+    for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
+      if(i == 0 || nodes[i] != nodes[i - 1]) {
+	nodes[i]->stat().postponed.ApplyDelta(delta, i);
+      }
+    }
+    
+    results.num_finite_difference_prunes++;
+    return true;
+  }
 };
 
 #endif
