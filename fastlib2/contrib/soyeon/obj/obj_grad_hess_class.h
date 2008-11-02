@@ -6,7 +6,7 @@ class ObjectGradientHessian {
  public:
   void Init(int &num_points_t); 
   void Destruct();
-	void ApproxBetafnNominator(int num_points_t, *beta_nominator);
+	void ApproxBetafnNominator(int &num_points_t, double *beta_nominator);
  
  
 private:
