@@ -71,6 +71,15 @@ Fastlib meetings
 					4-4) fastlib load data as MATRIX ONLY //need to be fixed?
 				5. Passing function arguments by the value vs. pointer or references
 				-ref1-p250~
+10/30 Thurs. (2:00p) Nick - Start coding for the project: Object fn.
+				1. ArrayList<Matrix>
+					- Each element in vector(array) is Matrix
+					- Used to store attribute matrix for each decision maker
+					- size: # of decision maker
+				2. Make dot product more efficient
+					exp_betas_times_x1_+=exp(la::Dot(betas.length(), 
+								beta.ptr(), 
+								first_stage_y_[n].GetColumnPtr(j)));
 				
 				
 					
