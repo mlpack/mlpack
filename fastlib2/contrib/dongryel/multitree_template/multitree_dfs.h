@@ -14,6 +14,8 @@ class MultiTreeDepthFirst {
  
   typedef GeneralBinarySpaceTree<DHrectBound<2>, Matrix, typename MultiTreeProblem::MultiTreeStat > Tree;
 
+  ArrayList<Matrix *> targets_;
+
   ArrayList<Matrix *> sets_;
 
   ArrayList<Tree *> trees_;
@@ -265,11 +267,26 @@ class MultiTreeDepthFirst {
     delete trees_[0];
   }
 
-  void Compute(typename MultiTreeProblem::MultiTreeQueryResult
+  void Compute(const ArrayList<Matrix *> *query_sets,
+	       typename MultiTreeProblem::MultiTreeQueryResult
 	       *query_results) {
     
+    // Build the query tree.
+    if(query_sets != NULL) {
+      index_t previous_size = sets_.size();
+      sets_.Resize(previous_size + query_sets->size());
+      trees_.Resize(previous_size + query_sets->size());
+
+      for(index_t i = 0; i < query_sets->size(); i++) {
+	sets_[previous_size + i] = (*query_sets)[i];
+	trees_[previous_size + i] = proximity::MakeGenKdTree<double, Tree, 
+	  proximity::GenKdTreeMedianSplitter>(*(sets_[sets_.size() - 1]), 10,
+					      NULL, NULL);
+      }
+    }
+
     // Assume that the query is the 0-th index.
-    query_results->Init((sets_[0])->n_cols());
+    query_results->Init((sets_[sets_.size() - 1])->n_cols());
 
     // Preprocess the query trees.
     
@@ -292,11 +309,10 @@ class MultiTreeDepthFirst {
   void NaiveCompute(typename MultiTreeProblem::MultiTreeQueryResult
 		    *query_results) {
     
-    // Assume that the query is the 0-th index.
-    query_results->Init((sets_[0])->n_cols());
+    // Assume that the query is the last index.
+    query_results->Init((sets_[sets_.size() - 1])->n_cols());
 
-    // Preprocess the query trees.
-    
+    // Preprocess the query trees.    
 
     // Call the canonical algorithm.
     double total_num_tuples = TotalNumTuples(trees_);
@@ -312,13 +328,18 @@ class MultiTreeDepthFirst {
     PostProcessTree_(trees_[0], *query_results);
   }
 
-  void Init(const ArrayList<Matrix *> &sets) {
+  void Init(const ArrayList<Matrix *> &sets,
+	    const ArrayList<Matrix *> *targets) {
     
     // Copy the dataset and build the trees.
     sets_.Init(MultiTreeProblem::order);
+    targets_.Init(MultiTreeProblem::order);
     trees_.Init(MultiTreeProblem::order);
     for(index_t i = 0; i < MultiTreeProblem::order; i++) {
       sets_[i] = sets[i];
+      if(targets != NULL) {
+	targets_[i] = (*targets)[i];
+      }
     }
 
     // This could potentially be improved by checking which matrices
