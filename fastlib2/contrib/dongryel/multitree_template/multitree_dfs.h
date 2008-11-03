@@ -56,6 +56,9 @@ class MultiTreeDepthFirst {
 
     static void RecursionLoop(const ArrayList<Matrix *> &sets,
 			      ArrayList<Tree *> &nodes,
+			      double total_num_tuples,
+			      Tree *previous_node_chosen,
+			      const bool contains_non_leaf_in_the_list,
 			      typename MultiTreeProblem::MultiTreeQueryResult
 			      &query_results,
 			      MultiTreeDepthFirst *algorithm_object) {
@@ -67,7 +70,8 @@ class MultiTreeDepthFirst {
 	if(start == 0 || 
 	   !(nodes[start]->end() <= nodes[start - 1]->begin())) {
 	  MultiTreeHelper_<start + 1, end>::RecursionLoop
-	    (sets, nodes, query_results, algorithm_object);
+	    (sets, nodes, total_num_tuples, nodes[start],
+	     contains_non_leaf_in_the_list, query_results, algorithm_object);
 	}
       }
       else {
@@ -86,14 +90,16 @@ class MultiTreeDepthFirst {
 	   !(saved_node->left()->end() <= nodes[start - 1]->begin())) {
 	  nodes[start] = saved_node->left();
 	  MultiTreeHelper_<start + 1, end>::RecursionLoop
-	    (sets, nodes, query_results, algorithm_object);
+	    (sets, nodes, total_num_tuples, nodes[start], true, query_results,
+	     algorithm_object);
 	}
 
 	if(start == 0 || 
 	   !(saved_node->right()->end() <= nodes[start - 1]->begin())) {
 	  nodes[start] = saved_node->right();
 	  MultiTreeHelper_<start + 1, end>::RecursionLoop
-	    (sets, nodes, query_results, algorithm_object);
+	    (sets, nodes, total_num_tuples, nodes[start], true, query_results,
+	     algorithm_object);
 	}
 	
 	// Put back the node in the list after recursing...
@@ -123,7 +129,7 @@ class MultiTreeDepthFirst {
    public:
     static void NestedLoop(typename MultiTreeProblem::MultiTreeGlobal &globals,
 			   const ArrayList<Matrix *> &sets, 
-			   ArrayList<Tree *> &nodes,
+			   ArrayList<Tree *> &nodes,			   
 			   typename MultiTreeProblem::MultiTreeQueryResult
 			   &query_results) {
       
@@ -134,16 +140,24 @@ class MultiTreeDepthFirst {
 
     static void RecursionLoop(const ArrayList<Matrix *> &sets,
 			      ArrayList<Tree *> &nodes,
+			      double total_num_tuples,
+			      Tree *previous_node_chosen,
+			      const bool contains_non_leaf_in_the_list,
 			      typename MultiTreeProblem::MultiTreeQueryResult
 			      &query_results,
 			      MultiTreeDepthFirst *algorithm_object) {
-     
-      double new_total_num_tuples = algorithm_object->TotalNumTuples(nodes);
 
-      if(new_total_num_tuples > 0) {
-	algorithm_object->MultiTreeDepthFirstCanonical_
-	  (sets, nodes, query_results, new_total_num_tuples);
+      if(contains_non_leaf_in_the_list) {
+	double new_total_num_tuples = algorithm_object->TotalNumTuples(nodes);
+	if(new_total_num_tuples > 0) {
+	  algorithm_object->MultiTreeDepthFirstCanonical_
+	    (sets, nodes, query_results, new_total_num_tuples);
+	}
       }
+      else {
+	algorithm_object->MultiTreeDepthFirstBase_(sets, nodes, query_results,
+						   total_num_tuples);
+      }      
     }
   };
 
