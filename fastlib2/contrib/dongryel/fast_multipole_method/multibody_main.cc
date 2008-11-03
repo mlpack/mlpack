@@ -35,10 +35,10 @@ int main(int argc, char *argv[]) {
   MultiTreeDepthFirst<AxilrodTellerForceProblem> algorithm;
   AxilrodTellerForceProblem::MultiTreeQueryResult results;
   AxilrodTellerForceProblem::MultiTreeQueryResult naive_results;
-  algorithm.Init(sets);
+  algorithm.Init(sets, NULL);
 
   fx_timer_start(fx_root, "multitree");
-  algorithm.Compute(&results);
+  algorithm.Compute(NULL, &results);
   fx_timer_stop(fx_root, "multitree");
 
   results.PrintDebug("force_vectors.txt");
