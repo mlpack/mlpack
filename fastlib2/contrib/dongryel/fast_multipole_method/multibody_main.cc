@@ -44,6 +44,7 @@ int main(int argc, char *argv[]) {
   results.PrintDebug("force_vectors.txt");
   printf("Got %d finite difference prunes...\n",
 	 results.num_finite_difference_prunes);
+  printf("Got %d Monte Carlo prunes...\n", results.num_monte_carlo_prunes);
   
   fx_timer_start(fx_root, "naive_code");
   algorithm.NaiveCompute(&naive_results);
