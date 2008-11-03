@@ -180,24 +180,12 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
 	   total_n_minus_one_tuples_root_, total_n_minus_one_tuples_)) {
     return;
   }
-    
-  // Figure out which ones are non-leaves.
-  index_t split_index = -1;
-  Heuristic_(nodes, &split_index);
-  
-  // All leaves, then base case.
-  if(split_index < 0) {
-    MultiTreeDepthFirstBase_(sets, nodes, query_results, total_num_tuples);
-    return;
-  }
-  
-  // Else, recurse to every possible combination.
-  else {
 
-    MultiTreeHelper_<0, MultiTreeProblem::order>::RecursionLoop
-      (sets, nodes, query_results, this);    
-    return;
-  }
+  // Recurse to every combination...
+  MultiTreeHelper_<0, MultiTreeProblem::order>::RecursionLoop
+    (sets, nodes, total_num_tuples, false, (Tree *) NULL,
+     query_results, this);    
+  return;
 }
 
 template<typename MultiTreeProblem>
