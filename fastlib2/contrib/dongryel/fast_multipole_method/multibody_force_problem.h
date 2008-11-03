@@ -579,7 +579,7 @@ class AxilrodTellerForceProblem {
 					 const Vector
 					 &total_n_minus_one_tuples) {
     
-    if(total_num_tuples < 60) {
+    if(total_num_tuples < 40) {
       return false;
     }
 
