@@ -53,6 +53,69 @@ class MultiTreeDepthFirst {
 						     query_results);
       }
     }
+
+    static void RecursionLoop(const ArrayList<Matrix *> &sets,
+			      ArrayList<Tree *> &nodes,
+			      typename MultiTreeProblem::MultiTreeQueryResult
+			      &query_results,
+			      MultiTreeDepthFirst *algorithm_object) {
+      
+      // In case of a leaf, then nothing else to do here.
+      if(nodes[start]->is_leaf()) {
+	
+	// Check whether there is a conflict with the node chosen before...
+	if(start == 0 || 
+	   !(nodes[start]->end() <= nodes[start - 1]->begin())) {
+	  MultiTreeHelper_<start + 1, end>::RecursionLoop
+	    (sets, nodes, query_results, algorithm_object);
+	}
+      }
+      else {
+       
+	// Save the node before choosing its child.
+	Tree *saved_node = nodes[start];
+
+	// Push down the postponed information before recursing...
+	nodes[start]->left()->stat().postponed.ApplyPostponed
+	  (nodes[start]->stat().postponed);
+	nodes[start]->right()->stat().postponed.ApplyPostponed
+	  (nodes[start]->stat().postponed);
+	nodes[start]->stat().postponed.SetZero();
+	
+	if(start == 0 || 
+	   !(saved_node->left()->end() <= nodes[start - 1]->begin())) {
+	  nodes[start] = saved_node->left();
+	  MultiTreeHelper_<start + 1, end>::RecursionLoop
+	    (sets, nodes, query_results, algorithm_object);
+	}
+
+	if(start == 0 || 
+	   !(saved_node->right()->end() <= nodes[start - 1]->begin())) {
+	  nodes[start] = saved_node->right();
+	  MultiTreeHelper_<start + 1, end>::RecursionLoop
+	    (sets, nodes, query_results, algorithm_object);
+	}
+	
+	// Put back the node in the list after recursing...
+	nodes[start] = saved_node;
+
+	// Apply the postponed changes for both child nodes.
+	typename MultiTreeProblem::MultiTreeQuerySummary tmp_left_child_summary
+	  (nodes[start]->left()->stat().summary);
+	tmp_left_child_summary.ApplyPostponed
+	  (nodes[start]->left()->stat().postponed);
+	typename MultiTreeProblem::MultiTreeQuerySummary
+	  tmp_right_child_summary(nodes[start]->right()->stat().summary);
+	tmp_right_child_summary.ApplyPostponed
+	  (nodes[start]->right()->stat().postponed);
+	
+	// Refine statistics after recursing.
+	nodes[start]->stat().summary.StartReaccumulate();
+	nodes[start]->stat().summary.Accumulate(tmp_left_child_summary);
+	nodes[start]->stat().summary.Accumulate(tmp_right_child_summary);
+      }
+    }
+
   };
 
   template<int end>
@@ -67,6 +130,20 @@ class MultiTreeDepthFirst {
       // Exhaustively compute the contribution due to the selected
       // tuple.
       globals.kernel_aux.EvaluateMain(globals, sets, query_results);
+    }
+
+    static void RecursionLoop(const ArrayList<Matrix *> &sets,
+			      ArrayList<Tree *> &nodes,
+			      typename MultiTreeProblem::MultiTreeQueryResult
+			      &query_results,
+			      MultiTreeDepthFirst *algorithm_object) {
+     
+      double new_total_num_tuples = algorithm_object->TotalNumTuples(nodes);
+
+      if(new_total_num_tuples > 0) {
+	algorithm_object->MultiTreeDepthFirstCanonical_
+	  (sets, nodes, query_results, new_total_num_tuples);
+      }
     }
   };
 
