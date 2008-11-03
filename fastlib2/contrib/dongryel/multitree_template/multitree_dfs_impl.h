@@ -103,14 +103,12 @@ double MultiTreeDepthFirst<MultiTreeProblem>::RecursiveLeaveOneOutTuples_
 
 template<typename MultiTreeProblem>
 void MultiTreeDepthFirst<MultiTreeProblem>::Heuristic_
-(const ArrayList<Tree *> &nodes, index_t *max_count_among_non_leaf, 
- index_t *split_index) {
+(const ArrayList<Tree *> &nodes, index_t *split_index) {
   
   for(int start = 0; start < MultiTreeProblem::order; start++) {
-    if(!(nodes[start]->is_leaf()) &&
-       nodes[start]->count() > *max_count_among_non_leaf) {
-      *max_count_among_non_leaf = nodes[start]->count();
+    if(!(nodes[start]->is_leaf())) {
       *split_index = start;
+      break;
     }
   }
 }
@@ -171,37 +169,21 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
  typename MultiTreeProblem::MultiTreeQueryResult &query_results,
  double total_num_tuples) {
 
-  bool no_ancestor_relationship = true;
-  for(index_t i = 0; i < MultiTreeProblem::order - 1; i++) {
-    for(index_t j = i + 1; j < MultiTreeProblem::order; j++) {
-      if(first_node_indices_strictly_surround_second_node_indices_
-	 (nodes[i], nodes[j]) ||
-	 first_node_indices_strictly_surround_second_node_indices_
-	 (nodes[j], nodes[i])) {
-	no_ancestor_relationship = false;
-	break;
-      }
-    }
+  if(MultiTreeProblem::ConsiderTupleExact(globals_, query_results,
+					  nodes, total_num_tuples,
+					  total_n_minus_one_tuples_root_,
+					  total_n_minus_one_tuples_)) {
+    return;
   }
-
-  if(no_ancestor_relationship) {
-    if(MultiTreeProblem::ConsiderTupleExact(globals_, query_results,
-					    nodes, total_num_tuples,
-					    total_n_minus_one_tuples_root_,
-					    total_n_minus_one_tuples_)) {
-      return;
-    }
-    else if(MultiTreeProblem::ConsiderTupleProbabilistic
-	    (globals_, query_results, sets, nodes, total_num_tuples,
-	     total_n_minus_one_tuples_root_, total_n_minus_one_tuples_)) {
-      return;
-    }
+  else if(MultiTreeProblem::ConsiderTupleProbabilistic
+	  (globals_, query_results, sets, nodes, total_num_tuples,
+	   total_n_minus_one_tuples_root_, total_n_minus_one_tuples_)) {
+    return;
   }
     
   // Figure out which ones are non-leaves.
   index_t split_index = -1;
-  index_t max_count_among_non_leaf = 0;
-  Heuristic_(nodes, &max_count_among_non_leaf, &split_index);
+  Heuristic_(nodes, &split_index);
   
   // All leaves, then base case.
   if(split_index < 0) {
@@ -209,57 +191,11 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
     return;
   }
   
-  // Else, split an internal node and recurse.
+  // Else, recurse to every possible combination.
   else {
-    double new_num_tuples;
-    
-    // Push down approximations downward for the node that is to be
-    // expanded.
-    nodes[split_index]->left()->stat().postponed.ApplyPostponed
-      (nodes[split_index]->stat().postponed);
-    nodes[split_index]->right()->stat().postponed.ApplyPostponed
-      (nodes[split_index]->stat().postponed);
-    nodes[split_index]->stat().postponed.SetZero();
 
-    // Recurse to the left.
-    Tree *node_saved = nodes[split_index];
-    nodes[split_index] = node_saved->left();
-    new_num_tuples = TotalNumTuples(nodes);
-    
-    // If the current node combination is valid, then recurse.
-    if(new_num_tuples > 0) {
-      MultiTreeDepthFirstCanonical_(sets, nodes, query_results,
-				    new_num_tuples);
-    }
-    
-    // Recurse to the right.
-    nodes[split_index] = node_saved->right();
-    new_num_tuples = TotalNumTuples(nodes);
-    
-    // If the current node combination is valid, then recurse.
-    if(new_num_tuples > 0) {
-      MultiTreeDepthFirstCanonical_(sets, nodes, query_results,
-				    new_num_tuples);
-    }
-
-    // Put back the saved node back into the list.
-    nodes[split_index] = node_saved;
-    
-    // Apply the postponed changes for both child nodes.
-    typename MultiTreeProblem::MultiTreeQuerySummary tmp_left_child_summary
-      (nodes[split_index]->left()->stat().summary);
-    tmp_left_child_summary.ApplyPostponed
-      (nodes[split_index]->left()->stat().postponed);
-    typename MultiTreeProblem::MultiTreeQuerySummary tmp_right_child_summary
-      (nodes[split_index]->right()->stat().summary);
-    tmp_right_child_summary.ApplyPostponed
-      (nodes[split_index]->right()->stat().postponed);
-
-    // Refine statistics after recursing.
-    nodes[split_index]->stat().summary.StartReaccumulate();
-    nodes[split_index]->stat().summary.Accumulate(tmp_left_child_summary);
-    nodes[split_index]->stat().summary.Accumulate(tmp_right_child_summary);
-    
+    MultiTreeHelper_<0, MultiTreeProblem::order>::RecursionLoop
+      (sets, nodes, query_results, this);    
     return;
   }
 }
