@@ -73,7 +73,7 @@ class Objective {
 	//ArrayList<index_t> derivative_beta_conditional_postponed_prob_;
 	//ArrayList<index_t> conditional_postponed_prob_;
 
-	ArrayList<index_t> SumFirstDerivativeConditionalPostpondProb_
+	ArrayList<index_t> sum_first_derivative_conditional_postpond_prob_
 	//ArrayList<index_t> SumSecondDerivativeConditionalPostpondProb_
 
 	//need exp_betas_times_x1 and exp_betas_times_x2
