@@ -363,11 +363,11 @@ class AxilrodTellerForceKernelAux {
 	distance_second_third_pow_three, distance_second_third_pow_five;
 
       distance_first_second.lo =
-	math::Pow<1, 2>(lower_bound_squared_distances.get(first_index[p],
-							  second_index[p]));
+	sqrt(lower_bound_squared_distances.get(first_index[p],
+					       second_index[p]));
       distance_first_second.hi =
-	math::Pow<1, 2>(upper_bound_squared_distances.get(first_index[p],
-							  second_index[p]));
+	sqrt(upper_bound_squared_distances.get(first_index[p],
+					       second_index[p]));
       distance_first_second_pow_three.lo =
 	distance_first_second.lo *
 	lower_bound_squared_distances.get(first_index[p], second_index[p]);
@@ -387,11 +387,11 @@ class AxilrodTellerForceKernelAux {
 	upper_bound_squared_distances.get(first_index[p], second_index[p]) *
 	distance_first_second_pow_five.hi;
       distance_first_third.lo =
-	math::Pow<1, 2>(lower_bound_squared_distances.get(first_index[p],
-							  third_index[p]));
+	sqrt(lower_bound_squared_distances.get(first_index[p],
+					       third_index[p]));
       distance_first_third.hi =
-	math::Pow<1, 2>(upper_bound_squared_distances.get(first_index[p],
-							  third_index[p]));
+	sqrt(upper_bound_squared_distances.get(first_index[p],
+					       third_index[p]));
       distance_first_third_pow_three.lo =
 	distance_first_third.lo *
 	lower_bound_squared_distances.get(first_index[p], third_index[p]);
@@ -405,11 +405,11 @@ class AxilrodTellerForceKernelAux {
 	upper_bound_squared_distances.get(first_index[p], third_index[p]) *
 	distance_first_third_pow_three.hi;
       distance_second_third.lo =
-	math::Pow<1, 2>(lower_bound_squared_distances.get(second_index[p],
-							  third_index[p]));
+	sqrt(lower_bound_squared_distances.get(second_index[p],
+					       third_index[p]));
       distance_second_third.hi =
-	math::Pow<1, 2>(upper_bound_squared_distances.get(second_index[p],
-							  third_index[p])); 
+	sqrt(upper_bound_squared_distances.get(second_index[p],
+					       third_index[p])); 
       distance_second_third_pow_three.lo =
 	distance_second_third.lo *
 	lower_bound_squared_distances.get(second_index[p], third_index[p]);
@@ -481,8 +481,8 @@ class AxilrodTellerForceKernelAux {
 	(indices[second_index[p]]);
       
       double distance_first_second =
-	math::Pow<1, 2>(squared_distances.get(first_index[p],
-					      second_index[p]));
+	sqrt(squared_distances.get(first_index[p],
+				   second_index[p]));
       double distance_first_second_pow_three =
 	distance_first_second *
 	squared_distances.get(first_index[p], second_index[p]);
@@ -493,8 +493,8 @@ class AxilrodTellerForceKernelAux {
 	squared_distances.get(first_index[p], second_index[p]) *
 	distance_first_second_pow_five;
       double distance_first_third =
-	math::Pow<1, 2>(squared_distances.get(first_index[p],
-					      third_index[p]));
+	sqrt(squared_distances.get(first_index[p],
+				   third_index[p]));
       double distance_first_third_pow_three =
 	distance_first_third *
 	squared_distances.get(first_index[p], third_index[p]);
@@ -502,8 +502,8 @@ class AxilrodTellerForceKernelAux {
 	squared_distances.get(first_index[p], third_index[p]) *
 	distance_first_third_pow_three;
       double distance_second_third =
-	math::Pow<1, 2>(squared_distances.get(second_index[p],
-					      third_index[p]));
+	sqrt(squared_distances.get(second_index[p],
+				   third_index[p]));
       double distance_second_third_pow_three =
 	distance_second_third *
 	squared_distances.get(second_index[p], third_index[p]);
