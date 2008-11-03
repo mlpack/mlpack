@@ -172,8 +172,7 @@ class MultiTreeDepthFirst {
   void CopyNodeSet_(const ArrayList<Tree *> &source_list,
 		    ArrayList<Tree *> *destination_list);
 
-  void Heuristic_(const ArrayList<Tree *> &nodes, 
-		  index_t *max_count_among_non_leaf, index_t *split_index);
+  void Heuristic_(const ArrayList<Tree *> &nodes, index_t *split_index);
 
   void MultiTreeDepthFirstBase_
   (const ArrayList<Matrix *> &sets, ArrayList<Tree *> &trees,
