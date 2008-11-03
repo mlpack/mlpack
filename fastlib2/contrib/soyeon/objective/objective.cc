@@ -63,6 +63,8 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 	num_of_alphas_=10;
 	alpha_weight_=1/num_of_alphas;
   
+	exp_betas_times_x2_.SetZero();
+
 	for(index_t n=0; n<first_stage_x_.size; n++){
 		for(index_t l=0; l<num_of_alphas; ;++){
 			alpha_temp=(l+1)*(alpha_weight_);
@@ -83,42 +85,18 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 			}	//i
 
 			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
-				numerator+=exp(la::Dot(betas.size(), betas.ptr(),
+				second_stage_x_[n]+=exp(la::Dot(betas.size(), betas.ptr(),
 											 second_stage_x_[n].GetColumnPtr(i) ));
 			}
 			//conditional_postponed_probability_[n]
-			postponed_probability_[n]+=( (numerator/(exp_betas_times_x1_+ numerator))
+			postponed_probability_[n]+=( (second_stage_x_[n]/(exp_betas_times_x1_[n]
+																	+ second_stage_x_[n]))
 																*beta_function_temp );			
 		}	//alpha
 		postponed_probability_[n]*=alpha_wieght_;	
 	}	//n
 
-  /*for(index_t n=0; n<first_stage_x_.size(); n++) {
-		double alpha_temp=0;
-		double alpha_weight_=1/num_of_alphas;
-		ArrayList<index
-    for(index_t l=0; l<num_of_alphas_; l++) {
-      double exp_betas_times_x2_bar=0;
-			alpha_temp=(1+l)*(alpha_weight_);
-
-			for(index t 
-			if (ind_unk_k>0) {
-				 temp=alpha_temp*unk_x_past_[
-				second_stage_x_bar_
-			}
-
-			postponed_probability[n]+=(exp_betas_times_x2_tilde_+
-      //for(index_t i=0; i<second_stage_x_bar_[n].n_cols(); i++) {
-      //  nominator+=exp(la::Dot(betas.size(), betas.ptr(),
-			//												 second_stage_x_bar_[n].GetColumnPtr(i) ));
-      //}
-			//nominator=exp_betas_times_x2_tilde+
-			
-      postponed_probability[n]+=numerator/(exp_betas_times_x1_+ numerator);
-    }
-    posponed_probability_*=alpha_wieght_;
-  }
-	*/
+  
 }
 
 void Objective::ComputeExpBetasTimesX1_(Vector &betas) {
@@ -133,18 +111,6 @@ void Objective::ComputeExpBetasTimesX1_(Vector &betas) {
   }
 }
 
-/*void Objective::ComputeExpBetasTimesX2_tilde_(Vector &betas) {
-  exp_betas_times_x2_tilde_.SetZero();
-  
-	for(index_t n=0; n<second_stage_x_tilde_.size(); n++){
-		for(index_t j=0; j<second_stage_x__tilde_[n].n_cols(); j++) {
-			exp_betas_times_x2_tilde_[n]+=exp(la::Dot(betas.length(), 
-															beta.ptr(), 
-															second_stage_y_[n].GetColumnPtr(j)));
-		}
-  }
-}
-*/
 
 void Objective::ComputeDeumeratorBetaFunction_(double p, doulbe q){
 	denumerator_beta_function_=0;

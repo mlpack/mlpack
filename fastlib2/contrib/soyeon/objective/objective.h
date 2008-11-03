@@ -35,6 +35,7 @@ class Objective {
 
 
 	ArrayList<index_t> exp_betas_times_x1_;
+	ArrayList<index_t> exp_betas_times_x2_;
 	//ArrayList<index_t> exp_betas_times_x2_tilde_;
 	ArrayList<index_t> postponed_probability_;
 	//ArrayList<index_t> conditional_postponed_probability_;
@@ -58,11 +59,13 @@ class Objective {
 	void ComputePostponedProbability_(Vector &betas, double p, double q);
 	void ComputeExpBetasTimesX1_(Vector &betas);
 	//void ComputeExpBetasTimesX2_tilde_(Vector &betas);
-	void ComputeDeumeratorBetaFunction(double p, doulbe q);
+	void ComputeDeumeratorBetaFunction_(double p, doulbe q);
 	//void ComputeMaxSizeXBar_();
 
-	ArrayList<index_t> exp_betas_times_x1_;
-	ArrayList<index_t> postponed_probability_;
+	
+	
+
+
 	
 };
 
