@@ -5,8 +5,6 @@
 #include "mlpack/series_expansion/kernel_aux.h"
 #include "mlpack/series_expansion/inverse_pow_dist_kernel_aux.h"
 
-#include "../multitree_template/upper_triangular_square_matrix.h"
-
 class AxilrodTellerForceKernelAux {
 
  private:
