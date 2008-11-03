@@ -69,7 +69,7 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 		for(index_t l=0; l<num_of_alphas; ;++){
 			alpha_temp=(l+1)*(alpha_weight_);
 		
-			beta_function_temp=pow(alpha_temp, p-1)*pow((1-alpha_temp), q-1);
+			beta_function_temp=pow(alpha_temp, p-1)*pow((1-alpha_temp), q-1)/denumerator_beta_function_;
 
 		
 			//Calculate x^2_{ni}(alpha_l)
@@ -126,7 +126,8 @@ void Objective::ComputeDeumeratorBetaFunction_(double p, doulbe q) {
 	denumerator*=(t_weight_);
 }
 
-//
+//////////////////////////////////////////////////////////
+//add new things from here for objective2 (Compute gradient) 
 //Compute dot_logit
 void Objective::ComputeDotLogit_(Vector &betas) {
 	for(index_t n=0; n<first_stage_x_.size(); n++){
@@ -135,11 +136,13 @@ void Objective::ComputeDotLogit_(Vector &betas) {
 																				 (first_stage_x_[n].GetColumnPtr(i))/
 																				 exp_betas_times_x1_[n]));
 		}	//i
-		for(index_t j=0; j<second_stage_x_.n_cols(); j++){
+		/*for(index_t j=0; j<second_stage_x_.n_cols(); j++){
 			second_stage_dot_logit_[n].set(j, 1, exp(la::Dot(betas.length(), beta.ptr(),
 																				 (second_stage_x_[n].GetColumnPtr(i))/
 																				 exp_betas_times_x2_[n]));
+																				 
 		}	//j
+		*/
 	}	//n
 }
 
@@ -152,9 +155,9 @@ void Objective::ComputeDDotLogit_() {
 		for(index_t i=0; i<first_stage_x_.n_cols(); i++){
 			first_stage_ddot_logit_[n].set(i, i, first_stage_dot_logit_[n].get(i,1));
 		}	//i
-		for(index_t j=0; i<second_stage_x_.n_cols(); j++){
+		/*for(index_t j=0; i<second_stage_x_.n_cols(); j++){
 			second_stage_ddot_logit_[n].set(j, j, second_stage_dot_logit_[n].get(j,1));
-		}	//j
+		}	//j*/
 
 	}	//n
 
@@ -174,15 +177,17 @@ Vector Objective::ComputeDerivativeBetaTerm1_() {
       Vector temp;
 			temp.Init(betas.length());
 			la::MulOverwrite(first_stage_x_[n], first_stage_dot_logit[n]), &temp);
-			derivative_beta_term1+=la::SubOverwrite(first_stage_x_[n].GetColumnPtr(first_stage_y_[n]),
-																							temp);
-    }
+			la::SubOverwrite(first_stage_x_[n].GetColumnPtr(first_stage_y_[n]), &temp);
+			//check
+			la::Addto(derivative_beta_term1, &temp);
+																							
+		}
   }
-  return term1;
+  return derivative_beta_term1;
 }
 
 
-void Objective::ComputeDerivativeBetaConditionalPostponedProb_(Vector &betas){
+/*void Objective::ComputeDerivativeBetaConditionalPostponedProb_(Vector &betas){
 	derivative_beta_conditional_postponed_prob_.SetZero();
 	conditional_postponed_prob_.SetZero();
 
@@ -202,15 +207,138 @@ void Objective::ComputeDerivativeBetaConditionalPostponedProb_(Vector &betas){
 		//derivative_beta_conditional_postponed_prob_[n]=&temp;
 	}
 }
+*/
+
+void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas){
+	
+	Vector temp;
+	temp.Init(betas.length());	//dotX1*dotLogit1
+	//SumSecondDerivativeConditionalPostpondProb_.SetZero();
+
+	double alpha_temp=0;
+	double beta_function_temp=0;
+	double numerator=0;
+	//need to specify
+	num_of_alphas_=10;
+	alpha_weight_=1/num_of_alphas;
+
+	exp_betas_times_x2_.SetZero();
+	second_stage_dot_logit_.SetZero();
+	double conditional_postponed_prob=0;
+	Vector first_derivative_conditional_postpond_prob;
+	first_derivative_conditional_postpond_prob.Init(betas.length());
+	Vector temp2;	//dotX2*dotLogit2
+	temp2.Init(betas.length());
 
 
 
 
+	for(index_t n=0; n<first_stage_x_.size(); n++){
+		la::MulOverwrite(first_stage_x_[n], first_stage_dot_logit_[n], &temp);
+		SumFirstDerivativeConditionalPostpondProb_[n].SetZero();
+
+	 for(index_t l=0; l<num_of_alphas; ;++){
+			alpha_temp=(l+1)*(alpha_weight_);
+		
+			beta_function_temp=pow(alpha_temp, p-1)*pow((1-alpha_temp), q-1)/denumerator_beta_function_;
 
 		
+			//Calculate x^2_{ni}(alpha_l)
+			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
+				int count=0;
+				for(index_t j=ind_unk_x_[0]; j<ind_unk_x_[ind_unk_x_.size()]; j++){
+					count+=1;
+					exponential_temp=alpha_temp*first_stage_x_[n].get(i, j)
+													+(alpha_temp)*(1-alpha_temp)*unk_x_past[i].get(count-1,1)
+													+(alpha_temp)*pow((1-alpha_temp),2)*unk_x_past[i].get(count-1,2);
+					second_stage_x_[n].set(j, i, exponential_temp);
+				}	//j
+			}	//i
 
+			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
+				exp_betas_times_x2_[n]+=exp(la::Dot(betas.size(), betas.ptr(),
+											 second_stage_x_[n].GetColumnPtr(i) ));
+				//Calculate second_stage_dot_logit_
+				second_stage_dot_logit_[n].set( i, 1, exp(la::Dot(betas.length(), beta.ptr(),
+																				 (second_stage_x_[n].GetColumnPtr(i))/
+																				 exp_betas_times_x2_[n]) );
+			}	//i
+			conditional_postponed_prob=exp_betas_times_x2_[n]/(exp_betas_times_x1_[n]+exp_betas_times_x2_[n]);
+			la::MulOverwrite(second_stage_x_[n], second_stage_dot_logit_[n], &temp2);
+			la::SubOverwrite(temp2, temp1, &first_derivative_conditional_postpond_prob);
+			//Scale with beta_function
+			la::Scale( (conditional_postponed_prob)*(1-conditional_postponed_prob)*beta_function_temp, &first_derivative_conditional_postpond_prob);
 
-
+			//Check
+			la::Addto(SumFirstDerivativeConditionalPostpondProb_[n], &first_derivative_conditional_postpond_prob);
+					
+		}	//alpha
+		la::Scale(alpha_wieght_, &SumFirstDerivativeConditionalPostpondProb_[n]);	
+	}	//n
 
 }
+
+
+
+Vector Objective::ComputeDerivativeBetaTerm2_() {
+
+	derivative_beta_term2.Init(betas.length());
+	derivative_beta_term2.SetZero();
+	Vector temp;
+	temp.Init(betas.length());
+
+	for(index_t n=0; n<first_stage_x_.size(); n++){
+		if (first_stage_y_[n]<0) {
+      continue;
+    } else {
+			//check
+			temp=SumFirstDerivativeConditionalPostpondProb_[n]/(1-postponed_probability_[n]);
+			//check
+			la::Addto(derivative_beta_term2, &temp);
+
+		}	//if-else
+
+	}	//n
+	return derivative_beta_term2;
+
+}
+
+Matrix Objective::ComputeSecondDerivativeBetaTerm1_() {
+	//check
+	Matrix second_derivative_beta_term1;
+	second_derivative_beta_term1.Init(betas.length(), betas.length());
+	derivative_beta_term1.SetAll(0.0);
+
+  for(index_t n=0; n<first_stage_x_.size(); n++) {
+    if (first_stage_y_[n]<0) { 
+			//first_stage_y_[n]=-1 if all==zero, j_i is n chose j_i
+      continue;
+    } else {
+
+			//check from here
+      Vector temp1;
+			temp1.Init(betas.length());
+			la::MulOverwrite(first_stage_x_[n], first_stage_dot_logit[n]), &temp1);
+
+			Matrix temp2
+			temp2.Init(betas.length(), betas.length());
+			la::MulTransBOverwrite(temp1, temp1, &temp2);
+
+			Matrix temp3;
+			temp3.Init(betas.length(), first_stage_x_[n].n_cols());
+			la::MulOverwrite(first_stage_x_[n], first_stage_ddot_logit_[n], &temp3);
+
+			Matrix temp4;
+			temp3.Init(betas.length(), betas.length());
+			la::MulTransBOverwrite(temp3, first_stage_x_[n], &temp4);
+			//check
+			la::SubFrom(temp4, &temp2);
+			la::Addto(second_derivative_beta_term1, &temp2);
+																							
+		}
+  }
+  return second_derivative_beta_term1;
+}
+}
+
 

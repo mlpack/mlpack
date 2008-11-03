@@ -69,7 +69,7 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 		for(index_t l=0; l<num_of_alphas; ;++){
 			alpha_temp=(l+1)*(alpha_weight_);
 		
-			beta_function_temp=pow(alpha_temp, p-1)*pow((1-alpha_temp), q-1);
+			beta_function_temp=pow(alpha_temp, p-1)*pow((1-alpha_temp), q-1)/denumerator_beta_function_;
 
 		
 			//Calculate x^2_{ni}(alpha_l)

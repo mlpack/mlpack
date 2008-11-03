@@ -15,3 +15,4 @@
 	
 12. Maximum of elements in array or matrix?
 13. Equal spaced array generation?
+14. Check
