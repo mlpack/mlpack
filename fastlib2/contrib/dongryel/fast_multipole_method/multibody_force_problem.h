@@ -312,6 +312,10 @@ class AxilrodTellerForceProblem {
     /** @brief The number of finite-difference prunes.
      */
     int num_finite_difference_prunes;
+    
+    /** @brief The number of Monte Carlo prunes.
+     */
+    int num_monte_carlo_prunes;
 
     OT_DEF_BASIC(MultiTreeQueryResult) {
       OT_MY_OBJECT(l1_norm_positive_force_vector_l);
@@ -322,6 +326,7 @@ class AxilrodTellerForceProblem {
       OT_MY_OBJECT(n_pruned);
       OT_MY_OBJECT(used_error);
       OT_MY_OBJECT(num_finite_difference_prunes);
+      OT_MY_OBJECT(num_monte_carlo_prunes);
     }
 
    public:
@@ -330,12 +335,26 @@ class AxilrodTellerForceProblem {
 			      double *max_relative_error,
 			      double *negative_max_relative_error,
 			      double *positive_max_relative_error) {
+
+      // Compute the net force...
+      Vector net_force, net_force_for_approx;
+      net_force.Init(3);
+      net_force_for_approx.Init(3);
+      net_force.SetZero();
+      net_force_for_approx.SetZero();
+
       FILE *relative_error_output = fopen("relative_error.txt", "w+");
       *max_relative_error = 0;
       *negative_max_relative_error = 0;
       *positive_max_relative_error = 0;
 
       for(index_t i = 0; i < used_error.length(); i++) {
+
+	// Add up the net force...
+	la::AddTo(3, force_vector_e.GetColumnPtr(i), net_force.ptr());
+	la::AddTo(3, other_results.force_vector_e.GetColumnPtr(i),
+		  net_force_for_approx.ptr());
+
 	double l1_norm_error = 
 	  la::RawLMetric<1>(force_vector_e.n_rows(),
 			    force_vector_e.GetColumnPtr(i),
@@ -384,7 +403,9 @@ class AxilrodTellerForceProblem {
 						negative_l1_norm_error /
 						negative_l1_norm_exact);
       }
-
+      net_force.PrintDebug("Net force: ", stdout);
+      net_force_for_approx.PrintDebug("Net force approximated: ", stdout);
+      
       fclose(relative_error_output);
     }
 
@@ -450,6 +471,7 @@ class AxilrodTellerForceProblem {
       n_pruned.SetZero();
       used_error.SetZero();
       num_finite_difference_prunes = 0;
+      num_monte_carlo_prunes = 0;
     }
   };
 
@@ -557,7 +579,7 @@ class AxilrodTellerForceProblem {
 					 const Vector
 					 &total_n_minus_one_tuples) {
     
-    if(total_num_tuples < 30) {      
+    if(total_num_tuples < 60) {
       return false;
     }
 
@@ -600,7 +622,7 @@ class AxilrodTellerForceProblem {
       }
     }
     
-    results.num_finite_difference_prunes++;
+    results.num_monte_carlo_prunes++;
     return true;
   }
 };
