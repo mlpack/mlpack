@@ -57,7 +57,6 @@ class MultiTreeDepthFirst {
     static void RecursionLoop(const ArrayList<Matrix *> &sets,
 			      ArrayList<Tree *> &nodes,
 			      double total_num_tuples,
-			      Tree *previous_node_chosen,
 			      const bool contains_non_leaf_in_the_list,
 			      typename MultiTreeProblem::MultiTreeQueryResult
 			      &query_results,
@@ -70,8 +69,8 @@ class MultiTreeDepthFirst {
 	if(start == 0 || 
 	   !(nodes[start]->end() <= nodes[start - 1]->begin())) {
 	  MultiTreeHelper_<start + 1, end>::RecursionLoop
-	    (sets, nodes, total_num_tuples, nodes[start],
-	     contains_non_leaf_in_the_list, query_results, algorithm_object);
+	    (sets, nodes, total_num_tuples, contains_non_leaf_in_the_list,
+	     query_results, algorithm_object);
 	}
       }
       else {
@@ -85,21 +84,72 @@ class MultiTreeDepthFirst {
 	nodes[start]->right()->stat().postponed.ApplyPostponed
 	  (nodes[start]->stat().postponed);
 	nodes[start]->stat().postponed.SetZero();
+
+	// Visit flags to whether visit the left and the right.
+	bool visit_left = true;
+	bool visit_right = true;
+	double squared_distance_to_left = DBL_MAX;
+	double squared_distance_to_right = DBL_MAX;
 	
 	if(start == 0 || 
 	   !(saved_node->left()->end() <= nodes[start - 1]->begin())) {
-	  nodes[start] = saved_node->left();
-	  MultiTreeHelper_<start + 1, end>::RecursionLoop
-	    (sets, nodes, total_num_tuples, nodes[start], true, query_results,
-	     algorithm_object);
+	  visit_left = true;
+	  if(start > 0) {
+	    squared_distance_to_left = nodes[start - 1]->bound().
+	      MinDistanceSq(saved_node->left()->bound());
+	  }
 	}
 
 	if(start == 0 || 
 	   !(saved_node->right()->end() <= nodes[start - 1]->begin())) {
-	  nodes[start] = saved_node->right();
-	  MultiTreeHelper_<start + 1, end>::RecursionLoop
-	    (sets, nodes, total_num_tuples, nodes[start], true, query_results,
-	     algorithm_object);
+	  visit_right = true;
+	  if(start > 0) {
+	    squared_distance_to_right = nodes[start - 1]->bound().
+	      MinDistanceSq(saved_node->right()->bound());
+	  }
+	}
+	
+	if(visit_left || start == 0) {
+	  if(visit_right || start == 0) {
+	    if(squared_distance_to_left <= squared_distance_to_right) {
+	      nodes[start] = saved_node->left();
+	      MultiTreeHelper_<start + 1, end>::RecursionLoop
+		(sets, nodes, total_num_tuples, true, query_results,
+		 algorithm_object);
+	      
+	      nodes[start] = saved_node->right();
+	      MultiTreeHelper_<start + 1, end>::RecursionLoop
+		(sets, nodes, total_num_tuples, true, query_results,
+		 algorithm_object);
+	    }
+	    else {
+	      nodes[start] = saved_node->right();
+	      MultiTreeHelper_<start + 1, end>::RecursionLoop
+		(sets, nodes, total_num_tuples, true, query_results,
+		 algorithm_object);
+	      
+	      nodes[start] = saved_node->left();
+	      MultiTreeHelper_<start + 1, end>::RecursionLoop
+		(sets, nodes, total_num_tuples, true, query_results,
+		 algorithm_object);	      
+	    }
+	  }
+	  else {
+
+	    // Just visit the left branch.
+	    nodes[start] = saved_node->left();
+	    MultiTreeHelper_<start + 1, end>::RecursionLoop
+	      (sets, nodes, total_num_tuples, true, query_results,
+	       algorithm_object);
+	  }
+	}
+	else {
+	  if(visit_right) {
+	    nodes[start] = saved_node->right();
+	    MultiTreeHelper_<start + 1, end>::RecursionLoop
+	      (sets, nodes, total_num_tuples, true, query_results,
+	       algorithm_object);	    
+	  }
 	}
 	
 	// Put back the node in the list after recursing...
@@ -141,7 +191,6 @@ class MultiTreeDepthFirst {
     static void RecursionLoop(const ArrayList<Matrix *> &sets,
 			      ArrayList<Tree *> &nodes,
 			      double total_num_tuples,
-			      Tree *previous_node_chosen,
 			      const bool contains_non_leaf_in_the_list,
 			      typename MultiTreeProblem::MultiTreeQueryResult
 			      &query_results,
@@ -186,7 +235,8 @@ class MultiTreeDepthFirst {
   void CopyNodeSet_(const ArrayList<Tree *> &source_list,
 		    ArrayList<Tree *> *destination_list);
 
-  void Heuristic_(const ArrayList<Tree *> &nodes, index_t *split_index);
+  void Heuristic_(Tree *nd, Tree *nd1, Tree *nd2, Tree **partner1,
+		  Tree **partner2);
 
   void MultiTreeDepthFirstBase_
   (const ArrayList<Matrix *> &sets, ArrayList<Tree *> &trees,

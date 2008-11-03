@@ -103,13 +103,19 @@ double MultiTreeDepthFirst<MultiTreeProblem>::RecursiveLeaveOneOutTuples_
 
 template<typename MultiTreeProblem>
 void MultiTreeDepthFirst<MultiTreeProblem>::Heuristic_
-(const ArrayList<Tree *> &nodes, index_t *split_index) {
+(Tree *nd, Tree *nd1, Tree *nd2, Tree **partner1, Tree **partner2) {
   
-  for(int start = 0; start < MultiTreeProblem::order; start++) {
-    if(!(nodes[start]->is_leaf())) {
-      *split_index = start;
-      break;
-    }
+  double d1 = nd->bound().MinDistanceSq(nd1->bound());
+  double d2 = nd->bound().MinDistanceSq(nd2->bound());
+  
+  // Prioritized traversal based on the squared distance bounds.
+  if(d1 <= d2) {
+    *partner1 = nd1;
+    *partner2 = nd2;
+  }
+  else {
+    *partner1 = nd2;
+    *partner2 = nd1;
   }
 }
 
@@ -183,8 +189,7 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
 
   // Recurse to every combination...
   MultiTreeHelper_<0, MultiTreeProblem::order>::RecursionLoop
-    (sets, nodes, total_num_tuples, false, (Tree *) NULL,
-     query_results, this);    
+    (sets, nodes, total_num_tuples, false, query_results, this);    
   return;
 }
 
