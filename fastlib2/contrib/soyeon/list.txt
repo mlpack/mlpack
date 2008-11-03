@@ -1,0 +1,21 @@
+1. Initialization
+2. Group functions1
+	double ComputeTerm1_(Vector &betas);
+	double ComputeTerm2_(Vector &betas, double p, double q);
+	double ComputeTerm3_();
+	
+3. Group functions2
+	ComputePostpondprob_
+	ComputeSumDerivativeConditionalPostpondProb_
+	ComputeSumDerivativeConditionalPostpondProb_
+	
+4. Group function3
+	ComputeDerivativeBetaTerm1_()
+	ComputeDerivativeBetaTerm2_()
+	ComputeDerivativeBetaTerm3_()
+	
+5. Group function4
+	Matrix ComputeSecondDerivativeBetaTerm1_();
+	Matrix ComputeSecondDerivativeBetaTerm2_();
+	Matrix ComputeSecondDerivativeBetaTerm3_();
+5. Check

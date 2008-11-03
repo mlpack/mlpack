@@ -63,15 +63,18 @@ class Objective {
 
 ///////////////////////////////////////////////////////
 
-	//add new from here for objective2
+	//add new things from here for objective2 (Compute gradient)
 	ArrayList<Matrix> first_stage_dot_logit_;
-	ArrayList<Matrix> first_stage_ddot_logti_;
+	ArrayList<Matrix> first_stage_ddot_logit_;
 
 	ArrayList<Matrix> second_stage_dot_logit_;
-	ArrayList<Matrix> second_stage_ddot_logit_;
+	//ArrayList<Matrix> second_stage_ddot_logit_;
 
-	ArrayList<index_t> derivative_beta_conditional_postponed_prob_;
-	ArrayList<index_t> conditional_postponed_prob_;
+	//ArrayList<index_t> derivative_beta_conditional_postponed_prob_;
+	//ArrayList<index_t> conditional_postponed_prob_;
+
+	ArrayList<index_t> SumFirstDerivativeConditionalPostpondProb_
+	//ArrayList<index_t> SumSecondDerivativeConditionalPostpondProb_
 
 	//need exp_betas_times_x1 and exp_betas_times_x2
 	void ComputeDotLogit_(Vector &betas);
@@ -80,7 +83,17 @@ class Objective {
 	void ComputeDDotLogit_( );
 	//need DotLogit
 	Vector ComputeDerivativeBetaTerm1_();
-	void ComputeDerivativeBetaConditionalPostponedProb_(Vector &betas);
+	Vector ComputeDerivativeBetaTerm2_();
+	Vector ComputeDerivativeBetaTerm2_();
+
+	Matrix ComputeSecondDerivativeBetaTerm1_();
+	Matrix ComputeSecondDerivativeBetaTerm2_();
+	Matrix ComputeSecondDerivativeBetaTerm3_();
+	//void ComputeDerivativeBetaConditionalPostponedProb_(Vector &betas);
+	
+	//need first_stage_dot_logit_
+	void ComputeSumDerivativeConditionalPostpondProb_(Vector &betas);
+	
 
 
 
