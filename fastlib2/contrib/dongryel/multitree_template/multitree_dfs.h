@@ -274,7 +274,7 @@ class MultiTreeDepthFirst {
     // This could potentially be improved by checking which matrices
     // are the same...
     trees_[0] = proximity::MakeGenKdTree<double, Tree, 
-      proximity::GenKdTreeMidpointSplitter>(*(sets_[0]), 10, NULL, NULL);
+      proximity::GenKdTreeMedianSplitter>(*(sets_[0]), 10, NULL, NULL);
     for(index_t i = 1; i < MultiTreeProblem::order; i++) {
       trees_[i] = trees_[0];
     }
