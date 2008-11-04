@@ -598,6 +598,8 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 	double beta_fn_temp5=0;
 	double beta_fn_temp6=0;
 
+	double powtemp=0;
+
 	beta_fn_temp1=1/denumerator_beta_function_;
 
 	for(index_t m=0; m<num_of_t_beta_fn-1; m++){
@@ -615,6 +617,8 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 	beta_fn_temp3*=(t_weight_/pow(denumerator_beta_function_, 2));
 	beta_fn_temp4*=(t_weight_/pow(denumerator_beta_function_, 2));
 	beta_fn_temp5*=(t_weight_/pow(denumerator_beta_function_, 2));
+	beta_fn_temp6*=(t_weight_/pow(denumerator_beta_function_, 2));
+
 
 	for(index_t n=0; n<first_stage_x_.size(); n++){
 		for(index_t l=0; l<num_of_alphas-1; l++){
@@ -645,45 +649,168 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 			}	//i
 			conditional_postponed_prob=exp_betas_times_x2_[n]/(exp_betas_times_x1_[n]+exp_betas_times_x2_[n]);
 
+			powtemp=pow(alpha_temp, p-1)*pow(1-alpha_temp, q-1);
+
 			sum_first_derivative_p_beta_fn_[n]+=conditional_postponed_prob
-																					*( pow(alpha_temp, p-1)*pow(1-alpha_temp, q-1)
+																					*( powtemp
 																					*(log(alpha_temp)*beta_fn_temp1
 																					- beta_fn_temp2) );
 			sum_second_derivative_p_beta_fn_[n]+=conditional_postponed_prob
-																					 *( pow(alpha_temp, p-1)*pow(1-alpha_temp, q-1)
+																					 *( powtemp
 																					 *( pow(log(alpha_temp), 2)*beta_fn_temp1
 																					 -2*log(alpha_temp)*beta_fn_temp2
 																					 +beta_fn_temp3));
 			sum_first_derivative_q_beta_fn_[n]+=conditional_postponed_prob
-																					*( pow(alpha_temp, p-1)*pow(1-alpha_temp, q-1)
+																					*( powtemp
 																					*(log(1-alpha_temp)*beta_fn_temp1
 																					- beta_fn_temp4) );
 			sum_second_derivative_q_beta_fn_[n]+=conditional_postponed_prob
-																					 *( pow(alpha_temp, p-1)*pow(1-alpha_temp, q-1)
+																					 *( powtemp
 																					 *( pow(log(1-alpha_temp), 2)*beta_fn_temp1
 																					 -2*log(1-alpha_temp)*beta_fn_temp4
 																					 +beta_fn_temp5));
-			sum_second_derivative_p_q_beta_fn_=0;
+			sum_second_derivative_p_q_beta_fn_[n]+=conditional_postponed_prob
+																					 *( powtemp
+																					 *(log(1-alpha_temp)log(alpha_temp)*beta_fn_temp1
+																					 +log(1-alpha_temp)*beta_fn_temp2
+																					 -log(alpha_temp)*beta_fn_temp4
+																					 -beta_fn_temp6) 
+																					 -(( powtemp
+																					*(log(1-alpha_temp)*beta_fn_temp1
+																					- beta_fn_temp4) )
+																					*2*beta_fn_temp2*denumerator_beta_function_));
 
 		}	//l
 		sum_first_derivative_p_beta_fn_[n]*=alpha_weight_;
 		sum_second_derivative_p_beta_fn_[n]*=alpha_weight_;
 		sum_first_derivative_q_beta_fn_[n]*=alpha_weight_;
 		sum_second_derivative_q_beta_fn_[n]*=alpha_weight_;
+		sum_second_derivative_p_q_beta_fn_[n]*=alpha_weight_;
 
 
 	}	//n
-
-
-
-
-
-	
-
-
-
-	
-
 }
+
+
+
+
+double ComputeDerivativePTerm2_() {
+	double derivative_p_term2=0;
+  for(index_t n=0; n<first_stage_x_.size(); n++) {
+    if (first_stage_y_[n]<0) {
+      continue;
+    } else {
+      derivative_p_term2+=(sum_first_derivative_p_beta_fn_[n]/(1-postponed_probability_[n]));
+    }
+  }
+	derivative_p_term2*=-1;
+  return derivative_p_term2;
+	
+}
+
+
+
+double ComputeDerivativePTerm3_() {
+	double derivative_p_term3=0;
+  for(index_t n=0; n<first_stage_x_.size(); n++) {
+    if (second_stage_y_[n]<0) {
+      continue;
+    } else {
+      derivative_p_term3+=(sum_first_derivative_p_beta_fn_[n]/(postponed_probability_[n]));
+    }
+  }
+	return derivative_p_term3;
+}
+
+
+double ComputeSecondDerivativePTerm2_() 
+	double second_derivative_p_term2=0;
+  for(index_t n=0; n<first_stage_x_.size(); n++) {
+    if (first_stage_y_[n]<0) {
+      continue;
+    } else {
+      second_derivative_p_term2+=( sum_second_derivative_p_beta_fn_[n]/(1-postponed_probability_[n]))
+																	 + pow( (sum_first_derivative_p_beta_fn_[n]/(1-postponed_probability_[n])), 2));
+    }
+  }
+	second_derivative_p_term2*=-1;
+  return second_derivative_p_term2;
+}
+
+
+
+double ComputeSecondDerivativePTerm3_() {
+	double second_derivative_p_term3=0;
+  for(index_t n=0; n<first_stage_x_.size(); n++) {
+    if (second_stage_y_[n]<0) {
+      continue;
+    } else {
+      second_derivative_p_term3+=( sum_second_derivative_p_beta_fn_[n]/(postponed_probability_[n]))
+																	 - pow( (sum_first_derivative_p_beta_fn_[n]/(postponed_probability_[n])), 2));
+    }
+  }
+	return second_derivative_p_term3;
+}
+
+
+
+double ComputeDerivativeQTerm2_() {
+	double derivative_q_term2=0;
+  for(index_t n=0; n<first_stage_x_.size(); n++) {
+    if (first_stage_y_[n]<0) {
+      continue;
+    } else {
+      derivative_q_term2+=(sum_first_derivative_q_beta_fn_[n]/(1-postponed_probability_[n]));
+    }
+  }
+	derivative_q_term2*=-1;
+  return derivative_q_term2;
+}
+
+
+double ComputeDerivativeQTerm3_() {
+	double derivative_q_term3=0;
+  for(index_t n=0; n<first_stage_x_.size(); n++) {
+    if (second_stage_y_[n]<0) {
+      continue;
+    } else {
+      derivative_q_term3+=(sum_first_derivative_q_beta_fn_[n]/(postponed_probability_[n]));
+    }
+  }
+	return derivative_q_term3;
+}
+
+
+
+
+double ComputeSecondDerivativeQTerm2_(){
+	double second_derivative_q_term2=0;
+  for(index_t n=0; n<first_stage_x_.size(); n++) {
+    if (first_stage_y_[n]<0) {
+      continue;
+    } else {
+      second_derivative_q_term2+=( sum_second_derivative_q_beta_fn_[n]/(1-postponed_probability_[n]))
+																	 + pow( (sum_first_derivative_q_beta_fn_[n]/(1-postponed_probability_[n])), 2));
+    }
+  }
+	second_derivative_q_term2*=-1;
+  return second_derivative_q_term2;
+}
+
+
+
+double ComputeSecondDerivativeQTerm3_() {
+	double second_derivative_q_term3=0;
+  for(index_t n=0; n<first_stage_x_.size(); n++) {
+    if (second_stage_y_[n]<0) {
+      continue;
+    } else {
+      second_derivative_q_term3+=( sum_second_derivative_q_beta_fn_[n]/(postponed_probability_[n]))
+																	 - pow( (sum_first_derivative_q_beta_fn_[n]/(postponed_probability_[n])), 2));
+    }
+  }
+	return second_derivative_q_term3;
+}
+
 
 
