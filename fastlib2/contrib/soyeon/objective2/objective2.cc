@@ -66,7 +66,7 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 	exp_betas_times_x2_.SetZero();
   
 	for(index_t n=0; n<first_stage_x_.size; n++){
-		for(index_t l=0; l<num_of_alphas; ;++){
+		for(index_t l=0; l<num_of_alphas-1; ;++){
 			alpha_temp=(l+1)*(alpha_weight_);
 		
 			beta_function_temp=pow(alpha_temp, p-1)*pow((1-alpha_temp), q-1)/denumerator_beta_function_;
@@ -117,11 +117,11 @@ void Objective::ComputeDeumeratorBetaFunction_(double p, doulbe q) {
 	num_of_t_beta_fn_=10;
 	double t_weight_=1/(num_of_t_beta_fn);
 	double t_temp;
-	for(index t tnum=0; tnum<num_of_t_beta_fn_; tnum++){
+	for(index t tnum=0; tnum<num_of_t_beta_fn_-1; tnum++){
 		t_temp=(tnum+1)*(t_weight_);
 
 		//double pow( double base, double exp );
-		denumerator_beta_function_+=pow(temp, p-1)*pow((1-t_temp), q-1);
+		denumerator_beta_function_+=pow(t_temp, p-1)*pow((1-t_temp), q-1);
 	}
 	denumerator*=(t_weight_);
 }
@@ -285,7 +285,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas){
 
 
 
-		for(index_t l=0; l<num_of_alphas; ;++){
+		for(index_t l=0; l<num_of_alphas-1; l++){
 			alpha_temp=(l+1)*(alpha_weight_);
 		
 			beta_function_temp=pow(alpha_temp, p-1)*pow((1-alpha_temp), q-1)/denumerator_beta_function_;
@@ -444,7 +444,7 @@ Matrix Objective::ComputeSecondDerivativeBetaTerm1_() {
 }
 
 
-Matrix ComputeSecondDerivativeBetaTerm2_() { 
+Matrix Objective::ComputeSecondDerivativeBetaTerm2_() { 
 
 	Matrix second_derivative_beta_term2;
 	second_derivative_beta_term2.Init(betas.length(), betas.length());
@@ -483,7 +483,7 @@ Matrix ComputeSecondDerivativeBetaTerm2_() {
 
 
 
-Vector ComputeDerivativeBetaTerm3_() {
+Vector Objective::ComputeDerivativeBetaTerm3_() {
 	derivative_beta_term3.Init(betas.length());
 	derivative_beta_term3.SetZero();
 	Vector temp;
@@ -506,7 +506,7 @@ Vector ComputeDerivativeBetaTerm3_() {
 }
 
 
-Matrix ComputeSecondDerivativeBetaTerm3_() {
+Matrix Objective::ComputeSecondDerivativeBetaTerm3_() {
 	Matrix second_derivative_beta_term3;
 	second_derivative_beta_term3.Init(betas.length(), betas.length());
 	second_derivative_beta_term3.SetAll(0.0);
@@ -541,3 +541,149 @@ Matrix ComputeSecondDerivativeBetaTerm3_() {
 	
 	return second_derivative_beta_term3;
 }
+
+
+
+double Object::ComputeDerivativePTerm1_() {
+	double derivative_p_term1=0;
+
+	return derivative_p_term1;
+}
+
+
+
+double Objective::ComputeSecondDerivativePTerm1_() {
+	double second_derivative_p_term1=0;
+
+	return second_derivative_p_term1;
+}
+
+
+
+double Object::ComputeDerivativeQTerm1_() {
+	double derivative_q_term1=0;
+
+	return derivative_q_term1;
+}
+
+
+
+double Objective::ComputeSecondDerivativeQTerm1_() {
+	double second_derivative_q_term1=0;
+
+	return second_derivative_q_term1;
+}
+
+void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, double q) {
+	double alpha_temp=0;
+	double t_temp=0;
+
+	num_of_alphas_=10;
+	num_of_t_beta_fn_=10;
+	alpha_weight_=1/num_of_alphas;
+	t_weight_=1/num_of_t_beta_fn;
+
+	//check - don't need to initilize memeber variable here
+	sum_first_derivative_p_beta_fn_.SetZero();
+	sum_second_derivative_p_beta_fn_.SetZero();
+	sum_first_derivative_q_beta_fn_.SetZero();
+	sum_second_derivative_q_beta_fn_.SetZero();
+	sum_second_derivative_p_q_beta_fn_.SetZero();
+
+
+	double beta_fn_temp1=0;
+	double beta_fn_temp2=0;
+	double beta_fn_temp3=0;
+	double beta_fn_temp4=0;
+	double beta_fn_temp5=0;
+	double beta_fn_temp6=0;
+
+	beta_fn_temp1=1/denumerator_beta_function_;
+
+	for(index_t m=0; m<num_of_t_beta_fn-1; m++){
+		t_temp=(m+1)*(t_weight_);
+
+		beta_fn_temp2+=pow(t_temp, p-1)*pow(1-t_temp, q-1)*log(t_temp);
+		beta_fn_temp3+=pow(t_temp, p-1)*pow(1-t_temp, q-1)*pow(log(t_temp), 2);
+		beta_fn_temp4+=pow(t_temp, p-1)*pow(1-t_temp, q-1)*log(1-t_temp);
+		beta_fn_temp5+=pow(t_temp, p-1)*pow(1-t_temp, q-1)*pow(log(1-t_temp), 2);
+		beta_fn_temp6+=pow(t_temp, p-1)*pow(1-t_temp, q-1)*log(1-t_temp)*log(t_temp);
+
+
+	}		//m
+	beta_fn_temp2*=(t_weight_/pow(denumerator_beta_function_, 2));
+	beta_fn_temp3*=(t_weight_/pow(denumerator_beta_function_, 2));
+	beta_fn_temp4*=(t_weight_/pow(denumerator_beta_function_, 2));
+	beta_fn_temp5*=(t_weight_/pow(denumerator_beta_function_, 2));
+
+	for(index_t n=0; n<first_stage_x_.size(); n++){
+		for(index_t l=0; l<num_of_alphas-1; l++){
+			alpha_temp=(l+1)*(alpha_weight_);
+
+			//Calculate x^2_{ni}(alpha_l)
+			for(index t i=1; i<first_stage_x_[n].n_cols(); i++){
+				int count=0;
+				for(index_t j=ind_unk_x_[0]; j<ind_unk_x_[ind_unk_x_.size()]; j++){
+					count+=1;
+					exponential_temp=alpha_temp*first_stage_x_[n].get(i, j)
+													+(alpha_temp)*(1-alpha_temp)*unk_x_past[i].get(count-1,1)
+													+(alpha_temp)*pow((1-alpha_temp),2)*unk_x_past[i].get(count-1,2);
+					second_stage_x_[n].set(j, i, exponential_temp);
+				}	//j
+			}	//i
+
+			//Calculate e^(beta*x^2(alpha_l))
+			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
+				exp_betas_times_x2_[n]+=exp(la::Dot(betas.size(), betas.ptr(),
+											 second_stage_x_[n].GetColumnPtr(i) ));
+				/*//Calculate second_stage_dot_logit_
+				second_stage_dot_logit_[n].set( i, 1, exp(la::Dot(betas.length(), beta.ptr(),
+																				 (second_stage_x_[n].GetColumnPtr(i))/
+																				 exp_betas_times_x2_[n]) );
+				second_stage_ddot_logit_[n].set(i, i, first_stage_dot_logit_[n].get(i,1));
+				*/
+			}	//i
+			conditional_postponed_prob=exp_betas_times_x2_[n]/(exp_betas_times_x1_[n]+exp_betas_times_x2_[n]);
+
+			sum_first_derivative_p_beta_fn_[n]+=conditional_postponed_prob
+																					*( pow(alpha_temp, p-1)*pow(1-alpha_temp, q-1)
+																					*(log(alpha_temp)*beta_fn_temp1
+																					- beta_fn_temp2) );
+			sum_second_derivative_p_beta_fn_[n]+=conditional_postponed_prob
+																					 *( pow(alpha_temp, p-1)*pow(1-alpha_temp, q-1)
+																					 *( pow(log(alpha_temp), 2)*beta_fn_temp1
+																					 -2*log(alpha_temp)*beta_fn_temp2
+																					 +beta_fn_temp3));
+			sum_first_derivative_q_beta_fn_[n]+=conditional_postponed_prob
+																					*( pow(alpha_temp, p-1)*pow(1-alpha_temp, q-1)
+																					*(log(1-alpha_temp)*beta_fn_temp1
+																					- beta_fn_temp4) );
+			sum_second_derivative_q_beta_fn_[n]+=conditional_postponed_prob
+																					 *( pow(alpha_temp, p-1)*pow(1-alpha_temp, q-1)
+																					 *( pow(log(1-alpha_temp), 2)*beta_fn_temp1
+																					 -2*log(1-alpha_temp)*beta_fn_temp4
+																					 +beta_fn_temp5));
+			sum_second_derivative_p_q_beta_fn_=0;
+
+		}	//l
+		sum_first_derivative_p_beta_fn_[n]*=alpha_weight_;
+		sum_second_derivative_p_beta_fn_[n]*=alpha_weight_;
+		sum_first_derivative_q_beta_fn_[n]*=alpha_weight_;
+		sum_second_derivative_q_beta_fn_[n]*=alpha_weight_;
+
+
+	}	//n
+
+
+
+
+
+	
+
+
+
+	
+
+}
+
+

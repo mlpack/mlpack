@@ -96,6 +96,41 @@ class Objective {
 	
 	//need first_stage_dot_logit_
 	void ComputeSumDerivativeConditionalPostpondProb_(Vector &betas);
+
+	double ComputeDerivativePTerm1_();
+	double ComputeDerivativePTerm2_();
+	double ComputeDerivativePTerm3_();
+
+	double ComputeSecondDerivativePTerm1_();
+	double ComputeSecondDerivativePTerm2_();
+	double ComputeSecondDerivativePTerm3_();
+
+	double ComputeDerivativeQTerm1_();
+	double ComputeDerivativeQTerm2_();
+	double ComputeDerivativeQTerm3_();
+
+	double ComputeSecondDerivativeQTerm1_();
+	double ComputeSecondDerivativeQTerm2_();
+	double ComputeSecondDerivativeQTerm3_();
+
+
+	void ComputeSumDerivativeBetaFunction_(Vector &betas, double p, double q);
+
+	ArrayList<index_t> sum_first_derivative_p_beta_fn_;
+	ArrayList<index_t> sum_second_derivative_p_beta_fn;
+	ArrayList<index_t> sum_first_derivative_q_beta_fn_;
+	ArrayList<index_t> sum_second_derivative_q_beta_fn_;
+	ArrayList<index_t> sum_second_derivative_p_q_beta_fn_;
+
+
+
+
+
+
+
+
+
+
 	
 
 
