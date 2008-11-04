@@ -121,14 +121,21 @@ class Objective {
 	ArrayList<index_t> sum_first_derivative_q_beta_fn_;
 	ArrayList<index_t> sum_second_derivative_q_beta_fn_;
 	ArrayList<index_t> sum_second_derivative_p_q_beta_fn_;
+	ArrayList<index_t> sum_second_derivative_conditionl_postponed_p_;
+	ArrayList<index_t> sum_second_derivative_conditionl_postponed_q_;
+	
 
-	Vector ComputeDerivativePBetaTerm1_();
-	Vector ComputeDerivativePBetaTerm2_();
-	Vector ComputeDerivativePBetaTerm3_();
+	Vector ComputeSecondDerivativePBetaTerm1_();
+	Vector ComputeSecondDerivativePBetaTerm2_();
+	Vector ComputeSecondDerivativePBetaTerm3_();
 
-	Vector ComputeDerivativeQBetaTerm1_();
-	Vector ComputeDerivativeQBetaTerm2_();
-	Vector ComputeDerivativeQBetaTerm3_();
+	Vector ComputeSecondDerivativeQBetaTerm1_();
+	Vector ComputeSecondDerivativeQBetaTerm2_();
+	Vector ComputeSecondDerivativeQBetaTerm3_();
+
+	double ComputeSecondDerivativePQTerm1_();
+	double ComputeSecondDerivativePQTerm2_();
+	double ComputeSecondDerivativePQTerm3_();
 
 
 
