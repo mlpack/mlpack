@@ -465,7 +465,7 @@ Matrix ComputeSecondDerivativeBetaTerm2_() {
 			} else {
 				la::Scale( (1/(1-postponed_probability_[n]), &first_temp);
 				la::MulTransBOverwrite(sum_first_derivative_conditional_postpond_prob_[n], 
-															 sum_first_derivative_conditional_postpond_prob_[n], *second_temp);
+															 sum_first_derivative_conditional_postpond_prob_[n], &second_temp);
 				la::Scale( 1/pow((1-postponed_probability_[n]), 2), &second_temp);
 
 				la::AddOverwrite(second_temp, first_temp, &second_derivative_beta_temp);
@@ -479,4 +479,65 @@ Matrix ComputeSecondDerivativeBetaTerm2_() {
 	}	//n
 	la::Scale(-1, &second_derivative_beta_term2);
 	return second_derivative_beta_term2;
+}
+
+
+
+Vector ComputeDerivativeBetaTerm3_() {
+	derivative_beta_term3.Init(betas.length());
+	derivative_beta_term3.SetZero();
+	Vector temp;
+	temp.Init(betas.length());
+
+	for(index_t n=0; n<first_stage_x_.size(); n++){
+		if (second_stage_y_[n]<0) {
+      continue;
+    } else {
+			//check
+			temp=SumFirstDerivativeConditionalPostpondProb_[n]/(postponed_probability_[n]);
+			//check
+			la::Addto(derivative_beta_term3, &temp);
+
+		}	//if-else
+
+	}	//n
+	return derivative_beta_term3;
+
+}
+
+
+Matrix ComputeSecondDerivativeBetaTerm3_() {
+	Matrix second_derivative_beta_term3;
+	second_derivative_beta_term3.Init(betas.length(), betas.length());
+	second_derivative_beta_term3.SetAll(0.0);
+
+	Matrix first_temp;
+	first_temp.Init(betas.length(), betas.length());
+
+	Matrix second_temp;
+	second_temp.Init(betas.length(), betas.length());
+
+	Matrix second_derivative_beta_temp;
+	second_derivative_beta_temp.Init(betas.length(), betas.length());
+
+	for(index_t n=0; n<first_stage_x_.size(); n++){
+		  if (second_stage_y_[n]<0) { 
+				continue;
+			} else {
+				la::Scale( (1/(postponed_probability_[n]), &first_temp);
+				la::MulTransBOverwrite(sum_first_derivative_conditional_postpond_prob_[n], 
+															 sum_first_derivative_conditional_postpond_prob_[n], &second_temp);
+				la::Scale( 1/pow((1-postponed_probability_[n]), 2), &second_temp);
+
+				la::SubOverwrite(second_temp, first_temp, &second_derivative_beta_temp);
+
+				//check
+				la::AddTo(second_derivative_beta_temp, &second_derivative_beta_term3);
+
+							
+			}	//else
+
+	}	//n
+	
+	return second_derivative_beta_term3;
 }
