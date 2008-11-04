@@ -544,7 +544,7 @@ Matrix Objective::ComputeSecondDerivativeBetaTerm3_() {
 
 
 
-double Object::ComputeDerivativePTerm1_() {
+double Objective::ComputeDerivativePTerm1_() {
 	double derivative_p_term1=0;
 
 	return derivative_p_term1;
@@ -560,7 +560,7 @@ double Objective::ComputeSecondDerivativePTerm1_() {
 
 
 
-double Object::ComputeDerivativeQTerm1_() {
+double Objective::ComputeDerivativeQTerm1_() {
 	double derivative_q_term1=0;
 
 	return derivative_q_term1;
@@ -694,7 +694,7 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 
 
 
-double ComputeDerivativePTerm2_() {
+double Objective::ComputeDerivativePTerm2_() {
 	double derivative_p_term2=0;
   for(index_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]<0) {
@@ -710,7 +710,7 @@ double ComputeDerivativePTerm2_() {
 
 
 
-double ComputeDerivativePTerm3_() {
+double Objective::ComputeDerivativePTerm3_() {
 	double derivative_p_term3=0;
   for(index_t n=0; n<first_stage_x_.size(); n++) {
     if (second_stage_y_[n]<0) {
@@ -723,7 +723,7 @@ double ComputeDerivativePTerm3_() {
 }
 
 
-double ComputeSecondDerivativePTerm2_() 
+double Objective::ComputeSecondDerivativePTerm2_() 
 	double second_derivative_p_term2=0;
   for(index_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]<0) {
@@ -739,7 +739,7 @@ double ComputeSecondDerivativePTerm2_()
 
 
 
-double ComputeSecondDerivativePTerm3_() {
+double Objective::ComputeSecondDerivativePTerm3_() {
 	double second_derivative_p_term3=0;
   for(index_t n=0; n<first_stage_x_.size(); n++) {
     if (second_stage_y_[n]<0) {
@@ -754,7 +754,7 @@ double ComputeSecondDerivativePTerm3_() {
 
 
 
-double ComputeDerivativeQTerm2_() {
+double Objective::ComputeDerivativeQTerm2_() {
 	double derivative_q_term2=0;
   for(index_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]<0) {
@@ -768,7 +768,7 @@ double ComputeDerivativeQTerm2_() {
 }
 
 
-double ComputeDerivativeQTerm3_() {
+double Objective::ComputeDerivativeQTerm3_() {
 	double derivative_q_term3=0;
   for(index_t n=0; n<first_stage_x_.size(); n++) {
     if (second_stage_y_[n]<0) {
@@ -783,7 +783,7 @@ double ComputeDerivativeQTerm3_() {
 
 
 
-double ComputeSecondDerivativeQTerm2_(){
+double Objective::ComputeSecondDerivativeQTerm2_(){
 	double second_derivative_q_term2=0;
   for(index_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]<0) {
@@ -799,7 +799,7 @@ double ComputeSecondDerivativeQTerm2_(){
 
 
 
-double ComputeSecondDerivativeQTerm3_() {
+double Objective::ComputeSecondDerivativeQTerm3_() {
 	double second_derivative_q_term3=0;
   for(index_t n=0; n<first_stage_x_.size(); n++) {
     if (second_stage_y_[n]<0) {

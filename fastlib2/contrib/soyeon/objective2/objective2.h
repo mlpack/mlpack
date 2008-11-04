@@ -122,6 +122,15 @@ class Objective {
 	ArrayList<index_t> sum_second_derivative_q_beta_fn_;
 	ArrayList<index_t> sum_second_derivative_p_q_beta_fn_;
 
+	Vector ComputeDerivativePBetaTerm1_();
+	Vector ComputeDerivativePBetaTerm2_();
+	Vector ComputeDerivativePBetaTerm3_();
+
+	Vector ComputeDerivativeQBetaTerm1_();
+	Vector ComputeDerivativeQBetaTerm2_();
+	Vector ComputeDerivativeQBetaTerm3_();
+
+
 
 
 
