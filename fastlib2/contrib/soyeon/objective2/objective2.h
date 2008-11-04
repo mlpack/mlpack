@@ -87,7 +87,7 @@ class Objective {
 	//need DotLogit
 	Vector ComputeDerivativeBetaTerm1_();
 	Vector ComputeDerivativeBetaTerm2_();
-	Vector ComputeDerivativeBetaTerm2_();
+	Vector ComputeDerivativeBetaTerm3_();
 
 	Matrix ComputeSecondDerivativeBetaTerm1_();
 	Matrix ComputeSecondDerivativeBetaTerm2_();
