@@ -572,6 +572,7 @@ class AxilrodTellerForceKernelAux {
 	  (first_set->n_rows(), 
 	   first_set->GetColumnPtr(indices[first_index]),
 	   second_set->GetColumnPtr(indices[second_index]));
+	      
 	squared_distances.set(first_index, second_index, squared_distance);
 
 	// Mirror the distances across diagonals, just in case you
@@ -852,15 +853,18 @@ class AxilrodTellerForceKernelAux {
       // Randomly choose a 3-tuple...
       do {
 	for(index_t i = 0; i < order_; i++) {
-	  globals.chosen_indices[i] = 
+	  globals.hybrid_node_chosen_indices[i] = 
 	    math::RandInt(nodes[i]->begin(), nodes[i]->end());
 	}
-      } while(globals.chosen_indices[0] == globals.chosen_indices[1] ||
-	      globals.chosen_indices[0] == globals.chosen_indices[2] ||
-	      globals.chosen_indices[1] == globals.chosen_indices[2]);
+      } while(globals.hybrid_node_chosen_indices[0] ==
+	      globals.hybrid_node_chosen_indices[1] ||
+	      globals.hybrid_node_chosen_indices[0] ==
+	      globals.hybrid_node_chosen_indices[2] ||
+	      globals.hybrid_node_chosen_indices[1] ==
+	      globals.hybrid_node_chosen_indices[2]);
 
       // Evaluate the pairwise distances.    
-      PairwiseEvaluateLoop(sets, globals.chosen_indices,
+      PairwiseEvaluateLoop(sets, globals.hybrid_node_chosen_indices,
 			   lower_bound_squared_distances_);
 
       // Clear the contribution accumulator.
@@ -868,7 +872,7 @@ class AxilrodTellerForceKernelAux {
       upper_bound_negative_contributions_.SetZero();
 
       // Evaluate contribution of the three tuples...
-      EvaluateHelper(sets, globals.chosen_indices, 
+      EvaluateHelper(sets, globals.hybrid_node_chosen_indices, 
 		     lower_bound_squared_distances_);
 
       ExtractContribution
@@ -1119,9 +1123,9 @@ class AxilrodTellerForceKernelAux {
   template<typename Global, typename MultiTreeQueryResult>
   void EvaluateMain(Global &globals, const ArrayList<Matrix *> &sets,
 		    MultiTreeQueryResult &query_results) {
-    
+
     // Evaluate the pairwise distances.    
-    PairwiseEvaluateLoop(sets, globals.chosen_indices,
+    PairwiseEvaluateLoop(sets, globals.hybrid_node_chosen_indices,
 			 lower_bound_squared_distances_);
 
     // Clear the contribution accumulator.
@@ -1131,43 +1135,49 @@ class AxilrodTellerForceKernelAux {
     // Evaluate the positive kernels at (0, 1), (0, 2), (1, 2) and (0,
     // 2), (0, 1), (1, 2) and (1, 2), (0, 2), (0, 1) in dimension 0,
     // 1, 2.
-    EvaluateHelper(sets, globals.chosen_indices, 
+    EvaluateHelper(sets, globals.hybrid_node_chosen_indices, 
 		   lower_bound_squared_distances_);
     
     // Get the positive/negative force vector for the first, second,
     // third particle in the list.
     double *positive_force_vector_first_particle =
       query_results.positive_force_vector_e.GetColumnPtr
-      (globals.chosen_indices[0]);
+      (globals.hybrid_node_chosen_indices[0]);
     double &l1_norm_positive_force_vector_l_first_particle =
-      query_results.l1_norm_positive_force_vector_l[globals.chosen_indices[0]];
+      query_results.l1_norm_positive_force_vector_l
+      [globals.hybrid_node_chosen_indices[0]];
     double *negative_force_vector_first_particle =
       query_results.negative_force_vector_e.GetColumnPtr
-      (globals.chosen_indices[0]);
+      (globals.hybrid_node_chosen_indices[0]);
     double &l1_norm_negative_force_vector_u_first_particle =
-      query_results.l1_norm_negative_force_vector_u[globals.chosen_indices[0]];
+      query_results.l1_norm_negative_force_vector_u
+      [globals.hybrid_node_chosen_indices[0]];
 
     double *positive_force_vector_second_particle =
       query_results.positive_force_vector_e.GetColumnPtr
-      (globals.chosen_indices[1]);
+      (globals.hybrid_node_chosen_indices[1]);
     double &l1_norm_positive_force_vector_l_second_particle =
-      query_results.l1_norm_positive_force_vector_l[globals.chosen_indices[1]];
+      query_results.l1_norm_positive_force_vector_l
+      [globals.hybrid_node_chosen_indices[1]];
     double *negative_force_vector_second_particle =
       query_results.negative_force_vector_e.GetColumnPtr
-      (globals.chosen_indices[1]);
+      (globals.hybrid_node_chosen_indices[1]);
     double &l1_norm_negative_force_vector_u_second_particle =
-      query_results.l1_norm_negative_force_vector_u[globals.chosen_indices[1]];
+      query_results.l1_norm_negative_force_vector_u
+      [globals.hybrid_node_chosen_indices[1]];
 
     double *positive_force_vector_third_particle =
       query_results.positive_force_vector_e.GetColumnPtr
-      (globals.chosen_indices[2]);
+      (globals.hybrid_node_chosen_indices[2]);
     double &l1_norm_positive_force_vector_l_third_particle =
-      query_results.l1_norm_positive_force_vector_l[globals.chosen_indices[2]];
+      query_results.l1_norm_positive_force_vector_l
+      [globals.hybrid_node_chosen_indices[2]];
     double *negative_force_vector_third_particle =
       query_results.negative_force_vector_e.GetColumnPtr
-      (globals.chosen_indices[2]);
+      (globals.hybrid_node_chosen_indices[2]);
     double &l1_norm_negative_force_vector_u_third_particle =
-      query_results.l1_norm_negative_force_vector_u[globals.chosen_indices[2]];
+      query_results.l1_norm_negative_force_vector_u
+      [globals.hybrid_node_chosen_indices[2]];
 
     ExtractContribution
       (negative_force_vector_first_particle, NULL,
@@ -1182,6 +1192,7 @@ class AxilrodTellerForceKernelAux {
        l1_norm_negative_force_vector_u_third_particle,
        l1_norm_positive_force_vector_l_third_particle,
        positive_force_vector_third_particle, NULL);
+
   }  
 };
 
