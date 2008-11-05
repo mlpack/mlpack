@@ -1,9 +1,9 @@
 template<typename MultiTreeProblem>
 double MultiTreeDepthFirst<MultiTreeProblem>::LeaveOneOutTuplesBase_
-(const ArrayList<Tree *> &nodes) {
+(const ArrayList<HybridTree *> &nodes) {
   
   // Compute the total number of tuples formed among the nodes.
-  Tree *current_node = nodes[0];
+  HybridTree *current_node = nodes[0];
   int numerator = current_node->count();
   int denominator = 1;
   double total_num_tuples = numerator;
@@ -55,7 +55,7 @@ double MultiTreeDepthFirst<MultiTreeProblem>::LeaveOneOutTuplesBase_
 
 template<typename MultiTreeProblem>
 double MultiTreeDepthFirst<MultiTreeProblem>::RecursiveLeaveOneOutTuples_
-(ArrayList<Tree *> &nodes, index_t examine_index_start) {
+(ArrayList<HybridTree *> &nodes, index_t examine_index_start) {
   
   // Test if all the nodes are equal or disjoint.
   bool equal_or_disjoint_flag = true;
@@ -88,7 +88,7 @@ double MultiTreeDepthFirst<MultiTreeProblem>::RecursiveLeaveOneOutTuples_
     return LeaveOneOutTuplesBase_(nodes);
   }
   else {
-    Tree *node_saved = nodes[examine_index_start];
+    HybridTree *node_saved = nodes[examine_index_start];
     nodes[examine_index_start] = node_saved->left();
     double left_count = RecursiveLeaveOneOutTuples_(nodes,
 						    examine_index_start);
@@ -102,40 +102,72 @@ double MultiTreeDepthFirst<MultiTreeProblem>::RecursiveLeaveOneOutTuples_
 }
 
 template<typename MultiTreeProblem>
+template<bool is_hybrid_node, typename TreeType1, typename TreeType2>
 void MultiTreeDepthFirst<MultiTreeProblem>::Heuristic_
-(Tree *nd, Tree *nd1, Tree *nd2, Tree **partner1, Tree **partner2) {
+(TreeType1 *nd, TreeType2 *nd1, TreeType2 *nd2, TreeType2 **partner1,
+ TreeType2 **partner2) {
   
-  double d1 = nd->bound().MinDistanceSq(nd1->bound());
-  double d2 = nd->bound().MinDistanceSq(nd2->bound());
-  
-  // Prioritized traversal based on the squared distance bounds.
-  if(d1 <= d2) {
+  if(nd == NULL) {
     *partner1 = nd1;
     *partner2 = nd2;
   }
   else {
-    *partner1 = nd2;
-    *partner2 = nd1;
+    
+    bool no_conflict_nd1 = (nd1->end() > nd->begin()) || (!is_hybrid_node);
+    bool no_conflict_nd2 = (nd2->end() > nd->begin()) || (!is_hybrid_node);
+    double d1 = (no_conflict_nd1) ?
+      nd->bound().MinDistanceSq(nd1->bound()):DBL_MAX;
+    double d2 = (no_conflict_nd2) ?
+      nd->bound().MinDistanceSq(nd2->bound()):DBL_MAX;
+    
+    // Prioritized traversal based on the squared distance bounds.
+    if(d1 <= d2) {
+      if(no_conflict_nd1) {
+	*partner1 = nd1;
+      }
+      if(no_conflict_nd2) {
+	*partner2 = nd2;
+      }
+    }
+    else {
+      if(no_conflict_nd2) {
+	*partner1 = nd2;
+      }
+      if(no_conflict_nd1) {
+	*partner2 = nd1;
+      }
+    }
   }
 }
 
 template<typename MultiTreeProblem>
 void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
-(const ArrayList<Matrix *> &sets, ArrayList<Tree *> &nodes,
+(const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_nodes,
+ ArrayList<QueryTree *> &query_nodes,
+ ArrayList<ReferenceTree *> &reference_nodes,
  typename MultiTreeProblem::MultiTreeQueryResult &query_results,
  double total_num_tuples) {
 
-  MultiTreeHelper_<0, MultiTreeProblem::order>::NestedLoop
-    (globals_, sets, nodes, query_results);
+  MultiTreeHelper_<0, MultiTreeProblem::num_hybrid_sets>::HybridNodeNestedLoop
+    (globals_, sets, hybrid_nodes, query_nodes, reference_nodes, 
+     query_results);
+
+  MultiTreeHelper_<0, MultiTreeProblem::num_query_sets>::QueryNodeNestedLoop
+    (globals_, sets, hybrid_nodes, query_nodes, reference_nodes, 
+     query_results);
+
+  MultiTreeHelper_<0, MultiTreeProblem::num_reference_sets>::
+    ReferenceNodeNestedLoop(globals_, sets, hybrid_nodes, query_nodes,
+			    reference_nodes, query_results);
 
   // Add the postponed information to each point, without causing any
-  // duplicate information transmission.
-  for(index_t i = 0; i < MultiTreeProblem::order; i++) {
-    if(i > 0 && nodes[i] == nodes[i - 1]) {
+  // duplicate information transmission for each "hybrid" node.
+  for(index_t i = 0; i < MultiTreeProblem::num_hybrid_sets; i++) {
+    if(i > 0 && hybrid_nodes[i] == hybrid_nodes[i - 1]) {
       continue;
     }
     
-    Tree *qnode = nodes[i];
+    HybridTree *qnode = hybrid_nodes[i];
 
     // Clear the summary statistics of the current query node so that
     // we can refine it to better bounds.
@@ -156,71 +188,66 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
     // Clear postponed information.
     qnode->stat().postponed.SetZero();
   }
-}
+  
+  // Add the postponed information to each point for each "query"
+  // node.
+  for(index_t i = 0; i < MultiTreeProblem::num_query_sets; i++) {
+    
+    QueryTree *qnode = query_nodes[i];
 
-template<typename MultiTreeProblem>
-void MultiTreeDepthFirst<MultiTreeProblem>::CopyNodeSet_
-(const ArrayList<Tree *> &source_list, ArrayList<Tree *> *destination_list) {
+    // Clear the summary statistics of the current query node so that
+    // we can refine it to better bounds.
+    qnode->stat().summary.StartReaccumulate();
 
-  destination_list->Init(source_list.size());
+    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
 
-  for(index_t i = 0; i < MultiTreeProblem::order; i++) {
-    (*destination_list)[i] = source_list[i];
+      // Apply postponed to each point.
+      query_results.ApplyPostponed(qnode->stat().postponed, q);
+
+      // Refine statistics.
+      qnode->stat().summary.Accumulate(query_results, q);
+
+      // Increment the number of (n - 1) tuples pruned.
+      query_results.n_pruned[q] += total_n_minus_one_tuples_[i];
+    }
+
+    // Clear postponed information.
+    qnode->stat().postponed.SetZero();
   }
+
 }
 
 template<typename MultiTreeProblem>
 void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
-(const ArrayList<Matrix *> &sets, ArrayList<Tree *> &nodes,
+(const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_nodes,
+ ArrayList<QueryTree *> &query_nodes,
+ ArrayList<ReferenceTree *> &reference_nodes,
  typename MultiTreeProblem::MultiTreeQueryResult &query_results,
  double total_num_tuples) {
 
   if(MultiTreeProblem::ConsiderTupleExact(globals_, query_results,
-					  nodes, total_num_tuples,
+					  hybrid_nodes, query_nodes,
+					  reference_nodes, total_num_tuples,
 					  total_n_minus_one_tuples_root_,
 					  total_n_minus_one_tuples_)) {
     return;
   }
   else if(MultiTreeProblem::ConsiderTupleProbabilistic
-	  (globals_, query_results, sets, nodes, total_num_tuples,
-	   total_n_minus_one_tuples_root_, total_n_minus_one_tuples_)) {
+	  (globals_, query_results, sets, hybrid_nodes, query_nodes,
+	   reference_nodes, total_num_tuples, total_n_minus_one_tuples_root_,
+	   total_n_minus_one_tuples_)) {
     return;
   }
 
   // Recurse to every combination...
-  MultiTreeHelper_<0, MultiTreeProblem::order>::RecursionLoop
-    (sets, nodes, total_num_tuples, false, query_results, this);    
+  MultiTreeHelper_<0, MultiTreeProblem::num_hybrid_sets>::
+    HybridNodeRecursionLoop(sets, hybrid_nodes, query_nodes, reference_nodes,
+			    total_num_tuples, false, query_results, this);
   return;
 }
 
 template<typename MultiTreeProblem>
-void MultiTreeDepthFirst<MultiTreeProblem>::PreProcessTree_
-(Tree *node, const ArrayList<double> &squared_distances,
- const ArrayList<double> &squared_fn_distances) {
-
-  if(node->is_leaf()) {
-    node->stat().min_squared_nn_dist = DBL_MAX;
-    node->stat().max_squared_fn_dist = 0;
-    for(index_t q = node->begin(); q < node->end(); q++) {
-      node->stat().min_squared_nn_dist = 
-	std::min(node->stat().min_squared_nn_dist, squared_distances[q]);
-      node->stat().max_squared_fn_dist =
-	std::max(node->stat().max_squared_fn_dist, squared_fn_distances[q]);
-    }
-  }
-  else {
-    PreProcessTree_(node->left(), squared_distances, squared_fn_distances);
-    PreProcessTree_(node->right(), squared_distances, squared_fn_distances);
-    node->stat().min_squared_nn_dist =
-      std::min(node->left()->stat().min_squared_nn_dist,
-	       node->right()->stat().min_squared_nn_dist);
-    node->stat().max_squared_fn_dist =
-      std::max(node->left()->stat().max_squared_fn_dist,
-	       node->right()->stat().max_squared_fn_dist);
-  }
-}
-
-template<typename MultiTreeProblem>
+template<typename Tree>
 void MultiTreeDepthFirst<MultiTreeProblem>::PostProcessTree_
 (Tree *node, typename MultiTreeProblem::MultiTreeQueryResult &query_results) {
   
