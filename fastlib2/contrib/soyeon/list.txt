@@ -37,6 +37,10 @@
 	double ComputeSecondDerivativeQTerm2_();
 	double ComputeSecondDerivativeQTerm3_();
 	
-	
-	
-7. Check
+7. Devide functions into two group
+	Objective&Gradient
+	Objective&Gradient&Hessian
+
+8. Check
+
+9. Handle data structure for several classes

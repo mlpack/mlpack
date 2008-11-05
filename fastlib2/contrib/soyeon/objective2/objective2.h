@@ -5,6 +5,8 @@ class Objective {
  public:
   void Init(fx_module *module);
   void ComputeObjective(Matrix &x, double *value);
+	void ComputeGradient(Matrix &x, Vector *gradient);
+	void ComputeHessian(Matrix &x, Matrix *hessian);
  
  private:
   ArrayList<Matrix> first_stage_x_; 
