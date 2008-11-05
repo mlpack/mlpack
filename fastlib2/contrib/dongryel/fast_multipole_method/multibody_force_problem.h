@@ -225,7 +225,7 @@ class AxilrodTellerForceProblem {
 
   };
 
-  class MultiTreeStat {
+  class MultiTreeQueryStat {
 
    public:
     MultiTreeQueryPostponed postponed;
@@ -236,7 +236,7 @@ class AxilrodTellerForceProblem {
 
     //GaussianKernelAux::TLocalExpansion local_expansion;
     
-    OT_DEF_BASIC(MultiTreeStat) {
+    OT_DEF_BASIC(MultiTreeQueryStat) {
       OT_MY_OBJECT(postponed);
       OT_MY_OBJECT(summary);
       //OT_MY_OBJECT(farfield_expansion);
@@ -245,7 +245,7 @@ class AxilrodTellerForceProblem {
     
   public:
     
-    void FinalPush(MultiTreeStat &child_stat) {
+    void FinalPush(MultiTreeQueryStat &child_stat) {
       //child_stat.postponed.ApplyPostponed(postponed);
       //local_expansion.TranslateToLocal(child_stat.local_expansion);
     }
@@ -261,8 +261,8 @@ class AxilrodTellerForceProblem {
     }
     
     void Init(const Matrix& dataset, index_t &start, index_t &count,
-	      const MultiTreeStat& left_stat, 
-	      const MultiTreeStat& right_stat) {
+	      const MultiTreeQueryStat& left_stat, 
+	      const MultiTreeQueryStat& right_stat) {
       postponed.Init();
       SetZero();
     }
@@ -288,6 +288,9 @@ class AxilrodTellerForceProblem {
       // Reset the postponed quantities to zero.
       SetZero();
     }
+  };
+
+  class MultiTreeReferenceStat {
   };
 
   class MultiTreeQueryResult {
@@ -488,7 +491,7 @@ class AxilrodTellerForceProblem {
 
     /** @brief The chosen indices.
      */
-    ArrayList<index_t> chosen_indices;
+    ArrayList<index_t> hybrid_node_chosen_indices;
 
     /** @brief The total number of 3-tuples that contain a particular
      *         particle.
@@ -500,7 +503,7 @@ class AxilrodTellerForceProblem {
     void Init(index_t total_num_particles) {
 
       kernel_aux.Init();
-      chosen_indices.Init(AxilrodTellerForceProblem::order);
+      hybrid_node_chosen_indices.Init(AxilrodTellerForceProblem::order);
       
       total_n_minus_one_tuples = 
 	math::BinomialCoefficient(total_num_particles - 1,
@@ -512,13 +515,22 @@ class AxilrodTellerForceProblem {
   /** @brief The order of interaction is 3-tuple problem. I
    */
   static const int order = 3;
+
+  static const int num_hybrid_sets = 3;
+  
+  static const int num_query_sets = 0;
+
+  static const int num_reference_sets = 0;
+
   static const double relative_error_ = 0.1;
 
   template<typename MultiTreeGlobal, typename MultiTreeQueryResult,
-	   typename Tree>
+	   typename HybridTree, typename QueryTree, typename ReferenceTree>
   static bool ConsiderTupleExact(MultiTreeGlobal &globals,
 				 MultiTreeQueryResult &results,
-				 ArrayList<Tree *> &nodes,
+				 ArrayList<HybridTree *> &hybrid_nodes,
+				 ArrayList<QueryTree *> &query_nodes,
+				 ArrayList<ReferenceTree *> &reference_nodes,
 				 double total_num_tuples,
 				 double total_n_minus_one_tuples_root,
 				 const Vector &total_n_minus_one_tuples) {
@@ -526,7 +538,7 @@ class AxilrodTellerForceProblem {
     // Compute delta change for each node...
     MultiTreeDelta delta;
     delta.Init(total_n_minus_one_tuples);
-    if(!delta.ComputeFiniteDifference(globals, nodes,
+    if(!delta.ComputeFiniteDifference(globals, hybrid_nodes,
 				      total_n_minus_one_tuples)) {
       return false;
     }
@@ -535,10 +547,10 @@ class AxilrodTellerForceProblem {
     for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
 
       // Refine the summary statistics from the new info...
-      if(i == 0 || nodes[i] != nodes[i - 1]) {
+      if(i == 0 || hybrid_nodes[i] != hybrid_nodes[i - 1]) {
 	AxilrodTellerForceProblem::MultiTreeQuerySummary new_summary;
-	new_summary.InitCopy(nodes[i]->stat().summary);
-	new_summary.ApplyPostponed(nodes[i]->stat().postponed);
+	new_summary.InitCopy(hybrid_nodes[i]->stat().summary);
+	new_summary.ApplyPostponed(hybrid_nodes[i]->stat().postponed);
 	new_summary.ApplyDelta(delta, i);
 	
 	// Compute the L1 norm of the positive component and the
@@ -559,8 +571,8 @@ class AxilrodTellerForceProblem {
     // In this case, add the delta contributions to the postponed
     // slots of each node.
     for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
-      if(i == 0 || nodes[i] != nodes[i - 1]) {
-	nodes[i]->stat().postponed.ApplyDelta(delta, i);
+      if(i == 0 || hybrid_nodes[i] != hybrid_nodes[i - 1]) {
+	hybrid_nodes[i]->stat().postponed.ApplyDelta(delta, i);
       }
     }
     
@@ -569,15 +581,14 @@ class AxilrodTellerForceProblem {
   }
 
   template<typename MultiTreeGlobal, typename MultiTreeQueryResult,
-	   typename Tree>
-  static bool ConsiderTupleProbabilistic(MultiTreeGlobal &globals,
-					 MultiTreeQueryResult &results,
-					 const ArrayList<Matrix *> &sets,
-					 ArrayList<Tree *> &nodes,
-					 double total_num_tuples,
-					 double total_n_minus_one_tuples_root,
-					 const Vector
-					 &total_n_minus_one_tuples) {
+	   typename HybridTree, typename QueryTree, typename ReferenceTree>
+  static bool ConsiderTupleProbabilistic
+  (MultiTreeGlobal &globals, MultiTreeQueryResult &results,
+   const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_nodes,
+   ArrayList<QueryTree *> &query_nodes,
+   ArrayList<ReferenceTree *> &reference_nodes,
+   double total_num_tuples, double total_n_minus_one_tuples_root,
+   const Vector &total_n_minus_one_tuples) {
     
     if(total_num_tuples < 40) {
       return false;
@@ -586,17 +597,17 @@ class AxilrodTellerForceProblem {
     // Compute delta change for each node...
     MultiTreeDelta delta;
     delta.Init(total_n_minus_one_tuples);
-    delta.ComputeMonteCarloEstimates(globals, sets, nodes,
+    delta.ComputeMonteCarloEstimates(globals, sets, hybrid_nodes,
 				     total_n_minus_one_tuples);
 
     // Consider each node in turn whether it can be pruned or not.
     for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
 
       // Refine the summary statistics from the new info...
-      if(i == 0 || nodes[i] != nodes[i - 1]) {
+      if(i == 0 || hybrid_nodes[i] != hybrid_nodes[i - 1]) {
 	AxilrodTellerForceProblem::MultiTreeQuerySummary new_summary;
-	new_summary.InitCopy(nodes[i]->stat().summary);
-	new_summary.ApplyPostponed(nodes[i]->stat().postponed);
+	new_summary.InitCopy(hybrid_nodes[i]->stat().summary);
+	new_summary.ApplyPostponed(hybrid_nodes[i]->stat().postponed);
 	new_summary.ApplyDelta(delta, i);
 	
 	// Compute the L1 norm of the positive component and the
@@ -617,8 +628,8 @@ class AxilrodTellerForceProblem {
     // In this case, add the delta contributions to the postponed
     // slots of each node.
     for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
-      if(i == 0 || nodes[i] != nodes[i - 1]) {
-	nodes[i]->stat().postponed.ApplyDelta(delta, i);
+      if(i == 0 || hybrid_nodes[i] != hybrid_nodes[i - 1]) {
+	hybrid_nodes[i]->stat().postponed.ApplyDelta(delta, i);
       }
     }
     

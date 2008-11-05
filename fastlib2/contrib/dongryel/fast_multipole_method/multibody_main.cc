@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
   // root directory (NULL) for the multibody object to work inside.
   // Here, we initialize it with all parameters defined
   // "--multibody/...=...".
-  struct datanode *multibody_module = fx_submodule(fx_root, "multibody");
+  //struct datanode *multibody_module = fx_submodule(fx_root, "multibody");
   
   // The reference data file is a required parameter.
   const char* references_file_name = fx_param_str_req(fx_root, "data");
@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
   data::Load(references_file_name, &references);
 
   // Instantiate a multi-tree problem...
-  ArrayList<Matrix *> sets;
+  ArrayList<const Matrix *> sets;
   sets.Init(AxilrodTellerForceProblem::order);
   for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
     sets[i] = &references;
@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
   MultiTreeDepthFirst<AxilrodTellerForceProblem> algorithm;
   AxilrodTellerForceProblem::MultiTreeQueryResult results;
   AxilrodTellerForceProblem::MultiTreeQueryResult naive_results;
-  algorithm.Init(sets, NULL);
+  algorithm.InitMonoChromatic(sets, (const ArrayList<const Matrix *> *) NULL);
 
   fx_timer_start(fx_root, "multitree");
   algorithm.Compute(NULL, &results);
@@ -47,7 +47,8 @@ int main(int argc, char *argv[]) {
   printf("Got %d Monte Carlo prunes...\n", results.num_monte_carlo_prunes);
   
   fx_timer_start(fx_root, "naive_code");
-  algorithm.NaiveCompute(&naive_results);
+  algorithm.NaiveCompute((const ArrayList<const Matrix *> *) NULL,
+			 &naive_results);
   fx_timer_stop(fx_root, "naive_code");
   naive_results.PrintDebug("naive_force_vectors.txt");
   double max_relative_error, positive_max_relative_error,
