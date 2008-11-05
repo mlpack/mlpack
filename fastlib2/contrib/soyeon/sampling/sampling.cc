@@ -6,6 +6,7 @@
 
 
 Sampling::Init(fx_module *module) {
+	ind_initial_sampling_=0;
 
 }
 
@@ -35,6 +36,18 @@ Sampling::Shuffle() {
 }
 
 Sampling::ExpandSubset(double percent_added_sample) {
+	if(ind_initial_sampling_==0) {
+		//copy num_initial_sampling 
+		for(index_t i=0; i<num_initial_sampling-1; i++){
+			sample_selector_[i]=shuffled_array[i];
+		}	//i
+
+
+
+		
+	} else {
+	}	//else
+
 	
 }
 

@@ -49,6 +49,10 @@ int main(int argc, char *argv[]) {
   
 	double dummy_objective;
   my_objective.ComputeObjective(initial_x, &dummy_objective);
+<<<<<<< .mine
+  NOTIFY("The objective is %lg", dummy_objective);
+  fx_done(fx_root);
+=======
 	Vector dummy_gradient;
   my_objective.ComputeGradient(initial_x, &dummy_gradient);
 	
@@ -78,6 +82,7 @@ int main(int argc, char *argv[]) {
 	
 	data::Save("Hessian.csv", dummy_hessian);
 
+>>>>>>> .r2779
   fx_done(fx_root);
 
 
