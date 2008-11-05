@@ -636,6 +636,20 @@ class AxilrodTellerForceProblem {
     results.num_monte_carlo_prunes++;
     return true;
   }
+    
+  static void HybridNodeEvaluateMain(MultiTreeGlobal &globals,
+				     const ArrayList<Matrix *> &sets,
+				     MultiTreeQueryResult &query_results) {
+    
+    globals.kernel_aux.EvaluateMain(globals, sets, query_results);
+  }
+
+  static void ReferenceNodeEvaluateMain(MultiTreeGlobal &globals,
+					const ArrayList<Matrix *> &sets,
+					MultiTreeQueryResult &query_results) {
+    
+  }
+
 };
 
 #endif
