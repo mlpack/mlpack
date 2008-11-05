@@ -17,3 +17,5 @@
 13. Equal spaced array generation?
 14. Check
 15. Handle several classes - especially data structure
+16. ArrayList<index_t> copy
+17. sample select

@@ -12,13 +12,14 @@ class Sampling {
 
 
 		int num_people_;		//first_stage_x_.size()
-		Vector shuffled_array_; //length=num_people_
+		ArrayList<index_t> shuffled_array_; //length=num_people_
 
 		//1 if initial_sampling is done, then need to expand_subset
 		//0 if initial_sampling is not done yet
 		int ind_initial_sampling_;	
+		int num_initial_sampling_; //one of the argument
 
-		Vector sample_selector_; //
+		ArrayList<index_t> sample_selector_; //
 		
 		void Shuffle();
 };
