@@ -336,7 +336,7 @@ class MultiTreeDepthFirst {
 
       // Exhaustively compute the contribution due to the selected
       // tuple.
-      globals.kernel_aux.EvaluateMain(globals, sets, query_results);
+      MultiTreeProblem::HybridNodeEvaluateMain(globals, sets, query_results);
     }
 
     static void QueryNodeNestedLoop
@@ -355,6 +355,8 @@ class MultiTreeDepthFirst {
      ArrayList<ReferenceTree *> &reference_nodes, 
      typename MultiTreeProblem::MultiTreeQueryResult &query_results) {
 
+      MultiTreeProblem::ReferenceNodeEvaluateMain(globals, sets,
+						  query_results);
     }
 
     static void HybridNodeRecursionLoop
