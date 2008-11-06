@@ -306,7 +306,7 @@ class AxilrodTellerForceProblem {
 
     Vector l1_norm_negative_force_vector_u;
 
-    Matrix force_vector_e;
+    Matrix final_results;
 
     Vector n_pruned;
     
@@ -325,7 +325,7 @@ class AxilrodTellerForceProblem {
       OT_MY_OBJECT(positive_force_vector_e);
       OT_MY_OBJECT(negative_force_vector_e);
       OT_MY_OBJECT(l1_norm_negative_force_vector_u);
-      OT_MY_OBJECT(force_vector_e);
+      OT_MY_OBJECT(final_results);
       OT_MY_OBJECT(n_pruned);
       OT_MY_OBJECT(used_error);
       OT_MY_OBJECT(num_finite_difference_prunes);
@@ -354,17 +354,17 @@ class AxilrodTellerForceProblem {
       for(index_t i = 0; i < used_error.length(); i++) {
 
 	// Add up the net force...
-	la::AddTo(3, force_vector_e.GetColumnPtr(i), net_force.ptr());
-	la::AddTo(3, other_results.force_vector_e.GetColumnPtr(i),
+	la::AddTo(3, final_results.GetColumnPtr(i), net_force.ptr());
+	la::AddTo(3, other_results.final_results.GetColumnPtr(i),
 		  net_force_for_approx.ptr());
 
 	double l1_norm_error = 
-	  la::RawLMetric<1>(force_vector_e.n_rows(),
-			    force_vector_e.GetColumnPtr(i),
-			    other_results.force_vector_e.GetColumnPtr(i));
+	  la::RawLMetric<1>(final_results.n_rows(),
+			    final_results.GetColumnPtr(i),
+			    other_results.final_results.GetColumnPtr(i));
 	double l1_norm_exact = 0;
-	const double *exact_vector = force_vector_e.GetColumnPtr(i);
-	for(index_t d = 0; d < force_vector_e.n_rows(); d++) {
+	const double *exact_vector = final_results.GetColumnPtr(i);
+	for(index_t d = 0; d < final_results.n_rows(); d++) {
 	  l1_norm_exact += fabs(exact_vector[d]);
 	}
 	
@@ -432,7 +432,7 @@ class AxilrodTellerForceProblem {
       positive_force_vector_e.Init(3, num_queries);
       negative_force_vector_e.Init(3, num_queries);
       l1_norm_negative_force_vector_u.Init(num_queries);
-      force_vector_e.Init(3, num_queries);
+      final_results.Init(3, num_queries);
       n_pruned.Init(num_queries);
       used_error.Init(num_queries);
 
@@ -442,16 +442,16 @@ class AxilrodTellerForceProblem {
     void PostProcess(index_t q_index) {
       la::AddOverwrite(3, positive_force_vector_e.GetColumnPtr(q_index),
 		       negative_force_vector_e.GetColumnPtr(q_index),
-		       force_vector_e.GetColumnPtr(q_index));
+		       final_results.GetColumnPtr(q_index));
     }
 
     void PrintDebug(const char *output_file_name) const {
       FILE *stream = fopen(output_file_name, "w+");
       
-      for(index_t q = 0; q < force_vector_e.n_cols(); q++) {
+      for(index_t q = 0; q < final_results.n_cols(); q++) {
 
 	const double *force_vector_e_column = 
-	  force_vector_e.GetColumnPtr(q);
+	  final_results.GetColumnPtr(q);
 
 	for(index_t d = 0; d < 3; d++) {
 	  fprintf(stream, "%g ", force_vector_e_column[d]);
@@ -470,7 +470,7 @@ class AxilrodTellerForceProblem {
       positive_force_vector_e.SetZero();
       negative_force_vector_e.SetZero();
       l1_norm_negative_force_vector_u.SetZero();
-      force_vector_e.SetZero();
+      final_results.SetZero();
       n_pruned.SetZero();
       used_error.SetZero();
       num_finite_difference_prunes = 0;
@@ -496,6 +496,10 @@ class AxilrodTellerForceProblem {
     /** @brief The chosen indices.
      */
     ArrayList<index_t> hybrid_node_chosen_indices;
+
+    ArrayList<index_t> query_node_chosen_indices;
+    
+    ArrayList<index_t> reference_node_chosen_indices;
 
     /** @brief The total number of 3-tuples that contain a particular
      *         particle.
@@ -646,14 +650,18 @@ class AxilrodTellerForceProblem {
   }
     
   static void HybridNodeEvaluateMain(MultiTreeGlobal &globals,
+				     const ArrayList<Matrix *> &query_sets,
 				     const ArrayList<Matrix *> &sets,
+				     const ArrayList<Matrix *> &targets,
 				     MultiTreeQueryResult &query_results) {
     
     globals.kernel_aux.EvaluateMain(globals, sets, query_results);
   }
 
   static void ReferenceNodeEvaluateMain(MultiTreeGlobal &globals,
+					const ArrayList<Matrix *> &query_sets,
 					const ArrayList<Matrix *> &sets,
+					const ArrayList<Matrix *> &targets,
 					MultiTreeQueryResult &query_results) {
     
   }
