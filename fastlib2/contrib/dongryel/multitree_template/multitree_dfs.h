@@ -471,9 +471,12 @@ class MultiTreeDepthFirst {
    double total_num_tuples);
 
   template<typename Tree>
+  void PreProcessQueryTree_(Tree *node);
+
+  template<typename Tree>
   void PostProcessTree_
   (Tree *node, typename MultiTreeProblem::MultiTreeQueryResult &query_results);
-
+  
  public:
 
   MultiTreeDepthFirst() {
@@ -516,8 +519,10 @@ class MultiTreeDepthFirst {
     query_results->Init((sets_[sets_.size() - 1])->n_cols());
 
     // Preprocess the query trees.
+    if(query_sets != NULL) {
+      PreProcessQueryTree_(query_trees[0]);
+    }
     
-
     // Call the canonical algorithm.
     double total_num_tuples = TotalNumTuples(hybrid_trees_, query_trees,
 					     reference_trees_);
@@ -603,7 +608,8 @@ class MultiTreeDepthFirst {
   }
 
   void InitMultiChromatic(const ArrayList<const Matrix *> &sets,
-			  const ArrayList<const Matrix *> *targets) {
+			  const ArrayList<const Matrix *> *targets,
+			  struct datanode *module_in) {
 
     // In this case, the hybrid set is empty...
     hybrid_trees_.Init();
@@ -630,7 +636,7 @@ class MultiTreeDepthFirst {
     }
     
     // Initialize the global parameters.
-    globals_.Init((sets_[0])->n_cols());
+    globals_.Init((sets_[0])->n_cols(), sets[0]->n_rows(), module_in);
 
     // Initialize the total number of (n - 1) tuples for each node
     // index.
@@ -638,7 +644,8 @@ class MultiTreeDepthFirst {
   }
 
   void InitMonoChromatic(const ArrayList<const Matrix *> &sets,
-			 const ArrayList<const Matrix *> *targets) {
+			 const ArrayList<const Matrix *> *targets,
+			 struct datanode *module_in) {
 
     // In this case, the reference set is empty...
     reference_trees_.Init();
@@ -678,7 +685,7 @@ class MultiTreeDepthFirst {
     }
     
     // Initialize the global parameters.
-    globals_.Init((sets_[0])->n_cols());
+    globals_.Init((sets_[0])->n_cols(), (sets_[0])->n_rows(), module_in);
 
     // Initialize the total number of (n - 1) tuples for each node
     // index.

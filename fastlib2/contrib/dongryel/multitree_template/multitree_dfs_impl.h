@@ -248,6 +248,20 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
 
 template<typename MultiTreeProblem>
 template<typename Tree>
+void MultiTreeDepthFirst<MultiTreeProblem>::PreProcessQueryTree_(Tree *node) {
+  
+  node->stat().Init(node->bound(), globals_.kernel_aux);
+
+  if(node->is_leaf()) {
+  }
+  else {
+    PreProcessQueryTree_(node->left());
+    PreProcessQueryTree_(node->right());
+  }
+}
+
+template<typename MultiTreeProblem>
+template<typename Tree>
 void MultiTreeDepthFirst<MultiTreeProblem>::PostProcessTree_
 (Tree *node, typename MultiTreeProblem::MultiTreeQueryResult &query_results) {
   
