@@ -1,7 +1,8 @@
 #include "fastlib/fastlib.h"
 
-
+class ObjectieTest;
 class Objective {
+friend class ObjectiveTest;
  public:
   void Init(fx_module *module);
   void ComputeObjective(Matrix &x, double *value);
@@ -16,11 +17,9 @@ class Objective {
 	//ArrayList<Matrix> second_stage_x_bar_; //unknown attributes
 	
 	//Information for exponential smoothing
-	ArrayList<Matrix> unk_x_past_;
+	ArrayList<Matrix> unknown_x_past_;
 	//x_bar with max_number of alternatives for all people
 	//nrow=num_unk_x_, ncol=max_number_alternatives
-	Matrix max_size_x_bar; 
-	
 	
   
   ArrayList<index_t>  first_stage_y_;
@@ -33,7 +32,7 @@ class Objective {
 	
 	//it corresponds to the unknown attributes index in unk_x_past file
 	//(eg. 7th attribute(price) is unknown 
-	ArrayList<index_t> ind_unk_x_;
+	ArrayList<index_t> ind_unknown_x_;
 
 
 	ArrayList<index_t> exp_betas_times_x1_;
@@ -45,7 +44,7 @@ class Objective {
 	//unk_x_past_.size==max_number_alternatives_
 	int max_number_alternatives_;
 	//number of positive elements in ind_unk_x
-	int num_unk_x_;
+	int num_unknown_x_;
 
 	
 	double denumerator_beta_function_;
@@ -138,23 +137,6 @@ class Objective {
 	double ComputeSecondDerivativePQTerm1_();
 	double ComputeSecondDerivativePQTerm2_();
 	double ComputeSecondDerivativePQTerm3_();
-
-
-
-
-
-
-
-
-
-
-
-	
-
-
-
-
-	
 };
 
 

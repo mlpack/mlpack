@@ -2,7 +2,34 @@
 #include <cmath>
     
 Objective::Init(fx_module *module) {
-
+  module_=module;
+  const char *data_file1=fx_param_str_req(module_, "data1");
+  const char *info_file1=fx_param_str_req(omdule_. "info1");
+  Matrix x;
+  data::Load(data_file1, &x);
+  Matrix info1;
+  data::Load(info_file1, &info);
+  first_stage_x_.Init(info1.n_cols());
+  index_t start_col=0;
+  for(index_t i=0; i<info1.n_cols(); i++) {
+    first_stage_x_[i].Init(x.n_rows(), info1[i]);
+    first_stage_x_[i].CopyColumnFromMat(0, start_col, info1[i]);
+    start_col+=info[i];
+  }
+  const char *data_file2=fx_param_str_req(module_, "data2");
+  const char *info_file2=fx_param_str_req(omdule_. "info2");
+  Matrix x;
+  data::Load(data_file2, &x);
+  Matrix info2;
+  data::Load(info_file2, &info2);
+  second_stage_x_.Init(info2.n_cols());
+  start_col=0;
+  for(index_t i=0; i<info2.n_cols(); i++) {
+    second_stage_x_[i].Init(x.n_rows(), info[i]);
+    second_stage_x_[i].CopyColumnFromMat(0, start_col, info2[i]);
+    start_col+=info2[i];
+  }
+  
 }
 
 Objective::ComputeObjective(Matrix &x, double *objective) {
@@ -54,23 +81,22 @@ double Objecitve::ComputeTerm3_() {
 void Objective::ComputePostponedProbability_(Vector &betas, 
                                              double p, 
                                              double q) {
-  postponed_probability_.SetZero(); 
-
-	double alpha_temp=0;
-	double beta_function_temp=0;
 	double numerator=0;
 	//need to specify
 	num_of_alphas_=10;
 	alpha_weight_=1/num_of_alphas;
-
-	exp_betas_times_x2_.SetZero();
+	double exp_betas_times_x2=0;
+  for(index_t i=0; i<postponed_probability_.size(); i++) {
+    postponed_probability_[i]=0;
+  }
   
 	for(index_t n=0; n<first_stage_x_.size; n++){
 		for(index_t l=0; l<num_of_alphas-1; ;++){
-			alpha_temp=(l+1)*(alpha_weight_);
-		
-			beta_function_temp=pow(alpha_temp, p-1)*pow((1-alpha_temp), q-1)/denumerator_beta_function_;
-
+			double alpha_temp;
+	    double beta_function_temp;
+      alpha_temp=(l+1)*(alpha_weight_);
+			beta_function_temp=pow(alpha_temp, p-1)*
+          pow((1-alpha_temp), q-1)/denumerator_beta_function_;
 		
 			//Calculate x^2_{ni}(alpha_l)
 			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
@@ -93,7 +119,7 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 																  + exp_betas_times_x2_[n]) )
 																*beta_function_temp );			
 		}	//alpha
-		postponed_probability_[n]*=alpha_wieght_;	
+		postponed_probability_[n]*=alpha_weight_;	
 	}	//n
 
 }
@@ -125,7 +151,7 @@ void Objective::ComputeDeumeratorBetaFunction_(double p, doulbe q) {
 	}
 	denumerator*=(t_weight_);
 }
-
+/*
 //////////////////////////////////////////////////////////
 //add new things from here for objective2 (Compute gradient) 
 //Compute dot_logit
@@ -136,13 +162,13 @@ void Objective::ComputeDotLogit_(Vector &betas) {
 																				 (first_stage_x_[n].GetColumnPtr(i))/
 																				 exp_betas_times_x1_[n]));
 		}	//i
-		/*for(index_t j=0; j<second_stage_x_.n_cols(); j++){
-			second_stage_dot_logit_[n].set(j, 1, exp(la::Dot(betas.length(), beta.ptr(),
-																				 (second_stage_x_[n].GetColumnPtr(i))/
-																				 exp_betas_times_x2_[n]));
-																				 
-		}	//j
-		*/
+		//for(index_t j=0; j<second_stage_x_.n_cols(); j++){
+		//	second_stage_dot_logit_[n].set(j, 1, exp(la::Dot(betas.length(), beta.ptr(),
+		//																		 (second_stage_x_[n].GetColumnPtr(i))/
+		//																		 exp_betas_times_x2_[n]));
+		//																		 
+		//}	//j
+		
 	}	//n
 }
 
@@ -155,9 +181,9 @@ void Objective::ComputeDDotLogit_() {
 		for(index_t i=0; i<first_stage_x_.n_cols(); i++){
 			first_stage_ddot_logit_[n].set(i, i, first_stage_dot_logit_[n].get(i,1));
 		}	//i
-		/*for(index_t j=0; i<second_stage_x_.n_cols(); j++){
-			second_stage_ddot_logit_[n].set(j, j, second_stage_dot_logit_[n].get(j,1));
-		}	//j*/
+		//for(index_t j=0; i<second_stage_x_.n_cols(); j++){
+		//	second_stage_ddot_logit_[n].set(j, j, second_stage_dot_logit_[n].get(j,1));
+		//}	//j
 
 	}	//n
 
@@ -189,27 +215,6 @@ Vector Objective::ComputeDerivativeBetaTerm1_() {
 }
 
 
-/*void Objective::ComputeDerivativeBetaConditionalPostponedProb_(Vector &betas){
-	derivative_beta_conditional_postponed_prob_.SetZero();
-	conditional_postponed_prob_.SetZero();
-
-	//Vector temp;
-	//temp.Init(betas.lentgh());
-	//temp.SetZero();
-
-	for(index_t n=0; n<first_stage_x_[n].size; n++){
-		
-		conditional_postponed_prob_[n]=exp_betas_times_x2_[n]/(exp_betas_times_x1_[n]+exp_betas_times_x2_[n]);
-		DEBUG_ASSERT(conditional_postponed_prob_[n]>0);
-		DEBUG_ASSERT(conditional_postponed_prob_[n]<1);
-		la::MulOverwrite(first_stage_x_[n], first_stage_dot_logit[n]), &derivative_beta_conditional_postponed_prob_[n]);
-		//check
-		la::MulExpert(1, second_stage_x_[n], second_stage_dot_logit[n], -1, &derivative_beta_conditional_postponed_prob_[n]);
-		la::scale( conditional_postponed_prob_*(1-conditional_postponed_prob_), &derivative_beta_conditional_postponed_prob_[n]);
-		//derivative_beta_conditional_postponed_prob_[n]=&temp;
-	}
-}
-*/
 
 void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas){
 	
@@ -714,12 +719,12 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 			la::ScaleOverwrite(( powtemp*(log(alpha_temp)*beta_fn_temp1-beta_fn_temp2) ), first_derivative_conditional_postpond_prob,
 												&sum_second_derivative_conditionl_postponed_p_temp);
 			la::AddTo(sum_second_derivative_conditionl_postponed_p_temp, &sum_second_derivative_conditionl_postponed_p_[n]);
-			/*sum_second_derivative_conditionl_postponed_p_[n]+=first_derivative_conditional_postpond_prob
-																												*( powtemp
-																												*(log(alpha_temp)*beta_fn_temp1
-																												- beta_fn_temp2) );
-																								*/
-			//Calculate sum_second_derivative_conditionl_postponed_q_[n]
+			//sum_second_derivative_conditionl_postponed_p_[n]+=first_derivative_conditional_postpond_prob
+			//																									*( powtemp
+			//																									*(log(alpha_temp)*beta_fn_temp1
+		  //																										- beta_fn_temp2) );
+			
+      //Calculate sum_second_derivative_conditionl_postponed_q_[n]
 			//check
 			la::ScaleOverwrite(( powtemp*(log(1-alpha_temp)*beta_fn_temp1- beta_fn_temp4) ), first_derivative_conditional_postpond_prob,
 												&sum_second_derivative_conditionl_postponed_q_temp);
@@ -1051,7 +1056,7 @@ double Objective::ComputeSecondDerivativePQTerm3_() {
   }
   return second_derivative_p_q_term3;
 }
-
+*/
 
 
 
