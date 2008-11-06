@@ -485,6 +485,10 @@ class AxilrodTellerForceProblem {
 
    public:
     
+    /** @brief The module holding the parameters.
+     */
+    struct datanode *module;
+
     /** @brief The kernel object.
      */
     AxilrodTellerForceKernelAux kernel_aux;
@@ -500,7 +504,8 @@ class AxilrodTellerForceProblem {
 
    public:
 
-    void Init(index_t total_num_particles) {
+    void Init(index_t total_num_particles, index_t dimension_in,
+	      struct datanode *module_in) {
 
       kernel_aux.Init();
       hybrid_node_chosen_indices.Init(AxilrodTellerForceProblem::order);
@@ -508,6 +513,9 @@ class AxilrodTellerForceProblem {
       total_n_minus_one_tuples = 
 	math::BinomialCoefficient(total_num_particles - 1,
 				  AxilrodTellerForceProblem::order - 1);
+
+      // Set the incoming module for referring to parameters.
+      module = module_in;
     }
 
   };

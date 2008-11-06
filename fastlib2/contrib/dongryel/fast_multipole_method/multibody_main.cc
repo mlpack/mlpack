@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
   // root directory (NULL) for the multibody object to work inside.
   // Here, we initialize it with all parameters defined
   // "--multibody/...=...".
-  //struct datanode *multibody_module = fx_submodule(fx_root, "multibody");
+  struct datanode *multibody_module = fx_submodule(fx_root, "multibody");
   
   // The reference data file is a required parameter.
   const char* references_file_name = fx_param_str_req(fx_root, "data");
@@ -35,7 +35,8 @@ int main(int argc, char *argv[]) {
   MultiTreeDepthFirst<AxilrodTellerForceProblem> algorithm;
   AxilrodTellerForceProblem::MultiTreeQueryResult results;
   AxilrodTellerForceProblem::MultiTreeQueryResult naive_results;
-  algorithm.InitMonoChromatic(sets, (const ArrayList<const Matrix *> *) NULL);
+  algorithm.InitMonoChromatic(sets, (const ArrayList<const Matrix *> *) NULL,
+			      multibody_module);
 
   fx_timer_start(fx_root, "multitree");
   algorithm.Compute(NULL, &results);
