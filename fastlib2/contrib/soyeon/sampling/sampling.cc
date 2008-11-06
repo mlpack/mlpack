@@ -65,6 +65,13 @@ Sampling::ExpandSubset(double percent_added_sample, ArrayList<index_t> *sample_s
 }
 
 //Next-->function for picking the data from selected people 
+Sampling::ReturnSubsetData(ArrayList<Matrix> Input_file1, ArrayList<Matrix> Input_file2, 
+													 ArrayList<Matrix> Input_file3) {
+
+	MakeColumnVector
+}
+
+
 
 
 		
