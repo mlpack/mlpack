@@ -26,7 +26,13 @@ class MultiTreeDepthFirst {
 
   ArrayList<ReferenceTree *> reference_trees_;
 
+  ArrayList<index_t> old_from_new_references_;
+
   ArrayList<HybridTree *> hybrid_trees_;
+
+  ArrayList<index_t> old_from_new_hybrids_;
+
+  ArrayList<index_t> new_from_old_hybrids_;
 
   typename MultiTreeProblem::MultiTreeGlobal globals_;
 
@@ -39,7 +45,9 @@ class MultiTreeDepthFirst {
    public:
     static void HybridNodeNestedLoop
     (typename MultiTreeProblem::MultiTreeGlobal &globals,
-     const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_nodes,
+     const ArrayList<Matrix *> &query_sets,
+     const ArrayList<Matrix *> &sets, const ArrayList<Matrix *> &targets,
+     ArrayList<HybridTree *> &hybrid_nodes,
      ArrayList<QueryTree *> &query_nodes,
      ArrayList<ReferenceTree *> &reference_nodes,
      typename MultiTreeProblem::MultiTreeQueryResult &query_results) {
@@ -62,14 +70,16 @@ class MultiTreeDepthFirst {
       for(index_t i = starting_point_index; i < ending_point_index; i++) {
 	globals.hybrid_node_chosen_indices[start] = i;
 	MultiTreeHelper_<start + 1, end>::HybridNodeNestedLoop
-	  (globals, sets, hybrid_nodes, query_nodes, reference_nodes,
-	   query_results);
+	  (globals, query_sets, sets, targets, hybrid_nodes, query_nodes,
+	   reference_nodes, query_results);
       }
     }
     
     static void QueryNodeNestedLoop
     (typename MultiTreeProblem::MultiTreeGlobal &globals,
-     const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_nodes,
+     const ArrayList<Matrix *> &query_sets,
+     const ArrayList<Matrix *> &sets, const ArrayList<Matrix *> &targets,
+     ArrayList<HybridTree *> &hybrid_nodes,
      ArrayList<QueryTree *> &query_nodes,
      ArrayList<ReferenceTree *> &reference_nodes,
      typename MultiTreeProblem::MultiTreeQueryResult &query_results) {
@@ -80,14 +90,16 @@ class MultiTreeDepthFirst {
       for(index_t i = starting_point_index; i < ending_point_index; i++) {
 	globals.query_node_chosen_indices[start] = i;
 	MultiTreeHelper_<start + 1, end>::QueryNodeNestedLoop
-	  (globals, sets, hybrid_nodes, query_nodes, reference_nodes,
-	   query_results);
+	  (globals, query_sets, sets, targets, hybrid_nodes, query_nodes,
+	   reference_nodes, query_results);
       }
     }
 
     static void ReferenceNodeNestedLoop
     (typename MultiTreeProblem::MultiTreeGlobal &globals,
-     const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_nodes,
+     const ArrayList<Matrix *> &query_sets,
+     const ArrayList<Matrix *> &sets, const ArrayList<Matrix *> &targets,
+     ArrayList<HybridTree *> &hybrid_nodes,
      ArrayList<QueryTree *> &query_nodes,
      ArrayList<ReferenceTree *> &reference_nodes,
      typename MultiTreeProblem::MultiTreeQueryResult &query_results) {
@@ -98,13 +110,15 @@ class MultiTreeDepthFirst {
       for(index_t i = starting_point_index; i < ending_point_index; i++) {
 	globals.reference_node_chosen_indices[start] = i;
 	MultiTreeHelper_<start + 1, end>::ReferenceNodeNestedLoop
-	  (globals, sets, hybrid_nodes, query_nodes, reference_nodes,
-	   query_results);
+	  (globals, query_sets, sets, targets, hybrid_nodes, query_nodes,
+	   reference_nodes, query_results);
       }
     }
 
     static void HybridNodeRecursionLoop
-    (const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_nodes,
+    (const ArrayList<Matrix *> &query_sets,
+     const ArrayList<Matrix *> &sets, const ArrayList<Matrix *> &targets,
+     ArrayList<HybridTree *> &hybrid_nodes,
      ArrayList<QueryTree *> &query_nodes,
      ArrayList<ReferenceTree *> &reference_nodes,
      double total_num_tuples, const bool contains_non_leaf_in_the_list,
@@ -118,9 +132,9 @@ class MultiTreeDepthFirst {
 	if(start == 0 || 
 	   !(hybrid_nodes[start]->end() <= hybrid_nodes[start - 1]->begin())) {
 	  MultiTreeHelper_<start + 1, end>::HybridNodeRecursionLoop
-	    (sets, hybrid_nodes, query_nodes, reference_nodes, 
-	     total_num_tuples, contains_non_leaf_in_the_list, query_results,
-	     algorithm_object);
+	    (query_sets, sets, targets, hybrid_nodes, query_nodes,
+	     reference_nodes, total_num_tuples, contains_non_leaf_in_the_list,
+	     query_results, algorithm_object);
 	}
       }
       else {
@@ -150,16 +164,18 @@ class MultiTreeDepthFirst {
 	if(first_node != NULL) {
 	  hybrid_nodes[start] = first_node;
 	  MultiTreeHelper_<start + 1, end>::HybridNodeRecursionLoop
-	    (sets, hybrid_nodes, query_nodes, reference_nodes, 
-	     total_num_tuples, true, query_results, algorithm_object);
+	    (query_sets, sets, targets, hybrid_nodes, query_nodes,
+	     reference_nodes, total_num_tuples, true, query_results,
+	     algorithm_object);
 	}
 
 	// Visit the other node, if not null...
 	if(second_node != NULL) {
 	  hybrid_nodes[start] = second_node;
 	  MultiTreeHelper_<start + 1, end>::HybridNodeRecursionLoop
-	    (sets, hybrid_nodes, query_nodes, reference_nodes, 
-	     total_num_tuples, true, query_results, algorithm_object);
+	    (query_sets, sets, targets, hybrid_nodes, query_nodes,
+	     reference_nodes, total_num_tuples, true, query_results,
+	     algorithm_object);
 	}
 	
 	// Put back the node in the list after recursing...
@@ -185,7 +201,9 @@ class MultiTreeDepthFirst {
     }
 
     static void QueryNodeRecursionLoop
-    (const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_nodes,
+    (const ArrayList<Matrix *> &query_sets,
+     const ArrayList<Matrix *> &sets, const ArrayList<Matrix *> &targets,
+     ArrayList<HybridTree *> &hybrid_nodes,
      ArrayList<QueryTree *> &query_nodes,
      ArrayList<ReferenceTree *> &reference_nodes,
      double total_num_tuples, const bool contains_non_leaf_in_the_list,
@@ -196,9 +214,9 @@ class MultiTreeDepthFirst {
       if(query_nodes[start]->is_leaf()) {
 	
 	MultiTreeHelper_<start + 1, end>::QueryNodeRecursionLoop
-	  (sets, hybrid_nodes, query_nodes, reference_nodes, 
-	   total_num_tuples, contains_non_leaf_in_the_list, query_results,
-	   algorithm_object);
+	  (query_sets, sets, targets, hybrid_nodes, query_nodes,
+	   reference_nodes, total_num_tuples, contains_non_leaf_in_the_list,
+	   query_results, algorithm_object);
       }
       else {
        
@@ -227,16 +245,18 @@ class MultiTreeDepthFirst {
 	if(first_node != NULL) {
 	  query_nodes[start] = first_node;
 	  MultiTreeHelper_<start + 1, end>::QueryNodeRecursionLoop
-	    (sets, hybrid_nodes, query_nodes, reference_nodes, 
-	     total_num_tuples, true, query_results, algorithm_object);
+	    (query_sets, sets, targets, hybrid_nodes, query_nodes,
+	     reference_nodes, total_num_tuples, true, query_results,
+	     algorithm_object);
 	}
 
 	// Visit the other node, if not null...
 	if(second_node != NULL) {
 	  query_nodes[start] = second_node;
 	  MultiTreeHelper_<start + 1, end>::QueryNodeRecursionLoop
-	    (sets, hybrid_nodes, query_nodes, reference_nodes, 
-	     total_num_tuples, true, query_results, algorithm_object);
+	    (query_sets, sets, targets, hybrid_nodes, query_nodes,
+	     reference_nodes, total_num_tuples, true, query_results,
+	     algorithm_object);
 	}
 	
 	// Put back the node in the list after recursing...
@@ -260,7 +280,9 @@ class MultiTreeDepthFirst {
     }
 
     static void ReferenceNodeRecursionLoop
-    (const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_nodes,
+    (const ArrayList<Matrix *> &query_sets,
+     const ArrayList<Matrix *> &sets, const ArrayList<Matrix *> &targets,
+     ArrayList<HybridTree *> &hybrid_nodes,
      ArrayList<QueryTree *> &query_nodes,
      ArrayList<ReferenceTree *> &reference_nodes,
      double total_num_tuples, const bool contains_non_leaf_in_the_list,
@@ -271,9 +293,9 @@ class MultiTreeDepthFirst {
       if(reference_nodes[start]->is_leaf()) {
 	
 	MultiTreeHelper_<start + 1, end>::ReferenceNodeRecursionLoop
-	  (sets, hybrid_nodes, query_nodes, reference_nodes, 
-	   total_num_tuples, contains_non_leaf_in_the_list, query_results,
-	   algorithm_object);
+	  (query_sets, sets, targets, hybrid_nodes, query_nodes,
+	   reference_nodes, total_num_tuples, contains_non_leaf_in_the_list,
+	   query_results, algorithm_object);
       }
       else {
        
@@ -305,16 +327,18 @@ class MultiTreeDepthFirst {
 	if(first_node != NULL) {
 	  reference_nodes[start] = first_node;
 	  MultiTreeHelper_<start + 1, end>::ReferenceNodeRecursionLoop
-	    (sets, hybrid_nodes, query_nodes, reference_nodes, 
-	     total_num_tuples, true, query_results, algorithm_object);
+	    (query_sets, sets, targets, hybrid_nodes, query_nodes,
+	     reference_nodes, total_num_tuples, true, query_results,
+	     algorithm_object);
 	}
 
 	// Visit the other node, if not null...
 	if(second_node != NULL) {
 	  reference_nodes[start] = second_node;
 	  MultiTreeHelper_<start + 1, end>::ReferenceNodeRecursionLoop
-	    (sets, hybrid_nodes, query_nodes, reference_nodes, 
-	     total_num_tuples, true, query_results, algorithm_object);
+	    (query_sets, sets, targets, hybrid_nodes, query_nodes,
+	     reference_nodes, total_num_tuples, true, query_results,
+	     algorithm_object);
 	}
 	
 	// Put back the node in the list after recursing...
@@ -329,38 +353,50 @@ class MultiTreeDepthFirst {
    public:
     static void HybridNodeNestedLoop
     (typename MultiTreeProblem::MultiTreeGlobal &globals,
-     const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_nodes,
+     const ArrayList<Matrix *> &query_sets,
+     const ArrayList<Matrix *> &sets, const ArrayList<Matrix *> &targets,
+     ArrayList<HybridTree *> &hybrid_nodes,
      ArrayList<QueryTree *> &query_nodes, 
      ArrayList<ReferenceTree *> &reference_nodes, 
      typename MultiTreeProblem::MultiTreeQueryResult &query_results) {
 
       // Exhaustively compute the contribution due to the selected
       // tuple.
-      MultiTreeProblem::HybridNodeEvaluateMain(globals, sets, query_results);
+      MultiTreeProblem::HybridNodeEvaluateMain(globals, query_sets, sets,
+					       targets, query_results);
     }
 
     static void QueryNodeNestedLoop
     (typename MultiTreeProblem::MultiTreeGlobal &globals,
-     const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_nodes,
+     const ArrayList<Matrix *> &query_sets,
+     const ArrayList<Matrix *> &sets, const ArrayList<Matrix *> &targets,
+     ArrayList<HybridTree *> &hybrid_nodes,
      ArrayList<QueryTree *> &query_nodes, 
      ArrayList<ReferenceTree *> &reference_nodes, 
      typename MultiTreeProblem::MultiTreeQueryResult &query_results) {
 
+      MultiTreeHelper_<0, MultiTreeProblem::num_reference_sets>::
+	ReferenceNodeNestedLoop(globals, query_sets, sets, targets,
+				hybrid_nodes, query_nodes, reference_nodes,
+				query_results);
     }
 
     static void ReferenceNodeNestedLoop
     (typename MultiTreeProblem::MultiTreeGlobal &globals,
-     const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_nodes,
+     const ArrayList<Matrix *> &query_sets,
+     const ArrayList<Matrix *> &sets, const ArrayList<Matrix *> &targets,
+     ArrayList<HybridTree *> &hybrid_nodes,
      ArrayList<QueryTree *> &query_nodes, 
      ArrayList<ReferenceTree *> &reference_nodes, 
      typename MultiTreeProblem::MultiTreeQueryResult &query_results) {
-
-      MultiTreeProblem::ReferenceNodeEvaluateMain(globals, sets,
-						  query_results);
+      MultiTreeProblem::ReferenceNodeEvaluateMain(globals, query_sets, sets,
+						  targets, query_results);
     }
 
     static void HybridNodeRecursionLoop
-    (const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_nodes,
+    (const ArrayList<Matrix *> &query_sets,
+     const ArrayList<Matrix *> &sets, const ArrayList<Matrix *> &targets,
+     ArrayList<HybridTree *> &hybrid_nodes,
      ArrayList<QueryTree *> &query_nodes,
      ArrayList<ReferenceTree *> &reference_nodes,
      double total_num_tuples, const bool contains_non_leaf_in_the_list,
@@ -369,13 +405,15 @@ class MultiTreeDepthFirst {
 
       MultiTreeHelper_<0, MultiTreeProblem::num_query_sets>::
 	QueryNodeRecursionLoop
-	(sets, hybrid_nodes, query_nodes, reference_nodes, 
+	(query_sets, sets, targets, hybrid_nodes, query_nodes, reference_nodes,
 	 total_num_tuples, contains_non_leaf_in_the_list, query_results,
 	 algorithm_object);
     }
 
     static void QueryNodeRecursionLoop
-    (const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_nodes,
+    (const ArrayList<Matrix *> &query_sets,
+     const ArrayList<Matrix *> &sets, const ArrayList<Matrix *> &targets,
+     ArrayList<HybridTree *> &hybrid_nodes,
      ArrayList<QueryTree *> &query_nodes,
      ArrayList<ReferenceTree *> &reference_nodes,
      double total_num_tuples, const bool contains_non_leaf_in_the_list,
@@ -384,13 +422,15 @@ class MultiTreeDepthFirst {
       
       MultiTreeHelper_<0, MultiTreeProblem::num_reference_sets>::
 	ReferenceNodeRecursionLoop
-	(sets, hybrid_nodes, query_nodes, reference_nodes, 
+	(query_sets, sets, targets, hybrid_nodes, query_nodes, reference_nodes,
 	 total_num_tuples, contains_non_leaf_in_the_list, query_results,
 	 algorithm_object);
     }
-
+    
     static void ReferenceNodeRecursionLoop
-    (const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_nodes,
+    (const ArrayList<Matrix *> &query_sets,
+     const ArrayList<Matrix *> &sets, const ArrayList<Matrix *> &targets,
+     ArrayList<HybridTree *> &hybrid_nodes,
      ArrayList<QueryTree *> &query_nodes,
      ArrayList<ReferenceTree *> &reference_nodes,
      double total_num_tuples, const bool contains_non_leaf_in_the_list,
@@ -405,14 +445,14 @@ class MultiTreeDepthFirst {
 
 	if(new_total_num_tuples > 0) {
 	  algorithm_object->MultiTreeDepthFirstCanonical_
-	    (sets, hybrid_nodes, query_nodes, reference_nodes, query_results,
-	     new_total_num_tuples);
+	    (query_sets, sets, targets, hybrid_nodes, query_nodes,
+	     reference_nodes, query_results, new_total_num_tuples);	  
 	}
       }
       else {
 	algorithm_object->MultiTreeDepthFirstBase_
-	  (sets, hybrid_nodes, query_nodes, reference_nodes, query_results,
-	   total_num_tuples);
+	  (query_sets, sets, targets, hybrid_nodes, query_nodes,
+	   reference_nodes, query_results, total_num_tuples);
       }      
     }
   };
@@ -457,14 +497,18 @@ class MultiTreeDepthFirst {
   }
 
   void MultiTreeDepthFirstBase_
-  (const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_trees,
+  (const ArrayList<Matrix *> &query_sets,
+   const ArrayList<Matrix *> &sets, const ArrayList<Matrix *> &targets,
+   ArrayList<HybridTree *> &hybrid_trees,
    ArrayList<QueryTree *> &query_trees,
    ArrayList<ReferenceTree *> &reference_tress,
    typename MultiTreeProblem::MultiTreeQueryResult &query_results,
    double total_num_tuples);
 
   void MultiTreeDepthFirstCanonical_
-  (const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_trees,
+  (const ArrayList<Matrix *> &query_sets,
+   const ArrayList<Matrix *> &sets, const ArrayList<Matrix *> &targets,
+   ArrayList<HybridTree *> &hybrid_trees,
    ArrayList<QueryTree *> &query_trees,
    ArrayList<ReferenceTree *> &reference_trees,
    typename MultiTreeProblem::MultiTreeQueryResult &query_results,
@@ -476,7 +520,42 @@ class MultiTreeDepthFirst {
   template<typename Tree>
   void PostProcessTree_
   (Tree *node, typename MultiTreeProblem::MultiTreeQueryResult &query_results);
-  
+
+  /** @brief Shuffles a vector according to a given permutation.
+   *
+   *  @param v The vector to be shuffled.
+   *  @param permutation The permutation.
+   */
+  void ShuffleAccordingToPermutation_
+  (Vector &v, const ArrayList<index_t> &permutation) {
+    
+    Vector v_tmp;
+    v_tmp.Init(v.length());
+    for(index_t i = 0; i < v_tmp.length(); i++) {
+      v_tmp[i] = v[permutation[i]];
+    }
+    v.CopyValues(v_tmp);
+  }
+
+  /** @brief Shuffles a vector according to a given permutation.
+   *
+   *  @param v The vector to be shuffled.
+   *  @param permutation The permutation.
+   */
+  void ShuffleAccordingToPermutation_
+  (Matrix &v, const ArrayList<index_t> &permutation) {
+    
+    Matrix v_tmp;
+    v_tmp.Init(v.n_rows(), v.n_cols());
+    for(index_t r = 0; r < v.n_rows(); r++) {
+      for(index_t c = 0; c < v.n_cols(); c++) {
+	v_tmp.set(r, c, v.get(r, permutation[c]));
+      }
+    }
+
+    v.CopyValues(v_tmp);
+  }
+
  public:
 
   MultiTreeDepthFirst() {
@@ -491,35 +570,44 @@ class MultiTreeDepthFirst {
     }
   }
 
-  void Compute(const ArrayList<const Matrix *> *query_sets,
+  void Compute(const ArrayList<const Matrix *> *query_sets_in,
 	       typename MultiTreeProblem::MultiTreeQueryResult
 	       *query_results) {
 
+    ArrayList<Matrix *> query_sets;
     ArrayList<QueryTree *> query_trees;
+    ArrayList<index_t> old_from_new_queries;
+    ArrayList<index_t> new_from_old_queries;
     
     // Build the query tree.
-    if(query_sets != NULL) {
-      index_t previous_size = sets_.size();
-      sets_.Resize(previous_size + query_sets->size());
-      query_trees.Init(query_sets->size());
+    if(query_sets_in != NULL) {
+      query_sets.Init(query_sets_in->size());
+      query_trees.Init(query_sets_in->size());
 
-      for(index_t i = 0; i < query_sets->size(); i++) {
-	sets_[previous_size + i] = new Matrix();
-	sets_[previous_size + i]->Copy(*((*query_sets)[i]));
+      for(index_t i = 0; i < query_sets.size(); i++) {
+	query_sets[i] = new Matrix();
+	query_sets[i]->Copy(*((*query_sets_in)[i]));
 	query_trees[i] = proximity::MakeGenKdTree<double, QueryTree,
-	  proximity::GenKdTreeMedianSplitter>(*(sets_[sets_.size() - 1]), 10,
-					      NULL, NULL);
+	  proximity::GenKdTreeMedianSplitter>(*(query_sets[i]), 10,
+					      &old_from_new_queries,
+					      &new_from_old_queries);
       }
     }
     else {
+      query_sets.Init();
       query_trees.Init();
     }
 
     // Assume that the query is the 0-th index.
-    query_results->Init((sets_[sets_.size() - 1])->n_cols());
+    if(query_sets.size() > 0) {
+      query_results->Init((query_sets[0])->n_cols());
+    }
+    else {
+      query_results->Init((sets_[0])->n_cols());
+    }
 
     // Preprocess the query trees.
-    if(query_sets != NULL) {
+    if(query_sets_in != NULL) {
       PreProcessQueryTree_(query_trees[0]);
     }
     
@@ -531,54 +619,75 @@ class MultiTreeDepthFirst {
     printf("There are %g tuples...\n",
 	   math::BinomialCoefficient((sets_[0])->n_cols() - 1, 
 				     MultiTreeProblem::order));
-    MultiTreeDepthFirstCanonical_(sets_, hybrid_trees_, query_trees,
-				  reference_trees_, *query_results,
-				  total_num_tuples);
+
+    MultiTreeDepthFirstCanonical_(query_sets, sets_, targets_, hybrid_trees_,
+				  query_trees, reference_trees_,
+				  *query_results, total_num_tuples);
 
     // Postprocess the query trees, also postprocessing the final
     // query results and free memory.
-    if(query_sets != NULL) {
+    if(query_sets_in != NULL) {
       PostProcessTree_(query_trees[0], *query_results);
-      for(index_t i = 0; i < query_sets->size(); i++) {
+      for(index_t i = 0; i < query_sets.size(); i++) {
         delete query_trees[i];
-        delete sets_[sets_.size() - 1 - i];
+        delete query_sets[i];
       }
     }
     else {
       PostProcessTree_(hybrid_trees_[0], *query_results);
     }
-    
+
+    // Shuffle back the query results according to its permutation.
+    if(query_sets.size() > 0) {
+      ShuffleAccordingToPermutation_(query_results->final_results,
+				     new_from_old_queries);
+    }
+    else {
+      ShuffleAccordingToPermutation_(query_results->final_results,
+				     new_from_old_hybrids_);
+    }
   }
 
-  void NaiveCompute(const ArrayList<const Matrix *> *query_sets,
+  void NaiveCompute(const ArrayList<const Matrix *> *query_sets_in,
 		    typename MultiTreeProblem::MultiTreeQueryResult
 		    *query_results) {
 
     ArrayList<QueryTree *> query_trees;
+    ArrayList<Matrix *> query_sets;
+    ArrayList<index_t> old_from_new_queries;
+    ArrayList<index_t> new_from_old_queries;
 
     // Build the query tree.
-    if(query_sets != NULL) {
-      index_t previous_size = sets_.size();
-      sets_.Resize(previous_size + query_sets->size());
-      query_trees.Init(query_sets->size());
+    if(query_sets_in != NULL) {
+      query_sets.Init(query_sets_in->size());
+      query_trees.Init(query_sets_in->size());
 
-      for(index_t i = 0; i < query_sets->size(); i++) {
-	sets_[previous_size + i] = new Matrix();
-	sets_[previous_size + i]->Copy(*((*query_sets)[i]));
+      for(index_t i = 0; i < query_sets_in->size(); i++) {
+	query_sets[i] = new Matrix();
+	query_sets[i]->Copy(*((*query_sets_in)[i]));
 	query_trees[i] = proximity::MakeGenKdTree<double,
 	  QueryTree, proximity::GenKdTreeMedianSplitter>
-	  (*(sets_[sets_.size() - 1]), 
-	   ((sets_[sets_.size() - 1])->n_cols()) * 2, NULL, NULL);
+	  (*(query_sets[i]), ((query_sets[i])->n_cols()) * 2, 
+	   &old_from_new_queries, &new_from_old_queries);
       }
     }
     else {
+      query_sets.Init();
       query_trees.Init();
     }
-   
-    // Assume that the query is the last index.
-    query_results->Init((sets_[sets_.size() - 1])->n_cols());
 
-    // Preprocess the query trees.    
+    // Assume that the query is the 0-th index.
+    if(query_sets.size() > 0) {
+      query_results->Init((query_sets[0])->n_cols());
+    }
+    else {
+      query_results->Init((sets_[0])->n_cols());
+    }
+
+    // Preprocess the query trees.
+    if(query_sets_in != NULL) {
+      PreProcessQueryTree_(query_trees[0]);
+    }
 
     // Call the canonical algorithm.
     double total_num_tuples = TotalNumTuples(hybrid_trees_, query_trees,
@@ -588,22 +697,32 @@ class MultiTreeDepthFirst {
     printf("There are %g tuples...\n",
 	   math::BinomialCoefficient((sets_[0])->n_cols() - 1, 
 				     MultiTreeProblem::order));
-    MultiTreeDepthFirstBase_(sets_, hybrid_trees_, query_trees, 
-			     reference_trees_, *query_results,
+    MultiTreeDepthFirstBase_(query_sets, sets_, targets_, hybrid_trees_,
+			     query_trees, reference_trees_, *query_results,
 			     total_num_tuples);
 
     // Postprocess the query trees, also postprocessing the final
     // query results.
-    if(query_sets != NULL) {
+    if(query_sets_in != NULL) {
       PostProcessTree_(query_trees[0], *query_results);
 
-      for(index_t i = 0; i < query_sets->size(); i++) {
+      for(index_t i = 0; i < query_sets.size(); i++) {
 	delete query_trees[i];
-	delete sets_[sets_.size() - 1 - i];
+	delete query_sets[i];
       }
     }
     else {
       PostProcessTree_(hybrid_trees_[0], *query_results);
+    }
+
+    // Shuffle back the query results according to its permutation.
+    if(query_sets.size() > 0) {
+      ShuffleAccordingToPermutation_(query_results->final_results,
+				     new_from_old_queries);
+    }
+    else {
+      ShuffleAccordingToPermutation_(query_results->final_results,
+				     new_from_old_hybrids_);
     }
   }
 
@@ -630,9 +749,16 @@ class MultiTreeDepthFirst {
     // This could potentially be improved by checking which matrices
     // are the same...
     reference_trees_[0] = proximity::MakeGenKdTree<double, ReferenceTree,
-      proximity::GenKdTreeMedianSplitter>(*(sets_[0]), 10, NULL, NULL);
+      proximity::GenKdTreeMedianSplitter>(*(sets_[0]), 10, 
+					  &old_from_new_references_, NULL);
     for(index_t i = 1; i < MultiTreeProblem::num_reference_sets; i++) {
       reference_trees_[i] = reference_trees_[0];
+    }
+
+    // Shuffle the target values according to the permutation
+    // shuffling of the reference points.
+    if(targets != NULL) {
+      ShuffleAccordingToPermutation_(*(targets_[0]), old_from_new_references_);
     }
     
     // Initialize the global parameters.
@@ -679,7 +805,9 @@ class MultiTreeDepthFirst {
     // This could potentially be improved by checking which matrices
     // are the same...
     hybrid_trees_[0] = proximity::MakeGenKdTree<double, HybridTree,
-      proximity::GenKdTreeMedianSplitter>(*(sets_[0]), 10, NULL, NULL);
+      proximity::GenKdTreeMedianSplitter>(*(sets_[0]), 10, 
+					  &old_from_new_hybrids_,
+					  &new_from_old_hybrids_);
     for(index_t i = 1; i < MultiTreeProblem::num_hybrid_sets; i++) {
       hybrid_trees_[i] = hybrid_trees_[0];
     }
