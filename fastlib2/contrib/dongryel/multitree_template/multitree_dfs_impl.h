@@ -142,23 +142,25 @@ void MultiTreeDepthFirst<MultiTreeProblem>::Heuristic_
 
 template<typename MultiTreeProblem>
 void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
-(const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_nodes,
+(const ArrayList<Matrix *> &query_sets,
+ const ArrayList<Matrix *> &sets, const ArrayList<Matrix *> &targets,
+ ArrayList<HybridTree *> &hybrid_nodes,
  ArrayList<QueryTree *> &query_nodes,
  ArrayList<ReferenceTree *> &reference_nodes,
  typename MultiTreeProblem::MultiTreeQueryResult &query_results,
  double total_num_tuples) {
 
   MultiTreeHelper_<0, MultiTreeProblem::num_hybrid_sets>::HybridNodeNestedLoop
-    (globals_, sets, hybrid_nodes, query_nodes, reference_nodes, 
-     query_results);
+    (globals_, query_sets, sets, targets, hybrid_nodes, query_nodes,
+     reference_nodes, query_results);
 
   MultiTreeHelper_<0, MultiTreeProblem::num_query_sets>::QueryNodeNestedLoop
-    (globals_, sets, hybrid_nodes, query_nodes, reference_nodes, 
-     query_results);
+    (globals_, query_sets, sets, targets, hybrid_nodes, query_nodes,
+     reference_nodes, query_results);
 
   MultiTreeHelper_<0, MultiTreeProblem::num_reference_sets>::
-    ReferenceNodeNestedLoop(globals_, sets, hybrid_nodes, query_nodes,
-			    reference_nodes, query_results);
+    ReferenceNodeNestedLoop(globals_, query_sets, sets, targets, hybrid_nodes,
+			    query_nodes, reference_nodes, query_results);
 
   // Add the postponed information to each point, without causing any
   // duplicate information transmission for each "hybrid" node.
@@ -219,7 +221,9 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
 
 template<typename MultiTreeProblem>
 void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
-(const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_nodes,
+(const ArrayList<Matrix *> &query_sets,
+ const ArrayList<Matrix *> &sets, const ArrayList<Matrix *> &targets,
+ ArrayList<HybridTree *> &hybrid_nodes,
  ArrayList<QueryTree *> &query_nodes,
  ArrayList<ReferenceTree *> &reference_nodes,
  typename MultiTreeProblem::MultiTreeQueryResult &query_results,
@@ -241,8 +245,9 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
 
   // Recurse to every combination...
   MultiTreeHelper_<0, MultiTreeProblem::num_hybrid_sets>::
-    HybridNodeRecursionLoop(sets, hybrid_nodes, query_nodes, reference_nodes,
-			    total_num_tuples, false, query_results, this);
+    HybridNodeRecursionLoop(query_sets, sets, targets, hybrid_nodes,
+			    query_nodes, reference_nodes, total_num_tuples,
+			    false, query_results, this);
   return;
 }
 
