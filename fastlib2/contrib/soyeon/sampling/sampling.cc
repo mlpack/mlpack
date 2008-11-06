@@ -35,21 +35,36 @@ Sampling::Shuffle() {
 
 }
 
-Sampling::ExpandSubset(double percent_added_sample) {
+Sampling::ExpandSubset(double percent_added_sample, ArrayList<index_t> *sample_selector_) {
 	if(ind_initial_sampling_==0) {
 		//copy num_initial_sampling 
-		for(index_t i=0; i<num_initial_sampling-1; i++){
-			sample_selector_[i]=shuffled_array[i];
+		for(index_t i=0; i<num_initial_sampling; i++){
+			//check
+			//sample_selector_[i]=shuffled_array[i];
+			//check-what's the difference?
+			sample_selector_.PushBackCopy(shuffled_array[i]);
 		}	//i
-
-
-
-		
-	} else {
+		ind_initial_sampling_=1;
+		num_slected_sample_=num_initial_sampling;
+	}	else {
+			int num_add_sample=0;
+			num_add_sample=math::RoundInt((num_selected_sample_)*(percent_added_sample));
+			if(num_add_sample+num_selected_sample_ >= num_people_){
+				for(index_t i=num_selected_sample_; i<num_people_; i++){
+					sample_selector_.PushbackCopy(shuffled_array[i]);
+					num_selected_sample_=num_people_;
+				}	//i
+			} else {
+				for(index_t i=num_selected_sample_; i<(num_selected_sample_+num_add_sample); i++){
+					sample_selector_.PushBackCopy(shuffled_array[i]);
+					num_selected_sample_+=num_add_sample;
+				}	//i
+			}	//else
 	}	//else
-
 	
 }
+
+//Next-->function for picking the data from selected people 
 
 
 		
