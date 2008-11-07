@@ -33,7 +33,7 @@ void Objective::Init(fx_module *module) {
         start_col, 
         (index_t)info2.get(0,i),
         x);
-    start_col+=info2.get(0,i);
+    start_col+=(index_t)info2.get(0,i);
   }
 
 	const char *data_file3=fx_param_str_req(module_, "data3");
@@ -49,7 +49,7 @@ void Objective::Init(fx_module *module) {
     unknown_x_past_[i].Init(x.n_rows(), (index_t)info3.get(0,i));
     unknown_x_past_[i].CopyColumnFromMat(0, start_col, 
         (index_t)info3.get(0,i), x);
-    start_col+=info3.get(0, i);
+    start_col+=(index_t)info3.get(0, i);
   }
 
 	int num_people=first_stage_x_.size();
@@ -76,11 +76,11 @@ void Objective::Init(fx_module *module) {
 	alpha_weight_=0;  
 }
 
-void Objective::ComputeObjective(Matrix &x, double *objective) {
+void Objective::ComputeObjective(double *objective) {
   Vector betas;
-  betas.Alias(x.ptr(), x.n_rows());
-  double p=x.get(0, num_of_betas_);
-  double q=x.get(0, num_of_betas_+1);
+  betas.Alias(first_stage_x_[1].ptr(), first_stage_x_[1].n_rows());
+  double p=first_stage_x_[1].get(0, num_of_betas_);
+  double q=first_stage_x_[1].get(0, num_of_betas_+1);
   ComputeExpBetasTimesX1_(betas);
   ComputeDeumeratorBetaFunction_(p, q);
   ComputePostponedProbability_(betas, 
@@ -166,12 +166,14 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 			}	//i
 				
 
-
+		for(index_t i=0; i<exp_betas_times_x2_.size(); i++) {
+			exp_betas_times_x2_[i]=0;
+		}
 
 			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
-				exp_betas_times_x2_[n]+=exp(la::Dot(betas.length(), betas.ptr(),
-											 second_stage_x_[n].GetColumnPtr(i) ));
-			}
+				exp_betas_times_x2_[n]+=exp(la::Dot(betas.length(), 
+																betas.ptr(),
+																second_stage_x_[n].GetColumnPtr(i)));			}
 			//conditional_postponed_probability_[n]
 			postponed_probability_[n]+=( (exp_betas_times_x2_[n]/(exp_betas_times_x1_[n]
 																  + exp_betas_times_x2_[n]) )
