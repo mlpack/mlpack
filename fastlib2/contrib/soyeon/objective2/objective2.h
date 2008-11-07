@@ -5,9 +5,9 @@ class Objective {
 friend class ObjectiveTest;
  public:
   void Init(fx_module *module);
-  void ComputeObjective(Matrix &x, double *value);
-	void ComputeGradient(Matrix &x, Vector *gradient);
-	void ComputeHessian(Matrix &x, Matrix *hessian);
+  void ComputeObjective(double *objective);
+	void ComputeGradient(Vector *gradient);
+	void ComputeHessian(Matrix *hessian);
  
  private:
   fx_module *module_;
@@ -36,11 +36,11 @@ friend class ObjectiveTest;
 	ArrayList<index_t> ind_unknown_x_;
 
 
-	ArrayList<index_t> exp_betas_times_x1_;
-	ArrayList<index_t> exp_betas_times_x2_;
+	ArrayList<double> exp_betas_times_x1_;
+	ArrayList<double> exp_betas_times_x2_;
 
 	//ArrayList<index_t> exp_betas_times_x2_tilde_;
-	ArrayList<index_t> postponed_probability_;
+	ArrayList<double> postponed_probability_;
 	//ArrayList<index_t> conditional_postponed_probability_;
 
 	//max num of choices among all
