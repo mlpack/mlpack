@@ -1,49 +1,55 @@
-#include "objective.h"
+#include "objective2.h"
 #include <cmath>
     
-Objective::Init(fx_module *module) {
+void Objective::Init(fx_module *module) {
   module_=module;
   const char *data_file1=fx_param_str_req(module_, "data1");
-  const char *info_file1=fx_param_str_req(omdule_. "info1");
+  const char *info_file1=fx_param_str_req(module_, "info1");
   Matrix x;
   data::Load(data_file1, &x);
+  num_of_betas_=x.n_rows();
   Matrix info1;
-  data::Load(info_file1, &info);
+  data::Load(info_file1, &info1);
   first_stage_x_.Init(info1.n_cols());
   index_t start_col=0;
   for(index_t i=0; i<info1.n_cols(); i++) {
-    first_stage_x_[i].Init(x.n_rows(), info1[i]);
-    first_stage_x_[i].CopyColumnFromMat(0, start_col, info1[i], x);
-    start_col+=info[i];
+    first_stage_x_[i].Init(x.n_rows(), (index_t)info1.get(0, i));
+    first_stage_x_[i].CopyColumnFromMat(0, start_col, 
+        (index_t)info1.get(0,i), x);
+    start_col+=(index_t)info1.get(0, i);
   }
   const char *data_file2=fx_param_str_req(module_, "data2");
-  const char *info_file2=fx_param_str_req(omdule_. "info2");
+  const char *info_file2=fx_param_str_req(module_, "info2");
 	//info1==info2
-  Matrix x;
+  x.Destruct();
   data::Load(data_file2, &x);
   Matrix info2;
   data::Load(info_file2, &info2);
   second_stage_x_.Init(info2.n_cols());
   start_col=0;
   for(index_t i=0; i<info2.n_cols(); i++) {
-    second_stage_x_[i].Init(x.n_rows(), info2[i]);
-    second_stage_x_[i].CopyColumnFromMat(0, start_col, info2[i]);
-    start_col+=info2[i];
+    second_stage_x_[i].Init(x.n_rows(), (index_t)info2.get(0,i));
+    second_stage_x_[i].CopyColumnFromMat(0, 
+        start_col, 
+        (index_t)info2.get(0,i),
+        x);
+    start_col+=info2.get(0,i);
   }
 
 	const char *data_file3=fx_param_str_req(module_, "data3");
-  const char *info_file3=fx_param_str_req(omdule_. "info3");
+  const char *info_file3=fx_param_str_req(module_, "info3");
 	//info1==info2==info3
-  Matrix x;
+  x.Destruct();
   data::Load(data_file3, &x);
   Matrix info3;
   data::Load(info_file3, &info3);
   unknown_x_past_.Init(info3.n_cols());
   start_col=0;
   for(index_t i=0; i<info3.n_cols(); i++) {
-    unknown_x_past_[i].Init(x.n_rows(), info3[i]);
-    unknown_x_past_[i].CopyColumnFromMat(0, start_col, info3[i]);
-    start_col+=info3[i];
+    unknown_x_past_[i].Init(x.n_rows(), (index_t)info3.get(0,i));
+    unknown_x_past_[i].CopyColumnFromMat(0, start_col, 
+        (index_t)info3.get(0,i), x);
+    start_col+=info3.get(0, i);
   }
 
 	int num_people=first_stage_x_.size();
@@ -67,11 +73,23 @@ Objective::Init(fx_module *module) {
 	num_of_t_beta_fn_=0;
 	t_weight_=0;
 	num_of_alphas_=0;
-	alpha_wieght_=0;  
+	alpha_weight_=0;  
 }
 
-Objective::ComputeObjective(Matrix &x, double *objective) {
-  *objective = ComputeTerm1_() + ComputeTerm2_() + ComputeTerm3_();
+void Objective::ComputeObjective(Matrix &x, double *objective) {
+  Vector betas;
+  betas.Alias(x.ptr(), x.n_rows());
+  double p=x.get(0, num_of_betas_);
+  double q=x.get(0, num_of_betas_+1);
+  ComputeExpBetasTimesX1_(betas);
+  ComputeDeumeratorBetaFunction_(p, q);
+  ComputePostponedProbability_(betas, 
+                               p, 
+                               q);
+
+  *objective = ComputeTerm1_(betas) 
+               + ComputeTerm2_(); 
+               + ComputeTerm3_();
 }
 
 double Objective::ComputeTerm1_(Vector &betas) {
@@ -89,7 +107,7 @@ double Objective::ComputeTerm1_(Vector &betas) {
   return term1;
 }
 
-double Objective::ComputeTerm2_(Vector &betas, double p, double q) {
+double Objective::ComputeTerm2_() {
   double term2=0;
   for(index_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]<0) {
@@ -102,7 +120,7 @@ double Objective::ComputeTerm2_(Vector &betas, double p, double q) {
   return term2;
 }
 
-double Objecitve::ComputeTerm3_() {
+double Objective::ComputeTerm3_() {
   double term3=0;
   for(index_t n=0; n<first_stage_x_.size(); n++) {
     if (second_stage_y_[n]<0) {
@@ -122,14 +140,14 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 	double numerator=0;
 	//need to specify
 	num_of_alphas_=10;
-	alpha_weight_=1/num_of_alphas;
+	alpha_weight_=1/num_of_alphas_;
 	double exp_betas_times_x2=0;
   for(index_t i=0; i<postponed_probability_.size(); i++) {
     postponed_probability_[i]=0;
   }
   
-	for(index_t n=0; n<first_stage_x_.size; n++){
-		for(index_t l=0; l<num_of_alphas-1; ;++){
+	for(index_t n=0; n<first_stage_x_.size(); n++){
+		for(index_t l=0; l<num_of_alphas_-1; l++){
 			double alpha_temp;
 	    double beta_function_temp;
       alpha_temp=(l+1)*(alpha_weight_);
@@ -140,9 +158,9 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 			//Calculate x^2_{ni}(alpha_l)
 			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
 				for(index_t j=ind_unknown_x_[0]; j<ind_unknown_x_.size(); j++){
-					exponential_temp=alpha_temp*first_stage_x_[n].get(i, j)
-													+(alpha_temp)*(1-alpha_temp)*unknown_x_past[n].get(i,1)
-													+(alpha_temp)*pow((1-alpha_temp),2)*unk_x_past[n].get(i,2);
+					double exponential_temp=alpha_temp*first_stage_x_[n].get(i, j)
+													+(alpha_temp)*(1-alpha_temp)*unknown_x_past_[n].get(i,1)
+													+(alpha_temp)*pow((1-alpha_temp),2)*unknown_x_past_[n].get(i,2);
 					second_stage_x_[n].set(j-1, i, exponential_temp);
 				}	//j
 			}	//i
@@ -151,7 +169,7 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 
 
 			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
-				exp_betas_times_x2_[n]+=exp(la::Dot(betas.size(), betas.ptr(),
+				exp_betas_times_x2_[n]+=exp(la::Dot(betas.length(), betas.ptr(),
 											 second_stage_x_[n].GetColumnPtr(i) ));
 			}
 			//conditional_postponed_probability_[n]
@@ -165,31 +183,33 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 }
 
 void Objective::ComputeExpBetasTimesX1_(Vector &betas) {
-  exp_betas_times_x1_.SetZero();
+  for(index_t i=0; i<exp_betas_times_x1_.size(); i++) {
+    exp_betas_times_x1_[i]=0;
+  }
   //double sum=0;
 	for(index_t n=0; n<first_stage_x_.size(); n++){
 		for(index_t j=0; j<first_stage_x_[n].n_cols(); j++) {
 			exp_betas_times_x1_[n]+=exp(la::Dot(betas.length(), 
-															beta.ptr(), 
-															first_stage_y_[n].GetColumnPtr(j)));
+															betas.ptr(), 
+															first_stage_x_[n].GetColumnPtr(j)));
 		}
   }
 }
 
 
-void Objective::ComputeDeumeratorBetaFunction_(double p, doulbe q) {
+void Objective::ComputeDeumeratorBetaFunction_(double p, double q) {
 	denumerator_beta_function_=0;
 	//Need to choose number of t points to approximate integral
 	num_of_t_beta_fn_=10;
-	double t_weight_=1/(num_of_t_beta_fn);
+	double t_weight_=1/(num_of_t_beta_fn_);
 	double t_temp;
-	for(index t tnum=0; tnum<num_of_t_beta_fn_-1; tnum++){
+	for(index_t tnum=0; tnum<num_of_t_beta_fn_-1; tnum++){
 		t_temp=(tnum+1)*(t_weight_);
 
 		//double pow( double base, double exp );
 		denumerator_beta_function_+=pow(t_temp, p-1)*pow((1-t_temp), q-1);
 	}
-	denumerator*=(t_weight_);
+	denumerator_beta_function_*=(t_weight_);
 }
 /*
 //////////////////////////////////////////////////////////
