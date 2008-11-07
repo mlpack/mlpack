@@ -10,6 +10,7 @@ friend class ObjectiveTest;
 	void ComputeHessian(Matrix &x, Matrix *hessian);
  
  private:
+  fx_module *module_;
   ArrayList<Matrix> first_stage_x_; 
 	ArrayList<Matrix> second_stage_x_; 
 	//first_stage_x_.size()==second_stage_x_.size()
@@ -36,6 +37,8 @@ friend class ObjectiveTest;
 
 
 	ArrayList<index_t> exp_betas_times_x1_;
+	ArrayList<index_t> exp_betas_times_x2_;
+
 	//ArrayList<index_t> exp_betas_times_x2_tilde_;
 	ArrayList<index_t> postponed_probability_;
 	//ArrayList<index_t> conditional_postponed_probability_;
@@ -45,21 +48,20 @@ friend class ObjectiveTest;
 	//int max_number_alternatives_;
 	//number of positive elements in ind_unk_x
 	//int num_unknown_x_;
-
-	
+  index_t num_of_betas_;	
 	double denumerator_beta_function_;
-	int num_of_t_beta_fn_;
+	index_t num_of_t_beta_fn_;
 	double t_weight_;
-	int num_of_alphas_;
-	double alpha_wieght_;
+	index_t num_of_alphas_;
+	double alpha_weight_;
 
   double ComputeTerm1_(Vector &betas);
-  double ComputeTerm2_(Vector &betas, double p, double q);
+  double ComputeTerm2_();
   double ComputeTerm3_();
 	void ComputePostponedProbability_(Vector &betas, double p, double q);
 	void ComputeExpBetasTimesX1_(Vector &betas);
 	//void ComputeExpBetasTimesX2_tilde_(Vector &betas);
-	void ComputeDeumeratorBetaFunction_(double p, doulbe q);
+	void ComputeDeumeratorBetaFunction_(double p, double q);
 	//void ComputeMaxSizeXBar_();
 
 	/*
