@@ -42,9 +42,9 @@ friend class ObjectiveTest;
 
 	//max num of choices among all
 	//unk_x_past_.size==max_number_alternatives_
-	int max_number_alternatives_;
+	//int max_number_alternatives_;
 	//number of positive elements in ind_unk_x
-	int num_unknown_x_;
+	//int num_unknown_x_;
 
 	
 	double denumerator_beta_function_;
@@ -62,6 +62,7 @@ friend class ObjectiveTest;
 	void ComputeDeumeratorBetaFunction_(double p, doulbe q);
 	//void ComputeMaxSizeXBar_();
 
+	/*
 ///////////////////////////////////////////////////////
 
 	//add new things from here for objective2 (Compute gradient)
@@ -137,6 +138,8 @@ friend class ObjectiveTest;
 	double ComputeSecondDerivativePQTerm1_();
 	double ComputeSecondDerivativePQTerm2_();
 	double ComputeSecondDerivativePQTerm3_();
+
+	*/
 };
 
 
