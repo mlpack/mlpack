@@ -102,14 +102,14 @@ void Objective::ComputeObjective(double *objective) {
                                p, 
                                q);
 
-	/* debug
+	
 
-  //*objective = ComputeTerm1_(betas) 
-  //             + ComputeTerm2_(); 
-  //             + ComputeTerm3_();
-debug */
+  *objective = ComputeTerm1_(betas) 
+               + ComputeTerm2_(); 
+               + ComputeTerm3_();
 
-	*objective=2;
+
+	//*objective=2;
 
 	
 	
@@ -163,8 +163,8 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 	double numerator=0;
 	//need to specify
 	num_of_alphas_=10;
-	alpha_weight_=1/num_of_alphas_;
-	double exp_betas_times_x2=0;
+	alpha_weight_=(double)1/num_of_alphas_;
+	//double exp_betas_times_x2=0;
   for(index_t i=0; i<postponed_probability_.size(); i++) {
     postponed_probability_[i]=0;
   }
@@ -197,10 +197,14 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 				exp_betas_times_x2_[n]+=exp(la::Dot(betas.length(), 
 																betas.ptr(),
 																second_stage_x_[n].GetColumnPtr(i)));			}
+			//cout<<"exp_betas_times_x2_"<<exp_betas_times_x2_[n]<<endl;
 			//conditional_postponed_probability_[n]
 			postponed_probability_[n]+=( (exp_betas_times_x2_[n]/(exp_betas_times_x1_[n]
 																  + exp_betas_times_x2_[n]) )
-       *beta_function_temp );	
+																		*beta_function_temp );	
+			//cout<<"beta_fn_temp "<<beta_function_temp<<endl;
+			//cout<<"postpond_prob "<<postponed_probability_[n]<<endl;
+			//cout<<"denumerator_beta_function_ "<<denumerator_beta_function_<<endl;
    
     }	//alpha
 
@@ -229,15 +233,17 @@ void Objective::ComputeDeumeratorBetaFunction_(double p, double q) {
 	denumerator_beta_function_=0;
 	//Need to choose number of t points to approximate integral
 	num_of_t_beta_fn_=10;
-	double t_weight_=1/(num_of_t_beta_fn_);
+	t_weight_=(double)1/(num_of_t_beta_fn_);
 	double t_temp;
 	for(index_t tnum=0; tnum<num_of_t_beta_fn_-1; tnum++){
 		t_temp=(tnum+1)*(t_weight_);
-
+		
 		//double pow( double base, double exp );
 		denumerator_beta_function_+=pow(t_temp, p-1)*pow((1-t_temp), q-1);
+	
 	}
 	denumerator_beta_function_*=(t_weight_);
+	
 }
 /*
 //////////////////////////////////////////////////////////
@@ -315,7 +321,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas){
 	double numerator=0;
 	//need to specify
 	num_of_alphas_=10;
-	alpha_weight_=1/num_of_alphas;
+	alpha_weight_=(double)1/num_of_alphas;
 
 	exp_betas_times_x2_.SetZero();
 	second_stage_dot_logit_.SetZero();
@@ -677,8 +683,8 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 
 	num_of_alphas_=10;
 	num_of_t_beta_fn_=10;
-	alpha_weight_=1/num_of_alphas;
-	t_weight_=1/num_of_t_beta_fn;
+	alpha_weight_=(double)1/num_of_alphas;
+	t_weight_=(double)1/num_of_t_beta_fn;
 
 	//check - don't need to initilize memeber variable here
 	sum_first_derivative_p_beta_fn_.SetZero();
