@@ -1,17 +1,9 @@
 librule(
     name = "lprcde",                         # this line can be safely omitted
     sources = [],                            # files that must be compiled
-    headers = ["nwrcde_common.h",
-               "nwrcde_delta.h",
-               "nwrcde_error.h",
-               "nwrcde.h",
-               "nwrcde_global.h",
-               "nwrcde_impl.h",
-               "nwrcde_query_postponed.h",
-               "nwrcde_query_result.h",
-               "nwrcde_query_summary.h",
-               "nwrcde_stat.h"],             # include files part of the 'lib'
+    headers = ["nwrcde_problem.h"],
     deplibs = ["fastlib:fastlib_int",
+               "contrib/dongryel/multitree_template:multitree_template",
                "contrib/dongryel/proximity_project:proximity_project",
                "mlpack/series_expansion:series_expansion"]
     )

@@ -210,7 +210,7 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
       qnode->stat().summary.Accumulate(query_results, q);
 
       // Increment the number of (n - 1) tuples pruned.
-      query_results.n_pruned[q] += total_n_minus_one_tuples_[i];
+      query_results.UpdatePrunedComponents(reference_nodes, q);
     }
 
     // Clear postponed information.
@@ -230,6 +230,7 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
  double total_num_tuples) {
 
   if(MultiTreeProblem::ConsiderTupleExact(globals_, query_results,
+					  query_sets, sets, targets,
 					  hybrid_nodes, query_nodes,
 					  reference_nodes, total_num_tuples,
 					  total_n_minus_one_tuples_root_,
@@ -267,23 +268,44 @@ void MultiTreeDepthFirst<MultiTreeProblem>::PreProcessQueryTree_(Tree *node) {
 
 template<typename MultiTreeProblem>
 template<typename Tree>
+void MultiTreeDepthFirst<MultiTreeProblem>::PreProcessReferenceTree_
+(Tree *node, index_t reference_tree_index) {
+
+  if(node->is_leaf()) {
+
+    node->stat().PostInit(node->bound(), globals_.kernel_aux, sets_, targets_,
+			  node->begin(), node->count());
+  }
+  else {
+    PreProcessReferenceTree_(node->left(), reference_tree_index);
+    PreProcessReferenceTree_(node->right(), reference_tree_index);
+
+    node->stat().PostInit(node->bound(), globals_.kernel_aux, sets_, targets_,
+			  node->begin(), node->count(), node->left()->stat(),
+			  node->right()->stat());
+  }
+}
+
+template<typename MultiTreeProblem>
+template<typename Tree>
 void MultiTreeDepthFirst<MultiTreeProblem>::PostProcessTree_
-(Tree *node, typename MultiTreeProblem::MultiTreeQueryResult &query_results) {
+(const Matrix &qset, Tree *node, 
+ typename MultiTreeProblem::MultiTreeQueryResult &query_results) {
   
   if(node->is_leaf()) {
     for(index_t i = node->begin(); i < node->end(); i++) {
-      query_results.ApplyPostponed(node->stat().postponed, i);
+      query_results.FinalPush(qset, node->stat(), i);
       query_results.PostProcess(i);
     }
   }
   else {
 
     // Push down postponed contributions to the left and the right.
-    node->left()->stat().postponed.ApplyPostponed(node->stat().postponed);
-    node->right()->stat().postponed.ApplyPostponed(node->stat().postponed);
+    node->stat().FinalPush(node->left()->stat());
+    node->stat().FinalPush(node->right()->stat());
     
-    PostProcessTree_(node->left(), query_results);
-    PostProcessTree_(node->right(), query_results);
+    PostProcessTree_(qset, node->left(), query_results);
+    PostProcessTree_(qset, node->right(), query_results);
   }
 
   node->stat().postponed.SetZero();
