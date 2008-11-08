@@ -76,11 +76,11 @@ void Objective::Init(fx_module *module) {
 	alpha_weight_=0;  
 }
 
-void Objective::ComputeObjective(double *objective) {
+void Objective::ComputeObjective(Matrix &x, double *objective) {
   Vector betas;
-  betas.Alias(first_stage_x_[1].ptr(), first_stage_x_[1].n_rows());
-  double p=first_stage_x_[1].get(0, num_of_betas_);
-  double q=first_stage_x_[1].get(0, num_of_betas_+1);
+  betas.Alias(x.ptr(), first_stage_x_[0].n_rows());
+  double p=x.get(0, num_of_betas_);
+  double q=x.get(0, num_of_betas_+1);
   ComputeExpBetasTimesX1_(betas);
   ComputeDeumeratorBetaFunction_(p, q);
   ComputePostponedProbability_(betas, 
