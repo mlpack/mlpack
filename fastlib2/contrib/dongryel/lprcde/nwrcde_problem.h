@@ -225,9 +225,6 @@ class NWRCdeProblem {
 	  approximation.order_farfield = -1;
 	approximation.sum_e = 0;
       }
-      else {
-      }
-
     }
     
     template<typename TGlobal, typename QueryTree, typename ReferenceTree,
