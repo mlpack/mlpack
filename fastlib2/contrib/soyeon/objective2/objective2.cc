@@ -1,5 +1,6 @@
 #include "objective2.h"
 #include <cmath>
+#include "iostream.h"
     
 void Objective::Init(fx_module *module) {
   module_=module;
@@ -18,6 +19,7 @@ void Objective::Init(fx_module *module) {
         (index_t)info1.get(0,i), x);
     start_col+=(index_t)info1.get(0, i);
   }
+	
   const char *data_file2=fx_param_str_req(module_, "data2");
   const char *info_file2=fx_param_str_req(module_, "info2");
 	//info1==info2
@@ -51,17 +53,20 @@ void Objective::Init(fx_module *module) {
         (index_t)info3.get(0,i), x);
     start_col+=(index_t)info3.get(0, i);
   }
+	
 
-	int num_people=first_stage_x_.size();
+	index_t num_people=first_stage_x_.size();
+	
 
+	
 	//Initilize memeber variables
 	first_stage_y_.Init(num_people);
-	first_stage_y_[1]=-1;
-	first_stage_y_[2]=2;
+	first_stage_y_[0]=-1;
+	first_stage_y_[1]=2;
 
 	second_stage_y_.Init(num_people);
-	second_stage_y_[1]=1;
-	second_stage_y_[2]=-1;
+	second_stage_y_[0]=1;
+	second_stage_y_[1]=-1;
 
 	ind_unknown_x_.Init(x.n_cols()/2);
 	ind_unknown_x_[0]=3;
@@ -74,22 +79,39 @@ void Objective::Init(fx_module *module) {
 	t_weight_=0;
 	num_of_alphas_=0;
 	alpha_weight_=0;  
+	
 }
 
-void Objective::ComputeObjective(Matrix &x, double *objective) {
-  Vector betas;
-  betas.Alias(x.ptr(), first_stage_x_[0].n_rows());
-  double p=x.get(0, num_of_betas_);
-  double q=x.get(0, num_of_betas_+1);
-  ComputeExpBetasTimesX1_(betas);
+//void Objective::ComputeObjective(Matrix &x, double *objective) {
+void Objective::ComputeObjective(double *objective) { 
+	
+	Vector betas;
+  //betas.Alias(x.ptr(), x.n_rows());
+	betas.Alias(first_stage_x_[0].ptr(), first_stage_x_[0].n_rows());
+  //double p=first_stage_x_[1].get(0, 0);
+  //double q=first_stage_x_[1].get(0, 1);
+  double p=2;
+	double q=5;
+	
+	ComputeExpBetasTimesX1_(betas);
+	
   ComputeDeumeratorBetaFunction_(p, q);
+	
   ComputePostponedProbability_(betas, 
                                p, 
                                q);
 
-  *objective = ComputeTerm1_(betas) 
-               + ComputeTerm2_(); 
-               + ComputeTerm3_();
+	/* debug
+
+  //*objective = ComputeTerm1_(betas) 
+  //             + ComputeTerm2_(); 
+  //             + ComputeTerm3_();
+debug */
+
+	*objective=2;
+
+	
+	
 }
 
 double Objective::ComputeTerm1_(Vector &betas) {
@@ -154,7 +176,7 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 			beta_function_temp=pow(alpha_temp, p-1)*
           pow((1-alpha_temp), q-1)/denumerator_beta_function_;
 		
-			
+			/* debug
 			//Calculate x^2_{ni}(alpha_l)
 			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
 				for(index_t j=ind_unknown_x_[0]; j<ind_unknown_x_.size(); j++){
@@ -179,6 +201,8 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 																  + exp_betas_times_x2_[n]) )
 																*beta_function_temp );			
 		}	//alpha
+
+		dubeg */
 		postponed_probability_[n]*=alpha_weight_;	
 	}	//n
 
