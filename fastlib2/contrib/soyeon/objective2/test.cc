@@ -9,9 +9,10 @@ class ObjectiveTest {
   void Test1() {
     objective.Init(module_);
 		double dummy_objective;
-    Matrix x;
-    objective.ComputeObjective(x, &dummy_objective );
-		NOTIFY("The objective is %lg", dummy_objective);
+    //Matrix x;
+    objective.ComputeObjective(&dummy_objective );
+		NOTIFY("The objective is %g", dummy_objective);
+		//printf("The objective is %g", dummy_objective);
   }
   void TestAll() {
     Test1();
