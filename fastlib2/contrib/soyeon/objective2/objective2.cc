@@ -72,6 +72,7 @@ void Objective::Init(fx_module *module) {
 	ind_unknown_x_[0]=3;
 
 	exp_betas_times_x1_.Init(num_people);
+  exp_betas_times_x2_.Init(num_people);
 	postponed_probability_.Init(num_people);
 
 	denumerator_beta_function_=0;
@@ -176,7 +177,7 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 			beta_function_temp=pow(alpha_temp, p-1)*
           pow((1-alpha_temp), q-1)/denumerator_beta_function_;
 		
-			/* debug
+			
 			//Calculate x^2_{ni}(alpha_l)
 			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
 				for(index_t j=ind_unknown_x_[0]; j<ind_unknown_x_.size(); j++){
@@ -188,9 +189,9 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 			}	//i
 				
 
-		for(index_t i=0; i<exp_betas_times_x2_.size(); i++) {
-			exp_betas_times_x2_[i]=0;
-		}
+		  for(index_t i=0; i<exp_betas_times_x2_.size(); i++) {
+			  exp_betas_times_x2_[i]=0;
+		  }
 
 			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
 				exp_betas_times_x2_[n]+=exp(la::Dot(betas.length(), 
@@ -199,10 +200,11 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 			//conditional_postponed_probability_[n]
 			postponed_probability_[n]+=( (exp_betas_times_x2_[n]/(exp_betas_times_x1_[n]
 																  + exp_betas_times_x2_[n]) )
-																*beta_function_temp );			
-		}	//alpha
+       *beta_function_temp );	
+   
+    }	//alpha
 
-		dubeg */
+
 		postponed_probability_[n]*=alpha_weight_;	
 	}	//n
 
