@@ -26,6 +26,8 @@ class AxilrodTellerForceProblem {
     Vector n_pruned;
     
     Vector used_error;
+
+    Vector probabilistic_used_error;
     
    public:
 
@@ -34,14 +36,17 @@ class AxilrodTellerForceProblem {
 				    const ArrayList<Matrix *> &sets,
 				    ArrayList<Tree *> &nodes,
 				    const Vector &total_n_minus_one_tuples) {
-      
+
+      // Clear the deterministic error component.
+      used_error.SetZero();
+
       // If any of the distance evaluation resulted in zero minimum
       // distance, then return false.
       globals.kernel_aux.ComputeMonteCarloEstimates
 	(globals, sets, nodes, total_n_minus_one_tuples,
 	 negative_force_vector_e, l1_norm_negative_force_vector_u,
 	 l1_norm_positive_force_vector_l, positive_force_vector_e, n_pruned,
-	 used_error);
+	 probabilistic_used_error);
       
     }
 
@@ -66,6 +71,7 @@ class AxilrodTellerForceProblem {
       l1_norm_positive_force_vector_l.SetZero();
       positive_force_vector_e.SetZero();
       used_error.SetZero();
+      probabilistic_used_error.SetZero();
     }
 
     void Init(const Vector &total_n_minus_one_tuples) {
@@ -77,7 +83,9 @@ class AxilrodTellerForceProblem {
       positive_force_vector_e.Init(3, 3);
       n_pruned.Init(3);
       used_error.Init(3);
+      probabilistic_used_error.Init(3);
 
+      // Copy the number of pruned tuples...
       n_pruned.CopyValues(total_n_minus_one_tuples);
 
       // Initializes to zeros...
@@ -101,6 +109,8 @@ class AxilrodTellerForceProblem {
     
     double used_error;
 
+    double probabilistic_used_error;
+
     void ApplyDelta(const MultiTreeDelta &delta_in, index_t node_index) {
       la::AddTo(3, delta_in.negative_force_vector_e.GetColumnPtr(node_index),
 		negative_force_vector_e.ptr());
@@ -112,6 +122,9 @@ class AxilrodTellerForceProblem {
 		positive_force_vector_e.ptr());
       n_pruned += delta_in.n_pruned[node_index];
       used_error += delta_in.used_error[node_index];
+      probabilistic_used_error = 
+	sqrt(math::Sqr(probabilistic_used_error) +
+	     math::Sqr(delta_in.probabilistic_used_error[node_index]));
     }
 
     void ApplyPostponed(const MultiTreeQueryPostponed &postponed_in) {
@@ -125,6 +138,9 @@ class AxilrodTellerForceProblem {
 		positive_force_vector_e.ptr());
       n_pruned += postponed_in.n_pruned;
       used_error += postponed_in.used_error;     
+      probabilistic_used_error =
+	sqrt(math::Sqr(probabilistic_used_error) +
+	     math::Sqr(postponed_in.probabilistic_used_error));
     }
 
     void SetZero() {
@@ -134,6 +150,7 @@ class AxilrodTellerForceProblem {
       positive_force_vector_e.SetZero();
       n_pruned = 0;
       used_error = 0;
+      probabilistic_used_error = 0;
     }
 
     void Init() {
@@ -158,11 +175,14 @@ class AxilrodTellerForceProblem {
     
     double used_error_u;
 
+    double probabilistic_used_error_u;
+
     OT_DEF_BASIC(MultiTreeQuerySummary) {
       OT_MY_OBJECT(l1_norm_negative_force_vector_u);
       OT_MY_OBJECT(l1_norm_positive_force_vector_l);
       OT_MY_OBJECT(n_pruned_l);
       OT_MY_OBJECT(used_error_u);
+      OT_MY_OBJECT(probabilistic_used_error_u);
     }
 
    public:
@@ -179,6 +199,9 @@ class AxilrodTellerForceProblem {
 	std::min(n_pruned_l, query_results.n_pruned[q_index]);
       used_error_u =
 	std::max(used_error_u, query_results.used_error[q_index]);
+      probabilistic_used_error_u =
+	std::max(probabilistic_used_error_u,
+		 query_results.probabilistic_used_error[q_index]);
     }
 
     void SetZero() {
@@ -186,6 +209,7 @@ class AxilrodTellerForceProblem {
       l1_norm_positive_force_vector_l = 0;
       n_pruned_l = 0;
       used_error_u = 0;
+      probabilistic_used_error_u = 0;
     }
     
     void ApplyDelta(const MultiTreeDelta &delta_in, index_t delta_index) {
@@ -203,6 +227,9 @@ class AxilrodTellerForceProblem {
 	postponed_in.l1_norm_positive_force_vector_l;
       n_pruned_l += postponed_in.n_pruned;
       used_error_u += postponed_in.used_error;
+      probabilistic_used_error_u =
+	sqrt(math::Sqr(probabilistic_used_error_u) +
+	     math::Sqr(postponed_in.probabilistic_used_error));
     }
 
     void Accumulate(const MultiTreeQuerySummary &summary_in) {
@@ -214,6 +241,9 @@ class AxilrodTellerForceProblem {
 		 summary_in.l1_norm_positive_force_vector_l);
       n_pruned_l = std::min(n_pruned_l, summary_in.n_pruned_l);
       used_error_u = std::max(used_error_u, summary_in.used_error_u);
+      probabilistic_used_error_u = 
+	std::max(probabilistic_used_error_u,
+		 summary_in.probabilistic_used_error_u);
     }
 
     void StartReaccumulate() {
@@ -221,6 +251,7 @@ class AxilrodTellerForceProblem {
       l1_norm_positive_force_vector_l = DBL_MAX;
       n_pruned_l = DBL_MAX;
       used_error_u = 0;
+      probabilistic_used_error_u = 0;
     }
 
   };
@@ -312,6 +343,8 @@ class AxilrodTellerForceProblem {
     
     Vector used_error;
 
+    Vector probabilistic_used_error;
+
     /** @brief The number of finite-difference prunes.
      */
     int num_finite_difference_prunes;
@@ -328,6 +361,7 @@ class AxilrodTellerForceProblem {
       OT_MY_OBJECT(final_results);
       OT_MY_OBJECT(n_pruned);
       OT_MY_OBJECT(used_error);
+      OT_MY_OBJECT(probabilistic_used_error);
       OT_MY_OBJECT(num_finite_difference_prunes);
       OT_MY_OBJECT(num_monte_carlo_prunes);
     }
@@ -436,6 +470,9 @@ class AxilrodTellerForceProblem {
 	postponed_in.l1_norm_negative_force_vector_u;
       n_pruned[q_index] += postponed_in.n_pruned;
       used_error[q_index] += postponed_in.used_error;
+      probabilistic_used_error[q_index] =
+	sqrt(math::Sqr(probabilistic_used_error[q_index]) +
+	     math::Sqr(postponed_in.probabilistic_used_error));
     }
 
     void Init(int num_queries) {
@@ -446,7 +483,8 @@ class AxilrodTellerForceProblem {
       final_results.Init(3, num_queries);
       n_pruned.Init(num_queries);
       used_error.Init(num_queries);
-
+      probabilistic_used_error.Init(num_queries);
+      
       SetZero();
     }
 
@@ -484,6 +522,7 @@ class AxilrodTellerForceProblem {
       final_results.SetZero();
       n_pruned.SetZero();
       used_error.SetZero();
+      probabilistic_used_error.SetZero();
       num_finite_difference_prunes = 0;
       num_monte_carlo_prunes = 0;
     }
@@ -536,7 +575,7 @@ class AxilrodTellerForceProblem {
 
   };
 
-  /** @brief The order of interaction is 3-tuple problem. I
+  /** @brief The order of interaction is 3-tuple problem.
    */
   static const int order = 3;
 
@@ -588,7 +627,9 @@ class AxilrodTellerForceProblem {
 	if((AxilrodTellerForceProblem::relative_error_ *
 	    (new_summary.l1_norm_negative_force_vector_u +
 	     new_summary.l1_norm_positive_force_vector_l) -
-	    new_summary.used_error_u) * ratio < delta.used_error[i]) {
+	    (new_summary.used_error_u +
+	     new_summary.probabilistic_used_error_u)) * ratio
+	   < delta.used_error[i]) {
 	  
 	  return false;
 	}
@@ -645,7 +686,9 @@ class AxilrodTellerForceProblem {
 	if((AxilrodTellerForceProblem::relative_error_ *
 	    (new_summary.l1_norm_negative_force_vector_u +
 	     new_summary.l1_norm_positive_force_vector_l) -
-	    new_summary.used_error_u) * ratio < delta.used_error[i]) {
+	    (new_summary.used_error_u +
+	     new_summary.probabilistic_used_error_u)) * ratio <
+	   delta.probabilistic_used_error[i]) {
 	  
 	  return false;
 	}
