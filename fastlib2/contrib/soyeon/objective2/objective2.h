@@ -5,7 +5,7 @@ class Objective {
 friend class ObjectiveTest;
  public:
   void Init(fx_module *module);
-  void ComputeObjective(double *objective);
+  void ComputeObjective(Matrix &x, double *objective);
 	void ComputeGradient(Vector *gradient);
 	void ComputeHessian(Matrix *hessian);
  
