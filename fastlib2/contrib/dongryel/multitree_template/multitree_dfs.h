@@ -518,8 +518,12 @@ class MultiTreeDepthFirst {
   void PreProcessQueryTree_(Tree *node);
 
   template<typename Tree>
+  void PreProcessReferenceTree_(Tree *node, index_t reference_tree_index);
+
+  template<typename Tree>
   void PostProcessTree_
-  (Tree *node, typename MultiTreeProblem::MultiTreeQueryResult &query_results);
+  (const Matrix &qset, Tree *node,
+   typename MultiTreeProblem::MultiTreeQueryResult &query_results);
 
   /** @brief Shuffles a vector according to a given permutation.
    *
@@ -545,15 +549,11 @@ class MultiTreeDepthFirst {
   void ShuffleAccordingToPermutation_
   (Matrix &v, const ArrayList<index_t> &permutation) {
     
-    Matrix v_tmp;
-    v_tmp.Init(v.n_rows(), v.n_cols());
-    for(index_t r = 0; r < v.n_rows(); r++) {
-      for(index_t c = 0; c < v.n_cols(); c++) {
-	v_tmp.set(r, c, v.get(r, permutation[c]));
-      }
+    for(index_t c = 0; c < v.n_cols(); c++) {
+      Vector column_vector;
+      v.MakeColumnVector(c, &column_vector);
+      ShuffleAccordingToPermutation_(column_vector, permutation);
     }
-
-    v.CopyValues(v_tmp);
   }
 
  public:
@@ -567,6 +567,18 @@ class MultiTreeDepthFirst {
     if(hybrid_trees_.size() > 0) {
       delete hybrid_trees_[0];
       delete sets_[0];
+    }
+
+    if(reference_trees_.size() > 0) {
+      for(index_t i = 0; i < reference_trees_.size(); i++) {
+	delete reference_trees_[i];
+      }
+    }
+    
+    if(targets_.size() > 0) {
+      for(index_t i = 0; i < targets_.size(); i++) {
+	delete targets_[i];
+      }
     }
   }
 
@@ -627,14 +639,14 @@ class MultiTreeDepthFirst {
     // Postprocess the query trees, also postprocessing the final
     // query results and free memory.
     if(query_sets_in != NULL) {
-      PostProcessTree_(query_trees[0], *query_results);
+      PostProcessTree_(*(query_sets[0]), query_trees[0], *query_results);
       for(index_t i = 0; i < query_sets.size(); i++) {
         delete query_trees[i];
         delete query_sets[i];
       }
     }
     else {
-      PostProcessTree_(hybrid_trees_[0], *query_results);
+      PostProcessTree_(*(sets_[0]), hybrid_trees_[0], *query_results);
     }
 
     // Shuffle back the query results according to its permutation.
@@ -704,7 +716,7 @@ class MultiTreeDepthFirst {
     // Postprocess the query trees, also postprocessing the final
     // query results.
     if(query_sets_in != NULL) {
-      PostProcessTree_(query_trees[0], *query_results);
+      PostProcessTree_(*(query_sets[0]), query_trees[0], *query_results);
 
       for(index_t i = 0; i < query_sets.size(); i++) {
 	delete query_trees[i];
@@ -712,7 +724,7 @@ class MultiTreeDepthFirst {
       }
     }
     else {
-      PostProcessTree_(hybrid_trees_[0], *query_results);
+      PostProcessTree_(*(sets_[0]), hybrid_trees_[0], *query_results);
     }
 
     // Shuffle back the query results according to its permutation.
@@ -746,11 +758,16 @@ class MultiTreeDepthFirst {
       }
     }
 
+    // Initialize the global parameters.
+    globals_.Init((sets_[0])->n_cols(), sets[0]->n_rows(), targets_,
+		  module_in);
+
     // This could potentially be improved by checking which matrices
     // are the same...
     reference_trees_[0] = proximity::MakeGenKdTree<double, ReferenceTree,
       proximity::GenKdTreeMedianSplitter>(*(sets_[0]), 10, 
 					  &old_from_new_references_, NULL);
+    PreProcessReferenceTree_(reference_trees_[0], 0);
     for(index_t i = 1; i < MultiTreeProblem::num_reference_sets; i++) {
       reference_trees_[i] = reference_trees_[0];
     }
@@ -761,9 +778,6 @@ class MultiTreeDepthFirst {
       ShuffleAccordingToPermutation_(*(targets_[0]), old_from_new_references_);
     }
     
-    // Initialize the global parameters.
-    globals_.Init((sets_[0])->n_cols(), sets[0]->n_rows(), module_in);
-
     // Initialize the total number of (n - 1) tuples for each node
     // index.
     total_n_minus_one_tuples_.Init(sets.size());
@@ -813,7 +827,8 @@ class MultiTreeDepthFirst {
     }
     
     // Initialize the global parameters.
-    globals_.Init((sets_[0])->n_cols(), (sets_[0])->n_rows(), module_in);
+    globals_.Init((sets_[0])->n_cols(), (sets_[0])->n_rows(), targets_,
+		  module_in);
 
     // Initialize the total number of (n - 1) tuples for each node
     // index.

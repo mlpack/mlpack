@@ -244,9 +244,9 @@ class AxilrodTellerForceProblem {
     }
     
   public:
-    
+
     void FinalPush(MultiTreeQueryStat &child_stat) {
-      //child_stat.postponed.ApplyPostponed(postponed);
+      child_stat.postponed.ApplyPostponed(postponed);
       //local_expansion.TranslateToLocal(child_stat.local_expansion);
     }
     
@@ -412,6 +412,17 @@ class AxilrodTellerForceProblem {
       fclose(relative_error_output);
     }
 
+    template<typename Tree>
+    void UpdatePrunedComponents(const ArrayList<Tree *> &reference_nodes,
+				index_t q_index) {
+    }
+
+    void FinalPush(const Matrix &qset, 
+		   const MultiTreeQueryStat &stat_in, index_t q_index) {
+      
+      ApplyPostponed(stat_in.postponed, q_index);
+    }
+
     void ApplyPostponed(const MultiTreeQueryPostponed &postponed_in, 
 			index_t q_index) {
       
@@ -509,6 +520,7 @@ class AxilrodTellerForceProblem {
    public:
 
     void Init(index_t total_num_particles, index_t dimension_in,
+	      const ArrayList<Matrix *> &reference_targets,
 	      struct datanode *module_in) {
 
       kernel_aux.Init();
@@ -540,6 +552,9 @@ class AxilrodTellerForceProblem {
 	   typename HybridTree, typename QueryTree, typename ReferenceTree>
   static bool ConsiderTupleExact(MultiTreeGlobal &globals,
 				 MultiTreeQueryResult &results,
+				 const ArrayList<Matrix *> &query_sets,
+				 const ArrayList<Matrix *> &reference_sets,
+				 const ArrayList<Matrix *> &reference_targets,
 				 ArrayList<HybridTree *> &hybrid_nodes,
 				 ArrayList<QueryTree *> &query_nodes,
 				 ArrayList<ReferenceTree *> &reference_nodes,
