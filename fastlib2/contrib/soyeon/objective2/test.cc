@@ -12,6 +12,10 @@ class ObjectiveTest {
     //Matrix x;
     objective.ComputeObjective(&dummy_objective );
 		NOTIFY("The objective is %g", dummy_objective);
+
+		Vector gradient;
+		gradient.Init(num_of_betas);
+		objective.ComputeGradient(&gradient);
 		//printf("The objective is %g", dummy_objective);
   }
   void TestAll() {
