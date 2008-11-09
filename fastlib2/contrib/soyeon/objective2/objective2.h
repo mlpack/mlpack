@@ -64,15 +64,18 @@ friend class ObjectiveTest;
 	void ComputeDeumeratorBetaFunction_(double p, double q);
 	//void ComputeMaxSizeXBar_();
 
-	/*
+
 ///////////////////////////////////////////////////////
+////////calculate gradient
+/////////////////////////////////////////////////////////////
+
 
 	//add new things from here for objective2 (Compute gradient)
 	ArrayList<Matrix> first_stage_dot_logit_;
 	ArrayList<Matrix> first_stage_ddot_logit_;
 
 	ArrayList<Matrix> second_stage_dot_logit_;
-	//ArrayList<Matrix> second_stage_ddot_logit_;
+	ArrayList<Matrix> second_stage_ddot_logit_;
 
 	//ArrayList<index_t> derivative_beta_conditional_postponed_prob_;
 	//ArrayList<index_t> conditional_postponed_prob_;
@@ -87,15 +90,15 @@ friend class ObjectiveTest;
 	void ComputeDotLogit_(Vector &betas);
 
 	//need DotLogit
-	void ComputeDDotLogit_( );
+	void ComputeDDotLogit_();
 	//need DotLogit
-	Vector ComputeDerivativeBetaTerm1_();
-	Vector ComputeDerivativeBetaTerm2_();
-	Vector ComputeDerivativeBetaTerm3_();
+	void ComputeDerivativeBetaTerm1_(Vector *beta_term1);
+	void ComputeDerivativeBetaTerm2_(Vector *beta_term2);
+	void ComputeDerivativeBetaTerm3_(Vector *beta_term3);
 
-	Matrix ComputeSecondDerivativeBetaTerm1_();
-	Matrix ComputeSecondDerivativeBetaTerm2_();
-	Matrix ComputeSecondDerivativeBetaTerm3_();
+	void ComputeSecondDerivativeBetaTerm1_(Matrix *second_beta_term1);
+	void ComputeSecondDerivativeBetaTerm2_(Matrix *second_beta_term2);
+	void ComputeSecondDerivativeBetaTerm3_(Matrix *second_beta_term3);
 	//void ComputeDerivativeBetaConditionalPostponedProb_(Vector &betas);
 	
 	//need first_stage_dot_logit_
@@ -141,7 +144,7 @@ friend class ObjectiveTest;
 	double ComputeSecondDerivativePQTerm2_();
 	double ComputeSecondDerivativePQTerm3_();
 
-	*/
+	
 };
 
 
