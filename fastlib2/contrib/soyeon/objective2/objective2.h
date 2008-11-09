@@ -71,10 +71,10 @@ friend class ObjectiveTest;
 
 
 	//add new things from here for objective2 (Compute gradient)
-	ArrayList<Matrix> first_stage_dot_logit_;
+	ArrayList<Vector> first_stage_dot_logit_;
 	ArrayList<Matrix> first_stage_ddot_logit_;
 
-	ArrayList<Matrix> second_stage_dot_logit_;
+	ArrayList<Vector> second_stage_dot_logit_;
 	ArrayList<Matrix> second_stage_ddot_logit_;
 
 	//ArrayList<index_t> derivative_beta_conditional_postponed_prob_;

@@ -83,10 +83,10 @@ void Objective::Init(fx_module *module) {
 
 	//from here for the gradient
 	first_stage_dot_logit_.Init(num_people);
-	first_stage_ddot_logit_.Init(num_people);
+	first_stage_ddot_logit_.Init(num_people, num_people);
 
 	second_stage_dot_logit_.Init(num_people);
-	second_stage_ddot_logit_.Init(num_people);
+	second_stage_ddot_logit_.Init(num_people, num_people);
 
 	sum_first_derivative_conditional_postpond_prob_.Init(num_people);
 	sum_second_derivative_conditional_postpond_prob_.Init(num_people);
@@ -325,7 +325,7 @@ void Objective::ComputeGradient(Vector *gradient) {
 													+	ComputeDerivativePTerm2_()
 													+ ComputeDerivativePTerm3_();
 
-	*gradient[num_of_betas_+1]=ComputeDerivativeQTerm1_()
+	(*gradient)[num_of_betas_+1]=ComputeDerivativeQTerm1_()
 													+	ComputeDerivativeQTerm2_()
 													+ ComputeDerivativeQTerm3_();
 
@@ -336,23 +336,29 @@ void Objective::ComputeGradient(Vector *gradient) {
 //add new things from here for objective2 (Compute gradient) 
 //Compute dot_logit
 void Objective::ComputeDotLogit_(Vector &betas) {
+	for(index_t i=0; i<first_stage_dot_logit_.size(); i++) {
+    first_stage_dot_logit_[i].SetAll(0.0);
+  }
+	
 	for(index_t n=0; n<first_stage_x_.size(); n++){
 		for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
-			first_stage_dot_logit_[n].set(i, 1, exp(la::Dot(betas.length(), betas.ptr(),
-																				 (first_stage_x_[n].GetColumnPtr(i))/
-																				 exp_betas_times_x1_[n]));
+			first_stage_dot_logit_[n][i]=(exp(la::Dot( betas.length(), betas.ptr(),
+																				 first_stage_x_[n].GetColumnPtr(i) ))/
+																				 exp_betas_times_x1_[n]);
 		}	//i
 	}	//n
 }
 
 
 void Objective::ComputeDDotLogit_() {
-	first_stage_ddot_logit_.SetZero();
-	second_stage_ddot_logit_.SetZero();
+	for(index_t i=0; i<first_stage_ddot_logit_.size(); i++) {
+    first_stage_ddot_logit_[i].SetAll(0.0);
+  }
+
 
 	for(index_t n=0; n<first_stage_x_.size(); n++){
-		for(index_t i=0; i<first_stage_x_.n_cols(); i++){
-			first_stage_ddot_logit_[n].set(i, i, first_stage_dot_logit_[n].get(i,1));
+		for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
+			first_stage_ddot_logit_[n].set(i, i, first_stage_dot_logit_[n][i]);
 		}	//i
 		//for(index_t j=0; i<second_stage_x_.n_cols(); j++){
 		//	second_stage_ddot_logit_[n].set(j, j, second_stage_dot_logit_[n].get(j,1));
@@ -369,7 +375,7 @@ void Objective::ComputeDerivativeBetaTerm1_(Vector *beta_term1) {
 	//derivative_beta_term1.SetZero();
 
 	Vector temp;
-	temp.Init(betas.length());
+	temp.Init(num_of_betas_);
 
   for(index_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]<0) { 
@@ -377,8 +383,8 @@ void Objective::ComputeDerivativeBetaTerm1_(Vector *beta_term1) {
       continue;
     } else {
   
-			la::MulOverwrite(first_stage_x_[n], first_stage_dot_logit[n]), &temp);
-			la::SubOverwrite(first_stage_x_[n].GetColumnPtr(first_stage_y_[n]), &temp);
+			la::MulOverwrite(first_stage_dot_logit_[n], first_stage_x_[n], &temp);
+			la::SubOverwrite(num_of_betas_, first_stage_x_[n].GetColumnPtr(first_stage_y_[n]), &temp);
 			//check
 			la::Addto(temp, beta_term1);
 																							
