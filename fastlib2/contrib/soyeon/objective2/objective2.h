@@ -38,6 +38,7 @@ friend class ObjectiveTest;
 
 	ArrayList<double> exp_betas_times_x1_;
 	ArrayList<double> exp_betas_times_x2_;
+	
 
 	//ArrayList<index_t> exp_betas_times_x2_tilde_;
 	ArrayList<double> postponed_probability_;
@@ -80,8 +81,8 @@ friend class ObjectiveTest;
 	//ArrayList<index_t> derivative_beta_conditional_postponed_prob_;
 	//ArrayList<index_t> conditional_postponed_prob_;
 
-	ArrayList<index_t> sum_first_derivative_conditional_postpond_prob_;
-	ArrayList<index_t> sum_second_derivative_conditional_postpond_prob_;
+	ArrayList<Vector> sum_first_derivative_conditional_postpond_prob_;
+	ArrayList<Matrix> sum_second_derivative_conditional_postpond_prob_;
 
 
 	//ArrayList<index_t> SumSecondDerivativeConditionalPostpondProb_
@@ -102,7 +103,7 @@ friend class ObjectiveTest;
 	//void ComputeDerivativeBetaConditionalPostponedProb_(Vector &betas);
 	
 	//need first_stage_dot_logit_
-	void ComputeSumDerivativeConditionalPostpondProb_(Vector &betas);
+	void ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, double p, double q);
 
 	double ComputeDerivativePTerm1_();
 	double ComputeDerivativePTerm2_();
@@ -123,13 +124,14 @@ friend class ObjectiveTest;
 
 	void ComputeSumDerivativeBetaFunction_(Vector &betas, double p, double q);
 
-	ArrayList<index_t> sum_first_derivative_p_beta_fn_;
-	ArrayList<index_t> sum_second_derivative_p_beta_fn;
-	ArrayList<index_t> sum_first_derivative_q_beta_fn_;
-	ArrayList<index_t> sum_second_derivative_q_beta_fn_;
-	ArrayList<index_t> sum_second_derivative_p_q_beta_fn_;
-	ArrayList<index_t> sum_second_derivative_conditionl_postponed_p_;
-	ArrayList<index_t> sum_second_derivative_conditionl_postponed_q_;
+	ArrayList<double> sum_first_derivative_p_beta_fn_;
+	ArrayList<double> sum_second_derivative_p_beta_fn_;
+	ArrayList<double> sum_first_derivative_q_beta_fn_;
+	ArrayList<double> sum_second_derivative_q_beta_fn_;
+	ArrayList<double> sum_second_derivative_p_q_beta_fn_;
+	ArrayList<Vector> sum_second_derivative_conditionl_postponed_p_;
+	ArrayList<Vector> sum_second_derivative_conditionl_postponed_q_;
+
 	
 
 	Vector ComputeSecondDerivativePBetaTerm1_();

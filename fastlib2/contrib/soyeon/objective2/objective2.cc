@@ -89,7 +89,7 @@ void Objective::Init(fx_module *module) {
 	second_stage_ddot_logit_.Init(num_people, num_people);
 
 	sum_first_derivative_conditional_postpond_prob_.Init(num_people);
-	sum_second_derivative_conditional_postpond_prob_.Init(num_people);
+	sum_second_derivative_conditional_postpond_prob_.Init(num_people, num_people);
 
 
 
@@ -294,7 +294,7 @@ void Objective::ComputeGradient(Vector *gradient) {
 	
 	ComputeDotLogit_(betas);
 	ComputeDDotLogit_();
-	ComputeSumDerivativeConditionalPostpondProb_(betas);
+	ComputeSumDerivativeConditionalPostpondProb_(betas, p, q);
 
 	Vector beta_term1;
 	beta_term1.Init(num_of_betas_);
@@ -384,9 +384,10 @@ void Objective::ComputeDerivativeBetaTerm1_(Vector *beta_term1) {
     } else {
   
 			la::MulOverwrite(first_stage_dot_logit_[n], first_stage_x_[n], &temp);
-			la::SubOverwrite(num_of_betas_, first_stage_x_[n].GetColumnPtr(first_stage_y_[n]), &temp);
+			//check2
+			la::SubOverwrite(num_of_betas_, temp.ptr(), first_stage_x_[n].GetColumnPtr(first_stage_y_[n]), temp.ptr());
 			//check
-			la::Addto(temp, beta_term1);
+			la::AddTo(temp, beta_term1);
 																							
 		}
   }
@@ -395,7 +396,7 @@ void Objective::ComputeDerivativeBetaTerm1_(Vector *beta_term1) {
 
 
 
-void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas){
+void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, double p, double q){
 	
 	Vector temp1;
 	temp1.Init(betas.length());	//dotX1*dotLogit1
@@ -403,16 +404,25 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas){
 
 	double alpha_temp=0;
 	double beta_function_temp=0;
-	double numerator=0;
+	//double numerator=0;
+	double exponential_temp=0;
 	//need to specify
 	num_of_alphas_=10;
-	alpha_weight_=(double)1/num_of_alphas;
+	alpha_weight_=(double)1/num_of_alphas_;
 
-	exp_betas_times_x2_.SetZero();
-	second_stage_dot_logit_.SetZero();
+	for(index_t i=0; i<exp_betas_times_x2_.size(); i++) {
+    exp_betas_times_x2_[i]=0;
+		second_stage_dot_logit_[i].SetZero();
+  }
+
+	
+	//second_stage_dot_logit_.SetZero();
 	double conditional_postponed_prob=0;
 	Vector first_derivative_conditional_postpond_prob;
 	first_derivative_conditional_postpond_prob.Init(betas.length());
+
+	Matrix matrix_first_derivative_conditional_postpond_prob;
+	matrix_first_derivative_conditional_postpond_prob.Init(betas.length(),1);
 
 	Matrix second_derivative_conditional_postpond_prob;
 	second_derivative_conditional_postpond_prob.Init(betas.length(),betas.length() );
@@ -424,27 +434,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas){
 	Matrix first_term_temp;
 	first_term_temp.Init(betas.length(), betas.length());
 
-	Matrix temp3; //dotLogit2*dotLogit2'
-	temp3.Init(second_stage_x_[n].n_cols(), second_stage_x_[n].n_cols());
-
-	Matrix temp4; //ddotLogit2-dotLogit2*dotLogit2'
-	temp4.Init(second_stage_x_[n].n_cols(), second_stage_x_[n].n_cols());
-
-	Matrix temp5;	//dotX2(temp4)
-	temp5.Init(betas.length(), second_stage_x_[n].n_cols());
-
-	Matrix temp6; //temp5*dotX2'
-	temp6.Init(betas.length(), betas.length());
-
-	//terms for the first stage
-	Matrix temp7; //dotLogit1*dotLogit1
-	temp7.Init(first_stage_x_[n].n_cols(), first_stage_x_[n].n_cols());
-
-	Matrix temp8; //ddotLogit1-dotLogit1*dotLogit1'
-	temp8.Init(first_stage_x_[n].n_cols(), first_stage_x_[n].n_cols());
-
-	Matrix temp9;	//dotX1(temp8)
-	temp5.Init(betas.length(), second_stage_x_[n].n_cols());
+	
 
 	Matrix temp10; //temp9*dotX1'
 	temp10.Init(betas.length(), betas.length());
@@ -452,26 +442,61 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas){
 	Matrix second_term_temp;
 	second_term_temp.Init(betas.length(), betas.length());
 
-
-
-
-
+	for(index_t i=0; i<sum_first_derivative_conditional_postpond_prob_.size(); i++) {
+    sum_first_derivative_conditional_postpond_prob_[i].SetAll(0.0);
+	}
+	
 
 	for(index_t n=0; n<first_stage_x_.size(); n++){
-		la::MulOverwrite(first_stage_x_[n], first_stage_dot_logit_[n], &temp1);
-		sum_first_derivative_conditional_postpond_prob_[n].SetZero();
 
-		la::MulTransBOverwrite(first_stage_dot_logit_[n], first_stage_dot_logit_[n], &temp7);
+		Matrix temp3; //dotLogit2*dotLogit2'
+		temp3.Init(second_stage_x_[n].n_cols(), second_stage_x_[n].n_cols());
+
+		Matrix temp4; //ddotLogit2-dotLogit2*dotLogit2'
+		temp4.Init(second_stage_x_[n].n_cols(), second_stage_x_[n].n_cols());
+
+		Matrix temp5;	//dotX2(temp4)
+		temp5.Init(betas.length(), second_stage_x_[n].n_cols());
+
+		Matrix temp6; //temp5*dotX2'
+		temp6.Init(betas.length(), betas.length());
+
+		//terms for the first stage
+		Matrix temp7; //dotLogit1*dotLogit1
+		temp7.Init(first_stage_x_[n].n_cols(), first_stage_x_[n].n_cols());
+
+		Matrix temp8; //ddotLogit1-dotLogit1*dotLogit1'
+		temp8.Init(first_stage_x_[n].n_cols(), first_stage_x_[n].n_cols());
+
+		Matrix temp9;	//dotX1(temp8)
+		temp5.Init(betas.length(), second_stage_x_[n].n_cols());
+
+		la::MulOverwrite(first_stage_x_[n], first_stage_dot_logit_[n], &temp1);
+
+		
+		Matrix matrix_first_stage_dot_logit;
+		matrix_first_stage_dot_logit.Init(first_stage_x_[n].n_cols(), 1);
+
+		matrix_first_stage_dot_logit.CopyVectorToColumn(1, first_stage_dot_logit_[n]);
+		//la::MulTransBOverwrite(first_stage_dot_logit_[n], first_stage_dot_logit_[n], &temp7);
+		
+		la::MulTransBOverwrite(matrix_first_stage_dot_logit, 
+														matrix_first_stage_dot_logit, &temp7);
 
 		la::SubOverwrite(temp7, first_stage_ddot_logit_[n], &temp8);
 
-		la::MulOverwrite(first_stage_dot_logit_[n], temp8, &temp9);
+		//la::MulOverwrite(first_stage_dot_logit_[n], temp8, &temp9);
+		la::MulOverwrite(matrix_first_stage_dot_logit, temp8, &temp9);
 
-		la::MulTransBOverwrite(temp9, first_stage_dot_logit_[n], &temp10);
+		//la::MulTransBOverwrite(temp9, first_stage_dot_logit_[n], &temp10);
+		la::MulTransBOverwrite(temp9, matrix_first_stage_dot_logit, &temp10);
+
+		Matrix matrix_second_stage_dot_logit;
+		matrix_second_stage_dot_logit.Init(second_stage_x_[n].n_cols(), 1);
 
 
 
-		for(index_t l=0; l<num_of_alphas-1; l++){
+		for(index_t l=0; l<num_of_alphas_-1; l++){
 			alpha_temp=(l+1)*(alpha_weight_);
 		
 			beta_function_temp=pow(alpha_temp, p-1)*pow((1-alpha_temp), q-1)/denumerator_beta_function_;
@@ -480,23 +505,24 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas){
 			//Calculate x^2_{ni}(alpha_l)
 			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
 				int count=0;
-				for(index_t j=ind_unk_x_[0]; j<ind_unk_x_[ind_unk_x_.size()]; j++){
+				for(index_t j=ind_unknown_x_[0]; j<ind_unknown_x_[ind_unknown_x_.size()]; j++){
 					count+=1;
 					exponential_temp=alpha_temp*first_stage_x_[n].get(i, j)
-													+(alpha_temp)*(1-alpha_temp)*unk_x_past[i].get(count-1,1)
-													+(alpha_temp)*pow((1-alpha_temp),2)*unk_x_past[i].get(count-1,2);
+													+(alpha_temp)*(1-alpha_temp)*unknown_x_past_[i].get(count-1,1)
+													+(alpha_temp)*pow((1-alpha_temp),2)*unknown_x_past_[i].get(count-1,2);
 					second_stage_x_[n].set(j, i, exponential_temp);
 				}	//j
 			}	//i
 
 			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
-				exp_betas_times_x2_[n]+=exp(la::Dot(betas.size(), betas.ptr(),
+				exp_betas_times_x2_[n]+=exp(la::Dot(betas.length(), betas.ptr(),
 											 second_stage_x_[n].GetColumnPtr(i) ));
 				//Calculate second_stage_dot_logit_
-				second_stage_dot_logit_[n].set( i, 1, exp(la::Dot(betas.length(), beta.ptr(),
-																				 (second_stage_x_[n].GetColumnPtr(i))/
-																				 exp_betas_times_x2_[n]) );
-				second_stage_ddot_logit_[n].set(i, i, first_stage_dot_logit_[n].get(i,1));
+				second_stage_dot_logit_[n][i]=(exp(la::Dot(betas.length(), betas.ptr(),
+																				 second_stage_x_[n].GetColumnPtr(i)))/
+																				 exp_betas_times_x2_[n]);
+																				 
+				second_stage_ddot_logit_[n].set(i, i, first_stage_dot_logit_[n][i]);
 			}	//i
 			conditional_postponed_prob=exp_betas_times_x2_[n]/(exp_betas_times_x1_[n]+exp_betas_times_x2_[n]);
 			la::MulOverwrite(second_stage_x_[n], second_stage_dot_logit_[n], &temp2);
@@ -505,7 +531,15 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas){
 			//Calculate SecondDerivativePostponedProb.
 			//Matrix first_term_temp;
 			//first_term_temp.Init(betas.length(), betas.length());
-			la::MulTransBOverwrite(first_derivative_conditional_postpond_prob, first_derivative_conditional_postpond_prob, 
+
+			//handle vector transpose
+			matrix_first_derivative_conditional_postpond_prob.CopyVectorToColumn(
+																										1, first_derivative_conditional_postpond_prob);
+
+
+
+			la::MulTransBOverwrite(matrix_first_derivative_conditional_postpond_prob, 
+														 matrix_first_derivative_conditional_postpond_prob, 
 														 &first_term_temp);
 			la::Scale( (1-2*conditional_postponed_prob)*(conditional_postponed_prob)*(1-conditional_postponed_prob),
 								&first_term_temp);
@@ -513,7 +547,13 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas){
 			//check
 			//Matrix temp3; //dotLogit*dotLogit'
 			//temp3.Init(second_stage_x_[n].n_cols(), second_stage_x_[n].n_cols());
-			la::MulTransBOverwrite(second_stage_dot_logit_[n], second_stage_dot_logit_[n], &temp3);
+
+			//Handle vector transpose
+			//Matrix matrix_second_stage_dot_logit_;
+			matrix_second_stage_dot_logit.CopyVectorToColumn(1,second_stage_dot_logit_[n]); 
+			//la::MulTransBOverwrite(second_stage_dot_logit_[n], second_stage_dot_logit_[n], &temp3);
+			la::MulTransBOverwrite(matrix_second_stage_dot_logit, 
+														 matrix_second_stage_dot_logit, &temp3);
 			
 			//Matrix temp4; //ddotLogit-dotLogit*dotLogit'
 			//temp4.Init(second_stage_x_[n].n_cols(), second_stage_x_[n].n_cols());
@@ -521,11 +561,14 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas){
 
 			//Matrix temp5;	//dotX2(temp4)
 			//temp5.Init(betas.length(), second_stage_x_[n].n_cols());
-			la::MulOverwrite(second_stage_dot_logit_[n], temp4, &temp5);
+
+			//la::MulOverwrite(second_stage_dot_logit_[n], temp4, &temp5);
+			la::MulOverwrite(matrix_second_stage_dot_logit, temp4, &temp5);
 
 			//Matrix temp6; //temp5*dotX2'
 			//temp6.Init(betas.length(), betas.length());
-			la::MulTransBOverwrite(temp5, second_stage_dot_logit_[n], &temp6);
+			//la::MulTransBOverwrite(temp5, second_stage_dot_logit_[n], &temp6);
+			la::MulTransBOverwrite(temp5, matrix_second_stage_dot_logit, &temp6);
 
 			la::SubOverwrite(temp10, temp6, &second_term_temp);
 			la::Scale( (conditional_postponed_prob)*(1-conditional_postponed_prob), &second_term_temp);
@@ -536,7 +579,8 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas){
 			//Scale with beta_function
 			la::Scale( beta_function_temp, &second_derivative_conditional_postpond_prob );
 			//check
-			la::Addto(second_derivative_conditional_postpond_prob, &sum_second_derivative_conditional_postpond_prob_[n]);
+			la::AddTo(second_derivative_conditional_postpond_prob, 
+								&sum_second_derivative_conditional_postpond_prob_[n]);
 
 
 			la::Scale( (conditional_postponed_prob)*(1-conditional_postponed_prob), &first_derivative_conditional_postpond_prob);
@@ -545,11 +589,11 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas){
 			la::Scale( beta_function_temp, &first_derivative_conditional_postpond_prob );
 
 			//Check
-			la::Addto(first_derivative_conditional_postpond_prob, &sum_first_derivative_conditional_postpond_prob_[n]);
+			la::AddTo(first_derivative_conditional_postpond_prob, &sum_first_derivative_conditional_postpond_prob_[n]);
 					
 		}	//alpha
-		la::Scale(alpha_wieght_, &sum_first_derivative_conditional_postpond_prob_[n]);
-		la::Scale(alpha_wieght_, &sum_second_derivative_conditional_postpond_prob_[n]);
+		la::Scale(alpha_weight_, &sum_first_derivative_conditional_postpond_prob_[n]);
+		la::Scale(alpha_weight_, &sum_second_derivative_conditional_postpond_prob_[n]);
 	}	//n
 
 }
@@ -561,7 +605,7 @@ void Objective::ComputeDerivativeBetaTerm2_(Vector *beta_term2) {
 	//derivative_beta_term2.Init(betas.length());
 	//derivative_beta_term2.SetZero();
 	Vector temp;
-	temp.Init(betas.length());
+	temp.Init(num_of_betas_);
 
 	for(index_t n=0; n<first_stage_x_.size(); n++){
 		if (first_stage_y_[n]<0) {
@@ -571,7 +615,7 @@ void Objective::ComputeDerivativeBetaTerm2_(Vector *beta_term2) {
 			la::ScaleOverwrite((1/(1-postponed_probability_[n])), sum_first_derivative_conditional_postpond_prob_[n], &temp);
 			//temp=SumFirstDerivativeConditionalPostpondProb_[n]/(1-postponed_probability_[n]);
 			//check
-			la::Addto(temp, beta_term2);
+			la::AddTo(temp, beta_term2);
 
 		}	//if-else
 
@@ -587,18 +631,26 @@ void Objective::ComputeSecondDerivativeBetaTerm1_(Matrix *second_beta_term1) {
 	//second_derivative_beta_term1.SetAll(0.0);
 
 	Vector temp1;
-	temp1.Init(betas.length());
+	temp1.Init(num_of_betas_);
 
-	Matrix temp2
-	temp2.Init(betas.length(), betas.length());
+	Matrix matrix_temp1;
+	matrix_temp1.Init(num_of_betas_, 1);
+
+
+	Matrix temp2;
+	temp2.Init(num_of_betas_, num_of_betas_);
 
 	Matrix temp3;
-	temp3.Init(betas.length(), first_stage_x_[n].n_cols());
+	//temp3.Init(num_of_betas_, first_stage_x_[n].n_cols());
 
 	Matrix temp4;
-	temp3.Init(betas.length(), betas.length());
+	temp3.Init(num_of_betas_, num_of_betas_);
 
   for(index_t n=0; n<first_stage_x_.size(); n++) {
+
+		temp3.Init(num_of_betas_, first_stage_x_[n].n_cols());
+
+
     if (first_stage_y_[n]<0) { 
 			//first_stage_y_[n]=-1 if all==zero, j_i is n chose j_i
       continue;
@@ -607,11 +659,15 @@ void Objective::ComputeSecondDerivativeBetaTerm1_(Matrix *second_beta_term1) {
 			//check from here
       //Vector temp1;
 			//temp1.Init(betas.length());
-			la::MulOverwrite(first_stage_x_[n], first_stage_dot_logit[n]), &temp1);
+			la::MulOverwrite(first_stage_x_[n], first_stage_dot_logit_[n], &temp1);
+
+			matrix_temp1.CopyVectorToColumn(1, temp1);
 
 			//Matrix temp2
 			//temp2.Init(betas.length(), betas.length());
-			la::MulTransBOverwrite(temp1, temp1, &temp2);
+
+			//la::MulTransBOverwrite(temp1, temp1, &temp2);
+			la::MulTransBOverwrite(matrix_temp1, matrix_temp1, &temp2);
 
 			//Matrix temp3;
 			//temp3.Init(betas.length(), first_stage_x_[n].n_cols());
@@ -622,7 +678,7 @@ void Objective::ComputeSecondDerivativeBetaTerm1_(Matrix *second_beta_term1) {
 			la::MulTransBOverwrite(temp3, first_stage_x_[n], &temp4);
 			//check
 			la::SubFrom(temp4, &temp2);
-			la::Addto(temp2, second_beta_term1);
+			la::AddTo(temp2, second_beta_term1);
 																							
 		}
   }
@@ -638,24 +694,36 @@ void Objective::ComputeSecondDerivativeBetaTerm2_(Matrix *second_beta_term2) {
 	//second_derivative_beta_term2.SetAll(0.0);
 
 	Matrix first_temp;
-	first_temp.Init(betas.length(), betas.length());
+	first_temp.Init(num_of_betas_, num_of_betas_);
 
 	Matrix second_temp;
-	second_temp.Init(betas.length(), betas.length());
+	second_temp.Init(num_of_betas_, num_of_betas_);
 
 	Matrix second_derivative_beta_temp;
-	second_derivative_beta_temp.Init(betas.length(), betas.length());
+	second_derivative_beta_temp.Init(num_of_betas_, num_of_betas_);
+
+	Matrix matrix_sum_first_derivative_conditional_postpond_prob;
+	matrix_sum_first_derivative_conditional_postpond_prob.Init(num_of_betas_, 1);
+
 
 	for(index_t n=0; n<first_stage_x_.size(); n++){
 		  if (first_stage_y_[n]<0) { 
 				continue;
 			} else {
-				la::Scale( (1/(1-postponed_probability_[n]), &first_temp);
-				la::MulTransBOverwrite(sum_first_derivative_conditional_postpond_prob_[n], 
-															 sum_first_derivative_conditional_postpond_prob_[n], &second_temp);
+				la::Scale( (1/(1-postponed_probability_[n])), &first_temp);
+
+				//handle vector transpose
+				matrix_sum_first_derivative_conditional_postpond_prob.CopyVectorToColumn(1, 
+																	sum_first_derivative_conditional_postpond_prob_[n]);
+
+				//la::MulTransBOverwrite(sum_first_derivative_conditional_postpond_prob_[n], 
+				//											 sum_first_derivative_conditional_postpond_prob_[n], &second_temp);
+				la::MulTransBOverwrite(matrix_sum_first_derivative_conditional_postpond_prob, 
+															 matrix_sum_first_derivative_conditional_postpond_prob, &second_temp);
+				
 				la::Scale( 1/pow((1-postponed_probability_[n]), 2), &second_temp);
 
-				la::AddOverwrite(second_temp, first_temp, second_beta_temp);
+				la::AddOverwrite(second_temp, first_temp, second_beta_term2);
 
 				//check
 				la::AddTo(second_derivative_beta_temp, second_beta_term2);
@@ -674,7 +742,7 @@ void Objective::ComputeDerivativeBetaTerm3_(Vector *beta_term3) {
 	//derivative_beta_term3.Init(betas.length());
 	//derivative_beta_term3.SetZero();
 	Vector temp;
-	temp.Init(betas.length());
+	temp.Init(num_of_betas_);
 
 	for(index_t n=0; n<first_stage_x_.size(); n++){
 		if (second_stage_y_[n]<0) {
@@ -684,7 +752,7 @@ void Objective::ComputeDerivativeBetaTerm3_(Vector *beta_term3) {
 			la::ScaleOverwrite( (1/postponed_probability_[n]), sum_first_derivative_conditional_postpond_prob_[n], &temp);
 			//temp=SumFirstDerivativeConditionalPostpondProb_[n]/(postponed_probability_[n]);
 			//check
-			la::Addto(temp, beta_term3);
+			la::AddTo(temp, beta_term3);
 
 		}	//if-else
 
@@ -700,24 +768,40 @@ void Objective::ComputeSecondDerivativeBetaTerm3_(Matrix *second_beta_term3) {
 	//second_derivative_beta_term3.SetAll(0.0);
 
 	Matrix first_temp;
-	first_temp.Init(betas.length(), betas.length());
+	first_temp.Init(num_of_betas_, num_of_betas_);
 
 	Matrix second_temp;
-	second_temp.Init(betas.length(), betas.length());
+	second_temp.Init(num_of_betas_, num_of_betas_);
 
 	Matrix second_derivative_beta_temp;
-	second_derivative_beta_temp.Init(betas.length(), betas.length());
+	second_derivative_beta_temp.Init(num_of_betas_, num_of_betas_);
+
+	Matrix matrix_sum_first_derivative_conditional_postpond_prob;
+	matrix_sum_first_derivative_conditional_postpond_prob.Init(num_of_betas_,1);
+
+
 
 	for(index_t n=0; n<first_stage_x_.size(); n++){
 		  if (second_stage_y_[n]<0) { 
 				continue;
 			} else {
-				la::Scale( (1/(postponed_probability_[n]), &first_temp);
-				la::MulTransBOverwrite(sum_first_derivative_conditional_postpond_prob_[n], 
-															 sum_first_derivative_conditional_postpond_prob_[n], &second_temp);
+				la::Scale( (1/(postponed_probability_[n])), &first_temp);
+	
+				//handle vector transpose
+				matrix_sum_first_derivative_conditional_postpond_prob.CopyVectorToColumn(1, 
+																		sum_first_derivative_conditional_postpond_prob_[n]);
+
+
+				//la::MulTransBOverwrite(sum_first_derivative_conditional_postpond_prob_[n], 
+				//											 sum_first_derivative_conditional_postpond_prob_[n], &second_temp);
+
+				la::MulTransBOverwrite(matrix_sum_first_derivative_conditional_postpond_prob, 
+															 matrix_sum_first_derivative_conditional_postpond_prob, &second_temp);
+
+
 				la::Scale( 1/pow((1-postponed_probability_[n]), 2), &second_temp);
 
-				la::SubOverwrite(second_temp, first_temp, second_beta_temp);
+				la::SubOverwrite(second_temp, first_temp, second_beta_term3);
 
 				//check
 				la::AddTo(second_derivative_beta_temp, second_beta_term3);
@@ -768,15 +852,17 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 
 	num_of_alphas_=10;
 	num_of_t_beta_fn_=10;
-	alpha_weight_=(double)1/num_of_alphas;
-	t_weight_=(double)1/num_of_t_beta_fn;
+	alpha_weight_=(double)(1/num_of_alphas_);
+	t_weight_=(double)(1/num_of_t_beta_fn_);
 
-	//check - don't need to initilize memeber variable here
-	sum_first_derivative_p_beta_fn_.SetZero();
-	sum_second_derivative_p_beta_fn_.SetZero();
-	sum_first_derivative_q_beta_fn_.SetZero();
-	sum_second_derivative_q_beta_fn_.SetZero();
-	sum_second_derivative_p_q_beta_fn_.SetZero();
+	for(index_t i=0; i<sum_first_derivative_p_beta_fn_.size(); i++) {
+		sum_first_derivative_p_beta_fn_[i]=0;
+		sum_second_derivative_p_beta_fn_[i]=0;
+		sum_first_derivative_q_beta_fn_[i]=0;
+		sum_second_derivative_q_beta_fn_[i]=0;
+		sum_second_derivative_p_q_beta_fn_[i]=0;
+	}
+
 
 
 	double beta_fn_temp1=0;
@@ -786,13 +872,16 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 	double beta_fn_temp5=0;
 	double beta_fn_temp6=0;
 
+	double exponential_temp=0;
 	double powtemp=0;
+	double conditional_postponed_prob=0;
 
 	Vector first_derivative_conditional_postpond_prob;
 	first_derivative_conditional_postpond_prob.Init(betas.length());
 
 	Vector sum_second_derivative_conditionl_postponed_p_temp;
 	sum_second_derivative_conditionl_postponed_p_temp.Init(betas.length());
+	
 
 	Vector sum_second_derivative_conditionl_postponed_q_temp;
 	sum_second_derivative_conditionl_postponed_q_temp.Init(betas.length());
@@ -810,7 +899,7 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 
 	beta_fn_temp1=1/denumerator_beta_function_;
 
-	for(index_t m=0; m<num_of_t_beta_fn-1; m++){
+	for(index_t m=0; m<num_of_t_beta_fn_-1; m++){
 		t_temp=(m+1)*(t_weight_);
 
 		beta_fn_temp2+=pow(t_temp, p-1)*pow(1-t_temp, q-1)*log(t_temp);
@@ -830,30 +919,31 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 
 	for(index_t n=0; n<first_stage_x_.size(); n++){
 		la::MulOverwrite(first_stage_x_[n], first_stage_dot_logit_[n], &temp1);
-		for(index_t l=0; l<num_of_alphas-1; l++){
+		for(index_t l=0; l<num_of_alphas_-1; l++){
 			alpha_temp=(l+1)*(alpha_weight_);
 
 			//Calculate x^2_{ni}(alpha_l)
-			for(index t i=1; i<first_stage_x_[n].n_cols(); i++){
+			for(index_t i=1; i<first_stage_x_[n].n_cols(); i++){
 				int count=0;
-				for(index_t j=ind_unk_x_[0]; j<ind_unk_x_[ind_unk_x_.size()]; j++){
+				for(index_t j=ind_unknown_x_[0]; j<ind_unknown_x_[ind_unknown_x_.size()]; j++){
 					count+=1;
 					exponential_temp=alpha_temp*first_stage_x_[n].get(i, j)
-													+(alpha_temp)*(1-alpha_temp)*unk_x_past[i].get(count-1,1)
-													+(alpha_temp)*pow((1-alpha_temp),2)*unk_x_past[i].get(count-1,2);
+													+(alpha_temp)*(1-alpha_temp)*unknown_x_past_[i].get(count-1,1)
+													+(alpha_temp)*pow((1-alpha_temp),2)*unknown_x_past_[i].get(count-1,2);
 					second_stage_x_[n].set(j, i, exponential_temp);
 				}	//j
 			}	//i
 
 			//Calculate e^(beta*x^2(alpha_l))
 			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
-				exp_betas_times_x2_[n]+=exp(la::Dot(betas.size(), betas.ptr(),
+				exp_betas_times_x2_[n]+=exp(la::Dot(betas.length(), betas.ptr(),
 											 second_stage_x_[n].GetColumnPtr(i) ));
 				//Calculate second_stage_dot_logit_
-				second_stage_dot_logit_[n].set( i, 1, exp(la::Dot(betas.length(), beta.ptr(),
-																				 (second_stage_x_[n].GetColumnPtr(i))/
-																				 exp_betas_times_x2_[n]) );
-				second_stage_ddot_logit_[n].set(i, i, first_stage_dot_logit_[n].get(i,1));
+				second_stage_dot_logit_[n][i]=(exp(la::Dot(betas.length(), betas.ptr(),
+																				 second_stage_x_[n].GetColumnPtr(i)))/
+																				 exp_betas_times_x2_[n]);
+				
+				second_stage_ddot_logit_[n].set(i,i, first_stage_dot_logit_[n][i]);
 				
 			}	//i
 			conditional_postponed_prob=exp_betas_times_x2_[n]/(exp_betas_times_x1_[n]+exp_betas_times_x2_[n]);
@@ -883,15 +973,9 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 																					 -2*log(1-alpha_temp)*beta_fn_temp4
 																					 +beta_fn_temp5));
 			sum_second_derivative_p_q_beta_fn_[n]+=conditional_postponed_prob
-																					 *( powtemp
-																					 *(log(1-alpha_temp)log(alpha_temp)*beta_fn_temp1
-																					 +log(1-alpha_temp)*beta_fn_temp2
-																					 -log(alpha_temp)*beta_fn_temp4
-																					 -beta_fn_temp6) 
-																					 -(( powtemp
-																					*(log(1-alpha_temp)*beta_fn_temp1
-																					- beta_fn_temp4) )
-																					*2*beta_fn_temp2*denumerator_beta_function_));
+																					 *((powtemp*(log(1-alpha_temp)*log(alpha_temp)*beta_fn_temp1+log(1-alpha_temp)*beta_fn_temp2-log(alpha_temp)*beta_fn_temp4-beta_fn_temp6))
+																					 -((powtemp*(log(1-alpha_temp)*beta_fn_temp1- beta_fn_temp4))*(2*beta_fn_temp2*denumerator_beta_function_)));
+																					 
 
 			//Calculate sum_second_derivative_conditionl_postponed_p_[n]
 			//check
@@ -953,14 +1037,14 @@ double Objective::ComputeDerivativePTerm3_() {
 }
 
 
-double Objective::ComputeSecondDerivativePTerm2_() 
+double Objective::ComputeSecondDerivativePTerm2_() {
 	double second_derivative_p_term2=0;
   for(index_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]<0) {
       continue;
     } else {
       second_derivative_p_term2+=( sum_second_derivative_p_beta_fn_[n]/(1-postponed_probability_[n]))
-																	 + pow( (sum_first_derivative_p_beta_fn_[n]/(1-postponed_probability_[n])), 2));
+																	 + pow( (sum_first_derivative_p_beta_fn_[n]/(1-postponed_probability_[n])), 2);
     }
   }
 	second_derivative_p_term2*=-1;
@@ -976,7 +1060,7 @@ double Objective::ComputeSecondDerivativePTerm3_() {
       continue;
     } else {
       second_derivative_p_term3+=( sum_second_derivative_p_beta_fn_[n]/(postponed_probability_[n]))
-																	 - pow( (sum_first_derivative_p_beta_fn_[n]/(postponed_probability_[n])), 2));
+																	 - pow( (sum_first_derivative_p_beta_fn_[n]/(postponed_probability_[n])), 2);
     }
   }
 	return second_derivative_p_term3;
@@ -1020,7 +1104,7 @@ double Objective::ComputeSecondDerivativeQTerm2_(){
       continue;
     } else {
       second_derivative_q_term2+=( sum_second_derivative_q_beta_fn_[n]/(1-postponed_probability_[n]))
-																	 + pow( (sum_first_derivative_q_beta_fn_[n]/(1-postponed_probability_[n])), 2));
+																	 + pow( (sum_first_derivative_q_beta_fn_[n]/(1-postponed_probability_[n])), 2);
     }
   }
 	second_derivative_q_term2*=-1;
@@ -1036,7 +1120,7 @@ double Objective::ComputeSecondDerivativeQTerm3_() {
       continue;
     } else {
       second_derivative_q_term3+=( sum_second_derivative_q_beta_fn_[n]/(postponed_probability_[n]))
-																	 - pow( (sum_first_derivative_q_beta_fn_[n]/(postponed_probability_[n])), 2));
+																	 - pow( (sum_first_derivative_q_beta_fn_[n]/(postponed_probability_[n])), 2);
     }
   }
 	return second_derivative_q_term3;
@@ -1047,7 +1131,7 @@ double Objective::ComputeSecondDerivativeQTerm3_() {
 
 Vector Objective::ComputeSecondDerivativePBetaTerm1_() {
 	Vector second_derivative_p_beta_term1;
-	second_derivative_p_beta_term1.Init(betas.length());
+	second_derivative_p_beta_term1.Init(num_of_betas_);
 	second_derivative_p_beta_term1.SetZero();
 
 	return second_derivative_p_beta_term1;
@@ -1058,16 +1142,19 @@ Vector Objective::ComputeSecondDerivativePBetaTerm1_() {
 
 Vector Objective::ComputeSecondDerivativePBetaTerm2_() {
 	Vector second_derivative_p_beta_term2;
-	second_derivative_p_beta_term2.Init(betas.length());
+	second_derivative_p_beta_term2.Init(num_of_betas_);
 
 	Vector temp1;
-	temp1.Init(betas.length());
+	temp1.Init(num_of_betas_);
 
 	Vector temp2;
-	temp2.Init(betas.length());
+	temp2.Init(num_of_betas_);
 
 	Vector temp3;
-	temp3.Init(betas.length());
+	temp3.Init(num_of_betas_);
+
+	Vector temp4;
+	temp4.Init(num_of_betas_);
 
 
 	//second_derivative_p_beta_term2.SetZero();
@@ -1076,11 +1163,12 @@ Vector Objective::ComputeSecondDerivativePBetaTerm2_() {
       continue;
     } else {
 			//temp1-first term
-			la::ScaleOverwrite((1/(1-postponed_probability_[n])), sum_second_derivative_conditionl_postponed_p_[n], &temp1);
-			la::ScaleOverwrite( (sum_first_derivative_p_beta_fn_/(pow((1-postponed_probability_[n]), 2))),
+			la::ScaleOverwrite( pow((1-postponed_probability_[n]), -1), sum_second_derivative_conditionl_postponed_p_[n], &temp1);
+			
+			la::ScaleOverwrite( (sum_first_derivative_p_beta_fn_[n]/(pow((1-postponed_probability_[n]), 2))),
 												 sum_first_derivative_conditional_postpond_prob_[n], &temp2);
 			la::AddOverwrite( temp2, temp1, &temp3);
-			la::Addto(temp3, &second_derivative_p_beta_term2);
+			la::AddTo(temp3, &second_derivative_p_beta_term2);
       //second_derivative_p_beta_term2+=(sum_first_derivative_q_beta_fn_[n]/(1-postponed_probability_[n]));
     }
   }
@@ -1092,16 +1180,16 @@ Vector Objective::ComputeSecondDerivativePBetaTerm2_() {
 
 Vector Objective::ComputeSecondDerivativePBetaTerm3_() {
 	Vector second_derivative_p_beta_term3;
-	second_derivative_p_beta_term3.Init(betas.length());
+	second_derivative_p_beta_term3.Init(num_of_betas_);
 
 	Vector temp1;
-	temp1.Init(betas.length());
+	temp1.Init(num_of_betas_);
 
 	Vector temp2;
-	temp2.Init(betas.length());
+	temp2.Init(num_of_betas_);
 
 	Vector temp3;
-	temp3.Init(betas.length());
+	temp3.Init(num_of_betas_);
 
 
 	//second_derivative_p_beta_term2.SetZero();
@@ -1111,10 +1199,10 @@ Vector Objective::ComputeSecondDerivativePBetaTerm3_() {
     } else {
 			//temp1-first term
 			la::ScaleOverwrite((1/(postponed_probability_[n])), sum_second_derivative_conditionl_postponed_p_[n], &temp1);
-			la::ScaleOverwrite( (sum_first_derivative_p_beta_fn_/(pow((postponed_probability_[n]), 2))),
+			la::ScaleOverwrite( (sum_first_derivative_p_beta_fn_[n]/(pow((postponed_probability_[n]), 2))),
 												 sum_first_derivative_conditional_postpond_prob_[n], &temp2);
 			la::AddOverwrite( temp2, temp1, &temp3);
-			la::Addto(temp3, &second_derivative_p_beta_term3);
+			la::AddTo(temp3, &second_derivative_p_beta_term3);
       //second_derivative_p_beta_term2+=(sum_first_derivative_q_beta_fn_[n]/(1-postponed_probability_[n]));
     }
   }
@@ -1124,7 +1212,7 @@ Vector Objective::ComputeSecondDerivativePBetaTerm3_() {
 
 Vector Objective::ComputeSecondDerivativeQBetaTerm1_() {
 	Vector second_derivative_q_beta_term1;
-	second_derivative_q_beta_term1.Init(betas.length());
+	second_derivative_q_beta_term1.Init(num_of_betas_);
 	second_derivative_q_beta_term1.SetZero();
 
 	return second_derivative_q_beta_term1;
@@ -1133,16 +1221,16 @@ Vector Objective::ComputeSecondDerivativeQBetaTerm1_() {
 
 Vector Objective::ComputeSecondDerivativeQBetaTerm2_() {
 	Vector second_derivative_q_beta_term2;
-	second_derivative_q_beta_term2.Init(betas.length());
+	second_derivative_q_beta_term2.Init(num_of_betas_);
 
 	Vector temp1;
-	temp1.Init(betas.length());
+	temp1.Init(num_of_betas_);
 
 	Vector temp2;
-	temp2.Init(betas.length());
+	temp2.Init(num_of_betas_);
 
 	Vector temp3;
-	temp3.Init(betas.length());
+	temp3.Init(num_of_betas_);
 
 
 	//second_derivative_p_beta_term2.SetZero();
@@ -1152,10 +1240,10 @@ Vector Objective::ComputeSecondDerivativeQBetaTerm2_() {
     } else {
 			//temp1-first term
 			la::ScaleOverwrite((1/(1-postponed_probability_[n])), sum_second_derivative_conditionl_postponed_q_[n], &temp1);
-			la::ScaleOverwrite( (sum_first_derivative_q_beta_fn_/(pow((1-postponed_probability_[n]), 2))),
+			la::ScaleOverwrite( (sum_first_derivative_q_beta_fn_[n]/(pow((1-postponed_probability_[n]), 2))),
 												 sum_first_derivative_conditional_postpond_prob_[n], &temp2);
 			la::AddOverwrite( temp2, temp1, &temp3);
-			la::Addto(temp3, &second_derivative_q_beta_term2);
+			la::AddTo(temp3, &second_derivative_q_beta_term2);
       //second_derivative_p_beta_term2+=(sum_first_derivative_q_beta_fn_[n]/(1-postponed_probability_[n]));
     }
   }
@@ -1167,16 +1255,16 @@ Vector Objective::ComputeSecondDerivativeQBetaTerm2_() {
 
 Vector Objective::ComputeSecondDerivativeQBetaTerm3_() {
 	Vector second_derivative_q_beta_term3;
-	second_derivative_q_beta_term3.Init(betas.length());
+	second_derivative_q_beta_term3.Init(num_of_betas_);
 
 	Vector temp1;
-	temp1.Init(betas.length());
+	temp1.Init(num_of_betas_);
 
 	Vector temp2;
-	temp2.Init(betas.length());
+	temp2.Init(num_of_betas_);
 
 	Vector temp3;
-	temp3.Init(betas.length());
+	temp3.Init(num_of_betas_);
 
 
 	//second_derivative_p_beta_term2.SetZero();
@@ -1186,10 +1274,10 @@ Vector Objective::ComputeSecondDerivativeQBetaTerm3_() {
     } else {
 			//temp1-first term
 			la::ScaleOverwrite((1/(postponed_probability_[n])), sum_second_derivative_conditionl_postponed_q_[n], &temp1);
-			la::ScaleOverwrite( (sum_first_derivative_q_beta_fn_/(pow((postponed_probability_[n]), 2))),
+			la::ScaleOverwrite( (sum_first_derivative_q_beta_fn_[n]/(pow((postponed_probability_[n]), 2))),
 												 sum_first_derivative_conditional_postpond_prob_[n], &temp2);
 			la::AddOverwrite( temp2, temp1, &temp3);
-			la::Addto(temp3, &second_derivative_q_beta_term3);
+			la::AddTo(temp3, &second_derivative_q_beta_term3);
       //second_derivative_p_beta_term2+=(sum_first_derivative_q_beta_fn_[n]/(1-postponed_probability_[n]));
     }
   }
@@ -1213,11 +1301,11 @@ double Objective::ComputeSecondDerivativePQTerm2_() {
       continue;
     } else {
       second_derivative_p_q_term2+=( sum_second_derivative_p_q_beta_fn_[n]/(1-postponed_probability_[n]))
-																		+ ((sum_first_derivative_p_beta_fn_/(1-postponed_probability_[n]))
-																		* (sum_first_derivative_q_beta_fn_/(1-postponed_probability_[n])));
+																		+ ((sum_first_derivative_p_beta_fn_[n]/(1-postponed_probability_[n]))
+																		* (sum_first_derivative_q_beta_fn_[n]/(1-postponed_probability_[n])));
     }
   }
-	second_derivative_q_term2*=-1;
+	second_derivative_p_q_term2*=-1;
   return second_derivative_p_q_term2;
 }
 
@@ -1229,8 +1317,8 @@ double Objective::ComputeSecondDerivativePQTerm3_() {
       continue;
     } else {
       second_derivative_p_q_term3+=( sum_second_derivative_p_q_beta_fn_[n]/(postponed_probability_[n]))
-																		- ((sum_first_derivative_p_beta_fn_/(postponed_probability_[n]))
-																		* (sum_first_derivative_q_beta_fn_/(postponed_probability_[n])));
+																		- ((sum_first_derivative_p_beta_fn_[n]/(postponed_probability_[n]))
+																		* (sum_first_derivative_q_beta_fn_[n]/(postponed_probability_[n])));
     }
   }
   return second_derivative_p_q_term3;
