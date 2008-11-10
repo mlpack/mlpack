@@ -293,6 +293,11 @@ void Objective::ComputeGradient(Vector *gradient) {
 	*/
 	
 	ComputeDotLogit_(betas);
+
+	(*gradient)[1]=1;
+	//cout<<"gradient "<<gradient[1]<<endl;
+
+/*
 	ComputeDDotLogit_();
 	ComputeSumDerivativeConditionalPostpondProb_(betas, p, q);
 
@@ -329,6 +334,7 @@ void Objective::ComputeGradient(Vector *gradient) {
 													+	ComputeDerivativeQTerm2_()
 													+ ComputeDerivativeQTerm3_();
 
+													*/
 }
 
 
@@ -336,10 +342,17 @@ void Objective::ComputeGradient(Vector *gradient) {
 //add new things from here for objective2 (Compute gradient) 
 //Compute dot_logit
 void Objective::ComputeDotLogit_(Vector &betas) {
+
+	cout<<"DotLogit start"<<endl;
+
 	for(index_t i=0; i<first_stage_dot_logit_.size(); i++) {
-    first_stage_dot_logit_[i].SetAll(0.0);
+    first_stage_dot_logit_[i].SetZero();
   }
-	
+	cout<<"initilization "<<endl;
+
+	//cout<<"first_stage_dot "<<first_stage_dot_logit_[1][1]<<endl;
+	//cout<<"beta_fn_temp "<<beta_function_temp<<endl;
+
 	for(index_t n=0; n<first_stage_x_.size(); n++){
 		for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
 			first_stage_dot_logit_[n][i]=(exp(la::Dot( betas.length(), betas.ptr(),
