@@ -23,6 +23,7 @@ class Sampling {
 		//ArrayList<index_t> sample_selector_; //
 		
 		void Shuffle();
+		void CalculateSamplingError(double *sigma_n);
 };
 
 
