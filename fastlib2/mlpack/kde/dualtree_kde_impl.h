@@ -268,9 +268,9 @@ bool DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
 
       // If the first recursion is computed exactly, then increment
       // the probability tolerance for the second recursion.
-      if(first_result) {
-	probability_second = math::Sqr(probability_first);
-      }
+      //if(first_result) {
+      //probability_second = math::Sqr(probability_first);
+      //}
 
       bool second_result =
 	DualtreeKdeCanonical_(qnode, rnode_second, probability_second);
@@ -324,9 +324,9 @@ bool DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
 
       // If the first recursion is carried out exactly, then increment
       // the probability tolerance for the second recursion.
-      if(left_first_result) {
-	probability_second = math::Sqr(probability_first);
-      }
+      //if(left_first_result) {
+      //	probability_second = math::Sqr(probability_first);
+      //}
 
       bool left_second_result = 
 	DualtreeKdeCanonical_(qnode->left(), rnode_second, probability_second);
@@ -341,9 +341,9 @@ bool DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
 
       // If the first recursion is carried out exactly, then increment
       // the probability tolerance for the second recursion.
-      if(right_first_result) {
-	probability_second = math::Sqr(probability_first);
-      }
+      //if(right_first_result) {
+      //probability_second = math::Sqr(probability_first);
+      //}
 
       bool right_second_result =
 	DualtreeKdeCanonical_(qnode->right(), rnode_second,

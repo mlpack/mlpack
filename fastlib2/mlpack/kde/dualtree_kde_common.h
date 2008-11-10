@@ -55,15 +55,15 @@ class DualtreeKdeCommon {
   // Prioritized traversal based on the squared distance bounds.
   if(d1 <= d2) {
     *partner1 = nd1;
-    *probability1 = sqrt(probability);
+    *probability1 = (probability);
     *partner2 = nd2;
-    *probability2 = sqrt(probability);
+    *probability2 = (probability);
   }
   else {
     *partner1 = nd2;
-    *probability1 = sqrt(probability);
+    *probability1 = (probability);
     *partner2 = nd1;
-    *probability2 = sqrt(probability);
+    *probability2 = (probability);
   }
 }
 
