@@ -1,6 +1,6 @@
 #include "objective2.h"
 #include <cmath>
-#include "iostream.h"
+#include <iostream.h>
     
 void Objective::Init(fx_module *module) {
   module_=module;
@@ -293,13 +293,11 @@ void Objective::ComputeGradient(Vector *gradient) {
 	*/
 	
 	ComputeDotLogit_(betas);
-
-	(*gradient)[1]=1;
-	//cout<<"gradient "<<gradient[1]<<endl;
-
-/*
 	ComputeDDotLogit_();
+	cout<<"ddot end"<<endl;
 	ComputeSumDerivativeConditionalPostpondProb_(betas, p, q);
+	cout<<"sumDerivativeCondPostpondprob end"<<endl;
+	/*
 
 	Vector beta_term1;
 	beta_term1.Init(num_of_betas_);
@@ -343,29 +341,29 @@ void Objective::ComputeGradient(Vector *gradient) {
 //Compute dot_logit
 void Objective::ComputeDotLogit_(Vector &betas) {
 
-	cout<<"DotLogit start"<<endl;
-
-	for(index_t i=0; i<first_stage_dot_logit_.size(); i++) {
-    first_stage_dot_logit_[i].SetZero();
+	for(index_t n=0; n<first_stage_dot_logit_.size(); n++) {
+		first_stage_dot_logit_[n].Init(first_stage_x_[n].n_cols());
+    first_stage_dot_logit_[n].SetZero();
   }
-	cout<<"initilization "<<endl;
 
-	//cout<<"first_stage_dot "<<first_stage_dot_logit_[1][1]<<endl;
-	//cout<<"beta_fn_temp "<<beta_function_temp<<endl;
 
+	//cout<<"test "<<first_stage_dot_logit_[1][1]<<endl;
 	for(index_t n=0; n<first_stage_x_.size(); n++){
 		for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
 			first_stage_dot_logit_[n][i]=(exp(la::Dot( betas.length(), betas.ptr(),
-																				 first_stage_x_[n].GetColumnPtr(i) ))/
-																				 exp_betas_times_x1_[n]);
+																				 first_stage_x_[n].GetColumnPtr(i) )))/
+																				 exp_betas_times_x1_[n];
+			//cout<<"test "<<first_stage_dot_logit_[n][i]<<endl;
 		}	//i
 	}	//n
+	
 }
 
 
 void Objective::ComputeDDotLogit_() {
-	for(index_t i=0; i<first_stage_ddot_logit_.size(); i++) {
-    first_stage_ddot_logit_[i].SetAll(0.0);
+	for(index_t n=0; n<first_stage_ddot_logit_.size(); n++) {
+		first_stage_ddot_logit_[n].Init(first_stage_x_[n].n_cols(), first_stage_x_[n].n_cols());
+    first_stage_ddot_logit_[n].SetZero();
   }
 
 
@@ -425,6 +423,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 
 	for(index_t i=0; i<exp_betas_times_x2_.size(); i++) {
     exp_betas_times_x2_[i]=0;
+		second_stage_dot_logit_[i].Init(num_of_betas_);
 		second_stage_dot_logit_[i].SetZero();
   }
 
@@ -456,7 +455,8 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 	second_term_temp.Init(betas.length(), betas.length());
 
 	for(index_t i=0; i<sum_first_derivative_conditional_postpond_prob_.size(); i++) {
-    sum_first_derivative_conditional_postpond_prob_[i].SetAll(0.0);
+		sum_first_derivative_conditional_postpond_prob_[i].Init(num_of_betas_);
+    sum_first_derivative_conditional_postpond_prob_[i].SetZero();
 	}
 	
 

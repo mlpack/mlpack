@@ -1,4 +1,5 @@
 #include "objective2.h"
+#include <iostream.h>
 
 class ObjectiveTest {
  public:
@@ -18,6 +19,7 @@ class ObjectiveTest {
 		//gradient.Init(num_of_betas_);
 		objective.ComputeGradient(&gradient);
 		//printf("The objective is %g", dummy_objective);
+		cout<<"gradient test "<<gradient[0]<<endl;
 		NOTIFY("gradient calculation end");
   }
   void TestAll() {
