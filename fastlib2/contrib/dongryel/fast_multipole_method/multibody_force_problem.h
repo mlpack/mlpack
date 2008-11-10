@@ -385,6 +385,10 @@ class AxilrodTellerForceProblem {
       *negative_max_relative_error = 0;
       *positive_max_relative_error = 0;
 
+      // Number of approximated force vectors within the relative
+      // error.
+      index_t within_relative_error = 0;
+
       for(index_t i = 0; i < used_error.length(); i++) {
 
 	// Add up the net force...
@@ -405,6 +409,12 @@ class AxilrodTellerForceProblem {
 	fprintf(relative_error_output, "%g ", l1_norm_error / l1_norm_exact);
 	*max_relative_error = std::max(*max_relative_error,
 				       l1_norm_error / l1_norm_exact);
+
+	if(l1_norm_error <= l1_norm_exact * 
+	   AxilrodTellerForceProblem::relative_error_) {
+	  within_relative_error++;
+	}
+
         double positive_l1_norm_error =
           la::RawLMetric<1>(positive_force_vector_e.n_rows(),
                             positive_force_vector_e.GetColumnPtr(i),
@@ -442,7 +452,9 @@ class AxilrodTellerForceProblem {
       }
       net_force.PrintDebug("Net force: ", stdout);
       net_force_for_approx.PrintDebug("Net force approximated: ", stdout);
-      
+
+      printf("Within relative error: %d\n", within_relative_error);
+
       fclose(relative_error_output);
     }
 
@@ -619,19 +631,23 @@ class AxilrodTellerForceProblem {
 	new_summary.ApplyPostponed(hybrid_nodes[i]->stat().postponed);
 	new_summary.ApplyDelta(delta, i);
 	
-	// Compute the L1 norm of the positive component and the
-	// negative component.
-	double ratio = total_n_minus_one_tuples[i] / 
-	  (total_n_minus_one_tuples_root - new_summary.n_pruned_l);
+	double difference = fabs(new_summary.l1_norm_negative_force_vector_u -
+				 new_summary.l1_norm_positive_force_vector_l);
+        double sum = new_summary.l1_norm_negative_force_vector_u +
+	  new_summary.l1_norm_positive_force_vector_l;
 
-	if((AxilrodTellerForceProblem::relative_error_ *
-	    (new_summary.l1_norm_negative_force_vector_u +
-	     new_summary.l1_norm_positive_force_vector_l) -
-	    (new_summary.used_error_u +
-	     new_summary.probabilistic_used_error_u)) * ratio
-	   < delta.used_error[i]) {
-	  
-	  return false;
+	if((AxilrodTellerForceProblem::relative_error_ * difference -
+	    (new_summary.used_error_u + 
+	     new_summary.probabilistic_used_error_u)) * 
+	   total_n_minus_one_tuples[i] < 
+	   delta.used_error[i] * 
+	   (total_n_minus_one_tuples_root - new_summary.n_pruned_l)) {
+
+	  if(((sum + delta.used_error[i]) - sum) * 15 >
+	     sum * AxilrodTellerForceProblem::relative_error_) {
+	    
+	    return false;
+	  }
 	}
       }
     }
@@ -680,17 +696,23 @@ class AxilrodTellerForceProblem {
 	
 	// Compute the L1 norm of the positive component and the
 	// negative component.
-	double ratio = total_n_minus_one_tuples[i] / 
-	  (total_n_minus_one_tuples_root - new_summary.n_pruned_l);
+	double difference = fabs(new_summary.l1_norm_negative_force_vector_u -
+				 new_summary.l1_norm_positive_force_vector_l);
+        double sum = new_summary.l1_norm_negative_force_vector_u +
+          new_summary.l1_norm_positive_force_vector_l;
 
-	if((AxilrodTellerForceProblem::relative_error_ *
-	    (new_summary.l1_norm_negative_force_vector_u +
-	     new_summary.l1_norm_positive_force_vector_l) -
+	if((AxilrodTellerForceProblem::relative_error_ * difference -
 	    (new_summary.used_error_u +
-	     new_summary.probabilistic_used_error_u)) * ratio <
-	   delta.probabilistic_used_error[i]) {
-	  
-	  return false;
+	     new_summary.probabilistic_used_error_u)) * 
+	   total_n_minus_one_tuples[i] <
+	   delta.probabilistic_used_error[i] *
+	   (total_n_minus_one_tuples_root - new_summary.n_pruned_l)) {
+	   
+          if(((sum + delta.probabilistic_used_error[i]) - sum) * 15 >
+	     sum * AxilrodTellerForceProblem::relative_error_) {
+            return false;
+          }
+
 	}
       }
     }
