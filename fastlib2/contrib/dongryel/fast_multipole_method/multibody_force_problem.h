@@ -704,11 +704,11 @@ class AxilrodTellerForceProblem {
 	if((AxilrodTellerForceProblem::relative_error_ * difference -
 	    (new_summary.used_error_u +
 	     new_summary.probabilistic_used_error_u)) * 
-	   total_n_minus_one_tuples[i] <
+	   total_n_minus_one_tuples[i] <=
 	   delta.probabilistic_used_error[i] *
 	   (total_n_minus_one_tuples_root - new_summary.n_pruned_l)) {
 	   
-          if(((sum + delta.probabilistic_used_error[i]) - sum) * 15 >
+          if(((sum + delta.probabilistic_used_error[i]) - sum) * 15 >=
 	     sum * AxilrodTellerForceProblem::relative_error_) {
             return false;
           }
