@@ -73,7 +73,40 @@ Sampling::ReturnSubsetData(ArrayList<Matrix> Input_file1, ArrayList<Matrix> Inpu
 
 
 
+Sampling::CalculateSamplingError(double *sigma_n){
 
+}
+
+void CalculateSamplingError(ml_data *dt,double *sigma_n)
+{
+   int i,count=0;
+   double correctionfactor;
+   double temp,sum=0.0,sum_sq=0.0;
+   
+   //////////////////////////////////////////
+   // References...
+   int np=dt->npersons;		
+   int *person_selector=dt->person_selector;
+   double *person_SP=dt->person_SP;
+   double *person_SP_new=dt->person_SP_new;
+   //////////////////////////////////////////
+
+   for(i=0;i<np;i++)
+   {
+      if((person_selector)&&(person_selector[i]==0))
+	 continue;
+      count++;
+      temp=log(person_SP[i]/person_SP_new[i]);
+      sum+=temp;
+      sum_sq+=(temp*temp);
+   }
+   correctionfactor=sqrt(((double)(np-count))/(np-1));
+   sum_sq-=((sum*sum)/count);
+   sum_sq/=count;
+   sum_sq/=(count-1);
+   
+   (*sigma_n)=correctionfactor*sqrt(sum_sq);
+}
 		
 
 
