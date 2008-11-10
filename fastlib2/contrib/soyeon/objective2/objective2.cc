@@ -366,6 +366,13 @@ void Objective::ComputeGradient(Vector *gradient) {
 	ComputeDerivativeBetaTerm3_(&beta_term3);
 	cout<<"DerivativeBetaTerm3 done"<<endl;
 
+	cout<<"Gradient vector for beta: ";
+	for (index_t i=0; i<beta_term1.length(); i++)
+	{
+		cout<<beta_term1[i]<<" ";
+	}
+	cout<<endl;
+
 	//double ComputeDerivativePTerm1_();
 	//double ComputeDerivativePTerm2_();
 	//double ComputeDerivativePTerm3_();
@@ -377,18 +384,31 @@ void Objective::ComputeGradient(Vector *gradient) {
 	ComputeSumDerivativeBetaFunction_(betas, p, q);
 	cout<<"SumDerivativeBetaFunction done"<<endl;
 
+  Vector dummy_gradient;
+	dummy_gradient.Init(num_of_betas_+2);
+	dummy_gradient.SetZero();
 
 	for(index_t i=0; i<num_of_betas_; i++){
-		(*gradient)[i]=beta_term1[i]+beta_term2[i]+beta_term3[i];
+		dummy_gradient[i]=beta_term1[i]+beta_term2[i]+beta_term3[i];
 	}
 
-	(*gradient)[num_of_betas_]=ComputeDerivativePTerm1_()
+	dummy_gradient[num_of_betas_]=ComputeDerivativePTerm1_()
 													+	ComputeDerivativePTerm2_()
 													+ ComputeDerivativePTerm3_();
 
-	(*gradient)[num_of_betas_+1]=ComputeDerivativeQTerm1_()
+	dummy_gradient[num_of_betas_+1]=ComputeDerivativeQTerm1_()
 													+	ComputeDerivativeQTerm2_()
 													+ ComputeDerivativeQTerm3_();
+
+	cout<<"Gradient vector: ";
+	for (index_t i=0; i<dummy_gradient.length(); i++)
+	{
+		cout<<dummy_gradient[i]<<" ";
+	}
+	cout<<endl;
+
+	gradient=&dummy_gradient;
+	cout<<"gradient done"<<endl;
 
 													
 }
@@ -449,6 +469,8 @@ void Objective::ComputeDerivativeBetaTerm1_(Vector *beta_term1) {
 	temp.Init(num_of_betas_);
 
   for(index_t n=0; n<first_stage_x_.size(); n++) {
+		cout<<"n="<<n<<endl;
+		cout<<"first_stage_y_[n]="<<first_stage_y_[n]<<endl;
     if (first_stage_y_[n]<0) { 
 			//first_stage_y_[n]=-1 if all==zero, j_i is n chose j_i
       continue;
@@ -456,9 +478,19 @@ void Objective::ComputeDerivativeBetaTerm1_(Vector *beta_term1) {
   
 			la::MulOverwrite(first_stage_x_[n], first_stage_dot_logit_[n], &temp);
 			//check2
+
+			cout<<"temp0="<<temp[0]<<endl;
+			cout<<"temp1="<<temp[1]<<endl;
+			cout<<"temp2="<<temp[2]<<endl;
+			
 			la::SubOverwrite(num_of_betas_, temp.ptr(), first_stage_x_[n].GetColumnPtr(first_stage_y_[n]), temp.ptr());
+			cout<<"temp0="<<temp[0]<<endl;
+			cout<<"temp1="<<temp[1]<<endl;
+			cout<<"temp2="<<temp[2]<<endl;
 			//check
 			la::AddTo(temp, beta_term1);
+
+			
 																							
 		}
   }

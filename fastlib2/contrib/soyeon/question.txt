@@ -19,3 +19,6 @@
 15. Handle several classes - especially data structure
 16. ArrayList<index_t> copy & Capacity?
 17. sample data selection
+==============
+18. Destruct()
+19. Access the element of Vector pointer argument in function
