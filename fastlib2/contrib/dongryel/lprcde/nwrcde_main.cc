@@ -151,11 +151,15 @@ int main(int argc, char *argv[]) {
 
   // Run the appropriate algorithm based on the kernel type.
   if(!strcmp(fx_param_str(nwrcde_module, "kernel", "gaussian"), "gaussian")) {
+
+    printf("Chose the Gaussian kernel...\n");
     StartComputation<GaussianKernelAux>(queries, references,
 					reference_targets_transposed,
 					nwrcde_module);
   }
   else if(!strcmp(fx_param_str(nwrcde_module, "kernel", "epan"), "epan")) {
+
+    printf("Chose the Epanechnikov kernel...\n");
     StartComputation<EpanKernelAux>(queries, references, 
 				    reference_targets_transposed,
 				    nwrcde_module);
