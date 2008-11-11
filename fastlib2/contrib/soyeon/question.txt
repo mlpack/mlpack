@@ -22,3 +22,4 @@
 ==============
 18. Destruct()
 19. Access the element of Vector pointer argument in function
+20. beta_term1->Copy(temp3);

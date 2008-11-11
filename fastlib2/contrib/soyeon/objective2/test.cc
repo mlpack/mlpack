@@ -15,11 +15,17 @@ class ObjectiveTest {
 		NOTIFY("The objective is %g", dummy_objective);
 
 		NOTIFY("gradient calculation start");
-		Vector gradient;
+		Vector dummy_gradient;
 		//gradient.Init(num_of_betas_);
-		objective.ComputeGradient(&gradient);
+		objective.ComputeGradient(&dummy_gradient);
 		//printf("The objective is %g", dummy_objective);
-		cout<<"gradient test "<<gradient[0]<<endl;
+		cout<<"Gradient vector: ";
+		for (index_t i=0; i<dummy_gradient.length(); i++)
+		{
+			cout<<dummy_gradient[i]<<" ";
+		}
+		cout<<endl;
+		
 		NOTIFY("gradient calculation end");
   }
   void TestAll() {
