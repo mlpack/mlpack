@@ -500,7 +500,8 @@ class AxilrodTellerForceProblem {
       SetZero();
     }
 
-    void PostProcess(index_t q_index) {
+    template<typename MultiTreeGlobal>
+    void PostProcess(const MultiTreeGlobal &globals, index_t q_index) {
       la::AddOverwrite(3, positive_force_vector_e.GetColumnPtr(q_index),
 		       negative_force_vector_e.GetColumnPtr(q_index),
 		       final_results.GetColumnPtr(q_index));
