@@ -14,7 +14,7 @@ class ObjectiveTest {
     objective.ComputeObjective(&dummy_objective );
 		NOTIFY("The objective is %g", dummy_objective);
 
-		NOTIFY("gradient calculation start");
+		NOTIFY("Gradient calculation starts");
 		Vector dummy_gradient;
 		//gradient.Init(num_of_betas_);
 		objective.ComputeGradient(&dummy_gradient);
@@ -26,7 +26,21 @@ class ObjectiveTest {
 		}
 		cout<<endl;
 		
-		NOTIFY("gradient calculation end");
+		NOTIFY("Gradient calculation ends");
+		
+		NOTIFY("Exact hessian calculation starts");
+		Matrix dummy_hessian;
+		objective.ComputeHessian(&dummy_hessian);
+		cout<<"Hessian matrix: "<<endl;
+
+		for (index_t j=0; j<dummy_hessian.n_rows(); j++){
+			for (index_t k=0; k<dummy_hessian.n_cols(); k++){
+				cout<<dummy_hessian.get(j,k) <<"  ";
+			}
+			cout<<endl;
+		}
+		NOTIFY("Exact hessian calculation ends");
+		
   }
   void TestAll() {
     Test1();
