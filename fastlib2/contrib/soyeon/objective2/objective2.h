@@ -97,9 +97,7 @@ friend class ObjectiveTest;
 	void ComputeDerivativeBetaTerm2_(Vector *beta_term2);
 	void ComputeDerivativeBetaTerm3_(Vector *beta_term3);
 
-	void ComputeSecondDerivativeBetaTerm1_(Matrix *second_beta_term1);
-	void ComputeSecondDerivativeBetaTerm2_(Matrix *second_beta_term2);
-	void ComputeSecondDerivativeBetaTerm3_(Matrix *second_beta_term3);
+	
 	//void ComputeDerivativeBetaConditionalPostponedProb_(Vector &betas);
 	
 	//need first_stage_dot_logit_
@@ -109,18 +107,9 @@ friend class ObjectiveTest;
 	double ComputeDerivativePTerm2_();
 	double ComputeDerivativePTerm3_();
 
-	double ComputeSecondDerivativePTerm1_();
-	double ComputeSecondDerivativePTerm2_();
-	double ComputeSecondDerivativePTerm3_();
-
 	double ComputeDerivativeQTerm1_();
 	double ComputeDerivativeQTerm2_();
 	double ComputeDerivativeQTerm3_();
-
-	double ComputeSecondDerivativeQTerm1_();
-	double ComputeSecondDerivativeQTerm2_();
-	double ComputeSecondDerivativeQTerm3_();
-
 
 	void ComputeSumDerivativeBetaFunction_(Vector &betas, double p, double q);
 
@@ -133,18 +122,32 @@ friend class ObjectiveTest;
 	ArrayList<Vector> sum_second_derivative_conditionl_postponed_q_;
 
 	
+	//Hessian
+	void ComputeSecondDerivativeBetaTerm1_(Matrix *second_beta_term1);
+	void ComputeSecondDerivativeBetaTerm2_(Matrix *second_beta_term2);
+	void ComputeSecondDerivativeBetaTerm3_(Matrix *second_beta_term3);
 
-	Vector ComputeSecondDerivativePBetaTerm1_();
-	Vector ComputeSecondDerivativePBetaTerm2_();
-	Vector ComputeSecondDerivativePBetaTerm3_();
+	double ComputeSecondDerivativePTerm1_();
+	double ComputeSecondDerivativePTerm2_();
+	double ComputeSecondDerivativePTerm3_();
 
-	Vector ComputeSecondDerivativeQBetaTerm1_();
-	Vector ComputeSecondDerivativeQBetaTerm2_();
-	Vector ComputeSecondDerivativeQBetaTerm3_();
+	double ComputeSecondDerivativeQTerm1_();
+	double ComputeSecondDerivativeQTerm2_();
+	double ComputeSecondDerivativeQTerm3_();
+
+	void ComputeSecondDerivativePBetaTerm1_(Vector *p_beta_term1);
+	void ComputeSecondDerivativePBetaTerm2_(Vector *p_beta_term2);
+	void ComputeSecondDerivativePBetaTerm3_(Vector *p_beta_term3);
+
+	void ComputeSecondDerivativeQBetaTerm1_(Vector *q_beta_term1);
+	void ComputeSecondDerivativeQBetaTerm2_(Vector *q_beta_term2);
+	void ComputeSecondDerivativeQBetaTerm3_(Vector *q_beta_term3);
 
 	double ComputeSecondDerivativePQTerm1_();
 	double ComputeSecondDerivativePQTerm2_();
 	double ComputeSecondDerivativePQTerm3_();
+
+
 
 	
 };
