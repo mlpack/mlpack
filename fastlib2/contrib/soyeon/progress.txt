@@ -20,7 +20,7 @@ Fastlib meetings
 					binrule(name="main", 
 					        sources=["main.cc"], 
 					        deplibs=[":lin_test"])
-				>fl-build --mode ==fast... or ==debug file.cc
+				>fl-build --mode =fast... or =debug file.cc
 				>./file
 				>svn list
 				>svn commit -m "msg"
@@ -80,6 +80,11 @@ Fastlib meetings
 					exp_betas_times_x1_+=exp(la::Dot(betas.length(), 
 								beta.ptr(), 
 								first_stage_y_[n].GetColumnPtr(j)));
+								
+11/06 Thurs. >fl-build --mode=debug objective2
+			 >fl-build --model=debug test
+			 >./test --data1=data1.csv --info1=info1.csv --data2=data2.csv
+			 --info2=info2.csv --data3=data3.csv --info3=info3.csv
 				
 				
 					
