@@ -435,10 +435,13 @@ class AxilrodTellerForceKernelAux {
 	   distance_second_third_pow_three,
 	   distance_second_third_pow_five, negative_contributions,
 	   positive_contributions);
-	min_negative_contribution[counter] += negative_contributions.lo;
-	max_negative_contribution[counter] += negative_contributions.hi;
-	min_positive_contribution[counter] += positive_contributions.lo;
-	max_positive_contribution[counter] += positive_contributions.hi;
+
+	DRange tmp_negative_contributions;
+	DRange tmp_positive_contributions;
+	tmp_negative_contributions.lo = negative_contributions.lo;
+	tmp_negative_contributions.hi = negative_contributions.hi;
+	tmp_positive_contributions.lo = positive_contributions.lo;
+	tmp_positive_contributions.hi = positive_contributions.hi;
 	  
 	AxilrodTellerForceKernelNegativeEvaluate
 	  (counter, first_bound, second_bound,
@@ -453,10 +456,33 @@ class AxilrodTellerForceKernelAux {
 	   distance_second_third_pow_three,
 	   distance_second_third_pow_five, negative_contributions,
 	   positive_contributions);
-	min_negative_contribution[counter] += negative_contributions.lo;
-	max_negative_contribution[counter] += negative_contributions.hi;
-	min_positive_contribution[counter] += positive_contributions.lo;
-	max_positive_contribution[counter] += positive_contributions.hi;
+
+	DRange tmp_negative_contributions2;
+	DRange tmp_positive_contributions2;
+	tmp_negative_contributions2.lo = negative_contributions.lo;
+	tmp_negative_contributions2.hi = negative_contributions.hi;
+	tmp_positive_contributions2.lo = positive_contributions.lo;
+	tmp_positive_contributions2.hi = positive_contributions.hi;
+	
+	double min_contribution = tmp_negative_contributions.lo +
+	  tmp_negative_contributions2.lo + tmp_positive_contributions.lo +
+	  tmp_positive_contributions2.lo;
+	double max_contribution = tmp_negative_contributions.hi +
+	  tmp_negative_contributions2.hi + tmp_positive_contributions.hi +
+	  tmp_positive_contributions2.hi;
+
+	if(min_contribution < 0) {
+	  min_negative_contribution[counter] += min_contribution;
+	}
+	else {
+	  min_positive_contribution[counter] += min_contribution;
+	}
+	if(max_contribution < 0) {
+	  max_negative_contribution[counter] += max_contribution;
+	}
+	else {
+	  max_positive_contribution[counter] += max_contribution;
+	}
 
       } // iterating over each dimension (row-wise)...
     }
