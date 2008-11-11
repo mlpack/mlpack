@@ -633,8 +633,6 @@ class AxilrodTellerForceProblem {
 	
 	double difference = fabs(new_summary.l1_norm_negative_force_vector_u -
 				 new_summary.l1_norm_positive_force_vector_l);
-        double sum = new_summary.l1_norm_negative_force_vector_u +
-	  new_summary.l1_norm_positive_force_vector_l;
 
 	if((AxilrodTellerForceProblem::relative_error_ * difference -
 	    (new_summary.used_error_u + 
@@ -643,8 +641,8 @@ class AxilrodTellerForceProblem {
 	   delta.used_error[i] * 
 	   (total_n_minus_one_tuples_root - new_summary.n_pruned_l)) {
 
-	  if(((sum + delta.used_error[i]) - sum) * 15 >
-	     sum * AxilrodTellerForceProblem::relative_error_) {
+	  if(((difference + delta.used_error[i]) - difference) * 15 >
+	     difference * AxilrodTellerForceProblem::relative_error_) {
 	    
 	    return false;
 	  }
@@ -698,8 +696,6 @@ class AxilrodTellerForceProblem {
 	// negative component.
 	double difference = fabs(new_summary.l1_norm_negative_force_vector_u -
 				 new_summary.l1_norm_positive_force_vector_l);
-        double sum = new_summary.l1_norm_negative_force_vector_u +
-          new_summary.l1_norm_positive_force_vector_l;
 
 	if((AxilrodTellerForceProblem::relative_error_ * difference -
 	    (new_summary.used_error_u +
@@ -708,8 +704,9 @@ class AxilrodTellerForceProblem {
 	   delta.probabilistic_used_error[i] *
 	   (total_n_minus_one_tuples_root - new_summary.n_pruned_l)) {
 	   
-          if(((sum + delta.probabilistic_used_error[i]) - sum) * 15 >=
-	     sum * AxilrodTellerForceProblem::relative_error_) {
+          if(((difference + delta.probabilistic_used_error[i]) - 
+	      difference) * 15 >=
+	     difference * AxilrodTellerForceProblem::relative_error_) {
             return false;
           }
 
