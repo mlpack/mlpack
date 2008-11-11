@@ -295,7 +295,7 @@ void MultiTreeDepthFirst<MultiTreeProblem>::PostProcessTree_
   if(node->is_leaf()) {
     for(index_t i = node->begin(); i < node->end(); i++) {
       query_results.FinalPush(qset, node->stat(), i);
-      query_results.PostProcess(i);
+      query_results.PostProcess(globals_, i);
     }
   }
   else {

@@ -572,6 +572,7 @@ class MultiTreeDepthFirst {
     if(reference_trees_.size() > 0) {
       for(index_t i = 0; i < reference_trees_.size(); i++) {
 	delete reference_trees_[i];
+	delete sets_[i];
       }
     }
     
