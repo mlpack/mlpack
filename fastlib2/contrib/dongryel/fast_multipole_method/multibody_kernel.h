@@ -537,18 +537,15 @@ class AxilrodTellerForceKernelAux {
 	   distance_second_third,
 	   distance_second_third_pow_three,
 	   distance_second_third_pow_five);
-	
-	if(positive_kernel_evaluate > 0) {
-	  positive_contribution[counter] += positive_kernel_evaluate;
+
+	double sum_evaluate = positive_kernel_evaluate +
+	  negative_kernel_evaluate;
+
+	if(sum_evaluate > 0) {
+	  positive_contribution[counter] += sum_evaluate;
 	}
 	else {
-	  negative_contribution[counter] += positive_kernel_evaluate;
-	}
-	if(negative_kernel_evaluate > 0) {
-	  positive_contribution[counter] += negative_kernel_evaluate;
-	}
-	else {
-	  negative_contribution[counter] += negative_kernel_evaluate;
+	  negative_contribution[counter] += sum_evaluate;
 	}
 
       } // iterating over each dimension (row-wise)...

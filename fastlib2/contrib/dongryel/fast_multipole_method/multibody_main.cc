@@ -25,6 +25,9 @@ int main(int argc, char *argv[]) {
   // data::Load inits a matrix with the contents of a .csv or .arff.
   data::Load(references_file_name, &references);
 
+
+  la::Scale(references.n_cols() * references.n_rows(), 10.0, references.ptr());
+
   // Instantiate a multi-tree problem...
   ArrayList<const Matrix *> sets;
   sets.Init(AxilrodTellerForceProblem::order);
