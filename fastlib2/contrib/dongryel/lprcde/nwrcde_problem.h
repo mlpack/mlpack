@@ -539,7 +539,8 @@ class NWRCdeProblem {
       SetZero();
     }
     
-    void PostProcess(index_t q_index) {
+    template<typename MultiTreeGlobal>
+    void PostProcess(const MultiTreeGlobal &globals, index_t q_index) {
       
       if(nwr_denominator_sum_e[q_index] == 0 &&
 	 nwr_numerator_sum_e[q_index] == 0) {
