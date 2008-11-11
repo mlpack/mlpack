@@ -555,7 +555,8 @@ class NWRCdeProblem {
       FILE *stream = fopen(output_file_name, "w+");
       
       for(index_t q = 0; q < final_results.length(); q++) {
-	fprintf(stream, "%g\n", final_results[q]);
+	fprintf(stream, "%g %g %g\n", final_results[q],
+		nwr_numerator_n_pruned[q], nwr_denominator_n_pruned[q]);
       }
       
       fclose(stream);
@@ -1048,7 +1049,7 @@ class NWRCdeProblem {
       if((delta.nwr_numerator.used_error <= allowed_error.nwr_numerator.error)
 	 && (delta.nwr_denominator.used_error <= 
 	     allowed_error.nwr_denominator.error)) {
-	
+
 	qnode->stat().postponed.ApplyDelta(delta);
 	query_results.num_finite_difference_prunes++; 
 	return true;
