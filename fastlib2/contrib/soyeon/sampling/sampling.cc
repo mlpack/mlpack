@@ -6,9 +6,10 @@
 
 
 Sampling::Init(fx_module *module) {
-	ind_initial_sampling_=0;
+	//ind_initial_sampling_=0;
 
 }
+
 
 
 Sampling::Shuffle() {
@@ -35,86 +36,92 @@ Sampling::Shuffle() {
 
 }
 
-Sampling::ExpandSubset(double percent_added_sample, ArrayList<index_t> *sample_selector_) {
-	if(ind_initial_sampling_==0) {
-		//copy num_initial_sampling 
-		for(index_t i=0; i<num_initial_sampling; i++){
+
+
+Sampling::InitialSampling(ArrayList<index_t> *sample_selector, double *num_slected_sample) {
+	for(index_t i=0; i<num_initial_sampling; i++){
 			//check
 			//sample_selector_[i]=shuffled_array[i];
 			//check-what's the difference?
-			sample_selector_.PushBackCopy(shuffled_array[i]);
+			sample_selector->PushBackCopy(shuffled_array[i]);
+			*num_slected_sample=num_initial_sampling;
 		}	//i
-		ind_initial_sampling_=1;
-		num_slected_sample_=num_initial_sampling;
-	}	else {
-			int num_add_sample=0;
-			num_add_sample=math::RoundInt((num_selected_sample_)*(percent_added_sample));
-			if(num_add_sample+num_selected_sample_ >= num_people_){
-				for(index_t i=num_selected_sample_; i<num_people_; i++){
-					sample_selector_.PushbackCopy(shuffled_array[i]);
-					num_selected_sample_=num_people_;
-				}	//i
-			} else {
-				for(index_t i=num_selected_sample_; i<(num_selected_sample_+num_add_sample); i++){
-					sample_selector_.PushBackCopy(shuffled_array[i]);
-					num_selected_sample_+=num_add_sample;
-				}	//i
-			}	//else
+
+}
+
+
+
+Sampling::ExpandSubset(double percent_added_sample, ArrayList<index_t> *sample_selector, double *num_selected_sample) {
+	
+	int num_add_sample=0;
+	num_add_sample=math::RoundInt((num_selected_sample_)*(percent_added_sample));
+	if(num_add_sample+num_selected_sample_ >= num_people_){
+		for(index_t i=num_selected_sample_; i<num_people_; i++){
+			sample_selector->PushbackCopy(shuffled_array[i]);
+			//sample_selector.size()==num_seleted_sample_==num_people_
+			*num_selected_sample=num_people_;
+		}	//i
+	} else {
+		for(index_t i=num_selected_sample_; i<(num_selected_sample_+num_add_sample); i++){
+			sample_selector->PushBackCopy(shuffled_array[i]);
+			//sample_selector.size()==num_seleted_sample_
+			*num_selected_sample+=num_add_sample;
+		}	//i
 	}	//else
 	
 }
 
-//Next-->function for picking the data from selected people 
-Sampling::ReturnSubsetData(ArrayList<Matrix> Input_file1, ArrayList<Matrix> Input_file2, 
-													 ArrayList<Matrix> Input_file3) {
+
+
+Sampling::ReturnSubsetData(double num_selected_sample, ArrayList<index_t> &sample_selector, 
+													 ArrayList<Matrix> *added_first_stage_x, ArrayList<Matrix> *added_second_stage_x, 
+													 ArrayList<Matrix> *added_unknown_x_past, ArrayList<index_t> *added_first_stage_y, 
+													 ArrayList<index_t> *added_second_stage_y, ArrayList<index_t> *ind_unknown_x) {
+
+	//assume input files are saved as desired form
+	int num_selected_people;
+	num_selected_people=sample_selector.size();
+
+	ArrayList<Matrix> added_first_stage_x_temp;
+	first_stage_x_temp.Init(num_selected_people);
+
+	ArrayList<Matrix> added_second_stage_x_temp;
+	second_stage_x_temp.Init(num_selected_people);
+
+	ArrayList<Matrix> added_unknown_x_past_temp;
+	unknown_x_past_temp.Init(num_selected_people);
+
+	ArrayList<index_t> added_first_stage_y_temp;
+	first_stage_y_temp.Init(num_selected_people);
+
+	ArrayList<index_t> added_second_stage_y_temp;
+	second_stage_Y_temp.Init(num_selected_people);
+
+	ArrayList<index_t> ind_unknown_x_temp;
+	ind_unknown_x_temp.Init(num_of_unknown_x_);
+	
+	//check - change to Vector and Alias and copy one time
+	for(index_t i=0; i<num_of_unknown_x_; i++){
+		ind_unknown_x_temp[i]=population_ind_unknown_x_[i];
+	}
+
+
+
+	for(index_t i=0; i<num_selected_people; i++){
+		added_first_stage_x_temp[i].Alias(population_first_stage_x_(sample_selector[i]);
+
+
+	
+	}		//i
+
 
 	MakeColumnVector
 }
 
 
 
+
 Sampling::CalculateSamplingError(double *sigma_n){
 
 }
-
-void CalculateSamplingError(ml_data *dt,double *sigma_n)
-{
-   int i,count=0;
-   double correctionfactor;
-   double temp,sum=0.0,sum_sq=0.0;
-   
-   //////////////////////////////////////////
-   // References...
-   int np=dt->npersons;		
-   int *person_selector=dt->person_selector;
-   double *person_SP=dt->person_SP;
-   double *person_SP_new=dt->person_SP_new;
-   //////////////////////////////////////////
-
-   for(i=0;i<np;i++)
-   {
-      if((person_selector)&&(person_selector[i]==0))
-	 continue;
-      count++;
-      temp=log(person_SP[i]/person_SP_new[i]);
-      sum+=temp;
-      sum_sq+=(temp*temp);
-   }
-   correctionfactor=sqrt(((double)(np-count))/(np-1));
-   sum_sq-=((sum*sum)/count);
-   sum_sq/=count;
-   sum_sq/=(count-1);
-   
-   (*sigma_n)=correctionfactor*sqrt(sum_sq);
-}
-		
-
-
-
-
-
-
-}
-
-
 
