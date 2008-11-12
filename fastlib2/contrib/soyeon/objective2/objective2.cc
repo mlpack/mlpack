@@ -57,25 +57,25 @@ void Objective::Init(fx_module *module) {
   }
 	
 
-	index_t num_people=first_stage_x_.size();
+	index_t num_selected_people=first_stage_x_.size();
 	
 
 	
 	//Initilize memeber variables
-	first_stage_y_.Init(num_people);
+	first_stage_y_.Init(num_selected_people);
 	first_stage_y_[0]=-1;
 	first_stage_y_[1]=2;
 
-	second_stage_y_.Init(num_people);
+	second_stage_y_.Init(num_selected_people);
 	second_stage_y_[0]=1;
 	second_stage_y_[1]=-1;
 
 	ind_unknown_x_.Init(1);
 	ind_unknown_x_[0]=3;
 
-	exp_betas_times_x1_.Init(num_people);
-  exp_betas_times_x2_.Init(num_people);
-	postponed_probability_.Init(num_people);
+	exp_betas_times_x1_.Init(num_selected_people);
+  exp_betas_times_x2_.Init(num_selected_people);
+	postponed_probability_.Init(num_selected_people);
 	for(index_t i=0; i<postponed_probability_.size(); i++) {
     postponed_probability_[i]=0;
   }
@@ -87,8 +87,8 @@ void Objective::Init(fx_module *module) {
 	alpha_weight_=0;  
 
 	//from here for the gradient
-	first_stage_dot_logit_.Init(num_people);
-	first_stage_ddot_logit_.Init(num_people, num_people);
+	first_stage_dot_logit_.Init(num_selected_people);
+	first_stage_ddot_logit_.Init(num_selected_people, num_selected_people);
 
 	for(index_t i=0; i<first_stage_dot_logit_.size(); i++) {
     exp_betas_times_x1_[i]=0;
@@ -99,8 +99,8 @@ void Objective::Init(fx_module *module) {
 
   }
 
-	second_stage_dot_logit_.Init(num_people);
-	second_stage_ddot_logit_.Init(num_people, num_people);
+	second_stage_dot_logit_.Init(num_selected_people);
+	second_stage_ddot_logit_.Init(num_selected_people, num_selected_people);
 
 	for(index_t i=0; i<second_stage_dot_logit_.size(); i++) {
     exp_betas_times_x2_[i]=0;
@@ -111,8 +111,8 @@ void Objective::Init(fx_module *module) {
 
   }
 
-	sum_first_derivative_conditional_postpond_prob_.Init(num_people);
-	sum_second_derivative_conditional_postpond_prob_.Init(num_people);
+	sum_first_derivative_conditional_postpond_prob_.Init(num_selected_people);
+	sum_second_derivative_conditional_postpond_prob_.Init(num_selected_people);
 
 	for(index_t n=0; n<first_stage_x_.size(); n++) {
 		sum_first_derivative_conditional_postpond_prob_[n].Init(num_of_betas_);
@@ -122,13 +122,13 @@ void Objective::Init(fx_module *module) {
 
 	}
 
-	sum_first_derivative_p_beta_fn_.Init(num_people);
-	sum_second_derivative_p_beta_fn_.Init(num_people);
-	sum_first_derivative_q_beta_fn_.Init(num_people);
-	sum_second_derivative_q_beta_fn_.Init(num_people);
-	sum_second_derivative_p_q_beta_fn_.Init(num_people);
-	sum_second_derivative_conditionl_postponed_p_.Init(num_people);
-	sum_second_derivative_conditionl_postponed_q_.Init(num_people);
+	sum_first_derivative_p_beta_fn_.Init(num_selected_people);
+	sum_second_derivative_p_beta_fn_.Init(num_selected_people);
+	sum_first_derivative_q_beta_fn_.Init(num_selected_people);
+	sum_second_derivative_q_beta_fn_.Init(num_selected_people);
+	sum_second_derivative_p_q_beta_fn_.Init(num_selected_people);
+	sum_second_derivative_conditionl_postponed_p_.Init(num_selected_people);
+	sum_second_derivative_conditionl_postponed_q_.Init(num_selected_people);
 
 
 	for(index_t i=0; i<first_stage_x_.size(); i++) {
