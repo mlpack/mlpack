@@ -488,96 +488,6 @@ class AxilrodTellerForceKernelAux {
     }
   }
 
-  void EvaluateHelper
-  (const ArrayList<Matrix *> &sets, const ArrayList<index_t> &indices,
-   const Matrix &squared_distances) {
-
-    for(index_t p = 0; p < order_; p++) {
-
-      double *positive_contribution =
-	lower_bound_positive_contributions_.GetColumnPtr(p);
-      double *negative_contribution = 
-	upper_bound_negative_contributions_.GetColumnPtr(p);
-      
-      const double *first_point = sets[first_index[p]]->GetColumnPtr
-	(indices[first_index[p]]);
-      const double *second_point = sets[second_index[p]]->GetColumnPtr
-	(indices[second_index[p]]);
-      
-      double distance_first_second =
-	sqrt(squared_distances.get(first_index[p],
-				   second_index[p]));
-      double distance_first_second_pow_three =
-	distance_first_second *
-	squared_distances.get(first_index[p], second_index[p]);
-      double distance_first_second_pow_five =
-	squared_distances.get(first_index[p], second_index[p]) *
-	distance_first_second_pow_three;
-      double distance_first_second_pow_seven =
-	squared_distances.get(first_index[p], second_index[p]) *
-	distance_first_second_pow_five;
-      double distance_first_third =
-	sqrt(squared_distances.get(first_index[p],
-				   third_index[p]));
-      double distance_first_third_pow_three =
-	distance_first_third *
-	squared_distances.get(first_index[p], third_index[p]);
-      double distance_first_third_pow_five =
-	squared_distances.get(first_index[p], third_index[p]) *
-	distance_first_third_pow_three;
-      double distance_second_third =
-	sqrt(squared_distances.get(second_index[p],
-				   third_index[p]));
-      double distance_second_third_pow_three =
-	distance_second_third *
-	squared_distances.get(second_index[p], third_index[p]);
-      double distance_second_third_pow_five =
-	squared_distances.get(second_index[p], third_index[p]) *
-	distance_second_third_pow_three;
-
-      for(index_t counter = 0; counter < dimension_; counter++) {
-	double positive_kernel_evaluate = 
-	  AxilrodTellerForceKernelPositiveEvaluate
-	  (counter, first_point, second_point,
-	   distance_first_second,
-	   distance_first_second_pow_three,
-	   distance_first_second_pow_five,
-	   distance_first_second_pow_seven,
-	   distance_first_third,
-	   distance_first_third_pow_three,
-	   distance_first_third_pow_five,
-	   distance_second_third,
-	   distance_second_third_pow_three,
-	   distance_second_third_pow_five);
-
-	double negative_kernel_evaluate =
-	  AxilrodTellerForceKernelNegativeEvaluate
-	  (counter, first_point, second_point,
-	   distance_first_second,
-	   distance_first_second_pow_three,
-	   distance_first_second_pow_five,
-	   distance_first_second_pow_seven,
-	   distance_first_third,
-	   distance_first_third_pow_three,
-	   distance_first_third_pow_five,
-	   distance_second_third,
-	   distance_second_third_pow_three,
-	   distance_second_third_pow_five);
-
-	double sum_evaluate = positive_kernel_evaluate +
-	  negative_kernel_evaluate;
-
-	if(sum_evaluate > 0) {
-	  positive_contribution[counter] += sum_evaluate;
-	}
-	else {
-	  negative_contribution[counter] += sum_evaluate;
-	}
-
-      } // iterating over each dimension (row-wise)...
-    }
-  }
-
   void PairwiseEvaluateLoop(const ArrayList<Matrix *> &sets,
 			    const ArrayList<index_t> &indices,
 			    Matrix &squared_distances) {
@@ -895,11 +805,10 @@ class AxilrodTellerForceKernelAux {
       upper_bound_negative_contributions_.SetZero();
 
       // Evaluate contribution of the three tuples...
-      EvaluateHelper(sets, globals.hybrid_node_chosen_indices, 
-		     lower_bound_squared_distances_);
-
       ExtractContribution
-	(negative_force_vector_first_particle.ptr(),
+	(sets, globals.hybrid_node_chosen_indices, 
+	 lower_bound_squared_distances_,
+	 negative_force_vector_first_particle.ptr(),
 	 squared_negative_force_vector_first_particle.ptr(),
 	 l1_norm_negative_force_vector_u_first_particle,
 	 l1_norm_positive_force_vector_l_first_particle,
@@ -1028,7 +937,9 @@ class AxilrodTellerForceKernelAux {
   }
 
   void ExtractContribution
-  (double *negative_force_vector_first_particle,
+  (const ArrayList<Matrix *> &sets, const ArrayList<index_t> &indices,
+   const Matrix &squared_distances,
+   double *negative_force_vector_first_particle,
    double *squared_negative_force_vector_first_particle,
    double &l1_norm_negative_force_vector_u_first_particle,
    double &l1_norm_positive_force_vector_l_first_particle,
@@ -1046,99 +957,211 @@ class AxilrodTellerForceKernelAux {
    double &l1_norm_positive_force_vector_l_third_particle,
    double *positive_force_vector_third_particle,
    double *squared_positive_force_vector_third_particle) {
-       
-    // Temporary variable...
-    double tmp_contrib;
+
+    const double *first_point = sets[0]->GetColumnPtr(indices[0]);
+    const double *second_point = sets[0]->GetColumnPtr(indices[1]);
+    const double *third_point = sets[0]->GetColumnPtr(indices[2]);
+
+    double squared_distance_between_i_and_j = squared_distances.get(0, 1);
+    double pow_squared_distance_between_i_and_j_0_5 =
+      sqrt(squared_distance_between_i_and_j);
+    double pow_squared_distance_between_i_and_j_1_5 =
+      squared_distance_between_i_and_j *
+      pow_squared_distance_between_i_and_j_0_5;
+    double pow_squared_distance_between_i_and_j_2_5 =
+      squared_distance_between_i_and_j *
+      pow_squared_distance_between_i_and_j_1_5;
+    double pow_squared_distance_between_i_and_j_3_5 =
+      squared_distance_between_i_and_j *
+      pow_squared_distance_between_i_and_j_2_5;
+
+    double squared_distance_between_i_and_k = squared_distances.get(0, 2);
+    double pow_squared_distance_between_i_and_k_0_5 =
+      sqrt(squared_distance_between_i_and_k);
+    double pow_squared_distance_between_i_and_k_1_5 =
+      squared_distance_between_i_and_k *
+      pow_squared_distance_between_i_and_k_0_5;
+    double pow_squared_distance_between_i_and_k_2_5 =
+      squared_distance_between_i_and_k *
+      pow_squared_distance_between_i_and_k_1_5;
+    double pow_squared_distance_between_i_and_k_3_5 =
+      squared_distance_between_i_and_k *
+      pow_squared_distance_between_i_and_k_2_5;
     
-    for(index_t i = 0; i < dimension_; i++) {
+    double squared_distance_between_j_and_k = squared_distances.get(1, 2);
+    double pow_squared_distance_between_j_and_k_0_5 =
+      sqrt(squared_distance_between_j_and_k);
+    double pow_squared_distance_between_j_and_k_1_5 =
+      squared_distance_between_j_and_k *
+      pow_squared_distance_between_j_and_k_0_5;
+    double pow_squared_distance_between_j_and_k_2_5 =
+      squared_distance_between_j_and_k *
+      pow_squared_distance_between_j_and_k_1_5;
+    double pow_squared_distance_between_j_and_k_3_5 =
+      squared_distance_between_j_and_k *
+      pow_squared_distance_between_j_and_k_2_5;
+    
+    for(index_t d = 0; d < dimension_; d++) {
+
+      double positive_contribution1 =
+	AxilrodTellerForceKernelPositiveEvaluate
+	(d, first_point, second_point,
+	 pow_squared_distance_between_i_and_j_0_5,
+	 pow_squared_distance_between_i_and_j_1_5,
+	 pow_squared_distance_between_i_and_j_2_5,
+	 pow_squared_distance_between_i_and_j_3_5,
+	 pow_squared_distance_between_i_and_k_0_5,
+	 pow_squared_distance_between_i_and_k_1_5,
+	 pow_squared_distance_between_i_and_k_2_5,
+	 pow_squared_distance_between_j_and_k_0_5,
+	 pow_squared_distance_between_j_and_k_1_5,
+	 pow_squared_distance_between_j_and_k_2_5);
       
-      // Check positive contributions...
-      tmp_contrib = lower_bound_positive_contributions_.get(i, 0);
-      negative_force_vector_first_particle[i] += (-tmp_contrib);
-      if(squared_negative_force_vector_first_particle != NULL) {
-	squared_negative_force_vector_first_particle[i] += 
-	  math::Sqr(-tmp_contrib);
-      }
-      l1_norm_negative_force_vector_u_first_particle += tmp_contrib;
-      positive_force_vector_second_particle[i] += tmp_contrib;
-      if(squared_positive_force_vector_second_particle != NULL) {
-	squared_positive_force_vector_second_particle[i] += 
-	  math::Sqr(tmp_contrib);
-      }
-      l1_norm_positive_force_vector_l_second_particle += tmp_contrib;
-
-      tmp_contrib = lower_bound_positive_contributions_.get(i, 1);
-      negative_force_vector_first_particle[i] += (-tmp_contrib);
-      if(squared_negative_force_vector_first_particle != NULL) {
-	squared_negative_force_vector_first_particle[i] += 
-	  math::Sqr(-tmp_contrib);
-      }
-      l1_norm_negative_force_vector_u_first_particle += tmp_contrib;
-      positive_force_vector_third_particle[i] += tmp_contrib;
-      if(squared_positive_force_vector_third_particle != NULL) {
-	squared_positive_force_vector_third_particle[i] += 
-	  math::Sqr(tmp_contrib);
-      }
-      l1_norm_positive_force_vector_l_third_particle += tmp_contrib;
-
-      tmp_contrib = lower_bound_positive_contributions_.get(i, 2);
-      negative_force_vector_second_particle[i] += (-tmp_contrib);
-      if(squared_negative_force_vector_second_particle != NULL) {
-	squared_negative_force_vector_second_particle[i] +=
-	  math::Sqr(-tmp_contrib);
-      }
-      l1_norm_negative_force_vector_u_second_particle += tmp_contrib;
-      positive_force_vector_third_particle[i] += tmp_contrib;
-      if(squared_positive_force_vector_third_particle != NULL) {
-	squared_positive_force_vector_third_particle[i] +=
-	  math::Sqr(tmp_contrib);
-      }
-      l1_norm_positive_force_vector_l_third_particle += tmp_contrib;
+      double positive_contribution2 =
+	AxilrodTellerForceKernelPositiveEvaluate
+	(d, first_point, third_point,
+	 pow_squared_distance_between_i_and_k_0_5,
+	 pow_squared_distance_between_i_and_k_1_5,
+	 pow_squared_distance_between_i_and_k_2_5,
+	 pow_squared_distance_between_i_and_k_3_5,
+	 pow_squared_distance_between_i_and_j_0_5,
+	 pow_squared_distance_between_i_and_j_1_5,
+	 pow_squared_distance_between_i_and_j_2_5,
+	 pow_squared_distance_between_j_and_k_0_5,
+	 pow_squared_distance_between_j_and_k_1_5,
+	 pow_squared_distance_between_j_and_k_2_5);
       
-      // Check negative contribution accumulations...
-      tmp_contrib = upper_bound_negative_contributions_.get(i, 0);
-      positive_force_vector_first_particle[i] += (-tmp_contrib);
-      if(squared_positive_force_vector_first_particle != NULL) {
-	squared_positive_force_vector_first_particle[i] += 
-	  math::Sqr(-tmp_contrib);
-      }
-      l1_norm_positive_force_vector_l_first_particle += (-tmp_contrib);
-      negative_force_vector_second_particle[i] += tmp_contrib;
-      if(squared_negative_force_vector_second_particle != NULL) {
-	squared_negative_force_vector_second_particle[i] += 
-	  math::Sqr(tmp_contrib);
-      }
-      l1_norm_negative_force_vector_u_second_particle += (-tmp_contrib);
+      double positive_contribution3 =
+	AxilrodTellerForceKernelPositiveEvaluate
+	(d, second_point, third_point,
+	 pow_squared_distance_between_j_and_k_0_5,
+	 pow_squared_distance_between_j_and_k_1_5,
+	 pow_squared_distance_between_j_and_k_2_5,
+	 pow_squared_distance_between_j_and_k_3_5,
+	 pow_squared_distance_between_i_and_k_0_5,
+	 pow_squared_distance_between_i_and_k_1_5,
+	 pow_squared_distance_between_i_and_k_2_5,
+	 pow_squared_distance_between_i_and_j_0_5,
+	 pow_squared_distance_between_i_and_j_1_5,
+	 pow_squared_distance_between_i_and_j_2_5);
+      
+      double negative_contribution1 =
+	AxilrodTellerForceKernelNegativeEvaluate
+	(d, first_point, second_point,
+	 pow_squared_distance_between_i_and_j_0_5,
+	 pow_squared_distance_between_i_and_j_1_5,
+	 pow_squared_distance_between_i_and_j_2_5,
+	 pow_squared_distance_between_i_and_j_3_5,
+	 pow_squared_distance_between_i_and_k_0_5,
+	 pow_squared_distance_between_i_and_k_1_5,
+	 pow_squared_distance_between_i_and_k_2_5,
+	 pow_squared_distance_between_j_and_k_0_5,
+	 pow_squared_distance_between_j_and_k_1_5,
+	 pow_squared_distance_between_j_and_k_2_5);
+      
+      double negative_contribution2 =
+	AxilrodTellerForceKernelNegativeEvaluate
+	(d, first_point, third_point,
+	 pow_squared_distance_between_i_and_k_0_5,
+	 pow_squared_distance_between_i_and_k_1_5,
+	 pow_squared_distance_between_i_and_k_2_5,
+	 pow_squared_distance_between_i_and_k_3_5,
+	 pow_squared_distance_between_i_and_j_0_5,
+	 pow_squared_distance_between_i_and_j_1_5,
+	 pow_squared_distance_between_i_and_j_2_5,
+	 pow_squared_distance_between_j_and_k_0_5,
+	 pow_squared_distance_between_j_and_k_1_5,
+	 pow_squared_distance_between_j_and_k_2_5);
+      
+      double negative_contribution3 =
+	AxilrodTellerForceKernelNegativeEvaluate
+	(d, second_point, third_point,
+	 pow_squared_distance_between_j_and_k_0_5,
+	 pow_squared_distance_between_j_and_k_1_5,
+	 pow_squared_distance_between_j_and_k_2_5,
+	 pow_squared_distance_between_j_and_k_3_5,
+	 pow_squared_distance_between_i_and_k_0_5,
+	 pow_squared_distance_between_i_and_k_1_5,
+	 pow_squared_distance_between_i_and_k_2_5,
+	 pow_squared_distance_between_i_and_j_0_5,
+	 pow_squared_distance_between_i_and_j_1_5,
+	 pow_squared_distance_between_i_and_j_2_5);
+      
+      double sum_contribution1 = positive_contribution1 +
+	negative_contribution1;
+      double sum_contribution2 = positive_contribution2 +
+	negative_contribution2;
+      double sum_contribution3 = positive_contribution3 +
+	negative_contribution3;
 
-      tmp_contrib = upper_bound_negative_contributions_.get(i, 1);
-      positive_force_vector_first_particle[i] += (-tmp_contrib);
-      if(squared_positive_force_vector_first_particle != NULL) {
-	squared_positive_force_vector_first_particle[i] += 
-	  math::Sqr(-tmp_contrib);
-      }
-      l1_norm_positive_force_vector_l_first_particle += (-tmp_contrib);
-      negative_force_vector_third_particle[i] += tmp_contrib;
-      if(squared_negative_force_vector_third_particle != NULL) {
-	squared_negative_force_vector_third_particle[i] += 
-	  math::Sqr(tmp_contrib);
-      }
-      l1_norm_negative_force_vector_u_third_particle += (-tmp_contrib);
+      double first_particle_contribution =
+	-(sum_contribution1 + sum_contribution2);
+      double second_particle_contribution =
+	sum_contribution1 - sum_contribution3;
+      double third_particle_contribution =
+	sum_contribution2 + sum_contribution3;
 
-      tmp_contrib = upper_bound_negative_contributions_.get(i, 2);
-      positive_force_vector_second_particle[i] += (-tmp_contrib);
-      if(squared_positive_force_vector_second_particle != NULL) {
-	squared_positive_force_vector_second_particle[i] +=
-	  math::Sqr(-tmp_contrib);
+      if(first_particle_contribution > 0) {
+	positive_force_vector_first_particle[d] += first_particle_contribution;
+	if(squared_positive_force_vector_first_particle != NULL) {
+	  squared_positive_force_vector_first_particle[d] +=
+	    math::Sqr(first_particle_contribution);
+	}
+	l1_norm_positive_force_vector_l_first_particle +=
+	  first_particle_contribution;
       }
-      l1_norm_positive_force_vector_l_second_particle += (-tmp_contrib);
-      negative_force_vector_third_particle[i] += tmp_contrib;
-      if(squared_negative_force_vector_third_particle != NULL) {
-	squared_negative_force_vector_third_particle[i] += 
-	  math::Sqr(tmp_contrib);
+      else {
+	negative_force_vector_first_particle[d] += first_particle_contribution;
+	if(squared_negative_force_vector_first_particle != NULL) {
+	  squared_negative_force_vector_first_particle[d] +=
+	    math::Sqr(first_particle_contribution);
+	}
+	l1_norm_negative_force_vector_u_first_particle += 
+	  (-first_particle_contribution);
       }
-      l1_norm_negative_force_vector_u_third_particle += (-tmp_contrib);
+      if(second_particle_contribution > 0) {
+	positive_force_vector_second_particle[d] +=
+	  second_particle_contribution;
+	if(squared_positive_force_vector_second_particle != NULL) {
+	  squared_positive_force_vector_second_particle[d] +=
+	    math::Sqr(second_particle_contribution);
+	}
+	l1_norm_positive_force_vector_l_second_particle +=
+	  second_particle_contribution;
+      }
+      else {
+	negative_force_vector_second_particle[d] +=
+	  second_particle_contribution;
+	if(squared_negative_force_vector_second_particle != NULL) {
+	  squared_negative_force_vector_second_particle[d] +=
+	    math::Sqr(second_particle_contribution);
+	}
+	l1_norm_negative_force_vector_u_second_particle += 
+	  (-second_particle_contribution);
+      }
+      if(third_particle_contribution > 0) {
+	positive_force_vector_third_particle[d] +=
+	  third_particle_contribution;
+	if(squared_positive_force_vector_third_particle != NULL) {
+	  squared_positive_force_vector_third_particle[d] +=
+	    math::Sqr(third_particle_contribution);
+	}
+	l1_norm_positive_force_vector_l_third_particle +=
+	  third_particle_contribution;
+      }
+      else {
+	negative_force_vector_third_particle[d] +=
+	  third_particle_contribution;
+	if(squared_negative_force_vector_third_particle != NULL) {
+	  squared_negative_force_vector_third_particle[d] +=
+	    math::Sqr(third_particle_contribution);
+	}
+	l1_norm_negative_force_vector_u_third_particle += 
+	  (-third_particle_contribution);
+      }
 
-    } // end of looping over each dimension...
+    } // iterating over each dimension (row-wise)...
+
   }
 
   /** @brief Evaluate the kernel given the chosen indices exhaustively.
@@ -1155,12 +1178,6 @@ class AxilrodTellerForceKernelAux {
     lower_bound_positive_contributions_.SetZero();
     upper_bound_negative_contributions_.SetZero();
 
-    // Evaluate the positive kernels at (0, 1), (0, 2), (1, 2) and (0,
-    // 2), (0, 1), (1, 2) and (1, 2), (0, 2), (0, 1) in dimension 0,
-    // 1, 2.
-    EvaluateHelper(sets, globals.hybrid_node_chosen_indices, 
-		   lower_bound_squared_distances_);
-    
     // Get the positive/negative force vector for the first, second,
     // third particle in the list.
     double *positive_force_vector_first_particle =
@@ -1203,7 +1220,9 @@ class AxilrodTellerForceKernelAux {
       [globals.hybrid_node_chosen_indices[2]];
 
     ExtractContribution
-      (negative_force_vector_first_particle, NULL,
+      (sets, globals.hybrid_node_chosen_indices, 
+       lower_bound_squared_distances_,
+       negative_force_vector_first_particle, NULL,
        l1_norm_negative_force_vector_u_first_particle,
        l1_norm_positive_force_vector_l_first_particle,
        positive_force_vector_first_particle, NULL,
@@ -1215,7 +1234,6 @@ class AxilrodTellerForceKernelAux {
        l1_norm_negative_force_vector_u_third_particle,
        l1_norm_positive_force_vector_l_third_particle,
        positive_force_vector_third_particle, NULL);
-
   }  
 };
 

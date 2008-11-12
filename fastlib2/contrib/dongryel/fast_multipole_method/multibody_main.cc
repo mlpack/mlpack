@@ -2,6 +2,244 @@
 #include "multibody_kernel.h"
 #include "../multitree_template/multitree_dfs.h"
 
+double AxilrodTellerForceKernelPositiveEvaluate
+(int dimension_in, const double *first_point, const double *second_point,
+ double first_distance, double first_distance_pow_three,
+ double first_distance_pow_five, double first_distance_pow_seven,
+ double second_distance, double second_distance_pow_three,
+ double second_distance_pow_five, double third_distance,
+ double third_distance_pow_three, double third_distance_pow_five) {
+  
+  double first_factor = second_distance / third_distance_pow_five *
+    (first_point[dimension_in] - second_point[dimension_in]);
+  double second_factor = third_distance / second_distance_pow_five *
+    (first_point[dimension_in] - second_point[dimension_in]);
+  return 1.875 * (first_factor + second_factor) /
+    first_distance_pow_seven;
+}
+
+double AxilrodTellerForceKernelNegativeEvaluate
+(int dimension_in, const double *first_point, const double *second_point,
+ double first_distance, double first_distance_pow_three,
+ double first_distance_pow_five, double first_distance_pow_seven,
+ double second_distance, double second_distance_pow_three,
+ double second_distance_pow_five, double third_distance,
+ double third_distance_pow_three, double third_distance_pow_five) {
+  
+  double coord_diff = first_point[dimension_in] - 
+    second_point[dimension_in];
+  
+  double first_factor = (-0.75) / 
+    (first_distance_pow_five * second_distance_pow_three *
+     third_distance_pow_three);
+  double second_factor = (-0.375) /
+    (first_distance * second_distance_pow_five * third_distance_pow_five);
+  double third_factor = (-0.375) / 
+    (first_distance_pow_three * second_distance_pow_three *
+     third_distance_pow_five);
+  double fourth_factor = (-0.375) /
+    (first_distance_pow_three * second_distance_pow_five *
+     third_distance_pow_three);
+  double fifth_factor = (-1.125) /
+    (first_distance_pow_five * second_distance * third_distance_pow_five);
+  double sixth_factor = (-1.125) /
+    (first_distance_pow_five * second_distance_pow_five * third_distance);
+  double seventh_factor = (-1.875) /
+    (first_distance_pow_seven * second_distance * third_distance_pow_three);
+  double eigth_factor = (-1.875) /
+    (first_distance_pow_seven * second_distance_pow_three * third_distance);
+  
+  // The eight negative components.
+  return coord_diff * 
+    (first_factor + second_factor + third_factor + fourth_factor +
+     fifth_factor + sixth_factor + seventh_factor + eigth_factor);
+}
+
+void MultibodyBruteForce(const Matrix &particle_set) {
+
+  Matrix short_bruteforce;
+  short_bruteforce.Init(3, particle_set.n_cols());
+  short_bruteforce.SetZero();
+  Vector netforce;
+  netforce.Init(3);
+  netforce.SetZero();
+
+  for(index_t i = 0; i < particle_set.n_cols() - 2; i++) {
+
+    const double *first_point = particle_set.GetColumnPtr(i);
+    double *first_point_force_vector = short_bruteforce.GetColumnPtr(i);
+
+    for(index_t j = i + 1; j < particle_set.n_cols() - 1; j++) {
+
+      const double *second_point = particle_set.GetColumnPtr(j);
+      double *second_point_force_vector = short_bruteforce.GetColumnPtr(j);
+      double squared_distance_between_i_and_j = 
+	la::DistanceSqEuclidean(3, first_point, second_point);
+      double pow_squared_distance_between_i_and_j_0_5 =
+	sqrt(squared_distance_between_i_and_j);
+      double pow_squared_distance_between_i_and_j_1_5 =
+	squared_distance_between_i_and_j *
+	pow_squared_distance_between_i_and_j_0_5;
+      double pow_squared_distance_between_i_and_j_2_5 =
+	squared_distance_between_i_and_j *
+	pow_squared_distance_between_i_and_j_1_5;
+      double pow_squared_distance_between_i_and_j_3_5 =
+	squared_distance_between_i_and_j *
+	pow_squared_distance_between_i_and_j_2_5;
+      
+
+      for(index_t k = j + 1; k < particle_set.n_cols(); k++) {
+
+	const double *third_point = particle_set.GetColumnPtr(k);
+	double *third_point_force_vector = short_bruteforce.GetColumnPtr(k);
+	double squared_distance_between_i_and_k =
+	  la::DistanceSqEuclidean(3, first_point, third_point);
+	double squared_distance_between_j_and_k =
+	  la::DistanceSqEuclidean(3, second_point, third_point);
+
+	double pow_squared_distance_between_i_and_k_0_5 =
+	  sqrt(squared_distance_between_i_and_k);
+	double pow_squared_distance_between_i_and_k_1_5 =
+	  squared_distance_between_i_and_k *
+	  pow_squared_distance_between_i_and_k_0_5;
+	double pow_squared_distance_between_i_and_k_2_5 =
+	  squared_distance_between_i_and_k *
+	  pow_squared_distance_between_i_and_k_1_5;
+	double pow_squared_distance_between_i_and_k_3_5 =
+	  squared_distance_between_i_and_k *
+	  pow_squared_distance_between_i_and_k_2_5;
+
+	double pow_squared_distance_between_j_and_k_0_5 =
+	  sqrt(squared_distance_between_j_and_k);
+	double pow_squared_distance_between_j_and_k_1_5 =
+	  squared_distance_between_j_and_k *
+	  pow_squared_distance_between_j_and_k_0_5;
+	double pow_squared_distance_between_j_and_k_2_5 =
+	  squared_distance_between_j_and_k *
+	  pow_squared_distance_between_j_and_k_1_5;
+	double pow_squared_distance_between_j_and_k_3_5 =
+	  squared_distance_between_j_and_k *
+	  pow_squared_distance_between_j_and_k_2_5;
+
+	for(index_t d = 0; d < 3; d++) {
+
+	  double positive_contribution1 =
+	    AxilrodTellerForceKernelPositiveEvaluate
+	    (d, first_point, second_point,
+	     pow_squared_distance_between_i_and_j_0_5,
+	     pow_squared_distance_between_i_and_j_1_5,
+	     pow_squared_distance_between_i_and_j_2_5,
+	     pow_squared_distance_between_i_and_j_3_5,
+	     pow_squared_distance_between_i_and_k_0_5,
+	     pow_squared_distance_between_i_and_k_1_5,
+	     pow_squared_distance_between_i_and_k_2_5,
+	     pow_squared_distance_between_j_and_k_0_5,
+	     pow_squared_distance_between_j_and_k_1_5,
+	     pow_squared_distance_between_j_and_k_2_5);
+
+	  double positive_contribution2 =
+	    AxilrodTellerForceKernelPositiveEvaluate
+	    (d, first_point, third_point,
+	     pow_squared_distance_between_i_and_k_0_5,
+	     pow_squared_distance_between_i_and_k_1_5,
+	     pow_squared_distance_between_i_and_k_2_5,
+	     pow_squared_distance_between_i_and_k_3_5,
+	     pow_squared_distance_between_i_and_j_0_5,
+	     pow_squared_distance_between_i_and_j_1_5,
+	     pow_squared_distance_between_i_and_j_2_5,
+	     pow_squared_distance_between_j_and_k_0_5,
+	     pow_squared_distance_between_j_and_k_1_5,
+	     pow_squared_distance_between_j_and_k_2_5);
+
+	  double positive_contribution3 =
+	    AxilrodTellerForceKernelPositiveEvaluate
+	    (d, second_point, third_point,
+	     pow_squared_distance_between_j_and_k_0_5,
+	     pow_squared_distance_between_j_and_k_1_5,
+	     pow_squared_distance_between_j_and_k_2_5,
+	     pow_squared_distance_between_j_and_k_3_5,
+	     pow_squared_distance_between_i_and_k_0_5,
+	     pow_squared_distance_between_i_and_k_1_5,
+	     pow_squared_distance_between_i_and_k_2_5,
+	     pow_squared_distance_between_i_and_j_0_5,
+	     pow_squared_distance_between_i_and_j_1_5,
+	     pow_squared_distance_between_i_and_j_2_5);
+
+	  double negative_contribution1 =
+	    AxilrodTellerForceKernelNegativeEvaluate
+	    (d, first_point, second_point,
+	     pow_squared_distance_between_i_and_j_0_5,
+	     pow_squared_distance_between_i_and_j_1_5,
+	     pow_squared_distance_between_i_and_j_2_5,
+	     pow_squared_distance_between_i_and_j_3_5,
+	     pow_squared_distance_between_i_and_k_0_5,
+	     pow_squared_distance_between_i_and_k_1_5,
+	     pow_squared_distance_between_i_and_k_2_5,
+	     pow_squared_distance_between_j_and_k_0_5,
+	     pow_squared_distance_between_j_and_k_1_5,
+	     pow_squared_distance_between_j_and_k_2_5);
+
+	  double negative_contribution2 =
+	    AxilrodTellerForceKernelNegativeEvaluate
+	    (d, first_point, third_point,
+	     pow_squared_distance_between_i_and_k_0_5,
+	     pow_squared_distance_between_i_and_k_1_5,
+	     pow_squared_distance_between_i_and_k_2_5,
+	     pow_squared_distance_between_i_and_k_3_5,
+	     pow_squared_distance_between_i_and_j_0_5,
+	     pow_squared_distance_between_i_and_j_1_5,
+	     pow_squared_distance_between_i_and_j_2_5,
+	     pow_squared_distance_between_j_and_k_0_5,
+	     pow_squared_distance_between_j_and_k_1_5,
+	     pow_squared_distance_between_j_and_k_2_5);
+
+	  double negative_contribution3 =
+	    AxilrodTellerForceKernelNegativeEvaluate
+	    (d, second_point, third_point,
+	     pow_squared_distance_between_j_and_k_0_5,
+	     pow_squared_distance_between_j_and_k_1_5,
+	     pow_squared_distance_between_j_and_k_2_5,
+	     pow_squared_distance_between_j_and_k_3_5,
+	     pow_squared_distance_between_i_and_k_0_5,
+	     pow_squared_distance_between_i_and_k_1_5,
+	     pow_squared_distance_between_i_and_k_2_5,
+	     pow_squared_distance_between_i_and_j_0_5,
+	     pow_squared_distance_between_i_and_j_1_5,
+	     pow_squared_distance_between_i_and_j_2_5);
+	  
+	  double first_point_contribution =
+	    -(positive_contribution1 + negative_contribution1) -
+	    (positive_contribution2 + negative_contribution2);
+	  double second_point_contribution =
+	    (positive_contribution1 + negative_contribution1) -
+	    (positive_contribution3 + negative_contribution3);
+	  double third_point_contribution =
+	    (positive_contribution2 + negative_contribution2) +
+	    (positive_contribution3 + negative_contribution3);
+	  
+	  first_point_force_vector[d] += first_point_contribution;
+	  second_point_force_vector[d] += second_point_contribution;
+	  third_point_force_vector[d] += third_point_contribution;
+	}
+
+      }
+    }
+  }
+
+  FILE *foutput = fopen("short_bruteforce.txt", "w+");
+  for(index_t i = 0; i < particle_set.n_cols(); i++) {
+
+    for(index_t d = 0; d < 3; d++) {
+      fprintf(foutput, "%g ", short_bruteforce.get(d, i));
+    }
+    la::AddTo(3, short_bruteforce.GetColumnPtr(i),
+	      netforce.ptr());
+    fprintf(foutput, "\n");
+  }
+  netforce.PrintDebug("", stdout);
+  fclose(foutput);
+}
+
 int main(int argc, char *argv[]) {
 
   // Initialize FastExec (parameter handling stuff).
@@ -26,7 +264,7 @@ int main(int argc, char *argv[]) {
   data::Load(references_file_name, &references);
 
 
-  la::Scale(references.n_cols() * references.n_rows(), 10.0, references.ptr());
+  la::Scale(references.n_cols() * references.n_rows(), 30.0, references.ptr());
 
   // Instantiate a multi-tree problem...
   ArrayList<const Matrix *> sets;
@@ -63,6 +301,9 @@ int main(int argc, char *argv[]) {
   printf("Maximum relative error: %g\n", max_relative_error);
   printf("Positive max relative error: %g\n", positive_max_relative_error);
   printf("Negative max relative error: %g\n", negative_max_relative_error);
+
+
+  MultibodyBruteForce(references);
 
   fx_done(fx_root);
   return 0;
