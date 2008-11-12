@@ -86,11 +86,11 @@ class OptimizationTrait<OPTPP::OptCG> {
 
 // Quasi-Newton BFGS
 template<>
-class OptimizationTrait<OPTPP::OptQNewton> {
+class OptimizationTrait<OPTPP::OptNewtonLike> {
  public:
   typedef OPTPP::NLF1 NlpType;
   static void InitializeMethod(fx_module *module, 
-      OPTPP::OptQNewton *method) {
+      OPTPP::OptNewtonLike *method) {
      std::string search_strategy = fx_param_str(module, 
                                       "search_strategy",
                                       "line_search");
