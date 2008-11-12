@@ -144,7 +144,9 @@ class OptimizationTrait<OPTPP::OptNewton> {
   }
 };
 
-
+/*
+ *
+ */ 
 
 template <typename Method, typename Objective>
 class StaticUnconstrainedOptimizer {
@@ -275,6 +277,9 @@ class StaticUnconstrainedOptimizer {
     }
   } 
 };
-  
+
+template<typename Method, typename Objective>
+  Objective *StaticUnconstrainedOptimizer<Method, Objective>::objective_=NULL;
+
 }; // Namespace optim
 #endif

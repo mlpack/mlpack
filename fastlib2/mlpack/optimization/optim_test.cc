@@ -46,6 +46,7 @@ class Rosen {
     
 };
 
+
 class StaticUnconstrainedOptimizerTest {
  public:
   StaticUnconstrainedOptimizerTest(fx_module *module) {
