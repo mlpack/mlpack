@@ -1,6 +1,5 @@
 #include <string>
 #include "approx_nn.h"
-#include "mlpack/allknn/allknn.h"
 
 const fx_entry_doc approx_nn_main_entries[] = {
   {"r", FX_REQUIRED, FX_STR, NULL,
@@ -81,31 +80,35 @@ int main (int argc, char *argv[]) {
   // Naive computation
   if (fx_param_bool(root, "donaive", false)) {
     ApproxNN naive_nn;
-    NOTIFY("Naive");
-    NOTIFY("Init");
+    NOTIFY("Brute computation");
+    NOTIFY("Initializing....");
     fx_timer_start(ann_module, "naive_init");
     naive_nn.InitNaive(qdata, rdata, 1);
     fx_timer_stop(ann_module, "naive_init");
+    NOTIFY("Initialized.");
 
-    NOTIFY("Compute");
+    NOTIFY("Computing Neighbors.....");
     fx_timer_start(ann_module, "naive");
     naive_nn.ComputeNaive(&nac, &din);
     fx_timer_stop(ann_module, "naive");
+    NOTIFY("Neighbors Computed.");
   }
 
   // Exact computation
   if (fx_param_bool(root, "doexact", true)) {
     ApproxNN exact_nn;
-    NOTIFY("Exact");
-    NOTIFY("Init");
+    NOTIFY("Exact using Single Tree");
+    NOTIFY("Initializing....");
     fx_timer_start(ann_module, "exact_init");
     exact_nn.Init(qdata, rdata, ann_module);
     fx_timer_stop(ann_module, "exact_init");
+    NOTIFY("Initialized.");
 
-    NOTIFY("Compute");
+    NOTIFY("Computing Neighbors.....");
     fx_timer_start(ann_module, "exact");
     exact_nn.ComputeNeighbors(&exc, &die);
     fx_timer_stop(ann_module, "exact");
+    NOTIFY("Neighbors Computed.");
   }
 
 //   compare_neighbors(&neighbor_indices, &dist_sq, &exc, &die);
@@ -113,19 +116,21 @@ int main (int argc, char *argv[]) {
   // Approximate computation
   if (fx_param_bool(root, "doapprox", true)) {
     ApproxNN approx_nn;
-    NOTIFY("Approx");
-    NOTIFY("Init");
+    NOTIFY("Rank Approximate using Single Tree");
+    NOTIFY("Initializing....");
     fx_timer_start(ann_module, "approx_init");
     approx_nn.InitApprox(qdata, rdata, ann_module);
     fx_timer_stop(ann_module, "approx_init");
+    NOTIFY("Initialized.");
 
-    NOTIFY("Compute");
+    NOTIFY("Computing Neighbors.....");
     fx_timer_start(ann_module, "approx");
     approx_nn.ComputeApprox(&apc, &dia);
     fx_timer_stop(ann_module, "approx");
+    NOTIFY("Neighbors Computed.");
   }
   
-  count_mismatched_neighbors(&exc, &die, &apc, &dia);
+  //  count_mismatched_neighbors(&exc, &die, &apc, &dia);
 
   fx_done(fx_root);
 }

@@ -22,10 +22,10 @@ const fx_entry_doc approx_nn_entries[] = {
   {"knns", FX_PARAM, FX_INT, NULL, 
    " The number of nearest neighbors we need to compute"
    " (defaults to 1).\n"},
-  {"epsilon", FX_PARAM, FX_INT, NULL,
-   " Rank approximation.\n"},
-//   {"epsilon", FX_PARAM, FX_DOUBLE, NULL,
-//    " Rank approximation factor.\n"},
+//   {"epsilon", FX_PARAM, FX_INT, NULL,
+//    " Rank approximation.\n"},
+  {"epsilon", FX_PARAM, FX_DOUBLE, NULL,
+   " Rank approximation factor (\% of the reference set size).\n"},
   {"alpha", FX_PARAM, FX_DOUBLE, NULL,
    " The error probability.\n"},
   {"leaf_size", FX_PARAM, FX_INT, NULL,
@@ -195,8 +195,8 @@ private:
   // set sizes
   ArrayList<index_t> sample_sizes_;
   // The rank approximation
-  index_t epsilon_;
-  // double epsilon_;
+  index_t rank_approx_;
+  double epsilon_;
   // The maximum number of points to be sampled
   index_t sample_limit_;
   // Minimum number of samples required for each query
@@ -296,17 +296,23 @@ private:
   void ComputeSampleSizes_(index_t rank_approx, double alpha,
 			   ArrayList<index_t> *samples) {
     index_t set_size = samples->size(),
-      n = samples->size();
-    NOTIFY("N = %"LI"d", set_size);
+      n = rank_approx + 1000;
+    
     double prob;
     DEBUG_ASSERT(alpha <= 1.0);
+    do {
+      n--;
+      prob = ComputeProbability_(rank_approx + 1000,
+				 n, rank_approx);
+    } while (prob >= alpha);
+
+    double beta = (double) ++n
+      / (double) (rank_approx + 1000);
+
     while (set_size > rank_approx) {
-      do {
-	n--;
-	prob = ComputeProbability_(set_size, n, rank_approx);
-      } while (prob >= alpha);
-      (*samples)[--set_size] = ++n;
-    }  // end while
+      (*samples)[set_size -1] = (index_t)(beta * (double) set_size);
+      set_size--;
+    }
     while (set_size > 0) {
       (*samples)[--set_size] = 1;
     }
@@ -929,148 +935,6 @@ public:
     sample_sizes_.Init();
   } // Init
 
-//   /** Use this if you want to run allknn it on a single dataset 
-//    * the query tree and reference tree are the same
-//    */
-//   void Init(const Matrix& references_in,
-// 	    struct datanode* module_in) {
-     
-//     // set the module
-//     module_ = module_in;
-    
-//     // track the number of prunes
-//     number_of_prunes_ = 0;
-    
-//     // Get the leaf size from the module
-//     leaf_size_ = fx_param_int(module_, "leaf_size", 20);
-//     // Make sure the leaf size is valid
-//     DEBUG_ASSERT(leaf_size_ > 0);
-    
-//     // Copy the matrices to the class members since they will be rearranged.  
-//     references_.Copy(references_in);
-//     queries_.Alias(references_);    
-//     // K-nearest neighbors initialization
-//     knns_ = fx_param_int(module_, "knns", 5);
-  
-//     // Initialize the list of nearest neighbor candidates
-//     neighbor_indices_.Init(references_.n_cols() * knns_);
-    
-//     // Initialize the vector of upper bounds for each point.  
-//     neighbor_distances_.Init(references_.n_cols() * knns_);
-//     neighbor_distances_.SetAll(DBL_MAX);
-
-//     // We'll time tree building
-//     fx_timer_start(module_, "tree_building");
-
-//     // This call makes each tree from a matrix, leaf size, and two arrays 
-//     // that record the permutation of the data points
-//     // Instead of NULL, it is possible to specify an array new_from_old_
-//     query_tree_ = NULL;
-//     reference_tree_
-//       = tree::MakeKdTreeMidpoint<TreeType>(references_, 
-// 					   leaf_size_,
-// 					   &old_from_new_references_,
-// 					   NULL);
-    
-//     // Stop the timer we started above
-//     fx_timer_stop(module_, "tree_building");
-
-//   }
-
-//   void Init(const Matrix& queries_in,
-// 	    const Matrix& references_in, 
-// 	    index_t leaf_size, index_t knns) {
-    
-//     // track the number of prunes
-//     number_of_prunes_ = 0;
-    
-//     // Make sure the leaf size is valid
-//     leaf_size_ = leaf_size;
-//     DEBUG_ASSERT(leaf_size_ > 0);
-    
-//     // Make sure the knns is valid
-//     knns_ = knns;
-//     DEBUG_ASSERT(knns_ > 0);
-//     // Copy the matrices to the class members since they will be rearranged.  
-//     queries_.Copy(queries_in);
-//     references_.Copy(references_in);
-    
-//     // The data sets need to have the same number of points
-//     DEBUG_SAME_SIZE(queries_.n_rows(), references_.n_rows());
-    
-  
-//     // Initialize the list of nearest neighbor candidates
-//     neighbor_indices_.Init(queries_.n_cols() * knns_);
-    
-//     // Initialize the vector of upper bounds for each point.  
-//     neighbor_distances_.Init(queries_.n_cols() * knns_);
-//     neighbor_distances_.SetAll(DBL_MAX);
-
-
-//     // This call makes each tree from a matrix, leaf size, and two arrays 
-//     // that record the permutation of the data points
-//     // Instead of NULL, it is possible to specify an array new_from_old_
-
-//     // Here we need to change the query tree into N single-point
-//     // query trees
-//     for (index_t i = 0; i < queries_.n_cols(); i++) {
-//       Matrix query;
-//       queries_.MakeColumnSlice(i, 1, &query);
-//       TreeType *single_point_tree
-// 	= tree::MakeKdTreeMidpoint<TreeType>(query,
-// 					     leaf_size_, 
-// 					     &old_from_new_queries_,
-// 					     NULL);
-//       query_trees_.push_back(single_point_tree);
-//       old_from_new_queries_.Renew();
-//     }
-//     reference_tree_
-//       = tree::MakeKdTreeMidpoint<TreeType>(references_, 
-// 					   leaf_size_,
-// 					   &old_from_new_references_,
-// 					   NULL);
-
-//     // initializing the sample_sizes_
-//     sample_sizes_.Init();
-//   } // Init
-
-//   void Init(const Matrix& references_in,
-// 	    index_t leaf_size, index_t knns) {
-//     // track the number of prunes
-//     number_of_prunes_ = 0;
-    
-//     // Make sure the leaf size is valid
-//     leaf_size_ = leaf_size;
-//     DEBUG_ASSERT(leaf_size_ > 0);
-    
-//     // Make sure the knns is valid
-//     knns_ = knns;
-//     DEBUG_ASSERT(knns_ > 0);
-//     // Copy the matrices to the class members since they will be rearranged.  
-//     references_.Copy(references_in);
-//     queries_.Alias(references_); 
-  
-//     // Initialize the list of nearest neighbor candidates
-//     neighbor_indices_.Init(references_.n_cols() * knns_);
-    
-//     // Initialize the vector of upper bounds for each point.  
-//     neighbor_distances_.Init(references_.n_cols() * knns_);
-//     neighbor_distances_.SetAll(DBL_MAX);
-
-
-//     // This call makes each tree from a matrix, leaf size, and two arrays 
-//     // that record the permutation of the data points
-//     // Instead of NULL, it is possible to specify an array new_from_old_
-//     query_tree_ = NULL;
-//     reference_tree_
-//       = tree::MakeKdTreeMidpoint<TreeType>(references_, 
-// 					   leaf_size_,
-// 					   &old_from_new_references_,
-// 					   NULL);
-//     // This is an annoying feature of fastlib
-//     old_from_new_queries_.Init();
-//   }
-
   void Destruct() {
     for (std::vector<TreeType*>::iterator it = query_trees_.begin();
 	 it < query_trees_.end(); it++) {
@@ -1127,11 +991,6 @@ public:
       old_from_new_queries_.Renew();
     }
     
-//     query_tree_
-//       = tree::MakeKdTreeMidpoint<TreeType>(queries_, 
-// 					   leaf_size_,
-// 					   &old_from_new_queries_,
-// 					   NULL);
     reference_tree_
       = tree::MakeKdTreeMidpoint<TreeType>(references_,
 					   leaf_size_,
@@ -1142,30 +1001,6 @@ public:
     sample_sizes_.Init();
   } // InitNaive
   
-//   void InitNaive(const Matrix& references_in, index_t knns){
-    
-//     references_.Copy(references_in);
-//     queries_.Alias(references_);
-//     knns_=knns;
-    
-//     neighbor_indices_.Init(references_.n_cols()*knns_);
-//     neighbor_distances_.Init(references_.n_cols()*knns_);
-//     neighbor_distances_.SetAll(DBL_MAX);
-    
-//     // The only difference is that we set leaf_size_ to be large enough 
-//     // that each tree has only one node
-//     leaf_size_ = references_.n_cols();
-    
-//     query_tree_ = NULL;
-//     reference_tree_
-//       = tree::MakeKdTreeMidpoint<TreeType>(references_,
-// 					   leaf_size_,
-// 					   &old_from_new_references_,
-// 					   NULL);
-//     // This is an annoying feature of fastlib
-//     old_from_new_queries_.Init();
-//   } // InitNaive
-
   void InitApprox(const Matrix& queries_in,
 		  const Matrix& references_in,
 		  struct datanode* module_in) {
@@ -1247,9 +1082,16 @@ public:
     sample_sizes_.Init(references_.n_cols());
 
     // compute the sample sizes
-    epsilon_ = fx_param_int(module_, "epsilon", 0);
+    epsilon_ = fx_param_double(module_, "epsilon", 0.0);
+    rank_approx_ = (index_t) (epsilon_
+			      * (double) references_.n_cols()
+			      / 100.0);
 
-    ComputeSampleSizes_(epsilon_, alpha, &sample_sizes_);
+    NOTIFY("Rank Approximation: %2.3f%% or %"LI"d"
+	   " with Probability:%1.2f",
+	   epsilon_, rank_approx_, alpha);
+
+    ComputeSampleSizes_(rank_approx_, alpha, &sample_sizes_);
 
     fx_timer_stop(module_, "computing_sample_sizes");
 
@@ -1258,71 +1100,6 @@ public:
     min_samples_per_q_ = sample_sizes_[references_.n_cols() -1];
 
   } // InitApprox
-
-//   void InitApprox(const Matrix& queries_in,
-// 		  const Matrix& references_in, 
-// 		  index_t leaf_size, index_t knns,
-// 		  index_t epsilon, double alpha) {
-    
-//     // Check if the probability is <=1
-//     DEBUG_ASSERT(alpha <= 1.0);
-
-//     // track the number of prunes
-//     number_of_prunes_ = 0;
-    
-//     // Make sure the leaf size is valid
-//     leaf_size_ = leaf_size;
-//     DEBUG_ASSERT(leaf_size_ > 0);
-    
-//     // Make sure the knns is valid
-//     knns_ = knns;
-//     DEBUG_ASSERT(knns_ > 0);
-//     // Copy the matrices to the class members since they will be rearranged.  
-//     queries_.Copy(queries_in);
-//     references_.Copy(references_in);
-    
-//     // The data sets need to have the same number of points
-//     DEBUG_SAME_SIZE(queries_.n_rows(), references_.n_rows());
-    
-  
-//     // Initialize the list of nearest neighbor candidates
-//     neighbor_indices_.Init(queries_.n_cols() * knns_);
-    
-//     // Initialize the vector of upper bounds for each point.  
-//     neighbor_distances_.Init(queries_.n_cols() * knns_);
-//     neighbor_distances_.SetAll(DBL_MAX);
-
-
-//     // This call makes each tree from a matrix, leaf size, and two arrays 
-//     // that record the permutation of the data points
-//     // Instead of NULL, it is possible to specify an array new_from_old_
-
-//     // Here we need to change the query tree into N single-point
-//     // query trees
-//     for (index_t i = 0; i < queries_.n_cols(); i++) {
-//       Matrix query;
-//       queries_.MakeColumnSlice(i, 1, &query);
-//       TreeType *single_point_tree
-// 	= tree::MakeKdTreeMidpoint<TreeType>(query,
-// 					     leaf_size_, 
-// 					     &old_from_new_queries_,
-// 					     NULL);
-//       query_trees_.push_back(single_point_tree);
-//       old_from_new_queries_.Renew();
-//     }
-//     reference_tree_
-//       = tree::MakeKdTreeMidpoint<TreeType>(references_, 
-// 					   leaf_size_,
-// 					   &old_from_new_references_,
-// 					   NULL);
-
-//     // initialize the sample_sizes array
-//     sample_sizes_.Init(references_.n_cols());
-//     epsilon_ = epsilon;
-//     // compute the sample sizes
-//     ComputeSampleSizes_(epsilon_, alpha, &sample_sizes_);
-
-//   } // Init
   
   /**
    * Computes the nearest neighbors and stores them in *results
