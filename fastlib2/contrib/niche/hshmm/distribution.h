@@ -1,0 +1,42 @@
+#ifndef DISTRIBUTION_H
+#define DISTRIBUTION_H
+
+class Distribution {
+ private:
+
+  int n_dims_;
+
+  Vector mu_;
+  Matrix sigma_;
+
+ public:
+
+  void Init(int n_dims_in) {
+    n_dims_ = n_dims_in;
+    mu_.Init(n_dims_);
+    sigma_.Init(n_dims_, n_dims_);
+  }
+
+
+  void RandomlyInitialize() {
+    sigma_.SetZero();
+    for(int i = 0; i < n_dims_; i++) {
+      mu_[i] = drand48();
+      
+      // spherical covariance
+      sigma_.set(i, i, 1);
+    }
+  }
+  
+  Vector mu() {
+    return mu_;
+  }
+
+  Matrix sigma() {
+    return sigma_;
+  }
+
+};
+
+
+#endif /* DISTRIBUTION_H */
