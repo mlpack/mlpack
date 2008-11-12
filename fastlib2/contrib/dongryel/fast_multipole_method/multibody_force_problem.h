@@ -642,7 +642,7 @@ class AxilrodTellerForceProblem {
 	   delta.used_error[i] * 
 	   (total_n_minus_one_tuples_root - new_summary.n_pruned_l)) {
 
-	  if(((difference + delta.used_error[i]) - difference) * 15 >
+	  if(((difference + delta.used_error[i]) - difference) >
 	     difference * AxilrodTellerForceProblem::relative_error_) {
 	    
 	    return false;
@@ -706,7 +706,7 @@ class AxilrodTellerForceProblem {
 	   (total_n_minus_one_tuples_root - new_summary.n_pruned_l)) {
 	   
           if(((difference + delta.probabilistic_used_error[i]) - 
-	      difference) * 15 >=
+	      difference)  >=
 	     difference * AxilrodTellerForceProblem::relative_error_) {
             return false;
           }
