@@ -18,18 +18,35 @@
 
 #ifndef OPTIMIZER_H_
 #define OPTIMIZER_H_
+#ifndef HAVE_STD
+#define HAVE_STD
+#endif
+
+#ifndef HAVE_NAMESPACES
+#define HAVE_NAMESPACES
+#endif
+
 #include "fastlib/fastlib.h"
-#include "NFL.h"
-#include "OptQNewton.h"
-#include "OptCG.h"
+#include "opt++/include/newmat.h"
+#include "opt++/include/NFL.h"
+#include "opt++/include/OptCG.h"
+#include "opt++/include/OptLBFGS.h"
+#include "opt++/include/OptFDNewton.h"
+#include "opt++/include/OptNewton.h"
+#include "opt++/include/OptQNewton.h"
+
 
 namespace optim {
 
-template<typename Method>
-class OptimizationTrait;
+typedef OPTPP::OptCG       CG;
+typedef OPTPP::OptQNewton  QNewton;
+typedef OPTPP::OptQNewton  BFGS;
+typedef OPTPP::OptFDNewton FDNewton;
+typedef OPTPP::OptNewton   Newton;
+typedef OPTPP::OptLBFGS       LBFGS;
 
-template<>
-class OptimizationTrait<Method> {
+template<typename Method>
+class OptimizationTrait {
  public:
   typedef void NlpType;
   static void InitializeMethod(fx_module *module, Method *method);
@@ -37,30 +54,31 @@ class OptimizationTrait<Method> {
 };
 
 // Conjugate Gradient
+template<>
 class OptimizationTrait<OPTPP::OptCG> {
  public:
   typedef OPTPP::NLF1 NlpType;
-  static void InitializeMethod(fx_module *module, Method *method) {
+  static void InitializeMethod(fx_module *module, OPTPP::OptCG *method) {
     std::string search_strategy = fx_param_str(module, 
                                       "search_strategy",
                                       "line_search");
     if (search_strategy=="line_search") {
-      method_->setSearchStrategy(OPTPP::LineSearch);
+      method->setSearchStrategy(OPTPP::LineSearch);
     } else {
       if (search_strategy=="trust_region") {
-        method_->setSearchStrategy(OPTPP::TrustRegion);
+        method->setSearchStrategy(OPTPP::TrustRegion);
       } else {
         if (search_strategy=="trust_pds") {
-          method_->setSearchStrategy(OPTPP::TrustPDS);
+          method->setSearchStrategy(OPTPP::TrustPDS);
         } else {
           FATAL("The specified search strategy %s is not supported", 
               search_strategy.c_str());
         }
       }
     } 
-    if (method_->checkDeriv()==false) {
-      NONFATAL("Warning finite difference derivative/hessian doesn't much 
-          analytic");
+    if (method->checkDeriv()==false) {
+      NONFATAL("Warning finite difference derivative/hessian doesn't much "
+          "analytic");
     }    
 
   }
@@ -71,29 +89,30 @@ template<>
 class OptimizationTrait<OPTPP::OptQNewton> {
  public:
   typedef OPTPP::NLF1 NlpType;
-  static void InitializeMethod(fx_module *module, Method *method) {
+  static void InitializeMethod(fx_module *module, 
+      OPTPP::OptQNewton *method) {
      std::string search_strategy = fx_param_str(module, 
                                       "search_strategy",
                                       "line_search");
     if (search_strategy=="line_search") {
-      method_->setSearchStrategy(OPTPP::LineSearch);
+      method->setSearchStrategy(OPTPP::LineSearch);
     } else {
       if (search_strategy=="trust_region") {
-        method_->setSearchStrategy(OPTPP::TrustRegion);
-        method_->setTRSize(fx_param_double(module_, "trust_region_size", 
-              method_->getTRSize()));
+        method->setSearchStrategy(OPTPP::TrustRegion);
+        method->setTRSize(fx_param_double(module, "trust_region_size", 
+              method->getTRSize()));
       } else {
         if (search_strategy=="trust_pds") {
-          method_->setSearchStrategy(OPTPP::TrustPDS);
+          method->setSearchStrategy(OPTPP::TrustPDS);
         } else {
           FATAL("The specified search strategy %s is not supported", 
               search_strategy.c_str());
         }
       }
     } 
-    if (method_->checkDeriv()==false) {
-      NONFATAL("Warning finite difference derivative/hessian doesn't much 
-          analytic");
+    if (method->checkDeriv()==false) {
+      NONFATAL("Warning finite difference derivative/hessian doesn't much "
+         " analytic");
     }    
   }
 };
@@ -103,9 +122,9 @@ template<>
 class OptimizationTrait<OPTPP::OptFDNewton> {
  public:
   typedef OPTPP::NLF1 NlpType;
-  static void InitializeMethod(fx_module *module, Method *method) {
+  static void InitializeMethod(fx_module *module, OPTPP::OptFDNewton *method) {
     OptimizationTrait<OPTPP::OptQNewton>::InitializeMethod(
-        module_, method);  
+        module, method);  
   }
 };
 
@@ -114,9 +133,9 @@ template<>
 class OptimizationTrait<OPTPP::OptNewton> {
  public:
   typedef OPTPP::NLF2 NlpType;
-  static void InitializeMethod(fx_module *module, Method *method) {
+  static void InitializeMethod(fx_module *module, OPTPP::OptNewton *method) {
    OptimizationTrait<OPTPP::OptQNewton>::InitializeMethod(
-        module_, method);  
+        module, method);  
  
   }
 };
@@ -127,9 +146,9 @@ template<>
 class OptimizationTrait<OPTPP::OptLBFGS> {
  public:
   typedef OPTPP::NLF1 NlpType;
-  static void InitializeMethod(fx_module *module, Method *method) {
+  static void InitializeMethod(fx_module *module, OPTPP::OptLBFGS *method) {
     OptimizationTrait<OPTPP::OptCG>::InitializeMethod(
-        module_, method);  
+        module, method);  
   
   }
 };
@@ -137,11 +156,11 @@ class OptimizationTrait<OPTPP::OptLBFGS> {
 template <typename Method, typename Objective>
 class StaticUnconstrainedOptimizer {
  public:
-  UnconstrainedOptimizer() {
+  StaticUnconstrainedOptimizer() {
     objective_=NULL;
     method_=NULL;
   }
-  ~UnconstrainedOptimizer() {
+  ~StaticUnconstrainedOptimizer() {
     if (method_==NULL) {
       delete method_;
     }
@@ -150,38 +169,38 @@ class StaticUnconstrainedOptimizer {
     module_ = module;
     objective_ = objective;
     dimension_=objective_->dimension();
-    OptimizationTraits<Method>::NlpType nlp(dimension_.
-        ComputeObjective, Initialize, NULL);
+    OptimizationTrait<Method>::NlpType nlp(dimension_, ComputeObjective, 
+        Initialize, NULL);
     // setting some generic options for the optimization method
     const char *status_file=fx_param_str(module_, "status_file", "status.txt" );
     if (method_->setOutputFile(status_file, 0)==false) {
       FATAL("Failed to open the status file %s for writing", status_file);
     }
     // Setup the tolerances 
-    OPTPP::Tols tols;
+    OPTPP::TOLS tols;
     tols.setDefaultTol();
     if (fx_param_exists(module_, "function_tol")) {
-      tols.setFTol(fx_param_double(module_, "function_tol"))
+      tols.setFTol(fx_param_double_req(module_, "function_tol"))
     } else {
       if (fx_param_exists(module_, "step_tol")) {
-        tols.setStepTol(fx_param_double(module_, "step_tol"));
+        tols.setStepTol(fx_param_double_req(module_, "step_tol"));
       } else {
         if (fx_param_exists(module_, "grad_tol")) {
-          tols.setGTol(fx_param_double(module_, "grad_tol"));
+          tols.setGTol(fx_param_double_req(module_, "grad_tol"));
         } 
       }
     }
     if (fx_param_exists(module_, "max_step")) {
-      tols.setMaxStep(module_, fx_param_double(module_, "max_step"));
+      tols.setMaxStep(module_, fx_param_double_req(module_, "max_step"));
     }
     if (fx_param_exists(module_, "min_step")) {
-      tols.setMinStep(module_, fx_param_double(module_, "min_step"));
+      tols.setMinStep(module_, fx_param_double_req(module_, "min_step"));
     }
     if (fx_param_exists(module_, "line_search_tol")) {
-      tols.setLSTol(module_, fx_param_double(module_, "min_step"));
+      tols.setLSTol(module_, fx_param_double_req(module_, "min_step"));
     }
     if (fx_param_exists(module_, "trust_region_tol")) {
-      tols.setTRTol(module_, fx_param_double(module_, "trust_region_tol"));
+      tols.setTRTol(module_, fx_param_double_req(module_, "trust_region_tol"));
     }
   
    
