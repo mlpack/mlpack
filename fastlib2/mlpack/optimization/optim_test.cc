@@ -23,7 +23,11 @@ class Rosen {
     dimension_ = 2;
   };
   ~Rosen(){}; 
-   void ComputeObjective(Vector &x, double *value) {
+  void GiveInit(Vector *vec) {
+    (*vec)[0]=0;
+    (*vec)[1]=0; 
+  }
+  void ComputeObjective(Vector &x, double *value) {
      double x1=x[0];
      double x2=x[1];
      *value = 100*math::Sqr(x2-x1*x1)+math::Sqr(1-x1);
@@ -34,7 +38,9 @@ class Rosen {
      (*gx)[0]=-100*2*(1-x1)-200*(x2-x1*x1)*2*x1;
      (*gx)[1]=200*(x2-x1*x1);
    }
-   
+   index_t dimension() {
+     return dimension_;
+   } 
  private:
   index_t dimension_;
     
@@ -56,7 +62,7 @@ class StaticUnconstrainedOptimizerTest {
   }
  private:
   fx_module *module_;
-  optim::StaticUnconstrainedOptimizer<LBFGS, Rosen> optimizer_;
+  optim::StaticUnconstrainedOptimizer<optim::LBFGS, Rosen> optimizer_;
 };
 
 int main(int argc, char *argv[]) {
