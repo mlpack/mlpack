@@ -525,12 +525,36 @@ class MultiTreeDepthFirst {
   (const Matrix &qset, Tree *node,
    typename MultiTreeProblem::MultiTreeQueryResult &query_results);
 
+  void ShuffleAccordingToPermutationColumnwise_
+  (Matrix &v, const ArrayList<index_t> &permutation) {
+    
+    Matrix v_tmp;
+    la::TransposeInit(v, &v_tmp);
+    for(index_t i = 0; i < v.n_rows(); i++) {
+      Vector column_vector;
+      v_tmp.MakeColumnVector(i, &column_vector);
+      ShuffleAccordingToPermutation_(column_vector, permutation);
+    }
+    la::TransposeOverwrite(v_tmp, &v);
+  }
+
   /** @brief Shuffles a vector according to a given permutation.
    *
    *  @param v The vector to be shuffled.
    *  @param permutation The permutation.
    */
   void ShuffleAccordingToPermutation_
+  (Vector &v, const ArrayList<index_t> &permutation) {
+    
+    Vector v_tmp;
+    v_tmp.Init(v.length());
+    for(index_t i = 0; i < v_tmp.length(); i++) {
+      v_tmp[i] = v[permutation[i]];
+    }
+    v.CopyValues(v_tmp);
+  }
+
+  void ShuffleAccordingToPermutationColumnwise_
   (Vector &v, const ArrayList<index_t> &permutation) {
     
     Vector v_tmp;
@@ -652,12 +676,12 @@ class MultiTreeDepthFirst {
 
     // Shuffle back the query results according to its permutation.
     if(query_sets.size() > 0) {
-      ShuffleAccordingToPermutation_(query_results->final_results,
-				     new_from_old_queries);
+      ShuffleAccordingToPermutationColumnwise_(query_results->final_results,
+					       new_from_old_queries);
     }
     else {
-      ShuffleAccordingToPermutation_(query_results->final_results,
-				     new_from_old_hybrids_);
+      ShuffleAccordingToPermutationColumnwise_(query_results->final_results,
+					       new_from_old_hybrids_);
     }
   }
 
@@ -730,12 +754,12 @@ class MultiTreeDepthFirst {
 
     // Shuffle back the query results according to its permutation.
     if(query_sets.size() > 0) {
-      ShuffleAccordingToPermutation_(query_results->final_results,
-				     new_from_old_queries);
+      ShuffleAccordingToPermutationColumnwise_(query_results->final_results,
+					       new_from_old_queries);
     }
     else {
-      ShuffleAccordingToPermutation_(query_results->final_results,
-				     new_from_old_hybrids_);
+      ShuffleAccordingToPermutationColumnwise_(query_results->final_results,
+					       new_from_old_hybrids_);
     }
   }
 
@@ -766,7 +790,7 @@ class MultiTreeDepthFirst {
     // This could potentially be improved by checking which matrices
     // are the same...
     reference_trees_[0] = proximity::MakeGenKdTree<double, ReferenceTree,
-      proximity::GenKdTreeMedianSplitter>(*(sets_[0]), 10, 
+      proximity::GenKdTreeMedianSplitter>(*(sets_[0]), 20, 
 					  &old_from_new_references_, NULL);
     PreProcessReferenceTree_(reference_trees_[0], 0);
     for(index_t i = 1; i < MultiTreeProblem::num_reference_sets; i++) {
