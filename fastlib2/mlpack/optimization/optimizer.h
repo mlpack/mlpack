@@ -28,7 +28,7 @@
 
 #include "fastlib/fastlib.h"
 #include "opt++/include/newmat.h"
-#include "opt++/include/NFL.h"
+#include "opt++/include/NLF.h"
 #include "opt++/include/OptCG.h"
 #include "opt++/include/OptLBFGS.h"
 #include "opt++/include/OptFDNewton.h"
@@ -45,20 +45,13 @@ typedef OPTPP::OptFDNewton FDNewton;
 typedef OPTPP::OptNewton   Newton;
 typedef OPTPP::OptLBFGS       LBFGS;
 
+
+// The default is good for CG and L-BFGS
 template<typename Method>
 class OptimizationTrait {
  public:
-  typedef void NlpType;
-  static void InitializeMethod(fx_module *module, Method *method);
-
-};
-
-// Conjugate Gradient
-template<>
-class OptimizationTrait<OPTPP::OptCG> {
- public:
   typedef OPTPP::NLF1 NlpType;
-  static void InitializeMethod(fx_module *module, OPTPP::OptCG *method) {
+  static void InitializeMethod(fx_module *module, Method *method) {
     std::string search_strategy = fx_param_str(module, 
                                       "search_strategy",
                                       "line_search");
@@ -80,11 +73,10 @@ class OptimizationTrait<OPTPP::OptCG> {
       NONFATAL("Warning finite difference derivative/hessian doesn't much "
           "analytic");
     }    
-
   }
 };
 
-// Quasi-Newton BFGS
+// Generic Newton 
 template<>
 class OptimizationTrait<OPTPP::OptNewtonLike> {
  public:
@@ -123,10 +115,22 @@ class OptimizationTrait<OPTPP::OptFDNewton> {
  public:
   typedef OPTPP::NLF1 NlpType;
   static void InitializeMethod(fx_module *module, OPTPP::OptFDNewton *method) {
-    OptimizationTrait<OPTPP::OptQNewton>::InitializeMethod(
+    OptimizationTrait<OPTPP::OptNewtonLike>::InitializeMethod(
         module, method);  
   }
 };
+
+// Quasi-Newton BFGS 
+template<>
+class OptimizationTrait<OPTPP::OptQNewton> {
+ public:
+  typedef OPTPP::NLF1 NlpType;
+  static void InitializeMethod(fx_module *module, OPTPP::OptFDNewton *method) {
+    OptimizationTrait<OPTPP::OptNewtonLike>::InitializeMethod(
+        module, method);  
+  }
+};
+
 
 // Newton  with analytic expression for the Hessian
 template<>
@@ -134,24 +138,13 @@ class OptimizationTrait<OPTPP::OptNewton> {
  public:
   typedef OPTPP::NLF2 NlpType;
   static void InitializeMethod(fx_module *module, OPTPP::OptNewton *method) {
-   OptimizationTrait<OPTPP::OptQNewton>::InitializeMethod(
+   OptimizationTrait<OPTPP::OptNewtonLike>::InitializeMethod(
         module, method);  
  
   }
 };
 
 
-// L-BFGS 
-template<>
-class OptimizationTrait<OPTPP::OptLBFGS> {
- public:
-  typedef OPTPP::NLF1 NlpType;
-  static void InitializeMethod(fx_module *module, OPTPP::OptLBFGS *method) {
-    OptimizationTrait<OPTPP::OptCG>::InitializeMethod(
-        module, method);  
-  
-  }
-};
 
 template <typename Method, typename Objective>
 class StaticUnconstrainedOptimizer {
@@ -169,8 +162,8 @@ class StaticUnconstrainedOptimizer {
     module_ = module;
     objective_ = objective;
     dimension_=objective_->dimension();
-    OptimizationTrait<Method>::NlpType nlp(dimension_, ComputeObjective, 
-        Initialize, NULL);
+    typename OptimizationTrait<Method>::NlpType nlp(dimension_, ComputeObjective, 
+        Initialize, (OPTPP::CompoundConstraint *)NULL);
     // setting some generic options for the optimization method
     const char *status_file=fx_param_str(module_, "status_file", "status.txt" );
     if (method_->setOutputFile(status_file, 0)==false) {
@@ -180,7 +173,7 @@ class StaticUnconstrainedOptimizer {
     OPTPP::TOLS tols;
     tols.setDefaultTol();
     if (fx_param_exists(module_, "function_tol")) {
-      tols.setFTol(fx_param_double_req(module_, "function_tol"))
+      tols.setFTol(fx_param_double_req(module_, "function_tol"));
     } else {
       if (fx_param_exists(module_, "step_tol")) {
         tols.setStepTol(fx_param_double_req(module_, "step_tol"));
@@ -191,23 +184,19 @@ class StaticUnconstrainedOptimizer {
       }
     }
     if (fx_param_exists(module_, "max_step")) {
-      tols.setMaxStep(module_, fx_param_double_req(module_, "max_step"));
+      tols.setMaxStep(fx_param_double_req(module_, "max_step"));
     }
     if (fx_param_exists(module_, "min_step")) {
-      tols.setMinStep(module_, fx_param_double_req(module_, "min_step"));
+      tols.setMinStep(fx_param_double_req(module_, "min_step"));
     }
     if (fx_param_exists(module_, "line_search_tol")) {
-      tols.setLSTol(module_, fx_param_double_req(module_, "min_step"));
-    }
-    if (fx_param_exists(module_, "trust_region_tol")) {
-      tols.setTRTol(module_, fx_param_double_req(module_, "trust_region_tol"));
+      tols.setLSTol(fx_param_double_req(module_, "min_step"));
     }
   
-   
     tols.setMaxIter(fx_param_int(module_, "max_iter", 1000));
-    method_ = new Method(nlp, tols);
+    method_ = new Method(&nlp, tols);
 
-    OptimizationTraits<Method>::InitializeMethod(module_, method_);
+    OptimizationTrait<Method>::InitializeMethod(module_, method_);
     
   }
   void Destruct() {
@@ -216,12 +205,12 @@ class StaticUnconstrainedOptimizer {
     }
   }
   void Optimize(Vector *result) {
-    method_->Optimize();
+    method_->optimize();
     NEWMAT::ColumnVector x=method_->getXPrev();
     result->Copy(x.data(), dimension_); 
     fx_result_bool(module_, "converged", method_->checkConvg());
     fx_result_int(module_, "iterations", method_->getIter());
-    method_->Cleanup();
+    method_->cleanup();
   }
  
  private:
@@ -231,60 +220,56 @@ class StaticUnconstrainedOptimizer {
   index_t dimension_;
   
   static void Initialize(int ndim, NEWMAT::ColumnVector &x) {
-    DEBUG_ASSERT(ndim==dimension_);
     Vector vec;  
-    vec->Alias(x.data(), dimension_);
+    vec.Alias(x.data(), ndim);
     objective_->GiveInit(&vec);
     
   }
-  static void ComputeObjective(int ndim, NEWMAT::ColumnVector &x, 
+  static void ComputeObjective(int ndim, const NEWMAT::ColumnVector &x, 
       double &fx, int &result) {
-    DEBUG_ASSERT(ndim==dimension_);
     Vector vec;  
-    vec->Alias(x.data(), dimension_);
+    vec.Alias(x.data(), ndim);
     objective_->ComputeObjective(vec, &fx);
-    result = NLPFunction;
+    result = OPTPP::NLPFunction;
   };
   
-  static void ComputeObjective(int mode, int ndim, NEWMAT::ColumnVector &x, 
+  static void ComputeObjective(int mode, int ndim, const NEWMAT::ColumnVector &x, 
       double &fx, NEWMAT::ColumnVector &gx, int &result) {
-    DEBUG_ASSERT(ndim==dimension_);
     Vector vecx;  
-    vecx->Alias(x.data(), dimension_);
-    if (mode & NLPFunction) {
+    vecx.Alias((double *)x.data(), ndim);
+    if (mode & OPTPP::NLPFunction) {
       objective_->ComputeObjective(vecx, &fx);
-      result = NLPFunction;
+      result = OPTPP::NLPFunction;
     } else {
-      if (mode & NLPGradient) {
+      if (mode & OPTPP::NLPGradient) {
         Vector vecg;
-        vecg->Alias(gx.data(), dimension_);
-        objective_->ComputeGradient(vecx, &vec);
-        result = NLPGradient;
+        vecg.Alias(gx.data(), ndim);
+        objective_->ComputeGradient(vecx, &vecg);
+        result = OPTPP::NLPGradient;
       }
     }   
   }
     
-  static void ComputeObjective(int mode, int ndim, NEWMAT::ColumnVector &x, 
+  static void ComputeObjective(int mode, int ndim, const NEWMAT::ColumnVector &x, 
       double &fx, NEWMAT::ColumnVector &gx, 
     NEWMAT::SymmetricMatrix &hx, int &result) {
-    DEBUG_ASSERT(ndim==dimension_);
     Vector vecx;  
-    vecx->Alias(x.data(), dimension_);
-    if (mode & NLPFunction) {
-      objective_->ComputeObjective(vec, &fx);
-      result = NLPFunction;
+    vecx.Alias(x.data(), ndim);
+    if (mode & OPTPP::NLPFunction) {
+      objective_->ComputeObjective(vecx, &fx);
+      result = OPTPP::NLPFunction;
     } else {
-      if (mode & NLPGradient) {
+      if (mode & OPTPP::NLPGradient) {
         Vector vecg;
-        vecg->Alias(gx.data(), dimension_);
+        vecg.Alias(gx.data(), ndim);
         objective_->ComputeGradient(vecx, &vecg); 
-        result = NLPGradient;
+        result = OPTPP::NLPGradient;
       } else {
-        if (mode & NLPHessian) {
+        if (mode & OPTPP::NLPHessian) {
           Matrix hessian;
-          hessian.Alias(hx.data(), dimension_, dimension_);  
+          hessian.Alias(hx.data(), ndim, ndim);  
           objective_->ComputeHessian(vecx, hessian);  
-          result = NLPHessian;
+          result = OPTPP::NLPHessian;
         }
       }
     }
