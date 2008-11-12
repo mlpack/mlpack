@@ -1,6 +1,5 @@
 #include <string>
 #include "approx_nn_dual.h"
-#include "mlpack/allknn/allknn.h"
 
 const fx_entry_doc approx_nn_main_dual_entries[] = {
   {"r", FX_REQUIRED, FX_STR, NULL,
@@ -125,7 +124,7 @@ int main (int argc, char *argv[]) {
     fx_timer_stop(ann_module, "approx");
   }
   
-  count_mismatched_neighbors(&exc, &die, &apc, &dia);
+  //  count_mismatched_neighbors(&exc, &die, &apc, &dia);
 
   fx_done(fx_root);
 }

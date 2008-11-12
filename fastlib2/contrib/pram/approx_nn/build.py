@@ -14,5 +14,6 @@ binrule(name="main",
 binrule(name="main_dual",
     sources=["main_dual.cc"],
     deplibs=[":approxnn_dual",
-             "mlpack/allknn:allknn"]);
+             #"mlpack/allknn:allknn"
+             ]);
 
