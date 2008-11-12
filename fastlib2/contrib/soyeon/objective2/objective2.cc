@@ -1,6 +1,6 @@
 #include "objective2.h"
 #include <cmath>
-#include <iostream.h>
+#include <iostream>
     
 void Objective::Init(fx_module *module) {
   module_=module;
@@ -24,6 +24,7 @@ void Objective::Init(fx_module *module) {
   const char *info_file2=fx_param_str_req(module_, "info2");
 	//info1==info2
   x.Destruct();
+	//x.get(1,1);
   data::Load(data_file2, &x);
   Matrix info2;
   data::Load(info_file2, &info2);
