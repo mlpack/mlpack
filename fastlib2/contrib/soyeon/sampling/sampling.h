@@ -11,7 +11,8 @@ class Sampling {
 		//double CalculateSamplingError();
 
 	private:
-		
+
+		fx_module *module_;		
 		ArrayList<Matrix> population_first_stage_x_;
 		ArrayList<Matrix> population_second_stage_x_;
 		ArrayList<Matrix> population_unknown_x_past_;
