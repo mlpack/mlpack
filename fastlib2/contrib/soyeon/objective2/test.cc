@@ -7,7 +7,7 @@ class ObjectiveTest {
     module_= module;
   }
   void Destruct();
-  void Test1() {
+  void Test_objective2() {
     objective.Init(module_);
 		double dummy_objective;
     //Matrix x;
@@ -42,8 +42,14 @@ class ObjectiveTest {
 		NOTIFY("Exact hessian calculation ends");
 		
   }
+
+	//void Test_sampling() {
+	//}
+
+
   void TestAll() {
-    Test1();
+    Test_objective2();
+		//Test_sampling();
 		
   }
 

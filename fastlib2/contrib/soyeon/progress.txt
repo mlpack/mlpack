@@ -83,8 +83,7 @@ Fastlib meetings
 								
 11/06 Thurs. >fl-build --mode=debug objective2
 			 >fl-build --model=debug test
-			 >./test --data1=data1.csv --info1=info1.csv --data2=data2.csv
-			 --info2=info2.csv --data3=data3.csv --info3=info3.csv
+			 >./test --data1=data1.csv --info1=info1.csv --data2=data2.csv			 --info2=info2.csv --data3=data3.csv --info3=info3.csv
 				
 				
 					
