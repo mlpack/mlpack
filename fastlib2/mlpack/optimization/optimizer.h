@@ -154,23 +154,22 @@ class StaticUnconstrainedOptimizer {
   StaticUnconstrainedOptimizer() {
     objective_=NULL;
     method_=NULL;
+    nlp_=NULL;
   }
   ~StaticUnconstrainedOptimizer() {
-    if (method_==NULL) {
+    if (method_!=NULL) {
       delete method_;
+    }
+    if (nlp_!=NULL) {
+      delete nlp_;
     }
   }
   void Init(fx_module *module, Objective *objective) {
     module_ = module;
     objective_ = objective;
     dimension_=objective_->dimension();
-    typename OptimizationTrait<Method>::NlpType nlp(dimension_, ComputeObjective, 
+    nlp_ = new typename OptimizationTrait<Method>::NlpType(dimension_, ComputeObjective, 
         Initialize, (OPTPP::CompoundConstraint *)NULL);
-    // setting some generic options for the optimization method
-    const char *status_file=fx_param_str(module_, "status_file", "status.txt" );
-    if (method_->setOutputFile(status_file, 0)==false) {
-      FATAL("Failed to open the status file %s for writing", status_file);
-    }
     // Setup the tolerances 
     OPTPP::TOLS tols;
     tols.setDefaultTol();
@@ -196,14 +195,24 @@ class StaticUnconstrainedOptimizer {
     }
   
     tols.setMaxIter(fx_param_int(module_, "max_iter", 1000));
-    method_ = new Method(&nlp, tols);
+    method_ = new Method(nlp_, tols);
+    // setting some generic options for the optimization method
+    const char *status_file=fx_param_str(module_, "status_file", "status.txt" );
+    if (method_->setOutputFile(status_file, 0)==false) {
+      FATAL("Failed to open the status file %s for writing", status_file);
+    }
 
     OptimizationTrait<Method>::InitializeMethod(module_, method_);
     
   }
   void Destruct() {
-    if (method_==NULL) {
+    if (method_!=NULL) {
       delete method_;
+      method_=NULL;
+    }
+    if (nlp_!=NULL) {
+      delete nlp_;
+      nlp_=NULL;
     }
   }
   void Optimize(Vector *result) {
@@ -218,6 +227,7 @@ class StaticUnconstrainedOptimizer {
  private:
   fx_module *module_;
   static Objective *objective_;
+  typename OptimizationTrait<Method>::NlpType *nlp_;
   Method *method_; 
   index_t dimension_;
   
