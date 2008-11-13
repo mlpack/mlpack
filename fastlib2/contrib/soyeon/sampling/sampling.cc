@@ -5,24 +5,89 @@
 
 
 
-Sampling::Init(fx_module *module) {
-	num_slected_sample_=0;
+void Sampling::Init(fx_module *module) {
+	module_=module;
+	const char *data_file1=fx_param_str_req(module_, "data1");
+	const char *info_file1=fx_param_str_req(module_, "info1");
+	Matrix x;
+	data::Load(data_file1, &x);
+	//num_of_betas_=x.n_rows();
+	num_of_people_=info1.n_cols();
+  Matrix info1;
+  data::Load(info_file1, &info1);
+  population_first_stage_x_.Init(num_of_people_);
+	index_t start_col=0;
+  for(index_t i=0; i<num_of_people_; i++) {
+    population_first_stage_x_[i].Init(x.n_rows(), (index_t)info1.get(0, i));
+    population_first_stage_x_[i].CopyColumnFromMat(0, start_col, 
+										(index_t)info1.get(0,i), x);
+    start_col+=(index_t)info1.get(0, i);
+  }
+	
+  const char *data_file2=fx_param_str_req(module_, "data2");
+	x.Destruct();
+	data::Load(data_file2, &x);
+	population_second_stage_x_.Init(num_of_people_);
+	start_col=0;
+  for(index_t i=0; i<num_of_people_; i++) {
+    population_second_stage_x_[i].Init(x.n_rows(), (index_t)info1.get(0,i));
+	  population_second_stage_x_[i].CopyColumnFromMat(0, start_col, 
+							(index_t)info2.get(0,i), x);
+    start_col+=(index_t)info1.get(0,i);
+  }
+
+	//need to be fixed
+	const char *data_file3=fx_param_str_req(module_, "data3");
+  x.Destruct();
+  data::Load(data_file3, &x);
+  population_unknown_x_past_.Init(num_of_people_);
+  start_col=0;
+  for(index_t i=0; i<num_of_people_; i++) {
+    population_unknown_x_past_[i].Init(x.n_rows(), (index_t)info1.get(0,i));
+    population_unknown_x_past_[i].CopyColumnFromMat(0, start_col, 
+        (index_t)info1.get(0,i), x);
+    start_col+=(index_t)info1.get(0, i);
+  }
+
+	 
+	const char *info_y_file=fx_param_str_req(module_, "info_y");
+  Matrix info_y;
+  data::Load(info_file_y, &info_y);
+  population_first_stage_y_.Init(num_of_people_);
+  for(index_t i=0; i<num_of_people_; i++) {
+	  population_first_stage_y_[i]=info_y.get(1,i);
+  }
+
+  const char *info_ind_unknown_x_file=fx_param_str_req(module_, "info_ind_unknown_x");
+  Matrix info_ind_unknown_x;
+  data::Load(info_ind_unknown_x_file, &info_ind_unknown_x);
+  num_of_unknown_x_=info_ind_unknown_x.n_cols();
+  population_ind_unknown_x_.Init(num_of_unknown_x_);
+  for(index_t i=0; i<num_of_unknown_x_; i++) {
+	  population_ind_unknown_x_[i]=info_ind_unknown_x[i];
+  }
+
+  double initial_percent_sample_=fx_param_double(module_, "initial_percent_sample", 5);
+
+	//Initilize memeber variables
+	num_of_selected_sample_=0;
 	count_num_sampling_=0;
+
+	shuffled_array_.Init(num_of_people_);
 
 }
 
 
 
-Sampling::Shuffle() {
+void Sampling::Shuffle() {
 	//check - can be done in initilization
-	num_people_=first_stage_x_.size();
 	int random =0;
 	int temp=0;
 
 	//Vector shuffled_array_;
-	//shuffled_array_.Init(num_people_);
+	//shuffled_array_.Init(num_of_people_);
 
-	for(index_t i=0; i<num_people_; i++){
+	for(index_t i=0; i<num_of_people_; i++){
 		shuffled_array_[i]=i;
 	}	//i
 
@@ -32,9 +97,9 @@ Sampling::Shuffle() {
 		
    
 	//Shuffle elements by randomly exchanging each with one other.
-	for(index_t j=0; j<num_people_-1; j++){
+	for(index_t j=0; j<num_of_people_-1; j++){
 		//random number for remaining position
-		random = j+(rand() % (num_people_-j));	
+		random = j+(rand() % (num_of_people_-j));	
 		//shuffle
 		swap( shuffled_array_[j], shuffled_array_[random] );
 	}	//j
@@ -43,77 +108,31 @@ Sampling::Shuffle() {
 
 
 
-Sampling::InitialSampling(ArrayList<Matrix> *initial_first_stage_x, ArrayList<Matrix> *initial_second_stage_x, 
-													ArrayList<Matrix> *initial_unknown_x_past, ArrayList<index_t> *initial_first_stage_y, 
-													ArrayList<index_t> *ind_unknown_x) {
-	//Vector sample_selector;
-	//sample_selector.Init(num_initial_sampling_);
-	for(index_t i=0; i<num_initial_sampling_; i++){
-			//check
-			//sample_selector_[i]=shuffled_array[i];
-			//check-what's the difference?
-			sample_selector_.PushBackCopy(shuffled_array[i]);
-			
-	}	//i
-	num_slected_sample_=num_initial_sampling_;
-	//DEBUG_SAME_SIZE(sample_selector->size(), num_selected_sample);
-  DEBUG_ASSERT_MSG(sample_sepector_.size()==num_selected_sample, 
-      "Size of sample selector is not same as number of selected sample %i != %i",
-      sample_sepector_.size(), num_selected_sample);
-
-	//Copy to currect Subset
-	ArrayList<Matrix> initial_first_stage_x_temp;
-	first_stage_x_temp.Init(num_selected_sample_);
-
-	ArrayList<Matrix> initial_second_stage_x_temp;
-	second_stage_x_temp.Init(num_selected_sample_);
-
-	ArrayList<Matrix> initial_unknown_x_past_temp;
-	unknown_x_past_temp.Init(num_selected_sample_);
-
-	ArrayList<index_t> initial_first_stage_y_temp;
-	first_stage_y_temp.Init(num_selected_sample_);
-
-	//ArrayList<index_t> initial_second_stage_y_temp;
-	//second_stage_Y_temp.Init(num_selected_sample);
-
-	//ArrayList<index_t> ind_unknown_x_temp;
-	//ind_unknown_x_temp.Init(num_of_unknown_x_);
-
-	ind_unknown_x->Copy(population_ind_unknown_x_);
-
-	for(index_t i=0; i<num_selected_sample; i++){
-		initial_first_stage_x_temp[i].Alias(population_first_stage_x_(sample_selector[i]);
-		initial_second_stage_x_temp[i].Alias(population_second_stage_x_(sample_selector[i]);
-		initial_unknown_x_past_temp[i].Alias(population_unknown_x_past_(sample_selector[i]);
-		initial_first_stage_y_temp[i].Alias(population_first_stage_y_(sample_selector[i]);
-	}
-
-	initial_first_stage_x->Copy(initial_first_stage_x_temp);
-	initial_second_stage_x->Copy(initial_second_stage_x_temp);
-	initial_unknown_x_past->Copy(initial_unknown_x_past_temp);
-	initial_first_stage_y->Copy(initial_first_stage_y_temp);
-
-	count_num_sampling_+=1;
-	
-	}		//i
-
-
-}
-
-
-Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *added_first_stage_x, 
+void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *added_first_stage_x, 
 											 ArrayList<Matrix> *added_second_stage_x, ArrayList<Matrix> *added_unknown_x_past, 
 											 ArrayList<index_t> *added_first_stage_y, Vector *ind_unknown_x) {
 		
 	int num_add_sample=0;
-	//int old_num_selected_sample=num_selected_sample_;
+	//int old_num_selected_sample=num_of_selected_sample_;
 
-	if(count_num_sampling_==0) {
-		num_add_sample=math::RoundInt((num_people_)*(percent_added_sample));
+	/*if(count_num_sampling_==0) {
+		num_add_sample=math::RoundInt((num_of_people_)*(percent_added_sample));
+		if(num_add_sample==0) {
+			NOTIFY("number of sample to add is zero. start with Two samples.");
+			num_add_sample=2;
+		}
+
 	}	else {
-		num_add_sample=math::RoundInt((num_selected_sample_)*(percent_added_sample));
+		num_add_sample=math::RoundInt((num_of_selected_sample_)*(percent_added_sample));
 	}	//else
+	*/
+	num_add_sample=math::RoundInt((num_of_selected_sample_)*(percent_added_sample));
+	if(num_add_sample==0) {
+			NOTIFY("number of sample to add is zero. start with Two samples.");
+			num_add_sample=2;
+	}	//if
+
+
 
 	//Copy to currect Subset
 	added_first_stage_x.Init();
@@ -123,22 +142,22 @@ Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *added_fir
 	ind_unknown_x->Copy(population_ind_unknown_x_);
 
 
-	if(num_add_sample+num_selected_sample_ >= num_people_){
-		for(index_t i=num_selected_sample_; i<num_people_; i++){
+	if(num_add_sample+num_of_selected_sample_ >= num_of_people_){
+		for(index_t i=num_of_selected_sample_; i<num_of_people_; i++){
 			added_first_stage_x.PushBackCopy(population_first_stage_x_(sample_selector[i]);
 			added_second_stage_x.PushBackCopy(population_second_stage_x_(sample_selector[i]);
 			added_unknown_x_past.PushBackCopy(population_unknown_x_past_(sample_selector[i]);
 			added_first_stage_y.PushBackCopy(population_first_stage_y_(sample_selector[i]);
 		}		//i	
-		num_selected_sample_=num_people_;
+		num_of_selected_sample_=num_of_people_;
 	} else {
-		for(index_t i=num_selected_sample_; i<(num_selected_sample_+num_add_sample); i++){
+		for(index_t i=num_of_selected_sample_; i<(num_of_selected_sample_+num_add_sample); i++){
 			added_first_stage_x.PushBackCopy(population_first_stage_x_(sample_selector[i]);
 			added_second_stage_x.PushBackCopy(population_second_stage_x_(sample_selector[i]);
 			added_unknown_x_past.PushBackCopy(population_unknown_x_past_(sample_selector[i]);
 			added_first_stage_y.PushBackCopy(population_first_stage_y_(sample_selector[i]);			
 		}	//i
-		num_selected_sample_+=num_add_sample;		
+		num_of_selected_sample_+=num_add_sample;		
 	}	//else
 	
 	//DEBUG_SAME_SIZE(sample_selector->size(), num_selected_sample);
@@ -151,7 +170,7 @@ Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *added_fir
 }
 
 
-/*Sampling::CalculateSamplingError(double *sigma_n){
+/*double Sampling::CalculateSamplingError() {
 
 }
 */
