@@ -631,19 +631,19 @@ class AxilrodTellerForceProblem {
 	new_summary.InitCopy(hybrid_nodes[i]->stat().summary);
 	new_summary.ApplyPostponed(hybrid_nodes[i]->stat().postponed);
 	new_summary.ApplyDelta(delta, i);
-	
-	double difference = fabs(new_summary.l1_norm_negative_force_vector_u -
-				 new_summary.l1_norm_positive_force_vector_l);
 
-	if((AxilrodTellerForceProblem::relative_error_ * difference -
+	double sum = new_summary.l1_norm_negative_force_vector_u +
+	  new_summary.l1_norm_positive_force_vector_l;
+	
+	if((AxilrodTellerForceProblem::relative_error_ * sum -
 	    (new_summary.used_error_u + 
 	     new_summary.probabilistic_used_error_u)) * 
 	   total_n_minus_one_tuples[i] < 
 	   delta.used_error[i] * 
 	   (total_n_minus_one_tuples_root - new_summary.n_pruned_l)) {
 
-	  if(((difference + delta.used_error[i]) - difference) >
-	     difference * AxilrodTellerForceProblem::relative_error_) {
+	  if(((sum + delta.used_error[i]) - sum) >
+	     sum * AxilrodTellerForceProblem::relative_error_) {
 	    
 	    return false;
 	  }
@@ -695,19 +695,19 @@ class AxilrodTellerForceProblem {
 	
 	// Compute the L1 norm of the positive component and the
 	// negative component.
-	double difference = fabs(new_summary.l1_norm_negative_force_vector_u -
-				 new_summary.l1_norm_positive_force_vector_l);
+	double sum = new_summary.l1_norm_negative_force_vector_u +
+	  new_summary.l1_norm_positive_force_vector_l;
 
-	if((AxilrodTellerForceProblem::relative_error_ * difference -
+	if((AxilrodTellerForceProblem::relative_error_ * sum -
 	    (new_summary.used_error_u +
 	     new_summary.probabilistic_used_error_u)) * 
 	   total_n_minus_one_tuples[i] <=
 	   delta.probabilistic_used_error[i] *
 	   (total_n_minus_one_tuples_root - new_summary.n_pruned_l)) {
-	   
-          if(((difference + delta.probabilistic_used_error[i]) - 
-	      difference)  >=
-	     difference * AxilrodTellerForceProblem::relative_error_) {
+	  
+          if(((sum+ delta.probabilistic_used_error[i]) - 
+	      sum) >=
+	     sum * AxilrodTellerForceProblem::relative_error_) {
             return false;
           }
 
