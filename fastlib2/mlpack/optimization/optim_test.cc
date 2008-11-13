@@ -25,18 +25,22 @@ class Rosen {
   ~Rosen(){}; 
   void GiveInit(Vector *vec) {
     (*vec)[0]=0;
-    (*vec)[1]=0; 
+    (*vec)[1]=1; 
   }
   void ComputeObjective(Vector &x, double *value) {
      double x1=x[0];
      double x2=x[1];
-     *value = 100*math::Sqr(x2-x1*x1)+math::Sqr(1-x1);
+     double f1=(x2-x1*x1);
+     double f2=1.-x1;
+     *value = 100. *f1*f1+f2*f2;
    } 
    void ComputeGradient(Vector &x, Vector *gx) {
      double x1=x[0];
      double x2=x[1];
-     (*gx)[0]=-100*2*(1-x1)-200*(x2-x1*x1)*2*x1;
-     (*gx)[1]=200*(x2-x1*x1);
+     double f1=(x2-x1*x1);
+     double f2=1.-x1;
+     (*gx)[0]=-400.*f1*x1-2.*f2;
+     (*gx)[1]=200.*f1;
    }
    index_t dimension() {
      return dimension_;
