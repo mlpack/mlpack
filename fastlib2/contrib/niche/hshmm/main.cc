@@ -20,16 +20,39 @@ int main(int argc, char *argv[]) {
   fx_done(root);
 
   HMM hmm;
-  hmm.Init(4, 2);
+  hmm.Init(4, 2, 25);
 
   hmm.RandomlyInitialize();
+  hmm.CustomInitialize();
 
   hmm.PrintDebug();
 
-  Matrix state_probabilities;
-  hmm.CalculateStateProbabilities(5, &state_probabilities);
+  hmm.ComputeStateProbabilities();
 
-  state_probabilities.PrintDebug("state_probabilities");
+  hmm.cumulative_p_transition().PrintDebug("cumulative_p_transition");
+
+  hmm.state_probabilities().PrintDebug("state_probabilities");
+
+  hmm.state_cumulative_probabilities().PrintDebug("state_cumulative_probabilities");
+
+  Matrix random_draws;
+  random_draws.Init(1,1000);
+  for(int i = 0; i < 1000; i++) {
+    random_draws.set(0, i, hmm.DrawStateGivenLastState(1));
+  }
+
+  data::Save("random_draws.txt", random_draws);
+
+  
+
+
+
+
+
+
+  // draw a state from P(q_t | theta)
+
+  
 
 
   return SUCCESS_PASS;
