@@ -463,26 +463,15 @@ class AxilrodTellerForceKernelAux {
 	tmp_negative_contributions2.hi = negative_contributions.hi;
 	tmp_positive_contributions2.lo = positive_contributions.lo;
 	tmp_positive_contributions2.hi = positive_contributions.hi;
-	
-	double min_contribution = tmp_negative_contributions.lo +
-	  tmp_negative_contributions2.lo + tmp_positive_contributions.lo +
-	  tmp_positive_contributions2.lo;
-	double max_contribution = tmp_negative_contributions.hi +
-	  tmp_negative_contributions2.hi + tmp_positive_contributions.hi +
-	  tmp_positive_contributions2.hi;
 
-	if(min_contribution < 0) {
-	  min_negative_contribution[counter] += min_contribution;
-	}
-	else {
-	  min_positive_contribution[counter] += min_contribution;
-	}
-	if(max_contribution < 0) {
-	  max_negative_contribution[counter] += max_contribution;
-	}
-	else {
-	  max_positive_contribution[counter] += max_contribution;
-	}
+	min_negative_contribution[counter] +=
+	  tmp_negative_contributions.lo + tmp_negative_contributions2.lo;
+	max_negative_contribution[counter] +=
+	  tmp_negative_contributions.hi + tmp_negative_contributions2.hi;
+	min_positive_contribution[counter] +=
+	  tmp_positive_contributions.lo + tmp_positive_contributions2.lo;
+	max_positive_contribution[counter] +=
+	  tmp_positive_contributions.hi + tmp_positive_contributions2.hi;
 
       } // iterating over each dimension (row-wise)...
     }
