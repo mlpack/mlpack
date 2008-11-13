@@ -15,7 +15,7 @@ class SamplingTest {
 			ArrayList<index_t> current_added_first_stage_y;
 			Vector current_ind_unknown_x;
 	
-			sampling.ExpandSubset(initial_percent_sample_, &current_added_first_stage_x,
+			sampling.ExpandSubset(5, &current_added_first_stage_x,
 							&current_added_second_stage_x, &current_added_unknown_x_past, 
 							&current_added_first_stage_y, &current_ind_unknown_x);
 
@@ -35,7 +35,7 @@ class SamplingTest {
 
 int main(int argc, char *argv[]) {
   fx_module *module=fx_init(argc, argv, NULL);
-  ObjectiveSampling test;
+  SamplingTest test;
   test.Init(module);
   test.TestAll();
   fx_done(module);
