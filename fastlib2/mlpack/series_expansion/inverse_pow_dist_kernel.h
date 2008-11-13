@@ -27,6 +27,13 @@ class InversePowDistGradientKernel {
     return (point1[dimension_] - point2[dimension_]) / 
       pow(squared_distance, lambda_ / 2.0);
   }
+
+  static inline double EvalUnnorm(int dimension_in, double lambda_in,
+				  const double *point1, const double *point2,
+				  double squared_distance) {
+    return (point1[dimension_in] - point2[dimension_in]) / 
+      pow(squared_distance, lambda_in / 2.0);
+  }
 };
 
 class InversePowDistKernel {
@@ -64,6 +71,15 @@ class InversePowDistKernel {
     }
     else {
       return pow(sqdist, -lambda_ / 2.0);
+    }
+  }
+
+  static inline double EvalUnnormOnSq(double lambda_in, double sqdist) {
+    if(lambda_in > 0) {
+      return 1.0 / pow(sqdist, lambda_in / 2.0);
+    }
+    else {
+      return pow(sqdist, -lambda_in / 2.0);
     }
   }
 
