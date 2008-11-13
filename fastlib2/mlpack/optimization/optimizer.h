@@ -251,15 +251,13 @@ class StaticUnconstrainedOptimizer {
     vecx.Alias((double *)x.data(), ndim);
     if (mode & OPTPP::NLPFunction) {
       objective_->ComputeObjective(vecx, &fx);
-      result = OPTPP::NLPFunction;
-    } else {
-      if (mode & OPTPP::NLPGradient) {
-        Vector vecg;
-        vecg.Alias(gx.data(), ndim);
-        objective_->ComputeGradient(vecx, &vecg);
-        result = OPTPP::NLPGradient;
-      }
-    }   
+    } 
+    if (mode & OPTPP::NLPGradient) {
+       Vector vecg;
+       vecg.Alias(gx.data(), ndim);
+       objective_->ComputeGradient(vecx, &vecg);
+    }
+    result = OPTPP::NLPFunction & OPTPP::NLPGradient;   
   }
     
   static void ComputeObjective(int mode, int ndim, const NEWMAT::ColumnVector &x, 
@@ -269,22 +267,18 @@ class StaticUnconstrainedOptimizer {
     vecx.Alias(x.data(), ndim);
     if (mode & OPTPP::NLPFunction) {
       objective_->ComputeObjective(vecx, &fx);
-      result = OPTPP::NLPFunction;
-    } else {
-      if (mode & OPTPP::NLPGradient) {
-        Vector vecg;
-        vecg.Alias(gx.data(), ndim);
-        objective_->ComputeGradient(vecx, &vecg); 
-        result = OPTPP::NLPGradient;
-      } else {
-        if (mode & OPTPP::NLPHessian) {
-          Matrix hessian;
-          hessian.Alias(hx.data(), ndim, ndim);  
-          objective_->ComputeHessian(vecx, hessian);  
-          result = OPTPP::NLPHessian;
-        }
-      }
     }
+    if (mode & OPTPP::NLPGradient) {
+      Vector vecg;
+      vecg.Alias(gx.data(), ndim);
+      objective_->ComputeGradient(vecx, &vecg); 
+    }
+    if (mode & OPTPP::NLPHessian) {
+      Matrix hessian;
+      hessian.Alias(hx.data(), ndim, ndim);  
+      objective_->ComputeHessian(vecx, hessian);  
+    }
+    result = OPTPP::NLPFunction & OPTPP::NLPGradient & OPTPP::NLPHessian;   
   } 
 };
 
