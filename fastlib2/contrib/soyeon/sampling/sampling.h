@@ -4,10 +4,16 @@ class SamplingTest;
 class Sampling {
 	friend class SamplingTest;
 	public:
-	 void Init(fx_module *module);
-	 void ExpandSubset(double percent_added_sample, ArrayList<Matrix> *added_first_stage_x, 
+	 
+	 void Init(fx_module *module, int *num_of_people, 
+											Vector *ind_unknown_x);
+	 /*void ExpandSubset(double percent_added_sample, ArrayList<Matrix> *added_first_stage_x, 
 										 ArrayList<Matrix> *added_second_stage_x, ArrayList<Matrix> *added_unknown_x_past, 
 										 ArrayList<index_t> *added_first_stage_y, Vector *ind_unknown_x);
+	 */
+	 void ExpandSubset(double percent_added_sample, ArrayList<Matrix> *added_first_stage_x, 
+										 ArrayList<Matrix> *added_second_stage_x, ArrayList<Matrix> *added_unknown_x_past, 
+										 ArrayList<index_t> *added_first_stage_y);
 		//double CalculateSamplingError();
 
 	private:

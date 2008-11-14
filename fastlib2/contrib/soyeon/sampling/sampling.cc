@@ -7,7 +7,8 @@ using namespace std;
 
 
 
-void Sampling::Init(fx_module *module) {
+void Sampling::Init(fx_module *module, int *num_of_people, 
+											Vector *ind_unknown_x) {
 	module_=module;
 	const char *data_file1=fx_param_str_req(module_, "data1");
 	const char *info_file1=fx_param_str_req(module_, "info1");
@@ -18,6 +19,7 @@ void Sampling::Init(fx_module *module) {
   Matrix info1;
   data::Load(info_file1, &info1);
 	num_of_people_=info1.n_cols();
+	*num_of_people=num_of_people_;
   population_first_stage_x_.Init(num_of_people_);
 	index_t start_col=0;
   for(index_t i=0; i<num_of_people_; i++) {
@@ -26,7 +28,20 @@ void Sampling::Init(fx_module *module) {
 										(index_t)info1.get(0,i), x);
     start_col+=(index_t)info1.get(0, i);
   }
-	
+
+	/*
+	cout<<"data file 1:";
+	for(index_t i=0; i<num_of_people_; i++) {
+		cout<<"population_first_stage_x["<<i<<"]"<<endl;
+		for(index_t j=0; j<population_first_stage_x_[i].n_rows(); j++){
+			for(index_t k=0; k<population_first_stage_x_[i].n_cols(); k++) {
+				cout<<population_first_stage_x_[i].get(j,k)<<" ";
+			}
+			cout<<endl;
+		}
+		cout<<endl;		
+	}
+	*/
   const char *data_file2=fx_param_str_req(module_, "data2");
 	x.Destruct();
 	data::Load(data_file2, &x);
@@ -38,6 +53,19 @@ void Sampling::Init(fx_module *module) {
 							(index_t)info1.get(0,i), x);
     start_col+=(index_t)info1.get(0,i);
   }
+
+	/*cout<<"data file 2:";
+	for(index_t i=0; i<num_of_people_; i++) {
+		cout<<"population_second_stage_x["<<i<<"]"<<endl;
+		for(index_t j=0; j<population_second_stage_x_[i].n_rows(); j++){
+			for(index_t k=0; k<population_second_stage_x_[i].n_cols(); k++) {
+				cout<<population_second_stage_x_[i].get(j,k)<<" ";
+			}
+			cout<<endl;
+		}
+		cout<<endl;		
+	}
+	*/
 
 	//need to be fixed
 	const char *data_file3=fx_param_str_req(module_, "data3");
@@ -70,6 +98,9 @@ void Sampling::Init(fx_module *module) {
 	  population_ind_unknown_x_[i]=info_ind_unknown_x.get(0,i);
   }
 
+	ind_unknown_x->Copy(population_ind_unknown_x_);
+
+
   double initial_percent_sample=fx_param_double(module_, "initial_percent_sample", 5);
 
 	//Initilize memeber variables
@@ -79,6 +110,8 @@ void Sampling::Init(fx_module *module) {
 
 	shuffled_array_.Init(num_of_people_);
 
+	//return num_of_people_;
+
 }
 
 
@@ -86,11 +119,6 @@ void Sampling::Init(fx_module *module) {
 void Sampling::Shuffle_() {
 	//check - can be done in initilization
 	int random =0;
-	
-
-	//Vector shuffled_array_;
-	//shuffled_array_.Init(num_of_people_);
-
 	for(index_t i=0; i<num_of_people_; i++){
 		shuffled_array_[i]=i;
 	}	//i
@@ -118,11 +146,17 @@ void Sampling::Shuffle_() {
 
 
 
-void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *added_first_stage_x, 
+/*void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *added_first_stage_x, 
 											 ArrayList<Matrix> *added_second_stage_x, ArrayList<Matrix> *added_unknown_x_past, 
 											 ArrayList<index_t> *added_first_stage_y, Vector *ind_unknown_x) {
-		
+												 */
+
+void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *added_first_stage_x, 
+											 ArrayList<Matrix> *added_second_stage_x, ArrayList<Matrix> *added_unknown_x_past, 
+											 ArrayList<index_t> *added_first_stage_y) {
+	
 	int num_added_sample=0;
+	
 	//int old_num_selected_sample=num_of_selected_sample_;
 
 	/*if(count_num_sampling_==0) {
@@ -138,7 +172,8 @@ void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *adde
 	*/
 	if(num_of_selected_sample_==0) {
 		NOTIFY("Initial sampling...");
-		num_added_sample=math::RoundInt((num_of_people_)*(percent_added_sample)/100);
+		cout<<"initial_percent_sample_="<<initial_percent_sample_<<endl;
+		num_added_sample=math::RoundInt((num_of_people_)*(initial_percent_sample_)/100);
 	} else {
 		num_added_sample=math::RoundInt((num_of_selected_sample_)*(percent_added_sample)/100);
 	}
@@ -151,11 +186,11 @@ void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *adde
 
 
 	//Copy to currect Subset
-	added_first_stage_x->Init();
-	added_second_stage_x->Init();
-	added_unknown_x_past->Init();
-	added_first_stage_y->Init();
-	ind_unknown_x->Copy(population_ind_unknown_x_);
+	//added_first_stage_x->Init();
+	//added_second_stage_x->Init();
+	//added_unknown_x_past->Init();
+	//added_first_stage_y->Init();
+	//ind_unknown_x->CopyValues(population_ind_unknown_x_);
 
 
 	if(num_added_sample+num_of_selected_sample_ >= num_of_people_){
@@ -167,6 +202,7 @@ void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *adde
 		}		//i	
 		num_of_selected_sample_=num_of_people_;
 		NOTIFY("All data are used");
+		
 	} else {
 		for(index_t i=num_of_selected_sample_; i<(num_of_selected_sample_+num_added_sample); i++){
 			added_first_stage_x->PushBackCopy(population_first_stage_x_[shuffled_array_[i]]);
@@ -178,13 +214,15 @@ void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *adde
 	}	//else
 	
 	//DEBUG_SAME_SIZE(sample_selector->size(), num_selected_sample);
-  DEBUG_ASSERT_MSG(added_first_stage_x->size()==num_added_sample, 
+  /*DEBUG_ASSERT_MSG(added_first_stage_x->size()==num_added_sample, 
       "Size of added first stage x is not same as number of added sample %i != %i",
       added_first_stage_x->size(), num_added_sample);
+*/
 
 	count_num_sampling_+=1;
-	NOTIFY("This is %d th sampling", count_num_sampling_);
+	NOTIFY("Extend subset (%d)", count_num_sampling_);
 	cout<<"num_added_sample="<<num_added_sample<<endl;
+	
 	
 }
 
