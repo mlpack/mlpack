@@ -2,6 +2,7 @@
 #include <stdlib.h>	//rand() srand()
 #include <time.h>	//time()
 #include <algorithm>	//swap
+#include <iostream>
 using namespace std;
 
 
@@ -57,7 +58,7 @@ void Sampling::Init(fx_module *module) {
   data::Load(info_y_file, &info_y);
   population_first_stage_y_.Init(num_of_people_);
   for(index_t i=0; i<num_of_people_; i++) {
-	  population_first_stage_y_[i]=(index_t)info_y.get(1,i);
+	  population_first_stage_y_[i]=(index_t)info_y.get(0,i);
   }
 
   const char *info_ind_unknown_x_file=fx_param_str_req(module_, "info_ind_unknown_x");
@@ -66,7 +67,7 @@ void Sampling::Init(fx_module *module) {
   num_of_unknown_x_=info_ind_unknown_x.n_cols();
   population_ind_unknown_x_.Init(num_of_unknown_x_);
   for(index_t i=0; i<num_of_unknown_x_; i++) {
-	  population_ind_unknown_x_[i]=info_ind_unknown_x.get(1,i);
+	  population_ind_unknown_x_[i]=info_ind_unknown_x.get(0,i);
   }
 
   double initial_percent_sample=fx_param_double(module_, "initial_percent_sample", 5);
@@ -82,7 +83,7 @@ void Sampling::Init(fx_module *module) {
 
 
 
-void Sampling::Shuffle() {
+void Sampling::Shuffle_() {
 	//check - can be done in initilization
 	int random =0;
 	
@@ -107,6 +108,12 @@ void Sampling::Shuffle() {
 		swap( shuffled_array_[j], shuffled_array_[random] );
 	}	//j
 
+	cout<<"shuffled_array :";
+	for(index_t i=0; i<num_of_people_; i++){
+		cout<<shuffled_array_[i] <<" ";
+	}
+	cout<<endl;
+
 }
 
 
@@ -129,7 +136,13 @@ void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *adde
 		num_add_sample=math::RoundInt((num_of_selected_sample_)*(percent_added_sample));
 	}	//else
 	*/
-	num_added_sample=math::RoundInt((num_of_selected_sample_)*(percent_added_sample));
+	if(num_of_selected_sample_==0) {
+		NOTIFY("Initial sampling...");
+		num_added_sample=math::RoundInt((num_of_people_)*(percent_added_sample)/100);
+	} else {
+		num_added_sample=math::RoundInt((num_of_selected_sample_)*(percent_added_sample)/100);
+	}
+
 	if(num_added_sample==0) {
 			NOTIFY("number of sample to add is zero. start with Two samples.");
 			num_added_sample=2;
@@ -170,6 +183,8 @@ void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *adde
       added_first_stage_x->size(), num_added_sample);
 
 	count_num_sampling_+=1;
+	NOTIFY("This is %d th sampling", count_num_sampling_);
+	cout<<"num_added_sample="<<num_added_sample<<endl;
 	
 }
 
