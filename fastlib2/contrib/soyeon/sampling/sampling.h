@@ -28,7 +28,7 @@ class Sampling {
 		int num_of_selected_sample_;
 		int count_num_sampling_;
 
-		void Shuffle();
+		void Shuffle_();
 		
 
 
