@@ -851,7 +851,7 @@ class AxilrodTellerForceKernelAux {
     squared_negative_force_vector_third_particle.SetZero();
     double l1_norm_negative_force_vector_u_third_particle = 0;
 
-    const int num_samples = 60;
+    const int num_samples = 30;
     const double z_score = 1.65;
 
     for(index_t i = 0; i < num_samples; i++) {

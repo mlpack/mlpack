@@ -408,6 +408,12 @@ class AxilrodTellerForceProblem {
 
     Vector probabilistic_used_error;
 
+    /** @brief The boolean map specifying whether each particle
+     *         satisfies the coordinate-wise relative error bound
+     *         using the lower and the upper bounds.
+     */
+    GenVector<bool> relative_error_satisfied;
+
     /** @brief The number of finite-difference prunes.
      */
     int num_finite_difference_prunes;
@@ -431,6 +437,7 @@ class AxilrodTellerForceProblem {
       OT_MY_OBJECT(n_pruned);
       OT_MY_OBJECT(used_error);
       OT_MY_OBJECT(probabilistic_used_error);
+      OT_MY_OBJECT(relative_error_satisfied);
       OT_MY_OBJECT(num_finite_difference_prunes);
       OT_MY_OBJECT(num_monte_carlo_prunes);
     }
@@ -585,6 +592,7 @@ class AxilrodTellerForceProblem {
       n_pruned.Init(num_queries);
       used_error.Init(num_queries);
       probabilistic_used_error.Init(num_queries);
+      relative_error_satisfied.Init(num_queries);
       
       SetZero();
     }
@@ -612,11 +620,41 @@ class AxilrodTellerForceProblem {
 	(final_results, mapping);
       MultiTreeUtility::ShuffleAccordingToQueryPermutation
 	(final_results_u, mapping);
+
+      // Check whether each particle satisfies the relative error
+      // bound (roughly in the probabilistic sense) by examining the
+      // lower and the upper bounds in each dimension.
+      for(index_t i = 0; i < final_results_l.n_cols(); i++) {
+	
+	// The lower bound column vector and the upper bound column
+	// vector.
+	const double *force_vector_l_column = final_results_l.GetColumnPtr(i);
+	const double *force_vector_u_column = final_results_u.GetColumnPtr(i);
+	
+	double coord_diff = 
+	  fabs(force_vector_u_column[0] - force_vector_l_column[0]) +
+	  fabs(force_vector_u_column[1] - force_vector_l_column[1]) +
+	  fabs(force_vector_u_column[2] - force_vector_l_column[2]);
+	double l1_norm_lower_bound = 
+	  fabs(force_vector_l_column[0]) + fabs(force_vector_l_column[1]) +
+	  fabs(force_vector_l_column[2]);
+
+	// For each dimension...
+	if(coord_diff > l1_norm_lower_bound *
+	   AxilrodTellerForceProblem::relative_error_) {
+	  
+	  relative_error_satisfied[i] = false;
+	}
+      }
     }
 
     void PrintDebug(const char *output_file_name) const {
+
       FILE *stream = fopen(output_file_name, "w+");
-      
+      FILE *relative_error_satisfied_output =
+	fopen("relative_error_satisfied_guess.txt", "w+");
+      int relative_error_satisfied_guess = 0;
+
       for(index_t q = 0; q < final_results.n_cols(); q++) {
 
 	const double *force_vector_l_column =
@@ -643,30 +681,19 @@ class AxilrodTellerForceProblem {
 	}
 	fprintf(stream, " ] ");
 	
-	// Check if any of the dimension has opposites signs for the
-	// lower and upper bound coordinates, if so, print
-	// "X". Otherwise print "O"
-	for(index_t d = 0; d < 3; d++) {
-	  if(force_vector_e_column[d] < 0 &&
-	     (force_vector_l_column[d] + force_vector_e_column[d] > 0 ||
-	      force_vector_e_column[d] + force_vector_u_column[d] > 0) ||
-	     force_vector_e_column[d] > 0 &&
-	     (force_vector_l_column[d] + force_vector_e_column[d] < 0 ||
-	      force_vector_e_column[d] + force_vector_u_column[d] < 0)) {
-	    fprintf(stream, "X ");
-	  }
-	  else {
-	    fprintf(stream, "O ");
-	  }
-	}
+	fprintf(stream, " %g\n", n_pruned[q]);
+	fprintf(relative_error_satisfied_output, "%d\n", 
+		relative_error_satisfied[q]);
 	
-	fprintf(stream, "%g %g %g ", l1_norm_positive_force_vector_l[q],
-		l1_norm_negative_force_vector_u[q], n_pruned[q]);
-		
-	fprintf(stream, "\n");
+	if(relative_error_satisfied[q]) {
+	  relative_error_satisfied_guess++;
+	}
       }
       
+      printf("I think %d particles satisfy the relative error...\n",
+	     relative_error_satisfied_guess);
       fclose(stream);
+      fclose(relative_error_satisfied_output);
     }
 
     void SetZero() {
@@ -684,6 +711,10 @@ class AxilrodTellerForceProblem {
       n_pruned.SetZero();
       used_error.SetZero();
       probabilistic_used_error.SetZero();
+
+      // By default, I assume all queries satisfy the relative error...
+      relative_error_satisfied.SetAll(true);
+
       num_finite_difference_prunes = 0;
       num_monte_carlo_prunes = 0;
     }
@@ -821,7 +852,7 @@ class AxilrodTellerForceProblem {
    double total_num_tuples, double total_n_minus_one_tuples_root,
    const Vector &total_n_minus_one_tuples) {
     
-    if(total_num_tuples < 80) {
+    if(total_num_tuples < 40) {
       return false;
     }
 
