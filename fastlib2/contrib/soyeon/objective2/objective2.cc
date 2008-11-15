@@ -145,6 +145,9 @@ void Objective::Init(fx_module *module) {
 
 	}
 
+	
+	
+
 
 
 
@@ -153,15 +156,15 @@ void Objective::Init(fx_module *module) {
 }
 
 //void Objective::ComputeObjective(Matrix &x, double *objective) {
-void Objective::ComputeObjective(double *objective) { 
+void Objective::ComputeObjective(Vector &current_parameter, double *objective) { 
 	
 	Vector betas;
   //betas.Alias(x.ptr(), x.n_rows());
-	betas.Alias(first_stage_x_[0].ptr(), first_stage_x_[0].n_rows());
+	betas.Alias(current_parameter.ptr(), num_of_betas_);
   //double p=first_stage_x_[1].get(0, 0);
   //double q=first_stage_x_[1].get(0, 1);
-  double p=2;
-	double q=5;
+  double p=current_parameter[num_of_betas_];
+	double q=current_parameter[num_of_betas_+1];
 	
 	ComputeExpBetasTimesX1_(betas);
 	
@@ -188,15 +191,15 @@ void Objective::ComputeObjective(double *objective) {
 ////Calculate gradient
 ////////////////////////////////////////////////
 
-void Objective::ComputeGradient(Vector *gradient) { 
+void Objective::ComputeGradient(Vector &current_parameter, Vector *gradient) { 
 	
 	Vector betas;
   //betas.Alias(x.ptr(), x.n_rows());
-	betas.Alias(first_stage_x_[0].ptr(), first_stage_x_[0].n_rows());
+	betas.Alias(current_parameter.ptr(), num_of_betas_);
   //double p=first_stage_x_[1].get(0, 0);
   //double q=first_stage_x_[1].get(0, 1);
-  double p=2;
-	double q=5;
+  double p=current_parameter[num_of_betas_];
+	double q=current_parameter[num_of_betas_+1];
 	
 	ComputeExpBetasTimesX1_(betas);
 	
@@ -264,15 +267,16 @@ void Objective::ComputeGradient(Vector *gradient) {
 ////Calculate hessian
 ////////////////////////////////////////////////
 
-void Objective::ComputeHessian(Matrix *hessian) { 
+void Objective::ComputeHessian(Vector &current_parameter, Matrix *hessian) { 
 	
 	Vector betas;
   //betas.Alias(x.ptr(), x.n_rows());
-	betas.Alias(first_stage_x_[0].ptr(), first_stage_x_[0].n_rows());
+	betas.Alias(current_parameter.ptr(), num_of_betas_);
   //double p=first_stage_x_[1].get(0, 0);
   //double q=first_stage_x_[1].get(0, 1);
-  double p=2;
-	double q=5;
+  double p=current_parameter[num_of_betas_];
+	double q=current_parameter[num_of_betas_+1];
+	
 	
 	ComputeExpBetasTimesX1_(betas);
 	
