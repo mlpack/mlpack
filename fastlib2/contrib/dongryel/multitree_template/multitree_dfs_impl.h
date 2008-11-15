@@ -158,10 +158,6 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
     (globals_, query_sets, sets, targets, hybrid_nodes, query_nodes,
      reference_nodes, query_results);
 
-  MultiTreeHelper_<0, MultiTreeProblem::num_reference_sets>::
-    ReferenceNodeNestedLoop(globals_, query_sets, sets, targets, hybrid_nodes,
-			    query_nodes, reference_nodes, query_results);
-
   // Add the postponed information to each point, without causing any
   // duplicate information transmission for each "hybrid" node.
   for(index_t i = 0; i < MultiTreeProblem::num_hybrid_sets; i++) {

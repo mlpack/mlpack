@@ -6,6 +6,7 @@
 #include "mlpack/series_expansion/kernel_aux.h"
 
 #include "multibody_kernel.h"
+#include "../multitree_template/multitree_utility.h"
 
 class AxilrodTellerForceProblem {
 
@@ -15,20 +16,42 @@ class AxilrodTellerForceProblem {
 
    public:
 
+    Matrix negative_force_vector_l;
+
     Matrix negative_force_vector_e;
+
+    Matrix negative_force_vector_u;
 
     Vector l1_norm_negative_force_vector_u;
 
     Vector l1_norm_positive_force_vector_l;
 
+    Matrix positive_force_vector_l;
+
     Matrix positive_force_vector_e;
+
+    Matrix positive_force_vector_u;
 
     Vector n_pruned;
     
     Vector used_error;
 
     Vector probabilistic_used_error;
-    
+
+    OT_DEF_BASIC(MultiTreeDelta) {
+      OT_MY_OBJECT(negative_force_vector_l);
+      OT_MY_OBJECT(negative_force_vector_e);
+      OT_MY_OBJECT(negative_force_vector_u);
+      OT_MY_OBJECT(l1_norm_negative_force_vector_u);
+      OT_MY_OBJECT(l1_norm_positive_force_vector_l);
+      OT_MY_OBJECT(positive_force_vector_l);
+      OT_MY_OBJECT(positive_force_vector_e);
+      OT_MY_OBJECT(positive_force_vector_u);
+      OT_MY_OBJECT(n_pruned);
+      OT_MY_OBJECT(used_error);
+      OT_MY_OBJECT(probabilistic_used_error);
+    }
+
    public:
 
     template<typename TGlobal, typename Tree>
@@ -44,8 +67,10 @@ class AxilrodTellerForceProblem {
       // distance, then return false.
       globals.kernel_aux.ComputeMonteCarloEstimates
 	(globals, sets, nodes, total_n_minus_one_tuples,
-	 negative_force_vector_e, l1_norm_negative_force_vector_u,
-	 l1_norm_positive_force_vector_l, positive_force_vector_e, n_pruned,
+	 negative_force_vector_l, negative_force_vector_e,
+	 negative_force_vector_u, l1_norm_negative_force_vector_u,
+	 l1_norm_positive_force_vector_l, positive_force_vector_l,
+	 positive_force_vector_e, positive_force_vector_u, n_pruned,
 	 probabilistic_used_error);
       
     }
@@ -58,18 +83,24 @@ class AxilrodTellerForceProblem {
       // If any of the distance evaluation resulted in zero minimum
       // distance, then return false.
       bool flag = globals.kernel_aux.ComputeFiniteDifference
-	(globals, nodes, total_n_minus_one_tuples, negative_force_vector_e,
+	(globals, nodes, total_n_minus_one_tuples, negative_force_vector_l,
+	 negative_force_vector_e, negative_force_vector_u,
 	 l1_norm_negative_force_vector_u, l1_norm_positive_force_vector_l,
-	 positive_force_vector_e, n_pruned, used_error);
+	 positive_force_vector_l, positive_force_vector_e,
+	 positive_force_vector_u, n_pruned, used_error);
 
       return flag;
     }
 
     void SetZero() {
+      negative_force_vector_l.SetZero();
       negative_force_vector_e.SetZero();
+      negative_force_vector_u.SetZero();
       l1_norm_negative_force_vector_u.SetZero();
       l1_norm_positive_force_vector_l.SetZero();
+      positive_force_vector_l.SetZero();
       positive_force_vector_e.SetZero();
+      positive_force_vector_u.SetZero();
       used_error.SetZero();
       probabilistic_used_error.SetZero();
     }
@@ -77,10 +108,14 @@ class AxilrodTellerForceProblem {
     void Init(const Vector &total_n_minus_one_tuples) {
 
       // Hard-codes to use 3-dimensional vectors.
+      negative_force_vector_l.Init(3, 3);
       negative_force_vector_e.Init(3, 3);
+      negative_force_vector_u.Init(3, 3);
       l1_norm_negative_force_vector_u.Init(3);
       l1_norm_positive_force_vector_l.Init(3);
+      positive_force_vector_l.Init(3, 3);
       positive_force_vector_e.Init(3, 3);
+      positive_force_vector_u.Init(3, 3);
       n_pruned.Init(3);
       used_error.Init(3);
       probabilistic_used_error.Init(3);
@@ -97,13 +132,21 @@ class AxilrodTellerForceProblem {
     
    public:
 
+    Vector negative_force_vector_l;
+
     Vector negative_force_vector_e;
+
+    Vector negative_force_vector_u;
 
     double l1_norm_negative_force_vector_u;
 
     double l1_norm_positive_force_vector_l;
 
+    Vector positive_force_vector_l;
+
     Vector positive_force_vector_e;
+
+    Vector positive_force_vector_u;
 
     double n_pruned;
     
@@ -112,14 +155,22 @@ class AxilrodTellerForceProblem {
     double probabilistic_used_error;
 
     void ApplyDelta(const MultiTreeDelta &delta_in, index_t node_index) {
+      la::AddTo(3, delta_in.negative_force_vector_l.GetColumnPtr(node_index),
+		negative_force_vector_l.ptr());
       la::AddTo(3, delta_in.negative_force_vector_e.GetColumnPtr(node_index),
 		negative_force_vector_e.ptr());
+      la::AddTo(3, delta_in.negative_force_vector_u.GetColumnPtr(node_index),
+		negative_force_vector_u.ptr());
       l1_norm_negative_force_vector_u += 
 	delta_in.l1_norm_negative_force_vector_u[node_index];
       l1_norm_positive_force_vector_l +=
 	delta_in.l1_norm_positive_force_vector_l[node_index];
+      la::AddTo(3, delta_in.positive_force_vector_l.GetColumnPtr(node_index),
+		positive_force_vector_l.ptr());
       la::AddTo(3, delta_in.positive_force_vector_e.GetColumnPtr(node_index),
 		positive_force_vector_e.ptr());
+      la::AddTo(3, delta_in.positive_force_vector_u.GetColumnPtr(node_index),
+		positive_force_vector_u.ptr());
       n_pruned += delta_in.n_pruned[node_index];
       used_error += delta_in.used_error[node_index];
       probabilistic_used_error = 
@@ -128,14 +179,22 @@ class AxilrodTellerForceProblem {
     }
 
     void ApplyPostponed(const MultiTreeQueryPostponed &postponed_in) {
+      la::AddTo(3, postponed_in.negative_force_vector_l.ptr(),
+		negative_force_vector_l.ptr());
       la::AddTo(3, postponed_in.negative_force_vector_e.ptr(),
 		negative_force_vector_e.ptr());
+      la::AddTo(3, postponed_in.negative_force_vector_u.ptr(),
+		negative_force_vector_u.ptr());
       l1_norm_negative_force_vector_u +=
 	postponed_in.l1_norm_negative_force_vector_u;
       l1_norm_positive_force_vector_l +=
 	postponed_in.l1_norm_positive_force_vector_l;
+      la::AddTo(3, postponed_in.positive_force_vector_l.ptr(),
+		positive_force_vector_l.ptr());
       la::AddTo(3, postponed_in.positive_force_vector_e.ptr(),
 		positive_force_vector_e.ptr());
+      la::AddTo(3, postponed_in.positive_force_vector_u.ptr(),
+		positive_force_vector_u.ptr());
       n_pruned += postponed_in.n_pruned;
       used_error += postponed_in.used_error;     
       probabilistic_used_error =
@@ -144,10 +203,14 @@ class AxilrodTellerForceProblem {
     }
 
     void SetZero() {
+      negative_force_vector_l.SetZero();
       negative_force_vector_e.SetZero();
+      negative_force_vector_u.SetZero();
       l1_norm_negative_force_vector_u = 0;
       l1_norm_positive_force_vector_l = 0;
+      positive_force_vector_l.SetZero();
       positive_force_vector_e.SetZero();
+      positive_force_vector_u.SetZero();
       n_pruned = 0;
       used_error = 0;
       probabilistic_used_error = 0;
@@ -156,8 +219,12 @@ class AxilrodTellerForceProblem {
     void Init() {
 
       // Hard-codes to use 3-dimensional vectors.
+      negative_force_vector_l.Init(3);
       negative_force_vector_e.Init(3);
+      negative_force_vector_u.Init(3);
+      positive_force_vector_l.Init(3);
       positive_force_vector_e.Init(3);
+      positive_force_vector_u.Init(3);
 
       // Initializes to zeros...
       SetZero();
@@ -259,26 +326,20 @@ class AxilrodTellerForceProblem {
   class MultiTreeQueryStat {
 
    public:
+
     MultiTreeQueryPostponed postponed;
     
     MultiTreeQuerySummary summary;
-
-    //GaussianKernelAux::TFarFieldExpansion farfield_expansion;
-
-    //GaussianKernelAux::TLocalExpansion local_expansion;
     
     OT_DEF_BASIC(MultiTreeQueryStat) {
       OT_MY_OBJECT(postponed);
       OT_MY_OBJECT(summary);
-      //OT_MY_OBJECT(farfield_expansion);
-      //OT_MY_OBJECT(local_expansion);
     }
     
   public:
 
     void FinalPush(MultiTreeQueryStat &child_stat) {
       child_stat.postponed.ApplyPostponed(postponed);
-      //local_expansion.TranslateToLocal(child_stat.local_expansion);
     }
     
     void SetZero() {
@@ -300,21 +361,11 @@ class AxilrodTellerForceProblem {
     
     template<typename TKernelAux>
     void Init(const TKernelAux &kernel_aux_in) {
-      //farfield_expansion.Init(kernel_aux_in);
-      //local_expansion.Init(kernel_aux_in);
     }
     
     template<typename TBound, typename TKernelAux>
     void Init(const TBound &bounding_primitive,
 	      const TKernelAux &kernel_aux_in) {
-      
-      // Initialize the center of expansions and bandwidth for series
-      // expansion.
-      //Vector bounding_box_center;
-      //Init(kernel_aux_in);
-      //bounding_primitive.CalculateMidpoint(&bounding_box_center);
-      //(farfield_expansion.get_center())->CopyValues(bounding_box_center);
-      //(local_expansion.get_center())->CopyValues(bounding_box_center);
       
       // Reset the postponed quantities to zero.
       SetZero();
@@ -329,15 +380,27 @@ class AxilrodTellerForceProblem {
 
     Vector l1_norm_positive_force_vector_l;
 
+    Matrix positive_force_vector_l;
+
     /** @brief Each column is a force vector for each particle.
      */    
     Matrix positive_force_vector_e;
+
+    Matrix positive_force_vector_u;
     
+    Matrix negative_force_vector_l;
+
     Matrix negative_force_vector_e;
+
+    Matrix negative_force_vector_u;
 
     Vector l1_norm_negative_force_vector_u;
 
+    Matrix final_results_l;
+
     Matrix final_results;
+
+    Matrix final_results_u;
 
     Vector n_pruned;
     
@@ -355,10 +418,16 @@ class AxilrodTellerForceProblem {
 
     OT_DEF_BASIC(MultiTreeQueryResult) {
       OT_MY_OBJECT(l1_norm_positive_force_vector_l);
+      OT_MY_OBJECT(positive_force_vector_l);
       OT_MY_OBJECT(positive_force_vector_e);
+      OT_MY_OBJECT(positive_force_vector_u);
+      OT_MY_OBJECT(negative_force_vector_l);
       OT_MY_OBJECT(negative_force_vector_e);
+      OT_MY_OBJECT(negative_force_vector_u);
       OT_MY_OBJECT(l1_norm_negative_force_vector_u);
+      OT_MY_OBJECT(final_results_l);
       OT_MY_OBJECT(final_results);
+      OT_MY_OBJECT(final_results_u);
       OT_MY_OBJECT(n_pruned);
       OT_MY_OBJECT(used_error);
       OT_MY_OBJECT(probabilistic_used_error);
@@ -407,6 +476,12 @@ class AxilrodTellerForceProblem {
 	}
 	
 	fprintf(relative_error_output, "%g ", l1_norm_error / l1_norm_exact);
+
+	if(l1_norm_error > l1_norm_exact * AxilrodTellerForceProblem::
+	   relative_error_) {
+	  fprintf(relative_error_output, "X ");
+	}
+
 	*max_relative_error = std::max(*max_relative_error,
 				       l1_norm_error / l1_norm_exact);
 
@@ -474,10 +549,18 @@ class AxilrodTellerForceProblem {
       
       l1_norm_positive_force_vector_l[q_index] += 
 	postponed_in.l1_norm_positive_force_vector_l;
+      la::AddTo(3, postponed_in.positive_force_vector_l.ptr(),
+		positive_force_vector_l.GetColumnPtr(q_index));
       la::AddTo(3, postponed_in.positive_force_vector_e.ptr(),
 		positive_force_vector_e.GetColumnPtr(q_index));
+      la::AddTo(3, postponed_in.positive_force_vector_u.ptr(),
+		positive_force_vector_u.GetColumnPtr(q_index));
+      la::AddTo(3, postponed_in.negative_force_vector_l.ptr(),
+		negative_force_vector_l.GetColumnPtr(q_index));
       la::AddTo(3, postponed_in.negative_force_vector_e.ptr(),
 		negative_force_vector_e.GetColumnPtr(q_index));
+      la::AddTo(3, postponed_in.negative_force_vector_u.ptr(),
+		negative_force_vector_u.GetColumnPtr(q_index));
       l1_norm_negative_force_vector_u[q_index] +=
 	postponed_in.l1_norm_negative_force_vector_u;
       n_pruned[q_index] += postponed_in.n_pruned;
@@ -489,10 +572,16 @@ class AxilrodTellerForceProblem {
 
     void Init(int num_queries) {
       l1_norm_positive_force_vector_l.Init(num_queries);
+      positive_force_vector_l.Init(3, num_queries);
       positive_force_vector_e.Init(3, num_queries);
+      positive_force_vector_u.Init(3, num_queries);
+      negative_force_vector_l.Init(3, num_queries);
       negative_force_vector_e.Init(3, num_queries);
+      negative_force_vector_u.Init(3, num_queries);
       l1_norm_negative_force_vector_u.Init(num_queries);
+      final_results_l.Init(3, num_queries);
       final_results.Init(3, num_queries);
+      final_results_u.Init(3, num_queries);
       n_pruned.Init(num_queries);
       used_error.Init(num_queries);
       probabilistic_used_error.Init(num_queries);
@@ -502,9 +591,27 @@ class AxilrodTellerForceProblem {
 
     template<typename MultiTreeGlobal>
     void PostProcess(const MultiTreeGlobal &globals, index_t q_index) {
+
+      la::AddOverwrite(3, positive_force_vector_l.GetColumnPtr(q_index),
+		       negative_force_vector_l.GetColumnPtr(q_index),
+		       final_results_l.GetColumnPtr(q_index));
       la::AddOverwrite(3, positive_force_vector_e.GetColumnPtr(q_index),
 		       negative_force_vector_e.GetColumnPtr(q_index),
 		       final_results.GetColumnPtr(q_index));
+      la::AddOverwrite(3, positive_force_vector_u.GetColumnPtr(q_index),
+		       negative_force_vector_u.GetColumnPtr(q_index),
+		       final_results_u.GetColumnPtr(q_index));
+    }
+
+    template<typename MultiTreeGlobal>
+    void Finalize(const MultiTreeGlobal &globals,
+		  const ArrayList<index_t> &mapping) {
+      MultiTreeUtility::ShuffleAccordingToQueryPermutation
+	(final_results_l, mapping);
+      MultiTreeUtility::ShuffleAccordingToQueryPermutation
+	(final_results, mapping);
+      MultiTreeUtility::ShuffleAccordingToQueryPermutation
+	(final_results_u, mapping);
     }
 
     void PrintDebug(const char *output_file_name) const {
@@ -512,15 +619,50 @@ class AxilrodTellerForceProblem {
       
       for(index_t q = 0; q < final_results.n_cols(); q++) {
 
+	const double *force_vector_l_column =
+	  final_results_l.GetColumnPtr(q);
 	const double *force_vector_e_column = 
 	  final_results.GetColumnPtr(q);
+	const double *force_vector_u_column =
+	  final_results_u.GetColumnPtr(q);
 
+	// Print the lower bound on the coordinate force vector.
+	fprintf(stream, "[ ");
+	for(index_t d = 0; d < 3; d++) {
+	  fprintf(stream, "%g ", force_vector_l_column[d]);
+	}
+	fprintf(stream, " ] [ ");
+	// Print the estimates on the coordinate force vector.
 	for(index_t d = 0; d < 3; d++) {
 	  fprintf(stream, "%g ", force_vector_e_column[d]);
 	}
-
-	fprintf(stream, "%g %g %g", l1_norm_positive_force_vector_l[q],
+	fprintf(stream, " ] [ ");
+	// Print the upper bound on the coordinate force vector.
+	for(index_t d = 0; d < 3; d++) {
+	  fprintf(stream, "%g ", force_vector_u_column[d]);
+	}
+	fprintf(stream, " ] ");
+	
+	// Check if any of the dimension has opposites signs for the
+	// lower and upper bound coordinates, if so, print
+	// "X". Otherwise print "O"
+	for(index_t d = 0; d < 3; d++) {
+	  if(force_vector_e_column[d] < 0 &&
+	     (force_vector_l_column[d] + force_vector_e_column[d] > 0 ||
+	      force_vector_e_column[d] + force_vector_u_column[d] > 0) ||
+	     force_vector_e_column[d] > 0 &&
+	     (force_vector_l_column[d] + force_vector_e_column[d] < 0 ||
+	      force_vector_e_column[d] + force_vector_u_column[d] < 0)) {
+	    fprintf(stream, "X ");
+	  }
+	  else {
+	    fprintf(stream, "O ");
+	  }
+	}
+	
+	fprintf(stream, "%g %g %g ", l1_norm_positive_force_vector_l[q],
 		l1_norm_negative_force_vector_u[q], n_pruned[q]);
+		
 	fprintf(stream, "\n");
       }
       
@@ -529,10 +671,16 @@ class AxilrodTellerForceProblem {
 
     void SetZero() {
       l1_norm_positive_force_vector_l.SetZero();
+      positive_force_vector_l.SetZero();
       positive_force_vector_e.SetZero();
+      positive_force_vector_u.SetZero();
+      negative_force_vector_l.SetZero();
       negative_force_vector_e.SetZero();
+      negative_force_vector_u.SetZero();
       l1_norm_negative_force_vector_u.SetZero();
+      final_results_l.SetZero();
       final_results.SetZero();
+      final_results_u.SetZero();
       n_pruned.SetZero();
       used_error.SetZero();
       probabilistic_used_error.SetZero();
@@ -673,7 +821,7 @@ class AxilrodTellerForceProblem {
    double total_num_tuples, double total_n_minus_one_tuples_root,
    const Vector &total_n_minus_one_tuples) {
     
-    if(total_num_tuples < 40) {
+    if(total_num_tuples < 80) {
       return false;
     }
 

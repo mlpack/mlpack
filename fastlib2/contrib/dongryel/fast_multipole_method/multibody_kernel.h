@@ -554,27 +554,55 @@ class AxilrodTellerForceKernelAux {
 
   template<typename Tree>
   void ComputeError(ArrayList<Tree *> &nodes,
+		    Matrix &negative_force_vector_l,
 		    Matrix &negative_force_vector_e,
+		    Matrix &negative_force_vector_u,
 		    Vector &l1_norm_negative_force_vector_u,
 		    Vector &l1_norm_positive_force_vector_l,
+		    Matrix &positive_force_vector_l,
 		    Matrix &positive_force_vector_e,
+		    Matrix &positive_force_vector_u,
 		    Vector &n_pruned, Vector &used_error) {
     
     // Temporary variable...
     double min_tmp_contrib, max_tmp_contrib, error, average;
 
     // Force vector pointers for each node.
+    double *negative_force_vector_l_first = negative_force_vector_l.
+      GetColumnPtr(0);
     double *negative_force_vector_e_first = negative_force_vector_e.
       GetColumnPtr(0);
+    double *negative_force_vector_u_first = negative_force_vector_u.
+      GetColumnPtr(0);
+    double *negative_force_vector_l_second = negative_force_vector_l.
+      GetColumnPtr(1);
     double *negative_force_vector_e_second = negative_force_vector_e.
       GetColumnPtr(1);
+    double *negative_force_vector_u_second = negative_force_vector_u.
+      GetColumnPtr(1);
+    double *negative_force_vector_l_third = negative_force_vector_l.
+      GetColumnPtr(2);
     double *negative_force_vector_e_third = negative_force_vector_e.
       GetColumnPtr(2);
+    double *negative_force_vector_u_third = negative_force_vector_u.
+      GetColumnPtr(2);
+    double *positive_force_vector_l_first = positive_force_vector_l.
+      GetColumnPtr(0);
     double *positive_force_vector_e_first = positive_force_vector_e.
       GetColumnPtr(0);
+    double *positive_force_vector_u_first = positive_force_vector_u.
+      GetColumnPtr(0);
+    double *positive_force_vector_l_second = positive_force_vector_l.
+      GetColumnPtr(1);
     double *positive_force_vector_e_second = positive_force_vector_e.
       GetColumnPtr(1);
+    double *positive_force_vector_u_second = positive_force_vector_u.
+      GetColumnPtr(1);
+    double *positive_force_vector_l_third = positive_force_vector_l.
+      GetColumnPtr(2);
     double *positive_force_vector_e_third = positive_force_vector_e.
+      GetColumnPtr(2);
+    double *positive_force_vector_u_third = positive_force_vector_u.
       GetColumnPtr(2);
 
     for(index_t i = 0; i < dimension_; i++) {
@@ -587,10 +615,14 @@ class AxilrodTellerForceKernelAux {
 	average = 0.5 * (max_tmp_contrib + min_tmp_contrib);
 	used_error[0] += error;
 	l1_norm_negative_force_vector_u[0] += min_tmp_contrib;
+	negative_force_vector_l_first[i] += (-max_tmp_contrib);
 	negative_force_vector_e_first[i] += (-average);
+	negative_force_vector_u_first[i] += (-min_tmp_contrib);
 	used_error[1] += error;
 	l1_norm_positive_force_vector_l[1] += min_tmp_contrib;
+	positive_force_vector_l_second[i] += min_tmp_contrib;
 	positive_force_vector_e_second[i] += average;
+	positive_force_vector_u_second[i] += max_tmp_contrib;
       }
 
       {
@@ -600,10 +632,14 @@ class AxilrodTellerForceKernelAux {
 	average = 0.5 * (max_tmp_contrib + min_tmp_contrib);
 	used_error[0] += error;
 	l1_norm_negative_force_vector_u[0] += min_tmp_contrib;
+	negative_force_vector_l_first[i] += (-max_tmp_contrib);
 	negative_force_vector_e_first[i] += (-average);
+	negative_force_vector_u_first[i] += (-min_tmp_contrib);
 	used_error[2] += error;
 	l1_norm_positive_force_vector_l[2] += min_tmp_contrib;
+	positive_force_vector_l_third[i] += min_tmp_contrib;
 	positive_force_vector_e_third[i] += average;
+	positive_force_vector_u_third[i] += max_tmp_contrib;
       }
 
       {
@@ -613,10 +649,14 @@ class AxilrodTellerForceKernelAux {
 	average = 0.5 * (max_tmp_contrib + min_tmp_contrib);
 	used_error[1] += error;
 	l1_norm_negative_force_vector_u[1] += min_tmp_contrib;
+	negative_force_vector_l_second[i] += (-max_tmp_contrib);
 	negative_force_vector_e_second[i] += (-average);
+	negative_force_vector_u_second[i] += (-min_tmp_contrib);
 	used_error[2] += error;
 	l1_norm_positive_force_vector_l[2] += min_tmp_contrib;
+	positive_force_vector_l_third[i] += min_tmp_contrib;
 	positive_force_vector_e_third[i] += average;
+	positive_force_vector_u_third[i] += max_tmp_contrib;
       }
       
       // Check negative contribution accumulations...
@@ -627,10 +667,14 @@ class AxilrodTellerForceKernelAux {
 	average = 0.5 * (max_tmp_contrib + min_tmp_contrib);
 	used_error[0] += error;
 	l1_norm_positive_force_vector_l[0] += (-max_tmp_contrib);
+	positive_force_vector_l_first[i] += (-max_tmp_contrib);
 	positive_force_vector_e_first[i] += (-average);
+	positive_force_vector_u_first[i] += (-min_tmp_contrib);
 	used_error[1] += error;
 	l1_norm_negative_force_vector_u[1] += (-max_tmp_contrib);
+	negative_force_vector_l_second[i] += min_tmp_contrib;
 	negative_force_vector_e_second[i] += average;
+	negative_force_vector_u_second[i] += max_tmp_contrib;
       }
 
       {
@@ -640,10 +684,14 @@ class AxilrodTellerForceKernelAux {
 	average = 0.5 * (max_tmp_contrib + min_tmp_contrib);
 	used_error[0] += error;
 	l1_norm_positive_force_vector_l[0] += (-max_tmp_contrib);
+	positive_force_vector_l_first[i] += (-max_tmp_contrib);
 	positive_force_vector_e_first[i] += (-average);
+	positive_force_vector_u_first[i] += (-min_tmp_contrib);
 	used_error[2] += error;
 	l1_norm_negative_force_vector_u[2] += (-max_tmp_contrib);
+	negative_force_vector_l_third[i] += min_tmp_contrib;
 	negative_force_vector_e_third[i] += average;
+	negative_force_vector_u_third[i] += max_tmp_contrib;
       }
 
       {
@@ -653,10 +701,14 @@ class AxilrodTellerForceKernelAux {
 	average = 0.5 * (max_tmp_contrib + min_tmp_contrib);
 	used_error[1] += error;
 	l1_norm_positive_force_vector_l[1] += (-max_tmp_contrib);
+	positive_force_vector_l_second[i] += (-max_tmp_contrib);
 	positive_force_vector_e_second[i] += (-average);
+	positive_force_vector_u_second[i] += (-min_tmp_contrib);
 	used_error[2] += error;
 	l1_norm_negative_force_vector_u[2] += (-max_tmp_contrib);
+	negative_force_vector_l_third[i] += min_tmp_contrib;
 	negative_force_vector_e_third[i] += average;
+	negative_force_vector_u_third[i] += max_tmp_contrib;
       }
     } // end of iterating over each dimension...
   }
@@ -670,9 +722,11 @@ class AxilrodTellerForceKernelAux {
   template<typename TGlobal, typename Tree>
   bool ComputeFiniteDifference
   (TGlobal &globals, ArrayList<Tree *> &nodes,
-   const Vector &total_n_minus_one_tuples,
-   Matrix &negative_force_vector_e, Vector &l1_norm_negative_force_vector_u,
-   Vector &l1_norm_positive_force_vector_l, Matrix &positive_force_vector_e,
+   const Vector &total_n_minus_one_tuples, Matrix &negative_force_vector_l,
+   Matrix &negative_force_vector_e, Matrix &negative_force_vector_u,
+   Vector &l1_norm_negative_force_vector_u,
+   Vector &l1_norm_positive_force_vector_l, Matrix &positive_force_vector_l,
+   Matrix &positive_force_vector_e, Matrix &positive_force_vector_u,
    Vector &n_pruned, Vector &used_error) {
 
     // Clear the contribution accumulator.
@@ -694,25 +748,43 @@ class AxilrodTellerForceKernelAux {
 					       lower_bound_squared_distances_,
 					       upper_bound_squared_distances_);
 
-    ComputeError(nodes,
-		 negative_force_vector_e, l1_norm_negative_force_vector_u,
-		 l1_norm_positive_force_vector_l, positive_force_vector_e,
+    ComputeError(nodes, negative_force_vector_l,
+		 negative_force_vector_e, negative_force_vector_u,
+		 l1_norm_negative_force_vector_u,
+		 l1_norm_positive_force_vector_l, positive_force_vector_l,
+		 positive_force_vector_e, positive_force_vector_u,
 		 n_pruned, used_error);
 
     // Scale the error and delta contributions by the number of (n -
     // 1) tuples for each node.
     for(index_t i = 0; i < order_; i++) {
       if(i == 0 || nodes[i] != nodes[i - 1]) {
+	double *negative_force_vector_l_column =
+	  negative_force_vector_l.GetColumnPtr(i);
 	double *negative_force_vector_e_column =
 	  negative_force_vector_e.GetColumnPtr(i);
+	double *negative_force_vector_u_column =
+	  negative_force_vector_u.GetColumnPtr(i);
+	la::Scale(dimension_, total_n_minus_one_tuples[i],
+		  negative_force_vector_l_column);	
 	la::Scale(dimension_, total_n_minus_one_tuples[i],
 		  negative_force_vector_e_column);
+	la::Scale(dimension_, total_n_minus_one_tuples[i],
+		  negative_force_vector_u_column);
 	l1_norm_negative_force_vector_u[i] *= total_n_minus_one_tuples[i];
 	l1_norm_positive_force_vector_l[i] *= total_n_minus_one_tuples[i];
+	double *positive_force_vector_l_column = 
+	  positive_force_vector_l.GetColumnPtr(i);
 	double *positive_force_vector_e_column = 
 	  positive_force_vector_e.GetColumnPtr(i);
+	double *positive_force_vector_u_column = 
+	  positive_force_vector_u.GetColumnPtr(i);
+	la::Scale(dimension_, total_n_minus_one_tuples[i],
+		  positive_force_vector_l_column);
 	la::Scale(dimension_, total_n_minus_one_tuples[i],
 		  positive_force_vector_e_column);
+	la::Scale(dimension_, total_n_minus_one_tuples[i],
+		  positive_force_vector_u_column);
 	used_error[i] *= total_n_minus_one_tuples[i];
       }
     }
@@ -725,9 +797,11 @@ class AxilrodTellerForceKernelAux {
   template<typename TGlobal, typename Tree>
   void ComputeMonteCarloEstimates
   (TGlobal &globals, const ArrayList<Matrix *> &sets, ArrayList<Tree *> &nodes,
-   const Vector &total_n_minus_one_tuples,
-   Matrix &negative_force_vector_e, Vector &l1_norm_negative_force_vector_u,
-   Vector &l1_norm_positive_force_vector_l, Matrix &positive_force_vector_e,
+   const Vector &total_n_minus_one_tuples, Matrix &negative_force_vector_l,
+   Matrix &negative_force_vector_e, Matrix &negative_force_vector_u,
+   Vector &l1_norm_negative_force_vector_u,
+   Vector &l1_norm_positive_force_vector_l, Matrix &positive_force_vector_l,
+   Matrix &positive_force_vector_e, Matrix &positive_force_vector_u,
    Vector &n_pruned, Vector &used_error) {
 
     // Get the positive/negative force vector for the first, second,
@@ -777,7 +851,7 @@ class AxilrodTellerForceKernelAux {
     squared_negative_force_vector_third_particle.SetZero();
     double l1_norm_negative_force_vector_u_third_particle = 0;
 
-    const int num_samples = 30;
+    const int num_samples = 60;
     const double z_score = 1.65;
 
     for(index_t i = 0; i < num_samples; i++) {
@@ -807,23 +881,27 @@ class AxilrodTellerForceKernelAux {
       ExtractContribution
 	(sets, globals.hybrid_node_chosen_indices, 
 	 lower_bound_squared_distances_,
-	 negative_force_vector_first_particle.ptr(),
+	 NULL,
+	 negative_force_vector_first_particle.ptr(), NULL,
 	 squared_negative_force_vector_first_particle.ptr(),
 	 l1_norm_negative_force_vector_u_first_particle,
 	 l1_norm_positive_force_vector_l_first_particle,
-	 positive_force_vector_first_particle.ptr(),
+	 NULL,
+	 positive_force_vector_first_particle.ptr(), NULL,
 	 squared_positive_force_vector_first_particle.ptr(),
-	 negative_force_vector_second_particle.ptr(),
+	 NULL,
+	 negative_force_vector_second_particle.ptr(), NULL,	 
 	 squared_negative_force_vector_second_particle.ptr(),
 	 l1_norm_negative_force_vector_u_second_particle,
 	 l1_norm_positive_force_vector_l_second_particle,
-	 positive_force_vector_second_particle.ptr(),
-	 squared_positive_force_vector_second_particle.ptr(),
-	 negative_force_vector_third_particle.ptr(),
+	 NULL,
+	 positive_force_vector_second_particle.ptr(), NULL,
+	 squared_positive_force_vector_second_particle.ptr(), NULL,
+	 negative_force_vector_third_particle.ptr(), NULL,
 	 squared_negative_force_vector_third_particle.ptr(),
 	 l1_norm_negative_force_vector_u_third_particle,
-	 l1_norm_positive_force_vector_l_third_particle,
-	 positive_force_vector_third_particle.ptr(),
+	 l1_norm_positive_force_vector_l_third_particle, NULL,
+	 positive_force_vector_third_particle.ptr(), NULL,
 	 squared_positive_force_vector_third_particle.ptr());
       
     } // end of looping over each sample...
@@ -907,13 +985,55 @@ class AxilrodTellerForceKernelAux {
 		inverse_factor) * positive_force_vector_third_particle[i]),
 	      0.0));
 	     
-      used_error[0] += negative_variance_first_particle;
-      used_error[0] += positive_variance_first_particle;
-      used_error[1] += negative_variance_second_particle;
-      used_error[1] += positive_variance_second_particle;
-      used_error[2] += negative_variance_third_particle;
-      used_error[2] += positive_variance_third_particle;
+      used_error[0] = sqrt(math::Sqr(used_error[0]) +
+			   math::Sqr(negative_variance_first_particle));
+      used_error[0] = sqrt(math::Sqr(used_error[0]) +
+			   math::Sqr(positive_variance_first_particle));
+      used_error[1] = sqrt(math::Sqr(used_error[1]) +
+			   math::Sqr(negative_variance_second_particle));
+      used_error[1] = sqrt(math::Sqr(used_error[1]) +
+			   math::Sqr(positive_variance_second_particle));
+      used_error[2] = sqrt(math::Sqr(used_error[2]) +
+			   math::Sqr(negative_variance_third_particle));
+      used_error[2] = sqrt(math::Sqr(used_error[2]) +
+			   math::Sqr(positive_variance_third_particle));
       
+      // Get the negative lower component for each particle in this
+      // dimension.
+      negative_force_vector_l.set(i, 0, negative_force_vector_e.get(i, 0) -
+				  negative_variance_first_particle);
+      negative_force_vector_l.set(i, 1, negative_force_vector_e.get(i, 1) -
+				  negative_variance_second_particle);
+      negative_force_vector_l.set(i, 2, negative_force_vector_e.get(i, 2) -
+				  negative_variance_third_particle);
+
+      // Get the negative upper component for each particle in this
+      // dimension.
+      negative_force_vector_u.set(i, 0, negative_force_vector_e.get(i, 0) +
+				  negative_variance_first_particle);
+      negative_force_vector_u.set(i, 1, negative_force_vector_e.get(i, 1) +
+				  negative_variance_second_particle);
+      negative_force_vector_u.set(i, 2, negative_force_vector_e.get(i, 2) +
+				  negative_variance_third_particle);
+
+      // Get the positive lower component for each particle in this
+      // dimension.
+      positive_force_vector_l.set(i, 0, positive_force_vector_e.get(i, 0) -
+				  positive_variance_first_particle);
+      positive_force_vector_l.set(i, 1, positive_force_vector_e.get(i, 1) -
+				  positive_variance_second_particle);
+      positive_force_vector_l.set(i, 2, positive_force_vector_e.get(i, 2) -
+				  positive_variance_third_particle);
+
+      // Get the positive upper component for each particle in this
+      // dimension.
+      positive_force_vector_u.set(i, 0, positive_force_vector_e.get(i, 0) +
+				  positive_variance_first_particle);
+      positive_force_vector_u.set(i, 1, positive_force_vector_e.get(i, 1) +
+				  positive_variance_second_particle);
+      positive_force_vector_u.set(i, 2, positive_force_vector_e.get(i, 2) +
+				  positive_variance_third_particle);
+
       l1_norm_negative_force_vector_u[0] += 
 	std::max(((-negative_force_vector_e.get(i, 0)) - 
 		  negative_variance_first_particle), 0.0);
@@ -935,26 +1055,44 @@ class AxilrodTellerForceKernelAux {
     }
   }
 
+  void AddIfNotNull(double *pointer, index_t position, double increment) {
+    if(pointer != NULL) {
+      pointer[position] += increment;
+    }
+  }
+
   void ExtractContribution
   (const ArrayList<Matrix *> &sets, const ArrayList<index_t> &indices,
    const Matrix &squared_distances,
+   double *negative_force_vector_l_first_particle,
    double *negative_force_vector_first_particle,
-   double *squared_negative_force_vector_first_particle,
+   double *negative_force_vector_u_first_particle,
+   double *squared_negative_force_vector_first_particle,   
    double &l1_norm_negative_force_vector_u_first_particle,
    double &l1_norm_positive_force_vector_l_first_particle,
+   double *positive_force_vector_l_first_particle,
    double *positive_force_vector_first_particle,
+   double *positive_force_vector_u_first_particle,
    double *squared_positive_force_vector_first_particle,
+   double *negative_force_vector_l_second_particle,
    double *negative_force_vector_second_particle,
+   double *negative_force_vector_u_second_particle,
    double *squared_negative_force_vector_second_particle,
    double &l1_norm_negative_force_vector_u_second_particle,
    double &l1_norm_positive_force_vector_l_second_particle,
+   double *positive_force_vector_l_second_particle,
    double *positive_force_vector_second_particle,
+   double *positive_force_vector_u_second_particle,
    double *squared_positive_force_vector_second_particle,
+   double *negative_force_vector_l_third_particle,
    double *negative_force_vector_third_particle,
+   double *negative_force_vector_u_third_particle,
    double *squared_negative_force_vector_third_particle,
    double &l1_norm_negative_force_vector_u_third_particle,
    double &l1_norm_positive_force_vector_l_third_particle,
+   double *positive_force_vector_l_third_particle,
    double *positive_force_vector_third_particle,
+   double *positive_force_vector_u_third_particle,
    double *squared_positive_force_vector_third_particle) {
 
     const double *first_point = sets[0]->GetColumnPtr(indices[0]);
@@ -1101,7 +1239,11 @@ class AxilrodTellerForceKernelAux {
 	sum_contribution2 + sum_contribution3;
 
       if(first_particle_contribution > 0) {
+	AddIfNotNull(positive_force_vector_l_first_particle, d, 
+		     first_particle_contribution);
 	positive_force_vector_first_particle[d] += first_particle_contribution;
+	AddIfNotNull(positive_force_vector_u_first_particle, d, 
+		     first_particle_contribution);
 	if(squared_positive_force_vector_first_particle != NULL) {
 	  squared_positive_force_vector_first_particle[d] +=
 	    math::Sqr(first_particle_contribution);
@@ -1110,7 +1252,11 @@ class AxilrodTellerForceKernelAux {
 	  first_particle_contribution;
       }
       else {
+	AddIfNotNull(negative_force_vector_l_first_particle, d, 
+		     first_particle_contribution);
 	negative_force_vector_first_particle[d] += first_particle_contribution;
+	AddIfNotNull(negative_force_vector_u_first_particle, d, 
+		     first_particle_contribution);
 	if(squared_negative_force_vector_first_particle != NULL) {
 	  squared_negative_force_vector_first_particle[d] +=
 	    math::Sqr(first_particle_contribution);
@@ -1119,8 +1265,12 @@ class AxilrodTellerForceKernelAux {
 	  (-first_particle_contribution);
       }
       if(second_particle_contribution > 0) {
+	AddIfNotNull(positive_force_vector_l_second_particle, d,
+		     second_particle_contribution);
 	positive_force_vector_second_particle[d] +=
 	  second_particle_contribution;
+	AddIfNotNull(positive_force_vector_u_second_particle, d,
+		     second_particle_contribution);
 	if(squared_positive_force_vector_second_particle != NULL) {
 	  squared_positive_force_vector_second_particle[d] +=
 	    math::Sqr(second_particle_contribution);
@@ -1129,8 +1279,12 @@ class AxilrodTellerForceKernelAux {
 	  second_particle_contribution;
       }
       else {
+	AddIfNotNull(negative_force_vector_l_second_particle, d,
+		     second_particle_contribution);
 	negative_force_vector_second_particle[d] +=
 	  second_particle_contribution;
+	AddIfNotNull(negative_force_vector_u_second_particle, d,
+		     second_particle_contribution);
 	if(squared_negative_force_vector_second_particle != NULL) {
 	  squared_negative_force_vector_second_particle[d] +=
 	    math::Sqr(second_particle_contribution);
@@ -1139,8 +1293,12 @@ class AxilrodTellerForceKernelAux {
 	  (-second_particle_contribution);
       }
       if(third_particle_contribution > 0) {
+	AddIfNotNull(positive_force_vector_l_third_particle, d,
+		     third_particle_contribution);
 	positive_force_vector_third_particle[d] +=
 	  third_particle_contribution;
+	AddIfNotNull(positive_force_vector_u_third_particle, d,
+		     third_particle_contribution);
 	if(squared_positive_force_vector_third_particle != NULL) {
 	  squared_positive_force_vector_third_particle[d] +=
 	    math::Sqr(third_particle_contribution);
@@ -1149,8 +1307,12 @@ class AxilrodTellerForceKernelAux {
 	  third_particle_contribution;
       }
       else {
+	AddIfNotNull(negative_force_vector_l_third_particle, d,
+		     third_particle_contribution);
 	negative_force_vector_third_particle[d] +=
 	  third_particle_contribution;
+	AddIfNotNull(negative_force_vector_u_third_particle, d,
+		     third_particle_contribution);
 	if(squared_negative_force_vector_third_particle != NULL) {
 	  squared_negative_force_vector_third_particle[d] +=
 	    math::Sqr(third_particle_contribution);
@@ -1179,40 +1341,76 @@ class AxilrodTellerForceKernelAux {
 
     // Get the positive/negative force vector for the first, second,
     // third particle in the list.
+    double *positive_force_vector_l_first_particle =
+      query_results.positive_force_vector_l.GetColumnPtr
+      (globals.hybrid_node_chosen_indices[0]);
     double *positive_force_vector_first_particle =
       query_results.positive_force_vector_e.GetColumnPtr
       (globals.hybrid_node_chosen_indices[0]);
+    double *positive_force_vector_u_first_particle =
+      query_results.positive_force_vector_u.GetColumnPtr
+      (globals.hybrid_node_chosen_indices[0]);    
     double &l1_norm_positive_force_vector_l_first_particle =
       query_results.l1_norm_positive_force_vector_l
       [globals.hybrid_node_chosen_indices[0]];
+    double *negative_force_vector_l_first_particle =
+      query_results.negative_force_vector_l.GetColumnPtr
+      (globals.hybrid_node_chosen_indices[0]);
     double *negative_force_vector_first_particle =
       query_results.negative_force_vector_e.GetColumnPtr
+      (globals.hybrid_node_chosen_indices[0]);
+    double *negative_force_vector_u_first_particle =
+      query_results.negative_force_vector_u.GetColumnPtr
       (globals.hybrid_node_chosen_indices[0]);
     double &l1_norm_negative_force_vector_u_first_particle =
       query_results.l1_norm_negative_force_vector_u
       [globals.hybrid_node_chosen_indices[0]];
 
+    double *positive_force_vector_l_second_particle =
+      query_results.positive_force_vector_l.GetColumnPtr
+      (globals.hybrid_node_chosen_indices[1]);
     double *positive_force_vector_second_particle =
       query_results.positive_force_vector_e.GetColumnPtr
+      (globals.hybrid_node_chosen_indices[1]);
+    double *positive_force_vector_u_second_particle =
+      query_results.positive_force_vector_u.GetColumnPtr
       (globals.hybrid_node_chosen_indices[1]);
     double &l1_norm_positive_force_vector_l_second_particle =
       query_results.l1_norm_positive_force_vector_l
       [globals.hybrid_node_chosen_indices[1]];
+    double *negative_force_vector_l_second_particle =
+      query_results.negative_force_vector_l.GetColumnPtr
+      (globals.hybrid_node_chosen_indices[1]);
     double *negative_force_vector_second_particle =
       query_results.negative_force_vector_e.GetColumnPtr
+      (globals.hybrid_node_chosen_indices[1]);
+    double *negative_force_vector_u_second_particle =
+      query_results.negative_force_vector_u.GetColumnPtr
       (globals.hybrid_node_chosen_indices[1]);
     double &l1_norm_negative_force_vector_u_second_particle =
       query_results.l1_norm_negative_force_vector_u
       [globals.hybrid_node_chosen_indices[1]];
 
+    double *positive_force_vector_l_third_particle =
+      query_results.positive_force_vector_l.GetColumnPtr
+      (globals.hybrid_node_chosen_indices[2]);
     double *positive_force_vector_third_particle =
       query_results.positive_force_vector_e.GetColumnPtr
+      (globals.hybrid_node_chosen_indices[2]);
+    double *positive_force_vector_u_third_particle =
+      query_results.positive_force_vector_u.GetColumnPtr
       (globals.hybrid_node_chosen_indices[2]);
     double &l1_norm_positive_force_vector_l_third_particle =
       query_results.l1_norm_positive_force_vector_l
       [globals.hybrid_node_chosen_indices[2]];
+    double *negative_force_vector_l_third_particle =
+      query_results.negative_force_vector_l.GetColumnPtr
+      (globals.hybrid_node_chosen_indices[2]);
     double *negative_force_vector_third_particle =
       query_results.negative_force_vector_e.GetColumnPtr
+      (globals.hybrid_node_chosen_indices[2]);
+    double *negative_force_vector_u_third_particle =
+      query_results.negative_force_vector_u.GetColumnPtr
       (globals.hybrid_node_chosen_indices[2]);
     double &l1_norm_negative_force_vector_u_third_particle =
       query_results.l1_norm_negative_force_vector_u
@@ -1221,18 +1419,30 @@ class AxilrodTellerForceKernelAux {
     ExtractContribution
       (sets, globals.hybrid_node_chosen_indices, 
        lower_bound_squared_distances_,
-       negative_force_vector_first_particle, NULL,
+       negative_force_vector_l_first_particle,
+       negative_force_vector_first_particle,
+       negative_force_vector_u_first_particle, NULL,
        l1_norm_negative_force_vector_u_first_particle,
        l1_norm_positive_force_vector_l_first_particle,
-       positive_force_vector_first_particle, NULL,
-       negative_force_vector_second_particle, NULL,
+       positive_force_vector_l_first_particle,
+       positive_force_vector_first_particle,
+       positive_force_vector_u_first_particle, NULL,
+       negative_force_vector_l_second_particle,
+       negative_force_vector_second_particle,
+       negative_force_vector_u_second_particle, NULL,
        l1_norm_negative_force_vector_u_second_particle,
        l1_norm_positive_force_vector_l_second_particle,
-       positive_force_vector_second_particle, NULL,
-       negative_force_vector_third_particle, NULL,
+       positive_force_vector_l_second_particle,
+       positive_force_vector_second_particle,
+       positive_force_vector_u_second_particle, NULL,
+       negative_force_vector_l_third_particle,
+       negative_force_vector_third_particle,
+       negative_force_vector_u_third_particle, NULL,
        l1_norm_negative_force_vector_u_third_particle,
        l1_norm_positive_force_vector_l_third_particle,
-       positive_force_vector_third_particle, NULL);
+       positive_force_vector_l_third_particle,
+       positive_force_vector_third_particle,
+       positive_force_vector_u_third_particle, NULL);
   }  
 };
 
