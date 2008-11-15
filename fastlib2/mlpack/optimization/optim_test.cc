@@ -51,9 +51,9 @@ class Rosen {
 };
 
 
-class StaticUnconstrainedOptimizerTest {
+class StaticOptppOptimizerTest {
  public:
-  StaticUnconstrainedOptimizerTest(fx_module *module) {
+  StaticOptppOptimizerTest(fx_module *module) {
     module_ = module;
   }
   void Test1() {
@@ -67,12 +67,12 @@ class StaticUnconstrainedOptimizerTest {
   }
  private:
   fx_module *module_;
-  optim::StaticUnconstrainedOptimizer<optim::LBFGS, Rosen> optimizer_;
+  optim::StaticOptppOptimizer<optim::LBFGS, Rosen> optimizer_;
 };
 
 int main(int argc, char *argv[]) {
   fx_module *fx_root = fx_init(argc, argv, NULL);
-  StaticUnconstrainedOptimizerTest test(fx_root);
+  StaticOptppOptimizerTest test(fx_root);
   test.TestAll();
   fx_done(fx_root);
 }
