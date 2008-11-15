@@ -862,11 +862,11 @@ class AxilrodTellerForceKernelAux {
 	  globals.hybrid_node_chosen_indices[i] = 
 	    math::RandInt(nodes[i]->begin(), nodes[i]->end());
 	}
-      } while(globals.hybrid_node_chosen_indices[0] ==
+      } while(globals.hybrid_node_chosen_indices[0] >=
 	      globals.hybrid_node_chosen_indices[1] ||
-	      globals.hybrid_node_chosen_indices[0] ==
+	      globals.hybrid_node_chosen_indices[0] >=
 	      globals.hybrid_node_chosen_indices[2] ||
-	      globals.hybrid_node_chosen_indices[1] ==
+	      globals.hybrid_node_chosen_indices[1] >=
 	      globals.hybrid_node_chosen_indices[2]);
 
       // Evaluate the pairwise distances.    
