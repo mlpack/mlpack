@@ -3,6 +3,7 @@
 
 #include "fastlib/fastlib.h"
 #include "mlpack/series_expansion/kernel_aux.h"
+#include "../multitree_template/multitree_utility.h"
 
 template<typename TKernelAux>
 class NWRCdeProblem {
@@ -481,6 +482,13 @@ class NWRCdeProblem {
     }
     
    public:
+
+    void Finalize(const MultiTreeGlobal &globals, 
+		  const ArrayList<index_t> &mapping) {
+      
+      MultiTreeUtility::ShuffleAccordingToQueryPermutation(final_results,
+							   mapping);
+    }
 
     template<typename TQueryStat>
     void FinalPush(const Matrix &qset, const TQueryStat &query_stat,

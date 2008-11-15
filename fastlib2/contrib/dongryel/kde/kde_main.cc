@@ -42,6 +42,7 @@ void StartComputation(const Matrix &queries, const Matrix &references,
 			       module);
 
   printf("Starting the multitree computation...\n");
+
   fx_timer_start(fx_root, "multitree_compute");
   algorithm.Compute(&query_sets, &query_results);
   fx_timer_stop(fx_root, "multitree_compute");

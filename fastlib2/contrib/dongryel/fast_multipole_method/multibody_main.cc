@@ -303,7 +303,7 @@ int main(int argc, char *argv[]) {
   printf("Negative max relative error: %g\n", negative_max_relative_error);
 
 
-  MultibodyBruteForce(references);
+  // MultibodyBruteForce(references);
 
   fx_done(fx_root);
   return 0;

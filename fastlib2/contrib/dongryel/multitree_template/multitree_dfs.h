@@ -6,6 +6,7 @@
 #include "contrib/dongryel/proximity_project/gen_kdtree.h"
 #include "mlpack/allknn/allknn.h"
 #include "contrib/nvasil/allkfn/allkfn.h"
+#include "multitree_utility.h"
 
 template<typename MultiTreeProblem>
 class MultiTreeDepthFirst {
@@ -525,61 +526,6 @@ class MultiTreeDepthFirst {
   (const Matrix &qset, Tree *node,
    typename MultiTreeProblem::MultiTreeQueryResult &query_results);
 
-  void ShuffleAccordingToPermutationColumnwise_
-  (Matrix &v, const ArrayList<index_t> &permutation) {
-    
-    Matrix v_tmp;
-    la::TransposeInit(v, &v_tmp);
-    for(index_t i = 0; i < v.n_rows(); i++) {
-      Vector column_vector;
-      v_tmp.MakeColumnVector(i, &column_vector);
-      ShuffleAccordingToPermutation_(column_vector, permutation);
-    }
-    la::TransposeOverwrite(v_tmp, &v);
-  }
-
-  /** @brief Shuffles a vector according to a given permutation.
-   *
-   *  @param v The vector to be shuffled.
-   *  @param permutation The permutation.
-   */
-  void ShuffleAccordingToPermutation_
-  (Vector &v, const ArrayList<index_t> &permutation) {
-    
-    Vector v_tmp;
-    v_tmp.Init(v.length());
-    for(index_t i = 0; i < v_tmp.length(); i++) {
-      v_tmp[i] = v[permutation[i]];
-    }
-    v.CopyValues(v_tmp);
-  }
-
-  void ShuffleAccordingToPermutationColumnwise_
-  (Vector &v, const ArrayList<index_t> &permutation) {
-    
-    Vector v_tmp;
-    v_tmp.Init(v.length());
-    for(index_t i = 0; i < v_tmp.length(); i++) {
-      v_tmp[i] = v[permutation[i]];
-    }
-    v.CopyValues(v_tmp);
-  }
-
-  /** @brief Shuffles a vector according to a given permutation.
-   *
-   *  @param v The vector to be shuffled.
-   *  @param permutation The permutation.
-   */
-  void ShuffleAccordingToPermutation_
-  (Matrix &v, const ArrayList<index_t> &permutation) {
-    
-    for(index_t c = 0; c < v.n_cols(); c++) {
-      Vector column_vector;
-      v.MakeColumnVector(c, &column_vector);
-      ShuffleAccordingToPermutation_(column_vector, permutation);
-    }
-  }
-
  public:
 
   MultiTreeDepthFirst() {
@@ -674,14 +620,11 @@ class MultiTreeDepthFirst {
       PostProcessTree_(*(sets_[0]), hybrid_trees_[0], *query_results);
     }
 
-    // Shuffle back the query results according to its permutation.
     if(query_sets.size() > 0) {
-      ShuffleAccordingToPermutationColumnwise_(query_results->final_results,
-					       new_from_old_queries);
+      query_results->Finalize(globals_, old_from_new_queries);
     }
     else {
-      ShuffleAccordingToPermutationColumnwise_(query_results->final_results,
-					       new_from_old_hybrids_);
+      query_results->Finalize(globals_, old_from_new_hybrids_);
     }
   }
 
@@ -752,14 +695,11 @@ class MultiTreeDepthFirst {
       PostProcessTree_(*(sets_[0]), hybrid_trees_[0], *query_results);
     }
 
-    // Shuffle back the query results according to its permutation.
     if(query_sets.size() > 0) {
-      ShuffleAccordingToPermutationColumnwise_(query_results->final_results,
-					       new_from_old_queries);
+      query_results->Finalize(globals_, old_from_new_queries);
     }
     else {
-      ShuffleAccordingToPermutationColumnwise_(query_results->final_results,
-					       new_from_old_hybrids_);
+      query_results->Finalize(globals_, old_from_new_hybrids_);
     }
   }
 
@@ -800,7 +740,8 @@ class MultiTreeDepthFirst {
     // Shuffle the target values according to the permutation
     // shuffling of the reference points.
     if(targets != NULL) {
-      ShuffleAccordingToPermutation_(*(targets_[0]), old_from_new_references_);
+      MultiTreeUtility::ShuffleAccordingToPermutation
+	(*(targets_[0]), old_from_new_references_);
     }
     
     // Initialize the total number of (n - 1) tuples for each node
