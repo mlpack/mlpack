@@ -4,13 +4,15 @@ class ObjectieTest;
 class Objective {
 friend class ObjectiveTest;
  public:
+	//Vector current_parameter;
   void Init(fx_module *module);
-  void ComputeObjective(double *objective);
-	void ComputeGradient(Vector *gradient);
-	void ComputeHessian(Matrix *hessian);
+  void ComputeObjective(Vector &current_parameter, double *objective);
+	void ComputeGradient(Vector &current_parameter, Vector *gradient);
+	void ComputeHessian(Vector &current_parameter, Matrix *hessian);
  
  private:
   fx_module *module_;
+	
   ArrayList<Matrix> first_stage_x_; 
 	ArrayList<Matrix> second_stage_x_; 
 	//first_stage_x_.size()==second_stage_x_.size()
