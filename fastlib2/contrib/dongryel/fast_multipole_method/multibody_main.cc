@@ -74,7 +74,7 @@ void MultibodyBruteForce(const Matrix &particle_set) {
       const double *second_point = particle_set.GetColumnPtr(j);
       double *second_point_force_vector = short_bruteforce.GetColumnPtr(j);
       double squared_distance_between_i_and_j = 
-	la::DistanceSqEuclidean(3, first_point, second_point);
+	la::DistanceSqEuclidean(3, first_point, second_point) + DBL_EPSILON;
       double pow_squared_distance_between_i_and_j_0_5 =
 	sqrt(squared_distance_between_i_and_j);
       double pow_squared_distance_between_i_and_j_1_5 =
@@ -93,9 +93,9 @@ void MultibodyBruteForce(const Matrix &particle_set) {
 	const double *third_point = particle_set.GetColumnPtr(k);
 	double *third_point_force_vector = short_bruteforce.GetColumnPtr(k);
 	double squared_distance_between_i_and_k =
-	  la::DistanceSqEuclidean(3, first_point, third_point);
+	  la::DistanceSqEuclidean(3, first_point, third_point) + DBL_EPSILON;
 	double squared_distance_between_j_and_k =
-	  la::DistanceSqEuclidean(3, second_point, third_point);
+	  la::DistanceSqEuclidean(3, second_point, third_point) + DBL_EPSILON;
 
 	double pow_squared_distance_between_i_and_k_0_5 =
 	  sqrt(squared_distance_between_i_and_k);
