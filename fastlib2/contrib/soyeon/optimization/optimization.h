@@ -9,7 +9,7 @@ class Optimization {
 
 
 	private:
-		int CheckPositiveDefiniteness(Matrix &hessian);
+		
 
 
 
