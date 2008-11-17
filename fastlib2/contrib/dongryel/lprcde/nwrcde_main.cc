@@ -134,8 +134,17 @@ int main(int argc, char *argv[]) {
   Matrix queries;
 
   // data::Load inits a matrix with the contents of a .csv or .arff.
-  data::Load(references_file_name, &references);  
-  data::Load(queries_file_name, &queries);
+  data::Load(references_file_name, &references);
+
+  bool queries_equal_references = !strcmp(references_file_name,
+                                          queries_file_name);
+  
+  if(queries_equal_references) {
+    queries.Alias(references);
+  }
+  else {
+    data::Load(queries_file_name, &queries);
+  }
   data::Load(reference_targets_file_name, &reference_targets);
   Matrix reference_targets_transposed;
   reference_targets_transposed.Init(reference_targets.n_cols(),
@@ -147,6 +156,19 @@ int main(int argc, char *argv[]) {
       reference_targets_transposed.set(c, r, reference_targets.get(r, c));
       reference_targets_transposed.set(c, 2 * r + 1, 1.0);
     }
+  }
+
+  // Confirm whether the user asked for scaling of the dataset
+  if(!strcmp(fx_param_str(nwrcde_module, "scaling", "none"), "range")) {
+    printf("Range scaling...\n");
+    DatasetScaler::ScaleDataByMinMax(queries, references,
+                                     queries_equal_references);
+  }
+  else if(!strcmp(fx_param_str(nwrcde_module, "scaling", "none"),
+                  "standardize")) {
+    printf("Standardized scaling...\n");
+    DatasetScaler::StandardizeData(queries, references,
+                                   queries_equal_references);
   }
 
   // Run the appropriate algorithm based on the kernel type.
