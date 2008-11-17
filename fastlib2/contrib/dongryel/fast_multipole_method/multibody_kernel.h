@@ -503,7 +503,7 @@ class AxilrodTellerForceKernelAux {
 	  la::DistanceSqEuclidean
 	  (first_set->n_rows(), 
 	   first_set->GetColumnPtr(indices[first_index]),
-	   second_set->GetColumnPtr(indices[second_index]));
+	   second_set->GetColumnPtr(indices[second_index])) + DBL_EPSILON;
 	      
 	squared_distances.set(first_index, second_index, squared_distance);
 
@@ -526,15 +526,11 @@ class AxilrodTellerForceKernelAux {
 
 	double min_squared_distance =
 	  nodes[first_index]->bound().MinDistanceSq
-	  (nodes[second_index]->bound());
-
-	if(min_squared_distance == 0) {
-	  return true;
-	}
+	  (nodes[second_index]->bound()) + DBL_EPSILON;
 
 	double max_squared_distance =
 	  nodes[first_index]->bound().MaxDistanceSq
-	  (nodes[second_index]->bound());
+	  (nodes[second_index]->bound()) + DBL_EPSILON;
 
 	lower_bound_squared_distances.set(first_index, second_index,
 					  min_squared_distance);
