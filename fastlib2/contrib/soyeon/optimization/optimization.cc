@@ -5,17 +5,21 @@
 using namespace std;	//max
  
 
+void Optimization::Init(fx_module *module) {
+	module_=module;
+}
 
 
-void Optimization::ComputeDoglegDirection(int num_of_par,
-																					double radius, 
+void Optimization::ComputeDoglegDirection(double radius, 
 																					Vector &gradient,
 																					Matrix &hessian,
-																					Vector &p,
+																					Vector *p,
 																					double *delta_m) {
 	//check positive definiteness of the hessian
 	Matrix inverse_hessian;
 	if( !PASSED(la::InverseInit(hessian, &inverse_hessian)) ) {
+
+		cout<<"Hessian matrix is not invertible"<<endl;
 
 		//if hessian is indefinite->use cauchy point
 		double gHg;
@@ -23,11 +27,12 @@ void Optimization::ComputeDoglegDirection(int num_of_par,
 		Matrix transpose_hessian;
 		la::TransposeInit(hessian, &transpose_hessian);
 
-		Matrix temp1; //H*g
-		la::MulInit(hessian, gradient, &temp1);
-		gHg=la::Dot(temp1, gradient);
+		Vector temp2; //H*g
+		la::MulInit(hessian, gradient, &temp2);
+		gHg=la::Dot(temp2, gradient);
 
 		double gradient_norm=sqrt(la::Dot(gradient, gradient));
+		
 
 		if(gHg<=0){
 			//double gradient_norm=sqrt(la::Dot(gradient, gradient));
@@ -36,18 +41,19 @@ void Optimization::ComputeDoglegDirection(int num_of_par,
 		}
 		else{
 			double zeta=0;
-			zeta=min(pow(gradient_norm, 3)/(radius*gHg), 1);
+			zeta=std::min(pow(gradient_norm, 3)/(radius*gHg), 1.0);
 			la::ScaleInit(-1*zeta*radius/gradient_norm, gradient, p);
 
 		}
+		
 
 	}	//if
 	else {	//if hessian matrix is positive definite
-		la::InverseInit(hessian, &inverse_hessian);
+		//la::InverseInit(hessian, &inverse_hessian);
 		Vector p_b;
 		//p_b= - (hessian)^-1 * g
 		la::MulInit(inverse_hessian, gradient, &p_b);
-		la::Scale(-1, p_b);
+		la::Scale(-1.0, &p_b);
 
 		double p_b_norm;
 		//p_b_norm=la::Dot(p_b, p_b);
@@ -78,7 +84,7 @@ void Optimization::ComputeDoglegDirection(int num_of_par,
 			}
 			*/
 			
-			Matrix temp1; //H*g
+			Vector temp1; //H*g
 			la::MulInit(hessian, gradient, &temp1);
 			gHg=la::Dot(temp1, gradient);
 
@@ -132,6 +138,15 @@ void Optimization::ComputeDoglegDirection(int num_of_par,
 			}	//else
 		}
 	}
+
+	//delta_m calculation -g'p-0.5*p'Hp=-g'p-0.5*(Hp)'p
+	Vector temp3; //Hp
+	la::MulInit(hessian, *p, &temp3);
+	double pHp;
+	pHp=la::Dot(temp3, *p);
+
+	*delta_m=-1*(la::Dot(gradient, *p))-0.5*pHp;
+	
 }
 
 
