@@ -13,8 +13,8 @@ public:
 		Vector current_gradient;
 		current_gradient.Init(3);
 		current_gradient[0]=0.2;
-		current_gradient[1]=1.1;
-		current_gradient[2]=2.8;
+		current_gradient[1]=0.3;
+		current_gradient[2]=0.8;
 
 		Matrix current_hessian;
 		current_hessian.Init(3,3);
@@ -43,7 +43,23 @@ public:
 		cout<<endl;
 
 		cout<<"delta_m="<<dummy_delta_m<<endl;
+		
+    Vector dummy_p2;
+		double dummy_delta_m2;
+		optimization.ComputeSteihaugDirection(current_radius, 
+																current_gradient,
+																current_hessian,
+																&dummy_p2,
+																&dummy_delta_m2);
 
+		cout<<"p2="<<" ";
+		for(index_t i=0; i<dummy_p2.length(); i++){
+			cout<<dummy_p2[i]<<" ";
+		}
+		cout<<endl;
+
+		cout<<"delta_m2="<<dummy_delta_m2<<endl;
+		
 
 
 	}
