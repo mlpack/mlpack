@@ -8,7 +8,8 @@ using namespace std;
 
 
 void Sampling::Init(fx_module *module, int *num_of_people, 
-											Vector *ind_unknown_x) {
+											Vector *ind_unknown_x, double *initial_percent_sample,
+											Vector *initial_parameter) {
 	module_=module;
 	const char *data_file1=fx_param_str_req(module_, "data1");
 	const char *info_file1=fx_param_str_req(module_, "info1");
@@ -100,13 +101,43 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 
 	ind_unknown_x->Copy(population_ind_unknown_x_);
 
+	cout<<"test"<<endl;
 
-  double initial_percent_sample=fx_param_double(module_, "initial_percent_sample", 5);
+	const char *initial_parameter_file=fx_param_str(module_, "stating_points", "default_initial.csv");
+	/*if(initial_parameter_file !=NULL) {
+		Matrix mtx_initial_parameter;
+    data::Load(initial_parameter_file, &mtx_initial_parameter);
+		mtx_initial_parameter.MakeColumnVector(0, initial_parameter);
+	}
+	else {
+		NOTIFY("Starting points are not given. Use default...");
+		initial_parameter->Init(x.n_rows());
+		initial_parameter->SetZero();
+	}
+	*/
+	Matrix mtx_initial_parameter;
+  data::Load(initial_parameter_file, &mtx_initial_parameter);
+	if(mtx_initial_parameter.n_rows()==1 && mtx_initial_parameter.get(0,0)==0){
+		NOTIFY("Starting points are not given. Use default...");
+		initial_parameter->Init(x.n_rows());
+		initial_parameter->SetZero();
+	}
+	else if(mtx_initial_parameter.n_rows() != x.n_rows()){
+		FATAL("The number of starting points given is not same as the number of parameters");
+	}
+	else {
+		mtx_initial_parameter.MakeColumnVector(0, initial_parameter);
+	}
+
+
+	cout<<"test2"<<endl;
+  double arg_initial_percent_sample=fx_param_double(module_, "initial_percent_sample", 5);
 
 	//Initilize memeber variables
 	num_of_selected_sample_=0;
 	count_num_sampling_=0;
-	initial_percent_sample_=initial_percent_sample;
+	initial_percent_sample_=arg_initial_percent_sample;
+  *initial_percent_sample=initial_percent_sample_;
 
 	shuffled_array_.Init(num_of_people_);
 
