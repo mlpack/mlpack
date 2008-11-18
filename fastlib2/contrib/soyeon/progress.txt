@@ -84,6 +84,21 @@ Fastlib meetings
 11/06 Thurs. >fl-build --mode=debug objective2
 			 >fl-build --model=debug test
 			 >./test --data1=data1.csv --info1=info1.csv --data2=data2.csv --info2=info2.csv --data3=data3.csv --info3=info3.csv
+			 
+			 [.] The objective is -2.87419
+[.] Gradient calculation starts
+Gradient vector: 0.07925 -0.111573 0.621885 0.012997 -0.00950998
+[.] Gradient calculation ends
+[.] Exact hessian calculation starts
+Hessian matrix:
+-0.0514969  -0.0552393  -0.0528984  0.00150735  -0.00108295
+-0.0552393  -0.0853248  -0.07779  0.00237815  -0.00172084
+-0.0528984  -0.07779  -0.0999041  0.00434628  -0.00320945
+0.00150735  0.00237815  0.00434628  1.09549  0.00121945
+-0.00108295  -0.00172084  -0.00320945  0.00121945  0.631995
+
+
+
 
 11/13 Thurs. >fl-build --mode=debug sampling
 			 >fl-build --mode=debug test
