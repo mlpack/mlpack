@@ -1,3 +1,4 @@
+#include "objective2.h"
 #include "optimization.h"
 #include <iostream.h>
 
@@ -66,6 +67,7 @@ public:
 
 	void TestAll() {
     Test_optimization();
+		//Test_Sampling();
 				
   }
 
