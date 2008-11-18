@@ -97,13 +97,17 @@ Hessian matrix:
 0.00150735  0.00237815  0.00434628  1.09549  0.00121945
 -0.00108295  -0.00172084  -0.00320945  0.00121945  0.631995
 
-
+./test --data1=data1.csv --data2=data2.csv --data3=data3.csv --info1=info1.csv 
+					
+	
 
 
 11/13 Thurs. >fl-build --mode=debug sampling
 			 >fl-build --mode=debug test
 			 >./test --data1=data1.csv --data2=data2.csv --data3=data3.csv --info1=info1.csv --info_y=info_y.csv --info_ind_unknown_x=info_unknown_x.csv --initial_percent_sample=50
 				
+				
+/test --data1=data1.csv --data2=data2.csv --data3=data3.csv --info1=info1.csv 
 					
 				
 				
