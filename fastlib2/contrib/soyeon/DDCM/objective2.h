@@ -5,7 +5,11 @@ class Objective {
 friend class ObjectiveTest;
  public:
 	//Vector current_parameter;
-  void Init(fx_module *module);
+  void Init(ArrayList<Matrix> added_first_stage_x, 
+										 ArrayList<Matrix> added_second_stage_x, 
+										 ArrayList<Matrix> added_unknown_x_past, 
+										 ArrayList<index_t> added_first_stage_y,
+										 Vector ind_unknown_x);
   void ComputeObjective(Vector &current_parameter, double *objective);
 	void ComputeGradient(Vector &current_parameter, Vector *gradient);
 	void ComputeHessian(Vector &current_parameter, Matrix *hessian);
@@ -30,12 +34,12 @@ friend class ObjectiveTest;
   // to all zeros in y
   // If it is greter than zero then it corresponds to 
   // the non zero element index
-	ArrayList<index_t> second_stage_y_;
+	//ArrayList<index_t> second_stage_y_;
 	//1 then it corresponds to all one in y^post
 	
 	//it corresponds to the unknown attributes index in unk_x_past file
 	//(eg. 7th attribute(price) is unknown 
-	ArrayList<index_t> ind_unknown_x_;
+	Vector ind_unknown_x_;
 
 
 	ArrayList<double> exp_betas_times_x1_;
