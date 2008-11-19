@@ -512,6 +512,7 @@
 #define OT_DESTRUCTOR(C) \
    public: \
     ~C() { \
+      DEBUG_DESTRUCT_OK(this); \
       ot__private::Destructor<false> ot__destructor(this); \
     } \
    private:
@@ -678,10 +679,10 @@
 
 
 /**
- * Fills a function to be called just after default construction and
- * all forms of copying to ensure that fresh and copied objects are
- * not considered aliases.  Code specified for OT_BECOME_NON_ALIAS
- * must cause code for OT_IS_ALIAS to return false.
+ * Fills a function to be called after all forms of copying to ensure
+ * that copied objects are not considered aliases.  Code specified for
+ * OT_BECOME_NON_ALIAS must cause code for OT_IS_ALIAS to return
+ * false.
  *
  * This macro is unnecessary unless you also invoke OT_ALIAS_METHODS.
  * In addition, it is unnecessary if OT_REFILL_TRANSIENTS leaves the
@@ -912,8 +913,8 @@
  *        test whether an object of your class can be initialized
  * @returns whether the object can be initialized
  *
- * @see DEBUG_INIT_OK, OT_DEBUG_MODIFY_OK, OT_IS_ALIAS,
- *      OT_DEFAULT_CONSTRUCT, OBJECT_TRAVERSAL
+ * @see DEBUG_INIT_OK, OT_DEBUG_MODIFY_OK, OT_DEBUG_DESTRUCT_OK,
+ *      OT_IS_ALIAS, OT_DEFAULT_CONSTRUCT, OBJECT_TRAVERSAL
  */
 #define OT_DEBUG_INIT_OK(C) \
    public: \
@@ -927,7 +928,7 @@
  * Asserts in debug-mode that an object may be initialized, e.g. that
  * no Init function has been called.
  *
- * If aliasing is defined for you class, this macro (by default)
+ * If aliasing is defined for your class, this macro (by default)
  * asserts that the object is an alias; otherwise, it does nothing.
  * Its behavior may be changed by invoking the OT_DEBUG_INIT_OK macro.
  *
@@ -970,8 +971,8 @@
  *        test whether an object of your class can be modified
  * @returns whether the object can be modified
  *
- * @see DEBUG_MODIFY_OK, OT_DEBUG_INIT_OK, OT_IS_ALIAS,
- *      OBJECT_TRAVERSAL
+ * @see DEBUG_MODIFY_OK, OT_DEBUG_INIT_OK, OT_DEBUG_DESTRUCT_OK,
+ *      OT_IS_ALIAS, OBJECT_TRAVERSAL
  */
 #define OT_DEBUG_MODIFY_OK(C) \
    public: \
@@ -985,18 +986,71 @@
  * Asserts that an object may be modified, e.g. that it is not an
  * alias.
  *
- * If aliasing is defined for you class, this macro (by default)
+ * If aliasing is defined for your class, this macro (by default)
  * asserts that the object is not an alias; otherwise, it does
  * nothing.  Its behavior may be changed by invoking the
  * OT_DEBUG_MODIFY_OK macro.
  *
- * @param x the object to assert uninitiailized
+ * @param x the object to assert modifiable
  *
  * @see OT_DEBUG_MODIFY_OK
  */
 #define DEBUG_MODIFY_OK(x) \
     DEBUG_ASSERT_MSG(OT__DebugModifyOK(x), \
         "Modification of alias/locked %s; missing Init?", \
+        typeid(*x).name());
+
+/**
+ * Fills a function to be called by the DEBUG_DESTRUCT_OK macro.  This
+ * macro is in turn called by the object's destructor and Renew
+ * method to test for premature destruction.
+ *
+ * By default, this function simply returns true.  You may optionally
+ * invoke this marco to perform an arbitrary test.  The provided
+ * function should not have any side-effects.  It may assume that it
+ * is called only in debug-mode.
+ *
+ * Example (counting references):
+ * @code
+ *   class MyClass {
+ *     bool n_references_;
+ *     ...
+ *     OT_DEBUG_DESTRUCT_OK(MyClass) {
+ *       return n_references_ == 0;
+ *     }
+ *     ...
+ *   };
+ * @endcode
+ *
+ * @param C the name of your class
+ * @param following_code a block containing the code needed to
+ *        test whether an object of your class can be destroyed
+ * @returns whether the object can be destroyed
+ *
+ * @see DEBUG_DESTRUCT_OK, OT_DEBUG_INIT_OK, OT_DEBUG_MODIFY_OK
+ *      OBJECT_TRAVERSAL
+ */
+#define OT_DEBUG_DESTRUCT_OK(x) \
+   public: \
+    friend bool OT__DebugDestructOK(C *ot__obj) { \
+      return ot__obj->OT__DebugDestructOK_(); \
+    } \
+   private: \
+    bool OT__DebugDestructOK_()
+
+/**
+ * Asserts that an object may be destroyed.
+ *
+ * This macro does nothing unless you invoke the OT_DEBUG_DESTRUCT_OK
+ * macro for your class.
+ *
+ * @param x the object to assert destructable
+ *
+ * @see OT_DEBUG_DESTRUCT_OK
+ */
+#define DEBUG_DESTRUCT_OK(x) \
+    DEBUG_ASSERT_MSG(OT__DebugDestructOK(x), \
+        "Premature destruction of %s; missing Init?", \
         typeid(*x).name());
 
 
@@ -1291,6 +1345,7 @@
       mem::DebugPoison(this); \
     } \
     ~C() { \
+      DEBUG_DESTRUCT_OK(this); \
       mem::DebugPoison(this); \
     } \
     friend bool OT__Shallow(const C *ot__obj) { \

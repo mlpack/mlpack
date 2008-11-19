@@ -21,25 +21,47 @@
 
 #include "common.h"
 
-/** Performs an expression only in debug mode. */
+/**
+ * Performs an expression only in debug mode.
+ *
+ * Use either as in @c DEBUG_ONLY(i = BIG_BAD_NUMBER); or
+ *
+ * @code
+ *   DEBUG_ONLY {
+ *     Matrix results;
+ *     my_alg.ResultsInit(&results);
+ *     results.PrintDebug();
+ *   }
+ * @endcode
+ *
+ * @see VERBOSE_ONLY, PROFILE_ONLY
+ */
 #ifdef DEBUG
-#define DEBUG_ONLY(x) (x)
+#define DEBUG_ONLY if (0) NOP; else
 #else
-#define DEBUG_ONLY(x) NOP
+#define DEBUG_ONLY if (1) NOP; else
 #endif
 
-/** Performs an expression only in verbose mode. */
+/**
+ * Performs an expression only in verbose mode.
+ *
+ * @see DEBUG_ONLY, PROFILE_ONLY
+ */
 #ifdef VERBOSE
-#define VERBOSE_ONLY(x) (x)
+#define VERBOSE_ONLY if (0) NOP; else
 #else
-#define VERBOSE_ONLY(x) NOP
+#define VERBOSE_ONLY if (1) NOP; else
 #endif
 
-/** Performs an expression only in profile mode. */
+/**
+ * Performs an expression only in profile mode.
+ *
+ * @see DEBUG_ONLY, VERBOSE_ONLY
+ */
 #ifdef PROFILE
-#define PROFILE_ONLY(x) (x)
+#define PROFILE_ONLY if (0) NOP; else
 #else
-#define PROFILE_ONLY(x) NOP
+#define PROFILE_ONLY if (1) NOP; else
 #endif
 
 /** Verbosity for VERBOSE_MSG and VERBOSE_GOT_HERE. */
@@ -59,16 +81,17 @@ extern int print_warnings;
  * specified minimum.
  *
  * Example:
- *
  * @code
- * if (object.type == RABBIT) {
- *   VERBOSE_MSG(3.0, "Processing %s as a rabbit", object.name);
- *   process_rabbit(object);
- * }
+ *   if (object.type == RABBIT) {
+ *     VERBOSE_MSG(3.0, "Processing %s as a rabbit", object.name);
+ *     process_rabbit(object);
+ *   }
  * @endcode
  *
  * @param min_verbosity level of verbosity required to emit mesage
  * @param msg_params format string and variables, as in printf
+ *
+ * @see VERBOSE_GOT_HERE
  */
 #define VERBOSE_MSG(min_verbosity, msg_params...) \
     VERBOSE_ONLY( \
@@ -82,6 +105,8 @@ extern int print_warnings;
  * print_got_heres.
  *
  * @param min_verbosity level of verbosity required to emit mesage
+ *
+ * @see VERBOSE_MSG
  */
 #define VERBOSE_GOT_HERE(min_verbosity) \
     VERBOSE_ONLY( \
@@ -100,6 +125,8 @@ extern int print_warnings;
  *
  * @param cond the condition when the warning should be raised
  * @param msg_params format string and variables, as in printf
+ *
+ * @see DEBUG_WARNING_IF, DEBUG_ERROR_MSG_IF
  */
 #define DEBUG_WARNING_MSG_IF(cond, msg_params...) \
     DEBUG_ONLY(unlikely((cond) && print_warnings) \
@@ -117,6 +144,8 @@ extern int print_warnings;
  * print_warnings.
  *
  * @param cond the condition when the warning should be raised
+ *
+ * @see DEBUG_WARNING_MSG_IF, DEBUG_ERROR_IF
  */
 #define DEBUG_WARNING_IF(cond) \
     DEBUG_WARNING_MSG_IF(cond, "warning: " #cond)
@@ -130,6 +159,8 @@ extern int print_warnings;
  *
  * @param cond the condition when the error should be raised
  * @param msg_params format string and variables, as in printf
+ *
+ * @see DEBUG_ERROR_IF, DEBUG_ASSERT_MSG, DEBUG_WARNING_MSG_IF
  */
 #define DEBUG_ERROR_MSG_IF(cond, msg_params...) \
     DEBUG_ONLY(unlikely(cond) \
@@ -143,6 +174,8 @@ extern int print_warnings;
  * recommended for conditions to have side-effects.
  *
  * @param cond the condition when the error should be raised
+ *
+ * @see DEBUG_ERROR_MSG_IF, DEBUG_ASSERT, DEBUG_WARNING_IF
  */
 #define DEBUG_ERROR_IF(cond) \
     DEBUG_ERROR_MSG_IF(cond, "error: " #cond)
@@ -156,6 +189,8 @@ extern int print_warnings;
  *
  * @param cond the condition that must be true to proceed
  * @param msg_params format string and variables, as in printf
+ *
+ * @see DEBUG_ASSERT, DEBUG_ERROR_MSG_IF
  */
 #define DEBUG_ASSERT_MSG(cond, msg_params...) \
     DEBUG_ONLY(likely(cond) \
@@ -168,6 +203,8 @@ extern int print_warnings;
  * recommended for conditions to have side-effects.
  *
  * @param cond the condition that must be true to proceed
+ *
+ * @see DEBUG_ASSERT_MSG, DEBUG_ERROR_IF
  */
 #define DEBUG_ASSERT(cond) \
     DEBUG_ASSERT_MSG(cond, "assertion failure: %s", #cond)
@@ -188,6 +225,8 @@ extern int print_warnings;
  * either C or C++ without having to specify the type.
  *
  * @param type the type of the pointer to be poisoned
+ *
+ * @see DEBUG_POISON_PTR
  */
 #define BIG_BAD_POINTER(type) (REINTERPRET_CAST(type *, 0xDEADBEEF))
 
@@ -227,6 +266,8 @@ const T *poison_ptr(T *&x) {
  *
  * @param x the index value to test
  * @param bound the upper bound for x; 0 is the implicit lower bound
+ *
+ * @see DEBUG_BOUNDS_INCLUSIVE, DEBUG_SAME_INT
  */
 #define DEBUG_BOUNDS(x, bound) \
     DEBUG_ASSERT_MSG(STATIC_CAST(uint64, x) < STATIC_CAST(uint64, bound), \
@@ -242,6 +283,8 @@ const T *poison_ptr(T *&x) {
  *
  * @param x the index value to test
  * @param bound the upper bound for x; 0 is the implicit lower bound
+ *
+ * @see DEBUG_BOUNDS, DEBUG_SAME_INT
  */
 #define DEBUG_BOUNDS_INCLUSIVE(x, bound) \
     DEBUG_ASSERT_MSG(STATIC_CAST(uint64, x) <= STATIC_CAST(uint64, bound), \
@@ -257,6 +300,8 @@ const T *poison_ptr(T *&x) {
  *
  * @param x left-hand side of the equality test
  * @param y right-hand side of the equality test
+ *
+ * @see DEBUG_SAME_SIZE, DEBUG_SAME_DOUBLE, DEBUG_APPROX_DOUBLE
  */
 #define DEBUG_SAME_INT(x, y) \
     DEBUG_ASSERT_MSG((x) == (y), \
@@ -275,6 +320,8 @@ const T *poison_ptr(T *&x) {
  *
  * @param x left-hand side of the equality test
  * @param y right-hand side of the equality test
+ *
+ * @see DEBUG_SAME_INT, DEBUG_SAME_DOUBLE, DEBUG_APPROX_DOUBLE
  */
 #define DEBUG_SAME_SIZE(x, y) \
     DEBUG_ASSERT_MSG((x) == (y), \
@@ -290,6 +337,8 @@ const T *poison_ptr(T *&x) {
  *
  * @param x left-hand side of the equality test
  * @param y right-hand side of the equality test
+ *
+ * @see DEBUG_SAME_INT, DEBUG_APPROX_DOUBLE
  */
 #define DEBUG_SAME_DOUBLE(x, y) \
     DEBUG_ASSERT_MSG((x) == (y), \
@@ -306,6 +355,8 @@ const T *poison_ptr(T *&x) {
  *
  * @param x left-hand side of the equality test
  * @param y right-hand side of the equality test
+ *
+ * @see DEBUG_SAME_INT, DEBUG_SAME_DOUBLE
  */
 #define DEBUG_APPROX_DOUBLE(x, y, eps) \
     DEBUG_ASSERT_MSG(fabs(STATIC_CAST(double, (x) - (y))) < eps, \

@@ -73,6 +73,8 @@ const fx_entry_doc fx__fx_entries[] = {
    "  Whether to emit rusage data in \"info\".\n"},
   {"silent", FX_PARAM, FX_BOOL, NULL,
    "  Whether to skip the printing of results to screen.\n"},
+  {"no_types", FX_PARAM, FX_BOOL, NULL,
+   "  Whether to skip the printing of entry types.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -1997,14 +1999,22 @@ static void fx__report_rusage(fx_module *mod, int usage_type)
 
 static void fx__output_results(fx_module *root)
 {
+  char *type_char = fx_mod_marker;
+
+  /* ### Just added the below, make sure it works.  It's objective is
+         to strip out the colon-types at the end of the line. */
+  if (fx_param_bool(root, "fx/no_types", 0)) {
+    type_char = NULL;
+  }
+
   if (fx_param_exists(root, "fx/output")) {
     FILE *stream = fopen(fx_param_str_req(root, "fx/output"), "w");
-    datanode_write(root, stream, fx_mod_marker);
+    datanode_write(root, stream, type_char);
     fclose(stream);
   }
 
   if (!fx_param_bool(root, "fx/silent", 0)) {
-    datanode_write(root, stdout, fx_mod_marker);
+    datanode_write(root, stdout, type_char);
   }
 }
 
