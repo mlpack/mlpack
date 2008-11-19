@@ -47,6 +47,9 @@
  *
  * @param expr the expression to evaluate
  * @param value the expected result of expr
+ * @returns the result of expr
+ *
+ * @see likely, unlikely
  */
 #ifndef NO_COMPILER_DEFS
 #define expect(expr, value) (__builtin_expect((expr), (value)))
@@ -54,10 +57,44 @@
 #define expect(expr, value) (expr)
 #endif
 
-/** Optimize compilation for a condition being true. */
+/**
+ * Optimize compilation for a condition being true.
+ *
+ * Example:
+ * @code
+ *   if (likely(i < size)) {
+ *     ...
+ *   }
+ * @endcode
+ *
+ * Note that this normalizes the result of cond to 1 or 0, which is
+ * always fine for use with if-statements and loops.
+ *
+ * @param cond the condition to test
+ * @returns the boolean result of cond
+ *
+ * @see unlikely, expect
+ */
 #define likely(cond) expect(!!(cond), 1)
 
-/** Optimize compilation for a condition being false. */
+/**
+ * Optimize compilation for a condition being false.
+ *
+ * Example:
+ * @code
+ *   if (unlikely(error != 0)) {
+ *     ...
+ *   }
+ * @endcode
+ *
+ * Note that this normalizes the result of cond to 1 or 0, which is
+ * always fine for use with if-statements and loops.
+ *
+ * @param cond the condition to test
+ * @returns the boolean result of cond
+ *
+ * @see likely, expect
+ */
 #define unlikely(cond) expect(!!(cond), 0)
 
 /** Returns 1 if the compiler can prove the expression is constant. */
@@ -70,10 +107,10 @@
 
 
 /**
- * Define a function that never returns, e.g. aborts the program.
+ * Indicates a function will not return, e.g. will abort the program.
  *
- * Supresses potential warning messages about not returning a value in
- * non-void functions.
+ * Use this to supress potential warning messages about not returning
+ * a value in non-void functions.
  *
  * Example:
  * @code
@@ -88,10 +125,10 @@
 #endif
 
 /**
- * Define a function with printf-style arguments.
+ * Indicates a function has printf-style arguments.
  *
- * Enables compile-time warning messages for mismatched printf format
- * strings and argument lists.
+ * Use this to enable compile-time warning messages for mismatched
+ * printf format strings and argument lists.
  *
  * Example:
  * @code
@@ -101,6 +138,9 @@
  *
  * Note that C++ member funtions reserve argument 1 for "this", so the
  * first visible argument is 2.
+ *
+ * @param format_arg the position of the format string argument
+ * @param dotdotdot_arg the position of the ... argument
  */
 #ifndef NO_COMPILER_DEFS
 #define COMPILER_PRINTF(format_arg, dotdotdot_arg) \
@@ -110,15 +150,15 @@
 #endif
 
 /**
- * Define a function with no (visible) side-effects.
+ * Indicates a function has no (visible) side-effects.
  *
- * Allows the compiler to optimize out repeated calls or rearrange
- * calls, and supresses warning messages when multiple functions are
- * called in an expression.  (By definition, C/C++ may evaluate
- * expressions in any order, causing problems for functions with
- * side-effects).
+ * Use this to allow the compiler to optimize out repeated calls or
+ * rearrange calls, and to supress warning messages when multiple
+ * functions are called in an expression.  (By definition, C/C++ may
+ * evaluate subexpressions and function arguments in any order,
+ * causing problems they contain functions with side-effects).
  *
- * WARNING: due to complier bugs, never use for functions of pointers.
+ * WARNING: Due to complier bugs, never use for functions of pointers.
  *
  * Example:
  * @code
@@ -148,11 +188,31 @@
  *
  * This will raise warnings when compiling with features that may
  * eventually be removed.
+ *
+ * @see COMPILER_DEPRECATED_MSG
  */
-#ifndef NO_COMPILER_DEFS
+#if !defined(NO_COMPILER_DEFS) && !defined(NO_DEPRECATION_WARNINGS)
 #define COMPILER_DEPRECATED __attribute__((deprecated))
 #else
 #define COMPILER_DEPRECATED
+#endif
+
+/**
+ * Denotes a function as deprecated with a warning message.
+ *
+ * This will eventually raise the provided warning message when
+ * compiling, but this feature is not currently available in all
+ * compilers, so instead, the behavior is identical to
+ * COMPILER_DEPRECATED.
+ *
+ * @param msg printed when compiling with a deprecated function
+ *
+ * @see COMPILER_DEPRECATED
+ */
+#if !defined(NO_COMPILER_DEFS) && !defined(NO_DEPRECATION_WARNINGS)
+#define COMPILER_DEPRECATED_MSG(msg) COMPILER_DEPRECATED
+#else
+#define COMPILER_DEPRECATED_MSG(msg)
 #endif
 
 
@@ -160,7 +220,16 @@
 /**
  * Computes the stride (alignment) of a type.
  *
+ * C/C++ will preferentially read and write members of this type at
+ * memory positions which are multiples of its stride, for instance
+ * when inside structs or function argument lists.
+ *
  * Input must be a type, not a variable as is possible with sizeof.
+ *
+ * @param T a type to be measured
+ * @returns the stride of T
+ *
+ * @see stride_align
  */
 #ifdef __cplusplus
 #define strideof(T) (compiler_strideof<T>::STRIDE)
@@ -181,14 +250,29 @@ struct compiler_strideof {
 #define strideof(T) (sizeof(struct {T x; char c;}) - sizeof(T))
 #endif
 
-/** Aligns a size_t to a multiple of a type's stride, rounding up. */
+/**
+ * Aligns a size_t to a multiple of a type's stride, rounding up.
+ *
+ * @param num the size_t to be aligned
+ * @param T align to the stride of this type
+ * @returns the aligned value
+ *
+ * @see stride_of, stride_align_max
+ **/
 #define stride_align(num, T) \
     (((size_t)(num) + strideof(T) - 1) / strideof(T) * strideof(T))
 
 /** The maximum stride of any object on the platform. */
-#define MAX_STRIDE 16           /* TODO: confirm correct */
+#define MAX_STRIDE 16 /* TODO: confirm correct */
 
-/** Aligns a size_t to a multiple of the maximum stride. */
+/**
+ * Aligns a size_t to a multiple of the maximum stride.
+ *
+ * @param num the number to be aligned
+ * @returns the maximally aligned value
+ *
+ * @see stride_align, stride_of
+ */
 #define stride_align_max(num) \
     (((size_t)(num) + MAX_STRIDE - 1) & ~(size_t)(MAX_STRIDE - 1))
 

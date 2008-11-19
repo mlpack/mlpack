@@ -67,6 +67,11 @@ class ArrayList {
     OT_ALLOC_EXPERT(ptr_, size_, false,
         i, OT_OBJ(ptr_[i]));
   }
+  OT_DEFAULT_CONSTRUCT(ArrayList) {
+    Reset_();
+    OT__BecomeAlias_();
+  }
+
   OT_TRANSIENTS(ArrayList) {
     OT_OBJ(cap_);
   }
@@ -74,6 +79,7 @@ class ArrayList {
     // after copy, array is truncated; also unsets aliasing
     cap_ = size_;
   }
+
   OT_BECOME_ALIAS(ArrayList) {
     cap_ = -1;
   }
@@ -86,16 +92,11 @@ class ArrayList {
   /* Allocates more space; unlikely, so not inlined. */
   void IncreaseCap_(index_t cap);
 
-  /* Convenient one-liner for three assignments. */
-  void Init_(Elem *ptr, index_t size, index_t cap) {
-    ptr_ = ptr;
-    size_ = size;
-    cap_ = cap;
-  }
-
   /* Brings the ArrayList to a default empty state. */
   void Reset_() {
-    Init_(NULL, 0, 0);
+    ptr_ = NULL;
+    size_ = 0;
+    cap_ = 0;
   }
 
  public:
@@ -121,7 +122,9 @@ class ArrayList {
    */
   Elem *InitRaw(index_t size, index_t cap) {
     ARRAYLIST__DEBUG_INIT_OK(this, size, cap);
-    Init_(mem::Alloc<Elem>(size), size, cap);
+    ptr_ = mem::Alloc<Elem>(size);
+    size_ = size;
+    cap_ = cap;
     return ptr_;
   }
   Elem *InitRaw(index_t size) {
@@ -245,7 +248,9 @@ class ArrayList {
    */
   void InitAlias(Elem *ptr, index_t size) {
     DEBUG_INIT_OK(this);
-    Init_(ptr, size, -1);
+    ptr_ = ptr;
+    size_ = size;
+    cap_ = -1;
   }
 
   /**
@@ -284,7 +289,9 @@ class ArrayList {
    */
   void InitSteal(Elem *ptr, index_t size, index_t cap) {
     ARRAYLIST__DEBUG_INIT_OK(this, size, cap);
-    Init_(ptr, size, cap);
+    ptr_ = ptr;
+    size_ = size;
+    cap_ = cap;
   }
   void InitSteal(Elem *ptr, index_t size) {
     InitSteal(ptr, size, size);
@@ -1042,62 +1049,52 @@ class ArrayList {
 
   ////////// Deprecated //////////////////////////////////////////////
 
-  /** Renamed InitCopy */
-  COMPILER_DEPRECATED
+  COMPILER_DEPRECATED_MSG("Renamed InitCopy")
   void Copy(const Elem *src, index_t size) {
     InitCopy(src, size);
   }
-  /** Renamed InitSteal */
-  COMPILER_DEPRECATED
+  COMPILER_DEPRECATED_MSG("Renamed InitSteal")
   void Steal(const Elem *src, index_t size) {
     InitSteal(src, size);
   }
-  /** Renamed InitSteal; other will alias */
-  COMPILER_DEPRECATED
+  COMPILER_DEPRECATED_MSG("Renamed InitSteal; other will alias")
   void Steal(ArrayList *other) {
     InitSteal(other);
     other->Reset_();
   }
 
-  /** Renamed ReleasePtr; will become alias */
-  COMPILER_DEPRECATED
+  COMPILER_DEPRECATED_MSG("Renamed ReleasePtr; will become alias")
   Elem *ReleasePointer() {
     Elem *retval = ReleasePtr();
     Reset_();
     return retval;
   }
-  /** Renamed Renew */
-  COMPILER_DEPRECATED
+  COMPILER_DEPRECATED_MSG("Renamed Renew")
   void Destruct() {
     Renew();
   }
 
-  /** Renamed SizeAtLeast */
-  COMPILER_DEPRECATED
+  COMPILER_DEPRECATED_MSG("Renamed SizeAtLeast")
   void EnsureSizeAtLeast(index_t size) {
     SizeAtLeast(size);
   }
 
-  /** Renamed PushBack; no longer returns pointer */
-  COMPILER_DEPRECATED
+  COMPILER_DEPRECATED_MSG("Renamed PushBack; no longer returns pointer")
   Elem *AddBack(index_t inc = 1) {
     index_t offset = size_;
     PushBack(inc);
     return ptr_ + offset;
   }
-  /** Renamed PushBackRaw */
-  COMPILER_DEPRECATED
+  COMPILER_DEPRECATED_MSG("Renamed PushBackRaw")
   Elem *AddBackUnconstructed(index_t inc = 1) {
     return PushBackRaw(inc);
   }
-  /** Renamed PushBackCopy */
-  COMPILER_DEPRECATED
+  COMPILER_DEPRECATED_MSG("Renamed PushBackCopy")
   Elem *AddBackItem(const Elem &elem) {
     return &PushBackCopy(elem);
   }
 
-  /** Behavior similar to PopBackInit */
-  COMPILER_DEPRECATED
+  COMPILER_DEPRECATED_MSG("Use PopBackInit instead")
   Elem *PopBackPtr() {
     PopBackRaw();
     return end();

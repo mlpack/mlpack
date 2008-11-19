@@ -49,6 +49,11 @@ inline bool OT__DebugModifyOK(T *ot__obj) {
   return !OT__Aliasable(ot__obj) || !OT__IsAlias(ot__obj);
 }
 
+template<typename T>
+inline bool OT__DebugDestructOK(T *ot__obj) {
+  return true;
+}
+
 
 
 template<typename T>
@@ -377,6 +382,10 @@ namespace ot__private {
     }
 
     template<typename T>
+    bool PreStaticArray(T **ptr, index_t len) {
+      return true;
+    }
+    template<typename T>
     bool PreStaticArray(T *ptr, index_t len) {
       if (OT__Shallow(ptr)) {
 	mem::DebugPoison(ptr, len);
@@ -384,10 +393,6 @@ namespace ot__private {
 	mem::Construct(ptr, len);
       }
       return false;
-    }
-    template<typename T>
-    bool PreStaticArray(T **ptr, index_t len) {
-      return true;
     }
     template<typename T>
     void PostStaticArray(T *ptr, index_t len) {}
@@ -457,15 +462,15 @@ namespace ot__private {
     }
 
     template<typename T>
+    bool PreStaticArray(T **ptr, index_t len) {
+      return true;
+    }
+    template<typename T>
     bool PreStaticArray(T *ptr, index_t len) {
       if (OT__Shallow(ptr)) {
 	mem::DebugPoison(ptr, len);
       }
       return false;
-    }
-    template<typename T>
-    bool PreStaticArray(T **ptr, index_t len) {
-      return true;
     }
     template<typename T>
     void PostStaticArray(T *ptr, index_t len) {}
@@ -905,9 +910,9 @@ namespace ot__private {
 
     template<typename T>
     void Obj(T *&ptr) {
-      DEBUG_ONLY(NONFATAL(
-          "Freezing pointer %s as primitive.",
-          typeid(T *).name()));
+      //DEBUG_ONLY(NONFATAL(
+      //    "Freezing pointer %s as primitive.",
+      //    typeid(T *).name()));
     }
     template<typename T>
     void Obj(T &obj) {
@@ -1105,9 +1110,9 @@ namespace ot__private {
       if (OT__NonConstPtr(src)) {
 	return true;
       } else {
-	DEBUG_WARN_MSG_IF(!t_size_only,
-            "Serializing pointer %s as primitive.",
-            typeid(T *).name());
+	//DEBUG_WARN_MSG_IF(!t_size_only,
+        //    "Serializing pointer %s as primitive.",
+        //    typeid(T *).name());
 	Write_(src, len);
 	return false;
       }
@@ -1140,9 +1145,9 @@ namespace ot__private {
 
     template<typename T>
     void Obj(T *&ptr) {
-      DEBUG_WARN_MSG_IF(!t_size_only,
-          "Serializing pointer %s as primitive.",
-          typeid(T *).name());
+      //DEBUG_WARN_MSG_IF(!t_size_only,
+      //    "Serializing pointer %s as primitive.",
+      //    typeid(T *).name());
       Write_(&ptr);
     }
     template<typename T>
