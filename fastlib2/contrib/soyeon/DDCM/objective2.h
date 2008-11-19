@@ -1,18 +1,32 @@
 #include "fastlib/fastlib.h"
 
-class ObjectieTest;
+//class Sampling;
 class Objective {
-friend class ObjectiveTest;
+//friend class Sampling;
  public:
 	//Vector current_parameter;
-  void Init(ArrayList<Matrix> added_first_stage_x, 
-										 ArrayList<Matrix> added_second_stage_x, 
-										 ArrayList<Matrix> added_unknown_x_past, 
-										 ArrayList<index_t> added_first_stage_y,
-										 Vector ind_unknown_x);
-  void ComputeObjective(Vector &current_parameter, double *objective);
-	void ComputeGradient(Vector &current_parameter, Vector *gradient);
-	void ComputeHessian(Vector &current_parameter, Matrix *hessian);
+  /*void Init(ArrayList<Matrix> &added_first_stage_x,
+						ArrayList<Matrix> &added_second_stage_x, 
+						ArrayList<Matrix> &added_unknown_x_past, 
+						ArrayList<index_t> &added_first_stage_y,
+						Vector &ind_unknown_x);
+  */
+	void Init2(Vector &ind_unknown_x);
+	void Init3(int sample_size,
+						ArrayList<Matrix> &added_first_stage_x,
+						ArrayList<Matrix> &added_second_stage_x, 
+						ArrayList<Matrix> &added_unknown_x_past, 
+						ArrayList<index_t> &added_first_stage_y);
+						
+						
+
+	//void Destruct();
+  void ComputeObjective(Vector &current_parameter, 
+										 double *objective);
+	void ComputeGradient(Vector &current_parameter, 
+										 Vector *gradient);
+	void ComputeHessian(Vector &current_parameter, 
+										 Matrix *hessian);
  
  private:
   fx_module *module_;

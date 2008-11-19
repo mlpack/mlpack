@@ -98,7 +98,8 @@ Hessian matrix:
 -0.00108295  -0.00172084  -0.00320945  0.00121945  0.631995
 
 ./test --data1=data1.csv --data2=data2.csv --data3=data3.csv --info1=info1.csv 
-					
+./objective2_test --data1=data1.csv --data2=data2.csv --data3=data3.csv --info1=info1.csv 
+							
 	
 
 
