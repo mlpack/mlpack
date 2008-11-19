@@ -2,9 +2,38 @@
 #include <cmath>
 #include <iostream>
     
-void Objective::Init(fx_module *module) {
-  module_=module;
-  const char *data_file1=fx_param_str_req(module_, "data1");
+void Objective::Init(ArrayList<Matrix> first_stage_x_, 
+										 ArrayList<Matrix> second_stage_x_, 
+										 ArrayList<Matrix> unknown_x_past_, 
+										 ArrayList<index_t> first_stage_y_,
+										 Vector ind_unknown_x_) {
+	num_of_betas_=first_stage_x_[0].n_rows();
+	index_t num_selected_people=first_stage_x_.size();
+
+
+	/*
+	first_stage_x_.Init(num_selected_people);
+	second_stage_x_.Init(num_selected_people);
+
+	
+	first_stage_x_.Copy(added_first_stage_x);
+	//index_t num_selected_people=first_stage_x_.size();
+
+	second_stage_x_.Copy(added_second_stage_x);
+	unknown_x_past_.Copy(added_unknown_x_past);
+	first_stage_y_.Copy(added_first_stage_y);
+	ind_unknown_x_.Copy(ind_unknown_x);
+*/
+
+
+
+
+
+
+//void Objective::Init(fx_module *module) {
+//  module_=module;
+  /*
+	const char *data_file1=fx_param_str_req(module_, "data1");
   const char *info_file1=fx_param_str_req(module_, "info1");
   Matrix x;
   data::Load(data_file1, &x);
@@ -57,6 +86,7 @@ void Objective::Init(fx_module *module) {
     start_col+=(index_t)info1.get(0, i);
   }
 	
+	
 
 	index_t num_selected_people=first_stage_x_.size();
 	
@@ -73,6 +103,7 @@ void Objective::Init(fx_module *module) {
 
 	ind_unknown_x_.Init(1);
 	ind_unknown_x_[0]=3;
+	*/
 
 	exp_betas_times_x1_.Init(num_selected_people);
   exp_betas_times_x2_.Init(num_selected_people);
@@ -435,7 +466,7 @@ double Objective::ComputeTerm2_() {
 double Objective::ComputeTerm3_() {
   double term3=0;
   for(index_t n=0; n<first_stage_x_.size(); n++) {
-    if (second_stage_y_[n]<0) {
+    if (first_stage_y_[n]>0) {
       continue;
     } else {
       DEBUG_ASSERT(postponed_probability_[n]>0);
@@ -472,7 +503,7 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 			//Calculate x^2_{ni}(alpha_l)
 			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
 				int count=0;
-				for(index_t j=ind_unknown_x_[0]; j<=ind_unknown_x_[ind_unknown_x_.size()-1]; j++){
+				for(index_t j=ind_unknown_x_[0]; j<=ind_unknown_x_[ind_unknown_x_.length()-1]; j++){
 					exponential_temp=alpha_temp*first_stage_x_[n].get(j-1, i)
 													+(alpha_temp)*(1-alpha_temp)*unknown_x_past_[n].get(count,0)
 													+(alpha_temp)*pow((1-alpha_temp),2)*unknown_x_past_[n].get(count,1);
@@ -746,7 +777,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
 				//cout<<"i="<<i<<endl;
 				int count=0;
-				for(index_t j=ind_unknown_x_[0]; j<=ind_unknown_x_[ind_unknown_x_.size()-1]; j++){
+				for(index_t j=ind_unknown_x_[0]; j<=ind_unknown_x_[ind_unknown_x_.length()-1]; j++){
 					//cout<<"j="<<j<<endl;
 					
 					exponential_temp=alpha_temp*first_stage_x_[n].get(j-1, i)
@@ -1080,7 +1111,7 @@ void Objective::ComputeDerivativeBetaTerm3_(Vector *beta_term3) {
 	temp2.SetZero();
 
 	for(index_t n=0; n<first_stage_x_.size(); n++){
-		if (second_stage_y_[n]<0) {
+		if (first_stage_y_[n]>0) {
       continue;
     } else {
 			//check
@@ -1122,7 +1153,7 @@ void Objective::ComputeSecondDerivativeBetaTerm3_(Matrix *second_beta_term3) {
 
 
 	for(index_t n=0; n<first_stage_x_.size(); n++){
-		  if (second_stage_y_[n]<0) { 
+		  if (first_stage_y_[n]>0) { 
 				continue;
 			} else {
 				la::Scale( (1/(postponed_probability_[n])), &first_temp);
@@ -1271,7 +1302,7 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
 				
 				int count=0;
-				for(index_t j=ind_unknown_x_[0]; j<=ind_unknown_x_[ind_unknown_x_.size()-1]; j++){
+				for(index_t j=math::RoundInt(ind_unknown_x_[0]); j<=math::RoundInt(ind_unknown_x_[math::RoundInt(ind_unknown_x_.length()-1)]); j++){
 					
 					
 					exponential_temp=alpha_temp*first_stage_x_[n].get(j-1, i)
@@ -1384,7 +1415,7 @@ double Objective::ComputeDerivativePTerm2_() {
 double Objective::ComputeDerivativePTerm3_() {
 	double derivative_p_term3=0;
   for(index_t n=0; n<first_stage_x_.size(); n++) {
-    if (second_stage_y_[n]<0) {
+    if (first_stage_y_[n]>0) {
       continue;
     } else {
       derivative_p_term3+=(sum_first_derivative_p_beta_fn_[n]/(postponed_probability_[n]));
@@ -1413,7 +1444,7 @@ double Objective::ComputeSecondDerivativePTerm2_() {
 double Objective::ComputeSecondDerivativePTerm3_() {
 	double second_derivative_p_term3=0;
   for(index_t n=0; n<first_stage_x_.size(); n++) {
-    if (second_stage_y_[n]<0) {
+    if (first_stage_y_[n]>0) {
       continue;
     } else {
       second_derivative_p_term3+=( sum_second_derivative_p_beta_fn_[n]/(postponed_probability_[n]))
@@ -1442,7 +1473,7 @@ double Objective::ComputeDerivativeQTerm2_() {
 double Objective::ComputeDerivativeQTerm3_() {
 	double derivative_q_term3=0;
   for(index_t n=0; n<first_stage_x_.size(); n++) {
-    if (second_stage_y_[n]<0) {
+    if (first_stage_y_[n]>0) {
       continue;
     } else {
       derivative_q_term3+=(sum_first_derivative_q_beta_fn_[n]/(postponed_probability_[n]));
@@ -1473,7 +1504,7 @@ double Objective::ComputeSecondDerivativeQTerm2_(){
 double Objective::ComputeSecondDerivativeQTerm3_() {
 	double second_derivative_q_term3=0;
   for(index_t n=0; n<first_stage_x_.size(); n++) {
-    if (second_stage_y_[n]<0) {
+    if (first_stage_y_[n]>0) {
       continue;
     } else {
       second_derivative_q_term3+=( sum_second_derivative_q_beta_fn_[n]/(postponed_probability_[n]))
@@ -1552,7 +1583,7 @@ void Objective::ComputeSecondDerivativePBetaTerm3_(Vector *p_beta_term3) {
 
 	//second_derivative_p_beta_term2.SetZero();
 	for(index_t n=0; n<first_stage_x_.size(); n++) {
-    if (second_stage_y_[n]<0) {
+    if (first_stage_y_[n]>0) {
       continue;
     } else {
 			//temp1-first term
@@ -1629,7 +1660,7 @@ void Objective::ComputeSecondDerivativeQBetaTerm3_(Vector *q_beta_term3) {
 
 	//second_derivative_p_beta_term2.SetZero();
 	for(index_t n=0; n<first_stage_x_.size(); n++) {
-    if (second_stage_y_[n]<0) {
+    if (first_stage_y_[n]>0) {
       continue;
     } else {
 			//temp1-first term
@@ -1673,7 +1704,7 @@ double Objective::ComputeSecondDerivativePQTerm2_() {
 double Objective::ComputeSecondDerivativePQTerm3_() {
 	double second_derivative_p_q_term3=0;
   for(index_t n=0; n<first_stage_x_.size(); n++) {
-    if (second_stage_y_[n]<0) {
+    if (first_stage_y_[n]>0) {
       continue;
     } else {
       second_derivative_p_q_term3+=( sum_second_derivative_p_q_beta_fn_[n]/(postponed_probability_[n]))

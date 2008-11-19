@@ -101,9 +101,29 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 
 	ind_unknown_x->Copy(population_ind_unknown_x_);
 
-	cout<<"test"<<endl;
+	
+	if (fx_param_exists(module_, "starting_points")) {
+		const char *initial_parameter_file=fx_param_str_req(module_,"stating_points");
+		Matrix mtx_initial_parameter;
+		data::Load(initial_parameter_file, &mtx_initial_parameter);
+		if(mtx_initial_parameter.n_rows() != x.n_rows()){
+			NOTIFY("The number of starting points given is not same as the number of parameters");
+			NOTIFY("Use default...");
+			initial_parameter->Init(x.n_rows()+2);	//beta+p+q
+			initial_parameter->SetZero();
+		}	//if
+		mtx_initial_parameter.MakeColumnVector(0, initial_parameter);
+	}	//if
+	else {
+		NOTIFY("Starting points are not given. Use default...");
+		initial_parameter->Init(x.n_rows()+2);
+		initial_parameter->SetZero();
 
-	const char *initial_parameter_file=fx_param_str(module_, "stating_points", "default_initial.csv");
+	}
+
+
+
+	//const char *initial_parameter_file=fx_param_str(module_, "stating_points", "default_initial.csv");
 	/*if(initial_parameter_file !=NULL) {
 		Matrix mtx_initial_parameter;
     data::Load(initial_parameter_file, &mtx_initial_parameter);
@@ -115,7 +135,7 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 		initial_parameter->SetZero();
 	}
 	*/
-	Matrix mtx_initial_parameter;
+	/*Matrix mtx_initial_parameter;
   data::Load(initial_parameter_file, &mtx_initial_parameter);
 	if(mtx_initial_parameter.n_rows()==1 && mtx_initial_parameter.get(0,0)==0){
 		NOTIFY("Starting points are not given. Use default...");
@@ -128,9 +148,9 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 	else {
 		mtx_initial_parameter.MakeColumnVector(0, initial_parameter);
 	}
+	*/
 
 
-	cout<<"test2"<<endl;
   double arg_initial_percent_sample=fx_param_double(module_, "initial_percent_sample", 5);
 
 	//Initilize memeber variables
@@ -147,7 +167,7 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 
 
 
-void Sampling::Shuffle_() {
+void Sampling::Shuffle() {
 	//check - can be done in initilization
 	int random =0;
 	for(index_t i=0; i<num_of_people_; i++){
