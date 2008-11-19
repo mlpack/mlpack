@@ -40,11 +40,15 @@ public:
 
   void test_QuicSVD() {
     Matrix A;
-    data::Load("input1.txt", &A);
+    data::Load("input3.txt", &A);
     QuicSVD svd(A, 0.1);
     Vector s;
-    Matrix U, VT;
+    Matrix U, VT, S;
     svd.ComputeSVD(&s, &U, &VT);
+    data::Save("U.txt", U);
+    S.InitDiagonal(s);
+    data::Save("S.txt", S);
+    data::Save("VT.txt", VT);
   }
 
   void run_tests() {
