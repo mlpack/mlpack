@@ -1,109 +1,51 @@
 #include "objective2.h"
 #include <cmath>
-#include <iostream>
+#include <iostream.h>
     
-void Objective::Init(ArrayList<Matrix> first_stage_x_, 
-										 ArrayList<Matrix> second_stage_x_, 
-										 ArrayList<Matrix> unknown_x_past_, 
-										 ArrayList<index_t> first_stage_y_,
-										 Vector ind_unknown_x_) {
-	num_of_betas_=first_stage_x_[0].n_rows();
-	index_t num_selected_people=first_stage_x_.size();
+
+/*
+void Objective::Init(ArrayList<Matrix> &added_first_stage_x, 
+										 ArrayList<Matrix> &added_second_stage_x, 
+										 ArrayList<Matrix> &added_unknown_x_past, 
+										 ArrayList<index_t> &added_first_stage_y,
+										 Vector &ind_unknown_x) {
 
 
-	/*
-	first_stage_x_.Init(num_selected_people);
+	index_t previous_num_selected_people=0;
+	//current_num_selected_people
+	num_of_betas_=added_first_stage_x[0].n_rows();
+	index_t num_selected_people=added_first_stage_x.size();
+
+	
+
+	
+	//first_stage_x_.Init(num_selected_people);
+	//first_stage_x_.PushBackCopy(added_first_stage_x);
+	//for(index_t i=0; i<num_selected_people; i++) {
+    //first_stage_x_[i].Init(added_first_stage_x[i].n_rows(), added_first_stage_x[i].n_cols());
+    //first_stage_x_[i].PushBackCopy(added_first_stage_x[i]);
+    
+  //}
 	second_stage_x_.Init(num_selected_people);
-
-	
-	first_stage_x_.Copy(added_first_stage_x);
-	//index_t num_selected_people=first_stage_x_.size();
-
 	second_stage_x_.Copy(added_second_stage_x);
+
+	
+	unknown_x_past_.Init(num_selected_people);
 	unknown_x_past_.Copy(added_unknown_x_past);
-	first_stage_y_.Copy(added_first_stage_y);
-	ind_unknown_x_.Copy(ind_unknown_x);
-*/
 
-
-
-
-
-
-//void Objective::Init(fx_module *module) {
-//  module_=module;
-  /*
-	const char *data_file1=fx_param_str_req(module_, "data1");
-  const char *info_file1=fx_param_str_req(module_, "info1");
-  Matrix x;
-  data::Load(data_file1, &x);
-  num_of_betas_=x.n_rows();
-  Matrix info1;
-  data::Load(info_file1, &info1);
-  first_stage_x_.Init(info1.n_cols());
-  index_t start_col=0;
-  for(index_t i=0; i<info1.n_cols(); i++) {
-    first_stage_x_[i].Init(x.n_rows(), (index_t)info1.get(0, i));
-    first_stage_x_[i].CopyColumnFromMat(0, start_col, 
-        (index_t)info1.get(0,i), x);
-    start_col+=(index_t)info1.get(0, i);
-  }
-	
-  const char *data_file2=fx_param_str_req(module_, "data2");
-  //const char *info_file2=fx_param_str_req(module_, "info2");
-	//info1==info2
-  x.Destruct();
-	//x.get(1,1);
-  data::Load(data_file2, &x);
-  //Matrix info2;
-  //data::Load(info_file2, &info2);
-  second_stage_x_.Init(info1.n_cols());
-  start_col=0;
-  for(index_t i=0; i<info1.n_cols(); i++) {
-    second_stage_x_[i].Init(x.n_rows(), (index_t)info1.get(0,i));
-	  //second_stage_x_[i].Init(first_stage_x_[0].n_rows(), (index_t)info2.get(0,i));
-	
-		second_stage_x_[i].CopyColumnFromMat(0, 
-        start_col, 
-        (index_t)info1.get(0,i),
-        x);
-    start_col+=(index_t)info1.get(0,i);
-  }
-
-	const char *data_file3=fx_param_str_req(module_, "data3");
-  //const char *info_file3=fx_param_str_req(module_, "info3");
-	//info1==info2==info3
-  x.Destruct();
-  data::Load(data_file3, &x);
-  //Matrix info3;
-  //data::Load(info_file3, &info3);
-  unknown_x_past_.Init(info1.n_cols());
-  start_col=0;
-  for(index_t i=0; i<info1.n_cols(); i++) {
-    unknown_x_past_[i].Init(x.n_rows(), (index_t)info1.get(0,i));
-    unknown_x_past_[i].CopyColumnFromMat(0, start_col, 
-        (index_t)info1.get(0,i), x);
-    start_col+=(index_t)info1.get(0, i);
-  }
-	
-	
-
-	index_t num_selected_people=first_stage_x_.size();
-	
-
-	
-	//Initilize memeber variables
 	first_stage_y_.Init(num_selected_people);
-	first_stage_y_[0]=-1;
-	first_stage_y_[1]=2;
+	first_stage_y_.Copy(added_first_stage_y);
 
-	second_stage_y_.Init(num_selected_people);
-	second_stage_y_[0]=1;
-	second_stage_y_[1]=-1;
+	
+	ind_unknown_x_.Copy(ind_unknown_x);
 
-	ind_unknown_x_.Init(1);
-	ind_unknown_x_[0]=3;
-	*/
+
+
+
+
+
+
+
 
 	exp_betas_times_x1_.Init(num_selected_people);
   exp_betas_times_x2_.Init(num_selected_people);
@@ -180,24 +122,246 @@ void Objective::Init(ArrayList<Matrix> first_stage_x_,
 	
 
 
-
+	//previous_num_selected_people_=current_num_selected_people;
+	//current_num_selected_people
 
 
 	
 }
 
+*/
+
+
+void Objective::Init2(Vector &ind_unknown_x) {
+	first_stage_x_.Init();
+	second_stage_x_.Init();
+	unknown_x_past_.Init();
+	first_stage_y_.Init();
+	ind_unknown_x_.Copy(ind_unknown_x);
+
+	exp_betas_times_x1_.Init();
+  exp_betas_times_x2_.Init();
+	postponed_probability_.Init();
+	//for(index_t i=0; i<postponed_probability_.size(); i++) {
+  //  postponed_probability_[i]=0;
+  //}
+
+	denumerator_beta_function_=0;
+	num_of_t_beta_fn_=0;
+	t_weight_=0;
+	num_of_alphas_=0;
+	alpha_weight_=0;  
+
+	//from here for the gradient
+	first_stage_dot_logit_.Init();
+	first_stage_ddot_logit_.Init();
+
+	/*for(index_t i=0; i<first_stage_dot_logit_.size(); i++) {
+    exp_betas_times_x1_[i]=0;
+		first_stage_dot_logit_[i].Init(first_stage_x_[i].n_cols());
+		first_stage_dot_logit_[i].SetZero();
+		first_stage_ddot_logit_[i].Init(first_stage_x_[i].n_cols(),first_stage_x_[i].n_cols());
+		first_stage_ddot_logit_[i].SetZero();
+
+  }
+	*/
+
+	second_stage_dot_logit_.Init();
+	second_stage_ddot_logit_.Init();
+
+	/*for(index_t i=0; i<second_stage_dot_logit_.size(); i++) {
+    exp_betas_times_x2_[i]=0;
+		second_stage_dot_logit_[i].Init(first_stage_x_[i].n_cols());
+		second_stage_dot_logit_[i].SetZero();
+		second_stage_ddot_logit_[i].Init(first_stage_x_[i].n_cols(),first_stage_x_[i].n_cols());
+		second_stage_ddot_logit_[i].SetZero();
+
+  }
+*/
+	sum_first_derivative_conditional_postpond_prob_.Init();
+	sum_second_derivative_conditional_postpond_prob_.Init();
+
+	/*for(index_t n=0; n<first_stage_x_.size(); n++) {
+		sum_first_derivative_conditional_postpond_prob_[n].Init(num_of_betas_);
+		sum_first_derivative_conditional_postpond_prob_[n].SetZero();
+		sum_second_derivative_conditional_postpond_prob_[n].Init(num_of_betas_, num_of_betas_);
+		sum_second_derivative_conditional_postpond_prob_[n].SetZero();
+
+	}
+	*/
+
+	sum_first_derivative_p_beta_fn_.Init();
+	sum_second_derivative_p_beta_fn_.Init();
+	sum_first_derivative_q_beta_fn_.Init();
+	sum_second_derivative_q_beta_fn_.Init();
+	sum_second_derivative_p_q_beta_fn_.Init();
+	sum_second_derivative_conditionl_postponed_p_.Init();
+	sum_second_derivative_conditionl_postponed_q_.Init();
+
+
+	/*for(index_t i=0; i<first_stage_x_.size(); i++) {
+		sum_first_derivative_p_beta_fn_[i]=0;
+		sum_second_derivative_p_beta_fn_[i]=0;
+		sum_first_derivative_q_beta_fn_[i]=0;
+		sum_second_derivative_q_beta_fn_[i]=0;
+		sum_second_derivative_p_q_beta_fn_[i]=0;
+		sum_second_derivative_conditionl_postponed_p_[i].Init(num_of_betas_);
+		sum_second_derivative_conditionl_postponed_p_[i].SetZero();
+		sum_second_derivative_conditionl_postponed_q_[i].Init(num_of_betas_);
+		sum_second_derivative_conditionl_postponed_q_[i].SetZero();
+
+	}
+	*/
+
+
+
+
+}
+
+
+void Objective::Init3(int sample_size,
+						ArrayList<Matrix> &added_first_stage_x,
+						ArrayList<Matrix> &added_second_stage_x, 
+						ArrayList<Matrix> &added_unknown_x_past, 
+						ArrayList<index_t> &added_first_stage_y) {
+
+	
+	num_of_betas_=added_first_stage_x[0].n_rows();
+	int num_selected_people=added_first_stage_x.size();
+
+	for(index_t i=sample_size; i<num_selected_people; i++){
+		first_stage_x_.PushBackCopy(added_first_stage_x[i]);
+		second_stage_x_.PushBackCopy(added_second_stage_x[i]);
+		unknown_x_past_.PushBackCopy(added_unknown_x_past[i]);
+		first_stage_y_.PushBackCopy(added_first_stage_y[i]);
+
+	}
+	exp_betas_times_x1_.Destruct();
+	exp_betas_times_x1_.Init(num_selected_people);
+
+	exp_betas_times_x2_.Destruct();
+  exp_betas_times_x2_.Init(num_selected_people);
+
+	postponed_probability_.Destruct();
+	postponed_probability_.Init(num_selected_people);
+	for(index_t i=0; i<postponed_probability_.size(); i++) {
+    postponed_probability_[i]=0;
+  }
+
+	//denumerator_beta_function_=0;
+	//num_of_t_beta_fn_=0;
+	//t_weight_=0;
+	//num_of_alphas_=0;
+	//alpha_weight_=0;  
+
+	//from here for the gradient
+	first_stage_dot_logit_.Destruct();
+	first_stage_dot_logit_.Init(num_selected_people);
+	first_stage_ddot_logit_.Destruct();
+	first_stage_ddot_logit_.Init(num_selected_people);
+
+	for(index_t i=0; i<first_stage_dot_logit_.size(); i++) {
+    exp_betas_times_x1_[i]=0;
+		first_stage_dot_logit_[i].Init(first_stage_x_[i].n_cols());
+		first_stage_dot_logit_[i].SetZero();
+		first_stage_ddot_logit_[i].Init(first_stage_x_[i].n_cols(),first_stage_x_[i].n_cols());
+		first_stage_ddot_logit_[i].SetZero();
+
+  }
+	
+	second_stage_dot_logit_.Destruct();
+	second_stage_dot_logit_.Init(num_selected_people);
+	second_stage_ddot_logit_.Destruct();
+	second_stage_ddot_logit_.Init(num_selected_people);
+
+	for(index_t i=0; i<second_stage_dot_logit_.size(); i++) {
+    exp_betas_times_x2_[i]=0;
+		second_stage_dot_logit_[i].Init(first_stage_x_[i].n_cols());
+		second_stage_dot_logit_[i].SetZero();
+		second_stage_ddot_logit_[i].Init(first_stage_x_[i].n_cols(),first_stage_x_[i].n_cols());
+		second_stage_ddot_logit_[i].SetZero();
+
+  }
+	
+	sum_first_derivative_conditional_postpond_prob_.Destruct();
+	sum_first_derivative_conditional_postpond_prob_.Init(num_selected_people);
+	sum_second_derivative_conditional_postpond_prob_.Destruct();
+	sum_second_derivative_conditional_postpond_prob_.Init(num_selected_people);
+
+	for(index_t n=0; n<first_stage_x_.size(); n++) {
+		sum_first_derivative_conditional_postpond_prob_[n].Init(num_of_betas_);
+		sum_first_derivative_conditional_postpond_prob_[n].SetZero();
+		sum_second_derivative_conditional_postpond_prob_[n].Init(num_of_betas_, num_of_betas_);
+		sum_second_derivative_conditional_postpond_prob_[n].SetZero();
+
+	}
+
+	sum_first_derivative_p_beta_fn_.Destruct();
+	sum_second_derivative_p_beta_fn_.Destruct();
+	sum_first_derivative_q_beta_fn_.Destruct();
+	sum_second_derivative_q_beta_fn_.Destruct();
+	sum_second_derivative_p_q_beta_fn_.Destruct();
+	sum_second_derivative_conditionl_postponed_p_.Destruct();
+	sum_second_derivative_conditionl_postponed_q_.Destruct();
+
+
+	sum_first_derivative_p_beta_fn_.Init(num_selected_people);
+	sum_second_derivative_p_beta_fn_.Init(num_selected_people);
+	sum_first_derivative_q_beta_fn_.Init(num_selected_people);
+	sum_second_derivative_q_beta_fn_.Init(num_selected_people);
+	sum_second_derivative_p_q_beta_fn_.Init(num_selected_people);
+	sum_second_derivative_conditionl_postponed_p_.Init(num_selected_people);
+	sum_second_derivative_conditionl_postponed_q_.Init(num_selected_people);
+
+
+	for(index_t i=0; i<first_stage_x_.size(); i++) {
+		sum_first_derivative_p_beta_fn_[i]=0;
+		sum_second_derivative_p_beta_fn_[i]=0;
+		sum_first_derivative_q_beta_fn_[i]=0;
+		sum_second_derivative_q_beta_fn_[i]=0;
+		sum_second_derivative_p_q_beta_fn_[i]=0;
+		sum_second_derivative_conditionl_postponed_p_[i].Init(num_of_betas_);
+		sum_second_derivative_conditionl_postponed_p_[i].SetZero();
+		sum_second_derivative_conditionl_postponed_q_[i].Init(num_of_betas_);
+		sum_second_derivative_conditionl_postponed_q_[i].SetZero();
+
+	}
+
+
+
+
+
+	
+
+	
+	//first_stage_x_.Init(num_select
+}
+
+
 //void Objective::ComputeObjective(Matrix &x, double *objective) {
-void Objective::ComputeObjective(Vector &current_parameter, double *objective) { 
+void Objective::ComputeObjective(Vector &current_parameter, 
+										 double *objective) { 
 	
 	Vector betas;
   //betas.Alias(x.ptr(), x.n_rows());
+	
+	for(index_t i=0; i<current_parameter.length(); i++){
+		cout<<current_parameter[i]<<" ";
+	}
+
+
 	betas.Alias(current_parameter.ptr(), num_of_betas_);
   //double p=first_stage_x_[1].get(0, 0);
   //double q=first_stage_x_[1].get(0, 1);
   double p=current_parameter[num_of_betas_];
 	double q=current_parameter[num_of_betas_+1];
+
 	
 	ComputeExpBetasTimesX1_(betas);
+
+	cout<<"test1"<<endl;
+
+	
 	
   ComputeDeumeratorBetaFunction_(p, q);
 	
@@ -222,7 +386,8 @@ void Objective::ComputeObjective(Vector &current_parameter, double *objective) {
 ////Calculate gradient
 ////////////////////////////////////////////////
 
-void Objective::ComputeGradient(Vector &current_parameter, Vector *gradient) { 
+void Objective::ComputeGradient(Vector &current_parameter, 
+										 Vector *gradient) { 
 	
 	Vector betas;
   //betas.Alias(x.ptr(), x.n_rows());
@@ -298,7 +463,8 @@ void Objective::ComputeGradient(Vector &current_parameter, Vector *gradient) {
 ////Calculate hessian
 ////////////////////////////////////////////////
 
-void Objective::ComputeHessian(Vector &current_parameter, Matrix *hessian) { 
+void Objective::ComputeHessian(Vector &current_parameter, 
+										 Matrix *hessian) { 
 	
 	Vector betas;
   //betas.Alias(x.ptr(), x.n_rows());
