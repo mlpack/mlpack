@@ -52,7 +52,7 @@ class GCCCompiler(CompilerInfo):
   def __init__(self):
     CompilerInfo.__init__(self)
     use_gfortran = True
-    if os.path.exists("/usr/bin/g77"):
+    if not os.path.exists("/usr/bin/gfortran"):
       use_gfortran = False
       print "!!! Using g77.  GFortran will be preferred eventually."
     self.name = "gcc"
@@ -86,6 +86,7 @@ class GCC4Compiler(GCCCompiler):
     self.name = "gcc4"
     self.command_from_ext["c"] = "gcc4 %s -c %s -o %s -Wall";
     self.command_from_ext["cc"] = "g++4 -Wall -Woverloaded-virtual -fno-exceptions -Wparentheses -fno-exceptions %s -c %s -o %s";
+    self.linker = "g++4"
 
 class ICCCompiler(CompilerInfo):
   def __init__(self):
@@ -102,10 +103,10 @@ class ICCCompiler(CompilerInfo):
     }
     self.command_from_ext = {
       "c" : "icc %s -c %s -o %s",
-      "cc" : "icpc %s -c %s -o %s -fno-exceptions",
+      "cc" : "icc %s -c %s -o %s -fno-exceptions",
       "f" : "ifort %s -c %s -o %s -Wall"
     }
-    self.linker = "icpc"
+    self.linker = "icc"
     self.lflags_start = ""
     self.lflags_end = "-lm -lpthread %s" % (self.lflags_fortran)
 
