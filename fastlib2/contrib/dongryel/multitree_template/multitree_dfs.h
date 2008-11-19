@@ -17,8 +17,6 @@ class MultiTreeDepthFirst {
 
   typedef GeneralBinarySpaceTree<DHrectBound<2>, Matrix, typename MultiTreeProblem::MultiTreeReferenceStat > ReferenceTree;
   
-  typedef GeneralBinarySpaceTree<DHrectBound<2>, Matrix, typename MultiTreeProblem::MultiTreeQueryStat > QueryTree;
-  
   typedef GeneralBinarySpaceTree<DHrectBound<2>, Matrix, typename MultiTreeProblem::MultiTreeQueryStat > HybridTree;
 
   ArrayList<Matrix *> targets_;
