@@ -132,12 +132,16 @@ void Objective::Init(ArrayList<Matrix> &added_first_stage_x,
 */
 
 
-void Objective::Init2(Vector &ind_unknown_x) {
+void Objective::Init2(Vector &ind_unknown_x, int count_init2) {
+
+	if(count_init2 ==0) {
 	first_stage_x_.Init();
 	second_stage_x_.Init();
 	unknown_x_past_.Init();
 	first_stage_y_.Init();
 	ind_unknown_x_.Copy(ind_unknown_x);
+	}
+
 
 	exp_betas_times_x1_.Init();
   exp_betas_times_x2_.Init();
@@ -213,7 +217,7 @@ void Objective::Init2(Vector &ind_unknown_x) {
 	}
 	*/
 
-
+	count_init2+=1;
 
 
 }
@@ -345,10 +349,7 @@ void Objective::ComputeObjective(Vector &current_parameter,
 	Vector betas;
   //betas.Alias(x.ptr(), x.n_rows());
 	
-	for(index_t i=0; i<current_parameter.length(); i++){
-		cout<<current_parameter[i]<<" ";
-	}
-
+	
 
 	betas.Alias(current_parameter.ptr(), num_of_betas_);
   //double p=first_stage_x_[1].get(0, 0);
@@ -359,9 +360,6 @@ void Objective::ComputeObjective(Vector &current_parameter,
 	
 	ComputeExpBetasTimesX1_(betas);
 
-	cout<<"test1"<<endl;
-
-	
 	
   ComputeDeumeratorBetaFunction_(p, q);
 	
@@ -475,13 +473,13 @@ void Objective::ComputeHessian(Vector &current_parameter,
 	double q=current_parameter[num_of_betas_+1];
 	
 	
-	ComputeExpBetasTimesX1_(betas);
+	//ComputeExpBetasTimesX1_(betas);
 	
-  ComputeDeumeratorBetaFunction_(p, q);
+  //ComputeDeumeratorBetaFunction_(p, q);
 	
-  ComputePostponedProbability_(betas, 
-                               p, 
-                               q);
+  //ComputePostponedProbability_(betas, 
+  //                             p, 
+  //                             q);
 
 	
 	/*
@@ -496,8 +494,11 @@ void Objective::ComputeHessian(Vector &current_parameter,
 	//cout<<"ddot done"<<endl;
 	ComputeSumDerivativeConditionalPostpondProb_(betas, p, q);
 	//cout<<"sumDerivativeCondPostpondprob done"<<endl;
+	
+	
 	ComputeSumDerivativeBetaFunction_(betas, p, q);
 	//cout<<"SumDerivativeBetaFunction done"<<endl;
+
 	
 
 	Matrix dummy_second_beta_term1;
@@ -510,6 +511,7 @@ void Objective::ComputeHessian(Vector &current_parameter,
 	ComputeSecondDerivativeBetaTerm3_(&dummy_second_beta_term3);
 	
 
+	
 	Vector dummy_p_beta_term1;
 	Vector dummy_p_beta_term2;
 	Vector dummy_p_beta_term3;
@@ -1219,12 +1221,7 @@ void Objective::ComputeSecondDerivativeBetaTerm2_(Matrix *second_beta_term2) {
 	Matrix second_derivative_beta_temp;
 	second_derivative_beta_temp.Init(num_of_betas_, num_of_betas_);
 
-	Matrix matrix_sum_first_derivative_conditional_postpond_prob;
-	//matrix_sum_first_derivative_conditional_postpond_prob.Init(num_of_betas_, 1);
-
-	Matrix tmatrix_sum_first_derivative_conditional_postpond_prob;
-	//tmatrix_sum_first_derivative_conditional_postpond_prob.Init(num_of_betas_, 1);
-
+	
 
 	for(index_t n=0; n<first_stage_x_.size(); n++){
 		  if (first_stage_y_[n]<0) { 
@@ -1233,6 +1230,13 @@ void Objective::ComputeSecondDerivativeBetaTerm2_(Matrix *second_beta_term2) {
 				la::ScaleOverwrite( (1/(1-postponed_probability_[n])), sum_second_derivative_conditional_postpond_prob_[n], &first_temp);
 
 				//handle vector transpose
+
+				Matrix matrix_sum_first_derivative_conditional_postpond_prob;
+				//matrix_sum_first_derivative_conditional_postpond_prob.Init(num_of_betas_, 1);
+
+				Matrix tmatrix_sum_first_derivative_conditional_postpond_prob;
+				//tmatrix_sum_first_derivative_conditional_postpond_prob.Init(num_of_betas_, 1);
+
 				
 				matrix_sum_first_derivative_conditional_postpond_prob.Alias(sum_first_derivative_conditional_postpond_prob_[n].ptr(),
 																																		sum_first_derivative_conditional_postpond_prob_[n].length(),
@@ -1310,14 +1314,7 @@ void Objective::ComputeSecondDerivativeBetaTerm3_(Matrix *second_beta_term3) {
 	Matrix second_derivative_beta_temp;
 	second_derivative_beta_temp.Init(num_of_betas_, num_of_betas_);
 
-	Matrix matrix_sum_first_derivative_conditional_postpond_prob;
-	//matrix_sum_first_derivative_conditional_postpond_prob.Init(num_of_betas_,1);
-
-	Matrix tmatrix_sum_first_derivative_conditional_postpond_prob;
-	//tmatrix_sum_first_derivative_conditional_postpond_prob.Init(num_of_betas_,1);
-
-
-
+	
 	for(index_t n=0; n<first_stage_x_.size(); n++){
 		  if (first_stage_y_[n]>0) { 
 				continue;
@@ -1325,6 +1322,14 @@ void Objective::ComputeSecondDerivativeBetaTerm3_(Matrix *second_beta_term3) {
 				la::Scale( (1/(postponed_probability_[n])), &first_temp);
 	
 				//handle vector transpose
+
+				Matrix matrix_sum_first_derivative_conditional_postpond_prob;
+				//matrix_sum_first_derivative_conditional_postpond_prob.Init(num_of_betas_,1);
+
+				Matrix tmatrix_sum_first_derivative_conditional_postpond_prob;
+				//tmatrix_sum_first_derivative_conditional_postpond_prob.Init(num_of_betas_,1);
+
+
 
 				matrix_sum_first_derivative_conditional_postpond_prob.Alias(sum_first_derivative_conditional_postpond_prob_[n].ptr(),
 																									sum_first_derivative_conditional_postpond_prob_[n].length(),
