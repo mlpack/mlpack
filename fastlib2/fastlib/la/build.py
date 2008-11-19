@@ -132,6 +132,8 @@ def make_blas(sysentry, files, params):
 			compiler = compiler_info.compiler_program("f")
                         if compiler == "gfortran":
                           sysentry.command("cd %s/BLAS && sed -i.backup -e 's/g77/gfortran/' make.inc" % (sq(workspace_dir)))
+                        if compiler == "g77":
+                          sysentry.command("cd %s/BLAS && sed -i.backup -e 's/gfortran/g77/' make.inc" % (sq(workspace_dir)))
 			sysentry.command("echo '*** Compiling  BLAS from netlib.org'")
 			sysentry.command("echo '!!! BLAS WARNING: For better performance, install ATLAS or Intel MKL.'")
 			sysentry.command("echo '... This may take several minutes (about 800 FORTRAN files).'")
@@ -192,8 +194,13 @@ def make_lapack(sysentry, files, params):
 			sysentry.command("echo '... This may take several minutes (about 800 FORTRAN files).'")
                         if compiler == "gfortran":
                           sysentry.command("cd %s/lapack* && sed -i.backup -e 's/g77/gfortran/' make.inc.example" % (sq(workspace_dir)))
+                        if compiler == "g77":
+                          sysentry.command("cd %s/lapack* && sed -i.backup -e 's/gfortran/g77/' make.inc.example" % (sq(workspace_dir)))
                         # This is fixing Bill's problem.
                         sysentry.command("cd %s/lapack* && echo 'TIMER = INT_CPU_TIME' >> make.inc.example" % (sq(workspace_dir)))
+                        # This is fixing the compilation flag to be something other than -g option.
+                        sysentry.command("cd %s/lapack* && echo 'FORTRAN = gfortran -fimplicit-none -O3' >> make.inc.example" % (sq(workspace_dir)))
+                        sysentry.command("cd %s/lapack* && echo 'LOADER = gfortran -O3' >> make.inc.example" % (sq(workspace_dir)))
 			sysentry.command("cd %s/lapack* && mv make.inc.example make.inc" % (sq(workspace_dir)) )
 			sysentry.command("cd %s/lapack* && make lapacklib" % (sq(workspace_dir)))
 			sysentry.command("echo '... Almost done with LAPACK...'")
