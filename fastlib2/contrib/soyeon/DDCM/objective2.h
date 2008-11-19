@@ -11,7 +11,7 @@ class Objective {
 						ArrayList<index_t> &added_first_stage_y,
 						Vector &ind_unknown_x);
   */
-	void Init2(Vector &ind_unknown_x);
+	void Init2(Vector &ind_unknown_x, int count_init2);
 	void Init3(int sample_size,
 						ArrayList<Matrix> &added_first_stage_x,
 						ArrayList<Matrix> &added_second_stage_x, 
@@ -30,8 +30,8 @@ class Objective {
  
  private:
   fx_module *module_;
-	
-  ArrayList<Matrix> first_stage_x_; 
+
+	ArrayList<Matrix> first_stage_x_; 
 	ArrayList<Matrix> second_stage_x_; 
 	//first_stage_x_.size()==second_stage_x_.size()
 	//ArrayList<Matrix> second_stage_x_tilde_; //known attributes
