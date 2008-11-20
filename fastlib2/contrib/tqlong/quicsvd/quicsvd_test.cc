@@ -40,7 +40,7 @@ public:
 
   void test_QuicSVD() {
     Matrix A;
-    data::Load("input3.txt", &A);
+    data::Load("input1.txt", &A);
     QuicSVD svd(A, 0.1);
     Vector s;
     Matrix U, VT, S;

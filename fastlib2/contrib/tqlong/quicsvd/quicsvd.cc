@@ -84,7 +84,7 @@ void QuicSVD::ComputeSVD(Vector* s, Matrix* U, Matrix* VT) {
     
     //ot::Print(curRelErr(), "curRelErr = ", stdout);
   }
-  ot::Print(basis_, "basis", stdout);
+  //ot::Print(basis_, "basis", stdout);
   extractSVD(s, U, VT);
 }
 
@@ -131,7 +131,7 @@ void InverseRowScale(const Vector& s, Matrix* A) {
 }
 
 void QuicSVD::extractSVD(Vector* s, Matrix* U, Matrix* VT) {
-  ot::Print(UTA_, "UTA", stdout);
+  //ot::Print(UTA_, "UTA", stdout);
 
   Matrix UTA2;
   Matrix Uprime, VprimeT;
@@ -148,7 +148,26 @@ void QuicSVD::extractSVD(Vector* s, Matrix* U, Matrix* VT) {
   MulTransCInit(UTA_, Uprime, VT);
   InverseRowScale(*s, VT);
 
-  ot::Print(*U, "U=", stdout);
-  ot::Print(*s, "s=", stdout);
-  ot::Print(*VT, "VT=", stdout);
+  //ot::Print(*U, "U=", stdout);
+  //ot::Print(*s, "s=", stdout);
+  //ot::Print(*VT, "VT=", stdout);
+}
+
+void QuicSVD::SVDInit(const Matrix& A, double targetRelErr,
+		      Vector* s, Matrix* U, Matrix* VT) {
+  // check if we need to transpose A to save some computation
+  bool transpose = A.n_rows() > A.n_cols() * 1.1;
+
+  if (!transpose) {
+    QuicSVD svd(A, targetRelErr);
+    svd.ComputeSVD(s, U, VT);
+  }
+  else {
+    Matrix AT, UT, V;
+    la::TransposeInit(A, &AT);
+    QuicSVD svd(AT, targetRelErr);
+    svd.ComputeSVD(s, &V, &UT);
+    la::TransposeInit(UT, U);
+    la::TransposeInit(V, VT);
+  }
 }

@@ -32,6 +32,9 @@ class QuicSVD {
 
   void ComputeSVD(Vector* s, Matrix* U, Matrix* VT);
 
+  static void SVDInit(const Matrix& A, double targetRelErr,
+		      Vector* s, Matrix* U, Matrix* VT);
+
  private:
   void addBasisFrom(const CosineNode& node);
   double curRelErr();
