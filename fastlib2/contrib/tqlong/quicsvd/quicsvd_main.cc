@@ -1,3 +1,16 @@
+/**
+ * @file quicsvd_main.cc
+ *
+ * This file implements command line interface for the QUIC-SVD
+ * method. It approximate the original matrix by another matrix
+ * with smaller dimension to a certain accuracy degree specified by the 
+ * user and then make SVD decomposition in the projected supspace.
+ *
+ * Run with --help for more usage.
+ * 
+ * @see quicsvd.h
+ */
+
 #include <fastlib/fastlib.h>
 #include "quicsvd.h"
 
@@ -51,12 +64,12 @@ int main(int argc, char* argv[]) {
     S.AliasColVector(s);
     data::Save(fx_param_str(NULL, "s_out", NULL), S);
   }
-  else // use OT to write to standard output
+  else 
     ot::Print(s, "s", stdout);
 
   if (fx_param_exists(NULL, "VT_out"))
     data::Save(fx_param_str(NULL, "VT_out", NULL), VT);
-  else // use OT to write to standard output
+  else 
     ot::Print(VT, "VT", stdout);
 
   fx_done(NULL);
