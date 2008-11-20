@@ -1,16 +1,19 @@
 #include "cosine_tree.h"
 
+// L2 norm of a specific column in a matrix
 double columnNormL2(const Matrix& A, index_t i_col) {
   Vector col;
   A.MakeColumnVector(i_col, &col);
   return la::LengthEuclidean(col);
 }
 
+// Zero tolerance
 #define eps (1e-16)
 bool isZero(double d) {
   return (d<eps) && (d>-eps);
 }
 
+// Init a root cosine node from a matrix
 CosineNode::CosineNode(const Matrix& A) {
   this->A_.Alias(A);
   origIndices_.Init(A_.n_cols());
@@ -27,6 +30,7 @@ CosineNode::CosineNode(const Matrix& A) {
   CalStats();
 }
 
+// Init a child cosine node from its parent and a set of the parent's columns
 CosineNode::CosineNode(CosineNode& parent, 
 		       const ArrayList<int>& indices, bool isLeft) {
   A_.Alias(parent.A_);
@@ -76,13 +80,17 @@ void CosineNode::CalCosines(const Vector& center,
 			    ArrayList<double>* cosines) {
   cosines->Init(n_cols());
   double centerL2 = la::LengthEuclidean(center);
-  for (index_t i_col = 0; i_col < n_cols(); i_col++) {
-    Vector col;
-    GetColumn(i_col, &col);
-    double numerator = la::Dot(center, col);
-    double denominator = centerL2 * norms_[i_col];
-    (*cosines)[i_col] = (isZero(denominator)) ? 2:numerator/denominator;
-  }
+  for (index_t i_col = 0; i_col < n_cols(); i_col++) 
+    // if col is a zero vector then push it to the left node
+    if (isZero(norms_[i_col]))
+      (*cosines)[i_col] = 2;
+    else {
+      Vector col;
+      GetColumn(i_col, &col);
+      double numerator = la::Dot(center, col);
+      double denominator = centerL2 * norms_[i_col];
+      (*cosines)[i_col] = numerator/denominator;
+    }
 }
 
 void CosineNode::CreateIndices(ArrayList<int>* indices) {
@@ -91,6 +99,7 @@ void CosineNode::CreateIndices(ArrayList<int>* indices) {
     (*indices)[i_col] = i_col;
 }
 
+// Quicksort partitioning procedure
 index_t qpartition(ArrayList<double>& key, ArrayList<int>& data,
 		index_t left, index_t right) {
   index_t j = left;
@@ -106,6 +115,8 @@ index_t qpartition(ArrayList<double>& key, ArrayList<int>& data,
   return j;
 }
 
+
+// Quicksort on the cosine values
 void qsort(ArrayList<double>& key, ArrayList<int>& data,
 	   index_t left, index_t right) {
   if (left >= right) return;
@@ -118,15 +129,18 @@ void Sort(ArrayList<double>& key, ArrayList<int>& data) {
   qsort(key, data, 0, key.size()-1);
 }
 
+// Calculate the split point where the cosines values are closer
+// to the minimum cosine value than the maximum cosine value
 index_t calSplitPoint(const ArrayList<double>& key) {
   double leftKey = key[0];
   double rightKey = key[key.size()-1];
   index_t i = 0;
-  while (leftKey - key[i] < key[i] - rightKey && i < key.size()) i++;
+  while (leftKey - key[i] <= key[i] - rightKey && i < key.size()) i++;
   //printf("i = %d\n", i);
   return i;
 }
 
+// Init a subcopy of an array list
 void InitSubCopy(const ArrayList<int>& src, index_t pos, index_t size,
 		 ArrayList<int>* dst) {
   dst->Init(size);
@@ -134,12 +148,18 @@ void InitSubCopy(const ArrayList<int>& src, index_t pos, index_t size,
     (*dst)[i] = src[pos+i];
 }
 
+// Split the indices at the split point
 void splitIndices(ArrayList<int>& indices, int leftSize,
 		  ArrayList<int>* leftIdx, ArrayList<int>* rightIdx) {
   InitSubCopy(indices, 0, leftSize, leftIdx);
   InitSubCopy(indices, leftSize, indices.size()-leftSize, rightIdx);
 }
 
+// Split a cosine tree node by choose a random center, and sort
+// the cosine values decreasingly, then choose a split point
+// by calling calSplitPoint()
+// This procedure won't split a node if either child has the same
+// set of columns as the parent
 void CosineNode::Split() {
   if (n_cols() < 2) return;
   Vector center;
