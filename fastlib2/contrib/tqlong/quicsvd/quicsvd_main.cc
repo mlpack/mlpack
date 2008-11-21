@@ -29,6 +29,8 @@ const fx_entry_doc quicsvd_main_entries[] = {
    " time to run the QUIC-SVD algorithm.\n"},
   {"lasvd_time", FX_TIMER, FX_CUSTOM, NULL,
    " time to run the SVD algorithm from LAPACK.\n"},
+  {"actualErr", FX_RESULT, FX_DOUBLE, NULL,
+   " actual relative norm error.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -52,6 +54,7 @@ int main(int argc, char* argv[]) {
   const char* A_in = fx_param_str(NULL, "A_in", NULL);
 
   printf("Loading data ... ");
+  fflush(stdout);
   data::Load(A_in, &A);
   printf("done.\n");
 
@@ -62,7 +65,7 @@ int main(int argc, char* argv[]) {
   fflush(stdout);
   fx_timer_start(NULL, "quicsvd_time");
   // call the QUIC-SVD method
-  QuicSVD::SVDInit(A, targetRelErr, &s, &U, &VT);
+  double actualErr = QuicSVD::SVDInit(A, targetRelErr, &s, &U, &VT);
   fx_timer_stop(NULL, "quicsvd_time");
   printf("stop.\n");
   
@@ -83,6 +86,8 @@ int main(int argc, char* argv[]) {
     data::Save(fx_param_str(NULL, "VT_out", NULL), VT);
   else 
     ot::Print(VT, "VT", stdout);
+
+  fx_result_double(NULL, "actualErr", actualErr);
 
   s.Destruct();
   U.Destruct();

@@ -197,7 +197,7 @@ void QuicSVD::extractSVD(Vector* s, Matrix* U, Matrix* VT) {
 
 // Init matrices by Singular Value Decomposition, 
 // mimic la::SVDInit(A, s, U, VT) interface
-void QuicSVD::SVDInit(const Matrix& A, double targetRelErr,
+double QuicSVD::SVDInit(const Matrix& A, double targetRelErr,
 		      Vector* s, Matrix* U, Matrix* VT) {
   // check if we need to transpose A to save some computation
   bool transpose = A.n_rows() > A.n_cols() * 1.1;
@@ -205,6 +205,7 @@ void QuicSVD::SVDInit(const Matrix& A, double targetRelErr,
   if (!transpose) {
     QuicSVD svd(A, targetRelErr);
     svd.ComputeSVD(s, U, VT);
+    return svd.curRelErr();
   }
   else {
     Matrix AT, UT, V;
@@ -213,5 +214,6 @@ void QuicSVD::SVDInit(const Matrix& A, double targetRelErr,
     svd.ComputeSVD(s, &V, &UT);
     la::TransposeInit(UT, U);
     la::TransposeInit(V, VT);
+    return svd.curRelErr();
   }
 }
