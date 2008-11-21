@@ -26,7 +26,9 @@ const fx_entry_doc quicsvd_main_entries[] = {
   {"VT_out", FX_PARAM, FX_STR, NULL,
    " File to hold matrix VT (V transposed).\n"},
   {"quicsvd_time", FX_TIMER, FX_CUSTOM, NULL,
-   " time to run the algorithm.\n"},
+   " time to run the QUIC-SVD algorithm.\n"},
+  {"lasvd_time", FX_TIMER, FX_CUSTOM, NULL,
+   " time to run the SVD algorithm from LAPACK.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -48,15 +50,20 @@ int main(int argc, char* argv[]) {
 
   // parse input file to get matrix A
   const char* A_in = fx_param_str(NULL, "A_in", NULL);
+
+  printf("Loading data ... ");
   data::Load(A_in, &A);
+  printf("done.\n");
 
   // parse target relative error, default = 0.1
   const double targetRelErr = fx_param_double(NULL, "relErr", 0.1);
 
+  printf("QUIC-SVD start ... ");
   fx_timer_start(NULL, "quicsvd_time");
   // call the QUIC-SVD method
   QuicSVD::SVDInit(A, targetRelErr, &s, &U, &VT);
   fx_timer_stop(NULL, "quicsvd_time");
+  printf("stop.\n");
   
   if (fx_param_exists(NULL, "U_out"))
     data::Save(fx_param_str(NULL, "U_out", NULL), U);
@@ -75,6 +82,16 @@ int main(int argc, char* argv[]) {
     data::Save(fx_param_str(NULL, "VT_out", NULL), VT);
   else 
     ot::Print(VT, "VT", stdout);
+
+  s.Destruct();
+  U.Destruct();
+  VT.Destruct();
+  printf("LAPACK-SVD start ... ");
+  fx_timer_start(NULL, "lasvd_time");
+  // call the QUIC-SVD method
+  la::SVDInit(A, &s, &U, &VT);
+  fx_timer_stop(NULL, "lasvd_time");
+  printf("stop.\n");
 
   fx_done(NULL);
 }
