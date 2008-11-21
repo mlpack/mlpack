@@ -18,7 +18,7 @@ const fx_entry_doc quicsvd_main_entries[] = {
   {"A_in", FX_REQUIRED, FX_STR, NULL,
    " File consists of matrix A to be decomposed A = U S VT. \n"},
   {"relErr", FX_PARAM, FX_DOUBLE, NULL,
-   " Target relative error |A-A'|/|A|, default = 0.1.\n"},
+   " Target relative error |A|-|A'|/|A|, default = 0.1.\n"},
   {"U_out", FX_PARAM, FX_STR, NULL,
    " File to hold matrix U.\n"},
   {"s_out", FX_PARAM, FX_STR, NULL,
