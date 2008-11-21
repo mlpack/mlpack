@@ -51,8 +51,10 @@ int main(int argc, char* argv[]) {
   // parse target relative error, default = 0.1
   const double targetRelErr = fx_param_double(NULL, "relErr", 0.1);
 
+  fx_timer_start(NULL, "quicsvd");
   // call the QUIC-SVD method
   QuicSVD::SVDInit(A, targetRelErr, &s, &U, &VT);
+  fx_timer_stop(NULL, "quicsvd");
   
   if (fx_param_exists(NULL, "U_out"))
     data::Save(fx_param_str(NULL, "U_out", NULL), U);
