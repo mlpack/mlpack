@@ -59,6 +59,7 @@ int main(int argc, char* argv[]) {
   const double targetRelErr = fx_param_double(NULL, "relErr", 0.1);
 
   printf("QUIC-SVD start ... ");
+  fflush(stdout);
   fx_timer_start(NULL, "quicsvd_time");
   // call the QUIC-SVD method
   QuicSVD::SVDInit(A, targetRelErr, &s, &U, &VT);
@@ -87,6 +88,7 @@ int main(int argc, char* argv[]) {
   U.Destruct();
   VT.Destruct();
   printf("LAPACK-SVD start ... ");
+  fflush(stdout);
   fx_timer_start(NULL, "lasvd_time");
   // call the QUIC-SVD method
   la::SVDInit(A, &s, &U, &VT);
