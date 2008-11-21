@@ -122,6 +122,44 @@ int main (int argc, char *argv[]) {
     fx_timer_start(ann_module, "approx");
     approx_nn.ComputeApprox(&apc, &dia);
     fx_timer_stop(ann_module, "approx");
+
+    double epsilon
+      = fx_param_double_req(ann_module, "epsilon");
+    index_t rank_error
+      = (index_t) (epsilon * (double) rdata.n_cols()
+		   / 100);
+    double alpha
+      = fx_param_double_req(ann_module, "alpha");
+
+    ArrayList<index_t> rank_errors;
+    ArrayList<double> true_dist;
+    find_rank_dist(qdata, rdata, &apc, &dia,
+		   &rank_errors, &true_dist);
+
+    // computing average rank error
+    // and probability of failure
+    index_t re = 0, failed = 0;
+    for (index_t i = 0; i < rank_errors.size(); i++) {
+      if (rank_errors[i] > rank_error) {
+	failed++;
+      }
+      re += rank_errors[i];
+    }
+    double avg_rank = (double) re / (double) qdata.n_cols();
+    double success_prob = (double) (qdata.n_cols() - re)
+      / (double) qdata.n_cols();
+
+    // computing average distance error
+    double de = 0.0;
+    for (index_t i = 0; i < true_dist.size(); ++i) {
+      de += (dia[i] - true_dist[i])/true_dist[i];
+    }
+    double avg_de = de / (double) qdate.n_cols();
+    NOTIFY("True rank error: %"LI"d, Success Prob = %lf",
+	   rank_error, alpha);
+
+    NOTIFY("Avg Rank: %lf, success prob = %lf, Avg de = %lf",
+	   avg_rank, success_prob, avg_de);
   }
   
   //  count_mismatched_neighbors(&exc, &die, &apc, &dia);
@@ -165,4 +203,48 @@ void count_mismatched_neighbors(ArrayList<index_t> *a,
     }
   }
   NOTIFY("%"LI"d/%"LI"d errors", count_mismatched, a->size());
+}
+
+void find_rank_dist(Matrix &query, Matrix &reference,
+		    ArrayList<index_t> *in,
+		    ArrayList<double> *dist,
+		    ArrayList<index_t> *rank_error,
+		    ArrayList<double> *true_nn_dist) {
+
+  DEBUG_SAME_SIZE(in->size(), dist->size());
+  DEBUG_SAME_SIZE(in->size(), query.n_cols());
+  // initialize the rank and dist error vector
+  rank_error->Init(in->size());
+  true_nn_dist->Init(in->size());
+
+  // Looping over the queries
+  for (index_t i = 0; i < query.n_cols(); i++) {
+    Vector q;
+    query.MakeColumnVector(i, &q);
+
+    double present_dist = (*dist)[i],
+      best_dist = (*dist)[i];
+
+    index_t rank = 0;
+
+    // Looping over the references
+    for (index_t j = 0; j < reference.n_cols(); j++) {
+      Vector r;
+      reference.MakeColumnVector(j, &r);
+
+      double this_dist = la::DistanceSqEuclidean(q, r);
+      if (this_dist < present_dist) {
+	rank++;
+      }
+      if (this_dist < best_dist) {
+	best_dist = this_dist;
+      }
+    }
+
+    // The actual rank error
+    (*rank_error)[i] = rank;
+
+    // The true nearest neighbor dist
+    (*true_nn_error)[i] = best_dist;
+  }
 }
