@@ -76,8 +76,10 @@ class QuicSVD {
   /** Static method to compute the QUIC-SVD directly from
    *  the original matrix and a specified relative error.
    *  It mimics the same syntax of la::SVDInit(A, s, U, VT)
+   *
+   *  Return: actual relative norm difference
    */
-  static void SVDInit(const Matrix& A, double targetRelErr,
+  static double SVDInit(const Matrix& A, double targetRelErr,
 		      Vector* s, Matrix* U, Matrix* VT);
 
  private:
