@@ -25,6 +25,8 @@ const fx_entry_doc quicsvd_main_entries[] = {
    " File to hold the singular values vector s.\n"},
   {"VT_out", FX_PARAM, FX_STR, NULL,
    " File to hold matrix VT (V transposed).\n"},
+  {"quicsvd_time", FX_TIMER, FX_CUSTOM, NULL,
+   " time to run the algorithm.\n"},
   FX_ENTRY_DOC_DONE
 };
 
