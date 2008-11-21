@@ -277,7 +277,7 @@ class NaiveKde {
 
       if(isnan(density_estimates[q]) || isinf(density_estimates[q]) || 
 	 isnan(densities_[q]) || isinf(densities_[q])) {
-	VERBOSE_MSG("Warning: Got infs or nans!\n");
+	VERBOSE_MSG(0,"Warning: Got infs or nans!\n");
       }
 
       if(rel_err > max_rel_err) {

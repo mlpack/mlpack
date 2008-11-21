@@ -50,30 +50,42 @@ class Thread {
   
  public:
   Thread() {
+#ifdef DEBUG
     DEBUG_ONLY(status_ = UNINIT);
+#endif
   }
   ~Thread() {
+#ifdef DEBUG
     DEBUG_ASSERT(status_ == DETACHED || status_ == READY || status_ == DONE || status_ == UNINIT);
     DEBUG_ONLY(status_ = UNINIT);
+#endif
   }
   
   /**
    * Initializes, given a task to run.
    */
   void Init(Task* task_in) {
+#ifdef DEBUG
     DEBUG_ASSERT(status_ == UNINIT);
+#endif
     task_ = task_in;
+#ifdef DEBUG
     DEBUG_ONLY(status_ = READY);
+#endif
   }
   
   /**
    * Starts the thread running.
    */
   void Start() {
+#ifdef DEBUG
     DEBUG_ASSERT(status_ == READY);
+#endif
     pthread_create(&thread_, NULL,
         ThreadMain_, reinterpret_cast<void*>(this));
+#ifdef DEBUG
     DEBUG_ONLY(status_ = ATTACHED);
+#endif
   }
   
   /**
@@ -88,7 +100,9 @@ class Thread {
     pthread_attr_t tattr;
     sched_param param;
 
+#ifdef DEBUG
     DEBUG_ASSERT(status_ == READY);
+#endif
     pthread_attr_init(&tattr);
     pthread_attr_getschedparam(&tattr, &param);
     param.sched_priority = prio;
@@ -96,7 +110,9 @@ class Thread {
     pthread_create(&thread_, &tattr,
         ThreadMain_, reinterpret_cast<void*>(this));
     pthread_attr_destroy(&tattr);
+#ifdef DEBUG
     DEBUG_ONLY(status_ = ATTACHED);
+#endif
   }
   
   /**
@@ -104,9 +120,13 @@ class Thread {
    * completes.  You may not call WaitStop on this thread afterwards.
    */
   void Detach() {
+#ifdef DEBUG
     DEBUG_ASSERT(status_ == ATTACHED);
+#endif
     pthread_detach(thread_);
+#ifdef DEBUG
     DEBUG_ONLY(status_ = DETACHED);
+#endif
   }
   
   /**
@@ -115,9 +135,13 @@ class Thread {
    * Failure to do this may cause your program to hang when it is done.
    */
   void WaitStop() {
+#ifdef DEBUG
     DEBUG_ASSERT(status_ == ATTACHED);
+#endif
     pthread_join(thread_, NULL);
+#ifdef DEBUG
     DEBUG_ONLY(status_ = DONE);
+#endif
   }
   
   /**

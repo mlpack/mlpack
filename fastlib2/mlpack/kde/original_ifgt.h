@@ -570,14 +570,14 @@ class OriginalIFGT {
     // This is the upper limit on the number of clusters.
     int cluster_limit = (int) ceilf(20.0 * sqrt(dim_) / sqrt(bandwidth_));
     
-    VERBOSE_MSG("Automatic parameter selection phase...\n");
+    VERBOSE_MSG(0,"Automatic parameter selection phase...\n");
 
     printf("Preprocessing phase for the original IFGT...\n");
 
     fx_timer_start(module_, "ifgt_kde_preprocess");
     IFGTChooseParameters_(cluster_limit);
-    VERBOSE_MSG("Chose %d clusters...\n", num_cluster_desired_);
-    VERBOSE_MSG("Tentatively chose %d truncation order...\n", pterms_);
+    VERBOSE_MSG(0,"Chose %d clusters...\n", num_cluster_desired_);
+    VERBOSE_MSG(0,"Tentatively chose %d truncation order...\n", pterms_);
 
     // Allocate spaces for storing coefficients and clustering information.
     cluster_centers_.Init(dim_, num_cluster_desired_);
@@ -586,7 +586,7 @@ class OriginalIFGT {
     cluster_radii_.Init(num_cluster_desired_);
     num_reference_points_in_cluster_.Init(num_cluster_desired_);    
     
-    VERBOSE_MSG("Now clustering...\n");
+    VERBOSE_MSG(0,"Now clustering...\n");
 
     // Divide the source space into num_cluster_desired_ parts using
     // K-center algorithm
@@ -603,15 +603,15 @@ class OriginalIFGT {
     weighted_coeffs_.Init(total_num_coeffs_, num_cluster_desired_);
     unweighted_coeffs_.Init(total_num_coeffs_, num_cluster_desired_);
 
-    VERBOSE_MSG("Maximum radius generated in the cluster: %g...\n",
+    VERBOSE_MSG(0,"Maximum radius generated in the cluster: %g...\n",
 		max_radius_cluster_);
-    VERBOSE_MSG("Truncation order updated to %d after clustering...\n", 
+    VERBOSE_MSG(0,"Truncation order updated to %d after clustering...\n", 
 		pterms_);
 
     // Compute coefficients.    
-    VERBOSE_MSG("Now computing Taylor coefficients...\n");
+    VERBOSE_MSG(0,"Now computing Taylor coefficients...\n");
     TaylorExpansion();
-    VERBOSE_MSG("Taylor coefficient computation finished...\n");
+    VERBOSE_MSG(0,"Taylor coefficient computation finished...\n");
     fx_timer_stop(module_, "ifgt_kde_preprocess");
     printf("Preprocessing step finished...\n");
   }
