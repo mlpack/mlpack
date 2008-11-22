@@ -119,6 +119,15 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 		NOTIFY("Number of parameters is %d", num_of_betas+2);
 		initial_parameter->Init(num_of_betas+2);
 		initial_parameter->SetZero();
+		(*initial_parameter)[num_of_betas]=2;
+		(*initial_parameter)[num_of_betas+1]=2;
+
+		cout<<"Starting points are:   ";
+		for(index_t i=0; i<initial_parameter->length(); i++){
+			cout<<(*initial_parameter)[i]<<" ";
+		}
+		cout<<endl;
+
 		//initial_parameter[num_or_betas]->2;
 		//initial_parameter[num_or_betas+1]->2;
 
