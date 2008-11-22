@@ -1,7 +1,9 @@
 #include "sampling.h"
 #include "objective2.h"
 #include "optimization.h"
-#include <iostream.h>
+#include <iostream>
+
+using namespace std;
 
 /*class DDCMTest {
 public:
@@ -79,7 +81,7 @@ int main(int argc, char *argv[]) {
 
 		
 		sampling_count+=1;
-		cout<<"sampling_count="<<sampling_count<<endl;
+		std::cout<<"sampling_count="<<sampling_count<<endl;
 		sampling.ExpandSubset(current_percent_added_sample, &current_added_first_stage_x,
 					&current_added_second_stage_x, &current_added_unknown_x_past, 
 					&current_added_first_stage_y);
@@ -101,12 +103,12 @@ int main(int argc, char *argv[]) {
 		//gradient.Init(num_of_betas_);
 		objective.ComputeGradient(current_parameter, &current_gradient);
 		//printf("The objective is %g", dummy_objective);
-		cout<<"Gradient vector: ";
+		std::cout<<"Gradient vector: ";
 		for (index_t i=0; i<current_gradient.length(); i++)
 		{
-			cout<<current_gradient[i]<<" ";
+			std::cout<<current_gradient[i]<<" ";
 		}
-		cout<<endl;
+		std::cout<<endl;
 		
 		NOTIFY("Gradient calculation ends");
 		
@@ -173,13 +175,8 @@ int main(int argc, char *argv[]) {
 
 	}
 	cout<<"Total_sampling_count="<<sampling_count<<endl;
-	
 
-  
-
-
-
-  
+ 
   fx_done(module);
 }
 

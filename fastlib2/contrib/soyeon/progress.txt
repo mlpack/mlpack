@@ -109,7 +109,7 @@ Hessian matrix:
 				
 				
 /test --data1=data1.csv --data2=data2.csv --data3=data3.csv --info1=info1.csv 
-					
+./main --data1=data1.csv --data2=data2.csv --data3=data3.csv --info1=info1.csv --info_y=info_y.csv --info_ind_unknown_x=info_unknown_x.csv --initial_percent_sample=50					
 				
 				
  				
