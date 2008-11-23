@@ -241,8 +241,8 @@ void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *adde
 	} else {
 		num_added_sample=math::RoundInt((num_of_selected_sample_)*(percent_added_sample)/100);
 	}
-
-	if(num_added_sample==0) {
+	
+	if(num_added_sample==0 && num_of_selected_sample_!=num_of_people_) {
 			NOTIFY("number of sample to add is zero. start with Two samples.");
 			num_added_sample=2;
 	}	//if
@@ -265,7 +265,7 @@ void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *adde
 			added_first_stage_y->PushBackCopy(population_first_stage_y_[shuffled_array_[i]]);
 		}		//i	
 		num_of_selected_sample_=num_of_people_;
-		NOTIFY("All data are used");
+		//NOTIFY("All data are used");
 		
 	} else {
 		for(index_t i=num_of_selected_sample_; i<(num_of_selected_sample_+num_added_sample); i++){
@@ -283,10 +283,18 @@ void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *adde
       added_first_stage_x->size(), num_added_sample);
 */
 
-	count_num_sampling_+=1;
-	NOTIFY("Extend subset (%d)", count_num_sampling_);
-	cout<<"num_added_sample="<<num_added_sample<<endl;
 	
+	//cout<<"num_added_sample="<<num_added_sample<<endl;
+	if(num_of_selected_sample_!=num_of_people_){
+		count_num_sampling_+=1;
+		NOTIFY("Extend subset (%d)", count_num_sampling_);
+		NOTIFY("Add %d sample(s)", num_added_sample);
+	}
+
+
+
+		
+			
 	
 }
 

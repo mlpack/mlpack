@@ -600,6 +600,49 @@ void Objective::ComputeHessian(Vector &current_parameter,
 												
 }
 
+void Objective::ComputeChoiceProbability(Vector &current_parameter, 
+																				 Vector *choice_probability) {
+
+	Vector betas;
+  //betas.Alias(x.ptr(), x.n_rows());
+	
+	
+
+	betas.Alias(current_parameter.ptr(), num_of_betas_);
+  //double p=first_stage_x_[1].get(0, 0);
+  //double q=first_stage_x_[1].get(0, 1);
+  double p=current_parameter[num_of_betas_];
+	double q=current_parameter[num_of_betas_+1];
+
+	choice_probability->Init(first_stage_x_.size());
+
+	
+	ComputeExpBetasTimesX1_(betas);
+
+	
+  ComputeDeumeratorBetaFunction_(p, q);
+	
+  ComputePostponedProbability_(betas, 
+                               p, 
+                               q);
+
+	for(index_t n=0; n<first_stage_x_.size(); n++) {
+    if (first_stage_y_[n]<0) { 
+			(*choice_probability)[n]=postponed_probability_[n];
+      
+    } else {
+      Vector temp;
+      first_stage_x_[n].MakeColumnVector(first_stage_y_[n], &temp);
+			(*choice_probability)[n]=exp(la::Dot(betas, temp))/exp_betas_times_x1_[n];
+			
+		}
+  }
+
+
+}
+
+
+
 ///////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
 

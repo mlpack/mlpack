@@ -27,6 +27,8 @@ class Objective {
 										 Vector *gradient);
 	void ComputeHessian(Vector &current_parameter, 
 										 Matrix *hessian);
+	void ComputeChoiceProbability(Vector &current_parameter, 
+																				 Vector *choice_probability);
  
  private:
   fx_module *module_;
