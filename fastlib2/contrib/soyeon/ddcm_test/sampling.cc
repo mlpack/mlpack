@@ -119,8 +119,8 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 		NOTIFY("Number of parameters is %d", num_of_betas+2);
 		initial_parameter->Init(num_of_betas+2);
 		initial_parameter->SetZero();
-		(*initial_parameter)[num_of_betas]=2;
-		(*initial_parameter)[num_of_betas+1]=2;
+		(*initial_parameter)[num_of_betas]=1e-6;
+		(*initial_parameter)[num_of_betas+1]=1e-9;
 
 		cout<<"Starting points are:   ";
 		for(index_t i=0; i<initial_parameter->length(); i++){
@@ -282,7 +282,6 @@ void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *adde
       "Size of added first stage x is not same as number of added sample %i != %i",
       added_first_stage_x->size(), num_added_sample);
 */
-
 	
 	//cout<<"num_added_sample="<<num_added_sample<<endl;
 	if(num_of_selected_sample_!=num_of_people_){

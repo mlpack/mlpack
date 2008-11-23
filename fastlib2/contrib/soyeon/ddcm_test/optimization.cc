@@ -160,7 +160,8 @@ void Optimization::ComputeSteihaugDirection(double radius,
 																Vector &gradient,
 																Matrix &hessian,
 																Vector *p,
-																double *delta_m) {
+																double *delta_m
+																) {
 	//"Numerical optimization" p.171 CG-Steihaug
 	//Truncated conjugated gradient algorithm implementation
 	//"Trust_Region Methods", pp. 202-207
@@ -308,9 +309,83 @@ void Optimization::TrustRadiusUpdate(double rho, double p_norm,
 }
 
 
+void Optimization::ComputeDerectionUnderConstraints(double radius, 
+																					Vector &gradient,
+																					Matrix &hessian,
+																					Vector &current_parameter,
+																					Vector *p,
+																					double *delta_m,
+																					Vector *next_parameter,
+																					double *new_radius) {
+
+		double constraints_check=1;
+		Vector candidate_p;
+		double candidate_delta_m;
+		Vector candidate_next_parameter;
+		candidate_next_parameter.Init(current_parameter.length());
+
+		double candidate_radius=radius;
+		while(constraints_check>0){
+
+		
+		ComputeDoglegDirection(candidate_radius, gradient, hessian, &candidate_p, &candidate_delta_m);
+		//double p_norm=0;
+				
+
+			
+			//cout<<"p="<<" ";
+			//for(index_t i=0; i<current_p.length(); i++){
+			//	cout<<current_p[i]<<" ";
+			//}
+			//cout<<endl;
+			
+			//cout<<"delta_m="<<candidate_delta_m<<endl;
+
+			
+			la::AddOverwrite(candidate_p, current_parameter, &candidate_next_parameter);
+
+			if( candidate_next_parameter[candidate_next_parameter.length()-2]>0 && 
+				candidate_next_parameter[candidate_next_parameter.length()-1]>0 ) {
+				NOTIFY("Satisfy Constraints");
+				p->Copy(candidate_p);
+				next_parameter->Copy(candidate_next_parameter);
+				(*delta_m)=candidate_delta_m;
+				(*new_radius)=candidate_radius;
+				constraints_check=-1;
+
+			}
+			else{
+			cout<<"bed_new_parameter=";
+			for(index_t i=0; i<candidate_next_parameter.length(); i++){
+				cout<<candidate_next_parameter[i]<<" ";
+			}
+			cout<<endl;
+				
+			NOTIFY("Constraint Violation...Shrink Trust region Radius...");
+			(candidate_radius)=0.5*candidate_radius;
+			}
+			/*
+			NOTIFY("Projection");
+			if(next_parameter[next_parameter.length()-2]<=0) {
+				NOTIFY("p is negative");
+				next_parameter[next_parameter.length()-2]=0;
+			}
+			else if(next_parameter[next_parameter.length()-1]<=0) {
+				NOTIFY("q is negative");
+				next_parameter[next_parameter.length()-1]=0;
+			}
+			*/
+								
+			
+		}	//while
+
+}
+
 
 
 	
+
+
 
 
 

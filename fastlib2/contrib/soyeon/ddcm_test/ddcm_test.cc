@@ -102,13 +102,21 @@ int main(int argc, char *argv[]) {
 	
 	double rho=0; //agreement(ratio)
 	
-	int max_iteration=6;
-	int iteration_count=0;
+	
 
 	double correction_factor=0;
 	Vector current_choice_probability;
 	Vector next_choice_probability;
 
+	//for stopping rule
+	double error_tolerance=1e-16;
+	double zero_tolerance=1e-1;	//for gradient norm
+
+	//error_tolerance*=100000;
+	//cout<<"error_tolerance="<<error_tolerance<<endl;
+
+	int max_iteration=100;
+	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
 
@@ -133,6 +141,7 @@ int main(int argc, char *argv[]) {
 									 current_added_first_stage_y);
 		}
 		else {
+			
 			NOTIFY("All data are used");
 		}
 
@@ -160,6 +169,7 @@ int main(int argc, char *argv[]) {
 		
 		//NOTIFY("Gradient calculation ends");
 		
+		
 
 		//NOTIFY("Exact hessian calculation starts");
 		Matrix current_hessian;
@@ -174,46 +184,88 @@ int main(int argc, char *argv[]) {
 			cout<<endl;
 		}
 		*/
-
-		//NOTIFY("Exact hessian calculation ends");
-
 		Vector current_p;
 		double current_delta_m;
-		optimization.ComputeDoglegDirection(current_radius, 
-																        current_gradient,
-																				current_hessian,
-																				&current_p,
-																				&current_delta_m);
-		//double p_norm=0;
-		p_norm=sqrt(la::Dot(current_p, current_p));
+		Vector next_parameter;
+		double new_radius;
+		//NOTIFY("Exact hessian calculation ends");
 
-		/*
-		cout<<"p="<<" ";
-		for(index_t i=0; i<current_p.length(); i++){
-			cout<<current_p[i]<<" ";
-		}
-		cout<<endl;
-		*/
+		optimization.ComputeDerectionUnderConstraints(current_radius, 
+																					current_gradient,
+																					current_hessian,
+																					current_parameter,
+																					&current_p,
+																					&current_delta_m,
+																					&next_parameter,
+																					&new_radius);
+
+		
+		
+
+
+		current_radius=new_radius;
+
+/*	
+		double constraints_check=1;
+			
+		//while(constraints_check>0){
+
+			
+		optimization.ComputeDoglegDirection(current_radius, 
+																					current_gradient,
+																					current_hessian,
+																					&current_p,
+																					&current_delta_m);
+		//double p_norm=0;
+			
+
+		
+		//cout<<"p="<<" ";
+		//for(index_t i=0; i<current_p.length(); i++){
+		//	cout<<current_p[i]<<" ";
+		//}
+		//cout<<endl;
+		
 		cout<<"delta_m="<<current_delta_m<<endl;
 
-		/*
-    Vector next_p2;
-		double next_delta_m2;
-		optimization.ComputeSteihaugDirection(current_radius, 
-																current_gradient,
-																current_hessian,
-																&next_p2,
-																&next_delta_m2);
-
-		cout<<"p2="<<" ";
-		for(index_t i=0; i<next_p2.length(); i++){
-			cout<<next_p2[i]<<" ";
-		}
-		cout<<endl;
-
-		cout<<"delta_m2="<<next_delta_m2<<endl;
-		*/
+		
 		la::AddOverwrite(current_p, current_parameter, &next_parameter);
+
+		if( next_parameter[next_parameter.length()-2]>0 && 
+			next_parameter[next_parameter.length()-1]>0 ) {
+			NOTIFY("Satisfy Constraints");
+			constraints_check=-1;
+		}
+		else{
+			cout<<"bed_new_parameter=";
+			for(index_t i=0; i<next_parameter.length(); i++){
+				cout<<next_parameter[i]<<" ";
+			}
+			cout<<endl;
+				
+		  NOTIFY("Constraint Violation...Shrink Trust region Radius...");
+		  current_radius=0.75*current_radius;
+			
+			NOTIFY("Projection");
+			if(next_parameter[next_parameter.length()-2]<=0) {
+				NOTIFY("p is negative");
+				next_parameter[next_parameter.length()-2]=0;
+			}
+			else if(next_parameter[next_parameter.length()-1]<=0) {
+				NOTIFY("q is negative");
+				next_parameter[next_parameter.length()-1]=0;
+			}
+			
+							
+		}	//else
+
+		
+*/
+
+
+				
+		p_norm=sqrt(la::Dot(current_p, current_p));
+		 
 		cout<<"new_parameter=";
 		for(index_t i=0; i<next_parameter.length(); i++){
 			cout<<next_parameter[i]<<" ";
@@ -221,11 +273,11 @@ int main(int argc, char *argv[]) {
 		cout<<endl;
 
 		objective.ComputeObjective(next_parameter, 
-															 &next_objective);
+														 &next_objective);
 		next_objective/=current_added_first_stage_x.size();
 		NOTIFY("The Next objective is %g", next_objective);
 
-		
+	
 
 
 
@@ -252,12 +304,13 @@ int main(int argc, char *argv[]) {
 				sampling_error+= pow(((current_choice_probability[n]-next_choice_probability[n])-(current_objective-next_objective) ),2);
 			}
 			sampling_error*=(correction_factor/(sample_size*(sample_size-1)));
+			cout<<"sampling_error="<<sampling_error<<endl;
 			
 			if(current_delta_m<0.5*sampling_error){
 				current_percent_added_sample=(0.5*sampling_error/current_delta_m)*(0.5*sampling_error/current_delta_m)-1.0;
 			}
 
-		}
+		}	//if
 
 		
 		/*
@@ -267,11 +320,7 @@ int main(int argc, char *argv[]) {
 		}
 		*/
 
-		if(sample_size==num_of_people){
-			end_sampling+=1;
-			//NOTIFY("All data are used");
-		}
-
+		
 				
 		//agreement rho calculation
 		rho=(current_objective-next_objective)/(current_delta_m);
@@ -283,15 +332,35 @@ int main(int argc, char *argv[]) {
 		
 		//radius update
 		optimization.TrustRadiusUpdate(rho, p_norm, &current_radius);
-				
 
+		if(sample_size==num_of_people){
+			end_sampling+=1;
+			double gradient_norm;
+			gradient_norm = sqrt(la::Dot(current_gradient, current_gradient));
+			cout<<"gradient_norm="<<gradient_norm<<endl;
 
+			if(gradient_norm<zero_tolerance){
+				NOTIFY("Gradient norm is small enough...Exit...");
+				break;
+			}
+			
+			//NOTIFY("All data are used");
+		}
 	}
+	
+		
+
+
+
+	
 	cout<<"Total_iteration_count="<<iteration_count<<endl;
+	NOTIFY("Final solution: ");
+	
 
  
   fx_done(module);
 }
+
 
 
 
