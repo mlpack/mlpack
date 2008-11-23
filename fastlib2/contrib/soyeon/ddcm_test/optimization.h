@@ -19,6 +19,17 @@ class Optimization {
 
 		void TrustRadiusUpdate(double rho, double p_norm, 
 													 double *current_radius);
+    void ComputeDerectionUnderConstraints(double radius, 
+																					Vector &gradient,
+																					Matrix &hessian,
+																					Vector &current_parameter,
+																					Vector *p,
+																					double *delta_m,
+																					Vector *next_parameter,
+																					double *new_radius);
+
+		
+
 
 
 														
