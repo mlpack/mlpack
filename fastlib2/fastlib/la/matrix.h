@@ -410,6 +410,8 @@ class GenVector {
   }
 };
 
+/** @brief A Vector is a GenVector of double's.
+ */
 typedef GenVector<double> Vector;
 
 /**
@@ -1081,6 +1083,8 @@ class SmallVector : public Vector {
   }
 };
 
+/** @brief A Matrix is a GenMatrix of double's.
+ */
 typedef GenMatrix<double> Matrix;
 
 /**
