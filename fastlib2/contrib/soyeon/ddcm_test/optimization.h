@@ -17,6 +17,10 @@ class Optimization {
 																	Vector *p,
 																	double *delta_m);
 
+		void TrustRadiusUpdate(double rho, double p_norm, 
+													 double *current_radius);
+
+
 														
 
 
@@ -24,6 +28,7 @@ class Optimization {
 
 	private:
 		fx_module *module_;
+		double max_radius_;
 /*#define DBL_EPS 1e-16
 #define ZERO_EPS 1e-9
 #define PRINT_FREQ 1
