@@ -7,6 +7,7 @@ using namespace std;	//max
 
 void Optimization::Init(fx_module *module) {
 	module_=module;
+	max_radius_=10.0;
 }
 
 
@@ -287,6 +288,23 @@ void Optimization::ComputeSteihaugDirection(double radius,
 
 
 
+}
+
+
+
+void Optimization::TrustRadiusUpdate(double rho, double p_norm, 
+																		 double *current_radius) {
+																			 
+	if(rho<0.25)
+	{
+		cout<<"Shrinking trust region radius..."<<endl;
+		(*current_radius)=p_norm/4.0; //(*radius)=(*radius)/4.0;
+	}
+	else if( (rho>0.75) && (p_norm > (0.99*(*current_radius))) )
+	{
+		cout<<"Expanding trust region radius..."<<endl;
+		(*current_radius)=min(2.0*(*current_radius),max_radius_);
+	}
 }
 
 
