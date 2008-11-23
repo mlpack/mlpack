@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
 	NOTIFY("Shuffling");
 	sampling.Shuffle();
 	sampling.Shuffle();
-	NOTIFY("Initial sampling percent is %f", initial_percent_sampling);
+	NOTIFY("Initial sampling percent is %d", initial_percent_sampling);
 		
 	int count_init2=0;
 	objective.Init2(ind_unknown_x, count_init2);
@@ -72,8 +72,12 @@ int main(int argc, char *argv[]) {
 	ArrayList<index_t> current_added_first_stage_y;
 	current_added_first_stage_y.Init();
 
-	int sampling_count=0;
+	
+	
+
 	int sample_size=0;
+	int end_sampling=0;
+	//int num_added_sample=0;
 	double current_percent_added_sample=initial_percent_sampling;
 	
 	int num_of_parameter=initial_parameter.length();
@@ -98,28 +102,48 @@ int main(int argc, char *argv[]) {
 	
 	double rho=0; //agreement(ratio)
 	
-	while(sample_size<num_of_people){
+	int max_iteration=6;
+	int iteration_count=0;
+
+	double correction_factor=0;
+	Vector current_choice_probability;
+	Vector next_choice_probability;
+
+
+	while(iteration_count<max_iteration){
 
 		
-		sampling_count+=1;
-		std::cout<<"sampling_count="<<sampling_count<<endl;
+		iteration_count+=1;
+		cout<<"iteration_count="<<iteration_count<<endl;
+
+		if(end_sampling==0) {
+			//NOTIFY("All data are used");
 		sampling.ExpandSubset(current_percent_added_sample, &current_added_first_stage_x,
 					&current_added_second_stage_x, &current_added_unknown_x_past, 
 					&current_added_first_stage_y);
 		//current_percent_added_sample=percent_added_sample;
 		//index_t current_num_selected_people=current_percent_added_sample.size();
+		
+
+
 		objective.Init3(sample_size,
 									 current_added_first_stage_x,
 									 current_added_second_stage_x,
 									 current_added_unknown_x_past, 
 									 current_added_first_stage_y);
+		}
+		else {
+			NOTIFY("All data are used");
+		}
+
 		
 		objective.ComputeObjective(current_parameter, 
 															 &current_objective);
+		current_objective/=current_added_first_stage_x.size();
 		//NOTIFY("The objective is %g", current_objective);
 
 		
-		NOTIFY("Gradient calculation starts");
+		//NOTIFY("Gradient calculation starts");
 		Vector current_gradient;
 		//gradient.Init(num_of_betas_);
 		objective.ComputeGradient(current_parameter, &current_gradient);
@@ -134,10 +158,10 @@ int main(int argc, char *argv[]) {
 		*/
 
 		
-		NOTIFY("Gradient calculation ends");
+		//NOTIFY("Gradient calculation ends");
 		
 
-		NOTIFY("Exact hessian calculation starts");
+		//NOTIFY("Exact hessian calculation starts");
 		Matrix current_hessian;
 		objective.ComputeHessian(current_parameter, &current_hessian);
 		/*
@@ -151,7 +175,7 @@ int main(int argc, char *argv[]) {
 		}
 		*/
 
-		NOTIFY("Exact hessian calculation ends");
+		//NOTIFY("Exact hessian calculation ends");
 
 		Vector current_p;
 		double current_delta_m;
@@ -198,8 +222,57 @@ int main(int argc, char *argv[]) {
 
 		objective.ComputeObjective(next_parameter, 
 															 &next_objective);
+		next_objective/=current_added_first_stage_x.size();
 		NOTIFY("The Next objective is %g", next_objective);
 
+		
+
+
+
+		//cout<<"current_added_first_stage_x.size("<<current_added_first_stage_x.size()<<")"<<endl;
+		//update sample size
+		
+
+		if(end_sampling==0){	//if all data are not used yet
+			//num_added_sample = current_added_first_stage_x.size()-sample_size;
+			sample_size=current_added_first_stage_x.size();
+			//NOTIFY("Number of added sample= %d", num_added_sample);
+			
+			//sampling error calculation
+			correction_factor=(num_of_people-sample_size)/(num_of_people-1.0);
+			
+			
+			objective.ComputeChoiceProbability(current_parameter, 
+																				 &current_choice_probability);
+			objective.ComputeChoiceProbability(next_parameter, 
+																				 &next_choice_probability);
+			
+			double sampling_error=0;
+			for(index_t n=0; n<sample_size; n++){
+				sampling_error+= pow(((current_choice_probability[n]-next_choice_probability[n])-(current_objective-next_objective) ),2);
+			}
+			sampling_error*=(correction_factor/(sample_size*(sample_size-1)));
+			
+			if(current_delta_m<0.5*sampling_error){
+				current_percent_added_sample=(0.5*sampling_error/current_delta_m)*(0.5*sampling_error/current_delta_m)-1.0;
+			}
+
+		}
+
+		
+		/*
+		if(sample_size==num_of_people &&end_sampling==0){
+			end_sampling+=1;
+			NOTIFY("All data are used");
+		}
+		*/
+
+		if(sample_size==num_of_people){
+			end_sampling+=1;
+			//NOTIFY("All data are used");
+		}
+
+				
 		//agreement rho calculation
 		rho=(current_objective-next_objective)/(current_delta_m);
 		cout<<"rho= "<<rho<<endl;
@@ -213,15 +286,8 @@ int main(int argc, char *argv[]) {
 				
 
 
-
-
-		cout<<"current_added_first_stage_x.size("<<current_added_first_stage_x.size()<<")"<<endl;
-		sample_size=current_added_first_stage_x.size();
-		
-
-
 	}
-	cout<<"Total_sampling_count="<<sampling_count<<endl;
+	cout<<"Total_iteration_count="<<iteration_count<<endl;
 
  
   fx_done(module);
