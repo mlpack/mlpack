@@ -116,44 +116,44 @@ def make_blas(sysentry, files, params):
 
 		if resp==3:
 			print commands.getoutput("ln -s /lib/libblas.dll.a "+ sq(libblas.name));
-			return;
-		if resp==2:
-			blas_lib=input("Give me now the full path with the BLAS library name in quotes ie \"/usr/lib/libblas.a\": ");
-			print "I am creating a symbolic link to "+ str(blas_lib)
-			commands.getoutput("rm -f " + sq(libblas.name));
-			print commands.getoutput("ln -s "+str(lapack_lib)+ " "+ sq(libblas.name));
 		else:
-			if resp==1:
-				print "Now I will download BLAS from netlib.org"
-				workspace_dir = os.path.join(os.path.dirname(libblas.name), "netlib_workspace1")
-			# Make sure we won't rm -rf anything bad
-			assert "netlib_workspace1" in workspace_dir
-			sysentry.command("echo '... Extracting  files...'")
-			sysentry.command("mkdir -p %s" % sq(workspace_dir))
-                        if os.path.basename(params["downloader"]) == "wget":
-                          sysentry.command("cd %s && %s http://www.netlib.org/blas/blas.tgz" % ((sq(workspace_dir)), sq(params["downloader"])))
-                        else:
-                          sysentry.command("cd %s && %s http://www.netlib.org/blas/blas.tgz -o blas.tgz" % ((sq(workspace_dir)), sq(params["downloader"])))
-			sysentry.command("cd %s && tar -xzf %s" % (sq(workspace_dir), sq("blas.tgz")))
-                        compiler_info = compilers[params["compiler"]]
-			compiler = compiler_info.compiler_program("f")
-                        if compiler == "gfortran":
-                          sysentry.command("cd %s/BLAS && sed -i.backup -e 's/g77/gfortran/' make.inc" % (sq(workspace_dir)))
-                        if compiler == "g77":
-                          sysentry.command("cd %s/BLAS && sed -i.backup -e 's/gfortran/g77/' make.inc" % (sq(workspace_dir)))
-			sysentry.command("echo '*** Compiling  BLAS from netlib.org'")
-			sysentry.command("echo '!!! BLAS WARNING: For better performance, install ATLAS or Intel MKL.'")
-			sysentry.command("echo '... This may take several minutes (about 800 FORTRAN files).'")
-			sysentry.command("cd %s/BLAS && make all" % (sq(workspace_dir)))
-			sysentry.command("echo '... Almost done with BLAS...'")
-			sysentry.command("cd %s/BLAS && mv blas*.a %s" % (sq(workspace_dir), sq(libblas.name)))
-			sysentry.command("echo '... Created archive, cleaning up.'")
-			sysentry.command("rm -rf %s" % sq(workspace_dir))
-                        if params["prefix"] != "":
-                          destination_parent_dir = params["prefix"].rstrip("/").rstrip(os.sep) + "/lib/"
-                          sysentry.command("mkdir -p " + destination_parent_dir)
-                          sysentry.command("cp -f " + (sq(libblas.name)) + " " + destination_parent_dir)
-                        sysentry.command("echo '*** Done with  and BLAS!'")
+			if resp==2:
+				blas_lib=input("Give me now the full path with the BLAS library name in quotes ie \"/usr/lib/libblas.a\": ");
+				print "I am creating a symbolic link to "+ str(blas_lib)
+				commands.getoutput("rm -f " + sq(libblas.name));
+				print commands.getoutput("ln -s "+str(lapack_lib)+ " "+ sq(libblas.name));
+			else:
+				if resp==1:
+					print "Now I will download BLAS from netlib.org"
+					workspace_dir = os.path.join(os.path.dirname(libblas.name), "netlib_workspace1")
+				# Make sure we won't rm -rf anything bad
+				assert "netlib_workspace1" in workspace_dir
+				sysentry.command("echo '... Extracting  files...'")
+				sysentry.command("mkdir -p %s" % sq(workspace_dir))
+				if os.path.basename(params["downloader"]) == "wget":
+					sysentry.command("cd %s && %s http://www.netlib.org/blas/blas.tgz" % ((sq(workspace_dir)), sq(params["downloader"])))
+					else:
+						sysentry.command("cd %s && %s http://www.netlib.org/blas/blas.tgz -o blas.tgz" % ((sq(workspace_dir)), sq(params["downloader"])))
+				sysentry.command("cd %s && tar -xzf %s" % (sq(workspace_dir), sq("blas.tgz")))
+				compiler_info = compilers[params["compiler"]]
+				compiler = compiler_info.compiler_program("f")
+				if compiler == "gfortran":
+					sysentry.command("cd %s/BLAS && sed -i.backup -e 's/g77/gfortran/' make.inc" % (sq(workspace_dir)))
+					if compiler == "g77":
+						sysentry.command("cd %s/BLAS && sed -i.backup -e 's/gfortran/g77/' make.inc" % (sq(workspace_dir)))
+				sysentry.command("echo '*** Compiling  BLAS from netlib.org'")
+				sysentry.command("echo '!!! BLAS WARNING: For better performance, install ATLAS or Intel MKL.'")
+				sysentry.command("echo '... This may take several minutes (about 800 FORTRAN files).'")
+				sysentry.command("cd %s/BLAS && make all" % (sq(workspace_dir)))
+				sysentry.command("echo '... Almost done with BLAS...'")
+				sysentry.command("cd %s/BLAS && mv blas*.a %s" % (sq(workspace_dir), sq(libblas.name)))
+				sysentry.command("echo '... Created archive, cleaning up.'")
+				sysentry.command("rm -rf %s" % sq(workspace_dir))
+				if params["prefix"] != "":
+					destination_parent_dir = params["prefix"].rstrip("/").rstrip(os.sep) + "/lib/"
+					sysentry.command("mkdir -p " + destination_parent_dir)
+					sysentry.command("cp -f " + (sq(libblas.name)) + " " + destination_parent_dir)
+					sysentry.command("echo '*** Done with  and BLAS!'")
 	print "Generating a blas.lock file, if you want to reinstall differently delete it"
 	print commands.getoutput("echo lock"  + " >"+sq(blas_lock.name));
 	return [(Types.LINKABLE, libblas)]
@@ -183,7 +183,7 @@ def make_lapack(sysentry, files, params):
 
 		if resp==3:
 			print commands.getoutput("ln -s /lib/liblapack.dll.a " + sq(liblapack.name));
-			return;
+			return [(Types.LINKABLE, libblas)]
 
 		if resp==2:
 			lapack_lib=input("Give me now the full path with the LAPACK library name in quotes ie \"/usr/lib/liblapack.a\": ");
