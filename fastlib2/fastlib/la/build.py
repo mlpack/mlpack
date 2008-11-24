@@ -183,14 +183,13 @@ def make_lapack(sysentry, files, params):
 
 		if resp==3:
 			print commands.getoutput("ln -s /lib/liblapack.dll.a " + sq(liblapack.name));
-			return [(Types.LINKABLE, liblapack)]
 
 		if resp==2:
 			lapack_lib=input("Give me now the full path with the LAPACK library name in quotes ie \"/usr/lib/liblapack.a\": ");
 			print "I am creating a symbolic link to "+ str(lapack_lib)
 			commands.getoutput("rm -f " + sq(liblapack.name));
 			print commands.getoutput("ln -s "+str(lapack_lib)+ " " + sq(liblapack.name));
-		else:
+		if resp==3:
 			print "Now I will download LAPACK from netlib.org"
 			workspace_dir = os.path.join(os.path.dirname(liblapack.name), "netlib_workspace2")
 			compiler_info = compilers[params["compiler"]]
