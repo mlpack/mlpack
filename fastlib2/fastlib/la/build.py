@@ -192,6 +192,13 @@ def make_lapack(sysentry, files, params):
 			sysentry.command("echo '*** Compiling  LAPACK  from netlib.org'")
 			sysentry.command("echo '!!! LAPACK WARNING: For better performance, install ATLAS or Intel MKL.'")
 			sysentry.command("echo '... This may take several minutes (about 800 FORTRAN files).'")
+			sysentry.command("cd %s/lapack* && sed -i.backup -e 's/; .\/testlsame\;//' Makefile" % (sq(workspace_dir)))
+			sysentry.command("cd %s/lapack* && sed -i.backup -e 's/.\/testslamch\;//' Makefile" % (sq(workspace_dir)))
+			sysentry.command("cd %s/lapack* && sed -i.backup -e 's/.\/testdlamch\;//' Makefile" % (sq(workspace_dir)))
+			sysentry.command("cd %s/lapack* && sed -i.backup -e 's/.\/testsecond\;//' Makefile" % (sq(workspace_dir)))
+			sysentry.command("cd %s/lapack* && sed -i.backup -e 's/.\/testdsecnd\;//' Makefile" % (sq(workspace_dir)))
+			sysentry.command("cd %s/lapack* && sed -i.backup -e 's/.\/testversion//' Makefile" % (sq(workspace_dir)))
+
                         if compiler == "gfortran":
                           sysentry.command("cd %s/lapack* && sed -i.backup -e 's/g77/gfortran/' make.inc.example" % (sq(workspace_dir)))
                         if compiler == "g77":
