@@ -106,19 +106,26 @@ def make_blas(sysentry, files, params):
 		print "  You will be asked to give the full path along with the library name (/path/libexample.a)"
 		print "  if after giving the path you realize that it is wrong or it doesn't work"
 		print "  delete the $instalation_dir/fastlib/lapack.lock file and build your code again"
+		print "3)If you have cygwin choose this option, make sure you have installed lapack with the cygwin installer"
 		resp=0;
-		while resp!=1 and resp!=2:
+		while resp!=1 and resp!=2 and resp!=3:
 			resp=input("Give me your choice now: ");
-			if resp!=1 and resp!=2:
+			if resp!=1 and resp!=2 and resp!=3:
 				print "You chose "+str(resp)+ " which is not a valid choice"
+			commands.getoutput("rm -f " + sq(libblas.name));
+
+		if resp==3:
+			print commands.getoutput("ln -s /lib/libblas.dll.a "+ sq(libblas.name));
+			return;
 		if resp==2:
-			lapack_lib=input("Give me now the full path with the BLAS library name in quotes ie \"/usr/lib/libblas.a\": ");
-			print "I am creating a symbolic link to "+ str(lapack_lib)
+			blas_lib=input("Give me now the full path with the BLAS library name in quotes ie \"/usr/lib/libblas.a\": ");
+			print "I am creating a symbolic link to "+ str(blas_lib)
 			commands.getoutput("rm -f " + sq(libblas.name));
 			print commands.getoutput("ln -s "+str(lapack_lib)+ " "+ sq(libblas.name));
 		else:
-			print "Now I will download BLAS from netlib.org"
-			workspace_dir = os.path.join(os.path.dirname(libblas.name), "netlib_workspace1")
+			if resp==1:
+				print "Now I will download BLAS from netlib.org"
+				workspace_dir = os.path.join(os.path.dirname(libblas.name), "netlib_workspace1")
 			# Make sure we won't rm -rf anything bad
 			assert "netlib_workspace1" in workspace_dir
 			sysentry.command("echo '... Extracting  files...'")
@@ -165,11 +172,19 @@ def make_lapack(sysentry, files, params):
 		print "  You will be asked to give the full path along with the library name (/path/libexample.a)"
 		print "  if after giving the path you realize that it is wrong or it doesn't work"
 		print "  delete the $instalation_dir/fastlib/lapack.lock file and build your code again"
+		print "3)If you have cygwin choose this option, make sure you have installed lapack with the cygwin installer"
+
 		resp=0;
-		while resp!=1 and resp!=2:
+		while resp!=1 and resp!=2 and resp!=3:
 			resp=input("Give me your choice now: ");
-			if resp!=1 and resp!=2:
+			if resp!=1 and resp!=2 and resp!=3:
 				print "You chose "+str(resp)+ " which is not a valid choice"
+			commands.getoutput("rm -f " + sq(liblapack.name));
+
+		if resp==3:
+			print commands.getoutput("ln -s /lib/liblapack.dll.a " + sq(liblapack.name));
+			return;
+
 		if resp==2:
 			lapack_lib=input("Give me now the full path with the LAPACK library name in quotes ie \"/usr/lib/liblapack.a\": ");
 			print "I am creating a symbolic link to "+ str(lapack_lib)
