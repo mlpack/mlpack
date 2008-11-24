@@ -132,7 +132,7 @@ def make_blas(sysentry, files, params):
 				sysentry.command("mkdir -p %s" % sq(workspace_dir))
 				if os.path.basename(params["downloader"]) == "wget":
 					sysentry.command("cd %s && %s http://www.netlib.org/blas/blas.tgz" % ((sq(workspace_dir)), sq(params["downloader"])))
-					else:
+				else:
 						sysentry.command("cd %s && %s http://www.netlib.org/blas/blas.tgz -o blas.tgz" % ((sq(workspace_dir)), sq(params["downloader"])))
 				sysentry.command("cd %s && tar -xzf %s" % (sq(workspace_dir), sq("blas.tgz")))
 				compiler_info = compilers[params["compiler"]]
@@ -183,7 +183,7 @@ def make_lapack(sysentry, files, params):
 
 		if resp==3:
 			print commands.getoutput("ln -s /lib/liblapack.dll.a " + sq(liblapack.name));
-			return [(Types.LINKABLE, libblas)]
+			return [(Types.LINKABLE, liblapack)]
 
 		if resp==2:
 			lapack_lib=input("Give me now the full path with the LAPACK library name in quotes ie \"/usr/lib/liblapack.a\": ");
