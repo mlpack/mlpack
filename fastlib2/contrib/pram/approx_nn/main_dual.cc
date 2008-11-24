@@ -46,10 +46,19 @@ const fx_module_doc approx_nn_main_dual_doc = {
 void compare_neighbors(ArrayList<index_t>*, ArrayList<double>*, 
                        ArrayList<index_t>*, ArrayList<double>*);
 
-void count_mismatched_neighbors(ArrayList<index_t>*, ArrayList<double>*, 
-				  ArrayList<index_t>*, ArrayList<double>*);
+void count_mismatched_neighbors(ArrayList<index_t>*,
+				ArrayList<double>*, 
+				ArrayList<index_t>*,
+				ArrayList<double>*);
+
+void find_rank_dist(Matrix&, Matrix&, ArrayList<index_t>*,
+		    ArrayList<double>*, ArrayList<index_t>*,
+		    ArrayList<double>*);
 
 int main (int argc, char *argv[]) {
+
+  srand( time(NULL));
+
   fx_module *root
     = fx_init(argc, argv, &approx_nn_main_dual_doc);
 
@@ -139,27 +148,44 @@ int main (int argc, char *argv[]) {
     // computing average rank error
     // and probability of failure
     index_t re = 0, failed = 0;
+    DEBUG_ASSERT(rank_errors.size() == qdata.n_cols());
+
+    index_t max_er = 0, min_er = rdata.n_cols();
     for (index_t i = 0; i < rank_errors.size(); i++) {
+      if (rank_errors[i] > max_er) {
+	max_er = rank_errors[i];
+      }
+      if (rank_errors[i] < min_er) {
+	min_er = rank_errors[i];
+      }
       if (rank_errors[i] > rank_error) {
 	failed++;
       }
       re += rank_errors[i];
     }
     double avg_rank = (double) re / (double) qdata.n_cols();
-    double success_prob = (double) (qdata.n_cols() - re)
+    double success_prob = (double) (qdata.n_cols() - failed)
       / (double) qdata.n_cols();
 
     // computing average distance error
     double de = 0.0;
     for (index_t i = 0; i < true_dist.size(); ++i) {
-      de += (dia[i] - true_dist[i])/true_dist[i];
+      de += (sqrt(dia[i]) - sqrt(true_dist[i]))
+	/ sqrt(true_dist[i]);
     }
-    double avg_de = de / (double) qdate.n_cols();
-    NOTIFY("True rank error: %"LI"d, Success Prob = %lf",
+    double avg_de = de / (double) qdata.n_cols();
+    NOTIFY("Required rank error: %"LI"d,"
+	   " Required success Prob = %1.2lf",
 	   rank_error, alpha);
 
-    NOTIFY("Avg Rank: %lf, success prob = %lf, Avg de = %lf",
+    NOTIFY("True Avg Rank error: %6.2lf,"
+	   " True success prob = %1.2lf,"
+	   " Avg de = %1.2lf",
 	   avg_rank, success_prob, avg_de);
+
+    NOTIFY("Max error: %"LI"d,"
+	   " Min error: %"LI"d",
+	   max_er, min_er);
   }
   
   //  count_mismatched_neighbors(&exc, &die, &apc, &dia);
@@ -180,7 +206,8 @@ void compare_neighbors(ArrayList<index_t> *a,
 
   for(index_t i = 0; x != y; x++, z++, i++) {
     DEBUG_WARN_MSG_IF(*x != *z || (*da)[i] != (*db)[i], 
-                      "point %"LI"d brute: %"LI"d:%lf fast: %"LI"d:%lf",
+                      "point %"LI"d brute: %"LI"d:%lf"
+		      " fast: %"LI"d:%lf",
                       i, *z, (*db)[i], *x, (*da)[i]);
   }
 }
@@ -219,11 +246,17 @@ void find_rank_dist(Matrix &query, Matrix &reference,
 
   // Looping over the queries
   for (index_t i = 0; i < query.n_cols(); i++) {
-    Vector q;
+    Vector q, nn_r;
     query.MakeColumnVector(i, &q);
+    reference.MakeColumnVector((*in)[i], &nn_r);
+
+    double test_dist
+      = la::DistanceSqEuclidean(q, nn_r);
 
     double present_dist = (*dist)[i],
-      best_dist = (*dist)[i];
+      best_dist = test_dist;
+
+    DEBUG_ASSERT(test_dist == present_dist);
 
     index_t rank = 0;
 
@@ -233,7 +266,7 @@ void find_rank_dist(Matrix &query, Matrix &reference,
       reference.MakeColumnVector(j, &r);
 
       double this_dist = la::DistanceSqEuclidean(q, r);
-      if (this_dist < present_dist) {
+      if (this_dist < test_dist) {
 	rank++;
       }
       if (this_dist < best_dist) {
@@ -245,6 +278,13 @@ void find_rank_dist(Matrix &query, Matrix &reference,
     (*rank_error)[i] = rank;
 
     // The true nearest neighbor dist
-    (*true_nn_error)[i] = best_dist;
+    (*true_nn_dist)[i] = best_dist;
   }
 }
+
+/*
+  Things to try:
+  * try removing the error distribution strategy and check times
+  and average error and success probability
+
+ */
