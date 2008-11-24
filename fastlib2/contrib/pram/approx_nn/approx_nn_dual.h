@@ -1,9 +1,9 @@
 /**
  * @file approx_nn_dual.h
  *
- * Defines ApproxNN class to perform all-nearest-neighbors on two specified 
- * data sets, but obtain the approximate rank nearest neighbor with a 
- * given probability.
+ * Defines ApproxNN class to compute the nearest-neighbors 
+ * of a query set given a reference set, but obtain the
+ * approximate rank nearest neighbor with a given probability.
  */
 
 #ifndef APPROX_NN_DUAL_H
@@ -75,12 +75,7 @@ class ApproxNN {
    * needs its upper bound on its nearest neighbor distances.  
    */
   class QueryStat {
-    
-    // Defines many useful things for a class, including a pretty 
-    // printer and copy constructor
     OT_DEF_BASIC(QueryStat) {
-      // Include this line for all non-pointer members
-      // There are other versions for arrays and pointers, see base/otrav.h
       OT_MY_OBJECT(max_distance_so_far_); 
       OT_MY_OBJECT(total_points_);
       OT_MY_OBJECT(samples_);
@@ -129,10 +124,6 @@ class ApproxNN {
       samples_ += points;
     }
     
-    // In addition to any member variables for the statistic, all stat 
-    // classes need two Init 
-    // functions, one for leaves and one for non-leaves. 
-    
     /**
      * Initialization function used in tree-building when initializing 
      * a leaf node.  For allnn, needs no additional information 
@@ -150,11 +141,13 @@ class ApproxNN {
     /**
      * Initialization function used in tree-building when 
      * initializing a non-leaf node.  For other algorithms,
-     * node statistics can be built using information from the children.  
+     * node statistics can be built using information from
+     * the children.  
      */
     void Init(const Matrix& matrix, index_t start, index_t count, 
 	      const QueryStat& left, const QueryStat& right) {
-      // For allnn, non-leaves can be initialized in the same way as leaves
+      // For allnn, non-leaves can be initialized in the
+      // same way as leaves
       Init(matrix, start, count);
     } 
     
@@ -239,7 +232,8 @@ private:
    * Computes the minimum squared distance between the
    * bounding boxes of two nodes
    */
-  double MinNodeDistSq_ (TreeType* query_node, TreeType* reference_node) {
+  double MinNodeDistSq_ (TreeType* query_node,
+			 TreeType* reference_node) {
     // node->bound() gives us the DHrectBound class for the node
     // It has a function MinDistanceSq which takes another DHrectBound
     return query_node->bound().MinDistanceSq(reference_node->bound());
@@ -275,16 +269,16 @@ private:
     double prob = (double) sample_size / (double) set_size;
     prob *= sum;
 
-//     // asserting that the probability is <= 1.0
-// This may not be the case when 'n' is close to 'N' and 
-// 'rank_approx' is large enough to make N-1-rank_approx+i < n-1
+    // asserting that the probability is < 1.0
+    // This may not be the case when 'n' is close to 'N' and 
+    // 'rank_approx' is large enough to make N-1-rank_approx+i < n-1
     return prob;
   }
   
   /**
    * This function computes the minimum sample sizes
    * required to obtain the approximate rank with
-   * a given probability (1-alpha).
+   * a given probability (alpha).
    * 
    * It assumes that the ArrayList<index_t> *samples
    * has been initialized to length N.
@@ -343,21 +337,26 @@ private:
       }
       // We'll do the same for the references
       for (index_t reference_index = reference_node->begin(); 
-           reference_index < reference_node->end(); reference_index++) {
+           reference_index < reference_node->end();
+	   reference_index++) {
 
 	// Confirm that points do not identify themselves as neighbors
 	// in the monochromatic case
         if (likely(reference_node != query_node ||
 		   reference_index != query_index)) {
 	  Vector reference_point;
-	  references_.MakeColumnVector(reference_index, &reference_point);
-	  // We'll use lapack to find the distance between the two vectors
+	  references_.MakeColumnVector(reference_index, 
+				       &reference_point);
+	  // We'll use lapack to find the distance
+	  // between the two vectors
 	  double distance =
 	    la::DistanceSqEuclidean(query_point, reference_point);
-	  // If the reference point is closer than the current candidate, 
+	  // If the reference point is closer than
+	  // the current candidate, 
 	  // we'll update the candidate
  	  if (distance < neighbor_distances_[ind+knns_-1]) {
-	    neighbors.push_back(std::make_pair(distance, reference_index));
+	    neighbors.push_back(std::make_pair(distance,
+					       reference_index));
 	  }
 	}
       } // for reference_index
@@ -369,8 +368,10 @@ private:
       }
       neighbors.resize(knns_);
       // We need to find the upper bound distance for this query node
-      if (neighbor_distances_[ind+knns_-1] > query_max_neighbor_distance) {
-        query_max_neighbor_distance = neighbor_distances_[ind+knns_-1]; 
+      if (neighbor_distances_[ind+knns_-1]
+	  > query_max_neighbor_distance) {
+        query_max_neighbor_distance
+	  = neighbor_distances_[ind+knns_-1]; 
       }
     } // for query_index 
     // Update the upper bound for the query_node
@@ -629,6 +630,10 @@ private:
 	= reference_node->end() - reference_node->begin();
       query_node->stat().add_total_points(reference_size);
       query_node->stat().add_samples(reference_size);
+
+      // what if we still plan to sample equally from here and 
+      // not selective sampling
+      // query_node->stat().add_samples(sample_sizes_[reference_size -1]);
 
     } else if (query_node->is_leaf() && reference_node->is_leaf()) {
       // Base Case
