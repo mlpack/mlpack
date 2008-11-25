@@ -570,24 +570,27 @@ void TestQR() {
 
   Matrix a_q_actual;
   Matrix a_r_actual;
+  Matrix a_q_r_actual;
   
   TEST_ASSERT(PASSED(la::QRInit(a, &a_q_actual, &a_r_actual)));
-  AssertApproxMatrix(a_q_expect, a_q_actual, 1.0e-5);
-  AssertApproxMatrix(a_r_expect, a_r_actual, 1.0e-5);
+  la::MulInit(a_q_actual, a_r_actual, &a_q_r_actual);
+  AssertApproxMatrix(a, a_q_r_actual, 1.0e-5);
   
   Matrix b_q_actual;
   Matrix b_r_actual;
+  Matrix b_q_r_actual;
   
   TEST_ASSERT(PASSED(la::QRInit(b, &b_q_actual, &b_r_actual)));
-  AssertApproxMatrix(b_q_expect, b_q_actual, 1.0e-5);
-  AssertApproxMatrix(b_r_expect, b_r_actual, 1.0e-5);
+  la::MulInit(b_q_actual, b_r_actual, &b_q_r_actual);
+  AssertApproxMatrix(b, b_q_r_actual, 1.0e-5);
   
   Matrix c_q_actual;
   Matrix c_r_actual;
+  Matrix c_q_r_actual;
   
   TEST_ASSERT(PASSED(la::QRInit(c, &c_q_actual, &c_r_actual)));
-  AssertApproxMatrix(c_q_expect, c_q_actual, 1.0e-5);
-  AssertApproxMatrix(c_r_expect, c_r_actual, 1.0e-5);
+  la::MulInit(c_q_actual, c_r_actual, &c_q_r_actual);
+  AssertApproxMatrix(c, c_q_r_actual, 1.0e-5);
 }
 
 
