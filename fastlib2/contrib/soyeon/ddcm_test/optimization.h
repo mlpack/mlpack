@@ -28,7 +28,8 @@ class Optimization {
 																					Vector *next_parameter,
 																					double *new_radius);
 
-		
+		void ComputeEstimatesVariance(Vector &final_estimates,
+																	Vector &estimates_variance);
 
 
 
