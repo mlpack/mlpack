@@ -1185,7 +1185,7 @@ public:
 		       query_tree_->stat().total_points(),
 		       references_.n_cols());
       DEBUG_ASSERT_MSG(query_tree_->stat().samples()
-		       < min_samples_per_q_,"n':%"LI"d, n:%"LI"d",
+		       > min_samples_per_q_,"n':%"LI"d, n:%"LI"d",
 		       query_tree_->stat().samples(),
 		       min_samples_per_q_);
       NOTIFY("n:%"LI"d, N:%"LI"d", query_tree_->stat().samples(),
