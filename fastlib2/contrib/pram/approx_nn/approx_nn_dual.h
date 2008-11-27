@@ -285,24 +285,58 @@ private:
    */
   void ComputeSampleSizes_(index_t rank_approx, double alpha,
 			   ArrayList<index_t> *samples) {
+//     index_t set_size = samples->size(),
+//       n = rank_approx + 1000;
+
+//     double prob;
+//     DEBUG_ASSERT(alpha <= 1.0);
+//     do {
+//       n--;
+//       prob = ComputeProbability_(rank_approx + 1000,
+// 				 n, rank_approx);
+//     } while (prob >= alpha);
+
+//     double beta = (double) ++n
+//       / (double) (rank_approx + 1000);
+
+//     while (set_size > rank_approx) {
+//       (*samples)[set_size -1] = (index_t)(beta * (double) set_size);
+//       set_size--;
+//     }
+//     while (set_size > 0) {
+//       (*samples)[--set_size] = 1;
+//     }
+
     index_t set_size = samples->size(),
-      n = rank_approx + 1000;
+      n = samples->size();
 
     double prob;
     DEBUG_ASSERT(alpha <= 1.0);
+    bool first = true;
+    double beta = 0;
     do {
-      n--;
-      prob = ComputeProbability_(rank_approx + 1000,
-				 n, rank_approx);
-    } while (prob >= alpha);
-
-    double beta = (double) ++n
-      / (double) (rank_approx + 1000);
-
-    while (set_size > rank_approx) {
-      (*samples)[set_size -1] = (index_t)(beta * (double) set_size);
-      set_size--;
-    }
+      do {
+	n--;
+	prob = ComputeProbability_(set_size,
+				   n, rank_approx);
+      } while (prob >= alpha);
+      (*samples)[--set_size] = ++n;
+      if (first) {
+	beta = (double) n / (double) (set_size+1);
+	first = false;
+      } else {
+	index_t n_1 = (index_t) (beta * (double)(set_size+1));
+	DEBUG_WARN_MSG_IF(n > n_1,
+			  "n = %"LI"d n' = %"LI"d, N = %"LI"d",
+			  n, n_1, set_size+1);
+	if (n_1 > n) {
+	  (*samples)[set_size] = n_1;
+	}
+// 	double diff = abs(b - ((double) n / (double) (set_size+1)));
+// 	DEBUG_ASSERT(diff < 0.5);
+      }
+//       printf ("%"LI"d, %"LI"d\n", n, set_size+1);
+    } while (set_size > rank_approx);
     while (set_size > 0) {
       (*samples)[--set_size] = 1;
     }
@@ -629,11 +663,11 @@ private:
       index_t reference_size
 	= reference_node->end() - reference_node->begin();
       query_node->stat().add_total_points(reference_size);
-      query_node->stat().add_samples(reference_size);
+      // query_node->stat().add_samples(reference_size);
 
       // what if we still plan to sample equally from here and 
       // not selective sampling
-      // query_node->stat().add_samples(sample_sizes_[reference_size -1]);
+      query_node->stat().add_samples(sample_sizes_[reference_size -1]);
 
     } else if (query_node->is_leaf() && reference_node->is_leaf()) {
       // Base Case
@@ -702,12 +736,17 @@ private:
 		       query_node->left()->stat().total_points(),
 		       query_node->right()->stat().total_points());
 
+      DEBUG_ASSERT(query_node->stat().total_points()
+		   < query_node->left()->stat().total_points());
       query_node->stat().set_total_points(query_node->left()->stat().total_points());
 
       // the number of samples made for each of the query points
       // is actually the minimum of both the children. And we 
       // are setting it instead of adding because we don't want
       // to have repetitions (since the information goes bottom up)
+      DEBUG_ASSERT(query_node->stat().samples() < 
+		   min(query_node->left()->stat().samples(),
+		       query_node->right()->stat().samples()));
       query_node->stat().set_samples(min(query_node->left()->stat().samples(),
 					 query_node->right()->stat().samples()));
 
@@ -831,12 +870,17 @@ private:
 		       query_node->left()->stat().total_points(),
 		       query_node->right()->stat().total_points());
 
+      DEBUG_ASSERT(query_node->stat().total_points() < 
+		   query_node->left()->stat().total_points());
       query_node->stat().set_total_points(query_node->left()->stat().total_points());
 
       // the number of samples made for each of the query points
       // is actually the minimum of both the children. And we 
       // are setting it instead of adding because we don't want
       // to have repetitions (since the information goes bottom up)
+      DEBUG_ASSERT(query_node->stat().samples() < 
+		   min(query_node->left()->stat().samples(),
+		       query_node->right()->stat().samples()));
       query_node->stat().set_samples(min(query_node->left()->stat().samples(),
 					 query_node->right()->stat().samples()));
     }
@@ -1136,6 +1180,16 @@ public:
       ComputeApproxRecursion_(query_tree_, reference_tree_, 
 			      MinNodeDistSq_(query_tree_,
 					     reference_tree_));
+      DEBUG_ASSERT_MSG(query_tree_->stat().total_points()
+		       == references_.n_cols(),"N':%"LI"d, N:%"LI"d",
+		       query_tree_->stat().total_points(),
+		       references_.n_cols());
+      DEBUG_ASSERT_MSG(query_tree_->stat().samples()
+		       < min_samples_per_q_,"n':%"LI"d, n:%"LI"d",
+		       query_tree_->stat().samples(),
+		       min_samples_per_q_);
+      NOTIFY("n:%"LI"d, N:%"LI"d", query_tree_->stat().samples(),
+	     query_tree_->stat().total_points());
     } else {
       ComputeApproxRecursion_(reference_tree_, reference_tree_, 
 			      MinNodeDistSq_(reference_tree_,

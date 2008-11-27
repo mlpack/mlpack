@@ -21,6 +21,9 @@ const fx_entry_doc approx_nn_main_dual_entries[] = {
   {"doapprox", FX_PARAM, FX_BOOL, NULL,
    " A variable which decides whether we do"
    " the approximate computation(defaults to true).\n"},
+  {"compute_error", FX_PARAM, FX_BOOL, NULL,
+   " Whether to compute the rank and distance error"
+   " for the approximate results.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -132,60 +135,62 @@ int main (int argc, char *argv[]) {
     approx_nn.ComputeApprox(&apc, &dia);
     fx_timer_stop(ann_module, "approx");
 
-    double epsilon
-      = fx_param_double_req(ann_module, "epsilon");
-    index_t rank_error
-      = (index_t) (epsilon * (double) rdata.n_cols()
-		   / 100);
-    double alpha
-      = fx_param_double_req(ann_module, "alpha");
+    if (fx_param_bool(root, "compute_error", true)) {
+      double epsilon
+	= fx_param_double_req(ann_module, "epsilon");
+      index_t rank_error
+	= (index_t) (epsilon * (double) rdata.n_cols()
+		     / 100);
+      double alpha
+	= fx_param_double_req(ann_module, "alpha");
 
-    ArrayList<index_t> rank_errors;
-    ArrayList<double> true_dist;
-    find_rank_dist(qdata, rdata, &apc, &dia,
-		   &rank_errors, &true_dist);
+      ArrayList<index_t> rank_errors;
+      ArrayList<double> true_dist;
+      find_rank_dist(qdata, rdata, &apc, &dia,
+		     &rank_errors, &true_dist);
 
-    // computing average rank error
-    // and probability of failure
-    index_t re = 0, failed = 0;
-    DEBUG_ASSERT(rank_errors.size() == qdata.n_cols());
+      // computing average rank error
+      // and probability of failure
+      index_t re = 0, failed = 0;
+      DEBUG_ASSERT(rank_errors.size() == qdata.n_cols());
 
-    index_t max_er = 0, min_er = rdata.n_cols();
-    for (index_t i = 0; i < rank_errors.size(); i++) {
-      if (rank_errors[i] > max_er) {
-	max_er = rank_errors[i];
+      index_t max_er = 0, min_er = rdata.n_cols();
+      for (index_t i = 0; i < rank_errors.size(); i++) {
+	if (rank_errors[i] > max_er) {
+	  max_er = rank_errors[i];
+	}
+	if (rank_errors[i] < min_er) {
+	  min_er = rank_errors[i];
+	}
+	if (rank_errors[i] > rank_error) {
+	  failed++;
+	}
+	re += rank_errors[i];
       }
-      if (rank_errors[i] < min_er) {
-	min_er = rank_errors[i];
+      double avg_rank = (double) re / (double) qdata.n_cols();
+      double success_prob = (double) (qdata.n_cols() - failed)
+	/ (double) qdata.n_cols();
+
+      // computing average distance error
+      double de = 0.0;
+      for (index_t i = 0; i < true_dist.size(); ++i) {
+	de += (sqrt(dia[i]) - sqrt(true_dist[i]))
+	  / sqrt(true_dist[i]);
       }
-      if (rank_errors[i] > rank_error) {
-	failed++;
-      }
-      re += rank_errors[i];
+      double avg_de = de / (double) qdata.n_cols();
+      NOTIFY("Required rank error: %"LI"d,"
+	     " Required success Prob = %1.2lf",
+	     rank_error, alpha);
+
+      NOTIFY("True Avg Rank error: %6.2lf,"
+	     " True success prob = %1.2lf,"
+	     " Avg de = %1.2lf",
+	     avg_rank, success_prob, avg_de);
+
+      NOTIFY("Max error: %"LI"d,"
+	     " Min error: %"LI"d",
+	     max_er, min_er);
     }
-    double avg_rank = (double) re / (double) qdata.n_cols();
-    double success_prob = (double) (qdata.n_cols() - failed)
-      / (double) qdata.n_cols();
-
-    // computing average distance error
-    double de = 0.0;
-    for (index_t i = 0; i < true_dist.size(); ++i) {
-      de += (sqrt(dia[i]) - sqrt(true_dist[i]))
-	/ sqrt(true_dist[i]);
-    }
-    double avg_de = de / (double) qdata.n_cols();
-    NOTIFY("Required rank error: %"LI"d,"
-	   " Required success Prob = %1.2lf",
-	   rank_error, alpha);
-
-    NOTIFY("True Avg Rank error: %6.2lf,"
-	   " True success prob = %1.2lf,"
-	   " Avg de = %1.2lf",
-	   avg_rank, success_prob, avg_de);
-
-    NOTIFY("Max error: %"LI"d,"
-	   " Min error: %"LI"d",
-	   max_er, min_er);
   }
   
   //  count_mismatched_neighbors(&exc, &die, &apc, &dia);
