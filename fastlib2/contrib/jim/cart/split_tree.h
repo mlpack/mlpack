@@ -31,7 +31,7 @@ class Split{
   void NonOrderedRegression_(int dim, int classes) {
     trial_missing_data_flag_ = 0;
     ArrayList<Vector> results;
-    trial_split_params_.Destruct();    
+    trial_split_params_.Renew();    
     results.Init(classes);
     int i, j;
     
@@ -208,15 +208,20 @@ class Split{
       results[j][val] = results[j][val] + 1;      
     }  
     // Now find best partition of variable classes...
+    Vector left, right;
+    right.Init(t_classes);
+    left.Init(t_classes);
+    right.SetZero();
+    left.SetZero();
     if (v_classes > 2){
       int left_count = 0, right_count = 0;
       double left_gini = 0, right_gini = 0;
-      Vector left, right;     
-      right.Init(t_classes);
-      left.Init(t_classes);
-      left.SetZero();
+      // Vector left, right;     
+      //  right.Init(t_classes);
+      // left.Init(t_classes);
+      // left.SetZero();
       which_side.SetZero();
-      right.SetZero();           
+      //  right.SetZero();           
       for (i = 0; i < v_classes; i++){
 	right_gini = right_gini + gini[i] + 2 * (right_count * count[i] - 
 				       la::Dot(right, results[i]));
@@ -281,10 +286,10 @@ class Split{
     trial_left_value_ = 0;
     trial_right_value_ = 0;
     for (j = 0; j < t_classes; j++){
-      if (left[j] > left[trial_left_value_]){
+      if (left[j] > left[(int)trial_left_value_]){
 	trial_left_value_ = j;
       }
-      if (right[j] >= right[trial_right_value_]){
+      if (right[j] >= right[(int)trial_right_value_]){
 	trial_right_value_ = j;
       }
     }
@@ -295,13 +300,13 @@ class Split{
       trial_right_value_ = trial_left_value_;
       trial_left_value_ = (int)temp;
       temp = trial_right_error_;
-      trial_right_error = trial_left_error_;
+      trial_right_error_ = trial_left_error_;
       trial_left_error_ = temp;
     }
 
     for (j = start_; j < stop_; j++){
       val = (int)points_->Get(dim, j);
-      trial_split_[j - start_] = which_side[val]^flip;     
+      trial_split_[j - start_] = ((int)which_side[val])^flip;     
     }
   }
 
@@ -309,7 +314,7 @@ class Split{
   void OrderedRegression_(int dim) {
     trial_left_error_ = BIG_BAD_NUMBER;
     trial_missing_data_flag_ = 0;
-    trial_split_params_.Destruct();
+    trial_split_params_.Renew();
     trial_split_params_.Init(2);
     trial_split_params_[0] = dim;
     int j, first;
@@ -386,7 +391,7 @@ class Split{
   void OrderedClassification_(int dim, int classes){    
     trial_left_error_ = BIG_BAD_NUMBER;
     trial_missing_data_flag_ = 0;
-    trial_split_params_.Destruct();
+    trial_split_params_.Renew();
     trial_split_params_.Init(2);
     trial_split_params_[0] = dim;
     int j, first;
@@ -621,8 +626,8 @@ class Split{
 	}	   
 	if (unlikely(trial_left_error_ + trial_right_error_ < 
 		     left_error_ + right_error_)){	 
-	  split_params_[0].Destruct();
-	  split_params_[0].Copy(trial_split_params_);
+	  split_params_[0].Renew();
+	  split_params_[0].InitCopy(trial_split_params_);
 	  left_error_ = trial_left_error_;
 	  right_error_ = trial_right_error_;
 	  left_value_ = trial_left_value_;
