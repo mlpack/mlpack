@@ -21,6 +21,7 @@ void MaxVariance::Init(datanode *module, Matrix &data) {
   knns_ = fx_param_int(module_, "knns", 5);
   leaf_size_ = fx_param_int(module_, "leaf_size", 20);
   new_dimension_ = fx_param_int_req(module_, "new_dimension");
+  num_of_points_ = data.n_cols();
   NOTIFY("Data loaded ...\n");
   NOTIFY("Nearest neighbor constraints ...\n");
   NOTIFY("Building tree with data ...\n");
@@ -512,6 +513,7 @@ void MaxVarianceInequalityOnFurthest::GiveInitMatrix(Matrix *init_data) {
 void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
   module_=module;
   new_dimension_ = fx_param_int_req(module_, "new_dimension");
+  num_of_points_=data.n_cols();
   infeasibility1_=DBL_MAX;
   previous_infeasibility1_=DBL_MAX;
   desired_feasibility_error_ = fx_param_double(module_, "desired_feasibility_error", 1);

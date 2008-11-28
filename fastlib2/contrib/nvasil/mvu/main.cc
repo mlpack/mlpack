@@ -23,7 +23,7 @@
 
 int main(int argc, char *argv[]){
   fx_module *fx_root=fx_init(argc, argv, NULL);
-  std::string optimized_function=fx_param_str(NULL, "opts/optfun", "mvu");
+  std::string optimized_function=fx_param_str(NULL, "opts/optfun", "mvfu");
   fx_module *optfun_node;
   fx_module *l_bfgs_node;
   l_bfgs_node=fx_submodule(fx_root, "opts/l_bfgs");
