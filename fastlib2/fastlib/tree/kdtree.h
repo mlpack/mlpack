@@ -222,7 +222,7 @@ namespace tree {
 
     return success;
   }
-};
+}
 
 /** Basic KD tree structure. @experimental */
 typedef BinarySpaceTree<DHrectBound<2>, Matrix> BasicKdTree;

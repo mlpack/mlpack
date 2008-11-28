@@ -73,6 +73,21 @@ class DHrectBound {
     return true;
   }
 
+  bool Contains(const Vector& point, const Vector& box) const {
+    const DRange *a = this->bounds_;
+    for (index_t i = 0; i < point.length(); i++){
+      if (a[i].hi > a[i].lo){
+	if (!bounds_[i].Contains(point[i])){
+	  return false;
+	}
+      } else if(point[i] > a[i].hi & point[i] < a[i].lo){
+	return false;
+      }       
+    }
+    return true;
+  } 
+
+
   /** Gets the dimensionality */
   index_t dim() const {
     return dim_;
@@ -254,6 +269,7 @@ class DHrectBound {
  /**
   * Computes minimum distance between boxes in periodic coordinate system
   */
+ 
  double PeriodicMinDistanceSq(const DHrectBound& other, const Vector& box_size)
  const {
    double sum = 0;
@@ -263,24 +279,28 @@ class DHrectBound {
    DEBUG_SAME_SIZE(dim_, other.dim_);
    
    for (index_t d = 0; d < dim_; d++){
-     double v = 0;
-     bool i,j,k,l;
-     i = a[d].lo < a[d].hi;
-     j = b[d].lo < b[d].hi;
-     k = a[d].hi > b[d].lo;
-     l = b[d].hi > a[d].lo;
-     v = ((i^j) & !(k | l)) * std::min(a[d].lo - b[d].hi, b[d].lo - a[d].hi);
-     v = v + (i & j & (k ^ l)) * std::min(a[d].lo - b[d].hi + l*box_size[d], 
-					    b[d].lo - a[d].hi + k*box_size[d]);
-     sum += math::PowAbs<t_pow, 1>(v);
+     double v = 0, bh, bl, ah;
+     bh = b[d].hi - a[d].lo;
+     bl = b[d].lo - a[d].lo;
+     ah = a[d].hi - a[d].lo;
+     ah = ah - floor(ah / box_size[d])*box_size[d];
+     bh = bh - floor(bh / box_size[d])*box_size[d];
+     bl = bl - floor(bl / box_size[d])*box_size[d];
+     if (bh > bl & bl > ah) {
+       v = min(bl - ah, box_size[d] - bh);
+     }
+     sum += math::Pow<t_pow, 1>(v);
    }
    
    return math::Pow<2, t_pow>(sum);
  }
+ 
+
 
  /**
   * Computes maximum distance between boxes in periodic coordinate system
   */
+ 
  double PeriodicMaxDistanceSq(const DHrectBound& other, const Vector& box_size)
  const {
    double sum = 0;
@@ -290,22 +310,25 @@ class DHrectBound {
    DEBUG_SAME_SIZE(dim_, other.dim_);
    
    for (index_t d = 0; d < dim_; d++){
-     double ab, ba, v;
-     ab = a[d].hi - b[d].lo;
-     ba = b[d].hi - a[d].lo;
-     if (ab < 0){
-       ab = ab + box_size[d];
+     double v = box_size[d] / 2.0;
+     double ah, bh, bl, dh;
+     ah = a[d].hi - a[d].lo + box_size[d]/2.0;
+     bh = b[d].hi - a[d].lo + box_size[d]/2.0;
+     bl = b[d].lo - a[d].lo + box_size[d]/2.0;
+     dh = a[d].hi - a[d].lo;
+     ah = ah - floor(ah / box_size[d])*box_size[d];
+     bh = bh - floor(bh / box_size[d])*box_size[d];
+     bl = bl - floor(bl / box_size[d])*box_size[d];
+     dh = dh - floor(dh / box_size[d])*box_size[d];
+     if (bl > dh && bh > bl){      
+       v = max(bh - box_size[d] / 2.0, ah - bl);
+     } else {
+       v = box_size[d] / 2.0;
      }
-     if(ba < 0){
-       ba = ba + box_size[d];
-     }
-     v = min(ba, ab);
-     v = min(v, box_size[d] / 2.0);
      sum += math::PowAbs<t_pow, 1>(v);
    }   
    return math::Pow<2, t_pow>(sum);
  }
-
 
 
   /**
@@ -463,6 +486,83 @@ class DHrectBound {
 
     return *this;
   }
+
+
+ /**
+  * Expand this bounding box to encompass another point. Done to 
+  * minimize added volume in periodic coordinates.
+  */
+ DHrectBound& Add(const Vector&  other, const Vector& size){
+   DEBUG_SAME_SIZE(other.length(), dim_);
+   // Catch case of uninitialized bounds
+   if (bounds_[0].hi < 0){
+     for (index_t i = 0; i < dim_; i++){
+       bounds_[i] |= other[i];
+     }
+   }
+
+   for (index_t i= 0; i < dim_; i++){
+     double ah, al;
+     ah = bounds_[i].hi - other[i];
+     al = bounds_[i].lo - other[i];
+     ah = ah - floor(ah / size[i])*size[i];
+     al = al - floor(al / size[i])*size[i];
+     if (ah < al){
+       if (size[i] - ah < al){
+	 bounds_[i].hi = other[i];
+       } else {
+	 bounds_[i].lo = other[i];
+       }
+     }     
+   }
+   return *this;
+ }
+
+
+ /**
+  * Expand this bounding box in periodic coordinates, minimizing added volume.
+  */
+ DHrectBound& Add(const DHrectBound& other, const Vector& size){
+   if (bounds_[0].hi < 0){
+     for (index_t i = 0; i < dim_; i++){
+       bounds_[i] |= other.bounds_[i];
+     }
+   }
+
+   for (index_t i = 0; i < dim_; i++) {
+     double ah, al, bh, bl;
+     ah = bounds_[i].hi;
+     al = bounds_[i].lo;
+     bh = other.bounds_[i].hi;
+     bl = other.bounds_[i].lo;
+     ah = ah - al;    
+     bh = bh - al;
+     bl = bl - al;              
+     ah = ah - floor(ah / size[i])*size[i];
+     bh = bh - floor(bh / size[i])*size[i];
+     bl = bl - floor(bl / size[i])*size[i];
+
+     if (((bh > ah) & (bh < bl | ah > bl )) ||
+	 (bh >= bl & bl > ah & bh < ah -bl + size[i])){
+       bounds_[i].hi = other.bounds_[i].hi;
+     }
+    
+     if (bl > ah && ((bl > bh) || (bh >= ah -bl + size[i]))){
+       bounds_[i].lo = other.bounds_[i].lo;
+     }   
+
+     if (unlikely(ah > bl & bl > bh)){
+       bounds_[i].lo = 0;
+       bounds_[i].hi = size[i];
+     }
+    
+
+   }   
+   return *this;
+ }
+
+
+
 };
 
 /**

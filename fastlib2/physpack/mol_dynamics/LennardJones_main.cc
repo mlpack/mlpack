@@ -15,7 +15,7 @@
 
 int main(int argc, char *argv[])
 {
-  fx_init(argc, argv);
+  fx_module *root = fx_init(argc, argv, NULL);
   const char* fp;
   fp = fx_param_str(NULL, "data", "default.txt");
   
@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
   double time = 0, time_step, stop_time;
   bool do_naive;
   LennardJones simulation;
-  struct datanode* parameters = fx_submodule(NULL, "param", "parameters");
+  struct datanode* parameters = fx_submodule(root, "param");
 
   // Read Atom Matrix
   data::Load(fp, &atom_matrix);
@@ -35,6 +35,7 @@ int main(int argc, char *argv[])
  
   tree_file = fopen("out_tree.dat", "w+");
 
+  fx_timer_start(NULL, "Tree_Based");
   // Begin simulation, and run to end time.   
   simulation.Init(atom_matrix, parameters);
   simulation.UpdateVelocities(time_step/2);
@@ -43,6 +44,7 @@ int main(int argc, char *argv[])
     simulation.UpdatePositions(time_step);  
     time = time + time_step;
   }
+  fx_timer_stop(NULL ,"Tree_Based");
 
   // Record final positions according to both methods.   
   simulation.WritePositions(tree_file);
@@ -71,7 +73,7 @@ int main(int argc, char *argv[])
     simulation.CompareToNaive(naive_atom_matrix);
   }
 
-  fx_done();
+  fx_done(root);
 
   fclose(tree_file);
 
