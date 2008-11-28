@@ -73,6 +73,8 @@ int main(int argc, char *argv[]) {
   fx_module *l_bfgs_module = fx_submodule(fx_root, "l_bfgs");
   fx_set_param_double(l_bfgs_module, "use_default_termination", false);
   Matrix result;
+  ArrayList<index_t> anchors;
+  anchors.Init();
   if (mode == "mvu") {
     MaxFurthestNeighborsSemiSupervised opt_fun;
     LBfgs<MaxFurthestNeighborsSemiSupervised> engine;
@@ -91,6 +93,7 @@ int main(int argc, char *argv[]) {
       engine.Init(&opt_fun, l_bfgs_module);
       engine.ComputeLocalOptimumBFGS();
       result.Copy(*engine.coordinates());
+      opt_fun.anchors(&anchors);
     } else {
       FATAL("This mode (%s) is not supported", mode.c_str());
     }
@@ -100,7 +103,7 @@ int main(int argc, char *argv[]) {
   index_t num1=labeled_data_points.n_cols();
   labeled_data_points.Destruct(); 
   labeled_data_points.Copy(result.GetColumnPtr(0), new_dimension, num1);  
-  data::Save("unfolded.csv", labeled_data_points);
+  data::Save("unfolded.csv", result);
   index_t num2=unlabeled_data_points.n_cols();
   if (!unlabeled_points_file.empty()) {
     unlabeled_data_points.Destruct();
@@ -124,18 +127,26 @@ int main(int argc, char *argv[]) {
         std::string validation_file =fx_param_str_req(fx_root, "validation_file");
         Matrix validation_labels;
         data::Load(validation_file.c_str(), &validation_labels);
+        if (validation_labels.n_cols()==1) {
+          Matrix labels1;
+          la::TransposeInit(validation_labels, &labels1);
+          validation_labels.Destruct();
+          validation_labels.Own(&labels1);
+        }
+
         total_score=0.0;
-        index_t anchor_point=0;
-        double anchor_label=labels.get(0, 0);
-        double *p1=labeled_data_points.GetColumnPtr(anchor_point);
-        for(index_t i=0; i<validation_labels.n_cols(); i++)  {
-          double *p2=unlabeled_data_points.GetColumnPtr(i);
-          double dot_product=la::Dot(new_dimension, p1, p2);
-          if (dot_product >= 0.0  and anchor_label==validation_labels.get(0, i)) {
-            total_score+=1;
-          } else {
-            if (dot_product <=0.0 and anchor_label!=validation_labels.get(0, i)) {
+        for(index_t i=0; i<validation_labels.n_cols(); i++) {
+          for(index_t j=0; j<1; j++) {
+            double anchor_label=labels.get(0, anchors[j]);
+            double *p1=labeled_data_points.GetColumnPtr(anchors[j]);
+            double *p2=unlabeled_data_points.GetColumnPtr(i);
+            double dot_product=la::Dot(new_dimension, p1, p2);
+            if (dot_product > 0.0  and anchor_label==validation_labels.get(0, i)) {
               total_score+=1;
+            } else {
+              if (dot_product <0.0 and anchor_label!=validation_labels.get(0, i)) {
+                total_score+=1;
+              }
             }
           }
         }
@@ -181,6 +192,13 @@ double  ComputeClassificationScore(fx_module *module,
     std::string validation_file =fx_param_str_req(module, "validation_file");
     Matrix validation_labels;
     data::Load(validation_file.c_str(), &validation_labels);
+    if (validation_labels.n_cols()==1) {
+      Matrix labels1;
+      la::TransposeInit(validation_labels, &labels1);
+      validation_labels.Destruct();
+      validation_labels.Own(&labels1);
+    }
+
     for(index_t i=0; i<classification_results->n_cols(); i++) {
       if (classification_results->get(0, i) == validation_labels.get(0, i)) {
         total_hits+=1;
