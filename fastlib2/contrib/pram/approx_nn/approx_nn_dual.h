@@ -325,7 +325,7 @@ private:
 	beta = (double) n / (double) (set_size+1);
 	first = false;
       } else {
-	index_t n_1 = (index_t) (beta * (double)(set_size+1));
+	index_t n_1 = (index_t) (beta * (double)(set_size+1)) +1;
 	DEBUG_WARN_MSG_IF(n > n_1,
 			  "n = %"LI"d n' = %"LI"d, N = %"LI"d",
 			  n, n_1, set_size+1);
@@ -1185,7 +1185,7 @@ public:
 		       query_tree_->stat().total_points(),
 		       references_.n_cols());
       DEBUG_ASSERT_MSG(query_tree_->stat().samples()
-		       > min_samples_per_q_,"n':%"LI"d, n:%"LI"d",
+		       >= min_samples_per_q_,"n':%"LI"d, n:%"LI"d",
 		       query_tree_->stat().samples(),
 		       min_samples_per_q_);
       NOTIFY("n:%"LI"d, N:%"LI"d", query_tree_->stat().samples(),

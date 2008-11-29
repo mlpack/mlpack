@@ -119,7 +119,7 @@ int main (int argc, char *argv[]) {
     fx_timer_stop(ann_module, "exact");
   }
 
-  // compare_neighbors(&neighbor_indices, &dist_sq, &exc, &die);
+  //compare_neighbors(&nac, &din, &exc, &die);
 
   // Approximate computation
   if (fx_param_bool(root, "doapprox", true)) {
