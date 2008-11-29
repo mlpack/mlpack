@@ -208,7 +208,7 @@ class KdeStat {
     
   /** @brief The subspace associated with this node.
    */
-  SubspaceStat subspace_;
+  //SubspaceStat subspace_;
 
   /** @brief Gets the weight sum.
    */
@@ -287,15 +287,15 @@ class KdeStat {
     
   void Init(const Matrix& dataset, index_t &start, index_t &count) {
     Init();
-    subspace_.Init(dataset, start, count);
+    //subspace_.Init(dataset, start, count);
   }
     
   void Init(const Matrix& dataset, index_t &start, index_t &count,
 	    const KdeStat& left_stat,
 	    const KdeStat& right_stat) {
     Init();
-    subspace_.Init(dataset, start, count, left_stat.subspace_,
-		   right_stat.subspace_);
+    //    subspace_.Init(dataset, start, count, left_stat.subspace_,
+    //	   right_stat.subspace_);
   }
     
   void Init(const Vector& center, const TKernelAux &ka) {
