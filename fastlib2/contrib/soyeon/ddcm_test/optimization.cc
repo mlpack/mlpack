@@ -384,11 +384,7 @@ void Optimization::ComputeDerectionUnderConstraints(double radius,
 
 
 	
-void Optimization::ComputeEstimatesVariance(Vector &final_estimates,
-																						Vector &estimates_variance) {
 
-
-}
 
 
 

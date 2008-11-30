@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
 
-	int max_iteration=100;
+	int max_iteration=10;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
@@ -174,7 +174,7 @@ int main(int argc, char *argv[]) {
 		//NOTIFY("Exact hessian calculation starts");
 		Matrix current_hessian;
 		objective.ComputeHessian(current_parameter, &current_hessian);
-		/*
+		
 		cout<<"Hessian matrix: "<<endl;
 
 		for (index_t j=0; j<current_hessian.n_rows(); j++){
@@ -183,7 +183,7 @@ int main(int argc, char *argv[]) {
 			}
 			cout<<endl;
 		}
-		*/
+		
 		Vector current_p;
 		double current_delta_m;
 		Vector next_parameter;
@@ -308,6 +308,7 @@ int main(int argc, char *argv[]) {
 			
 			if(current_delta_m<0.5*sampling_error){
 				current_percent_added_sample=(0.5*sampling_error/current_delta_m)*(0.5*sampling_error/current_delta_m)-1.0;
+				current_percent_added_sample*=100.0;
 			}
 
 		}	//if
@@ -346,6 +347,7 @@ int main(int argc, char *argv[]) {
 			
 			//NOTIFY("All data are used");
 		}
+
 	}
 	
 		
@@ -355,6 +357,41 @@ int main(int argc, char *argv[]) {
 	
 	cout<<"Total_iteration_count="<<iteration_count<<endl;
 	NOTIFY("Final solution: ");
+	for(index_t i=0; i<current_parameter.length(); i++) {
+		cout<<current_parameter[i]<<" ";
+	}
+	cout<<endl;
+
+	//Compute Variance of the estimates -H^{-1}
+	Matrix final_hessian;
+	objective.ComputeHessian(current_parameter, &final_hessian);
+	Matrix inverse_hessian;
+	if( !PASSED(la::InverseInit(final_hessian, &inverse_hessian)) ) {
+		NOTIFY("Final hessian matrix is not invertible!");
+	}
+	else{
+		la::Scale(-1.0, &inverse_hessian);
+
+		index_t n=inverse_hessian.n_rows();
+		Vector estimates_variance;
+		estimates_variance.Init(n);
+		for(index_t i=0; i<n; i++) {
+			estimates_variance[i]=inverse_hessian.get(i,i);
+		}
+
+
+		//linalg__private::DiagToVector(inverse_hessian, &estimates_variance);
+		
+		cout<<"Variance of etimates: ";
+		for(index_t i=0; i<estimates_variance.length(); i++) {
+			cout<<estimates_variance[i]<<" ";
+
+		}
+		cout<<endl;
+
+	}
+
+	
 	
 
  
