@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
     dtb.Init(data_points, dtb_module);
     
     ////////////// Run DTB /////////////////////
-    ArrayList<EdgePair> results;
+    Matrix results;
     
     dtb.ComputeMST(&results);
     
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
       
       naive.Init(data_points, naive_module);
       
-      ArrayList<EdgePair> naive_results;
+      Matrix naive_results;
       naive.ComputeMST(&naive_results);
       
       /* Compare the naive output to the DTB output */
@@ -63,6 +63,7 @@ int main(int argc, char* argv[]) {
       // Check if the edge lists are the same
       // Loop over the naive edge list
       int is_correct = 1;
+      /*
       for (index_t naive_index = 0; naive_index < results.size(); 
            naive_index++) {
        
@@ -96,7 +97,7 @@ int main(int argc, char* argv[]) {
         }
         
       }
-      
+      */
       if (is_correct == 0) {
        
         printf("Naive check failed!\n  Edge lists are different.\n\n");
@@ -142,9 +143,9 @@ int main(int argc, char* argv[]) {
     const char* output_filename = 
         fx_param_str(NULL, "output_filename", "output.txt");
     
-    FILE* output_file = fopen(output_filename, "w");
+    //FILE* output_file = fopen(output_filename, "w");
     
-    ot::Print(results, output_file);
+    data::Save(output_filename, results);
     
   }// end else (if using_thor)
   
