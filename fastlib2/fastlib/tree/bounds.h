@@ -50,6 +50,31 @@ class DHrectBound {
     dim_ = dimension;
     Reset();
   }
+  
+  /**
+   * Makes this (uninitialized) box the average of the two arguments, 
+   * i.e. the max and min of each range is the average of the maxes and mins 
+   * of the arguments.  
+   *
+   * Added by: Bill March, 5/7
+   */
+  void AverageBoxesInit(const DHrectBound& box1, const DHrectBound& box2) {
+  
+    index_t dim = box1.dim();
+    DEBUG_ASSERT(dim == box2.dim());
+    
+    Init(dim);
+    
+    for (index_t i = 0; i < dim; i++) {
+    
+      DRange range;
+      range = box1.get(i) +  box2.get(i);
+      range *= 0.5;
+      bounds_[i] = range;
+    
+    } 
+    
+  } // AverageBoxes()
 
   /**
    * Resets all dimensions to the empty set.
