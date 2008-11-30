@@ -110,7 +110,9 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 			NOTIFY("The number of starting points given is not same as the number of parameters");
 			NOTIFY("Use default...");
 			initial_parameter->Init(num_of_betas+2);	//beta+p+q
-			initial_parameter->SetZero();
+			//initial_parameter->SetZero();
+			initial_parameter->SetAll(2.0);
+			
 		}	//if
 		mtx_initial_parameter.MakeColumnVector(0, initial_parameter);
 	}	//if
@@ -118,9 +120,10 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 		NOTIFY("Starting points are not given. Use default...");
 		NOTIFY("Number of parameters is %d", num_of_betas+2);
 		initial_parameter->Init(num_of_betas+2);
-		initial_parameter->SetZero();
-		(*initial_parameter)[num_of_betas]=1e-6;
-		(*initial_parameter)[num_of_betas+1]=1e-9;
+		//initial_parameter->SetZero();
+		initial_parameter->SetAll(2.0);
+		//(*initial_parameter)[num_of_betas]=2;
+		//(*initial_parameter)[num_of_betas+1]=2;
 
 		cout<<"Starting points are:   ";
 		for(index_t i=0; i<initial_parameter->length(); i++){

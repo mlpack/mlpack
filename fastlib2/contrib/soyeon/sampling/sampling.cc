@@ -233,6 +233,10 @@ void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *adde
 			NOTIFY("number of sample to add is zero. start with Two samples.");
 			num_added_sample=2;
 	}	//if
+	else if(num_added_sample > num_of_people) {
+			NOTIFY("number of sample to add exceeds total number of data points. Use all data");
+			
+	}	//if
 
 
 
