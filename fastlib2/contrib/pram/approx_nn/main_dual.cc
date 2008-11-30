@@ -24,6 +24,9 @@ const fx_entry_doc approx_nn_main_dual_entries[] = {
   {"compute_error", FX_PARAM, FX_BOOL, NULL,
    " Whether to compute the rank and distance error"
    " for the approximate results.\n"},
+  {"result_file", FX_PARAM, FX_STR, NULL,
+   " The file in which the nearest neighbor results are to be output"
+   " (defaults to 'results.txt')\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -73,21 +76,14 @@ int main (int argc, char *argv[]) {
   data::Load(rfile.c_str(), &rdata);
   NOTIFY("File loaded...");
 
-//   AllkNN allknn;
-//   ArrayList<index_t> neighbor_indices;
-//   ArrayList<double> dist_sq;
-//   fx_timer_start(root, "Init");
-//   allknn.Init(qdata, rdata, 20, 10);
-//   fx_timer_stop(root, "Init");
-//   fx_timer_start(root, "Compute");
-//   allknn.ComputeNeighbors(&neighbor_indices, &dist_sq);
-//   fx_timer_stop(root, "Compute");
-
   struct datanode *ann_module
     = fx_submodule(root, "ann");
 
   ArrayList<index_t> nac, exc, apc;
   ArrayList<double> din, die, dia;
+
+  index_t knns = fx_param_int_req(ann_module, "knns");
+  std::string result_file = fx_param_str(root, "result_file", "result.txt");
 
   // Naive computation
   if (fx_param_bool(root, "donaive", false)) {
@@ -95,13 +91,26 @@ int main (int argc, char *argv[]) {
     NOTIFY("Naive");
     NOTIFY("Init");
     fx_timer_start(ann_module, "naive_init");
-    naive_nn.InitNaive(qdata, rdata, 1);
+    naive_nn.InitNaive(qdata, rdata, knns);
     fx_timer_stop(ann_module, "naive_init");
 
     NOTIFY("Compute");
     fx_timer_start(ann_module, "naive");
     naive_nn.ComputeNaive(&nac, &din);
     fx_timer_stop(ann_module, "naive");
+
+    FILE *fp=fopen(result_file.c_str(), "w");
+    if (fp==NULL) {
+      FATAL("Error while opening %s...%s", result_file.c_str(),
+	    strerror(errno));
+    }
+    for(index_t i=0 ; i < nac.size()/knns ; i++) {
+      for(index_t j=0; j<knns; j++) {
+	fprintf(fp, "%"LI"d %"LI"d %lg\n", i,
+		nac[i*knns+j], din[i*knns+j]);
+      }
+    }
+    fclose(fp);
   }
 
   // Exact computation
@@ -117,6 +126,19 @@ int main (int argc, char *argv[]) {
     fx_timer_start(ann_module, "exact");
     exact_nn.ComputeNeighbors(&exc, &die);
     fx_timer_stop(ann_module, "exact");
+
+    FILE *fp=fopen(result_file.c_str(), "w");
+    if (fp==NULL) {
+      FATAL("Error while opening %s...%s", result_file.c_str(),
+	    strerror(errno));
+    }
+    for(index_t i=0 ; i < exc.size()/knns ; i++) {
+      for(index_t j=0; j<knns; j++) {
+	fprintf(fp, "%"LI"d %"LI"d %lg\n", i,
+		exc[i*knns+j], die[i*knns+j]);
+      }
+    }
+    fclose(fp);
   }
 
   //compare_neighbors(&nac, &din, &exc, &die);
@@ -134,6 +156,19 @@ int main (int argc, char *argv[]) {
     fx_timer_start(ann_module, "approx");
     approx_nn.ComputeApprox(&apc, &dia);
     fx_timer_stop(ann_module, "approx");
+
+    FILE *fp=fopen(result_file.c_str(), "w");
+    if (fp==NULL) {
+      FATAL("Error while opening %s...%s", result_file.c_str(),
+	    strerror(errno));
+    }
+    for(index_t i=0 ; i < apc.size()/knns ; i++) {
+      for(index_t j=0; j<knns; j++) {
+	fprintf(fp, "%"LI"d %"LI"d %lg\n", i,
+		apc[i*knns+j], dia[i*knns+j]);
+      }
+    }
+    fclose(fp);
 
     if (fx_param_bool(root, "compute_error", false)) {
       double epsilon
