@@ -105,7 +105,7 @@ int main (int argc, char *argv[]) {
   }
 
   // Exact computation
-  if (fx_param_bool(root, "doexact", true)) {
+  if (fx_param_bool(root, "doexact", false)) {
     ApproxNN exact_nn;
     NOTIFY("Exact");
     NOTIFY("Init");
@@ -122,7 +122,7 @@ int main (int argc, char *argv[]) {
   //compare_neighbors(&nac, &din, &exc, &die);
 
   // Approximate computation
-  if (fx_param_bool(root, "doapprox", true)) {
+  if (fx_param_bool(root, "doapprox", false)) {
     ApproxNN approx_nn;
     NOTIFY("Approx");
     NOTIFY("Init");
@@ -135,7 +135,7 @@ int main (int argc, char *argv[]) {
     approx_nn.ComputeApprox(&apc, &dia);
     fx_timer_stop(ann_module, "approx");
 
-    if (fx_param_bool(root, "compute_error", true)) {
+    if (fx_param_bool(root, "compute_error", false)) {
       double epsilon
 	= fx_param_double_req(ann_module, "epsilon");
       index_t rank_error
