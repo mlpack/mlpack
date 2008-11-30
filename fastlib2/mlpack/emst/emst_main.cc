@@ -13,7 +13,7 @@
 
 int main(int argc, char* argv[]) {
  
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
  
   // For when I implement a thor version
   bool using_thor = fx_param_bool(NULL, "using_thor", 0);
@@ -34,7 +34,8 @@ int main(int argc, char* argv[]) {
     
     /////////////// Initialize DTB //////////////////////
     DualTreeBoruvka dtb;
-    struct datanode* dtb_module = fx_submodule(NULL, "dtb", "dtb_module");
+    //struct datanode* dtb_module = fx_submodule(NULL, "dtb", "dtb_module");
+    struct datanode* dtb_module = fx_submodule(NULL, "dtb_module");
     dtb.Init(data_points, dtb_module);
     
     ////////////// Run DTB /////////////////////
@@ -46,9 +47,8 @@ int main(int argc, char* argv[]) {
     if (fx_param_bool(NULL, "do_naive", 0)) {
      
       DualTreeBoruvka naive;
-      struct datanode* naive_module = fx_submodule(NULL, "naive", 
-                                                   "naive_module");
-      fx_set_param(naive_module, "do_naive", "1");
+      struct datanode* naive_module = fx_submodule(NULL, "naive_module");
+      fx_set_param_bool(naive_module, "do_naive", 1);
       
       naive.Init(data_points, naive_module);
       
@@ -106,7 +106,7 @@ int main(int argc, char* argv[]) {
           
           printf("Total lengths are different!  One algorithm has failed.\n");
           
-          fx_done();
+          fx_done(NULL);
           return 1;
           
         }
@@ -148,7 +148,7 @@ int main(int argc, char* argv[]) {
     
   }// end else (if using_thor)
   
-  fx_done();
+  fx_done(NULL);
   
   return 0;
   

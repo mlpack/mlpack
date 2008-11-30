@@ -496,7 +496,7 @@ class DualTreeBoruvka {
    */
   void OutputResults_() {
     
-    VERBOSE_ONLY(ot::Print(edges));
+    //VERBOSE_ONLY(ot::Print(edges));
     
     fx_format_result(module_, "total_squared_length", "%f", total_dist_);
     fx_format_result(module_, "number_of_points", "%d", number_of_points_);
