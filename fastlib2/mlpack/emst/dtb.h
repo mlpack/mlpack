@@ -408,10 +408,10 @@ class DualTreeBoruvka {
    * TODO: Make this sort the edge list by distance as well for hierarchical
    * clusterings.
    */
-  void EmitResults_(ArrayList<EdgePair>* results) {
+  void EmitResults_(Matrix* results) {
     
     DEBUG_ASSERT(number_of_edges_ == number_of_points_ - 1);
-    results->Init(number_of_edges_);
+    results->Init(3, number_of_edges_);
     
     if (!do_naive_) {
       for (index_t i = 0; i < (number_of_points_ - 1); i++) {
@@ -422,19 +422,24 @@ class DualTreeBoruvka {
         edges_[i].set_greater_index(old_from_new_permutation_[edges_[i]
           .greater_index()]);
         
-        (*results)[i] = edges_[i];
+        results->set(0, i, edges_[i].lesser_index());
+        results->set(1, i, edges_[i].greater_index());
+        results->set(2, i, edges_[i].distance());
         
       }
     }
     else {
       
       for (index_t i = 0; i < number_of_edges_; i++) {
-        (*results)[i] = edges_[i];
+        results->set(0, i, edges_[i].lesser_index());
+        results->set(1, i, edges_[i].greater_index());
+        results->set(2, i, edges_[i].distance());
       }
       
     }
     
   } // EmitResults_
+  
   
   
   /**
@@ -589,7 +594,7 @@ class DualTreeBoruvka {
    * Call this function after Init.  It will iteratively find the nearest 
    * neighbor of each component until the MST is complete.
    */
-  void ComputeMST(ArrayList<EdgePair>* results) {
+  void ComputeMST(Matrix* results) {
     
     fx_timer_start(module_, "MST_computation");
     
