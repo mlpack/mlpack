@@ -27,6 +27,6 @@ binrule(
     name = "mog_l2e_main",
     sources = ["mog_l2e_main.cc"],
     deplibs = [":mog_l2e",
-               "mlpack/optimization:optimization",
+               "mlpack/optimization:opt++",
                "fastlib:fastlib"]
     )
