@@ -193,7 +193,9 @@ function dim_reduction_Callback(hObject, eventdata, handles)
 
 % Hints: contents = get(hObject,'String') returns dim_reduction contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from dim_reduction
-
+contents = get(hObject, 'String');
+handles.dim_reduction = contents{get(hObject, 'Value')};
+guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
 function neighbors_CreateFcn(hObject, eventdata, handles)
@@ -218,7 +220,9 @@ function neighbors_Callback(hObject, eventdata, handles)
 
 % Hints: contents = get(hObject,'String') returns neighbors contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from neighbors
-
+contents = get(hObject, 'String');
+handles.neighbors = contents{get(hObject, 'Value')};
+guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
 function algorithms_CreateFcn(hObject, eventdata, handles)
@@ -243,7 +247,9 @@ function algorithms_Callback(hObject, eventdata, handles)
 
 % Hints: contents = get(hObject,'String') returns algorithms contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from algorithms
-
+contents = get(hObject, 'String');
+handles.algorithms = contents{get(hObject, 'Value')};
+guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
 function data_file1_CreateFcn(hObject, eventdata, handles)
@@ -268,7 +274,9 @@ function data_file1_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of data_file1 as text
 %        str2double(get(hObject,'String')) returns contents of data_file1 as a double
-
+contents = get(hObject, 'String');
+handles.data_file = contents{get(hObject, 'Value')};
+guidata(hObject, handles);
 
 % --- Executes on button press in plot.
 function plot_Callback(hObject, eventdata, handles)
@@ -282,7 +290,7 @@ function go1_Callback(hObject, eventdata, handles)
 % hObject    handle to go1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+ComputeAlgorithms(handles.data_file, handles.dim_reduction);
 
 % --- Executes on button press in go2.
 function go2_Callback(hObject, eventdata, handles)
@@ -321,8 +329,8 @@ function knn1_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of knn1 as text
 %        str2double(get(hObject,'String')) returns contents of knn1 as a double
-
-
+handles.knn1 = str2double(get(hObject, 'String'));
+guidata(hObject, handles);
 
 
 % --- Creates and returns a handle to the GUI figure. 
@@ -539,10 +547,9 @@ h15 = uicontrol(...
 'Units','characters',...
 'BackgroundColor',[1 1 1],...
 'Callback','demo(''data_file1_Callback'',gcbo,[],guidata(gcbo))',...
-'ListboxTop',0,...
-'Position',[9.8 31.7692307692308 20.2 1.38461538461538],...
+'Position',[9.8 27.7692307692308 30.2 5.38461538461538],...
 'String',GetDataFiles(),...
-'Style','edit',...
+'Style','listbox',...
 'CreateFcn','demo(''data_file1_CreateFcn'',gcbo,[],guidata(gcbo))',...
 'Tag','data_file1');
 

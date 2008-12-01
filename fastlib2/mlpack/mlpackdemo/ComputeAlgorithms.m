@@ -1,6 +1,10 @@
 function ComputeAlgorithms(data_file, method)
-  if strcmp(method, 'KPCA')==1
-      
+  data_file
+  method
+  if strcmp(method, 'PCA')==1
+      data_file
+      method
+      system('../../contrib/tqlong/quicsvd/quicsvd_test');
   end
   if strcmp(method, 'KDE')==1
       
