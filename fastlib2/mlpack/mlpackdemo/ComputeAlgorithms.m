@@ -4,7 +4,7 @@ function ComputeAlgorithms(data_file, method)
   if strcmp(method, 'PCA')==1
       data_file
       method
-      system('../../contrib/tqlong/quicsvd/quicsvd_test');
+      system('setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./quicsvd_test');
   end
   if strcmp(method, 'KDE')==1
       

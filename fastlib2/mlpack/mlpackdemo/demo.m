@@ -184,7 +184,6 @@ else
     set(hObject,'BackgroundColor',get(0,'defaultUicontrolBackgroundColor'));
 end
 
-
 % --- Executes on selection change in dim_reduction.
 function dim_reduction_Callback(hObject, eventdata, handles)
 % hObject    handle to dim_reduction (see GCBO)
