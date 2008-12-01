@@ -177,13 +177,14 @@ int main(int argc, char *argv[]) {
 		
 		cout<<"Hessian matrix: "<<endl;
 
-		for (index_t j=0; j<current_hessian.n_rows(); j++){
+		/*for (index_t j=0; j<current_hessian.n_rows(); j++){
 			for (index_t k=0; k<current_hessian.n_cols(); k++){
 				cout<<current_hessian.get(j,k) <<"  ";
 			}
 			cout<<endl;
 		}
-		
+		*/
+
 		Vector current_p;
 		double current_delta_m;
 		Vector next_parameter;
