@@ -1,6 +1,6 @@
-global fastlib_root =' ';
+% global fastlib_root =' ';
 
-function varargout = demo_export(varargin)
+function varargout = demo(varargin)
 % DEMO_EXPORT M-file for demo_export.fig
 %      DEMO_EXPORT, by itself, creates a new DEMO_EXPORT or raises the existing
 %      singleton*.
