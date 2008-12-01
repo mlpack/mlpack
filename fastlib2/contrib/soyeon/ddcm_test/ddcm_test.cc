@@ -177,13 +177,24 @@ int main(int argc, char *argv[]) {
 		
 		cout<<"Hessian matrix: "<<endl;
 
-		/*for (index_t j=0; j<current_hessian.n_rows(); j++){
+		for (index_t j=0; j<current_hessian.n_rows(); j++){
 			for (index_t k=0; k<current_hessian.n_cols(); k++){
 				cout<<current_hessian.get(j,k) <<"  ";
 			}
 			cout<<endl;
 		}
-		*/
+		Matrix current_inverse_hessian;
+		if( !PASSED(la::InverseInit(current_hessian, &current_inverse_hessian)) ) {
+			NOTIFY("Final hessian matrix is not invertible!");
+		}
+		else{
+			cout<<"Diagonal of inverse hessian: ";
+			for(index_t i=0; i<current_inverse_hessian.n_rows(); i++){
+				cout<<current_inverse_hessian.get(i,i)<<" ";
+			}
+			cout<<endl;
+		}
+
 
 		Vector current_p;
 		double current_delta_m;
