@@ -7,8 +7,9 @@ function DimReduction(datafile, method)
       return;  
   end
   
-  if strcmp(method, 'PCA')==1
-    
+  if strcmp(method, 'MVU')==1
+     % do  pca on the mvu file to bring it down to 2
+     % and output the result to input.csv
      return;  
  end
  error('Method not supported');
