@@ -1,6 +1,74 @@
 #include "fastlib/fastlib_int.h"
 #include "fastlib/thor/thor.h"
 
+const fx_entry_doc nbc_multi_entries[] = {
+  {"r", FX_REQUIRED, FX_STR, NULL,
+   "  A reference data matrix file.  The last two columns contain\n"
+   "  priors and labels, respectively, unless disabled.  Labels are\n"
+   "  given 0 for negative and 1 for positive.\n"},
+  {"r/no_priors", FX_PARAM, FX_BOOL, NULL,
+   "  Indicates that r has no column for priors.\n"},
+  {"q", FX_PARAM, FX_STR, NULL,
+   "  A query data matrix file (default r).  As for r, the last two\n"
+   "  columns contain priors and labels unless disabled.\n"},
+  {"q/no_priors", FX_PARAM, FX_BOOL, NULL,
+   "  Indicates that q has no column for priors.  If this is set, you\n"
+   "  must also set --nbc/prior for proper computation.\n"},
+  {"q/no_labels", FX_PARAM, FX_BOOL, NULL,
+   "  Indicates that q has no column for labels.\n"},
+  {"o", FX_PARAM, FX_STR, NULL,
+   "  Destination file for classification with best bandwidths.\n"},
+  {"o/no_emit", FX_PARAM, FX_BOOL, NULL,
+   "  Disable the emition of results to file.\n"},
+  {"nbc/max_h_pos", FX_REQUIRED, FX_DOUBLE, NULL,
+   "  The greatest kernel bandwidth to test for the positive class.\n"},
+  {"nbc/min_h_pos", FX_PARAM, FX_DOUBLE, NULL,
+   "  The smallest bandwidth to test for the positive class (default 0);\n"
+   "  min_h_pos + (max_h_pos - min_h_pos) / num_h_pos is the actual\n"
+   "  smallest bandwidth tested.\n"},
+  {"nbc/num_h_pos", FX_PARAM, FX_INT, NULL,
+   "  Number of bandwidths for the positive class (default 1).\n"},
+  {"nbc/max_h_neg", FX_REQUIRED, FX_DOUBLE, NULL,
+   "  Like max_h_pos, but for negative class.\n"},
+  {"nbc/min_h_neg", FX_PARAM, FX_DOUBLE, NULL,
+   "  Like min_h_pos, but for negative class.\n"},
+  {"nbc/num_h_neg", FX_PARAM, FX_INT, NULL,
+   "  Like num_h_pos, but for negative class.\n"},
+  {"nbc/prior", FX_PARAM, FX_DOUBLE, NULL,
+   "  Overrides the columns of priors for q.  Set this if --q/no_priors\n"
+   "  is given.\n"},
+  {"nbc/threshold", FX_PARAM, FX_DOUBLE, NULL,
+   "  Positive class postierior probability required to classify as\n"
+   "  positive; use 0.5 for Bayes optimal classifier (default 0.5).\n"},
+  {"read", FX_TIMER, FX_CUSTOM, NULL,
+   "  Time spent reading data from file.\n"},
+  {"tree", FX_TIMER, FX_CUSTOM, NULL,
+   "  Time spent building trees.\n"},
+  {"gnp/gnp", FX_TIMER, FX_CUSTOM, NULL,
+   "  Time spent in generaled N-body computation.\n"},
+  {"gnp/global_result/best_eff_pos", FX_RESULT, FX_DOUBLE, NULL,
+   "  Best observed efficiency for postive class (percentage classified\n"
+   "  positive points actually positive).\n"},
+  {"gnp/global_result/best_cov_pos", FX_RESULT, FX_DOUBLE, NULL,
+   "  Best observed coverage for postive class (percentage actually\n"
+   "  positive points classified positive).\n"},
+  {"gnp/global_result/best_eff_neg", FX_RESULT, FX_DOUBLE, NULL,
+   "  Like best_eff_pos, but for negative class.\n"},
+  {"gnp/global_result/best_cov_neg", FX_RESULT, FX_DOUBLE, NULL,
+   "  Like best_cov_pos, but for negative class.\n"},
+  {"gnp/global_result/best_h_pos", FX_RESULT, FX_INT, NULL,
+   "  Best observed bandwidth for the positive class.\n"},
+  {"gnp/global_result/best_h_neg", FX_RESULT, FX_INT, NULL,
+   "  Best observed bandwidth for the negative class.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc nbc_multi_doc = {
+  nbc_multi_entries, NULL,
+  "This program performes nonparametric Bayes classification with multiple\n"
+  "bandwidths for the purpose of bandwidth optimization.\n"
+};
+
 /**
  * Nonparametric Bayes Classification for 2 classes.
  *
@@ -195,12 +263,12 @@ class Nbc {
       kernel_pos.Init(count_kernel_pos);
       coeff_pos.Init(count_kernel_pos);
 
-      h_pos.lo = fx_param_double_req(module, "min_h_pos");
-      h_pos.hi = fx_param_double(module, "max_h_pos", h_pos.lo);
+      h_pos.hi = fx_param_double_req(module, "max_h_pos");
+      h_pos.lo = fx_param_double(module, "min_h_pos", 0);
 
-      step = count_kernel_pos > 1 ? h_pos.width() / (count_kernel_pos - 1) : 0;
-      h_cur = h_pos.lo;
-      for (i = 0; i < count_kernel_pos; i++, h_cur += step) {
+      step = h_pos.width() / count_kernel_pos;
+      h_cur = h_pos.hi;
+      for (i = count_kernel_pos - 1; i >= 0; --i, h_cur -= step) {
 	kernel_pos[i].Init(h_cur);
       }
 
@@ -211,9 +279,9 @@ class Nbc {
       h_neg.lo = fx_param_double_req(module, "min_h_neg");
       h_neg.hi = fx_param_double(module, "max_h_neg", h_neg.lo);
 
-      step = count_kernel_neg > 1 ? h_neg.width() / (count_kernel_neg - 1) : 0;
-      h_cur = h_neg.lo;
-      for (i = 0; i < count_kernel_neg; i++, h_cur += step) {
+      step = h_neg.width() / count_kernel_neg;
+      h_cur = h_neg.hi;
+      for (i = count_kernel_neg - 1; i >= 0; --i, h_cur -= step) {
 	kernel_neg[i].Init(h_cur);
       }
 
@@ -951,33 +1019,50 @@ class Nbc {
     index_t i_size;
     index_t j_size;
     /** Identified pos points, stored column-major. Similar for _neg. */
-    ArrayList<int> result_pos;
-    ArrayList<int> result_neg;
+    ArrayList<int> count_pos;
+    ArrayList<int> count_neg;
+    /** Number of points that couldn't be classified. */
+    ArrayList<int> count_unknown;
+    /** Correct pos points, stored column-major. Similar for _neg. */
+    ArrayList<int> count_correct_pos;
+    ArrayList<int> count_correct_neg;
 
     OT_DEF(GlobalResult) {
       OT_MY_OBJECT(i_size);
       OT_MY_OBJECT(j_size);
-      OT_MY_OBJECT(result_pos);
-      OT_MY_OBJECT(result_neg);
+      OT_MY_OBJECT(count_pos);
+      OT_MY_OBJECT(count_neg);
+      OT_MY_OBJECT(count_unknown);
+      OT_MY_OBJECT(count_correct_pos);
+      OT_MY_OBJECT(count_correct_neg);
     }
 
    public:
     void Init(const Param& param) {
       i_size = param.kernel_pos.size();
       j_size = param.kernel_neg.size();
-      result_pos.Init(i_size * j_size);
-      result_neg.Init(i_size * j_size);
+      count_pos.Init(i_size * j_size);
+      count_neg.Init(i_size * j_size);
+      count_unknown.Init(i_size * j_size);
+      count_correct_pos.Init(i_size * j_size);
+      count_correct_neg.Init(i_size * j_size);
 
-      for (int i = 0; i < result_pos.size(); i++) {
-	result_pos[i] = 0;
-	result_neg[i] = 0;
+      for (int i = 0; i < count_pos.size(); i++) {
+	count_pos[i] = 0;
+	count_neg[i] = 0;
+	count_unknown[i] = 0;
+	count_correct_pos[i] = 0;
+	count_correct_neg[i] = 0;
       }
     }
 
     void Accumulate(const Param& param, const GlobalResult& other) {
-      for (int i = 0; i < result_pos.size(); i++) {
-	result_pos[i] += other.result_pos[i];
-	result_neg[i] += other.result_neg[i];
+      for (int i = 0; i < count_pos.size(); i++) {
+	count_pos[i] += other.count_pos[i];
+	count_neg[i] += other.count_neg[i];
+	count_unknown[i] += other.count_unknown[i];
+	count_correct_pos[i] += other.count_correct_pos[i];
+	count_correct_neg[i] += other.count_correct_neg[i];
       }
     }
 
@@ -987,19 +1072,30 @@ class Nbc {
 
     void Report(const Param& param, datanode *datanode) {
       if (likely(param.loo)) {
-	double best_acc_pos = 0;
-	double best_acc_neg = 0;
+	double best_eff_pos = 0;
+	double best_eff_neg = 0;
+	double best_cov_pos = 0;
+	double best_cov_neg = 0;
 	index_t best_i = -1;
 	index_t best_j = -1;
 
 	for (index_t j = 0; j < j_size; j++) {
 	  for (index_t i = 0; i < i_size; i++) {
-	    double acc_pos = result_pos[i + j * i_size] / ((double)param.count_pos);
-	    double acc_neg = result_neg[i + j * i_size] / ((double)param.count_neg);
+	    double eff_pos =
+	        count_correct_pos[i+j*i_size] / (double)count_pos[i+j*i_size];
+	    double eff_neg =
+	        count_correct_neg[i+j*i_size] / (double)count_neg[i+j*i_size];
 
-	    if (acc_pos * acc_neg > best_acc_pos * best_acc_neg) {
-	      best_acc_pos = acc_pos;
-	      best_acc_neg = acc_neg;
+	    double cov_pos =
+	        count_correct_pos[i+j*i_size] / (double)param.count_pos;
+	    double cov_neg =
+	        count_correct_neg[i+j*i_size] / (double)param.count_neg;
+
+	    if (eff_pos * cov_pos > best_eff_pos * best_cov_pos) {
+	      best_eff_pos = eff_pos;
+	      best_cov_pos = cov_pos;
+	      best_eff_neg = eff_neg;
+	      best_cov_neg = cov_neg;
 	      best_i = i;
 	      best_j = j;
 	    }
@@ -1007,17 +1103,21 @@ class Nbc {
 	}
 
 	if (best_i != -1 && best_j != -1) {
-	  fx_format_result(datanode, "best_acc_pos", "%g", best_acc_pos);
-	  fx_format_result(datanode, "best_acc_neg", "%g", best_acc_neg);
-	  fx_format_result(datanode, "best_h_pos", "%g",
-			   sqrt(param.kernel_pos[best_i].bandwidth_sq()));
-	  fx_format_result(datanode, "best_h_neg", "%g",
-			   sqrt(param.kernel_neg[best_j].bandwidth_sq()));
+	  fx_result_double(datanode, "best_eff_pos", best_eff_pos);
+	  fx_result_double(datanode, "best_cov_pos", best_cov_pos);
+	  fx_result_double(datanode, "best_eff_neg", best_eff_neg);
+	  fx_result_double(datanode, "best_cov_neg", best_cov_neg);
+	  fx_result_double(datanode, "best_h_pos",
+	      sqrt(param.kernel_pos[best_i].bandwidth_sq()));
+	  fx_result_double(datanode, "best_h_neg",
+	      sqrt(param.kernel_neg[best_j].bandwidth_sq()));
 	} else {
-	  fx_format_result(datanode, "best_acc_pos", "0");
-	  fx_format_result(datanode, "best_acc_neg", "0");
-	  fx_format_result(datanode, "best_h_pos", "not found!");
-	  fx_format_result(datanode, "best_h_neg", "not found!");
+	  fx_result_double(datanode, "best_eff_pos", 0);
+	  fx_result_double(datanode, "best_eff_neg", 0);
+	  fx_result_double(datanode, "best_cov_pos", 0);
+	  fx_result_double(datanode, "best_cov_neg", 0);
+	  fx_result_double(datanode, "best_h_pos", -1);
+	  fx_result_double(datanode, "best_h_neg", -1);
 	}
       }
     }
@@ -1026,17 +1126,19 @@ class Nbc {
         const QPoint& q_point, index_t q_i,
         const QResult& q_result) {
       if (likely(param.loo)) {
-	if (q_point.is_pos()) {
-	  for (int i = 0; i < result_pos.size(); i++) {
-	    if (q_result.label.label[i] == LAB_POS) {
-	      ++result_pos[i];
+	for (int i = 0; i < count_pos.size(); ++i) {
+	  if (q_result.label.label[i] == LAB_POS) {
+	    ++count_pos[i];
+	    if (q_point.is_pos()) {
+	      ++count_correct_pos[i];
 	    }
-	  }
-	} else {
-	  for (int i = 0; i < result_pos.size(); i++) {
-	    if (q_result.label.label[i] == LAB_NEG) {
-	      ++result_neg[i];
+	  } else if (q_result.label.label[i] == LAB_NEG) {
+	    ++count_neg[i];
+	    if (!q_point.is_pos()) {
+	      ++count_correct_neg[i];
 	    }
+	  } else if (q_result.label.label[i] == LAB_EITHER) {
+	    ++count_unknown[i];
 	  }
 	}
       }
@@ -1422,15 +1524,15 @@ void NbcMain(datanode *module) {
 
   fx_timer_start(module, "read");
   param.no_labels = false;
-  param.no_priors = fx_param_bool(module, "r_no_priors", 0);
+  param.no_priors = fx_param_bool(module, "r/no_priors", 0);
   r_points_cache = new DistributedCache();
   n_r_points = thor::ReadPoints<Nbc::RPoint>(
       param, DATA_CHANNEL + 0, DATA_CHANNEL + 1,
       fx_submodule(module, "r"),
       r_points_cache);
   if (fx_param_exists(module, "q")) {
-    param.no_labels = fx_param_bool(module, "q_no_labels", 0);
-    param.no_priors = fx_param_bool(module, "q_no_priors", 0);
+    param.no_labels = fx_param_bool(module, "q/no_labels", 0);
+    param.no_priors = fx_param_bool(module, "q/no_priors", 0);
     q_points_cache = new DistributedCache();
     n_q_points = thor::ReadPoints<Nbc::QPoint>(
         param, DATA_CHANNEL + 2, DATA_CHANNEL + 3,
@@ -1484,7 +1586,8 @@ void NbcMain(datanode *module) {
       q_tree, r_tree, &q_results, &global_result);
 
   // Emit the results; this needs to be folded into THOR
-  if (!fx_param_bool(module, "no_emit", 0)) {
+  const char *out_file = fx_param_str(module, "o", "out.csv");
+  if (out_file[0] != '\0' && !fx_param_bool(module, "o/no_emit", 0)) {
     Matrix classifications;
     classifications.Init(1, n_q_points);
     if (rpc::is_root()) {
@@ -1497,17 +1600,17 @@ void NbcMain(datanode *module) {
       for (index_t i = 0; i < n_q_points; i++,
 	     result_iter.Next(), points_iter.Next()) {
 	classifications.set(0, (*points_iter).index(),
-			    (*result_iter).label.at(0,0));
+			    2 - (*result_iter).label.at(0,0));
       }
     }
-    data::Save(fx_param_str(module, "out", "out.csv"), classifications);
+    data::Save(out_file, classifications);
   }
 
   rpc::Done();
 }
 
 int main(int argc, char *argv[]) {
-  fx_module *root = fx_init(argc, argv, NULL);
+  fx_module *root = fx_init(argc, argv, &nbc_multi_doc);
 
   NbcMain(root);
   

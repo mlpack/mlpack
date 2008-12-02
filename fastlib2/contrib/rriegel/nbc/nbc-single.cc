@@ -1,6 +1,60 @@
 #include "fastlib/fastlib_int.h"
 #include "fastlib/thor/thor.h"
 
+const fx_entry_doc nbc_single_entries[] = {
+  {"r", FX_REQUIRED, FX_STR, NULL,
+   "  A reference data matrix file.  The last two columns contain\n"
+   "  priors and labels, respectively, unless disabled.  Labels are\n"
+   "  given 0 for negative and 1 for positive.\n"},
+  {"r/no_priors", FX_PARAM, FX_BOOL, NULL,
+   "  Indicates that r has no column for priors.\n"},
+  {"q", FX_PARAM, FX_STR, NULL,
+   "  A query data matrix file (default r).  As for r, the last two\n"
+   "  columns contain priors and labels unless disabled.\n"},
+  {"q/no_priors", FX_PARAM, FX_BOOL, NULL,
+   "  Indicates that q has no column for priors.  If this is set, you\n"
+   "  must also set --nbc/prior for proper computation.\n"},
+  {"q/no_labels", FX_PARAM, FX_BOOL, NULL,
+   "  Indicates that q has no column for labels.\n"},
+  {"o", FX_PARAM, FX_STR, NULL,
+   "  Destination file for classifications.\n"},
+  {"o/no_emit", FX_PARAM, FX_BOOL, NULL,
+   "  Disable the emition of results to file.\n"},
+  {"nbc/h_pos", FX_REQUIRED, FX_DOUBLE, NULL,
+   "  The kernel bandwidth for the positive class.\n"},
+  {"nbc/h_neg", FX_REQUIRED, FX_DOUBLE, NULL,
+   "  The kernel bandwidth for the negative class.\n"},
+  {"nbc/prior", FX_PARAM, FX_DOUBLE, NULL,
+   "  Overrides the columns of priors for q.  Set this if --q/no_priors\n"
+   "  is given.\n"},
+  {"nbc/threshold", FX_PARAM, FX_DOUBLE, NULL,
+   "  Positive class postierior probability required to classify as\n"
+   "  positive; use 0.5 for Bayes optimal classifier (default 0.5).\n"},
+  {"read", FX_TIMER, FX_CUSTOM, NULL,
+   "  Time spent reading data from file.\n"},
+  {"tree", FX_TIMER, FX_CUSTOM, NULL,
+   "  Time spent building trees.\n"},
+  {"gnp/gnp", FX_TIMER, FX_CUSTOM, NULL,
+   "  Time spent in generaled N-body computation.\n"},
+  {"gnp/global_result/eff_pos", FX_RESULT, FX_DOUBLE, NULL,
+   "  Observed efficiency for postive class (percentage classified\n"
+   "  positive points actually positive).\n"},
+  {"gnp/global_result/cov_pos", FX_RESULT, FX_DOUBLE, NULL,
+   "  Observed coverage for postive class (percentage actually\n"
+   "  positive points classified positive).\n"},
+  {"gnp/global_result/eff_neg", FX_RESULT, FX_DOUBLE, NULL,
+   "  Like eff_pos, but for negative class.\n"},
+  {"gnp/global_result/cov_neg", FX_RESULT, FX_DOUBLE, NULL,
+   "  Like cov_pos, but for negative class.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc nbc_single_doc = {
+  nbc_single_entries, NULL,
+  "This program performes nonparametric Bayes classification with given\n"
+  "bandwidths for the purpose of fast classification of unlabeled data.\n"
+};
+
 /**
  * Nonparametric Bayes Classification for 2 classes.
  *
@@ -729,11 +783,15 @@ class Nbc {
     index_t count_pos;
     index_t count_neg;
     index_t count_unknown;
+    index_t count_correct_pos;
+    index_t count_correct_neg;
     
     OT_DEF_BASIC(GlobalResult) {
       OT_MY_OBJECT(count_pos);
       OT_MY_OBJECT(count_neg);
       OT_MY_OBJECT(count_unknown);
+      OT_MY_OBJECT(count_correct_pos);
+      OT_MY_OBJECT(count_correct_neg);
     }
 
    public:
@@ -741,6 +799,8 @@ class Nbc {
       count_pos = 0;
       count_neg = 0;
       count_unknown = 0;
+      count_correct_pos = 0;
+      count_correct_neg = 0;
     }
     void Accumulate(const Param& param, const GlobalResult& other) {
       count_pos += other.count_pos;
@@ -751,30 +811,49 @@ class Nbc {
     void UndoDelta(const Param& param, const Delta& delta) {}
     void Postprocess(const Param& param) {}
     void Report(const Param& param, datanode *datanode) {
-      index_t total = count_pos + count_neg + count_unknown;
+      double eff_pos =
+	  count_correct_pos / (double)count_pos;
+      double eff_neg =
+	  count_correct_neg / (double)count_neg;
+
+      double cov_pos =
+	  count_correct_pos / (double)param.count_pos;
+      double cov_neg =
+	  count_correct_neg / (double)param.count_neg;
 
       fx_format_result(datanode, "count_pos", "%"LI"d",
           count_pos);
       fx_format_result(datanode, "percent_pos", "%.05f",
-          double(count_pos) / total * 100.0);
+          double(count_pos) / param.count_all * 100.0);
       fx_format_result(datanode, "count_neg", "%"LI"d",
           count_neg);
       fx_format_result(datanode, "percent_neg", "%.05f",
-          double(count_neg) / total * 100.0);
+          double(count_neg) / param.count_all * 100.0);
       fx_format_result(datanode, "count_unknown", "%"LI"d",
           count_unknown);
       fx_format_result(datanode, "percent_unknown", "%.05f",
-          double(count_unknown) / total * 100.0);
+          double(count_unknown) / param.count_all * 100.0);
+
+      fx_format_result(datanode, "eff_pos", "%g", eff_pos);
+      fx_format_result(datanode, "cov_pos", "%g", cov_pos);
+      fx_format_result(datanode, "eff_neg", "%g", eff_neg);
+      fx_format_result(datanode, "cov_neg", "%g", cov_neg);
     }
     void ApplyResult(const Param& param,
         const QPoint& q_point, index_t q_i,
-        const QResult& result) {
-      if (result.label == LAB_POS) {
-        ++count_pos;
-      } else if (result.label == LAB_NEG) {
-        ++count_neg;
-      } else if (result.label == LAB_EITHER) {
-        ++count_unknown;
+        const QResult& q_result) {
+      if (q_result.label == LAB_POS) {
+	++count_pos;
+	if (param.loo && q_point.is_pos()) {
+	  ++count_correct_pos;
+	}
+      } else if (q_result.label == LAB_NEG) {
+	++count_neg;
+	if (param.loo && !q_point.is_pos()) {
+	  ++count_correct_neg;
+	}
+      } else if (q_result.label == LAB_EITHER) {
+	++count_unknown;
       }
     }
   };
@@ -1027,15 +1106,15 @@ void NbcMain(datanode *module) {
 
   fx_timer_start(module, "read");
   param.no_labels = false;
-  param.no_priors = fx_param_bool(module, "r_no_priors", 0);
+  param.no_priors = fx_param_bool(module, "r/no_priors", 0);
   r_points_cache = new DistributedCache();
   n_r_points = thor::ReadPoints<Nbc::RPoint>(
       param, DATA_CHANNEL + 0, DATA_CHANNEL + 1,
       fx_submodule(module, "r"),
       r_points_cache);
   if (fx_param_exists(module, "q")) {
-    param.no_labels = fx_param_bool(module, "q_no_labels", 0);
-    param.no_priors = fx_param_bool(module, "q_no_priors", 0);
+    param.no_labels = fx_param_bool(module, "q/no_labels", 0);
+    param.no_priors = fx_param_bool(module, "q/no_priors", 0);
     q_points_cache = new DistributedCache();
     n_q_points = thor::ReadPoints<Nbc::QPoint>(
         param, DATA_CHANNEL + 2, DATA_CHANNEL + 3,
@@ -1089,7 +1168,8 @@ void NbcMain(datanode *module) {
       q_tree, r_tree, &q_results, &global_result);
 
   // Emit the results; this needs to be folded into THOR
-  if (!fx_param_bool(module, "no_emit", 0)) {
+  const char *out_file = fx_param_str(module, "o", "out.csv");
+  if (out_file[0] != '\0' && !fx_param_bool(module, "no_emit", 0)) {
     Matrix classifications;
     classifications.Init(1, n_q_points);
     if (rpc::is_root()) {
@@ -1105,14 +1185,14 @@ void NbcMain(datanode *module) {
 			    2 - (*result_iter).label);
       }
     }
-    data::Save(fx_param_str(module, "out", "out.csv"), classifications);
+    data::Save(out_file, classifications);
   }
 
   rpc::Done();
 }
 
 int main(int argc, char *argv[]) {
-  fx_module *root = fx_init(argc, argv, NULL);
+  fx_module *root = fx_init(argc, argv, &nbc_single_doc);
 
   NbcMain(root);
   
