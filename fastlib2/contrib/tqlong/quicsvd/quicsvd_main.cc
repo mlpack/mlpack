@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
   printf("Loading data ... ");
   fflush(stdout);
   data::Load(A_in, &A);
-  printf("done.\n");
+  printf("n_rows = %d, n_cols = %d, done.\n", A.n_rows(), A.n_cols());
 
   // parse target relative error, default = 0.1
   const double targetRelErr = fx_param_double(NULL, "relErr", 0.1);
