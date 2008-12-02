@@ -5,7 +5,7 @@ const fx_entry_doc kernel_matrix_generator_entries[] = {
    " File consists of data points in lines.\n"},
   {"bandwidth", FX_REQUIRED, FX_DOUBLE, NULL,
    " The kernel bandwidth.\n"},
-  {"rate", FX_REQUIRED, FX_INT, NULL,
+  {"rate", FX_PARAM, FX_INT, NULL,
    " The sampling rate, default = 20.\n"},
   {"output", FX_PARAM, FX_STR, NULL,
    " File to hold output kernel matrix,"
