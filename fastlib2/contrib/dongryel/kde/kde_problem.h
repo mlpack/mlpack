@@ -4,6 +4,7 @@
 #include "fastlib/fastlib.h"
 #include "mlpack/series_expansion/kernel_aux.h"
 #include "../multitree_template/multitree_utility.h"
+#include "mlpack/kde/inverse_normal_cdf.h"
 
 template<typename TKernelAux>
 class KdeProblem {
@@ -312,6 +313,10 @@ class KdeProblem {
      */
     TKernelAux kernel_aux;
     
+    /** @brief The desired probability level.
+     */
+    double probability;
+
     /** @brief The relative error desired.
      */
     double relative_error;
@@ -331,6 +336,7 @@ class KdeProblem {
     OT_DEF_BASIC(MultiTreeGlobal) {
       OT_MY_OBJECT(dimension);
       OT_MY_OBJECT(kernel_aux);
+      OT_MY_OBJECT(probability);
       OT_MY_OBJECT(relative_error);
       OT_MY_OBJECT(num_reference_points);
       OT_MY_OBJECT(normalizing_constant);
@@ -378,6 +384,9 @@ class KdeProblem {
 	kernel_aux.Init(bandwidth, fx_param_int(module, "order", 0),
 			dimension);
       }
+
+      // Set the probability level.
+      probability = fx_param_double(module, "probability", 0.9);
 
       // Set the relative error.
       relative_error = fx_param_double(module, "relative_error", 0.1);
@@ -683,6 +692,10 @@ class KdeProblem {
     
    public:
     
+    double get_weight_sum() {
+      return farfield_expansion.get_weight_sum();
+    }
+
     void Init(const Matrix& dataset, index_t &start, index_t &count) {
     }
     
@@ -866,19 +879,27 @@ class KdeProblem {
 	   typename HybridTree, typename QueryTree, typename ReferenceTree>
   static bool ConsiderTupleProbabilistic
   (MultiTreeGlobal &globals, MultiTreeQueryResult &results,
+   const ArrayList<Matrix *> &query_sets,
    const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &nodes,
    ArrayList<QueryTree *> &query_nodes,
    ArrayList<ReferenceTree *> &reference_nodes, double total_num_tuples,
    double total_n_minus_one_tuples_root,
    const Vector &total_n_minus_one_tuples) {
-    
-    return false;
 
-    /*
+    QueryTree *qnode = query_nodes[0];
+    ReferenceTree *rnode = reference_nodes[0];
+    const Matrix &qset = *(query_sets[0]);
+    const Matrix &rset = *(sets[0]);
+
     // If the reference node contains too few points, then return.
     if(qnode->count() * rnode->count() < 50) {
       return false;
     }
+
+    // Refine the lower bound using the new lower bound info.
+    MultiTreeQuerySummary new_summary;
+    new_summary.InitCopy(qnode->stat().summary);
+    new_summary.ApplyPostponed(qnode->stat().postponed);
 
     // Refine the lower bound using the new lower bound info.
     double max_used_error = 0;
@@ -887,14 +908,16 @@ class KdeProblem {
     // more samples are needed.
     bool flag = true;
 
-    // Reset the current position of the scratch space to zero.
+    // Temporary sum accumulants.
     double kernel_sums = 0;
+    double kernel_sums_l = 0;
     double squared_kernel_sums = 0;
 
     // Commence sampling...
     {
       double standard_score =
-        InverseNormalCDF::Compute(probability + 0.5 * (1 - probability));
+        InverseNormalCDF::Compute(globals.probability + 0.5 * 
+				  (1 - globals.probability));
 
       // The initial number of samples is equal to the default.
       int num_samples = 25;
@@ -910,19 +933,18 @@ class KdeProblem {
 
           // Get the pointer to the current query point.
           const double *query_point =
-            (kde_object->qset_).GetColumnPtr(random_query_point_index);
+            qset.GetColumnPtr(random_query_point_index);
 
           // Get the pointer to the current reference point.
           const double *reference_point =
-            (kde_object->rset_).GetColumnPtr(random_reference_point_index);
+            rset.GetColumnPtr(random_reference_point_index);
 
           // Compute the pairwise distance and kernel value.
           double squared_distance = la::DistanceSqEuclidean
-            ((kde_object->rset_).n_rows(), query_point, reference_point);
+            (rset.n_rows(), query_point, reference_point);
 
           double weighted_kernel_value =
-            kde_object->EvalUnnormOnSq_(random_reference_point_index,
-                                        squared_distance);
+            globals.kernel_aux.kernel_.EvalUnnormOnSq(squared_distance);
           kernel_sums += weighted_kernel_value;
           squared_kernel_sums += weighted_kernel_value * weighted_kernel_value;
 
@@ -938,31 +960,25 @@ class KdeProblem {
           (squared_kernel_sums - total_samples * sample_mean * sample_mean) /
           ((double) total_samples - 1);
 
-        // Compute the current threshold for guaranteeing the relative
-        // error bound.
-        double new_used_error = qnode->stat().used_error_ +
-          qnode->stat().postponed_used_error_;
-        double new_n_pruned = qnode->stat().n_pruned_ +
-          qnode->stat().postponed_n_pruned_;
-
         // The currently proven lower bound.
-        double new_mass_l = qnode->stat().mass_l_ +
-          qnode->stat().postponed_l_ + dl;
         double right_hand_side =
-          (kde_object->relative_error_ * new_mass_l - new_used_error) /
-          (kde_object->rroot_->stat().get_weight_sum() - new_n_pruned);
-
+          (globals.relative_error * new_summary.sum_l -
+	   new_summary.used_error_u) /
+          (globals.num_reference_points - new_summary.n_pruned_l);
+	
         if(sqrt(sample_variance) * standard_score < right_hand_side ||
-           ((new_mass_l + sqrt(sample_variance) * standard_score *
+           ((new_summary.sum_l + sqrt(sample_variance) * standard_score *
 	     rnode->stat().get_weight_sum()) -
-            new_mass_l) *
-           (kde_object->rroot_->stat().get_weight_sum() - new_n_pruned)
-           < kde_object->relative_error_ * new_mass_l *
+            new_summary.sum_l) *
+           (globals.num_reference_points - new_summary.n_pruned_l)
+           < globals.relative_error * new_summary.sum_l *
            rnode->stat().get_weight_sum()) {
+
           kernel_sums = kernel_sums / ((double) total_samples) *
             rnode->stat().get_weight_sum();
           max_used_error = rnode->stat().get_weight_sum() *
             standard_score * sqrt(sample_variance);
+	  kernel_sums_l = kernel_sums - max_used_error;
           break;
         }
         else {
@@ -976,12 +992,13 @@ class KdeProblem {
 
     // If all queries can be pruned, then add the approximations.
     if(flag) {
-      de = kernel_sums;
-      used_error = max_used_error;
+      qnode->stat().postponed.sum_l += kernel_sums_l;
+      qnode->stat().postponed.sum_e += kernel_sums;
+      qnode->stat().postponed.n_pruned += rnode->count();
+      qnode->stat().postponed.used_error += max_used_error;
       return true;
     }
     return false;
-    */
   }
 
   static void HybridNodeEvaluateMain(MultiTreeGlobal &globals,
