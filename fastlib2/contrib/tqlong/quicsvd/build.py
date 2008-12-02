@@ -36,7 +36,7 @@ binrule(
 
 binrule(
 	# The name of the executable.
-	name = "quicsvd_demo",
+	name = "gen_kernel_matrix",
 	
 	# The .c or .cc file containing main and any others you need.
 	sources = ["kernel_matrix_generator.cc"],
