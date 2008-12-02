@@ -25,12 +25,18 @@ const fx_entry_doc quicsvd_main_entries[] = {
    " File to hold the singular values vector s.\n"},
   {"VT_out", FX_PARAM, FX_STR, NULL,
    " File to hold matrix VT (V transposed).\n"},
+  {"SVT_out", FX_PARAM, FX_STR, NULL,
+   " File to hold matrix S * VT (the dimension reduced data).\n"},
+  {"lasvd", FX_PARAM, FX_STR, NULL,
+   " Use this parameter to compare running time to that of la::SVDInit().\n"},
   {"quicsvd_time", FX_TIMER, FX_CUSTOM, NULL,
    " time to run the QUIC-SVD algorithm.\n"},
   {"lasvd_time", FX_TIMER, FX_CUSTOM, NULL,
    " time to run the SVD algorithm from LAPACK.\n"},
   {"actualErr", FX_RESULT, FX_DOUBLE, NULL,
    " actual relative norm error.\n"},
+  {"dimension", FX_RESULT, FX_INT, NULL,
+   " the reduced dimension of the data.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -79,26 +85,33 @@ int main(int argc, char* argv[]) {
   fx_timer_stop(NULL, "quicsvd_time");
   printf("stop.\n");
   
+  fx_result_double(NULL, "actualErr", actualErr);
+  fx_result_int(NULL, "dimension", s.length());
+
   if (fx_param_exists(NULL, "U_out"))
     data::Save(fx_param_str(NULL, "U_out", NULL), U);
-  else // use OT to write to standard output
-    ot::Print(U, "U", stdout);
+  //else // use OT to write to standard output
+  //  ot::Print(U, "U", stdout);
 
   if (fx_param_exists(NULL, "s_out")) {
     Matrix S;
     S.AliasColVector(s);
     data::Save(fx_param_str(NULL, "s_out", NULL), S);
   }
-  else 
-    ot::Print(s, "s", stdout);
+  //else 
+  //  ot::Print(s, "s", stdout);
 
   if (fx_param_exists(NULL, "VT_out"))
     data::Save(fx_param_str(NULL, "VT_out", NULL), VT);
-  else 
-    ot::Print(VT, "VT", stdout);
+  //else 
+  //  ot::Print(VT, "VT", stdout);
 
-  fx_result_double(NULL, "actualErr", actualErr);
+  if (fx_param_exists(NULL, "SVT_out")) {
+    la::ScaleRows(s, &VT);
+    data::Save(fx_param_str(NULL, "SVT_out", NULL), VT);
+  }
 
+  /*
   Matrix B, V;
   la::TransposeInit(VT, &V);
   B.Init(A.n_rows(), A.n_cols());
@@ -117,17 +130,20 @@ int main(int argc, char* argv[]) {
   la::SubFrom(A, &B);
 
   printf("relative error: %f\n", norm(B)/norm(A));
+  */
 
-  s.Destruct();
-  U.Destruct();
-  VT.Destruct();
-  printf("LAPACK-SVD start ... ");
-  fflush(stdout);
-  fx_timer_start(NULL, "lasvd_time");
-  // call the QUIC-SVD method
-  la::SVDInit(A, &s, &U, &VT);
-  fx_timer_stop(NULL, "lasvd_time");
-  printf("stop.\n");
+  if (fx_param_exists(NULL, "lasvd")) {
+    s.Destruct();
+    U.Destruct();
+    VT.Destruct();
+    printf("LAPACK-SVD start ... ");
+    fflush(stdout);
+    fx_timer_start(NULL, "lasvd_time");
+    // call the QUIC-SVD method
+    la::SVDInit(A, &s, &U, &VT);
+    fx_timer_stop(NULL, "lasvd_time");
+    printf("stop.\n");
+  }
 
   fx_done(NULL);
 }
