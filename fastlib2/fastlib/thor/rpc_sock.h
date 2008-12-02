@@ -11,7 +11,7 @@
 
 #include "fastlib/col/arraylist.h"
 #include "fastlib/col/queue.h"
-#include "fastlib/math/math.h"
+#include "fastlib/math/math_lib.h"
 
 #include <sys/socket.h>
 #include <sys/types.h>
