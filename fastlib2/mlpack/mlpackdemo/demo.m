@@ -289,21 +289,31 @@ function go1_Callback(hObject, eventdata, handles)
 % hObject    handle to go1 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-ComputeAlgorithms(handles.data_file, handles.dim_reduction);
+ComputeAlgorithms(handles.data_file, handles.dim_reduction,...
+    handles.knn1);
+% Add the dimension-reduced dataset to the list.
 
 % --- Executes on button press in go2.
 function go2_Callback(hObject, eventdata, handles)
 % hObject    handle to go2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-ComputeAlgorithms(handles.data_file, handles.dim_reduction);
+ComputeAlgorithms(handles.data_file, handles.neighbors,...
+    handles.knn1);
+% Get the handle to the plot in the GUI and plot adjacnecy graph.
+get(handles.axes1);
+data_matrix = load('/net/hg200/dongryel/MLPACK_test_datasets/mnist10k_test_MVU_4.csv');
+data_matrix = data_matrix(:, 1:2);
+load 'adjacency_matrix.mat' adjacency_matrix;
+gplot(adjacency_matrix, data_matrix);
 
 % --- Executes on button press in go3.
 function go3_Callback(hObject, eventdata, handles)
 % hObject    handle to go3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-ComputeAlgorithms(handles.data_file, handles.algorithms);
+ComputeAlgorithms(handles.data_file, handles.algorithms,...
+    handles.knn1);
 
 % --- Executes during object creation, after setting all properties.
 function knn1_CreateFcn(hObject, eventdata, handles)
