@@ -11,8 +11,8 @@ class TrainingSet{
   Matrix* data_matrix_;
   ArrayList<Vector> order_;  
   ArrayList<Vector> back_order_; 
-  //  ArrayList<int> old_from_new_;
-  int n_features_, n_points_;
+  ArrayList<int> old_from_new_, new_from_old_;
+  int n_features_, n_points_, target_types_;
 
 
   int SortOrdinalFeature_(int dim, int start_, int stop_){   
@@ -87,13 +87,12 @@ class TrainingSet{
 
   ////////////////////// Helper Functions /////////////////////////////////////
 
-  void Init(const char* fp, Vector &firsts){
-   
+  void Init(const char* fp, Vector &firsts){   
     data_.InitFromFile(fp);
     // Make linked list representing sorting of ordered vars
     data_matrix_ = &data_.matrix();
-    int n_features_ = data_.n_features();
-    int n_points_ = data_.n_points();   
+    n_features_ = data_.n_features();
+    n_points_ = data_.n_points();   
     order_.Init(n_features_);
     back_order_.Init(n_features_);     
     firsts.Init(n_features_);
@@ -119,7 +118,77 @@ class TrainingSet{
 	back_order_[i].Init(0);
       }
     }    
+    old_from_new_.Init(n_points_);
+    new_from_old_.Init(n_points_);
+    for (int i = 0; i < n_points_; i++){
+      old_from_new_[i] = i;
+      new_from_old_[i] = i;
+    }
   }
+  
+  /*
+   * Initialization for features and target in separate files.
+   */
+  void InitLabels(const char* fp){   
+    data_.InitFromFile(fp);
+   
+    // Make linked list representing sorting of ordered vars
+    n_features_ = data_.n_features();
+    n_points_ = data_.n_points();  
+    old_from_new_.Init(n_points_);
+    new_from_old_.Init(n_points_);
+    for (int i = 0; i < n_points_; i++){
+      old_from_new_[i] = i;
+      new_from_old_[i] = i;
+    }	 
+  }
+
+  void InitLabels2(const char* fl, Vector &firsts, Matrix* data_in){
+    Matrix labels_;
+    data::Load(fl, &labels_);
+    data_matrix_ = data_in;
+    target_types_ = 0;
+    for (int i = 0; i < n_points_; i++){
+      Vector temp;
+      data_.matrix().MakeColumnVector(i, &temp);
+      for (int j = 0; j < n_features_; j++){
+	data_matrix_->set(j,i, temp[j]);
+      }      
+      data_matrix_->set(n_features_, i, labels_.get(0, i));
+      if (labels_.get(0,i) >= target_types_){
+	target_types_ = (int)labels_.get(0,i)+1;
+      }
+    }    
+    n_features_++;
+    order_.Init(n_features_);
+    back_order_.Init(n_features_);     
+    firsts.Init(n_features_);
+    int i;
+    DatasetInfo meta_data = data_.info();
+    const DatasetFeature* current_feature;
+    for (i = 0; i < n_features_-1; i++){
+      current_feature = &meta_data.feature(i);      
+      if (current_feature->type() != 2 ){
+	order_[i].Init(n_points_); 
+	back_order_[i].Init(n_points_);
+	back_order_[i].SetAll(-2);
+	firsts[i] = SortOrdinalFeature_(i, 0, n_points_);
+	int j_old = (int)firsts[i], j_cur = (int)order_[i][(int)firsts[i]];
+	back_order_[i][j_old] = -1;
+	while(j_cur > 0){
+	  back_order_[i][j_cur] = j_old;
+	  j_old = j_cur;
+	  j_cur = (int)order_[i][j_cur];
+	} 	
+      } else {
+	order_[i].Init(0);
+	back_order_[i].Init(0);
+      }
+    }       
+    order_[n_features_-1].Init(0);
+    back_order_[n_features_-1].Init(0);
+  }
+  
 
   // This function swaps columns of our data matrix, to represent the
   // partition into left and right nodes.
@@ -128,7 +197,7 @@ class TrainingSet{
 			  Vector* firsts_r_out){
     Vector firsts_l;
     Vector firsts_r;
-    n_features_ = data_.n_features();
+    // n_features_ = data_.n_features();
     firsts_l.Init(n_features_);
     firsts_r.Init(n_features_);
 
@@ -187,9 +256,16 @@ class TrainingSet{
       
       data_matrix_->MakeColumnVector(left, &left_vector);
       data_matrix_->MakeColumnVector(right, &right_vector);
-      
+
+      int temp = old_from_new_[left];
+      old_from_new_[left] = old_from_new_[right];
+      old_from_new_[right] = temp;
+
+      new_from_old_[temp] = right;
+      new_from_old_[old_from_new_[left]] = left;
+
       left_vector.SwapValues(&right_vector);
-      int temp = (int)split[left - start];
+      temp = (int)split[left - start];
       split[left - start] = split[right - start];
       split[right - start] = temp;
             
@@ -249,31 +325,50 @@ class TrainingSet{
   
 
 
-  int GetVariableType(int dim) {
+  int GetVariableType(int dim) {    
     DatasetFeature temp = data_.info().feature(dim);
-    return temp.n_values();
+    return temp.n_values();    
   }
 
   int GetFeatures(){
-    return data_.n_features();   
+    return n_features_;   
   }
 
   int GetPointSize(){
-    return data_.n_points();
+    return n_points_;
   }
 
   int GetTargetType(int target_dim){
-    DatasetFeature temp = data_.info().feature(target_dim);
-    return temp.n_values();
+    if (target_dim < data_.n_features()){
+      DatasetFeature temp = data_.info().feature(target_dim);
+      return temp.n_values();
+    } else {
+      return target_types_;
+    }
   }
  
+
+  double Verify(int target_dim, double value, int index){
+    double real_value = this->Get(target_dim, index);
+    int target_type = this->GetTargetType(target_dim);
+    if (target_type > 0){
+      return !((int)value == (int)real_value);
+    } else {
+      return (value - real_value);
+    }
+    return 0;
+  }
 
   void GetOrder(int dim, Vector *order, int start, int stop){
     order->WeakCopy(order_[dim]);    
   }
 
   double Get(int i, int j){
-    return data_.get(i,j);
+    return data_matrix_->get(i,j);
+  }
+
+  int WhereNow(int i){
+    return new_from_old_[i];
   }
 
 }; // class DataSet

@@ -389,6 +389,9 @@ class Split{
   // stores the numbe rof occurneces of each. Additional variables
   // track the most common target value, and the Gini error.
   void OrderedClassification_(int dim, int classes){    
+    if(start_ == 4086 & stop_ == 4089){
+      printf("Case found \n");
+    }
     trial_left_error_ = BIG_BAD_NUMBER;
     trial_missing_data_flag_ = 0;
     trial_split_params_.Renew();
@@ -451,7 +454,7 @@ class Split{
       temp_left_error_ = (left_points*left_points*temp_left_error_ +
 			   2 * left_points - 2 * (int)left_abundance[val]) / 
 	((left_points + 1)*(left_points + 1));
-      
+     
       right_points--;
       if (right_points == 0){
 	temp_right_error_ = 0;
@@ -469,31 +472,39 @@ class Split{
       if (left_abundance[val] > left_abundance[left_mode]){
 	left_mode = val;
       }
-     current = (int)order[current];
-      if ((left_points*temp_left_error_ + right_points*temp_right_error_) / 
-	  total_points <= best_error){
-	trial_split_params_[1] = points_->Get(dim, current);
-	trial_right_value_ = right_mode;
-	trial_left_value_ = left_mode;
-	trial_right_error_ = right_points*temp_right_error_ / total_points;
-	trial_left_error_ = left_points*temp_left_error_ / total_points;
-	best_error = trial_right_error_ + trial_left_error_;
-	int temp = best_index;
-	while(temp != current) {
-	 trial_split_[temp - start_] = 1;	 
-	  temp = (int)(order)[temp];
+      double old_variable = points_->Get(dim, current);
+      current = (int)order[current];
+      if (current >= 0 && old_variable != points_->Get(dim, current)){
+	if ((left_points*temp_left_error_ + right_points*temp_right_error_) / 
+	    total_points <= best_error){
+	  trial_split_params_[1] = points_->Get(dim, current);
+	  trial_right_value_ = right_mode;
+	  trial_left_value_ = left_mode;
+	  trial_right_error_ = right_points*temp_right_error_ / total_points;
+	  trial_left_error_ = left_points*temp_left_error_ / total_points;
+	  best_error = trial_right_error_ + trial_left_error_;
+	  int temp = best_index;
+	  while(temp != current) {
+	    trial_split_[temp - start_] = 1;	 
+	    temp = (int)(order)[temp];
+	  }
+	  best_index = current;
 	}
-	best_index = current;
       }
     }
   } // OrderedClassification
 
+
+  /*
+   * Under construction- this will handle input files with missing data
+   */
+  /*
   void SurrogateSplits_(){
     int old_target_ = target_dim_;
     int i, n;
     double current_error;
     target_dim_ = -1;
-    for (i = 0; i <n; i++) {
+    for (i = 0; i < n; i++) {
       if (likely(i != split_dim_ & i != old_target_)) {
 	int var_type = points_->GetVariableType(i);
 	if (var_type > 0){
@@ -502,8 +513,7 @@ class Split{
 	  OrderedClassification_(i, 2);
 	}	
 	// Place trial split in sequence
-	current_error = trial_right_error_ + trial_left_error_;
-	
+	current_error = trial_right_error_ + trial_left_error_;	
       } 
     } 
     // Update split for points with missing values
@@ -534,7 +544,7 @@ class Split{
 	j++;
       }
     }
-  }
+  } */
  
 
   ////////////////////// Constructors /////////////////////////////////////////
@@ -576,6 +586,7 @@ class Split{
 
   double GetInitialError(){
     int targ_type = points_->GetTargetType(target_dim_);
+    printf("Target: %d \n", targ_type);
     int j, count = 0;
     double error = 0.0;
     if (targ_type > 0) {
@@ -583,13 +594,14 @@ class Split{
       Vector abundances;
       abundances.Init(targ_type);
       abundances.SetZero();
-      for (j = start_; j < stop_; j++){	
+      int eta = 0;
+      for (j = start_; j < stop_; j++){		
 	val = (int)points_->Get(target_dim_, j);
-	error = (count * count * error + 2 * count - 2 * abundances[val]) / 
-	  ((count + 1)*(count + 1));
-	count ++;
+	eta  = eta + 2*(int)abundances[val] + 1;
+	count++;
 	abundances[val] = abundances[val] + 1;
       }
+      error = 1.0 - eta / (count*count);
     } else {      
       double mean = 0.0;
       for (j = start_; j < stop_ ; j++){
@@ -609,40 +621,43 @@ class Split{
     right_error_ = BIG_BAD_NUMBER;
     for (i = 0; i < n; i++){      
       int targ_type = points_->GetTargetType(target_dim_);
-      int var_type = points_->GetVariableType(i);
-      if (target_dim_ != i){
-	if (var_type > 0){ 
-	  if (targ_type > 0){
-	    NonOrderedClassification_(i, var_type, targ_type);
+      if (i != target_dim_){
+	int var_type = points_->GetVariableType(i);
+	if (target_dim_ != i){
+	  if (var_type > 0){ 
+	    if (targ_type > 0){
+	      NonOrderedClassification_(i, var_type, targ_type);
+	    } else {
+	      NonOrderedRegression_(i, var_type);
+	    }	
 	  } else {
-	    NonOrderedRegression_(i, var_type);
-	  }	
-	} else {
-	  if (targ_type > 0){
-	    OrderedClassification_(i, targ_type);
-	  } else {
-	    OrderedRegression_(i);
-	  }	
-	}	   
-	if (unlikely(trial_left_error_ + trial_right_error_ < 
-		     left_error_ + right_error_)){	 
-	  split_params_[0].Renew();
-	  split_params_[0].InitCopy(trial_split_params_);
-	  left_error_ = trial_left_error_;
-	  right_error_ = trial_right_error_;
-	  left_value_ = trial_left_value_;
-	  right_value_ = trial_right_value_;
-	  split_.CopyValues(trial_split_);
-	  missing_data_flag_ = trial_missing_data_flag_;	
-	  split_dim_ = i;
-	}      
+	    if (targ_type > 0){
+	      OrderedClassification_(i, targ_type);
+	    } else {
+	      OrderedRegression_(i);
+	    }	
+	  }	   
+	  if (unlikely(trial_left_error_ + trial_right_error_ < 
+		       left_error_ + right_error_)){	 
+	    split_params_[0].Renew();
+	    split_params_[0].InitCopy(trial_split_params_);
+	    left_error_ = trial_left_error_;
+	    right_error_ = trial_right_error_;
+	    left_value_ = trial_left_value_;
+	    right_value_ = trial_right_value_;
+	    split_.CopyValues(trial_split_);
+	    missing_data_flag_ = trial_missing_data_flag_;	
+	    split_dim_ = i;
+	  }      
+	}
       }
     }
-    
+
+    /*
     // Surrogate splits
     if (missing_data_flag_){
       SurrogateSplits_();
-    }
+      }*/
 
      
     printf("Split Variable: %d Value:", split_dim_);
@@ -665,11 +680,22 @@ class Split{
   }
 
   double GetRightError(){
+    //  if (points_->GetTargetType(target_dim_) > 0){      
+    // } else {
     return right_error_;
+    //  }      
   }
 
   double GetLeftError() {
     return left_error_;
+  }
+
+  double GetLeftValue(){
+    return left_value_;
+  }
+
+  double GetRightValue(){
+    return right_value_;
   }
 
   ArrayList<ArrayList<double> > GetSplitParams(){
