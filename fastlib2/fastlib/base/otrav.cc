@@ -57,10 +57,18 @@ void ot::StandardFormat::Untraversed(const unsigned char *obj_cp,
 
 FOR_ALL_PRIMITIVES_DO(STANDARD_FORMAT__PRIMITIVE)
 
+void ot::StandardFormat::Primitive(const char *name, index_t index,
+				   const char *type, bool val) {
+  PrintIndent_();
+  PrintHeader_(name, index, type, -1);
+  fprintf(stream_, val ? "true" : "false");
+  putc('\n', stream_);
+}
+
 #undef STANDARD_FORMAT__PRIMITIVE
 
-  void ot::StandardFormat::Str(const char *name, index_t index,
-			       const char *type, const char *str) {
+void ot::StandardFormat::Str(const char *name, index_t index,
+			     const char *type, const char *str) {
   PrintIndent_();
   PrintHeader_(name, index, type, -1);
   if (!str) {
@@ -99,7 +107,13 @@ void ot::StandardFormat::Ptr(const char *name, index_t index,
 			     const char *type, ptrdiff_t ptr) {
   PrintIndent_();
   PrintHeader_(name, index, type, -1);
-  fprintf(stream_, "0x%X", ptr);
+  if (sizeof(ptrdiff_t) >= sizeof(int)) {
+    fprintf(stream_, "0x%X", (int)ptr);
+  } else if (sizeof(ptrdiff_t) >= sizeof(long)) {
+    fprintf(stream_, "0x%lX", (long)ptr);
+  } else {
+    fprintf(stream_, "0x%llX", (long long)ptr);
+  }
   putc('\n', stream_);
 }
 
@@ -179,6 +193,15 @@ void ot::XMLFormat::Untraversed(const unsigned char *obj_cp,
 
 FOR_ALL_PRIMITIVES_DO(XML_FORMAT__PRIMITIVE)
 
+void ot::XMLFormat::Primitive(const char *name, index_t index,
+			      const char *type, bool val) {
+  PrintIndent_();
+  PrintHeader_(name, index, type, -1);
+  fprintf(stream_, val ? "true" : "false");
+  PrintFooter_(type);
+  putc('\n', stream_);
+}
+
 #undef XML_FORMAT__PRIMITIVE
 
 void ot::XMLFormat::Str(const char *name, index_t index,
@@ -212,7 +235,13 @@ void ot::XMLFormat::Ptr(const char *name, index_t index,
 			const char *type, ptrdiff_t ptr) {
   PrintIndent_();
   PrintHeader_(name, index, type, -1);
-  fprintf(stream_, "0x%X", ptr);
+  if (sizeof(ptrdiff_t) >= sizeof(int)) {
+    fprintf(stream_, "0x%X", (int)ptr);
+  } else if (sizeof(ptrdiff_t) >= sizeof(long)) {
+    fprintf(stream_, "0x%lX", (long)ptr);
+  } else {
+    fprintf(stream_, "0x%llX", (long long)ptr);
+  }
   PrintFooter_(type);
   putc('\n', stream_);
 }

@@ -52,7 +52,7 @@ class ThorNode {
   index_t end_;
   index_t parent_;
   index_t subnodes_in_page_;
-#endif LIT_DISK_TREES
+#endif /* LIT_DISK_TREES */
 
   OT_DEF_BASIC(ThorNode) {
     OT_MY_OBJECT(begin_);
@@ -64,7 +64,7 @@ class ThorNode {
     OT_MY_OBJECT(end_);
     OT_MY_OBJECT(parent_);
     OT_MY_OBJECT(subnodes_in_page_);
-#endif LIT_DISK_TREES
+#endif /* LIT_DISK_TREES */
   }
 
  public:

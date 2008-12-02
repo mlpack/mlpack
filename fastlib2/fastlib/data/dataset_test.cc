@@ -1,7 +1,7 @@
 #include "dataset.h"
 
-#include "math/discrete.h"
-#include "base/test.h"
+#include "fastlib/math/discrete.h"
+#include "fastlib/base/test.h"
 
 TEST_SUITE_BEGIN(dataset)
 

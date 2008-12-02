@@ -2,18 +2,18 @@
 
 template<typename T>
 void CacheArrayBlockHandler<T>::Init(const T& default_obj) {
-  default_elem_.Init(ot::PointerFrozenSize(default_obj));
-  ot::PointerFreeze(default_obj, default_elem_.begin());
+  default_elem_.Init(ot::FrozenSize(default_obj));
+  ot::Freeze(default_elem_.begin(), default_obj);
 }
 
 template<typename T>
 void CacheArrayBlockHandler<T>::Serialize(ArrayList<char>* data) const {
-  data->Copy(default_elem_);
+  data->InitCopy(default_elem_);
 }
 
 template<typename T>
 void CacheArrayBlockHandler<T>::Deserialize(const ArrayList<char>& data) {
-  default_elem_.Copy(data);
+  default_elem_.InitCopy(data);
 }
 
 template<typename T>
@@ -22,7 +22,7 @@ void CacheArrayBlockHandler<T>::BlockInitFrozen(BlockDevice::blockid_t blockid,
   DEBUG_ASSERT((begin % default_elem_.size()) == 0);
   index_t elems = bytes / default_elem_.size();
   for (index_t i = 0; i < elems; i++) {
-    mem::BitCopyBytes(block, default_elem_.begin(), default_elem_.size());
+    mem::CopyBytes(block, default_elem_.begin(), default_elem_.size());
     block += default_elem_.size();
   }
 }
@@ -34,7 +34,7 @@ void CacheArrayBlockHandler<T>::BlockFreeze(BlockDevice::blockid_t blockid,
   DEBUG_ASSERT(begin % default_elem_.size() == 0);
   index_t elems = bytes / default_elem_.size();
   for (index_t i = 0; i < elems; i++) {
-    ot::PointerRefreeze(reinterpret_cast<const T*>(old_location), block);
+    ot::SemiFreeze(block, reinterpret_cast<const T*>(old_location));
     block += default_elem_.size();
     old_location += default_elem_.size();
   }
@@ -47,16 +47,17 @@ void CacheArrayBlockHandler<T>::BlockThaw(BlockDevice::blockid_t blockid,
   DEBUG_ASSERT(begin % default_elem_.size() == 0);
   index_t elems = bytes / default_elem_.size();
   for (index_t i = 0; i < elems; i++) {
-    ot::PointerThaw<T>(block);
+    ot::SemiThaw<T>(block);
     block += default_elem_.size();
   }
 }
 
 template<typename T>
 void CacheArrayBlockHandler<T>::GetDefaultElement(T *default_element_out) {
-  ArrayList<char> tmp(default_elem_);
-  const T* source = ot::PointerThaw<T>(tmp.begin());
-  ot::Copy(*source, default_element_out);
+  ArrayList<char> tmp;
+  tmp.InitCopy(default_elem_);
+  const T* source = ot::SemiThaw<T>(tmp.begin());
+  ot::InitCopy(default_element_out, *source);
 }
 
 //--------------------------------------------------------------------------
@@ -64,7 +65,7 @@ void CacheArrayBlockHandler<T>::GetDefaultElement(T *default_element_out) {
 template<typename T>
 index_t CacheArray<T>::ConvertBlockSize(
     const Element& element, int kilobytes) {
-  size_t elem_size = ot::PointerFrozenSize(element);
+  size_t elem_size = ot::FrozenSize(element);
   size_t bytes = size_t(kilobytes) << 10;
   int i;
 
@@ -119,8 +120,9 @@ void CacheArray<T>::Swap(index_t index_a, index_t index_b) {
   char *a = reinterpret_cast<char*>(StartWrite(index_a));
   char *b = reinterpret_cast<char*>(StartWrite(index_b));
   mem::BitSwap(a, b, n_elem_bytes_);
-  ot::PointerRelocate<Element>(a, b);
-  ot::PointerRelocate<Element>(b, a);
+  /* TODO: Fix potential memory leak here */
+  ot::SemiCopy<Element>(b, a);
+  ot::SemiCopy<Element>(a, b);
   ReleaseElement(index_a);
   ReleaseElement(index_b);
 }
@@ -132,8 +134,9 @@ void CacheArray<T>::Copy(index_t index_src, index_t index_dest) {
   DEBUG_ASSERT(BlockDevice::can_write(mode_));
   const char *src = reinterpret_cast<char*>(StartWrite(index_src));
   char *dest = reinterpret_cast<char*>(StartWrite(index_dest));
-  mem::BitCopy(dest, src, n_elem_bytes_);
-  ot::PointerRelocate<Element>(src, dest);
+  mem::Copy(dest, src, n_elem_bytes_);
+  /* TODO: Fix potential memory leak here */
+  ot::SemiCopy<Element>(dest, src);
   ReleaseElement(index_src);
   ReleaseElement(index_dest);
 }
@@ -418,20 +421,20 @@ void ZCacheIterImpl_<Helperclass, Element, BaseElement>::NextBlock_() {
 template<typename T>
 void SubsetArray<T>::Init(const Element& default_elem,
     index_t begin, index_t end) {
-  n_elem_bytes_ = ot::PointerFrozenSize(default_elem);
+  n_elem_bytes_ = ot::FrozenSize(default_elem);
   begin_ = begin;
   end_ = end;
   adjusted_ = NULL;
   if (begin_ < end_) {
     char *base = mem::Alloc<char>(n_elem_bytes_ * (end - begin));
     char *adjusted = base - (begin * n_elem_bytes_);
-    ot::PointerFreeze(default_elem, base);
+    ot::Freeze(base, default_elem);
     for (index_t i = begin + 1; i < end; i++) {
       char *ptr = adjusted + i * n_elem_bytes_;
-      mem::BitCopyBytes(ptr, base, n_elem_bytes_);
-      ot::PointerThaw<Element>(ptr);
+      mem::CopyBytes(ptr, base, n_elem_bytes_);
+      ot::SemiThaw<Element>(ptr);
     }
-    ot::PointerThaw<Element>(base);
+    ot::SemiThaw<Element>(base);
     adjusted_ = adjusted;
   }
 }

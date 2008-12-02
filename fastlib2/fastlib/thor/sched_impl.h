@@ -54,11 +54,12 @@ void CentroidScheduler<Node>::DistributeInitialWork_(
     ProcessScheduler *queue = &rankes_[begin_rank];
     ArrayList<InternalNode*> node_stack;
     node_stack.Init();
-    *node_stack.AddBack() = node;
+    node_stack.PushBack() = node;
 
     // Subdivide the node further if possible.
     while (node_stack.size() != 0) {
-      InternalNode *cur = *node_stack.PopBackPtr();
+      InternalNode *cur;
+      node_stack.PopBackInit(&cur);
       //double distance = cur->node().bound().MinDistanceSq(center);
 
       if (cur->is_leaf() || cur->count() <= max_grain_size) {
@@ -69,7 +70,7 @@ void CentroidScheduler<Node>::DistributeInitialWork_(
         n_grains_++;
       } else {
         for (index_t k = 0; k < Node::CARDINALITY; k++) {
-          *node_stack.AddBack() = cur->GetChild(tree_, k);
+          node_stack.PushBack() = cur->GetChild(tree_, k);
         }
       }
     }
@@ -145,14 +146,15 @@ void CentroidScheduler<Node>::GetWork(int rank_num, ArrayList<Grain> *work) {
     // Mark all children as complete (non-recursive version)
     ArrayList<InternalNode*> stack;
     stack.Init();
-    *stack.AddBack() = found_node;
+    stack.PushBack() = found_node;
     while (stack.size() != 0) {
-      InternalNode *c = *stack.PopBackPtr();
+      InternalNode *c;
+      stack.PopBackInit(&c);
       c->info() = ALL;
       for (index_t k = 0; k < Node::CARDINALITY; k++) {
         InternalNode *c_child = c->child(k);
         if (c_child) {
-          *stack.AddBack() = c_child;
+          stack.PushBack() = c_child;
         }
       }
     }

@@ -44,7 +44,11 @@ class DatasetFeature {
   
   OBJECT_TRAVERSAL(DatasetFeature) {
     OT_OBJ(name_);
-    OT_OBJ(reinterpret_cast<int &>(type_));
+    //OT_OBJ(reinterpret_cast<int &>(type_));
+    OT_ENUM_EXPERT(type_, int,
+      OT_ENUM_VAL(CONTINUOUS)
+      OT_ENUM_VAL(INTEGER)
+      OT_ENUM_VAL(NOMINAL));
     OT_OBJ(value_names_);
   }
   

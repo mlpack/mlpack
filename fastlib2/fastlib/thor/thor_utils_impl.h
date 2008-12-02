@@ -233,7 +233,7 @@ void thor::RpcDualTree(datanode *module, int base_channel,
   }
 
   if (global_result_out) {
-    global_result_out->Copy(my_global_result);
+    global_result_out->InitCopy(my_global_result);
   }
 
   delete work_queue;

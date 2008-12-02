@@ -87,6 +87,7 @@ inline bool OT__Shallow(const T *ot__obj) { return false; }
     inline bool OT__Shallow< T >(const T *ot__obj) { return true; }
 
 FOR_ALL_PRIMITIVES_DO(OT__MAKE_SHALLOW)
+OT__MAKE_SHALLOW(bool, "%d");
 
 template<typename T>
 inline bool OT__Shallow(const T *const *ot__obj) { return true; }
@@ -149,6 +150,7 @@ namespace ot {
                    const char *type, T val);
 
     FOR_ALL_PRIMITIVES_DO(STANDARD_FORMAT__PRIMITIVE)
+    STANDARD_FORMAT__PRIMITIVE(bool, "%d");
 
 #undef STANDARD_FORMAT__PRIMITIVE
 
@@ -205,6 +207,7 @@ namespace ot {
 		   const char *type, T val);
 
     FOR_ALL_PRIMITIVES_DO(XML_FORMAT__PRIMITIVE)
+    XML_FORMAT__PRIMITIVE(bool, "%d");
 
 #undef XML_FORMAT__PRIMITIVE
 
@@ -285,6 +288,7 @@ namespace ot__private {
     }
 
     FOR_ALL_PRIMITIVES_DO(PRINTER__PRIMITIVE_OBJ)
+    PRINTER__PRIMITIVE_OBJ(bool, "%d");
 
 #undef PRINTER__PRIMITIVE_OBJ
 
@@ -305,6 +309,11 @@ namespace ot__private {
       format_.Open(name, index_, type);
       OT__TraverseObject(&obj, this);
       format_.Close(name, type);
+    }
+
+    template<typename T>
+    void Enum(T &obj) {
+      format_.Primitive(name_, index_, type_, (long long)obj);
     }
 
     template<typename T>
@@ -379,6 +388,11 @@ namespace ot__private {
       } else if (t_semi) {
 	mem::Construct(&obj);
       }
+    }
+
+    template<typename T>
+    void Enum(T &obj) {
+      mem::DebugPoison(&obj);
     }
 
     template<typename T>
@@ -462,6 +476,11 @@ namespace ot__private {
     }
 
     template<typename T>
+    void Enum(T &obj) {
+      mem::DebugPoison(&obj);
+    }
+
+    template<typename T>
     bool PreStaticArray(T **ptr, index_t len) {
       return true;
     }
@@ -540,6 +559,9 @@ namespace ot__private {
 	mem::Destruct(&obj);
       }
     }
+
+    template<typename T>
+    void Enum(T &obj) {}
 
     template<typename T>
     bool PreStaticArray(T *ptr, index_t len) {
@@ -640,6 +662,9 @@ namespace ot__private {
         OT__TraverseObject(&obj, this);
       }
     }
+
+    template<typename T>
+    void Enum(T &obj) {}
 
     template<typename T>
     bool PreStaticArray(T *ptr, index_t len) {
@@ -755,6 +780,9 @@ namespace ot__private {
     }
 
     template<typename T>
+    void Enum(T &obj) {}
+
+    template<typename T>
     bool PreStaticArray(T *ptr, index_t len) {
       return !OT__Shallow(ptr);
     }
@@ -840,6 +868,9 @@ namespace ot__private {
     }
 
     template<typename T>
+    void Enum(T &obj) {}
+
+    template<typename T>
     bool PreStaticArray(T *ptr, index_t len) {
       return !OT__Shallow(ptr);
     }
@@ -920,6 +951,9 @@ namespace ot__private {
 	OT__TraverseObject(&obj, this);
       }
     }
+
+    template<typename T>
+    void Enum(T &obj) {}
 
     template<typename T>
     bool PreStaticArray(T *ptr, index_t len) {
@@ -1022,6 +1056,9 @@ namespace ot__private {
 	}
       }
     }
+
+    template<typename T>
+    void Enum(T &obj) {}
 
     template<typename T>
     bool PreStaticArray(T *ptr, index_t len) {
@@ -1160,6 +1197,11 @@ namespace ot__private {
     }
 
     template<typename T>
+    void Enum(T &obj) {
+      Write_(&obj);
+    }
+
+    template<typename T>
     bool PreStaticArray(T *ptr, index_t len) {
       return OT__PreTraverse((T *)NULL, ptr, len, this);
     }
@@ -1282,6 +1324,11 @@ namespace ot__private {
 	TransientUnstructor<false> ot__unstructor(&obj);
 	OT__RefillTransients(&obj);
       }
+    }
+
+    template<typename T>
+    void Enum(T &obj) {
+      Read_(&obj);
     }
 
     template<typename T>

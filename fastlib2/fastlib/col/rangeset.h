@@ -101,7 +101,7 @@ void RangeSet<TBoundary>::Union(
 
   // add everything that strictly precedes the new one to add
   while (i < ranges_.size() && !(begin <= ranges_[i].end)) {
-    new_list.AddBackItem(ranges_[i]);
+    new_list.PushBackCopy(ranges_[i]);
     i++;
   }
 
@@ -119,13 +119,13 @@ void RangeSet<TBoundary>::Union(
     i++;
   }
 
-  Range *new_range = new_list.AddBackUnconstructed();
+  Range *new_range = new_list.PushBackRaw();
   new(&new_range->begin)Boundary(*selected_begin);
   new(&new_range->end)Boundary(*selected_end);
 
   // add everything that comes after
   for (; i < ranges_.size(); i++) {
-    new_list.AddBackItem(ranges_[i]);
+    new_list.PushBackCopy(ranges_[i]);
   }
 
   // replace the list

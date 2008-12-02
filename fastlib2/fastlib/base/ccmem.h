@@ -345,6 +345,7 @@ namespace mem {
   }
 
   FOR_ALL_PRIMITIVES_DO(BASE_CCMEM__SIMPLE_CONSTRUCTORS)
+  BASE_CCMEM__SIMPLE_CONSTRUCTORS(bool, "%d")
 
   /** No-op constructs an array of pointers. */
   template<typename T>
