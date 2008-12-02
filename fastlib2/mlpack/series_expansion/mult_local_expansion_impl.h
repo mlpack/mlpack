@@ -137,7 +137,7 @@ double MultLocalExpansion<TKernelAux>::EvaluateField(const Matrix& data,
   
   for(index_t i = 0; i < dim; i++)
     heads[i] = 0;
-  heads[dim] = MAXINT;
+  heads[dim] = INT_MAX;
 
   tmp[0] = 1.0;
 
@@ -208,7 +208,7 @@ double MultLocalExpansion<TKernelAux>::EvaluateField(const Vector& x_q) const {
   
   for(index_t i = 0; i < dim; i++)
     heads[i] = 0;
-  heads[dim] = MAXINT;
+  heads[dim] = INT_MAX;
 
   tmp[0] = 1.0;
 

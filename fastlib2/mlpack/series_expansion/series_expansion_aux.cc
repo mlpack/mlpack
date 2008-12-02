@@ -126,7 +126,7 @@ void SeriesExpansionAux::Init(int max_order, int dim) {
   for(i = 0; i < dim; i++) {
     heads[i] = 0;
   }
-  heads[dim] = MAXINT;
+  heads[dim] = INT_MAX;
   cinds[0] = 0;
   
   // compute inverse factorial and negative inverse factorials and
