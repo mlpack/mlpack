@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
   double bandwidth = fx_param_double_req(fx_root, "bandwidth");
   data::Load(references_file_name, &references);
 
-  printf("nrows = %d ncols = %d", references.n_rows(), 
+  printf("nrows = %d ncols = %d\n", references.n_rows(), 
 	 references.n_cols());
 #define RUNNING 1
 #if RUNNING==1  
