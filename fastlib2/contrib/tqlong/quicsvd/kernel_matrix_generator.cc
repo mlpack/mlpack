@@ -59,6 +59,8 @@ int main(int argc, char *argv[]) {
   // Output the matrix.
   const char *file_name = fx_param_str(fx_root, "output", 
 				       "kernel_matrix.txt");
+  data::Save(file_name, kernel_matrix);
+  /*
   FILE *output_file = fopen(file_name, "w+");
   for(index_t r = 0; r < kernel_matrix.n_rows(); r++) {
     for(index_t c = 0; c < kernel_matrix.n_cols(); c++) {
@@ -66,7 +68,7 @@ int main(int argc, char *argv[]) {
     }
     fprintf(output_file, "\n");
   }
-
+  */
   fx_done(fx_root);
 #endif
   return 0;
