@@ -817,9 +817,8 @@ void DistributedCache::WritebackDirtyRemote_(blockid_t blockid, char *data) {
     DEBUG_ASSERT(block->status == PARTIALLY_DIRTY);
     // Find the intersection between this block and all dirty ranges we
     // know about.
-    #ifdef DEBUG
     offset_t bytes_total = 0;
-    #endif
+
     for (index_t i = 0; i < write_ranges_.size(); i++) {
       Position begin = write_ranges_[i].begin;
       Position end = write_ranges_[i].end;

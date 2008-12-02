@@ -9,7 +9,7 @@
 
 #include "fastlib/base/base.h"
 #include "fastlib/col/intmap.h"
-#include "fastlib/col/string.h"
+#include "fastlib/col/col_string.h"
 #include "fastlib/fx/fx.h"
 #include "fastlib/par/thread.h"
 

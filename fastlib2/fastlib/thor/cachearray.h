@@ -133,10 +133,9 @@ class CacheArray {
   /** The underlying distributed cache. */
   DistributedCache *cache_;
   
-#ifdef DEBUG
   /** Number of locks made to this cache. */
   int64 n_fifo_locks_;
-#endif
+
   /**
    * Number of pages in the thread-local FIFO cache.
    *
