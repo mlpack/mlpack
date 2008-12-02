@@ -296,14 +296,14 @@ function go2_Callback(hObject, eventdata, handles)
 % hObject    handle to go2 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+ComputeAlgorithms(handles.data_file, handles.dim_reduction);
 
 % --- Executes on button press in go3.
 function go3_Callback(hObject, eventdata, handles)
 % hObject    handle to go3 (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+ComputeAlgorithms(handles.data_file, handles.algorithms);
 
 % --- Executes during object creation, after setting all properties.
 function knn1_CreateFcn(hObject, eventdata, handles)
