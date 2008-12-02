@@ -7,7 +7,7 @@
 #ifndef THOR_THORSTRUCT_H
 #define THOR_THORSTRUCT_H
 
-#define LIT_DISK_TREES
+//#define LIT_DISK_TREES
 
 #include "cachearray.h"
 
