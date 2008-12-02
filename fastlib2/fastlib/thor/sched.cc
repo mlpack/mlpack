@@ -34,5 +34,5 @@ void RemoteScheduler::GetWork(
   request.operation = WorkRequest::GIVE_ME_WORK;
   request.rank = rank;
   Rpc<WorkResponse> response(channel_, destination_, request);
-  work_items->Copy(response->work_items);
+  work_items->InitCopy(response->work_items);
 }

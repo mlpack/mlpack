@@ -68,7 +68,7 @@ class MinHeap {
   void Put(Key key, Value value) {
     Entry entry;
 
-    entries_.AddBack();
+    entries_.PushBack();
 
     entry.key = key;
     entry.value = value;
@@ -96,7 +96,8 @@ class MinHeap {
    * returning it.
    */
   void PopOnly() {
-    Entry entry = *entries_.PopBackPtr();
+    Entry entry;
+    entries_.PopBackInit(&entry);
 
     if (likely(entries_.size() != 0)) {
       WalkDown_(entry, 0);

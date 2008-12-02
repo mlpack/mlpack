@@ -15,9 +15,12 @@
 
 //-------------------------------------------------------------------------
 
-#warning "avoid transaction messages"
-#warning "put buffer limit"
-#warning "use udp"
+/*
+ * TODO:
+ * - avoid transaction messages
+ * - put buffer limit
+ * - use udp
+ */
 
 RpcSockImpl::Cleanup RpcSockImpl::cleanup_;
 
@@ -308,7 +311,7 @@ void RpcSockImpl::CalcChildren_() {
 
   while (i > 1) {
     i /= 2;
-    *children_.AddBack() = rank_ + i;
+    children_.PushBack() = rank_ + i;
   }
 
   parent_ = rank_ - ((~rank_) & (rank_-1)) - 1;
@@ -500,7 +503,7 @@ void RpcSockImpl::PollingLoop_() {
         // Accept incoming connections
         int new_fd;
         while ((new_fd = accept(listen_fd_, NULL, NULL)) >= 0) {
-          *unknown_connections_.AddBack() = new_fd;
+          unknown_connections_.PushBack() = new_fd;
           RegisterReadFd(-1, new_fd);
         }
       }
@@ -714,7 +717,7 @@ Message *Transaction::CreateMessage(int peer, size_t size) {
   if (i == peers_.size()) {
     // We haven't sent or received from this peer, so we need to send the
     // channel number to it so that the channel can create a new transaction.
-    peers_.AddBack();
+    peers_.PushBack();
     transaction_id = RpcSockImpl::instance->AssignTransaction(peer, this);
     peers_[i].peer = peer;
     peers_[i].channel = channel();
@@ -734,10 +737,10 @@ void Transaction::TransactionHandleNewSender_(Message *message) {
   // We'll reply to this with channel -1, meaning that it was the other end
   // who initiated the transaction ID, i.e., the transaction ID lives in
   // their namespace.
-  PeerInfo *peer_info = peers_.AddBack();
-  peer_info->peer = message->peer();
-  peer_info->channel = -1;
-  peer_info->transaction_id = message->transaction_id();
+  PeerInfo &peer_info = peers_.PushBack();
+  peer_info.peer = message->peer();
+  peer_info.channel = -1;
+  peer_info.transaction_id = message->transaction_id();
 }
 
 void Transaction::Send(Message *message) {

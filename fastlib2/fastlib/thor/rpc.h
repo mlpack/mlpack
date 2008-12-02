@@ -101,13 +101,13 @@ class Rpc {
       int channel, int peer, const RequestObject& request) {
     transaction_.Init(channel);
     Message *request_msg = transaction_.CreateMessage(
-        peer, ot::PointerFrozenSize(request));
-    ot::PointerFreeze(request, request_msg->data());
+        peer, ot::FrozenSize(request));
+    ot::Freeze(request_msg->data(), request);
     transaction_.Send(request_msg);
 
     if (request.requires_response()) {
       transaction_.WaitDone();
-      response_object_ = ot::PointerThaw<ResponseObject>(
+      response_object_ = ot::SemiThaw<ResponseObject>(
           transaction_.response()->data());
     } else {
       transaction_.Done();
@@ -184,13 +184,13 @@ template<typename RequestObject, typename ResponseObject>
 void RemoteObjectBackend<RequestObject, ResponseObject>
     ::RemoteObjectTransaction::HandleMessage(Message *request) {
   const RequestObject* real_request =
-      ot::PointerThaw<RequestObject>(request->data());
+      ot::SemiThaw<RequestObject>(request->data());
   ResponseObject real_response;
   inner_->HandleRequest(*real_request, &real_response);
   if (real_request->requires_response()) {
     Message *response = CreateMessage(
-      request->peer(), ot::PointerFrozenSize(real_response));
-    ot::PointerFreeze(real_response, response->data());
+      request->peer(), ot::FrozenSize(real_response));
+    ot::Freeze(response->data(), real_response);
     Send(response);
   }
   Done();
@@ -219,15 +219,15 @@ class ReduceChannel : public Channel {
     void CheckStatus_() {
       if (n_received_ == rpc::n_children()) {
         for (index_t i = 0; i < rpc::n_children(); i++) {
-          TData *subdata = ot::PointerThaw<TData>(received_[i]->data());
+          TData *subdata = ot::SemiThaw<TData>(received_[i]->data());
           reductor_->Reduce(*subdata, data_);
           delete received_[i];
         }
         if (!rpc::is_root()) {
           // Send my subtree's results to my parent.
           Message *message_to_send = CreateMessage(rpc::parent(),
-              ot::PointerFrozenSize(*data_));
-          ot::PointerFreeze(*data_, message_to_send->data());
+              ot::FrozenSize(*data_));
+          ot::Freeze(message_to_send->data(), *data_);
           Send(message_to_send);
         }
         rpc::Unregister(channel());
@@ -342,9 +342,9 @@ class Broadcaster : public Channel {
     virtual ~BroadcastTransaction() { delete received; }
 
     void SetData(const Data& data) {
-      size_t size = ot::PointerFrozenSize(data);
+      size_t size = ot::FrozenSize(data);
       char *buf = mem::Alloc<char>(size);
-      ot::PointerFreeze(data, buf);
+      ot::Freeze(buf, data);
       received = new Message();
       received->Init(0, 0, 0, buf, 0, size);
     }
@@ -385,7 +385,7 @@ class Broadcaster : public Channel {
     } else {
       transaction_.DoMaster();
     }
-    data_ = ot::PointerThaw<Data>(transaction_.received->data());
+    data_ = ot::SemiThaw<Data>(transaction_.received->data());
   }
 
   Data &get() const {
@@ -423,10 +423,10 @@ class DataGetterBackend
 
  public:
   void Init(const T& data_in) {
-    ot::Copy(data_in, &data_);
+    ot::InitCopy(&data_, data_in);
   }
   void Init(const T* data_in) {
-    ot::Copy(*data_in, &data_);
+    ot::InitCopy(&data_, *data_in);
   }
 
   virtual void HandleRequest(const DataGetterRequest& request, T *response);
@@ -435,7 +435,7 @@ class DataGetterBackend
 template<typename T>
 void DataGetterBackend<T>::HandleRequest(const DataGetterRequest& request,
     T* response) {
-  ot::Copy(data_, response);
+  ot::InitCopy(response, data_);
 }
 
 /**
@@ -451,7 +451,7 @@ namespace rpc {
     DataGetterRequest request;
     request.operation = DataGetterRequest::GET_DATA;
     Rpc<T> response(channel, peer, request);
-    ot::Copy(*response, result);
+    ot::InitCopy(result, *response);
   }
 
   /**

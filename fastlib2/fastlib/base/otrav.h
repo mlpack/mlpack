@@ -103,10 +103,17 @@
  * @see OT_ENUM_EXPERT
  */
 #define OT_ENUM_VAL(val) \
-    if (ot__visitor->IS_PRINTER && ot__enum == val) { \
+   case val: \
+    if (ot__visitor->IS_PRINTER) { \
       const char *ot__temp = #val; \
       ot__visitor->Obj(ot__temp); \
-    } else // for series of OT_ENUM_VAL, use in OT_ENUM_EXPERT
+      break; \
+    } // fall-through to default inside OT_ENUM_EXPERT
+
+//    if (ot__visitor->IS_PRINTER && ot__enum == val) {
+//      const char *ot__temp = #val;
+//      ot__visitor->Obj(ot__temp);
+//    } else // for series of OT_ENUM_VAL, use in OT_ENUM_EXPERT
 
 /**
  * Inside OBJECT_TRAVERSAL, traverse an enum, optionally providing
@@ -160,9 +167,10 @@
 #define OT_ENUM_EXPERT(x, T, print_code) \
     if (true) { \
       ot__visitor->Name(#x, x); \
-      T ot__enum = x; \
-      print_code { \
-        ot__visitor->Obj(reinterpret_cast< T &>(x)); \
+      switch (x) { \
+	print_code \
+       default: \
+	ot__visitor->Enum(x); \
       } \
     } else NOP // require semicolon
 
@@ -1968,6 +1976,12 @@ namespace ot {
   template<typename T>
   COMPILER_DEPRECATED
   void PointerRelocate(const char *old_loc, char *new_loc) {
+    /*
+     * TODO: Perhaps detect if Shallow, doing nothing, or try function
+     * FixTransients, which by default deallocates them and
+     * reallocates them and can be redefined to blank.  Carefully
+     * consider Swap behavior in cachearray_impl.h.
+     */
     // leaks memory for allocated transients
     SemiCopy<T>(new_loc, old_loc);
   }

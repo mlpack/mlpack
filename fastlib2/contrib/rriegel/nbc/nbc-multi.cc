@@ -56,9 +56,9 @@ const fx_entry_doc nbc_multi_entries[] = {
    "  Like best_eff_pos, but for negative class.\n"},
   {"gnp/global_result/best_cov_neg", FX_RESULT, FX_DOUBLE, NULL,
    "  Like best_cov_pos, but for negative class.\n"},
-  {"gnp/global_result/best_h_pos", FX_RESULT, FX_INT, NULL,
+  {"gnp/global_result/best_h_pos", FX_RESULT, FX_DOUBLE, NULL,
    "  Best observed bandwidth for the positive class.\n"},
-  {"gnp/global_result/best_h_neg", FX_RESULT, FX_INT, NULL,
+  {"gnp/global_result/best_h_neg", FX_RESULT, FX_DOUBLE, NULL,
    "  Best observed bandwidth for the negative class.\n"},
   FX_ENTRY_DOC_DONE
 };
@@ -276,8 +276,8 @@ class Nbc {
       kernel_neg.Init(count_kernel_neg);
       coeff_neg.Init(count_kernel_neg);
 
-      h_neg.lo = fx_param_double_req(module, "min_h_neg");
-      h_neg.hi = fx_param_double(module, "max_h_neg", h_neg.lo);
+      h_neg.hi = fx_param_double_req(module, "max_h_neg");
+      h_neg.lo = fx_param_double(module, "min_h_neg", 0);
 
       step = h_neg.width() / count_kernel_neg;
       h_cur = h_neg.hi;
@@ -327,16 +327,7 @@ class Nbc {
 	coeff_neg[i].loo = threshold / (norm_neg * count_neg_loo);
       }
 
-      ot::Print(dim);
-      ot::Print(count_all);
-
-      ot::Print(loo);
-
-      ot::Print(count_pos);
-      ot::Print(kernel_pos);
-
-      ot::Print(count_neg);
-      ot::Print(kernel_neg);
+      ot::Print(*this);
     }
   };
 

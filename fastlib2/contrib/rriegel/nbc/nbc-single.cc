@@ -301,29 +301,16 @@ class Nbc {
       index_t count_neg_loo = loo ? count_neg - 1 : count_neg;
 
       coeff_pos = (1 - threshold - epsilon) * norm_neg * count_neg_loo
-	/ ((threshold + epsilon) * norm_pos * count_pos);
+	  / ((threshold + epsilon) * norm_pos * count_pos);
       coeff_neg = (threshold - epsilon) * norm_pos * count_pos_loo
-	/ ((1 - threshold + epsilon) * norm_neg * count_neg);
+	  / ((1 - threshold + epsilon) * norm_neg * count_neg);
 
       coeff_pos_loo = (1 - threshold - epsilon) * norm_neg * count_neg
-	/ ((threshold + epsilon) * norm_pos * count_pos_loo);
+	  / ((threshold + epsilon) * norm_pos * count_pos_loo);
       coeff_neg_loo = (threshold - epsilon) * norm_pos * count_pos
-	/ ((1 - threshold + epsilon) * norm_neg * count_neg_loo);
+	  / ((1 - threshold + epsilon) * norm_neg * count_neg_loo);
 
-      ot::Print(loo);
-
-      ot::Print(dim);
-      ot::Print(count_all);
-
-      ot::Print(count_pos);
-      ot::Print(kernel_pos);
-      ot::Print(coeff_pos);
-      ot::Print(coeff_pos_loo);
-
-      ot::Print(count_neg);
-      ot::Print(kernel_neg);
-      ot::Print(coeff_neg);
-      ot::Print(coeff_neg_loo);
+      ot::Print(*this);
     }
   };
 
@@ -821,23 +808,20 @@ class Nbc {
       double cov_neg =
 	  count_correct_neg / (double)param.count_neg;
 
-      fx_format_result(datanode, "count_pos", "%"LI"d",
-          count_pos);
-      fx_format_result(datanode, "percent_pos", "%.05f",
+      fx_result_int(datanode, "count_pos", count_pos);
+      fx_result_double(datanode, "percent_pos",
           double(count_pos) / param.count_all * 100.0);
-      fx_format_result(datanode, "count_neg", "%"LI"d",
-          count_neg);
-      fx_format_result(datanode, "percent_neg", "%.05f",
+      fx_result_int(datanode, "count_neg", count_neg);
+      fx_result_double(datanode, "percent_neg",
           double(count_neg) / param.count_all * 100.0);
-      fx_format_result(datanode, "count_unknown", "%"LI"d",
-          count_unknown);
-      fx_format_result(datanode, "percent_unknown", "%.05f",
+      fx_result_int(datanode, "count_unknown", count_unknown);
+      fx_result_double(datanode, "percent_unknown",
           double(count_unknown) / param.count_all * 100.0);
 
-      fx_format_result(datanode, "eff_pos", "%g", eff_pos);
-      fx_format_result(datanode, "cov_pos", "%g", cov_pos);
-      fx_format_result(datanode, "eff_neg", "%g", eff_neg);
-      fx_format_result(datanode, "cov_neg", "%g", cov_neg);
+      fx_result_double(datanode, "eff_pos", eff_pos);
+      fx_result_double(datanode, "cov_pos", cov_pos);
+      fx_result_double(datanode, "eff_neg", eff_neg);
+      fx_result_double(datanode, "cov_neg", cov_neg);
     }
     void ApplyResult(const Param& param,
         const QPoint& q_point, index_t q_i,

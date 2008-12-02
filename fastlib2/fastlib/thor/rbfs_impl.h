@@ -19,7 +19,7 @@ void DualTreeRecursiveBreadth<GNP>::Doit(
     DistributedCache *r_points,
     DistributedCache *r_nodes,
     DistributedCache *q_results) {
-  param_.Copy(param_in);
+  param_.InitCopy(param_in);
 
   q_nodes_.Init(q_nodes, BlockDevice::M_READ);
   r_points_.Init(r_points, BlockDevice::M_READ);
@@ -126,12 +126,12 @@ void DualTreeRecursiveBreadth<GNP>::Queue::Consider(
     const typename GNP::QNode& q_node, const typename GNP::RNode& r_node,
     index_t r_index, const typename GNP::Delta& parent_delta,
     typename GNP::GlobalResult *global_result) {
-  QueueItem *item = q.AddBack();
-  item->r_index = r_index;
-  item->delta.Init(param);
+  QueueItem &item = q.PushBack();
+  item.r_index = r_index;
+  item.delta.Init(param);
   if (likely(GNP::Algorithm::ConsiderPairIntrinsic(param, q_node, r_node,
-      parent_delta, &item->delta, global_result, &postponed))) {
-    summary_result.ApplyDelta(param, item->delta);
+      parent_delta, &item.delta, global_result, &postponed))) {
+    summary_result.ApplyDelta(param, item.delta);
   } else {
     q.PopBack();
   }
@@ -201,7 +201,7 @@ void DualTreeRecursiveBreadth<GNP>::DivideReferences_(
   //summaries[0].ApplyPostponed(parent.postponed);
 
   for (index_t i = 1; i < parent_queue->q.size(); i++) {
-    summaries[i].Copy(summaries[i-1]);
+    summaries[i].InitCopy(summaries[i-1]);
     summaries[i].ApplyDelta(param_, parent_queue->q[i-1].delta);
   }
 

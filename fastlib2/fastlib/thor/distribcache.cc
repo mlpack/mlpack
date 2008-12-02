@@ -12,7 +12,7 @@
 //-- THE DISTRIBUTED CACHE ------------------------------------------------
 //-------------------------------------------------------------------------
 
-#warning perform randomized syncing to avoid contention
+/* TODO: perform randomized syncing to avoid contention */
 
 void DistributedCache::InitMaster(int channel_num_in,
     offset_t n_block_bytes_in,
@@ -75,7 +75,7 @@ void DistributedCache::DoConfigRequest_() {
   request->field3 = 0;
   transaction.Send(message);
   transaction.WaitDone();
-  ConfigResponse *response = ot::PointerThaw<ConfigResponse>(
+  ConfigResponse *response = ot::SemiThaw<ConfigResponse>(
       transaction.response()->data());
 
   n_blocks_ = 0;
@@ -909,8 +909,8 @@ void DistributedCache::ResponseTransaction::HandleMessage(
       cache_->handler_->Serialize(&config_response.block_handler_data);
       config_response.n_block_bytes = cache_->n_block_bytes_;
       Message *response = CreateMessage(message->peer(),
-          ot::PointerFrozenSize(config_response));
-      ot::PointerFreeze(config_response, response->data());
+          ot::FrozenSize(config_response));
+      ot::Freeze(response->data(), config_response);
       Send(response);
     }
     break;
@@ -1014,7 +1014,7 @@ void DistributedCache::SyncTransaction::HandleMessage(Message *message) {
     case OTHERS_ACCUMULATING: {
       DEBUG_ASSERT(message->peer() == rpc::parent());
       char *data = message->data_as<Request>()->data_as<char>();
-      SyncInfo *info = ot::PointerThaw<SyncInfo>(data);
+      SyncInfo *info = ot::SemiThaw<SyncInfo>(data);
       ParentAccumulated_(*info);
     }
     break;
@@ -1065,7 +1065,7 @@ void DistributedCache::SyncTransaction::ParentFlushed_() {
 }
 
 void DistributedCache::SyncTransaction::AccumulateChild_(Message *message) {
-  SyncInfo *info = ot::PointerThaw<SyncInfo>(
+  SyncInfo *info = ot::SemiThaw<SyncInfo>(
       message->data_as<Request>()->data_as<char>());
   sync_info_.MergeWith(*info);
   n_++;
@@ -1110,9 +1110,9 @@ void DistributedCache::SyncTransaction::SendStatusInformation_(int peer,
   // we have two layers of headers here, and then we can freeze the
   // ArrayList into place.
   Message *request_msg = CreateMessage(peer, Request::size(
-      ot::PointerFrozenSize(info)));
+      ot::FrozenSize(info)));
   Request *request = request_msg->data_as<Request>();
-  ot::PointerFreeze(info, request->data_as<char>());
+  ot::Freeze(request->data_as<char>(), info);
   request->type = Request::SYNC;
   request->field1 = 0;
   request->field2 = 0;

@@ -177,8 +177,8 @@ class ThorTree {
   void Init(const Param& param_in,
       const ThorTreeDecomposition<Node> &decomp_in,
       DistributedCache *points_in, DistributedCache *nodes_in) {
-    param_.Copy(param_in);
-    decomp_.Copy(decomp_in);
+    param_.InitCopy(param_in);
+    decomp_.InitCopy(decomp_in);
     points_ = points_in;
     nodes_ = nodes_in;
   }
