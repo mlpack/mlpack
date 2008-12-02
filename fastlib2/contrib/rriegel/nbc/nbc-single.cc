@@ -772,6 +772,8 @@ class Nbc {
     index_t count_unknown;
     index_t count_correct_pos;
     index_t count_correct_neg;
+    index_t count_true_pos;
+    index_t count_true_neg;
     
     OT_DEF_BASIC(GlobalResult) {
       OT_MY_OBJECT(count_pos);
@@ -779,6 +781,8 @@ class Nbc {
       OT_MY_OBJECT(count_unknown);
       OT_MY_OBJECT(count_correct_pos);
       OT_MY_OBJECT(count_correct_neg);
+      OT_MY_OBJECT(count_true_pos);
+      OT_MY_OBJECT(count_true_neg);
     }
 
    public:
@@ -788,35 +792,43 @@ class Nbc {
       count_unknown = 0;
       count_correct_pos = 0;
       count_correct_neg = 0;
+      count_true_pos = 0;
+      count_true_neg = 0;
     }
     void Accumulate(const Param& param, const GlobalResult& other) {
       count_pos += other.count_pos;
       count_neg += other.count_neg;
       count_unknown += other.count_unknown;
+      count_correct_pos += other.count_correct_pos;
+      count_correct_neg += other.count_correct_neg;
+      count_true_pos += other.count_true_pos;
+      count_true_neg += other.count_true_neg;
     }
     void ApplyDelta(const Param& param, const Delta& delta) {}
     void UndoDelta(const Param& param, const Delta& delta) {}
     void Postprocess(const Param& param) {}
     void Report(const Param& param, datanode *datanode) {
+      double count_all = count_pos + count_neg + count_unknown;
+
       double eff_pos =
 	  count_correct_pos / (double)count_pos;
       double eff_neg =
 	  count_correct_neg / (double)count_neg;
 
       double cov_pos =
-	  count_correct_pos / (double)param.count_pos;
+	  count_correct_pos / (double)count_true_pos;
       double cov_neg =
-	  count_correct_neg / (double)param.count_neg;
+	  count_correct_neg / (double)count_true_neg;
 
       fx_result_int(datanode, "count_pos", count_pos);
       fx_result_double(datanode, "percent_pos",
-          double(count_pos) / param.count_all * 100.0);
+          double(count_pos) / count_all * 100.0);
       fx_result_int(datanode, "count_neg", count_neg);
       fx_result_double(datanode, "percent_neg",
-          double(count_neg) / param.count_all * 100.0);
+          double(count_neg) / count_all * 100.0);
       fx_result_int(datanode, "count_unknown", count_unknown);
       fx_result_double(datanode, "percent_unknown",
-          double(count_unknown) / param.count_all * 100.0);
+          double(count_unknown) / count_all * 100.0);
 
       fx_result_double(datanode, "eff_pos", eff_pos);
       fx_result_double(datanode, "cov_pos", cov_pos);
@@ -828,16 +840,23 @@ class Nbc {
         const QResult& q_result) {
       if (q_result.label == LAB_POS) {
 	++count_pos;
-	if (param.loo && q_point.is_pos()) {
+	if (!param.no_labels && q_point.is_pos()) {
 	  ++count_correct_pos;
 	}
       } else if (q_result.label == LAB_NEG) {
 	++count_neg;
-	if (param.loo && !q_point.is_pos()) {
+	if (!param.no_labels && !q_point.is_pos()) {
 	  ++count_correct_neg;
 	}
       } else if (q_result.label == LAB_EITHER) {
 	++count_unknown;
+      }
+      if (!param.no_labels) {
+	if (q_point.is_pos()) {
+	  ++count_true_pos;
+	} else {
+	  ++count_true_neg;
+	}
       }
     }
   };

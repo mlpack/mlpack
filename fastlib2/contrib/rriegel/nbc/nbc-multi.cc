@@ -1010,13 +1010,15 @@ class Nbc {
     index_t i_size;
     index_t j_size;
     /** Identified pos points, stored column-major. Similar for _neg. */
-    ArrayList<int> count_pos;
-    ArrayList<int> count_neg;
+    ArrayList<index_t> count_pos;
+    ArrayList<index_t> count_neg;
     /** Number of points that couldn't be classified. */
-    ArrayList<int> count_unknown;
+    ArrayList<index_t> count_unknown;
     /** Correct pos points, stored column-major. Similar for _neg. */
-    ArrayList<int> count_correct_pos;
-    ArrayList<int> count_correct_neg;
+    ArrayList<index_t> count_correct_pos;
+    ArrayList<index_t> count_correct_neg;
+    index_t count_true_pos;
+    index_t count_true_neg;
 
     OT_DEF(GlobalResult) {
       OT_MY_OBJECT(i_size);
@@ -1026,6 +1028,8 @@ class Nbc {
       OT_MY_OBJECT(count_unknown);
       OT_MY_OBJECT(count_correct_pos);
       OT_MY_OBJECT(count_correct_neg);
+      OT_MY_OBJECT(count_true_pos);
+      OT_MY_OBJECT(count_true_neg);
     }
 
    public:
@@ -1045,6 +1049,9 @@ class Nbc {
 	count_correct_pos[i] = 0;
 	count_correct_neg[i] = 0;
       }
+
+      count_true_pos = 0;
+      count_true_neg = 0;
     }
 
     void Accumulate(const Param& param, const GlobalResult& other) {
@@ -1055,6 +1062,9 @@ class Nbc {
 	count_correct_pos[i] += other.count_correct_pos[i];
 	count_correct_neg[i] += other.count_correct_neg[i];
       }
+
+      count_true_pos += other.count_true_pos;
+      count_true_neg += other.count_true_neg;
     }
 
     void ApplyDelta(const Param& param, const Delta& delta) {}
@@ -1078,9 +1088,9 @@ class Nbc {
 	        count_correct_neg[i+j*i_size] / (double)count_neg[i+j*i_size];
 
 	    double cov_pos =
-	        count_correct_pos[i+j*i_size] / (double)param.count_pos;
+	        count_correct_pos[i+j*i_size] / (double)count_true_pos;
 	    double cov_neg =
-	        count_correct_neg[i+j*i_size] / (double)param.count_neg;
+	        count_correct_neg[i+j*i_size] / (double)count_true_neg;
 
 	    if (eff_pos * cov_pos > best_eff_pos * best_cov_pos) {
 	      best_eff_pos = eff_pos;
@@ -1116,21 +1126,26 @@ class Nbc {
     void ApplyResult(const Param& param,
         const QPoint& q_point, index_t q_i,
         const QResult& q_result) {
-      if (likely(param.loo)) {
-	for (int i = 0; i < count_pos.size(); ++i) {
-	  if (q_result.label.label[i] == LAB_POS) {
-	    ++count_pos[i];
-	    if (q_point.is_pos()) {
-	      ++count_correct_pos[i];
-	    }
-	  } else if (q_result.label.label[i] == LAB_NEG) {
-	    ++count_neg[i];
-	    if (!q_point.is_pos()) {
-	      ++count_correct_neg[i];
-	    }
-	  } else if (q_result.label.label[i] == LAB_EITHER) {
-	    ++count_unknown[i];
+      for (int i = 0; i < count_pos.size(); ++i) {
+	if (q_result.label.label[i] == LAB_POS) {
+	  ++count_pos[i];
+	  if (!param.no_labels && q_point.is_pos()) {
+	    ++count_correct_pos[i];
 	  }
+	} else if (q_result.label.label[i] == LAB_NEG) {
+	  ++count_neg[i];
+	  if (!param.no_labels && !q_point.is_pos()) {
+	    ++count_correct_neg[i];
+	  }
+	} else if (q_result.label.label[i] == LAB_EITHER) {
+	  ++count_unknown[i];
+	}
+      }
+      if (!param.no_labels) {
+	if (q_point.is_pos()) {
+	  ++count_true_pos;
+	} else {
+	  ++count_true_neg;
 	}
       }
     }
