@@ -44,6 +44,16 @@ const fx_module_doc quicsvd_main_doc = {
   "Value Decomposition using QUIC-SVD method.\n"
 };
 
+double norm(const Matrix& A) {
+  double s = 0;
+  for (int i = 0; i < A.n_cols(); i++) {
+    Vector col;
+    A.MakeColumnVector(i, &col);
+    s += math::Sqr(la::LengthEuclidean(col));
+  }
+  return sqrt(s);
+}
+
 int main(int argc, char* argv[]) {
   fx_init(argc, argv, &quicsvd_main_doc);
 
@@ -88,6 +98,25 @@ int main(int argc, char* argv[]) {
     ot::Print(VT, "VT", stdout);
 
   fx_result_double(NULL, "actualErr", actualErr);
+
+  Matrix B, V;
+  la::TransposeInit(VT, &V);
+  B.Init(A.n_rows(), A.n_cols());
+  B.SetZero();
+
+  for (index_t i = 0; i < s.length(); i++) {
+    Vector ucol, vcol;
+    U.MakeColumnVector(i, &ucol);
+    V.MakeColumnVector(i, &vcol);
+    Matrix ucol_i, vcol_i;
+    ucol_i.AliasColVector(ucol);
+    vcol_i.AliasColVector(vcol);
+    la::MulExpert(s[i], false, ucol_i, true, vcol_i, 1, &B);
+  }
+
+  la::SubFrom(A, &B);
+
+  printf("relative error: %f\n", norm(B)/norm(A));
 
   s.Destruct();
   U.Destruct();
