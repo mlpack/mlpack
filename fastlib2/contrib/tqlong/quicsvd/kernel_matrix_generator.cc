@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
 
   printf("nrows = %d ncols = %d", references.n_rows(), 
 	 references.n_cols());
-  //#define RUNNING 1
+#define RUNNING 1
 #if RUNNING==1  
   // Kernel matrix to be outputted.
   Matrix kernel_matrix;
@@ -42,15 +42,17 @@ int main(int argc, char *argv[]) {
   GaussianKernel kernel;
   kernel.Init(bandwidth);
 
-  kernel_matrix.Init(references.n_cols(), references.n_cols());
-  for(index_t r = 0; r < references.n_cols(); r++) {
+  int rate = 20;
+  int n_cols = (references.n_cols())/rate+1;
+  kernel_matrix.Init(n_cols, n_cols);
+  for(index_t r = 0; r < references.n_cols(); r+=rate) {
     const double *r_col = references.GetColumnPtr(r);
 
-    for(index_t q = 0; q < references.n_cols(); q++) {
+    for(index_t q = 0; q < references.n_cols(); q+=rate) {
       const double *q_col = references.GetColumnPtr(q);
       double dsqd = la::DistanceSqEuclidean(references.n_rows(), q_col,
 					    r_col);
-      kernel_matrix.set(q, r, kernel.EvalUnnormOnSq(dsqd));
+      kernel_matrix.set(q/rate, r/rate, kernel.EvalUnnormOnSq(dsqd));
     }
   }
 
@@ -58,8 +60,8 @@ int main(int argc, char *argv[]) {
   const char *file_name = fx_param_str(fx_root, "output", 
 				       "kernel_matrix.txt");
   FILE *output_file = fopen(file_name, "w+");
-  for(index_t r = 0; r < references.n_cols(); r++) {
-    for(index_t c = 0; c < references.n_cols(); c++) {
+  for(index_t r = 0; r < kernel_matrix.n_rows(); r++) {
+    for(index_t c = 0; c < kernel_matrix.n_cols(); c++) {
       fprintf(output_file, "%g ", kernel_matrix.get(c, r));
     }
     fprintf(output_file, "\n");
