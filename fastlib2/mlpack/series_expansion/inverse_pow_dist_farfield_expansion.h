@@ -14,7 +14,6 @@
 #define INVERSE_POW_DIST_FARFIELD_EXPANSION
 
 #include <complex>
-#include <values.h>
 
 #include "fastlib/fastlib.h"
 #include "kernel_aux.h"

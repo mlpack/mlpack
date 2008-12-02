@@ -1,5 +1,3 @@
-#include <values.h>
-
 #include "series_expansion_aux.h"
 
 const Vector& SeriesExpansionAux::get_inv_multiindex_factorials() const {
