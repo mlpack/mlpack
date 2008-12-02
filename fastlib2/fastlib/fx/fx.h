@@ -27,6 +27,14 @@ typedef struct stopwatch fx_timer;
 /** The datanode under which all fx information is stored. */
 extern fx_module *fx_root;
 
+/** Whether to print messages about missing documentation. */
+extern int fx_docs_nagging;
+
+/*
+ * TODO: Consider adding support for printing params, timers, and
+ * results to stdout upon accessing/stopping/writing them.
+ */
+
 /**
  * The various kinds of data entries.
  *

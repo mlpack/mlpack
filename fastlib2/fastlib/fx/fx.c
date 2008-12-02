@@ -19,9 +19,10 @@
 
 
 /* TODO: Use this mutex where appropriate */
-static pthread_mutex_t fx__mutex;
+// static pthread_mutex_t fx__mutex;
 
 fx_module *fx_root = NULL;
+int fx_docs_nagging = 1;
 
 
 
@@ -73,8 +74,10 @@ const fx_entry_doc fx__fx_entries[] = {
    "  Whether to emit rusage data in \"info\".\n"},
   {"silent", FX_PARAM, FX_BOOL, NULL,
    "  Whether to skip the printing of results to screen.\n"},
-  {"no_types", FX_PARAM, FX_BOOL, NULL,
-   "  Whether to skip the printing of entry types.\n"},
+  {"no_output_types", FX_PARAM, FX_BOOL, NULL,
+   "  Whether to skip the printing of entry types (e.g. \"/param:P\").\n"},
+  {"no_docs_nagging", FX_PARAM, FX_BOOL, NULL,
+   "  Whether to suppress messages about missing documentation.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -308,8 +311,10 @@ static success_t fx__check_mod_type(const char *header, fx_mod_t mod_type,
 {
   if (unlikely(!fx_module_is_type(entry, mod_type))) {
     if (entry->mod_type < FX_PARAM) {
-      FX__NONFATAL("%s %s \"", entry, "\" is not documented.",
-          header, fx_mod_name[mod_type]);
+      if (fx_docs_nagging) {
+	FX__NONFATAL("%s %s \"", entry, "\" is not documented.",
+	    header, fx_mod_name[mod_type]);
+      }
       return SUCCESS_WARN;
     } else {
       FX__NONFATAL("%s %s \"", entry, "\" is documented as a %s.",
@@ -1780,7 +1785,11 @@ static void fx__load_param_files(fx_module *root)
 
   while (size--) {
     FILE *stream = fopen(*load++, "r");
-    datanode_read(root, stream, NULL, 0);
+    if (likely(stream)) {
+      datanode_read(root, stream, NULL, 0);
+    } else {
+      FATAL("Cannot open file for \"--fx/load=%s\".", *(load - 1));
+    }
     fclose(stream);
   }
 }
@@ -1790,7 +1799,7 @@ static success_t fx__check_param(fx_module *param)
   success_t success = SUCCESS_PASS;
   size_t size = 0;
 
-  /* Note: params can't be FX_CUSTOM */
+  /* Note: Params can't be FX_CUSTOM */
   switch (param->val_type) {
   case FX_STR:
     break;
@@ -1859,6 +1868,7 @@ static void fx__report_sys(fx_module *sys)
 
 static void fx__read_debug_params(fx_module *debug)
 {
+  /* TODO: Default to current settings for customizability? */
   verbosity_level = fx_param_double(debug, "verbosity_level", 1.0);
   print_got_heres = fx_param_bool(debug, "print_got_heres", 1);
   print_warnings = fx_param_bool(debug, "print_warnings", 1);
@@ -1883,6 +1893,7 @@ fx_module *fx_init(int argc, char *argv[], const fx_module_doc *doc)
 {
   fx_module *root = malloc(sizeof(fx_module));
 
+  /* First fx_init sets true root but can call to create more trees */
   if (!fx_root) {
     fx_root = root;
   }
@@ -1893,16 +1904,21 @@ fx_module *fx_init(int argc, char *argv[], const fx_module_doc *doc)
     fx__fill_docs(root, doc);
   }
 
+  /* Set argc = 0 to omit command line parsing */
   if (argc > 0) {
     fx__parse_cmd_line(root, argc - 1, argv + 1);
-    if (fx_param_exists(root, "fx/load")) {
-      fx__load_param_files(root);
-    }
 
     if (fx_param_exists(root, "help")) {
       fx__std_help(argv[0], fx_param_str_req(root, "help"), doc);
     }
 
+    if (fx_param_exists(root, "fx/load")) {
+      fx__load_param_files(root);
+    }
+
+    if (fx_param_bool(root, "fx/no_docs_nagging", 0)) {
+      fx_docs_nagging = 0;
+    }
     MUST_NOT_FAIL_MSG(fx__check_inputs(root),
         "There were problems with input parameters; try --help.");
 
@@ -1931,6 +1947,7 @@ static void fx__timer_double(fx_module *mod, const char *key, double val)
   timer->val = fx__alloc_double(val);
 }
 
+/* #ifdef because gcc whines about not using this function */
 #ifdef HAVE_RDTSC
 static void fx__timer_int(fx_module *mod, const char *key, long long val)
 {
@@ -1957,6 +1974,7 @@ static void fx__stop_timers(fx_module *mod, struct timestamp *now)
       stopwatch_stop(timer, now);
     }
 
+    /* Squelch "undocumented" nagging with bonus timer docs */
     fx__fill_docs(mod, &fx__timer_doc);
 
 #ifdef HAVE_RDTSC
@@ -1976,7 +1994,7 @@ static void fx__report_rusage(fx_module *mod, int usage_type)
 
   getrusage(usage_type, &usage);
 
-  /* Note: many of these are unsupported by various OSes */
+  /* Note: Many of these are unsupported by various OSes */
   fx_result_int(mod, "utime/sec", usage.ru_utime.tv_sec);
   fx_result_int(mod, "utime/usec", usage.ru_utime.tv_usec);
   fx_result_int(mod, "stime/sec", usage.ru_stime.tv_sec);
@@ -2001,18 +2019,19 @@ static void fx__output_results(fx_module *root)
 {
   char *type_char = fx_mod_marker;
 
-  /* ### Just added the below, make sure it works.  It's objective is
-         to strip out the colon-types at the end of the line. */
+  /* Disable the printing of type characters if appropriate */
   if (fx_param_bool(root, "fx/no_types", 0)) {
     type_char = NULL;
   }
 
+  /* Pipe a transcript of the params if output specified */
   if (fx_param_exists(root, "fx/output")) {
     FILE *stream = fopen(fx_param_str_req(root, "fx/output"), "w");
     datanode_write(root, stream, type_char);
     fclose(stream);
   }
 
+  /* Still pipe to stdout unless explicitly silenced */
   if (!fx_param_bool(root, "fx/silent", 0)) {
     datanode_write(root, stdout, type_char);
   }
@@ -2023,6 +2042,7 @@ void fx_done(fx_module *root)
   struct timestamp now;
   timestamp_now(&now);
 
+  /* Can input NULL, but also additionally created trees */
   if (!root) {
     root = fx_root;
     fx_root = NULL;
