@@ -33,3 +33,17 @@ binrule(
 	# The leading colon means to check this build.py for allnn.
 	deplibs = [":quicsvd"]
 )
+
+binrule(
+	# The name of the executable.
+	name = "quicsvd_demo",
+	
+	# The .c or .cc file containing main and any others you need.
+	sources = ["kernel_matrix_generator.cc"],
+	
+	# This line can be omitted if there are no headers.
+	# headers = ["util.h","quic_svd_base.h","cosine_tree.h"],
+	
+	# The leading colon means to check this build.py for allnn.
+	deplibs = [":quicsvd"]
+)
