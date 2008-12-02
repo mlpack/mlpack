@@ -6,7 +6,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     os_separator_positions = find(output_filename == '/');
     last_position = os_separator_positions(length(os_separator_positions)) + 1;
     output_filename = ['/net/hc293/dongryel/Research/fastlib2/mlpack/mlpackdemo/' output_filename(last_position:length(output_filename))];
-    command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./quicsvd_main --A_in=' data_file ' --SVT_out=' output_filename ' --relErr=0.85'];
+    command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./quicsvd_main --A_in=' data_file ' --SVT_out=' output_filename ' --relErr=0.1'];
     [status, result] = system(command);
     % Add the resulting output file to the list.
     set(handles.data_file1, 'String', [ get(handles.data_file1, 'String') ; { output_filename }]);
@@ -53,9 +53,17 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     gplot(adjacency_matrix, data_matrix);
     zoom on;
   end;
-  if strcmp(method, 'KDE')==1    
-    data_file = ['/net/hg200/dongryel/MLPACK_test_datasets/' data_file '.csv'];
-    data_file = '/net/hc293/dongryel/Research/fastlib2/mlpack/mlpackdemo/dummy.csv';
+  if strcmp(method, 'KPCA')==1
+    % Generate a kernel matrix (a random sample), then run SVD.
+    [status, result] = system( ['wc -l ' data_file] );
+    first_blank = find(result == ' ', 1, 'first');
+    numlines = str2double( result(1:first_blank - 1) );
+    rate = numlines / 1000;
+    bandwidth = 0.3;
+    command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./gen_kernel_matrix --data=' data_file ' --rate=' num2str(rate) ' --output=kernel_matrix.txt' ' --bandwidth=' num2str(bandwidth)];
+    [status, result] = system(command);
+  end;
+  if strcmp(method, 'KDE')==1
     command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../kde/ && ./kde_cv_bin --data=' data_file ' --kde/kernel=gaussian --kde/probability=0.8 --kde/relative_error=0.1'];
     [status, result] = system(command);
     % Parse the optimal bandwidth...
@@ -68,8 +76,12 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     [kde_status, kde_result] = system(kde_command)
     % Get the handle to the GUI plot, and plot the density.
     get(handles.axes1);
-    data_matrix = load('dummy.csv');
+    data_matrix = load(data_file);
     density_values = load('../kde/kde_output.txt');
+    [U, S, V] = svd(data_matrix, 'econ');
+    U = U(:, 1:2);
+    S = S(1:2, 1:2);
+    data_matrix = U * S;
     scatter3(data_matrix(:, 1), data_matrix(:, 2), density_values);
   end
   if strcmp(method, 'Range search')==1
