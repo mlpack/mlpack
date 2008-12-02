@@ -5,6 +5,8 @@ const fx_entry_doc kernel_matrix_generator_entries[] = {
    " File consists of data points in lines.\n"},
   {"bandwidth", FX_REQUIRED, FX_DOUBLE, NULL,
    " The kernel bandwidth.\n"},
+  {"rate", FX_REQUIRED, FX_INT, NULL,
+   " The sampling rate, default = 20.\n"},
   {"output", FX_PARAM, FX_STR, NULL,
    " File to hold output kernel matrix,"
    " default = \"kernel_matrix.txt\".\n"},
@@ -42,7 +44,7 @@ int main(int argc, char *argv[]) {
   GaussianKernel kernel;
   kernel.Init(bandwidth);
 
-  int rate = 20;
+  int rate = fx_param_int(fx_root, "rate", 20);
   int n_cols = (references.n_cols()-1)/rate+1;
   kernel_matrix.Init(n_cols, n_cols);
   for(index_t r = 0; r < references.n_cols(); r+=rate) {
