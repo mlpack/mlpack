@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
   kernel.Init(bandwidth);
 
   int rate = 20;
-  int n_cols = (references.n_cols())/rate+1;
+  int n_cols = (references.n_cols()-1)/rate+1;
   kernel_matrix.Init(n_cols, n_cols);
   for(index_t r = 0; r < references.n_cols(); r+=rate) {
     const double *r_col = references.GetColumnPtr(r);
