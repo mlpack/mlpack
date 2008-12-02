@@ -10,10 +10,14 @@
 #include "cartree.h"
 
 const fx_entry_doc root_entries[] = {
-  {"target", FX_REQUIRED, FX_INT, NULL,
-  "Target Variable \n"},
-  {"data_file", FX_REQUIRED, FX_STR,  NULL,
+  {"target", FX_INT, NULL,
+  "Target Variable, if in data file \n"},
+  {"data", FX_REQUIRED, FX_STR,  NULL,
    "Test data file \n"},
+  {"labels", FX_STR, NULL,
+   "Labels for classification \n"},
+  {"alpha", FX_DOUBLE, NULL,
+   "Pruning criterion \n"}
   FX_ENTRY_DOC_DONE
 };
 
@@ -30,16 +34,16 @@ int main(int argc, char *argv[]){
   fx_module *root = fx_init(argc, argv, &root_doc);
 
   const char* fp;
-  fp = fx_param_str_req(NULL, "data_file");
+  fp = fx_param_str_req(NULL, "data");
   const char* fl;
   fl = fx_param_str(NULL, "labels", " ");
  
   FILE *classifications;
   classifications = fopen("results.csv", "w+");
   int target_variable;
-  target_variable = fx_param_int_req(NULL, "target");
+  target_variable = fx_param_int(NULL, "target", 0);
   double alpha;
-  alpha = fx_param_double(0, "alpha", 10);
+  alpha = fx_param_double(0, "alpha", 1.0);
    Matrix data_mat;
   TrainingSet data;
   Vector firsts;  
@@ -66,8 +70,9 @@ int main(int argc, char *argv[]){
   tree.Grow();
   printf(" Tree has %d nodes. \n", 2*tree.GetNumNodes()-1);
 
+  printf("Pruning...\n");
   tree.Prune(alpha);
-     printf(" Tree has %d nodes. \n", 2*tree.GetNumNodes()-1);
+  printf("Tree has %d nodes. \n", 2*tree.GetNumNodes()-1);
 
 
   int errors = 0;
