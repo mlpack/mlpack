@@ -11,8 +11,6 @@
 #ifndef INVERSE_POW_DIST_LOCAL_EXPANSION
 #define INVERSE_POW_DIST_LOCAL_EXPANSION
 
-#include <values.h>
-
 #include "fastlib/fastlib.h"
 #include "kernel_aux.h"
 #include "inverse_pow_dist_series_expansion_aux.h"

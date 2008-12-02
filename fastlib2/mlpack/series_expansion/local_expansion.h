@@ -12,8 +12,6 @@
 #ifndef LOCAL_EXPANSION
 #define LOCAL_EXPANSION
 
-#include <values.h>
-
 #include "fastlib/fastlib.h"
 #include "kernel_aux.h"
 #include "series_expansion_aux.h"

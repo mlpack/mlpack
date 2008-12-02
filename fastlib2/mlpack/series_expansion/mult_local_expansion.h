@@ -12,8 +12,6 @@
 #ifndef MULT_LOCAL_EXPANSION
 #define MULT_LOCAL_EXPANSION
 
-#include <values.h>
-
 #include "fastlib/fastlib.h"
 #include "kernel_aux.h"
 #include "mult_series_expansion_aux.h"

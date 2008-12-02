@@ -12,7 +12,6 @@
 #ifndef MULT_FARFIELD_EXPANSION
 #define MULT_FARFIELD_EXPANSION
 
-#include <values.h>
 
 #include "fastlib/fastlib.h"
 #include "kernel_aux.h"
