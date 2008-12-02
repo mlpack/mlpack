@@ -14,12 +14,25 @@ function ComputeAlgorithms(data_file, method, handles)
     command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../allknn && ./allknn_exe --reference_file=' data_file ' --knns=' int2str(handles.knn)];
     [status, result] = system(command);
     % Convert the list to the adjacency matrix.
-    ConvertKnnResultToAdjacencyMatrix();
+    ConvertKnnResultToAdjacencyMatrix('../allknn/result.txt');
   end
   if strcmp(method, 'APPROX')==1
   end
   
   % More algorithms.
+  if strcmp(method, 'EMST')==1
+    data_file = ['/net/hg200/dongryel/MLPACK_test_datasets/' data_file '.csv'];
+    data_file = '/net/hc293/dongryel/Research/fastlib2/mlpack/mlpackdemo/dummy.csv';
+    command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../emst/ && ./emst_main --data=' data_file ' --output_filename=result.txt'];
+    [status, result] = system(command);
+    % Get the handle to the GUI plot, and plot the density.
+    get(handles.axes1);
+    data_matrix = load('dummy.csv');
+    % Convert the list to the adjacency matrix.
+    ConvertKnnResultToAdjacencyMatrix('../emst/result.txt');
+    load 'adjacency_matrix.mat' adjacency_matrix;
+    gplot(adjacency_matrix, data_matrix);
+  end;
   if strcmp(method, 'KDE')==1    
     data_file = ['/net/hg200/dongryel/MLPACK_test_datasets/' data_file '.csv'];
     data_file = '/net/hc293/dongryel/Research/fastlib2/mlpack/mlpackdemo/dummy.csv';
