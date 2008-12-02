@@ -27,6 +27,8 @@ const fx_entry_doc approx_nn_main_dual_entries[] = {
   {"result_file", FX_PARAM, FX_STR, NULL,
    " The file in which the nearest neighbor results are to be output"
    " (defaults to 'results.txt')\n"},
+  {"print_results", FX_PARAM, FX_BOOL, NULL,
+   " Whether to print out results or not\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -99,18 +101,20 @@ int main (int argc, char *argv[]) {
     naive_nn.ComputeNaive(&nac, &din);
     fx_timer_stop(ann_module, "naive");
 
-    FILE *fp=fopen(result_file.c_str(), "w");
-    if (fp==NULL) {
-      FATAL("Error while opening %s...%s", result_file.c_str(),
-	    strerror(errno));
-    }
-    for(index_t i=0 ; i < nac.size()/knns ; i++) {
-      for(index_t j=0; j<knns; j++) {
-	fprintf(fp, "%"LI"d %"LI"d %lg\n", i,
-		nac[i*knns+j], din[i*knns+j]);
+    if (fx_param_bool(root, "print_results", true)) {
+      FILE *fp=fopen(result_file.c_str(), "w");
+      if (fp==NULL) {
+	FATAL("Error while opening %s...%s", result_file.c_str(),
+	      strerror(errno));
       }
+      for(index_t i=0 ; i < nac.size()/knns ; i++) {
+	for(index_t j=0; j<knns; j++) {
+	  fprintf(fp, "%"LI"d %"LI"d %lg\n", i,
+		  nac[i*knns+j], din[i*knns+j]);
+	}
+      }
+      fclose(fp);
     }
-    fclose(fp);
   }
 
   // Exact computation
@@ -127,18 +131,20 @@ int main (int argc, char *argv[]) {
     exact_nn.ComputeNeighbors(&exc, &die);
     fx_timer_stop(ann_module, "exact");
 
-    FILE *fp=fopen(result_file.c_str(), "w");
-    if (fp==NULL) {
-      FATAL("Error while opening %s...%s", result_file.c_str(),
-	    strerror(errno));
-    }
-    for(index_t i=0 ; i < exc.size()/knns ; i++) {
-      for(index_t j=0; j<knns; j++) {
-	fprintf(fp, "%"LI"d %"LI"d %lg\n", i,
-		exc[i*knns+j], die[i*knns+j]);
+    if (fx_param_bool(root, "print_results", true)) {
+      FILE *fp=fopen(result_file.c_str(), "w");
+      if (fp==NULL) {
+	FATAL("Error while opening %s...%s", result_file.c_str(),
+	      strerror(errno));
       }
+      for(index_t i=0 ; i < exc.size()/knns ; i++) {
+	for(index_t j=0; j<knns; j++) {
+	  fprintf(fp, "%"LI"d %"LI"d %lg\n", i,
+		  exc[i*knns+j], die[i*knns+j]);
+	}
+      }
+      fclose(fp);
     }
-    fclose(fp);
   }
 
   //compare_neighbors(&nac, &din, &exc, &die);
@@ -157,18 +163,20 @@ int main (int argc, char *argv[]) {
     approx_nn.ComputeApprox(&apc, &dia);
     fx_timer_stop(ann_module, "approx");
 
-    FILE *fp=fopen(result_file.c_str(), "w");
-    if (fp==NULL) {
-      FATAL("Error while opening %s...%s", result_file.c_str(),
-	    strerror(errno));
-    }
-    for(index_t i=0 ; i < apc.size()/knns ; i++) {
-      for(index_t j=0; j<knns; j++) {
-	fprintf(fp, "%"LI"d %"LI"d %lg\n", i,
-		apc[i*knns+j], dia[i*knns+j]);
+    if (fx_param_bool(root, "print_results", true)) {
+      FILE *fp=fopen(result_file.c_str(), "w");
+      if (fp==NULL) {
+	FATAL("Error while opening %s...%s", result_file.c_str(),
+	      strerror(errno));
       }
+      for(index_t i=0 ; i < apc.size()/knns ; i++) {
+	for(index_t j=0; j<knns; j++) {
+	  fprintf(fp, "%"LI"d %"LI"d %lg\n", i,
+		  apc[i*knns+j], dia[i*knns+j]);
+	}
+      }
+      fclose(fp);
     }
-    fclose(fp);
 
     if (fx_param_bool(root, "compute_error", false)) {
       double epsilon
