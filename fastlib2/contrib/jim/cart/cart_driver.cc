@@ -12,6 +12,8 @@
 const fx_entry_doc root_entries[] = {
   {"target", FX_REQUIRED, FX_INT, NULL,
   "Target Variable \n"},
+  {"data_file", FX_REQUIRED, FX_STR,  NULL,
+   "Test data file \n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -28,32 +30,60 @@ int main(int argc, char *argv[]){
   fx_module *root = fx_init(argc, argv, &root_doc);
 
   const char* fp;
-  fp = fx_param_str(NULL, "data_file", "cpu.arff");
-
+  fp = fx_param_str_req(NULL, "data_file");
+  const char* fl;
+  fl = fx_param_str(NULL, "labels", " ");
+ 
+  FILE *classifications;
+  classifications = fopen("results.csv", "w+");
   int target_variable;
   target_variable = fx_param_int_req(NULL, "target");
   double alpha;
   alpha = fx_param_double(0, "alpha", 10);
- 
+   Matrix data_mat;
   TrainingSet data;
-  Vector firsts;
-  data.Init(fp, firsts);
-  
-  if (target_variable >= data.GetFeatures()){
-    target_variable = data.GetFeatures() - 1;
-  }
-  if (target_variable < 0){
-    target_variable = 0;
+  Vector firsts;  
+  if (!strcmp(" ", fl)){   
+    data_mat.Init(1,1);
+    data.Init(fp, firsts);
+    if (target_variable >= data.GetFeatures()){
+      target_variable = data.GetFeatures() - 1;
+    }
+    if (target_variable < 0){
+      target_variable = 0;
+    }
+  } else {      
+    data.InitLabels(fp);  
+    data_mat.Init(data.GetFeatures()+1, data.GetPointSize());
+    data.InitLabels2(fl, firsts, &data_mat);
+    printf("Target Variable: %d \n", target_variable);
+    target_variable = data.GetFeatures()-1;    
   }
 
   CARTree tree;
   tree.Init(&data, firsts, 0, data.GetPointSize(), target_variable, alpha);
 
   tree.Grow();
-  printf(" Tree has %d nodes. \n", tree.GetNumNodes());
+  printf(" Tree has %d nodes. \n", 2*tree.GetNumNodes()-1);
 
   tree.Prune(alpha);
+     printf(" Tree has %d nodes. \n", 2*tree.GetNumNodes()-1);
+
+
+  int errors = 0;
+  for (int i = 0; i < data.GetPointSize(); i++){
+    int j;
+    j = data.WhereNow(i);
+    double prediction = tree.Test(&data, j);
+    errors = errors + (int)data.Verify(target_variable, prediction, j);  
+    fprintf(classifications, "%f \n", prediction); 
+  }
+  printf("\n Misclassified Cases: %d \n \n", errors);
+
+  fclose(classifications);
 
   fx_done(root);
+
+ 
 
 }
