@@ -12,9 +12,10 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     set(handles.data_file1, 'String', [ get(handles.data_file1, 'String') ; { output_filename }]);
     guidata(hObject, handles);
     % Plot the dimension reduced dataset.
-    get(handles.axes1);
     data_matrix = load(output_filename);
+    data_matrix = data_matrix(:, 1:2);
     plot(data_matrix(:, 1), data_matrix(:, 2), '.');
+    csvwrite(output_filename, data_matrix);
     zoom on;
   end;
   if strcmp(method, 'MVU')==1
@@ -48,7 +49,6 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     %[status, result] = system(command);
     system(command)
     % Get the handle to the GUI plot, and plot the density.
-    get(handles.axes1);
     data_matrix = load(data_file);
     % Convert the list to the adjacency matrix.
     ConvertKnnResultToAdjacencyMatrix('../emst/result.txt', handles.knn1);
@@ -79,8 +79,9 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     set(handles.data_file1, 'String', [ get(handles.data_file1, 'String') ; { output_filename }]);
     guidata(hObject, handles);
     % Plot the dimension reduced dataset.
-    get(handles.axes1);
     data_matrix = load(output_filename);
+    data_matrix = data_matrix(:, 1:2);
+    csvwrite(output_filename, data_matrix);
     if size(data_matrix, 2) >= 2
       plot(data_matrix(:, 1), data_matrix(:, 2), '.');
     else
@@ -100,7 +101,6 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     % Run the KDE on the optimal bandwidth.
     [kde_status, kde_result] = system(kde_command)
     % Get the handle to the GUI plot, and plot the density.
-    get(handles.axes1);
     data_matrix = load(data_file);
     density_values = load('../kde/kde_output.txt');
     [U, S, V] = svd(data_matrix, 'econ');
@@ -121,8 +121,9 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     result_vectors = load('../range_search/results.txt');
     membership_vectors = CreateMembershipVectors(result_vectors);
     % Get the handle to the GUI plot and plot the range search result.
-    get(handles.axes1);
     data_matrix = load(data_file);
+    hold off;
+    plot(0);
     plot(data_matrix(:, 1), data_matrix(:, 2), '.');
     hold on;
     color_ordering = 'grcmyk';
