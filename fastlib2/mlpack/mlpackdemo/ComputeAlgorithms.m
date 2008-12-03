@@ -111,12 +111,32 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
   end
   if strcmp(method, 'Range search')==1
     command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../range_search/ && ./ortho_range_search_bin --data=' data_file];
+    num_search_windows = size(handles.lower_ranges, 2);
     handles.lower_ranges = handles.lower_ranges';
     handles.upper_ranges = handles.upper_ranges';
     csvwrite('../range_search/lower.csv', handles.lower_ranges);
     csvwrite('../range_search/upper.csv', handles.upper_ranges);
-    %[status, result] = system(command);
-    system(command)
+    [status, result] = system(command);
+    % Read in the boolean membership vector.
+    result_vectors = load('../range_search/results.txt');
+    membership_vectors = CreateMembershipVectors(result_vectors);
+    % Get the handle to the GUI plot and plot the range search result.
+    get(handles.axes1);
+    data_matrix = load(data_file);
+    plot(data_matrix(:, 1), data_matrix(:, 2), '.');
+    hold on;
+    color_ordering = 'grcmyk';
+    for i = 1:num_search_windows
+        % Draw the search window, and plot the points that fall with in it.
+        rectangle('Position', [handles.lower_ranges(i, 1), handles.lower_ranges(i, 2), ...
+            handles.upper_ranges(i, 1) - handles.lower_ranges(i, 1),...
+            handles.upper_ranges(i, 2) - handles.lower_ranges(i, 2)]);
+        plot_color = [color_ordering(i) '*'];
+        plot(data_matrix(membership_vectors{i}, 1), data_matrix(membership_vectors{i}, 2), plot_color);
+    end;
+    zoom on;
+    hold off;
+    % Clear the search windows after a search.
     handles.lower_ranges = [];
     handles.upper_ranges = [];
     guidata(hObject, handles);
