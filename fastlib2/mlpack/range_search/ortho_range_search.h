@@ -20,7 +20,7 @@
  *    search.Init(dataset, NULL);
  *    search.Compute(low_coord_limits, high_coord_limits);
  *
- *    Vector search_results;
+ *    GenMatrix<bool> search_results;
  *
  *    // Make sure that the vector is uninitialized before passing.
  *    search.get_results(&search_results);
@@ -286,7 +286,7 @@ class OrthoRangeSearch {
     }
     data_.CopyValues(tmp_data);
   }
-  
+
   /** @brief The base case.
    *
    *  @param search_window_node The node containing the search windows.

@@ -10,6 +10,25 @@
 
 #include "fastlib/mmanager/memory_manager.h"
 
+void OutputOrhogonalRangeSearchResults(const GenMatrix<bool> &search_results,
+				       const char *file_name) {
+  
+  FILE *file_pointer = fopen(file_name, "w+");
+
+  for(index_t r = 0; r < search_results.n_rows(); r++) {
+    for(index_t c = 0; c < search_results.n_cols(); c++) {
+
+      if(search_results.get(r, c)) {
+	fprintf(file_pointer, "1 ");
+      }
+      else {
+	fprintf(file_pointer, "0 ");
+      }
+    }
+    fprintf(file_pointer, "\n");
+  }
+}
+
 /** Main function which reads parameters and runs the orthogonal
  *  range search.
  *
@@ -76,29 +95,24 @@ int main(int argc, char *argv[]) {
   ////////// READING PARAMETERS AND LOADING DATA /////////////////////
 
   // The reference data file is a required parameter.
-  const char* dataset_file_name = fx_param_str(NULL, "data", "data.ds");
+  const char* dataset_file_name = fx_param_str(NULL, "data", "data.csv");
 
   // column-oriented dataset matrix.
-  GenMatrix<short int> dataset;
+  GenMatrix<double> dataset;
 
   // data::Load inits a matrix with the contents of a .csv or .arff.
-  data_aux::Load(dataset_file_name, &dataset);
+  data::Load(dataset_file_name, &dataset);
 
   // Generate the 200 uniformly distributed search ranges.
-  GenMatrix<short int> low_coord_limits, high_coord_limits;
-  low_coord_limits.Init(dataset.n_rows(), 200);
-  high_coord_limits.Init(dataset.n_rows(), 200);
-  for(index_t i = 0; i < 200; i++) {
-    
-    // For each dimension, generate random number between 0 and 230.
-    for(index_t j = 0; j < dataset.n_rows(); j++) {
-      short int random_num = math::RandInt(21, 230);
-      short int perturbation = math::RandInt(0, 20);
+  GenMatrix<double> low_coord_limits, high_coord_limits;
+  
+  // The file containing the lower and the upper limits of each search
+  // window.
+  const char *lower_limit_file_name = fx_param_str(NULL, "lower", "lower.csv");
+  const char *upper_limit_file_name = fx_param_str(NULL, "upper", "upper.csv");
 
-      low_coord_limits.set(j, i, random_num - perturbation);
-      high_coord_limits.set(j, i, random_num + perturbation);
-    }
-  }
+  data::Load(lower_limit_file_name, &low_coord_limits);
+  data::Load(upper_limit_file_name, &high_coord_limits);
 
   // flag for determining whether we need to do naive algorithm.
   bool do_naive = fx_param_exists(NULL, "do_naive");
@@ -114,7 +128,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Declare fast tree-based orthogonal range search algorithm object.
-  OrthoRangeSearch<short int> fast_search;
+  OrthoRangeSearch<double> fast_search;
   fast_search.Init(dataset, fx_param_exists(NULL, "do_naive"),
 		   load_tree_file_name);
   GenMatrix<bool> fast_search_results;
@@ -127,9 +141,12 @@ int main(int argc, char *argv[]) {
     fast_search.SaveTree(save_tree_file_name);
   }
 
+  // Dump the result to the file.
+  OutputOrhogonalRangeSearchResults(fast_search_results, "results.txt");
+
   // if naive option is specified, do naive algorithm
   if(do_naive) {
-    NaiveOrthoRangeSearch<short int> search;
+    NaiveOrthoRangeSearch<double> search;
     GenMatrix<bool> naive_search_results;
     search.Init(dataset);
     search.Compute(low_coord_limits, high_coord_limits, &naive_search_results);
