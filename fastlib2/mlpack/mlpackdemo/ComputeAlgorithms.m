@@ -37,6 +37,9 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     ConvertKnnResultToAdjacencyMatrix('../allknn/result.txt', handles.knn1);
   end
   if strcmp(method, 'APPROX')==1
+    command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/pram/approx_nn && ./main_dual --q=' data_file ' --r=' data_file ' --ann/knns=' int2str(handles.knn1) ' --doapprox'];
+    [status, result] = system(command);
+    ConvertKnnResultToAdjacencyMatrix('../../contrib/pram/approx_nn/result.txt', handles.knn1);
   end
   
   % More algorithms.
