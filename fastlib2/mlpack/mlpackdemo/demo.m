@@ -287,7 +287,8 @@ tmp_upper_vector = [handles.range12 ; handles.range22];
 handles.lower_ranges = [handles.lower_ranges tmp_lower_vector];
 handles.upper_ranges = [handles.upper_ranges tmp_upper_vector];
 % Draw the rectangles as well.
-get(handles.axes1);
+hold off;
+h=plot(0);
 hold on;
 for i = 1:size(handles.lower_ranges, 2)
     width = handles.upper_ranges(1, i) - handles.lower_ranges(1, i);
@@ -298,7 +299,7 @@ for i = 1:size(handles.lower_ranges, 2)
 end;
 guidata(hObject, handles);
 zoom on;
-hold off;
+
 
 % --- Executes on button press in go1.
 function go1_Callback(hObject, eventdata, handles)
@@ -317,7 +318,6 @@ function go2_Callback(hObject, eventdata, handles)
 ComputeAlgorithms(handles.data_file, handles.neighbors,...
     hObject, handles);
 % Get the handle to the plot in the GUI and plot adjacnecy graph.
-get(handles.axes1);
 data_matrix = load(handles.data_file);
 % Dimension reduce to two dimensions, in case it has more than two.
 [U, S, V] = svd(data_matrix, 'econ');
