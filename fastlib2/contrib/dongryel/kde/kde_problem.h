@@ -82,6 +82,7 @@ class KdeProblem {
       double sum_e;
       double n_pruned;
       double used_error;
+      double probabilistic_used_error;
       
       OT_DEF_BASIC(KdeApproximation) {
 	OT_MY_OBJECT(approx_type);
@@ -100,6 +101,7 @@ class KdeProblem {
 	OT_MY_OBJECT(sum_e);
 	OT_MY_OBJECT(n_pruned);
 	OT_MY_OBJECT(used_error);
+	OT_MY_OBJECT(probabilistic_used_error);
       }
       
      public:
@@ -132,6 +134,7 @@ class KdeProblem {
 	sum_e = 0;
 	n_pruned = 0;
 	used_error = 0;
+	probabilistic_used_error = 0;
       }      
     };
 
@@ -291,7 +294,8 @@ class KdeProblem {
      ReferenceTree *rnode) {
 
       error_per_pair = (parameters.relative_error * new_summary.sum_l -
-			new_summary.used_error_u) /
+			(new_summary.used_error_u +
+			 new_summary.probabilistic_used_error_u)) /
 	(parameters.num_reference_points - new_summary.n_pruned_l);
       error = error_per_pair * rnode->count();
     }    
@@ -412,6 +416,7 @@ class KdeProblem {
     Vector sum_e;
     Vector n_pruned;
     Vector used_error;
+    Vector probabilistic_used_error;
     
     int num_finite_difference_prunes;
     
@@ -431,6 +436,7 @@ class KdeProblem {
       OT_MY_OBJECT(sum_e);
       OT_MY_OBJECT(n_pruned);
       OT_MY_OBJECT(used_error);
+      OT_MY_OBJECT(probabilistic_used_error);
       OT_MY_OBJECT(num_finite_difference_prunes);
       OT_MY_OBJECT(num_far_to_local_prunes);
       OT_MY_OBJECT(num_direct_far_prunes);
@@ -466,6 +472,9 @@ class KdeProblem {
       sum_e[q_index] += postponed_in.sum_e;
       n_pruned[q_index] += postponed_in.n_pruned;
       used_error[q_index] += postponed_in.used_error;
+      probabilistic_used_error[q_index] = 
+	sqrt(math::Sqr(probabilistic_used_error[q_index]) +
+	     math::Sqr(postponed_in.probabilistic_used_error));
     }
 
     template<typename ReferenceTree>
@@ -481,6 +490,7 @@ class KdeProblem {
       sum_e.Init(num_queries);
       n_pruned.Init(num_queries);
       used_error.Init(num_queries);
+      probabilistic_used_error.Init(num_queries);
       final_results.Init(num_queries);
       
       // Reset the sums to zero.
@@ -506,6 +516,7 @@ class KdeProblem {
       sum_e.SetZero();
       n_pruned.SetZero();
       used_error.SetZero();
+      probabilistic_used_error.SetZero();
 
       num_finite_difference_prunes = 0;
       num_far_to_local_prunes = 0;
@@ -524,6 +535,7 @@ class KdeProblem {
     double sum_e;
     double n_pruned;
     double used_error;
+    double probabilistic_used_error;
     
    public:
 
@@ -533,6 +545,9 @@ class KdeProblem {
       sum_e += delta_in.kde_approximation.sum_e;
       n_pruned += delta_in.kde_approximation.n_pruned;
       used_error += delta_in.kde_approximation.used_error;
+      probabilistic_used_error =
+	sqrt(math::Sqr(probabilistic_used_error) +
+	     math::Sqr(delta_in.kde_approximation.probabilistic_used_error));
     }
     
     template<typename TQueryPostponed>
@@ -541,6 +556,9 @@ class KdeProblem {
       sum_e += postponed_in.sum_e;
       n_pruned += postponed_in.n_pruned;
       used_error += postponed_in.used_error;
+      probabilistic_used_error =
+	sqrt(math::Sqr(probabilistic_used_error) +
+	     math::Sqr(postponed_in.probabilistic_used_error));
     }
     
     void SetZero() {
@@ -548,6 +566,7 @@ class KdeProblem {
       sum_e = 0;
       n_pruned = 0;
       used_error = 0;
+      probabilistic_used_error = 0;
     }
     
   };
@@ -562,10 +581,13 @@ class KdeProblem {
 
     double used_error_u;
     
+    double probabilistic_used_error_u;
+    
     OT_DEF_BASIC(MultiTreeQuerySummary) {
       OT_MY_OBJECT(sum_l);
       OT_MY_OBJECT(n_pruned_l);
       OT_MY_OBJECT(used_error_u);
+      OT_MY_OBJECT(probabilistic_used_error_u);
     }
     
    public:
@@ -582,6 +604,9 @@ class KdeProblem {
       sum_l = std::min(sum_l, query_results.sum_l[q_index]);
       n_pruned_l = std::min(n_pruned_l, query_results.n_pruned[q_index]);
       used_error_u = std::max(used_error_u, query_results.used_error[q_index]);
+      probabilistic_used_error_u =
+	std::max(probabilistic_used_error_u,
+		 query_results.probabilistic_used_error[q_index]);
     }
     
     template<typename TQuerySummary>
@@ -591,6 +616,9 @@ class KdeProblem {
       n_pruned_l = std::min(n_pruned_l, other_summary_results.n_pruned_l);
       used_error_u = std::max(used_error_u,
 			      other_summary_results.used_error_u);
+      probabilistic_used_error_u =
+	std::max(probabilistic_used_error_u,
+		 other_summary_results.probabilistic_used_error_u);
     }
     
     template<typename TDelta>
@@ -605,6 +633,9 @@ class KdeProblem {
       sum_l += postponed_in.sum_l;
       n_pruned_l += postponed_in.n_pruned;
       used_error_u += postponed_in.used_error;
+      probabilistic_used_error_u = 
+	sqrt(math::Sqr(probabilistic_used_error_u) +
+	     math::Sqr(postponed_in.probabilistic_used_error));
     }
     
     void StartReaccumulate() {
@@ -612,6 +643,7 @@ class KdeProblem {
       sum_l = DBL_MAX;
       n_pruned_l = DBL_MAX;
       used_error_u = 0;
+      probabilistic_used_error_u = 0;
     }
     
     void SetZero() {
@@ -619,6 +651,7 @@ class KdeProblem {
       sum_l = 0;
       n_pruned_l = 0;
       used_error_u = 0;
+      probabilistic_used_error_u = 0;
     }
     
   };
@@ -963,7 +996,8 @@ class KdeProblem {
         // The currently proven lower bound.
         double right_hand_side =
           (globals.relative_error * new_summary.sum_l -
-	   new_summary.used_error_u) /
+	   (new_summary.used_error_u + 
+	    new_summary.probabilistic_used_error_u)) /
           (globals.num_reference_points - new_summary.n_pruned_l);
 	
         if(sqrt(sample_variance) * standard_score < right_hand_side ||
@@ -995,7 +1029,9 @@ class KdeProblem {
       qnode->stat().postponed.sum_l += kernel_sums_l;
       qnode->stat().postponed.sum_e += kernel_sums;
       qnode->stat().postponed.n_pruned += rnode->count();
-      qnode->stat().postponed.used_error += max_used_error;
+      qnode->stat().postponed.probabilistic_used_error =
+	sqrt(math::Sqr(qnode->stat().postponed.probabilistic_used_error) +
+	     math::Sqr(max_used_error));
       return true;
     }
     return false;
