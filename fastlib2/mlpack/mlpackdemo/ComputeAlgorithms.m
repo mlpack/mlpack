@@ -59,23 +59,30 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     first_blank = find(result == ' ', 1, 'first');
     numlines = str2double( result(1:first_blank - 1) );
     rate = numlines / 1000;
-    bandwidth = 0.3;
-    kernel_matrix_file = '/net/hc293/dongryel/Research/fastlib2/contrib/tqlong/quicsvd/kernel_matrix.txt';
+    % Currently hard-coded the bandwidth...
+    bandwidth = handles.bandwidth1;
+    kernel_matrix_file = ['/net/hc293/dongryel/Research/fastlib2/contrib/tqlong/quicsvd/' ...
+      data_file(find(data_file == '/', 1, 'last') + 1:length(data_file) - 4) '_kernel_matrix_bandwidth_' num2str(bandwidth) '.txt'];
     command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./gen_kernel_matrix --data=' data_file ' --rate=' num2str(rate) ' --output=' kernel_matrix_file ' --bandwidth=' num2str(bandwidth)];
     [status, result] = system(command);    
-    output_filename = [data_file(1:length(kernel_matrix_file) - length('kernel_matrix.txt')) '_pca_output.csv'];
+    output_filename = [kernel_matrix_file(1:length(kernel_matrix_file) - 4) '_pca_output.csv'];
     os_separator_positions = find(output_filename == '/');
     last_position = os_separator_positions(length(os_separator_positions)) + 1;
     output_filename = ['/net/hc293/dongryel/Research/fastlib2/mlpack/mlpackdemo/' output_filename(last_position:length(output_filename))];
-    command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./quicsvd_main --A_in=' data_file ' --SVT_out=' output_filename ' --relErr=0.1'];
+    command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./quicsvd_main --A_in=' kernel_matrix_file ' --SVT_out=' output_filename ' --relErr=0.1'];
     [status, result] = system(command);
     % Add the resulting output file to the list.
+    output_filename
     set(handles.data_file1, 'String', [ get(handles.data_file1, 'String') ; { output_filename }]);
     guidata(hObject, handles);
     % Plot the dimension reduced dataset.
     get(handles.axes1);
     data_matrix = load(output_filename);
-    plot(data_matrix(:, 1), data_matrix(:, 2), '.');
+    if size(data_matrix, 2) >= 2
+      plot(data_matrix(:, 1), data_matrix(:, 2), '.');
+    else
+      plot(data_matrix(:, 1), zeros(size(data_matrix, 1), 1), '.');
+    end;
     zoom on;
   end;
   if strcmp(method, 'KDE')==1
