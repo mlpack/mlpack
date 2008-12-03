@@ -10,14 +10,14 @@
 #include "cartree.h"
 
 const fx_entry_doc root_entries[] = {
-  {"target", FX_INT, NULL,
+  {"target", FX_PARAM, FX_INT, NULL,
   "Target Variable, if in data file \n"},
   {"data", FX_REQUIRED, FX_STR,  NULL,
    "Test data file \n"},
-  {"labels", FX_STR, NULL,
+  {"labels", FX_PARAM, FX_STR, NULL,
    "Labels for classification \n"},
-  {"alpha", FX_DOUBLE, NULL,
-   "Pruning criterion \n"}
+  {"alpha", FX_PARAM, FX_DOUBLE, NULL,
+   "Pruning criterion \n"},
   FX_ENTRY_DOC_DONE
 };
 
