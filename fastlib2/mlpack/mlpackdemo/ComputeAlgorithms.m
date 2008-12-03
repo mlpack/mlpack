@@ -110,7 +110,16 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     scatter3(data_matrix(:, 1), data_matrix(:, 2), density_values);
   end
   if strcmp(method, 'Range search')==1
-      
+    command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../range_search/ && ./ortho_range_search_bin --data=' data_file];
+    handles.lower_ranges = handles.lower_ranges';
+    handles.upper_ranges = handles.upper_ranges';
+    csvwrite('../range_search/lower.csv', handles.lower_ranges);
+    csvwrite('../range_search/upper.csv', handles.upper_ranges);
+    %[status, result] = system(command);
+    system(command)
+    handles.lower_ranges = [];
+    handles.upper_ranges = [];
+    guidata(hObject, handles);
   end
   if strcmp(method, 'NBC')==1
       
