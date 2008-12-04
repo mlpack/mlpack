@@ -9,14 +9,17 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./quicsvd_main --A_in=' data_file ' --SVT_out=' output_filename ' --relErr=0.1'];
     [status, result] = system(command);
     % Add the resulting output file to the list.
-    set(handles.data_file1, 'String', [ get(handles.data_file1, 'String') ; { output_filename }]);
-    guidata(hObject, handles);
+    set(handles.data_file, 'String', [ get(handles.data_file, 'String') ; { output_filename }]);
     % Plot the dimension reduced dataset.
     data_matrix = load(output_filename);
     data_matrix = data_matrix(:, 1:2);
     plot(data_matrix(:, 1), data_matrix(:, 2), '.');
     csvwrite(output_filename, data_matrix);
     zoom on;
+    % Change the dataset to the resulting output file.
+    handles.data_file = output_filename;
+    set(handles.current_dataset, 'String', handles.data_file);
+    guidata(hObject, handles);
   end;
   if strcmp(method, 'MVU')==1
     % Currently, MVU doesn't do anything but display the precomputed MVU
@@ -75,9 +78,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./quicsvd_main --A_in=' kernel_matrix_file ' --SVT_out=' output_filename ' --relErr=0.1'];
     [status, result] = system(command);
     % Add the resulting output file to the list.
-    output_filename
     set(handles.data_file1, 'String', [ get(handles.data_file1, 'String') ; { output_filename }]);
-    guidata(hObject, handles);
     % Plot the dimension reduced dataset.
     data_matrix = load(output_filename);
     data_matrix = data_matrix(:, 1:2);
@@ -88,6 +89,10 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
       plot(data_matrix(:, 1), zeros(size(data_matrix, 1), 1), '.');
     end;
     zoom on;
+    % Change the dataset to the resulting output file.
+    handles.data_file = output_filename;
+    set(handles.current_dataset, 'String', handles.data_file);
+    guidata(hObject, handles);
   end;
   if strcmp(method, 'KDE')==1
     command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../kde/ && ./kde_cv_bin --data=' data_file ' --kde/kernel=gaussian --kde/probability=0.8 --kde/relative_error=0.1'];
@@ -110,6 +115,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     scatter3(data_matrix(:, 1), data_matrix(:, 2), density_values);
   end
   if strcmp(method, 'Range search')==1
+    data_file
     command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../range_search/ && ./ortho_range_search_bin --data=' data_file];
     num_search_windows = size(handles.lower_ranges, 2);
     handles.lower_ranges = handles.lower_ranges';
