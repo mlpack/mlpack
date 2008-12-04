@@ -1,5 +1,8 @@
 function ComputeAlgorithms(data_file, method, hObject, handles)
 
+  set(handles.flashlight, 'Value', method);
+  guidata(hObject, handles);
+  
   % Dimension-reduction algorithms.
   if strcmp(method, 'PCA')==1
     output_filename = [data_file(1:length(data_file) - 4) '_pca_output.csv'];
@@ -9,7 +12,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./quicsvd_main --A_in=' data_file ' --SVT_out=' output_filename ' --relErr=0.1'];
     [status, result] = system(command);
     % Add the resulting output file to the list.
-    set(handles.data_file, 'String', [ get(handles.data_file, 'String') ; { output_filename }]);
+    set(handles.data_file1, 'String', [ get(handles.data_file1, 'String') ; { output_filename }]);
     % Plot the dimension reduced dataset.
     data_matrix = load(output_filename);
     data_matrix = data_matrix(:, 1:2);
@@ -17,8 +20,8 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     csvwrite(output_filename, data_matrix);
     zoom on;
     % Change the dataset to the resulting output file.
-    handles.data_file = output_filename;
-    set(handles.current_dataset, 'String', handles.data_file);
+    handles.data_file_var = output_filename;
+    set(handles.data_file1, 'Value', length(get(handles.data_file1, 'String')));
     guidata(hObject, handles);
   end;
   if strcmp(method, 'MVU')==1
@@ -66,7 +69,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     numlines = str2double( result(1:first_blank - 1) );
     rate = numlines / 1000;
     % Currently hard-coded the bandwidth...
-    bandwidth = handles.bandwidth1;
+    bandwidth = handles.bandwidth1_var;
     kernel_matrix_file = ['/net/hc293/dongryel/Research/fastlib2/contrib/tqlong/quicsvd/' ...
       data_file(find(data_file == '/', 1, 'last') + 1:length(data_file) - 4) '_kernel_matrix_bandwidth_' num2str(bandwidth) '.txt'];
     command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./gen_kernel_matrix --data=' data_file ' --rate=' num2str(rate) ' --output=' kernel_matrix_file ' --bandwidth=' num2str(bandwidth)];
@@ -90,8 +93,8 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     end;
     zoom on;
     % Change the dataset to the resulting output file.
-    handles.data_file = output_filename;
-    set(handles.current_dataset, 'String', handles.data_file);
+    handles.data_file_var = output_filename;
+    set(handles.data_file1, 'Value', length(get(handles.data_file1, 'String')));
     guidata(hObject, handles);
   end;
   if strcmp(method, 'KDE')==1
