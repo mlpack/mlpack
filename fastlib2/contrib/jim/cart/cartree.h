@@ -22,7 +22,7 @@ class CARTree{
  private:
   int start_, stop_, split_point_;
   int target_dim_;
-  double error_, complexity_cost_, value_;
+  double error_, value_;
   Split split_criterion_;
   CARTree *left_;
   CARTree *right_;
@@ -57,12 +57,10 @@ class CARTree{
   
   // Root node initializer
   void Init(TrainingSet* points_in, Vector &first_pointers_in, 
-	    int start_in, int stop_in, int target_dim_in, 
-	    double complexity_cost_in) {
+	    int start_in, int stop_in, int target_dim_in) {
     points_ = points_in;
     start_ = start_in;
-    stop_ = stop_in;
-    complexity_cost_ = complexity_cost_in;
+    stop_ = stop_in;   
     left_ = NULL;
     right_ = NULL;
     first_pointers_.Copy(first_pointers_in);
@@ -71,15 +69,13 @@ class CARTree{
   }
 
   void Init(TrainingSet* points_in, Vector &first_pointers_in, 
-	    int start_in, int stop_in, int target_dim_in,
-	    double complexity_cost_in, double error_in){
+	    int start_in, int stop_in, int target_dim_in, double error_in){
     points_ = points_in;   
     start_ = start_in;
-    stop_ = stop_in;
-    complexity_cost_ = complexity_cost_in;
+    stop_ = stop_in;   
     left_ = NULL;
     right_ = NULL;
-    error_ = error_in;
+    error_ = error_in / (stop_ - start_);
     first_pointers_.Copy(first_pointers_in);
     target_dim_ = target_dim_in;
   }
@@ -96,8 +92,8 @@ class CARTree{
       int leafs;
       leafs = left_->GetNumNodes() + right_->GetNumNodes();
       child_error = left_->GetChildError()*left_->Count()
-	+ right_->GetChildError()*right_->Count();            
-      if ((stop_-start_)*error_ <= child_error + (lambda * (leafs-1))) {
+	+ right_->GetChildError()*right_->Count();       
+      if ((stop_ - start_)*error_ <= child_error + (lambda * (leafs-1))) {
 	//	printf("Pruning %d leaves from tree. \n", leafs);
 	left_ = NULL;
 	right_ = NULL;
@@ -164,9 +160,9 @@ class CARTree{
       left_ = new CARTree();
       right_ = new CARTree();
       left_->Init(points_, first_pts_l, start_, split_point_, target_dim_,
-		  complexity_cost_, left_error);
+		  left_error);
       right_->Init(points_, first_pts_r, split_point_, stop_, target_dim_,
-		   complexity_cost_, right_error);    
+		   right_error);    
       left_->SetValue(split_criterion_.GetLeftValue());
       right_->SetValue(split_criterion_.GetRightValue());
       left_->Grow();      
