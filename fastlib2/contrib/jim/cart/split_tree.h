@@ -381,10 +381,7 @@ class Split{
   // A vector of length equal to the number of target classes
   // stores the numbe rof occurneces of each. Additional variables
   // track the most common target value, and the Gini error.
-  void OrderedClassification_(int dim, int classes){    
-    if(start_ == 4086 & stop_ == 4089){
-      printf("Case found \n");
-    }
+  void OrderedClassification_(int dim, int classes){        
     trial_left_error_ = BIG_BAD_NUMBER;
     trial_missing_data_flag_ = 0;
     trial_split_params_.Renew();
@@ -435,8 +432,7 @@ class Split{
 	printf("MISSING VALUE! \n");
       }
     }     
-    double best_error = temp_right_error_*right_points;
-    int total_points = right_points;
+    double best_error = temp_right_error_*right_points;   
     //printf("Initial Error: %f Dimension: %d \n", best_error,  dim);
 
     while (current != -1) {
@@ -578,8 +574,7 @@ class Split{
   }
 
   double GetInitialError(){
-    int targ_type = points_->GetTargetType(target_dim_);
-    printf("Target: %d \n", targ_type);
+    int targ_type = points_->GetTargetType(target_dim_);    
     int j, count = 0;
     double error = 0.0;
     if (targ_type > 0) {
@@ -652,13 +647,14 @@ class Split{
       SurrogateSplits_();
       }*/
 
-     
+    /*
     printf("Split Variable: %d Value:", split_dim_);
     for (i = 1; i < split_params_[0].size(); i++){
       printf(" %5.1f, ", split_params_[0][i]);
     }
     printf("\n");
     printf("Left Value: %f Right value: %f \n", left_value_, right_value_);
+    */
       
     // This will be the last line of the function;
     // printf("Partitioning Matrx ... \n");
