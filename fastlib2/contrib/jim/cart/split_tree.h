@@ -215,13 +215,8 @@ class Split{
     left.SetZero();
     if (v_classes > 2){
       int left_count = 0, right_count = 0;
-      double left_gini = 0, right_gini = 0;
-      // Vector left, right;     
-      //  right.Init(t_classes);
-      // left.Init(t_classes);
-      // left.SetZero();
-      which_side.SetZero();
-      //  right.SetZero();           
+      double left_gini = 0, right_gini = 0;  
+      which_side.SetZero();             
       for (i = 0; i < v_classes; i++){
 	right_gini = right_gini + gini[i] + 2 * (right_count * count[i] - 
 				       la::Dot(right, results[i]));
@@ -269,14 +264,12 @@ class Split{
 	     la::Dot(right, results[change_index]));	  
 	}
       }
-      trial_left_error_ = left_gini / (left_count*(right_count + left_count));
-      trial_right_error_ = right_gini / (right_count*(right_count+left_count));
+      trial_left_error_ = left_gini / left_count;
+      trial_right_error_ = right_gini / right_count;
       
     } else {
-      trial_left_error_ = results[0][1] / ((results[0][0] + results[1][0])*
-					   results[0][0]);
-      trial_right_error_ = results[1][1] / ((results[0][0] + results[1][0])*
-					    results[1][0]);
+      trial_left_error_ = results[0][1] / results[0][0];
+      trial_right_error_ = results[1][1] / results[1][0];
       
       which_side[0] = 0;
       which_side[1] = 1;
@@ -442,7 +435,7 @@ class Split{
 	printf("MISSING VALUE! \n");
       }
     }     
-    double best_error = temp_right_error_;
+    double best_error = temp_right_error_*right_points;
     int total_points = right_points;
     //printf("Initial Error: %f Dimension: %d \n", best_error,  dim);
 
@@ -475,13 +468,13 @@ class Split{
       double old_variable = points_->Get(dim, current);
       current = (int)order[current];
       if (current >= 0 && old_variable != points_->Get(dim, current)){
-	if ((left_points*temp_left_error_ + right_points*temp_right_error_) / 
-	    total_points <= best_error){
+	if ((left_points*temp_left_error_ + right_points*temp_right_error_) 
+	    <= best_error){
 	  trial_split_params_[1] = points_->Get(dim, current);
 	  trial_right_value_ = right_mode;
 	  trial_left_value_ = left_mode;
-	  trial_right_error_ = right_points*temp_right_error_ / total_points;
-	  trial_left_error_ = left_points*temp_left_error_ / total_points;
+	  trial_right_error_ = right_points*temp_right_error_;
+	  trial_left_error_ = left_points*temp_left_error_;
 	  best_error = trial_right_error_ + trial_left_error_;
 	  int temp = best_index;
 	  while(temp != current) {
@@ -669,7 +662,7 @@ class Split{
       
     // This will be the last line of the function;
     // printf("Partitioning Matrx ... \n");
-    split_point_ = points_->MatrixPartition(start_, stop_, NULL, 
+    split_point_ = points_->MatrixPartition(start_, stop_, 
 					    split_, first_pointers_,
 					    first_points_l, first_points_r);
     //   printf("Matrix Partitioned. Split Point: %d \n", split_point_);

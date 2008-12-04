@@ -192,9 +192,8 @@ class TrainingSet{
 
   // This function swaps columns of our data matrix, to represent the
   // partition into left and right nodes.
-  index_t MatrixPartition(index_t start, index_t stop, index_t *old_from_new,
-                          Vector split, Vector firsts, Vector* firsts_l_out, 
-			  Vector* firsts_r_out){
+  index_t MatrixPartition(index_t start, index_t stop, Vector split, 
+	 Vector firsts, Vector* firsts_l_out, Vector* firsts_r_out){
     Vector firsts_l;
     Vector firsts_r;
     // n_features_ = data_.n_features();
@@ -303,12 +302,6 @@ class TrainingSet{
 	  back_order_[i][left] = back_r;	  
 	}
       }      
-      
-      if (old_from_new){
-	index_t t = old_from_new[left];
-	old_from_new[left] = old_from_new[right];
-	old_from_new[right] = t;	  
-      }
       
       DEBUG_ASSERT(left <= right);
       right--;      
