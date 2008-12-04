@@ -84,23 +84,52 @@ class CARTree{
    * Prune tree- remove subtrees if small decrease in
    * Gini index does not justify number of leaves.
    */
-  void Prune(double lambda){
+  int Prune(double lambda){
     if (likely(left_ != NULL)){
-      left_->Prune(lambda);
-      right_->Prune(lambda);     
+      int result;
+      result = left_->Prune(lambda);
+      result  = (result | right_->Prune(lambda));     
       double child_error;
       int leafs;
       leafs = left_->GetNumNodes() + right_->GetNumNodes();
       child_error = left_->GetChildError()*left_->Count()
 	+ right_->GetChildError()*right_->Count();       
       if ((stop_ - start_)*error_ <= child_error + (lambda * (leafs-1))) {
-	//	printf("Pruning %d leaves from tree. \n", leafs);
 	left_ = NULL;
 	right_ = NULL;
-      }
+	return 1;
+      } else {
+	return result;
+      }	
+    } else {
+      return 0;
     }
   }
 
+  void WriteTree(int level, FILE* fp){
+    if (likely(left_ != NULL)){
+      fprintf(fp, "\n");
+      for (int i = 0; i < level; i++){
+	fprintf(fp, "|\t");
+      }
+      ArrayList<ArrayList<double> > split_data;
+      split_data = split_criterion_.GetSplitParams();      
+      int split_dim;
+      double split_val;
+      split_dim =  (int)split_data[0][0];
+      split_val = split_data[0][1];      
+      fprintf(fp, "Var. %d >=%5.2f ", split_dim, split_val);
+      right_->WriteTree(level+1, fp);
+      fprintf(fp, "\n");
+      for (int i = 0; i < level; i++){
+	fprintf(fp, "|\t");
+      }      
+      fprintf(fp, "Var. %d < %5.2f ", split_dim, split_val);
+      left_->WriteTree(level+1, fp);
+    } else {            
+      fprintf(fp, ": Predict =%4.0f", value_);
+    }  
+  }
   
   /*
    * Find predicted value for a given data point
@@ -148,15 +177,17 @@ class CARTree{
 	error_ = split_criterion_.GetInitialError();
       }
       Vector first_pts_l, first_pts_r;
+      /*
       printf("\n");
       printf("Start: %d Stop: %d Error: %f \n", start_, stop_, error_);
       printf("-------------------------------------------\n");
+      */
       split_criterion_.MakeSplit(&first_pts_l, &first_pts_r);
       
       split_point_ = split_criterion_.GetSplitPoint();
       double left_error = split_criterion_.GetLeftError();
       double right_error = split_criterion_.GetRightError();
-      printf("Left Error: %f Right Error: %f \n", left_error, right_error);
+      //  printf("Left Error: %f Right Error: %f \n", left_error, right_error);
       left_ = new CARTree();
       right_ = new CARTree();
       left_->Init(points_, first_pts_l, start_, split_point_, target_dim_,

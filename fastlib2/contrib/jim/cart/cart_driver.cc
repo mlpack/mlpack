@@ -33,13 +33,15 @@ const fx_module_doc root_doc = {
 int main(int argc, char *argv[]){
   fx_module *root = fx_init(argc, argv, &root_doc);
 
+  
+
   const char* fp;
   fp = fx_param_str_req(NULL, "data");
   const char* fl;
   fl = fx_param_str(NULL, "labels", " ");
  
-  FILE *classifications;
-  classifications = fopen("results.csv", "w+");
+  FILE *result;
+  result = fopen("tree.txt", "w+");
   int target_variable, points;
   target_variable = fx_param_int(NULL, "target", 0);
   double alpha;
@@ -47,14 +49,15 @@ int main(int argc, char *argv[]){
   int folds;
   folds = fx_param_int(NULL, "folds", 10);
   
-  Vector alpha_error;
-  alpha_error.Init(3600);
-  alpha_error.SetZero();
+  ArrayList<ArrayList<double> > alphas;
+  alphas.Init(0);
 
   for (int i = 0; i < folds; i++){
-     Matrix data_mat;
-     TrainingSet data;
-     Vector firsts;  
+    ArrayList<ArrayList<double> > fold_alpha;
+    fold_alpha.Init(0);
+    Matrix data_mat;
+    TrainingSet data;
+    Vector firsts;  
     // Read in data
     if (!strcmp(" ", fl)){   
       data_mat.Init(1,1);
@@ -68,8 +71,7 @@ int main(int argc, char *argv[]){
     } else {      
       data.InitLabels(fp);  
       data_mat.Init(data.GetFeatures()+1, data.GetPointSize());
-      data.InitLabels2(fl, firsts, &data_mat);
-      printf("Target Variable: %d \n", target_variable);
+      data.InitLabels2(fl, firsts, &data_mat);   
       target_variable = data.GetFeatures()-1;    
     }
   
@@ -93,28 +95,79 @@ int main(int argc, char *argv[]){
     CARTree tree;
     tree.Init(&data, new_firsts, CV_set, points, target_variable);
     tree.Grow();
-    printf(" Tree has %d nodes. \n", 2*tree.GetNumNodes()-1);
+    int max_nodes = tree.GetNumNodes();
+    printf(" Tree has %d nodes. \n", 2*max_nodes-1);
 
   
     printf("Pruning with increasing alpha...\n");
-    for (int k = 0; k < 3600; k++){
-      // Prune tree with increasing alpha, measure success rate    
-      tree.Prune(0.5*k);   
-      int errors = 0;    
+    double current_alpha = 0;
+    while(tree.GetNumNodes() > 1){      
+      int errors = 0;
       for (int j = 0; j < CV_set; j++){
 	double prediction = tree.Test(&data, j);
 	errors = errors + (int)data.Verify(target_variable, prediction, j); 
       }
-      alpha_error[k] = alpha_error[k] + errors;
+      fold_alpha.PushBack();
+      int size_list = fold_alpha.size() - 1;
+      fold_alpha[size_list].Init(2);
+      fold_alpha[size_list][0] = current_alpha;
+      fold_alpha[size_list][1] = errors;
+      while (tree.Prune(current_alpha) < 1){
+	current_alpha = current_alpha + 1.0e-2;
+      }
     }
+    // Merge list of alpha vs. error
+    ArrayList<ArrayList<double> > new_alphas;
+    new_alphas.Init(0);
+    int master = 0, fold = 0, total = 0;
+    printf("Master: %d Fold: %d \n", alphas.size(), fold_alpha.size());     
+    while(fold < fold_alpha.size() & master < alphas.size()){
+      new_alphas.PushBack();
+      new_alphas[total].Init(2);
+      new_alphas[total][0] = min(alphas[master][0], fold_alpha[fold][0]);
+      new_alphas[total][1] = alphas[master][1] + fold_alpha[fold][1];
+      total++;
+      if (alphas[master][0] == fold_alpha[fold][0]){
+	fold++;
+	master++;		  
+      } else {
+	if (alphas[master][0] < fold_alpha[fold][0]){
+	  master++;	   	  
+	} else {
+	  fold++;	    
+	}
+      }     
+    }             
+    
+    for (int k = master; k < alphas.size(); k++){	
+      new_alphas.PushBack();
+      new_alphas[total].Init(2);
+      new_alphas[total][0] = alphas[k][0];
+      new_alphas[total][1] = alphas[k][1] + fold_alpha[fold-1][1];
+      total++;       
+    }      
+    
+    for (int k = fold; k < fold_alpha.size(); k++){
+      new_alphas.PushBack();      
+      new_alphas[total].Init(2);      
+      new_alphas[total][0] = fold_alpha[k][0];
+      if (master ==0){
+	new_alphas[total][1] = fold_alpha[k][1];
+      } else {
+	new_alphas[total][1] = alphas[master-1][1] + fold_alpha[k][1];
+      }
+      total++;
+    }
+    alphas = new_alphas;
   }
+
   // Find optimal alpha
   double best_alpha = 0;
   int best_error = BIG_BAD_NUMBER;
-  for (int k = 0; k < 3600; k++){
-    if (alpha_error[k] < best_error){
-      best_error = alpha_error[k];
-      best_alpha = 0.5*k;
+  for (int k = 0; k < alphas.size(); k++){
+    if (alphas[k][1] < best_error){
+      best_error = alphas[k][1];
+      best_alpha = alphas[k][0];
     }    
   }
   if (best_alpha > 0){
@@ -166,12 +219,12 @@ int main(int argc, char *argv[]){
   }
   printf("Error: %d \n", errors);   
 
+  // Write Tree to file
+  tree.WriteTree(0, result); 
 
 
 
-
-
-  fclose(classifications);
+  fclose(result);
 
   fx_done(root);
 
