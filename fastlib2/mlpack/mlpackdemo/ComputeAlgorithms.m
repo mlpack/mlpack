@@ -1,7 +1,10 @@
 function ComputeAlgorithms(data_file, method, hObject, handles)
 
-  set(handles.flashlight, 'Value', method);
+  axes(GetAxes(handles, 2));
+  title([method ' timings'], 'FontSize', 28)
+  set(handles.flashlight, 'String', method);
   guidata(hObject, handles);
+  drawnow;
   
   % Dimension-reduction algorithms.
   if strcmp(method, 'PCA')==1
@@ -13,16 +16,16 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     [status, result] = system(command);
     % Add the resulting output file to the list.
     set(handles.data_file1, 'String', [ get(handles.data_file1, 'String') ; { output_filename }]);
+    % Change the dataset to the resulting output file.
+    handles.data_file_var = output_filename;
+    set(handles.data_file1, 'Value', length(get(handles.data_file1, 'String')));
+    guidata(hObject, handles);
     % Plot the dimension reduced dataset.
     data_matrix = load(output_filename);
     data_matrix = data_matrix(:, 1:2);
     plot(data_matrix(:, 1), data_matrix(:, 2), '.');
     csvwrite(output_filename, data_matrix);
     zoom on;
-    % Change the dataset to the resulting output file.
-    handles.data_file_var = output_filename;
-    set(handles.data_file1, 'Value', length(get(handles.data_file1, 'String')));
-    guidata(hObject, handles);
   end;
   if strcmp(method, 'MVU')==1
     % Currently, MVU doesn't do anything but display the precomputed MVU
@@ -39,7 +42,13 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
   % Nearest neighbor algorithms.
   if strcmp(method, 'EXACT')==1
     command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../allknn && ./allknn_exe --reference_file=' data_file ' --knns=' int2str(handles.knn1)];
+    tic;
     [status, result] = system(command);
+    timing = toc;
+    % Plot the timing.   
+    weka_timing = GetWekaTiming(data_file, method);    
+    bar([timing weka_timing]);
+    drawnow;
     % Convert the list to the adjacency matrix.
     ConvertKnnResultToAdjacencyMatrix('../allknn/result.txt', handles.knn1);
   end
@@ -52,14 +61,16 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
   % More algorithms.
   if strcmp(method, 'EMST')==1
     command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../emst/ && ./emst_main --data=' data_file ' --output_filename=result.txt'];
-    %[status, result] = system(command);
-    system(command)
+    [status, result] = system(command);
     % Get the handle to the GUI plot, and plot the density.
     data_matrix = load(data_file);
     % Convert the list to the adjacency matrix.
     ConvertKnnResultToAdjacencyMatrix('../emst/result.txt', handles.knn1);
     load 'adjacency_matrix.mat' adjacency_matrix;
+    axes(GetAxes(handles, 1));
+    hold off;
     gplot(adjacency_matrix, data_matrix);
+    drawnow;
     zoom on;
   end;
   if strcmp(method, 'KPCA')==1
@@ -79,27 +90,40 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     last_position = os_separator_positions(length(os_separator_positions)) + 1;
     output_filename = ['/net/hc293/dongryel/Research/fastlib2/mlpack/mlpackdemo/' output_filename(last_position:length(output_filename))];
     command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./quicsvd_main --A_in=' kernel_matrix_file ' --SVT_out=' output_filename ' --relErr=0.1'];
+    tic;
     [status, result] = system(command);
+    kpca_timing = toc;
+    % Plot the timing.   
+    naive_timing = GetNaiveTiming(data_file, method);
+    bar([kpca_timing naive_timing]);
+    drawnow;
     % Add the resulting output file to the list.
     set(handles.data_file1, 'String', [ get(handles.data_file1, 'String') ; { output_filename }]);
     % Plot the dimension reduced dataset.
     data_matrix = load(output_filename);
     data_matrix = data_matrix(:, 1:2);
     csvwrite(output_filename, data_matrix);
+    
+    % Change the dataset to the resulting output file.
+    handles.data_file_var = output_filename;
+    set(handles.data_file1, 'Value', length(get(handles.data_file1, 'String')));
+    guidata(hObject, handles);
+
+    axes(GetAxes(handles, 1));
+    hold off;
     if size(data_matrix, 2) >= 2
       plot(data_matrix(:, 1), data_matrix(:, 2), '.');
     else
       plot(data_matrix(:, 1), zeros(size(data_matrix, 1), 1), '.');
     end;
     zoom on;
-    % Change the dataset to the resulting output file.
-    handles.data_file_var = output_filename;
-    set(handles.data_file1, 'Value', length(get(handles.data_file1, 'String')));
-    guidata(hObject, handles);
   end;
   if strcmp(method, 'KDE')==1
+    
     command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../kde/ && ./kde_cv_bin --data=' data_file ' --kde/kernel=gaussian --kde/probability=0.8 --kde/relative_error=0.1'];
+    tic;
     [status, result] = system(command);
+    bandwidth_cv_timing = toc;
     % Parse the optimal bandwidth...
     start_positions = findstr(result, 'achieved at the bandwidth value of ');
     end_positions = findstr(result, '/info/sys/node/name:R ');
@@ -107,7 +131,14 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     optimal_bandwidth = str2double(result(start_positions(1) + offset_length:end_positions(1) - 1));
     kde_command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../kde/ && ./dualtree_kde_bin --data=' data_file ' --kde/kernel=gaussian --kde/probability=0.8 --kde/relative_error=0.1 --kde/bandwidth=' num2str(optimal_bandwidth) ' --kde/fast_kde_output=kde_output.txt --kde/loo'];
     % Run the KDE on the optimal bandwidth.
-    [kde_status, kde_result] = system(kde_command)
+    tic;
+    [kde_status, kde_result] = system(kde_command);
+    kde_timing = toc;
+    % Plot the timing.   
+    naive_timing = GetNaiveTiming(data_file, method);    
+    bar([kde_timing + bandwidth_cv_timing naive_timing]);
+    drawnow;
+
     % Get the handle to the GUI plot, and plot the density.
     data_matrix = load(data_file);
     density_values = load('../kde/kde_output.txt');
@@ -115,6 +146,8 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     U = U(:, 1:2);
     S = S(1:2, 1:2);
     data_matrix = U * S;
+    axes(GetAxes(handles, 1));
+    hold off;
     scatter3(data_matrix(:, 1), data_matrix(:, 2), density_values);
   end
   if strcmp(method, 'Range search')==1
@@ -154,6 +187,6 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
   if strcmp(method, 'NBC')==1
       
   end
-  if strcmp(method, 'Decision Trees')==1
+  if strcmp(method, 'Decision Tree')==1
       
   end

@@ -180,6 +180,20 @@ function axis_CreateFcn(hObject, eventdata, handles)
 hold off;
 plot(0);
 hold on;
+guidata(hObject, handles);
+
+% --- Executes during object creation, after setting all properties.
+function axis1_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to dim_reduction (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: listbox controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+hold off;
+handles.axis1 = plot(0);
+hold on;
+guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
 function dim_reduction_CreateFcn(hObject, eventdata, handles)
@@ -336,9 +350,9 @@ U = U(:, 1:2);
 S = S(1:2, 1:2);
 data_matrix = U * S;
 load 'adjacency_matrix.mat' adjacency_matrix;
+axes(GetAxes(handles, 1));
 hold off;
 plot(0);
-hold on;
 gplot(adjacency_matrix, data_matrix);
 zoom on;
 
@@ -630,7 +644,7 @@ h2 = axes(...
 'ZTickLabel','',...
 'ZTickLabelMode','manual',...
 'ZTickMode','manual',...
-'Tag','axes1',...
+'Tag','axes',...
 'CreateFcn','demo(''axis_CreateFcn'',gcbo,[],guidata(gcbo))',...
 'UserData',zeros(1,0));
 
@@ -976,7 +990,7 @@ h32 = axes(...
 'ZTickLabelMode','manual',...
 'ZTickMode','manual',...
 'Tag','axes1',...
-'CreateFcn','demo(''axis_CreateFcn'',gcbo,[],guidata(gcbo))',...
+'CreateFcn','demo(''axis1_CreateFcn'',gcbo,[],guidata(gcbo))',...
 'UserData',zeros(1,0));
 
 h33 = uicontrol(...
