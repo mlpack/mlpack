@@ -1,2 +1,2 @@
 function w = GetWidth()
-w = 1.0;
+w = 0.5;

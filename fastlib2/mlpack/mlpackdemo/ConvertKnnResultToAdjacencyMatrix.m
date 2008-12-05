@@ -1,10 +1,10 @@
 function ConvertKnnResultToAdjacencyMatrix(filename, knn)
 
 % Open the k-nn result file.
-result = load(filename);
+result = textread(filename);
 
 number_rows_in_result = size(result, 1);
-number_of_points = number_rows_in_result / knn;
+number_of_points = int32(number_rows_in_result / knn);
 self = zeros(number_of_points, 3);
 for i = 1:number_rows_in_result
     result(i, 1) = result(i, 1) + 1;

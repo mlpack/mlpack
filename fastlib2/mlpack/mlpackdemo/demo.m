@@ -355,7 +355,9 @@ neighbors_var = neighbors_list{get(handles.neighbors1, 'Value')};
 ComputeAlgorithms(data_file_var, neighbors_var,...
     hObject, handles);
 % Get the handle to the plot in the GUI and plot adjacnecy graph.
-data_matrix = load(handles.data_file_var);
+data_file_list = get(handles.data_file1, 'String');
+data_file_var = data_file_list{get(handles.data_file1, 'Value')};
+data_matrix = load(data_file_var);
 % Dimension reduce to two dimensions, in case it has more than two.
 [U, S, V] = svd(data_matrix, 'econ');
 U = U(:, 1:2);
@@ -364,7 +366,7 @@ data_matrix = U * S;
 load 'adjacency_matrix.mat' adjacency_matrix;
 axes(handles.first_axis);
 cla;
-gplot(adjacency_matrix, data_matrix);
+gplot(adjacency_matrix, data_matrix,'*-');
 zoom on;
 
 % --- Executes on button press in go3.
