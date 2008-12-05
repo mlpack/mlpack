@@ -234,9 +234,9 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
     return;
   }
   else if(MultiTreeProblem::ConsiderTupleProbabilistic
-	  (globals_, query_results, sets, hybrid_nodes, query_nodes,
-	   reference_nodes, total_num_tuples, total_n_minus_one_tuples_root_,
-	   total_n_minus_one_tuples_)) {
+	  (globals_, query_results, query_sets, sets, hybrid_nodes,
+	   query_nodes, reference_nodes, total_num_tuples,
+	   total_n_minus_one_tuples_root_, total_n_minus_one_tuples_)) {
     return;
   }
 
