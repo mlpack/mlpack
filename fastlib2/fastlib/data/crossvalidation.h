@@ -565,20 +565,26 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
 
     // randomize the original data set within each class if necessary
     ArrayList<index_t> permutation;
-    permutation.Init(num_data_points_);
+
     if (randomized) {
+      permutation.Init(num_data_points_);
       for (index_t i_classes=0; i_classes<num_classes; i_classes++) {
 	ArrayList<index_t> sub_permutation; // within class permut indices
 	math::MakeRandomPermutation(cv_labels_ct[i_classes], &sub_permutation);
 	// use sub-permutation indicies to form the whole permutation
-	for (index_t j=0; j<cv_labels_ct[i_classes]; j++) {
-	  permutation[cv_labels_startpos[i_classes]+j] = cv_labels_index[ cv_labels_ct[i_classes]+sub_permutation[j] ];
+	if (i_classes==0){
+	  for (index_t j=0; j<cv_labels_ct[i_classes]; j++)
+	    permutation[cv_labels_startpos[i_classes]+j] = cv_labels_index[ sub_permutation[j] ];
+	}
+	else {
+	  for (index_t j=0; j<cv_labels_ct[i_classes]; j++)
+	    permutation[cv_labels_startpos[i_classes]+j] = cv_labels_index[ cv_labels_ct[i_classes-1]+sub_permutation[j] ];
 	}
 	sub_permutation.Clear();
       }
     } // e.g. [10,13,5,17,0,6,7,,4,9,8,1,2,,...]
     else {
-      permutation.InitCopy(cv_labels_index); // e.g. [0,5,6,7,10,13,17,,1,2,4,8,9,,...]
+      permutation.InitCopy(cv_labels_index, cv_labels_index.size()); // e.g. [0,5,6,7,10,13,17,,1,2,4,8,9,,...]
     }
     // begin CV
     for (int i_fold = 0; i_fold < n_folds_; i_fold++) {
