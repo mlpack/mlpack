@@ -195,7 +195,7 @@ class CARTree{
       right_->Init(points_, first_pts_r, split_point_, stop_, target_dim_,
 		   right_error);    
       left_->SetValue(split_criterion_.GetLeftValue());
-      right_->SetValue(split_criterion_.GetRightValue());
+      right_->SetValue(split_criterion_.GetRightValue());     
       left_->Grow();      
       right_->Grow();                
     } else {

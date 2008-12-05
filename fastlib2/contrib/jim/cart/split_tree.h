@@ -337,7 +337,7 @@ class Split{
 	printf("MISSING VALUE! Dimension %d \n", dim);
       }
     }   
-    double best_error = temp_right_error_;
+    double best_error = BIG_BAD_NUMBER;
 
     // Move boundary across ordered values, one at a time.
     while (current != -1 && right_points > 0) {  
@@ -355,15 +355,22 @@ class Split{
 	temp_right_error_ = 0;
 	right_mean = 0;
       }     
+      double current_var, next_var = BIG_BAD_NUMBER;
+      current_var = points_->Get(dim, current);
       current = (int)order[current];
-     
+      double net_error = sqrt(temp_left_error_)*left_points + 
+	sqrt(temp_right_error_)*right_points;      
+      if (current != -1){
+	next_var = points_->Get(dim, current);
+      }
+ 
       // Keep track of lowest sum-of-squares error so far
-      if (temp_left_error_ + temp_right_error_ < best_error){
+      if (net_error < best_error & current_var != next_var){
 	trial_split_params_[1] = points_->Get(dim, current);
 	trial_right_value_ = right_mean;
 	trial_left_value_ = left_mean;
-	trial_right_error_ = temp_right_error_;
-	trial_left_error_ = temp_left_error_;
+	trial_right_error_ = sqrt(temp_right_error_)*right_points;
+	trial_left_error_ = sqrt(temp_left_error_)*left_points;
 	best_error = trial_right_error_ + trial_left_error_;
 	int temp = best_index;
 	while(temp != current) {
@@ -372,8 +379,7 @@ class Split{
 	}
 	best_index = current;
       }
-    }
-   
+    }   
   }  // OrderedRegression
 
 
@@ -650,7 +656,7 @@ class Split{
     /*
     printf("Split Variable: %d Value:", split_dim_);
     for (i = 1; i < split_params_[0].size(); i++){
-      printf(" %5.1f, ", split_params_[0][i]);
+      printf(" %5.3f, ", split_params_[0][i]);
     }
     printf("\n");
     printf("Left Value: %f Right value: %f \n", left_value_, right_value_);
