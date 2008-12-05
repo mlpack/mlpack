@@ -43,7 +43,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
   
   % Nearest neighbor algorithms.
   if strcmp(method, 'EXACT')==1
-    command = [SetLibraryPath() ' && cd ../allknn && ./allknn_exe --reference_file=' data_file ' --knns=' int2str(handles.knn1)];
+    command = [SetLibraryPath() ' && cd ../allknn && ./allknn_exe --reference_file=' data_file ' --knns=' get(handles.knn1, 'String')];
     tic;
     [status, result] = system(command);
     timing = toc;
@@ -53,12 +53,12 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     SetAxesLabels();
     drawnow;
     % Convert the list to the adjacency matrix.
-    ConvertKnnResultToAdjacencyMatrix('../allknn/result.txt', handles.knn1);
+    ConvertKnnResultToAdjacencyMatrix('../allknn/result.txt', str2num(get(handles.knn1, 'String')));
   end
   if strcmp(method, 'APPROX')==1
-    command = [SetLibraryPath() ' && cd ../../contrib/pram/approx_nn && ./main_dual --q=' data_file ' --r=' data_file ' --ann/knns=' int2str(handles.knn1) ' --doapprox'];
+    command = [SetLibraryPath() ' && cd ../../contrib/pram/approx_nn && ./main_dual --q=' data_file ' --r=' data_file ' --ann/knns=' get(handles.knn1, 'String') ' --doapprox --ann/epsilon=1 --ann/alpha=0.7'];
     [status, result] = system(command);
-    ConvertKnnResultToAdjacencyMatrix('../../contrib/pram/approx_nn/result.txt', handles.knn1);
+    ConvertKnnResultToAdjacencyMatrix('../../contrib/pram/approx_nn/result.txt', str2num(get(handles.knn1, 'String')));
   end
   
   % More algorithms.

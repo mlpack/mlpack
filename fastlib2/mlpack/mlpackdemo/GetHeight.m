@@ -1,2 +1,2 @@
 function h = GetHeight()
-h = 1.0;
+h = 0.5;
