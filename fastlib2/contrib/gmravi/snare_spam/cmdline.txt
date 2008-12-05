@@ -1,0 +1,5 @@
+
+./nbc-single --q=packet_features_scaled_test1.data --r=packet_features_scaled_train1.data --nbc/h_pos=2.11 --nbc/h_neg=2.11 --r_no_priors --nbc/prior=0.5 --q_no_priors
+
+
+ ./nbc-multi --r=packet_features_scaled.data --nbc/min_h_pos=1.5 --nbc/max_h_pos=3.0 --nbc/num_h_pos=20 --nbc/min_h_neg=1.3 --nbc/max_h_neg=2.6 --nbc/num_h_neg=20 --r_no_priors --nbc/prior=0.49
