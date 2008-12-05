@@ -180,6 +180,7 @@ function axis_CreateFcn(hObject, eventdata, handles)
 hold off;
 plot(0);
 hold on;
+set(hObject, 'Tag', 'first_axis');
 guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
@@ -193,6 +194,7 @@ function axis1_CreateFcn(hObject, eventdata, handles)
 hold off;
 handles.axis1 = plot(0);
 hold on;
+set(hObject, 'Tag', 'second_axis');
 guidata(hObject, handles);
 
 % --- Executes during object creation, after setting all properties.
@@ -350,7 +352,7 @@ U = U(:, 1:2);
 S = S(1:2, 1:2);
 data_matrix = U * S;
 load 'adjacency_matrix.mat' adjacency_matrix;
-axes(GetAxes(handles, 1));
+axes(handles.first_axis);
 hold off;
 plot(0);
 gplot(adjacency_matrix, data_matrix);
@@ -644,8 +646,8 @@ h2 = axes(...
 'ZTickLabel','',...
 'ZTickLabelMode','manual',...
 'ZTickMode','manual',...
-'Tag','axes',...
 'CreateFcn','demo(''axis_CreateFcn'',gcbo,[],guidata(gcbo))',...
+'Tag','axes',...
 'UserData',zeros(1,0));
 
 

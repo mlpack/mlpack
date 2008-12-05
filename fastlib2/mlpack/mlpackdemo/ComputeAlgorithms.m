@@ -1,6 +1,6 @@
 function ComputeAlgorithms(data_file, method, hObject, handles)
-
-  axes(GetAxes(handles, 2));
+ 
+  axes(handles.second_axis);
   title([method ' timings'], 'FontSize', 28)
   set(handles.flashlight, 'String', method);
   guidata(hObject, handles);
@@ -65,10 +65,9 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     % Get the handle to the GUI plot, and plot the density.
     data_matrix = load(data_file);
     % Convert the list to the adjacency matrix.
-    ConvertKnnResultToAdjacencyMatrix('../emst/result.txt', handles.knn1);
-    load 'adjacency_matrix.mat' adjacency_matrix;
-    axes(GetAxes(handles, 1));
-    hold off;
+    ConvertKnnResultToAdjacencyMatrix('../emst/result.txt', 1);
+    load 'adjacency_matrix.mat' adjacency_matrix;    
+    axes(handles.first_axis);
     gplot(adjacency_matrix, data_matrix);
     drawnow;
     zoom on;
@@ -109,14 +108,15 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     set(handles.data_file1, 'Value', length(get(handles.data_file1, 'String')));
     guidata(hObject, handles);
 
-    axes(GetAxes(handles, 1));
-    hold off;
+    axes(handles.first_axis);
     if size(data_matrix, 2) >= 2
       plot(data_matrix(:, 1), data_matrix(:, 2), '.');
     else
       plot(data_matrix(:, 1), zeros(size(data_matrix, 1), 1), '.');
     end;
+    drawnow;
     zoom on;
+    guidata(hObject, handles);
   end;
   if strcmp(method, 'KDE')==1
     
@@ -146,12 +146,11 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     U = U(:, 1:2);
     S = S(1:2, 1:2);
     data_matrix = U * S;
-    axes(GetAxes(handles, 1));
+    axes(handles.first_axis);
     hold off;
     scatter3(data_matrix(:, 1), data_matrix(:, 2), density_values);
   end
   if strcmp(method, 'Range search')==1
-    data_file
     command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../range_search/ && ./ortho_range_search_bin --data=' data_file];
     num_search_windows = size(handles.lower_ranges, 2);
     handles.lower_ranges = handles.lower_ranges';
@@ -164,10 +163,9 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     membership_vectors = CreateMembershipVectors(result_vectors);
     % Get the handle to the GUI plot and plot the range search result.
     data_matrix = load(data_file);
-    hold off;
-    plot(0);
+    %axes(GetAxes(handles, 1));
+    axes(handles.first_axis);
     plot(data_matrix(:, 1), data_matrix(:, 2), '.');
-    hold on;
     color_ordering = 'grcmyk';
     for i = 1:num_search_windows
         % Draw the search window, and plot the points that fall with in it.
@@ -178,7 +176,6 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
         plot(data_matrix(membership_vectors{i}, 1), data_matrix(membership_vectors{i}, 2), plot_color);
     end;
     zoom on;
-    hold off;
     % Clear the search windows after a search.
     handles.lower_ranges = [];
     handles.upper_ranges = [];
