@@ -197,5 +197,16 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
       decision_tree_command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/jim/cart/ && ./main' ...
           ' --data=' data_file ' --target=0 --alpha=0.3'];
       [status, result] = system(decision_tree_command);
-      result
+      
+      %[status, result] = system('cat ../../contrib/jim/cart/tree.txt');
+      fid = fopen('../../contrib/jim/cart/tree.txt', 'rt');
+      lines = {};
+      while feof(fid) == 0
+          tline = fgetl(fid);
+          tline = strrep(tline, '|', '|     ');
+          lines{end+1} = tline;
+      end
+      fclose(fid);
+      set(handles.textbox_output, 'String', lines);
+      guidata(hObject, handles);
   end

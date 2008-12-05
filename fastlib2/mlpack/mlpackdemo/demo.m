@@ -546,6 +546,33 @@ if isfield(handles, 'upper_ranges') == 0
 end;
 guidata(hObject, handles);
 
+% --- Executes during object creation, after setting all properties.
+function textbox_output_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to data_file1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc
+    set(hObject,'BackgroundColor','white');
+else
+    set(hObject,'BackgroundColor',get(0,'defaultUicontrolBackgroundColor'));
+end
+
+
+
+
+function textbox_output_Callback(hObject, eventdata, handles)
+% hObject    handle to data_file1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of data_file1 as text
+%        str2double(get(hObject,'String')) returns contents of data_file1 as a double
+
+
+
 function h = GetHeight()
 h = 0.7;
 
@@ -1005,6 +1032,18 @@ h33 = uicontrol(...
 'String','Method running',...
 'Style','text',...
 'Tag','flashlight');
+
+h34 = uicontrol(...
+'Parent',h1,...
+'Units','normalized',...
+'Callback','demo(''textbox_output_Callback'',gcbo,[],guidata(gcbo))',...
+'Position',[0.663 0.054 0.313 0.483],...
+'String','Decision tree output',...
+'Style','listbox',...
+'Value',1,...
+'CreateFcn','demo(''textbox_output_CreateFcn'',gcbo,[],guidata(gcbo))',...
+'Tag','textbox_output');
+
 
 hsingleton = h1;
 
