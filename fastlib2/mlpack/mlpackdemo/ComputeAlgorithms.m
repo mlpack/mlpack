@@ -56,7 +56,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     ConvertKnnResultToAdjacencyMatrix('../allknn/result.txt', str2num(get(handles.knn1, 'String')));
   end
   if strcmp(method, 'APPROX')==1
-    command = [SetLibraryPath() ' && cd ../../contrib/pram/approx_nn && ./main_dual --q=' data_file ' --r=' data_file ' --ann/knns=' get(handles.knn1, 'String') ' --doapprox --ann/epsilon=1 --ann/alpha=0.7'];
+    command = [SetLibraryPath() ' && cd ../../contrib/pram/approx_nn && ./main_dual --q=' data_file ' --r=' data_file ' --ann/knns=' get(handles.knn1, 'String') ' --doapprox --ann/epsilon=1 --ann/alpha=0.9'];
     [status, result] = system(command);
     ConvertKnnResultToAdjacencyMatrix('../../contrib/pram/approx_nn/result.txt', str2num(get(handles.knn1, 'String')));
   end
