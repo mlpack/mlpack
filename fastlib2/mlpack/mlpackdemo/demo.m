@@ -192,7 +192,7 @@ function axis1_CreateFcn(hObject, eventdata, handles)
 % Hint: listbox controls usually have a white background on Windows.
 %       See ISPC and COMPUTER.
 hold off;
-handles.axis1 = plot(0);
+plot(0);
 hold on;
 set(hObject, 'Tag', 'second_axis');
 guidata(hObject, handles);
@@ -314,9 +314,11 @@ tmp_upper_vector = [handles.range12_var ; handles.range22_var];
 handles.lower_ranges = [handles.lower_ranges tmp_lower_vector];
 handles.upper_ranges = [handles.upper_ranges tmp_upper_vector];
 % Draw the rectangles as well.
-hold off;
-h=plot(0);
-hold on;
+axes(handles.first_axis);
+cla;
+data_file_list = get(handles.data_file1, 'String');
+data_matrix = load(data_file_list{get(handles.data_file1, 'Value')});
+plot(data_matrix(:, 1), data_matrix(:, 2), '.');
 for i = 1:size(handles.lower_ranges, 2)
     width = handles.upper_ranges(1, i) - handles.lower_ranges(1, i);
     height = handles.upper_ranges(2, i) - handles.lower_ranges(2, i);
@@ -353,8 +355,7 @@ S = S(1:2, 1:2);
 data_matrix = U * S;
 load 'adjacency_matrix.mat' adjacency_matrix;
 axes(handles.first_axis);
-hold off;
-plot(0);
+cla;
 gplot(adjacency_matrix, data_matrix);
 zoom on;
 
