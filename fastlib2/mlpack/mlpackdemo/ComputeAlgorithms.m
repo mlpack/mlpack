@@ -23,6 +23,8 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     % Plot the dimension reduced dataset.
     data_matrix = load(output_filename);
     data_matrix = data_matrix(:, 1:2);
+    axes(handles.first_axis);
+    hold off;
     plot(data_matrix(:, 1), data_matrix(:, 2), '.');
     csvwrite(output_filename, data_matrix);
     zoom on;
@@ -192,5 +194,8 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
       bandwidth_compute_command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../contrib/rriegel/nbc/ && ./nbc-single --data=' data_file];
   end
   if strcmp(method, 'Decision Tree')==1
-      
+      decision_tree_command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/jim/cart/ && ./main' ...
+          ' --data=' data_file ' --target=0 --alpha=0.3'];
+      [status, result] = system(decision_tree_command);
+      result
   end
