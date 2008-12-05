@@ -11,7 +11,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     output_filename = [data_file(1:length(data_file) - 4) '_pca_output.csv'];
     os_separator_positions = find(output_filename == '/');
     last_position = os_separator_positions(length(os_separator_positions)) + 1;
-    output_filename = ['/net/hc293/dongryel/Research/fastlib2/mlpack/mlpackdemo/' output_filename(last_position:length(output_filename))];
+    output_filename = [GetRootPath() output_filename(last_position:length(output_filename))];
     command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./quicsvd_main --A_in=' data_file ' --SVT_out=' output_filename ' --relErr=0.1'];
     [status, result] = system(command);
     % Add the resulting output file to the list.
@@ -24,6 +24,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     data_matrix = load(output_filename);
     data_matrix = data_matrix(:, 1:2);
     axes(handles.first_axis);
+    cla;
     plot(data_matrix(:, 1), data_matrix(:, 2), '.');
     csvwrite(output_filename, data_matrix);
     zoom on;
@@ -31,7 +32,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
   if strcmp(method, 'MVU')==1
     % Currently, MVU doesn't do anything but display the precomputed MVU
     % result.
-    data_matrix = load('/net/hg200/dongryel/MLPACK_test_datasets/LayoutHistogram-rnd_MVU_5.csv');
+    data_matrix = load([GetRootPath() 'LayoutHistogram-rnd_MVU_5.csv']);
     [U, S, V] = svd(data_matrix, 'econ');
     U = U(:, 1:2);
     S = S(1:2, 1:2);
@@ -83,14 +84,14 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     rate = numlines / 2000;
     % Currently hard-coded the bandwidth...
     bandwidth = handles.bandwidth1_var;
-    kernel_matrix_file = ['/net/hc293/dongryel/Research/fastlib2/contrib/tqlong/quicsvd/' ...
+    kernel_matrix_file = [GetRootPath() ...
     data_file(find(data_file == '/', 1, 'last') + 1:length(data_file) - 4) '_kernel_matrix_bandwidth_' num2str(bandwidth) '.txt'];
     command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./gen_kernel_matrix --data=' data_file ' --rate=' num2str(rate) ' --kernel=polynomial --output=' kernel_matrix_file ' --degree=' num2str(bandwidth)];
     [status, result] = system(command);    
     output_filename = [kernel_matrix_file(1:length(kernel_matrix_file) - 4) '_pca_output.csv'];
     os_separator_positions = find(output_filename == '/');
     last_position = os_separator_positions(length(os_separator_positions)) + 1;
-    output_filename = ['/net/hc293/dongryel/Research/fastlib2/mlpack/mlpackdemo/' output_filename(last_position:length(output_filename))];
+    output_filename = [GetRootPath() output_filename(last_position:length(output_filename))];
     command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./quicsvd_main --A_in=' kernel_matrix_file ' --SVT_out=' output_filename ' --relErr=0.1'];
     tic;
     [status, result] = system(command);
@@ -155,7 +156,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     S = S(1:2, 1:2);
     data_matrix = U * S;
     axes(handles.first_axis);
-    hold off;
+    cla;
     scatter3(data_matrix(:, 1), data_matrix(:, 2), density_values);
     rotate3d on;
   end
@@ -172,8 +173,8 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     membership_vectors = CreateMembershipVectors(result_vectors);
     % Get the handle to the GUI plot and plot the range search result.
     data_matrix = load(data_file);
-    %axes(GetAxes(handles, 1));
     axes(handles.first_axis);
+    cla;
     plot(data_matrix(:, 1), data_matrix(:, 2), '.');
     color_ordering = 'grcmyk';
     for i = 1:num_search_windows
