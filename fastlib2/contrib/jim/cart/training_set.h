@@ -29,6 +29,10 @@ class TrainingSet{
     int left_start = SortOrdinalFeature_(dim, start_, halfway);
     int right_start = SortOrdinalFeature_(dim, halfway, stop_);     
     // Merge Results
+    return MergeDim_(dim, left_start, right_start);
+  }
+
+  int MergeDim_(int dim, int left_start, int right_start){
     int merge_start, left, right;
     if (left_start >= 0){
       if (right_start >= 0 ) {
@@ -69,8 +73,9 @@ class TrainingSet{
       } else {
 	return -1;
       }
-    }
+    }    
   }
+
 
 
   //////////////////////// Constructors ///////////////////////////////////////
@@ -108,7 +113,7 @@ class TrainingSet{
 	firsts[i] = SortOrdinalFeature_(i, 0, n_points_);
 	int j_old = (int)firsts[i], j_cur = (int)order_[i][(int)firsts[i]];
 	back_order_[i][j_old] = -1;
-	while(j_cur > 0){
+	while(j_cur >= 0){
 	  back_order_[i][j_cur] = j_old;
 	  j_old = j_cur;
 	  j_cur = (int)order_[i][j_cur];
@@ -175,7 +180,7 @@ class TrainingSet{
 	firsts[i] = SortOrdinalFeature_(i, 0, n_points_);
 	int j_old = (int)firsts[i], j_cur = (int)order_[i][(int)firsts[i]];
 	back_order_[i][j_old] = -1;
-	while(j_cur > 0){
+	while(j_cur >= 0){
 	  back_order_[i][j_cur] = j_old;
 	  j_old = j_cur;
 	  j_cur = (int)order_[i][j_cur];
@@ -188,12 +193,84 @@ class TrainingSet{
     order_[n_features_-1].Init(0);
     back_order_[n_features_-1].Init(0);
   }
-  
+
+
+  void Merge(Vector& left_firsts, Vector& right_firsts, Vector* new_firsts){
+    Vector firsts;
+    firsts.Init(n_features_);
+    firsts.SetZero();
+    for (int i = 0; i < order_.size(); i++){
+      if (order_[i].length() > 0){
+	firsts[i] = MergeDim_(i, (int)left_firsts[i], (int)right_firsts[i]);
+	back_order_[i].SetAll(-2);
+	int j_old = (int)firsts[i], j_cur = (int)order_[i][(int)firsts[i]];
+	back_order_[i][j_old] = -1;
+	while(j_cur >= 0){
+	  back_order_[i][j_cur] = j_old;
+	  j_old = j_cur;
+	  j_cur = (int)order_[i][j_cur];
+	} 	
+      }
+    }
+    la::ScaleOverwrite(1.0, firsts, new_firsts);
+  }
+
+
+  void Swap(int left, int right, Vector* firsts){
+    Vector left_vector;
+    Vector right_vector;
+    Vector new_firsts;
+    la::ScaleInit(1.0, *firsts, &new_firsts);
+    
+    data_matrix_->MakeColumnVector(left, &left_vector);
+    data_matrix_->MakeColumnVector(right, &right_vector);
+    
+    int temp = old_from_new_[left];
+    old_from_new_[left] = old_from_new_[right];
+    old_from_new_[right] = temp;
+    
+    new_from_old_[temp] = right;
+    new_from_old_[old_from_new_[left]] = left;
+    
+    left_vector.SwapValues(&right_vector);
+    // Update linked lists
+    for (int i = 0; i < n_features_; i++){
+      if (likely(order_[i].length() > 0)){	  	 
+	if (likely(back_order_[i][right] >= 0)){
+	  if (back_order_[i][left] >= 0){
+	    order_[i][(int)back_order_[i][right]] = left;
+	    order_[i][(int)back_order_[i][left]] = right;	      
+	  } else {
+	    new_firsts[i] = right;
+	    order_[i][(int)back_order_[i][right]] = left;
+	  }
+	} else {
+	  new_firsts[i] = left;
+	  order_[i][(int)back_order_[i][left]] = right;
+	}
+	if (likely(order_[i][right] >= 0)){
+	  back_order_[i][(int)order_[i][right]] = left;
+	}
+	if (likely(order_[i][left] >= 0)){
+	  back_order_[i][(int)order_[i][left]] = right;	  
+	}
+      }	
+      double temp = back_order_[i][left];
+      back_order_[i][left] = back_order_[i][right];
+      back_order_[i][right] = temp;
+
+      temp = order_[i][left];
+      order_[i][left] = order_[i][right];
+      order_[i][right] = temp;   
+    }
+    la::ScaleOverwrite(1.0, new_firsts, firsts);
+  }
+
 
   // This function swaps columns of our data matrix, to represent the
   // partition into left and right nodes.
-  index_t MatrixPartition(index_t start, index_t stop, Vector split, 
-	 Vector firsts, Vector* firsts_l_out, Vector* firsts_r_out){
+  index_t MatrixPartition(index_t start, index_t stop, Vector& split, 
+	 Vector& firsts, Vector* firsts_l_out, Vector* firsts_r_out){
     Vector firsts_l;
     Vector firsts_r;
     // n_features_ = data_.n_features();

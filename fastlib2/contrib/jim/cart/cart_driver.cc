@@ -94,11 +94,12 @@ int main(int argc, char *argv[]){
     int CV_set = stop - start;     
 
     // Grow Tree
+    printf("\nFold %d \n ---------------\n", i);
     CARTree tree;
     tree.Init(&data, new_firsts, CV_set, points, target_variable);
     tree.Grow();
     int max_nodes = tree.GetNumNodes();
-    printf("\nFold %d \n ---------------\n", i);
+   
     printf("Tree has %d nodes. \n", 2*max_nodes-1);
 
   
@@ -167,7 +168,7 @@ int main(int argc, char *argv[]){
   double best_alpha = 0;
   int best_error = BIG_BAD_NUMBER;
   for (int k = 0; k < alphas.size(); k++){
-    if (alphas[k][1] < best_error){
+    if (alphas[k][1] <= best_error){
       best_error = (int)alphas[k][1];
       best_alpha = alphas[k][0];
     }    
