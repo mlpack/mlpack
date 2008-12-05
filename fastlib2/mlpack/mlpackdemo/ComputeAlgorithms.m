@@ -78,7 +78,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     [status, result] = system( ['wc -l ' data_file] );
     first_blank = find(result == ' ', 1, 'first');
     numlines = str2double( result(1:first_blank - 1) );
-    rate = numlines / 10000;
+    rate = numlines / 2000;
     % Currently hard-coded the bandwidth...
     bandwidth = handles.bandwidth1_var;
     kernel_matrix_file = ['/net/hc293/dongryel/Research/fastlib2/contrib/tqlong/quicsvd/' ...
@@ -112,6 +112,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     guidata(hObject, handles);
 
     axes(handles.first_axis);
+    cla;
     if size(data_matrix, 2) >= 2
       plot(data_matrix(:, 1), data_matrix(:, 2), '.');
     else
