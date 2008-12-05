@@ -572,13 +572,6 @@ function textbox_output_Callback(hObject, eventdata, handles)
 %        str2double(get(hObject,'String')) returns contents of data_file1 as a double
 
 
-
-function h = GetHeight()
-h = 0.7;
-
-function w = GetWidth()
-w = 0.5;
-
 % --- Creates and returns a handle to the GUI figure. 
 function h1 = demo_export_LayoutFcn(policy)
 % policy - create a new figure or use a singleton. 'new' or 'reuse'.

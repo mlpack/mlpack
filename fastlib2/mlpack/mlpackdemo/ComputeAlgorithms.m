@@ -24,7 +24,6 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     data_matrix = load(output_filename);
     data_matrix = data_matrix(:, 1:2);
     axes(handles.first_axis);
-    hold off;
     plot(data_matrix(:, 1), data_matrix(:, 2), '.');
     csvwrite(output_filename, data_matrix);
     zoom on;
@@ -47,9 +46,10 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     tic;
     [status, result] = system(command);
     timing = toc;
-    % Plot the timing.   
-    weka_timing = GetWekaTiming(data_file, method);    
+    % Plot the timing.
+    weka_timing = GetWekaTiming(data_file, method);
     bar([timing weka_timing]);
+    SetAxesLabels();
     drawnow;
     % Convert the list to the adjacency matrix.
     ConvertKnnResultToAdjacencyMatrix('../allknn/result.txt', handles.knn1);
@@ -98,6 +98,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     % Plot the timing.   
     naive_timing = GetNaiveTiming(data_file, method);
     bar([kpca_timing naive_timing]);
+    SetAxesLabels()
     drawnow;
     % Add the resulting output file to the list.
     set(handles.data_file1, 'String', [ get(handles.data_file1, 'String') ; { output_filename }]);
@@ -143,6 +144,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     % Plot the timing.   
     naive_timing = GetNaiveTiming(data_file, method);    
     bar([kde_timing + bandwidth_cv_timing naive_timing]);
+    SetAxesLabels();
     drawnow;
 
     % Get the handle to the GUI plot, and plot the density.
