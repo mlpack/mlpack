@@ -187,7 +187,9 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     guidata(hObject, handles);
   end
   if strcmp(method, 'NBC')==1
-      
+      % Prepare the run...
+      bandwidth_cv_command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../contrib/rriegel/nbc/ && ./nbc-multi --data=' data_file];
+      bandwidth_compute_command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../contrib/rriegel/nbc/ && ./nbc-single --data=' data_file];
   end
   if strcmp(method, 'Decision Tree')==1
       
