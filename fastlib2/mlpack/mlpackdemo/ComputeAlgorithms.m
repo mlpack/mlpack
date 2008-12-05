@@ -12,7 +12,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     os_separator_positions = find(output_filename == '/');
     last_position = os_separator_positions(length(os_separator_positions)) + 1;
     output_filename = [GetRootPath() output_filename(last_position:length(output_filename))];
-    command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./quicsvd_main --A_in=' data_file ' --SVT_out=' output_filename ' --relErr=0.1'];
+    command = [SetLibraryPath() ' && cd ../../contrib/tqlong/quicsvd && ./quicsvd_main --A_in=' data_file ' --SVT_out=' output_filename ' --relErr=0.1'];
     [status, result] = system(command);
     % Add the resulting output file to the list.
     set(handles.data_file1, 'String', [ get(handles.data_file1, 'String') ; { output_filename }]);
@@ -43,7 +43,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
   
   % Nearest neighbor algorithms.
   if strcmp(method, 'EXACT')==1
-    command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../allknn && ./allknn_exe --reference_file=' data_file ' --knns=' int2str(handles.knn1)];
+    command = [SetLibraryPath() ' && cd ../allknn && ./allknn_exe --reference_file=' data_file ' --knns=' int2str(handles.knn1)];
     tic;
     [status, result] = system(command);
     timing = toc;
@@ -56,14 +56,14 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     ConvertKnnResultToAdjacencyMatrix('../allknn/result.txt', handles.knn1);
   end
   if strcmp(method, 'APPROX')==1
-    command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/pram/approx_nn && ./main_dual --q=' data_file ' --r=' data_file ' --ann/knns=' int2str(handles.knn1) ' --doapprox'];
+    command = [SetLibraryPath() ' && cd ../../contrib/pram/approx_nn && ./main_dual --q=' data_file ' --r=' data_file ' --ann/knns=' int2str(handles.knn1) ' --doapprox'];
     [status, result] = system(command);
     ConvertKnnResultToAdjacencyMatrix('../../contrib/pram/approx_nn/result.txt', handles.knn1);
   end
   
   % More algorithms.
   if strcmp(method, 'EMST')==1
-    command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../emst/ && ./emst_main --data=' data_file ' --output_filename=result.txt'];
+    command = [SetLibraryPath() ' && cd ../emst/ && ./emst_main --data=' data_file ' --output_filename=result.txt'];
     [status, result] = system(command);
     % Get the handle to the GUI plot, and plot the density.
     data_matrix = load(data_file);
@@ -86,13 +86,13 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     bandwidth = handles.bandwidth1_var;
     kernel_matrix_file = [GetRootPath() ...
     data_file(find(data_file == '/', 1, 'last') + 1:length(data_file) - 4) '_kernel_matrix_bandwidth_' num2str(bandwidth) '.txt'];
-    command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./gen_kernel_matrix --data=' data_file ' --rate=' num2str(rate) ' --kernel=polynomial --output=' kernel_matrix_file ' --degree=' num2str(bandwidth)];
+    command = [SetLibraryPath() ' && cd ../../contrib/tqlong/quicsvd && ./gen_kernel_matrix --data=' data_file ' --rate=' num2str(rate) ' --kernel=polynomial --output=' kernel_matrix_file ' --degree=' num2str(bandwidth)];
     [status, result] = system(command);    
     output_filename = [kernel_matrix_file(1:length(kernel_matrix_file) - 4) '_pca_output.csv'];
     os_separator_positions = find(output_filename == '/');
     last_position = os_separator_positions(length(os_separator_positions)) + 1;
     output_filename = [GetRootPath() output_filename(last_position:length(output_filename))];
-    command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./quicsvd_main --A_in=' kernel_matrix_file ' --SVT_out=' output_filename ' --relErr=0.1'];
+    command = [SetLibraryPath() ' && cd ../../contrib/tqlong/quicsvd && ./quicsvd_main --A_in=' kernel_matrix_file ' --SVT_out=' output_filename ' --relErr=0.1'];
     tic;
     [status, result] = system(command);
     kpca_timing = toc;
@@ -128,7 +128,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
   end;
   if strcmp(method, 'KDE')==1
     
-    command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../kde/ && ./kde_cv_bin --data=' data_file ' --kde/kernel=gaussian --kde/probability=0.8 --kde/relative_error=0.1'];
+    command = [SetLibraryPath() ' && cd ../kde/ && ./kde_cv_bin --data=' data_file ' --kde/kernel=gaussian --kde/probability=0.8 --kde/relative_error=0.1'];
     tic;
     [status, result] = system(command);
     bandwidth_cv_timing = toc;
@@ -137,7 +137,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     end_positions = findstr(result, '/info/sys/node/name:R ');
     offset_length = length('achieved at the bandwidth value of ');
     optimal_bandwidth = str2double(result(start_positions(1) + offset_length:end_positions(1) - 1));
-    kde_command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../kde/ && ./dualtree_kde_bin --data=' data_file ' --kde/kernel=gaussian --kde/probability=0.8 --kde/relative_error=0.1 --kde/bandwidth=' num2str(optimal_bandwidth) ' --kde/fast_kde_output=kde_output.txt --kde/loo'];
+    kde_command = [SetLibraryPath() ' && cd ../kde/ && ./dualtree_kde_bin --data=' data_file ' --kde/kernel=gaussian --kde/probability=0.8 --kde/relative_error=0.1 --kde/bandwidth=' num2str(optimal_bandwidth) ' --kde/fast_kde_output=kde_output.txt --kde/loo'];
     % Run the KDE on the optimal bandwidth.
     tic;
     [kde_status, kde_result] = system(kde_command);
@@ -161,7 +161,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     rotate3d on;
   end
   if strcmp(method, 'Range search')==1
-    command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../range_search/ && ./ortho_range_search_bin --data=' data_file];
+    command = [SetLibraryPath() ' && cd ../range_search/ && ./ortho_range_search_bin --data=' data_file];
     num_search_windows = size(handles.lower_ranges, 2);
     handles.lower_ranges = handles.lower_ranges';
     handles.upper_ranges = handles.upper_ranges';
@@ -193,11 +193,11 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
   end
   if strcmp(method, 'NBC')==1
       % Prepare the run...
-      bandwidth_cv_command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../contrib/rriegel/nbc/ && ./nbc-multi --data=' data_file];
-      bandwidth_compute_command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../contrib/rriegel/nbc/ && ./nbc-single --data=' data_file];
+      bandwidth_cv_command = [SetLibraryPath() ' && cd ../contrib/rriegel/nbc/ && ./nbc-multi --data=' data_file];
+      bandwidth_compute_command = [SetLibraryPath() ' && cd ../contrib/rriegel/nbc/ && ./nbc-single --data=' data_file];
   end
   if strcmp(method, 'Decision Tree')==1
-      decision_tree_command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/jim/cart/ && ./main' ...
+      decision_tree_command = [SetLibraryPath() ' && cd ../../contrib/jim/cart/ && ./main' ...
           ' --data=' data_file ' --target=0 --alpha=0.3'];
       [status, result] = system(decision_tree_command);
       
