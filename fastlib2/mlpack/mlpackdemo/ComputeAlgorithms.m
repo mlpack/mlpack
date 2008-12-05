@@ -1,8 +1,12 @@
 function ComputeAlgorithms(data_file, method, hObject, handles)
  
+  axes(handles.first_axis);
+  cla;
+  drawnow;
   axes(handles.second_axis);
+  cla;
   title([method ' timings'], 'FontSize', 28)
-  set(handles.flashlight, 'String', method);
+  set(handles.flashlight, 'String', method);  
   guidata(hObject, handles);
   drawnow;
   
@@ -13,7 +17,9 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     last_position = os_separator_positions(length(os_separator_positions)) + 1;
     output_filename = [GetRootPath() output_filename(last_position:length(output_filename))];
     command = [SetLibraryPath() ' && cd ../../contrib/tqlong/quicsvd && ./quicsvd_main --A_in=' data_file ' --SVT_out=' output_filename ' --relErr=0.1'];
+    tic;
     [status, result] = system(command);
+    timing = toc;
     % Add the resulting output file to the list.
     set(handles.data_file1, 'String', [ get(handles.data_file1, 'String') ; { output_filename }]);
     % Change the dataset to the resulting output file.
@@ -23,6 +29,14 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     % Plot the dimension reduced dataset.
     data_matrix = load(output_filename);
     data_matrix = data_matrix(:, 1:2);
+    
+    % Plot the timing.    
+    weka_timing = GetWekaTiming(data_file, method);
+    naive_timing = GetNaiveTiming(data_file, method);
+    bar([timing weka_timing naive_timing]);
+    SetAxesLabels();
+    drawnow;
+    
     axes(handles.first_axis);
     cla;
     plot(data_matrix(:, 1), data_matrix(:, 2), '.');
@@ -47,16 +61,17 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     tic;
     [status, result] = system(command);
     timing = toc;
-    % Plot the timing.
+    % Plot the timing.    
     weka_timing = GetWekaTiming(data_file, method);
-    bar([timing weka_timing]);
+    naive_timing = GetNaiveTiming(data_file, method);
+    bar([timing weka_timing naive_timing]);
     SetAxesLabels();
     drawnow;
     % Convert the list to the adjacency matrix.
     ConvertKnnResultToAdjacencyMatrix('../allknn/result.txt', str2num(get(handles.knn1, 'String')));
   end
   if strcmp(method, 'APPROX')==1
-    command = [SetLibraryPath() ' && cd ../../contrib/pram/approx_nn && ./main_dual --q=' data_file ' --r=' data_file ' --ann/knns=' get(handles.knn1, 'String') ' --doapprox --ann/epsilon=1 --ann/alpha=0.9'];
+    command = [SetLibraryPath() ' && cd ../../contrib/pram/approx_nn && ./main_dual --q=' data_file ' --r=' data_file ' --ann/knns=' get(handles.knn1, 'String') ' --doapprox --ann/epsilon=0.5 --ann/alpha=0.9'];
     [status, result] = system(command);
     ConvertKnnResultToAdjacencyMatrix('../../contrib/pram/approx_nn/result.txt', str2num(get(handles.knn1, 'String')));
   end
@@ -64,15 +79,28 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
   % More algorithms.
   if strcmp(method, 'EMST')==1
     command = [SetLibraryPath() ' && cd ../emst/ && ./emst_main --data=' data_file ' --output_filename=result.txt'];
+    tic;
     [status, result] = system(command);
+    timing = toc;
     % Get the handle to the GUI plot, and plot the density.
     data_matrix = load(data_file);
     % Convert the list to the adjacency matrix.
     ConvertKnnResultToAdjacencyMatrix('../emst/result.txt', 1);
     load 'adjacency_matrix.mat' adjacency_matrix;    
+    
+    % Plot the timing.
+    weka_timing = GetWekaTiming(data_file,  method);
+    naive_timing = GetNaiveTiming(data_file, method);
+    bar([timing weka_timing naive_timing]);
+    SetAxesLabels();
+    drawnow;
+    
     axes(handles.first_axis);
     cla;
-    gplot(adjacency_matrix, data_matrix);
+    gplot(adjacency_matrix, data_matrix,'.-');
+    set(get(gca,'Children'), 'MarkerEdgeColor', [1 0 0])
+    set(get(gca,'Children'), 'MarkerSize', 5)
+    
     drawnow;
     zoom on;
   end;
