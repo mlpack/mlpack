@@ -11,13 +11,15 @@
 
 const fx_entry_doc root_entries[] = {
   {"target", FX_PARAM, FX_INT, NULL,
-  "Target Variable, if in data file \n"},
+  "Dimension of target variable, if in data file \n"},
   {"data", FX_REQUIRED, FX_STR,  NULL,
    "Test data file \n"},
   {"labels", FX_PARAM, FX_STR, NULL,
-   "Labels for classification \n"},
+   "Labels for classification, if in separate file \n"},
   {"alpha", FX_PARAM, FX_DOUBLE, NULL,
-   "Pruning criterion \n"},
+   "Pruning criterion. Input value ignored if using cross validation. \n"},
+  {"folds", FX_PARAM, FX_DOUBLE, NULL,
+   "Number of folds for cross validation. Use 0 to specify your own alpha \n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -47,7 +49,7 @@ int main(int argc, char *argv[]){
   double alpha;
   alpha = fx_param_double(0, "alpha", 1.0);
   int folds;
-  folds = fx_param_int(NULL, "folds", 10);
+  folds = fx_param_int(0, "folds", 10);
   
   ArrayList<ArrayList<double> > alphas;
   alphas.Init(0);
@@ -96,7 +98,8 @@ int main(int argc, char *argv[]){
     tree.Init(&data, new_firsts, CV_set, points, target_variable);
     tree.Grow();
     int max_nodes = tree.GetNumNodes();
-    printf(" Tree has %d nodes. \n", 2*max_nodes-1);
+    printf("\nFold %d \n ---------------\n", i);
+    printf("Tree has %d nodes. \n", 2*max_nodes-1);
 
   
     printf("Pruning with increasing alpha...\n");
@@ -119,8 +122,7 @@ int main(int argc, char *argv[]){
     // Merge list of alpha vs. error
     ArrayList<ArrayList<double> > new_alphas;
     new_alphas.Init(0);
-    int master = 0, fold = 0, total = 0;
-    printf("Master: %d Fold: %d \n", alphas.size(), fold_alpha.size());     
+    int master = 0, fold = 0, total = 0;     
     while(fold < fold_alpha.size() & master < alphas.size()){
       new_alphas.PushBack();
       new_alphas[total].Init(2);
@@ -166,13 +168,13 @@ int main(int argc, char *argv[]){
   int best_error = BIG_BAD_NUMBER;
   for (int k = 0; k < alphas.size(); k++){
     if (alphas[k][1] < best_error){
-      best_error = alphas[k][1];
+      best_error = (int)alphas[k][1];
       best_alpha = alphas[k][0];
     }    
   }
-  if (best_alpha > 0){
+  if (folds > 0){
     alpha = best_alpha;
-    printf("New Alpha: %f \n", alpha);
+    printf("\n CV-determined cost complexity: %f \n", alpha);
   }
   
 
@@ -195,8 +197,7 @@ int main(int argc, char *argv[]){
   } else {      
     data.InitLabels(fp);  
     data_mat.Init(data.GetFeatures()+1, data.GetPointSize());
-    data.InitLabels2(fl, firsts, &data_mat);
-    printf("Target Variable: %d \n", target_variable);
+    data.InitLabels2(fl, firsts, &data_mat);   
     target_variable = data.GetFeatures()-1;    
   }
   
@@ -206,7 +207,8 @@ int main(int argc, char *argv[]){
   CARTree tree;
   tree.Init(&data, firsts, 0, points, target_variable);
   tree.Grow();
-  printf(" Tree has %d nodes. \n", 2*tree.GetNumNodes()-1);
+  printf("\nFinal Tree \n -------------- \n");
+  printf("Tree has %d nodes. \n", 2*tree.GetNumNodes()-1);
   
   // Prune tree with increasing alpha, measure success rate
   printf("Pruning...\n");
