@@ -27,3 +27,4 @@ if strcmp(method, 'KPCA') == 1
         end;
     end;
 end;
+timing = 1000;

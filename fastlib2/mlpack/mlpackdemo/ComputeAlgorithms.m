@@ -68,6 +68,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     ConvertKnnResultToAdjacencyMatrix('../emst/result.txt', 1);
     load 'adjacency_matrix.mat' adjacency_matrix;    
     axes(handles.first_axis);
+    cla;
     gplot(adjacency_matrix, data_matrix);
     drawnow;
     zoom on;
@@ -77,12 +78,12 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     [status, result] = system( ['wc -l ' data_file] );
     first_blank = find(result == ' ', 1, 'first');
     numlines = str2double( result(1:first_blank - 1) );
-    rate = numlines / 1000;
+    rate = numlines / 10000;
     % Currently hard-coded the bandwidth...
     bandwidth = handles.bandwidth1_var;
     kernel_matrix_file = ['/net/hc293/dongryel/Research/fastlib2/contrib/tqlong/quicsvd/' ...
-      data_file(find(data_file == '/', 1, 'last') + 1:length(data_file) - 4) '_kernel_matrix_bandwidth_' num2str(bandwidth) '.txt'];
-    command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./gen_kernel_matrix --data=' data_file ' --rate=' num2str(rate) ' --output=' kernel_matrix_file ' --bandwidth=' num2str(bandwidth)];
+    data_file(find(data_file == '/', 1, 'last') + 1:length(data_file) - 4) '_kernel_matrix_bandwidth_' num2str(bandwidth) '.txt'];
+    command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../../contrib/tqlong/quicsvd && ./gen_kernel_matrix --data=' data_file ' --rate=' num2str(rate) ' --kernel=polynomial --output=' kernel_matrix_file ' --degree=' num2str(bandwidth)];
     [status, result] = system(command);    
     output_filename = [kernel_matrix_file(1:length(kernel_matrix_file) - 4) '_pca_output.csv'];
     os_separator_positions = find(output_filename == '/');
@@ -100,7 +101,9 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     set(handles.data_file1, 'String', [ get(handles.data_file1, 'String') ; { output_filename }]);
     % Plot the dimension reduced dataset.
     data_matrix = load(output_filename);
-    data_matrix = data_matrix(:, 1:2);
+    if(size(data_matrix, 2) > 2)
+        data_matrix = data_matrix(:, 1:2);
+    end;
     csvwrite(output_filename, data_matrix);
     
     % Change the dataset to the resulting output file.
@@ -149,6 +152,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     axes(handles.first_axis);
     hold off;
     scatter3(data_matrix(:, 1), data_matrix(:, 2), density_values);
+    rotate3d on;
   end
   if strcmp(method, 'Range search')==1
     command = ['setenv LD_LIBRARY_PATH /usr/lib/gcc/x86_64-redhat-linux5E/4.1.2 && cd ../range_search/ && ./ortho_range_search_bin --data=' data_file];
