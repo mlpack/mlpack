@@ -366,7 +366,8 @@ data_matrix = U * S;
 load 'adjacency_matrix.mat' adjacency_matrix;
 axes(handles.first_axis);
 cla;
-gplot(adjacency_matrix, data_matrix,'*-');
+gplot(adjacency_matrix, data_matrix,'.-');
+set(get(gca,'Children'), 'MarkerEdgeColor', [1 0 0])
 zoom on;
 
 % --- Executes on button press in go3.
