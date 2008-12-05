@@ -144,7 +144,7 @@ class CARTree{
 	bool go_left = 0;
 	for (int i = 1; i < split_data[0].size(); i++){
 	  go_left = go_left | 
-	  (split_data[0][i] == (int)(test_data->Get(index, split_dim)));
+	  (split_data[0][i] == (int)(test_data->Get(split_dim, index)));
 	}
 	if (go_left){
 	  return left_->Test(test_data, index);
@@ -169,8 +169,8 @@ class CARTree{
   /*
    * Expand tree
    */
-  void Grow() {       
-    if (error_ > 1e-8){
+  void Grow() {    
+    if (error_ > 1e-8 & start_ != stop_){
       split_criterion_.Init(points_, first_pointers_, start_, stop_, 
 			    target_dim_);
       if (error_ == BIG_BAD_NUMBER){
