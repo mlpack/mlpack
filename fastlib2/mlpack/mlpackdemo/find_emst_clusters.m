@@ -1,4 +1,4 @@
-function [clusters, cluster_rank] = find_emst_clusters(emst_mat, k)
+function [clusters_stratified, clusters, cluster_rank] = find_emst_clusters(emst_mat, k)
 
 % Given the output of the fastlib EMST computation and a number of clusters
 % k, returns a vector of cluster labels 1:k
@@ -87,3 +87,12 @@ for i = 1:num_points
 
 end
 
+clusters_stratified = {};
+cluster_label_encountered = [];
+for i = 1:num_points
+    if length(find(cluster_label_encountered == clusters(i))) == 0
+        list_labels = find(clusters == clusters(i));
+        clusters_stratified{end + 1} = list_labels;
+        cluster_label_encountered = [cluster_label_encountered clusters(i)];
+    end;
+end;
