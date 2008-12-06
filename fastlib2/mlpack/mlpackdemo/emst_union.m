@@ -12,15 +12,15 @@ if (xroot == yroot)
 
 elseif (xrank > yrank)
     
-    cluster_out(y) = xroot;
+    cluster_out(yroot) = xroot;
     
 elseif (xrank < yrank)
     
-    cluster_out(x) = yroot;
+    cluster_out(xroot) = yroot;
     
 elseif (xroot ~= yroot)
     
-    cluster_out(y) = xroot;
+    cluster_out(yroot) = xroot;
     rank_out(xroot) = rank_out(xroot) + 1;
 
 end
