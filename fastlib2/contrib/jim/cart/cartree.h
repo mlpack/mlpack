@@ -28,7 +28,8 @@ class CARTree{
   CARTree *right_;
   TrainingSet *points_;
   Vector first_pointers_;
-
+  int test_count_; 
+  double test_error_;
 
   ////////////////////// Private Functions ////////////////////////////////////
   
@@ -77,7 +78,7 @@ class CARTree{
     right_ = NULL;
     error_ = error_in / (stop_ - start_);
     first_pointers_.Copy(first_pointers_in);
-    target_dim_ = target_dim_in;
+    target_dim_ = target_dim_in;    
   }
 
   /*
@@ -88,13 +89,14 @@ class CARTree{
     if (likely(left_ != NULL)){
       int result;
       result = left_->Prune(lambda);
-      result  = (result | right_->Prune(lambda));     
+      result = result | right_->Prune(lambda);     
       double child_error;
       int leafs;
       leafs = left_->GetNumNodes() + right_->GetNumNodes();
       child_error = left_->GetChildError()*left_->Count()
 	+ right_->GetChildError()*right_->Count();       
-      if ((stop_ - start_)*error_ <= child_error + (lambda * (leafs-1))) {
+      double criterion = (stop_ - start_)*error_ - child_error;
+      if (criterion <= (lambda * (leafs-1))) {
 	left_ = NULL;
 	right_ = NULL;
 	return 1;
@@ -103,6 +105,56 @@ class CARTree{
       }	
     } else {
       return 0;
+    }
+  }
+
+  void SetTestError(TrainingSet* test_data, int index){
+    test_count_++;
+    if (likely(left_ != NULL)){
+      ArrayList<ArrayList<double> > split_data;
+      split_data = split_criterion_.GetSplitParams();
+      int split_dim = (int)split_data[0][0];
+      // Split variable is not ordered...
+      if (test_data->GetVariableType(split_dim) > 0 ){
+	bool go_left = 0;
+	for (int i = 1; i < split_data[0].size(); i++){
+	  go_left = go_left | 
+	  (split_data[0][i] == (int)(test_data->Get(split_dim, index)));
+	}
+	if (go_left){
+	  left_->SetTestError(test_data, index);
+	} else {
+	  right_->SetTestError(test_data, index);
+	}
+      } else {
+      // Split Variable is ordered.
+ 	double split_point = split_data[0][1];
+	if (test_data->Get(split_dim, index) >= split_point){
+	  right_->SetTestError(test_data, index);
+	} else {
+	  left_->SetTestError(test_data, index);
+	}
+      }
+    } 
+    if (test_data->GetTargetType(target_dim_) > 0) {
+      test_error_ = test_error_ + 
+	(value_ != test_data->Get(target_dim_, index));
+    } else {
+      test_error_ = test_error_ + 
+	(value_ - test_data->Get(target_dim_, index))*
+	(value_ - test_data->Get(target_dim_, index));
+    }
+  }
+
+  double GetTestError(){
+    if (likely(left_ != NULL)){
+      return left_->GetTestError() + right_->GetTestError();
+    } else {
+      if (points_->GetTargetType(target_dim_) > 0) {
+	return test_error_;
+      } else {
+	return sqrt(test_error_ / test_count_);
+      }
     }
   }
 
@@ -177,7 +229,7 @@ class CARTree{
 	error_ = split_criterion_.GetInitialError();
       }
       Vector first_pts_l, first_pts_r;
-      /*
+      /* 
       printf("\n");
       printf("Start: %d Stop: %d Error: %f \n", start_, stop_, error_);
       printf("-------------------------------------------\n");
