@@ -1,8 +1,10 @@
-function [clusters] = find_emst_clusters(emst_mat, k)
+function [clusters, cluster_rank] = find_emst_clusters(emst_mat, k)
 
 % Given the output of the fastlib EMST computation and a number of clusters
 % k, returns a vector of cluster labels 1:k
 % 
+% IMPORTANT: Assumes the points are indexed 0 to N-1
+%
 % INPUTS:
 %% emst_mat - the matrix output by the fastlib emst algorithm
 %% k - number of desired clusters
@@ -12,9 +14,8 @@ function [clusters] = find_emst_clusters(emst_mat, k)
 %% in the MST
 
 
-[num_points, blah] = size(emst_mat);
-
-%clusters = zeros(num_points-k+1,1);
+[num_edges, blah] = size(emst_mat);
+num_points = num_edges + 1;
 
 % find largest edges
 
@@ -22,7 +23,7 @@ function [clusters] = find_emst_clusters(emst_mat, k)
 largest = zeros(k-1,2);
 smallest_ind = 1;
 smallest_val = 0;
-for i=1:num_points
+for i=1:num_edges
     
     if (emst_mat(i,3) > smallest_val)
         
@@ -52,18 +53,37 @@ end
 
 
 split_emst = emst_mat;
-split_emst(largest(:,1),:) = []
+split_emst(largest(:,1),:) = [];
+% Move points so they are indexed by one instead of zero
+split_emst(:,1:2) = split_emst(:,1:2) + ones(num_edges-k+1,2);
 
+clusters = 1:num_points;
+clusters = clusters';
+cluster_rank = zeros(num_points,1);
 
-clusters = 1:num_points+1;
-clusters = clusters'
+num_clusters_ideal = num_points;
 
-cluster_rank = zeros(num_points+1,1);
+for i=1:num_edges-k+1
 
-sprintf('calling union');
-for i=1:num_points-k+1
-    
+%i
+%    clusters(split_emst(i,1))
+%cluster_rank(split_emst(i,1))
+%    clusters(split_emst(i,2))
+%cluster_rank(split_emst(i,2))
     [clusters, cluster_rank] = emst_union(clusters, cluster_rank, split_emst(i,1), split_emst(i,2));
-    
+num_clusters_ideal = num_clusters_ideal - 1;
+%clusters(split_emst(i,1))
+%cluster_rank(split_emst(i,1))
+%clusters(split_emst(i,2)) 
+%cluster_rank(split_emst(i,2))   
+
 end
+
+% flatten out the list
+for i = 1:num_points
+
+[par, clusters] = emst_find(i, clusters);
+
+end
+
 
