@@ -1,5 +1,8 @@
 function ComputeAlgorithms(data_file, method, hObject, handles)
  
+  set(gcf, 'Name', 'running');
+  guidata(hObject, handles);
+  
   axes(handles.first_axis);
   cla;
   drawnow;
@@ -241,3 +244,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
       set(handles.textbox_output, 'String', lines);
       guidata(hObject, handles);
   end
+
+  set(gcf, 'Name', 'done');
+  guidata(hObject, handles);
+  
