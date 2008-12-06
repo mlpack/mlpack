@@ -102,8 +102,24 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     cla;
     gplot(adjacency_matrix, data_matrix,'.-');
     set(get(gca,'Children'), 'MarkerEdgeColor', [1 0 0])
-    set(get(gca,'Children'), 'MarkerSize', 5)
+    set(get(gca,'Children'), 'MarkerSize', 5);
     
+    % Find the clusters as well.
+    [membership_vectors, clusters, cluster_rank] = find_emst_clusters(load('../emst/result.txt'), 9);
+    color_chosen = [ 0 0 0 ];
+    for i = 1:9
+        if i < 3
+            color_chosen(1) = color_chosen(1) + 0.25;
+        else
+            if i < 6
+                color_chosen(2) = color_chosen(2) + 0.25;
+            else
+                color_chosen(3) = color_chosen(3) + 0.25;
+            end;
+        end;
+        % Plot the points in each cluster with different colors        
+        plot(data_matrix(membership_vectors{i}, 1), data_matrix(membership_vectors{i}, 2), '.', 'Color', color_chosen);
+    end;
     drawnow;
     zoom on;
   end;
@@ -113,13 +129,13 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     first_blank = find(result == ' ', 1, 'first');
     numlines = str2double( result(1:first_blank - 1) );
     rate = numlines / 2000;
-    % Currently hard-coded the bandwidth...
-    bandwidth = handles.bandwidth1_var;
+    % Get the bandwidth...
+    bandwidth = str2num(get(handles.bandwidth1, 'String'));
     kernel_matrix_file = [GetRootPath() ...
     data_file(find(data_file == '/', 1, 'last') + 1:length(data_file) - 4) '_kernel_matrix_bandwidth_' num2str(bandwidth) '.txt'];
     command = [SetLibraryPath() ' && cd ../../contrib/tqlong/quicsvd && ./gen_kernel_matrix --data=' data_file ' --rate=' num2str(rate) ' --kernel=polynomial --output=' kernel_matrix_file ' --degree=' num2str(bandwidth)];
     [status, result] = system(command);    
-    output_filename = [kernel_matrix_file(1:length(kernel_matrix_file) - 4) '_pca_output.csv'];
+    output_filename = [kernel_matrix_file(1:length(kernel_matrix_file) - 4) '_kpca_output.csv'];
     os_separator_positions = find(output_filename == '/');
     last_position = os_separator_positions(length(os_separator_positions)) + 1;
     output_filename = [GetRootPath() output_filename(last_position:length(output_filename))];
@@ -226,7 +242,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
       % Prepare the run...
       target = 1; % something smart here
       working_file = handles.working_file;
-      merge_command = [SetLibraryPath() ' && sed -e "s/' target '/*/" -e "s/[' [0:target-1, target+1:9] ']/0/" -e "s/*/1/" ' handles.labels ' && paste -d "," ' data_file ' - >| ' working_file];
+      merge_command = [SetLibraryPath() ' && sed -e "s/' num2str(target) '/*/" -e "s/[' [0:target-1, target+1:9] ']/0/" -e "s/*/1/" ' handles.labels ' | paste -d "," ' data_file ' - >| ' working_file];
       % Execute the above
 
       max_h_pos = 1000; % something smart here
