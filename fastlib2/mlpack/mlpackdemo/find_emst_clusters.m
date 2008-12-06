@@ -51,7 +51,6 @@ for i=1:num_edges
     
 end
 
-
 split_emst = emst_mat;
 split_emst(largest(:,1),:) = [];
 % Move points so they are indexed by one instead of zero
@@ -72,7 +71,7 @@ for i=1:num_edges-k+1
 %cluster_rank(split_emst(i,2))
 
     [clusters, cluster_rank] = emst_union(clusters, cluster_rank, split_emst(i,1), split_emst(i,2));
-num_clusters_ideal = num_clusters_ideal - 1;
+    num_clusters_ideal = num_clusters_ideal - 1;
 
 %clusters(split_emst(i,1))
 %cluster_rank(split_emst(i,1))
@@ -84,8 +83,7 @@ end
 % flatten out the list
 for i = 1:num_points
 
-[par, clusters] = emst_find(i, clusters);
+    [par, clusters] = emst_find(i, clusters);
 
 end
-
 
