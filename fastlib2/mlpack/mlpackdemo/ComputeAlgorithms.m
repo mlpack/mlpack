@@ -224,8 +224,30 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
   end
   if strcmp(method, 'NBC')==1
       % Prepare the run...
-      bandwidth_cv_command = [SetLibraryPath() ' && cd ../contrib/rriegel/nbc/ && ./nbc-multi --data=' data_file];
-      bandwidth_compute_command = [SetLibraryPath() ' && cd ../contrib/rriegel/nbc/ && ./nbc-single --data=' data_file];
+      target = 1; % something smart here
+      working_file = handles.working_file;
+      merge_command = [SetLibraryPath() ' && sed -e "s/' target '/*/" -e "s/[' [0:target-1, target+1:9] ']/0/" -e "s/*/1/" ' handles.labels ' && paste -d "," ' data_file ' - >| ' working_file];
+      % Execute the above
+
+      max_h_pos = 1000; % something smart here
+      min_h_pos = 0;
+      max_h_neg = 1000; % something smart here
+      min_h_neg = 0;
+      
+      for cv_iter = 1:5 % variable iteration count?
+          bandwidth_cv_command = [SetLibraryPath() ' && cd ../contrib/rriegel/nbc/ && ./nbc-multi --r=' working_file ' --r/no_priors --nbc/max_h_pos=' max_h_pos ' --nbc/min_h_pos=' min_h_pos ' --nbc/num_h_pos=10 --nbc/max_h_neg=' max_h_neg ' --nbc/min_h_neg=' min_h_neg ' --num_h_neg=10 --fx/no_docs_nagging'];
+          % Execute the above and somehow get best_h_pos and best_h_neg from results of above
+
+          step_pos = (max_h_pos - min_h_pos) / 10;
+          min_h_pos = best_h_pos - step_pos;
+          max_h_pos = best_h_pos + step_pos;
+
+          step_neg = (max_h_neg - min_h_neg) / 10;
+          min_h_neg = best_h_neg - step_neg;
+          max_h_neg = best_h_neg + step_neg;
+      end
+
+      bandwidth_compute_command = [SetLibraryPath() ' && cd ../contrib/rriegel/nbc/ && ./nbc-single --r=' working_file ' --r/no_priors --q=' handles.queries ' --q/no_priors --q/no_labels --h_pos=' best_h_pos ' --h_neg=' best_h_neg ' --fx/no_docs_nagging'];
   end
   if strcmp(method, 'Decision Tree')==1
       decision_tree_command = [SetLibraryPath() ' && cd ../../contrib/jim/cart/ && ./main' ...
