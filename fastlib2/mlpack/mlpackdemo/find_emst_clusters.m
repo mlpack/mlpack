@@ -70,8 +70,10 @@ for i=1:num_edges-k+1
 %cluster_rank(split_emst(i,1))
 %    clusters(split_emst(i,2))
 %cluster_rank(split_emst(i,2))
+
     [clusters, cluster_rank] = emst_union(clusters, cluster_rank, split_emst(i,1), split_emst(i,2));
 num_clusters_ideal = num_clusters_ideal - 1;
+
 %clusters(split_emst(i,1))
 %cluster_rank(split_emst(i,1))
 %clusters(split_emst(i,2)) 
