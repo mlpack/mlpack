@@ -94,7 +94,7 @@ int main(int argc, char *argv[]){
     int CV_set = stop - start;     
 
     // Grow Tree
-    printf("\nFold %d \n ---------------\n", i);
+    printf("\nFold %d \n---------------\n", i);
     CARTree tree;
     tree.Init(&data, new_firsts, CV_set, points, target_variable);
     tree.Grow();
@@ -112,19 +112,19 @@ int main(int argc, char *argv[]){
 
     while(tree.GetNumNodes() > 1 & current_alpha < BIG_BAD_NUMBER){      
       errors = tree.GetTestError(); 
-      if (errors != old_errors){      
+        if (errors != old_errors){      
 	fold_alpha.PushBack();
 	int size_list = fold_alpha.size() - 1;
 	fold_alpha[size_list].Init(2);
 	fold_alpha[size_list][0] = current_alpha;
 	fold_alpha[size_list][1] = errors;
-      }
-      old_errors = errors;
-      // current_alpha = tree.Prune(current_alpha) + 1.0e-5;
-     
+	  }
+       old_errors = errors;      
+	//    	current_alpha = tree.Prune(current_alpha) + 1.0e-5;
+	
       while (!tree.Prune(current_alpha)){ 
 	current_alpha = current_alpha + 1.0e-2;
-      }
+	}
     }
     
     // Merge list of alpha vs. error
@@ -182,11 +182,10 @@ int main(int argc, char *argv[]){
   }
   if (folds > 0){
     alpha = best_alpha;
-    printf("\n CV-determined cost complexity: %f \n", alpha);
+    printf("\n CV-determined cost complexity: %5.2f \n", alpha);
   }
   
-
-
+   printf("\nFinal Tree \n-------------- \n");
   // Rebuild tree final time, using all data, prune using
   // C.V. determined alpha.
   Matrix data_mat;
@@ -215,7 +214,7 @@ int main(int argc, char *argv[]){
   CARTree tree;
   tree.Init(&data, firsts, 0, points, target_variable);
   tree.Grow();
-  printf("\nFinal Tree \n -------------- \n");
+ 
   printf("Tree has %d nodes. \n", 2*tree.GetNumNodes()-1);
   
   // Prune tree with increasing alpha, measure success rate
