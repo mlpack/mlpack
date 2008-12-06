@@ -81,10 +81,12 @@ class CARTree{
     target_dim_ = target_dim_in;    
   }
 
-  /*
+  
+ /*
    * Prune tree- remove subtrees if small decrease in
    * Gini index does not justify number of leaves.
    */
+  
   int Prune(double lambda){
     if (likely(left_ != NULL)){
       int result;
@@ -107,7 +109,7 @@ class CARTree{
       return 0;
     }
   }
-
+  
   void SetTestError(TrainingSet* test_data, int index){
     test_count_++;
     if (likely(left_ != NULL)){
