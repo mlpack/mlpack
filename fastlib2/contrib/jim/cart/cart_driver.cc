@@ -102,24 +102,31 @@ int main(int argc, char *argv[]){
    
     printf("Tree has %d nodes. \n", 2*max_nodes-1);
 
-  
+    
     printf("Pruning with increasing alpha...\n");
     double current_alpha = 0;
-    while(tree.GetNumNodes() > 1){      
-      int errors = 0;
-      for (int j = 0; j < CV_set; j++){
-	double prediction = tree.Test(&data, j);
-	errors = errors + (int)data.Verify(target_variable, prediction, j); 
+    for (int j = 0; j < CV_set; j++){
+      tree.SetTestError(&data, j);
+    }
+    double errors = 0, old_errors = 0;
+
+    while(tree.GetNumNodes() > 1 & current_alpha < BIG_BAD_NUMBER){      
+      errors = tree.GetTestError(); 
+      if (errors != old_errors){      
+	fold_alpha.PushBack();
+	int size_list = fold_alpha.size() - 1;
+	fold_alpha[size_list].Init(2);
+	fold_alpha[size_list][0] = current_alpha;
+	fold_alpha[size_list][1] = errors;
       }
-      fold_alpha.PushBack();
-      int size_list = fold_alpha.size() - 1;
-      fold_alpha[size_list].Init(2);
-      fold_alpha[size_list][0] = current_alpha;
-      fold_alpha[size_list][1] = errors;
-      while (tree.Prune(current_alpha) < 1){
+      old_errors = errors;
+      // current_alpha = tree.Prune(current_alpha) + 1.0e-5;
+     
+      while (!tree.Prune(current_alpha)){ 
 	current_alpha = current_alpha + 1.0e-2;
       }
     }
+    
     // Merge list of alpha vs. error
     ArrayList<ArrayList<double> > new_alphas;
     new_alphas.Init(0);
