@@ -106,15 +106,15 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     
     % Find the clusters as well.
     [membership_vectors, clusters, cluster_rank] = find_emst_clusters(load('../emst/result.txt'), 9);
-    color_chosen = [ 0 0 0 ];
+    color_chosen = [ 0.1 0.1 0 ];
     for i = 1:9
-        if i < 3
-            color_chosen(1) = color_chosen(1) + 0.25;
+        if i <= 3
+            color_chosen(1) = color_chosen(1) + 0.27;
         else
-            if i < 6
-                color_chosen(2) = color_chosen(2) + 0.25;
+            if i <= 6
+                color_chosen(2) = color_chosen(2) + 0.27;
             else
-                color_chosen(3) = color_chosen(3) + 0.25;
+                color_chosen(3) = color_chosen(3) + 0.27;
             end;
         end;
         % Plot the points in each cluster with different colors        
