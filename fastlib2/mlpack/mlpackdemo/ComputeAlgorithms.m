@@ -13,6 +13,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
   guidata(hObject, handles);
   drawnow;
   
+  SetTextBoxOutput(handles, hObject, method);      
   % Dimension-reduction algorithms.
   if strcmp(method, 'PCA')==1
     output_filename = [data_file(1:length(data_file) - 4) '_pca_output.csv'];
@@ -261,7 +262,6 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
           ' --data=' data_file ' --target=0 --alpha=0.3'];
       [status, result] = system(decision_tree_command);
       
-      %[status, result] = system('cat ../../contrib/jim/cart/tree.txt');
       fid = fopen('../../contrib/jim/cart/tree.txt', 'rt');
       lines = {};
       while feof(fid) == 0
