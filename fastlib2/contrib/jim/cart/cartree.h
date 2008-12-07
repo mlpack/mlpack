@@ -33,7 +33,42 @@ class CARTree{
 
   ////////////////////// Private Functions ////////////////////////////////////
   
-   
+  void ErrorInit_(){
+    int targ_type = points_->GetTargetType(target_dim_);    
+    int j, count = 0;
+    double temp_err = 0.0;
+    if (targ_type > 0) {
+      int val, mode = 0;
+      int temp_value = 0;
+      Vector abundances;
+      abundances.Init(targ_type);
+      abundances.SetZero();
+      int eta = 0;
+      for (j = start_; j < stop_; j++){		
+	val = (int)points_->Get(target_dim_, j);
+	eta  = eta + 2*(int)abundances[val] + 1;
+	count++;
+	abundances[val] = abundances[val] + 1;
+	if (abundances[val] > mode){
+	  mode++;
+	  temp_value = val;
+	}
+      }
+      error_ = 1 - eta / (count*count);
+      value_ = temp_value;
+    } else {      
+      double mean = 0.0;
+      for (j = start_; j < stop_ ; j++){
+	double val = points_->Get(target_dim_, j);
+	temp_err = temp_err + count*(mean - val)*(mean - val) / (count + 1);
+	mean = (mean*count + val) / (count + 1);
+	count++;
+      }
+      error_ = sqrt(temp_err);
+      value_ = mean;
+    }   
+  }
+
 
   ////////////////////// Constructors /////////////////////////////////////////
   
@@ -66,7 +101,7 @@ class CARTree{
     right_ = NULL;
     first_pointers_.Copy(first_pointers_in);
     target_dim_ = target_dim_in;
-    error_ = BIG_BAD_NUMBER;
+    ErrorInit_();
   }
 
   void Init(TrainingSet* points_in, Vector &first_pointers_in, 
@@ -76,7 +111,9 @@ class CARTree{
     stop_ = stop_in;   
     left_ = NULL;
     right_ = NULL;
+    
     error_ = error_in / (stop_ - start_);
+   
     first_pointers_.Copy(first_pointers_in);
     target_dim_ = target_dim_in;    
   }
@@ -86,7 +123,7 @@ class CARTree{
    * Prune tree- remove subtrees if small decrease in
    * Gini index does not justify number of leaves.
    */
-  
+  /*
   int Prune(double lambda){
     if (likely(left_ != NULL)){
       int result;
@@ -96,7 +133,7 @@ class CARTree{
       int leafs;
       leafs = left_->GetNumNodes() + right_->GetNumNodes();
       child_error = left_->GetChildError()*left_->Count()
-	+ right_->GetChildError()*right_->Count();       
+	+ right_->GetChildError()*right_->Count();      
       double criterion = (stop_ - start_)*error_ - child_error;
       if (criterion <= (lambda * (leafs-1))) {
 	left_ = NULL;
@@ -109,7 +146,32 @@ class CARTree{
       return 0;
     }
   }
+  */
   
+  double Prune(double lambda){
+    if (likely(left_ != NULL)){
+      double result;
+      result = left_->Prune(lambda);
+      result = min(result, right_->Prune(lambda));     
+      double child_error;
+      int leafs;
+      leafs = left_->GetNumNodes() + right_->GetNumNodes();
+      child_error = left_->GetChildError()*left_->Count()
+	+ right_->GetChildError()*right_->Count();      
+      double criterion = (stop_ - start_)*error_ - child_error;   
+      if (criterion <= (lambda * (leafs-1))) {
+	left_ = NULL;
+	right_ = NULL;
+	return BIG_BAD_NUMBER;
+      } else {	
+	return min(result, criterion / (leafs-1));
+      }	
+    } else {
+      return BIG_BAD_NUMBER;
+    }
+  }
+  
+
   void SetTestError(TrainingSet* test_data, int index){
     test_count_++;
     if (likely(left_ != NULL)){
@@ -226,12 +288,9 @@ class CARTree{
   void Grow() {    
     if (error_ > 1e-8 & start_ != stop_){
       split_criterion_.Init(points_, first_pointers_, start_, stop_, 
-			    target_dim_);
-      if (error_ == BIG_BAD_NUMBER){
-	error_ = split_criterion_.GetInitialError();
-      }
+			    target_dim_);    
       Vector first_pts_l, first_pts_r;
-      /* 
+      /*  
       printf("\n");
       printf("Start: %d Stop: %d Error: %f \n", start_, stop_, error_);
       printf("-------------------------------------------\n");
@@ -239,11 +298,13 @@ class CARTree{
       split_criterion_.MakeSplit(&first_pts_l, &first_pts_r);
       
       split_point_ = split_criterion_.GetSplitPoint();
+      
       double left_error = split_criterion_.GetLeftError();
       double right_error = split_criterion_.GetRightError();
       //  printf("Left Error: %f Right Error: %f \n", left_error, right_error);
+      // printf("Split Point: %d \n", split_point_);
       left_ = new CARTree();
-      right_ = new CARTree();
+      right_ = new CARTree();      
       left_->Init(points_, first_pts_l, start_, split_point_, target_dim_,
 		  left_error);
       right_->Init(points_, first_pts_r, split_point_, stop_, target_dim_,
