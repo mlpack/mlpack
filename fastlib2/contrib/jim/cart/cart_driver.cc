@@ -108,23 +108,16 @@ int main(int argc, char *argv[]){
     for (int j = 0; j < CV_set; j++){
       tree.SetTestError(&data, j);
     }
-    double errors = 0, old_errors = 0;
-
+    double errors = 0;
+    
     while(tree.GetNumNodes() > 1 & current_alpha < BIG_BAD_NUMBER){      
-      errors = tree.GetTestError(); 
-        if (errors != old_errors){      
+      errors = tree.GetTestError();            
 	fold_alpha.PushBack();
 	int size_list = fold_alpha.size() - 1;
 	fold_alpha[size_list].Init(2);
 	fold_alpha[size_list][0] = current_alpha;
-	fold_alpha[size_list][1] = errors;
-	  }
-       old_errors = errors;      
-	//    	current_alpha = tree.Prune(current_alpha) + 1.0e-5;
-	
-      while (!tree.Prune(current_alpha)){ 
-	current_alpha = current_alpha + 1.0e-2;
-	}
+	fold_alpha[size_list][1] = errors;  
+      current_alpha = tree.Prune(current_alpha) + 1.0e-8;      
     }
     
     // Merge list of alpha vs. error
@@ -161,16 +154,16 @@ int main(int argc, char *argv[]){
       new_alphas.PushBack();      
       new_alphas[total].Init(2);      
       new_alphas[total][0] = fold_alpha[k][0];
-      if (master ==0){
+      if (master == 0){
 	new_alphas[total][1] = fold_alpha[k][1];
       } else {
 	new_alphas[total][1] = alphas[master-1][1] + fold_alpha[k][1];
       }
       total++;
     }
-    alphas = new_alphas;
+    alphas = new_alphas;  
   }
-
+  
   // Find optimal alpha
   double best_alpha = 0;
   int best_error = BIG_BAD_NUMBER;
@@ -184,6 +177,7 @@ int main(int argc, char *argv[]){
     alpha = best_alpha;
     printf("\n CV-determined cost complexity: %5.2f \n", alpha);
   }
+  
   
    printf("\nFinal Tree \n-------------- \n");
   // Rebuild tree final time, using all data, prune using

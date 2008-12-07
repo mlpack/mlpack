@@ -339,7 +339,7 @@ class Split{
     }   
     double best_error = BIG_BAD_NUMBER;
 
-    // Move boundary across ordered values, one at a time.
+    // Move boundary across ordered values, one at a time.   
     while (current != -1 && right_points > 0) {  
       double val = points_->Get(target_dim_, current);
       temp_right_error_ = temp_right_error_ - right_points*
@@ -363,7 +363,7 @@ class Split{
       if (current != -1){
 	next_var = points_->Get(dim, current);
       }
- 
+     
       // Keep track of lowest sum-of-squares error so far
       if (net_error < best_error & current_var != next_var){
 	trial_split_params_[1] = points_->Get(dim, current);
@@ -373,13 +373,13 @@ class Split{
 	trial_left_error_ = sqrt(temp_left_error_)*left_points;
 	best_error = trial_right_error_ + trial_left_error_;
 	int temp = best_index;
-	while(temp != current) {
+	while(temp != current) {	  
 	  trial_split_[temp - start_] = 1;
-	  temp = (int)order[temp];
+	  temp = (int)order[temp];	  
 	}
 	best_index = current;
       }
-    }   
+    }     
   }  // OrderedRegression
 
 
@@ -422,11 +422,9 @@ class Split{
 	j--;
       }
       if (!isnan(points_->Get(dim, j))){	
-	trial_split_[j -start_] = 0;
-	temp_right_error_ = (right_points*right_points*temp_right_error_ +
-			     2 * right_points - 2 * 
-			     (int)right_abundance[val]) /
-	  ((right_points + 1)*(right_points + 1));
+	trial_split_[j -start_] = 0;	
+	temp_right_error_ = temp_right_error_ + 1 + 
+	  2*(int)right_abundance[val];
 	right_abundance[val] = right_abundance[val] + 1;
 	if (right_abundance[val] > right_abundance[right_mode]){
 	  right_mode = val;
@@ -438,18 +436,13 @@ class Split{
 	printf("MISSING VALUE! \n");
       }
     }     
-    double best_error = temp_right_error_*right_points;   
-    //printf("Initial Error: %f Dimension: %d \n", best_error,  dim);
-
+    double best_error = temp_right_error_ / right_points;   
+    //printf("Initial Error: %f Dimension: %d \n", best_error,  dim);   
     while (current != -1) {
       int val = (int)points_->Get(target_dim_, current);
-      temp_right_error_ = (right_points*right_points*temp_right_error_ -
-			   2 * right_points + 2 * (int)right_abundance[val]) / 
-	((right_points - 1)*(right_points - 1));
-      temp_left_error_ = (left_points*left_points*temp_left_error_ +
-			   2 * left_points - 2 * (int)left_abundance[val]) / 
-	((left_points + 1)*(left_points + 1));
-     
+      temp_right_error_ = temp_right_error_ + 1 - 
+	2 * (int)right_abundance[val]; 
+      temp_left_error_ = temp_left_error_ + 1 + 2 * (int)left_abundance[val];  
       right_points--;
       if (right_points == 0){
 	temp_right_error_ = 0;
@@ -470,16 +463,17 @@ class Split{
       double old_variable = points_->Get(dim, current);
       current = (int)order[current];
       if (current >= 0 && old_variable != points_->Get(dim, current)){
-	if ((left_points*temp_left_error_ + right_points*temp_right_error_) 
-	    <= best_error){
+	if (right_points > 0 && temp_left_error_ / left_points + 
+	    temp_right_error_ / right_points  > best_error){
 	  trial_split_params_[1] = points_->Get(dim, current);
 	  trial_right_value_ = right_mode;
 	  trial_left_value_ = left_mode;
-	  trial_right_error_ = right_points*temp_right_error_;
-	  trial_left_error_ = left_points*temp_left_error_;
-	  best_error = trial_right_error_ + trial_left_error_;
+	  trial_right_error_ = right_points - temp_right_error_ / right_points;
+	  trial_left_error_ = left_points - temp_left_error_ / left_points;
+	  best_error = temp_right_error_ / right_points + 
+	    temp_left_error_  / left_points;
 	  int temp = best_index;
-	  while(temp != current) {
+	  while(temp != current) {	    
 	    trial_split_[temp - start_] = 1;	 
 	    temp = (int)(order)[temp];
 	  }
@@ -612,7 +606,7 @@ class Split{
     missing_data_flag_ = 0;
     int i, n = points_->GetFeatures();  
     left_error_ = BIG_BAD_NUMBER;
-    right_error_ = BIG_BAD_NUMBER;
+    right_error_ = BIG_BAD_NUMBER;   
     for (i = 0; i < n; i++){      
       int targ_type = points_->GetTargetType(target_dim_);
       if (i != target_dim_){
@@ -636,7 +630,7 @@ class Split{
 	    split_params_[0].Renew();
 	    split_params_[0].InitCopy(trial_split_params_);
 	    left_error_ = trial_left_error_;
-	    right_error_ = trial_right_error_;
+	    right_error_ = trial_right_error_;	   
 	    left_value_ = trial_left_value_;
 	    right_value_ = trial_right_value_;
 	    split_.CopyValues(trial_split_);
