@@ -105,20 +105,11 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     set(get(gca,'Children'), 'MarkerSize', 5);
     
     % Find the clusters as well.
-    [membership_vectors, clusters, cluster_rank] = find_emst_clusters(load('../emst/result.txt'), 9);
-    color_chosen = [ 0.1 0.1 0 ];
-    for i = 1:9
-        if i <= 3
-            color_chosen(1) = color_chosen(1) + 0.27;
-        else
-            if i <= 6
-                color_chosen(2) = color_chosen(2) + 0.27;
-            else
-                color_chosen(3) = color_chosen(3) + 0.27;
-            end;
-        end;
+    [membership_vectors, clusters, cluster_rank] = find_emst_clusters(load('../emst/result.txt'), 5);
+    color_ordering = 'grcmyk';
+    for i = 1:5
         % Plot the points in each cluster with different colors        
-        plot(data_matrix(membership_vectors{i}, 1), data_matrix(membership_vectors{i}, 2), '.', 'Color', color_chosen);
+        plot(data_matrix(membership_vectors{i}, 1), data_matrix(membership_vectors{i}, 2), [ color_ordering(i) '.' ])
     end;
     drawnow;
     zoom on;
