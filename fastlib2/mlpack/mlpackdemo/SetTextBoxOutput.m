@@ -38,6 +38,10 @@ function SetTextBoxOutput(handles, hObject, method)
       lines{end + 1} = 'Fast High-dimensional Kernel Summatins Using the Monte Carlo Multipole Method.';
       lines{end + 1} = 'In Advances in Neural Information Processing Systems (NIPS) 22, 2009.';
       lines{end + 1} = ' ';
+      lines{end + 1} = 'M. P. Holmes, A.G. Gray, and C. L. Isbell, Jr.';
+      lines{end + 1} = 'Ultrafast Monte Carlo for Kernel Estimators for Generalized Statistical Summations.';
+      lines{end + 1} = 'In Advances in Neural Information Processing Systems (NIPS) 21, 2008.';
+      lines{end + 1} = ' ';
       lines{end + 1} = 'D. Lee, A. Gray, and A. Moore.';
       lines{end + 1} = 'Dual-tree fast gauss transforms.';
       lines{end + 1} = 'Advances in Neural Information Processing Systems, pages 747-754.';
