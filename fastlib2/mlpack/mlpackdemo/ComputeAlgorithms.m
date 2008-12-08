@@ -7,6 +7,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
   cla;
   drawnow;
   axes(handles.second_axis);
+  set(gca, 'YScale', 'Log');
   cla;
   title([method ' timings'], 'FontSize', 28)
   set(handles.flashlight, 'String', method);  
