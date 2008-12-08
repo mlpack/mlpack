@@ -16,6 +16,11 @@ data_files = GetDataFiles();
 exact_nn_timings = [100 100 100 100 100];
 decision_tree_timings = [100 100 100 100 100];
 kpca_timings = [100 100 100 100 100];
+
+num_lines = sscanf(result, '%f', 1);
+
+timing = -1;
+
 if strcmp(method, 'KDE') == 1
     timing = 3600 / (50000 * 50000) * (num_lines * num_lines);
 end;
@@ -31,11 +36,21 @@ if strcmp(method, 'PCA') == 1
     timing = polyval(polycoeff, 0.5 * (counter + num_lines));
 end;
 if strcmp(method, 'EMST') == 1
-    polycoeff = [0.002 -0.1471 25.6272];
-    timing = polyval(polycoeff, 0.5 * (counter + num_lines));
+    timing = (num_lines / 4096.0) * (num_lines / 4096.0) * (num_lines / 4096.0) * 3337;
 end;
 if strcmp(method, 'EXACT') == 1
-    timing = 1000;
+    if strcmp(data_file, [root_path 'LayoutHistogram.csv']) == 1
+        timing = 1105.65;
+    end;
+    if strcmp(data_file, [root_path 'LayoutHistogram-rnd.csv']) == 1
+        timing = 21.2;
+    end;
+    if strcmp(data_file, [root_path 'mnist10k_test.csv']) == 1
+        timing = 321;
+    end;
+    if strcmp(data_file, [root_path 'mnist60k_train.csv']) == 1
+        timing = 8129;
+    end;
 end;
 if strcmp(method, 'APPROX') == 1
     timing = 1000;
