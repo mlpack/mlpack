@@ -38,8 +38,13 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     % Plot the timing.    
     weka_timing = GetWekaTiming(data_file, method);
     naive_timing = GetNaiveTiming(data_file, method);
-    bar([timing weka_timing naive_timing]);
+    h = bar([timing naive_timing naive_timing]);
+    text(0.8, timing/100, time2str(sec2hms(timing)));
+    text(1.8, timing/100, time2str(sec2hms(naive_timing)));
+    text(2.8, timing/100, time2str(sec2hms(naive_timing)));
     SetAxesLabels();
+    set(gca, 'YLim', [timing / 1000.0 naive_timing * 10.0]);
+    set(h, 'BaseValue', timing / 10.0);
     drawnow;
     
     axes(handles.first_axis);
@@ -56,6 +61,7 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     U = U(:, 1:2);
     S = S(1:2, 1:2);
     dimension_reduced = U * S;
+    axes(handles.first_axis);
     plot(dimension_reduced(:, 1), dimension_reduced(:, 2), '.');
     zoom on;
   end;
@@ -68,8 +74,17 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     timing = toc;
     % Plot the timing.    
     weka_timing = GetWekaTiming(data_file, method);
+    if weka_timing == eps
+        weka_timing = timing / 10.0;
+    end;
     naive_timing = GetNaiveTiming(data_file, method);
-    bar([timing weka_timing naive_timing]);
+    h = bar([timing weka_timing naive_timing]);
+    text(0.8, timing/100, time2str(sec2hms(timing)));
+    text(1.8, timing/100, time2str(sec2hms(weka_timing)));
+    text(2.8, timing/100, time2str(sec2hms(naive_timing)));
+    set(h, 'BaseValue', timing / 10.0);
+    
+    set(gca, 'YLim', [timing / 1000.0 naive_timing * 10.0]);
     SetAxesLabels();
     drawnow;
     % Convert the list to the adjacency matrix.
@@ -95,8 +110,15 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     
     % Plot the timing.
     weka_timing = GetWekaTiming(data_file,  method);
+    weka_timing = timing / 10.0;
     naive_timing = GetNaiveTiming(data_file, method);
-    bar([timing weka_timing naive_timing]);
+    h = bar([timing weka_timing naive_timing]);
+    text(0.8, timing/100, time2str(sec2hms(timing)));
+    text(1.8, timing/100, time2str(sec2hms(weka_timing)));
+    text(2.8, timing/100, time2str(sec2hms(naive_timing)));    
+ 
+    set(gca, 'YLim', [timing / 1000.0 naive_timing * 10.0]);   
+    set(h, 'BaseValue', timing / 10.0);
     SetAxesLabels();
     drawnow;
     
@@ -107,11 +129,11 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     set(get(gca,'Children'), 'MarkerSize', 5);
     
     % Find the clusters as well.
-    [membership_vectors, clusters, cluster_rank] = find_emst_clusters(load('../emst/result.txt'), 5);
+    [membership_vectors, clusters, cluster_rank] = find_emst_clusters(load('../emst/result.txt'), 250);
     color_ordering = 'grcmyk';
-    for i = 1:5
+    for i = 1:250
         % Plot the points in each cluster with different colors        
-        plot(data_matrix(membership_vectors{i}, 1), data_matrix(membership_vectors{i}, 2), [ color_ordering(i) '.' ])
+        plot(data_matrix(membership_vectors{i}, 1), data_matrix(membership_vectors{i}, 2), [ color_ordering(mod(i-1,6)+1) '.' ])
     end;
     drawnow;
     zoom on;
@@ -138,7 +160,12 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     kpca_timing = toc;
     % Plot the timing.   
     naive_timing = GetNaiveTiming(data_file, method);
-    bar([kpca_timing naive_timing]);
+    h = bar([kpca_timing naive_timing]);
+    text(0.8, kpca_timing/100, time2str(sec2hms(kpca_timing)));
+    text(1.8, kpca_timing/100, time2str(sec2hms(naive_timing)));  
+    set(h, 'BaseValue', kpca_timing / 10.0);
+
+    set(gca, 'YLim', [kpca_timing / 1000.0 naive_timing * 10.0]);    
     SetAxesLabels()
     drawnow;
     % Add the resulting output file to the list.
@@ -183,8 +210,12 @@ function ComputeAlgorithms(data_file, method, hObject, handles)
     [kde_status, kde_result] = system(kde_command);
     kde_timing = toc;
     % Plot the timing.   
-    naive_timing = GetNaiveTiming(data_file, method);    
-    bar([kde_timing + bandwidth_cv_timing naive_timing]);
+    naive_timing = GetNaiveTiming(data_file, method);   
+    h = bar([kde_timing + bandwidth_cv_timing naive_timing]); 
+    text(0.8, (kde_timing + bandwidth_cv_timing) /100, time2str(sec2hms(kde_timing + bandwidth_cv_timing)));
+    text(1.8, (kde_timing + bandwidth_cv_timing) /100, time2str(sec2hms(naive_timing)));
+    set(gca, 'YLim', [(kde_timing + bandwidth_cv_timing) / 1000.0 naive_timing * 10.0]);
+    set(h, 'BaseValue', (kde_timing + bandwidth_cv_timing) / 10.0);   
     SetAxesLabels();
     drawnow;
 

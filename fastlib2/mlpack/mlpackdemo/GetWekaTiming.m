@@ -1,6 +1,7 @@
 function timing = GetWekaTiming(data_file, method)
 data_files = GetDataFiles();
-timing = -1;
+timing = eps;
+root_path=GetRootPath();
 if strcmp(method, 'EXACT') == 1
     if strcmp(data_file, [root_path 'LayoutHistogram.csv']) == 1
         timing = 99.52;

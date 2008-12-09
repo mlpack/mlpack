@@ -1,5 +1,6 @@
 function timing = GetNaiveTiming(data_file, method)
 [status, result] = system( ['wc -l ' data_file] );
+root_path = GetRootPath();
 fid = fopen(data_file, 'rt');
 first_line = fgetl(fid);
 fclose(fid);
@@ -19,7 +20,7 @@ kpca_timings = [100 100 100 100 100];
 
 num_lines = sscanf(result, '%f', 1);
 
-timing = -1;
+timing = 1;
 
 if strcmp(method, 'KDE') == 1
     timing = 3600 / (50000 * 50000) * (num_lines * num_lines);
