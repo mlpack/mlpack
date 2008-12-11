@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
 
-	int max_iteration=10;
+	int max_iteration=20;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
@@ -149,7 +149,7 @@ int main(int argc, char *argv[]) {
 		objective.ComputeObjective(current_parameter, 
 															 &current_objective);
 		current_objective/=current_added_first_stage_x.size();
-		//NOTIFY("The objective is %g", current_objective);
+		NOTIFY("The objective is %g", current_objective);
 
 		
 		//NOTIFY("Gradient calculation starts");
@@ -177,12 +177,16 @@ int main(int argc, char *argv[]) {
 		
 		cout<<"Hessian matrix: "<<endl;
 
+		/*
 		for (index_t j=0; j<current_hessian.n_rows(); j++){
 			for (index_t k=0; k<current_hessian.n_cols(); k++){
 				cout<<current_hessian.get(j,k) <<"  ";
 			}
 			cout<<endl;
 		}
+		*/
+		
+
 		Matrix current_inverse_hessian;
 		if( !PASSED(la::InverseInit(current_hessian, &current_inverse_hessian)) ) {
 			NOTIFY("Final hessian matrix is not invertible!");
@@ -336,7 +340,7 @@ int main(int argc, char *argv[]) {
 		
 				
 		//agreement rho calculation
-		rho=(current_objective-next_objective)/(current_delta_m);
+		rho=-1.0*(current_objective-next_objective)/(current_delta_m);
 		cout<<"rho= "<<rho<<endl;
 		if(rho>eta){
 			current_parameter.CopyValues(next_parameter);
@@ -382,7 +386,7 @@ int main(int argc, char *argv[]) {
 		NOTIFY("Final hessian matrix is not invertible!");
 	}
 	else{
-		la::Scale(-1.0, &inverse_hessian);
+		//la::Scale(-1.0, &inverse_hessian);
 
 		index_t n=inverse_hessian.n_rows();
 		Vector estimates_variance;

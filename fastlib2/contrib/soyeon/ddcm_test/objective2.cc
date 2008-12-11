@@ -1,7 +1,10 @@
 #include "objective2.h"
 #include <cmath>
 #include <iostream>
-    
+#include <iostream>
+
+using namespace std;
+  
 
 /*
 void Objective::Init(ArrayList<Matrix> &added_first_stage_x, 
@@ -151,9 +154,9 @@ void Objective::Init2(Vector &ind_unknown_x, int count_init2) {
   //}
 
 	denumerator_beta_function_=0;
-	num_of_t_beta_fn_=0;
+	num_of_t_beta_fn_=100;
 	t_weight_=0;
-	num_of_alphas_=0;
+	num_of_alphas_=100;
 	alpha_weight_=0;  
 
 	//from here for the gradient
@@ -369,9 +372,16 @@ void Objective::ComputeObjective(Vector &current_parameter,
 
 	
 
-  *objective = ComputeTerm1_(betas) 
+  /**objective = ComputeTerm1_(betas) 
                + ComputeTerm2_()
                + ComputeTerm3_();
+*/
+
+
+	*objective = (ComputeTerm1_(betas) 
+               + ComputeTerm2_()
+               + ComputeTerm3_());
+
 
 
 	//*objective=2;
@@ -449,6 +459,9 @@ void Objective::ComputeGradient(Vector &current_parameter,
 																+ComputeDerivativeQTerm2_()
 																+ComputeDerivativeQTerm3_();
 
+	//handle minimization
+	//la::Scale(-1.0, &dummy_gradient);
+
 
 	gradient->Copy(dummy_gradient);
 	
@@ -525,6 +538,9 @@ void Objective::ComputeHessian(Vector &current_parameter,
 	ComputeSecondDerivativePBetaTerm2_(&dummy_p_beta_term2);
 	ComputeSecondDerivativePBetaTerm3_(&dummy_p_beta_term3);
 
+	//index_t i=
+	//cout<<"p_beta_term: "<<dummy_p_beta_term1[i]+dummy_p_beta_term2[i]+dummy_p_beta_term2[i]
+
 	ComputeSecondDerivativeQBetaTerm1_(&dummy_q_beta_term1);
 	ComputeSecondDerivativeQBetaTerm2_(&dummy_q_beta_term2);
 	ComputeSecondDerivativeQBetaTerm3_(&dummy_q_beta_term3);
@@ -595,6 +611,9 @@ void Objective::ComputeHessian(Vector &current_parameter,
 		cout<<endl;
 	}
 	*/
+
+	//handle minimization
+	//la::Scale(-1.0, &dummy_hessian);
 	hessian->Copy(dummy_hessian);
 	//cout<<"hessian done"<<endl;
 												
@@ -693,7 +712,7 @@ void Objective::ComputePostponedProbability_(Vector &betas,
                                              double q) {
 	//double numerator=0;
 	//need to specify
-	num_of_alphas_=10;
+	//num_of_alphas_=10;
 	alpha_weight_=(double)1/num_of_alphas_;
 	double exponential_temp=0;
 	//double exp_betas_times_x2=0;
@@ -764,7 +783,7 @@ void Objective::ComputeExpBetasTimesX1_(Vector &betas) {
 void Objective::ComputeDeumeratorBetaFunction_(double p, double q) {
 	denumerator_beta_function_=0;
 	//Need to choose number of t points to approximate integral
-	num_of_t_beta_fn_=10;
+	//num_of_t_beta_fn_=10;
 	t_weight_=(double)1/(num_of_t_beta_fn_);
 	double t_temp;
 	for(index_t tnum=0; tnum<num_of_t_beta_fn_-1; tnum++){
@@ -878,7 +897,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 	//double numerator=0;
 	double exponential_temp=0;
 	//need to specify
-	num_of_alphas_=10;
+	//num_of_alphas_=10;
 	alpha_weight_=(double)1/num_of_alphas_;
 
 
@@ -1441,8 +1460,8 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 	double alpha_temp=0;
 	double t_temp=0;
 
-	num_of_alphas_=10;
-	num_of_t_beta_fn_=10;
+	//num_of_alphas_=10;
+	//num_of_t_beta_fn_=10;
 	alpha_weight_=(double)1/num_of_alphas_;
 	t_weight_=(double)1/num_of_t_beta_fn_;
 	
@@ -1561,17 +1580,33 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 			sum_second_derivative_p_beta_fn_[n]+=conditional_postponed_prob
 																					 *( powtemp
 																					 *( pow(log(alpha_temp), 2)*beta_fn_temp1
+																					 -beta_fn_temp3
 																					 -2*log(alpha_temp)*beta_fn_temp2
-																					 +beta_fn_temp3));
+																					 +2*pow(beta_fn_temp2,2)*denumerator_beta_function_));
+			
 			sum_first_derivative_q_beta_fn_[n]+=conditional_postponed_prob
 																					*( powtemp
 																					*(log(1-alpha_temp)*beta_fn_temp1
 																					- beta_fn_temp4) );
-			sum_second_derivative_q_beta_fn_[n]+=conditional_postponed_prob
+			
+
+			/*sum_second_derivative_q_beta_fn_[n]+=conditional_postponed_prob
 																					 *( powtemp
 																					 *( pow(log(1-alpha_temp), 2)*beta_fn_temp1
 																					 -2*log(1-alpha_temp)*beta_fn_temp4
 																					 +beta_fn_temp5));
+			
+			*/
+
+
+			sum_second_derivative_q_beta_fn_[n]+=conditional_postponed_prob
+																					 *( powtemp
+																					 *( pow(log(1-alpha_temp), 2)*beta_fn_temp1
+																					 -beta_fn_temp5
+																					 -2*log(1-alpha_temp)*beta_fn_temp4
+																					 +2*pow(beta_fn_temp4,2)*denumerator_beta_function_));
+			
+
 			sum_second_derivative_p_q_beta_fn_[n]+=conditional_postponed_prob
 																					 *((powtemp*(log(1-alpha_temp)*log(alpha_temp)*beta_fn_temp1+log(1-alpha_temp)*beta_fn_temp2-log(alpha_temp)*beta_fn_temp4-beta_fn_temp6))
 																					 -((powtemp*(log(1-alpha_temp)*beta_fn_temp1- beta_fn_temp4))*(2*beta_fn_temp2*denumerator_beta_function_)));
