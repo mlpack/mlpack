@@ -882,7 +882,9 @@ class KdeProblem {
     // safe to prune.
     if(!isnan(allowed_error.error)) {
       
-      if(delta.kde_approximation.used_error <= allowed_error.error) {
+      if((new_summary.sum_l + delta.kde_approximation.used_error) -
+	 new_summary.sum_l <= allowed_error.error) {
+
 	qnode->stat().postponed.ApplyDelta(delta);
 	query_results.num_finite_difference_prunes++; 
 	return true;
@@ -998,15 +1000,12 @@ class KdeProblem {
           (globals.relative_error * new_summary.sum_l -
 	   (new_summary.used_error_u + 
 	    new_summary.probabilistic_used_error_u)) /
-          (globals.num_reference_points - new_summary.n_pruned_l);
+          (globals.num_reference_points - new_summary.n_pruned_l) *
+	  rnode->stat().get_weight_sum();
 	
-        if(sqrt(sample_variance) * standard_score < right_hand_side ||
-           ((new_summary.sum_l + sqrt(sample_variance) * standard_score *
-	     rnode->stat().get_weight_sum()) -
-            new_summary.sum_l) *
-           (globals.num_reference_points - new_summary.n_pruned_l)
-           < globals.relative_error * new_summary.sum_l *
-           rnode->stat().get_weight_sum()) {
+        if((new_summary.sum_l + rnode->stat().get_weight_sum() * 
+	    sqrt(sample_variance) * standard_score) - new_summary.sum_l <= 
+	   right_hand_side) {
 
           kernel_sums = kernel_sums / ((double) total_samples) *
             rnode->stat().get_weight_sum();
