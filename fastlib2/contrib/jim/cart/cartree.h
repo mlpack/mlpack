@@ -123,31 +123,7 @@ class CARTree{
    * Prune tree- remove subtrees if small decrease in
    * Gini index does not justify number of leaves.
    */
-  /*
-  int Prune(double lambda){
-    if (likely(left_ != NULL)){
-      int result;
-      result = left_->Prune(lambda);
-      result = result | right_->Prune(lambda);     
-      double child_error;
-      int leafs;
-      leafs = left_->GetNumNodes() + right_->GetNumNodes();
-      child_error = left_->GetChildError()*left_->Count()
-	+ right_->GetChildError()*right_->Count();      
-      double criterion = (stop_ - start_)*error_ - child_error;
-      if (criterion <= (lambda * (leafs-1))) {
-	left_ = NULL;
-	right_ = NULL;
-	return 1;
-      } else {
-	return result;
-      }	
-    } else {
-      return 0;
-    }
-  }
-  */
-  
+ 
   double Prune(double lambda){
     if (likely(left_ != NULL)){
       double result;
