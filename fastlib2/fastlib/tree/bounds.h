@@ -294,7 +294,7 @@ class DHrectBound {
  /**
   * Computes minimum distance between boxes in periodic coordinate system
   */
- 
+
  double PeriodicMinDistanceSq(const DHrectBound& other, const Vector& box_size)
  const {
    double sum = 0;
@@ -303,16 +303,36 @@ class DHrectBound {
    
    DEBUG_SAME_SIZE(dim_, other.dim_);
    
+   for (index_t d = 0; d < dim_; d++){      
+     double v = 0, d1, d2, d3;
+     d1 = (a[d].hi > a[d].lo | b[d].hi > b[d].lo)*
+       min(b[d].lo - a[d].hi, a[d].lo-b[d].hi);
+     d2 = (a[d].hi > a[d].lo & b[d].hi > b[d].lo)*
+       min(b[d].lo - a[d].hi, a[d].lo-b[d].hi + box_size[d]);
+     d3 = (a[d].hi > a[d].lo & b[d].hi > b[d].lo)*
+       min(b[d].lo - a[d].hi + box_size[d], a[d].lo-b[d].hi);
+     v = (d1 + fabs(d1)) + (d2+  fabs(d2)) + (d3 + fabs(d3));
+     sum += math::Pow<t_pow, 1>(v);
+   }   
+   return math::Pow<2, t_pow>(sum) / 4;
+ }
+ 
+
+ 
+double PeriodicMinDistanceSq(const Vector& point, const Vector& box_size)
+ const {
+   double sum = 0;  
+   const DRange *b = this->bounds_;
+      
    for (index_t d = 0; d < dim_; d++){
-     double v = 0, bh, bl, ah;
-     bh = b[d].hi - a[d].lo;
-     bl = b[d].lo - a[d].lo;
-     ah = a[d].hi - a[d].lo;
-     ah = ah - floor(ah / box_size[d])*box_size[d];
+     double a = point[d];
+     double v = 0, bh;
+     bh = b[d].hi-b[d].lo;
      bh = bh - floor(bh / box_size[d])*box_size[d];
-     bl = bl - floor(bl / box_size[d])*box_size[d];
-     if (bh > bl & bl > ah) {
-       v = min(bl - ah, box_size[d] - bh);
+     a = a - b[d].lo;
+     a = a - floor(a / box_size[d])*box_size[d];
+     if (bh > a){
+       v = min(a - bh, box_size[d]-a);
      }
      sum += math::Pow<t_pow, 1>(v);
    }
@@ -320,6 +340,7 @@ class DHrectBound {
    return math::Pow<2, t_pow>(sum);
  }
  
+
 
 
  /**
@@ -336,24 +357,56 @@ class DHrectBound {
    
    for (index_t d = 0; d < dim_; d++){
      double v = box_size[d] / 2.0;
-     double ah, bh, bl, dh;
-     ah = a[d].hi - a[d].lo + box_size[d]/2.0;
-     bh = b[d].hi - a[d].lo + box_size[d]/2.0;
-     bl = b[d].lo - a[d].lo + box_size[d]/2.0;
-     dh = a[d].hi - a[d].lo;
-     ah = ah - floor(ah / box_size[d])*box_size[d];
-     bh = bh - floor(bh / box_size[d])*box_size[d];
-     bl = bl - floor(bl / box_size[d])*box_size[d];
+     double dh, dl;
+     dh = a[d].hi - b[d].lo;
      dh = dh - floor(dh / box_size[d])*box_size[d];
-     if (bl > dh && bh > bl){      
-       v = max(bh - box_size[d] / 2.0, ah - bl);
+     dl = b[d].hi - a[d].lo;
+     dl = dl - floor(dl / box_size[d])*box_size[d];
+     v = max(min(dh,v), min(dl, v));
+       
+     sum += math::PowAbs<t_pow, 1>(v);
+   }   
+   return math::Pow<2, t_pow>(sum);
+ }
+
+
+ double PeriodicMaxDistanceSq(const Vector& point, const Vector& box_size)
+ const {
+   double sum = 0;
+   const DRange *a = this->bounds_;  
+   for (index_t d = 0; d < dim_; d++){
+     double b = point[d];
+     double v = box_size[d] / 2.0;
+     double ah, al;
+     ah = a[d].hi - b;
+     ah = ah - floor(ah / box_size[d])*box_size[d];
+     if (ah < v){
+       v = ah;
      } else {
-       v = box_size[d] / 2.0;
+       al = a[d].lo - b;
+       al = al - floor(al / box_size[d])*box_size[d];
+       if (al > v){
+	 v = 2*v-al;
+       }
      }
      sum += math::PowAbs<t_pow, 1>(v);
    }   
    return math::Pow<2, t_pow>(sum);
  }
+
+
+ double MaxDelta(const DHrectBound& other, int box_width, int dim)
+ const{
+   double result = 0.5*box_width;
+   return result;
+ }
+
+ double MinDelta(const DHrectBound& other, int box_width, int dim)
+ const{
+   double result = -0.5*box_width;
+   return result;
+ }
+
 
 
   /**
