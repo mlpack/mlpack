@@ -27,7 +27,7 @@ const fx_entry_doc root_entries[] = {
    "Temperature of simulation. \n"},
   {"pos", FX_REQUIRED, FX_STR, NULL, 
    "Kinematic Information of particles \n"},
-  {"lj", FX_REQUIRED, FX_STR, NULL, 
+  {"two", FX_REQUIRED, FX_STR, NULL, 
    "Parameters of two-body potential function \n"},
   {"rad", FX_PARAM, FX_STR, NULL, 
    "Name of radial distribution output \n"},
@@ -35,6 +35,8 @@ const fx_entry_doc root_entries[] = {
    "Name of coordinate output file \n"},
   {"stats", FX_PARAM, FX_STR, NULL, 
    "Name of stats output file \n"},
+  {"info", FX_PARAM, FX_INT, NULL,
+   "Toggles off output to screen \n"},
   FX_ENTRY_DOC_DONE  
 };
 
@@ -70,7 +72,7 @@ int main(int argc, char *argv[])
   
   // Input files
   fp_k = fx_param_str_req(NULL, "pos");
-  fp_l = fx_param_str_req(NULL, "lj");
+  fp_l = fx_param_str_req(NULL, "two");
   fp_three = fx_param_str_req(NULL, "three");
   
   // Output Files
@@ -85,11 +87,13 @@ int main(int argc, char *argv[])
  
   struct datanode* parameters = fx_submodule(root, "param");
 
-  time_step = fx_param_double(0, "dt", 1.0e0);
-  stop_time = fx_param_double(0, "tf", 1.0e2); 
+  time_step = fx_param_double(0, "dt", 0.1);
+  stop_time = fx_param_double(0, "tf", 1.0e3); 
   double set_temp = fx_param_double(0, "temp", -1.0);
-  printf("Set Temperature: %f \n", set_temp);
+ 
   set_temp = set_temp * (3.0*K_B);
+
+  int info = fx_param_int(0, "info", 0);
 
   // Read Atom Matrix
   data::Load(fp_k, &atom_matrix);
@@ -147,18 +151,22 @@ int main(int argc, char *argv[])
       tree_simulation.Reset();
       simulation.RadialDistribution(&tree_simulation);
       tree_simulation.Write(radial_distribution);
-      printf("\n Time: %f \n-------------\n", time);
+      printf("Time: %f \n", time);
       temperature = simulation.ComputeTemperature();
-      temperature = temperature / (3.0*K_B);
-      printf("Temperature: %f \n", temperature);
+      temperature = temperature / (3.0*K_B);     
       pressure = simulation.ComputePressure();
-      printf("Pressure: %f \n", pressure);
+      
       diffusion = simulation.ComputeDiffusion(atom_matrix);
-      printf("Diffusion: %f \n", diffusion);
-      printf("Percent Pruned: %f \n", pct);
-      printf("Triples Computed: %d \n", trips);
+      if (info){
+	printf("--------------\n");
+	printf("Temperature: %f \n", temperature);
+	printf("Pressure: %f \n", pressure);
+	printf("Diffusion: %f \n", diffusion);
+	printf("Percent Pruned: %f \n", pct);
+	printf("Triples Computed: %d \n \n", trips);
+      }
       fprintf(stats, "%f %f %f, %f \n", time, diffusion, pressure,
-           temperature);
+	      temperature);
  
       if (set_temp > 0){
 	simulation.ScaleToTemperature(set_temp);

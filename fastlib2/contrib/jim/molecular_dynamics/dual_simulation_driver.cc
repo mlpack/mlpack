@@ -27,7 +27,7 @@ const fx_entry_doc root_entries[] = {
    "Temperature of simulation. \n"},
   {"pos", FX_REQUIRED, FX_STR, NULL, 
    "Kinematic Information of particles \n"},
-  {"lj", FX_REQUIRED, FX_STR, NULL, 
+  {"two", FX_REQUIRED, FX_STR, NULL, 
    "Parameters of two-body potential function \n"},
   {"rad", FX_PARAM, FX_STR, NULL, 
    "Name of radial distribution output \n"},
@@ -35,6 +35,8 @@ const fx_entry_doc root_entries[] = {
    "Name of coordinate output file \n"},
   {"stats", FX_PARAM, FX_STR, NULL, 
    "Name of stats output file \n"},
+ {"info", FX_PARAM, FX_INT, NULL,
+   "Toggles off output to screen \n"},
   FX_ENTRY_DOC_DONE  
 };
 
@@ -73,9 +75,9 @@ int main(int argc, char *argv[])
   radial_distribution = fopen(fp_rad, "w+");
 
   double time_step, stop_time, time;
-  
+  int info = fx_param_int(0, "info", 0);
   fp_k = fx_param_str_req(NULL, "pos");
-  fp_l = fx_param_str_req(NULL, "lj"); 
+  fp_l = fx_param_str_req(NULL, "two"); 
 
   Matrix atom_matrix, lj_matrix;
  
@@ -138,18 +140,23 @@ int main(int argc, char *argv[])
       tree_simulation.Reset();
       simulation.RadialDistribution(&tree_simulation);
       tree_simulation.Write(radial_distribution);
-      printf("\n Time: %f \n-------------\n", time);
+      printf("Time: %f \n", time);
       temperature = simulation.ComputeTemperature();
-      temperature = temperature / (3.0*K_B);
-      printf("Temperature: %f \n", temperature);
+      temperature = temperature / (3.0*K_B);     
       pressure = simulation.ComputePressure();
-      printf("Pressure: %f \n", pressure);
+      
       diffusion = simulation.ComputeDiffusion(atom_matrix);
-      printf("Diffusion: %f \n", diffusion);
-      printf("Percent Pruned: %f \n", pct);     
+      if (info){
+	printf("--------------\n");
+	printf("Temperature: %f \n", temperature);
+	printf("Pressure: %f \n", pressure);
+	printf("Diffusion: %f \n", diffusion);
+	printf("Percent Pruned: %f \n", pct);	
+      }
       fprintf(stats, "%f %f %f, %f \n", time, diffusion, pressure,
-           temperature);
-      if(set_temp > 0){
+	      temperature);
+ 
+      if (set_temp > 0){
 	simulation.ScaleToTemperature(set_temp);
       }
     }    

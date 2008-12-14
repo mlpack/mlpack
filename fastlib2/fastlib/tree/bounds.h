@@ -395,15 +395,43 @@ double PeriodicMinDistanceSq(const Vector& point, const Vector& box_size)
  }
 
 
- double MaxDelta(const DHrectBound& other, int box_width, int dim)
+ double MaxDelta(const DHrectBound& other, double box_width, int dim)
  const{
+   const DRange *a = this->bounds_; 
+   const DRange *b = other.bounds_;
    double result = 0.5*box_width;
+   double temp = b[dim].hi - a[dim].lo;
+   temp = temp - floor(temp / box_width)*box_width;
+   if (temp > box_width / 2){
+     temp = b[dim].lo - a[dim].hi;
+     temp = temp - floor(temp / box_width)*box_width;
+     if (temp > box_width / 2){
+       result = b[dim].hi - a[dim].lo;
+       result = result - floor(temp / box_width + 1)*box_width;
+     } 
+   } else {
+     result = temp;
+   }
    return result;
  }
 
- double MinDelta(const DHrectBound& other, int box_width, int dim)
+ double MinDelta(const DHrectBound& other, double box_width, int dim)
  const{
+   const DRange *a = this->bounds_;   
+   const DRange *b  = other.bounds_;
    double result = -0.5*box_width;
+   double temp = b[dim].hi - a[dim].lo;
+   temp = temp - floor(temp/  box_width)*box_width;
+   if (temp > box_width / 2){
+     temp = b[dim].hi - a[dim].hi;
+     temp = temp - floor(temp / box_width)*box_width;
+     if (temp > box_width / 2){
+       result = temp - box_width;
+     } 
+   } else {
+     temp = b[dim].hi - a[dim].hi;
+     result = temp - floor(temp / box_width)*box_width;
+   }
    return result;
  }
 
