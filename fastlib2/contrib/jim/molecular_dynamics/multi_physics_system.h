@@ -268,7 +268,6 @@ private:
 
   void GetForceRangeDual_(ParticleTree* query, ParticleTree* ref,
 			  Vector* bounds){   
-    double result;
     double r_min, r_max;
     if (boundary_ == PERIODIC){
       r_min = sqrt(query->bound().PeriodicMinDistanceSq(ref->bound(),
@@ -279,6 +278,7 @@ private:
       r_min = sqrt(query->bound().MinDistanceSq(ref->bound()));     
       r_max = sqrt(query->bound().MaxDistanceSq(ref->bound()));
     }        
+    r_min = max(r_min, 2.8);
     Vector max, min, fmax, fmin;
     max.Init(3);
     min.Init(3);
@@ -308,7 +308,33 @@ private:
       }
     }    
     // Get range from omitting three body interactions 
+    double coef = query->stat().axilrod_[0]*ref->stat().axilrod_[0]*
+      (query->stat().axilrod_[0] + ref->stat().axilrod_[0]);
+    double dist = 2.8;
+    for (int j = 0; j < 3; j++){
+      if (coef*max[j] > 0){
+	fmax[j] = fmax[j] + 0.25*coef*max[j]*(15 / pow(r_min, 11) - 
+          48 /pow(r_max,11));  
+      } else {
+	fmax[j] = fmax[j] + 0.25*coef*max[j]*(15 / pow(r_max, 11) - 
+          24*(1.0/(pow(dist, 3)*pow(r_min,8)) + 1.0/(dist*pow(r_min, 10))));  
+      }
+      if (coef*min[j] > 0){
+	fmin[j] = fmin[j] + 0.25*coef*min[j]*(15 / pow(r_min, 11) - 
+          48/pow(r_max,11)); 
+      } else {
+	fmin[j] = fmin[j] + 0.25*coef*min[j]*(15 / pow(r_max, 11) - 
+          24*(1.0/(pow(dist, 3)*pow(r_min,8)) + 1.0/(dist*pow(r_min, 10))));  
+      }
+    }
     
+    Vector delta, err;
+    la::SubInit(fmax, fmin, &delta);
+    err.Init(2);
+    err[0] = la::Dot(delta,delta);
+    err[1] = err[0] / (ref->stat().mass_*ref->stat().mass_);
+    err[0] = err[0] / (query->stat().mass_*query->stat().mass_);
+    la::ScaleOverwrite(time_step_*time_step_ , err, bounds);
   }
 
 
@@ -346,34 +372,132 @@ private:
       c_min = sqrt(k->bound().MinDistanceSq(i->bound()));     
       c_max = sqrt(k->bound().MaxDistanceSq(i->bound()));
     }    
-    a_min = max(a_min, 2.6);
-    b_min = max(b_min, 2.6);
-    c_min = max(c_min, 2.6);
+    a_min = max(a_min, 2.8);
+    b_min = max(b_min, 2.8);
+    c_min = max(c_min, 2.8);
     Vector maxA, maxB, maxC, minA, minB, minC;
+    minA.Init(3);
+    maxA.Init(3);
+    minB.Init(3);
+    maxB.Init(3);
+    minC.Init(3);
+    maxC.Init(3);
     for (int d = 0; d < 3; d++){
-      maxA = i->bound().MaxDelta(j->bound(), dimensions_[d], d);
-      maxB = j->bound().MaxDelta(k->bound(), dimensions_[d], d);
-      maxC = k->bound().MaxDelta(i->bound(), dimensions_[d], d);
-      minA = i->bound().MinDelta(j->bound(), dimensions_[d], d);
-      minB = j->bound().MinDelta(k->bound(), dimensions_[d], d);
-      minC = k->bound().MinDelta(i->bound(), dimensions_[d], d);
+      maxA[d] = i->bound().MaxDelta(j->bound(), dimensions_[d], d);
+      maxB[d] = j->bound().MaxDelta(k->bound(), dimensions_[d], d);
+      maxC[d] = k->bound().MaxDelta(i->bound(), dimensions_[d], d);
+      minA[d] = i->bound().MinDelta(j->bound(), dimensions_[d], d);
+      minB[d] = j->bound().MinDelta(k->bound(), dimensions_[d], d);
+      minC[d] = k->bound().MinDelta(i->bound(), dimensions_[d], d);
+    }
+    Vector fmaxA, fmaxB, fmaxC, fminA, fminB, fminC;
+    fminA.Init(3);
+    fminB.Init(3); 
+    fminC.Init(3);
+    fmaxA.Init(3); 
+    fmaxB.Init(3);
+    fmaxC.Init(3);
+    
+    double coef;   
+    coef = fabs(3.0 * i->stat().axilrod_[0] * j->stat().axilrod_[0] *
+      k->stat().axilrod_[0] / 8.0)*time_step_;  
+    Vector coef_max, coef_min;
+    coef_max.Init(3);
+    coef_min.Init(3);
+    coef_min[0] = coef*(5*(b_min/pow(c_max,5) + c_min / pow(b_max, 5))
+	 / (pow(a_max,7)) - 
+	 ((((5.0 / (b_min*pow(c_min,3)) + 5.0/(c_min*pow(b_min,3))) / 
+	    (a_min*a_min) + 2.0/pow(b_min*c_min, 3) + 3.0/(b_min*pow(c_min, 5))
+	    + 3.0/(c_min*pow(b_min,5)))/(a_min*a_min) + 
+	   1.0/(pow(b_min,5)*pow(c_min,3))  + 1.0/(pow(b_min,3)*pow(c_min,5)))
+	  /(a_min*a_min) + 1.0 / (pow(b_min, 5)*pow(c_min,5)) / a_min));
+    coef_max[0] = coef*(5*(b_max/pow(c_min,5) + c_max/ pow(b_min, 5))
+	 / (pow(a_min,7)) - 
+	 ((((5.0 / (b_max*pow(c_max,3)) + 5.0/(c_max*pow(b_max,3))) / 
+	    (a_max*a_max) + 2.0/pow(b_max*c_max, 3) + 3.0/(b_max*pow(c_max, 5))
+	    + 3.0/(c_max*pow(b_max,5)))/(a_max*a_max) + 
+	   1.0/(pow(b_max,5)*pow(c_max,3))  + 1.0/(pow(b_max,3)*pow(c_max,5)))
+	  /(a_max*a_max) + 1.0 / (pow(b_max, 5)*pow(c_max,5)) / a_max));
+    coef_min[1] = coef*(5*(a_min/pow(c_max,5) + c_min / pow(a_max, 5))
+	 / (pow(b_max,7)) - 
+	 ((((5.0 / (a_min*pow(c_min,3)) + 5.0/(c_min*pow(a_min,3))) / 
+	    (b_min*b_min) + 2.0/pow(a_min*c_min, 3) + 3.0/(a_min*pow(c_min, 5))
+	    + 3.0/(c_min*pow(a_min,5)))/(b_min*b_min) + 
+	   1.0/(pow(a_min,5)*pow(c_min,3))  + 1.0/(pow(a_min,3)*pow(c_min,5)))
+	  /(b_min*b_min) + 1.0 / (pow(a_min, 5)*pow(c_min,5)) / b_min));
+    coef_max[1] = coef*(5*(a_max/pow(c_min,5) + c_max/ pow(a_min, 5))
+	 / (pow(b_min,7)) - 
+	 ((((5.0 / (a_max*pow(c_max,3)) + 5.0/(c_max*pow(a_max,3))) / 
+	    (b_max*b_max) + 2.0/pow(a_max*c_max, 3) + 3.0/(a_max*pow(c_max, 5))
+	    + 3.0/(c_max*pow(a_max,5)))/(b_max*b_max) + 
+	   1.0/(pow(a_max,5)*pow(c_max,3))  + 1.0/(pow(a_max,3)*pow(c_max,5)))
+	  /(b_max*b_max) + 1.0 / (pow(a_max, 5)*pow(c_max,5)) / b_max));
+    coef_min[2] = coef*(5*(a_min/pow(b_max,5) + b_min / pow(a_max, 5))
+	 / (pow(c_max,7)) - 
+	 ((((5.0 / (a_min*pow(b_min,3)) + 5.0/(b_min*pow(a_min,3))) / 
+	    (c_min*c_min) + 2.0/pow(a_min*b_min, 3) + 3.0/(a_min*pow(b_min, 5))
+	    + 3.0/(b_min*pow(a_min,5)))/(c_min*c_min) + 
+	   1.0/(pow(a_min,5)*pow(b_min,3))  + 1.0/(pow(a_min,3)*pow(b_min,5)))
+	  /(c_min*c_min) + 1.0 / (pow(a_min, 5)*pow(b_min,5)) / c_min));
+    coef_max[2] = coef*(5*(a_max/pow(b_min,5) + b_max/ pow(a_min, 5))
+	 / (pow(c_min,7)) - 
+	 ((((5.0 / (a_max*pow(b_max,3)) + 5.0/(b_max*pow(a_max,3))) / 
+	    (c_max*c_max) + 2.0/pow(a_max*b_max, 3) + 3.0/(a_max*pow(b_max, 5))
+	    + 3.0/(b_max*pow(a_max,5)))/(c_max*c_max) + 
+	   1.0/(pow(a_max,5)*pow(b_max,3))  + 1.0/(pow(a_max,3)*pow(b_max,5)))
+	  /(c_max*c_max) + 1.0 / (pow(a_max, 5)*pow(b_max,5)) / c_max));
+      
+
+    for (int d = 0; d < 3; d++){
+      if (coef*minA[d] > 0){
+	fminA[d] = minA[d]*coef_min[0];
+      } else {
+	fminA[d] = minA[d]*coef_max[0];
+      }
+      if (coef*maxA[d] > 0){
+	fmaxA[d] = maxA[d]*coef_max[0];
+      } else {
+	fmaxA[d] = maxA[d]*coef_min[0];
+      }
+      if (coef*minB[d] > 0){
+	fminB[d] = minB[d]*coef_min[1];
+      } else {
+	fminB[d] = minB[d]*coef_max[1];
+      }
+      if (coef*maxB[d] > 0){
+	fmaxB[d] = maxB[d]*coef_max[1];
+      } else {
+	fmaxB[d] = maxB[d]*coef_min[1];
+      }
+      if (coef*minC[d] > 0){
+	fminC[d] = minC[d]*coef_min[2];
+      } else {
+	fminC[d] = minC[d]*coef_max[2];
+      }
+      if (coef*maxC[d] > 0){
+	fmaxC[d] = maxC[d]*coef_max[2];
+      } else {
+	fmaxC[d] = maxC[d]*coef_min[2];
+      }
     }
 
 
-    double coef, a_range, b_range, c_range;   
-  
-    a_range = ForceRangeThree_(a_min, b_min, c_min);
-    b_range = ForceRangeThree_(b_min, a_min, c_min);
-    c_range = ForceRangeThree_(c_min, b_min, a_min);    
- 
-    coef = fabs(3.0 * i->stat().axilrod_[0] * j->stat().axilrod_[0] *
-      k->stat().axilrod_[0] / 16.0);  
-    Vector range;
+    Vector range, fminI, fminJ, fminK, fmaxI, fmaxJ, fmaxK;
+    la::SubInit(fmaxA, fminC, &fmaxI); 
+    la::SubInit(fmaxB, fminA, &fmaxJ); 
+    la::SubInit(fmaxC, fminB, &fmaxK); 
+    la::SubInit(fminA, fmaxC, &fminI); 
+    la::SubInit(fminB, fmaxA, &fminJ); 
+    la::SubInit(fminC, fmaxB, &fminK); 
+
     range.Init(3);
-    range[0] = coef*(a_range + c_range);
-    range[1] = coef*(a_range + b_range);
-    range[2] = coef*(b_range + c_range);
-    la::ScaleOverwrite(coef, range, bounds);   
+    range[0] = la::DistanceSqEuclidean(fminI, fmaxI);
+    range[1] = la::DistanceSqEuclidean(fminJ, fmaxJ);
+    range[2] = la::DistanceSqEuclidean(fminK, fmaxK);
+    range[0] = range[0] / (i->stat().mass_*i->stat().mass_);
+    range[1] = range[1] / (j->stat().mass_*j->stat().mass_);
+    range[2] = range[2] / (k->stat().mass_*k->stat().mass_);
+    la::ScaleOverwrite(1.0, range, bounds);   
   }
 
 
@@ -471,9 +595,9 @@ private:
    * Momentum updating routines.
    */
   void UpdateMomentumDual_(ParticleTree* query, ParticleTree* ref){
-    if (ref->begin() < query->begin()){
-      return;
-    }
+    // if (ref->begin() <= query->begin()){
+    //   return;
+    // }
     Vector force_range, error_bound;   
     error_bound.Init(2);
     force_range.Init(2);
@@ -526,9 +650,9 @@ private:
   void UpdateMomentumThree_(ParticleTree* query, ParticleTree* ref1, 
 			    ParticleTree* ref2){
     // Avoid double counting any interactions.
-    if (ref1->begin() < query->begin() || ref2->begin() < ref1->begin()){
-      return;
-    }
+    //   if (ref1->begin() < query->begin() || ref2->begin() < ref1->begin()){
+    //     return;
+    //    }
 
     Vector force_range, error_bound;   
     error_bound.Init(3);
@@ -810,7 +934,7 @@ public:
   void Init(const Matrix& atoms_in, struct datanode* param){      
     atoms_.Copy(atoms_in);
     n_atoms_ = atoms_.n_cols();
-    force_bound_ = fx_param_double(param, "force_bound", 0.001);
+    force_bound_ = fx_param_double(param, "force_bound", 1.0e-3);
     force_bound_ = force_bound_*force_bound_;
     leaf_size_ = fx_param_int(param, "leaf", 4);
     Vector dims;
@@ -820,7 +944,7 @@ public:
     dims[2] = 2;
     system_ = tree::MakeKdTreeMidpointSelective<ParticleTree>(atoms_, dims, 
                 leaf_size_, &new_from_old_map_, &old_from_new_map_);
-    boundary_ = fx_param_int(param, "bc", FREE);
+    boundary_ = fx_param_int(param, "bc", PERIODIC);
     dimensions_.Init(3);
     dimensions_[0] = fx_param_double(param, "lx", 60);
     dimensions_[1] = fx_param_double(param, "ly", 60);
@@ -1070,7 +1194,7 @@ public:
       }
       atoms_.MakeColumnSubvector(j, 0, 3, &temp);
       fprintf(fp, " %16.8f, %16.8f, %16.8f, ", temp[0], temp[1], temp[2]);
-      double mass = atoms_.get(j, 3);
+      double mass = atoms_.get(3, j);
       fprintf(fp, "%16.8f,", mass);
       temp.Destruct();
       atoms_.MakeColumnSubvector(j, 4, 3, &temp);

@@ -133,8 +133,7 @@ private:
    */
 
   void GetForceRangeDual_(ParticleTree* query, ParticleTree* ref,
-			  Vector* bounds){   
-    double result;
+			  Vector* bounds){       
     double r_min, r_max;
     if (boundary_ == PERIODIC){
       r_min = sqrt(query->bound().PeriodicMinDistanceSq(ref->bound(),
@@ -145,13 +144,43 @@ private:
       r_min = sqrt(query->bound().MinDistanceSq(ref->bound()));     
       r_max = sqrt(query->bound().MaxDistanceSq(ref->bound()));
     }        
+    Vector max, min, fmax, fmin;
+    max.Init(3);
+    min.Init(3);
+    fmax.Init(3);
+    fmin.Init(3);
+    fmax.SetZero();
+    fmin.SetZero();
+    for(int i = 0; i < 3; i++){
+      max[i] = query->bound().MaxDelta(ref->bound(), dimensions_[i],i);
+      min[i] = query->bound().MinDelta(ref->bound(), dimensions_[i],i);
+    }
     for (int i = 0; i < forces_.n_rows(); i++){
       int power = (int)powers_[i];
       double temp = query->stat().interactions_[i].coef()*
-	ref->stat().interactions_[i].coef()* fabs(signs_[i]);
-      result = result + fabs(temp*power*
-			    (pow(r_min, power-1) - pow(r_max, power-1)));
+	ref->stat().interactions_[i].coef()*power;      
+      for (int j = 0; j < 3; j++){
+	if (max[j]*temp > 0){
+	  fmax[j] = fmax[j] + max[j]*temp*pow(r_min, power-2);
+	} else {
+	  fmax[j] = fmax[j] + max[j]*temp*pow(r_max, power-2);
+	}
+	if( min[j]*temp > 0){
+	  fmin[j] = fmin[j] + min[j]*temp*pow(r_max, power-2);
+	} else {
+	  fmin[j] = fmin[j] + min[j]*temp*pow(r_min, power-2);
+	}
+      }
     }    
+    // Get range from omitting three body interactions 
+    
+    Vector delta, err;
+    la::SubInit(fmax, fmin, &delta);
+    err.Init(2);
+    err[0] = la::Dot(delta,delta);
+    err[1] = err[0] / (ref->stat().mass_*ref->stat().mass_);
+    err[0] = err[0] / (query->stat().mass_*query->stat().mass_);
+    la::ScaleOverwrite(time_step_*time_step_ , err, bounds);
   }
 
  int GetForceRangeDualCutoff_(ParticleTree* query, ParticleTree* ref){   
@@ -472,7 +501,7 @@ public:
     dims[2] = 2;
     system_ = tree::MakeKdTreeMidpointSelective<ParticleTree>(atoms_, dims, 
                 leaf_size_, &new_from_old_map_, &old_from_new_map_);
-    boundary_ = fx_param_int(param, "bc", FREE);
+    boundary_ = fx_param_int(param, "bc", PERIODIC);
     dimensions_.Init(3);
     dimensions_[0] = fx_param_double(param, "lx", 60);
     dimensions_[1] = fx_param_double(param, "ly", 60);
@@ -566,7 +595,7 @@ public:
   }
 
   double ComputePressure(){    
-    printf("Virial: %f \n", virial_);   
+    // printf("Virial: %f \n", virial_);   
     double pressure = (n_atoms_*temperature_ + virial_) /  
       (3.0*dimensions_[0]*dimensions_[1]*dimensions_[2]); 
     return pressure;
@@ -697,7 +726,7 @@ public:
       }
       atoms_.MakeColumnSubvector(j, 0, 3, &temp);
       fprintf(fp, " %16.8f, %16.8f, %16.8f, ", temp[0], temp[1], temp[2]);
-      double mass = atoms_.get(j, 3);
+      double mass = atoms_.get(3, j);
       fprintf(fp, "%16.8f,", mass);
       temp.Destruct();
       atoms_.MakeColumnSubvector(j, 4, 3, &temp);
