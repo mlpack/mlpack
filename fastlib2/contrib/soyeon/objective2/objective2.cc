@@ -82,9 +82,9 @@ void Objective::Init(fx_module *module) {
   }
 
 	denumerator_beta_function_=0;
-	num_of_t_beta_fn_=0;
+	num_of_t_beta_fn_=100;
 	t_weight_=0;
-	num_of_alphas_=0;
+	num_of_alphas_=100;
 	alpha_weight_=0;  
 
 	//from here for the gradient
@@ -451,7 +451,7 @@ void Objective::ComputePostponedProbability_(Vector &betas,
                                              double q) {
 	//double numerator=0;
 	//need to specify
-	num_of_alphas_=10;
+	//num_of_alphas_=10;
 	alpha_weight_=(double)1/num_of_alphas_;
 	double exponential_temp=0;
 	//double exp_betas_times_x2=0;
@@ -522,7 +522,7 @@ void Objective::ComputeExpBetasTimesX1_(Vector &betas) {
 void Objective::ComputeDeumeratorBetaFunction_(double p, double q) {
 	denumerator_beta_function_=0;
 	//Need to choose number of t points to approximate integral
-	num_of_t_beta_fn_=10;
+	//num_of_t_beta_fn_=10;
 	t_weight_=(double)1/(num_of_t_beta_fn_);
 	double t_temp;
 	for(index_t tnum=0; tnum<num_of_t_beta_fn_-1; tnum++){
@@ -636,7 +636,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 	//double numerator=0;
 	double exponential_temp=0;
 	//need to specify
-	num_of_alphas_=10;
+	//num_of_alphas_=10;
 	alpha_weight_=(double)1/num_of_alphas_;
 
 
@@ -1196,8 +1196,8 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 	double alpha_temp=0;
 	double t_temp=0;
 
-	num_of_alphas_=10;
-	num_of_t_beta_fn_=10;
+	//num_of_alphas_=10;
+	//num_of_t_beta_fn_=10;
 	alpha_weight_=(double)1/num_of_alphas_;
 	t_weight_=(double)1/num_of_t_beta_fn_;
 	
