@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
 
-	int max_iteration=50;
+	int max_iteration=500;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
@@ -353,7 +353,9 @@ int main(int argc, char *argv[]) {
 		if(sample_size==num_of_people){
 			end_sampling+=1;
 			double gradient_norm;
+			la::Scale(1.0/num_of_people, &current_gradient);
 			gradient_norm = sqrt(la::Dot(current_gradient, current_gradient));
+			
 			cout<<"gradient_norm="<<gradient_norm<<endl;
 
 			if(gradient_norm<zero_tolerance){

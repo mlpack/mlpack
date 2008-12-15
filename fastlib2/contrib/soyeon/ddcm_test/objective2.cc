@@ -619,16 +619,16 @@ void Objective::ComputeHessian(Vector &current_parameter,
 	Vector eigen_hessian;
 	la::EigenvaluesInit (dummy_hessian, &eigen_hessian);
 	double max_eigen=0;
-	cout<<"eigen_value:"<<endl;
+	//cout<<"eigen_value:"<<endl;
 	for(index_t i=0; i<eigen_hessian.length(); i++){
-		cout<<eigen_hessian[i]<<" ";
+		//cout<<eigen_hessian[i]<<" ";
 		if(eigen_hessian[i]>max_eigen){
 			max_eigen=eigen_hessian[i];
 		}
 
 	}
-	cout<<endl;
-	cout<<"max_eigen="<<max_eigen<<endl;
+	//cout<<endl;
+	//cout<<"max_eigen="<<max_eigen<<endl;
 	for(index_t i=0; i<eigen_hessian.length(); i++){
 		dummy_hessian.set(i,i,(dummy_hessian.get(i,i)-max_eigen*(1.01)));
 	}
