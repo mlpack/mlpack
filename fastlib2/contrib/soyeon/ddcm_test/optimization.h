@@ -10,6 +10,12 @@ class Optimization {
 																Matrix &hessian,
 																Vector *p,
 																double *delta_m);
+
+		void ComputeScaledDoglegDirection(double radius, 
+																Vector &gradient,
+																Matrix &hessian,
+																Vector *p,
+																double *delta_m);
 		
 		void ComputeSteihaugDirection(double radius, 
 																	Vector &gradient,
@@ -28,7 +34,14 @@ class Optimization {
 																					Vector *next_parameter,
 																					double *new_radius);
 
-												
+		void ComputeScaledDerectionUnderConstraints(double radius, 
+																					Vector &gradient,
+																					Matrix &hessian,
+																					Vector &current_parameter,
+																					Vector *p,
+																					double *delta_m,
+																					Vector *next_parameter,
+																					double *new_radius);									
 
 
 

@@ -361,6 +361,8 @@ void Objective::ComputeObjective(Vector &current_parameter,
 	double q=current_parameter[num_of_betas_+1];
 
 	
+
+	
 	ComputeExpBetasTimesX1_(betas);
 
 	
@@ -371,17 +373,18 @@ void Objective::ComputeObjective(Vector &current_parameter,
                                q);
 
 	
-
+	
   /**objective = ComputeTerm1_(betas) 
                + ComputeTerm2_()
                + ComputeTerm3_();
 */
 
-
+	
 	*objective = -1*(ComputeTerm1_(betas) 
                + ComputeTerm2_()
                + ComputeTerm3_());
 
+	
 
 
 	//*objective=2;
@@ -671,7 +674,7 @@ void Objective::ComputeChoiceProbability(Vector &current_parameter,
       
     } else {
       Vector temp;
-      first_stage_x_[n].MakeColumnVector(first_stage_y_[n], &temp);
+      first_stage_x_[n].MakeColumnVector((first_stage_y_[n]-1), &temp);
 			(*choice_probability)[n]=exp(la::Dot(betas, temp))/exp_betas_times_x1_[n];
 			
 		}
@@ -693,11 +696,12 @@ double Objective::ComputeTerm1_(Vector &betas) {
       continue;
     } else {
       Vector temp;
-      first_stage_x_[n].MakeColumnVector(first_stage_y_[n], &temp);
+      first_stage_x_[n].MakeColumnVector((first_stage_y_[n]-1), &temp);
 			term1+=la::Dot(betas, temp) - log(exp_betas_times_x1_[n]);
     }
   }
   return term1;
+	
 }
 
 double Objective::ComputeTerm2_() {
@@ -892,7 +896,7 @@ void Objective::ComputeDerivativeBetaTerm1_(Vector *beta_term1) {
 			la::MulOverwrite(first_stage_x_[n], first_stage_dot_logit_[n], &temp);
 			//check2
 
-			la::SubOverwrite(num_of_betas_, temp.ptr(), first_stage_x_[n].GetColumnPtr(first_stage_y_[n]), temp2.ptr());
+			la::SubOverwrite(num_of_betas_, temp.ptr(), first_stage_x_[n].GetColumnPtr(first_stage_y_[n]-1), temp2.ptr());
 			
 																									
 		}	//else

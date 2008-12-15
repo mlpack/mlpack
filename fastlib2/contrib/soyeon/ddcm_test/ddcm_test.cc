@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
 
-	int max_iteration=500;
+	int max_iteration=20;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
@@ -139,6 +139,7 @@ int main(int argc, char *argv[]) {
 									 current_added_second_stage_x,
 									 current_added_unknown_x_past, 
 									 current_added_first_stage_y);
+		
 		}
 		else {
 			
@@ -148,6 +149,7 @@ int main(int argc, char *argv[]) {
 		
 		objective.ComputeObjective(current_parameter, 
 															 &current_objective);
+		
 		current_objective/=current_added_first_stage_x.size();
 		NOTIFY("The objective is %g", current_objective);
 
@@ -200,11 +202,13 @@ int main(int argc, char *argv[]) {
 		}
 
 
+
 		Vector current_p;
 		double current_delta_m;
 		Vector next_parameter;
 		double new_radius;
 		//NOTIFY("Exact hessian calculation ends");
+
 
 		optimization.ComputeDerectionUnderConstraints(current_radius, 
 																					current_gradient,
@@ -214,8 +218,21 @@ int main(int argc, char *argv[]) {
 																					&current_delta_m,
 																					&next_parameter,
 																					&new_radius);
-
 		
+		
+
+		/*
+		//Scaled version
+		optimization.ComputeScaledDerectionUnderConstraints(current_radius, 
+																					current_gradient,
+																					current_hessian,
+																					current_parameter,
+																					&current_p,
+																					&current_delta_m,
+																					&next_parameter,
+																					&new_radius);
+
+		*/
 		
 
 
@@ -277,8 +294,12 @@ int main(int argc, char *argv[]) {
 
 		
 */
-
-
+		//Scaling
+		//Vector nonscaled_current_p;
+		//nonscaled_current_p.Init(current_p.length());
+		//nonscaled_current_p.CopyValues(current_p);
+		//la::MulOverwrite(current_inverse_hessian, nonscaled_current_p, &current_p);
+		//current_inverse_hessian
 				
 		p_norm=sqrt(la::Dot(current_p, current_p));
 		 
