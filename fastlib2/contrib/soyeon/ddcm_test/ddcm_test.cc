@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
 
-	int max_iteration=20;
+	int max_iteration=50;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
@@ -189,7 +189,7 @@ int main(int argc, char *argv[]) {
 
 		Matrix current_inverse_hessian;
 		if( !PASSED(la::InverseInit(current_hessian, &current_inverse_hessian)) ) {
-			NOTIFY("Final hessian matrix is not invertible!");
+			NOTIFY("Current hessian matrix is not invertible!");
 		}
 		else{
 			cout<<"Diagonal of inverse hessian: ";
@@ -340,7 +340,7 @@ int main(int argc, char *argv[]) {
 		
 				
 		//agreement rho calculation
-		rho=-1.0*(current_objective-next_objective)/(current_delta_m);
+		rho=+1.0*(current_objective-next_objective)/(current_delta_m);
 		cout<<"rho= "<<rho<<endl;
 		if(rho>eta){
 			current_parameter.CopyValues(next_parameter);
@@ -387,6 +387,13 @@ int main(int argc, char *argv[]) {
 	}
 	else{
 		//la::Scale(-1.0, &inverse_hessian);
+
+		cout<<"Diagonal of inverse final hessian: ";
+		for(index_t i=0; i<inverse_hessian.n_rows(); i++){
+			cout<<inverse_hessian.get(i,i)<<" ";
+		}
+		cout<<endl;
+
 
 		index_t n=inverse_hessian.n_rows();
 		Vector estimates_variance;

@@ -378,7 +378,7 @@ void Objective::ComputeObjective(Vector &current_parameter,
 */
 
 
-	*objective = (ComputeTerm1_(betas) 
+	*objective = -1*(ComputeTerm1_(betas) 
                + ComputeTerm2_()
                + ComputeTerm3_());
 
@@ -614,6 +614,26 @@ void Objective::ComputeHessian(Vector &current_parameter,
 
 	//handle minimization
 	//la::Scale(-1.0, &dummy_hessian);
+
+	//Check positive definiteness
+	Vector eigen_hessian;
+	la::EigenvaluesInit (dummy_hessian, &eigen_hessian);
+	double max_eigen=0;
+	cout<<"eigen_value:"<<endl;
+	for(index_t i=0; i<eigen_hessian.length(); i++){
+		cout<<eigen_hessian[i]<<" ";
+		if(eigen_hessian[i]>max_eigen){
+			max_eigen=eigen_hessian[i];
+		}
+
+	}
+	cout<<endl;
+	cout<<"max_eigen="<<max_eigen<<endl;
+	for(index_t i=0; i<eigen_hessian.length(); i++){
+		dummy_hessian.set(i,i,(dummy_hessian.get(i,i)-max_eigen*(1.01)));
+	}
+
+
 	hessian->Copy(dummy_hessian);
 	//cout<<"hessian done"<<endl;
 												
@@ -1581,7 +1601,7 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 																					 *( powtemp
 																					 *( pow(log(alpha_temp), 2)*beta_fn_temp1
 																					 -beta_fn_temp3
-																					 -2*log(alpha_temp)*beta_fn_temp2
+																					 -2*log(alpha_temp)*beta_fn_temp1*beta_fn_temp2*denumerator_beta_function_
 																					 +2*pow(beta_fn_temp2,2)*denumerator_beta_function_));
 			
 			sum_first_derivative_q_beta_fn_[n]+=conditional_postponed_prob
@@ -1601,9 +1621,9 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 
 			sum_second_derivative_q_beta_fn_[n]+=conditional_postponed_prob
 																					 *( powtemp
-																					 *( pow(log(1-alpha_temp), 2)*beta_fn_temp1
+																					 *( pow( log(1-alpha_temp), 2)*beta_fn_temp1
 																					 -beta_fn_temp5
-																					 -2*log(1-alpha_temp)*beta_fn_temp4
+																					 -2*log(1-alpha_temp)*beta_fn_temp1*beta_fn_temp4*denumerator_beta_function_
 																					 +2*pow(beta_fn_temp4,2)*denumerator_beta_function_));
 			
 
