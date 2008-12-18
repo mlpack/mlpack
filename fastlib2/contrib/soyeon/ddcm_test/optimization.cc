@@ -110,10 +110,15 @@ void Optimization::ComputeDoglegDirection(double radius,
 				double b=la::Dot(diff, diff2);
 				double c=la::Dot(diff2, diff2)-math::Sqr(radius);
 
-				//DEBUG_ASSERT_MSG(b*b*-4*a*c>0, 
+				//DEBUG_ASSERT_MSG(b*b-4*a*c>0, 
 				//"(Dogleg)Discriminant is negative. Fail to get the solution zeta.");
-				NOTIFY("(Dogleg)Discriminant is negative. Fail to get the solution zeta.");
-				double sqrt_discriminant=sqrt(b*b-4*a*c);
+				if(b*b-4*a*c<=0){
+					NOTIFY("(Dogleg)Discriminant is negative. Fail to get the solution zeta.");
+					double sqrt_discriminant=sqrt(-1*(b*b-4*a*c));
+				}
+				else{
+					double sqrt_discriminant=sqrt(b*b-4*a*c);
+				}
 				double zeta1=(-b+sqrt_discriminant)/(2*a);
 				double zeta2=(-b-sqrt_discriminant)/(2*a);
 				double zeta=-1;
@@ -128,7 +133,9 @@ void Optimization::ComputeDoglegDirection(double radius,
 					zeta=zeta2;
 				}
 				else{
-					DEBUG_ASSERT_MSG((zeta>0), "Fail to get zeta");
+					//DEBUG_ASSERT_MSG((zeta>0), "Fail to get zeta");
+					NOTIFY("Fail to get zeta");
+					zeta=0.5;
 				}
 
 				if(zeta<=1){
@@ -268,8 +275,13 @@ void Optimization::ComputeScaledDoglegDirection(double radius,
 
 				//DEBUG_ASSERT_MSG(b*b*-4*a*c>0, 
 				//"(Dogleg)Discriminant is negative. Fail to get the solution zeta.");
-				NOTIFY("(Dogleg)Discriminant is negative. Fail to get the solution zeta.");
-				double sqrt_discriminant=sqrt(b*b-4*a*c);
+				if(b*b-4*a*c<=0){
+					NOTIFY("(Dogleg)Discriminant is negative. Fail to get the solution zeta.");
+					double sqrt_discriminant=sqrt(-1*(b*b-4*a*c));
+				}
+				else{
+					double sqrt_discriminant=sqrt(b*b-4*a*c);
+				}
 				double zeta1=(-b+sqrt_discriminant)/(2*a);
 				double zeta2=(-b-sqrt_discriminant)/(2*a);
 				double zeta=-1;
@@ -284,7 +296,9 @@ void Optimization::ComputeScaledDoglegDirection(double radius,
 					zeta=zeta2;
 				}
 				else{
-					DEBUG_ASSERT_MSG((zeta>0), "Fail to get zeta");
+					//DEBUG_ASSERT_MSG((zeta>0), "Fail to get zeta");
+					NOTIFY("Fail to get zeta..use 0.5");
+					zeta=0.5;
 				}
 
 				if(zeta<=1){

@@ -1,9 +1,11 @@
+//#ifndef LIN_ALGEBRA_CLASS_H_
+//#define LIN_ALGEBRA_CLASS_H_
 #include "fastlib/fastlib.h"
 
 class RosenbrockFunction {
  public:
 
-	void Init(fx_module *module);
+	void Init(fx_module *module)
   //void Init(Matrix &quadratiic_term, Vector &linear_term); //Initialize the member data of a class
   void Destruct(); //decinstructor
   void ComputeObjective(Vector &x, double *objective);
@@ -12,12 +14,14 @@ class RosenbrockFunction {
  
 private:
   //memeber variable with _(under score)
-	fx_module *module_;
-  
+  Matrix quadratic_term_;
+  Vector linear_term_;
+  Matrix sum_quad_;
 };
 
 
 
+#endif
 
 
 
