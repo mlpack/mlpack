@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
 
-	int max_iteration=20;
+	int max_iteration=200;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
@@ -209,7 +209,7 @@ int main(int argc, char *argv[]) {
 		double new_radius;
 		//NOTIFY("Exact hessian calculation ends");
 
-
+		/*
 		optimization.ComputeDerectionUnderConstraints(current_radius, 
 																					current_gradient,
 																					current_hessian,
@@ -218,10 +218,10 @@ int main(int argc, char *argv[]) {
 																					&current_delta_m,
 																					&next_parameter,
 																					&new_radius);
-		
+		*/
 		
 
-		/*
+		
 		//Scaled version
 		optimization.ComputeScaledDerectionUnderConstraints(current_radius, 
 																					current_gradient,
@@ -232,7 +232,7 @@ int main(int argc, char *argv[]) {
 																					&next_parameter,
 																					&new_radius);
 
-		*/
+		
 		
 
 
