@@ -13,17 +13,10 @@ librule(name="optimization",
 		sources=["optimization.cc"],
 		deplibs=["fastlib:fastlib"]);
 		
-librule(name="test_obj",
-        headers=["test_obj.h"],
-        sources=["test_obj.cc"],
-        deplibs=["fastlib:fastlib"])
-		
+	
 binrule(name="main", 
         sources=["DDCM_test.cc"], 
-        deplibs=[":objective2", ":sampling", ":optimization", ":test_obj"])
+        deplibs=[":objective2", ":sampling", ":optimization"])
 
 	
-binrule(name="test_main", 
-        sources=["test_main.cc"], 
-        deplibs=[":objective2", ":sampling", ":optimization", ":test_obj"])
 
