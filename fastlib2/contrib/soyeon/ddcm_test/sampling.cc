@@ -124,8 +124,8 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 		NOTIFY("Starting points are not given. Use default...");
 		NOTIFY("Number of parameters is %d", num_of_betas+2);
 		initial_parameter->Init(num_of_betas+2);
-		//initial_parameter->SetZero();
 		initial_parameter->SetAll(1.5);
+		//initial_parameter->SetZero();
 		//(*initial_parameter)[num_of_betas]=2;
 		//(*initial_parameter)[num_of_betas+1]=2;
 
