@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
 	double error_tolerance=1e-16;
 	double zero_tolerance=1e-2;	//for gradient norm
 
-	int max_iteration=200;
+	int max_iteration=2000;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){

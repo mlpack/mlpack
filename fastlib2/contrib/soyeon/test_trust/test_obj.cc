@@ -36,6 +36,29 @@ void RosenbrockFunction::ComputeHessian(Vector &x, Matrix *hessian){
 	hessian_temp.set(1,1,100);
 	hessian_temp.set(0,1,-1*200*x[0]);
 	hessian_temp.set(1,0,-1*200*x[0]);
+	
+	/*
+	//Check positive definiteness
+	Vector eigen_hessian;
+	la::EigenvaluesInit (hessian_temp, &eigen_hessian);
+	double min_eigen=eigen_hessian[0];
+	//cout<<"eigen_value:"<<endl;
+	for(index_t i=0; i<eigen_hessian.length(); i++){
+		//cout<<eigen_hessian[i]<<" ";
+		if(eigen_hessian[i]<min_eigen){
+			min_eigen=eigen_hessian[i];
+		}
+
+	}
+	//cout<<endl;
+	//cout<<"max_eigen="<<max_eigen<<endl;
+	for(index_t i=0; i<eigen_hessian.length(); i++){
+		hessian_temp.set(i,i,(hessian_temp.get(i,i)+min_eigen*(1.01)));
+	}
+
+	*/
+
+
 
 	hessian->Copy(hessian_temp);
 
