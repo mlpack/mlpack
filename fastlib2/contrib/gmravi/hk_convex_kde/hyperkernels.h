@@ -16,9 +16,9 @@ class GaussianHyperKernel{
     sigma_h_=sigma_h;
     sigma_=sigma;
 
-    printf("In hyperkernel class sigma_h_=%f\n",
-	   sigma_h_);
-    printf("sigma is %f\n",sigma);
+    //printf("In hyperkernel class sigma_h_=%f\n",
+    //   sigma_h_);
+    //printf("sigma is %f\n",sigma);
     num_dims_=num_dims;
 
     //Initialize the gaussian kenels
@@ -35,12 +35,13 @@ class GaussianHyperKernel{
     //Calculate the normalization constant
     
       double norm_const1=gk_inter_.CalcNormConstant(num_dims_);
-      printf("norm constant1 is %f..\n",norm_const1);
-      double norm_const2=gk_intra_.CalcNormConstant(num_dims_);
-      printf("Norm const2 is %f..\n",norm_const2);
-      double norm_const=norm_const2*norm_const2*norm_const1;
+      //printf("norm constant1 is %f..\n",norm_const1);
 
-      printf("The normalization constant is %f\n",norm_const);
+      double norm_const2=gk_intra_.CalcNormConstant(num_dims_);
+      // printf("Norm const2 is %f..\n",norm_const2);
+
+      double norm_const=norm_const2*norm_const2*norm_const1;
+      //printf("The normalization constant is %f\n",norm_const);
       return norm_const;
   }
 
@@ -54,7 +55,7 @@ class GaussianHyperKernel{
     double norm_const2=gk_intra_.CalcNormConstant(num_dims_);
     double norm_const=norm_const1*norm_const2;
     
-    printf("The normalization constant is %f\n",norm_const);
+    //printf("The normalization constant is %f\n",norm_const);
     return norm_const;
   }
   
@@ -169,12 +170,15 @@ class GaussianHyperKernel{
     else{ 
       double sqd_distance=la::DistanceSqEuclidean(x_r,x_s);      
       unnorm_val2=gk_intra_.EvalUnnormOnSq(sqd_distance);
+      //printf("Sqd distance between other pairs is %f..\n",sqd_distance);
       la::AddInit(x_r,x_s,&mean_x_r_x_s);
       la::Scale(0.5,&mean_x_r_x_s);
     }
     double sqd_distance=la::DistanceSqEuclidean(mean_x_p_x_q,mean_x_r_x_s);
+    
     unnorm_val3=gk_inter_.EvalUnnormOnSq(sqd_distance);
     double hyperkernel_val=unnorm_val2*unnorm_val3;
+    // printf("gaussian between other values  is %f..\n",unnorm_val2);
     return hyperkernel_val;
   }
 

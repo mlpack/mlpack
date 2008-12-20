@@ -146,7 +146,7 @@ class HKInteriorPointPredictorCorrector{
     quad_value=la::Dot(A_trans_beta,A_trans_beta)/2; //quad value is \beta^TAA^T\beta    
     double linear_value=la::Dot(beta_vector_,a_vector_);
     penalized_ise_train_set_=quad_value-linear_value;
-    printf("The penalized ise is of the train set is %f...\n",penalized_ise_train_set_);
+    //printf("The penalized ise is of the train set is %f...\n",penalized_ise_train_set_);
     return penalized_ise_train_set_;
     }
     double get_ise_train_set(){
@@ -182,8 +182,8 @@ class HKInteriorPointPredictorCorrector{
       ise_train_set=quad_value-linear_value;
       
       printf("The ise is of the train set is %f...\n",ise_train_set);
-      printf("quad_val=%f\n",quad_value);
-      printf("linear value=%f..\n",linear_value);
+      //printf("quad_val=%f\n",quad_value);
+      //printf("linear value=%f..\n",linear_value);
       return ise_train_set;
     }
 
@@ -225,7 +225,7 @@ class HKInteriorPointPredictorCorrector{
       double norm_const=ghk.CalcNormConstant();
       
       double constant=2.0/(num_train_points_*(num_train_points_-1));
-      printf("Constant is ....%f\n",constant);
+      //printf("Constant is ....%f\n",constant);
       
       //THIS HAS TO CHANGE WHEN I USE A MULTIPLICATIVE KERComputeNEL
       GaussianKernel gpq; //This is the gaussian kernel between x_p,x_q
@@ -389,12 +389,7 @@ class HKInteriorPointPredictorCorrector{
     //beta_vector_.PrintDebug();
 
     printf("Before calculating densities..\n");
-    printf("Train set is..\n");
-    train_set_.PrintDebug();
-
-    printf("Test set is...\n");
-    test_set_.PrintDebug();
-
+    
     GaussianHyperKernel ghk;
     ghk.Init(sigma_,sigma_h_,num_dims_);
     
@@ -463,8 +458,8 @@ class HKInteriorPointPredictorCorrector{
       computed_test_densities_[test_pt]=
 	total_contrib/num_train_points_;
     }
-    printf("calculated test densities are...\n");
-    computed_test_densities_.PrintDebug();
+   //printf("calculated test densities are...\n");
+    //computed_test_densities_.PrintDebug();
   }
 
   //To calculate ISE we need to find the cholesky factor of
@@ -595,7 +590,7 @@ class HKInteriorPointPredictorCorrector{
   //delta \beta=(2M+D')^-1 D'(v2+D(v1-\delta psi v))
   void EvaluateDeltaBeta_(){
     
-    printf("In evaluate delta beta...\n");
+    //    printf("In evaluate delta beta...\n");
     
     Vector delta_psi_v;
     la::ScaleInit(delta_psi_,v_vector_,&delta_psi_v);
@@ -1011,14 +1006,14 @@ class HKInteriorPointPredictorCorrector{
     
     //printf("Linear value is %f..\n",beta_trans_a);
     
-    printf("Gap is %f..\n",*gap);
+    //printf("Gap is %f..\n",*gap);
 
-    printf("Ratio is %f..\n",*gap/denominator);
+    //printf("Ratio is %f..\n",*gap/denominator);
 
-    printf("Beta gamma product is %f..\n",beta_trans_gamma);
+    //printf("Beta gamma product is %f..\n",beta_trans_gamma);
 
-    printf("The objective function value is %f..\n",function_val);
-    printf("..................................\n");
+    //printf("The objective function value is %f..\n",function_val);
+    //printf("..................................\n");
 
   }
 
@@ -1056,7 +1051,7 @@ class HKInteriorPointPredictorCorrector{
     //Get the starting values for beta and gamma and \psi
     
     GetTheStartPoint_();
-    printf("psi=%f mu_=%f..\n",psi_,mu_);
+    //printf("psi=%f mu_=%f..\n",psi_,mu_);
     
     
     index_t flag;
@@ -1117,7 +1112,7 @@ class HKInteriorPointPredictorCorrector{
       
       CalculateGap_(&gap,&gap_ratio);
       
-      printf("Finished ITERATION=%d...\n\n",num_iterations_);
+      //printf("Finished ITERATION=%d...\n\n",num_iterations_);
 
       num_iterations_++;
     }
@@ -1139,7 +1134,7 @@ class HKInteriorPointPredictorCorrector{
     
     GetLinearPartOfObjective_();
 
-    printf("Got linear part of the objective.....\n");
+    //    printf("Got linear part of the objective.....\n");
     
     //We shall call the vector involved in the linear part of
     //constraint as the v_vector_
@@ -1236,8 +1231,8 @@ class HKInteriorPointPredictorCorrector{
 
   
 
-    printf("The test set is...\n");
-    test_set_.PrintDebug();
+    // printf("The test set is...\n");
+    //test_set_.PrintDebug();
 
    
     //This ends the necessaary file reading routines. Lets read the
@@ -1261,7 +1256,7 @@ class HKInteriorPointPredictorCorrector{
 
     sqd_num_train_points_=num_train_points_*num_train_points_;
 
-    printf("Squared number of train points are %d..\n",sqd_num_train_points_);
+    //    printf("Squared number of train points are %d..\n",sqd_num_train_points_);
 
     //THIS IS A TEMPORARY ARRANGEMENT..........
 
@@ -1315,7 +1310,7 @@ class HKInteriorPointPredictorCorrector{
       sqrt(3*sigma_4+5*sigma_2*sigma_h_2+
 	   2*sigma_h_4);
 
-    printf("Primal constant is %f...\n",primal_constant_);
+    //printf("Primal constant is %f...\n",primal_constant_);
     num_iterations_=0;
 
   }
