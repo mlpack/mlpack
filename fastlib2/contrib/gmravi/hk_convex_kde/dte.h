@@ -376,10 +376,10 @@ template<typename TKernel> class DTreeEvaluation{
 
   ~DTreeEvaluation(){
 
+    //delete both the trees
+
     delete(qroot_);
     delete(rroot_);
-  
-    
   }
 
   ///Getters and setters
@@ -396,6 +396,8 @@ template<typename TKernel> class DTreeEvaluation{
       temp[q]=density_estimates_e_[new_from_old_q_[q]];
     }
     
+    //printf("The estimates are..\n");
+    //temp.PrintDebug();
     row_p.CopyValues(temp);
 
     //    printf("Number of Prunes:%d. ...\n",number_of_prunes_);
