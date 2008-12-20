@@ -85,6 +85,12 @@ class ICholDynamic{
 
   }
 
+  //Getters
+  double get_element_of_m_matrix(index_t p,index_t q,index_t r,index_t s){
+
+    return ComputeElementOfMMatrix_(p,q,r,s);
+  }
+
  private:
   
   void  CreateSquaredVectorFromCholFactor_(index_t start_row,
@@ -267,7 +273,7 @@ class ICholDynamic{
     //printf("k_prime val=%f...\n",k_prime_val);
     //printf("temp=%f..\n",temp);
 
-    double m_val=(c*k_prime_val/sqd_num_train_points_)+lambda_*k_val;
+    double m_val=(c*k_prime_val/sqd_num_train_points_)+(lambda_*k_val);
     //printf("m_val=%f..\n",m_val);
     return m_val;
   }
@@ -498,7 +504,9 @@ class ICholDynamic{
 	index_t row2=max_index;
 	index_t tillcol=i;
 
-	//printf("For swapping row1=%d,row2=%d,tillcol=%d...\n",row1,row2,tillcol);
+	//printf("For swapping row1=%d,row2=%d,tillcol=%d...\n",
+	//row1,row2,tillcol);
+
 	SwapRowsOfCholFactor_(row1,row2,tillcol);
 	
 	//NOTE: WE have swapped elements of row i and q only till col
@@ -523,7 +531,7 @@ class ICholDynamic{
 	  
 	printf("Permutation[%d]=%d",q,perm_[q]);
 	}*/
-	printf("\n...");
+       
 	ExtractRowOfOriginalMatrix_(i,start_index_of_perm_vector,temp1);
 	
 	if(i>=1){
@@ -597,8 +605,6 @@ class ICholDynamic{
 	  }
 	}
       }
-      
-      printf("i is %d...\n",i);
       //Add the new column
 
       chol_factor_dynamic_.AddBackItem(new_column_to_be_formed);
@@ -646,10 +652,6 @@ class ICholDynamic{
     for(index_t i=0;i<sqd_num_train_points_;i++){
       perm_in[i]=perm_[i];
     }
-
-    /* Matrix res;
-    special_la::PreMultiplyMatrixWithPermutationMatrixInit(perm_in,chol_factor_in,&res);
-    res.PrintDebug();*/
   }
   
  public:
@@ -722,6 +724,7 @@ class ICholDynamic{
     
     printf("Will allocate memory for cholesky factorization...\n");
     printf("Number of training points are...%d\n",num_train_points_);
+    printf("lambda is %f..\n",lambda_);
     
     //Chol factor will begin as an arraylist of size 0 and then grow in size
     
@@ -739,7 +742,7 @@ class ICholDynamic{
       perm_[i]=i;      
     }
     
-    epsilon_=pow(10,-4);
+    epsilon_=pow(10,-6);
     
     num_dims_=train_set_.n_rows();
   }
