@@ -160,16 +160,16 @@ int main(int argc, char *argv[]){
   ////////////////////////////////////////////////////////////////////////////////
 
    fx_timer_start(NULL,"full");
-   double min_sigma=min_band_naive_kde*0.75;
+   double min_sigma=min_band_naive_kde*0.50;
    
    double max_sigma=min_band_naive_kde*1.25;
 
-   index_t number_steps=1;
+   index_t number_steps=5;
    
    double gap=(max_sigma-min_sigma)/number_steps;
 
    Vector sigma;
-   sigma.Init(number_steps);
+   sigma.Init(number_steps+1);
 
 
    //TODO: CHANGE THIS CHANGE THIS
@@ -181,7 +181,7 @@ int main(int argc, char *argv[]){
      sigma[i]=min_sigma+(i*gap);
    }
    
-   //   sigma[number_steps]=min_band_naive_kde/sqrt(2);
+   sigma[number_steps]=min_band_naive_kde/sqrt(2);
 
    printf("Sigma is..\n");
    sigma.PrintDebug();
@@ -189,7 +189,7 @@ int main(int argc, char *argv[]){
    Vector lambda;
    
    lambda.Init(1);
-   lambda[0]=1;
+   lambda[0]=0.1;
    // lambda[1]=0.5;
    //lambda[2]=0.05;
    //lambda[3]=5;
@@ -211,10 +211,10 @@ int main(int argc, char *argv[]){
 
 
   index_t total_crossvalidation=0;
-  index_t num_sigma_h=1;
+  index_t num_sigma_h=5;
 
   Vector sigma_h;
-  sigma_h.Init(num_sigma_h);
+  sigma_h.Init(num_sigma_h+1);
 
   Matrix dummy_test;
   dummy_test.Init(0,0);
@@ -226,20 +226,22 @@ int main(int argc, char *argv[]){
 
     fx_set_param_double(ipc,"sigma",sigma[j]);
 
-    double min_sigma_h=0.5;
+    double min_sigma_h=0;
     double max_sigma_h=4*sigma[j];
-    printf("min sigma_h is...%f\n",min_sigma_h);
-
+    
+    printf("sigma_h is..\n");
+    sigma_h.PrintDebug();
     double gap=(max_sigma_h-min_sigma_h)/num_sigma_h;
     for(index_t p=0;p<num_sigma_h;p++){
       
       sigma_h[p]=min_sigma_h+(p*gap);
       printf("sigma_h has added in %f..\n",sigma_h[p]);
     }
-    printf("Sigma_h is...\n");
-    sigma_h.PrintDebug();
-    // sigma_h[num_sigma_h]=60; //inifinte sigma_h
-
+    
+    sigma_h[num_sigma_h]=60; //inifinte sigma_h
+     printf("Sigma_h is...\n");
+     sigma_h.PrintDebug();
+    
     for(index_t i=0;i<sigma_h.length();i++){
       
       fx_set_param_double(ipc,"sigma_h",sigma_h[i]);      
