@@ -103,7 +103,7 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 
 	
 	if (fx_param_exists(module_, "starting_points")) {
-		const char *initial_parameter_file=fx_param_str_req(module_,"stating_points");
+		const char *initial_parameter_file=fx_param_str_req(module_,"starting_points");
 		Matrix mtx_initial_parameter;
 		data::Load(initial_parameter_file, &mtx_initial_parameter);
 		if(mtx_initial_parameter.n_rows() != num_of_betas+2){
@@ -207,11 +207,11 @@ void Sampling::Shuffle() {
 		swap( shuffled_array_[j], shuffled_array_[random] );
 	}	//j
 
-	cout<<"shuffled_array :";
-	for(index_t i=0; i<num_of_people_; i++){
-		cout<<shuffled_array_[i] <<" ";
-	}
-	cout<<endl;
+	//cout<<"shuffled_array :";
+	//for(index_t i=0; i<num_of_people_; i++){
+	//	cout<<shuffled_array_[i] <<" ";
+	//}
+	//cout<<endl;
 
 }
 
@@ -250,7 +250,7 @@ void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *adde
 	}
 	
 	if(num_added_sample==0 && num_of_selected_sample_!=num_of_people_) {
-			NOTIFY("number of sample to add is zero. start with Two samples.");
+			NOTIFY("number of sample to add is zero. Add Two samples.");
 			num_added_sample=2;
 	}	//if
 

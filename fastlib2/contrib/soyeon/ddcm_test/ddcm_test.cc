@@ -42,17 +42,25 @@ int main(int argc, char *argv[]) {
 	Vector ind_unknown_x;
 	double initial_percent_sampling;
 	Vector initial_parameter;
+
+	
+
 	
 
   sampling.Init(module, &num_of_people, &ind_unknown_x, 
 								&initial_percent_sampling,
 								&initial_parameter);
-
+	cout<<"Starting points:"<<endl;
+	for(index_t i=0; i<initial_parameter.length(); i++){
+		cout<<initial_parameter[i]<<" ";
+	}
+	cout<<endl;
 	NOTIFY("Number of people in dataset is %d", num_of_people);
 	NOTIFY("Shuffling");
 	sampling.Shuffle();
 	sampling.Shuffle();
-	NOTIFY("Initial sampling percent is %d", initial_percent_sampling);
+	sampling.Shuffle();
+	NOTIFY("Initial sampling percent is %f", initial_percent_sampling);
 		
 	int count_init2=0;
 	objective.Init2(ind_unknown_x, count_init2);
@@ -114,8 +122,26 @@ int main(int argc, char *argv[]) {
 
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
+	Vector tpar;
+	tpar.Init(current_parameter.length());
+	tpar[0]=1;
+	tpar[1]=1;
+	tpar[2]=2;
+	tpar[3]=2;
 
-	int max_iteration=200;
+  cout<<"true parameter:"<<endl;
+	for(index_t i=0; i<tpar.length(); i++){
+		cout<<tpar[i]<<" ";
+	}
+	cout<<endl;
+
+
+  double tobjective;
+	objective.ComputeObjective(tpar, 
+															 &tobjective);
+	cout<<"max objective="<<tobjective<<endl;
+
+	int max_iteration=500;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
@@ -146,7 +172,7 @@ int main(int argc, char *argv[]) {
 			NOTIFY("All data are used");
 		}
 
-		
+		cout<<"Number of data used="<<current_added_first_stage_x.size()<<endl;
 		objective.ComputeObjective(current_parameter, 
 															 &current_objective);
 		
@@ -329,7 +355,7 @@ int main(int argc, char *argv[]) {
 			
 			//sampling error calculation
 			correction_factor=(num_of_people-sample_size)/(num_of_people-1.0);
-			
+			//cout<<"correction factor:"<<correction_factor<<endl;
 			
 			objective.ComputeChoiceProbability(current_parameter, 
 																				 &current_choice_probability);
@@ -344,8 +370,9 @@ int main(int argc, char *argv[]) {
 			cout<<"sampling_error="<<sampling_error<<endl;
 			
 			if(current_delta_m<0.5*sampling_error){
-				current_percent_added_sample=(0.5*sampling_error/current_delta_m)*(0.5*sampling_error/current_delta_m)-1.0;
+				current_percent_added_sample=(0.5*sampling_error/current_delta_m)*(0.5*sampling_error/current_delta_m);
 				current_percent_added_sample*=100.0;
+				//cout<<"percent_added_sample="<<current_percent_added_sample<<endl;
 			}
 
 		}	//if
