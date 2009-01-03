@@ -1025,7 +1025,16 @@ class KdeProblem {
 
     // If all queries can be pruned, then add the approximations.
     if(flag) {
-      qnode->stat().postponed.sum_l += kernel_sums_l;
+      // Initialize the delta.
+      MultiTreeDelta delta;
+      delta.Reset(globals, qnode, rnode);
+
+      // Compute the bound changes due to a finite-difference
+      // approximation.
+      delta.ComputeFiniteDifference(globals, qnode, rnode);
+
+      qnode->stat().postponed.sum_l += 
+	std::max(kernel_sums_l, delta.kde_approximation.sum_l);
       qnode->stat().postponed.sum_e += kernel_sums;
       qnode->stat().postponed.n_pruned += rnode->count();
       qnode->stat().postponed.probabilistic_used_error =
