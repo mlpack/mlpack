@@ -1088,9 +1088,12 @@ class NWRCdeProblem {
 	   typename HybridTree, typename QueryTree, typename ReferenceTree>
   static bool ConsiderTupleProbabilistic
   (MultiTreeGlobal &globals, MultiTreeQueryResult &results,
-   const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &nodes,
+   const ArrayList<Matrix *> &query_sets,
+   const ArrayList<Matrix *> &reference_sets,
+   ArrayList<HybridTree *> &hybrid_nodes,
    ArrayList<QueryTree *> &query_nodes,
-   ArrayList<ReferenceTree *> &reference_nodes, double total_num_tuples,
+   ArrayList<ReferenceTree *> &reference_nodes,
+   double total_num_tuples,
    double total_n_minus_one_tuples_root,
    const Vector &total_n_minus_one_tuples) {
 
