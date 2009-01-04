@@ -569,7 +569,7 @@ class MultiTreeDepthFirst {
 	query_sets[i] = new Matrix();
 	query_sets[i]->Copy(*((*query_sets_in)[i]));
 	query_trees[i] = proximity::MakeGenKdTree<double, QueryTree,
-	  proximity::GenKdTreeMedianSplitter>(*(query_sets[i]), 10,
+	  proximity::GenKdTreeMedianSplitter>(*(query_sets[i]), 40,
 					      &old_from_new_queries,
 					      &new_from_old_queries);
       }
@@ -728,7 +728,7 @@ class MultiTreeDepthFirst {
     // This could potentially be improved by checking which matrices
     // are the same...
     reference_trees_[0] = proximity::MakeGenKdTree<double, ReferenceTree,
-      proximity::GenKdTreeMedianSplitter>(*(sets_[0]), 20, 
+      proximity::GenKdTreeMedianSplitter>(*(sets_[0]), 40, 
 					  &old_from_new_references_, NULL);
     PreProcessReferenceTree_(reference_trees_[0], 0);
     for(index_t i = 1; i < MultiTreeProblem::num_reference_sets; i++) {
@@ -783,7 +783,7 @@ class MultiTreeDepthFirst {
     // This could potentially be improved by checking which matrices
     // are the same...
     hybrid_trees_[0] = proximity::MakeGenKdTree<double, HybridTree,
-      proximity::GenKdTreeMedianSplitter>(*(sets_[0]), 10, 
+      proximity::GenKdTreeMedianSplitter>(*(sets_[0]), 20, 
 					  &old_from_new_hybrids_,
 					  &new_from_old_hybrids_);
     for(index_t i = 1; i < MultiTreeProblem::num_hybrid_sets; i++) {
