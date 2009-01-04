@@ -225,7 +225,11 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
  typename MultiTreeProblem::MultiTreeQueryResult &query_results,
  double total_num_tuples) {
 
-  if(MultiTreeProblem::ConsiderTupleExact(globals_, query_results,
+  // Declare the delta object so that it can be shared between the
+  // exact and the probabilistic pruning methods...
+  typename MultiTreeProblem::MultiTreeDelta exact_delta;
+
+  if(MultiTreeProblem::ConsiderTupleExact(globals_, query_results, exact_delta,
 					  query_sets, sets, targets,
 					  hybrid_nodes, query_nodes,
 					  reference_nodes, total_num_tuples,
@@ -234,8 +238,8 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstCanonical_
     return;
   }
   else if(MultiTreeProblem::ConsiderTupleProbabilistic
-	  (globals_, query_results, query_sets, sets, hybrid_nodes,
-	   query_nodes, reference_nodes, total_num_tuples,
+	  (globals_, query_results, exact_delta, query_sets, sets,
+	   hybrid_nodes, query_nodes, reference_nodes, total_num_tuples,
 	   total_n_minus_one_tuples_root_, total_n_minus_one_tuples_)) {
     return;
   }
