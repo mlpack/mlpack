@@ -783,6 +783,7 @@ class AxilrodTellerForceProblem {
 	   typename HybridTree, typename QueryTree, typename ReferenceTree>
   static bool ConsiderTupleExact(MultiTreeGlobal &globals,
 				 MultiTreeQueryResult &results,
+				 MultiTreeDelta &delta,
 				 const ArrayList<Matrix *> &query_sets,
 				 const ArrayList<Matrix *> &reference_sets,
 				 const ArrayList<Matrix *> &reference_targets,
@@ -794,7 +795,6 @@ class AxilrodTellerForceProblem {
 				 const Vector &total_n_minus_one_tuples) {
 
     // Compute delta change for each node...
-    MultiTreeDelta delta;
     delta.Init(total_n_minus_one_tuples);
     if(!delta.ComputeFiniteDifference(globals, hybrid_nodes,
 				      total_n_minus_one_tuples)) {
@@ -846,6 +846,7 @@ class AxilrodTellerForceProblem {
 	   typename HybridTree, typename QueryTree, typename ReferenceTree>
   static bool ConsiderTupleProbabilistic
   (MultiTreeGlobal &globals, MultiTreeQueryResult &results,
+   MultiTreeDelta &exact_delta, const ArrayList<Matrix *> &query_sets,
    const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &hybrid_nodes,
    ArrayList<QueryTree *> &query_nodes,
    ArrayList<ReferenceTree *> &reference_nodes,
