@@ -288,10 +288,11 @@ class KdeProblem {
     
    public:
     
-    template<typename TGlobal, typename TQuerySummary, typename ReferenceTree>
+    template<typename TGlobal, typename TQuerySummary, typename TDelta,
+	     typename ReferenceTree>
     void ComputeAllowableError
     (const TGlobal &parameters, const TQuerySummary &new_summary,
-     ReferenceTree *rnode) {
+     const TDelta &exact_delta, ReferenceTree *rnode) {
 
       error_per_pair = (parameters.relative_error * new_summary.sum_l -
 			(new_summary.used_error_u +
@@ -579,6 +580,8 @@ class KdeProblem {
     
     double n_pruned_l;
 
+    double n_pruned_u;
+
     double used_error_u;
     
     double probabilistic_used_error_u;
@@ -586,6 +589,7 @@ class KdeProblem {
     OT_DEF_BASIC(MultiTreeQuerySummary) {
       OT_MY_OBJECT(sum_l);
       OT_MY_OBJECT(n_pruned_l);
+      OT_MY_OBJECT(n_pruned_u);
       OT_MY_OBJECT(used_error_u);
       OT_MY_OBJECT(probabilistic_used_error_u);
     }
@@ -603,6 +607,7 @@ class KdeProblem {
 
       sum_l = std::min(sum_l, query_results.sum_l[q_index]);
       n_pruned_l = std::min(n_pruned_l, query_results.n_pruned[q_index]);
+      n_pruned_u = std::max(n_pruned_u, query_results.n_pruned[q_index]);
       used_error_u = std::max(used_error_u, query_results.used_error[q_index]);
       probabilistic_used_error_u =
 	std::max(probabilistic_used_error_u,
@@ -614,6 +619,7 @@ class KdeProblem {
 
       sum_l = std::min(sum_l, other_summary_results.sum_l);
       n_pruned_l = std::min(n_pruned_l, other_summary_results.n_pruned_l);
+      n_pruned_u = std::max(n_pruned_u, other_summary_results.n_pruned_u);
       used_error_u = std::max(used_error_u,
 			      other_summary_results.used_error_u);
       probabilistic_used_error_u =
@@ -632,6 +638,7 @@ class KdeProblem {
       
       sum_l += postponed_in.sum_l;
       n_pruned_l += postponed_in.n_pruned;
+      n_pruned_u += postponed_in.n_pruned;
       used_error_u += postponed_in.used_error;
       probabilistic_used_error_u = 
 	sqrt(math::Sqr(probabilistic_used_error_u) +
@@ -642,6 +649,7 @@ class KdeProblem {
 
       sum_l = DBL_MAX;
       n_pruned_l = DBL_MAX;
+      n_pruned_u = 0;
       used_error_u = 0;
       probabilistic_used_error_u = 0;
     }
@@ -650,6 +658,7 @@ class KdeProblem {
 
       sum_l = 0;
       n_pruned_l = 0;
+      n_pruned_u = 0;
       used_error_u = 0;
       probabilistic_used_error_u = 0;
     }
@@ -843,6 +852,7 @@ class KdeProblem {
 	   typename HybridTree, typename QueryTree, typename ReferenceTree>
   static bool ConsiderTupleExact(MultiTreeGlobal &globals,
 				 MultiTreeQueryResult &query_results,
+				 MultiTreeDelta &delta,
 				 const ArrayList<Matrix *> &query_sets,
 				 const ArrayList<Matrix *> &reference_sets,
 				 const ArrayList<Matrix *> &targets,
@@ -858,7 +868,6 @@ class KdeProblem {
     ReferenceTree *rnode = reference_nodes[0];
     
     // Initialize the delta.
-    MultiTreeDelta delta;
     delta.Reset(globals, qnode, rnode);
 
     // Initialize the query summary.
@@ -876,7 +885,7 @@ class KdeProblem {
     
     // Compute the allowable error.
     typename KdeProblem::KdeError allowed_error;
-    allowed_error.ComputeAllowableError(globals, new_summary, rnode);
+    allowed_error.ComputeAllowableError(globals, new_summary, delta, rnode);
 
     // If the error bound is satisfied by the hard error bound, it is
     // safe to prune.
@@ -891,7 +900,8 @@ class KdeProblem {
       }
 
       // Try series expansion.
-      else if(delta.ComputeSeriesExpansion(globals, qnode, rnode, 
+      else if(globals.dimension <= 6 &&
+	      delta.ComputeSeriesExpansion(globals, qnode, rnode, 
 					   allowed_error)) {
 	KdeProblem::ApplySeriesExpansion(globals, *(query_sets[0]),
 					 *(reference_sets[0]),
@@ -914,7 +924,7 @@ class KdeProblem {
 	   typename HybridTree, typename QueryTree, typename ReferenceTree>
   static bool ConsiderTupleProbabilistic
   (MultiTreeGlobal &globals, MultiTreeQueryResult &results,
-   const ArrayList<Matrix *> &query_sets,
+   MultiTreeDelta &exact_delta, const ArrayList<Matrix *> &query_sets,
    const ArrayList<Matrix *> &sets, ArrayList<HybridTree *> &nodes,
    ArrayList<QueryTree *> &query_nodes,
    ArrayList<ReferenceTree *> &reference_nodes, double total_num_tuples,
@@ -958,83 +968,75 @@ class KdeProblem {
       int num_samples = 25;
       int total_samples = 0;
 
-      do {
-        for(index_t s = 0; s < num_samples; s++) {
-
-          index_t random_query_point_index =
-            math::RandInt(qnode->begin(), qnode->end());
-          index_t random_reference_point_index =
-            math::RandInt(rnode->begin(), rnode->end());
-
-          // Get the pointer to the current query point.
-          const double *query_point =
-            qset.GetColumnPtr(random_query_point_index);
-
-          // Get the pointer to the current reference point.
-          const double *reference_point =
-            rset.GetColumnPtr(random_reference_point_index);
-
-          // Compute the pairwise distance and kernel value.
-          double squared_distance = la::DistanceSqEuclidean
-            (rset.n_rows(), query_point, reference_point);
-
-          double weighted_kernel_value =
-            globals.kernel_aux.kernel_.EvalUnnormOnSq(squared_distance);
-          kernel_sums += weighted_kernel_value;
-          squared_kernel_sums += weighted_kernel_value * weighted_kernel_value;
-
-        } // end of taking samples for this roune...
-
-        // Increment total number of samples.
-        total_samples += num_samples;
-
-        // Compute the current estimate of the sample mean and the
-        // sample variance.
-        double sample_mean = kernel_sums / ((double) total_samples);
-        double sample_variance =
-          (squared_kernel_sums - total_samples * sample_mean * sample_mean) /
-          ((double) total_samples - 1);
-
-        // The currently proven lower bound.
-        double right_hand_side =
-          (globals.relative_error * new_summary.sum_l -
-	   (new_summary.used_error_u + 
-	    new_summary.probabilistic_used_error_u)) /
-          (globals.num_reference_points - new_summary.n_pruned_l) *
-	  rnode->stat().get_weight_sum();
+      for(index_t s = 0; s < num_samples; s++) {
 	
-        if((new_summary.sum_l + rnode->stat().get_weight_sum() * 
-	    sqrt(sample_variance) * standard_score) - new_summary.sum_l <= 
-	   right_hand_side) {
+	index_t random_query_point_index =
+	  math::RandInt(qnode->begin(), qnode->end());
+	index_t random_reference_point_index =
+	  math::RandInt(rnode->begin(), rnode->end());
+	
+	// Get the pointer to the current query point.
+	const double *query_point =
+	  qset.GetColumnPtr(random_query_point_index);
+	
+	// Get the pointer to the current reference point.
+	const double *reference_point =
+	  rset.GetColumnPtr(random_reference_point_index);
+	
+	// Compute the pairwise distance and kernel value.
+	double squared_distance = la::DistanceSqEuclidean
+	  (rset.n_rows(), query_point, reference_point);
+	
+	double weighted_kernel_value =
+	  globals.kernel_aux.kernel_.EvalUnnormOnSq(squared_distance);
+	kernel_sums += weighted_kernel_value;
+	squared_kernel_sums += weighted_kernel_value * weighted_kernel_value;
+	
+      } // end of taking samples for this roune...
+      
+      // Increment total number of samples.
+      total_samples += num_samples;
+      
+      // Compute the current estimate of the sample mean and the
+      // sample variance.
+      double sample_mean = kernel_sums / ((double) total_samples);
+      double sample_variance =
+	(squared_kernel_sums - total_samples * sample_mean * sample_mean) /
+	((double) total_samples - 1);
+      
+      // The currently proven lower bound.
+      double current_lower_bound = new_summary.sum_l +
+	std::max(exact_delta.kde_approximation.sum_l, 
+		 rnode->stat().get_weight_sum() * 
+		 (sample_mean - sqrt(sample_variance) * standard_score));
 
-          kernel_sums = kernel_sums / ((double) total_samples) *
-            rnode->stat().get_weight_sum();
-          max_used_error = rnode->stat().get_weight_sum() *
-            standard_score * sqrt(sample_variance);
-	  kernel_sums_l = kernel_sums - max_used_error;
-          break;
-        }
-        else {
-          flag = false;
-          break;
-        }
-
-      } while(true);
+      // Right hand side due to the estimates...
+      double right_hand_side =
+	(globals.relative_error * current_lower_bound -
+	 (new_summary.used_error_u + 
+	  new_summary.probabilistic_used_error_u)) /
+	(globals.num_reference_points - new_summary.n_pruned_l) *
+	rnode->stat().get_weight_sum();
+      
+      if((new_summary.sum_l + rnode->stat().get_weight_sum() * 
+	  sqrt(sample_variance) * standard_score) - new_summary.sum_l <= 
+	 right_hand_side) {
+	
+	kernel_sums = sample_mean * rnode->stat().get_weight_sum();
+	max_used_error = rnode->stat().get_weight_sum() *
+	  standard_score * sqrt(sample_variance);
+	kernel_sums_l = kernel_sums - max_used_error;
+      }
+      else {
+	flag = false;
+      }
 
     } // end of sampling...
 
     // If all queries can be pruned, then add the approximations.
     if(flag) {
-      // Initialize the delta.
-      MultiTreeDelta delta;
-      delta.Reset(globals, qnode, rnode);
-
-      // Compute the bound changes due to a finite-difference
-      // approximation.
-      delta.ComputeFiniteDifference(globals, qnode, rnode);
-
       qnode->stat().postponed.sum_l += 
-	std::max(kernel_sums_l, delta.kde_approximation.sum_l);
+	std::max(kernel_sums_l, exact_delta.kde_approximation.sum_l);
       qnode->stat().postponed.sum_e += kernel_sums;
       qnode->stat().postponed.n_pruned += rnode->count();
       qnode->stat().postponed.probabilistic_used_error =
