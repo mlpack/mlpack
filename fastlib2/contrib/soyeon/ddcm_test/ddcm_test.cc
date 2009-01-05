@@ -141,6 +141,9 @@ int main(int argc, char *argv[]) {
 															 &tobjective);
 	cout<<"max objective="<<tobjective<<endl;
 
+	
+
+
 	int max_iteration=500;
 	int iteration_count=0;
 
@@ -165,7 +168,7 @@ int main(int argc, char *argv[]) {
 									 current_added_second_stage_x,
 									 current_added_unknown_x_past, 
 									 current_added_first_stage_y);
-		
+
 		}
 		else {
 			
@@ -181,6 +184,18 @@ int main(int argc, char *argv[]) {
 
 		
 		//NOTIFY("Gradient calculation starts");
+		
+		/*
+		Vector tgradient;
+		objective.ComputeGradient(tpar, 
+															 &tgradient);
+		cout<<"tgradient="<<endl;
+		for(index_t i=0; i<tgradient.length(); i++){
+			cout<<tgradient[i]<<" ";
+		}
+		cout<<endl;
+		*/
+
 		Vector current_gradient;
 		//gradient.Init(num_of_betas_);
 		objective.ComputeGradient(current_parameter, &current_gradient);
