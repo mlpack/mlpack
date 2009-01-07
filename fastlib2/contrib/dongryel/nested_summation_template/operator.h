@@ -11,9 +11,9 @@ class Operator {
    */
   ArrayList<Operator *> operators_;
 
-  /** @brief The list of indices involved with this operator.
+  /** @brief The list of dataset indices involved with this operator.
    */
-  ArrayList<index_t> indices_;
+  ArrayList<index_t> dataset_indices_;
 
   OT_DEF_BASIC(Operator) {
     OT_MY_OBJECT(operators_);
@@ -24,11 +24,13 @@ class Operator {
 
   /** @brief Evaluate the operator exactly.
    */
-  virtual double NaiveCompute() = 0;
+  virtual double NaiveCompute
+  (const std::map<index_t, index_t> &constant_dataset_indices) = 0;
 
   /** @brief Evaluate the operator using Monte Carlo.
    */
-  virtual double MonteCarloCompute() = 0;
+  virtual double MonteCarloCompute
+  (const std::map<index_t, index_t> &constant_dataset_indices) = 0;
 
 };
 
