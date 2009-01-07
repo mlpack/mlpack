@@ -4,7 +4,6 @@
 #include "fastlib/fastlib.h"
 #include "operator.h"
 
-template<is_positive>
 class Sum: public Operator {
 
  public:
@@ -16,7 +15,7 @@ class Sum: public Operator {
 
     // If this is the base case, where there is no more nested
     // operator inside, then call the multi-tree algorithm.
-    if(indices_.size() > 0) {
+    if(operators_.size() > 0) {
       
     }
 
@@ -27,13 +26,15 @@ class Sum: public Operator {
 	sum_result += operators_[i]->NaiveCompute();
       }
     }
-
-    if(is_positive) {
-      return sum_result;
+    
+    if(!is_positive_) {
+      sum_result = -sum_result;
     }
-    else {
-      return -sum_result;
+    if(should_be_inverted_) {
+      sum_result = 1.0 / sum_result;
     }
+    
+    return sum_result;
   }
 
   double MonteCarloCompute
@@ -54,13 +55,15 @@ class Sum: public Operator {
 	sum_result += operators_[i]->MonteCarloCompute();
       }
     }
-
-    if(is_positive) {
-      return sum_result;
+    
+    if(!is_positive_) {
+      sum_result = -sum_result;
     }
-    else {
-      return -sum_result;
+    if(should_be_inverted_) {
+      sum_result = 1.0 / sum_result;
     }
+    
+    return sum_result;    
   }
 
 };
