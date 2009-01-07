@@ -749,6 +749,8 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 	*/
   
 	for(index_t n=0; n<first_stage_x_.size(); n++){
+		exp_betas_times_x2_[n]=0;
+		postponed_probability_[n]=0;
 		for(index_t l=0; l<num_of_alphas_-1; l++){
 			double alpha_temp;
 	    double beta_function_temp;
@@ -769,16 +771,18 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 				}	//j
 			}	//i
 
-		  for(index_t i=0; i<exp_betas_times_x2_.size(); i++) {
-			  exp_betas_times_x2_[i]=0;
-		  }
+		  //for(index_t i=0; i<exp_betas_times_x2_.size(); i++) {
+			//  exp_betas_times_x2_[i]=0;
+		  //}
 
 			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
+				//exp_betas_times_x2_[n]=0;
 				exp_betas_times_x2_[n]+=exp(la::Dot(betas.length(), 
 																betas.ptr(),
 																second_stage_x_[n].GetColumnPtr(i)));			}
 			//cout<<"exp_betas_times_x2_"<<exp_betas_times_x2_[n]<<endl;
 			//conditional_postponed_probability_[n]
+			
 			postponed_probability_[n]+=( (exp_betas_times_x2_[n]/(exp_betas_times_x1_[n]
 																  + exp_betas_times_x2_[n]) )
 																		*beta_function_temp );	
@@ -798,6 +802,7 @@ void Objective::ComputeExpBetasTimesX1_(Vector &betas) {
   
   //double sum=0;
 	for(index_t n=0; n<first_stage_x_.size(); n++){
+		exp_betas_times_x1_[n]=0;
 		for(index_t j=0; j<first_stage_x_[n].n_cols(); j++) {
 			exp_betas_times_x1_[n]+=exp(la::Dot(betas.length(), 
 															betas.ptr(), 
@@ -842,6 +847,7 @@ void Objective::ComputeDotLogit_(Vector &betas) {
 
 	//cout<<"test "<<first_stage_dot_logit_[1][1]<<endl;
 	for(index_t n=0; n<first_stage_x_.size(); n++){
+		first_stage_dot_logit_[n].SetZero();
 		for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
 			first_stage_dot_logit_[n][i]=(exp(la::Dot( betas.length(), betas.ptr(),
 																				 first_stage_x_[n].GetColumnPtr(i) )))/
@@ -849,7 +855,15 @@ void Objective::ComputeDotLogit_(Vector &betas) {
 			//cout<<"test "<<first_stage_dot_logit_[n][i]<<endl;
 		}	//i
 	}	//n
+	cout<<"first_stage_dot_logit_[1]="<<endl;
+	for(index_t i=0; i<first_stage_x_[1].n_cols(); i++){
+		cout<<first_stage_dot_logit_[1][i]<<" ";
+		}	//i
+	cout<<endl;
+
 	
+
+
 }
 
 
@@ -972,6 +986,8 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 
 	for(index_t n=0; n<first_stage_x_.size(); n++){
 
+		exp_betas_times_x2_[n]=0;
+
 		Matrix temp3; //dotLogit2*dotLogit2'
 		temp3.Init(second_stage_x_[n].n_cols(), second_stage_x_[n].n_cols());
 	
@@ -1045,6 +1061,10 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 				}	//j
 			}	//i
 			
+			//for(index_t n=0; n<exp_betas_times_x2_.size(); n++){
+			//	exp_betas_times_x2_[n]=0;
+			//}
+
 
 			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
 				exp_betas_times_x2_[n]+=exp(la::Dot(betas.length(), betas.ptr(),
@@ -1553,7 +1573,22 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 	beta_fn_temp5*=(t_weight_/pow(denumerator_beta_function_, 2));
 	beta_fn_temp6*=(t_weight_/pow(denumerator_beta_function_, 2));
 
+	for(index_t i=0; i<first_stage_x_.size(); i++) {
+		sum_first_derivative_p_beta_fn_[i]=0;
+		sum_second_derivative_p_beta_fn_[i]=0;
+		sum_first_derivative_q_beta_fn_[i]=0;
+		sum_second_derivative_q_beta_fn_[i]=0;
+		sum_second_derivative_p_q_beta_fn_[i]=0;
+		//sum_second_derivative_conditionl_postponed_p_[i].Init(num_of_betas_);
+		sum_second_derivative_conditionl_postponed_p_[i].SetZero();
+		//sum_second_derivative_conditionl_postponed_q_[i].Init(num_of_betas_);
+		sum_second_derivative_conditionl_postponed_q_[i].SetZero();
+
+	}
+
 	for(index_t n=0; n<first_stage_x_.size(); n++){
+		exp_betas_times_x2_[n]=0;
+
 		la::MulOverwrite(first_stage_x_[n], first_stage_dot_logit_[n], &temp1);
 		for(index_t l=0; l<num_of_alphas_-1; l++){
 			alpha_temp=(l+1)*(alpha_weight_);

@@ -2,6 +2,8 @@
 #include <cmath>
 #include <iostream>
     
+using namespace std;
+
 void Objective::Init(fx_module *module) {
   module_=module;
   const char *data_file1=fx_param_str_req(module_, "data1");
@@ -486,11 +488,13 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 		  }
 
 			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
+				exp_betas_times_x2_[n]=0;
 				exp_betas_times_x2_[n]+=exp(la::Dot(betas.length(), 
 																betas.ptr(),
 																second_stage_x_[n].GetColumnPtr(i)));			}
 			//cout<<"exp_betas_times_x2_"<<exp_betas_times_x2_[n]<<endl;
 			//conditional_postponed_probability_[n]
+			postponed_probability_[n]=0;
 			postponed_probability_[n]+=( (exp_betas_times_x2_[n]/(exp_betas_times_x1_[n]
 																  + exp_betas_times_x2_[n]) )
 																		*beta_function_temp );	
@@ -511,10 +515,26 @@ void Objective::ComputeExpBetasTimesX1_(Vector &betas) {
   //double sum=0;
 	for(index_t n=0; n<first_stage_x_.size(); n++){
 		for(index_t j=0; j<first_stage_x_[n].n_cols(); j++) {
+			exp_betas_times_x1_[n]=0;
 			exp_betas_times_x1_[n]+=exp(la::Dot(betas.length(), 
 															betas.ptr(), 
 															first_stage_x_[n].GetColumnPtr(j)));
 		}
+
+		/*cout<<"first_stage_x="<<endl;
+		for(index_t i=0; i<first_stage_x_.size(); i++){
+			cout<<first_stage_x_[i].get(0,0)<<" ";
+		}
+		cout<<endl;
+		*/
+
+		/*cout<<"exp_betas_times_x1:"<<endl;
+		for(index_t i=0; i<exp_betas_times_x1_.size(); i++){
+			cout<<exp_betas_times_x1_[i]<<" ";
+		}
+		cout<<endl;
+*/
+
   }
 }
 
@@ -1263,6 +1283,7 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 	beta_fn_temp6*=(t_weight_/pow(denumerator_beta_function_, 2));
 
 	for(index_t n=0; n<first_stage_x_.size(); n++){
+
 		la::MulOverwrite(first_stage_x_[n], first_stage_dot_logit_[n], &temp1);
 		for(index_t l=0; l<num_of_alphas_-1; l++){
 			alpha_temp=(l+1)*(alpha_weight_);

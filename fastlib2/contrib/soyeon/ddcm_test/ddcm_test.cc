@@ -140,7 +140,7 @@ int main(int argc, char *argv[]) {
 	
 
 
-  int max_iteration=500;
+  int max_iteration=2;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
@@ -199,6 +199,7 @@ int main(int argc, char *argv[]) {
 		tobjective=0;
 		objective.ComputeObjective(tpar, 
 															 &tobjective);
+		
 		tobjective/=current_added_first_stage_x.size();
 		cout<<"max objective="<<tobjective<<endl;
 
@@ -209,14 +210,14 @@ int main(int argc, char *argv[]) {
 		la::Scale(1.0/current_added_first_stage_x.size(), &current_gradient);
 		
 		//printf("The objective is %g", dummy_objective);
-		/*
+		
 		cout<<"Gradient vector: ";
 		for (index_t i=0; i<current_gradient.length(); i++)
 		{
 			std::cout<<current_gradient[i]<<" ";
 		}
 		std::cout<<endl;
-		*/
+		
 
 
 		Vector opt_gradient;
@@ -256,7 +257,6 @@ int main(int argc, char *argv[]) {
 		}
 		*/
 		
-
 		Matrix current_inverse_hessian;
 		if( !PASSED(la::InverseInit(current_hessian, &current_inverse_hessian)) ) {
 			NOTIFY("Current hessian matrix is not invertible!");
@@ -269,6 +269,19 @@ int main(int argc, char *argv[]) {
 			cout<<endl;
 		}
 
+		Matrix opt_hessian;
+		objective.ComputeHessian(tpar, &opt_hessian);
+		la::Scale(1.0/current_added_first_stage_x.size(), &opt_hessian);
+		
+		cout<<"Hessian matrix at true par: "<<endl;
+
+		
+		for (index_t j=0; j<opt_hessian.n_rows(); j++){
+			for (index_t k=0; k<opt_hessian.n_cols(); k++){
+				cout<<opt_hessian.get(j,k) <<"  ";
+			}
+			cout<<endl;
+		}
 
 
 		Vector current_p;

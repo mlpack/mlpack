@@ -54,6 +54,27 @@ class ObjectiveTest {
 
 		objective.ComputeObjective(current_parameter, &dummy_objective );
 		NOTIFY("The objective is %g", dummy_objective);
+
+		objective.ComputeGradient(current_parameter, &dummy_gradient);
+		//printf("The objective is %g", dummy_objective);
+		cout<<"Gradient vector: ";
+		for (index_t i=0; i<dummy_gradient.length(); i++)
+		{
+			cout<<dummy_gradient[i]<<" ";
+		}
+		cout<<endl;
+
+		objective.ComputeHessian(current_parameter, &dummy_hessian);
+		cout<<"Hessian matrix: "<<endl;
+
+		for (index_t j=0; j<dummy_hessian.n_rows(); j++){
+			for (index_t k=0; k<dummy_hessian.n_cols(); k++){
+				cout<<dummy_hessian.get(j,k) <<"  ";
+			}
+			cout<<endl;
+		}
+
+
 		
   }
 
