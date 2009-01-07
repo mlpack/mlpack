@@ -105,35 +105,56 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 	if (fx_param_exists(module_, "starting_points")) {
 		const char *initial_parameter_file=fx_param_str_req(module_,"starting_points");
 		Matrix mtx_initial_parameter;
-		data::Load(initial_parameter_file, &mtx_initial_parameter);
-		if(mtx_initial_parameter.n_rows() != num_of_betas+2){
-			NOTIFY("The number of starting points given is not same as the number of parameters");
-			NOTIFY("Use default...");
-			initial_parameter->Init(num_of_betas+2);	//beta+p+q
-			//initial_parameter->SetZero();
-			//(*initial_parameter)[num_of_betas]=2;
-			//(*initial_parameter)[num_of_betas+1]=2;
-			initial_parameter->SetAll(1.5);
+		if(data::Load(initial_parameter_file, &mtx_initial_parameter)==SUCCESS_FAIL) {
+			FATAL("File %s not found", initial_parameter_file);
+		}
+		else{
 
-			
-			
-		}	//if
-		mtx_initial_parameter.MakeColumnVector(0, initial_parameter);
+			if(mtx_initial_parameter.n_rows() != num_of_betas+2){
+				NOTIFY("The number of starting points given is not same as the number of parameters");
+				NOTIFY("Use default...");
+				//initial_parameter->Destruct(); 
+				initial_parameter->Init(num_of_betas+2);	//beta+p+q
+				//initial_parameter->SetZero();
+				//(*initial_parameter)[num_of_betas]=2;
+				//(*initial_parameter)[num_of_betas+1]=2;
+				initial_parameter->SetAll(1.5);
+
+				
+				
+			}	//if
+			else{
+				mtx_initial_parameter.MakeColumnVector(0, initial_parameter);
+				/*
+				cout<<"Starting points are:   ";
+				for(index_t i=0; i<initial_parameter->length(); i++){
+					cout<<(*initial_parameter)[i]<<" ";
+				}
+				cout<<endl;
+				*/
+			}
+		}	//else
 	}	//if
 	else {
 		NOTIFY("Starting points are not given. Use default...");
 		NOTIFY("Number of parameters is %d", num_of_betas+2);
 		initial_parameter->Init(num_of_betas+2);
-		initial_parameter->SetAll(1.5);
-		//initial_parameter->SetZero();
-		//(*initial_parameter)[num_of_betas]=2;
-		//(*initial_parameter)[num_of_betas+1]=2;
+		
+		//initial_parameter->SetAll(1.5);
 
+		initial_parameter->SetZero();
+		(*initial_parameter)[0]=1.5;
+		(*initial_parameter)[1]=1;
+		(*initial_parameter)[num_of_betas]=2;
+		(*initial_parameter)[num_of_betas+1]=2.2;
+
+		/*
 		cout<<"Starting points are:   ";
 		for(index_t i=0; i<initial_parameter->length(); i++){
 			cout<<(*initial_parameter)[i]<<" ";
 		}
 		cout<<endl;
+		*/
 
 		//initial_parameter[num_or_betas]->2;
 		//initial_parameter[num_or_betas+1]->2;
