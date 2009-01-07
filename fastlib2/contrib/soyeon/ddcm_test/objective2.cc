@@ -466,7 +466,7 @@ void Objective::ComputeGradient(Vector &current_parameter,
 																+ComputeDerivativeQTerm3_();
 
 	//handle minimization
-	//la::Scale(-1.0, &dummy_gradient);
+	la::Scale(-1.0, &dummy_gradient);
 
 
 	gradient->Copy(dummy_gradient);
@@ -508,15 +508,15 @@ void Objective::ComputeHessian(Vector &current_parameter,
 
 	*/
 	
-	ComputeDotLogit_(betas);
-	ComputeDDotLogit_();
-	//cout<<"ddot done"<<endl;
-	ComputeSumDerivativeConditionalPostpondProb_(betas, p, q);
-	//cout<<"sumDerivativeCondPostpondprob done"<<endl;
+	//ComputeDotLogit_(betas);
+	//ComputeDDotLogit_();
+	////cout<<"ddot done"<<endl;
+	//ComputeSumDerivativeConditionalPostpondProb_(betas, p, q);
+	////cout<<"sumDerivativeCondPostpondprob done"<<endl;
 	
 	
-	ComputeSumDerivativeBetaFunction_(betas, p, q);
-	//cout<<"SumDerivativeBetaFunction done"<<endl;
+	//ComputeSumDerivativeBetaFunction_(betas, p, q);
+	////cout<<"SumDerivativeBetaFunction done"<<endl;
 
 	
 
@@ -618,8 +618,7 @@ void Objective::ComputeHessian(Vector &current_parameter,
 	}
 	*/
 
-	//handle minimization
-	//la::Scale(-1.0, &dummy_hessian);
+	
 
 	//Check positive definiteness
 	Vector eigen_hessian;
@@ -639,6 +638,9 @@ void Objective::ComputeHessian(Vector &current_parameter,
 		dummy_hessian.set(i,i,(dummy_hessian.get(i,i)-max_eigen*(1.01)));
 	}
 
+
+	//handle minimization
+	la::Scale(-1.0, &dummy_hessian);
 
 	hessian->Copy(dummy_hessian);
 	//cout<<"hessian done"<<endl;
@@ -855,11 +857,13 @@ void Objective::ComputeDotLogit_(Vector &betas) {
 			//cout<<"test "<<first_stage_dot_logit_[n][i]<<endl;
 		}	//i
 	}	//n
-	cout<<"first_stage_dot_logit_[1]="<<endl;
+	
+	/*cout<<"first_stage_dot_logit_[1]="<<endl;
 	for(index_t i=0; i<first_stage_x_[1].n_cols(); i++){
 		cout<<first_stage_dot_logit_[1][i]<<" ";
 		}	//i
 	cout<<endl;
+*/
 
 	
 
