@@ -140,7 +140,7 @@ int main(int argc, char *argv[]) {
 	
 
 
-  int max_iteration=2;
+  int max_iteration=100;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
@@ -207,17 +207,18 @@ int main(int argc, char *argv[]) {
 		Vector current_gradient;
 		//gradient.Init(num_of_betas_);
 		objective.ComputeGradient(current_parameter, &current_gradient);
-		la::Scale(1.0/current_added_first_stage_x.size(), &current_gradient);
+		//la::Scale(1.0/current_added_first_stage_x.size(), &current_gradient);
 		
 		//printf("The objective is %g", dummy_objective);
-		
+		/*
 		cout<<"Gradient vector: ";
 		for (index_t i=0; i<current_gradient.length(); i++)
 		{
 			std::cout<<current_gradient[i]<<" ";
 		}
 		std::cout<<endl;
-		
+		*/
+
 
 
 		Vector opt_gradient;
@@ -244,7 +245,7 @@ int main(int argc, char *argv[]) {
 		//NOTIFY("Exact hessian calculation starts");
 		Matrix current_hessian;
 		objective.ComputeHessian(current_parameter, &current_hessian);
-		la::Scale(1.0/current_added_first_stage_x.size(), &current_hessian);
+		//la::Scale(1.0/current_added_first_stage_x.size(), &current_hessian);
 		
 		cout<<"Hessian matrix: "<<endl;
 
@@ -256,6 +257,8 @@ int main(int argc, char *argv[]) {
 			cout<<endl;
 		}
 		*/
+
+		
 		
 		Matrix current_inverse_hessian;
 		if( !PASSED(la::InverseInit(current_hessian, &current_inverse_hessian)) ) {
@@ -269,6 +272,7 @@ int main(int argc, char *argv[]) {
 			cout<<endl;
 		}
 
+/*
 		Matrix opt_hessian;
 		objective.ComputeHessian(tpar, &opt_hessian);
 		la::Scale(1.0/current_added_first_stage_x.size(), &opt_hessian);
@@ -283,6 +287,7 @@ int main(int argc, char *argv[]) {
 			cout<<endl;
 		}
 
+*/
 
 		Vector current_p;
 		double current_delta_m;
@@ -443,7 +448,7 @@ int main(int argc, char *argv[]) {
 		
 				
 		//agreement rho calculation
-		rho=+1.0*(current_objective-next_objective)/(current_delta_m);
+		rho=+1.0*(current_objective-next_objective)/(current_delta_m)*current_added_first_stage_x.size();
 		cout<<"rho= "<<rho<<endl;
 		if(rho>eta){
 			current_parameter.CopyValues(next_parameter);
@@ -456,7 +461,7 @@ int main(int argc, char *argv[]) {
 		if(sample_size==num_of_people){
 			end_sampling+=1;
 			double gradient_norm;
-			//la::Scale(1.0/num_of_people, &current_gradient);
+			la::Scale(1.0/num_of_people, &current_gradient);
 			gradient_norm = sqrt(la::Dot(current_gradient, current_gradient));
 			
 			cout<<"gradient_norm="<<gradient_norm<<endl;
