@@ -4,11 +4,13 @@
 #include "fastlib/fastlib.h"
 #include "operator.h"
 
+template<is_positive>
 class Sum: public Operator {
 
  public:
 
-  double NaiveCompute() {
+  double NaiveCompute
+  (const std::map<index_t, index_t> &constant_dataset_indices) {
 
     double sum_result = 0;
 
@@ -26,10 +28,16 @@ class Sum: public Operator {
       }
     }
 
-    return sum_result;
+    if(is_positive) {
+      return sum_result;
+    }
+    else {
+      return -sum_result;
+    }
   }
 
-  double MonteCarloCompute() {
+  double MonteCarloCompute
+  (const std::map<index_t, index_t> &constant_dataset_indices) {
 
     double sum_result = 0;
 
@@ -47,7 +55,12 @@ class Sum: public Operator {
       }
     }
 
-    return sum_result;
+    if(is_positive) {
+      return sum_result;
+    }
+    else {
+      return -sum_result;
+    }
   }
 
 };
