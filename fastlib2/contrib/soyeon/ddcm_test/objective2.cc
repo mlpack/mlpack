@@ -163,39 +163,39 @@ void Objective::Init2(Vector &ind_unknown_x, int count_init2) {
 	first_stage_dot_logit_.Init();
 	first_stage_ddot_logit_.Init();
 
-	/*for(index_t i=0; i<first_stage_dot_logit_.size(); i++) {
-    exp_betas_times_x1_[i]=0;
-		first_stage_dot_logit_[i].Init(first_stage_x_[i].n_cols());
-		first_stage_dot_logit_[i].SetZero();
-		first_stage_ddot_logit_[i].Init(first_stage_x_[i].n_cols(),first_stage_x_[i].n_cols());
-		first_stage_ddot_logit_[i].SetZero();
+	//for(index_t i=0; i<first_stage_dot_logit_.size(); i++) {
+    //exp_betas_times_x1_[i]=0;
+		//first_stage_dot_logit_[i].Init(first_stage_x_[i].n_cols());
+		//first_stage_dot_logit_[i].SetZero();
+		//first_stage_ddot_logit_[i].Init(first_stage_x_[i].n_cols(),first_stage_x_[i].n_cols());
+		//first_stage_ddot_logit_[i].SetZero();
 
-  }
-	*/
+  //}
+	
 
 	second_stage_dot_logit_.Init();
 	second_stage_ddot_logit_.Init();
 
-	/*for(index_t i=0; i<second_stage_dot_logit_.size(); i++) {
-    exp_betas_times_x2_[i]=0;
-		second_stage_dot_logit_[i].Init(first_stage_x_[i].n_cols());
-		second_stage_dot_logit_[i].SetZero();
-		second_stage_ddot_logit_[i].Init(first_stage_x_[i].n_cols(),first_stage_x_[i].n_cols());
-		second_stage_ddot_logit_[i].SetZero();
+	//for(index_t i=0; i<second_stage_dot_logit_.size(); i++) {
+    //exp_betas_times_x2_[i]=0;
+		//second_stage_dot_logit_[i].Init(first_stage_x_[i].n_cols());
+		//second_stage_dot_logit_[i].SetZero();
+		//second_stage_ddot_logit_[i].Init(first_stage_x_[i].n_cols(),first_stage_x_[i].n_cols());
+		//second_stage_ddot_logit_[i].SetZero();
 
-  }
-*/
+  //}
+
 	sum_first_derivative_conditional_postpond_prob_.Init();
 	sum_second_derivative_conditional_postpond_prob_.Init();
 
-	/*for(index_t n=0; n<first_stage_x_.size(); n++) {
-		sum_first_derivative_conditional_postpond_prob_[n].Init(num_of_betas_);
-		sum_first_derivative_conditional_postpond_prob_[n].SetZero();
-		sum_second_derivative_conditional_postpond_prob_[n].Init(num_of_betas_, num_of_betas_);
-		sum_second_derivative_conditional_postpond_prob_[n].SetZero();
+	//for(index_t n=0; n<first_stage_x_.size(); n++) {
+		//sum_first_derivative_conditional_postpond_prob_[n].Init(num_of_betas_);
+		//sum_first_derivative_conditional_postpond_prob_[n].SetZero();
+		//sum_second_derivative_conditional_postpond_prob_[n].Init(num_of_betas_, num_of_betas_);
+		//sum_second_derivative_conditional_postpond_prob_[n].SetZero();
 
-	}
-	*/
+	//}
+	
 
 	sum_first_derivative_p_beta_fn_.Init();
 	sum_second_derivative_p_beta_fn_.Init();
@@ -206,24 +206,27 @@ void Objective::Init2(Vector &ind_unknown_x, int count_init2) {
 	sum_second_derivative_conditionl_postponed_q_.Init();
 
 
-	/*for(index_t i=0; i<first_stage_x_.size(); i++) {
-		sum_first_derivative_p_beta_fn_[i]=0;
-		sum_second_derivative_p_beta_fn_[i]=0;
-		sum_first_derivative_q_beta_fn_[i]=0;
-		sum_second_derivative_q_beta_fn_[i]=0;
-		sum_second_derivative_p_q_beta_fn_[i]=0;
-		sum_second_derivative_conditionl_postponed_p_[i].Init(num_of_betas_);
-		sum_second_derivative_conditionl_postponed_p_[i].SetZero();
-		sum_second_derivative_conditionl_postponed_q_[i].Init(num_of_betas_);
-		sum_second_derivative_conditionl_postponed_q_[i].SetZero();
+	//for(index_t i=0; i<first_stage_x_.size(); i++) {
+		//sum_first_derivative_p_beta_fn_[i]=0;
+		//sum_second_derivative_p_beta_fn_[i]=0;
+		//sum_first_derivative_q_beta_fn_[i]=0;
+		//sum_second_derivative_q_beta_fn_[i]=0;
+		//sum_second_derivative_p_q_beta_fn_[i]=0;
+		//sum_second_derivative_conditionl_postponed_p_[i].Init(num_of_betas_);
+		//sum_second_derivative_conditionl_postponed_p_[i].SetZero();
+		//sum_second_derivative_conditionl_postponed_q_[i].Init(num_of_betas_);
+		//sum_second_derivative_conditionl_postponed_q_[i].SetZero();
 
-	}
-	*/
+	//}
+	
 
 	count_init2+=1;
 
 
 }
+
+
+
 
 
 void Objective::Init3(int sample_size,

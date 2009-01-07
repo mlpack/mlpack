@@ -7,7 +7,7 @@ using namespace std;	//max
 
 void Optimization::Init(fx_module *module) {
 	module_=module;
-	max_radius_=100.0;
+	max_radius_=1000.0;
 }
 
 
