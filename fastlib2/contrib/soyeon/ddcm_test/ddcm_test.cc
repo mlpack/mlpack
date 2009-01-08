@@ -140,7 +140,7 @@ int main(int argc, char *argv[]) {
 	
 
 
-  int max_iteration=100;
+  int max_iteration=2;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
