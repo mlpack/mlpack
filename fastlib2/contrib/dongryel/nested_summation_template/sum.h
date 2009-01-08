@@ -9,61 +9,58 @@ class Sum: public Operator {
  public:
 
   double NaiveCompute
-  (const std::map<index_t, index_t> &constant_dataset_indices) {
+  (std::map<index_t, index_t> &constant_dataset_indices) {
 
     double sum_result = 0;
+ 
+    // Get the list of restrictions associated with the current
+    // dataset index.
+    std::map<index_t, std::vector<int> >::iterator restriction = 
+      restrictions_->find(dataset_index_);
+    const std::vector<index_t> &restriction_vector = (*restriction).second;
+  
+    // The current dataset that is involved.
+    const Matrix *dataset = datasets_[dataset_index_];
 
-    // If this is the base case, where there is no more nested
-    // operator inside, then call the multi-tree algorithm.
-    if(operators_.size() > 0) {
-      
-    }
+    // Loop over all indices of the current operator.
+    for(index_t n = 0; n < dataset->n_cols(); n++) {
 
-    // Otherwise, recursively evaluate the operators and add them up.
-    else {
-      
+      if(CheckViolation_(constant_dataset_indices, restriction_vector, n)) {
+	continue;
+      }
+
+      // Re-assign the point index for the current dataset.
+      constant_dataset_indices[dataset_index_] = n;
+
+      // Recursively evaluate the operators and add them up.
       for(index_t i = 0; i < operators_.size(); i++) {
-	sum_result += operators_[i]->NaiveCompute();
+	sum_result += operators_[i]->NaiveCompute(constant_dataset_indices);
       }
     }
-    
-    if(!is_positive_) {
-      sum_result = -sum_result;
-    }
-    if(should_be_inverted_) {
-      sum_result = 1.0 / sum_result;
-    }
-    
-    return sum_result;
+    return PostProcess_(constant_dataset_indices, sum_result);
   }
 
   double MonteCarloCompute
-  (const std::map<index_t, index_t> &constant_dataset_indices) {
+  (std::map<index_t, index_t> &constant_dataset_indices) {
 
     double sum_result = 0;
 
-    // If this is the base case, where there is no more nested
-    // operator inside, then call the multi-tree algorithm.
-    if(operators_.size() == 0) {
-      
-    }
+    // Sample over some combinations of the current operator, and
+    // recursively call the operators underneath the current operator,
+    // and summing all of them up.
+    for(index_t s = 0; s < sample_size; s++) {
 
-    // Otherwise, recursively evaluate the operators and add them up.
-    else {
+      constant_dataset_indices[dataset_index_] =
+	ChoosePointIndex_(constant_dataset_indices);
       
+      // Recursively evaluate the operators and add them up.
       for(index_t i = 0; i < operators_.size(); i++) {
-	sum_result += operators_[i]->MonteCarloCompute();
+	sum_result += operators_[i]->MonteCarloCompute
+	  (constant_dataset_indices);
       }
     }
     
-    if(!is_positive_) {
-      sum_result = -sum_result;
-    }
-    if(should_be_inverted_) {
-      sum_result = 1.0 / sum_result;
-    }
-    
-    return sum_result;    
+    return PostProcess_(constant_dataset_indices, sum_result);
   }
 
 };
