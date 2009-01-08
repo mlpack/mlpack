@@ -8,37 +8,27 @@ class Ratio: public Operator {
  public:
   
   double NaiveCompute
-  (const std::map<index_t, index_t> &constant_dataset_indices) {
+  (std::map<index_t, index_t> &constant_dataset_indices) {
 
-    double numerator_result = operators_[0]->NaiveCompute();
-    double denominator_result = operators_[1]->NaiveCompute();    
+    double numerator_result = 
+      operators_[0]->NaiveCompute(constant_dataset_indices);
+    double denominator_result = 
+      operators_[1]->NaiveCompute(constant_dataset_indices);
     double result = numerator_result / denominator_result;
-
-    if(!is_positive_) {
-      result = -result;
-    }
-    if(should_be_inverted_) {
-      result = 1.0 / result;
-    }
     
-    return result;
+    return PostProcess_(constant_dataset_indices, result);
   }
 
   double MonteCarloCompute
-  (const std::map<index_t, index_t> &constant_dataset_indices) {
+  (std::map<index_t, index_t> &constant_dataset_indices) {
 
-    double numerator_result = operators_[0]->MonteCarloCompute();
-    double denominator_result = operators_[1]->MonteCarloCompute();    
+    double numerator_result = 
+      operators_[0]->MonteCarloCompute(constant_dataset_indices);
+    double denominator_result = 
+      operators_[1]->MonteCarloCompute(constant_dataset_indices);
     double result = numerator_result / denominator_result;
 
-    if(!is_positive_) {
-      result = -result;
-    }
-    if(should_be_inverted_) {
-      result = 1.0 / result;
-    }
-    
-    return result;
+    return PostProcess_(constant_dataset_indices, result);
   }
 
 };
