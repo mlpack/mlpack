@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
 
 	//Trust region parameter
 	//double max_radius=10;
-	double current_radius=0.001;	//initial_radius
+	double current_radius=1;	//initial_radius
 	double eta=0.2;
 	
 	double rho=0; //agreement(ratio)
@@ -137,10 +137,11 @@ int main(int argc, char *argv[]) {
 	}
 	cout<<endl;
 
+
 	
 
 
-  int max_iteration=2;
+  int max_iteration=50;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
@@ -195,6 +196,7 @@ int main(int argc, char *argv[]) {
 		cout<<endl;
 		*/
 
+		
 		double tobjective;
 		tobjective=0;
 		objective.ComputeObjective(tpar, 
@@ -203,11 +205,13 @@ int main(int argc, char *argv[]) {
 		tobjective/=current_added_first_stage_x.size();
 		cout<<"max objective="<<tobjective<<endl;
 
+		
+
 
 		Vector current_gradient;
 		//gradient.Init(num_of_betas_);
 		objective.ComputeGradient(current_parameter, &current_gradient);
-		//la::Scale(1.0/current_added_first_stage_x.size(), &current_gradient);
+		la::Scale(1.0/current_added_first_stage_x.size(), &current_gradient);
 		
 		//printf("The objective is %g", dummy_objective);
 		/*
@@ -221,6 +225,7 @@ int main(int argc, char *argv[]) {
 
 
 
+		/*
 		Vector opt_gradient;
 		//gradient.Init(num_of_betas_);
 		objective.ComputeGradient(tpar, &opt_gradient);
@@ -237,7 +242,8 @@ int main(int argc, char *argv[]) {
 		opt_gradient_norm = sqrt(la::Dot(opt_gradient, opt_gradient));
 		cout<<"gradient_norm at true par="<<opt_gradient_norm<<endl;
 
-		
+		*/
+
 		//NOTIFY("Gradient calculation ends");
 		
 		
@@ -245,7 +251,7 @@ int main(int argc, char *argv[]) {
 		//NOTIFY("Exact hessian calculation starts");
 		Matrix current_hessian;
 		objective.ComputeHessian(current_parameter, &current_hessian);
-		//la::Scale(1.0/current_added_first_stage_x.size(), &current_hessian);
+		la::Scale(1.0/current_added_first_stage_x.size(), &current_hessian);
 		
 		cout<<"Hessian matrix: "<<endl;
 
@@ -448,7 +454,8 @@ int main(int argc, char *argv[]) {
 		
 				
 		//agreement rho calculation
-		rho=+1.0*(current_objective-next_objective)/(current_delta_m)*current_added_first_stage_x.size();
+		//rho=1.0*(current_objective-next_objective)/(current_delta_m)*current_added_first_stage_x.size();
+		rho=1.0*(current_objective-next_objective)/(current_delta_m)*current_added_first_stage_x.size();
 		cout<<"rho= "<<rho<<endl;
 		if(rho>eta){
 			current_parameter.CopyValues(next_parameter);
