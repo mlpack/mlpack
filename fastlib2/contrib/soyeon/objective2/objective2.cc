@@ -641,6 +641,8 @@ void Objective::ComputeDerivativeBetaTerm1_(Vector *beta_term1) {
 	//beta_term1=&temp3;
 	beta_term1->Copy(temp3);
   //return derivative_beta_term1;
+	
+
 }
 
 
@@ -703,6 +705,8 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 
 
 	for(index_t n=0; n<first_stage_x_.size(); n++){
+
+		
 
 		Matrix temp3; //dotLogit2*dotLogit2'
 		temp3.Init(second_stage_x_[n].n_cols(), second_stage_x_[n].n_cols());

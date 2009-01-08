@@ -171,15 +171,15 @@ int main(int argc, char *argv[]) {
 			NOTIFY("All data are used");
 	
 		}
-
-		
+		double current_sample_size;
+		current_sample_size=current_added_first_stage_x.size();
 
 
 		cout<<"Number of data used="<<current_added_first_stage_x.size()<<endl;
-		objective.ComputeObjective(current_parameter, 
+		objective.ComputeObjective(current_sample_size, current_parameter, 
 															 &current_objective);
 		
-		current_objective/=current_added_first_stage_x.size();
+		//current_objective/=current_added_first_stage_x.size();
 		NOTIFY("The objective is %g", current_objective);
 
 		
@@ -199,10 +199,10 @@ int main(int argc, char *argv[]) {
 		
 		double tobjective;
 		tobjective=0;
-		objective.ComputeObjective(tpar, 
+		objective.ComputeObjective(current_sample_size, tpar, 
 															 &tobjective);
 		
-		tobjective/=current_added_first_stage_x.size();
+		//tobjective/=current_added_first_stage_x.size();
 		cout<<"max objective="<<tobjective<<endl;
 
 		
@@ -210,8 +210,8 @@ int main(int argc, char *argv[]) {
 
 		Vector current_gradient;
 		//gradient.Init(num_of_betas_);
-		objective.ComputeGradient(current_parameter, &current_gradient);
-		la::Scale(1.0/current_added_first_stage_x.size(), &current_gradient);
+		objective.ComputeGradient(current_sample_size, current_parameter, &current_gradient);
+		//la::Scale(1.0/current_added_first_stage_x.size(), &current_gradient);
 		
 		//printf("The objective is %g", dummy_objective);
 		/*
@@ -250,8 +250,8 @@ int main(int argc, char *argv[]) {
 
 		//NOTIFY("Exact hessian calculation starts");
 		Matrix current_hessian;
-		objective.ComputeHessian(current_parameter, &current_hessian);
-		la::Scale(1.0/current_added_first_stage_x.size(), &current_hessian);
+		objective.ComputeHessian(current_sample_size, current_parameter, &current_hessian);
+		//la::Scale(1.0/current_added_first_stage_x.size(), &current_hessian);
 		
 		cout<<"Hessian matrix: "<<endl;
 
@@ -401,9 +401,9 @@ int main(int argc, char *argv[]) {
 		}
 		cout<<endl;
 
-		objective.ComputeObjective(next_parameter, 
+		objective.ComputeObjective(current_sample_size, next_parameter, 
 														 &next_objective);
-		next_objective/=current_added_first_stage_x.size();
+		//next_objective/=current_added_first_stage_x.size();
 		NOTIFY("The Next objective is %g", next_objective);
 
 	
@@ -455,7 +455,7 @@ int main(int argc, char *argv[]) {
 				
 		//agreement rho calculation
 		//rho=1.0*(current_objective-next_objective)/(current_delta_m)*current_added_first_stage_x.size();
-		rho=1.0*(current_objective-next_objective)/(current_delta_m)*current_added_first_stage_x.size();
+		rho=1.0*(current_objective-next_objective)/(current_delta_m);
 		cout<<"rho= "<<rho<<endl;
 		if(rho>eta){
 			current_parameter.CopyValues(next_parameter);
@@ -468,7 +468,7 @@ int main(int argc, char *argv[]) {
 		if(sample_size==num_of_people){
 			end_sampling+=1;
 			double gradient_norm;
-			la::Scale(1.0/num_of_people, &current_gradient);
+			//la::Scale(1.0/num_of_people, &current_gradient);
 			gradient_norm = sqrt(la::Dot(current_gradient, current_gradient));
 			
 			cout<<"gradient_norm="<<gradient_norm<<endl;
@@ -497,7 +497,7 @@ int main(int argc, char *argv[]) {
 
 	//Compute Variance of the estimates -H^{-1}
 	Matrix final_hessian;
-	objective.ComputeHessian(current_parameter, &final_hessian);
+	objective.ComputeHessian(current_added_first_stage_x.size(), current_parameter, &final_hessian);
 	Matrix inverse_hessian;
 	if( !PASSED(la::InverseInit(final_hessian, &inverse_hessian)) ) {
 		NOTIFY("Final hessian matrix is not invertible!");

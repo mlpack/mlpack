@@ -21,12 +21,15 @@ class Objective {
 						
 
 	//void Destruct();
-  void ComputeObjective(Vector &current_parameter, 
-										 double *objective);
-	void ComputeGradient(Vector &current_parameter, 
-										 Vector *gradient);
-	void ComputeHessian(Vector &current_parameter, 
-										 Matrix *hessian);
+  void ComputeObjective(double current_sample,
+												Vector &current_parameter, 
+												double *objective);
+	void ComputeGradient(double current_sample,
+											 Vector &current_parameter, 
+										   Vector *gradient);
+	void ComputeHessian(double current_sample,
+											Vector &current_parameter, 
+										  Matrix *hessian);
 	void ComputeChoiceProbability(Vector &current_parameter, 
 																				 Vector *choice_probability);
  

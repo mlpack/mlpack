@@ -349,8 +349,9 @@ void Objective::Init3(int sample_size,
 
 
 //void Objective::ComputeObjective(Matrix &x, double *objective) {
-void Objective::ComputeObjective(Vector &current_parameter, 
-										 double *objective) { 
+void Objective::ComputeObjective(double current_sample,
+																 Vector &current_parameter, 
+																 double *objective) { 
 	
 	Vector betas;
   //betas.Alias(x.ptr(), x.n_rows());
@@ -383,7 +384,7 @@ void Objective::ComputeObjective(Vector &current_parameter,
 */
 
 	
-	*objective = -1*(ComputeTerm1_(betas) 
+	*objective = (-1/current_sample)*(ComputeTerm1_(betas) 
                + ComputeTerm2_()
                + ComputeTerm3_());
 
@@ -400,8 +401,9 @@ void Objective::ComputeObjective(Vector &current_parameter,
 ////Calculate gradient
 ////////////////////////////////////////////////
 
-void Objective::ComputeGradient(Vector &current_parameter, 
-										 Vector *gradient) { 
+void Objective::ComputeGradient(double current_sample,
+																Vector &current_parameter, 
+																Vector *gradient) { 
 	
 	Vector betas;
   //betas.Alias(x.ptr(), x.n_rows());
@@ -466,7 +468,7 @@ void Objective::ComputeGradient(Vector &current_parameter,
 																+ComputeDerivativeQTerm3_();
 
 	//handle minimization
-	la::Scale(-1.0, &dummy_gradient);
+	la::Scale(-1.0/current_sample, &dummy_gradient);
 
 
 	gradient->Copy(dummy_gradient);
@@ -480,8 +482,9 @@ void Objective::ComputeGradient(Vector &current_parameter,
 ////Calculate hessian
 ////////////////////////////////////////////////
 
-void Objective::ComputeHessian(Vector &current_parameter, 
-										 Matrix *hessian) { 
+void Objective::ComputeHessian(double current_sample,
+															 Vector &current_parameter, 
+															 Matrix *hessian) { 
 	
 	Vector betas;
   //betas.Alias(x.ptr(), x.n_rows());
@@ -640,7 +643,9 @@ void Objective::ComputeHessian(Vector &current_parameter,
 
 
 	//handle minimization
-	la::Scale(-1.0, &dummy_hessian);
+	//la::Scale(-1.0, &dummy_hessian);
+	la::Scale(-1.0/current_sample, &dummy_hessian);
+
 
 	hessian->Copy(dummy_hessian);
 	//cout<<"hessian done"<<endl;
