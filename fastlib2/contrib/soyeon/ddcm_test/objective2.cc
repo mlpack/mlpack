@@ -154,9 +154,9 @@ void Objective::Init2(Vector &ind_unknown_x, int count_init2) {
   //}
 
 	denumerator_beta_function_=0;
-	num_of_t_beta_fn_=100;
+	num_of_t_beta_fn_=5;
 	t_weight_=1;
-	num_of_alphas_=100;
+	num_of_alphas_=5;
 	alpha_weight_=1;  
 
 	//from here for the gradient
@@ -706,7 +706,7 @@ double Objective::ComputeTerm1_(Vector &betas) {
 			term1+=la::Dot(betas, temp) - log(exp_betas_times_x1_[n]);
     }
   }
-	cout<<"term1="<<term1<<endl;
+	//cout<<"term1="<<term1<<endl;
   return term1;
 	
 }
@@ -721,6 +721,7 @@ double Objective::ComputeTerm2_() {
       term2+=log(1-postponed_probability_[n]);
     }
   }
+	cout<<"term2="<<term2<<endl;
   return term2;
 }
 
@@ -732,8 +733,10 @@ double Objective::ComputeTerm3_() {
     } else {
       DEBUG_ASSERT(postponed_probability_[n]>0);
       term3+=log(postponed_probability_[n]);
+			cout<<"postponed_prob="<<postponed_probability_[n]<<endl;
     }
   }
+	cout<<"term3="<<term3<<endl;
   return term3;
 }
 

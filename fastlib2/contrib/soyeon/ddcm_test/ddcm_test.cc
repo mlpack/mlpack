@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
 	NOTIFY("Number of people in dataset is %d", num_of_people);
 	NOTIFY("Shuffling");
 	sampling.Shuffle();
-	sampling.Shuffle();
+	//sampling.Shuffle();
 	//sampling.Shuffle();
 	NOTIFY("Initial sampling percent is %f", initial_percent_sampling);
 		
@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
 	
 
 
-  int max_iteration=50;
+  int max_iteration=2;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
