@@ -140,15 +140,16 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 		NOTIFY("Number of parameters is %d", num_of_betas+2);
 		initial_parameter->Init(num_of_betas+2);
 		
-		initial_parameter->SetAll(10.0);
+		initial_parameter->SetAll(3);
 
 		/*
 		initial_parameter->SetZero();
-		(*initial_parameter)[0]=2;
-		(*initial_parameter)[1]=1.1;
-		(*initial_parameter)[num_of_betas]=1.8;
-		(*initial_parameter)[num_of_betas+1]=2.1;
+		(*initial_parameter)[0]=1;
+		(*initial_parameter)[1]=1;
+		(*initial_parameter)[num_of_betas]=2;
+		(*initial_parameter)[num_of_betas+1]=2;
 		*/
+
 
 		/*
 		cout<<"Starting points are:   ";
@@ -230,11 +231,11 @@ void Sampling::Shuffle() {
 		swap( shuffled_array_[j], shuffled_array_[random] );
 	}	//j
 
-	//cout<<"shuffled_array :";
-	//for(index_t i=0; i<num_of_people_; i++){
-	//	cout<<shuffled_array_[i] <<" ";
-	//}
-	//cout<<endl;
+	cout<<"shuffled_array :";
+	for(index_t i=0; i<num_of_people_; i++){
+		cout<<shuffled_array_[i] <<" ";
+	}
+	cout<<endl;
 
 }
 

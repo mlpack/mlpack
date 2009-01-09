@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
 	NOTIFY("Shuffling");
 	sampling.Shuffle();
 	sampling.Shuffle();
-	sampling.Shuffle();
+	//sampling.Shuffle();
 	NOTIFY("Initial sampling percent is %f", initial_percent_sampling);
 		
 	int count_init2=0;
@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
 
 	//Trust region parameter
 	//double max_radius=10;
-	double current_radius=1;	//initial_radius
+	double current_radius=0.01;	//initial_radius
 	double eta=0.2;
 	
 	double rho=0; //agreement(ratio)
@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
 	
-	
+	/*
 	Vector tpar;
 	tpar.Init(current_parameter.length());
 	tpar[0]=1;
@@ -136,6 +136,7 @@ int main(int argc, char *argv[]) {
 		cout<<tpar[i]<<" ";
 	}
 	cout<<endl;
+  */
 
 
 	
@@ -182,7 +183,7 @@ int main(int argc, char *argv[]) {
 		//current_objective/=current_added_first_stage_x.size();
 		NOTIFY("The objective is %g", current_objective);
 
-		
+		cout<<"current_sample_size="<<current_sample_size<<endl;
 		//NOTIFY("Gradient calculation starts");
 		
 		/*
@@ -196,7 +197,7 @@ int main(int argc, char *argv[]) {
 		cout<<endl;
 		*/
 
-		
+		/*
 		double tobjective;
 		tobjective=0;
 		objective.ComputeObjective(current_sample_size, tpar, 
@@ -204,6 +205,7 @@ int main(int argc, char *argv[]) {
 		
 		//tobjective/=current_added_first_stage_x.size();
 		cout<<"max objective="<<tobjective<<endl;
+    */
 
 		
 
@@ -214,23 +216,23 @@ int main(int argc, char *argv[]) {
 		//la::Scale(1.0/current_added_first_stage_x.size(), &current_gradient);
 		
 		//printf("The objective is %g", dummy_objective);
-		/*
+		
 		cout<<"Gradient vector: ";
 		for (index_t i=0; i<current_gradient.length(); i++)
 		{
 			std::cout<<current_gradient[i]<<" ";
 		}
 		std::cout<<endl;
-		*/
+		
 
 
 
-		/*
+		/*		
 		Vector opt_gradient;
 		//gradient.Init(num_of_betas_);
-		objective.ComputeGradient(tpar, &opt_gradient);
+		objective.ComputeGradient(current_sample_size, tpar, &opt_gradient);
 		//cout<<"current_added_first_stage_x.size()="<<current_added_first_stage_x.size()<<endl;
-		la::Scale(1.0/current_added_first_stage_x.size(), &opt_gradient);
+		//la::Scale(1.0/current_added_first_stage_x.size(), &opt_gradient);
 		cout<<"Gradient vector at true par: ";
 		for (index_t i=0; i<opt_gradient.length(); i++)
 		{
@@ -241,8 +243,10 @@ int main(int argc, char *argv[]) {
 		double opt_gradient_norm;
 		opt_gradient_norm = sqrt(la::Dot(opt_gradient, opt_gradient));
 		cout<<"gradient_norm at true par="<<opt_gradient_norm<<endl;
-
 		*/
+
+
+		
 
 		//NOTIFY("Gradient calculation ends");
 		
@@ -455,7 +459,7 @@ int main(int argc, char *argv[]) {
 				
 		//agreement rho calculation
 		//rho=1.0*(current_objective-next_objective)/(current_delta_m)*current_added_first_stage_x.size();
-		rho=1.0*(current_objective-next_objective)/(current_delta_m);
+		rho= 1.0*(current_objective-next_objective)/(current_delta_m);
 		cout<<"rho= "<<rho<<endl;
 		if(rho>eta){
 			current_parameter.CopyValues(next_parameter);
