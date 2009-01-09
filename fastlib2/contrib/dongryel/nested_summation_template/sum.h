@@ -20,7 +20,7 @@ class Sum: public Operator {
     const std::vector<index_t> &restriction_vector = (*restriction).second;
   
     // The current dataset that is involved.
-    const Matrix *dataset = datasets_[dataset_index_];
+    const Matrix *dataset = (*datasets_)[dataset_index_];
 
     // Loop over all indices of the current operator.
     for(index_t n = 0; n < dataset->n_cols(); n++) {
@@ -48,10 +48,10 @@ class Sum: public Operator {
     // Sample over some combinations of the current operator, and
     // recursively call the operators underneath the current operator,
     // and summing all of them up.
+    int sample_size = 25;
     for(index_t s = 0; s < sample_size; s++) {
 
-      constant_dataset_indices[dataset_index_] =
-	ChoosePointIndex_(constant_dataset_indices);
+      ChoosePointIndex_(constant_dataset_indices);
       
       // Recursively evaluate the operators and add them up.
       for(index_t i = 0; i < operators_.size(); i++) {
