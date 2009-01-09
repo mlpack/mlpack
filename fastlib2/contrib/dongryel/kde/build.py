@@ -1,16 +1,26 @@
 librule(
     name = "kde",                            # this line can be safely omitted
     sources = [],                            # files that must be compiled
-    headers = ["kde_problem.h"],
-    deplibs = ["fastlib:fastlib_int",
-               "contrib/dongryel/multitree_template:multitree_template",
-               "contrib/dongryel/proximity_project:proximity_project",
-               "mlpack/series_expansion:series_expansion"]
+    headers = ["kde_cv.h",
+               "kde_problem.h"],
+    deplibs =
+    ["fastlib:fastlib_int",
+     "contrib/dongryel/multitree_template:multitree_template",
+     "contrib/dongryel/nested_summation_template:nested_summation_template",
+     "contrib/dongryel/proximity_project:proximity_project",
+     "mlpack/series_expansion:series_expansion"]
     )
 
 binrule(
     name = "kde_bin",
     sources = ["kde_main.cc"],
+    headers = [],
+    deplibs = [":kde"]
+    )
+
+binrule(
+    name = "kde_cv_bin",
+    sources = ["kde_cv_main.cc"],
     headers = [],
     deplibs = [":kde"]
     )
