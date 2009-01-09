@@ -52,9 +52,20 @@ class GCCCompiler(CompilerInfo):
   def __init__(self):
     CompilerInfo.__init__(self)
     use_gfortran = True
-    if not os.path.exists("/usr/bin/gfortran"):
-      use_gfortran = False
-      print "!!! Using g77.  GFortran will be preferred eventually."
+
+    check_gfortran_existence = os.popen("which gfortran")
+    check_gfortran_existence_result = check_gfortran_existence.read()
+    check_gfortran_existence.close()
+    check_gfortran_existence_result = check_gfortran_existence_result[:len(check_gfortran_existence_result) - 1]
+    if len(check_gfortran_existence_result) == 0:
+      check_gfortran_existence = os.popen("which gfortran-4")
+      check_gfortran_existence_result = check_gfortran_existence.read()
+      check_gfortran_existence.close()
+      check_gfortran_existence_result = check_gfortran_existence_result[:len(check_gfortran_existence_result) - 1]
+      if len(check_gfortran_existence_result) == 0:
+        use_gfortran = False
+        print "!!! Using g77.  GFortran will be preferred eventually."
+
     self.name = "gcc"
     self.mode_dictionary = {
       "verbose": "-g -DDEBUG -DVERBOSE",
@@ -87,6 +98,14 @@ class GCC4Compiler(GCCCompiler):
     self.command_from_ext["c"] = "gcc4 %s -c %s -o %s -Wall";
     self.command_from_ext["cc"] = "g++4 -Wall -Woverloaded-virtual -fno-exceptions -Wparentheses -fno-exceptions %s -c %s -o %s";
     self.linker = "g++4"
+
+class GCCdash4Compiler(GCCCompiler):
+  def __init__(self):
+    GCCCompiler.__init__(self)
+    self.name = "gcc-4"
+    self.command_from_ext["c"] = "gcc-4 %s -c %s -o %s -Wall";
+    self.command_from_ext["cc"] = "g++-4 -Wall -Woverloaded-virtual -fno-exceptions -Wparentheses -fno-exceptions %s -c %s -o %s";
+    self.linker = "g++-4"
 
 class ICCCompiler(CompilerInfo):
   def __init__(self):
@@ -132,7 +151,7 @@ class MPICompiler(CompilerInfo):
     self.lflags_start = ""
     self.lflags_end = "-lm -lpthread %s" % (self.lflags_fortran)
 
-compiler_choices = [GCCCompiler(), GCC4Compiler(), MPICompiler(), ICCCompiler()]
+compiler_choices = [GCCCompiler(), GCC4Compiler(), GCCdash4Compiler(), MPICompiler(), ICCCompiler()]
 compilers = dict([(c.name, c) for c in compiler_choices])
 
 class MakeBuildSys(dep.DepSys):
