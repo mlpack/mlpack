@@ -140,7 +140,7 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 		NOTIFY("Number of parameters is %d", num_of_betas+2);
 		initial_parameter->Init(num_of_betas+2);
 		
-		initial_parameter->SetAll(3);
+		initial_parameter->SetAll(1.5);
 
 		/*
 		initial_parameter->SetZero();
