@@ -1,11 +1,12 @@
 #ifndef OPERATOR_H
 #define OPERATOR_H
 
+#include <map>
 #include "fastlib/fastlib.h"
 
 class Operator {
 
- private:
+ protected:
 
   /** @brief The nested operators under this operator.
    */
@@ -23,7 +24,7 @@ class Operator {
   /** @brief The ordered list of datasets. This is a global list of
    *         datasets.
    */
-  ArrayList<Matrix *> datasets_;
+  ArrayList<Matrix *> *datasets_;
 
   /** @brief A boolean flag that specifies whether the recursive
    *         result should be negated or not.
@@ -35,22 +36,11 @@ class Operator {
    */
   bool should_be_inverted_;
 
-  OT_DEF_BASIC(Operator) {
-    OT_MY_OBJECT(operators_);
-    OT_MY_OBJECT(dataset_index_);
-    OT_MY_OBJECT(is_positive_);
-    OT_MY_OBJECT(should_be_inverted_);
-  }
-
   bool CheckViolation_
   (const std::map<index_t, index_t> &previous_constant_dataset_indices,
    const std::vector<index_t> &restriction_vector, index_t new_point_index) {
 
-    for(index_t n = 0; n < restriction_vector.size(); n++) {
-      
-      // Look up the point index chosen for the current
-      // restriction...
-      index_t restriction_dataset_index = restriction_vector[n];
+    for(index_t n = 0; n < (index_t) restriction_vector.size(); n++) {
       
       if(previous_constant_dataset_indices.find(new_point_index) !=
 	 previous_constant_dataset_indices.end()) {
@@ -75,7 +65,7 @@ class Operator {
     const std::vector<index_t> &restriction_vector = (*restriction).second;
 
     // The pointer to the current dataset.
-    const Matrix *current_dataset = datasets_[dataset_index_];
+    const Matrix *current_dataset = (*datasets_)[dataset_index_];
 
     if(restriction != restrictions_->end()) {
       
@@ -98,7 +88,7 @@ class Operator {
       new_point_index = math::RandInt(0, current_dataset->n_cols());
     }
 
-    previous_constant_data_indices[dataset_index_] = new_point_index;
+    previous_constant_dataset_indices[dataset_index_] = new_point_index;
   }
 
   double PostProcess_(std::map<index_t, index_t> &constant_dataset_indices,
@@ -121,18 +111,7 @@ class Operator {
 
  public:
 
-  /** @brief Evaluate the operator exactly.
-   */
-  virtual double NaiveCompute
-  (std::map<index_t, index_t> &constant_dataset_indices) = 0;
-
-  /** @brief Evaluate the operator using Monte Carlo.
-   */
-  virtual double MonteCarloCompute
-  (std::map<index_t, index_t> &constant_dataset_indices) = 0;
-
-  const ArrayList<index_t> &dataset_indices() {
-    return dataset_indices_;
+  virtual ~Operator() {
   }
   
   const std::map<index_t, std::vector<index_t> > *restrictions() {
@@ -142,6 +121,30 @@ class Operator {
   const ArrayList<Operator *> &child_operators() {
     return operators_;
   }
+
+  void add_child_operator(Operator *child_operator_in) {
+
+    operators_.PushBackRaw();
+    operators_[operators_.size() - 1] = child_operator_in;
+  }
+
+  void set_positive_flag(bool positive_flag_in) {
+    is_positive_ = positive_flag_in;
+  }
+
+  void set_inversion_flag(bool inversion_flag_in) {
+    should_be_inverted_ = inversion_flag_in;
+  }
+
+  /** @brief Evaluate the operator exactly.
+   */
+  virtual double NaiveCompute
+  (std::map<index_t, index_t> &constant_dataset_indices) = 0;
+
+  /** @brief Evaluate the operator using Monte Carlo.
+   */
+  virtual double MonteCarloCompute
+  (std::map<index_t, index_t> &constant_dataset_indices) = 0;
 
 };
 
