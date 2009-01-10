@@ -1,5 +1,5 @@
 #include "textfile.h"
-#include "base/test.h"
+#include "fastlib/base/test.h"
 
 #include <math.h>
 
