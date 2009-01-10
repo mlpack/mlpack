@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
 
 	//for stopping rule
 	double error_tolerance=1e-16;
-	double zero_tolerance=1e-1;	//for gradient norm
+	double zero_tolerance=1e-2;	//for gradient norm
 
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
