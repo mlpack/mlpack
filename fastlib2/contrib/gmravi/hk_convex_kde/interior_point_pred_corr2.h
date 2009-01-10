@@ -12,7 +12,6 @@
 #define SPARSITY_THRESHOLD 0.1
 #define SMALL_STEP pow(10,-7)
 #define MAX_NUM_ITERATIONS 50
-#include <map>
 
 class HKInteriorPointPredictorCorrector{
   
@@ -35,13 +34,13 @@ class HKInteriorPointPredictorCorrector{
   //two parameters namely sigma and sigma_h
 
   //This is like the bw of the gaussian hyperkernel
-  double sigma_;
+  double sigma_hk_;
 
   //This measures the interaction between 2 pais of points. If set to
   //infinity then this interaction is considered to be constant
   //irrespective of the distance between the pairs of points
 
-  double sigma_h_;
+  double sigma_h_hk_;
 
   //The regularization factor
   
@@ -68,15 +67,15 @@ class HKInteriorPointPredictorCorrector{
  
   //The primal and the dual variables
   Vector beta_vector_;
-  Vector delta_beta_vector_;
+  Vector delta_beta_pred_vector_;
 
   Vector gamma_vector_;
-  Vector delta_gamma_vector_;
+  Vector delta_gamma_pred_vector_;
 
   Vector D_vector_; //D<-\frac{\beta_i}{\gamma_i}
 
   double psi_;
-  double delta_psi_;
+  double delta_psi_pred_;
 
   //Cholesky factor of the matrix 2M
 
@@ -97,9 +96,18 @@ class HKInteriorPointPredictorCorrector{
   Vector v2_vector_;
   double s1_;
 
-
-  //This is the path following constant. This will converge to 0
+  //This is just the dot product between \beta and \gamma. At
+  //optimality this should be 0
   double mu_;
+
+  //The sigma value. This value along with $\mu$ helps calculate the
+  //path following constant $\tau=\mu \times \sigma$
+  double sigma_pred_corr_;
+  
+  //Step lengths for primal and dual variable
+
+  double primal_step_length_;
+  double dual_step_length_;
 
   //Keep a tab on the number of iterations
 
@@ -157,7 +165,7 @@ class HKInteriorPointPredictorCorrector{
       Matrix chol_factor_K_prime_matrix;
       ArrayList <index_t> perm_mat_K_prime_matrix;
       
-      ichol_dynamic.Init(train_set_,sigma_h_,sigma_,0); //lambda =0
+      ichol_dynamic.Init(train_set_,sigma_h_hk_,sigma_hk_,0); //lambda =0
       perm_mat_K_prime_matrix.Init(sqd_num_train_points_);
       ichol_dynamic.Compute(chol_factor_K_prime_matrix,perm_mat_K_prime_matrix);
       
@@ -221,7 +229,7 @@ class HKInteriorPointPredictorCorrector{
     void GetLinearPartOfObjective_(){
       
       GaussianHyperKernel ghk;
-      ghk.Init(sigma_,sigma_h_,num_dims_);
+      ghk.Init(sigma_hk_,sigma_h_hk_,num_dims_);
       double norm_const=ghk.CalcNormConstant();
       
       double constant=2.0/(num_train_points_*(num_train_points_-1));
@@ -229,7 +237,7 @@ class HKInteriorPointPredictorCorrector{
       
       //THIS HAS TO CHANGE WHEN I USE A MULTIPLICATIVE KERComputeNEL
       GaussianKernel gpq; //This is the gaussian kernel between x_p,x_q
-      gpq.Init(sigma_*sqrt(2),num_dims_);
+      gpq.Init(sigma_hk_*sqrt(2),num_dims_);
       
       //Iterations begin from here...................
       for(index_t p=0;p<num_train_points_;p++){
@@ -291,7 +299,7 @@ class HKInteriorPointPredictorCorrector{
     
     //bw=sqrt(6\sigma^2+4\sigma_h^2)
     
-    double bandwidth=sqrt(6*sigma_*sigma_+4*sigma_h_*sigma_h_); 
+    double bandwidth=sqrt(6*sigma_hk_*sigma_hk_+4*sigma_h_hk_*sigma_h_hk_); 
     double tau=0.004;
     
     //Having fixed p, let q vary from q=p onwards
@@ -328,7 +336,7 @@ class HKInteriorPointPredictorCorrector{
     dte.GetEstimatesInitialized(p,row_p);
     
     GaussianKernel gk;
-    gk.Init(sigma_*sqrt(2));
+    gk.Init(sigma_hk_*sqrt(2));
     double norm_const=gk.CalcNormConstant(num_dims_);
 
     //Having go the estimates multiply with <x_p,x_q>_{2\sigm,a^2}
@@ -391,10 +399,10 @@ class HKInteriorPointPredictorCorrector{
     printf("Before calculating densities..\n");
     
     GaussianHyperKernel ghk;
-    ghk.Init(sigma_,sigma_h_,num_dims_);
+    ghk.Init(sigma_hk_,sigma_h_hk_,num_dims_);
     
     GaussianKernel gk;
-    gk.Init(sigma_*sqrt(2));
+    gk.Init(sigma_hk_*sqrt(2));
     
     //$ \hat{f}\left(x\right)=\frac{1}{m}\sum_{i=1}^m \langle
     //x,x_i\rangle \sum_{p=1}^m\sum_{q=1}^m \beta_{p,q}\langle
@@ -465,7 +473,7 @@ class HKInteriorPointPredictorCorrector{
   //To calculate ISE we need to find the cholesky factor of
   //\underline{K}
   
-  void FormScalars1_(){
+  void FormScalars1PredictorStep_(){
 
     //s1<-c-\beta^Tv
     //c is the primal constant
@@ -477,43 +485,27 @@ class HKInteriorPointPredictorCorrector{
     //printf("The scalar s1_ is...%f\n",s1_);
   }
 
-  void FormVectorv2_(){
+  void FormVectorv2PredictorStep_(){
+    
+    //For the predictor step v_2=-\beta
 
-    double product=0.0;
-    double val=1.0;
+    Vector neg_beta_vector;
 
-    for(index_t i=0;i<sqd_num_train_points_;i++){
+    la::ScaleInit(-1,beta_vector_,&neg_beta_vector);
 
-      //the product of the delta terms.  This should be 0 for the
-      //predictor step. However it becomes non-zero for the corrector
-      //step
-     
-      val=gamma_vector_[i];
-
-      product=
-	delta_beta_vector_[i]*delta_gamma_vector_[i];
-
-      double numerator=mu_-(beta_vector_[i]*gamma_vector_[i])-product;
-	
-      v2_vector_[i]=numerator/val;
-    }
-
-    /*printf("Formed vector v2 to get..\n");
-      v2_vector_.PrintDebug();*/
+    v2_vector_.Alias(neg_beta_vector);
   }
 
-  void FormVectorv1_(){
+  void FormVectorv1PredictorStep_(){
 
     //v1=a+\gamma-\psi v-2M\beta
 
     Vector a_plus_gamma;
     la::AddInit(a_vector_,gamma_vector_,&a_plus_gamma);
 
-
     //Get psi_v
     Vector psi_v;
     la::ScaleInit(psi_,v_vector_,&psi_v);
-
 
     Vector a_plus_gamma_minus_psi_v;
     la::SubInit(psi_v,a_plus_gamma,
@@ -530,12 +522,43 @@ class HKInteriorPointPredictorCorrector{
     la::SubOverwrite(two_M_beta,a_plus_gamma_minus_psi_v,
 		     &v1_vector_);
   }
+
+
+  //Do the same thing for corrector steps too
+
+  void FormScalars1CorrectorStep_(){
+    
+    s1_=0;
+
+  }
+
+  void FormVectorv1CorrectorStep_(){
+
+    v1_vector_.SetZero();
+  }
+
+
+  void FormVectorv2CorrectorStep_(){
+    
+    for(index_t i=0;i<sqd_num_train_points_;i++){
+
+      double val1=(sigma_pred_corr_*mu_-
+		   ((delta_beta_pred_vector_[i]*delta_gamma_pred_vector_[i])));
+
+      v2_vector_[i]=val1/gamma_vector_[i];
+    }
+  }
+  
+  
+
   
   //The first step of the primal-dual path following method. This
   //solves a linear system of equations, having neglected the delta
   //terms
 
-  void EvaluateDeltaPsi_(double *denominator_delta_psi,index_t flag){
+  double EvaluateDeltaPsi_(double *denominator_delta_psi,index_t flag){
+
+    double delta_psi;
     
     //Evaluate v1-2Mv2;
 
@@ -583,17 +606,18 @@ class HKInteriorPointPredictorCorrector{
     double v_trans_v2=la::Dot(v_vector_,v2_vector_);
 
     //printf("Numerator of my calculations are %f..\n",v_trans_v2-s1_+temp2);
-    delta_psi_=(v_trans_v2-s1_+temp2)/temp4;
+    delta_psi=(v_trans_v2-s1_+temp2)/temp4;
+    return delta_psi;
   }
 
 
   //delta \beta=(2M+D')^-1 D'(v2+D(v1-\delta psi v))
-  void EvaluateDeltaBeta_(){
+  void EvaluateDeltaBeta_(double delta_psi,Vector &delta_beta_vector){
     
     //    printf("In evaluate delta beta...\n");
     
     Vector delta_psi_v;
-    la::ScaleInit(delta_psi_,v_vector_,&delta_psi_v);
+    la::ScaleInit(delta_psi,v_vector_,&delta_psi_v);
     
     Vector v1_minus_delta_psi_v;
     la::SubInit(delta_psi_v,v1_vector_,&v1_minus_delta_psi_v); //v1-\delta psi v
@@ -703,14 +727,14 @@ class HKInteriorPointPredictorCorrector{
 
      //delta beta is sum_of_v2_prod1-D_A_temp1
 
-    la::SubOverwrite(D_A_temp1,sum_of_v2_prod1,&delta_beta_vector_);
+    la::SubOverwrite(D_A_temp1,sum_of_v2_prod1,&delta_beta_vector);
   }
 
   //delta gamma =D'(v2-delta \beta)
   
   //Evaluate delta beta
   
-   void EvaluateDeltaGamma_(){
+   void EvaluateDeltaGamma_(double delta_psi,Vector &delta_beta_vector,Vector &delta_gamma_vector){
 
 
      //\delta gamma= 2M\delta \beta +\delta \psi v-v_1
@@ -719,14 +743,14 @@ class HKInteriorPointPredictorCorrector{
 
      special_la::PostMultiplyMatrixWithVectorGivenCholesky(chol_factor_,
 							   perm_mat_,
-							   delta_beta_vector_,
+							   delta_beta_vector,
 							   &two_M_delta_beta);
 	
      //Lets find 2M\delta \beta +\delta psi v
 
      Vector delta_psi_v;
 
-     la::ScaleInit(delta_psi_,v_vector_,&delta_psi_v);
+     la::ScaleInit(delta_psi,v_vector_,&delta_psi_v);
 
      Vector two_M_delta_beta_plus_delta_psi_v;
 
@@ -738,72 +762,23 @@ class HKInteriorPointPredictorCorrector{
      //Finally subtract v1
      la::SubOverwrite(v1_vector_,
 		      two_M_delta_beta_plus_delta_psi_v,
-		      &delta_gamma_vector_);
+		      &delta_gamma_vector);
    }
 
    void GetTheStartPoint_(){
      //The starting point is basically a set of values for
-     //beta_vector_,gamma_vector_,psi_.  Though it can be chosen in a
-     //more intelligent way, I shall start with a very naive choice of
-     //\beta,\gamma \psi
+     //beta_vector_,gamma_vector_,psi_.
      
-     beta_vector_.SetAll(1);
-     gamma_vector_.SetAll(1);
-     psi_=5;
-     mu_=1;
-
-     //An intelligent choice
-
-     /* double temp=primal_constant_/sqd_num_train_points_; */
-
-/*      double total_sum=0; */
+     /*  Since we are doing infeasible method our choice of
+	 beta,\gamma,\psi will be very simple but they will be strictly
+	 positive */
      
-/*      for(index_t i=0;i<sqd_num_train_points_-1;i++){ */
-       
-/*        if(v_vector_[i]>temp){ */
-
-/* 	 beta_vector_[i]=0; */
-/*        } */
-/*        else{ */
-
-/* 	 beta_vector_[i]=1; */
-/* 	 total_sum+=v_vector_[i]; */
-/*        } */
-/*      } */
-/*      beta_vector_[sqd_num_train_points_-1]=(primal_constant_-total_sum)/v_vector_[sqd_num_train_points_-1]; */
-
-/*      //printf("beta vector is...\n"); */
-/*      //beta_vector_.PrintDebug(); */
-     
-/*      //printf("gamma vector is...\n"); */
-     //gamma_vector_.PrintDebug();
-
-     
-     
-     // We shall obtain the starting point by solving a regularized KKT
-     /*v1_vector_.CopyValues(a_vector_);
-       s1_=primal_constant_;
-       v2_vector_.SetZero();
-       
-       double val;
-       val=0;
-       
-       index_t flag=NOT_CALCULATED;
-       
-       EvaluateDeltaPsi_(&val,&flag);
-       EvaluateDeltaBeta_();
-       EvaluateDeltaGamma_();
-       
-       //In order to get positivity constraints
-       
-       for(index_t i=0;i<sqd_num_train_points_;i++){
-       
-       beta_vector_[i]=max(delta_beta_vector_[i],1.0);
-       gamma_vector_[i]=max(delta_gamma_vector_[i],1.0);
-       }
-       
-       psi_=delta_psi_;*/ 
+     beta_vector_.SetAll(1); 
+     gamma_vector_.SetAll(1); 
+     psi_=1; 
    }
+
+   //The D vector is simply a vector of ratio of beta to gamma components
    
    void GetDVector_(){
      
@@ -818,33 +793,62 @@ class HKInteriorPointPredictorCorrector{
        
        double val=
 	 beta_vector_[i]/gamma_vector_[i];
-
-       D_vector_[i]=val;
-       
+       D_vector_[i]=val; 
      } 
    }
    
    void TakePredictorStep_(double *denominator_delta_psi,index_t flag){
-     
-     EvaluateDeltaPsi_(denominator_delta_psi,flag);
 
+
+     //Temporary Primal Dual Variables
+     Vector delta_beta_vector;
+     Vector delta_gamma_vector;
+     double delta_psi;
+
+     delta_beta_vector.Init(sqd_num_train_points_);
+     delta_gamma_vector.Init(sqd_num_train_points_);
+     
+     delta_psi=EvaluateDeltaPsi_(denominator_delta_psi,flag);
+     
      //printf("Evaluated delta psi..\n");
-     EvaluateDeltaBeta_();
+     EvaluateDeltaBeta_(delta_psi,delta_beta_vector);
      
      //printf("Evlauated delta beta...\n");
-     EvaluateDeltaGamma_();
+     EvaluateDeltaGamma_(delta_psi,delta_beta_vector,delta_gamma_vector);
      
      //printf("Evaluated delta gamma...\n");
+
+     //This routine could have been called while perfomring the
+     //predictor step or corrector step.
+
+     if(flag==NOT_CALCULATED){
+
+       //This means this step has been called from the predictor step
+       delta_beta_pred_vector_.CopyValues(delta_beta_vector);
+       delta_gamma_pred_vector_.CopyValues(delta_gamma_vector);
+       delta_psi_pred_=delta_psi;
+     }
+     else{
+       //this step was called while performing the corrector
+       //step. Hence perform additions. 
+
+       la::AddTo(delta_beta_vector,&delta_beta_pred_vector_);
+       la::AddTo(delta_gamma_vector,&delta_gamma_pred_vector_);
+       delta_psi_pred_+=delta_psi;
+     }
    }
    
    void TakeCorrectorStep_(double *denominator_delta_psi,index_t flag){
      
-     //The corrector step involves updating v2 and resolving equations
-     //Hence calculate v2
      
-     FormVectorv2_(); 
+     //Set vectors v1,v2, and scalar s1
+      
+      FormVectorv1CorrectorStep_();
+      FormVectorv2CorrectorStep_();
+      FormScalars1CorrectorStep_();
        
-     //Resolve the equations
+     //Resolve the equations. For this we shall recall the Predictor
+     //step with $v_1,v_2,s_1$ changed
      
      TakePredictorStep_(denominator_delta_psi,flag);
    }
@@ -852,113 +856,102 @@ class HKInteriorPointPredictorCorrector{
    //This step finds the appropriate Step size to update the primal 
    //and dual variables
    
-   double FindStepSize_(){
-     
-     /*  double min_lambda=1.0;
-	 double lambda;
-	 //Run an iterator over beta values and find min lambda
-	 for(index_t i=0;i<sqd_num_train_points_;i++){
-	 
-	 if(delta_beta_vector_[i]<0){
-	 lambda=
-	 beta_vector_[i]*(UPDATE_FRACTION-1)/delta_beta_vector_[i];
-	 }
-	 if(lambda<min_lambda){
-	 
-	 min_lambda=lambda;
-	 }
-	 }
-	 
-	 for(index_t i=0;i<sqd_num_train_points_;i++){
-	 
-	 if(delta_gamma_vector_[i]<0){
-	 lambda=
-	 gamma_vector_[i]*(UPDATE_FRACTION-1)/delta_gamma_vector_[i];
-	 }
-	 
-	 if(lambda<min_lambda){
-	 
-	 min_lambda=lambda;
-	 
-	 }
-	 }
-	 return min_lambda;*/
-     
-     
-     //Iterator over beta
-     double min_over_beta=DBL_MAX;
-     double min_over_gamma=DBL_MAX;
-     
-     for(index_t i=0;i<sqd_num_train_points_;i++){
-       
-       double frac_beta=delta_beta_vector_[i]/beta_vector_[i];
+   void FindPrimalAndDualStepSizes_(){
 
-       if(frac_beta < min_over_beta){
-	 
-	 min_over_beta=frac_beta;
+     //first lets calculate the primal step length
+     
+     index_t len=beta_vector_.length();
+    
+     for(index_t i=0;i<len;i++){
+       
+       //Positive values for \delta\beta and \delta\gamma admit any
+       //amount of step length. Hence it is enough to iterate over
+       //negative values for \delta\beta and \delta\gamma
+
+       if(delta_beta_pred_vector_[i]<0){
+
+	 double temp=beta_vector_[i]/delta_beta_pred_vector_[i];
+	 if(temp<primal_step_length_){
+	   primal_step_length_=temp;
+	 }
        }
-       
-       double frac_gamma=delta_gamma_vector_[i]/gamma_vector_[i];
+       else{
+	 //No calculation is required
 
-       if(frac_gamma < min_over_gamma){
+       }
+
+       //Do a similar thing for \gamma
+       if(delta_gamma_pred_vector_[i]<0){
 	 
-	 min_over_gamma=frac_gamma;
+	 double temp=gamma_vector_[i]/delta_gamma_pred_vector_[i];
+	 if(temp<dual_step_length_){
+	   dual_step_length_=temp;
+	 }
+       }
+       else{
+	 //No calculation is required
+	 
        }
      }
-
-     double temp=1.0/(UPDATE_FRACTION-1);
-
-     //printf("min_over_beta=%f..\n",min_over_beta);
-     //printf("min_over_gamma=%f..\n",min_over_gamma);
-     
-     double lambda_inv=max(max(1.0,temp*min_over_beta),temp*min_over_gamma);
-     return 1.0/lambda_inv;
    }
 
-  void UpdatePrimalAndDualVariables_(double min_lambda){
+  void UpdatePrimalAndDualVariables_(){
 
-    la::Scale(min_lambda,&delta_beta_vector_);
+    la::Scale(primal_step_length_,&delta_beta_pred_vector_);
     
     //\beta <- \beta+delta_beta
     
-    la::AddTo(delta_beta_vector_,&beta_vector_);
+    la::AddTo(delta_beta_pred_vector_,&beta_vector_);
 
-    la::Scale(min_lambda,&delta_gamma_vector_);
+    la::Scale(dual_step_length_,&delta_gamma_pred_vector_);
 
     //\gamma <-\gamma+delta \gamma
 
-    la::AddTo(delta_gamma_vector_,&gamma_vector_);
+    la::AddTo(delta_gamma_pred_vector_,&gamma_vector_);
 
-    psi_=psi_+min_lambda*delta_psi_;
+    psi_=psi_+dual_step_length_*delta_psi_pred_;
   }
 
-  void UpdateMu_(double min_lambda){
+  void CalculateMu_(){
 
-
-    double small_number=0.00001;
-
-   
-    //$mu=
-    //\frac{\beta^T\gamma}{m^2} \left(\frac{1-\lambda+epsilon}{10+\lambda}\right)$
-
-    double dot_product_between_beta_and_gamma;
-
-    dot_product_between_beta_and_gamma=la::Dot(beta_vector_,gamma_vector_);
-
-    double frac=(1-min_lambda+small_number)/(10+min_lambda);
- 
-    mu_=(dot_product_between_beta_and_gamma/sqd_num_train_points_)*frac*frac;
-
+    
+    //mu is simply the dot product between $\beta$ and $\gamma$
+    mu_=la::Dot(beta_vector_,gamma_vector_);
+    mu_=mu_/sqd_num_train_points_;
   }
+
+
+  void CalculateSigma_(){
+
+    double mu_aff;
+    
+
+    //beta_copy=beta_vector_+(primal_step_length*delta_beta_vector_)
+    Vector beta_copy;
+    beta_copy.CopyValues(beta_vector_);
+    la::AddExpert (primal_step_length_,delta_beta_pred_vector_, &beta_copy);
+    
+    //Do the same thing with the $\gamma$ vector too
+  
+    Vector gamma_copy;
+    gamma_copy.CopyValues(gamma_vector_);
+    la::AddExpert (dual_step_length_,delta_gamma_pred_vector_, &gamma_copy);
+    
+    mu_aff=(la::Dot(gamma_copy,beta_copy))/sqd_num_train_points_;
+
+    double ratio=mu_aff/mu_;
+    sigma_pred_corr_=ratio*ratio*ratio;
+  }
+
   
   //This function simply flushes the delta_beta,delta_gamm and
   //delta_psi values to 0
 
   void FlushUpdates_(){
     
-    delta_beta_vector_.SetZero();
-    delta_gamma_vector_.SetZero();
-    delta_psi_=0;
+    delta_beta_pred_vector_.SetZero();
+    delta_gamma_pred_vector_.SetZero();
+    delta_psi_pred_=0;
   }
 
 
@@ -1048,65 +1041,67 @@ class HKInteriorPointPredictorCorrector{
   index_t PredictorCorrectorSteps_(){
 
     
-    //Get the starting values for beta and gamma and \psi
+    //Get the starting values for \beta, \gamma and \psi
     
     GetTheStartPoint_();
-    //printf("psi=%f mu_=%f..\n",psi_,mu_);
-    
     
     index_t flag;
     
     double gap;
     double gap_ratio=DBL_MAX;
     while(fabs(gap_ratio)>max_gap_ratio_&&num_iterations_<MAX_NUM_ITERATIONS){ 
-      
-      
+
+      //With the current values for $\beta,\gamma$ calculate $\mu
+
+      CalculateMu_();
+           
       //We compute vectors v1,v2, s1, before taking the predictor
-      //corrector steps. While v1,s1 are same for both the predictor
-      //and the correctors steps, v2 changes for the corrector
-      //step. Also we need the D_vector
+      //corrector steps.We also need the D matrix which is a diagonal matrix
 
+      GetDVector_();      
+      FormVectorv1PredictorStep_();
+      FormVectorv2PredictorStep_();
+      FormScalars1PredictorStep_();
 
-      GetDVector_();
-      
-      FormVectorv1_();
-      FormVectorv2_();
-      FormScalars1_();
-
-      double denominator_delta_psi=0;
-      
+     
       // This forces the program to calculate the quantity
       // denominator_delta_psi
       
+      double denominator_delta_psi=0;
+      
       flag=NOT_CALCULATED; 
-      
+     
+      //Calculate $\deta\beta,\delta\gamma,\delta\psi$ 
       TakePredictorStep_(&denominator_delta_psi,flag);
-
-      //Since predictor step has calculated the quantity denominator_delta_psi 
-      //set the flag
       
+      //Having taken the predictor step, lets measure the primal and
+      //the dual step length's that can be taken
+
+      FindPrimalAndDualStepSizes_();
+
+      //Having calculated step sizes now calculate the value of
+      //$\sigma$.$\sigma$ is simply the ratio of $\mu_aff$ to $\mu$.
+
+      CalculateSigma_();
+
+      //We are finished with the predictor step. Now we need to take
+      //the corrector step.
+
       flag=CALCULATED;
       
-      TakeCorrectorStep_(&denominator_delta_psi,flag);
-      
-      double min_lambda=FindStepSize_();
+      TakeCorrectorStep_(&denominator_delta_psi,flag);      
+      FindPrimalAndDualStepSizes_(); 
 
-      if(min_lambda<SMALL_STEP){
-	
-	printf("min_lambda is %f..\n",min_lambda);
-	
-	return -1;
-      }
+      //Lets take much conservative steps.
       
+      primal_step_length_=max(0.95*primal_step_length_,1.0);
+      dual_step_length_=max(0.95*dual_step_length_,1.0);
+
      
       //Having got the step size update the primal and the dual
       //variables
-      
-      UpdatePrimalAndDualVariables_(min_lambda);
-      
-      //Update mu
-      
-      UpdateMu_(min_lambda);
+
+      UpdatePrimalAndDualVariables_();
       
       FlushUpdates_();
       
@@ -1134,7 +1129,7 @@ class HKInteriorPointPredictorCorrector{
     
     GetLinearPartOfObjective_();
 
-    //    printf("Got linear part of the objective.....\n");
+    // printf("Got linear part of the objective.....\n");
     
     //We shall call the vector involved in the linear part of
     //constraint as the v_vector_
@@ -1153,7 +1148,7 @@ class HKInteriorPointPredictorCorrector{
   void GetCholeskyFactorizationOfMMatrix_(){
 
     ICholDynamic ichol_dynamic;
-    ichol_dynamic.Init(train_set_,sigma_h_,sigma_,lambda_);
+    ichol_dynamic.Init(train_set_,sigma_h_hk_,sigma_hk_,lambda_);
     ichol_dynamic.Compute(chol_factor_,perm_mat_);  
     
     //We need the cholesky factorization of 2M everywhere.  hence we
@@ -1188,8 +1183,6 @@ class HKInteriorPointPredictorCorrector{
     
     fx_timer_start(NULL,"preprocess");
     GetLinearPartOfObjectiveAndLinearConstraintVectors_();
-
-  
     
     //Get the Cholesky factiorization of the matrix M
     
@@ -1239,12 +1232,12 @@ class HKInteriorPointPredictorCorrector{
     //parameters of the gaussian kernel and the regularization
     //constant \lambda from the user
     
-    sigma_=fx_param_double_req(module_,"sigma");
-    sigma_h_=fx_param_double_req(module_,"sigma_h");
+    sigma_hk_=fx_param_double_req(module_,"sigma");
+    sigma_h_hk_=fx_param_double_req(module_,"sigma_h");
     lambda_=fx_param_double_req(module_,"lambda");
 
     printf("In the init function we have...\n");
-    printf("sigma_h=%f,sigma=%f,lambda=%f..\n",sigma_h_,sigma_,lambda_);
+    printf("sigma_h_hk=%f,sigma_hk_=%f,lambda=%f..\n",sigma_h_hk_,sigma_hk_,lambda_);
     max_gap_ratio_=fx_param_double(module_,"max_gap_ratio",0.0001);
     
     
@@ -1269,8 +1262,8 @@ class HKInteriorPointPredictorCorrector{
     a_vector_.Init(sqd_num_train_points_);
     beta_vector_.Init(sqd_num_train_points_);
     gamma_vector_.Init(sqd_num_train_points_);
-    delta_beta_vector_.Init(sqd_num_train_points_);
-    delta_gamma_vector_.Init(sqd_num_train_points_);
+    delta_beta_pred_vector_.Init(sqd_num_train_points_);
+    delta_gamma_pred_vector_.Init(sqd_num_train_points_);
 
     computed_test_densities_.Init(num_test_points_);
     
@@ -1283,15 +1276,15 @@ class HKInteriorPointPredictorCorrector{
     //chol factor will be initialized in the routine GetCholFactor
 
     //Set delta_beta, delta_gamma and delta_psi to 0
-    delta_beta_vector_.SetZero();
-    delta_gamma_vector_.SetZero();
-    delta_psi_=0;
+    delta_beta_pred_vector_.SetZero();
+    delta_gamma_pred_vector_.SetZero();
+    delta_psi_pred_=0;
 
 
-    double sigma_4=sigma_*sigma_*sigma_*sigma_;
-    double sigma_2=sigma_*sigma_;
-    double sigma_h_2=sigma_h_*sigma_h_;
-    double sigma_h_4=sigma_h_*sigma_h_*sigma_h_*sigma_h_;
+    double sigma_4=sigma_hk_*sigma_hk_*sigma_hk_*sigma_hk_;
+    double sigma_2=sigma_hk_*sigma_hk_;
+    double sigma_h_2=sigma_h_hk_*sigma_h_hk_;
+    double sigma_h_4=sigma_h_hk_*sigma_h_hk_*sigma_h_hk_*sigma_h_hk_;
 
 
     //The primal constant
