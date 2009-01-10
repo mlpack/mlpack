@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
 	
 
 
-  int max_iteration=2;
+  int max_iteration=20;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
@@ -186,16 +186,7 @@ int main(int argc, char *argv[]) {
 		cout<<"current_sample_size="<<current_sample_size<<endl;
 		//NOTIFY("Gradient calculation starts");
 		
-		/*
-		Vector tgradient;
-		objective.ComputeGradient(tpar, 
-															 &tgradient);
-		cout<<"tgradient="<<endl;
-		for(index_t i=0; i<tgradient.length(); i++){
-			cout<<tgradient[i]<<" ";
-		}
-		cout<<endl;
-		*/
+		
 
 		/*
 		double tobjective;
@@ -206,6 +197,7 @@ int main(int argc, char *argv[]) {
 		//tobjective/=current_added_first_stage_x.size();
 		cout<<"max objective="<<tobjective<<endl;
     */
+
 
 		
 
@@ -233,17 +225,22 @@ int main(int argc, char *argv[]) {
 		objective.ComputeGradient(current_sample_size, tpar, &opt_gradient);
 		//cout<<"current_added_first_stage_x.size()="<<current_added_first_stage_x.size()<<endl;
 		//la::Scale(1.0/current_added_first_stage_x.size(), &opt_gradient);
-		cout<<"Gradient vector at true par: ";
+		
+		/*cout<<"Gradient vector at true par: ";
 		for (index_t i=0; i<opt_gradient.length(); i++)
 		{
 			cout<<opt_gradient[i]<<" ";
 		}
 		cout<<endl;
+		
+
+
 
 		double opt_gradient_norm;
 		opt_gradient_norm = sqrt(la::Dot(opt_gradient, opt_gradient));
 		cout<<"gradient_norm at true par="<<opt_gradient_norm<<endl;
 		*/
+		
 
 
 		
@@ -473,7 +470,13 @@ int main(int argc, char *argv[]) {
 			end_sampling+=1;
 			double gradient_norm;
 			//la::Scale(1.0/num_of_people, &current_gradient);
-			gradient_norm = sqrt(la::Dot(current_gradient, current_gradient));
+			Vector next_gradient;
+			//gradient.Init(num_of_betas_);
+			
+			objective.ComputeGradient(current_sample_size, current_parameter, &next_gradient);
+		//la::Scale(1.0/current_added_first_stage_
+
+			gradient_norm = sqrt(la::Dot(next_gradient, next_gradient));
 			
 			cout<<"gradient_norm="<<gradient_norm<<endl;
 
