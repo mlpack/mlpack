@@ -442,6 +442,29 @@ void Objective::ComputeGradient(double current_sample,
 	ComputeDerivativeBetaTerm3_(&dummy_beta_term3);
 	//cout<<"DerivativeBetaTerm3 done"<<endl;
 	
+	/*
+	cout<<"dummy_beta_term1="<<endl;
+	for(index_t i=0; i<dummy_beta_term1.length(); i++){
+		cout<<dummy_beta_term1[i]<<" "<<endl;
+	}
+	*/
+
+	/*
+	cout<<"dummy_beta_term2="<<endl;
+	for(index_t i=0; i<dummy_beta_term2.length(); i++){
+		cout<<dummy_beta_term2[i]<<" "<<endl;
+	}
+	*/
+
+
+	/*
+	cout<<"dummy_beta_term3="<<endl;
+	for(index_t i=0; i<dummy_beta_term3.length(); i++){
+		cout<<dummy_beta_term3[i]<<" "<<endl;
+	}
+	*/
+
+	
 
 	
 	ComputeSumDerivativeBetaFunction_(betas, p, q);
@@ -721,7 +744,7 @@ double Objective::ComputeTerm2_() {
       term2+=log(1-postponed_probability_[n]);
     }
   }
-	cout<<"term2="<<term2<<endl;
+	//cout<<"term2="<<term2<<endl;
   return term2;
 }
 
@@ -733,10 +756,10 @@ double Objective::ComputeTerm3_() {
     } else {
       DEBUG_ASSERT(postponed_probability_[n]>0);
       term3+=log(postponed_probability_[n]);
-			cout<<"postponed_prob="<<postponed_probability_[n]<<endl;
+			//cout<<"postponed_prob="<<postponed_probability_[n]<<endl;
     }
   }
-	cout<<"term3="<<term3<<endl;
+	//cout<<"term3="<<term3<<endl;
   return term3;
 }
 
@@ -829,14 +852,21 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 		}
 		cout<<endl;
 		*/
-
+	/*
+	cout<<"exp_betas_times_x2_[n] part1:"<<endl;
+	for(index_t n=0; n<exp_betas_times_x2_.size(); n++){
+		cout<<exp_betas_times_x2_[n]<<" ";
+	}
+	cout<<endl;
 	
-	/*cout<<"postponed_probability_"<<endl;
+		
+	cout<<"postponed_probability_"<<endl;
 	for(index_t i=0; i<postponed_probability_.size(); i++){
 		cout<<postponed_probability_[i]<<" ";
 	}
 	cout<<endl;
-*/
+  */
+
 	//postponed_probability_check
 
 }
@@ -995,7 +1025,10 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 	alpha_weight_=(double)1/num_of_alphas_;
 
 
-	double conditional_postponed_prob=0;
+	//double conditional_postponed_prob;
+	Vector conditional_postponed_prob;
+	conditional_postponed_prob.Init(first_stage_x_.size());
+
 	Vector first_derivative_conditional_postpond_prob;
 	first_derivative_conditional_postpond_prob.Init(betas.length());
 
@@ -1035,12 +1068,14 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 	Matrix tmatrix_second_stage_dot_logit;
 	//tmatrix_second_stage_dot_logit.Init(second_stage_x_[n].n_cols(), 1);
 
-
+	conditional_postponed_prob.SetZero();
 
 	for(index_t n=0; n<first_stage_x_.size(); n++){
 
 		sum_first_derivative_conditional_postpond_prob_[n].SetZero();
 		sum_second_derivative_conditional_postpond_prob_[n].SetZero();
+		//conditional_postponed_prob=0;
+		
 
 		exp_betas_times_x2_[n]=0;
 
@@ -1126,12 +1161,43 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 
 			}	//i
 			
+
+			for(index_t i=0; i<exp_betas_times_x2_.size(); i++) {
+			  exp_betas_times_x2_[i]=0;
+		  }
+		  
+
+			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
+				//exp_betas_times_x2_[n]=0;
+				exp_betas_times_x2_[n]+=exp(la::Dot(betas.length(), 
+																betas.ptr(),
+																second_stage_x_[n].GetColumnPtr(i)));			
+			}
+			
+			/*
+			//Calculate x^2_{ni}(alpha_l)
+			//int count=0;
+			double j=ind_unknown_x_[0];
+
+			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
+				
+				exponential_temp=alpha_temp*first_stage_x_[n].get(j-1, i)
+													+(alpha_temp)*(1-alpha_temp)*unknown_x_past_[n].get(0, i)
+													+pow((1-alpha_temp),2)*unknown_x_past_[n].get(1,i);
+				second_stage_x_[n].set(j-1, i, exponential_temp);
+				//count+=first_stage_x_[n].n_cols();
+				
+
+
+			}	//i
+			
 			
 
 			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
 				exp_betas_times_x2_[n]+=exp(la::Dot(betas.length(), betas.ptr(),
 											 second_stage_x_[n].GetColumnPtr(i) ));
 			}	//i
+			*/
 
 
 
@@ -1146,9 +1212,17 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 			}	//i
 
 		
-			conditional_postponed_prob=exp_betas_times_x2_[n]/(exp_betas_times_x1_[n]+exp_betas_times_x2_[n]);
+			conditional_postponed_prob[n]=exp_betas_times_x2_[n]/(exp_betas_times_x1_[n]+exp_betas_times_x2_[n]);
 			la::MulOverwrite(second_stage_x_[n], second_stage_dot_logit_[n], &temp2);
-			la::SubOverwrite(temp2, temp1, &first_derivative_conditional_postpond_prob);
+			la::SubOverwrite(temp1, temp2, &first_derivative_conditional_postpond_prob);
+			/*
+			cout<<"n="<<n<<"first_derivative_conditional_postpond_prob middle"<<endl;
+			for(index_t i=0; i<first_derivative_conditional_postpond_prob.length(); i++){
+				cout<<first_derivative_conditional_postpond_prob[i]<<" ";
+			}
+			cout<<endl;
+			*/
+
 
 			//Calculate SecondDerivativePostponedProb.
 			//Matrix first_term_temp;
@@ -1167,7 +1241,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 			la::MulOverwrite(matrix_first_derivative_conditional_postpond_prob, 
 														 tmatrix_first_derivative_conditional_postpond_prob, 
 														 &first_term_temp);
-			la::Scale( (1-2*conditional_postponed_prob)*(conditional_postponed_prob)*(1-conditional_postponed_prob),
+			la::Scale( (1-2*conditional_postponed_prob[n])*(conditional_postponed_prob[n])*(1-conditional_postponed_prob[n]),
 								&first_term_temp);
 
 			
@@ -1208,7 +1282,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 			la::MulTransBOverwrite(temp5, second_stage_x_[n], &temp6);
 
 			la::SubOverwrite(temp10, temp6, &second_term_temp);
-			la::Scale( (conditional_postponed_prob)*(1-conditional_postponed_prob), &second_term_temp);
+			la::Scale( (conditional_postponed_prob[n])*(1-conditional_postponed_prob[n]), &second_term_temp);
 
 			la::AddOverwrite(second_term_temp, first_term_temp, &second_derivative_conditional_postpond_prob);
 			//end of calculation of second_derivative_conditional_postpond_prob
@@ -1222,7 +1296,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 								&sum_second_derivative_conditional_postpond_prob_[n]);
 
 
-			la::Scale( (conditional_postponed_prob)*(1-conditional_postponed_prob), &first_derivative_conditional_postpond_prob);
+			la::Scale( (conditional_postponed_prob[n])*(1-conditional_postponed_prob[n]), &first_derivative_conditional_postpond_prob);
 
 			//Scale with beta_function
 			la::Scale( beta_function_temp, &first_derivative_conditional_postpond_prob );
@@ -1245,6 +1319,16 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 
 		}	//alpha
 
+		//test
+		/*
+		cout<<"first_derivative_conditional_postpond_prob"<<endl;
+		for(index_t i=0; i<first_derivative_conditional_postpond_prob.length(); i++){
+			cout<<first_derivative_conditional_postpond_prob[i]<<" ";
+		}
+		cout<<endl;
+		*/
+
+		
 
 		la::Scale(alpha_weight_, &sum_first_derivative_conditional_postpond_prob_[n]);
 		la::Scale(alpha_weight_, &sum_second_derivative_conditional_postpond_prob_[n]);
@@ -1283,6 +1367,35 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 	//cout<<"conditional_postponed_prob="<<conditional_postponed_prob<<endl;
 	//cout<<"beta_fn_temp="<<beta_function_temp<<endl;
 
+	//cout<<"beta_fn_temp="<<beta_function_temp<<endl;
+	
+	/*
+	cout<<"exp_betas_times_x2_[n]:"<<endl;
+	for(index_t n=0; n<exp_betas_times_x2_.size(); n++){
+		cout<<exp_betas_times_x2_[n]<<" ";
+	}
+	cout<<endl;
+
+	cout<<"conditional_postponed_prob="<<endl;
+	for(index_t n=0; n<conditional_postponed_prob.length(); n++){
+		cout<<conditional_postponed_prob[n]<<" ";
+	}
+	cout<<endl;
+	*/
+
+  
+
+  /*
+	cout<<"sum_first_derivative_conditional_postpond_prob_[0]"<<endl;
+	for(index_t i=0; i<sum_first_derivative_conditional_postpond_prob_[0].length(); i++){
+		cout<<sum_first_derivative_conditional_postpond_prob_[0][i]<<" ";
+	}
+	cout<<endl;
+	*/
+
+	
+
+
 
 }
 
@@ -1311,8 +1424,10 @@ void Objective::ComputeDerivativeBetaTerm2_(Vector *beta_term2) {
 
 		}	//if-else
 		la::AddTo(temp, &temp2);
+		
 
 	}	//n
+	la::Scale(-1, &temp2);
 	//return derivative_beta_term2;
 	beta_term2->Copy(temp2);
 	/*
