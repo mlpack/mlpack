@@ -58,13 +58,21 @@ class KdeCV {
     inner_sum->add_child_operator(kernel_function);
   }
   
+  double MonteCarloCompute() {
+
+    // Set of dataset indices that have been chosen throughout the
+    // computation; this acts as a stack of arguments.
+    std::map<index_t, index_t> constant_dataset_indices;
+
+    return root_->MonteCarloCompute(constant_dataset_indices);   
+  }
+
   double NaiveCompute() {
     
     // Set of dataset indices that have been chosen throughout the
     // computation; this acts as a stack of arguments.
     std::map<index_t, index_t> constant_dataset_indices;
 
-    printf("Starting!\n");
     return root_->NaiveCompute(constant_dataset_indices);
   }
 

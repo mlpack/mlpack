@@ -5,6 +5,9 @@ int main(int argc, char *argv[]) {
   // Initialize FastExec.
   fx_init(argc, argv, NULL);
 
+  // Initialize the random number seed.
+  srand(time(NULL));
+
   ////////// READING PARAMETERS AND LOADING DATA /////////////////////
 
   // FASTexec organizes parameters and results into submodules.  Think
@@ -26,7 +29,9 @@ int main(int argc, char *argv[]) {
   
   kde_cv_algorithm.Init(references);
 
-  printf("Computed a double sum of %g...\n",
+  printf("Computed a Monte Carlo double sum of %g...\n",
+	 kde_cv_algorithm.MonteCarloCompute());
+  printf("Computed a naive double sum of %g...\n",
 	 kde_cv_algorithm.NaiveCompute());
 
   // Finalize FastExec.
