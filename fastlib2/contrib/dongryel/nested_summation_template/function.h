@@ -58,7 +58,12 @@ class KernelFunction: public Function {
 
  public:
 
-  void Init(double bandwidth_in) {
+  void InitKernelFunction(index_t first_dataset_index,
+			  index_t second_dataset_index, double bandwidth_in) {
+
+    involved_dataset_indices_.Init(2);
+    involved_dataset_indices_[0] = first_dataset_index;
+    involved_dataset_indices_[1] = second_dataset_index;
     kernel_.Init(bandwidth_in);
   }
   

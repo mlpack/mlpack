@@ -44,7 +44,6 @@ class Operator {
       
       if(previous_constant_dataset_indices.find(new_point_index) !=
 	 previous_constant_dataset_indices.end()) {
-	
 	return true;
       }
     }
@@ -145,6 +144,24 @@ class Operator {
    */
   virtual double MonteCarloCompute
   (std::map<index_t, index_t> &constant_dataset_indices) = 0;
+
+  /** @brief Initialize.
+   */
+  void Init(index_t dataset_index_in,
+	    std::map<index_t, std::vector<index_t> > *restrictions_in, 
+	    ArrayList<Matrix *> *datasets_in, bool is_positive_in,
+	    bool should_be_inverted_in) {
+
+    // Initialize the list of child operators.
+    operators_.Init();
+
+    // Set the values to the incoming parameters.
+    dataset_index_ = dataset_index_in;
+    restrictions_ = restrictions_in;
+    datasets_ = datasets_in;
+    is_positive_ = is_positive_in;
+    should_be_inverted_ = should_be_inverted_in;   
+  }
 
 };
 
