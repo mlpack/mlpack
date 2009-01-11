@@ -17,7 +17,6 @@ class Sum: public Operator {
     // dataset index.
     std::map<index_t, std::vector<int> >::iterator restriction = 
       restrictions_->find(dataset_index_);
-    const std::vector<index_t> &restriction_vector = (*restriction).second;
   
     // The current dataset that is involved.
     const Matrix *dataset = (*datasets_)[dataset_index_];
@@ -25,7 +24,8 @@ class Sum: public Operator {
     // Loop over all indices of the current operator.
     for(index_t n = 0; n < dataset->n_cols(); n++) {
 
-      if(CheckViolation_(constant_dataset_indices, restriction_vector, n)) {
+      if(restriction != restrictions_->end() &&
+	 CheckViolation_(constant_dataset_indices, (*restriction).second, n)) {
 	continue;
       }
 
@@ -35,7 +35,7 @@ class Sum: public Operator {
       // Recursively evaluate the operators and add them up.
       for(index_t i = 0; i < operators_.size(); i++) {
 	sum_result += operators_[i]->NaiveCompute(constant_dataset_indices);
-      }
+      }      
     }
     return PostProcess_(constant_dataset_indices, sum_result);
   }
