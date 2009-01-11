@@ -60,6 +60,11 @@ class Sum: public Operator {
       }
     }
     
+    // Compute the sample average and multiply by the number of terms
+    // in the current dataset index.
+    sum_result = sum_result / ((double) sample_size) * 
+      (((*datasets_)[dataset_index_])->n_cols());
+    
     return PostProcess_(constant_dataset_indices, sum_result);
   }
 
