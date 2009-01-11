@@ -93,7 +93,7 @@ class DiscreteHMM {
    */
   void TrainBaumWelch(const ArrayList<Vector>& list_data_seq, int max_iteration, double tolerance);
 
-  void TrainMMF(const ArrayList<Vector>& list_data_seq, int max_iteration, double tolerance);
+  void TrainMMF(const ArrayList<Vector>& list_data_seq, double rho, int max_iteration, double tolerance);
 
   /** 
    * Train the model with a list of sequences, must be already initialized 
