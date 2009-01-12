@@ -578,6 +578,20 @@ void Objective::ComputeHessian(double current_sample,
 	dummy_hessian.Init(num_of_betas_+2, num_of_betas_+2);
 	dummy_hessian.SetZero();
 
+	Matrix dummy_hessian_beta;
+  dummy_hessian_beta.Init(num_of_betas_,num_of_betas_);
+  dummy_hessian_beta.SetZero();
+	la::AddOverwrite(dummy_second_beta_term1, dummy_second_beta_term2, &dummy_hessian_beta);
+	la::AddTo(dummy_second_beta_term3, &dummy_hessian_beta);
+	 
+  cout<<"Hessian matrix beta"<<endl;	
+	for (index_t j=0; j<dummy_second_beta_term3.n_rows(); j++){
+		for (index_t k=0; k<dummy_second_beta_term3.n_cols(); k++){
+				cout<<dummy_hessian_beta.get(j,k) <<"  ";
+		}
+		cout<<endl;
+	}
+
 	for(index_t i=0; i<num_of_betas_+2; i++){
 		for(index_t j=0; j<num_of_betas_+2; j++){
 
@@ -607,7 +621,40 @@ void Objective::ComputeHessian(double current_sample,
 		}	//j
 	}		//i
 
+	/*
+	cout<<"Hessian matrix beta1"<<endl;	
+	for (index_t j=0; j<dummy_second_beta_term1.n_rows(); j++){
+		for (index_t k=0; k<dummy_second_beta_term1.n_cols(); k++){
+				cout<<dummy_second_beta_term1.get(j,k) <<"  ";
+		}
+		cout<<endl;
+	}
+
+	cout<<"Hessian matrix beta2"<<endl;	
+	for (index_t j=0; j<dummy_second_beta_term1.n_rows(); j++){
+		for (index_t k=0; k<dummy_second_beta_term1.n_cols(); k++){
+				cout<<dummy_second_beta_term2.get(j,k) <<"  ";
+		}
+		cout<<endl;
+	}
+
+	cout<<"Hessian matrix beta3"<<endl;	
+	for (index_t j=0; j<dummy_second_beta_term3.n_rows(); j++){
+		for (index_t k=0; k<dummy_second_beta_term3.n_cols(); k++){
+				cout<<dummy_hessian.get(j,k) <<"  ";
+		}
+		cout<<endl;
+	}
+	*/
+
 	
+	cout<<"Hessian matrix part1"<<endl;	
+	for (index_t j=0; j<dummy_second_beta_term3.n_rows(); j++){
+		for (index_t k=0; k<dummy_second_beta_term3.n_cols(); k++){
+				cout<<dummy_second_beta_term3.get(j,k) <<"  ";
+		}
+		cout<<endl;
+	}
 
 	dummy_hessian.set(num_of_betas_, num_of_betas_, 
 													ComputeSecondDerivativePTerm1_()
@@ -631,14 +678,14 @@ void Objective::ComputeHessian(double current_sample,
 
 	
 	
-	
-	/*for (index_t j=0; j<dummy_hessian.n_rows(); j++){
+	cout<<"Hessian matrix"<<endl;	
+	for (index_t j=0; j<dummy_hessian.n_rows(); j++){
 		for (index_t k=0; k<dummy_hessian.n_cols(); k++){
 				cout<<dummy_hessian.get(j,k) <<"  ";
 		}
 		cout<<endl;
 	}
-	*/
+	
 
 	
 
@@ -655,7 +702,7 @@ void Objective::ComputeHessian(double current_sample,
 
 	}
 	//cout<<endl;
-	//cout<<"max_eigen="<<max_eigen<<endl;
+	cout<<"max_eigen="<<max_eigen<<endl;
 	for(index_t i=0; i<eigen_hessian.length(); i++){
 		dummy_hessian.set(i,i,(dummy_hessian.get(i,i)-max_eigen*(1.01)));
 	}
@@ -2325,22 +2372,69 @@ void Objective::ComputeSecondDerivativePBetaTerm2_(Vector *p_beta_term2) {
     if (first_stage_y_[n]<0) {
       continue;
     } else {
+			temp1.SetZero();
+			temp2.SetZero();
+			temp3.SetZero();
 			//temp1-first term
-			la::ScaleOverwrite( pow((1-postponed_probability_[n]), -1), sum_second_derivative_conditionl_postponed_p_[n], &temp1);
+			la::ScaleOverwrite( (1.0/(1-postponed_probability_[n])), sum_second_derivative_conditionl_postponed_p_[n], &temp1);
 			la::ScaleOverwrite( (sum_first_derivative_p_beta_fn_[n]/(pow((1-postponed_probability_[n]), 2))),
 												 sum_first_derivative_conditional_postpond_prob_[n], &temp2);
 			la::AddOverwrite( temp2, temp1, &temp3);
+			
+			/*
+			cout<<"n="<<n<<" "<<"postponed_probability_[n]"<<postponed_probability_[n]<<endl;
+
+			cout<<"temp2"<<endl;
+			for(index_t i=0; i<temp2.length(); i++){
+				cout<<temp2[i]<<" ";
+			}
+			cout<<endl;
+
+			cout<<"temp1"<<endl;
+			for(index_t i=0; i<temp1.length(); i++){
+				cout<<temp1[i]<<" ";
+			}
+			cout<<endl;
+
+			cout<<"n="<<n<<" "<<"sum_second_derivative_conditionl_postponed_p_"<<endl;
+			for(index_t i=0; i<sum_second_derivative_conditionl_postponed_p_[n].length(); i++){
+				cout<<sum_second_derivative_conditionl_postponed_p_[n][i]<<" ";
+			}
+			cout<<endl;
+			*/
+
+
+
+
 			la::AddTo(temp3, &second_derivative_p_beta_term2);
       //second_derivative_p_beta_term2+=(sum_first_derivative_q_beta_fn_[n]/(1-postponed_probability_[n]));
-    }
+			/*
+			cout<<"sum_second_derivative_conditionl_postponed_p_"<<endl;
+			for(index_t i=0; i<sum_second_derivative_conditionl_postponed_p_[n].length(); i++){
+				cout<<sum_second_derivative_conditionl_postponed_p_[n][i]<<" ";
+			}
+			cout<<endl;
+			
+
+			cout<<"second_derivative_p_beta_term2"<<endl;
+			for(index_t i=0; i<second_derivative_p_beta_term2.length(); i++){
+				cout<<second_derivative_p_beta_term2[i]<<" ";
+			}
+			cout<<endl;
+			*/
+
+
+		}
   }
 	la::Scale(-1, &second_derivative_p_beta_term2);
 	
+	/*
 	cout<<"second_derivative_p_beta_term2"<<endl;
 	for(index_t i=0; i<second_derivative_p_beta_term2.length(); i++){
 		cout<<second_derivative_p_beta_term2[i]<<" ";
 	}
 	cout<<endl;
+	*/
 
 
 	p_beta_term2->Copy(second_derivative_p_beta_term2);
@@ -2368,21 +2462,28 @@ void Objective::ComputeSecondDerivativePBetaTerm3_(Vector *p_beta_term3) {
     if (first_stage_y_[n]>0) {
       continue;
     } else {
+			temp3.SetZero();
+			temp1.SetZero();
+			temp2.SetZero();
 			//temp1-first term
 			la::ScaleOverwrite((1/(postponed_probability_[n])), sum_second_derivative_conditionl_postponed_p_[n], &temp1);
 			la::ScaleOverwrite( (sum_first_derivative_p_beta_fn_[n]/(pow((postponed_probability_[n]), 2))),
 												 sum_first_derivative_conditional_postpond_prob_[n], &temp2);
-			la::AddOverwrite( temp2, temp1, &temp3);
+			//la::AddOverwrite( temp2, temp1, &temp3);
+			la::SubOverwrite(temp2, temp1, &temp3);
+
 			la::AddTo(temp3, &second_derivative_p_beta_term3);
       //second_derivative_p_beta_term2+=(sum_first_derivative_q_beta_fn_[n]/(1-postponed_probability_[n]));
     }
   }
 
+	/*
 	cout<<"second_derivative_p_beta_term3"<<endl;
 	for(index_t i=0; i<second_derivative_p_beta_term3.length(); i++){
 		cout<<second_derivative_p_beta_term3[i]<<" ";
 	}
 	cout<<endl;
+  */
 
 	p_beta_term3->Copy(second_derivative_p_beta_term3);
 }
@@ -2418,6 +2519,10 @@ void Objective::ComputeSecondDerivativeQBetaTerm2_(Vector *q_beta_term2) {
       continue;
     } else {
 			//temp1-first term
+			temp1.SetZero();
+			temp2.SetZero();
+			temp3.SetZero();
+
 			la::ScaleOverwrite((1/(1-postponed_probability_[n])), sum_second_derivative_conditionl_postponed_q_[n], &temp1);
 			la::ScaleOverwrite( (sum_first_derivative_q_beta_fn_[n]/(pow((1-postponed_probability_[n]), 2))),
 												 sum_first_derivative_conditional_postpond_prob_[n], &temp2);
@@ -2428,11 +2533,13 @@ void Objective::ComputeSecondDerivativeQBetaTerm2_(Vector *q_beta_term2) {
   }
 	la::Scale(-1, &second_derivative_q_beta_term2);
 
+	/*
 	cout<<"second_derivative_q_beta_term2"<<endl;
 	for(index_t i=0; i<second_derivative_q_beta_term2.length(); i++){
 		cout<<second_derivative_q_beta_term2[i]<<" ";
 	}
 	cout<<endl;
+  */
 
 
 	q_beta_term2->Copy(second_derivative_q_beta_term2);
@@ -2460,21 +2567,27 @@ void Objective::ComputeSecondDerivativeQBetaTerm3_(Vector *q_beta_term3) {
     if (first_stage_y_[n]>0) {
       continue;
     } else {
+			temp1.SetZero();
+			temp2.SetZero();
+			temp3.SetZero();
 			//temp1-first term
 			la::ScaleOverwrite((1/(postponed_probability_[n])), sum_second_derivative_conditionl_postponed_q_[n], &temp1);
 			la::ScaleOverwrite( (sum_first_derivative_q_beta_fn_[n]/(pow((postponed_probability_[n]), 2))),
 												 sum_first_derivative_conditional_postpond_prob_[n], &temp2);
-			la::AddOverwrite( temp2, temp1, &temp3);
+			//la::AddOverwrite( temp2, temp1, &temp3);
+			la::SubOverwrite(temp2, temp1, &temp3);
 			la::AddTo(temp3, &second_derivative_q_beta_term3);
       //second_derivative_p_beta_term2+=(sum_first_derivative_q_beta_fn_[n]/(1-postponed_probability_[n]));
     }
   }
 
+	/*
 	cout<<"second_derivative_q_beta_term3"<<endl;
 	for(index_t i=0; i<second_derivative_q_beta_term3.length(); i++){
 		cout<<second_derivative_q_beta_term3[i]<<" ";
 	}
 	cout<<endl;
+  */
 
 	q_beta_term3->Copy(second_derivative_q_beta_term3);
 
@@ -2502,7 +2615,8 @@ double Objective::ComputeSecondDerivativePQTerm2_() {
   }
 	second_derivative_p_q_term2*=-1;
 
-	cout<<"second_derivative_p_q_term2="<<second_derivative_p_q_term2<<endl;
+	
+	//cout<<"second_derivative_p_q_term2="<<second_derivative_p_q_term2<<endl;
   return second_derivative_p_q_term2;
 }
 
@@ -2519,7 +2633,7 @@ double Objective::ComputeSecondDerivativePQTerm3_() {
     }
   }
 
-	cout<<"second_derivative_p_q_term3="<<second_derivative_p_q_term3<<endl;
+	//cout<<"second_derivative_p_q_term3="<<second_derivative_p_q_term3<<endl;
   return second_derivative_p_q_term3;
 }
 
