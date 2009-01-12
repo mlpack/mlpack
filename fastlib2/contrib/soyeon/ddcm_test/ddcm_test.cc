@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
 
 	//for stopping rule
 	double error_tolerance=1e-16;
-	double zero_tolerance=1e-2;	//for gradient norm
+	double zero_tolerance=1e-1;	//for gradient norm
 
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
 	
 
 
-  int max_iteration=20;
+  int max_iteration=1;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
