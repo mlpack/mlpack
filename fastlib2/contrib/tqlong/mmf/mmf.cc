@@ -60,6 +60,11 @@ double** Create2DArray(int m, int n) {
   return arr;
 }
 
+double* Create1DArray(int m) {
+  double* arr = new double [m];
+  return arr;
+}
+
 void SetZero3D(double*** arr, int m, int n, int p) {
   for (int i = 0; i < m; i++)
     for (int j = 0; j < n; j++)
@@ -84,6 +89,97 @@ void SetRandom2D(double** arr, int m, int n) {
   for (int i = 0; i < m; i++)
     for (int j = 0; j < n; j++)
 	arr[i][j] = (double) rand() / RAND_MAX + 1e-10;
+}
+
+void SetRandom1D(double* arr, int m) {
+  for (int i = 0; i < m; i++)
+    arr[i] = (double) rand() / RAND_MAX + 1e-10;
+}
+
+void MMFTriState(int M, double*** tri, Matrix* tran, 
+		 double rho, int max_iteration) {
+  double** tr;
+  double* p;
+
+  double sum = 0;
+  for (int s1s = 0; s1s < M; s1s++)
+    for (int s2s = 0; s2s < M; s2s++)
+      for (int s3s = 0; s3s < M; s3s++) 
+	sum += tri[s1s][s2s][s3s];
+  for (int s1s = 0; s1s < M; s1s++)
+    for (int s2s = 0; s2s < M; s2s++)
+      for (int s3s = 0; s3s < M; s3s++) 
+	tri[s1s][s2s][s3s] *= (1/sum);
+ 
+
+  tr = Create2DArray(M, M);
+  p = Create1DArray(M);
+  SetRandom2D(tr, M, M);
+  SetRandom1D(p, M);
+
+  for (int  iter = 0; iter < max_iteration; iter ++) {
+    for (int s1 = 0; s1 < M; s1++)
+      for (int s2 = 0; s2 < M; s2++) {
+	double deno = 0, nume = 0;
+
+	for (int s1s = 0; s1s < M; s1s++)
+	  for (int s2s = 0; s2s < M; s2s++)
+	    for (int s3s = 0; s3s < M; s3s++) {
+	      double a_i = tri[s1s][s2s][s3s];
+	      double f_i = p[s1s]*tr[s1s][s2s]*tr[s2s][s3s];
+	      if (s1s==s1 && s2s==s2) {
+		deno += p[s1s]*tr[s2s][s3s];
+		nume += a_i/f_i*p[s1s]*tr[s2s][s3s];
+	      }
+	      if (s2s==s1 && s3s==s2) {
+		deno += p[s1s]*tr[s1s][s2s];
+		nume += a_i/f_i*p[s1s]*tr[s1s][s2s];
+	      }
+	    }
+	
+	double sum = 0;
+	for (int s2s = 0; s2s < M; s2s++) sum += tr[s1][s2s];
+	tr[s1][s2] *= (nume+rho) / (deno + rho*sum);
+      }
+    
+    for (int s = 0; s < M; s++) {
+      double deno = 0, nume = 0;
+      for (int s2s = 0; s2s < M; s2s++)
+	for (int s3s = 0; s3s < M; s3s++) {
+	  double a_i = tri[s][s2s][s3s];
+	  double f_i = p[s]*tr[s][s2s]*tr[s2s][s3s];
+	  deno += tr[s][s2s]*tr[s2s][s3s];
+	  nume += a_i/f_i*tr[s][s2s]*tr[s2s][s3s];
+	}
+      double sum = 0;
+      for (int ss = 0; ss < M; ss++) sum += p[ss];
+      p[s] *= (nume+rho) / (deno + rho*sum);
+    }
+
+    double error = 0;
+    for (int s1s = 0; s1s < M; s1s++)
+      for (int s2s = 0; s2s < M; s2s++)
+	for (int s3s = 0; s3s < M; s3s++) {
+	  double a_i = tri[s1s][s2s][s3s];
+	  double f_i = p[s1s]*tr[s1s][s2s]*tr[s2s][s3s];
+	  error += a_i*log(a_i/f_i)-a_i+f_i;
+	}
+    printf("error = %f\n", error);
+  }
+
+  for (int s1s = 0; s1s < M; s1s++)
+    for (int s2s = 0; s2s < M; s2s++)
+      for (int s3s = 0; s3s < M; s3s++) {
+	double a_i = tri[s1s][s2s][s3s];
+	double f_i = p[s1s]*tr[s1s][s2s]*tr[s2s][s3s];
+	printf("a_i = %f f_i = %f\n", a_i, f_i);
+      }
+
+  for (int s1 = 0; s1 < M; s1++)
+    for (int s2 = 0; s2 < M; s2++)
+      tran->ref(s1,s2) = tr[s1][s2];
+  for (int s = 0; s < M; s++)
+    printf("p[%d] = %f\n", s, p[s]);
 }
 
 void DiscreteHMM::TrainMMF(const ArrayList<Vector>& list_data_seq, 
@@ -243,6 +339,7 @@ void DiscreteHMM::TrainMMF(const ArrayList<Vector>& list_data_seq,
 	    sum += stateObs[s][vv];
 	  stateObs[s][v] *= (nume+rho) / (deno+rho*sum);
 	}
+      /*
       double error = 0;
       for (TriValMap::iterator it = obsmap.begin(); it != obsmap.end(); it++) {
 	TriValues obs = it->first;
@@ -258,9 +355,12 @@ void DiscreteHMM::TrainMMF(const ArrayList<Vector>& list_data_seq,
 
 	error += a_i * log(a_i/f_i) - a_i + f_i;
       }
+      
       printf("iter = %5d error = %f\n", iter, error);
+      */
   }
 
+  /*
   for (TriValMap::iterator it = obsmap.begin(); it != obsmap.end(); it++) {
     TriValues obs = it->first;
     double a_i = it->second;
@@ -273,6 +373,7 @@ void DiscreteHMM::TrainMMF(const ArrayList<Vector>& list_data_seq,
 
     printf("a_i = %f f_i = %f\n", a_i, f_i);
   }
+  */
 
   for (int s = 0; s < M; s++)
     for (int v = 0; v < N; v++) 
@@ -291,20 +392,34 @@ void DiscreteHMM::TrainMMF(const ArrayList<Vector>& list_data_seq,
     }
   }
   */
+
+  MMFTriState(M, triState, &transmission_, rho, max_iteration);
+  /*
   Vector sums1;
   sums1.Init(M); 
   sums1.SetZero();
+  transmission_.SetZero();
   for (int s1 = 0; s1 < M; s1++)
     for (int s2 = 0; s2 < M; s2++)
       for (int s3 = 0; s3 < M; s3++) {
-	transmission_.ref(s1, s2) += triState[s1][s2][s3];
-	transmission_.ref(s2, s3) += triState[s1][s2][s3];
-	sums1[s1] += triState[s1][s2][s3];
-	sums1[s2] += triState[s1][s2][s3];
+	double tmp = triState[s1][s2][s3];
+	printf("s1=%d s2=%d s3=%d triState=%f\n", 
+	       s1,s2,s3,tmp);
+	transmission_.ref(s1, s2) += tmp;
+	if (s1 != s2 || s2 != s3)
+	  transmission_.ref(s2, s3) += tmp;
+	sums1[s1] += tmp; 
+	if (s1 != s2)
+	  sums1[s2] += tmp; 
       }
-  for (int s1 = 0; s1 < M; s1++)
-    for (int s2 = 0; s2 < M; s2++)
+  for (int s1 = 0; s1 < M; s1++) {
+    printf("-- s1=%d sum=%f\n", s1, sums1[s1]);
+    for (int s2 = 0; s2 < M; s2++) {
+      printf("-- s1=%d s2=%d tran=%f\n", s1,s2,transmission_.get(s1,s2));
       transmission_.ref(s1, s2) /= sums1[s1];
+    }
+  }
+  */
 }
 
 const fx_entry_doc mmf_main_entries[] = {
