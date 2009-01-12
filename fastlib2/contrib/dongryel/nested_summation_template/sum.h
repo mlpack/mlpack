@@ -48,7 +48,7 @@ class Sum: public Operator {
     // Sample over some combinations of the current operator, and
     // recursively call the operators underneath the current operator,
     // and summing all of them up.
-    int sample_size = 25;
+    int sample_size = 50;
     for(index_t s = 0; s < sample_size; s++) {
 
       ChoosePointIndex_(constant_dataset_indices);
