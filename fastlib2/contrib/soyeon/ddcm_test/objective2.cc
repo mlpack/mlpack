@@ -599,12 +599,14 @@ void Objective::ComputeHessian(double current_sample,
 	dummy_p_beta_term.SetZero();
 	la::AddOverwrite(dummy_p_beta_term2, dummy_p_beta_term3, &dummy_p_beta_term);
 
+	/*
 	cout<<"p_beta_term: "<<endl;
 	for(index_t i=0; i<dummy_p_beta_term.length(); i++){
 		cout<<dummy_p_beta_term[i]<<" ";
 	}
 	cout<<endl;
-	
+	*/
+
 	//ComputeSecondDerivativeQBetaTerm1_(&dummy_q_beta_term1);
 	ComputeSecondDerivativeQBetaTerm2_(&dummy_q_beta_term2);
 	ComputeSecondDerivativeQBetaTerm3_(&dummy_q_beta_term3);
@@ -624,6 +626,7 @@ void Objective::ComputeHessian(double current_sample,
 	la::AddOverwrite(dummy_second_beta_term1, dummy_second_beta_term2, &dummy_hessian_beta);
 	la::AddTo(dummy_second_beta_term3, &dummy_hessian_beta);
 	 
+	/*
   cout<<"Hessian matrix beta"<<endl;	
 	for (index_t j=0; j<dummy_second_beta_term3.n_rows(); j++){
 		for (index_t k=0; k<dummy_second_beta_term3.n_cols(); k++){
@@ -631,6 +634,8 @@ void Objective::ComputeHessian(double current_sample,
 		}
 		cout<<endl;
 	}
+	*/
+
 
 	for(index_t i=0; i<num_of_betas_+2; i++){
 		for(index_t j=0; j<num_of_betas_+2; j++){
@@ -699,7 +704,7 @@ void Objective::ComputeHessian(double current_sample,
 	}
 	*/
 
-	
+	/*
 	cout<<"Hessian matrix part1"<<endl;	
 	for (index_t j=0; j<dummy_second_beta_term3.n_rows(); j++){
 		for (index_t k=0; k<dummy_second_beta_term3.n_cols(); k++){
@@ -707,6 +712,8 @@ void Objective::ComputeHessian(double current_sample,
 		}
 		cout<<endl;
 	}
+	*/
+
 
 	dummy_hessian.set(num_of_betas_, num_of_betas_, 
 													ComputeSecondDerivativePTerm1_()
@@ -755,10 +762,22 @@ void Objective::ComputeHessian(double current_sample,
 	}
 	//cout<<endl;
 	cout<<"max_eigen="<<max_eigen<<endl;
-	for(index_t i=0; i<eigen_hessian.length(); i++){
-		dummy_hessian.set(i,i,(dummy_hessian.get(i,i)-max_eigen*(1.01)));
+
+	if(max_eigen>0){
+		NOTIFY("Hessian is not Negative definite..Modify...");
+		for(index_t i=0; i<eigen_hessian.length(); i++){
+			dummy_hessian.set(i,i,(dummy_hessian.get(i,i)-max_eigen*(1.01)));
+		}
 	}
 
+
+	cout<<"Modified Hessian matrix"<<endl;	
+	for (index_t j=0; j<dummy_hessian.n_rows(); j++){
+		for (index_t k=0; k<dummy_hessian.n_cols(); k++){
+				cout<<dummy_hessian.get(j,k) <<"  ";
+		}
+		cout<<endl;
+	}
 
 	//handle minimization
 	//la::Scale(-1.0, &dummy_hessian);
