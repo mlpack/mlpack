@@ -563,12 +563,17 @@ void Objective::ComputeHessian(double current_sample,
 
 	
 	ComputeSecondDerivativePBetaTerm1_(&dummy_p_beta_term1);
+	
 	ComputeSecondDerivativePBetaTerm2_(&dummy_p_beta_term2);
 	ComputeSecondDerivativePBetaTerm3_(&dummy_p_beta_term3);
 
 	//index_t i=
-	//cout<<"p_beta_term: "<<dummy_p_beta_term1[i]+dummy_p_beta_term2[i]+dummy_p_beta_term2[i]
-
+	cout<<"p_beta_term: "<<endl;
+	for(index_t i=0; i<dummy_p_beta_term1.length(); i++){
+		cout<<(dummy_p_beta_term1[i]+dummy_p_beta_term2[i]+dummy_p_beta_term2[i])<<" ";
+	}
+	cout<<endl;
+	
 	ComputeSecondDerivativeQBetaTerm1_(&dummy_q_beta_term1);
 	ComputeSecondDerivativeQBetaTerm2_(&dummy_q_beta_term2);
 	ComputeSecondDerivativeQBetaTerm3_(&dummy_q_beta_term3);
@@ -596,26 +601,29 @@ void Objective::ComputeHessian(double current_sample,
 		for(index_t j=0; j<num_of_betas_+2; j++){
 
 			if(i<num_of_betas_ && j<num_of_betas_){
-				dummy_hessian.set(i,j, dummy_second_beta_term1.get(i,j)
-															+dummy_second_beta_term2.get(i,j)
-															+dummy_second_beta_term2.get(i,j));
+				//dummy_hessian.set(i,j, (dummy_second_beta_term1.get(i,j)
+				//											+dummy_second_beta_term2.get(i,j)
+				//											+dummy_second_beta_term2.get(i,j)));
+				dummy_hessian.set(i,j, dummy_hessian_beta.get(i,j));
 				
-			} else if(i<num_of_betas_ &&j>=num_of_betas_){
+			} else if(i<num_of_betas_ && j>=num_of_betas_){
+				//cout<<"i="<<i<<endl;
+				//cout<<"j="<<j<<endl;
 				
-				dummy_hessian.set(i,num_of_betas_, dummy_p_beta_term1[i]
+				dummy_hessian.set(i,num_of_betas_, (dummy_p_beta_term1[i]
 															+dummy_p_beta_term2[i]
-															+dummy_p_beta_term2[i]);
-				dummy_hessian.set(i,num_of_betas_+1, dummy_q_beta_term1[i]
+															+dummy_p_beta_term2[i]));
+				dummy_hessian.set(i,num_of_betas_+1, (dummy_q_beta_term1[i]
 															+dummy_q_beta_term2[i]
-															+dummy_q_beta_term2[i]);
+															+dummy_q_beta_term2[i]));
 															
-			}	else if(j<num_of_betas_ &&i>=num_of_betas_){
-				dummy_hessian.set(num_of_betas_, j, dummy_p_beta_term1[j]
+			}	else if(j<num_of_betas_ && i>=num_of_betas_){
+				dummy_hessian.set(num_of_betas_, j, (dummy_p_beta_term1[j]
 															+dummy_p_beta_term2[j]
-															+dummy_p_beta_term2[j]);
-				dummy_hessian.set(num_of_betas_+1, j, dummy_q_beta_term1[j]
+															+dummy_p_beta_term2[j]));
+				dummy_hessian.set(num_of_betas_+1, j, (dummy_q_beta_term1[j]
 															+dummy_q_beta_term2[j]
-															+dummy_q_beta_term2[j]);
+															+dummy_q_beta_term2[j]));
 			} 
 
 		}	//j
@@ -651,7 +659,7 @@ void Objective::ComputeHessian(double current_sample,
 	cout<<"Hessian matrix part1"<<endl;	
 	for (index_t j=0; j<dummy_second_beta_term3.n_rows(); j++){
 		for (index_t k=0; k<dummy_second_beta_term3.n_cols(); k++){
-				cout<<dummy_second_beta_term3.get(j,k) <<"  ";
+				cout<<dummy_hessian.get(j,k) <<"  ";
 		}
 		cout<<endl;
 	}
