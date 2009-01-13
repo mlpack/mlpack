@@ -234,11 +234,14 @@ void Sampling::Shuffle() {
 		swap( shuffled_array_[j], shuffled_array_[random] );
 	}	//j
 
+	/*
 	cout<<"shuffled_array :";
 	for(index_t i=0; i<num_of_people_; i++){
 		cout<<shuffled_array_[i] <<" ";
 	}
 	cout<<endl;
+	*/
+
 
 }
 
