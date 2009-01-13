@@ -144,12 +144,14 @@ class Operator {
   /** @brief Evaluate the operator exactly.
    */
   virtual double NaiveCompute
-  (Strata &strata, std::map<index_t, index_t> &constant_dataset_indices) = 0;
+  (std::map<index_t, index_t> &constant_dataset_indices) = 0;
 
   /** @brief Evaluate the operator using Monte Carlo.
    */
   virtual double MonteCarloCompute
-  (Strata &strata, std::map<index_t, index_t> &constant_dataset_indices) = 0;
+  (ArrayList<Strata> &list_of_strata,
+   std::map<index_t, index_t> &constant_dataset_indices,
+   double relative_error, double probability) = 0;
 
   /** @brief Initialize.
    */

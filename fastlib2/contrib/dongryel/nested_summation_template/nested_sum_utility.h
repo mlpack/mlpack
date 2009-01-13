@@ -26,14 +26,14 @@ class NestedSumUtility {
 
     // If this is the first time sampling the strata, then assign the
     // same number of samples.
-    if(total_num_samples_so_far == 0) {
+    if(strata.total_num_samples_so_far == 0) {
       for(index_t i = 0; i < strata.total_num_stratum; i++) {
 	strata.output_allocation_for_each_stratum[i] =
 	  total_samples_to_allocate;
       }
 
       // Increment the total number of samples used so far.
-      total_num_samples_so_far += strata.total_num_stratum *
+      strata.total_num_samples_so_far += strata.total_num_stratum *
 	total_num_samples_to_allocate;
     }
     else {
@@ -46,11 +46,14 @@ class NestedSumUtility {
       }
       for(index_t i = 0; i < strata.total_num_stratum; i++) {
 	double variance_for_current_stratum = ComputeVariance(strata, i);
-	strata.output_allocation_for_each_stratum = 
+	strata.output_allocation_for_each_stratum[i] = 
 	  std::min(1, (index_t) 
 		   ceil(total_num_samples_to_allocate * 
 			strata.percentage_of_terms_in_each_stratum[i] *
 			sqrt(variance_for_current_stratum) / denom));
+
+	strata.total_num_samples_so_far +=
+	  strata.output_allocation_for_each_stratum[i];
       }
       
     }
