@@ -3,10 +3,16 @@
 
 #include <map>
 #include "fastlib/fastlib.h"
+#include "strata.h"
 
 class Operator {
 
  protected:
+
+  /** @brief The minimum number of samples to achieve approximate
+   *         asymptotic normality.
+   */
+  const index_t min_num_samples_ = 25;
 
   /** @brief The nested operators under this operator.
    */
@@ -138,12 +144,12 @@ class Operator {
   /** @brief Evaluate the operator exactly.
    */
   virtual double NaiveCompute
-  (std::map<index_t, index_t> &constant_dataset_indices) = 0;
+  (Strata &strata, std::map<index_t, index_t> &constant_dataset_indices) = 0;
 
   /** @brief Evaluate the operator using Monte Carlo.
    */
   virtual double MonteCarloCompute
-  (std::map<index_t, index_t> &constant_dataset_indices) = 0;
+  (Strata &strata, std::map<index_t, index_t> &constant_dataset_indices) = 0;
 
   /** @brief Initialize.
    */

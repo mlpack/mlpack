@@ -9,7 +9,7 @@ class Sum: public Operator {
  public:
 
   double NaiveCompute
-  (std::map<index_t, index_t> &constant_dataset_indices) {
+  (Strata &strata, std::map<index_t, index_t> &constant_dataset_indices) {
 
     double sum_result = 0;
  
@@ -41,24 +41,36 @@ class Sum: public Operator {
   }
 
   double MonteCarloCompute
-  (std::map<index_t, index_t> &constant_dataset_indices) {
+  (Strata &strata, std::map<index_t, index_t> &constant_dataset_indices) {
 
     double sum_result = 0;
 
     // Sample over some combinations of the current operator, and
     // recursively call the operators underneath the current operator,
     // and summing all of them up.
-    int sample_size = 50;
-    for(index_t s = 0; s < sample_size; s++) {
+    int total_num_samples_needed = Operator::min_num_samples_;
+    
+    do {
+      for(index_t strata = 0; strata < ; strata++) {
 
-      ChoosePointIndex_(constant_dataset_indices);
-      
-      // Recursively evaluate the operators and add them up.
-      for(index_t i = 0; i < operators_.size(); i++) {
-	sum_result += operators_[i]->MonteCarloCompute
-	  (constant_dataset_indices);
+	for(index_t s = 0; s < total_num_samples_needed; s++) {
+	  
+	  ChoosePointIndex_(constant_dataset_indices);
+	  
+	  // Recursively evaluate the operators and add them up.
+	  for(index_t i = 0; i < operators_.size(); i++) {
+	    sum_result += operators_[i]->MonteCarloCompute
+	      (constant_dataset_indices);
+	  }
+	}
       }
-    }
+
+      // Recompute the threshold and the samples needed for the next
+      // iteration...
+      int threshold = ;
+      
+    } while(total_num_samples_so_far < total_num_samples_needed);
+
     
     // Compute the sample average and multiply by the number of terms
     // in the current dataset index.
