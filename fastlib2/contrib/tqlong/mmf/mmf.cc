@@ -78,6 +78,10 @@ void SetZero2D(double** arr, int m, int n) {
 	arr[i][j] = 0;
 }
 
+void SetZero1D(double* arr, int m) {
+  for (int i = 0; i < m; i++) arr[i] = 0;
+}
+
 void SetRandom3D(double*** arr, int m, int n, int p) {
   for (int i = 0; i < m; i++)
     for (int j = 0; j < n; j++)
@@ -96,7 +100,131 @@ void SetRandom1D(double* arr, int m) {
     arr[i] = (double) rand() / RAND_MAX + 1e-10;
 }
 
-void MMFTriState(int M, double*** tri, Matrix* tran, 
+void SetSumUnity3D(double*** arr, int m, int n, int p) {
+  double sum = 0;
+  for (int s1s = 0; s1s < m; s1s++)
+    for (int s2s = 0; s2s < n; s2s++)
+      for (int s3s = 0; s3s < p; s3s++) 
+	sum += arr[s1s][s2s][s3s];
+  for (int s1s = 0; s1s < m; s1s++)
+    for (int s2s = 0; s2s < n; s2s++)
+      for (int s3s = 0; s3s < p; s3s++) 
+	arr[s1s][s2s][s3s] *= (1/sum);
+}
+
+void SetSumUnity2D(double** arr, int m, int n) {
+  double sum = 0;
+  for (int s1s = 0; s1s < m; s1s++)
+    for (int s2s = 0; s2s < n; s2s++)
+      sum += arr[s1s][s2s];
+  for (int s1s = 0; s1s < m; s1s++)
+    for (int s2s = 0; s2s < n; s2s++)
+      arr[s1s][s2s] *= (1/sum);
+}
+
+void SetSumUnity1D(double* arr, int m) {
+  double sum = 0;
+  for (int s1s = 0; s1s < m; s1s++)
+    sum += arr[s1s];
+  for (int s1s = 0; s1s < m; s1s++)
+    arr[s1s] *= (1/sum);
+}
+
+void MMFTriState(int M, double*** a_i, Matrix* tran, 
+		 double tol, int max_iteration) {
+  double** tr, **af_dtr, **dtr, **tmp_tr;
+  double* p, *af_dp, *dp, *tmp_p;
+  double old_error = 1;
+
+  double*** f_i;
+
+  SetSumUnity3D(a_i, M, M, M);
+  f_i = Create3DArray(M, M, M);
+ 
+  tr = Create2DArray(M, M); tmp_tr = Create2DArray(M, M);
+  p = Create1DArray(M); tmp_p = Create1DArray(M);
+  dtr = Create2DArray(M, M); af_dtr = Create2DArray(M, M);
+  dp = Create1DArray(M); af_dp = Create1DArray(M);
+
+
+  SetRandom2D(tr, M, M); 
+  for (int s = 0; s < M; s++)
+    SetSumUnity1D(tr[s], M);
+  SetRandom1D(p, M); SetSumUnity1D(p, M);
+
+  for (int iter = 0; iter < max_iteration; iter ++) {
+    double error = 0;
+    for (int s1 = 0; s1 < M; s1++)
+      for (int s2 = 0; s2 < M; s2++)
+	for (int s3 = 0; s3 < M; s3++) {
+	  f_i[s1][s2][s3] = p[s1]*tr[s1][s2]*tr[s2][s3];
+	  error += a_i[s1][s2][s3] * log (a_i[s1][s2][s3]/f_i[s1][s2][s3]) 
+	    - a_i[s1][s2][s3] + f_i[s1][s2][s3];
+	}
+    printf("iter=%d error=%f\n",iter,error);
+    if (fabs(error-old_error) < tol || fabs((error-old_error)/old_error) < tol)
+      break;
+    old_error = error;
+    /*
+      if (error < min_error) {
+      for (int s1 = 0; s1 < M; s1++)
+      for (int s2 = 0; s2 < M; s2++)
+      min_tr[s1][s2] = tr[s1][s2];
+      min_error = error;
+      }
+    */
+
+    SetZero2D(af_dtr, M, M); SetZero2D(dtr, M, M); 
+    SetZero1D(af_dp, M); SetZero1D(dp, M); 
+    for (int s1 = 0; s1 < M; s1++)
+      for (int s2 = 0; s2 < M; s2++)
+	for (int s3 = 0; s3 < M; s3++) {
+	  double tmp = a_i[s1][s2][s3]/f_i[s1][s2][s3];
+	  af_dp[s1] += tmp*tr[s1][s2]*tr[s2][s3];
+	  dp[s1] += tr[s1][s2]*tr[s2][s3];
+
+	  af_dtr[s1][s2] += tmp*p[s1]*tr[s2][s3];
+	  dtr[s1][s2] += p[s1]*tr[s2][s3];
+	  af_dtr[s2][s3] += tmp*p[s1]*tr[s1][s2];
+	  dtr[s2][s3] += p[s1]*tr[s1][s2];
+	}
+
+    if (iter % 2) {
+      for (int s1 = 0; s1 < M; s1++)
+	for (int s2 = 0; s2 < M; s2++) {
+	  double nume = af_dtr[s1][s2], deno = dtr[s1][s2];
+	  for (int s = 0; s < M; s++) {
+	    nume += tr[s1][s]*dtr[s1][s];
+	    deno += tr[s1][s]*af_dtr[s1][s];
+	  }
+	  tmp_tr[s1][s2] = tr[s1][s2]*nume/deno;
+	}
+      for (int s1 = 0; s1 < M; s1++)
+	for (int s2 = 0; s2 < M; s2++) tr[s1][s2] = tmp_tr[s1][s2];
+    }
+    else {
+      for (int s = 0; s < M; s++) {
+	double nume = af_dp[s], deno = dp[s];
+	for (int ss = 0; ss < M; ss++) {
+	  nume += p[ss]*dp[ss];
+	  deno += p[ss]*af_dp[ss];
+	}
+	tmp_p[s] = p[s]*nume/deno;
+      }
+      for (int s = 0; s < M; s++) p[s] = tmp_p[s];
+    }
+  }
+  
+  for (int s1 = 0; s1 < M; s1++)
+    for (int s2 = 0; s2 < M; s2++) {
+      tran->ref(s1,s2) = tr[s1][s2];
+      printf("%f\n", tr[s1][s2]);
+    }
+  for (int s = 0; s < M; s++)
+    printf("p[%d] = %f\n", s, p[s]);
+}
+
+void MMFTriState1(int M, double*** tri, Matrix* tran, 
 		 double rho, int max_iteration) {
   double** tr;
   double* p;
@@ -265,7 +393,7 @@ void DiscreteHMM::TrainMMF(const ArrayList<Vector>& list_data_seq,
       for (int s = 0; s < M; s++)
 	for (int v = 0; v < N; v++)
 	  stateObs[s][v] *= (stateObsNume[s][v]/stateObsDeno[s][v]);
-  */
+    */
       for (int s1 = 0; s1 < M; s1++)
 	for (int s2 = 0; s2 < M; s2++)
 	  for (int s3 = 0; s3 < M; s3++) {
@@ -393,7 +521,7 @@ void DiscreteHMM::TrainMMF(const ArrayList<Vector>& list_data_seq,
   }
   */
 
-  MMFTriState(M, triState, &transmission_, rho, max_iteration);
+  MMFTriState(M, triState, &transmission_, tolerance, max_iteration);
   /*
   Vector sums1;
   sums1.Init(M); 
