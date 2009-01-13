@@ -8,8 +8,7 @@ class Sum: public Operator {
 
  public:
 
-  double NaiveCompute
-  (Strata &strata, std::map<index_t, index_t> &constant_dataset_indices) {
+  double NaiveCompute(std::map<index_t, index_t> &constant_dataset_indices) {
 
     double sum_result = 0;
  
@@ -41,7 +40,9 @@ class Sum: public Operator {
   }
 
   double MonteCarloCompute
-  (Strata &strata, std::map<index_t, index_t> &constant_dataset_indices) {
+  (ArrayList<Strata> &list_of_strata,
+   std::map<index_t, index_t> &constant_dataset_indices,
+   double relative_error, double probability) {
 
     double sum_result = 0;
 
@@ -50,8 +51,16 @@ class Sum: public Operator {
     // and summing all of them up.
     int total_num_samples_needed = Operator::min_num_samples_;
     
+    
     do {
-      for(index_t strata = 0; strata < ; strata++) {
+
+      // Do sample allocations over the strata.
+      NestedSumUtility::OptimalAllocation(list_of_strata[dataset_index_],
+					  total_num_samples_needed);
+
+      for(index_t strata_index = 0;
+	  strata_index < list_of_strata[dataset_index_].total_num_stratum;
+	  strata_index++) {
 
 	for(index_t s = 0; s < total_num_samples_needed; s++) {
 	  
@@ -60,16 +69,19 @@ class Sum: public Operator {
 	  // Recursively evaluate the operators and add them up.
 	  for(index_t i = 0; i < operators_.size(); i++) {
 	    sum_result += operators_[i]->MonteCarloCompute
-	      (constant_dataset_indices);
+	      (list_of_strata, constant_dataset_indices, relative_error,
+	       probability);
 	  }
 	}
       }
 
       // Recompute the threshold and the samples needed for the next
       // iteration...
-      int threshold = ;
+      int threshold = math::Sqr(standard_score * (1 + relative_error) /
+				(relative_error * sample_mean)) *
+	sample_variance;
       
-    } while(total_num_samples_so_far < total_num_samples_needed);
+    } while(total_num_samples_needed > 0);
 
     
     // Compute the sample average and multiply by the number of terms
