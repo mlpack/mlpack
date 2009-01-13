@@ -8,7 +8,7 @@ class Ratio: public Operator {
  public:
   
   double NaiveCompute
-  (std::map<index_t, index_t> &constant_dataset_indices) {
+  (Strata &strata, std::map<index_t, index_t> &constant_dataset_indices) {
 
     double numerator_result = 
       operators_[0]->NaiveCompute(constant_dataset_indices);
@@ -20,7 +20,7 @@ class Ratio: public Operator {
   }
 
   double MonteCarloCompute
-  (std::map<index_t, index_t> &constant_dataset_indices) {
+  (Strata &strata, std::map<index_t, index_t> &constant_dataset_indices) {
 
     double numerator_result = 
       operators_[0]->MonteCarloCompute(constant_dataset_indices);

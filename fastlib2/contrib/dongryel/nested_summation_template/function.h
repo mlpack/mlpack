@@ -43,7 +43,8 @@ class Function: public Operator {
    *         Monte Carlo style computation.
    */
   double MonteCarloCompute
-  (std::map<index_t, index_t> &constant_dataset_indices) {
+  (Strata &strata, std::map<index_t, index_t> &constant_dataset_indices) {
+    
     return NaiveCompute(constant_dataset_indices);
   }
 
@@ -67,7 +68,8 @@ class KernelFunction: public Function {
     kernel_.Init(bandwidth_in);
   }
   
-  double NaiveCompute(std::map<index_t, index_t> &constant_dataset_indices) {
+  double NaiveCompute(Strata &strata,
+		      std::map<index_t, index_t> &constant_dataset_indices) {
 
     double sqdist = SquaredDistance_(constant_dataset_indices);
     return kernel_.EvalUnnormOnSq(sqdist);
