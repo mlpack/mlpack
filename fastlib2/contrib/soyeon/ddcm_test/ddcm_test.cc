@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
 	
-	/*
+	
 	Vector tpar;
 	tpar.Init(current_parameter.length());
 	tpar[0]=1;
@@ -137,7 +137,7 @@ int main(int argc, char *argv[]) {
 		cout<<tpar[i]<<" ";
 	}
 	cout<<endl;
-  */
+  
 	
 	//hessian update
 	Matrix diff_gradient;
@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
 
 
   //iteration
-  int max_iteration=50;
+  int max_iteration=100;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
@@ -211,7 +211,7 @@ int main(int argc, char *argv[]) {
 		
 		
 
-		/*
+		
 		double tobjective;
 		tobjective=0;
 		objective.ComputeObjective(current_sample_size, tpar, 
@@ -219,8 +219,8 @@ int main(int argc, char *argv[]) {
 		
 		//tobjective/=current_added_first_stage_x.size();
 		cout<<"max objective="<<tobjective<<endl;
-    */
-				
+    
+			
 
 
 		Vector current_gradient;
@@ -246,7 +246,7 @@ int main(int argc, char *argv[]) {
 
 
 
-		/*		
+				
 		Vector opt_gradient;
 		//gradient.Init(num_of_betas_);
 		objective.ComputeGradient(current_sample_size, tpar, &opt_gradient);
@@ -267,13 +267,13 @@ int main(int argc, char *argv[]) {
 		opt_gradient_norm = sqrt(la::Dot(opt_gradient, opt_gradient));
 		cout<<"gradient_norm at true par="<<opt_gradient_norm<<endl;
 		
-		*/
+		
 
 				
 
 		//NOTIFY("Gradient calculation ends");
 		
-/*
+
 		///////////////////////////////////////////////////////////////////////
     ///////////////////////////////Exact hessian calculation
 		//NOTIFY("Exact hessian calculation starts");
@@ -283,7 +283,7 @@ int main(int argc, char *argv[]) {
 		
 		//cout<<"Hessian matrix: "<<endl;
 /////////////////////////////////////////////////////////////////
-*/
+
 
 /*
 		for (index_t j=0; j<current_hessian.n_rows(); j++){
@@ -503,6 +503,7 @@ int main(int argc, char *argv[]) {
 		//rho=1.0*(current_objective-next_objective)/(current_delta_m)*current_added_first_stage_x.size();
 		rho= 1.0*(current_objective-next_objective)/(current_delta_m);
 
+		/*
 			////////////////////////////////////////////////////////
 		//Hessian update - BFGS
 		Matrix updated_hessian;
@@ -529,7 +530,8 @@ int main(int argc, char *argv[]) {
 		la::SubOverwrite(temp1, current_hessian, &updated_hessian);
 		la::AddTo(temp2, &updated_hessian);
 
-		
+		*/
+
 		
 
 
@@ -538,7 +540,7 @@ int main(int argc, char *argv[]) {
 		if(rho>eta){
 			current_parameter.CopyValues(next_parameter);
 			NOTIFY("Accepting the step...");
-			current_hessian.CopyValues(updated_hessian);
+			//current_hessian.CopyValues(updated_hessian);
 		
 
 		}
