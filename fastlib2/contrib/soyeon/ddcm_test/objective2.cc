@@ -803,7 +803,7 @@ void Objective::ComputeHessian(double current_sample,
 													+ComputeSecondDerivativePQTerm3_());
 
 	
-	
+	/*
 	cout<<"Hessian matrix"<<endl;	
 	for (index_t j=0; j<dummy_hessian.n_rows(); j++){
 		for (index_t k=0; k<dummy_hessian.n_cols(); k++){
@@ -811,9 +811,8 @@ void Objective::ComputeHessian(double current_sample,
 		}
 		cout<<endl;
 	}
-	
-
-	
+	*/
+		
 
 	//Check positive definiteness
 	Vector eigen_hessian;
