@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
 	
-	
+	/*
 	Vector tpar;
 	tpar.Init(current_parameter.length());
 	tpar[0]=1;
@@ -136,13 +136,10 @@ int main(int argc, char *argv[]) {
 		cout<<tpar[i]<<" ";
 	}
 	cout<<endl;
-  
-
-
+  */
 	
 
-
-  int max_iteration=10;
+  int max_iteration=2;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
@@ -188,7 +185,7 @@ int main(int argc, char *argv[]) {
 		
 		
 
-		
+		/*
 		double tobjective;
 		tobjective=0;
 		objective.ComputeObjective(current_sample_size, tpar, 
@@ -196,7 +193,8 @@ int main(int argc, char *argv[]) {
 		
 		//tobjective/=current_added_first_stage_x.size();
 		cout<<"max objective="<<tobjective<<endl;
-    
+    */
+
 
 
 		
@@ -219,7 +217,7 @@ int main(int argc, char *argv[]) {
 
 
 
-				
+		/*		
 		Vector opt_gradient;
 		//gradient.Init(num_of_betas_);
 		objective.ComputeGradient(current_sample_size, tpar, &opt_gradient);
@@ -240,10 +238,8 @@ int main(int argc, char *argv[]) {
 		opt_gradient_norm = sqrt(la::Dot(opt_gradient, opt_gradient));
 		cout<<"gradient_norm at true par="<<opt_gradient_norm<<endl;
 		
-		
-
-
-		
+		*/
+				
 
 		//NOTIFY("Gradient calculation ends");
 		

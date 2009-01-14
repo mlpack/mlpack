@@ -470,6 +470,7 @@ void Objective::ComputeGradient(double current_sample,
 	ComputeSumDerivativeBetaFunction_(betas, p, q);
 	//cout<<"SumDerivativeBetaFunction done"<<endl;
 
+	
   Vector dummy_gradient;
 	dummy_gradient.Init(num_of_betas_+2);
 	dummy_gradient.SetZero();
@@ -477,7 +478,10 @@ void Objective::ComputeGradient(double current_sample,
 	for(index_t i=0; i<num_of_betas_; i++){
 		dummy_gradient[i]=dummy_beta_term1[i]+dummy_beta_term2[i]+dummy_beta_term3[i];
 	}
+	
 
+
+	
 	dummy_gradient[num_of_betas_]=ComputeDerivativePTerm1_()
 																+ComputeDerivativePTerm2_()
 																+ComputeDerivativePTerm3_();
@@ -485,13 +489,76 @@ void Objective::ComputeGradient(double current_sample,
 	dummy_gradient[num_of_betas_+1]=ComputeDerivativeQTerm1_()
 																+ComputeDerivativeQTerm2_()
 																+ComputeDerivativeQTerm3_();
+																
+
+	/*
+	double derivative_p_term2;
+  derivative_p_term2=ComputeDerivativePTerm2_();
+	//cout<<"ComputeDerivativePTerm2_()="<<derivative_p_term2<<endl;
+	double derivative_p_term3;
+  derivative_p_term3=ComputeDerivativePTerm3_();
+	cout<<"ComputeDerivativePTerm3_()="<<derivative_p_term3<<endl;
+
+	double derivative_p_term;
+	derivative_p_term=derivative_p_term2+derivative_p_term3;
+	cout<<"derivative_p_term="<<derivative_p_term<<endl;
+  
+	double derivative_p_term;
+	derivative_p_term=ComputeDerivativePTerm2_()+ComputeDerivativePTerm3_();
+	cout<<"derivative_p_term="<<derivative_p_term<<endl;
+
+
+  //cout<<"num_of_betas_"<<num_of_betas_<<endl;
+  dummy_gradient[num_of_betas_]=derivative_p_term;
+	dummy_gradient[num_of_betas_+1]=(ComputeDerivativeQTerm2_()+ComputeDerivativeQTerm3_());
+  */
+
+	/*
+	Matrix dummy_gradient;
+	dummy_gradient.Init(num_of_betas_+2, 1);
+  dummy_gradient.SetZero();
+
+
+  cout<<"dummy gradient"<<endl;
+	for(index_t i=0; i<dummy_gradient.n_rows(); i++){
+		cout<<dummy_gradient.get(i,0)<<" ";
+	}
+	cout<<endl;
+
+
+
+
+	for(index_t i=0; i<num_of_betas_; i++){
+		dummy_gradient.set(i,0, (dummy_beta_term1[i]+dummy_beta_term2[i]+dummy_beta_term3[i]));
+	}
+	
+  cout<<"dummy gradient 2"<<endl;
+	for(index_t i=0; i<dummy_gradient.n_rows(); i++){
+		cout<<dummy_gradient.get(i,0)<<" ";
+	}
+	cout<<endl;
+	
+  dummy_gradient.set(num_of_betas_, 0, (ComputeDerivativePTerm2_()+ComputeDerivativePTerm3_()));
+	dummy_gradient.set(num_of_betas_+1, 0, (ComputeDerivativeQTerm2_()+ComputeDerivativeQTerm3_()));
+
+	cout<<"dummy gradient 3"<<endl;
+	for(index_t i=0; i<dummy_gradient.n_rows(); i++){
+		cout<<dummy_gradient.get(i,0)<<" ";
+	}
+	cout<<endl;
 
 	//handle minimization
 	la::Scale(-1.0/current_sample, &dummy_gradient);
 
+	Vector dummy_gradient2;
+  dummy_gradient.MakeColumnVector(0, &dummy_gradient2);
 
+
+	gradient->Copy(dummy_gradient2);
+	*/
+
+	la::Scale(-1.0/current_sample, &dummy_gradient);
 	gradient->Copy(dummy_gradient);
-	
 												
 }
 
