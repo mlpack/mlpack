@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
 
 	//for stopping rule
 	double error_tolerance=1e-16;
-	double zero_tolerance=1e-2;	//for gradient norm
+	double zero_tolerance=1e-3;	//for gradient norm
 
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
@@ -131,7 +131,8 @@ int main(int argc, char *argv[]) {
 	tpar[2]=2;
 	tpar[3]=2;
 
-  cout<<"true parameter:"<<endl;
+  
+	cout<<"true parameter:"<<endl;
 	for(index_t i=0; i<tpar.length(); i++){
 		cout<<tpar[i]<<" ";
 	}
@@ -139,7 +140,7 @@ int main(int argc, char *argv[]) {
   */
 	
 
-  int max_iteration=2;
+  int max_iteration=50;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
@@ -194,14 +195,17 @@ int main(int argc, char *argv[]) {
 		//tobjective/=current_added_first_stage_x.size();
 		cout<<"max objective="<<tobjective<<endl;
     */
-
-
-
-		
+				
 
 
 		Vector current_gradient;
 		//gradient.Init(num_of_betas_);
+		cout<<"test current_parameter"<<endl;
+		for(index_t i=0; i<current_parameter.length(); i++){
+			cout<<current_parameter[i]<<" ";
+		}
+		cout<<endl;
+
 		objective.ComputeGradient(current_sample_size, current_parameter, &current_gradient);
 		//la::Scale(1.0/current_added_first_stage_x.size(), &current_gradient);
 		
@@ -239,6 +243,7 @@ int main(int argc, char *argv[]) {
 		cout<<"gradient_norm at true par="<<opt_gradient_norm<<endl;
 		
 		*/
+
 				
 
 		//NOTIFY("Gradient calculation ends");
@@ -250,7 +255,7 @@ int main(int argc, char *argv[]) {
 		objective.ComputeHessian(current_sample_size, current_parameter, &current_hessian);
 		//la::Scale(1.0/current_added_first_stage_x.size(), &current_hessian);
 		
-		cout<<"Hessian matrix: "<<endl;
+		//cout<<"Hessian matrix: "<<endl;
 
 		/*
 		for (index_t j=0; j<current_hessian.n_rows(); j++){
@@ -275,10 +280,10 @@ int main(int argc, char *argv[]) {
 			cout<<endl;
 		}
 
-/*
+    /*
 		Matrix opt_hessian;
-		objective.ComputeHessian(tpar, &opt_hessian);
-		la::Scale(1.0/current_added_first_stage_x.size(), &opt_hessian);
+		objective.ComputeHessian(current_sample_size, tpar, &opt_hessian);
+		//la::Scale(1.0/current_added_first_stage_x.size(), &opt_hessian);
 		
 		cout<<"Hessian matrix at true par: "<<endl;
 
@@ -289,8 +294,9 @@ int main(int argc, char *argv[]) {
 			}
 			cout<<endl;
 		}
+    */
 
-*/
+
 
 		Vector current_p;
 		double current_delta_m;
@@ -298,7 +304,7 @@ int main(int argc, char *argv[]) {
 		double new_radius;
 		//NOTIFY("Exact hessian calculation ends");
 
-		/*
+		
 		optimization.ComputeDerectionUnderConstraints(current_radius, 
 																					current_gradient,
 																					current_hessian,
@@ -307,10 +313,10 @@ int main(int argc, char *argv[]) {
 																					&current_delta_m,
 																					&next_parameter,
 																					&new_radius);
-		*/
+		
 		
 
-		
+		/*
 		//Scaled version
 		optimization.ComputeScaledDerectionUnderConstraints(current_radius, 
 																					current_gradient,
@@ -323,6 +329,7 @@ int main(int argc, char *argv[]) {
 
 		
 		
+    */
 
 
 		current_radius=new_radius;
@@ -392,7 +399,7 @@ int main(int argc, char *argv[]) {
 				
 		p_norm=sqrt(la::Dot(current_p, current_p));
 		 
-		cout<<"new_parameter=";
+		cout<<"candidate_new_parameter=";
 		for(index_t i=0; i<next_parameter.length(); i++){
 			cout<<next_parameter[i]<<" ";
 		}
@@ -401,7 +408,7 @@ int main(int argc, char *argv[]) {
 		objective.ComputeObjective(current_sample_size, next_parameter, 
 														 &next_objective);
 		//next_objective/=current_added_first_stage_x.size();
-		NOTIFY("The Next objective is %g", next_objective);
+		NOTIFY("The candidate Next objective is %g", next_objective);
 
 	
 
@@ -469,9 +476,10 @@ int main(int argc, char *argv[]) {
 			Vector next_gradient;
 			//gradient.Init(num_of_betas_);
 			
+			cout<<"current_sample_size for norm calculation="<<current_sample_size<<endl;
 			objective.ComputeGradient(current_sample_size, current_parameter, &next_gradient);
 		//la::Scale(1.0/current_added_first_stage_
-			NOTIFY("current_parameter");
+			NOTIFY("current_parameter for the  calculation of norm");
 			for(index_t i=0; i<current_parameter.length(); i++){
 				cout<<current_parameter[i]<<" ";
 			}
