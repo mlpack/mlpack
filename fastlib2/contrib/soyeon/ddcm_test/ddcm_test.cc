@@ -139,7 +139,32 @@ int main(int argc, char *argv[]) {
 	cout<<endl;
   */
 	
+	//hessian update
+	Matrix diff_gradient;
+	diff_gradient.Init(num_of_parameter, 1);
+	diff_gradient.SetZero();
 
+	Matrix diff_par;
+	diff_par.Init(num_of_parameter, 1);
+	diff_par.SetZero();
+
+	Matrix temp1; //H*s*s'*H
+	temp1.Init(num_of_parameter, num_of_parameter);
+	temp1.SetZero();
+
+	Matrix Hs;
+	Hs.Init(num_of_parameter, num_of_parameter);
+
+	double scale_temp1;
+	scale_temp1=0;
+
+	Matrix temp2; //yy'/s'y
+	temp2.Init(num_of_parameter, num_of_parameter);
+
+
+
+
+  //iteration
   int max_iteration=50;
 	int iteration_count=0;
 
@@ -248,16 +273,19 @@ int main(int argc, char *argv[]) {
 
 		//NOTIFY("Gradient calculation ends");
 		
-		
-
+/*
+		///////////////////////////////////////////////////////////////////////
+    ///////////////////////////////Exact hessian calculation
 		//NOTIFY("Exact hessian calculation starts");
 		Matrix current_hessian;
 		objective.ComputeHessian(current_sample_size, current_parameter, &current_hessian);
 		//la::Scale(1.0/current_added_first_stage_x.size(), &current_hessian);
 		
 		//cout<<"Hessian matrix: "<<endl;
+/////////////////////////////////////////////////////////////////
+*/
 
-		/*
+/*
 		for (index_t j=0; j<current_hessian.n_rows(); j++){
 			for (index_t k=0; k<current_hessian.n_cols(); k++){
 				cout<<current_hessian.get(j,k) <<"  ";
@@ -265,6 +293,17 @@ int main(int argc, char *argv[]) {
 			cout<<endl;
 		}
 		*/
+
+		
+		
+		///////////////////////////////////////////////////////////////////////
+    ///////////////////////////////hessian update - BFGS
+		if(iteration_count==1){
+			Matrix current_hessian;
+			objective.ComputeHessian(current_sample_size, current_parameter, &current_hessian);
+		}
+
+
 
 		
 		
@@ -456,39 +495,79 @@ int main(int argc, char *argv[]) {
 		*/
 
 		
-				
+		Vector next_gradient;
+		objective.ComputeGradient(current_sample_size, current_parameter, &next_gradient);
+		
+
 		//agreement rho calculation
 		//rho=1.0*(current_objective-next_objective)/(current_delta_m)*current_added_first_stage_x.size();
 		rho= 1.0*(current_objective-next_objective)/(current_delta_m);
+
+			////////////////////////////////////////////////////////
+		//Hessian update - BFGS
+		Matrix updated_hessian;
+		updated_hessian.Init(current_gradient.length(), current_gradient.length());
+
+		la::SubOverwrite(current_gradient, next_gradient, &diff_gradient);
+		la::SubOverwrite(current_parameter, next_parameter, &diff_par);
+		
+		//Matrix temp1; //H*s*s'*H
+		//Matrix Hs;
+		la::MulOverwrite(current_hessian, diff_par, &Hs);
+		la::MulTransBOverwrite(Hs, Hs, &temp1);
+		//double scale_temp1;
+		scale_temp1=Dot(Hs, diff_par);
+		la::Scale( scale_temp, &temp1);
+
+		//Matrix temp2; //yy'/s'y
+		la::MulTransBOverwrite(diff_gradient, diff_gradient, &temp2);
+		cout<<"temp2"<<temp2[0]<<endl;
+		la::Scale( dot(diff_par, diff_gradient), &temp2);
+		cout<<"dot"<<dot(diff_par, diff_gradient)<<endl;
+		cout<<"temp2"<<temp2[0]<<endl;
+
+		la::SubOverwrite(temp1, current_hessian, &updated_hessian);
+		la::AddTo(temp2, &updated_hessian);
+
+		
+		
+
+
+
 		cout<<"rho= "<<rho<<endl;
 		if(rho>eta){
 			current_parameter.CopyValues(next_parameter);
 			NOTIFY("Accepting the step...");
+			current_hessian.CopyValues(updated_hessian);
+		
+
 		}
 		
 		//radius update
 		optimization.TrustRadiusUpdate(rho, p_norm, &current_radius);
 
+
 		if(sample_size==num_of_people){
 			end_sampling+=1;
 			double gradient_norm;
 			//la::Scale(1.0/num_of_people, &current_gradient);
+			/*
 			Vector next_gradient;
-			//gradient.Init(num_of_betas_);
-			
-			cout<<"current_sample_size for norm calculation="<<current_sample_size<<endl;
+					
+			//cout<<"current_sample_size for norm calculation="<<current_sample_size<<endl;
 			objective.ComputeGradient(current_sample_size, current_parameter, &next_gradient);
 		//la::Scale(1.0/current_added_first_stage_
-			NOTIFY("current_parameter for the  calculation of norm");
-			for(index_t i=0; i<current_parameter.length(); i++){
-				cout<<current_parameter[i]<<" ";
-			}
-			cout<<endl;
+			//NOTIFY("current_parameter for the  calculation of norm");
+			//for(index_t i=0; i<current_parameter.length(); i++){
+			//	cout<<current_parameter[i]<<" ";
+			//}
+			//cout<<endl;
 			NOTIFY("Gradient for the calculation of norm");
 			for(index_t i=0; i<current_parameter.length(); i++){
 				cout<<next_gradient[i]<<" ";
 			}
 			cout<<endl;
+      */
 
 
 			gradient_norm = sqrt(la::Dot(next_gradient, next_gradient));
