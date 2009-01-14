@@ -1,6 +1,8 @@
 #ifndef KDE_CV_H
 #define KDE_CV_H
 
+#include "contrib/dongryel/proximity_project/general_spacetree.h"
+#include "contrib/dongryel/proximity_project/gen_kdtree.h"
 #include "contrib/dongryel/nested_summation_template/function.h"
 #include "contrib/dongryel/nested_summation_template/operator.h"
 #include "contrib/dongryel/nested_summation_template/ratio.h"
@@ -11,9 +13,13 @@ class KdeCV {
 
  private:
 
+  /** @brief The type of the tree used for the algorithm.
+   */
+  typedef GeneralBinarySpaceTree<DHrectBound<2>, Matrix > TreeType;
+
   /** @brief The root of the operator.
    */
-  Operator *root_;
+  Operator *operator_root_;
 
   /** @brief The restrictions associated with the operation.
    */
@@ -23,19 +29,33 @@ class KdeCV {
    */
   ArrayList<Matrix *> datasets_;
 
+  /** @brief The copy of the reference set.
+   */
+  Matrix reference_set_;
+
+  /** @brief The tree used for the stratified sampling.
+   */
+  TreeType *data_root_;
+
  public:
 
   void set_bandwidth(double bandwidth_in) {
     
   }
 
-  void Init(Matrix &reference_set) {
+  void Init(const Matrix &reference_set_in) {
+
+    // Make a copy of the dataset and make a tree out of it.
+    reference_set_.Copy(reference_set_in);
+    data_root_ = proximity::MakeGenKdTree<double, TreeType,
+      proximity::GenKdTreeMedianSplitter>(reference_set_, 40, 
+					  (ArrayList<index_t> *) NULL, NULL);
 
     // Push in the pointer twice for the dataset since the query
     // equals the reference...
     datasets_.Init(2);
-    datasets_[0] = &reference_set;
-    datasets_[1] = &reference_set;
+    datasets_[0] = &reference_set_;
+    datasets_[1] = &reference_set_;
 
     // Allocate the kernel function...
     KernelFunction<TKernel> *kernel_function = new KernelFunction<TKernel>();
@@ -49,12 +69,12 @@ class KdeCV {
     inner_sum->Init(1, &restrictions_, &datasets_, true, false);
 
     // Allocate the outer sum.
-    root_ = new Sum();
-    root_->Init(0, &restrictions_, &datasets_, true, false);
+    operator_root_ = new Sum();
+    operator_root_->Init(0, &restrictions_, &datasets_, true, false);
     
     // The outer sum owns the inner sum, which owns the kernel
     // function.
-    root_->add_child_operator(inner_sum);
+    operator_root_->add_child_operator(inner_sum);
     inner_sum->add_child_operator(kernel_function);
   }
   
@@ -64,7 +84,7 @@ class KdeCV {
     // computation; this acts as a stack of arguments.
     std::map<index_t, index_t> constant_dataset_indices;
 
-    return root_->MonteCarloCompute(constant_dataset_indices);   
+    return operator_root_->MonteCarloCompute(constant_dataset_indices);   
   }
 
   double NaiveCompute() {
@@ -73,7 +93,7 @@ class KdeCV {
     // computation; this acts as a stack of arguments.
     std::map<index_t, index_t> constant_dataset_indices;
 
-    return root_->NaiveCompute(constant_dataset_indices);
+    return operator_root_->NaiveCompute(constant_dataset_indices);
   }
 
   double BaseNaiveCompute() {

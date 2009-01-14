@@ -114,6 +114,9 @@ int main(int argc, char *argv[]) {
   // we initialize it with all parameters defined "--kde/...=...".
   struct datanode* kde_module = fx_submodule(fx_root, "kde");
 
+  // Initialize the random number seed.
+  srand(time(NULL));
+
   // The reference data file is a required parameter.
   const char* references_file_name = fx_param_str_req(fx_root, "data");
 
