@@ -1,3 +1,11 @@
+/*
+  This code will simply run the hyperkernel density estimation code
+  with parameter settings
+
+
+*/
+
+
 #include "interior_point_pred_corr2.h"
 #include "special_la.h"
 #include "fastlib/fastlib_int.h"
@@ -5,7 +13,6 @@
 #include "mlpack/kde/bandwidth_lscv.h"
 #include "mlpack/kde/naive_kde.h"
 #include "mlpack/series_expansion/kernel_aux.h"
-
 
 int main(int argc, char *argv[]){
   
@@ -16,10 +23,9 @@ int main(int argc, char *argv[]){
   
   //Train data file is a reuqirement
   const char *train_file=fx_param_str_req(ipc,"train");
-
-
   index_t num_train_points;  
   Matrix train_data;
+
   
   //Load the train datasets
   
@@ -28,13 +34,14 @@ int main(int argc, char *argv[]){
 
   printf("Train dataset has been read....\n");
 
-  index_t num_test_points=0;
 
-  //This is a flag
+  //Variables concerning test set
+
+  index_t num_test_points=0;
   index_t test_file_present=0;
   index_t true_density_file_present=0;
-
   Matrix test_data;
+
   //Check for the existence of a test set and accordingly read data
   if(fx_param_exists(ipc,"test")){
     
@@ -45,20 +52,34 @@ int main(int argc, char *argv[]){
     num_test_points=test_data.n_cols();
   }
   else{
+    printf("Test set doesnt exist.....\n");
     
     test_data.Init(0,0); //This avoids segmentation fault
     num_test_points=0;
   }
-  
+
+
+  Matrix true_test_densities;
+  if(fx_param_exists(ipc,"true")){
+    true_density_file_present=1;
+    
+    const char *true_density_file=fx_param_str_req(ipc,"true");
+    //Since the true test densities are given, hence
+    data::Load(true_density_file,&true_test_densities);
+    
+  }
+
+
+  /**************************** Do naive kde first*******************************/    
 
   //Lets do least squares cv for naive kde
 
-
   /////////////// NAIVE KDE AND CROSSVALIDATION////////////
-  struct datanode* naive=fx_submodule(NULL,"naive");  
   
   //Get the minimum bandwidth for naive kde using least squares
   //crossvalidation
+
+  struct datanode* naive=fx_submodule(NULL,"naive");
   double min_band_naive_kde;
   
   Matrix reference_weights;
@@ -73,57 +94,68 @@ int main(int argc, char *argv[]){
     Optimize<GaussianKernelAux>(train_data,reference_weights);
 
   printf("Finished crossvalidation for least squares bandwidth");
-
+  
 
   printf("Minimum bandwidth is %f\n",min_band_naive_kde);
-
+  
   double optimal_ise_score_naive_kde=
-    BandwidthLSCV::ComputeLSCVScore<GaussianKernelAux>(train_data,reference_weights,
-						       min_band_naive_kde);
- 
-
-  printf("Least squares crossvalidation score at the optimal bandwidth is %f..\n",optimal_ise_score_naive_kde);
-
-
-  Vector naive_kde_test_densities;
-
-   if(fx_param_exists(ipc,"test")){
+    BandwidthLSCV::
+    ComputeLSCVScore<GaussianKernelAux>(train_data,reference_weights,min_band_naive_kde);
+  
+    printf("Least squares crossvalidation score at the optimal bandwidth for naive kde is %f..\n",optimal_ise_score_naive_kde);
+  
+    Vector naive_kde_test_densities;
+    
     
     //Uniform weight KDE
+    
+    // NaiveKde<GaussianKernel> naive_kde;
+    //   fx_set_param_double(naive,"bandwidth", min_band_naive_kde);
+    //   fx_set_param_str(naive,"mode","fixedbw");
+    
+    //  naive_kde.Init(test_data,train_data,naive);
+    //      naive_kde.Compute();
+    //      naive_kde.get_density_estimates(&naive_kde_test_densities);
+    
+    GaussianKernel gk;
+    gk.Init(min_band_naive_kde);
 
-     NaiveKde<GaussianKernel> naive_kde;
-     fx_set_param_double(naive,"bandwidth", min_band_naive_kde);
-     fx_set_param_str(naive,"mode","fixedbw");
-     
-     naive_kde.Init(test_data,train_data,naive);
-     naive_kde.Compute();
-     naive_kde.get_density_estimates(&naive_kde_test_densities);
-
-     printf("Test points for naive kde are..\n");
-     test_data.PrintDebug();
-     printf("Naive kde test densities are...\n");
-     naive_kde_test_densities.PrintDebug();
-   }
-   else{
-     
-     naive_kde_test_densities.Init(0);
-   }
-
-
+    index_t num_dims=train_data.n_rows();
+    
+    naive_kde_test_densities.Init(num_test_points);
+    double norm_const=
+      gk.CalcNormConstant(num_dims);
+    
+    for(index_t i=0;i<num_test_points;i++){
+      
+      double *x=test_data.GetColumnPtr(i);
+      
+      double total_contrib=0;
+      
+      for(index_t j=0;j<num_train_points;j++){
+	
+	double *x_j=train_data.GetColumnPtr(j); 
+	
+	double sqd_dist=
+	  la::DistanceSqEuclidean(num_dims,x, x_j);
+	
+	double unnorm_kernel_val=
+	  gk.EvalUnnormOnSq(sqd_dist);
+	
+	total_contrib+=unnorm_kernel_val;
+      }
+      naive_kde_test_densities[i]=total_contrib/(num_train_points*norm_const);
+    }
+    
    //Having got the density estimates calculate the mean squared error
    //Only if the true densities are known
    
 
-   double rmse_naive_kde_opt=DBL_MAX;
+   double rmse_naive_kde_opt=-1;
 
-
-
-   Matrix true_test_densities;
+   
    if(fx_param_exists(ipc,"true")){
      
-     const char *true_density_file=fx_param_str_req(ipc,"true");
-     //Since the true test densities are given, hence
-     data::Load(true_density_file,&true_test_densities);
      double rmse=0;
      index_t num_test_points=true_test_densities.n_cols();
      
@@ -137,6 +169,7 @@ int main(int argc, char *argv[]){
      rmse_naive_kde_opt=sqrt(rmse/num_test_points);
      true_density_file_present=1;
 
+     printf("Optimal bw for naive kde is %f..\n",min_band_naive_kde);
      printf("RMSE naive kde is %f..\n",rmse_naive_kde_opt);
    }
    else{
@@ -146,173 +179,195 @@ int main(int argc, char *argv[]){
 
    //You can always calculate the likelihood
 
-   double negative_log_likelihood_naive_kde_opt=1;
+   // double negative_log_likelihood_naive_kde_opt=1;
 
-   for(index_t i=0;i<num_test_points;i++){
+//    for(index_t i=0;i<num_test_points;i++){
 
-     negative_log_likelihood_naive_kde_opt*=naive_kde_test_densities[i];
-   }
+//      negative_log_likelihood_naive_kde_opt*=naive_kde_test_densities[i];
+//    }
 
-   negative_log_likelihood_naive_kde_opt=-log(negative_log_likelihood_naive_kde_opt);
+//    negative_log_likelihood_naive_kde_opt=-log(negative_log_likelihood_naive_kde_opt);
 
-  
+   /****************************************Done with naive kde**********************************/
 
-  ////////////////////////////////////////////////////////////////////////////////
+
+
+
 
    fx_timer_start(NULL,"full");
-   double min_sigma=min_band_naive_kde*0.50;
-   
-   double max_sigma=min_band_naive_kde*1.25;
-
-   index_t number_steps=5;
-   
-   double gap=(max_sigma-min_sigma)/number_steps;
-
-   Vector sigma;
-   sigma.Init(number_steps+1);
 
 
-   //TODO: CHANGE THIS CHANGE THIS
+   //Number of parameteres for crossvalidation
 
-   min_sigma=min_band_naive_kde;
-   
-   for(index_t i=0;i<number_steps;i++){
+   index_t num_sigma=5;
+   index_t num_sigma_h=5;
+   index_t num_lambda=1;
+
+
+   Vector sigma_vec;
+   Vector sigma_h_vec;
+   Vector lambda_vec;
+
+   //Initialize these vectors
+
+   sigma_vec.Init(num_sigma+1);
+   sigma_h_vec.Init(num_sigma_h+1);
+   lambda_vec.Init(num_lambda);
+
+
+   //Set up these values
+   double min_sigma=min_band_naive_kde/3;
+   double max_sigma=3*min_band_naive_kde;
+
+   double gap=(max_sigma-min_sigma)/num_sigma;
+
+   for(index_t i=0;i<num_sigma;i++){
      
-     sigma[i]=min_sigma+(i*gap);
+     sigma_vec[i]=min_sigma+i*gap;
    }
-   
-   sigma[number_steps]=min_band_naive_kde/sqrt(2);
+   sigma_vec[num_sigma]=min_band_naive_kde/sqrt(2);
 
-   printf("Sigma is..\n");
-   sigma.PrintDebug();
+
+   //Set up sigma_h
+
+   gap=min_sigma/(2*num_sigma_h);
+
+   double average_sigma=(min_sigma+max_sigma)/2.0;
+   for(index_t i=0;i<num_sigma_h;i++){
+
+     sigma_h_vec[i]=i*average_sigma;     
+   } 
+   sigma_h_vec[num_sigma_h]=60; //Infinite sigma_h
+
+   lambda_vec[0]=200.0;
   
-   Vector lambda;
-   
-   lambda.Init(1);
-   lambda[0]=0.1;
-   // lambda[1]=0.5;
-   //lambda[2]=0.05;
-   //lambda[3]=5;
-   //lambda[4]=20;
-
   //Having got all the initial data lets create an object of the class
   //HkInteriorPointPredictorCorrector
 
-  //Decide upon a range for \sigma,\sigma_h and lambda
-  
-  //************************************************
-
-
-
   double min_ise_hkde=DBL_MAX;
-  double opt_sigma_h;
-  double opt_sigma;
-  double opt_lambda;
+ 
+
+  printf("Sigma vector is ...\n");
+  sigma_vec.PrintDebug();
+
+  printf("Sigma_h vector is ...\n");
+  sigma_h_vec.PrintDebug();
+  
+  printf("lambda vector is..\n");
+  lambda_vec.PrintDebug();
+
+  /*
+    A little hack 
+
+  */
+
+//   num_sigma=0;
+//   num_sigma_h=0;
+//   num_lambda=1;
+  
+//   sigma_vec[0]=min_band_naive_kde/sqrt(2);
+//   sigma_h_vec[0]=60;
+//   lambda_vec[0]=10;
+  
 
 
-  index_t total_crossvalidation=0;
-  index_t num_sigma_h=5;
+ 
+  double reg_ise_opt=DBL_MAX; 
+  index_t num_defaulters=0;      
 
-  Vector sigma_h;
-  sigma_h.Init(num_sigma_h+1);
+  double sigma_opt,sigma_h_opt,lambda_opt;
 
-  Matrix dummy_test;
-  dummy_test.Init(0,0);
-
-
-  double ise_at_inf_sigma_h=DBL_MAX;
-
-  for(index_t j=0;j<sigma.length();j++){
-
-    fx_set_param_double(ipc,"sigma",sigma[j]);
-
-    double min_sigma_h=0;
-    double max_sigma_h=4*sigma[j];
+  for(index_t i=0;i<num_sigma+1;i++){
     
-    printf("sigma_h is..\n");
-    sigma_h.PrintDebug();
-    double gap=(max_sigma_h-min_sigma_h)/num_sigma_h;
-    for(index_t p=0;p<num_sigma_h;p++){
+    for(index_t j=0;j<num_sigma_h+1;j++){
       
-      sigma_h[p]=min_sigma_h+(p*gap);
-      printf("sigma_h has added in %f..\n",sigma_h[p]);
-    }
-    
-    sigma_h[num_sigma_h]=60; //inifinte sigma_h
-     printf("Sigma_h is...\n");
-     sigma_h.PrintDebug();
-    
-    for(index_t i=0;i<sigma_h.length();i++){
-      
-      fx_set_param_double(ipc,"sigma_h",sigma_h[i]);      
-      
-      for(index_t k=0;k<lambda.length();k++){
+      for(index_t k=0;k<num_lambda;k++){
+
+
+	fx_set_param_double(ipc,"sigma",sigma_vec[i]);
+	fx_set_param_double(ipc,"sigma_h",sigma_h_vec[j]);      
+	fx_set_param_double(ipc,"lambda",lambda_vec[k]);
 	
-	fx_set_param_double(ipc,"lambda",lambda[k]);
 	
-
-	printf("TOTAL ITERATIONS DONE ARE %d...\n",total_crossvalidation);
-	printf("sigma_h=%f,sigma=%f,lambda=%f...\n",sigma_h[i],sigma[j],lambda[k]);
-
 	HKInteriorPointPredictorCorrector hk_ippc; 
-
-	hk_ippc.Init(train_data,dummy_test,ipc);
+	hk_ippc.Init(train_data,test_data,ipc);
 	index_t ret_val=hk_ippc.ComputeOptimalSolution();
-
-	double ise;
+	
 	if(ret_val==-1){
-	  printf("There was a possibiltity of inf loop......\n");
-	  printf("sigma_h=%f,sigma=%f,lambda=%f...\n",sigma_h[i],sigma[j],lambda[k]);
-	  ise=DBL_MAX;
+	  
+	  //do nothing
+	  num_defaulters++;
 	}
 	else{
-	  ise=hk_ippc.get_ise_train_set();
+	  double reg_ise=
+	    hk_ippc.get_penalized_ise_train_set();
+	  
+	  if(reg_ise<reg_ise_opt){
+	    
+	    sigma_opt=sigma_vec[i];
+	    sigma_h_opt=sigma_h_vec[j];
+	    lambda_opt=lambda_vec[k];
+	    reg_ise_opt=reg_ise;
+	  }
 	}
-	if(ise<min_ise_hkde){
-
-	  min_ise_hkde=ise;
-	  opt_sigma_h=sigma_h[i];
-	  opt_sigma=sigma[j];
-	  opt_lambda=lambda[k];
-	}
-
-	if(fabs(sigma_h[i]-60)<0.000001&&fabs(sigma[j]-min_band_naive_kde/sqrt(2))<0.000001){
-
-	  ise_at_inf_sigma_h=ise;
-	}
-	total_crossvalidation++;
       }
     }
   }
-  /////////////////////////////////////////////////////////////////////////////////////
-  
-  printf("Run the code with optimal hyperkernel parameters....\n");
-  
-  printf("sigma_h=%f,sigma=%f,lambda=%f..\n",opt_sigma_h,opt_sigma,opt_lambda);
 
-  ///////Run HKDE WITH OPTIMAL PARAMETERS
-  HKInteriorPointPredictorCorrector hk_ippc; 
-  fx_set_param_double(ipc,"sigma_h",opt_sigma_h);
-  fx_set_param_double(ipc,"sigma",opt_sigma);
-  fx_set_param_double(ipc,"lambda",opt_lambda);
+  //Fianlly run with the optimal settings
   
+  fx_set_param_double(ipc,"sigma",sigma_opt);
+  fx_set_param_double(ipc,"sigma_h",sigma_h_opt);      
+  fx_set_param_double(ipc,"lambda",lambda_opt);
+  
+  
+  HKInteriorPointPredictorCorrector hk_ippc; 
   hk_ippc.Init(train_data,test_data,ipc);
   hk_ippc.ComputeOptimalSolution();
-  double hkde_ise_opt=hk_ippc.get_ise_train_set();
-  double negative_log_likelihood_hkde_opt=
-    hk_ippc.get_negative_log_likelihood_test();
+  double ise_opt_train_set_hkde=
+    hk_ippc.get_ise_train_set();
 
   Vector test_densities_hkde_opt;
   hk_ippc.get_test_densities(test_densities_hkde_opt);
+  
+  printf("The number of defaulters are %d..\n",num_defaulters);
 
+  /////////////////////////////////////////////////////////////////////////////////////
+  
+ //  printf("Run the code with optimal hyperkernel parameters....\n");
+  
+  //   printf("sigma_h=%f,sigma=%f,lambda=%f..\n",opt_sigma_h,opt_sigma,opt_lambda);
+  
+  //   ///////Run HKDE WITH OPTIMAL PARAMETERS
+  //   HKInteriorPointPredictorCorrector hk_ippc; 
+  //   fx_set_param_double(ipc,"sigma_h",opt_sigma_h);
+  //   fx_set_param_double(ipc,"sigma",opt_sigma);
+  //   fx_set_param_double(ipc,"lambda",opt_lambda);
+  
+  //   hk_ippc.Init(train_data,test_data,ipc);
+  //   hk_ippc.ComputeOptimalSolution();
+  //   double hkde_ise_opt=hk_ippc.get_ise_train_set();
+  //   double negative_log_likelihood_hkde_opt=
+  //     hk_ippc.get_negative_log_likelihood_test();
+  
+  //   Vector test_densities_hkde_opt;
+  //   hk_ippc.get_test_densities(test_densities_hkde_opt);
+  
   //////////////////////////////////////////////////////////////////////////
+  
 
-  double rmse_hkde_opt=DBL_MAX;
-
+  //Calculate RMSE of hkde. To do this check to see if we have a
+  //true_density_file
+ 
+  double rmse_hkde_opt=-1;
+  
   if(true_density_file_present==1){
-
+    
     double rmse=0;
     for(index_t i=0;i<num_test_points;i++){
+
+      //printf("Actual density is %f..\n",true_test_densities.get(0,i));
+      //printf("Calculated density is %f..\n",test_densities_hkde_opt[i]);
       
       double diff=
 	test_densities_hkde_opt[i]-true_test_densities.get(0,i);
@@ -326,43 +381,38 @@ int main(int argc, char *argv[]){
 
   //print all the results  
   printf("HYPERKERNEL results...................................\n");
-  printf("sigma_h_opt=%f\n",opt_sigma_h);
-  printf("sigma_opt=%f\n",opt_sigma);
-  printf("lambda_opt=%f\n",opt_lambda);
-  printf("Negative lOG LIKELIHOOD=%f...\n",negative_log_likelihood_hkde_opt);
-  printf("ISE:%f\n",min_ise_hkde);
+  printf("sigma_h=%f\n",sigma_h_opt);
+  printf("sigma=%f\n",sigma_opt);
+  printf("lambda=%f\n",lambda_opt);
+  printf("The unregualrized ISE of train set is %f..\n",
+	 ise_opt_train_set_hkde);
+  printf("The regualrized ISE of train set is %f..\n",reg_ise_opt);
+  
+  
+  printf("HKDE Densities are............\n");
+  test_densities_hkde_opt.PrintDebug();
+  
+
   //printf("penalized ise at optimal settings is %f..\n",min_penalized_ise_hkde);
   printf("RMSE:%f....\n",rmse_hkde_opt);
-  printf("ise at infinite sigma_h=%f..\n",ise_at_inf_sigma_h);
 
-  printf("............................\n");
-
+  printf("..............................\n");
   printf("NAIVE KDE results...\n");
 
-  printf("h_opt:%f\n...",min_band_naive_kde);
-  printf("NEGATIVE LOG LIKELIHOOD=%f..\n",negative_log_likelihood_naive_kde_opt);
-  printf("ISE TRAIN=%f..\n",optimal_ise_score_naive_kde);
-  printf("RMSE=%f.........\n",rmse_naive_kde_opt);
-
-  printf("Total number of iterations are %d...\n",total_crossvalidation);
-
-
-
-
-  printf("HKDE Densities are...\n");
-   test_densities_hkde_opt.PrintDebug();
-
-
-  printf("NAIVE KDE Densities are...\n");
+  printf("The bandwidth of naive kde is %f..\n",min_band_naive_kde);
+  printf("The ise of naive kde at optimal setting is %f..\n",optimal_ise_score_naive_kde);
+  printf("rmse of naive kde is %f..\n",rmse_naive_kde_opt);
+  printf("Naive kde densities are...\n");
   naive_kde_test_densities.PrintDebug();
+
 
   ////////////Print Them//////////////////
   
-   FILE *fp_naive=fopen("naive_kde_densities_mog9.txt","w");
-   FILE *fp_hkde=fopen("hkde_densities_mog9.txt","w");
+  // FILE *fp_naive=fopen("naive_kde_densities_mog9.txt","w");
+  //    FILE *fp_hkde=fopen("hkde_densities_mog9.txt","w");
   
-   test_densities_hkde_opt.PrintDebug(NULL,fp_hkde);
-   naive_kde_test_densities.PrintDebug(NULL,fp_naive);
+  //    test_densities_hkde_opt.PrintDebug(NULL,fp_hkde);
+  //    naive_kde_test_densities.PrintDebug(NULL,fp_naive);
   
-   fx_done(NULL);
+  fx_done(NULL);
 }
