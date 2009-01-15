@@ -22,8 +22,6 @@ const fx_entry_doc approx_nn_dual_entries[] = {
   {"knns", FX_PARAM, FX_INT, NULL, 
    " The number of nearest neighbors we need to compute"
    " (defaults to 1).\n"},
-//   {"epsilon", FX_PARAM, FX_INT, NULL,
-//    " Rank approximation.\n"},
   {"epsilon", FX_PARAM, FX_DOUBLE, NULL,
    " Rank approximation factor (%% of the reference set size).\n"},
   {"alpha", FX_PARAM, FX_DOUBLE, NULL,
@@ -283,6 +281,9 @@ private:
    * It assumes that the ArrayList<index_t> *samples
    * has been initialized to length N.
    */
+
+  // need to optimize this soon enough
+ public:
   void ComputeSampleSizes_(index_t rank_approx, double alpha,
 			   ArrayList<index_t> *samples) {
 //     index_t set_size = samples->size(),
@@ -312,30 +313,18 @@ private:
 
     double prob;
     DEBUG_ASSERT(alpha <= 1.0);
-    bool first = true;
     double beta = 0;
     do {
-      do {
-	n--;
-	prob = ComputeProbability_(set_size,
-				   n, rank_approx);
-      } while (prob >= alpha);
-      (*samples)[--set_size] = ++n;
-      if (first) {
-	beta = (double) n / (double) (set_size+1);
-	first = false;
-      } else {
-	index_t n_1 = (index_t) (beta * (double)(set_size+1)) +1;
-	DEBUG_WARN_MSG_IF(n > n_1,
-			  "n = %"LI"d n' = %"LI"d, N = %"LI"d",
-			  n, n_1, set_size+1);
-	if (n_1 > n) {
-	  (*samples)[set_size] = n_1;
-	}
-// 	double diff = abs(b - ((double) n / (double) (set_size+1)));
-// 	DEBUG_ASSERT(diff < 0.5);
-      }
-//       printf ("%"LI"d, %"LI"d\n", n, set_size+1);
+      n--;
+      prob = ComputeProbability_(set_size,
+				 n, rank_approx);
+    } while (prob >= alpha);
+    (*samples)[--set_size] = ++n;
+    beta = (double) n / (double) (set_size+1);
+
+    do {
+      n = (index_t) (beta * (double)(set_size)) +1;
+      (*samples)[--set_size] = n;
     } while (set_size > rank_approx);
     while (set_size > 0) {
       (*samples)[--set_size] = 1;
@@ -345,6 +334,7 @@ private:
   /**
    * Performs exhaustive computation between two leaves.  
    */
+ private:
   void ComputeBaseCase_(TreeType* query_node,
 			TreeType* reference_node) {
    
@@ -954,6 +944,60 @@ public:
     sample_sizes_.Init();
   } // Init
 
+  // Initializing for the monochromatic case
+  void Init(const Matrix& references_in,
+	    struct datanode* module_in) {
+    
+    // set the module
+    module_ = module_in;
+    
+    // track the number of prunes
+    number_of_prunes_ = 0;
+    
+    // Get the leaf size from the module
+    leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+    // Make sure the leaf size is valid
+    DEBUG_ASSERT(leaf_size_ > 0);
+    
+    // Copy the matrices to the class members since they will be rearranged.  
+    references_.Copy(references_in);
+    queries_.Alias(references_);
+    
+    // keep a track of the dataset
+    fx_param_int(module_, "dim", references_.n_rows());
+    fx_param_int(module_, "qsize", references_.n_cols());
+    fx_param_int(module_, "rsize", references_.n_cols());
+
+    // K-nearest neighbors initialization
+    knns_ = fx_param_int(module_, "knns", 1);
+  
+    // Initialize the list of nearest neighbor candidates
+    neighbor_indices_.Init(references_.n_cols() * knns_);
+    
+    // Initialize the vector of upper bounds for each point.  
+    neighbor_distances_.Init(references_.n_cols() * knns_);
+    neighbor_distances_.SetAll(DBL_MAX);
+
+    // We'll time tree building
+    fx_timer_start(module_, "tree_building");
+
+    // This call makes each tree from a matrix, leaf size, and two arrays 
+    // that record the permutation of the data points
+    // Instead of NULL, it is possible to specify an array new_from_old_
+    query_tree_ = NULL;
+    reference_tree_
+      = tree::MakeKdTreeMidpoint<TreeType>(references_, 
+					   leaf_size_,
+					   &old_from_new_references_,
+					   NULL);
+    
+    fx_timer_stop(module_, "tree_building");
+
+    // initializing stuff not needed here
+    sample_sizes_.Init();
+    old_from_new_queries_.Init();
+  } // Init
+
   void Destruct() {
     if (query_tree_ != NULL) {
       delete query_tree_;
@@ -1008,6 +1052,39 @@ public:
     sample_sizes_.Init();
   } // InitNaive
 
+  // Initializing for the naive computation for a
+  // monochromatic dataset
+  void InitNaive(const Matrix& references_in, index_t knns){
+    
+    references_.Copy(references_in);
+    queries_.Alias(references_);
+    knns_=knns;
+
+    neighbor_indices_.Init(references_.n_cols()*knns_);
+    neighbor_distances_.Init(references_.n_cols()*knns_);
+    neighbor_distances_.SetAll(DBL_MAX);
+    
+    // The only difference is that we set leaf_size_ to be large enough 
+    // that each tree has only one node
+    leaf_size_ = references_.n_cols();
+    
+    query_tree_ = NULL;
+    reference_tree_
+      = tree::MakeKdTreeMidpoint<TreeType>(references_,
+					   leaf_size_,
+					   &old_from_new_references_,
+					   NULL);
+
+    // initialiazing stuff not needed here
+    sample_sizes_.Init();
+    old_from_new_queries_.Init();
+  } // InitNaive
+
+  /**
+   * Initialization for the Rank-Approximate nearest neighbor
+   * computation for which we store the number of samples 
+   * to be made for each size of a dataset.
+   */
   void InitApprox(const Matrix& queries_in,
 		  const Matrix& references_in,
 		  struct datanode* module_in) {
@@ -1055,12 +1132,7 @@ public:
     // We'll time tree building
     fx_timer_start(module_, "tree_building_approx");
 
-    // This call makes each tree from a matrix, leaf size, and two arrays 
-    // that record the permutation of the data points
-    // Instead of NULL, it is possible to specify an array new_from_old_
-
-    // Here we need to change the query tree into N single-point
-    // query trees
+    // Making the trees
     query_tree_
       = tree::MakeKdTreeMidpoint<TreeType>(queries_,
 					   leaf_size_, 
@@ -1098,6 +1170,90 @@ public:
     // initializing the minimum samples required per
     // query to hold the probability bound
     min_samples_per_q_ = sample_sizes_[references_.n_cols() -1];
+
+  } // InitApprox
+
+  // InitApprox for the monochromatic case
+  void InitApprox(const Matrix& references_in,
+		  struct datanode* module_in) {
+    
+    // set the module
+    module_ = module_in;
+
+    // Check if the probability is <=1
+    double alpha = fx_param_double(module_, "alpha", 1.0);
+    DEBUG_ASSERT(alpha <= 1.0);
+    
+    // track the number of prunes
+    number_of_prunes_ = 0;
+    
+    // Get the leaf size from the module
+    leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+    // Make sure the leaf size is valid
+    DEBUG_ASSERT(leaf_size_ > 0);
+
+    // Getting the sample_limit
+    sample_limit_ = fx_param_int(module_, "sample_limit", 20);
+    
+    // Copy the matrices to the class members since they will be rearranged.  
+    references_.Copy(references_in);
+    queries_.Alias(references_);
+    
+    // keep a track of the dataset
+    fx_param_int(module_, "dim", references_.n_rows());
+    fx_param_int(module_, "qsize", references_.n_cols());
+    fx_param_int(module_, "rsize", references_.n_cols());
+
+    // K-nearest neighbors initialization
+    knns_ = fx_param_int(module_, "knns", 1);
+  
+    // Initialize the list of nearest neighbor candidates
+    neighbor_indices_.Init(references_.n_cols() * knns_);
+    
+    // Initialize the vector of upper bounds for each point.  
+    neighbor_distances_.Init(references_.n_cols() * knns_);
+    neighbor_distances_.SetAll(DBL_MAX);
+
+    // We'll time tree building
+    fx_timer_start(module_, "tree_building_approx");
+
+    // Making the trees
+    query_tree_ = NULL;
+    reference_tree_
+      = tree::MakeKdTreeMidpoint<TreeType>(references_, 
+					   leaf_size_,
+					   &old_from_new_references_,
+					   NULL);
+    
+    // Stop the timer we started above
+    fx_timer_stop(module_, "tree_building_approx");
+
+    // We will time the initialization of the sample size
+    // table
+    fx_timer_start(module_, "computing_sample_sizes");
+
+    // initialize the sample_sizes array
+    sample_sizes_.Init(references_.n_cols());
+
+    // compute the sample sizes
+    epsilon_ = fx_param_double(module_, "epsilon", 0.0);
+    rank_approx_ = (index_t) (epsilon_
+			      * (double) references_.n_cols()
+			      / 100.0);
+    NOTIFY("Rank Approximation: %2.3f%% or %"LI"d"
+	   " with Probability:%1.2f",
+	   epsilon_, rank_approx_, alpha);
+
+    ComputeSampleSizes_(rank_approx_, alpha, &sample_sizes_);
+
+    fx_timer_stop(module_, "computing_sample_sizes");
+
+    // initializing the minimum samples required per
+    // query to hold the probability bound
+    min_samples_per_q_ = sample_sizes_[references_.n_cols() -1];
+
+    // initializing stuff not used here
+    old_from_new_queries_.Init();
 
   } // InitApprox
   
@@ -1158,13 +1314,24 @@ public:
     // The same code as above
     resulting_neighbors->Init(neighbor_indices_.size());
     distances->Init(neighbor_distances_.length());
+
     // We need to map the indices back from how they have 
     // been permuted
-    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-      (*resulting_neighbors)[old_from_new_references_[i/knns_]*knns_+ i%knns_]
-	= old_from_new_references_[neighbor_indices_[i]];
-      (*distances)[old_from_new_references_[i/knns_]*knns_+ i%knns_]
-	=  neighbor_distances_[i];
+    if (query_tree_ != NULL) {
+      for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+        (*resulting_neighbors)[old_from_new_queries_[i/knns_]*knns_+ i%knns_]
+	  = old_from_new_references_[neighbor_indices_[i]];
+        (*distances)[old_from_new_queries_[i/knns_]*knns_+ i%knns_]
+	  = neighbor_distances_[i];
+      }
+    } else {
+      for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+        (*resulting_neighbors)[old_from_new_references_[i/knns_]
+			       *knns_+ i%knns_]
+	  = old_from_new_references_[neighbor_indices_[i]];
+        (*distances)[old_from_new_references_[i/knns_]*knns_+ i%knns_]
+	  = neighbor_distances_[i];
+      }
     }
   }
 

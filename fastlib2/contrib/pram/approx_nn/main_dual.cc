@@ -4,13 +4,9 @@
 const fx_entry_doc approx_nn_main_dual_entries[] = {
   {"r", FX_REQUIRED, FX_STR, NULL,
    " A file containing the reference set.\n"},
-  {"q", FX_REQUIRED, FX_STR, NULL,
+  {"q", FX_PARAM, FX_STR, NULL,
    " A file containing the query set"
    " (defaults to the reference set).\n"},
-  {"Init", FX_TIMER, FX_CUSTOM, NULL,
-   " Nik's tree code init.\n"},
-  {"Compute", FX_TIMER, FX_CUSTOM, NULL,
-   " Nik's tree code compute.\n"},
   {"donaive", FX_PARAM, FX_BOOL, NULL,
    " A variable which decides whether we do"
    " the naive computation(defaults to false).\n"},
@@ -71,30 +67,55 @@ int main (int argc, char *argv[]) {
     = fx_init(argc, argv, &approx_nn_main_dual_doc);
 
   Matrix qdata, rdata;
-  std::string qfile = fx_param_str_req(root, "q");
   std::string rfile = fx_param_str_req(root, "r");
   NOTIFY("Loading files...");
-  data::Load(qfile.c_str(), &qdata);
   data::Load(rfile.c_str(), &rdata);
+  if (fx_param_exists(root, "q")) {
+    std::string qfile = fx_param_str_req(root, "q");
+    data::Load(qfile.c_str(), &qdata);
+  } else {
+    qdata.Copy(rdata);
+  }
+
   NOTIFY("File loaded...");
 
   struct datanode *ann_module
     = fx_submodule(root, "ann");
 
+
   ArrayList<index_t> nac, exc, apc;
   ArrayList<double> din, die, dia;
 
-  index_t knns = fx_param_int_req(ann_module, "knns");
+  index_t knns = fx_param_int(ann_module, "knns", 1);
   std::string result_file = fx_param_str(root, "result_file", "result.txt");
+
+  // Part where I check how table is made
+//   ApproxNN test;
+//   ArrayList<index_t> samples;
+//   samples.Init(fx_param_int_req(root, "N"));
+//   test.ComputeSampleSizes_(fx_param_int_req(root, "n"), 0.90,
+// 			   &samples);
+
+//   for (index_t i = 0; i < samples.size(); i++) {
+//     printf("%"LI"d ", samples[i]);
+//   }
+
+  // This part ends here
 
   // Naive computation
   if (fx_param_bool(root, "donaive", false)) {
     ApproxNN naive_nn;
     NOTIFY("Naive");
     NOTIFY("Init");
-    fx_timer_start(ann_module, "naive_init");
-    naive_nn.InitNaive(qdata, rdata, knns);
-    fx_timer_stop(ann_module, "naive_init");
+    if (fx_param_exists(root, "q")) {
+      fx_timer_start(ann_module, "naive_init");
+      naive_nn.InitNaive(qdata, rdata, knns);
+      fx_timer_stop(ann_module, "naive_init");
+    } else {
+      fx_timer_start(ann_module, "naive_init");
+      naive_nn.InitNaive(rdata, knns);
+      fx_timer_stop(ann_module, "naive_init");
+    }
 
     NOTIFY("Compute");
     fx_timer_start(ann_module, "naive");
@@ -122,9 +143,15 @@ int main (int argc, char *argv[]) {
     ApproxNN exact_nn;
     NOTIFY("Exact");
     NOTIFY("Init");
-    fx_timer_start(ann_module, "exact_init");
-    exact_nn.Init(qdata, rdata, ann_module);
-    fx_timer_stop(ann_module, "exact_init");
+    if (fx_param_exists(root, "q")) {
+      fx_timer_start(ann_module, "exact_init");
+      exact_nn.Init(qdata, rdata, ann_module);
+      fx_timer_stop(ann_module, "exact_init");
+    } else {
+      fx_timer_start(ann_module, "exact_init");
+      exact_nn.Init(rdata, ann_module);
+      fx_timer_stop(ann_module, "exact_init");
+    }
 
     NOTIFY("Compute");
     fx_timer_start(ann_module, "exact");
@@ -138,10 +165,12 @@ int main (int argc, char *argv[]) {
 	      strerror(errno));
       }
       for(index_t i=0 ; i < exc.size()/knns ; i++) {
+	fprintf(fp, "%"LI"d", i);
 	for(index_t j=0; j<knns; j++) {
-	  fprintf(fp, "%"LI"d %"LI"d %lg\n", i,
-		  exc[i*knns+j], die[i*knns+j]);
+	  fprintf(fp, ",%"LI"d",
+		  exc[i*knns+j]);
 	}
+	fprintf(fp, "\n");
       }
       fclose(fp);
     }
@@ -154,9 +183,15 @@ int main (int argc, char *argv[]) {
     ApproxNN approx_nn;
     NOTIFY("Approx");
     NOTIFY("Init");
-    fx_timer_start(ann_module, "approx_init");
-    approx_nn.InitApprox(qdata, rdata, ann_module);
-    fx_timer_stop(ann_module, "approx_init");
+    if (fx_param_exists(root, "q")) {
+      fx_timer_start(ann_module, "approx_init");
+      approx_nn.InitApprox(qdata, rdata, ann_module);
+      fx_timer_stop(ann_module, "approx_init");
+    } else {
+      fx_timer_start(ann_module, "approx_init");
+      approx_nn.InitApprox(rdata, ann_module);
+      fx_timer_stop(ann_module, "approx_init");
+    }
 
     NOTIFY("Compute");
     fx_timer_start(ann_module, "approx");
@@ -198,17 +233,33 @@ int main (int argc, char *argv[]) {
       DEBUG_ASSERT(rank_errors.size() == qdata.n_cols());
 
       index_t max_er = 0, min_er = rdata.n_cols();
-      for (index_t i = 0; i < rank_errors.size(); i++) {
-	if (rank_errors[i] > max_er) {
-	  max_er = rank_errors[i];
+
+      if (fx_param_exists(root, "q")) {
+	for (index_t i = 0; i < rank_errors.size(); i++) {
+	  if (rank_errors[i] > max_er) {
+	    max_er = rank_errors[i];
+	  }
+	  if (rank_errors[i] < min_er) {
+	    min_er = rank_errors[i];
+	  }
+	  if (rank_errors[i] > rank_error) {
+	    failed++;
+	  }
+	  re += rank_errors[i];
 	}
-	if (rank_errors[i] < min_er) {
-	  min_er = rank_errors[i];
+      } else {
+	for (index_t i = 0; i < rank_errors.size(); i++) {
+	  if (rank_errors[i]-1 > max_er) {
+	    max_er = rank_errors[i] -1;
+	  }
+	  if (rank_errors[i]-1 < min_er) {
+	    min_er = rank_errors[i]-1;
+	  }
+	  if (rank_errors[i] -1> rank_error) {
+	    failed++;
+	  }
+	  re += rank_errors[i] -1;
 	}
-	if (rank_errors[i] > rank_error) {
-	  failed++;
-	}
-	re += rank_errors[i];
       }
       double avg_rank = (double) re / (double) qdata.n_cols();
       double success_prob = (double) (qdata.n_cols() - failed)
@@ -310,6 +361,7 @@ void find_rank_dist(Matrix &query, Matrix &reference,
 
     // Looping over the references
     for (index_t j = 0; j < reference.n_cols(); j++) {
+
       Vector r;
       reference.MakeColumnVector(j, &r);
 
