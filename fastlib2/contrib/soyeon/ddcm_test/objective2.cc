@@ -409,13 +409,13 @@ void Objective::ComputeGradient(double current_sample,
   double p=current_parameter[num_of_betas_];
 	double q=current_parameter[num_of_betas_+1];
 	
-	//ComputeExpBetasTimesX1_(betas);
+	ComputeExpBetasTimesX1_(betas);
 	
-  //ComputeDeumeratorBetaFunction_(p, q);
+  ComputeDeumeratorBetaFunction_(p, q);
 	
-  //ComputePostponedProbability_(betas, 
-  //                             p, 
-  //                             q);
+  ComputePostponedProbability_(betas, 
+                               p, 
+                               q);
 
 	
 	/*
@@ -581,13 +581,13 @@ void Objective::ComputeHessian(double current_sample,
 	double q=current_parameter[num_of_betas_+1];
 	
 	
-	//ComputeExpBetasTimesX1_(betas);
+	ComputeExpBetasTimesX1_(betas);
 	
-  //ComputeDeumeratorBetaFunction_(p, q);
+  ComputeDeumeratorBetaFunction_(p, q);
 	
-  //ComputePostponedProbability_(betas, 
-  //                             p, 
-  //                             q);
+  ComputePostponedProbability_(betas, 
+                               p, 
+                               q);
 
 	
 	/*
@@ -597,14 +597,14 @@ void Objective::ComputeHessian(double current_sample,
 
 	*/
 	
-	//ComputeDotLogit_(betas);
-	//ComputeDDotLogit_();
+	ComputeDotLogit_(betas);
+	ComputeDDotLogit_();
 	////cout<<"ddot done"<<endl;
-	//ComputeSumDerivativeConditionalPostpondProb_(betas, p, q);
+  ComputeSumDerivativeConditionalPostpondProb_(betas, p, q);
 	////cout<<"sumDerivativeCondPostpondprob done"<<endl;
 	
 	
-	//ComputeSumDerivativeBetaFunction_(betas, p, q);
+	ComputeSumDerivativeBetaFunction_(betas, p, q);
 	////cout<<"SumDerivativeBetaFunction done"<<endl;
 
 	
@@ -804,7 +804,7 @@ void Objective::ComputeHessian(double current_sample,
 
 	
 	/*
-	cout<<"Hessian matrix"<<endl;	
+	cout<<"Hessian matrix before correction"<<endl;	
 	for (index_t j=0; j<dummy_hessian.n_rows(); j++){
 		for (index_t k=0; k<dummy_hessian.n_cols(); k++){
 				cout<<dummy_hessian.get(j,k) <<"  ";
@@ -812,6 +812,8 @@ void Objective::ComputeHessian(double current_sample,
 		cout<<endl;
 	}
 	*/
+
+	
 		
 
 	//Check positive definiteness
