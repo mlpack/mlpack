@@ -200,6 +200,14 @@ int main(int argc, char *argv[]) {
 
 
 		cout<<"Number of data used="<<current_added_first_stage_x.size()<<endl;
+		
+		cout<<"current_parameter part1"<<endl;
+		for(index_t i=0; i<current_parameter.length(); i++){
+			cout<<current_parameter[i]<<" "<<endl;
+		}
+
+    double current_objective;
+		current_objective=0;
 		objective.ComputeObjective(current_sample_size, current_parameter, 
 															 &current_objective);
 		
@@ -221,35 +229,10 @@ int main(int argc, char *argv[]) {
 		cout<<"max objective="<<tobjective<<endl;
     
 			
-
-
-		Vector current_gradient;
-		//gradient.Init(num_of_betas_);
-		cout<<"test current_parameter"<<endl;
-		for(index_t i=0; i<current_parameter.length(); i++){
-			cout<<current_parameter[i]<<" ";
-		}
-		cout<<endl;
-
-		objective.ComputeGradient(current_sample_size, current_parameter, &current_gradient);
-		//la::Scale(1.0/current_added_first_stage_x.size(), &current_gradient);
-		
-		//printf("The objective is %g", dummy_objective);
-		
-		cout<<"Gradient vector: ";
-		for (index_t i=0; i<current_gradient.length(); i++)
-		{
-			std::cout<<current_gradient[i]<<" ";
-		}
-		std::cout<<endl;
-		
-
-
-
-				
-		Vector opt_gradient;
+    Vector opt_gradient;
 		//gradient.Init(num_of_betas_);
 		objective.ComputeGradient(current_sample_size, tpar, &opt_gradient);
+		
 		//cout<<"current_added_first_stage_x.size()="<<current_added_first_stage_x.size()<<endl;
 		//la::Scale(1.0/current_added_first_stage_x.size(), &opt_gradient);
 		
@@ -267,6 +250,35 @@ int main(int argc, char *argv[]) {
 		opt_gradient_norm = sqrt(la::Dot(opt_gradient, opt_gradient));
 		cout<<"gradient_norm at true par="<<opt_gradient_norm<<endl;
 		
+		
+
+		Vector current_gradient;
+		//gradient.Init(num_of_betas_);
+		cout<<"test current_parameter"<<endl;
+		for(index_t i=0; i<current_parameter.length(); i++){
+			cout<<current_parameter[i]<<" ";
+		}
+		cout<<endl;
+
+		objective.ComputeGradient(current_sample_size, current_parameter, &current_gradient);
+		//Vector current_gradient2;
+		//objective.ComputeGradient(current_sample_size, tpar, &current_gradient2);
+		
+		//la::Scale(1.0/current_added_first_stage_x.size(), &current_gradient);
+		
+		//printf("The objective is %g", dummy_objective);
+		
+		cout<<"Gradient vector: ";
+		for (index_t i=0; i<current_gradient.length(); i++)
+		{
+			std::cout<<current_gradient[i]<<" ";
+		}
+		std::cout<<endl;
+		
+
+
+
+				
 		
 
 				

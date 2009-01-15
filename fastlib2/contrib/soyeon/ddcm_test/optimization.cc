@@ -114,6 +114,7 @@ void Optimization::ComputeDoglegDirection(double radius,
 				//"(Dogleg)Discriminant is negative. Fail to get the solution zeta.");
 				if(b*b-4*a*c<=0){
 					NOTIFY("(Dogleg)Discriminant is negative. Fail to get the solution zeta.");
+					cout<<"(Dogleg)Discriminant"<<(b*b-4*a*c)<<endl;
 					//double sqrt_discriminant =sqrt(-1*(b*b-4*a*c));
 					NOTIFY("Use cauchy point");
 					//if hessian is indefinite->use cauchy point
