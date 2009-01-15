@@ -206,8 +206,8 @@ int main(int argc, char *argv[]) {
 			cout<<current_parameter[i]<<" "<<endl;
 		}
 
-    double current_objective;
-		current_objective=0;
+    //double current_objective;
+		//current_objective=0;
 		objective.ComputeObjective(current_sample_size, current_parameter, 
 															 &current_objective);
 		
@@ -219,7 +219,7 @@ int main(int argc, char *argv[]) {
 		
 		
 
-		
+		/*
 		double tobjective;
 		tobjective=0;
 		objective.ComputeObjective(current_sample_size, tpar, 
@@ -249,7 +249,8 @@ int main(int argc, char *argv[]) {
 		double opt_gradient_norm;
 		opt_gradient_norm = sqrt(la::Dot(opt_gradient, opt_gradient));
 		cout<<"gradient_norm at true par="<<opt_gradient_norm<<endl;
-		
+		*/
+
 		
 
 		Vector current_gradient;
