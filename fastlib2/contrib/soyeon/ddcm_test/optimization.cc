@@ -110,8 +110,8 @@ void Optimization::ComputeDoglegDirection(double radius,
 				double b=la::Dot(diff, diff2);
 				double c=la::Dot(diff2, diff2)-math::Sqr(radius);
 
-				//DEBUG_ASSERT_MSG(b*b-4*a*c>0, 
-				//"(Dogleg)Discriminant is negative. Fail to get the solution zeta.");
+				DEBUG_ASSERT_MSG(b*b-4*a*c>0, 
+				"(Dogleg)Discriminant is negative. Fail to get the solution zeta.");
 				if(b*b-4*a*c<=0){
 					NOTIFY("(Dogleg)Discriminant is negative. Fail to get the solution zeta.");
 					cout<<"(Dogleg)Discriminant"<<(b*b-4*a*c)<<endl;
@@ -303,8 +303,8 @@ void Optimization::ComputeScaledDoglegDirection(double radius,
 				double b=la::Dot(diff, diff2);
 				double c=la::Dot(diff2, diff2)-math::Sqr(radius);
 
-				//DEBUG_ASSERT_MSG(b*b*-4*a*c>0, 
-				//"(Dogleg)Discriminant is negative. Fail to get the solution zeta.");
+				DEBUG_ASSERT_MSG(b*b*-4*a*c>0, 
+				"(Dogleg)Discriminant is negative. Fail to get the solution zeta.");
 				if(b*b-4*a*c<=0){
 					NOTIFY("(Dogleg)Discriminant is negative. Fail to get the solution zeta.");
 					NOTIFY("Use cauchy point");

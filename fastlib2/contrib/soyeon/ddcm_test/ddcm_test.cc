@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
 
 
   //iteration
-  int max_iteration=3;
+  int max_iteration=1000;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
@@ -201,10 +201,13 @@ int main(int argc, char *argv[]) {
 
 		cout<<"Number of data used="<<current_added_first_stage_x.size()<<endl;
 		
+		/*
 		cout<<"current_parameter part1"<<endl;
 		for(index_t i=0; i<current_parameter.length(); i++){
 			cout<<current_parameter[i]<<" "<<endl;
 		}
+		*/
+
 
     //double current_objective;
 		//current_objective=0;
@@ -243,23 +246,23 @@ int main(int argc, char *argv[]) {
 		}
 		cout<<endl;
 		
-
-
-
 		double opt_gradient_norm;
 		opt_gradient_norm = sqrt(la::Dot(opt_gradient, opt_gradient));
 		cout<<"gradient_norm at true par="<<opt_gradient_norm<<endl;
-		*/
+		
+    */
 
 		
 
 		Vector current_gradient;
 		//gradient.Init(num_of_betas_);
+		/*
 		cout<<"test current_parameter"<<endl;
 		for(index_t i=0; i<current_parameter.length(); i++){
 			cout<<current_parameter[i]<<" ";
 		}
 		cout<<endl;
+    */
 
 		objective.ComputeGradient(current_sample_size, current_parameter, &current_gradient);
 		//Vector current_gradient2;
@@ -285,11 +288,28 @@ int main(int argc, char *argv[]) {
 				
 
 		//NOTIFY("Gradient calculation ends");
+		/*
+    NOTIFY("True hessian");
+		Matrix opt_hessian;
+		objective.ComputeHessian(current_sample_size, tpar, &opt_hessian);
+		//la::Scale(1.0/current_added_first_stage_x.size(), &opt_hessian);
 		
+		cout<<"Hessian matrix at true par: "<<endl;
 
+		
+		for (index_t j=0; j<opt_hessian.n_rows(); j++){
+			for (index_t k=0; k<opt_hessian.n_cols(); k++){
+				cout<<opt_hessian.get(j,k) <<"  ";
+			}
+			cout<<endl;
+		}
+		*/
+
+    
 		///////////////////////////////////////////////////////////////////////
     ///////////////////////////////Exact hessian calculation
 		//NOTIFY("Exact hessian calculation starts");
+
 		Matrix current_hessian;
 		objective.ComputeHessian(current_sample_size, current_parameter, &current_hessian);
 		//la::Scale(1.0/current_added_first_stage_x.size(), &current_hessian);
@@ -308,13 +328,14 @@ int main(int argc, char *argv[]) {
 		*/
 
 		
-		
+		/*
 		///////////////////////////////////////////////////////////////////////
     ///////////////////////////////hessian update - BFGS
 		if(iteration_count==1){
 			Matrix current_hessian;
 			objective.ComputeHessian(current_sample_size, current_parameter, &current_hessian);
 		}
+    */
 
 
 
@@ -332,21 +353,7 @@ int main(int argc, char *argv[]) {
 			cout<<endl;
 		}
 
-    /*
-		Matrix opt_hessian;
-		objective.ComputeHessian(current_sample_size, tpar, &opt_hessian);
-		//la::Scale(1.0/current_added_first_stage_x.size(), &opt_hessian);
-		
-		cout<<"Hessian matrix at true par: "<<endl;
-
-		
-		for (index_t j=0; j<opt_hessian.n_rows(); j++){
-			for (index_t k=0; k<opt_hessian.n_cols(); k++){
-				cout<<opt_hessian.get(j,k) <<"  ";
-			}
-			cout<<endl;
-		}
-    */
+    
 
 
 
@@ -356,7 +363,7 @@ int main(int argc, char *argv[]) {
 		double new_radius;
 		//NOTIFY("Exact hessian calculation ends");
 
-		
+		/*
 		optimization.ComputeDerectionUnderConstraints(current_radius, 
 																					current_gradient,
 																					current_hessian,
@@ -366,9 +373,10 @@ int main(int argc, char *argv[]) {
 																					&next_parameter,
 																					&new_radius);
 		
-		
+		*/
 
-		/*
+
+		
 		//Scaled version
 		optimization.ComputeScaledDerectionUnderConstraints(current_radius, 
 																					current_gradient,
@@ -381,7 +389,7 @@ int main(int argc, char *argv[]) {
 
 		
 		
-    */
+    
 
 
 		current_radius=new_radius;
