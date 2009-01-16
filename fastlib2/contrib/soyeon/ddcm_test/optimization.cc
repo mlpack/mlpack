@@ -18,8 +18,8 @@ void Optimization::ComputeDoglegDirection(double radius,
 																					double *delta_m) {
 	//check positive definiteness of the hessian
 
-	la::Scale(-1.0, &hessian);
-	la::Scale(-1.0, &gradient);
+	//la::Scale(-1.0, &hessian);
+	//la::Scale(-1.0, &gradient);
 
 	Matrix inverse_hessian;
 	if( !PASSED(la::InverseInit(hessian, &inverse_hessian)) ) {
@@ -104,8 +104,8 @@ void Optimization::ComputeDoglegDirection(double radius,
 			double p_u_norm;
 
 			//maximization
-			la::ScaleInit(-1*la::Dot(gradient, gradient)/gHg, gradient, &p_u);
-			//la::ScaleInit(+1*la::Dot(gradient, gradient)/gHg, gradient, &p_u);
+			//la::ScaleInit(-1*la::Dot(gradient, gradient)/gHg, gradient, &p_u);
+			la::ScaleInit(+1*la::Dot(gradient, gradient)/gHg, gradient, &p_u);
 			p_u_norm=sqrt(la::Dot(p_u, p_u));
 
 			if( p_u_norm>=radius ) {	//p=radius/p_u_norm * p_u)
@@ -119,7 +119,7 @@ void Optimization::ComputeDoglegDirection(double radius,
 				Vector diff2; //2p_u-p_b
 				la::ScaleInit(2, p_u, &diff2);
 				la::SubFrom(p_b, &diff2);
-				double b=la::Dot(diff2, diff);
+				double b=2*la::Dot(diff2, diff);
 				//double c=la::Dot(diff2, diff2)-math::Sqr(radius);
 				double c=la::Dot(diff2, diff2)-(radius*radius);
 

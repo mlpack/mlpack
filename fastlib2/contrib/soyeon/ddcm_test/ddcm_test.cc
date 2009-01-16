@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
 
 	//for stopping rule
 	double error_tolerance=1e-16;
-	double zero_tolerance=1e-3;	//for gradient norm
+	double zero_tolerance=1e-4;	//for gradient norm
 
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
 
 
   //iteration
-  int max_iteration=10;
+  int max_iteration=300;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
@@ -525,7 +525,7 @@ int main(int argc, char *argv[]) {
 
 		//agreement rho calculation
 		//rho=1.0*(current_objective-next_objective)/(current_delta_m)*current_added_first_stage_x.size();
-		rho= -1.0*(current_objective-next_objective)/(current_delta_m);
+		rho= +1.0*(current_objective-next_objective)/(current_delta_m);
 
 		/*
 			////////////////////////////////////////////////////////
