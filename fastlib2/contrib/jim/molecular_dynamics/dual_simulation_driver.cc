@@ -126,15 +126,18 @@ int main(int argc, char *argv[])
   tree_simulation.WriteHeader(radial_distribution);
 
   double temperature, diffusion, pressure = 0;
+  int get_pct_flag=1;
   while (time < stop_time){
     double pct = simulation.GetPercent();    
-    if (unlikely(time < 2*time_step)){
+    if (unlikely(get_pct_flag)){
       target_pct = pct;      
+      get_pct_flag = 0;
     }
     simulation.UpdatePositions(time_step);   
-    if (pct < 0.85*target_pct){
+    if (pct < 0.90*target_pct){
       simulation.RebuildTree();
-      simulation.ReinitStats(lj_matrix);     
+      simulation.ReinitStats(lj_matrix);   
+      get_pct_flag = 1;
     }
     if ((int)(time / time_step) % 5 == 1){
       tree_simulation.Reset();

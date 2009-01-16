@@ -294,6 +294,8 @@ private:
       int power = (int)powers_[i];
       double temp = query->stat().interactions_[i].coef()*
 	ref->stat().interactions_[i].coef()*power;      
+      
+      /*
       for (int j = 0; j < 3; j++){
 	if (max[j]*temp > 0){
 	  fmax[j] = fmax[j] + max[j]*temp*pow(r_min, power-2);
@@ -306,6 +308,7 @@ private:
 	  fmin[j] = fmin[j] + min[j]*temp*pow(r_min, power-2);
 	}
       }
+      */
     }    
     // Get range from omitting three body interactions 
     double coef = query->stat().axilrod_[0]*ref->stat().axilrod_[0]*
@@ -934,8 +937,7 @@ public:
   void Init(const Matrix& atoms_in, struct datanode* param){      
     atoms_.Copy(atoms_in);
     n_atoms_ = atoms_.n_cols();
-    force_bound_ = fx_param_double(param, "force_bound", 1.0e-3);
-    force_bound_ = force_bound_*force_bound_;
+    force_bound_ = fx_param_double(param, "force_bound", 1.0e-3);    
     leaf_size_ = fx_param_int(param, "leaf", 4);
     Vector dims;
     dims.Init(3);
