@@ -794,6 +794,65 @@ class HKInteriorPointPredictorCorrector{
      psi_=1; 
    }
 
+   void GetTheStartPointAdvanced_(){ 
+
+      //The starting point is basically a set of values for
+      //beta_vector_,gamma_vector_,psi_.
+     
+     //Since we are doing infeasible method our choice of 
+     // beta,\gamma,\psi will be very simple but they will be 
+     //strictly positive. Now ind order to avoid very infeasible 
+     // points we shall solve a regularized KKT  
+       
+     //This is solved by setting v_1=a,v_2=0,s_1=primal_constant_ 
+     
+     //Temporary Primal Dual Variables
+     Vector delta_beta_vector; 
+     Vector delta_gamma_vector; 
+     double delta_psi; 
+     
+     delta_beta_vector.Init(sqd_num_train_points_); 
+     delta_gamma_vector.Init(sqd_num_train_points_);
+     
+     
+     //Set v1_vector ,v2_vector and s_1 
+     
+     v1_vector_.CopyValues(a_vector_);
+     s1_=primal_constant_; 
+     v2_vector_.SetZero(); 
+     D_vector_.SetAll(3); 
+     
+     index_t flag=NOT_CALCULATED;
+     
+     double denominator_delta_psi=0;//I dont care abt this value as 
+                                    //far as obtaining a starting 
+ 				    //point is concerned 
+     
+     delta_psi=EvaluateDeltaPsi_(&denominator_delta_psi,flag);
+     EvaluateDeltaBeta_(delta_psi,delta_beta_vector); 
+     printf("Evaluated delta beta....\n"); 
+     
+     //delta_gamma evaluation is easy for this case. It is simply 
+     //-D^(-1)\delta_beta 
+     
+     la::ScaleOverwrite (-1.0/3, delta_beta_vector,&delta_gamma_vector); 
+     
+     //To enforce strict positivity we shall set \beta=\max(\beta,1), \gamma=\max(\gamma,1) 
+      
+     for(index_t i=0;i<sqd_num_train_points_;i++){ 
+       
+       beta_vector_[i]=max(delta_beta_vector[i],1.0); 
+       gamma_vector_[i]=max(delta_gamma_vector[i],1.0); 
+      } 
+     psi_=delta_psi; 
+     
+     /* printf("Found the start vectors by using an advanced method...\n"); */
+/*      printf("The initial values are...\n"); */
+/*      beta_vector_.PrintDebug(); */
+/*      gamma_vector_.PrintDebug(); */
+/*      printf("psi is %f..\n",psi_); */
+   }
+   
    //The D vector is simply a vector of ratio of beta to gamma components
    
    void GetDVector_(){
@@ -1104,7 +1163,6 @@ class HKInteriorPointPredictorCorrector{
       return -1;
     }
 
-
     //CheckDualityGap_();
     int flag3=CheckForOptimality_();
     if(flag3!=1){
@@ -1122,7 +1180,7 @@ class HKInteriorPointPredictorCorrector{
     
     //Get the starting values for \beta, \gamma and \psi
     
-    GetTheStartPoint_();
+    GetTheStartPointAdvanced_();
     
     printf("Got the start point..\n");
     index_t flag;
