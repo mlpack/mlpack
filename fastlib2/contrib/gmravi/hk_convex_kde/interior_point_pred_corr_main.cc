@@ -239,7 +239,7 @@ int main(int argc, char *argv[]){
    } 
    sigma_h_vec[num_sigma_h]=60; //Infinite sigma_h
 
-   lambda_vec[0]=200.0;
+   lambda_vec[0]=10000.0;
   
   //Having got all the initial data lets create an object of the class
   //HkInteriorPointPredictorCorrector
@@ -283,7 +283,7 @@ int main(int argc, char *argv[]){
       
       for(index_t k=0;k<num_lambda;k++){
 
-
+	printf("ITERATION:i=%d,j=%d,k=%d..\n",i,j,k);
 	fx_set_param_double(ipc,"sigma",sigma_vec[i]);
 	fx_set_param_double(ipc,"sigma_h",sigma_h_vec[j]);      
 	fx_set_param_double(ipc,"lambda",lambda_vec[k]);
@@ -292,6 +292,8 @@ int main(int argc, char *argv[]){
 	HKInteriorPointPredictorCorrector hk_ippc; 
 	hk_ippc.Init(train_data,test_data,ipc);
 	index_t ret_val=hk_ippc.ComputeOptimalSolution();
+
+
 	
 	if(ret_val==-1){
 	  
@@ -314,7 +316,7 @@ int main(int argc, char *argv[]){
     }
   }
 
-  //Fianlly run with the optimal settings
+  //Finally run with the optimal settings
   
   fx_set_param_double(ipc,"sigma",sigma_opt);
   fx_set_param_double(ipc,"sigma_h",sigma_h_opt);      
