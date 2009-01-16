@@ -210,20 +210,16 @@ private:
   /**
    * Routines for calling force evaluations
    */
-  void EvaluateNodeForcesDual_(ParticleTree* query, ParticleTree* ref){
-    // Two-Body only. We can't evalute three body between two nodes
-    // without considering each particle.
+  void EvaluateNodeForcesDual_(ParticleTree* query, ParticleTree* ref){   
     TwoBodyForce_(query, ref);
   }
 
 
  
   // This will also cover overlap cases near the diagonal,
-  // so query and ref may be the same node. We can evalute three
-  // body forces between these two nodes by considering each triple.
-  void EvaluateLeafForcesDual_(ParticleTree* query, ParticleTree* ref){
-    // Two and Three Body
-     for(int i = query->begin(); i < query->begin()+query->count(); i++){
+  // so query and ref may be the same node. 
+  void EvaluateLeafForcesDual_(ParticleTree* query, ParticleTree* ref){  
+    for(int i = query->begin(); i < query->begin()+query->count(); i++){
       for(int j = ref->begin(); j < ref->count() + ref->begin(); j++){
 	TwoBodyForce_(i,j);		
       }           
@@ -474,7 +470,7 @@ private:
     FORBID_ACCIDENTAL_COPIES(DualPhysicsSystem);
 
 public:
-     
+    
     DualPhysicsSystem(){
       system_ = NULL;
       query_ = NULL;
@@ -483,7 +479,7 @@ public:
     
     ~DualPhysicsSystem(){     
       if (system_ != NULL){
-	delete system_;
+	//	delete system_;
       }     
     }
     
@@ -581,11 +577,12 @@ public:
     dims[0] = 0;
     dims[1] = 1;
     dims[2] = 2;
+    /*
     for (int i = 0; i < n_atoms_; i++){
       Vector pos;
       atoms_.MakeColumnSubvector(i, 0, 3, &pos);
-      AdjustVector_(&pos);
-    }
+      //  AdjustVector_(&pos);
+      }*/
     system_ = tree::MakeKdTreeMidpointSelective<ParticleTree>(atoms_, dims,
 	        leaf_size_, &temp_new_old, &temp_old_new);
     for (int i = 0; i < n_atoms_; i++){

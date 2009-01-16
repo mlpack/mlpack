@@ -22,9 +22,10 @@ struct ParticleStat {
 
   Vector centroid_;
   Vector velocity_; 
-  double mass_, radius_;
+  double mass_, radius_, error_;
   ArrayList<TwoBodyStat> interactions_;
   Vector axilrod_;
+  Vector delta_, temp_delta_;
   int start_, count_;
   
 
@@ -102,7 +103,7 @@ struct ParticleStat {
   void MergeStats(const ParticleStat& left_stat, 
 		  const ParticleStat& right_stat){    
     interactions_.Init(left_stat.interactions_.size());
-    for (int i = 0; i < interactions_.size(); i++){           
+     for (int i = 0; i < interactions_.size(); i++){           
       interactions_[i].Init(left_stat.interactions_[i], 
 			    right_stat.interactions_[i]);
     }
@@ -167,6 +168,11 @@ struct ParticleStat {
   void GetVelocity(Vector* vel){
     vel->CopyValues(velocity_);
     velocity_.SetZero();
+  }
+
+  
+
+  double CheckError(){
   }
 
 };
