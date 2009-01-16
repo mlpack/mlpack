@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
 
 
   //iteration
-  int max_iteration=1000;
+  int max_iteration=10;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
@@ -363,7 +363,7 @@ int main(int argc, char *argv[]) {
 		double new_radius;
 		//NOTIFY("Exact hessian calculation ends");
 
-		/*
+		
 		optimization.ComputeDerectionUnderConstraints(current_radius, 
 																					current_gradient,
 																					current_hessian,
@@ -373,10 +373,10 @@ int main(int argc, char *argv[]) {
 																					&next_parameter,
 																					&new_radius);
 		
-		*/
-
-
 		
+
+
+		/*
 		//Scaled version
 		optimization.ComputeScaledDerectionUnderConstraints(current_radius, 
 																					current_gradient,
@@ -386,6 +386,9 @@ int main(int argc, char *argv[]) {
 																					&current_delta_m,
 																					&next_parameter,
 																					&new_radius);
+
+																					*/
+
 
 		
 		
@@ -522,7 +525,7 @@ int main(int argc, char *argv[]) {
 
 		//agreement rho calculation
 		//rho=1.0*(current_objective-next_objective)/(current_delta_m)*current_added_first_stage_x.size();
-		rho= 1.0*(current_objective-next_objective)/(current_delta_m);
+		rho= -1.0*(current_objective-next_objective)/(current_delta_m);
 
 		/*
 			////////////////////////////////////////////////////////

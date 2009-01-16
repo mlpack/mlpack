@@ -558,6 +558,7 @@ void Objective::ComputeGradient(double current_sample,
 	*/
 
 	la::Scale(-1.0/current_sample, &dummy_gradient);
+	//la::Scale(+1.0/current_sample, &dummy_gradient);
 	gradient->Copy(dummy_gradient);
 												
 }
@@ -814,11 +815,21 @@ void Objective::ComputeHessian(double current_sample,
 	*/
 
 	
-		
 
+	
+	la::Scale(-1.0, &dummy_hessian);	
+  
 	//Check positive definiteness
 	Vector eigen_hessian;
 	la::EigenvaluesInit (dummy_hessian, &eigen_hessian);
+
+	cout<<"eigen values"<<endl;
+
+	for(index_t i=0; i<eigen_hessian.length(); i++){
+		cout<<eigen_hessian[i]<<" ";
+	}
+	cout<<endl;
+
 	double max_eigen=0;
 	//cout<<"eigen_value:"<<endl;
 	for(index_t i=0; i<eigen_hessian.length(); i++){
@@ -846,10 +857,13 @@ void Objective::ComputeHessian(double current_sample,
 		}
 		cout<<endl;
 	}
+	
+
 
 	//handle minimization
 	//la::Scale(-1.0, &dummy_hessian);
-	la::Scale(-1.0/current_sample, &dummy_hessian);
+	//la::Scale(-1.0/current_sample, &dummy_hessian);
+	la::Scale(+1.0/current_sample, &dummy_hessian);
 
 
 	hessian->Copy(dummy_hessian);
