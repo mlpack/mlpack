@@ -32,6 +32,12 @@ class Objective {
 										  Matrix *hessian);
 	void ComputeChoiceProbability(Vector &current_parameter, 
 																				 Vector *choice_probability);
+	void CheckGradient(double current_sample,
+										 Vector &current_parameter, 
+										 Vector *approx_gradient);
+	void CheckHessian(double current_sample, 
+									  Vector &current_parameter, 
+										Matrix *approx_hessian);
  
  private:
   fx_module *module_;

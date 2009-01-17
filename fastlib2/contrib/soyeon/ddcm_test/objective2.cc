@@ -2,6 +2,7 @@
 #include <cmath>
 #include <iostream>
 #include <iostream>
+#include <algorithm> //sqrt
 
 using namespace std;
   
@@ -154,9 +155,9 @@ void Objective::Init2(Vector &ind_unknown_x, int count_init2) {
   //}
 
 	denumerator_beta_function_=0;
-	num_of_t_beta_fn_=5;
+	num_of_t_beta_fn_=100;
 	t_weight_=1;
-	num_of_alphas_=5;
+	num_of_alphas_=100;
 	alpha_weight_=1;  
 
 	//from here for the gradient
@@ -2789,6 +2790,94 @@ double Objective::ComputeSecondDerivativePQTerm3_() {
 	//cout<<"second_derivative_p_q_term3="<<second_derivative_p_q_term3<<endl;
   return second_derivative_p_q_term3;
 }
+
+
+//////////////////////////////////////////////////
+///Finite differene derivative approximation
+//////////////////////////////////////////////////
+void Objective::CheckGradient(double current_sample,
+															Vector &current_parameter, 
+									 Vector *approx_gradient) {
+
+	Vector e;
+	e.Init(num_of_betas_+2);
+
+	Vector u1; //x+epsillon*ei
+	u1.Init(num_of_betas_+2);
+	u1.SetZero();
+
+	Vector u2; //x-epsillon*ei
+	u2.Init(num_of_betas_+2);
+  u2.SetZero();
+
+	double epsilon;
+	epsilon=sqrt(1e-8);
+
+	double u1_objective=0;
+	double u2_objective=0;
+
+	Vector dummy_approx_gradient;
+	dummy_approx_gradient.Init(num_of_betas_+2);
+	dummy_approx_gradient.SetZero();
+
+	for(index_t i=0; i<(num_of_betas_+2); i++){
+		e.SetZero();
+		e[i]=1.0;
+		la::Scale(epsilon, &e);
+		/*
+		cout<<"e="<<endl;
+		for(index_t i=0; i<e.length(); i++){
+			cout<<e[i]<<" ";
+		}
+		cout<<endl;
+    */
+
+		la::AddOverwrite(current_parameter, e, &u1);
+		la::SubOverwrite(e, current_parameter, &u2);
+		
+		/*
+		cout<<"u1="<<endl;
+		for(index_t i=0; i<e.length(); i++){
+			cout<<u1[i]<<" ";
+		}
+		cout<<endl;
+
+		cout<<"u2="<<endl;
+		for(index_t i=0; i<e.length(); i++){
+			cout<<u2[i]<<" ";
+		}
+		cout<<endl;
+    */
+		
+
+		ComputeObjective(current_sample, u1, &u1_objective);
+    
+		
+		//cout<<"u1_objective="<<u1_objective<<endl;
+		ComputeObjective(current_sample, u2, &u2_objective);
+
+		dummy_approx_gradient[i]=(u1_objective-u2_objective)/(2*epsilon);
+		//cout<<"dummy_approx_gradient[i]="<<dummy_approx_gradient[i]<<endl;
+	  
+	}
+
+	approx_gradient->Copy(dummy_approx_gradient);
+
+
+}
+
+
+
+	
+
+
+void Objective::CheckHessian(double current_sample,
+														 Vector &current_parameter, 
+														 Matrix *approx_hessian){
+}
+
+
+ 
 
 
 
