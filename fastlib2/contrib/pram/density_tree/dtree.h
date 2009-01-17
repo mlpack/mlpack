@@ -8,8 +8,9 @@
 #ifndef DTREE_H
 #define DTREE_H
 
-#include <vector>
+#include <algorithm>
 #include <utility>
+#include <vector>
 
 #include "fastlib/fastlib.h"
 #define LEAF_SIZE 5
@@ -260,9 +261,10 @@ class DTree{
   /*
    * Expand tree
    */
-  void Grow(Matrix& data, ArrayList<index_t> *old_from_new) {    
+  double Grow(Matrix& data, ArrayList<index_t> *old_from_new) {    
 
     DEBUG_ASSERT(data.n_cols() == stop_ - start_);
+    double left_g, right_g;
     if (stop_ - start_ > LEAF_SIZE) {
 
       // find the split
@@ -296,19 +298,67 @@ class DTree{
 		  start_ + split_ind, left_error);
       right_->Init(&max_vals_r, &min_vals_r, start_
 		   + split_ind, stop_, right_error);
-      left_->Grow(data_l, old_from_new);
-      right_->Grow(data_r, old_from_new);
+      left_g = left_->Grow(data_l, old_from_new);
+      right_g = right_->Grow(data_r, old_from_new);
 
+      // storing values of R(T~) and |T~|
       subtree_leaves_ = left_->subtree_leaves() + right_->subtree_leaves();
       subtree_leaves_error_ = left_->subtree_leaves_error()
 	+ right_->subtree_leaves_error();
+
+      // Forming T1 by removing leaves for which
+      // R(t) = R(t_L) + R(t_R)
+      if ((left_->subtree_leaves() == 1)
+	  && (right_->subtree_leaves() == 1)) {
+	if (left_->error() + right_->error() == error_) {
+	  delete left_;
+	  delete right_;
+	  subtree_leaves_ = 1;
+	  subtree_leaves_error_ = error_;
+	} // end if
+      } // end if
     } else {
       // This is a leaf node, do something here, probably compute
       // density here or something
       subtree_leaves_ = 1;
       subtree_leaves_error_ = error_;
-    }
+    } // end if-else
+
+    // if leaf do not compute g_k(t), else compute, store,
+    // and propagate min(g_k(t_L),g_k(t_R),g_k(t)), 
+    // unless t_L and/or t_R are leaves
+    if (subtree_leaves_ == 1) {
+      return DBL_MAX;
+    } else {
+      double g_t = (error_ - subtree_leaves_error_) 
+	/ (subtree_leaves_ - 1);
+
+      return min(g_t, min(left_g, right_g));
+    } // end if-else
+
+    // need to compute (c_t^2)*r_t for all subtree leaves
+    // this is equal to n_t^2/r_t*n^2 = -error_ !!
+    // therefore the value we need is actually
+    // -1.0*subtree_leaves_error_
   } // Grow
+
+  double PruneAndUpdate(double old_alpha) {
+
+    // compute g_t
+    double g_t = (error_ - subtree_leaves_error_)
+      / (subtree_leaves_ - 1);
+
+    if (g_t > old_alpha) {
+
+    } else { // prune this subtree
+      subtree_leaves_ = 1;
+      subtree_error_ = error_;
+      delete left_;
+      delete right_;
+      return DBL_MAX;
+    } // end if-else
+
+  } // PruneAndUpdate
   
 //  /*
 //    * Prune tree- remove subtrees if small decrease in
