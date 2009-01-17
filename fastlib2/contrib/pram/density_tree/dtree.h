@@ -9,17 +9,10 @@
 #define DTREE_H
 
 #include <algorithm>
-#include <utility>
 #include <vector>
 
 #include "fastlib/fastlib.h"
 #define LEAF_SIZE 5
-// #include "split_tree.h"
-
-// bool Compare(pair <double,index_t> v1,
-// 	     pair <double, index_t> v2) {
-//   return (v1.first < v2.first);
-// }
 
 class DTree{
  
@@ -58,6 +51,34 @@ class DTree{
   // The children
   DTree *left_;
   DTree *right_;
+
+  ////////////////////// Constructors /////////////////////////////////////////
+  
+  FORBID_ACCIDENTAL_COPIES(DTree);
+
+ public: 
+
+  DTree() {
+    max_vals_ = NULL;
+    min_vals_ = NULL;
+    left_ = NULL;
+    right_ = NULL;
+  }
+
+  ~DTree() {
+    if (left_ != NULL){
+      delete left_;
+    }
+    if (right_ != NULL){
+      delete right_;
+    }
+    if (max_vals_ != NULL) {
+      max_vals_->Clear();
+    }
+    if (min_vals_ != NULL) {
+      min_vals_->Clear();
+    }
+  }
 
   ////////////////////// Getters and Setters //////////////////////////////////
   index_t start() { return start_; }
@@ -124,13 +145,13 @@ class DTree{
       }
 
       // sort the values in ascending order
-      vector<double> dim_val_vec (dim_vals, dim_vals + n_t);
+      std::vector<double> dim_val_vec (dim_vals, dim_vals + n_t);
       sort(dim_val_vec.begin(), dim_val_vec.end());
 
       // get ready to go through the sorted list and compute error
       double min_dim_error = min_error, temp_lval, temp_rval;
       index_t dim_split_ind, ind = 0;
-      for (vector<double>::iterator it = dim_val_vec.begin();
+      for (std::vector<double>::iterator it = dim_val_vec.begin();
 	   it < dim_val_vec.end()-1; it++, ind++) {
 	double split = (*it + *(it+1))/2;
 	double temp_l = k * (ind+1) * (ind+1) / (split - min);
@@ -165,7 +186,7 @@ class DTree{
 		  double *split_val) {
 
     // get the values for the split dim
-    vector<double> dim_val_vec;
+    std::vector<double> dim_val_vec;
     for (index_t i = 0; i < data.n_cols(); i++) {
       dim_val_vec.push_back(data.get(split_dim, i));
     } // end for
@@ -203,30 +224,6 @@ class DTree{
     data.MakeColumnSlice(split_ind, data.n_cols()-split_ind, data_r);
 
   } // end SplitData_()
-
-  ////////////////////// Constructors /////////////////////////////////////////
-  
-  FORBID_ACCIDENTAL_COPIES(DTree);
-
- public: 
-
-  DTree() {
-  }
-
-  ~DTree() {
-    if (left_ != NULL){
-      delete left_;
-    }
-    if (right_ != NULL){
-      delete right_;
-    }
-    if (max_vals_ != NULL) {
-      max_vals_->Clear();
-    }
-    if (min_vals_ != NULL) {
-      min_vals_->Clear();
-    }
-  }
 
   ///////////////////// Helper Functions //////////////////////////////////////
 
@@ -348,13 +345,31 @@ class DTree{
     double g_t = (error_ - subtree_leaves_error_)
       / (subtree_leaves_ - 1);
 
-    if (g_t > old_alpha) {
+    if (g_t > old_alpha) { // go down the tree and update accordingly
+      // traverse the children
+      double left_g = left_->PruneAndUpdate(old_alpha);
+      double right_g = right_->PruneAndUpdate(old_alpha);
+
+      // update values
+      subtree_leaves_ = left_->subtree_leaves()
+	+ right_->subtree_leaves();
+      subtree_leaves_error_ = left_->subtree_leaves_error()
+	+ right_->subtree_leaves_error();
+
+      // update g_t value
+      g_t = (error_ - subtree_leaves_error_)
+	/ (subtree_leaves_ - 1);
+
+      return min(g_t, min(left_g, right_g));
 
     } else { // prune this subtree
+      // making this node a leaf node
       subtree_leaves_ = 1;
       subtree_error_ = error_;
       delete left_;
       delete right_;
+
+      // passing information upward
       return DBL_MAX;
     } // end if-else
 
@@ -498,30 +513,30 @@ class DTree{
 //     }
 //   } // Test
 
-  double GetChildError(){
-    if (left_ != NULL){
-      return (left_->GetChildError()*left_->Count() + 
-	      right_->GetChildError()*right_->Count()) / (stop_ - start_);
-    } else {
-      return error_;
-    }
-  }
+//   double GetChildError(){
+//     if (left_ != NULL){
+//       return (left_->GetChildError()*left_->Count() + 
+// 	      right_->GetChildError()*right_->Count()) / (stop_ - start_);
+//     } else {
+//       return error_;
+//     }
+//   }
 
-  int GetNumNodes(){
-    if (left_  != NULL){
-      return left_->GetNumNodes() + right_->GetNumNodes();
-    } else {
-      return 1; 
-    }
-  }
+//   int GetNumNodes(){
+//     if (left_  != NULL){
+//       return left_->GetNumNodes() + right_->GetNumNodes();
+//     } else {
+//       return 1; 
+//     }
+//   }
 
-  int Count(){
-    return stop_ - start_;
-  }
+//   int Count(){
+//     return stop_ - start_;
+//   }
 
-  void SetValue(double val_in){
-    value_ = val_in;
-  }
+//   void SetValue(double val_in){
+//     value_ = val_in;
+//   }
   
 }; // Class DTree
 
