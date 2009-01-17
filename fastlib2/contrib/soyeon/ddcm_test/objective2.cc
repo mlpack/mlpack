@@ -805,7 +805,7 @@ void Objective::ComputeHessian(double current_sample,
 													+ComputeSecondDerivativePQTerm3_());
 
 	
-	/*
+	la::Scale(-1.0/current_sample, &dummy_hessian);
 	cout<<"Hessian matrix before correction"<<endl;	
 	for (index_t j=0; j<dummy_hessian.n_rows(); j++){
 		for (index_t k=0; k<dummy_hessian.n_cols(); k++){
@@ -813,7 +813,7 @@ void Objective::ComputeHessian(double current_sample,
 		}
 		cout<<endl;
 	}
-	*/
+	
 
 	
 
@@ -841,7 +841,7 @@ void Objective::ComputeHessian(double current_sample,
 
 	}
 	//cout<<endl;
-	cout<<"max_eigen="<<max_eigen<<endl;
+	cout<<"max_eigen="<<(max_eigen/current_sample)<<endl;
 
 	if(max_eigen>0){
 		NOTIFY("Hessian is not Negative definite..Modify...");
@@ -851,13 +851,7 @@ void Objective::ComputeHessian(double current_sample,
 	}
 
 
-	cout<<"Modified Hessian matrix"<<endl;	
-	for (index_t j=0; j<dummy_hessian.n_rows(); j++){
-		for (index_t k=0; k<dummy_hessian.n_cols(); k++){
-				cout<<dummy_hessian.get(j,k) <<"  ";
-		}
-		cout<<endl;
-	}
+	
 	
 
 
@@ -865,6 +859,15 @@ void Objective::ComputeHessian(double current_sample,
 	//la::Scale(-1.0, &dummy_hessian);
 	//la::Scale(-1.0/current_sample, &dummy_hessian);
 	la::Scale(+1.0/current_sample, &dummy_hessian);
+
+	cout<<"Modified Hessian matrix"<<endl;	
+	for (index_t j=0; j<dummy_hessian.n_rows(); j++){
+		for (index_t k=0; k<dummy_hessian.n_cols(); k++){
+				cout<<dummy_hessian.get(j,k) <<"  ";
+		}
+		cout<<endl;
+	}
+
 
 
 	hessian->Copy(dummy_hessian);
@@ -2798,7 +2801,9 @@ double Objective::ComputeSecondDerivativePQTerm3_() {
 void Objective::CheckGradient(double current_sample,
 															Vector &current_parameter, 
 									 Vector *approx_gradient) {
+										 
 
+	//approx_gradient(i)=(f(x+epsilon*ei)-f(x-epsilon*ei))/(2*epsilon)
 	Vector e;
 	e.Init(num_of_betas_+2);
 
@@ -2874,6 +2879,138 @@ void Objective::CheckGradient(double current_sample,
 void Objective::CheckHessian(double current_sample,
 														 Vector &current_parameter, 
 														 Matrix *approx_hessian){
+
+
+//approx_hessian(i,j)=(gradi(x+epsilon*ej)-gradi(x-epsilon*ej))/(4*epsilon)
+//									+(gradj(x+epsilon*ei)-gradj(x-epsilon*ei))/(4*epsilon)
+//OR
+//(i,j)=(f(x+epsilon*ei+epsilon*ej)-f(x+epsilon*ei)-f(x+epsilon*ej)+f(x))/(epsilon^2)
+//(i,j)=(f(x+epsilon*ei+epsilon*ej)-f(x+epsilon*ei-epsilon*ej)
+//															 -f(x-epsilon*ei+epsilon*ej)+f(x-epsilon*ei-epsilon*ej))/(4*epsilon^2)
+
+
+	Vector ei;
+	ei.Init(num_of_betas_+2);
+
+	Vector ej;
+	ej.Init(num_of_betas_+2);
+
+
+	Vector u1i; //x+epsillon*ei
+	u1i.Init(num_of_betas_+2);
+	u1i.SetZero();
+
+	Vector u2i; //x-epsillon*ei
+	u2i.Init(num_of_betas_+2);
+  u2i.SetZero();
+
+	Vector u1j; //x+epsillon*ei
+	u1j.Init(num_of_betas_+2);
+	u1j.SetZero();
+
+	Vector u2j; //x-epsillon*ei
+	u2j.Init(num_of_betas_+2);
+  u2j.SetZero();
+
+	double epsilon;
+	epsilon=sqrt(1e-8);
+
+	//Vector u1i_gradient;
+  //u1i_gradient.Init(num_of_betas_+2);
+  //u1i_gradient.SetZero();
+
+	//Vector u1j_gradient;
+  //u1j_gradient.Init(num_of_betas_+2);
+  //u1j_gradient.SetZero();
+
+	//Vector u2i_gradient;
+  //u2i_gradient.Init(num_of_betas_+2);
+  //u2i_gradient.SetZero();
+
+	//Vector u2j_gradient;
+  //u2j_gradient.Init(num_of_betas_+2);
+  //u2j_gradient.SetZero();
+
+	/*
+	Vector diff_gradient_i;
+  diff_gradient_i.Init(num_of_betas_+2);
+  diff_gradient_i.SetZero();
+
+	Vector diff_gradient_j;
+  diff_gradient_j.Init(num_of_betas_+2);
+  diff_gradient_j.SetZero();
+  */
+	double diff_gradient_i=0;
+	double diff_gradient_j=0;
+
+	
+
+	Matrix dummy_approx_hessian;
+	dummy_approx_hessian.Init(num_of_betas_+2, num_of_betas_+2);
+	dummy_approx_hessian.SetZero();
+
+	for(index_t i=0; i<(num_of_betas_+2); i++){
+		ei.SetZero();
+		ei[i]=1.0;
+		la::Scale(epsilon, &ei);
+
+		la::AddOverwrite(current_parameter, ei, &u1i);
+		la::SubOverwrite(ei, current_parameter, &u2i);
+
+		Vector u1i_gradient;
+		Vector u2i_gradient;
+		ComputeGradient(current_sample, u1i, &u1i_gradient);		
+		ComputeGradient(current_sample, u2i, &u2i_gradient);
+
+		//la::SubOverwrite(u2i_gradient, u1i_gradient, &diff_gradient_i);
+		//la::Scale((1.0/(4*epsilon)), &diff_gradient_i);
+
+		//dummy_approx_gradient[i]=(u1_objective-u2_objective)/(2*epsilon);
+		
+
+		for(index_t j=0; j<(num_of_betas_+2); j++){
+			ej.SetZero();
+			ej[i]=1.0;
+			la::Scale(epsilon, &ej);
+
+			la::AddOverwrite(current_parameter, ej, &u1j);
+		  la::SubOverwrite(ej, current_parameter, &u2j);
+
+
+      Vector u1j_gradient;
+			Vector u2j_gradient;
+			ComputeGradient(current_sample, u1j, &u1j_gradient);		
+		  ComputeGradient(current_sample, u2j, &u2j_gradient);
+
+			//la::SubOverwrite(u2j_gradient, u1j_gradient, &diff_gradient_j);
+		  //la::Scale((1.0/(4*epsilon)), &diff_gradient_j);
+
+			diff_gradient_i=(u1j_gradient[i]-u2j_gradient[i])/(4*epsilon);
+			diff_gradient_j=(u1i_gradient[j]-u2i_gradient[j])/(4*epsilon);
+
+			double temp=0;
+			temp=(diff_gradient_i+diff_gradient_j);
+
+			dummy_approx_hessian.set(i,j,temp);
+		}
+	}
+
+	//Make hessian symmetric
+	for(index_t i=0; i<(num_of_betas_+2); i++){
+		for(index_t j=0; j<(num_of_betas_+2); j++){
+
+			double temp2=0;
+			temp2=(dummy_approx_hessian.get(i,j)+dummy_approx_hessian.get(j,i))/(2.0);
+			dummy_approx_hessian.set(i,j, temp2);
+			dummy_approx_hessian.set(j,i, temp2);
+		}
+	}
+
+
+
+	
+	approx_hessian->Copy(dummy_approx_hessian);
+
 }
 
 
