@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
 
 
   //iteration
-  int max_iteration=300;
+  int max_iteration=2;
 	int iteration_count=0;
 
 	while(iteration_count<max_iteration){
@@ -278,6 +278,17 @@ int main(int argc, char *argv[]) {
 			std::cout<<current_gradient[i]<<" ";
 		}
 		std::cout<<endl;
+
+
+		Vector approx_gradient;
+		objective.CheckGradient(current_sample_size, current_parameter, &approx_gradient);
+
+		cout<<"Approximated Gradient vector: ";
+		for (index_t i=0; i<current_gradient.length(); i++)
+		{
+			cout<<approx_gradient[i]<<" ";
+		}
+		cout<<endl;
 		
 
 
