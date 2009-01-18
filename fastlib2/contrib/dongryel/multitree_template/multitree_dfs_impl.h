@@ -176,11 +176,11 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
       // Apply postponed to each point.
       query_results.ApplyPostponed(qnode->stat().postponed, q);
 
-      // Refine statistics.
-      qnode->stat().summary.Accumulate(query_results, q);
-
       // Increment the number of (n - 1) tuples pruned.
       query_results.n_pruned[q] += total_n_minus_one_tuples_[i];
+
+      // Refine statistics.
+      qnode->stat().summary.Accumulate(query_results, q);
     }
 
     // Clear postponed information.
@@ -202,11 +202,11 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
       // Apply postponed to each point.
       query_results.ApplyPostponed(qnode->stat().postponed, q);
 
-      // Refine statistics.
-      qnode->stat().summary.Accumulate(query_results, q);
-
       // Increment the number of (n - 1) tuples pruned.
       query_results.UpdatePrunedComponents(reference_nodes, q);
+
+      // Refine statistics.
+      qnode->stat().summary.Accumulate(query_results, q);
     }
 
     // Clear postponed information.
