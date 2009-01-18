@@ -264,6 +264,28 @@ class KdeProblem {
       kde_approximation.used_error = rnode->count() * finite_difference_error;
     }
     
+    template<typename TGlobal, typename ReferenceTree>
+    void ComputeFiniteDifference
+    (const TGlobal &parameters, const double *query_point, 
+     ReferenceTree *rnode) {
+
+      double finite_difference_error;
+
+      dsqd_range.lo = rnode->bound().MinDistanceSq(query_point);
+      dsqd_range.hi = rnode->bound().MaxDistanceSq(query_point);
+      kernel_value_range =
+        parameters.kernel_aux.kernel_.RangeUnnormOnSq(dsqd_range);
+
+      finite_difference_error = 0.5 * kernel_value_range.width();
+
+      // Compute the bound delta changes based on the kernel value range.
+      kde_approximation.sum_l = rnode->count() * kernel_value_range.lo;
+      kde_approximation.sum_e = rnode->count() *
+        kernel_value_range.mid();
+      kde_approximation.n_pruned = rnode->count();
+      kde_approximation.used_error = rnode->count() * finite_difference_error;
+    }
+
     template<typename TGlobal, typename QueryTree, typename ReferenceTree>
     void Reset(const TGlobal &parameters, QueryTree *qnode,
 	       ReferenceTree *rnode) {
@@ -465,6 +487,17 @@ class KdeProblem {
 	query_stat.local_expansion.EvaluateField(qset, q_index);
     }
     
+    template<typename TDelta>
+    void ApplyDelta(const TDelta &delta_in, index_t q_index) {
+      sum_l[q_index] += delta_in.kde_approximation.sum_l;
+      sum_e[q_index] += delta_in.kde_approximation.sum_e;
+      n_pruned[q_index] += delta_in.kde_approximation.n_pruned;
+      used_error[q_index] += delta_in.kde_approximation.used_error;
+      probabilistic_used_error[q_index] =
+        sqrt(math::Sqr(probabilistic_used_error[q_index]) +
+             math::Sqr(delta_in.kde_approximation.probabilistic_used_error));
+    }
+
     template<typename TQueryPostponed>
     void ApplyPostponed(const TQueryPostponed &postponed_in,
 			index_t q_index) {
@@ -602,6 +635,16 @@ class KdeProblem {
       SetZero();
     }
     
+    template<typename TQueryResult>
+    void Init(const TQueryResult &query_results, index_t q_index) {
+      sum_l = query_results.sum_l[q_index];
+      n_pruned_l = query_results.n_pruned[q_index];
+      n_pruned_u = query_results.n_pruned[q_index];
+      used_error_u = query_results.used_error[q_index];
+      probabilistic_used_error_u = query_results.probabilistic_used_error
+	[q_index];
+    }
+
     template<typename TQueryResult>
     void Accumulate(const TQueryResult &query_results, index_t q_index) {
 
@@ -891,8 +934,7 @@ class KdeProblem {
     // safe to prune.
     if(!isnan(allowed_error.error)) {
       
-      if((new_summary.sum_l + delta.kde_approximation.used_error) -
-	 new_summary.sum_l <= allowed_error.error) {
+      if(delta.kde_approximation.used_error <= allowed_error.error) {
 
 	qnode->stat().postponed.ApplyDelta(delta);
 	query_results.num_finite_difference_prunes++; 
@@ -911,7 +953,55 @@ class KdeProblem {
       }
 
       else {
-	return false;
+	
+	if(qnode->is_leaf() && rnode->is_leaf()) {
+	  
+	  const Matrix &query_set = *(query_sets[0]);
+	  qnode->stat().summary.StartReaccumulate();
+	  
+	  for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+
+	    query_results.ApplyPostponed(qnode->stat().postponed, q);
+	    const double *query_point = query_set.GetColumnPtr(q);
+	    delta.ComputeFiniteDifference(globals, query_point, rnode);
+	    new_summary.Init(query_results, q);
+	    new_summary.ApplyDelta(delta);
+	    allowed_error.ComputeAllowableError(globals, new_summary, delta,
+						rnode);
+
+	    if(delta.kde_approximation.used_error > allowed_error.error) {
+	      for(index_t r = rnode->begin(); r < rnode->end(); r++) {
+
+		double squared_distance =
+		  la::DistanceSqEuclidean(globals.dimension,
+					  query_sets[0]->GetColumnPtr(q),
+					  reference_sets[0]->GetColumnPtr(r));
+		
+		double kernel_value = globals.kernel_aux.kernel_.EvalUnnormOnSq
+		  (squared_distance);
+
+		query_results.sum_l[q] += kernel_value;
+		query_results.sum_e[q] += kernel_value;
+
+	      } // end of looping over each reference point...
+
+	      query_results.UpdatePrunedComponents(reference_nodes, q);
+	    }
+	    else {
+	      query_results.ApplyDelta(delta, q);
+	    }
+
+	    qnode->stat().summary.Accumulate(query_results, q);
+	    
+	  } // end of looping over each query point
+
+	  qnode->stat().postponed.SetZero();
+	  return true;
+
+	}   // end of the case for both query and reference being leaves...
+	else {
+	  return false;
+	}
       }
     }
     else {
