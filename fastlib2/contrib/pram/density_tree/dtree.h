@@ -1,4 +1,4 @@
-/**
+ /**
  * @file dtree.h
  *
  * Density Tree class
@@ -41,6 +41,9 @@ class DTree{
 
   // number of leaves of the subtree
   index_t subtree_leaves_;
+
+  // ratio of number of points in the node
+  double ratio_;
 
   // since we are using uniform density, we need
   // the max and min of every dimension for every node
@@ -272,6 +275,12 @@ class DTree{
     //     NOTIFY("grow");
     DEBUG_ASSERT(data.n_cols() == stop_ - start_);
     double left_g, right_g;
+
+    // computing points ratio
+    ratio_ = (double) (stop_ - start_)
+      / (double) old_from_new->size();
+
+    // Checking if node is large enough
     if ((stop_ - start_) > LEAF_SIZE) {
 
       // find the split
@@ -298,6 +307,9 @@ class DTree{
       max_vals_l[dim] = split_val;
       min_vals_r[dim] = split_val;
 
+      // store split dim and split val in the node
+      split_val_ = split_val;
+      split_dim_ = dim;
 
       // Recursively growing the children
       left_ = new DTree();
@@ -391,7 +403,26 @@ class DTree{
       } // end if-else
     }
   } // PruneAndUpdate
-  
+
+  double ComputeValue(Vector& query) {
+
+    if (subtree_leaves_ == 1) { // if leaf
+      // return value
+      // compute r_t
+      double range = 1.0;
+      for (index_t i = 0; i < max_vals_->size(); i++) {
+	range *= ((*max_vals_)[i] - (*min_vals_)[i]);
+      } // end for
+
+      return ratio_ / range;
+    } else if (query[split_dim] <= split_val_) { // if left subtree
+      // go to left child
+      return left_->ComputeValue(query);
+    } else { // if right subtree
+      // go to right child
+      return right_->ComputeValue(query);
+    } // end if-else
+  } // ComputeValue  
 //  /*
 //    * Prune tree- remove subtrees if small decrease in
 //    * Gini index does not justify number of leaves.
