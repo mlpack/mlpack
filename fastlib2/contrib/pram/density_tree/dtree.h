@@ -8,7 +8,6 @@
 #ifndef DTREE_H
 #define DTREE_H
 
-#include <algorithm>
 #include <vector>
 
 #include "fastlib/fastlib.h"
@@ -72,12 +71,12 @@ class DTree{
     if (right_ != NULL){
       delete right_;
     }
-    if (max_vals_ != NULL) {
-      max_vals_->Clear();
-    }
-    if (min_vals_ != NULL) {
-      min_vals_->Clear();
-    }
+//     if (max_vals_ != NULL) {
+//       max_vals_->Clear();
+//     }
+//     if (min_vals_ != NULL) {
+//       min_vals_->Clear();
+//     }
   }
 
   ////////////////////// Getters and Setters //////////////////////////////////
@@ -121,6 +120,7 @@ class DTree{
 		  index_t *split_dim, index_t *split_ind,
 		  double *left_error, double *right_error) {
 
+//     NOTIFY("FindSplit")
     DEBUG_ASSERT(data.n_cols() == stop_ - start_);
     index_t n_t = data.n_cols();
     double min_error = error_;
@@ -128,29 +128,29 @@ class DTree{
 
     // loop through each dimension
     for (index_t dim = 0; dim < max_vals_->size(); dim++) {
+      bool dim_split_found = false;
+
       double min = (*min_vals_)[dim], max = (*max_vals_)[dim];
       double range = 1.0;
       for (index_t i = 0; i < max_vals_->size(); i++) {
-	if (((*max_vals_)[i] -(*min_vals)[i] > 0.0) && (i != dim)) {
-	  range *= ((*max_vals_)[i] -(*min_vals)[i]);
+	if (((*max_vals_)[i] -(*min_vals_)[i] > 0.0) && (i != dim)) {
+	  range *= ((*max_vals_)[i] -(*min_vals_)[i]);
 	}
       }
       double k = -1.0 / (total_n * total_n * range);
 
       // get the values for the dimension
-      ArrayList<double> dim_vals;
-      dim_vals.Init(n_t);
+      std::vector<double> dim_val_vec;
       for (index_t i = 0; i < n_t; i++) {
-	dim_vals[i] = data.get(dim, i);
+	dim_val_vec.push_back (data.get(dim, i));
       }
-
       // sort the values in ascending order
-      std::vector<double> dim_val_vec (dim_vals, dim_vals + n_t);
-      sort(dim_val_vec.begin(), dim_val_vec.end());
+      std::sort(dim_val_vec.begin(), dim_val_vec.end());
 
       // get ready to go through the sorted list and compute error
-      double min_dim_error = min_error, temp_lval, temp_rval;
-      index_t dim_split_ind, ind = 0;
+      double min_dim_error = min_error,
+	temp_lval = 0.0, temp_rval = 0.0;
+      index_t dim_split_ind = -1, ind = 0;
       for (std::vector<double>::iterator it = dim_val_vec.begin();
 	   it < dim_val_vec.end()-1; it++, ind++) {
 	double split = (*it + *(it+1))/2;
@@ -161,23 +161,24 @@ class DTree{
 	  temp_lval = temp_l;
 	  temp_rval = temp_r;
 	  dim_split_ind = ind;
-	  some_split_found = true;
+	  dim_split_found = true;
 	} // end if
       } // end for
 
-      if ((min_dim_error <= min_error) && some_split_found) {
+      dim_val_vec.clear();
+
+
+      if ((min_dim_error <= min_error) && dim_split_found) {
 	min_error = min_dim_error;
 	*split_dim = dim;
 	*split_ind = dim_split_ind;
 	*left_error = temp_lval;
 	*right_error = temp_rval;
+	some_split_found = true;
       } // end if
     } // end for
 
-    if (!some_split_found) {
-      printf("Weird - no split found\n");
-      exit(1);
-    }
+    DEBUG_ASSERT_MSG(some_split_found, "Weird - no split found\n");
   } // end FindSplit_()
 
   void SplitData_(Matrix& data, index_t split_dim, index_t split_ind,
@@ -185,43 +186,51 @@ class DTree{
 		  ArrayList<index_t> *old_from_new, 
 		  double *split_val) {
 
+//     NOTIFY("SplitData %"LI"d %"LI"d", split_ind, data.n_cols());
     // get the values for the split dim
     std::vector<double> dim_val_vec;
     for (index_t i = 0; i < data.n_cols(); i++) {
       dim_val_vec.push_back(data.get(split_dim, i));
     } // end for
 
-    // sort the values for keeping the indices around
-    sort(dim_val_vec.begin(), dim_val_vec.end());
+    // sort the values
+    std::sort(dim_val_vec.begin(), dim_val_vec.end());
 
     *split_val = (*(dim_val_vec.begin()+split_ind)
       +  *(dim_val_vec.begin()+split_ind+1)) / 2;
 
+//     NOTIFY("Split val %lg", *split_val);
     index_t i = split_ind, j = split_ind + 1;
-    while ((i > -1) && (j < data.n_cols())) {
-      while ((data.get(split_dim, i) < *split_val) && (i>-1))
+    while ( i > -1 && j < data.n_cols()) {
+      while (i > -1 && data.get(split_dim, i) < *split_val)
 	i--;
 
-      while ((data.get(split_dim, j) > *split_val) && (j<data.n_cols()))
+      while (j < data.n_cols() && data.get(split_dim, j) > *split_val)
 	j++;
 
       // swapping values
-      Vector vec1, vec2;
-      data.MakeColumnVector(i, &vec1);
-      data.MakeColumnVector(j, &vec2);
-      vec1.SwapValues(&vec2);
+      if (i > -1 && j < data.n_cols()) {
+	//	NOTIFY("swapping %"LI"d", i);
+	Vector vec1, vec2;
+	data.MakeColumnVector(i, &vec1);
+	data.MakeColumnVector(j, &vec2);
+	vec1.SwapValues(&vec2);
 
-      index_t temp = (*old_from_new)[start_ + i];
-      (*old_from_new)[start_ +i] = (*old_from_new)[start_ +j];
-      (*old_from_new)[start_ +j] = temp;
+	index_t temp = (*old_from_new)[start_ + i];
+	(*old_from_new)[start_ +i] = (*old_from_new)[start_ +j];
+	(*old_from_new)[start_ +j] = temp;
 
-      i--;
-      j++;
+	i--;
+	j++;
+      }
     }
-    DEBUG_ASSERT((i==-1)&&(j==data.n_cols()));
 
-    data.MakeColumnSlice(0, split_ind, data_l);
-    data.MakeColumnSlice(split_ind, data.n_cols()-split_ind, data_r);
+    DEBUG_ASSERT_MSG((i==-1)||(j==data.n_cols()),
+		     "i = %"LI"d, j = %"LI"d N = %"LI"d",
+		     i, j, data.n_cols());
+
+    data.MakeColumnSlice(0, split_ind+1, data_l);
+    data.MakeColumnSlice(split_ind+1, data.n_cols()-split_ind-1, data_r);
 
   } // end SplitData_()
 
@@ -260,26 +269,28 @@ class DTree{
    */
   double Grow(Matrix& data, ArrayList<index_t> *old_from_new) {    
 
+    //     NOTIFY("grow");
     DEBUG_ASSERT(data.n_cols() == stop_ - start_);
     double left_g, right_g;
-    if (stop_ - start_ > LEAF_SIZE) {
+    if ((stop_ - start_) > LEAF_SIZE) {
 
       // find the split
       index_t dim, split_ind;
       double left_error, right_error;
+      //    printf("here %"LI"d\n", data.n_cols());
       FindSplit_(data, old_from_new->size(),
 		 &dim, &split_ind,
 		 &left_error, &right_error);
-
+//       printf(" there %"LI"d", split_ind);
       // Split the data for the children
-      Matrix* data_l, data_r;
+      Matrix data_l, data_r;
       double split_val;
       SplitData_(data, dim, split_ind,
-		 data_l, data_r, old_from_new, &split_val);
+		 &data_l, &data_r, old_from_new, &split_val);
 
       // make max and min vals for the children
       ArrayList<double> max_vals_l, max_vals_r;
-      ArrayList<double> nin_vals_l, min_vals_r;
+      ArrayList<double> min_vals_l, min_vals_r;
       max_vals_l.InitCopy(*max_vals_);
       max_vals_r.InitCopy(*max_vals_);
       min_vals_l.InitCopy(*min_vals_);
@@ -292,9 +303,9 @@ class DTree{
       left_ = new DTree();
       right_ = new DTree();
       left_->Init(&max_vals_l, &min_vals_l, start_,
-		  start_ + split_ind, left_error);
+		  start_ + split_ind + 1, left_error);
       right_->Init(&max_vals_r, &min_vals_r, start_
-		   + split_ind, stop_, right_error);
+		   + split_ind + 1, stop_, right_error);
       left_g = left_->Grow(data_l, old_from_new);
       right_g = right_->Grow(data_r, old_from_new);
 
@@ -342,37 +353,43 @@ class DTree{
   double PruneAndUpdate(double old_alpha) {
 
     // compute g_t
-    double g_t = (error_ - subtree_leaves_error_)
-      / (subtree_leaves_ - 1);
-
-    if (g_t > old_alpha) { // go down the tree and update accordingly
-      // traverse the children
-      double left_g = left_->PruneAndUpdate(old_alpha);
-      double right_g = right_->PruneAndUpdate(old_alpha);
-
-      // update values
-      subtree_leaves_ = left_->subtree_leaves()
-	+ right_->subtree_leaves();
-      subtree_leaves_error_ = left_->subtree_leaves_error()
-	+ right_->subtree_leaves_error();
-
-      // update g_t value
-      g_t = (error_ - subtree_leaves_error_)
+    if (subtree_leaves_ == 1) {
+      return DBL_MAX;
+    } else {
+      double g_t = (error_ - subtree_leaves_error_)
 	/ (subtree_leaves_ - 1);
 
-      return min(g_t, min(left_g, right_g));
+      if (g_t > old_alpha) { // go down the tree and update accordingly
+	// traverse the children
+	double left_g = left_->PruneAndUpdate(old_alpha);
+	double right_g = right_->PruneAndUpdate(old_alpha);
 
-    } else { // prune this subtree
-      // making this node a leaf node
-      subtree_leaves_ = 1;
-      subtree_error_ = error_;
-      delete left_;
-      delete right_;
+	// update values
+	subtree_leaves_ = left_->subtree_leaves()
+	  + right_->subtree_leaves();
+	subtree_leaves_error_ = left_->subtree_leaves_error()
+	  + right_->subtree_leaves_error();
 
-      // passing information upward
-      return DBL_MAX;
-    } // end if-else
+	// update g_t value
+	g_t = (error_ - subtree_leaves_error_)
+	  / (subtree_leaves_ - 1);
 
+	return min(g_t, min(left_g, right_g));
+
+      } else { // prune this subtree
+	// making this node a leaf node
+	//	printf(".");fflush(NULL);
+	subtree_leaves_ = 1;
+	subtree_leaves_error_ = error_;
+	delete left_;
+	left_ = NULL;
+	delete right_;
+	right_ = NULL;
+	//	printf("+");fflush(NULL);
+	// passing information upward
+	return DBL_MAX;
+      } // end if-else
+    }
   } // PruneAndUpdate
   
 //  /*
