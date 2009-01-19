@@ -79,6 +79,16 @@ int main(int argc, char *argv[]){
 
   NOTIFY("%"LI"d leaf nodes in this tree", dtree->subtree_leaves());
 
+//   // computing densities for the train points in the
+//   // big tree
+//   for (index_t i = 0; i < dataset.n_cols(); i++) {
+//     Vector test_p;
+//     dataset.MakeColumnVector(i, &test_p);
+//     double f = dtree->ComputeValue(test_p);
+//     printf("%lg ", f);
+//   } // end for
+//   printf("\n");
+
   // sequential pruning and saving the alpha vals and the
   // values of c_t^2*r_t
   std::vector<std::pair<double, double> >  pruned_sequence;
@@ -113,7 +123,7 @@ int main(int argc, char *argv[]){
 
   // Go through each fold
   for (index_t fold = 0; fold < folds; fold++) {
-//     NOTIFY("Fold %"LI"d...", fold+1);
+    // NOTIFY("Fold %"LI"d...", fold+1);
 
     // break up data into train and test set
     Matrix test;
@@ -210,7 +220,6 @@ int main(int argc, char *argv[]){
     } // end if
   } // end for
 
-//   double optimal_alpha = (pruned_sequence.end() -2)->first;
   // Initializing the tree
   DTree *dtree_opt = new DTree();
   dtree_opt->Init(max_vals, min_vals, dataset.n_cols());
@@ -242,8 +251,18 @@ int main(int argc, char *argv[]){
   // Pruning with optimal alpha
   NOTIFY("%"LI"d leaf nodes in this tree", dtree_opt->subtree_leaves());
 
-  dtree_opt->WriteTree(0);
-  printf("\n");fflush(NULL);
+//   dtree_opt->WriteTree(0);
+//   printf("\n");fflush(NULL);
+//   // computing densities for the train points in the
+//   // optimal tree
+//   for (index_t i = 0; i < dataset.n_cols(); i++) {
+//     Vector test_p;
+//     dataset.MakeColumnVector(i, &test_p);
+//     double f = dtree_opt->ComputeValue(test_p);
+//     printf("%lg ", f);
+//   } // end for
+//   printf("\n");fflush(NULL);
+
 //   // outputting the optimal tree
 //   std::string output_file
 //     = fx_param_str(root, "treee_file", "output.txt");
