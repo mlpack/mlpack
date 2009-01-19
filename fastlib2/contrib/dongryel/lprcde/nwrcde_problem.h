@@ -1015,6 +1015,7 @@ class NWRCdeProblem {
 	   typename HybridTree, typename QueryTree, typename ReferenceTree>
   static bool ConsiderTupleExact(MultiTreeGlobal &globals,
 				 MultiTreeQueryResult &query_results,
+				 MultiTreeDelta &delta,
 				 const ArrayList<Matrix *> &query_sets,
 				 const ArrayList<Matrix *> &reference_sets,
 				 const ArrayList<Matrix *> &targets,
@@ -1030,7 +1031,6 @@ class NWRCdeProblem {
     ReferenceTree *rnode = reference_nodes[0];
     
     // Initialize the delta.
-    MultiTreeDelta delta;
     delta.Reset(globals, qnode, rnode);
 
     // Initialize the query summary.
@@ -1088,6 +1088,7 @@ class NWRCdeProblem {
 	   typename HybridTree, typename QueryTree, typename ReferenceTree>
   static bool ConsiderTupleProbabilistic
   (MultiTreeGlobal &globals, MultiTreeQueryResult &results,
+   MultiTreeDelta &exact_delta,
    const ArrayList<Matrix *> &query_sets,
    const ArrayList<Matrix *> &reference_sets,
    ArrayList<HybridTree *> &hybrid_nodes,
