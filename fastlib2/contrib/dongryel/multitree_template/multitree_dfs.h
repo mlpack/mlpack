@@ -4,20 +4,20 @@
 #include "fastlib/fastlib.h"
 #include "contrib/dongryel/proximity_project/general_spacetree.h"
 #include "contrib/dongryel/proximity_project/gen_kdtree.h"
-#include "mlpack/allknn/allknn.h"
-#include "contrib/nvasil/allkfn/allkfn.h"
 #include "multitree_utility.h"
 
 template<typename MultiTreeProblem>
 class MultiTreeDepthFirst {
   
- private:
+ public:
  
   typedef GeneralBinarySpaceTree<DHrectBound<2>, Matrix, typename MultiTreeProblem::MultiTreeQueryStat > QueryTree;
 
   typedef GeneralBinarySpaceTree<DHrectBound<2>, Matrix, typename MultiTreeProblem::MultiTreeReferenceStat > ReferenceTree;
   
   typedef GeneralBinarySpaceTree<DHrectBound<2>, Matrix, typename MultiTreeProblem::MultiTreeQueryStat > HybridTree;
+
+ private:
 
   ArrayList<Matrix *> targets_;
 
@@ -526,6 +526,8 @@ class MultiTreeDepthFirst {
 
  public:
 
+  /** @brief The default constructor which does nothing.
+   */
   MultiTreeDepthFirst() {
   }
   
