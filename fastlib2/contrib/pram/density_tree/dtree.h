@@ -61,8 +61,6 @@ class DTree{
  public: 
 
   DTree() {
-//     max_vals_ = NULL;
-//     min_vals_ = NULL;
     left_ = NULL;
     right_ = NULL;
   }
@@ -74,12 +72,6 @@ class DTree{
     if (right_ != NULL){
       delete right_;
     }
-//     if (max_vals_ != NULL) {
-//       max_vals_->Clear();
-//     }
-//     if (min_vals_ != NULL) {
-//       min_vals_->Clear();
-//     }
   }
 
   ////////////////////// Getters and Setters //////////////////////////////////
@@ -100,11 +92,9 @@ class DTree{
   DTree* left_child() { return left_; }
   DTree* right_child() { return right_; }
 
-//   ArrayList<double> max_vals() { return max_vals_; }
-//   ArrayList<double> min_vals() { return min_vals_; }
-
   ////////////////////// Private Functions ////////////////////////////////////
-  
+ private:
+
   double ComputeNodeError_(index_t total_points) {
     double range = 1.0;
     index_t node_size = stop_ - start_;
@@ -128,7 +118,6 @@ class DTree{
 		  index_t *split_dim, index_t *split_ind,
 		  double *left_error, double *right_error) {
 
-//     NOTIFY("FindSplit")
     DEBUG_ASSERT(data.n_cols() == stop_ - start_);
     DEBUG_ASSERT(data.n_rows() == max_vals_.size());
     DEBUG_ASSERT(data.n_rows() == min_vals_.size());
@@ -200,14 +189,13 @@ class DTree{
 		     "Weird - no split found"
 		     " %"LI"d points, %"LI"d \n",
 		     data.n_cols(), total_n);
-  } // end FindSplit_()
+  } // end FindSplit_
 
   void SplitData_(Matrix& data, index_t split_dim, index_t split_ind,
 		  Matrix *data_l, Matrix *data_r, 
 		  ArrayList<index_t> *old_from_new, 
 		  double *split_val) {
 
-//     NOTIFY("SplitData %"LI"d %"LI"d", split_ind, data.n_cols());
     // get the values for the split dim
     std::vector<double> dim_val_vec;
     for (index_t i = 0; i < data.n_cols(); i++) {
@@ -220,7 +208,6 @@ class DTree{
     *split_val = (*(dim_val_vec.begin()+split_ind)
       +  *(dim_val_vec.begin()+split_ind+1)) / 2;
 
-//     NOTIFY("Split val %lg", *split_val);
     index_t i = split_ind, j = split_ind + 1;
     while ( i > -1 && j < data.n_cols()) {
       while (i > -1 && data.get(split_dim, i) < *split_val)
@@ -231,7 +218,6 @@ class DTree{
 
       // swapping values
       if (i > -1 && j < data.n_cols()) {
-	//	NOTIFY("swapping %"LI"d", i);
 	Vector vec1, vec2;
 	data.MakeColumnVector(i, &vec1);
 	data.MakeColumnVector(j, &vec2);
@@ -253,10 +239,10 @@ class DTree{
     data.MakeColumnSlice(0, split_ind+1, data_l);
     data.MakeColumnSlice(split_ind+1, data.n_cols()-split_ind-1, data_r);
 
-  } // end SplitData_()
+  } // end SplitData_
 
-  ///////////////////// Helper Functions //////////////////////////////////////
-
+  ///////////////////// Public Functions //////////////////////////////////////
+ public:
   
   // Root node initializer
   void Init(ArrayList<double>& max_vals,
@@ -287,12 +273,11 @@ class DTree{
     error_ = error;
   }
 
-  /*
+  /**
    * Expand tree
    */
   double Grow(Matrix& data, ArrayList<index_t> *old_from_new) {    
 
-    //     NOTIFY("grow");
     DEBUG_ASSERT(data.n_cols() == stop_ - start_);
     DEBUG_ASSERT(data.n_rows() == max_vals_.size());
     DEBUG_ASSERT(data.n_rows() == min_vals_.size());
@@ -308,11 +293,10 @@ class DTree{
       // find the split
       index_t dim, split_ind;
       double left_error, right_error;
-      //    printf("here %"LI"d\n", data.n_cols());
       FindSplit_(data, old_from_new->size(),
 		 &dim, &split_ind,
 		 &left_error, &right_error);
-//       printf(" there %"LI"d", split_ind);
+
       // Split the data for the children
       Matrix data_l, data_r;
       double split_val;
@@ -430,14 +414,12 @@ class DTree{
 	}
       } else { // prune this subtree
 	// making this node a leaf node
-	//	printf(".");fflush(NULL);
 	subtree_leaves_ = 1;
 	subtree_leaves_error_ = error_;
 	delete left_;
 	left_ = NULL;
 	delete right_;
 	right_ = NULL;
-	//	printf("+");fflush(NULL);
 	// passing information upward
 	return DBL_MAX;
       } // end if-else
@@ -454,8 +436,7 @@ class DTree{
     DEBUG_ASSERT(query.length() == min_vals_.size());
 
     if (subtree_leaves_ == 1) { // if leaf
-//       NOTIFY("Leaf %"LI"d", max_vals_.size());
-      // return value
+      // compute value
       // compute r_t
       double range = 1.0;
       for (index_t i = 0; i < max_vals_.size(); i++) {
@@ -463,19 +444,15 @@ class DTree{
 	  range *= max_vals_[i] - min_vals_[i];
 	}
       } // end for
-//       NOTIFY("Leaf done");
       return ratio_ / range;
     } else if (query[split_dim_] <= split_value_) { // if left subtree
-      //    NOTIFY("left");
       // go to left child
       return left_->ComputeValue(query);
     } else { // if right subtree
-      //      NOTIFY("Right");
       // go to right child
       return right_->ComputeValue(query);
     } // end if-else
   } // ComputeValue  
-
 
   void WriteTree(index_t level){
     if (likely(left_ != NULL)){
