@@ -255,6 +255,20 @@ class DHrectBound {
   }
 
   /**
+   * Calculates maximum bound-to-point squared distance.
+   */
+  double MaxDistanceSq(const double *point) const {
+    double sum = 0;
+
+    for (index_t d = 0; d < dim_; d++) {
+      double v = std::max(point[d] - bounds_[d].lo, bounds_[d].hi - point[d]);
+      sum += math::Pow<t_pow, 1>(v); // v is non-negative
+    }
+
+    return math::Pow<2, t_pow>(sum);
+  }
+
+  /**
    * Computes maximum distance.
    */
   double MaxDistanceSq(const DHrectBound& other) const {
