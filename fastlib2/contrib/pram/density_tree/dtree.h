@@ -47,8 +47,8 @@ class DTree{
 
   // since we are using uniform density, we need
   // the max and min of every dimension for every node
-  ArrayList<double> *max_vals_;
-  ArrayList<double> *min_vals_;
+  ArrayList<double> max_vals_;
+  ArrayList<double> min_vals_;
 
   // The children
   DTree *left_;
@@ -61,8 +61,8 @@ class DTree{
  public: 
 
   DTree() {
-    max_vals_ = NULL;
-    min_vals_ = NULL;
+//     max_vals_ = NULL;
+//     min_vals_ = NULL;
     left_ = NULL;
     right_ = NULL;
   }
@@ -89,6 +89,8 @@ class DTree{
 
   index_t split_dim() { return split_dim_; }
 
+  double split_value() { return split_value_; }
+
   double error() { return error_; }
 
   double subtree_leaves_error() { return subtree_leaves_error_; }
@@ -98,18 +100,21 @@ class DTree{
   DTree* left_child() { return left_; }
   DTree* right_child() { return right_; }
 
+//   ArrayList<double> max_vals() { return max_vals_; }
+//   ArrayList<double> min_vals() { return min_vals_; }
+
   ////////////////////// Private Functions ////////////////////////////////////
   
   double ComputeNodeError_(index_t total_points) {
     double range = 1.0;
     index_t node_size = stop_ - start_;
 
-    DEBUG_ASSERT(max_vals_->size() == min_vals_->size());
-    for (index_t i = 0; i < max_vals_->size(); i++) {
+    DEBUG_ASSERT(max_vals_.size() == min_vals_.size());
+    for (index_t i = 0; i < max_vals_.size(); i++) {
       // if no variation in a dimension, we do not care
       // about that dimension
-      if (((*max_vals_)[i] - (*min_vals_)[i]) > 0.0) {
-	range *= ((*max_vals_)[i] - (*min_vals_)[i]);
+      if (max_vals_[i] - min_vals_[i] > 0.0) {
+	range *= max_vals_[i] - min_vals_[i];
       }
     }
 
@@ -125,22 +130,25 @@ class DTree{
 
 //     NOTIFY("FindSplit")
     DEBUG_ASSERT(data.n_cols() == stop_ - start_);
+    DEBUG_ASSERT(data.n_rows() == max_vals_.size());
+    DEBUG_ASSERT(data.n_rows() == min_vals_.size());
     index_t n_t = data.n_cols();
     double min_error = error_;
     bool some_split_found = false;
 
     // loop through each dimension
-    for (index_t dim = 0; dim < max_vals_->size(); dim++) {
+    for (index_t dim = 0; dim < max_vals_.size(); dim++) {
       bool dim_split_found = false;
 
-      double min = (*min_vals_)[dim], max = (*max_vals_)[dim];
+      double min = min_vals_[dim], max = max_vals_[dim];
       double range = 1.0;
-      for (index_t i = 0; i < max_vals_->size(); i++) {
-	if (((*max_vals_)[i] -(*min_vals_)[i] > 0.0) && (i != dim)) {
-	  range *= ((*max_vals_)[i] -(*min_vals_)[i]);
+      for (index_t i = 0; i < max_vals_.size(); i++) {
+	if (max_vals_[i] -min_vals_[i] > 0.0 && i != dim) {
+	  range *= max_vals_[i] - min_vals_[i];
 	}
       }
       double k = -1.0 / (total_n * total_n * range);
+      DEBUG_ASSERT_MSG(-1.0*k < DBL_MAX, "k:%lg", k);
 
       // get the values for the dimension
       std::vector<double> dim_val_vec;
@@ -157,14 +165,18 @@ class DTree{
       for (std::vector<double>::iterator it = dim_val_vec.begin();
 	   it < dim_val_vec.end()-1; it++, ind++) {
 	double split = (*it + *(it+1))/2;
-	double temp_l = k * (ind+1) * (ind+1) / (split - min);
-	double temp_r = k * (n_t - ind-1) * (n_t - ind-1) / (max - split);
-	if (temp_l + temp_r <= min_dim_error) {
-	  min_dim_error = temp_l + temp_r;
-	  temp_lval = temp_l;
-	  temp_rval = temp_r;
-	  dim_split_ind = ind;
-	  dim_split_found = true;
+	if (split - min > 0.0 && max - split > 0.0) {
+	  double temp_l = k * (ind+1) * (ind+1) / (split - min);
+	  DEBUG_ASSERT(-1.0*temp_l < DBL_MAX);
+	  double temp_r = k * (n_t - ind-1) * (n_t - ind-1) / (max - split);
+	  DEBUG_ASSERT(-1.0*temp_r < DBL_MAX);
+	  if (temp_l + temp_r <= min_dim_error) {
+	    min_dim_error = temp_l + temp_r;
+	    temp_lval = temp_l;
+	    temp_rval = temp_r;
+	    dim_split_ind = ind;
+	    dim_split_found = true;
+	  } // end if
 	} // end if
       } // end for
 
@@ -181,7 +193,13 @@ class DTree{
       } // end if
     } // end for
 
-    DEBUG_ASSERT_MSG(some_split_found, "Weird - no split found\n");
+    // This might occur when you have many instances of the
+    // same point in the dataset. Have to figure out a way to
+    // deal with it
+    DEBUG_ASSERT_MSG(some_split_found,
+		     "Weird - no split found"
+		     " %"LI"d points, %"LI"d \n",
+		     data.n_cols(), total_n);
   } // end FindSplit_()
 
   void SplitData_(Matrix& data, index_t split_dim, index_t split_ind,
@@ -241,29 +259,31 @@ class DTree{
 
   
   // Root node initializer
-  void Init(ArrayList<double> *max_vals,
-	    ArrayList<double> *min_vals,
+  void Init(ArrayList<double>& max_vals,
+	    ArrayList<double>& min_vals,
 	    index_t total_points) {
     start_ = 0;
     stop_ = total_points;
-    max_vals_ = max_vals;
-    min_vals_ = min_vals;
+    max_vals_.InitCopy(max_vals);
+    min_vals_.InitCopy(min_vals);
     left_ = NULL;
     right_ = NULL;
     error_ = ComputeNodeError_(total_points);
+    DEBUG_ASSERT_MSG(-1.0*error_ < DBL_MAX, "E:%lg", error_);
   }
 
   // Non-root node initializer
-  void Init(ArrayList<double> *max_vals,
-	    ArrayList<double> *min_vals,
+  void Init(ArrayList<double>& max_vals,
+	    ArrayList<double>& min_vals,
 	    index_t start, index_t stop,
 	    double error){
     start_ = start;
     stop_ = stop;
-    max_vals_ = max_vals;
-    min_vals_ = min_vals;
+    max_vals_.InitCopy(max_vals);
+    min_vals_.InitCopy(min_vals);
     left_ = NULL;
     right_ = NULL;
+    DEBUG_ASSERT_MSG(-1.0*error < DBL_MAX,"E:%lg", error);
     error_ = error;
   }
 
@@ -274,6 +294,8 @@ class DTree{
 
     //     NOTIFY("grow");
     DEBUG_ASSERT(data.n_cols() == stop_ - start_);
+    DEBUG_ASSERT(data.n_rows() == max_vals_.size());
+    DEBUG_ASSERT(data.n_rows() == min_vals_.size());
     double left_g, right_g;
 
     // computing points ratio
@@ -300,23 +322,27 @@ class DTree{
       // make max and min vals for the children
       ArrayList<double> max_vals_l, max_vals_r;
       ArrayList<double> min_vals_l, min_vals_r;
-      max_vals_l.InitCopy(*max_vals_);
-      max_vals_r.InitCopy(*max_vals_);
-      min_vals_l.InitCopy(*min_vals_);
-      min_vals_r.InitCopy(*min_vals_);
+      max_vals_l.InitCopy(max_vals_);
+      max_vals_r.InitCopy(max_vals_);
+      min_vals_l.InitCopy(min_vals_);
+      min_vals_r.InitCopy(min_vals_);
       max_vals_l[dim] = split_val;
       min_vals_r[dim] = split_val;
 
+      DEBUG_ASSERT(max_vals_l.size() == max_vals_.size());
+      DEBUG_ASSERT(min_vals_l.size() == min_vals_.size());
+      DEBUG_ASSERT(max_vals_r.size() == max_vals_.size());
+      DEBUG_ASSERT(min_vals_r.size() == min_vals_.size());
       // store split dim and split val in the node
-      split_val_ = split_val;
+      split_value_ = split_val;
       split_dim_ = dim;
 
       // Recursively growing the children
       left_ = new DTree();
       right_ = new DTree();
-      left_->Init(&max_vals_l, &min_vals_l, start_,
+      left_->Init(max_vals_l, min_vals_l, start_,
 		  start_ + split_ind + 1, left_error);
-      right_->Init(&max_vals_r, &min_vals_r, start_
+      right_->Init(max_vals_r, min_vals_r, start_
 		   + split_ind + 1, stop_, right_error);
       left_g = left_->Grow(data_l, old_from_new);
       right_g = right_->Grow(data_r, old_from_new);
@@ -332,7 +358,9 @@ class DTree{
 	  && (right_->subtree_leaves() == 1)) {
 	if (left_->error() + right_->error() == error_) {
 	  delete left_;
+	  left_ = NULL;
 	  delete right_;
+	  right_ = NULL;
 	  subtree_leaves_ = 1;
 	  subtree_leaves_error_ = error_;
 	} // end if
@@ -386,8 +414,20 @@ class DTree{
 	g_t = (error_ - subtree_leaves_error_)
 	  / (subtree_leaves_ - 1);
 
-	return min(g_t, min(left_g, right_g));
-
+	DEBUG_ASSERT_MSG(g_t < DBL_MAX,
+			 "g:%lg, rt:%lg, rtt:%lg, l:%"LI"d",
+			 g_t, error_, subtree_leaves_error_,
+			 subtree_leaves_);
+	if (left_->subtree_leaves() == 1
+	    && right_->subtree_leaves() == 1) {
+	  return g_t;
+	} else if (left_->subtree_leaves() == 1) {
+	  return min(g_t, right_g);
+	} else if (right_->subtree_leaves() == 1) {
+	  return min(g_t, left_g);
+	} else {
+	  return min(g_t, min(left_g, right_g));
+	}
       } else { // prune this subtree
 	// making this node a leaf node
 	//	printf(".");fflush(NULL);
@@ -406,185 +446,61 @@ class DTree{
 
   double ComputeValue(Vector& query) {
 
+    DEBUG_ASSERT_MSG(query.length() == max_vals_.size(),
+		     "dim = %"LI"d, maxval size= %"LI"d"
+		     ", sl=%"LI"d",
+		     query.length(), max_vals_.size(),
+		     subtree_leaves_);
+    DEBUG_ASSERT(query.length() == min_vals_.size());
+
     if (subtree_leaves_ == 1) { // if leaf
+//       NOTIFY("Leaf %"LI"d", max_vals_.size());
       // return value
       // compute r_t
       double range = 1.0;
-      for (index_t i = 0; i < max_vals_->size(); i++) {
-	range *= ((*max_vals_)[i] - (*min_vals_)[i]);
+      for (index_t i = 0; i < max_vals_.size(); i++) {
+	if (max_vals_[i] - min_vals_[i] > 0.0) {
+	  range *= max_vals_[i] - min_vals_[i];
+	}
       } // end for
-
+//       NOTIFY("Leaf done");
       return ratio_ / range;
-    } else if (query[split_dim] <= split_val_) { // if left subtree
+    } else if (query[split_dim_] <= split_value_) { // if left subtree
+      //    NOTIFY("left");
       // go to left child
       return left_->ComputeValue(query);
     } else { // if right subtree
+      //      NOTIFY("Right");
       // go to right child
       return right_->ComputeValue(query);
     } // end if-else
   } // ComputeValue  
-//  /*
-//    * Prune tree- remove subtrees if small decrease in
-//    * Gini index does not justify number of leaves.
-//    */
- 
-//   double Prune(double lambda){
-//     if (likely(left_ != NULL)){
-//       double result;
-//       result = left_->Prune(lambda);
-//       result = min(result, right_->Prune(lambda));     
-//       double child_error;
-//       int leafs;
-//       leafs = left_->GetNumNodes() + right_->GetNumNodes();
-//       child_error = left_->GetChildError()*left_->Count()
-// 	+ right_->GetChildError()*right_->Count();      
-//       double criterion = (stop_ - start_)*error_ - child_error;   
-//       if (criterion <= (lambda * (leafs-1))) {
-// 	left_ = NULL;
-// 	right_ = NULL;
-// 	return BIG_BAD_NUMBER;
-//       } else {	
-// 	return min(result, criterion / (leafs-1));
-//       }	
-//     } else {
-//       return BIG_BAD_NUMBER;
-//     }
-//   }
-  
 
-//   void SetTestError(TrainingSet* test_data, int index){
-//     test_count_++;
-//     if (likely(left_ != NULL)){
-//       ArrayList<ArrayList<double> > split_data;
-//       split_data = split_criterion_.GetSplitParams();
-//       int split_dim = (int)split_data[0][0];
-//       // Split variable is not ordered...
-//       if (test_data->GetVariableType(split_dim) > 0 ){
-// 	bool go_left = 0;
-// 	for (int i = 1; i < split_data[0].size(); i++){
-// 	  go_left = go_left | 
-// 	  (split_data[0][i] == (int)(test_data->Get(split_dim, index)));
-// 	}
-// 	if (go_left){
-// 	  left_->SetTestError(test_data, index);
-// 	} else {
-// 	  right_->SetTestError(test_data, index);
-// 	}
-//       } else {
-//       // Split Variable is ordered.
-//  	double split_point = split_data[0][1];
-// 	if (test_data->Get(split_dim, index) >= split_point){
-// 	  right_->SetTestError(test_data, index);
-// 	} else {
-// 	  left_->SetTestError(test_data, index);
-// 	}
-//       }
-//     } 
-//     if (test_data->GetTargetType(target_dim_) > 0) {
-//       test_error_ = test_error_ + 
-// 	(value_ != test_data->Get(target_dim_, index));
-//     } else {
-//       test_error_ = test_error_ + 
-// 	(value_ - test_data->Get(target_dim_, index))*
-// 	(value_ - test_data->Get(target_dim_, index));
-//     }
-//   }
 
-//   double GetTestError(){
-//     if (likely(left_ != NULL)){
-//       return left_->GetTestError() + right_->GetTestError();
-//     } else {
-//       if (points_->GetTargetType(target_dim_) > 0) {
-// 	return test_error_;
-//       } else {
-// 	return sqrt(test_error_ / test_count_);
-//       }
-//     }
-//   }
-
-//   void WriteTree(int level, FILE* fp){
-//     if (likely(left_ != NULL)){
-//       fprintf(fp, "\n");
-//       for (int i = 0; i < level; i++){
-// 	fprintf(fp, "|\t");
-//       }
-//       ArrayList<ArrayList<double> > split_data;
-//       split_data = split_criterion_.GetSplitParams();      
-//       int split_dim;
-//       double split_val;
-//       split_dim =  (int)split_data[0][0];
-//       split_val = split_data[0][1];      
-//       fprintf(fp, "Var. %d >=%5.2f ", split_dim, split_val);
-//       right_->WriteTree(level+1, fp);
-//       fprintf(fp, "\n");
-//       for (int i = 0; i < level; i++){
-// 	fprintf(fp, "|\t");
-//       }      
-//       fprintf(fp, "Var. %d < %5.2f ", split_dim, split_val);
-//       left_->WriteTree(level+1, fp);
-//     } else {            
-//       fprintf(fp, ": Predict =%4.0f", value_);
-//     }  
-//   }
-  
-//   /*
-//    * Find predicted value for a given data point
-//    */
-//   double Test(TrainingSet* test_data, int index){   
-//     if (likely(left_ != NULL)){
-//       ArrayList<ArrayList<double> > split_data;
-//       split_data = split_criterion_.GetSplitParams();
-//       int split_dim = (int)split_data[0][0];
-//       // Split variable is not ordered...
-//       if (test_data->GetVariableType(split_dim) > 0 ){
-// 	bool go_left = 0;
-// 	for (int i = 1; i < split_data[0].size(); i++){
-// 	  go_left = go_left | 
-// 	  (split_data[0][i] == (int)(test_data->Get(split_dim, index)));
-// 	}
-// 	if (go_left){
-// 	  return left_->Test(test_data, index);
-// 	} else {
-// 	  return right_->Test(test_data, index);
-// 	}
-//       } else {
-//       // Split Variable is ordered.
-//  	double split_point = split_data[0][1];
-// 	if (test_data->Get(split_dim, index) >= split_point){
-// 	  return right_->Test(test_data, index);
-// 	} else {
-// 	  return left_->Test(test_data, index);
-// 	}
-//       }
-//     } else{
-//       return value_;
-//     }
-//   } // Test
-
-//   double GetChildError(){
-//     if (left_ != NULL){
-//       return (left_->GetChildError()*left_->Count() + 
-// 	      right_->GetChildError()*right_->Count()) / (stop_ - start_);
-//     } else {
-//       return error_;
-//     }
-//   }
-
-//   int GetNumNodes(){
-//     if (left_  != NULL){
-//       return left_->GetNumNodes() + right_->GetNumNodes();
-//     } else {
-//       return 1; 
-//     }
-//   }
-
-//   int Count(){
-//     return stop_ - start_;
-//   }
-
-//   void SetValue(double val_in){
-//     value_ = val_in;
-//   }
+  void WriteTree(index_t level){
+    if (likely(left_ != NULL)){
+      printf("\n");
+      for (index_t i = 0; i < level; i++){
+	printf("|\t");
+      }
+      printf("Var. %"LI"d > %lg ", split_dim_, split_value_);
+      right_->WriteTree(level+1);
+      printf("\n");
+      for (index_t i = 0; i < level; i++){
+	printf("|\t");
+      }      
+      printf("Var. %"LI"d <= %lg ", split_dim_, split_value_);
+      left_->WriteTree(level+1);
+    } else {
+      double range = 1.0;
+      for (index_t i = 0; i < max_vals_.size(); i++) {
+	if (max_vals_[i] - min_vals_[i] > 0.0) {
+	  range *= max_vals_[i] - min_vals_[i];
+	}
+      } // end for
+      printf("-> Predict:%lg", ratio_ / range);
+    }  
+  }
   
 }; // Class DTree
 
