@@ -4,6 +4,7 @@
 #include "fastlib/fastlib.h"
 #include "contrib/dongryel/proximity_project/general_spacetree.h"
 #include "contrib/dongryel/proximity_project/gen_kdtree.h"
+#include "contrib/dongryel/nested_summation_template/strata.h"
 #include "multitree_utility.h"
 
 template<typename MultiTreeProblem>
@@ -517,6 +518,11 @@ class MultiTreeDepthFirst {
   void PreProcessQueryTree_(Tree *node);
 
   template<typename Tree>
+  void PreProcessQueryTreeMonochromatic_
+  (Tree *node, const typename MultiTreeProblem::MultiTreeQueryResult 
+   &results);
+
+  template<typename Tree>
   void PreProcessReferenceTree_(Tree *node, index_t reference_tree_index);
 
   template<typename Tree>
@@ -555,7 +561,7 @@ class MultiTreeDepthFirst {
 
   void Compute(const ArrayList<const Matrix *> *query_sets_in,
 	       typename MultiTreeProblem::MultiTreeQueryResult
-	       *query_results) {
+	       *query_results, bool monochromatic_trick = false) {
 
     ArrayList<Matrix *> query_sets;
     ArrayList<QueryTree *> query_trees;
@@ -589,19 +595,58 @@ class MultiTreeDepthFirst {
       query_results->Init((sets_[0])->n_cols());
     }
 
-    // Preprocess the query trees.
+    // Preprocess the query trees. Note that the bounds will be
+    // overwritten if the monochromatic tree is applied...
     if(query_sets_in != NULL) {
       PreProcessQueryTree_(query_trees[0]);
     }
-    
+
+    // If the monochromatic trick is required, then create the initial
+    // strata and do a monochromatic on each strata to build up the
+    // bounds.
+    if(monochromatic_trick) {
+      Strata<HybridTree> frontier;
+      frontier.Init(hybrid_trees_[0], MultiTreeProblem::order - 1, 0.1);
+
+      printf("%d strata created for the monochromatic trick...\n",
+	     frontier.total_num_stratum);
+
+      // Save the root nodes before doing the trick...
+      ArrayList<HybridTree *> saved_nodes;
+      saved_nodes.Init(hybrid_trees_.size());
+      for(index_t i = 0; i < hybrid_trees_.size(); i++) {
+	saved_nodes[i] = hybrid_trees_[i];
+      }
+
+      for(index_t i = 0; i < frontier.total_num_stratum; i++) {
+	
+	for(index_t j = 0; j < hybrid_trees_.size(); j++) {
+	  hybrid_trees_[j] = frontier.node_list[i];
+	}
+
+	double total_num_tuples = TotalNumTuples(hybrid_trees_, query_trees,
+						 reference_trees_);
+	total_n_minus_one_tuples_root_ = total_n_minus_one_tuples_[0];
+
+	MultiTreeDepthFirstBase_(query_sets, sets_, targets_, hybrid_trees_,
+				 query_trees, reference_trees_, *query_results,
+				 total_num_tuples);
+      }
+      for(index_t i = 0; i < hybrid_trees_.size(); i++) {
+        hybrid_trees_[i] = saved_nodes[i];
+      }
+
+      PreProcessQueryTreeMonochromatic_(hybrid_trees_[0], *query_results);
+    }
+
     // Call the canonical algorithm.
     double total_num_tuples = TotalNumTuples(hybrid_trees_, query_trees,
-					     reference_trees_);
+                                             reference_trees_);
     total_n_minus_one_tuples_root_ = total_n_minus_one_tuples_[0];
 
     printf("There are %g tuples...\n",
-	   math::BinomialCoefficient((sets_[0])->n_cols() - 1, 
-				     MultiTreeProblem::order));
+           math::BinomialCoefficient((sets_[0])->n_cols() - 1,
+                                     MultiTreeProblem::order - 1));
 
     MultiTreeDepthFirstCanonical_(query_sets, sets_, targets_, hybrid_trees_,
 				  query_trees, reference_trees_,

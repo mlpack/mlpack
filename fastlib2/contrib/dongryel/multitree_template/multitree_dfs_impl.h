@@ -268,6 +268,27 @@ void MultiTreeDepthFirst<MultiTreeProblem>::PreProcessQueryTree_(Tree *node) {
 
 template<typename MultiTreeProblem>
 template<typename Tree>
+void MultiTreeDepthFirst<MultiTreeProblem>::PreProcessQueryTreeMonochromatic_
+(Tree *qnode, const typename MultiTreeProblem::MultiTreeQueryResult &results) {
+
+  qnode->stat().summary.StartReaccumulate();
+
+  if(qnode->is_leaf()) {   
+    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+      qnode->stat().summary.Accumulate(results, q);
+    }
+  }
+  else {
+    PreProcessQueryTreeMonochromatic_(qnode->left(), results);
+    PreProcessQueryTreeMonochromatic_(qnode->right(), results);
+
+    qnode->stat().summary.Accumulate(qnode->left()->stat().summary);
+    qnode->stat().summary.Accumulate(qnode->right()->stat().summary);
+  }
+}
+
+template<typename MultiTreeProblem>
+template<typename Tree>
 void MultiTreeDepthFirst<MultiTreeProblem>::PreProcessReferenceTree_
 (Tree *node, index_t reference_tree_index) {
 
