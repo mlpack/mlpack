@@ -4,8 +4,6 @@
 
 
 */
-
-
 #include "interior_point_pred_corr2.h"
 #include "special_la.h"
 #include "fastlib/fastlib_int.h"
@@ -191,17 +189,14 @@ int main(int argc, char *argv[]){
    /****************************************Done with naive kde**********************************/
 
 
-
-
-
    fx_timer_start(NULL,"full");
 
 
    //Number of parameteres for crossvalidation
 
-   index_t num_sigma=5;
-   index_t num_sigma_h=5;
-   index_t num_lambda=1;
+   index_t num_sigma=6;
+   index_t num_sigma_h=6;
+   index_t num_lambda=6;
 
 
    Vector sigma_vec;
@@ -215,31 +210,21 @@ int main(int argc, char *argv[]){
    lambda_vec.Init(num_lambda);
 
 
+   printf("Min bandwidth for naive kde is %f..\n",min_band_naive_kde);
+
    //Set up these values
-   double min_sigma=min_band_naive_kde/3;
+   double min_sigma=min_band_naive_kde/2;
    double max_sigma=3*min_band_naive_kde;
 
    double gap=(max_sigma-min_sigma)/num_sigma;
 
-   for(index_t i=0;i<num_sigma;i++){
+   for(index_t i=0;i<num_sigma+1;i++){
      
      sigma_vec[i]=min_sigma+i*gap;
    }
    sigma_vec[num_sigma]=min_band_naive_kde/sqrt(2);
-
-
-   //Set up sigma_h
-
-   gap=min_sigma/(2*num_sigma_h);
-
-   double average_sigma=(min_sigma+max_sigma)/2.0;
-   for(index_t i=0;i<num_sigma_h;i++){
-
-     sigma_h_vec[i]=i*average_sigma;     
-   } 
-   sigma_h_vec[num_sigma_h]=60; //Infinite sigma_h
-
-   lambda_vec[0]=10000.0;
+  
+   lambda_vec[0]=0.1;
   
   //Having got all the initial data lets create an object of the class
   //HkInteriorPointPredictorCorrector
@@ -250,34 +235,41 @@ int main(int argc, char *argv[]){
   printf("Sigma vector is ...\n");
   sigma_vec.PrintDebug();
 
-  printf("Sigma_h vector is ...\n");
-  sigma_h_vec.PrintDebug();
-  
-  printf("lambda vector is..\n");
-  lambda_vec.PrintDebug();
+  /** A bit of a hack**/
 
-  /*
-    A little hack 
-
-  */
-
-//   num_sigma=0;
+ //  num_sigma=0;
 //   num_sigma_h=0;
-//   num_lambda=1;
-  
-//   sigma_vec[0]=min_band_naive_kde/sqrt(2);
-//   sigma_h_vec[0]=60;
-//   lambda_vec[0]=10;
-  
-
-
+//   sigma_vec[0]=0.0293;
  
-  double reg_ise_opt=DBL_MAX; 
   index_t num_defaulters=0;      
+  index_t num_err=0;
 
   double sigma_opt,sigma_h_opt,lambda_opt;
 
+  //The optimal scores of reg ise and ise
+  double ise_train_set_hkde_opt=DBL_MAX;
+  double reg_ise_opt;
+
+  Vector test_densities_hkde_opt;
   for(index_t i=0;i<num_sigma+1;i++){
+
+    //Initialize a $\sigma_h$ vector
+
+    Vector sigma_h_vec;
+    sigma_h_vec.Init(num_sigma_h+1);
+
+    //Set up sigma_h as per the $\sigma$ vector
+    
+    for(index_t count=0;count<num_sigma_h;count++){
+      
+      sigma_h_vec[count]=(count)*sigma_vec[i];     
+    } 
+
+    sigma_h_vec[num_sigma_h]=60; //Infinite sigma_h
+
+    printf("Sigma_h vector is ...\n");
+    sigma_h_vec.PrintDebug();
+    
     
     for(index_t j=0;j<num_sigma_h+1;j++){
       
@@ -292,7 +284,7 @@ int main(int argc, char *argv[]){
 	HKInteriorPointPredictorCorrector hk_ippc; 
 	hk_ippc.Init(train_data,test_data,ipc);
 	index_t ret_val=hk_ippc.ComputeOptimalSolution();
-
+	printf("Return value is=%d..\n",ret_val);
 
 	
 	if(ret_val==-1){
@@ -304,19 +296,46 @@ int main(int argc, char *argv[]){
 	  double reg_ise=
 	    hk_ippc.get_penalized_ise_train_set();
 	  
-	  if(reg_ise<reg_ise_opt){
+
+	  double ise_train_set_hkde=
+	    hk_ippc.get_ise_train_set();
+	  
+	  if(ise_train_set_hkde<ise_train_set_hkde_opt){
 	    
-	    sigma_opt=sigma_vec[i];
-	    sigma_h_opt=sigma_h_vec[j];
-	    lambda_opt=lambda_vec[k];
-	    reg_ise_opt=reg_ise;
+	    if(reg_ise>ise_train_set_hkde){
+	      sigma_opt=sigma_vec[i];
+	      sigma_h_opt=sigma_h_vec[j];
+	      lambda_opt=lambda_vec[k];
+	      
+	      reg_ise_opt=reg_ise;
+	      ise_train_set_hkde_opt=ise_train_set_hkde;
+	    }
+	    else{
+	      //There was possibly a numerical errod
+	      printf("POSSIBLE NUMERICAL ERROR....\n");
+	      num_err++;
+	      printf("Regularized ISE is %f..\n",reg_ise);
+	      printf("ISE train set is %f..\n",ise_train_set_hkde);
+
+	      //THIS SHOULD BE REMOVED LATER ON................
+	     //  sigma_opt=sigma_vec[i];
+// 	      sigma_h_opt=sigma_h_vec[j];
+// 	      lambda_opt=lambda_vec[k];
+	      
+// 	      reg_ise_opt=reg_ise;
+// 	      ise_train_set_hkde_opt=ise_train_set_hkde;
+
+	    }
 	  }
 	}
       }
     }
   }
-
-  //Finally run with the optimal settings
+  printf("The optimal parameter setting is...\n");
+  printf("sigma is %f..\n",sigma_opt);
+  printf("sigma_h is %f..\n",sigma_h_opt);
+  printf("lambda_opt is %f..\n",lambda_opt);
+  //   //Finally run with the optimal settings
   
   fx_set_param_double(ipc,"sigma",sigma_opt);
   fx_set_param_double(ipc,"sigma_h",sigma_h_opt);      
@@ -326,48 +345,21 @@ int main(int argc, char *argv[]){
   HKInteriorPointPredictorCorrector hk_ippc; 
   hk_ippc.Init(train_data,test_data,ipc);
   hk_ippc.ComputeOptimalSolution();
-  double ise_opt_train_set_hkde=
-    hk_ippc.get_ise_train_set();
-
-  Vector test_densities_hkde_opt;
   hk_ippc.get_test_densities(test_densities_hkde_opt);
   
   printf("The number of defaulters are %d..\n",num_defaulters);
-
-  /////////////////////////////////////////////////////////////////////////////////////
+  printf("The number of numerical errors are %d..\n",num_err);
   
- //  printf("Run the code with optimal hyperkernel parameters....\n");
-  
-  //   printf("sigma_h=%f,sigma=%f,lambda=%f..\n",opt_sigma_h,opt_sigma,opt_lambda);
-  
-  //   ///////Run HKDE WITH OPTIMAL PARAMETERS
-  //   HKInteriorPointPredictorCorrector hk_ippc; 
-  //   fx_set_param_double(ipc,"sigma_h",opt_sigma_h);
-  //   fx_set_param_double(ipc,"sigma",opt_sigma);
-  //   fx_set_param_double(ipc,"lambda",opt_lambda);
-  
-  //   hk_ippc.Init(train_data,test_data,ipc);
-  //   hk_ippc.ComputeOptimalSolution();
-  //   double hkde_ise_opt=hk_ippc.get_ise_train_set();
-  //   double negative_log_likelihood_hkde_opt=
-  //     hk_ippc.get_negative_log_likelihood_test();
-  
-  //   Vector test_densities_hkde_opt;
-  //   hk_ippc.get_test_densities(test_densities_hkde_opt);
-  
-  //////////////////////////////////////////////////////////////////////////
-  
-
   //Calculate RMSE of hkde. To do this check to see if we have a
   //true_density_file
- 
+  
   double rmse_hkde_opt=-1;
   
   if(true_density_file_present==1){
     
     double rmse=0;
     for(index_t i=0;i<num_test_points;i++){
-
+      
       //printf("Actual density is %f..\n",true_test_densities.get(0,i));
       //printf("Calculated density is %f..\n",test_densities_hkde_opt[i]);
       
@@ -378,42 +370,56 @@ int main(int argc, char *argv[]){
     }
     rmse_hkde_opt=sqrt(rmse/num_test_points);
   }
-
+  
   fx_timer_stop(NULL,"full");
-
+  
   //print all the results  
   printf("HYPERKERNEL results...................................\n");
   printf("sigma_h=%f\n",sigma_h_opt);
   printf("sigma=%f\n",sigma_opt);
   printf("lambda=%f\n",lambda_opt);
   printf("The unregualrized ISE of train set is %f..\n",
-	 ise_opt_train_set_hkde);
+	 ise_train_set_hkde_opt);
   printf("The regualrized ISE of train set is %f..\n",reg_ise_opt);
   
   
   printf("HKDE Densities are............\n");
   test_densities_hkde_opt.PrintDebug();
   
-
+  
   //printf("penalized ise at optimal settings is %f..\n",min_penalized_ise_hkde);
   printf("RMSE:%f....\n",rmse_hkde_opt);
-
+  
   printf("..............................\n");
   printf("NAIVE KDE results...\n");
-
+  
   printf("The bandwidth of naive kde is %f..\n",min_band_naive_kde);
   printf("The ise of naive kde at optimal setting is %f..\n",optimal_ise_score_naive_kde);
   printf("rmse of naive kde is %f..\n",rmse_naive_kde_opt);
   printf("Naive kde densities are...\n");
   naive_kde_test_densities.PrintDebug();
-
-
+  
+  
   ////////////Print Them//////////////////
   
-  // FILE *fp_naive=fopen("naive_kde_densities_mog9.txt","w");
-  //    FILE *fp_hkde=fopen("hkde_densities_mog9.txt","w");
+   FILE *fp_naive=fopen("results_suicide_unscaled.txt","w");
+   FILE *fp_hkde=fopen("hkde_densities_suicide_unscaled.txt","w");
+   
+   index_t max_length=test_densities_hkde_opt.length();
+   for(index_t i=0;i<max_length;i++){
+     if(i!=max_length-1){
+
+       fprintf(fp_hkde,"%f\n",test_densities_hkde_opt[i]);
+       fprintf(fp_naive,"%f\n",naive_kde_test_densities[i]);
+     }
+     else{
+       
+       fprintf(fp_hkde,"%f",test_densities_hkde_opt[i]);
+       fprintf(fp_naive,"%f",naive_kde_test_densities[i]);
+     }
+   }
   
-  //    test_densities_hkde_opt.PrintDebug(NULL,fp_hkde);
+  //test_densities_hkde_opt.PrintDebug(NULL,fp_hkde);
   //    naive_kde_test_densities.PrintDebug(NULL,fp_naive);
   
   fx_done(NULL);
