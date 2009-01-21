@@ -331,12 +331,41 @@ class AxilrodTellerForceProblem {
     
     MultiTreeQuerySummary summary;
     
+    double priority;
+    
+    Vector mean;
+    
+    index_t count;
+    
+    bool in_strata;
+
+    double num_precomputed_tuples;
+
     OT_DEF_BASIC(MultiTreeQueryStat) {
       OT_MY_OBJECT(postponed);
       OT_MY_OBJECT(summary);
+      OT_MY_OBJECT(priority);
+      OT_MY_OBJECT(mean);
+      OT_MY_OBJECT(count);
+      OT_MY_OBJECT(in_strata);
+      OT_MY_OBJECT(num_precomputed_tuples);
     }
     
-  public:
+   public:
+
+    double SumOfPerDimensionVariances
+    (const Matrix &dataset, index_t &start, index_t &count) {
+
+      double total_variance = 0;
+      for(index_t i = start; i < start + count; i++) {
+	const double *point = dataset.GetColumnPtr(i);
+	for(index_t d = 0; d < 3; d++) {
+	  total_variance += math::Sqr(point[d] - mean[d]);
+	}
+      }
+      total_variance /= ((double) count);
+      return total_variance;
+    }
 
     void FinalPush(MultiTreeQueryStat &child_stat) {
       child_stat.postponed.ApplyPostponed(postponed);
@@ -345,18 +374,49 @@ class AxilrodTellerForceProblem {
     void SetZero() {
       postponed.SetZero();
       summary.SetZero();
+      priority = 0;
+      mean.SetZero();
+      in_strata = false;
+      num_precomputed_tuples = 0;
     }
     
-    void Init(const Matrix& dataset, index_t &start, index_t &count) {
+    void Init(const Matrix& dataset, index_t &start, index_t &count_in) {
       postponed.Init();
+      mean.Init(3);
       SetZero();
+      count = count_in;
+
+      // Compute the mean vector.
+      for(index_t i = start; i < start + count; i++) {
+	const double *point = dataset.GetColumnPtr(i);
+	la::AddTo(3, point, mean.ptr());
+      }
+      la::Scale(3, 1.0 / ((double) count), mean.ptr());
+
+      // Compute the priority of this node which is basically the
+      // number of points times sum of per-dimension variances.
+      double sum_of_per_dimension_variances = SumOfPerDimensionVariances
+	(dataset, start, count);
+      priority = count * sum_of_per_dimension_variances;
     }
     
-    void Init(const Matrix& dataset, index_t &start, index_t &count,
+    void Init(const Matrix& dataset, index_t &start, index_t &count_in,
 	      const MultiTreeQueryStat& left_stat, 
 	      const MultiTreeQueryStat& right_stat) {
       postponed.Init();
+      mean.Init(3);
       SetZero();
+      count = count_in;
+
+      la::ScaleOverwrite(left_stat.count, left_stat.mean, &mean);
+      la::AddExpert(3, right_stat.count, right_stat.mean.ptr(), mean.ptr());
+      la::Scale(3, 1.0 / ((double) count), mean.ptr());
+
+      // Compute the priority of this node which is basically the
+      // number of points times sum of per-dimension variances.
+      double sum_of_per_dimension_variances = SumOfPerDimensionVariances
+	(dataset, start, count);
+      priority = count * sum_of_per_dimension_variances;
     }
     
     template<typename TKernelAux>
@@ -792,10 +852,26 @@ class AxilrodTellerForceProblem {
 				 ArrayList<ReferenceTree *> &reference_nodes,
 				 double total_num_tuples,
 				 double total_n_minus_one_tuples_root,
-				 const Vector &total_n_minus_one_tuples) {
+				 Vector &total_n_minus_one_tuples) {
 
     // Compute delta change for each node...
+    if(hybrid_nodes[0] == hybrid_nodes[1] && 
+       hybrid_nodes[1] == hybrid_nodes[2]) {
+
+      for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
+	total_n_minus_one_tuples[i] -= 
+	  (hybrid_nodes[i]->stat().num_precomputed_tuples);
+      }
+    }
+
     delta.Init(total_n_minus_one_tuples);
+
+    if(unlikely(hybrid_nodes[0]->stat().in_strata && 
+		hybrid_nodes[0] == hybrid_nodes[1] &&
+		hybrid_nodes[1] == hybrid_nodes[2])) {
+      return true;
+    }
+
     if(!delta.ComputeFiniteDifference(globals, hybrid_nodes,
 				      total_n_minus_one_tuples)) {
       return false;
@@ -821,9 +897,25 @@ class AxilrodTellerForceProblem {
 	   delta.used_error[i] * 
 	   (total_n_minus_one_tuples_root - new_summary.n_pruned_l)) {
 
+	  /*
 	  if(((sum + delta.used_error[i]) - sum) >
 	     sum * AxilrodTellerForceProblem::relative_error_) {
+	    return false;
+	  }
+	  */
+
+	  const double *negative_force_vector_e = 
+	    delta.negative_force_vector_e.GetColumnPtr(i);
+	  const double *positive_force_vector_e =
+	    delta.positive_force_vector_e.GetColumnPtr(i);
+	  double change_l1_norm = 
+	    fabs(negative_force_vector_e[0] + negative_force_vector_e[1] +
+		 negative_force_vector_e[2]) +
+	    positive_force_vector_e[0] + positive_force_vector_e[1] +
+	    positive_force_vector_e[2];
 	    
+	  if(((sum + change_l1_norm) - sum) >
+	     sum * AxilrodTellerForceProblem::relative_error_) {
 	    return false;
 	  }
 	}
@@ -853,6 +945,8 @@ class AxilrodTellerForceProblem {
    double total_num_tuples, double total_n_minus_one_tuples_root,
    const Vector &total_n_minus_one_tuples) {
     
+
+    /*
     if(total_num_tuples < 40) {
       return false;
     }
@@ -905,6 +999,8 @@ class AxilrodTellerForceProblem {
     
     results.num_monte_carlo_prunes++;
     return true;
+    */
+    return false;
   }
     
   static void HybridNodeEvaluateMain(MultiTreeGlobal &globals,

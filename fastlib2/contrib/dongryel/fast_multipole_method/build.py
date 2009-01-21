@@ -13,7 +13,8 @@ librule(
     sources = [],
     headers = ["multibody_force_problem.h",
                "multibody_kernel.h"],
-    deplibs = ["contrib/dongryel/multitree_template:multitree_template"]
+    deplibs = ["contrib/dongryel/multitree_template:multitree_template",
+               "contrib/dongryel/nested_summation_template:nested_summation_template"]
     )
 
 binrule(

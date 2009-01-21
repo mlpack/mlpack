@@ -1,6 +1,7 @@
 #include "multibody_force_problem.h"
 #include "multibody_kernel.h"
 #include "../multitree_template/multitree_dfs.h"
+#include "../nested_summation_template/strata.h"
 
 double AxilrodTellerForceKernelPositiveEvaluate
 (int dimension_in, const double *first_point, const double *second_point,
@@ -280,7 +281,7 @@ int main(int argc, char *argv[]) {
 			      multibody_module);
 
   fx_timer_start(fx_root, "multitree");
-  algorithm.Compute(NULL, &results);
+  algorithm.Compute(NULL, &results, true);
   fx_timer_stop(fx_root, "multitree");
 
   results.PrintDebug("force_vectors.txt");
