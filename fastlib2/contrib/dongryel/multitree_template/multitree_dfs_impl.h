@@ -285,6 +285,22 @@ void MultiTreeDepthFirst<MultiTreeProblem>::PreProcessQueryTreeMonochromatic_
     qnode->stat().summary.Accumulate(qnode->left()->stat().summary);
     qnode->stat().summary.Accumulate(qnode->right()->stat().summary);
   }
+
+  // Initialize the precomputed n-tuples...
+  qnode->stat().num_precomputed_tuples = 0;
+  if(qnode->stat().in_strata) {
+    qnode->stat().num_precomputed_tuples = 
+      math::BinomialCoefficient(qnode->count() - 1, 
+				MultiTreeProblem::order - 1);
+  }
+  else {
+
+    if(!qnode->is_leaf()) {
+      qnode->stat().num_precomputed_tuples = 
+	qnode->left()->stat().num_precomputed_tuples +
+	qnode->right()->stat().num_precomputed_tuples;
+    }
+  }
 }
 
 template<typename MultiTreeProblem>
