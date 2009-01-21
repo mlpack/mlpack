@@ -11,7 +11,7 @@
 #define NUM_ITERATIONS 15
 #define SPARSITY_THRESHOLD 0.1
 #define SMALL_STEP pow(10,-7)
-#define MAX_NUM_ITERATIONS 150
+#define MAX_NUM_ITERATIONS 20000000
 
 class HKInteriorPointPredictorCorrector{
   
@@ -135,6 +135,20 @@ class HKInteriorPointPredictorCorrector{
   //Maximum gap
 
   double max_gap_;
+
+  //The feasibility gap for primal
+
+  double epsilon_primal_;
+
+  //The feasibility gap for dual
+
+  double epsilon_dual_;
+
+  //The surrogate duality gap
+
+  double epsilon_duality_gap_;
+  
+
 
  public:
 
@@ -796,6 +810,8 @@ class HKInteriorPointPredictorCorrector{
 
    void GetTheStartPointAdvanced_(){ 
 
+     printf("GOt the start point using advanced tech..\n");
+
       //The starting point is basically a set of values for
       //beta_vector_,gamma_vector_,psi_.
      
@@ -1038,53 +1054,130 @@ class HKInteriorPointPredictorCorrector{
   }
 
 
-  void CalculateGap_(double *gap,double *gap_ratio){
+  int CalculateGap_(double *gap,double *gap_ratio){
+
+
+    //First check for primal feasibility
+
+    //This can be done by calculating the value of \\beta^Tv-c
+    
+    double beta_trans_v;
+    beta_trans_v=la::Dot(beta_vector_,v_vector_);
+    
+    double primal_feasibility_gap=beta_trans_v-primal_constant_;
+    if(primal_feasibility_gap>epsilon_primal_){
+
+      //Primal feasibnility is violated
+
+      printf("epsilon_primal =%f,primal feasibility gap is %f..\n",epsilon_primal_,primal_feasibility_gap);
+      return -1;
+
+    }
+
+    //Check for dual feasibility
+
+    // Calculate the value of $a+\gamma-\psi v-2M\beta$
+    
+    Vector a_plus_gamma;
+    la::AddInit(a_vector_,gamma_vector_,&a_plus_gamma);
+    
+    //Get psi_v
+    Vector psi_v;
+    la::ScaleInit(psi_,v_vector_,&psi_v);
+
+    Vector a_plus_gamma_minus_psi_v;
+    la::SubInit(psi_v,a_plus_gamma,
+		&a_plus_gamma_minus_psi_v);
+
+    Vector two_M_beta;    
+    special_la::
+      PostMultiplyMatrixWithVectorGivenCholeskyInit(chol_factor_,
+						    perm_mat_,
+						    beta_vector_,
+						    &two_M_beta);
+    
+    Vector temp;
+    //temp <-a+\gamma-\psiv-2M\beta
+    la::SubInit(two_M_beta,a_plus_gamma_minus_psi_v,
+		&temp);
+
+    double dual_feasibility_gap=
+      la::LengthEuclidean(temp);
+
+    if(dual_feasibility_gap>epsilon_dual_){
+
+      //Dual feasibility is violated
+      printf("epsilon_dual=%f,dual feasibility gap is %f..\n",epsilon_dual_,dual_feasibility_gap);
+      return -1;
+    }
+
+    //Calculate the surrogate duality gap as showed in boyd
+    //This requires the calculation of \beta^T\gamma
+
+    double surrogate_duality_gap=
+      la::Dot(beta_vector_,gamma_vector_);
+
+    if(surrogate_duality_gap>epsilon_duality_gap_){
+      printf("surrogate dual gap is %f..\n",surrogate_duality_gap);
+      
+      return -1;
+    }
+
+    //Erverything looks all rite
+    
+    printf("primal feasibility gap is %f..\n",primal_feasibility_gap);
+    printf("dual feasibility gap is %f..\n",dual_feasibility_gap);
+    printf("surrogate dual gap is %f..\n",surrogate_duality_gap);
+    return 1;
+
+
+    //*************Old piece of code***********************/
 
     //gap =-\beta^T \gamma+\psi(\beta^Tv-c);
 
-    double beta_trans_gamma;
+   /*  double beta_trans_gamma; */
 
-    beta_trans_gamma=la::Dot(beta_vector_,gamma_vector_);
+/*     beta_trans_gamma=la::Dot(beta_vector_,gamma_vector_); */
 
-    double beta_trans_v;
-    beta_trans_v=la::Dot(beta_vector_,v_vector_);
+/*     double beta_trans_v; */
+/*     beta_trans_v=la::Dot(beta_vector_,v_vector_); */
 
-    *gap=-1*(beta_trans_gamma-psi_*(beta_trans_v-primal_constant_));
+/*     *gap=-1*(beta_trans_gamma-psi_*(beta_trans_v-primal_constant_)); */
 
     
-    Vector A_trans_beta;
-    la::MulInit(beta_vector_,permuted_chol_factor_,&A_trans_beta); //$A^T\beta$
+/*     Vector A_trans_beta; */
+/*     la::MulInit(beta_vector_,permuted_chol_factor_,&A_trans_beta); //$A^T\beta$ */
 
-    //printf("A_trans beta is...\n");
-    //A_trans_beta.PrintDebug();
+/*     //printf("A_trans beta is...\n"); */
+/*     //A_trans_beta.PrintDebug(); */
 
 
-    double quad_value;
+/*     double quad_value; */
 
-    quad_value=la::Dot(A_trans_beta,A_trans_beta); //quad value is \beta^TAA^T\beta
+/*     quad_value=la::Dot(A_trans_beta,A_trans_beta); //quad value is \beta^TAA^T\beta */
 
-    //Since A is the permuted cholesky factor of 2M and not M, the
-    //quad _value obtained above is twice the actual value
+/*     //Since A is the permuted cholesky factor of 2M and not M, the */
+/*     //quad _value obtained above is twice the actual value */
 
-    quad_value/=2;
+/*     quad_value/=2; */
 
-    double beta_trans_a;
+/*     double beta_trans_a; */
 
-    beta_trans_a=la::Dot(beta_vector_,a_vector_);
+/*     beta_trans_a=la::Dot(beta_vector_,a_vector_); */
 
-    double function_val=quad_value-beta_trans_a;
+/*     double function_val=quad_value-beta_trans_a; */
 
-    double denominator=fabs(function_val+(*gap));
+/*     double denominator=fabs(function_val+(*gap)); */
 
-    *gap_ratio=*gap/denominator;
+/*     *gap_ratio=*gap/denominator; */
     
-    //printf("Quad value is %f..\n",quad_value);
+/*     //printf("Quad value is %f..\n",quad_value); */
     
-    //printf("Linear value is %f..\n",beta_trans_a);
+/*     //printf("Linear value is %f..\n",beta_trans_a); */
     
-    printf("Gap is %f..\n",*gap);
+/*     printf("Gap is %f..\n",*gap); */
 
-    printf("Ratio is %f..\n",*gap/denominator);
+/*     printf("Ratio is %f..\n",*gap/denominator); */
 
     //printf("Beta gamma product is %f..\n",beta_trans_gamma);
 
@@ -1150,29 +1243,34 @@ class HKInteriorPointPredictorCorrector{
 
   int CheckIfKKTIsSatisfied_(){
 
+
+   
     int flag1=CheckIfPositive_();
     if(flag1!=1){
       printf("Otimization was not succesful becasuse the final solution is not positive");
       return -1;
     }
+   
 
-    int flag2=CheckIfPrimalFeasible_();
+    // ALL FURTHER CHECKS ARE NOT REQUIRED SINCE THEY HAVE ALREADY BEEN CHECKED
 
-    if(flag2!=1){
-      printf("Otimization was not succesful becasuse the final solution is not primal feasible");
-      return -1;
-    }
+   /*  int flag2=CheckIfPrimalFeasible_(); */
 
-    //CheckDualityGap_();
-    int flag3=CheckForOptimality_();
-    if(flag3!=1){
+/*     if(flag2!=1){ */
+/*       printf("Otimization was not succesful becasuse the final solution is not primal feasible"); */
+/*       return -1; */
+/*     } */
 
-       printf("Otimization was not succesful becasuse the final solution is not optimal");
-      return -1;
-    }
+/*     //CheckDualityGap_(); */
+/*     int flag3=CheckForOptimality_(); */
+/*     if(flag3!=1){ */
 
-    //Everything looks fine
-    return 1;
+/*        printf("Otimization was not succesful becasuse the final solution is not optimal"); */
+/*       return -1; */
+/*     } */
+
+    //Everything looks fine */
+     return 1;
   }
 
   index_t PredictorCorrectorSteps_(){
@@ -1180,14 +1278,15 @@ class HKInteriorPointPredictorCorrector{
     
     //Get the starting values for \beta, \gamma and \psi
     
-    GetTheStartPointAdvanced_();
+    GetTheStartPoint_();
     
     printf("Got the start point..\n");
     index_t flag;
     
     double gap;
     double gap_ratio=DBL_MAX;
-    while(fabs(gap_ratio)>max_gap_ratio_&&num_iterations_<MAX_NUM_ITERATIONS){ 
+    index_t status=-1;
+    while(status==-1&&num_iterations_<MAX_NUM_ITERATIONS){ 
 
       //With the current values for $\beta,\gamma$ calculate $\mu
 
@@ -1252,23 +1351,24 @@ class HKInteriorPointPredictorCorrector{
       //variables
 
       UpdatePrimalAndDualVariables_();
-  
+      status=CalculateGap_(&gap,&gap_ratio);
       FlushUpdates_();
       
-      CalculateGap_(&gap,&gap_ratio);
+     
       
-      // printf("Finished ITERATION=%d...\n\n",num_iterations_);
+       printf("Finished ITERATION=%d...\n\n",num_iterations_);
 
       num_iterations_++;
     
     }
 
-    if(fabs(gap_ratio)>max_gap_ratio_){
+    //NOT REQUIRED SINCE THEY HAVE ALREADY BEEN DONE
+   /*  if(fabs(gap_ratio)>max_gap_ratio_){ */
       
-      printf("Ended with gap larger than max gap. Hence returning ERROR..\n");
-      return -1;
-
-    }
+/*       printf("Ended with gap larger than max gap. Hence returning ERROR..\n"); */
+/*       return -1; */
+    
+/*     } */
     printf("Number of iterations made are %d..\n",num_iterations_);
    
     return CheckIfKKTIsSatisfied_(); 
@@ -1394,9 +1494,20 @@ class HKInteriorPointPredictorCorrector{
     printf("sigma_h_hk=%f,sigma_hk_=%f,lambda=%f..\n",sigma_h_hk_,sigma_hk_,lambda_);
     max_gap_ratio_=fx_param_double(module_,"max_gap_ratio",0.0001);
     
-    double max_gap_=fx_param_double(module_,"max_gap",0.0001);
+    
+     max_gap_=fx_param_double(module_,"max_gap",0.0001);
     
 
+
+    // The feasibility gap for primal and dual
+    epsilon_primal_=fx_param_double(module_,"epsilon_primal",0.001);
+    epsilon_dual_=fx_param_double(module_,"epsilon_dual",0.001);
+    
+    //The surrogate duality gap
+    
+    epsilon_duality_gap_=fx_param_double(module_,"epsilon_duality_gap",0.001);
+    
+    
     //The dimensionality of the dataset
     num_dims_=train_set_.n_rows();
 
