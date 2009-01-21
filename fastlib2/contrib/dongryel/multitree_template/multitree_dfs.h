@@ -721,7 +721,7 @@ class MultiTreeDepthFirst {
 
     printf("There are %g tuples...\n",
 	   math::BinomialCoefficient((sets_[0])->n_cols() - 1, 
-				     MultiTreeProblem::order));
+				     MultiTreeProblem::order - 1));
     MultiTreeDepthFirstBase_(query_sets, sets_, targets_, hybrid_trees_,
 			     query_trees, reference_trees_, *query_results,
 			     total_num_tuples);
