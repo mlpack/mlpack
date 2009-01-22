@@ -12,6 +12,7 @@
 
 #include "fastlib/fastlib.h"
 #define LEAF_SIZE 5
+#define MIN_LEAF_SIZE 2
 
 class DTree{
  
@@ -29,6 +30,12 @@ class DTree{
 
   // The split dim
   index_t split_dim_;
+
+//   // split dim types
+//   ArrayList<enum> dim_types_;
+
+//   // The split value for non-numeric data
+//   string split_val_;
 
   // The split val on that dim
   double split_value_;
@@ -127,14 +134,28 @@ class DTree{
 
     // loop through each dimension
     for (index_t dim = 0; dim < max_vals_.size(); dim++) {
+      // initializing all the stuff for this dimension
       bool dim_split_found = false;
+      double min_dim_error = min_error,
+	temp_lval = 0.0, temp_rval = 0.0;
+      index_t dim_split_ind = -1, ind = MIN_LEAF_SIZE -1;
 
+      // have to deal with REAL, INTEGER, NOMINAL data
+      // differently so have to think of how to do that.
+      // Till them experiment with comparisons with kde
+      // and also scalability experiments and visualization.
+
+//       if (dim_type_[dim] == NOMINAL) {
+
+//       } else {
       double min = min_vals_[dim], max = max_vals_[dim];
       double range = 1.0;
       for (index_t i = 0; i < max_vals_.size(); i++) {
+// 	if (dim_type_[i] == REAL) {
 	if (max_vals_[i] -min_vals_[i] > 0.0 && i != dim) {
 	  range *= max_vals_[i] - min_vals_[i];
 	}
+// 	}
       }
       double k = -1.0 / (total_n * total_n * range);
       DEBUG_ASSERT_MSG(-1.0*k < DBL_MAX, "k:%lg", k);
@@ -148,12 +169,18 @@ class DTree{
       std::sort(dim_val_vec.begin(), dim_val_vec.end());
 
       // get ready to go through the sorted list and compute error
-      double min_dim_error = min_error,
-	temp_lval = 0.0, temp_rval = 0.0;
-      index_t dim_split_ind = -1, ind = 0;
-      for (std::vector<double>::iterator it = dim_val_vec.begin();
-	   it < dim_val_vec.end()-1; it++, ind++) {
-	double split = (*it + *(it+1))/2;
+
+      // enforcing the leaves to have a minimum of MIN_LEAF_SIZE 
+      // number of points to avoid spikes
+      for (std::vector<double>::iterator it = dim_val_vec.begin()
+	     + MIN_lEAF_SIZE -1; it < dim_val_vec.end()
+	     - MIN_LEAF_SIZE; it++, ind++) {
+	double split;
+// 	if (dim_type_[dim] == REAL) {
+	  split = (*it + *(it+1))/2;
+// 	} else {
+// 	  split = *it;
+// 	}
 	if (split - min > 0.0 && max - split > 0.0) {
 	  double temp_l = k * (ind+1) * (ind+1) / (split - min);
 	  DEBUG_ASSERT(-1.0*temp_l < DBL_MAX);
@@ -180,6 +207,7 @@ class DTree{
 	*right_error = temp_rval;
 	some_split_found = true;
       } // end if
+
     } // end for
 
     // This might occur when you have many instances of the
