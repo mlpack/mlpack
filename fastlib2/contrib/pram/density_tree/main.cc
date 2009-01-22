@@ -39,6 +39,16 @@ int main(int argc, char *argv[]){
 
   NOTIFY("%"LI"d points in %"LI"d dims.", dataset.n_cols(),
 	 dataset.n_rows());
+
+//   // getting information about the feature type
+//   // REAL, INTEGER, NOMINAL. Most probably using
+//   // enum ... don't know how to use it though.
+//   ArrayList<enum> dim_type;
+//   dim_type.Init(dataset.n_rows());
+//   for (index_t i = 0; i < dim_type.size(); i++) {
+//     // assign dim type somehow
+//   } // end for
+
   // finding the max and min vals for the dataset
   ArrayList<double> max_vals, min_vals;
   max_vals.Init(dataset.n_rows());
@@ -48,6 +58,7 @@ int main(int argc, char *argv[]){
   la::TransposeInit(dataset, &temp_d);
 
   for (index_t i = 0; i < temp_d.n_cols(); i++) {
+    // if (dim_type[i] != NOMINAL) {
     Vector dim_vals;
     temp_d.MakeColumnVector(i, &dim_vals);
     std::vector<double> dim_vals_vec(dim_vals.ptr(),
@@ -56,6 +67,7 @@ int main(int argc, char *argv[]){
     sort(dim_vals_vec.begin(), dim_vals_vec.end());
     min_vals[i] = *(dim_vals_vec.begin());
     max_vals[i] = *(dim_vals_vec.end() -1);
+    // }
   }
 
   // Initializing the tree
