@@ -15,6 +15,10 @@ const fx_entry_doc dtree_main_entries[] = {
    " Number of folds for cross validation.\n"},
   {"tree_file", FX_PARAM, FX_STR, NULL,
    " The file in which the tree would be printed.\n"},
+  {"train_time", FX_TIMER, FX_CUSTOM, NULL,
+   " Training time for obtaining the optimal tree.\n"},
+  {"test_time", FX_TIMER, FX_CUSTOM, NULL,
+   " Testing time for the optimal decision tree.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -31,6 +35,7 @@ void PermuteMatrix(const Matrix&, Matrix*);
 
 int main(int argc, char *argv[]){
 
+  srand( time(NULL));
   fx_module *root = fx_init(argc, argv, &dtree_main_doc);
   std::string data_file = fx_param_str_req(root, "d");
   Matrix dataset;
@@ -85,6 +90,8 @@ int main(int argc, char *argv[]){
   Matrix new_dataset;
   new_dataset.Copy(dataset);
 
+  // starting the training timer
+  fx_timer_start(root, "train_time");
   // Growing the tree
   double old_alpha = 0.0;
   double alpha = dtree->Grow(new_dataset, &old_from_new);
@@ -129,7 +136,8 @@ int main(int argc, char *argv[]){
 
   // Permute the dataset once just for keeps
   Matrix pdata;
-  PermuteMatrix(dataset, &pdata);
+  //  PermuteMatrix(dataset, &pdata);
+  pdata.Copy(dataset);
   //  pdata.PrintDebug("Per");
   index_t test_size = dataset.n_cols() / folds;
 
@@ -232,6 +240,9 @@ int main(int argc, char *argv[]){
     } // end if
   } // end for
 
+  // stopping the training timer
+  fx_timer_stop(root, "train_time");
+
   // Initializing the tree
   DTree *dtree_opt = new DTree();
   dtree_opt->Init(max_vals, min_vals, dataset.n_cols());
@@ -265,21 +276,25 @@ int main(int argc, char *argv[]){
 
 //   dtree_opt->WriteTree(0);
 //   printf("\n");fflush(NULL);
-//   // computing densities for the train points in the
-//   // optimal tree
-//   for (index_t i = 0; i < dataset.n_cols(); i++) {
-//     Vector test_p;
-//     dataset.MakeColumnVector(i, &test_p);
-//     double f = dtree_opt->ComputeValue(test_p);
+  // computing densities for the train points in the
+  // optimal tree
+
+  // starting the test timer
+  fx_timer_start(root, "test_time");
+  for (index_t i = 0; i < dataset.n_cols(); i++) {
+    Vector test_p;
+    dataset.MakeColumnVector(i, &test_p);
+    double f = dtree_opt->ComputeValue(test_p);
 //     printf("%lg ", f);
-//   } // end for
-//   printf("\n");fflush(NULL);
+  } // end for
+  printf("\n");fflush(NULL);
+  fx_timer_stop(root, "test_time");
 
 //   // outputting the optimal tree
 //   std::string output_file
 //     = fx_param_str(root, "treee_file", "output.txt");
 
-  fx_param_bool(root, "fx/silent", 1);
+  fx_param_bool(root, "fx/silent", 0);
   fx_done(root);
 }
 
@@ -290,7 +305,7 @@ void PermuteMatrix(const Matrix& input, Matrix *output) {
   Matrix perm_mat;
   perm_mat.Init(size, size);
   perm_mat.SetAll(0.0);
-
+  srand( time(NULL));
   math::MakeRandomPermutation(size, &perm_array);
   for(index_t i = 0; i < size; i++) {
     perm_mat.set(perm_array[i], i, 1.0);
