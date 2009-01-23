@@ -12,7 +12,7 @@
 
 #include "fastlib/fastlib.h"
 #define LEAF_SIZE 5
-#define MIN_LEAF_SIZE 2
+#define MIN_LEAF_SIZE 1
 
 class DTree{
  
@@ -138,7 +138,7 @@ class DTree{
       bool dim_split_found = false;
       double min_dim_error = min_error,
 	temp_lval = 0.0, temp_rval = 0.0;
-      index_t dim_split_ind = -1, ind = MIN_LEAF_SIZE -1;
+      index_t dim_split_ind = -1, ind = 0;
 
       // have to deal with REAL, INTEGER, NOMINAL data
       // differently so have to think of how to do that.
@@ -149,6 +149,7 @@ class DTree{
 
 //       } else {
       double min = min_vals_[dim], max = max_vals_[dim];
+//       NOTIFY("%lg - %lg", min, max);
       double range = 1.0;
       for (index_t i = 0; i < max_vals_.size(); i++) {
 // 	if (dim_type_[i] == REAL) {
@@ -157,8 +158,11 @@ class DTree{
 	}
 // 	}
       }
-      double k = -1.0 / (total_n * total_n * range);
-      DEBUG_ASSERT_MSG(-1.0*k < DBL_MAX, "k:%lg", k);
+//        double k1 = -1.0 / (50000.0 * 50000.0 *20.0);
+//        double k2 = -1.0 / (10000 * 10000 * 20);
+//       double k = -1.0 / ((double)total_n * (double)total_n * range);
+//       DEBUG_ASSERT_MSG(-1.0*k < DBL_MAX, "k:%lg", k);
+//       NOTIFY("k = %lg, N=%"LI"d %lg %lg %lg", k, total_n, range, k1, k2);
 
       // get the values for the dimension
       std::vector<double> dim_val_vec;
@@ -172,9 +176,8 @@ class DTree{
 
       // enforcing the leaves to have a minimum of MIN_LEAF_SIZE 
       // number of points to avoid spikes
-      for (std::vector<double>::iterator it = dim_val_vec.begin()
-	     + MIN_lEAF_SIZE -1; it < dim_val_vec.end()
-	     - MIN_LEAF_SIZE; it++, ind++) {
+      for (std::vector<double>::iterator it = dim_val_vec.begin();
+	   it < dim_val_vec.end() -1; it++, ind++) {
 	double split;
 // 	if (dim_type_[dim] == REAL) {
 	  split = (*it + *(it+1))/2;
@@ -182,11 +185,19 @@ class DTree{
 // 	  split = *it;
 // 	}
 	if (split - min > 0.0 && max - split > 0.0) {
-	  double temp_l = k * (ind+1) * (ind+1) / (split - min);
+// 	  printf(".");
+	  double temp_l = -1.0 * ((double)(ind+1)/(double)total_n)
+	    * ((double)(ind+1)/(double)total_n)
+	    / (range * (split - min));
 	  DEBUG_ASSERT(-1.0*temp_l < DBL_MAX);
-	  double temp_r = k * (n_t - ind-1) * (n_t - ind-1) / (max - split);
+	  double temp_r = -1.0 * ((double)(n_t - ind-1)/(double)total_n)
+	    * ((double)(n_t - ind-1)/(double)total_n)
+	    / (range * (max - split));
 	  DEBUG_ASSERT(-1.0*temp_r < DBL_MAX);
+// 	  NOTIFY("%lg %lg  %lg %lg", temp_l + temp_r, temp_l, temp_r, split);
+// 	  exit(1);
 	  if (temp_l + temp_r <= min_dim_error) {
+// 	    printf(".");
 	    min_dim_error = temp_l + temp_r;
 	    temp_lval = temp_l;
 	    temp_rval = temp_r;
@@ -215,8 +226,8 @@ class DTree{
     // deal with it
     DEBUG_ASSERT_MSG(some_split_found,
 		     "Weird - no split found"
-		     " %"LI"d points, %"LI"d \n",
-		     data.n_cols(), total_n);
+		     " %"LI"d points, %"LI"d %lg\n",
+		     data.n_cols(), total_n, min_error);
   } // end FindSplit_
 
   void SplitData_(Matrix& data, index_t split_dim, index_t split_ind,
@@ -380,6 +391,8 @@ class DTree{
     } else {
       // This is a leaf node, do something here, probably compute
       // density here or something
+      DEBUG_ASSERT_MSG(stop_ - start_ >= MIN_LEAF_SIZE,
+		       "%"LI"d points", stop_ - start_);
       subtree_leaves_ = 1;
       subtree_leaves_error_ = error_;
     } // end if-else
