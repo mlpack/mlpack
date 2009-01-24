@@ -43,9 +43,6 @@ int main(int argc, char *argv[]) {
 	double initial_percent_sampling;
 	Vector initial_parameter;
 
-	
-
-	
 
   sampling.Init(module, &num_of_people, &ind_unknown_x, 
 								&initial_percent_sampling,
@@ -140,12 +137,12 @@ int main(int argc, char *argv[]) {
   
 	
 	//hessian update
-	Matrix diff_gradient;
-	diff_gradient.Init(num_of_parameter, 1);
+	Vector diff_gradient;
+	diff_gradient.Init(num_of_parameter);
 	diff_gradient.SetZero();
 
-	Matrix diff_par;
-	diff_par.Init(num_of_parameter, 1);
+	Vector diff_par;
+	diff_par.Init(num_of_parameter);
 	diff_par.SetZero();
 
 	Matrix temp1; //H*s*s'*H
@@ -153,7 +150,7 @@ int main(int argc, char *argv[]) {
 	temp1.SetZero();
 
 	Matrix Hs;
-	Hs.Init(num_of_parameter, num_of_parameter);
+	Hs.Init(num_of_parameter, 1);
 
 	double scale_temp1;
 	scale_temp1=0;
@@ -161,12 +158,22 @@ int main(int argc, char *argv[]) {
 	Matrix temp2; //yy'/s'y
 	temp2.Init(num_of_parameter, num_of_parameter);
 
+	Matrix updated_hessian;
+	updated_hessian.Init(num_of_parameter, num_of_parameter);
+	updated_hessian.SetZero();
+
+
 
 
 
   //iteration
   int max_iteration=2;
 	int iteration_count=0;
+
+	Matrix current_hessian;		
+	current_hessian.Init(num_of_parameter, num_of_parameter);
+	current_hessian.SetAll(1.0);
+	//objective.ComputeHessian(current_sample_size, current_parameter, &current_hessian);
 
 	while(iteration_count<max_iteration){
 
@@ -314,9 +321,10 @@ int main(int argc, char *argv[]) {
 		*/
 
     
+		/*
 		///////////////////////////////////////////////////////////////////////
     ///////////////////////////////Exact hessian calculation
-		//NOTIFY("Exact hessian calculation starts");
+		/NOTIFY("Exact hessian calculation starts");
 
 		Matrix current_hessian;
 		objective.ComputeHessian(current_sample_size, current_parameter, &current_hessian);
@@ -353,6 +361,7 @@ int main(int argc, char *argv[]) {
 			cout<<endl;
 		}
 
+*/
 
 /////////////////////////////////////////////////////////////////
 
@@ -367,19 +376,21 @@ int main(int argc, char *argv[]) {
 		*/
 
 		
-		/*
+
+		
 		///////////////////////////////////////////////////////////////////////
     ///////////////////////////////hessian update - BFGS
-		if(iteration_count==1){
-			Matrix current_hessian;
-			objective.ComputeHessian(current_sample_size, current_parameter, &current_hessian);
-		}
-    */
+		cout<<"Test"<<endl;
+		//if(iteration_count==1){
 
+			//NOTIFY("Initial hessian matrix calculation...");
 
-
+			//Matrix current_hessian;			
+			//objective.ComputeHessian(current_sample_size, current_parameter, &current_hessian);
 		
-		
+		//}		//iteration_count==1
+		/*
+
 		Matrix current_inverse_hessian;
 		if( !PASSED(la::InverseInit(current_hessian, &current_inverse_hessian)) ) {
 			NOTIFY("Current hessian matrix is not invertible!");
@@ -391,8 +402,9 @@ int main(int argc, char *argv[]) {
 			}
 			cout<<endl;
 		}
+		*/
 
-    
+
 
 
 
@@ -549,8 +561,7 @@ int main(int argc, char *argv[]) {
 
 		}	//if
 
-		
-		/*
+				/*
 		if(sample_size==num_of_people &&end_sampling==0){
 			end_sampling+=1;
 			NOTIFY("All data are used");
@@ -560,50 +571,86 @@ int main(int argc, char *argv[]) {
 		
 		Vector next_gradient;
 		objective.ComputeGradient(current_sample_size, current_parameter, &next_gradient);
-		
+
+			
 
 		//agreement rho calculation
 		//rho=1.0*(current_objective-next_objective)/(current_delta_m)*current_added_first_stage_x.size();
 		rho= +1.0*(current_objective-next_objective)/(current_delta_m);
 
-		/*
+		
 			////////////////////////////////////////////////////////
+/*
+		//hessian update
+	Matrix diff_gradient;
+	diff_gradient.Init(num_of_parameter, 1);
+	diff_gradient.SetZero();
+
+	Matrix diff_par;
+	diff_par.Init(num_of_parameter, 1);
+	diff_par.SetZero();
+
+	Matrix temp1; //H*s*s'*H
+	temp1.Init(num_of_parameter, num_of_parameter);
+	temp1.SetZero();
+
+	Matrix Hs;
+	Hs.Init(num_of_parameter, num_of_parameter);
+
+	double scale_temp1;
+	scale_temp1=0;
+
+	Matrix temp2; //yy'/s'y
+	temp2.Init(num_of_parameter, num_of_parameter);
+	*/
+		
 		//Hessian update - BFGS
-		Matrix updated_hessian;
-		updated_hessian.Init(current_gradient.length(), current_gradient.length());
+		
+		//Matrix updated_hessian;
+		//updated_hessian.Init(current_gradient.length(), current_gradient.length());
+		//updated_hessian.SetZero();
+
+		//cout<<"test0"<<endl;
 
 		la::SubOverwrite(current_gradient, next_gradient, &diff_gradient);
 		la::SubOverwrite(current_parameter, next_parameter, &diff_par);
+
+		//cout<<"test"<<endl;
+		
+    Matrix mtx_diff_par;
+		mtx_diff_par.Alias(diff_par.ptr(), diff_par.length(), 1);
+
+		Matrix mtx_diff_gradient;
+		mtx_diff_gradient.Alias(diff_gradient.ptr(), diff_gradient.length(), 1);
+
 		
 		//Matrix temp1; //H*s*s'*H
 		//Matrix Hs;
-		la::MulOverwrite(current_hessian, diff_par, &Hs);
+		la::MulOverwrite(current_hessian, mtx_diff_par, &Hs);
+		
 		la::MulTransBOverwrite(Hs, Hs, &temp1);
+		
 		//double scale_temp1;
-		scale_temp1=Dot(Hs, diff_par);
-		la::Scale( scale_temp, &temp1);
+		scale_temp1=la::Dot(Hs, mtx_diff_par);
+		la::Scale( scale_temp1, &temp1);
 
-		//Matrix temp2; //yy'/s'y
-		la::MulTransBOverwrite(diff_gradient, diff_gradient, &temp2);
-		cout<<"temp2"<<temp2[0]<<endl;
-		la::Scale( dot(diff_par, diff_gradient), &temp2);
-		cout<<"dot"<<dot(diff_par, diff_gradient)<<endl;
-		cout<<"temp2"<<temp2[0]<<endl;
+		
+    //Matrix temp2; //yy'/s'y
+		la::MulTransBOverwrite(mtx_diff_gradient, mtx_diff_gradient, &temp2);
+		//cout<<"temp2"<<temp2[0]<<endl;
+		la::Scale( la::Dot(mtx_diff_par, mtx_diff_gradient), &temp2);
+		//cout<<"dot"<<la::dot(mtx_diff_par, mtx_diff_gradient)<<endl;
+		//cout<<"temp2"<<temp2[0]<<endl;
 
 		la::SubOverwrite(temp1, current_hessian, &updated_hessian);
 		la::AddTo(temp2, &updated_hessian);
 
-		*/
-
 		
-
-
-
 		cout<<"rho= "<<rho<<endl;
 		if(rho>eta){
 			current_parameter.CopyValues(next_parameter);
 			NOTIFY("Accepting the step...");
-			//current_hessian.CopyValues(updated_hessian);
+			current_hessian.CopyValues(updated_hessian);
 		
 
 		}
@@ -703,6 +750,10 @@ int main(int argc, char *argv[]) {
  
   fx_done(module);
 }
+
+
+
+
 
 
 
