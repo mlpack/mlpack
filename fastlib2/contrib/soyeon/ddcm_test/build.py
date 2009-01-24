@@ -15,7 +15,7 @@ librule(name="optimization",
 		
 	
 binrule(name="main", 
-        sources=["main.cc"], 
+        sources=["DDCM_test.cc"], 
         deplibs=[":objective2", ":sampling", ":optimization"])
 
 	
