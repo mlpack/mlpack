@@ -311,67 +311,16 @@ int main(int argc, char *argv[]) {
 		*/
 
     
-		/*
-		///////////////////////////////////////////////////////////////////////
-    ///////////////////////////////Exact hessian calculation
-		/NOTIFY("Exact hessian calculation starts");
-
-		Matrix current_hessian;
-		objective.ComputeHessian(current_sample_size, current_parameter, &current_hessian);
-		//la::Scale(1.0/current_added_first_stage_x.size(), &current_hessian);
 		
-		cout<<"Hessian matrix: "<<endl;
-    //cout<<"approx_hessian"<<endl;
-		for (index_t j=0; j<current_hessian.n_rows(); j++){
-			for (index_t k=0; k<current_hessian.n_cols(); k++){
-				cout<<current_hessian.get(j,k) <<"  ";
-			}
-			cout<<endl;
-		}
 
-		Matrix approx_hessian;
-		objective.CheckHessian(current_sample_size, current_parameter, &approx_hessian);
-
-		cout<<"approx_hessian"<<endl;
-		for (index_t j=0; j<current_hessian.n_rows(); j++){
-			for (index_t k=0; k<current_hessian.n_cols(); k++){
-				cout<<approx_hessian.get(j,k) <<"  ";
-			}
-			cout<<endl;
-		}
-
-		Matrix diff_hessian;
-		la::SubInit(approx_hessian, current_hessian, &diff_hessian);
-
-		cout<<"diff_hessian"<<endl;
-		for (index_t j=0; j<current_hessian.n_rows(); j++){
-			for (index_t k=0; k<current_hessian.n_cols(); k++){
-				cout<<diff_hessian.get(j,k) <<"  ";
-			}
-			cout<<endl;
-		}
-
-*/
-
-/////////////////////////////////////////////////////////////////
-
-
-/*
-		for (index_t j=0; j<current_hessian.n_rows(); j++){
-			for (index_t k=0; k<current_hessian.n_cols(); k++){
-				cout<<current_hessian.get(j,k) <<"  ";
-			}
-			cout<<endl;
-		}
-		*/
-
-		
 
 		
 		///////////////////////////////////////////////////////////////////////
     ///////////////////////////////hessian update - BFGS
 		Matrix current_hessian;
 		if(iteration_count==1){
+
+			NOTIFY("Exact hessian calculation");
 			
 			objective.ComputeHessian(current_sample_size, current_parameter, &current_hessian);
 		
