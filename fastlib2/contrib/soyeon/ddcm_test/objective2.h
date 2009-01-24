@@ -38,6 +38,10 @@ class Objective {
 	void CheckHessian(double current_sample, 
 									  Vector &current_parameter, 
 										Matrix *approx_hessian);
+
+	void CheckHessian2(double current_sample, 
+									  Vector &current_parameter, 
+										Matrix *approx_hessian);
  
  private:
   fx_module *module_;

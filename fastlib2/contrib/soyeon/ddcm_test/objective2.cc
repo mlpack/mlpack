@@ -2884,9 +2884,6 @@ void Objective::CheckHessian(double current_sample,
 //approx_hessian(i,j)=(gradi(x+epsilon*ej)-gradi(x-epsilon*ej))/(4*epsilon)
 //									+(gradj(x+epsilon*ei)-gradj(x-epsilon*ei))/(4*epsilon)
 //OR
-//(i,j)=(f(x+epsilon*ei+epsilon*ej)-f(x+epsilon*ei)-f(x+epsilon*ej)+f(x))/(epsilon^2)
-//(i,j)=(f(x+epsilon*ei+epsilon*ej)-f(x+epsilon*ei-epsilon*ej)
-//															 -f(x-epsilon*ei+epsilon*ej)+f(x-epsilon*ei-epsilon*ej))/(4*epsilon^2)
 
 
 	Vector ei;
@@ -3015,6 +3012,21 @@ void Objective::CheckHessian(double current_sample,
 
 
  
+void CheckHessian2(double current_sample, 
+									  Vector &current_parameter, 
+										Matrix *approx_hessian) {
+
+
+//(i,j)=(f(x+epsilon*ei+epsilon*ej)-f(x+epsilon*ei)-f(x+epsilon*ej)+f(x))/(epsilon^2)
+//(i,j)=(f(x+epsilon*ei+epsilon*ej)-f(x+epsilon*ei-epsilon*ej)
+//															 -f(x-epsilon*ei+epsilon*ej)+f(x-epsilon*ei-epsilon*ej))/(4*epsilon^2)
+
+
+
+
+}
+
+
 
 
 
