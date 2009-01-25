@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
 
 	//Trust region parameter
 	//double max_radius=10;
-	double current_radius=0.01;	//initial_radius
+	double current_radius=0.1;	//initial_radius
 	double eta=0.2;
 	
 	double rho=0; //agreement(ratio)
@@ -167,12 +167,19 @@ int main(int argc, char *argv[]) {
 
 
   //iteration
-  int max_iteration=2;
+  int max_iteration=10;
 	int iteration_count=0;
 
 	Matrix current_hessian;		
 	current_hessian.Init(num_of_parameter, num_of_parameter);
-	current_hessian.SetAll(1.0);
+	current_hessian.SetZero();
+	for(index_t i=0; i<current_hessian.n_rows(); i++){
+		current_hessian.set(i,i,1.0);
+	}
+	la::Scale(-1.0, &current_hessian);
+
+
+
 	//objective.ComputeHessian(current_sample_size, current_parameter, &current_hessian);
 
 	while(iteration_count<max_iteration){
@@ -339,6 +346,8 @@ int main(int argc, char *argv[]) {
 			cout<<endl;
 		}
 
+
+
 		Matrix approx_hessian;
 		objective.CheckHessian(current_sample_size, current_parameter, &approx_hessian);
 
@@ -380,7 +389,7 @@ int main(int argc, char *argv[]) {
 		
 		///////////////////////////////////////////////////////////////////////
     ///////////////////////////////hessian update - BFGS
-		cout<<"Test"<<endl;
+		
 		//if(iteration_count==1){
 
 			//NOTIFY("Initial hessian matrix calculation...");
@@ -404,6 +413,21 @@ int main(int argc, char *argv[]) {
 		}
 		*/
 
+  /*
+	if(iteration_count==1){
+		Matrix approx_hessian;
+		objective.CheckHessian(current_sample_size, current_parameter, &approx_hessian);
+
+		cout<<"approx_hessian"<<endl;
+		for (index_t j=0; j<current_hessian.n_rows(); j++){
+			for (index_t k=0; k<current_hessian.n_cols(); k++){
+				cout<<approx_hessian.get(j,k) <<"  ";
+			}
+			cout<<endl;
+		}
+
+	}
+	*/
 
 
 
@@ -414,7 +438,7 @@ int main(int argc, char *argv[]) {
 		double new_radius;
 		//NOTIFY("Exact hessian calculation ends");
 
-		
+		/*
 		optimization.ComputeDerectionUnderConstraints(current_radius, 
 																					current_gradient,
 																					current_hessian,
@@ -423,11 +447,14 @@ int main(int argc, char *argv[]) {
 																					&current_delta_m,
 																					&next_parameter,
 																					&new_radius);
+																					*/
+
+																					
+
 		
 		
 
 
-		/*
 		//Scaled version
 		optimization.ComputeScaledDerectionUnderConstraints(current_radius, 
 																					current_gradient,
@@ -437,16 +464,15 @@ int main(int argc, char *argv[]) {
 																					&current_delta_m,
 																					&next_parameter,
 																					&new_radius);
+																					
+										
 
-																					*/
 
-
-		
-		
-    
+		 
 
 
 		current_radius=new_radius;
+		cout<<"current_radius="<<current_radius<<endl;
 
 /*	
 		double constraints_check=1;
@@ -612,8 +638,15 @@ int main(int argc, char *argv[]) {
 
 		//cout<<"test0"<<endl;
 
+		//la::Scale(-1.0, &current_hessian);
+		//la::Scale(-1.0, &current_gradient);
+
 		la::SubOverwrite(current_gradient, next_gradient, &diff_gradient);
 		la::SubOverwrite(current_parameter, next_parameter, &diff_par);
+
+		//la::SubOverwrite(next_gradient, current_gradient, &diff_gradient);
+		//la::SubOverwrite(next_parameter, current_parameter, &diff_par);
+
 
 		//cout<<"test"<<endl;
 		
@@ -644,6 +677,33 @@ int main(int argc, char *argv[]) {
 
 		la::SubOverwrite(temp1, current_hessian, &updated_hessian);
 		la::AddTo(temp2, &updated_hessian);
+		//la::Scale(-1.0, &current_gradient);
+		//la::Scale(-1.0, &updated_hessian);
+
+		//Check positive definiteness
+		Vector eigen_hessian;
+		la::EigenvaluesInit (updated_hessian, &eigen_hessian);
+
+		cout<<"eigen values of updated hessian"<<endl;
+
+		for(index_t i=0; i<eigen_hessian.length(); i++){
+			cout<<eigen_hessian[i]<<" ";
+		}
+		cout<<endl;
+
+		double max_eigen=0;
+		//cout<<"eigen_value:"<<endl;
+		for(index_t i=0; i<eigen_hessian.length(); i++){
+			//cout<<eigen_hessian[i]<<" ";
+			if(eigen_hessian[i]>max_eigen){
+				max_eigen=eigen_hessian[i];
+			}
+
+		}
+		//cout<<endl;
+		cout<<"max_eigen="<<(max_eigen)<<endl;
+
+
 
 		
 		cout<<"rho= "<<rho<<endl;
@@ -651,6 +711,8 @@ int main(int argc, char *argv[]) {
 			current_parameter.CopyValues(next_parameter);
 			NOTIFY("Accepting the step...");
 			current_hessian.CopyValues(updated_hessian);
+			
+			NOTIFY("Update the hessian matrix by BFGS method...");
 		
 
 		}
@@ -710,7 +772,8 @@ int main(int argc, char *argv[]) {
 
 	//Compute Variance of the estimates -H^{-1}
 	Matrix final_hessian;
-	objective.ComputeHessian(current_added_first_stage_x.size(), current_parameter, &final_hessian);
+	//objective.ComputeHessian(current_added_first_stage_x.size(), current_parameter, &final_hessian);
+	final_hessian.Alias(current_hessian);
 	Matrix inverse_hessian;
 	if( !PASSED(la::InverseInit(final_hessian, &inverse_hessian)) ) {
 		NOTIFY("Final hessian matrix is not invertible!");

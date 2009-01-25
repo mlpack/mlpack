@@ -57,7 +57,7 @@ void Optimization::ComputeDoglegDirection(double radius,
 	else {	//if hessian matrix is positive definite
 		//la::InverseInit(hessian, &inverse_hessian);
 
-		NOTIFY("hessian matrix is positive definite");
+		//NOTIFY("hessian matrix is positive definite");
 		
 		Vector p_b;
 		//p_b= - (hessian)^-1 * g
@@ -302,6 +302,8 @@ void Optimization::ComputeScaledDoglegDirection(double radius,
 			Vector scaled_gradient;
 			la::MulInit(inverse_hessian, gradient, &scaled_gradient);
 			la::ScaleInit(-1*la::Dot(gradient, scaled_gradient)/gHg, scaled_gradient, &p_u);
+			la::ScaleInit(+1*la::Dot(gradient, scaled_gradient)/gHg, scaled_gradient, &p_u);
+			
 			p_u_norm=sqrt(la::Dot(p_u, p_u));
 
 			if( p_u_norm>=radius ) {	//p=radius/p_u_norm * p_u)
@@ -315,8 +317,8 @@ void Optimization::ComputeScaledDoglegDirection(double radius,
 				Vector diff2; //2p_u-p_b
 				la::ScaleInit(2, p_u, &diff2);
 				la::SubFrom(p_b, &diff2);
-				double b=la::Dot(diff, diff2);
-				double c=la::Dot(diff2, diff2)-math::Sqr(radius);
+				double b=2*la::Dot(diff, diff2);
+				double c=la::Dot(diff2, diff2)-radius*radius;
 
 				DEBUG_ASSERT_MSG(b*b*-4*a*c>0, 
 				"(Dogleg)Discriminant is negative. Fail to get the solution zeta.");

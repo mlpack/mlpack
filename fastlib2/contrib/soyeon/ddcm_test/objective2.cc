@@ -805,7 +805,7 @@ void Objective::ComputeHessian(double current_sample,
 													+ComputeSecondDerivativePQTerm3_());
 
 	
-	la::Scale(-1.0/current_sample, &dummy_hessian);
+	//la::Scale(-1.0/current_sample, &dummy_hessian);
 	cout<<"Hessian matrix before correction"<<endl;	
 	for (index_t j=0; j<dummy_hessian.n_rows(); j++){
 		for (index_t k=0; k<dummy_hessian.n_cols(); k++){
@@ -2956,8 +2956,12 @@ void Objective::CheckHessian(double current_sample,
 
 		Vector u1i_gradient;
 		Vector u2i_gradient;
-		ComputeGradient(current_sample, u1i, &u1i_gradient);		
+		ComputeGradient(current_sample, u1i, &u1i_gradient);
 		ComputeGradient(current_sample, u2i, &u2i_gradient);
+
+		la::Scale(-1.0, &u1i_gradient);
+		la::Scale(-1.0, &u2i_gradient);
+
 
 		//la::SubOverwrite(u2i_gradient, u1i_gradient, &diff_gradient_i);
 		//la::Scale((1.0/(4*epsilon)), &diff_gradient_i);
@@ -2978,6 +2982,8 @@ void Objective::CheckHessian(double current_sample,
 			Vector u2j_gradient;
 			ComputeGradient(current_sample, u1j, &u1j_gradient);		
 		  ComputeGradient(current_sample, u2j, &u2j_gradient);
+			la::Scale(-1.0, &u1j_gradient);
+		  la::Scale(-1.0, &u2j_gradient);
 
 			//la::SubOverwrite(u2j_gradient, u1j_gradient, &diff_gradient_j);
 		  //la::Scale((1.0/(4*epsilon)), &diff_gradient_j);
@@ -3003,7 +3009,35 @@ void Objective::CheckHessian(double current_sample,
 		}
 	}
 
+	//Check positive definiteness
+	Vector eigen_hessian;
+	la::EigenvaluesInit (dummy_approx_hessian, &eigen_hessian);
 
+	cout<<"eigen values"<<endl;
+
+	for(index_t i=0; i<eigen_hessian.length(); i++){
+		cout<<eigen_hessian[i]<<" ";
+	}
+	cout<<endl;
+
+	double max_eigen=0;
+	//cout<<"eigen_value:"<<endl;
+	for(index_t i=0; i<eigen_hessian.length(); i++){
+		//cout<<eigen_hessian[i]<<" ";
+		if(eigen_hessian[i]>max_eigen){
+			max_eigen=eigen_hessian[i];
+		}
+
+	}
+	//cout<<endl;
+	cout<<"max_eigen="<<(max_eigen)<<endl;
+
+	if(max_eigen>0){
+		NOTIFY("Hessian is not Negative definite..Modify...");
+		for(index_t i=0; i<eigen_hessian.length(); i++){
+			dummy_approx_hessian.set(i,i,(dummy_approx_hessian.get(i,i)-max_eigen*(1.01)));
+		}
+	}
 
 	
 	approx_hessian->Copy(dummy_approx_hessian);
@@ -3016,10 +3050,10 @@ void CheckHessian2(double current_sample,
 									  Vector &current_parameter, 
 										Matrix *approx_hessian) {
 
-
 //(i,j)=(f(x+epsilon*ei+epsilon*ej)-f(x+epsilon*ei)-f(x+epsilon*ej)+f(x))/(epsilon^2)
 //(i,j)=(f(x+epsilon*ei+epsilon*ej)-f(x+epsilon*ei-epsilon*ej)
 //															 -f(x-epsilon*ei+epsilon*ej)+f(x-epsilon*ei-epsilon*ej))/(4*epsilon^2)
+
 
 
 
