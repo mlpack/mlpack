@@ -18,6 +18,7 @@ void Optimization::ComputeDoglegDirection(double radius,
 																					double *delta_m) {
 	//check positive definiteness of the hessian
 
+	
 	//la::Scale(-1.0, &hessian);
 	//la::Scale(-1.0, &gradient);
 
@@ -104,8 +105,8 @@ void Optimization::ComputeDoglegDirection(double radius,
 			double p_u_norm;
 
 			//maximization
-			//la::ScaleInit(-1*la::Dot(gradient, gradient)/gHg, gradient, &p_u);
-			la::ScaleInit(+1*la::Dot(gradient, gradient)/gHg, gradient, &p_u);
+			la::ScaleInit(-1*la::Dot(gradient, gradient)/gHg, gradient, &p_u);
+			//la::ScaleInit(+1*la::Dot(gradient, gradient)/gHg, gradient, &p_u);
 			p_u_norm=sqrt(la::Dot(p_u, p_u));
 
 			if( p_u_norm>=radius ) {	//p=radius/p_u_norm * p_u)
@@ -194,13 +195,21 @@ void Optimization::ComputeDoglegDirection(double radius,
 	}
 	}
 
+	//la::Scale(-1.0, &hessian);
+	//la::Scale(-1.0, &gradient);
+	la::Scale(-1.0, p);
+
 	//delta_m calculation -g'p-0.5*p'Hp=-g'p-0.5*(Hp)'p
 	Vector temp3; //Hp
 	la::MulInit(hessian, *p, &temp3);
 	double pHp=0;;
 	pHp=la::Dot(temp3, *p);
 
-	*delta_m=-1*(la::Dot(gradient, *p))-0.5*(pHp);
+	
+
+	*delta_m=-1*(-1*(la::Dot(gradient, *p))-0.5*(pHp));
+	
+
 	
 }
 

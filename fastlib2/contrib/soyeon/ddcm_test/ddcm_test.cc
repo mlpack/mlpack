@@ -167,14 +167,14 @@ int main(int argc, char *argv[]) {
 
 
   //iteration
-  int max_iteration=10;
+  int max_iteration=20;
 	int iteration_count=0;
 
 	Matrix current_hessian;		
 	current_hessian.Init(num_of_parameter, num_of_parameter);
 	current_hessian.SetZero();
 	for(index_t i=0; i<current_hessian.n_rows(); i++){
-		current_hessian.set(i,i,1.0);
+		current_hessian.set(i,i,20);
 	}
 	la::Scale(-1.0, &current_hessian);
 
@@ -430,7 +430,9 @@ int main(int argc, char *argv[]) {
 	*/
 
 
-
+    //NOTIFY("Dogleg method starts...");
+		//cout<<"Current Hessian matrix"<<endl;
+		//cout<<current_hessian.get(0,0)<<endl;
 
 		Vector current_p;
 		double current_delta_m;
@@ -438,7 +440,7 @@ int main(int argc, char *argv[]) {
 		double new_radius;
 		//NOTIFY("Exact hessian calculation ends");
 
-		/*
+		
 		optimization.ComputeDerectionUnderConstraints(current_radius, 
 																					current_gradient,
 																					current_hessian,
@@ -447,14 +449,14 @@ int main(int argc, char *argv[]) {
 																					&current_delta_m,
 																					&next_parameter,
 																					&new_radius);
-																					*/
+																					
 
 																					
 
 		
 		
 
-
+    /*
 		//Scaled version
 		optimization.ComputeScaledDerectionUnderConstraints(current_radius, 
 																					current_gradient,
@@ -464,7 +466,9 @@ int main(int argc, char *argv[]) {
 																					&current_delta_m,
 																					&next_parameter,
 																					&new_radius);
-																					
+
+																					*/
+										
 										
 
 
@@ -474,68 +478,6 @@ int main(int argc, char *argv[]) {
 		current_radius=new_radius;
 		cout<<"current_radius="<<current_radius<<endl;
 
-/*	
-		double constraints_check=1;
-			
-		//while(constraints_check>0){
-
-			
-		optimization.ComputeDoglegDirection(current_radius, 
-																					current_gradient,
-																					current_hessian,
-																					&current_p,
-																					&current_delta_m);
-		//double p_norm=0;
-			
-
-		
-		//cout<<"p="<<" ";
-		//for(index_t i=0; i<current_p.length(); i++){
-		//	cout<<current_p[i]<<" ";
-		//}
-		//cout<<endl;
-		
-		cout<<"delta_m="<<current_delta_m<<endl;
-
-		
-		la::AddOverwrite(current_p, current_parameter, &next_parameter);
-
-		if( next_parameter[next_parameter.length()-2]>0 && 
-			next_parameter[next_parameter.length()-1]>0 ) {
-			NOTIFY("Satisfy Constraints");
-			constraints_check=-1;
-		}
-		else{
-			cout<<"bed_new_parameter=";
-			for(index_t i=0; i<next_parameter.length(); i++){
-				cout<<next_parameter[i]<<" ";
-			}
-			cout<<endl;
-				
-		  NOTIFY("Constraint Violation...Shrink Trust region Radius...");
-		  current_radius=0.75*current_radius;
-			
-			NOTIFY("Projection");
-			if(next_parameter[next_parameter.length()-2]<=0) {
-				NOTIFY("p is negative");
-				next_parameter[next_parameter.length()-2]=0;
-			}
-			else if(next_parameter[next_parameter.length()-1]<=0) {
-				NOTIFY("q is negative");
-				next_parameter[next_parameter.length()-1]=0;
-			}
-			
-							
-		}	//else
-
-		
-*/
-		//Scaling
-		//Vector nonscaled_current_p;
-		//nonscaled_current_p.Init(current_p.length());
-		//nonscaled_current_p.CopyValues(current_p);
-		//la::MulOverwrite(current_inverse_hessian, nonscaled_current_p, &current_p);
-		//current_inverse_hessian
 				
 		p_norm=sqrt(la::Dot(current_p, current_p));
 		 
@@ -601,8 +543,9 @@ int main(int argc, char *argv[]) {
 			
 
 		//agreement rho calculation
+		cout<<"delta_m="<<current_delta_m<<endl;
 		//rho=1.0*(current_objective-next_objective)/(current_delta_m)*current_added_first_stage_x.size();
-		rho= +1.0*(current_objective-next_objective)/(current_delta_m);
+		rho= -1.0*(current_objective-next_objective)/(current_delta_m);
 
 		
 			////////////////////////////////////////////////////////
@@ -635,8 +578,6 @@ int main(int argc, char *argv[]) {
 		//Matrix updated_hessian;
 		//updated_hessian.Init(current_gradient.length(), current_gradient.length());
 		//updated_hessian.SetZero();
-
-		//cout<<"test0"<<endl;
 
 		//la::Scale(-1.0, &current_hessian);
 		//la::Scale(-1.0, &current_gradient);
@@ -779,7 +720,7 @@ int main(int argc, char *argv[]) {
 		NOTIFY("Final hessian matrix is not invertible!");
 	}
 	else{
-		//la::Scale(-1.0, &inverse_hessian);
+		la::Scale(-1.0, &inverse_hessian);
 
 		cout<<"Diagonal of inverse final hessian: ";
 		for(index_t i=0; i<inverse_hessian.n_rows(); i++){
