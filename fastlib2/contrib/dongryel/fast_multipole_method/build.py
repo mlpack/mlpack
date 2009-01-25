@@ -11,7 +11,10 @@ librule(
 librule(
     name = "multibody",
     sources = [],
-    headers = ["multibody_force_problem.h",
+    headers = ["at_potential_kernel.h",
+               "three_body_gaussian_kernel.h",
+               "multibody_force_problem.h",
+               "multibody_potential_problem.h",
                "multibody_kernel.h"],
     deplibs = ["contrib/dongryel/multitree_template:multitree_template",
                "contrib/dongryel/nested_summation_template:nested_summation_template"]
@@ -25,8 +28,15 @@ binrule(
     )
 
 binrule(
-    name = "multibody_bin",
-    sources = ["multibody_main.cc"],
+    name = "multibody_force_bin",
+    sources = ["multibody_force_main.cc"],
+    headers = [],
+    deplibs = [":multibody"]
+    )
+
+binrule(
+    name = "multibody_potential_bin",
+    sources = ["multibody_potential_main.cc"],
     headers = [],
     deplibs = [":multibody"]
     )

@@ -258,10 +258,14 @@ class AxilrodTellerForceProblem {
     void Accumulate(const TQueryResult &query_results, index_t q_index) {
       l1_norm_negative_force_vector_u =
 	std::min(l1_norm_negative_force_vector_u,
-		 query_results.l1_norm_negative_force_vector_u[q_index]);
+		 fabs(query_results.negative_force_vector_e.get(0, q_index) +
+		      query_results.negative_force_vector_e.get(1, q_index) + 
+		      query_results.negative_force_vector_e.get(2, q_index)));
       l1_norm_positive_force_vector_l =
 	std::min(l1_norm_positive_force_vector_l,
-		 query_results.l1_norm_positive_force_vector_l[q_index]);
+		 query_results.positive_force_vector_e.get(0, q_index) +
+		 query_results.positive_force_vector_e.get(1, q_index) +
+		 query_results.positive_force_vector_e.get(2, q_index));
       n_pruned_l =
 	std::min(n_pruned_l, query_results.n_pruned[q_index]);
       used_error_u =
@@ -910,12 +914,14 @@ class AxilrodTellerForceProblem {
 	    delta.positive_force_vector_e.GetColumnPtr(i);
 	  double change_l1_norm = 
 	    fabs(negative_force_vector_e[0] + negative_force_vector_e[1] +
-		 negative_force_vector_e[2]) +
-	    positive_force_vector_e[0] + positive_force_vector_e[1] +
-	    positive_force_vector_e[2];
+		 negative_force_vector_e[2] +
+		 positive_force_vector_e[0] + positive_force_vector_e[1] +
+		 positive_force_vector_e[2]);
 	    
-	  if(((sum + change_l1_norm) - sum) >
-	     sum * AxilrodTellerForceProblem::relative_error_) {
+	  if(change_l1_norm *
+	     (total_n_minus_one_tuples_root - new_summary.n_pruned_l) >
+	     sum * AxilrodTellerForceProblem::relative_error_ *
+	     total_n_minus_one_tuples[i]) {
 	    return false;
 	  }
 	}
