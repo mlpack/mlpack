@@ -2,7 +2,14 @@ librule(
     name = "kde",                            # this line can be safely omitted
     sources = [],                            # files that must be compiled
     headers = ["kde_cv.h",
-               "kde_problem.h"],
+               "kde_delta.h",
+               "kde_error.h",
+               "kde_global.h",
+               "kde_problem.h",
+               "kde_query_postponed.h",
+               "kde_query_result.h",
+               "kde_query_summary.h",
+               "kde_stat.h"],
     deplibs =
     ["fastlib:fastlib_int",
      "contrib/dongryel/multitree_template:multitree_template",
