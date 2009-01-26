@@ -5,6 +5,49 @@
 
 class ATPotentialKernel: public MultibodyPotentialKernel {
 
+ private:
+
+  double PositiveEvaluateCommon_(const Matrix &squared_distances) {
+
+    double sq_dist1 = squared_distances.get(0, 1);
+    double sq_dist2 = squared_distances.get(0, 2);
+    double sq_dist3 = squared_distances.get(1, 2);
+
+    double fourth_dist1 = sq_dist1 * sq_dist1;
+    double fourth_dist2 = sq_dist2 * sq_dist2;
+    double fourth_dist3 = sq_dist3 * sq_dist3;
+    double fifth_dist1 = fourth_dist1 * sqrt(sq_dist1);
+    double fifth_dist2 = fourth_dist2 * sqrt(sq_dist2);
+    double fifth_dist3 = fourth_dist3 * sqrt(sq_dist3);
+    double first_part = 3.0 * fourth_dist1 * (sq_dist2 + sq_dist3);
+    double second_part = 3.0 * sq_dist2 * sq_dist3 * (sq_dist2 + sq_dist3);
+    double third_part = sq_dist1 * 
+      (3.0 * fourth_dist2 + 2.0 * sq_dist2 * sq_dist3 + 3.0 * fourth_dist3);
+    double common_contribution = (first_part + second_part + third_part) /
+      (8.0 * fifth_dist1 * fifth_dist2 * fifth_dist3);
+
+    return common_contribution;
+  }
+
+  double NegativeEvaluateCommon_(const Matrix &squared_distances) {
+
+    double sq_dist1 = squared_distances.get(0, 1);
+    double sq_dist2 = squared_distances.get(0, 2);
+    double sq_dist3 = squared_distances.get(1, 2);
+
+    double sixth_dist1 = sq_dist1 * sq_dist1 * sq_dist1;
+    double sixth_dist2 = sq_dist2 * sq_dist2 * sq_dist2;
+    double sixth_dist3 = sq_dist3 * sq_dist3 * sq_dist3;
+    double fifth_dist1 = sq_dist1 * sq_dist1 * sqrt(sq_dist1);
+    double fifth_dist2 = sq_dist2 * sq_dist2 * sqrt(sq_dist2);
+    double fifth_dist3 = sq_dist3 * sq_dist3 * sqrt(sq_dist3);
+    
+    double common_contribution = 
+      -0.375 * (sixth_dist1 + sixth_dist2 + sixth_dist3) /
+      (fifth_dist1 * fifth_dist2 * fifth_dist3);    
+    return common_contribution;
+  }
+
  public:
 
   static const int order = 3;
@@ -33,56 +76,6 @@ class ATPotentialKernel: public MultibodyPotentialKernel {
        sq_dist3);
 
     return part1 + part2;
-  }
-
-  void PositiveEvaluate(const ArrayList<index_t> &indices,
-			const ArrayList<Matrix *> &sets,
-			ArrayList<DRange> &positive_potential_bounds) {
-
-    double sq_dist1 = min_squared_distances.get(0, 1);
-    double sq_dist2 = min_squared_distances.get(0, 2);
-    double sq_dist3 = min_squared_distances.get(1, 2);
-
-    double fourth_dist1 = sq_dist1 * sq_dist1;
-    double fourth_dist2 = sq_dist2 * sq_dist2;
-    double fourth_dist3 = sq_dist3 * sq_dist3;
-    double fifth_dist1 = fourth_dist1 * sqrt(sq_dist1);
-    double fifth_dist2 = fourth_dist2 * sqrt(sq_dist2);
-    double fifth_dist3 = fourth_dist3 * sqrt(sq_dist3);
-    double first_part = 3.0 * fourth_dist1 * (sq_dist2 + sq_dist3);
-    double second_part = 3.0 * sq_dist2 * sq_dist3 * (sq_dist2 + sq_dist3);
-    double third_part = sq_dist1 * 
-      (3.0 * fourth_dist2 + 2.0 * sq_dist2 * sq_dist3 + 3.0 * fourth_dist3);
-    double common_contribution = (first_part + second_part + third_part) /
-      (8.0 * fifth_dist1 * fifth_dist2 * fifth_dist3);
-    
-    positive_potential_bounds[indices[0]] += common_contribution;
-    positive_potential_bounds[indices[1]] += common_contribution;
-    positive_potential_bounds[indices[2]] += common_contribution;
-  }
-
-  void NegativeEvaluate(const ArrayList<index_t> &indices, 
-			const ArrayList<Matrix *> &sets,
-			ArrayList<DRange> &negative_potential_bounds) {
-
-    double sq_dist1 = min_squared_distances.get(0, 1);
-    double sq_dist2 = min_squared_distances.get(0, 2);
-    double sq_dist3 = min_squared_distances.get(1, 2);
-
-    double sixth_dist1 = sq_dist1 * sq_dist1 * sq_dist1;
-    double sixth_dist2 = sq_dist2 * sq_dist2 * sq_dist2;
-    double sixth_dist3 = sq_dist3 * sq_dist3 * sq_dist3;
-    double fifth_dist1 = sq_dist1 * sq_dist1 * sqrt(sq_dist1);
-    double fifth_dist2 = sq_dist2 * sq_dist2 * sqrt(sq_dist2);
-    double fifth_dist3 = sq_dist3 * sq_dist3 * sqrt(sq_dist3);
-    
-    double common_contribution = 
-      -0.375 * (sixth_dist1 + sixth_dist2 + sixth_dist3) /
-      (fifth_dist1 * fifth_dist2 * fifth_dist3);
-
-    negative_potential_bounds[indices[0]] += common_contribution;
-    negative_potential_bounds[indices[1]] += common_contribution;
-    negative_potential_bounds[indices[2]] += common_contribution;
   }
 };
 
