@@ -5,6 +5,12 @@
 
 class MultibodyPotentialKernel {
 
+ private:
+
+  virtual double PositiveEvaluateCommon_(const Matrix &squared_distances) = 0;
+
+  virtual double NegativeEvaluateCommon_(const Matrix &squared_distances) = 0;
+
  public:
 
   Matrix min_squared_distances;
@@ -17,7 +23,7 @@ class MultibodyPotentialKernel {
   virtual void Init(double bandwidth_in = -1.0) = 0;
 
   template<typename Global, typename Tree>
-  void ComputePairwiseDistances(const Global &globals, 
+  bool ComputePairwiseDistances(const Global &globals, 
 				const ArrayList<Tree *> &nodes) {
     
     for(index_t first_index = 0; first_index < nodes.size(); first_index++) {
@@ -27,9 +33,18 @@ class MultibodyPotentialKernel {
 	double min_squared_distance =
 	  nodes[first_index]->bound().MinDistanceSq
 	  (nodes[second_index]->bound());
+
+	if(min_squared_distance == 0) {
+	  return false;
+	}
+
 	double max_squared_distance =
 	  nodes[first_index]->bound().MaxDistanceSq
 	  (nodes[second_index]->bound());
+
+	if(max_squared_distance == 0) {
+	  return false;
+	}
 
 	// Set the distances, mirroring them across diagonals, just in
 	// case they are needed.
@@ -43,6 +58,8 @@ class MultibodyPotentialKernel {
 				  max_squared_distance);
       }
     }
+
+    return true;
   }
 
   template<typename Global>
@@ -83,16 +100,71 @@ class MultibodyPotentialKernel {
 		     results.negative_potential_bound);
   }
 
-  virtual void PositiveEvaluate
-  (const ArrayList<index_t> &indices, const ArrayList<Matrix *> &sets,
-   ArrayList<DRange> &positive_potential_bounds) = 0;
+  template<typename Global, typename Tree, typename Delta>
+  void ComputeFiniteDifference(const Global &globals,
+			       const ArrayList<Tree *> &nodes, Delta &delta) {
+    
+    // Compute the pairwise distances among the nodes.
+    ComputePairwiseDistances(globals, nodes);
+    
+    // Call the kernels and compute the delta change.
+    PositiveEvaluate(nodes, delta);
+    NegativeEvaluate(nodes, delta);
+  }
 
-  virtual void NegativeEvaluate
-  (const ArrayList<index_t> &indices, const ArrayList<Matrix *> &sets,
-   ArrayList<DRange> &negative_potential_bounds) = 0;
+  void PositiveEvaluate(const ArrayList<index_t> &indices,
+			const ArrayList<Matrix *> &sets,
+			ArrayList<DRange> &positive_potential_bounds) {
+
+    double positive_potential = PositiveEvaluateCommon_(min_squared_distances);
+    
+    for(index_t i = 0; i < sets.size(); i++) {
+      positive_potential_bounds[indices[i]] += positive_potential;
+    }
+  }
+
+  void NegativeEvaluate(const ArrayList<index_t> &indices,
+			const ArrayList<Matrix *> &sets,
+			ArrayList<DRange> &negative_potential_bounds) {
+
+    double negative_potential = NegativeEvaluateCommon_(min_squared_distances);
+    
+    for(index_t i = 0; i < sets.size(); i++) {
+      negative_potential_bounds[indices[i]] += negative_potential;
+    }
+  }
+
+  template<typename Tree, typename Delta>
+  void PositiveEvaluate(const ArrayList<Tree *> &nodes, Delta &delta) {
+
+    double min_positive_potential = 
+      PositiveEvaluateCommon_(max_squared_distances);
+    double max_positive_potential =
+      PositiveEvaluateCommon_(min_squared_distances);
+    
+    for(index_t i = 0; i < nodes.size(); i++) {
+      delta.positive_potential_bound[i].Init
+	(delta.n_pruned[i] * min_positive_potential, 
+	 delta.n_pruned[i] * max_positive_potential);
+    }
+  }
+  
+  template<typename Tree, typename Delta>
+  void NegativeEvaluate(const ArrayList<Tree *> &nodes, Delta &delta) {
+
+    double min_negative_potential = 
+      NegativeEvaluateCommon_(min_squared_distances);
+    double max_negative_potential =
+      PositiveEvaluateCommon_(max_squared_distances);
+    
+    for(index_t i = 0; i < nodes.size(); i++) {
+      delta.negative_potential_bound[i].Init
+	(delta.n_pruned[i] * min_negative_potential,
+	 delta.n_pruned[i] * max_negative_potential);
+    }
+  }
 
   void SetZero() {
-
     min_squared_distances.SetZero();
     max_squared_distances.SetZero();
   }

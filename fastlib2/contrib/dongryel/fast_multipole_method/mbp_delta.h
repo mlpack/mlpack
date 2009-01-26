@@ -43,10 +43,14 @@ class MultiTreeDelta {
 			       const Vector &total_n_minus_one_tuples) {
     
     // Compute the pairwise distances among the nodes.
-    globals.kernel_aux.ComputePairwiseDistances(globals, nodes);
-
+    bool flag = globals.kernel_aux.ComputePairwiseDistances(globals, nodes);
     
-    return true;
+    // Compute the delta change based on the pairwise distances.
+    if(flag) {
+      globals.kernel_aux.ComputeFiniteDifference(globals, nodes, *this);
+    }
+    
+    return flag;
   }
   
   void SetZero() {
