@@ -11,11 +11,18 @@ librule(
 librule(
     name = "multibody",
     sources = [],
-    headers = ["at_potential_kernel.h",
-               "three_body_gaussian_kernel.h",
+    headers = ["at_potential_kernel.h",              
+               "mbp_delta.h",
+               "mbp_global.h",
+               "mbp_kernel.h",
+               "mbp_query_postponed.h",
+               "mbp_query_result.h",
+               "mbp_query_summary.h",
+               "mbp_stat.h",
                "multibody_force_problem.h",
                "multibody_potential_problem.h",
-               "multibody_kernel.h"],
+               "multibody_kernel.h",
+               "three_body_gaussian_kernel.h"],
     deplibs = ["contrib/dongryel/multitree_template:multitree_template",
                "contrib/dongryel/nested_summation_template:nested_summation_template"]
     )

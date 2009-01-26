@@ -1,7 +1,9 @@
 #ifndef THREE_BODY_GAUSSIAN_KERNEL_H
 #define THREE_BODY_GAUSSIAN_KERNEL_H
 
-class ThreeBodyGaussianKernel {
+#include "mbp_kernel.h"
+
+class ThreeBodyGaussianKernel: public MultibodyPotentialKernel {
 
  private:
   double bandwidth_sq_;
@@ -16,13 +18,25 @@ class ThreeBodyGaussianKernel {
     inv_bandwidth_sq_ = 1.0 / bandwidth_sq_;
   }
 
-  double Evaluate(double sq_dist1, double sq_dist2, double sq_dist3) {
+  void PositiveEvaluate(const ArrayList<index_t> &indices, 
+			const ArrayList<Matrix *> &sets,
+			ArrayList<DRange> &positive_potential_bounds) {
     
-    return PositiveEvaluate(sq_dist1, sq_dist2, sq_dist3);
+    double sum_squared_distances = min_squared_distances.get(0, 1) +
+      min_squared_distances.get(0, 2) + min_squared_distances.get(1, 2);
+    double positive_potential =
+      exp(-0.5 * inv_bandwidth_sq_ * sum_squared_distances);
+
+    positive_potential_bounds[indices[0]] += positive_potential;
+    positive_potential_bounds[indices[1]] += positive_potential;
+    positive_potential_bounds[indices[2]] += positive_potential;
   }
-  
-  double PositiveEvaluate(double sq_dist1, double sq_dist2, double sq_dist3) {
-    return exp(-0.5 * (sq_dist1 + sq_dist2 + sq_dist3) * inv_bandwidth_sq_);
+
+  void NegativeEvaluate(const ArrayList<index_t> &indices, 
+			const ArrayList<Matrix *> &sets,
+			ArrayList<DRange> &negative_potential_bounds) {
+
+    // Do nothing since there is no negative contribution...
   }
 
 };
