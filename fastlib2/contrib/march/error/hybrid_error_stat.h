@@ -65,7 +65,7 @@ public:
     DEBUG_ASSERT(allowed_error >= 0.0); 
     
   //  printf("allowed_error = %g\n", allowed_error);
-    
+     
     if (max_error_incurred < allowed_error) {
       
       prune = true;
