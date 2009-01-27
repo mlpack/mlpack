@@ -7,12 +7,12 @@ class ShellPair {
 
  public:
 
-  void ShellPair() {}
+  ShellPair() {}
   
-  void ~ShellPair() {}
+  ~ShellPair() {}
   
-  void Init(index_t M_index, index_t N_index, const BasisShell& M_shell, 
-            const BasisShell& N_shell) {
+  void Init(index_t M_index, index_t N_index, BasisShell& M_shell, 
+            BasisShell& N_shell) {
   
     DEBUG_ASSERT(M_index <= N_index);
     M_index_ = M_index;
@@ -33,6 +33,14 @@ class ShellPair {
     return N_index_;
   }
   
+  BasisShell& M_Shell() {
+    return M_shell_;
+  }
+  
+  BasisShell& N_Shell() {
+    return N_shell_;
+  }
+  
   
   void set_indices(index_t M_index, index_t N_index) {
   
@@ -41,6 +49,14 @@ class ShellPair {
     N_index_ = N_index;
   
   } // set_indices()
+  
+  void set_integral_upper_bound(double bd) {
+    integral_upper_bound_ = bd;
+  } 
+  
+  double integral_upper_bound() {
+    return integral_upper_bound_;
+  }
 
  private:
 

@@ -1,7 +1,7 @@
 #include "eri.h"
 
-
-double eri::F_0_(double z) {
+namespace eri {
+double F_0_(double z) {
 
   if (z == 0) {
     return 1.0;
@@ -13,16 +13,16 @@ double eri::F_0_(double z) {
 } // F_0_
 
 
-double eri::SSSSIntegral(double alpha_A, const Vector& A_vec, double alpha_B, 
-                         const Vector& B_vec, double alpha_C, 
-                         const Vector& C_vec, double alpha_D, 
-                         const Vector& D_vec) {
+double SSSSIntegral(double alpha_A,  Vector& A_vec, double alpha_B, 
+                          Vector& B_vec, double alpha_C, 
+                          Vector& C_vec, double alpha_D, 
+                          Vector& D_vec) {
 
   double gamma_p = alpha_A + alpha_B;
   double gamma_q = alpha_C + alpha_D;
 
-  double integral = 2*math::pow(math::Pi,2.5)/
-                      (gamma_p*gamma_q*math::sqrt(gamma_p + gamma_q));
+  double integral = 2*pow(math::PI,2.5)/
+                          (gamma_p*gamma_q*sqrt(gamma_p + gamma_q));
 
   double AB_dist = la::DistanceSqEuclidean(A_vec, B_vec);
   double CD_dist = la::DistanceSqEuclidean(C_vec, D_vec);
@@ -56,3 +56,49 @@ double eri::SSSSIntegral(double alpha_A, const Vector& A_vec, double alpha_B,
   return integral;
 
 }
+
+/**
+ * Note, this only works on uncontracted, S-type integrals.  
+ */
+double ComputeShellIntegrals(BasisShell& mu_fun, BasisShell& nu_fun, 
+                                   BasisShell& rho_fun, 
+                                   BasisShell& sigma_fun) {
+                          
+                          
+  double this_int;
+  
+  this_int = eri::SSSSIntegral(mu_fun.exp(), mu_fun.center(), nu_fun.exp(), 
+                               nu_fun.center(), rho_fun.exp(), rho_fun.center(), 
+                               sigma_fun.exp(), sigma_fun.center());
+  
+  return this_int;
+
+}
+
+double ComputeShellIntegrals(ShellPair& AB_shell, 
+                             ShellPair& CD_shell) {
+ 
+  return ComputeShellIntegrals(AB_shell.M_Shell(), AB_shell.N_Shell(), 
+                               CD_shell.M_Shell(), CD_shell.N_Shell());
+                             
+                                                                                     
+}
+
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
