@@ -87,7 +87,7 @@ class MultiTreeQueryResult {
       postponed_in.positive_potential_bound;
     positive_potential_e[q_index] += postponed_in.positive_potential_e;
     n_pruned[q_index] += postponed_in.n_pruned;
-    used_error[q_index] += postponed_in.used_error;      
+    used_error[q_index] += postponed_in.used_error;
   }
 
   void Init(int num_queries) {
@@ -113,8 +113,12 @@ class MultiTreeQueryResult {
   void Finalize(const MultiTreeGlobal &globals,
 		const ArrayList<index_t> &mapping) {
 
-    MultiTreeUtility::ShuffleAccordingToQueryPermutation
-      (final_results, mapping);
+    MultiTreeUtility::ShuffleAccordingToQueryPermutation(positive_potential_e,
+							 mapping);
+    MultiTreeUtility::ShuffleAccordingToQueryPermutation(negative_potential_e,
+							 mapping);
+    MultiTreeUtility::ShuffleAccordingToQueryPermutation(final_results,
+							 mapping);
   }
 
   void PrintDebug(const char *output_file_name) const {
