@@ -67,7 +67,7 @@ double ComputeShellIntegrals(BasisShell& mu_fun, BasisShell& nu_fun,
                           
   double this_int;
   
-  this_int = eri::SSSSIntegral(mu_fun.exp(), mu_fun.center(), nu_fun.exp(), 
+  this_int = SSSSIntegral(mu_fun.exp(), mu_fun.center(), nu_fun.exp(), 
                                nu_fun.center(), rho_fun.exp(), rho_fun.center(), 
                                sigma_fun.exp(), sigma_fun.center());
   
