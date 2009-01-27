@@ -16,9 +16,64 @@ class BasisShell {
   
   ~BasisShell() {}
   
-  void Init() {
+  void Init(const Vector& cent, double exp, index_t mom, index_t ind) {
+  
+    DEBUG_ASSERT(mom >= 0);
+    DEBUG_ASSERT(ind >= 0);
+    DEBUG_ASSERT(exp >= 0);
+    
+    total_momentum_ = mom;
+    start_index_ = ind;
+    exponent_ = exp;
+  
+    center_.Copy(cent);
+  
+    if (mom == 0) {
+    
+      num_functions_ = 1;
+    
+    }
+    else if (mom == 1) {
+    
+      num_functions_ = 3;
+    
+    }
+    else {
+      FATAL("Higher momenta not supported.");
+    }
   
   } // Init()
+  
+  void Copy(BasisShell& inshell) {
+  
+    total_momentum_ = inshell.total_momentum();
+    start_index_ = inshell.start_index();
+    exponent_ = inshell.exp();
+    center_.Copy(inshell.center());
+    num_functions_ = inshell.num_functions();
+  
+  }
+  
+  double exp() {
+    return exponent_;
+  }
+  
+  const Vector& center() {
+    return center_;
+  }
+  
+  index_t num_functions() {
+    return num_functions_;
+  }
+  
+  index_t total_momentum() {
+    return total_momentum_;
+  }
+  
+  index_t start_index() {
+    return start_index_;
+  }
+  
 
  private:
 
@@ -30,7 +85,12 @@ class BasisShell {
   
   Vector center_;
   
-  ArrayList<BasisFunction> functions_;
+  double exponent_;
+  
+  // The index of the center in the Matrix
+  index_t start_index_;
+  
+  //ArrayList<index_t> functions_;
   
   // I'll need to define these somewhere
   char* atom_type_;
