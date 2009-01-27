@@ -105,8 +105,8 @@ class MultiTreeQueryResult {
   template<typename MultiTreeGlobal>
   void PostProcess(const MultiTreeGlobal &globals, index_t q_index) {
 
-    la::AddOverwrite(final_results.length(), negative_potential_e.ptr(),
-		     positive_potential_e.ptr(), final_results.ptr());
+    final_results[q_index] = negative_potential_e[q_index] +
+      positive_potential_e[q_index];
   }
 
   template<typename MultiTreeGlobal>

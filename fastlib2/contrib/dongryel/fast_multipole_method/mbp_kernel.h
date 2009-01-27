@@ -86,10 +86,8 @@ class MultibodyPotentialKernel {
 			     globals.hybrid_node_chosen_indices);
 
     // Call the kernels.
-    PositiveEvaluate(globals.hybrid_node_chosen_indices, sets, 
-		     results.positive_potential_bound);
-    NegativeEvaluate(globals.hybrid_node_chosen_indices, sets, 
-		     results.negative_potential_bound);
+    PositiveEvaluate(globals.hybrid_node_chosen_indices, sets, results);
+    NegativeEvaluate(globals.hybrid_node_chosen_indices, sets, results);
   }
 
   template<typename Global, typename Tree, typename Delta>
@@ -108,25 +106,29 @@ class MultibodyPotentialKernel {
     return flag;
   }
 
+  template<typename QueryResult>
   void PositiveEvaluate(const ArrayList<index_t> &indices,
-			const ArrayList<Matrix *> &sets,
-			ArrayList<DRange> &positive_potential_bounds) {
+			const ArrayList<Matrix *> &sets, 
+			QueryResult &results) {
 
     double positive_potential = PositiveEvaluateCommon_(min_squared_distances);
     
     for(index_t i = 0; i < sets.size(); i++) {
-      positive_potential_bounds[indices[i]] += positive_potential;
+      results.positive_potential_bound[indices[i]] += positive_potential;
+      results.positive_potential_e[indices[i]] += positive_potential;
     }
   }
 
+  template<typename QueryResult>
   void NegativeEvaluate(const ArrayList<index_t> &indices,
 			const ArrayList<Matrix *> &sets,
-			ArrayList<DRange> &negative_potential_bounds) {
+			QueryResult &results) {
 
     double negative_potential = NegativeEvaluateCommon_(min_squared_distances);
     
     for(index_t i = 0; i < sets.size(); i++) {
-      negative_potential_bounds[indices[i]] += negative_potential;
+      results.negative_potential_bound[indices[i]] += negative_potential;
+      results.negative_potential_e[indices[i]] += negative_potential;
     }
   }
 
@@ -146,11 +148,13 @@ class MultibodyPotentialKernel {
     if(isinf(max_positive_potential) || isnan(max_positive_potential)) {
       return false;
     }
-    
+
     for(index_t i = 0; i < nodes.size(); i++) {
       delta.positive_potential_bound[i].Init
 	(delta.n_pruned[i] * min_positive_potential, 
 	 delta.n_pruned[i] * max_positive_potential);
+      delta.positive_potential_e[i] = 0.5 * delta.n_pruned[i] *
+	(min_positive_potential + max_positive_potential);
       delta.used_error[i] = 0.5 * delta.n_pruned[i] * 
 	(max_positive_potential - min_positive_potential);
     }
@@ -178,6 +182,8 @@ class MultibodyPotentialKernel {
       delta.negative_potential_bound[i].Init
 	(delta.n_pruned[i] * min_negative_potential,
 	 delta.n_pruned[i] * max_negative_potential);
+      delta.negative_potential_e[i] = 0.5 * delta.n_pruned[i] *
+	(min_negative_potential + max_negative_potential);
       delta.used_error[i] = 0.5 * delta.n_pruned[i] *
 	(max_negative_potential - min_negative_potential);
     }
