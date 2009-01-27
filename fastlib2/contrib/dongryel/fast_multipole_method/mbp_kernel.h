@@ -155,7 +155,7 @@ class MultibodyPotentialKernel {
 	 delta.n_pruned[i] * max_positive_potential);
       delta.positive_potential_e[i] = 0.5 * delta.n_pruned[i] *
 	(min_positive_potential + max_positive_potential);
-      delta.used_error[i] = 0.5 * delta.n_pruned[i] * 
+      delta.used_error[i] = delta.used_error[i] + 0.5 * delta.n_pruned[i] * 
 	(max_positive_potential - min_positive_potential);
     }
     return true;
@@ -172,8 +172,8 @@ class MultibodyPotentialKernel {
     }
 
     double max_negative_potential =
-      PositiveEvaluateCommon_(max_squared_distances);
-
+      NegativeEvaluateCommon_(max_squared_distances);
+    
     if(isinf(max_negative_potential) || isnan(max_negative_potential)) {
       return false;
     }
@@ -184,7 +184,7 @@ class MultibodyPotentialKernel {
 	 delta.n_pruned[i] * max_negative_potential);
       delta.negative_potential_e[i] = 0.5 * delta.n_pruned[i] *
 	(min_negative_potential + max_negative_potential);
-      delta.used_error[i] = 0.5 * delta.n_pruned[i] *
+      delta.used_error[i] = delta.used_error[i] + 0.5 * delta.n_pruned[i] *
 	(max_negative_potential - min_negative_potential);
     }
     return true;

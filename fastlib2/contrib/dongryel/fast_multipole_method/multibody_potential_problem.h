@@ -91,19 +91,20 @@ class MultibodyPotentialProblem {
 	new_summary.ApplyDelta(delta, i);
 
 	// Compute the right hand side of the pruning rule
-	double right_hand_side = globals.relative_error *
-	  (new_summary.positive_potential_bound.lo -
-	   new_summary.negative_potential_bound.hi) * 
+	double right_hand_side = 
+	  (globals.relative_error *
+	   (new_summary.positive_potential_bound.lo -
+	    new_summary.negative_potential_bound.hi) -
+	   new_summary.used_error_u) * 
 	  (total_n_minus_one_tuples[i] / 
 	   (total_n_minus_one_tuples_root - new_summary.n_pruned_l));
-	
-	
+
 	if(delta.used_error[i] > right_hand_side) {
 	  return false;
 	}
       }
     }
-
+    
     // In this case, add the delta contributions to the postponed
     // slots of each node.
     for(index_t i = 0; i < TKernel::order; i++) {
