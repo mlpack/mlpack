@@ -30,6 +30,11 @@ class ThreeBodyGaussianKernel: public MultibodyPotentialKernel {
   void Init(double bandwidth_in) {
     bandwidth_sq_ = math::Sqr(bandwidth_in);
     inv_bandwidth_sq_ = 1.0 / bandwidth_sq_;
+
+    min_squared_distances.Init(3, 3);
+    max_squared_distances.Init(3, 3);
+
+    SetZero();
   }
 
 };

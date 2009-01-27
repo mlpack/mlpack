@@ -36,6 +36,34 @@ class MultiTreeQueryResult {
 			    double *negative_max_relative_error,
 			    double *positive_max_relative_error) {
 
+    *max_relative_error = 0;
+    *negative_max_relative_error = 0;
+    *positive_max_relative_error = 0;
+
+    for(index_t i = 0; i < final_results.length(); i++) {
+      
+      double relative_error, negative_relative_error, positive_relative_error;
+      
+      positive_relative_error = (positive_potential_e[i] == 
+				 other_results.positive_potential_e[i]) ?
+	0:( fabs(positive_potential_e[i] - 
+		 other_results.positive_potential_e[i]) /
+	    positive_potential_e[i]);
+      negative_relative_error = (negative_potential_e[i] == 
+				 other_results.negative_potential_e[i]) ?
+	0:( fabs(negative_potential_e[i] - 
+		 other_results.negative_potential_e[i]) /
+	    fabs(negative_potential_e[i]));
+      relative_error = (final_results[i] == other_results.final_results[i]) ?
+	0:( fabs(final_results[i] - other_results.final_results[i]) /
+	    fabs(final_results[i]));
+      
+      *max_relative_error = std::max(*max_relative_error, relative_error);
+      *negative_max_relative_error = std::max(*negative_max_relative_error,
+					      negative_relative_error);
+      *positive_max_relative_error = std::max(*positive_max_relative_error,
+					      positive_relative_error);
+    }
   }
 
   template<typename Tree>
@@ -91,6 +119,12 @@ class MultiTreeQueryResult {
 
   void PrintDebug(const char *output_file_name) const {
 
+    FILE *output_file = fopen(output_file_name, "w+");
+    
+    for(index_t i = 0; i < final_results.length(); i++) {
+      fprintf(output_file, "%g %g\n", final_results[i], n_pruned[i]);
+    }
+    fclose(output_file);
   }
 
   void SetZero() {

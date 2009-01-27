@@ -53,7 +53,8 @@ class MultibodyPotentialProblem {
 				 double total_n_minus_one_tuples_root,
 				 Vector &total_n_minus_one_tuples) {
 
-    // Compute delta change for each node...
+    // If the monochromatic trick was applied, then readjust the
+    // number of remaining tuples...
     if(hybrid_nodes[0] == hybrid_nodes[1] && 
        hybrid_nodes[1] == hybrid_nodes[2]) {
 
@@ -63,8 +64,10 @@ class MultibodyPotentialProblem {
       }
     }
 
+    // Compute delta change for each node...
     delta.Init(total_n_minus_one_tuples);
 
+    // Compute delta change for each node...
     if(unlikely(hybrid_nodes[0]->stat().in_strata && 
 		hybrid_nodes[0] == hybrid_nodes[1] &&
 		hybrid_nodes[1] == hybrid_nodes[2])) {
@@ -87,8 +90,15 @@ class MultibodyPotentialProblem {
 	new_summary.ApplyPostponed(hybrid_nodes[i]->stat().postponed);
 	new_summary.ApplyDelta(delta, i);
 
-	// In this case, we do not attempt to prune...
-	if(false) {
+	// Compute the right hand side of the pruning rule
+	double right_hand_side = globals.relative_error *
+	  (new_summary.positive_potential_bound.lo -
+	   new_summary.negative_potential_bound.hi) * 
+	  (total_n_minus_one_tuples[i] / 
+	   (total_n_minus_one_tuples_root - new_summary.n_pruned_l));
+	
+	
+	if(delta.used_error[i] > right_hand_side) {
 	  return false;
 	}
       }

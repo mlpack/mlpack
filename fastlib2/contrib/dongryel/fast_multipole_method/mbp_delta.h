@@ -42,14 +42,10 @@ class MultiTreeDelta {
 			       ArrayList<Tree *> &nodes,
 			       const Vector &total_n_minus_one_tuples) {
     
-    // Compute the pairwise distances among the nodes.
-    bool flag = globals.kernel_aux.ComputePairwiseDistances(globals, nodes);
-    
-    // Compute the delta change based on the pairwise distances.
-    if(flag) {
+    // Compute the pairwise distances among the nodes, and min and max
+    // contributions...
+    bool flag = 
       globals.kernel_aux.ComputeFiniteDifference(globals, nodes, *this);
-    }
-    
     return flag;
   }
   
@@ -60,8 +56,9 @@ class MultiTreeDelta {
     }
     negative_potential_e.SetZero();
     positive_potential_e.SetZero();
-    n_pruned.SetZero();
     used_error.SetZero();
+
+    // WARNING: I don't set n_pruned to zero...
   }
   
   void Init(const Vector &total_n_minus_one_tuples) {

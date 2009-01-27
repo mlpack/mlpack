@@ -25,7 +25,6 @@ int main(int argc, char *argv[]) {
   
   // data::Load inits a matrix with the contents of a .csv or .arff.
   data::Load(references_file_name, &references);
-  la::Scale(references.n_cols() * references.n_rows(), 30.0, references.ptr());
 
   // Instantiate a multi-tree problem...
   ArrayList<const Matrix *> sets;
@@ -45,7 +44,7 @@ int main(int argc, char *argv[]) {
 			      multibody_module);
   
   fx_timer_start(fx_root, "multitree");
-  algorithm.Compute(NULL, &results, true);
+  algorithm.Compute(NULL, &results);
   fx_timer_stop(fx_root, "multitree");
   
   results.PrintDebug("potentials.txt");
@@ -56,7 +55,7 @@ int main(int argc, char *argv[]) {
   algorithm.NaiveCompute((const ArrayList<const Matrix *> *) NULL,
 			 &naive_results);
   fx_timer_stop(fx_root, "naive_code");
-  naive_results.PrintDebug("naive_force_vectors.txt");
+  naive_results.PrintDebug("naive_potentials.txt");
   double max_relative_error, positive_max_relative_error,
     negative_max_relative_error;
   naive_results.MaximumRelativeError(results, &max_relative_error,
