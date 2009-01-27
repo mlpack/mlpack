@@ -34,17 +34,9 @@ class MultibodyPotentialKernel {
 	  nodes[first_index]->bound().MinDistanceSq
 	  (nodes[second_index]->bound());
 
-	if(min_squared_distance == 0) {
-	  return false;
-	}
-
 	double max_squared_distance =
 	  nodes[first_index]->bound().MaxDistanceSq
 	  (nodes[second_index]->bound());
-
-	if(max_squared_distance == 0) {
-	  return false;
-	}
 
 	// Set the distances, mirroring them across diagonals, just in
 	// case they are needed.
@@ -101,15 +93,19 @@ class MultibodyPotentialKernel {
   }
 
   template<typename Global, typename Tree, typename Delta>
-  void ComputeFiniteDifference(const Global &globals,
+  bool ComputeFiniteDifference(const Global &globals,
 			       const ArrayList<Tree *> &nodes, Delta &delta) {
     
     // Compute the pairwise distances among the nodes.
     ComputePairwiseDistances(globals, nodes);
     
     // Call the kernels and compute the delta change.
-    PositiveEvaluate(nodes, delta);
-    NegativeEvaluate(nodes, delta);
+    bool flag = PositiveEvaluate(nodes, delta);
+
+    if(flag) {
+      flag = NegativeEvaluate(nodes, delta);
+    }
+    return flag;
   }
 
   void PositiveEvaluate(const ArrayList<index_t> &indices,
@@ -135,33 +131,57 @@ class MultibodyPotentialKernel {
   }
 
   template<typename Tree, typename Delta>
-  void PositiveEvaluate(const ArrayList<Tree *> &nodes, Delta &delta) {
+  bool PositiveEvaluate(const ArrayList<Tree *> &nodes, Delta &delta) {
 
     double min_positive_potential = 
       PositiveEvaluateCommon_(max_squared_distances);
+
+    if(isinf(min_positive_potential) || isnan(min_positive_potential)) {
+      return false;
+    }
+
     double max_positive_potential =
       PositiveEvaluateCommon_(min_squared_distances);
+    
+    if(isinf(max_positive_potential) || isnan(max_positive_potential)) {
+      return false;
+    }
     
     for(index_t i = 0; i < nodes.size(); i++) {
       delta.positive_potential_bound[i].Init
 	(delta.n_pruned[i] * min_positive_potential, 
 	 delta.n_pruned[i] * max_positive_potential);
+      delta.used_error[i] = 0.5 * delta.n_pruned[i] * 
+	(max_positive_potential - min_positive_potential);
     }
+    return true;
   }
   
   template<typename Tree, typename Delta>
-  void NegativeEvaluate(const ArrayList<Tree *> &nodes, Delta &delta) {
+  bool NegativeEvaluate(const ArrayList<Tree *> &nodes, Delta &delta) {
 
     double min_negative_potential = 
       NegativeEvaluateCommon_(min_squared_distances);
+
+    if(isinf(min_negative_potential) || isnan(min_negative_potential)) {
+      return false;
+    }
+
     double max_negative_potential =
       PositiveEvaluateCommon_(max_squared_distances);
-    
+
+    if(isinf(max_negative_potential) || isnan(max_negative_potential)) {
+      return false;
+    }
+
     for(index_t i = 0; i < nodes.size(); i++) {
       delta.negative_potential_bound[i].Init
 	(delta.n_pruned[i] * min_negative_potential,
 	 delta.n_pruned[i] * max_negative_potential);
+      delta.used_error[i] = 0.5 * delta.n_pruned[i] *
+	(max_negative_potential - min_negative_potential);
     }
+    return true;
   }
 
   void SetZero() {
