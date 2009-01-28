@@ -27,6 +27,10 @@ class Distribution {
       sigma_.set(i, i, 1);
     }
   }
+
+  int n_dims() {
+    return n_dims_;
+  }
   
   Vector mu() {
     return mu_;
