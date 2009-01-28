@@ -23,6 +23,7 @@ librule(
 
 binrule(
 	name="schwartz_prescreening_main",
+        headers=[],
 	sources=["schwartz_prescreening_main.cc"],
 	deplibs=["fastlib:fastlib", ":schwartz_prescreening", ":eri"]
 )

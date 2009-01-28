@@ -20,8 +20,11 @@ int main(int argc, char* argv[]) {
   Matrix exponents;
   data::Load(exp_file, &exponents);
   Vector exp;
-  exponents.MakeColumnVector(0, &exp);
-  
+  //exponents.MakeColumnVector(0, &exp);
+  exp.Init(centers.n_cols());
+    exp.SetAll(0.0001);
+
+
   const char* momenta_file = fx_param_str(root_mod, "momenta", "test_momenta.csv");
   Matrix momenta;
   data::Load(momenta_file, &momenta);

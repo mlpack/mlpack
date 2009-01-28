@@ -30,9 +30,11 @@ class SchwartzPrescreening {
     // Set up shells here
     num_shells_ = basis_centers_.n_cols();
     basis_list_.Init(num_shells_);
-    
+
+    printf("num_shells: %d\n", num_shells_);
+
     num_shell_pairs_ = 0;
-    shell_pair_list_.Init();
+    shell_pair_list_.Init(num_shells_*num_shells_);
     
     num_prunes_ = 0;
     
@@ -43,6 +45,8 @@ class SchwartzPrescreening {
     coulomb_matrix_.SetZero();
     exchange_matrix_.Init(matrix_size_, matrix_size_);
     exchange_matrix_.SetZero();
+
+    fock_matrix_.Init(matrix_size_, matrix_size_);
     
     // Change this to take it as input
     density_matrix_.Init(matrix_size_, matrix_size_);

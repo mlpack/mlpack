@@ -58,7 +58,7 @@ class BasisShell {
     return exponent_;
   }
   
-  const Vector& center() {
+  Vector& center() {
     return center_;
   }
   
