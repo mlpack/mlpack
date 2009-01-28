@@ -144,10 +144,10 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 
 		
 		initial_parameter->SetZero();
-		(*initial_parameter)[0]=1;
-		(*initial_parameter)[1]=1.5;
-		(*initial_parameter)[num_of_betas]=2;
-		(*initial_parameter)[num_of_betas+1]=1.8;
+		(*initial_parameter)[0]=10;
+		(*initial_parameter)[1]=5;
+		(*initial_parameter)[num_of_betas]=7;
+		(*initial_parameter)[num_of_betas+1]=2;
 
 		(*initial_parameter)[2]=1.7;
 		
