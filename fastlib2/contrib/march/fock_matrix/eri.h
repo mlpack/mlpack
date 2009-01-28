@@ -12,9 +12,9 @@ namespace eri {
   
   // An ERI between four s-type gaussians with arbitrary bandwidth
   // This function does not currently normalize the gaussians
-  double SSSSIntegral(double alpha_A,  Vector A_vec, double alpha_B, 
-                       Vector B_vec, double alpha_C,  Vector C_vec, 
-                      double alpha_D,  Vector D_vec);
+  double SSSSIntegral(double alpha_A,  Vector& A_vec, double alpha_B, 
+                       Vector& B_vec, double alpha_C,  Vector& C_vec, 
+                      double alpha_D,  Vector& D_vec);
                       
   // Compute the integral for general basis functions
   // I should add a shell version of this to take advantage of shell symmetry

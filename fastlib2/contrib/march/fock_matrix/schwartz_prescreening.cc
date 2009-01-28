@@ -65,11 +65,11 @@ void SchwartzPrescreening::ComputeFockMatrix(Matrix* fock_out) {
   // Is there symmetry I can use here?
   for (index_t i = 0; i < num_shells_; i++) {
   
-    ShellPair i_pair = shell_pair_list_[i];
+    ShellPair& i_pair = shell_pair_list_[i];
   
     for (index_t j = 0; j < num_shells_; j++) {
     
-      ShellPair j_pair = shell_pair_list_[j];
+      ShellPair& j_pair = shell_pair_list_[j];
 
       // this can be made tighter by considering other density matrix entries
       //double density_bound = max(i_pair.density_mat_upper(), 
@@ -107,6 +107,8 @@ void SchwartzPrescreening::ComputeFockMatrix(Matrix* fock_out) {
   la::AddOverwrite(coulomb_matrix_, exchange_matrix_, &fock_matrix_);
   
   fock_out->Copy(fock_matrix_);
+
+  printf("num_prunes: %d\n", num_prunes_);
 
 } // ComputeFockMatrix()
 
