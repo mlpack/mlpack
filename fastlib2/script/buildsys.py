@@ -57,12 +57,12 @@ class GCCCompiler(CompilerInfo):
     check_gfortran_existence_result = check_gfortran_existence.read()
     check_gfortran_existence.close()
     check_gfortran_existence_result = check_gfortran_existence_result[:len(check_gfortran_existence_result) - 1]
-    if len(check_gfortran_existence_result) == 0:
+    if len(check_gfortran_existence_result) == 0 or check_gfortran_existence_result[0] != '/': # '/' test for Macs
       check_gfortran_existence = os.popen("which gfortran-4")
       check_gfortran_existence_result = check_gfortran_existence.read()
       check_gfortran_existence.close()
       check_gfortran_existence_result = check_gfortran_existence_result[:len(check_gfortran_existence_result) - 1]
-      if len(check_gfortran_existence_result) == 0:
+      if len(check_gfortran_existence_result) == 0 or check_gfortran_existence_result[0] != '/': # '/' test for Macs
         use_gfortran = False
         print "!!! Using g77.  GFortran will be preferred eventually."
 

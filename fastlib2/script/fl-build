@@ -81,14 +81,14 @@ check_gcc4_existence = os.popen("which gcc4")
 check_gcc4_existence_result = check_gcc4_existence.read()
 check_gcc4_existence.close()
 check_gcc4_existence_result = check_gcc4_existence_result[:len(check_gcc4_existence_result) - 1]
-if len(check_gcc4_existence_result) > 0:
+if len(check_gcc4_existence_result) > 0 and check_gcc4_existence_result[0] == '/': # '/' test for Macs
   fx.param_default("compiler", "gcc4")
 else:
   check_gcc4_existence = os.popen("which gcc-4")
   check_gcc4_existence_result = check_gcc4_existence.read()
   check_gcc4_existence.close()
   check_gcc4_existence_result = check_gcc4_existence_result[:len(check_gcc4_existence_result) - 1]
-  if len(check_gcc4_existence_result) > 0:
+  if len(check_gcc4_existence_result) > 0 and check_gcc4_existence_result[0] == '/': # '/' test for Macs
     fx.param_default("compiler", "gcc-4")
   else:
     fx.param_default("compiler", "gcc")
@@ -128,7 +128,7 @@ check_curl_existence = os.popen("which curl")
 check_downloader_existence_result = check_curl_existence.read()
 check_curl_existence.close()
 check_downloader_existence_result = check_downloader_existence_result[:len(check_downloader_existence_result) - 1]
-if len(check_downloader_existence_result) == 0:
+if len(check_downloader_existence_result) == 0 or check_downloader_existence_result[0] != '/': # '/' test for Macs
   check_wget_existence = os.popen("which wget")
   check_downloader_existence_result = check_wget_existence.read()
   check_wget_existence.close()
