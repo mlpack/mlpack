@@ -49,7 +49,7 @@ class MultiTreeGlobal {
 
     // Extract the relative error and the bandwidth from the module.
     relative_error = fx_param_double(module, "relative_error", 0.1);
-    kernel_aux.Init(fx_param_double_req(module, "bandwidth"));           
+    kernel_aux.Init(fx_param_double(module, "bandwidth", 0.3));
 
     // Set the dimension.
     dimension = dimension_in;
