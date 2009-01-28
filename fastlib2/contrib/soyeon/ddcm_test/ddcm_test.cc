@@ -167,14 +167,14 @@ int main(int argc, char *argv[]) {
 
 
   //iteration
-  int max_iteration=20;
+  int max_iteration=100;
 	int iteration_count=0;
 
 	Matrix current_hessian;		
 	current_hessian.Init(num_of_parameter, num_of_parameter);
 	current_hessian.SetZero();
 	for(index_t i=0; i<current_hessian.n_rows(); i++){
-		current_hessian.set(i,i,20);
+		current_hessian.set(i,i,2);
 	}
 	la::Scale(-1.0, &current_hessian);
 
@@ -237,6 +237,7 @@ int main(int argc, char *argv[]) {
 		
 
 		/*
+		
 		double tobjective;
 		tobjective=0;
 		objective.ComputeObjective(current_sample_size, tpar, 
@@ -263,8 +264,13 @@ int main(int argc, char *argv[]) {
 		double opt_gradient_norm;
 		opt_gradient_norm = sqrt(la::Dot(opt_gradient, opt_gradient));
 		cout<<"gradient_norm at true par="<<opt_gradient_norm<<endl;
+
+		*/
+
 		
-    */
+
+		
+    
 
 		
 
@@ -632,6 +638,7 @@ int main(int argc, char *argv[]) {
 		}
 		cout<<endl;
 
+		/*
 		double max_eigen=0;
 		//cout<<"eigen_value:"<<endl;
 		for(index_t i=0; i<eigen_hessian.length(); i++){
@@ -643,6 +650,10 @@ int main(int argc, char *argv[]) {
 		}
 		//cout<<endl;
 		cout<<"max_eigen="<<(max_eigen)<<endl;
+		*/
+
+
+
 
 
 
