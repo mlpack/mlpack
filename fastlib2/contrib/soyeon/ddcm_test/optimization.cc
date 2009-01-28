@@ -19,8 +19,8 @@ void Optimization::ComputeDoglegDirection(double radius,
 	//check positive definiteness of the hessian
 
 	
-	//la::Scale(-1.0, &hessian);
-	//la::Scale(-1.0, &gradient);
+	la::Scale(-1.0, &hessian);
+	la::Scale(-1.0, &gradient);
 
 	Matrix inverse_hessian;
 	if( !PASSED(la::InverseInit(hessian, &inverse_hessian)) ) {
@@ -195,8 +195,8 @@ void Optimization::ComputeDoglegDirection(double radius,
 	}
 	}
 
-	//la::Scale(-1.0, &hessian);
-	//la::Scale(-1.0, &gradient);
+	la::Scale(-1.0, &hessian);
+	la::Scale(-1.0, &gradient);
 	la::Scale(-1.0, p);
 
 	//delta_m calculation -g'p-0.5*p'Hp=-g'p-0.5*(Hp)'p
