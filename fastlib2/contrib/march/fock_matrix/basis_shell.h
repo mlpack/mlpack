@@ -41,6 +41,10 @@ class BasisShell {
     else {
       FATAL("Higher momenta not supported.");
     }
+    
+    normalization_constant_ = ComputeNormConstant_();
+    
+    printf("norm: %g\n", normalization_constant_);
   
   } // Init()
   
@@ -51,6 +55,7 @@ class BasisShell {
     exponent_ = inshell.exp();
     center_.Copy(inshell.center());
     num_functions_ = inshell.num_functions();
+    normalization_constant_ = inshell.normalization_constant();
   
   }
   
@@ -74,6 +79,10 @@ class BasisShell {
     return start_index_;
   }
   
+  double normalization_constant() {
+    return normalization_constant_;
+  }
+  
 
  private:
 
@@ -94,6 +103,36 @@ class BasisShell {
   
   // I'll need to define these somewhere
   char* atom_type_;
+  
+  // need to multiply integrals by this
+  double normalization_constant_;
+  
+  ///////////////////////
+  
+  double ComputeNormConstant_() {
+  
+    double norm = pow(2/math::PI, 0.75); 
+    
+    //printf("norm: %g\n", norm);
+    
+//    printf("exponent: %g\n", exponent_);
+//    printf("total_momentum: %d\n", total_momentum_);
+    
+    double second_part = pow(2, total_momentum_) * 
+        pow(exponent_, ((2*total_momentum_) + 3)*0.25);
+    //double second_part = pow(exponent_, ((2*total_momentum_) + 3)*0.25);
+      
+//    printf("second_part:%g\n", second_part);
+      
+    norm = norm * second_part;
+        
+    // Would need to divide here if total momentum is greater than one
+    
+//    printf("norm: %g\n", norm);
+    
+    return norm; 
+  
+  } // ComputeNormConstant_()
   
 
 }; // class BasisShell

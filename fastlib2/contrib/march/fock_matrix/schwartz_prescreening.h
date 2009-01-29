@@ -7,6 +7,17 @@
 #include "basis_shell.h"
 #include "shell_pair.h"
 
+const fx_entry_doc schwartz_entries[] = {
+{"num_prunes", FX_RESULT, FX_INT, NULL, 
+  "The number of integral computations pruned.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc schwartz_mod_doc = {
+  schwartz_entries, NULL, "algorithm module for schwartz prescreening.\n"
+};
+
+
 class SchwartzPrescreening {
 
  public:
@@ -18,39 +29,43 @@ class SchwartzPrescreening {
   void ComputeFockMatrix(Matrix* fock_out);
   
   void Init(const Matrix& cent, const Vector& exp, const Vector& mom, 
-            double thresh, fx_module* mod) {
+            double thresh, const Matrix& density_in, const index_t mat_size_in, 
+            fx_module* mod) {
   
     basis_centers_.Copy(cent);
     basis_exponents_.Copy(exp);
     basis_momenta_.Copy(mom);
     
     threshold_ = thresh;
-    module = mod;
+    module_ = mod;
     
     // Set up shells here
+    // This is correct even for higher momenta
+    // however, 
     num_shells_ = basis_centers_.n_cols();
     basis_list_.Init(num_shells_);
 
     printf("num_shells: %d\n", num_shells_);
 
     num_shell_pairs_ = 0;
-    shell_pair_list_.Init(num_shells_*num_shells_);
+    
+    shell_pair_list_.Init(num_shells_ + num_shells_*(num_shells_-1)/2);
+    //shell_pair_list_.Init(num_shells_*num_shells_);
     
     num_prunes_ = 0;
     
     // This won't be correct when I add p-type
-    matrix_size_ = num_shells_;
+    matrix_size_ = mat_size_in;
     
     coulomb_matrix_.Init(matrix_size_, matrix_size_);
     coulomb_matrix_.SetZero();
     exchange_matrix_.Init(matrix_size_, matrix_size_);
     exchange_matrix_.SetZero();
 
-    fock_matrix_.Init(matrix_size_, matrix_size_);
+    //fock_matrix_.Init(matrix_size_, matrix_size_);
     
     // Change this to take it as input
-    density_matrix_.Init(matrix_size_, matrix_size_);
-    density_matrix_.SetAll(1.0);
+    density_matrix_.Copy(density_in);
     
     for (index_t i = 0; i < num_shells_; i++) {
     
@@ -66,7 +81,7 @@ class SchwartzPrescreening {
   
  private:
 
-  fx_module* module;
+  fx_module* module_;
 
   Matrix basis_centers_;
   Vector basis_exponents_;
@@ -107,7 +122,7 @@ class SchwartzPrescreening {
   /**
    * Inner computation for Schwartz bound
    */
-  double ComputeSchwartzIntegral_();
+  double ComputeSchwartzIntegral_(BasisShell& mu, BasisShell& nu);
   
   
 
