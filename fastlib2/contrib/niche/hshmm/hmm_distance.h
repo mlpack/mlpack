@@ -105,34 +105,44 @@ dist =
   // TODO: mixture of Gaussian case (nearly trivial)
   static double ObservableKernel(Distribution x,
 				 Distribution y) {
+    printf("1\n");
     double val = 1;
 
     int n = x.n_dims();    
-
+    printf("1.25\n");
     double lambda = 1; //NOTE: CHANGE THIS LATER
 
     Matrix sigma_x, sigma_y;
 
     sigma_x.Copy(x.sigma());
     sigma_y.Copy(y.sigma());
+    printf("1.5\n");
+    sigma_x.PrintDebug("sigma");
 
+    Matrix test;
+    test.Init(1,1);
+    test.set(0,0,1);
+    test.PrintDebug("test");
+    
+    printf("%f\n", la::Determinant(test));
 
     // 1) compute norm constants by which result should eventually be divided
     double x_norm_constant =
       pow(2 * M_PI, ((double)n) / 2.)
       * sqrt(fabs(la::Determinant(sigma_x)));
+    printf("1.6\n");
     double y_norm_constant =
       pow(2 * M_PI, ((double)n) / 2.)
       * sqrt(fabs(la::Determinant(sigma_y)));
 
-
+    printf("1.75\n");
     // 2) compute the first, non-exponentiated term
     
     // take care of the 1/2 scalars in the exponent
     la::Scale(2, &sigma_x);
     la::Scale(2, &sigma_y);
 
-
+    printf("2\n");
     Matrix sigma_x_inv;
     la::InverseInit(sigma_x, &sigma_x_inv);
 
@@ -153,7 +163,7 @@ dist =
 
 
     // 3) compute the second, exponentiated term
-    
+    printf("3\n");
     Matrix eye;
     eye.Init(n, n);
     eye.SetZero();
@@ -178,7 +188,7 @@ dist =
     Matrix beta;
     la::AddInit(sigma_x, sigma_y, &beta);
     la::Inverse(&beta); // beta = inv(sigma_x + sigma_y)
-    
+    printf("4\n");
     Vector temp_vec1, temp_vec2;
 
     la::MulInit(x.mu(), alpha, &temp_vec1);
@@ -239,7 +249,7 @@ dist =
     la::MulOverwrite(y.mu(), sigma_y_inv, &temp_vec1);
     result -= la::Dot(temp_vec1, y.mu());
     result -= lambda * la::Dot(x.mu(), x.mu());
-
+    printf("5\n");
     double second_term = exp(result);
 
     val =

@@ -40,6 +40,13 @@ class Distribution {
     return sigma_;
   }
 
+  void SetMu(Vector mu_in) {
+    mu_.CopyValues(mu_in);
+  }
+
+  void SetSigma(Matrix sigma_in) {
+    sigma_.CopyValues(sigma_in);
+  }
 };
 
 
