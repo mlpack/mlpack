@@ -2020,7 +2020,7 @@ static void fx__output_results(fx_module *root)
   char *type_char = fx_mod_marker;
 
   /* Disable the printing of type characters if appropriate */
-  if (fx_param_bool(root, "fx/no_types", 0)) {
+  if (fx_param_bool(root, "fx/no_output_types", 0)) {
     type_char = NULL;
   }
 
