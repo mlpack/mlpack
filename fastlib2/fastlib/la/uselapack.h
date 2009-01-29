@@ -1203,6 +1203,62 @@ namespace la {
    */
   success_t EigenvectorsInit(const Matrix &A, Vector *w, Matrix *V);
 
+/**
+   * Generalized eigenvalue/vector decomposition of two symmetric matrices.
+   *
+   * Compute all the eigenvalues, and optionally, the eigenvectors
+   * of a real generalized eigenproblem, of the form
+   * A*x=(lambda)*B*x, A*Bx=(lambda)*x, or B*A*x=(lambda)*x, where
+   * A and B are assumed to be symmetric and B is also positive definite.
+   *
+   * @param itype an integer that specifies the	problem	type to	be solved:
+   *        = 1: A*x = (lambda)*B*x
+   *        = 2: A*B*x = (lambda)*x
+   *        = 3: B*A*x = (lambda)*x
+   * @param A_eigenvec an N-by-N matrix to be decomposed; overwritten
+   *        with the matrix of eigenvectors
+   * @param B_chol an N-by-N matrix to be decomposed; overwritten
+   *        with triangular factor U or L from the Cholesky factorization
+   *        B=U**T*U or B=L*L**T.
+   * @param w a length-N array of eigenvalues in ascending order.
+   * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
+   */
+  success_t GenEigenSymmetric(int itype, Matrix *A_eigenvec, Matrix *B_chol, double *w);
+
+  /**
+   * Generalized eigenvalue/vector decomposition of two nonsymmetric matrices.
+   *
+   * Compute all the eigenvalues, and optionally, the eigenvectors
+   * of a real generalized eigenproblem, of the form
+   * A*x=(lambda)*B*x, A*B*x=(lambda)*x, or B*A*x=(lambda)*x
+   *
+   * (alpha_real(j) + alpha_imag(j)*i)/beta(j), j=1,...,N, will be the 
+   * generalized eigenvalues.
+   *
+   * Note: the quotients alpha_real(j)/beta(j) and alpha_imag(j)/beta(j) may
+   * easily over- or underflow, and beta(j) may even be zero.  Thus, the
+   * user should avoid naively computing the ratio alpha/beta.  However,
+   * alpha_real and alpha_imag will be always less than and usually comparable
+   * with norm(A) in magnitude, and beta always less than and usually
+   * comparable with norm(B).
+   *
+   * Real eigenvectors are stored in the columns of V, while imaginary
+   * eigenvectors occupy adjacent columns of V with conjugate pairs
+   * given by V(:,j) + i*V(:,j+1) and V(:,j) - i*V(:,j+1).
+   *
+   * @param A_garbage an N-by-N matrix to be decomposed; overwritten
+   *        with garbage
+   * @param B_garbage an N-by-N matrix to be decomposed; overwritten
+   *        with garbage
+   * @param alpha_real a length-N array
+   * @param alpha_imag a length-N array
+   * @param beta a length-N array
+   * @param V_raw an N-by-N matrix ptr to store eigenvectors, or NULL
+   * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
+   */
+  success_t GenEigenNonSymmetric(Matrix *A_garbage, Matrix *B_garbage,
+      double *alpha_real, double *alpha_imag, double *beta, double *V_raw);
+
   /**
    * Destructive SVD (A = U * S * VT).
    *
