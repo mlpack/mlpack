@@ -236,7 +236,7 @@ int main(int argc, char *argv[]) {
 		
 		
 
-		/*
+		
 		
 		double tobjective;
 		tobjective=0;
@@ -265,7 +265,7 @@ int main(int argc, char *argv[]) {
 		opt_gradient_norm = sqrt(la::Dot(opt_gradient, opt_gradient));
 		cout<<"gradient_norm at true par="<<opt_gradient_norm<<endl;
 
-		*/
+		
 
 		
 

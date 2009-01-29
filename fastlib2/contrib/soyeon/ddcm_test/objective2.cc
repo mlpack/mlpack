@@ -930,7 +930,19 @@ double Objective::ComputeTerm1_(Vector &betas) {
     } else {
       Vector temp;
       first_stage_x_[n].MakeColumnVector((first_stage_y_[n]-1), &temp);
-			term1+=la::Dot(betas, temp) - log(exp_betas_times_x1_[n]);
+			//cout<<"term1"<<endl;
+			//cout<<(la::Dot(betas, temp) - log(exp_betas_times_x1_[n]))<<endl;
+			//cout<<(la::Dot(betas, temp))<<endl;
+			//cout<<(log(exp_betas_times_x1_[n]))<<endl;
+			//cout<<"exp_betas_x1="<<exp_betas_times_x1_[n]<<endl;
+			if(la::Dot(betas, temp) - log(exp_betas_times_x1_[n])<1e-7){
+				term1+=0;
+			}
+			else{
+				term1+=la::Dot(betas, temp) - log(exp_betas_times_x1_[n]);
+			}
+
+			
     }
   }
 	//cout<<"term1="<<term1<<endl;
@@ -946,6 +958,8 @@ double Objective::ComputeTerm2_() {
     } else {
       DEBUG_ASSERT(1-postponed_probability_[n]);
       term2+=log(1-postponed_probability_[n]);
+			//cout<<"term2"<<endl;
+			//cout<<(log(1-postponed_probability_[n]))<<endl;
     }
   }
 	//cout<<"term2="<<term2<<endl;
@@ -960,6 +974,8 @@ double Objective::ComputeTerm3_() {
     } else {
       DEBUG_ASSERT(postponed_probability_[n]>0);
       term3+=log(postponed_probability_[n]);
+			//cout<<"term3"<<endl;
+			//cout<<(log(postponed_probability_[n]))<<endl;
 			//cout<<"postponed_prob="<<postponed_probability_[n]<<endl;
     }
   }
