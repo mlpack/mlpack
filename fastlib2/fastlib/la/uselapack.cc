@@ -400,6 +400,52 @@ success_t la::EigenvectorsInit(const Matrix &A, Vector *w, Matrix *V) {
   return success;
 }
 
+success_t la::GenEigenSymmetric(int itype, Matrix *A_eigenvec, Matrix *B_chol, double *w) {
+  DEBUG_MATSQUARE(*A_eigenvec);
+  DEBUG_MATSQUARE(*B_chol);
+  DEBUG_ASSERT(A_eigenvec->n_rows()==B_chol->n_rows());
+  f77_integer itype_f77 = itype;
+  f77_integer info;
+  f77_integer n = A_eigenvec->n_rows();
+  const char *job = "V"; // Compute eigenvalues and eigenvectors.
+  double d; // for querying optimal work size
+
+  F77_FUNC(dsygv)(&itype_f77, job, "U", n, A_eigenvec->ptr(), n, B_chol->ptr(), n, w,
+      &d, -1, &info);
+  {
+    f77_integer lwork = (f77_integer)d;
+    double work[lwork];
+
+    F77_FUNC(dsygv)(&itype_f77, job, "U", n, A_eigenvec->ptr(), n, B_chol->ptr(), n, w,
+      work, lwork, &info);
+  }
+
+  return SUCCESS_FROM_LAPACK(info);
+}
+
+success_t la::GenEigenNonSymmetric(Matrix *A_garbage, Matrix *B_garbage,
+    double *alpha_real, double *alpha_imag, double *beta, double *V_raw) {
+  DEBUG_MATSQUARE(*A_garbage);
+  DEBUG_MATSQUARE(*B_garbage);
+  DEBUG_ASSERT(A_garbage->n_rows()==B_garbage->n_rows());
+  f77_integer info;
+  f77_integer n = A_garbage->n_rows();
+  const char *job = V_raw ? "V" : "N";
+  double d; // for querying optimal work size
+
+  F77_FUNC(dgegv)("N", job, n, A_garbage->ptr(), n, B_garbage->ptr(), n, 
+      alpha_real, alpha_imag, beta, NULL, 1, V_raw, n, &d, -1, &info);
+  {
+    f77_integer lwork = (f77_integer)d;
+    double work[lwork];
+
+    F77_FUNC(dgegv)("N", job, n, A_garbage->ptr(), n, B_garbage->ptr(), n, 
+      alpha_real, alpha_imag, beta, NULL, 1, V_raw, n, work, lwork, &info);
+  }
+
+  return SUCCESS_FROM_LAPACK(info);
+}
+
 /*
 DGESDD is supposed to be faster, although I haven't actually found this
 to be the case.
