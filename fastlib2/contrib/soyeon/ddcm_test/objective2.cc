@@ -935,12 +935,13 @@ double Objective::ComputeTerm1_(Vector &betas) {
 			//cout<<(la::Dot(betas, temp))<<endl;
 			//cout<<(log(exp_betas_times_x1_[n]))<<endl;
 			//cout<<"exp_betas_x1="<<exp_betas_times_x1_[n]<<endl;
-			if(la::Dot(betas, temp) - log(exp_betas_times_x1_[n])<1e-7){
-				term1+=0;
-			}
-			else{
+
+			//if(la::Dot(betas, temp) - log(exp_betas_times_x1_[n])<1e-7){
+			//	term1+=0;
+			//}
+			//else{
 				term1+=la::Dot(betas, temp) - log(exp_betas_times_x1_[n]);
-			}
+			//}
 
 			
     }

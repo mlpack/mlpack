@@ -174,7 +174,7 @@ int main(int argc, char *argv[]) {
 	current_hessian.Init(num_of_parameter, num_of_parameter);
 	current_hessian.SetZero();
 	for(index_t i=0; i<current_hessian.n_rows(); i++){
-		current_hessian.set(i,i,2);
+		current_hessian.set(i,i,1);
 	}
 	la::Scale(-1.0, &current_hessian);
 
@@ -236,7 +236,7 @@ int main(int argc, char *argv[]) {
 		
 		
 
-		
+		/*
 		
 		double tobjective;
 		tobjective=0;
@@ -266,6 +266,8 @@ int main(int argc, char *argv[]) {
 		cout<<"gradient_norm at true par="<<opt_gradient_norm<<endl;
 
 		
+
+		*/
 
 		
 
