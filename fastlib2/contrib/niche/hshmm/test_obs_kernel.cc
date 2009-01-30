@@ -20,29 +20,45 @@ int main(int argc, char *argv[]) {
   Distribution f;
   Distribution g;
 
-  int n_dims = 2;
+  int n_dims = 1;
 
   f.Init(n_dims);
   g.Init(n_dims);
 
-  Vector mu;
-  mu.Init(n_dims);
-  mu.SetZero();
-  f.SetMu(mu);
-  g.SetMu(mu);
+  Vector mu_f;
+  mu_f.Init(n_dims);
+  mu_f.SetZero();
+  mu_f[0] = 0.1;
+  f.SetMu(mu_f);
 
-  Matrix sigma;
-  sigma.Init(n_dims, n_dims);
-  sigma.SetZero();
+  Vector mu_g;
+  mu_g.Init(n_dims);
+  mu_g.SetZero();
+  mu_g[0] = -0.1;
+  g.SetMu(mu_g);
+
+  Matrix sigma_f;
+  sigma_f.Init(n_dims, n_dims);
+  sigma_f.SetZero();
   for(int i = 0; i < n_dims; i++) {
-    sigma.set(i, i, 1);
+    sigma_f.set(i, i, 1);
   }
-  f.SetSigma(sigma);
-  g.SetSigma(sigma);
+  sigma_f.set(0, 0, 1.2);
+  f.SetSigma(sigma_f);
+
+  Matrix sigma_g;
+  sigma_g.Init(n_dims, n_dims);
+  sigma_g.SetZero();
+  for(int i = 0; i < n_dims; i++) {
+    sigma_g.set(i, i, 1);
+  }
+  sigma_g.set(0, 0, 0.8);
+  g.SetSigma(sigma_g);
 
   double sim = HMM_Distance::ObservableKernel(f, g);
   
-  printf("similarity(f,g) = %f\n", sim);
+  printf("similarity(f,g) = %.9f\n", sim);
+
 
   fx_done(root);
 

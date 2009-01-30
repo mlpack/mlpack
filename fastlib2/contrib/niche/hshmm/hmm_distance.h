@@ -105,44 +105,31 @@ dist =
   // TODO: mixture of Gaussian case (nearly trivial)
   static double ObservableKernel(Distribution x,
 				 Distribution y) {
-    printf("1\n");
     double val = 1;
 
     int n = x.n_dims();    
-    printf("1.25\n");
     double lambda = 1; //NOTE: CHANGE THIS LATER
 
     Matrix sigma_x, sigma_y;
 
     sigma_x.Copy(x.sigma());
     sigma_y.Copy(y.sigma());
-    printf("1.5\n");
-    sigma_x.PrintDebug("sigma");
 
-    Matrix test;
-    test.Init(1,1);
-    test.set(0,0,1);
-    test.PrintDebug("test");
-    
-    printf("%f\n", la::Determinant(test));
 
     // 1) compute norm constants by which result should eventually be divided
     double x_norm_constant =
       pow(2 * M_PI, ((double)n) / 2.)
       * sqrt(fabs(la::Determinant(sigma_x)));
-    printf("1.6\n");
     double y_norm_constant =
       pow(2 * M_PI, ((double)n) / 2.)
       * sqrt(fabs(la::Determinant(sigma_y)));
 
-    printf("1.75\n");
     // 2) compute the first, non-exponentiated term
     
     // take care of the 1/2 scalars in the exponent
     la::Scale(2, &sigma_x);
     la::Scale(2, &sigma_y);
 
-    printf("2\n");
     Matrix sigma_x_inv;
     la::InverseInit(sigma_x, &sigma_x_inv);
 
@@ -159,11 +146,66 @@ dist =
 
     la::AddTo(product, &sum);
 
-    double first_term = pow(2*M_PI, n) / sqrt(fabs(la::Determinant(sum)));
+    double first_term = pow(M_PI, n) / sqrt(fabs(la::Determinant(sum)));
 
 
-    // 3) compute the second, exponentiated term
-    printf("3\n");
+    // 3) compute the second, exponentiated term - correct
+
+    Matrix lambda_I;
+    lambda_I.Init(n, n);
+    lambda_I.SetZero();
+    for(int i = 0; i < n; i++) {
+      lambda_I.set(i, i, lambda);
+    }
+    sigma_x_inv.PrintDebug("sigma_x_inv");
+    sigma_y_inv.PrintDebug("sigma_y_inv");
+    Matrix sigma_x_inv_plus_lambda_I;
+    la::AddInit(sigma_x_inv, lambda_I, &sigma_x_inv_plus_lambda_I);
+    //Matrix A;
+    //HMM_Distance::MatrixSqrtSymmetric(sigma_x_inv_plus_lambda_I, &A);
+    Matrix B;
+    la::InverseInit(sigma_x_inv_plus_lambda_I, &B);
+
+    Matrix temp_mat;
+    Matrix alpha;
+    la::MulInit(sigma_x_inv, B, &temp_mat);
+    la::MulInit(temp_mat, sigma_x_inv, &alpha);
+    la::Scale(-1, &alpha);
+    la::AddTo(sigma_y_inv, &alpha);
+    la::AddTo(sigma_x_inv, &alpha);
+
+    Vector beta;
+    la::MulOverwrite(sigma_x_inv, B, &temp_mat);
+    la::MulInit(temp_mat, x.mu(), &beta);
+    la::Scale(lambda, &beta);
+    Vector temp_vec;
+    la::MulInit(sigma_y_inv, y.mu(), &temp_vec);
+    la::AddTo(temp_vec, &beta);
+    la::Scale(-2, &beta);
+
+    double delta;
+    la::MulOverwrite(x.mu(), B, &temp_vec);
+    delta = -lambda * lambda * la::Dot(temp_vec, x.mu());
+    la::MulOverwrite(y.mu(), sigma_y_inv, &temp_vec);
+    delta += la::Dot(temp_vec, y.mu());
+    delta += lambda * la::Dot(x.mu(), x.mu());
+
+    Matrix alpha_inv;
+    la::InverseInit(alpha, &alpha_inv);
+    la::MulOverwrite(beta, alpha_inv, &temp_vec);
+    double result = (la::Dot(temp_vec, beta) / 4) - delta;
+
+
+    printf("result = %f\n", result);
+
+    alpha.PrintDebug("alpha");
+    beta.PrintDebug("beta");
+    printf("delta = %f\n", delta);
+
+    /*
+
+    // 3) compute the second, exponentiated term - wrong
+
     Matrix eye;
     eye.Init(n, n);
     eye.SetZero();
@@ -188,7 +230,7 @@ dist =
     Matrix beta;
     la::AddInit(sigma_x, sigma_y, &beta);
     la::Inverse(&beta); // beta = inv(sigma_x + sigma_y)
-    printf("4\n");
+
     Vector temp_vec1, temp_vec2;
 
     la::MulInit(x.mu(), alpha, &temp_vec1);
@@ -249,7 +291,8 @@ dist =
     la::MulOverwrite(y.mu(), sigma_y_inv, &temp_vec1);
     result -= la::Dot(temp_vec1, y.mu());
     result -= lambda * la::Dot(x.mu(), x.mu());
-    printf("5\n");
+    */
+
     double second_term = exp(result);
 
     val =
@@ -260,8 +303,41 @@ dist =
   }
 
 
-    
+  static void MatrixSqrtSymmetric(Matrix A, Matrix *sqrt_A) {
+    Vector D_vector;
+    Matrix D, E;
+    la::EigenvectorsInit(A, &D_vector, &E);
 
+    int n = D_vector.length();
+
+    D.Init(n, n);
+    D.SetZero();
+    for(int i = 0; i < n; i++) {
+      D.set(i, i, sqrt(D_vector[i]));
+    }
+
+    Matrix E_D;
+    la::MulInit(E, D, &E_D);
+    la::MulTransBInit(E_D, E, sqrt_A);
+  }
+
+  static void MatrixPowSymmetric(Matrix A, Matrix *pow_A, double exponent) {
+    Vector D_vector;
+    Matrix D, E;
+    la::EigenvectorsInit(A, &D_vector, &E);
+
+    int n = D_vector.length();
+
+    D.Init(n, n);
+    D.SetZero();
+    for(int i = 0; i < n; i++) {
+      D.set(i, i, pow(D_vector[i], exponent));
+    }
+
+    Matrix E_D;
+    la::MulInit(E, D, &E_D);
+    la::MulTransBInit(E_D, E, pow_A);
+  }
 
 
 };
