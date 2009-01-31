@@ -28,36 +28,60 @@ int main(int argc, char *argv[]) {
   Vector mu_f;
   mu_f.Init(n_dims);
   mu_f.SetZero();
-  mu_f[0] = 0.1;
+  int i;
+  for(i = 0; i < n_dims; i++) {
+    mu_f[i] = 0;
+  }
   f.SetMu(mu_f);
 
   Vector mu_g;
   mu_g.Init(n_dims);
   mu_g.SetZero();
-  mu_g[0] = -0.1;
+  for(i = 0; i < n_dims; i++) {
+    mu_g[i] = 0;
+  }
   g.SetMu(mu_g);
 
   Matrix sigma_f;
   sigma_f.Init(n_dims, n_dims);
   sigma_f.SetZero();
-  for(int i = 0; i < n_dims; i++) {
+  for(i = 0; i < n_dims; i++) {
     sigma_f.set(i, i, 1);
   }
-  sigma_f.set(0, 0, 1.2);
+  sigma_f.set(0, 0, 1);
   f.SetSigma(sigma_f);
 
   Matrix sigma_g;
   sigma_g.Init(n_dims, n_dims);
   sigma_g.SetZero();
-  for(int i = 0; i < n_dims; i++) {
+  for(i = 0; i < n_dims; i++) {
     sigma_g.set(i, i, 1);
   }
-  sigma_g.set(0, 0, 0.8);
+  sigma_g.set(0, 0, 1);
   g.SetSigma(sigma_g);
 
-  double sim = HMM_Distance::ObservableKernel(f, g);
+
+
+  f.PrintDebug("f");
+  g.PrintDebug("g");
   
-  printf("similarity(f,g) = %.9f\n", sim);
+
+  Matrix results;
+  int num_samples = 1000;
+  double increment = 0.01;
+  results.Init(2, num_samples);
+
+  double sim;
+  for(int j = 0; j < num_samples; j++) {
+    sim = HMM_Distance::ObservableKernel(f, g);
+    results.set(0, j, g.mu_[0]);
+    results.set(1, j, sim);
+    g.mu_[0] += increment;
+  }
+
+  data::Save("sim_results.txt", results);
+  
+
 
 
   fx_done(root);

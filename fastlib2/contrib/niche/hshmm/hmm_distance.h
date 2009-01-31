@@ -157,8 +157,6 @@ dist =
     for(int i = 0; i < n; i++) {
       lambda_I.set(i, i, lambda);
     }
-    sigma_x_inv.PrintDebug("sigma_x_inv");
-    sigma_y_inv.PrintDebug("sigma_y_inv");
     Matrix sigma_x_inv_plus_lambda_I;
     la::AddInit(sigma_x_inv, lambda_I, &sigma_x_inv_plus_lambda_I);
     //Matrix A;
@@ -196,11 +194,7 @@ dist =
     double result = (la::Dot(temp_vec, beta) / 4) - delta;
 
 
-    printf("result = %f\n", result);
 
-    alpha.PrintDebug("alpha");
-    beta.PrintDebug("beta");
-    printf("delta = %f\n", delta);
 
     /*
 

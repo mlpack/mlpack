@@ -2,14 +2,14 @@
 #define DISTRIBUTION_H
 
 class Distribution {
- private:
+ public:
+
 
   int n_dims_;
 
   Vector mu_;
   Matrix sigma_;
 
- public:
 
   void Init(int n_dims_in) {
     n_dims_ = n_dims_in;
@@ -46,6 +46,12 @@ class Distribution {
 
   void SetSigma(Matrix sigma_in) {
     sigma_.CopyValues(sigma_in);
+  }
+
+  void PrintDebug(char *name) {
+    printf("----- DISTRIBUTION %s -----\n", name);
+    mu_.PrintDebug("mu");
+    sigma_.PrintDebug("sigma");
   }
 };
 
