@@ -2,8 +2,10 @@ librule(
     name = "hmm",                 # the executable name
     #sources = ["support.cc","discreteHMM.cc","gaussianHMM.cc","mixgaussHMM.cc","mixtureDST.cc"],
     #headers = ["support.h", "discreteHMM.h","gaussianHMM.h","mixgaussHMM.h","mixtureDST.h"],
-    sources = ["discreteHMM.cc", "gaussianHMM.cc", "support.cc", "gaussianDistribution.cc"],
-    headers = ["discreteHMM.h", "gaussianHMM.h", "support.h"],
+    sources = ["discreteHMM.cc", "gaussianHMM.cc", "support.cc",
+               "gaussianDistribution.cc"],
+    headers = ["discreteHMM.h", "gaussianHMM.h", "mixtureHMM.h",
+               "gaussianDistribution.h", "support.h"],
     deplibs = ["fastlib:fastlib_int"]       # depends on faslib core library
     )
 

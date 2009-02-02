@@ -32,9 +32,9 @@ const fx_module_doc hmm_generate_main_doc = {
 };
 
 void printSEQ(FILE* f, const ArrayList<index_t>& seq) {
-	for (index_t i = 0; i < seq.size(); i++)
-		fprintf(f, "%d,", seq[i]);
-	fprintf(f, "\n");
+  for (index_t i = 0; i < seq.size(); i++)
+    fprintf(f, "%d,", seq[i]);
+  fprintf(f, "\n");
 }
 
 int main(int argc, char* argv[]) {
@@ -49,29 +49,29 @@ int main(int argc, char* argv[]) {
   
   FILE* f = fopen(fileSEQ, "w");
   if (strcmp(type, "discrete") == 0) {
-  	DiscreteHMM hmm;
-  	hmm.LoadTransition(fileTR);
-  	hmm.LoadEmission(fileE);
+    DiscreteHMM hmm;
+    hmm.LoadTransition(fileTR);
+    hmm.LoadEmission(fileE);
   	
-  	for (int i_seq = 0; i_seq < numseq; i_seq++) {
-  		ArrayList<index_t> seq;
-  		int len = (length >= lenmax)?length:rand()%(lenmax-length)+length;
-  		hmm.Generate(len, &seq, NULL);
-  		printSEQ(f, seq);
-		}
-	}
-	else if (strcmp(type, "gaussian") == 0) {
-		GaussianHMM hmm;
-		hmm.LoadTransition(fileTR);
-		hmm.LoadEmission(fileE);
-  	for (int i_seq = 0; i_seq < numseq; i_seq++) {
-  		GaussianHMM::OutputSeq seq;
-  		int len = (length >= lenmax)?length:rand()%(lenmax-length)+length;
-  		hmm.Generate(len, &seq, NULL);
-  		GaussianHMM::printSEQ(f, seq);
-		}
-	}
-	fclose(f);
+    for (int i_seq = 0; i_seq < numseq; i_seq++) {
+      ArrayList<index_t> seq;
+      int len = (length >= lenmax)?length:rand()%(lenmax-length)+length;
+      hmm.Generate(len, &seq, NULL);
+      printSEQ(f, seq);
+    }
+  }
+  else if (strcmp(type, "gaussian") == 0) {
+    GaussianHMM hmm;
+    hmm.LoadTransition(fileTR);
+    hmm.LoadEmission(fileE);
+    for (int i_seq = 0; i_seq < numseq; i_seq++) {
+      GaussianHMM::OutputSeq seq;
+      int len = (length >= lenmax)?length:rand()%(lenmax-length)+length;
+      hmm.Generate(len, &seq, NULL);
+      GaussianHMM::printSEQ(f, seq);
+    }
+  }
+  fclose(f);
   fx_done(NULL);
 }
 
