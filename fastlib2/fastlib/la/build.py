@@ -42,8 +42,8 @@ def gen_compile_complex_lapack(sysentry, files, params):
   sysentry.command("echo '... NOTE 3: We require case sensitivity for LAPACK/BLAS string parameters.'")
   sysentry.command("echo '... This may take several minutes (about 800 FORTRAN files).'")
   # Loop unrolling is not useful on modern architectures (and bloats EXE size).
-  # Thus, we only compile -O2.
-  sysentry.command("cd %s && %s -O2 -c src/*.f" % (sq(workspace_dir), sq(compiler)))
+  # Thus, we only compile -O.
+  sysentry.command("cd %s && %s -O -c src/*.f" % (sq(workspace_dir), sq(compiler)))
   sysentry.command("echo '... Almost done with LAPACK/BLAS...'")
   #noopt = "zlamch clamch" # these have to be compiled without optimization
   #noopt_real = " ".join(sq(["src/%s.f" % x for x in noopt.split()]))
@@ -78,8 +78,8 @@ def gen_compile_lapack(sysentry, files, params):
   sysentry.command("echo '... NOTE 3: We require case sensitivity for LAPACK/BLAS string parameters.'")
   sysentry.command("echo '... This may take several minutes (about 800 FORTRAN files).'")
   # Loop unrolling is not useful on modern architectures (and bloats EXE size).
-  # Thus, we only compile -O2.
-  sysentry.command("cd %s && %s -O2 -c src/*.f" % (sq(workspace_dir), sq(compiler)))
+  # Thus, we only compile -O.
+  sysentry.command("cd %s && %s -O -c src/*.f" % (sq(workspace_dir), sq(compiler)))
   sysentry.command("echo '... Almost done with LAPACK/BLAS...'")
   noopt = "dlamch slamch" # these have to be compiled without optimization
   noopt_real = " ".join(sq(["src/%s.f" % x for x in noopt.split()]))
@@ -220,8 +220,8 @@ def make_lapack(sysentry, files, params):
                         # This is fixing Bill's problem.
                         sysentry.command("cd %s/lapack* && echo 'TIMER = INT_CPU_TIME' >> make.inc.example" % (sq(workspace_dir)))
                         # This is fixing the compilation flag to be something other than -g option.
-                        sysentry.command("cd %s/lapack* && echo 'FORTRAN = gfortran -fimplicit-none -O3' >> make.inc.example" % (sq(workspace_dir)))
-                        sysentry.command("cd %s/lapack* && echo 'LOADER = gfortran -O3' >> make.inc.example" % (sq(workspace_dir)))
+                        sysentry.command("cd %s/lapack* && echo 'FORTRAN = gfortran -fimplicit-none -O' >> make.inc.example" % (sq(workspace_dir)))
+                        sysentry.command("cd %s/lapack* && echo 'LOADER = gfortran -O' >> make.inc.example" % (sq(workspace_dir)))
 			sysentry.command("cd %s/lapack* && mv make.inc.example make.inc" % (sq(workspace_dir)) )
 			sysentry.command("cd %s/lapack* && make lapacklib" % (sq(workspace_dir)))
 			sysentry.command("echo '... Almost done with LAPACK...'")
