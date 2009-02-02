@@ -10,25 +10,18 @@ GaussianDistribution::GaussianDistribution(
 }
 
 GaussianDistribution::GaussianDistribution(index_t dim) {
-	printf("TEST1\n");
 	InitMeanCov(dim);
 	Vector m; m.Init(dim);
 	Matrix cov; cov.Init(dim, dim);
 	
-	printf("TEST1\n");
-	
 	for (index_t i = 0; i < dim; i++)
 		m[i] = math::Random(-1, 1);
 		
-	printf("TEST1\n");
-	
 	cov.SetZero();
 	for (index_t i = 0; i < dim; i++)
 		cov.ref(i, i) = math::Random(1, 4);
 	
-	printf("TEST1\n");
 	setMeanCov(m, cov);
-	printf("TEST1\n");
 }
 
 GaussianDistribution::GaussianDistribution(const GaussianDistribution& gd) {
@@ -43,7 +36,9 @@ GaussianDistribution::GaussianDistribution(const GaussianDistribution& gd) {
 }
 
 double GaussianDistribution::logP(const Vector& x) {
-	return gConst - 0.5*multxAy(x, invCov, x);
+	Vector d;
+	la::SubInit(mean, x, &d);
+	return gConst - 0.5*multxAy(d, invCov, d);
 }
 
 void GaussianDistribution::createFromCols(
@@ -53,8 +48,6 @@ void GaussianDistribution::createFromCols(
 	Matrix covariance;
 	src.MakeColumnVector(col, &mean);
 	src.MakeColumnSlice(col+1, dim, &covariance);
-	ot::Print(mean);
-	ot::Print(covariance);
 	tmp->setMeanCov(mean, covariance);
 }
 
@@ -103,19 +96,10 @@ void GaussianDistribution::InitMeanCov(index_t dim) {
 void GaussianDistribution::setMeanCov(const Vector& m, const Matrix& cov) {
 	this->mean.CopyValues(m);
 	this->covariance.CopyValues(cov);
-	printf("TEST2\n");
-	ot::Print(cov);
-	ot::Print(invCov);
-	Matrix invTmp;
-	la::InverseInit(cov, &invTmp);
-	invCov.CopyValues(invTmp);
-	printf("TEST2\n");
+	la::InverseOverwrite(cov, &invCov);
 	Matrix tmp;
 	la::CholeskyInit(cov, &tmp);
-	printf("TEST2\n");
 	sqrCov.CopyValues(tmp);
-	printf("TEST2\n");
 	gConst = -0.5*n_dim()*log(2*math::PI)-0.5*la::DeterminantLog(cov, NULL);
-	printf("TEST2\n");
 }
 

@@ -25,6 +25,8 @@ public:
 		{ return transition.ref(i, j); }
 	double e_get(index_t i, index_t j)
 		{ return emission.ref(i, j); }
+	static void readSEQ(TextLineReader& f, DiscreteHMM::OutputSeq* seq);
+	static void readSEQs(TextLineReader& f, ArrayList<DiscreteHMM::OutputSeq>* seqs);
 private:
 	void forward(const OutputSeq& seq,
 		Matrix* fs, Vector* scale);

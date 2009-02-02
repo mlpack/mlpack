@@ -38,16 +38,6 @@ void printSEQ(FILE* f, const ArrayList<index_t>& seq) {
 }
 
 int main(int argc, char* argv[]) {
-	Matrix test;
-	test.Init(2,2);
-	test.SetZero();
-	test.ref(0,0) = 1;
-	test.ref(1,1) = 1;
-	ot::Print(test);
-	Matrix inv;
-	la::InverseInit(test, &inv);
-	ot::Print(inv);
-/*	
   fx_init(argc, argv, &hmm_generate_main_doc );
   const char* type = fx_param_str_req(fx_root, "type");
   const char* fileTR = fx_param_str_req(fx_root, "fileTR");
@@ -82,8 +72,6 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	fclose(f);
-  
   fx_done(NULL);
-*/
 }
 

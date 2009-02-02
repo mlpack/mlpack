@@ -21,6 +21,32 @@ void DiscreteHMM::Save(const char* outTR, const char* outE) {
 	data::Save(outE, emission);
 }
 
+void DiscreteHMM::readSEQ(TextLineReader& f, DiscreteHMM::OutputSeq* seq) {
+	seq->Init();
+	while (f.MoreLines()) {
+		ArrayList<String> strlist;
+		strlist.Init();
+		f.Peek().Split(", ", &strlist);
+		f.Gobble();
+		if (strlist.size() > 0) {
+			for (index_t i = 0; i < strlist.size(); i++)
+				seq->PushBackCopy(atoi(strlist[i].c_str()));
+			//ot::Print(*seq);
+			break;
+		}
+	}
+}
+
+void DiscreteHMM::readSEQs(TextLineReader& f, ArrayList<DiscreteHMM::OutputSeq>* seqs) {
+	seqs->Init();
+	while (1) {
+  	DiscreteHMM::OutputSeq seq;
+  	readSEQ(f, &seq);
+		if (seq.size() == 0) break;
+		seqs->PushBackCopy(seq);
+	}
+}
+
 void DiscreteHMM::Generate(index_t length, OutputSeq* seq,
 	StateSeq* states){
 	Matrix cTR, cE;

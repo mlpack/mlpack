@@ -119,4 +119,10 @@ namespace supportHMM {
     la::AddTo(mean, v);
   }
 
+	void RandomInit(int m, int n, Matrix* A) {
+		A->Init(n, n);
+		for (index_t i = 0; i < n; i++)
+			for (index_t j = 0; j < n; j++)
+				A->ref(i, j) = math::Random();
+	}
 }

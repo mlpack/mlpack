@@ -53,6 +53,7 @@ public:
 	void LoadTransition(const char* filename);
 	void LoadEmission(const char* filename);
 	void Save(const char* outTR, const char* outE);
+	void InitRandom(index_t dim, index_t n_state);
 	int n_states() { return transition.n_rows(); }
 	int n_dim() { return emission[0].n_dim(); }
 	double tr_get(index_t i, index_t j) 
@@ -60,6 +61,8 @@ public:
 	const GaussianDistribution& e_get(index_t i)
 		{ return emission[i]; }
 	static void printSEQ(FILE* f, const OutputSeq& seq);
+	static void readSEQ(TextLineReader& f, OutputSeq* seq);
+	static void readSEQs(TextLineReader& f, ArrayList<OutputSeq>* seq);
 private:
 	void calPOutput(const OutputSeq& seq, Matrix* pOutput);
 	void forward(const OutputSeq& seq,
