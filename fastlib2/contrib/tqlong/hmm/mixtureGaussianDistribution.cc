@@ -1,54 +1,45 @@
+#include "mixtureGaussianDistribution.h"
 #include "gaussianDistribution.h"
 #include "support.h"
 
 using namespace supportHMM;
 
-GaussianDistribution::GaussianDistribution(
-					   const Vector& mean, const Matrix& cov) {
-  InitMeanCov(mean.length());
-  setMeanCov(mean, cov);
+MixtureGaussianDistribution::GaussianDistribution(index_t n_mixs, index_t dim) {
+  pMixtures.Init();
+  gDistributions.Init();
+
+  double s = 0.0;
+  for (index_t i = 0; i < n_mixs; i++) {
+    double r = math::Random(0, 1);
+    s += r;
+    pMixtures.PushBackCopy(r);
+  }
+  for (index_t i = 0; i < n_mixs; i++)
+    pMixtures[i] /= s;
+
+  for (index_t i = 0; i < n_mixs; i++) {
+    GaussianDistribution gd(dim);
+    gDistributions.PushBackCopy(gd);
+  }
 }
 
-GaussianDistribution::GaussianDistribution(index_t dim) {
-  InitMeanCov(dim);
-  Vector m; m.Init(dim);
-  Matrix cov; cov.Init(dim, dim);
-	
-  for (index_t i = 0; i < dim; i++)
-    m[i] = math::Random(-1, 1);
-		
-  cov.SetZero();
-  for (index_t i = 0; i < dim; i++)
-    cov.ref(i, i) = math::Random(1, 4);
-	
-  setMeanCov(m, cov);
+MixtureGaussianDistribution::MixtureGaussianDistribution(const MixtureGaussianDistribution& mgd) {
+  pMixtures.Copy(mgd.pMixtures);
+  gDistributions.Copy(mgd.gDistributions);
 }
 
-GaussianDistribution::GaussianDistribution(const GaussianDistribution& gd) {
-  mean.Copy(gd.mean);
-  covariance.Copy(gd.covariance);
-  invCov.Copy(gd.invCov);
-  sqrCov.Copy(gd.sqrCov);
-  accMean.Copy(gd.accMean);
-  accCov.Copy(gd.accCov);
-  gConst = gd.gConst;
-  accDenom = gd.accDenom;
+double MixtureGaussianDistribution::logP(const Vector& x) {
+  double s = 0;
+  for (index_t i = 0; i < n_mixs(); i++) 
+    s += pMixtures[i] * exp(gDistributions[i].logP(x));
+  return log(s);
 }
 
-double GaussianDistribution::logP(const Vector& x) {
-  Vector d;
-  la::SubInit(mean, x, &d);
-  return gConst - 0.5*multxAy(d, invCov, d);
-}
-
-void GaussianDistribution::createFromCols(
-					  const Matrix& src, index_t col, GaussianDistribution* tmp) {
+void MixtureGaussianDistribution::createFromFile(
+    TextLineReader& f, MixtureGaussianDistribution* tmp) {
   index_t dim = src.n_rows();
-  Vector mean;
-  Matrix covariance;
-  src.MakeColumnVector(col, &mean);
-  src.MakeColumnSlice(col+1, dim, &covariance);
-  tmp->setMeanCov(mean, covariance);
+  for (index_t i = 0; i < n_mixs; i++) {
+  }
 }
 
 void GaussianDistribution::Generate(Vector* x) {

@@ -40,31 +40,31 @@ int main(int argc, char* argv[]) {
   const char* outTR = fx_param_str(fx_root, "outTR", "tr.out");
   const char* outE = fx_param_str(fx_root, "outE", "e.out");
   double tolerance = fx_param_double(fx_root, "tol", 1e-5);
-  double maxIteration = fx_param_int(fx_root, "maxiter", 500);
+  index_t maxIteration = fx_param_int(fx_root, "maxiter", 500);
   
   TextLineReader f;
   f.Open(fileSEQ);
   if (strcmp(type, "discrete") == 0) {
-  	DiscreteHMM hmm;
-  	hmm.LoadTransition(fileTR);
-  	hmm.LoadEmission(fileE);
-  	ArrayList<DiscreteHMM::OutputSeq> seqs;
-  	DiscreteHMM::readSEQs(f, &seqs);
-  	hmm.Train(seqs, tolerance, maxIteration);
-  	hmm.Save(outTR, outE);
-	}
-	else if (strcmp(type, "gaussian") == 0) {
-  	GaussianHMM hmm;
-  	//hmm.LoadTransition(fileTR);
-  	//hmm.LoadEmission(fileE);
-  	srand(time(NULL));
-  	ArrayList<GaussianHMM::OutputSeq> seqs;
-  	GaussianHMM::readSEQs(f, &seqs);
-  	hmm.InitRandom(seqs[0][0].length(), 2);
-  	printf("numSeq = %d\n", seqs.size());
-  	hmm.Train(seqs, tolerance, maxIteration);
-  	hmm.Save(outTR, outE);
-	}
+    DiscreteHMM hmm;
+    hmm.LoadTransition(fileTR);
+    hmm.LoadEmission(fileE);
+    ArrayList<DiscreteHMM::OutputSeq> seqs;
+    DiscreteHMM::readSEQs(f, &seqs);
+    hmm.Train(seqs, tolerance, maxIteration);
+    hmm.Save(outTR, outE);
+  }
+  else if (strcmp(type, "gaussian") == 0) {
+    GaussianHMM hmm;
+    //hmm.LoadTransition(fileTR);
+    //hmm.LoadEmission(fileE);
+    srand(time(NULL));
+    ArrayList<GaussianHMM::OutputSeq> seqs;
+    GaussianHMM::readSEQs(f, &seqs);
+    hmm.InitRandom(seqs[0][0].length(), 2);
+    printf("numSeq = %d\n", seqs.size());
+    hmm.Train(seqs, tolerance, maxIteration);
+    hmm.Save(outTR, outE);
+  }
   f.Close();
   
   fx_done(NULL);

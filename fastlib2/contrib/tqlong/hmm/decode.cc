@@ -39,36 +39,36 @@ int main(int argc, char* argv[]) {
   f.Open(fileSEQ);
   FILE* fout = fopen(fileLOG, "w");
   if (strcmp(type, "discrete") == 0) {
-  	DiscreteHMM hmm;
-  	hmm.LoadTransition(fileTR);
-  	hmm.LoadEmission(fileE);
-  	while (1) {
-  		DiscreteHMM::OutputSeq seq;
-  		DiscreteHMM::readSEQ(f, &seq);
-  		if (seq.size() == 0) break;
-  		Matrix pStates, fs, bs;
-  		Vector s;
-  		double logSeq = hmm.Decode(seq, &pStates, &fs, &bs, &s);
-  		fprintf(fout, "%f\n", logSeq);
-		}
-	}
-	else if (strcmp(type, "gaussian") == 0) {
-		GaussianHMM hmm;
-		hmm.LoadTransition(fileTR);
-		hmm.LoadEmission(fileE);
-  	while (1) {
-  		GaussianHMM::OutputSeq seq;
-  		GaussianHMM::readSEQ(f, &seq);
-  		printf("length = %d\n", seq.size());
-  		if (seq.size() == 0) break;
-  		Matrix pStates, fs, bs, pOutput;
-  		Vector s;
-  		double logSeq = hmm.Decode(seq, &pStates, &fs, &bs, &s, &pOutput);
-  		fprintf(fout, "%f\n", logSeq);
-		}
-	}
-	f.Close();
-	fclose(fout);
+    DiscreteHMM hmm;
+    hmm.LoadTransition(fileTR);
+    hmm.LoadEmission(fileE);
+    while (1) {
+      DiscreteHMM::OutputSeq seq;
+      DiscreteHMM::readSEQ(f, &seq);
+      if (seq.size() == 0) break;
+      Matrix pStates, fs, bs;
+      Vector s;
+      double logSeq = hmm.Decode(seq, &pStates, &fs, &bs, &s);
+      fprintf(fout, "%f\n", logSeq);
+    }
+  }
+  else if (strcmp(type, "gaussian") == 0) {
+    GaussianHMM hmm;
+    hmm.LoadTransition(fileTR);
+    hmm.LoadEmission(fileE);
+    while (1) {
+      GaussianHMM::OutputSeq seq;
+      GaussianHMM::readSEQ(f, &seq);
+      printf("length = %d\n", seq.size());
+      if (seq.size() == 0) break;
+      Matrix pStates, fs, bs, pOutput;
+      Vector s;
+      double logSeq = hmm.Decode(seq, &pStates, &fs, &bs, &s, &pOutput);
+      fprintf(fout, "%f\n", logSeq);
+    }
+  }
+  f.Close();
+  fclose(fout);
   
   fx_done(NULL);
 }
