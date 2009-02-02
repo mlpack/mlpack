@@ -27,6 +27,17 @@ class ThreeBodyGaussianKernel: public MultibodyPotentialKernel {
 
   static const int order = 3;
 
+  double EvaluateUnnorm(double distance) {
+
+    return exp(-0.5 * math::Sqr(distance) * inv_bandwidth_sq_);
+  }
+
+  double Gradient(double distance) {
+    
+    return -distance * inv_bandwidth_sq_ * 
+      exp(-0.5 * math::Sqr(distance) * inv_bandwidth_sq_);
+  }
+
   void Init(double bandwidth_in) {
     bandwidth_sq_ = math::Sqr(bandwidth_in);
     inv_bandwidth_sq_ = 1.0 / bandwidth_sq_;
