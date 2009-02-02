@@ -9,7 +9,6 @@ index_t MaxLength(const ArrayList<GaussianHMM::OutputSeq>& seqs);
 void GaussianHMM::LoadTransition(const char* filename) {
 	data::Load(filename, &transition);
 	normalizeRows(&transition);
-	ot::Print(transition);
 }
 
 void GaussianHMM::LoadEmission(const char* filename) {
@@ -17,14 +16,10 @@ void GaussianHMM::LoadEmission(const char* filename) {
 	data::Load(filename, &tmp);
 	index_t dim = tmp.n_rows();
 	index_t n = tmp.n_cols()/(dim+1);
-	printf("n=%d\n", n);
-	ot::Print(tmp);
 	emission.Init();
 	for (index_t i = 0; i < n; i++) {
 		GaussianDistribution gd(dim);
-		gd.Save(stdout);
 		GaussianDistribution::createFromCols(tmp, i*(dim+1), &gd);
-		gd.Save(stdout);
 		emission.PushBackCopy(gd);
 	}
 }
@@ -37,15 +32,63 @@ void GaussianHMM::Save(const char* outTR, const char* outE) {
 	fclose(f);
 }
 
+void GaussianHMM::InitRandom(index_t dim, index_t n_state) {
+	RandomInit(n_state, n_state, &transition);
+	normalizeRows(&transition);
+	emission.Init();
+	for (index_t i = 0; i < n_state; i++) {
+		GaussianDistribution gd(dim);
+		emission.PushBackCopy(gd);
+	}
+}
+
 void GaussianHMM::printSEQ(FILE* f, const OutputSeq& seq) {
 	fprintf(f, "%d\n", seq.size());
 	for (index_t i = 0; i < seq.size(); i++) 
 		printVector(f, seq[i]);
 }
 
+void GaussianHMM::readSEQ(TextLineReader& f, OutputSeq* seq) {
+	seq->Init();
+	while (f.MoreLines()) {
+		ArrayList<String> strlist;
+		strlist.Init();
+		f.Peek().Split(", ", &strlist);
+		f.Gobble();
+		// is number of vectors
+		if (strlist.size() != 1) continue;
+		index_t length = atoi(strlist[0].c_str());
+		//printf("length=%d\n", length);
+		if (length == 0) continue;
+		for (index_t i = 0; i < length; i++) {
+			ArrayList<String> strlist;
+			strlist.Init();
+			f.Peek().Split(", ", &strlist);
+			f.Gobble();
+			Vector tmp;
+			tmp.Init(strlist.size());
+			for (index_t i = 0; i < strlist.size(); i++)
+				tmp[i] = atof(strlist[i].c_str());
+			seq->PushBackCopy(tmp);
+			//ot::Print(tmp);
+		}
+		break;
+	}
+}
+
+void GaussianHMM::readSEQs(TextLineReader& f, ArrayList<OutputSeq>* seq) {
+	seq->Init();
+	while (1) {
+		OutputSeq tmp;
+		readSEQ(f, &tmp);
+		if (tmp.size() == 0) break;
+		seq->PushBackCopy(tmp);
+	}
+}
+
 void GaussianHMM::Generate(index_t length, OutputSeq* seq,
 	StateSeq* states){
-	Matrix cTR, cE;
+	Matrix cTR;
 	cumulativeSum(transition, &cTR);
 	seq->Init();
 	if (states) states->Init();
@@ -68,9 +111,15 @@ double GaussianHMM::Decode(const OutputSeq& seq,
 		bool init) {
 	
 	if (init) initDecode(seq.size(), pStates, fs, bs, scale, pOutput);
+	//for (int i = 0; i < n_states(); i++)
+	//	emission[i].Save(stdout);
 	calPOutput(seq, pOutput);
+	//ot::Print(*pOutput);
 	forward(seq, fs, scale, pOutput);
+	//ot::Print(*fs);
+	//ot::Print(*scale);
 	backward(seq, bs, scale, pOutput);
+	//ot::Print(*bs);
 	
 	calPStates(seq.size(), pStates, fs, bs);
 	double logSeq = calPSeq(seq.size(), scale);
@@ -126,9 +175,13 @@ void GaussianHMM::Train(const ArrayList<OutputSeq>& seqs,
 }
 
 void GaussianHMM::calPOutput(const OutputSeq& seq, Matrix* pOutput) {
-	for (index_t i = 0; i < seq.size(); i++) 
-		for (index_t s = 0; s < n_states(); s++)
+	for (index_t i = 0; i < seq.size(); i++) {
+		for (index_t s = 0; s < n_states(); s++) {
 			pOutput->ref(s, i) = emission[s].logP(seq[i]);
+			//printf("%10f,", pOutput->ref(s, i));
+		}
+		//printf("\n");
+	}
 }
 
 void GaussianHMM::M_step(const OutputSeq& seq, const Matrix& fs, const Matrix& bs, 
@@ -167,7 +220,7 @@ void GaussianHMM::forward(const OutputSeq& seq,
 			fs->ref(s, i) = 0;
 			for (index_t s1 = 0; s1 < n_states(); s1++)
 				fs->ref(s, i) +=  fs->get(s1, i-1)*tr_get(s1, s);
-			fs->ref(s, i) *= pOutput->get(s, i-1);
+			fs->ref(s, i) = exp(log(fs->get(s, i)) + pOutput->get(s, i-1));
 			//printf("i=%d s=%d, fs(s, i) = %f\n", i,s,fs->get(s, i));
 		}
 		(*scale)[i] = NormalizeColumn(fs, i);
@@ -183,8 +236,8 @@ void GaussianHMM::backward(const OutputSeq& seq,
 		for (index_t s = 0; s < n_states(); s++) {
 			bs->ref(s, i) = 0.0;
 			for (index_t s1 = 0; s1 < n_states(); s1++)
-				bs->ref(s, i) += tr_get(s, s1)*bs->get(s1, i+1)*
-				  pOutput->get(s1, i);
+				bs->ref(s, i) += exp(log(tr_get(s, s1))+log(bs->get(s1, i+1))+
+				  pOutput->get(s1, i));
 			bs->ref(s, i) /= (*scale)[i+1];
 		}
 }

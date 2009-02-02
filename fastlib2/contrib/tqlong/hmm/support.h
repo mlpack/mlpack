@@ -18,6 +18,7 @@ namespace supportHMM {
   double RandomNormal();
   void RandomNormal(int dim, Vector* v);
   void RandomNormal(const Vector& mean, const Matrix& cov, Vector* v);
+  void RandomInit(int m, int n, Matrix* A);
 	void printVector(FILE* f, const Vector& x);
 	void printMatrix(FILE* f, const Matrix& x);
 };

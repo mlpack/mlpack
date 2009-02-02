@@ -1,5 +1,6 @@
 #include <fastlib/fastlib.h>
 #include "discreteHMM.h"
+#include "gaussianHMM.h"
 
 const fx_entry_doc hmm_decode_main_entries[] = {
   {"type", FX_REQUIRED, FX_STR, NULL,
@@ -24,21 +25,7 @@ const fx_module_doc hmm_decode_main_doc = {
   "This is a program generating sequences from HMM models.\n"
 };
 
-void readSEQ(TextLineReader& f, DiscreteHMM::OutputSeq* seq) {
-	seq->Init();
-	while (f.MoreLines()) {
-		ArrayList<String> strlist;
-		strlist.Init();
-		f.Peek().Split(", ", &strlist);
-		f.Gobble();
-		if (strlist.size() > 0) {
-			for (index_t i = 0; i < strlist.size(); i++)
-				seq->PushBackCopy(atoi(strlist[i].c_str()));
-			//ot::Print(*seq);
-			break;
-		}
-	}
-}
+
 
 int main(int argc, char* argv[]) {
   fx_init(argc, argv, &hmm_decode_main_doc );
@@ -57,11 +44,26 @@ int main(int argc, char* argv[]) {
   	hmm.LoadEmission(fileE);
   	while (1) {
   		DiscreteHMM::OutputSeq seq;
-  		readSEQ(f, &seq);
+  		DiscreteHMM::readSEQ(f, &seq);
   		if (seq.size() == 0) break;
   		Matrix pStates, fs, bs;
   		Vector s;
   		double logSeq = hmm.Decode(seq, &pStates, &fs, &bs, &s);
+  		fprintf(fout, "%f\n", logSeq);
+		}
+	}
+	else if (strcmp(type, "gaussian") == 0) {
+		GaussianHMM hmm;
+		hmm.LoadTransition(fileTR);
+		hmm.LoadEmission(fileE);
+  	while (1) {
+  		GaussianHMM::OutputSeq seq;
+  		GaussianHMM::readSEQ(f, &seq);
+  		printf("length = %d\n", seq.size());
+  		if (seq.size() == 0) break;
+  		Matrix pStates, fs, bs, pOutput;
+  		Vector s;
+  		double logSeq = hmm.Decode(seq, &pStates, &fs, &bs, &s, &pOutput);
   		fprintf(fout, "%f\n", logSeq);
 		}
 	}
