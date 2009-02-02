@@ -106,6 +106,8 @@ class MultibodyPotentialKernel {
     return flag;
   }
 
+  virtual double Gradient(double distance) = 0;
+
   template<typename QueryResult>
   void PositiveEvaluate(const ArrayList<index_t> &indices,
 			const ArrayList<Matrix *> &sets, 

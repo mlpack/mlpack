@@ -9,7 +9,23 @@ librule(
     )
 
 librule(
-    name = "multibody",
+    name = "chebyshev_fit",
+    sources = [],
+    headers = ["chebyshev_fit.h"],
+    deplibs = ["fastlib:fastlib_int"]
+    )
+
+librule(
+    name = "multibody_force",
+    sources = [],
+    headers = ["multibody_force_problem.h",
+               "multibody_kernel.h"],    
+    deplibs = ["contrib/dongryel/multitree_template:multitree_template",
+               "contrib/dongryel/nested_summation_template:nested_summation_template"]
+    )
+
+librule(
+    name = "multibody_potential",
     sources = [],
     headers = ["at_potential_kernel.h",              
                "mbp_delta.h",
@@ -19,12 +35,11 @@ librule(
                "mbp_query_result.h",
                "mbp_query_summary.h",
                "mbp_stat.h",
-               "multibody_force_problem.h",
                "multibody_potential_problem.h",
-               "multibody_kernel.h",
                "three_body_gaussian_kernel.h"],
     deplibs = ["contrib/dongryel/multitree_template:multitree_template",
-               "contrib/dongryel/nested_summation_template:nested_summation_template"]
+               "contrib/dongryel/nested_summation_template:nested_summation_template",
+               ":chebyshev_fit"]
     )
 
 binrule(
@@ -38,14 +53,21 @@ binrule(
     name = "multibody_force_bin",
     sources = ["multibody_force_main.cc"],
     headers = [],
-    deplibs = [":multibody"]
+    deplibs = [":multibody_force"]
     )
 
 binrule(
     name = "multibody_potential_bin",
     sources = ["multibody_potential_main.cc"],
     headers = [],
-    deplibs = [":multibody"]
+    deplibs = [":multibody_potential"]
+    )
+
+binrule(
+    name = "chebyshev_fit_test",
+    sources = ["chebyshev_fit_test.cc"],
+    headers = [],
+    deplibs = [":chebyshev_fit"]
     )
 
 # to build:

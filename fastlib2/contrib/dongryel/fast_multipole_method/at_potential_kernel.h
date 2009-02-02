@@ -63,6 +63,12 @@ class ATPotentialKernel: public MultibodyPotentialKernel {
     SetZero();
   }
 
+  double Gradient(double distance) {
+    
+    // COMPLETE ME!!!
+    return 0;
+  }
+
   double Evaluate(double sq_dist1, double sq_dist2, double sq_dist3) {
 
     double cube_dist1 = sq_dist1 * sqrt(sq_dist1);
