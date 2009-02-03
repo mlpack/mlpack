@@ -601,11 +601,12 @@ class MultiTreeDepthFirst {
       PreProcessQueryTree_(query_trees[0]);
     }
 
+    /*
     // If the monochromatic trick is required, then create the initial
     // strata and do a monochromatic on each strata to build up the
     // bounds.
     if(monochromatic_trick) {
-      Strata<HybridTree> frontier;
+      Strata frontier;
       frontier.Init(hybrid_trees_[0], MultiTreeProblem::order - 1, 0.1);
 
       printf("%d strata created for the monochromatic trick...\n",
@@ -638,6 +639,7 @@ class MultiTreeDepthFirst {
 
       PreProcessQueryTreeMonochromatic_(hybrid_trees_[0], *query_results);
     }
+    */
 
     // Call the canonical algorithm.
     double total_num_tuples = TotalNumTuples(hybrid_trees_, query_trees,
