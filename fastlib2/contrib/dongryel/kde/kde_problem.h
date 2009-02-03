@@ -217,6 +217,10 @@ class KdeProblem {
    double total_n_minus_one_tuples_root,
    const Vector &total_n_minus_one_tuples) {
 
+    if(globals.probability >= 1) {
+      return false;
+    }
+
     QueryTree *qnode = query_nodes[0];
     ReferenceTree *rnode = reference_nodes[0];
     const Matrix &qset = *(query_sets[0]);
