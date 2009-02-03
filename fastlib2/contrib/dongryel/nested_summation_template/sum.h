@@ -3,6 +3,7 @@
 
 #include "fastlib/fastlib.h"
 #include "operator.h"
+#include "nested_sum_utility.h"
 
 class Sum: public Operator {
 
@@ -77,19 +78,26 @@ class Sum: public Operator {
 
       // Recompute the threshold and the samples needed for the next
       // iteration...
+
+      /*
+      // FIX ME!!!!!
+      double standard_score = 0;
       int threshold = math::Sqr(standard_score * (1 + relative_error) /
 				(relative_error * sample_mean)) *
 	sample_variance;
+      */
       
     } while(total_num_samples_needed > 0);
 
-    
+    /*
     // Compute the sample average and multiply by the number of terms
     // in the current dataset index.
     sum_result = sum_result / ((double) sample_size) * 
       (((*datasets_)[dataset_index_])->n_cols());
     
     return PostProcess_(constant_dataset_indices, sum_result);
+    */
+    return 0;
   }
 
 };
