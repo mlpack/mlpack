@@ -5,7 +5,6 @@
 #include <queue>
 #include <vector>
 
-template<typename TreeType>
 class Strata {
 
  public:
@@ -14,7 +13,7 @@ class Strata {
 
   index_t total_num_terms;
 
-  ArrayList<TreeType *> node_list;
+  ArrayList<DRange> node_list;
 
   Matrix statistics_for_each_stratum;
 
@@ -22,6 +21,7 @@ class Strata {
 
   ArrayList<index_t> output_allocation_for_each_stratum;
 
+  template<typename TreeType>
   class CompareTreeType {
    public:
     bool operator()(TreeType *a, TreeType *b) {
@@ -33,6 +33,7 @@ class Strata {
    *         number of nodes using the number of data points times sum
    *         of per-dimension variance heuristic.
    */
+  template<typename TreeType>
   void Init(TreeType *root_in, index_t num_stratum_desired) {
 
     // Set the total number of terms.
@@ -41,17 +42,19 @@ class Strata {
 
     // The priority queue used for the expansion.
     std::priority_queue<TreeType *, std::vector<TreeType *>,
-      CompareTreeType> frontier;
+      CompareTreeType<TreeType> > frontier;
     frontier.push(root_in);
     total_num_stratum = 0;
 
     // First expand the tree and form the frontier which will become
     // the list of strata.
     do {
-      TreeType *popped_node = frontier.pop();
+      TreeType *popped_node = frontier.top();
+      frontier.pop();
       if(popped_node->is_leaf()) {
 	node_list.PushBackRaw();
-	node_list[node_list.size() - 1] = popped_node;
+	node_list[node_list.size() - 1].lo = popped_node->begin();
+	node_list[node_list.size() - 1].hi = popped_node->end();
 	total_num_stratum++;
       }
       else {
@@ -69,8 +72,11 @@ class Strata {
     // priority queue.
     index_t remaining_count = num_stratum_desired - total_num_stratum;
     for(index_t c = 0; c < remaining_count; c++) {
+      TreeType *popped_node = frontier.top();
+      frontier.pop();
       node_list.PushBackRaw();
-      node_list[node_list.size() - 1] = frontier.pop();
+      node_list[node_list.size() - 1].lo = popped_node->begin();
+      node_list[node_list.size() - 1].hi = popped_node->end();
       total_num_stratum++;
     }
     while(!frontier.empty()) {
@@ -90,6 +96,7 @@ class Strata {
    *         the root node. The expansion is using the number of data
    *         points times sum of per-dimension variance heuristic.
    */
+  template<typename TreeType>
   void Init(TreeType *root_in, index_t num_times_replicated,
 	    double fraction_desired) {
 
@@ -99,7 +106,7 @@ class Strata {
 
     // The priority queue used for the expansion.
     std::priority_queue<TreeType *, std::vector<TreeType *>,
-      CompareTreeType> frontier;
+      CompareTreeType<TreeType> > frontier;
     frontier.push(root_in);
     total_num_stratum = 0;
 
@@ -118,7 +125,8 @@ class Strata {
       if(popped_node->is_leaf()) {
 	popped_node->stat().in_strata = true;
 	node_list.PushBackRaw();
-	node_list[node_list.size() - 1] = popped_node;
+	node_list[node_list.size() - 1].lo = popped_node->begin();
+	node_list[node_list.size() - 1].hi = popped_node->end();
       }
       else {
 	total_n_tuples_so_far -= 
@@ -145,7 +153,8 @@ class Strata {
       popped_node->stat().in_strata = true;
       frontier.pop();
       node_list.PushBackRaw();
-      node_list[node_list.size() - 1] = popped_node;
+      node_list[node_list.size() - 1].lo = popped_node->begin();
+      node_list[node_list.size() - 1].hi = popped_node->end();
     }    
     total_num_stratum = node_list.size();
 

@@ -37,19 +37,6 @@ class Function: public Operator {
     return la::DistanceSqEuclidean(dimension, first_point, second_point);
   }
 
- public:
-
-  /** @brief A function evaluation is evaluated exactly for naive and
-   *         Monte Carlo style computation.
-   */
-  double MonteCarloCompute
-  (ArrayList<Strata> &list_of_strata,
-   std::map<index_t, index_t> &constant_dataset_indices,
-   double relative_error, double probability) {
-    
-    return NaiveCompute(constant_dataset_indices);
-  }
-
 };
 
 template<typename TKernel>
@@ -74,6 +61,17 @@ class KernelFunction: public Function {
 
     double sqdist = SquaredDistance_(constant_dataset_indices);
     return kernel_.EvalUnnormOnSq(sqdist);
+  }
+
+  /** @brief A function evaluation is evaluated exactly for naive and
+   *         Monte Carlo style computation.
+   */
+  double MonteCarloCompute
+  (ArrayList<Strata> &list_of_strata,
+   std::map<index_t, index_t> &constant_dataset_indices,
+   double relative_error, double probability) {
+    
+    return NaiveCompute(constant_dataset_indices);
   }
 
 };

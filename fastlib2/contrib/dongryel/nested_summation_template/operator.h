@@ -12,7 +12,7 @@ class Operator {
   /** @brief The minimum number of samples to achieve approximate
    *         asymptotic normality.
    */
-  const index_t min_num_samples_ = 25;
+  static const index_t min_num_samples_ = 25;
 
   /** @brief The nested operators under this operator.
    */
@@ -141,17 +141,18 @@ class Operator {
     should_be_inverted_ = inversion_flag_in;
   }
 
-  /** @brief Evaluate the operator exactly.
-   */
-  virtual double NaiveCompute
-  (std::map<index_t, index_t> &constant_dataset_indices) = 0;
-
-  /** @brief Evaluate the operator using Monte Carlo.
+  /** @brief A function evaluation is evaluated exactly for naive and
+   *         Monte Carlo style computation.
    */
   virtual double MonteCarloCompute
   (ArrayList<Strata> &list_of_strata,
    std::map<index_t, index_t> &constant_dataset_indices,
    double relative_error, double probability) = 0;
+
+  /** @brief Evaluate the operator exactly.
+   */
+  virtual double NaiveCompute
+  (std::map<index_t, index_t> &constant_dataset_indices) = 0;
 
   /** @brief Initialize.
    */
