@@ -22,10 +22,12 @@ class KdeError {
   (const TGlobal &parameters, const TQuerySummary &new_summary,
    const TDelta &exact_delta, ReferenceTree *rnode) {
     
-    error_per_pair = (parameters.relative_error * new_summary.sum_l -
-		      (new_summary.used_error_u +
-		       new_summary.probabilistic_used_error_u)) /
-      (parameters.num_reference_points - new_summary.n_pruned_l);
+    error_per_pair = 
+      std::max((parameters.relative_error * new_summary.sum_l -
+		(new_summary.used_error_u +
+		 new_summary.probabilistic_used_error_u)) /
+	       (parameters.num_reference_points - new_summary.n_pruned_l), 
+	       0.0);
     error = error_per_pair * rnode->count();
   }    
 };

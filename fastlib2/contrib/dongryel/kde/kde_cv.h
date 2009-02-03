@@ -80,11 +80,14 @@ class KdeCV {
   
   double MonteCarloCompute() {
 
+    /*
     // Set of dataset indices that have been chosen throughout the
     // computation; this acts as a stack of arguments.
     std::map<index_t, index_t> constant_dataset_indices;
 
     return operator_root_->MonteCarloCompute(constant_dataset_indices);   
+    */
+    return 0;
   }
 
   double NaiveCompute() {
