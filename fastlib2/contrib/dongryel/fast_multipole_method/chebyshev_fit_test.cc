@@ -12,15 +12,15 @@ int main(int argc, char *argv[]) {
   kernel.Init(0.8);
   range.lo = 0;
   range.hi = 5;
-  values.lo = kernel.EvaluateUnnorm(range.lo);
-  values.hi = kernel.EvaluateUnnorm(range.hi);
+  values.lo = kernel.EvalUnnorm(range.lo);
+  values.hi = kernel.EvalUnnorm(range.hi);
   
   printf("%g %g %g %g\n", range.lo, range.hi, values.lo, values.hi);
 
   fit.Init(range, 20, &kernel);
 
   for(double j = range.lo; j <= range.hi; j += 0.05) {
-    printf("%g %g\n", fit.Evaluate(j, 3), kernel.EvaluateUnnorm(j));
+    printf("%g %g\n", fit.Evaluate(j, 3), kernel.EvalUnnorm(j));
   }
 
   Vector taylor;

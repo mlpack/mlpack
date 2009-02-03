@@ -5,7 +5,7 @@
 
 class ChebyshevFit {
 
- private:
+ public:
 
   static const double pi_ = 3.141592653589793;
 
@@ -44,8 +44,8 @@ class ChebyshevFit {
     for(index_t k = 0; k < order; k++) {
       double grid_val = cos(pi_ * (k + 0.5) / ((double) order));
       tmp_vector[k] = 
-	kernel->EvaluateUnnorm(grid_val * transformed_interval.lo +
-			       transformed_interval.hi);      
+	kernel->EvalUnnorm(grid_val * transformed_interval.lo +
+			   transformed_interval.hi);      
     }
 
     double factor = 2.0 / ((double) order);
@@ -64,6 +64,7 @@ class ChebyshevFit {
     
     double d = 0.0;
     double dd = 0.0;
+    double sv = 0.0;
     if((x - approximation_interval_.lo) *
        (x - approximation_interval_.hi) > 0.0) {
 
@@ -76,12 +77,11 @@ class ChebyshevFit {
     double y2 = 2.0 * y;
 
     for(index_t j = order - 1; j > 0; j--) {
-      double sv = d;
+      sv = d;
       d = y2 * d - dd + coefficients_[j];
       dd = sv;
     }
-    return y * d - dd + 0.5 * coefficients_[0];
-    
+    return y * d - dd + 0.5 * coefficients_[0];    
   }
 
   void ConvertToTaylorExpansion(int order, Vector *result) {
@@ -93,23 +93,23 @@ class ChebyshevFit {
     dd.SetZero();
     
     double sv;
-    (*result)[0] = coefficients_[order - 1];
+    ((*result)[0]) = coefficients_[order - 1];
     
     for(index_t j = order - 2; j > 0; j--) {
       for(index_t k = order - j; k > 0; k--) {
-	sv = (*result)[k];
-	(*result)[k] = 2.0 * ((*result)[k - 1]) - dd[k];
+	sv = ((*result)[k]);
+	((*result)[k]) = 2.0 * ((*result)[k - 1]) - dd[k];
 	dd[k] = sv;
       }
       sv = (*result)[0];
-      (*result)[0] = -dd[0] + coefficients_[j];
+      ((*result)[0]) = -dd[0] + coefficients_[j];
       dd[0] = sv;
     }
 
     for(index_t j = order - 1; j > 0; j--) {
-      (*result)[j] = ((*result)[j - 1]) - dd[j];
+      ((*result)[j]) = ((*result)[j - 1]) - dd[j];
     }
-    (*result)[0] = -dd[0] + 0.5 * coefficients_[0];    
+    ((*result)[0]) = -dd[0] + 0.5 * coefficients_[0];    
   }
 
   void ConvertToTaylorExpansionOriginalVariable(int order, Vector *result) {
@@ -119,14 +119,14 @@ class ChebyshevFit {
     double cnst = 2.0 / approximation_interval_.width();
     double fac = cnst;
     for(index_t j = 1; j < result->length(); j++) {
-      (*result)[j] *= fac;
+      ((*result)[j]) *= fac;
       fac *= cnst;
     }
     cnst = approximation_interval_.mid();
     
     for(index_t j = 0; j <= result->length() - 2; j++) {
       for(index_t k = result->length() - 2; k >= j; k--) {
-	(*result)[k] -= cnst * ((*result)[k + 1]);
+	((*result)[k]) -= cnst * ((*result)[k + 1]);
       }
     }
   }

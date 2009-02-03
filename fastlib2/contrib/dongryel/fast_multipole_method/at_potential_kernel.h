@@ -83,6 +83,12 @@ class ATPotentialKernel: public MultibodyPotentialKernel {
 
     return part1 + part2;
   }
+
+  double EvalUnnorm(double distance) {
+
+    return 1.0 / (DBL_EPSILON + pow(distance, 2.0));
+  }
+
 };
 
 #endif
