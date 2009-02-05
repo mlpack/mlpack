@@ -45,18 +45,30 @@ int main(int argc, char* argv[]) {
   const char* centers_file = fx_param_str(root_mod, "centers", "test_centers.csv");
   Matrix centers;
   data::Load(centers_file, &centers);
-  
+
+  double angstroms_to_bohr = 1.889725989;
+
+  if (fx_param_exists(root_mod, "angstroms")) {
+    
+    la::Scale(angstroms_to_bohr, &centers);
+
+  }  
   
   // Change these to believe input later
-  /*
-  const char* exp_file = fx_param_str(root_mod, "exponents", "test_exp.csv");
-  Matrix exponents;
-  data::Load(exp_file, &exponents);
-  */
   Vector exp;
-  //exponents.MakeColumnVector(0, &exp);
-  exp.Init(centers.n_cols());
-  exp.SetAll(0.0001);
+  if (fx_param_exists(root_mod, "single_bandwidth")) {
+    double band = fx_param_double(root_mod, "single_bandwidth", 0.01);
+    exp.Init(centers.n_cols());
+    exp.SetAll(band);
+  }
+  else {
+    const char* exp_file = fx_param_str(root_mod, "exponents", "test_exp.csv");
+    Matrix exponents;
+    data::Load(exp_file, &exponents);
+    exponents.MakeColumnVector(0, &exp);
+  }
+
+  
 
   /*
   const char* momenta_file = fx_param_str(root_mod, "momenta", "test_momenta.csv");
@@ -70,7 +82,7 @@ int main(int argc, char* argv[]) {
   // is equal to n_cols + 2*sum(mom) for only s and p-type
   index_t mat_size;
   // The dot product only works for momenta 1 
-  mat_size = centers.n_cols() + 2*la::Dot(mom, mom);
+  mat_size = centers.n_cols() + (index_t)2*la::Dot(mom, mom);
   
   Matrix density;
   if (fx_param_exists(root_mod, "density")) {
