@@ -13,6 +13,12 @@ int main(int argc, char* argv[]) {
   const char* centers_name = fx_param_str_req(NULL, "basis_centers");
   data::Load(centers_name, &centers);
   
+  double angstroms_to_bohr = 1.889725989;
+
+  if (fx_param_exists(NULL, "angstroms")) {
+    la::Scale(angstroms_to_bohr, &centers);
+  }
+
   struct datanode* mod = fx_submodule(NULL, "integrals");
   
   double bandwidth = fx_param_double(NULL, "bandwidth", 0.1);

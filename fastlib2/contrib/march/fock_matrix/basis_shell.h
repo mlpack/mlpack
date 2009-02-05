@@ -44,7 +44,7 @@ class BasisShell {
     
     normalization_constant_ = ComputeNormConstant_();
     
-    printf("norm: %g\n", normalization_constant_);
+    //printf("norm: %g\n", normalization_constant_);
   
   } // Init()
   
