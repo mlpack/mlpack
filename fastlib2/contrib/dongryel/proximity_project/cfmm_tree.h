@@ -35,10 +35,10 @@ namespace proximity {
     
    public:
 
-    CFmmTreeWellSeparatedTree() {
+    CFmmWellSeparatedTree() {
     }
 
-    ~CFmmTreeWellSeparatedTree() {
+    ~CFmmWellSeparatedTree() {
       if(children_.size() > 0) {
 	for(index_t i = 0; i < children_.size(); i++) {
 	  delete children_[i];
@@ -58,6 +58,10 @@ namespace proximity {
       return begin_[particle_set_number] + count_[particle_set_number];
     }
 
+    CFmmTree<TStatistics> *get_child(int index) const {
+      return children_[index];
+    }
+
     /** @brief Tests whether it is a leaf node or not.
      */
     bool is_leaf() const {
@@ -68,7 +72,6 @@ namespace proximity {
       begin_.Init(number_of_particle_sets);
       count_.Init(number_of_particle_sets);
       total_count_ = 0;
-      node_index_ = 0;
       children_.Init();
     }
 
@@ -80,10 +83,11 @@ namespace proximity {
       total_count_ += count_in;
     }
     
-    CFmmTree *AllocateNewChild(index_t number_of_particle_sets,
-			       index_t dimension, unsigned int node_index_in) {
+    CFmmTree<TStatistics> *AllocateNewChild(index_t number_of_particle_sets,
+					    index_t dimension, 
+					    unsigned int node_index_in) {
       
-      CFmmTree *new_node = new CFmmTree();
+      CFmmTree<TStatistics> *new_node = new CFmmTree<TStatistics>();
       *(children_.PushBackRaw()) = new_node;
 
       new_node->Init(number_of_particle_sets, dimension);
@@ -94,8 +98,7 @@ namespace proximity {
 
     void Print() const {
       if (!is_leaf()) {
-	printf("internal node: %d points total on level %d\n", total_count_,
-	       level_);
+	printf("internal node: %d points total\n", total_count_);
 	for(index_t i = 0; i < begin_.size(); i++) {
 	  printf("   set %d: %d to %d: %d points total\n", i, 
 		 begin_[i], begin_[i] + count_[i] - 1, count_[i]);	  
@@ -105,8 +108,7 @@ namespace proximity {
 	}
       }
       else {
-	printf("leaf node: %d points total on level %d\n", total_count_,
-	       level_);
+	printf("leaf node: %d points total\n", total_count_);
 	for(index_t i = 0; i < begin_.size(); i++) {
 	  printf("   set %d: %d to %d: %d points total\n", i, 
 		 begin_[i], begin_[i] + count_[i] - 1, count_[i]);	  
@@ -130,7 +132,7 @@ namespace proximity {
 
     /** @brief The type of statistics stored in each node.
      */
-    typedef TStatistic Statistic;
+    typedef TStatistics Statistics;
     
     /** @brief The bounding box.
      */
@@ -164,13 +166,13 @@ namespace proximity {
 
     /** @brief The stored statistics for this node.
      */
-    Statistic stat_;
+    Statistics stat_;
     
     /** @brief The divided group based on the well-separated
      *         indices. This generalizes the 2-way branchings used in
      *         the CFMM paper.
      */
-    ArrayList<CFmmWellSeparatedTree *> partitions_based_on_ws_indices_;
+    ArrayList<CFmmWellSeparatedTree<TStatistics> *> partitions_based_on_ws_indices_;
 
    public:
 
@@ -216,7 +218,7 @@ namespace proximity {
       count_.Init(number_of_particle_sets);
       total_count_ = 0;
       node_index_ = 0;
-      children_.Init();
+      partitions_based_on_ws_indices_.Init();
     }
 
     void Init(index_t particle_set_number, index_t begin_in, 
@@ -240,17 +242,14 @@ namespace proximity {
       return bound_;
     }
 
-    GenHypercubeTree *get_child(int index) const {
-      return children_[index];
-    }
-
     void set_level(index_t level) {
       level_ = level;
     }
 
-    CFmmWellSeparatedTree *AllocateNewPartition() {
+    CFmmWellSeparatedTree<TStatistics> *AllocateNewPartition() {
 
-      CFmmWellSeparatedTree *new_partition = new CFmmWellSeparatedTree();
+      CFmmWellSeparatedTree<TStatistics> *new_partition = 
+	new CFmmWellSeparatedTree<TStatistics>();
       *(partitions_based_on_ws_indices_.PushBackRaw()) = new_partition;
       
       new_partition->Init();

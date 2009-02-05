@@ -300,8 +300,8 @@ namespace tree_cfmm_tree_private {
 
   template<typename TStatistic>
   void SplitCFmmTree
-  (ArrayList<Matrix *> &matrices, CFmmTree<TStatistic> *node, 
-   index_t leaf_size,
+  (ArrayList<Matrix *> &matrices, ArrayList<Vector *> &targets,
+   CFmmTree<TStatistic> *node, index_t leaf_size,
    ArrayList< ArrayList<CFmmTree<TStatistic> *> > *nodes_in_each_level,
    ArrayList< ArrayList<index_t> > *old_from_new, index_t level) {
 
@@ -311,6 +311,11 @@ namespace tree_cfmm_tree_private {
     
     // Otherwise, attempt to split.
     else {
+
+      // First, partition the particles in this box according to its
+      // index. For now, just divide into the two main groups...
+      node->AllocateNewPartition();
+      node->AllocateNewPartition();
 
       // Recursively split each dimension.
       unsigned int code = 0;
