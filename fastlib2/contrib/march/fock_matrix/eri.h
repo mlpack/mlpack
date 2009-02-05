@@ -32,6 +32,9 @@ namespace eri {
                                
   double ComputeShellIntegrals(ShellPair& AB_shell, 
                                ShellPair& CD_shell);
+                               
+  index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
+                            ArrayList<BasisShell>& shells_in);
 
 
 }
