@@ -21,6 +21,14 @@ librule(
     )
 
 binrule(
+    name = "cfmm_tree_test_bin",
+    sources = ["cfmm_tree_test.cc"],
+    headers = [],
+    deplibs = [":proximity_project",
+               "fastlib:fastlib_int"]
+    )
+
+binrule(
     name = "gen_hypercube_tree_test_bin",
     sources = ["gen_hypercube_tree_test.cc"],
     headers = [],
