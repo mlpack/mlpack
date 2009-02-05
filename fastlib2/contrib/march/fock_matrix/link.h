@@ -14,7 +14,7 @@ class Link {
 
   Matrix centers_;
   
-  Matrix fock_matrix_;
+  Matrix exchange_matrix_;
   
   ArrayList<BasisShell> shell_list_;
   ArrayList<ShellPair> shell_pair_list_;

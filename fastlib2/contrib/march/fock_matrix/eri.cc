@@ -108,6 +108,42 @@ double ComputeShellIntegrals(ShellPair& AB_shell,
 }
 
 
+index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
+                       ArrayList<BasisShell>& shells_in) {
+
+  index_t num_shells = shells_in.length();
+  
+  index_t num_shell_pairs = 0;
+  
+  // What size to init to? 
+  shell_pairs->Init();
+
+  for (index_t i = 0; i < num_shells; i++) {
+  
+    BasisShell i_shell = shells_in[i];
+    
+    for (index_t j = i; j < num_shells; j++) {
+    
+      BasisShell j_shell = shells_in[j];
+      
+      // Do they use the overlap integral here?
+      double this_bound = SchwartzBound_(i_shell, j_shell);
+      
+      if (this_bound > shell_pair_cutoff) {
+      
+        (*shell_pairs)[num_shell_pairs].Init(i, j, i_shell, j_shell);
+        (*shell_pairs)[num_shell_pairs].set_integral_upper_bound(this_bound);
+        num_shell_pairs++;
+      
+      }
+      
+    } // for j
+    
+  } // for i 
+  
+  return num_shell_pairs;
+
+}
 
 
 
