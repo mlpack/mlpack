@@ -288,6 +288,95 @@ namespace proximity {
     }
 
   };
+
+#include "cfmm_tree_impl.h"
+
+  /** @brief Creates a continuous FMM tree (high-dimensional
+   *         generalization of quad-tree, octree) from data with
+   *         additional partitions on a target value associated with
+   *         each point. I imagine this could be a useful tree for
+   *         general supervised learning.
+   *
+   * @experimental
+   *
+   * This requires you to pass in two unitialized ArrayLists which
+   * will contain index mappings so you can account for the
+   * re-ordering of the matrix.  (By unitialized I mean don't call
+   * Init on it)
+   *
+   * @param matrix data where each column is a point, WHICH WILL BE
+   * RE-ORDERED
+   *
+   * @param targets the labels associated with each data point for
+   * each group, WHICH WILL BE RE-ORDERED.
+   *
+   * @param leaf_size the maximum points in a leaf
+   *
+   * @param old_from_new pointer to an unitialized arraylist; it
+   * will map new indices to original
+   *
+   * @param new_from_old pointer to an unitialized arraylist; it
+   * will map original indexes to new indices
+   */
+  template<typename TStatistic>
+  CFmmTree<TStatistic> *MakeCFmmTree
+  (ArrayList<Matrix *> &matrices, ArrayList<Vector *> &targets,
+   index_t leaf_size,
+   ArrayList< ArrayList<CFmmTree<TStatistic> *> > *nodes_in_each_level,
+   ArrayList< ArrayList<index_t> > *old_from_new = NULL,
+   ArrayList< ArrayList<index_t> > *new_from_old = NULL) {
+    
+    CFmmTree<TStatistic> *node = new CFmmTree<TStatistic>();
+    
+    if (old_from_new) {
+      old_from_new->Init(matrices.size());
+
+      for(index_t j = 0; j < matrices.size(); j++) {
+	(*old_from_new)[j].Init(matrices[j]->n_cols());
+	
+	for (index_t i = 0; i < matrices[j]->n_cols(); i++) {
+	  (*old_from_new)[j][i] = i;
+	}
+      }
+    }
+    
+    // Initialize the global list of nodes.
+    nodes_in_each_level->Init(100);
+    for(index_t i = 0; i < nodes_in_each_level->size(); i++) {
+      ((*nodes_in_each_level)[i]).Init();
+    }
+
+    // Initialize the root node.
+    node->Init(matrices.size(), matrices[0]->n_rows());
+    node->set_level(0);
+    for(index_t i = 0; i < matrices.size(); i++) {
+      node->Init(i, 0, matrices[i]->n_cols());
+    }
+    
+    // Make the tightest cube bounding box you can fit around the
+    // current set of points.
+    tree_cfmm_tree_private::ComputeBoundingHypercube(matrices, node);
+
+    // Put the root node into the initial list of level 0.
+    *(((*nodes_in_each_level)[0]).PushBackRaw()) = node;
+
+    tree_cfmm_tree_private::SplitCFmmTree
+      (matrices, node, leaf_size, nodes_in_each_level, old_from_new, 0);
+
+    // Index shuffling business...
+    if (new_from_old) {
+      new_from_old->Init(matrices.size());
+
+      for(index_t j = 0; j < matrices.size(); j++) {
+	(*new_from_old)[j].Init(matrices[j]->n_cols());
+	for (index_t i = 0; i < matrices[j]->n_cols(); i++) {
+	  (*new_from_old)[j][(*old_from_new)[j][i]] = i;
+	}
+      }
+    }
+    
+    return node;
+  }
 };
 
 #endif

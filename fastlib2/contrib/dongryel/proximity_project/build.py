@@ -3,6 +3,8 @@ librule(
     sources = ["gen_range.cc"],              # files that must be compiled
     headers = ["subspace_stat.h",
                "../../../mlpack/kde/dataset_scaler.h",
+               "cfmm_tree.h",
+               "cfmm_tree_impl.h",
                "general_type_bounds.h",
                "gen_hypercube_tree.h",
                "gen_hypercube_tree_impl.h",
