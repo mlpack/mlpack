@@ -122,8 +122,9 @@ namespace tree_cfmm_tree_private {
 
   template<typename TStatistic>
   bool RecursiveMatrixPartition
-  (ArrayList<Matrix *> &matrices, CFmmTree<TStatistic> *node, index_t count,
-   ArrayList<index_t> &child_begin, ArrayList<index_t> &child_count,
+  (ArrayList<Matrix *> &matrices, ArrayList<Vector *> &targets,
+   CFmmTree<TStatistic> *node, index_t count, ArrayList<index_t> &child_begin,
+   ArrayList<index_t> &child_count,
    ArrayList< ArrayList<CFmmTree<TStatistic> *> > *nodes_in_each_level,
    ArrayList< ArrayList<index_t> > *old_from_new, const int level, 
    int recursion_level, unsigned int code) {
@@ -164,7 +165,8 @@ namespace tree_cfmm_tree_private {
 	}
 
 	index_t left_count = MatrixPartition(particle_set_number, matrices, 
-					     recursion_level, split_value, 
+					     targets, recursion_level, 
+					     split_value, 
 					     child_begin[particle_set_number],
 					     child_count[particle_set_number],
 					     old_from_new) - 
@@ -199,14 +201,14 @@ namespace tree_cfmm_tree_private {
       if(total_left_count > 0) {
 	left_result =
 	  RecursiveMatrixPartition
-	  (matrices, node, total_left_count, left_child_begin, 
+	  (matrices, targets, node, total_left_count, left_child_begin, 
 	   left_child_count, nodes_in_each_level, old_from_new, level, 
 	   recursion_level + 1, 2 * code);
       }
       if(total_right_count > 0) {
 	right_result =
 	  RecursiveMatrixPartition
-	  (matrices, node, total_right_count, right_child_begin, 
+	  (matrices, targets, node, total_right_count, right_child_begin, 
 	   right_child_count, nodes_in_each_level, old_from_new, level, 
 	   recursion_level + 1, 2 * code + 1);
       }
@@ -317,27 +319,69 @@ namespace tree_cfmm_tree_private {
       node->AllocateNewPartition();
       node->AllocateNewPartition();
 
-      // Recursively split each dimension.
-      unsigned int code = 0;
-      ArrayList<index_t> child_begin;
-      ArrayList<index_t> child_count;
-      child_begin.Init(matrices.size());
-      child_count.Init(matrices.size());
+      // Loop for each dataset, and split based on the target
+      // values...
       for(index_t i = 0; i < matrices.size(); i++) {
-	child_begin[i] = node->begin(i);
-	child_count[i] = node->count(i);
+	
+	double min_target = DBL_MAX;
+	double max_target = -DBL_MAX;
+
+	for(index_t j = node->begin(i); j < node->end(i); j++) {
+
+	  min_target = std::min(min_target, (*(targets[i]))[j]);
+	  max_target = std::max(max_target, ((*targets[i]))[j]);
+	}
+
+	double splitvalue = 0.5 * (min_target + max_target);
+	index_t split_index = MatrixPartitionByTargets
+	  (i, matrices, targets, matrices[0]->n_cols(), splitvalue,
+	   node->begin_[i], node->count_[i], old_from_new);
+	
+	// If we weren't able to split it (due to every point having
+	// the same target value), then merely divide into two equal
+	// groups.
+	if(split_index <= node->begin(i)) {
+	  index_t left_count = node->count(i) / 2;
+	  node->partitions_based_on_ws_indices_[0]->Init(i, node->begin(i),
+							 left_count);
+	  node->partitions_based_on_ws_indices_[1]->Init
+	    (i, node->begin(i) + left_count, node->count(i) - left_count);
+	}
+	else {
+	  node->partitions_based_on_ws_indices_[0]->Init
+	    (i, node->begin(i), split_index - node->begin(i));
+	  node->partitions_based_on_ws_indices_[1]->Init
+	    (i, split_index, node->begin(i) + node->count(i) - split_index);
+	}
       }
 
-      bool can_cut = (node->side_length() > DBL_EPSILON) &&
-	RecursiveMatrixPartition
-	(matrices, node, node->count(), child_begin, child_count,
-	 nodes_in_each_level, old_from_new, level, 0, code);
+      // Loop for each partition...
 
-      if(can_cut) {
-	for(index_t i = 0; i < node->num_children(); i++) {
-	  CFmmTree<TStatistic> *child_node = node->get_child(i);
-	  SplitCFmmTree(matrices, child_node, leaf_size, nodes_in_each_level,
-			old_from_new, level + 1);
+      for(index_t j = 0; j < node->partitions_based_on_ws_indices_->size(); 
+	  j++) {
+	
+	// Recursively split each dimension.
+	unsigned int code = 0;
+	ArrayList<index_t> child_begin;
+	ArrayList<index_t> child_count;
+	child_begin.Init(matrices.size());
+	child_count.Init(matrices.size());
+	for(index_t i = 0; i < matrices.size(); i++) {
+	  child_begin[i] = node->begin(i);
+	  child_count[i] = node->count(i);
+	}
+	
+	bool can_cut = (node->side_length() > DBL_EPSILON) &&
+	  RecursiveMatrixPartition
+	  (matrices, targets, node, node->count(), child_begin, child_count,
+	   nodes_in_each_level, old_from_new, level, 0, code);
+	
+	if(can_cut) {
+	  for(index_t i = 0; i < node->num_children(); i++) {
+	    CFmmTree<TStatistic> *child_node = node->get_child(i);
+	    SplitCFmmTree(matrices, child_node, leaf_size, nodes_in_each_level,
+			  old_from_new, level + 1);
+	  }
 	}
       }
     }

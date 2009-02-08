@@ -242,8 +242,41 @@ namespace proximity {
       return bound_;
     }
 
+    /**
+     * Gets the index of the begin point of this subset.
+     */
+    index_t begin(index_t particle_set_number) const {
+      return begin_[particle_set_number];
+    }
+    
+    /**
+     * Gets the index one beyond the last index in the series.
+     */
+    index_t end(index_t particle_set_number) const {
+      return begin_[particle_set_number] + count_[particle_set_number];
+    }
+
+    unsigned int node_index() const {
+      return node_index_;
+    }
+
     void set_level(index_t level) {
       level_ = level;
+    }
+
+    index_t level() {
+      return level_;
+    }
+
+    /**
+     * Gets the number of points in this subset.
+     */
+    index_t count(index_t particle_set_number) const {
+      return count_[particle_set_number];
+    }
+
+    index_t count() const {
+      return total_count_;
     }
 
     CFmmWellSeparatedTree<TStatistics> *AllocateNewPartition() {
@@ -360,7 +393,8 @@ namespace proximity {
     *(((*nodes_in_each_level)[0]).PushBackRaw()) = node;
 
     tree_cfmm_tree_private::SplitCFmmTree
-      (matrices, node, leaf_size, nodes_in_each_level, old_from_new, 0);
+      (matrices, targets, node, leaf_size, nodes_in_each_level, 
+       old_from_new, 0);
 
     // Index shuffling business...
     if (new_from_old) {
