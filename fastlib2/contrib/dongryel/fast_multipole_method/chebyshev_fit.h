@@ -38,9 +38,6 @@ class ChebyshevFit {
     transformed_interval.lo = 0.5 * (interval_in.hi - interval_in.lo);
     transformed_interval.hi = 0.5 * (interval_in.hi + interval_in.lo);
 
-    printf("Transformed: %g %g\n", transformed_interval.lo,
-	   transformed_interval.hi);
-
     for(index_t k = 0; k < order; k++) {
       double grid_val = cos(pi_ * (k + 0.5) / ((double) order));
       tmp_vector[k] = 
@@ -56,8 +53,6 @@ class ChebyshevFit {
       }
       coefficients_[j] = factor * sum;
     }
-    
-    coefficients_.PrintDebug();
   }
 
   double Evaluate(double x, int order) {
@@ -130,6 +125,22 @@ class ChebyshevFit {
       }
     }
   }
+
+  /** @brief Computes an estimate of the truncation error after the
+   *         expansion is cut-off after the prescribed order.
+   */
+  double TruncationError(int order) {
+
+    double error = 0;
+
+    for(index_t m = order + 1; m < coefficients_.length(); m++) {
+
+      error += fabs(coefficients_[m]);
+    }
+
+    return error;
+  }
+
 };
 
 #endif
