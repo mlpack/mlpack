@@ -1,4 +1,14 @@
 librule(
+    name = "continuous_fmm",
+    sources = [],
+    headers = ["continuous_fmm.h",
+               "fmm_stat.h"],
+    deplibs = ["fastlib:fastlib_int",
+               "contrib/dongryel/proximity_project:proximity_project",
+               "mlpack/series_expansion:series_expansion"]
+    )
+
+librule(
     name = "fast_multipole_method",          # this line can be safely omitted
     sources = [],                            # files that must be compiled
     headers = ["fast_multipole_method.h",
@@ -47,6 +57,13 @@ binrule(
     sources = ["fast_multipole_method_main.cc"],
     headers = [],
     deplibs = [":fast_multipole_method"]
+    )
+
+binrule(
+    name = "continuous_fmm_bin",
+    sources = ["cfmm_main.cc"],
+    headers = [],
+    deplibs = [":continuous_fmm"]
     )
 
 binrule(
