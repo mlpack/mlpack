@@ -123,14 +123,14 @@ namespace tree_cfmm_tree_private {
   template<typename TStatistic>
   bool RecursiveMatrixPartition
   (ArrayList<Matrix *> &matrices, ArrayList<Vector *> &targets,
-   CFmmTree<TStatistic> *node, index_t count, ArrayList<index_t> &child_begin,
-   ArrayList<index_t> &child_count,
+   CFmmWellSeparatedTree<TStatistic> *node, index_t count, 
+   ArrayList<index_t> &child_begin, ArrayList<index_t> &child_count,
    ArrayList< ArrayList<CFmmTree<TStatistic> *> > *nodes_in_each_level,
    ArrayList< ArrayList<index_t> > *old_from_new, const int level, 
    int recursion_level, unsigned int code) {
     
     if(recursion_level < matrices[0]->n_rows()) {
-      const DRange &range_in_this_dimension = node->bound().get
+      const DRange &range_in_this_dimension = node->parent_->bound().get
 	(recursion_level);
       double split_value = 0.5 * (range_in_this_dimension.lo +
 				  range_in_this_dimension.hi);
@@ -221,11 +221,11 @@ namespace tree_cfmm_tree_private {
       // of half the side length.
       CFmmTree<TStatistic> *new_child =
 	node->AllocateNewChild(matrices.size(), matrices[0]->n_rows(),
-			       (node->node_index() << 
+			       (node->parent_->node_index() << 
 				matrices[0]->n_rows()) + code);
       
       // Set the level one more of the parent.
-      new_child->set_level(node->level() + 1);
+      new_child->set_level(node->parent_->level() + 1);
 
       // Appropriately set the membership in each particle set.
       for(index_t p = 0; p < matrices.size(); p++) {
@@ -242,7 +242,7 @@ namespace tree_cfmm_tree_private {
 
       for(index_t d = matrices[0]->n_rows() - 1; d >= 0; d--) {
 	const DRange &range_in_this_dimension = 
-	  node->bound().get(matrices[0]->n_rows() - 1 - d);
+	  node->parent_->bound().get(matrices[0]->n_rows() - 1 - d);
 
 	if((code & (1 << d)) > 0) {
 	  lower_coord[matrices[0]->n_rows() - 1 - d] = 0.5 * 
@@ -357,7 +357,7 @@ namespace tree_cfmm_tree_private {
 
       // Loop for each partition...
 
-      for(index_t j = 0; j < node->partitions_based_on_ws_indices_->size(); 
+      for(index_t j = 0; j < (node->partitions_based_on_ws_indices_).size(); 
 	  j++) {
 	
 	// Recursively split each dimension.
@@ -367,20 +367,25 @@ namespace tree_cfmm_tree_private {
 	child_begin.Init(matrices.size());
 	child_count.Init(matrices.size());
 	for(index_t i = 0; i < matrices.size(); i++) {
-	  child_begin[i] = node->begin(i);
-	  child_count[i] = node->count(i);
+	  child_begin[i] = node->partitions_based_on_ws_indices_[j]->begin(i);
+	  child_count[i] = node->partitions_based_on_ws_indices_[j]->count(i);
 	}
 	
 	bool can_cut = (node->side_length() > DBL_EPSILON) &&
 	  RecursiveMatrixPartition
-	  (matrices, targets, node, node->count(), child_begin, child_count,
-	   nodes_in_each_level, old_from_new, level, 0, code);
+	  (matrices, targets, node->partitions_based_on_ws_indices_[j], 
+	   node->partitions_based_on_ws_indices_[j]->count(), child_begin, 
+	   child_count, nodes_in_each_level, old_from_new, level, 0, code);
 	
 	if(can_cut) {
-	  for(index_t i = 0; i < node->num_children(); i++) {
-	    CFmmTree<TStatistic> *child_node = node->get_child(i);
-	    SplitCFmmTree(matrices, child_node, leaf_size, nodes_in_each_level,
-			  old_from_new, level + 1);
+	  for(index_t i = 0; 
+	      i < node->partitions_based_on_ws_indices_[j]->num_children(); 
+	      i++) {
+
+	    CFmmTree<TStatistic> *child_node = 
+	      node->partitions_based_on_ws_indices_[j]->get_child(i);
+	    SplitCFmmTree(matrices, targets, child_node, leaf_size, 
+			  nodes_in_each_level, old_from_new, level + 1);
 	  }
 	}
       }
