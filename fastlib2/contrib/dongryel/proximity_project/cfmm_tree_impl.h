@@ -353,6 +353,26 @@ namespace tree_cfmm_tree_private {
 	  node->partitions_based_on_ws_indices_[1]->Init
 	    (i, split_index, node->begin(i) + node->count(i) - split_index);
 	}
+
+	// Compute the maximum WS index for the current dataset for
+	// each partition.
+	for(index_t p = 0; p < (node->partitions_based_on_ws_indices_).size();
+	    p++) {
+
+	  // WS index cannot be negative, so this is a good starting
+	  // point for accumulating the max statistics.
+	  node->partitions_based_on_ws_indices_[p]->
+	    well_separated_indices_[i] = -1000.0;
+
+	  for(index_t j = node->partitions_based_on_ws_indices_[p]->begin(i);
+	      j < node->partitions_based_on_ws_indices_[p]->end(i); j++) {
+	    
+	    node->partitions_based_on_ws_indices_[p]->
+	      well_separated_indices_[i] = 
+	      std::max(node->partitions_based_on_ws_indices_[p]->
+		       well_separated_indices_[i], (*(targets[i]))[j]);
+	  }
+	}
       }
 
       // Loop for each partition...
