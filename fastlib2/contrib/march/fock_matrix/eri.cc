@@ -109,15 +109,19 @@ double ComputeShellIntegrals(ShellPair& AB_shell,
 
 
 index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
-                       ArrayList<BasisShell>& shells_in) {
+                          ArrayList<BasisShell>& shells_in, 
+                          double shell_pair_cutoff) {
+
+  // The size to increase the list by when necessary
+  index_t num_to_add = 20;
 
   index_t num_shells = shells_in.length();
   
   index_t num_shell_pairs = 0;
   
   // What size to init to? 
-  shell_pairs->Init();
-
+  shell_pairs->Init(num_shells);
+  
   for (index_t i = 0; i < num_shells; i++) {
   
     BasisShell i_shell = shells_in[i];
@@ -131,10 +135,14 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
       
       if (this_bound > shell_pair_cutoff) {
       
+        if (shell_pairs->capacity() <= num_shell_pairs) {
+          shell_pairs->PushBack(num_to_add);
+        }
+        
         (*shell_pairs)[num_shell_pairs].Init(i, j, i_shell, j_shell);
         (*shell_pairs)[num_shell_pairs].set_integral_upper_bound(this_bound);
         num_shell_pairs++;
-      
+              
       }
       
     } // for j
@@ -145,10 +153,68 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
 
 }
 
+index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
+                          ArrayList<BasisShell>& shells_in, 
+                          double shell_pair_cutoff, Vector* shell_max) {
+  
+  // The size to increase the list by when necessary
+  index_t num_to_add = 20;
+  
+  index_t num_shells = shells_in.length();
+  
+  index_t num_shell_pairs = 0;
+  
+  // What size to init to? 
+  shell_pairs->Init(num_shells);
 
+  DEBUG_ASSERT(shell_max != NULL);
+  shell_max->Init(num_shells);
+  
+  for (index_t i = 0; i < num_shells; i++) {
+    
+    BasisShell i_shell = shells_in[i];
+    
+    double i_max = -DBL_MAX;
+    
+    for (index_t j = i; j < num_shells; j++) {
+      
+      BasisShell j_shell = shells_in[j];
+      
+      // Do they use the overlap integral here?
+      double this_bound = SchwartzBound_(i_shell, j_shell);
+      
+      if (this_bound > shell_pair_cutoff) {
+        
+        if (shell_pairs->capacity() <= num_shell_pairs) {
+          shell_pairs->PushBack(num_to_add);
+        }
+        
+        (*shell_pairs)[num_shell_pairs].Init(i, j, i_shell, j_shell);
+        (*shell_pairs)[num_shell_pairs].set_integral_upper_bound(this_bound);
+        num_shell_pairs++;
+        
+        if (this_bound > i_max) {
+          i_max = this_bound;
+        }
+      
+      }
+      
+    } // for j
 
-
+    DEBUG_ASSERT(i_max > 0.0);
+    (*shell_max)[i] = i_max;
+    
+  } // for i 
+  
+  return num_shell_pairs;
+  
 }
+
+
+
+
+
+} // namespace eri
 
 
 

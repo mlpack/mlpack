@@ -10,11 +10,14 @@
 const fx_entry_doc schwartz_entries[] = {
 {"num_prunes", FX_RESULT, FX_INT, NULL, 
   "The number of integral computations pruned.\n"},
+{"shell_pair_threshold", FX_PARAM, FX_DOUBLE, NULL, 
+ "The threshold for a shell pair to be included.\n"
+ "Default: 0.0 (i.e. no shell pair screening.)\n"},
   FX_ENTRY_DOC_DONE
 };
 
 const fx_module_doc schwartz_mod_doc = {
-  schwartz_entries, NULL, "algorithm module for schwartz prescreening.\n"
+  schwartz_entries, NULL, "Algorithm module for schwartz prescreening.\n"
 };
 
 
@@ -37,19 +40,22 @@ class SchwartzPrescreening {
     basis_momenta_.Copy(mom);
     
     threshold_ = thresh;
+    
     module_ = mod;
+
+    shell_pair_threshold_ = fx_param_double(module_, "shell_pair_threshold", 
+                                            0.0);
     
     // Set up shells here
     // This is correct even for higher momenta
-    // however, 
     num_shells_ = basis_centers_.n_cols();
     basis_list_.Init(num_shells_);
 
-    printf("num_shells: %d\n", num_shells_);
+    //printf("num_shells: %d\n", num_shells_);
 
     num_shell_pairs_ = 0;
     
-    shell_pair_list_.Init(num_shells_ + num_shells_*(num_shells_-1)/2);
+    //shell_pair_list_.Init(num_shells_ + num_shells_*(num_shells_-1)/2);
     //shell_pair_list_.Init(num_shells_*num_shells_);
     
     num_prunes_ = 0;
@@ -110,6 +116,9 @@ class SchwartzPrescreening {
   
   // The threshold for ignoring a shell quartet
   double threshold_;
+  
+  // The threshold for including a shell pair in further computation
+  double shell_pair_threshold_;
 
   /**
    * The result needs to be multiplied by a density matrix bound
