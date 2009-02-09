@@ -90,6 +90,7 @@ namespace proximity {
       begin_.Init(number_of_particle_sets);
       count_.Init(number_of_particle_sets);
       total_count_ = 0;
+      well_separated_indices_.Init(number_of_particle_sets);
       children_.Init();
       parent_ = parent_in;
     }
@@ -238,6 +239,7 @@ namespace proximity {
       total_count_ = 0;
       node_index_ = 0;
       partitions_based_on_ws_indices_.Init();
+      well_separated_indices_.Init(number_of_particle_sets);
     }
 
     void Init(index_t particle_set_number, index_t begin_in, 
