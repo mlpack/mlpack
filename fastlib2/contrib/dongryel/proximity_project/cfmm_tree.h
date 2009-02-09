@@ -32,7 +32,12 @@ namespace proximity {
     /** @brief The pointers to the children nodes.
      */
     ArrayList<CFmmTree<TStatistics> *> children_;
-    
+
+    /** @brief The pointer to the parent so that it can access the
+     *         parent's bounding box information.
+     */
+    CFmmTree<TStatistics> *parent_;
+
    public:
 
     CFmmWellSeparatedTree() {
@@ -44,6 +49,10 @@ namespace proximity {
 	  delete children_[i];
 	}
       }
+    }
+
+    index_t num_children() const {
+      return children_.size();
     }
 
     /** @brief Gets the index of the begin point of this subset.
@@ -58,6 +67,14 @@ namespace proximity {
       return begin_[particle_set_number] + count_[particle_set_number];
     }
 
+    index_t count(index_t particle_set_number) const {
+      return count_[particle_set_number];
+    }
+
+    index_t count() const {
+      return total_count_;
+    }
+
     CFmmTree<TStatistics> *get_child(int index) const {
       return children_[index];
     }
@@ -68,11 +85,13 @@ namespace proximity {
       return children_.size() == 0;      
     }
 
-    void Init(index_t number_of_particle_sets, index_t dimension) {
+    void Init(index_t number_of_particle_sets, index_t dimension, 
+	      CFmmTree<TStatistics> *parent_in) {
       begin_.Init(number_of_particle_sets);
       count_.Init(number_of_particle_sets);
       total_count_ = 0;
       children_.Init();
+      parent_ = parent_in;
     }
 
     void Init(index_t particle_set_number, index_t begin_in, 
@@ -284,8 +303,8 @@ namespace proximity {
       CFmmWellSeparatedTree<TStatistics> *new_partition = 
 	new CFmmWellSeparatedTree<TStatistics>();
       *(partitions_based_on_ws_indices_.PushBackRaw()) = new_partition;
-      
-      new_partition->Init();
+
+      new_partition->Init(begin_.size(), bound_.dim(), this);
       return new_partition;
     }
 
