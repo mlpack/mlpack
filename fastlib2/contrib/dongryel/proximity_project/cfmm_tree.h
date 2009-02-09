@@ -192,7 +192,8 @@ namespace proximity {
      *         indices. This generalizes the 2-way branchings used in
      *         the CFMM paper.
      */
-    ArrayList<CFmmWellSeparatedTree<TStatistics> *> partitions_based_on_ws_indices_;
+    ArrayList<CFmmWellSeparatedTree<TStatistics> *> 
+      partitions_based_on_ws_indices_;
 
    public:
 
@@ -365,6 +366,9 @@ namespace proximity {
    *
    * @param leaf_size the maximum points in a leaf
    *
+   * @param min_required_ws_index the minimum value of well-separation
+   * index required for multipole-multipole interaction.
+   *
    * @param old_from_new pointer to an unitialized arraylist; it
    * will map new indices to original
    *
@@ -374,7 +378,7 @@ namespace proximity {
   template<typename TStatistic>
   CFmmTree<TStatistic> *MakeCFmmTree
   (ArrayList<Matrix *> &matrices, ArrayList<Vector *> &targets,
-   index_t leaf_size,
+   index_t leaf_size, double min_required_ws_index,
    ArrayList< ArrayList<CFmmTree<TStatistic> *> > *nodes_in_each_level,
    ArrayList< ArrayList<index_t> > *old_from_new = NULL,
    ArrayList< ArrayList<index_t> > *new_from_old = NULL) {
@@ -414,8 +418,8 @@ namespace proximity {
     *(((*nodes_in_each_level)[0]).PushBackRaw()) = node;
 
     tree_cfmm_tree_private::SplitCFmmTree
-      (matrices, targets, node, leaf_size, nodes_in_each_level, 
-       old_from_new, 0);
+      (matrices, targets, node, leaf_size, min_required_ws_index, 
+       nodes_in_each_level, old_from_new, 0);
 
     // Index shuffling business...
     if (new_from_old) {

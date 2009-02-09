@@ -304,11 +304,29 @@ namespace tree_cfmm_tree_private {
   void SplitCFmmTree
   (ArrayList<Matrix *> &matrices, ArrayList<Vector *> &targets,
    CFmmTree<TStatistic> *node, index_t leaf_size,
+   double min_required_ws_index,
    ArrayList< ArrayList<CFmmTree<TStatistic> *> > *nodes_in_each_level,
    ArrayList< ArrayList<index_t> > *old_from_new, index_t level) {
 
     // If the node is just too small, then do not split.
     if(node->count() <= leaf_size) {
+
+      // Compute the maximum WS index among here for each dataset.
+      for(index_t i = 0; i < (node->begin_).size(); i++) {
+	
+	// WS index cannot be negative, so this is a good starting
+	// point for accumulating the max statistics.
+	node->well_separated_indices_[i] = -1000.0;
+	
+	for(index_t j = node->begin(i); j < node->end(i); j++) {
+	  
+	  node->well_separated_indices_[i] = 
+	    std::max(node->well_separated_indices_[i], 
+		     std::max((*(targets[i]))[j] / 
+			      (node->bound().get(0).width()), 
+			      min_required_ws_index));
+	}
+      } // end of looping over each partition...
     }
     
     // Otherwise, attempt to split.
@@ -370,9 +388,12 @@ namespace tree_cfmm_tree_private {
 	    node->partitions_based_on_ws_indices_[p]->
 	      well_separated_indices_[i] = 
 	      std::max(node->partitions_based_on_ws_indices_[p]->
-		       well_separated_indices_[i], (*(targets[i]))[j]);
+		       well_separated_indices_[i], 
+		       std::max((*(targets[i]))[j] / 
+				(node->bound().get(0).width()), 
+				min_required_ws_index));
 	  }
-	}
+	} // end of looping over each partition...
       }
 
       // Loop for each partition...
@@ -405,7 +426,8 @@ namespace tree_cfmm_tree_private {
 	    CFmmTree<TStatistic> *child_node = 
 	      node->partitions_based_on_ws_indices_[j]->get_child(i);
 	    SplitCFmmTree(matrices, targets, child_node, leaf_size, 
-			  nodes_in_each_level, old_from_new, level + 1);
+			  min_required_ws_index, nodes_in_each_level, 
+			  old_from_new, level + 1);
 	  }
 	}
       }
