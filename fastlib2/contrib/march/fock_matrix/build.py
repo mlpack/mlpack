@@ -21,6 +21,14 @@ librule(
 	tests=[]
 )
 
+librule(
+	name="link_exchange",
+	headers=["link.h", "basis_shell.h", "shell_pair.h"],
+	sources=["link.cc"],
+	deplibs=["fastlib:fastlib", ":eri"],
+	tests=[]
+)
+
 binrule(
 	name="schwartz_prescreening_main",
         headers=[],

@@ -58,6 +58,7 @@ double SchwartzPrescreening::SchwartzBound_(BasisShell &mu,
 void SchwartzPrescreening::ComputeFockMatrix(Matrix* fock_out) {
 
   // form shell-pairs
+  /*
   for (index_t i = 0; i < num_shells_; i++) {
   
     BasisShell i_shell = basis_list_[i];
@@ -79,6 +80,9 @@ void SchwartzPrescreening::ComputeFockMatrix(Matrix* fock_out) {
     } // for j
   
   } //for i
+  */
+  num_shell_pairs_ = eri::ComputeShellPairs(&shell_pair_list_, basis_list_, 
+                                            shell_pair_threshold_);
   
   fx_format_result(module_, "num_shell_pairs", "%d", num_shell_pairs_);
   
