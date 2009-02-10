@@ -272,14 +272,28 @@ class ContinuousFmm {
   void TransmitLocalExpansionToChildren_
   (proximity::CFmmTree<FmmStat> *query_node) {
     
-    for(index_t c = 0; c < query_node->num_children(); c++) {
-      
-      // Query child.
-      proximity::CFmmTree<FmmStat> *query_child_node =
-	query_node->get_child(c);
+    // Two step process: first transmit the local expansion of the
+    // current query node to each local expansion of the two
+    // partitions, then for each partition, transmit to its children.
+
+    for(index_t p = 0; p < query_node->partitions_based_on_ws_indices_.size();
+	p++) {
       
       query_node->stat().local_expansion_.TranslateToLocal
-	(query_child_node->stat().local_expansion_);
+	(query_node->partitions_based_on_ws_indices_[p]->stat_.
+	 local_expansion_);
+
+      for(index_t c = 0; c < query_node->partitions_based_on_ws_indices_[p]
+	    ->num_children(); c++) {
+	
+	// Query child.
+	proximity::CFmmTree<FmmStat> *query_child_node =
+	  query_node->partitions_based_on_ws_indices_[p]->get_child(c);
+	
+	query_node->partitions_based_on_ws_indices_[p]->stat_.
+	  local_expansion_.TranslateToLocal
+	  (query_child_node->stat().local_expansion_);
+      }
     }
   }
 
