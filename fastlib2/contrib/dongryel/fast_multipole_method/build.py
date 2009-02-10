@@ -4,6 +4,7 @@ librule(
     headers = ["continuous_fmm.h",
                "fmm_stat.h"],
     deplibs = ["fastlib:fastlib_int",
+               "contrib/dongryel/multitree_template:multitree_template",
                "contrib/dongryel/proximity_project:proximity_project",
                "mlpack/series_expansion:series_expansion"]
     )
@@ -14,6 +15,7 @@ librule(
     headers = ["fast_multipole_method.h",
                "fmm_stat.h"],                # include files part of the 'lib'
     deplibs = ["fastlib:fastlib_int",
+               "contrib/dongryel/multitree_template:multitree_template",
                "contrib/dongryel/proximity_project:proximity_project",
                "mlpack/series_expansion:series_expansion"]
     )

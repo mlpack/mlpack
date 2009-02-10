@@ -26,9 +26,9 @@
 #include "mlpack/series_expansion/inverse_pow_dist_kernel.h"
 #include "mlpack/series_expansion/inverse_pow_dist_farfield_expansion.h"
 #include "mlpack/series_expansion/inverse_pow_dist_local_expansion.h"
-#include "mlpack/kde/dualtree_kde_common.h"
 #include "contrib/dongryel/proximity_project/cfmm_tree.h"
-#include "contrib/dongryel/proximity_project/cfmm_tree_util.h"
+#include "contrib/dongryel/proximity_project/gen_hypercube_tree_util.h"
+#include "contrib/dongryel/multitree_template/multitree_utility.h"
 
 class ContinuousFmm {
 
@@ -66,15 +66,21 @@ class ContinuousFmm {
    */
   Vector shuffled_reference_particle_charge_set_;
 
+  /** @brief The shuffled reference particle bandwidth set.
+   */
   Vector shuffled_reference_particle_bandwidth_set_;
+
+  /** @brief The shuffled reference particle extent number.
+   */
+  Vector shuffled_reference_particle_extent_set_;
 
   /** @brief The octree containing the entire particle set.
    */
-  proximity::GenHypercubeTree<FmmStat> *tree_;
+  proximity::CFmmTree<FmmStat> *tree_;
 
   /** @brief The list of nodes on each level.
    */
-  ArrayList< ArrayList <proximity::GenHypercubeTree<FmmStat> *> > nodes_in_each_level_;
+  ArrayList< ArrayList <proximity::CFmmTree<FmmStat> *> > nodes_in_each_level_;
 
   /** @brief The number of query particles in the particle set.
    */
@@ -130,13 +136,13 @@ class ContinuousFmm {
     for(index_t level = nodes_in_each_level_.size() - 1; level >= 0; level--) {
 
       // The references to the nodes on the current level.
-      ArrayList<proximity::GenHypercubeTree<FmmStat> *> 
+      ArrayList<proximity::CFmmTree<FmmStat> *> 
 	&nodes_on_current_level = nodes_in_each_level_[level];
 
       // Iterate over each node in the list.
       for(index_t n = 0; n < nodes_on_current_level.size(); n++) {
 	
-	proximity::GenHypercubeTree<FmmStat> *node = nodes_on_current_level[n];
+	proximity::CFmmTree<FmmStat> *node = nodes_on_current_level[n];
 	
 	// Compute the node center.
 	for(index_t i = 0; i < shuffled_reference_particle_set_.n_rows(); 
@@ -174,8 +180,8 @@ class ContinuousFmm {
   }
 
   void EvaluateMultipoleExpansion_
-  (proximity::GenHypercubeTree<FmmStat> *query_node, 
-   proximity::GenHypercubeTree<FmmStat> *reference_node) {
+  (proximity::CFmmTree<FmmStat> *query_node, 
+   proximity::CFmmTree<FmmStat> *reference_node) {
 
     index_t query_point_indexing = 
       (shuffled_reference_particle_set_.ptr() == 
@@ -190,8 +196,8 @@ class ContinuousFmm {
     }
   }
 
-  void BaseCase_(proximity::GenHypercubeTree<FmmStat> *query_node,
-		 proximity::GenHypercubeTree<FmmStat> *reference_node,
+  void BaseCase_(proximity::CFmmTree<FmmStat> *query_node,
+		 proximity::CFmmTree<FmmStat> *reference_node,
 		 Vector &potentials) {
     
     index_t query_point_indexing = 
@@ -223,8 +229,7 @@ class ContinuousFmm {
     }
   }
 
-  void EvaluateLocalExpansion_
-  (proximity::GenHypercubeTree<FmmStat> *query_node) {
+  void EvaluateLocalExpansion_(proximity::CFmmTree<FmmStat> *query_node) {
 
     index_t query_point_indexing = 
       (shuffled_reference_particle_set_.ptr() == 
@@ -241,12 +246,12 @@ class ContinuousFmm {
   }
 
   void TransmitLocalExpansionToChildren_
-  (proximity::GenHypercubeTree<FmmStat> *query_node) {
+  (proximity::CFmmTree<FmmStat> *query_node) {
     
     for(index_t c = 0; c < query_node->num_children(); c++) {
       
       // Query child.
-      proximity::GenHypercubeTree<FmmStat> *query_child_node =
+      proximity::CFmmTree<FmmStat> *query_child_node =
 	query_node->get_child(c);
       
       query_node->stat().local_expansion_.TranslateToLocal
@@ -264,14 +269,14 @@ class ContinuousFmm {
     for(index_t level = 1; level < nodes_in_each_level_.size(); level++) {
       
       // Retrieve the nodes on the current level.
-      const ArrayList<proximity::GenHypercubeTree<FmmStat> * > 
+      const ArrayList<proximity::CFmmTree<FmmStat> * > 
 	&nodes_on_current_level = nodes_in_each_level_[level];
       
       // Iterate over each node in this level.
       for(index_t n = 0; n < nodes_on_current_level.size(); n++) {
 
 	// The pointer to the current query node.
-	proximity::GenHypercubeTree<FmmStat> *node = nodes_on_current_level[n];
+	proximity::CFmmTree<FmmStat> *node = nodes_on_current_level[n];
 
 	// If the node does not contain any query points, then skip
 	// it.
@@ -282,7 +287,7 @@ class ContinuousFmm {
 	// Compute the colleague nodes of the given node. This
 	// corresponds to Cheng, Greengard, and Rokhlin's List 2 in
 	// their description of the algorithm.
-	ArrayList<proximity::GenHypercubeTree<FmmStat> *> colleagues;
+	ArrayList<proximity::CFmmTree<FmmStat> *> colleagues;
 	GenHypercubeTreeUtil::FindColleagues
 	  (shuffled_query_particle_set_.n_rows(), node, nodes_in_each_level_,
 	   &colleagues);
@@ -290,7 +295,7 @@ class ContinuousFmm {
 	// Perform far-to-local translation for the colleague nodes.
 	for(index_t c = 0; c < colleagues.size(); c++) {
 
-	  proximity::GenHypercubeTree<FmmStat> *colleague_node = colleagues[c];
+	  proximity::CFmmTree<FmmStat> *colleague_node = colleagues[c];
 
 	  if(colleague_node->count(0) > 0) {
 	    colleague_node->stat().farfield_expansion_.TranslateToLocal
@@ -301,8 +306,8 @@ class ContinuousFmm {
 	 
 	// These correspond to the List 1 and List 3 of the same
 	// paper.
-	ArrayList<proximity::GenHypercubeTree<FmmStat> *> adjacent_leaves;
-	ArrayList<proximity::GenHypercubeTree<FmmStat> *> 
+	ArrayList<proximity::CFmmTree<FmmStat> *> adjacent_leaves;
+	ArrayList<proximity::CFmmTree<FmmStat> *> 
 	  non_adjacent_children;
 
 	// If the current query node is a leaf node, then compute List
@@ -425,10 +430,10 @@ class ContinuousFmm {
 
  public:
 
-  FastMultipoleMethod() {
+  ContinuousFmm() {
   }
 
-  ~FastMultipoleMethod() {
+  ~ContinuousFmm() {
     if(tree_ != NULL) {
       delete tree_;
       tree_ = NULL;
@@ -529,29 +534,39 @@ class ContinuousFmm {
       shuffled_reference_particle_charge_set_[i] = rset_weights.get(0, i);
     }
 
-    // Copy over the reference bandwidth set.
+    // Copy over the reference bandwidth set and initialize the extent
+    // for each particle.
     shuffled_reference_particle_bandwidth_set_.Init(rset_weights.n_cols());
     for(index_t i = 0; i < rset_weights.n_cols(); i++) {
       shuffled_reference_particle_bandwidth_set_[i] = 
 	rset_bandwidths.get(0, i);
+      shuffled_reference_particle_extent_set_[i] = 
+	sqrt(2.0 / shuffled_reference_particle_bandwidth_set_[i]) *
+	InverseNormalCDF::Compute
+	(1.0 - 0.5 * fx_param_double(module_, "precision", 0.1));
     }
 
     // Construct query and reference trees. Shuffle the reference
     // weights according to the permutation of the reference set in
     // the reference tree.
     fx_timer_start(NULL, "tree_d");
-    tree_ = proximity::MakeGenHypercubeTree(particle_sets, leaflen,
-					    &nodes_in_each_level_,
-					    &old_from_new_index_,
-					    &new_from_old_index_);
+    tree_ = proximity::MakeCFmmTree(particle_sets, leaflen,
+				    &nodes_in_each_level_,
+				    &old_from_new_index_,
+				    &new_from_old_index_);
     fx_timer_stop(NULL, "tree_d");
 
     printf("Constructed the tree...\n");
     
-    // Shuffle the reference particle charges according to the
+    // Shuffle the reference particle charges, the reference particle
+    // bandwidths, and the reference particle extents according to the
     // permutation of the reference particle set.
-    DualtreeKdeCommon::ShuffleAccordingToPermutation
+    MultiTreeUtility::ShuffleAccordingToPermutation
       (shuffled_reference_particle_charge_set_, old_from_new_index_[0]);
+    MultiTreeUtility::ShuffleAccordingToPermutation
+      (shuffled_reference_particle_bandwidth_set_, old_from_new_index_[0]);
+    MultiTreeUtility::ShuffleAccordingToPermutation
+      (shuffled_reference_particle_extent_set_, old_from_new_index_[0]);
 
     // Retrieve the lambda order needed for expansion.
     lambda_ = fx_param_double(module_, "lambda", 1.0);
