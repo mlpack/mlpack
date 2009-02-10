@@ -33,6 +33,8 @@ namespace proximity {
      */
     index_t total_count_;
 
+    bool init_flag_;
+
     /** @brief The stored statistics for this node.
      */
     Statistics stat_;
@@ -101,6 +103,7 @@ namespace proximity {
       well_separated_indices_.Init(number_of_particle_sets);
       children_.Init();
       parent_ = parent_in;
+      init_flag_ = false;
     }
 
     void Init(index_t particle_set_number, index_t begin_in, 
@@ -195,7 +198,9 @@ namespace proximity {
     /** @brief The stored statistics for this node.
      */
     Statistics stat_;
-    
+
+    bool init_flag_;
+
     /** @brief The divided group based on the well-separated
      *         indices. This generalizes the 2-way branchings used in
      *         the CFMM paper.
@@ -258,6 +263,7 @@ namespace proximity {
       well_separated_indices_.Init(number_of_particle_sets);
 
       parent_ = parent_in;
+      init_flag_ = false;
     }
 
     void Init(index_t particle_set_number, index_t begin_in, 
