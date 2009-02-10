@@ -147,12 +147,12 @@ class ContinuousFmm {
 	// Compute the node center.
 	for(index_t i = 0; i < shuffled_reference_particle_set_.n_rows(); 
 	    i++) {
-	  node_center[i] = 0.5 * (node->bound().get(i).lo +
-				  node->bound().get(i).hi);
+	  node_center[i] = node->bound().get(i).mid();
 	}
 
 	// Initialize the far-field expansion of the current node.
 	node->stat().farfield_expansion_.Init(node_center, &sea_);
+	node->init_flag_ = true;
 
 	// Also initialize the local expansion of the current node (to
 	// be used in the downward pass later).
@@ -167,16 +167,40 @@ class ContinuousFmm {
 	     node->begin(0), node->end(0), sea_.get_max_order());
 	}
 	
-	// Otherwise, translate the moments owned by the children in a
-	// bottom-up fashion.
+	// Otherwise, translate the moments owned by the partitions...
 	else {
-	  for(index_t child = 0; child < node->num_children(); child++) {
+	  for(index_t p = 0; p < node->partitions_based_on_ws_indices_.size();
+	      p++) {
+
 	    node->stat().farfield_expansion_.TranslateFromFarField
-	      (node->get_child(child)->stat().farfield_expansion_);
+	      (node->partitions_based_on_ws_indices_[p]->stat_.
+	       farfield_expansion_);
 	  }
 	}
-      }
-    }
+
+	// If the current node has a "ws-node" parent, then add the
+	// contribution to it... Of course, we need to initialize the
+	// moments set before adding...
+	if((!(node->parent_->init_flag_)) && node->parent_ != NULL) {
+
+	  // The node center is the node that owns the partition, so
+	  // it's the parent's parent...
+	  for(index_t i = 0; i < shuffled_reference_particle_set_.n_rows();
+	      i++) {
+	    node_center[i] = (node->parent_->parent_->bound()).get(i).mid();
+	  }
+
+	  node->parent_->stat_.farfield_expansion_.Init(node_center, &sea_);
+	  node->parent_->stat_.local_expansion_.Init(node_center, &sea_);
+	  node->parent_->init_flag_ = true;
+	}
+	if(node->parent_ != NULL) {
+	  node->parent_->stat_.farfield_expansion_.TranslateFromFarField
+	    (node->stat().farfield_expansion_);
+	}
+	
+      } // iterating over each node on the current level...
+    } // iterating over each level set...
   }
 
   void EvaluateMultipoleExpansion_
@@ -568,8 +592,9 @@ class ContinuousFmm {
     MultiTreeUtility::ShuffleAccordingToPermutation
       (shuffled_reference_particle_extent_set_, old_from_new_index_[0]);
 
-    // Retrieve the lambda order needed for expansion.
-    lambda_ = fx_param_double(module_, "lambda", 1.0);
+    // Retrieve the lambda order needed for expansion. The CFMM uses
+    // the Coulombic kernel, hence always 1...
+    lambda_ = 1.0;
 
     // Initialize the kernel.
     kernel_.Init(lambda_, queries.n_rows());
