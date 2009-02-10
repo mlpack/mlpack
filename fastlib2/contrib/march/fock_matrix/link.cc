@@ -4,10 +4,10 @@
 
 void Link::ComputeFockMatrix() {
 
-  // Find "significant" bra and ket shell pairs?
-  
-  // When I do this, I need to also create a list of the maximum Schwartz 
-  // integral estimate for each shell
+  // Find "significant" bra and ket shell pairs
+  // These need to be ordered in terms of their Schwartz estimates
+  // I think shell_pair_list_ needs to be a list of lists
+  // One list of shell pairs for each mu
   num_shell_pairs_ = eri::ComputeShellPairs(&shell_pair_list_, shell_list_, 
                                             shell_pair_cutoff_, &shell_max_);
   
@@ -46,15 +46,25 @@ void Link::ComputeFockMatrix() {
   
   // loop over bra shell pairs
   
+  for (index_t mulambda_ind = 0; mulambda_ind < num_shell_pairs_; 
+       mulambda_ind++) {
   
+    // loop over \nu for the current \mu
+    for (index_t nu_ind = 0; nu_ind < num_nu; nu_ind++) {
   
-  // loop over \nu for the current \mu
+      // loop over \sigma and screen to see if this integral is necessary
+      // how to figure out which sigmas appear in shell pairs with 
   
-  // loop over \sigma and screen to see if this integral is necessary
+    } // loop nu_ind
   
-  // loop over \lambda and screen
+    // loop over nu corresponding to lambda and do same
+    // why is this necessary as well?  
   
-  // compute significant integrals
+    // compute significant integrals
+
+
+
+  } // loop mulambda_ind (over bra shell pairs)
 
 } // ComputeFockMatrix()
 
