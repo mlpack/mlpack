@@ -17,7 +17,7 @@
 #include "mlpack/series_expansion/inverse_pow_dist_kernel.h"
 #include "mlpack/series_expansion/inverse_pow_dist_farfield_expansion.h"
 #include "mlpack/series_expansion/inverse_pow_dist_local_expansion.h"
-#include "mlpack/kde/dualtree_kde_common.h"
+#include "contrib/dongryel/multitree_template/multitree_utility.h"
 #include "contrib/dongryel/proximity_project/gen_hypercube_tree.h"
 #include "contrib/dongryel/proximity_project/gen_hypercube_tree_util.h"
 
@@ -532,7 +532,7 @@ class FastMultipoleMethod {
     
     // Shuffle the reference particle charges according to the
     // permutation of the reference particle set.
-    DualtreeKdeCommon::ShuffleAccordingToPermutation
+    MultiTreeUtility::ShuffleAccordingToPermutation
       (shuffled_reference_particle_charge_set_, old_from_new_index_[0]);
 
     // Retrieve the lambda order needed for expansion.
