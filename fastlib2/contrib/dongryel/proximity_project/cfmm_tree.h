@@ -11,6 +11,10 @@ namespace proximity {
 
    public:
 
+    /** @brief The type of statistics stored in each node.
+     */
+    typedef TStatistics Statistics;
+
     /** @brief The beginning index of the point for each dataset.
      */
     ArrayList<index_t> begin_;
@@ -28,6 +32,10 @@ namespace proximity {
     /** @brief The total number of points for all the datasets.
      */
     index_t total_count_;
+
+    /** @brief The stored statistics for this node.
+     */
+    Statistics stat_;
 
     /** @brief The pointers to the children nodes.
      */
@@ -110,7 +118,7 @@ namespace proximity {
       CFmmTree<TStatistics> *new_node = new CFmmTree<TStatistics>();
       *(children_.PushBackRaw()) = new_node;
 
-      new_node->Init(number_of_particle_sets, dimension);
+      new_node->Init(number_of_particle_sets, dimension, this);
       new_node->node_index_ = node_index_in;
 
       return new_node;
@@ -195,6 +203,11 @@ namespace proximity {
     ArrayList<CFmmWellSeparatedTree<TStatistics> *> 
       partitions_based_on_ws_indices_;
 
+    /** @brief The parent partition that owns this node. This is NULL
+     *         for the root node.
+     */
+    CFmmWellSeparatedTree<Statistics> *parent_;
+
    public:
 
     CFmmTree() {
@@ -234,13 +247,17 @@ namespace proximity {
       }
     }
 
-    void Init(index_t number_of_particle_sets, index_t dimension) {
+    void Init(index_t number_of_particle_sets, index_t dimension,
+	      CFmmWellSeparatedTree<Statistics> *parent_in) {
+
       begin_.Init(number_of_particle_sets);
       count_.Init(number_of_particle_sets);
       total_count_ = 0;
       node_index_ = 0;
       partitions_based_on_ws_indices_.Init();
       well_separated_indices_.Init(number_of_particle_sets);
+
+      parent_ = parent_in;
     }
 
     void Init(index_t particle_set_number, index_t begin_in, 
@@ -404,7 +421,8 @@ namespace proximity {
     }
 
     // Initialize the root node.
-    node->Init(matrices.size(), matrices[0]->n_rows());
+    node->Init(matrices.size(), matrices[0]->n_rows(), 
+	       (CFmmWellSeparatedTree<TStatistic> *) NULL);
     node->set_level(0);
     for(index_t i = 0; i < matrices.size(); i++) {
       node->Init(i, 0, matrices[i]->n_cols());
