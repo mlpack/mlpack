@@ -107,7 +107,7 @@ double ComputeShellIntegrals(ShellPair& AB_shell,
                                                                                      
 }
 
-
+// I need to order these by size of integral estimate
 index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
                           ArrayList<BasisShell>& shells_in, 
                           double shell_pair_cutoff) {
