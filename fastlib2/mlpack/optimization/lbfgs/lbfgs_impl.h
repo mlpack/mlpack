@@ -1,7 +1,7 @@
 /*
  * =====================================================================================
  * 
- *       Filename:  l_bfgs_impl.h
+ *       Filename:  lbfgs_impl.h
  * 
  *    Description:  
  * 
@@ -131,7 +131,7 @@ void LBfgs<OptimizedFunction>::Init(OptimizedFunction *optimized_function,
 }
 
 template<typename OptimizedFunction>
-void LBfgs<OptimizedFunction>::Destruct() {
+void Lbfgs<OptimizedFunction>::Destruct() {
 // fclose(fp_log_);
   double objective;
   double feasibility_error;
@@ -153,7 +153,7 @@ void LBfgs<OptimizedFunction>::Destruct() {
 }
 
 template<typename OptimizedFunction>
-void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
+void Lbfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
   double feasibility_error;
   if (silent_==false) {
     NOTIFY("Starting optimization ...\n");
@@ -287,43 +287,43 @@ void LBfgs<OptimizedFunction>::ComputeLocalOptimumBFGS() {
 }
 
 template<typename OptimizedFunction>
-void LBfgs<OptimizedFunction>::CopyCoordinates(Matrix *result) {
+void Lbfgs<OptimizedFunction>::CopyCoordinates(Matrix *result) {
   result->Copy(coordinates_);
 }
 
 template<typename OptimizedFunction>
-void  LBfgs<OptimizedFunction>::set_coordinates(Matrix &coordinates) {
+void  Lbfgs<OptimizedFunction>::set_coordinates(Matrix &coordinates) {
   coordinates_.CopyValues(coordinates);
 }
 template<typename OptimizedFunction>
-Matrix *LBfgs<OptimizedFunction>::coordinates() {
+Matrix *Lbfgs<OptimizedFunction>::coordinates() {
   return &coordinates_;
 }
 
 template<typename OptimizedFunction>
-double LBfgs<OptimizedFunction>::sigma() {
+double Lbfgs<OptimizedFunction>::sigma() {
   return sigma_;
 }
 
 template<typename OptimizedFunction>
-void LBfgs<OptimizedFunction>::set_sigma(double sigma) {
+void Lbfgs<OptimizedFunction>::set_sigma(double sigma) {
   sigma_=sigma;
   optimized_function_->set_sigma(sigma_);
 }
 
 template<typename OptimizedFunction>
-void LBfgs<OptimizedFunction>::Reset() {
+void Lbfgs<OptimizedFunction>::Reset() {
   sigma_ = fx_param_double(module_, "sigma", 10);
   optimized_function_->set_sigma(sigma_);
 }
 
 template<typename OptimizedFunction>
-void LBfgs<OptimizedFunction>::set_max_iterations(index_t max_iterations) {
+void Lbfgs<OptimizedFunction>::set_max_iterations(index_t max_iterations) {
   max_iterations_=max_iterations;
 }
 
 template<typename OptimizedFunction>
-void LBfgs<OptimizedFunction>::InitOptimization_() {
+void Lbfgs<OptimizedFunction>::InitOptimization_() {
   if (unlikely(new_dimension_<0)) {
     FATAL("You forgot to set the new dimension\n");
   }
@@ -352,7 +352,7 @@ void LBfgs<OptimizedFunction>::InitOptimization_() {
 }
 
 template<typename OptimizedFunction>
-void LBfgs<OptimizedFunction>::UpdateLagrangeMult_() {
+void Lbfgs<OptimizedFunction>::UpdateLagrangeMult_() {
   optimized_function_->UpdateLagrangeMult(coordinates_);
   sigma_*=gamma_;
   optimized_function_->set_sigma(sigma_);
@@ -362,7 +362,7 @@ void LBfgs<OptimizedFunction>::UpdateLagrangeMult_() {
 // in the wolfe form. so for example if the direction is the negative gradient the direction
 // should be the gradient and not the -gradient
 template<typename OptimizedFunction>
-success_t LBfgs<OptimizedFunction>::ComputeWolfeStep_(double *step, Matrix &direction) {
+success_t Lbfgs<OptimizedFunction>::ComputeWolfeStep_(double *step, Matrix &direction) {
   fx_timer_start(module_, "wolfe_step");
   success_t success=SUCCESS_PASS;
   Matrix temp_coordinates;
@@ -418,7 +418,7 @@ success_t LBfgs<OptimizedFunction>::ComputeWolfeStep_(double *step, Matrix &dire
 }
 
 template<typename OptimizedFunction>
-success_t LBfgs<OptimizedFunction>::ComputeBFGS_(double *step, Matrix &grad, index_t memory) {
+success_t Lbfgs<OptimizedFunction>::ComputeBFGS_(double *step, Matrix &grad, index_t memory) {
   fx_timer_start(module_, "bfgs_step");
   Vector alpha;
   alpha.Init(mem_bfgs_);
@@ -479,7 +479,7 @@ success_t LBfgs<OptimizedFunction>::ComputeBFGS_(double *step, Matrix &grad, ind
 }
 
 template<typename OptimizedFunction>
-success_t LBfgs<OptimizedFunction>::UpdateBFGS_() {
+success_t Lbfgs<OptimizedFunction>::UpdateBFGS_() {
   index_t try_index_bfgs = (index_bfgs_ - 1 + mem_bfgs_ ) % mem_bfgs_;
   if (UpdateBFGS_(try_index_bfgs)==SUCCESS_FAIL) {
     return SUCCESS_FAIL;
@@ -490,7 +490,7 @@ success_t LBfgs<OptimizedFunction>::UpdateBFGS_() {
 }
 
 template<typename OptimizedFunction>
-success_t LBfgs<OptimizedFunction>::UpdateBFGS_(index_t index_bfgs) {
+success_t Lbfgs<OptimizedFunction>::UpdateBFGS_(index_t index_bfgs) {
   fx_timer_start(module_, "update_bfgs");
   // shift all values
   Matrix temp_s_bfgs;
@@ -650,7 +650,7 @@ void ComputeCauchyPoint(Matrix &coordinates, Matrix &gradient,
 }
 */
 template<typename OptimizedFunction>
-std::string LBfgs<OptimizedFunction>::ComputeProgress_() {
+std::string Lbfgs<OptimizedFunction>::ComputeProgress_() {
   double lagrangian=optimized_function_->ComputeLagrangian(coordinates_);
   double objective;
   optimized_function_->ComputeObjective(coordinates_, &objective);
@@ -668,7 +668,7 @@ std::string LBfgs<OptimizedFunction>::ComputeProgress_() {
 }
 
 template<typename OptimizedFunction>
-void LBfgs<OptimizedFunction>::ReportProgressFile_() {
+void Lbfgs<OptimizedFunction>::ReportProgressFile_() {
   std::string progress = ComputeProgress_();
   NOTIFY("%s\n", progress.c_str());
   // fprintf(fp_log_, "%s\n", progress.c_str());
