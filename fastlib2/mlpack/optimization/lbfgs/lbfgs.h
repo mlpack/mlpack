@@ -1,7 +1,7 @@
 /*
  * =====================================================================================
  * 
- *       Filename:  l_bfgs.h
+ *       Filename:  lbfgs.h
  * 
  *    Description:  
  * 
@@ -16,14 +16,14 @@
  * =====================================================================================
  */
 
-#ifndef L_BFGS_H_
-#define L_BFGS_H_
+#ifndef LBFGS_H_
+#define LBFGS_H_
 
 #include "fastlib/fastlib.h"
 #include <string>
 
 template<typename OptimizedFunction>
-class LBfgs {
+class Lbfgs {
  public:
   void Init(OptimizedFunction *optimized_function, datanode* module);
   void Destruct();
@@ -88,5 +88,5 @@ class LBfgs {
   FILE *fp_log_;
 };
 
-#include "l_bfgs_impl.h"
-#endif //L_BFGS_H_
+#include "lbfgs_impl.h"
+#endif //LBFGS_H_

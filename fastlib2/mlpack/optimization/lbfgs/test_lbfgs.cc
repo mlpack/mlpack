@@ -1,7 +1,7 @@
 /*
  * =====================================================================================
  *
- *       Filename:  test_l_bfgs.cc
+ *       Filename:  test_lbfgs.cc
  *
  *    Description:  
  *
@@ -15,13 +15,13 @@
  *
  * =====================================================================================
  */
-#include "l_bfgs.h"
+#include "lbfgs.h"
 #include "../mvu/mvu_objectives.h"
 #include <string>
 
-class LBfgsTest {
+class LbfgsTest {
  public:
-  LBfgsTest(){
+  LbfgsTest(){
     data_file_="swiss_roll_1000.csv";
   }
   void TestMaxVar1() {
@@ -75,7 +75,7 @@ class LBfgsTest {
 
 int main(int argc, char *argv[]) {
   fx_init(argc, argv);
-  LBfgsTest test;
+  LbfgsTest test;
   test.TestAll();
   fx_done();
 }
