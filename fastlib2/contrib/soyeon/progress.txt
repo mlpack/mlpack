@@ -115,4 +115,11 @@ Hessian matrix:
 				
 ./main --data1=sim2_data1.csv --data2=sim2_data2.csv --data3=sim2_data3.csv --info1=sim2_info1.csv --info_y=sim2_info_y.csv --info_ind_unknown_x=sim2_info_unknown_x.csv --initial_percent_sample=10 --starting_points=init.csv					
 				
- 				
+ 
+ ./main --data1=sim3_data1.csv --data2=sim3_data2.csv --data3=sim3_data3.csv --info1=sim3_info1.csv --info_y=sim3_info_y.csv --info_ind_unknown_x=sim3_info_unknown_x.csv --initial_percent_sample=100	
+ 
+ <Plan>
+ 1. opt++, trust resion method with constraints / install/documentation
+ 2. write to files/print out format
+ 3. speed up?
+ 4. Unix fastlib for simulation
