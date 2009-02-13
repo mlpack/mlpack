@@ -23,18 +23,18 @@
 
 int main(int argc, char *argv[]){
   fx_module *fx_root=fx_init(argc, argv, NULL);
-  std::string optimized_function=fx_param_str(NULL, "opts/optfun", "mvfu");
+  std::string optimized_function=fx_param_str(fx_root, "/optfun", "mvfu");
   fx_module *optfun_node;
   fx_module *l_bfgs_node;
-  l_bfgs_node=fx_submodule(fx_root, "opts/l_bfgs");
-  optfun_node=fx_submodule(fx_root, "opts/optfun");
+  l_bfgs_node=fx_submodule(fx_root, "/lbfgs");
+  optfun_node=fx_submodule(fx_root, "/optfun");
   // this is sort of a hack and it has to be eliminated in the final version
   index_t new_dimension=fx_param_int(l_bfgs_node, "new_dimension", 2);
   fx_set_param_int(optfun_node, "new_dimension", new_dimension); 
   
-  if (!fx_param_exists(fx_root, "opts/optfun/nearest_neighbor_file")) {
+  if (!fx_param_exists(fx_root, "/optfun/nearest_neighbor_file")) {
     Matrix data_mat;
-    std::string data_file=fx_param_str_req(NULL, "opts/data_file");
+    std::string data_file=fx_param_str_req(fx_root, "opts/data_file");
     if (data::Load(data_file.c_str(), &data_mat)==SUCCESS_FAIL) {
       FATAL("Didn't manage to load %s", data_file.c_str());
     }
@@ -62,13 +62,13 @@ int main(int argc, char *argv[]){
   
     //we need to insert the number of points
     fx_set_param_int(l_bfgs_node, "num_of_points", data_mat.n_cols());
-    std::string result_file=fx_param_str(NULL, "opts/result_file", "result.csv");
+    std::string result_file=fx_param_str(fx_root, "opts/result_file", "result.csv");
     bool done=false;
     
     if (optimized_function == "mvu") {
       MaxVariance opt_function;
       opt_function.Init(optfun_node, data_mat);
-      LBfgs<MaxVariance> engine;
+      Lbfgs<MaxVariance> engine;
       engine.Init(&opt_function, l_bfgs_node);
       if (pca_init==true) {
         engine.set_coordinates(*initial_data);
@@ -79,25 +79,11 @@ int main(int argc, char *argv[]){
       }
       done=true;
     }
-    if (optimized_function=="mvuineq") {
-      MaxVarianceInequalityOnFurthest opt_function;
-      opt_function.Init(optfun_node, data_mat);
-      LBfgs<MaxVarianceInequalityOnFurthest> engine;
-      engine.Init(&opt_function, l_bfgs_node);
-      if (pca_init==true) {
-        engine.set_coordinates(*initial_data);
-      }
-      engine.ComputeLocalOptimumBFGS();
-      if (data::Save(result_file.c_str(), *engine.coordinates())==SUCCESS_FAIL) {
-        FATAL("Didn't manage to save %s", result_file.c_str());
-      }
-      done=true;
-    }
-    if (optimized_function == "mvfu"){
+   if (optimized_function == "mvfu"){
       MaxFurthestNeighbors opt_function;
       opt_function.Init(optfun_node, data_mat);
       //opt_function.set_lagrange_mult(0.0);
-      LBfgs<MaxFurthestNeighbors> engine;
+      Lbfgs<MaxFurthestNeighbors> engine;
       fx_set_param_bool(l_bfgs_node, "use_default_termination", false);
       engine.Init(&opt_function, l_bfgs_node);
       if (pca_init==true) {
@@ -131,7 +117,7 @@ int main(int argc, char *argv[]){
       //we need to insert the number of points
       fx_set_param_int(l_bfgs_node, "num_of_points", opt_function.num_of_points());
 
-      LBfgs<MaxVariance> engine;
+      Lbfgs<MaxVariance> engine;
       engine.Init(&opt_function, l_bfgs_node);
       engine.ComputeLocalOptimumBFGS();
       if (data::Save(result_file.c_str(), *engine.coordinates())==SUCCESS_FAIL) {
@@ -146,7 +132,7 @@ int main(int argc, char *argv[]){
       fx_set_param_int(l_bfgs_node, "num_of_points", opt_function.num_of_points());
       fx_set_param_bool(l_bfgs_node, "use_default_termination", false);
 
-      LBfgs<MaxFurthestNeighbors> engine;
+      Lbfgs<MaxFurthestNeighbors> engine;
       engine.Init(&opt_function, l_bfgs_node);
       engine.ComputeLocalOptimumBFGS();
       if (data::Save(result_file.c_str(), *engine.coordinates())==SUCCESS_FAIL) {
