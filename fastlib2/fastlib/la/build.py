@@ -121,7 +121,7 @@ def make_blas(sysentry, files, params):
 				blas_lib=input("Give me now the full path with the BLAS library name in quotes ie \"/usr/lib/libblas.a\": ");
 				print "I am creating a symbolic link to "+ str(blas_lib)
 				commands.getoutput("rm -f " + sq(libblas.name));
-				print commands.getoutput("ln -s "+str(lapack_lib)+ " "+ sq(libblas.name));
+				print commands.getoutput("ln -s "+str(blas_lib)+ " "+ sq(libblas.name));
 			else:
 				if resp==1:
 					print "Now I will download BLAS from netlib.org"
