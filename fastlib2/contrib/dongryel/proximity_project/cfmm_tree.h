@@ -27,7 +27,7 @@ namespace proximity {
     /** @brief The well-separated index for each dataset, i.e. the
      *         maximum WS index for the points for each group.
      */
-    Vector well_separated_indices_;
+    GenVector<int> well_separated_indices_;
     
     /** @brief The total number of points for all the datasets.
      */
@@ -101,6 +101,7 @@ namespace proximity {
       count_.Init(number_of_particle_sets);
       total_count_ = 0;
       well_separated_indices_.Init(number_of_particle_sets);
+      well_separated_indices_.SetZero();
       children_.Init();
       parent_ = parent_in;
       init_flag_ = false;
@@ -181,7 +182,7 @@ namespace proximity {
     /** @brief The well-separated index for each dataset, i.e. the
      *         maximum WS index for the points for each group.
      */
-    Vector well_separated_indices_;
+    GenVector<int> well_separated_indices_;
     
     /** @brief The total number of points for all the datasets.
      */
@@ -261,7 +262,7 @@ namespace proximity {
       node_index_ = 0;
       partitions_based_on_ws_indices_.Init();
       well_separated_indices_.Init(number_of_particle_sets);
-
+      well_separated_indices_.SetZero();
       parent_ = parent_in;
       init_flag_ = false;
     }
@@ -401,7 +402,7 @@ namespace proximity {
   template<typename TStatistic>
   CFmmTree<TStatistic> *MakeCFmmTree
   (ArrayList<Matrix *> &matrices, ArrayList<Vector *> &targets,
-   index_t leaf_size, double min_required_ws_index,
+   index_t leaf_size, index_t min_required_ws_index,
    ArrayList< ArrayList<CFmmTree<TStatistic> *> > *nodes_in_each_level,
    ArrayList< ArrayList<index_t> > *old_from_new = NULL,
    ArrayList< ArrayList<index_t> > *new_from_old = NULL) {
