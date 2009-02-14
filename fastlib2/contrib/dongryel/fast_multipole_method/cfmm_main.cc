@@ -57,7 +57,7 @@ int main(int argc, char *argv[]) {
 	       &reference_bandwidths);
   }
   else {
-    reference_bandwidths.Init(1, reference.n_cols());
+    reference_bandwidths.Init(1, references.n_cols());
     reference_bandwidths.SetAll(1);
   }
 
@@ -65,11 +65,12 @@ int main(int argc, char *argv[]) {
   ContinuousFmm cfmm_algorithm;
   cfmm_algorithm.Init(queries, references, reference_weights,
 		      reference_bandwidths, queries_equal_references, 
-		      fmm_module);
+		      cfmm_module);
   
   // Start computation.
   cfmm_algorithm.Compute();
 
+  // Compute naively.
   Vector naive_results;
   cfmm_algorithm.NaiveCompute(&naive_results);
 
