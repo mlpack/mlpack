@@ -1,6 +1,7 @@
 #ifndef GEN_HYPERCUBE_TREE_UTIL_H
 #define GEN_HYPERCUBE_TREE_UTIL_H
 
+#include "cfmm_tree.h"
 #include "gen_hypercube_tree.h"
 
 namespace GenHypercubeTreeUtil {
@@ -13,14 +14,13 @@ namespace GenHypercubeTreeUtil {
     return index << dimension;
   }
 
-  template<typename TStatistic>
-  proximity::GenHypercubeTree<TStatistic> *FindNode
-  (const ArrayList< ArrayList<proximity::GenHypercubeTree<TStatistic> *> > 
+  template<typename TreeType>
+  TreeType *FindNode
+  (const ArrayList< ArrayList<TreeType *> > 
    &nodes_in_each_level, unsigned int node_index, index_t level) {
 
-    const ArrayList<proximity::GenHypercubeTree<TStatistic> *> 
-      &candidate_list = nodes_in_each_level[level];
-    proximity::GenHypercubeTree<TStatistic> *candidate = NULL;
+    const ArrayList<TreeType *> &candidate_list = nodes_in_each_level[level];
+    TreeType *candidate = NULL;
 
     for(index_t i = 0; i < candidate_list.size(); i++) {
       if((candidate_list[i])->node_index() == node_index) {
@@ -31,27 +31,25 @@ namespace GenHypercubeTreeUtil {
     return candidate;
   }
 
-  template<typename TStatistic>
+  template<typename TreeType>
   void NodeListSetDifference
   (index_t dimension,
-   const ArrayList<proximity::GenHypercubeTree<TStatistic> * > &first_list,
-   const ArrayList<proximity::GenHypercubeTree<TStatistic> * > &second_list,
-   const ArrayList<proximity::GenHypercubeTree<TStatistic> * > &third_list,
-   const ArrayList<proximity::GenHypercubeTree<TStatistic> * > &filter_list,
-   ArrayList<proximity::GenHypercubeTree<TStatistic> * > *set_difference) {
+   const ArrayList<TreeType * > &first_list,
+   const ArrayList<TreeType * > &second_list,
+   const ArrayList<TreeType * > &third_list,
+   const ArrayList<TreeType * > &filter_list,
+   ArrayList<TreeType * > *set_difference) {
    
     // Initialize the set difference list.
     set_difference->Init();
     
     for(index_t i = 0; i < filter_list.size(); i++) {
       
-      proximity::GenHypercubeTree<TStatistic> *node_from_filter_list = 
-	filter_list[i];
+      TreeType *node_from_filter_list = filter_list[i];
       bool flag = false;
 
       for(index_t j = 0; j < first_list.size(); j++) {
-	proximity::GenHypercubeTree<TStatistic> *node_from_first_list = 
-	  first_list[j];
+	TreeType *node_from_first_list = first_list[j];
 
 	int level_difference = node_from_first_list->level() -
 	  node_from_filter_list->level();
@@ -73,8 +71,7 @@ namespace GenHypercubeTreeUtil {
       }
       
       for(index_t j = 0; j < second_list.size(); j++) {
-	proximity::GenHypercubeTree<TStatistic> *node_from_second_list = 
-	  second_list[j];
+	TreeType *node_from_second_list = second_list[j];
 	int level_difference = node_from_second_list->level() -
 	  node_from_filter_list->level();
 	DEBUG_ASSERT(level_difference >= 0);
@@ -92,8 +89,7 @@ namespace GenHypercubeTreeUtil {
       }
 
       for(index_t j = 0; j < third_list.size(); j++) {
-	proximity::GenHypercubeTree<TStatistic> *node_from_third_list = 
-	  third_list[j];
+	TreeType *node_from_third_list = third_list[j];
 	int level_difference = node_from_third_list->level() -
 	  node_from_filter_list->level();
 	
@@ -116,105 +112,247 @@ namespace GenHypercubeTreeUtil {
     }
   }
 
-  template<typename TStatistic>
-  void FindColleagues(index_t dimension, 
-		      proximity::GenHypercubeTree<TStatistic> *node,
-		      const 
-		      ArrayList
-		      < ArrayList<proximity::GenHypercubeTree<TStatistic> * > >
-		      &nodes_in_each_level,
-		      ArrayList<proximity::GenHypercubeTree<TStatistic> *> 
-		      *colleagues) {
-    
-    // Initialize the colleague node list.
-    colleagues->Init();
+  template<typename TreeType>
+  class FindColleagues {
 
-    ArrayList<proximity::GenHypercubeTree<TStatistic> * > neighbors_of_parent;
+   public:
+    static void DoIt(index_t dimension, TreeType *node,
+		     const ArrayList< ArrayList<TreeType * > > 
+		     &nodes_in_each_level, ArrayList<TreeType *> *colleagues);
 
-    // Find the parent node of the given node.
-    proximity::GenHypercubeTree<TStatistic> *parent_node =
-      FindNode(nodes_in_each_level, FindParent(node->node_index(), dimension), 
-	       node->level() - 1);
-    
-    // Find the neighbors of the parent node.
-    FindNeighborsInAdaptiveGenHypercubeTree
-      (nodes_in_each_level, parent_node->node_index(), parent_node->level(),
-       dimension, &neighbors_of_parent);
-    
-    // Find the children of the neighbors of the parent node.
-    for(index_t i = 0; i < neighbors_of_parent.size(); i++) {
+  };
+
+  template<>
+  template<typename Statistics>
+  class FindColleagues< proximity::GenHypercubeTree<Statistics> > {
+ 
+   public:
+    static void DoIt(index_t dimension, proximity::GenHypercubeTree<Statistics>
+		     *node, const ArrayList< 
+		     ArrayList<proximity::GenHypercubeTree<Statistics> * > > 
+		     &nodes_in_each_level,
+		     ArrayList< proximity::GenHypercubeTree<Statistics> *> 
+		     *colleagues) {
       
-      proximity::GenHypercubeTree<TStatistic> *given_neighbor_of_parent =
-	neighbors_of_parent[i];
-      for(index_t j = 0; j < given_neighbor_of_parent->num_children(); j++) {
-	proximity::GenHypercubeTree<TStatistic> *child_node = 
-	  given_neighbor_of_parent->get_child(j);
-
-	// I do not feel like doing bit-shuffling business to optimize
-	// this. I'll just compute the node distance.
-	double min_distance = 
-	  sqrt(node->bound().MinDistanceSq(child_node->bound()));
+      // Initialize the colleague node list.
+      colleagues->Init();
+      
+      ArrayList< proximity::GenHypercubeTree<Statistics> * > 
+	neighbors_of_parent;
+      
+      // Find the parent node of the given node.
+      proximity::GenHypercubeTree<Statistics> *parent_node =
+	FindNode(nodes_in_each_level, 
+		 FindParent(node->node_index(), dimension), node->level() - 1);
+      
+      // Find the neighbors of the parent node.
+      FindNeighborsInAdaptiveGenHypercubeTree
+	(nodes_in_each_level, parent_node->node_index(), parent_node->level(),
+	 dimension, &neighbors_of_parent);
+      
+      // Find the children of the neighbors of the parent node.
+      for(index_t i = 0; i < neighbors_of_parent.size(); i++) {
 	
-	if(min_distance > 0) {
-	  *(colleagues->PushBackRaw()) = child_node;
+	proximity::GenHypercubeTree<Statistics> *given_neighbor_of_parent = 
+	  neighbors_of_parent[i];
+	for(index_t j = 0; j < given_neighbor_of_parent->num_children(); j++) {
+	  proximity::GenHypercubeTree<Statistics> *child_node = 
+	    given_neighbor_of_parent->get_child(j);
+	  
+	  // I do not feel like doing bit-shuffling business to optimize
+	  // this. I'll just compute the node distance.
+	  double min_distance = 
+	    sqrt(node->bound().MinDistanceSq(child_node->bound()));
+	  
+	  if(min_distance > 0) {
+	    *(colleagues->PushBackRaw()) = child_node;
+	  }
 	}
       }
     }
-  }
+  };
 
-  template<typename TStatistic>
-  void RetrieveAdjacentLeafNode
-  (const proximity::GenHypercubeTree<TStatistic> *centered_node,
-   proximity::GenHypercubeTree<TStatistic> 
-   *potentially_fake_leaf_neighbor_node,
-   ArrayList<proximity::GenHypercubeTree<TStatistic> *> *adjacent_children, 
-   ArrayList<proximity::GenHypercubeTree<TStatistic> *> 
-   *non_adjacent_children) {
-
-    // Compute the minimum distance between the centered node and
-    // the current node being considered. I imagine this could be
-    // optimized using bit shuffling business, but I am currently
-    // not inclined to implementing this.
-    double min_distance = 
-      sqrt(centered_node->bound().MinDistanceSq
-	   (potentially_fake_leaf_neighbor_node->bound()));
-    
-    // If the minimum distance at least the side length of the
-    // reference node being considered, then add to the non-adjacent
-    // list. Otherwise, it is adjacent.
-    if(min_distance >= potentially_fake_leaf_neighbor_node->side_length()) {
-      *(non_adjacent_children->PushBackRaw()) =
-	potentially_fake_leaf_neighbor_node;
-    }
-    else {
+  template<>
+  template<typename Statistics>
+  class FindColleagues< proximity::CFmmTree<Statistics> > {
+ 
+   public:
+    static void DoIt(index_t dimension, proximity::CFmmTree<Statistics>
+		     *node, const ArrayList< 
+		     ArrayList<proximity::CFmmTree<Statistics> * > > 
+		     &nodes_in_each_level,
+		     ArrayList< proximity::CFmmTree<Statistics> *> 
+		     *colleagues) {
       
-      if(potentially_fake_leaf_neighbor_node->is_leaf()) {
-	*(adjacent_children->PushBackRaw()) =
+      // Initialize the colleague node list.
+      colleagues->Init();
+      
+      ArrayList< proximity::CFmmTree<Statistics> * > 
+	neighbors_of_parent;
+      
+      // Find the parent node of the given node.
+      /*
+      proximity::CFmmTree<Statistics> *parent_node =
+	FindNode(nodes_in_each_level, 
+		 FindParent(node->node_index(), dimension), node->level() - 1);
+      */
+      proximity::CFmmTree<Statistics> *parent_node =
+	node->parent_->parent_;
+      
+      // Find the neighbors of the parent node.
+      FindNeighborsInAdaptiveGenHypercubeTree
+	(nodes_in_each_level, parent_node->node_index(), parent_node->level(),
+	 dimension, &neighbors_of_parent);
+      
+      // Find the children of the neighbors of the parent node.
+      for(index_t i = 0; i < neighbors_of_parent.size(); i++) {
+	
+	proximity::CFmmTree<Statistics> *given_neighbor_of_parent = 
+	  neighbors_of_parent[i];
+	
+	// Loop over each partition...
+	for(index_t p = 0; p < given_neighbor_of_parent->
+	      partitions_based_on_ws_indices_.size(); p++) {
+
+	  for(index_t j = 0; j < given_neighbor_of_parent->
+		partitions_based_on_ws_indices_[p]->num_children(); j++) {
+	    proximity::CFmmTree<Statistics> *child_node = 
+	      given_neighbor_of_parent->
+	      partitions_based_on_ws_indices_[p]->get_child(j);
+	    
+	    // I do not feel like doing bit-shuffling business to optimize
+	    // this. I'll just compute the node distance.
+	    double min_distance = 
+	      sqrt(node->bound().MinDistanceSq(child_node->bound()));
+	    
+	    if(min_distance > 0) {
+	      *(colleagues->PushBackRaw()) = child_node;
+	    }
+	  }
+	}
+      }
+    }
+  };
+
+  template<typename TreeType>
+  class RetrieveAdjacentLeafNode {
+   public:
+
+    static void DoIt(const TreeType *centered_node, 
+		     TreeType *potentially_fake_leaf_neighbor_node,
+		     ArrayList<TreeType *> *adjacent_children, 
+		     ArrayList<TreeType *> *non_adjacent_children);
+  };
+  
+  template<>
+  template<typename Statistics>
+  class RetrieveAdjacentLeafNode< proximity::GenHypercubeTree<Statistics> > {
+   public:
+    
+    typedef proximity::GenHypercubeTree<Statistics> TreeType;
+
+    static void DoIt(const TreeType *centered_node, 
+		     TreeType *potentially_fake_leaf_neighbor_node,
+		     ArrayList<TreeType *> *adjacent_children, 
+		     ArrayList<TreeType *> *non_adjacent_children) {
+      
+      // Compute the minimum distance between the centered node and
+      // the current node being considered. I imagine this could be
+      // optimized using bit shuffling business, but I am currently
+      // not inclined to implementing this.
+      double min_distance = 
+	sqrt(centered_node->bound().MinDistanceSq
+	     (potentially_fake_leaf_neighbor_node->bound()));
+      
+      // If the minimum distance at least the side length of the
+      // reference node being considered, then add to the non-adjacent
+      // list. Otherwise, it is adjacent.
+      if(min_distance >= potentially_fake_leaf_neighbor_node->side_length()) {
+	*(non_adjacent_children->PushBackRaw()) =
 	  potentially_fake_leaf_neighbor_node;
       }
       else {
-	for(index_t i = 0; i < 
-	      potentially_fake_leaf_neighbor_node->num_children(); i++) {
-	  
-	  proximity::GenHypercubeTree<TStatistic> *potential_node =
-	    potentially_fake_leaf_neighbor_node->get_child(i);
-	  RetrieveAdjacentLeafNode(centered_node, potential_node, 
-				   adjacent_children, non_adjacent_children);
+	
+	if(potentially_fake_leaf_neighbor_node->is_leaf()) {
+	  *(adjacent_children->PushBackRaw()) =
+	    potentially_fake_leaf_neighbor_node;
 	}
-      }
+	else {
+	  for(index_t i = 0; i < 
+		potentially_fake_leaf_neighbor_node->num_children(); i++) {
+	    
+	    TreeType *potential_node =
+	      potentially_fake_leaf_neighbor_node->get_child(i);
+	    DoIt(centered_node, potential_node, adjacent_children, 
+		 non_adjacent_children);
+	  }
+	}
+      }      
     }
-  }
+  };
 
-  template<typename TStatistic>
+  template<>
+  template<typename Statistics>
+  class RetrieveAdjacentLeafNode< proximity::CFmmTree<Statistics> > {
+   public:
+    
+    typedef proximity::CFmmTree<Statistics> TreeType;
+
+    static void DoIt(const TreeType *centered_node, 
+		     TreeType *potentially_fake_leaf_neighbor_node,
+		     ArrayList<TreeType *> *adjacent_children, 
+		     ArrayList<TreeType *> *non_adjacent_children) {
+      
+      // Compute the minimum distance between the centered node and
+      // the current node being considered. I imagine this could be
+      // optimized using bit shuffling business, but I am currently
+      // not inclined to implementing this.
+      double min_distance = 
+	sqrt(centered_node->bound().MinDistanceSq
+	     (potentially_fake_leaf_neighbor_node->bound()));
+      
+      // If the minimum distance at least the side length of the
+      // reference node being considered, then add to the non-adjacent
+      // list. Otherwise, it is adjacent.
+      if(min_distance >= potentially_fake_leaf_neighbor_node->side_length()) {
+	*(non_adjacent_children->PushBackRaw()) =
+	  potentially_fake_leaf_neighbor_node;
+      }
+      else {
+	
+	if(potentially_fake_leaf_neighbor_node->is_leaf()) {
+	  *(adjacent_children->PushBackRaw()) =
+	    potentially_fake_leaf_neighbor_node;
+	}
+	else {
+	  for(index_t p = 0; p < 
+		potentially_fake_leaf_neighbor_node->
+		partitions_based_on_ws_indices_.size(); p++) {
+
+	    for(index_t i = 0; i < 
+		  potentially_fake_leaf_neighbor_node->
+		  partitions_based_on_ws_indices_[p]->num_children(); i++) {
+	      
+	      TreeType *potential_node =
+		potentially_fake_leaf_neighbor_node->
+		partitions_based_on_ws_indices_[p]->get_child(i);
+	      DoIt(centered_node, potential_node, adjacent_children, 
+		   non_adjacent_children);
+
+	    } // end of looping over each child of the current partition...
+	  } // end of looping over each partition...
+	}
+      }      
+    }
+  };
+
+  template<typename TreeType>
   void FindAdjacentLeafNode
   (index_t dimension,
-   const ArrayList< ArrayList<proximity::GenHypercubeTree<TStatistic> *> > 
-   &nodes_in_each_level,
-   proximity::GenHypercubeTree<TStatistic> *leaf_node,
-   ArrayList<proximity::GenHypercubeTree<TStatistic> *> 
-   *adjacent_children,
-   ArrayList<proximity::GenHypercubeTree<TStatistic> *> 
-   *non_adjacent_children) {
+   const ArrayList< ArrayList<TreeType *> > &nodes_in_each_level,
+   TreeType *leaf_node,
+   ArrayList<TreeType *> *adjacent_children,
+   ArrayList<TreeType *> *non_adjacent_children) {
     
     // Initialize the list to be returned.
     adjacent_children->Init();
@@ -235,16 +373,15 @@ namespace GenHypercubeTreeUtil {
 	  neighbor_indices_to_be_filtered.size();
 	potentially_fake_leaf_neighbor++) {
       
-      proximity::GenHypercubeTree<TStatistic> 
-	*potentially_fake_leaf_neighbor_node =
+      TreeType *potentially_fake_leaf_neighbor_node =
 	FindNode(nodes_in_each_level, neighbor_indices_to_be_filtered
 		 [potentially_fake_leaf_neighbor], leaf_node->level());
 	     
       // In this case, we traverse down.
       if(potentially_fake_leaf_neighbor_node != NULL) {
-	RetrieveAdjacentLeafNode(leaf_node,
-				 potentially_fake_leaf_neighbor_node,
-				 adjacent_children, non_adjacent_children);
+	RetrieveAdjacentLeafNode<TreeType>::DoIt
+	  (leaf_node, potentially_fake_leaf_neighbor_node,
+	   adjacent_children, non_adjacent_children);
       }
       // Otherwise, we traverse up to find the parent.
       else {
@@ -252,7 +389,7 @@ namespace GenHypercubeTreeUtil {
 	index_t current_level = leaf_node->level();
 	unsigned int potential_node_index = 
 	  neighbor_indices_to_be_filtered[potentially_fake_leaf_neighbor];
-	proximity::GenHypercubeTree<TStatistic> *potential_candidate = NULL;
+	TreeType *potential_candidate = NULL;
 	
 	do {
 	  
@@ -412,12 +549,11 @@ namespace GenHypercubeTreeUtil {
 			   0, false, *neighbor_indices);
   }
 
-  template<typename TStatistic>
+  template<typename TreeType>
   void FindNeighborsInAdaptiveGenHypercubeTree
-  (const ArrayList< ArrayList<proximity::GenHypercubeTree<TStatistic> *> > 
-   &nodes_in_each_level,
+  (const ArrayList< ArrayList<TreeType *> > &nodes_in_each_level,
    unsigned int index, index_t level, index_t dimension, 
-   ArrayList<proximity::GenHypercubeTree<TStatistic> * > *neighbor_nodes) {
+   ArrayList<TreeType * > *neighbor_nodes) {
     
     // Initialize the node list.
     neighbor_nodes->Init();
@@ -428,7 +564,7 @@ namespace GenHypercubeTreeUtil {
 
     // Now filter the list based on its existence.
     for(index_t i = 0; i < unfiltered_neighbor_indices.size(); i++) {
-      proximity::GenHypercubeTree<TStatistic> *node =
+      TreeType *node =
 	FindNode(nodes_in_each_level, unfiltered_neighbor_indices[i], level);
       
       if(node != NULL) {
@@ -437,17 +573,17 @@ namespace GenHypercubeTreeUtil {
     }
   }
 
-  template<typename TStatistic>
+  template<typename TreeType>
   void FindFourthList
-  (const ArrayList< ArrayList<proximity::GenHypercubeTree<TStatistic> *> > 
-   &nodes_in_each_level, unsigned int index, index_t level, index_t dimension,
-   const ArrayList<proximity::GenHypercubeTree<TStatistic> * > &first_list,
-   const ArrayList<proximity::GenHypercubeTree<TStatistic> * > &second_list,
-   const ArrayList<proximity::GenHypercubeTree<TStatistic> * > &third_list,
-   ArrayList<proximity::GenHypercubeTree<TStatistic> * > *fourth_list) {
+  (const ArrayList< ArrayList<TreeType *> > &nodes_in_each_level, 
+   unsigned int index, index_t level, index_t dimension,
+   const ArrayList<TreeType * > &first_list,
+   const ArrayList<TreeType * > &second_list,
+   const ArrayList<TreeType * > &third_list,
+   ArrayList<TreeType * > *fourth_list) {
 
     // First, find the parent of the given node.
-    ArrayList<proximity::GenHypercubeTree<TStatistic> * > neighbors_of_parent;
+    ArrayList<TreeType * > neighbors_of_parent;
 
     // Then, find the neighbors of the parent of the given node.
     FindNeighborsInAdaptiveGenHypercubeTree
