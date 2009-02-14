@@ -247,9 +247,16 @@ class ContinuousFmm {
 	
 	double sq_dist = la::DistanceSqEuclidean
 	  (shuffled_query_particle_set_.n_rows(), q_col, r_col);
-	
+	double dist = sqrt(sq_dist);
+
+	// This implements the kernel function used for the base case
+	// in the page 2 of the CFMM paper...
 	potentials[q] += shuffled_reference_particle_charge_set_[r] *
-	  kernel_.EvalUnnormOnSq(sq_dist);
+	  erf(sqrt(shuffled_reference_particle_bandwidth_set_[q] *
+		   shuffled_reference_particle_bandwidth_set_[r] /
+		   (shuffled_reference_particle_bandwidth_set_[q] +
+		    shuffled_reference_particle_bandwidth_set_[r])) * dist) / 
+	  dist;
       }
     }
   }
