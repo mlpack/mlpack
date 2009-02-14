@@ -273,6 +273,7 @@ class FastMultipoleMethod {
 	// their description of the algorithm.
 	ArrayList<proximity::GenHypercubeTree<FmmStat> *> colleagues;
 	GenHypercubeTreeUtil::FindColleagues
+	  <proximity::GenHypercubeTree<FmmStat> >::DoIt
 	  (shuffled_query_particle_set_.n_rows(), node, nodes_in_each_level_,
 	   &colleagues);
 

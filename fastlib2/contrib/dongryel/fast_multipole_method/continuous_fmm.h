@@ -23,6 +23,7 @@
 
 #include "fastlib/fastlib.h"
 #include "fmm_stat.h"
+#include "mlpack/kde/inverse_normal_cdf.h"
 #include "mlpack/series_expansion/inverse_pow_dist_kernel.h"
 #include "mlpack/series_expansion/inverse_pow_dist_farfield_expansion.h"
 #include "mlpack/series_expansion/inverse_pow_dist_local_expansion.h"
@@ -181,7 +182,7 @@ class ContinuousFmm {
 	// If the current node has a "ws-node" parent, then add the
 	// contribution to it... Of course, we need to initialize the
 	// moments set before adding...
-	if((!(node->parent_->init_flag_)) && node->parent_ != NULL) {
+	if(node->parent_ != NULL && (!(node->parent_->init_flag_))) {
 
 	  // The node center is the node that owns the partition, so
 	  // it's the parent's parent...
@@ -326,9 +327,9 @@ class ContinuousFmm {
 	// corresponds to Cheng, Greengard, and Rokhlin's List 2 in
 	// their description of the algorithm.
 	ArrayList<proximity::CFmmTree<FmmStat> *> colleagues;
-	GenHypercubeTreeUtil::FindColleagues
-	  (shuffled_query_particle_set_.n_rows(), node, nodes_in_each_level_,
-	   &colleagues);
+	GenHypercubeTreeUtil::FindColleagues<proximity::CFmmTree<FmmStat> >::
+	  DoIt(shuffled_query_particle_set_.n_rows(), node, 
+	       nodes_in_each_level_, &colleagues);
 
 	// Perform far-to-local translation for the colleague nodes.
 	for(index_t c = 0; c < colleagues.size(); c++) {
@@ -361,7 +362,7 @@ class ContinuousFmm {
 	  for(index_t adjacent = 0; adjacent < adjacent_leaves.size(); 
 	      adjacent++) {
 	    
-	    proximity::GenHypercubeTree<FmmStat> *reference_leaf_node =
+	    proximity::CFmmTree<FmmStat> *reference_leaf_node = 
 	      adjacent_leaves[adjacent];
 	    
 	    DEBUG_ASSERT(reference_leaf_node->is_leaf());
@@ -375,7 +376,7 @@ class ContinuousFmm {
 	  // its far-field expansion.
 	  for(index_t non_adjacent = 0; non_adjacent < 
 		non_adjacent_children.size(); non_adjacent++) {
-	    proximity::GenHypercubeTree<FmmStat> *reference_node =
+	    proximity::CFmmTree<FmmStat> *reference_node =
 	      non_adjacent_children[non_adjacent];
 
 	    // This is the cut-off that determines whether exhaustive
@@ -401,7 +402,7 @@ class ContinuousFmm {
 	}
 
 	// Compute List 4.
-	ArrayList<proximity::GenHypercubeTree<FmmStat> * > fourth_list;
+	ArrayList<proximity::CFmmTree<FmmStat> * > fourth_list;
 	GenHypercubeTreeUtil::FindFourthList
 	  (nodes_in_each_level_, node->node_index(), node->level(),
 	   shuffled_query_particle_set_.n_rows(), adjacent_leaves, 
@@ -412,7 +413,7 @@ class ContinuousFmm {
 	for(index_t direct_accum = 0; direct_accum < fourth_list.size();
 	    direct_accum++) {
 	  
-	  proximity::GenHypercubeTree<FmmStat> *reference_node =
+	  proximity::CFmmTree<FmmStat> *reference_node = 
 	    fourth_list[direct_accum];
 	  
 	  // This is the cut-off that determines whether computing by
@@ -575,6 +576,7 @@ class ContinuousFmm {
     // Copy over the reference bandwidth set and initialize the extent
     // for each particle.
     shuffled_reference_particle_bandwidth_set_.Init(rset_weights.n_cols());
+    shuffled_reference_particle_extent_set_.Init(rset_weights.n_cols());
     for(index_t i = 0; i < rset_weights.n_cols(); i++) {
       shuffled_reference_particle_bandwidth_set_[i] = 
 	rset_bandwidths.get(0, i);
@@ -587,11 +589,14 @@ class ContinuousFmm {
     // Construct query and reference trees. Shuffle the reference
     // weights according to the permutation of the reference set in
     // the reference tree.
+    ArrayList<Vector *> target_sets;
+    target_sets.Init();
+    *(target_sets.PushBackRaw()) = &shuffled_reference_particle_extent_set_;
     fx_timer_start(NULL, "tree_d");
-    tree_ = proximity::MakeCFmmTree(particle_sets, leaflen,
-				    &nodes_in_each_level_,
-				    &old_from_new_index_,
-				    &new_from_old_index_);
+    tree_ = proximity::MakeCFmmTree
+      (particle_sets, target_sets, leaflen,
+       fx_param_int(module_, "min_ws_index", 2),
+       &nodes_in_each_level_, &old_from_new_index_, &new_from_old_index_);
     fx_timer_stop(NULL, "tree_d");
 
     printf("Constructed the tree...\n");
