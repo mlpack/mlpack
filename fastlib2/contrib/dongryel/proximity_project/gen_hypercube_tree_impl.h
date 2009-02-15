@@ -241,12 +241,12 @@ namespace tree_gen_hypercube_tree_private {
   template<typename TStatistic>
   void SplitGenHypercubeTree
   (ArrayList<Matrix *> &matrices, GenHypercubeTree<TStatistic> *node, 
-   index_t leaf_size,
+   index_t leaf_size, index_t max_tree_depth,
    ArrayList< ArrayList<GenHypercubeTree<TStatistic> *> > *nodes_in_each_level,
    ArrayList< ArrayList<index_t> > *old_from_new, index_t level) {
 
     // If the node is just too small, then do not split.
-    if(node->count() <= leaf_size) {
+    if(node->count() <= leaf_size || node->level() >= max_tree_depth) {
     }
     
     // Otherwise, attempt to split.
@@ -272,8 +272,8 @@ namespace tree_gen_hypercube_tree_private {
 	for(index_t i = 0; i < node->num_children(); i++) {
 	  GenHypercubeTree<TStatistic> *child_node = node->get_child(i);
 	  SplitGenHypercubeTree(matrices, child_node, leaf_size, 
-				nodes_in_each_level, old_from_new,
-				level + 1);
+				max_tree_depth, nodes_in_each_level, 
+				old_from_new, level + 1);
 	}
       }
     }

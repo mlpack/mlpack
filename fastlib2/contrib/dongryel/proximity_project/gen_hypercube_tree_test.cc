@@ -137,7 +137,7 @@ int main(int argc, char *argv[]) {
   ArrayList< ArrayList<proximity::GenHypercubeTree< EmptyStatistic<Matrix> > *> > nodes_in_each_level;
   proximity::GenHypercubeTree<EmptyStatistic<Matrix> > *root;
   root = proximity::MakeGenHypercubeTree
-    (matrices, leaflen, &nodes_in_each_level, &old_from_new);
+    (matrices, leaflen, 4, &nodes_in_each_level, &old_from_new);
   
   fx_timer_stop(NULL, "generalized_hypercube_tree_build");
 

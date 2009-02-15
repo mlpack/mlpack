@@ -202,7 +202,7 @@ namespace proximity {
    */
   template<typename TStatistic>
   GenHypercubeTree<TStatistic> *MakeGenHypercubeTree
-  (ArrayList<Matrix *> &matrices, index_t leaf_size,
+  (ArrayList<Matrix *> &matrices, index_t leaf_size, index_t max_tree_depth,
    ArrayList< ArrayList<GenHypercubeTree<TStatistic> *> > *nodes_in_each_level,
    ArrayList< ArrayList<index_t> > *old_from_new = NULL,
    ArrayList< ArrayList<index_t> > *new_from_old = NULL) {
@@ -222,7 +222,7 @@ namespace proximity {
     }
     
     // Initialize the global list of nodes.
-    nodes_in_each_level->Init(100);
+    nodes_in_each_level->Init(max_tree_depth + 1);
     for(index_t i = 0; i < nodes_in_each_level->size(); i++) {
       ((*nodes_in_each_level)[i]).Init();
     }
@@ -242,7 +242,8 @@ namespace proximity {
     *(((*nodes_in_each_level)[0]).PushBackRaw()) = node;
 
     tree_gen_hypercube_tree_private::SplitGenHypercubeTree
-      (matrices, node, leaf_size, nodes_in_each_level, old_from_new, 0);
+      (matrices, node, leaf_size, max_tree_depth, nodes_in_each_level, 
+       old_from_new, 0);
 
     // Index shuffling business...
     if (new_from_old) {
