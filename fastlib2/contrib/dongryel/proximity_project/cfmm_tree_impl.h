@@ -304,7 +304,7 @@ namespace tree_cfmm_tree_private {
   void SplitCFmmTree
   (ArrayList<Matrix *> &matrices, ArrayList<Vector *> &targets,
    CFmmTree<TStatistic> *node, index_t leaf_size,
-   index_t min_required_ws_index,
+   index_t min_required_ws_index, index_t max_tree_depth,
    ArrayList< ArrayList<CFmmTree<TStatistic> *> > *nodes_in_each_level,
    ArrayList< ArrayList<index_t> > *old_from_new, index_t level) {
 
@@ -324,10 +324,12 @@ namespace tree_cfmm_tree_private {
 				  (node->bound().get(0).width()))), 
 			    min_required_ws_index));
       }
+      
     } // end of looping over each partition...
 
-    // If the node is just too small, then do not split.
-    if(node->count() <= leaf_size) {
+    // If the node is just too small or it reached the maximum depth,
+    // then do not split.
+    if(node->count() <= leaf_size || node->level() >= max_tree_depth) {
 
     }
     
@@ -429,8 +431,8 @@ namespace tree_cfmm_tree_private {
 	    CFmmTree<TStatistic> *child_node = 
 	      node->partitions_based_on_ws_indices_[j]->get_child(i);
 	    SplitCFmmTree(matrices, targets, child_node, leaf_size, 
-			  min_required_ws_index, nodes_in_each_level, 
-			  old_from_new, level + 1);
+			  min_required_ws_index, max_tree_depth, 
+			  nodes_in_each_level, old_from_new, level + 1);
 	  }
 	}
       }
