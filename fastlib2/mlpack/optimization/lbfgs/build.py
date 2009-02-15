@@ -4,6 +4,5 @@ librule(name="lbfgs",
 
 binrule(name="test",
     sources=["test_lbfgs.cc"],
-    deplibs=["fastlib:fastlib", ":lbfgs", "mlpack/allknn:allknn", 
-    "contrib/nvasil/allkfn:allkfn", "contrib/nvasil/mvu:mvu"])
+    deplibs=["fastlib:fastlib", ":lbfgs", "mlpack/mvu:mvu"])
 
