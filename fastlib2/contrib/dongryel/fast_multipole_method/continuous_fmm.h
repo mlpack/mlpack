@@ -330,6 +330,9 @@ class ContinuousFmm {
 	  continue;
 	}
 
+	printf("Well separated index for the query node: %d\n",
+	       node->well_separated_indices_[0]);
+
 	// Compute the colleague nodes of the given node. This
 	// corresponds to Cheng, Greengard, and Rokhlin's List 2 in
 	// their description of the algorithm.
@@ -338,12 +341,17 @@ class ContinuousFmm {
 	  DoIt(shuffled_query_particle_set_.n_rows(), node, 
 	       nodes_in_each_level_, &colleagues);
 
-	// Perform far-to-local translation for the colleague nodes.
+	// Perform far-to-local translation for the colleague nodes
+	// that are far away. For others, compute the contributoins
+	// exhaustively...
 	for(index_t c = 0; c < colleagues.size(); c++) {
 
 	  proximity::CFmmTree<FmmStat> *colleague_node = colleagues[c];
 
 	  if(colleague_node->count(0) > 0) {
+
+	    printf("I am a reference node with %d WS index...\n", 
+		   colleague_node->well_separated_indices_[0]);
 	    colleague_node->stat().farfield_expansion_.TranslateToLocal
 	      (node->stat().local_expansion_, sea_.get_max_order());
 	  }
@@ -603,6 +611,7 @@ class ContinuousFmm {
     tree_ = proximity::MakeCFmmTree
       (particle_sets, target_sets, leaflen,
        fx_param_int(module_, "min_ws_index", 2),
+       fx_param_int(module_, "max_tree_depth", 4),
        &nodes_in_each_level_, &old_from_new_index_, &new_from_old_index_);
     fx_timer_stop(NULL, "tree_d");
 
