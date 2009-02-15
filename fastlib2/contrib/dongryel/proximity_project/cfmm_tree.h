@@ -214,6 +214,11 @@ namespace proximity {
      */
     CFmmWellSeparatedTree<Statistics> *parent_;
 
+    /** @brief The next sibling of this node across a diferent
+     *         partition.
+     */
+    CFmmTree<Statistics> *sibling_;
+
    public:
 
     CFmmTree() {
@@ -265,6 +270,7 @@ namespace proximity {
       well_separated_indices_.SetZero();
       parent_ = parent_in;
       init_flag_ = false;
+      sibling_ = NULL;
     }
 
     void Init(index_t particle_set_number, index_t begin_in, 
@@ -458,6 +464,42 @@ namespace proximity {
       }
     }
     
+    // Connect the siblings in each node level...
+    for(index_t i = 0; i < nodes_in_each_level->size(); i++) {
+      
+      ArrayList<CFmmTree<TStatistic> * > &nodes_on_current_level =
+	(*nodes_in_each_level)[i];
+
+      for(index_t j = 0; j < nodes_on_current_level.size(); j++) {
+	
+	// The current node that is considered the first in the list
+	// that will share the same node ID.
+	CFmmTree<TStatistic> *head_node = nodes_on_current_level[j];
+
+	// If this node already has a well-defined sibling, then skip
+	// it.
+	if(head_node->sibling_ != NULL) {
+	  continue;
+	}
+	CFmmTree<TStatistic> *first_node = head_node;
+
+	for(index_t k = j + 1; k < nodes_on_current_level.size(); k++) {
+	  CFmmTree<TStatistic> *to_connect = nodes_on_current_level[k];
+
+	  // In this case, connect the head to this node, and move the
+	  // head pointer to the next.
+	  if(head_node->node_index_ == to_connect->node_index_) {
+
+	    head_node->sibling_ = to_connect;
+	    head_node = to_connect;
+	  }
+	}
+	
+	// Finish linking in a circular list fashion...
+	head_node->sibling_ = first_node;
+      }
+    }
+      
     return node;
   }
 };
