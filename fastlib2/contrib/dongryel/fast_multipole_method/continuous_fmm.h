@@ -330,9 +330,6 @@ class ContinuousFmm {
 	  continue;
 	}
 
-	printf("Well separated index for the query node: %d\n",
-	       node->well_separated_indices_[0]);
-
 	// Compute the colleague nodes of the given node. This
 	// corresponds to Cheng, Greengard, and Rokhlin's List 2 in
 	// their description of the algorithm.
@@ -342,27 +339,71 @@ class ContinuousFmm {
 	       nodes_in_each_level_, &colleagues);
 
 	// Perform far-to-local translation for the colleague nodes
-	// that are far away. For others, compute the contributoins
+	// that are far away. For others, compute the contributions
 	// exhaustively...
 	for(index_t c = 0; c < colleagues.size(); c++) {
 
-	  proximity::CFmmTree<FmmStat> *colleague_node = colleagues[c];
+	  proximity::CFmmTree<FmmStat> *colleague_node = colleagues[c];	  
+	  proximity::CFmmTree<FmmStat> *head = colleague_node;
+	  proximity::CFmmTree<FmmStat> *current = head;
+	  do {
 
-	  if(colleague_node->count(0) > 0) {
-
-	    printf("I am a reference node with %d WS index...\n", 
-		   colleague_node->well_separated_indices_[0]);
-	    colleague_node->stat().farfield_expansion_.TranslateToLocal
-	      (node->stat().local_expansion_, sea_.get_max_order());
-	  }
+	    if(current->count(0) > 0) {
+	      index_t required_ws_index = -1;
+	      
+	      if(node->parent_ == current->parent_) {
+		printf("We are under the same branch...\n");
+		
+		// In this case, we use the well separated index for the
+		// partition that owns the query and the reference
+		// nodes.
+		required_ws_index = node->parent_->well_separated_indices_[0];
+	      }
+	      else {
+		
+		// The required well separatedness for the query node
+		// and the reference node under different branches is
+		// the average of the WS indices of the two.
+		required_ws_index = (int)
+		  ceil(0.5 * (node->well_separated_indices_[0] +
+			      current->well_separated_indices_[0]));	      
+	      }
+	      
+	      // Compute the distance from the query and the reference
+	      // nodes to see if they are well-separated. If it is, then
+	      // use far-to-local translation. Otherwise, contributions
+	      // are accumulated using direct method.
+	      double min_dist = 
+		sqrt(la::DistanceSqEuclidean
+		     (shuffled_reference_particle_set_.n_rows(), 
+		      (node->stat().farfield_expansion_.get_center())->ptr(),
+		      (current->stat().farfield_expansion_.get_center())
+		      ->ptr()))
+		- 0.5 * sqrt(shuffled_reference_particle_set_.n_rows()) * 
+		(node->side_length() + current->side_length());
+	      
+	      if(false && min_dist >= required_ws_index * 
+		 std::max(node->side_length(), current->side_length())) {
+		
+		current->stat().farfield_expansion_.TranslateToLocal
+		  (node->stat().local_expansion_, sea_.get_max_order());
+	      }
+	      else {
+		BaseCase_(node, current, potentials_);
+	      }
+	    } // end of checking whether the reference node is empty...
+	    
+	    // Iterate to the next sibling of the current colleague node.
+	    current = current->sibling_;
+	    
+	  } while(current != head);
 	  
 	} // end of iterating over each colleague...
 	 
 	// These correspond to the List 1 and List 3 of the same
 	// paper.
 	ArrayList<proximity::CFmmTree<FmmStat> *> adjacent_leaves;
-	ArrayList<proximity::CFmmTree<FmmStat> *> 
-	  non_adjacent_children;
+	ArrayList<proximity::CFmmTree<FmmStat> *> non_adjacent_children;
 
 	// If the current query node is a leaf node, then compute List
 	// 1 and List 3 of the Cheng/Greengard/Rokhlin paper.
@@ -379,11 +420,19 @@ class ContinuousFmm {
 	    
 	    proximity::CFmmTree<FmmStat> *reference_leaf_node = 
 	      adjacent_leaves[adjacent];
-	    
-	    DEBUG_ASSERT(reference_leaf_node->is_leaf());
-	    if(reference_leaf_node->count(0) > 0) {
-	      BaseCase_(node, reference_leaf_node, potentials_);
-	    }
+	    proximity::CFmmTree<FmmStat> *head = reference_leaf_node;
+	    proximity::CFmmTree<FmmStat> *current = head;
+
+	    do {
+
+	      DEBUG_ASSERT(reference_leaf_node->is_leaf());
+	      if(current->count(0) > 0) {
+		BaseCase_(node, current, potentials_);
+	      }
+	      
+	      current = current->sibling_;
+
+	    } while(current != head);
 
 	  } // end of iterating over List 1...
 
@@ -393,21 +442,27 @@ class ContinuousFmm {
 		non_adjacent_children.size(); non_adjacent++) {
 	    proximity::CFmmTree<FmmStat> *reference_node =
 	      non_adjacent_children[non_adjacent];
+	    proximity::CFmmTree<FmmStat> *head = reference_node;
+	    proximity::CFmmTree<FmmStat> *current = head;
 
-	    // This is the cut-off that determines whether exhaustive
-	    // base case of the direct far-field evaluation is
-	    // cheaper.
-	    
-	    if(reference_node->count(0) > 0) {
-	      if(reference_node->count(0) > 
-		 sea_.get_max_order() * sea_.get_max_order() * 
-		 sea_.get_max_order()) {
-		EvaluateMultipoleExpansion_(node, reference_node);
+	    do {
+	      // This is the cut-off that determines whether exhaustive
+	      // base case of the direct far-field evaluation is
+	      // cheaper.	    
+	      if(current->count(0) > 0) {
+		/*
+		  if(reference_node->count(0) > 
+		  sea_.get_max_order() * sea_.get_max_order() * 
+		  sea_.get_max_order()) {
+		  EvaluateMultipoleExpansion_(node, reference_node);
+		  }
+		  else {
+		*/
+		BaseCase_(node, current, potentials_);
+		//}
 	      }
-	      else {
-		BaseCase_(node, reference_node, potentials_);
-	      }
-	    }
+	      current = current->sibling_;
+	    } while(current != head);
 	    
 	  } // end of iterating over List 3...
 	}
@@ -430,25 +485,33 @@ class ContinuousFmm {
 	  
 	  proximity::CFmmTree<FmmStat> *reference_node = 
 	    fourth_list[direct_accum];
+	  proximity::CFmmTree<FmmStat> *head = reference_node;
+	  proximity::CFmmTree<FmmStat> *current = head;
 	  
-	  // This is the cut-off that determines whether computing by
-	  // direct accumulation is cheaper with respect to the base
-	  // case method.
-	  if(reference_node->count(0) > 0) {
-	    if(node->count(query_point_indexing) >
-	       sea_.get_max_order() * sea_.get_max_order() * 
-	       sea_.get_max_order()) {
-	      
-	      node->stat().local_expansion_.AccumulateCoeffs
+	  do {
+
+	    // This is the cut-off that determines whether computing by
+	    // direct accumulation is cheaper with respect to the base
+	    // case method.
+	    if(current->count(0) > 0) {
+	      /*
+		if(node->count(query_point_indexing) >
+		sea_.get_max_order() * sea_.get_max_order() * 
+		sea_.get_max_order()) {
+		
+		node->stat().local_expansion_.AccumulateCoeffs
 		(shuffled_reference_particle_set_,
-		 shuffled_reference_particle_charge_set_,
-		 reference_node->begin(0), reference_node->end(0),
-		 sea_.get_max_order());
+		shuffled_reference_particle_charge_set_,
+		reference_node->begin(0), reference_node->end(0),
+		sea_.get_max_order());
+		}
+		else {
+	      */
+	      BaseCase_(node, current, potentials_);
 	    }
-	    else {
-	      BaseCase_(node, reference_node, potentials_);
-	    }
-	  }
+	    //}
+	    current = current->sibling_;
+	  } while(current != head);
 	}
 	
 	// If the current query node is a leaf node, then we have to
@@ -560,8 +623,8 @@ class ContinuousFmm {
     leave_one_out_ = (queries.ptr() == references.ptr());
 
     // Read in the number of points owned by a leaf.
-    int leaflen = std::max((long long int) 3, 
-			   fx_param_int(module_in, "leaflen", 40));
+    int leaflen = std::max((long long int) 1, 
+			   fx_param_int(module_in, "leaflen", 1));
 
     // Set the number of query particles and reference particles
     // accordingly.
@@ -611,7 +674,7 @@ class ContinuousFmm {
     tree_ = proximity::MakeCFmmTree
       (particle_sets, target_sets, leaflen,
        fx_param_int(module_, "min_ws_index", 2),
-       fx_param_int(module_, "max_tree_depth", 4),
+       fx_param_int(module_, "max_tree_depth", 3),
        &nodes_in_each_level_, &old_from_new_index_, &new_from_old_index_);
     fx_timer_stop(NULL, "tree_d");
 
@@ -639,6 +702,7 @@ class ContinuousFmm {
 
     // Allocate the vector for storing the accumulated potential.
     potentials_.Init(shuffled_query_particle_set_.n_cols());
+
   }
 };
 

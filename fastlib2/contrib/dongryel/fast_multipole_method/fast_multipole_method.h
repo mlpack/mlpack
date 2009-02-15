@@ -523,7 +523,9 @@ class FastMultipoleMethod {
     // weights according to the permutation of the reference set in
     // the reference tree.
     fx_timer_start(NULL, "tree_d");
+    int max_tree_depth = fx_param_int(module_, "max_tree_depth", 3);
     tree_ = proximity::MakeGenHypercubeTree(particle_sets, leaflen,
+					    max_tree_depth,
 					    &nodes_in_each_level_,
 					    &old_from_new_index_,
 					    &new_from_old_index_);
