@@ -422,7 +422,7 @@ namespace proximity {
     }
     
     // Initialize the global list of nodes.
-    nodes_in_each_level->Init(100);
+    nodes_in_each_level->Init(max_tree_depth + 1);
     for(index_t i = 0; i < nodes_in_each_level->size(); i++) {
       ((*nodes_in_each_level)[i]).Init();
     }
