@@ -402,7 +402,7 @@ namespace proximity {
   template<typename TStatistic>
   CFmmTree<TStatistic> *MakeCFmmTree
   (ArrayList<Matrix *> &matrices, ArrayList<Vector *> &targets,
-   index_t leaf_size, index_t min_required_ws_index,
+   index_t leaf_size, index_t min_required_ws_index, index_t max_tree_depth,
    ArrayList< ArrayList<CFmmTree<TStatistic> *> > *nodes_in_each_level,
    ArrayList< ArrayList<index_t> > *old_from_new = NULL,
    ArrayList< ArrayList<index_t> > *new_from_old = NULL) {
@@ -444,7 +444,7 @@ namespace proximity {
 
     tree_cfmm_tree_private::SplitCFmmTree
       (matrices, targets, node, leaf_size, min_required_ws_index, 
-       nodes_in_each_level, old_from_new, 0);
+       max_tree_depth, nodes_in_each_level, old_from_new, 0);
 
     // Index shuffling business...
     if (new_from_old) {
