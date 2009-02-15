@@ -23,6 +23,37 @@
 #include "mlpack/allkfn/allkfn.h"
 #include "mlpack/optimization/lbfgs/optimization_utils.h"
 
+const fx_entry_doc mvu_entries[] = {
+  {"new_dimension", FX_REQUIRED, FX_INT, NULL,
+   " the number fo dimensions for the unfolded"},
+  {"nearest_neighbor_file", FX_PARAM, FX_STR, NULL,
+   " file with the nearest neighbor pairs and the squared distances \n"
+   " defaults to nearest.txt"},
+  {"furthest_neighbor_file", FX_PARAM, FX_STR, NULL,
+   " file with the nearest neighbor pairs and the squared distances "},
+  {"knns", FX_PARAM, FX_INT, NULL,
+   " number of nearest neighbors to build the graph\n"
+   " if you choose the option with the nearest file you don't need to specify it"},
+ {"leaf_size", FX_PARAM, FX_INT, NULL,
+   " leaf_size for the tree.\n "
+   " if you choose the option with the nearest file you don't need to specify it"},
+FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc mvu_doc = {
+  mvu_entries, NULL,
+  " This program computes the Maximum Variance Unfolding"
+  " and the Maximum Futhest Neighbor Unfolding as presented "
+  " in the paper: \n"
+  " @conference{vasiloglou2008ssm,\n"
+  "   title={{Scalable semidefinite manifold learning}},\n"
+  "   author={Vasiloglou, N. and Gray, A.G. and Anderson, D.V.},\n"
+  "   booktitle={Machine Learning for Signal Processing, 2008. MLSP 2008. IEEE Workshop on},\n"
+  "   pages={368--373},\n"
+  "   year={2008}\n"
+  " }\n"
+};
+
 class MaxVariance {
  public:
   static const index_t MAX_KNNS=30;

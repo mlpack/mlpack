@@ -84,10 +84,10 @@ void MaxVariance::Init(fx_module *module) {
   module_=module;
   new_dimension_ = fx_param_int_req(module_, "new_dimension");
 
-  std::string nearest_neighbor_file=fx_param_str_req(module, 
-      "nearest_neighbor_file");
-  std::string furthest_neighbor_file=fx_param_str_req(module, 
-      "furthest_neighbor_file");
+  std::string nearest_neighbor_file=fx_param_str(module, 
+      "nearest_neighbor_file", "nearest.txt");
+  std::string furthest_neighbor_file=fx_param_str(module, 
+      "furthest_neighbor_file", "futherst.txt");
   FILE *fp=fopen(nearest_neighbor_file.c_str(), "r");
   if (fp==NULL) {
     FATAL("Error while opening %s...%s", nearest_neighbor_file.c_str(),
