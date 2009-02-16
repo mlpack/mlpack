@@ -514,6 +514,16 @@ class GenMatrix {
   }
 
   /**
+   * Creates a diagonal matrix.
+   */
+  void InitDiagonal(const index_t dimension, const double value) {
+    Init(dimension, dimension);
+    for(index_t i=0; i<dimension; i++) {
+      this->set(i, i, value);
+    }
+  }
+
+  /**
    * Creates a Matrix with uninitialized elements of the specified
    * size statically. This matrix is not freed!
    */
@@ -536,6 +546,15 @@ class GenMatrix {
   void StaticInitDiagonal(const GenVector<T>& v) {
     StaticInit(v.length(), v.length());
     SetDiagonal(v);
+  }
+  /**
+   * Creates a diagonal matrix.
+   */
+  void StaticInitDiagonal(const index_t dimension, const double value) {
+    StaticInit(dimension, dimension);
+    for(index_t i=0; i<dimension; i++) {
+      this->set(i, i, value);
+    }
   }
 
   /**
