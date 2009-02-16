@@ -12,6 +12,25 @@ double F_0_(double z) {
   
 } // F_0_
 
+double ComputeGPTCenter(Vector& A_vec, double alpha_A, Vector& B_vec, 
+                      double alpha_B, Vector* p_vec) {
+ 
+  double gamma = alpha_A + alpha_B;
+  
+  Vector A_vec_scaled;
+  Vector B_vec_scaled;
+  
+  la::ScaleInit(alpha_A, A_vec, &A_vec_scaled);
+  la::ScaleInit(alpha_B, B_vec, &B_vec_scaled);
+  
+  la::AddInit(A_vec_scaled, B_vec_scaled, p_vec);
+  la::Scale(1/gamma, p_vec);
+  
+  return gamma;
+                                                                
+}
+
+
 
 double SSSSIntegral(double alpha_A,  Vector& A_vec, double alpha_B, 
                           Vector& B_vec, double alpha_C, 
@@ -107,6 +126,14 @@ double ComputeShellIntegrals(ShellPair& AB_shell,
                                                                                      
 }
 
+double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
+
+  double bound = ComputeShellIntegrals(i_shell, j_shell, i_shell, j_shell);
+
+  return sqrt(bound);
+
+}
+
 // I need to order these by size of integral estimate
 index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
                           ArrayList<BasisShell>& shells_in, 
@@ -115,7 +142,7 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
   // The size to increase the list by when necessary
   index_t num_to_add = 20;
 
-  index_t num_shells = shells_in.length();
+  index_t num_shells = shells_in.size();
   
   index_t num_shell_pairs = 0;
   
@@ -131,7 +158,7 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
       BasisShell j_shell = shells_in[j];
       
       // Do they use the overlap integral here?
-      double this_bound = SchwartzBound_(i_shell, j_shell);
+      double this_bound = SchwartzBound(i_shell, j_shell);
       
       if (this_bound > shell_pair_cutoff) {
       
@@ -160,7 +187,7 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
   // The size to increase the list by when necessary
   index_t num_to_add = 20;
   
-  index_t num_shells = shells_in.length();
+  index_t num_shells = shells_in.size();
   
   index_t num_shell_pairs = 0;
   
@@ -181,7 +208,7 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
       BasisShell j_shell = shells_in[j];
       
       // Do they use the overlap integral here?
-      double this_bound = SchwartzBound_(i_shell, j_shell);
+      double this_bound = SchwartzBound(i_shell, j_shell);
       
       if (this_bound > shell_pair_cutoff) {
         

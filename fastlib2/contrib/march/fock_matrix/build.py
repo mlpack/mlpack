@@ -42,3 +42,10 @@ binrule(
 	sources=["naive_comparison.cc"],
 	deplibs=["fastlib:fastlib", ":schwartz_prescreening", ":eri"]
 )
+
+binrule(
+	name="cfmm_screening_main",
+	headers=["eri.h"],
+	sources=["cfmm_screening_main.cc"],
+	deplibs=["fastlib:fastlib", ":eri"]
+)

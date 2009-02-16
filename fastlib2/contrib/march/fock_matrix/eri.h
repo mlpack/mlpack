@@ -10,6 +10,9 @@ namespace eri {
   // The erf-like function
   double F_0_(double z);
   
+  double ComputeGPTCenter(Vector& A_vec, double alpha_A, Vector& B_vec, 
+                          double alpha_B, Vector* p_vec);
+  
   // An ERI between four s-type gaussians with arbitrary bandwidth
   // This function does not currently normalize the gaussians
   double SSSSIntegral(double alpha_A,  Vector& A_vec, double alpha_B, 
@@ -32,6 +35,11 @@ namespace eri {
                                
   double ComputeShellIntegrals(ShellPair& AB_shell, 
                                ShellPair& CD_shell);
+                               
+  /**
+   * Computes the Schwartz factor Q_{i j} = (i j|i j)^1/2
+   */
+  double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell);
                             
   /**
    * Compute the list of significant shell pairs.
