@@ -18,7 +18,7 @@ class RidgeRegression {
   void Destruct();
   void Regress();
   double ComputeSquareError();
-  void Factors(Matrix *factors);
+  void factors(Matrix *factors);
   void set_lambda(double lambda);
   double lambda();
 

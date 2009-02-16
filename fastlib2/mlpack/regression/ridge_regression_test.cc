@@ -31,7 +31,7 @@ class RidgeRegressionTest {
   void Test1() {
     engine_.Regress();
     Matrix factors;
-    engine_.Factors(&factors);
+    engine_.factors(&factors);
     NOTIFY("Square Error:%g", engine_.ComputeSquareError());
     for(index_t i=0; i<factors.n_rows(); i++) {
       TEST_DOUBLE_APPROX(factors.get(i,0), true_factors_.get(i, 0), 1e-3);

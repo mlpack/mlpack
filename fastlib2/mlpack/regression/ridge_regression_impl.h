@@ -79,7 +79,7 @@ double RidgeRegression::ComputeSquareError() {
   return square_error;
 }
 
-void  RidgeRegression::Factors(Matrix *factors) {
+void  RidgeRegression::factors(Matrix *factors) {
   factors->Copy(factors_);
 }
   
