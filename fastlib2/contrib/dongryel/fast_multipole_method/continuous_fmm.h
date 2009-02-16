@@ -35,6 +35,8 @@ class ContinuousFmm {
 
  private:
 
+  double sqrt_pi_;
+
   ////////// Private Member Variables //////////
 
   double lambda_;
@@ -248,15 +250,20 @@ class ContinuousFmm {
 	double sq_dist = la::DistanceSqEuclidean
 	  (shuffled_query_particle_set_.n_rows(), q_col, r_col);
 	double dist = sqrt(sq_dist);
+	double erf_argument = 
+	  sqrt(shuffled_reference_particle_bandwidth_set_[q] *
+	       shuffled_reference_particle_bandwidth_set_[r] /
+	       (shuffled_reference_particle_bandwidth_set_[q] +
+		shuffled_reference_particle_bandwidth_set_[r]));
 
 	// This implements the kernel function used for the base case
 	// in the page 2 of the CFMM paper...
-	potentials[q] += 
-	  erf(sqrt(shuffled_reference_particle_bandwidth_set_[q] *
-		   shuffled_reference_particle_bandwidth_set_[r] /
-		   (shuffled_reference_particle_bandwidth_set_[q] +
-		    shuffled_reference_particle_bandwidth_set_[r])) * dist) / 
-	  dist;
+	if(dist > 0) {
+	  potentials[q] += erf(erf_argument * dist) / dist;
+	}
+	else {
+	  potentials[q] += 2.0 * erf_argument / sqrt_pi_;
+	}
       }
     }
   }
@@ -614,6 +621,8 @@ class ContinuousFmm {
     // Allocate the vector for storing the accumulated potential.
     potentials_.Init(shuffled_query_particle_set_.n_cols());
 
+    // Compute PI.
+    sqrt_pi_ = sqrt(2.0 * acos(0));
   }
 };
 
