@@ -251,7 +251,7 @@ class ContinuousFmm {
 
 	// This implements the kernel function used for the base case
 	// in the page 2 of the CFMM paper...
-	potentials[q] += shuffled_reference_particle_charge_set_[r] *
+	potentials[q] += 
 	  erf(sqrt(shuffled_reference_particle_bandwidth_set_[q] *
 		   shuffled_reference_particle_bandwidth_set_[r] /
 		   (shuffled_reference_particle_bandwidth_set_[q] +
@@ -342,12 +342,6 @@ class ContinuousFmm {
 	  proximity::CFmmTree<FmmStat> *possible_nn_of_parent =
 	    nodes_on_previous_level[i];
 
-	  // Skip the parent itself - no self-neighbor allowed.
-	  if(possible_nn_of_parent->node_index() == 
-	     parent_node->node_index()) {
-	    continue;
-	  }
-
 	  double min_dist = sqrt(parent_node->bound().MinDistanceSq
 				 (possible_nn_of_parent->bound()));
 	  
@@ -415,6 +409,12 @@ class ContinuousFmm {
 		} // end of determining whether the query and the
 		  // reference are at least zero apart.
 
+		else if(node->is_leaf() &&
+			node != current_reference_child) {
+		  BaseCase_(node, current_reference_child, potentials_);
+		}
+
+
 	      } // end of looping over each child in the partition.
 	    } // end of looping over each partition.
 	  
@@ -433,7 +433,7 @@ class ContinuousFmm {
           // If the node contains any reference points, then we have
           // to do the self-interactions among the node.
           if(node->count(0) > 0) {
-            BaseCase_(node, node, potentials_);
+	    BaseCase_(node, node, potentials_);
           }
 	}
 
