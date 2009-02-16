@@ -25,16 +25,16 @@ void RidgeRegression::Init(fx_module *module,
   module_=module;
   lambda_=fx_param_double(module_, "lambda", 0);
   lambda_sq_ = lambda_ * lambda_;
-  DEBUG_ERROR_MSG_IF(predictors.n_cols()>predictors.n_rows(),
-     "The number of the columns %"LI"d must be greater or equal to the number of "
+  DEBUG_ERROR_MSG_IF(predictors.n_cols()<predictors.n_rows(),
+     "The number of the columns %"LI"d must be less or equal to the number of "
      " the rows %"LI"d ", predictors.n_cols(), predictors.n_rows());
-  DEBUG_ERROR_MSG_IF(predictions.n_cols() >1, 
-      "The current implementation supports only one column predictions");
-  DEBUG_ERROR_MSG_IF(predictors.n_rows()!=predictions.n_rows(), 
+  DEBUG_ERROR_MSG_IF(predictions.n_rows() >1, 
+      "The current implementation supports only one dimensional predictions");
+  DEBUG_ERROR_MSG_IF(predictors.n_cols()!=predictions.n_cols(), 
       "Predictors and predictions must have the same same number "
-      "of rows %"LI"d != %"LI"d ", predictors.n_rows(), predictors.n_cols());
-  predictors.Copy(predictors);
-  predictions.Copy(predictions);
+      "of rows %"LI"d != %"LI"d ", predictors.n_cols(), predictions.n_cols());
+  predictors_.Copy(predictors);
+  predictions_.Copy(predictions);
 }
 void RidgeRegression::Init(fx_module *module, 
                            Matrix &input_data, 
@@ -58,22 +58,22 @@ void RidgeRegression::Init(fx_module *module,
 
 void RidgeRegression::Regress() {
   // we have to solve the system:
-  // (predictors^T * predictors + lambda^2 I) * factors 
+  // (predictors * predictors^T + lambda^2 I) * factors 
   //     = predictors^T * predictions 
   Matrix lhs; // lhs: left hand side
   Matrix rhs; // rhs: right hand side
  
-  la::MulTransAInit(predictors_, predictors_, &lhs);
-  for(index_t i=0; i<predictors_.n_cols(); i++) {
+  la::MulTransBInit(predictors_, predictors_, &lhs);
+  for(index_t i=0; i<predictors_.n_rows(); i++) {
     lhs.set(i, i, lhs.get(i, i) + lambda_sq_);
   }
-  la::MulTransAInit(predictors_, predictions_, &rhs);
+  la::MulTransBInit(predictors_, predictions_, &rhs);
   la::SolveInit(lhs, rhs, &factors_);
 }
 
 double RidgeRegression::ComputeSquareError() {
   Matrix error;
-  la::MulInit(predictors_, factors_, &error);
+  la::MulTransAInit(factors_, predictors_, &error);
   la::SubFrom(error, &predictions_);
   double square_error= la::Dot(error.n_rows(), error.ptr(), error.ptr()); 
   return square_error;
