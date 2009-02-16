@@ -67,6 +67,11 @@ void InversePowDistFarFieldExpansion::AccumulateCoeffs
 double InversePowDistFarFieldExpansion::EvaluateField(const double *v,
 						      int order) const {
 
+  // If there are no farfield moments, then return 0.
+  if(order_ < 0) {
+    return 0;
+  }
+
   double result = 0;
   std::complex<double> tmp(0, 0);
   std::complex<double> partial_derivative(0, 0);
@@ -165,6 +170,11 @@ void InversePowDistFarFieldExpansion::PrintDebug
 void InversePowDistFarFieldExpansion::TranslateFromFarField
 (const InversePowDistFarFieldExpansion &se) {
   
+  // If there is nothing from the child, then do nothing.
+  if(se.get_order() < 0) {
+    return;
+  }
+
   // Get the pointer to the far field moments to be translated.
   const ArrayList<GenMatrix<std::complex<double> > > *coeffs_to_be_translated =
     se.get_coeffs();
@@ -179,6 +189,22 @@ void InversePowDistFarFieldExpansion::TranslateFromFarField
   double x_diff = -(center_[0] - (*old_center)[0]);
   double y_diff = -(center_[1] - (*old_center)[1]);
   double z_diff = -(center_[2] - (*old_center)[2]);
+
+
+  // If the two centers are exactly the same, then just copy over the
+  // coefficients.
+  if(fabs(x_diff) < DBL_EPSILON && fabs(y_diff) < DBL_EPSILON &&
+     fabs(z_diff) < DBL_EPSILON) {
+    for(index_t n_prime = 0; n_prime <= se.get_order(); n_prime++) {
+      // Get the matrix reference to the coefficients to be stored.
+      GenMatrix<std::complex<double> > &nprime_th_order_destination_matrix =
+	coeffs_[n_prime];
+      nprime_th_order_destination_matrix.CopyValues
+	((*coeffs_to_be_translated)[n_prime]);
+    }
+    return;
+  }
+
   double magnitude_of_vector_in_xy_plane;
   std::complex<double> eta;
   std::complex<double> xi;
@@ -266,6 +292,12 @@ void InversePowDistFarFieldExpansion::TranslateFromFarField
 template<typename InversePowDistLocalExpansion>
 void InversePowDistFarFieldExpansion::TranslateToLocal
 (InversePowDistLocalExpansion &se, int truncation_order) {
+
+  // If there are no far field moments in this node, then do
+  // nothing...
+  if(order_ < 0) {
+    return;
+  }
 
   // Pointer to the local moment coefficients.
   ArrayList< GenMatrix<std::complex<double> > > *local_moments =
