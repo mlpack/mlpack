@@ -4,7 +4,7 @@
 
 class RidgeRegression {
  public:
-  RidgeRegression();
+  RidgeRegression() {}
   void Init(fx_module *module, Matrix &predictors, Matrix &predictions);
   void Init(fx_module *module, Matrix &input_data, index_t selector);
   void Init(fx_module *module, 

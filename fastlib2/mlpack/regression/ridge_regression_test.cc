@@ -33,7 +33,7 @@ class RidgeRegressionTest {
     Matrix factors;
     engine_.Factors(&factors);
     for(index_t i=0; i<factors.n_rows(); i++) {
-      TEST_DOUBLE_APPROX(factors.get(i,0), true_factors.get(i, 0));
+      TEST_DOUBLE_APPROX(factors.get(i,0), true_factors_.get(i, 0), 1e-3);
     }
   }
   void TestAll() {
@@ -51,8 +51,8 @@ class RidgeRegressionTest {
 };
 
 int main(int argc, char *argv[]) {
-  fx_module *module = fx_init(NULL, argc, argv);
-  fx_set_double(module, "lambda", 1.0);
+  fx_module *module = fx_init(argc, argv, NULL);
+  fx_set_param_double(module, "lambda", 1.0);
   RidgeRegressionTest  test;
   test.Init(module);
   test.TestAll();
