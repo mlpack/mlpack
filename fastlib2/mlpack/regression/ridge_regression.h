@@ -1,19 +1,36 @@
-/*
- * =====================================================================================
- * 
- *       Filename:  ridge_regression.h
- * 
- *    Description:  
- * 
- *        Version:  1.0
- *        Created:  02/14/2009 11:23:51 PM EST
- *       Revision:  none
- *       Compiler:  gcc
- * 
- *         Author:  Nikolaos Vasiloglou (NV), nvasil@ieee.org
- *        Company:  Georgia Tech Fastlab-ESP Lab
- * 
- * =====================================================================================
- */
+#ifndef RIDGE_REGRESSION_H_
+#define RIDGE_REGRESSION_H_
+#include "fastlib/fastlib.h"
 
+class RidgeRegression {
+ public:
+  RidgeRegression();
+  void Init(fx_module *module, Matrix &predictors, Matrix &predictions);
+  void Init(fx_module *module, Matrix &input_data, index_t selector);
+  void Init(fx_module *module, 
+            Matrix &input_data, 
+            GenVector<index_t> &predictor_indices,
+            index_t prediction_index);
+  void Init(fx_module *module, 
+            Matrix &input_data, 
+            GenVector<index_t> &predictor_indices,
+            Matrix &prediction);
+  void Destruct();
+  void Regress();
+  double ComputeSquareError();
+  void Factors(Matrix *factors);
+  void set_lambda(double lambda);
+  double lambda();
+
+ private:
+  fx_module *module_;
+  Matrix predictors_;
+  Matrix predictions_;
+  Matrix factors_;
+  double lambda_;
+  double lambda_sq_;
+};
+
+#include "ridge_regression_impl.h"
+#endif
 
