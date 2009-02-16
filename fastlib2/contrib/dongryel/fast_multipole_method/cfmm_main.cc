@@ -34,6 +34,7 @@ int main(int argc, char *argv[]) {
 
   // data::Load inits a matrix with the contents of a .csv or .arff.
   data::Load(references_file_name, &references);  
+  la::Scale(100.0, &references);
   if(queries_equal_references) {
     queries.Alias(references);
   }
