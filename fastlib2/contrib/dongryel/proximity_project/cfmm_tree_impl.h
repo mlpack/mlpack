@@ -198,20 +198,20 @@ namespace tree_cfmm_tree_private {
       bool left_result = false;
       bool right_result = false;
 
-      if(total_left_count > 0) {
+      //if(total_left_count > 0) {
 	left_result =
 	  RecursiveMatrixPartition
 	  (matrices, targets, node, total_left_count, left_child_begin, 
 	   left_child_count, nodes_in_each_level, old_from_new, level, 
 	   recursion_level + 1, 2 * code);
-      }
-      if(total_right_count > 0) {
+	//}
+	//if(total_right_count > 0) {
 	right_result =
 	  RecursiveMatrixPartition
 	  (matrices, targets, node, total_right_count, right_child_begin, 
 	   right_child_count, nodes_in_each_level, old_from_new, level, 
 	   recursion_level + 1, 2 * code + 1);
-      }
+	//}
       
       return left_result || right_result;
     }
@@ -329,7 +329,7 @@ namespace tree_cfmm_tree_private {
 
     // If the node is just too small or it reached the maximum depth,
     // then do not split.
-    if(node->count() <= leaf_size || node->level() >= max_tree_depth) {
+    if(node->level() >= max_tree_depth) {
 
     }
     
