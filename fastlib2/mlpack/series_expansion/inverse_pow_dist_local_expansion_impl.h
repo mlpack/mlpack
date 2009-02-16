@@ -63,6 +63,11 @@ void InversePowDistLocalExpansion::AccumulateCoeffs(const Matrix& data,
 double InversePowDistLocalExpansion::EvaluateField(const double *v,
 						   int order) const {
   
+  // If there are no local moments, then return 0
+  if(order_ < 0) {
+    return 0;
+  }
+
   // The final sum.
   double result = 0;
 
@@ -156,6 +161,11 @@ void InversePowDistLocalExpansion::PrintDebug(const char *name,
 
 void InversePowDistLocalExpansion::TranslateToLocal
 (InversePowDistLocalExpansion &se) {
+
+  // If there are no local moments here, then do nothing.
+  if(order_ < 0) {
+    return;
+  }
 
   // Get the pointer to the destination local moments.
   ArrayList<GenMatrix<std::complex<double> > > *dest_local_coeffs =
