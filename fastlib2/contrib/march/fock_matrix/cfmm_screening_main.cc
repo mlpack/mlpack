@@ -23,7 +23,7 @@ const fx_module_doc cfmm_screening_main_doc = {
 
 int main(int argc, char* argv[]) {
 
-  fx_module* root_mod = fx_init(argc, argv, cfmm_screening_main_doc);
+  fx_module* root_mod = fx_init(argc, argv, &cfmm_screening_main_doc);
   
   Matrix centers;
   const char* centers_file = fx_param_str_req(root_mod, "centers");
@@ -91,7 +91,7 @@ int main(int argc, char* argv[]) {
                                               "centers.csv");
   data::Save(centers_out_file, charge_centers);
   
-  
+  fx_result_int(root_mod, "num_charge_dists", num_shell_pairs);
   
   fx_done(root_mod);
 
