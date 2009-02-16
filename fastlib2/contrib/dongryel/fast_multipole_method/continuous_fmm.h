@@ -314,11 +314,13 @@ class ContinuousFmm {
     // Start from the top level and descend down the tree.
     for(index_t level = 1; level < nodes_in_each_level_.size(); level++) {
       
-      // Retrieve the nodes on the current level.
+      // Retrieve the nodes on the current level and the level above.
       const ArrayList<proximity::CFmmTree<FmmStat> * > 
 	&nodes_on_current_level = nodes_in_each_level_[level];
-      
-      // Iterate over each node in this level.
+      const ArrayList<proximity::CFmmTree<FmmStat> * >
+	&nodes_on_previous_level = nodes_in_each_level_[level - 1];
+
+      // Iterate over each query node in this level.
       for(index_t n = 0; n < nodes_on_current_level.size(); n++) {
 
 	// The pointer to the current query node.
@@ -330,202 +332,111 @@ class ContinuousFmm {
 	  continue;
 	}
 
-	// Compute the colleague nodes of the given node. This
-	// corresponds to Cheng, Greengard, and Rokhlin's List 2 in
-	// their description of the algorithm.
-	ArrayList<proximity::CFmmTree<FmmStat> *> colleagues;
-	GenHypercubeTreeUtil::FindColleagues<proximity::CFmmTree<FmmStat> >::
-	  DoIt(shuffled_query_particle_set_.n_rows(), node, 
-	       nodes_in_each_level_, &colleagues);
-
-	// Perform far-to-local translation for the colleague nodes
-	// that are far away. For others, compute the contributions
-	// exhaustively...
-	for(index_t c = 0; c < colleagues.size(); c++) {
-
-	  proximity::CFmmTree<FmmStat> *colleague_node = colleagues[c];	  
-	  proximity::CFmmTree<FmmStat> *head = colleague_node;
-	  proximity::CFmmTree<FmmStat> *current = head;
-	  do {
-
-	    if(current->count(0) > 0) {
-	      index_t required_ws_index = -1;
-	      
-	      if(node->parent_ == current->parent_) {
-		printf("We are under the same branch...\n");
-		
-		// In this case, we use the well separated index for the
-		// partition that owns the query and the reference
-		// nodes.
-		required_ws_index = node->parent_->well_separated_indices_[0];
-	      }
-	      else {
-		
-		// The required well separatedness for the query node
-		// and the reference node under different branches is
-		// the average of the WS indices of the two.
-		required_ws_index = (int)
-		  ceil(0.5 * (node->well_separated_indices_[0] +
-			      current->well_separated_indices_[0]));	      
-	      }
-	      
-	      // Compute the distance from the query and the reference
-	      // nodes to see if they are well-separated. If it is, then
-	      // use far-to-local translation. Otherwise, contributions
-	      // are accumulated using direct method.
-	      double min_dist = 
-		sqrt(la::DistanceSqEuclidean
-		     (shuffled_reference_particle_set_.n_rows(), 
-		      (node->stat().farfield_expansion_.get_center())->ptr(),
-		      (current->stat().farfield_expansion_.get_center())
-		      ->ptr()))
-		- 0.5 * sqrt(shuffled_reference_particle_set_.n_rows()) * 
-		(node->side_length() + current->side_length());
-	      
-	      if(false && min_dist >= required_ws_index * 
-		 std::max(node->side_length(), current->side_length())) {
-		
-		current->stat().farfield_expansion_.TranslateToLocal
-		  (node->stat().local_expansion_, sea_.get_max_order());
-	      }
-	      else {
-		BaseCase_(node, current, potentials_);
-	      }
-	    } // end of checking whether the reference node is empty...
-	    
-	    // Iterate to the next sibling of the current colleague node.
-	    current = current->sibling_;
-	    
-	  } while(current != head);
+	// Get the parent node of the current query node.
+	proximity::CFmmTree<FmmStat> *parent_node = node->parent_->parent_;
+	
+	// For each parent, get its nearest neighbors and
+	// subsequently the children under it.
+	for(index_t i = 0; i < nodes_on_previous_level.size(); i++) {
 	  
-	} // end of iterating over each colleague...
-	 
-	// These correspond to the List 1 and List 3 of the same
-	// paper.
-	ArrayList<proximity::CFmmTree<FmmStat> *> adjacent_leaves;
-	ArrayList<proximity::CFmmTree<FmmStat> *> non_adjacent_children;
+	  proximity::CFmmTree<FmmStat> *possible_nn_of_parent =
+	    nodes_on_previous_level[i];
 
-	// If the current query node is a leaf node, then compute List
-	// 1 and List 3 of the Cheng/Greengard/Rokhlin paper.
-	if(node->is_leaf()) {
-	  	  
-	  GenHypercubeTreeUtil::FindAdjacentLeafNode
-	    (shuffled_query_particle_set_.n_rows(), nodes_in_each_level_, node,
-	     &adjacent_leaves, &non_adjacent_children);
+	  // Skip the parent itself - no self-neighbor allowed.
+	  if(possible_nn_of_parent->node_index() == 
+	     parent_node->node_index()) {
+	    continue;
+	  }
 
-	  // Iterate over each node in List 1 and directly compute the
-	  // contribution.
-	  for(index_t adjacent = 0; adjacent < adjacent_leaves.size(); 
-	      adjacent++) {
-	    
-	    proximity::CFmmTree<FmmStat> *reference_leaf_node = 
-	      adjacent_leaves[adjacent];
-	    proximity::CFmmTree<FmmStat> *head = reference_leaf_node;
-	    proximity::CFmmTree<FmmStat> *current = head;
-
-	    do {
-
-	      DEBUG_ASSERT(reference_leaf_node->is_leaf());
-	      if(current->count(0) > 0) {
-		BaseCase_(node, current, potentials_);
-	      }
+	  double min_dist = sqrt(parent_node->bound().MinDistanceSq
+				 (possible_nn_of_parent->bound()));
+	  
+	  // Consider the children under the nearest neighbor of
+	  // parent.
+	  if(min_dist == 0) {
+	    for(index_t p = 0; p < possible_nn_of_parent->
+		  partitions_based_on_ws_indices_.size(); p++) {
 	      
-	      current = current->sibling_;
+	      proximity::CFmmWellSeparatedTree<FmmStat> *partition = 
+		possible_nn_of_parent->partitions_based_on_ws_indices_[p];
 
-	    } while(current != head);
+	      for(index_t c = 0; c < partition->num_children(); c++) {
+		
+		// The current child.
+		proximity::CFmmTree<FmmStat> *current_reference_child =
+		  partition->get_child(c);
 
-	  } // end of iterating over List 1...
+		// If the reference child contains no points, then
+		// skip it.
+		if(current_reference_child->count(0) == 0) {
+		  continue;
+		}
 
-	  // Iterate over each node in List 3 and directly evaluate
-	  // its far-field expansion.
-	  for(index_t non_adjacent = 0; non_adjacent < 
-		non_adjacent_children.size(); non_adjacent++) {
-	    proximity::CFmmTree<FmmStat> *reference_node =
-	      non_adjacent_children[non_adjacent];
-	    proximity::CFmmTree<FmmStat> *head = reference_node;
-	    proximity::CFmmTree<FmmStat> *current = head;
+		// Compute the distance between the current query node
+		// to the current reference child on the same level.
+		double min_dist_between_query_and_reference =
+		  sqrt(node->bound().MinDistanceSq
+		       (current_reference_child->bound()));
 
-	    do {
-	      // This is the cut-off that determines whether exhaustive
-	      // base case of the direct far-field evaluation is
-	      // cheaper.	    
-	      if(current->count(0) > 0) {
-		/*
-		  if(reference_node->count(0) > 
-		  sea_.get_max_order() * sea_.get_max_order() * 
-		  sea_.get_max_order()) {
-		  EvaluateMultipoleExpansion_(node, reference_node);
+		if(min_dist_between_query_and_reference > 0) {
+
+		  // The required WS index for the query and the
+		  // reference to be approximated using F2L
+		  // translation.
+		  index_t required_ws_index = -1;
+
+		  // Test whether the query and the reference are
+		  // under the same branch of CFMM tree.
+		  if(node->parent_ == current_reference_child->parent_) {
+
+		    required_ws_index = node->parent_->
+		      well_separated_indices_[0];
 		  }
 		  else {
-		*/
-		BaseCase_(node, current, potentials_);
-		//}
-	      }
-	      current = current->sibling_;
-	    } while(current != head);
-	    
-	  } // end of iterating over List 3...
-	}
-	else {
-	  adjacent_leaves.Init();
-	  non_adjacent_children.Init();	  
-	}
+		    required_ws_index = 
+		      (int) ceil(0.5 * (node->well_separated_indices_[0] +
+					current_reference_child->
+					well_separated_indices_[0]));
+		  }
 
-	// Compute List 4.
-	ArrayList<proximity::CFmmTree<FmmStat> * > fourth_list;
-	GenHypercubeTreeUtil::FindFourthList
-	  (nodes_in_each_level_, node->node_index(), node->level(),
-	   shuffled_query_particle_set_.n_rows(), adjacent_leaves, 
-	   colleagues, non_adjacent_children, &fourth_list);
-	
-	// Directly accumulate the contribution of each reference node
-	// in List 4.
-	for(index_t direct_accum = 0; direct_accum < fourth_list.size();
-	    direct_accum++) {
-	  
-	  proximity::CFmmTree<FmmStat> *reference_node = 
-	    fourth_list[direct_accum];
-	  proximity::CFmmTree<FmmStat> *head = reference_node;
-	  proximity::CFmmTree<FmmStat> *current = head;
-	  
-	  do {
+		  // If the two nodes are at least WS nodes apart,
+		  // then translate far to local. Otherwise,
+		  // accumulate exhaustively.
+		  if(min_dist_between_query_and_reference >= 
+		     required_ws_index * node->side_length()) {
+		    current_reference_child->stat().farfield_expansion_.
+		      TranslateToLocal(node->stat().local_expansion_,
+				       sea_.get_max_order());
+		  }
+		  else {
+		    BaseCase_(node, current_reference_child, potentials_);
+		  }
 
-	    // This is the cut-off that determines whether computing by
-	    // direct accumulation is cheaper with respect to the base
-	    // case method.
-	    if(current->count(0) > 0) {
-	      /*
-		if(node->count(query_point_indexing) >
-		sea_.get_max_order() * sea_.get_max_order() * 
-		sea_.get_max_order()) {
-		
-		node->stat().local_expansion_.AccumulateCoeffs
-		(shuffled_reference_particle_set_,
-		shuffled_reference_particle_charge_set_,
-		reference_node->begin(0), reference_node->end(0),
-		sea_.get_max_order());
-		}
-		else {
-	      */
-	      BaseCase_(node, current, potentials_);
-	    }
-	    //}
-	    current = current->sibling_;
-	  } while(current != head);
-	}
+		} // end of determining whether the query and the
+		  // reference are at least zero apart.
+
+	      } // end of looping over each child in the partition.
+	    } // end of looping over each partition.
+	  
+	  } // end of determining whether the node is nearest neighbor
+	    // of the parent of the current query node.
+	} // end of looping over each node on the previous level.
 	
-	// If the current query node is a leaf node, then we have to
-	// evaluate its local expansion, plus the self-interaction!
+
+	// If the node is a leaf node, then we need to compute
+	// self-interaction as well, and evaluate the local expansion
+	// formed inside it. Otherwise, translate the local moments
+	// downwards.
 	if(node->is_leaf()) {
 	  EvaluateLocalExpansion_(node);
-
-	  // If the node contains any reference points, then we have
-	  // to do the self-interactions among the node.
-	  if(node->count(0) > 0) {
-	    BaseCase_(node, node, potentials_);
-	  }
+	  
+          // If the node contains any reference points, then we have
+          // to do the self-interactions among the node.
+          if(node->count(0) > 0) {
+            BaseCase_(node, node, potentials_);
+          }
 	}
-	
+
 	// Otherwise, we need to pass it down.
 	else {
 	  TransmitLocalExpansionToChildren_(node);
