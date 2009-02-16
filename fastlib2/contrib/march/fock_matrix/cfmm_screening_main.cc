@@ -23,7 +23,7 @@ const fx_module_doc cfmm_screening_main_doc = {
 
 int main(int argc, char* argv[]) {
 
-  fx_module* root_mod = fx_init(argc, argv, NULL);
+  fx_module* root_mod = fx_init(argc, argv, cfmm_screening_main_doc);
   
   Matrix centers;
   const char* centers_file = fx_param_str_req(root_mod, "centers");
