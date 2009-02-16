@@ -171,6 +171,9 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
         num_shell_pairs++;
               
       }
+      else {
+        printf("pruned\n");
+      }
       
     } // for j
     
