@@ -609,7 +609,7 @@ class ContinuousFmm {
     kernel_.Init(lambda_, queries.n_rows());
 
     // Initialize the series expansion auxliary object.
-    sea_.Init(lambda_, fx_param_int(module_, "order", 5), references.n_rows());
+    sea_.Init(lambda_, fx_param_int(module_, "order", 2), references.n_rows());
 
     // Allocate the vector for storing the accumulated potential.
     potentials_.Init(shuffled_query_particle_set_.n_cols());
