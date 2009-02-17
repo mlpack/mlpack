@@ -1,14 +1,10 @@
 #include "link.h"
 
 
-bool Link::Prescreening_Sort_(BasisShell* shellA, BasisShell* shellB) {
+ bool Link::Prescreening_Sort_(BasisShell* shellA, BasisShell* shellB) {
 
-  index_t a_ind = shellA->start_index();
-  index_t b_ind = shellB->start_index();
-
-  // how to get index for mu?  
-  return ((shell_max_[a_ind] * density_mat_.ref(current_mu_, a_ind)) < 
-          (shell_max_[b_ind] * density_mat_.ref(current_mu_, b_ind)));
+  return ((shellA->max_schwartz_factor() * shellA->current_density_entry()) < 
+          (shellB->max_schwartz_factor() * shellB->current_density_entry()));
 
 }
 
@@ -62,14 +58,18 @@ void Link::ComputeFockMatrix() {
     
       significant_nu_for_mu[k] = shell_list_.begin() + 
                                   significant_nu_index[k];
+      significant_nu_for_mu[k]->set_max_schwartz_factor(shell_max_[k]);
+      significant_nu_for_mu[k]->set_current_density_entry(density_mat_.ref(i,k));
     
     } // for k
     
     // sort significant_nu_for_mu
     
     std::sort(significant_nu_for_mu, significant_nu_for_mu+next_ind, 
-              &Link::Prescreening_Sort_);
+              Link::Prescreening_Sort_);
     
+  
+    ot::Print(significant_nu_for_mu);
   
   } // for i
   
