@@ -27,11 +27,17 @@ int main(int argc, char* argv[]) {
   Matrix centers_mat;
   data::Load(centers_file, &centers_mat);
   
-  const char* exp_file = fx_param_str_req(root_mod, "exponents");
-  Matrix exp_mat;
-  data::Load(exp_file, &exp_mat);
   Vector exp_vec;
-  exp_mat.MakeColumnVector(0, &exp_vec);
+  if (fx_param_exists(root_mod, "exponents")) {
+    const char* exp_file = fx_param_str_req(root_mod, "exponents");
+    Matrix exp_mat;
+    data::Load(exp_file, &exp_mat);
+    exp_mat.MakeColumnVector(0, &exp_vec);
+  }
+  else {
+    exp_vec.Init(centers_mat.n_cols());
+    exp_vec.SetAll(1.0);
+  }
 
   Vector mom_vec;
   if (fx_param_exists(root_mod, "momenta")) {
