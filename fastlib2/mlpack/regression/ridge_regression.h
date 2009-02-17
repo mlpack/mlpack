@@ -16,19 +16,19 @@ class RidgeRegression {
             GenVector<index_t> &predictor_indices,
             Matrix &prediction);
   void Destruct();
-  void Regress();
+  void Regress(double lambda);
+  void SVDRegress(double lambda);
+  void CrossValidatedRegression(double lambda_min, 
+                               double lambda_max,
+                               index_t num);
   double ComputeSquareError();
   void factors(Matrix *factors);
-  void set_lambda(double lambda);
-  double lambda();
 
  private:
   fx_module *module_;
   Matrix predictors_;
   Matrix predictions_;
   Matrix factors_;
-  double lambda_;
-  double lambda_sq_;
 };
 
 #include "ridge_regression_impl.h"
