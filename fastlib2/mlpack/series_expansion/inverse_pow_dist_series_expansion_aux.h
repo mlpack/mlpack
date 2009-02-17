@@ -32,11 +32,15 @@ class InversePowDistSeriesExpansionAux {
    */
   ArrayList<Matrix> multiplicative_constants_;
 
+  Vector multiplicative_constants_block_;
+
   /** @brief These are the $A(n, m, \lambda) = (-1)^n (n - m)! 2^m
    *         \left( \frac{\lambda}{2} \right)_m$.
    */
   ArrayList<Matrix> a_constants_;
   
+  Vector a_constants_block_;
+
   /** @brief These are the $T(m, k, \lambda) = (-1)^{m + k} (\lambda -
    *         1)_{2k} m choose k$.
    */
@@ -66,12 +70,16 @@ class InversePowDistSeriesExpansionAux {
   void ComputeAConstants_() {
 
     a_constants_.Init(2 * (max_order_ + 1));
+    a_constants_block_.Init((2 * max_order_ + 1) * a_constants_.size() *
+			    (a_constants_.size() + 1) / 2);
+    double *previous = a_constants_block_.ptr();
 
     for(index_t n = 0; n < a_constants_.size(); n++) {
       
-      // Allocate $(n + 1)$ by $(n + 1)$ matrix.
-      a_constants_[n].Init(n + 1, 2 * max_order_ + 1);
+      // Allocate $(n + 1)$ by $2 * max_order_ + 1$ matrix.
+      a_constants_[n].Alias(previous, n + 1, 2 * max_order_ + 1);
       a_constants_[n].SetZero();
+      previous += (n + 1) * (2 * max_order_ + 1);
 
       // The reference to the matrix.
       Matrix &n_th_order_matrix = a_constants_[n];
@@ -121,12 +129,19 @@ class InversePowDistSeriesExpansionAux {
   void ComputeMultiplicativeConstants_() {
     
     multiplicative_constants_.Init(2 * (max_order_ + 1));
+    multiplicative_constants_block_.Init
+      (multiplicative_constants_.size() *
+       (multiplicative_constants_.size() + 1) *
+       (2 * multiplicative_constants_.size() + 1) / 6);
+    double *previous_index = multiplicative_constants_block_.ptr();
 
     for(index_t n = 0; n < multiplicative_constants_.size(); n++) {
       
       // Allocate $(n + 1)$ by $(n + 1)$ matrix.
-      multiplicative_constants_[n].Init(n + 1, n + 1);
+      multiplicative_constants_[n].Alias
+	(previous_index, n + 1, n + 1);
       multiplicative_constants_[n].SetZero();
+      previous_index += (n + 1) * (n + 1);
 
       // The reference to the matrix.
       Matrix &n_th_order_matrix = multiplicative_constants_[n];
