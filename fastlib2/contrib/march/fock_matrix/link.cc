@@ -50,7 +50,7 @@ void Link::ComputeFockMatrix() {
     } // for j
     
     
-    significant_mu_pairs_[i] = (BasisShell**)malloc(next_ind); 
+    significant_mu_pairs_[i] = (BasisShell**)malloc(next_ind * sizeof(BasisShell**)); 
     //BasisShell** significant_mu_pairs_[i] = significant_mu_pairs_[i];
     
     
