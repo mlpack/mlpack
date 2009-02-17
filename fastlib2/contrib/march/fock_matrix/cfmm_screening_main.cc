@@ -1,6 +1,6 @@
 #include "fastlib/fastlib.h"
 #include "eri.h"
-
+#include "contrib/dongryel/continuous_fmm.h"
 
 const fx_entry_doc cfmm_screening_entries[] = {
 {"centers", FX_REQUIRED, FX_STR, NULL, 
@@ -54,9 +54,12 @@ int main(int argc, char* argv[]) {
   } // for i
   
   
+  
   ArrayList<ShellPair> shell_pairs;
   
+  fx_timer_start(root_mod, "cfmm_time");
   
+  fx_timer_start(root_mod, "prescreening_time");
   index_t num_shell_pairs = eri::ComputeShellPairs(&shell_pairs, shells, 
                                                    thresh);
                                                    
@@ -84,15 +87,44 @@ int main(int argc, char* argv[]) {
   
   } // for i
   
-  const char* exp_out_file = fx_param_str(root_mod, "exponents_out", "exp.csv");
+  fx_timer_stop(root_mod, "prescreening_time");
+  
+  // Replace this with reading in the matrix and processing it later
+  Vector densities;
+  densities.Init(num_shell_pairs);
+  densitites.SetAll(1.0);
+  
+  /*const char* exp_out_file = fx_param_str(root_mod, "exponents_out", "exp.csv");
   data::Save(exp_out_file, charge_exponents);
   
   const char* centers_out_file = fx_param_str(root_mod, "centers_out", 
                                               "centers.csv");
   data::Save(centers_out_file, charge_centers);
+  */
+  
+  fx_module* cfmm_module = fx_submodule(root_mod, "cfmm");
+  
+  ContinuousFmm cfmm_algorithm;
+  cfmm_algorithm.Init(charge_centers, charge_centers, densities, 
+                      charge_exponents, true, cfmm_module);
+  
+  fx_timer_start(root_mod, "multipole_time");
+  cfmm_algorithm.Compute();
+  fx_timer_stop(root_mod, "multipole_time");
+  
+  fx_timer_stop(root_mod, "cfmm_time");
+  
+  if (fx_param_exists(root_mod, "do_cfmm_naive")) {
+    fx_timer_start(root_mod, "naive_cfmm_time");
+    Vector naive_results;
+    cfmm_algorithm.NaiveCompute(&naive_results);
+    fx_timer_stop(root_mod, "naive_cfmm_time");
+  }
   
   fx_result_int(root_mod, "num_charge_dists", num_shell_pairs);
   
   fx_done(root_mod);
+  
+  return 0;
 
 } // main()

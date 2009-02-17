@@ -45,7 +45,9 @@ binrule(
 
 binrule(
 	name="cfmm_screening_main",
-	headers=["eri.h"],
+	headers=["eri.h", "contrib/dongryel/fast_multipole_method/continuous_fmm.h"],
 	sources=["cfmm_screening_main.cc"],
-	deplibs=["fastlib:fastlib", ":eri"]
+	deplibs=["fastlib:fastlib", ":eri", contrib/dongryel/multitree_template:multitree_template",
+		 "contrib/dongryel/proximity_project:proximity_project",
+		 "mlpack/series_expansion:series_expansion"]
 )
