@@ -69,7 +69,14 @@ void Link::ComputeFockMatrix() {
               Link::Prescreening_Sort_);
     
   
-    ot::Print(significant_mu_pairs_[i]);
+    //ot::Print(significant_mu_pairs_[i]);
+    
+    for (index_t a = 0; a < next_ind; a++) {
+      printf("sort_val: %g\n", 
+             significant_mu_pairs_[i][a]->max_schwartz_factor() * 
+              significant_mu_pairs_[i][a]->current_density_entry());
+              
+    }
   
   } // for i
   
