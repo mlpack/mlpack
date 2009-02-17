@@ -23,8 +23,6 @@ void RidgeRegression::Init(fx_module *module,
                            Matrix &predictors, 
                            Matrix &predictions) {
   module_=module;
-  lambda_=fx_param_double(module_, "lambda", 0);
-  lambda_sq_ = lambda_ * lambda_;
   DEBUG_ERROR_MSG_IF(predictors.n_cols()<predictors.n_rows(),
      "The number of the columns %"LI"d must be less or equal to the number of "
      " the rows %"LI"d ", predictors.n_cols(), predictors.n_rows());
@@ -56,20 +54,100 @@ void RidgeRegression::Init(fx_module *module,
 
 }
 
-void RidgeRegression::Regress() {
+void RidgeRegression::Regress(double lambda) {
   // we have to solve the system:
   // (predictors * predictors^T + lambda^2 I) * factors 
   //     = predictors^T * predictions 
   Matrix lhs; // lhs: left hand side
   Matrix rhs; // rhs: right hand side
- 
+  double lambda_sq = lambda * lambda;
   la::MulTransBInit(predictors_, predictors_, &lhs);
   for(index_t i=0; i<predictors_.n_rows(); i++) {
-    lhs.set(i, i, lhs.get(i, i) + lambda_sq_);
+    lhs.set(i, i, lhs.get(i, i) + lambda_sq);
   }
   la::MulTransBInit(predictors_, predictions_, &rhs);
   la::SolveInit(lhs, rhs, &factors_);
 }
+
+void RidgeRegression::SvdRegress(double lambda) {
+  Vector singular_values;
+  Matrix u, v_t;
+  Matrix predictors_t;
+  la::TransposeInit(predictors_, &predictors_t)
+  la::SVDInit(predictors_t, &singular_values, &u, &v_t);
+  Vector singular_values_sq;
+  factors_.Init(1, predictors_.n_cols());
+  factors_.SetAll(0.0);
+  double lambda_sq=lambda*lambda;
+  for(index_t i=0; i<singular_values.length(); i++) {
+    double s_sq=math::Sqr(singular_values_sq[i]);
+    double alpha=s_sq/(lambda_sq+s_sq)*
+                 la::Dot(predictions._n_cols(),
+                         u.GetColumnPtr(i), 
+                         predictions.ptr());
+   la::AddExpert(factors_.n_cols(), alpha, 
+                 factors_.GetColumnPtr(i), 
+                 factors_.ptr());   
+  }
+}
+
+void RidgeRegression::CrossValidatedRegression(double lambda_min, 
+                                              double lambda_max,
+                                              index_t num) {
+  DEBUG_ERROR_MSG_IF(lambda_min>lambda_max, 
+      "lambda_max %lg must be larger than lambda_min %lg",
+     lambda_max, lambda_min );
+  double step=(lambda_max-lambda_min)/num;
+  Vector singular_values;
+  Matrix u, v_t;
+  Matrix predictors_t;
+  la::TransposeInit(predictors, &predictors_t);
+  la::SVDInit(predictors_t, &singular_values, &u, &v_t);
+  Vector singular_values_sq;
+  singular_values_sq.Copy(singular_values);
+  for(index_t i=0; i<singular_values.length(); i++) {
+    singular_values_sq[i] = math::Sqr(singular_values[i]);
+  }
+  Matrix u_x_b;
+  la::MulInit(u, predictions , &u_x_b);
+  double min_score=DBL_MAX;
+  index_t min_index=-1;
+  for(index_t i=0; i<num; i++) {
+    double lambda=lambda_min+i*step;
+    double lambda_sq=math::Sqr(lambda);
+    // compute residual error
+    Matrix error;
+    error.Init(1, predictors.n_cols());
+    double tau=predictors_.n_rows();
+    for(index_t j=0; i<singular_values_sq.length(); j++) {
+      double aplpha=lambda_sq/(singular_values_sq[j]+lambda_sq);
+      la::AddExpert(error.n_cols(), 
+                    alpha, 
+                    u_x_b.GetColumnPtr(i), 
+                    error.ptr());
+      // compute tau
+      tau-=singular_values_sq[j]/(singular_values_sq[j]+lambda_sqr);
+    }
+    double rss = Dot::(error, error);
+    score=(rss)/math::Sqr(tau);
+    if (score<min_score) {
+      min_score=score;
+      min_index=i;
+    }
+  }
+  fx_result_double(module_, "cross_validation_score", min_score);
+  double lambda_sq=maths::Sqr(lambda_min+min_index*step);
+  factors_.Init(1, predictors_.n_cols());
+  for(index_t i=0; i<singular_values_sq.length(); i++) {
+      double aplpha=singular_values_sq[i]/(singular_values_sq[i]+lambda_sq);
+      la::AddExpert(factors_.n_cols(), 
+                    alpha, 
+                    u_x_b.GetColumnPtr(i), 
+                    factors_.ptr());
+   }
+
+}
+
 
 double RidgeRegression::ComputeSquareError() {
   Matrix error;
@@ -82,14 +160,5 @@ double RidgeRegression::ComputeSquareError() {
 void  RidgeRegression::factors(Matrix *factors) {
   factors->Copy(factors_);
 }
-  
-void  RidgeRegression::set_lambda(double lambda) {
-  lambda_ = lambda;
-  lambda_sq_ = lambda_ * lambda_;
-}
-double  RidgeRegression::lambda() {
-  return lambda_;
-}
-
 
 #endif
