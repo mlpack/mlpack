@@ -1014,19 +1014,22 @@ int main(int argc, char *argv[]) {
   DEBUG_ASSERT(TestTransInversePowDistLocalToLocal(data, weights, begin, end));
 
   InversePowDistKernelAux kernel_aux;
-  kernel_aux.Init(-2, 3, 4);
+  kernel_aux.Init(-3, 5, 4);
   Matrix derivative_map;
-  kernel_aux.AllocateDerivativeMap(4, 3, &derivative_map);
+  kernel_aux.AllocateDerivativeMap(4, 5, &derivative_map);
   Vector x;
   x.Init(4);
   x.SetAll(3);
   kernel_aux.ComputeDirectionalDerivatives(x, &derivative_map, 3);
+
+  printf("Printing the derivative map\n");
   derivative_map.PrintDebug();
   kernel_aux.sea_.PrintDebug();
 
-  //TestEpanKernelEvaluateFarField(data, weights, begin, end);
-  //TestEpanKernelEvaluateLocalField(data, weights, begin, end);
+  TestEpanKernelEvaluateFarField(data, weights, begin, end);
+  TestEpanKernelEvaluateLocalField(data, weights, begin, end);
   TestEpanKernelTranslateFarToLocalField(data, weights, begin, end);
 
   fx_done(fx_root);
+  return 0;
 }
