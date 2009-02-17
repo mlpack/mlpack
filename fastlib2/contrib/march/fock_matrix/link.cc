@@ -51,25 +51,25 @@ void Link::ComputeFockMatrix() {
     
     
     significant_mu_pairs_[i] = (BasisShell**)malloc(next_ind); 
-    BasisShell** significant_nu_for_mu = significant_mu_pairs_[i];
+    //BasisShell** significant_mu_pairs_[i] = significant_mu_pairs_[i];
     
     
     for (index_t k = 0; k < next_ind; k++) {
     
-      significant_nu_for_mu[k] = shell_list_.begin() + 
+      significant_mu_pairs_[i][k] = shell_list_.begin() + 
                                   significant_nu_index[k];
-      significant_nu_for_mu[k]->set_max_schwartz_factor(shell_max_[k]);
-      significant_nu_for_mu[k]->set_current_density_entry(density_mat_.ref(i,k));
+      significant_mu_pairs_[i][k]->set_max_schwartz_factor(shell_max_[k]);
+      significant_mu_pairs_[i][k]->set_current_density_entry(density_mat_.ref(i,k));
     
     } // for k
     
     // sort significant_nu_for_mu
     
-    std::sort(significant_nu_for_mu, significant_nu_for_mu+next_ind, 
+    std::sort(significant_mu_pairs_[i], significant_mu_pairs_[i]+next_ind, 
               Link::Prescreening_Sort_);
     
   
-    ot::Print(significant_nu_for_mu);
+    ot::Print(significant_mu_pairs_[i]);
   
   } // for i
   
