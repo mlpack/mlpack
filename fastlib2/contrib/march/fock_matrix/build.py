@@ -51,3 +51,10 @@ binrule(
 		 "contrib/dongryel/proximity_project:proximity_project",
 		 "mlpack/series_expansion:series_expansion"]
 )
+
+binrule(
+	name="link_main",
+	headers=["link.h"],
+	sources=["link_main.cc"],
+	deplibs=["fastlib:fastlib", ":eri", ":link_exchange"]
+)	

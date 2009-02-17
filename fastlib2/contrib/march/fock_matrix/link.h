@@ -29,7 +29,7 @@ class Link {
   
   Vector basis_momenta_;
   
-  Matrix exchange_mat_;
+  Matrix exchange_matrix_;
   
   Matrix density_mat_;
   
@@ -39,11 +39,18 @@ class Link {
   ArrayList<ShellPair> shell_pair_list_;
   
   // 
-  ArrayList<ArrayList> significant_mu_pairs_;
-  ArrayList<BasisShell> significant_nu_for_mu_;
+  //ArrayList<ArrayList> significant_mu_pairs_;
+  //ArrayList<BasisShell> significant_nu_for_mu_;
+  
+  // significant_mu_pairs_[i] = list of significant nu for shell i
+  BasisShell*** significant_mu_pairs_;
+  
   
   // The length of shell_list_
   index_t num_shells_;
+  
+  // The number of shell pairs remaining after the initial Schwartz thresholding
+  index_t num_shell_pairs_;
   
   // The threshold for a significant eri
   double threshold_;
@@ -52,6 +59,18 @@ class Link {
   // defaults to be the same as the four index threshold, since I think this is
   // what is done in QChem
   double shell_pair_cutoff_;
+  
+  // Used in sorting functions 
+  index_t current_mu_;
+  
+  
+  ////////////////////////// Functions ///////////////////////////////
+  
+  /**
+   * Used for sorting the list of significant nu for each mu in order of 
+   * density matrix and maximum Schwartz factor. 
+   */
+  bool Prescreening_Sort_(BasisShell* ShellA, BasisShell* ShellB);
 
  public:
 
@@ -71,7 +90,7 @@ class Link {
     shell_list_.Init(num_shells_);
     
     // Fill in shell_list_
-    for (index_t i = 0; i < num_shell_; i++) {
+    for (index_t i = 0; i < num_shells_; i++) {
     
       Vector new_cent;
       basis_centers_.MakeColumnVector(i, &new_cent);
@@ -83,7 +102,8 @@ class Link {
     shell_pair_cutoff_ = fx_param_double(module_, "shell_pair_cutoff", 
                                          threshold_);
                                          
-    significant_mu_pairs_.Init(num_shells_);
+    significant_mu_pairs_ = 
+        (BasisShell***)malloc(num_shells_*sizeof(BasisShell**));
     
   
   }
