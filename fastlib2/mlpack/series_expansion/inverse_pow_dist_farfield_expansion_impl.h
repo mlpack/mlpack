@@ -199,8 +199,18 @@ void InversePowDistFarFieldExpansion::TranslateFromFarField
       // Get the matrix reference to the coefficients to be stored.
       GenMatrix<std::complex<double> > &nprime_th_order_destination_matrix =
 	coeffs_[n_prime];
-      nprime_th_order_destination_matrix.CopyValues
-	((*coeffs_to_be_translated)[n_prime]);
+
+      for(index_t j = 0; j < nprime_th_order_destination_matrix.n_cols();
+	  j++) {
+
+	for(index_t i = 0; i < nprime_th_order_destination_matrix.n_rows();
+	    i++) {
+	  nprime_th_order_destination_matrix.set
+	    (i, j,
+	     nprime_th_order_destination_matrix.get(i, j) +
+	     ((*coeffs_to_be_translated)[n_prime]).get(i, j));
+	}
+      }
     }
     return;
   }
