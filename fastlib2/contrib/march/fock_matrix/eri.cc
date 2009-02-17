@@ -162,7 +162,7 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
       
       if (this_bound > shell_pair_cutoff) {
       
-        if (shell_pairs->capacity() <= num_shell_pairs) {
+        if (shell_pairs->size() <= num_shell_pairs) {
           shell_pairs->PushBack(num_to_add);
         }
         
@@ -171,9 +171,9 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
         num_shell_pairs++;
               
       }
-      else {
+      /*      else {
         printf("pruned\n");
-      }
+	}*/
       
     } // for j
     

@@ -23,8 +23,9 @@ const fx_module_doc cfmm_screening_main_doc = {
 
 int main(int argc, char* argv[]) {
 
-  fx_module* root_mod = fx_init(argc, argv, &cfmm_screening_main_doc);
-  
+  //  fx_module* root_mod = fx_init(argc, argv, &cfmm_screening_main_doc);
+  fx_module* root_mod = fx_init(argc, argv, NULL);
+
   Matrix centers;
   const char* centers_file = fx_param_str_req(root_mod, "centers");
   data::Load(centers_file, &centers);
@@ -43,13 +44,20 @@ int main(int argc, char* argv[]) {
   index_t num_shells = centers.n_cols();
   ArrayList<BasisShell> shells;
   shells.Init(num_shells);
-  
+
+  /*
+  centers.PrintDebug();
+  exp_mat.PrintDebug();
+  printf("centers: cols: %d, rows %d\n", centers.n_cols(), centers.n_rows());
+  printf("exp: cols: %d, rows %d\n", exp_mat.n_cols(), exp_mat.n_rows());
+  */
+
   for (index_t i = 0; i < num_shells; i++) {
   
     Vector new_cent;
     centers.MakeColumnVector(i, &new_cent);
   
-    shells[i].Init(new_cent, exp_mat.ref(i,0), 0, i);
+    shells[i].Init(new_cent, exp_mat.ref(0, i), 0, i);
   
   } // for i
   
@@ -69,7 +77,9 @@ int main(int argc, char* argv[]) {
   charge_centers.Init(3,num_shell_pairs);
   
   Matrix charge_exponents;
-  charge_exponents.Init(num_shell_pairs, 1);
+  charge_exponents.Init(1,num_shell_pairs);
+
+
   
   for (index_t i = 0; i < num_shell_pairs; i++) {
   
@@ -83,7 +93,7 @@ int main(int argc, char* argv[]) {
     // add to output matrix
     charge_centers.CopyVectorToColumn(i, cent_vec);
     
-    charge_exponents.set(i, 0, new_exp);
+    charge_exponents.set(0,i, new_exp);
   
   } // for i
   
