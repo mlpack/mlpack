@@ -66,14 +66,14 @@ class Link {
   
   ////////////////////////// Functions ///////////////////////////////
   
-  /**
-   * Used for sorting the list of significant nu for each mu in order of 
-   * density matrix and maximum Schwartz factor. 
-   */
-  bool Prescreening_Sort_(BasisShell* ShellA, BasisShell* ShellB);
 
  public:
-
+    /**
+    * Used for sorting the list of significant nu for each mu in order of 
+     * density matrix and maximum Schwartz factor. 
+     */
+    static bool Prescreening_Sort_(BasisShell* ShellA, BasisShell* ShellB);
+  
   void Init(fx_module* mod, double thresh, const Matrix& centers, 
             const Vector& exp, const Vector& moment, const Matrix& density_in) {
   

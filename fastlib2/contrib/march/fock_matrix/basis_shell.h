@@ -12,9 +12,12 @@ class BasisShell {
 
  public:
 
-  BasisShell() {}
+  //OT_DEF_BASIC(BasisShell);
+
+  /*BasisShell() {}
   
   ~BasisShell() {}
+  */
   
   void Init(const Vector& cent, double exp, index_t mom, index_t ind) {
   
@@ -83,6 +86,30 @@ class BasisShell {
     return normalization_constant_;
   }
   
+  index_t current_mu() {
+    return current_mu_;
+  }
+  
+  void set_current_mu(index_t mu_in) {
+    current_mu_ = mu_in;
+  }
+  
+  double max_schwartz_factor() {
+    return max_schwartz_factor_;
+  }
+  
+  void set_max_schwartz_factor(double fac) {
+    max_schwartz_factor_ = fac;
+  }
+  
+  double current_density_entry() {
+    return current_density_entry_;
+  } 
+  
+  void set_current_density_entry(double entry) {
+    current_density_entry_ = entry;
+  }
+    
 
  private:
 
@@ -106,6 +133,13 @@ class BasisShell {
   
   // need to multiply integrals by this
   double normalization_constant_;
+  
+  // used in sorting
+  index_t current_mu_;
+  double current_density_entry_;
+  
+  // (mu_max|mu_max)^1/2 from LinK paper
+  double max_schwartz_factor_;
   
   ///////////////////////
   
