@@ -1,6 +1,6 @@
 #include "fastlib/fastlib.h"
 #include "eri.h"
-#include "contrib/dongryel/continuous_fmm.h"
+#include "contrib/dongryel/fast_multipole_method/continuous_fmm.h"
 
 const fx_entry_doc cfmm_screening_entries[] = {
 {"centers", FX_REQUIRED, FX_STR, NULL, 
@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
   
   } // for i
   
-  
+  fx_result_int(root_mod, "num_basis_functions", num_shells);
   
   ArrayList<ShellPair> shell_pairs;
   
@@ -100,9 +100,9 @@ int main(int argc, char* argv[]) {
   fx_timer_stop(root_mod, "prescreening_time");
   
   // Replace this with reading in the matrix and processing it later
-  Vector densities;
-  densities.Init(num_shell_pairs);
-  densitites.SetAll(1.0);
+  Matrix densities;
+  densities.Init(1,num_shell_pairs);
+  densities.SetAll(1.0);
   
   /*const char* exp_out_file = fx_param_str(root_mod, "exponents_out", "exp.csv");
   data::Save(exp_out_file, charge_exponents);
@@ -112,7 +112,7 @@ int main(int argc, char* argv[]) {
   data::Save(centers_out_file, charge_centers);
   */
   
-  fx_module* cfmm_module = fx_submodule(root_mod, "cfmm");
+  struct datanode* cfmm_module = fx_submodule(root_mod, "cfmm");
   
   ContinuousFmm cfmm_algorithm;
   cfmm_algorithm.Init(charge_centers, charge_centers, densities, 
