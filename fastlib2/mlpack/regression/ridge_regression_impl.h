@@ -69,31 +69,27 @@ void RidgeRegression::Regress(double lambda) {
   la::SolveInit(lhs, rhs, &factors_);
 }
 
-void RidgeRegression::SvdRegress(double lambda) {
+void RidgeRegression::SVDRegress(double lambda) {
   Vector singular_values;
   Matrix u, v_t;
   Matrix predictors_t;
-  la::TransposeInit(predictors_, &predictors_t)
+  la::TransposeInit(predictors_, &predictors_t);
   la::SVDInit(predictors_t, &singular_values, &u, &v_t);
-  Vector singular_values_sq;
   factors_.Init(1, predictors_.n_cols());
   factors_.SetAll(0.0);
-  double lambda_sq=lambda*lambda;
-  for(index_t i=0; i<singular_values.length(); i++) {
-    double s_sq=math::Sqr(singular_values_sq[i]);
-    double alpha=s_sq/(lambda_sq+s_sq)*
-                 la::Dot(predictions._n_cols(),
-                         u.GetColumnPtr(i), 
-                         predictions.ptr());
-   la::AddExpert(factors_.n_cols(), alpha, 
-                 factors_.GetColumnPtr(i), 
-                 factors_.ptr());   
+  double lambda_sq = lambda * lambda;
+  for(index_t i = 0; i < singular_values.length(); i++) {
+    double s_sq = math::Sqr(singular_values[i]);
+    double alpha = s_sq / (lambda_sq + s_sq) *
+      la::Dot(predictions_.n_cols(), u.GetColumnPtr(i), predictions_.ptr());
+    la::AddExpert(factors_.n_cols(), alpha, u.GetColumnPtr(i),
+		  factors_.ptr());   
   }
 }
 
 void RidgeRegression::CrossValidatedRegression(double lambda_min, 
-                                              double lambda_max,
-                                              index_t num) {
+					       double lambda_max,
+					       index_t num) {
   DEBUG_ERROR_MSG_IF(lambda_min>lambda_max, 
       "lambda_max %lg must be larger than lambda_min %lg",
      lambda_max, lambda_min );
@@ -101,7 +97,7 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
   Vector singular_values;
   Matrix u, v_t;
   Matrix predictors_t;
-  la::TransposeInit(predictors, &predictors_t);
+  la::TransposeInit(predictors_, &predictors_t);
   la::SVDInit(predictors_t, &singular_values, &u, &v_t);
   Vector singular_values_sq;
   singular_values_sq.Copy(singular_values);
@@ -109,7 +105,7 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
     singular_values_sq[i] = math::Sqr(singular_values[i]);
   }
   Matrix u_x_b;
-  la::MulInit(u, predictions , &u_x_b);
+  la::MulInit(u, predictions_, &u_x_b);
   double min_score=DBL_MAX;
   index_t min_index=-1;
   for(index_t i=0; i<num; i++) {
@@ -117,32 +113,31 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
     double lambda_sq=math::Sqr(lambda);
     // compute residual error
     Matrix error;
-    error.Init(1, predictors.n_cols());
+    error.Init(1, predictors_.n_cols());
     double tau=predictors_.n_rows();
     for(index_t j=0; i<singular_values_sq.length(); j++) {
-      double aplpha=lambda_sq/(singular_values_sq[j]+lambda_sq);
+      double alpha=lambda_sq/(singular_values_sq[j]+lambda_sq);
       la::AddExpert(error.n_cols(), 
                     alpha, 
                     u_x_b.GetColumnPtr(i), 
                     error.ptr());
       // compute tau
-      tau-=singular_values_sq[j]/(singular_values_sq[j]+lambda_sqr);
+      tau-=singular_values_sq[j]/(singular_values_sq[j]+lambda_sq);
     }
-    double rss = Dot::(error, error);
-    score=(rss)/math::Sqr(tau);
+    double rss = la::Dot(error, error);
+    double score=(rss)/math::Sqr(tau);
     if (score<min_score) {
       min_score=score;
       min_index=i;
     }
   }
   fx_result_double(module_, "cross_validation_score", min_score);
-  double lambda_sq=maths::Sqr(lambda_min+min_index*step);
+  double lambda_sq = math::Sqr(lambda_min+min_index*step);
   factors_.Init(1, predictors_.n_cols());
   for(index_t i=0; i<singular_values_sq.length(); i++) {
-      double aplpha=singular_values_sq[i]/(singular_values_sq[i]+lambda_sq);
-      la::AddExpert(factors_.n_cols(), 
-                    alpha, 
-                    u_x_b.GetColumnPtr(i), 
+      double alpha = singular_values_sq[i] / 
+	(singular_values_sq[i] + lambda_sq);
+      la::AddExpert(factors_.n_cols(), alpha, u_x_b.GetColumnPtr(i), 
                     factors_.ptr());
    }
 

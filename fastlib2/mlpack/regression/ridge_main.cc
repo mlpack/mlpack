@@ -34,7 +34,7 @@ int main(int argc, char *argv[]) {
   RidgeRegression engine;
   engine.Init(module, predictors, predictions);
   NOTIFY("Computing Regression...");
-  engine.Regress();
+  engine.Regress(0);
   NOTIFY("Regression Complete !");
   double square_error =  engine.ComputeSquareError();
   NOTIFY("Squre Error:%g", square_error);
