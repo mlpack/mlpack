@@ -29,7 +29,7 @@ class RidgeRegressionTest {
     engine_.Init(module_, predictors_, predictions_); 
   }
   void Test1() {
-    engine_.Regress();
+    engine_.Regress(0);
     Matrix factors;
     engine_.factors(&factors);
     NOTIFY("Square Error:%g", engine_.ComputeSquareError());
