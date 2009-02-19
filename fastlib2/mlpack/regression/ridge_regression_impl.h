@@ -19,8 +19,7 @@
 //    "Fix it otherwise the program will behave unexpectedly");                
 #else
 
-void RidgeRegression::Init(fx_module *module, 
-                           Matrix &predictors, 
+void RidgeRegression::Init(fx_module *module, Matrix &predictors, 
                            Matrix &predictions) {
   module_=module;
   DEBUG_ERROR_MSG_IF(predictors.n_cols()<predictors.n_rows(),
@@ -31,9 +30,19 @@ void RidgeRegression::Init(fx_module *module,
   DEBUG_ERROR_MSG_IF(predictors.n_cols()!=predictions.n_cols(), 
       "Predictors and predictions must have the same same number "
       "of rows %"LI"d != %"LI"d ", predictors.n_cols(), predictions.n_cols());
-  predictors_.Copy(predictors);
-  predictions_.Copy(predictions);
+
+  // Append a row of 1's to the predictors to account for dataset that
+  // is not mean-centered, and transpose it.
+  predictors_.Init(predictions.n_cols(), predictors.n_rows() + 1);
+  for(index_t i = 0; i < predictors_.n_rows(); i++) {
+    predictors_.set(i, 0, 1.0);
+    for(index_t j = 1; j < predictors_.n_cols(); j++) {
+      predictors_.set(i, j, predictors.get(j - 1, i));
+    }
+  }
+  la::TransposeInit(predictions, &predictions_);
 }
+
 void RidgeRegression::Init(fx_module *module, 
                            Matrix &input_data, 
                            index_t selector) {
@@ -55,92 +64,126 @@ void RidgeRegression::Init(fx_module *module,
 }
 
 void RidgeRegression::Regress(double lambda) {
-  // we have to solve the system:
-  // (predictors * predictors^T + lambda^2 I) * factors 
-  //     = predictors^T * predictions 
+
+  // we have to solve the system: (predictors^T * predictors +
+  // lambda^2 I) * factors = predictors^T * predictions
   Matrix lhs; // lhs: left hand side
   Matrix rhs; // rhs: right hand side
   double lambda_sq = lambda * lambda;
-  la::MulTransBInit(predictors_, predictors_, &lhs);
-  for(index_t i=0; i<predictors_.n_rows(); i++) {
+  la::MulTransAInit(predictors_, predictors_, &lhs);
+
+  // Add the regularizaton parameter to the diagonals before
+  // inverting.
+  for(index_t i = 0; i < predictors_.n_cols(); i++) {
     lhs.set(i, i, lhs.get(i, i) + lambda_sq);
   }
-  la::MulTransBInit(predictors_, predictions_, &rhs);
-  la::SolveInit(lhs, rhs, &factors_);
+
+  la::MulTransAInit(predictors_, predictions_, &rhs);
+
+  success_t flag = la::SolveInit(lhs, rhs, &factors_);
+
+  if(flag == SUCCESS_FAIL) {
+    printf("There was a problem in inverting the matrix!\n");
+  }
 }
 
 void RidgeRegression::SVDRegress(double lambda) {
+
   Vector singular_values;
   Matrix u, v_t;
-  Matrix predictors_t;
-  la::TransposeInit(predictors_, &predictors_t);
-  la::SVDInit(predictors_t, &singular_values, &u, &v_t);
-  factors_.Init(1, predictors_.n_cols());
-  factors_.SetAll(0.0);
+  la::SVDInit(predictors_, &singular_values, &u, &v_t);
+
+  // Factors should have $D + 1$ parameters.
+  factors_.Init(predictors_.n_cols(), 1);
+  factors_.SetZero();
   double lambda_sq = lambda * lambda;
+
   for(index_t i = 0; i < singular_values.length(); i++) {
     double s_sq = math::Sqr(singular_values[i]);
-    double alpha = s_sq / (lambda_sq + s_sq) *
-      la::Dot(predictions_.n_cols(), u.GetColumnPtr(i), predictions_.ptr());
-    la::AddExpert(factors_.n_cols(), alpha, u.GetColumnPtr(i),
-		  factors_.ptr());   
+    double alpha = singular_values[i] / (lambda_sq + s_sq) * 
+      la::Dot(u.n_rows(), u.GetColumnPtr(i), predictions_.ptr());
+
+    // Scale each row vector of V^T and add to the factor.
+    for(index_t j = 0; j < v_t.n_cols(); j++) {
+      factors_.set(j, 0, factors_.get(j, 0) + alpha * v_t.get(i, j));
+    }
   }
 }
 
 void RidgeRegression::CrossValidatedRegression(double lambda_min, 
 					       double lambda_max,
 					       index_t num) {
-  DEBUG_ERROR_MSG_IF(lambda_min>lambda_max, 
-      "lambda_max %lg must be larger than lambda_min %lg",
-     lambda_max, lambda_min );
-  double step=(lambda_max-lambda_min)/num;
+  DEBUG_ERROR_MSG_IF(lambda_min > lambda_max, 
+		     "lambda_max %lg must be larger than lambda_min %lg",
+		     lambda_max, lambda_min );
+  double step = (lambda_max - lambda_min) / num;
   Vector singular_values;
   Matrix u, v_t;
   Matrix predictors_t;
   la::TransposeInit(predictors_, &predictors_t);
   la::SVDInit(predictors_t, &singular_values, &u, &v_t);
+
+  // Square the singular values and store it.
   Vector singular_values_sq;
   singular_values_sq.Copy(singular_values);
-  for(index_t i=0; i<singular_values.length(); i++) {
+  for(index_t i = 0; i < singular_values.length(); i++) {
     singular_values_sq[i] = math::Sqr(singular_values[i]);
   }
+
   Matrix u_x_b;
-  la::MulInit(u, predictions_, &u_x_b);
-  double min_score=DBL_MAX;
-  index_t min_index=-1;
-  for(index_t i=0; i<num; i++) {
-    double lambda=lambda_min+i*step;
-    double lambda_sq=math::Sqr(lambda);
+  la::MulTransAInit(u, predictions_, &u_x_b);
+  double min_score = DBL_MAX;
+  index_t min_index = -1;
+
+  Matrix error;
+  error.Init(1, predictors_.n_cols());
+
+  for(index_t i = 0; i < num; i++) {
+    double lambda = lambda_min + i * step;
+    double lambda_sq = math::Sqr(lambda);
+
     // compute residual error
-    Matrix error;
-    error.Init(1, predictors_.n_cols());
-    double tau=predictors_.n_rows();
-    for(index_t j=0; i<singular_values_sq.length(); j++) {
-      double alpha=lambda_sq/(singular_values_sq[j]+lambda_sq);
-      la::AddExpert(error.n_cols(), 
-                    alpha, 
-                    u_x_b.GetColumnPtr(i), 
-                    error.ptr());
+    error.SetZero();
+
+    // tau starts from the number of rows of predictors_ minus one
+    // because we append a row of 1's at the start to the
+    // dimensionality of the problem.
+    double tau = predictors_.n_rows() - 1;
+    for(index_t j = 0; j < singular_values_sq.length(); j++) {
+      double alpha = lambda_sq / (singular_values_sq[j] + lambda_sq);
+      la::AddExpert(error.n_cols(), alpha * u_x_b.get(i, 0), 
+                    u.GetColumnPtr(j), error.ptr());
       // compute tau
-      tau-=singular_values_sq[j]/(singular_values_sq[j]+lambda_sq);
+      tau -= singular_values_sq[j] / (singular_values_sq[j] + lambda_sq);
     }
     double rss = la::Dot(error, error);
-    double score=(rss)/math::Sqr(tau);
-    if (score<min_score) {
-      min_score=score;
-      min_index=i;
+
+    // Here we need to add to residual squared error the squared error
+    // of the predictions.
+    for(index_t j = 0; j < predictions_.n_cols(); j++) {
+      double accumulant = predictions_.get(0, j);
+      
+      for(index_t k = 0; k < singular_values_sq.length(); k++) {
+	accumulant -= u_x_b.get(k, 0) * u.get(j, k);
+      }
+      rss += math::Sqr(accumulant);
+    }
+
+    double score = rss / math::Sqr(tau);
+    if(score < min_score) {
+      min_score = score;
+      min_index = i;
     }
   }
   fx_result_double(module_, "cross_validation_score", min_score);
-  double lambda_sq = math::Sqr(lambda_min+min_index*step);
+  double lambda_sq = math::Sqr(lambda_min + min_index * step);
   factors_.Init(1, predictors_.n_cols());
-  for(index_t i=0; i<singular_values_sq.length(); i++) {
+  for(index_t i = 0; i < singular_values_sq.length(); i++) {
       double alpha = singular_values_sq[i] / 
 	(singular_values_sq[i] + lambda_sq);
-      la::AddExpert(factors_.n_cols(), alpha, u_x_b.GetColumnPtr(i), 
-                    factors_.ptr());
-   }
-
+      la::AddExpert(factors_.n_cols(), alpha * u_x_b.get(0, i),
+		    u.GetColumnPtr(i), factors_.ptr());
+  }
 }
 
 
