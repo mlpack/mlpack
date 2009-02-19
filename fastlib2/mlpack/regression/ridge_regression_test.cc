@@ -22,33 +22,46 @@
 class RidgeRegressionTest {
  public:
   void Init(fx_module *module) {
-    module_=module;
+    module_ = module;
     data::Load("predictors.csv", &predictors_);
     data::Load("predictions.csv", &predictions_);
     data::Load("true_factors.csv", &true_factors_);
-    engine_.Init(module_, predictors_, predictions_); 
   }
+
   void Test1() {
-    engine_.Regress(0);
-    Matrix factors;
-    engine_.factors(&factors);
-    NOTIFY("Square Error:%g", engine_.ComputeSquareError());
+
+    engine_ = new RidgeRegression();
+    engine_->Init(module_, predictors_, predictions_);
+    engine_->Regress(0);
+    RidgeRegression svd_engine;
+    svd_engine.Init(module_, predictors_, predictions_);
+    svd_engine.SVDRegress(0);
+    Matrix factors, svd_factors;
+    engine_->factors(&factors);
+    svd_engine.factors(&svd_factors);
+    
     for(index_t i=0; i<factors.n_rows(); i++) {
-      TEST_DOUBLE_APPROX(factors.get(i,0), true_factors_.get(i, 0), 1e-3);
+      TEST_DOUBLE_APPROX(factors.get(i, 0), svd_factors.get(i, 0), 1e-3);
     }
+    
+    Destruct();
   }
+
   void TestAll() {
-    Test1();
+    Test1();    
     NOTIFY("[*] Test1 passed !!");
   }  
-  void Destruct();
+
+  void Destruct() {
+    delete engine_;
+  }
+
  private:
   fx_module *module_;
-  RidgeRegression engine_;
+  RidgeRegression *engine_;
   Matrix predictors_;
   Matrix predictions_;
   Matrix true_factors_;
-
 };
 
 int main(int argc, char *argv[]) {
