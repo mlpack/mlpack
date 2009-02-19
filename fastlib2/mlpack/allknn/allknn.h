@@ -163,6 +163,15 @@ class AllkNN {
     // It has a function MinDistanceSq which takes another DHrectBound
     return query_node->bound().MinDistanceSq(reference_node->bound());
   } 
+
+  /**
+   * Computes the minimum squared distances between a point and a node's bounding box
+   */
+  double MinPointNodeDistSq_ (const Vector& query_point, TreeType* reference_node) {
+    // node->bound() gives us the DHrectBound class for the node
+    // It has a function MinDistanceSq which takes another DHrectBound
+    return reference_node->bound().MinDistanceSq(query_point);
+  } 
   
   
   /**
@@ -197,38 +206,42 @@ class AllkNN {
         neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
                                     neighbor_indices_[ind+i]);
       }
-      // We'll do the same for the references
-      for (index_t reference_index = reference_node->begin(); 
-           reference_index < reference_node->end(); reference_index++) {
 
-	      // Confirm that points do not identify themselves as neighbors
-	      // in the monochromatic case
-        if (likely(reference_node != query_node ||
-		       reference_index != query_index)) {
-	        Vector reference_point;
-	        references_.MakeColumnVector(reference_index, &reference_point);
-	        // We'll use lapack to find the distance between the two vectors
-	        double distance =
-	        la::DistanceSqEuclidean(query_point, reference_point);
-	        // If the reference point is closer than the current candidate, 
-	        // we'll update the candidate
-	        if (distance < neighbor_distances_[ind+knns_-1]) {
-	          neighbors.push_back(std::make_pair(distance, reference_index));
-	        }
-	      }
-      } // for reference_index
-     // if ((index_t)neighbors.size()>knns_) {
-      std::sort(neighbors.begin(), neighbors.end());
-      for(index_t i=0; i<knns_; i++) {
-        neighbor_distances_[ind+i] = neighbors[i].first;
-        neighbor_indices_[ind+i]  = neighbors[i].second;
+      double query_to_node_distance =
+	MinPointNodeDistSq_(query_point, reference_node);
+      if (query_to_node_distance < neighbor_distances_[ind+knns_-1]) {
+	// We'll do the same for the references
+	for (index_t reference_index = reference_node->begin(); 
+	     reference_index < reference_node->end(); reference_index++) {
+	
+	  // Confirm that points do not identify themselves as neighbors
+	  // in the monochromatic case
+	  if (likely(reference_node != query_node ||
+		     reference_index != query_index)) {
+	    Vector reference_point;
+	    references_.MakeColumnVector(reference_index, &reference_point);
+	    // We'll use lapack to find the distance between the two vectors
+	    double distance =
+	      la::DistanceSqEuclidean(query_point, reference_point);
+	    // If the reference point is closer than the current candidate, 
+	    // we'll update the candidate
+	    if (distance < neighbor_distances_[ind+knns_-1]) {
+	      neighbors.push_back(std::make_pair(distance, reference_index));
+	    }
+	  }
+	} // for reference_index
+	// if ((index_t)neighbors.size()>knns_) {
+	std::sort(neighbors.begin(), neighbors.end());
+	for(index_t i=0; i<knns_; i++) {
+	  neighbor_distances_[ind+i] = neighbors[i].first;
+	  neighbor_indices_[ind+i]  = neighbors[i].second;
+	}
+	neighbors.resize(knns_);
       }
-      neighbors.resize(knns_);
       // We need to find the upper bound distance for this query node
       if (neighbor_distances_[ind+knns_-1] > query_max_neighbor_distance) {
-        query_max_neighbor_distance = neighbor_distances_[ind+knns_-1]; 
+	query_max_neighbor_distance = neighbor_distances_[ind+knns_-1]; 
       }
-    //  }
       
     } // for query_index 
     // Update the upper bound for the query_node
@@ -665,7 +678,7 @@ class AllkNN {
    */
   void ComputeNeighbors(ArrayList<index_t>* resulting_neighbors,
                         ArrayList<double>* distances) {
-     
+    fx_timer_start(module_, "computing_neighbors");
     if (mode_=="dual") {
       // Start on the root of each tree
       if (query_tree_!=NULL) {
@@ -698,7 +711,7 @@ class AllkNN {
       }
       printf("\n");
     }
-    
+    fx_timer_stop(module_, "computing_neighbors");
     // We need to initialize the results list before filling it
     resulting_neighbors->Init(neighbor_indices_.size());
     distances->Init(neighbor_distances_.length());
