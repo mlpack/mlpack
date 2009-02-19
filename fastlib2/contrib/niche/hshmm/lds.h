@@ -22,22 +22,33 @@ class LDS {
   
  public:
 
-  void Init(int n_dims_latent_in, int n_dims_obs_in, bool load) {
+  void Init(int n_dims_latent_in, int n_dims_obs_in, bool load, char* suffix) {
     n_dims_latent_ = n_dims_latent_in;
     n_dims_obs_ = n_dims_obs_in;
 
     if(load) {
+
+      char *filename;
+      filename = (char*) malloc(100 * sizeof(char));
+
       Matrix mu_0_Matrix;
-      data::Load("synth/mu_0.dat", &mu_0_Matrix);
+      sprintf(filename, "mu_0_%s.dat", suffix);
+      data::Load(filename, &mu_0_Matrix);
       mu_0_.Init(mu_0_Matrix.n_rows());
       mu_0_.CopyValues(mu_0_Matrix.ptr());
 
-      data::Load("synth/Sigma_0.dat", &Sigma_0_);
+      sprintf(filename, "Sigma_0_%s.dat", suffix);
+      data::Load(filename, &Sigma_0_);
+      sprintf(filename, "A_%s.dat", suffix);
       data::Load("synth/A.dat", &A_);
+      sprintf(filename, "C_%s.dat", suffix);
       data::Load("synth/C.dat", &C_);
+      sprintf(filename, "Q_%s.dat", suffix);
       data::Load("synth/Q.dat", &Q_);
+      sprintf(filename, "R_%s.dat", suffix);
       data::Load("synth/R.dat", &R_);
       
+      free(filename);
       
       if((mu_0_.length() != n_dims_latent_)
 	 || (Sigma_0_.n_rows() != n_dims_latent_)
