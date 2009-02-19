@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
   }
   NOTIFY("Regression Complete !");
   double square_error = engine.ComputeSquareError();
-  NOTIFY("Squre Error:%g", square_error);
+  NOTIFY("Square Error:%g", square_error);
   fx_result_double(module, "square error", square_error);
   Matrix factors;
   engine.factors(&factors);
