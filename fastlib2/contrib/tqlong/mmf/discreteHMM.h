@@ -45,6 +45,7 @@ class DiscreteHMM {
 
   /** Initializes from computed transmission and emission matrices */
   void Init(const Matrix& transmission, const Matrix& emission);
+  void Init(int M, int N);
 
   /** Initializes by loading from a file */
   void InitFromFile(const char* profile);
@@ -93,7 +94,7 @@ class DiscreteHMM {
    */
   void TrainBaumWelch(const ArrayList<Vector>& list_data_seq, int max_iteration, double tolerance);
 
-  void TrainMMF(const ArrayList<Vector>& list_data_seq, double rho, int max_iteration, double tolerance);
+  void TrainMMF(const ArrayList<Vector>& list_data_seq, int maxrand, int max_iteration, double tolerance);
 
   /** 
    * Train the model with a list of sequences, must be already initialized 

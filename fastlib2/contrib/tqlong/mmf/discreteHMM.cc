@@ -26,6 +26,13 @@ void DiscreteHMM::Init(const Matrix& transmission, const Matrix& emission) {
   DEBUG_ASSERT(transmission.n_rows() == emission.n_rows());
 }
 
+void DiscreteHMM::Init(int M, int N) {
+  transmission_.Init(M, M);
+  emission_.Init(M, N);
+  //DEBUG_ASSERT(transmission.n_rows() == transmission.n_cols());
+  //DEBUG_ASSERT(transmission.n_rows() == emission.n_rows());
+}
+
 void DiscreteHMM::InitFromFile(const char* profile) {
   ArrayList<Matrix> list_mat;
   load_matrix_list(profile, &list_mat);
@@ -46,6 +53,9 @@ void DiscreteHMM::InitFromData(const ArrayList<Vector>& list_data_seq, int numst
     if (list_data_seq[i].length() > list_data_seq[maxseq].length()) maxseq = i;
   for (int i = 0; i < list_data_seq[maxseq].length(); i++)
     if (list_data_seq[maxseq][i] > numsymbol) numsymbol = (int) list_data_seq[maxseq][i];
+  for (int i = 0; i < list_data_seq.size(); i++)
+    for (int j = 0; j < list_data_seq[i].length(); j++)
+      if (list_data_seq[i][j] > numsymbol) numsymbol = (int) list_data_seq[i][j];
   numsymbol++;
   Vector states;
   int L = list_data_seq[maxseq].length();
@@ -67,8 +77,8 @@ void DiscreteHMM::SaveProfile(const char* profile) const {
     return;
   }
 
-  print_matrix(w_pro, transmission_, "%% transmision", "%f,");
-  print_matrix(w_pro, emission_, "%% emission", "%f,");
+  print_matrix(w_pro, transmission_, "%% transmision", "%g,");
+  print_matrix(w_pro, emission_, "%% emission", "%g,");
 }
 
 void DiscreteHMM::GenerateSequence(int length, Vector* data_seq, Vector* state_seq) const {

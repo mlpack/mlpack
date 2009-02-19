@@ -43,6 +43,20 @@ binrule(
     deplibs = ["fastlib:fastlib_int"]
     )
 
+binrule(
+    name = "mmf2",
+    sources = ["mmf2.cc","support.cc","discreteHMM.cc"],
+    headers = ["support.h","discreteHMM.h"],
+    deplibs = ["fastlib:fastlib_int"]
+    )
+
+binrule(
+    name = "mmf3",
+    sources = ["mmf3.cc","support.cc","discreteHMM.cc"],
+    headers = ["support.h","discreteHMM.h"],
+    deplibs = ["fastlib:fastlib_int"]
+    )
+
 # to build:
 # 1. make sure have environment variables set up:
 #    $ source /full/path/to/fastlib/script/fl-env /full/path/to/fastlib
