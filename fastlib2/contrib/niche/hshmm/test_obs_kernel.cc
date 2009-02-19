@@ -1,4 +1,6 @@
-#include "hmm_distance.h"
+#include "fastlib/fastlib.h"
+#include "mmk.h"
+#include "ppk.h"
 
 const fx_entry_doc test_obs_kernel_entries[] = {
   FX_ENTRY_DOC_DONE
@@ -63,24 +65,55 @@ int main(int argc, char *argv[]) {
 
 
   f.PrintDebug("f");
+  printf("\n");
   g.PrintDebug("g");
   
 
-  Matrix results;
-  int num_samples = 1000;
-  double increment = 0.01;
-  results.Init(2, num_samples);
-
-  double sim;
-  for(int j = 0; j < num_samples; j++) {
-    sim = HMM_Distance::ObservableKernel(f, g);
-    results.set(0, j, g.mu_[0]);
-    results.set(1, j, sim);
-    g.mu_[0] += increment;
+  int num_lambdas = 180;
+  double lambda_increase_factor = 1.1;
+  Vector lambda_array;
+  lambda_array.Init(num_lambdas);
+  lambda_array[0] = 1e-5;
+  for(int i = 1; i < num_lambdas; i++) {
+    lambda_array[i] = lambda_array[i-1] * lambda_increase_factor;
   }
 
+  int num_samples = 1000;
+  //double mean_shift_increment = 0.01;
+  double covariate_shift_increment = 0.01;
+  Matrix results;
+  results.Init(num_lambdas + 2, num_samples);
+
+  MMK mmk;
+  mmk.Init(1); // set lambda = 1
+
+  PPK ppk;
+  ppk.Init(1); // set rho = 1
+
+  double mmk_sim;
+  double ppk_sim;
+  for(int i = 0; i < num_samples; i++) {
+    //results.set(0, i, g.mu_[0]);
+    results.set(0, i, g.sigma_.get(0, 0));
+    ppk_sim = ppk.Compute(f, g);
+    results.set(1, i, ppk_sim);
+    
+    for(int j = 0; j < num_lambdas; j++) {
+      mmk.SetLambda(lambda_array[j]);
+      mmk_sim = mmk.Compute(f, g);
+      results.set(j + 2, i, mmk_sim);
+    }
+    
+    //g.mu_[0] += mean_shift_increment;
+    g.sigma_.set(0, 0, g.sigma_.get(0,0) + covariate_shift_increment);
+  }
+
+
+  Matrix lambda_array_matrix_alias;
+  lambda_array_matrix_alias.AliasRowVector(lambda_array);
+  data::Save("lambda_array.txt", lambda_array_matrix_alias);
+
   data::Save("sim_results.txt", results);
-  
 
 
 
