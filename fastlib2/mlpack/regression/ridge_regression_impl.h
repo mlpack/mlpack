@@ -209,9 +209,9 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
 
 double RidgeRegression::ComputeSquareError() {
   Matrix error;
-  la::MulTransAInit(factors_, predictors_, &error);
-  la::SubFrom(error, &predictions_);
-  double square_error= la::Dot(error.n_rows(), error.ptr(), error.ptr()); 
+  la::MulInit(predictors_, factors_, &error);
+  la::SubFrom(predictions_, &error);
+  double square_error = la::Dot(error.n_rows(), error.ptr(), error.ptr());
   return square_error;
 }
 
