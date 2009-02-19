@@ -8,7 +8,7 @@ binrule(
 binrule(
     name = "test_obs",
     sources = ["test_obs_kernel.cc"],
-    headers = ["hmm.h","distribution.h","hmm_distance.h"],
+    headers = ["distribution.h","mmk.h","ppk.h"],
     deplibs = ["fastlib:fastlib"]
 )
 
