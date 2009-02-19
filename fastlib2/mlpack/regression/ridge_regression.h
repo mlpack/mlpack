@@ -1,6 +1,7 @@
 #ifndef RIDGE_REGRESSION_H_
 #define RIDGE_REGRESSION_H_
 #include "fastlib/fastlib.h"
+#include "mlpack/quicsvd/quicsvd.h"
 
 class RidgeRegression {
  public:
@@ -17,6 +18,7 @@ class RidgeRegression {
             Matrix &prediction);
   void Destruct();
   void Regress(double lambda);
+  void QuicSVDRegress(double lambda, double relative_error);
   void SVDRegress(double lambda);
   void CrossValidatedRegression(double lambda_min, 
                                double lambda_max,
