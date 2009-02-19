@@ -29,6 +29,10 @@ class RidgeRegression {
   Matrix predictors_;
   Matrix predictions_;
   Matrix factors_;
+
+  void ComputeLinearModel_(double lambda_sq, const Vector &singular_values, 
+			   const Matrix &u, const Matrix v_t);
+
 };
 
 #include "ridge_regression_impl.h"

@@ -28,7 +28,7 @@ class RidgeRegressionTest {
     data::Load("true_factors.csv", &true_factors_);
   }
 
-  void Test1() {
+  void TestRegressVersusSVDRegress() {
 
     engine_ = new RidgeRegression();
     engine_->Init(module_, predictors_, predictions_);
@@ -48,7 +48,7 @@ class RidgeRegressionTest {
   }
 
   void TestAll() {
-    Test1();    
+    TestRegressVersusSVDRegress();    
     NOTIFY("[*] Test1 passed !!");
   }  
 

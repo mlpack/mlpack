@@ -87,16 +87,13 @@ void RidgeRegression::Regress(double lambda) {
   }
 }
 
-void RidgeRegression::SVDRegress(double lambda) {
-
-  Vector singular_values;
-  Matrix u, v_t;
-  la::SVDInit(predictors_, &singular_values, &u, &v_t);
+void RidgeRegression::ComputeLinearModel_
+(double lambda_sq, const Vector &singular_values, 
+ const Matrix &u, const Matrix v_t) {
 
   // Factors should have $D + 1$ parameters.
   factors_.Init(predictors_.n_cols(), 1);
   factors_.SetZero();
-  double lambda_sq = lambda * lambda;
 
   for(index_t i = 0; i < singular_values.length(); i++) {
     double s_sq = math::Sqr(singular_values[i]);
@@ -110,6 +107,30 @@ void RidgeRegression::SVDRegress(double lambda) {
   }
 }
 
+void RidgeRegression::SVDRegress(double lambda) {
+
+  Vector singular_values;
+  Matrix u, v_t;
+  la::SVDInit(predictors_, &singular_values, &u, &v_t);
+
+  double lambda_sq = lambda * lambda;
+
+  ComputeLinearModel_(lambda_sq, singular_values, u, v_t);
+
+  /*
+  for(index_t i = 0; i < singular_values.length(); i++) {
+    double s_sq = math::Sqr(singular_values[i]);
+    double alpha = singular_values[i] / (lambda_sq + s_sq) * 
+      la::Dot(u.n_rows(), u.GetColumnPtr(i), predictions_.ptr());
+
+    // Scale each row vector of V^T and add to the factor.
+    for(index_t j = 0; j < v_t.n_cols(); j++) {
+      factors_.set(j, 0, factors_.get(j, 0) + alpha * v_t.get(i, j));
+    }
+  }
+  */
+}
+
 void RidgeRegression::CrossValidatedRegression(double lambda_min, 
 					       double lambda_max,
 					       index_t num) {
@@ -119,9 +140,7 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
   double step = (lambda_max - lambda_min) / num;
   Vector singular_values;
   Matrix u, v_t;
-  Matrix predictors_t;
-  la::TransposeInit(predictors_, &predictors_t);
-  la::SVDInit(predictors_t, &singular_values, &u, &v_t);
+  la::SVDInit(predictors_, &singular_values, &u, &v_t);
 
   // Square the singular values and store it.
   Vector singular_values_sq;
@@ -130,6 +149,9 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
     singular_values_sq[i] = math::Sqr(singular_values[i]);
   }
 
+  // u_x_b will be a vector of length s such that each entry is a dot
+  // product between the $i$-th left singular vector and the
+  // predictions_ values.
   Matrix u_x_b;
   la::MulTransAInit(u, predictions_, &u_x_b);
   double min_score = DBL_MAX;
@@ -138,6 +160,8 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
   Matrix error;
   error.Init(1, predictors_.n_cols());
 
+  // Try different values of lambda and choose the best one that
+  // minimizes the loss function.
   for(index_t i = 0; i < num; i++) {
     double lambda = lambda_min + i * step;
     double lambda_sq = math::Sqr(lambda);
@@ -145,13 +169,13 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
     // compute residual error
     error.SetZero();
 
-    // tau starts from the number of rows of predictors_ minus one
-    // because we append a row of 1's at the start to the
+    // tau starts from the number of columns of predictors_ minus one
+    // because we append a column of 1's at the start to the
     // dimensionality of the problem.
-    double tau = predictors_.n_rows() - 1;
+    double tau = predictors_.n_cols() - 1;
     for(index_t j = 0; j < singular_values_sq.length(); j++) {
       double alpha = lambda_sq / (singular_values_sq[j] + lambda_sq);
-      la::AddExpert(error.n_cols(), alpha * u_x_b.get(i, 0), 
+      la::AddExpert(error.n_cols(), alpha * u_x_b.get(j, 0), 
                     u.GetColumnPtr(j), error.ptr());
       // compute tau
       tau -= singular_values_sq[j] / (singular_values_sq[j] + lambda_sq);
@@ -160,8 +184,8 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
 
     // Here we need to add to residual squared error the squared error
     // of the predictions.
-    for(index_t j = 0; j < predictions_.n_cols(); j++) {
-      double accumulant = predictions_.get(0, j);
+    for(index_t j = 0; j < predictions_.n_rows(); j++) {
+      double accumulant = predictions_.get(j, 0);
       
       for(index_t k = 0; k < singular_values_sq.length(); k++) {
 	accumulant -= u_x_b.get(k, 0) * u.get(j, k);
@@ -176,14 +200,10 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
     }
   }
   fx_result_double(module_, "cross_validation_score", min_score);
+
+  // Using the best lambda, compute the linear model.
   double lambda_sq = math::Sqr(lambda_min + min_index * step);
-  factors_.Init(1, predictors_.n_cols());
-  for(index_t i = 0; i < singular_values_sq.length(); i++) {
-      double alpha = singular_values_sq[i] / 
-	(singular_values_sq[i] + lambda_sq);
-      la::AddExpert(factors_.n_cols(), alpha * u_x_b.get(0, i),
-		    u.GetColumnPtr(i), factors_.ptr());
-  }
+  ComputeLinearModel_(lambda_sq, singular_values, u, v_t);
 }
 
 
