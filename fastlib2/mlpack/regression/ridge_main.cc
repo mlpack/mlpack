@@ -26,6 +26,9 @@ int main(int argc, char *argv[]) {
   std::string predictors_file = fx_param_str_req(module, "predictors"); 
   std::string predictions_file = fx_param_str_req(module, "predictions");
 
+  // Initialize the random number seed.
+  srand(time(NULL));
+
   Matrix predictors;
   if (data::Load(predictors_file.c_str(), &predictors)==SUCCESS_FAIL) {
     FATAL("Unable to open file %s", predictors_file.c_str());
@@ -40,8 +43,12 @@ int main(int argc, char *argv[]) {
   engine.Init(module, predictors, predictions);
   NOTIFY("Computing Regression...");
 
-  if(fx_param_exists(module, "normal_equation_method")) {  
+  const char *method = fx_param_str(module, "method", "quicsvd");
+  if(!strcmp(method, "normal")) {  
     engine.Regress(lambda);
+  }
+  else if(!strcmp(method, "quicsvd")) {
+    engine.QuicSVDRegress(lambda, 0.1);
   }
   else {
     engine.SVDRegress(lambda);

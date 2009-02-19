@@ -107,6 +107,17 @@ void RidgeRegression::ComputeLinearModel_
   }
 }
 
+void RidgeRegression::QuicSVDRegress(double lambda, double relative_error) {
+
+  Vector singular_values;
+  Matrix u, v_t;
+  QuicSVD::SVDInit(predictors_, relative_error, &singular_values, &u, &v_t);
+
+  double lambda_sq = lambda * lambda;
+
+  ComputeLinearModel_(lambda_sq, singular_values, u, v_t);
+}
+
 void RidgeRegression::SVDRegress(double lambda) {
 
   Vector singular_values;
@@ -116,19 +127,6 @@ void RidgeRegression::SVDRegress(double lambda) {
   double lambda_sq = lambda * lambda;
 
   ComputeLinearModel_(lambda_sq, singular_values, u, v_t);
-
-  /*
-  for(index_t i = 0; i < singular_values.length(); i++) {
-    double s_sq = math::Sqr(singular_values[i]);
-    double alpha = singular_values[i] / (lambda_sq + s_sq) * 
-      la::Dot(u.n_rows(), u.GetColumnPtr(i), predictions_.ptr());
-
-    // Scale each row vector of V^T and add to the factor.
-    for(index_t j = 0; j < v_t.n_cols(); j++) {
-      factors_.set(j, 0, factors_.get(j, 0) + alpha * v_t.get(i, j));
-    }
-  }
-  */
 }
 
 void RidgeRegression::CrossValidatedRegression(double lambda_min, 
