@@ -179,8 +179,8 @@ class MeanMapKernel {
       for(int i2 = 0; i2 < n2; i2++) {
 	psi_current -> set(i1, i2,
 			   hmm_a.p_initial()[0] * hmm_b.p_initial()[0]);
-	printf("psi_current[i1,i2] = %f\n",
-	       psi_current -> get(i1, i2));
+	//printf("psi_current[i1,i2] = %f\n",
+	//       psi_current -> get(i1, i2));
       }
     }
     
@@ -202,8 +202,8 @@ class MeanMapKernel {
 	    }
 	  }
 	  psi_current -> set(j1, j2, sum);
-	  printf("psi_current[i1,i2] = %f\n",
-		 psi_current -> get(j1, j2));
+	  //printf("psi_current[i1,i2] = %f\n",
+	  //	 psi_current -> get(j1, j2));
 
 	}
       }
@@ -215,14 +215,14 @@ class MeanMapKernel {
 	sum +=
 	  phi.get(i1, i2) *
 	  psi_current -> get(i1, i2);
-	printf("psi_current[i1,i2] = %f\n",
-	       psi_current -> get(i1, i2));
+	//printf("psi_current[i1,i2] = %f\n",
+	//     psi_current -> get(i1, i2));
       }
     }
 
     delete psi_last;
     delete psi_current;
-    printf("sum = %f\n", sum);
+    //printf("sum = %f\n", sum);
     return sum;
     
 	

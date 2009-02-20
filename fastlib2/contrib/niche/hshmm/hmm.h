@@ -22,7 +22,8 @@ class HMM {
 
   Vector p_initial_;
 
-  Matrix p_transition_;
+  /* rows sum to 1: p_transition_.get(i,j) is P(s_j | s_i) */
+  Matrix p_transition_; //
 
   TDistribution* state_distributions_;
 
@@ -244,6 +245,10 @@ class HMM {
     }
 
     return j;
+  }
+
+  void SetPTransition(Matrix p_transition_in) {
+    p_transition_.CopyValues(p_transition_in);
   }
 
   ~HMM() {

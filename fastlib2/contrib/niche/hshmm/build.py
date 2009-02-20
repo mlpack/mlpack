@@ -1,6 +1,6 @@
 binrule(
     name = "test_hmm_multinomial",
-    sources = ["test_hmm_multinomial.cc"],
+    sources = ["test_hmm_multinomial.cc", "load_profile.cc"],
     headers = ["hmm.h", "lds.h", "multinomial.h", "gaussian.h", "mmk.h"],
     deplibs = ["fastlib:fastlib"]
 )
@@ -37,6 +37,13 @@ binrule(
 binrule(
     name = "test_debug",
     sources = ["testdebug.cc"],
+    headers = [],
+    deplibs = ["fastlib:fastlib"]
+)
+
+binrule(
+    name = "load_profile",
+    sources = ["load_profile.cc"],
     headers = [],
     deplibs = ["fastlib:fastlib"]
 )
