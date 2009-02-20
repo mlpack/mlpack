@@ -3,9 +3,15 @@
 
 
 #include "fastlib/fastlib.h"
-
 #include "distribution.h"
+#include "gaussian.h"
 
+#define MULTINOMIAL 0
+#define GAUSSIAN 1
+#define MOG 2
+
+
+template <typename TDistribution>
 class HMM {
 
  private:
@@ -18,7 +24,7 @@ class HMM {
 
   Matrix p_transition_;
 
-  ArrayList<Distribution> state_distributions_;
+  TDistribution* state_distributions_;
 
   Matrix state_probabilities_;
 
@@ -36,11 +42,16 @@ class HMM {
     
     p_initial_.Init(n_states_);
     p_transition_.Init(n_states_, n_states_);
-    state_distributions_.Init(n_states_);
-    for(int i = 0; i < n_states_; i++) {
-      state_distributions_[i].Init(n_dims_in);
-    }
 
+    state_distributions_ = 
+      (TDistribution*) malloc(n_states_ * sizeof(TDistribution));
+    for(int i = 0; i < n_states_; i++) {
+      state_distributions_[i].Init(n_dims_);
+      printf("distribution %d\n", i);
+      state_distributions_[i].mu().PrintDebug("mu");
+      state_distributions_[i].sigma().PrintDebug("sigma");
+    }
+      
     state_probabilities_.Init(n_states_, T_);
 
     state_cumulative_probabilities_.Init(n_states_, T_);
@@ -49,20 +60,23 @@ class HMM {
     
   }
 
+  
   void RandomlyInitialize() {
     double uniform = ((double) 1) / ((double) n_states_);
 
     for(int i = 0; i < n_states_; i++) {
       p_initial_[i] = uniform;
-      
       for(int j = 0; j < n_states_; j++) {
 	p_transition_.set(j, i, uniform);
       }
-
+   
+      //state_distributions_[i].Init(n_dims_);
       state_distributions_[i].RandomlyInitialize();
     }
   }
+  
 
+  /*
   void CustomInitialize() {
     
     // set initial state probabilities
@@ -106,6 +120,14 @@ class HMM {
     ComputeCumulativePTransition();
 
   }
+  */
+
+
+  void SetStateDistribution(int i,
+			    const TDistribution &distribution) {
+    state_distributions_[i].CopyValues(distribution);
+  }
+  
 
   void ComputeCumulativePTransition() {
 
@@ -119,43 +141,43 @@ class HMM {
   }
     
 
-  int n_states() {
+  int n_states() const {
     return n_states_;
   }
 
-  int n_dims() {
+  int n_dims() const {
     return n_dims_;
   }
 
-  int T() {
+  int T() const {
     return T_;
   }
   
-  Vector p_initial() {
+  Vector p_initial() const {
     return p_initial_;
   }
 
-  Matrix p_transition() {
+  Matrix p_transition() const {
     return p_transition_;
   }
 
-  ArrayList<Distribution> state_distributions() {
+  TDistribution* state_distributions() const {
     return state_distributions_;
   }
 
-  Matrix state_probabilities() {
+  Matrix state_probabilities() const {
     return state_probabilities_;
   }
 
-  Matrix state_cumulative_probabilities() {
+  Matrix state_cumulative_probabilities() const {
     return state_cumulative_probabilities_;
   }
 
-  Matrix cumulative_p_transition() {
+  Matrix cumulative_p_transition() const {
     return cumulative_p_transition_;
   }
   
-  void PrintDebug(const char *name = "", FILE *stream = stderr) /*const*/ {
+  void PrintDebug(const char *name = "", FILE *stream = stderr) const {
     fprintf(stream, "----- HMM %s ------\n", name);
     
     p_initial_.PrintDebug("initial probabilities", stream);
@@ -225,6 +247,18 @@ class HMM {
     }
 
     return j;
+  }
+
+  ~HMM() {
+    //printf("destroying HMM\n");
+    Destruct();
+  }
+
+  void Destruct() {
+    for(int i = 0; i < n_states_; i++) {
+      state_distributions_[i].Destruct();
+    }
+    free(state_distributions_);
   }
 
 };

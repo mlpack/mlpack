@@ -1,16 +1,3 @@
-/*
-Distribution
- |         \----------------
- |          \         \     \
-Gaussian    HMM      LDS    (Multinomial?)
-
-
-MMK operates on two Distribution objects of the same class
-
-
-
- */
-
 #include "lds.h"
 #include "mmk.h"
 
@@ -30,10 +17,10 @@ int main(int argc, char *argv[]) {
   lds_2.Init(2, 1, true, argv[2]);
 
 
-  MeanMapKernel<LDS> mmk_lds;
-  mmk_lds.Init(1, 10);
+  MeanMapKernel mmk;
+  mmk.Init(1, 10);
 
-  double kernel_result = mmk_lds.Compute(lds_1, lds_2);
+  double kernel_result = mmk.Compute(lds_1, lds_2);
   printf("k(lds_1, lds_2) = %f\n", kernel_result);
   
   FILE *outfile = fopen("kernel_result.txt", "w");

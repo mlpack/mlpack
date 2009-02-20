@@ -8,37 +8,76 @@ class Gaussian {
 
   Vector* mu_;
   Matrix* sigma_;
+
+  void Init(int n_dims_in) {
+    n_dims_ = n_dims_in;
+
+    mu_ = new Vector();
+    mu_ -> Init(n_dims_);
+
+    sigma_ = new Matrix();
+    sigma_ -> Init(n_dims_, n_dims_);
+  }
   
-  void Init(Vector *mu_in,
-	    Matrix *sigma_in) {
-    mu_ = mu_in;
-    sigma_ = sigma_in;
+  void Init(const Vector &mu_in,
+	    const Matrix &sigma_in) {
+    mu_ = new Vector();
+    mu_ -> Copy(mu_in);
+    
+    sigma_ = new Matrix();
+    sigma_ -> Copy(sigma_in);
 
     n_dims_ = mu_ -> length();
   }
-
-  int n_dims() {
+  
+  void CopyValues(const Gaussian &other) {
+    mu_ -> CopyValues(other.mu());
+    sigma_ -> CopyValues(other.sigma());
+  }
+  
+  int n_dims() const {
     return n_dims_;
   }
 
-  Vector mu() {
+  const Vector mu () const {
     return *mu_;
   }
 
-  Matrix sigma() {
+  const Matrix sigma() const {
     return *sigma_;
   }
-
-  void SetMu(Vector* mu_in) {
-    mu_ = mu_in;
-  }
-
-  void SetSigma(Matrix* sigma_in) {
-    sigma_ = sigma_in;
-  }
-
-
   
+  void SetMu(const Vector &mu_in) {
+    mu_ -> CopyValues(mu_in);
+  }
+
+  void SetSigma(const Matrix &sigma_in) {
+    sigma_ -> CopyValues(sigma_in);
+  }
+  
+  void RandomlyInitialize() {
+    sigma_ -> SetZero();
+    for(int i = 0; i < n_dims_; i++) {
+      (*mu_)[i] = drand48();
+      
+      // spherical covariance
+      (*sigma_).set(i, i, 1);
+    }
+  }
+  
+  ~Gaussian() {
+    //printf("~destroying Gaussian\n");
+    Destruct();
+  }
+
+  void Destruct() {
+    //printf("destroying Gaussian\n");
+    delete mu_;
+    delete sigma_;
+  }
+
+
+  /*  
   // Note: This is the multivariate Gaussian case.
   // TODO: mixture of Gaussian case (nearly trivial)
   static double Compute(Gaussian x,
@@ -141,6 +180,7 @@ class Gaussian {
     
     return val;
   }
+  */
 };
     
 #endif /* GAUSSIAN_H */
