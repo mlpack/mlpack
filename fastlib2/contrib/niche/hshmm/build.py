@@ -1,15 +1,8 @@
 binrule(
-	name = "hshmm",
-	sources = ["main.cc"],
-	headers = ["hmm.h","distribution.h","hmm_distance.h"],
+	name = "test_hmm",
+	sources = ["test_hmm.cc"],
+	headers = ["hmm.h", "gaussian.h","mmk.h"],
         deplibs = ["fastlib:fastlib"]
-)
-
-binrule(
-    name = "test_obs",
-    sources = ["test_obs_kernel.cc"],
-    headers = ["distribution.h","mmk.h","ppk.h"],
-    deplibs = ["fastlib:fastlib"]
 )
 
 binrule(
@@ -27,3 +20,16 @@ binrule(
 )
 
 
+binrule(
+    name = "test_distribution",
+    sources = ["test_distribution.cc"],
+    headers = ["distribution.h", "multinomial.h", "gaussian.h"],
+    deplibs = ["fastlib:fastlib"]
+)
+
+binrule(
+    name = "test_debug",
+    sources = ["testdebug.cc"],
+    headers = [],
+    deplibs = ["fastlib:fastlib"]
+)

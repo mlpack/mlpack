@@ -6,8 +6,8 @@
 int main(int argc, char *argv[]) {
   fx_module* root = fx_init(argc, argv, NULL);
 
-  MeanMapKernel<Gaussian> mmk_gaussian;
-  mmk_gaussian.Init(1);
+  MeanMapKernel mmk;
+  mmk.Init(1);
 
 
   Vector mu_1, mu_2;
@@ -42,13 +42,13 @@ int main(int argc, char *argv[]) {
   
 
   Gaussian gaussian_1;
-  gaussian_1.Init(&mu_1, &Sigma_1);
+  gaussian_1.Init(mu_1, Sigma_1);
   
   Gaussian gaussian_2;
-  gaussian_2.Init(&mu_2, &Sigma_2);
+  gaussian_2.Init(mu_2, Sigma_2);
   
   printf("k(gaussian_1, gaussian_2) = %f\n",
-	 mmk_gaussian.Compute(gaussian_1, gaussian_2));
+	 mmk.Compute(gaussian_1, gaussian_2));
 
   printf("\n\n\n\n");
 

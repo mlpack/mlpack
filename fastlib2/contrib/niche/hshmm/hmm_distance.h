@@ -3,13 +3,14 @@
 
 #include "hmm.h"
 #include "mmk.h"
+#include "gaussian.h"
 
 class HMM_Distance {
 
  public:
 
   static double Compute(HMM hmm_a, HMM hmm_b, int num_times) {
-    MMK mmk;
+    MeanMapKernel<Gaussian> mmk;
     mmk.Init(1);
     
     int n1 = hmm_a.n_states();
