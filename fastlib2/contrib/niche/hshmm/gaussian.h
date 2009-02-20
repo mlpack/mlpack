@@ -64,6 +64,13 @@ class Gaussian {
       (*sigma_).set(i, i, 1);
     }
   }
+
+  void PrintDebug(const char *name = "", FILE *stream = stderr) const {
+    fprintf(stream, name);
+    mu_ -> PrintDebug("mu");
+    sigma_ -> PrintDebug("sigma");
+  }
+    
   
   ~Gaussian() {
     //printf("~destroying Gaussian\n");
