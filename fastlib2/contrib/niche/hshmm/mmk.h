@@ -17,7 +17,7 @@ class MeanMapKernel {
     Init(lambda_in, 1);
   }
   
-  void Init(double lambda_in, double n_T_in) {
+  void Init(double lambda_in, int n_T_in) {
     lambda_ = lambda_in;
     n_T_ = n_T_in;
   }
