@@ -47,9 +47,6 @@ class HMM {
       (TDistribution*) malloc(n_states_ * sizeof(TDistribution));
     for(int i = 0; i < n_states_; i++) {
       state_distributions_[i].Init(n_dims_);
-      printf("distribution %d\n", i);
-      state_distributions_[i].mu().PrintDebug("mu");
-      state_distributions_[i].sigma().PrintDebug("sigma");
     }
       
     state_probabilities_.Init(n_states_, T_);
@@ -182,11 +179,11 @@ class HMM {
     
     p_initial_.PrintDebug("initial probabilities", stream);
     p_transition_.PrintDebug("transition probabilities", stream);
-    
+
+    char string[100];    
     for(int i = 0 ;i < n_states_; i++) {
-      fprintf(stream, "state %d:\n", i+1);
-      state_distributions_[i].mu().PrintDebug("mu");
-      state_distributions_[i].sigma().PrintDebug("sigma");
+      sprintf(string, "state %d:\n", i+1);
+      state_distributions_[i].PrintDebug(string);
       fprintf(stream, "\n");
     }
   }
