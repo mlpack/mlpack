@@ -18,6 +18,8 @@ class MultiTreeQueryResult {
   /** @brief The number of finite-difference prunes.
    */
   int num_finite_difference_prunes;
+  
+  int num_monte_carlo_prunes;
 
   OT_DEF_BASIC(MultiTreeQueryResult) {
     OT_MY_OBJECT(negative_potential_bound);
@@ -27,6 +29,8 @@ class MultiTreeQueryResult {
     OT_MY_OBJECT(final_results);
     OT_MY_OBJECT(n_pruned);
     OT_MY_OBJECT(used_error);
+    OT_MY_OBJECT(num_finite_difference_prunes);
+    OT_MY_OBJECT(num_monte_carlo_prunes);
   }
 
  public:
@@ -144,5 +148,6 @@ class MultiTreeQueryResult {
     used_error.SetZero();
 
     num_finite_difference_prunes = 0;
+    num_monte_carlo_prunes = 0;
   }
 };
