@@ -90,6 +90,21 @@ class MultibodyPotentialKernel {
     NegativeEvaluate(globals.hybrid_node_chosen_indices, sets, results);
   }
 
+  template<typename Global>
+  double EvaluateMain(const Global &globals, const ArrayList<Matrix *> &sets) {
+
+    // Compute the pairwise distances among the points.
+    ComputePairwiseDistances(globals, sets, 
+			     globals.hybrid_node_chosen_indices);
+
+    // Call the kernels.
+    double positive_result = 
+      PositiveEvaluate(globals.hybrid_node_chosen_indices, sets);
+    double negative_result =
+      NegativeEvaluate(globals.hybrid_node_chosen_indices, sets);
+    return positive_result + negative_result;
+  }
+
   template<typename Global, typename Tree, typename Delta>
   bool ComputeFiniteDifference(const Global &globals,
 			       const ArrayList<Tree *> &nodes, Delta &delta) {
@@ -107,6 +122,20 @@ class MultibodyPotentialKernel {
   }
 
   virtual double Gradient(double distance) = 0;
+
+  double PositiveEvaluate(const ArrayList<index_t> &indices,
+			  const ArrayList<Matrix *> &sets) {
+
+    double positive_potential = PositiveEvaluateCommon_(min_squared_distances);
+    return positive_potential;
+  }
+
+  double NegativeEvaluate(const ArrayList<index_t> &indices,
+			  const ArrayList<Matrix *> &sets) {
+
+    double negative_potential = NegativeEvaluateCommon_(min_squared_distances);
+    return negative_potential;
+  }
 
   template<typename QueryResult>
   void PositiveEvaluate(const ArrayList<index_t> &indices,

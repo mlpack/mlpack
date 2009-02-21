@@ -30,6 +30,15 @@ class MultiTreeGlobal {
    */
   double relative_error;
 
+  /** @brief The probability requirement.
+   */
+  double probability;
+
+  /** @brief The standard score that corresponds to the probability
+   *         requirement.
+   */
+  double z_score;
+
   int dimension;
 
  public:
@@ -47,8 +56,11 @@ class MultiTreeGlobal {
     // Set the incoming module for referring to parameters.
     module = module_in;
 
-    // Extract the relative error and the bandwidth from the module.
+    // Extract the relative error/probability and the bandwidth from
+    // the module.
     relative_error = fx_param_double(module, "relative_error", 0.1);
+    probability = fx_param_double(module, "probability", 1.0);
+    z_score = InverseNormalCDF::Compute(probability + 0.5 * (1 - probability));
     kernel_aux.Init(fx_param_double(module, "bandwidth", 0.3));
 
     // Set the dimension.

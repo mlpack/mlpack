@@ -26,6 +26,8 @@ class MultiTreeDelta {
   
   Vector used_error;
 
+  bool initialized;
+
   OT_DEF_BASIC(MultiTreeDelta) {
     OT_MY_OBJECT(negative_potential_bound);
     OT_MY_OBJECT(negative_potential_e);
@@ -33,10 +35,68 @@ class MultiTreeDelta {
     OT_MY_OBJECT(positive_potential_e);
     OT_MY_OBJECT(n_pruned);
     OT_MY_OBJECT(used_error);
+    OT_MY_OBJECT(initialized);
   }
   
  public:
   
+  template<typename TGlobal>
+  void RefineBounds(TGlobal &globals, double potential_avg, 
+		    double standard_deviation) {
+
+    for(index_t i = 0; i < positive_potential_e.length(); i++) {
+      if(initialized) {
+	if(potential_avg >= 0) {
+	  positive_potential_e[i] = potential_avg * n_pruned[i];	  
+	}
+	else {
+	  negative_potential_e[i] = potential_avg * n_pruned[i];
+	}
+	used_error[i] = std::min(used_error[i], globals.z_score *
+				 n_pruned[i] * standard_deviation);
+
+	if(potential_avg >= 0) {
+	  positive_potential_bound[i].lo = 
+	    std::max(positive_potential_bound[i].lo,
+		     positive_potential_e[i] - used_error[i]);
+	  positive_potential_bound[i].hi = 
+	    std::min(positive_potential_bound[i].hi,
+		     positive_potential_e[i] + used_error[i]);
+	}
+	else {
+	  negative_potential_bound[i].lo = 
+	    std::max(negative_potential_bound[i].lo,
+		     negative_potential_e[i] - used_error[i]);
+	  negative_potential_bound[i].hi = 
+	    std::min(negative_potential_bound[i].hi,
+		     negative_potential_e[i] + used_error[i]);
+	}
+      }
+      else {
+	if(potential_avg >= 0) {
+	  positive_potential_e[i] = potential_avg * n_pruned[i];
+	}
+	else {
+	  negative_potential_e[i] = potential_avg * n_pruned[i];
+	}
+	used_error[i] = globals.z_score * n_pruned[i] * standard_deviation;
+
+	if(potential_avg >= 0) {
+	  positive_potential_bound[i].lo = 
+	    std::max(0.0, positive_potential_e[i] - used_error[i]);
+	  positive_potential_bound[i].hi = positive_potential_e[i] + 
+	    used_error[i];
+	}
+	else {
+	  negative_potential_bound[i].lo = negative_potential_e[i] - 
+	    used_error[i];
+	  negative_potential_bound[i].hi = 
+	    std::min(0.0, negative_potential_e[i] + used_error[i]);
+	}	
+      }
+    } // end of looping over each node entity...
+  }
+
   template<typename TGlobal, typename Tree>
   bool ComputeFiniteDifference(TGlobal &globals,
 			       ArrayList<Tree *> &nodes,
@@ -46,6 +106,7 @@ class MultiTreeDelta {
     // contributions...
     bool flag = 
       globals.kernel_aux.ComputeFiniteDifference(globals, nodes, *this);
+    initialized = true;
     return flag;
   }
   
@@ -58,7 +119,8 @@ class MultiTreeDelta {
     positive_potential_e.SetZero();
     used_error.SetZero();
 
-    // WARNING: I don't set n_pruned to zero...
+    // WARNING: I don't set n_pruned to zero because I assume it will
+    // be re-used after the initialization Init function.
   }
   
   void Init(const Vector &total_n_minus_one_tuples) {
@@ -75,5 +137,7 @@ class MultiTreeDelta {
     
     // Initializes to zeros...
     SetZero();
+
+    initialized = false;
   }    
 };
