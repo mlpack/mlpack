@@ -1,3 +1,11 @@
+/** @file multitree_dfs_impl.h
+ *
+ *  The implementation of the function templates defined in
+ *  multitree_dfs.h
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
 template<typename MultiTreeProblem>
 double MultiTreeDepthFirst<MultiTreeProblem>::LeaveOneOutTuplesBase_
 (const ArrayList<HybridTree *> &nodes) {

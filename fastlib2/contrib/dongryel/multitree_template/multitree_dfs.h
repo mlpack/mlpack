@@ -1,3 +1,11 @@
+/** @file multitree_dfs.h
+ *
+ *  The template auto-generator for depth first solver for general
+ *  multitree problems.
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
 #ifndef MULTITREE_DFS_H
 #define MULTITREE_DFS_H
 
