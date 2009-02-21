@@ -1,3 +1,10 @@
+/** @file multitree_utility.h
+ *
+ *  The common utility for shuffling and reshuffling results.
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
 #ifndef MULTITREE_UTILITY_H
 #define MULTITREE_UTILITY_H
 
