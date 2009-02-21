@@ -136,6 +136,7 @@ class MultibodyPotentialProblem {
       max_number_of_points = std::max(max_number_of_points, 
 				      hybrid_nodes[i]->count());
     }
+
     if(globals.probability >= 1 || max_number_of_points < 50) {
       return false;
     }
@@ -158,7 +159,8 @@ class MultibodyPotentialProblem {
 	do {
 	  globals.hybrid_node_chosen_indices[j] = 
 	    math::RandInt(hybrid_nodes[j]->begin(), hybrid_nodes[j]->end());
-	} while(j != 0 && globals.hybrid_node_chosen_indices[j] <=
+
+	} while(j != 0 && globals.hybrid_node_chosen_indices[j] !=
 		globals.hybrid_node_chosen_indices[j - 1]);
 
       } // end of the for-loop for choosing the indices...
