@@ -106,7 +106,7 @@ void RidgeRegression::BuildDesignMatrixFromIndexSet_
   // the intercept (the constant term). Here we are transposing the
   // dataset.
   predictors_.Init(input_data.n_cols(), predictor_indices.length() + 1);
-  
+    
   for(index_t i = 0; i < input_data.n_cols(); i++) {
     
     // Initialize the first column of the design matrix to be 1.
@@ -241,6 +241,31 @@ double RidgeRegression::ComputeSquareError() {
   la::SubFrom(predictions_, &error);
   double square_error = la::Dot(error.n_rows(), error.ptr(), error.ptr());
   return square_error;
+}
+
+void RidgeRegression::Predict(const Matrix &dataset, 
+			      const GenVector<index_t> &predictor_indices,
+			      Vector *new_predictions) {
+
+  // (Roughly) take each column of the dataset and compute the
+  // dot-product between it and the linear model coefficients, but
+  // also need to take care of the intercept part of the coefficients.
+  new_predictions->Init(dataset.n_cols());
+
+  if(predictor_indices.length() + 1 != factors_.n_rows()) {
+    printf("The number of selected indices is not equal to the ");
+    printf("non-constant coefficients!\n");
+    return;
+  }
+
+  for(index_t i = 0; i < dataset.n_cols(); i++) {
+    (*new_predictions)[i] = factors_.get(0, 0);
+
+    for(index_t j = 0; j < predictor_indices.length(); j++) {
+      (*new_predictions)[i] += factors_.get(j + 1, 0) * 
+	dataset.get(predictor_indices[j], i);
+    }
+  }
 }
 
 void RidgeRegression::Predict(const Matrix &dataset, Vector *new_predictions) {
