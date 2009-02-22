@@ -48,19 +48,30 @@ void RidgeRegression::Init(fx_module *module,
                            index_t selector) {
   //COMPILER_PRINTF("%s","!!!!!!!!!! Method not implemented yet" );
 }
+
 void RidgeRegression::Init(fx_module *module, 
                            Matrix &input_data, 
                            GenVector<index_t> &predictor_indices,
                            index_t prediction_index) {
-  //COMPILER_PRINTF("%s","!!!!!!!!!! Method not implemented yet" );
-
+  
+  module_ = module;
+  
+  BuildDesignMatrixFromIndexSet_(input_data, predictor_indices);
+  predictions_.Init(input_data.n_cols(), 1);
+  
+  for(index_t i = 0; i < input_data.n_cols(); i++) {
+    predictions_.set(i, 0, input_data.get(prediction_index, i));
+  }
 }
+
 void RidgeRegression::Init(fx_module *module, 
                            Matrix &input_data, 
                            GenVector<index_t> &predictor_indices,
-                           Matrix &prediction) {
-  //COMPILER_PRINTF("%s","!!!!!!!!!! Method not implemented yet" );
+                           Matrix &predictions) {
 
+  module_ = module;
+  BuildDesignMatrixFromIndexSet_(input_data, predictor_indices);  
+  la::TransposeInit(predictions, &predictions_);
 }
 
 void RidgeRegression::Regress(double lambda) {
@@ -85,6 +96,26 @@ void RidgeRegression::Regress(double lambda) {
   if(flag == SUCCESS_FAIL) {
     printf("There was a problem in inverting the matrix!\n");
   }
+}
+
+void RidgeRegression::BuildDesignMatrixFromIndexSet_
+(const Matrix &input_data, const GenVector<index_t> &predictor_indices) {
+  
+  // Extract the rows that are relevant, and construct the appropriate
+  // design matrix from it. We add one more parameter to the model for
+  // the intercept (the constant term). Here we are transposing the
+  // dataset.
+  predictors_.Init(input_data.n_cols(), predictor_indices.length() + 1);
+  
+  for(index_t i = 0; i < input_data.n_cols(); i++) {
+    
+    // Initialize the first column of the design matrix to be 1.
+    predictors_.set(i, 0, 1.0);
+
+    for(index_t j = 0; j < predictor_indices.length(); j++) {
+      predictors_.set(i, j + 1, input_data.get(predictor_indices[j], i));
+    }
+  } 
 }
 
 void RidgeRegression::ComputeLinearModel_
@@ -204,7 +235,6 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
   ComputeLinearModel_(lambda_sq, singular_values, u, v_t);
 }
 
-
 double RidgeRegression::ComputeSquareError() {
   Matrix error;
   la::MulInit(predictors_, factors_, &error);
@@ -213,7 +243,23 @@ double RidgeRegression::ComputeSquareError() {
   return square_error;
 }
 
-void  RidgeRegression::factors(Matrix *factors) {
+void RidgeRegression::Predict(const Matrix &dataset, Vector *new_predictions) {
+  
+  // (Roughly) take each column of the dataset and compute the
+  // dot-product between it and the linear model coefficients, but
+  // also need to take care of the intercept part of the coefficients.
+  new_predictions->Init(dataset.n_cols());
+
+  for(index_t i = 0; i < dataset.n_cols(); i++) {
+    (*new_predictions)[i] = factors_.get(0, 0);
+
+    for(index_t j = 0; j < dataset.n_rows(); j++) {
+      (*new_predictions)[i] += factors_.get(j + 1, 0) * dataset.get(j, i);
+    }
+  }
+}
+
+void RidgeRegression::factors(Matrix *factors) {
   factors->Copy(factors_);
 }
 
