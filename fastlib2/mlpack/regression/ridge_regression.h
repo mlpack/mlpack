@@ -58,6 +58,10 @@ class RidgeRegression {
    */
   void Predict(const Matrix &dataset, Vector *new_predictions);
 
+  void Predict(const Matrix &dataset, 
+	       const GenVector<index_t> &predictor_indices,
+	       Vector *new_predictions);
+
   void factors(Matrix *factors);
 
  private:

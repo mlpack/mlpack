@@ -5,6 +5,23 @@
 
 class RidgeRegressionUtil {
 
+ private:
+
+  template<typename T>
+  static void CopyVectorExceptOneIndex_(const GenVector<T> &source,
+					index_t exclude_index,
+					GenVector<T> *destination) {
+    destination->Init(source.length() - 1);
+    index_t current_index = 0;
+
+    for(index_t j = 0; j < source.length(); j++) {
+      if(source[j] != exclude_index) {
+	(*destination)[current_index] = source[j];
+	current_index++;
+      }
+    }
+  }
+
  public:
 
   static double CorrelationCoefficient(const Vector &observations,
@@ -38,30 +55,121 @@ class RidgeRegressionUtil {
 
   
   /** @brief Performs the feature selection using the variance
-   *         inflation factor.
+   *         inflation factor. The invariant assumed in this function
+   *         is that predictor_indices includes the
+   *         prune_predictor_indices, and prediction_index is not
+   *         included in either set.
    *
-   *  @param input_features The input features.
-   *  @param output_feature The output features excluding the features that
-   *         were pruned.
+   *  @param input_data The column-oriented dataset.
+   *
+   *  
    */
   static void FeatureSelection
-  (fx_module *module, const Matrix &input_featuers, 
-   const GenVector<index_t> &predictor_indices, index_t prediction_index,
-   double variance_inflation_factor_threshold = 8.0) {
+  (fx_module *module, const Matrix &input_data,
+   const GenVector<index_t> &predictor_indices, 
+   const GenVector<index_t> &prune_predictor_indices, 
+   index_t prediction_index,
+   const GenVector<index_t> *output_predictor_indices) {
     
+    double lambda = fx_param_double(module, "lambda", 0.0);
+    double variance_inflation_factor_threshold = 
+      fx_param_double(module, "vif_threshold", 8.0);
     bool done_flag = false;
-
+    GenVector<index_t> *current_predictor_indices = new GenVector<index_t>();
+    GenVector<index_t> *current_prune_predictor_indices = new 
+      GenVector<index_t>();
+    const char *method = fx_param_str(module, "method", "quicsvd");
+    current_predictor_indices->Copy(predictor_indices);
+    current_prune_predictor_indices->Copy(prune_predictor_indices);
+        
     do {
+
+      // The maximum variance inflation factor and the index that
+      // achieved it.
+      double max_variance_inflation_factor = 0.0;
+      index_t index_of_max_variance_inflation_factor = -1;
+
+      // Reset the flag to be true.
+      done_flag = true;
 
       // For each of the features in the current list, regress the
       // i-th feature versus the rest of the features and compute its
       // variance inflation factor.
-      for(index_t i = 0; i < pruned_features.n_cols(); i++) {
+      for(index_t i = 0; i < current_prune_predictor_indices->length(); i++) {
 	
+	GenVector<index_t> loo_pruned_predictor_indices;
+	CopyVectorExceptOneIndex_(current_predictor_indices, 
+				  (*current_prune_predictor_indices)[i],
+				  &loo_pruned_predictor_indices);
+
 	RidgeRegression ridge_regression;
+	ridge_regression.Init(module, input_data, 
+			      loo_pruned_predictor_indices, 
+			      (*current_prune_predictor_indices)[i]);
+
+	// Do the regression and compute the variance inflation factor
+	// based on the results.
+	if(!strcmp(method, "normal")) {  
+	  ridge_regression.Regress(lambda);
+	}
+	else if(!strcmp(method, "quicsvd")) {
+	  ridge_regression.QuicSVDRegress(lambda, 0.1);
+	}
+	else {
+	  ridge_regression.SVDRegress(lambda);
+	}
+	Vector loo_predictions;
+	ridge_regression.Predict(input_data, loo_pruned_predictor_indices, 
+				 &loo_predictions);
+
+	// Extract the dimension that is being regressed against.
+	Vector loo_feature;
+	loo_feature.Init(input_data.n_cols());
+	for(index_t j = 0; j < input_data.n_cols(); j++) {
+	  loo_feature[j] = input_data.get
+	    ((*current_prune_predictor_indices)[i], j);
+	}
+	double variance_inflation_factor = 
+	  VarianceInflationFactor(loo_feature, loo_predictions);
 	
+	if(variance_inflation_factor > max_variance_inflation_factor) {
+	  max_variance_inflation_factor = variance_inflation_factor;
+	  index_of_max_variance_inflation_factor = 
+	    (*pruned_predictor_indices)[i];
+	}
+
+      } // end of iterating over each feature that is being considered
+	// for pruning...
+      
+      // If the maximum variance inflation factor exceeded the
+      // threshold, then eliminate it from the current list of
+      // features, and the do-while loop repeats.
+      if(max_variance_inflation_factor > variance_inflation_factor_threshold) {
+	
+	GenVector<index_t> *new_predictor_indices = new GenVector<index_t>();
+	CopyVectorExceptOneIndex_(current_predictor_indices, 
+				  index_of_max_variance_inflation_factor,
+				  new_predictor_indices);
+	delete current_predictor_indices;
+	current_predictor_indices = new_predictor_indices;
+
+	GenVector<index_t> *new_prune_indices = new GenVector<index_t>();
+	CopyVectorExceptOneIndex_(*current_prune_predictor_indices, 
+				  index_of_max_variance_inflation_factor,
+				  new_prune_indices);
+	delete current_prune_predictor_indices;
+	current_prune_predictor_indices = new_prune_indices;
+	done_flag = false;
       }
-    } while(!done_flag);
+
+    } while(!done_flag && pruned_predictor_indices->length() > 1);
+
+    // Copy the output indices and free the temporary index vectors
+    // afterwards.
+    output_predictor_indices->Copy(current_predictor_indices);    
+    delete current_predictor_indices;
+    delete current_prune_predictor_indices;
+    
   }
 
 };
