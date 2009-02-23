@@ -24,10 +24,9 @@ int main(int argc, char *argv[]) {
 
   ////////// Documentation stuffs //////////
   const fx_entry_doc ridge_main_entries[] = {
-    {"predictors", FX_REQUIRED, FX_STR, NULL,
-     "  A file containing the predictors.\n"},
-    {"predictions", FX_REQUIRED, FX_STR, NULL,
-     "  A file containing the observed predictions.\n"},
+    {"inversion_method", FX_PARAM, FX_STR, NULL,
+     "  The method chosen for inverting the design matrix: normal\
+ (normal equation), svd (SVD), quicsvd (QUIC-SVD).\n"},
     {"lambda_min", FX_PARAM, FX_DOUBLE, NULL,
      "  The minimum lambda value used for CV (set to zero by default).\n"},
     {"lambda_max", FX_PARAM, FX_DOUBLE, NULL,
@@ -37,9 +36,16 @@ int main(int argc, char *argv[]) {
  fsregress (feature selection then regress).\n"},
     {"num_lambdas", FX_PARAM, FX_INT, NULL,
      "  The number of lambdas to try for CV (set to 1 by default).\n"},
-    {"inversion_method", FX_PARAM, FX_STR, NULL,
-     "  The method chosen for inverting the design matrix: normal\
- (normal equation), svd (SVD), quicsvd (QUIC-SVD).\n"},
+    {"predictions", FX_REQUIRED, FX_STR, NULL,
+     "  A file containing the observed predictions.\n"},
+    {"predictor_indices", FX_PARAM, FX_STR, NULL,
+     "  The file containing the indices of the dimensions that act as the \
+predictors for the input dataset.\n"},
+    {"predictors", FX_REQUIRED, FX_STR, NULL,
+     "  A file containing the predictors.\n"},
+    {"prune_predictor_indices", FX_PARAM, FX_STR, NULL,
+     "  The file containing the indices of the dimensions that must be \
+considered for pruning for the input dataset.\n"},
     FX_ENTRY_DOC_DONE
   };
   
@@ -98,13 +104,13 @@ int main(int argc, char *argv[]) {
       engine.SVDRegress(lambda_min);
     }
   }
-  else if(!strcmp(mode, "crossvalidate")) {
+  else if(!strcmp(mode, "cvregress")) {
     NOTIFY("Crossvalidating for the optimal lambda in [ %g %g ] by trying \
 %d values...", lambda_min, lambda_max, num_lambdas_to_cv);
     engine.Init(module, predictors, predictions);
     engine.CrossValidatedRegression(lambda_min, lambda_max, num_lambdas_to_cv);
   }
-  else if(!strcmp(mode, "featureselection")) {
+  else if(!strcmp(mode, "fsregress")) {
 
     Matrix predictor_indices_intermediate;
     Matrix prune_predictor_indices_intermediate;
@@ -133,8 +139,11 @@ int main(int argc, char *argv[]) {
     for(index_t i = 0; i < predictor_indices_intermediate.n_cols(); i++) {
       predictor_indices[i] = 
 	(index_t) predictor_indices_intermediate.get(0, i);
+    }
+    for(index_t i = 0; i < prune_predictor_indices_intermediate.n_cols(); 
+	i++) {
       prune_predictor_indices[i] = (index_t)
-	prune_predictor_indices_intermediate.get(0, i);
+	prune_predictor_indices_intermediate.get(0, i);   
     }
     
     // Run the feature selection.
