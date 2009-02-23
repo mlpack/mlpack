@@ -258,11 +258,14 @@ class ContinuousFmm {
 
 	// This implements the kernel function used for the base case
 	// in the page 2 of the CFMM paper...
+
 	if(dist > 0) {
-	  potentials[q] += erf(erf_argument * dist) / dist;
+	  potentials[q] += shuffled_reference_particle_charge_set_[r] * 
+                        0.5 * sqrt_pi_ * erf(erf_argument * dist) / dist;
 	}
 	else {
-	  potentials[q] += 2.0 * erf_argument / sqrt_pi_;
+	  potentials[q] += 0.5 * sqrt_pi_ * 
+          shuffled_reference_particle_charge_set_[r] * erf_argument;
 	}
       }
     }
@@ -498,7 +501,7 @@ class ContinuousFmm {
     OutputResultsToFile_(*naively_computed_potentials, "naive_fmm_output.txt");
   }
 
-  void Compute() {
+  void Compute(Vector* potentials_out) {
     
     printf("Starting the computation...\n");
 
@@ -527,7 +530,12 @@ class ContinuousFmm {
     ReshuffleResults_(potentials_);
 
     // Output the results to the file.
-    OutputResultsToFile_(potentials_, "fast_fmm_output.txt");
+    //OutputResultsToFile_(potentials_, "fast_fmm_output.txt");
+    
+    if (potentials_out != NULL) {
+      potentials_out->Copy(potentials_);
+    }
+    
   }
 
   void Init(const Matrix &queries, const Matrix &references,
