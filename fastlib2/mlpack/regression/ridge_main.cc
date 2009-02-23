@@ -22,7 +22,37 @@
 
 int main(int argc, char *argv[]) {
 
-  fx_module *module = fx_init(argc, argv, NULL);
+  ////////// Documentation stuffs //////////
+  const fx_entry_doc ridge_main_entries[] = {
+    {"predictors", FX_REQUIRED, FX_STR, NULL,
+     "  A file containing the predictors.\n"},
+    {"predictions", FX_REQUIRED, FX_STR, NULL,
+     "  A file containing the observed predictions.\n"},
+    {"lambda_min", FX_PARAM, FX_DOUBLE, NULL,
+     "  The minimum lambda value used for CV (set to zero by default).\n"},
+    {"lambda_max", FX_PARAM, FX_DOUBLE, NULL,
+     "  The maximum lambda value used for CV (set to zero by default).\n"},
+    {"mode", FX_PARAM, FX_STR, NULL,
+     "  The computation mode: regress, cvregress (cross-validated regression),\
+ fsregress (feature selection then regress).\n"},
+    {"num_lambdas", FX_PARAM, FX_INT, NULL,
+     "  The number of lambdas to try for CV (set to 1 by default).\n"},
+    {"inversion_method", FX_PARAM, FX_STR, NULL,
+     "  The method chosen for inverting the design matrix: normal\
+ (normal equation), svd (SVD), quicsvd (QUIC-SVD).\n"},
+    FX_ENTRY_DOC_DONE
+  };
+  
+  const fx_submodule_doc ridge_main_submodules[] = {
+    FX_SUBMODULE_DOC_DONE
+  };
+  
+  const fx_module_doc ridge_main_doc = {
+    ridge_main_entries, ridge_main_submodules,
+    "This is the driver for the ridge regression.\n"
+  };
+
+  fx_module *module = fx_init(argc, argv, &ridge_main_doc);
   double lambda_min = fx_param_double(module, "lambda_min", 0.0);
   double lambda_max = fx_param_double(module, "lambda_max", 0.0);
   int num_lambdas_to_cv = fx_param_int(module, "num_lambdas", 1);
@@ -40,19 +70,19 @@ int main(int argc, char *argv[]) {
   std::string predictions_file = fx_param_str_req(module, "predictions");
 
   Matrix predictors;
-  if (data::Load(predictors_file.c_str(), &predictors)==SUCCESS_FAIL) {
+  if (data::Load(predictors_file.c_str(), &predictors) == SUCCESS_FAIL) {
     FATAL("Unable to open file %s", predictors_file.c_str());
   }
 
   Matrix predictions;
-  if (data::Load(predictions_file.c_str(), &predictions)==SUCCESS_FAIL) {
+  if (data::Load(predictions_file.c_str(), &predictions) == SUCCESS_FAIL) {
     FATAL("Unable to open file %s", predictions_file.c_str());
   }
 
   RidgeRegression engine;
   NOTIFY("Computing Regression...");
 
-  const char *method = fx_param_str(module, "method", "quicsvd");
+  const char *method = fx_param_str(module, "inversion_method", "quicsvd");
   
   if(!strcmp(mode, "regress")) {
 
@@ -69,8 +99,8 @@ int main(int argc, char *argv[]) {
     }
   }
   else if(!strcmp(mode, "crossvalidate")) {
-    NOTIFY("Crossvalidating for the optimal lambda in [ %g %g ] by trying %d values...",
-	   lambda_min, lambda_max, num_lambdas_to_cv);
+    NOTIFY("Crossvalidating for the optimal lambda in [ %g %g ] by trying \
+%d values...", lambda_min, lambda_max, num_lambdas_to_cv);
     engine.Init(module, predictors, predictions);
     engine.CrossValidatedRegression(lambda_min, lambda_max, num_lambdas_to_cv);
   }

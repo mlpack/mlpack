@@ -129,7 +129,11 @@ class RidgeRegressionUtil {
 	}
 	double variance_inflation_factor = 
 	  VarianceInflationFactor(loo_feature, loo_predictions);
-	
+
+	NOTIFY("The %d-th dimension has a variance inflation factor of %g.\n",
+	       (*current_prune_predictor_indices)[i], 
+	       variance_inflation_factor);
+
 	if(variance_inflation_factor > max_variance_inflation_factor) {
 	  max_variance_inflation_factor = variance_inflation_factor;
 	  index_of_max_variance_inflation_factor = 
