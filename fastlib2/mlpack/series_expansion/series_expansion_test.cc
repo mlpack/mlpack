@@ -12,9 +12,31 @@ class SeriesExpansionTest {
 
   void TestFourierExpansionMapping() {
 
+    NOTIFY("[*] TestFourierExpansionMapping");
     FourierSeriesExpansionAux series_aux;
-    series_aux.Init(2, 3);
+    int order = 2;
+    int dim = 3;
+    series_aux.Init(order, dim);
     series_aux.PrintDebug();
+
+    // Verify that the shifting of each multiindex by the max order
+    // roughly corresponds to the base ((2 * order) + 1) number.
+    int total_num_mapping = (int) pow(2 * order + 1, dim);
+    for(index_t i = 0; i < total_num_mapping; i++) {
+      const ArrayList<int> &mapping = series_aux.get_multiindex(i);
+
+      int number = 0;
+      printf("The mapping: ");
+      for(index_t j = 0; j < dim; j++) {
+	number = (2 * order + 1) * number + (mapping[j] + order);
+	printf("%d ", mapping[j]);
+      }
+      printf("maps to %d\n", number);
+      
+      if(number != i) {
+	FATAL("The mapping at the position %d is computed incorrectly!", i);
+      }
+    }
   }
 
   void TestAll() {

@@ -115,7 +115,6 @@ class FourierSeriesExpansionAux {
     for(index_t j = 0; j < dim; j++) {
       (multiindex_mapping_[0])[j] = -max_order;
     }
-    printf("Hi %d\n", list_total_num_coeffs_[limit]);
     if(max_order > 0) {
       index_t boundary, i, k, step;
 
