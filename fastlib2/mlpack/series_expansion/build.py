@@ -5,6 +5,7 @@ librule(
     headers = ["bounds_aux.h",
                "farfield_expansion.h",
                "farfield_expansion_impl.h",
+               "fourier_series_expansion_aux.h",
                "inverse_pow_dist_farfield_expansion.h",
                "inverse_pow_dist_farfield_expansion_impl.h",
                "inverse_pow_dist_kernel_aux.h",
@@ -26,8 +27,8 @@ librule(
 
 # Test driver for series expansion library
 binrule(
-    name = "main",
-    sources = ["main.cc"],
+    name = "series_expansion_test",
+    sources = ["series_expansion_test.cc"],
     headers = [],
     deplibs = [":series_expansion"]
     )
