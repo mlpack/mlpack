@@ -9,6 +9,9 @@ const fx_entry_doc cfmm_screening_entries[] = {
 {"exponents", FX_REQUIRED, FX_STR, NULL, 
 "A file containing the exponents of the basis functions.\n"
 "Must have the same number of rows as centers.\n"},
+{"density", FX_PARAM, FX_STR, NULL, 
+"A file containing the density matrix.  If it is not provided, an all-ones\n"
+"matrix is assumed.\n"},
   {"threshold", FX_PARAM, FX_DOUBLE, NULL,
   "The threshold for cutting off a shell-pair.  Default: 10e-10\n"},
   {"centers_out", FX_PARAM, FX_STR, NULL,
@@ -25,7 +28,7 @@ const fx_module_doc cfmm_screening_main_doc = {
 int main(int argc, char* argv[]) {
 
   //  fx_module* root_mod = fx_init(argc, argv, &cfmm_screening_main_doc);
-  fx_module* root_mod = fx_init(argc, argv, NULL);
+  fx_module* root_mod = fx_init(argc, argv, &cfmm_screening_main_doc);
 
   Matrix centers;
   const char* centers_file = fx_param_str_req(root_mod, "centers");
@@ -34,6 +37,7 @@ int main(int argc, char* argv[]) {
   Matrix exp_mat;
   const char* exp_file = fx_param_str_req(root_mod, "exponents");
   data::Load(exp_file, &exp_mat);
+  
   
   if (centers.n_cols() != exp_mat.n_cols()) {
     FATAL("Number of basis centers must equal number of exponents.\n");
@@ -64,6 +68,16 @@ int main(int argc, char* argv[]) {
   
   fx_result_int(root_mod, "num_basis_functions", num_shells);
   
+  Matrix density_mat;
+  if (fx_param_exists(root_mod, "density")) {
+    const char* density_file = fx_param_str_req(root_mod, "density");
+  }
+  else {
+    density_mat.Init(num_shells, num_shells);
+    density_mat.SetAll(1.0);
+  }
+  
+  
   ArrayList<ShellPair> shell_pairs;
   
   fx_timer_start(root_mod, "cfmm_time");
@@ -81,7 +95,6 @@ int main(int argc, char* argv[]) {
   charge_exponents.Init(1,num_shell_pairs);
 
 
-  
   for (index_t i = 0; i < num_shell_pairs; i++) {
   
     Vector cent_vec;
@@ -98,12 +111,32 @@ int main(int argc, char* argv[]) {
   
   } // for i
   
-  fx_timer_stop(root_mod, "prescreening_time");
   
   // Replace this with reading in the matrix and processing it later
   Matrix densities;
   densities.Init(1,num_shell_pairs);
-  densities.SetAll(1.0);
+  
+  for (index_t i = 0; i < num_shell_pairs; i++) {
+  
+    index_t m_ind = shell_pairs[i].M_index();
+    index_t n_ind = shell_pairs[i].N_index();
+    double new_density = density_mat.ref(m_ind, n_ind);
+    
+    // Lumping the coefficients of the integral into the charges
+    new_density = new_density * shell_pairs[i].integral_factor();
+    new_density = new_density / (pow(shell_pairs[i].exponent(), 1.5));
+    new_density = new_density * shell_pairs[i].M_Shell().normalization_constant();
+    new_density = new_density * shell_pairs[i].N_Shell().normalization_constant();
+  
+    printf("m_ind: %d, n_ind: %d, new_density: %g\n", m_ind, n_ind, new_density);
+  
+    densities.set(0, i, new_density);
+  
+  } // for i
+  
+  
+  fx_timer_stop(root_mod, "prescreening_time");
+  
   
   /*const char* exp_out_file = fx_param_str(root_mod, "exponents_out", "exp.csv");
   data::Save(exp_out_file, charge_exponents);
@@ -119,11 +152,49 @@ int main(int argc, char* argv[]) {
   cfmm_algorithm.Init(charge_centers, charge_centers, densities, 
                       charge_exponents, true, cfmm_module);
   
+  Vector cfmm_output;
+  
   fx_timer_start(root_mod, "multipole_time");
-  cfmm_algorithm.Compute();
+  cfmm_algorithm.Compute(&cfmm_output);
   fx_timer_stop(root_mod, "multipole_time");
   
+  DEBUG_ASSERT(cfmm_output.length() == num_shell_pairs);
+  
+  // Re-arrange the cfmm output into a matrix
+  Matrix cfmm_fock;
+  cfmm_fock.Init(num_shells, num_shells);
+  
+  for (index_t i = 0; i < num_shell_pairs; i++) {
+  
+    index_t m_ind = shell_pairs[i].M_index();
+    index_t n_ind = shell_pairs[i].N_index();
+    
+    // multiply by prefactors and such
+    
+    double fock_entry = cfmm_output[i];
+
+    printf("fock_entry (before factors): %g\n", fock_entry);
+
+    fock_entry = fock_entry * shell_pairs[i].integral_factor();
+    fock_entry = fock_entry / (pow(shell_pairs[i].exponent(), 1.5));
+    fock_entry = fock_entry * 2 * pow(math::PI, 2.5);
+    fock_entry = fock_entry * shell_pairs[i].M_Shell().normalization_constant();
+    fock_entry = fock_entry * shell_pairs[i].N_Shell().normalization_constant();
+
+    printf("fock_entry (after factors): %g\n", fock_entry);
+    
+    cfmm_fock.set(m_ind, n_ind, fock_entry);
+    cfmm_fock.set(n_ind, m_ind, fock_entry);
+    
+  } // for i
+  
   fx_timer_stop(root_mod, "cfmm_time");
+  
+  printf("CFMM Coulomb\n");
+  cfmm_fock.PrintDebug();
+  
+  
+  /////////////// Naive CFMM ///////////////////////////
   
   if (fx_param_exists(root_mod, "do_cfmm_naive")) {
     fx_timer_start(root_mod, "naive_cfmm_time");
@@ -133,14 +204,23 @@ int main(int argc, char* argv[]) {
   }
   
   
-  /*
+  
   NaiveFockMatrix naive_comp;
   
   
+  
   if (fx_param_exists(root_mod, "do_naive")) {
-    naive_comp.Init(centers, naive_mod, density_mat, exponent);
+    fx_module* naive_mod = fx_submodule(root_mod, "naive");
+    naive_comp.Init(centers, naive_mod, density_mat, 1.0);
+    naive_comp.ComputeFockMatrix();
+    Matrix naive_fock;
+    naive_comp.PrintFockMatrix(NULL, &naive_fock, NULL);
+    
+    printf("naive_fock\n");
+    naive_fock.PrintDebug();
+    
   }
-  */
+  
   
   fx_result_int(root_mod, "num_charge_dists", num_shell_pairs);
   
