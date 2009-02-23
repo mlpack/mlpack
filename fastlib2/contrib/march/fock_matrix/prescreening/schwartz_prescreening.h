@@ -3,9 +3,9 @@
  */
 
 #include "fastlib/fastlib.h"
-#include "eri.h"
-#include "basis_shell.h"
-#include "shell_pair.h"
+#include "contrib/march/fock_matrix/fock_impl/eri.h"
+#include "contrib/march/fock_matrix/fock_impl/basis_shell.h"
+#include "contrib/march/fock_matrix/fock_impl/shell_pair.h"
 
 const fx_entry_doc schwartz_entries[] = {
 {"num_prunes", FX_RESULT, FX_INT, NULL, 

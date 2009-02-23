@@ -1,7 +1,7 @@
 #include "fastlib/fastlib.h"
-#include "eri.h"
+#include "contrib/march/fock_matrix/fock_impl/eri.h"
 #include "contrib/dongryel/fast_multipole_method/continuous_fmm.h"
-#include "naive_fock_matrix.h"
+#include "contrib/march/fock_matrix/naive_fock_matrix.h"
 
 const fx_entry_doc cfmm_screening_entries[] = {
 {"centers", FX_REQUIRED, FX_STR, NULL, 
@@ -132,12 +132,15 @@ int main(int argc, char* argv[]) {
     fx_timer_stop(root_mod, "naive_cfmm_time");
   }
   
+  
+  /*
   NaiveFockMatrix naive_comp;
   
   
   if (fx_param_exists(root_mod, "do_naive")) {
     naive_comp.Init(centers, naive_mod, density_mat, exponent);
   }
+  */
   
   fx_result_int(root_mod, "num_charge_dists", num_shell_pairs);
   

@@ -2,9 +2,9 @@
 #define LINK_H
 
 #include "fastlib/fastlib.h"
-#include "eri.h"
-#include "basis_shell.h"
-#include "shell_pair.h"
+#include "contrib/march/fock_matrix/fock_impl/eri.h"
+#include "contrib/march/fock_matrix/fock_impl/basis_shell.h"
+#include "contrib/march/fock_matrix/fock_impl/shell_pair.h"
 
 const fx_entry_doc link_entries[] = {
   {"shell_pair_cutoff", FX_PARAM, FX_DOUBLE, NULL, 
