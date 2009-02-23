@@ -1,5 +1,5 @@
 /*
- * =====================================================================================
+ * ============================================================================
  * 
  *       Filename:  ridge_regression_impl.h
  * 
@@ -12,7 +12,7 @@
  * 
  *         Author:  Nikolaos Vasiloglou (NV), nvasil@ieee.org
  * 
- * =====================================================================================
+ * ============================================================================
 */ 
 #ifndef RIDGE_REGRESSION_H_
 //COMPILER_PRINTF("%s", "!!!!!You have accidently included ridge_regression_impl.h "
@@ -223,6 +223,7 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
     }
 
     double score = rss / math::Sqr(tau);
+
     if(score < min_score) {
       min_score = score;
       min_index = i;
