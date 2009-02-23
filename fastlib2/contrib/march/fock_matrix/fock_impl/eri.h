@@ -5,6 +5,8 @@
 #include "basis_shell.h"
 #include "shell_pair.h"
 
+class ShellPair;
+
 namespace eri {
 
   // The erf-like function
@@ -12,6 +14,20 @@ namespace eri {
   
   double ComputeGPTCenter(Vector& A_vec, double alpha_A, Vector& B_vec, 
                           double alpha_B, Vector* p_vec);
+                          
+  double IntegralPrefactor(double alpha_A, double alpha_B, double alpha_C, 
+                           double alpha_D);
+                           
+  double IntegralGPTFactor(double A_exp, Vector& A_vec, 
+                           double B_exp, Vector& B_vec);
+                           
+  double IntegralMomentumFactor(double gamma_AB, Vector& AB_center, 
+                                double gamma_CD, Vector& CD_center);
+                                
+  double IntegralMomentumFactor(double alpha_A,  Vector& A_vec, double alpha_B, 
+                                Vector& B_vec, double alpha_C, 
+                                Vector& C_vec, double alpha_D, 
+                                Vector& D_vec);
   
   // An ERI between four s-type gaussians with arbitrary bandwidth
   // This function does not currently normalize the gaussians

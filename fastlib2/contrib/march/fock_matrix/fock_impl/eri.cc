@@ -1,6 +1,8 @@
 #include "eri.h"
 
 namespace eri {
+
+
 double F_0_(double z) {
 
   if (z == 0) {
@@ -13,7 +15,7 @@ double F_0_(double z) {
 } // F_0_
 
 double ComputeGPTCenter(Vector& A_vec, double alpha_A, Vector& B_vec, 
-                      double alpha_B, Vector* p_vec) {
+                        double alpha_B, Vector* p_vec) {
  
   double gamma = alpha_A + alpha_B;
   
@@ -30,61 +32,88 @@ double ComputeGPTCenter(Vector& A_vec, double alpha_A, Vector& B_vec,
                                                                 
 }
 
+/**
+ * 2 pi^(5/2)/(gamma_p * gamma_q * sqrt(gamma_p + gamma_q))
+ */
+double IntegralPrefactor(double gamma_p, double gamma_q) {
 
+  double factor = 2 * pow(math::PI, 2.5);
+  factor = factor/(gamma_p * gamma_q * sqrt(gamma_p + gamma_q));
+  
+  return factor;
 
-double SSSSIntegral(double alpha_A,  Vector& A_vec, double alpha_B, 
-                          Vector& B_vec, double alpha_C, 
-                          Vector& C_vec, double alpha_D, 
-                          Vector& D_vec) {
+}
+
+double IntegralPrefactor(double alpha_A, double alpha_B, double alpha_C, 
+                         double alpha_D) {
 
   double gamma_p = alpha_A + alpha_B;
   double gamma_q = alpha_C + alpha_D;
   
-  //printf("gamma_p:%g\n", gamma_p);
-  //printf("gamma_q:%g\n", gamma_q);
+  return IntegralPrefactor(gamma_p, gamma_q);
 
-  double integral = 2*pow(math::PI, 2.5)/
-                          (gamma_p*gamma_q*sqrt(gamma_p + gamma_q));
-                          
-  //printf("constant: %g\n", integral);
+}
 
-  double AB_dist = la::DistanceSqEuclidean(A_vec, B_vec);
-  double CD_dist = la::DistanceSqEuclidean(C_vec, D_vec);
+/**
+ * Denoted K_1 or K_2 in the notes
+ */
+double IntegralGPTFactor(double A_exp, Vector& A_vec, 
+                         double B_exp, Vector& B_vec) {
+
+  double dist_sq = la::DistanceSqEuclidean(A_vec, B_vec);
+  
+  return (exp(-A_exp * B_exp * dist_sq/(A_exp + B_exp)));
+
+}
+
+
+/**
+ * Depends on the momentum of the four centers
+ *
+ * In the (ss|ss) case, this will just be the F_0 part
+ */
+double IntegralMomentumFactor(double gamma_AB, Vector& AB_center, 
+                              double gamma_CD, Vector& CD_center) {
+
+  double four_way_dist = la::DistanceSqEuclidean(AB_center, CD_center);
+
+  return F_0_(four_way_dist * gamma_AB * gamma_CD/(gamma_AB + gamma_CD));
+
+}
+
+double IntegralMomentumFactor(double alpha_A,  Vector& A_vec, double alpha_B, 
+                              Vector& B_vec, double alpha_C, 
+                              Vector& C_vec, double alpha_D, 
+                              Vector& D_vec) {
 
   
-  Vector A_vec_scaled;
-  la::ScaleInit(alpha_A, A_vec, &A_vec_scaled);
-  Vector B_vec_scaled;
-  la::ScaleInit(alpha_B, B_vec, &B_vec_scaled);
-  Vector C_vec_scaled;
-  la::ScaleInit(alpha_C, C_vec, &C_vec_scaled);
-  Vector D_vec_scaled;
-  la::ScaleInit(alpha_D, D_vec, &D_vec_scaled);
+  Vector p_vec;
+  double gamma_p = ComputeGPTCenter(A_vec, alpha_A, B_vec, 
+                                    alpha_B, &p_vec);
+  
+  Vector q_vec;
+  double gamma_q = ComputeGPTCenter(C_vec, alpha_C, D_vec, 
+                                    alpha_D, &q_vec);
+  
+  
+  return IntegralMomentumFactor(gamma_p, p_vec, gamma_q, q_vec);
 
-  
-  Vector AB_vec;
-  la::AddInit(A_vec_scaled, B_vec_scaled, &AB_vec);
-  la::Scale(1/gamma_p, &AB_vec);
-  Vector CD_vec;
-  la::AddInit(C_vec_scaled, D_vec_scaled, &CD_vec);
-  la::Scale(1/gamma_q, &CD_vec);
+}
 
-  double four_way_dist = la::DistanceSqEuclidean(AB_vec, CD_vec);
-  
-  double four_way_part = F_0_(four_way_dist * gamma_p * gamma_q/(gamma_p + gamma_q));
-  
-  integral = integral * four_way_part;
 
-  double K1 = exp(-alpha_A * alpha_B * AB_dist/gamma_p);
-  double K2 = exp(-alpha_C * alpha_D * CD_dist/gamma_q);
+
+double SSSSIntegral(double alpha_A,  Vector& A_vec, double alpha_B, 
+                    Vector& B_vec, double alpha_C, 
+                    Vector& C_vec, double alpha_D, 
+                    Vector& D_vec) {
   
-  integral = integral * K1 * K2;
+  double integral = IntegralPrefactor(alpha_A, alpha_B, alpha_C, alpha_D);
   
-  /*
-  printf("K1: %g\n", K1);
-  printf("K2: %g\n", K2);
-  printf("four way part %g\n", four_way_part);
-  */
+  integral = integral * IntegralGPTFactor(alpha_A, A_vec, alpha_B, B_vec);
+  integral = integral * IntegralGPTFactor(alpha_C, C_vec, alpha_D, D_vec);
+  
+  integral = integral * IntegralMomentumFactor(alpha_A, A_vec, alpha_B, B_vec, 
+                                               alpha_C, C_vec, alpha_D, D_vec);
   
   return integral;
 
@@ -100,12 +129,15 @@ double ComputeShellIntegrals(BasisShell& mu_fun, BasisShell& nu_fun,
                           
   double this_int;
   
+  // Integral itself
   this_int = SSSSIntegral(mu_fun.exp(), mu_fun.center(), nu_fun.exp(), 
                                nu_fun.center(), rho_fun.exp(), rho_fun.center(), 
                                sigma_fun.exp(), sigma_fun.center());
                               
   //printf("mu norm: %g\n", mu_fun.normalization_constant());
+                    
                                  
+  // normalization
   this_int = this_int * mu_fun.normalization_constant();
   this_int = this_int * nu_fun.normalization_constant();
   this_int = this_int * rho_fun.normalization_constant();
@@ -120,10 +152,37 @@ double ComputeShellIntegrals(BasisShell& mu_fun, BasisShell& nu_fun,
 double ComputeShellIntegrals(ShellPair& AB_shell, 
                              ShellPair& CD_shell) {
  
+ /*
   return ComputeShellIntegrals(AB_shell.M_Shell(), AB_shell.N_Shell(), 
                                CD_shell.M_Shell(), CD_shell.N_Shell());
                              
-                                                                                     
+   */
+   
+  // GPT factors
+  double integral = AB_shell.integral_factor() * CD_shell.integral_factor();
+  
+  // prefactor
+  integral = integral * IntegralPrefactor(AB_shell.M_Shell().exp(), 
+                                          AB_shell.N_Shell().exp(), 
+                                          CD_shell.M_Shell().exp(), 
+                                          CD_shell.N_Shell().exp());                 
+              
+  // normalization   
+  integral = integral * AB_shell.M_Shell().normalization_constant();
+  integral = integral * AB_shell.N_Shell().normalization_constant();
+  integral = integral * CD_shell.M_Shell().normalization_constant();
+  integral = integral * CD_shell.N_Shell().normalization_constant();
+
+  // momentum term
+  integral = integral * IntegralMomentumFactor(AB_shell.exponent(), 
+                                               AB_shell.center(), 
+                                               CD_shell.exponent(), 
+                                               CD_shell.center());
+
+  return integral;
+                 
+  
+                                                                                                                                                                       
 }
 
 double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
@@ -245,15 +304,5 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
 
 
 } // namespace eri
-
-
-
-
-
-
-
-
-
-
 
 

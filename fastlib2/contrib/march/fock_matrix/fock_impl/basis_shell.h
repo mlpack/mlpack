@@ -1,6 +1,8 @@
 #ifndef BASIS_SHELL_H
 #define BASIS_SHELL_H
 
+#include "fastlib/fastlib.h"
+
 /**
  * A shell is a set of integrals with the same center, total angular momentum, 
  * and exponents, but with different orientations of the momentum.  

@@ -221,6 +221,8 @@ class DualTreeIntegrals {
    * nodes.  
    *
    * TODO: this can be used to compute density matrix bounds when I include them
+   *
+   * Is this actually used for anything?
    */
   void PreOrderTraversal_(IntegralTree* this_node) {
     
