@@ -9,9 +9,10 @@ class RidgeRegression {
   RidgeRegression() {
   }
 
-  void Init(fx_module *module, Matrix &predictors, Matrix &predictions);
+  void Init(fx_module *module, const Matrix &predictors, 
+	    const Matrix &predictions);
 
-  void Init(fx_module *module, Matrix &input_data, index_t selector);
+  void Init(fx_module *module, const Matrix &input_data, index_t selector);
 
   /** @brief From a column-oriented dataset, initialize the design
    *         matrix using the row features whose indices belong to the
@@ -31,14 +32,14 @@ class RidgeRegression {
    *  should be used as the predictions (training target).
    */
   void Init(fx_module *module, 
-            Matrix &input_data, 
-            GenVector<index_t> &predictor_indices,
-            index_t prediction_index);
+            const Matrix &input_data, 
+            const GenVector<index_t> &predictor_indices,
+            index_t &prediction_index);
 
   void Init(fx_module *module, 
-            Matrix &input_data, 
-            GenVector<index_t> &predictor_indices,
-            Matrix &prediction);
+            const Matrix &input_data, 
+            const GenVector<index_t> &predictor_indices,
+            const Matrix &prediction);
 
   void Destruct();
 

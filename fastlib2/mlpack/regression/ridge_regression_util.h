@@ -57,8 +57,7 @@ class RidgeRegressionUtil {
   /** @brief Performs the feature selection using the variance
    *         inflation factor. The invariant assumed in this function
    *         is that predictor_indices includes the
-   *         prune_predictor_indices, and prediction_index is not
-   *         included in either set.
+   *         prune_predictor_indices.
    *
    *  @param input_data The column-oriented dataset.
    *
@@ -68,8 +67,7 @@ class RidgeRegressionUtil {
   (fx_module *module, const Matrix &input_data,
    const GenVector<index_t> &predictor_indices, 
    const GenVector<index_t> &prune_predictor_indices, 
-   index_t prediction_index,
-   const GenVector<index_t> *output_predictor_indices) {
+   GenVector<index_t> *output_predictor_indices) {
     
     double lambda = fx_param_double(module, "lambda", 0.0);
     double variance_inflation_factor_threshold = 
@@ -98,7 +96,7 @@ class RidgeRegressionUtil {
       for(index_t i = 0; i < current_prune_predictor_indices->length(); i++) {
 	
 	GenVector<index_t> loo_pruned_predictor_indices;
-	CopyVectorExceptOneIndex_(current_predictor_indices, 
+	CopyVectorExceptOneIndex_(*current_predictor_indices, 
 				  (*current_prune_predictor_indices)[i],
 				  &loo_pruned_predictor_indices);
 
@@ -135,7 +133,7 @@ class RidgeRegressionUtil {
 	if(variance_inflation_factor > max_variance_inflation_factor) {
 	  max_variance_inflation_factor = variance_inflation_factor;
 	  index_of_max_variance_inflation_factor = 
-	    (*pruned_predictor_indices)[i];
+	    (*current_prune_predictor_indices)[i];
 	}
 
       } // end of iterating over each feature that is being considered
@@ -147,7 +145,7 @@ class RidgeRegressionUtil {
       if(max_variance_inflation_factor > variance_inflation_factor_threshold) {
 	
 	GenVector<index_t> *new_predictor_indices = new GenVector<index_t>();
-	CopyVectorExceptOneIndex_(current_predictor_indices, 
+	CopyVectorExceptOneIndex_(*current_predictor_indices, 
 				  index_of_max_variance_inflation_factor,
 				  new_predictor_indices);
 	delete current_predictor_indices;
@@ -162,11 +160,11 @@ class RidgeRegressionUtil {
 	done_flag = false;
       }
 
-    } while(!done_flag && pruned_predictor_indices->length() > 1);
+    } while(!done_flag && current_prune_predictor_indices->length() > 1);
 
     // Copy the output indices and free the temporary index vectors
     // afterwards.
-    output_predictor_indices->Copy(current_predictor_indices);    
+    output_predictor_indices->Copy(*current_predictor_indices);    
     delete current_predictor_indices;
     delete current_prune_predictor_indices;
     

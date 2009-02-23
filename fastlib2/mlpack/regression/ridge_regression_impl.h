@@ -19,8 +19,8 @@
 //    "Fix it otherwise the program will behave unexpectedly");                
 #else
 
-void RidgeRegression::Init(fx_module *module, Matrix &predictors, 
-                           Matrix &predictions) {
+void RidgeRegression::Init(fx_module *module, const Matrix &predictors, 
+                           const Matrix &predictions) {
   module_=module;
   DEBUG_ERROR_MSG_IF(predictors.n_cols()<predictors.n_rows(),
      "The number of the columns %"LI"d must be less or equal to the number of "
@@ -44,15 +44,15 @@ void RidgeRegression::Init(fx_module *module, Matrix &predictors,
 }
 
 void RidgeRegression::Init(fx_module *module, 
-                           Matrix &input_data, 
+                           const Matrix &input_data, 
                            index_t selector) {
   //COMPILER_PRINTF("%s","!!!!!!!!!! Method not implemented yet" );
 }
 
 void RidgeRegression::Init(fx_module *module, 
-                           Matrix &input_data, 
-                           GenVector<index_t> &predictor_indices,
-                           index_t prediction_index) {
+                           const Matrix &input_data, 
+                           const GenVector<index_t> &predictor_indices,
+                           index_t &prediction_index) {
   
   module_ = module;
   
@@ -65,9 +65,9 @@ void RidgeRegression::Init(fx_module *module,
 }
 
 void RidgeRegression::Init(fx_module *module, 
-                           Matrix &input_data, 
-                           GenVector<index_t> &predictor_indices,
-                           Matrix &predictions) {
+                           const Matrix &input_data, 
+                           const GenVector<index_t> &predictor_indices,
+                           const Matrix &predictions) {
 
   module_ = module;
   BuildDesignMatrixFromIndexSet_(input_data, predictor_indices);  
@@ -229,6 +229,8 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
     }
   }
   fx_result_double(module_, "cross_validation_score", min_score);
+
+  NOTIFY("The optimal lambda: %g...\n", lambda_min + min_index * step);
 
   // Using the best lambda, compute the linear model.
   double lambda_sq = math::Sqr(lambda_min + min_index * step);
