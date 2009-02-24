@@ -3,6 +3,21 @@
 
 class KaczmarzMethod {
 
+ private:
+
+  static void Residual_(const Matrix &linear_system, 
+			const Vector &right_hand_side,
+			const Vector &current_solution,
+			Vector *residual) {
+
+    for(index_t i = 0; i < linear_system.n_rows(); i++) {
+      double dot_product = 
+	la::Dot(linear_system.n_rows(), linear_system.GetColumnPtr(i),
+		current_solution.ptr());
+      (*residual)[i] = right_hand_side[i] - dot_product;
+    }
+  }
+
  public:
   
   /** @brief Solves the A^T x = b.
@@ -11,7 +26,7 @@ class KaczmarzMethod {
 			     const Vector &right_hand_side, Vector *solution) {
 
     // The vector solution to the column-oriented system.
-    solution->Init(linear_system.n_cols());
+    solution->Init(linear_system.n_rows());
     solution->SetZero();
 
     // The current estimate of the residual.
@@ -43,10 +58,11 @@ class KaczmarzMethod {
 		       proj_solution_to_current_column) / 
 	squared_norm_current_column;
 
-      // Update the solution.
-      la::AddExpert(linear_system.n_cols(), factor, current_column,
+      // Update the solution and compute the residual.
+      la::AddExpert(linear_system.n_rows(), factor, current_column,
 		    solution->ptr());
-
+      Residual_(linear_system, right_hand_side, *solution, &residual);
+      
       // Increment the iteration number and update the index to be
       // considered in the next iteration.
       iteration_number++;
@@ -55,9 +71,7 @@ class KaczmarzMethod {
 	current_index = 0;
       }
 
-      // For now, let's terminate when the iteration number reaches
-      // the number of columns...
-      if(iteration_number == linear_system.n_cols() * 4) {
+      if(la::Dot(residual, residual) < 1e-3) {
 	done_flag = true;
       }
 
