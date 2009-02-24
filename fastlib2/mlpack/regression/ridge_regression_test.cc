@@ -31,6 +31,8 @@ class RidgeRegressionTest {
 
   void TestRegressVersusSVDRegress() {
 
+    NOTIFY("[*] TestRegressVersusSVDRegress");
+
     engine_ = new RidgeRegression();
     engine_->Init(module_, predictors_, predictions_);
     engine_->Regress(0);
@@ -46,10 +48,14 @@ class RidgeRegressionTest {
     }
     
     Destruct();
+
+    NOTIFY("[*] TestRegressVersusSVDRegress complete!");
   }
 
   void TestVIFBasedFeatureSelection() {
     
+    NOTIFY("[*] TestVIFBasedFeatureSelection");
+
     // Craft a synthetic dataset in which the third dimension is
     // completely dependent on the first and the second.
     Matrix synthetic_data;
@@ -79,12 +85,13 @@ class RidgeRegressionTest {
       printf(" %d ", output_predictor_indices[i]);
     }
     printf("\n");
+    NOTIFY("[*] TESTVIFBasedFeatureSelection complete!");
   }
 
   void TestAll() {
     TestRegressVersusSVDRegress();
     TestVIFBasedFeatureSelection();
-    NOTIFY("[*] Test1 passed !!");
+    NOTIFY("[*] All tests passed !!");
   }  
 
   void Destruct() {
