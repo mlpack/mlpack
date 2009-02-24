@@ -18,6 +18,7 @@
 #include "fastlib/fastlib.h"
 #include "fastlib/base/test.h"
 #include "ridge_regression.h"
+#include "ridge_regression_util.h"
 
 class RidgeRegressionTest {
  public:
@@ -47,8 +48,42 @@ class RidgeRegressionTest {
     Destruct();
   }
 
+  void TestVIFBasedFeatureSelection() {
+    
+    // Craft a synthetic dataset in which the third dimension is
+    // completely dependent on the first and the second.
+    Matrix synthetic_data;
+    synthetic_data.Init(4, 5);
+    for(index_t i = 0; i < 5; i++) {
+      synthetic_data.set(0, i, i);
+      synthetic_data.set(1, i, 3 * i + 1);
+      synthetic_data.set(2, i, 4);
+      synthetic_data.set(3, i, 5);
+    }
+    GenVector<index_t> predictor_indices;
+    GenVector<index_t> prune_predictor_indices;
+    GenVector<index_t> output_predictor_indices;
+    predictor_indices.Init(4);
+    predictor_indices[0] = 0;
+    predictor_indices[1] = 1;
+    predictor_indices[2] = 2;
+    predictor_indices[3] = 3;
+    prune_predictor_indices.Copy(predictor_indices);
+
+    RidgeRegressionUtil::FeatureSelection(module_, synthetic_data, 
+					  predictor_indices,
+					  prune_predictor_indices,
+					  &output_predictor_indices);
+    printf("Output indices: ");
+    for(index_t i = 0; i < output_predictor_indices.length(); i++) {
+      printf(" %d ", output_predictor_indices[i]);
+    }
+    printf("\n");
+  }
+
   void TestAll() {
-    TestRegressVersusSVDRegress();    
+    TestRegressVersusSVDRegress();
+    TestVIFBasedFeatureSelection();
     NOTIFY("[*] Test1 passed !!");
   }  
 
