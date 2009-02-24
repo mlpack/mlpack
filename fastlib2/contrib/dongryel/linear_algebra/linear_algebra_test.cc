@@ -12,19 +12,23 @@ class LinearAlgebraTest {
   void TestKaczmarzMethod() {
     Matrix linear_system;
     Vector right_hand_side;
-    int num_rows = 10;
-    int num_cols = 20;
+    int num_rows = 3;
+    int num_cols = 3;
     linear_system.Init(num_rows, num_cols);
-    right_hand_side.Init(num_rows);
-    for(index_t i = 0; i < num_cols; i++) {
-      for(index_t j = 0; j < num_rows; j++) {
-	linear_system.set(j, i, math::Random());
-      }
-    }
-    for(index_t j = 0; j < num_rows; j++) {
-      right_hand_side[j] = math::Random();
-    }
-
+    right_hand_side.Init(num_cols);
+    linear_system.set(0, 0, 2);
+    linear_system.set(0, 1, 1);
+    linear_system.set(0, 2, -1);
+    linear_system.set(1, 0, -3);
+    linear_system.set(1, 1, 4);
+    linear_system.set(1, 2, 2);
+    linear_system.set(2, 0, 2);
+    linear_system.set(2, 1, -1);
+    linear_system.set(2, 2, 1);
+    right_hand_side[0] = 21;
+    right_hand_side[1] = 1;
+    right_hand_side[2] = 17;
+    
     Vector solution;
     KaczmarzMethod::SolveTransInit(linear_system, right_hand_side, 
 				   &solution);
