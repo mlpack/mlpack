@@ -15,7 +15,7 @@ class MultiTreeQueryStat {
   bool in_strata;
 
   double num_precomputed_tuples;
-
+  
   OT_DEF_BASIC(MultiTreeQueryStat) {
     OT_MY_OBJECT(postponed);
     OT_MY_OBJECT(summary);

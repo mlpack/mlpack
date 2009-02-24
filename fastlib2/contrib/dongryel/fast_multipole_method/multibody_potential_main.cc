@@ -32,8 +32,9 @@ class MultibodyPotentialComputer {
     fx_timer_stop(fx_root, "multitree");
     
     results.PrintDebug("potentials.txt");
-    printf("Got %d finite difference prunes...\n",
-	   results.num_finite_difference_prunes);
+    printf("Got %d finite difference prunes, %d Monte Carlo prunes...\n",
+	   results.num_finite_difference_prunes,
+	   results.num_monte_carlo_prunes);
     
     fx_timer_start(fx_root, "naive_code");
     algorithm.NaiveCompute((const ArrayList<const Matrix *> *) NULL,

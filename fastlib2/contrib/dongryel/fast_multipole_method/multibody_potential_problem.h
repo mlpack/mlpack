@@ -129,15 +129,26 @@ class MultibodyPotentialProblem {
    double total_num_tuples, double total_n_minus_one_tuples_root,
    const Vector &total_n_minus_one_tuples) {
 
+    // Perhaps, this should be parameterized by the Global object.
+    const int num_samples = 100;
+
     // If Monte Carlo approximation is disabled or the three nodes
     // contain too few number of points, then return.
     index_t max_number_of_points = 0;
+    bool overlap = false;
     for(index_t i = 0; i < hybrid_nodes.size(); i++) {
       max_number_of_points = std::max(max_number_of_points, 
 				      hybrid_nodes[i]->count());
+      if(i > 0) {
+	overlap = (hybrid_nodes[i] == hybrid_nodes[i - 1]);
+      }
+      if(overlap) {
+	break;
+      }
     }
 
-    if(globals.probability >= 1 || max_number_of_points < 50) {
+    if(globals.probability >= 1 || max_number_of_points < num_samples ||
+       overlap) {
       return false;
     }
 
@@ -147,9 +158,6 @@ class MultibodyPotentialProblem {
     double potential_avg = 0;
     double standard_deviation = 0;
     double squared_potential_sums = 0;
-
-    // Perhaps, this should be parameterized by the Global object.
-    const int num_samples = 50;
 
     for(index_t i = 0; i < num_samples; i++) {
 
@@ -175,7 +183,7 @@ class MultibodyPotentialProblem {
     potential_avg = potential_sums / ((double) num_samples);
     standard_deviation = 
       sqrt((squared_potential_sums - num_samples * math::Sqr(potential_avg))
-	   / ((double) num_samples - 1));
+	   / ((double) num_samples - 1)) / sqrt(num_samples);
 
     // Refine delta bounds based on sampling.
     exact_delta.RefineBounds(globals, potential_avg, standard_deviation);
@@ -191,7 +199,7 @@ class MultibodyPotentialProblem {
 	new_summary.ApplyPostponed(hybrid_nodes[i]->stat().postponed);
 	new_summary.ApplyDelta(exact_delta, i);
 
-	// Compute the right hand side of the pruning rule
+	// Compute the right hand side of the pruning rule.
 	double right_hand_side = 
 	  (globals.relative_error *
 	   (new_summary.positive_potential_bound.lo -
