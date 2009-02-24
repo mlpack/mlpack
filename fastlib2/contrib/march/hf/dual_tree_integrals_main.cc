@@ -40,7 +40,10 @@ int main(int argc, char* argv[]) {
   integrals.ComputeFockMatrix();
   fx_timer_stop(NULL, "nbody_time");
   
-  integrals.OutputFockMatrix(NULL, NULL, NULL, NULL);
+  Matrix fock_out;
+  integrals.OutputFockMatrix(&fock_out, NULL, NULL, NULL);
+
+  fock_out.PrintDebug();
   
   if (fx_param_exists(NULL, "do_naive")) {
     
@@ -52,6 +55,11 @@ int main(int argc, char* argv[]) {
     fx_timer_start(NULL, "naive_time");
     naive.ComputeFockMatrix();
     fx_timer_stop(NULL, "naive_time");
+    
+    Matrix naive_fock;
+    naive.PrintFockMatrix(&naive_fock, NULL, NULL);
+  
+    naive_fock.PrintDebug();
   
   }
 

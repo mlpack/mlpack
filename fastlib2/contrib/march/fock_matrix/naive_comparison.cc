@@ -1,5 +1,5 @@
 #include "naive_fock_matrix.h"
-#include "schwartz_prescreening.h"
+#include "contrib/march/fock_matrix/prescreening/schwartz_prescreening.h"
 
 
 int main(int argc, char* argv[]) {
