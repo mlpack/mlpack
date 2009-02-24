@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
   const fx_entry_doc ridge_main_entries[] = {
     {"inversion_method", FX_PARAM, FX_STR, NULL,
      "  The method chosen for inverting the design matrix: normal\
- (normal equation), svd (SVD), quicsvd (QUIC-SVD).\n"},
+ (normal equation), svd (SVD: default), quicsvd (QUIC-SVD).\n"},
     {"lambda_min", FX_PARAM, FX_DOUBLE, NULL,
      "  The minimum lambda value used for CV (set to zero by default).\n"},
     {"lambda_max", FX_PARAM, FX_DOUBLE, NULL,
@@ -69,6 +69,10 @@ considered for pruning for the input dataset.\n"},
       fx_set_param_str(module, "mode", "regress");
       mode = fx_param_str(module, "mode", "regress");
     }
+  }
+  else {
+    fx_set_param_str(module, "mode", "cvregress");
+    mode = fx_param_str(module, "mode", "cvregress");
   }
 
   // Read the dataset and its labels.

@@ -24,8 +24,8 @@ class RidgeRegressionUtil {
 
  public:
 
-  static double CorrelationCoefficient(const Vector &observations,
-				       const Vector &predictions) {
+  static double SquaredCorrelationCoefficient(const Vector &observations,
+					      const Vector &predictions) {
     
     // Compute the average of the observed values.
     double avg_observed_value = 0;
@@ -50,7 +50,8 @@ class RidgeRegressionUtil {
   static double VarianceInflationFactor(const Vector &observations,
 					const Vector &predictions) {
     
-    return 1.0 / (1.0 - CorrelationCoefficient(observations, predictions));
+    return 1.0 / 
+      (1.0 - SquaredCorrelationCoefficient(observations, predictions));
   }
 
   
@@ -95,18 +96,23 @@ class RidgeRegressionUtil {
       // variance inflation factor.
       for(index_t i = 0; i < current_prune_predictor_indices->length(); i++) {
 	
-	GenVector<index_t> loo_pruned_predictor_indices;
+	// Take out the current dimension being regressed against from
+	// the predictor list to form the leave-one-out predictor
+	// list.
+	GenVector<index_t> loo_current_predictor_indices;
 	CopyVectorExceptOneIndex_(*current_predictor_indices, 
 				  (*current_prune_predictor_indices)[i],
-				  &loo_pruned_predictor_indices);
+				  &loo_current_predictor_indices);
 
+	// Initialize the ridge regression model using the
+	// leave-one-out predictor indices with the appropriate
+	// prediction index.
 	RidgeRegression ridge_regression;
 	ridge_regression.Init(module, input_data, 
-			      loo_pruned_predictor_indices, 
+			      loo_current_predictor_indices, 
 			      (*current_prune_predictor_indices)[i]);
 
-	// Do the regression and compute the variance inflation factor
-	// based on the results.
+	// Do the regression.
 	if(!strcmp(method, "normal")) {  
 	  ridge_regression.Regress(lambda);
 	}
@@ -117,10 +123,11 @@ class RidgeRegressionUtil {
 	  ridge_regression.SVDRegress(lambda);
 	}
 	Vector loo_predictions;
-	ridge_regression.Predict(input_data, loo_pruned_predictor_indices, 
+	ridge_regression.Predict(input_data, loo_current_predictor_indices, 
 				 &loo_predictions);
 
-	// Extract the dimension that is being regressed against.
+	// Extract the dimension that is being regressed against and
+	// compute the variance inflation factor.
 	Vector loo_feature;
 	loo_feature.Init(input_data.n_cols());
 	for(index_t j = 0; j < input_data.n_cols(); j++) {
@@ -168,7 +175,7 @@ class RidgeRegressionUtil {
 
     // Copy the output indices and free the temporary index vectors
     // afterwards.
-    output_predictor_indices->Copy(*current_predictor_indices);    
+    output_predictor_indices->Copy(*current_predictor_indices);
     delete current_predictor_indices;
     delete current_prune_predictor_indices;
     
