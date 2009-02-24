@@ -242,9 +242,10 @@ class ContinuousFmm {
 	
 	// Compute the pairwise distance, if the query and the
 	// reference are not the same particle.
-	if(leave_one_out_ && q == r) {
+    // We need to compute the self-interaction as well - BM
+	/*if(leave_one_out_ && q == r) {
 	  continue;
-	}
+	}*/
 	const double *r_col = shuffled_reference_particle_set_.GetColumnPtr(r);
 	
 	double sq_dist = la::DistanceSqEuclidean
@@ -258,15 +259,20 @@ class ContinuousFmm {
 
 	// This implements the kernel function used for the base case
 	// in the page 2 of the CFMM paper...
-
+    
 	if(dist > 0) {
+      // multiply by 2 for symmetry - BM
 	  potentials[q] += shuffled_reference_particle_charge_set_[r] * 
-                        0.5 * sqrt_pi_ * erf(erf_argument * dist) / dist;
+                        erf(erf_argument * dist) / dist;
 	}
 	else {
-	  potentials[q] += 0.5 * sqrt_pi_ * 
-          shuffled_reference_particle_charge_set_[r] * erf_argument;
-	}
+      if (q == r) {
+        potentials[q] += shuffled_reference_particle_charge_set_[r]/erf_argument;
+      }
+      else {
+	  potentials[q] += 2 * shuffled_reference_particle_charge_set_[r] / erf_argument;
+      }
+    }
       }
     }
   }
@@ -498,7 +504,8 @@ class ContinuousFmm {
     ReshuffleResults_(*naively_computed_potentials);
 
     // Output the results to the file.
-    OutputResultsToFile_(*naively_computed_potentials, "naive_fmm_output.txt");
+    //OutputResultsToFile_(*naively_computed_potentials, "naive_fmm_output.txt");
+    
   }
 
   void Compute(Vector* potentials_out) {

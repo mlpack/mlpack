@@ -125,8 +125,14 @@ int main(int argc, char* argv[]) {
     // Lumping the coefficients of the integral into the charges
     new_density = new_density * shell_pairs[i].integral_factor();
     new_density = new_density / (pow(shell_pairs[i].exponent(), 1.5));
+    //printf("exp: %g\n", shell_pairs[i].exponent());
     new_density = new_density * shell_pairs[i].M_Shell().normalization_constant();
     new_density = new_density * shell_pairs[i].N_Shell().normalization_constant();
+    
+    // If not on diagonal, then needs to be counted twice
+    if (m_ind != n_ind) {
+      new_density = 2 * new_density;
+    }
   
     printf("m_ind: %d, n_ind: %d, new_density: %g\n", m_ind, n_ind, new_density);
   
@@ -177,7 +183,7 @@ int main(int argc, char* argv[]) {
 
     fock_entry = fock_entry * shell_pairs[i].integral_factor();
     fock_entry = fock_entry / (pow(shell_pairs[i].exponent(), 1.5));
-    fock_entry = fock_entry * 2 * pow(math::PI, 2.5);
+    fock_entry = fock_entry * pow(math::PI, 3.0);
     fock_entry = fock_entry * shell_pairs[i].M_Shell().normalization_constant();
     fock_entry = fock_entry * shell_pairs[i].N_Shell().normalization_constant();
 
@@ -201,7 +207,40 @@ int main(int argc, char* argv[]) {
     Vector naive_results;
     cfmm_algorithm.NaiveCompute(&naive_results);
     fx_timer_stop(root_mod, "naive_cfmm_time");
+    
+    Matrix naive_cfmm_fock;
+    naive_cfmm_fock.Init(num_shells, num_shells);
+    
+    for (index_t i = 0; i < num_shell_pairs; i++) {
+      
+      index_t m_ind = shell_pairs[i].M_index();
+      index_t n_ind = shell_pairs[i].N_index();
+      
+      // multiply by prefactors and such
+      
+      double fock_entry = naive_results[i];
+      
+      //printf("fock_entry (before factors): %g\n", fock_entry);
+      
+      fock_entry = fock_entry * shell_pairs[i].integral_factor();
+      fock_entry = fock_entry / (pow(shell_pairs[i].exponent(), 1.5));
+      fock_entry = fock_entry * pow(math::PI, 3.0);
+      fock_entry = fock_entry * shell_pairs[i].M_Shell().normalization_constant();
+      fock_entry = fock_entry * shell_pairs[i].N_Shell().normalization_constant();
+      
+      //printf("fock_entry (after factors): %g\n", fock_entry);
+      
+      naive_cfmm_fock.set(m_ind, n_ind, fock_entry);
+      naive_cfmm_fock.set(n_ind, m_ind, fock_entry);
+      
+    } // for i
+    
+    printf("Naive CFMM\n");
+    naive_cfmm_fock.PrintDebug();
+    
+    
   }
+  
   
   
   
