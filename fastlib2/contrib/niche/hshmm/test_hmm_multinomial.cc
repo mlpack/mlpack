@@ -112,20 +112,35 @@ int main(int argc, char *argv[]) {
   kernel_matrix.Init(n_hmms, n_hmms);
   kernel_matrix.SetAll(-1);
 
-  for(int i_hmm_1 = 0; i_hmm_1 < n_hmms; i_hmm_1++) {
+  for(int i = 0; i < n_hmms; i++) {
     char filename_profile_hmm_1[100];
-    sprintf(filename_profile_hmm_1, "../../tqlong/mmf/profiles/est_mmf_pro_%03d.dis", i_hmm_1);
-    for(int i_hmm_2 = i_hmm_1; i_hmm_2 < n_hmms; i_hmm_2++) {
+    sprintf(filename_profile_hmm_1, "profiles/est_mmf_pro_%03d.dis", i);
+    for(int j = i; j < n_hmms; j++) {
       char filename_profile_hmm_2[100];
-      sprintf(filename_profile_hmm_2, "../../tqlong/mmf/profiles/est_mmf_pro_%03d.dis", i_hmm_2);
+      sprintf(filename_profile_hmm_2, "profiles/est_mmf_pro_%03d.dis", j);
 
       double val = ComputeKernel(filename_profile_hmm_1, filename_profile_hmm_2);
-      kernel_matrix.set(i_hmm_1, i_hmm_2, val);
-      if(i_hmm_1 != i_hmm_2) {
-	kernel_matrix.set(i_hmm_2, i_hmm_1, val);
+      kernel_matrix.set(i, j, val);
+      if(i != j) {
+	kernel_matrix.set(j, i, val);
       }
     }
   }
+
+  Vector sqrt_diag;
+  sqrt_diag.Init(n_hmms);
+  for(int i = 0; i < n_hmms; i++) {
+    sqrt_diag[i] = sqrt(kernel_matrix.get(i, i));
+  }
+
+  for(int i = 0; i < n_hmms; i++) {
+    for(int j = 0; j < n_hmms; j++) {
+      kernel_matrix.set(j, i,
+			kernel_matrix.get(j, i) /
+			(sqrt_diag[i] * sqrt_diag[j]));
+    }
+  }
+			
 
   data::Save("kernel_mat.dat", kernel_matrix);
 
