@@ -119,6 +119,23 @@ double SSSSIntegral(double alpha_A,  Vector& A_vec, double alpha_B,
 
 }
 
+void CreateShells(const Matrix& centers, const Vector& exponents, 
+                  const Vector& momenta, ArrayList<BasisShell>* shells_out) {
+                  
+  shells_out->Init(centers.n_cols());
+  
+  for (index_t i = 0; i < centers_.n_cols(); i++) {
+  
+    Vector new_cent;
+    centers.MakeColumnVector(i, &new_cent);
+    
+    (*shells_out)[i].Init(new_cent, exponents[i], momenta[i], i);
+  
+  } // for i
+                  
+} // CreateShells()
+
+
 /**
  * Note, this only works on uncontracted, S-type integrals.  
  */
