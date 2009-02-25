@@ -5,7 +5,7 @@ import string
 
 seqs_filename = 'training_seqs.out'
 seqs_file = open(seqs_filename)
-num_seqs = 100
+num_seqs = 200
 
 for label in range(0, 2):
     for seq_num in range(0 + label, num_seqs, 2):

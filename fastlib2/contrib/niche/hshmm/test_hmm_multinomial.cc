@@ -94,10 +94,9 @@ double ComputeKernel(const char* filename_profile_hmm_1,
   mmk.Init(lambda, T);
 
   double val = mmk.Compute(hmm_a, hmm_b);
-
-  printf("hmm_dist(hmm_a, hmm_b) = %e\n",
-	 val);
-
+  
+  //printf("hmm_dist(hmm_a, hmm_b) = %e\n", val);
+  
   return val;
 }
 
@@ -106,13 +105,14 @@ double ComputeKernel(const char* filename_profile_hmm_1,
 int main(int argc, char *argv[]) {
   fx_module* root = fx_init(argc, argv, &hshmm_main_doc);
 
-  int n_hmms = 100;
+  int n_hmms = 200;
 
   Matrix kernel_matrix;
   kernel_matrix.Init(n_hmms, n_hmms);
   kernel_matrix.SetAll(-1);
 
   for(int i = 0; i < n_hmms; i++) {
+    printf("%d/%d\n", i, n_hmms);
     char filename_profile_hmm_1[100];
     sprintf(filename_profile_hmm_1, "profiles/est_mmf_pro_%03d.dis", i);
     for(int j = i; j < n_hmms; j++) {
