@@ -2,8 +2,8 @@
  * @file fourier_expansion.h
  *
  * This file contains a templatized class implementing the $O(p^D)$
- * Fourier expansion for computing the coefficients for a far-field
- * expansion for an arbitrary kernel function.
+ * Fourier expansion for computing the coefficients for a
+ * far-field/local expansion for an arbitrary kernel function.
  *
  * @author Dongryeol Lee (dongryel)
  * @bug No known bugs.
@@ -51,7 +51,7 @@ class FourierExpansion {
 
  public:
 
-  friend class FourierSeriesExpansionAux;
+  friend class FourierSeriesExpansionAux<T>;
 
   ////////// Public Type Representation //////////
   typedef T data_type;
@@ -115,6 +115,40 @@ class FourierExpansion {
    */
   void AccumulateCoeffs(const GenMatrix<T> &data, const GenVector<T> &weights,
 			int begin, int end, int order) {
+    
+    // Loop over each data point and accumulate its contribution.
+    index_t num_coefficients = sea_->get_total_num_coeffs(order);
+
+    for(index_t i = begin; i < end; i++) {
+
+      // The current data point.
+      const double *point = data.GetColumnPtr(i);
+
+      for(index_t j = 0; j < num_coefficients; j++) {
+	
+	// Retrieve the current mapping.
+	const ArrayList<short int> &mapping = sea_->get_multiindex(j);
+	
+	// Dot product between the multiindex and the relative
+	// coorindate of the data point.
+	double dot_product = 0;
+	for(index_t k = 0; k < mapping.size(); k++) {
+	  dot_product += mapping[k] * (point[k] - center_[k]);
+	}
+	
+	// For each coefficient, scale it and add to the current one.
+	double trig_argument = 
+	  -(sea_->integral_truncation_limit() * dot_product / 
+	    (sea_->get_max_order() *
+	     sqrt(2 * sea_->kernel_aux_->bandwidth_sq())));
+	std::complex<T> contribution(cos(trig_argument), sin(trig_argument));
+	contribution *= weights[i];
+	
+	// This does the actual accumulation.
+	coeffs_.set(j, coeffs_.get(j) + contribution);
+
+      } // end of iterating over each coefficient position.
+    }
   }
 
   /**
@@ -123,7 +157,8 @@ class FourierExpansion {
    */
   void RefineCoeffs(const GenMatrix<T> &data, const GenVector<T> &weights,
 		    int begin, int end, int order) {
-
+    
+    AccumulateCoeffs(data, weights, begin, end, order);
   }
   
   /**

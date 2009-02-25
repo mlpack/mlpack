@@ -14,17 +14,16 @@ class SeriesExpansionTest {
   void TestFourierExpansion() {
     
     NOTIFY("[*] TestFourierExpansion");
-    FourierSeriesExpansionAux series_aux;
+    FourierSeriesExpansionAux<double> series_aux;
     int order = 2;
     int dim = 3;
-    series_aux.Init(order, dim);
-    
+    series_aux.Init(order, dim);    
   }
 
   void TestFourierExpansionMapping() {
 
     NOTIFY("[*] TestFourierExpansionMapping");
-    FourierSeriesExpansionAux series_aux;
+    FourierSeriesExpansionAux<double> series_aux;
     int order = 2;
     int dim = 3;
     series_aux.Init(order, dim);

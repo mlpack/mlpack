@@ -11,6 +11,7 @@
 /** @brief Fourier-series based expansion, essentially $O(p^D)$
  *         expansion.
  */
+template<typename T = double>
 class FourierSeriesExpansionAux {
 
  public:
@@ -23,6 +24,10 @@ class FourierSeriesExpansionAux {
 
   ArrayList<short int> list_total_num_coeffs_;
 
+  GenVector<T> precomputed_constants_;
+
+  T final_scaling_factor_;
+
   ArrayList< ArrayList<short int> > multiindex_mapping_;
 
   OT_DEF_BASIC(FourierSeriesExpansionAux) {
@@ -30,6 +35,8 @@ class FourierSeriesExpansionAux {
     OT_MY_OBJECT(max_order_);
     OT_MY_OBJECT(integral_truncation_limit_);
     OT_MY_OBJECT(list_total_num_coeffs_);
+    OT_MY_OBJECT(precomputed_constants_);
+    OT_MY_OBJECT(final_scaling_factor_);
     OT_MY_OBJECT(multiindex_mapping_);
   }
 
@@ -149,7 +156,26 @@ class FourierSeriesExpansionAux {
 	    (multiindex_mapping_[i])[k] = (multiindex_mapping_[i])[k] + 1;
 	  }
 	}
+      }      
+    }
+
+    // Now loop over each multi-index, and precompute the constants.
+    precomputed_constants_.Init(multiindex_mapping_.size());
+    final_scaling_factor_ = pow(integral_truncation_limit_ / 
+				(2 * max_order_ * sqrt(2.0 * acos(0))), dim_);
+    for(index_t j = 0; j < multiindex_mapping_.size(); j++) {
+      
+      const ArrayList<short int> &mapping = multiindex_mapping_[j];
+
+      // The squared length of the multiindex mapping.
+      double squared_length_mapping = 0;
+      for(index_t k = 0; k < dim_; k++) {
+	squared_length_mapping += math::Sqr(mapping[k]);
       }
+      
+      precomputed_constants_[j] = 
+	exp(-squared_length_mapping * math::Sqr(integral_truncation_limit_) /
+	    (4 * math::Sqr(max_order_)));
     }
   }
 
@@ -252,8 +278,11 @@ class FourierSeriesExpansionAux {
       std::complex<T> factor(cos(trig_argument), sin(trig_argument));
       std::complex<T> new_coefficient = coeffs.get(i) * factor;
 
-      result += new_coefficient.real();
+      result += precomputed_constants_[i] * new_coefficient.real();
     }
+
+    // Scale the result then return.
+    result *= final_scaling_factor_;
     return result;
   }
 
