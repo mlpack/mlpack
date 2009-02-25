@@ -56,6 +56,13 @@ namespace eri {
    * Computes the Schwartz factor Q_{i j} = (i j|i j)^1/2
    */
   double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell);
+  
+  
+  /**
+   * Forms the list of BasisShells from the centers, exponents, and momenta
+   */
+  void CreateShells(const Matrix& centers, const Vector& exponents, 
+                    const Vector& momenta, ArrayList<BasisShell>* shells_out);
                             
   /**
    * Compute the list of significant shell pairs.
