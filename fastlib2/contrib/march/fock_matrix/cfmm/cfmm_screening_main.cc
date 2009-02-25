@@ -1,7 +1,7 @@
 #include "fastlib/fastlib.h"
 #include "contrib/march/fock_matrix/fock_impl/eri.h"
 #include "contrib/dongryel/fast_multipole_method/continuous_fmm.h"
-#include "contrib/march/fock_matrix/naive_fock_matrix.h"
+#include "contrib/march/fock_matrix/naive/naive_fock_matrix.h"
 
 const fx_entry_doc cfmm_screening_entries[] = {
 {"centers", FX_REQUIRED, FX_STR, NULL, 
@@ -37,6 +37,10 @@ int main(int argc, char* argv[]) {
   Matrix exp_mat;
   const char* exp_file = fx_param_str_req(root_mod, "exponents");
   data::Load(exp_file, &exp_mat);
+  
+  Matrix mom;
+  mom.Init(1, centers.n_cols());
+  mom.SetAll(0);
   
   
   if (centers.n_cols() != exp_mat.n_cols()) {
@@ -246,14 +250,12 @@ int main(int argc, char* argv[]) {
   
   NaiveFockMatrix naive_comp;
   
-  
-  
   if (fx_param_exists(root_mod, "do_naive")) {
     fx_module* naive_mod = fx_submodule(root_mod, "naive");
-    naive_comp.Init(centers, naive_mod, density_mat, 1.0);
-    naive_comp.ComputeFockMatrix();
+    naive_comp.Init(centers, exp_mat, mom, density_mat, naive_mod);
+    naive_comp.ComputeFock();
     Matrix naive_fock;
-    naive_comp.PrintFockMatrix(NULL, &naive_fock, NULL);
+    naive_comp.OutputFock(NULL, &naive_fock, NULL);
     
     printf("naive_fock\n");
     naive_fock.PrintDebug();
