@@ -68,7 +68,8 @@ int main(int argc, char *argv[]) {
 		      cfmm_module);
   
   // Start computation.
-  cfmm_algorithm.Compute();
+  Vector cfmm_results;
+  cfmm_algorithm.Compute(&cfmm_results);
 
   // Compute naively.
   Vector naive_results;
