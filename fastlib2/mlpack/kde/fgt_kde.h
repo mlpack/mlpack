@@ -471,7 +471,7 @@ class FGTKde {
       d = 0;
     
       for(j = 0; j < totalnumcoeffs; j++) {
-	const ArrayList<int> &mapping = msea_.get_multiindex(j);
+	const ArrayList<short int> &mapping = msea_.get_multiindex(j);
 	
 	for(k = 0, l = j % step; k < p_alpha; k++, l += step) {
 	  arrtmp.set(d, j, arrtmp.get(d, j) + mcoeffs[l] * 
@@ -489,7 +489,7 @@ class FGTKde {
 	  boundary2 = 0;
 	
 	  for(j = 0; j < totalnumcoeffs; j++) {
-	    const ArrayList<int> &mapping = msea_.get_multiindex(j);
+	    const ArrayList<short int> &mapping = msea_.get_multiindex(j);
 
 	    if(j % boundary == 0) {
 	      boundary2 += boundary;
@@ -503,7 +503,8 @@ class FGTKde {
 		jump += boundary2 - boundary;
 	      }
 	    
-	      const ArrayList<int> &mapping2 = msea_.get_multiindex(jump);
+	      const ArrayList<short int> &mapping2 = 
+		msea_.get_multiindex(jump);
 
 	      arrtmp.set(d, j,
 			 arrtmp.get(d, j) +
