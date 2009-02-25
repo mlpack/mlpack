@@ -19,10 +19,13 @@ const fx_module_doc hshmm_main_doc = {
 
 
 
-double ComputeKernel(const char* filename_profile_hmm_1, const char* filename_profile_hmm_2) {
+double ComputeKernel(const char* filename_profile_hmm_1,
+		     const char* filename_profile_hmm_2) {
 
   int n_dims = 2;
-  int T = 10;
+  int T = 70;
+
+  double lambda = fx_param_double_req(NULL, "lambda");
 
   Matrix p_transition;
   Matrix all_p_emission;
@@ -88,7 +91,7 @@ double ComputeKernel(const char* filename_profile_hmm_1, const char* filename_pr
   //printf("Ready to MMK\n");
   
   MeanMapKernel mmk;
-  mmk.Init(1, T);
+  mmk.Init(lambda, T);
 
   double val = mmk.Compute(hmm_a, hmm_b);
 
@@ -111,10 +114,10 @@ int main(int argc, char *argv[]) {
 
   for(int i_hmm_1 = 0; i_hmm_1 < n_hmms; i_hmm_1++) {
     char filename_profile_hmm_1[100];
-    sprintf(filename_profile_hmm_1, "../../tqlong/mmf/profiles/est_bw_pro_%03d.dis", i_hmm_1);
+    sprintf(filename_profile_hmm_1, "../../tqlong/mmf/profiles/est_mmf_pro_%03d.dis", i_hmm_1);
     for(int i_hmm_2 = i_hmm_1; i_hmm_2 < n_hmms; i_hmm_2++) {
       char filename_profile_hmm_2[100];
-      sprintf(filename_profile_hmm_2, "../../tqlong/mmf/profiles/est_bw_pro_%03d.dis", i_hmm_2);
+      sprintf(filename_profile_hmm_2, "../../tqlong/mmf/profiles/est_mmf_pro_%03d.dis", i_hmm_2);
 
       double val = ComputeKernel(filename_profile_hmm_1, filename_profile_hmm_2);
       kernel_matrix.set(i_hmm_1, i_hmm_2, val);
