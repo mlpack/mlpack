@@ -1,4 +1,4 @@
-#include "naive_fock_matrix.h"
+#include "contrib/march/fock_matrix/naive/naive_fock_matrix.h"
 #include "contrib/march/fock_matrix/prescreening/schwartz_prescreening.h"
 
 
@@ -45,11 +45,11 @@ int main(int argc, char* argv[]) {
   naive_computation.Init(centers, naive_mod, density, common_exp);
   
   fx_timer_start(root_mod, "naive_time");
-  naive_computation.ComputeFockMatrix();
+  naive_computation.ComputeFock();
   fx_timer_stop(root_mod, "naive_time");
 
   Matrix naive_fock;
-  naive_computation.PrintFockMatrix(&naive_fock, NULL, NULL);
+  naive_computation.OutputFock(&naive_fock, NULL, NULL);
   
   printf("\nNaiveFock.\n");
   naive_fock.PrintDebug();
