@@ -27,21 +27,21 @@ class SeriesExpansionAux {
 
   Matrix multiindex_combination_;
 
-  ArrayList< ArrayList<int> > multiindex_mapping_;
+  ArrayList< ArrayList<short int> > multiindex_mapping_;
 
   /** 
    * for each i-th multiindex m_i, store the positions of the j-th
    * multiindex mapping such that m_i - m_j >= 0 (the difference in
    * all coordinates is nonnegative).
    */
-  ArrayList< ArrayList<int> > lower_mapping_index_;
+  ArrayList< ArrayList<short int> > lower_mapping_index_;
 
   /** 
    * for each i-th multiindex m_i, store the positions of the j-th
    * multiindex mapping such that m_i - m_j <= 0 (the difference in
    * all coordinates is nonpositive).
    */
-  ArrayList< ArrayList<int> > upper_mapping_index_;
+  ArrayList< ArrayList<short int> > upper_mapping_index_;
 
   /** row index is for n, column index is for k */
   Matrix n_choose_k_;
@@ -82,11 +82,11 @@ class SeriesExpansionAux {
     lower_mapping_index_.Init(list_total_num_coeffs_[limit]);
 
     for(index_t i = 0; i < list_total_num_coeffs_[limit]; i++) {
-      const ArrayList<int> &outer_mapping = multiindex_mapping_[i];
+      const ArrayList<short int> &outer_mapping = multiindex_mapping_[i];
       lower_mapping_index_[i].Init();
 
       for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
-	const ArrayList<int> &inner_mapping = multiindex_mapping_[j];
+	const ArrayList<short int> &inner_mapping = multiindex_mapping_[j];
 	int flag = 0;
 
 	for(index_t d = 0; d < dim_; d++) {
@@ -114,12 +114,12 @@ class SeriesExpansionAux {
     for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
       
       // beta mapping
-      const ArrayList<int> &beta_mapping = multiindex_mapping_[j];
+      const ArrayList<short int> &beta_mapping = multiindex_mapping_[j];
       
       for(index_t k = 0; k < list_total_num_coeffs_[limit]; k++) {
 	
 	// alpha mapping
-	const ArrayList<int> &alpha_mapping = multiindex_mapping_[k];
+	const ArrayList<short int> &alpha_mapping = multiindex_mapping_[k];
 	
 	// initialize the factor to 1
 	multiindex_combination_.set(j, k, 1);
@@ -146,11 +146,11 @@ class SeriesExpansionAux {
     upper_mapping_index_.Init(list_total_num_coeffs_[limit]);
     
     for(index_t i = 0; i < list_total_num_coeffs_[limit]; i++) {
-      const ArrayList<int> &outer_mapping = multiindex_mapping_[i];
+      const ArrayList<short int> &outer_mapping = multiindex_mapping_[i];
       upper_mapping_index_[i].Init();
       
       for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
-	const ArrayList<int> &inner_mapping = multiindex_mapping_[j];
+	const ArrayList<short int> &inner_mapping = multiindex_mapping_[j];
 	int flag = 0;
 	
 	for(index_t d = 0; d < dim_; d++) {
@@ -180,13 +180,13 @@ class SeriesExpansionAux {
 
   const Vector& get_inv_multiindex_factorials() const;
 
-  const ArrayList< int > * get_lower_mapping_index() const;
+  const ArrayList< short int > * get_lower_mapping_index() const;
 
   int get_max_order() const;
 
-  const ArrayList< int > & get_multiindex(int pos) const;
+  const ArrayList< short int > & get_multiindex(int pos) const;
 
-  const ArrayList< int > * get_multiindex_mapping() const;
+  const ArrayList< short int > * get_multiindex_mapping() const;
 
   const Vector& get_neg_inv_multiindex_factorials() const;
 
@@ -194,14 +194,14 @@ class SeriesExpansionAux {
 
   double get_n_multichoose_k_by_pos(int n, int k) const;
 
-  const ArrayList< int > * get_upper_mapping_index() const;
+  const ArrayList< short int > * get_upper_mapping_index() const;
 
   // interesting functions
 
   /**
    * Computes the position of the given multiindex
    */
-  int ComputeMultiindexPosition(const ArrayList<int> &multiindex) const;
+  int ComputeMultiindexPosition(const ArrayList<short int> &multiindex) const;
 
   /** @brief Computes the computational cost of evaluating a far-field
    *         expansion of order p at a single query point.

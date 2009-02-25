@@ -8,7 +8,8 @@ int SeriesExpansionAux::get_max_total_num_coeffs() const {
   return list_total_num_coeffs_[max_order_];
 }
 
-const ArrayList < int > *SeriesExpansionAux::get_lower_mapping_index() const {
+const ArrayList < short int > *SeriesExpansionAux::get_lower_mapping_index() 
+  const {
   return lower_mapping_index_.begin();
 }
 
@@ -16,11 +17,13 @@ int SeriesExpansionAux::get_max_order() const {
   return max_order_;
 }
 
-const ArrayList < int > &SeriesExpansionAux::get_multiindex(int pos) const {
+const ArrayList < short int > &SeriesExpansionAux::get_multiindex(int pos) 
+  const {
   return multiindex_mapping_[pos];
 }
 
-const ArrayList < int > *SeriesExpansionAux::get_multiindex_mapping() const {
+const ArrayList < short int > *SeriesExpansionAux::get_multiindex_mapping() 
+  const {
   return multiindex_mapping_.begin();
 }
 
@@ -41,12 +44,14 @@ int SeriesExpansionAux::get_total_num_coeffs(int order) const {
   return list_total_num_coeffs_[order];
 }
 
-const ArrayList < int > *SeriesExpansionAux::get_upper_mapping_index() const {
+const ArrayList < short int > *SeriesExpansionAux::get_upper_mapping_index() 
+  const {
+
   return upper_mapping_index_.begin();
 }
 
 int SeriesExpansionAux::ComputeMultiindexPosition
-(const ArrayList<int> &multiindex) const {
+(const ArrayList<short int> &multiindex) const {
 
   int dim = multiindex.size();
   int mapping_sum = 0;

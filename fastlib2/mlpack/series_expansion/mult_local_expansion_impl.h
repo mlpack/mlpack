@@ -35,7 +35,8 @@ void MultLocalExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
   double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
   
   // get the order of traversal for the given order of approximation
-  const ArrayList<int> &traversal_order = sea_->traversal_mapping_[order];
+  const ArrayList<short int> &traversal_order = 
+    sea_->traversal_mapping_[order];
 
   // for each data point,
   for(index_t r = begin; r < end; r++) {
@@ -52,7 +53,7 @@ void MultLocalExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
     // compute h_{beta}((x_r - x_Q) / sqrt(2h^2))
     for(index_t j = 0; j < total_num_coeffs; j++) {
       int index = traversal_order[j];
-      const ArrayList<int> &mapping = sea_->get_multiindex(index);
+      const ArrayList<short int> &mapping = sea_->get_multiindex(index);
       double partial_derivative = 
 	ka_->ComputePartialDerivative(derivative_map, mapping);
       coeffs_[index] += neg_inv_multiindex_factorials[index] * weights[r] * 
@@ -87,7 +88,7 @@ void MultLocalExpansion<TKernelAux>::PrintDebug(const char *name,
   fprintf(stream, ") = \\sum\\limits_{x_r \\in R} K(||x_q - x_r||) = ");
   
   for (index_t i = 0; i < total_num_coeffs; i++) {
-    ArrayList<int> mapping = sea_->get_multiindex(i);
+    ArrayList<short int> mapping = sea_->get_multiindex(i);
     fprintf(stream, "%g", coeffs_[i]);
     
     for(index_t d = 0; d < dim; d++) {
@@ -127,7 +128,7 @@ double MultLocalExpansion<TKernelAux>::EvaluateField(const Matrix& data,
   x_Q_to_x_q.Init(dim);
   Vector tmp;
   tmp.Init(sea_->get_max_total_num_coeffs());
-  ArrayList<int> heads;
+  ArrayList<short int> heads;
   heads.Init(dim + 1);
   
   // compute (x_q - x_Q) / (sqrt(2h^2))
@@ -137,24 +138,26 @@ double MultLocalExpansion<TKernelAux>::EvaluateField(const Matrix& data,
   
   for(index_t i = 0; i < dim; i++)
     heads[i] = 0;
-  heads[dim] = INT_MAX;
+  heads[dim] = SHRT_MAX;
 
   tmp[0] = 1.0;
 
   // get the order of traversal for the given order of approximation
-  const ArrayList<int> &traversal_order = sea_->traversal_mapping_[order_];
+  const ArrayList<short int> &traversal_order = 
+    sea_->traversal_mapping_[order_];
 
   for(index_t i = 1; i < total_num_coeffs; i++) {
     
     int index = traversal_order[i];
-    const ArrayList<int> &lower_mappings = sea_->lower_mapping_index_[index];
+    const ArrayList<short int> &lower_mappings = 
+      sea_->lower_mapping_index_[index];
     
     // from the direct descendant, recursively compute the multipole moments
     int direct_ancestor_mapping_pos = 
       lower_mappings[lower_mappings.size() - 2];
     int position = 0;
-    const ArrayList<int> &mapping = sea_->multiindex_mapping_[index];
-    const ArrayList<int> &direct_ancestor_mapping = 
+    const ArrayList<short int> &mapping = sea_->multiindex_mapping_[index];
+    const ArrayList<short int> &direct_ancestor_mapping = 
       sea_->multiindex_mapping_[direct_ancestor_mapping_pos];
     for(index_t i = 0; i < dim; i++) {
       if(mapping[i] != direct_ancestor_mapping[i]) {
@@ -198,7 +201,7 @@ double MultLocalExpansion<TKernelAux>::EvaluateField(const Vector& x_q) const {
   x_Q_to_x_q.Init(dim);
   Vector tmp;
   tmp.Init(sea_->get_max_total_num_coeffs());
-  ArrayList<int> heads;
+  ArrayList<short int> heads;
   heads.Init(dim + 1);
   
   // compute (x_q - x_Q) / (sqrt(2h^2))
@@ -213,19 +216,19 @@ double MultLocalExpansion<TKernelAux>::EvaluateField(const Vector& x_q) const {
   tmp[0] = 1.0;
 
   // get the order of traversal for the given order of approximation
-  ArrayList<int> &traversal_order = sea_->traversal_mapping_[order_];
+  ArrayList<short int> &traversal_order = sea_->traversal_mapping_[order_];
 
   for(index_t i = 1; i < total_num_coeffs; i++) {
     
     int index = traversal_order[i];
-    ArrayList<int> &lower_mappings = sea_->lower_mapping_index_[index];
+    ArrayList<short int> &lower_mappings = sea_->lower_mapping_index_[index];
     
     // from the direct descendant, recursively compute the multipole moments
     int direct_ancestor_mapping_pos = 
       lower_mappings[lower_mappings.size() - 2];
     int position = 0;
-    const ArrayList<int> &mapping = sea_->multiindex_mapping_[index];
-    const ArrayList<int> &direct_ancestor_mapping = 
+    const ArrayList<short int> &mapping = sea_->multiindex_mapping_[index];
+    const ArrayList<short int> &direct_ancestor_mapping = 
       sea_->multiindex_mapping_[direct_ancestor_mapping_pos];
     for(index_t i = 0; i < dim; i++) {
       if(mapping[i] != direct_ancestor_mapping[i]) {
@@ -327,22 +330,22 @@ void MultLocalExpansion<TKernelAux>::TranslateFromFarField
 
   // compute required partial derivatives
   ka_->ComputeDirectionalDerivatives(cent_diff, &derivative_map, 2 * order_);
-  ArrayList<int> beta_plus_alpha;
+  ArrayList<short int> beta_plus_alpha;
   beta_plus_alpha.Init(dimension);
 
   // get the order of traversal for the given order of approximation
-  ArrayList<int> &traversal_order = sea_->traversal_mapping_[far_order];
+  ArrayList<short int> &traversal_order = sea_->traversal_mapping_[far_order];
 
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
     int index_j = traversal_order[j];
-    ArrayList<int> beta_mapping = sea_->get_multiindex(index_j);
+    ArrayList<short int> beta_mapping = sea_->get_multiindex(index_j);
     pos_arrtmp[index_j] = neg_arrtmp[index_j] = 0;
 
     for(index_t k = 0; k < total_num_coeffs; k++) {
 
       int index_k = traversal_order[k];
-      ArrayList<int> alpha_mapping = sea_->get_multiindex(index_k);
+      ArrayList<short int> alpha_mapping = sea_->get_multiindex(index_k);
       for(index_t d = 0; d < dimension; d++) {
 	beta_plus_alpha[d] = beta_mapping[d] + alpha_mapping[d];
       }
@@ -383,7 +386,7 @@ void MultLocalExpansion<TKernelAux>::TranslateToLocal(MultLocalExpansion &se) {
   new_center.Alias(*(se.get_center()));
   int prev_order = se.get_order();
   int total_num_coeffs = sea_->get_total_num_coeffs(order_);
-  const ArrayList < int > *upper_mapping_index = 
+  const ArrayList<short int> *upper_mapping_index = 
     sea_->get_upper_mapping_index();
   Vector new_coeffs;
   new_coeffs.Alias(se.get_coeffs());
@@ -392,7 +395,7 @@ void MultLocalExpansion<TKernelAux>::TranslateToLocal(MultLocalExpansion &se) {
   int dim = sea_->get_dimension();
 
   // temporary variable
-  ArrayList<int> tmp_storage;
+  ArrayList<short int> tmp_storage;
   tmp_storage.Init(dim);
 
   // sqrt two times bandwidth
@@ -416,14 +419,15 @@ void MultLocalExpansion<TKernelAux>::TranslateToLocal(MultLocalExpansion &se) {
   C_k.Alias(sea_->get_inv_multiindex_factorials());
 
   // get the order of traversal for the given order of approximation
-  const ArrayList<int> &traversal_order = sea_->traversal_mapping_[order_];
+  const ArrayList<short int> &traversal_order = 
+    sea_->traversal_mapping_[order_];
 
   // do the actual translation
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
     int index_j = traversal_order[j];
-    const ArrayList<int> &alpha_mapping = sea_->get_multiindex(index_j);
-    const ArrayList <int> &upper_mappings_for_alpha = 
+    const ArrayList<short int> &alpha_mapping = sea_->get_multiindex(index_j);
+    const ArrayList<short int> &upper_mappings_for_alpha = 
       upper_mapping_index[index_j];
     double pos_coeffs = 0;
     double neg_coeffs = 0;
@@ -434,7 +438,7 @@ void MultLocalExpansion<TKernelAux>::TranslateToLocal(MultLocalExpansion &se) {
 	break;
       }
 
-      const ArrayList<int> &beta_mapping = 
+      const ArrayList<short int> &beta_mapping = 
 	sea_->get_multiindex(upper_mappings_for_alpha[k]);
       int flag = 0;
       double diff1 = 1.0;
