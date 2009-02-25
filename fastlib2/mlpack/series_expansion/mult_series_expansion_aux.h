@@ -28,21 +28,21 @@ class MultSeriesExpansionAux {
 
   Matrix multiindex_combination_;
 
-  ArrayList< ArrayList<int> > multiindex_mapping_;
+  ArrayList< ArrayList<short int> > multiindex_mapping_;
 
   /**
    * for each i-th multiindex m_i, store the positions of the j-th
    * multiindex mapping such that m_i - m_j >= 0 (the difference in
    * all coordinates is nonnegative).
    */
-  ArrayList< ArrayList<int> > lower_mapping_index_;
+  ArrayList< ArrayList<short int> > lower_mapping_index_;
 
   /**
    * for each i-th multiindex m_i, store the positions of the j-th
    * multiindex mapping such that m_i - m_j <= 0 (the difference in
    * all coordinates is nonpositive).
    */
-  ArrayList< ArrayList<int> > upper_mapping_index_;
+  ArrayList< ArrayList<short int> > upper_mapping_index_;
 
   /** row index is for n, column index is for k */
   Matrix n_choose_k_;
@@ -51,7 +51,7 @@ class MultSeriesExpansionAux {
    * For each i-th order, store the positions of the coefficient
    * array to traverse.
    */
-  ArrayList< ArrayList<int> > traversal_mapping_;
+  ArrayList< ArrayList<short int> > traversal_mapping_;
 
   OT_DEF_BASIC(MultSeriesExpansionAux) {
     OT_MY_OBJECT(dim_);
@@ -91,7 +91,7 @@ class MultSeriesExpansionAux {
 
       for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
 	
-        const ArrayList<int> &mapping = multiindex_mapping_[j];
+        const ArrayList<short int> &mapping = multiindex_mapping_[j];
         int flag = 0;
 
         for(index_t d = 0; d < dim_; d++) {
@@ -110,7 +110,7 @@ class MultSeriesExpansionAux {
 
   void ComputeLowerMappingIndex() {
 
-    ArrayList<int> diff;
+    ArrayList<short int> diff;
     diff.Init(dim_);
 
     // initialize the index
@@ -118,11 +118,11 @@ class MultSeriesExpansionAux {
     lower_mapping_index_.Init(list_total_num_coeffs_[limit]);
 
     for(index_t i = 0; i < list_total_num_coeffs_[limit]; i++) {
-      const ArrayList<int> &outer_mapping = multiindex_mapping_[i];
+      const ArrayList<short int> &outer_mapping = multiindex_mapping_[i];
       lower_mapping_index_[i].Init();
 
       for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
-        const ArrayList<int> &inner_mapping = multiindex_mapping_[j];
+        const ArrayList<short int> &inner_mapping = multiindex_mapping_[j];
         int flag = 0;
 
         for(index_t d = 0; d < dim_; d++) {
@@ -150,12 +150,12 @@ class MultSeriesExpansionAux {
     for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
 
       // beta mapping
-      const ArrayList<int> &beta_mapping = multiindex_mapping_[j];
+      const ArrayList<short int> &beta_mapping = multiindex_mapping_[j];
 
       for(index_t k = 0; k < list_total_num_coeffs_[limit]; k++) {
 
         // alpha mapping
-        const ArrayList<int> &alpha_mapping = multiindex_mapping_[k];
+        const ArrayList<short int> &alpha_mapping = multiindex_mapping_[k];
 
         // initialize the factor to 1
         multiindex_combination_.set(j, k, 1);
@@ -174,7 +174,7 @@ class MultSeriesExpansionAux {
 
   void ComputeUpperMappingIndex() {
 
-    ArrayList<int> diff;
+    ArrayList<short int> diff;
     diff.Init(dim_);
 
     // initialize the index
@@ -182,11 +182,11 @@ class MultSeriesExpansionAux {
     upper_mapping_index_.Init(list_total_num_coeffs_[limit]);
 
     for(index_t i = 0; i < list_total_num_coeffs_[limit]; i++) {
-      const ArrayList<int> &outer_mapping = multiindex_mapping_[i];
+      const ArrayList<short int> &outer_mapping = multiindex_mapping_[i];
       upper_mapping_index_[i].Init();
 
       for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
-        const ArrayList<int> &inner_mapping = multiindex_mapping_[j];
+        const ArrayList<short int> &inner_mapping = multiindex_mapping_[j];
         int flag = 0;
 
         for(index_t d = 0; d < dim_; d++) {
@@ -222,7 +222,7 @@ class MultSeriesExpansionAux {
     return inv_multiindex_factorials_;
   }
 
-  const ArrayList< int > * get_lower_mapping_index() const {
+  const ArrayList<short int> * get_lower_mapping_index() const {
     return lower_mapping_index_.begin();
   }
 
@@ -230,11 +230,11 @@ class MultSeriesExpansionAux {
     return max_order_;
   }
 
-  const ArrayList< int > & get_multiindex(int pos) const {
+  const ArrayList<short int> & get_multiindex(int pos) const {
     return multiindex_mapping_[pos];
   }
 
-  const ArrayList< int > * get_multiindex_mapping() const {
+  const ArrayList<short int> * get_multiindex_mapping() const {
     return multiindex_mapping_.begin();
   }
 
@@ -250,7 +250,7 @@ class MultSeriesExpansionAux {
     return multiindex_combination_.get(n, k);
   }
 
-  const ArrayList< int > * get_upper_mapping_index() const {
+  const ArrayList<short int> * get_upper_mapping_index() const {
     return upper_mapping_index_.begin();
   }
 
@@ -259,7 +259,7 @@ class MultSeriesExpansionAux {
   /**
    * Computes the position of the given multiindex
    */
-  int ComputeMultiindexPosition(const ArrayList<int> &multiindex) const {
+  int ComputeMultiindexPosition(const ArrayList<short int> &multiindex) const {
     int index = 0;
     
     // using Horner's rule

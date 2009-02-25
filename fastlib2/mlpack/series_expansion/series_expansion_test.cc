@@ -1,5 +1,6 @@
 #include "fastlib/fastlib.h"
 #include "fastlib/base/test.h"
+#include "fourier_expansion.h"
 #include "fourier_series_expansion_aux.h"
 
 class SeriesExpansionTest {
@@ -8,6 +9,16 @@ class SeriesExpansionTest {
 
   void Init(fx_module *module_in) {
     module_ = module_in;
+  }
+
+  void TestFourierExpansion() {
+    
+    NOTIFY("[*] TestFourierExpansion");
+    FourierSeriesExpansionAux series_aux;
+    int order = 2;
+    int dim = 3;
+    series_aux.Init(order, dim);
+    
   }
 
   void TestFourierExpansionMapping() {
@@ -23,7 +34,7 @@ class SeriesExpansionTest {
     // roughly corresponds to the base ((2 * order) + 1) number.
     int total_num_mapping = (int) pow(2 * order + 1, dim);
     for(index_t i = 0; i < total_num_mapping; i++) {
-      const ArrayList<int> &mapping = series_aux.get_multiindex(i);
+      const ArrayList<short int> &mapping = series_aux.get_multiindex(i);
 
       int number = 0;
       printf("The mapping: ");
@@ -38,9 +49,10 @@ class SeriesExpansionTest {
       }
     }
   }
-
+  
   void TestAll() {
     TestFourierExpansionMapping();
+    TestFourierExpansion();
     NOTIFY("[*] All tests passed !!");
   }
 

@@ -51,7 +51,7 @@ void LocalExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
     
     // compute h_{beta}((x_r - x_Q) / sqrt(2h^2))
     for(index_t j = 0; j < total_num_coeffs; j++) {
-      const ArrayList<int> &mapping = sea_->get_multiindex(j);
+      const ArrayList<short int> &mapping = sea_->get_multiindex(j);
       arrtmp[j] = ka_->ComputePartialDerivative(derivative_map, mapping);
     }
 
@@ -87,7 +87,7 @@ void LocalExpansion<TKernelAux>::PrintDebug(const char *name,
   fprintf(stream, ") = \\sum\\limits_{x_r \\in R} K(||x_q - x_r||) = ");
   
   for (index_t i = 0; i < total_num_coeffs; i++) {
-    const ArrayList<int> &mapping = sea_->get_multiindex(i);
+    const ArrayList<short int> &mapping = sea_->get_multiindex(i);
     fprintf(stream, "%g", coeffs_[i]);
     
     for(index_t d = 0; d < dim; d++) {
@@ -134,7 +134,7 @@ double LocalExpansion<TKernelAux>::EvaluateField(const double *x_q) const {
   x_Q_to_x_q.Init(dim);
   Vector tmp;
   tmp.Init(total_num_coeffs);
-  ArrayList<int> heads;
+  ArrayList<short int> heads;
   heads.Init(dim + 1);
   
   // compute (x_q - x_Q) / (sqrt(2h^2))
@@ -145,7 +145,7 @@ double LocalExpansion<TKernelAux>::EvaluateField(const double *x_q) const {
   for(index_t i = 0; i < dim; i++) {
     heads[i] = 0;
   }
-  heads[dim] = INT_MAX;
+  heads[dim] = SHRT_MAX;
 
   tmp[0] = 1.0;
 
@@ -251,17 +251,17 @@ void LocalExpansion<TKernelAux>::TranslateFromFarField
 
   // compute required partial derivatives
   ka_->ComputeDirectionalDerivatives(cent_diff, &derivative_map, 2 * order_);
-  ArrayList<int> beta_plus_alpha;
+  ArrayList<short int> beta_plus_alpha;
   beta_plus_alpha.Init(dimension);
 
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
-    const ArrayList<int> &beta_mapping = sea_->get_multiindex(j);
+    const ArrayList<short int> &beta_mapping = sea_->get_multiindex(j);
     pos_arrtmp[j] = neg_arrtmp[j] = 0;
 
     for(index_t k = 0; k < total_num_coeffs; k++) {
 
-      const ArrayList<int> &alpha_mapping = sea_->get_multiindex(k);
+      const ArrayList<short int> &alpha_mapping = sea_->get_multiindex(k);
       for(index_t d = 0; d < dimension; d++) {
 	beta_plus_alpha[d] = beta_mapping[d] + alpha_mapping[d];
       }
@@ -300,7 +300,7 @@ void LocalExpansion<TKernelAux>::TranslateToLocal(LocalExpansion &se) {
   new_center.Alias(*(se.get_center()));
   int prev_order = se.get_order();
   int total_num_coeffs = sea_->get_total_num_coeffs(order_);
-  const ArrayList < int > *upper_mapping_index = 
+  const ArrayList<short int> *upper_mapping_index = 
     sea_->get_upper_mapping_index();
   Vector new_coeffs;
   new_coeffs.Alias(se.get_coeffs());
@@ -309,7 +309,7 @@ void LocalExpansion<TKernelAux>::TranslateToLocal(LocalExpansion &se) {
   int dim = sea_->get_dimension();
 
   // temporary variable
-  ArrayList<int> tmp_storage;
+  ArrayList<short int> tmp_storage;
   tmp_storage.Init(dim);
 
   // sqrt two times bandwidth
@@ -335,8 +335,9 @@ void LocalExpansion<TKernelAux>::TranslateToLocal(LocalExpansion &se) {
   // do the actual translation
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
-    const ArrayList<int> &alpha_mapping = sea_->get_multiindex(j);
-    const ArrayList<int> &upper_mappings_for_alpha = upper_mapping_index[j];
+    const ArrayList<short int> &alpha_mapping = sea_->get_multiindex(j);
+    const ArrayList<short int> &upper_mappings_for_alpha = 
+      upper_mapping_index[j];
     double pos_coeffs = 0;
     double neg_coeffs = 0;
 
@@ -346,7 +347,7 @@ void LocalExpansion<TKernelAux>::TranslateToLocal(LocalExpansion &se) {
 	break;
       }
 
-      const ArrayList<int> &beta_mapping = 
+      const ArrayList<short int> &beta_mapping = 
 	sea_->get_multiindex(upper_mappings_for_alpha[k]);
       int flag = 0;
       double diff1 = 1.0;

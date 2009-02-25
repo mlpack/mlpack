@@ -19,13 +19,16 @@ class FourierSeriesExpansionAux {
 
   int max_order_;
 
-  ArrayList<int> list_total_num_coeffs_;
+  double integral_truncation_limit_;
 
-  ArrayList< ArrayList<int> > multiindex_mapping_;
+  ArrayList<short int> list_total_num_coeffs_;
+
+  ArrayList< ArrayList<short int> > multiindex_mapping_;
 
   OT_DEF_BASIC(FourierSeriesExpansionAux) {
     OT_MY_OBJECT(dim_);
     OT_MY_OBJECT(max_order_);
+    OT_MY_OBJECT(integral_truncation_limit_);
     OT_MY_OBJECT(list_total_num_coeffs_);
     OT_MY_OBJECT(multiindex_mapping_);
   }
@@ -42,15 +45,23 @@ class FourierSeriesExpansionAux {
     return list_total_num_coeffs_[max_order_]; 
   }
 
+  double integral_truncation_limit() const {
+    return integral_truncation_limit_;
+  }
+
   int get_max_order() const {
     return max_order_;
   }
 
-  const ArrayList< int > & get_multiindex(int pos) const {
+  void set_integral_truncation_limit(double integral_truncation_limit_in) {
+    integral_truncation_limit_ = integral_truncation_limit_in;
+  }
+
+  const ArrayList< short int > & get_multiindex(int pos) const {
     return multiindex_mapping_[pos];
   }
 
-  const ArrayList< int > * get_multiindex_mapping() const {
+  const ArrayList< short int > * get_multiindex_mapping() const {
     return multiindex_mapping_.begin();
   }
 
@@ -59,7 +70,7 @@ class FourierSeriesExpansionAux {
   /**
    * Computes the position of the given multiindex
    */
-  int ComputeMultiindexPosition(const ArrayList<int> &multiindex) const {
+  int ComputeMultiindexPosition(const ArrayList<short int> &multiindex) const {
     int index = 0;
     
     // using Horner's rule
@@ -158,6 +169,92 @@ class FourierSeriesExpansionAux {
       fprintf(stream, ") ");
     }
     fprintf(stream, "\n");
+  }
+
+  /** @brief The common translation operator used for far-to-far,
+   *         far-to-local, and local-to-local translation.
+   */
+  template<typename SourceExpansion, typename DestinationExpansion>
+  void TranslationOperator
+  (const SourceExpansion &source_expansion,
+   DestinationExpansion &destination_expansion, int truncation_order) const {
+    
+    // Get the coefficients to be translated and its center of
+    // expansion.
+    typedef typename SourceExpansion::data_type T;
+    const GenVector<T> &coeffs_to_be_translated = 
+      source_expansion.get_coeffs();    
+    const GenVector<T> &source_center = *(source_expansion.get_center());
+    const GenVector<T> &destination_center = 
+      *(destination_expansion.get_center());
+    GenVector<T> &coeffs_destination = destination_expansion.get_coeffs();
+    
+    // Loop over each coefficient.
+    index_t num_coefficients = list_total_num_coeffs_[truncation_order];
+    for(index_t i = 0; i < num_coefficients; i++) {
+      
+      // Get the current multi-index.
+      const ArrayList<short int> &mapping = get_multiindex(i);
+      
+      // Dot product between the multiindex and the center
+      // differences.
+      double dot_product = 0;
+      for(index_t j = 0; j < mapping.size(); j++) {
+	dot_product += mapping[j] * (destination_center[j] - source_center[j]);
+      }
+      
+      // For each coefficient, scale it and add to the current one.
+      double trig_argument = integral_truncation_limit() * dot_product /
+	(get_max_order() * 
+	 sqrt(2 * (source_expansion.kernel_aux_)->bandwidth_sq()));
+      std::complex<T> factor(cos(trig_argument), sin(trig_argument));
+      std::complex<T> new_coefficient = coeffs_to_be_translated.get(i) * 
+	factor;
+      
+      coeffs_destination.set(i, new_coefficient);
+    }    
+  }
+
+  /** @brief The common series expansion evaluation for far-field and
+   *         local expansion based on Fourier expansion.
+   */
+  template<typename TExpansion>
+  typename TExpansion::data_type EvaluationOperator
+  (const TExpansion &expansion, const typename TExpansion::data_type *x_q, 
+   int order) const {
+    
+    typedef typename TExpansion::data_type T;
+    typename TExpansion::data_type result = 0;
+    index_t num_coefficients = list_total_num_coeffs_[order];
+
+    // The coefficients to be evaluated.
+    const GenVector<typename TExpansion::data_type> &coeffs = 
+      expansion.get_coeffs();
+    const GenVector<typename TExpansion::data_type> &source_center =
+      *(expansion.get_center());
+    
+    for(index_t i = 0; i < num_coefficients; i++) {
+      
+      // Get the current multi-index.
+      const ArrayList<short int> &mapping = get_multiindex(i);
+      
+      // Dot product between the multiindex and the center
+      // differences.
+      double dot_product = 0;
+      for(index_t j = 0; j < mapping.size(); j++) {
+	dot_product += mapping[j] * (x_q[j] - source_center[j]);
+      }
+
+      // For each coefficient, scale it and add to the current one.
+      double trig_argument = integral_truncation_limit() * dot_product /
+	(get_max_order() * 
+	 sqrt(2 * (expansion.kernel_aux)->bandwidth_sq()));
+      std::complex<T> factor(cos(trig_argument), sin(trig_argument));
+      std::complex<T> new_coefficient = coeffs.get(i) * factor;
+
+      result += new_coefficient.real();
+    }
+    return result;
   }
 
 };

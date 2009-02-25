@@ -94,7 +94,7 @@ class GaussianKernelMultAux {
   }
 
   double ComputePartialDerivative(const Matrix &derivative_map,
-				  const ArrayList<int> &mapping) const {
+				  const ArrayList<short int> &mapping) const {
     
     double partial_derivative = 1.0;
     
@@ -350,7 +350,7 @@ class GaussianKernelAux {
   }
 
   double ComputePartialDerivative(const Matrix &derivative_map,
-				  const ArrayList<int> &mapping) const {
+				  const ArrayList<short int> &mapping) const {
     
     double partial_derivative = 1.0;
     
@@ -624,7 +624,7 @@ class EpanKernelAux {
   }
 
   double ComputePartialDerivative(const Matrix &derivative_map,
-				  const ArrayList<int> &mapping) const {
+				  const ArrayList<short int> &mapping) const {
 
     return derivative_map.get(sea_.ComputeMultiindexPosition(mapping), 0);
   }
