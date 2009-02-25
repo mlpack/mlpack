@@ -30,12 +30,14 @@ run_script_file = open(run_script_filename, 'w')
 
 run_script_file.write('#!/bin/csh\n\n')
 
+mmf_path = '../../tqlong/mmf/'
+
 for seq_num in range(0, num_seqs):
     numstring = string.zfill(seq_num, 3)
     cur_seq_filename = 'data/seq_' + numstring + '.out'
     mmf_profile_filename='profiles/est_mmf_pro_' + numstring + '.dis'
     bw_profile_filename='profiles/est_bw_pro_' + numstring + '.dis'
-    run_script_file.write('./mmf3 --seqfile=' + cur_seq_filename + ' --numstate=3 --numsymbol=2 --profile=' + mmf_profile_filename + ' --tolerance=1e-5\n')
-    run_script_file.write('./train --type=discrete --algorithm=baumwelch --seqfile=' + cur_seq_filename + ' --guess=' + mmf_profile_filename + ' --profile=' + bw_profile_filename + ' --maxiter=1000 --tolerance=1e-5\n\n')
+    run_script_file.write(mmf_path + './mmf3 --seqfile=' + cur_seq_filename + ' --numstate=3 --numsymbol=2 --profile=' + mmf_profile_filename + ' --tolerance=1e-5\n')
+    run_script_file.write(mmf_path + './train --type=discrete --algorithm=baumwelch --seqfile=' + cur_seq_filename + ' --guess=' + mmf_profile_filename + ' --profile=' + bw_profile_filename + ' --maxiter=1000 --tolerance=1e-5\n\n')
 
 run_script_file.close()
