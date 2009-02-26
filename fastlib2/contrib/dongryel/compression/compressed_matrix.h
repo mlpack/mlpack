@@ -105,14 +105,14 @@ class CompressedVector {
 				  block_size * sizeof(T));
       
       if(success_flag == Z_MEM_ERROR) {
-	NOTIFY("There was not enough memory for compressing.");
+	//NOTIFY("There was not enough memory for compressing.");
       }
       else if(success_flag == Z_BUF_ERROR) {
-	NOTIFY("There was not enough room in the buffer.");
+	//NOTIFY("There was not enough room in the buffer.");
       }
       else {
-	NOTIFY("Compression is a success: %d bytes into %d bytes!",
-	       uncompressed_block_size, (int) remaining_buffer_size);
+	//NOTIFY("Compression is a success: %d bytes into %d bytes!",
+	//     uncompressed_block_size, (int) remaining_buffer_size);
       }
       index_offsets_[i] = total_bytes_chewed;
       total_bytes_chewed += remaining_buffer_size;
@@ -137,7 +137,7 @@ class CompressedVector {
   /**
    * Gets the i'th element of this vector.
    */
-  T operator [] (index_t i) const {
+  T operator [] (index_t i) {
     DEBUG_BOUNDS(i, length_);
 
     // Compute the block that contains this element.
@@ -151,7 +151,7 @@ class CompressedVector {
 	(index_offsets_[block_index + 1] - index_offsets_[block_index]);
       uncompress((Bytef *) decompressed_cache_, &num_bytes_written,
 		 ptr_ + index_offsets_[block_index], num_bytes_to_decompress);
-      block_index = current_decompressed_block_;
+      current_decompressed_block_ = block_index;
     }
     
     return decompressed_cache_[i % block_size];
