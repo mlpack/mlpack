@@ -4,18 +4,35 @@
 int main(int argc, char *argv[]) {
   fx_init(argc, argv, NULL);
 
-  CompressedVector<double> cv;
+  CompressedVector<double, 100> cv;
   Vector v;
-  index_t length_of_vector = 3000;
+  index_t length_of_vector = 30000;
   v.Init(length_of_vector);
   for(index_t i = 0; i < length_of_vector; i++) {
     v[i] = i;
   }
+
+  // Copy the vector to the compressed one.
   cv.Copy(v);
 
+  // Measure the time for the compressed vector.
+  fx_timer_start(fx_root, "compressed_vector_dot_product");
+  double dot_product = 0;
   for(index_t i = 0; i < length_of_vector; i++) {
-    printf("I got %g\n", cv[i]);
+    dot_product += math::Sqr(cv[i]);
   }
+  fx_timer_stop(fx_root, "compressed_vector_dot_product");
+  printf("Dot product: %g\n", dot_product);
+
+  // Measure the time for the uncompressed vector.
+  fx_timer_start(fx_root, "uncompressed_vector_dot_product");
+  dot_product = 0;
+  for(index_t i = 0; i < length_of_vector; i++) {
+    dot_product += math::Sqr(v[i]);
+  }
+  fx_timer_stop(fx_root, "uncompressed_vector_dot_product");
+  printf("Dot product: %g\n", dot_product);
+
   fx_done(fx_root);
   return 0;
 }

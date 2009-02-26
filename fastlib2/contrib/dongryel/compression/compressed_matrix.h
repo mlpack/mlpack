@@ -30,9 +30,9 @@ class CompressedVector {
   /** @brief The offsets required to access each block of elements in
    *         the compressed sream.
    */
-  short int *index_offsets_;
+  int *index_offsets_;
 
-  short int num_blocks_;
+  int num_blocks_;
 
   /** The number of elements in the vector. */
   index_t length_;
@@ -85,7 +85,7 @@ class CompressedVector {
       ceilf(((double)uncompressed_vector.length()) / ((double) block_size));
 
     // Allocate the index offset array.
-    index_offsets_ = mem::Alloc<short int>(num_blocks_);
+    index_offsets_ = mem::Alloc<int>(num_blocks_);
 
     // Allocate the cache for the decompressed block of elements.
     decompressed_cache_ = mem::Alloc<T>(block_size);
@@ -124,6 +124,9 @@ class CompressedVector {
     memcpy(ptr_, tmp_buffer, total_bytes_chewed);
     internal_length_ = total_bytes_chewed;
     mem::Free(tmp_buffer);    
+
+    // Set the number of elements.
+    length_ = uncompressed_vector.length();
   }
 
   /** The number of elements in this vector. */
