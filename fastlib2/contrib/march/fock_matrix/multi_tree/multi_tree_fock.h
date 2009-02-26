@@ -1,6 +1,9 @@
 #ifndef MULTI_TREE_FOCK_H
 #define MULTI_TREE_FOCK_H
 
+#include "fastlib/fastlib.h"
+#include "square_fock_tree.h"
+
 const fx_entry_doc multi_tree_fock_entries[] = {
   {"epsilon", FX_PARAM, FX_DOUBLE, NULL, 
    "The relative error cutoff.  Default:0.01\n"},
@@ -14,12 +17,12 @@ const fx_entry_doc multi_tree_fock_entries[] = {
   {"N", FX_RESULT, FX_INT, NULL, 
   "The total number of basis functions, as in the dimension of the Fock matrix.\n"},
   {"leaf_size", FX_PARAM, FX_INT, NULL, 
-    "The size of the leaves in the tree.  Default: 10\n"}
+    "The size of the leaves in the tree.  Default: 10\n"},
   {"epsilon_split", FX_PARAM, FX_DOUBLE, NULL, 
     "Controls the allocation of error between the Coulomb and exchange \n"
     "computations.  A setting of 1 allocates all the error to the Coulomb side.\n"
-    "Only values in the interval (0,1) are permitted.  Default: 0.5\n"}
-  FX_ENTRY_DOC_DONE;
+    "Only values in the interval (0,1) are permitted.  Default: 0.5\n"},
+  FX_ENTRY_DOC_DONE
 };
 
 
@@ -37,12 +40,12 @@ private:
     // The node's index in a pre-order depth-first traversal of the tree
     index_t node_index_;
     
-    // I might need some notion of bandwidths
     double min_bandwidth_;
     double max_bandwidth_;
     
     index_t height_;
     
+    // I don't think these matter in single nodes
     double density_upper_bound_;
     double density_lower_bound_;
     
@@ -64,10 +67,13 @@ private:
     } // Init (leaves)
     
     void Init(const Matrix& matrix, index_t start, index_t count, 
-              const IntegralStat& left, const IntegralStat& right) {
+              const SingleNodeStat& left, const SingleNodeStat& right) {
       
       Init();
       height_ = max(left.height(), right.height()) + 1;
+      
+      min_bandwidth_ = min(left.min_bandwidth(), right.min_bandwidth());
+      max_bandwidth_ = max(left.max_bandwidth(), right.max_bandwidth());
       
     } // Init (non-leaves)
     
@@ -132,8 +138,7 @@ private:
   // I should also consider something better than bounding boxes
   typedef BinarySpaceTree<DHrectBound<2>, Matrix, SingleNodeStat> FockTree; 
   
-  typedef SquareTree<IntegralTree, IntegralTree, SquareTreeStat> 
-    SquareFockTree;
+  typedef SquareFockTree<FockTree> SquareTree;
   
  private:
     
@@ -141,8 +146,10 @@ private:
   FockTree* tree_;
   
   // the square tree
-  SquareFockTree* square_tree_;
+  SquareTree* square_tree_;
   
+  // Centers of the basis functions
+  // assuming one entry per function
   Matrix centers_;
   
   // The fx module
@@ -157,6 +164,10 @@ private:
   // The number of times an approximation is invoked
   int coulomb_approximations_;
   int exchange_approximations_;
+  
+  index_t num_absolute_prunes_;
+  index_t num_relative_prunes_;
+  
   
   // The number of times the base case is called
   int coulomb_base_cases_;
@@ -175,6 +186,7 @@ private:
   // the amount of error allocated to the exchange matrix
   double epsilon_exchange_;
   
+  // The absolute analogs of the above 
   double epsilon_absolute_;
   double epsilon_coulomb_absolute_;
   double epsilon_exchange_absolute_;
@@ -184,7 +196,7 @@ private:
   double hybrid_cutoff_;
   
   // The return values are stored here
-  // total_integrals_.ref(i, j) is the fock matrix entry i, j
+  // fock_matrix__.ref(i, j) is the fock matrix entry i, j
   Matrix fock_matrix_;
   
   // The exchange contribution
@@ -193,10 +205,11 @@ private:
   // The coulomb contribution
   Matrix coulomb_matrix_;
   
-  // The density matrix, will be input for now
+  // The density matrix
   Matrix density_matrix_;
   
   // The total number of basis functions
+  // this is the dimensionality of the density matrix
   index_t number_of_basis_functions_;
   
   // what is this for?
@@ -208,8 +221,6 @@ private:
   // Size of leaves in the tree
   int leaf_size_;
   
-  index_t num_absolute_prunes_;
-  index_t num_relative_prunes_;
   
   //////////////// Functions /////////////////////////////
   
@@ -217,7 +228,7 @@ private:
    * Determines if the Coulomb interaction between the given square nodes can 
    * currently be approximated.  If so, then *approx_val holds the estimate
    */
-  bool CanApproximateCoulomb_(SquareFockTree* mu_nu, SquareFockTree* rho_sigma, 
+  bool CanApproximateCoulomb_(SquareTree* mu_nu, SquareTree* rho_sigma, 
                               double* approx_val);
   
   /**
@@ -226,14 +237,20 @@ private:
    */
   bool CanApproximateExchange_(SquareFockTree* mu_nu, SquareFockTree* rho_sigma, 
                                double* approx_val);
-                               
+             
+ /**
+  * Base cases
+  */                  
   void ComputeCoulombBaseCase_(SquareFockTree* mu_nu, 
                                SquareFockTree* rho_sigma);
 
   void ComputeExchangeBaseCase_(SquareFockTree* mu_nu, 
                                 SquareFockTree* rho_sigma);
 
-  
+
+  /**
+   * Recursive calls
+   */  
   void ComputeCoulombRecursion_(SquareIntegralTree* query, 
                                 SquareIntegralTree* ref);
   
@@ -244,17 +261,17 @@ private:
   
  public:
  
-  void Init(const Matrix& centers_in, fx_module* mod, const Vector& exp_in
-            const Vector& momenta_in) {
+  void Init(const Matrix& centers_in, const Matrix& exp_in
+            const Matrix& momenta_in, const Matrix& density_in, 
+            fx_module* mod) {
   
     // Needs to be copied because it will be permuted 
     centers_.Copy(centers_in);
     
     module_ = mod;
     
-    exponents_.Copy(exp_in);
-    
-    momenta_.Copy(momenta_in);
+    exponents_.Copy(exp_in.ptr(), centers_.n_cols());
+    momenta_.Copy(mom_in.ptr(), centers_.n_cols());
     
     epsilon_ = fx_param_double(module_, "epsilon", 0.01);
     
@@ -318,10 +335,9 @@ private:
   
   } // Init()
   
+  // Should see how CFMM code unpermutes and use that
   void GetPermutation(ArrayList<index_t>* perm) {
-  
     perm->Copy(old_from_new_centers_);
-  
   } // GetPermutation()
   
   void ComputeFockMatrix();

@@ -1,9 +1,9 @@
 #include "fastlib/fastlib.h"
-#include "contrib/march/fock_matrix/cfmm/cfmm_coulomb.h"
-#include "contrib/march/fock_matrix/multi_tree/multi_tree_fock.h"
+//#include "contrib/march/fock_matrix/multi_tree/multi_tree_fock.h"
 #include "contrib/march/fock_matrix/naive/naive_fock_matrix.h"
 #include "contrib/march/fock_matrix/prescreening/schwartz_prescreening.h"
 #include "contrib/march/fock_matrix/link/link.h"
+#include "contrib/march/fock_matrix/cfmm/cfmm_coulomb.h"
 
 
 const fx_entry_doc fock_matrix_main_entries[] = {
@@ -15,16 +15,35 @@ const fx_entry_doc fock_matrix_main_entries[] = {
 {"density", FX_PARAM, FX_STR, NULL, 
   "A file containing the density matrix.  If it is not provided, an all-ones\n"
   "matrix is assumed.\n"},
-{"threshold", FX_PARAM, FX_DOUBLE, NULL,
-  "The threshold for cutting off a shell-pair.  Default: 10e-10\n"},
-/*{"centers_out", FX_PARAM, FX_STR, NULL,
-  "The file to write the charge centers to.  Default: centers.csv \n"},
-{"exponents_out", FX_PARAM, FX_STR, NULL, 
-  "The file to write the charge exponents to.  Default: exp.csv\n"}*/
+{"momenta", FX_PARAM, FX_STR, NULL, 
+"A file containing the momenta.  If not specified, then all functions are\n"
+"assumed to be s-type.\n"},
+{"do_cfmm", FX_PARAM, FX_STR, NULL,
+  "Compute the CFMM Coulomb matrix.  The value is irrelevant.\n"},
+{"do_link", FX_PARAM, FX_STR, NULL,
+  "Compute the LinK exchange matrix.  The value is irrelevant.\n"},
+{"do_prescreening", FX_PARAM, FX_STR, NULL,
+  "Compute the Fock matrix with Scwartz prescreening.  The value is irrelevant.\n"},
+{"do_naive", FX_PARAM, FX_STR, NULL,
+  "Compute the Fock matrix naively.  The value is irrelevant.\n"},
+{"do_multi", FX_PARAM, FX_STR, NULL,
+  "Compute the multi-tree Fock matrix.  The value is irrelevant.\n"},
+{"print_cfmm", FX_PARAM, FX_STR, NULL,
+  "Print the CFMM Coulomb matrix.  The value is irrelevant.\n"},
+{"print_link", FX_PARAM, FX_STR, NULL,
+  "Print the LinK exchange matrix.  The value is irrelevant.\n"},
+{"print_prescreening", FX_PARAM, FX_STR, NULL,
+  "Print the Fock matrix with Scwartz prescreening.  The value is irrelevant.\n"},
+{"print_naive", FX_PARAM, FX_STR, NULL,
+  "Print the Fock matrix naively.  The value is irrelevant.\n"},
+{"print_multi", FX_PARAM, FX_STR, NULL,
+  "Print the multi-tree Fock matrix.  The value is irrelevant.\n"},  
 };
 
+
+
 const fx_module_doc fock_matrix_main_doc = {
-  cfmm_screening_entries, NULL, 
+  fock_matrix_main_entries, NULL, 
   "Runs and compares different fock matrix construction methods.\n"
 };
 
@@ -48,16 +67,12 @@ int main(int argc, char* argv[]) {
   
   Matrix density;
   if (fx_param_exists(root_mod, "density")) {
-    
     const char* density_file = fx_param_str_req(root_mod, "density");
-    data::Load(density_file, &root_mod);
-    
+    data::Load(density_file, &density);
   }
   else {
-    
     density.Init(centers.n_cols(), centers.n_cols());
     density.SetAll(1.0);
-    
   }
   
   if ((density.n_cols() != centers.n_cols()) || 
@@ -68,6 +83,7 @@ int main(int argc, char* argv[]) {
   Matrix momenta;
   if (fx_param_exists(root_mod, "momenta")) {
     const char* momenta_file = fx_param_str_req(root_mod, "momenta");
+    data::Load(momenta_file, &momenta);
   }
   else {
     momenta.Init(1, centers.n_cols());
@@ -77,8 +93,18 @@ int main(int argc, char* argv[]) {
   
   if (fx_param_exists(root_mod, "do_cfmm")) {
   
-    if (fx_param_exists(root_mod, "print_cfmm")) {
+    Matrix cfmm_coulomb;
     
+    fx_module* cfmm_mod = fx_submodule(root_mod, "cfmm");
+    
+    CFMMCoulomb coulomb_alg;
+    
+    coulomb_alg.Init(centers, exp_mat, momenta, density, cfmm_mod);
+    coulomb_alg.ComputeCoulomb();
+    coulomb_alg.Output(&cfmm_coulomb);
+  
+    if (fx_param_exists(root_mod, "print_cfmm")) {
+      cfmm_coulomb.PrintDebug("CFMM J");
     }
   
   } // do_cfmm
@@ -86,7 +112,18 @@ int main(int argc, char* argv[]) {
 
   if (fx_param_exists(root_mod, "do_link")) {
     
+    Matrix link_exchange;
+    
+    fx_module* link_mod = fx_submodule(root_mod, "link");
+    
+    Link link_alg;
+    link_alg.Init(centers, exp_mat, momenta, density, link_mod);
+    link_alg.ComputeExchangeMatrix();
+    link_alg.OutputExchangeMatrix(&link_exchange);
+    
     if (fx_param_exists(root_mod, "print_link")) {
+      
+      link_exchange.PrintDebug("LinK K");
       
     }
     
@@ -94,7 +131,18 @@ int main(int argc, char* argv[]) {
 
   if (fx_param_exists(root_mod, "do_prescreening")) {
     
+    Matrix prescreening_fock;
+    
+    fx_module* prescreening_mod = fx_submodule(root_mod, "prescreening");
+    
+    SchwartzPrescreening prescreen_alg;
+    prescreen_alg.Init(centers, exp_mat, momenta, density, prescreening_mod);
+    
+    prescreen_alg.ComputeFockMatrix(&prescreening_fock);
+    
     if (fx_param_exists(root_mod, "print_prescreening")) {
+      
+      prescreening_fock.PrintDebug("Schwartz Prescreening F");
       
     }
     
@@ -102,22 +150,49 @@ int main(int argc, char* argv[]) {
   
   if (fx_param_exists(root_mod, "do_naive")) {
     
+    Matrix naive_fock;
+    Matrix naive_coulomb;
+    Matrix naive_exchange;
+    
+    fx_module* naive_mod = fx_submodule(root_mod, "naive");
+    
+    NaiveFockMatrix naive_alg;
+    
+    naive_alg.Init(centers, exp_mat, momenta, density, naive_mod);
+    naive_alg.ComputeFock();
+    naive_alg.OutputFock(&naive_fock, &naive_coulomb, &naive_exchange);
+    
     if (fx_param_exists(root_mod, "print_naive")) {
+      
+      naive_fock.PrintDebug("Naive F");
+      naive_coulomb.PrintDebug("Naive J");
+      naive_exchange.PrintDebug("Naive K");
       
     }
     
   } // do_naive
   
+/*
   if (fx_param_exists(root_mod, "do_multi")) {
+    
+    Matrix multi_fock;
+    
+    fx_module* multi_mod = fx_submodule(root_mod, "multi");
+    
+    MultiTreeFock multi_alg;
+    
+    multi_alg.Init(centers, exp_mat, momenta, density, multi_mod);
+    multi_alg.ComputeFockMatrix();
+    multi_alg.Output(&multi_fock);
     
     if (fx_param_exists(root_mod, "print_multi")) {
       
     }
     
   } // do_multi
+*/
   
-  
-  
+  // Do comparison here?
   
 
   return 0;
