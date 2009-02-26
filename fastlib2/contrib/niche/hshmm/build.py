@@ -47,3 +47,10 @@ binrule(
     headers = [],
     deplibs = ["fastlib:fastlib"]
 )
+
+binrule(
+    name = "hmm_testing",
+    sources = ["hmm_testing.cc","../../tqlong/mmf/mmf3.cc"],
+    headers = [],
+    deplibs = ["fastlib:fastlib","contrib/tqlong/mmf:hmm"]
+)
