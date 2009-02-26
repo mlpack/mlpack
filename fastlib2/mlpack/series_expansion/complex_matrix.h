@@ -254,6 +254,21 @@ class ComplexVector {
     ptr_[2 * i + 1] = new_value.imag();
   }
 
+  /**
+   * Prints to a stream as a debug message.
+   *
+   * @param name a name that will be printed with the vector
+   * @param stream the stream to print to, such as stderr (default) or stdout
+   */
+  void PrintDebug(const char *name = "", FILE *stream = stderr) const {
+    fprintf(stream, "----- VECTOR %s ------\n", name);
+    for (index_t i = 0; i < length(); i++) {
+      std::complex<T> number = get(i);
+      fprintf(stream, "%g + %g * i", number.real(), number.imag());
+    }
+    fprintf(stream, "\n");
+  }
+
  private:
   void AssertUninitialized_() const {
     DEBUG_ASSERT_MSG(length_ == BIG_BAD_NUMBER, "Cannot re-init vectors.");

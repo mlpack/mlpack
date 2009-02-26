@@ -2,6 +2,8 @@
 #include "fastlib/base/test.h"
 #include "fourier_expansion.h"
 #include "fourier_series_expansion_aux.h"
+#include "complex_matrix.h"
+#include "fourier_kernel_aux.h"
 
 class SeriesExpansionTest {
 
@@ -14,10 +16,39 @@ class SeriesExpansionTest {
   void TestFourierExpansion() {
     
     NOTIFY("[*] TestFourierExpansion");
-    FourierSeriesExpansionAux<double> series_aux;
-    int order = 2;
+    GaussianKernelFourierAux<double> kernel_aux;
+    int order = 3;
     int dim = 3;
-    series_aux.Init(order, dim);    
+    double bandwidth = 0.1;
+    kernel_aux.Init(bandwidth, order, dim);
+
+    // Create an expansion from a random synthetic dataset.
+    Matrix random_dataset;
+    Vector weights;
+    random_dataset.Init(20, 3);
+    Vector center;
+    center.Init(3);
+    center.SetZero();
+    weights.Init(20);
+    for(index_t j = 0; j < 3; j++) {
+      for(index_t i = 0; i < 20; i++) {
+	random_dataset.set(i, j, math::Random(0, i));
+      }
+    }
+    for(index_t i = 0; i < 20; i++) {
+      la::AddTo(center.length(), random_dataset.GetColumnPtr(i), center.ptr());
+    }
+    la::Scale(center.length(), 1.0 / ((double) 20), center.ptr());
+    
+    weights.SetAll(1.0);
+    FourierExpansion<GaussianKernelFourierAux<double> > expansion;
+    expansion.Init(center, kernel_aux);
+    
+    expansion.AccumulateCoeffs(random_dataset, weights, 0, 20, 3);
+    
+    // Retrieve the coefficients and print them out.
+    const ComplexVector<double> &coeffs = expansion.get_coeffs();
+    coeffs.PrintDebug();
   }
 
   void TestFourierExpansionMapping() {
