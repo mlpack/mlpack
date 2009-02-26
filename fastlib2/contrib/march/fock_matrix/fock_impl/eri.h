@@ -51,6 +51,14 @@ namespace eri {
                                
   double ComputeShellIntegrals(ShellPair& AB_shell, 
                                ShellPair& CD_shell);
+                          
+ /**
+  * Used for computing bounds in the multi-tree code
+  * Should eventually take a momentum argument
+  */
+  double DistanceIntegral(double alpha_A, double alpha_B, double alpha_C, 
+                          double alpha_D, double AB_dist, double CD_dist, 
+                          double four_way_dist);
                                
   /**
    * Computes the Schwartz factor Q_{i j} = (i j|i j)^1/2

@@ -73,7 +73,6 @@ class CFMMCoulomb {
     density_.Copy(density);
     
     
-    
     // This only works for s and p type functions
     num_funs_ = centers_.n_cols() + (index_t)2*la::Dot(momenta_, momenta_);
     
@@ -83,11 +82,12 @@ class CFMMCoulomb {
     
     mod_ = mod_in;
     
+    // set charge_thresh_ from the module
+    charge_thresh_ = fx_param_double(mod_, "charge_thresh", 10e-10);
+    
     
     
   } // Init()
-  
-  
   
   void ComputeCoulomb();
   
@@ -95,6 +95,7 @@ class CFMMCoulomb {
   void Output(Matrix* coulomb_out);
   
 }; // class CFMMCoulomb
+
 
 
 #endif

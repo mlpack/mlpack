@@ -9,7 +9,7 @@
 }
 
 
-void Link::ComputeFockMatrix() {
+void Link::ComputeExchangeMatrix() {
 
   // Find "significant" bra and ket shell pairs
   // These need to be ordered in terms of their Schwartz estimates

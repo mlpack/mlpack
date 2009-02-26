@@ -74,21 +74,27 @@ class Link {
      */
     static bool Prescreening_Sort_(BasisShell* ShellA, BasisShell* ShellB);
   
-  void Init(fx_module* mod, double thresh, const Matrix& centers, 
-            const Vector& exp, const Vector& moment, const Matrix& density_in) {
+  void Init(const Matrix& centers, const Matrix& exp, const Matrix& moment,  
+            const Matrix& density_in, fx_module* mod) {
   
     module_ = mod;
     
-    threshold_ = thresh;
+    threshold_ = fx_param_double(mod, "thresh", 10e-10);
     
     basis_centers_.Copy(centers);
-    basis_exponents_.Copy(exp);
-    basis_momenta_.Copy(moment);
+    
+    DEBUG_ASSERT(exp.n_cols() == moment.n_cols());
+    DEBUG_ASSERT(exp.n_cols() == basis_centers_.n_cols());
+    
+    basis_exponents_.Copy(exp.ptr(), basis_centers_.n_cols());
+    basis_momenta_.Copy(moment.ptr(), basis_centers_.n_cols());
+    
     density_mat_.Copy(density_in);
     
     num_shells_ = basis_centers_.n_cols();
     shell_list_.Init(num_shells_);
     
+    // Change to use the code in eri
     // Fill in shell_list_
     for (index_t i = 0; i < num_shells_; i++) {
     
@@ -108,7 +114,7 @@ class Link {
   
   }
     
-  void ComputeFockMatrix();
+  void ComputeExchangeMatrix();
 
   void OutputExchangeMatrix(Matrix* exc_out);
 

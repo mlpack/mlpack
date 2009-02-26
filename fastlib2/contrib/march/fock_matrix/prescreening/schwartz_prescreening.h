@@ -29,22 +29,23 @@ class SchwartzPrescreening {
   
   ~SchwartzPrescreening() {}
   
+  // Change this to match the format of the others
   void ComputeFockMatrix(Matrix* fock_out);
   
-  void Init(const Matrix& cent, const Vector& exp, const Vector& mom, 
-            double thresh, const Matrix& density_in, const index_t mat_size_in, 
-            fx_module* mod) {
+  void Init(const Matrix& cent, const Matrix& exp, const Matrix& mom, 
+            const Matrix& density_in, fx_module* mod) {
   
     basis_centers_.Copy(cent);
-    basis_exponents_.Copy(exp);
-    basis_momenta_.Copy(mom);
     
-    threshold_ = thresh;
+    basis_exponents_.Copy(exp.ptr(), basis_centers_.n_cols());
+    basis_momenta_.Copy(mom.ptr(), basis_centers_.n_cols());
     
     module_ = mod;
 
+    threshold_ = fx_param_double(module_, "thresh", 10e-10);
+    
     shell_pair_threshold_ = fx_param_double(module_, "shell_pair_threshold", 
-                                            0.0);
+                                            10e-10);
     
     // Set up shells here
     // This is correct even for higher momenta
@@ -60,8 +61,11 @@ class SchwartzPrescreening {
     
     num_prunes_ = 0;
     
-    // This won't be correct when I add p-type
-    matrix_size_ = mat_size_in;
+    // Change this to take it as input
+    density_matrix_.Copy(density_in);
+    
+    // Is this correct?
+    matrix_size_ = density_matrix_.n_cols();
     
     coulomb_matrix_.Init(matrix_size_, matrix_size_);
     coulomb_matrix_.SetZero();
@@ -70,8 +74,6 @@ class SchwartzPrescreening {
 
     //fock_matrix_.Init(matrix_size_, matrix_size_);
     
-    // Change this to take it as input
-    density_matrix_.Copy(density_in);
     
     for (index_t i = 0; i < num_shells_; i++) {
     
