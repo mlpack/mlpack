@@ -66,7 +66,7 @@ class FourierExpansion {
     return &center_; 
   }
 
-  const ComplexVector<T> *get_center() const { 
+  const GenVector<T> *get_center() const { 
     return &center_; 
   }
 

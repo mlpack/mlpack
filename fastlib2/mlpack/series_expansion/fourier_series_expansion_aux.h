@@ -115,6 +115,10 @@ class FourierSeriesExpansionAux {
    */
   void Init(int max_order, int dim) {
 
+    // Set the integral truncation limit. This perhaps should be set
+    // to a user-defined level.
+    integral_truncation_limit_ = 10;
+
     // initialize max order and dimension
     dim_ = dim;
     max_order_ = max_order;
@@ -161,8 +165,9 @@ class FourierSeriesExpansionAux {
 
     // Now loop over each multi-index, and precompute the constants.
     precomputed_constants_.Init(multiindex_mapping_.size());
-    final_scaling_factor_ = pow(integral_truncation_limit_ / 
-				(2 * max_order_ * sqrt(2.0 * acos(0))), dim_);
+    final_scaling_factor_ = 
+      pow(integral_truncation_limit_ / 
+	  (2.0 * max_order_ * sqrt(2.0 * acos(0))), dim_);
     for(index_t j = 0; j < multiindex_mapping_.size(); j++) {
       
       const ArrayList<short int> &mapping = multiindex_mapping_[j];
@@ -254,7 +259,7 @@ class FourierSeriesExpansionAux {
     index_t num_coefficients = list_total_num_coeffs_[order];
 
     // The coefficients to be evaluated.
-    const GenVector<typename TExpansion::data_type> &coeffs = 
+    const ComplexVector<typename TExpansion::data_type> &coeffs = 
       expansion.get_coeffs();
     const GenVector<typename TExpansion::data_type> &source_center =
       *(expansion.get_center());
@@ -274,7 +279,7 @@ class FourierSeriesExpansionAux {
       // For each coefficient, scale it and add to the current one.
       double trig_argument = integral_truncation_limit() * dot_product /
 	(get_max_order() * 
-	 sqrt(2 * (expansion.kernel_aux)->bandwidth_sq()));
+	 sqrt(2 * (expansion.ka_->kernel_.bandwidth_sq())));
       std::complex<T> factor(cos(trig_argument), sin(trig_argument));
       std::complex<T> new_coefficient = coeffs.get(i) * factor;
 

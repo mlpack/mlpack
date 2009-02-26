@@ -7,6 +7,25 @@
 
 class SeriesExpansionTest {
 
+ private:
+
+  template<typename TKernelAux>
+  double BaseCase_(const Vector &query_point, const Matrix &reference_set,
+		   const Vector &reference_weights,
+		   const TKernelAux &kernel_aux) {
+
+    double sum = 0.0;
+    
+    for(index_t i = 0; i < reference_set.n_cols(); i++) {
+      double squared_distance = 
+	la::DistanceSqEuclidean(reference_set.n_rows(), query_point.ptr(),
+				reference_set.GetColumnPtr(i));      
+      printf("Got distance: %g\n", squared_distance);
+      sum += kernel_aux.kernel_.EvalUnnormOnSq(squared_distance);
+    }
+    return sum;
+  }
+
  public:
 
   void Init(fx_module *module_in) {
@@ -19,19 +38,22 @@ class SeriesExpansionTest {
     GaussianKernelFourierAux<double> kernel_aux;
     int order = 3;
     int dim = 3;
-    double bandwidth = 0.1;
+    double bandwidth = 10;
     kernel_aux.Init(bandwidth, order, dim);
+
+    // Set the integral truncation limit manually.
+    kernel_aux.sea_.set_integral_truncation_limit(bandwidth * 3.0);
 
     // Create an expansion from a random synthetic dataset.
     Matrix random_dataset;
     Vector weights;
-    random_dataset.Init(20, 3);
+    random_dataset.Init(3, 20);
     Vector center;
     center.Init(3);
     center.SetZero();
     weights.Init(20);
-    for(index_t j = 0; j < 3; j++) {
-      for(index_t i = 0; i < 20; i++) {
+    for(index_t j = 0; j < 20; j++) {
+      for(index_t i = 0; i < 3; i++) {
 	random_dataset.set(i, j, math::Random(0, i));
       }
     }
@@ -40,6 +62,7 @@ class SeriesExpansionTest {
     }
     la::Scale(center.length(), 1.0 / ((double) 20), center.ptr());
     
+    center.PrintDebug();
     weights.SetAll(1.0);
     FourierExpansion<GaussianKernelFourierAux<double> > expansion;
     expansion.Init(center, kernel_aux);
@@ -49,6 +72,15 @@ class SeriesExpansionTest {
     // Retrieve the coefficients and print them out.
     const ComplexVector<double> &coeffs = expansion.get_coeffs();
     coeffs.PrintDebug();
+
+    // Evaluate the expansion, and compare against the naive.
+    Vector evaluation_point;
+    evaluation_point.Init(3);
+    evaluation_point.SetAll(1.0);
+    NOTIFY("Expansion evaluated to be: %g",
+	   expansion.EvaluateField(evaluation_point.ptr(), 3));
+    NOTIFY("Naive sum: %g", BaseCase_(evaluation_point, random_dataset,
+				      weights, kernel_aux));    
   }
 
   void TestFourierExpansionMapping() {
