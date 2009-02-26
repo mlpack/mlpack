@@ -38,7 +38,7 @@ class SeriesExpansionTest {
     GaussianKernelFourierAux<double> kernel_aux;
     int order = 3;
     int dim = 3;
-    double bandwidth = 10;
+    double bandwidth = 30;
     kernel_aux.Init(bandwidth, order, dim);
 
     // Set the integral truncation limit manually.
@@ -76,7 +76,7 @@ class SeriesExpansionTest {
     // Evaluate the expansion, and compare against the naive.
     Vector evaluation_point;
     evaluation_point.Init(3);
-    evaluation_point.SetAll(1.0);
+    evaluation_point.SetAll(2.0);
     NOTIFY("Expansion evaluated to be: %g",
 	   expansion.EvaluateField(evaluation_point.ptr(), 3));
     NOTIFY("Naive sum: %g", BaseCase_(evaluation_point, random_dataset,
