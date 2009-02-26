@@ -41,7 +41,7 @@ class FourierExpansion {
   const typename TKernelAux::TKernel *kernel_;
 
   /** pointer to the precomputed constants inside kernel auxiliary object */
-  const typename TKernelAux::TSeriesExpansionAux *sea_;
+  const FourierSeriesExpansionAux<double> *sea_;
 
   OT_DEF(FourierExpansion) {
     OT_MY_OBJECT(center_);
@@ -62,16 +62,16 @@ class FourierExpansion {
   double bandwidth_sq() const { return kernel_->bandwidth_sq(); }
   
   /** Get the center of expansion */
-  Vector *get_center() { 
+  GenVector<T> *get_center() { 
     return &center_; 
   }
 
-  const Vector *get_center() const { 
+  const ComplexVector<T> *get_center() const { 
     return &center_; 
   }
 
   /** Get the coefficients */
-  const Vector& get_coeffs() const {
+  const ComplexVector<T> &get_coeffs() const {
     return coeffs_;
   }
   
@@ -139,8 +139,7 @@ class FourierExpansion {
 	// For each coefficient, scale it and add to the current one.
 	double trig_argument = 
 	  -(sea_->integral_truncation_limit() * dot_product / 
-	    (sea_->get_max_order() *
-	     sqrt(2 * sea_->kernel_aux_->bandwidth_sq())));
+	    (sea_->get_max_order() * sqrt(2 * bandwidth_sq())));
 	std::complex<T> contribution(cos(trig_argument), sin(trig_argument));
 	contribution *= weights[i];
 	
