@@ -7,6 +7,7 @@
 #define FOURIER_SERIES_EXPANSION_AUX_H
 
 #include "fastlib/fastlib.h"
+#include <iostream>
 
 /** @brief Fourier-series based expansion, essentially $O(p^D)$
  *         expansion.
@@ -255,7 +256,7 @@ class FourierSeriesExpansionAux {
    int order) const {
     
     typedef typename TExpansion::data_type T;
-    typename TExpansion::data_type result = 0;
+    std::complex<typename TExpansion::data_type> result = 0;
     index_t num_coefficients = list_total_num_coeffs_[order];
 
     // The coefficients to be evaluated.
@@ -283,12 +284,12 @@ class FourierSeriesExpansionAux {
       std::complex<T> factor(cos(trig_argument), sin(trig_argument));
       std::complex<T> new_coefficient = coeffs.get(i) * factor;
 
-      result += precomputed_constants_[i] * new_coefficient.real();
+      result += precomputed_constants_[i] * new_coefficient;
     }
 
     // Scale the result then return.
     result *= final_scaling_factor_;
-    return result;
+    return result.real();
   }
 
 };
