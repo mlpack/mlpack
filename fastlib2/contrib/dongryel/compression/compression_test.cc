@@ -11,7 +11,11 @@ int main(int argc, char *argv[]) {
   for(index_t i = 0; i < length_of_vector; i++) {
     v[i] = i;
   }
-  cv.Init(v);
+  cv.Copy(v);
+
+  for(index_t i = 0; i < length_of_vector; i++) {
+    printf("I got %g\n", cv[i]);
+  }
   fx_done(fx_root);
   return 0;
 }
