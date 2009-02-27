@@ -4,6 +4,8 @@
 #include "fastlib/fastlib.h"
 #include "fastlib/tree/statistic.h"
 
+#include "gen_hypercube_tree_impl.h"
+
 namespace proximity {
 
   template<class TStatistic>
@@ -177,7 +179,6 @@ namespace proximity {
 
   };
 
-#include "gen_hypercube_tree_impl.h"
 
   /** @brief Creates a generalized hypercube tree (high-dimensional
    * generalization of quad-tree, octree) from data.

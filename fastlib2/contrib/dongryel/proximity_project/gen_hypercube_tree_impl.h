@@ -1,11 +1,12 @@
 #include "fastlib/fastlib.h"
 
-namespace tree_gen_hypercube_tree_private {
+class tree_gen_hypercube_tree_private {
 
-  index_t MatrixPartition(index_t particle_set_number, 
-			  ArrayList<Matrix *> &matrices, index_t dim, 
-			  double splitvalue, index_t first, index_t count, 
-			  ArrayList< ArrayList<index_t> > *old_from_new) {
+ public:
+  static index_t MatrixPartition
+  (index_t particle_set_number, ArrayList<Matrix *> &matrices, index_t dim, 
+   double splitvalue, index_t first, index_t count, 
+   ArrayList< ArrayList<index_t> > *old_from_new) {
     
     index_t left = first;
     index_t right = first + count - 1;
@@ -59,12 +60,12 @@ namespace tree_gen_hypercube_tree_private {
     return left;
   }
 
-  template<typename TStatistic>
-  bool RecursiveMatrixPartition
+  template<typename THypercubeTree>
+  static bool RecursiveMatrixPartition
   (ArrayList<Matrix *> &matrices,
-   GenHypercubeTree<TStatistic> *node, index_t count,
+   THypercubeTree *node, index_t count,
    ArrayList<index_t> &child_begin, ArrayList<index_t> &child_count,
-   ArrayList< ArrayList<GenHypercubeTree<TStatistic> *> > *nodes_in_each_level,
+   ArrayList< ArrayList<THypercubeTree *> > *nodes_in_each_level,
    ArrayList< ArrayList<index_t> > *old_from_new, const int level, 
    int recursion_level, unsigned int code) {
     
@@ -157,7 +158,7 @@ namespace tree_gen_hypercube_tree_private {
 
       // Create the child. From the code, also set the bounding cube
       // of half the side length.
-      GenHypercubeTree<TStatistic> *new_child =
+      THypercubeTree *new_child =
 	node->AllocateNewChild(matrices.size(), matrices[0]->n_rows(),
 			       (node->node_index() << 
 				matrices[0]->n_rows()) + code);
@@ -202,9 +203,9 @@ namespace tree_gen_hypercube_tree_private {
     }
   }
 
-  template<typename TStatistic>
-  void ComputeBoundingHypercube(const ArrayList<Matrix *> &matrices,
-				GenHypercubeTree<TStatistic> *node) {
+  template<typename THypercubeTree>
+  static void ComputeBoundingHypercube(const ArrayList<Matrix *> &matrices,
+				       THypercubeTree *node) {
 
     // Initialize the bound.
     node->bound().Init(matrices[0]->n_rows());
@@ -238,11 +239,11 @@ namespace tree_gen_hypercube_tree_private {
     node->bound() |= new_upper_coordinate;
   }
 
-  template<typename TStatistic>
-  void SplitGenHypercubeTree
-  (ArrayList<Matrix *> &matrices, GenHypercubeTree<TStatistic> *node, 
+  template<typename THypercubeTree>
+  static void SplitGenHypercubeTree
+  (ArrayList<Matrix *> &matrices, THypercubeTree *node, 
    index_t leaf_size, index_t max_tree_depth,
-   ArrayList< ArrayList<GenHypercubeTree<TStatistic> *> > *nodes_in_each_level,
+   ArrayList< ArrayList<THypercubeTree *> > *nodes_in_each_level,
    ArrayList< ArrayList<index_t> > *old_from_new, index_t level) {
 
     // If the node is just too small, then do not split.
@@ -270,7 +271,7 @@ namespace tree_gen_hypercube_tree_private {
 
       if(can_cut) {
 	for(index_t i = 0; i < node->num_children(); i++) {
-	  GenHypercubeTree<TStatistic> *child_node = node->get_child(i);
+	  THypercubeTree *child_node = node->get_child(i);
 	  SplitGenHypercubeTree(matrices, child_node, leaf_size, 
 				max_tree_depth, nodes_in_each_level, 
 				old_from_new, level + 1);

@@ -1,15 +1,17 @@
 #include "fastlib/fastlib.h"
 
-namespace tree_cfmm_tree_private {
-
-  void SwapValues(Vector &v, index_t first_index, index_t second_index) {
+class tree_cfmm_tree_private {
+  
+ public:
+  static void SwapValuesPrivate_(Vector &v, index_t first_index, 
+				 index_t second_index) {
     
     double tmp_value = v[first_index];
     v[first_index] = v[second_index];
     v[second_index] = tmp_value;
   }
 
-  index_t MatrixPartitionByTargets
+  static index_t MatrixPartitionByTargets
   (index_t particle_set_number, ArrayList<Matrix *> &matrices,
    ArrayList<Vector *> &targets, index_t dim, double splitvalue, index_t first,
    index_t count, ArrayList< ArrayList<index_t> > *old_from_new) {
@@ -46,7 +48,7 @@ namespace tree_cfmm_tree_private {
 
       // Swap the vectors and the targets.
       left_vector.SwapValues(&right_vector);
-      SwapValues(*(targets[particle_set_number]), left, right);
+      SwapValuesPrivate_(*(targets[particle_set_number]), left, right);
       
       if (old_from_new) {
         index_t t = (*old_from_new)[particle_set_number][left];
@@ -64,11 +66,13 @@ namespace tree_cfmm_tree_private {
     return left;
   }
 
-  index_t MatrixPartition(index_t particle_set_number, 
-			  ArrayList<Matrix *> &matrices,
-			  ArrayList<Vector *> &targets, index_t dim, 
-			  double splitvalue, index_t first, index_t count, 
-			  ArrayList< ArrayList<index_t> > *old_from_new) {
+  static index_t MatrixPartition
+  (index_t particle_set_number, 
+   ArrayList<Matrix *> &matrices,
+   ArrayList<Vector *> &targets, index_t dim, 
+   double splitvalue, index_t first, 
+   index_t count, 
+   ArrayList< ArrayList<index_t> > *old_from_new) {
     
     index_t left = first;
     index_t right = first + count - 1;
@@ -102,7 +106,7 @@ namespace tree_cfmm_tree_private {
 
       // Swap the vectors and the targets.
       left_vector.SwapValues(&right_vector);
-      SwapValues(*(targets[particle_set_number]), left, right);
+      SwapValuesPrivate_(*(targets[particle_set_number]), left, right);
       
       if (old_from_new) {
         index_t t = (*old_from_new)[particle_set_number][left];
@@ -120,12 +124,12 @@ namespace tree_cfmm_tree_private {
     return left;
   }
 
-  template<typename TStatistic>
-  bool RecursiveMatrixPartition
+  template<typename TCFmmWellSeparatedTree, typename TCFmmTree>
+  static bool RecursiveMatrixPartition
   (ArrayList<Matrix *> &matrices, ArrayList<Vector *> &targets,
-   CFmmWellSeparatedTree<TStatistic> *node, index_t count, 
+   TCFmmWellSeparatedTree *node, index_t count, 
    ArrayList<index_t> &child_begin, ArrayList<index_t> &child_count,
-   ArrayList< ArrayList<CFmmTree<TStatistic> *> > *nodes_in_each_level,
+   ArrayList< ArrayList<TCFmmTree *> > *nodes_in_each_level,
    ArrayList< ArrayList<index_t> > *old_from_new, const int level, 
    int recursion_level, unsigned int code) {
     
@@ -219,7 +223,7 @@ namespace tree_cfmm_tree_private {
 
       // Create the child. From the code, also set the bounding cube
       // of half the side length.
-      CFmmTree<TStatistic> *new_child =
+      TCFmmTree *new_child =
 	node->AllocateNewChild(matrices.size(), matrices[0]->n_rows(),
 			       (node->parent_->node_index() << 
 				matrices[0]->n_rows()) + code);
@@ -264,9 +268,9 @@ namespace tree_cfmm_tree_private {
     }
   }
 
-  template<typename TStatistic>
-  void ComputeBoundingHypercube(const ArrayList<Matrix *> &matrices,
-				CFmmTree<TStatistic> *node) {
+  template<typename TCFmmTree>
+  static void ComputeBoundingHypercube(const ArrayList<Matrix *> &matrices,
+				       TCFmmTree *node) {
 
     // Initialize the bound.
     node->bound().Init(matrices[0]->n_rows());
@@ -300,12 +304,12 @@ namespace tree_cfmm_tree_private {
     node->bound() |= new_upper_coordinate;
   }
 
-  template<typename TStatistic>
-  void SplitCFmmTree
+  template<typename TCFmmTree>
+  static void SplitCFmmTree
   (ArrayList<Matrix *> &matrices, ArrayList<Vector *> &targets,
-   CFmmTree<TStatistic> *node, index_t leaf_size,
+   TCFmmTree *node, index_t leaf_size,
    index_t min_required_ws_index, index_t max_tree_depth,
-   ArrayList< ArrayList<CFmmTree<TStatistic> *> > *nodes_in_each_level,
+   ArrayList< ArrayList<TCFmmTree *> > *nodes_in_each_level,
    ArrayList< ArrayList<index_t> > *old_from_new, index_t level) {
 
     // Compute the maximum WS index among here for each dataset.
@@ -428,7 +432,7 @@ namespace tree_cfmm_tree_private {
 	      i < node->partitions_based_on_ws_indices_[j]->num_children(); 
 	      i++) {
 
-	    CFmmTree<TStatistic> *child_node = 
+	    TCFmmTree *child_node = 
 	      node->partitions_based_on_ws_indices_[j]->get_child(i);
 	    SplitCFmmTree(matrices, targets, child_node, leaf_size, 
 			  min_required_ws_index, max_tree_depth, 
