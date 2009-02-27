@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
 
 	//for stopping rule
 	double error_tolerance=1e-16;
-	double zero_tolerance=0.001;	//for gradient norm
+	double zero_tolerance=0.0001;	//for gradient norm
 
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
@@ -457,7 +457,7 @@ int main(int argc, char *argv[]) {
 		double new_radius;
 		//NOTIFY("Exact hessian calculation ends");
 
-		
+		/*
 		optimization.ComputeDerectionUnderConstraints(current_radius, 
 																					current_gradient,
 																					current_hessian,
@@ -466,14 +466,15 @@ int main(int argc, char *argv[]) {
 																					&current_delta_m,
 																					&next_parameter,
 																					&new_radius);
-																					
+																					*/
+					
 
 																					
 
 		
 		
 
-    /*
+    
 		//Scaled version
 		optimization.ComputeScaledDerectionUnderConstraints(current_radius, 
 																					current_gradient,
@@ -484,7 +485,7 @@ int main(int argc, char *argv[]) {
 																					&next_parameter,
 																					&new_radius);
 
-			*/
+			
 
 										
 										
@@ -569,6 +570,8 @@ int main(int argc, char *argv[]) {
 			////////////////////////////////////////////////////////
 /*
 		//hessian update
+		//BFGS Hnew=Hcurrent-(Hc ss' Hc)/s'Hcs + yy'/s'y
+		//where s=theta_c-theta, y=grad(theta_c)-grad(theta)
 	Matrix diff_gradient;
 	diff_gradient.Init(num_of_parameter, 1);
 	diff_gradient.SetZero();
@@ -597,11 +600,12 @@ int main(int argc, char *argv[]) {
 		//updated_hessian.Init(current_gradient.length(), current_gradient.length());
 		//updated_hessian.SetZero();
 
-		//la::Scale(-1.0, &current_hessian);
-		//la::Scale(-1.0, &current_gradient);
+		la::Scale(-1.0, &current_hessian);
+		la::Scale(-1.0, &current_gradient);
 
 		la::SubOverwrite(current_gradient, next_gradient, &diff_gradient);
-		la::SubOverwrite(current_parameter, next_parameter, &diff_par);
+		//la::SubOverwrite(current_parameter, next_parameter, &diff_par);
+		la::SubOverwrite(next_parameter, current_parameter, &diff_par);
 
 		//la::SubOverwrite(next_gradient, current_gradient, &diff_gradient);
 		//la::SubOverwrite(next_parameter, current_parameter, &diff_par);
@@ -615,12 +619,13 @@ int main(int argc, char *argv[]) {
 		Matrix mtx_diff_gradient;
 		mtx_diff_gradient.Alias(diff_gradient.ptr(), diff_gradient.length(), 1);
 
+		/*
     cout<<"diff_gradient"<<endl;
 		for(index_t i=0; i<diff_gradient.length(); i++){
-			cout<<diff_gradient[i] <<" ";
+			cout<<mtx_diff_gradient.get(i,0) <<" ";
 		}
 		cout<<endl;
-
+    */
 		
 		//Matrix temp1; //H*s*s'*H
 		//Matrix Hs;
@@ -630,53 +635,20 @@ int main(int argc, char *argv[]) {
 		
 		//double scale_temp1;
 		scale_temp1=la::Dot(Hs, mtx_diff_par);
-		la::Scale( scale_temp1, &temp1);
+		la::Scale( (1.0/scale_temp1), &temp1);
 
 		
     //Matrix temp2; //yy'/s'y
 		la::MulTransBOverwrite(mtx_diff_gradient, mtx_diff_gradient, &temp2);
 		//cout<<"temp2"<<temp2[0]<<endl;
 
+		/*
 		cout<<"mtx_diff_gradient"<<endl;
 		for(index_t i=0; i<mtx_diff_gradient.n_rows(); i++){
 			cout<<mtx_diff_gradient.get(i,0) <<" ";
 		}
 		cout<<endl;
-
-		cout<<"temp2"<<endl;
-		for (index_t j=0; j<updated_hessian.n_rows(); j++){
-			for (index_t k=0; k<updated_hessian.n_cols(); k++){
-				cout<<temp2.get(j,k) <<"  ";
-			}
-			cout<<endl;
-		}
-
-
-		la::Scale( la::Dot(mtx_diff_par, mtx_diff_gradient), &temp2);
-
-		cout<<"temp2"<<endl;
-		for (index_t j=0; j<updated_hessian.n_rows(); j++){
-			for (index_t k=0; k<updated_hessian.n_cols(); k++){
-				cout<<temp2.get(j,k) <<"  ";
-			}
-			cout<<endl;
-		}
-
-		//cout<<"dot"<<la::dot(mtx_diff_par, mtx_diff_gradient)<<endl;
-		//cout<<"temp2"<<temp2[0]<<endl;
-
-		la::SubOverwrite(temp1, current_hessian, &updated_hessian);
-		la::AddTo(temp2, &updated_hessian);
-		//la::Scale(-1.0, &current_gradient);
-		//la::Scale(-1.0, &updated_hessian);
-		cout<<"Hessian update"<<endl;
-		cout<<"current_hessian"<<endl;
-		for (index_t j=0; j<updated_hessian.n_rows(); j++){
-			for (index_t k=0; k<updated_hessian.n_cols(); k++){
-				cout<<current_hessian.get(j,k) <<"  ";
-			}
-			cout<<endl;
-		}
+    
 
 		cout<<"temp1"<<endl;
 		for (index_t j=0; j<updated_hessian.n_rows(); j++){
@@ -686,6 +658,9 @@ int main(int argc, char *argv[]) {
 			cout<<endl;
 		}
 
+
+		la::Scale( (1/la::Dot(mtx_diff_par, mtx_diff_gradient)), &temp2);
+
 		cout<<"temp2"<<endl;
 		for (index_t j=0; j<updated_hessian.n_rows(); j++){
 			for (index_t k=0; k<updated_hessian.n_cols(); k++){
@@ -693,7 +668,27 @@ int main(int argc, char *argv[]) {
 			}
 			cout<<endl;
 		}
+		*/
 
+		//cout<<"dot"<<la::dot(mtx_diff_par, mtx_diff_gradient)<<endl;
+		//cout<<"temp2"<<temp2[0]<<endl;
+
+		la::SubOverwrite(temp1, current_hessian, &updated_hessian);
+		la::AddTo(temp2, &updated_hessian);
+		
+		la::Scale(-1.0, &current_gradient);
+		la::Scale(-1.0, &updated_hessian);
+		la::Scale(-1.0, &current_hessian);
+		cout<<"Hessian update"<<endl;
+		
+		/*
+		cout<<"current_hessian"<<endl;
+		for (index_t j=0; j<updated_hessian.n_rows(); j++){
+			for (index_t k=0; k<updated_hessian.n_cols(); k++){
+				cout<<current_hessian.get(j,k) <<"  ";
+			}
+			cout<<endl;
+		}
 
 		cout<<"update_hessian"<<endl;
 		for (index_t j=0; j<updated_hessian.n_rows(); j++){
@@ -702,6 +697,8 @@ int main(int argc, char *argv[]) {
 			}
 			cout<<endl;
 		}
+		*/
+
 
 		//Check positive definiteness
 		Vector eigen_hessian;
