@@ -556,7 +556,7 @@ int main(int argc, char *argv[]) {
 
 		
 		Vector next_gradient;
-		objective.ComputeGradient(current_sample_size, current_parameter, &next_gradient);
+		objective.ComputeGradient(current_sample_size, next_parameter, &next_gradient);
 
 			
 
