@@ -4,15 +4,17 @@
  * @file svm.h
  *
  * This head file contains functions for performing SVM training and prediction
- * Supported SVM learner type:SVM_C, SVM_R, SVM_DE
+ * Supported SVM learner type:SVM_C, SVM_R, SVM_Q
  *
- * @see smo.h
+ * @see opt_smo.h
+ * @see opt_sgd.h
  */
 
 #ifndef U_SVM_SVM_H
 #define U_SVM_SVM_H
 
-#include "smo.h"
+#include "opt_smo.h"
+#include "opt_sgd.h"
 
 #include "fastlib/fastlib.h"
 
@@ -92,17 +94,23 @@ class SVM {
    * Type id of the SVM learner: 
    *  0:SVM Classification (svm_c);
    *  1:SVM Regression (svm_r);
-   *  2:SVM density estimation (svm_de);
+   *  2:SVM quantile estimation (svm_q);
    * Developers may add more learner types if necessary
    */
   int learner_typeid_;
+  // Optimization method: smo, sgd, sample_smo
+  String opt_method_;
   /* array of models for storage of the 2-class(binary) classifiers 
      Need to train num_classes_*(num_classes_-1)/2 binary models */
   struct SVM_MODELS {
     /* bias term in each binary model */
     double bias_;
-    /* all coefficients of the binary dataset, not necessarily thoes of SVs */
+    /* all coefficients (alpha*y) of the binary dataset, not necessarily thoes of SVs */
     ArrayList<double> coef_;
+    /* the slope w */
+    Vector w_;
+    /* scale for w*/
+    double scale_w_;
   };
   ArrayList<SVM_MODELS> models_;
 
@@ -142,8 +150,12 @@ class SVM {
     double Cn_; // C for y==-1
     // for SVM_R
     double epsilon_;
-    // working set selection scheme, 1 for 1st order expansion; 2 for 2nd order expansion
+    // working set selection scheme of SMO, 1 for 1st order expansion; 2 for 2nd order expansion
     double wss_;
+    // accuracy for the optimization stopping creterion
+    double accuracy_;
+    // number of iterations
+    index_t n_iter_;
   };
   PARAMETERS param_;
   
@@ -158,6 +170,7 @@ class SVM {
  public:
   typedef TKernel Kernel;
   class SMO<Kernel>;
+  class SGD<Kernel>;
 
   void Init(int learner_typeid, const Dataset& dataset, datanode *module);
   void InitTrain(int learner_typeid, const Dataset& dataset, datanode *module);
@@ -169,10 +182,10 @@ class SVM {
  private:
   void SVM_C_Train_(int learner_typeid, const Dataset& dataset, datanode *module);
   void SVM_R_Train_(int learner_typeid, const Dataset& dataset, datanode *module);
-  void SVM_DE_Train_(int learner_typeid, const Dataset& dataset, datanode *module);
+  void SVM_Q_Train_(int learner_typeid, const Dataset& dataset, datanode *module);
   double SVM_C_Predict_(const Vector& vector);
   double SVM_R_Predict_(const Vector& vector);
-  double SVM_DE_Predict_(const Vector& vector);
+  double SVM_Q_Predict_(const Vector& vector);
 
   void SaveModel_(int learner_typeid, String model_filename);
   void LoadModel_(int learner_typeid, String model_filename);
@@ -188,6 +201,8 @@ class SVM {
 template<typename TKernel>
 void SVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *module){
   learner_typeid_ = learner_typeid;
+
+  opt_method_ = fx_param_str(NULL, "opt", "smo"); // optimization method: default using SMO
 
   n_data_ = dataset.n_points();
   // # of features == # of row - 1, exclude the last row (for labels)
@@ -230,6 +245,10 @@ void SVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *mo
   param_.b_ = fx_param_int(NULL, "b", dataset.n_points());
   // working set selection scheme. default: 1st order expansion
   param_.wss_ = fx_param_int(NULL, "wss", 1);
+  // accuracy for optimization
+  param_.accuracy_ = fx_param_double(NULL, "accuracy", 1e-4);
+  // number of iterations
+  param_.n_iter_ = fx_param_int(NULL, "n_iter", 10000);
 
   // the tradeoff parameter "C", default: 10.0
   param_.C_ = fx_param_double(NULL, "c", 10.0);
@@ -240,7 +259,7 @@ void SVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *mo
     // the "epsilon", default: 0.1
     param_.epsilon_ = fx_param_double(NULL, "epsilon", 0.1);
   }
-  else if (learner_typeid == 2) { // SVM_DE
+  else if (learner_typeid == 2) { // SVM_Q
   }
 }
 
@@ -254,15 +273,14 @@ void SVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *mo
 template<typename TKernel>
 void SVM<TKernel>::InitTrain(int learner_typeid, const Dataset& dataset, datanode *module) {
   Init(learner_typeid, dataset, module);
-  
   if (learner_typeid == 0) { // Multiclass SVM Clssification
     SVM_C_Train_(learner_typeid, dataset, module);
   }
   else if (learner_typeid == 1) { // SVM Regression
     SVM_R_Train_(learner_typeid, dataset, module);
   }
-  else if (learner_typeid == 2) { // SVM Density Estimation
-    SVM_DE_Train_(learner_typeid, dataset, module);
+  else if (learner_typeid == 2) { // SVM Quantile Estimation
+    SVM_Q_Train_(learner_typeid, dataset, module);
   }
   
   /* Save models to file "svm_model" */
@@ -285,25 +303,12 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
   /* Group labels, split the training dataset for training bi-class SVM classifiers */
   dataset.GetLabels(train_labels_list_, train_labels_index_, train_labels_ct_, train_labels_startpos_);
 
-  /* Train num_classes*(num_classes-1)/2 binary class(labels:-1, 1) models using SMO */
+  /* Train num_classes*(num_classes-1)/2 binary class(labels:-1, 1) models */
   index_t ct = 0;
   index_t i, j;
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
       models_.PushBack();
-
-      SMO<Kernel> smo;
-      /* Initialize SMO parameters */
-      ArrayList<double> param_feed_db;
-      param_feed_db.Init();
-      param_feed_db.PushBack() = param_.b_;
-      param_feed_db.PushBack() = param_.Cp_;
-      param_feed_db.PushBack() = param_.Cn_;
-      param_feed_db.PushBack() = param_.wss_;
-      smo.InitPara(learner_typeid, param_feed_db);
-      /* Initialize kernel */
-      smo.kernel().Init(fx_submodule(module, "kernel"));
-
       /* Construct dataset consists of two classes i and j (reassign labels 1 and -1) */
       // TODO: avoid these ugly and time-consuming memory allocation
       Dataset dataset_bi;
@@ -331,13 +336,61 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	dataset_bi_index[n+train_labels_ct_[i]] = train_labels_index_[train_labels_startpos_[j]+n];
       }
 
-      /* 2-classes SVM training */
-      smo.Train(learner_typeid, &dataset_bi);
+      if (opt_method_== "smo") {
+	/* Initialize SMO parameters */
+	ArrayList<double> param_feed_db;
+	param_feed_db.Init();
+	param_feed_db.PushBack() = param_.b_;
+	param_feed_db.PushBack() = param_.Cp_;
+	param_feed_db.PushBack() = param_.Cn_;
+	param_feed_db.PushBack() = param_.wss_;
+	param_feed_db.PushBack() = param_.n_iter_;
+	param_feed_db.PushBack() = param_.accuracy_;
+	SMO<Kernel> smo;
+	smo.InitPara(learner_typeid, param_feed_db);
+	
+	/* Initialize kernel */
+	smo.kernel().Init(fx_submodule(module, "kernel"));
 
-      /* Get the trained bi-class model */
-      models_[ct].bias_ = smo.Bias();
-      models_[ct].coef_.Init();
-      smo.GetSVM(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_);
+	/* 2-classes SVM training using SMO */
+	smo.Train(learner_typeid, &dataset_bi);
+	
+	/* Get the trained bi-class model */
+	models_[ct].coef_.Init(); // alpha*y
+	models_[ct].bias_ = smo.Bias(); // bias
+	models_[ct].w_.Init(0); // for linear SGD only. not used here
+	smo.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
+      }
+      else if (opt_method_== "sgd") {
+	/* Initialize SGD parameters */
+	ArrayList<double> param_feed_db;
+	param_feed_db.Init();
+	param_feed_db.PushBack() = param_.Cp_;
+	param_feed_db.PushBack() = param_.Cn_;
+	param_feed_db.PushBack() = param_.kerneltypeid_== 0 ? 0.0: 1.0;
+	param_feed_db.PushBack() = param_.n_iter_;
+	param_feed_db.PushBack() = param_.accuracy_;
+	SGD<Kernel> sgd;
+	sgd.InitPara(learner_typeid, param_feed_db);
+	
+	/* Initialize kernel */
+	sgd.kernel().Init(fx_submodule(module, "kernel"));
+
+	/* 2-classes SVM training using SGD*/
+	sgd.Train(learner_typeid, &dataset_bi);
+	
+	/* Get the trained bi-class model */
+	models_[ct].coef_.Init(); // alpha*y, used for nonlinear SVM only
+	if (param_.kerneltypeid_== 0) { // linear SVM
+	  models_[ct].w_.Copy(*(sgd.W())); // w
+	  models_[ct].scale_w_ = sgd.ScaleW(); // scale of w, for linear SVM
+	}
+	else { // nonlinear SVM
+	  sgd.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
+	  models_[ct].w_.Init(0); // for linear SVM only. not used here
+	}
+	models_[ct].bias_ = sgd.Bias(); // bias
+      }
 
       ct++;
     }
@@ -414,24 +467,53 @@ void SVM<TKernel>::SVM_R_Train_(int learner_typeid, const Dataset& dataset, data
 
   models_.PushBack();
 
-  SMO<Kernel> smo;
-  /* Initialize SMO parameters */
-  ArrayList<double> param_feed_db;
-  param_feed_db.Init();
-  param_feed_db.PushBack() = param_.b_;
-  param_feed_db.PushBack() = param_.C_;
-  param_feed_db.PushBack() = param_.epsilon_;
-  param_feed_db.PushBack() = param_.wss_;
-  smo.InitPara(learner_typeid, param_feed_db);
-  /* Initialize kernel */
-  smo.kernel().Init(fx_submodule(module, "kernel"));
-  /* SVM_R Training */
-  smo.Train(learner_typeid, &dataset);
+  if (opt_method_== "smo") {
+    /* Initialize SMO parameters */
+    ArrayList<double> param_feed_db;
+    param_feed_db.Init();
+    param_feed_db.PushBack() = param_.b_;
+    param_feed_db.PushBack() = param_.C_;
+    param_feed_db.PushBack() = param_.epsilon_;
+    param_feed_db.PushBack() = param_.wss_;
+    param_feed_db.PushBack() = param_.n_iter_;
+    param_feed_db.PushBack() = param_.accuracy_;
+    SMO<Kernel> smo;
+    smo.InitPara(learner_typeid, param_feed_db);
+    
+    /* Initialize kernel */
+    smo.kernel().Init(fx_submodule(module, "kernel"));
 
-  /* Get the trained model */
-  models_[0].bias_ = smo.Bias();
-  models_[0].coef_.Init();
-  smo.GetSVM(dataset_index, models_[0].coef_, trainset_sv_indicator_);
+    /* SVM_R Training using SMO*/
+    smo.Train(learner_typeid, &dataset);
+    
+    /* Get the trained model */
+    models_[0].bias_ = smo.Bias(); // bias
+    models_[0].coef_.Init(); // alpha*y
+    models_[0].w_.Init(0); // not using
+    smo.GetSV(dataset_index, models_[0].coef_, trainset_sv_indicator_); // get support vectors
+  }
+  else if (opt_method_== "sgd") {
+    /* Initialize SGD parameters */
+    ArrayList<double> param_feed_db;
+    param_feed_db.Init();
+    param_feed_db.PushBack() = param_.Cp_;
+    param_feed_db.PushBack() = param_.Cn_;
+    param_feed_db.PushBack() = param_.kerneltypeid_== 0 ? 0.0: 1.0;
+    SGD<Kernel> sgd;
+    sgd.InitPara(learner_typeid, param_feed_db);
+    
+    /* Initialize kernel */
+    sgd.kernel().Init(fx_submodule(module, "kernel"));
+
+    /* SVM_R Training using SGD*/
+    sgd.Train(learner_typeid, &dataset);
+    
+    /* Get the trained model */
+    models_[0].bias_ = sgd.Bias(); // bias
+    models_[0].w_.Copy(*(sgd.W())); // w
+    models_[0].scale_w_ = sgd.ScaleW(); // scale of w
+    models_[0].coef_.Init(0); // not using
+  }
 
   /* Get index list of support vectors */
   for (i = 0; i < n_data_; i++) {
@@ -458,14 +540,14 @@ void SVM<TKernel>::SVM_R_Train_(int learner_typeid, const Dataset& dataset, data
 }
 
 /**
-* Training for SVM Density Estimation
+* Training for SVM Quantile Estimation
 *
 * @param: type id of the learner
 * @param: training set
 * @param: module name
 */
 template<typename TKernel>
-void SVM<TKernel>::SVM_DE_Train_(int learner_typeid, const Dataset& dataset, datanode *module) {
+void SVM<TKernel>::SVM_Q_Train_(int learner_typeid, const Dataset& dataset, datanode *module) {
   // TODO
 }
 
@@ -487,8 +569,8 @@ double SVM<TKernel>::Predict(int learner_typeid, const Vector& datum) {
   else if (learner_typeid == 1) { // SVM Regression
     predicted_value = SVM_R_Predict_(datum);
   }
-  else if (learner_typeid == 2) { // SVM Density Estimation
-    predicted_value = SVM_DE_Predict_(datum);
+  else if (learner_typeid == 2) { // SVM Quantile Estimation
+    predicted_value = SVM_Q_Predict_(datum);
   }
   return predicted_value;
 }
@@ -511,14 +593,32 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
   ArrayList<double> values;
   values.Init(num_models_);
   index_t ct = 0;
+  double sum = 0.0;
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
-      double sum = 0;
-      for(k = 0; k < sv_list_ct_[i]; k++) {
-	sum += sv_coef_.get(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];
+      if (opt_method_== "smo") {
+	sum = 0.0;
+	for(k = 0; k < sv_list_ct_[i]; k++) {
+	  sum += sv_coef_.get(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];
+	}
+	for(k = 0; k < sv_list_ct_[j]; k++) {
+	  sum += sv_coef_.get(i, sv_list_startpos_[j]+k) * keval[sv_list_startpos_[j]+k];
+	}
       }
-      for(k = 0; k < sv_list_ct_[j]; k++) {
-	sum += sv_coef_.get(i, sv_list_startpos_[j]+k) * keval[sv_list_startpos_[j]+k];
+      else if (opt_method_== "sgd") {
+	if (param_.kerneltypeid_== 0) { // linear SVM
+	  sum = la::Dot(models_[ct].w_, datum);
+	  sum *= models_[ct].scale_w_;
+	}
+	else { // nonlinear SVM
+	  sum = 0.0;
+	  for(k = 0; k < sv_list_ct_[i]; k++) {
+	    sum += sv_coef_.get(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];
+	  }
+	  for(k = 0; k < sv_list_ct_[j]; k++) {
+	    sum += sv_coef_.get(i, sv_list_startpos_[j]+k) * keval[sv_list_startpos_[j]+k];
+	  }
+	}
       }
       sum += models_[ct].bias_;
       values[ct] = sum;
@@ -563,22 +663,27 @@ template<typename TKernel>
 double SVM<TKernel>::SVM_R_Predict_(const Vector& datum) {
   index_t i;
   double sum = 0.0;
-  for (i = 0; i < total_num_sv_; i++) {
-    sum += sv_coef_.get(0, i) * param_.kernel_.Eval(datum.ptr(), sv_.GetColumnPtr(i), num_features_);
+  if (opt_method_== "smo") {
+    for (i = 0; i < total_num_sv_; i++) {
+      sum += sv_coef_.get(0, i) * param_.kernel_.Eval(datum.ptr(), sv_.GetColumnPtr(i), num_features_);
+    }
+  }
+  else if (opt_method_== "sgd") {
+    // TODO
   }
   sum += models_[0].bias_;
   return sum;
 }
 
 /**
-* SVM Density Estimation Prediction for one testing vector
+* SVM Quantile Estimation Prediction for one testing vector
 *
 * @param: testing vector
 *
-* @return: estimated density value
+* @return: estimated quantile value (the support)
 */
 template<typename TKernel>
-double SVM<TKernel>::SVM_DE_Predict_(const Vector& datum) {
+double SVM<TKernel>::SVM_Q_Predict_(const Vector& datum) {
   // TODO
   return 0.0;
 }
@@ -679,8 +784,8 @@ void SVM<TKernel>::SaveModel_(int learner_typeid, String model_filename) {
       fprintf(fp, "%d ", sv_index_[i]);
     fprintf(fp, "\n");
   }
-  else if (learner_typeid == 2) { // for SVM_DE
-    fprintf(fp, "svm_type SVM_DE\n");
+  else if (learner_typeid == 2) { // for SVM_Q
+    fprintf(fp, "svm_type SVM_Q\n");
     fprintf(fp, "total_num_sv %d\n", total_num_sv_);
     fprintf(fp, "sv_index ");
     for (i = 0; i < total_num_sv_; i++)
@@ -751,7 +856,7 @@ void SVM<TKernel>::LoadModel_(int learner_typeid, String model_filename) {
 	learner_typeid_ = 0;
       else if (strcmp(cmd,"SVM_R")==0)
 	learner_typeid_ = 1;
-      else if (strcmp(cmd,"SVM_DE")==0)
+      else if (strcmp(cmd,"SVM_Q")==0)
 	learner_typeid_ = 2;
     }
     else if (strcmp(cmd, "total_num_sv")==0) {

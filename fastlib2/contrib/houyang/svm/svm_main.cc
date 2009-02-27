@@ -17,7 +17,8 @@
  * Please refer to README for detail description of usage and examples.
  *
  * @see svm.h
- * @see smo.h
+ * @see opt_smo.h
+ * @see opt_sgd.h
  */
 
 #include "svm.h"
@@ -184,7 +185,7 @@ int main(int argc, char *argv[]) {
   else if (learner_name == "svm_r") { // Support Vector Regression
     learner_typeid = 1;
   }
-  else if (learner_name == "svm_de") { // Support Vector Density Estimation
+  else if (learner_name == "svm_q") { // Support Vector Quantile Estimation
     learner_typeid = 2;
   }
   else {
