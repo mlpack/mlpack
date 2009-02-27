@@ -1,6 +1,11 @@
 #ifndef CFMM_TREE_H
 #define CFMM_TREE_H
 
+#include "fastlib/fastlib.h"
+
+#include "cfmm_tree_impl.h"
+
+
 namespace proximity {
 
   // Forward declaration...
@@ -367,8 +372,6 @@ namespace proximity {
 
   };
 
-#include "cfmm_tree_impl.h"
-
   /** @brief Creates a continuous FMM tree (high-dimensional
    *         generalization of quad-tree, octree) from data with
    *         additional partitions on a target value associated with
@@ -403,12 +406,13 @@ namespace proximity {
   CFmmTree<TStatistic> *MakeCFmmTree
   (ArrayList<Matrix *> &matrices, ArrayList<Vector *> &targets,
    index_t leaf_size, index_t min_required_ws_index, index_t max_tree_depth,
-   ArrayList< ArrayList<CFmmTree<TStatistic> *> > *nodes_in_each_level,
+   ArrayList< ArrayList<CFmmTree<TStatistic> *> > 
+   *nodes_in_each_level,
    ArrayList< ArrayList<index_t> > *old_from_new = NULL,
    ArrayList< ArrayList<index_t> > *new_from_old = NULL) {
-    
-    CFmmTree<TStatistic> *node = new CFmmTree<TStatistic>();
-    
+
+  
+    proximity::CFmmTree<TStatistic> *node = new proximity::CFmmTree<TStatistic>();
     if (old_from_new) {
       old_from_new->Init(matrices.size());
 
@@ -429,7 +433,7 @@ namespace proximity {
 
     // Initialize the root node.
     node->Init(matrices.size(), matrices[0]->n_rows(), 
-	       (CFmmWellSeparatedTree<TStatistic> *) NULL);
+	       (proximity::CFmmWellSeparatedTree<TStatistic> *) NULL);
     node->set_level(0);
     for(index_t i = 0; i < matrices.size(); i++) {
       node->Init(i, 0, matrices[i]->n_cols());
@@ -459,7 +463,9 @@ namespace proximity {
     }
       
     return node;
+  
   }
+  
 };
 
 #endif

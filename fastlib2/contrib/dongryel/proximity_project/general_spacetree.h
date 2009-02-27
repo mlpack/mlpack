@@ -11,7 +11,7 @@
 #ifndef TREE_GENERAL_SPACETREE_H
 #define TREE_GENERAL_SPACETREE_H
 
-#include "fastlib/fastlib_int.h"
+#include "fastlib/fastlib.h"
 
 /**
  * A binary space partitioning tree, such as KD or ball tree.
