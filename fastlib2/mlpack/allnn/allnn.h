@@ -260,26 +260,30 @@ class AllNN {
       // These are easy to search for, though for some reason, Garry
       // was more partial to "where's WALDO".  More memorable, maybe?
 
-      /* TODO: try pruning query points vs reference node */
+      double distance_to_hrect = 
+	  reference_node->bound().MinDistanceSq(query_point);
 
-      for (index_t reference_index = reference_node->begin();
-          reference_index < reference_node->end(); reference_index++) {
+      /* Try to prune one last time */
+      if (distance_to_hrect < neighbor_distances_[query_index]) {
+	for (index_t reference_index = reference_node->begin();
+	     reference_index < reference_node->end(); reference_index++) {
 
-        Vector reference_point;
-        references_.MakeColumnVector(reference_index, &reference_point);
-        if (likely(reference_node != query_node ||
-		      reference_index != query_index)) {
-          // BLAS can perform many vectors ops more quickly than C/C++.
-          double distance =
-              la::DistanceSqEuclidean(query_point, reference_point);
+	  Vector reference_point;
+	  references_.MakeColumnVector(reference_index, &reference_point);
+	  if (likely(reference_node != query_node ||
+		     reference_index != query_index)) {
+	    // BLAS can perform many vectors ops more quickly than C/C++.
+	    double distance =
+                la::DistanceSqEuclidean(query_point, reference_point);
 
-	        /* Record points found to be closer than the best so far */
-          if (distance < neighbor_distances_[query_index]) {
-            neighbor_distances_[query_index] = distance;
-            neighbor_indices_[query_index] = reference_index;
-          }
-        }
-      } /* for reference_index */
+	    /* Record points found to be closer than the best so far */
+	    if (distance < neighbor_distances_[query_index]) {
+	      neighbor_distances_[query_index] = distance;
+	      neighbor_indices_[query_index] = reference_index;
+	    }
+	  }
+	} /* for reference_index */
+      } /* for prune test */
 
       /* Find the upper bound nn distance for this node */
       if (neighbor_distances_[query_index] > max_nearest_neighbor_distance) {
