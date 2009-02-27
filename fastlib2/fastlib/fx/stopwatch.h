@@ -19,7 +19,7 @@ EXTERN_C_BEGIN
 /** Cycle counter data type. */
 typedef uint64 tsc_t;
 /** Length modifier for emitting tsc_t with printf. */
-#define LT L64
+#define LTSC L64
 
 /* TODO: Check x86_64 and other architectures */
 
