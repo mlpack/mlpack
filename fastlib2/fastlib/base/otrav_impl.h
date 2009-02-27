@@ -1117,7 +1117,8 @@ namespace ot__private {
     template<typename T>
     void Write_(T *val, index_t elems = 1) {
       if (!t_size_only) {
-	fwrite(val, sizeof(T), elems, stream_);
+	size_t elems_written = fwrite(val, sizeof(T), elems, stream_);
+	DEBUG_ASSERT(elems_written == (size_t)elems);
       }
       size += sizeof(T) * elems;
     }
@@ -1249,7 +1250,8 @@ namespace ot__private {
 
     template<typename T>
     void Read_(T *ptr, index_t elems = 1) {
-      fread(ptr, sizeof(T), elems, stream_);
+      size_t elems_read = fread(ptr, sizeof(T), elems, stream_);
+      DEBUG_ASSERT(elems_read == (size_t)elems);
       size_ += sizeof(T) * elems;
     }
 
