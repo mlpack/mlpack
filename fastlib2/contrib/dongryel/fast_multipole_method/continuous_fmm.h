@@ -28,7 +28,6 @@
 #include "mlpack/series_expansion/inverse_pow_dist_farfield_expansion.h"
 #include "mlpack/series_expansion/inverse_pow_dist_local_expansion.h"
 #include "contrib/dongryel/proximity_project/cfmm_tree.h"
-#include "contrib/dongryel/proximity_project/gen_hypercube_tree_util.h"
 #include "contrib/dongryel/multitree_template/multitree_utility.h"
 
 class ContinuousFmm {
