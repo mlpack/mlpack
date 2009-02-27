@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
 
 	//for stopping rule
 	double error_tolerance=1e-16;
-	double zero_tolerance=1e-4;	//for gradient norm
+	double zero_tolerance=0.001;	//for gradient norm
 
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
@@ -167,9 +167,10 @@ int main(int argc, char *argv[]) {
 
 
   //iteration
-  int max_iteration=100;
+  int max_iteration=200;
 	int iteration_count=0;
 
+	/*
 	Matrix current_hessian;		
 	current_hessian.Init(num_of_parameter, num_of_parameter);
 	current_hessian.SetZero();
@@ -177,6 +178,11 @@ int main(int argc, char *argv[]) {
 		current_hessian.set(i,i,1);
 	}
 	la::Scale(-1.0, &current_hessian);
+	*/
+
+	Matrix current_hessian;	
+
+	
 
 
 
@@ -269,12 +275,7 @@ int main(int argc, char *argv[]) {
 
 		*/
 
-		
-
-		
-    
-
-		
+			
 
 		Vector current_gradient;
 		//gradient.Init(num_of_betas_);
@@ -354,12 +355,15 @@ int main(int argc, char *argv[]) {
 			cout<<endl;
 		}
 
+*/
 
-
+		
+/*
+		NOTIFY("Hessian approximation");
 		Matrix approx_hessian;
 		objective.CheckHessian(current_sample_size, current_parameter, &approx_hessian);
 
-		cout<<"approx_hessian"<<endl;
+		cout<<"approx_hessian1"<<endl;
 		for (index_t j=0; j<current_hessian.n_rows(); j++){
 			for (index_t k=0; k<current_hessian.n_cols(); k++){
 				cout<<approx_hessian.get(j,k) <<"  ";
@@ -367,18 +371,21 @@ int main(int argc, char *argv[]) {
 			cout<<endl;
 		}
 
-		Matrix diff_hessian;
-		la::SubInit(approx_hessian, current_hessian, &diff_hessian);
+		Matrix approx_hessian2;
+		objective.CheckHessian2(current_sample_size, current_parameter, &approx_hessian2);
 
-		cout<<"diff_hessian"<<endl;
+
+		cout<<"approx_hessian2"<<endl;
 		for (index_t j=0; j<current_hessian.n_rows(); j++){
 			for (index_t k=0; k<current_hessian.n_cols(); k++){
-				cout<<diff_hessian.get(j,k) <<"  ";
+				cout<<approx_hessian2.get(j,k) <<"  ";
 			}
 			cout<<endl;
 		}
-
 */
+
+
+
 
 /////////////////////////////////////////////////////////////////
 
@@ -421,21 +428,23 @@ int main(int argc, char *argv[]) {
 		}
 		*/
 
-  /*
+  
 	if(iteration_count==1){
-		Matrix approx_hessian;
-		objective.CheckHessian(current_sample_size, current_parameter, &approx_hessian);
+		cout<<"iteration_count==1"<<endl;
+		objective.CheckHessian(current_sample_size, current_parameter, &current_hessian);
 
-		cout<<"approx_hessian"<<endl;
+		cout<<"hessian0"<<endl;
 		for (index_t j=0; j<current_hessian.n_rows(); j++){
 			for (index_t k=0; k<current_hessian.n_cols(); k++){
-				cout<<approx_hessian.get(j,k) <<"  ";
+				cout<<current_hessian.get(j,k) <<"  ";
 			}
 			cout<<endl;
 		}
+		
 
 	}
-	*/
+	  //Matrix current_hessian;
+		
 
 
     //NOTIFY("Dogleg method starts...");
@@ -475,7 +484,8 @@ int main(int argc, char *argv[]) {
 																					&next_parameter,
 																					&new_radius);
 
-																					*/
+			*/
+
 										
 										
 
@@ -605,6 +615,12 @@ int main(int argc, char *argv[]) {
 		Matrix mtx_diff_gradient;
 		mtx_diff_gradient.Alias(diff_gradient.ptr(), diff_gradient.length(), 1);
 
+    cout<<"diff_gradient"<<endl;
+		for(index_t i=0; i<diff_gradient.length(); i++){
+			cout<<diff_gradient[i] <<" ";
+		}
+		cout<<endl;
+
 		
 		//Matrix temp1; //H*s*s'*H
 		//Matrix Hs;
@@ -620,7 +636,32 @@ int main(int argc, char *argv[]) {
     //Matrix temp2; //yy'/s'y
 		la::MulTransBOverwrite(mtx_diff_gradient, mtx_diff_gradient, &temp2);
 		//cout<<"temp2"<<temp2[0]<<endl;
+
+		cout<<"mtx_diff_gradient"<<endl;
+		for(index_t i=0; i<mtx_diff_gradient.n_rows(); i++){
+			cout<<mtx_diff_gradient.get(i,0) <<" ";
+		}
+		cout<<endl;
+
+		cout<<"temp2"<<endl;
+		for (index_t j=0; j<updated_hessian.n_rows(); j++){
+			for (index_t k=0; k<updated_hessian.n_cols(); k++){
+				cout<<temp2.get(j,k) <<"  ";
+			}
+			cout<<endl;
+		}
+
+
 		la::Scale( la::Dot(mtx_diff_par, mtx_diff_gradient), &temp2);
+
+		cout<<"temp2"<<endl;
+		for (index_t j=0; j<updated_hessian.n_rows(); j++){
+			for (index_t k=0; k<updated_hessian.n_cols(); k++){
+				cout<<temp2.get(j,k) <<"  ";
+			}
+			cout<<endl;
+		}
+
 		//cout<<"dot"<<la::dot(mtx_diff_par, mtx_diff_gradient)<<endl;
 		//cout<<"temp2"<<temp2[0]<<endl;
 
@@ -628,10 +669,43 @@ int main(int argc, char *argv[]) {
 		la::AddTo(temp2, &updated_hessian);
 		//la::Scale(-1.0, &current_gradient);
 		//la::Scale(-1.0, &updated_hessian);
+		cout<<"Hessian update"<<endl;
+		cout<<"current_hessian"<<endl;
+		for (index_t j=0; j<updated_hessian.n_rows(); j++){
+			for (index_t k=0; k<updated_hessian.n_cols(); k++){
+				cout<<current_hessian.get(j,k) <<"  ";
+			}
+			cout<<endl;
+		}
+
+		cout<<"temp1"<<endl;
+		for (index_t j=0; j<updated_hessian.n_rows(); j++){
+			for (index_t k=0; k<updated_hessian.n_cols(); k++){
+				cout<<temp1.get(j,k) <<"  ";
+			}
+			cout<<endl;
+		}
+
+		cout<<"temp2"<<endl;
+		for (index_t j=0; j<updated_hessian.n_rows(); j++){
+			for (index_t k=0; k<updated_hessian.n_cols(); k++){
+				cout<<temp2.get(j,k) <<"  ";
+			}
+			cout<<endl;
+		}
+
+
+		cout<<"update_hessian"<<endl;
+		for (index_t j=0; j<updated_hessian.n_rows(); j++){
+			for (index_t k=0; k<updated_hessian.n_cols(); k++){
+				cout<<updated_hessian.get(j,k) <<"  ";
+			}
+			cout<<endl;
+		}
 
 		//Check positive definiteness
 		Vector eigen_hessian;
-		la::EigenvaluesInit (updated_hessian, &eigen_hessian);
+		la::EigenvaluesInit(updated_hessian, &eigen_hessian);
 
 		cout<<"eigen values of updated hessian"<<endl;
 
@@ -723,11 +797,52 @@ int main(int argc, char *argv[]) {
 		cout<<current_parameter[i]<<" ";
 	}
 	cout<<endl;
+  
+	//cout<<"num_of_people="<<num_of_people;
 
+	
+	
 	//Compute Variance of the estimates -H^{-1}
-	Matrix final_hessian;
+	Matrix final_hessian1;
 	//objective.ComputeHessian(current_added_first_stage_x.size(), current_parameter, &final_hessian);
-	final_hessian.Alias(current_hessian);
+	
+	final_hessian1.Alias(current_hessian);
+	Matrix inverse_hessian1;
+	if( !PASSED(la::InverseInit(final_hessian1, &inverse_hessian1)) ) {
+		NOTIFY("Final hessian1 matrix is not invertible!");
+	}
+	else{
+		la::Scale(-1.0, &inverse_hessian1);
+
+		cout<<"Diagonal of inverse final hessian: ";
+		for(index_t i=0; i<inverse_hessian1.n_rows(); i++){
+			cout<<inverse_hessian1.get(i,i)<<" ";
+		}
+		cout<<endl;
+
+
+		index_t n=inverse_hessian1.n_rows();
+		Vector estimates_variance1;
+		estimates_variance1.Init(n);
+		for(index_t i=0; i<n; i++) {
+			estimates_variance1[i]=inverse_hessian1.get(i,i);
+		}
+
+
+		//linalg__private::DiagToVector(inverse_hessian, &estimates_variance);
+		
+		cout<<"Variance of etimates: ";
+		for(index_t i=0; i<estimates_variance1.length(); i++) {
+			cout<<estimates_variance1[i]<<" ";
+
+		}
+		cout<<endl;
+
+	}
+  
+	NOTIFY("Final hessian calculation2");
+	Matrix final_hessian;
+  objective.CheckHessian(num_of_people, current_parameter, &final_hessian);
 	Matrix inverse_hessian;
 	if( !PASSED(la::InverseInit(final_hessian, &inverse_hessian)) ) {
 		NOTIFY("Final hessian matrix is not invertible!");
@@ -760,8 +875,11 @@ int main(int argc, char *argv[]) {
 		cout<<endl;
 
 	}
+	
+
 
 	
+
 	
 
  
