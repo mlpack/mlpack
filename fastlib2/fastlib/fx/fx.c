@@ -224,7 +224,7 @@ static void fx__write_path(fx_module *entry, FILE *stream)
     fx__write_path(entry->parent, stream);
     putc('/', stream);
   }
-  fprintf(stream, entry->key);
+  fprintf(stream, "%s", entry->key);
 }
 
 COMPILER_NO_RETURN
