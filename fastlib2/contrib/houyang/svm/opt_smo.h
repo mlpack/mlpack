@@ -45,19 +45,17 @@
  * @see svm.h
  */
 
-#ifndef U_SVM_SMO_H
-#define U_SVM_SMO_H
+#ifndef U_SVM_OPT_SMO_H
+#define U_SVM_OPT_SMO_H
 
 #include "fastlib/fastlib.h"
 
-// the tolerance for determing the optimality
-const double SMO_OPT_TOLERANCE = 1.0e-4;
 // maximum # of interations for SMO training
-const index_t MAX_NUM_ITER = 10000;
+const index_t MAX_NUM_ITER_SMO = 1000000;
 // after # of iterations to do shrinking
 const index_t NUM_FOR_SHRINKING = 1000;
 // threshold that determines whether need to do unshrinking
-const double SMO_UNSHRINKING_TOLERANCE = 10 * SMO_OPT_TOLERANCE;
+const double SMO_UNSHRINKING_TOLERANCE = 10;
 // threshold that determines whether an alpha is a SV or not
 const double SMO_ALPHA_ZERO = 1.0e-4;
 // for indefinite kernels
@@ -87,6 +85,7 @@ class SMO {
 
   Vector alpha_; /* the alphas, to be optimized */
   Vector alpha_status_; /*  ID_LOWER_BOUND (-1), ID_UPPER_BOUND (1), ID_FREE (0) */
+  index_t n_sv_; /* number of support vectors */
   
   index_t n_alpha_; /* number of variables to be optimized */
   index_t n_active_; /* number of samples in the active set */
@@ -98,7 +97,6 @@ class SMO {
   ArrayList<int> y_; /* list that stores "labels" */
 
   double bias_;
-  index_t n_sv_; /* number of support vectors */
 
   Vector grad_; /* gradient value */
   Vector grad_bar_; /* gradient value when treat free variables as 0 */
@@ -109,6 +107,8 @@ class SMO {
   double Cn_; // C_-, for SVM_C, y==-1
   double epsilon_; // for SVM_R
   int wss_; // working set selection scheme, 1 for 1st order expansion; 2 for 2nd order expansion
+  index_t n_iter_; // number of iterations
+  double accuracy_; // accuracy for stopping creterion
 
  public:
   SMO() {}
@@ -120,16 +120,18 @@ class SMO {
   void InitPara(int learner_typeid, ArrayList<double> &param_) {
     // init parameters
     budget_ = (int)param_[0];
+    wss_ = (int) param_[3];
+    n_iter_ = (index_t) param_[4];
+    n_iter_ = n_iter_ < MAX_NUM_ITER_SMO ? n_iter_: MAX_NUM_ITER_SMO;
+    accuracy_ = param_[5];
     if (learner_typeid == 0) { // SVM_C
       Cp_ = param_[1];
       Cn_ = param_[2];
-      wss_ = (int) param_[3];
     }
     else if (learner_typeid == 1) { // SVM_R
       Cp_ = param_[1];
       Cn_ = Cp_;
       epsilon_ = param_[2];
-      wss_ = (int) param_[3];
     }
   }
 
@@ -143,7 +145,7 @@ class SMO {
     return bias_;
   }
 
-  void GetSVM(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
+  void GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
 
  private:
   void LearnersInit_(int learner_typeid);
@@ -248,12 +250,12 @@ void SMO<TKernel>::LearnersInit_(int learner_typeid) {
     y_.Init(n_alpha_);
     for (i = 0; i < n_alpha_; i++) {
       y_[i] = datamatrix_.get(datamatrix_.n_rows()-1, i) > 0 ? 1 : -1;
-      }
+    }
   }
   else if (learner_typeid_ == 1) { // SVM_R
     n_alpha_ = 2 * n_data_;
 
-    alpha_.Init(2 * n_alpha_);
+    alpha_.Init(2 * n_alpha_); // TODO
     alpha_.SetZero();
 
     // initialize gradient
@@ -366,7 +368,7 @@ void SMO<TKernel>::Shrinking_() {
   }
 
   // determine whether need to do Unshrinking
-  if ( unshrinked_ || grad_max - grad_min <= SMO_UNSHRINKING_TOLERANCE ) {
+  if ( unshrinked_ || grad_max - grad_min <= SMO_UNSHRINKING_TOLERANCE * accuracy_ ) {
     // Unshrinking: put shrinked alphas back to active set
     ReconstructGradient_(learner_typeid_);
     for ( t=n_alpha_-1; t>n_active_; t-- ) {
@@ -437,7 +439,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   /* Begin SMO iterations */
   int stop_condition = 0;
   while (1) {
-    VERBOSE_GOT_HERE(0);
+    //VERBOSE_GOT_HERE(0);
     
     /* for every min(n_data_, 1000) iterations, do shrinking */
     if (--ct_shrinking_ == 0) {
@@ -448,10 +450,12 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     // Find working set, check stopping criterion, update gradient and alphas
     stop_condition = TrainIteration_();
     // termination check, stop_condition==1 or 2->terminate
-    if (stop_condition == 1) // optimality reached
+    if (stop_condition == 1) {// optimality reached
+      printf("Accuracy %f achieved. Number of iterations: %d\n.", accuracy_, ct_iter_);
       break;
+    }
     else if (stop_condition == 2) {// max num of iterations exceeded
-      fprintf(stderr, "Max # of iterations (%d) exceeded !!!\n", MAX_NUM_ITER);
+      fprintf(stderr, "Number of iterations %d exceeded !!!\n", n_iter_);
       break;
     }
   }
@@ -477,7 +481,7 @@ int SMO<TKernel>::TrainIteration_() {
       return 0;
     }
   }
-  else if (ct_iter_ >= MAX_NUM_ITER) { // max num of iterations exceeded
+  else if (ct_iter_ >= n_iter_) { // number of iterations exceeded
     return 2;
   }
   else{ // update gradient and alphas, and continue iterations
@@ -598,7 +602,7 @@ bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
   out_j = idx_j; // j found
   
   // Stopping Criterion check
-  if (grad_max - grad_min <= SMO_OPT_TOLERANCE)
+  if (grad_max - grad_min <= accuracy_)
     return true; // optimality reached
 
   return false;
@@ -738,7 +742,7 @@ void SMO<TKernel>::CalcBias_() {
 *
 */
 template<typename TKernel>
-void SMO<TKernel>::GetSVM(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
+void SMO<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
   if (learner_typeid_ == 0) {// SVM_C
     for (index_t i = 0; i < n_data_; i++) {
       if (alpha_[i] >= SMO_ALPHA_ZERO) { // support vectors found

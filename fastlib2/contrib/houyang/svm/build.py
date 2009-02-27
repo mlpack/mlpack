@@ -3,7 +3,7 @@ librule(
 	
 	sources = ["svm_main.cc"],
 	
-	headers = ["smo.h", "svm.h"],
+        headers = ["opt_smo.h", "opt_sgd.h", "svm.h"],
 	
 	deplibs = ["fastlib:fastlib"],
 	
@@ -15,7 +15,7 @@ binrule(
     
     sources = ["svm_main.cc"],
    
-    headers = ["smo.h", "svm.h"],
+    headers = ["opt_smo.h", "opt_sgd.h", "svm.h"],
 
     deplibs = [":svm"]
 
