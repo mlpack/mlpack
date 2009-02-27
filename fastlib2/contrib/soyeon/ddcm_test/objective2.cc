@@ -2918,16 +2918,17 @@ void Objective::CheckHessian(double current_sample,
 	u2i.Init(num_of_betas_+2);
   u2i.SetZero();
 
-	Vector u1j; //x+epsillon*ei
+	Vector u1j; //x+epsillon*ej
 	u1j.Init(num_of_betas_+2);
 	u1j.SetZero();
 
-	Vector u2j; //x-epsillon*ei
+	Vector u2j; //x-epsillon*ej
 	u2j.Init(num_of_betas_+2);
   u2j.SetZero();
 
 	double epsilon;
-	epsilon=sqrt(1e-8);
+	//epsilon=sqrt(1e-8);
+	epsilon=1e-4;
 
 	//Vector u1i_gradient;
   //u1i_gradient.Init(num_of_betas_+2);
@@ -2976,8 +2977,8 @@ void Objective::CheckHessian(double current_sample,
 		ComputeGradient(current_sample, u1i, &u1i_gradient);
 		ComputeGradient(current_sample, u2i, &u2i_gradient);
 
-		la::Scale(-1.0, &u1i_gradient);
-		la::Scale(-1.0, &u2i_gradient);
+		//la::Scale(-1.0, &u1i_gradient);
+		//la::Scale(-1.0, &u2i_gradient);
 
 
 		//la::SubOverwrite(u2i_gradient, u1i_gradient, &diff_gradient_i);
@@ -2988,7 +2989,7 @@ void Objective::CheckHessian(double current_sample,
 
 		for(index_t j=0; j<(num_of_betas_+2); j++){
 			ej.SetZero();
-			ej[i]=1.0;
+			ej[j]=1.0;
 			la::Scale(epsilon, &ej);
 
 			la::AddOverwrite(current_parameter, ej, &u1j);
@@ -2999,8 +3000,8 @@ void Objective::CheckHessian(double current_sample,
 			Vector u2j_gradient;
 			ComputeGradient(current_sample, u1j, &u1j_gradient);		
 		  ComputeGradient(current_sample, u2j, &u2j_gradient);
-			la::Scale(-1.0, &u1j_gradient);
-		  la::Scale(-1.0, &u2j_gradient);
+			//la::Scale(-1.0, &u1j_gradient);
+		  //la::Scale(-1.0, &u2j_gradient);
 
 			//la::SubOverwrite(u2j_gradient, u1j_gradient, &diff_gradient_j);
 		  //la::Scale((1.0/(4*epsilon)), &diff_gradient_j);
@@ -3009,7 +3010,141 @@ void Objective::CheckHessian(double current_sample,
 			diff_gradient_j=(u1i_gradient[j]-u2i_gradient[j])/(4*epsilon);
 
 			double temp=0;
-			temp=(diff_gradient_i+diff_gradient_j);
+			temp=-1*(diff_gradient_i+diff_gradient_j);
+
+			dummy_approx_hessian.set(i,j,temp);
+		}
+	}
+
+	/*
+	cout<<"dummy_hessian_nonsymmetric"<<endl;
+	for (index_t j=0; j<dummy_approx_hessian.n_rows(); j++){
+		for (index_t k=0; k<dummy_approx_hessian.n_cols(); k++){
+			cout<<dummy_approx_hessian.get(j,k) <<"  ";
+		}
+		cout<<endl;
+	}
+  */
+
+
+	//Make hessian symmetric
+	for(index_t i=0; i<(num_of_betas_+2); i++){
+		for(index_t j=0; j<(num_of_betas_+2); j++){
+
+			double temp2=0;
+			temp2=(dummy_approx_hessian.get(i,j)+dummy_approx_hessian.get(j,i))/(2.0);
+			dummy_approx_hessian.set(i,j, temp2);
+			dummy_approx_hessian.set(j,i, temp2);
+		}
+	}
+
+	//Check positive definiteness
+	Vector eigen_hessian;
+	la::EigenvaluesInit(dummy_approx_hessian, &eigen_hessian);
+
+	
+	cout<<"eigen values"<<endl;
+
+	for(index_t i=0; i<eigen_hessian.length(); i++){
+		cout<<eigen_hessian[i]<<" ";
+	}
+	cout<<endl;
+
+	double max_eigen=0;
+	//cout<<"eigen_value:"<<endl;
+	for(index_t i=0; i<eigen_hessian.length(); i++){
+		//cout<<eigen_hessian[i]<<" ";
+		if(eigen_hessian[i]>max_eigen){
+			max_eigen=eigen_hessian[i];
+		}
+
+	}
+	//cout<<endl;
+	cout<<"max_eigen="<<(max_eigen)<<endl;
+
+	if(max_eigen>0){
+		NOTIFY("Hessian is not Negative definite..Modify...");
+		for(index_t i=0; i<eigen_hessian.length(); i++){
+			dummy_approx_hessian.set(i,i,(dummy_approx_hessian.get(i,i)-(max_eigen+0.5)));
+			//dummy_approx_hessian.set(i,i,(dummy_approx_hessian.get(i,i)-(max_eigen*1.1)));
+		}
+	}
+
+	
+	approx_hessian->Copy(dummy_approx_hessian);
+
+}
+
+
+ 
+void Objective::CheckHessian2(double current_sample, 
+									  Vector &current_parameter, 
+										Matrix *approx_hessian) {
+
+//(i,j)=(f(x+epsilon*ei+epsilon*ej)-f(x+epsilon*ei)-f(x+epsilon*ej)+f(x))/(epsilon^2)
+//(i,j)=(f(x+epsilon*ei+epsilon*ej)-f(x+epsilon*ei-epsilon*ej)
+//															 -f(x-epsilon*ei+epsilon*ej)+f(x-epsilon*ei-epsilon*ej))/(4*epsilon^2)
+
+	Vector ei;
+	ei.Init(num_of_betas_+2);
+
+	Vector ej;
+	ej.Init(num_of_betas_+2);
+
+
+	Vector u1i; //x+epsillon*ei
+	u1i.Init(num_of_betas_+2);
+	u1i.SetZero();
+
+	Vector u1j; //x+epsillon*ej
+	u1j.Init(num_of_betas_+2);
+	u1j.SetZero();
+
+	Vector uij; //x+epsillon*ei+epsilon*ej
+	uij.Init(num_of_betas_+2);
+  uij.SetZero();
+
+	double epsilon;
+	//epsilon=sqrt(1e-8);
+	epsilon=1e-4;
+
+		
+	Matrix dummy_approx_hessian;
+	dummy_approx_hessian.Init(num_of_betas_+2, num_of_betas_+2);
+	dummy_approx_hessian.SetZero();
+
+	for(index_t i=0; i<(num_of_betas_+2); i++){
+		ei.SetZero();
+		ei[i]=1.0;
+		la::Scale(epsilon, &ei);
+
+		la::AddOverwrite(current_parameter, ei, &u1i);
+				
+		double first_term; //f(x+epsilon*ei+epsilon*ej)
+		double second_term; //-f(x+epsilon*ei)
+		double third_term; //-f(x+epsilon*ej)
+		double fourth_term; //+f(x))
+
+		ComputeObjective(current_sample, u1i, &second_term);
+		//second_term=-1*second_term;
+		ComputeObjective(current_sample, current_parameter, &fourth_term);
+		fourth_term=-1*fourth_term;
+		
+		for(index_t j=0; j<(num_of_betas_+2); j++){
+			ej.SetZero();
+			ej[i]=1.0;
+			la::Scale(epsilon, &ej);
+
+			la::AddOverwrite(current_parameter, ej, &u1j);
+		  la::AddOverwrite(u1i, ej, &uij);
+
+   		ComputeObjective(current_sample, u1j, &third_term);
+			//third_term=-1.0*third_term;
+			ComputeObjective(current_sample, uij, &first_term);
+			first_term=-1.0*first_term;
+
+			double temp=0;
+			temp=(first_term+second_term+third_term+fourth_term)/(epsilon*epsilon);
 
 			dummy_approx_hessian.set(i,j,temp);
 		}
@@ -3024,6 +3159,14 @@ void Objective::CheckHessian(double current_sample,
 			dummy_approx_hessian.set(i,j, temp2);
 			dummy_approx_hessian.set(j,i, temp2);
 		}
+	}
+
+	cout<<"dummy_hessian2"<<endl;
+	for (index_t j=0; j<dummy_approx_hessian.n_rows(); j++){
+		for (index_t k=0; k<dummy_approx_hessian.n_cols(); k++){
+			cout<<dummy_approx_hessian.get(j,k) <<"  ";
+		}
+		cout<<endl;
 	}
 
 	//Check positive definiteness
@@ -3058,19 +3201,6 @@ void Objective::CheckHessian(double current_sample,
 
 	
 	approx_hessian->Copy(dummy_approx_hessian);
-
-}
-
-
- 
-void CheckHessian2(double current_sample, 
-									  Vector &current_parameter, 
-										Matrix *approx_hessian) {
-
-//(i,j)=(f(x+epsilon*ei+epsilon*ej)-f(x+epsilon*ei)-f(x+epsilon*ej)+f(x))/(epsilon^2)
-//(i,j)=(f(x+epsilon*ei+epsilon*ej)-f(x+epsilon*ei-epsilon*ej)
-//															 -f(x-epsilon*ei+epsilon*ej)+f(x-epsilon*ei-epsilon*ej))/(4*epsilon^2)
-
 
 
 
