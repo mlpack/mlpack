@@ -1,7 +1,9 @@
 # Library build rule for the series expansion implementation
 librule(
     name = "series_expansion",
-    sources = ["series_expansion_aux.cc"],
+    sources = ["inverse_pow_dist_farfield_expansion_impl.cc",
+               "inverse_pow_dist_local_expansion_impl.cc",
+               "series_expansion_aux.cc"],
     headers = ["bounds_aux.h",
                "complex_matrix.h",
                "farfield_expansion.h",
@@ -10,11 +12,9 @@ librule(
                "fourier_kernel_aux.h",
                "fourier_series_expansion_aux.h",
                "inverse_pow_dist_farfield_expansion.h",
-               "inverse_pow_dist_farfield_expansion_impl.h",
                "inverse_pow_dist_kernel_aux.h",
                "inverse_pow_dist_kernel.h",
                "inverse_pow_dist_local_expansion.h",
-               "inverse_pow_dist_local_expansion_impl.h",
                "inverse_pow_dist_series_expansion_aux.h",
                "kernel_aux.h",
                "local_expansion.h",

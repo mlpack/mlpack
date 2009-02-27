@@ -6,6 +6,7 @@
 #ifndef INVERSE_POW_DIST_SERIES_EXPANSION_AUX
 #define INVERSE_POW_DIST_SERIES_EXPANSION_AUX
 
+#include <complex>
 #include <iostream>
 
 #include "fastlib/fastlib.h"
