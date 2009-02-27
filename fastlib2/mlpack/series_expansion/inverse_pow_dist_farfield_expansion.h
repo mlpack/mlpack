@@ -19,6 +19,8 @@
 #include "kernel_aux.h"
 #include "inverse_pow_dist_series_expansion_aux.h"
 
+#include "inverse_pow_dist_local_expansion.h"
+
 /** @brief The far field expansion class for the inverse power
  *         distance function.
  */
@@ -158,14 +160,9 @@ class InversePowDistFarFieldExpansion {
    * Translate to the given local expansion. The translated coefficients
    * are added up to the passed-in local expansion coefficients.
    */
-  template<typename InversePowDistLocalExpansion>
   void TranslateToLocal(InversePowDistLocalExpansion &se, 
 			int truncation_order);
 
 };
-
-#define INSIDE_INVERSE_POW_DIST_FARFIELD_EXPANSION_H
-#include "inverse_pow_dist_farfield_expansion_impl.h"
-#undef INSIDE_INVERSE_POW_DIST_FARFIELD_EXPANSION_H
 
 #endif

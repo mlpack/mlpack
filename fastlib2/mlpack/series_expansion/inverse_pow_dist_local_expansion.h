@@ -15,8 +15,6 @@
 #include "kernel_aux.h"
 #include "inverse_pow_dist_series_expansion_aux.h"
 
-class InversePowDistFarFieldExpansion;
-
 /** @brief The class defining a local expansion for inverse distance
  *         kernel functions.
  */
@@ -127,9 +125,5 @@ class InversePowDistLocalExpansion {
   void TranslateToLocal(InversePowDistLocalExpansion &se);
 
 };
-
-#define INSIDE_INVERSE_POW_DIST_LOCAL_EXPANSION_H
-#include "inverse_pow_dist_local_expansion_impl.h"
-#undef INSIDE_INVERSE_POW_DIST_LOCAL_EXPANSION_H
 
 #endif

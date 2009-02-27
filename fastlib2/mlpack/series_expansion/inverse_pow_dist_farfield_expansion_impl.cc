@@ -1,7 +1,4 @@
-#ifndef INSIDE_INVERSE_POW_DIST_FARFIELD_EXPANSION_H
-#error "This file is not a public header file!"
-#endif
-
+#include "inverse_pow_dist_farfield_expansion.h"
 #include <complex>
 #include <iostream>
 
@@ -299,7 +296,6 @@ void InversePowDistFarFieldExpansion::TranslateFromFarField
   order_ = std::max(order_, se.get_order());
 }
 
-template<typename InversePowDistLocalExpansion>
 void InversePowDistFarFieldExpansion::TranslateToLocal
 (InversePowDistLocalExpansion &se, int truncation_order) {
 

@@ -1,9 +1,4 @@
-#ifndef INSIDE_INVERSE_POW_DIST_LOCAL_EXPANSION_H
-#error "This is not a public header file!"
-#endif
-
-#ifndef INVERSE_POW_DIST_LOCAL_EXPANSION_IMPL_H
-#define INVERSE_POW_DIST_LOCAL_EXPANSION_IMPL_H
+#include "inverse_pow_dist_local_expansion.h"
 
 void InversePowDistLocalExpansion::Accumulate(const double *v, 
 					      double weight, int order) {
@@ -257,5 +252,3 @@ void InversePowDistLocalExpansion::TranslateToLocal
   // current order and given order.
   se.set_order(std::max(order_, se.get_order()));
 }
-
-#endif

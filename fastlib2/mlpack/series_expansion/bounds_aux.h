@@ -1,16 +1,17 @@
 #ifndef BOUNDS_AUX_H
 #define BOUNDS_AUX_H
 
-#include "fastlib/fastlib_int.h"
+#include "fastlib/fastlib.h"
 
-namespace bounds_aux {
+class bounds_aux {
   
+ public:
   template<int t_pow>
-  void MaxDistanceSq(const DHrectBound<t_pow> &bound1, 
-		     const DHrectBound<t_pow> &bound2,
-		     Vector &furthest_point_in_bound1,
-		     double &furthest_dsqd) {
-		       
+  static void MaxDistanceSq(const DHrectBound<t_pow> &bound1, 
+			    const DHrectBound<t_pow> &bound2,
+			    Vector &furthest_point_in_bound1,
+			    double &furthest_dsqd) {
+    
     int dim = furthest_point_in_bound1.length();
     furthest_dsqd = 0;
 
@@ -37,10 +38,10 @@ namespace bounds_aux {
   }
 
   template<int t_pow>
-  void MaxDistanceSq(const DHrectBound<t_pow> &bound1, 
-		     Vector &bound2_centroid,
-		     Vector &furthest_point_in_bound1,
-		     double &furthest_dsqd) {
+  static void MaxDistanceSq(const DHrectBound<t_pow> &bound1, 
+			    Vector &bound2_centroid,
+			    Vector &furthest_point_in_bound1,
+			    double &furthest_dsqd) {
 		       
     int dim = furthest_point_in_bound1.length();
     furthest_dsqd = 0;
@@ -67,10 +68,10 @@ namespace bounds_aux {
   }
 
   template<int t_pow, typename TVector>
-  void MaxDistanceSq(const DBallBound < LMetric<t_pow>, TVector > &bound1, 
-		     Vector &bound2_centroid,
-		     Vector &furthest_point_in_bound1,
-		     double &furthest_dsqd) {
+  static void MaxDistanceSq(const DBallBound < LMetric<t_pow>, TVector > &bound1, 
+			    Vector &bound2_centroid,
+			    Vector &furthest_point_in_bound1,
+			    double &furthest_dsqd) {
 		       
     furthest_dsqd = 0;
     
@@ -100,7 +101,7 @@ namespace bounds_aux {
    *         of the given ball bound.
    */
   template<int t_pow, typename TVector>
-  double MaxSideLengthOfBoundingBox
+  static double MaxSideLengthOfBoundingBox
   (const DBallBound < LMetric<t_pow>, TVector > &ball_bound) {
     return ball_bound.radius() * 2;
   }
@@ -110,7 +111,7 @@ namespace bounds_aux {
    *         side length.
    */
   template<int t_pow>
-  double MaxSideLengthOfBoundingBox(const DHrectBound<t_pow> &bound) {
+  static double MaxSideLengthOfBoundingBox(const DHrectBound<t_pow> &bound) {
 
     double max_length = 0;
 
@@ -125,7 +126,7 @@ namespace bounds_aux {
    *         L1 sense.
    */
   template<int t_pow, typename TVector>
-  double MaxL1Distance
+  static double MaxL1Distance
   (const DBallBound < LMetric<t_pow>, TVector > &ball_bound1,
    const DBallBound < LMetric<t_pow>, TVector > &ball_bound2,
    int *dimension) {
@@ -146,8 +147,8 @@ namespace bounds_aux {
    *         L1 sense.
    */
   template<int t_pow>
-  double MaxL1Distance(const DHrectBound<t_pow> &bound1,
-		       const DHrectBound<t_pow> &bound2, int *dimension) {
+  static double MaxL1Distance(const DHrectBound<t_pow> &bound1,
+			      const DHrectBound<t_pow> &bound2, int *dimension) {
 
     double farthest_distance_manhattan = 0;
     for(index_t d = 0; d < bound1.dim(); d++) {
@@ -163,47 +164,6 @@ namespace bounds_aux {
     *dimension = bound1.dim();
     return farthest_distance_manhattan;
   }
-
-  /** @brief The comparison function used for quick sort
-   */
-  static int qsort_compar_(const void *a, const void *b) {
-    
-    index_t a_dereferenced = *((index_t *) a);
-    index_t b_dereferenced = *((index_t *) b);
-    
-    if(a_dereferenced < b_dereferenced) {
-      return -1;
-    }
-    else if(a_dereferenced > b_dereferenced) {
-      return 1;
-    }
-    else {
-      return 0;
-    }
-  }
-
-  double RandomizedDistanceSqEuclidean(index_t length, const double *a, 
-				       const double *b) {
-    
-    int num_samples = (int) sqrt(length);
-    double sample_mean = 0;
-    ArrayList<index_t> dimension_indices;
-    dimension_indices.Init(num_samples);
-    for(index_t i = 0; i < num_samples; i++) {
-      dimension_indices[i] = math::RandInt(0, length);
-    }
-    qsort(dimension_indices.begin(), num_samples, sizeof(index_t), 
-	  &qsort_compar_);
-    
-    for(index_t i = 0; i < num_samples; i++) {      
-      sample_mean += math::Sqr(a[dimension_indices[i]] - 
-			       b[dimension_indices[i]]);
-    }
-
-    sample_mean /= ((double) num_samples);    
-    return sample_mean * length;
-  }
-
 };
 
 #endif
