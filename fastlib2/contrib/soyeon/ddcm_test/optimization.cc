@@ -483,7 +483,7 @@ void Optimization::ComputeScaledDoglegDirection(double radius,
 		
 		Vector p_b;
 		//p_b= - (hessian)^-1 * g
-		la::MulInit(inverse_hessian, gradient, &p_b);
+		//la::MulInit(inverse_hessian, gradient, &p_b);
 		//la::Scale(-1.0, &p_b);
 		la::ScaleInit(-1.0, gradient, &p_b);
 		//maximization
@@ -623,17 +623,27 @@ void Optimization::ComputeScaledDoglegDirection(double radius,
 
 	la::Scale(-1.0, &scaled_hessian);
 	la::Scale(-1.0, &scaled_gradient);
+	
+	//Vector scaled_p;
+	//scaled_p.Alias(*p);
+
+	//la::MulOverwrite(scaled_p, inverse_hessian, p) ;
+
 
 	//delta_m calculation -g'p-0.5*p'Hp=-g'p-0.5*(Hp)'p
 	Vector temp3; //Hp
-	la::MulInit(scaled_hessian, *p, &temp3);
+	la::MulInit(hessian, *p, &temp3);
 	double pHp=0;;
 	pHp=la::Dot(temp3, *p);
 
 	
 
-	*delta_m=-1*(-1*(la::Dot(scaled_gradient, *p))-0.5*(pHp));
-	
+	*delta_m=-1*(-1*(la::Dot(gradient, *p))-0.5*(pHp));
+
+
+	//Vector scaled_p;
+	//la::ScaleInit(-1.0, *p, &scaled_p);
+  //la::MulOverwrite(scaled_p, inverse_hessian, p);
 
 	
 }
