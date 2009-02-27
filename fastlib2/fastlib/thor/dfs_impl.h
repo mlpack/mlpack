@@ -19,7 +19,7 @@ void DualTreeDepthFirst<GNP>::Doit(
     DistributedCache *r_points,
     DistributedCache *r_nodes,
     DistributedCache *q_results) {
-  param_.Copy(param_in);
+  param_.InitCopy(param_in);
 
   q_nodes_.Init(q_nodes, BlockDevice::M_READ);
   r_points_.Init(r_points, BlockDevice::M_READ);
