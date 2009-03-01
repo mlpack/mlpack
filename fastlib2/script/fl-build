@@ -93,7 +93,7 @@ else:
   else:
     fx.param_default("compiler", "gcc")
 
-fx.param_default("j", "2")
+fx.param_default("j", "1")
 fx.param_default("prefix", "")
 fx.param_default("downloader", "/usr/bin/wget")
 target_name = fx.extra_args[0]
