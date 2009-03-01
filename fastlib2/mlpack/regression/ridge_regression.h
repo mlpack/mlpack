@@ -43,11 +43,11 @@ class RidgeRegression {
 
   void Destruct();
 
-  void Regress(double lambda);
-
   void QuicSVDRegress(double lambda, double relative_error);
 
   void SVDRegress(double lambda);
+
+  void SVDNormalEquationRegress(double lambda);
 
   void CrossValidatedRegression(double lambda_min, double lambda_max,
 				index_t num);
@@ -77,6 +77,8 @@ class RidgeRegression {
 
   void ComputeLinearModel_(double lambda_sq, const Vector &singular_values, 
 			   const Matrix &u, const Matrix v_t);
+  
+  void FormNormalEquation_(double lambda, Matrix *output);
 
   void BuildDesignMatrixFromIndexSet_
   (const Matrix &input_data, const GenVector<index_t> &predictor_indices);

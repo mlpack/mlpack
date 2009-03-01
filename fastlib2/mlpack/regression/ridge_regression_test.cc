@@ -29,13 +29,13 @@ class RidgeRegressionTest {
     data::Load("true_factors.csv", &true_factors_);
   }
 
-  void TestRegressVersusSVDRegress() {
+  void TestSVDNormalEquationRegressVersusSVDRegress() {
 
-    NOTIFY("[*] TestRegressVersusSVDRegress");
+    NOTIFY("[*] TestSVDNormalEquationRegressVersusSVDRegress");
 
     engine_ = new RidgeRegression();
     engine_->Init(module_, predictors_, predictions_);
-    engine_->Regress(0);
+    engine_->SVDNormalEquationRegress(0);
     RidgeRegression svd_engine;
     svd_engine.Init(module_, predictors_, predictions_);
     svd_engine.SVDRegress(0);
@@ -44,6 +44,8 @@ class RidgeRegressionTest {
     svd_engine.factors(&svd_factors);
     
     for(index_t i=0; i<factors.n_rows(); i++) {
+      NOTIFY("Normal Equation: %g, SVD: %g\n", factors.get(i, 0),
+	     svd_factors.get(i, 0));
       TEST_DOUBLE_APPROX(factors.get(i, 0), svd_factors.get(i, 0), 1e-3);
     }
     
@@ -89,7 +91,7 @@ class RidgeRegressionTest {
   }
 
   void TestAll() {
-    TestRegressVersusSVDRegress();
+    TestSVDNormalEquationRegressVersusSVDRegress();
     TestVIFBasedFeatureSelection();
     NOTIFY("[*] All tests passed !!");
   }  
