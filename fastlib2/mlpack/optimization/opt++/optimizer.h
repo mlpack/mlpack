@@ -27,19 +27,19 @@
 #endif
 
 #include "fastlib/fastlib.h"
-#include "opt++/include/newmat.h"
-#include "opt++/include/NLF.h"
-#include "opt++/include/OptCG.h"
-#include "opt++/include/OptLBFGS.h"
-#include "opt++/include/OptFDNewton.h"
-#include "opt++/include/OptNewton.h"
-#include "opt++/include/OptQNewton.h"
-#include "opt++/include/BoundConstraint.h"
-#include "opt++/include/CompoundConstraint.h"
-#include "opt++/include/LinearEquation.h"
-#include "opt++/include/LinearInequality.h"
-#include "opt++/include/NonLinearEquation.h"
-#include "opt++/include/NonLinearInequality.h"
+#include "include/newmat.h"
+#include "include/NLF.h"
+#include "include/OptCG.h"
+#include "include/OptLBFGS.h"
+#include "include/OptFDNewton.h"
+#include "include/OptNewton.h"
+#include "include/OptQNewton.h"
+#include "include/BoundConstraint.h"
+#include "include/CompoundConstraint.h"
+#include "include/LinearEquation.h"
+#include "include/LinearInequality.h"
+#include "include/NonLinearEquation.h"
+#include "include/NonLinearInequality.h"
 
 
 namespace optim {
@@ -258,7 +258,7 @@ class LinearInequalityTrait<Method, Objective, true> {
     } else {
       if (left_b==NULL and right_b!=NULL){
         NEWMAT::ColumnVector right(right_b->ptr(), right_b->length());
-        lineq = new OPTPP::LinearInequality(alpha, right_b, false);
+        lineq = new OPTPP::LinearInequality(alpha, right, false);
       } else {
         NEWMAT::ColumnVector left(left_b->ptr(), left_b->length());
         NEWMAT::ColumnVector right(right_b->ptr(), right_b->length());
