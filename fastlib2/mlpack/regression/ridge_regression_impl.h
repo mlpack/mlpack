@@ -74,28 +74,17 @@ void RidgeRegression::Init(fx_module *module,
   la::TransposeInit(predictions, &predictions_);
 }
 
-void RidgeRegression::Regress(double lambda) {
-
-  // we have to solve the system: (predictors^T * predictors +
-  // lambda^2 I) * factors = predictors^T * predictions
-  Matrix lhs; // lhs: left hand side
-  Matrix rhs; // rhs: right hand side
+void RidgeRegression::FormNormalEquation_(double lambda, Matrix *output) {
+  
+  // Set up the predictors^T * predictors.
   double lambda_sq = lambda * lambda;
-  la::MulTransAInit(predictors_, predictors_, &lhs);
+  la::MulTransAInit(predictors_, predictors_, output);
 
   // Add the regularizaton parameter to the diagonals before
   // inverting.
   for(index_t i = 0; i < predictors_.n_cols(); i++) {
-    lhs.set(i, i, lhs.get(i, i) + lambda_sq);
-  }
-
-  la::MulTransAInit(predictors_, predictions_, &rhs);
-
-  success_t flag = la::SolveInit(lhs, rhs, &factors_);
-
-  if(flag == SUCCESS_FAIL) {
-    printf("There was a problem in inverting the matrix!\n");
-  }
+    output->set(i, i, output->get(i, i) + lambda_sq);
+  } 
 }
 
 void RidgeRegression::BuildDesignMatrixFromIndexSet_
@@ -158,6 +147,36 @@ void RidgeRegression::SVDRegress(double lambda) {
   double lambda_sq = lambda * lambda;
 
   ComputeLinearModel_(lambda_sq, singular_values, u, v_t);
+}
+
+void RidgeRegression::SVDNormalEquationRegress(double lambda) {
+
+  Matrix normal_equation;
+  FormNormalEquation_(lambda, &normal_equation);
+  
+  // Do the SVD on the normal equation, which is of a smaller size
+  // than the original design matrix.
+  Vector eigen_values;
+  Matrix eigen_v, v_t;
+  la::SVDInit(normal_equation, &eigen_values, &eigen_v, &v_t);
+
+  // Take the square root of each eigenvalue to get the singular
+  // values.
+  for(index_t i = 0; i < eigen_values.length(); i++) {
+    eigen_values[i] = sqrt(eigen_values[i]);
+  }
+  Matrix u;
+  la::MulInit(predictors_, eigen_v, &u);
+  for(index_t i = 0; i < u.n_cols(); i++) {
+    double *u_column = u.GetColumnPtr(i);
+    if(eigen_values[i] > 0) {
+      la::Scale(u.n_rows(), 1.0 / eigen_values[i], u_column);
+    }
+  }
+  
+  double lambda_sq = lambda * lambda;
+
+  ComputeLinearModel_(lambda_sq, eigen_values, u, v_t);  
 }
 
 void RidgeRegression::CrossValidatedRegression(double lambda_min, 

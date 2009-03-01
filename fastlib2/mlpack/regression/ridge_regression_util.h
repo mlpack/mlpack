@@ -113,8 +113,8 @@ class RidgeRegressionUtil {
 			      (*current_prune_predictor_indices)[i]);
 
 	// Do the regression.
-	if(!strcmp(method, "normal")) {  
-	  ridge_regression.Regress(lambda);
+	if(!strcmp(method, "normalsvd")) {  
+	  ridge_regression.SVDNormalEquationRegress(lambda);
 	}
 	else if(!strcmp(method, "quicsvd")) {
 	  ridge_regression.QuicSVDRegress(lambda, 0.1);

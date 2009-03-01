@@ -25,8 +25,8 @@ int main(int argc, char *argv[]) {
   ////////// Documentation stuffs //////////
   const fx_entry_doc ridge_main_entries[] = {
     {"inversion_method", FX_PARAM, FX_STR, NULL,
-     "  The method chosen for inverting the design matrix: normal\
- (normal equation), svd (SVD: default), quicsvd (QUIC-SVD).\n"},
+     "  The method chosen for inverting the design matrix: normalsvd\
+ (SVD on normal equation: default), svd (SVD), quicsvd (QUIC-SVD).\n"},
     {"lambda_min", FX_PARAM, FX_DOUBLE, NULL,
      "  The minimum lambda value used for CV (set to zero by default).\n"},
     {"lambda_max", FX_PARAM, FX_DOUBLE, NULL,
@@ -92,14 +92,14 @@ considered for pruning for the input dataset.\n"},
   RidgeRegression engine;
   NOTIFY("Computing Regression...");
 
-  const char *method = fx_param_str(module, "inversion_method", "quicsvd");
+  const char *method = fx_param_str(module, "inversion_method", "normalsvd");
   
   if(!strcmp(mode, "regress")) {
 
     engine.Init(module, predictors, predictions);
 
-    if(!strcmp(method, "normal")) {  
-      engine.Regress(lambda_min);
+    if(!strcmp(method, "normalsvd")) {  
+      engine.SVDNormalEquationRegress(lambda_min);
     }
     else if(!strcmp(method, "quicsvd")) {
       engine.QuicSVDRegress(lambda_min, 0.1);
@@ -157,8 +157,8 @@ considered for pruning for the input dataset.\n"},
 					  prune_predictor_indices,
 					  &output_predictor_indices);
     engine.Init(module, predictors, output_predictor_indices, predictions);
-    if(!strcmp(method, "normal")) {  
-      engine.Regress(lambda_min);
+    if(!strcmp(method, "normalsvd")) {  
+      engine.SVDNormalEquationRegress(lambda_min);
     }
     else if(!strcmp(method, "quicsvd")) {
       engine.QuicSVDRegress(lambda_min, 0.1);
