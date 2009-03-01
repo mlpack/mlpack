@@ -10,3 +10,8 @@ binrule(name = "ridge",
         sources = ["ridge_main.cc"],
         deplibs = [":ridge_regression"]
     )
+
+binrule(name = "dataset_preprocess",
+        sources = ["dataset_preprocess.cc"],
+        deplibs = ["fastlib:fastlib"]
+        )
