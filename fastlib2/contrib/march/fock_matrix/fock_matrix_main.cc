@@ -94,7 +94,7 @@ int main(int argc, char* argv[]) {
   if (fx_param_exists(root_mod, "do_cfmm")) {
   
     Matrix cfmm_coulomb;
-    
+ 
     fx_module* cfmm_mod = fx_submodule(root_mod, "cfmm");
     
     CFMMCoulomb coulomb_alg;
@@ -106,8 +106,12 @@ int main(int argc, char* argv[]) {
     if (fx_param_exists(root_mod, "print_cfmm")) {
       cfmm_coulomb.PrintDebug("CFMM J");
     }
+    
+    printf("CFMM in scope\n");
   
   } // do_cfmm
+  
+  printf("CFMM out scope\n");
 
 
   if (fx_param_exists(root_mod, "do_link")) {

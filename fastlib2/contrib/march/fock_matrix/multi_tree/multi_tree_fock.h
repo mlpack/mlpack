@@ -225,6 +225,30 @@ private:
   //////////////// Functions /////////////////////////////
   
   /**
+   * Returns the maximum integral between two square tree nodes
+   */
+  double NodesMaxIntegral(SquareTree* mu_nu, SquareTree* rho_sigma);
+  
+  double NodesMinIntegral(SquareTree* mu_nu, SquareTree* rho_sigma);
+  
+  double NodesMidpointIntegral(SquareTree* mu_nu, SquareTree* rho_sigma);
+  
+  /**
+   * Determines if the pair of nodes represent a non square square node
+   * on the diagonal.  This is important for counting the number of repeated 
+   * reference pairs accurately.  
+   */
+  bool RectangleOnDiagonal_(FockTree* mu, FockTree* nu);
+  
+  /**
+   * Counts the number of entries on the diagonal in the square node.  This 
+   * is needed for accurately counting how many references are involved in 
+   * an approximation.  
+   */
+  index_t CountOnDiagonal_(SquareFockTree* rho_sigma);
+  
+  
+  /**
    * Determines if the Coulomb interaction between the given square nodes can 
    * currently be approximated.  If so, then *approx_val holds the estimate
    */

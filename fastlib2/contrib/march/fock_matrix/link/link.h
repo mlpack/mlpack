@@ -44,6 +44,9 @@ class Link {
   
   // significant_mu_pairs_[i] = list of significant nu for shell i
   BasisShell*** significant_mu_pairs_;
+
+  // num_significant_mu_pairs_[i] = number of significant nu for mu
+  ArrayList<index_t> num_significant_mu_pairs_;
   
   
   // The length of shell_list_
@@ -110,6 +113,8 @@ class Link {
                                          
     significant_mu_pairs_ = 
         (BasisShell***)malloc(num_shells_*sizeof(BasisShell**));
+        
+    num_significant_mu_pairs_.Init(num_shells_);
     
   
   }

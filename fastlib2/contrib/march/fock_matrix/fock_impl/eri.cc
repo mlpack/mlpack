@@ -29,7 +29,7 @@ double ComputeGPTCenter(Vector& A_vec, double alpha_A, Vector& B_vec,
   la::Scale(1/gamma, p_vec);
   
   return gamma;
-                                                                
+  
 }
 
 /**
@@ -197,9 +197,7 @@ double ComputeShellIntegrals(ShellPair& AB_shell,
                                                CD_shell.center());
 
   return integral;
-                 
-  
-                                                                                                                                                                       
+
 }
 
 double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
@@ -210,20 +208,17 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
 
 }
 
-// I need to order these by size of integral estimate
+
 index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
                           ArrayList<BasisShell>& shells_in, 
                           double shell_pair_cutoff) {
-
-  // The size to increase the list by when necessary
-  index_t num_to_add = 20;
 
   index_t num_shells = shells_in.size();
   
   index_t num_shell_pairs = 0;
   
   // What size to init to? 
-  shell_pairs->Init(num_shells);
+  shell_pairs->Init();
   
   for (index_t i = 0; i < num_shells; i++) {
   
@@ -238,18 +233,14 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
       
       if (this_bound > shell_pair_cutoff) {
       
-        if (shell_pairs->size() <= num_shell_pairs) {
-          shell_pairs->PushBack(num_to_add);
-        }
+        shell_pairs->PushBack();
         
         (*shell_pairs)[num_shell_pairs].Init(i, j, i_shell, j_shell);
         (*shell_pairs)[num_shell_pairs].set_integral_upper_bound(this_bound);
         num_shell_pairs++;
+        
               
       }
-      /*      else {
-        printf("pruned\n");
-	}*/
       
     } // for j
     
@@ -262,16 +253,14 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
 index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
                           ArrayList<BasisShell>& shells_in, 
                           double shell_pair_cutoff, Vector* shell_max) {
-  
-  // The size to increase the list by when necessary
-  index_t num_to_add = 20;
-  
+    
   index_t num_shells = shells_in.size();
   
   index_t num_shell_pairs = 0;
   
   // What size to init to? 
-  shell_pairs->Init(num_shells);
+  //shell_pairs->Init(num_shells);
+  shell_pairs->Init();
 
   DEBUG_ASSERT(shell_max != NULL);
   shell_max->Init(num_shells);
@@ -291,9 +280,7 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
       
       if (this_bound > shell_pair_cutoff) {
         
-        if (shell_pairs->capacity() <= num_shell_pairs) {
-          shell_pairs->PushBack(num_to_add);
-        }
+        shell_pairs->PushBack();
         
         (*shell_pairs)[num_shell_pairs].Init(i, j, i_shell, j_shell);
         (*shell_pairs)[num_shell_pairs].set_integral_upper_bound(this_bound);
@@ -315,7 +302,6 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
   return num_shell_pairs;
   
 }
-
 
 
 
