@@ -15,6 +15,12 @@
  * 
  * =====================================================================================
  */
+/** @file optimizer.h
+ *
+ *  @author Nikolaos Vasiloglou (nick)
+ *
+ * 
+ */
 
 #ifndef OPTIMIZER_H_
 #define OPTIMIZER_H_
@@ -41,9 +47,26 @@
 #include "include/NonLinearEquation.h"
 #include "include/NonLinearInequality.h"
 
+/**
+ *  Namespace optim
+ *  Here you can find all the classes you need for optimization
+ *
+ */
 
 namespace optim {
 
+/**
+ * @brief
+ * Definitions for the op++ library
+ * @code
+ *   typedef OPTPP::OptCG       CG;      // for conjugate gradient
+ *   typedef OPTPP::OptQNewton  QNewton; // for quasi newton method
+ *   typedef OPTPP::OptQNewton  BFGS;    // for BFGS
+ *   typedef OPTPP::OptFDNewton FDNewton;// for newton with finite differences
+ *   typedef OPTPP::OptNewton   Newton;  // for standard newton
+ *   typedef OPTPP::OptLBFGS    LBFGS;   // for limited BFGS
+ * @endcode
+ */  
 typedef OPTPP::OptCG       CG;
 typedef OPTPP::OptQNewton  QNewton;
 typedef OPTPP::OptQNewton  BFGS;
@@ -51,6 +74,24 @@ typedef OPTPP::OptFDNewton FDNewton;
 typedef OPTPP::OptNewton   Newton;
 typedef OPTPP::OptLBFGS    LBFGS;
 
+/**
+ * @brief
+ * opt++ supports different constraint types:
+ * if you want a combination of the constraints then
+ * you just add them. For example if you have bound constraints  and 
+ * linear inequalities and nonlinear equalities then you use:
+ * BoundConstraint + LinearEquality + NonlinearEquality
+ * @code
+ *   enum ConstraintType {
+ *     NoConstraint       = 0,  // unconstrained optimization
+ *     BoundConstraint    = 2,  // box constraints
+ *     LinearEquality     = 4,  // linear equalities
+ *     LinearInequality   = 8,  // linear inequalities
+ *     NonLinearEquality  = 16, // nonlinear equalities
+ *     NonLinearInequality= 32  // nonlinear inequalities
+ *   };
+ * @endcode
+ */
 enum ConstraintType {
   NoConstraint       = 0,
   BoundConstraint    = 2,
@@ -60,11 +101,32 @@ enum ConstraintType {
   NonLinearInequality= 32
 };
 
+/**
+ * @brief This is the main class for optimization
+ * Currently this is for opt++ only but in the future it will
+ * support more optimizers 
+ * @class 
+ *   template <typename Method,    // Optimization method, Newton,LBFGS etc 
+ *             typename Objective, // this is the class that has the optimization
+ *                                 // function and the constraints  
+ *             ConstraintType Constraint=NoConstraint // constraint types
+ *             >
+ *    class StaticOptppOptimizer;
+ *
+ * @brief As a  note for the developers, the class is called static because it
+ * has a static definition inside. Unfortunately the way op++ was developed 
+ * we can only optimize one function per time.   
+ */
 template <typename Method, 
          typename Objective, 
          ConstraintType Constraint=NoConstraint>
 class StaticOptppOptimizer;
 
+/**
+ * @brief Here we define a trait for the optimization, we need this trait to do
+ * the necessary initializations
+ *        
+ */
 // The default is good for CG and L-BFGS
 template<typename Method>
 class OptimizationTrait {
@@ -95,6 +157,9 @@ class OptimizationTrait {
   }
 };
 
+/**
+ * @brief trait specialization for Newton method
+ */ 
 // Generic Newton 
 template<>
 class OptimizationTrait<OPTPP::OptNewtonLike> {
@@ -128,6 +193,10 @@ class OptimizationTrait<OPTPP::OptNewtonLike> {
   }
 };
 
+/**
+ * @brief trait specialization for Quasi-Newton with finite difference
+ * approximation of the Hessian 
+ */
 // Quasi-Newton with Finite Difference approximation on the Hessian
 template<>
 class OptimizationTrait<OPTPP::OptFDNewton> {
@@ -139,6 +208,9 @@ class OptimizationTrait<OPTPP::OptFDNewton> {
   }
 };
 
+/**
+ * @brief trait specialization for the Quasi-Newton BFGS
+ */
 // Quasi-Newton BFGS 
 template<>
 class OptimizationTrait<OPTPP::OptQNewton> {
@@ -163,8 +235,16 @@ class OptimizationTrait<OPTPP::OptNewton> {
   }
 };
 
+// In this section we define the traits for  constraints
 
 
+/**
+ * @brief This trait is usefull for handling bound constraints
+ * @class template<typename Method, typename Objective, bool Applicable>
+ *          class BoundConstraintTrait;
+ * @brief The default behaviour when the bound constraint is not applicable
+ * is to do nothing
+ */
 template<typename Method, typename Objective, bool Applicable>
 class BoundConstraintTrait {
  public:
@@ -173,6 +253,22 @@ class BoundConstraintTrait {
   }
 };
 
+/**
+ * @brief When the bound constraint is applicable then it updated the
+ * constraints accordingly. The objective must provide a GetBoundConstraints
+ * public member function defined as:
+ * @code
+ *   class Objective {
+ *    public:
+ *     void GetBoundConstraint(Vector *lower_bound, Vector *upper_bound);
+ *   };
+ * @endcode
+ *  \f$  \vec{l} \leq \vec{x} \leq \vex{u}\f$
+ * The Vectors lower_bound and upper_bound contain the lower 
+ *  and upper bounds for all the constraints. If you want to have 
+ *  only lower bounds then leave the upper_bound vector unchanged. If you 
+ *  want only upper bounds then leave the lower bound unchanged. 
+ */
 template<typename Method, typename Objective>
 class BoundConstraintTrait<Method, Objective, true> {
  public:
@@ -180,19 +276,21 @@ class BoundConstraintTrait<Method, Objective, true> {
        OPTPP::OptppArray<OPTPP::Constraint> *constraint_array) {
     index_t dimension = objective->dimension();
     OPTPP::Constraint bc;
-    Vector *lower_bound;
-    Vector *upper_bound;
-    objective->GetBoundConstraint(lower_bound, upper_bound);
-    if (lower_bound!=NULL and upper_bound==NULL) {
-      NEWMAT::ColumnVector lower(lower_bound->ptr(), lower_bound->length());
+    Vector lower_bound;
+    Vector upper_bound;
+    objective->GetBoundConstraint(&lower_bound, &upper_bound);
+    if (lower_bound.length()!=BIG_BAD_NUMBER and 
+        upper_bound.length()==BIG_BAD_NUMBER) {
+      NEWMAT::ColumnVector lower(lower_bound.ptr(), lower_bound.length());
       bc = new OPTPP::BoundConstraint(dimension, lower); 
     } else {
-      if (lower_bound==NULL and upper_bound!=NULL){
-        NEWMAT::ColumnVector upper(upper_bound->ptr(), upper_bound->length());
+      if (lower_bound.length()==BIG_BAD_NUMBER and 
+          upper_bound.length()!=BIG_BAD_NUMBER){
+        NEWMAT::ColumnVector upper(upper_bound.ptr(), upper_bound.length());
         bc = new OPTPP::BoundConstraint(dimension, upper, false);
       } else {
-        NEWMAT::ColumnVector lower(lower_bound->ptr(), lower_bound->length());
-        NEWMAT::ColumnVector upper(upper_bound->ptr(), upper_bound->length());
+        NEWMAT::ColumnVector lower(lower_bound.ptr(), lower_bound.length());
+        NEWMAT::ColumnVector upper(upper_bound.ptr(), upper_bound.length());
         bc = new OPTPP::BoundConstraint(dimension, lower, upper);
       }
     }
@@ -200,6 +298,15 @@ class BoundConstraintTrait<Method, Objective, true> {
   }
 
 };
+/**
+ * @class template<typename Method, typename Objective, bool Applicable>
+ *         class LinearEqualityTrait;
+ * @brief This trait is usefull for handling linear equalities
+ * @class template<typename Method, typename Objective, bool Applicable>
+ *          class LinearEqualityTrait;
+ * @brief The default behaviour when the linear equality constraint is not applicable
+ * is to do nothing
+ */
 
 template<typename Method, typename Objective, bool Applicable>
 class LinearEqualityTrait {
@@ -211,23 +318,53 @@ class LinearEqualityTrait {
 
 };
 
+/**
+ * @class template<typename Method, typename Objective>
+ *          class LinearEqualityTrait<Method, Objective, true> 
+ * @brief When linear equalities are applicable then it updates the
+ * constraints accordingly. The objective must provide a GetLinearEquality
+ * public member function defined as:
+ * @code
+ *   class Objective {
+ *    public:
+ *     void GetLinearEquality(Matrix *a_mat, Vector *b_vec);
+ *   };
+ * @endcode
+ * The constraint is expressed in the form \f$ A \vec{x} = \vec{b} \f$
+ */
 template<typename Method, typename Objective>
 class LinearEqualityTrait<Method, Objective, true> {
  public:
    static void UpdateConstraints(Objective *objective, 
        OPTPP::OptppArray<OPTPP::Constraint> *constraint_array) {
      index_t dimension = objective->dimension();
-     Matrix *a_mat;
-     Vector *b_vec;
-     objective->GetLinearEquality(a_mat, b_vec);
-     NEWMAT::Matrix alpha(a_mat->ptr(), a_mat->n_rows(), a_mat->n_cols());
-     NEWMAT::ColumnVector beta(b_vec->ptr(), b_vec->length());  
+     Matrix a_mat;
+     Vector b_vec;
+     objective->GetLinearEquality(&a_mat, &b_vec);
+     NEWMAT::Matrix alpha(a_mat.ptr(), a_mat.n_rows(), a_mat.n_cols());
+     NEWMAT::ColumnVector beta(b_vec.ptr(), b_vec.length());  
      OPTPP::Constraint  leq = new OPTPP::LinearEquation(alpha, beta);
      constraint_array->append(leq);
   }
 
-
 };
+
+/**
+ * @class template<typename Method, typename Objective, bool Applicable>
+ *            class LinearInequalityTrait 
+ * @brief When linear inequalities are applicable then it updates the
+ * constraints accordingly. The objective must provide a GetLinearInequality
+ * public member function defined as:
+ * @code
+ *   class Objective {
+ *    public:
+ *     void GetLinearInequality(Matrix *a_mat, Vector *l_vec, Vector *u_vec);
+ *   };
+ * @endcode
+ * The constraint is expressed in the form \f$ \vec{l} \leq A \vec{x} \leq \vec{u} \f$
+ * if you have only left or right hand side inequality, just do nothing about
+ * the one  you don't care.
+ */
 
 template<typename Method, typename Objective, bool Applicable>
 class LinearInequalityTrait {
@@ -245,29 +382,46 @@ class LinearInequalityTrait<Method, Objective, true> {
        OPTPP::OptppArray<OPTPP::Constraint> *constraint_array) {  
     index_t dimension = objective->dimension();
     OPTPP::Constraint lineq;
-    Matrix *a_mat;
-    Vector *left_b;
-    Vector *right_b;
-    objective->GetLinearInequalityConstraint(a_mat, left_b, right_b);
-    NEWMAT::Matrix alpha(a_mat->ptr(), a_mat->n_rows(), a_mat->n_cols());
-    DEBUG_ASSERT(a_mat!=NULL);
-    DEBUG_ASSERT(left_b!=NULL or right_b!=NULL); 
-    if (left_b!=NULL and right_b==NULL) {
-      NEWMAT::ColumnVector left(left_b->ptr(), left_b->length());
+    Matrix a_mat;
+    Vector left_b;
+    Vector right_b;
+    objective->GetLinearInequalityConstraint(&a_mat, &left_b, &right_b);
+    NEWMAT::Matrix alpha(a_mat.ptr(), a_mat.n_rows(), a_mat.n_cols());
+    DEBUG_ASSERT(a_mat.n_rows()!=BIG_BAD_NUMBER);
+    DEBUG_ASSERT(left_b.length()!=BIG_BAD_NUMBER or 
+        right_b.length()!=BIG_BAD_NUMBER); 
+    if (left_b.length()!=BIG_BAD_NUMBER and right_b.length()==BIG_BAD_NUMBER) {
+      NEWMAT::ColumnVector left(left_b.ptr(), left_b.length());
       lineq = new OPTPP::LinearInequality(alpha, left); 
     } else {
-      if (left_b==NULL and right_b!=NULL){
-        NEWMAT::ColumnVector right(right_b->ptr(), right_b->length());
+      if (left_b.length()==BIG_BAD_NUMBER and 
+          right_b.length()!=BIG_BAD_NUMBER){
+        NEWMAT::ColumnVector right(right_b.ptr(), right_b.length());
         lineq = new OPTPP::LinearInequality(alpha, right, false);
       } else {
-        NEWMAT::ColumnVector left(left_b->ptr(), left_b->length());
-        NEWMAT::ColumnVector right(right_b->ptr(), right_b->length());
+        NEWMAT::ColumnVector left(left_b.ptr(), left_b.length());
+        NEWMAT::ColumnVector right(right_b.ptr(), right_b.length());
         lineq = new OPTPP::LinearInequality(alpha, left, right);
       }
     }
     constraint_array->append(lineq);
   }
 };
+
+/**
+ * @class template<typename Method, typename Objective, bool Applicable>
+ *            class NonLinearEqualityTrait;
+ * @brief When the nonlinear constraints are  applicable then it updates the
+ * constraints accordingly. The objective must provide a 
+ * public member function defined as:
+ * @code
+ *   class Objective {
+ *    public:
+ *     double num_of_non_linear_equalities());
+ *   };
+ * @endcode
+ * The constraint is expressed in the form \f$ f(\vec{x})=0 \f$
+ */
 
 template<typename Method, typename Objective, bool Applicable>
 class NonLinearEqualityTrait {
@@ -288,7 +442,7 @@ class NonLinearEqualityTrait<Method, Objective, true> {
           StaticOptppOptimizer<Method, Objective>::
           ComputeNonLinearEqualityConstraints));
     OPTPP::Constraint eq = new OPTPP::NonLinearEquation(nlp,
-        objective->num_of_non_linear_equations());
+        objective->num_of_non_linear_equalities());
     constraint_array->append(eq);
   }
 };
@@ -302,6 +456,26 @@ class NonLinearInequalityTrait {
   
 };
 
+/**
+ * @class template<typename Method, typename Objective, bool Applicable>
+ *            class NonLinearInequalityTrait 
+ * @brief When the nonlineare inequality constraints are applicable then it updates the
+ * constraints accordingly. The objective must provide the 
+ * public member functions defined as:
+ * @code
+ *   class Objective {
+ *    public:
+ *     void GetNonLinearInequalityConstraintBounds(Vector *lower, Vector *upper);
+ *     double num_of_non_linear_inequalities());
+ *   };
+ * @endcode
+ * The constraint is expressed in the form \f$ \vec{l} \leq f(\vec{x}) \leq
+ * \vec{u}\f$
+ * if you want only one side inequality then ignore the side you are not
+ * interested in. If you don't specify any of \f$ \vec{l}, \vec{u} \f$ then 
+ * it assumes the inequality  \f$ f(\vec{x}) \leq 0 \f$.
+ */
+
 template<typename Method, typename Objective>
 class NonLinearInequalityTrait<Method, Objective, true> {
  public: 
@@ -312,28 +486,31 @@ class NonLinearInequalityTrait<Method, Objective, true> {
         new typename OptimizationTrait<Method>::NlpType(
           StaticOptppOptimizer<Method, Objective>::
           ComputeNonLinearInequalityConstraints));
-    Vector *left_b;
-    Vector *right_b;
-    objective->GetNonLinearInequalityConstraintBounds(left_b, right_b);
+    Vector left_b;
+    Vector right_b;
+    objective->GetNonLinearInequalityConstraintBounds(&left_b, &right_b);
     OPTPP::Constraint ineq; 
-    if (left_b==NULL and right_b==NULL) {
-      ineq = new OPTPP::NonLinearEquation(nlp, 
+    if (left_b.length()==BIG_BAD_NUMBER and 
+        right_b.length()==BIG_BAD_NUMBER) {
+      ineq = new OPTPP::NonLinearInequality(nlp, 
           objective->num_of_non_linear_inequalities());
     } else {
-      if (left_b!=NULL and right_b==NULL) {
-        NEWMAT::ColumnVector left(left_b->ptr(), left_b->length());    
+      if (left_b.length()!=BIG_BAD_NUMBER and 
+          right_b.length()==BIG_BAD_NUMBER) {
+        NEWMAT::ColumnVector left(left_b.ptr(), left_b.length());    
         ineq = new OPTPP::NonLinearInequality(nlp, left,
             objective->num_of_non_linear_inequalities());  
       } else {   
-        if (left_b==NULL and right_b!=NULL) {
-          NEWMAT::ColumnVector right(right_b->ptr(), right_b->length());    
+        if (left_b.length()==BIG_BAD_NUMBER and right_b.length()!=BIG_BAD_NUMBER) {
+          NEWMAT::ColumnVector right(right_b.ptr(), right_b.length());    
           ineq = new OPTPP::NonLinearInequality(nlp, right, false,
               objective->num_of_non_linear_inequalities());  
    
         } else {
-          if (left_b!=NULL and right_b!=NULL) {
-            NEWMAT::ColumnVector right(right_b->ptr(), right_b->length());    
-            NEWMAT::ColumnVector left(left_b->ptr(), left_b->length());    
+          if (left_b.length()!=BIG_BAD_NUMBER and
+              right_b.length()!=BIG_BAD_NUMBER) {
+            NEWMAT::ColumnVector right(right_b.ptr(), right_b.length());    
+            NEWMAT::ColumnVector left(left_b.ptr(), left_b.length());    
             ineq = new OPTPP::NonLinearInequality(nlp, left, right,
                 objective->num_of_non_linear_inequalities());
           
@@ -344,9 +521,119 @@ class NonLinearInequalityTrait<Method, Objective, true> {
   } 
 };
 
-/*  Wrapper to Opt++ so that your life is easier 
- *  when it comes to interfacing Fastlib
- */ 
+/**
+ * @brief This is the core class for running optimization. It supports
+ * everything that opt++ offer, constrained and unconstrained optimization, 
+ * linear/nonlinear equalities/ineqialities  as well as bound constraints. The
+ * algorithms include zero order methods (derivative free) up to second order
+ * (Newton's method). 
+ *
+ * @class template <typename Method, typename Objective, ConstraintType Constraint>
+ *           class StaticOptppOptimizer;
+ *  @param[Method] the optimization method we are going to use, it can be any of 
+ *   the following: 
+ *    @code
+ *      typedef OPTPP::OptCG       CG;      // for conjugate gradient
+ *      typedef OPTPP::OptQNewton  QNewton; // for quasi newton method
+ *      typedef OPTPP::OptQNewton  BFGS;    // for BFGS
+ *      typedef OPTPP::OptFDNewton FDNewton;// for newton with finite differences
+ *      typedef OPTPP::OptNewton   Newton;  // for standard newton
+ *      typedef OPTPP::OptLBFGS    LBFGS;   // for limited BFGS
+ *    @endcode
+ *  @param[Objective] This is the class that defines the objective ant the
+ *   constraints, as well as initializations. You can use any class that defines
+ *   the following member functions:
+ *   @note Not every function has to be defined. For example if you are using
+ *   a first order method  that requires gradient only, you don't need to define
+ *   ComputeHessian. Another example, if you are using only linear equality
+ *   constraints you don't need to define the functions that have to do with
+ *   nonlinear equality or inequality constraints.
+ *   @code
+ *    class MyOptimizationProblem {
+ *      public:
+ *       // returns the dimensionality of the optimization
+ *       //   also known as the number of the optimization variable
+ *       index_t dimension(); 
+ *       
+ *       // fills the vector with initial value
+ *       void GiveInit(Vector *vec); 
+ *       
+ *       // Computes the objective f(x) and returns it to value
+ *       void ComputeObjective(Vector &x, double *value);
+ *       
+ *       // Computes the gradient g=f'(x)
+ *       void ComputeGradient(Vector &x, Vector *g);
+ *       
+ *       // Computes the Hessian  h=f''(x);
+ *       void ComputeHessian(Vector &x, Matrix *h);
+ *     
+ *       // Defines the Bound constraints for the variables
+ *       void GetBoundConstraint(Vector *lower_bound, Vector *upper_bound);
+ *    @endcode   
+ *       @note \f$  \vec{l} \leq \vec{x} \leq \vex{u}\f$
+ *        The Vectors lower_bound and upper_bound contain the lower 
+ *        and upper bounds for all the constraints. If you want to have 
+ *        only lower bounds then leave the upper_bound vector unchanged. If you 
+ *        want only upper bounds then leave the lower bound unchanged. 
+ *    @code 
+ *       // Fills the matrix A and vector b for equality constraints 
+ *       void GetLinearEquality(Matrix *a_mat, Vector *b_vec);
+ *    @endcode   
+ *       @note  The constraint is expressed in the form \f$ A \vec{x} = \vec{b} \f$
+ *    @code 
+ *       // Fills the matrix A, lower and upper bounds for the linear
+ *       // inequalities
+ *       void GetLinearInequality(Matrix *a_mat, Vector *l_vec, Vector *u_vec);
+ *    @endcode   
+ *       @note The constraint is expressed in the form \f$ \vec{l} \leq A \vec{x} \leq \vec{u} \f$
+ *        if you have only left or right hand side inequality, just do nothing about
+ *        the one  you don't care.
+ *    @code   
+ *       // Returns the number of nonlinear equalities
+ *       index_t num_of_non_linear_equalities()    
+ *
+ *       // Writes on vecc the evaluation of nonlinear equality constraints on
+ *       // vecx
+ *       void ComputeNonLinearEqualityConstraints(Vector &vecx, Vector *vecc);
+ *       
+ *       // Writes on cjacob  the evaluation of the jacobian nonlinear equality 
+ *       // constraints on vecx
+ *       void ComputeNonLinearEqualityConstraintsJacobian(Vector &vecx, Matrix *cjacob);
+ *       
+ *       // Returns the number of nonlinear inequalities
+ *       index_t num_of_non_linear_inequalities()    
+ *       
+ *       // Writes on vecc the evaluation of nonlinear inequality constraints on
+ *       // vecx
+ *       void ComputeNonLinearInequalityConstraints(Vector &vecx, Vector *vecc);
+ *       
+ *       // Writes on cjacob  the evaluation of the jacobian nonlinear equality 
+ *       // constraints on vecx
+ *       void ComputeNonLinearInequalityConstraintsJacobian(Vector &vecx, Matirx *cjacob);
+ *       
+ *       // Writes on both vectors the lower and upper bounds of nonlinear
+ *       // inequalities 
+ *       void GetNonLinearInequalityConstraintBounds(Vector *lower, Vector *upper);
+ *      @note The constraint is expressed in the form \f$ \vec{l} \leq f(\vec{x}) \leq
+ *            \vec{u}\f$, if you want only one side inequality then ignore the side you are not
+ *            interested in. If you don't specify any of \f$ \vec{l}, \vec{u} \f$ then 
+ *            it assumes the inequality  \f$ f(\vec{x}) \leq 0 \f$.
+ *
+ *    };
+ *   @endcode
+ *  @param[Constraint] It can be any sum of the following enums
+ *    @code
+ *      enum ConstraintType {
+ *        NoConstraint       = 0,  // unconstrained optimization
+ *        BoundConstraint    = 2,  // box constraints
+ *        LinearEquality     = 4,  // linear equalities
+ *        LinearInequality   = 8,  // linear inequalities
+ *        NonLinearEquality  = 16, // nonlinear equalities
+ *        NonLinearInequality= 32  // nonlinear inequalities
+ *      };
+ *    @endcode
+ *
+ */
 template <typename Method, typename Objective, ConstraintType Constraint>
 class StaticOptppOptimizer {
  public:
@@ -363,6 +650,7 @@ class StaticOptppOptimizer {
     module_ = module;
     objective_ = objective;
     dimension_=objective_->dimension();
+    // Load the constraints
     OPTPP::OptppArray<OPTPP::Constraint> constraint_array;
     BoundConstraintTrait<Method, Objective, 
      (bool)(Constraint & BoundConstraint)>::UpdateConstraints(objective_, 
@@ -382,6 +670,7 @@ class StaticOptppOptimizer {
  
     nlp_ = new typename OptimizationTrait<Method>::NlpType(dimension_, ComputeObjective, 
         Initialize, (OPTPP::CompoundConstraint *)NULL);
+    
     // Setup the tolerances 
     OPTPP::TOLS tols;
     tols.setDefaultTol();
