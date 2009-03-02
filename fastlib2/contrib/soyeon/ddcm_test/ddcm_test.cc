@@ -103,7 +103,8 @@ int main(int argc, char *argv[]) {
 	//Trust region parameter
 	//double max_radius=10;
 	double current_radius=0.1;	//initial_radius
-	double eta=0.2;
+	//double eta=0.25;
+	double eta=0.0001;
 	
 	double rho=0; //agreement(ratio)
 	
@@ -115,7 +116,7 @@ int main(int argc, char *argv[]) {
 
 	//for stopping rule
 	double error_tolerance=1e-16;
-	double zero_tolerance=0.0001;	//for gradient norm
+	double zero_tolerance=0.00001;	//for gradient norm 10^-5?
 
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
@@ -457,7 +458,7 @@ int main(int argc, char *argv[]) {
 		double new_radius;
 		//NOTIFY("Exact hessian calculation ends");
 
-		/*
+		
 		optimization.ComputeDerectionUnderConstraints(current_radius, 
 																					current_gradient,
 																					current_hessian,
@@ -466,7 +467,7 @@ int main(int argc, char *argv[]) {
 																					&current_delta_m,
 																					&next_parameter,
 																					&new_radius);
-																					*/
+																					
 					
 
 																					
@@ -474,7 +475,7 @@ int main(int argc, char *argv[]) {
 		
 		
 
-    
+    /*
 		//Scaled version
 		optimization.ComputeScaledDerectionUnderConstraints(current_radius, 
 																					current_gradient,
@@ -484,6 +485,8 @@ int main(int argc, char *argv[]) {
 																					&current_delta_m,
 																					&next_parameter,
 																					&new_radius);
+																					*/
+
 
 			
 
@@ -804,6 +807,15 @@ int main(int argc, char *argv[]) {
 	//objective.ComputeHessian(current_added_first_stage_x.size(), current_parameter, &final_hessian);
 	
 	final_hessian1.Alias(current_hessian);
+
+	cout<<"Final_hessian1"<<endl;
+	for (index_t j=0; j<final_hessian1.n_rows(); j++){
+		for (index_t k=0; k<final_hessian1.n_cols(); k++){
+			cout<<final_hessian1.get(j,k) <<"  ";
+		}
+		cout<<endl;
+	}
+
 	Matrix inverse_hessian1;
 	if( !PASSED(la::InverseInit(final_hessian1, &inverse_hessian1)) ) {
 		NOTIFY("Final hessian1 matrix is not invertible!");
@@ -811,13 +823,14 @@ int main(int argc, char *argv[]) {
 	else{
 		la::Scale(-1.0, &inverse_hessian1);
 
+		/*
 		cout<<"Diagonal of inverse final hessian: ";
 		for(index_t i=0; i<inverse_hessian1.n_rows(); i++){
 			cout<<inverse_hessian1.get(i,i)<<" ";
 		}
 		cout<<endl;
-
-
+		*/
+		
 		index_t n=inverse_hessian1.n_rows();
 		Vector estimates_variance1;
 		estimates_variance1.Init(n);
@@ -840,6 +853,15 @@ int main(int argc, char *argv[]) {
 	NOTIFY("Final hessian calculation2");
 	Matrix final_hessian;
   objective.CheckHessian(num_of_people, current_parameter, &final_hessian);
+
+	cout<<"Final_hessian2 from finite approx."<<endl;
+	for (index_t j=0; j<final_hessian.n_rows(); j++){
+		for (index_t k=0; k<final_hessian.n_cols(); k++){
+			cout<<final_hessian.get(j,k) <<"  ";
+		}
+		cout<<endl;
+	}
+
 	Matrix inverse_hessian;
 	if( !PASSED(la::InverseInit(final_hessian, &inverse_hessian)) ) {
 		NOTIFY("Final hessian matrix is not invertible!");
@@ -847,7 +869,7 @@ int main(int argc, char *argv[]) {
 	else{
 		la::Scale(-1.0, &inverse_hessian);
 
-		cout<<"Diagonal of inverse final hessian: ";
+		cout<<"Diagonal of inverse final hessian2: ";
 		for(index_t i=0; i<inverse_hessian.n_rows(); i++){
 			cout<<inverse_hessian.get(i,i)<<" ";
 		}

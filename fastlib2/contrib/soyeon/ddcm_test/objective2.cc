@@ -3065,8 +3065,8 @@ void Objective::CheckHessian(double current_sample,
 	if(max_eigen>0){
 		NOTIFY("Hessian is not Negative definite..Modify...");
 		for(index_t i=0; i<eigen_hessian.length(); i++){
-			dummy_approx_hessian.set(i,i,(dummy_approx_hessian.get(i,i)-(max_eigen+0.5)));
-			//dummy_approx_hessian.set(i,i,(dummy_approx_hessian.get(i,i)-(max_eigen*1.1)));
+			//dummy_approx_hessian.set(i,i,(dummy_approx_hessian.get(i,i)-(max_eigen+0.5)));
+			dummy_approx_hessian.set(i,i,(dummy_approx_hessian.get(i,i)-(max_eigen*1.1)));
 		}
 	}
 
