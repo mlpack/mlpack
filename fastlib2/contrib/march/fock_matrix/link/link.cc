@@ -43,14 +43,19 @@ void Link::ComputeExchangeMatrix() {
         // What is the best way to do this?  This list will have to be sorted
         // This fails if there are more than num_shells_/2 significant elements
         significant_nu_index[next_ind] = j;
+        
+        // I need to store next_ind somehow in order to be able to iterate 
+        // later
         next_ind++;
       
       }
     
     } // for j
     
+    num_significant_mu_pairs_[i] = next_ind;
     
-    significant_mu_pairs_[i] = (BasisShell**)malloc(next_ind * sizeof(BasisShell**)); 
+    significant_mu_pairs_[i] = (BasisShell**)malloc(next_ind * 
+                                                    sizeof(BasisShell**)); 
     //BasisShell** significant_mu_pairs_[i] = significant_mu_pairs_[i];
     
     
@@ -70,7 +75,6 @@ void Link::ComputeExchangeMatrix() {
     
   
     //ot::Print(significant_mu_pairs_[i]);
-    
     for (index_t a = 0; a < next_ind; a++) {
       printf("sort_val: %g\n", 
              significant_mu_pairs_[i][a]->max_schwartz_factor() * 
@@ -82,29 +86,73 @@ void Link::ComputeExchangeMatrix() {
   
   // loop over bra shell pairs
   
-  /*
-  for (index_t mulambda_ind = 0; mulambda_ind < num_shell_pairs_; 
-       mulambda_ind++) {
+  for (index_t shell_pair_ind = 0; shell_pair_ind < num_shell_pairs_; 
+       shell_pair_ind++) {
+       
+    ShellPair mu_lambda = shell_pair_list_[shell_pair_ind];
+    BasisShell mu_shell = mu_lambda.M_Shell();
+    BasisShell lambda_shell = mu_lambda.N_Shell();
+    
+    index_t mu_ind = mu_lambda.M_index();
+    
+    index_t lambda_ind = mu_lambda.N_index();
   
-    // loop over \nu for the current \mu
-    for (index_t nu_ind = 0; nu_ind < num_nu; nu_ind++) {
-  
-      // loop over \sigma and screen to see if this integral is necessary
-      // how to figure out which sigmas appear in shell pairs with 
-  
-    } // loop nu_ind
-  
-    // loop over nu corresponding to lambda and do same
-    // why is this necessary as well?  
-  
-    // compute significant integrals
+    // loop over nu corresponding to mu
+    // what is num_nu? 
+    index_t num_nu = num_significant_mu_pairs_[mu_ind];
+    for (index_t nu_ind = 0; nu_ind < num_nu; nu_ind) {
+    
+      BasisShell nu_shell = *(significant_mu_pairs_[mu_ind][nu_ind]);
+      
+      // store how many sigificant sigmas for this nu in order to exit loop
+      index_t significant_sigmas = 0;
+      
+      // loop over significant sigmas
+      // how do I know which ones are significant?
+      index_t num_sigma = num_significant_mu_pairs_[nu_ind];
+      for (index_t sigma_ind = 0; sigma_ind < num_sigma; sigma_ind++) {
+      
+        // fill in these
+        // would be nice to be working with shell pairs, since they store the 
+        // Schwartz factors
+        if (density_mat_.ref(mu, nu) * mu_lambda_schwartz * nu_sigma_schwartz > cutoff) {
+      
+          // store nu sigma as a significant shell pair to be computed
+          // is it really necessary to store these, or can I compute it now?
+        
+          significant_sigmas++;
+        
+        }
+        // leave sigma loop, since it is sorted
+        else {
+          break;
+        }
+        
+      } // for sigma_ind
+      
+      // exit loop if this nu has no sigmas that count
+      if (significant_sigmas == 0) {
+        break;
+      }
+    
+    } // for nu_ind
+
+    
+  // loop over nu corresponding to lambda and do same
+  // why is this necessary as well?  
 
 
 
-  } // loop mulambda_ind (over bra shell pairs)
 
-   */
+  // compute significant integrals
 
+
+
+
+
+  } // for bra shell pairs
+
+  
 } // ComputeFockMatrix()
 
 

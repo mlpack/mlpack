@@ -106,7 +106,7 @@ void CFMMCoulomb::MultipoleCleanup_() {
 /////////////////// Public Functions ///////////////////////////
 
 void CFMMCoulomb::ComputeCoulomb() {
-/*
+
   ScreenCharges_();
   
   MultipoleInit_();
@@ -114,7 +114,7 @@ void CFMMCoulomb::ComputeCoulomb() {
   MultipoleComputation_();
   
   MultipoleCleanup_();
-  */ 
+   
 } // ComputeCoulomb()
 
 
