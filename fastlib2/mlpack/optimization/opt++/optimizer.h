@@ -1,20 +1,3 @@
-/*
- * =====================================================================================
- * 
- *       Filename:  optimizer.h
- * 
- *    Description:  
- * 
- *        Version:  1.0
- *        Created:  11/10/2008 03:10:29 PM EST
- *       Revision:  none
- *       Compiler:  gcc
- * 
- *         Author:  Nikolaos Vasiloglou (NV), nvasil@ieee.org
- *        Company:  Georgia Tech Fastlab-ESP Lab
- * 
- * =====================================================================================
- */
 /** @file optimizer.h
  *
  *  @author Nikolaos Vasiloglou (nick)
@@ -48,7 +31,7 @@
 #include "include/NonLinearInequality.h"
 
 /**
- *  Namespace optim
+ *  @brief Namespace optim
  *  Here you can find all the classes you need for optimization
  *
  */
@@ -56,8 +39,7 @@
 namespace optim {
 
 /**
- * @brief
- * Definitions for the op++ library
+ * @brief  Definitions for the op++ library
  * @code
  *   typedef OPTPP::OptCG       CG;      // for conjugate gradient
  *   typedef OPTPP::OptQNewton  QNewton; // for quasi newton method
@@ -67,6 +49,7 @@ namespace optim {
  *   typedef OPTPP::OptLBFGS    LBFGS;   // for limited BFGS
  * @endcode
  */  
+
 typedef OPTPP::OptCG       CG;
 typedef OPTPP::OptQNewton  QNewton;
 typedef OPTPP::OptQNewton  BFGS;
@@ -102,20 +85,119 @@ enum ConstraintType {
 };
 
 /**
- * @brief This is the main class for optimization
- * Currently this is for opt++ only but in the future it will
- * support more optimizers 
- * @class 
- *   template <typename Method,    // Optimization method, Newton,LBFGS etc 
- *             typename Objective, // this is the class that has the optimization
- *                                 // function and the constraints  
- *             ConstraintType Constraint=NoConstraint // constraint types
- *             >
- *    class StaticOptppOptimizer;
+ * @brief This is the core class for running optimization. It supports
+ * everything that opt++ offer, constrained and unconstrained optimization, 
+ * linear/nonlinear equalities/ineqialities  as well as bound constraints. The
+ * algorithms include zero order methods (derivative free) up to second order
+ * (Newton's method). 
  *
- * @brief As a  note for the developers, the class is called static because it
- * has a static definition inside. Unfortunately the way op++ was developed 
- * we can only optimize one function per time.   
+ * @class  StaticOptppOptimizer
+ * template <typename Method, typename Objective, ConstraintType Constraint>
+ *           class StaticOptppOptimizer;
+ *  @param[Method the optimization method we are going to use, it can be any of 
+ *   the following: 
+ *    @code
+ *      typedef OPTPP::OptCG       CG;      // for conjugate gradient
+ *      typedef OPTPP::OptQNewton  QNewton; // for quasi newton method
+ *      typedef OPTPP::OptQNewton  BFGS;    // for BFGS
+ *      typedef OPTPP::OptFDNewton FDNewton;// for newton with finite differences
+ *      typedef OPTPP::OptNewton   Newton;  // for standard newton
+ *      typedef OPTPP::OptLBFGS    LBFGS;   // for limited BFGS
+ *    @endcode
+ *  @param[Constraint It can be any sum of the following enums
+ *    @code
+ *      enum ConstraintType {
+ *        NoConstraint       = 0,  // unconstrained optimization
+ *        BoundConstraint    = 2,  // box constraints
+ *        LinearEquality     = 4,  // linear equalities
+ *        LinearInequality   = 8,  // linear inequalities
+ *        NonLinearEquality  = 16, // nonlinear equalities
+ *        NonLinearInequality= 32  // nonlinear inequalities
+ *      };
+ *    @endcode
+  *  @param[Objective This is the class that defines the objective ant the
+ *   constraints, as well as initializations. You can use any class that defines
+ *   the following member functions:
+ *   @note Not every function has to be defined. For example if you are using
+ *   a first order method  that requires gradient only, you don't need to define
+ *   ComputeHessian. Another example, if you are using only linear equality
+ *   constraints you don't need to define the functions that have to do with
+ *   nonlinear equality or inequality constraints.
+ *   @code
+ *    class MyOptimizationProblem {
+ *      public:
+ *       // returns the dimensionality of the optimization
+ *       //   also known as the number of the optimization variable
+ *       index_t dimension(); 
+ *       
+ *       // fills the vector with initial value
+ *       void GiveInit(Vector *vec); 
+ *       
+ *       // Computes the objective f(x) and returns it to value
+ *       void ComputeObjective(Vector &x, double *value);
+ *       
+ *       // Computes the gradient g=f'(x)
+ *       void ComputeGradient(Vector &x, Vector *g);
+ *       
+ *       // Computes the Hessian  h=f''(x);
+ *       void ComputeHessian(Vector &x, Matrix *h);
+ *     
+ *       // Defines the Bound constraints for the variables
+ *       void GetBoundConstraint(Vector *lower_bound, Vector *upper_bound);
+ *    @endcode   
+ *       @note \f$  \vec{l} \leq \vec{x} \leq \vec{u} \f$
+ *        The Vectors lower_bound and upper_bound contain the lower 
+ *        and upper bounds for all the constraints. If you want to have 
+ *        only lower bounds then leave the upper_bound vector unchanged. If you 
+ *        want only upper bounds then leave the lower bound unchanged. 
+ *    @code 
+ *       // Fills the matrix A and vector b for equality constraints 
+ *       void GetLinearEquality(Matrix *a_mat, Vector *b_vec);
+ *    @endcode   
+ *       @note  The constraint is expressed in the form \f$ A \vec{x} = \vec{b} \f$
+ *    @code 
+ *       // Fills the matrix A, lower and upper bounds for the linear
+ *       // inequalities
+ *       void GetLinearInequality(Matrix *a_mat, Vector *l_vec, Vector *u_vec);
+ *    @endcode   
+ *       @note The constraint is expressed in the form \f$ \vec{l} \leq A \vec{x} \leq \vec{u} \f$
+ *        if you have only left or right hand side inequality, just do nothing about
+ *        the one  you don't care.
+ *    @code   
+ *       // Returns the number of nonlinear equalities
+ *       index_t num_of_non_linear_equalities()    
+ *
+ *       // Writes on vecc the evaluation of nonlinear equality constraints on
+ *       // vecx
+ *       void ComputeNonLinearEqualityConstraints(Vector &vecx, Vector *vecc);
+ *       
+ *       // Writes on cjacob  the evaluation of the jacobian nonlinear equality 
+ *       // constraints on vecx
+ *       void ComputeNonLinearEqualityConstraintsJacobian(Vector &vecx, Matrix *cjacob);
+ *       
+ *       // Returns the number of nonlinear inequalities
+ *       index_t num_of_non_linear_inequalities()    
+ *       
+ *       // Writes on vecc the evaluation of nonlinear inequality constraints on
+ *       // vecx
+ *       void ComputeNonLinearInequalityConstraints(Vector &vecx, Vector *vecc);
+ *       
+ *       // Writes on cjacob  the evaluation of the jacobian nonlinear equality 
+ *       // constraints on vecx
+ *       void ComputeNonLinearInequalityConstraintsJacobian(Vector &vecx, Matirx *cjacob);
+ *       
+ *       // Writes on both vectors the lower and upper bounds of nonlinear
+ *       // inequalities 
+ *       void GetNonLinearInequalityConstraintBounds(Vector *lower, Vector *upper);
+ *    @endcode   
+ *      @note The constraint is expressed in the form \f$ \vec{l} \leq f(\vec{x}) \leq \vec{u}\f$ , 
+ *      if you want only one side inequality then ignore the side you are not
+ *            interested in. If you don't specify any of \f$ \vec{l}, \vec{u} \f$ then 
+ *            it assumes the inequality  \f$ f(\vec{x}) \leq 0 \f$ .
+ *   @code
+ *    };
+ *   @endcode
+ *
  */
 template <typename Method, 
          typename Objective, 
@@ -194,6 +276,7 @@ class OptimizationTrait<OPTPP::OptNewtonLike> {
 };
 
 /**
+ *
  * @brief trait specialization for Quasi-Newton with finite difference
  * approximation of the Hessian 
  */
@@ -210,6 +293,7 @@ class OptimizationTrait<OPTPP::OptFDNewton> {
 
 /**
  * @brief trait specialization for the Quasi-Newton BFGS
+ *
  */
 // Quasi-Newton BFGS 
 template<>
@@ -222,7 +306,11 @@ class OptimizationTrait<OPTPP::OptQNewton> {
   }
 };
 
-
+/**
+ * @brief trait specialization for the Newton
+ *
+ */
+/
 // Newton  with analytic expression for the Hessian
 template<>
 class OptimizationTrait<OPTPP::OptNewton> {
@@ -240,7 +328,8 @@ class OptimizationTrait<OPTPP::OptNewton> {
 
 /**
  * @brief This trait is usefull for handling bound constraints
- * @class template<typename Method, typename Objective, bool Applicable>
+ *
+ *    template<typename Method, typename Objective, bool Applicable>
  *          class BoundConstraintTrait;
  * @brief The default behaviour when the bound constraint is not applicable
  * is to do nothing
@@ -263,7 +352,7 @@ class BoundConstraintTrait {
  *     void GetBoundConstraint(Vector *lower_bound, Vector *upper_bound);
  *   };
  * @endcode
- *  \f$  \vec{l} \leq \vec{x} \leq \vex{u}\f$
+ *  \f$  \vec{l} \leq \vec{x} \leq \vec{u}\f$
  * The Vectors lower_bound and upper_bound contain the lower 
  *  and upper bounds for all the constraints. If you want to have 
  *  only lower bounds then leave the upper_bound vector unchanged. If you 
@@ -299,7 +388,8 @@ class BoundConstraintTrait<Method, Objective, true> {
 
 };
 /**
- * @class template<typename Method, typename Objective, bool Applicable>
+ * @class LinearEqualityTrait
+ *   template<typename Method, typename Objective, bool Applicable>
  *         class LinearEqualityTrait;
  * @brief This trait is usefull for handling linear equalities
  * @class template<typename Method, typename Objective, bool Applicable>
@@ -319,7 +409,8 @@ class LinearEqualityTrait {
 };
 
 /**
- * @class template<typename Method, typename Objective>
+ * @class LinearEqualityTrait<Method, Objective, true>
+ *   template<typename Method, typename Objective>
  *          class LinearEqualityTrait<Method, Objective, true> 
  * @brief When linear equalities are applicable then it updates the
  * constraints accordingly. The objective must provide a GetLinearEquality
@@ -350,7 +441,8 @@ class LinearEqualityTrait<Method, Objective, true> {
 };
 
 /**
- * @class template<typename Method, typename Objective, bool Applicable>
+ * @class LinearInequalityTrait 
+ *   template<typename Method, typename Objective, bool Applicable>
  *            class LinearInequalityTrait 
  * @brief When linear inequalities are applicable then it updates the
  * constraints accordingly. The objective must provide a GetLinearInequality
@@ -409,7 +501,8 @@ class LinearInequalityTrait<Method, Objective, true> {
 };
 
 /**
- * @class template<typename Method, typename Objective, bool Applicable>
+ * @class NonLinearEqualityTrait
+ *   template<typename Method, typename Objective, bool Applicable>
  *            class NonLinearEqualityTrait;
  * @brief When the nonlinear constraints are  applicable then it updates the
  * constraints accordingly. The objective must provide a 
@@ -457,7 +550,8 @@ class NonLinearInequalityTrait {
 };
 
 /**
- * @class template<typename Method, typename Objective, bool Applicable>
+ * @class NonLinearInequalityTrait 
+ *   template<typename Method, typename Objective, bool Applicable>
  *            class NonLinearInequalityTrait 
  * @brief When the nonlineare inequality constraints are applicable then it updates the
  * constraints accordingly. The objective must provide the 
@@ -469,8 +563,7 @@ class NonLinearInequalityTrait {
  *     double num_of_non_linear_inequalities());
  *   };
  * @endcode
- * The constraint is expressed in the form \f$ \vec{l} \leq f(\vec{x}) \leq
- * \vec{u}\f$
+ * The constraint is expressed in the form \f$ \vec{l} \leq f(\vec{x}) \leq \vec{u}\f$
  * if you want only one side inequality then ignore the side you are not
  * interested in. If you don't specify any of \f$ \vec{l}, \vec{u} \f$ then 
  * it assumes the inequality  \f$ f(\vec{x}) \leq 0 \f$.
@@ -521,119 +614,6 @@ class NonLinearInequalityTrait<Method, Objective, true> {
   } 
 };
 
-/**
- * @brief This is the core class for running optimization. It supports
- * everything that opt++ offer, constrained and unconstrained optimization, 
- * linear/nonlinear equalities/ineqialities  as well as bound constraints. The
- * algorithms include zero order methods (derivative free) up to second order
- * (Newton's method). 
- *
- * @class template <typename Method, typename Objective, ConstraintType Constraint>
- *           class StaticOptppOptimizer;
- *  @param[Method] the optimization method we are going to use, it can be any of 
- *   the following: 
- *    @code
- *      typedef OPTPP::OptCG       CG;      // for conjugate gradient
- *      typedef OPTPP::OptQNewton  QNewton; // for quasi newton method
- *      typedef OPTPP::OptQNewton  BFGS;    // for BFGS
- *      typedef OPTPP::OptFDNewton FDNewton;// for newton with finite differences
- *      typedef OPTPP::OptNewton   Newton;  // for standard newton
- *      typedef OPTPP::OptLBFGS    LBFGS;   // for limited BFGS
- *    @endcode
- *  @param[Objective] This is the class that defines the objective ant the
- *   constraints, as well as initializations. You can use any class that defines
- *   the following member functions:
- *   @note Not every function has to be defined. For example if you are using
- *   a first order method  that requires gradient only, you don't need to define
- *   ComputeHessian. Another example, if you are using only linear equality
- *   constraints you don't need to define the functions that have to do with
- *   nonlinear equality or inequality constraints.
- *   @code
- *    class MyOptimizationProblem {
- *      public:
- *       // returns the dimensionality of the optimization
- *       //   also known as the number of the optimization variable
- *       index_t dimension(); 
- *       
- *       // fills the vector with initial value
- *       void GiveInit(Vector *vec); 
- *       
- *       // Computes the objective f(x) and returns it to value
- *       void ComputeObjective(Vector &x, double *value);
- *       
- *       // Computes the gradient g=f'(x)
- *       void ComputeGradient(Vector &x, Vector *g);
- *       
- *       // Computes the Hessian  h=f''(x);
- *       void ComputeHessian(Vector &x, Matrix *h);
- *     
- *       // Defines the Bound constraints for the variables
- *       void GetBoundConstraint(Vector *lower_bound, Vector *upper_bound);
- *    @endcode   
- *       @note \f$  \vec{l} \leq \vec{x} \leq \vex{u}\f$
- *        The Vectors lower_bound and upper_bound contain the lower 
- *        and upper bounds for all the constraints. If you want to have 
- *        only lower bounds then leave the upper_bound vector unchanged. If you 
- *        want only upper bounds then leave the lower bound unchanged. 
- *    @code 
- *       // Fills the matrix A and vector b for equality constraints 
- *       void GetLinearEquality(Matrix *a_mat, Vector *b_vec);
- *    @endcode   
- *       @note  The constraint is expressed in the form \f$ A \vec{x} = \vec{b} \f$
- *    @code 
- *       // Fills the matrix A, lower and upper bounds for the linear
- *       // inequalities
- *       void GetLinearInequality(Matrix *a_mat, Vector *l_vec, Vector *u_vec);
- *    @endcode   
- *       @note The constraint is expressed in the form \f$ \vec{l} \leq A \vec{x} \leq \vec{u} \f$
- *        if you have only left or right hand side inequality, just do nothing about
- *        the one  you don't care.
- *    @code   
- *       // Returns the number of nonlinear equalities
- *       index_t num_of_non_linear_equalities()    
- *
- *       // Writes on vecc the evaluation of nonlinear equality constraints on
- *       // vecx
- *       void ComputeNonLinearEqualityConstraints(Vector &vecx, Vector *vecc);
- *       
- *       // Writes on cjacob  the evaluation of the jacobian nonlinear equality 
- *       // constraints on vecx
- *       void ComputeNonLinearEqualityConstraintsJacobian(Vector &vecx, Matrix *cjacob);
- *       
- *       // Returns the number of nonlinear inequalities
- *       index_t num_of_non_linear_inequalities()    
- *       
- *       // Writes on vecc the evaluation of nonlinear inequality constraints on
- *       // vecx
- *       void ComputeNonLinearInequalityConstraints(Vector &vecx, Vector *vecc);
- *       
- *       // Writes on cjacob  the evaluation of the jacobian nonlinear equality 
- *       // constraints on vecx
- *       void ComputeNonLinearInequalityConstraintsJacobian(Vector &vecx, Matirx *cjacob);
- *       
- *       // Writes on both vectors the lower and upper bounds of nonlinear
- *       // inequalities 
- *       void GetNonLinearInequalityConstraintBounds(Vector *lower, Vector *upper);
- *      @note The constraint is expressed in the form \f$ \vec{l} \leq f(\vec{x}) \leq
- *            \vec{u}\f$, if you want only one side inequality then ignore the side you are not
- *            interested in. If you don't specify any of \f$ \vec{l}, \vec{u} \f$ then 
- *            it assumes the inequality  \f$ f(\vec{x}) \leq 0 \f$.
- *
- *    };
- *   @endcode
- *  @param[Constraint] It can be any sum of the following enums
- *    @code
- *      enum ConstraintType {
- *        NoConstraint       = 0,  // unconstrained optimization
- *        BoundConstraint    = 2,  // box constraints
- *        LinearEquality     = 4,  // linear equalities
- *        LinearInequality   = 8,  // linear inequalities
- *        NonLinearEquality  = 16, // nonlinear equalities
- *        NonLinearInequality= 32  // nonlinear inequalities
- *      };
- *    @endcode
- *
- */
 template <typename Method, typename Objective, ConstraintType Constraint>
 class StaticOptppOptimizer {
  public:
