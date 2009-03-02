@@ -163,12 +163,29 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 		(*initial_parameter)[0]=1.34071;
 		(*initial_parameter)[1]=1.6346;
 		(*initial_parameter)[num_of_betas]=1.67677;
-		(*initial_parameter)[num_of_betas+1]=1.09795;*/
+		(*initial_parameter)[num_of_betas+1]=1.09795;
 
 		(*initial_parameter)[0]=1.3427;
 		(*initial_parameter)[1]=1.63946;
 		(*initial_parameter)[num_of_betas]=1.48997;
 		(*initial_parameter)[num_of_betas+1]=0.968507;
+
+		//new starting points
+		(*initial_parameter)[0]=10;
+		(*initial_parameter)[1]=5;
+		(*initial_parameter)[num_of_betas]=9;
+		(*initial_parameter)[num_of_betas+1]=3;
+
+		(*initial_parameter)[0]=1.30307;
+		(*initial_parameter)[1]=1.60892;
+		(*initial_parameter)[num_of_betas]=8.12362;
+		(*initial_parameter)[num_of_betas+1]=4.4049;*/
+
+		(*initial_parameter)[0]=1.31451;
+		(*initial_parameter)[1]=1.59058;
+		(*initial_parameter)[num_of_betas]=7.61954;
+		(*initial_parameter)[num_of_betas+1]=4.85318;
+		
 		
 		
 

@@ -894,6 +894,9 @@ int main(int argc, char *argv[]) {
 		cout<<endl;
 
 	}
+
+	//NOTIFY("Robust covariance matrix calculation");
+
 	
 
 

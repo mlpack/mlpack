@@ -49,17 +49,18 @@ int main(int argc, char *argv[]) {
   
 	double dummy_objective;
   my_objective.ComputeObjective(initial_x, &dummy_objective);
-<<<<<<< .mine
+
   NOTIFY("The objective is %lg", dummy_objective);
   fx_done(fx_root);
-=======
+
 	Vector dummy_gradient;
   my_objective.ComputeGradient(initial_x, &dummy_gradient);
 	
-	Matrix dummy_hessian;
+	/*Matrix dummy_hessian;
 	my_objective.ComputeHessian(initial_x, &dummy_hessian);
   
 	cout<<"Objective function value: "<< dummy_objective << "\n";
+*/
 
 	int i,j,k;
 	cout<<"Gradient vector: ";
@@ -68,7 +69,7 @@ int main(int argc, char *argv[]) {
 		cout<<dummy_gradient[i]<<" ";
 	}
 	cout<<endl;
-	
+	/*
 	cout<<"Hessian matrix: ";
 	for (j=0; j<dummy_hessian.n_rows(); j++)
 	{
@@ -83,6 +84,8 @@ int main(int argc, char *argv[]) {
 	data::Save("Hessian.csv", dummy_hessian);
 
 >>>>>>> .r2779
+*/
+
   fx_done(fx_root);
 
 
