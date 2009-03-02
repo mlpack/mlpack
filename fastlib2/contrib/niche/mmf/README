@@ -1,0 +1,195 @@
+This file contains usage information for HMM package of FASTLIB.
+
+0. File format
+==============
+There are 3 file types used in HMM, for describing HMM profile, storing
+data sequences and state sequences. For compactness and human
+readability, the files are a TEXT files consist of several matrices and 
+vectors seperated by lines begining with '%' character (these lines can be 
+used for notation/comment). The matrices are stored in column-wise manner
+(i.e. each line is a column). The numbers can be seperated by blank spaces
+or commas.
+
+0.1. HMM profile
+================
+
+The library implements 3 types of HMM: discrete, gaussian and mixture of
+gaussian. Each type has a different profile format. 
+
+Discrete HMM
+============
+
+The profile of a discrete HMM contains two matrices: transmission probability 
+and emission probability. For example:
+
+% Example of a discrete HMM profile
+% transmission (2 states)
+0.9 0.05
+0.1 0.95
+% emission (2 states x 6 symbols)
+0.166 0.1
+0.166 0.1
+0.166 0.1
+0.166 0.1
+0.166 0.1
+0.17 0.5
+
+Gaussian HMM
+============
+
+The profile of a gaussian HMM contains: transmission matrix, gaussian 
+distributions (mean/covariance) of every state. For example:
+
+% Example of a gaussian HMM profile
+% transmission (2 states)
+0.9 0.05
+0.1 0.95
+% mean - state 0 
+0 0
+% covariance - state 0
+1.0 0.1
+0.0 1.0
+% mean - state 1
+2 2
+% covariance - state 1
+1.0 0.0
+0.1 1.0
+
+Mixture of Gaussian HMM
+=======================
+
+The profile of a mixture of gaussian HMM contains: transmission matrix, 
+mixture of gaussian distributions of every state. Each mixture contains a
+priori probability vector and the mean/covariance of every cluster. For example
+
+% Example of a mixture of gaussian HMM profile
+% transmission
+0.9 0.05
+0.1 0.95
+% prior - state 0
+0.5 0.5
+% mean 0 - state 0
+0 0
+% cov 0 - state 0
+1.0 0.0
+0.0 1.0
+% mean 1 - state 0
+0 5
+% cov 1 - state 0
+1.0 0.0
+0.0 1.0
+% prior - state 1
+0.5 0.5
+% mean 0 - state 1
+5 0
+% cov 0 - state 1
+1.0 0.0
+0.0 1.0
+% mean 1 - state 1
+5 5
+% cov 1 - state 1
+1.0 0.0
+0.0 1.0
+
+0.2. Data sequences
+===================
+
+Discrete HMM
+============
+
+The discrete sequences are vectors separated by lines beginning with '%'.
+For example
+
+% total 6 symbols
+% sequence 1
+1,2,3,4,5,0,2,3,4,5
+% sequence 2
+3,2,0,2,3,4,5,0,3,4
+
+Gaussian and Mixture of Gaussian HMM
+====================================
+
+The data sequences are matrices separated by lines beginning with '%'. Each
+line is an observation at each time step.
+
+0.3. State sequences
+====================
+
+State sequences are store similarly to discrete data sequences.
+
+1. Generate a random sequence from HMM
+======================================
+
+Usage:
+  generate --type=={discrete|gaussian|mixture} OPTIONS
+[OPTIONS]
+  --profile=file   : file contains HMM profile
+  --length=NUM     : sequence length
+  --lenmax=NUM     : maximum sequence length, default = length
+  --numseq=NUM     : number of sequence
+  --seqfile=file   : output file for generated sequences
+  --statefile=file : output file for generated state sequences
+
+2. Calculate log-likelihood of sequences (Forward procedure)
+============================================================
+
+Usage:
+  loglik --type=={discrete|gaussian|mixture} OPTIONS
+[OPTIONS]
+  --profile==file   : file contains HMM profile
+  --seqfile==file   : file contains input sequences
+  --logfile==file   : output file for log-likelihood of the sequences
+
+3. Compute the most probable sequence (Viterbi algorithm)
+=========================================================
+
+Usage:
+  viterbi --type=={discrete|gaussian|mixture} OPTIONS
+[OPTIONS]
+  --profile=file   : file contains HMM profile
+  --seqfile=file   : file contains input sequences
+  --statefile=file : output file for state sequences
+
+4. Training/Estimating HMM parameters
+=====================================
+
+Usage:
+  train --type=={discrete|gaussian|mixture} OPTION
+[OPTIONS]
+  --algorithm={baumwelch|viterbi} : algorithm used for training, default Baum-Welch
+  --seqfile=file   : file contains input sequences
+  --guess=file     : file contains guess HMM profile
+  --numstate=NUM   : if no guess profile is specified, at least specify the number of state
+  --profile=file   : output file for estimated HMM profile
+  --maxiter=NUM    : maximum number of iteration, default=500
+  --tolerance=NUM  : error tolerance on log-likelihood, default=1e-3
+
+5. Examples
+===========
+
+To generate 20 data sequences of length 100 come from a discrete HMM stored 
+in 'pro.dis' and save data sequences and state sequences in 'seq.dis.out' and
+'state.dis.out'
+
+./generate --type=discrete --profile=pro.dis --length=100 --numseq=20 
+           --seqfile=seq.dis.out --statefile=state.dis.out
+
+To calculate the log-likelihood of the sequences in 'seq.dis.out' according
+to the HMM stored in 'pro.dis' and save the results in 'loglik.dis.out'
+
+./loglik --type=discrete --profile=pro.dis --seqfile=seq.dis.out
+         --logfile=loglik.dis.out
+
+To compute the most probable state sequences of the sequences in 'seq.dis.out' 
+according to the HMM stored in 'pro.dis' and save the results in 
+'state.viterbi.dis.out'
+
+./viterbi --type=discrete --profile=pro.dis --seqfile=seq.dis.out
+          --statefile=state.viterbi.dis.out
+
+To estimate the model parameters using training data from 'seq.dis.out' with
+a starting guess in 'pro.dis' (Baum-Welch algorithm) and save the profile in
+'pro.dis.out'
+
+./train --type=discrete --seqfile=seq.dis.out --guess=pro.dis 
+        --profile=pro.dis.out
