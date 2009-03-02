@@ -485,7 +485,13 @@ void Optimization::ComputeScaledDoglegDirection(double radius,
 		//p_b= - (hessian)^-1 * g
 		//la::MulInit(inverse_hessian, gradient, &p_b);
 		//la::Scale(-1.0, &p_b);
-		la::ScaleInit(-1.0, gradient, &p_b);
+    
+		//scaling
+		la::MulInit(inverse_hessian, scaled_gradient, &p_b);
+		la::Scale(-1.0, &p_b);
+		
+		
+		//la::ScaleInit(-1.0, gradient, &p_b);
 		//maximization
 		//la::Scale(-1.0, &p_b);
 
@@ -500,8 +506,8 @@ void Optimization::ComputeScaledDoglegDirection(double radius,
 			//g'*H*g = (H*g)'g
 			double gHg;
 
-			Matrix transpose_hessian;
-			la::TransposeInit(scaled_hessian, &transpose_hessian);
+			//Matrix transpose_hessian;
+			//la::TransposeInit(scaled_hessian, &transpose_hessian);
 
 			/*
 			//check whether hessian is symmetric
@@ -519,7 +525,7 @@ void Optimization::ComputeScaledDoglegDirection(double radius,
 			*/
 			
 			Vector temp1; //H*g
-			la::MulInit(scaled_hessian, scaled_gradient, &temp1);
+			la::MulInit(inverse_hessian, scaled_gradient, &temp1);
 			gHg=la::Dot(temp1, scaled_gradient);
 
 			Vector p_u;
@@ -527,7 +533,7 @@ void Optimization::ComputeScaledDoglegDirection(double radius,
 			double p_u_norm;
 
 			//maximization
-			la::ScaleInit(-1*la::Dot(scaled_gradient, scaled_gradient)/gHg, scaled_gradient, &p_u);
+			la::ScaleInit( (-1.0*la::Dot(scaled_gradient, scaled_gradient)/gHg), scaled_gradient, &p_u);
 			//la::ScaleInit(+1*la::Dot(gradient, gradient)/gHg, gradient, &p_u);
 			p_u_norm=sqrt(la::Dot(p_u, p_u));
 
@@ -548,8 +554,8 @@ void Optimization::ComputeScaledDoglegDirection(double radius,
 
 
         cout<<"(Dogleg)Discriminant= "<<(b*b-4*a*c)<<endl;
-				DEBUG_ASSERT_MSG(b*b-4*a*c>0, 
-				"(Dogleg)Discriminant is negative. Fail to get the solution zeta.");
+				//DEBUG_ASSERT_MSG(b*b-4*a*c>0, 
+				//"(Dogleg)Discriminant is negative. Fail to get the solution zeta.");
 				if(b*b-4*a*c<=0){
 					NOTIFY("(Dogleg)Discriminant is negative. Fail to get the solution zeta.");
 					cout<<"(Dogleg)Discriminant"<<(b*b-4*a*c)<<endl;
@@ -788,15 +794,20 @@ void Optimization::ComputeSteihaugDirection(double radius,
 void Optimization::TrustRadiusUpdate(double rho, double p_norm, 
 																		 double *current_radius) {
 																			 
-	if(rho<0.25)
+	//if(rho<0.25)
+  if(rho<0.0001)
 	{
 		cout<<"Shrinking trust region radius..."<<endl;
 		(*current_radius)=p_norm/4.0; //(*radius)=(*radius)/4.0;
 	}
-	else if( (rho>0.75) && (p_norm > (0.99*(*current_radius))) )
+	//else if( (rho>0.75) && (p_norm > (0.99*(*current_radius))) )
+	else if( (rho>0.99) && (p_norm > (0.99*(*current_radius))) )
 	{
 		cout<<"Expanding trust region radius..."<<endl;
-		(*current_radius)=min(2.0*(*current_radius),max_radius_);
+		//(*current_radius)=min(2.0*(*current_radius),max_radius_);
+		//(*current_radius)=min(2.0*(*current_radius),max_radius_);
+		(*current_radius)=min(3.5*(*current_radius),max_radius_);
+		
 	}
 }
 
@@ -914,9 +925,9 @@ void Optimization::ComputeScaledDerectionUnderConstraints(double radius,
 
 		while(constraints_check>0){
 
-		
-		ComputeScaledDoglegDirection(candidate_radius, gradient, hessian, &candidate_p, &candidate_delta_m);
-		//double p_norm=0;
+		  cout<<"candidate_radius="<<candidate_radius<<endl;
+			ComputeScaledDoglegDirection(candidate_radius, gradient, hessian, &candidate_p, &candidate_delta_m);
+			//double p_norm=0;
 				
 
 			
@@ -937,7 +948,8 @@ void Optimization::ComputeScaledDerectionUnderConstraints(double radius,
 				p->Copy(candidate_p);
 				next_parameter->Copy(candidate_next_parameter);
 				(*delta_m)=candidate_delta_m;
-				(*new_radius)=candidate_radius;
+				//(*new_radius)=candidate_radius;
+				(*new_radius)=radius;
 				constraints_check=-1;
 
 			}
@@ -949,7 +961,7 @@ void Optimization::ComputeScaledDerectionUnderConstraints(double radius,
 			cout<<endl;
 				
 			NOTIFY("Constraint Violation...Shrink Trust region Radius...");
-			(candidate_radius)=0.5*candidate_radius;
+			(candidate_radius)=0.25*candidate_radius;
 			}
 			/*
 			NOTIFY("Projection");
