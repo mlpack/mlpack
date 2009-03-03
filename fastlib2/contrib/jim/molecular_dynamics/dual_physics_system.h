@@ -627,11 +627,13 @@ public:
   // Compute the average kinetic energy of the particles
   double ComputeTemperature(){
     temperature_ = 0;
-    double ke;      
+    double ke = 0;      
     for(int i = 0; i < n_atoms_; i++){
       Vector vel;
       atoms_.MakeColumnSubvector(i, 4, 3, &vel);
-      ke = la::Dot(vel, vel) * atoms_.get(3, i);
+      double t1 = la::Dot(vel,vel);
+      double t2 = atoms_.get(3, i);
+      ke =t1*t2;
       temperature_ = temperature_ + ke;
     }         
     temperature_ = temperature_ / n_atoms_;
