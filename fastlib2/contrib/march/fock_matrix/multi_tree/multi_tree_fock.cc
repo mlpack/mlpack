@@ -435,6 +435,9 @@ void ComputeExchangeBaseCase_(SquareFockTree* mu_nu,
                               
 }
 
+
+///////////////////// public functions ////////////////////////////////////
+
 void ComputeFockMatrix() {
 
   fx_timer_start(module_, "coulomb_recursion");

@@ -87,6 +87,9 @@ class ShellPair {
   
   // the average center weighted by the bandwidths
   Vector center_;
+  
+  // the Schwartz factor
+  double schwartz_factor_;
 
 }; // class ShellPair
 

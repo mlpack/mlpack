@@ -250,13 +250,18 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
 
 }
 
+// this version is for link
 index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
                           ArrayList<BasisShell>& shells_in, 
-                          double shell_pair_cutoff, Vector* shell_max) {
+                          double shell_pair_cutoff, Vector* shell_max, 
+                          BasisShell*** sigma_for_nu, 
+                          ArrayList<index_t>* num_per_shell) {
     
   index_t num_shells = shells_in.size();
   
   index_t num_shell_pairs = 0;
+  
+  //num_per_shell->Init(num_shells);
   
   // What size to init to? 
   //shell_pairs->Init(num_shells);
@@ -268,8 +273,13 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
   for (index_t i = 0; i < num_shells; i++) {
     
     BasisShell i_shell = shells_in[i];
+    index_t num_for_i = 0;
+    
     
     double i_max = -DBL_MAX;
+    
+    ArrayList<index_t> significant_sig_index;
+    significant_sig_index.Init(num_shells);
     
     for (index_t j = i; j < num_shells; j++) {
       
@@ -286,16 +296,34 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
         (*shell_pairs)[num_shell_pairs].set_integral_upper_bound(this_bound);
         num_shell_pairs++;
         
+        significant_sig_index[num_for_i] = j;
+        
         if (this_bound > i_max) {
           i_max = this_bound;
         }
+        
+        // track how many shell pairs have i as the first shell
+        num_for_i++;
       
-      }
+      } // if shell pair meets bound
+      
       
     } // for j
 
+
+
     DEBUG_ASSERT(i_max > 0.0);
     (*shell_max)[i] = i_max;
+
+    (*num_per_shell)[i] = num_for_i;
+    
+    sigma_for_nu[i] = (BasisShell**)malloc(num_for_i * sizeof(BasisShell**));
+
+    for (index_t k = 0; k < num_for_i; k++) {
+    
+      sigma_for_nu[i][k] = shells_in.begin() + significant_sig_index[k];
+    
+    } // for k
     
   } // for i 
   
