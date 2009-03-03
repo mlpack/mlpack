@@ -35,18 +35,34 @@ class Link {
   
   Vector shell_max_;
   
+  // The list of shells, constructed from input
   ArrayList<BasisShell> shell_list_;
-  ArrayList<ShellPair> shell_pair_list_;
   
-  // 
-  //ArrayList<ArrayList> significant_mu_pairs_;
-  //ArrayList<BasisShell> significant_nu_for_mu_;
+  // The list of shell pairs that meet the cutoff 
+  ArrayList<ShellPair> shell_pair_list_;
   
   // significant_mu_pairs_[i] = list of significant nu for shell i
   BasisShell*** significant_mu_pairs_;
 
   // num_significant_mu_pairs_[i] = number of significant nu for mu
   ArrayList<index_t> num_significant_mu_pairs_;
+  
+  // used to iterate over the sigmas belonging to a nu
+  // needs to be sorted
+  BasisShell*** significant_sigma_for_nu_;
+  
+  // used to index into above sorted list
+  ArrayList<index_t> num_significant_sigma_for_nu_;
+  
+  
+  // num_shells_for_i_[j] = number of shell pairs for which j is the first 
+  // index
+  ArrayList<index_t> num_shells_for_i_;
+  
+  // first_nu_index_[i] = the first place in shell_pair_list_ that nu appears
+  ArrayList<index_t> first_nu_index_;
+  
+  
   
   
   // The length of shell_list_
@@ -68,15 +84,17 @@ class Link {
   
   
   ////////////////////////// Functions ///////////////////////////////
-  
+ private:
+
+  void PrescreeningLoop_();
 
  public:
-    /**
-    * Used for sorting the list of significant nu for each mu in order of 
-     * density matrix and maximum Schwartz factor. 
-     */
-    static bool Prescreening_Sort_(BasisShell* ShellA, BasisShell* ShellB);
-  
+  /**
+   * Used for sorting the list of significant nu for each mu in order of 
+   * density matrix and maximum Schwartz factor. 
+   */
+  static bool Prescreening_Sort_(BasisShell* ShellA, BasisShell* ShellB);
+
   void Init(const Matrix& centers, const Matrix& exp, const Matrix& moment,  
             const Matrix& density_in, fx_module* mod) {
   
@@ -114,9 +132,20 @@ class Link {
     significant_mu_pairs_ = 
         (BasisShell***)malloc(num_shells_*sizeof(BasisShell**));
         
+    significant_sigma_for_nu_ = 
+        (BasisShell***)malloc(num_shells_*sizeof(BasisShell**));
+        
     num_significant_mu_pairs_.Init(num_shells_);
     
-  
+    num_significant_sigma_for_nu_.Init(num_shells_);
+    /*
+    for (index_t i = 0; i < num_shells_; i++) {
+    
+      num_significant_sigma_for_nu_[i] = 0;
+    
+    } // for i
+     */
+     
   }
     
   void ComputeExchangeMatrix();
