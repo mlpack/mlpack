@@ -895,7 +895,13 @@ int main(int argc, char *argv[]) {
 
 	}
 
+	/*
+
 	//NOTIFY("Robust covariance matrix calculation");
+
+	current_gradient
+	*/
+
 
 	
 
