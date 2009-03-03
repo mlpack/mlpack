@@ -264,9 +264,8 @@ class ComplexVector {
     fprintf(stream, "----- VECTOR %s ------\n", name);
     for (index_t i = 0; i < length(); i++) {
       std::complex<T> number = get(i);
-      fprintf(stream, "%g + %g * i", number.real(), number.imag());
+      fprintf(stream, "%g + %g * i\n", number.real(), number.imag());
     }
-    fprintf(stream, "\n");
   }
 
  private:
