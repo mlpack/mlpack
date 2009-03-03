@@ -13,7 +13,7 @@
 #include "fastlib/fastlib.h"
 #include "fastlib/la/matrix.h"
 #include "fastlib/sparse/sparse_matrix.h"
-#include "../allknn/allknn.h"
+#include "mlpack/allknn/allknn.h"
 
 class KernelPCATest;
 /**

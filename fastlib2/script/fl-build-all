@@ -98,7 +98,7 @@ else:
   else:
     fx.param_default("compiler", "gcc")
 
-fx.param_default("j", "1")
+fx.param_default("j", "-1")
 fx.param_default("prefix", "")
 fx.param_default("downloader", "/usr/bin/curl")
 target_name = ":VERYSPECIALPYTHONSTRING"
@@ -154,13 +154,16 @@ def build_all(real_subpath, fake_subpath, target_name, posttext):
   
   print "*** Running Makefile"
   
-  processors = fx.param_int("j")
-  
   util.writelines(makefile_path, makefile_lines)
-  
+
+  processors = fx.param_int("j")
+  make_args = ["make"]
+  if processors >= 0:
+    make_args.append("-j%d" % processors)
+
   retval = util.spawn_redirect(
     os.path.abspath("."),
-    ["make", "-j%d" % processors],
+    make_args,
     infile = None,
     outfile = None,
     errfile = None)
