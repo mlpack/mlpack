@@ -60,19 +60,22 @@ int main(int argc, char *argv[])
   const char* fp_stats;
   const char* fp_coords;
   const char* fp_rad;
-  
+  const char* fp_diff;
+
   FILE *coords;
   FILE *stats; 
   FILE *radial_distribution;
- 
+  FILE *diff;
 
   fp_stats = fx_param_str(NULL, "stats", "tree_stats_dual.dat");
   fp_rad = fx_param_str(NULL, "rad", "raddist_dual.dat");
   fp_coords = fx_param_str(NULL, "coord", "coords_dual.dat");
+  fp_diff = fx_param_str(NULL, "diff", "diffusion_dual.dat");
 
   coords = fopen(fp_coords, "w+");
   stats = fopen(fp_stats, "w+");  
   radial_distribution = fopen(fp_rad, "w+");
+  diff = fopen(fp_diff, "w+");
 
   double time_step, stop_time, time;
   int info = fx_param_int(0, "info", 0);
@@ -109,7 +112,9 @@ int main(int argc, char *argv[])
   use_dims[0] = 0;
   use_dims[1] = 1;
   use_dims[2] = 2;
-
+  
+  ArrayList<Matrix> positions;
+   
   fx_timer_start(parameters, "Tree_Based");
   DualPhysicsSystem simulation;
   printf("\n------------------\nTree Simulation \n------------------ \n");
@@ -125,9 +130,19 @@ int main(int argc, char *argv[])
   tree_simulation.Init(450, 15.0);
   tree_simulation.WriteHeader(radial_distribution);
 
+  double delta = 10.0, last_time = -2*delta;
+  int diff_count = 0, diff_tot = 10;
+  positions.Init(diff_tot);
+
   double temperature, diffusion, pressure = 0;
   int get_pct_flag=1;
   while (time < stop_time){
+    if (diff_count < diff_tot & time > last_time + delta){ 
+      last_time = time;    
+      positions[diff_count].Init(3, atom_matrix.n_cols());
+      simulation.RecordPositions(positions[diff_count]);
+      diff_count++;
+    }
     double pct = simulation.GetPercent();    
     if (unlikely(get_pct_flag)){
       target_pct = pct;      
@@ -147,13 +162,24 @@ int main(int argc, char *argv[])
       temperature = simulation.ComputeTemperature();
       temperature = temperature / (3.0*K_B);     
       pressure = simulation.ComputePressure();
-      
-      diffusion = simulation.ComputeDiffusion(atom_matrix);
+     
+      fprintf(diff, "%f,", time);
+      for (int j = 0; j < diff_tot; j++){
+	if (j < diff_count){
+	  diffusion = simulation.ComputeDiffusion(positions[j]);
+	  fprintf(diff, "%f,", diffusion);
+	} else {
+	  fprintf(diff, "%f", 0.0);
+	}
+      }
+      fprintf(diff, "\n");
       if (info){
 	printf("--------------\n");
+	if (temperature > 180.0){
+	  printf("Too hot!\n");
+	}
 	printf("Temperature: %f \n", temperature);
 	printf("Pressure: %f \n", pressure);
-	printf("Diffusion: %f \n", diffusion);
 	printf("Percent Pruned: %f \n", pct);	
       }
       fprintf(stats, "%f %f %f, %f \n", time, diffusion, pressure,
