@@ -8,7 +8,7 @@ librule(
 
 librule(
     name = "particle2",                  
-    headers = ["particle_tree.h", "two_body_stat.h",
+    headers = ["particle_tree.h",
                "dual_physics_system.h"],   
     deplibs = ["fastlib:fastlib", "fastlib:fastlib_int"]
     )

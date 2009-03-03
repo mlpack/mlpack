@@ -88,7 +88,7 @@ private:
     la::Scale(coef*time_step_, &force);
     left->stat().ApplyForce(force);
     la::Scale(-1.0, &force);
-    right->stat().ApplyForce(force);
+    right->stat().ApplyForce(force);    
     percent_pruned_ = percent_pruned_ + 1;
   }
 
@@ -105,7 +105,7 @@ private:
     }
     double dist = sqrt(la::Dot(delta_r, delta_r));
     if (cutoff_ > 0){
-      if (sqrt(dist ) > cutoff_){
+      if (dist  > cutoff_){
 	return;
       }
     }
@@ -124,7 +124,7 @@ private:
     atoms_.MakeColumnSubvector(right, 4, 3, &right_vec);
     la::AddExpert(time_step_ / atoms_.get(3,left), delta_r, &left_vec);
     la::AddExpert(-time_step_ / atoms_.get(3,right), delta_r, &right_vec);
-    percent_pruned_ = percent_pruned_ + 1;
+    percent_pruned_ = percent_pruned_ + 1;  
   }
 
     
@@ -144,13 +144,17 @@ private:
       r_min = sqrt(query->bound().MinDistanceSq(ref->bound()));     
       r_max = sqrt(query->bound().MaxDistanceSq(ref->bound()));
     }        
-    Vector max, min, fmax, fmin;
+    Vector max, min, fmax_qr, fmin_qr, fmax_rq, fmin_rq;
     max.Init(3);
     min.Init(3);
-    fmax.Init(3);
-    fmin.Init(3);
-    fmax.SetZero();
-    fmin.SetZero();
+    fmax_qr.Init(3);
+    fmin_qr.Init(3);
+    fmax_qr.SetZero();
+    fmin_qr.SetZero();
+    fmax_rq.Init(3);
+    fmin_rq.Init(3);
+    fmax_rq.SetZero();
+    fmin_rq.SetZero();
     for(int i = 0; i < 3; i++){
       max[i] = query->bound().MaxDelta(ref->bound(), dimensions_[i],i);
       min[i] = query->bound().MinDelta(ref->bound(), dimensions_[i],i);
@@ -158,29 +162,38 @@ private:
     for (int i = 0; i < forces_.n_rows(); i++){
       int power = (int)powers_[i];
       double temp = query->stat().interactions_[i].coef()*
-	ref->stat().interactions_[i].coef()*power;      
+	ref->stat().interactions_[i].coef()*power*signs_[i];      
       for (int j = 0; j < 3; j++){
 	if (max[j]*temp > 0){
-	  fmax[j] = fmax[j] + max[j]*temp*pow(r_min, power-2);
+	  fmax_qr[j] = fmax_qr[j] + max[j]*temp*pow(r_min, power-2);
+	  fmin_rq[j] = fmin_rq[j] - max[j]*temp*pow(r_min, power-2);
 	} else {
-	  fmax[j] = fmax[j] + max[j]*temp*pow(r_max, power-2);
+	  fmax_qr[j] = fmax_qr[j] + max[j]*temp*pow(r_max, power-2);
+	  fmin_rq[j] = fmin_rq[j] - max[j]*temp*pow(r_max, power-2);
 	}
 	if( min[j]*temp > 0){
-	  fmin[j] = fmin[j] + min[j]*temp*pow(r_max, power-2);
+	  fmin_qr[j] = fmin_qr[j] + min[j]*temp*pow(r_max, power-2);
+	  fmax_rq[j] = fmax_rq[j] - min[j]*temp*pow(r_max, power-2);
 	} else {
-	  fmin[j] = fmin[j] + min[j]*temp*pow(r_min, power-2);
+	  fmin_qr[j] = fmin_qr[j] + min[j]*temp*pow(r_min, power-2);
+	  fmax_rq[j] = fmax_rq[j] - min[j]*temp*pow(r_min, power-2);	  
 	}
       }
     }    
     // Get range from omitting three body interactions 
     
-    Vector delta, err;
-    la::SubInit(fmax, fmin, &delta);
+    Vector delta_rq, delta_qr, err;
+    la::SubInit(fmax_qr, fmin_qr, &delta_qr);   
+    la::SubInit(fmax_rq, fmin_rq, &delta_rq);
     err.Init(2);
-    err[0] = la::Dot(delta,delta);
-    err[1] = err[0] / (ref->stat().mass_*ref->stat().mass_);
-    err[0] = err[0] / (query->stat().mass_*query->stat().mass_);
-    la::ScaleOverwrite(time_step_*time_step_ , err, bounds);
+    err.SetZero();
+    for (int i = 0; i < 3; i++){
+      err[0] = err[0] + fabs(delta_qr[i]);
+      err[1] = err[1] + fabs(delta_rq[i]);
+    }
+    err[1] = err[1] / ref->stat().mass_;
+    err[0] = err[0] / query->stat().mass_;
+    la::ScaleOverwrite(time_step_, err, bounds);   
   }
 
  int GetForceRangeDualCutoff_(ParticleTree* query, ParticleTree* ref){   
@@ -249,11 +262,12 @@ private:
     error_bound.Init(2);
     force_range.Init(2);
     GetForceRangeDual_(query, ref, &force_range);
-    error_bound[0] = 2*force_bound_*ref->count()/(n_atoms_*(n_atoms_-1));
-    error_bound[1] = 2*force_bound_*query->count()/(n_atoms_*(n_atoms_-1));    
+    error_bound[0] = force_bound_*ref->count()/ n_atoms_;
+    error_bound[1] = force_bound_*query->count()/ n_atoms_;    
     // Can we evaluate force here?
     if (force_range[0] < error_bound[0] & force_range[1] < error_bound[1]){
-      EvaluateNodeForcesDual_(query, ref);
+      GetForceRangeDual_(query, ref, &force_range);
+      EvaluateNodeForcesDual_(query, ref);     
     } else {
       // Or do we recurse down further?
       int a,b;
@@ -673,13 +687,24 @@ public:
       }
       atoms_.MakeColumnSubvector(j, 0, 3, &temp1);
       old_positions.MakeColumnSubvector(i, 0, 3, &temp2);
-      la::SubInit(temp1, temp2, &temp3);
-      //    if (boundary_ == PERIODIC){
-      //	AdjustVector_(&temp3);
-      //  }
+      la::SubInit(temp1, temp2, &temp3);     
       diff = diff + la::Dot(temp3, temp3);
     }
     return diff / n_atoms_;
+  }
+  
+  void RecordPositions(Matrix& out_positions){
+    for (int i = 0; i < n_atoms_; i++){
+      Vector temp;
+      int j = i;
+      if (system_ != NULL){
+	j = old_from_new_map_[j];
+      }
+      atoms_.MakeColumnSubvector(j, 0, 3, &temp);
+      for (int k = 0; k < 3; k++){
+	out_positions.set(k , i, temp[k]);
+      }
+    }
   }
 
  
