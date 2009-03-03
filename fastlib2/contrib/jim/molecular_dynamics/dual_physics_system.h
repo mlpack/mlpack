@@ -607,6 +607,7 @@ public:
 
   double ComputePressure(){    
     // printf("Virial: %f \n", virial_);   
+    virial_ = 0;
     double pressure = (n_atoms_*temperature_ + virial_) /  
       (3.0*dimensions_[0]*dimensions_[1]*dimensions_[2]); 
     return pressure;
