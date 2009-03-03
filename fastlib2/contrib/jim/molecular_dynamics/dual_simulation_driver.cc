@@ -37,6 +37,8 @@ const fx_entry_doc root_entries[] = {
    "Name of stats output file \n"},
  {"info", FX_PARAM, FX_INT, NULL,
    "Toggles off output to screen \n"},
+  {"snapshots", FX_PARAM, FX_INT, NULL,
+   "Number of snapshots for diffusion \n"},
   FX_ENTRY_DOC_DONE  
 };
 
@@ -79,6 +81,7 @@ int main(int argc, char *argv[])
 
   double time_step, stop_time, time;
   int info = fx_param_int(0, "info", 0);
+  int diff_tot = fx_param_int(0, "snapshots", 1);
   fp_k = fx_param_str_req(NULL, "pos");
   fp_l = fx_param_str_req(NULL, "two"); 
 
@@ -131,7 +134,7 @@ int main(int argc, char *argv[])
   tree_simulation.WriteHeader(radial_distribution);
 
   double delta = 10.0, last_time = -2*delta;
-  int diff_count = 0, diff_tot = 0;
+  int diff_count = 0;
   positions.Init(diff_tot);
 
   double temperature, diffusion, pressure = 0;
