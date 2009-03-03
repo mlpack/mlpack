@@ -16,7 +16,7 @@
  * =====================================================================================
  */
 #include "lbfgs.h"
-#include "../mvu/mvu_objectives.h"
+#include "mlpack/mvu/mvu_objectives.h"
 #include <string>
 
 class LbfgsTest {
@@ -27,39 +27,41 @@ class LbfgsTest {
   void TestMaxVar1() {
     Matrix test_data;
     data::Load(data_file_.c_str(), &test_data);
-    LBfgs<MaxVariance> engine;
+    Lbfgs<MaxVariance> engine;
     MaxVariance opt_object;
     opt_object.Init(NULL, test_data);
     engine.Init(&opt_object, NULL);
     engine.ComputeLocalOptimumBFGS();
     Matrix results;
-    engine.GetResults(&results);
+    engine.CopyCoordinates(&results);
     data::Save("max_var", results);
     engine.Destruct();
   }
   void TestMaxVar2() {
+    /*
     Matrix test_data;
     data::Load(data_file_.c_str(), &test_data);
-    LBfgs<MaxVarianceInequalityOnFurthest> engine;
+    Lbfgs<MaxVarianceInequalityOnFurthest> engine;
     MaxVarianceInequalityOnFurthest opt_object;
     opt_object.Init(NULL, test_data);
     engine.Init(&opt_object, NULL);
     engine.ComputeLocalOptimumBFGS();
     Matrix results;
-    engine.GetResults(&results);
+    engine.CopyCoordinates(&results);
     data::Save("max_var_ineq", results);
     engine.Destruct();
+    */
   }
   void TestMaxVar3() {
     Matrix test_data;
     data::Load(data_file_.c_str(), &test_data);
-    LBfgs<MaxFurthestNeighbors> engine;
+    Lbfgs<MaxFurthestNeighbors> engine;
     MaxFurthestNeighbors  opt_object;
     opt_object.Init(NULL, test_data);
     engine.Init(&opt_object, NULL);
     engine.ComputeLocalOptimumBFGS();
     Matrix results;
-    engine.GetResults(&results);
+    engine.CopyCoordinates(&results);
     data::Save("max_furth", results);
     engine.Destruct();
   }
@@ -74,9 +76,9 @@ class LbfgsTest {
 };
 
 int main(int argc, char *argv[]) {
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
   LbfgsTest test;
   test.TestAll();
-  fx_done();
+  fx_done(NULL);
 }
 

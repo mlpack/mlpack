@@ -29,7 +29,7 @@
 #define FGT_KDE_H
 
 #include <fastlib/fastlib.h>
-#include "..//series_expansion/mult_series_expansion_aux.h"
+#include "mlpack/series_expansion/mult_series_expansion_aux.h"
 
 
 /** @brief A computation class for FGT based kernel density estimation

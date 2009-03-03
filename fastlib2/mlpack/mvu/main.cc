@@ -62,7 +62,7 @@ const fx_entry_doc main_entries[] = {
  FX_ENTRY_DOC_DONE
 };
 
-const fx_submodule_doc _main_submodules[] = {
+const fx_submodule_doc main_submodules[] = {
   {"optfun", &mvu_doc,
    " Responsible for intializing MVU/MFNU.\n"},
    {"lbfgs", &lbfgs_doc,
