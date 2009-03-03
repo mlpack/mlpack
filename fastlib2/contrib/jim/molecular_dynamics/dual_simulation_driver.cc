@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
   tree_simulation.WriteHeader(radial_distribution);
 
   double delta = 10.0, last_time = -2*delta;
-  int diff_count = 0, diff_tot = 10;
+  int diff_count = 0, diff_tot = 0;
   positions.Init(diff_tot);
 
   double temperature, diffusion, pressure = 0;
