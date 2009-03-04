@@ -287,8 +287,8 @@ void LoadData(const char* name,
 int main(int argc, char* argv[]) {
   fx_init(argc, argv, NULL);
 
-  //srand(time(0));
-  srand(10);
+  srand(time(0));
+  //srand(10);
 
   int n_sequences_per_class;
   int n_sequences;
@@ -301,10 +301,12 @@ int main(int argc, char* argv[]) {
   Matrix training_data;
   Matrix test_data;
 
-  bool load_data = false;
+  bool load_data = fx_param_bool(NULL, "load_data", false);
+  bool save_data = fx_param_bool(NULL, "save_data", false);
+  const char* data_filename = fx_param_str(NULL, "data", "dataset.dat");
 
   if(load_data == true) {
-    LoadData("dataset_name", &initial_probs_vectors, &transition_matrices,
+    LoadData(data_filename, &initial_probs_vectors, &transition_matrices,
 	     &emission_matrices, &training_data, &test_data);
     n_sequences = initial_probs_vectors.size();
     n_sequences_per_class = n_sequences / 2; // we assume balanced data
@@ -408,8 +410,10 @@ int main(int argc, char* argv[]) {
       test_data.set(1, i, labels[test_indices[i]]);
     }
   
-    SaveData("dataset_name", initial_probs_vectors, transition_matrices,
-	     emission_matrices, training_data, test_data);
+    if(save_data) {
+      SaveData(data_filename, initial_probs_vectors, transition_matrices,
+	       emission_matrices, training_data, test_data);
+    }
   }
 
 
