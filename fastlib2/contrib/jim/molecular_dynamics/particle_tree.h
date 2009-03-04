@@ -171,10 +171,6 @@ struct ParticleStat {
   }
 
   
-
-  double CheckError(){
-  }
-
 };
 
 typedef BinarySpaceTree<DHrectBound<2>, Matrix, ParticleStat> ParticleTree;
