@@ -19,6 +19,144 @@ const fx_module_doc hshmm_main_doc = {
 
 
 
+double ComputeKernel(const Matrix &transition_matrix_a,
+		     const Matrix &emission_matrix_a,
+		     const Matrix &transition_matrix_b,
+		     const Matrix &emission_matrix_b) {
+  
+  int n_dims = emission_matrix_a.n_cols();
+  double T = fx_param_double(NULL, "T", 70);
+
+  double lambda = fx_param_double(NULL, "lambda", 0.3);
+
+  int n_states_a = transition_matrix_a.n_cols();
+  HMM<Multinomial> hmm_a;
+  hmm_a.Init(n_states_a, n_dims, T);
+  hmm_a.RandomlyInitialize();
+  hmm_a.SetPTransition(transition_matrix_a);
+
+  Matrix emission_matrix_a_transpose;
+  la::TransposeInit(emission_matrix_a, &emission_matrix_a_transpose);
+  for(int i = 0; i < n_states_a; i++) {
+    Vector p;
+    emission_matrix_a_transpose.MakeColumnVector(i, &p);
+
+    Multinomial multinomial;
+    multinomial.Init(p.length());
+    multinomial.SetP(p);
+
+    hmm_a.SetStateDistribution(i, multinomial);
+  }
+
+  hmm_a.ComputeCumulativePTransition();
+  hmm_a.ComputeStateProbabilities();
+  /*
+  hmm_a.cumulative_p_transition().PrintDebug("a cumulative_p_transition");
+  hmm_a.state_probabilities().PrintDebug("a state_probabilities");
+  hmm_a.state_cumulative_probabilities().PrintDebug("a state_cumulative_probabilities");
+  */
+
+  int n_states_b = transition_matrix_b.n_cols();
+  HMM<Multinomial> hmm_b;
+  hmm_b.Init(n_states_b, n_dims, T);
+  hmm_b.RandomlyInitialize();
+  hmm_b.SetPTransition(transition_matrix_b);
+
+  Matrix emission_matrix_b_transpose;
+  la::TransposeInit(emission_matrix_b, &emission_matrix_b_transpose);
+  for(int i = 0; i < n_states_b; i++) {
+    Vector p;
+    emission_matrix_b_transpose.MakeColumnVector(i, &p);
+
+    Multinomial multinomial;
+    multinomial.Init(p.length());
+    multinomial.SetP(p);
+
+    hmm_b.SetStateDistribution(i, multinomial);
+  }
+
+  hmm_b.ComputeCumulativePTransition();
+  hmm_b.ComputeStateProbabilities();
+  /*
+  hmm_b.cumulative_p_transition().PrintDebug("b cumulative_p_transition");
+  hmm_b.state_probabilities().PrintDebug("b state_probabilities");
+  hmm_b.state_cumulative_probabilities().PrintDebug("b state_cumulative_probabilities");
+  */
+  /*
+  hmm_a.PrintDebug("a");
+  hmm_b.PrintDebug("b");
+  */
+  //printf("Ready to MMK\n");
+  
+  MeanMapKernel mmk;
+  mmk.Init(lambda, T);
+
+  double val = mmk.Compute(hmm_a, hmm_b);
+  
+  //printf("hmm_dist(hmm_a, hmm_b) = %e\n", val);
+  
+  return val;
+}
+
+
+void ComputeKernelAllPairs(int n_sequences,
+			   Vector initial_probs_vectors[],
+			   Matrix transition_matrices[],
+			   Matrix emission_matrices[],
+			   Matrix *kernel_matrix) {
+  
+  HMM<Multinomial> hmms[n_sequences];
+  
+  int n_dims = emission_matrices[0].n_cols();
+  double T = fx_param_double(NULL, "T", 70);
+
+  double lambda = fx_param_double(NULL, "lambda", 0.3);
+  
+  for(int i = 0; i < n_sequences; i++) {
+    int n_states = transition_matrices[i].n_cols();
+    hmms[i].Init(n_states, n_dims, T);
+    hmms[i].SetPInitial(initial_probs_vectors[i]);
+    //hmms[i].RandomlyInitialize();
+    hmms[i].SetPTransition(transition_matrices[i]);
+    
+    Matrix emission_matrix_transpose;
+    la::TransposeInit(emission_matrices[i], &emission_matrix_transpose);
+    for(int j = 0; j < n_states; j++) {
+      Vector p;
+      emission_matrix_transpose.MakeColumnVector(j, &p);
+      Multinomial multinomial;
+      multinomial.Init(p.length());
+      multinomial.SetP(p);
+      hmms[i].SetStateDistribution(j, multinomial);
+    }
+    hmms[i].ComputeCumulativePTransition();
+    hmms[i].ComputeStateProbabilities();
+    //hmms[i].PrintDebug("hmm");
+  }
+  
+  
+  kernel_matrix -> Init(n_sequences, n_sequences);
+  
+  
+  MeanMapKernel mmk;
+  mmk.Init(lambda, T);
+  
+  for(int i = 0; i < n_sequences; i++) {
+    for(int j = 0; j < n_sequences; j++) {
+
+      double val = mmk.Compute(hmms[j], hmms[i]);
+      kernel_matrix -> set(j, i, val);
+      if(i != j) {
+	kernel_matrix -> set(i, j, val);
+      }
+    }
+  }
+  
+}
+
+
+
+
 double ComputeKernel(const char* filename_profile_hmm_1,
 		     const char* filename_profile_hmm_2) {
 
@@ -101,7 +239,7 @@ double ComputeKernel(const char* filename_profile_hmm_1,
 }
 
 
-
+/*
 int main(int argc, char *argv[]) {
   fx_module* root = fx_init(argc, argv, &hshmm_main_doc);
 
@@ -148,10 +286,5 @@ int main(int argc, char *argv[]) {
 
   return SUCCESS_PASS;
 }
-
-
-  
-
-  
-
+*/
 

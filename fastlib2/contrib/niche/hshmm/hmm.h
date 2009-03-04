@@ -247,9 +247,14 @@ class HMM {
     return j;
   }
 
+  void SetPInitial(Vector p_initial_in) {
+    p_initial_.CopyValues(p_initial_in);
+  }
+
   void SetPTransition(Matrix p_transition_in) {
     p_transition_.CopyValues(p_transition_in);
   }
+  
 
   ~HMM() {
     //printf("destroying HMM\n");

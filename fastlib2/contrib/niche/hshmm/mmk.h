@@ -178,7 +178,7 @@ class MeanMapKernel {
     for(int i1 = 0; i1 < n1; i1++) {
       for(int i2 = 0; i2 < n2; i2++) {
 	psi_current -> set(i1, i2,
-			   hmm_a.p_initial()[0] * hmm_b.p_initial()[0]);
+			   hmm_a.p_initial()[i1] * hmm_b.p_initial()[i2]);
 	//printf("psi_current[i1,i2] = %f\n",
 	//       psi_current -> get(i1, i2));
       }
