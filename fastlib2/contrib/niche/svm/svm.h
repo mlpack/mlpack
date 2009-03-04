@@ -61,9 +61,9 @@ class SVMRBFKernel {
   Matrix kernel_matrix_; //added by NISHANT
 
   void Init(datanode *node, const Matrix &kernel_matrix_in) { //TODO: NULL->node
-    kpara_.Init(2);
-    kpara_[0] = fx_param_double_req(NULL, "sigma"); //sigma
-    kpara_[1] = -1.0 / (2 * math::Sqr(kpara_[0])); //gamma
+    kpara_.Init(0); // changed by NISHANT from kpara_.Init(2)
+    //kpara_[0] = fx_param_double_req(NULL, "sigma"); //sigma // commented out by NISHANT
+    //kpara_[1] = -1.0 / (2 * math::Sqr(kpara_[0])); //gamma // commented out by NISHANT
     
     kernel_matrix_.Alias(kernel_matrix_in);
     
@@ -71,9 +71,9 @@ class SVMRBFKernel {
   }
 
   void Init(datanode *node) { //TODO: NULL->node
-    kpara_.Init(2);
-    kpara_[0] = fx_param_double_req(NULL, "sigma"); //sigma
-    kpara_[1] = -1.0 / (2 * math::Sqr(kpara_[0])); //gamma
+    kpara_.Init(0); // changed by NISHANT from kpara_.Init(2)
+    //kpara_[0] = fx_param_double_req(NULL, "sigma"); //sigma // commented out by NISHANT
+    //kpara_[1] = -1.0 / (2 * math::Sqr(kpara_[0])); //gamma // commented out by NISHANT
   }
   /* Kernel name */
   void GetName(String* kname) {
@@ -102,8 +102,8 @@ class SVMRBFKernel {
   }
   /* Save kernel parameters to file */
   void SaveParam(FILE* fp) {
-    fprintf(fp, "sigma %g\n", kpara_[0]);
-    fprintf(fp, "gamma %g\n", kpara_[1]);
+    //fprintf(fp, "sigma %g\n", kpara_[0]); // commented out by NISHANT
+    //fprintf(fp, "gamma %g\n", kpara_[1]); // commented out by NISHANT
   }
 };
 
@@ -817,12 +817,14 @@ void SVM<TKernel>::LoadModel_(int learner_typeid, String model_filename) {
     else if (strcmp(cmd, "kernel_typeid")==0) {
       fscanf(fp,"%d",&param_.kerneltypeid_);
     }
-    else if (strcmp(cmd, "sigma")==0) {
-      fscanf(fp,"%lf",&param_.kernel_.kpara_[0]); /* for gaussian kernels only */
-    }
-    else if (strcmp(cmd, "gamma")==0) {
-      fscanf(fp,"%lf",&param_.kernel_.kpara_[1]); /* for gaussian kernels only */
-    }
+    // below code commented out by NISHANT
+    //else if (strcmp(cmd, "sigma")==0) {
+    //  fscanf(fp,"%lf",&param_.kernel_.kpara_[0]); /* for gaussian kernels only */
+    //}
+    //else if (strcmp(cmd, "gamma")==0) {
+    //  fscanf(fp,"%lf",&param_.kernel_.kpara_[1]); /* for gaussian kernels only */
+    //}
+    // above code commented out by NISHANT
     // load bias
     else if (strcmp(cmd, "bias")==0) {
       for ( i= 0; i < num_models_; i++) {
