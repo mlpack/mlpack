@@ -1,5 +1,5 @@
 #include "fastlib/fastlib.h"
-//#include "contrib/march/fock_matrix/multi_tree/multi_tree_fock.h"
+#include "contrib/march/fock_matrix/multi_tree/multi_tree_fock.h"
 #include "contrib/march/fock_matrix/naive/naive_fock_matrix.h"
 #include "contrib/march/fock_matrix/prescreening/schwartz_prescreening.h"
 //#include "contrib/march/fock_matrix/link/link.h"
@@ -107,11 +107,8 @@ int main(int argc, char* argv[]) {
       cfmm_coulomb.PrintDebug("CFMM J");
     }
     
-    printf("CFMM in scope\n");
-  
   } // do_cfmm
   
-  printf("CFMM out scope\n");
 
 /*
   if (fx_param_exists(root_mod, "do_link")) {
@@ -177,7 +174,7 @@ int main(int argc, char* argv[]) {
     
   } // do_naive
   
-/*
+
   if (fx_param_exists(root_mod, "do_multi")) {
     
     Matrix multi_fock;
@@ -188,14 +185,14 @@ int main(int argc, char* argv[]) {
     
     multi_alg.Init(centers, exp_mat, momenta, density, multi_mod);
     multi_alg.ComputeFockMatrix();
-    multi_alg.Output(&multi_fock);
+    multi_alg.OutputFockMatrix(&multi_fock, NULL, NULL, NULL);
     
     if (fx_param_exists(root_mod, "print_multi")) {
       
     }
     
   } // do_multi
-*/
+
   
   // Do comparison here?
   

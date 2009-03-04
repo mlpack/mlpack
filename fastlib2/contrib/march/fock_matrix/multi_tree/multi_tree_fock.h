@@ -3,6 +3,7 @@
 
 #include "fastlib/fastlib.h"
 #include "square_fock_tree.h"
+#include "contrib/march/fock_matrix/fock_impl/eri.h"
 
 const fx_entry_doc multi_tree_fock_entries[] = {
   {"epsilon", FX_PARAM, FX_DOUBLE, NULL, 
@@ -231,11 +232,14 @@ private:
   /**
    * Returns the maximum integral between two square tree nodes
    */
-  double NodesMaxIntegral(SquareTree* mu_nu, SquareTree* rho_sigma);
+  double NodesMaxIntegral_(FockTree* mu, FockTree* nu, FockTree* rho, 
+                           FockTree* sigma);
   
-  double NodesMinIntegral(SquareTree* mu_nu, SquareTree* rho_sigma);
+  double NodesMinIntegral_(FockTree* mu, FockTree* nu, FockTree* rho,
+                           FockTree* sigma);
   
-  double NodesMidpointIntegral(SquareTree* mu_nu, SquareTree* rho_sigma);
+  double NodesMidpointIntegral_(FockTree* mu, FockTree* nu, FockTree* rho, 
+                                FockTree* sigma);
   
   /**
    * Determines if the pair of nodes represent a non square square node
@@ -320,7 +324,7 @@ private:
   
  public:
  
-  void Init(const Matrix& centers_in, const Matrix& exp_in
+  void Init(const Matrix& centers_in, const Matrix& exp_in,
             const Matrix& momenta_in, const Matrix& density_in, 
             fx_module* mod) {
   
@@ -330,12 +334,14 @@ private:
     module_ = mod;
     
     exponents_.Copy(exp_in.ptr(), centers_.n_cols());
-    momenta_.Copy(mom_in.ptr(), centers_.n_cols());
+    momenta_.Copy(momenta_in.ptr(), centers_.n_cols());
     
     epsilon_ = fx_param_double(module_, "epsilon", 0.01);
     
     epsilon_split_ = fx_param_double(module_, "epsilon_split", 0.5);
-    ASSERT(epsilon_split_ < 1.0 && epsilon_split_ > 0.0);
+    if ((epsilon_split_ > 1.0) || (epsilon_split_ < 0.0)) {
+      FATAL("Epsilon split must be between 0 and 1.\n");
+    }
     
     epsilon_coulomb_ = epsilon_split_ * epsilon_;
     epsilon_exchange_ = (1 - epsilon_split_) * epsilon_;
@@ -384,26 +390,44 @@ private:
     tree_ = tree::MakeKdTreeMidpoint<FockTree>(centers_, leaf_size_, 
                                                &old_from_new_centers_, NULL);
                                                
-    // IMPORTANT: permute the exponents and mommenta
-    
     // Do I use this for anything?
     // Set up the indices of the nodes for symmetry pruning
     traversal_index_ = 0;
     
-    square_tree_ = new SquareFockTree();
+    square_tree_ = new SquareTree();
     square_tree_->Init(tree_, tree_, number_of_basis_functions_);
+    
+    // IMPORTANT: permute the exponents, mommenta, and density
+    density_matrix_.Copy(density_in);
     
   
   } // Init()
   
   // Should see how CFMM code unpermutes and use that
   void GetPermutation(ArrayList<index_t>* perm) {
-    perm->Copy(old_from_new_centers_);
+    perm->InitCopy(old_from_new_centers_);
   } // GetPermutation()
   
-  void ComputeFockMatrix();
+  /**
+   * For use in between iterations of SCF solver
+   */
+  void UpdateMatrices(const Matrix& new_density);
     
-
+  /**
+   * Algorithm driver
+   */
+  void ComputeFockMatrix();
+  
+  /**
+   * Output matrices
+   *
+   * TODO: make this function unpermute them first
+   */
+  void OutputFockMatrix(Matrix* fock_out, Matrix* coulomb_out, 
+                        Matrix* exchange_out, 
+                        ArrayList<index_t>* old_from_new);
+  
+  
 }; // class MultiTreeFock
 
 

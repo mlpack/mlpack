@@ -54,6 +54,12 @@ double IntegralPrefactor(double alpha_A, double alpha_B, double alpha_C,
 
 }
 
+double IntegralGPTFactor(double A_exp, double B_exp, double AB_dist_sq) {
+
+  return (exp(-A_exp * B_exp * AB_dist_sq/(A_exp + B_exp)));
+
+}
+
 /**
  * Denoted K_1 or K_2 in the notes
  */
@@ -62,10 +68,20 @@ double IntegralGPTFactor(double A_exp, Vector& A_vec,
 
   double dist_sq = la::DistanceSqEuclidean(A_vec, B_vec);
   
-  return (exp(-A_exp * B_exp * dist_sq/(A_exp + B_exp)));
+  return IntegralGPTFactor(A_exp, B_exp, dist_sq);
 
 }
 
+
+double IntegralMomentumFactor(double alpha_A, double alpha_B, double alpha_C, 
+                              double alpha_D, double four_way_dist) {
+
+  double gamma_AB = alpha_A + alpha_B;
+  double gamma_CD = alpha_C + alpha_D;
+  
+  return F_0_(four_way_dist * gamma_AB * gamma_CD/(gamma_AB + gamma_CD));
+
+}
 
 /**
  * Depends on the momentum of the four centers
@@ -99,6 +115,23 @@ double IntegralMomentumFactor(double alpha_A,  Vector& A_vec, double alpha_B,
   return IntegralMomentumFactor(gamma_p, p_vec, gamma_q, q_vec);
 
 }
+
+double DistanceIntegral(double alpha_A, double alpha_B, double alpha_C, 
+                        double alpha_D, double AB_dist, double CD_dist, 
+                        double four_way_dist) {
+
+  double ab_fac = IntegralGPTFactor(alpha_A, alpha_B, AB_dist);
+  double cd_fac = IntegralGPTFactor(alpha_C, alpha_D, CD_dist);
+  
+  double prefac = IntegralPrefactor(alpha_A, alpha_B, alpha_C, alpha_D);
+  
+  double momentum = IntegralMomentumFactor(alpha_A, alpha_B, alpha_C, alpha_D, 
+                                           four_way_dist);
+
+  return (ab_fac * cd_fac * prefac * momentum);
+
+
+} // DistanceIntegral ()
 
 
 

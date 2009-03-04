@@ -39,7 +39,7 @@ class SquareFockTree {
     
    public:
       
-    void Init(const SquareIntegralStat& left, const SquareIntegralStat& right) {
+    void Init(const SquareFockStat& left, const SquareFockStat& right) {
       
       density_upper_bound_ = max(left.density_upper_bound(), 
                                  right.density_upper_bound());
@@ -133,10 +133,10 @@ class SquareFockTree {
   QueryTree* query1_;
   QueryTree* query2_;
   
-  SquareTree* left_child_;
-  SquareTree* right_child_;
+  SquareFockTree* left_child_;
+  SquareFockTree* right_child_;
   
-  SquareTreeStat stat_;
+  SquareFockStat stat_;
   
   
  public:
@@ -147,7 +147,7 @@ class SquareFockTree {
      *  It's important that I only create children where the index of q1  is 
      *  greater than that of q2
      */
-    void Init(QueryTree1* query1_root, QueryTree2* query2_root, 
+    void Init(QueryTree* query1_root, QueryTree* query2_root, 
               index_t num_funs) {
       
       query1_ = query1_root;
@@ -171,8 +171,8 @@ class SquareFockTree {
       // it's fine to split q1, since this will only increase it's index
       else if (q1_height == q2_height) {
         
-        left_child_ = new SquareTree();
-        right_child_ = new SquareTree();
+        left_child_ = new SquareFockTree<QueryTree>();
+        right_child_ = new SquareFockTree<QueryTree>();
         
         DEBUG_ASSERT(query1_->right()->end() > query2_->begin());
         DEBUG_ASSERT(query1_->left()->end() > query2_->begin());
@@ -191,8 +191,8 @@ class SquareFockTree {
           
           DEBUG_ASSERT(query1_->end() > query2_->left()->begin());
           
-          left_child_ = new SquareTree();
-          right_child_ = new SquareTree();
+          left_child_ = new SquareFockTree<QueryTree>();
+          right_child_ = new SquareFockTree<QueryTree>();
           
           left_child_->Init(query1_, query2_->left(), num_funs);
           right_child_->Init(query1_, query2_->right(), num_funs);
@@ -219,8 +219,8 @@ class SquareFockTree {
         // Idea: since query2 isn't necessary, go farther down query2
         else {
           
-          left_child_ = new SquareTree();
-          right_child_ = new SquareTree();
+          left_child_ = new SquareFockTree<QueryTree>();
+          right_child_ = new SquareFockTree<QueryTree>();
           
           query2_ = query2_->left();
           
@@ -240,8 +240,8 @@ class SquareFockTree {
           
           DEBUG_ASSERT(query1_->right()->end() > query2_->begin());
           
-          left_child_ = new SquareTree();
-          right_child_ = new SquareTree();
+          left_child_ = new SquareFockTree<QueryTree>();
+          right_child_ = new SquareFockTree<QueryTree>();
           
           left_child_->Init(query1_->left(), query2_, num_funs);
           right_child_->Init(query1_->right(), query2_, num_funs);
@@ -266,8 +266,8 @@ class SquareFockTree {
         // q1 is split twice
         else {
           
-          left_child_ = new SquareTree();
-          right_child_ = new SquareTree();
+          left_child_ = new SquareFockTree<QueryTree>();
+          right_child_ = new SquareFockTree<QueryTree>();
           
           query1_ = query1_->right();
           
@@ -290,11 +290,11 @@ class SquareFockTree {
       
     } // Init() (two-children)
   
-  QueryTree1* query1() {
+  QueryTree* query1() {
     return query1_;
   }
   
-  QueryTree2* query2() {
+  QueryTree* query2() {
     return query2_;
   }
   
@@ -302,19 +302,19 @@ class SquareFockTree {
     return (!left_child_);
   }
   
-  SquareTree* left() {
+  SquareFockTree* left() {
     return left_child_;
   }
   
-  SquareTree* right() {
+  SquareFockTree* right() {
     return right_child_;
   }
   
-  const SquareTreeStat& stat() const {
+  const SquareFockStat& stat() const {
     return stat_;
   }
   
-  SquareTreeStat& stat() {
+  SquareFockStat& stat() {
     return stat_;
   }
   
