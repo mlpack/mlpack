@@ -282,6 +282,117 @@ void LoadData(const char* name,
 }
 
 
+void CreateData(int n_sequences_per_class, int n_sequences,
+		ArrayList<Vector> *p_initial_probs_vectors,
+		ArrayList<Matrix> *p_transition_matrices,
+		ArrayList<Matrix> *p_emission_matrices,
+		Matrix *p_training_data,
+		Matrix *p_test_data) {
+
+  ArrayList<Vector> &initial_probs_vectors = *p_initial_probs_vectors;
+  ArrayList<Matrix> &transition_matrices = *p_transition_matrices;
+  ArrayList<Matrix> &emission_matrices = *p_emission_matrices;
+  Matrix &training_data = *p_training_data;
+  Matrix &test_data = *p_test_data;
+  
+  
+  initial_probs_vectors.Init(2 * n_sequences_per_class);
+  
+  transition_matrices.Init(2 * n_sequences_per_class);
+  
+  emission_matrices.Init(2 * n_sequences_per_class);
+  
+  fprintf(stderr, "Generating sequences and training HMMs...\n");
+  GenerateAndTrainSequences("class_0_transition.csv", "class_0_emission.csv",
+			    n_sequences_per_class,
+			    &initial_probs_vectors, 
+			    &transition_matrices,
+			    &emission_matrices,
+			    0);
+  
+  GenerateAndTrainSequences("class_1_transition.csv", "class_1_emission.csv",
+			    n_sequences_per_class,
+			    &initial_probs_vectors,
+			    &transition_matrices,
+			    &emission_matrices,
+			    n_sequences_per_class);
+  
+  Vector labels;
+  labels.Init(n_sequences);
+  for(int i = 0; i < n_sequences_per_class; i++) {
+    labels[i] = 1;
+  }
+  for(int i = n_sequences_per_class; i < n_sequences; i++) {
+    labels[i] = 0;
+  }
+  
+  /*
+    printf("\n\n\n\n\n\n\n\n\n\n");
+    for(int k = 0; k < n_sequences; k++) {
+    printf("sequence %d\n", k);
+    initial_probs_vectors[k].PrintDebug("initial probs");
+    transition_matrices[k].PrintDebug("transition matrix");
+    emission_matrices[k].PrintDebug("emission matrix");
+    }
+  */
+  
+  
+  /* Load training data */
+  
+  int indices_class_1[n_sequences_per_class];
+  SetToRange(indices_class_1, 0, n_sequences_per_class);
+  int indices_class_0[n_sequences_per_class];
+  SetToRange(indices_class_0, n_sequences_per_class, n_sequences);
+  
+  RandPerm(indices_class_1, n_sequences_per_class);
+  RandPerm(indices_class_0, n_sequences_per_class);
+  
+  int n_training_points = n_sequences / 2;
+  int n_test_points = n_sequences - n_training_points;
+  
+  int training_indices[n_training_points];
+  int test_indices[n_test_points];
+  
+  int n_training_points_per_class = n_training_points / 2;
+  int n_test_points_per_class = n_test_points / 2;
+  
+  int k_training = 0;
+  int k_test = 0;
+  int i;
+  for(i = 0; k_training < n_training_points_per_class; i++) {
+    training_indices[k_training] = indices_class_1[i];
+    k_training++;
+  }
+  for(; k_test < n_test_points_per_class; i++) {
+    test_indices[k_test] = indices_class_1[i];
+    k_test++;
+  }
+  for(i = 0; k_training < n_training_points; i++) {
+    training_indices[k_training] = indices_class_0[i];
+    k_training++;
+  }
+  for(; k_test < n_test_points; i++) {
+    test_indices[k_test] = indices_class_0[i];
+    k_test++;
+  }
+  
+  RandPerm(training_indices, n_training_points);
+  RandPerm(test_indices, n_test_points);
+  
+  training_data.Init(2, n_training_points);
+  for(int i = 0; i < n_training_points; i++) {
+    training_data.set(0, i, training_indices[i]);
+    training_data.set(1, i, labels[training_indices[i]]);
+  }
+  
+  test_data.Init(2, n_test_points);
+  for(int i = 0; i < n_test_points; i++) {
+    test_data.set(0, i, test_indices[i]);
+    test_data.set(1, i, labels[test_indices[i]]);
+  }
+}
+
+
 
 
 int main(int argc, char* argv[]) {
@@ -312,103 +423,13 @@ int main(int argc, char* argv[]) {
     n_sequences_per_class = n_sequences / 2; // we assume balanced data
   }
   else {
+
     n_sequences_per_class = fx_param_int(NULL, "n_sequences", 10);
     n_sequences  = 2 * n_sequences_per_class;
 
-    initial_probs_vectors.Init(2 * n_sequences_per_class);
-    
-    transition_matrices.Init(2 * n_sequences_per_class);
-    
-    emission_matrices.Init(2 * n_sequences_per_class);
-    
-    fprintf(stderr, "Generating sequences and training HMMs...\n");
-    GenerateAndTrainSequences("class_0_transition.csv", "class_0_emission.csv",
-			      n_sequences_per_class,
-			      &initial_probs_vectors, 
-			      &transition_matrices,
-			      &emission_matrices,
-			      0);
-    
-    GenerateAndTrainSequences("class_1_transition.csv", "class_1_emission.csv",
-			      n_sequences_per_class,
-			      &initial_probs_vectors,
-			      &transition_matrices,
-			      &emission_matrices,
-			      n_sequences_per_class);
-    
-    Vector labels;
-    labels.Init(n_sequences);
-    for(int i = 0; i < n_sequences_per_class; i++) {
-      labels[i] = 1;
-    }
-    for(int i = n_sequences_per_class; i < n_sequences; i++) {
-      labels[i] = 0;
-    }
-  
-    /*
-    printf("\n\n\n\n\n\n\n\n\n\n");
-    for(int k = 0; k < n_sequences; k++) {
-      printf("sequence %d\n", k);
-      initial_probs_vectors[k].PrintDebug("initial probs");
-      transition_matrices[k].PrintDebug("transition matrix");
-      emission_matrices[k].PrintDebug("emission matrix");
-    }
-    */
-    
-  
-    /* Load training data */
-    
-    int indices_class_1[n_sequences_per_class];
-    SetToRange(indices_class_1, 0, n_sequences_per_class);
-    int indices_class_0[n_sequences_per_class];
-    SetToRange(indices_class_0, n_sequences_per_class, n_sequences);
-    
-    RandPerm(indices_class_1, n_sequences_per_class);
-    RandPerm(indices_class_0, n_sequences_per_class);
-    
-    int n_training_points = n_sequences / 2;
-    int n_test_points = n_sequences - n_training_points;
-    
-    int training_indices[n_training_points];
-    int test_indices[n_test_points];
-    
-    int n_training_points_per_class = n_training_points / 2;
-    int n_test_points_per_class = n_test_points / 2;
-
-    int k_training = 0;
-    int k_test = 0;
-    int i;
-    for(i = 0; k_training < n_training_points_per_class; i++) {
-      training_indices[k_training] = indices_class_1[i];
-      k_training++;
-    }
-    for(; k_test < n_test_points_per_class; i++) {
-      test_indices[k_test] = indices_class_1[i];
-      k_test++;
-    }
-    for(i = 0; k_training < n_training_points; i++) {
-      training_indices[k_training] = indices_class_0[i];
-      k_training++;
-    }
-    for(; k_test < n_test_points; i++) {
-      test_indices[k_test] = indices_class_0[i];
-      k_test++;
-    }
-
-    RandPerm(training_indices, n_training_points);
-    RandPerm(test_indices, n_test_points);
-
-    training_data.Init(2, n_training_points);
-    for(int i = 0; i < n_training_points; i++) {
-      training_data.set(0, i, training_indices[i]);
-      training_data.set(1, i, labels[training_indices[i]]);
-    }
-    
-    test_data.Init(2, n_test_points);
-    for(int i = 0; i < n_test_points; i++) {
-      test_data.set(0, i, test_indices[i]);
-      test_data.set(1, i, labels[test_indices[i]]);
-    }
+    CreateData(n_sequences_per_class, n_sequences,
+	       &initial_probs_vectors, &transition_matrices,
+	       &emission_matrices, &training_data, &test_data);
   
     if(save_data) {
       SaveData(data_filename, initial_probs_vectors, transition_matrices,
@@ -467,14 +488,43 @@ int main(int argc, char* argv[]) {
   data::Load("predicted_values", &predicted_values);
   
   int n_test_points = predicted_values.n_rows();
-  int n_correct = 0;
+
+  int n_correct_class0 = 0;
+  int n_correct_class1 = 0;
+
   for(int i = 0; i < n_test_points; i++) {
-    n_correct += (((int)predicted_values.get(0, i)) == ((int)test_data.get(1,i)));
+    bool correct =
+      ((int)predicted_values.get(0, i)) == ((int)test_data.get(1,i));
+  
+    if(correct) {
+      if(test_data.get(1,i) == 1) {
+	n_correct_class1++;
+      }
+      else {
+	n_correct_class0++;
+      }
+    }
   }
+
+  int n_correct = n_correct_class1 + n_correct_class0;
+
+  // we assume n_test_points is even because we assumed balanced classes
+  fx_result_int(NULL, "class0_accuracy",
+		((double)n_correct_class0) / ((double)n_test_points / 2));
+  fx_result_int(NULL, "class1_accuracy",
+		((double)n_correct_class1) / ((double)n_test_points / 2));
 
   printf("n_correct / n_test_points = %d / %d = %f\n",
 	 n_correct, n_test_points,
-	 ((float) n_correct) / ((float) n_test_points));
+	 ((double) n_correct) / ((double) n_test_points));
+
+  printf("n_correct_class1 / n_test_points_class_1 = %d / %d = %f\n",
+	 n_correct_class1, n_test_points / 2,
+	 ((double) n_correct_class1) / ((double) n_test_points / 2));
+
+  printf("n_correct_class0 / n_test_points_class_0 = %d / %d = %f\n",
+	 n_correct_class0, n_test_points / 2,
+	 ((double) n_correct_class0) / ((double) n_test_points / 2));
     
   
   fx_done(NULL);
