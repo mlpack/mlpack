@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
   */
 
   Matrix kernel_matrix;
-  data::Load("../hshmm/kernel_mat.dat", &kernel_matrix);
+  data::Load("../hshmm/kernel_matrix.csv", &kernel_matrix);
 
 
   int n_points;
@@ -69,17 +69,15 @@ int main(int argc, char *argv[]) {
   KernelKmeans kernel_kmeans;
   kernel_kmeans.Init(&kernel_matrix, &weights, k);
 
-  ArrayList<int> clusters[k];
-  kernel_kmeans.Compute(clusters);
-  /*
-  for(int c = 0; c < k; c++) {
-    printf("\ncluster %d: ", c);
-    for(int j = 0; j < clusters[c].size(); j++) {
-      printf("%d, ", clusters[c][j]);
-    }
+  int cluster_memberships[n_points];
+  kernel_kmeans.Compute(cluster_memberships);
+
+  printf("cluster memberships\n");
+  for(int i = 0; i < n_points; i++) {
+    printf("%d\n", cluster_memberships[i]);
   }
-  printf("\n\n");
-  */
+    
+  
   fx_done(root);
 
   return SUCCESS_PASS;
