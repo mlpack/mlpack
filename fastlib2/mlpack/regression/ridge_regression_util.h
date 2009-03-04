@@ -69,7 +69,9 @@ class RidgeRegressionUtil {
    const GenVector<index_t> &predictor_indices, 
    const GenVector<index_t> &prune_predictor_indices, 
    GenVector<index_t> *output_predictor_indices) {
-    
+
+    NOTIFY("Starting VIF-based feature selection.");
+
     double lambda = fx_param_double(module, "lambda", 0.0);
     double variance_inflation_factor_threshold = 
       fx_param_double(module, "vif_threshold", 8.0);
@@ -77,10 +79,10 @@ class RidgeRegressionUtil {
     GenVector<index_t> *current_predictor_indices = new GenVector<index_t>();
     GenVector<index_t> *current_prune_predictor_indices = new 
       GenVector<index_t>();
-    const char *method = fx_param_str(module, "method", "quicsvd");
+    const char *method = fx_param_str(module, "inversion_method", "quicsvd");
     current_predictor_indices->Copy(predictor_indices);
     current_prune_predictor_indices->Copy(prune_predictor_indices);
-        
+
     do {
 
       // The maximum variance inflation factor and the index that
@@ -113,7 +115,7 @@ class RidgeRegressionUtil {
 			      (*current_prune_predictor_indices)[i]);
 
 	// Do the regression.
-	if(!strcmp(method, "normalsvd")) {  
+	if(!strcmp(method, "normalsvd")) {
 	  ridge_regression.SVDNormalEquationRegress(lambda);
 	}
 	else if(!strcmp(method, "quicsvd")) {
@@ -179,6 +181,7 @@ class RidgeRegressionUtil {
     delete current_predictor_indices;
     delete current_prune_predictor_indices;
     
+    NOTIFY("VIF feature selection complete.");
   }
 
 };

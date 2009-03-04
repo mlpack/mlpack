@@ -116,6 +116,8 @@ considered for pruning for the input dataset.\n"},
   }
   else if(!strcmp(mode, "fsregress")) {
 
+    NOTIFY("Feature selection based regression.\n");
+
     Matrix predictor_indices_intermediate;
     Matrix prune_predictor_indices_intermediate;
     std::string predictor_indices_file = fx_param_str_req(module, 

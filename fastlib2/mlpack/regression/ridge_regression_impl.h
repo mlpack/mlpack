@@ -76,6 +76,8 @@ void RidgeRegression::Init(fx_module *module,
 
 void RidgeRegression::FormNormalEquation_(double lambda, Matrix *output) {
   
+  NOTIFY("Forming the normal equation.");
+
   // Set up the predictors^T * predictors.
   double lambda_sq = lambda * lambda;
   la::MulTransAInit(predictors_, predictors_, output);
@@ -85,6 +87,9 @@ void RidgeRegression::FormNormalEquation_(double lambda, Matrix *output) {
   for(index_t i = 0; i < predictors_.n_cols(); i++) {
     output->set(i, i, output->get(i, i) + lambda_sq);
   } 
+
+  NOTIFY("Formed the normal equation of %d rows by %d columns.",
+	 output->n_rows(), output->n_cols());
 }
 
 void RidgeRegression::BuildDesignMatrixFromIndexSet_
@@ -151,7 +156,9 @@ void RidgeRegression::SVDRegress(double lambda) {
 
 void RidgeRegression::SVDNormalEquationRegress(double lambda) {
 
-  Matrix normal_equation;
+  NOTIFY("SVDNormalEquationRegress: starting.");
+
+  Matrix normal_equation;  
   FormNormalEquation_(lambda, &normal_equation);
   
   // Do the SVD on the normal equation, which is of a smaller size
@@ -176,7 +183,9 @@ void RidgeRegression::SVDNormalEquationRegress(double lambda) {
   
   double lambda_sq = lambda * lambda;
 
-  ComputeLinearModel_(lambda_sq, eigen_values, u, v_t);  
+  ComputeLinearModel_(lambda_sq, eigen_values, u, v_t);
+
+  NOTIFY("SVDNormalEquationRegress: complete.");
 }
 
 void RidgeRegression::CrossValidatedRegression(double lambda_min, 
