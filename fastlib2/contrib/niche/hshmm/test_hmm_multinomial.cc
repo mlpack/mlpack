@@ -25,7 +25,7 @@ double ComputeKernel(const Matrix &transition_matrix_a,
 		     const Matrix &emission_matrix_b) {
   
   int n_dims = emission_matrix_a.n_cols();
-  double T = fx_param_double(NULL, "T", 70);
+  int T = fx_param_int(NULL, "T", 70);
 
   double lambda = fx_param_double(NULL, "lambda", 0.3);
 
@@ -100,15 +100,15 @@ double ComputeKernel(const Matrix &transition_matrix_a,
 
 
 void ComputeKernelAllPairs(int n_sequences,
-			   Vector initial_probs_vectors[],
-			   Matrix transition_matrices[],
-			   Matrix emission_matrices[],
+			   const ArrayList<Vector> &initial_probs_vectors,
+			   const ArrayList<Matrix> &transition_matrices,
+			   const ArrayList<Matrix> &emission_matrices,
 			   Matrix *kernel_matrix) {
-  
+
   HMM<Multinomial> hmms[n_sequences];
   
   int n_dims = emission_matrices[0].n_cols();
-  double T = fx_param_double(NULL, "T", 70);
+  int T = fx_param_int(NULL, "T", 70);
 
   double lambda = fx_param_double(NULL, "lambda", 0.3);
   
