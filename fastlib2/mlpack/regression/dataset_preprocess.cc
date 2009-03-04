@@ -14,8 +14,9 @@ void FindIndexWithPrefix(Dataset &dataset, char *prefix,
     // make sure it hasn't been selected before. If so, then add to
     // the remove indices.
     const String &feature_name = features[i].name();
-    if(!strncmp(prefix, feature_name.c_str(), strlen(prefix))) {
 
+    if(!strncmp(prefix, feature_name.c_str(), strlen(prefix) - 1)) {
+      
       bool does_not_exist_yet = true;
       for(index_t j = 0; j < remove_indices.size(); j++) {
 	if(remove_indices[j] == i) {
@@ -24,7 +25,9 @@ void FindIndexWithPrefix(Dataset &dataset, char *prefix,
 	}
       }
       if(does_not_exist_yet) {
+	printf("Found: %s at position %d.\n", feature_name.c_str(), i);
 	remove_indices.PushBackCopy(i);
+	break;
       }
     }    
   }  
