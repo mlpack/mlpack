@@ -17,7 +17,7 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 	data::Load(data_file1, &x);
 	index_t num_of_betas=x.n_rows();
 	
-	cout<<"data1 done"<<endl;
+	//cout<<"data1 done"<<endl;
 
   Matrix info1;
   data::Load(info_file1, &info1);
@@ -25,7 +25,7 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 	*num_of_people=num_of_people_;
   population_first_stage_x_.Init(num_of_people_);
 
-	cout<<"data1 done2"<<endl;
+	//cout<<"data1 done2"<<endl;
 
 	index_t start_col=0;
   for(index_t i=0; i<num_of_people_; i++) {
@@ -35,7 +35,7 @@ void Sampling::Init(fx_module *module, int *num_of_people,
     start_col+=(index_t)info1.get(0, i);
   }
 
-	cout<<"data1 done3"<<endl;
+	//cout<<"data1 done3"<<endl;
 
 	/*
 	cout<<"data file 1:";
@@ -150,14 +150,16 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 		//initial_parameter->SetAll(1.5);
 
 		
-		initial_parameter->SetZero();
+		initial_parameter->SetAll(2.0);
+		/*
 		(*initial_parameter)[0]=1.2;
 		(*initial_parameter)[1]=1.5;
 		(*initial_parameter)[num_of_betas]=1.7;
 		(*initial_parameter)[num_of_betas+1]=2.1;
 
 		(*initial_parameter)[2]=1.7;
-		
+		*/
+
 
 
 
