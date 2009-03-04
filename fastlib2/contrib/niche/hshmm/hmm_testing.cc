@@ -10,10 +10,14 @@
 void GenerateAndTrainSequences(const char* transition_filename,
 			       const char* emission_filename,
 			       int n_sequences,
-			       Vector initial_probs_vectors[],
-			       Matrix transition_matrices[],
-			       Matrix emission_matrices[]) {
+			       ArrayList<Vector>* p_initial_probs_vectors,
+			       ArrayList<Matrix>* p_transition_matrices,
+			       ArrayList<Matrix>* p_emission_matrices,
+			       int first_index) {
 
+  ArrayList<Vector> &initial_probs_vectors = *p_initial_probs_vectors;
+  ArrayList<Matrix> &transition_matrices = *p_transition_matrices;
+  ArrayList<Matrix> &emission_matrices = *p_emission_matrices;
 
   Matrix transition;
   data::Load(transition_filename, &transition);
@@ -38,9 +42,9 @@ void GenerateAndTrainSequences(const char* transition_filename,
   int max_iter_bw = fx_param_int(NULL, "max_iter_bw", 500);
   double tol_bw = fx_param_double(NULL, "tolerance_bw", 1e-3);
 
+  int last_index = first_index + n_sequences;
 
-
-  for(int k = 0; k < n_sequences; k++) {
+  for(int k = first_index; k < last_index; k++) {
     Vector observed_sequence;
     Vector state_sequence;
     
@@ -223,66 +227,205 @@ void RandPerm(int x[], int length) {
   }
 }
 
+template<typename T>
+void WriteOut(const T &object, FILE* file) {
+  index_t size = ot::FrozenSize(object);
+  char* buf = mem::Alloc<char>(size);
+  ot::Freeze(buf, object);
+  fwrite(&size, sizeof(size), 1, file);
+  fwrite(buf, 1, size, file);
+  mem::Free(buf);
+}
+
+template<typename T>
+void ReadIn(T* object, FILE* file) {
+  index_t size;
+  fread(&size, sizeof(size), 1, file);
+  char* buf = mem::Alloc<char>(size);
+  fread(buf, 1, size, file);
+  ot::InitThaw(object, buf);
+  mem::Free(buf);
+}
+
+void SaveData(const char* name,
+	      const ArrayList<Vector> &initial_probs_vectors,
+	      const ArrayList<Matrix> &transition_matrices,
+	      const ArrayList<Matrix> &emission_matrices,
+	      const Matrix &training_data,
+	      const Matrix &test_data) {
+  FILE* file = fopen(name, "wb");
+
+  WriteOut(initial_probs_vectors, file);
+  WriteOut(transition_matrices, file);
+  WriteOut(emission_matrices, file);
+  WriteOut(training_data, file);
+  WriteOut(test_data, file);
+
+  fclose(file);
+}
+
+void LoadData(const char* name,
+	      ArrayList<Vector> *initial_probs_vectors,
+	      ArrayList<Matrix> *transition_matrices,
+	      ArrayList<Matrix> *emission_matrices,
+	      Matrix *training_data,
+	      Matrix *test_data) {
+  FILE* file = fopen(name, "rb");
+  
+  ReadIn(initial_probs_vectors, file);
+  ReadIn(transition_matrices, file);
+  ReadIn(emission_matrices, file);
+  ReadIn(training_data, file);
+  ReadIn(test_data, file);
+  
+  fclose(file);
+}
+
+
+
 
 int main(int argc, char* argv[]) {
   fx_init(argc, argv, NULL);
 
   //srand(time(0));
   srand(10);
-  
-  const int n_sequences_per_class = fx_param_int(NULL, "n_sequences", 10);
 
-  int n_sequences  = 2 * n_sequences_per_class;
-
-  Matrix transition_matrices[2 * n_sequences_per_class];
-  Matrix emission_matrices[2 * n_sequences_per_class];
-  Vector initial_probs_vectors[2 * n_sequences_per_class];
-  fprintf(stderr, "Generating sequences and training HMMs...\n");
-  GenerateAndTrainSequences("class_0_transition.csv", "class_0_emission.csv",
-			    n_sequences_per_class,
-			    initial_probs_vectors,
-			    transition_matrices,
-			    emission_matrices);
-
-  GenerateAndTrainSequences("class_1_transition.csv", "class_1_emission.csv",
-			    n_sequences_per_class,
-			    &(initial_probs_vectors[n_sequences_per_class]),
-			    &(transition_matrices[n_sequences_per_class]),
-			    &(emission_matrices[n_sequences_per_class]));
-
-  Vector labels;
-  labels.Init(n_sequences);
-  for(int i = 0; i < n_sequences_per_class; i++) {
-    labels[i] = 1;
-  }
-  for(int i = n_sequences_per_class; i < n_sequences; i++) {
-    labels[i] = 0;
-  }
-
-  /*
-  printf("\n\n\n\n\n\n\n\n\n\n");
-  for(int k = 0; k < n_sequences; k++) {
-    printf("sequence %d\n", k);
-    initial_probs_vectors[k].PrintDebug("initial probs");
-    transition_matrices[k].PrintDebug("transition matrix");
-    emission_matrices[k].PrintDebug("emission matrix");
-  }
-  */
+  int n_sequences_per_class;
+  int n_sequences;
 
   
+  ArrayList<Vector> initial_probs_vectors;
+  ArrayList<Matrix> transition_matrices;
+  ArrayList<Matrix> emission_matrices;
+
+  Matrix training_data;
+  Matrix test_data;
+
+  bool load_data = false;
+
+  if(load_data == true) {
+    LoadData("dataset_name", &initial_probs_vectors, &transition_matrices,
+	     &emission_matrices, &training_data, &test_data);
+    n_sequences = initial_probs_vectors.size();
+    n_sequences_per_class = n_sequences / 2; // we assume balanced data
+  }
+  else {
+    n_sequences_per_class = fx_param_int(NULL, "n_sequences", 10);
+    n_sequences  = 2 * n_sequences_per_class;
+
+    initial_probs_vectors.Init(2 * n_sequences_per_class);
+    
+    transition_matrices.Init(2 * n_sequences_per_class);
+    
+    emission_matrices.Init(2 * n_sequences_per_class);
+    
+    fprintf(stderr, "Generating sequences and training HMMs...\n");
+    GenerateAndTrainSequences("class_0_transition.csv", "class_0_emission.csv",
+			      n_sequences_per_class,
+			      &initial_probs_vectors, 
+			      &transition_matrices,
+			      &emission_matrices,
+			      0);
+    
+    GenerateAndTrainSequences("class_1_transition.csv", "class_1_emission.csv",
+			      n_sequences_per_class,
+			      &initial_probs_vectors,
+			      &transition_matrices,
+			      &emission_matrices,
+			      n_sequences_per_class);
+    
+    Vector labels;
+    labels.Init(n_sequences);
+    for(int i = 0; i < n_sequences_per_class; i++) {
+      labels[i] = 1;
+    }
+    for(int i = n_sequences_per_class; i < n_sequences; i++) {
+      labels[i] = 0;
+    }
+  
+    /*
+    printf("\n\n\n\n\n\n\n\n\n\n");
+    for(int k = 0; k < n_sequences; k++) {
+      printf("sequence %d\n", k);
+      initial_probs_vectors[k].PrintDebug("initial probs");
+      transition_matrices[k].PrintDebug("transition matrix");
+      emission_matrices[k].PrintDebug("emission matrix");
+    }
+    */
+    
+  
+    /* Load training data */
+    
+    int indices_class_1[n_sequences_per_class];
+    SetToRange(indices_class_1, 0, n_sequences_per_class);
+    int indices_class_0[n_sequences_per_class];
+    SetToRange(indices_class_0, n_sequences_per_class, n_sequences);
+    
+    RandPerm(indices_class_1, n_sequences_per_class);
+    RandPerm(indices_class_0, n_sequences_per_class);
+    
+    int n_training_points = n_sequences / 2;
+    int n_test_points = n_sequences - n_training_points;
+    
+    int training_indices[n_training_points];
+    int test_indices[n_test_points];
+    
+    int n_training_points_per_class = n_training_points / 2;
+    int n_test_points_per_class = n_test_points / 2;
+
+    int k_training = 0;
+    int k_test = 0;
+    int i;
+    for(i = 0; k_training < n_training_points_per_class; i++) {
+      training_indices[k_training] = indices_class_1[i];
+      k_training++;
+    }
+    for(; k_test < n_test_points_per_class; i++) {
+      test_indices[k_test] = indices_class_1[i];
+      k_test++;
+    }
+    for(i = 0; k_training < n_training_points; i++) {
+      training_indices[k_training] = indices_class_0[i];
+      k_training++;
+    }
+    for(; k_test < n_test_points; i++) {
+      test_indices[k_test] = indices_class_0[i];
+      k_test++;
+    }
+
+    RandPerm(training_indices, n_training_points);
+    RandPerm(test_indices, n_test_points);
+
+    training_data.Init(2, n_training_points);
+    for(int i = 0; i < n_training_points; i++) {
+      training_data.set(0, i, training_indices[i]);
+      training_data.set(1, i, labels[training_indices[i]]);
+    }
+    
+    test_data.Init(2, n_test_points);
+    for(int i = 0; i < n_test_points; i++) {
+      test_data.set(0, i, test_indices[i]);
+      test_data.set(1, i, labels[test_indices[i]]);
+    }
+  
+    SaveData("dataset_name", initial_probs_vectors, transition_matrices,
+	     emission_matrices, training_data, test_data);
+  }
+
+
+  
+  // Compute Kernel Matrix
   Matrix kernel_matrix;
   fprintf(stderr, "Computing kernel matrix...\n");
   ComputeKernelAllPairs(2 * n_sequences_per_class,
 			initial_probs_vectors, transition_matrices,
 			emission_matrices,
 			&kernel_matrix);
-
   Vector sqrt_diag;
   sqrt_diag.Init(n_sequences);
   for(int i = 0; i < n_sequences; i++) {
     sqrt_diag[i] = sqrt(kernel_matrix.get(i, i));
   }
-
   for(int i = 0; i < n_sequences; i++) {
     for(int j = 0; j < n_sequences; j++) {
       kernel_matrix.set(j, i,
@@ -290,80 +433,12 @@ int main(int argc, char* argv[]) {
 			(sqrt_diag[i] * sqrt_diag[j]));
     }
   }
-
   //kernel_matrix.PrintDebug("kernel matrix");
-
   data::Save("kernel_matrix.csv", kernel_matrix);
 
 
+
   
-  /* Load training data */
-
-  int indices_class_1[n_sequences_per_class];
-  SetToRange(indices_class_1, 0, n_sequences_per_class);
-  int indices_class_0[n_sequences_per_class];
-  SetToRange(indices_class_0, n_sequences_per_class, n_sequences);
-
-  RandPerm(indices_class_1, n_sequences_per_class);
-  RandPerm(indices_class_0, n_sequences_per_class);
-
-  int n_training_points = n_sequences / 2;
-  int n_test_points = n_sequences - n_training_points;
-
-  int training_indices[n_training_points];
-  int test_indices[n_test_points];
-
-  int n_training_points_per_class = n_training_points / 2;
-
-  int n_test_points_per_class = n_test_points / 2;
-
-  int k_training = 0;
-  int k_test = 0;
-  int i;
-  for(i = 0; k_training < n_training_points_per_class; i++) {
-    training_indices[k_training] = indices_class_1[i];
-    k_training++;
-  }
-  for(; k_test < n_test_points_per_class; i++) {
-    test_indices[k_test] = indices_class_1[i];
-    k_test++;
-  }
-  for(i = 0; k_training < n_training_points; i++) {
-    training_indices[k_training] = indices_class_0[i];
-    k_training++;
-  }
-  for(; k_test < n_test_points; i++) {
-    test_indices[k_test] = indices_class_0[i];
-    k_test++;
-  }
-
-
-  RandPerm(training_indices, n_training_points);
-  RandPerm(test_indices, n_test_points);
-
-  Matrix training_data;
-  training_data.Init(2, n_training_points);
-  for(int i = 0; i < n_training_points; i++) {
-    training_data.set(0, i, training_indices[i]);
-    training_data.set(1, i, labels[training_indices[i]]);
-  }
-
-  Matrix test_data;
-  test_data.Init(2, n_test_points);
-  for(int i = 0; i < n_test_points; i++) {
-    test_data.set(0, i, test_indices[i]);
-    test_data.set(1, i, labels[test_indices[i]]);
-  }
-  
-  /*
-  Matrix dataids_labels_matrix;
-  ids_labels_matrix.Init(2, n_sequences);
-  for(int i = 0; i < n_sequences; i++) {
-    ids_labels_matrix.set(0, i, i);
-    ids_labels_matrix.set(1, i, labels[i]);
-  }
-  */
-
 
   Dataset training_set;
   training_set.CopyMatrix(training_data);
@@ -387,6 +462,7 @@ int main(int argc, char* argv[]) {
   Matrix predicted_values;
   data::Load("predicted_values", &predicted_values);
   
+  int n_test_points = predicted_values.n_rows();
   int n_correct = 0;
   for(int i = 0; i < n_test_points; i++) {
     n_correct += (((int)predicted_values.get(0, i)) == ((int)test_data.get(1,i)));

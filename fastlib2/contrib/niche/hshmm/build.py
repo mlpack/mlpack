@@ -54,3 +54,10 @@ binrule(
     headers = ["hmm_testing.h"],
     deplibs = ["fastlib:fastlib","contrib/niche/mmf:hmm"]
 )
+
+binrule(
+    name = "test_serial",
+    sources = ["test_serial.cc"],
+    headers = [],
+    deplibs = ["fastlib:fastlib"]
+)
