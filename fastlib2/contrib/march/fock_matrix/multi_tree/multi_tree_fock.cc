@@ -108,8 +108,8 @@ double MultiTreeFock::NodesMidpointIntegral_(FockTree* mu, FockTree* nu,
 } // NodesMidpointIntegral_()
 
 
-bool DualTreeIntegrals::RectangleOnDiagonal_(FockTree* mu, 
-                                             FockTree* nu) {
+bool MultiTreeFock::RectangleOnDiagonal_(FockTree* mu, 
+                                         FockTree* nu) {
   
   if (mu == nu) {
     return false;
@@ -148,7 +148,7 @@ index_t MultiTreeFock::CountOnDiagonal_(SquareTree* rho_sigma) {
 
 bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu, 
                                            SquareTree* rho_sigma, 
-                                           double* approx_val) {
+                                           double* approx_out) {
 
   FockTree* mu = mu_nu->query1();
   FockTree* nu = mu_nu->query2();
@@ -245,13 +245,13 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
   // For relative error
   /*my_allowed_error = my_allowed_error * mu_nu->stat().entry_lower_bound();*/
   
-  DEBUG_ONLY(*approximate_value = BIG_BAD_NUMBER);
+  DEBUG_ONLY(*approx_out = BIG_BAD_NUMBER);
   
   if (my_max_error < my_allowed_error) {
     
     can_prune = true;
     
-    *approximate_value = approx_val;
+    *approx_out = approx_val;
     //printf("approx_val = %g\n", *approximate_value);
     if (below_cutoff) {
       num_absolute_prunes_++;
@@ -468,8 +468,8 @@ void MultiTreeFock::ComputeCoulombBaseCase_(SquareTree* mu_nu,
           
           // WARNING: this is unnormalized
           double this_integral = density_matrix_.ref(rho_index, sigma_index) * 
-            SSSSIntegral_(alpha_mu, mu_vec, alpha_nu, nu_vec, alpha_rho, 
-                          rho_vec, alpha_sigma, sigma_vec);
+            eri::SSSSIntegral(alpha_mu, mu_vec, alpha_nu, nu_vec, alpha_rho, 
+                              rho_vec, alpha_sigma, sigma_vec);
           
           // this line gets it right
           // double this_integral = ComputeSingleIntegral_(mu_vec, nu_vec, rho_vec, sigma_vec);
@@ -566,8 +566,8 @@ void MultiTreeFock::ComputeExchangeBaseCase_(SquareTree* mu_nu,
           // WARNING: this is not normalized
           // multiply by 0.5 for exchange matrix
           double kl_integral = 0.5 * density_matrix_.ref(rho_index, sigma_index) * 
-            ComputeSingleIntegral_(alpha_mu, mu_vec, alpha_rho, rho_vec, 
-                                   alpha_nu, nu_vec, alpha_sigma, sigma_vec);
+            eri::SSSSIntegral(alpha_mu, mu_vec, alpha_rho, rho_vec, 
+                              alpha_nu, nu_vec, alpha_sigma, sigma_vec);
           
           integral_value = integral_value + kl_integral;
           
@@ -581,8 +581,8 @@ void MultiTreeFock::ComputeExchangeBaseCase_(SquareTree* mu_nu,
             
             // WARNING: not normalized
             double lk_integral = density_matrix_.ref(sigma_index, rho_index) * 
-              ComputeSingleIntegral_(alpha_mu, mu_vec, alpha_sigma, sigma_vec, 
-                                     alpha_nu, nu_vec, alpha_rho, rho_vec) * 0.5;
+              eri::SSSSIntegral(alpha_mu, mu_vec, alpha_sigma, sigma_vec, 
+                                alpha_nu, nu_vec, alpha_rho, rho_vec) * 0.5;
             
             integral_value = integral_value + lk_integral;
             
@@ -1032,7 +1032,7 @@ void MultiTreeFock::SetEntryBounds_() {
 } // SetEntryBounds_
 
 
-void ResetTreeForExchange_(SquareTree* root) {
+void MultiTreeFock::ResetTreeForExchange_(SquareTree* root) {
   
   if (root != NULL) {
     
@@ -1050,15 +1050,25 @@ void ResetTreeForExchange_(SquareTree* root) {
 
 
 
-void ResetTree_(SquareTree* root) {
+void MultiTreeFock::ResetTree_(SquareTree* root) {
   
   double max_density;
   double min_density;
+  
+  /*
+  double min_exp;
+  double max_exp;
+  */
   
   if (root->is_leaf()) {
     
     max_density = -DBL_INF;
     min_density = DBL_INF;
+    
+    /*
+    min_exp = DBL_INF;
+    max_exp = DBL_INF;
+    */
     
     for (index_t i = root->query1()->begin(); i < root->query1()->end(); 
          i++) {
@@ -1075,6 +1085,15 @@ void ResetTree_(SquareTree* root) {
         }
         
       } // j
+      
+      /*
+      if (exponents_[i] < min_exp) {
+        min_exp = exponents_[i];
+      }
+      if (exponents_[i] > max_exp) {
+        max_exp = exponents_[i];
+      }
+      */
       
     } // i
     
@@ -1106,7 +1125,7 @@ void ResetTree_(SquareTree* root) {
 
 ///////////////////// public functions ////////////////////////////////////
 
-void ComputeFockMatrix() {
+void MultiTreeFock::ComputeFockMatrix() {
 
   fx_timer_start(module_, "coulomb_recursion");
   ComputeCoulombRecursion_(square_tree_, square_tree_);  
@@ -1125,3 +1144,73 @@ void ComputeFockMatrix() {
   
 
 } // ComputeFockMatrix()
+
+void MultiTreeFock::UpdateMatrices(const Matrix& new_density) {
+  
+  density_matrix_.CopyValues(new_density);
+  
+  //density_matrix_.PrintDebug();
+  
+  // Reset tree density bounds
+  ResetTree_(square_tree_);
+  
+  SetEntryBounds_();
+  
+  coulomb_matrix_.SetZero();
+  exchange_matrix_.SetZero();
+  fock_matrix_.SetZero();
+  
+} // UpdateMatrices()
+
+
+void MultiTreeFock::OutputFockMatrix(Matrix* fock_out, Matrix* coulomb_out, 
+                                     Matrix* exchange_out, 
+                                     ArrayList<index_t>* old_from_new) {
+  
+  //printf("number_of_approximations_ = %d\n", number_of_approximations_);
+  //printf("number_of_base_cases_ = %d\n\n", number_of_base_cases_);
+  //fx_format_result(module_, "bandwidth", "%g", bandwidth_);
+  fx_format_result(module_, "epsilon_coulomb", "%g", epsilon_coulomb_);
+  fx_format_result(module_, "epsilon_exchange", "%g", epsilon_exchange_);
+  fx_format_result(module_, "coulomb_approximations", "%d", 
+                   coulomb_approximations_);
+  fx_format_result(module_, "exchange_approximations", "%d", 
+                   exchange_approximations_);
+  fx_format_result(module_, "coulomb_base_cases", "%d", 
+                   coulomb_base_cases_);
+  fx_format_result(module_, "exchange_base_cases", "%d", 
+                   exchange_base_cases_);
+  fx_format_result(module_, "abs_prunes", "%d", num_absolute_prunes_);
+  fx_format_result(module_, "rel_prunes", "%d", num_relative_prunes_);
+  
+  /* printf("Multi-tree Coulomb:\n");
+  coulomb_matrix_.PrintDebug();
+  
+  printf("Multi-tree Exchange:\n");
+  exchange_matrix_.PrintDebug();
+  */
+  if (fock_out) {
+    fock_out->Copy(fock_matrix_);
+  }
+  if (coulomb_out) {
+    coulomb_out->Copy(coulomb_matrix_);
+  }
+  if (exchange_out) {
+    exchange_out->Copy(exchange_matrix_);
+  }
+  
+  if (old_from_new) {
+    old_from_new->InitCopy(old_from_new_centers_);
+  }
+  
+  // Need to output the Fock matrix
+  // should I unpermute here?
+  // Maybe keep it permuted in the other code, and unpermute at the end?
+  
+  // For now, unpermute it here
+  
+  
+} // OutputFockMatrix()
+
+
+

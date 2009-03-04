@@ -18,8 +18,13 @@ namespace eri {
   double IntegralPrefactor(double alpha_A, double alpha_B, double alpha_C, 
                            double alpha_D);
                            
+  double IntegralGPTFactor(double A_exp, double B_exp, double ab_dist_sq);
+                           
   double IntegralGPTFactor(double A_exp, Vector& A_vec, 
                            double B_exp, Vector& B_vec);
+                           
+  double IntegralMomentumFactor(double alpha_A, double alpha_B, double alpha_C, 
+                                double alpha_D, double four_way_dist);
                            
   double IntegralMomentumFactor(double gamma_AB, Vector& AB_center, 
                                 double gamma_CD, Vector& CD_center);
