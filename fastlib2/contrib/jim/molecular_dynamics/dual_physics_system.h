@@ -606,8 +606,7 @@ public:
   }
 
   double ComputePressure(){    
-    // printf("Virial: %f \n", virial_);   
-    virial_ = 0;
+    // printf("Virial: %f \n", virial_);       
     double pressure = (n_atoms_*temperature_ + virial_) /  
       (3.0*dimensions_[0]*dimensions_[1]*dimensions_[2]); 
     return pressure;
@@ -630,10 +629,8 @@ public:
     double ke = 0;      
     for(int i = 0; i < n_atoms_; i++){
       Vector vel;
-      atoms_.MakeColumnSubvector(i, 4, 3, &vel);
-      double t1 = la::Dot(vel,vel);
-      double t2 = atoms_.get(3, i);
-      ke =t1*t2;
+      atoms_.MakeColumnSubvector(i, 4, 3, &vel);     
+      ke = la::Dot(vel,vel)*atoms_.get(3,i);
       temperature_ = temperature_ + ke;
     }         
     temperature_ = temperature_ / n_atoms_;
