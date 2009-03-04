@@ -1,7 +1,8 @@
 #include "fastlib/fastlib.h"
 
 void FindIndexWithPrefix(Dataset &dataset, char *prefix,
-			 ArrayList<int> &remove_indices) {
+			 ArrayList<int> &remove_indices, 
+			 bool keep_going_after_first_match) {
 
   // Get the dataset information containing the feature types and
   // names.
@@ -27,7 +28,10 @@ void FindIndexWithPrefix(Dataset &dataset, char *prefix,
       if(does_not_exist_yet) {
 	printf("Found: %s at position %d.\n", feature_name.c_str(), i);
 	remove_indices.PushBackCopy(i);
-	break;
+	
+	if(!keep_going_after_first_match) {
+	  break;
+	}
       }
     }    
   }  
@@ -51,13 +55,48 @@ int main(int argc, char *argv[]) {
   do {
     printf("Input the prefix of the feature that you want to remove ");
     printf("(just press enter if you are done): ");
-    fgets(buffer, 1000, stdin);
+    fgets(buffer, 998, stdin);
 
-    if(strlen(buffer) == 0) {
+    if(strlen(buffer) == 1) {
       break;
     }
-    FindIndexWithPrefix(initial_dataset, buffer, remove_indices);
+    FindIndexWithPrefix(initial_dataset, buffer, remove_indices, false);
   } while(true);
+
+  ArrayList<int> prune_indices;
+  prune_indices.Init();
+  do {
+    printf("Input the prefix of the feature that you want to consider for pruning ");
+    printf("(just press enter if you are done): ");
+    fgets(buffer, 998, stdin);
+    
+    if(strlen(buffer) == 1) {
+      break;
+    }
+    FindIndexWithPrefix(initial_dataset, buffer, prune_indices, true);
+  } while(true);
+
+  // Output the indices to the file based on the results above.
+  FILE *predictor_file = fopen("predictor_indices.csv", "w+");
+  FILE *prune_file = fopen("prune_indices.csv", "w+");
+
+  for(index_t i = 0; i < initial_dataset.matrix().n_rows(); i++) {
+    bool to_be_removed = false;
+    for(index_t j = 0; j < remove_indices.size(); j++) {
+      if(remove_indices[j] == i) {
+	to_be_removed = true;
+	break;
+      }
+    }
+    if(!to_be_removed) {
+      fprintf(predictor_file, "%d\n", i);
+    }
+  }
+  for(index_t i = 0; i < prune_indices.size(); i++) {
+    fprintf(prune_file, "%d\n", prune_indices[i]);
+  }
+  fclose(predictor_file);
+  fclose(prune_file);
 
   fx_done(fx_root);
   return 0;
