@@ -1,7 +1,7 @@
 binrule(
     name = "test_hmm_multinomial",
     sources = ["test_hmm_multinomial.cc", "load_profile.cc"],
-    headers = ["hmm.h", "lds.h", "multinomial.h", "gaussian.h", "mmk.h"],
+    headers = ["hmm.h", "lds.h", "multinomial.h", "gaussian.h", "mmk.h","svm.h","svm.cc"],
     deplibs = ["fastlib:fastlib"]
 )
 
@@ -50,7 +50,7 @@ binrule(
 
 binrule(
     name = "hmm_testing",
-    sources = ["hmm_testing.cc","../../tqlong/mmf/mmf3.cc"],
-    headers = [],
-    deplibs = ["fastlib:fastlib","contrib/tqlong/mmf:hmm"]
+    sources = ["hmm_testing.cc","test_hmm_multinomial.cc","../mmf/mmf3.cc"],
+    headers = ["hmm_testing.h"],
+    deplibs = ["fastlib:fastlib","contrib/niche/mmf:hmm"]
 )
