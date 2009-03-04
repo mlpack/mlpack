@@ -41,7 +41,8 @@ class KernelKmeans {
   }
 
 
-  void Compute(ArrayList<int> clusters_array[]) {
+  void Compute(int cluster_memberships[]) {
+
     int** current_clusters;
     int* current_cluster_sizes;
     InitClusters_(current_clusters, current_cluster_sizes);
@@ -67,7 +68,7 @@ class KernelKmeans {
 
 
 
-    int sum_weights[k_];
+    double sum_weights[k_];
     char info[100];
     int max_iterations = 5;
     
@@ -143,13 +144,15 @@ class KernelKmeans {
     } // end k-means iteration
 
 
-    for(int i = 0; i < k_; i++) {
-      clusters_array[i].Init(current_cluster_sizes[i]);
-      int cluster_size = current_cluster_sizes[i];
-      for(int j = 0; j < cluster_size; j++) {
-	clusters_array[i][j] = current_clusters[i][j];
+    for(int c = 0; c < k_; c++) {
+      for(int j = 0; j < current_cluster_sizes[c]; j++) {
+	cluster_memberships[current_clusters[c][j]] = c;
       }
+    }
 
+
+
+    for(int i = 0; i < k_; i++) {
       free(current_clusters[i]);
       free(old_clusters[i]);
     }
