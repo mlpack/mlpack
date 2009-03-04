@@ -64,6 +64,10 @@ private:
       Init();
       height_ = 0;
       
+      // need to set min and max bandwidth here
+      // can't, the entries are being permuted, so I can't reference the 
+      // exponents_ vector
+      
     } // Init (leaves)
     
     void Init(const Matrix& matrix, index_t start, index_t count, 
@@ -245,7 +249,7 @@ private:
    * is needed for accurately counting how many references are involved in 
    * an approximation.  
    */
-  index_t CountOnDiagonal_(SquareFockTree* rho_sigma);
+  index_t CountOnDiagonal_(SquareTree* rho_sigma);
   
   
   /**
@@ -259,28 +263,59 @@ private:
    * Determines if the Exchange interaction can be approximated, and if so, 
    * fills in *approx_val with the estimate.
    */
-  bool CanApproximateExchange_(SquareFockTree* mu_nu, SquareFockTree* rho_sigma, 
+  bool CanApproximateExchange_(SquareTree* mu_nu, SquareTree* rho_sigma, 
                                double* approx_val);
              
  /**
   * Base cases
   */                  
-  void ComputeCoulombBaseCase_(SquareFockTree* mu_nu, 
-                               SquareFockTree* rho_sigma);
+  void ComputeCoulombBaseCase_(SquareTree* mu_nu, 
+                               SquareTree* rho_sigma);
 
-  void ComputeExchangeBaseCase_(SquareFockTree* mu_nu, 
-                                SquareFockTree* rho_sigma);
+  void ComputeExchangeBaseCase_(SquareTree* mu_nu, 
+                                SquareTree* rho_sigma);
+                                
+  /**
+   * Fill in approximations after pruning
+   *
+   * NOTE: these are almost the same function, the only difference is which
+   * matrix gets written to at the end
+   * How can I make them the same?
+   */
+  void FillApproximationCoulomb_(SquareTree* mu_nu, 
+                                 SquareTree* rho_sigma,
+                                 double integral_approximation);
+                                 
+  void FillApproximationExchange_(SquareTree* mu_nu, 
+                                  SquareTree* rho_sigma,
+                                  double integral_approximation);
+    
+
+
+  /**
+   * Keep track of bounds
+   */
+  void PropagateBoundsDown_(SquareTree* query);
+  
+  void PropagateBoundsUp_(SquareTree* query);
+
+  void SetEntryBounds_();
+
+  void ResetTreeForExchange_(SquareTree* root);
+  
+  void ResetTree_(SquareTree* root);
 
 
   /**
    * Recursive calls
    */  
-  void ComputeCoulombRecursion_(SquareIntegralTree* query, 
-                                SquareIntegralTree* ref);
+  void ComputeCoulombRecursion_(SquareTree* query, 
+                                SquareTree* ref);
   
   
-  void ComputeExchangeRecursion_(SquareIntegralTree* query, 
-                                 SquareIntegralTree* ref);
+  void ComputeExchangeRecursion_(SquareTree* query, 
+                                 SquareTree* ref);
+                                
   
   
  public:
@@ -348,6 +383,8 @@ private:
     
     tree_ = tree::MakeKdTreeMidpoint<FockTree>(centers_, leaf_size_, 
                                                &old_from_new_centers_, NULL);
+                                               
+    // IMPORTANT: permute the exponents and mommenta
     
     // Do I use this for anything?
     // Set up the indices of the nodes for symmetry pruning
