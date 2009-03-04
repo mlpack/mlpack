@@ -2,7 +2,7 @@
 //#include "contrib/march/fock_matrix/multi_tree/multi_tree_fock.h"
 #include "contrib/march/fock_matrix/naive/naive_fock_matrix.h"
 #include "contrib/march/fock_matrix/prescreening/schwartz_prescreening.h"
-#include "contrib/march/fock_matrix/link/link.h"
+//#include "contrib/march/fock_matrix/link/link.h"
 #include "contrib/march/fock_matrix/cfmm/cfmm_coulomb.h"
 
 
@@ -113,7 +113,7 @@ int main(int argc, char* argv[]) {
   
   printf("CFMM out scope\n");
 
-
+/*
   if (fx_param_exists(root_mod, "do_link")) {
     
     Matrix link_exchange;
@@ -132,6 +132,7 @@ int main(int argc, char* argv[]) {
     }
     
   } // do_link
+*/
 
   if (fx_param_exists(root_mod, "do_prescreening")) {
     

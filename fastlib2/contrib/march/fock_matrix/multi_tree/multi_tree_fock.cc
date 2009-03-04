@@ -124,13 +124,13 @@ bool DualTreeIntegrals::RectangleOnDiagonal_(FockTree* mu,
 } // RectangleOnDiagonal_  
 
 
-index_t MultiTreeFock::CountOnDiagonal_(SquareFockTree* rho_sigma) {
+index_t MultiTreeFock::CountOnDiagonal_(SquareTree* rho_sigma) {
   
   index_t on_diagonal;
   
   // one of these should be square, which one?
-  SquareFockTree* left_child = rho_sigma->left();
-  SquareFockTree* right_child = rho_sigma->right();
+  SquareTree* left_child = rho_sigma->left();
+  SquareTree* right_child = rho_sigma->right();
   
   if (left_child->query1() == left_child->query2()) {
     on_diagonal = left_child->query1()->count() * left_child->query2()->count();
@@ -150,10 +150,10 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
                                            SquareTree* rho_sigma, 
                                            double* approx_val) {
 
-  IntegralTree* mu = mu_nu->query1();
-  IntegralTree* nu = mu_nu->query2();
-  IntegralTree* rho = rho_sigma->query1();
-  IntegralTree* sigma = rho_sigma->query2();
+  FockTree* mu = mu_nu->query1();
+  FockTree* nu = mu_nu->query2();
+  FockTree* rho = rho_sigma->query1();
+  FockTree* sigma = rho_sigma->query2();
   
   bool can_prune = false;
   
@@ -266,14 +266,14 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
 }
 
 
-bool MultiTreeFock::CanApproximateExchange_(SquareIntegralTree* mu_nu, 
-                                            SquareIntegralTree* rho_sigma, 
+bool MultiTreeFock::CanApproximateExchange_(SquareTree* mu_nu, 
+                                            SquareTree* rho_sigma, 
                                             double* approximate_value) { 
                                             
-  IntegralTree* mu = mu_nu->query1();
-  IntegralTree* nu = mu_nu->query2();
-  IntegralTree* rho = rho_sigma->query1();
-  IntegralTree* sigma = rho_sigma->query2();
+  FockTree* mu = mu_nu->query1();
+  FockTree* nu = mu_nu->query2();
+  FockTree* rho = rho_sigma->query1();
+  FockTree* sigma = rho_sigma->query2();
   
   // If it is possible to prune here, that will still be true for the two 
   // children, where we won't have to try to handle the near symmetry
@@ -305,6 +305,7 @@ bool MultiTreeFock::CanApproximateExchange_(SquareIntegralTree* mu_nu,
     
   if (rho != sigma) {
     
+    /*
     double mu_sigma_min_dist = mu->bound().MinDistanceSq(sigma->bound());
     double mu_sigma_max_dist = mu->bound().MaxDistanceSq(sigma->bound());
     
@@ -318,6 +319,7 @@ bool MultiTreeFock::CanApproximateExchange_(SquareIntegralTree* mu_nu,
     
     double mu_sigma_four_way_min_dist = mu_sigma_ave.MinDistanceSq(nu_rho_ave);
     double mu_sigma_four_way_max_dist = mu_sigma_ave.MaxDistanceSq(nu_rho_ave);
+    */
     
     double mu_sigma_upper = NodesMaxIntegral_(mu, sigma, nu, rho);
     double mu_sigma_lower = NodesMinIntegral_(mu, sigma, nu, rho);
@@ -421,19 +423,685 @@ bool MultiTreeFock::CanApproximateExchange_(SquareIntegralTree* mu_nu,
 
 
 
-void ComputeCoulombBaseCase_(SquareFockTree* mu_nu, SquareFockTree* rho_sigma) {
-                             
-                             
-                             
-                             
-}
+void MultiTreeFock::ComputeCoulombBaseCase_(SquareTree* mu_nu, 
+                                            SquareTree* rho_sigma) {
+  
+  FockTree* mu = mu_nu->query1();
+  FockTree* nu = mu_nu->query2();
+  FockTree* rho = rho_sigma->query1();
+  FockTree* sigma = rho_sigma->query2();
+  
+  double max_entry = -DBL_INF;
+  double min_entry = DBL_INF;
+  
+  DEBUG_ASSERT(mu->end() > nu->begin());
+  DEBUG_ASSERT(rho->end() > sigma->begin());
+  
+  for (index_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
+    
+    for (index_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
+      
+      double integral_value = coulomb_matrix_.ref(mu_index, nu_index);
+      
+      for (index_t rho_index = rho->begin(); rho_index < rho->end();
+           rho_index++) {
+        
+        for (index_t sigma_index = sigma->begin(); sigma_index < sigma->end(); 
+             sigma_index++) {
+          
+          Vector mu_vec;
+          centers_.MakeColumnVector(mu_index, &mu_vec);
+          Vector nu_vec;
+          centers_.MakeColumnVector(nu_index, &nu_vec);
+          Vector rho_vec;
+          centers_.MakeColumnVector(rho_index, &rho_vec);
+          Vector sigma_vec;
+          centers_.MakeColumnVector(sigma_index, &sigma_vec);
+          
+          double alpha_mu = exponents_[mu_index];
+          double alpha_nu = exponents_[nu_index];
+          double alpha_rho = exponents_[rho_index];
+          double alpha_sigma = exponents_[sigma_index];
+          
+          // Multiply by normalization to the fourth, since it appears 
+          // once in each of the four integrals
+          
+          // WARNING: this is unnormalized
+          double this_integral = density_matrix_.ref(rho_index, sigma_index) * 
+            SSSSIntegral_(alpha_mu, mu_vec, alpha_nu, nu_vec, alpha_rho, 
+                          rho_vec, alpha_sigma, sigma_vec);
+          
+          // this line gets it right
+          // double this_integral = ComputeSingleIntegral_(mu_vec, nu_vec, rho_vec, sigma_vec);
+          if (rho != sigma) {
+            
+            this_integral = this_integral * 2;
+          }
+          
+          integral_value = integral_value + this_integral;
+          
+        } // sigma
+        
+      } // rho
+      
+      // Set both to account for mu/nu symmetry
+      coulomb_matrix_.set(mu_index, nu_index, integral_value);
+      // Necessary to fill in the lower triangle
+      if (mu != nu) {
+        coulomb_matrix_.set(nu_index, mu_index, integral_value);
+      }
+      
+      if (integral_value > max_entry) {
+        max_entry = integral_value;
+      }
+      if (integral_value < min_entry) {
+        min_entry = integral_value;
+      }
+      
+    } // nu
+    
+  } // mu
+  
+  mu_nu->stat().set_entry_upper_bound(max_entry);
+  mu_nu->stat().set_entry_lower_bound(min_entry);
+  
+  index_t new_refs = rho->count() * sigma->count();
+  
+  if (rho != sigma) {
+    new_refs = 2 * new_refs;
+    DEBUG_ASSERT(!((rho->begin() < sigma->begin()) && 
+                   (rho->end() > sigma->end())));
+    DEBUG_ASSERT(!((rho->begin() > sigma->begin()) && 
+                   (rho->end() < sigma->end())));
+  }
+  
+  mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
+                                         - new_refs);
+  
+} // ComputeCoulombBaseCase_
 
 
-void ComputeExchangeBaseCase_(SquareFockTree* mu_nu, 
-                              SquareFockTree* rho_sigma) {
- 
-                              
-}
+
+void MultiTreeFock::ComputeExchangeBaseCase_(SquareTree* mu_nu, 
+                                             SquareTree* rho_sigma) {
+  
+  FockTree* mu = mu_nu->query1();
+  FockTree* nu = mu_nu->query2();
+  FockTree* rho = rho_sigma->query1();
+  FockTree* sigma = rho_sigma->query2();
+  
+  double max_entry = -DBL_INF;
+  double min_entry = DBL_INF;
+  
+  DEBUG_ASSERT(mu->end() > nu->begin());
+  DEBUG_ASSERT(rho->end() > sigma->begin());
+  
+  for (index_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
+    
+    for (index_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
+      
+      double integral_value = exchange_matrix_.ref(mu_index, nu_index);
+      
+      for (index_t rho_index = rho->begin(); rho_index < rho->end();
+           rho_index++) {
+        
+        for (index_t sigma_index = sigma->begin(); sigma_index < sigma->end(); 
+             sigma_index++) {
+          
+          
+          Vector mu_vec;
+          centers_.MakeColumnVector(mu_index, &mu_vec);
+          Vector nu_vec;
+          centers_.MakeColumnVector(nu_index, &nu_vec);
+          Vector rho_vec;
+          centers_.MakeColumnVector(rho_index, &rho_vec);
+          Vector sigma_vec;
+          centers_.MakeColumnVector(sigma_index, &sigma_vec);
+          
+          double alpha_mu = exponents_[mu_index];
+          double alpha_nu = exponents_[nu_index];
+          double alpha_rho = exponents_[rho_index];
+          double alpha_sigma = exponents_[sigma_index];
+                    
+          // WARNING: this is not normalized
+          // multiply by 0.5 for exchange matrix
+          double kl_integral = 0.5 * density_matrix_.ref(rho_index, sigma_index) * 
+            ComputeSingleIntegral_(alpha_mu, mu_vec, alpha_rho, rho_vec, 
+                                   alpha_nu, nu_vec, alpha_sigma, sigma_vec);
+          
+          integral_value = integral_value + kl_integral;
+          
+          // Account for the rho-sigma partial symmetry
+          // No need to make this rectangle safe - base cases are square on 
+          // diagonal
+          if (rho != sigma) {  
+            
+            DEBUG_ASSERT(density_matrix_.ref(rho_index, sigma_index) == 
+                         density_matrix_.ref(sigma_index, rho_index));
+            
+            // WARNING: not normalized
+            double lk_integral = density_matrix_.ref(sigma_index, rho_index) * 
+              ComputeSingleIntegral_(alpha_mu, mu_vec, alpha_sigma, sigma_vec, 
+                                     alpha_nu, nu_vec, alpha_rho, rho_vec) * 0.5;
+            
+            integral_value = integral_value + lk_integral;
+            
+          }
+        } // sigma
+        
+      } // rho
+      
+      // Set both to account for mu/nu symmetry
+      exchange_matrix_.set(mu_index, nu_index, integral_value);
+      // Necessary to fill in the lower triangle
+      if (mu != nu) {
+        exchange_matrix_.set(nu_index, mu_index, integral_value);
+      }
+      
+      if (integral_value > max_entry) {
+        max_entry = integral_value;
+      }
+      if (integral_value < min_entry) {
+        min_entry = integral_value;
+      }        
+      
+    } // nu
+    
+  } // mu
+  
+  mu_nu->stat().set_entry_upper_bound(max_entry);
+  mu_nu->stat().set_entry_lower_bound(min_entry);
+  
+  index_t new_refs = rho->count() * sigma->count();
+  if (rho != sigma) {
+    new_refs = 2 * new_refs;
+  }
+  mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
+                                         - new_refs);
+  
+} // ComputeExchangeBaseCase_
+
+
+void MultiTreeFock::FillApproximationCoulomb_(SquareTree* mu_nu, 
+                                              SquareTree* rho_sigma,
+                                              double integral_approximation) {
+  
+  FockTree* mu = mu_nu->query1();
+  FockTree* nu = mu_nu->query2();
+  FockTree* rho = rho_sigma->query1();
+  FockTree* sigma = rho_sigma->query2();
+  
+  // if mu and nu overlap, recursively call this on children
+  // else if rho and sigma overlap, recursively call on children
+  // Make sure to update the integral approximation (for both) 
+  // and the bounds if splitting mu_nu
+  // else do the below
+  
+  if (RectangleOnDiagonal_(mu, nu)) {
+    
+    PropagateBoundsDown_(mu_nu);
+    
+    // this doesn't hold because I haven't propagated them down this far
+    DEBUG_ASSERT(mu_nu->stat().remaining_references() ==
+                 mu_nu->left()->stat().remaining_references());
+    
+    FillApproximationCoulomb_(mu_nu->left(), rho_sigma, 
+                              integral_approximation);
+    FillApproximationCoulomb_(mu_nu->right(), rho_sigma, 
+                              integral_approximation);
+    
+    PropagateBoundsUp_(mu_nu);
+    
+    /*
+     // Should be fine if the above statement holds
+     mu_nu->stat().set_remaining_references(
+                                            mu_nu->left()->stat().remaining_references());
+     
+     // Because it's already been updated for the children
+     mu_nu->stat().set_approximation_val(0.0);
+     
+     // It's just based on the children, right?
+     // This is the same code as the propagate bounds function
+     mu_nu->stat().set_entry_upper_bound(
+                                         max(mu_nu->left()->stat().entry_upper_bound(), 
+                                             mu_nu->right()->stat().entry_upper_bound()));
+     
+     mu_nu->stat().set_entry_lower_bound(
+                                         min(mu_nu->left()->stat().entry_lower_bound(), 
+                                             mu_nu->right()->stat().entry_lower_bound()));
+     
+     */
+    
+  }
+  else if (RectangleOnDiagonal_(rho, sigma)) {
+    
+    FillApproximationCoulomb_(mu_nu, rho_sigma->left(), 
+                              integral_approximation);
+    FillApproximationCoulomb_(mu_nu, rho_sigma->right(), 
+                              integral_approximation);
+    
+    // Because the approximation has been counted twice
+    mu_nu->stat().set_entry_upper_bound(mu_nu->stat().entry_upper_bound() - 
+                                        integral_approximation);
+    mu_nu->stat().set_entry_lower_bound(mu_nu->stat().entry_lower_bound() - 
+                                        integral_approximation);
+    
+  }
+  else {
+    
+    
+    for (index_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
+      
+      for (index_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
+        
+        double new_value = coulomb_matrix_.ref(mu_index, nu_index) + 
+        integral_approximation;
+        // Set both to account for mu/nu symmetry
+        // This uses the same logic as the base case
+        coulomb_matrix_.set(mu_index, nu_index, new_value);
+        if (mu != nu) {
+          coulomb_matrix_.set(nu_index, mu_index, new_value);
+        }
+        
+      } // nu
+      
+    } // mu
+    
+    mu_nu->stat().set_entry_upper_bound(mu_nu->stat().entry_upper_bound() + 
+                                        integral_approximation);
+    
+    mu_nu->stat().set_entry_lower_bound(mu_nu->stat().entry_lower_bound() + 
+                                        integral_approximation);
+    
+    index_t new_refs = rho->count() * sigma->count();
+    
+    if (rho != sigma) {
+      DEBUG_ASSERT(!((rho->begin() <= sigma->begin()) && 
+                     (rho->end() >= sigma->end())));
+      DEBUG_ASSERT(!((rho->begin() >= sigma->begin()) && 
+                     (rho->end() <= sigma->end())));
+      new_refs = 2 * new_refs;
+    }
+    
+    mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() - new_refs);
+    
+    mu_nu->stat().set_approximation_val(integral_approximation);
+    
+  }
+  
+} // FillApproximationCoulomb_()
+
+
+void MultiTreeFock::FillApproximationExchange_(SquareTree* mu_nu, 
+                                               SquareTree* rho_sigma,
+                                               double integral_approximation) {
+  
+  FockTree* mu = mu_nu->query1();
+  FockTree* nu = mu_nu->query2();
+  FockTree* rho = rho_sigma->query1();
+  FockTree* sigma = rho_sigma->query2();
+  
+  if (RectangleOnDiagonal_(mu, nu)) {
+    
+    PropagateBoundsDown_(mu_nu);
+    
+    DEBUG_ASSERT(mu_nu->stat().remaining_references() ==
+                 mu_nu->left()->stat().remaining_references());
+    
+    FillApproximationExchange_(mu_nu->left(), rho_sigma, 
+                               integral_approximation);
+    FillApproximationExchange_(mu_nu->right(), rho_sigma, 
+                               integral_approximation);
+    
+    PropagateBoundsUp_(mu_nu);
+    
+  }
+  else if (RectangleOnDiagonal_(rho, sigma)) {
+    
+    FillApproximationExchange_(mu_nu, rho_sigma->left(), 
+                               integral_approximation);
+    FillApproximationExchange_(mu_nu, rho_sigma->right(), 
+                               integral_approximation);
+    
+    // Because the approximation has been counted twice
+    mu_nu->stat().set_entry_upper_bound(mu_nu->stat().entry_upper_bound() - 
+                                        integral_approximation);
+    mu_nu->stat().set_entry_lower_bound(mu_nu->stat().entry_lower_bound() - 
+                                        integral_approximation);
+    
+  }
+  else {
+    
+    for (index_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
+      
+      for (index_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
+        
+        double new_value = exchange_matrix_.ref(mu_index, nu_index) + 
+        integral_approximation;
+        // Set both to account for mu/nu symmetry
+        // This uses the same logic as the base case
+        exchange_matrix_.set(mu_index, nu_index, new_value);
+        // I could probably check for this on the outside and make this function
+        // faster
+        if (mu != nu) {
+          exchange_matrix_.set(nu_index, mu_index, new_value);
+        }
+        
+      } // nu
+      
+    } // mu
+    
+    mu_nu->stat().set_entry_upper_bound(mu_nu->stat().entry_upper_bound() + 
+                                        integral_approximation);
+    
+    mu_nu->stat().set_entry_lower_bound(mu_nu->stat().entry_lower_bound() + 
+                                        integral_approximation);
+    
+    index_t new_refs = rho->count() * sigma->count();
+    if (rho != sigma) {
+      new_refs = 2 * new_refs;
+    }
+    mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
+                                           - new_refs);
+    
+    mu_nu->stat().set_approximation_val(integral_approximation);
+    
+  }
+  
+} // FillApproximationExchange_()
+
+
+void MultiTreeFock::PropagateBoundsDown_(SquareTree* query) {
+  
+  query->left()->stat().set_remaining_references(query->stat().remaining_references());
+  query->right()->stat().set_remaining_references(query->stat().remaining_references());
+  
+  if (query->stat().approximation_val() != 0.0) {
+    
+    query->left()->stat().set_entry_upper_bound(query->left()->stat().entry_upper_bound() + 
+                                                query->stat().approximation_val());
+    query->right()->stat().set_entry_upper_bound(query->right()->stat().entry_upper_bound() + 
+                                                 query->stat().approximation_val());
+    
+    query->left()->stat().set_entry_lower_bound(query->left()->stat().entry_lower_bound() + 
+                                                query->stat().approximation_val());
+    query->right()->stat().set_entry_lower_bound(query->right()->stat().entry_lower_bound() + 
+                                                 query->stat().approximation_val());
+    
+    query->stat().set_approximation_val(0.0);
+    
+  }
+  
+} // PropagateBoundsDown_()
+
+void MultiTreeFock::PropagateBoundsUp_(SquareTree* query) {
+  
+  double min_entry = query->left()->stat().entry_lower_bound();
+  double max_entry = query->left()->stat().entry_upper_bound();
+  
+  min_entry = min(min_entry, 
+                  query->right()->stat().entry_lower_bound());
+  max_entry = max(max_entry, 
+                  query->right()->stat().entry_upper_bound());
+  
+  query->stat().set_entry_upper_bound(max_entry);
+  query->stat().set_entry_lower_bound(min_entry);
+  
+  query->stat().set_remaining_references(query->left()->stat().remaining_references());
+  
+  DEBUG_ASSERT(query->stat().remaining_references() == 
+               query->right()->stat().remaining_references());
+  
+} // PropagateBoundsUp_()
+
+
+void MultiTreeFock::ComputeCoulombRecursion_(SquareTree* query, 
+                                             SquareTree* reference) {
+  
+  DEBUG_ASSERT(query->query1()->end() > query->query2()->begin());
+  DEBUG_ASSERT(reference->query1()->end() > reference->query2()->begin());
+  
+  double integral_approximation;
+  
+  if (query->is_leaf() && reference->is_leaf()) {
+    
+    coulomb_base_cases_++;
+    ComputeCoulombBaseCase_(query, reference);
+    
+  }
+  else if(CanApproximateCoulomb_(query, reference, &integral_approximation)) {
+    
+    DEBUG_ASSERT(integral_approximation != BIG_BAD_NUMBER);
+    
+    coulomb_approximations_++;
+    
+    FillApproximationCoulomb_(query, reference, integral_approximation);
+    
+  }        
+  else if (query->is_leaf()) {
+    // Don't need to propagate stats
+    
+    ComputeCoulombRecursion_(query, reference->left());
+    ComputeCoulombRecursion_(query, reference->right());
+    
+  }
+  else if (reference->is_leaf()) {
+    // Need to propagate some stats
+    
+    PropagateBoundsDown_(query);
+    
+    ComputeCoulombRecursion_(query->left(), reference);
+    ComputeCoulombRecursion_(query->right(), reference);
+    
+    PropagateBoundsUp_(query);
+    
+  }
+  else {
+    
+    PropagateBoundsDown_(query);
+    
+    ComputeCoulombRecursion_(query->left(), reference->left());
+    ComputeCoulombRecursion_(query->left(), reference->right());
+    
+    ComputeCoulombRecursion_(query->right(), reference->left());
+    ComputeCoulombRecursion_(query->right(), reference->right());
+    
+    PropagateBoundsUp_(query);
+    
+  }   
+  
+} // ComputeCoulombRecursion_()
+
+
+void MultiTreeFock::ComputeExchangeRecursion_(SquareTree* query, 
+                                              SquareTree* reference) {
+  
+  double integral_approximation;
+  
+  if (query->is_leaf() && reference->is_leaf()) {
+    
+    exchange_base_cases_++;
+    ComputeExchangeBaseCase_(query, reference);
+    
+  }
+  else if (CanApproximateExchange_(query, reference, &integral_approximation)) {
+    
+    DEBUG_ASSERT(integral_approximation != BIG_BAD_NUMBER);
+    
+    exchange_approximations_++;
+    
+    FillApproximationExchange_(query, reference, integral_approximation);
+    
+  }        
+  else if (query->is_leaf()) {
+    // Don't need to propagate stats
+    
+    ComputeExchangeRecursion_(query, reference->left());
+    ComputeExchangeRecursion_(query, reference->right());
+    
+  }
+  else if (reference->is_leaf()) {
+    // Need to propagate some stats
+    
+    PropagateBoundsDown_(query);
+    
+    ComputeExchangeRecursion_(query->left(), reference);
+    ComputeExchangeRecursion_(query->right(), reference);
+    
+    PropagateBoundsUp_(query);
+    
+  }
+  else {
+    
+    PropagateBoundsDown_(query);
+    
+    ComputeExchangeRecursion_(query->left(), reference->left());
+    ComputeExchangeRecursion_(query->left(), reference->right());
+    
+    ComputeExchangeRecursion_(query->right(), reference->left());
+    ComputeExchangeRecursion_(query->right(), reference->right());
+    
+    PropagateBoundsUp_(query);
+    
+  }
+  
+} // ComputeExchangeRecursion_()
+
+// NOTE: not sure if the max bandwidth really corresponds to the max integral
+void MultiTreeFock::SetEntryBounds_() {
+  
+  double density_upper = square_tree_->stat().density_upper_bound();
+  double density_lower = square_tree_->stat().density_lower_bound();
+  
+  double exp_upper = tree_->stat().max_bandwidth();
+  double exp_lower = tree_->stat().min_bandwidth();
+  
+  DEBUG_ASSERT(density_upper >= density_lower);
+  
+  double entry_upper;
+  double entry_lower;
+  
+  double max_dist = 
+      square_tree_->query1()->bound().MaxDistanceSq(square_tree_->query2()->bound());
+  
+  if (density_upper > 0) {
+    // then, the largest value is when all the distances are 0
+    
+    // this may not be normalized
+    double integral = eri::DistanceIntegral(exp_upper, exp_upper, exp_upper, 
+                                            exp_upper, 0.0, 0.0, 0.0);
+    
+    entry_upper = density_upper * number_of_basis_functions_ * 
+    number_of_basis_functions_ * integral;
+    
+  }
+  else {
+    // then, the largest value is when all the distances are max
+    
+    entry_upper = density_upper * 
+    eri::DistanceIntegral(exp_lower, exp_lower, exp_lower, exp_lower, max_dist, 
+                          max_dist, max_dist) * 
+    number_of_basis_functions_ * number_of_basis_functions_;
+    
+  }
+  
+  if (density_lower > 0) {
+    //then, the smallest value is when all the distances are max
+    
+    entry_lower = density_lower * 
+    eri::DistanceIntegral(exp_lower, exp_lower, exp_lower, exp_lower, max_dist, 
+                          max_dist, max_dist) * 
+    number_of_basis_functions_ * number_of_basis_functions_;
+    
+  }
+  else {
+    
+    double integral = eri::DistanceIntegral(exp_upper, exp_upper, exp_upper, 
+                                            exp_upper, 0.0, 0.0, 0.0);
+    
+    entry_lower = density_lower * number_of_basis_functions_ * 
+    number_of_basis_functions_ * integral;
+    
+  }
+  
+  DEBUG_ASSERT(entry_upper >= entry_lower);
+  
+  square_tree_->stat().set_entry_upper_bound(entry_upper);
+  square_tree_->stat().set_entry_lower_bound(entry_lower);
+  
+} // SetEntryBounds_
+
+
+void ResetTreeForExchange_(SquareTree* root) {
+  
+  if (root != NULL) {
+    
+    root->stat().set_remaining_references(number_of_basis_functions_ * 
+                                          number_of_basis_functions_);
+    
+    root->stat().set_approximation_val(0.0);
+    
+    ResetTreeForExchange_(root->left());
+    ResetTreeForExchange_(root->right());  
+    
+  }
+  
+} // ResetTreeForExchange_()
+
+
+
+void ResetTree_(SquareTree* root) {
+  
+  double max_density;
+  double min_density;
+  
+  if (root->is_leaf()) {
+    
+    max_density = -DBL_INF;
+    min_density = DBL_INF;
+    
+    for (index_t i = root->query1()->begin(); i < root->query1()->end(); 
+         i++) {
+      
+      for (index_t j = root->query2()->begin(); j < root->query2()->end(); 
+           j++) {
+        
+        double this_density = density_matrix_.ref(i, j);
+        if (this_density > max_density) {
+          max_density = this_density;
+        }
+        if (this_density < min_density) {
+          min_density = this_density;
+        }
+        
+      } // j
+      
+    } // i
+    
+  } // leaf
+  else {
+    
+    ResetTree_(root->left());
+    ResetTree_(root->right());
+    
+    max_density = max(root->left()->stat().density_upper_bound(), 
+                      root->right()->stat().density_upper_bound());
+    min_density = min(root->left()->stat().density_lower_bound(), 
+                      root->right()->stat().density_lower_bound());
+    
+  } // non-leaf
+  
+  root->stat().set_density_upper_bound(max_density);
+  root->stat().set_density_lower_bound(min_density);
+  
+  root->stat().set_remaining_references(number_of_basis_functions_ * 
+                                        number_of_basis_functions_);
+  
+  root->stat().set_approximation_val(0.0);
+  
+} // ResetTree_()
+
+
 
 
 ///////////////////// public functions ////////////////////////////////////
