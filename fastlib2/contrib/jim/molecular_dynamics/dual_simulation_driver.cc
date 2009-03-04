@@ -110,6 +110,8 @@ int main(int argc, char *argv[])
   signs_.CopyValues(temp);
   lj_matrix.ResizeNoalias(n_atoms - 2);
 
+  printf("Finished Reading data \n");
+
   Vector use_dims;
   use_dims.Init(3);
   use_dims[0] = 0;
@@ -128,6 +130,7 @@ int main(int argc, char *argv[])
   simulation.UpdateMomentum(time_step / 2);
   time = 0;  
   double target_pct = 0.9; 
+  printf("Initialized Simulation \n");
 
   RadDist tree_simulation;
   tree_simulation.Init(450, 15.0);
