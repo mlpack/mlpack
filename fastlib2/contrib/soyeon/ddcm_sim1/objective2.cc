@@ -353,7 +353,7 @@ void Objective::ComputeObjective(double current_sample,
 	Vector betas;
   //betas.Alias(x.ptr(), x.n_rows());
 	
-	cout<<"num_of_betas="<<num_of_betas_<<endl;
+	//cout<<"num_of_betas="<<num_of_betas_<<endl;
 
 	betas.Alias(current_parameter.ptr(), num_of_betas_);
   //double p=first_stage_x_[1].get(0, 0);
@@ -379,14 +379,7 @@ void Objective::ComputeObjective(double current_sample,
                + ComputeTerm3_();
 */
 
-	ComputeTerm1_(betas);
-	cout<<"test"<<endl;
-	ComputeTerm2_();
-	cout<<"test2"<<endl;
-	ComputeTerm3_();
-	cout<<"test3"<<endl;
-
-
+	
 	*objective = (-1/current_sample)*(ComputeTerm1_(betas) 
                + ComputeTerm2_()
                + ComputeTerm3_());
@@ -980,7 +973,12 @@ double Objective::ComputeTerm3_() {
     if (first_stage_y_[n]>0) {
       continue;
     } else {
-      DEBUG_ASSERT(postponed_probability_[n]>0);
+
+			//if(postponed_probability_[n]<0){
+			//	cout<<"n="<<n<<"postponed="<<postponed_probability_[n]<<endl;
+			//}
+
+      DEBUG_ASSERT(postponed_probability_[n]>=0);
       term3+=log(postponed_probability_[n]);
 			//cout<<"term3"<<endl;
 			//cout<<(log(postponed_probability_[n]))<<endl;
@@ -1028,6 +1026,8 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 				exponential_temp=alpha_temp*first_stage_x_[n].get(j-1, i)
 													+(alpha_temp)*(1-alpha_temp)*unknown_x_past_[n].get(0, i)
 													+pow((1-alpha_temp),2)*unknown_x_past_[n].get(1,i);
+				//cout<<"exponential_temp="<<exponential_temp<<endl;
+				
 				second_stage_x_[n].set(j-1, i, exponential_temp);
 				//count+=first_stage_x_[n].n_cols();
 				
@@ -1054,7 +1054,7 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 				exp_betas_times_x2_[n]+=exp(la::Dot(betas.length(), 
 																betas.ptr(),
 																second_stage_x_[n].GetColumnPtr(i)));			}
-			
+				//cout<<"n="<<n<<"expbetas="<<exp_betas_times_x2_[n]<<endl;
 			//conditional_postponed_probability_[n]
 			
 			postponed_probability_[n]+=( (exp_betas_times_x2_[n]/(exp_betas_times_x1_[n]
