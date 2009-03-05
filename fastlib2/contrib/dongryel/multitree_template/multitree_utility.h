@@ -20,15 +20,16 @@ class MultiTreeUtility {
     
     index_t t = 0, m = 0;
     index_t range = end_exclusive - begin_inclusive;
-    
+
     do {
       double u = math::Random();
       if((range - t) * u >= num_times - m) {
 	t++;
 	continue;
       }
-
+      
       output[m] = begin_inclusive + t;
+
       m++;
       t++;
       if(m >= num_times) {
@@ -48,11 +49,12 @@ class MultiTreeUtility {
       do {
 	block_pointer++;
       } while(nodes[block_pointer] == nodes[saved_block_pointer]);
-      
+
       RandomCombination(nodes[saved_block_pointer]->begin(),
 			nodes[saved_block_pointer]->end(),
-			saved_block_pointer - block_pointer,
+			block_pointer - saved_block_pointer,
 			random_permutation.begin() + saved_block_pointer);
+      
     }
   }
 
