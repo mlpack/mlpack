@@ -6,6 +6,26 @@
 #include "contrib/niche/svm/smo.h"
 #include "contrib/niche/svm/svm.h"
 
+const fx_entry_doc hmm_testing_entries_doc[] = {
+  {"lambda", FX_PARAM, FX_DOUBLE, NULL,
+   "  Kernel bandwidth"},
+  {"trans1", FX_PARAM, FX_STR, NULL,
+   "  Filename for class 1 transition matrix"},
+  {"trans0", FX_PARAM, FX_STR, NULL,
+   "  Filename for class 0 transition matrix"},
+  {"emis1", FX_PARAM, FX_STR, NULL,
+   "  Filename for class 1 emission matrix"},
+  {"emis0", FX_PARAM, FX_STR, NULL,
+   "  Filename for class 0 emission matrix"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc hmm_testing_doc = {
+  hmm_testing_entries_doc, NULL,
+  "MMK testing for HMM with Multinomial state distributions\n"
+};
+
+
 
 void GenerateAndTrainSequences(const char* transition_filename,
 			       const char* emission_filename,
@@ -302,15 +322,27 @@ void CreateData(int n_sequences_per_class, int n_sequences,
   
   emission_matrices.Init(2 * n_sequences_per_class);
   
-  fprintf(stderr, "Generating sequences and training HMMs...\n");
-  GenerateAndTrainSequences("class_0_transition.csv", "class_0_emission.csv",
+  const char* class1_trans = 
+    fx_param_str_req(NULL, "trans1");
+
+  const char* class0_trans =
+    fx_param_str_req(NULL, "trans0");
+
+  const char* class1_emis = 
+    fx_param_str_req(NULL, "emis1");
+
+  const char* class0_emis = 
+    fx_param_str_req(NULL, "emis0");
+  
+  printf("Generating sequences and training HMMs...\n");
+  GenerateAndTrainSequences(class1_trans, class1_emis,
 			    n_sequences_per_class,
 			    &initial_probs_vectors, 
 			    &transition_matrices,
 			    &emission_matrices,
 			    0);
   
-  GenerateAndTrainSequences("class_1_transition.csv", "class_1_emission.csv",
+  GenerateAndTrainSequences(class0_trans, class0_emis,
 			    n_sequences_per_class,
 			    &initial_probs_vectors,
 			    &transition_matrices,
@@ -396,7 +428,7 @@ void CreateData(int n_sequences_per_class, int n_sequences,
 
 
 int main(int argc, char* argv[]) {
-  fx_init(argc, argv, NULL);
+  fx_module* root = fx_init(argc, argv, &hmm_testing_doc);
 
   srand(time(0));
   //srand(10);
@@ -424,7 +456,7 @@ int main(int argc, char* argv[]) {
   }
   else {
 
-    n_sequences_per_class = fx_param_int(NULL, "n_sequences", 10);
+    n_sequences_per_class = fx_param_int(NULL, "n_sequences_per_class", 10);
     n_sequences  = 2 * n_sequences_per_class;
 
     CreateData(n_sequences_per_class, n_sequences,
@@ -441,7 +473,7 @@ int main(int argc, char* argv[]) {
   
   // Compute Kernel Matrix
   Matrix kernel_matrix;
-  fprintf(stderr, "Computing kernel matrix...\n");
+  printf("Computing kernel matrix...\n");
   ComputeKernelAllPairs(2 * n_sequences_per_class,
 			initial_probs_vectors, transition_matrices,
 			emission_matrices,
@@ -473,24 +505,28 @@ int main(int argc, char* argv[]) {
 
   SVM<SVMRBFKernel> svm; // this should be changed from SVMRBFKernel to something like SVMMMKKernel
   int learner_typeid = 0; // for svm_c
-  fprintf(stderr, "SVM Training... \n");
+  printf("SVM Training... \n");
   svm.InitTrain(learner_typeid, training_set, svm_module, kernel_matrix);
     
 
   Dataset test_set;
   test_set.CopyMatrix(test_data);
+  printf("test data dims = (%d, %d)\n", 
+	 test_data.n_cols(), test_data.n_rows());
 
-  fprintf(stderr, "SVM Predicting... \n");
+  printf("SVM Predicting... \n");
   svm.BatchPredict(learner_typeid, test_set, "predicted_values"); // TODO:param_req
 
 
   Matrix predicted_values;
   data::Load("predicted_values", &predicted_values);
   
-  int n_test_points = predicted_values.n_rows();
+  int n_test_points = predicted_values.n_cols();
 
   int n_correct_class0 = 0;
   int n_correct_class1 = 0;
+
+  printf("n_test_points = %d\n", n_test_points);
 
   for(int i = 0; i < n_test_points; i++) {
     bool correct =
@@ -509,10 +545,10 @@ int main(int argc, char* argv[]) {
   int n_correct = n_correct_class1 + n_correct_class0;
 
   // we assume n_test_points is even because we assumed balanced classes
-  fx_result_int(NULL, "class0_accuracy",
-		((double)n_correct_class0) / ((double)n_test_points / 2));
   fx_result_int(NULL, "class1_accuracy",
 		((double)n_correct_class1) / ((double)n_test_points / 2));
+  fx_result_int(NULL, "class0_accuracy",
+		((double)n_correct_class0) / ((double)n_test_points / 2));
 
   printf("n_correct / n_test_points = %d / %d = %f\n",
 	 n_correct, n_test_points,
@@ -525,9 +561,6 @@ int main(int argc, char* argv[]) {
   printf("n_correct_class0 / n_test_points_class_0 = %d / %d = %f\n",
 	 n_correct_class0, n_test_points / 2,
 	 ((double) n_correct_class0) / ((double) n_test_points / 2));
-    
   
-  fx_done(NULL);
-
-  return SUCCESS_PASS;
+  fx_done(root);
 }
