@@ -65,6 +65,7 @@ class NaiveFockMatrix {
     
     coulomb_mat_.Init(num_funs_, num_funs_);
     exchange_mat_.Init(num_funs_, num_funs_);
+    exchange_mat_.SetZero();
     
   
   } // Init()
@@ -77,35 +78,45 @@ class NaiveFockMatrix {
       for (index_t j = 0; j <= i; j++) {
       
         double ij_coulomb = 0.0;
-        double ij_exchange = 0.0;
+        //double ij_exchange = 0.0;
       
         for (index_t k = 0; k < num_shells_; k++) {
         
           for (index_t l = 0; l <= k; l++) {
           
-            double coulomb_int = eri::ComputeShellIntegrals(shells_[i], 
+            double integral = eri::ComputeShellIntegrals(shells_[i], 
                                                             shells_[j], 
                                                             shells_[k], 
                                                             shells_[l]);
-                                                         
-            double exchange_int = eri::ComputeShellIntegrals(shells_[i], 
-                                                             shells_[k], 
-                                                             shells_[j], 
-                                                             shells_[l]);
             
-            coulomb_int = density_.ref(k, l) * coulomb_int;
-            exchange_int = density_.ref(k,l) * exchange_int;
+            double coulomb_int = density_.ref(k, l) * integral;
+            double exchange_ik = density_.ref(j, l) * integral;
+            double exchange_il = density_.ref(j, k) * integral;
+            double exchange_jk = density_.ref(i, l) * integral;
+            double exchange_jl = density_.ref(i, k) * integral;
+          
           
             if (likely(k != l)) {
             
               coulomb_int *= 2;
-              exchange_int *= 2;
             
             }
           
             ij_coulomb += coulomb_int;
-            ij_exchange += exchange_int;
-          
+
+            // don't overcount when indices are equal
+            exchange_mat_.set(i, k, exchange_mat_.ref(i,k) + exchange_ik);
+            if (likely(k != l)) {
+              exchange_mat_.set(i, l, exchange_mat_.ref(i,l) + exchange_il);
+            }
+            if (likely(i != j)) {
+              exchange_mat_.set(j, k, exchange_mat_.ref(j,k) + exchange_jk);
+            }
+            if (likely((k != l) && (i != j))) {
+              exchange_mat_.set(j, l, exchange_mat_.ref(j,l) + exchange_jl);
+            }
+
+            
           } // for l
         
         } // for k
@@ -113,9 +124,6 @@ class NaiveFockMatrix {
         coulomb_mat_.set(i, j, ij_coulomb);
         coulomb_mat_.set(j, i, ij_coulomb);
         
-        exchange_mat_.set(i, j, ij_exchange);
-        exchange_mat_.set(j, i, ij_exchange);
-      
       } // for j
       
       

@@ -57,7 +57,7 @@ const fx_submodule_doc fock_matrix_main_submodules[] = {
 
 
 const fx_module_doc fock_matrix_main_doc = {
-  fock_matrix_main_entries, NULL, 
+  fock_matrix_main_entries, fock_matrix_main_submodules, 
   "Runs and compares different fock matrix construction methods.\n"
 };
 
@@ -210,6 +210,7 @@ int main(int argc, char* argv[]) {
   
   // Do comparison here?
   
+  fx_done(root_mod);
 
   return 0;
 
