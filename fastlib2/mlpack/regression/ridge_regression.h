@@ -47,7 +47,8 @@ class RidgeRegression {
 
   void SVDRegress(double lambda);
 
-  void SVDNormalEquationRegress(double lambda);
+  void SVDNormalEquationRegress(double lambda,
+				Matrix *precomputed_covariance = NULL);
 
   void CrossValidatedRegression(double lambda_min, double lambda_max,
 				index_t num);
