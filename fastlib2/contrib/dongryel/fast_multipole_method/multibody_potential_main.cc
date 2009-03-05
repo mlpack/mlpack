@@ -57,6 +57,8 @@ int main(int argc, char *argv[]) {
   // Initialize FastExec (parameter handling stuff).
   fx_init(argc, argv, NULL);
 
+  srand(time(NULL));
+
   ////////// READING PARAMETERS AND LOADING DATA /////////////////////
 
   // FASTexec organizes parameters and results into submodules.  Think
