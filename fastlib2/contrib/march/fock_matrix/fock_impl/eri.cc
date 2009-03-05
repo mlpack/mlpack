@@ -287,8 +287,8 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
 index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
                           ArrayList<BasisShell>& shells_in, 
                           double shell_pair_cutoff, Vector* shell_max, 
-                          BasisShell*** sigma_for_nu, 
-                          ArrayList<index_t>* num_per_shell) {
+                          ShellPair*** sigma_for_nu, 
+                          ArrayList<index_t>* num_sigma_for_nu) {
     
   index_t num_shells = shells_in.size();
   
@@ -348,17 +348,21 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
     DEBUG_ASSERT(i_max > 0.0);
     (*shell_max)[i] = i_max;
 
-    (*num_per_shell)[i] = num_for_i;
+    (*num_sigma_for_nu)[i] = num_for_i;
     
-    sigma_for_nu[i] = (BasisShell**)malloc(num_for_i * sizeof(BasisShell**));
+    sigma_for_nu[i] = (ShellPair**)malloc(num_for_i * sizeof(ShellPair**));
 
     for (index_t k = 0; k < num_for_i; k++) {
     
-      sigma_for_nu[i][k] = shells_in.begin() + significant_sig_index[k];
+      sigma_for_nu[i][k] = shell_pairs->begin() + significant_sig_index[k];
     
     } // for k
-    
+  
+    // sort here?
+        
   } // for i 
+  
+  
   
   return num_shell_pairs;
   

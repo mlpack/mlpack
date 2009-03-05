@@ -31,7 +31,7 @@ class Link {
   
   Matrix exchange_matrix_;
   
-  Matrix density_mat_;
+  Matrix density_matrix_;
   
   Vector shell_max_;
   
@@ -42,14 +42,14 @@ class Link {
   ArrayList<ShellPair> shell_pair_list_;
   
   // significant_mu_pairs_[i] = list of significant nu for shell i
-  BasisShell*** significant_mu_pairs_;
+  BasisShell*** significant_nu_for_mu_;
 
-  // num_significant_mu_pairs_[i] = number of significant nu for mu
-  ArrayList<index_t> num_significant_mu_pairs_;
+  // num_significant_nu_for_mu_[i] = number of significant nu for mu
+  ArrayList<index_t> num_significant_nu_for_mu_;
   
   // used to iterate over the sigmas belonging to a nu
   // needs to be sorted
-  BasisShell*** significant_sigma_for_nu_;
+  ShellPair*** significant_sigma_for_nu_;
   
   // used to index into above sorted list
   ArrayList<index_t> num_significant_sigma_for_nu_;
@@ -70,6 +70,10 @@ class Link {
   
   // The number of shell pairs remaining after the initial Schwartz thresholding
   index_t num_shell_pairs_;
+  
+  // the number of basis functions, also the dimensionality of the density and
+  // exchange matrices
+  index_t num_functions_;
   
   // The threshold for a significant eri
   double threshold_;
@@ -94,6 +98,11 @@ class Link {
    * density matrix and maximum Schwartz factor. 
    */
   static bool Prescreening_Sort_(BasisShell* ShellA, BasisShell* ShellB);
+  
+  /**
+   * Used for sorting a list of shell pairs in order of schwartz factor
+   */
+  static bool ShellPairSort_(ShellPair* shellA, ShellPair* shellB);
 
   void Init(const Matrix& centers, const Matrix& exp, const Matrix& moment,  
             const Matrix& density_in, fx_module* mod) {
@@ -110,10 +119,21 @@ class Link {
     basis_exponents_.Copy(exp.ptr(), basis_centers_.n_cols());
     basis_momenta_.Copy(moment.ptr(), basis_centers_.n_cols());
     
-    density_mat_.Copy(density_in);
+    density_matrix_.Copy(density_in);
     
     num_shells_ = basis_centers_.n_cols();
     shell_list_.Init(num_shells_);
+    
+    // only works for s and p type functions
+    num_functions_ = num_shells_ + (index_t)(2*la::Dot(basis_momenta_, 
+                                                       basis_momenta_));
+    
+    if ((density_matrix_.n_cols() != num_functions_) || 
+        (density_matrix_.n_rows() != num_functions_)) {
+      
+      FATAL("Density matrix must have correct dimensions.\n");
+            
+    } 
     
     // Change to use the code in eri
     // Fill in shell_list_
@@ -129,22 +149,18 @@ class Link {
     shell_pair_cutoff_ = fx_param_double(module_, "shell_pair_cutoff", 
                                          threshold_);
                                          
-    significant_mu_pairs_ = 
+    significant_nu_for_mu_ = 
         (BasisShell***)malloc(num_shells_*sizeof(BasisShell**));
         
     significant_sigma_for_nu_ = 
-        (BasisShell***)malloc(num_shells_*sizeof(BasisShell**));
+        (ShellPair***)malloc(num_shells_*sizeof(ShellPair**));
         
-    num_significant_mu_pairs_.Init(num_shells_);
+    num_significant_nu_for_mu_.Init(num_shells_);
     
     num_significant_sigma_for_nu_.Init(num_shells_);
-    /*
-    for (index_t i = 0; i < num_shells_; i++) {
     
-      num_significant_sigma_for_nu_[i] = 0;
-    
-    } // for i
-     */
+    exchange_matrix_.Init(num_functions_, num_functions_);
+    exchange_matrix_.SetZero();
      
   }
     

@@ -2,7 +2,7 @@
 #include "contrib/march/fock_matrix/multi_tree/multi_tree_fock.h"
 #include "contrib/march/fock_matrix/naive/naive_fock_matrix.h"
 #include "contrib/march/fock_matrix/prescreening/schwartz_prescreening.h"
-//#include "contrib/march/fock_matrix/link/link.h"
+#include "contrib/march/fock_matrix/link/link.h"
 #include "contrib/march/fock_matrix/cfmm/cfmm_coulomb.h"
 
 
@@ -38,8 +38,22 @@ const fx_entry_doc fock_matrix_main_entries[] = {
   "Print the Fock matrix naively.  The value is irrelevant.\n"},
 {"print_multi", FX_PARAM, FX_STR, NULL,
   "Print the multi-tree Fock matrix.  The value is irrelevant.\n"},  
+  FX_ENTRY_DOC_DONE
 };
 
+const fx_submodule_doc fock_matrix_main_submodules[] = {
+  {"cfmm", &cfmm_mod_doc, 
+   "Parameters and results for the CFMM.\n"},
+  {"link", &link_mod_doc,
+   "Parameters and results for LinK.\n"},
+  {"prescreening", &prescreening_mod_doc,
+   "Parameters and results for Schwartz prescreening.\n"},
+  {"naive", &naive_mod_doc,
+   "Parameters and results for naive.\n"},
+  {"multi", &multi_mod_doc,
+   "Parameters and results for multi-tree algorithm.\n"},
+  FX_SUBMODULE_DOC_DONE
+};
 
 
 const fx_module_doc fock_matrix_main_doc = {
@@ -110,7 +124,7 @@ int main(int argc, char* argv[]) {
   } // do_cfmm
   
 
-/*
+
   if (fx_param_exists(root_mod, "do_link")) {
     
     Matrix link_exchange;
@@ -129,7 +143,7 @@ int main(int argc, char* argv[]) {
     }
     
   } // do_link
-*/
+
 
   if (fx_param_exists(root_mod, "do_prescreening")) {
     

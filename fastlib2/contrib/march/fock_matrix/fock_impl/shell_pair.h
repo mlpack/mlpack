@@ -59,6 +59,10 @@ class ShellPair {
   double integral_upper_bound() {
     return integral_upper_bound_;
   }
+  
+  double schwartz_factor() {
+    return schwartz_factor_;
+  }
 
  private:
 

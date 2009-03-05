@@ -4,6 +4,17 @@
 #include "contrib/march/fock_matrix/fock_impl/eri.h"
 #include "contrib/dongryel/fast_multipole_method/continuous_fmm.h"
 
+const fx_entry_doc cfmm_mod_entries[] = {
+  {"charge_thresh", FX_PARAM, FX_DOUBLE, NULL,
+  "The screening threshold for including a charge distribution.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc cfmm_mod_doc = {
+  cfmm_mod_entries, NULL,
+  "Algorithm module for CFMM.\n"
+};
+
 class CFMMCoulomb {
 
  public:
