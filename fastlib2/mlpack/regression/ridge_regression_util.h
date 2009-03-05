@@ -54,7 +54,72 @@ class RidgeRegressionUtil {
       (1.0 - SquaredCorrelationCoefficient(observations, predictions));
   }
 
+  static void ComputeRoughCovariance_
+  (const Matrix &input_data, const GenVector<index_t> &predictor_indices, 
+   Matrix &rough_covariance) {
+    
+    // Initialize the covariance matrix to the zero matrix.
+    rough_covariance.SetZero();
+
+    // Loop over each column point.
+    for(index_t i = 0; i < input_data.n_cols(); i++) {
+
+      // The pointer to the point in consideration.
+      const double *point = input_data.GetColumnPtr(i);
+
+      // Loop over each predictor index.
+      for(index_t j = -1; j < predictor_indices.length(); j++) {
+
+	// The current predictor index.
+	index_t outer_predictor_index = -1;
+	double outer_value = 1.0;
+	
+	if(j >= 0) {
+	  outer_predictor_index = predictor_indices[j];
+	  outer_value = point[outer_predictor_index];
+	}
+
+	for(index_t k = -1; k < predictor_indices.length(); k++) {
+
+	  // The inner predictor index.
+	  index_t inner_predictor_index = -1;
+	  double inner_value = 1.0;
+
+	  if(k >= 0) {
+	    inner_predictor_index = predictor_indices[k];
+	    inner_value = point[inner_predictor_index];
+	  }
+
+	  rough_covariance.set
+	    (outer_predictor_index + 1, inner_predictor_index + 1,
+	     rough_covariance.get(outer_predictor_index + 1,
+				  inner_predictor_index + 1) +
+	     outer_value * inner_value);
+	}
+      }
+    }
+  }
   
+  static void ExtractCovarianceMatrixSubset_
+  (const Matrix &precomputed_covariance,
+   const GenVector<index_t> &loo_current_predictor_indices,
+   Matrix &precomputed_covariance_subset) {
+    
+    for(index_t i = -1; i < loo_current_predictor_indices.length(); i++) {
+      index_t column_position = (i == -1) ? 
+	0:loo_current_predictor_indices[i] + 1;
+
+      for(index_t j = -1; j < loo_current_predictor_indices.length(); j++) {
+	index_t row_position = (j == -1) ? 
+	  0:loo_current_predictor_indices[j] + 1;
+
+	precomputed_covariance_subset.set
+	  (j + 1, i + 1, 
+	   precomputed_covariance.get(row_position, column_position));
+      }
+    }    
+  }
+
   /** @brief Performs the feature selection using the variance
    *         inflation factor. The invariant assumed in this function
    *         is that predictor_indices includes the
@@ -83,6 +148,17 @@ class RidgeRegressionUtil {
     current_predictor_indices->Copy(predictor_indices);
     current_prune_predictor_indices->Copy(prune_predictor_indices);
 
+    // Precompute the covariance matrix to be used in the SVD if the
+    // covariance-based method is chosen.
+    Matrix *precomputed_covariance = NULL;
+    if(!strcmp(method, "normalsvd")) {
+      precomputed_covariance = new Matrix();
+      precomputed_covariance->Init(input_data.n_rows() + 1,
+				   input_data.n_rows() + 1);
+      ComputeRoughCovariance_(input_data, predictor_indices, 
+			      *precomputed_covariance);      
+    }
+
     do {
 
       // The maximum variance inflation factor and the index that
@@ -92,6 +168,10 @@ class RidgeRegressionUtil {
 
       // Reset the flag to be true.
       done_flag = true;
+
+      Matrix precomputed_covariance_subset;
+      precomputed_covariance_subset.Init(current_predictor_indices->length(),
+					 current_predictor_indices->length());
 
       // For each of the features in the current list, regress the
       // i-th feature versus the rest of the features and compute its
@@ -116,7 +196,15 @@ class RidgeRegressionUtil {
 
 	// Do the regression.
 	if(!strcmp(method, "normalsvd")) {
-	  ridge_regression.SVDNormalEquationRegress(lambda);
+
+	  // Extract the covariance matrix and feed it to the SVD so
+	  // that it is not computed again.
+	  ExtractCovarianceMatrixSubset_(*precomputed_covariance,
+					 loo_current_predictor_indices,
+					 precomputed_covariance_subset);
+	  
+	  ridge_regression.SVDNormalEquationRegress
+	    (lambda, &precomputed_covariance_subset);
 	}
 	else if(!strcmp(method, "quicsvd")) {
 	  ridge_regression.QuicSVDRegress(lambda, 0.1);
@@ -174,6 +262,10 @@ class RidgeRegressionUtil {
       }
 
     } while(!done_flag && current_prune_predictor_indices->length() > 1);
+
+    if(precomputed_covariance) {
+      delete precomputed_covariance;
+    }
 
     // Copy the output indices and free the temporary index vectors
     // afterwards.

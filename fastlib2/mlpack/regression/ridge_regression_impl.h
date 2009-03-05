@@ -154,18 +154,25 @@ void RidgeRegression::SVDRegress(double lambda) {
   ComputeLinearModel_(lambda_sq, singular_values, u, v_t);
 }
 
-void RidgeRegression::SVDNormalEquationRegress(double lambda) {
+void RidgeRegression::SVDNormalEquationRegress
+(double lambda, Matrix *precomputed_covariance) {
 
   NOTIFY("SVDNormalEquationRegress: starting.");
 
-  Matrix normal_equation;  
-  FormNormalEquation_(lambda, &normal_equation);
-  
-  // Do the SVD on the normal equation, which is of a smaller size
-  // than the original design matrix.
   Vector eigen_values;
   Matrix eigen_v, v_t;
-  la::SVDInit(normal_equation, &eigen_values, &eigen_v, &v_t);
+
+  if(precomputed_covariance == NULL) {
+    Matrix normal_equation;  
+    FormNormalEquation_(lambda, &normal_equation);
+
+    // Do the SVD on the normal equation, which is of a smaller size
+    // than the original design matrix.
+    la::SVDInit(normal_equation, &eigen_values, &eigen_v, &v_t);
+  }
+  else {
+    la::SVDInit(*precomputed_covariance, &eigen_values, &eigen_v, &v_t);
+  }
 
   // Take the square root of each eigenvalue to get the singular
   // values.
