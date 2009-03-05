@@ -37,6 +37,12 @@ const fx_entry_doc root_entries[] = {
    "Name of stats output file \n"},
   {"info", FX_PARAM, FX_INT, NULL,
    "Toggles off output to screen \n"},
+  {"diff", FX_PARAM, FX_STR, NULL,
+   "Name of diffusion output file \n"},
+  {"snapshots", FX_PARAM, FX_INT, NULL,
+   "Number of snapshots for diffusion \n"},
+  {"three", FX_REQUIRED, FX_STR, NULL,
+   "Parameters fo three-body potential function"},
   FX_ENTRY_DOC_DONE  
 };
 
@@ -61,15 +67,16 @@ int main(int argc, char *argv[])
   const char* fp_stats;
   const char* fp_coords;
   const char* fp_rad;
+  const char* fp_diff;
 
   FILE *coords;
   FILE *stats; 
   FILE *radial_distribution;
- 
+  FILE *diff;
   
  
   double time_step, stop_time, time;
-  
+  int diff_tot = fx_param_int(0, "snapshots", 1);
   // Input files
   fp_k = fx_param_str_req(NULL, "pos");
   fp_l = fx_param_str_req(NULL, "two");
@@ -79,10 +86,12 @@ int main(int argc, char *argv[])
   fp_stats = fx_param_str(NULL, "stats", "tree_stats.dat");
   fp_rad = fx_param_str(NULL, "rad", "raddist.dat");
   fp_coords = fx_param_str(NULL, "coord", "coords.dat");
+  fp_diff = fx_param_str(NULL, "diff", "diffusion.dat");
 
   coords = fopen(fp_coords, "w+");
   stats = fopen(fp_stats, "w+");  
   radial_distribution = fopen(fp_rad, "w+");
+  diff = fopen(fp_diff, "w+");
   Matrix atom_matrix, lj_matrix, at_matrix;
  
   struct datanode* parameters = fx_submodule(root, "param");
@@ -117,6 +126,8 @@ int main(int argc, char *argv[])
   use_dims[1] = 1;
   use_dims[2] = 2;
 
+  ArrayList<Matrix> positions;
+
   fx_timer_start(parameters, "Tree_Based");
   MultiPhysicsSystem simulation;
   printf("\n------------------\nTree Simulation \n------------------ \n");
@@ -134,8 +145,18 @@ int main(int argc, char *argv[])
   tree_simulation.Init(450, 15.0);
   tree_simulation.WriteHeader(radial_distribution);
 
-  double temperature, diffusion, pressure = 0;
+  double delta = 10.0, last_time = -2*delta;
+  int diff_count = 0;
+  positions.Init(diff_tot);
+
+  double temperature, diffusion = 0,pressure = 0;
   while (time < stop_time){
+    if (diff_count < diff_tot & time > last_time + delta){ 
+      last_time = time;    
+      positions[diff_count].Init(3, atom_matrix.n_cols());
+      simulation.RecordPositions(positions[diff_count]);
+      diff_count++;
+    }
     double pct = simulation.GetPercent();
     int trips = simulation.GetTrips();
     if (unlikely(time < 2*time_step)){
@@ -151,13 +172,22 @@ int main(int argc, char *argv[])
       tree_simulation.Reset();
       simulation.RadialDistribution(&tree_simulation);
       tree_simulation.Write(radial_distribution);
-      printf("Time: %f \n", time);
+     
       temperature = simulation.ComputeTemperature();
       temperature = temperature / (3.0*K_B);     
       pressure = simulation.ComputePressure();
-      
-      diffusion = simulation.ComputeDiffusion(atom_matrix);
+          
+      for (int j = 0; j < diff_tot; j++){
+	if (j < diff_count){
+	  diffusion = simulation.ComputeDiffusion(positions[j]);
+	  fprintf(diff, "%f,", diffusion);
+	} else {
+	  fprintf(diff, "%f,", 0.0);
+	}
+      }
+      fprintf(diff, "\n");
       if (info){
+	printf("\n Time: %f \n", time);
 	printf("--------------\n");
 	printf("Temperature: %f \n", temperature);
 	printf("Pressure: %f \n", pressure);
