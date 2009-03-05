@@ -27,7 +27,7 @@ class MultibodyPotentialProblem {
 
   #include "mbp_global.h"
 
-  /** @brief The order of interaction is 3-tuple problem.
+  /** @brief The order of interaction is defined by the kernel.
    */
   static const int order = TKernel::order;
 
@@ -132,23 +132,7 @@ class MultibodyPotentialProblem {
     // Perhaps, this should be parameterized by the Global object.
     const int num_samples = 100;
 
-    // If Monte Carlo approximation is disabled or the three nodes
-    // contain too few number of points, then return.
-    index_t max_number_of_points = 0;
-    bool overlap = false;
-    for(index_t i = 0; i < hybrid_nodes.size(); i++) {
-      max_number_of_points = std::max(max_number_of_points, 
-				      hybrid_nodes[i]->count());
-      if(i > 0) {
-	overlap = (hybrid_nodes[i] == hybrid_nodes[i - 1]);
-      }
-      if(overlap) {
-	break;
-      }
-    }
-
-    if(globals.probability >= 1 || max_number_of_points < num_samples ||
-       overlap) {
+    if(globals.probability >= 1) {
       return false;
     }
 
@@ -161,18 +145,10 @@ class MultibodyPotentialProblem {
 
     for(index_t i = 0; i < num_samples; i++) {
 
-      // A for-loop and a do-while to choose a unique n-tuple.
-      for(index_t j = 0; j < TKernel::order; j++) {
-
-	do {
-	  globals.hybrid_node_chosen_indices[j] = 
-	    math::RandInt(hybrid_nodes[j]->begin(), hybrid_nodes[j]->end());
-
-	} while(j != 0 && globals.hybrid_node_chosen_indices[j] ==
-		globals.hybrid_node_chosen_indices[j - 1]);
-
-      } // end of the for-loop for choosing the indices...
-
+      // Choose a random tuple.
+      MultiTreeUtility::RandomTuple(hybrid_nodes, 
+				    globals.hybrid_node_chosen_indices);
+      
       // Compute the potential value for the chosen indices.
       double potential = globals.kernel_aux.EvaluateMain(globals, sets);      
       potential_sums += potential;
