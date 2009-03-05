@@ -26,6 +26,11 @@ const fx_entry_doc multi_tree_fock_entries[] = {
   FX_ENTRY_DOC_DONE
 };
 
+const fx_module_doc multi_mod_doc = {
+  multi_tree_fock_entries, NULL, 
+  "Algorithm module for multi tree method.\n"
+};
+
 
 class MultiTreeFock {
 

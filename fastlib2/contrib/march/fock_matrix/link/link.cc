@@ -8,9 +8,9 @@ bool Link::Prescreening_Sort_(BasisShell* shellA, BasisShell* shellB) {
 
 }
 
-bool Link::ShellPairSort_(BasisShell* shellA, BasisShell* shellB) {
+bool Link::ShellPairSort_(ShellPair* shellA, ShellPair* shellB) {
 
-  return(shellA);
+  return(shellA->schwartz_factor() < shellB->schwartz_factor());
 
 }
 
@@ -48,7 +48,7 @@ void Link::PrescreeningLoop_() {
       
       // I think this threshold should be the same as the others 
       // Not sure if this is the right density matrix entry
-      if (density_mat_.ref(i,j) * shell_max_[i] * shell_max_[j] > threshold_) {
+      if (density_matrix_.ref(i,j) * shell_max_[i] * shell_max_[j] > threshold_) {
         
         // Store significant j for each i
         // What is the best way to do this?  This list will have to be sorted
@@ -63,38 +63,38 @@ void Link::PrescreeningLoop_() {
       
     } // for j
     
-    num_significant_mu_pairs_[i] = next_ind;
+    num_significant_nu_for_mu_[i] = next_ind;
     
-    significant_mu_pairs_[i] = (BasisShell**)malloc(next_ind * 
+    significant_nu_for_mu_[i] = (BasisShell**)malloc(next_ind * 
                                                     sizeof(BasisShell**)); 
     //BasisShell** significant_mu_pairs_[i] = significant_mu_pairs_[i];
     
-    
     for (index_t k = 0; k < next_ind; k++) {
       
-      significant_mu_pairs_[i][k] = shell_list_.begin() + 
+      significant_nu_for_mu_[i][k] = shell_list_.begin() + 
       significant_nu_index[k];
-      significant_mu_pairs_[i][k]->set_max_schwartz_factor(shell_max_[k]);
-      significant_mu_pairs_[i][k]->set_current_density_entry(density_mat_.ref(i,k));
+      significant_nu_for_mu_[i][k]->set_max_schwartz_factor(shell_max_[k]);
+      significant_nu_for_mu_[i][k]->set_current_density_entry(density_matrix_.ref(i,k));
       
     } // for k
     
     // sort significant_nu_for_mu
     
-    std::sort(significant_mu_pairs_[i], significant_mu_pairs_[i]+next_ind, 
+    std::sort(significant_nu_for_mu_[i], significant_nu_for_mu_[i]+next_ind, 
               Link::Prescreening_Sort_);
+              
     
-    
-    //ot::Print(significant_mu_pairs_[i]);
+    /*
     for (index_t a = 0; a < next_ind; a++) {
       printf("sort_val: %g\n", 
-             significant_mu_pairs_[i][a]->max_schwartz_factor() * 
-             significant_mu_pairs_[i][a]->current_density_entry());
+             significant_nu_for_mu_[i][a]->max_schwartz_factor() * 
+             significant_nu_for_mu_[i][a]->current_density_entry());
       
     }
-    
+    */
+        
     // sort significant_sigma_for_nu_[i] for all i
-      
+    // should I do this here?  
     std::sort(significant_sigma_for_nu_[i], 
               significant_sigma_for_nu_[i]+num_significant_sigma_for_nu_[i], 
               Link::ShellPairSort_);
@@ -103,46 +103,6 @@ void Link::PrescreeningLoop_() {
   
 }
 
-void Link::SortShellPairLists_() {
-
-/*  index_t shell_pair_ind = 0;
-
-  while(shell_pair_ind < num_shell_pairs_) {
-  
-    ShellPair this_pair = shell_pairs_[shell_pair_ind];
-    
-    index_t m_ind = this_pair.m_ind();
-    index_t n_ind = this_pair.n_ind();
-    
-    while(cur_ind == m_ind) {
-    
-      // add to list and counter
-      
-      
-      
-    
-    } // while cur_ind
-    
-    shell_pair_ind++;
-  
-  } // while shell_pair_ind
-
-*/
-
-  for (index_t shell_pair_ind = 0; shell_pair_ind < num_shell_pairs_; 
-       shell_pair_ind++) { 
-  
-    ShellPair this_pair = shell_pairs_[shell_pair_ind];
-    
-    index_t m_ind = this_pair.m_ind();
-    index_t n_ind = this_pair.n_ind();
-    
-    // don't know how much space to allocate
-    significant_sigma_for_nu_[m_ind][next_ind] = x;
-  
-  } // for shell_pair_ind
-
-} // SortShellPairLists_()
 
 void Link::ComputeExchangeMatrix() {
 
@@ -158,8 +118,6 @@ void Link::ComputeExchangeMatrix() {
        shell_pair_ind++) {
        
     ShellPair mu_lambda = shell_pair_list_[shell_pair_ind];
-    BasisShell mu_shell = mu_lambda.M_Shell();
-    BasisShell lambda_shell = mu_lambda.N_Shell();
     
     index_t mu_ind = mu_lambda.M_index();
     
@@ -167,35 +125,50 @@ void Link::ComputeExchangeMatrix() {
   
     // loop over nu corresponding to mu
     // what is num_nu? 
-    index_t num_nu = num_significant_mu_pairs_[mu_ind];
-    for (index_t nu_ind = 0; nu_ind < num_nu; nu_ind++) {
+    index_t num_nu = num_significant_nu_for_mu_[mu_ind];
+    for (index_t sorted_nu_ind = 0; sorted_nu_ind < num_nu; sorted_nu_ind++) {
     
-      BasisShell nu_shell = *(significant_mu_pairs_[mu_ind][nu_ind]);
-      
-      // store how many sigificant sigmas for this nu in order to exit loop
       index_t significant_sigmas = 0;
       
-      // loop over significant sigmas
-
-      index_t num_sigma = num_shells_for_i[nu_ind];
+      // need to get this from the first sorted list
+      BasisShell* nu_shell = significant_nu_for_mu_[mu_ind][sorted_nu_ind];
+      // not sure this will be right for higher momenta
+      index_t nu_ind = nu_shell->start_index();
+    
+      index_t num_sigma = num_significant_sigma_for_nu_[nu_ind];
 
       for (index_t sigma_ind = 0; sigma_ind < num_sigma; sigma_ind++) {
       
-        // need to store the sigma shells for nu somewhere
-        // I think they need to be sorted
-        BasisShell sigma_shell = what;
-      
-        // fill in these
-        // would be nice to be working with shell pairs, since they store the 
-        // Schwartz factors
-        if (abs(density_mat_.ref(mu, nu)) * mu_lambda_schwartz * nu_sigma_schwartz > cutoff) {
-      
-          // store nu sigma as a significant shell pair to be computed
-          // is it really necessary to store these, or can I compute it now?
-          // I think for my simple integral code it won't make a difference
+        ShellPair* nu_sigma = significant_sigma_for_nu_[nu_ind][sigma_ind];
         
+        if (abs(density_matrix_.ref(mu_ind, nu_ind)) * mu_lambda.schwartz_factor() * 
+            nu_sigma->schwartz_factor() > threshold_) {
+      
+          // store or compute the eri
+          
+          double integral = eri::ComputeShellIntegrals(mu_lambda, *nu_sigma);
+          // contract with mu, nu; mu, sigma; lambda, nu; lambda, sigma
+          // sum into lambda, sigma; lambda, nu; mu, sigma; mu, nu
+          
+          double mu_nu_int = density_matrix_.ref(mu_ind, nu_ind) * integral;
+          double mu_sigma_int = density_matrix_.ref(mu_ind, sigma_ind) * integral;
+          double lambda_nu_int = density_matrix_.ref(lambda_ind, nu_ind) * integral;
+          double lambda_sigma_int = density_matrix_.ref(lambda_ind, sigma_ind) * integral;
+          
+          double mu_nu_exc = exchange_matrix_.ref(mu_ind, nu_ind);
+          double mu_sigma_exc = exchange_matrix_.ref(mu_ind, sigma_ind);
+          double lambda_nu_exc = exchange_matrix_.ref(lambda_ind, nu_ind);
+          double lambda_sigma_exc = exchange_matrix_.ref(lambda_ind, sigma_ind);
+          
+          exchange_matrix_.set(mu_ind, nu_ind, mu_nu_exc + lambda_sigma_int);
+          exchange_matrix_.set(mu_ind, sigma_ind, mu_sigma_exc + lambda_nu_int);
+          exchange_matrix_.set(lambda_ind, nu_ind, 
+                               lambda_nu_exc + mu_sigma_int);
+          exchange_matrix_.set(lambda_ind, sigma_ind, 
+                               lambda_sigma_exc + mu_nu_int);
+          
           significant_sigmas++;
-        
+          
         }
         // leave sigma loop, since it is sorted
         else {
@@ -211,25 +184,84 @@ void Link::ComputeExchangeMatrix() {
     
     } // for nu_ind
 
+    // loop over nu corresponding to lambda and do same
+    // why is this necessary as well?  
+    // I think it's important for the symmetry, lambda mu never shows up as a 
+    // shell pair
+    // shouldn't do this if lambda == mu
+
+    if (mu_ind != lambda_ind) {
+      num_nu = num_significant_nu_for_mu_[lambda_ind];
+      
+      for (index_t sorted_nu_ind = 0; sorted_nu_ind < num_nu; sorted_nu_ind++) {
+        
+        index_t significant_sigmas = 0;
+        
+        // need to get this from the first sorted list
+        BasisShell* nu_shell = significant_nu_for_mu_[mu_ind][sorted_nu_ind];
+        // not sure this will be right for higher momenta
+        index_t nu_ind = nu_shell->start_index();
+        
+        index_t num_sigma = num_significant_sigma_for_nu_[nu_ind];
+        
+        for (index_t sigma_ind = 0; sigma_ind < num_sigma; sigma_ind++) {
+          
+          ShellPair* nu_sigma = significant_sigma_for_nu_[nu_ind][sigma_ind];
+          
+          if (abs(density_matrix_.ref(mu_ind, nu_ind)) * mu_lambda.schwartz_factor() * 
+              nu_sigma->schwartz_factor() > threshold_) {
+            
+            // store or compute the eri
+            double integral = eri::ComputeShellIntegrals(mu_lambda, *nu_sigma);
+            // contract with mu, nu; mu, sigma; lambda, nu; lambda, sigma
+            // sum into lambda, sigma; lambda, nu; mu, sigma; mu, nu
+            
+            double mu_nu_int = density_matrix_.ref(mu_ind, nu_ind) * integral;
+            double mu_sigma_int = density_matrix_.ref(mu_ind, sigma_ind) * integral;
+            double lambda_nu_int = density_matrix_.ref(lambda_ind, nu_ind) * integral;
+            double lambda_sigma_int = density_matrix_.ref(lambda_ind, sigma_ind) * integral;
+            
+            double mu_nu_exc = exchange_matrix_.ref(mu_ind, nu_ind);
+            double mu_sigma_exc = exchange_matrix_.ref(mu_ind, sigma_ind);
+            double lambda_nu_exc = exchange_matrix_.ref(lambda_ind, nu_ind);
+            double lambda_sigma_exc = exchange_matrix_.ref(lambda_ind, sigma_ind);
+            
+            exchange_matrix_.set(mu_ind, nu_ind, mu_nu_exc + lambda_sigma_int);
+            exchange_matrix_.set(mu_ind, sigma_ind, mu_sigma_exc + lambda_nu_int);
+            exchange_matrix_.set(lambda_ind, nu_ind, 
+                                 lambda_nu_exc + mu_sigma_int);
+            exchange_matrix_.set(lambda_ind, sigma_ind, 
+                                 lambda_sigma_exc + mu_nu_int);
+
+            
+            significant_sigmas++;
+            
+          }
+          // leave sigma loop, since it is sorted
+          else {
+            break;
+          }
+          
+        } // for sigma_ind
+        
+        // exit loop if this nu has no sigmas that count
+        if (significant_sigmas == 0) {
+          break;
+        }
+        
+      } // for nu_ind
     
-  // loop over nu corresponding to lambda and do same
-  // why is this necessary as well?  
-  // I think it's important for the symmetry, lambda mu never shows up as a 
-  // shell pair
+    } // if lambda != mu
 
 
-
-
-  // compute significant integrals
-
-
-
+    // compute significant integrals
+    // may just do this inside loop
 
 
   } // for bra shell pairs
 
   
-} // ComputeFockMatrix()
+} // ComputeExchangeMatrix()
 
 
 
@@ -238,3 +270,4 @@ void Link::OutputExchangeMatrix(Matrix* exc_out) {
   exc_out->Copy(exchange_matrix_);
   
 } // OutputFockMatrix
+

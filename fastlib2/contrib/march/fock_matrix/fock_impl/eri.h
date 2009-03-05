@@ -98,7 +98,7 @@ namespace eri {
   index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
                             ArrayList<BasisShell>& shells_in, 
                             double shell_pair_cutoff, Vector* shell_max, 
-                            BasisShell*** sigma_for_nu, 
+                            ShellPair*** sigma_for_nu, 
                             ArrayList<index_t>* num_per_shell);
   
 
