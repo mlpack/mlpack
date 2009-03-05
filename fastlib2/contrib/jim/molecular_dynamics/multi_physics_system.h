@@ -295,7 +295,7 @@ private:
       double temp = query->stat().interactions_[i].coef()*
 	ref->stat().interactions_[i].coef()*power;      
       
-      /*
+      
       for (int j = 0; j < 3; j++){
 	if (max[j]*temp > 0){
 	  fmax[j] = fmax[j] + max[j]*temp*pow(r_min, power-2);
@@ -308,7 +308,7 @@ private:
 	  fmin[j] = fmin[j] + min[j]*temp*pow(r_min, power-2);
 	}
       }
-      */
+      
     }    
     // Get range from omitting three body interactions 
     double coef = query->stat().axilrod_[0]*ref->stat().axilrod_[0]*
@@ -1061,7 +1061,7 @@ public:
   }
 
   double ComputePressure(){    
-    printf("Virial: %f \n", virial_);   
+    // printf("Virial: %f \n", virial_);   
     double pressure = (n_atoms_*temperature_ + virial_) /  
       (3.0*dimensions_[0]*dimensions_[1]*dimensions_[2]); 
     return pressure;
@@ -1173,7 +1173,19 @@ public:
     }   
   } // WritePositions
 
-
+ void RecordPositions(Matrix& out_positions){
+    for (int i = 0; i < n_atoms_; i++){
+      Vector temp;
+      int j = i;
+      if (system_ != NULL){
+	j = old_from_new_map_[j];
+      }
+      atoms_.MakeColumnSubvector(j, 0, 3, &temp);
+      for (int k = 0; k < 3; k++){
+	out_positions.set(k , i, temp[k]);
+      }
+    }
+  }
 
   void WriteMomentum(FILE* fp){   
     for (int i = 0; i < n_atoms_; i++){

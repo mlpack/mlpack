@@ -35,6 +35,8 @@ const fx_entry_doc root_entries[] = {
    "Name of coordinate output file \n"},
   {"stats", FX_PARAM, FX_STR, NULL, 
    "Name of stats output file \n"},
+  {"diff", FX_PARAM, FX_STR, NULL,
+   "Name of diffusion output file \n"},
  {"info", FX_PARAM, FX_INT, NULL,
    "Toggles off output to screen \n"},
   {"snapshots", FX_PARAM, FX_INT, NULL,
@@ -175,15 +177,12 @@ int main(int argc, char *argv[])
 	  diffusion = simulation.ComputeDiffusion(positions[j]);
 	  fprintf(diff, "%f,", diffusion);
 	} else {
-	  fprintf(diff, "%f", 0.0);
+	  fprintf(diff, "%f,", 0.0);
 	}
       }
       fprintf(diff, "\n");
       if (info){
 	printf("--------------\n");
-	if (temperature > 180.0){
-	  printf("Too hot!\n");
-	}
 	printf("Temperature: %f \n", temperature);
 	printf("Pressure: %f \n", pressure);
 	printf("Percent Pruned: %f \n", pct);	
