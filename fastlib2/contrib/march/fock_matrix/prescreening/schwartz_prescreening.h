@@ -16,7 +16,7 @@ const fx_entry_doc schwartz_entries[] = {
   FX_ENTRY_DOC_DONE
 };
 
-const fx_module_doc schwartz_mod_doc = {
+const fx_module_doc prescreening_mod_doc = {
   schwartz_entries, NULL, "Algorithm module for schwartz prescreening.\n"
 };
 

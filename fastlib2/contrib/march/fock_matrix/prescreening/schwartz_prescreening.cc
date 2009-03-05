@@ -57,30 +57,6 @@ double SchwartzPrescreening::SchwartzBound_(BasisShell &mu,
 
 void SchwartzPrescreening::ComputeFockMatrix(Matrix* fock_out) {
 
-  // form shell-pairs
-  /*
-  for (index_t i = 0; i < num_shells_; i++) {
-  
-    BasisShell i_shell = basis_list_[i];
-  
-    for (index_t j = i; j < num_shells_; j++) {
-    
-      BasisShell j_shell = basis_list_[j];
-      
-      shell_pair_list_[num_shell_pairs_].Init(i, j, i_shell, j_shell);
-      
-      double this_bound = SchwartzBound_(i_shell, j_shell);
-      //printf("this_bound = %g\n", this_bound);
-      shell_pair_list_[num_shell_pairs_].set_integral_upper_bound(this_bound);
-      // set density bound too
-      
-      num_shell_pairs_++;
-      
-      
-    } // for j
-  
-  } //for i
-  */
   num_shell_pairs_ = eri::ComputeShellPairs(&shell_pair_list_, basis_list_, 
                                             shell_pair_threshold_);
   
@@ -95,59 +71,59 @@ void SchwartzPrescreening::ComputeFockMatrix(Matrix* fock_out) {
     
       ShellPair& j_pair = shell_pair_list_[j];
 
-      // this can be made tighter by considering other density matrix entries
-      //double density_bound = max(i_pair.density_mat_upper(), 
-      //                           j_pair.density_mat_upper());
+      // consider all the relevant entries here 
       double density_bound = 1.0;
     
-      /*printf("i upper = %g\n", i_pair.integral_upper_bound());
-      printf("j upper = %g\n", j_pair.integral_upper_bound());
-      */
-      double this_est = i_pair.integral_upper_bound() * 
-          j_pair.integral_upper_bound() * density_bound;
+      double this_est = i_pair.schwartz_factor() * 
+          j_pair.schwartz_factor() * density_bound;
           
-      //printf("this_est = %g\n", this_est);
-      //printf("thresh = %g\n\n", threshold_);
-      
       
       if (this_est > threshold_) {
       
-        double this_int = eri::ComputeShellIntegrals(i_pair, j_pair);
+        double integral = eri::ComputeShellIntegrals(i_pair, j_pair);
         
         //printf("this_int: %g\n", this_int);
         
         // extend this for general case
-        index_t mind = i_pair.M_index();
-        index_t nind = i_pair.N_index();
+        index_t i_ind = i_pair.M_index();
+        index_t j_ind = i_pair.N_index();
         
-        index_t kind = j_pair.M_index();
-        index_t lind = j_pair.N_index();
+        index_t k_ind = j_pair.M_index();
+        index_t l_ind = j_pair.N_index();
         
-        //printf("mind: %d\n", mind);
-        //printf("nind: %d\n", nind);
+        double coulomb_int = integral * density_matrix_.ref(k_ind, l_ind);
         
-        // don't forget symmetry
-        double cval = coulomb_matrix_.get(mind, nind);
-        double eval = exchange_matrix_.get(mind, nind);
+        double coulomb_val = coulomb_matrix_.get(i_ind, j_ind);
         
-        if (kind != lind) {
-          cval = cval + 2 * this_int;
-          eval = eval - this_int;
+        double exchange_ik = density_matrix_.ref(j_ind, l_ind) * integral;
+        double exchange_il = density_matrix_.ref(j_ind, k_ind) * integral;
+        double exchange_jk = density_matrix_.ref(i_ind, l_ind) * integral;
+        double exchange_jl = density_matrix_.ref(i_ind, k_ind) * integral;
+        
+        if (k_ind != l_ind) {
+          coulomb_int *= 2;
         }
-        else {
-          cval = cval + this_int;
-          eval = eval - 0.5*this_int;
+          
+        coulomb_val += coulomb_int;
+        
+        coulomb_matrix_.set(i_ind, j_ind, coulomb_val); 
+        coulomb_matrix_.set(j_ind, i_ind, coulomb_val);
+        
+        exchange_matrix_.set(i_ind, k_ind, 
+                          exchange_matrix_.ref(i_ind,k_ind) + exchange_ik);
+        if (k_ind != l_ind) {
+          exchange_matrix_.set(i_ind, l_ind, 
+                            exchange_matrix_.ref(i_ind,l_ind) + exchange_il);
+        }
+        if (i_ind != j_ind) {
+          exchange_matrix_.set(j_ind, k_ind, 
+                            exchange_matrix_.ref(j_ind,k_ind) + exchange_jk);
+        }
+        if ((k_ind != l_ind) && (i_ind != j_ind)) {
+          exchange_matrix_.set(j_ind, l_ind, 
+                            exchange_matrix_.ref(j_ind,l_ind) + exchange_jl);
         }
         
-        
-        coulomb_matrix_.set(mind, nind, cval); 
-        exchange_matrix_.set(mind, nind, eval);
-        
-        if (mind != nind) {
-          coulomb_matrix_.set(nind, mind, cval);
-          exchange_matrix_.set(nind, mind, eval);
-        }
-              
       } 
       else {
         num_prunes_++;
@@ -156,8 +132,10 @@ void SchwartzPrescreening::ComputeFockMatrix(Matrix* fock_out) {
     }
     
   } // for i
-  
-  la::AddInit(coulomb_matrix_, exchange_matrix_, &fock_matrix_);
+    
+  // F = J - 1/2 K
+  la::ScaleInit(-0.5, exchange_matrix_, &fock_matrix_);    
+  la::AddTo(coulomb_matrix_, &fock_matrix_);
   
   fock_out->Copy(fock_matrix_);
   
