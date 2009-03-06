@@ -17,6 +17,16 @@ const fx_entry_doc hmm_testing_entries_doc[] = {
    "  Filename for class 1 emission matrix"},
   {"emis0", FX_PARAM, FX_STR, NULL,
    "  Filename for class 0 emission matrix"},
+  {"n_sequences_per_class", FX_PARAM, FX_INT, NULL,
+   "  Number of sequences per class. There are two classes total"},
+  {"n_symbols", FX_PARAM, FX_INT, NULL,
+   "  Number of symbols. Only used when loading sequences from file."},
+  {"save_hmms", FX_PARAM, FX_BOOL, NULL,
+   "  Whether or not to save the sufficient statistics for the HMMs learned from the sequences."},
+  {"load_hmms", FX_PARAM, FX_BOOL, NULL,
+   "  Whether or not to load the sufficient statistics for the HMMs learned in a previous program execution."},
+  {"hmms", FX_PARAM, FX_STR, NULL,
+   "  Filename for the HMMS (either already learned and to be loaded, or to be learned and saved."},
   FX_ENTRY_DOC_DONE
 };
 
@@ -27,7 +37,9 @@ const fx_module_doc hmm_testing_doc = {
 
 
 
-void GenerateAndTrainSequences(const char* transition_filename,
+void GenerateAndTrainSequences(bool load_data,
+			       const char* sequences_filename,
+			       const char* transition_filename,
 			       const char* emission_filename,
 			       int n_sequences,
 			       ArrayList<Vector>* p_initial_probs_vectors,
@@ -39,21 +51,7 @@ void GenerateAndTrainSequences(const char* transition_filename,
   ArrayList<Matrix> &transition_matrices = *p_transition_matrices;
   ArrayList<Matrix> &emission_matrices = *p_emission_matrices;
 
-  Matrix transition;
-  data::Load(transition_filename, &transition);
-
-  Matrix emission;
-  data::Load(emission_filename, &emission);
-
-  int n_symbols = emission.n_cols();
-
-
-  DiscreteHMM hmm_gen;
-  hmm_gen.Init(transition, emission);
   
-  const int sequence_length = fx_param_int(NULL, "length", 100);
-  int n_states = transition.n_cols() - 1; // subtract one for the start state
-  //int n_states = fx_param_int(NULL, "n_states", 4);
   
   int max_iter_mmf = fx_param_int(NULL, "max_iter_mmf", 500);
   int max_rand_iter = fx_param_int(NULL, "max_rand_iter", 60);
@@ -64,129 +62,191 @@ void GenerateAndTrainSequences(const char* transition_filename,
 
   int last_index = first_index + n_sequences;
 
-  for(int k = first_index; k < last_index; k++) {
-    Vector observed_sequence;
-    Vector state_sequence;
+  if(load_data == false) {
+    Matrix transition;
+    data::Load(transition_filename, &transition);
     
-    hmm_gen.GenerateSequence(sequence_length, &observed_sequence, &state_sequence);
+    Matrix emission;
+    data::Load(emission_filename, &emission);
     
-    DiscreteHMM learned_hmm;
-    learned_hmm.Init(n_states, n_symbols);
-    
-    ArrayList<Vector> seqs;
-    seqs.Init(1);
-    seqs[0].Copy(observed_sequence);
-    
-    
-    learned_hmm.TrainMMF(seqs, max_rand_iter, max_iter_mmf, tol_mmf);
+    int n_symbols = emission.n_cols();
 
-    Vector stationary_probabilities;
-    ComputeStationaryProbabilities(learned_hmm.transmission(),
-				   &stationary_probabilities);
+    DiscreteHMM hmm_gen;
+    hmm_gen.Init(transition, emission);
 
-    //stationary_probabilities.PrintDebug("stationary probabilities");
-
-    /* // a quick check to verify the stationary probabilities
-    Matrix result, result2, result4, result16;
-    la::MulInit(learned_hmm.transmission(), learned_hmm.transmission(),
-		&result);
-    la::MulInit(result, result, &result2);
-    la::MulInit(result2, result2, &result4);
-    la::MulInit(result4, result4, &result16);
-    result16.PrintDebug("A^16");
-    */
-
-    Matrix new_transition_matrix;
-    new_transition_matrix.Init(n_states + 1, n_states + 1);
-    for(int i = 0; i < n_states + 1; i++) {
-      new_transition_matrix.set(i, 0, 0);
+    const int sequence_length = fx_param_int(NULL, "length", 100);
+    int n_states = transition.n_cols() - 1; // subtract one for the start state
+    //int n_states = fx_param_int(NULL, "n_states", 4);
+    
+    for(int k = first_index; k < last_index; k++) {
+      Vector observed_sequence;
+      Vector state_sequence;
+      
+      hmm_gen.GenerateSequence(sequence_length, &observed_sequence, &state_sequence);
+      
+      GetHMMSufficientStats(observed_sequence, n_states, n_symbols,
+			    &(initial_probs_vectors[k]),
+			    &(transition_matrices[k]),
+			    &(emission_matrices[k]),
+			    max_iter_mmf, max_rand_iter, tol_mmf,
+			    max_iter_bw, tol_bw);
     }
-    for(int j = 0; j < n_states; j++) {
-      new_transition_matrix.set(0, j + 1, stationary_probabilities[j]);
-      for(int i = 0; i < n_states; i++) {
-	new_transition_matrix.set(i + 1, j + 1,
-				  learned_hmm.transmission().get(i, j));
-      }
-    }
+  }
+  else {
+    Matrix sequences;
+    data::Load(sequences_filename, &sequences);
 
-    //learned_hmm.transmission().PrintDebug("transition matrix");
-    //new_transition_matrix.PrintDebug("augmented transition matrix");
-
-
-    Matrix new_emission_matrix;
-    new_emission_matrix.Init(n_states + 1, n_symbols);
-
-    double uniform_p = 1. / ((double) n_symbols);
-
-    for(int j = 0; j < n_symbols; j++) {
-      new_emission_matrix.set(0, j, uniform_p);
-      for(int i = 0; i < n_states; i++) {
-	new_emission_matrix.set(i + 1, j,
-				learned_hmm.emission().get(i, j));
-      }
-    }
-
-    //learned_hmm.emission().PrintDebug("emission matrix");
-    //new_emission_matrix.PrintDebug("new emission matrix");
-
-    DiscreteHMM augmented_learned_hmm;
-    augmented_learned_hmm.Init(new_transition_matrix,
-			       new_emission_matrix);
+    int sequence_length = sequences.n_rows();
+    int n_symbols = fx_param_int_req(NULL, "n_symbols");
+    double ratio = fx_param_double(NULL, "ratio", 0.1);
+    int n_states = 3;/*
+      ((int)floor(0.5 * sqrt(n_symbols * n_symbols
+			     + 4 * (sequence_length * ratio + n_symbols + 1))
+		  - 0.5 * n_symbols))
+		  + 1;*/
+    printf("n_states = %d\n", n_states);
     
-    /*
+    int sequence_num = 0;
+    for(int k = first_index; k < last_index; k++) {
+      Vector observed_sequence;
+
+      sequences.MakeColumnVector(sequence_num, &observed_sequence);
+      
+      GetHMMSufficientStats(observed_sequence, n_states, n_symbols,
+			    &(initial_probs_vectors[k]),
+			    &(transition_matrices[k]),
+			    &(emission_matrices[k]),
+			    max_iter_mmf, max_rand_iter, tol_mmf,
+			    max_iter_bw, tol_bw);
+      sequence_num++;
+    }
+  }
+}
+
+
+void GetHMMSufficientStats(const Vector &observed_sequence,
+			   int n_states, int n_symbols,
+			   Vector* p_initial_probs_vector,
+			   Matrix* p_transition_matrix,
+			   Matrix* p_emission_matrix,
+			   int max_iter_mmf, int max_rand_iter, double tol_mmf,
+			   int max_iter_bw, double tol_bw) {
+  
+  DiscreteHMM learned_hmm;
+  learned_hmm.Init(n_states, n_symbols);
+  
+  ArrayList<Vector> seqs;
+  seqs.Init(1);
+  seqs[0].Copy(observed_sequence);
+    
+    
+  learned_hmm.TrainMMF(seqs, max_rand_iter, max_iter_mmf, tol_mmf);
+  
+  Vector stationary_probabilities;
+  ComputeStationaryProbabilities(learned_hmm.transmission(),
+				 &stationary_probabilities);
+  
+  //stationary_probabilities.PrintDebug("stationary probabilities");
+  
+  /* // a quick check to verify the stationary probabilities
+     Matrix result, result2, result4, result16;
+     la::MulInit(learned_hmm.transmission(), learned_hmm.transmission(),
+     &result);
+     la::MulInit(result, result, &result2);
+     la::MulInit(result2, result2, &result4);
+     la::MulInit(result4, result4, &result16);
+     result16.PrintDebug("A^16");
+  */
+  
+  Matrix new_transition_matrix;
+  new_transition_matrix.Init(n_states + 1, n_states + 1);
+  for(int i = 0; i < n_states + 1; i++) {
+    new_transition_matrix.set(i, 0, 0);
+  }
+  for(int j = 0; j < n_states; j++) {
+    new_transition_matrix.set(0, j + 1, stationary_probabilities[j]);
+    for(int i = 0; i < n_states; i++) {
+      new_transition_matrix.set(i + 1, j + 1,
+				learned_hmm.transmission().get(i, j));
+    }
+  }
+  
+  //learned_hmm.transmission().PrintDebug("transition matrix");
+  //new_transition_matrix.PrintDebug("augmented transition matrix");
+  
+  
+  Matrix new_emission_matrix;
+  new_emission_matrix.Init(n_states + 1, n_symbols);
+  
+  double uniform_p = 1. / ((double) n_symbols);
+  
+  for(int j = 0; j < n_symbols; j++) {
+    new_emission_matrix.set(0, j, uniform_p);
+    for(int i = 0; i < n_states; i++) {
+      new_emission_matrix.set(i + 1, j,
+			      learned_hmm.emission().get(i, j));
+    }
+  }
+
+  //learned_hmm.emission().PrintDebug("emission matrix");
+  //new_emission_matrix.PrintDebug("new emission matrix");
+
+  DiscreteHMM augmented_learned_hmm;
+  augmented_learned_hmm.Init(new_transition_matrix,
+			     new_emission_matrix);
+  
+  /*
     learned_hmm.TrainBaumWelch(seqs, max_iter_bw, tol_bw);
-
- 
+    
+    
     learned_hmm.transmission().PrintDebug("BW learned transition matrix");
     learned_hmm.emission().PrintDebug("BW learned emission matrix");
     
     transition_matrices[k].Copy(learned_hmm.transmission());
     emission_matrices[k].Copy(learned_hmm.emission());
-    */
-    
-    augmented_learned_hmm.TrainBaumWelch(seqs, max_iter_bw, tol_bw);
+  */
+  printf("training HMM via Baum Welch\n");
+  augmented_learned_hmm.TrainBaumWelch(seqs, max_iter_bw, tol_bw);
 
  
-    //augmented_learned_hmm.transmission().PrintDebug("BW learned transition matrix");
-    //augmented_learned_hmm.emission().PrintDebug("BW learned emission matrix");
-
-    const Matrix &augmented_transition = augmented_learned_hmm.transmission();
-    
-    Vector &initial_probs = initial_probs_vectors[k];
-    initial_probs.Init(n_states);
+  //augmented_learned_hmm.transmission().PrintDebug("BW learned transition matrix");
+  //augmented_learned_hmm.emission().PrintDebug("BW learned emission matrix");
+  
+  const Matrix &augmented_transition = augmented_learned_hmm.transmission();
+  
+  Vector &initial_probs = *p_initial_probs_vector;
+  initial_probs.Init(n_states);
+  for(int i = 0; i < n_states; i++) {
+    initial_probs[i] = augmented_transition.get(0, i + 1);
+  }
+  
+  Matrix &reduced_transition = *p_transition_matrix;
+  reduced_transition.Init(n_states, n_states);
+  for(int j = 0; j < n_states; j++) {
     for(int i = 0; i < n_states; i++) {
-      initial_probs[i] = augmented_transition.get(0, i + 1);
+      reduced_transition.set(i, j,
+			     augmented_transition.get(i + 1, j + 1));
     }
-
-    Matrix &reduced_transition = transition_matrices[k];
-    reduced_transition.Init(n_states, n_states);
-    for(int j = 0; j < n_states; j++) {
-      for(int i = 0; i < n_states; i++) {
-	reduced_transition.set(i, j,
-			       augmented_transition.get(i + 1, j + 1));
-      }
+  }
+  
+  const Matrix &augmented_emission = augmented_learned_hmm.emission();
+  
+  Matrix &reduced_emission = *p_emission_matrix;
+  reduced_emission.Init(n_states, n_symbols);
+  for(int j = 0; j < n_symbols; j++) {
+    for(int i = 0; i < n_states; i++) {
+      reduced_emission.set(i, j,
+			   augmented_emission.get(i + 1, j));
     }
-
-    const Matrix &augmented_emission = augmented_learned_hmm.emission();
-    
-    Matrix &reduced_emission = emission_matrices[k];
-    reduced_emission.Init(n_states, n_symbols);
-    for(int j = 0; j < n_symbols; j++) {
-      for(int i = 0; i < n_states; i++) {
-	reduced_emission.set(i, j,
-			     augmented_emission.get(i + 1, j));
-      }
-    }
-	
-    /*
+  }
+  
+  /*
     transition_matrices[k].PrintDebug("transition matrix");
     initial_probs_vectors[k].PrintDebug("initial probs");
     emission_matrices[k].PrintDebug("emission matrix");
-    */
-  }
-  
-
+  */
 }
+
 
 
 /* transition_matrix is a stochastic matrix (each row sums to 1) */
@@ -267,13 +327,13 @@ void ReadIn(T* object, FILE* file) {
   mem::Free(buf);
 }
 
-void SaveData(const char* name,
+void SaveHMMs(const char* filename,
 	      const ArrayList<Vector> &initial_probs_vectors,
 	      const ArrayList<Matrix> &transition_matrices,
 	      const ArrayList<Matrix> &emission_matrices,
 	      const Matrix &training_data,
 	      const Matrix &test_data) {
-  FILE* file = fopen(name, "wb");
+  FILE* file = fopen(filename, "wb");
 
   WriteOut(initial_probs_vectors, file);
   WriteOut(transition_matrices, file);
@@ -284,13 +344,13 @@ void SaveData(const char* name,
   fclose(file);
 }
 
-void LoadData(const char* name,
+void LoadHMMs(const char* filename,
 	      ArrayList<Vector> *initial_probs_vectors,
 	      ArrayList<Matrix> *transition_matrices,
 	      ArrayList<Matrix> *emission_matrices,
 	      Matrix *training_data,
 	      Matrix *test_data) {
-  FILE* file = fopen(name, "rb");
+  FILE* file = fopen(filename, "rb");
   
   ReadIn(initial_probs_vectors, file);
   ReadIn(transition_matrices, file);
@@ -302,12 +362,11 @@ void LoadData(const char* name,
 }
 
 
-void CreateData(int n_sequences_per_class, int n_sequences,
-		ArrayList<Vector> *p_initial_probs_vectors,
-		ArrayList<Matrix> *p_transition_matrices,
-		ArrayList<Matrix> *p_emission_matrices,
-		Matrix *p_training_data,
-		Matrix *p_test_data) {
+void ObtainDataLearnHMMs(ArrayList<Vector> *p_initial_probs_vectors,
+			 ArrayList<Matrix> *p_transition_matrices,
+			 ArrayList<Matrix> *p_emission_matrices,
+			 Matrix *p_training_data,
+			 Matrix *p_test_data) {
 
   ArrayList<Vector> &initial_probs_vectors = *p_initial_probs_vectors;
   ArrayList<Matrix> &transition_matrices = *p_transition_matrices;
@@ -315,39 +374,72 @@ void CreateData(int n_sequences_per_class, int n_sequences,
   Matrix &training_data = *p_training_data;
   Matrix &test_data = *p_test_data;
   
+  int n_sequences_per_class = fx_param_int(NULL, "n_sequences_per_class", 10);
+  int n_sequences  = 2 * n_sequences_per_class;
   
   initial_probs_vectors.Init(2 * n_sequences_per_class);
   
   transition_matrices.Init(2 * n_sequences_per_class);
   
   emission_matrices.Init(2 * n_sequences_per_class);
-  
-  const char* class1_trans = 
-    fx_param_str_req(NULL, "trans1");
 
-  const char* class0_trans =
-    fx_param_str_req(NULL, "trans0");
-
-  const char* class1_emis = 
-    fx_param_str_req(NULL, "emis1");
-
-  const char* class0_emis = 
-    fx_param_str_req(NULL, "emis0");
+  bool load_data = false;
   
-  printf("Generating sequences and training HMMs...\n");
-  GenerateAndTrainSequences(class1_trans, class1_emis,
-			    n_sequences_per_class,
-			    &initial_probs_vectors, 
-			    &transition_matrices,
-			    &emission_matrices,
-			    0);
-  
-  GenerateAndTrainSequences(class0_trans, class0_emis,
-			    n_sequences_per_class,
-			    &initial_probs_vectors,
-			    &transition_matrices,
-			    &emission_matrices,
-			    n_sequences_per_class);
+  if(load_data == false) {
+    const char* class1_trans = 
+      fx_param_str(NULL, "trans1", "../../../../class_1_transition.csv");
+    const char* class0_trans =
+      fx_param_str(NULL, "trans0", "../../../../class_0_transition.csv");
+    const char* class1_emis = 
+      fx_param_str(NULL, "emis1", "../../../../class_1_emission.csv");
+    const char* class0_emis = 
+      fx_param_str(NULL, "emis0", "../../../../class_0_emission.csv");
+    
+    printf("Generating sequences and training HMMs...\n");
+    GenerateAndTrainSequences(false,
+			      NULL,
+			      class1_trans, class1_emis,
+			      n_sequences_per_class,
+			      &initial_probs_vectors, 
+			      &transition_matrices,
+			      &emission_matrices,
+			      0);
+    
+    GenerateAndTrainSequences(false,
+			      NULL,
+			      class0_trans, class0_emis,
+			      n_sequences_per_class,
+			      &initial_probs_vectors,
+			      &transition_matrices,
+			      &emission_matrices,
+			      n_sequences_per_class);
+  }
+  else {
+    const char* class1_sequences_filename =
+      fx_param_str(NULL, "class1_seq", "GC_50-55_coding.900bps_small.dat");
+    
+    const char* class0_sequences_filename =
+      fx_param_str(NULL, "class0_seq", "GC_45-50_noncoding.900bps_small.dat");
+    
+    printf("Loading sequences and training HMMs...\n");
+    GenerateAndTrainSequences(true,
+			      class1_sequences_filename,
+			      NULL, NULL,
+			      n_sequences_per_class,
+			      &initial_probs_vectors, 
+			      &transition_matrices,
+			      &emission_matrices,
+			      0);
+    
+    GenerateAndTrainSequences(true,
+			      class0_sequences_filename,
+			      NULL, NULL,
+			      n_sequences_per_class,
+			      &initial_probs_vectors,
+			      &transition_matrices,
+			      &emission_matrices,
+			      n_sequences_per_class);
+  }
   
   Vector labels;
   labels.Init(n_sequences);
@@ -433,6 +525,18 @@ int main(int argc, char* argv[]) {
   srand(time(0));
   //srand(10);
 
+
+  bool load_hmms = fx_param_bool(NULL, "load_hmms", false);
+  bool save_hmms = fx_param_bool(NULL, "save_hmms", false);
+  const char* hmms_filename = fx_param_str(NULL, "hmms", "hmms.dat");
+
+  struct stat stFileInfo;
+  if(stat(hmms_filename, &stFileInfo) == 0) {
+    fprintf(stderr, "Error: File to which learned HMMs are to be save already exists! We avoid overwriting previously saved HMMs.\nExiting...\n");
+    return 1;
+  }
+
+
   int n_sequences_per_class;
   int n_sequences;
 
@@ -444,30 +548,24 @@ int main(int argc, char* argv[]) {
   Matrix training_data;
   Matrix test_data;
 
-  bool load_data = fx_param_bool(NULL, "load_data", false);
-  bool save_data = fx_param_bool(NULL, "save_data", false);
-  const char* data_filename = fx_param_str(NULL, "data", "dataset.dat");
 
-  if(load_data == true) {
-    LoadData(data_filename, &initial_probs_vectors, &transition_matrices,
+
+  if(load_hmms == true) {
+    LoadHMMs(hmms_filename, &initial_probs_vectors, &transition_matrices,
 	     &emission_matrices, &training_data, &test_data);
-    n_sequences = initial_probs_vectors.size();
-    n_sequences_per_class = n_sequences / 2; // we assume balanced data
   }
   else {
-
-    n_sequences_per_class = fx_param_int(NULL, "n_sequences_per_class", 10);
-    n_sequences  = 2 * n_sequences_per_class;
-
-    CreateData(n_sequences_per_class, n_sequences,
-	       &initial_probs_vectors, &transition_matrices,
-	       &emission_matrices, &training_data, &test_data);
-  
-    if(save_data) {
-      SaveData(data_filename, initial_probs_vectors, transition_matrices,
+    ObtainDataLearnHMMs(&initial_probs_vectors, &transition_matrices,
+			&emission_matrices, &training_data, &test_data);
+    if(save_hmms) {
+      SaveHMMs(hmms_filename, initial_probs_vectors, transition_matrices,
 	       emission_matrices, training_data, test_data);
     }
   }
+
+  n_sequences = initial_probs_vectors.size();
+  n_sequences_per_class = n_sequences / 2; // we assume balanced data
+
 
 
   
@@ -518,20 +616,19 @@ int main(int argc, char* argv[]) {
   svm.BatchPredict(learner_typeid, test_set, "predicted_values"); // TODO:param_req
 
 
+
+  // Emit results
+
   Matrix predicted_values;
   data::Load("predicted_values", &predicted_values);
-  
-  int n_test_points = predicted_values.n_cols();
 
+  int n_test_points = predicted_values.n_cols();
   int n_correct_class0 = 0;
   int n_correct_class1 = 0;
-
-  printf("n_test_points = %d\n", n_test_points);
 
   for(int i = 0; i < n_test_points; i++) {
     bool correct =
       ((int)predicted_values.get(0, i)) == ((int)test_data.get(1,i));
-  
     if(correct) {
       if(test_data.get(1,i) == 1) {
 	n_correct_class1++;
@@ -545,11 +642,14 @@ int main(int argc, char* argv[]) {
   int n_correct = n_correct_class1 + n_correct_class0;
 
   // we assume n_test_points is even because we assumed balanced classes
-  fx_result_int(NULL, "class1_accuracy",
+  fx_result_double(NULL, "class1_accuracy",
 		((double)n_correct_class1) / ((double)n_test_points / 2));
-  fx_result_int(NULL, "class0_accuracy",
+  fx_result_double(NULL, "class0_accuracy",
 		((double)n_correct_class0) / ((double)n_test_points / 2));
-
+  fx_result_double(NULL, "total_accuracy",
+		   ((double) n_correct) / ((double) n_test_points));
+		   
+  /*
   printf("n_correct / n_test_points = %d / %d = %f\n",
 	 n_correct, n_test_points,
 	 ((double) n_correct) / ((double) n_test_points));
@@ -561,6 +661,6 @@ int main(int argc, char* argv[]) {
   printf("n_correct_class0 / n_test_points_class_0 = %d / %d = %f\n",
 	 n_correct_class0, n_test_points / 2,
 	 ((double) n_correct_class0) / ((double) n_test_points / 2));
-  
+  */
   fx_done(root);
 }

@@ -9,6 +9,34 @@ void GenerateAndTrainSequences(const char* transition_filename,
 			       ArrayList<Matrix>* p_emission_matrices,
 			       int first_index);
 
+void GetHMMSufficientStats(const Vector &observed_sequence,
+			   int n_states, int n_symbols,
+			   Vector* p_initial_probs_vector,
+			   Matrix* p_transition_matrix,
+			   Matrix* p_emission_matrix,
+			   int max_iter_mmf, int max_rand_iter, double tol_mmf,
+			   int max_iter_bw, double tol_bw);
+
+void ObtainDataLearnHMMs(ArrayList<Vector> *p_initial_probs_vectors,
+			 ArrayList<Matrix> *p_transition_matrices,
+			 ArrayList<Matrix> *p_emission_matrices,
+			 Matrix *p_training_data,
+			 Matrix *p_test_data);
+
+void SaveHMMs(const char* filename,
+	      const ArrayList<Vector> &initial_probs_vectors,
+	      const ArrayList<Matrix> &transition_matrices,
+	      const ArrayList<Matrix> &emission_matrices,
+	      const Matrix &training_data,
+	      const Matrix &test_data);
+
+void LoadHMMs(const char* filename,
+	      ArrayList<Vector> *initial_probs_vectors,
+	      ArrayList<Matrix> *transition_matrices,
+	      ArrayList<Matrix> *emission_matrices,
+	      Matrix *training_data,
+	      Matrix *test_data);
+
 void ComputeStationaryProbabilities(const Matrix &transition_matrix,
 				    Vector* stationary_probabilities);
 
