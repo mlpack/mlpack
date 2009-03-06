@@ -1,0 +1,5 @@
+#!/bin/bash
+
+./hmm_testing --load_data=true --n_symbols=4 --n_sequences_per_class=200 --save_hmms=true --hmms=genes400_hmms.dat --lambda=1 --max_iter_bw=1000
+
+#fx-run gene400 ./hmm_testing --load_hmms=true --hmms=../../../../genes200_hmms.dat --lambda=0,1e-4,1e-3,1e-2,1e-1,1,1e1,1e2,1e3,1e9 --svm/c=1e-4,1e-3,1e-2,1e-1,1,1e1,1e2,1e3,1e4
