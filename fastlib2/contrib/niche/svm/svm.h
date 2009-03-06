@@ -256,16 +256,16 @@ void SVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *mo
   // budget parameter, contorls # of support vectors; default: # of data samples (use all)
   //param_.b_ = fx_param_int(NULL, "b", dataset.n_points());
   // working set selection scheme. default: 1st order expansion
-  param_.wss_ = fx_param_int(NULL, "wss", 1);
+  param_.wss_ = fx_param_int(module, "wss", 1);
 
   // the tradeoff parameter "C", default: 10.0
-  param_.C_ = fx_param_double(NULL, "c", 10.0);
-  param_.Cp_ = fx_param_double(NULL, "c_p", param_.C_);
-  param_.Cn_ = fx_param_double(NULL, "c_n", param_.C_);
+  param_.C_ = fx_param_double(module, "c", 10.0);
+  param_.Cp_ = fx_param_double(module, "c_p", param_.C_);
+  param_.Cn_ = fx_param_double(module, "c_n", param_.C_);
 
   if (learner_typeid == 1) { // for SVM_R only
     // the "epsilon", default: 0.1
-    param_.epsilon_ = fx_param_double(NULL, "epsilon", 0.1);
+    param_.epsilon_ = fx_param_double(module, "epsilon", 0.1);
   }
   else if (learner_typeid == 2) { // SVM_DE
   }
