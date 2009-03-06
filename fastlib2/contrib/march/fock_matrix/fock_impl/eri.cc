@@ -202,12 +202,6 @@ double ComputeShellIntegrals(BasisShell& mu_fun, BasisShell& nu_fun,
 double ComputeShellIntegrals(ShellPair& AB_shell, 
                              ShellPair& CD_shell) {
  
- /*
-  return ComputeShellIntegrals(AB_shell.M_Shell(), AB_shell.N_Shell(), 
-                               CD_shell.M_Shell(), CD_shell.N_Shell());
-                             
-   */
-   
   // GPT factors
   double integral = AB_shell.integral_factor() * CD_shell.integral_factor();
   
@@ -268,7 +262,8 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
       
         shell_pairs->PushBack();
         
-        (*shell_pairs)[num_shell_pairs].Init(i, j, i_shell, j_shell);
+        (*shell_pairs)[num_shell_pairs].Init(i, j, i_shell, j_shell, 
+                                             num_shell_pairs);
         (*shell_pairs)[num_shell_pairs].set_integral_upper_bound(this_bound);
         num_shell_pairs++;
         
@@ -325,7 +320,8 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
         
         shell_pairs->PushBack();
         
-        (*shell_pairs)[num_shell_pairs].Init(i, j, i_shell, j_shell);
+        (*shell_pairs)[num_shell_pairs].Init(i, j, i_shell, j_shell, 
+                                             num_shell_pairs);
         (*shell_pairs)[num_shell_pairs].set_integral_upper_bound(this_bound);
         num_shell_pairs++;
         

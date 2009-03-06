@@ -12,8 +12,9 @@ class ShellPair {
   
   ~ShellPair() {}
   
+  // add list index here
   void Init(index_t M_index, index_t N_index, BasisShell& M_shell, 
-            BasisShell& N_shell);
+            BasisShell& N_shell, index_t list_ind);
             
             
   index_t M_index() {
@@ -63,6 +64,14 @@ class ShellPair {
   double schwartz_factor() {
     return schwartz_factor_;
   }
+  
+  void set_list_index(index_t ind) {
+    list_index_ = ind;
+  }
+  
+  index_t list_index() {
+    return list_index_;
+  }
 
  private:
 
@@ -82,6 +91,9 @@ class ShellPair {
   BasisShell N_shell_;
   
   index_t num_prunes_;
+  
+  // this shell pair's position in the master list of shell_pairs
+  index_t list_index_;
   
   // for the integrals
   double integral_factor_;

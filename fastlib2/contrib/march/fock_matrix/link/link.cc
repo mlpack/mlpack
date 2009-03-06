@@ -26,7 +26,7 @@ void Link::PrescreeningLoop_() {
                                             significant_sigma_for_nu_, 
                                             &num_significant_sigma_for_nu_);
                                             
-  
+  fx_result_int(module_, "num_shell_pairs", num_shell_pairs_);
   
   
   //// Find significant \nu for all \mu
@@ -122,6 +122,14 @@ void Link::ComputeExchangeMatrix() {
     index_t mu_ind = mu_lambda.M_index();
     
     index_t lambda_ind = mu_lambda.N_index();
+    
+    index_t num_mu_integrals = 0;
+    index_t num_lambda_integrals = 0;
+    ArrayList<index_t> mu_integrals;
+    ArrayList<index_t> lambda_integrals;
+    
+    mu_integrals.Init();
+    lambda_integrals.Init();
   
     // loop over nu corresponding to mu
     // what is num_nu? 
@@ -137,41 +145,34 @@ void Link::ComputeExchangeMatrix() {
     
       index_t num_sigma = num_significant_sigma_for_nu_[nu_ind];
 
-      for (index_t sigma_ind = 0; sigma_ind < num_sigma; sigma_ind++) {
+      for (index_t sorted_sigma_ind = 0; sorted_sigma_ind < num_sigma; 
+           sorted_sigma_ind++) {
       
-        ShellPair* nu_sigma = significant_sigma_for_nu_[nu_ind][sigma_ind];
+        ShellPair* nu_sigma = significant_sigma_for_nu_[nu_ind][sorted_sigma_ind];
+        
+        index_t sigma_ind = nu_sigma->N_index();
         
         if (abs(density_matrix_.ref(mu_ind, nu_ind)) * mu_lambda.schwartz_factor() * 
             nu_sigma->schwartz_factor() > threshold_) {
       
           // store or compute the eri
+          // need to change this to storing it so I can merge the lists later
+          // create a list of index_t, list[i] = j, where shell_pairs_[j] has
+          // significant integrals relative to mu_lambda
+          // this list will need to be sorted, then I can use std::set_union
           
-          double integral = eri::ComputeShellIntegrals(mu_lambda, *nu_sigma);
-          // contract with mu, nu; mu, sigma; lambda, nu; lambda, sigma
-          // sum into lambda, sigma; lambda, nu; mu, sigma; mu, nu
-          
-          double mu_nu_int = density_matrix_.ref(mu_ind, nu_ind) * integral;
-          double mu_sigma_int = density_matrix_.ref(mu_ind, sigma_ind) * integral;
-          double lambda_nu_int = density_matrix_.ref(lambda_ind, nu_ind) * integral;
-          double lambda_sigma_int = density_matrix_.ref(lambda_ind, sigma_ind) * integral;
-          
-          double mu_nu_exc = exchange_matrix_.ref(mu_ind, nu_ind);
-          double mu_sigma_exc = exchange_matrix_.ref(mu_ind, sigma_ind);
-          double lambda_nu_exc = exchange_matrix_.ref(lambda_ind, nu_ind);
-          double lambda_sigma_exc = exchange_matrix_.ref(lambda_ind, sigma_ind);
-          
-          exchange_matrix_.set(mu_ind, nu_ind, mu_nu_exc + lambda_sigma_int);
-          exchange_matrix_.set(mu_ind, sigma_ind, mu_sigma_exc + lambda_nu_int);
-          exchange_matrix_.set(lambda_ind, nu_ind, 
-                               lambda_nu_exc + mu_sigma_int);
-          exchange_matrix_.set(lambda_ind, sigma_ind, 
-                               lambda_sigma_exc + mu_nu_int);
+          // how am I going to get the index of nu_sigma in the list of shell 
+          // pairs?  
+          mu_integrals.PushBack();
+          mu_integrals[num_mu_integrals] = nu_sigma->list_index();
+          num_mu_integrals++;
           
           significant_sigmas++;
           
         }
         // leave sigma loop, since it is sorted
         else {
+          //printf("left sigma loop\n");
           break;
         }
         
@@ -179,6 +180,7 @@ void Link::ComputeExchangeMatrix() {
       
       // exit loop if this nu has no sigmas that count
       if (significant_sigmas == 0) {
+        //printf("left nu loop\n");
         break;
       }
     
@@ -204,41 +206,27 @@ void Link::ComputeExchangeMatrix() {
         
         index_t num_sigma = num_significant_sigma_for_nu_[nu_ind];
         
-        for (index_t sigma_ind = 0; sigma_ind < num_sigma; sigma_ind++) {
+        for (index_t sorted_sigma_ind = 0; sorted_sigma_ind < num_sigma; 
+             sorted_sigma_ind++) {
           
-          ShellPair* nu_sigma = significant_sigma_for_nu_[nu_ind][sigma_ind];
+          ShellPair* nu_sigma = significant_sigma_for_nu_[nu_ind][sorted_sigma_ind];
+          
+          index_t sigma_ind = nu_sigma->N_index();
           
           if (abs(density_matrix_.ref(mu_ind, nu_ind)) * mu_lambda.schwartz_factor() * 
               nu_sigma->schwartz_factor() > threshold_) {
             
-            // store or compute the eri
-            double integral = eri::ComputeShellIntegrals(mu_lambda, *nu_sigma);
-            // contract with mu, nu; mu, sigma; lambda, nu; lambda, sigma
-            // sum into lambda, sigma; lambda, nu; mu, sigma; mu, nu
-            
-            double mu_nu_int = density_matrix_.ref(mu_ind, nu_ind) * integral;
-            double mu_sigma_int = density_matrix_.ref(mu_ind, sigma_ind) * integral;
-            double lambda_nu_int = density_matrix_.ref(lambda_ind, nu_ind) * integral;
-            double lambda_sigma_int = density_matrix_.ref(lambda_ind, sigma_ind) * integral;
-            
-            double mu_nu_exc = exchange_matrix_.ref(mu_ind, nu_ind);
-            double mu_sigma_exc = exchange_matrix_.ref(mu_ind, sigma_ind);
-            double lambda_nu_exc = exchange_matrix_.ref(lambda_ind, nu_ind);
-            double lambda_sigma_exc = exchange_matrix_.ref(lambda_ind, sigma_ind);
-            
-            exchange_matrix_.set(mu_ind, nu_ind, mu_nu_exc + lambda_sigma_int);
-            exchange_matrix_.set(mu_ind, sigma_ind, mu_sigma_exc + lambda_nu_int);
-            exchange_matrix_.set(lambda_ind, nu_ind, 
-                                 lambda_nu_exc + mu_sigma_int);
-            exchange_matrix_.set(lambda_ind, sigma_ind, 
-                                 lambda_sigma_exc + mu_nu_int);
-
-            
+            lambda_integrals.PushBack();
+            //printf("list_index: %d\n", nu_sigma->list_index());
+            lambda_integrals[num_lambda_integrals] = nu_sigma->list_index();
+            num_lambda_integrals++;
+                        
             significant_sigmas++;
             
           }
           // leave sigma loop, since it is sorted
           else {
+            //printf("left sigma loop\n");
             break;
           }
           
@@ -246,17 +234,80 @@ void Link::ComputeExchangeMatrix() {
         
         // exit loop if this nu has no sigmas that count
         if (significant_sigmas == 0) {
+          //printf("left nu loop\n");
           break;
         }
         
       } // for nu_ind
     
     } // if lambda != mu
+    else {
+      // make the list non-void for the union step below
+      lambda_integrals.PushBack();
+      lambda_integrals[num_lambda_integrals] = mu_integrals[0];
+      num_lambda_integrals++;
+    }
 
 
     // compute significant integrals
     // may just do this inside loop
 
+    // sort before calling union
+    std::sort(mu_integrals.begin(), mu_integrals.begin()+num_mu_integrals);
+    std::sort(lambda_integrals.begin(), 
+              lambda_integrals.begin() + num_lambda_integrals);
+
+    index_t* end_integrals;
+    ArrayList<index_t> integral_list;
+    integral_list.Init(num_shell_pairs_);
+    
+    end_integrals = std::set_union(mu_integrals.begin(), 
+                                   mu_integrals.begin()+num_mu_integrals, 
+                                   lambda_integrals.begin(), 
+                                   lambda_integrals.begin() + num_lambda_integrals, 
+                                   integral_list.begin());
+                                   
+    index_t num_integrals = end_integrals - integral_list.begin();
+    
+    // compute the integrals
+    
+    for (index_t int_ind = 0; int_ind < num_integrals; int_ind++) {
+    
+      ShellPair nu_sigma = shell_pair_list_[integral_list[int_ind]];
+      
+      index_t nu_ind = nu_sigma.M_index();
+      index_t sigma_ind = nu_sigma.N_index();
+      
+      double integral = eri::ComputeShellIntegrals(mu_lambda, nu_sigma);
+      // contract with mu, nu; mu, sigma; lambda, nu; lambda, sigma
+      // sum into lambda, sigma; lambda, nu; mu, sigma; mu, nu
+      
+      double mu_nu_int = density_matrix_.ref(mu_ind, nu_ind) * integral;
+      double mu_sigma_int = density_matrix_.ref(mu_ind, sigma_ind) * integral;
+      double lambda_nu_int = density_matrix_.ref(lambda_ind, nu_ind) * integral;
+      double lambda_sigma_int = density_matrix_.ref(lambda_ind, sigma_ind) * integral;
+      
+      double mu_nu_exc = exchange_matrix_.ref(mu_ind, nu_ind);
+      double mu_sigma_exc = exchange_matrix_.ref(mu_ind, sigma_ind);
+      double lambda_nu_exc = exchange_matrix_.ref(lambda_ind, nu_ind);
+      double lambda_sigma_exc = exchange_matrix_.ref(lambda_ind, sigma_ind);
+      
+      exchange_matrix_.set(mu_ind, nu_ind, mu_nu_exc + lambda_sigma_int);
+      if (sigma_ind != nu_ind) {
+        exchange_matrix_.set(mu_ind, sigma_ind, 
+                             mu_sigma_exc + lambda_nu_int);
+      }
+      if (lambda_ind != mu_ind){
+        exchange_matrix_.set(lambda_ind, nu_ind, 
+                             lambda_nu_exc + mu_sigma_int);
+      }
+      if ((lambda_ind != mu_ind) && (nu_ind != sigma_ind)) {
+        exchange_matrix_.set(lambda_ind, sigma_ind, 
+                             lambda_sigma_exc + mu_nu_int);
+      }
+      
+    
+    } // for int_ind
 
   } // for bra shell pairs
 
