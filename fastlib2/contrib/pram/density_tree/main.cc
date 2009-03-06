@@ -1,5 +1,6 @@
 /**
  * @file main.cc
+ * @ Parikshit Ram (pram@cc.gatech.edu)
  *
  */
 
@@ -19,6 +20,8 @@ const fx_entry_doc dtree_main_entries[] = {
    " Training time for obtaining the optimal tree.\n"},
   {"test_time", FX_TIMER, FX_CUSTOM, NULL,
    " Testing time for the optimal decision tree.\n"},
+  {"print_tree", FX_PARAM, FX_BOOL, NULL,
+   " Whether to print the tree or not.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -126,11 +129,11 @@ int main(int argc, char *argv[]){
  				      -1.0 * dtree->subtree_leaves_error());
   pruned_sequence.push_back(tree_seq);
 
-  printf("%"LI"d trees in the sequence, max_alpha:%lg.\n",
+  NOTIFY("%"LI"d trees in the sequence, max_alpha:%lg.\n",
 	 (index_t) pruned_sequence.size(), old_alpha);
 
 
-  // cross-validation here which I will do later
+  // cross-validation here
   index_t folds = fx_param_int(root, "folds", 10);
   NOTIFY("Starting %"LI"d-fold Cross validation", folds);
 
@@ -274,20 +277,23 @@ int main(int argc, char *argv[]){
   // Pruning with optimal alpha
   NOTIFY("%"LI"d leaf nodes in this tree", dtree_opt->subtree_leaves());
 
-//   dtree_opt->WriteTree(0);
-//   printf("\n");fflush(NULL);
-  // computing densities for the train points in the
-  // optimal tree
+  if (fx_param_bool(root, "print_tree", false)) {
+    dtree_opt->WriteTree(0);
+    printf("\n");fflush(NULL);
+  }
+//   // computing densities for the train points in the
+//   // optimal tree
 
-  // starting the test timer
+//   // starting the test timer
   fx_timer_start(root, "test_time");
-  for (index_t i = 0; i < dataset.n_cols(); i++) {
-    Vector test_p;
-    dataset.MakeColumnVector(i, &test_p);
-    double f = dtree_opt->ComputeValue(test_p);
-//     printf("%lg ", f);
-  } // end for
-  printf("\n");fflush(NULL);
+//   for (index_t i = 0; i < dataset.n_cols(); i++) {
+//     Vector test_p;
+//     dataset.MakeColumnVector(i, &test_p);
+//     double f = dtree_opt->ComputeValue(test_p);
+//     printf("%lg\n", f);
+//   } // end for
+//   //  printf("\n");
+//   fflush(NULL);
   fx_timer_stop(root, "test_time");
 
 //   // outputting the optimal tree

@@ -1,5 +1,6 @@
  /**
  * @file dtree.h
+ * @author Parikshit Ram (pram@cc.gatech.edu)
  *
  * Density Tree class
  *
@@ -15,19 +16,16 @@
 #define MIN_LEAF_SIZE 1
 
 class DTree{
+  k;
  
-
-  /////////////////// Nested Classes /////////////////////////////////////////
-
-
   ////////////////////// Member Variables /////////////////////////////////////
   
- private:
+private:
   // The indices in the complete set of points
   // (after all forms of swapping in the 
   // old_from_new array)
   int start_, stop_;
-
+  
   // The split dim
   index_t split_dim_;
 
@@ -65,7 +63,7 @@ class DTree{
   
   FORBID_ACCIDENTAL_COPIES(DTree);
 
- public: 
+public: 
 
   DTree() {
     left_ = NULL;
@@ -121,7 +119,7 @@ class DTree{
     return error;
   }
 
-  void FindSplit_(Matrix& data, index_t total_n,
+  bool FindSplit_(Matrix& data, index_t total_n,
 		  index_t *split_dim, index_t *split_ind,
 		  double *left_error, double *right_error) {
 
@@ -131,15 +129,11 @@ class DTree{
     index_t n_t = data.n_cols();
     double min_error = error_;
     bool some_split_found = false;
+    index_t nsd = 0;
+
 
     // loop through each dimension
     for (index_t dim = 0; dim < max_vals_.size(); dim++) {
-      // initializing all the stuff for this dimension
-      bool dim_split_found = false;
-      double min_dim_error = min_error,
-	temp_lval = 0.0, temp_rval = 0.0;
-      index_t dim_split_ind = -1, ind = 0;
-
       // have to deal with REAL, INTEGER, NOMINAL data
       // differently so have to think of how to do that.
       // Till them experiment with comparisons with kde
@@ -149,91 +143,98 @@ class DTree{
 
 //       } else {
       double min = min_vals_[dim], max = max_vals_[dim];
-//       NOTIFY("%lg - %lg", min, max);
-      double range = 1.0;
-      for (index_t i = 0; i < max_vals_.size(); i++) {
-// 	if (dim_type_[i] == REAL) {
-	if (max_vals_[i] -min_vals_[i] > 0.0 && i != dim) {
-	  range *= max_vals_[i] - min_vals_[i];
+
+      // checking if there is any scope of splitting in this dim
+      if (max - min > 0.0) {
+	// initializing all the stuff for this dimension
+	bool dim_split_found = false;
+	double min_dim_error = min_error,
+	  temp_lval = 0.0, temp_rval = 0.0;
+	index_t dim_split_ind = -1, ind = 0;
+
+	double range = 1.0;
+	for (index_t i = 0; i < max_vals_.size(); i++) {
+	  // 	if (dim_type_[i] == REAL) {
+	  if (max_vals_[i] -min_vals_[i] > 0.0 && i != dim) {
+	    range *= max_vals_[i] - min_vals_[i];
+	  }
+	  // 	}
 	}
-// 	}
-      }
-//        double k1 = -1.0 / (50000.0 * 50000.0 *20.0);
-//        double k2 = -1.0 / (10000 * 10000 * 20);
-//       double k = -1.0 / ((double)total_n * (double)total_n * range);
-//       DEBUG_ASSERT_MSG(-1.0*k < DBL_MAX, "k:%lg", k);
-//       NOTIFY("k = %lg, N=%"LI"d %lg %lg %lg", k, total_n, range, k1, k2);
 
-      // get the values for the dimension
-      std::vector<double> dim_val_vec;
-      for (index_t i = 0; i < n_t; i++) {
-	dim_val_vec.push_back (data.get(dim, i));
-      }
-      // sort the values in ascending order
-      std::sort(dim_val_vec.begin(), dim_val_vec.end());
+	// get the values for the dimension
+	std::vector<double> dim_val_vec;
+	for (index_t i = 0; i < n_t; i++) {
+	  dim_val_vec.push_back (data.get(dim, i));
+	}
+	// sort the values in ascending order
+	std::sort(dim_val_vec.begin(), dim_val_vec.end());
 
-      // get ready to go through the sorted list and compute error
+	// get ready to go through the sorted list and compute error
 
-      // enforcing the leaves to have a minimum of MIN_LEAF_SIZE 
-      // number of points to avoid spikes
-      for (std::vector<double>::iterator it = dim_val_vec.begin();
-	   it < dim_val_vec.end() -1; it++, ind++) {
-	double split;
-// 	if (dim_type_[dim] == REAL) {
+	// enforcing the leaves to have a minimum of MIN_LEAF_SIZE 
+	// number of points to avoid spikes
+	for (std::vector<double>::iterator it = dim_val_vec.begin();
+	     it < dim_val_vec.end() -1; it++, ind++) {
+	  double split;
+	  // 	if (dim_type_[dim] == REAL) {
 	  split = (*it + *(it+1))/2;
-// 	} else {
-// 	  split = *it;
-// 	}
-	if (split - min > 0.0 && max - split > 0.0) {
-// 	  printf(".");
-	  double temp_l = -1.0 * ((double)(ind+1)/(double)total_n)
-	    * ((double)(ind+1)/(double)total_n)
-	    / (range * (split - min));
-	  DEBUG_ASSERT(-1.0*temp_l < DBL_MAX);
-	  double temp_r = -1.0 * ((double)(n_t - ind-1)/(double)total_n)
-	    * ((double)(n_t - ind-1)/(double)total_n)
-	    / (range * (max - split));
-	  DEBUG_ASSERT(-1.0*temp_r < DBL_MAX);
-// 	  NOTIFY("%lg %lg  %lg %lg", temp_l + temp_r, temp_l, temp_r, split);
-// 	  exit(1);
-	  if (temp_l + temp_r <= min_dim_error) {
-// 	    printf(".");
-	    min_dim_error = temp_l + temp_r;
-	    temp_lval = temp_l;
-	    temp_rval = temp_r;
-	    dim_split_ind = ind;
-	    dim_split_found = true;
+	  // 	} else {
+	  // 	  split = *it;
+	  // 	}
+	  if (split - min > 0.0 && max - split > 0.0) {
+	    double temp_l = -1.0 * ((double)(ind+1)/(double)total_n)
+	      * ((double)(ind+1)/(double)total_n)
+	      / (range * (split - min));
+	    DEBUG_ASSERT(-1.0*temp_l < DBL_MAX);
+	    double temp_r = -1.0 * ((double)(n_t - ind-1)/(double)total_n)
+	      * ((double)(n_t - ind-1)/(double)total_n)
+	      / (range * (max - split));
+	    DEBUG_ASSERT(-1.0*temp_r < DBL_MAX);
+
+	    if (temp_l + temp_r <= min_dim_error) {
+	      //	      printf(".");
+	      min_dim_error = temp_l + temp_r;
+	      temp_lval = temp_l;
+	      temp_rval = temp_r;
+	      dim_split_ind = ind;
+	      dim_split_found = true;
+	    } // end if
 	  } // end if
+	} // end for
+
+	dim_val_vec.clear();
+
+
+	if ((min_dim_error <= min_error) && dim_split_found) {
+	  min_error = min_dim_error;
+	  *split_dim = dim;
+	  *split_ind = dim_split_ind;
+	  *left_error = temp_lval;
+	  *right_error = temp_rval;
+	  some_split_found = true;
 	} // end if
-      } // end for
-
-      dim_val_vec.clear();
-
-
-      if ((min_dim_error <= min_error) && dim_split_found) {
-	min_error = min_dim_error;
-	*split_dim = dim;
-	*split_ind = dim_split_ind;
-	*left_error = temp_lval;
-	*right_error = temp_rval;
-	some_split_found = true;
+      } else {
+	nsd++;
       } // end if
-
     } // end for
 
     // This might occur when you have many instances of the
     // same point in the dataset. Have to figure out a way to
     // deal with it
+    DEBUG_ASSERT(nsd != max_vals_.size());
+
+    return some_split_found;
     DEBUG_ASSERT_MSG(some_split_found,
 		     "Weird - no split found"
-		     " %"LI"d points, %"LI"d %lg\n",
-		     data.n_cols(), total_n, min_error);
+		     " %"LI"d points, %"LI"d %lg %"LI"d\n",
+		     data.n_cols(), total_n, min_error, nsd);
   } // end FindSplit_
 
   void SplitData_(Matrix& data, index_t split_dim, index_t split_ind,
 		  Matrix *data_l, Matrix *data_r, 
 		  ArrayList<index_t> *old_from_new, 
-		  double *split_val) {
+		  double *split_val,
+		  double *lsplit_val, double *rsplit_val) {
 
     // get the values for the split dim
     std::vector<double> dim_val_vec;
@@ -244,8 +245,9 @@ class DTree{
     // sort the values
     std::sort(dim_val_vec.begin(), dim_val_vec.end());
 
-    *split_val = (*(dim_val_vec.begin()+split_ind)
-      +  *(dim_val_vec.begin()+split_ind+1)) / 2;
+    *lsplit_val =  *(dim_val_vec.begin()+split_ind);
+    *rsplit_val =  *(dim_val_vec.begin() + split_ind + 1);
+    *split_val = (*lsplit_val + *rsplit_val) / 2 ;
 
     index_t i = split_ind, j = split_ind + 1;
     while ( i > -1 && j < data.n_cols()) {
@@ -279,6 +281,27 @@ class DTree{
     data.MakeColumnSlice(split_ind+1, data.n_cols()-split_ind-1, data_r);
 
   } // end SplitData_
+
+  void GetMaxMinVals_(Matrix& data, ArrayList<double> *max_vals,
+		      ArrayList<double> *min_vals) {
+    max_vals->Init(data.n_rows());
+    min_vals->Init(data.n_rows());
+    Matrix temp_d;
+    la::TransposeInit(data, &temp_d);
+    for (index_t i = 0; i < temp_d.n_cols(); i++) {
+      // if (dim_type[i] != NOMINAL) {
+      Vector dim_vals;
+      temp_d.MakeColumnVector(i, &dim_vals);
+      std::vector<double> dim_vals_vec(dim_vals.ptr(),
+				       dim_vals.ptr() + temp_d.n_rows());
+
+      sort(dim_vals_vec.begin(), dim_vals_vec.end());
+      (*min_vals)[i] = *(dim_vals_vec.begin());
+      (*max_vals)[i] = *(dim_vals_vec.end() -1);
+      // }
+    }
+
+  } // end GetMaxMinVals_
 
   ///////////////////// Public Functions //////////////////////////////////////
  public:
@@ -332,19 +355,21 @@ class DTree{
       // find the split
       index_t dim, split_ind;
       double left_error, right_error;
-      FindSplit_(data, old_from_new->size(),
-		 &dim, &split_ind,
-		 &left_error, &right_error);
+      if (FindSplit_(data, old_from_new->size(),
+		     &dim, &split_ind,
+		     &left_error, &right_error)) {
 
       // Split the data for the children
       Matrix data_l, data_r;
-      double split_val;
+      double split_val, lsplit_val, rsplit_val;
       SplitData_(data, dim, split_ind,
-		 &data_l, &data_r, old_from_new, &split_val);
+		 &data_l, &data_r, old_from_new, &split_val,
+		 &lsplit_val, &rsplit_val);
 
       // make max and min vals for the children
       ArrayList<double> max_vals_l, max_vals_r;
       ArrayList<double> min_vals_l, min_vals_r;
+
       max_vals_l.InitCopy(max_vals_);
       max_vals_r.InitCopy(max_vals_);
       min_vals_l.InitCopy(min_vals_);
@@ -388,6 +413,11 @@ class DTree{
 	  subtree_leaves_error_ = error_;
 	} // end if
       } // end if
+      } else {
+	// no split found so make a leaf out of it
+	subtree_leaves_ = 1;
+	subtree_leaves_error_ = error_;
+      } // end if-else
     } else {
       // This is a leaf node, do something here, probably compute
       // density here or something
