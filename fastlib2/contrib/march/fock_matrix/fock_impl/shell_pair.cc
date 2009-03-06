@@ -1,7 +1,7 @@
 #include "shell_pair.h"
 
 void ShellPair::Init(index_t M_index, index_t N_index, BasisShell& M_shell, 
-                BasisShell& N_shell) {
+                BasisShell& N_shell, index_t list_ind) {
 
   DEBUG_ASSERT(M_index <= N_index);
   M_index_ = M_index;
@@ -21,5 +21,7 @@ void ShellPair::Init(index_t M_index, index_t N_index, BasisShell& M_shell,
                                             N_shell_.exp(), N_shell_.center());
                                             
   schwartz_factor_ = eri::SchwartzBound(M_shell_, N_shell_);
+  
+  list_index_ = list_ind;
 
 }
