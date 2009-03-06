@@ -26,8 +26,6 @@ class MultiTreeDepthFirst {
   
   typedef GeneralBinarySpaceTree<DHrectBound<2>, Matrix, typename MultiTreeProblem::MultiTreeQueryStat > HybridTree;
 
- private:
-
   ArrayList<Matrix *> targets_;
 
   ArrayList<Matrix *> sets_;
@@ -47,6 +45,8 @@ class MultiTreeDepthFirst {
   Vector total_n_minus_one_tuples_;
 
   double total_n_minus_one_tuples_root_;
+
+ private:
 
   template<int start, int end>
   class MultiTreeHelper_ {
