@@ -574,116 +574,117 @@ int main(int argc, char* argv[]) {
 
 
 
+
   
-  // Compute Kernel Matrix
+  
+  
+  // Compute or Load Kernel Matrix
+
   Matrix kernel_matrix;
-  printf("Computing kernel matrix...\n");
-  fx_timer_start(NULL, "computing_kernel_all_pairs");
-  ComputeKernelAllPairs(2 * n_sequences_per_class,
-			initial_probs_vectors, transition_matrices,
-			emission_matrices,
-			&kernel_matrix);
-  fx_timer_stop(NULL, "computing_kernel_all_pairs");
 
-  Vector sqrt_diag;
-  sqrt_diag.Init(n_sequences);
-  for(int i = 0; i < n_sequences; i++) {
-    sqrt_diag[i] = sqrt(kernel_matrix.get(i, i));
+  char kernel_matrix_filename[100];
+  double lambda = fx_param_double(NULL, "lambda", 0.3);
+  sprintf(kernel_matrix_filename, "../kernel_matrix_%f.csv", lambda);
+
+  struct stat stFileInfo;
+  if(stat(kernel_matrix_filename, &stFileInfo) == 0) {
+    printf("Loading kernel matrix...\n");
+    data::Load(kernel_matrix_filename, &kernel_matrix);
   }
-  for(int i = 0; i < n_sequences; i++) {
-    for(int j = 0; j < n_sequences; j++) {
-      kernel_matrix.set(j, i,
-			kernel_matrix.get(j, i) /
-			(sqrt_diag[i] * sqrt_diag[j]));
+  else {
+    printf("Computing kernel matrix...\n");
+    fx_timer_start(NULL, "computing_kernel_all_pairs");
+    ComputeKernelAllPairs(2 * n_sequences_per_class,
+			  initial_probs_vectors, transition_matrices,
+			  emission_matrices,
+			  &kernel_matrix);
+    fx_timer_stop(NULL, "computing_kernel_all_pairs");
+    
+    Vector sqrt_diag;
+    sqrt_diag.Init(n_sequences);
+    for(int i = 0; i < n_sequences; i++) {
+      sqrt_diag[i] = sqrt(kernel_matrix.get(i, i));
     }
-  }
-  //kernel_matrix.PrintDebug("kernel matrix");
-  //data::Save("kernel_matrix.csv", kernel_matrix);
-
-
-  int n_c_params = 10;
-  double c_params[n_c_params];
-  for(int i = 0; i < n_c_params; i++) {
-    c_params[i] = pow10(i - 5);
-  }
-
-  char svm_module_name[100];
-
-  for(int c_param_num = 0; c_param_num < n_c_params; c_param_num++) {
-    double c_param = c_params[c_param_num];
-
-    Dataset training_set;
-    training_set.CopyMatrix(training_data);
-    
-    // Begin SVM Training | Training and Testing
-    sprintf(svm_module_name, "svm_C_%f", c_param);
-    datanode *svm_module = fx_submodule(fx_root, svm_module_name);
-
-    fx_set_param_double(svm_module, "c", c_param);
-
-    
-    SVM<SVMRBFKernel> svm; // this should be changed from SVMRBFKernel to something like SVMMMKKernel
-    int learner_typeid = 0; // for svm_c
-    
-    printf("SVM Training... \n");
-    svm.InitTrain(learner_typeid, training_set, svm_module, kernel_matrix);
-    
-    
-    Dataset test_set;
-    test_set.CopyMatrix(test_data);
-    printf("test data dims = (%d, %d)\n", 
-	   test_data.n_cols(), test_data.n_rows());
-    
-    printf("SVM Predicting... \n");
-    svm.BatchPredict(learner_typeid, test_set, "predicted_values"); // TODO:param_req
-    
-    
-    
-    // Emit results
-    
-    Matrix predicted_values;
-    data::Load("predicted_values", &predicted_values);
-    
-    int n_test_points = predicted_values.n_cols();
-    int n_correct_class0 = 0;
-    int n_correct_class1 = 0;
-    
-    for(int i = 0; i < n_test_points; i++) {
-      bool correct =
-	((int)predicted_values.get(0, i)) == ((int)test_data.get(1,i));
-      if(correct) {
-	if(test_data.get(1,i) == 1) {
-	  n_correct_class1++;
-	}
-	else {
-	  n_correct_class0++;
-	}
+    for(int i = 0; i < n_sequences; i++) {
+      for(int j = 0; j < n_sequences; j++) {
+	kernel_matrix.set(j, i,
+			  kernel_matrix.get(j, i) /
+			  (sqrt_diag[i] * sqrt_diag[j]));
       }
     }
-    
-    int n_correct = n_correct_class1 + n_correct_class0;
-
-    // we assume n_test_points is even because we assumed balanced classes
-    fx_result_double(svm_module, "class1_accuracy",
-		     ((double)n_correct_class1) / ((double)n_test_points / 2));
-    fx_result_double(svm_module, "class0_accuracy",
-		     ((double)n_correct_class0) / ((double)n_test_points / 2));
-    fx_result_double(svm_module, "total_accuracy",
-		     ((double) n_correct) / ((double) n_test_points));
-    
-    /*
-      printf("n_correct / n_test_points = %d / %d = %f\n",
-      n_correct, n_test_points,
-      ((double) n_correct) / ((double) n_test_points));
-      
-      printf("n_correct_class1 / n_test_points_class_1 = %d / %d = %f\n",
-      n_correct_class1, n_test_points / 2,
-      ((double) n_correct_class1) / ((double) n_test_points / 2));
-      
-      printf("n_correct_class0 / n_test_points_class_0 = %d / %d = %f\n",
-      n_correct_class0, n_test_points / 2,
-      ((double) n_correct_class0) / ((double) n_test_points / 2));
-    */
+    //kernel_matrix.PrintDebug("kernel matrix");
+    data::Save(kernel_matrix_filename, kernel_matrix);
   }
+
+  
+  Dataset training_set;
+  training_set.CopyMatrix(training_data);
+  
+  // Begin SVM Training | Training and Testing
+  datanode *svm_module = fx_submodule(fx_root, "svm");
+
+  SVM<SVMRBFKernel> svm; // this should be changed from SVMRBFKernel to something like SVMMMKKernel
+  int learner_typeid = 0; // for svm_c
+  
+  printf("SVM Training... \n");
+  svm.InitTrain(learner_typeid, training_set, svm_module, kernel_matrix);
+  
+    
+  Dataset test_set;
+  test_set.CopyMatrix(test_data);
+  printf("test data dims = (%d, %d)\n", 
+	 test_data.n_cols(), test_data.n_rows());
+  
+  printf("SVM Predicting... \n");
+  svm.BatchPredict(learner_typeid, test_set, "predicted_values"); // TODO:param_req
+  
+    
+    
+  // Emit results
+  
+  Matrix predicted_values;
+  data::Load("predicted_values", &predicted_values);
+  
+  int n_test_points = predicted_values.n_cols();
+  int n_correct_class0 = 0;
+  int n_correct_class1 = 0;
+  
+  for(int i = 0; i < n_test_points; i++) {
+    bool correct =
+      ((int)predicted_values.get(0, i)) == ((int)test_data.get(1,i));
+    if(correct) {
+      if(test_data.get(1,i) == 1) {
+	n_correct_class1++;
+      }
+      else {
+	n_correct_class0++;
+      }
+    }
+  }
+  
+  int n_correct = n_correct_class1 + n_correct_class0;
+  
+  // we assume n_test_points is even because we assumed balanced classes
+  fx_result_double(svm_module, "class1_accuracy",
+		   ((double)n_correct_class1) / ((double)n_test_points / 2));
+  fx_result_double(svm_module, "class0_accuracy",
+		   ((double)n_correct_class0) / ((double)n_test_points / 2));
+  fx_result_double(svm_module, "total_accuracy",
+		   ((double) n_correct) / ((double) n_test_points));
+  
+  /*
+    printf("n_correct / n_test_points = %d / %d = %f\n",
+    n_correct, n_test_points,
+    ((double) n_correct) / ((double) n_test_points));
+    
+    printf("n_correct_class1 / n_test_points_class_1 = %d / %d = %f\n",
+    n_correct_class1, n_test_points / 2,
+    ((double) n_correct_class1) / ((double) n_test_points / 2));
+    
+    printf("n_correct_class0 / n_test_points_class_0 = %d / %d = %f\n",
+    n_correct_class0, n_test_points / 2,
+    ((double) n_correct_class0) / ((double) n_test_points / 2));
+  */
+
   fx_done(root);
 }
