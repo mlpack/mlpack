@@ -3,4 +3,4 @@ librule(name="mvu",
     deplibs=["fastlib:fastlib", "mlpack/allknn:allknn", "mlpack/allkfn:allkfn"] )
 binrule(name="ncmvu",
 		sources=["main.cc"],
-		deplibs=["fastlib:fastlib", ":mvu", "mlpack/optimization/lbfgs:lbfgs"])
+		deplibs=["fastlib:fastlib", ":mvu", "fastlib/optimization/lbfgs:lbfgs"])
