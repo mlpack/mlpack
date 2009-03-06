@@ -75,4 +75,5 @@ int main(int argc, char *argv[]) {
   StaticOptppOptimizerTest test(fx_root);
   test.TestAll();
   fx_done(fx_root);
+  return 0;
 }
