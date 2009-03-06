@@ -36,10 +36,14 @@ class MultiTreeQueryResult {
  public:
 
   void MaximumRelativeError(const MultiTreeQueryResult &other_results,
+			    double required_relative_error,
 			    double *max_relative_error,
 			    double *negative_max_relative_error,
 			    double *positive_max_relative_error) {
 
+    int num_over_relative_error = 0;
+
+    double max_absolute_error = 0;
     *max_relative_error = 0;
     *negative_max_relative_error = 0;
     *positive_max_relative_error = 0;
@@ -67,7 +71,17 @@ class MultiTreeQueryResult {
 					      negative_relative_error);
       *positive_max_relative_error = std::max(*positive_max_relative_error,
 					      positive_relative_error);
+
+      if(relative_error > required_relative_error) {
+	num_over_relative_error++;
+      }
+      max_absolute_error = std::max(max_absolute_error,
+				    fabs(final_results[i] - 
+					 other_results.final_results[i]));
     }
+    NOTIFY("%d particles violated the relative error...", 
+	   num_over_relative_error);
+    NOTIFY("The maximum absolute error was %g...", max_absolute_error);
   }
 
   template<typename Tree>

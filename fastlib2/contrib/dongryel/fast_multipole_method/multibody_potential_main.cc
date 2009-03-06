@@ -43,9 +43,9 @@ class MultibodyPotentialComputer {
     naive_results.PrintDebug("naive_potentials.txt");
     double max_relative_error, positive_max_relative_error,
       negative_max_relative_error;
-    naive_results.MaximumRelativeError(results, &max_relative_error,
-				       &negative_max_relative_error,
-				       &positive_max_relative_error);
+    naive_results.MaximumRelativeError
+      (results, algorithm.globals_.relative_error, &max_relative_error, 
+       &negative_max_relative_error, &positive_max_relative_error);
     printf("Maximum relative error: %g\n", max_relative_error);
     printf("Positive max relative error: %g\n", positive_max_relative_error);
     printf("Negative max relative error: %g\n", negative_max_relative_error);
