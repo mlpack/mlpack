@@ -19,7 +19,7 @@
 #include <string>
 #include "fastlib/fastlib.h"
 #include "mvu_objectives.h"
-#include "mlpack/optimization/lbfgs/lbfgs.h"
+#include "fastlib/optimization/lbfgs/lbfgs.h"
 /**
  * @author Nikolaos Vasiloglou (nvasil@ieee.org)
  * @file main.cc
