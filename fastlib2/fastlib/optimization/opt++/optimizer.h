@@ -310,7 +310,6 @@ class OptimizationTrait<OPTPP::OptQNewton> {
  * @brief trait specialization for the Newton
  *
  */
-/
 // Newton  with analytic expression for the Hessian
 template<>
 class OptimizationTrait<OPTPP::OptNewton> {
