@@ -152,107 +152,166 @@ class MeanMapKernel {
     MeanMapKernel mmk;
     mmk.Init(lambda_);
 
+    bool slow_computation = false;
+    bool fast_computation = true;
+
+    if(slow_computation == true) {
     
-    int n1 = hmm_a.n_states();
-    int n2 = hmm_b.n_states();
+      int n1 = hmm_a.n_states();
+      int n2 = hmm_b.n_states();
     
 
 
-    Matrix phi;
-    phi.Init(n1, n2);
-    for(int i1 = 0; i1 < n1; i1++) {
-      for(int i2 = 0; i2 < n2; i2++) {
-	phi.set(i1, i2,
-		mmk.Compute(hmm_a.state_distributions()[i1],
-			     hmm_b.state_distributions()[i2]));
+      Matrix phi;
+      phi.Init(n1, n2);
+      for(int i1 = 0; i1 < n1; i1++) {
+	for(int i2 = 0; i2 < n2; i2++) {
+	  phi.set(i1, i2,
+		  mmk.Compute(hmm_a.state_distributions()[i1],
+			      hmm_b.state_distributions()[i2]));
 	
-      }
-    }
-    
-    Matrix* psi_last;
-    Matrix* psi_current;
-    Matrix* psi_temp;
-    psi_last    = new Matrix(n1, n2);
-    psi_current = new Matrix(n1, n2);
-    
-    for(int i1 = 0; i1 < n1; i1++) {
-      for(int i2 = 0; i2 < n2; i2++) {
-	psi_current -> set(i1, i2,
-			   hmm_a.p_initial()[i1] * hmm_b.p_initial()[i2]);
-	//printf("psi_current[i1,i2] = %f\n",
-	//       psi_current -> get(i1, i2));
-      }
-    }
-    
-    for(int t = 1; t <= n_T_; t++) {
-      psi_temp = psi_current;
-      psi_current = psi_last;
-      psi_last = psi_temp;
-      
-      for(int j1 = 0; j1 < n1; j1++) {
-	for(int j2 = 0; j2 < n2; j2++) {
-	  double sum = 0;
-	  for(int i1 = 0; i1 < n1; i1++) {
-	    for(int i2 = 0; i2 < n2; i2++) {
-	      sum +=
-		hmm_a.p_transition().get(j1, i1) *
-		hmm_b.p_transition().get(j2, i2) *
-		phi.get(i1, i2) *
-		psi_last -> get(i1, i2);
-	    }
-	  }
-	  psi_current -> set(j1, j2, sum);
-	  //printf("psi_current[i1,i2] = %f\n",
-	  //	 psi_current -> get(j1, j2));
-
 	}
       }
-    }
-
-    double sum = 0;
-    for(int i1 = 0; i1 < n1; i1++) {
-      for(int i2 = 0; i2 < n2; i2++) {
-	sum +=
-	  phi.get(i1, i2) *
-	  psi_current -> get(i1, i2);
-	//printf("psi_current[i1,i2] = %f\n",
-	//     psi_current -> get(i1, i2));
+    
+      Matrix* psi_last;
+      Matrix* psi_current;
+      Matrix* psi_temp;
+      psi_last    = new Matrix(n1, n2);
+      psi_current = new Matrix(n1, n2);
+    
+      for(int i1 = 0; i1 < n1; i1++) {
+	for(int i2 = 0; i2 < n2; i2++) {
+	  psi_current -> set(i1, i2,
+			     hmm_a.p_initial()[i1] * hmm_b.p_initial()[i2]);
+	  //printf("psi_current[i1,i2] = %f\n",
+	  //       psi_current -> get(i1, i2));
+	}
       }
-    }
+    
+      for(int t = 1; t <= n_T_; t++) {
+	psi_temp = psi_current;
+	psi_current = psi_last;
+	psi_last = psi_temp;
+      
+	for(int j1 = 0; j1 < n1; j1++) {
+	  for(int j2 = 0; j2 < n2; j2++) {
+	    double sum = 0;
+	    for(int i1 = 0; i1 < n1; i1++) {
+	      for(int i2 = 0; i2 < n2; i2++) {
+		sum +=
+		  hmm_a.p_transition().get(i1, j1) * // switched from .get(j1, i1)
+		  hmm_b.p_transition().get(i2, j2) * // switched from .get(j2, i2)
+		  phi.get(i1, i2) *
+		  psi_last -> get(i1, i2);
+	      }
+	    }
+	    psi_current -> set(j1, j2, sum);
+	    //printf("psi_current[i1,i2] = %f\n",
+	    //	 psi_current -> get(j1, j2));
 
-    delete psi_last;
-    delete psi_current;
-    //printf("sum = %f\n", sum);
-    return sum;
+	  }
+	}
+      }
+
+      double sum = 0;
+      for(int i1 = 0; i1 < n1; i1++) {
+	for(int i2 = 0; i2 < n2; i2++) {
+	  sum +=
+	    phi.get(i1, i2) *
+	    psi_current -> get(i1, i2);
+	  //printf("psi_current[i1,i2] = %f\n",
+	  //     psi_current -> get(i1, i2));
+	}
+      }
+
+      delete psi_last;
+      delete psi_current;
+      return sum;
     
 	
-/*
-// let Q and Q` be the set of states from hmm_a and hmm_b respectively
+      /*
+      // let Q and Q` be the set of states from hmm_a and hmm_b respectively
 
-for each q in Q, q` in Q`
-  psi(q,q`) = E_{x,x`}[k(x,x`)]
-end
+      for each q in Q, q` in Q`
+      psi(q,q`) = E_{x,x`}[k(x,x`)]
+      end
 
-for each q_0,q`_0
-  phi(q_0,q`_0) = p(q_0) * p(q_0`)
-end
+      for each q_0,q`_0
+      phi(q_0,q`_0) = p(q_0) * p(q_0`)
+      end
 
-for t = 1:T
-  for each q_t,q`_t
-    phi(q_t,q`_t) =
+      for t = 1:T
+      for each q_t,q`_t
+      phi(q_t,q`_t) =
       \sum_{q_{t-1},q`_{t-1}}
-        p(q_t | q_{t-1}) * p(q`_t | q`_{t-1})
-        * phi(q_{t-1}, q`_{t-1})
-        * psi(q_{t-1},q`_{t-1})
-  end
-end
+      p(q_t | q_{t-1}) * p(q`_t | q`_{t-1})
+      * phi(q_{t-1}, q`_{t-1})
+      * psi(q_{t-1},q`_{t-1})
+      end
+      end
 
-dist =
-  \sum_{q_T,q`_T}
-    phi(q_T,q`_T) psi(q_T,q`_T)
-*/
+      dist =
+      \sum_{q_T,q`_T}
+      phi(q_T,q`_T) psi(q_T,q`_T)
+      */
+    }
+    
+    if(fast_computation == true) {
+      int n1 = hmm_a.n_states();
+      int n2 = hmm_b.n_states();
+
+      Matrix psi;
+      psi.Init(n2, n1);
+      for(int i1 = 0; i1 < n1; i1++) {
+	for(int i2 = 0; i2 < n2; i2++) {
+	  psi.set(i2, i1,
+		  mmk.Compute(hmm_a.state_distributions()[i1],
+			      hmm_b.state_distributions()[i2]));
+	}
+      }
+
+      Matrix phi;
+      phi.Init(n2, n1);
+      
+      for(int i1 = 0; i1 < n1; i1++) {
+	for(int i2 = 0; i2 < n2; i2++) {
+	  phi.set(i2, i1,
+		  hmm_a.p_initial()[i1] * hmm_b.p_initial()[i2]);
+	}
+      }
+
+      for(int i1 = 0; i1 < n1; i1++) {
+	for(int i2 = 0; i2 < n2; i2++) {
+	  phi.set(i2, i1, phi.get(i2, i1) * psi.get(i2, i1));
+	}
+      }
+
+      Matrix transition2_transpose;
+      la::TransposeInit(hmm_b.p_transition(), &transition2_transpose);
+
+      Matrix temp1;
+      temp1.Init(n2, n1);
+
+      // main iteration
+      for(int t = 1; t <= n_T_; t++) {
+	la::MulOverwrite(transition2_transpose, phi, &temp1);
+	la::MulOverwrite(temp1, hmm_a.p_transition(), &phi);
+	for(int i1 = 0; i1 < n1; i1++) {
+	  for(int i2 = 0; i2 < n2; i2++) {
+	    phi.set(i2, i1, phi.get(i2, i1) * psi.get(i2, i1));
+	  }
+	}
+      }
+
+      double sum = 0;
+      for(int i1 = 0; i1 < n1; i1++) {
+	for(int i2 = 0; i2 < n2; i2++) {
+	  sum += phi.get(i2, i1);
+	}
+      }
+      return sum;
+    }
   }
-
 
 
 double Compute(LDS lds_1, LDS lds_2) {
