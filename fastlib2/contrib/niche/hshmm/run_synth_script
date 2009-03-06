@@ -1,0 +1,7 @@
+#!/bin/bash
+
+./hmm_testing --load_data=true --n_sequences_per_class=200 --hmms=genes400_hmms.dat --lambda=1 --max_iter_bw=1000
+
+#fx-run synth400 ./hmm_testing --load_hmms=true --hmms=../../../../synth200_hmms.dat --lambda=1e-3,1e-2,1e-1,1,1e1,1e2,1e3
+#fx-run synth400 ./hmm_testing --load_hmms=true --hmms=../../../../synth200_hmms.dat --lambda=0,1e-4,1e-3,1e-2,1e-1,1,1e1,1e2,1e3,1e9 --svm/c=1e-4,1e-3,1e-2,1e-1,1,1e1,1e2,1e3,1e4
+#fx-run test ./hmm_testing --load_data=false --lambda=1,10 --max_iter_bw=10,20
