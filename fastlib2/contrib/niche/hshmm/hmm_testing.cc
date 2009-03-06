@@ -99,11 +99,11 @@ void GenerateAndTrainSequences(bool load_data,
     int sequence_length = sequences.n_rows();
     int n_symbols = fx_param_int_req(NULL, "n_symbols");
     double ratio = fx_param_double(NULL, "ratio", 0.1);
-    int n_states = 3;/*
+    int n_states = 
       ((int)floor(0.5 * sqrt(n_symbols * n_symbols
-			     + 4 * (sequence_length * ratio + n_symbols + 1))
+		 	     + 4 * (sequence_length * ratio + n_symbols + 1))
 		  - 0.5 * n_symbols))
-		  + 1;*/
+      + 1;
     printf("n_states = %d\n", n_states);
     
     int sequence_num = 0;
@@ -383,7 +383,7 @@ void ObtainDataLearnHMMs(ArrayList<Vector> *p_initial_probs_vectors,
   
   emission_matrices.Init(2 * n_sequences_per_class);
 
-  bool load_data = false;
+  bool load_data = fx_param_bool(NULL, "load_data", false);
   
   if(load_data == false) {
     const char* class1_trans = 
@@ -420,6 +420,10 @@ void ObtainDataLearnHMMs(ArrayList<Vector> *p_initial_probs_vectors,
     
     const char* class0_sequences_filename =
       fx_param_str(NULL, "class0_seq", "GC_45-50_noncoding.900bps_small.dat");
+
+    printf("Using sequences in files:\n\t%s\n\t%s\n",
+	   class1_sequences_filename,
+	   class0_sequences_filename);
     
     printf("Loading sequences and training HMMs...\n");
     GenerateAndTrainSequences(true,
@@ -530,10 +534,12 @@ int main(int argc, char* argv[]) {
   bool save_hmms = fx_param_bool(NULL, "save_hmms", false);
   const char* hmms_filename = fx_param_str(NULL, "hmms", "hmms.dat");
 
-  struct stat stFileInfo;
-  if(stat(hmms_filename, &stFileInfo) == 0) {
-    fprintf(stderr, "Error: File to which learned HMMs are to be save already exists! We avoid overwriting previously saved HMMs.\nExiting...\n");
-    return 1;
+  if(save_hmms == true) {
+    struct stat stFileInfo;
+    if(stat(hmms_filename, &stFileInfo) == 0) {
+      fprintf(stderr, "Error: File to which learned HMMs are to be save already exists! We avoid overwriting previously saved HMMs.\nExiting...\n");
+      return 1;
+    }
   }
 
 
@@ -572,10 +578,13 @@ int main(int argc, char* argv[]) {
   // Compute Kernel Matrix
   Matrix kernel_matrix;
   printf("Computing kernel matrix...\n");
+  fx_timer_start(NULL, "computing_kernel_all_pairs");
   ComputeKernelAllPairs(2 * n_sequences_per_class,
 			initial_probs_vectors, transition_matrices,
 			emission_matrices,
 			&kernel_matrix);
+  fx_timer_stop(NULL, "computing_kernel_all_pairs");
+
   Vector sqrt_diag;
   sqrt_diag.Init(n_sequences);
   for(int i = 0; i < n_sequences; i++) {

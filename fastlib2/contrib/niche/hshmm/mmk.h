@@ -153,7 +153,6 @@ class MeanMapKernel {
     mmk.Init(lambda_);
 
     bool slow_computation = false;
-    bool fast_computation = true;
 
     if(slow_computation == true) {
     
@@ -255,8 +254,7 @@ class MeanMapKernel {
       phi(q_T,q`_T) psi(q_T,q`_T)
       */
     }
-    
-    if(fast_computation == true) {
+    else {
       int n1 = hmm_a.n_states();
       int n2 = hmm_b.n_states();
 
