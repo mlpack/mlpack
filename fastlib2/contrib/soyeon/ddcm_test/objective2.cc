@@ -3070,6 +3070,31 @@ void Objective::CheckHessian(double current_sample,
 		}
 	}
 
+	Vector eigen_hessian2;
+	Matrix eigenvec_hessian;
+
+    
+	la::EigenvectorsInit(dummy_approx_hessian, &eigen_hessian2, 
+																				&eigenvec_hessian);
+
+	cout<<"eigen values of updated hessian"<<endl;
+
+	for(index_t i=0; i<eigen_hessian2.length(); i++){
+		cout<<eigen_hessian2[i]<<" ";
+	}
+	cout<<endl;
+	cout<<endl;
+
+	cout<<"eigen vectors of updated hessian"<<endl;
+  for (index_t j=0; j<dummy_approx_hessian.n_rows(); j++){
+		for (index_t k=0; k<dummy_approx_hessian.n_cols(); k++){
+			cout<<eigenvec_hessian.get(j,k) <<"  ";
+		}
+		cout<<endl;
+	}
+	cout<<endl;
+
+
 	
 	approx_hessian->Copy(dummy_approx_hessian);
 
