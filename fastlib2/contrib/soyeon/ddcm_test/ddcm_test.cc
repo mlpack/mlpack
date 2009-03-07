@@ -104,7 +104,8 @@ int main(int argc, char *argv[]) {
 	//double max_radius=10;
 	double current_radius=0.1;	//initial_radius
 	//double eta=0.25;
-	double eta=0.0001;
+	//double eta=0.0001;
+	double eta=0.001;
 	
 	double rho=0; //agreement(ratio)
 	
@@ -116,7 +117,7 @@ int main(int argc, char *argv[]) {
 
 	//for stopping rule
 	double error_tolerance=1e-16;
-	double zero_tolerance=0.00001;	//for gradient norm 10^-5?
+	double zero_tolerance=0.0001;	//for gradient norm 10^-5?
 
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
@@ -125,8 +126,8 @@ int main(int argc, char *argv[]) {
 	Vector tpar;
 	tpar.Init(current_parameter.length());
 	tpar[0]=1;
-	tpar[1]=1;
-	tpar[2]=2;
+	tpar[1]=4;
+	tpar[2]=5;
 	tpar[3]=2;
 
   
@@ -320,6 +321,44 @@ int main(int argc, char *argv[]) {
 				
 
 		//NOTIFY("Gradient calculation ends");
+
+				if(sample_size==num_of_people){
+			end_sampling+=1;
+			double gradient_norm;
+			//la::Scale(1.0/num_of_people, &current_gradient);
+			/*
+			Vector next_gradient;
+					
+			//cout<<"current_sample_size for norm calculation="<<current_sample_size<<endl;
+			objective.ComputeGradient(current_sample_size, current_parameter, &next_gradient);
+		//la::Scale(1.0/current_added_first_stage_
+			//NOTIFY("current_parameter for the  calculation of norm");
+			//for(index_t i=0; i<current_parameter.length(); i++){
+			//	cout<<current_parameter[i]<<" ";
+			//}
+			//cout<<endl;
+			NOTIFY("Gradient for the calculation of norm");
+			for(index_t i=0; i<current_parameter.length(); i++){
+				cout<<next_gradient[i]<<" ";
+			}
+			cout<<endl;
+      */
+
+
+			gradient_norm = sqrt(la::Dot(current_gradient, current_gradient));
+			
+			cout<<"gradient_norm="<<gradient_norm<<endl;
+
+			if(gradient_norm<zero_tolerance){
+				NOTIFY("Gradient norm is small enough...Exit...");
+				break;
+			}
+			
+			//NOTIFY("All data are used");
+				}
+
+
+
 		/*
     NOTIFY("True hessian");
 		Matrix opt_hessian;
@@ -704,6 +743,7 @@ int main(int argc, char *argv[]) {
 
 
 		//Check positive definiteness
+		/*
 		Vector eigen_hessian;
 		la::EigenvaluesInit(updated_hessian, &eigen_hessian);
 
@@ -711,6 +751,31 @@ int main(int argc, char *argv[]) {
 
 		for(index_t i=0; i<eigen_hessian.length(); i++){
 			cout<<eigen_hessian[i]<<" ";
+		}
+		cout<<endl;
+		*/
+		
+		Vector eigen_hessian;
+		Matrix eigenvec_hessian;
+
+    
+		la::EigenvectorsInit(updated_hessian, &eigen_hessian, 
+																					&eigenvec_hessian);
+
+		cout<<"eigen values of updated hessian"<<endl;
+
+		for(index_t i=0; i<eigen_hessian.length(); i++){
+			cout<<eigen_hessian[i]<<" ";
+		}
+		cout<<endl;
+		cout<<endl;
+
+		cout<<"eigen vectors of updated hessian"<<endl;
+    for (index_t j=0; j<updated_hessian.n_rows(); j++){
+			for (index_t k=0; k<updated_hessian.n_cols(); k++){
+				cout<<eigenvec_hessian.get(j,k) <<"  ";
+			}
+			cout<<endl;
 		}
 		cout<<endl;
 
@@ -749,40 +814,7 @@ int main(int argc, char *argv[]) {
 		optimization.TrustRadiusUpdate(rho, p_norm, &current_radius);
 
 
-		if(sample_size==num_of_people){
-			end_sampling+=1;
-			double gradient_norm;
-			//la::Scale(1.0/num_of_people, &current_gradient);
-			/*
-			Vector next_gradient;
-					
-			//cout<<"current_sample_size for norm calculation="<<current_sample_size<<endl;
-			objective.ComputeGradient(current_sample_size, current_parameter, &next_gradient);
-		//la::Scale(1.0/current_added_first_stage_
-			//NOTIFY("current_parameter for the  calculation of norm");
-			//for(index_t i=0; i<current_parameter.length(); i++){
-			//	cout<<current_parameter[i]<<" ";
-			//}
-			//cout<<endl;
-			NOTIFY("Gradient for the calculation of norm");
-			for(index_t i=0; i<current_parameter.length(); i++){
-				cout<<next_gradient[i]<<" ";
-			}
-			cout<<endl;
-      */
 
-
-			gradient_norm = sqrt(la::Dot(next_gradient, next_gradient));
-			
-			cout<<"gradient_norm="<<gradient_norm<<endl;
-
-			if(gradient_norm<zero_tolerance){
-				NOTIFY("Gradient norm is small enough...Exit...");
-				break;
-			}
-			
-			//NOTIFY("All data are used");
-		}
 
 	}
 	

@@ -145,13 +145,13 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 		
 		initial_parameter->SetZero();
 		
-		/*		
+		/*	
 		(*initial_parameter)[0]=1.2;
 		(*initial_parameter)[1]=1.5;
 		(*initial_parameter)[num_of_betas]=1.7;
 		(*initial_parameter)[num_of_betas+1]=2.1;
 		
-		
+			
 		
 		(*initial_parameter)[0]=1.3392;
 		(*initial_parameter)[1]=1.62639;
@@ -290,13 +290,96 @@ void Sampling::Init(fx_module *module, int *num_of_people,
     (*initial_parameter)[0]=8.64681;
 		(*initial_parameter)[1]=27.5385;
 		(*initial_parameter)[num_of_betas]=8.11649;
-		(*initial_parameter)[num_of_betas+1]=7.56718;*/
+		(*initial_parameter)[num_of_betas+1]=7.56718;
 
 		(*initial_parameter)[0]=13.1332;
 		(*initial_parameter)[1]=40.8001;
 		(*initial_parameter)[num_of_betas]=6.87032;
 		(*initial_parameter)[num_of_betas+1]=6.4066;
 
+		//simulation5_error
+    (*initial_parameter)[0]=1.66669;
+		(*initial_parameter)[1]=4.37995;
+		(*initial_parameter)[num_of_betas]=2.88629;
+		(*initial_parameter)[num_of_betas+1]=1.83085;
+
+		//simulation5_error res3
+		(*initial_parameter)[0]=1.17397;
+		(*initial_parameter)[1]=3.42542;
+		(*initial_parameter)[num_of_betas]=1.94735;
+		(*initial_parameter)[num_of_betas+1]=2.702;
+
+		//simulation5_error res4
+		(*initial_parameter)[0]=1.43696;
+		(*initial_parameter)[1]=3.97589;
+		(*initial_parameter)[num_of_betas]=4.54396;
+		(*initial_parameter)[num_of_betas+1]=3.64368;
+
+		(*initial_parameter)[0]=1.4485;
+		(*initial_parameter)[1]=3.92903;
+		(*initial_parameter)[num_of_betas]=5.54422;
+		(*initial_parameter)[num_of_betas+1]=4.3535;
+
+		(*initial_parameter)[0]=1.43443;
+		(*initial_parameter)[1]=3.91498;
+		(*initial_parameter)[num_of_betas]=6.06644;
+		(*initial_parameter)[num_of_betas+1]=4.76733;
+
+		(*initial_parameter)[0]=1.80045;
+		(*initial_parameter)[1]=6.16382;
+		(*initial_parameter)[num_of_betas]=1.24462;
+		(*initial_parameter)[num_of_betas+1]=0.779631;
+		
+		//simulation6-res2
+		(*initial_parameter)[0]=2;
+		(*initial_parameter)[1]=5;
+		(*initial_parameter)[num_of_betas]=4;
+		(*initial_parameter)[num_of_betas+1]=3;
+
+		(*initial_parameter)[0]=1.4101;
+		(*initial_parameter)[1]=5.65133;
+		(*initial_parameter)[num_of_betas]=4.59492;
+		(*initial_parameter)[num_of_betas+1]=4.58733;
+
+		(*initial_parameter)[0]=1.39652;
+		(*initial_parameter)[1]=5.53831;
+		(*initial_parameter)[num_of_betas]=5.85271;
+		(*initial_parameter)[num_of_betas+1]=5.8539;
+
+		(*initial_parameter)[0]=1.718;
+		(*initial_parameter)[1]=6.76955;
+		(*initial_parameter)[num_of_betas]=6.0539;
+		(*initial_parameter)[num_of_betas+1]=1.56463;
+
+		(*initial_parameter)[0]=1.28105;
+		(*initial_parameter)[1]=5.38665;
+		(*initial_parameter)[num_of_betas]=4.50331;
+		(*initial_parameter)[num_of_betas+1]=2.53439;
+
+		(*initial_parameter)[0]=2;
+		(*initial_parameter)[1]=5;
+		(*initial_parameter)[num_of_betas]=4;
+		(*initial_parameter)[num_of_betas+1]=3;
+
+		(*initial_parameter)[0]=1.5982;
+		(*initial_parameter)[1]=5.96623;
+		(*initial_parameter)[num_of_betas]=5.17915;
+		(*initial_parameter)[num_of_betas+1]=1.22117;
+
+		
+		(*initial_parameter)[0]=1.43698;
+		(*initial_parameter)[1]=6.09037;
+		(*initial_parameter)[num_of_betas]=2.75128;
+		(*initial_parameter)[num_of_betas+1]=0.644982;*/
+
+		(*initial_parameter)[0]=2;
+		(*initial_parameter)[1]=5;
+		(*initial_parameter)[num_of_betas]=4;
+		(*initial_parameter)[num_of_betas+1]=3;
+
+
+		
+		
 		
 		
 		
