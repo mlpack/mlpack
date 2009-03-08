@@ -782,8 +782,8 @@ int main(int argc, char* argv[]) {
     val0_c_tries.Init(3);
 
 
-    double c_upper = 1e3;
-    double c_lower = 1e-6;
+    double c_upper = 1e4;
+    double c_lower = 1e-7;
 
     printf("c_upper = %f\n", c_upper);
     int val_c_upper = eval_kfold_svm(c_upper, n_points, permutation, cv_set, svm_module, kernel_matrix, &n_correct_class1, &n_correct_class0);
@@ -809,13 +809,20 @@ int main(int argc, char* argv[]) {
 
     int val_c_new = lower_bound;
     double c_new;
+    int num_guesses = 0;
+    bool terminate = false;
     while(val_c_new <= lower_bound) {
-      //c_new = drand48() * (c_upper - c_lower) + c_lower;
+      if(num_guesses >= 50) {
+	printf("50 guesses without improvement from starting strawmen!\nTerminating...\n");
+	terminate = true;
+	break;
+      }
       double log_c_upper = log(c_upper);
       double log_c_lower = log(c_lower);
       c_new = exp(drand48() * (log_c_upper - log_c_lower) + log_c_lower);
       printf("c_new = %f\n", c_new);
       val_c_new = eval_kfold_svm(c_new, n_points, permutation, cv_set, svm_module, kernel_matrix, &n_correct_class1, &n_correct_class0);
+      num_guesses++;
     }
 
     c_tries[2] = c_new;
@@ -825,7 +832,6 @@ int main(int argc, char* argv[]) {
 
     double c_tol = 1e-8;
     int iteration_num = 0;
-    bool terminate = false;
 
     while(((c_upper - c_lower) > c_tol) && !terminate) {
       iteration_num++;
@@ -833,12 +839,11 @@ int main(int argc, char* argv[]) {
       int val_c_new2 = val_c_new;
       int num_guesses = 0;
       while(val_c_new2 == val_c_new) {
-	if(num_guesses > 25) {
-	  printf("25 guesses without improvement, terminating...\n");
+	if(num_guesses >= 25) {
+	  printf("25 guesses without improvement.\nTerminating...\n");
 	  terminate = true;
 	  break;
 	}
-	//c_new2 = drand48() * (c_upper - c_lower) + c_lower;
  	double log_c_upper = log(c_upper);
 	double log_c_lower = log(c_lower);
 	c_new2 = exp(drand48() * (log_c_upper - log_c_lower) + log_c_lower);
@@ -894,6 +899,8 @@ int main(int argc, char* argv[]) {
     n_correct_class0 = val0_c_tries[opt_ind];
     
     printf("optimal c = %f\n", opt_c);
+    fx_result_double(NULL, "optimal_c", opt_c);
+
     
     
     /*
@@ -933,11 +940,11 @@ int main(int argc, char* argv[]) {
   int n_correct = n_correct_class1 + n_correct_class0;
   
   // we assume n_test_points is even because we assumed balanced classes
-  fx_result_double(svm_module, "class1_accuracy",
+  fx_result_double(NULL, "class1_accuracy",
 		   ((double)n_correct_class1) / ((double)n_test_points / 2));
-  fx_result_double(svm_module, "class0_accuracy",
+  fx_result_double(NULL, "class0_accuracy",
 		   ((double)n_correct_class0) / ((double)n_test_points / 2));
-  fx_result_double(svm_module, "total_accuracy",
+  fx_result_double(NULL, "total_accuracy",
 		   ((double) n_correct) / ((double) n_test_points));
   
   /*
