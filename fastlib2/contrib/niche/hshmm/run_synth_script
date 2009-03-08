@@ -4,7 +4,7 @@
 #./hmm_testing --load_hmms=true --hmms=synth200_hmms.dat --lambda=1e9 --trans1=class_1_transition.csv --emis1=class_1_emission.csv --trans0=class_0_transition.csv --emis0=class_0_emission.csv --n_sequences_per_class=200
 
 # testing over many parameter settings
-fx-run synth400_larger_c ./hmm_testing --load_hmms=true --hmms=../../../../synth200_hmms.dat --lambda=0,1e-4,1e-3,1e-2,1e-1,1,1e1,1e2,1e3,1e9
+fx-run synth400 ./hmm_testing --load_hmms=true --hmms=../../../../synth200_hmms.dat --lambda=0,1e-4,1e-3,1e-2,1e-1,1,1e1,1e2,1e3,1e9
 # --svm/c=1e-4,1e-3,1e-2,1e-1,1,1e1,1e2,1e3,1e4
 
 
