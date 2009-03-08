@@ -908,7 +908,9 @@ void Objective::ComputeChoiceProbability(Vector &current_parameter,
     } else {
       Vector temp;
       first_stage_x_[n].MakeColumnVector((first_stage_y_[n]-1), &temp);
-			(*choice_probability)[n]=exp(la::Dot(betas, temp))/exp_betas_times_x1_[n];
+			//(*choice_probability)[n]=exp(la::Dot(betas, temp))/exp_betas_times_x1_[n];
+			(*choice_probability)[n]=exp(la::Dot(betas, temp))/exp_betas_times_x1_[n]
+															*(1-postponed_probability_[n]);
 			
 		}
   }
@@ -3233,6 +3235,115 @@ void Objective::CheckHessian2(double current_sample,
 }
 
 
+
+
+
+void Objective::ComputePredictionError(double current_sample, 
+									  Vector &current_parameter,
+										ArrayList<index_t> &true_decision,
+										double *postponed_prediction_error,
+										double *choice_prediction_error){
+
+
+
+	Vector betas;
+  betas.Alias(current_parameter.ptr(), num_of_betas_);
+  double p=current_parameter[num_of_betas_];
+	double q=current_parameter[num_of_betas_+1];
+
+	ComputeExpBetasTimesX1_(betas);
+
+  ComputeDeumeratorBetaFunction_(p, q);
+	
+  ComputePostponedProbability_(betas, 
+                               p, 
+                               q);
+
+	//Vector predicted_postponed_probability;
+  //predicted_postponed_probability.Init(true_decision.length());
+	//predicted_postponed_probability=postponed_probability_[n]
+
+	index_t number_of_test=true_decision.size();
+
+	ArrayList<Vector> predicted_choice_probability_all;
+  predicted_choice_probability_all.Init(number_of_test);
+	for(index_t n=0; n<predicted_choice_probability_all.size(); n++){
+		predicted_choice_probability_all[n].Init(first_stage_x_[n].n_cols());
+    predicted_choice_probability_all[n].SetZero();
+	}
+
+	Vector predicted_choice_probability;
+  predicted_choice_probability.Init(number_of_test);
+	predicted_choice_probability.SetZero();
+
+
+  //predicted_choice_probability.SetZero();
+	//predicted_choice_probability.Init(first_stage_x_.size());
+
+	Vector predicted_decision;
+  predicted_decision.Init(number_of_test);
+  predicted_decision.SetZero();
+
+	for(index_t n=0; n<number_of_test; n++){
+		if(postponed_probability_[n]>0.5) {
+			predicted_decision[n]=-1;
+		} else {
+			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
+				Vector temp;
+				first_stage_x_[n].MakeColumnVector(i, &temp);
+				predicted_choice_probability_all[n][i]=
+					exp(la::Dot(betas, temp))/exp_betas_times_x1_[n]
+					*(1-postponed_probability_[n]);
+			}
+			//find the alternative with maximum choice_prob.
+			index_t index_chosen_alternative=0;
+			double max_choce_probability=-5;
+			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
+				if(max_choce_probability<predicted_choice_probability_all[n][i]){
+					index_chosen_alternative=i+1;
+					max_choce_probability=predicted_choice_probability_all[n][i];
+				}
+			}
+			predicted_decision[n]=index_chosen_alternative;
+			predicted_choice_probability[n]=max_choce_probability;
+		}
+	}
+
+	//error calculation
+	double temp_postponed_prediction_error=0;
+	double temp_choice_prediction_error=0;
+
+	double temp_postponed_prediction_error_prob=0;
+	double temp_choice_prediction_error_prob=0;
+
+	double count_correct_postponed=0;
+	double count_correct_choice=0;
+
+	for(index_t n=0; n<number_of_test; n++){
+		if(true_decision[n]==-1 &&predicted_decision[n]==-1){
+			count_correct_postponed=count_correct_postponed+1;
+			//temp_postponed_prediction_error_prob;
+
+		}
+		if(true_decision[n]==predicted_decision[n]){
+			count_correct_choice=count_correct_choice=+1;
+		}
+	}
+
+	temp_postponed_prediction_error=
+			(number_of_test-count_correct_postponed)/number_of_test*100;
+	temp_choice_prediction_error=
+		  (number_of_test-count_correct_choice)/number_of_test*100;
+
+	cout<<"postponed_prediction_error="<<temp_postponed_prediction_error<<endl;
+	cout<<"choice_prediction_error="<<temp_choice_prediction_error<<endl;
+
+  (*postponed_prediction_error)=temp_postponed_prediction_error;
+	(*choice_prediction_error)=temp_choice_prediction_error;
+
+
+
+}
 
 
 

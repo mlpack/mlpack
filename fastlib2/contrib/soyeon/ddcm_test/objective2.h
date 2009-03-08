@@ -42,6 +42,12 @@ class Objective {
 	void CheckHessian2(double current_sample, 
 									  Vector &current_parameter, 
 										Matrix *approx_hessian);
+	void ComputePredictionError(double current_sample, 
+									  Vector &current_parameter,
+										ArrayList<index_t> &true_decision,
+										double *postponed_prediction_error,
+										double *choice_prediction_error);
+
  
  private:
   fx_module *module_;
