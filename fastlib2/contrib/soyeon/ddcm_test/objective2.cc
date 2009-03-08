@@ -3316,9 +3316,7 @@ void Objective::ComputePredictionError(double current_sample,
 	double temp_postponed_prediction_error=0;
 	double temp_choice_prediction_error=0;
 
-	double temp_postponed_prediction_error_prob=0;
-	double temp_choice_prediction_error_prob=0;
-
+	
 	double count_correct_postponed=0;
 	double count_correct_choice=0;
 
@@ -3343,14 +3341,46 @@ void Objective::ComputePredictionError(double current_sample,
 	cout<<"postponed_prediction_error="<<temp_postponed_prediction_error<<endl;
 	cout<<"choice_prediction_error="<<temp_choice_prediction_error<<endl;
   cout<<"num_correct_choice_prediction="<<count_correct_choice<<endl;
-  (*postponed_prediction_error)=temp_postponed_prediction_error;
+  
+	//error probability calculation
+	Vector predicted_prob_of_n_choose_i;
+	predicted_prob_of_n_choose_i.Init(number_of_test);
+	predicted_prob_of_n_choose_i.SetZero();
+  
+
+	for(index_t n=0; n<number_of_test; n++){
+		if(true_decision[n]<0) {
+			predicted_prob_of_n_choose_i[n]=postponed_probability_[n];
+		}	//if
+		else {
+			predicted_prob_of_n_choose_i[n]=predicted_choice_probability_all[n][true_decision[n]-1];
+		}
+	}
+	//cout<<"Test2"<<endl;
+
+	//double temp_postponed_prediction_error_prob=0;
+	double temp_choice_prediction_error_prob=0;
+	double temp_postpone_prediction_error_prob=0;
+	for(index_t n=0; n<number_of_test; n++){
+		temp_choice_prediction_error_prob+=(1-predicted_prob_of_n_choose_i[n]);
+		temp_postpone_prediction_error_prob+=(1-postponed_probability_[n]);
+	}
+	temp_choice_prediction_error_prob*=2;
+	temp_postpone_prediction_error_prob*2;
+
+	cout<<"choice_prediction_error_prob_rate="<<temp_choice_prediction_error_prob/number_of_test<<endl;
+	cout<<"postpone_prediction_error_prob_rate="<<temp_postpone_prediction_error_prob/number_of_test<<endl;
+	(*postponed_prediction_error)=temp_postponed_prediction_error;
 	(*choice_prediction_error)=temp_choice_prediction_error;
 
+	/*
 	cout<<"predicted_decision"<<endl;
 	for(index_t n=0; n<number_of_test; n++){
 		cout<<predicted_decision[n]<<" ";
 	}
 	cout<<endl;
+	*/
+
 
 
 
