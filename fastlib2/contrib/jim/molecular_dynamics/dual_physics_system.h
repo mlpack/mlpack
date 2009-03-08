@@ -354,8 +354,14 @@ private:
       UpdatePositionsRecursion_(node->right(), &temp2);     
       node->stat().UpdateCentroid(node->left()->stat(),node->right()->stat());
       node->bound().Reset();
-      node->bound() |= node->left()->bound();
-      node->bound() |= node->right()->bound();      
+      	if (boundary_ == FREE){
+	  node->bound() |= node->left()->bound();
+	  node->bound() |= node->right()->bound();  	 
+	} else {
+	  node->bound().Add(node->left()->bound(), dimensions_);
+	  node->bound().Add(node->right()->bound(), dimensions_);
+	}
+        
     } else {  // Base Case                
       node->bound().Reset();     
       la::AddTo(node->stat().velocity_, vel); 
@@ -365,7 +371,11 @@ private:
 	la::AddTo(*vel, &temp);
 	atoms_.MakeColumnSubvector(i, 0, 3, &pos);
 	la::AddExpert(time_step_, temp, &pos);
-	node->bound() |= pos;
+	if (boundary_ == FREE){
+	  node->bound() |= pos;
+	} else {
+	  node->bound().Add(pos, dimensions_);
+	}
       }            
       node->stat().InitKinematics(node->begin(), node->count(), atoms_);
     }      
