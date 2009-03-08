@@ -44,5 +44,7 @@ void SetToRange(int x[], int start, int end);
 
 void RandPerm(int x[], int length);
 
+int eval_loocv_svm(double c, int n_points, const ArrayList<index_t> &permutation, const Dataset& cv_set, datanode* svm_module, const Matrix &kernel_matrix, int *n_correct_class1, int *n_correct_class0);
+
 
 #endif /* HMM_TESTING_H */

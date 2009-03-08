@@ -6,6 +6,8 @@
 #include "contrib/niche/svm/smo.h"
 #include "contrib/niche/svm/svm.h"
 
+#define KFOLD true
+
 const fx_entry_doc hmm_testing_entries_doc[] = {
   {"lambda", FX_PARAM, FX_DOUBLE, NULL,
    "  Kernel bandwidth"},
@@ -30,8 +32,14 @@ const fx_entry_doc hmm_testing_entries_doc[] = {
   FX_ENTRY_DOC_DONE
 };
 
+const fx_submodule_doc hmm_testing_submodules[] = {
+  {"svm", &svm_main_doc,
+   " does svm stuff\n"},
+  FX_SUBMODULE_DOC_DONE
+};
+
 const fx_module_doc hmm_testing_doc = {
-  hmm_testing_entries_doc, NULL,
+  hmm_testing_entries_doc, hmm_testing_submodules,
   "MMK testing for HMM with Multinomial state distributions\n"
 };
 
@@ -104,6 +112,7 @@ void GenerateAndTrainSequences(bool load_data,
 		 	     + 4 * (sequence_length * ratio + n_symbols + 1))
 		  - 0.5 * n_symbols))
       + 1;
+    n_states = 11; // override of formula to see if we results improve
     printf("n_states = %d\n", n_states);
     
     int sequence_num = 0;
@@ -466,59 +475,143 @@ void ObtainDataLearnHMMs(ArrayList<Vector> *p_initial_probs_vectors,
   
   
   /* Load training data */
+
+  if(KFOLD == false) {
+    int indices_class1[n_sequences_per_class];
+    SetToRange(indices_class1, 0, n_sequences_per_class);
+    int indices_class0[n_sequences_per_class];
+    SetToRange(indices_class0, n_sequences_per_class, n_sequences);
   
-  int indices_class_1[n_sequences_per_class];
-  SetToRange(indices_class_1, 0, n_sequences_per_class);
-  int indices_class_0[n_sequences_per_class];
-  SetToRange(indices_class_0, n_sequences_per_class, n_sequences);
+    RandPerm(indices_class1, n_sequences_per_class);
+    RandPerm(indices_class0, n_sequences_per_class);
   
-  RandPerm(indices_class_1, n_sequences_per_class);
-  RandPerm(indices_class_0, n_sequences_per_class);
+    int n_training_points = n_sequences / 2;
+    int n_test_points = n_sequences - n_training_points;
   
-  int n_training_points = n_sequences / 2;
-  int n_test_points = n_sequences - n_training_points;
+    int training_indices[n_training_points];
+    int test_indices[n_test_points];
   
-  int training_indices[n_training_points];
-  int test_indices[n_test_points];
+    int n_training_points_per_class = n_training_points / 2;
+    int n_test_points_per_class = n_test_points / 2;
   
-  int n_training_points_per_class = n_training_points / 2;
-  int n_test_points_per_class = n_test_points / 2;
+    int k_training = 0;
+    int k_test = 0;
+    int i;
+    for(i = 0; k_training < n_training_points_per_class; i++) {
+      training_indices[k_training] = indices_class1[i];
+      k_training++;
+    }
+    for(; k_test < n_test_points_per_class; i++) {
+      test_indices[k_test] = indices_class1[i];
+      k_test++;
+    }
+    for(i = 0; k_training < n_training_points; i++) {
+      training_indices[k_training] = indices_class0[i];
+      k_training++;
+    }
+    for(; k_test < n_test_points; i++) {
+      test_indices[k_test] = indices_class0[i];
+      k_test++;
+    }
   
-  int k_training = 0;
-  int k_test = 0;
-  int i;
-  for(i = 0; k_training < n_training_points_per_class; i++) {
-    training_indices[k_training] = indices_class_1[i];
-    k_training++;
+    RandPerm(training_indices, n_training_points);
+    RandPerm(test_indices, n_test_points);
+  
+    training_data.Init(2, n_training_points);
+    for(int i = 0; i < n_training_points; i++) {
+      training_data.set(0, i, training_indices[i]);
+      training_data.set(1, i, labels[training_indices[i]]);
+    }
+  
+    test_data.Init(2, n_test_points);
+    for(int i = 0; i < n_test_points; i++) {
+      test_data.set(0, i, test_indices[i]);
+      test_data.set(1, i, labels[test_indices[i]]);
+    }
   }
-  for(; k_test < n_test_points_per_class; i++) {
-    test_indices[k_test] = indices_class_1[i];
-    k_test++;
-  }
-  for(i = 0; k_training < n_training_points; i++) {
-    training_indices[k_training] = indices_class_0[i];
-    k_training++;
-  }
-  for(; k_test < n_test_points; i++) {
-    test_indices[k_test] = indices_class_0[i];
-    k_test++;
-  }
+  else { // KFOLD
+    int indices_class1[n_sequences_per_class];
+    SetToRange(indices_class1, 0, n_sequences_per_class);
+    int indices_class0[n_sequences_per_class];
+    SetToRange(indices_class0, n_sequences_per_class, n_sequences);
   
-  RandPerm(training_indices, n_training_points);
-  RandPerm(test_indices, n_test_points);
-  
-  training_data.Init(2, n_training_points);
-  for(int i = 0; i < n_training_points; i++) {
-    training_data.set(0, i, training_indices[i]);
-    training_data.set(1, i, labels[training_indices[i]]);
-  }
-  
-  test_data.Init(2, n_test_points);
-  for(int i = 0; i < n_test_points; i++) {
-    test_data.set(0, i, test_indices[i]);
-    test_data.set(1, i, labels[test_indices[i]]);
+    RandPerm(indices_class1, n_sequences_per_class);
+    RandPerm(indices_class0, n_sequences_per_class);
+
+    int training_indices[n_sequences];
+    for(int i = 0; i < n_sequences_per_class; i++) {
+      training_indices[i] = indices_class1[i];
+    }
+    int k = 0;
+    for(int i = n_sequences_per_class; i < n_sequences; i++) {
+      training_indices[i] = indices_class0[k];
+      k++;
+    }
+
+    printf("\n\nindices\n");
+    for(int i = 0; i < n_sequences; i++) {
+      printf("i = %d ", training_indices[i]);
+    }
+    printf("\n\n\n");
+    
+    training_data.Init(2, n_sequences);
+    for(int i = 0; i < n_sequences; i++) {
+      training_data.set(0, i, training_indices[i]);
+      training_data.set(1, i, labels[training_indices[i]]);
+    }
+
+    test_data.Init(2, 0);
   }
 }
+
+
+
+
+int eval_kfold_svm(double c, int n_points, const ArrayList<index_t> &permutation, const Dataset& cv_set, datanode* svm_module, const Matrix &kernel_matrix, int *n_correct_class1, int *n_correct_class0) {
+  printf("10-FOLD SVM Training and Testing... \n");
+
+  fx_set_param_double(svm_module, "c", c);
+
+  int n_folds = 10;
+
+  *n_correct_class1 = 0;
+  *n_correct_class0 = 0;
+  for(int fold_num = 0; fold_num < n_folds; fold_num++) {
+    Dataset training_set;
+    Dataset test_set;
+    cv_set.SplitTrainTest(n_folds, fold_num, permutation, &training_set, &test_set);
+    
+    // Begin SVM Training | Training and Testing
+    SVM<SVMRBFKernel> svm; // this should be changed from SVMRBFKernel to something like SVMMMKKernel
+    int learner_typeid = 0; // for svm_c
+    
+    
+    svm.InitTrain(learner_typeid, training_set, svm_module, kernel_matrix);
+
+    for(int i = 0; i < test_set.n_points(); i++) {
+      Vector test_point;
+      test_point.Alias(test_set.point(i), 2);
+    
+      double prediction = svm.Predict(learner_typeid, test_point);
+      int test_label = (int) test_point[1];
+      bool correct =
+	((int)prediction) == test_label;
+      if(correct) {
+	if(test_label == 1) {
+	  (*n_correct_class1)++;
+	}
+	else {
+	  (*n_correct_class0)++;
+	}
+      }
+    }
+  }
+
+  int n_correct = (*n_correct_class1) + (*n_correct_class0);
+  printf("n_correct = %d\n", n_correct);
+  return n_correct;
+}
+
 
 
 
@@ -616,50 +709,225 @@ int main(int argc, char* argv[]) {
     data::Save(kernel_matrix_filename, kernel_matrix);
   }
 
-  
-  Dataset training_set;
-  training_set.CopyMatrix(training_data);
-  
-  // Begin SVM Training | Training and Testing
-  datanode *svm_module = fx_submodule(fx_root, "svm");
 
-  SVM<SVMRBFKernel> svm; // this should be changed from SVMRBFKernel to something like SVMMMKKernel
-  int learner_typeid = 0; // for svm_c
-  
-  printf("SVM Training... \n");
-  svm.InitTrain(learner_typeid, training_set, svm_module, kernel_matrix);
-  
-    
-  Dataset test_set;
-  test_set.CopyMatrix(test_data);
-  printf("test data dims = (%d, %d)\n", 
-	 test_data.n_cols(), test_data.n_rows());
-  
-  printf("SVM Predicting... \n");
-  svm.BatchPredict(learner_typeid, test_set, "predicted_values"); // TODO:param_req
-  
-    
-    
-  // Emit results
-  
-  Matrix predicted_values;
-  data::Load("predicted_values", &predicted_values);
-  
-  int n_test_points = predicted_values.n_cols();
+  int n_test_points;
   int n_correct_class0 = 0;
   int n_correct_class1 = 0;
+
+  datanode* svm_module = fx_submodule(fx_root, "svm");
   
-  for(int i = 0; i < n_test_points; i++) {
-    bool correct =
-      ((int)predicted_values.get(0, i)) == ((int)test_data.get(1,i));
-    if(correct) {
-      if(test_data.get(1,i) == 1) {
-	n_correct_class1++;
-      }
-      else {
-	n_correct_class0++;
+  if(KFOLD == false) {
+    Dataset training_set;
+    training_set.CopyMatrix(training_data);
+  
+    // Begin SVM Training | Training and Testing
+    //datanode *svm_module = fx_submodule(fx_root, "svm");
+    fx_set_param_double(svm_module, "c", 1e-2);
+    SVM<SVMRBFKernel> svm; // this should be changed from SVMRBFKernel to something like SVMMMKKernel
+    int learner_typeid = 0; // for svm_c
+  
+    printf("SVM Training... \n");
+    svm.InitTrain(learner_typeid, training_set, svm_module, kernel_matrix);
+  
+    
+    Dataset test_set;
+    test_set.CopyMatrix(test_data);
+    printf("test data dims = (%d, %d)\n", 
+	   test_data.n_cols(), test_data.n_rows());
+  
+    printf("SVM Predicting... \n");
+    svm.BatchPredict(learner_typeid, test_set, "predicted_values"); // TODO:param_req
+  
+    
+    
+    // Emit results
+  
+    Matrix predicted_values;
+    data::Load("predicted_values", &predicted_values);
+
+    n_test_points = predicted_values.n_cols();
+  
+    for(int i = 0; i < n_test_points; i++) {
+      bool correct =
+	((int)predicted_values.get(0, i)) == ((int)test_data.get(1,i));
+      if(correct) {
+	if(test_data.get(1,i) == 1) {
+	  n_correct_class1++;
+	}
+	else {
+	  n_correct_class0++;
+	}
       }
     }
+  }
+  else { // KFOLD
+    Dataset cv_set;
+    cv_set.CopyMatrix(training_data);
+    printf("cv data dims = (%d, %d)\n",
+	   training_data.n_cols(), training_data.n_rows());
+
+    int n_points = training_data.n_cols();
+    n_test_points = n_points;
+
+    ArrayList<index_t> permutation;
+    math::MakeIdentityPermutation(n_points, &permutation);
+
+    ArrayList<double> c_tries;
+    c_tries.Init(3);
+    ArrayList<int> val_c_tries;
+    val_c_tries.Init(3);
+    ArrayList<int> val1_c_tries;
+    val1_c_tries.Init(3);
+    ArrayList<int> val0_c_tries;
+    val0_c_tries.Init(3);
+
+
+    double c_upper = 1e3;
+    double c_lower = 1e-6;
+
+    printf("c_upper = %f\n", c_upper);
+    int val_c_upper = eval_kfold_svm(c_upper, n_points, permutation, cv_set, svm_module, kernel_matrix, &n_correct_class1, &n_correct_class0);
+    c_tries[0] = c_upper;
+    val_c_tries[0] = val_c_upper;
+    val1_c_tries[0] = n_correct_class1;
+    val0_c_tries[0] = n_correct_class0;
+
+    printf("c_lower = %f\n", c_lower);
+    int val_c_lower = eval_kfold_svm(c_lower, n_points, permutation, cv_set, svm_module, kernel_matrix, &n_correct_class1, &n_correct_class0);
+    c_tries[1] = c_lower;
+    val_c_tries[1] = val_c_lower;
+    val1_c_tries[1] = n_correct_class1;
+    val0_c_tries[1] = n_correct_class0;
+
+    int lower_bound;
+    if(val_c_upper < val_c_lower) {
+      lower_bound = val_c_upper;
+    }
+    else {
+      lower_bound = val_c_lower;
+    }
+
+    int val_c_new = lower_bound;
+    double c_new;
+    while(val_c_new <= lower_bound) {
+      //c_new = drand48() * (c_upper - c_lower) + c_lower;
+      double log_c_upper = log(c_upper);
+      double log_c_lower = log(c_lower);
+      c_new = exp(drand48() * (log_c_upper - log_c_lower) + log_c_lower);
+      printf("c_new = %f\n", c_new);
+      val_c_new = eval_kfold_svm(c_new, n_points, permutation, cv_set, svm_module, kernel_matrix, &n_correct_class1, &n_correct_class0);
+    }
+
+    c_tries[2] = c_new;
+    val_c_tries[2] = val_c_new;
+    val1_c_tries[2] = n_correct_class1;
+    val0_c_tries[2] = n_correct_class0;
+
+    double c_tol = 1e-8;
+    int iteration_num = 0;
+    bool terminate = false;
+
+    while(((c_upper - c_lower) > c_tol) && !terminate) {
+      iteration_num++;
+      double c_new2;
+      int val_c_new2 = val_c_new;
+      int num_guesses = 0;
+      while(val_c_new2 == val_c_new) {
+	if(num_guesses > 25) {
+	  printf("25 guesses without improvement, terminating...\n");
+	  terminate = true;
+	  break;
+	}
+	//c_new2 = drand48() * (c_upper - c_lower) + c_lower;
+ 	double log_c_upper = log(c_upper);
+	double log_c_lower = log(c_lower);
+	c_new2 = exp(drand48() * (log_c_upper - log_c_lower) + log_c_lower);
+	printf("c_new2 = %f\titeration_num = %d\n", c_new2, iteration_num);
+	val_c_new2 = eval_kfold_svm(c_new2, n_points, permutation, cv_set, svm_module, kernel_matrix, &n_correct_class1, &n_correct_class0);
+	num_guesses++;
+      }
+      
+
+      c_tries.PushBackCopy(c_new2);
+      val_c_tries.PushBackCopy(val_c_new2);
+      val1_c_tries.PushBackCopy(n_correct_class1);
+      val0_c_tries.PushBackCopy(n_correct_class0);
+
+      if(val_c_new2 > val_c_new) {
+	if(c_new2 < c_new) {
+	  c_upper = c_new;
+	  val_c_upper = val_c_new;
+	  c_new = c_new2;
+	  val_c_new = val_c_new2;
+	}
+	else {
+	  c_lower = c_new;
+	  val_c_lower = val_c_new;
+	  c_new = c_new2;
+	  val_c_new = val_c_new2;
+	}
+      }
+      else { // val_c_new2 < val_c_new
+	if(c_new2 < c_new) {
+	  c_lower = c_new2;
+	  val_c_lower = val_c_new2;
+	}
+	else {
+	  c_upper = c_new2;
+	  val_c_upper = val_c_new2;
+	}
+      }
+    }
+
+    int n_tries = val_c_tries.size();
+
+    int opt_ind;
+    if(val_c_tries[n_tries - 1] > val_c_tries[n_tries - 2]) {
+      opt_ind = n_tries - 1;
+    }
+    else {
+      opt_ind = n_tries - 2;
+    }
+
+    double opt_c = c_tries[opt_ind];
+    n_correct_class1 = val1_c_tries[opt_ind];
+    n_correct_class0 = val0_c_tries[opt_ind];
+    
+    printf("optimal c = %f\n", opt_c);
+    
+    
+    /*
+
+    printf("LOOCV SVM Training and Testing... \n");
+    for(int i = 0; i < n_points; i++) {
+      Dataset training_set;
+      Dataset test_set;
+      cv_set.SplitTrainTest(n_points, i, permutation, &training_set, &test_set);
+        
+      // Begin SVM Training | Training and Testing
+      SVM<SVMRBFKernel> svm; // this should be changed from SVMRBFKernel to something like SVMMMKKernel
+      int learner_typeid = 0; // for svm_c
+      
+
+      svm.InitTrain(learner_typeid, training_set, svm_module, kernel_matrix);
+
+      Vector test_point;
+      test_point.Alias(test_set.point(0), 2);
+      
+      double prediction = svm.Predict(learner_typeid, test_point);
+      int test_label = (int) ((test_set.point(0))[1]);
+      bool correct =
+	((int)prediction) == test_label;
+      if(correct) {
+	if(test_label == 1) {
+	  n_correct_class1++;
+	}
+	else {
+	  n_correct_class0++;
+	}
+      }
+    }
+    */
   }
   
   int n_correct = n_correct_class1 + n_correct_class0;
