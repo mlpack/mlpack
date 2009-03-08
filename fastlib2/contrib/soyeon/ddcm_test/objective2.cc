@@ -3282,10 +3282,10 @@ void Objective::ComputePredictionError(double current_sample,
 
 	Vector predicted_decision;
   predicted_decision.Init(number_of_test);
-  predicted_decision.SetZero();
+  predicted_decision.SetAll(-1.0);
 
 	for(index_t n=0; n<number_of_test; n++){
-		if(postponed_probability_[n]>0.5) {
+		if(postponed_probability_[n]>=0.5) {
 			predicted_decision[n]=-1;
 		} else {
 			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
@@ -3297,15 +3297,18 @@ void Objective::ComputePredictionError(double current_sample,
 			}
 			//find the alternative with maximum choice_prob.
 			index_t index_chosen_alternative=0;
-			double max_choce_probability=-5;
+			double max_choce_probability=-100;
 			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
-				if(max_choce_probability<predicted_choice_probability_all[n][i]){
-					index_chosen_alternative=i+1;
-					max_choce_probability=predicted_choice_probability_all[n][i];
+				if(postponed_probability_[n]<0.5){
+					if(max_choce_probability<predicted_choice_probability_all[n][i]){
+						index_chosen_alternative=i;
+						//cout<<"n="<<n<<"index_chosen_alternative"<<index_chosen_alternative<<endl;
+						max_choce_probability=predicted_choice_probability_all[n][i];
+					}
 				}
+				predicted_decision[n]=index_chosen_alternative+1;
+				predicted_choice_probability[n]=max_choce_probability;
 			}
-			predicted_decision[n]=index_chosen_alternative;
-			predicted_choice_probability[n]=max_choce_probability;
 		}
 	}
 
@@ -3320,13 +3323,14 @@ void Objective::ComputePredictionError(double current_sample,
 	double count_correct_choice=0;
 
 	for(index_t n=0; n<number_of_test; n++){
-		if(true_decision[n]==-1 &&predicted_decision[n]==-1){
+		//if(true_decision[n]==-1 &&predicted_decision[n]==-1){
+	  if(true_decision[n]*predicted_decision[n]>0){
 			count_correct_postponed=count_correct_postponed+1;
 			//temp_postponed_prediction_error_prob;
 
 		}
-		if(true_decision[n]==predicted_decision[n]){
-			count_correct_choice=count_correct_choice=+1;
+		if((true_decision[n]==predicted_decision[n])){
+			count_correct_choice=count_correct_choice+1;
 		}
 	}
 
@@ -3334,12 +3338,21 @@ void Objective::ComputePredictionError(double current_sample,
 			(number_of_test-count_correct_postponed)/number_of_test*100;
 	temp_choice_prediction_error=
 		  (number_of_test-count_correct_choice)/number_of_test*100;
+			//(count_correct_choice)/number_of_test*100;
 
 	cout<<"postponed_prediction_error="<<temp_postponed_prediction_error<<endl;
 	cout<<"choice_prediction_error="<<temp_choice_prediction_error<<endl;
-
+  cout<<"num_correct_choice_prediction="<<count_correct_choice<<endl;
   (*postponed_prediction_error)=temp_postponed_prediction_error;
 	(*choice_prediction_error)=temp_choice_prediction_error;
+
+	cout<<"predicted_decision"<<endl;
+	for(index_t n=0; n<number_of_test; n++){
+		cout<<predicted_decision[n]<<" ";
+	}
+	cout<<endl;
+
+
 
 
 
