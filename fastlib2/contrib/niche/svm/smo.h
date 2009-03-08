@@ -104,7 +104,7 @@ class SMO {
   Vector grad_bar_; /* gradient value when treat free variables as 0 */
 
   // parameters
-  int budget_;
+  //int budget_; // commented out by NISHANT because not intialized
   double Cp_; // C_+, for SVM_C, y==1
   double Cn_; // C_-, for SVM_C, y==-1
   double epsilon_; // for SVM_R
@@ -119,7 +119,7 @@ class SMO {
    */
   void InitPara(int learner_typeid, ArrayList<double> &param_) {
     // init parameters
-    budget_ = (int)param_[0];
+    //budget_ = (int)param_[0]; // commented out by NISHANT because param_[0] not initialized
     if (learner_typeid == 0) { // SVM_C
       Cp_ = param_[1];
       Cn_ = param_[2];
@@ -404,7 +404,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   n_data_ = datamatrix_.n_cols();
   n_features_ = datamatrix_.n_rows() - 1;
 
-  budget_ = min(budget_, n_data_);
+  //budget_ = min(budget_, n_data_);  // commented out by NISHANT because not initialized
   bias_ = 0.0;
   n_sv_ = 0;
   unshrinked_ = false;

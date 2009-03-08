@@ -5,7 +5,7 @@
  *
  * This head file contains functions for performing SVM training and prediction
  * Supported SVM learner type:SVM_C, SVM_R, SVM_DE
- * Currently the Gaussian kernel has been changed to a structured kernel that accepts a kernel matrix parameter - Nishant
+ * Currently the Gaussian kernel has been changed to a structured kernel that accepts a kernel matrix parameter - NISHANT
  *
  * @see smo.h
  */
@@ -19,9 +19,45 @@
 
 #include <typeinfo>
 
-
 #define ID_LINEAR 0
 #define ID_GAUSSIAN 1
+
+// copied documentation from svm_main.cc to svm.h, removed unneeded entries - NISHANT
+
+const fx_entry_doc svm_main_entries_doc[] = {
+  {"k_cv", FX_PARAM, FX_INT, NULL,
+   "  The number of folds for cross validation, only required under \"cv\" mode.\n"},
+  {"cv_data", FX_PARAM, FX_STR, NULL,
+   "  The file name for cross validation data, only required under \"cv\" mode.\n"},
+  {"train_data", FX_PARAM, FX_STR, NULL,
+   "  The file name for training data, only required under \"train\" or \"train_test\" mode.\n"},
+  {"test_data", FX_PARAM, FX_STR, NULL,
+   "  The file name for testing data, only required under \"test\" or \"train_test\" mode.\n"},
+  {"kernel", FX_PARAM, FX_STR, NULL, // changed to FX_PARAM from FX_REQ
+   "  Kernel name, values:\"linear\", \"gaussian\".\n"},
+  {"sigma", FX_PARAM, FX_DOUBLE, NULL,
+   "  (for Gaussian kernel) sigma in the gaussian kernel k(x1,x2)=exp(-(x1-x2)^2/(2sigma^2)), only required when using \"guassian\" kernel\n"},
+  {"c", FX_RESERVED, FX_DOUBLE, NULL,
+   "  (for SVM_C) the weight (0~1) that controls compromise between large margins and small margin violations. Default value: 10.0.\n"},
+  {"c_p", FX_PARAM, FX_DOUBLE, NULL,
+   "  (for SVM_C) the weight (0~1) for the positive class (y==1). Default value: c.\n"},
+  {"c_n", FX_PARAM, FX_DOUBLE, NULL,
+   "  (for SVM_C) the weight (0~1) for the negative class (y==-1). Default value: c.\n"},
+  {"epsilon", FX_PARAM, FX_DOUBLE, NULL,
+   "  (for SVM_R) the epsilon in SVM regression of epsilon-insensitive loss. Default value: 0.1.\n"},
+  {"wss", FX_PARAM, FX_INT, NULL,
+   "  Working set selection scheme. 1 for 1st order expansion; 2 for 2nd order expansion. Default value: 1.\n"},
+  {"normalize", FX_PARAM, FX_BOOL, NULL,
+   "  Whether need to do data normalization before training/testing, values: \"0\" for no normalize, \"1\" for normalize.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc svm_main_doc = {
+  svm_main_entries_doc, NULL,
+  "These are the implementations for Support Vector Machines (SVM), including Multiclass classification, Regression, and One Class SVM)\n"
+};
+
+
 
 /**
 * Class for Linear Kernel
@@ -260,8 +296,8 @@ void SVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *mo
 
   // the tradeoff parameter "C", default: 10.0
   param_.C_ = fx_param_double(module, "c", 10.0);
-  param_.Cp_ = fx_param_double(module, "c_p", param_.C_);
-  param_.Cn_ = fx_param_double(module, "c_n", param_.C_);
+  param_.Cp_ = param_.C_; //fx_param_double(module, "c_p", param_.C_); // modified by NISHANT to get rid of persistent c_p
+  param_.Cn_ = param_.C_; //fx_param_double(module, "c_n", param_.C_); // modified by NISHANT to get rid of persistent c_n
 
   if (learner_typeid == 1) { // for SVM_R only
     // the "epsilon", default: 0.1
