@@ -37,7 +37,7 @@
  */
 
 namespace optim {
-
+ namespace optpp {
 /**
  * @brief  Definitions for the op++ library
  * @code
@@ -855,6 +855,6 @@ class StaticOptppOptimizer {
 template<typename Method, typename Objective, ConstraintType Constraint>
   Objective *StaticOptppOptimizer<Method, Objective, 
       Constraint>::objective_=NULL;
-
+};  //Namespace optpp
 }; // Namespace optim
 #endif

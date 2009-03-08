@@ -1,5 +1,4 @@
 # Scroll down to see the main part.
-# (This first part is dedicated to compiling and installing LAPACK.)
 import commands;
 import sys
 
@@ -21,7 +20,7 @@ def make_optpp(sysentry, files, params):
     print "2)Press 2 if you think you have a better version already installed press 2"
     print "  You will be asked to give the full path along with the library name (/path/libexample.a)"
     print "  if after giving the path you realize that it is wrong or it doesn't work"
-    print "  delete the $instalation_dir/mlpack/optimization/opt++/optpp.lock file and build your code again"
+    print "  delete the $instalation_dir/fastlib/optimization/opt++/optpp.lock file and build your code again"
     resp=0;
     while resp!=1 and resp!=2:
       resp=input("Give me your choice now: ");

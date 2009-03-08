@@ -67,7 +67,7 @@ class StaticOptppOptimizerTest {
   }
  private:
   fx_module *module_;
-  optim::StaticOptppOptimizer<optim::LBFGS, Rosen> optimizer_;
+  optim::optpp::StaticOptppOptimizer<optim::optpp::LBFGS, Rosen> optimizer_;
 };
 
 int main(int argc, char *argv[]) {
