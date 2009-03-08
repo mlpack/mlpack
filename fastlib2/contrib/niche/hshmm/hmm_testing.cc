@@ -772,6 +772,12 @@ int main(int argc, char* argv[]) {
     ArrayList<index_t> permutation;
     math::MakeIdentityPermutation(n_points, &permutation);
 
+    ArrayList<double> all_c_tries;
+    all_c_tries.Init(3);
+    ArrayList<double> val_all_c_tries;
+    val_all_c_tries.Init(3);
+
+
     ArrayList<double> c_tries;
     c_tries.Init(3);
     ArrayList<int> val_c_tries;
@@ -788,14 +794,18 @@ int main(int argc, char* argv[]) {
     printf("c_upper = %f\n", c_upper);
     int val_c_upper = eval_kfold_svm(c_upper, n_points, permutation, cv_set, svm_module, kernel_matrix, &n_correct_class1, &n_correct_class0);
     c_tries[0] = c_upper;
+    all_c_tries[0] = c_upper;
     val_c_tries[0] = val_c_upper;
+    val_all_c_tries[0] = val_c_upper;
     val1_c_tries[0] = n_correct_class1;
     val0_c_tries[0] = n_correct_class0;
 
     printf("c_lower = %f\n", c_lower);
     int val_c_lower = eval_kfold_svm(c_lower, n_points, permutation, cv_set, svm_module, kernel_matrix, &n_correct_class1, &n_correct_class0);
     c_tries[1] = c_lower;
+    all_c_tries[1] = c_lower;
     val_c_tries[1] = val_c_lower;
+    val_all_c_tries[1] = val_c_lower;
     val1_c_tries[1] = n_correct_class1;
     val0_c_tries[1] = n_correct_class0;
 
@@ -822,6 +832,8 @@ int main(int argc, char* argv[]) {
       c_new = exp(drand48() * (log_c_upper - log_c_lower) + log_c_lower);
       printf("c_new = %f\n", c_new);
       val_c_new = eval_kfold_svm(c_new, n_points, permutation, cv_set, svm_module, kernel_matrix, &n_correct_class1, &n_correct_class0);
+      all_c_tries.PushBackCopy(c_new);
+      val_all_c_tries.PushBackCopy(val_c_new);
       num_guesses++;
     }
 
@@ -849,6 +861,8 @@ int main(int argc, char* argv[]) {
 	c_new2 = exp(drand48() * (log_c_upper - log_c_lower) + log_c_lower);
 	printf("c_new2 = %f\titeration_num = %d\n", c_new2, iteration_num);
 	val_c_new2 = eval_kfold_svm(c_new2, n_points, permutation, cv_set, svm_module, kernel_matrix, &n_correct_class1, &n_correct_class0);
+	all_c_tries.PushBackCopy(c_new2);
+	val_all_c_tries.PushBackCopy(val_c_new2);
 	num_guesses++;
       }
       
@@ -883,6 +897,15 @@ int main(int argc, char* argv[]) {
 	}
       }
     }
+
+    int n_all_tries = all_c_tries.size();
+    Matrix c_accuracy_pairs;
+    c_accuracy_pairs.Init(2, n_all_tries);
+    for(int i = 0; i < n_all_tries; i++) {
+      c_accuracy_pairs.set(0, i, all_c_tries[i]);
+      c_accuracy_pairs.set(1, i, val_all_c_tries[i]);
+    }
+    data::Save("c_accuracy.csv", c_accuracy_pairs);
 
     int n_tries = val_c_tries.size();
 
