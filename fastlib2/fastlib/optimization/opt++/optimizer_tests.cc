@@ -144,6 +144,7 @@ public:
     trueval_[0] = 1.0;
     trueval_[1] = 1.0;
   }
+
   void TestLBFGS() {
     Rosen rosen;
     optimizer_LBFGS_.Init(module_, &rosen);
@@ -153,6 +154,32 @@ public:
       DEBUG_WARNING_IF(fabs(result[i] - trueval_[i]) > EPSILON);
     }
   }
+
+  void TestLBFGS_BC() {
+    Rosen rosen;
+    optimizer_LBFGS_BC_.Init(module_, &rosen);
+    Vector result;
+    optimizer_LBFGS_BC_.Optimize(&result);
+  }
+
+  void TestLBFGS_LE() {
+    Rosen rosen;
+    optimizer_LBFGS_LE_.Init(module_, &rosen);
+    Vector result;
+    optimizer_LBFGS_LE_.Optimize(&result);
+  }
+
+  void TestLBFGS_LI() {
+    Rosen rosen;
+    optimizer_LBFGS_LI_.Init(module_, &rosen);
+    Vector result;
+    optimizer_LBFGS_LI_.Optimize(&result);
+  }
+
+  void TestLBFGS_NLE() {}
+
+  void TestLBFGS_NLI() {}
+
   void TestCG() {
     Rosen rosen;
     optimizer_CG_.Init(module_, &rosen);
@@ -200,6 +227,12 @@ public:
   }
   void TestAll() {
     TestLBFGS();
+    TestLBFGS_BC();
+    TestLBFGS_LE();
+    TestLBFGS_LI();
+    TestLBFGS_NLE();
+    TestLBFGS_NLI();
+
     TestCG();
     TestQNewton();
     TestBFGS();
@@ -209,6 +242,12 @@ public:
 private:
   fx_module *module_;
   optim::optpp::StaticOptppOptimizer<optim::optpp::LBFGS, Rosen> optimizer_LBFGS_;
+  optim::optpp::StatisOptppOptimizer<optim::optpp::LBFGS, Rosen, 
+				     optim::optpp::BoundConstraint> optimizer_LBFGS_BC_;
+  optim::optpp::StatisOptppOptimizer<optim::optpp::LBFGS, Rosen, 
+				     optim::optpp::LinearEquality> optimizer_LBFGS_LE_;
+  optim::optpp::StatisOptppOptimizer<optim::optpp::LBFGS, Rosen, 
+				     optim::optpp::LinearInequality> optimizer_LBFGS_LI_;
   optim::optpp::StaticOptppOptimizer<optim::optpp::CG, Rosen> optimizer_CG_;
   optim::optpp::StaticOptppOptimizer<optim::optpp::QNewton, Rosen> optimizer_QNewton_;
   optim::optpp::StaticOptppOptimizer<optim::optpp::BFGS, Rosen> optimizer_BFGS_;
