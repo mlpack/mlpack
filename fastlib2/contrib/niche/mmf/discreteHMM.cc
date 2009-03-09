@@ -426,8 +426,12 @@ void DiscreteHMM::Train(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* 
   bs.Init(M, L);
   s.Init(L);
 
-  Vector pi; //added by nishant
-  pi.Init(M - 1); //added by nishant
+  Vector pi; //added by NISHANT
+  pi.Init(M - 1); //added by NISHANT
+  Vector norm_pi; //added by NISHANT
+  norm_pi.Init(M - 1); //added by NISHANT
+  norm_pi.SetZero(); // added by NISHANT
+  
 
   double loglik = 0, oldlog;
   for (int iter = 0; iter < max_iter; iter++) {
@@ -448,7 +452,7 @@ void DiscreteHMM::Train(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* 
 	  }
       }
 
-      // added by nishant - NOTE!: this code will not work properly for the multiple sequence case because we don't touch the scaling
+      // added by NISHANT - NOTE!: this code will not work properly for the multiple sequence case because we don't touch the scaling
       double pi_sum = 0;
       for(int i = 1; i < M; i++) {
 	double val = fs.get(i, 0) * bs.get(i, 0);
@@ -458,8 +462,9 @@ void DiscreteHMM::Train(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* 
       for(int i = 1; i < M; i++) {
 	pi[i - 1] /= pi_sum;
       }
+      la::AddTo(pi, &norm_pi);
       //pi.PrintDebug("pi");
-      // end addition by nishant
+      // end addition by NISHANT
       
       for (int t = 0; t < L; t++) {
 	int e = (int) seqs[idx][t];
@@ -469,9 +474,14 @@ void DiscreteHMM::Train(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* 
     }
 
     // added by nishant
+    double norm_pi_sum = 0;
+    for(int i = 1; i < M; i++) {
+      norm_pi_sum += norm_pi[i - 1];
+    }
+    la::Scale(1 / norm_pi_sum, &norm_pi);
     gTR.ref(0, 0) = 0;
     for(int j = 1; j < M; j++) {
-      gTR.ref(0, j) = pi[j - 1];
+      gTR.ref(0, j) = norm_pi[j - 1];
     }
     // end addition by nishant
 
@@ -489,7 +499,7 @@ void DiscreteHMM::Train(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* 
       else {
 	for (int j = 0; j < M; j++) gTR.ref(i, j) = TR.get(i, j) / s;
       }
-      
+          
       s = 0;
       for (int j = 0; j < N; j++) s += EM.get(i, j);
       //printf("s = %f\n", s);
@@ -503,8 +513,8 @@ void DiscreteHMM::Train(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* 
 	for (int j = 0; j < N; j++) gEM.ref(i, j) = EM.get(i, j) / s;
       }
     }
-    //gTR.PrintDebug("gTR");
-    //    exit(1);
+    //gTR.PrintDebug("gTR"); // added by NISHANT
+    //exit(1); // added by NISHANT
 
     //printf("Iter = %d Loglik = %8.4f\n", iter, loglik); //commented out by Nishant for speed
     if (fabs(oldlog - loglik) < tol) {
