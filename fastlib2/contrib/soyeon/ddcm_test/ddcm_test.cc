@@ -125,10 +125,18 @@ int main(int argc, char *argv[]) {
 	
 	Vector tpar;
 	tpar.Init(current_parameter.length());
+	/*
 	tpar[0]=1;
 	tpar[1]=4;
 	tpar[2]=5;
 	tpar[3]=2;
+	*/
+
+	tpar[0]=-1;
+	tpar[1]=2;
+	tpar[2]=3;
+	tpar[3]=1;
+
 
   
 	cout<<"true parameter:"<<endl;
@@ -169,7 +177,7 @@ int main(int argc, char *argv[]) {
 
 
   //iteration
-  int max_iteration=200;
+  int max_iteration=100;
 	int iteration_count=0;
 
 	/*
