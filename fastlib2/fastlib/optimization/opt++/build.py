@@ -103,6 +103,6 @@ customrule(
 
 librule(name="opt++",
   headers=["optimizer.h"],
-  tests=["optimizer_test.cc"],
+  tests=["optimizer_test.cc","optimizer_tests.cc"],
   deplibs=["fastlib:fastlib", ":optpp_install", ":newmat_install"]
 )

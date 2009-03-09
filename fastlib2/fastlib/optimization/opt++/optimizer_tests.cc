@@ -74,19 +74,25 @@ public:
   }
 
   void GetLinearEquality(Matrix *a_mat, Vector *b_vec) {
-    // assuming that the matrix and vector are initialized 
-    // to fit 2 constraints
+    // Providing 1 linear equality constraint
+
+    // Initializing the matrix and vector
+    a_mat->Init(1, dimension_);
+    b_vec->Init(1);
+
     a_mat->set(0,0,1.);
     a_mat->set(0,1,1.);
-    a_mat->set(1,0,1.);
-    a_mat->set(1,1,-2.);
     (*b_vec)[0] = 1.;
-    (*b_vec)[1] = 0.;
   }
 
   void GetLinearInequality(Matrix *a_mat, Vector *lb_vec, Vector *ub_vec) {
-    // assuming that the matrix and vector are initialized 
-    // to fit 2 constraints
+    // Providing 2X2 linear inequality constraints
+
+    // Initializing the matrix and vector
+    a_mat->Init(2, dimension_);
+    lb_vec->Init(2);
+    ub_vec->Init(2);
+
     a_mat->set(0,0,1.);
     a_mat->set(0,1,1.);
     a_mat->set(1,0,1.);
@@ -151,7 +157,9 @@ public:
     Vector result;
     optimizer_LBFGS_.Optimize(&result);  
     for (index_t i = 0; i < trueval.length(); i++) {
-      DEBUG_WARNING_IF(fabs(result[i] - trueval_[i]) > EPSILON);
+      DEBUG_WARNING_MSG_IF(fabs(result[i] - trueval_[i]) > EPSILON,
+			   "LBFGS:True %"LI"d:%lg, Computed %"LI"d:%lg",
+			   i,trueval_[i], i,result[i]);
     }
   }
 
@@ -176,6 +184,7 @@ public:
     optimizer_LBFGS_LI_.Optimize(&result);
   }
 
+  // Tests to be written
   void TestLBFGS_NLE() {}
 
   void TestLBFGS_NLI() {}
@@ -186,7 +195,9 @@ public:
     Vector result;
     optimizer_CG_.Optimize(&result);  
     for (index_t i = 0; i < trueval.length(); i++) {
-      DEBUG_WARNING_IF(fabs(result[i] - trueval_[i]) > EPSILON);
+      DEBUG_WARNING_MSG_IF(fabs(result[i] - trueval_[i]) > EPSILON,
+			   "CG:True %"LI"d:%lg, Computed %"LI"d:%lg",
+			   i,trueval_[i], i,result[i]);
     }
   }
   void TestQNewton() {
@@ -195,7 +206,9 @@ public:
     Vector result;
     optimizer_QNewton_.Optimize(&result);  
     for (index_t i = 0; i < trueval.length(); i++) {
-      DEBUG_WARNING_IF(fabs(result[i] - trueval_[i]) > EPSILON);
+      DEBUG_WARNING_MSG_IF(fabs(result[i] - trueval_[i]) > EPSILON,
+			   "QNewton:True %"LI"d:%lg, Computed %"LI"d:%lg",
+			   i,trueval_[i], i,result[i]);
     }
   }
   void TestBFGS() {
@@ -204,7 +217,9 @@ public:
     Vector result;
     optimizer_BFGS_.Optimize(&result);  
     for (index_t i = 0; i < trueval.length(); i++) {
-      DEBUG_WARNING_IF(fabs(result[i] - trueval_[i]) > EPSILON);
+      DEBUG_WARNING_MSG_IF(fabs(result[i] - trueval_[i]) > EPSILON,
+			   "BFGS:True %"LI"d:%lg, Computed %"LI"d:%lg",
+			   i,trueval_[i], i,result[i]);
     }
   }
   void TestFDNewton() {
@@ -213,7 +228,9 @@ public:
     Vector result;
     optimizer_FDNewton_.Optimize(&result);  
     for (index_t i = 0; i < trueval.length(); i++) {
-      DEBUG_WARNING_IF(fabs(result[i] - trueval_[i]) > EPSILON);
+      DEBUG_WARNING_MSG_IF(fabs(result[i] - trueval_[i]) > EPSILON,
+			   "FDNewton:True %"LI"d:%lg, Computed %"LI"d:%lg",
+			   i,trueval_[i], i,result[i]);
     }
   }
   void TestNewton() {
@@ -222,7 +239,9 @@ public:
     Vector result;
     optimizer_Newton_.Optimize(&result);  
     for (index_t i = 0; i < trueval.length(); i++) {
-      DEBUG_WARNING_IF(fabs(result[i] - trueval_[i]) > EPSILON);
+      DEBUG_WARNING_MSG_IF(fabs(result[i] - trueval_[i]) > EPSILON,
+			   "Newton:True %"LI"d:%lg, Computed %"LI"d:%lg",
+			   i,trueval_[i], i,result[i]);
     }
   }
   void TestAll() {
@@ -242,7 +261,7 @@ public:
 private:
   fx_module *module_;
   optim::optpp::StaticOptppOptimizer<optim::optpp::LBFGS, Rosen> optimizer_LBFGS_;
-  optim::optpp::StatisOptppOptimizer<optim::optpp::LBFGS, Rosen, 
+  optim::optpp::StatisOptppOptimizer<optim::optpp::LBFGS, Rosen,
 				     optim::optpp::BoundConstraint> optimizer_LBFGS_BC_;
   optim::optpp::StatisOptppOptimizer<optim::optpp::LBFGS, Rosen, 
 				     optim::optpp::LinearEquality> optimizer_LBFGS_LE_;
