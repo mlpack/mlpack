@@ -51,9 +51,18 @@ binrule(
 binrule(
     name = "hmm_testing",
     sources = ["hmm_testing.cc","test_hmm_multinomial.cc","../mmf/mmf3.cc"],
-    headers = ["hmm_testing.h"],
+    headers = ["hmm_testing.h","../svm/svm.h"],
     deplibs = ["fastlib:fastlib","contrib/niche/mmf:hmm"]
 )
+
+binrule(
+    name = "hmm_generative_classifier",
+    sources = ["hmm_generative_classifier.cc", "test_hmm_multinomial.cc","../mmf/mmf3.cc"],
+    headers = ["hmm_testing.h","../svm/svm.h"],
+    deplibs = ["fastlib:fastlib","contrib/niche/mmf:hmm"]
+)
+
+
 
 binrule(
     name = "test_serial",
