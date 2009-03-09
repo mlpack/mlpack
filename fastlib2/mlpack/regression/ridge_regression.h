@@ -10,9 +10,11 @@ class RidgeRegression {
   }
 
   void Init(fx_module *module, const Matrix &predictors, 
-	    const Matrix &predictions);
+	    const Matrix &predictions, 
+	    bool use_normal_equation_method = true);
 
-  void Init(fx_module *module, const Matrix &input_data, index_t selector);
+  void Init(fx_module *module, const Matrix &input_data, index_t selector,
+	    bool use_normal_equation_method = true);
 
   /** @brief From a column-oriented dataset, initialize the design
    *         matrix using the row features whose indices belong to the
@@ -34,12 +36,15 @@ class RidgeRegression {
   void Init(fx_module *module, 
             const Matrix &input_data, 
             const GenVector<index_t> &predictor_indices,
-            index_t &prediction_index);
+            index_t &prediction_index, bool use_normal_equation_method = true);
 
   void Init(fx_module *module, 
             const Matrix &input_data, 
             const GenVector<index_t> &predictor_indices,
-            const Matrix &prediction);
+            const Matrix &prediction, bool use_normal_equation_method = true);
+
+  void ReInitTargetValues(const Matrix &input_data, 
+			  index_t target_value_index);
 
   void Destruct();
 
@@ -47,8 +52,9 @@ class RidgeRegression {
 
   void SVDRegress(double lambda);
 
-  void SVDNormalEquationRegress(double lambda,
-				Matrix *precomputed_covariance = NULL);
+  void SVDNormalEquationRegress
+  (double lambda,
+   const GenVector<index_t> *predictor_indices = NULL);
 
   void CrossValidatedRegression(double lambda_min, double lambda_max,
 				index_t num);
@@ -70,19 +76,41 @@ class RidgeRegression {
 
   fx_module *module_;
 
+  /** @brief The design matrix.
+   */
   Matrix predictors_;
 
+  /** @brief The training target values for each instance. This is
+   *         generalizable to multi-target case by using a matrix.
+   */
   Matrix predictions_;
 
+  /** @brief The covariance matrix: roughly A A^T, modulo the
+   *         mandatory 1 vector added to the features for the
+   *         intercept.
+   */
+  Matrix covariance_;
+
+  /** @brief The trained linear regression model output.
+   */
   Matrix factors_;
 
   void ComputeLinearModel_(double lambda_sq, const Vector &singular_values, 
-			   const Matrix &u, const Matrix v_t);
+			   const Matrix &u, const Matrix &v_t,
+			   int num_features);
   
-  void FormNormalEquation_(double lambda, Matrix *output);
-
   void BuildDesignMatrixFromIndexSet_
-  (const Matrix &input_data, const GenVector<index_t> &predictor_indices);
+  (const Matrix &input_data, const double *predictions,
+   const GenVector<index_t> *predictor_indices);
+  
+  void BuildCovariance_(const Matrix &input_data, 
+			const GenVector<index_t> *predictor_indices,
+			const double *predictions_in);
+
+  void ExtractCovarianceSubset_
+  (const Matrix &precomputed_covariance,
+   const GenVector<index_t> *loo_current_predictor_indices,
+   Matrix *precomputed_covariance_subset);
 
 };
 
