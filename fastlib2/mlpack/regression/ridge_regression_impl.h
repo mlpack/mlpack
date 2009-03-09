@@ -19,9 +19,123 @@
 //    "Fix it otherwise the program will behave unexpectedly");                
 #else
 
+void RidgeRegression::BuildCovariance_
+(const Matrix &input_data, const GenVector<index_t> *predictor_indices,
+ const double *predictions_in) {
+  
+  NOTIFY("RidgeRegression::BuildCovariance_: starting.");
+
+  // Initialize the covariance matrix to the zero matrix.
+  covariance_.Init(input_data.n_rows() + 1, input_data.n_rows() + 1);
+  covariance_.SetZero();
+  
+  // Set the alias to the input data.
+  predictors_.Alias(input_data);
+
+  // Initialiez the target training value matrix.
+  predictions_.Init(input_data.n_cols(), 1);
+    
+  int limit = -1;
+  if(predictor_indices == NULL) {
+    limit = input_data.n_rows();
+  }
+  else {
+    limit = predictor_indices->length();
+  }
+  
+  // Loop over each column point.
+  for(index_t i = 0; i < input_data.n_cols(); i++) {
+    
+    // The pointer to the point in consideration.
+    const double *point = input_data.GetColumnPtr(i);
+
+    // Copy over the training target values.
+    predictions_.set(i, 0, predictions_in[i]);
+
+    // Loop over each predictor index.
+    for(index_t j = -1; j < limit; j++) {
+      
+      // The current predictor index.
+      index_t outer_predictor_index = -1;
+      double outer_value = 1.0;
+      
+      if(j >= 0) {
+	if(predictor_indices == NULL) {
+	  outer_predictor_index = j;
+	}
+	else {
+	  outer_predictor_index = (*predictor_indices)[j];
+	}
+	outer_value = point[outer_predictor_index];
+      }
+      
+      // Accumulate the covariance matrix.
+      for(index_t k = -1; k < limit; k++) {
+	
+	// The inner predictor index.
+	index_t inner_predictor_index = -1;
+	double inner_value = 1.0;
+	
+	if(k >= 0) {
+	  if(predictor_indices == NULL) {
+	    inner_predictor_index = k;
+	  }
+	  else {
+	    inner_predictor_index = (*predictor_indices)[k];
+	  }
+	  inner_value = point[inner_predictor_index];
+	}
+	
+	covariance_.set
+	  (outer_predictor_index + 1, inner_predictor_index + 1,
+	   covariance_.get(outer_predictor_index + 1,
+			   inner_predictor_index + 1) +
+	   outer_value * inner_value);
+      }
+    }
+  }
+  NOTIFY("RidgeRegression::BuildCovariance_: complete.");
+
+  // This is a hack.
+  factors_.Init(0, 0);
+}
+
+void RidgeRegression::ExtractCovarianceSubset_
+(const Matrix &precomputed_covariance,
+ const GenVector<index_t> *loo_current_predictor_indices,
+ Matrix *precomputed_covariance_subset) {
+
+  // If no indices are specified, then copy over the entire thing.
+  if(loo_current_predictor_indices == NULL) {    
+    precomputed_covariance_subset->Copy(covariance_);
+  }
+
+  else {
+    precomputed_covariance_subset->Init
+      (loo_current_predictor_indices->length() + 1,
+       loo_current_predictor_indices->length() + 1);
+    
+    for(index_t i = -1; i < loo_current_predictor_indices->length(); i++) {
+      index_t column_position = (i == -1) ? 
+	0:(*loo_current_predictor_indices)[i] + 1;
+      
+      for(index_t j = -1; j < loo_current_predictor_indices->length(); j++) {
+	index_t row_position = (j == -1) ? 
+	  0:(*loo_current_predictor_indices)[j] + 1;
+	
+	precomputed_covariance_subset->set
+	  (j + 1, i + 1, 
+	   precomputed_covariance.get(row_position, column_position));
+      }
+    }
+  }
+}
+
 void RidgeRegression::Init(fx_module *module, const Matrix &predictors, 
-                           const Matrix &predictions) {
-  module_=module;
+                           const Matrix &predictions,
+			   bool use_normal_equation_method) {
+
+  module_ = module;
   DEBUG_ERROR_MSG_IF(predictors.n_cols()<predictors.n_rows(),
      "The number of the columns %"LI"d must be less or equal to the number of "
      " the rows %"LI"d ", predictors.n_cols(), predictors.n_rows());
@@ -31,93 +145,119 @@ void RidgeRegression::Init(fx_module *module, const Matrix &predictors,
       "Predictors and predictions must have the same same number "
       "of rows %"LI"d != %"LI"d ", predictors.n_cols(), predictions.n_cols());
 
-  // Append a row of 1's to the predictors to account for dataset that
-  // is not mean-centered, and transpose it.
-  predictors_.Init(predictions.n_cols(), predictors.n_rows() + 1);
-  for(index_t i = 0; i < predictors_.n_rows(); i++) {
-    predictors_.set(i, 0, 1.0);
-    for(index_t j = 1; j < predictors_.n_cols(); j++) {
-      predictors_.set(i, j, predictors.get(j - 1, i));
-    }
+  if(use_normal_equation_method) {
+
+    // Build the covariance matrix.
+    BuildCovariance_(predictors, NULL, predictions.ptr());
   }
-  la::TransposeInit(predictions, &predictions_);
-}
-
-void RidgeRegression::Init(fx_module *module, 
-                           const Matrix &input_data, 
-                           index_t selector) {
-  //COMPILER_PRINTF("%s","!!!!!!!!!! Method not implemented yet" );
-}
-
-void RidgeRegression::Init(fx_module *module, 
-                           const Matrix &input_data, 
-                           const GenVector<index_t> &predictor_indices,
-                           index_t &prediction_index) {
-  
-  module_ = module;
-  
-  BuildDesignMatrixFromIndexSet_(input_data, predictor_indices);
-  predictions_.Init(input_data.n_cols(), 1);
-  
-  for(index_t i = 0; i < input_data.n_cols(); i++) {
-    predictions_.set(i, 0, input_data.get(prediction_index, i));
+  else {
+    
+    // The covariance is empty.
+    BuildDesignMatrixFromIndexSet_(predictors, predictions.ptr(), NULL);
+    covariance_.Init(0, 0);
   }
 }
 
 void RidgeRegression::Init(fx_module *module, 
                            const Matrix &input_data, 
                            const GenVector<index_t> &predictor_indices,
-                           const Matrix &predictions) {
-
+                           index_t &prediction_index,
+			   bool use_normal_equation_method) {
+  
   module_ = module;
-  BuildDesignMatrixFromIndexSet_(input_data, predictor_indices);  
-  la::TransposeInit(predictions, &predictions_);
+ 
+  if(use_normal_equation_method) {
+
+    // Build the covariance matrix.
+    BuildCovariance_(input_data, &predictor_indices,
+		     input_data.GetColumnPtr(prediction_index));
+  }
+  else {
+    
+    // Set the covariance stuff to be empty.
+    BuildDesignMatrixFromIndexSet_(input_data, 
+				   input_data.GetColumnPtr(prediction_index),
+				   &predictor_indices);
+    covariance_.Init(0, 0);
+  }  
 }
 
-void RidgeRegression::FormNormalEquation_(double lambda, Matrix *output) {
-  
-  NOTIFY("Forming the normal equation.");
+void RidgeRegression::Init(fx_module *module, 
+                           const Matrix &input_data, 
+                           const GenVector<index_t> &predictor_indices,
+                           const Matrix &predictions,
+			   bool use_normal_equation_method) {
 
-  // Set up the predictors^T * predictors.
-  double lambda_sq = lambda * lambda;
-  la::MulTransAInit(predictors_, predictors_, output);
+  module_ = module;
 
-  // Add the regularizaton parameter to the diagonals before
-  // inverting.
-  for(index_t i = 0; i < predictors_.n_cols(); i++) {
-    output->set(i, i, output->get(i, i) + lambda_sq);
-  } 
+  if(use_normal_equation_method) {
 
-  NOTIFY("Formed the normal equation of %d rows by %d columns.",
-	 output->n_rows(), output->n_cols());
+    // Build the covariance matrix.
+    BuildCovariance_(input_data, &predictor_indices, predictions.ptr());
+  }
+  else {
+    
+    // Set the covariance stuff to be empty.
+    BuildDesignMatrixFromIndexSet_(input_data, predictions.ptr(),
+				   &predictor_indices);
+    covariance_.Init(0, 0);
+  }
+}
+
+void RidgeRegression::ReInitTargetValues(const Matrix &input_data,
+					 index_t target_value_index) {
+
+  for(index_t i = 0; i < predictions_.n_rows(); i++) {
+    predictions_.set(i, 0, input_data.get(target_value_index, i));
+  }  
 }
 
 void RidgeRegression::BuildDesignMatrixFromIndexSet_
-(const Matrix &input_data, const GenVector<index_t> &predictor_indices) {
+(const Matrix &input_data, const double *predictions,
+ const GenVector<index_t> *predictor_indices) {
   
   // Extract the rows that are relevant, and construct the appropriate
   // design matrix from it. We add one more parameter to the model for
   // the intercept (the constant term). Here we are transposing the
   // dataset.
-  predictors_.Init(input_data.n_cols(), predictor_indices.length() + 1);
-    
+  int num_features = 0;
+  if(predictor_indices == NULL) {
+    num_features = input_data.n_rows();
+  }
+  else {
+    num_features = predictor_indices->length();
+  }  
+  predictors_.Init(input_data.n_cols(), num_features + 1);
+  predictions_.Init(input_data.n_cols(), 1);
+  
   for(index_t i = 0; i < input_data.n_cols(); i++) {
     
     // Initialize the first column of the design matrix to be 1.
     predictors_.set(i, 0, 1.0);
 
-    for(index_t j = 0; j < predictor_indices.length(); j++) {
-      predictors_.set(i, j + 1, input_data.get(predictor_indices[j], i));
+    for(index_t j = 0; j < num_features; j++) {
+      int get_feature_index = -1;
+      if(predictor_indices == NULL) {
+	get_feature_index = j;
+      }
+      else {
+	get_feature_index = (*predictor_indices)[j];
+      }
+      predictors_.set(i, j + 1, input_data.get(get_feature_index, i));
     }
+
+    // Copy over the predictions.
+    predictions_.set(i, 0, predictions[i]);
   } 
 }
 
 void RidgeRegression::ComputeLinearModel_
 (double lambda_sq, const Vector &singular_values, 
- const Matrix &u, const Matrix v_t) {
+ const Matrix &u, const Matrix &v_t, int num_features) {
 
   // Factors should have $D + 1$ parameters.
-  factors_.Init(predictors_.n_cols(), 1);
+  factors_.Destruct();
+  factors_.Init(num_features + 1, 1);
   factors_.SetZero();
 
   for(index_t i = 0; i < singular_values.length(); i++) {
@@ -140,7 +280,8 @@ void RidgeRegression::QuicSVDRegress(double lambda, double relative_error) {
 
   double lambda_sq = lambda * lambda;
 
-  ComputeLinearModel_(lambda_sq, singular_values, u, v_t);
+  ComputeLinearModel_(lambda_sq, singular_values, u, v_t, 
+		      predictors_.n_rows());
 }
 
 void RidgeRegression::SVDRegress(double lambda) {
@@ -151,36 +292,66 @@ void RidgeRegression::SVDRegress(double lambda) {
 
   double lambda_sq = lambda * lambda;
 
-  ComputeLinearModel_(lambda_sq, singular_values, u, v_t);
+  ComputeLinearModel_(lambda_sq, singular_values, u, v_t,
+		      predictors_.n_rows());
 }
 
 void RidgeRegression::SVDNormalEquationRegress
-(double lambda, Matrix *precomputed_covariance) {
+(double lambda, const GenVector<index_t> *predictor_indices) {
 
   NOTIFY("SVDNormalEquationRegress: starting.");
 
   Vector eigen_values;
   Matrix eigen_v, v_t;
 
-  if(precomputed_covariance == NULL) {
-    Matrix normal_equation;  
-    FormNormalEquation_(lambda, &normal_equation);
+  Matrix precomputed_covariance;
+  ExtractCovarianceSubset_(covariance_, predictor_indices, 
+			   &precomputed_covariance);
 
-    // Do the SVD on the normal equation, which is of a smaller size
-    // than the original design matrix.
-    la::SVDInit(normal_equation, &eigen_values, &eigen_v, &v_t);
-  }
-  else {
-    la::SVDInit(*precomputed_covariance, &eigen_values, &eigen_v, &v_t);
-  }
+  la::SVDInit(precomputed_covariance, &eigen_values, &eigen_v, &v_t);
 
   // Take the square root of each eigenvalue to get the singular
   // values.
   for(index_t i = 0; i < eigen_values.length(); i++) {
     eigen_values[i] = sqrt(eigen_values[i]);
   }
+
   Matrix u;
+  u.Init(predictors_.n_cols(), eigen_v.n_cols());
+  
+  int limit = -1;
+  if(predictor_indices == NULL) {
+    limit = predictors_.n_rows();
+  }
+  else {
+    limit = predictor_indices->length();
+  }
+
+  for(index_t i = 0; i < predictors_.n_cols(); i++) {
+    
+    const double *point = predictors_.GetColumnPtr(i);
+    for(index_t j = 0; j < eigen_v.n_cols(); j++) {
+      
+      const double *eigen_v_column = eigen_v.GetColumnPtr(j);
+      double dot_product = eigen_v_column[0];
+      for(index_t k = 1; k <= limit; k++) {
+	
+	if(predictor_indices == NULL) {
+	  dot_product += point[k - 1] * eigen_v_column[k];
+	}
+	else {
+	  dot_product += point[(*predictor_indices)[k - 1]] *
+	    eigen_v_column[k];
+	}
+      }      
+      u.set(i, j, dot_product);
+    }
+  }
+
+  /*
   la::MulInit(predictors_, eigen_v, &u);
+  */
+  
   for(index_t i = 0; i < u.n_cols(); i++) {
     double *u_column = u.GetColumnPtr(i);
     if(eigen_values[i] > 0) {
@@ -190,7 +361,10 @@ void RidgeRegression::SVDNormalEquationRegress
   
   double lambda_sq = lambda * lambda;
 
-  ComputeLinearModel_(lambda_sq, eigen_values, u, v_t);
+  ComputeLinearModel_(lambda_sq, eigen_values, u, v_t,
+		      (predictor_indices == NULL) ?
+		      predictors_.n_rows():
+		      (predictor_indices->length()));
 
   NOTIFY("SVDNormalEquationRegress: complete.");
 }
@@ -270,12 +444,21 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
 
   // Using the best lambda, compute the linear model.
   double lambda_sq = math::Sqr(lambda_min + min_index * step);
-  ComputeLinearModel_(lambda_sq, singular_values, u, v_t);
+  ComputeLinearModel_(lambda_sq, singular_values, u, v_t,
+		      predictors_.n_rows());
 }
 
 double RidgeRegression::ComputeSquareError() {
   Matrix error;
-  la::MulInit(predictors_, factors_, &error);
+  error.Init(predictors_.n_cols(), 1);
+  for(index_t i = 0; i < predictors_.n_cols(); i++) {
+    const double *point = predictors_.GetColumnPtr(i);
+    error.set(i, 0, factors_.get(0, 0));
+
+    for(index_t j = 0; j < predictors_.n_rows(); j++) {
+      error.set(i, 0, error.get(i, 0) + factors_.get(j + 1, 0) * point[j]);
+    }
+  }
   la::SubFrom(predictions_, &error);
   double square_error = la::Dot(error.n_rows(), error.ptr(), error.ptr());
   return square_error;
