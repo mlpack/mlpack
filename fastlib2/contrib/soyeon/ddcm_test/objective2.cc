@@ -3347,16 +3347,30 @@ void Objective::ComputePredictionError(double current_sample,
 	predicted_prob_of_n_choose_i.Init(number_of_test);
 	predicted_prob_of_n_choose_i.SetZero();
   
+	double count_true_postponed=0;
+	double count_predicted_postponed=0;
 
 	for(index_t n=0; n<number_of_test; n++){
 		if(true_decision[n]<0) {
+			count_true_postponed+=1;
 			predicted_prob_of_n_choose_i[n]=postponed_probability_[n];
+			if(predicted_decision[n]<0){
+				count_predicted_postponed+=1;
+			}
+
 		}	//if
 		else {
 			predicted_prob_of_n_choose_i[n]=predicted_choice_probability_all[n][true_decision[n]-1];
 		}
 	}
 	//cout<<"Test2"<<endl;
+	cout<<"count_true_postponed="<<count_true_postponed<<endl;
+	cout<<"Percent_true_postponed="<<count_true_postponed/number_of_test*100<<endl;
+  cout<<"count_predicted_postponed="<<count_predicted_postponed<<endl;
+  cout<<"(all)Percent_count_predicted_postponed="<<count_predicted_postponed/number_of_test*100<<endl;
+  cout<<"(postponed)Percent_count_predicted_postponed="<<count_predicted_postponed/count_true_postponed*100<<endl;
+
+	cout<<endl;
 
 	//double temp_postponed_prediction_error_prob=0;
 	double temp_choice_prediction_error_prob=0;

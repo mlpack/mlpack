@@ -149,3 +149,15 @@ fl-build --mode=debug --compiler=gcc main
 ./main --data1=sim3_data1.csv --data2=sim3_data2.csv --data3=sim3_data3.csv -
 -info1=sim3_info1.csv --info_y=sim3_info_y.csv --info_ind_unknown_x=sim2_info_u
 nknown_x.csv --initial_percent_sample=100
+
+
+
+./eval --data1=sim6_data1_test.csv --data2=sim6_data2_te
+st.csv --data3=sim6_data3_test.csv --info1=sim6_info1_test
+.csv --info_y=sim6_info_y_test.csv --info_ind_unknown_x=si
+m2_info_unknown_x.csv --initial_percent_sample=100
+
+ ./main --data1=sim6_data1.csv --data2=sim6_data2.csv --d
+ta3=sim6_data3.csv --info1=sim6_info1.csv --info_y=sim6_i
+fo_y.csv --info_ind_unknown_x=sim2_info_unknown_x.csv --i
+itial_percent_sample=100
