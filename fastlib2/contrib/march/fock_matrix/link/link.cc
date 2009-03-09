@@ -150,10 +150,10 @@ void Link::ComputeExchangeMatrix() {
       
         ShellPair* nu_sigma = significant_sigma_for_nu_[nu_ind][sorted_sigma_ind];
         
-        index_t sigma_ind = nu_sigma->N_index();
-        
-        if (abs(density_matrix_.ref(mu_ind, nu_ind)) * mu_lambda.schwartz_factor() * 
-            nu_sigma->schwartz_factor() > threshold_) {
+        //index_t sigma_ind = nu_sigma->N_index();
+        double bound = abs(density_matrix_.ref(mu_ind, nu_ind)) * mu_lambda.schwartz_factor() * 
+          nu_sigma->schwartz_factor();
+        if (bound > threshold_) {
       
           // store or compute the eri
           // need to change this to storing it so I can merge the lists later
@@ -172,7 +172,7 @@ void Link::ComputeExchangeMatrix() {
         }
         // leave sigma loop, since it is sorted
         else {
-          //printf("left sigma loop\n");
+          //printf("left sigma loop, bound: %g\n", bound);
           break;
         }
         
@@ -192,7 +192,9 @@ void Link::ComputeExchangeMatrix() {
     // shell pair
     // shouldn't do this if lambda == mu
 
+    
     if (mu_ind != lambda_ind) {
+      //printf("lambda loop\n");
       num_nu = num_significant_nu_for_mu_[lambda_ind];
       
       for (index_t sorted_nu_ind = 0; sorted_nu_ind < num_nu; sorted_nu_ind++) {
@@ -211,7 +213,7 @@ void Link::ComputeExchangeMatrix() {
           
           ShellPair* nu_sigma = significant_sigma_for_nu_[nu_ind][sorted_sigma_ind];
           
-          index_t sigma_ind = nu_sigma->N_index();
+          //index_t sigma_ind = nu_sigma->N_index();
           
           if (abs(density_matrix_.ref(mu_ind, nu_ind)) * mu_lambda.schwartz_factor() * 
               nu_sigma->schwartz_factor() > threshold_) {
@@ -242,12 +244,14 @@ void Link::ComputeExchangeMatrix() {
     
     } // if lambda != mu
     else {
+      
       // make the list non-void for the union step below
       lambda_integrals.PushBack();
       lambda_integrals[num_lambda_integrals] = mu_integrals[0];
       num_lambda_integrals++;
+      
     }
-
+    
 
     // compute significant integrals
     // may just do this inside loop
@@ -268,6 +272,7 @@ void Link::ComputeExchangeMatrix() {
                                    integral_list.begin());
                                    
     index_t num_integrals = end_integrals - integral_list.begin();
+    //printf("num_integrals = %d\n", num_integrals);
     
     // compute the integrals
     
@@ -277,6 +282,8 @@ void Link::ComputeExchangeMatrix() {
       
       index_t nu_ind = nu_sigma.M_index();
       index_t sigma_ind = nu_sigma.N_index();
+      //printf("mu_ind: %d, nu_ind: %d, lambda_ind: %d, sigma_ind: %d\n", mu_ind, 
+        //     nu_ind, lambda_ind, sigma_ind);
       
       double integral = eri::ComputeShellIntegrals(mu_lambda, nu_sigma);
       // contract with mu, nu; mu, sigma; lambda, nu; lambda, sigma

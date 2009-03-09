@@ -323,9 +323,9 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
         (*shell_pairs)[num_shell_pairs].Init(i, j, i_shell, j_shell, 
                                              num_shell_pairs);
         (*shell_pairs)[num_shell_pairs].set_integral_upper_bound(this_bound);
+        significant_sig_index[num_for_i] = num_shell_pairs;
         num_shell_pairs++;
         
-        significant_sig_index[num_for_i] = j;
         
         if (this_bound > i_max) {
           i_max = this_bound;

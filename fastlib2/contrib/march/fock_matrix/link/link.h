@@ -55,16 +55,6 @@ class Link {
   ArrayList<index_t> num_significant_sigma_for_nu_;
   
   
-  // num_shells_for_i_[j] = number of shell pairs for which j is the first 
-  // index
-  ArrayList<index_t> num_shells_for_i_;
-  
-  // first_nu_index_[i] = the first place in shell_pair_list_ that nu appears
-  ArrayList<index_t> first_nu_index_;
-  
-  
-  
-  
   // The length of shell_list_
   index_t num_shells_;
   
