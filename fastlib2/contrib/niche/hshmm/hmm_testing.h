@@ -46,7 +46,6 @@ const fx_module_doc hmm_testing_doc = {
 };
 
 
-
 void GenerateAndTrainSequences(const char* transition_filename,
 			       const char* emission_filename,
 			       int n_sequences,
@@ -100,6 +99,8 @@ void DoMMFBaumWelch(const ArrayList<Vector> &sequences, DiscreteHMM* p_augmented
 int GenerativeHMMClassifier(const ArrayList<Vector> &sequences,
 			     const Dataset &training_set,
 			     const Dataset &test_set);
+
+void LoadVaryingLengthData(const char* filename, ArrayList<Vector>* p_data);
 
 
 
@@ -175,25 +176,31 @@ void GenerateAndTrainSequences(bool load_data,
     }
   }
   else {
-    Matrix sequences;
-    data::Load(sequences_filename, &sequences);
-
-    int sequence_length = sequences.n_rows();
+    //Matrix sequences;
+    //data::Load(sequences_filename, &sequences);
+    ArrayList<Vector> sequences;
+    LoadVaryingLengthData(sequences_filename, &sequences);
+    
+    
     int n_symbols = fx_param_int_req(NULL, "n_symbols");
+    //int sequence_length = sequences.n_rows();
+    /*
     double ratio = fx_param_double(NULL, "ratio", 0.1);
     int n_states = 
       ((int)floor(0.5 * sqrt(n_symbols * n_symbols
 		 	     + 4 * (sequence_length * ratio + n_symbols + 1))
 		  - 0.5 * n_symbols))
-      + 1;
-    n_states = 9; // override of formula to see if results improve
+		  + 1;
+    int n_states = 9; // override of formula to see if results improve
     printf("n_states = %d\n", n_states);
+    */
+    int n_states = -1;
     
     int sequence_num = 0;
     for(int k = first_index; k < last_index; k++) {
-      Vector observed_sequence;
-
-      sequences.MakeColumnVector(sequence_num, &observed_sequence);
+      //Vector observed_sequence;
+      //sequences.MakeColumnVector(sequence_num, &observed_sequence);
+      Vector &observed_sequence = sequences[sequence_num];
       
       GetHMMSufficientStats(observed_sequence, n_states, n_symbols,
 			    &(initial_probs_vectors[k]),
@@ -215,6 +222,20 @@ void GetHMMSufficientStats(const Vector &observed_sequence,
 			   int max_iter_mmf, int max_rand_iter, double tol_mmf,
 			   int max_iter_bw, double tol_bw) {
   
+  observed_sequence.PrintDebug("observed_sequence");
+  if(n_states == -1) {
+    int sequence_length = observed_sequence.length();
+    double ratio = fx_param_double(NULL, "ratio", 0.1);
+    n_states = 
+      ((int)floor(0.5 * sqrt(n_symbols * n_symbols
+			     + 4 * (sequence_length * ratio + n_symbols + 1))
+		  - 0.5 * n_symbols))
+      + 1;
+    //int n_states = 9; // override of formula to see if results improve
+  }
+  printf("n_states = %d\n", n_states);
+
+
   
   ArrayList<Vector> seqs;
   seqs.Init(1);
@@ -222,24 +243,15 @@ void GetHMMSufficientStats(const Vector &observed_sequence,
 
   DiscreteHMM learned_hmm;
   learned_hmm.Init(n_states, n_symbols);
-    
+  printf("training HMM via MMF\n");
   learned_hmm.TrainMMF(seqs, max_rand_iter, max_iter_mmf, tol_mmf);
-  
+  printf("finished MMF\n");
   Vector stationary_probabilities;
   ComputeStationaryProbabilities(learned_hmm.transmission(),
 				 &stationary_probabilities);
   
-  //stationary_probabilities.PrintDebug("stationary probabilities");
+  stationary_probabilities.PrintDebug("stationary probabilities");
   
-  /* // a quick check to verify the stationary probabilities
-     Matrix result, result2, result4, result16;
-     la::MulInit(learned_hmm.transmission(), learned_hmm.transmission(),
-     &result);
-     la::MulInit(result, result, &result2);
-     la::MulInit(result2, result2, &result4);
-     la::MulInit(result4, result4, &result16);
-     result16.PrintDebug("A^16");
-  */
   
   Matrix new_transition_matrix;
   new_transition_matrix.Init(n_states + 1, n_states + 1);
@@ -254,8 +266,8 @@ void GetHMMSufficientStats(const Vector &observed_sequence,
     }
   }
   
-  //learned_hmm.transmission().PrintDebug("transition matrix");
-  //new_transition_matrix.PrintDebug("augmented transition matrix");
+  learned_hmm.transmission().PrintDebug("transition matrix");
+  new_transition_matrix.PrintDebug("augmented transition matrix");
   
   
   Matrix new_emission_matrix;
@@ -271,8 +283,8 @@ void GetHMMSufficientStats(const Vector &observed_sequence,
     }
   }
 
-  //learned_hmm.emission().PrintDebug("emission matrix");
-  //new_emission_matrix.PrintDebug("new emission matrix");
+  learned_hmm.emission().PrintDebug("emission matrix");
+  new_emission_matrix.PrintDebug("new emission matrix");
 
   DiscreteHMM augmented_learned_hmm;
   augmented_learned_hmm.Init(new_transition_matrix,
@@ -438,8 +450,10 @@ void ComputeStationaryProbabilities(const Matrix &transition_matrix,
 
   Matrix eigenvectors;
   Vector eigenvalues;
+  printf("computing eigenvectors\n");
   la::EigenvectorsInit(transition_matrix_transpose,
 		       &eigenvalues, &eigenvectors);
+  printf("computed eigenvectors\n");
 
   // we use Perron-Frobenius by which the maximum eigenvalue of a stochastic matrix is 1
   double max_eigenvalue = -1;
@@ -886,6 +900,38 @@ int GenerativeHMMClassifier(const ArrayList<Vector> &sequences,
 
   return n_correct;
 
+}
+
+void LoadVaryingLengthData(const char* filename, ArrayList<Vector>* p_data) {
+  ArrayList<Vector> &data = *p_data;
+
+  data.Init();
+
+  FILE* file = fopen(filename, "r");
+
+  char* buffer = (char*) malloc(sizeof(char) * 70000);
+  size_t len = 70000;
+
+
+  int n_read;
+  while((n_read = getline(&buffer, &len, file)) != -1) {
+    int sequence_length = (int) ((n_read - 1) / 2);
+  
+    Vector sequence;
+    sequence.Init(sequence_length);
+    for(int i = 0; i < sequence_length; i++) {
+      sscanf(buffer + (2 * i), "%lf", &(sequence[i]));
+    }
+    
+    //sequence.PrintDebug("sequence");
+    
+    data.PushBackCopy(sequence);
+  }
+
+  free(buffer);
+
+  fclose(file);
+  
 }
 
 

@@ -62,6 +62,13 @@ binrule(
     deplibs = ["fastlib:fastlib","contrib/niche/mmf:hmm"]
 )
 
+binrule(
+    name = "read_variable_file",
+    sources = ["read_variable_file.cc", "test_hmm_multinomial.cc","../mmf/mmf3.cc"],
+    headers = ["hmm_testing.h","../svm/svm.h"],
+    deplibs = ["fastlib:fastlib","contrib/niche/mmf:hmm"]
+)
+
 
 
 binrule(
