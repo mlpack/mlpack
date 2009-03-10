@@ -61,12 +61,15 @@ class RidgeRegressionTest {
     // Craft a synthetic dataset in which the third dimension is
     // completely dependent on the first and the second.
     Matrix synthetic_data;
+    Matrix synthetic_data_target_training_values;
     synthetic_data.Init(4, 5);
+    synthetic_data_target_training_values.Init(1, 5);
     for(index_t i = 0; i < 5; i++) {
       synthetic_data.set(0, i, i);
       synthetic_data.set(1, i, 3 * i + 1);
       synthetic_data.set(2, i, 4);
       synthetic_data.set(3, i, 5);
+      synthetic_data_target_training_values.set(0, i, i);
     }
     GenVector<index_t> predictor_indices;
     GenVector<index_t> prune_predictor_indices;
@@ -78,10 +81,14 @@ class RidgeRegressionTest {
     predictor_indices[3] = 3;
     prune_predictor_indices.Copy(predictor_indices);
 
-    RidgeRegressionUtil::FeatureSelection(module_, synthetic_data, 
-					  predictor_indices,
-					  prune_predictor_indices,
-					  &output_predictor_indices);
+    engine_ = new RidgeRegression();
+    engine_->Init(module_, synthetic_data, predictor_indices,
+		  synthetic_data_target_training_values);
+    engine_->FeatureSelectedRegression(predictor_indices,
+				       prune_predictor_indices,
+				       synthetic_data_target_training_values,
+				       &output_predictor_indices);
+
     printf("Output indices: ");
     for(index_t i = 0; i < output_predictor_indices.length(); i++) {
       printf(" %d ", output_predictor_indices[i]);
