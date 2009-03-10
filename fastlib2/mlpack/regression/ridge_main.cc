@@ -92,21 +92,10 @@ considered for pruning for the input dataset.\n"},
   RidgeRegression engine;
   NOTIFY("Computing Regression...");
 
-  const char *method = fx_param_str(module, "inversion_method", "normalsvd");
-  
   if(!strcmp(mode, "regress")) {
 
     engine.Init(module, predictors, predictions);
-
-    if(!strcmp(method, "normalsvd")) {  
-      engine.SVDNormalEquationRegress(lambda_min);
-    }
-    else if(!strcmp(method, "quicsvd")) {
-      engine.QuicSVDRegress(lambda_min, 0.1);
-    }
-    else {
-      engine.SVDRegress(lambda_min);
-    }
+    engine.SVDRegress(lambda_min);
   }
   else if(!strcmp(mode, "cvregress")) {
     NOTIFY("Crossvalidating for the optimal lambda in [ %g %g ] by trying \

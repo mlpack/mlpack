@@ -52,13 +52,8 @@ class RidgeRegression {
 
   void Destruct();
 
-  void QuicSVDRegress(double lambda, double relative_error);
-
-  void SVDRegress(double lambda);
-
-  void SVDNormalEquationRegress
-  (double lambda,
-   const GenVector<index_t> *predictor_indices = NULL);
+  void SVDRegress(double lambda,
+		  const GenVector<index_t> *predictor_indices = NULL);
 
   void CrossValidatedRegression(double lambda_min, double lambda_max,
 				index_t num);

@@ -34,10 +34,10 @@ class RidgeRegressionTest {
     NOTIFY("[*] TestSVDNormalEquationRegressVersusSVDRegress");
 
     engine_ = new RidgeRegression();
-    engine_->Init(module_, predictors_, predictions_);
-    engine_->SVDNormalEquationRegress(0);
+    engine_->Init(module_, predictors_, predictions_, true);
+    engine_->SVDRegress(0);
     RidgeRegression svd_engine;
-    svd_engine.Init(module_, predictors_, predictions_);
+    svd_engine.Init(module_, predictors_, predictions_, false);
     svd_engine.SVDRegress(0);
     Matrix factors, svd_factors;
     engine_->factors(&factors);
