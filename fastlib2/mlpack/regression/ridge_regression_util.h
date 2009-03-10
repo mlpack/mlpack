@@ -5,7 +5,7 @@
 
 class RidgeRegressionUtil {
 
- private:
+ public:
 
   template<typename T>
   static void CopyVectorExceptOneIndex_(const GenVector<T> &source,
@@ -21,8 +21,6 @@ class RidgeRegressionUtil {
       }
     }
   }
-
- public:
 
   static double SquaredCorrelationCoefficient(const Vector &observations,
 					      const Vector &predictions) {
@@ -68,7 +66,8 @@ class RidgeRegressionUtil {
    const GenVector<index_t> &predictor_indices, 
    const GenVector<index_t> &prune_predictor_indices, 
    GenVector<index_t> *output_predictor_indices) {
-
+    
+    /*
     NOTIFY("Starting VIF-based feature selection.");
 
     double lambda = fx_param_double(module, "lambda", 0.0);
@@ -118,12 +117,11 @@ class RidgeRegressionUtil {
 	// prediction index.
 	ridge_regression.ReInitTargetValues
 	  (input_data, (*current_prune_predictor_indices)[i]);
-	/*
+
 	RidgeRegression ridge_regression;
 	ridge_regression.Init(module, input_data, 
 			      loo_current_predictor_indices, 
 			      (*current_prune_predictor_indices)[i]);
-	*/
 
 	// Do the regression.
 	if(!strcmp(method, "normalsvd")) {	  
@@ -194,6 +192,7 @@ class RidgeRegressionUtil {
     delete current_prune_predictor_indices;
     
     NOTIFY("VIF feature selection complete.");
+*/
   }
 
 };

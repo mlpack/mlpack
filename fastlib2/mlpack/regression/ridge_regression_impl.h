@@ -212,6 +212,13 @@ void RidgeRegression::ReInitTargetValues(const Matrix &input_data,
   }  
 }
 
+void RidgeRegression::ReInitTargetValues(const Matrix &target_values_in) {
+
+  for(index_t i = 0; i < predictions_.n_rows(); i++) {
+    predictions_.set(i, 0, target_values_in.get(0, i));
+  }
+}
+
 void RidgeRegression::BuildDesignMatrixFromIndexSet_
 (const Matrix &input_data, const double *predictions,
  const GenVector<index_t> *predictor_indices) {
@@ -446,6 +453,129 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
   double lambda_sq = math::Sqr(lambda_min + min_index * step);
   ComputeLinearModel_(lambda_sq, singular_values, u, v_t,
 		      predictors_.n_rows());
+}
+
+void RidgeRegression::FeatureSelectedRegression
+(const GenVector<index_t> &predictor_indices, 
+ const GenVector<index_t> &prune_predictor_indices,
+ const Matrix &original_target_training_values,
+ GenVector<index_t> *output_predictor_indices) {
+  
+  NOTIFY("Starting VIF-based feature selection.");
+  
+  double lambda = fx_param_double(module_, "lambda", 0.0);
+  double variance_inflation_factor_threshold = 
+    fx_param_double(module_, "vif_threshold", 8.0);
+  bool done_flag = false;
+  GenVector<index_t> *current_predictor_indices = new GenVector<index_t>();
+  GenVector<index_t> *current_prune_predictor_indices = new 
+    GenVector<index_t>();
+  const char *method = fx_param_str(module_, "inversion_method", "quicsvd");
+  current_predictor_indices->Copy(predictor_indices);
+  current_prune_predictor_indices->Copy(prune_predictor_indices);
+  
+  do {
+    
+    // The maximum variance inflation factor and the index that
+    // achieved it.
+    double max_variance_inflation_factor = 0.0;
+    index_t index_of_max_variance_inflation_factor = -1;
+    
+    // Reset the flag to be true.
+    done_flag = true;
+    
+    // For each of the features in the current list, regress the
+    // i-th feature versus the rest of the features and compute its
+    // variance inflation factor.
+    for(index_t i = 0; i < current_prune_predictor_indices->length(); i++) {
+      
+      // Take out the current dimension being regressed against from
+      // the predictor list to form the leave-one-out predictor
+	// list.
+      GenVector<index_t> loo_current_predictor_indices;
+      RidgeRegressionUtil::CopyVectorExceptOneIndex_
+	(*current_predictor_indices, (*current_prune_predictor_indices)[i],
+	 &loo_current_predictor_indices);
+      
+      // Initialize the ridge regression model using the
+      // leave-one-out predictor indices with the appropriate
+      // prediction index.
+      ReInitTargetValues
+	(predictors_, (*current_prune_predictor_indices)[i]);
+      
+      // Do the regression.
+      if(!strcmp(method, "normalsvd")) {	  
+	SVDNormalEquationRegress
+	  (lambda, &loo_current_predictor_indices);
+      }
+      else if(!strcmp(method, "quicsvd")) {
+	QuicSVDRegress(lambda, 0.1);
+      }
+      else {
+	SVDRegress(lambda);
+      }
+      Vector loo_predictions;
+      Predict(predictors_, loo_current_predictor_indices, &loo_predictions);
+      
+      // Extract the dimension that is being regressed against and
+      // compute the variance inflation factor.
+      Vector loo_feature;
+      loo_feature.Init(predictors_.n_cols());
+      for(index_t j = 0; j < predictors_.n_cols(); j++) {
+	loo_feature[j] = predictors_.get
+	  ((*current_prune_predictor_indices)[i], j);
+      }
+      double variance_inflation_factor = 
+	RidgeRegressionUtil::VarianceInflationFactor(loo_feature,
+						     loo_predictions);
+      
+      NOTIFY("The %d-th dimension has a variance inflation factor of %g.\n",
+	     (*current_prune_predictor_indices)[i], 
+	     variance_inflation_factor);
+      
+      if(variance_inflation_factor > max_variance_inflation_factor) {
+	max_variance_inflation_factor = variance_inflation_factor;
+	index_of_max_variance_inflation_factor = 
+	  (*current_prune_predictor_indices)[i];
+      }
+      
+    } // end of iterating over each feature that is being considered
+    // for pruning...
+    
+    // If the maximum variance inflation factor exceeded the
+    // threshold, then eliminate it from the current list of
+    // features, and the do-while loop repeats.
+    if(max_variance_inflation_factor > variance_inflation_factor_threshold) {
+      
+      GenVector<index_t> *new_predictor_indices = new GenVector<index_t>();
+      RidgeRegressionUtil::CopyVectorExceptOneIndex_
+	(*current_predictor_indices, index_of_max_variance_inflation_factor,
+	 new_predictor_indices);
+      delete current_predictor_indices;
+      current_predictor_indices = new_predictor_indices;
+      
+      GenVector<index_t> *new_prune_indices = new GenVector<index_t>();
+      RidgeRegressionUtil::CopyVectorExceptOneIndex_
+	(*current_prune_predictor_indices, 
+	 index_of_max_variance_inflation_factor, new_prune_indices);
+      delete current_prune_predictor_indices;
+      current_prune_predictor_indices = new_prune_indices;
+      done_flag = false;
+    }
+    
+  } while(!done_flag && current_prune_predictor_indices->length() > 1);
+  
+  // Copy the output indices and free the temporary index vectors
+  // afterwards.
+  output_predictor_indices->Copy(*current_predictor_indices);
+  delete current_predictor_indices;
+  delete current_prune_predictor_indices;
+
+  // Change the target training values to the original prediction values.
+  ReInitTargetValues(original_target_training_values);
+  SVDNormalEquationRegress(lambda, output_predictor_indices);
+  
+  NOTIFY("VIF feature selection complete.");
 }
 
 double RidgeRegression::ComputeSquareError() {
