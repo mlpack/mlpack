@@ -29,6 +29,8 @@ namespace tree_kdtree_private {
       }          
     }
   }
+ 
+
 
   template<typename TBound, typename T>
   void FindBoundFromMatrix(const GenMatrix<T>& matrix,
@@ -171,25 +173,29 @@ namespace tree_kdtree_private {
 
   template<typename TKdTree, typename T>
     void SelectSplitKdTreeMidpoint(GenMatrix<T>& matrix,
-      const Vector& split_dimensions, TKdTree *node, index_t leaf_size, 
-      index_t *old_from_new) {
+      const Vector& split_dimensions, 
+      TKdTree *node, index_t leaf_size, index_t *old_from_new) {
   
     TKdTree *left = NULL;
     TKdTree *right = NULL;
     
-    SelectFindBoundFromMatrix(matrix, split_dimensions, node->begin(), 
+   
+      SelectFindBoundFromMatrix(matrix, split_dimensions, node->begin(), 
 			      node->count(), &node->bound());
+    
 
     if (node->count() > leaf_size) {
       index_t split_dim = BIG_BAD_NUMBER;
       double max_width = -1;
 
+      double w;
       for (index_t d = 0; d < split_dimensions.length(); d++) {
-        double w = node->bound().get(d).width();
+	index_t dim = (int)split_dimensions[d];
+	w = node->bound().get(dim).width();	
 	
         if (w > max_width) {	
           max_width = w;
-          split_dim = d;
+          split_dim = dim;
         }
       }
 
@@ -224,10 +230,10 @@ namespace tree_kdtree_private {
         // This should never happen if max_width > 0
         DEBUG_ASSERT(left->count() != 0 && right->count() != 0);
 
-        SelectSplitKdTreeMidpoint(matrix, split_dimensions, left, leaf_size, 
-				  old_from_new);
-        SelectSplitKdTreeMidpoint(matrix, split_dimensions, right, leaf_size, 
-				  old_from_new);
+        SelectSplitKdTreeMidpoint(matrix, split_dimensions, left, 
+				  leaf_size, old_from_new);
+        SelectSplitKdTreeMidpoint(matrix, split_dimensions, right, 
+				  leaf_size, old_from_new);
       }
     }
 
