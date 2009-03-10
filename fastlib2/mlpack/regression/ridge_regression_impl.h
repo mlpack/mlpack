@@ -308,72 +308,79 @@ void RidgeRegression::SVDNormalEquationRegress
 
   NOTIFY("SVDNormalEquationRegress: starting.");
 
-  Vector eigen_values;
-  Matrix eigen_v, v_t;
-
-  Matrix precomputed_covariance;
-  ExtractCovarianceSubset_(covariance_, predictor_indices, 
-			   &precomputed_covariance);
-
-  la::SVDInit(precomputed_covariance, &eigen_values, &eigen_v, &v_t);
-
-  // Take the square root of each eigenvalue to get the singular
-  // values.
-  for(index_t i = 0; i < eigen_values.length(); i++) {
-    eigen_values[i] = sqrt(eigen_values[i]);
-  }
-
-  Matrix u;
-  u.Init(predictors_.n_cols(), eigen_v.n_cols());
-  
-  int limit = -1;
-  if(predictor_indices == NULL) {
-    limit = predictors_.n_rows();
-  }
-  else {
-    limit = predictor_indices->length();
-  }
-
-  for(index_t i = 0; i < predictors_.n_cols(); i++) {
-    
-    const double *point = predictors_.GetColumnPtr(i);
-    for(index_t j = 0; j < eigen_v.n_cols(); j++) {
-      
-      const double *eigen_v_column = eigen_v.GetColumnPtr(j);
-      double dot_product = eigen_v_column[0];
-      for(index_t k = 1; k <= limit; k++) {
-	
-	if(predictor_indices == NULL) {
-	  dot_product += point[k - 1] * eigen_v_column[k];
-	}
-	else {
-	  dot_product += point[(*predictor_indices)[k - 1]] *
-	    eigen_v_column[k];
-	}
-      }      
-      u.set(i, j, dot_product);
-    }
-  }
-
-  /*
-  la::MulInit(predictors_, eigen_v, &u);
-  */
-  
-  for(index_t i = 0; i < u.n_cols(); i++) {
-    double *u_column = u.GetColumnPtr(i);
-    if(eigen_values[i] > 0) {
-      la::Scale(u.n_rows(), 1.0 / eigen_values[i], u_column);
-    }
-  }
+  Vector singular_values;
+  Matrix v_t, u;
+  ExtractSubspace_(&u, &singular_values, &v_t, predictor_indices);
   
   double lambda_sq = lambda * lambda;
 
-  ComputeLinearModel_(lambda_sq, eigen_values, u, v_t,
+  ComputeLinearModel_(lambda_sq, singular_values, u, v_t,
 		      (predictor_indices == NULL) ?
 		      predictors_.n_rows():
 		      (predictor_indices->length()));
 
   NOTIFY("SVDNormalEquationRegress: complete.");
+}
+
+void RidgeRegression::ExtractSubspace_
+(Matrix *u, Vector *singular_values, Matrix *v_t,
+ const GenVector<index_t> *predictor_indices) {
+
+  if(covariance_.n_rows() > 0) {
+
+    Matrix eigen_v;
+    Matrix precomputed_covariance;
+    ExtractCovarianceSubset_(covariance_, predictor_indices, 
+			     &precomputed_covariance);
+    la::SVDInit(precomputed_covariance, singular_values, &eigen_v, v_t);
+    
+    // Take the square root of each eigenvalue to get the singular
+    // values.
+    for(index_t i = 0; i < singular_values->length(); i++) {
+      (*singular_values)[i] = sqrt((*singular_values)[i]);
+    }
+    
+    u->Init(predictors_.n_cols(), eigen_v.n_cols());
+    
+    int limit = -1;
+    if(predictor_indices == NULL) {
+      limit = predictors_.n_rows();
+    }
+    else {
+      limit = predictor_indices->length();
+    }
+    
+    for(index_t i = 0; i < predictors_.n_cols(); i++) {
+      
+      const double *point = predictors_.GetColumnPtr(i);
+      for(index_t j = 0; j < eigen_v.n_cols(); j++) {
+	
+	const double *eigen_v_column = eigen_v.GetColumnPtr(j);
+	double dot_product = eigen_v_column[0];
+	for(index_t k = 1; k <= limit; k++) {
+	  
+	  if(predictor_indices == NULL) {
+	    dot_product += point[k - 1] * eigen_v_column[k];
+	  }
+	  else {
+	    dot_product += point[(*predictor_indices)[k - 1]] *
+	      eigen_v_column[k];
+	  }
+	}      
+	u->set(i, j, dot_product);
+      }
+    }
+    
+    for(index_t i = 0; i < u->n_cols(); i++) {
+      double *u_column = u->GetColumnPtr(i);
+      if((*singular_values)[i] > 0) {
+	la::Scale(u->n_rows(), 1.0 / (*singular_values)[i], u_column);
+      }
+    }
+  }
+  else {
+    la::SVDInit(predictors_, singular_values, u, v_t);
+  }
 }
 
 void RidgeRegression::CrossValidatedRegression(double lambda_min, 
@@ -385,7 +392,10 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
   double step = (lambda_max - lambda_min) / num;
   Vector singular_values;
   Matrix u, v_t;
-  la::SVDInit(predictors_, &singular_values, &u, &v_t);
+
+  // Compute the SVD and extract the left/right singular vectors and
+  // singular values.
+  ExtractSubspace_(&u, &singular_values, &v_t, NULL);
 
   // Square the singular values and store it.
   Vector singular_values_sq;
