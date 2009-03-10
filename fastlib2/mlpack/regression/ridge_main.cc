@@ -154,13 +154,6 @@ considered for pruning for the input dataset.\n"},
     
     // Run the feature selection.
     GenVector<index_t> output_predictor_indices;
-    
-    /*
-    RidgeRegressionUtil::FeatureSelection(module, predictors, 
-					  predictor_indices,
-					  prune_predictor_indices,
-					  &output_predictor_indices);
-    */
     engine.Init(module, predictors, predictor_indices, predictions);
     engine.FeatureSelectedRegression(predictor_indices,
 				     prune_predictor_indices,
