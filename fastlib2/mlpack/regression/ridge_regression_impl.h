@@ -95,9 +95,6 @@ void RidgeRegression::BuildCovariance_
     }
   }
   NOTIFY("RidgeRegression::BuildCovariance_: complete.");
-
-  // This is a hack.
-  factors_.Init(0, 0);
 }
 
 void RidgeRegression::ExtractCovarianceSubset_
@@ -156,6 +153,9 @@ void RidgeRegression::Init(fx_module *module, const Matrix &predictors,
     BuildDesignMatrixFromIndexSet_(predictors, predictions.ptr(), NULL);
     covariance_.Init(0, 0);
   }
+
+  // Initialize the factor to be empty.
+  factors_.Init(0, 0);
 }
 
 void RidgeRegression::Init(fx_module *module, 
@@ -179,7 +179,10 @@ void RidgeRegression::Init(fx_module *module,
 				   input_data.GetColumnPtr(prediction_index),
 				   &predictor_indices);
     covariance_.Init(0, 0);
-  }  
+  }
+
+  // Initialize the factor to be empty.
+  factors_.Init(0, 0);
 }
 
 void RidgeRegression::Init(fx_module *module, 
@@ -202,6 +205,9 @@ void RidgeRegression::Init(fx_module *module,
 				   &predictor_indices);
     covariance_.Init(0, 0);
   }
+
+  // Initialize the factor to be empty.
+  factors_.Init(0, 0);
 }
 
 void RidgeRegression::ReInitTargetValues(const Matrix &input_data,
@@ -279,34 +285,10 @@ void RidgeRegression::ComputeLinearModel_
   }
 }
 
-void RidgeRegression::QuicSVDRegress(double lambda, double relative_error) {
-
-  Vector singular_values;
-  Matrix u, v_t;
-  QuicSVD::SVDInit(predictors_, relative_error, &singular_values, &u, &v_t);
-
-  double lambda_sq = lambda * lambda;
-
-  ComputeLinearModel_(lambda_sq, singular_values, u, v_t, 
-		      predictors_.n_rows());
-}
-
-void RidgeRegression::SVDRegress(double lambda) {
-
-  Vector singular_values;
-  Matrix u, v_t;
-  la::SVDInit(predictors_, &singular_values, &u, &v_t);
-
-  double lambda_sq = lambda * lambda;
-
-  ComputeLinearModel_(lambda_sq, singular_values, u, v_t,
-		      predictors_.n_rows());
-}
-
-void RidgeRegression::SVDNormalEquationRegress
+void RidgeRegression::SVDRegress
 (double lambda, const GenVector<index_t> *predictor_indices) {
 
-  NOTIFY("SVDNormalEquationRegress: starting.");
+  NOTIFY("SVDRegress: starting.");
 
   Vector singular_values;
   Matrix v_t, u;
@@ -319,7 +301,7 @@ void RidgeRegression::SVDNormalEquationRegress
 		      predictors_.n_rows():
 		      (predictor_indices->length()));
 
-  NOTIFY("SVDNormalEquationRegress: complete.");
+  NOTIFY("SVDRegress: complete.");
 }
 
 void RidgeRegression::ExtractSubspace_
@@ -480,7 +462,6 @@ void RidgeRegression::FeatureSelectedRegression
   GenVector<index_t> *current_predictor_indices = new GenVector<index_t>();
   GenVector<index_t> *current_prune_predictor_indices = new 
     GenVector<index_t>();
-  const char *method = fx_param_str(module_, "inversion_method", "quicsvd");
   current_predictor_indices->Copy(predictor_indices);
   current_prune_predictor_indices->Copy(prune_predictor_indices);
   
@@ -514,16 +495,8 @@ void RidgeRegression::FeatureSelectedRegression
 	(predictors_, (*current_prune_predictor_indices)[i]);
       
       // Do the regression.
-      if(!strcmp(method, "normalsvd")) {	  
-	SVDNormalEquationRegress
-	  (lambda, &loo_current_predictor_indices);
-      }
-      else if(!strcmp(method, "quicsvd")) {
-	QuicSVDRegress(lambda, 0.1);
-      }
-      else {
-	SVDRegress(lambda);
-      }
+      SVDRegress(lambda, &loo_current_predictor_indices);
+
       Vector loo_predictions;
       Predict(predictors_, loo_current_predictor_indices, &loo_predictions);
       
@@ -583,7 +556,7 @@ void RidgeRegression::FeatureSelectedRegression
 
   // Change the target training values to the original prediction values.
   ReInitTargetValues(original_target_training_values);
-  SVDNormalEquationRegress(lambda, output_predictor_indices);
+  SVDRegress(lambda, output_predictor_indices);
   
   NOTIFY("VIF feature selection complete.");
 }
