@@ -143,31 +143,29 @@ considered for pruning for the input dataset.\n"},
     // to an int vector. This can be simplified only if there were a
     // way to read integer-based dataset directly without typecasting.
     for(index_t i = 0; i < predictor_indices_intermediate.n_cols(); i++) {
-      predictor_indices[i] = 
+      predictor_indices[i] =
 	(index_t) predictor_indices_intermediate.get(0, i);
     }
-    for(index_t i = 0; i < prune_predictor_indices_intermediate.n_cols(); 
+    for(index_t i = 0; i < prune_predictor_indices_intermediate.n_cols();
 	i++) {
       prune_predictor_indices[i] = (index_t)
-	prune_predictor_indices_intermediate.get(0, i);   
+	prune_predictor_indices_intermediate.get(0, i);
     }
     
     // Run the feature selection.
     GenVector<index_t> output_predictor_indices;
+    
+    /*
     RidgeRegressionUtil::FeatureSelection(module, predictors, 
 					  predictor_indices,
 					  prune_predictor_indices,
 					  &output_predictor_indices);
-    engine.Init(module, predictors, output_predictor_indices, predictions);
-    if(!strcmp(method, "normalsvd")) {  
-      engine.SVDNormalEquationRegress(lambda_min);
-    }
-    else if(!strcmp(method, "quicsvd")) {
-      engine.QuicSVDRegress(lambda_min, 0.1);
-    }
-    else {
-      engine.SVDRegress(lambda_min);
-    }
+    */
+    engine.Init(module, predictors, predictor_indices, predictions);
+    engine.FeatureSelectedRegression(predictor_indices,
+				     prune_predictor_indices,
+				     predictions,
+				     &output_predictor_indices);
   }
 
   NOTIFY("Ridge Regression Model Training Complete!");

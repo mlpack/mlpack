@@ -1,7 +1,9 @@
 #ifndef RIDGE_REGRESSION_H_
 #define RIDGE_REGRESSION_H_
+
 #include "fastlib/fastlib.h"
 #include "mlpack/quicsvd/quicsvd.h"
+#include "ridge_regression_util.h"
 
 class RidgeRegression {
  public:
@@ -46,6 +48,8 @@ class RidgeRegression {
   void ReInitTargetValues(const Matrix &input_data, 
 			  index_t target_value_index);
 
+  void ReInitTargetValues(const Matrix &target_values_in);
+
   void Destruct();
 
   void QuicSVDRegress(double lambda, double relative_error);
@@ -58,6 +62,12 @@ class RidgeRegression {
 
   void CrossValidatedRegression(double lambda_min, double lambda_max,
 				index_t num);
+
+  void FeatureSelectedRegression
+  (const GenVector<index_t> &predictor_indices, 
+   const GenVector<index_t> &prune_predictor_indices, 
+   const Matrix &original_target_training_values,
+   GenVector<index_t> *output_predictor_indices);
 
   double ComputeSquareError();
 
