@@ -130,12 +130,29 @@ int main(int argc, char *argv[]) {
 	tpar[1]=4;
 	tpar[2]=5;
 	tpar[3]=2;
-	*/
+	
 
 	tpar[0]=-1;
 	tpar[1]=2;
 	tpar[2]=3;
 	tpar[3]=1;
+
+	tpar[0]=0.8;
+	tpar[1]=-1.2;
+	tpar[2]=3;
+	tpar[3]=1;
+
+	tpar[0]=2;
+	tpar[1]=-1.5;
+	tpar[2]=4;
+	tpar[3]=0.8;*/
+
+	tpar[0]=3;
+	tpar[1]=-1;
+	tpar[2]=4;
+	tpar[3]=1;
+
+	
 
 
   
