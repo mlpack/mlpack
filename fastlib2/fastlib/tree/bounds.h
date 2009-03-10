@@ -284,7 +284,7 @@ class DHrectBound {
     }
 
     return math::Pow<2, t_pow>(sum);
-  }
+  } 
 
  /**
   * Computes maximum distance with offset
@@ -319,11 +319,11 @@ class DHrectBound {
    
    for (index_t d = 0; d < dim_; d++){      
      double v = 0, d1, d2, d3;
-     d1 = (a[d].hi > a[d].lo | b[d].hi > b[d].lo)*
+     d1 = (a[d].hi >= a[d].lo | b[d].hi >= b[d].lo)*
        min(b[d].lo - a[d].hi, a[d].lo-b[d].hi);
-     d2 = (a[d].hi > a[d].lo & b[d].hi > b[d].lo)*
+     d2 = (a[d].hi >= a[d].lo & b[d].hi >= b[d].lo)*
        min(b[d].lo - a[d].hi, a[d].lo-b[d].hi + box_size[d]);
-     d3 = (a[d].hi > a[d].lo & b[d].hi > b[d].lo)*
+     d3 = (a[d].hi >= a[d].lo & b[d].hi >= b[d].lo)*
        min(b[d].lo - a[d].hi + box_size[d], a[d].lo-b[d].hi);
      v = (d1 + fabs(d1)) + (d2+  fabs(d2)) + (d3 + fabs(d3));
      sum += math::Pow<t_pow, 1>(v);
@@ -408,25 +408,21 @@ double PeriodicMinDistanceSq(const Vector& point, const Vector& box_size)
    return math::Pow<2, t_pow>(sum);
  }
 
-
  double MaxDelta(const DHrectBound& other, double box_width, int dim)
  const{
    const DRange *a = this->bounds_; 
    const DRange *b = other.bounds_;
    double result = 0.5*box_width;
    double temp = b[dim].hi - a[dim].lo;
-   temp = temp - floor(temp / box_width)*box_width;
-   if (temp > box_width / 2){
-     temp = b[dim].lo - a[dim].hi;
-     temp = temp - floor(temp / box_width)*box_width;
-     if (temp > box_width / 2){
-       result = b[dim].hi - a[dim].lo;
-       result = result - floor(temp / box_width + 1)*box_width;
-     } 
-   } else {
-     result = temp;
+   temp = temp - floor(temp / box_width + 0.5)*box_width;
+   if (temp < 0){
+     double temp2 = b[dim].lo - a[dim].hi;
+     temp2 = temp2 - floor(temp2 / box_width + 0.5)*box_width;
+     if (temp2 > 0){
+       return result;
+     }
    }
-   return result;
+   return temp;  
  }
 
  double MinDelta(const DHrectBound& other, double box_width, int dim)
@@ -434,19 +430,16 @@ double PeriodicMinDistanceSq(const Vector& point, const Vector& box_size)
    const DRange *a = this->bounds_;   
    const DRange *b  = other.bounds_;
    double result = -0.5*box_width;
-   double temp = b[dim].hi - a[dim].lo;
-   temp = temp - floor(temp/  box_width)*box_width;
-   if (temp > box_width / 2){
-     temp = b[dim].hi - a[dim].hi;
-     temp = temp - floor(temp / box_width)*box_width;
-     if (temp > box_width / 2){
-       result = temp - box_width;
-     } 
-   } else {
-     temp = b[dim].hi - a[dim].hi;
-     result = temp - floor(temp / box_width)*box_width;
+   double temp = b[dim].lo - a[dim].hi;
+   temp = temp - floor(temp / box_width + 0.5)*box_width;
+   if (temp > 0){
+     double temp2 = b[dim].hi - a[dim].lo;
+     temp2 = temp2 - floor(temp2 / box_width + 0.5)*box_width;
+     if (temp2 < 0){
+       return result;
+     }
    }
-   return result;
+   return temp;
  }
 
 
@@ -615,9 +608,9 @@ double PeriodicMinDistanceSq(const Vector& point, const Vector& box_size)
  DHrectBound& Add(const Vector&  other, const Vector& size){
    DEBUG_SAME_SIZE(other.length(), dim_);
    // Catch case of uninitialized bounds
-   if (bounds_[0].hi < 0){
+   if (bounds_[0].hi < -10*size[0]){
      for (index_t i = 0; i < dim_; i++){
-       bounds_[i] |= other[i];
+       bounds_[i] |= other[i] - floor(other[i] / size[i] + 0.5)*size[i];
      }
    }
 
@@ -625,15 +618,16 @@ double PeriodicMinDistanceSq(const Vector& point, const Vector& box_size)
      double ah, al;
      ah = bounds_[i].hi - other[i];
      al = bounds_[i].lo - other[i];
+     // Project onto range 0 to L
      ah = ah - floor(ah / size[i])*size[i];
      al = al - floor(al / size[i])*size[i];
-     if (ah < al){
-       if (size[i] - ah < al){
-	 bounds_[i].hi = other[i];
+     if (ah >= al){
+       if (size[i] - al < ah){
+	 bounds_[i].hi = other[i] - floor(other[i] / size[i] + 0.5)*size[i];
        } else {
-	 bounds_[i].lo = other[i];
-       }
-     }     
+	 bounds_[i].lo = other[i] - floor(other[i] / size[i] + 0.5)*size[i];;
+       }      
+     }    
    }
    return *this;
  }
@@ -664,18 +658,19 @@ double PeriodicMinDistanceSq(const Vector& point, const Vector& box_size)
 
      if (((bh > ah) & (bh < bl | ah > bl )) ||
 	 (bh >= bl & bl > ah & bh < ah -bl + size[i])){
-       bounds_[i].hi = other.bounds_[i].hi;
+       bounds_[i].hi = other.bounds_[i].hi -  
+	 floor(other.bounds_[i].hi / size[i] + 0.5)*size[i];
      }
     
      if (bl > ah && ((bl > bh) || (bh >= ah -bl + size[i]))){
-       bounds_[i].lo = other.bounds_[i].lo;
+       bounds_[i].lo = other.bounds_[i].lo -  
+	 floor(other.bounds_[i].lo / size[i] + 0.5)*size[i];
      }   
 
      if (unlikely(ah > bl & bl > bh)){
-       bounds_[i].lo = 0;
-       bounds_[i].hi = size[i];
-     }
-    
+       bounds_[i].lo = -size[i]/2;
+       bounds_[i].hi = size[i]/2;
+     }   
 
    }   
    return *this;

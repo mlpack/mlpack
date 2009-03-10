@@ -48,8 +48,7 @@ namespace tree {
 
   template<typename TKdTree, typename T>
   TKdTree *MakeKdTreeMidpointSelective(GenMatrix<T>& matrix, 
-				       const Vector& split_dimensions,
-      index_t leaf_size,
+      const Vector& split_dimensions, index_t leaf_size,
       ArrayList<index_t> *old_from_new = NULL,
       ArrayList<index_t> *new_from_old = NULL) {
     TKdTree *node = new TKdTree();
@@ -69,9 +68,7 @@ namespace tree {
       
     node->Init(0, matrix.n_cols());
     node->bound().Init(split_dimensions.length());
-    tree_kdtree_private::SelectFindBoundFromMatrix(matrix, split_dimensions,
-        0, matrix.n_cols(), &node->bound());
-
+    
     tree_kdtree_private::SelectSplitKdTreeMidpoint(matrix, split_dimensions, 
 	node, leaf_size, old_from_new_ptr);
     
@@ -86,8 +83,7 @@ namespace tree {
 
   template<typename TKdTree, typename T>
   TKdTree *MakeKdTreeMidpointSelective(GenMatrix<T>& matrix, 
-				       const Vector& split_dimensions,
-      index_t leaf_size,
+    const Vector& split_dimensions, index_t leaf_size,
       GenVector<index_t> *old_from_new = NULL,
       GenVector<index_t> *new_from_old = NULL) {
     TKdTree *node = new TKdTree();
@@ -107,9 +103,7 @@ namespace tree {
       
     node->Init(0, matrix.n_cols());
     node->bound().Init(split_dimensions.length());
-    tree_kdtree_private::SelectFindBoundFromMatrix(matrix, split_dimensions,
-        0, matrix.n_cols(), &node->bound());
-
+  
     tree_kdtree_private::SelectSplitKdTreeMidpoint(matrix, split_dimensions, 
 	node, leaf_size, old_from_new_ptr);
     
@@ -134,6 +128,7 @@ namespace tree {
       split_dimensions[i] = i;
     }
     TKdTree *result;
+   
     result = MakeKdTreeMidpointSelective<TKdTree>(matrix, split_dimensions,
 		   leaf_size, old_from_new, new_from_old);
     return result;
@@ -151,8 +146,8 @@ namespace tree {
       split_dimensions[i] = i;
     }
     TKdTree *result;
-    result = MakeKdTreeMidpointSelective<TKdTree>(matrix, 
-        split_dimensions,
+  
+    result = MakeKdTreeMidpointSelective<TKdTree>(matrix, split_dimensions,
 		    leaf_size, old_from_new, new_from_old);
     return result;
   }

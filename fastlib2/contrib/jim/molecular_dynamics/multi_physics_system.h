@@ -51,6 +51,7 @@ private:
   Matrix atoms_;
   Matrix forces_;
   Matrix axilrod_teller_;
+  Matrix diffusion_;
   // Trees store current state of system
   ParticleTree *system_, *query_;
   ArrayList<int> old_from_new_map_, new_from_old_map_;  
@@ -937,6 +938,8 @@ public:
   void Init(const Matrix& atoms_in, struct datanode* param){      
     atoms_.Copy(atoms_in);
     n_atoms_ = atoms_.n_cols();
+    diffusion_.Init(3, n_atoms_);
+    diffusion_.SetZero();
     force_bound_ = fx_param_double(param, "force_bound", 1.0e-3);    
     leaf_size_ = fx_param_int(param, "leaf", 4);
     Vector dims;
@@ -944,13 +947,13 @@ public:
     dims[0] = 0;
     dims[1] = 1;
     dims[2] = 2;
-    system_ = tree::MakeKdTreeMidpointSelective<ParticleTree>(atoms_, dims, 
-                leaf_size_, &new_from_old_map_, &old_from_new_map_);
     boundary_ = fx_param_int(param, "bc", PERIODIC);
     dimensions_.Init(3);
     dimensions_[0] = fx_param_double(param, "lx", 60);
     dimensions_[1] = fx_param_double(param, "ly", 60);
     dimensions_[2] = fx_param_double(param, "lz", 60);  
+    system_ = tree::MakeKdTreeMidpointSelective<ParticleTree>(atoms_, dims, 
+      leaf_size_, &new_from_old_map_, &old_from_new_map_);   
     cutoff_ = fx_param_double(param, "cutoff", -1);   
     n_trips_ = n_atoms_*(n_atoms_-1)*(n_atoms_-2) / 6;
   } //Init
@@ -1047,17 +1050,31 @@ public:
     dims[0] = 0;
     dims[1] = 1;
     dims[2] = 2;
+
     for (int i = 0; i < n_atoms_; i++){
       Vector pos;
       atoms_.MakeColumnSubvector(i, 0, 3, &pos);
       AdjustVector_(&pos);
+      for (int j = 0; j < 3; j++){
+	double temp;
+	temp = ceil((pos[j] - atoms_.get(j,i)) / dimensions_[j]);
+	diffusion_.set(j,i,temp+diffusion_.get(j,i));
+	atoms_.set(j,i,pos[j]);	
+      }
     }
-    system_ = tree::MakeKdTreeMidpointSelective<ParticleTree>(atoms_, dims,
-	        leaf_size_, &temp_new_old, &temp_old_new);
+
+    system_ = tree::MakeKdTreeMidpointSelective<ParticleTree>(atoms_, dims, 
+                leaf_size_, &temp_new_old, &temp_old_new);
+       
     for (int i = 0; i < n_atoms_; i++){
-      old_from_new_map_[i] = temp_old_new[old_from_new_map_[i]];
+      for (int j = 0; j < 3; j++){
+	double temp = diffusion_.get(j, temp_old_new[i]);
+	diffusion_.set(j, temp_old_new[i], diffusion_.get(j,i));
+	diffusion_.set(j, i, temp);
+      }
+      old_from_new_map_[i] = temp_old_new[old_from_new_map_[i]];      
     }
-							      
+				      
   }
 
   double ComputePressure(){    
@@ -1145,11 +1162,11 @@ public:
 	j = old_from_new_map_[j];
       }
       atoms_.MakeColumnSubvector(j, 0, 3, &temp1);
+      for (int k = 0; k < 3; k++){
+	temp1[k] = temp1[k] + dimensions_[k]*diffusion_.get(k,j);
+      }
       old_positions.MakeColumnSubvector(i, 0, 3, &temp2);
-      la::SubInit(temp1, temp2, &temp3);
-      //    if (boundary_ == PERIODIC){
-      //	AdjustVector_(&temp3);
-      //  }
+      la::SubInit(temp1, temp2, &temp3);     
       diff = diff + la::Dot(temp3, temp3);
     }
     return diff / n_atoms_;
