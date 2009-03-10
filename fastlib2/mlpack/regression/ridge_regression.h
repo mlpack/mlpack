@@ -122,6 +122,8 @@ class RidgeRegression {
    const GenVector<index_t> *loo_current_predictor_indices,
    Matrix *precomputed_covariance_subset);
 
+  void ExtractSubspace_(Matrix *u, Vector *singular_values, Matrix *v_t,
+			const GenVector<index_t> *predictor_indices);
 };
 
 #include "ridge_regression_impl.h"
