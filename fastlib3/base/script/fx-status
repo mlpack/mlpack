@@ -1,0 +1,29 @@
+#!/usr/bin/env python
+
+USAGE = """fx-status: Shows a status summary of FASTexec experiment trials.
+
+Example:
+
+  fx-status timing ./main
+"""
+
+import pm
+import util
+import fxsys
+import fx  # use FASTexec argument parsing
+
+import sys
+import os
+
+if len(fx.extra_args) < 2:
+  print USAGE
+  sys.exit(1)
+
+label = fx.extra_args[0]
+exename = os.path.abspath(fx.extra_args[1])
+show_finished = fx.param_bool("show_finished")
+
+experiment = fxsys.SimpleExperiment(os.path.abspath("."), exename, label)
+print "*** Experiments stored in: %s" % experiment.path
+
+experiment.print_status(show_finished)

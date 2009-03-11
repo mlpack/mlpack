@@ -1,0 +1,180 @@
+#!/usr/bin/env python
+
+USAGE = """
+fl-build: Builds files as part of the FASTlib build system.
+   (usage: fl-build <targetname> [--mode={verbose|debug|check|fast|unsafe}])
+
+This builds the specified target rule and places links to generated files
+and a Makefile in the current directory.  I assume that FASTlib is
+installed here: %s
+This will build code outside of the above FASTlib tree, just be sure other
+external rules can are referred by relative paths like "." or "..".
+
+BACKGROUND - BUILD RULES
+
+  Build rules are named in the form path:name where the path is a relative
+  path from the current directory, or absolute from the FASTlib C
+  directory.  For instance:
+  
+     fastlib:fastlib  the 'fastlib' package in root of FASTlib tree
+     :helper          the rule 'helper' in current directory
+     ..:parent        the rule 'parent' in parent directory
+     ../sib:sib       the rule 'sib' in the sibling directory 'sib'
+  
+  The path specifies where the build.py specifying the rule is.  Each
+  build.py file specifies what rules are defined for that directory;
+  nameless rules take the name of the directory.
+
+OPTIONAL COMMAND LINE OPTIONS
+
+  --mode={verbose|debug|check|fast|unsafe|small} = compilation mode
+       [verbose] verbosity messages    [debug] "i need to use gdb"
+       *[check]* assertions and fast   [fast]  usually fastest
+       [unsafe]  bad optimizations     [small] code size
+  --j={1|2|3...} = number of CPU's to compile with
+"""
+
+import buildsys # buildsys.py contains the build system
+import os
+import sys
+import fx
+import util
+
+# figure out where fastlib is
+fl_build_path = sys.argv[0]
+script_path = os.path.realpath(os.path.dirname(fl_build_path))
+fastlib_path = os.path.dirname(script_path)
+
+# normalize path names and ensure a single '/' at the end of them
+code_path = os.path.realpath(fastlib_path).rstrip(os.sep) + os.sep
+curdir = os.path.realpath(os.getcwd()).rstrip(os.sep) + os.sep
+
+if len(fx.extra_args) != 1:
+  print USAGE % (code_path)
+  sys.exit(1)
+
+if curdir.startswith(code_path):
+  # When building inside build system, use relative paths from root
+  # of build system.
+  print "*** Building from within build system"
+  #real_path = curdir[len(code_path):]
+  real_rootpath = code_path
+  real_path = curdir.rstrip(os.sep)
+  fake_path = curdir[len(code_path):].replace(os.sep, "/").rstrip("/")
+else:
+  # When building from outside build system, use absolute paths.
+  # However, for generated files, we need somewhere to put them within
+  # the bin/ directory; se use 'OUTSIDE' to signify this.
+  print "*** Building from OUTSIDE build system... cross your fingers!"
+  print " - I think the build system is here: %s" % code_path
+  print " - This is where you are: %s" % curdir
+  real_rootpath = code_path
+  real_path = os.path.abspath(curdir).rstrip(os.sep)
+  fake_path = "external/" + curdir.replace(os.sep, "/").strip("/")
+
+# Create build parameters
+
+fx.param_default("cflags", "")
+fx.param_default("mode", "check")
+
+check_gcc4_existence = os.popen("which gcc4")
+check_gcc4_existence_result = check_gcc4_existence.read()
+check_gcc4_existence.close()
+check_gcc4_existence_result = check_gcc4_existence_result[:len(check_gcc4_existence_result) - 1]
+if len(check_gcc4_existence_result) > 0 and check_gcc4_existence_result[0] == '/': # '/' test for Macs
+  fx.param_default("compiler", "gcc4")
+else:
+  check_gcc4_existence = os.popen("which gcc-4")
+  check_gcc4_existence_result = check_gcc4_existence.read()
+  check_gcc4_existence.close()
+  check_gcc4_existence_result = check_gcc4_existence_result[:len(check_gcc4_existence_result) - 1]
+  if len(check_gcc4_existence_result) > 0 and check_gcc4_existence_result[0] == '/': # '/' test for Macs
+    fx.param_default("compiler", "gcc-4")
+  else:
+    fx.param_default("compiler", "gcc")
+
+fx.param_default("j", "-1")
+fx.param_default("prefix", "")
+fx.param_default("downloader", "/usr/bin/wget")
+target_name = fx.extra_args[0]
+
+implicit = False
+
+if not ":" in target_name:
+  # Target names MUST contain a colon.
+  target_name = ":".join(os.path.split(target_name))
+  print "!!! No ':' is in the target rule name, assuming '%s'." % target_name
+  if target_name.endswith(".cc"):
+    # okay, there is actually not a build rule... let's build the library
+    # and link to it
+    implicit = True
+    target_name = target_name[:-3]
+    print "!!! Ends with .cc, assuming ad-hoc build."
+
+target_name = target_name.replace(os.sep, "/")
+
+makefile_path = os.path.abspath("./Makefile")
+mode = fx.param_str("mode")
+compiler = fx.param_str("compiler")
+cflags = fx.param_str("cflags")
+(kernel, nodename, release, version, arch) = os.uname()
+arch = util.sanitize_basename(arch)
+kernel = util.sanitize_basename(kernel)
+prefix = fx.param_str("prefix")
+downloader = fx.param_str("downloader")
+
+# Get the downloader.
+check_curl_existence = os.popen("which curl")
+check_downloader_existence_result = check_curl_existence.read()
+check_curl_existence.close()
+check_downloader_existence_result = check_downloader_existence_result[:len(check_downloader_existence_result) - 1]
+if len(check_downloader_existence_result) == 0 or check_downloader_existence_result[0] != '/': # '/' test for Macs
+  check_wget_existence = os.popen("which wget")
+  check_downloader_existence_result = check_wget_existence.read()
+  check_wget_existence.close()
+  check_downloader_existence_result = check_downloader_existence_result[:len(check_downloader_existence_result) - 1]
+downloader = check_downloader_existence_result
+
+# Dispatch
+
+print "*** Generating Makefile in current directory"
+
+params = dict(arch=arch,kernel=kernel,mode=mode,compiler=compiler, \
+              cflags=cflags,prefix=prefix,downloader=downloader)
+
+print "*** Target Rule: '%s'" % target_name
+
+loader = buildsys.Loader(real_rootpath)
+if implicit:
+  target_shortname = target_name[target_name.index(":")+1:]
+  fx.param_default("lib", "fastlib:fastlib")
+  lib = fx.param_str("lib")
+  posttext = "binrule(name = '%s', sources=['%s.cc'], linkables = ['%s'])" \
+      % (target_shortname, target_shortname, lib)
+else:
+  posttext = ""
+target = loader.find_rule(target_name, real_path, fake_path, posttext)
+linkrule = buildsys.SymlinkRule([target], curdir)
+linkrule.generate(loader.thebuildsys, params)
+
+# TODO: Make symbolic link to result
+makefile_lines = loader.thebuildsys.to_makefile()
+
+print "*** Running Makefile"
+
+util.writelines(makefile_path, makefile_lines)
+
+processors = fx.param_int("j")
+make_args = ["make"]
+if processors >= 0:
+  make_args.append("-j%d" % processors)
+
+retval = util.spawn_redirect(
+  os.path.abspath("."),
+  make_args,
+  infile = None,
+  outfile = None,
+  errfile = None)
+
+sys.exit(retval)
+
