@@ -1,2 +1,0 @@
-./ncmvuc  --/labeled_points_file=2_class_swiss_roll.csv  --/labels_file=2_class_swiss_roll_labels.csv  --/num_of_classes=2 --/opt_fun/grad_tolerance=1e-6 --/opt_fun/new_dimension=3 --/opt_fun/knns=5 --/l_bfgs/mem_bfgs=4 --/l_bfgs/sigma=100 --/opt_fun/desired_feasibility_error=0.5 --/l_bfgs/gamma=3
-
