@@ -837,6 +837,13 @@ private:
     }
   } 
 
+  void AdjustVector_(Vector& vector_in, Vector& diff){
+    for(int i = 0; i < 3; i++){     
+      diff[i] = -floor(vector_in[i] / dimensions_[i] +0.5);
+      vector_in[i] = vector_in[i] + dimensions_[i]*diff[i];     
+    }
+  }
+
 
   void RaddistInternal_(RadDist* raddist, ParticleTree* query){
     if (query->is_leaf()) {   
@@ -1050,19 +1057,14 @@ public:
     dims[0] = 0;
     dims[1] = 1;
     dims[2] = 2;
-
     for (int i = 0; i < n_atoms_; i++){
-      Vector pos;
+      Vector pos, temp, diff;
       atoms_.MakeColumnSubvector(i, 0, 3, &pos);
-      AdjustVector_(&pos);
-      for (int j = 0; j < 3; j++){
-	double temp;
-	temp = ceil((pos[j] - atoms_.get(j,i)) / dimensions_[j]);
-	diffusion_.set(j,i,temp+diffusion_.get(j,i));
-	atoms_.set(j,i,pos[j]);	
-      }
+      temp.Init(3);
+      AdjustVector_(pos, temp);    
+      diffusion_.MakeColumnVector(i, &diff);
+      la::AddTo(temp, &diff);
     }
-
     system_ = tree::MakeKdTreeMidpointSelective<ParticleTree>(atoms_, dims, 
                 leaf_size_, &temp_new_old, &temp_old_new);
        
