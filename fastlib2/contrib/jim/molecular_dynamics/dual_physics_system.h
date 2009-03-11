@@ -90,7 +90,7 @@ private:
     left->stat().ApplyForce(force);
     la::Scale(-1.0, &force);
     right->stat().ApplyForce(force);    
-    percent_pruned_ = percent_pruned_ + 1;
+    percent_pruned_ = percent_pruned_ + 1;   
   }
 
 
@@ -125,7 +125,7 @@ private:
     atoms_.MakeColumnSubvector(right, 4, 3, &right_vec);
     la::AddExpert(time_step_ / atoms_.get(3,left), delta_r, &left_vec);
     la::AddExpert(-time_step_ / atoms_.get(3,right), delta_r, &right_vec);
-    percent_pruned_ = percent_pruned_ + 1;  
+    percent_pruned_ = percent_pruned_ + 1;   
   }
 
     
@@ -341,7 +341,7 @@ private:
    * intersections between bounding boxes as the simulation progresses.
    * The velocity of parent nodes is passed down the tree to the leaves.
    */
-  void UpdatePositionsRecursion_(ParticleTree* node, Vector* vel){    
+  void UpdatePositionsRecursion_(ParticleTree* node, Vector* vel){   
     if (likely(!node->is_leaf())){
       Vector temp1;
       Vector temp2;
@@ -411,6 +411,13 @@ private:
 	floor((*vector_in)[i] / dimensions_[i] +0.5);
     }
   } 
+
+  void AdjustVector_(Vector& vector_in, Vector& diff){
+    for(int i = 0; i < 3; i++){     
+      diff[i] = -floor(vector_in[i] / dimensions_[i] +0.5);
+      vector_in[i] = vector_in[i] + dimensions_[i]*diff[i];     
+    }
+  }
 
 
   void RaddistInternal_(RadDist* raddist, ParticleTree* query){
@@ -605,19 +612,14 @@ public:
     dims[0] = 0;
     dims[1] = 1;
     dims[2] = 2;
-    
     for (int i = 0; i < n_atoms_; i++){
-      Vector pos;
+      Vector pos, temp, diff;
       atoms_.MakeColumnSubvector(i, 0, 3, &pos);
-      AdjustVector_(&pos);
-      for (int j = 0; j < 3; j++){
-	double temp;
-	temp = ceil((pos[j] - atoms_.get(j,i)) / dimensions_[j]);
-	diffusion_.set(j,i,temp+diffusion_.get(j,i));
-	atoms_.set(j,i,pos[j]);	
-      }
+      temp.Init(3);
+      AdjustVector_(pos, temp);    
+      diffusion_.MakeColumnVector(i, &diff);
+      la::AddTo(temp, &diff);
     }
-
     system_ = tree::MakeKdTreeMidpointSelective<ParticleTree>(atoms_, dims, 
                 leaf_size_, &temp_new_old, &temp_old_new);
        
@@ -719,7 +721,7 @@ public:
       old_positions.MakeColumnSubvector(i, 0, 3, &temp2);
       la::SubInit(temp1, temp2, &temp3);     
       diff = diff + la::Dot(temp3, temp3);
-    }
+    }    
     return diff / n_atoms_;
   }
   
@@ -786,6 +788,8 @@ public:
     }
   }
 
+
+  
 }; // class PhysicsSystem
 
 #endif
