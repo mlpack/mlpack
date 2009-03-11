@@ -1,0 +1,26 @@
+1. Is there a function for printing matrix in fastlib?
+2. How to save the result and print? (fx_result)-> see the example
+3. error "no match for 'operator[]' in cout<<dummy_hessian[j][k]?
+4. ot::print
+5. How to make several classes & global variables(public?) - program design
+6. void init / void destruct?
+7. template (eg. template<typename Objective>?)
+8. typedef struc / #define a 3 / extern / global variable
+9. More about dataset class
+10. What is the double point **
+==============
+11. Is it possible declare and initialize member variable(private) at the same time?
+12. Exponential form with specific base and exponent (2^3)
+	void Objective::ComputeDeumeratorBetaFunction_
+	
+12. Maximum of elements in array or matrix?
+13. Equal spaced array generation?
+14. Check
+15. Handle several classes - especially data structure
+16. ArrayList<index_t> copy & Capacity?
+17. sample data selection
+==============
+18. Destruct()
+19. Access the element of Vector pointer argument in function
+20. beta_term1->Copy(temp3);
+21. ComputeSecondDerivativeBetaTerm1_ :Destruct()

@@ -1,0 +1,19 @@
+All-nearest neighbor search using kd trees
+
+Examples:
+
+---------------------------------------------------Use kd tree---------------------------------------------------
+./kdt_knn --ref_data=pen_digi_sorted_merged.csv  --leaf_size=20 --k_nn=1 --dual_single=dual --tree=kd
+./kdt_knn --ref_data=pen_digi_sorted_merged.csv  --leaf_size=20 --k_nn=1 --dual_single=single --tree=kd
+
+./kdt_knn --ref_data=ref.csv  --query_data=query.csv --leaf_size=20 --k_nn=1 --dual_single=dual --tree=kd
+./kdt_knn --ref_data=ref.csv  --query_data=query.csv --leaf_size=20 --k_nn=1 --dual_single=single --tree=kd
+
+------------------Use kd tree and check the correctness of its results, comparing with brute force search------------------
+./kdt_knn --ref_data=pen_digi_sorted_merged.csv  --leaf_size=20 --k_nn=1 --dual_single=dual --tree=kd --check_correct=1
+./kdt_knn --ref_data=pen_digi_sorted_merged.csv  --leaf_size=20 --k_nn=1 --dual_single=single --tree=kd --check_correct=1
+
+
+
+---------------------------------------------------Use brute force search---------------------------------------------------
+./kdt_knn --ref_data=pen_digi_sorted_merged.csv --leaf_size=20 --k_nn=1 --tree=bf

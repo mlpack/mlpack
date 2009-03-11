@@ -1,0 +1,6 @@
+Oct 7,2008
+
+9:14 Almost done with the coding. Will dump to a file and run sedumi
+
+11:30 Dumped to a file. How about cleaning it up and making sure no unnecessary work is beign done and then running with say 100 points
+
