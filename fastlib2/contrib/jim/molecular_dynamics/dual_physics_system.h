@@ -414,7 +414,7 @@ private:
 
   void AdjustVector_(Vector& vector_in, Vector& diff){
     for(int i = 0; i < 3; i++){     
-      diff[i] = -floor(vector_in[i] / dimensions_[i] +0.5);
+      diff[i] = -floor(vector_in[i] / dimensions_[i] +0.5);      
       vector_in[i] = vector_in[i] + dimensions_[i]*diff[i];     
     }
   }
@@ -603,9 +603,9 @@ public:
 
 
   void RebuildTree(){
-    printf("\n********************************************\n");
-    printf("* Rebuilding Tree...\n");
-    printf("********************************************\n");
+    //    printf("\n********************************************\n");
+    //   printf("* Rebuilding Tree...\n");
+    //   printf("********************************************\n");
     ArrayList<int> temp_old_new, temp_new_old;
     Vector dims;
     dims.Init(3);
@@ -616,22 +616,28 @@ public:
       Vector pos, temp, diff;
       atoms_.MakeColumnSubvector(i, 0, 3, &pos);
       temp.Init(3);
-      AdjustVector_(pos, temp);    
-      diffusion_.MakeColumnVector(i, &diff);
-      la::AddTo(temp, &diff);
+      if (boundary_ == PERIODIC){
+	AdjustVector_(pos, temp);    
+	diffusion_.MakeColumnVector(i, &diff);
+	la::AddTo(temp, &diff);
+      }
     }
     system_ = tree::MakeKdTreeMidpointSelective<ParticleTree>(atoms_, dims, 
                 leaf_size_, &temp_new_old, &temp_old_new);
-       
+    Matrix old_diff;
+    old_diff.Init(3, n_atoms_);
+    old_diff.CopyValues(diffusion_);
+
     for (int i = 0; i < n_atoms_; i++){
       for (int j = 0; j < 3; j++){
-	double temp = diffusion_.get(j, temp_old_new[i]);
-	diffusion_.set(j, temp_old_new[i], diffusion_.get(j,i));
-	diffusion_.set(j, i, temp);
+	int k = temp_old_new[i];
+	diffusion_.set(j, k, old_diff.get(j,i));
       }
-      old_from_new_map_[i] = temp_old_new[old_from_new_map_[i]];      
+      
     }
-							      
+    for (int i = 0; i < n_atoms_; i++){
+      old_from_new_map_[i] = temp_old_new[old_from_new_map_[i]]; 
+    }
   }
 
   double ComputePressure(){    
@@ -709,18 +715,20 @@ public:
   double ComputeDiffusion(const Matrix& old_positions){
     double diff = 0.0;
     for (int i = 0; i< n_atoms_; i++){
-      Vector temp1, temp2, temp3;
+      Vector oldp, newp, del;
       int j = i;
       if (system_ != NULL){
 	j = old_from_new_map_[j];
       }
-      atoms_.MakeColumnSubvector(j, 0, 3, &temp1);
+      atoms_.MakeColumnSubvector(j, 0, 3, &newp);
+      del.Init(3);
+      del.SetZero();
       for (int k = 0; k < 3; k++){
-	temp1[k] = temp1[k] + dimensions_[k]*diffusion_.get(k,j);
+	del[k] = newp[k] - dimensions_[k]*diffusion_.get(k,j);
       }
-      old_positions.MakeColumnSubvector(i, 0, 3, &temp2);
-      la::SubInit(temp1, temp2, &temp3);     
-      diff = diff + la::Dot(temp3, temp3);
+      old_positions.MakeColumnSubvector(i, 0, 3, &oldp);
+      la::AddExpert(-1.0, oldp, &del);     
+      diff = diff + la::Dot(del, del);
     }    
     return diff / n_atoms_;
   }
