@@ -114,12 +114,6 @@ void DiscreteHMM::DecodeInit(const Vector& data_seq, Matrix* state_prob_mat, Mat
 void forward_procedure(const Vector& seq, const Matrix& trans, const Matrix& emis, Vector *scales, Matrix* fs);
 
 double DiscreteHMM::ComputeLogLikelihood(const Vector& data_seq) const {
-  double sum = 0;
-  for(int i = 0; i < data_seq.length(); i++) {
-    sum += data_seq[i];
-  }
-  printf("test sum = %f\n", sum);
-  //data_seq.PrintDebug("test sequence");
   int L = data_seq.length();
   int M = transmission_.n_rows();
   Matrix fs(M, L);
@@ -441,6 +435,7 @@ void DiscreteHMM::Train(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* 
 
   double loglik = 0, oldlog;
   for (int iter = 0; iter < max_iter; iter++) {
+    printf("bw iter %d\n", iter);
     oldlog = loglik;
     loglik = 0;
 
