@@ -153,6 +153,7 @@ void GenerateAndTrainSequences(bool load_data,
     
     int sequence_num = 0;
     for(int k = first_index; k < last_index; k++) {
+      printf("sequence %d\n", k);
       Vector observed_sequence;
       Vector state_sequence;
       
@@ -198,6 +199,7 @@ void GenerateAndTrainSequences(bool load_data,
     
     int sequence_num = 0;
     for(int k = first_index; k < last_index; k++) {
+      printf("sequence %d\n", k);
       //Vector observed_sequence;
       //sequences.MakeColumnVector(sequence_num, &observed_sequence);
       Vector &observed_sequence = sequences[sequence_num];
@@ -222,7 +224,7 @@ void GetHMMSufficientStats(const Vector &observed_sequence,
 			   int max_iter_mmf, int max_rand_iter, double tol_mmf,
 			   int max_iter_bw, double tol_bw) {
   
-  observed_sequence.PrintDebug("observed_sequence");
+  //observed_sequence.PrintDebug("observed_sequence");
   if(n_states == -1) {
     int sequence_length = observed_sequence.length();
     double ratio = fx_param_double(NULL, "ratio", 0.1);
@@ -245,12 +247,12 @@ void GetHMMSufficientStats(const Vector &observed_sequence,
   learned_hmm.Init(n_states, n_symbols);
   printf("training HMM via MMF\n");
   learned_hmm.TrainMMF(seqs, max_rand_iter, max_iter_mmf, tol_mmf);
-  printf("finished MMF\n");
+  //printf("finished MMF\n");
   Vector stationary_probabilities;
   ComputeStationaryProbabilities(learned_hmm.transmission(),
 				 &stationary_probabilities);
   
-  stationary_probabilities.PrintDebug("stationary probabilities");
+  //stationary_probabilities.PrintDebug("stationary probabilities");
   
   
   Matrix new_transition_matrix;
@@ -266,8 +268,8 @@ void GetHMMSufficientStats(const Vector &observed_sequence,
     }
   }
   
-  learned_hmm.transmission().PrintDebug("transition matrix");
-  new_transition_matrix.PrintDebug("augmented transition matrix");
+  //learned_hmm.transmission().PrintDebug("transition matrix");
+  //new_transition_matrix.PrintDebug("augmented transition matrix");
   
   
   Matrix new_emission_matrix;
@@ -283,8 +285,8 @@ void GetHMMSufficientStats(const Vector &observed_sequence,
     }
   }
 
-  learned_hmm.emission().PrintDebug("emission matrix");
-  new_emission_matrix.PrintDebug("new emission matrix");
+  //learned_hmm.emission().PrintDebug("emission matrix");
+  //new_emission_matrix.PrintDebug("new emission matrix");
 
   DiscreteHMM augmented_learned_hmm;
   augmented_learned_hmm.Init(new_transition_matrix,
@@ -349,13 +351,6 @@ void DoMMFBaumWelch(const ArrayList<Vector> &sequences, DiscreteHMM* p_augmented
 		    int max_rand_iter, int max_iter_mmf, double tol_mmf,
 		    int max_iter_bw, double tol_bw) {
 
-  for(int i = 0; i < sequences.size(); i++) {
-    double sum = 0;
-    for(int j = 0; j < sequences[i].length(); j++) {
-      sum += (sequences[i])[j];
-    }
-    printf("train sum = %f\n", sum);
-  }
 
   DiscreteHMM learned_hmm;
   learned_hmm.Init(n_states, n_symbols);
@@ -450,10 +445,8 @@ void ComputeStationaryProbabilities(const Matrix &transition_matrix,
 
   Matrix eigenvectors;
   Vector eigenvalues;
-  printf("computing eigenvectors\n");
   la::EigenvectorsInit(transition_matrix_transpose,
 		       &eigenvalues, &eigenvectors);
-  printf("computed eigenvectors\n");
 
   // we use Perron-Frobenius by which the maximum eigenvalue of a stochastic matrix is 1
   double max_eigenvalue = -1;
@@ -492,7 +485,7 @@ void RandPerm(int x[], int length) {
   int swap_index;
   int temp;
   for(int i = 0; i < length_minus_1; i++) {
-    swap_index = rand() % (length - i);
+    swap_index = (rand() % (length - i)) + i;
     temp = x[i];
     x[i] = x[swap_index];
     x[swap_index] = temp;

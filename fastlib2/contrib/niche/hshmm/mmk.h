@@ -22,6 +22,10 @@ class MeanMapKernel {
     n_T_ = n_T_in;
   }
 
+  void SetLambda(double lambda_in) {
+    lambda_ = lambda_in;
+  }
+
   
   double Compute(const Multinomial &x, const Multinomial &y) {
 
@@ -139,7 +143,7 @@ class MeanMapKernel {
     val =
       first_term * second_term
       / (x_norm_constant * y_norm_constant);
-    printf("val = %f\n", val);
+    //printf("val = %f\n", val);
     return val;
   }
 
@@ -270,11 +274,12 @@ class MeanMapKernel {
 
       Matrix phi;
       phi.Init(n2, n1);
-      
+      double unif1 = ((double)1) / ((double)n1);
+      double unif2 = ((double)2) / ((double)n2);
       for(int i1 = 0; i1 < n1; i1++) {
 	for(int i2 = 0; i2 < n2; i2++) {
 	  phi.set(i2, i1,
-		  hmm_a.p_initial()[i1] * hmm_b.p_initial()[i2]);
+		  unif1 * unif2);//hmm_a.p_initial()[i1] * hmm_b.p_initial()[i2]);
 	}
       }
 

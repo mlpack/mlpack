@@ -19,8 +19,8 @@ const fx_module_doc test_obs_kernel_doc = {
 int main(int argc, char *argv[]) {
   fx_module* root = fx_init(argc, argv, &test_obs_kernel_doc);
 
-  Distribution f;
-  Distribution g;
+  Gaussian f;
+  Gaussian g;
 
   int n_dims = 1;
 
@@ -72,19 +72,40 @@ int main(int argc, char *argv[]) {
   int num_lambdas = 180;
   double lambda_increase_factor = 1.1;
   Vector lambda_array;
+  /*
   lambda_array.Init(num_lambdas);
+  
   lambda_array[0] = 1e-5;
   for(int i = 1; i < num_lambdas; i++) {
     lambda_array[i] = lambda_array[i-1] * lambda_increase_factor;
   }
+  */
+  
+  // mean shift
+  /*
+  lambda_array.Init(4);
+  lambda_array[0] = 1e-5;
+  lambda_array[1] = 1e-2;
+  lambda_array[2] = 5e-2;
+  lambda_array[3] = 5e-1;
+  */
 
-  int num_samples = 1000;
+  // covariance shift
+  
+  lambda_array.Init(4);
+  lambda_array[0] = 1e-5;
+  lambda_array[1] = 5e-3;
+  lambda_array[2] = 5e-2;
+  lambda_array[3] = 5e-1;
+  
+
+  int num_samples = 3000;
   //double mean_shift_increment = 0.01;
   double covariate_shift_increment = 0.01;
   Matrix results;
   results.Init(num_lambdas + 2, num_samples);
 
-  MMK mmk;
+  MeanMapKernel mmk;
   mmk.Init(1); // set lambda = 1
 
   PPK ppk;
@@ -93,8 +114,8 @@ int main(int argc, char *argv[]) {
   double mmk_sim;
   double ppk_sim;
   for(int i = 0; i < num_samples; i++) {
-    //results.set(0, i, g.mu_[0]);
-    results.set(0, i, g.sigma_.get(0, 0));
+    //results.set(0, i, g.mu()[0]);
+    results.set(0, i, g.sigma().get(0, 0));
     ppk_sim = ppk.Compute(f, g);
     results.set(1, i, ppk_sim);
     
@@ -104,8 +125,11 @@ int main(int argc, char *argv[]) {
       results.set(j + 2, i, mmk_sim);
     }
     
-    //g.mu_[0] += mean_shift_increment;
-    g.sigma_.set(0, 0, g.sigma_.get(0,0) + covariate_shift_increment);
+    //mu_g[0] += mean_shift_increment;
+    //g.SetMu(mu_g);
+    
+    sigma_g.set(0, 0, sigma_g.get(0,0) + covariate_shift_increment);
+    g.SetSigma(sigma_g);
   }
 
 

@@ -7,7 +7,7 @@ int main(int argc, char* argv[]) {
   int n_sequences_per_class = fx_param_int(NULL, "n_sequences_per_class", 10);
   int n_sequences  = 2 * n_sequences_per_class;
 
-  const int n_folds = 2;
+  const int n_folds = 10;
 
   ArrayList<Vector> sequences;
   sequences.Init(n_sequences);
@@ -18,33 +18,40 @@ int main(int argc, char* argv[]) {
     fx_param_str(NULL, "class0_seq", "GC_45-50_noncoding.900bps_small.dat");
 
   
-  Matrix class1_sequences_matrix;
-  data::Load(class1_sequences_filename, &class1_sequences_matrix);
+  ArrayList<Vector> class1_sequences;
+  LoadVaryingLengthData(class1_sequences_filename, &class1_sequences);
+  //Matrix class1_sequences_matrix;
+  //data::Load(class1_sequences_filename, &class1_sequences_matrix);
   for(int i = 0; i < n_sequences_per_class; i++) {
-    Vector observed_sequence;
-    class1_sequences_matrix.MakeColumnVector(i, &observed_sequence);
-    sequences[i].Copy(observed_sequence);
+    //Vector observed_sequence;
+    //class1_sequences_matrix.MakeColumnVector(i, &observed_sequence);
+    //sequences[i].Copy(observed_sequence);
+    sequences[i].Copy(class1_sequences[i]);
   }
 
-  Matrix class0_sequences_matrix;
-  data::Load(class0_sequences_filename, &class0_sequences_matrix);
-
+  ArrayList<Vector> class0_sequences;
+  LoadVaryingLengthData(class0_sequences_filename, &class0_sequences);
+  //Matrix class0_sequences_matrix;
+  //data::Load(class0_sequences_filename, &class0_sequences_matrix);
   for(int i = 0; i < n_sequences_per_class; i++) {
-    Vector observed_sequence;
-    class0_sequences_matrix.MakeColumnVector(i, &observed_sequence);
-    sequences[i + n_sequences_per_class].Copy(observed_sequence);
+    //Vector observed_sequence;
+    //class0_sequences_matrix.MakeColumnVector(i, &observed_sequence);
+    //sequences[i + n_sequences_per_class].Copy(observed_sequence);
+    sequences[i + n_sequences_per_class].Copy(class0_sequences[i]);
   }
 
-  
+  /*
   int sequence_length = class1_sequences_matrix.n_rows();
   int n_symbols = fx_param_int_req(NULL, "n_symbols");
   double ratio = fx_param_double(NULL, "ratio", 0.1);
+  
   int n_states = 
     ((int)floor(0.5 * sqrt(n_symbols * n_symbols
 			   + 4 * (sequence_length * ratio + n_symbols + 1))
 		- 0.5 * n_symbols))
     + 1;
-  //n_states = 3; // override of formula to see if results improve
+  */
+  int n_states = 9; // override of formula to see if results improve
   printf("n_states = %d\n", n_states);
 
   Matrix cv_data;

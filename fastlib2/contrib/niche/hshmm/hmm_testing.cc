@@ -6,6 +6,7 @@ int main(int argc, char* argv[]) {
   fx_module* root = fx_init(argc, argv, &hmm_testing_doc);
 
   srand(time(0));
+  srand48(time(0));
   //srand(10);
 
 
@@ -159,9 +160,9 @@ int main(int argc, char* argv[]) {
 
 
     ArrayList<double> all_c_tries;
-    all_c_tries.Init(3);
+    all_c_tries.Init(2);
     ArrayList<double> val_all_c_tries;
-    val_all_c_tries.Init(3);
+    val_all_c_tries.Init(2);
 
 
     ArrayList<double> c_tries;
@@ -173,6 +174,9 @@ int main(int argc, char* argv[]) {
     ArrayList<int> val0_c_tries;
     val0_c_tries.Init(3);
 
+
+    // we should definitely try these first:
+    //1e-4,1e-3,1e-2,1e-1,1,1e1,1e2,1e3  ,1e4
 
     double c_upper = 1e4;
     double c_lower = 1e-7;
@@ -194,6 +198,15 @@ int main(int argc, char* argv[]) {
     val_all_c_tries[1] = val_c_lower;
     val1_c_tries[1] = n_correct_class1;
     val0_c_tries[1] = n_correct_class0;
+
+    const double c_first[] = {1e-4,1e-3,1e-2,1e-1,1,1e1,1e2,1e3};
+    for(int i = 0; i < 8; i++) {
+      double val_c = eval_kfold_svm(c_first[i], n_points, permutation, cv_set, svm_module, kernel_matrix, &n_correct_class1, &n_correct_class0);
+      all_c_tries.PushBackCopy(c_first[i]);
+      val_all_c_tries.PushBackCopy(val_c);
+    }
+
+
 
     int lower_bound;
     if(val_c_upper < val_c_lower) {
