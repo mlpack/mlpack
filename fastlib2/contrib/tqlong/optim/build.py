@@ -8,6 +8,7 @@ librule(
 binrule(
     name = "optim_test",                 # the executable name
     sources = ["optim_test.cc"],
+    headers = ["myfun.h"],
     deplibs = [":optim"]       # depends on hmm library in this folder
     )
 
