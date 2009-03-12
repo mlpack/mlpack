@@ -87,9 +87,9 @@ int main(int argc, char* argv[]) {
     printf("training_set.n_points() = %d\n", training_set.n_points());
 
     char class1_hmm_fold_filename[100];
-    sprintf(class1_hmm_fold_filename, "%s_%d", class1_hmm_fold_filename, fold_num);
+    sprintf(class1_hmm_fold_filename, "%s_%d", class1_hmm_filename, fold_num);
     char class0_hmm_fold_filename[100];
-    sprintf(class0_hmm_fold_filename, "%s_%d", class0_hmm_fold_filename, fold_num);
+    sprintf(class0_hmm_fold_filename, "%s_%d", class0_hmm_filename, fold_num);
     
 
     int n_correct_fold = GenerativeHMMClassifier(sequences, training_set, test_set,
