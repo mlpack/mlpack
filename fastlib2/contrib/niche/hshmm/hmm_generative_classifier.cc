@@ -7,7 +7,7 @@ int main(int argc, char* argv[]) {
   int n_sequences_per_class = fx_param_int(NULL, "n_sequences_per_class", 10);
   int n_sequences  = 2 * n_sequences_per_class;
 
-  const int n_folds = 2;
+  const int n_folds = 10;
 
   ArrayList<Vector> sequences;
   sequences.Init(n_sequences);
