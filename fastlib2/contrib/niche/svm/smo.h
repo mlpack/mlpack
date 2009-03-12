@@ -51,7 +51,7 @@
 #include "fastlib/fastlib.h"
 
 // the tolerance for determing the optimality
-const double SMO_OPT_TOLERANCE = 1.0e-4;
+const double SMO_OPT_TOLERANCE = 1.0e-6; // changed from 1.0e-4 by NISHANT for temporary check
 // maximum # of interations for SMO training
 const index_t MAX_NUM_ITER = 10000;
 // after # of iterations to do shrinking
