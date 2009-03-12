@@ -1,70 +1,7 @@
 
 #include <fastlib/fastlib.h>
 #include "optim.h"
-
-class MyFun {
-  index_t dim;
-public:
-  MyFun() : dim(2) { }
-
-  index_t n_dim() {
-    return dim;
-  }
-
-  index_t n_con() {
-    return dim;
-  }
-
-  index_t n_eq() {
-    return 0;
-  }
-
-  double cValue(index_t i, const Vector& x) {
-    DEBUG_ASSERT(i < n_con());
-    return 0.1*(i+1)-x[i];
-  }
-
-  void cGradient(index_t i, const Vector& x, Vector* gc) {
-    DEBUG_ASSERT(i < n_con());
-    gc->SetAll(0.0);
-    (*gc)[i] = -1.0;
-  }
-
-  double eqValue(index_t i, const Vector& x) {
-    DEBUG_ASSERT(i < n_eq());
-    return INFINITY;
-  }
-
-  void eqGradient(index_t i, const Vector& x, Vector* gc) {
-    DEBUG_ASSERT(i < n_eq());
-  }
-
-  double fValue(const Vector& x) { // sum x[i]^2
-    for (int i = 0; i < x.length(); i++)
-      if (cValue(i, x) > 0) return INFINITY;
-    return la::Dot(x, x);
-  }
-
-  void fGradient(const Vector& x, Vector* g) { // g = 2x
-    la::ScaleOverwrite(2, x, g);
-  }
-  
-  void AddExpert(double alpha, const Vector& x, Vector* y) {
-    la::AddExpert(alpha, x, y);
-  }
-
-  double Dot(const Vector& x, const Vector& y) {
-    return la::Dot(x, y);
-  }
-
-  void ScaleOverwrite(double alpha, const Vector& x, Vector* y) {
-    la::ScaleOverwrite(alpha, x, y);
-  }
-
-  void Scale(double alpha, Vector* x) {
-    la::Scale(alpha, x);
-  }
-};
+#include "myfun.h"
 
 /*
 double my_fun(const Vector& x) { // sum x[i]^2
@@ -109,10 +46,12 @@ int main(int argc, char** argv) {
   xnew.Init(2);
 
   x[0] = 3; x[1] = 2;
-  MyFun mf;
+  MyFun1 mf(2);
 
   //double f = optim::GradientDescent(mf, x, &xnew, 100, 1e-6, 1e-6);
-  double f = optim::BarrierMethod(mf, x, &xnew, 100, 1e-9, 1e-6);
+  //double f = optim::BFGSDescent(mf, x, &xnew, 100, 1e-6, 1e-6);
+  //double f = optim::L_BFGSDescent(mf, x, &xnew, 100, 1e-6, 1e-6,4);
+  double f = optim::BarrierMethod(mf, x, &xnew, 100, 1e-6, 1e-6);
 
   ot::Print(xnew);
   ot::Print(f);
