@@ -65,6 +65,7 @@ class GenVector {
    */
   GenVector() {
     DEBUG_ONLY(Uninitialize_());
+    should_free_ = false;
   }
   
   /**
@@ -468,6 +469,7 @@ class GenMatrix {
    */
   GenMatrix() {
     DEBUG_ONLY(Uninitialize_());
+    should_free_ = false;
   }
 
   /**
