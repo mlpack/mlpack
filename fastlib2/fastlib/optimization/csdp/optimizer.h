@@ -191,15 +191,24 @@ class CsdpOptimizer {
          result=SUCCESS_FAIL;
          ret_message="Detected NaN or Inf values";
     }
-
+    fx_result_str("message", ret_message);
+    fx_result_double("primal_optimum", pobj_);
+    fx_result_double("dual_optimum", dobj_);
     return result;
   }
-  void GetX(SparseMatrix *x) {
-  
+  void GetX(BlockMatrix *x) {
+    ConvertCsdpToBlockMatrixFormat(x_, &x);
   }
-  void GetZ(SparseMatrix *z);
+  void GetZ(SparseMatrix *z) {
+    ConvertCsdpToBlockMatrixFormat(z_, &z);
+  }
   void GetY(Vector *y) {
     y->Copy(y_, num_of_constraints_);
+  }
+  void GetOptimum(double *primal_optimal, 
+                  double *dual_optimal) {
+    *primal_optimal=pobj_;
+    *dual_optimal = dbj_;
   }
  
  private:  
@@ -295,7 +304,7 @@ class CsdpOptimizer {
     memcpy(b_, b.ptr(), b.length()*sizeof(double));
   }
 
-  void ConvertCsdpToSparseMatrixFormat(struct blockmatrix &csdp_mat,
+  void ConvertCsdpToBlockMatrixFormat(struct blockmatrix &csdp_mat,
                                        BlockMatrix *new_mat ) {
     new_mat->Init(csdp_mat.nblocks);
     for(index_t i=0; i<csdp_mat.nblocks; i++) {
