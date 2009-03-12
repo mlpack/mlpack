@@ -76,13 +76,25 @@ int main(int argc, char* argv[]) {
 
   printf("sequences.size() = %d\n", sequences.size());
 
+  const char* class1_hmm_filename = fx_param_str_req(NULL, "class1_hmm_filename");
+  const char* class0_hmm_filename  = fx_param_str_req(NULL, "class0_hmm_filename");
+
   int n_correct = 0;
   for(int fold_num = 0; fold_num < n_folds; fold_num++) {
     Dataset training_set;
     Dataset test_set;
     cv_set.SplitTrainTest(n_folds, fold_num, permutation, &training_set, &test_set);
     printf("training_set.n_points() = %d\n", training_set.n_points());
-    int n_correct_fold = GenerativeHMMClassifier(sequences, training_set, test_set);
+
+    char class1_hmm_fold_filename[100];
+    sprintf(class1_hmm_fold_filename, "%s_%d", class1_hmm_fold_filename, fold_num);
+    char class0_hmm_fold_filename[100];
+    sprintf(class0_hmm_fold_filename, "%s_%d", class0_hmm_fold_filename, fold_num);
+    
+
+    int n_correct_fold = GenerativeHMMClassifier(sequences, training_set, test_set,
+						 class1_hmm_fold_filename,
+						 class0_hmm_fold_filename);
     printf("fold %d\n\tn_correct = %d\n", fold_num, n_correct_fold);
     n_correct += n_correct_fold;
   }

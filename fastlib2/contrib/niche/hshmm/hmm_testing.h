@@ -792,8 +792,10 @@ int eval_kfold_svm(double c, int n_points, const ArrayList<index_t> &permutation
 
 
 int GenerativeHMMClassifier(const ArrayList<Vector> &sequences,
-			     const Dataset &training_set,
-			     const Dataset &test_set) {
+			    const Dataset &training_set,
+			    const Dataset &test_set,
+			    const char* class1_hmm_filename,
+			    const char* class0_hmm_filename) {
   int n_symbols = fx_param_int_req(NULL, "n_symbols");  
   int n_states = fx_param_int_req(NULL, "n_states");
 
@@ -858,12 +860,14 @@ int GenerativeHMMClassifier(const ArrayList<Vector> &sequences,
 		 n_states, n_symbols,
 		 max_rand_iter, max_iter_mmf, tol_mmf,
 		 max_iter_bw, tol_bw);
+  class1_learned_hmm.SaveProfile(class1_hmm_filename);
 
   DiscreteHMM class0_learned_hmm;
   DoMMFBaumWelch(class0_training_sequences, &class0_learned_hmm,
 		 n_states, n_symbols,
 		 max_rand_iter, max_iter_mmf, tol_mmf,
 		 max_iter_bw, tol_bw);
+  class0_learned_hmm.SaveProfile(class0_hmm_filename);
   
   int n_correct = 0;
   for(int i = 0; i < n_test_points; i++) {
