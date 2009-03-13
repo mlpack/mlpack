@@ -60,6 +60,8 @@ void CFMMCoulomb::ScreenCharges_() {
 void CFMMCoulomb::MultipoleInit_() {
 
   fx_module* multipole_mod = fx_submodule(mod_, "multipole_cfmm");
+  
+  charges_.PrintDebug();
 
   cfmm_algorithm_.Init(charge_centers_, charge_centers_, charges_, 
                        charge_exponents_, true, multipole_mod);
@@ -73,6 +75,11 @@ void CFMMCoulomb::MultipoleComputation_() {
   cfmm_algorithm_.Compute(&multipole_output_);
 
 } // MultipoleComputation
+
+void CFMMCoulomb::NaiveComputation_() {
+  multipole_output_.Destruct();
+  cfmm_algorithm_.NaiveCompute(&multipole_output_);
+}
 
 
 void CFMMCoulomb::MultipoleCleanup_() {
@@ -111,7 +118,11 @@ void CFMMCoulomb::ComputeCoulomb() {
   
   MultipoleInit_();
   
+  
   MultipoleComputation_();
+  if (fx_param_exists(mod_, "do_naive")) {
+    NaiveComputation_();
+  }
   
   MultipoleCleanup_();
    

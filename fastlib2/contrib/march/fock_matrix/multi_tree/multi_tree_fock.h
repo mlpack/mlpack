@@ -23,6 +23,12 @@ const fx_entry_doc multi_tree_fock_entries[] = {
     "Controls the allocation of error between the Coulomb and exchange \n"
     "computations.  A setting of 1 allocates all the error to the Coulomb side.\n"
     "Only values in the interval (0,1) are permitted.  Default: 0.5\n"},
+  {"coulomb_recursion", FX_TIMER, FX_CUSTOM, NULL, 
+   "Amount of time spent computing J.\n"},
+  {"exchange_recursion", FX_TIMER, FX_CUSTOM, NULL, 
+   "Amount of time spent computing K.\n"},
+  {"epsilon_coulomb", FX_RESULT, FX_DOUBLE, NULL, 
+   "Amount of error allocated to the coulomb recursion.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -109,13 +115,13 @@ private:
     } // min_bandwdith
     
     void set_min_bandwidth(double new_min) {
-      DEBUG_ASSERT(new_min < max_bandwidth_);
+      DEBUG_ASSERT(new_min <= max_bandwidth_);
       DEBUG_ASSERT(new_min > 0);
       min_bandwidth_ = new_min;
     } //set_min_bandwidth
     
     void set_max_bandwidth(double new_max) {
-      DEBUG_ASSERT(new_max > min_bandwidth_);
+      DEBUG_ASSERT(new_max >= min_bandwidth_);
       DEBUG_ASSERT(new_max > 0);
       max_bandwidth_ = new_max;
     } // set_max_bandwidth
@@ -304,6 +310,8 @@ private:
   /**
    * Keep track of bounds
    */
+  void SetExponentBounds_(FockTree *tree);
+   
   void PropagateBoundsDown_(SquareTree* query);
   
   void PropagateBoundsUp_(SquareTree* query);
@@ -313,6 +321,17 @@ private:
   void ResetTreeForExchange_(SquareTree* root);
   
   void ResetTree_(SquareTree* root);
+  
+  /**
+   * PermuteMatrices and vectors
+   */
+  void ApplyPermutation(ArrayList<index_t>& old_from_new, Matrix* mat);
+
+  void ApplyPermutation(ArrayList<index_t>& old_from_new, Vector* vec);
+   
+  void UnApplyPermutation(ArrayList<index_t>& old_from_new, Matrix* mat);
+
+  void UnApplyPermutation(ArrayList<index_t>& old_from_new, Vector* vec);
 
 
   /**
@@ -350,7 +369,7 @@ private:
     
     epsilon_coulomb_ = epsilon_split_ * epsilon_;
     epsilon_exchange_ = (1 - epsilon_split_) * epsilon_;
-    DEBUG_ASSERT(epsilon_coulomb_ + epsilon_exchange_ == epsilon_);
+    DEBUG_ASSERT(epsilon_coulomb_ + epsilon_exchange_ <= epsilon_);
     
     epsilon_absolute_ = 
       fx_param_double(module_, "epsilon_absolute", 1.0);
@@ -394,6 +413,9 @@ private:
     
     tree_ = tree::MakeKdTreeMidpoint<FockTree>(centers_, leaf_size_, 
                                                &old_from_new_centers_, NULL);
+                              
+    // set up the min and max exponents                 
+    SetExponentBounds_(tree_);
                                                
     // Do I use this for anything?
     // Set up the indices of the nodes for symmetry pruning
@@ -403,7 +425,12 @@ private:
     square_tree_->Init(tree_, tree_, number_of_basis_functions_);
     
     // IMPORTANT: permute the exponents, mommenta, and density
-    density_matrix_.Copy(density_in);
+    density_matrix_.Init(number_of_basis_functions_, number_of_basis_functions_);
+    UpdateMatrices(density_in);
+    
+    ApplyPermutation(old_from_new_centers_, &exponents_);
+    ApplyPermutation(old_from_new_centers_, &momenta_);
+    
     
   
   } // Init()

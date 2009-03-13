@@ -65,6 +65,8 @@ class CFMMCoulomb {
   
   void MultipoleComputation_();
   
+  void NaiveComputation_();
+  
   void MultipoleCleanup_();
 
  public:

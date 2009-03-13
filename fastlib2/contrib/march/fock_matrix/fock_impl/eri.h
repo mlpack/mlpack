@@ -2,15 +2,18 @@
 #define ERI_H
 
 #include "fastlib/fastlib.h"
-#include "basis_shell.h"
-#include "shell_pair.h"
 
+class BasisShell;
 class ShellPair;
 
 namespace eri {
 
   // The erf-like function
   double F_0_(double z);
+  
+  double ComputeNormalization(BasisShell& shell);
+  
+  double ComputeNormalization(double exp, index_t momentum);
   
   double ComputeGPTCenter(Vector& A_vec, double alpha_A, Vector& B_vec, 
                           double alpha_B, Vector* p_vec);
@@ -103,5 +106,10 @@ namespace eri {
   
 
 }
+
+
+#include "basis_shell.h"
+#include "shell_pair.h"
+
 
 #endif
