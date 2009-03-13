@@ -14,6 +14,26 @@ double F_0_(double z) {
   
 } // F_0_
 
+double ComputeNormalization(BasisShell& shell) {
+
+  return ComputeNormalization(shell.exp(), shell.total_momentum());
+
+} // ComputeNormalization Basis Shell
+
+double ComputeNormalization(double exp, index_t momentum) {
+
+  double norm = pow(2/math::PI, 0.75); 
+  
+  double second_part = pow(2, momentum) * 
+    pow(exp, ((2*momentum) + 3)*0.25);
+  
+  norm = norm * second_part;
+  
+  return norm;     
+
+} // ComputeNormalization numbers
+
+
 double ComputeGPTCenter(Vector& A_vec, double alpha_A, Vector& B_vec, 
                         double alpha_B, Vector* p_vec) {
  
@@ -120,6 +140,11 @@ double DistanceIntegral(double alpha_A, double alpha_B, double alpha_C,
                         double alpha_D, double AB_dist, double CD_dist, 
                         double four_way_dist) {
 
+  double a_norm = ComputeNormalization(alpha_A, 0);
+  double b_norm = ComputeNormalization(alpha_B, 0);
+  double c_norm = ComputeNormalization(alpha_C, 0);
+  double d_norm = ComputeNormalization(alpha_D, 0);
+
   double ab_fac = IntegralGPTFactor(alpha_A, alpha_B, AB_dist);
   double cd_fac = IntegralGPTFactor(alpha_C, alpha_D, CD_dist);
   
@@ -128,7 +153,8 @@ double DistanceIntegral(double alpha_A, double alpha_B, double alpha_C,
   double momentum = IntegralMomentumFactor(alpha_A, alpha_B, alpha_C, alpha_D, 
                                            four_way_dist);
 
-  return (ab_fac * cd_fac * prefac * momentum);
+  return (a_norm * b_norm * c_norm * d_norm * ab_fac * cd_fac * prefac * 
+          momentum);
 
 
 } // DistanceIntegral ()

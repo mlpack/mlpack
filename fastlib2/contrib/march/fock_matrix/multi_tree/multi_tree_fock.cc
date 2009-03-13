@@ -439,12 +439,23 @@ void MultiTreeFock::ComputeCoulombBaseCase_(SquareTree* mu_nu,
   
   for (index_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
     
+    double alpha_mu = exponents_[mu_index];
+    double mu_norm = eri::ComputeNormalization(alpha_mu, momenta_[mu_index]);
+    
     for (index_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
+      
+      double alpha_nu = exponents_[nu_index];
+      double nu_norm = eri::ComputeNormalization(alpha_nu, momenta_[nu_index]);
+      
       
       double integral_value = coulomb_matrix_.ref(mu_index, nu_index);
       
       for (index_t rho_index = rho->begin(); rho_index < rho->end();
            rho_index++) {
+        
+        double alpha_rho = exponents_[rho_index];
+        double rho_norm = eri::ComputeNormalization(alpha_rho, 
+                                                    momenta_[rho_index]);
         
         for (index_t sigma_index = sigma->begin(); sigma_index < sigma->end(); 
              sigma_index++) {
@@ -458,16 +469,16 @@ void MultiTreeFock::ComputeCoulombBaseCase_(SquareTree* mu_nu,
           Vector sigma_vec;
           centers_.MakeColumnVector(sigma_index, &sigma_vec);
           
-          double alpha_mu = exponents_[mu_index];
-          double alpha_nu = exponents_[nu_index];
-          double alpha_rho = exponents_[rho_index];
           double alpha_sigma = exponents_[sigma_index];
+          
+          double sigma_norm = eri::ComputeNormalization(alpha_sigma, 
+                                                        momenta_[sigma_index]);
           
           // Multiply by normalization to the fourth, since it appears 
           // once in each of the four integrals
           
-          // WARNING: this is unnormalized
           double this_integral = density_matrix_.ref(rho_index, sigma_index) * 
+            mu_norm * nu_norm * rho_norm * sigma_norm * 
             eri::SSSSIntegral(alpha_mu, mu_vec, alpha_nu, nu_vec, alpha_rho, 
                               rho_vec, alpha_sigma, sigma_vec);
           
@@ -538,12 +549,22 @@ void MultiTreeFock::ComputeExchangeBaseCase_(SquareTree* mu_nu,
   
   for (index_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
     
+    double alpha_mu = exponents_[mu_index];
+    double mu_norm = eri::ComputeNormalization(alpha_mu, momenta_[mu_index]);
+    
     for (index_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
+      
+      double alpha_nu = exponents_[nu_index];
+      double nu_norm = eri::ComputeNormalization(alpha_nu, momenta_[nu_index]);
       
       double integral_value = exchange_matrix_.ref(mu_index, nu_index);
       
       for (index_t rho_index = rho->begin(); rho_index < rho->end();
            rho_index++) {
+        
+        double alpha_rho = exponents_[rho_index];
+        double rho_norm = eri::ComputeNormalization(alpha_rho, 
+                                                    momenta_[rho_index]);
         
         for (index_t sigma_index = sigma->begin(); sigma_index < sigma->end(); 
              sigma_index++) {
@@ -558,14 +579,14 @@ void MultiTreeFock::ComputeExchangeBaseCase_(SquareTree* mu_nu,
           Vector sigma_vec;
           centers_.MakeColumnVector(sigma_index, &sigma_vec);
           
-          double alpha_mu = exponents_[mu_index];
-          double alpha_nu = exponents_[nu_index];
-          double alpha_rho = exponents_[rho_index];
           double alpha_sigma = exponents_[sigma_index];
+          
+          double sigma_norm = eri::ComputeNormalization(alpha_sigma, 
+                                                        momenta_[sigma_index]);          
                     
-          // WARNING: this is not normalized
           // multiply by 0.5 for exchange matrix
           double kl_integral = 0.5 * density_matrix_.ref(rho_index, sigma_index) * 
+            mu_norm * nu_norm * rho_norm * sigma_norm * 
             eri::SSSSIntegral(alpha_mu, mu_vec, alpha_rho, rho_vec, 
                               alpha_nu, nu_vec, alpha_sigma, sigma_vec);
           
@@ -579,8 +600,8 @@ void MultiTreeFock::ComputeExchangeBaseCase_(SquareTree* mu_nu,
             DEBUG_ASSERT(density_matrix_.ref(rho_index, sigma_index) == 
                          density_matrix_.ref(sigma_index, rho_index));
             
-            // WARNING: not normalized
             double lk_integral = density_matrix_.ref(sigma_index, rho_index) * 
+              mu_norm * nu_norm * rho_norm * sigma_norm * 
               eri::SSSSIntegral(alpha_mu, mu_vec, alpha_sigma, sigma_vec, 
                                 alpha_nu, nu_vec, alpha_rho, rho_vec) * 0.5;
             
@@ -977,50 +998,48 @@ void MultiTreeFock::SetEntryBounds_() {
   double exp_lower = tree_->stat().min_bandwidth();
   
   DEBUG_ASSERT(density_upper >= density_lower);
+  DEBUG_ASSERT(exp_upper >= exp_lower);
   
   double entry_upper;
   double entry_lower;
   
   double max_dist = 
       square_tree_->query1()->bound().MaxDistanceSq(square_tree_->query2()->bound());
+      
+  // this may not be normalized
+  double max_integral = eri::DistanceIntegral(exp_upper, exp_upper, exp_upper, 
+                                              exp_upper, 0.0, 0.0, 0.0);
+                                              
+  double min_integral = eri::DistanceIntegral(exp_lower, exp_lower, exp_lower, 
+                                              exp_lower, max_dist, 
+                                              max_dist, max_dist);
   
   if (density_upper > 0) {
     // then, the largest value is when all the distances are 0
     
-    // this may not be normalized
-    double integral = eri::DistanceIntegral(exp_upper, exp_upper, exp_upper, 
-                                            exp_upper, 0.0, 0.0, 0.0);
-    
     entry_upper = density_upper * number_of_basis_functions_ * 
-    number_of_basis_functions_ * integral;
+        number_of_basis_functions_ * max_integral;
     
   }
   else {
     // then, the largest value is when all the distances are max
     
-    entry_upper = density_upper * 
-    eri::DistanceIntegral(exp_lower, exp_lower, exp_lower, exp_lower, max_dist, 
-                          max_dist, max_dist) * 
-    number_of_basis_functions_ * number_of_basis_functions_;
+    entry_upper = density_upper * min_integral * number_of_basis_functions_ 
+                 * number_of_basis_functions_;
     
   }
   
   if (density_lower > 0) {
     //then, the smallest value is when all the distances are max
     
-    entry_lower = density_lower * 
-    eri::DistanceIntegral(exp_lower, exp_lower, exp_lower, exp_lower, max_dist, 
-                          max_dist, max_dist) * 
-    number_of_basis_functions_ * number_of_basis_functions_;
+    entry_lower = density_lower * min_integral * 
+        number_of_basis_functions_ * number_of_basis_functions_;
     
   }
   else {
     
-    double integral = eri::DistanceIntegral(exp_upper, exp_upper, exp_upper, 
-                                            exp_upper, 0.0, 0.0, 0.0);
-    
     entry_lower = density_lower * number_of_basis_functions_ * 
-    number_of_basis_functions_ * integral;
+        number_of_basis_functions_ * max_integral;
     
   }
   
@@ -1065,8 +1084,8 @@ void MultiTreeFock::ResetTree_(SquareTree* root) {
     max_density = -DBL_INF;
     min_density = DBL_INF;
     
-    /*
-    min_exp = DBL_INF;
+    
+    /*min_exp = DBL_INF;
     max_exp = DBL_INF;
     */
     
@@ -1097,6 +1116,7 @@ void MultiTreeFock::ResetTree_(SquareTree* root) {
       
     } // i
     
+    
   } // leaf
   else {
     
@@ -1107,6 +1127,8 @@ void MultiTreeFock::ResetTree_(SquareTree* root) {
                       root->right()->stat().density_upper_bound());
     min_density = min(root->left()->stat().density_lower_bound(), 
                       root->right()->stat().density_lower_bound());
+                      
+    
     
   } // non-leaf
   
@@ -1118,8 +1140,122 @@ void MultiTreeFock::ResetTree_(SquareTree* root) {
   
   root->stat().set_approximation_val(0.0);
   
+  /*
+  root->query1().stat().set_max_bandwidth(max_exp);
+  root->query1().stat().set_min_bandwidth(min_exp);
+  */
+  
 } // ResetTree_()
 
+void MultiTreeFock::SetExponentBounds_(FockTree* tree) {
+
+  if (tree->is_leaf()) {
+  
+    double max_exp = -DBL_MAX;
+    double min_exp = DBL_MAX;
+  
+    for (index_t i = tree->begin(); i < tree->end(); i++) {
+    
+      if (max_exp < exponents_[i]) {
+        max_exp = exponents_[i];
+      }
+      
+      if (min_exp > exponents_[i]) {
+        min_exp = exponents_[i];
+      }
+    
+    } // for i
+    
+    tree->stat().set_max_bandwidth(max_exp);
+    tree->stat().set_min_bandwidth(min_exp);
+  
+  } // is leaf
+  else {
+  
+    SetExponentBounds_(tree->left());
+    SetExponentBounds_(tree->right());
+  
+    tree->stat().set_max_bandwidth(max(tree->left()->stat().max_bandwidth(), 
+                                       tree->right()->stat().max_bandwidth()));
+
+    tree->stat().set_min_bandwidth(min(tree->left()->stat().min_bandwidth(), 
+                                       tree->right()->stat().min_bandwidth()));
+  
+  } // not leaf
+
+} // SetExponentBounds_
+
+void MultiTreeFock::ApplyPermutation(ArrayList<index_t>& old_from_new, 
+                                     Matrix* mat) {
+
+  DEBUG_ASSERT(old_from_new.size() == mat->n_cols());
+  
+  Matrix temp_mat;
+  temp_mat.Init(mat->n_rows(), mat->n_cols());
+  
+  for (index_t i = 0; i < old_from_new.size(); i++) {
+  
+    temp_mat.CopyColumnFromMat(i, old_from_new[i], *mat);
+  
+  } // for i
+
+  mat->CopyValues(temp_mat);
+
+}
+
+void MultiTreeFock::ApplyPermutation(ArrayList<index_t>& old_from_new, 
+                                     Vector* vec) {
+
+  DEBUG_ASSERT(old_from_new.size() == vec->length());
+  
+  Vector temp_vec;
+  temp_vec.Init(vec->length());
+  
+  for (index_t i = 0; i < vec->length(); i++) {
+    
+    temp_vec[i] = (*vec)[old_from_new[i]];
+    
+  } // for i
+  
+  vec->CopyValues(temp_vec);
+  
+}
+
+void MultiTreeFock::UnApplyPermutation(ArrayList<index_t>& old_from_new, 
+                                       Matrix* mat) {
+
+  DEBUG_ASSERT(old_from_new.size() == mat->n_cols());
+
+  Matrix temp_mat;
+  temp_mat.Init(mat->n_rows(), mat->n_cols());
+  
+  for (index_t i = 0; i < old_from_new.size(); i++) {
+  
+    temp_mat.CopyColumnFromMat(old_from_new[i], i, *mat);
+  
+  } // for i
+
+  mat->CopyValues(temp_mat);
+
+}
+
+void MultiTreeFock::UnApplyPermutation(ArrayList<index_t>& old_from_new, 
+                                       Vector* vec) {
+
+  DEBUG_ASSERT(old_from_new.size() == vec->length());
+
+  Vector temp_vec;
+  temp_vec.Init(vec->length());
+
+  for (index_t i = 0; i < vec->length(); i++) {
+  
+    temp_vec[old_from_new[i]] = (*vec)[i];
+  
+  } // for i
+  
+  vec->CopyValues(temp_vec);
+
+}
 
 
 
@@ -1134,6 +1270,7 @@ void MultiTreeFock::ComputeFockMatrix() {
   // Will need to be followed by clearing the tree and computing the exchange 
   // matrix
   // I think this is the only resetting the tree will need
+  // the density and exponent bounds are not set
   SetEntryBounds_();
   ResetTreeForExchange_(square_tree_);
   fx_timer_start(module_, "exchange_recursion");
@@ -1148,6 +1285,8 @@ void MultiTreeFock::ComputeFockMatrix() {
 void MultiTreeFock::UpdateMatrices(const Matrix& new_density) {
   
   density_matrix_.CopyValues(new_density);
+  // this won't be correct when I switch to higher momentum
+  ApplyPermutation(old_from_new_centers_, &density_matrix_);
   
   //density_matrix_.PrintDebug();
   
@@ -1189,14 +1328,18 @@ void MultiTreeFock::OutputFockMatrix(Matrix* fock_out, Matrix* coulomb_out,
   printf("Multi-tree Exchange:\n");
   exchange_matrix_.PrintDebug();
   */
+  
   if (fock_out) {
     fock_out->Copy(fock_matrix_);
+    UnApplyPermutation(old_from_new_centers_, fock_out);
   }
   if (coulomb_out) {
     coulomb_out->Copy(coulomb_matrix_);
+    UnApplyPermutation(old_from_new_centers_, coulomb_out);
   }
   if (exchange_out) {
     exchange_out->Copy(exchange_matrix_);
+    UnApplyPermutation(old_from_new_centers_, exchange_out);
   }
   
   if (old_from_new) {

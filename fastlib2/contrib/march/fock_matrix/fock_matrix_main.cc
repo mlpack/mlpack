@@ -192,6 +192,8 @@ int main(int argc, char* argv[]) {
   if (fx_param_exists(root_mod, "do_multi")) {
     
     Matrix multi_fock;
+    Matrix multi_coulomb;
+    Matrix multi_exchange;
     
     fx_module* multi_mod = fx_submodule(root_mod, "multi");
     
@@ -199,9 +201,14 @@ int main(int argc, char* argv[]) {
     
     multi_alg.Init(centers, exp_mat, momenta, density, multi_mod);
     multi_alg.ComputeFockMatrix();
-    multi_alg.OutputFockMatrix(&multi_fock, NULL, NULL, NULL);
+    multi_alg.OutputFockMatrix(&multi_fock, &multi_coulomb, &multi_exchange, 
+                               NULL);
     
     if (fx_param_exists(root_mod, "print_multi")) {
+      
+      multi_fock.PrintDebug("Multi F");
+      multi_coulomb.PrintDebug("Multi J");
+      multi_exchange.PrintDebug("Multi K");
       
     }
     
