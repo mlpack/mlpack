@@ -22,11 +22,12 @@ namespace la {
   /**
    * Finds the Euclidean distance squared between two vectors.
    */
-  inline double DistanceSqEuclidean(
-      index_t length, const double *va, const double *vb) {
-    double s = 0;
+  template<typename Precision>
+  inline Precision DistanceSqEuclidean(
+      index_t length, const Precision *va, const Precision *vb) {
+    Precision s = 0;
     do {
-      double d = *va++ - *vb++;
+      Precision d = *va++ - *vb++;
       s += d * d;
     } while (--length);
     return s;
@@ -34,7 +35,9 @@ namespace la {
   /**
    * Finds the Euclidean distance squared between two vectors.
    */
-  inline double DistanceSqEuclidean(const Vector& x, const Vector& y) {
+  template<typename Precision>
+  inline Precision DistanceSqEuclidean(const GenVector<Precision>& x, 
+                                       const GenVector<Precision>& y) {
     DEBUG_SAME_SIZE(x.length(), y.length());
     return DistanceSqEuclidean(x.length(), x.ptr(), y.ptr());
   }
@@ -47,13 +50,13 @@ namespace la {
    * @param va first vector
    * @param vb second vector
    */
-  template<int t_pow>
-  inline double RawLMetric(
-      index_t length, const double *va, const double *vb) {
-    double s = 0;
+  template<typename Precision=double, int t_pow>
+  inline Precision RawLMetric(
+      index_t length, const Precision *va, const Precision *vb) {
+    Precision s = 0;
     do {
-      double d = *va++ - *vb++;
-      s += math::PowAbs<t_pow, 1>(d);
+      Precision d = *va++ - *vb++;
+      s += math::PowAbs<Precision, t_pow, 1>(d);
     } while (--length);
     return s;
   }
@@ -66,18 +69,19 @@ namespace la {
    * @param va first vector
    * @param vb second vector
    */
-  template<int t_pow>
-  inline double LMetric(
-      index_t length, const double *va, const double *vb) {
-    return math::Pow<1, t_pow>(RawLMetric<t_pow>(length, va, vb));
+  template<typename Precision=double, int t_pow>
+  inline Precision LMetric(
+      index_t length, const Precision *va, const Precision *vb) {
+    return math::Pow<Precision, 1, t_pow>(RawLMetric<Precision, t_pow>(length, va, vb));
   }
   /** Finds the trace of the matrix.
    *  Trace(A) is the sum of the diagonal elements
    */
-  inline double Trace(Matrix &a) {
+  template<typename Precision>
+  inline Precision Trace(GenMatrix<Precision> &a) {
     // trace has meaning only for square matrices
     DEBUG_SAME_SIZE(a.n_cols(), a.n_rows());
-    double trace=0;
+    Precision trace=0;
     for(index_t i=0; i<a.n_cols(); i++) {
       trace+=a.get(i, i);
     }
@@ -91,14 +95,16 @@ namespace la {
    *  We require that N >= m
    *  a should not be initialized
    */
-  inline success_t LeastSquareFit(Vector &y, Matrix &x, Vector *a) {
+  template<typename Precision>
+  inline success_t LeastSquareFit(GenVector<Precision> &y, 
+      GenMatrix<Precision> &x, GenVector<Precision> *a) {
     DEBUG_SAME_SIZE(y.length(), x.n_rows());
     DEBUG_ASSERT(x.n_rows() >= x.n_cols());
-    Vector r_xy_vec;
-    Matrix r_xx_mat;
-    la::MulTransAInit(x, x, &r_xx_mat);
-    la::MulInit(y, x, &r_xy_vec);
-    success_t status = la::SolveInit(r_xx_mat, r_xy_vec, a);
+    GenVector<Precision> r_xy_vec;
+    GenMatrix<Precision> r_xx_mat;
+    la::MulTransAInit<Precision>(x, x, &r_xx_mat);
+    la::MulInit<Precision>(y, x, &r_xy_vec);
+    success_t status = la::SolveInit<Precision>(r_xx_mat, r_xy_vec, a);
     if unlikely(status != SUCCESS_PASS) {
       if (status==SUCCESS_FAIL) {
         FATAL("Least square fit failed \n");
@@ -116,14 +122,16 @@ namespace la {
    *  We require that N >= m
    *  a should not be initialized
    */
-  inline success_t LeastSquareFit(Matrix &y, Matrix &x, Matrix *a) {
+  template<typename Precision>
+  inline success_t LeastSquareFit<Precision>(GenMatrix<Precision> &y, 
+      GenMatrix<Precision> &x, GenMatrix<Precision> *a) {
     DEBUG_SAME_SIZE(y.n_rows(), x.n_rows());
     DEBUG_ASSERT(x.n_rows() >= x.n_cols());
-    Matrix r_xy_mat;
-    Matrix r_xx_mat;
-    la::MulTransAInit(x, x, &r_xx_mat);
-    la::MulTransAInit(x, y, &r_xy_mat);
-    success_t status = la::SolveInit(r_xx_mat, r_xy_mat, a);
+    GenMatrix<Precision> r_xy_mat;
+    GenMatrix<Precision> r_xx_mat;
+    la::MulTransAInit<Precision>(x, x, &r_xx_mat);
+    la::MulTransAInit<Precision>(x, y, &r_xy_mat);
+    success_t status = la::SolveInit<Precision>(r_xx_mat, r_xy_mat, a);
     if unlikely(status != SUCCESS_PASS) {
       if (status==SUCCESS_FAIL) {
         FATAL("Least square fit failed \n");
@@ -141,14 +149,16 @@ namespace la {
    *  We require that N >= m
    *  a should not be initialized
    */
-  inline success_t LeastSquareFitTrans(Matrix &y, Matrix &x, Matrix *a) {
+  template<typename Precision>
+  inline success_t LeastSquareFitTrans(GenMatrix<Precision> &y, 
+      GenMatrix<Precision> &x, GenMatrix<Precision> *a) {
     DEBUG_SAME_SIZE(y.n_rows(), x.n_cols());
     DEBUG_ASSERT(x.n_cols() >= x.n_rows());
-    Matrix r_xy_mat;
-    Matrix r_xx_mat;
-    la::MulTransBInit(x, x, &r_xx_mat);
-    la::MulInit(x, y, &r_xy_mat);
-    success_t status = la::SolveInit(r_xx_mat, r_xy_mat, a);
+    GenMatrix<Precision> r_xy_mat;
+    GenMatrix<Precision> r_xx_mat;
+    la::MulTransBInit<Precision>(x, x, &r_xx_mat);
+    la::MulInit<Precision>(x, y, &r_xy_mat);
+    success_t status = la::SolveInit<Precision>(r_xx_mat, r_xy_mat, a);
     if unlikely(status != SUCCESS_PASS) {
       if (status==SUCCESS_FAIL) {
         FATAL("Least square fit failed \n");

@@ -15,8 +15,8 @@ TEST_SUITE_BEGIN(uselapack);
  * Creates a matrix locally.
  * The matrix cotents are column-major.
  */
-#define MAKE_MATRIX_TRANS(name, n_rows, n_cols, contents ...) \
-    double name ## _values [] = { contents }; \
+#define MAKE_MATRIX_TRANS(Precision, name, n_rows, n_cols, contents ...) \
+    Precision name ## _values [] = { contents }; \
     DEBUG_ASSERT(sizeof(name ## _values) / sizeof(double) == n_rows * n_cols); \
     Matrix name; \
     name.Alias(name ## _values, (n_rows), (n_cols));
@@ -25,24 +25,25 @@ TEST_SUITE_BEGIN(uselapack);
  * Creates a vector locally.
  * The matrix cotents are column-major.
  */
-#define MAKE_VECTOR(name, length, contents ...) \
-    double name ## _values [] = { contents }; \
-    DEBUG_ASSERT(sizeof(name ## _values) / sizeof(double) == (length)); \
+#define MAKE_VECTOR(Precision, name, length, contents ...) \
+    Precision name ## _values [] = { contents }; \
+    DEBUG_ASSERT(sizeof(name ## _values) / sizeof(Precision) == (length)); \
     Vector name; \
     name.Alias(name ## _values, (length));
-
-bool VectorApproxEqual(const Vector& a, const Vector& b,
-     double eps) {
+template<typename Precision>
+bool VectorApproxEqual(const GenVector<Precision>& a, 
+                       const GenVector<Precision>& b,
+                       Precision eps) {
   if (a.length() != b.length()) {
     fprintf(stderr, "XXX Size mismatch.\n");
     return false;
   }
   
   int wrong = 0;
-  double max_diff = 0;
+  Precision max_diff = 0;
   
   for (index_t i = 0; i < a.length(); i++) {
-    double diff = fabs(a.get(i) - b.get(i));
+    Precision diff = fabs(a.get(i) - b.get(i));
     max_diff = std::max(max_diff, diff);
     if (!(diff <= eps)) {
       wrong++;
@@ -60,8 +61,9 @@ bool VectorApproxEqual(const Vector& a, const Vector& b,
   
   return wrong == 0;
 }
-
-void AssertApproxVector(const Vector& a, const Vector& b, double eps) {
+template<typename Precision>
+void AssertApproxVector(const GenVector<Precision>& a, 
+                        const GenVectorPrecision& b, Precision eps) {
   if (!VectorApproxEqual(a, b, eps)) {
     a.PrintDebug("a");
     b.PrintDebug("b");
@@ -70,19 +72,21 @@ void AssertApproxVector(const Vector& a, const Vector& b, double eps) {
   //fprintf(stderr, "... Correct vector!\n");
 }
 
-bool MatrixApproxEqual(const Matrix& a, const Matrix& b,
-     double eps) {
+template<typename Precision>
+bool MatrixApproxEqual(const GenMatrix<Precision>& a, 
+                       const GenMatrix<Precision>& b,
+     Precision eps) {
   if (a.n_rows() != b.n_rows() || a.n_cols() != b.n_cols()) {
     fprintf(stderr, "XXX Size mismatch.\n");
     return false;
   }
   
   int wrong = 0;
-  double max_diff = 0;
+  Precision max_diff = 0;
   
   for (index_t c = 0; c < a.n_cols(); c++) {
     for (index_t r = 0; r < a.n_rows(); r++) {
-      double diff = fabs(a.get(r, c) - b.get(r, c));
+      Precision diff = fabs(a.get(r, c) - b.get(r, c));
       max_diff = std::max(max_diff, diff);
       if (!(diff <= eps)) {
         wrong++;
@@ -102,8 +106,10 @@ bool MatrixApproxEqual(const Matrix& a, const Matrix& b,
   return wrong == 0;
 }
 
-void AssertApproxMatrix(const Matrix& a, const Matrix& b,
-    double eps) {
+template<typename Precision>
+void AssertApproxMatrix(const GenMatrix<Precision>& a, 
+                        const GenMatrix<Precision>& b,
+    Precision eps) {
   if (!MatrixApproxEqual(a, b, eps)) {
     a.PrintDebug("a");
     b.PrintDebug("b");
@@ -112,14 +118,18 @@ void AssertApproxMatrix(const Matrix& a, const Matrix& b,
   //fprintf(stderr, "... Correct matrix!\n");
 }
 
-void AssertExactMatrix(const Matrix& a, const Matrix& b) {
+template<typename Precision>
+void AssertExactMatrix(const GenMatrix<Precision>& a, 
+                       const GenMatrix<Precision>& b) {
   AssertApproxMatrix(a, b, 0);
 }
 
-void AssertApproxTransMatrix(const Matrix& a, const Matrix& b,
-    double eps) {
-  Matrix a_trans;
-  la::TransposeInit(a, &a_trans);
+template<typename Precision>
+void AssertApproxTransMatrix(const GenMatrix<Precision>& a, 
+                             const GenMatrix<Precision>& b,
+                             Precision eps) {
+  GenMatrix<Precision> a_trans;
+  la::TransposeInit<Precision>(a, &a_trans);
   if (!MatrixApproxEqual(a_trans, b, eps)) {
     a_trans.PrintDebug("a_trans");
     b.PrintDebug("b");
@@ -127,23 +137,24 @@ void AssertApproxTransMatrix(const Matrix& a, const Matrix& b,
   }
 }
 
+template<typename Precision>
 void TestVectorDot() {
-  MAKE_VECTOR(a, 4,    2, 1, 4, 5);
-  MAKE_VECTOR(b, 4,    3, 0, 2, -1);
+  MAKE_VECTOR(Precision, a, 4,    2, 1, 4, 5);
+  MAKE_VECTOR(Precision, b, 4,    3, 0, 2, -1);
   
   //TEST_DOUBLE_EXACT(F77_FUNC(ddot)(4, a.ptr(), 1, a.ptr(), 1),  4+1+16+25);
-  TEST_DOUBLE_EXACT(la::Dot(a, a), 4+1+16+25);
-  TEST_DOUBLE_EXACT(la::Dot(a, b), 6+0+8-5);
-  TEST_DOUBLE_APPROX(la::LengthEuclidean(b), sqrt(9+0+4+1), 1.0e-8);
-  TEST_DOUBLE_APPROX(la::LengthEuclidean(a), sqrt(4+1+16+25), 1.0e-8);
+  TEST_DOUBLE_EXACT(la::Dot<Precision>(a, a), 4+1+16+25);
+  TEST_DOUBLE_EXACT(la::Dot<Precision>(a, b), 6+0+8-5);
+  TEST_DOUBLE_APPROX(la::LengthEuclidean<Precision>(b), sqrt(9+0+4+1), 1.0e-8);
+  TEST_DOUBLE_APPROX(la::LengthEuclidean<Precision>(a), sqrt(4+1+16+25), 1.0e-8);
 }
 
 // ---- INCLUDED FROM ORIGINAL LA TEST -----
 // ----
 // ----
 // ---- (Except distance tests are omitted)
-
-void MakeCountMatrix(index_t n_rows, index_t n_cols, Matrix *m) {
+template<typename Precision>
+void MakeCountMatrix(index_t n_rows, index_t n_cols, GenMatrix<Precision> *m) {
   m->Init(n_rows, n_cols);
   
   for (index_t c = 0; c < n_cols; c++) {
@@ -153,7 +164,8 @@ void MakeCountMatrix(index_t n_rows, index_t n_cols, Matrix *m) {
   }
 }
 
-void MakeConstantMatrix(index_t n_rows, index_t n_cols, double v, Matrix *m) {
+template<typename Precision>
+void MakeConstantMatrix(index_t n_rows, index_t n_cols, Precision v, GenMatrix<Precision> *m) {
   m->Init(n_rows, n_cols);
   
   for (index_t c = 0; c < n_cols; c++) {
@@ -164,32 +176,34 @@ void MakeConstantMatrix(index_t n_rows, index_t n_cols, double v, Matrix *m) {
 }
 
 /** Tests level 1 BLAS-ish stuff. */
+template<tyoename Precision>
 void TestMatrixSimpleMath() {
-  Matrix m1;
-  Matrix m2;
-  Matrix m3;
-  Matrix m4;
-  Matrix m5;
+  GenMatrix<Precision> m1;
+  GenMatrix<Precision> m2;
+  GenMatrix<Precision> m3;
+  GenMatrix<Precision> m4;
+  GenMatrix<Precision> m5;
   
-  MakeCountMatrix(3, 4, &m1);
-  MakeCountMatrix(3, 4, &m2);
-  la::AddTo(m2, &m1);
-  la::AddInit(m1, m2, &m3);
+  MakeCountMatrix<Precision>(3, 4, &m1);
+  MakeCountMatrix<Precision>(3, 4, &m2);
+  la::AddTo<Precision>(m2, &m1);
+  la::AddInit<Precision>(m1, m2, &m3);
   TEST_ASSERT(m3.get(0, 0) == 0);
   TEST_ASSERT(m3.get(2, 3) == (2+3)*3);
-  la::AddExpert(-1.0, m2, &m1);
+  la::AddExpert<Precision>(-1.0, m2, &m1);
   TEST_ASSERT(m1.get(0, 0) == 0);
   TEST_ASSERT(m1.get(2, 3) == (2+3));
-  la::Scale(4.0, &m1);
+  la::Scale<Precision>(4.0, &m1);
   TEST_ASSERT(m1.get(2, 3) == (2+3)*4);
-  MakeConstantMatrix(3, 4, 7.0, &m4);
-  la::AddInit(m1, m4, &m5);
+  MakeConstantMatrix<Precision>(3, 4, 7.0, &m4);
+  la::AddInit<Precision>(m1, m4, &m5);
   TEST_ASSERT(m5.get(2, 3) == (2+3)*4 + 7.0);
   TEST_ASSERT(m5.get(1, 3) == (1+3)*4 + 7.0);
   TEST_ASSERT(m5.get(1, 0) == (1+0)*4 + 7.0);
 }
 
-void MakeCountVector(index_t n, Vector *v) {
+template<typename Precision>
+void MakeCountVector<Precision>(index_t n, GenVector<Precision> *v) {
   v->Init(n);
   
   for (index_t c = 0; c < n; c++) {
@@ -197,7 +211,8 @@ void MakeCountVector(index_t n, Vector *v) {
   }
 }
 
-void MakeConstantVector(index_t n, double d, Vector *v) {
+template<typename Precision>
+void MakeConstantVector(index_t n, Precision d, GenVector<Precision> *v) {
   v->Init(n);
   
   for (index_t c = 0; c < n; c++) {
@@ -206,44 +221,46 @@ void MakeConstantVector(index_t n, double d, Vector *v) {
 }
 
 /** Tests level 1 BLAS-ish stuff. */
+template<typename Precision>
 void TestVectorSimpleMath() {
-  Vector v1;
-  Vector v2;
-  Vector v3;
-  Vector v4;
-  Vector v5;
+  GenVector<Precision> v1;
+  GenVector<Precision> v2;
+  GenVector<Precision> v3;
+  GenVector<Precision> v4;
+  GenVector<Precision> v5;
   
-  MakeCountVector(6, &v1);
-  MakeCountVector(6, &v2);
-  la::AddTo(v2, &v1);
-  la::AddInit(v1, v2, &v3);
+  MakeCountVector<Precision>(6, &v1);
+  MakeCountVector<Precision>(6, &v2);
+  la::AddTo<Precision>(v2, &v1);
+  la::AddInit<Precision>(v1, v2, &v3);
   TEST_ASSERT(v3[0] == 0);
   TEST_ASSERT(v3[5] == (5)*3);
-  la::AddExpert(-1.0, v2, &v1);
+  la::AddExpert<Precisin>(-1.0, v2, &v1);
   TEST_ASSERT(v1[0] == 0);
   TEST_ASSERT(v1[5] == (5));
-  la::Scale(4.0, &v1);
+  la::Scale<Precision>(4.0, &v1);
   TEST_ASSERT(v1[5] == (5)*4);
-  MakeConstantVector(6, 7.0, &v4);
-  la::AddInit(v1, v4, &v5);
+  MakeConstantVector<Precision>(6, 7.0, &v4);
+  la::AddInit<Precision>(v1, v4, &v5);
   TEST_ASSERT(v5[5] == (5)*4 + 7.0);
   TEST_ASSERT(v5[4] == (4)*4 + 7.0);
   TEST_ASSERT(v5[1] == (1)*4 + 7.0);
 }
 
 /** Tests aliases and copies */
+template<typename Precision>
 void TestVector() {
-  Vector v1;
-  const Vector *v_const;
-  Vector v2;
-  Vector v3;
-  Vector v4;
-  Vector v6;
-  Vector v7;
-  Vector v8;
-  Vector v9;
+  GenVector<Precision> v1;
+  const GenVector<Precision> *v_const;
+  GenVector<Precision> v2;
+  GenVector<Precision> v3;
+  GenVector<Precision> v4;
+  GenVector<Precision> v6;
+  GenVector<Precision> v7;
+  GenVector<Precision> v8;
+  GenVector<Precision> v9;
   
-  MakeCountVector(10, &v1);
+  MakeCountVector<Precision>(10, &v1);
   TEST_ASSERT(v1.length() == 10);
   TEST_ASSERT(v1.ptr()[3] == v1[3]);
   v_const = &v1;
@@ -272,7 +289,7 @@ void TestVector() {
   v8.WeakCopy(v1);
   TEST_ASSERT(v8[9] == 9);
   TEST_ASSERT(v8[3] == 3);
-  MakeConstantVector(10, 3.5, &v9);
+  MakeConstantVector<Precision>(10, 3.5, &v9);
   TEST_ASSERT(v9[0] == 3.5);
   TEST_ASSERT(v1[0] == 0.0);
   v9.SwapValues(&v1);
@@ -288,26 +305,26 @@ void TestVector() {
   TEST_ASSERT(v1[0] == 0.0);
 }
 
-
+template<typename Precision>
 void TestMatrix() {
-  Matrix m1;
-  const Matrix *m_const;
-  Matrix m2;
-  Matrix m3;
-  Matrix m4;
-  Matrix m6;
-  Matrix m7;
-  Matrix m8;
-  Matrix m9;
+  GenMatrix<Precision> m1;
+  const GenMatrix<Precision> *m_const;
+  GenMatrix<Precision> m2;
+  GenMatrix<Precision> m3;
+  GenMatrix<Precision> m4;
+  GenMatrix<Precision> m6;
+  GenMatrix<Precision> m7;
+  GenMatrix<Precision> m8;
+  GenMatrix<Precision> m9;
   
-  MakeCountMatrix(13, 10, &m1);
+  MakeCountMatrix<Precision>(13, 10, &m1);
   TEST_ASSERT(m1.n_cols() == 10);
   TEST_ASSERT(m1.n_rows() == 13);
   TEST_ASSERT(m1.ptr()[3] == m1.get(3, 0));
   m_const = &m1;
   TEST_ASSERT(m_const->ptr()[3] == (*m_const).get(3, 0));
 
-  Vector v1, v2;  
+  GenVector<Precision> v1, v2;  
   m1.MakeColumnVector(0, &v1);
   m1.MakeColumnVector(1, &v2);
   TEST_ASSERT(v1[12] == 12);
@@ -360,287 +377,291 @@ void TestMatrix() {
 // ---- -------- ----
 // ---- -------- ----
 // ---- -------- ----
-
+template<typename Precision>
 void TestMultiply() {
-  MAKE_MATRIX_TRANS(a, 3, 3,
+  MAKE_MATRIX_TRANS(Precision, a, 3, 3,
       3, 1, 4,
       1, 5, 9,
       2, 6, 5);
-  MAKE_MATRIX_TRANS(b, 3, 4,
+
+  MAKE_MATRIX_TRANS(Precision, b, 3, 4,
       3, 5, 8,
       9, 7, 9,
       3, 2, 3,
       8, 4, 6);
   
-  MAKE_MATRIX_TRANS(product_expect, 3, 4,
+  MAKE_MATRIX_TRANS(Precision, product_expect, 3, 4,
       30, 76, 97,
       52, 98, 144,
       17, 31, 45,
       40, 64, 98);
   
-  Matrix product_actual;
+  GenMatrix<Precision> product_actual;
   
   // product_actual is uninitialized
-  la::MulInit(a, b, &product_actual);
-  AssertExactMatrix(product_expect, product_actual);
+  la::MulInit<Precision>(a, b, &product_actual);
+  AssertExactMatrix<Precision>(product_expect, product_actual);
   
   product_actual.SetZero();
-  la::MulOverwrite(a, b, &product_actual);
-  AssertExactMatrix(product_expect, product_actual);
+  la::MulOverwrite<Precision>(a, b, &product_actual);
+  AssertExactMatrix<Precision>(product_expect, product_actual);
   
-  MAKE_MATRIX_TRANS(product_expect_transa, 3, 4,
+  MAKE_MATRIX_TRANS(Precision, product_expect_transa, 3, 4,
       46, 100, 76,
       70, 125, 105,
       23, 40, 33,
       52, 82, 70);
   
-  Matrix product_actual_transa;
-  la::MulTransAInit(a, b, &product_actual_transa);
-  AssertExactMatrix(product_expect_transa, product_actual_transa);
+  GenMatrix<Precision> product_actual_transa;
+  la::MulTransAInit<Precision>(a, b, &product_actual_transa);
+  AssertExactMatrix<Precision>(product_expect_transa, product_actual_transa);
 
-  Matrix a_t, b_t;
-  la::TransposeInit(a, &a_t);
-  la::TransposeInit(b, &b_t);
+  GenMatrix<Precision> a_t, b_t;
+  la::TransposeInit<Precision>(a, &a_t);
+  la::TransposeInit<Precision>(b, &b_t);
   
   product_actual_transa.Destruct();
-  la::MulTransBInit(a_t, b_t, &product_actual_transa);
-  AssertExactMatrix(product_expect_transa, product_actual_transa);
+  la::MulTransBInit<Precision(a_t, b_t, &product_actual_transa);
+  AssertExactMatrix<Precision>(product_expect_transa, product_actual_transa);
   
   product_actual.SetZero();
-  la::MulTransAOverwrite(a, b, &product_actual_transa);
-  AssertExactMatrix(product_expect_transa, product_actual_transa);
+  la::MulTransAOverwrite<Precision>(a, b, &product_actual_transa);
+  AssertExactMatrix<Precision>(product_expect_transa, product_actual_transa);
 
   // test matrix-vector multiplication
-  MAKE_VECTOR(v1, 3,     9, 1, 2);
-  MAKE_VECTOR(a_v1, 3,   32, 26, 55);
-  MAKE_VECTOR(v1_a, 3,   36, 32, 34);
-  MAKE_VECTOR(v2, 3,     2, 3, 4);
-  MAKE_VECTOR(a_v2, 3,   17, 41, 55);
-  MAKE_VECTOR(v2_a, 3,   25, 53, 42);
+  MAKE_VECTOR(Precision, v1, 3,     9, 1, 2);
+  MAKE_VECTOR(Precision, a_v1, 3,   32, 26, 55);
+  MAKE_VECTOR(Precision, v1_a, 3,   36, 32, 34);
+  MAKE_VECTOR(Precision, v2, 3,     2, 3, 4);
+  MAKE_VECTOR(Precision, a_v2, 3,   17, 41, 55);
+  MAKE_VECTOR(Precision, v2_a, 3,   25, 53, 42);
   
-  Vector a_v1_actual;
-  la::MulInit(a, v1, &a_v1_actual);
-  AssertApproxVector(a_v1, a_v1_actual, 0);
+  GenVector<Precision> a_v1_actual;
+  la::MulInit<Precision>(a, v1, &a_v1_actual);
+  AssertApproxVector<Precision>(a_v1, a_v1_actual, 0);
   
   Vector a_v2_actual;
   a_v2_actual.Init(3);
   la::MulOverwrite(a, v2, &a_v2_actual);
   AssertApproxVector(a_v2, a_v2_actual, 0);
   
-  Vector v1_a_actual;
-  la::MulInit(v1, a, &v1_a_actual);
-  AssertApproxVector(v1_a, v1_a_actual, 0);
+  GenVector<Precision> v1_a_actual;
+  la::MulInit<Precision>(v1, a, &v1_a_actual);
+  AssertApproxVector<Precision>(v1_a, v1_a_actual, 0);
   
-  Vector v2_a_actual;
+  GenVector<Precision> v2_a_actual;
   v2_a_actual.Init(3);
-  la::MulOverwrite(v2, a, &v2_a_actual);
-  AssertApproxVector(v2_a, v2_a_actual, 0);
+  la::MulOverwrite<Precision>(v2, a, &v2_a_actual);
+  AssertApproxVector<Precision>(v2_a, v2_a_actual, 0);
   
   // Test non-square matrices (we had some bad debug checks)
-  MAKE_VECTOR(v3, 4,     1, 2, 3, 4);
-  MAKE_VECTOR(b_v3, 3,   62, 41, 59);
-  MAKE_VECTOR(v1_b, 4,   48, 106, 35, 88);
+  MAKE_VECTOR(Precision, v3, 4,     1, 2, 3, 4);
+  MAKE_VECTOR(Precision, b_v3, 3,   62, 41, 59);
+  MAKE_VECTOR(Precision, v1_b, 4,   48, 106, 35, 88);
   
-  SmallVector<3> b_v3_actual;
+  SmallVector<Precision, 3> b_v3_actual;
   
-  la::MulOverwrite(b, v3, &b_v3_actual);
-  AssertApproxVector(b_v3, b_v3_actual, 0);
+  la::MulOverwrite<Precision>(b, v3, &b_v3_actual);
+  AssertApproxVector<Precision>(b_v3, b_v3_actual, 0);
 
-  Vector v1_b_actual;
-  la::MulInit(v1, b, &v1_b_actual);
-  AssertApproxVector(v1_b, v1_b_actual, 0);
+  GenVector<Precision> v1_b_actual;
+  la::MulInit<Precision>(v1, b, &v1_b_actual);
+  AssertApproxVector<Precision>(v1_b, v1_b_actual, 0);
   
 }
 
+template<typename Precision>
 void TestInverse() {
-  MAKE_MATRIX_TRANS(a, 3, 3,
+  MAKE_MATRIX_TRANS(Precision, a, 3, 3,
       .5, 0, 0,
       0, 1, 0,
       0, 0, 2);
-  MAKE_MATRIX_TRANS(a_inv_expect, 3, 3,
+  MAKE_MATRIX_TRANS(Precision, a_inv_expect, 3, 3,
       2, 0, 0,
       0, 1, 0,
       0, 0, .5);
 
-  MAKE_MATRIX_TRANS(b, 3, 3,
+  MAKE_MATRIX_TRANS(Precision, b, 3, 3,
       3, 1, 4,
       1, 5, 9,
       2, 6, 5);
-  MAKE_MATRIX_TRANS(b_inv_expect, 3, 3,
+  MAKE_MATRIX_TRANS(Precision, b_inv_expect, 3, 3,
       0.3222222, -0.2111111, 0.1222222,
       -0.1444444, -0.0777778, 0.2555556,
       0.0444444, 0.1777778, -0.1555556);
-  MAKE_MATRIX_TRANS(c, 3, 3,
+  MAKE_MATRIX_TRANS(Precision, c, 3, 3,
       1, 0, 0,
       0, 1, 0,
       0, 0, 0);
   
-  Matrix a_inv_actual;
+  GenMatrix<Precision> a_inv_actual;
   
-  TEST_ASSERT(PASSED(la::InverseInit(a, &a_inv_actual)));
-  AssertExactMatrix(a_inv_expect, a_inv_actual);
+  TEST_ASSERT(PASSED(la::InverseInit<Precision>(a, &a_inv_actual)));
+  AssertExactMatrix<Precision>(a_inv_expect, a_inv_actual);
   
-  Matrix b_inv_actual;
+  GenMatrix<Precision> b_inv_actual;
   
   b_inv_actual.Init(3, 3);
-  TEST_ASSERT(PASSED(la::InverseOverwrite(b, &b_inv_actual)));
-  AssertApproxMatrix(b_inv_expect, b_inv_actual, 1.0e-5);
+  TEST_ASSERT(PASSED(la::InverseOverwrite<Precision>(b, &b_inv_actual)));
+  AssertApproxMatrix<Precision>(b_inv_expect, b_inv_actual, 1.0e-5);
   
-  Matrix c_inv_actual;
+  GenMatrix<Precision> c_inv_actual;
   // Try inverting a 3x3 rank-3 matrix
-  TEST_ASSERT(!PASSED(la::InverseInit(c, &c_inv_actual)));
+  TEST_ASSERT(!PASSED(la::InverseInit<Precision>(c, &c_inv_actual)));
   
   // Try inverting a 3x3 rank-3 matrix
-  TEST_ASSERT(PASSED(la::Inverse(&b)));
-  AssertApproxMatrix(b, b_inv_actual, 1.0e-5);
+  TEST_ASSERT(PASSED(la::Inverse<Precision>(&b)));
+  AssertApproxMatrix<Precision>(b, b_inv_actual, 1.0e-5);
 }
 
+template<typename Precision>
 void TestDeterminant() {
-  MAKE_MATRIX_TRANS(a, 3, 3,
+  MAKE_MATRIX_TRANS(Precision, a, 3, 3,
       3, 1, 4,
       1, 5, 9,
       2, 6, 5);
-  MAKE_MATRIX_TRANS(b, 3, 3,
+  MAKE_MATRIX_TRANS(Precision, b, 3, 3,
       -3, 5, -8,
       9, -7, 9,
       2, 6, 5);
-  MAKE_MATRIX_TRANS(c, 3, 3,
+  MAKE_MATRIX_TRANS(Precision, c, 3, 3,
       -3, -5, -8,
       9, -7, 9,
       -2, 6, 5);
-  MAKE_MATRIX_TRANS(d, 3, 3,
+  MAKE_MATRIX_TRANS(Precision, d, 3, 3,
       31, 41, 59,
       26, 53, 58,
       97, 93, 23);
   
   int sign;
   
-  TEST_DOUBLE_APPROX(-90.0, la::Determinant(a), 1.0e-7);
-  TEST_DOUBLE_APPROX(log(90.0), la::DeterminantLog(a, &sign), 1.0e-7);
+  TEST_DOUBLE_APPROX(-90.0, la::Determinant<Precision>(a), 1.0e-7);
+  TEST_DOUBLE_APPROX(log(90.0), la::DeterminantLog<Precision>(a, &sign), 1.0e-7);
   DEBUG_ASSERT_MSG(sign == -1, "%d", sign);
-  TEST_DOUBLE_APPROX(-412.0, la::Determinant(b), 1.0e-7);
-  TEST_DOUBLE_APPROX(262.0, la::Determinant(c), 1.0e-7);
-  TEST_DOUBLE_APPROX(log(262.0), la::DeterminantLog(c, &sign), 1.0e-7);
+  TEST_DOUBLE_APPROX(-412.0, la::Determinant<Precision>(b), 1.0e-7);
+  TEST_DOUBLE_APPROX(262.0, la::Determinant<Precision>(c), 1.0e-7);
+  TEST_DOUBLE_APPROX(log(262.0), la::DeterminantLog<Precision>(c, &sign), 1.0e-7);
   DEBUG_ASSERT_MSG(sign == 1, "%d", sign);
-  TEST_DOUBLE_APPROX(-8.3934e4, la::Determinant(d), 1.0e-7);
+  TEST_DOUBLE_APPROX(-8.3934e4, la::Determinant<Precision>(d), 1.0e-7);
 }
 
+template<typename Precision>
 void TestQR() {
-  MAKE_MATRIX_TRANS(a, 3, 3,
+  MAKE_MATRIX_TRANS(Precision, a, 3, 3,
       3, 1, 4,
       1, 5, 9,
       2, 6, 5);
-  MAKE_MATRIX_TRANS(a_q_expect, 3, 3,
+  MAKE_MATRIX_TRANS(Precision, a_q_expect, 3, 3,
       -0.58835, -0.19612, -0.78446,
        0.71472, -0.57986, -0.39107,
       -0.37819, -0.79076, 0.48133);
-  MAKE_MATRIX_TRANS(a_r_expect, 3, 3,
+  MAKE_MATRIX_TRANS(Precision, a_r_expect, 3, 3,
       -5.09902, 0.00000, 0.00000,
       -8.62911, -5.70425, 0.00000,
       -6.27572, -4.00511, -3.09426);
   
-  MAKE_MATRIX_TRANS(b, 3, 4,
+  MAKE_MATRIX_TRANS(Precision, b, 3, 4,
       3, 5, 8,
       9, 7, 9,
       3, 2, 3,
       8, 4, 6);
-  MAKE_MATRIX_TRANS(b_q_expect, 3, 3,
+  MAKE_MATRIX_TRANS(Precision, b_q_expect, 3, 3,
       -0.303046, -0.505076, -0.808122,
        0.929360, 0.030979, -0.367872,
        0.210838, -0.862519, 0.460010);
-  MAKE_MATRIX_TRANS(b_r_expect, 3, 4,
+  MAKE_MATRIX_TRANS(Precision, b_r_expect, 3, 4,
        -9.89949, 0.00000, 0.00000,
       -13.53604, 5.27025, 0.00000,
        -4.34366, 1.74642, 0.28751,
        -9.29340, 5.35157, 0.99669);
 
-  MAKE_MATRIX_TRANS(c, 4, 3,
+  MAKE_MATRIX_TRANS(Precision, c, 4, 3,
       3, 9, 3, 8,
       5, 7, 2, 4,
       8, 9, 3, 6);
-  MAKE_MATRIX_TRANS(c_q_expect, 4, 3,
+  MAKE_MATRIX_TRANS(Precision, c_q_expect, 4, 3,
      -0.234978, -0.704934, -0.234978, -0.626608,
       0.846774, 0.175882, -0.039891, -0.500449,
      -0.464365, 0.686138, -0.180138, -0.530217);
    //0.110115, 0.036705, -0.954329, 0.275287
-  MAKE_MATRIX_TRANS(c_r_expect, 3, 3,
+  MAKE_MATRIX_TRANS(Precision, c_r_expect, 3, 3,
      -12.76715, 0.00000, 0.00000,
       -9.08582, 3.38347, 0.00000,
      -12.68882, 5.23476, -1.26139);
 
-  Matrix a_q_actual;
-  Matrix a_r_actual;
-  Matrix a_q_r_actual;
+  GenMatrix<Precision> a_q_actual;
+  GenMatrix<Precision> a_r_actual;
+  GenMatrix<Precision> a_q_r_actual;
   
-  TEST_ASSERT(PASSED(la::QRInit(a, &a_q_actual, &a_r_actual)));
-  la::MulInit(a_q_actual, a_r_actual, &a_q_r_actual);
-  AssertApproxMatrix(a, a_q_r_actual, 1.0e-5);
+  TEST_ASSERT(PASSED(la::QRInit<Precision>(a, &a_q_actual, &a_r_actual)));
+  la::MulInit<Precision>(a_q_actual, a_r_actual, &a_q_r_actual);
+  AssertApproxMatrix<Precision>(a, a_q_r_actual, 1.0e-5);
   
-  Matrix b_q_actual;
-  Matrix b_r_actual;
-  Matrix b_q_r_actual;
+  GenMatrix<Precision> b_q_actual;
+  GenMatrix<Precision> b_r_actual;
+  GenMatrix<Precision> b_q_r_actual;
   
-  TEST_ASSERT(PASSED(la::QRInit(b, &b_q_actual, &b_r_actual)));
-  la::MulInit(b_q_actual, b_r_actual, &b_q_r_actual);
-  AssertApproxMatrix(b, b_q_r_actual, 1.0e-5);
+  TEST_ASSERT(PASSED(la::QRInit<Precision>(b, &b_q_actual, &b_r_actual)));
+  la::MulInit<Precision>(b_q_actual, b_r_actual, &b_q_r_actual);
+  AssertApproxMatrix<Precision>(b, b_q_r_actual, 1.0e-5);
   
-  Matrix c_q_actual;
-  Matrix c_r_actual;
-  Matrix c_q_r_actual;
+  GenMatrix<Precision> c_q_actual;
+  GenMatrix<Precision> c_r_actual;
+  GenMatrix<Precision> c_q_r_actual;
   
-  TEST_ASSERT(PASSED(la::QRInit(c, &c_q_actual, &c_r_actual)));
-  la::MulInit(c_q_actual, c_r_actual, &c_q_r_actual);
-  AssertApproxMatrix(c, c_q_r_actual, 1.0e-5);
+  TEST_ASSERT(PASSED(la::QRInit<Precision>(c, &c_q_actual, &c_r_actual)));
+  la::MulInit<Precision>(c_q_actual, c_r_actual, &c_q_r_actual);
+  AssertApproxMatrix<Precision>(c, c_q_r_actual, 1.0e-5);
 }
 
-
+template<typename Precision>
 void TestEigen() {
-  MAKE_MATRIX_TRANS(a, 3, 3,
+  MAKE_MATRIX_TRANS(Precision, a, 3, 3,
       3, 1, 4,
       1, 5, 9,
       2, 6, 5);
-  MAKE_MATRIX_TRANS(a_eigenvectors_expect, 3, 3,
+  MAKE_MATRIX_TRANS(Precision, a_eigenvectors_expect, 3, 3,
      -0.212480, -0.912445, -0.172947,
      -0.599107, 0.408996, -0.592976,
      -0.771960, -0.012887, 0.786428);
-  MAKE_VECTOR(a_eigenvalues_real_expect, 3,
+  MAKE_VECTOR(Precision, a_eigenvalues_real_expect, 3,
       13.08576, 2.58001, -2.66577);
-  MAKE_VECTOR(a_eigenvalues_imag_expect, 3,
+  MAKE_VECTOR(Precision, a_eigenvalues_imag_expect, 3,
       0, 0, 0);
 
-  MAKE_MATRIX_TRANS(b, 2, 2,
+  MAKE_MATRIX_TRANS(Precision, b, 2, 2,
       3, 4,
       -2, -1);
-  MAKE_MATRIX_TRANS(b_eigenvectors_real_expect, 2, 2,
+  MAKE_MATRIX_TRANS(Precision, b_eigenvectors_real_expect, 2, 2,
       0.40825, 0.81650,
       0.40825, 0.81650);
-  MAKE_MATRIX_TRANS(b_eigenvectors_imag_expect, 2, 2,
+  MAKE_MATRIX_TRANS(Precision, b_eigenvectors_imag_expect, 2, 2,
       0.40825, 0.0,
       -0.40825, 0.0);
-  MAKE_VECTOR(b_eigenvalues_real_expect, 2,
+  MAKE_VECTOR(Precision, b_eigenvalues_real_expect, 2,
      1.0, 1.0);
-  MAKE_VECTOR(b_eigenvalues_imag_expect, 2,
+  MAKE_VECTOR(Precision, b_eigenvalues_imag_expect, 2,
      2.0, -2.0);
 
-  Matrix a_eigenvectors_actual;
-  Vector a_eigenvalues_actual;
+  GenMatrix<Precision> a_eigenvectors_actual;
+  GenVector<Precision> a_eigenvalues_actual;
   
-  TEST_ASSERT(PASSED(la::EigenvectorsInit(
+  TEST_ASSERT(PASSED(la::EigenvectorsInit<Precision>(
       a, &a_eigenvalues_actual, &a_eigenvectors_actual)));
-  AssertApproxVector(a_eigenvalues_real_expect, a_eigenvalues_actual, 1.0e-5);
-  AssertApproxTransMatrix(a_eigenvectors_expect, a_eigenvectors_actual, 1.0e-5);
+  AssertApproxVector<Precision>(a_eigenvalues_real_expect, a_eigenvalues_actual, 1.0e-5);
+  AssertApproxTransMatrix<Precision>(a_eigenvectors_expect, a_eigenvectors_actual, 1.0e-5);
 
-  Vector a_eigenvalues_real_actual;
+  GenVector<Precision> a_eigenvalues_real_actual;
   Vector a_eigenvalues_imag_actual;
   TEST_ASSERT(PASSED(la::EigenvaluesInit(
       a, &a_eigenvalues_real_actual, &a_eigenvalues_imag_actual)));
   AssertApproxVector(a_eigenvalues_real_expect, a_eigenvalues_real_actual, 1.0e-5);
   AssertApproxVector(a_eigenvalues_imag_expect, a_eigenvalues_imag_actual, 0.0);
 
-  Vector a_eigenvalues_actual_2;
+  GenVector<Precision> a_eigenvalues_actual_2;
   TEST_ASSERT(PASSED(la::EigenvaluesInit(
       a, &a_eigenvalues_actual_2)));
-  AssertApproxVector(a_eigenvalues_real_expect, a_eigenvalues_actual_2, 1.0e-5);
+  AssertApproxVector<Precision>(a_eigenvalues_real_expect, a_eigenvalues_actual_2, 1.0e-5);
   
   // complex eigenvalues
 
@@ -652,35 +673,36 @@ void TestEigen() {
   //TEST_ASSERT(!PASSED(la::EigenvectorsInit(
   //    b, &b_eigenvalues_actual, &b_eigenvectors_actual)));
 
-  Matrix b_eigenvectors_real_actual;
-  Matrix b_eigenvectors_imag_actual;
-  Vector b_eigenvalues_real_actual;
-  Vector b_eigenvalues_imag_actual;
-  TEST_ASSERT(PASSED(la::EigenvectorsInit(
+  GenMatrix<Precision> b_eigenvectors_real_actual;
+  GenMatrix<Precision> b_eigenvectors_imag_actual;
+  GenVector<Precision> b_eigenvalues_real_actual;
+  GenVector<Precision> b_eigenvalues_imag_actual;
+  TEST_ASSERT(PASSED(la::EigenvectorsInit<Precision>(
       b, &b_eigenvalues_real_actual, &b_eigenvalues_imag_actual,
       &b_eigenvectors_real_actual, &b_eigenvectors_imag_actual)));
-  AssertApproxVector(b_eigenvalues_real_expect, b_eigenvalues_real_actual, 1.0e-5);
-  AssertApproxMatrix(b_eigenvectors_real_expect, b_eigenvectors_real_actual, 1.0e-5);
-  AssertApproxVector(b_eigenvalues_imag_expect, b_eigenvalues_imag_actual, 1.0e-5);
-  AssertApproxMatrix(b_eigenvectors_imag_expect, b_eigenvectors_imag_actual, 1.0e-5);
+  AssertApproxVector<Precision>(b_eigenvalues_real_expect, b_eigenvalues_real_actual, 1.0e-5);
+  AssertApproxMatrix<Precision>(b_eigenvectors_real_expect, b_eigenvectors_real_actual, 1.0e-5);
+  AssertApproxVector<Precision>(b_eigenvalues_imag_expect, b_eigenvalues_imag_actual, 1.0e-5);
+  AssertApproxMatrix<Precision>(b_eigenvectors_imag_expect, b_eigenvectors_imag_actual, 1.0e-5);
 }
 
-void TrySchur(const Matrix &orig) {
-  Matrix z;
-  Matrix t;
-  Vector eigen_real;
-  Vector eigen_imag;
+template<typename Precision>
+void TrySchur(const GenMatrix<Precision> &orig) {
+  GenMatrix<Precision> z;
+  GenMatrix<Precision> t;
+  GenVector<Precision> eigen_real;
+  GenVector<Precision> eigen_imag;
   
-  la::SchurInit(orig, &eigen_real, &eigen_imag, &t, &z);
+  la::SchurInit<Precision>(orig, &eigen_real, &eigen_imag, &t, &z);
   
-  Matrix z_trans;
-  la::TransposeInit(z, &z_trans);
-  Matrix tmp;
-  la::MulInit(t, z_trans, &tmp);
-  Matrix result;
-  la::MulInit(z, tmp, &result);
+  GenMatrix<Precision> z_trans;
+  la::TransposeInit<Precision>(z, &z_trans);
+  GenMatrix<Precision> tmp;
+  la::MulInit<Precision>(t, z_trans, &tmp);
+  GenMatrix<Precision> result;
+  la::MulInit<Precision>(z, tmp, &result);
   
-  AssertApproxMatrix(orig, result, 1.0e-8);
+  AssertApproxMatrix<Pecision>(orig, result, 1.0e-8);
   
   /*
    * This test now fails because Schur finds real components while 
@@ -692,22 +714,24 @@ void TrySchur(const Matrix &orig) {
   //AssertApproxVector(eigen_real_2, eigen_real, 1.0e-8);
 }
 
+template<typename Precision>
 void TestSchur() {
-  MAKE_MATRIX_TRANS(a, 3, 3,
+  MAKE_MATRIX_TRANS(Precision, a, 3, 3,
      3, 1, 4,
      1, 5, 9,
      2, 6, 5);
-  MAKE_MATRIX_TRANS(b, 5, 5,
+  MAKE_MATRIX_TRANS(Precision, b, 5, 5,
      3, 1, 4, 1, 5,
      9, 2, 6, 5, 3,
      5, 8, 9, 7, 9,
      3, 2, 3, 8, 4,
      6, 2, 6, 4, 3);
   
-  TrySchur(a);
-  TrySchur(b);
+  TrySchur<Precision>(a);
+  TrySchur<Precision>(b);
 }
 
+template<typename Precision>
 void AssertProperSVD(const Matrix& orig,
     const Vector &s, const Matrix& u, const Matrix& vt) {
   Matrix s_matrix;

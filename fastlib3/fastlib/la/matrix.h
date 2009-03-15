@@ -1064,10 +1064,10 @@ class GenMatrix {
 /**
  * Low-overhead vector if length is known at compile time.
  */
-template<int t_length>
+template<typename Precision, int t_length>
 class SmallVector : public Vector {
  private:
-  double array_[t_length];
+  Precision array_[t_length];
   
  public:
   SmallVector() {
@@ -1080,25 +1080,25 @@ class SmallVector : public Vector {
     return t_length;
   }
 
-  double *ptr() {
+  Precision *ptr() {
     return array_;
   }
   
-  const double *ptr() const {
+  const Precision *ptr() const {
     return array_;
   }
   
-  double operator [] (index_t i) const {
+  Precision operator [] (index_t i) const {
     DEBUG_BOUNDS(i, t_length);
     return array_[i];
   }
   
-  double &operator [] (index_t i) {
+  Precision &operator [] (index_t i) {
     DEBUG_BOUNDS(i, t_length);
     return array_[i];
   }
   
-  double get(index_t i) const {
+  Precision get(index_t i) const {
     DEBUG_BOUNDS(i, t_length);
     return array_[i];
   }
@@ -1111,10 +1111,10 @@ typedef GenMatrix<double> Matrix;
 /**
  * Low-overhead matrix if size is known at compile time.
  */
-template<int t_rows, int t_cols>
-class SmallMatrix : public Matrix {
+template<typename Precision, int t_rows, int t_cols>
+class SmallMatrix : public GenMatrix<Precision> {
  private:
-  double array_[t_cols][t_rows];
+  Precision array_[t_cols][t_rows];
 
  public:
   SmallMatrix() {
@@ -1123,27 +1123,27 @@ class SmallMatrix : public Matrix {
   ~SmallMatrix() {}
 
  public:
-  const double *ptr() const {
+  const Precision *ptr() const {
     return array_[0];
   }
 
-  double *ptr() {
+  Precision *ptr() {
     return array_[0];
   }
 
-  double get(index_t r, index_t c) const {
+  Precision get(index_t r, index_t c) const {
     DEBUG_BOUNDS(r, t_rows);
     DEBUG_BOUNDS(c, t_cols);
     return array_[c][r];
   }
 
-  void set(index_t r, index_t c, double v) {
+  void set(index_t r, index_t c, Precision v) {
     DEBUG_BOUNDS(r, t_rows);
     DEBUG_BOUNDS(c, t_cols);
     array_[c][r] = v;
   }
 
-  double &ref(index_t r, index_t c) {
+  Precision &ref(index_t r, index_t c) {
     DEBUG_BOUNDS(r, t_rows);
     DEBUG_BOUNDS(c, t_cols);
     return array_[c][r];
@@ -1164,12 +1164,12 @@ class SmallMatrix : public Matrix {
     return size_t(t_rows) * size_t(t_cols);
   }
 
-  double *GetColumnPtr(index_t col) {
+  Precision *GetColumnPtr(index_t col) {
     DEBUG_BOUNDS(col, t_cols);
     return array_[col];
   }
 
-  const double *GetColumnPtr(index_t col) const {
+  const Precision *GetColumnPtr(index_t col) const {
     DEBUG_BOUNDS(col, t_cols);
     return array_[col];
   }
