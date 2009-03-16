@@ -64,6 +64,7 @@ int main(int argc, char *argv[])
   const char* fp_k;
   const char* fp_l;  
   const char* fp_three;
+  const char* fp_athelp;
   const char* fp_stats;
   const char* fp_coords;
   const char* fp_rad;
@@ -73,7 +74,6 @@ int main(int argc, char *argv[])
   FILE *stats; 
   FILE *radial_distribution;
   FILE *diff;
-  
  
   double time_step, stop_time, time;
   int diff_tot = fx_param_int(0, "snapshots", 1);
@@ -81,18 +81,21 @@ int main(int argc, char *argv[])
   fp_k = fx_param_str_req(NULL, "pos");
   fp_l = fx_param_str_req(NULL, "two");
   fp_three = fx_param_str_req(NULL, "three");
-  
+  fp_athelp = fx_param_str(NULL, "at", "at_helper.txt");
+
   // Output Files
   fp_stats = fx_param_str(NULL, "stats", "tree_stats.dat");
   fp_rad = fx_param_str(NULL, "rad", "raddist.dat");
   fp_coords = fx_param_str(NULL, "coord", "coords.dat");
   fp_diff = fx_param_str(NULL, "diff", "diffusion.dat");
 
+  
+  
   coords = fopen(fp_coords, "w+");
   stats = fopen(fp_stats, "w+");  
   radial_distribution = fopen(fp_rad, "w+");
   diff = fopen(fp_diff, "w+");
-  Matrix atom_matrix, lj_matrix, at_matrix;
+  Matrix atom_matrix, lj_matrix, at_matrix, at_params;
  
   struct datanode* parameters = fx_submodule(root, "param");
 
@@ -106,6 +109,7 @@ int main(int argc, char *argv[])
 
   // Read Atom Matrix
   data::Load(fp_k, &atom_matrix);
+  data::Load(fp_athelp, &at_params);
   Vector signs_, powers_;  
   data::Load(fp_l, &lj_matrix);
   data::Load(fp_three, &at_matrix);
@@ -134,7 +138,7 @@ int main(int argc, char *argv[])
  
   simulation.Init(atom_matrix, parameters);
   simulation.InitStats(lj_matrix, signs_, powers_);
-  simulation.InitAxilrodTeller(at_matrix);  
+  simulation.InitAxilrodTeller(at_matrix, at_params);  
   printf("Finished Initialization. Updating Momentum. \n");
   simulation.UpdateMomentum(time_step / 2);
   time = 0;  

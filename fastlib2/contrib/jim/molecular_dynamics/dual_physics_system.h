@@ -128,11 +128,64 @@ private:
     percent_pruned_ = percent_pruned_ + 1;   
   }
 
+
+  double GetForceRangeTerm_(double R, double r, double Rnorm, double rnorm,
+			    int nu){
+    double  eta = r*r*rnorm;
+    double result  = Rnorm*((nu-1+r)/pow(1-r, nu+1) - 0.5*(r*r*nu*(nu-1)*(nu-1)
+      + 2*nu*nu*r+2*(nu-1))) / pow(R, nu+2);
+    result = result + eta*(1 / pow(1-r, nu) -nu*r-1)/
+      ((nu+1)*(nu+2)*pow(R, nu+2));
+    return result;
+  }
+
+
+
+
+  void GetForceRangeDual_(ParticleTree* query, ParticleTree* ref,
+			  Vector* bounds){       
+    double range_q = 0, range_r = 0;
+    double Rr, Rq, rr, rq, rnormr = 0, rnormq = 0;
+    Rr = sqrt(ref->bound().PeriodicMinDistanceSq(query->stat().centroid_, 
+						 dimensions_));
+    Rq = sqrt(query->bound().PeriodicMinDistanceSq(ref->stat().centroid_,
+						   dimensions_));
+    Vector br, bq;
+    br.Init(3);
+    bq.Init(3);
+    for (int i = 0; i < 3; i++){
+      br[i] = query->bound().width(i, dimensions_[i]) /2;
+      bq[i] = ref->bound().width(i, dimensions_[i]) /2;
+      rnormr = rnormr + br[i];
+      rnormq = rnormq + bq[i];
+    }
+    rq = sqrt(la::Dot(bq, bq)) / Rq;
+    rr = sqrt(la::Dot(br, br)) / Rr;
+    double Rnormr = query->bound().PeriodicMaxDistance1Norm(
+      ref->stat().centroid_, dimensions_);
+    double Rnormq = ref->bound().PeriodicMaxDistance1Norm(
+      query->stat().centroid_, dimensions_);
+   
+    for (int i = 0; i < forces_.n_rows(); i++){
+      int power = abs((int)powers_[i]);      
+      range_q = range_q + fabs(ref->stat().interactions_[i].coef()*
+	signs_[i]*GetForceRangeTerm_(Rq, rq, Rnormq, rnormq, power));
+      range_r = range_r + fabs(query->stat().interactions_[i].coef()*
+	signs_[i]*GetForceRangeTerm_(Rr, rr, Rnormr, rnormr, power));
+    }    
+    Vector err;
+    err.Init(2);
+    err[0] = range_q;
+    err[1] = range_r;
+    
+    la::ScaleOverwrite(time_step_, err, bounds);
+  }
+
     
   /**
    * Force bounding functions
    */
-
+  /*
   void GetForceRangeDual_(ParticleTree* query, ParticleTree* ref,
 			  Vector* bounds){       
     double r_min, r_max;
@@ -196,6 +249,8 @@ private:
     err[0] = err[0] / query->stat().mass_;
     la::ScaleOverwrite(time_step_, err, bounds);   
   }
+  */
+
 
  int GetForceRangeDualCutoff_(ParticleTree* query, ParticleTree* ref){   
    int result;
