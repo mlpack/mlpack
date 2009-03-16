@@ -57,7 +57,8 @@ private:
   ArrayList<int> old_from_new_map_, new_from_old_map_;  
 
   Vector dimensions_, signs_, powers_;
-  
+  Vector power3a_, power3b_, power3c_;
+  Vector signs3_;
   
   double time_step_, boundary_, virial_, temperature_, cutoff_;
   bool three_body_;
@@ -267,6 +268,81 @@ private:
    * Force bounding functions
    */
 
+
+  double GetForceRangeTerm_(double R, double r, double Rnorm, double rnorm,
+			    int nu){
+    double  eta = r*r*rnorm;
+    double result  = Rnorm*((nu-1+r)/pow(1-r, nu+1) - 0.5*(r*r*nu*(nu-1)*(nu-1)
+      + 2*nu*nu*r+2*(nu-1))) / pow(R, nu+2);
+    result = result + eta*(1 / pow(1-r, nu) -nu*r-1)/
+      ((nu+1)*(nu+2)*pow(R, nu+2));
+    return result;
+  }
+
+
+  double GetPotentialRangeTerm_(double R, double r, int nu){
+    double result;
+    result = (1 / pow(1-r, nu) - nu*r -1) /(nu*pow(R, nu));
+    return result;
+  }
+
+
+  void GetForceRangeDual_(ParticleTree* query, ParticleTree* ref,
+			  Vector* bounds){       
+    double range_q = 0, range_r = 0;
+    double Rr, Rq, rr, rq, rnormr = 0, rnormq = 0;
+    Rr = sqrt(ref->bound().PeriodicMinDistanceSq(query->stat().centroid_, 
+						 dimensions_));
+    Rq = sqrt(query->bound().PeriodicMinDistanceSq(ref->stat().centroid_,
+						   dimensions_));
+    Vector br, bq;
+    br.Init(3);
+    bq.Init(3);
+    for (int i = 0; i < 3; i++){
+      br[i] = query->bound().width(i, dimensions_[i]) /2;
+      bq[i] = ref->bound().width(i, dimensions_[i]) /2;
+      rnormr = rnormr + br[i];
+      rnormq = rnormq + bq[i];
+    }
+    rq = sqrt(la::Dot(bq, bq)) / Rq;
+    rr = sqrt(la::Dot(br, br)) / Rr;
+    double Rnormq = query->bound().PeriodicMaxDistance1Norm(
+      ref->stat().centroid_, dimensions_);
+    double Rnormr = ref->bound().PeriodicMaxDistance1Norm(
+      query->stat().centroid_, dimensions_);
+   
+    for (int i = 0; i < forces_.n_rows(); i++){
+      int power = abs((int)powers_[i]);      
+      range_q = range_q + fabs(ref->stat().interactions_[i].coef()*
+	signs_[i]*GetForceRangeTerm_(Rq, rq, Rnormq, rnormq, power));
+      range_r = range_r + fabs(query->stat().interactions_[i].coef()*
+	signs_[i]*GetForceRangeTerm_(Rr, rr, Rnormr, rnormr, power));
+    }    
+
+    double rmin = 2.8;
+    for (int d = 0; d < 10; d++){
+      int powera = abs((int)power3a_[d]);  
+      int powerb = abs((int)power3b_[d]);  
+      int powerc = abs((int)power3c_[d]);  
+      range_q= range_q + fabs(ref->stat().axilrod_[0]*(ref->stat().axilrod_[0]+
+	query->stat().axilrod_[0])*powerb*Rnormq / 
+	(pow(rmin,powera)*pow(Rq*(1-rq), powerb+powerc+2)))*signs3_[d];
+      range_r= range_r+fabs(query->stat().axilrod_[0]*(ref->stat().axilrod_[0]+
+	query->stat().axilrod_[0])*powerb*Rnormr / 
+	(pow(rmin,powera)*pow(Rr*(1-rr), powerb+powerc+2)))*signs3_[d];
+    }
+    Vector err; 
+    err.Init(2);
+    err[0] = range_q;
+    err[1] = range_r;
+  
+    la::ScaleOverwrite(time_step_, err, bounds);
+  }
+
+
+
+
+  /*
   void GetForceRangeDual_(ParticleTree* query, ParticleTree* ref,
 			  Vector* bounds){   
     double r_min, r_max;
@@ -340,7 +416,7 @@ private:
     err[0] = err[0] / (query->stat().mass_*query->stat().mass_);
     la::ScaleOverwrite(time_step_*time_step_ , err, bounds);
   }
-
+  */
 
 
  int GetForceRangeDualCutoff_(ParticleTree* query, ParticleTree* ref){   
@@ -358,6 +434,90 @@ private:
  
 
 
+ void GetForceRangeTriple_(ParticleTree* i, ParticleTree* j, ParticleTree *k,
+			  Vector* bounds){       
+    double range_i = 0, range_j = 0, range_k = 0;
+    double Rij, Rjk, Rki, Rji, Rik, Rkj, ri, rk, rj;
+    double rnormi = 0, rnormj = 0, rnormk = 0;
+    Rji = sqrt(j->bound().PeriodicMinDistanceSq(i->stat().centroid_, 
+						 dimensions_));
+    Rki = sqrt(k->bound().PeriodicMinDistanceSq(i->stat().centroid_, 
+						dimensions_));
+    Rkj = sqrt(k->bound().PeriodicMinDistanceSq(j->stat().centroid_, 
+						dimensions_));
+    Rij = sqrt(i->bound().PeriodicMinDistanceSq(j->stat().centroid_, 
+						dimensions_));
+    Rjk = sqrt(j->bound().PeriodicMinDistanceSq(k->stat().centroid_, 
+						dimensions_));
+    Rik = sqrt(i->bound().PeriodicMinDistanceSq(k->stat().centroid_, 
+						dimensions_));
+    Vector bi, bj, bk;
+    bi.Init(3);
+    bj.Init(3);
+    bk.Init(3);
+    for (int d = 0; d < 3; d++){
+      bi[d] = i->bound().width(d, dimensions_[d]) / 2;
+      bj[d] = j->bound().width(d, dimensions_[d]) / 2;
+      bk[d] = k->bound().width(d, dimensions_[d]) / 2;
+      rnormi = rnormi + bi[d];
+      rnormj = rnormj + bj[d];
+      rnormk = rnormk + bk[d];
+    }
+    ri = sqrt(la::Dot(bi, bi));
+    rj = sqrt(la::Dot(bj, bj));
+    rk = sqrt(la::Dot(bk, bk));
+    double Rnormij = j->bound().PeriodicMaxDistance1Norm(
+       i->stat().centroid_, dimensions_);
+    double Rnormji = i->bound().PeriodicMaxDistance1Norm(
+       j->stat().centroid_, dimensions_);
+    double Rnormjk = k->bound().PeriodicMaxDistance1Norm(
+       j->stat().centroid_, dimensions_);
+    double Rnormkj = j->bound().PeriodicMaxDistance1Norm(
+       k->stat().centroid_, dimensions_);
+    double Rnormik = k->bound().PeriodicMaxDistance1Norm(
+      i->stat().centroid_, dimensions_);
+    double Rnormki = i->bound().PeriodicMaxDistance1Norm(
+      k->stat().centroid_, dimensions_);
+
+    if (rj > min(Rkj, Rij) | rk > min(Rik, Rjk) | ri > min(Rji, Rki)){
+      range_i = BIG_BAD_NUMBER;
+      range_j = BIG_BAD_NUMBER;
+      range_k = BIG_BAD_NUMBER;
+    } else {
+    for (int d = 0; d < 10; d++){
+      int powera = abs((int)power3a_[d]);  
+      int powerb = abs((int)power3b_[d]);  
+      int powerc = abs((int)power3c_[d]);  
+      range_i = range_i + fabs(j->stat().axilrod_[0]*k->stat().axilrod_[0]*
+	signs3_[d]*GetPotentialRangeTerm_(Rjk, rk/Rjk, powerb)*(
+	GetForceRangeTerm_(Rij, rj/Rij, Rnormij, rnormj, powera)*
+	GetPotentialRangeTerm_(Rik, rk/Rik, powerc) + 
+	GetForceRangeTerm_(Rik, rk/Rik, Rnormik, rnormk, powerc)*
+	GetPotentialRangeTerm_(Rij, rj/Rij, powera)));
+      range_j = range_j + fabs(i->stat().axilrod_[0]*k->stat().axilrod_[0]*
+	signs3_[d]*GetPotentialRangeTerm_(Rki, ri/Rki, powerc)*(
+	GetForceRangeTerm_(Rji, ri/Rji, Rnormji, rnormi, powera)*
+	GetPotentialRangeTerm_(Rjk, rk/Rjk, powerb) + 
+	GetForceRangeTerm_(Rjk, rk/Rjk, Rnormjk, rnormk, powerb)*
+	GetPotentialRangeTerm_(Rji, ri/Rji, powera)));
+      range_k = range_k + fabs(i->stat().axilrod_[0]*j->stat().axilrod_[0]*
+	signs3_[d]*GetPotentialRangeTerm_(Rij, rj/Rij, powera)*(
+	GetForceRangeTerm_(Rki, ri/Rki, Rnormki, rnormi, powerc)*
+	GetPotentialRangeTerm_(Rkj, rj/Rkj, powerb) + 
+	GetForceRangeTerm_(Rkj, rj/Rkj, Rnormkj, rnormj, powerb)*
+	GetPotentialRangeTerm_(Rki, ri/Rki, powerc)));          
+    }    
+    }
+    Vector err;
+    err.Init(3);
+    err[0] = range_i;
+    err[1] = range_j;
+    err[2] = range_k;
+    
+    la::ScaleOverwrite(time_step_, err, bounds);
+  }
+
+ /*
  void GetForceRangeTriple_(ParticleTree* i, ParticleTree* j,
 		      ParticleTree* k, Vector* bounds){    
     double a_max, b_max, c_max, a_min, b_min, c_min;   
@@ -503,7 +663,7 @@ private:
     range[2] = range[2] / (k->stat().mass_*k->stat().mass_);
     la::ScaleOverwrite(1.0, range, bounds);   
   }
-
+*/
 
   int GetForceRangeTripleCutoff_(ParticleTree* i, ParticleTree* j,
 				 ParticleTree* k){    
@@ -1012,7 +1172,7 @@ public:
     raddist->Scale(2.0 / n_atoms_);
   }
 
-  void InitAxilrodTeller(const Matrix& stats_in){
+  void InitAxilrodTeller(const Matrix& stats_in, const Matrix& powers){
     // Reindex cols of stats matrix.
     if (system_ != NULL){
       axilrod_teller_.Init(2, n_atoms_);
@@ -1026,6 +1186,10 @@ public:
     } else {
       axilrod_teller_.Copy(stats_in);
     }
+    powers.MakeColumnVector(0, &signs3_);
+    powers.MakeColumnVector(1, &power3a_);
+    powers.MakeColumnVector(2, &power3b_);
+    powers.MakeColumnVector(3, &power3c_); 
   }
 
 
