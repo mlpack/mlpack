@@ -11,9 +11,13 @@ double MultiTreeFock::NodesMaxIntegral_(FockTree* mu, FockTree* nu,
   
   // compute the average boxes
   DHrectBound<2> mu_nu_ave;
-  mu_nu_ave.AverageBoxesInit(mu->bound(), nu->bound());
+  mu_nu_ave.WeightedAverageBoxesInit(mu->stat().min_bandwidth(), mu->stat().max_bandwidth(), 
+                                     mu->bound(), nu->stat().min_bandwidth(), 
+                                     nu->stat().max_bandwidth(), nu->bound());
   DHrectBound<2> rho_sigma_ave;
-  rho_sigma_ave.AverageBoxesInit(rho->bound(), sigma->bound());
+  rho_sigma_ave.WeightedAverageBoxesInit(rho->stat().min_bandwidth(), rho->stat().max_bandwidth(), 
+                                 rho->bound(), sigma->stat().min_bandwidth(), 
+                                 sigma->stat().max_bandwidth(), sigma->bound());
   
   double four_way_min_dist = mu_nu_ave.MinDistanceSq(rho_sigma_ave);
 
@@ -744,6 +748,7 @@ void MultiTreeFock::FillApproximationCoulomb_(SquareTree* mu_nu,
       new_refs = 2 * new_refs;
     }
     
+    // reduces remaining references, but never alters epsilon
     mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() - new_refs);
     
     mu_nu->stat().set_approximation_val(integral_approximation);
@@ -1309,25 +1314,18 @@ void MultiTreeFock::OutputFockMatrix(Matrix* fock_out, Matrix* coulomb_out,
   //printf("number_of_approximations_ = %d\n", number_of_approximations_);
   //printf("number_of_base_cases_ = %d\n\n", number_of_base_cases_);
   //fx_format_result(module_, "bandwidth", "%g", bandwidth_);
-  fx_format_result(module_, "epsilon_coulomb", "%g", epsilon_coulomb_);
-  fx_format_result(module_, "epsilon_exchange", "%g", epsilon_exchange_);
-  fx_format_result(module_, "coulomb_approximations", "%d", 
+  fx_result_double(module_, "epsilon_coulomb", epsilon_coulomb_);
+  fx_result_double(module_, "epsilon_exchange", epsilon_exchange_);
+  fx_result_int(module_, "coulomb_approximations", 
                    coulomb_approximations_);
-  fx_format_result(module_, "exchange_approximations", "%d", 
+  fx_result_int(module_, "exchange_approximations", 
                    exchange_approximations_);
-  fx_format_result(module_, "coulomb_base_cases", "%d", 
+  fx_result_int(module_, "coulomb_base_cases", 
                    coulomb_base_cases_);
-  fx_format_result(module_, "exchange_base_cases", "%d", 
+  fx_result_int(module_, "exchange_base_cases", 
                    exchange_base_cases_);
-  fx_format_result(module_, "abs_prunes", "%d", num_absolute_prunes_);
-  fx_format_result(module_, "rel_prunes", "%d", num_relative_prunes_);
-  
-  /* printf("Multi-tree Coulomb:\n");
-  coulomb_matrix_.PrintDebug();
-  
-  printf("Multi-tree Exchange:\n");
-  exchange_matrix_.PrintDebug();
-  */
+  fx_result_int(module_, "abs_prunes", num_absolute_prunes_);
+  fx_result_int(module_, "rel_prunes", num_relative_prunes_);
   
   if (fock_out) {
     fock_out->Copy(fock_matrix_);
@@ -1345,14 +1343,7 @@ void MultiTreeFock::OutputFockMatrix(Matrix* fock_out, Matrix* coulomb_out,
   if (old_from_new) {
     old_from_new->InitCopy(old_from_new_centers_);
   }
-  
-  // Need to output the Fock matrix
-  // should I unpermute here?
-  // Maybe keep it permuted in the other code, and unpermute at the end?
-  
-  // For now, unpermute it here
-  
-  
+    
 } // OutputFockMatrix()
 
 

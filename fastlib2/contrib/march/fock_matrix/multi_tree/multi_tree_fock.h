@@ -29,6 +29,20 @@ const fx_entry_doc multi_tree_fock_entries[] = {
    "Amount of time spent computing K.\n"},
   {"epsilon_coulomb", FX_RESULT, FX_DOUBLE, NULL, 
    "Amount of error allocated to the coulomb recursion.\n"},
+  {"epsilon_exchange", FX_RESULT, FX_DOUBLE, NULL, 
+   "Amount of error allocated to the exchange recursion.\n"},
+  {"coulomb_approximations", FX_RESULT, FX_INT, NULL, 
+   "The number of prunes made in the coulomb recursion.\n"},
+  {"exchange_approximations", FX_RESULT, FX_INT, NULL, 
+  "The number of prunes made in the exchange recursion.\n"},
+  {"coulomb_base_cases", FX_RESULT, FX_INT, NULL, 
+   "The number of base cases computed in the coulomb recursion.\n"},
+  {"exchange_base_cases", FX_RESULT, FX_INT, NULL, 
+   "The number of base_cases_computed in the exchange recursion.\n"},
+  {"abs_prunes", FX_RESULT, FX_INT, NULL, 
+   "The number of prunes made with the absolute error cutoff.\n"},
+  {"rel_prunes", FX_RESULT, FX_INT, NULL, 
+   "The number of prunes made with the relative error cutoff.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -390,7 +404,7 @@ private:
     
     number_of_basis_functions_ = centers_.n_cols() + 
         (index_t)2*la::Dot(momenta_, momenta_);
-    fx_format_result(module_, "N", "%d", number_of_basis_functions_);
+    fx_result_int(module_, "N", number_of_basis_functions_);
     
     // A hack to make the pruning always absolute, since I can't input infinity
     // with fx

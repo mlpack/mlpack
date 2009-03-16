@@ -1,3 +1,10 @@
+librule(
+	name="fock_matrix_comparison",
+	headers=["fock_matrix_comparison.h"],
+	sources=["fock_matrix_comparison.cc"],
+	deplibs=["fastlib:fastlib"],
+)
+
 binrule(
 	name="naive_comparison",
 	headers=["naive_fock_matrix.h"],

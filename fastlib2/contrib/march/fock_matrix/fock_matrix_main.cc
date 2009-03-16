@@ -120,7 +120,7 @@ int main(int argc, char* argv[]) {
     if (fx_param_exists(root_mod, "print_cfmm")) {
       cfmm_coulomb.PrintDebug("CFMM J");
     }
-    
+        
   } // do_cfmm
   
 
@@ -216,6 +216,12 @@ int main(int argc, char* argv[]) {
 
   
   // Do comparison here?
+  
+  if (fx_param_exists(root_mod, "compare")) {
+  
+    
+  
+  } // comparison
   
   fx_done(root_mod);
 

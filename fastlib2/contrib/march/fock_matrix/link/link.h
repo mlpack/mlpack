@@ -10,6 +10,10 @@ const fx_entry_doc link_entries[] = {
   {"shell_pair_cutoff", FX_PARAM, FX_DOUBLE, NULL, 
   "The threshold for a shell pair to be counted as \"significant\".\n"
   "Default: equal to the ERI threshold.\n"},
+  {"thresh", FX_PARAM, FX_DOUBLE, NULL, 
+   "The threshold to include an integral as significant.  Default: 10e-10.\n"},
+  {"num_shell_pairs", FX_RESULT, FX_INT, NULL, 
+   "The number of significant shell pairs."},
   FX_ENTRY_DOC_DONE
 }; 
 
