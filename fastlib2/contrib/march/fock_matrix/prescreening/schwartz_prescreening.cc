@@ -60,7 +60,7 @@ void SchwartzPrescreening::ComputeFockMatrix(Matrix* fock_out) {
   num_shell_pairs_ = eri::ComputeShellPairs(&shell_pair_list_, basis_list_, 
                                             shell_pair_threshold_);
   
-  fx_format_result(module_, "num_shell_pairs", "%d", num_shell_pairs_);
+  fx_result_int(module_, "num_shell_pairs", num_shell_pairs_);
   
   // Is there symmetry I can use here?
   for (index_t i = 0; i < num_shell_pairs_; i++) {
@@ -139,7 +139,7 @@ void SchwartzPrescreening::ComputeFockMatrix(Matrix* fock_out) {
   
   fock_out->Copy(fock_matrix_);
   
-  fx_format_result(module_, "num_prunes", "%d", num_prunes_);
+  fx_result_int(module_, "num_prunes", num_prunes_);
 
 //  printf("num_prunes: %d\n", num_prunes_);
 
