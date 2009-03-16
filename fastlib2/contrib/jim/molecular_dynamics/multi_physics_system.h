@@ -1096,7 +1096,6 @@ public:
     
     ~MultiPhysicsSystem(){     
       if (system_ != NULL){
-	delete system_;
       }     
     }
     
