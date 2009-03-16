@@ -56,7 +56,7 @@ class DHrectBound {
    * i.e. the max and min of each range is the average of the maxes and mins 
    * of the arguments.  
    *
-   * Added by: Bill March, 5/7
+   * Added by: Bill March
    */
   void AverageBoxesInit(const DHrectBound& box1, const DHrectBound& box2) {
   
@@ -74,7 +74,48 @@ class DHrectBound {
     
     } 
     
-  } // AverageBoxes()
+  } // AverageBoxesInit()
+
+  /** 
+   * Computes the weighted average bounding box of two given boxes.
+   *
+   * If A \in box1 and B \in box2, each point in box1 (box2) is associated 
+   * with a weight \alpha (\beta), then this box bounds the vectors 
+   * (\alpha A + \beta B)/(\alpha + \beta)
+   *
+   * alpha1_min and alpha1_max bound the possible (positive) weights of the 
+   * vectors in box1
+   *
+   * added by Bill March 
+   */
+  void WeightedAverageBoxesInit(double alpha1_min, double alpha1_max, 
+                                const DHrectBound& box1, double alpha2_min, 
+                                double alpha2_max, const DHrectBound& box2) {
+  
+    index_t dim = box1.dim();
+    DEBUG_ASSERT(dim == box2.dim());
+    
+    Init(dim);
+    
+    for (index_t i = 0; i < dim; i++) {
+      
+      DRange range1 = box1.get(i);
+      DRange range2 = box2.get(i);
+      
+      double min_x = alpha1_min * range1.lo + alpha2_min * range2.lo;
+      min_x = min_x/(alpha1_max + alpha2_max);
+
+      double max_x = alpha1_max * range1.hi + alpha2_max * range2.hi;
+      max_x = max_x/(alpha1_min + alpha2_min);
+
+      DRange out_range;
+      out_range.Init(min_x, max_x);
+      
+      bounds_[i] = out_range;
+      
+    } 
+  
+  } // WeightedAverageBoxesInit()
 
   /**
    * Resets all dimensions to the empty set.
