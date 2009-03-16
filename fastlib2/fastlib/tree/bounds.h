@@ -386,7 +386,7 @@ double PeriodicMinDistanceSq(const Vector& point, const Vector& box_size)
      bh = bh - floor(bh / box_size[d])*box_size[d];
      a = a - b[d].lo;
      a = a - floor(a / box_size[d])*box_size[d];
-     if (bh > a){
+     if (bh < a){
        v = min(a - bh, box_size[d]-a);
      }
      sum += math::Pow<t_pow, 1>(v);
@@ -448,6 +448,43 @@ double PeriodicMinDistanceSq(const Vector& point, const Vector& box_size)
    }   
    return math::Pow<2, t_pow>(sum);
  }
+
+ double PeriodicMaxDistance1Norm(const Vector& point, const Vector& box_size)
+ const {
+   double sum = 0;
+   const DRange *a = this->bounds_;  
+   for (index_t d = 0; d < dim_; d++){
+     double b = point[d];
+     double v = box_size[d] / 2.0;
+     double ah, al;
+     ah = a[d].hi - b;
+     ah = ah - floor(ah / box_size[d])*box_size[d];
+     if (ah < v){
+       v = ah;
+     } else {
+       al = a[d].lo - b;
+       al = al - floor(al / box_size[d])*box_size[d];
+       if (al > v){
+	 v = 2*v-al;
+       }
+     }
+     sum += fabs(v);
+   }      
+   return sum;
+ }
+
+
+ // Computes width of box in periodic coordinates
+ double width(int dim, double box_width){
+   double result;
+   const DRange *a = this->bounds_;
+   result = a[dim].hi-a[dim].lo;
+   if (result < 0){
+     result = result + box_width;
+   }
+   return result;
+ }
+
 
  double MaxDelta(const DHrectBound& other, double box_width, int dim)
  const{
