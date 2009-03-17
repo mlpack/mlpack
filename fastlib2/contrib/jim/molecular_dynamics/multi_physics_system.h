@@ -1191,6 +1191,21 @@ public:
     powers.MakeColumnVector(3, &power3c_); 
   }
 
+  void ReinitAxilrodTeller(const Matrix& stats_in, const Matrix& powers){
+    // Reindex cols of stats matrix.
+    if (system_ != NULL){    
+      for (int i = 0; i < n_atoms_; i++){
+	int k = old_from_new_map_[i];
+	for (int j = 0; j < 2; j++){
+	  axilrod_teller_.set(j, k, stats_in.get(j, i));
+	}		
+      }
+      InitializeATStats_(system_);
+    } else {
+      axilrod_teller_.Copy(stats_in);
+    }   
+  }
+
 
   double GetPercent(){
     return percent_pruned_;
