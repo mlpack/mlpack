@@ -157,7 +157,7 @@ namespace la {
   template<typename Precision>
   inline void AddExpert(index_t length,
       Precision alpha, const Precision *x, Precision *y) {
-    CppBlass<Precision>::axpy(length, alpha, x, 1, y, 1);
+    CppBlas<Precision>::axpy(length, alpha, x, 1, y, 1);
   }
 
   /**
@@ -291,7 +291,7 @@ namespace la {
    * (\f$\vec{x} \cdot \vec{y}\f$).
    */
   template<typename Precision>
-  inline Precicion Dot(const GenVector<Precision> &x, 
+  inline Precision Dot(const GenVector<Precision> &x, 
                        const GenVector<Precision> &y) {
     DEBUG_SAME_SIZE(x.length(), y.length());
     return Dot<Precision>(x.length(), x.ptr(), y.ptr());
@@ -352,7 +352,7 @@ namespace la {
    */
   template<typename Precision>
   inline void ScaleRows(const GenMatrix<Precision>& d, 
-                        GenMatrix<Precision> Matrix *X) {
+                        GenMatrix<Precision> *X) {
     DEBUG_SAME_SIZE(std::min(d.n_cols(), d.n_rows()), 1);
     DEBUG_SAME_SIZE(std::max(d.n_cols(), d.n_rows()), X->n_rows());
     ScaleRows<Precision>(X->n_rows(), X->n_cols(), d.ptr(), X->ptr());
@@ -420,10 +420,10 @@ namespace la {
    * Adds a scaled matrix to an existing matrix
    * (\f$Y \gets Y + \alpha X\f$).
    */
-  template<typename>
-  inline void AddExpert<Precision>(Precision alpha, 
-                                   const GenMatrix<Precision> &X, 
-                                   GenMatrix<Precision> *Y) {
+  template<typename Precision>
+  inline void AddExpert(Precision alpha, 
+                        const GenMatrix<Precision> &X, 
+                        GenMatrix<Precision> *Y) {
     DEBUG_SAME_SIZE(X.n_rows(), Y->n_rows());
     DEBUG_SAME_SIZE(X.n_cols(), Y->n_cols());
     AddExpert<Precision>(X.n_elements(), alpha, X.ptr(), Y->ptr());
@@ -471,7 +471,8 @@ namespace la {
    */
   template<typename Precision>
   inline void AddOverwrite(const GenMatrix<Precision> &X, 
-                           const GenMatrix<Precision> &Y, Matrix *Z) {
+                           const GenMatrix<Precision> &Y, 
+                           GenMatrix<Precision> *Z) {
     DEBUG_SAME_SIZE(X.n_rows(), Y.n_rows());
     DEBUG_SAME_SIZE(X.n_cols(), Y.n_cols());
     DEBUG_SAME_SIZE(Z->n_rows(), Y.n_rows());
@@ -605,7 +606,8 @@ namespace la {
    * (\f$Y \gets X'\f$).
    */
   template<typename Precision>
-  inline void TransposeOverwrite(const GenMatrix &X, Matrix *Y) {
+  inline void TransposeOverwrite(const GenMatrix<Precision> &X, 
+                                 GenMatrix<Precision> *Y) {
     DEBUG_SAME_SIZE(X.n_rows(), Y->n_cols());
     DEBUG_SAME_SIZE(X.n_cols(), Y->n_rows());
     index_t nr = X.n_rows();
@@ -678,7 +680,7 @@ namespace la {
   inline void MulOverwrite(const GenMatrix<Precision> &A, 
                            const GenVector<Precision> &x, 
                            GenVector<Precision> *y) {
-    MulExpert(1.0, A, x, 0.0, y);
+    MulExpert<Precision>(1.0, A, x, 0.0, y);
   }
   /**
    * Inits a vector to the results of matrix-vector multiplication
@@ -780,7 +782,7 @@ namespace la {
                    trans_B ? B.n_cols() : B.n_rows());
     DEBUG_SAME_SIZE(trans_A ? A.n_cols() : A.n_rows(), C->n_rows());
     DEBUG_SAME_SIZE(trans_B ? B.n_rows() : B.n_cols(), C->n_cols());
-    F77_FUNC(dgemm)(trans_A ? "T" : "N", trans_B ? "T" : "N",
+    CppBlas<Precision>::gemm(trans_A ? "T" : "N", trans_B ? "T" : "N",
         C->n_rows(), C->n_cols(), trans_A ? A.n_rows() : A.n_cols(),
         alpha, A.ptr(), A.n_rows(), B.ptr(), B.n_rows(),
         beta, C->ptr(), C->n_rows());
@@ -797,7 +799,7 @@ namespace la {
    */
   template<typename Precision>
   inline void MulExpert(
-      Precision alpha, const GeMatrix<Precision> &A, 
+      Precision alpha, const GenMatrix<Precision> &A, 
       const GenMatrix<Precision> &B,
       Precision beta, GenMatrix<Precision> *C) {
     MulExpert<Precision>(alpha, false, A, false, B, beta, C);
@@ -926,7 +928,8 @@ namespace la {
   template<typename Precision>
   inline success_t PLUExpert(f77_integer *pivots, GenMatrix<Precision> *A_in_LU_out) {
     f77_integer info;
-    CppLapack<Precision>::getrf(A_in_LU_out->n_rows(), A_in_LU_out->n_cols(),
+    CppLapack<Precision>::getrf(A_in_LU_out->n_rows(), 
+        A_in_LU_out->n_cols(),
         A_in_LU_out->ptr(), A_in_LU_out->n_rows(), pivots, &info);
     return SUCCESS_FROM_LAPACK(info);
   }
@@ -1160,7 +1163,7 @@ namespace la {
         value = -value;
       } else if (!(value > 0)) {
         sign_det = 0;
-        log_det = numeric_limits<Precision>::quite_NaN();
+        log_det = std::numeric_limits<Precision>::quiet_NaN();
         break;
       }
 
@@ -1228,7 +1231,7 @@ namespace la {
                              GenMatrix<Precision> *X) {
     DEBUG_MATSQUARE(A);
     DEBUG_SAME_SIZE(A.n_rows(), B.n_rows());
-    Matrix tmp;
+    GenMatrix<Precision> tmp;
     index_t n = B.n_rows();
     f77_integer pivots[n];
     tmp.Copy(A);
@@ -1358,7 +1361,7 @@ namespace la {
 
     return success;
   } 
-  }
+  
 
   /**
    * Destructive Schur decomposition (A = Z * T * Z').
@@ -1412,7 +1415,7 @@ namespace la {
    *        and filled with the Schur vectors
    * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
    */
-  template<typename Precsion>
+  template<typename Precision>
   inline success_t SchurInit(const GenMatrix<Precision> &A,
       GenVector<Precision> *w_real, GenVector<Precision> *w_imag, 
       GenMatrix<Precision> *T, 
@@ -1471,13 +1474,14 @@ namespace la {
    *        and filled with the imaginary components
    * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
    **/
+  template<typename Precision>
   inline success_t EigenvaluesInit(const GenMatrix<Precision> &A,
       GenVector<Precision> *w_real, GenVector<Precision> *w_imag) {
     DEBUG_MATSQUARE(A);
     int n = A.n_rows();
     w_real->Init(n);
     w_imag->Init(n);
-    Matrix tmp;
+    GenMatrix<Precision> tmp;
     tmp.Copy(A);
     return SchurExpert<Precision>(&tmp, w_real->ptr(), w_imag->ptr(), NULL);
   }
@@ -1509,7 +1513,7 @@ namespace la {
 
     GenMatrix<Precision> tmp;
     tmp.Copy(A);
-    success_t success = SchurExpert(&tmp, w->ptr(), w_imag, NULL);
+    success_t success = SchurExpert<Precision>(&tmp, w->ptr(), w_imag, NULL);
 
     if (!PASSED(success)) {
       return success;
@@ -1517,7 +1521,7 @@ namespace la {
 
     for (index_t j = 0; j < n; j++) {
       if (unlikely(w_imag[j] != 0.0)) {
-        (*w)[j] = numeric_limits::quite_NAN();
+        (*w)[j] = std::numeric_limits<Precision>::quiet_NaN();
       }  
     }
     return success;
@@ -1625,7 +1629,7 @@ namespace la {
 
     for (index_t j = 0; j < n; j++) {
       if (unlikely(w_imag[j] != 0.0)) {
-        (*w)[j] = numeric_limits<Precision>::quite_NaN();
+        (*w)[j] = std::numeric_limits<Precision>::quiet_NaN();
       }
     }
 
@@ -1772,7 +1776,7 @@ namespace la {
     {
       f77_integer lwork = (f77_integer)d;
       // work for DGESDD can be large, we really do need to malloc it
-      Precision *work = mem::Alloc<double>(lwork);
+      Precision *work = mem::Alloc<Precision>(lwork);
 
       CppLapack<Precision>::gesdd(job, m, n, A_garbage->ptr(), m,
           s, U, m, VT, k, work, lwork, iwork, &info);
@@ -1896,7 +1900,6 @@ namespace la {
     U->Copy(A);
     return Cholesky(U);
   }
-static la::zzzLapackInit lapack_initializer;
 #endif
 
   /*

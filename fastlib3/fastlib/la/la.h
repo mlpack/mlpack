@@ -50,7 +50,7 @@ namespace la {
    * @param va first vector
    * @param vb second vector
    */
-  template<typename Precision=double, int t_pow>
+  template<typename Precision, int t_pow>
   inline Precision RawLMetric(
       index_t length, const Precision *va, const Precision *vb) {
     Precision s = 0;
@@ -69,7 +69,7 @@ namespace la {
    * @param va first vector
    * @param vb second vector
    */
-  template<typename Precision=double, int t_pow>
+  template<typename Precision, int t_pow>
   inline Precision LMetric(
       index_t length, const Precision *va, const Precision *vb) {
     return math::Pow<Precision, 1, t_pow>(RawLMetric<Precision, t_pow>(length, va, vb));
@@ -123,7 +123,7 @@ namespace la {
    *  a should not be initialized
    */
   template<typename Precision>
-  inline success_t LeastSquareFit<Precision>(GenMatrix<Precision> &y, 
+  inline success_t LeastSquareFit(GenMatrix<Precision> &y, 
       GenMatrix<Precision> &x, GenMatrix<Precision> *a) {
     DEBUG_SAME_SIZE(y.n_rows(), x.n_rows());
     DEBUG_ASSERT(x.n_rows() >= x.n_cols());
