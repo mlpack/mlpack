@@ -6,12 +6,13 @@
  *
  * @brief A template version of BLAS
  */
+namespace la {
 template<typename Precision>
-CppBlas {
+class CppBlas {
 };
 
 template<>
-CppBlas<float> {
+class CppBlas<float> {
  public:
   static void rot(index_t const a1, float *a2, index_t const a3, float *a4, index_t const a5, const float *a6, const float *a7) {
      F77_FUNC(srot)(a1, a2, a3, a4, a5, a6, a7);
@@ -35,10 +36,10 @@ CppBlas<float> {
      F77_FUNC(saxpy)(a1, a2, a3, a4, a5, a6);
   }
   static float dot(index_t const a1, const float *a2, index_t const a3, const float *a4, index_t const a5) {
-     F77_FUNC(sdot)(a1, a2, a3, a4, a5);
+    return  F77_FUNC(sdot)(a1, a2, a3, a4, a5);
   }
-  static float dsdot(index_t const a1, const float *a2, const float *a3, index_t const a4, const float *a5, index_t const a6) {
-     F77_FUNC(sdsdot)(a1, a2, a3, a4, a5, a6);
+  static double dsdot(index_t const a1, const float *a2, const float *a3, index_t const a4, const float *a5, index_t const a6) {
+     return F77_FUNC(sdsdot)(a1, a2, a3, a4, a5, a6);
   }
   static void scal(index_t const a1, float const a2, float *a3, index_t const a4) {
      F77_FUNC(sscal)(a1, a2, a3, a4); 
@@ -109,8 +110,8 @@ CppBlas<float> {
   static void syrk(const char *a1, const char *a2, index_t const a3, index_t const a4, const float *a5, const float *a6, index_t const a7, const float *a8, float *a9, index_t const a10) {
       F77_FUNC(ssyrk)(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10); 
   }
-  static void syr2k(const char *a1, const char *a2, index_t const a3, index_t const a4, const float *a5, const float *a6, index_t const a7, const float *a8, index_t const a9, const float *a10, float *a11, index_t const a11) {
-     F77_FUNC(ssyr2k)(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11);
+  static void syr2k(const char *a1, const char *a2, index_t const a3, index_t const a4, const float *a5, const float *a6, index_t const a7, const float *a8, index_t const a9, const float *a10, float *a11, index_t const a12) {
+     F77_FUNC(ssyr2k)(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12);
   }
   static void trmm(const char *a1, const char *a2, const char *a3, const char *a4, index_t const a5, index_t const a6, const float *a7, const float *a8, index_t const a9, float *a10, index_t const a11) {
      F77_FUNC(strmm)(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11);
@@ -121,7 +122,7 @@ CppBlas<float> {
 };
 
 template<>
-CppBlas<double> {
+class CppBlas<double> {
  public:
   static void rot(index_t const a1, double *a2, index_t const a3, double *a4, index_t const a5, const double *a6, const double *a7) {
      F77_FUNC(drot)(a1, a2, a3, a4, a5, a6, a7);
@@ -145,12 +146,9 @@ CppBlas<double> {
      F77_FUNC(daxpy)(a1, a2, a3, a4, a5, a6);
   }
   static double dot(index_t const a1, const double *a2, index_t const a3, const double *a4, index_t const a5) {
-     F77_FUNC(ddot)(a1, a2, a3, a4, a5);
+    return F77_FUNC(ddot)(a1, a2, a3, a4, a5);
   }
-  static double dsdot(index_t const a1, const double *a2, const double *a3, index_t const a4, const double *a5, index_t const a6) {
-     F77_FUNC(ddsdot)(a1, a2, a3, a4, a5, a6);
-  }
-  static void scal(index_t const a1, double const a2, double *a3, index_t const a4) {
+ static void scal(index_t const a1, double const a2, double *a3, index_t const a4) {
      F77_FUNC(dscal)(a1, a2, a3, a4); 
   }
   static double nrm2(index_t const a1, const double *a2, index_t const a3) {
@@ -219,8 +217,8 @@ CppBlas<double> {
   static void syrk(const char *a1, const char *a2, index_t const a3, index_t const a4, const double *a5, const double *a6, index_t const a7, const double *a8, double *a9, index_t const a10) {
       F77_FUNC(dsyrk)(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10); 
   }
-  static void syr2k(const char *a1, const char *a2, index_t const a3, index_t const a4, const double *a5, const double *a6, index_t const a7, const double *a8, index_t const a9, const double *a10, double *a11, index_t const a11) {
-     F77_FUNC(dsyr2k)(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11);
+  static void syr2k(const char *a1, const char *a2, index_t const a3, index_t const a4, const double *a5, const double *a6, index_t const a7, const double *a8, index_t const a9, const double *a10, double *a11, index_t const a12) {
+     F77_FUNC(dsyr2k)(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12);
   }
   static void trmm(const char *a1, const char *a2, const char *a3, const char *a4, index_t const a5, index_t const a6, const double *a7, const double *a8, index_t const a9, double *a10, index_t const a11) {
      F77_FUNC(dtrmm)(a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11);
@@ -228,7 +226,7 @@ CppBlas<double> {
   static void trsm(const char *a1, const char *a2, const char *a3, const char *a4, index_t const a5 , index_t const a6, const double *a7, const double *a8, index_t const a9, double *a10, index_t const a11) {
      F77_FUNC(dtrsm)(a1, a2, a3, a4, a5 , a6, a7, a8, a9, a10, a11); 
   }
-};
+};  //CppBlas
 
-
+}; // namespace la
 #endif

@@ -268,8 +268,8 @@ customrule(
 #---- This is the main part of LA package
 
 librule(
-    sources = ["uselapack.cc"],
-    headers = ["matrix.h", "la.h", "uselapack.h", "clapack.h", "blas.h"],
+    headers = ["matrix.h", "la.h", "uselapack.h", 
+      "clapack.h", "blas.h", "cpplapack.h", "cppblas.h"],
     tests = ["uselapack_test.cc"],
     deplibs = ["fastlib/base:base", "fastlib/col:col",
                "fastlib/mmanager:mmapmm", ":netlib_blas", ":netlib_lapack"])

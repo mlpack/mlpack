@@ -1065,7 +1065,7 @@ class GenMatrix {
  * Low-overhead vector if length is known at compile time.
  */
 template<typename Precision, int t_length>
-class SmallVector : public Vector {
+class SmallVector : public GenVector<Precision> {
  private:
   Precision array_[t_length];
   
