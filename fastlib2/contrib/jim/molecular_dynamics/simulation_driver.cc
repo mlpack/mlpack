@@ -168,10 +168,11 @@ int main(int argc, char *argv[])
       target_trips = trips;
     }
     simulation.UpdatePositions(time_step);   
-    if (pct < 0.85*target_pct || trips > 1.1*target_trips){
-      simulation.RebuildTree();
-      simulation.ReinitStats(lj_matrix);     
-    }
+    //  if (pct < 0.85*target_pct || trips > 1.1*target_trips){
+    //    simulation.RebuildTree();
+    //  simulation.ReinitStats(lj_matrix); 
+    // simulation.ReinitAxilrodTeller(at_matrix, at_params);
+     //  }
     if ((int)(time / time_step) % 5 == 1){
       tree_simulation.Reset();
       simulation.RadialDistribution(&tree_simulation);
