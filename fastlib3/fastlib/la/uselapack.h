@@ -1769,7 +1769,7 @@ namespace la {
     f77_integer k = std::min(m, n);
     f77_integer iwork[8 * k];
     const char *job = U ? "S" : "N";
-    double d; // for querying optimal work size
+    Precision d; // for querying optimal work size
 
     CppLapack<Precision>::gesdd(job, m, n, A_garbage->ptr(), m,
         s, U, m, VT, k, &d, -1, iwork, &info);
