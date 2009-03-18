@@ -790,14 +790,15 @@ public:
   
   void RecordPositions(Matrix& out_positions){
     for (int i = 0; i < n_atoms_; i++){
-      Vector temp;
+      Vector temp, temp2;
       int j = i;
       if (system_ != NULL){
 	j = old_from_new_map_[j];
       }
       atoms_.MakeColumnSubvector(j, 0, 3, &temp);
+      diffusion_.MakeColumnVector(j, &temp2);
       for (int k = 0; k < 3; k++){
-	out_positions.set(k , i, temp[k]);
+	out_positions.set(k , i, temp[k]-temp2[k]*dimensions_[k]);
       }
     }
   }

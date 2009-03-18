@@ -306,17 +306,68 @@ private:
     }
     rq = sqrt(la::Dot(bq, bq)) / Rq;
     rr = sqrt(la::Dot(br, br)) / Rr;
-    double Rnormq = query->bound().PeriodicMaxDistance1Norm(
+    double Rnormr = query->bound().PeriodicMaxDistance1Norm(
       ref->stat().centroid_, dimensions_);
+    double Rnormq = ref->bound().PeriodicMaxDistance1Norm(
+      query->stat().centroid_, dimensions_);
+   
+    for (int i = 0; i < forces_.n_rows(); i++){
+      int power = abs((int)powers_[i]);      
+      range_q = range_q + fabs(ref->stat().interactions_[i].coef()*
+       	signs_[i]*GetForceRangeTerm_(Rq, rq, Rnormq, rnormq, power));
+      range_r = range_r + fabs(query->stat().interactions_[i].coef()*
+	signs_[i]*GetForceRangeTerm_(Rr, rr, Rnormr, rnormr, power));
+    }    
+
+    double rmin = 2.8;
+    for (int d = 0; d < 10; d++){
+      int powera = abs((int)power3a_[d]);  
+      int powerb = abs((int)power3b_[d]);  
+      int powerc = abs((int)power3c_[d]);  
+      range_q= range_q + fabs(ref->stat().axilrod_[0]*(ref->stat().axilrod_[0]+
+	query->stat().axilrod_[0])*powerb*Rnormq / 
+	(pow(rmin,powera)*pow(Rq, powerb+powerc+2)))*signs3_[d];
+      range_r= range_r+fabs(query->stat().axilrod_[0]*(ref->stat().axilrod_[0]+
+	query->stat().axilrod_[0])*powerb*Rnormr / 
+	(pow(rmin,powera)*pow(Rr, powerb+powerc+2)))*signs3_[d];
+    }
+    Vector err; 
+    err.Init(2);
+    err[0] = range_q;
+    err[1] = range_r;
+  
+    la::ScaleOverwrite(time_step_, err, bounds);
+  }
+
+  /*
+  void GetForceRangeDual_(int query, ParticleTree* ref,
+			  Vector* bounds){      
+    Vector query_pt, dx;
+    atoms_.MakeColumnSubvector(query, 0, 3, &query_pt);
+    double range_q = 0, range_r = 0;
+    double Rr, Rq, rr, rq, rnormr = 0, rnormq = 0;
+    la::SubInit(query_pt, ref->stat().centroid_, &dx);
+    AdjustVector(&dx);
+    Rr = sqrt(ref->bound().PeriodicMinDistanceSq(query_pt, dimensions_));    
+    Rq = sqrt(la::Dot(dx, dx));
+
+    Vector bq;   
+    bq.Init(3);
+    for (int i = 0; i < 3; i++){     
+      bq[i] = ref->bound().width(i, dimensions_[i]) /2;     
+      rnormq = rnormq + bq[i];
+    }
+    rq = sqrt(la::Dot(bq, bq)) / Rq;
+   
     double Rnormr = ref->bound().PeriodicMaxDistance1Norm(
       query->stat().centroid_, dimensions_);
    
     for (int i = 0; i < forces_.n_rows(); i++){
       int power = abs((int)powers_[i]);      
       range_q = range_q + fabs(ref->stat().interactions_[i].coef()*
-	signs_[i]*GetForceRangeTerm_(Rq, rq, Rnormq, rnormq, power));
+	signs_[i]*GetForceRangeTerm_(Rq, rq, 0, rnormq, power));
       range_r = range_r + fabs(query->stat().interactions_[i].coef()*
-	signs_[i]*GetForceRangeTerm_(Rr, rr, Rnormr, rnormr, power));
+	signs_[i]*GetForceRangeTerm_(Rr, 0, Rnormr, 0, power));
     }    
 
     double rmin = 2.8;
@@ -338,8 +389,8 @@ private:
   
     la::ScaleOverwrite(time_step_, err, bounds);
   }
-
-
+  
+  */
 
 
   /*
@@ -912,7 +963,16 @@ private:
     }
   } 
   
-
+  void UpdateMomentumNaive_(){
+    for (int i = 0; i < n_atoms_; i++){
+      for (int j = i+1; j < n_atoms_; j++){
+	TwoBodyForce_(i,j);
+	for(int k = j+1; k < n_atoms_; k++){
+	  ThreeBodyForce_(i, j, k); 	  
+	}
+      }
+    }
+  }
 
   // End momentum udpating routines.
   
@@ -958,7 +1018,14 @@ private:
     }      
   }
     
-
+  void UpdatePositionsNaive_(){
+    for (int i = 0; i < n_atoms_; i++){
+      Vector pos, temp;
+      atoms_.MakeColumnSubvector(i, 4, 3, &temp);
+      atoms_.MakeColumnSubvector(i, 0, 3, &pos);
+      la::AddExpert(time_step_, temp, &pos);      
+    }
+  }
 
   void InitializeATStats_(ParticleTree* node){
     if (!node->is_leaf()){
@@ -1125,6 +1192,25 @@ public:
   } //Init
 
 
+  
+ /**
+   * Naive implementation computes all pairwise interactions, and can be 
+   * used to validate approximations made by tree implementation.
+   */
+  void InitNaive(const Matrix& atoms_in, struct datanode* param){      
+    atoms_.Copy(atoms_in);
+    n_atoms_ = atoms_.n_cols();      
+    boundary_ = fx_param_int(param, "bc", FREE);
+    dimensions_.Init(3);
+    dimensions_[0] = fx_param_double(param, "lx", 60);
+    dimensions_[1] = fx_param_double(param, "ly", 60);
+    dimensions_[2] = fx_param_double(param, "lz", 60);
+    system_ = NULL; 
+    old_from_new_map_.Init(0);    
+    new_from_old_map_.Init(0);   
+  } // InitNaive
+
+
 
   /**
    * Used to initialize electrostatics parameters, for both naive and 
@@ -1221,7 +1307,11 @@ public:
     Vector temp;
     temp.Init(3);
     temp.SetZero();     
-    UpdatePositionsRecursion_(system_, &temp);     
+    if (system_ != NULL){
+      UpdatePositionsRecursion_(system_, &temp);     
+    } else {
+      UpdatePositionsNaive_();
+    }
   }     
 
 
@@ -1269,16 +1359,18 @@ public:
     
  
   void UpdateMomentum(double time_step_in){  
-    total_triples_ = 0;
-    range_evals_ = 0;
     max_force_ = 0;
     virial_ = 0;    
     time_step_ = time_step_in;
-    percent_pruned_ = 0;   
-    UpdateMomentumMain_(system_);    
-    percent_pruned_ = 1.0-2*percent_pruned_ / (n_atoms_*n_atoms_ - n_atoms_); 
-    //  printf("Total Computed Triples: %d \n", total_triples_);
-    //  printf("Range Evaluations: %d \n", range_evals_);
+    if (system_ != NULL){
+      total_triples_ = 0;
+      range_evals_ = 0;    
+      percent_pruned_ = 0;       
+      UpdateMomentumMain_(system_);    
+      percent_pruned_ = 1.0-2*percent_pruned_/(n_atoms_*n_atoms_ - n_atoms_);  
+    } else {
+      UpdateMomentumNaive_();
+    }
   } //UpdateMomentum
 
 
@@ -1377,14 +1469,15 @@ public:
 
  void RecordPositions(Matrix& out_positions){
     for (int i = 0; i < n_atoms_; i++){
-      Vector temp;
+      Vector temp, temp2;
       int j = i;
       if (system_ != NULL){
 	j = old_from_new_map_[j];
       }
       atoms_.MakeColumnSubvector(j, 0, 3, &temp);
+      diffusion_.MakeColumnVector(j, &temp2);
       for (int k = 0; k < 3; k++){
-	out_positions.set(k , i, temp[k]);
+	out_positions.set(k , i, temp[k]-temp2[k]*dimensions_[k]);
       }
     }
   }
