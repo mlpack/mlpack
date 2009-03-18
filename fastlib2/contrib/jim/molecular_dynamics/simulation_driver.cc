@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
   fp_coords = fx_param_str(NULL, "coord", "coords.dat");
   fp_diff = fx_param_str(NULL, "diff", "diffusion.dat");
 
-  
+  bool do_naive = fx_param_bool(NULL, "naive", 0);
   
   coords = fopen(fp_coords, "w+");
   stats = fopen(fp_stats, "w+");  
@@ -132,14 +132,20 @@ int main(int argc, char *argv[])
 
   ArrayList<Matrix> positions;
 
-  fx_timer_start(parameters, "Tree_Based");
+  fx_timer_start(parameters, "Building Tree");
   MultiPhysicsSystem simulation;
   printf("\n------------------\nTree Simulation \n------------------ \n");
  
-  simulation.Init(atom_matrix, parameters);
+  if (do_naive){
+    simulation.InitNaive(atom_matrix, parameters);
+  } else {
+    simulation.Init(atom_matrix, parameters);
+  }
   simulation.InitStats(lj_matrix, signs_, powers_);
   simulation.InitAxilrodTeller(at_matrix, at_params);  
+  fx_timer_stop(parameters, "Building Tree");
   printf("Finished Initialization. Updating Momentum. \n");
+  fx_timer_start(parameters, "Tree Based");
   simulation.UpdateMomentum(time_step / 2);
   time = 0;  
   double target_pct = 0.9;
@@ -169,10 +175,10 @@ int main(int argc, char *argv[])
     }
     simulation.UpdatePositions(time_step);   
     //  if (pct < 0.85*target_pct || trips > 1.1*target_trips){
-    //    simulation.RebuildTree();
+    //  simulation.RebuildTree();
     //  simulation.ReinitStats(lj_matrix); 
-    // simulation.ReinitAxilrodTeller(at_matrix, at_params);
-     //  }
+    //  simulation.ReinitAxilrodTeller(at_matrix, at_params);
+    // }
     if ((int)(time / time_step) % 5 == 1){
       tree_simulation.Reset();
       simulation.RadialDistribution(&tree_simulation);
@@ -196,11 +202,10 @@ int main(int argc, char *argv[])
 	printf("--------------\n");
 	printf("Temperature: %f \n", temperature);
 	printf("Pressure: %f \n", pressure);
-	printf("Diffusion: %f \n", diffusion);
 	printf("Percent Pruned: %f \n", pct);
 	printf("Triples Computed: %d \n \n", trips);
       }
-      fprintf(stats, "%f %f %f, %f \n", time, diffusion, pressure,
+      fprintf(stats, "%f %f %f \n", time, pressure,
 	      temperature);
  
       if (set_temp > 0){
