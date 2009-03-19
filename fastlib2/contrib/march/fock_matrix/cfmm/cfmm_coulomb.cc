@@ -120,6 +120,7 @@ void CFMMCoulomb::ComputeCoulomb() {
   
   
   MultipoleComputation_();
+  
   if (fx_param_exists(mod_, "do_naive")) {
     NaiveComputation_();
   }
