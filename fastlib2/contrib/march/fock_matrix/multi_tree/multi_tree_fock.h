@@ -14,7 +14,7 @@ const fx_entry_doc multi_tree_fock_entries[] = {
   "The cutoff for hybrid error control.  If the value can be proven to be \n"
   "below the cutoff, then absolute error pruning is used.  For only relative \n"
   "error, set to 0; for only absolute, set to any value larger than the number\n"
-  "of basis functions.  Default: 0.1\n"},
+  "of basis functions.  Default: 0.0 (relative error only)\n"},
   {"N", FX_RESULT, FX_INT, NULL, 
   "The total number of basis functions, as in the dimension of the Fock matrix.\n"},
   {"leaf_size", FX_PARAM, FX_INT, NULL, 
@@ -391,7 +391,7 @@ private:
     epsilon_coulomb_absolute_ = 0.5 * epsilon_absolute_;
     epsilon_exchange_absolute_ = 0.5 * epsilon_absolute_;
     
-    hybrid_cutoff_ = fx_param_double(module_, "hybrid_cutoff", 0.1);
+    hybrid_cutoff_ = fx_param_double(module_, "hybrid_cutoff", 0.0);
     
     
     coulomb_approximations_ = 0;

@@ -5,3 +5,9 @@ librule(
 	deplibs=["fastlib:fastlib"]
 )
 
+librule(
+	name="oeints",
+	headers=["oeints.h", "basis_shell.h"],
+	sources=["oeints.cc"],
+	deplibs=["fastlib:fastlib", ":eri"]
+)

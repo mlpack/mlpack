@@ -9,6 +9,9 @@
 const fx_entry_doc fock_matrix_main_entries[] = {
 {"centers", FX_REQUIRED, FX_STR, NULL, 
   "A file containing the centers of the basis functions.\n"},
+{"bohr", FX_PARAM, FX_STR, NULL, 
+  "Specify this parameter if the data are in bohr.  Otherwise they are assumed\n"
+  " to be in angstroms.\n"},
 {"exponents", FX_REQUIRED, FX_STR, NULL, 
   "A file containing the exponents of the basis functions.\n"
   "Must have the same number of rows as centers.\n"},
@@ -102,6 +105,14 @@ int main(int argc, char* argv[]) {
   else {
     momenta.Init(1, centers.n_cols());
     momenta.SetAll(0);
+  }
+  
+  const double angstrom_to_bohr = 1.889725989;
+  // if the data are not input in bohr, assume they are in angstroms
+  if (!fx_param_exists(root_mod, "bohr")) {
+    
+    la::Scale(angstrom_to_bohr, &centers);
+  
   }
   
   

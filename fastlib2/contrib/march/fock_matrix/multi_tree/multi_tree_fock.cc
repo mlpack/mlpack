@@ -677,26 +677,6 @@ void MultiTreeFock::FillApproximationCoulomb_(SquareTree* mu_nu,
     
     PropagateBoundsUp_(mu_nu);
     
-    /*
-     // Should be fine if the above statement holds
-     mu_nu->stat().set_remaining_references(
-                                            mu_nu->left()->stat().remaining_references());
-     
-     // Because it's already been updated for the children
-     mu_nu->stat().set_approximation_val(0.0);
-     
-     // It's just based on the children, right?
-     // This is the same code as the propagate bounds function
-     mu_nu->stat().set_entry_upper_bound(
-                                         max(mu_nu->left()->stat().entry_upper_bound(), 
-                                             mu_nu->right()->stat().entry_upper_bound()));
-     
-     mu_nu->stat().set_entry_lower_bound(
-                                         min(mu_nu->left()->stat().entry_lower_bound(), 
-                                             mu_nu->right()->stat().entry_lower_bound()));
-     
-     */
-    
   }
   else if (RectangleOnDiagonal_(rho, sigma)) {
     
