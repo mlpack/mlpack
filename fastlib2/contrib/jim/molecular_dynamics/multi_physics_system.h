@@ -915,8 +915,9 @@ private:
 	    }
 	  }
 	  */
+	  
 	    // Base Case
-	  	  EvaluateLeafForcesDual_(query, ref);
+	  EvaluateLeafForcesDual_(query, ref);
 	}	 
       }
     }
@@ -999,7 +1000,7 @@ private:
 	/*
 	for (int i = ref2->begin(); i < ref2->begin() + ref2->count(); i++){  
 	  UpdateMomentumThree_(query, i, ref1);
-	}
+	}	
 	*/
       }
     }
@@ -1043,13 +1044,13 @@ private:
 	    UpdateMomentumThree_(query, ref1, ref2->right());
 	  } else {
 	    // Base Case
-	    // EvaluateLeafForcesThree_(query, ref1, ref2);
-	    
+	    EvaluateLeafForcesThree_(query, ref1, ref2);	
+	    /*
 	    for (int i = query->begin(); i < query->begin() + query->count();
 		 i++){
 	      UpdateMomentumThree_(i, ref1, ref2);
-	    }
-	    
+	    }	  
+	    */
 	  }
 	} 
       }
