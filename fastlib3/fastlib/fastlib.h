@@ -9,6 +9,7 @@
 #ifndef FASTLIB_FASTLIB_H
 #define FASTLIB_FASTLIB_H
 
+#include <limits>
 #include "fastlib/base/base.h"
 #include "fastlib/la/la.h"
 #include "la/matrix.h"
