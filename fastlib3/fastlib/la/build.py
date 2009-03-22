@@ -269,7 +269,8 @@ customrule(
 
 librule(
     headers = ["matrix.h", "la.h", "uselapack.h", 
-      "clapack.h", "blas.h", "cpplapack.h", "cppblas.h"],
+      "clapack.h", "blas.h", "cpplapack.h", "cppblas.h",
+      "utilities.h"],
     tests = ["uselapack_test.cc"],
     deplibs = ["fastlib/base:base", "fastlib/col:col",
                "fastlib/mmanager:mmapmm", ":netlib_blas", ":netlib_lapack"])
