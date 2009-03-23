@@ -8,8 +8,12 @@ class ShellPair;
 
 namespace eri {
 
+  double double_factorial(int m);
+  
   // The erf-like function
   double F_0_(double z);
+  
+  double F_m(double z, int m);
   
   double ComputeNormalization(BasisShell& shell);
   
@@ -103,6 +107,13 @@ namespace eri {
                             double shell_pair_cutoff, Vector* shell_max, 
                             ShellPair*** sigma_for_nu, 
                             ArrayList<index_t>* num_per_shell);
+                    
+  /**
+   * The main function, will replace all future function calls to compute 
+   * an ERI
+   */        
+  void TwoElectronIntegral(BasisShell& shellA, BasisShell& shellB, 
+                           BasisShell& shellC, BasisShell& shellD);
   
 
 }

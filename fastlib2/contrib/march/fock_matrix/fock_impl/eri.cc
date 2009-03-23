@@ -3,6 +3,18 @@
 namespace eri {
 
 
+double double_factorial(int m) {
+
+  double ret = (double)m;
+  while (m > 1) {
+    m = m - 2;
+    ret = ret * (double)m;
+  }
+  
+  return ret;
+
+}
+
 double F_0_(double z) {
 
   if (z == 0) {
@@ -13,6 +25,36 @@ double F_0_(double z) {
   }
   
 } // F_0_
+
+// term1 = (m-1)!! sqrt(pi) erf(sqrt(t)) / (2^(m/2 + 1) * t^((m+1)/2)
+// term2 = (exp(-t)/(2t)^(m/2)) * sum_{even n < m} ((2 t)^n (m-1)!!/(n+1)!!)
+double F_m(double t, int m) {
+
+  if (t == 0.0) {
+    return 1/((double)(2*m + 1));
+  }
+  else {
+  
+    double term1 = double_factorial(2*m - 1) * sqrt(math::PI) * erf(sqrt(t));
+    term1 = term1 / (pow(2, m+1) * pow(t, (double)((m+1)/2)));
+    
+    double term2 = 0.0;
+    int n = 0;
+    while (n < 2*m) {
+      
+      term2 += pow(2*t, n) * double_factorial(2*m - 1) / double_factorial(n+1);
+      
+    }
+    
+    term2 *= exp(-t)/(pow(2*t, m)); 
+
+    return (term1 - term2);
+     
+  }
+
+  
+
+}
 
 double ComputeNormalization(BasisShell& shell) {
 
@@ -389,6 +431,15 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
   return num_shell_pairs;
   
 }
+
+void TwoElectronIntegral(BasisShell& shellA, BasisShell& shellB, 
+                         BasisShell& shellC, BasisShell& shellD) {
+                      
+  
+
+  
+} // TwoElectronIntegral
+
 
 
 
