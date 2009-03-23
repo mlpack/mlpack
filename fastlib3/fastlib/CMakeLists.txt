@@ -1,0 +1,21 @@
+cmake_minimum_required(VERSION 2.6)
+
+PROJECT(fastlib)
+
+ADD_SUBDIRECTORY( base
+)
+
+ADD_SUBDIRECTORY( fx
+)
+
+ADD_SUBDIRECTORY( file
+)
+
+ADD_SUBDIRECTORY( col
+)
+
+ADD_SUBDIRECTORY( la
+)
+
+ADD_SUBDIRECTORY( data
+)
