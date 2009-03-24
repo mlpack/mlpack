@@ -4,6 +4,8 @@ namespace eri {
 
 
 double double_factorial(int m) {
+  
+  DEBUG_ASSERT(m >= 0);
 
   double ret = (double)m;
   while (m > 1) {
@@ -17,7 +19,8 @@ double double_factorial(int m) {
 
 double F_0_(double z) {
 
-  if (z == 0) {
+  if (z == 0.0) {
+    // double check that this shouldn't be 2/sqrt(pi)
     return 1.0;
   }
   else {
@@ -433,9 +436,131 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
 }
 
 void TwoElectronIntegral(BasisShell& shellA, BasisShell& shellB, 
-                         BasisShell& shellC, BasisShell& shellD) {
+                         BasisShell& shellC, BasisShell& shellD, 
+                         double**** integrals) {
                       
+  // determine the total angular momentum
+  index_t total_L = shellA.total_momentum() + shellB.total_momentum() 
+                       + shellC.total_momentum() + shellD.total_momentum();
+                      
+  double alpha_A = shellA.exp();
+  double alpha_B = shellB.exp();
+  double alpha_C = shellC.exp();
+  double alpha_D = shellD.exp();
   
+  Vector A_vec = shellA.center();
+  Vector B_vec = shellB.center();
+  
+  Vector p_vec;
+  double gamma_p = ComputeGPTCenter(A_vec, alpha_A, B_vec, 
+                                    alpha_B, &p_vec);
+  
+  Vector C_vec = shellC.center();
+  Vector D_vec = shellD.center();
+  
+  Vector q_vec;
+  double gamma_q = ComputeGPTCenter(C_vec, alpha_C, D_vec, 
+                                    alpha_D, &q_vec);
+                                    
+  double F_arg = gamma_p * gamma_q;
+  F_arg /= (gamma_p + gamma_q);
+  
+  double dist_sq = la::DistanceSqEuclidean(p_vec, q_vec);
+  
+  F_arg *= dist_sq;
+  
+  // compute the necessary values of F_m
+  
+  // how large an m do we need? depends on largest auxiliary integral
+  // it is total_L plus the largest auxiliary integral
+  // I think the largest auxiliary value is equal to the total momentum
+  ArrayList<double> F_vals;
+  F_vals.Init(2*total_L);
+  
+  for (int i = 0; i < 2*total_L; i++) {
+    F_vals[i] = F_m(F_arg, i);
+  }
+  
+  
+
+  // Need to figure out how to code up the regression for integrals 
+
+  // compute the intermediate integrals
+  
+  // make the last entry the auxiliary index
+  // but I don't need all of these integrals, how to know which ones to compute?
+  // make the last entry depend on how many of these are necessary
+  // will need to keep up with how many in each step
+  // include space for s integrals as well (make 3*momentum below)
+  int num_intermediates_A = (3*shellA.total_momentum()) + 1;
+  int num_intermediates_B = (3*shellB.total_momentum()) + 1;
+  int num_intermediates_C = (3*shellC.total_momentum()) + 1;
+  int num_intermediates_D = (3*shellD.total_momentum()) + 1;
+  
+  ArrayList<ArrayList<ArrayList<ArrayList<ArrayList<double> > > > > intermediate_ints;
+  intermediate_ints.Init(num_intermediates_A);
+  
+  for (index_t i = 0; i < num_intermediates_A; i++) {
+    intermediate_ints[i].Init(num_intermediates_B);
+    
+    for (index_t j = 0; j < num_intermediates_B; j++) {
+    
+      intermediate_ints[i][j].Init(num_intermediates_C);
+      
+      for (index_t k = 0; k < num_intermediates_C; k++) {
+      
+        intermediate_ints[i][j][k].Init(num_intermediates_D);
+      
+        for (index_t l = 0; l < num_intermediates_D; l++) {
+        
+          // the number of auxiliary integrals needed for this momentum
+          // I think that each reduction of momentum requires an increase in m
+          // so, the momentum of this integral subtracted from the target 
+          // should give the number of auxiliaries
+          int num_auxiliaries_needed;
+        
+          intermediate_ints[i][j][k][l].Init(num_auxiliaries_needed);
+        
+        }
+      
+      }
+    
+    }
+    
+  }
+  
+  // sum them into the needed integrals
+  
+  int num_integrals_A = (2*shellA.total_momentum()) + 1;
+  int num_integrals_B = (2*shellB.total_momentum()) + 1;
+  int num_integrals_C = (2*shellC.total_momentum()) + 1;
+  int num_integrals_D = (2*shellD.total_momentum()) + 1;
+  
+  // allocate memory to store the output integrals
+  // this only works for s and p shells
+  // indexed by x, y, z (or is just s if only one entry)
+  integrals = (double****)malloc(3 * num_integrals_A * sizeof(double***));
+  for (index_t i = 0; i < num_integrals_A; i++) {
+    
+    integrals[i] = (double***)malloc(num_integrals_B * sizeof(double**));
+  
+    for (index_t j = 0; j < num_integrals_B; j++) {
+      
+      integrals[i][j] = (double**)malloc(num_integrals_C * sizeof(double*));
+      
+      for (index_t k = 0; k < num_integrals_C; k++) {
+      
+        integrals[i][j][k] = (double*)malloc(num_integrals_D * sizeof(double));
+        
+      }
+      
+    }
+  
+  }
+
+
+  
+
 
   
 } // TwoElectronIntegral

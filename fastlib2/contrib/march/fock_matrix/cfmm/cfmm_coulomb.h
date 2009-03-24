@@ -65,6 +65,9 @@ class CFMMCoulomb {
   
   void MultipoleComputation_();
   
+  double NaiveBaseCase_(Vector& q_col, double q_band, Vector& r_col, 
+                        double r_band, double r_charge);
+                        
   void NaiveComputation_();
   
   void MultipoleCleanup_();
