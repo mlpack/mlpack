@@ -512,6 +512,7 @@ class GenMatrix {
    */
   void InitDiagonal(const GenVector<T>& v) {
     Init(v.length(), v.length());
+    SetZero();
     SetDiagonal(v);
   }
 
@@ -520,6 +521,7 @@ class GenMatrix {
    */
   void InitDiagonal(const index_t dimension, const double value) {
     Init(dimension, dimension);
+    SetZero();
     for(index_t i=0; i<dimension; i++) {
       this->set(i, i, value);
     }
@@ -1047,7 +1049,16 @@ class GenMatrix {
     // in bugs
     return size_t(n_rows_) * size_t(n_cols_);
   }
-  
+
+  /**
+   * It is exaclty the same like n_elements()
+   * This definition provided a uniform interface for 
+   * blas/lapck type operations
+   */   
+  size_t length() const {
+   return size_t(n_rows_) * size_t(n_cols_);
+  }
+
  private:
   void AssertUninitialized_() const {
     DEBUG_ASSERT_MSG(n_rows_ == BIG_BAD_NUMBER, "Cannot re-init matrices.");
