@@ -11,12 +11,47 @@
 
 #include "matrix.h"
 #include "uselapack.h"
-
 #include "fastlib/math/math_lib.h"
-
 #include <math.h>
 
 namespace la {
+  enum MemoryAlloc {Init, Overwrite};
+
+  template<MemoryAlloc T>
+  class AllocationTrait {
+    template<typename Container>
+    static inline void Init(index_t length, Container *cont);
+    
+    template<typename Container>
+    static inline void Init(index_t dim1, index_t dim2, Container *cont);
+  };
+
+  template<>
+  class AllocationTrait<Init> {
+    template<typename Container>
+    static inline void Init(index_t length, Container *cont) {
+      cont->Init(length);
+    }
+    
+    template<typename Container>
+    static inline void Init(index_t dim1, index_t dim2, Container *cont) {
+      cont->Init(dim1, dim2);
+    }
+  };
+
+  template<>
+  class AllocationTrait<Overwrite> {
+    template<typename Container>
+    static inline void Init(index_t length, Container *cont) {
+      DEBUG_SAME(length, cont->length());
+    }
+    
+    template<typename Container>
+    static inline void Init(index_t dim1, index_t dim2, Container *cont) {
+      DEBUG_SAME(dim1, cont->n_rows());
+      DEBUG_SAME(dim2, cont->n_cols());
+    }
+  };
 
   /**
    * Entrywise element multiplication of two memory blocks
@@ -24,17 +59,14 @@ namespace la {
    * In Matlab this is the .* operator
    * (\f$ C \gets A .* B\f$).
    */
-  template<typename Precision>
-  void DotMulInit(const index_t length,
+  template<typename Precision >
+  void DotMul(const index_t length,
               const Precision *A, 
               const Precision *B, 
-              Precision *C);
-
-  template<typename Precision>
-  void DotMulOvewrite(const index_t length,
-              const Precision *A, 
-              const Precision *B, 
-              Precision *C);
+              Precision *C) {
+    CppBlas<Precision>::gbmv("N", 
+        length, length, 0, 0, 1, A, 1, B, 1, 0, C, 1);
+  }
  
   /**
    * Entrywise element multiplication of two matrices
@@ -43,15 +75,15 @@ namespace la {
    * (\f$ C \gets A .* B\f$).
    */
  
-  template<typename Precision>
-  void DotMulInit(const GenMatrix<Precision> &A, 
+  template<typename Precision,  MemoryAlloc MemeAlloc>
+  void DotMul(const GenMatrix<Precision> &A, 
               const GenMatrix<Precision> &B, 
-              GenMatrix<Precision> *C);
-
-  template<typename Precision>
-  void DotMulOverwrite(const GenMatrix<Precision> &A, 
-              const GenMatrix<Precision> &B, 
-              GenMatrix<Precision> *C);
+              GenMatrix<Precision> *C) {
+    DEBUG_SAME_SIZE(A.n_rows(), B.n_rows());
+    DEBUG_SAME_SIZE(A.n_cols(), B.n_cols());
+    AllocationTrait<MemAlloc>::Init(A.n_rows(), A.n_cols(), &C);
+    DotMul<Precision>(A.n_elements(), A.ptr(), B.ptr(), C.ptr());  
+  }
  
   /**
    * Entrywise element multiplication of two vectors
@@ -59,17 +91,15 @@ namespace la {
    * In Matlab this is the .* operator
    * (\f$ \vec{C} \gets \vec{A} .* \vec{B}\f$).
    */ 
-  template<typename Precision>
-  void DotMulInit(const GenVector<Precision> &A, 
+  template<typename Precision, MemoryAlloc MemAlloc>
+  void DotMul(const GenVector<Precision> &A, 
               const GeVector<Precision> &B, 
-              GenVector<Precision> *C);
-
-  template<typename Precision>
-  void DotMulOverwrite(const GenVector<Precision> &A, 
-              const GeVector<Precision> &B, 
-              GenVector<Precision> *C);
-
-
+              GenVector<Precision> *C) {
+    DEBUG_SAME_SIZE(A.length(), B.length());
+    AllocationTrait<MemAlloc>::Init(A.length(), &C);
+    DotMul<Precision>(A.length(), A.ptr(), B.ptr(), C.ptr());  
+  
+  }
 
   /**
    * Entrywise element multiplication of two memory blocks
@@ -80,7 +110,14 @@ namespace la {
   template<typename Precision>
   void DotMulTo(const index_t length,
               const Precision *A, 
-              const Precision *B);
+              const Precision *B) {
+    
+    GenVector<Precision> C;
+    C.Init(length);
+    CppBlas<Precision>::gbmv("N", 
+        length, length, 0, 0, 1, A, 1, B, 1, 0, C.ptr(), 1);
+    memcopy(A, C.ptr(), length*sizeof(Precision));
+  }
   /**
    * Entrywise element multiplication of two matrices
    * Also known as the Hadamard product
@@ -88,409 +125,242 @@ namespace la {
    * (\f$ A \gets A .* B\f$).
    */
  
-  template<typename Precision>
+  template<typename Precision, MemoryAlloc MemAlloc>
   void DotMulTo(const GenMatrix<Precision> *A, 
-              GenMatrix<Precision> &B);
+              GenMatrix<Precision> &B) {
+    
+    DEBUG_SAME_SIZE(A->rows(), B.rows());
+    DEBUG_SAME_SIZE(A->cols(), B.cols());
+    DotMulTo(A->n_elements(), A->ptr(), B.ptr());
+  }
   /**
    * Entrywise element multiplication of two vectors
    * Also known as the Hadamard product
    * In Matlab this is the .* operator
    * (\f$ \vec{A} \gets \vec{A} .* \vec{B}\f$).
    */ 
-  template<typename Precision>
+  template<typename Precision, MemoryAlloc MemAlloc>
   void DotMulTo(const GenVector<Precision> *A, 
-              GeVector<Precision> &B);
+              GeVector<Precision> &B) {
+    DEBUG_SAME_SIZE(A->length(), B.length());
+    DotMulTo(A.length(), A->ptr(), B.ptr();) 
+  }
 
   /**
    * Elementwise integer powers of memory blocks
    * (\f$ B \gets A.\^n \f$)
    */
   template<typename Precision>
-  void DotIntPowInit(const index_t length,
+  void DotIntPow(const index_t length,
               index_t power,
               const Precision *A,
-              Precision *B); 
- 
-  template<typename Precision>
-  void DotIntPowOverwrite(const index_t length,
-              index_t power,
-              const Precision *A,
-              Precision *B); 
-   
+              Precision *B) {
+    memcpy(B, A, length*sizeof(Precision))
+    for(index_t i=0; i<power; i++) {
+      DotMulTo(length, A, B)
+    }
+  } 
+  
   /**
    * Elementwise integer powers of matrices
    * (\f$ B \gets A.\^n \f$)
    */
-  template<typename Precision>
+  template<typename Precision, MemoryAlloc MemAlloc>
   void DotIntPowInit(index_t power,
               const GenMatrix<Precision> &A,
-              GenMatrix<Precision> *B); 
+              GenMatrix<Precision> *B) {
+    AllocationTrait<MemAlloc>::Init(A.n_rows(), A.n_cols(), B);
+    DotIntPow<Precision>(A.n_elements, A.ptr(), B->ptr());
+  } 
 
   /**
    * Elementwise integer powers of vectors
    * (\f$ \vec{B} \gets \vec{A}.\^n \f$)
    */
-  template<typename Precision>
+  template<typename Precision, M>
   void DotIntPowInit(index_t power,
               const GenVector<Precision> &A,
-              GenVector<Precision> *B); 
+              GenVector<Precision> *B) {
+  
+    AllocationTrait<MemAlloc>::Init(A.length(), B);
+    DotIntPow<Precision>(A.length(), A.ptr(), B->ptr());
+  }
+
 
   /**
    * Elementwise integer powers of memory blocks
    * (\f$ A \gets A.\^n \f$)
    */
   template<typename Precision>
-  void DotIntPowOverwrite(const index_t length,
+  void DotIntPowTo(const index_t length,
               index_t power,
-              Precision *A); 
+              Precision *A) {
+    GenVector<Precision> temp;
+    temp.Init(length);
+    DotIntPow<Precision>(length, power, A, temp);
+    memcpy(A, temp, length*sizeof(Precision));
+  } 
   
  /**
    * Elementwise integer powers of matrices
    * (\f$ A \gets A.\^n \f$)
    */
   template<typename Precision>
-  void DotIntPowOverwrite(index_t power,
-              GenMatrix<Precision> *A); 
+  void DotIntPowTo(index_t power,
+              GenMatrix<Precision> *A) {
+    DotIntPow<Precision>(A->n_elements(), power, A->ptr());
+  } 
 
   /**
    * Elementwise integer powers of vectors
    * (\f$ \vec{A} \gets \vec{A}.\^n \f$)
    */
   template<typename Precision>
-  void DotIntPowOverwrite(index_t power,
-              GenVector<Precision> *A); 
-
-
-  /**
-   * Elementwise rational powers of memory blocks
-   * (\f$ B \gets A.\^(n/m) \f$)
-   */
-  template<typename Precision, int n, int m>
-  void DotPowInit(const index_t length
-              const Precision *A,
-              Precision *B); 
- 
-  /**
-   * Elementwise integer powers of matrices
-   * (\f$ B \gets A.\^(n/m) \f$)
-   */
-  template<typename Precision, int n, int m>
-  void DotPowInit(const GenMatrix<Precision> &A,
-              GenMatrix<Precision> *B); 
-
- 
-  /**
-   * Elementwise integer powers of vectors
-   * (\f$ B \gets A.\^(n/m) \f$)
-   */ 
-  template<typename Precision, int n, int m>
-  void DotPowInit(const GenVector<Precision> &A,
-              GenVector<Precision> *B); 
-  
-  /**
-   * Elementwise integer powers of vectors
-   * (\f$ \vec{B} \gets \vec{A}.\^(n/m) \f$)
-   */
-  template<typename Precision, int n, int m>
-  void DotPowInit(const GenMatrix<Precision> &A,
-              Gen<Precision> *B); 
+  void DotIntPowTo(index_t power,
+              GenVector<Precision> *A) {
+    DotIntPow<Precision>(A->length(), power, A->ptr());  
+  }
 
   /**
-   * Elementwise integer powers of memory blocks
-   * (\f$ A \gets A.\^(n/m) \f$)
+   * In this section we provide some basic object functions for matrix 
+   * pricessing
    */
-  template<typename Precision, int n, int m>
-  void DotIntPowOverwrite(const index_t length,
-              index_t power,
-              Precision *A); 
- 
-  /**
-   * Elementwise integer powers of matrices
-   * (\f$ A \gets A.\^(n/m) \f$)
-   */
-  template<typename Precision, int n, int m>
-  void DotPowOverwrite(GenMatrix<Precision> *A); 
- 
-  /**
-   * Elementwise integer powers of vectors
-   * (\f$ \vec{A} \gets vec{A}.\^(n/m) \f$)
-   */ 
-  template<typename Precision, int n, int m>
-  void DotPowOverwrite(GenVector<Precision> *A); 
-  
+  template<Precision>
+  class Sin {
+    public: 
+     Sin() {
+       frequency_=1.0;
+     }
+     void Init(Precision frequency) {
+       frequency_ = frequency;
+     } 
+     void set(Precision frequency){
+       frequency_ = frequency;
+     }
+     Precision operator()(Precision x) {
+       return sin(frequency * x);
+     }
+    private:
+     Precision frequency_;
+  }
 
-  /**
-   * Elementwise exponential of a memory block
-   * (\f$ B= \exp(A) \f$)
-   */
-  template<typename Precision>
-  void DotExpInit(const index_t length,
-              const Precision *A, 
-              Precision *B);
-  /**
-   * Elementwise exponential of a matrix
-   * (\f$ B= \exp(A) \f$)
-   */
-  template<typename Precision>
-  void DotExpInit(const GenMatrix<Precision> &A, 
-              GenMatrix<Precision> *B);
+  template<Precision>
+  class Cos {
+    public: 
+     Cos() {
+       frequency_=1.0;
+     }
+     void Init(Precision frequency) {
+       frequency_ = frequency;
+     } 
+     void set(Precision frequency){
+       frequency_ = frequency;
+     }
+     Precision operator()(Precision x) {
+       return cos(frequency_ * x);
+     }
+    private:
+     Precision frequency_;
+  }
 
-  /**
-   * Elementwise exponential of a vector
-   * (\f$ \vec{B}= \exp(\vec{A}) \f$)
-   */
-  template<typename Precision>
-  void DotExpInit(const index_t length,
-              const GenVector<Precision> &A, 
-              GenVector<Precision> *B);
+  template<Precision>
+  class Tan {
+    public: 
+     Tan() {
+       frequency_=1.0;
+     }
+     void Init(Precision frequency) {
+       frequency_ = frequency;
+     } 
+     void set(Precision frequency){
+       frequency_ = frequency;
+     }
+     Precision operator()(Precision x) {
+       return tan(frequency_ * x);
+     }
+    private:
+     Precision frequency_;
+  }
 
-  /**
-   * Elementwise exponential of a memory block
-   * (\f$ A= \exp(A) \f$)
-   */
-  template<typename Precision>
-  void DotExpOverwrite(const index_t length,
-              Precision *A);
-  /**
-   * Elementwise exponential of a matrix
-   * (\f$ A= \exp(A) \f$)
-   */
-  template<typename Precision>
-  void DotExpOverwrite(GenMatrix<Precision> *A);
+  template<Precision>
+  class Tan {
+    public: 
+     Tan() {
+       frequency_=1.0;
+     }
+     void Init(Precision frequency) {
+       frequency_ = frequency;
+     } 
+     void set(Precision frequency){
+       frequency_ = frequency;
+     }
+     Precision operator()(Precision x) {
+       return tan(frequency_ * x);
+     }
+    private:
+     Precision frequency_;
+  }
 
-  /**
-   * Elementwise exponential of a vector
-   * (\f$ \vec{A}= \exp(\vec{A}) \f$)
-   */
-  template<typename Precision>
-  void DotExpOverwrite(GenVector<Precision> *A);
+  template<Precision>
+  class Exp {
+    public: 
+     Exp() {
+       alpha_=1.0;
+     }
+     void Init(Precision alpha) {
+       alpha_ = alpha;
+     } 
+     void set(Precision alpha){
+       alpha_ = alpha;
+     }
+     Precision operator()(Precision x) {
+       return exp(alpha_ * x);
+     }
+    private:
+     Precision alpha_;
+  }
 
-  /**
-   * Elementwise log of a memory block
-   * (\f$ B= \log(A) \f$)
-   */
-  template<typename Precision>
-  void DotLogInit(const index_t length,
-              const Precision *A, 
-              Precision *B);
-  /**
-   * Elementwise log of a matrix
-   * (\f$ B= \log(A) \f$)
-   */
-  template<typename Precision>
-  void DotLogInit(const GenMatrix<Precision> &A, 
-              GenMatrix<Precision> *B);
+  template<Precision>
+  class Log {
+    public: 
+     Log() {
+       alpha_=1.0;
+     }
+     void Init(Precision alpha) {
+       alpha_ = alpha;
+     } 
+     void set(Precision alpha){
+       alpha_ = alpha;
+     }
+     Precision operator()(Precision x) {
+       DEBUG_ASSERT(x>0);
+       return log(alpha_ * x);
+     }
+    private:
+     Precision alpha_;
+  }
 
-  /**
-   * Elementwise log of a vector
-   * (\f$ \vec{B}= \log(\vec{A}) \f$)
-   */
-  template<typename Precision>
-  void DotLogInit(const GenVector<Precision> &A, 
-              GenVector<Precision> *B);
+  template<Precision>
+  class Pow {
+    public: 
+     Pow() {
+       alpha_=1.0;
+     }
+     void Init(Precision alpha) {
+       alpha_ = alpha;
+     } 
+     void set(Precision alpha){
+       alpha_ = alpha;
+     }
+     Precision operator()(Precision x) {
+       DEBUG_ASSERT(x>0);
+       return pow(alpha_, x);
+     }
+    private:
+     Precision alpha_;
+  }
 
-  /**
-   * Elementwise log of a memory block
-   * (\f$ A= \log(A) \f$)
-   */
-  template<typename Precision>
-  void DotLogOverwrite(const index_t length,
-              Precision *A);
-  /**
-   * Elementwise log of a matrix
-   * (\f$ A= \log(A) \f$)
-   */
-  template<typename Precision>
-  void DotLogOverwrite(GenMatrix<Precision> *A);
-
-  /**
-   * Elementwise log of a vector
-   * (\f$ \vec{A}= exp(\vec{A}) \f$)
-   */
-  template<typename Precision>
-  void DotLogOverwrite(GenVector<Precision> *A);
-
-  /**
-   * Elementwise tanh of a memory block
-   * (\f$ B= \tanh(A) \f$)
-   */
-  template<typename Precision>
-  void DotTanhInit(const index_t length,
-              const Precision *A, 
-              Precision *B);
-  /**
-   * Elementwise tanh of a matrix
-   * (\f$ B= \tanh(A) \f$)
-   */
-  template<typename Precision>
-  void DotTanhInit(const GenMatrix<Precision> &A, 
-              GenMatrix<Precision> *B);
-
-  /**
-   * Elementwise tanh of a vector
-   * (\f$ \vec{B}= \tanh(\vec{A}) \f$)
-   */
-  template<typename Precision>
-  void DotTanhInit(const GenVector<Precision> &A, 
-              GenVector<Precision> *B);
-
-  /**
-   * Elementwise tanh of a memory block
-   * (\f$ A= \tanh(A) \f$)
-   */
-  template<typename Precision>
-  void DotTanhOverwrite(const index_t length,
-              Precision *A);
-  /**
-   * Elementwise tanh of a matrix
-   * (\f$ A= \tanh(A) \f$)
-   */
-  template<typename Precision>
-  void DotTanhOverwrite(GenMatrix<Precision> *A);
-
-  /**
-   * Elementwise tanh of a vector
-   * (\f$ \vec{A}= \tanh(\vec{A}) \f$)
-   */
-  template<typename Precision>
-  void DotTanhOverwrite(GenVector<Precision> *A);
-  
-  /**
-   * Elementwise tan of a memory block
-   * (\f$ B= \tan(A) \f$)
-   */
-  template<typename Precision>
-  void DotTanInit(const index_t length,
-              Precision *A, 
-              Precision *B);
-  /**
-   * Elementwise tan of a matrix
-   * (\f$ B= \tan(A) \f$)
-   */
-  template<typename Precision>
-  void DotTanInit(const GenMatrix<Precision> &A, 
-              GenMatrix<Precision> *B);
-
-  /**
-   * Elementwise tan of a vector
-   * (\f$ \vec{B}= \tan(\vec{A}) \f$)
-   */
-  template<typename Precision>
-  void DotTanInit(const GenVector<Precision> &A, 
-              GenVector<Precision> *B);
-
-  /**
-   * Elementwise tan of a memory block
-   * (\f$ A= \tan(A) \f$)
-   */
-  template<typename Precision>
-  void DotTanOverwrite(const index_t length,
-              Precision *A);
-  /**
-   * Elementwise tan of a matrix
-   * (\f$ A= \tan(A) \f$)
-   */
-  template<typename Precision>
-  void DotTanOverwrite(GenMatrix<Precision> *A);
-
-  /**
-   * Elementwise tan of a vector
-   * (\f$ \vec{A}= \tan(\vec{A}) \f$)
-   */
-  template<typename Precision>
-  void DotTanOverwrite(GenVector<Precision> *A);
-  
-  /**
-   * Elementwise sin of a memory block
-   * (\f$ B= \sin(A) \f$)
-   */
-  template<typename Precision>
-  void DotSinInit(const index_t length,
-              const Precision *A, 
-              Precision *B);
-  /**
-   * Elementwise sin of a matrix
-   * (\f$ B= \sin(A) \f$)
-   */
-  template<typename Precision>
-  void DotSinInit(const GenMatrix<Precision> &A, 
-              GenMatrix<Precision> *B);
-
-  /**
-   * Elementwise sin of a vector
-   * (\f$ \vec{B}= \sin(\vec{A}) \f$)
-   */
-  template<typename Precision>
-  void DotSinInit(const GenVector<Precision> &A, 
-              GenVector<Precision> *B);
-
-  /**
-   * Elementwise sin of a memory block
-   * (\f$ A= \sin(A) \f$)
-   */
-  template<typename Precision>
-  void DotSinOverwrite(const index_t length,
-              Precision *A);
-  /**
-   * Elementwise sin of a matrix
-   * (\f$ A= \sin(A) \f$)
-   */
-  template<typename Precision>
-  void DotSinOverwrite(GenMatrix<Precision> *A);
-
-  /**
-   * Elementwise sin of a vector
-   * (\f$ \vec{A}= \sin(\vec{A}) \f$)
-   */
-  template<typename Precision>
-  void DotSinOverwrite(GenVector<Precision> *A);
- 
-  /**
-   * Elementwise cos of a memory block
-   * (\f$ B= \cos(A) \f$)
-   */
-  template<typename Precision>
-  void DotCosInit(const index_t length,
-              const Precision *A, 
-              Precision *B);
-  /**
-   * Elementwise cos of a matrix
-   * (\f$ B= \cos(A) \f$)
-   */
-  template<typename Precision>
-  void DotCosInit(const GenMatrix<Precision> &A, 
-              GenMatrix<Precision> *B);
-
-  /**
-   * Elementwise cos of a vector
-   * (\f$ \vec{B}= \cos(\vec{A}) \f$)
-   */
-  template<typename Precision>
-  void DotCosInit(const GenVector<Precision> &A, 
-              GenVector<Precision> *B);
-
-  /**
-   * Elementwise cos of a memory block
-   * (\f$ A= \cos(A) \f$)
-   */
-  template<typename Precision>
-  void DotCosOverwrite(const index_t length,
-              Precision *A);
-  /**
-   * Elementwise cos of a matrix
-   * (\f$ A= \cos(A) \f$)
-   */
-  template<typename Precision>
-  void DotCosOverwrite(GenMatrix<Precision> *A);
-
-  /**
-   * Elementwise cos of a vector
-   * (\f$ \vec{A}= \cos(\vec{A}) \f$)
-   */
-  template<typename Precision>
-  void DotCosOverwrite(GenVector<Precision> *A);
- 
-  /**
+   /**
    * Elementwise fun of a memory block
    * (\f$ B= fun(A) \f$)
    * where fun is an arbitrary function that operates on 
@@ -498,11 +368,17 @@ namespace la {
    * fun is passed as a function object. It is a class that overloads the 
    * operator()
    */
+
   template<typename Precision, typename Function>
-  void DotFunInit(const index_t length,
+  void DotFun(const index_t length,
               Function &fun,
               const Precision *A, 
-              Precision *B);
+              Precision *B) {
+  
+    for(index_t i=0; i<length; i++) {
+      B[i]=fun(A[i]);
+    }
+  }
   /**
    * Elementwise fun of a matrix
    * (\f$ B= \fun(A) \f$)
@@ -511,10 +387,13 @@ namespace la {
    * fun is passed as a function object. It is a class that overloads the 
    * operator()
    */
-  template<typename Precision, typename Function>
-  void DotFunInit(Function &fun
+  template<typename Precision, MemoryAlloc MemAlloc, typename Function>
+  void DotFun(Function &fun
               const GenMatrix<Precision> &A, 
-              GenMatrix<Precision> *B);
+              GenMatrix<Precision> *B) {
+    AllocatorTrait<MemAlloc>::Init(A.n_rows(), A.n_cols(), B);
+    DotFun<Precision, Function>(A.n_elements(), fun, A.ptr(), B->ptr());
+  }
 
   /**
    * Elementwise fun of a vector
@@ -523,44 +402,13 @@ namespace la {
    * fun is passed as a function object. It is a class that overloads the 
    * operator()
    */
-  template<typename Precision, typename Function>
-  void DotFunInit(Function &fun,              
+  template<typename Precision, MemoryAlloc MemAlloc, typename Function>
+  void DotFun(Function &fun,              
               const GenVector<Precision> &A, 
-              GenVector<Precision> *B);
-
-  /**
-   * Elementwise fun of a memory block
-   * (\f$ A= \fun(A) \f$)
-   * a single element.
-   * fun is passed as a function object. It is a class that overloads the 
-   * operator()
-   */
-  template<typename Precision, typename Function>
-  void DotFunOverwrite(const index_t length,
-              Function &fun,
-              Precision *A);
-  
-  /**
-   * Elementwise fun of a matrix
-   * (\f$ A= \fun(A) \f$)
-   * a single element.
-   * fun is passed as a function object. It is a class that overloads the 
-   * operator()
-   */
-  template<typename Precision, typename Function>
-  void DotFunOverwrite(Function &fun,
-              GenMatrix<Precision> *A);
-
-  /**
-   * Elementwise fun of a vector
-   * (\f$ \vec{A}= \fun(\vec{A}) \f$)
-   * a single element.
-   * fun is passed as a function object. It is a class that overloads the 
-   * operator()
-   */
-  template<typename Precision, typename Function>
-  void DotFunOverwrite(Function &fun,
-               GenVector<Precision> *A);
+              GenVector<Precision> *B) {
+    AllocatorTrait<MemAlloc>::Init(A.length(), B);
+    DotFun<Precision, Function>(A.length(), fun, A.ptr(), B->ptr());
+  }
 
  /**
    * Elementwise fun of  memory blocks
@@ -571,11 +419,15 @@ namespace la {
    * operator()
    */
   template<typename Precision, typename Function>
-  void DotFunInit(const index_t length,
+  void DotFun(const index_t length,
               Function &fun,
               const Precision *A, 
               const Precision *B, 
-              Precision *C);
+              Precision *C) {
+    for(index_t i=0; i<length; i++) {
+      C[i]=fun(A[i], B[i]);
+    }
+  }
   /**
    * Elementwise fun of two matrices
    * (\f$ C= \fun(A, B) \f$)
@@ -584,11 +436,17 @@ namespace la {
    * fun is passed as a function object. It is a class that overloads the 
    * operator()
    */
-  template<typename Precision, typename Function>
-  void DotFunInit(Function &fun
+  template<typename Precision, MemoryAlloc MemAlloc, typename Function>
+  void DotFun(Function &fun
               const GenMatrix<Precision> &A, 
               const GenMatrix<Precision> &B,
-              const GenMatrix<Precision> *C);
+              const GenMatrix<Precision> *C) {
+    DEBUG_SAME_SIZE(A.n_rows(), B.n_rows());
+    DEBUG_SAME_SIZE(A.n_cols(), B.n_cols());
+    AllocationTrait<MemAlloc>::Init(A.n_rows(), A.n_cols(), C);
+    DotFun<Precision, Function>(A.n_elements(), 
+        fun, A.ptr(), B.ptr(), C->ptr());
+  }
 
   /**
    * Elementwise fun of two vectors
@@ -598,58 +456,31 @@ namespace la {
    * operator()
    */
   template<typename Precision, typename Function>
-  void DotFunInit(Function &fun,              
+  void DotFun(Function &fun,              
               const GenVector<Precision> &A, 
               const GenVector<Precision> &B, 
-              GenVector<Precision> *C);
+              GenVector<Precision> *C) {
+    DEBUG_SAME_SIZE(A.length(), B.length());
+    DotFun(A.length(), fun, A.ptr(), B.ptr(), C->ptr());
+  }
 
-  /**
-   * Elementwise fun of two memory blocks
-   * (\f$ A= \fun(A, B) \f$)
-   * a single element.
-   * fun is passed as a function object. It is a class that overloads the 
-   * operator()
-   */
-  template<typename Precision, typename Function>
-  void DotFunOverwrite(const index_t length,
-              Function &fun,
-              Precision *A, 
-              const Precision *B);
-  
-  /**
-   * Elementwise fun of two matrices
-   * (\f$ A= \fun(A, B) \f$)
-   * a single element.
-   * fun is passed as a function object. It is a class that overloads the 
-   * operator()
-   */
-  template<typename Precision, typename Function>
-  void DotFunOverwrite(Function &fun,
-              GenMatrix<Precision> *A,
-              const GenMatrix<Precision> &B);
-
-  /**
-   * Elementwise fun of two vectors
-   * (\f$ \vec{A}= \fun(\vec{A}, \vec{B}) \f$)
-   * a single element.
-   * fun is passed as a function object. It is a class that overloads the 
-   * operator()
-   */
-  template<typename Precision, typename Function>
-  void DotFunOverwrite(Function &fun,
-               GenVector<Precision> *A, 
-               const GenVector<Precision> &B);
 
   /**
    * Sums the elements of a memory block
-   * (\f$ sum(A))
+   * (\f$ sum(A)\f$)
    * Notice: Because summation can lead to overflow we have a second
    * template parameter called RetPrecision for defining the Precision
    * of the sum. 
    */
   template<typename Precision, typename RetPrecision>
   RetPrecision Sum(const index_t length, 
-      const Precision *A);
+      const Precision *A) {
+    RetPrecision sum=0;
+    for(index_t i=0; i<length; i++) {
+      sum+=A[i];
+    }
+    return sum;
+  }
 
   /**
    * it sums all the elements of matrix A
@@ -657,21 +488,25 @@ namespace la {
    *
    */ 
   template<typename Precision, typename RetPrecision>
-  RetPrecision Sum(const index_t length, 
-      const GenMatrix<Precision> &A);
+  RetPrecision Sum(const GenMatrix<Precision> &A) {
+    return Sum<Precision, RetPrecision>(A.n_elements(), A.ptr());  
+  }
   
   /**
    * it sums all the columns of matrix A
    * (\f$ sum(A)\f$)
    *
    */ 
-  template<typename Precision, typename RetPrecision>
-  void SumInit(const GenMatrix<Precision> &A,
-      GenVector<RetPrecision> *col_sums);
-
-  template<typename Precision, typename RetPrecision>
-  void SumOverwrite(const GenMatrix<Precision> &A,
-      GenVector<RetPrecision> *col_sums);
+  template<typename Precision, MemoryAlloc MemAlloc, typename RetPrecision>
+  void SumCols(const GenMatrix<Precision> &A,
+      GenVector<RetPrecision> *col_sums) {
+    AllocatorTrait<MemAlloc>::Init(A.n_cols(), col_sums);    
+    RetPrecision *ptr=col_sums->ptr();
+    for(index_t i=0; i<A.n_cols(); i++) {
+      ptr[i]=Sum<Precision, RetPrecision>(A.n_rows(),
+          A.GetColumnPtr(i));
+    }
+  }
 
   /**
    * it sums all the rows of matrix A
@@ -679,36 +514,102 @@ namespace la {
    *
    */ 
   template<typename Precision, typename RetPrecision>
-  void SumInit(const GenMatrix<Precision> &A,
-      GenVector<RetPrecision> *row_sums);
+  void SumRows(const GenMatrix<Precision> &A,
+      GenVector<RetPrecision> *row_sums) {
+    AllocatorTrait<MemAlloc>::Init(A.n_rows(), row_sums);    
+    RetPrecision *ptr=row_sums->ptr();
+    for(index_t i=0; i<A.n_rows(); i++) {
+      ptr[i]=0;
+      for(index_t j=0; j<A.n_cols(); j++) {
+        ptr[i]+=A.get(i,j);
+      }        
+    }
+  }
   
-  template<typename Precision, typename RetPrecision>
-  void SumOverwrite(const GenMatrix<Precision> &A,
-      GenVector<RetPrecision> *row_sums);
-
   /**
    * Sums the elements of a Vector
-   * (\f$ sum(\vec{A}))
+   * (\f$ sum(\vec{A})\f$)
    * Notice: Because summation can lead to overflow we have a second
    * template parameter called RetPrecision for defining the Precision
    * of the sum. 
    */
   template<typename Precision, typename RetPrecision>
-  void RetPrecision Sum(const GenVector<Precision> &A);
+  RetPrecision RetPrecision Sum(const GenVector<Precision> &A) {    
+    return Sum<Precison, RetPrecision>(A.length(), A.ptr());
+  }
 
   /**
-   * Sums the elements of a memory block preprocessed with a function
-   * (\f$ sum(fun(A)))
+   * Multiplies the elements of a memory block
+   * (\f$ prod(A) \f$)
    * Notice: Because summation can lead to overflow we have a second
    * template parameter called RetPrecision for defining the Precision
    * of the sum. 
-   * Class Function is a function object so it must implement
-   * the operator()
    */
-  template<typename Precision, typename RetPrecision, Function fun>
-  RetPrecision FunSum(const index_t length,
-      Function &fun, 
-      const Precision *A);
+  template<typename Precision, typename RetPrecision>
+  RetPrecision Prod(const index_t length, 
+      const Precision *A) {
+    RetPrecision prod=1;
+    for(index_t i=0; i<length; i++) {
+      prod*=A[i];
+    }
+    return sum;
+  }
+
+  /**
+   * it  multiplies all the elements of matrix A
+   * (\f$ prod(prod(A))\f$)
+   *
+   */ 
+  template<typename Precision, typename RetPrecision>
+  RetPrecision Prod(const GenMatrix<Precision> &A) {
+    return Prod<Precision, RetPrecision>(A.n_elements(), A.ptr());  
+  }
+  
+  /**
+   * it prods all the columns of matrix A
+   * (\f$ prod(A)\f$)
+   *
+   */ 
+  template<typename Precision, MemoryAlloc MemAlloc, typename RetPrecision>
+  void ProdCols(const GenMatrix<Precision> &A,
+      GenVector<RetPrecision> *col_prods) {
+    AllocatorTrait<MemAlloc>::Init(A.n_cols(), col_sums);    
+    RetPrecision *ptr=col_prods->ptr();
+    for(index_t i=0; i<A.n_cols(); i++) {
+      ptr[i]=Prod<Precision, RetPrecision>(A.n_rows(),
+          A.GetColumnPtr(i));
+    }
+  }
+
+  /**
+   * it multiplies all the rows of matrix A
+   * (\f$ prod(A,2)\f$)
+   *
+   */ 
+  template<typename Precision, typename RetPrecision>
+  void ProdRows(const GenMatrix<Precision> &A,
+      GenVector<RetPrecision> *row_prods) {
+    AllocatorTrait<MemAlloc>::Init(A.n_rows(), row_sums);    
+    RetPrecision *ptr=row_prods->ptr();
+    for(index_t i=0; i<A.n_prods(); i++) {
+      ptr[i]=1;
+      for(index_t j=0; j<A.n_cols(); j++) {
+        ptr[i]*=A.get(i,j);
+      }        
+    }
+  }
+  
+  /**
+   * Multiplies the elements of a Vector
+   * (\f$ prod(\vec{A})\f$)
+   * Notice: Because summation can lead to overflow we have a second
+   * template parameter called RetPrecision for defining the Precision
+   * of the prod. 
+   */
+  template<typename Precision, typename RetPrecision>
+  RetPrecision RetPrecision Prod(const GenVector<Precision> &A) {    
+    return Prod<Precison, RetPrecision>(A.length(), A.ptr());
+  }
 
   /**
    * it sums all the elements of matrix A preprocessed with a function
@@ -720,7 +621,14 @@ namespace la {
   template<typename Precision, typename RetPrecision, typename Function>
   RetPrecision FunSum(const index_t length,
       Function *fun, 
-      const GenMatrix<Precision> &A);
+      const GenMatrix<Precision> &A) {
+    RetPrecision sum=0;
+    for(index_t i=0; i<length; i++) {
+      sum+=fun(A[i]);
+    }
+    return sum;
+
+  }
   
   /**
    * it sums all the columns of matrix A preprocessed with a function
@@ -728,32 +636,35 @@ namespace la {
    * Class Function is a function object so it must implement
    * the operator() 
    */ 
-  template<typename Precision, typename RetPrecision, typename Function>
-  void FunSumInit(Function &fun, 
+  template<typename Precision, typename RetPrecision, 
+           MemoryAllocator MemAlloc, typename Function>
+  RetPrecision FunSumCols(Function &fun, 
       const GenMatrix<Precision> &A,
-      GenVector<RetPrecision> *col_sums);
+      GenVector<RetPrecision> *col_sums) {
+    AllocatorTrait<MemAlloc>::Init(A.n_cols(), col_sums);    
+    RetPrecision *ptr=col_sums->ptr();
+    for(index_t i=0; i<A.n_cols(); i++) {
+      ptr[i]=FunSum<Precision, RetPrecision, MemAlloc, Function>(A.n_rows(),
+          fun, A.GetColumnPtr(i));
+    } 
+  }
 
-  template<typename Precision, typename RetPrecision, typename Function>
-  void FunSumOverwrite(Function &fun,
-      const GenMatrix<Precision> &A,
-      GenVector<RetPrecision> *col_sums);
-
-  /**
-   * it sums all the rows of matrix A preprocessed with a function
-   * (\f$ sum(A,2)\f$)
-   * Class Function is a function object so it must implement
-   * the operator() 
-   *
-   */ 
-  template<typename Precision, typename RetPrecision, typename Function>
-  void FunSumInit(Function &fun,
-      const GenMatrix<Precision> &A,
-      GenVector<RetPrecision> *row_sums);
-  
-  template<typename Precision, typename RetPrecision, typename Function>
-  void FunSumOverwrite(Function &fun,
-      const GenMatrix<Precision> &A,
-      GenVector<RetPrecision> *row_sums);
+  template<typename Precision, typename RetPrecision, 
+           MemoryAllocator MemAlloc, typename Function>
+  RetPrecision FunSumRows(Function &fun, 
+                          const GenMatrix<Precision> &A,
+                          GenVector<RetPrecision> *rows_sums) {
+    
+    AllocatorTrait<MemAlloc>::Init(A.n_rows(), row_sums);    
+    RetPrecision *ptr=row_sums->ptr();
+    for(index_t i=0; i<A.n_rows(); i++) {
+      ptr[i]=0;
+      for(index_t j=0; j<A.n_cols(); j++) {
+        ptr[i]+=fun(A.get(i,j));
+      }        
+    }
+  }
+ 
 
   /**
    * Sums the elements of a Vector preprocessed with a function
@@ -764,7 +675,10 @@ namespace la {
    */
   template<typename Precision, typename RetPrecision, typename Function>
   void RetPrecision FunSum(Function &fun,                      
-                           const GenVector<Precision> &A);
+                           const GenVector<Precision> &A) {
+   return FunSum<Precison, RetPrecision, Function>(A.length(), fun, A.ptr());
+
+  }
 
 
 
@@ -776,7 +690,10 @@ namespace la {
   template<typename Precision>
   void Zeros(const index_t rows, 
              consr index_t cols, 
-             GenMatrix<Precision> *A); 
+             GenMatrix<Precision> *A) {
+    A->Init(rows, cols, A);
+    A->SetAll(Precision(0.0));
+  }
 
   /**
    *  Matlab like utility function for returning a vector initialized
@@ -785,7 +702,10 @@ namespace la {
    */
   template<typename Precision>
   void Zeros(const index_t length 
-             GenVector<Precision> *A); 
+             GenVector<Precision> *A) {
+    A->Init(length);
+    A->SetAll(0.0);
+  }
 
   /**
    *  Matlab like utility function for returning a matrix initialized
@@ -795,7 +715,10 @@ namespace la {
   template<typename Precision>
   void Ones(const index_t rows, 
             const index_t cols, 
-            GenMatrix<Precision> *A); 
+            GenMatrix<Precision> *A) {
+     A->Init(rows, cols, A);
+     A->SetAll(Precision(1.0));
+  }
 
   /**
    *  Matlab like utility function for returning a vector initialized
@@ -804,7 +727,10 @@ namespace la {
    */
   template<typename Precision>
   void Ones(const index_t length, 
-             GenVector<Precision> *A); 
+             GenVector<Precision> *A) {
+    A->Init(length);
+    A->SetAll(1.0);
+  }
 
   /**
    *  Matlab like utility function for returning a matrix initialized
@@ -816,7 +742,14 @@ namespace la {
             const index_t cols,
             const index_t lo,
             const index_t hi,
-            GenMatrix<Precision> *A); 
+            GenMatrix<Precision> *A) {
+    A->Init(rows, cols);
+    for(index_t i=0; i<rows; i++) {
+      for(index_t j=0; j<cols; j++) {
+        A.set(i, j, math::Rand(lo, hi));
+      }
+    }
+  } 
 
   /**
    *  Matlab like utility function for returning a vector initialized
@@ -827,15 +760,22 @@ namespace la {
   void Rand(const index_t length,
             const index_t lo,
             const index_t hi, 
-            GenVector<Precision> *A); 
+            GenVector<Precision> *A) {
+    A->Init(length);
+    for(index_t i=0; i<length; i++) {
+      A->set(i, math::Rand(lo, hi));
+    }
+  }
  
   /**
    *  Matlab like utility function for generating  identity matrix 
    *
    */
   template<typename Precision>
-  void Eye(index_t size, 
-           GenMatrix<Precision> *I);
+  void Eye(index_t dimension, 
+           GenMatrix<Precision> *I) {
+    I->InitDiagonal(dimension, Precision(1.0));
+  }
 };
 
 #endif
