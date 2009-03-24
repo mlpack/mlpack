@@ -105,6 +105,8 @@ class ContinuousFmm {
   /** @brief The accumulated potential for each query particle.
    */
   Vector potentials_;
+  
+  Vector test_permutation_;
 
   ////////// Private Member Functions //////////
 
@@ -226,10 +228,12 @@ class ContinuousFmm {
 		 proximity::CFmmTree<FmmStat> *reference_node,
 		 Vector &potentials) {
     
+    
     index_t query_point_indexing = 
       (shuffled_reference_particle_set_.ptr() == 
        shuffled_query_particle_set_.ptr()) ? 0:1;
-
+     
+    
     for(index_t q = query_node->begin(query_point_indexing); 
 	q < query_node->end(query_point_indexing); q++) {
       
@@ -242,9 +246,9 @@ class ContinuousFmm {
 	// Compute the pairwise distance, if the query and the
 	// reference are not the same particle.
     // We need to compute the self-interaction as well - BM
-	/*if(leave_one_out_ && q == r) {
+	if(leave_one_out_ && q == r) {
 	  continue;
-	}*/
+	}
 	const double *r_col = shuffled_reference_particle_set_.GetColumnPtr(r);
 	
 	double sq_dist = la::DistanceSqEuclidean
@@ -260,16 +264,19 @@ class ContinuousFmm {
 	// in the page 2 of the CFMM paper...
     
 	if(dist > 0) {
-      // multiply by 2 for symmetry - BM
+      
 	  potentials[q] += shuffled_reference_particle_charge_set_[r] * 
                         erf(erf_argument * dist) / dist;
 	}
 	else {
       if (q == r) {
-        potentials[q] += shuffled_reference_particle_charge_set_[r]/erf_argument;
+        potentials[q] += shuffled_reference_particle_charge_set_[r] * 
+                            erf_argument * 2 / sqrt_pi_;
       }
       else {
-	  potentials[q] += 2 * shuffled_reference_particle_charge_set_[r] / erf_argument;
+      // not sure if I should really multiply by 2 here
+	  potentials[q] += shuffled_reference_particle_charge_set_[r] * erf_argument
+                         * 2 / sqrt_pi_;
       }
     }
       }
@@ -416,6 +423,7 @@ class ContinuousFmm {
 		    current_reference_child->stat().farfield_expansion_.
 		      TranslateToLocal(node->stat().local_expansion_,
 				       sea_.get_max_order());
+            printf("multipole approx\n");
 		  }
 		  else {
 		    BaseCase_(node, current_reference_child, potentials_);
@@ -534,7 +542,9 @@ class ContinuousFmm {
     // Reshuffle the results to account for dataset reshuffling
     // resulted from tree constructions.
     ReshuffleResults_(potentials_);
-
+    ReshuffleResults_(test_permutation_);
+    test_permutation_.PrintDebug();
+    
     // Output the results to the file.
     //OutputResultsToFile_(potentials_, "fast_fmm_output.txt");
     
@@ -552,8 +562,10 @@ class ContinuousFmm {
     module_ = module_in;
     
     // Set the flag for whether to perform leave-one-out computation.
-    leave_one_out_ = (queries.ptr() == references.ptr());
-
+    //leave_one_out_ = (queries.ptr() == references.ptr());
+    // this should always be false, since the self interaction is important - BM
+    leave_one_out_ = false;
+    
     // Read in the number of points owned by a leaf.
     int leaflen = std::max((long long int) 1, 
 			   fx_param_int(module_in, "leaflen", 1));
@@ -611,6 +623,8 @@ class ContinuousFmm {
     fx_timer_stop(NULL, "tree_d");
 
     printf("Constructed the tree...\n");
+    ot::Print(old_from_new_index_);
+    //tree_->Print();
     
     // Shuffle the reference particle charges, the reference particle
     // bandwidths, and the reference particle extents according to the
@@ -621,6 +635,16 @@ class ContinuousFmm {
       (shuffled_reference_particle_bandwidth_set_, old_from_new_index_[0]);
     MultiTreeUtility::ShuffleAccordingToPermutation
       (shuffled_reference_particle_extent_set_, old_from_new_index_[0]);
+
+    test_permutation_.Init(rset_weights.n_cols());
+    for (index_t i = 0; i < rset_weights.n_cols(); i++) {
+      test_permutation_[i] = i;
+    }
+    MultiTreeUtility::ShuffleAccordingToPermutation(test_permutation_, 
+                                                    old_from_new_index_[0]);
+    test_permutation_.PrintDebug();
+      
+    //ot::Print(shuffled_reference_particle_charge_set_);
 
     // Retrieve the lambda order needed for expansion. The CFMM uses
     // the Coulombic kernel, hence always 1...

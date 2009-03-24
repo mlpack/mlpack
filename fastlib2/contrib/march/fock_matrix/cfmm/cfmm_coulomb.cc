@@ -76,9 +76,65 @@ void CFMMCoulomb::MultipoleComputation_() {
 
 } // MultipoleComputation
 
+double CFMMCoulomb::NaiveBaseCase_(Vector& q_col, double q_band, Vector& r_col, 
+                                  double r_band, double r_charge) {
+
+  double potential = 0.0;
+
+  double sq_dist = la::DistanceSqEuclidean(q_col, r_col);
+  double dist = sqrt(sq_dist);
+  double erf_argument = sqrt(q_band * r_band / (q_band + r_band));
+  
+  // This implements the kernel function used for the base case
+  // in the page 2 of the CFMM paper...
+  
+  if(dist > 0) {
+    potential += r_charge * erf(erf_argument * dist) / dist;
+  }
+  else {
+    // F_0 needs to be 1, not sqrt(pi)/2
+    potential += r_charge * erf_argument * 2 / sqrt(math::PI);
+  }
+  
+  return potential;
+  
+}
+
 void CFMMCoulomb::NaiveComputation_() {
+  
+  /*
   multipole_output_.Destruct();
   cfmm_algorithm_.NaiveCompute(&multipole_output_);
+   */
+   
+  multipole_output_.Destruct();
+  multipole_output_.Init(num_shell_pairs_);
+  multipole_output_.SetZero();
+  
+  printf("doing naive\n");
+  
+  for(index_t q = 0; q < num_shell_pairs_; q++) {
+  
+    Vector q_col;
+    charge_centers_.MakeColumnVector(q, &q_col);
+    
+    double q_band = charge_exponents_.ref(0, q);
+  
+    for (index_t r = 0; r < num_shell_pairs_; r++) {
+    
+      Vector r_col;
+      charge_centers_.MakeColumnVector(r, &r_col);
+      double r_band = charge_exponents_.ref(0, r);
+      
+      double r_charge = charges_.ref(0, r);
+    
+      multipole_output_[q] += NaiveBaseCase_(q_col, q_band, r_col, r_band, 
+                                             r_charge);
+    
+    }
+  
+  }
+  
 }
 
 
@@ -97,6 +153,7 @@ void CFMMCoulomb::MultipoleCleanup_() {
     
     coulomb_entry *= shell_pairs_[i].integral_factor();
     coulomb_entry /= pow(shell_pairs_[i].exponent(), 1.5);
+    // extra square root of pi/2 from erf
     coulomb_entry *= pow(math::PI, 3.0);
     coulomb_entry *= shell_pairs_[i].M_Shell().normalization_constant();
     coulomb_entry *= shell_pairs_[i].N_Shell().normalization_constant();
