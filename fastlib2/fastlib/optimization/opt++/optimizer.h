@@ -46,6 +46,8 @@ namespace optim {
  *   typedef OPTPP::OptQNewton  BFGS;    // for BFGS
  *   typedef OPTPP::OptFDNewton FDNewton;// for newton with finite differences
  *   typedef OPTPP::OptNewton   Newton;  // for standard newton
+ *   typedef OPTPP::BCNewton    BCNewton;// for bound constraint newton
+ *   typedef OPTPP::OptConstrNewton CNewton; //for constrained Newton
  *   typedef OPTPP::OptLBFGS    LBFGS;   // for limited BFGS
  * @endcode
  */  
@@ -55,6 +57,8 @@ typedef OPTPP::OptQNewton  QNewton;
 typedef OPTPP::OptQNewton  BFGS;
 typedef OPTPP::OptFDNewton FDNewton;
 typedef OPTPP::OptNewton   Newton;
+typedef OPTPP::OptBCNewton BCNewton;
+typedef OPTPP::OptConstrNewton CNewton;
 typedef OPTPP::OptLBFGS    LBFGS;
 
 /**
@@ -612,6 +616,56 @@ class NonLinearInequalityTrait<Method, Objective, true> {
     } 
   } 
 };
+template<typename Method>
+class SearchStrategyTrait {
+ public:
+   static void SetSearchStrategy(Method *method, fx_module *module) {
+   
+   }
+};
+
+template<>
+class SearchStrategyTrait<OPTPP::OptConstrNewtonLike> {
+ public: 
+  static void SetSearchStrategy(OPTPP::OptConstrNewtonLike *method, fx_module *module) {
+    if (fx_param_exists(module, "strategy")) {
+      std::string strategy=fx_param_str_req(module, "strategy");
+      if (strategy=="linesearch") {
+        method->SetSearchStrategy(OPTPP::LineSearch);
+      } else {
+        if (strategy=="trustregion") {
+          method->SetSearchStrategy(OPTPP::TrustRegion);
+        } else {
+          if (strategy=="trustpds") {
+            method->SetSearchStrategy(OPTPP::TrustPDS);
+          }
+        }
+      }    
+    }
+  }
+};
+
+template<>
+class SearchStrategyTrait<OPTPP::OptBCNewton> {
+ public: 
+  static void SetSearchStrategy(OPTPP::OptBCNewtonLike *method, fx_module *module) {
+    if (fx_param_exists(module, "strategy")) {
+      std::string strategy=fx_param_str_req(module, "strategy");
+      if (strategy=="linesearch") {
+        method->SetSearchStrategy(OPTPP::LineSearch);
+      } else {
+        if (strategy=="trustregion") {
+          method->SetSearchStrategy(OPTPP::TrustRegion);
+        } else {
+          if (strategy=="trustpds") {
+            method->SetSearchStrategy(OPTPP::TrustPDS);
+          }
+        }
+      }    
+    }
+  }
+};
+
 
 template <typename Method, typename Objective, ConstraintType Constraint>
 class StaticOptppOptimizer {
@@ -676,6 +730,7 @@ class StaticOptppOptimizer {
   
     tols.setMaxIter(fx_param_int(module_, "max_iter", 1000));
     method_ = new Method(nlp_, tols);
+    SearchStrategyTrait<Method>::SetSearchStrategy(method_, module_);
     // setting some generic options for the optimization method
     const char *status_file=fx_param_str(module_, "status_file", "status.txt" );
     if (method_->setOutputFile(status_file, 0)==false) {
