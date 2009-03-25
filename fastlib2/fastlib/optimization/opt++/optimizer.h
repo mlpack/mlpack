@@ -633,13 +633,13 @@ class SearchStrategyTrait<OPTPP::OptConstrNewtonLike> {
     if (fx_param_exists(module, "strategy")) {
       std::string strategy=fx_param_str_req(module, "strategy");
       if (strategy=="linesearch") {
-        method->SetSearchStrategy(OPTPP::LineSearch);
+        method->setSearchStrategy(OPTPP::LineSearch);
       } else {
         if (strategy=="trustregion") {
-          method->SetSearchStrategy(OPTPP::TrustRegion);
+          method->setSearchStrategy(OPTPP::TrustRegion);
         } else {
           if (strategy=="trustpds") {
-            method->SetSearchStrategy(OPTPP::TrustPDS);
+            method->setSearchStrategy(OPTPP::TrustPDS);
           }
         }
       }    
@@ -654,13 +654,13 @@ class SearchStrategyTrait<OPTPP::OptBCNewton> {
     if (fx_param_exists(module, "strategy")) {
       std::string strategy=fx_param_str_req(module, "strategy");
       if (strategy=="linesearch") {
-        method->SetSearchStrategy(OPTPP::LineSearch);
+        method->setSearchStrategy(OPTPP::LineSearch);
       } else {
         if (strategy=="trustregion") {
-          method->SetSearchStrategy(OPTPP::TrustRegion);
+          method->setSearchStrategy(OPTPP::TrustRegion);
         } else {
           if (strategy=="trustpds") {
-            method->SetSearchStrategy(OPTPP::TrustPDS);
+            method->setSearchStrategy(OPTPP::TrustPDS);
           }
         }
       }    
