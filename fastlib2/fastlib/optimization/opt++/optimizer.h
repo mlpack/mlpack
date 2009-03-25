@@ -22,6 +22,8 @@
 #include "include/OptLBFGS.h"
 #include "include/OptFDNewton.h"
 #include "include/OptNewton.h"
+#include "include/OptBCNewton.h"
+#include "include/OptConstrNewton.h"
 #include "include/OptQNewton.h"
 #include "include/BoundConstraint.h"
 #include "include/CompoundConstraint.h"
