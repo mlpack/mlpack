@@ -122,6 +122,31 @@ class SpikeSeqPair {
 
   }
 
+  void ConstructPoints() {
+    int n_spikes = all_spikes.size();
+
+    int cur_spike = n_spikes - 1;
+
+    int n_x_spikes;
+    int n_y_spikes;
+
+    // referencing to X
+    for(int cur_spike = n_spikes - 1;
+	(n_x_spikes < tau_) || (n_y_spikes < tau_)) {
+      if(all_spikes[cur_spike].label == 0) {
+	n_x_spikes++;
+      }
+      else {
+	n_y_spikes++;
+      }
+      cur_spike--;
+    }
+
+
+
+
+  }
+
 };
 
 
