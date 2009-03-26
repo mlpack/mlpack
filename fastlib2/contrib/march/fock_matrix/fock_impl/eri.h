@@ -15,6 +15,8 @@ namespace eri {
   
   double F_m(double z, int m);
   
+  double BinomialCoeff(int pow, int mom1, int mom2, double dist1, double dist2);
+  
   double ComputeNormalization(BasisShell& shell);
   
   double ComputeNormalization(double exp, index_t momentum);

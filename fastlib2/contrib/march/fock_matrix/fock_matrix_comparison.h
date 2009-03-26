@@ -37,18 +37,18 @@ class FockMatrixComparison {
   bool compare_coulomb_;
   bool compare_exchange_;
   
-  Matrix* mat1_F_;
-  Matrix* mat1_J_;
-  Matrix* mat1_K_;
+  Matrix* F_mat_;
+  Matrix* J_mat_;
+  Matrix* K_mat_;
   
-  Matrix* mat2_F_;
-  Matrix* mat2_J_;
-  Matrix* mat2_K_;
+  Matrix* naive_F_mat_;
+  Matrix* naive_J_mat_;
+  Matrix* naive_K_mat_;
   
   fx_module* my_mod_;
   
-  fx_module* mod1_;
-  fx_module* mod2_;
+  fx_module* approx_mod_;
+  fx_module* naive_mod_;
   
   index_t num_entries_;
 

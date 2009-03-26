@@ -1,23 +1,23 @@
 #include "fock_matrix_comparison.h"
 
-void FockMatrixComparison::Init(fx_module* mod1, Matrix** mat1, 
-                                fx_module* mod2, Matrix** mat2, 
+void FockMatrixComparison::Init(fx_module* exp_mod, Matrix** exp_mats, 
+                                fx_module* naive_mod, Matrix** naive_mats, 
                                 fx_module* my_mod) {
            
-  mod1_ = mod1;
-  mod2_ = mod2;
+  approx_mod_ = exp_mod;
+  naive_mod_ = naive_mod;
   
-  mat1_F_ = mat1[0];
-  mat1_J_ = mat1[1];
-  mat1_K_ = mat1[2];
+  F_mat_ = exp_mats[0];
+  J_mat_ = exp_mats[1];
+  K_mat_ = exp_mats[2];
   
-  mat2_F_ = mat2[0];
-  mat2_J_ = mat2[1];
-  mat2_K_ = mat2[2];
+  naive_F_mat_ = naive_mats[0];
+  naive_J_mat_ = naive_mats[1];
+  naive_K_mat_ = naive_mats[2];
   
-  compare_fock_ = (mat1_F_ != NULL) && (mat2_F_ != NULL);
-  compare_coulomb_ = (mat1_J_ != NULL) && (mat2_J_ != NULL);
-  compare_exchange_ = (mat1_K_ != NULL) && (mat2_K_ != NULL);
+  compare_fock_ = F_mat_ != NULL;
+  compare_coulomb_ = J_mat_ != NULL;
+  compare_exchange_ = K_mat_ != NULL;
   
   my_mod_ = my_mod;
   
@@ -29,18 +29,10 @@ void FockMatrixComparison::Init(fx_module* mod1, Matrix** mat1,
   total_diff_J_ = 0.0;
   total_diff_K_ = 0.0;
   
-  num_entries_ = mat1_F_->n_cols();
-  
-  // check that all matrices are square
-  DEBUG_ASSERT(mat1_F_->n_cols() == mat1_F_->n_rows());
-  DEBUG_ASSERT(mat2_F_->n_cols() == mat2_F_->n_rows());
+  num_entries_ = naive_F_mat_->n_cols();
   
   // check that all matrices are the same size
-  DEBUG_ASSERT(mat1_F_->n_cols() == mat2_F_->n_cols());
   
-  
-  
-                                                     
 } // Init()
 
 
@@ -52,8 +44,8 @@ void FockMatrixComparison::Compare() {
     
       if (compare_fock_) {
       
-        double F_entry1 = mat1_F_->ref(i, j);
-        double F_entry2 = mat2_F_->ref(i, j);
+        double F_entry1 = F_mat_->ref(i, j);
+        double F_entry2 = naive_F_mat_->ref(i, j);
       
         double this_diff = abs(F_entry1 - F_entry2);
             
@@ -74,8 +66,8 @@ void FockMatrixComparison::Compare() {
       
       if (compare_coulomb_) {
       
-        double J_entry1 = mat1_J_->ref(i, j);
-        double J_entry2 = mat2_J_->ref(i, j);
+        double J_entry1 = J_mat_->ref(i, j);
+        double J_entry2 = naive_J_mat_->ref(i, j);
         
         double this_diff = abs(J_entry1 - J_entry2);
         
@@ -96,8 +88,8 @@ void FockMatrixComparison::Compare() {
       
       if (compare_exchange_) {
         
-        double K_entry1 = mat1_K_->ref(i, j);
-        double K_entry2 = mat2_K_->ref(i, j);
+        double K_entry1 = K_mat_->ref(i, j);
+        double K_entry2 = naive_K_mat_->ref(i, j);
         
         double this_diff = abs(K_entry1 - K_entry2);
         
@@ -155,8 +147,30 @@ void FockMatrixComparison::Compare() {
 
 void FockMatrixComparison::Destruct() {
 
-
-
+  if (F_mat_) {
+    F_mat_.Destruct();
+  }
+  if (naive_F_mat_) {
+    naive_F_mat_.Destruct();
+  }
+  if (J_mat_) {
+    J_mat_.Destruct();
+  }
+  if (naive_J_mat_) {
+    naive_J_mat_.Destruct();
+  }
+  if (K_mat_) {
+    K_mat_.Destruct();
+  }
+  if (naive_K_mat_) {
+    naive_K_mat_.Destruct();
+  }
+  
+  my_mod_ = NULL;
+  approx_mod_ = NULL;
+  naive_mod_ = NULL;
+  
+  
 } // Destruct()
 
 
