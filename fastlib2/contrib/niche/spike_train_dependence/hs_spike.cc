@@ -15,6 +15,7 @@ int main(int argc, char* argv[]) {
 
   spikes_pair.Merge();
   spikes_pair.PrintAllSpikes();
+  spikes_pair.ConstructPoints();
   //spikes_pair.XRef();
 
   
