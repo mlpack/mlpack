@@ -28,7 +28,8 @@ const fx_entry_doc fock_matrix_main_entries[] = {
 {"do_prescreening", FX_PARAM, FX_STR, NULL,
   "Compute the Fock matrix with Scwartz prescreening.  The value is irrelevant.\n"},
 {"do_naive", FX_PARAM, FX_STR, NULL,
-  "Compute the Fock matrix naively.  The value is irrelevant.\n"},
+  "Compute the Fock matrix naively.  Specifying this will recompute the naive\n"
+  "matrices, even if they already exist.\n"},
 {"do_multi", FX_PARAM, FX_STR, NULL,
   "Compute the multi-tree Fock matrix.  The value is irrelevant.\n"},
 {"print_cfmm", FX_PARAM, FX_STR, NULL,
@@ -40,7 +41,15 @@ const fx_entry_doc fock_matrix_main_entries[] = {
 {"print_naive", FX_PARAM, FX_STR, NULL,
   "Print the Fock matrix naively.  The value is irrelevant.\n"},
 {"print_multi", FX_PARAM, FX_STR, NULL,
-  "Print the multi-tree Fock matrix.  The value is irrelevant.\n"},  
+  "Print the multi-tree Fock matrix.  The value is irrelevant.\n"}, 
+{"compare_cfmm", FX_PARAM, FX_STR, NULL,
+  "Compare the result to naive. \n"}, 
+{"compare_link", FX_PARAM, FX_STR, NULL,
+  "Compare the result to naive. \n"}, 
+{"compare_prescreening", FX_PARAM, FX_STR, NULL,
+  "Compare the result to naive. \n"}, 
+{"compare_multi", FX_PARAM, FX_STR, NULL,
+  "Compare the result to naive. \n"}, 
   FX_ENTRY_DOC_DONE
 };
 
@@ -115,6 +124,76 @@ int main(int argc, char* argv[]) {
   
   }
   
+  // Have the naive matrices on hand if needed 
+  Matrix naive_fock;
+  Matrix naive_coulomb;
+  Matrix naive_exchange;
+  
+  // these won't work with fx_run
+  const char* naive_fock_file = "naive_storage/" + centers_file + "_" + 
+    exp_file + "_F.csv";
+  const char* naive_coulomb_file = "naive_storage/" + centers_file + "_" + 
+    exp_file + "_J.csv";
+  const char* naive_exchanges_file = "naive_storage/" + centers_file + "_" + 
+    exp_file + "_K.csv";
+    
+  bool do_naive = fx_param_exists(root_mod, "do_naive");
+  
+  fx_module* naive_mod = fx_submodule(root_mod, "naive");
+  
+  Matrix** naive_mats;
+  
+  // if we are going to compare
+  if (fx_param_exists(root_mod, "compare_cfmm") || 
+      fx_param_exists(root_mod, "compare_link") || 
+      fx_param_exists(root_mod, "compare_prescreening") || 
+      fx_param_exists(root_mod, "compare_multi")) {
+
+
+    // try to load them
+    if ((data::Load(naive_fock_file, &naive_fock) == SUCCESS_FAIL) ||
+        (data::Load(naive_coulomb_file, &naive_coulomb) == SUCCESS_FAIL) ||
+        (data::Load(naive_exchange_file, &naive_exchange) == SUCCESS_FAIL)) {
+     
+      // destruct them if they didn't load
+      naive_fock.Destruct();
+      naive_coulomb.Destruct();
+      naive_exchange.Destruct();
+      
+      // if it's not already going to get done, it needs to be done
+      do_naive = true;
+      
+    }
+  
+  }
+    
+  if (do_naive) {
+    
+    NaiveFockMatrix naive_alg;
+    
+    naive_alg.Init(centers, exp_mat, momenta, density, naive_mod);
+    naive_alg.ComputeFock();
+    naive_alg.OutputFock(&naive_fock, &naive_coulomb, &naive_exchange);
+    
+    if (fx_param_exists(root_mod, "print_naive")) {
+      
+      naive_fock.PrintDebug("Naive F");
+      naive_coulomb.PrintDebug("Naive J");
+      naive_exchange.PrintDebug("Naive K");
+      
+    }
+    
+    data::Save(naive_fock_file, naive_fock);
+    data::Save(naive_coulomb_file, naive_coulomb);
+    data::Save(naive_exchange_file, naive_exchange);
+    
+  } // do_naive
+  
+  naive_mats = (Matrix**)malloc(3*sizeof(Matrix*));
+  naive_mats[0] = &naive_fock;
+  naive_mats[1] = &naive_coulomb;
+  naive_mats[2] = &naive_exchange;
+  
   
   if (fx_param_exists(root_mod, "do_cfmm")) {
   
@@ -131,6 +210,22 @@ int main(int argc, char* argv[]) {
     if (fx_param_exists(root_mod, "print_cfmm")) {
       cfmm_coulomb.PrintDebug("CFMM J");
     }
+    
+    if (fx_param_exists(root_mod, "compare_cfmm") {
+    
+      fx_module* cfmm_compare_mod = fx_submodule(cfmm_mod, "compare");
+      
+      Matrix** cfmm_mats;
+      cfmm_mats = (Matrix**)malloc(3 * sizeof(Matrix*));
+      cfmm_mats[0] = NULL;
+      cfmm_mats[1] = &cfmm_coulomb;
+      cfmm_mats[2] = NULL;
+      
+      FockMatrixComparison cfmm_compare;
+      cfmm_compare.Init(cfmm_mod, cfmm_mats, naive_mod, naive_mats, 
+                        cfmm_compare_mod);
+    
+    } // cfmm comparison
         
   } // do_cfmm
   
@@ -153,6 +248,23 @@ int main(int argc, char* argv[]) {
       
     }
     
+    if (fx_param_exists(root_mod, "compare_link") {
+      
+      fx_module* link_compare_mod = fx_submodule(link_mod, "compare");
+      
+      Matrix** link_mats;
+      link_mats = (Matrix**)malloc(3 * sizeof(Matrix*));
+      link_mats[0] = NULL;
+      link_mats[1] = NULL;
+      link_mats[2] = &link_exchange;
+      
+      FockMatrixComparison link_compare;
+      prescreening_compare.Init(link_mod, link_mats, naive_mod, naive_mats, 
+                        link_compare_mod);
+      
+    } // cfmm comparison
+        
+    
   } // do_link
 
 
@@ -173,32 +285,26 @@ int main(int argc, char* argv[]) {
       
     }
     
+    if (fx_param_exists(root_mod, "compare_prescreening") {
+      
+      fx_module* prescreening_compare_mod = fx_submodule(prescreening_mod, "compare");
+      
+      Matrix** prescreening_mats;
+      prescreening_mats = (Matrix**)malloc(3 * sizeof(Matrix*));
+      prescreening_mats[0] = &prescreening_fock;
+      prescreening_mats[1] = NULL;
+      prescreening_mats[2] = NULL;
+      
+      FockMatrixComparison prescreening_compare;
+      prescreening_compare.Init(prescreening_mod, prescreening_mats, naive_mod, 
+                                naive_mats, prescreening_compare_mod);
+      
+    } // cfmm comparison
+        
+    
   } // do_prescreening
   
-  if (fx_param_exists(root_mod, "do_naive")) {
     
-    Matrix naive_fock;
-    Matrix naive_coulomb;
-    Matrix naive_exchange;
-    
-    fx_module* naive_mod = fx_submodule(root_mod, "naive");
-    
-    NaiveFockMatrix naive_alg;
-    
-    naive_alg.Init(centers, exp_mat, momenta, density, naive_mod);
-    naive_alg.ComputeFock();
-    naive_alg.OutputFock(&naive_fock, &naive_coulomb, &naive_exchange);
-    
-    if (fx_param_exists(root_mod, "print_naive")) {
-      
-      naive_fock.PrintDebug("Naive F");
-      naive_coulomb.PrintDebug("Naive J");
-      naive_exchange.PrintDebug("Naive K");
-      
-    }
-    
-  } // do_naive
-  
 
   if (fx_param_exists(root_mod, "do_multi")) {
     
@@ -223,17 +329,26 @@ int main(int argc, char* argv[]) {
       
     }
     
+    if (fx_param_exists(root_mod, "compare_multi") {
+      
+      fx_module* multi_compare_mod = fx_submodule(multi_mod, "compare");
+      
+      Matrix** multi_mats;
+      multi_mats = (Matrix**)malloc(3 * sizeof(Matrix*));
+      multi_mats[0] = &multi_fock;
+      multi_mats[1] = &multi_coulomb;
+      multi_mats[2] = &multi_exchange;
+      
+      FockMatrixComparison multi_compare;
+      multi_compare.Init(multi_mod, multi_mats, naive_mod, 
+                                naive_mats, multi_compare_mod);
+      
+    } // cfmm comparison        
+    
   } // do_multi
 
-  
-  // Do comparison here?
-  
-  if (fx_param_exists(root_mod, "compare")) {
-  
-    
-  
-  } // comparison
-  
+
+
   fx_done(root_mod);
 
   return 0;

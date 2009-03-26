@@ -59,6 +59,49 @@ double F_m(double t, int m) {
 
 }
 
+
+double BinomialCoeff(int pow, int mom1, int mom2, double dist1, double dist2) {
+
+  DEBUG_ASSERT(pow >= 0);
+
+  if (pow < 2) {
+    return 1.0;
+  }
+  else {
+    // only handles p integrals
+    DEBUG_ASSERT(pow == 2);
+    
+    return dist1 + dist2;
+    
+  }
+  
+  // I think I'll need this to work for general momenta, since that's how 
+  // kinetic integrals are defined 
+  
+  /*
+  double coeff = 0.0;
+  
+  int q = min(-pow, pow - (2*mom2));
+  
+  while (q < min(pow, (2*mom1) - pow)) {
+  
+    int i = (pow + q) / 2;
+    int j = (pow - q) / 2;
+  
+    coeff += choose(mom1, i) * choose(mom2, j) * pow(dist1, mom1-i) * pow(dist2, mom2-j);
+  
+    q += 2;
+  
+  }
+  
+  return coeff;
+   */
+
+}
+
+
+////////////// Integrals //////////////////////////
+
 double ComputeNormalization(BasisShell& shell) {
 
   return ComputeNormalization(shell.exp(), shell.total_momentum());
