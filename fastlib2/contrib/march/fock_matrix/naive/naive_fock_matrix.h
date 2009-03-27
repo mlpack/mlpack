@@ -130,10 +130,9 @@ class NaiveFockMatrix {
     
     } // for i
     
-    la::ScaleInit(-0.5, exchange_mat_, &fock_mat_);
-  
-    la::AddTo(coulomb_mat_, &fock_mat_);
-  
+    la::Scale(0.5, &exchange_mat_);
+    la::SubInit(exchange_mat_, coulomb_mat_, &fock_mat_);
+    
   } // ComputeFock()
   
   

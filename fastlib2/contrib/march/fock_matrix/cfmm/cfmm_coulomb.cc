@@ -61,7 +61,7 @@ void CFMMCoulomb::MultipoleInit_() {
 
   fx_module* multipole_mod = fx_submodule(mod_, "multipole_cfmm");
   
-  charges_.PrintDebug();
+  //charges_.PrintDebug();
 
   cfmm_algorithm_.Init(charge_centers_, charge_centers_, charges_, 
                        charge_exponents_, true, multipole_mod);
@@ -111,7 +111,7 @@ void CFMMCoulomb::NaiveComputation_() {
   multipole_output_.Init(num_shell_pairs_);
   multipole_output_.SetZero();
   
-  printf("doing naive\n");
+  //printf("doing naive\n");
   
   for(index_t q = 0; q < num_shell_pairs_; q++) {
   

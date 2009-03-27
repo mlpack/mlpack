@@ -423,7 +423,7 @@ class ContinuousFmm {
 		    current_reference_child->stat().farfield_expansion_.
 		      TranslateToLocal(node->stat().local_expansion_,
 				       sea_.get_max_order());
-            printf("multipole approx\n");
+            //printf("multipole approx\n");
 		  }
 		  else {
 		    BaseCase_(node, current_reference_child, potentials_);
@@ -543,7 +543,7 @@ class ContinuousFmm {
     // resulted from tree constructions.
     ReshuffleResults_(potentials_);
     ReshuffleResults_(test_permutation_);
-    test_permutation_.PrintDebug();
+    //test_permutation_.PrintDebug();
     
     // Output the results to the file.
     //OutputResultsToFile_(potentials_, "fast_fmm_output.txt");
@@ -623,7 +623,7 @@ class ContinuousFmm {
     fx_timer_stop(NULL, "tree_d");
 
     printf("Constructed the tree...\n");
-    ot::Print(old_from_new_index_);
+    //ot::Print(old_from_new_index_);
     //tree_->Print();
     
     // Shuffle the reference particle charges, the reference particle
@@ -642,7 +642,7 @@ class ContinuousFmm {
     }
     MultiTreeUtility::ShuffleAccordingToPermutation(test_permutation_, 
                                                     old_from_new_index_[0]);
-    test_permutation_.PrintDebug();
+    //test_permutation_.PrintDebug();
       
     //ot::Print(shuffled_reference_particle_charge_set_);
 

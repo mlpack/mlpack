@@ -21,9 +21,13 @@ void FockMatrixComparison::Init(fx_module* exp_mod, Matrix** exp_mats,
   
   my_mod_ = my_mod;
   
-  max_diff_F_ = 0.0;
-  max_diff_J_ = 0.0;
-  max_diff_K_ = 0.0;
+  max_diff_F_ = -1.0;
+  max_diff_J_ = -1.0;
+  max_diff_K_ = -1.0;
+  
+  max_rel_F_ = -1.0;
+  max_rel_J_ = -1.0;
+  max_rel_K_ = -1.0;
   
   total_diff_F_ = 0.0;
   total_diff_J_ = 0.0;
@@ -47,12 +51,17 @@ void FockMatrixComparison::Compare() {
         double F_entry1 = F_mat_->ref(i, j);
         double F_entry2 = naive_F_mat_->ref(i, j);
       
-        double this_diff = abs(F_entry1 - F_entry2);
+        double this_diff = fabs(F_entry1 - F_entry2);
+        double this_rel_diff = fabs(this_diff/F_entry2);
             
         if (this_diff > max_diff_F_) {
           max_diff_F_ = this_diff;
           max_index_row_F_ = i;
           max_index_col_F_ = j;
+        }
+        
+        if (this_rel_diff > max_rel_F_) {
+          max_rel_F_ = this_rel_diff;
         }
         
         // account for symmetry
@@ -69,12 +78,17 @@ void FockMatrixComparison::Compare() {
         double J_entry1 = J_mat_->ref(i, j);
         double J_entry2 = naive_J_mat_->ref(i, j);
         
-        double this_diff = abs(J_entry1 - J_entry2);
+        double this_diff = fabs(J_entry1 - J_entry2);
+        double this_rel_diff = fabs(this_diff/J_entry2);
         
         if (this_diff > max_diff_J_) {
           max_diff_J_ = this_diff;
           max_index_row_J_ = i;
           max_index_col_J_ = j;
+        }
+        
+        if (this_rel_diff > max_rel_J_) {
+          max_rel_J_ = this_rel_diff;
         }
         
         // account for symmetry
@@ -91,12 +105,17 @@ void FockMatrixComparison::Compare() {
         double K_entry1 = K_mat_->ref(i, j);
         double K_entry2 = naive_K_mat_->ref(i, j);
         
-        double this_diff = abs(K_entry1 - K_entry2);
+        double this_diff = fabs(K_entry1 - K_entry2);
+        double this_rel_diff = fabs(this_diff/K_entry2);
         
         if (this_diff > max_diff_K_) {
           max_diff_K_ = this_diff;
           max_index_row_K_ = i;
           max_index_col_K_ = j;
+        }
+        
+        if (this_rel_diff > max_rel_K_) {
+          max_rel_K_ = this_rel_diff;
         }
         
         // account for symmetry
@@ -123,47 +142,55 @@ void FockMatrixComparison::Compare() {
   
   // output results 
   
-  fx_result_double(my_mod_, "max_diff_F", max_diff_F_);
-  fx_result_int(my_mod_, "max_index_row_F", max_index_row_F_);
-  fx_result_int(my_mod_, "max_index_col_F", max_index_col_F_);
-  fx_result_double(my_mod_, "ave_diff_F", 
-                   (total_diff_F_/(num_entries_ * num_entries_)));
+  if (compare_fock_) {
+    fx_result_double(my_mod_, "max_diff_F", max_diff_F_);
+    fx_result_int(my_mod_, "max_index_row_F", max_index_row_F_);
+    fx_result_int(my_mod_, "max_index_col_F", max_index_col_F_);
+    fx_result_double(my_mod_, "ave_diff_F", 
+                     (total_diff_F_/(num_entries_ * num_entries_)));
+    fx_result_double(my_mod_, "max_rel_diff_F", max_rel_F_);
+  }
 
-  fx_result_double(my_mod_, "max_diff_J", max_diff_J_);
-  fx_result_int(my_mod_, "max_index_row_J", max_index_row_J_);
-  fx_result_int(my_mod_, "max_index_col_J", max_index_col_J_);
-  fx_result_double(my_mod_, "ave_diff_J", 
-                   (total_diff_J_/(num_entries_ * num_entries_)));
+  if (compare_coulomb_) {
+    fx_result_double(my_mod_, "max_diff_J", max_diff_J_);
+    fx_result_int(my_mod_, "max_index_row_J", max_index_row_J_);
+    fx_result_int(my_mod_, "max_index_col_J", max_index_col_J_);
+    fx_result_double(my_mod_, "ave_diff_J", 
+                     (total_diff_J_/(num_entries_ * num_entries_)));
+    fx_result_double(my_mod_, "max_rel_diff_J", max_rel_J_);
+  }
 
-  fx_result_double(my_mod_, "max_diff_K", max_diff_K_);
-  fx_result_int(my_mod_, "max_index_row_K", max_index_row_K_);
-  fx_result_int(my_mod_, "max_index_col_K", max_index_col_K_);
-  fx_result_double(my_mod_, "ave_diff_K", 
-                   (total_diff_K_/(num_entries_ * num_entries_)));
-
+  if (compare_exchange_) {
+    fx_result_double(my_mod_, "max_diff_K", max_diff_K_);
+    fx_result_int(my_mod_, "max_index_row_K", max_index_row_K_);
+    fx_result_int(my_mod_, "max_index_col_K", max_index_col_K_);
+    fx_result_double(my_mod_, "ave_diff_K", 
+                     (total_diff_K_/(num_entries_ * num_entries_)));
+    fx_result_double(my_mod_, "max_rel_diff_K", max_rel_K_);
+  }
                    
 } // Compare()
 
-
+// not sure this class actually owns these matrices
 void FockMatrixComparison::Destruct() {
 
   if (F_mat_) {
-    F_mat_.Destruct();
+    F_mat_->Destruct();
   }
   if (naive_F_mat_) {
-    naive_F_mat_.Destruct();
+    naive_F_mat_->Destruct();
   }
   if (J_mat_) {
-    J_mat_.Destruct();
+    J_mat_->Destruct();
   }
   if (naive_J_mat_) {
-    naive_J_mat_.Destruct();
+    naive_J_mat_->Destruct();
   }
   if (K_mat_) {
-    K_mat_.Destruct();
+    K_mat_->Destruct();
   }
   if (naive_K_mat_) {
-    naive_K_mat_.Destruct();
+    naive_K_mat_->Destruct();
   }
   
   my_mod_ = NULL;

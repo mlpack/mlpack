@@ -403,7 +403,7 @@ private:
     
     
     number_of_basis_functions_ = centers_.n_cols() + 
-        (index_t)2*la::Dot(momenta_, momenta_);
+        (index_t)2*(index_t)la::Dot(momenta_, momenta_);
     fx_result_int(module_, "N", number_of_basis_functions_);
     
     // A hack to make the pruning always absolute, since I can't input infinity

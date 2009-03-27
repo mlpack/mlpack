@@ -136,7 +136,8 @@ class Link {
       Vector new_cent;
       basis_centers_.MakeColumnVector(i, &new_cent);
       
-      shell_list_[i].Init(new_cent, basis_exponents_[i], basis_momenta_[i], i);
+      shell_list_[i].Init(new_cent, basis_exponents_[i], 
+                          (index_t)basis_momenta_[i], i);
     
     } // for i
   

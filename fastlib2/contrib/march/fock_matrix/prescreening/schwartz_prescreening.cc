@@ -55,7 +55,9 @@ double SchwartzPrescreening::SchwartzBound_(BasisShell &mu,
 } // SchwartzBound_()
 
 
-void SchwartzPrescreening::ComputeFockMatrix(Matrix* fock_out) {
+void SchwartzPrescreening::ComputeFockMatrix(Matrix* fock_out, 
+                                             Matrix* coulomb_out, 
+                                             Matrix* exchange_out) {
 
   num_shell_pairs_ = eri::ComputeShellPairs(&shell_pair_list_, basis_list_, 
                                             shell_pair_threshold_);
@@ -134,10 +136,12 @@ void SchwartzPrescreening::ComputeFockMatrix(Matrix* fock_out) {
   } // for i
     
   // F = J - 1/2 K
-  la::ScaleInit(-0.5, exchange_matrix_, &fock_matrix_);    
-  la::AddTo(coulomb_matrix_, &fock_matrix_);
-  
+  la::Scale(0.5, &exchange_matrix_);
+  la::SubInit(exchange_matrix_, coulomb_matrix_, &fock_matrix_);
+    
   fock_out->Copy(fock_matrix_);
+  coulomb_out->Copy(coulomb_matrix_);
+  exchange_out->Copy(exchange_matrix_);
   
   fx_result_int(module_, "num_prunes", num_prunes_);
 
