@@ -151,7 +151,7 @@ void Link::ComputeExchangeMatrix() {
         ShellPair* nu_sigma = significant_sigma_for_nu_[nu_ind][sorted_sigma_ind];
         
         //index_t sigma_ind = nu_sigma->N_index();
-        double bound = abs(density_matrix_.ref(mu_ind, nu_ind)) * mu_lambda.schwartz_factor() * 
+        double bound = fabs(density_matrix_.ref(mu_ind, nu_ind)) * mu_lambda.schwartz_factor() * 
           nu_sigma->schwartz_factor();
         if (bound > threshold_) {
       
@@ -215,7 +215,7 @@ void Link::ComputeExchangeMatrix() {
           
           //index_t sigma_ind = nu_sigma->N_index();
           
-          if (abs(density_matrix_.ref(mu_ind, nu_ind)) * mu_lambda.schwartz_factor() * 
+          if (fabs(density_matrix_.ref(mu_ind, nu_ind)) * mu_lambda.schwartz_factor() * 
               nu_sigma->schwartz_factor() > threshold_) {
             
             lambda_integrals.PushBack();
@@ -324,7 +324,8 @@ void Link::ComputeExchangeMatrix() {
 
 
 void Link::OutputExchangeMatrix(Matrix* exc_out) {
-
+  
+  la::Scale(0.5, &exchange_matrix_);
   exc_out->Copy(exchange_matrix_);
   
 } // OutputFockMatrix

@@ -34,7 +34,8 @@ class SchwartzPrescreening {
   ~SchwartzPrescreening() {}
   
   // Change this to match the format of the others
-  void ComputeFockMatrix(Matrix* fock_out);
+  void ComputeFockMatrix(Matrix* fock_out, Matrix* coulomb_out, 
+                         Matrix* exchange_out);
   
   void Init(const Matrix& cent, const Matrix& exp, const Matrix& mom, 
             const Matrix& density_in, fx_module* mod) {
@@ -84,7 +85,8 @@ class SchwartzPrescreening {
       Vector new_cent;
       basis_centers_.MakeColumnVector(i, &new_cent);
       
-      basis_list_[i].Init(new_cent, basis_exponents_[i], basis_momenta_[i], i);
+      basis_list_[i].Init(new_cent, basis_exponents_[i], 
+                          (index_t)basis_momenta_[i], i);
     
     } // for i
   

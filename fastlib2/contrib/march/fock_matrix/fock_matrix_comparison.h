@@ -22,6 +22,10 @@ class FockMatrixComparison {
   double max_diff_J_;
   double max_diff_K_;
   
+  double max_rel_F_;
+  double max_rel_J_;
+  double max_rel_K_;
+  
   // The row and column index of the maximum difference
   index_t max_index_row_F_;
   index_t max_index_col_F_;
