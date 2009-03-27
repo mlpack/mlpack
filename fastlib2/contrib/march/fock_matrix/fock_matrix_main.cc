@@ -51,6 +51,8 @@ const fx_entry_doc fock_matrix_main_entries[] = {
   "Compare the result to naive. \n"}, 
 {"compare_multi", FX_PARAM, FX_STR, NULL,
   "Compare the result to naive. \n"}, 
+{"naive_storage", FX_PARAM, FX_STR, NULL,
+  "Location of saved naive results.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -132,15 +134,9 @@ int main(int argc, char* argv[]) {
   Matrix naive_exchange;
   
   // these won't work with fx_run
-  /*
-  char* naive_fock_file;
-  strcat(naive_fock_file, "naive_storage/");
-  strcat(naive_fock_file, centers_file);
-  strcat(naive_fock_file, "_");
-  strcat(naive_fock_file, exp_file);
-  strcat(naive_fock_file, "_F.csv");
-  */
-  std::string directory("naive_storage/");
+  const char* dir_char = fx_param_str(root_mod, "naive_storage", 
+                                      "naive_storage/");
+  std::string directory(dir_char);
   std::string underscore("_");
   std::string under_F("_F.csv");
   std::string under_J("_J.csv");
@@ -158,21 +154,6 @@ int main(int argc, char* argv[]) {
   naive_exchange_string = directory + centers_file + underscore + exp_file + under_K;
   const char* naive_exchange_file = naive_exchange_string.c_str();
 
-  /*
-  char* naive_coulomb_file;
-  strcat(naive_coulomb_file, "naive_storage/");
-  strcat(naive_coulomb_file, centers_file);
-  strcat(naive_coulomb_file, "_");
-  strcat(naive_coulomb_file, exp_file);
-  strcat(naive_coulomb_file, "_J.csv");
-  
-  char* naive_exchange_file;
-  strcat(naive_exchange_file, "naive_storage/");
-  strcat(naive_exchange_file, centers_file);
-  strcat(naive_exchange_file, "_");
-  strcat(naive_exchange_file, exp_file);
-  strcat(naive_exchange_file, "_K.csv");
-  */
   
   bool do_naive = fx_param_exists(root_mod, "do_naive");
   
@@ -189,7 +170,7 @@ int main(int argc, char* argv[]) {
 
 
       // try to load them
-      // for now, assuming that all will load or none will
+      // assuming that all will load or none will
       if (data::Load(naive_fock_file, &naive_fock) == SUCCESS_FAIL) {
        
         // destruct them if they didn't load
