@@ -28,6 +28,7 @@ class SpikeSeqPair {
  private:
   Vector x_;
   Vector y_;
+  int n_spikes_;
   ArrayList<Spike> all_spikes;
   int tau_; // dependence horizon
   
@@ -59,7 +60,8 @@ class SpikeSeqPair {
   }
 
   void Merge() {
-    all_spikes.Init(x_.length() + y_.length());
+    n_spikes_ = x_.length() + y_.length();
+    all_spikes.Init(n_spikes_);
     int i_x = 0;
     int i_y = 0;
     for(int i_all = 0; (i_x < x_.length()) || (i_y < y_.length()); i_all++) {
@@ -123,28 +125,101 @@ class SpikeSeqPair {
   }
 
   void ConstructPoints() {
-    int n_spikes = all_spikes.size();
+    ConstructPointsByRefLabel(0);
+    //ConstructPointsByRefLabel(1);
+  }
 
-    int cur_spike = n_spikes - 1;
+  void ConstructPointsByRefLabel(int ref_label) {
+    int min_ref_spike_num = FindMinSpikeReference(ref_label);
+    printf("min_ref_spike_num = %d\n", min_ref_spike_num);
 
-    int n_x_spikes;
-    int n_y_spikes;
+    int n_points = 0;
+    for(int i = min_ref_spike_num; i < n_spikes_; i++) {
+      if(all_spikes[i].label() == ref_label) {
+	n_points++;
+      }
+    }
+    
+    Matrix primary_points;
+    primary_points.Init(tau_, n_points);
+    ConstructPointsByRefAndQueryLabel(min_ref_spike_num,
+				      ref_label,
+				      ref_label,
+				      &primary_points);
+    Matrix secondary_points;
+    secondary_points.Init(tau_, n_points);
+    ConstructPointsByRefAndQueryLabel(min_ref_spike_num,
+				      ref_label,
+				      1 - ref_label,
+				      &secondary_points);
 
-    // referencing to X
-    for(int cur_spike = n_spikes - 1;
-	(n_x_spikes < tau_) || (n_y_spikes < tau_)) {
-      if(all_spikes[cur_spike].label == 0) {
-	n_x_spikes++;
+    primary_points.PrintDebug("primary points");
+    secondary_points.PrintDebug("secondary points");
+  }
+
+  void ConstructPointsByRefAndQueryLabel(int min_ref_spike_num,
+					 int ref_label,
+					 int query_label,
+					 Matrix* points) {
+    int point_num = 0;
+    for(int i = min_ref_spike_num; i < n_spikes_; i++) {
+      if(all_spikes[i].label() == ref_label) {
+	Vector point;
+	points -> MakeColumnVector(point_num, &point);
+	ConstructPoint(i, query_label, &point);
+	point_num++;
+      }
+    }
+  }
+  
+  void ConstructPoint(int ref_spike_num, int query_label, Vector* p_point) {
+    printf("ref_spike_num = %d\n", ref_spike_num);
+    Vector& point = *p_point;
+
+    double ref_spike_time = all_spikes[ref_spike_num].time();
+
+    int n_complete = 0;
+    for(int i = ref_spike_num - 1; n_complete < tau_; i--) {
+      if(all_spikes[i].label() == query_label) {
+	point[n_complete] = ref_spike_time - all_spikes[i].time();
+	n_complete++;
+      }
+    }
+  }
+
+  int FindMinSpikeReference(int ref_label) {
+    int cur_spike = 0;
+
+    int n_primary_spikes = 0; // spikes with the same label as ref_label
+    int n_secondary_spikes = 0; // spikes with the label other than ref_label
+
+    int n_spikes_minus_1 = n_spikes_ - 1;
+    for(;
+	((n_primary_spikes < tau_) || (n_secondary_spikes < tau_))
+	  && (cur_spike < n_spikes_minus_1);
+	cur_spike++) {
+      if(all_spikes[cur_spike].label() == ref_label) {
+	n_primary_spikes++;
       }
       else {
-	n_y_spikes++;
+	n_secondary_spikes++;
       }
-      cur_spike--;
     }
 
+    if((n_primary_spikes < tau_) || (n_secondary_spikes < tau_)) {
+      FATAL("Dependence horizon is too large for the spike sequences. Decrease it.");
+    }
+    
+    while((cur_spike < n_spikes_)
+	  && (all_spikes[cur_spike].label() != ref_label)) {
+      cur_spike++;
+    }
 
+    if(cur_spike == n_spikes_) {
+      FATAL("Dependence horizon is too large for the spike sequences. Decrease it.");
+    }
 
-
+    return cur_spike;
   }
 
 };
