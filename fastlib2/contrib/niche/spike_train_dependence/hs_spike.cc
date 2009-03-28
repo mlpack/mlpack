@@ -1,30 +1,8 @@
 #include "fastlib/fastlib.h"
 #include "hs_spike.h"
+#include "hsic.h"
 
 
-void ComputeKernelMatrix(Matrix x, Matrix* kernel_matrix) {
-  int n_points = x.n_cols();
-  int n_dims = x.n_rows();
-
-  kernel_matrix -> Init(n_points, n_points);
-
-  Vector diff;
-  diff.Init(n_dims);
-  for(int i = 0; i < n_points; i++) {
-    Vector x_i;
-    x.MakeColumnVector(i, &x_i);
-    for(int j = i; j < n_points; j++) {
-      Vector x_j;
-      x.MakeColumnVector(j, &x_j);
-      la::SubOverwrite(x_i, x_j, &diff);
-      double val = exp(-1 * la::Dot(diff, diff));
-      kernel_matrix -> set(i, j, val);
-      if(i != j) {
-	kernel_matrix -> set(j, i, val);
-      }
-    }
-  }
-}
 
 
 int main(int argc, char* argv[]) {
@@ -45,53 +23,12 @@ int main(int argc, char* argv[]) {
   Matrix x1, y1, x2, y2;
   spikes_pair.ConstructPoints(&x1, &y1, &x2, &y2);
 
-  int n_points = x1.n_cols();
+  double hsic_x1_y1 = HSIC(x1, y1);
+  printf("x reference hsic(x, y) = %f\n", hsic_x1_y1);
 
-  Matrix K;
-  ComputeKernelMatrix(x1, &K);
+  double hsic_x2_y2 = HSIC(x2, y2);
+  printf("y reference hsic(x, y) = %f\n", hsic_x2_y2);
 
-  Matrix L;
-  ComputeKernelMatrix(y1, &L);
-
-  Matrix H;
-  H.Init(n_points, n_points);
-  H.SetZero();
-  for(int i = 0; i < n_points; i++) {
-    H.set(i, i, 1);
-  }
-  double one_over_n_points = ((double)1) / ((double) n_points);
-  for(int i = 0; i < n_points; i++) {
-    for(int j = 0; j < n_points; j++) {
-      H.set(j, i, H.get(j, i) - one_over_n_points);
-    }
-  }
-  K.PrintDebug("K");
-  L.PrintDebug("L");
-  H.PrintDebug("H");
-
-  Matrix result, result2;
-  la::MulInit(H, K, &result);
-  la::MulInit(result, H, &result2);
-  la::MulOverwrite(result2, L, &result);
-  la::Scale(((double)1) / ((double)(n_points * n_points)), &result);
-  double hsic = la::Trace(result);
-  printf("hsic = %e\n", hsic);
-  /*
-  y1.PrintDebug("y1");
-  y1_kernel_matrix.PrintDebug("y1 kernel matrix");
-  */
-  /*
-  y1.PrintDebug("y1");
-  x2.PrintDebug("x2");
-  y2.PrintDebug("y2");
-  */
-
-
-  
-
-
-  
-  
 
   fx_done(root);
 
