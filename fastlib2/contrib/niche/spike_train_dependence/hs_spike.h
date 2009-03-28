@@ -31,15 +31,6 @@ class SpikeSeqPair {
   int n_spikes_;
   ArrayList<Spike> all_spikes;
   int tau_; // dependence horizon
-  
- public:
-  void Init(const char* x_filename,
-	    const char* y_filename,
-	    int tau_in) {
-    tau_ = tau_in;
-    LoadVector(x_filename, &x_);
-    LoadVector(y_filename, &y_);
-  }
 
   void LoadVector(const char* filename, Vector* vector) {
     ArrayList<double> linearized;
@@ -55,7 +46,7 @@ class SpikeSeqPair {
     linearized.Trim();
     
     int n_points = linearized.size();
-    printf("n_points = %d\n", n_points);
+    //printf("n_points = %d\n", n_points);
     vector -> Own(linearized.ReleasePtr(), n_points);
   }
 
@@ -77,61 +68,11 @@ class SpikeSeqPair {
     }
   }
 
-  void PrintAllSpikes() {
-    for(int i = 0; i < all_spikes.size(); i++) {
-      char label;
-      if(all_spikes[i].label() == 0) {
-	label = 'X';
-      }
-      else {
-	label = 'Y';
-      }
-      printf("%f %c\n", all_spikes[i].time(), label);
-    }
-  }
-
-  void XRef() {
-    int cur_x = x_.length() - 1;
-    int cur_y = y_.length() - 1;
-
-    int n_gap = 0;
-    printf("(%d,%d) %d\n", cur_x, cur_y, n_gap);
-    while(x_[cur_x] <= y_[cur_y]) {
-      n_gap++;
-      cur_y--;
-      printf("(%d,%d) %d\n", cur_x, cur_y, n_gap);
-    }
-
-    while(n_gap < tau_) {
-      if(cur_y == -1 || cur_x <= 0) {
-	FATAL("Dependence horizon is too large for the spike sequences. Decrease it.");
-      }
-      cur_x--;
-      printf("(%d,%d) %d\n", cur_x, cur_y, n_gap);
-     
-      while(x_[cur_x] <= y_[cur_y]) {
-	n_gap++;
-	cur_y--;
-	printf("(%d,%d) %d\n", cur_x, cur_y, n_gap);
-	if(cur_y == -1) {
-	  break;
-	}
-      } 
-    }
-
-    printf("cur_x by y constraints = %d\n", cur_x);
-
-
-  }
-
-  void ConstructPoints() {
-    ConstructPointsByRefLabel(0);
-    //ConstructPointsByRefLabel(1);
-  }
-
-  void ConstructPointsByRefLabel(int ref_label) {
+  void ConstructPointsByRefLabel(int ref_label,
+				 Matrix* primary_points, 
+				 Matrix* secondary_points) {
     int min_ref_spike_num = FindMinSpikeReference(ref_label);
-    printf("min_ref_spike_num = %d\n", min_ref_spike_num);
+    //printf("min_ref_spike_num = %d\n", min_ref_spike_num);
 
     int n_points = 0;
     for(int i = min_ref_spike_num; i < n_spikes_; i++) {
@@ -140,21 +81,17 @@ class SpikeSeqPair {
       }
     }
     
-    Matrix primary_points;
-    primary_points.Init(tau_, n_points);
+    primary_points -> Init(tau_, n_points);
     ConstructPointsByRefAndQueryLabel(min_ref_spike_num,
 				      ref_label,
 				      ref_label,
-				      &primary_points);
-    Matrix secondary_points;
-    secondary_points.Init(tau_, n_points);
+				      primary_points);
+    secondary_points -> Init(tau_, n_points);
     ConstructPointsByRefAndQueryLabel(min_ref_spike_num,
 				      ref_label,
 				      1 - ref_label,
-				      &secondary_points);
+				      secondary_points);
 
-    primary_points.PrintDebug("primary points");
-    secondary_points.PrintDebug("secondary points");
   }
 
   void ConstructPointsByRefAndQueryLabel(int min_ref_spike_num,
@@ -173,7 +110,7 @@ class SpikeSeqPair {
   }
   
   void ConstructPoint(int ref_spike_num, int query_label, Vector* p_point) {
-    printf("ref_spike_num = %d\n", ref_spike_num);
+    //printf("ref_spike_num = %d\n", ref_spike_num);
     Vector& point = *p_point;
 
     double ref_spike_time = all_spikes[ref_spike_num].time();
@@ -221,6 +158,81 @@ class SpikeSeqPair {
 
     return cur_spike;
   }
+
+  
+  
+ public:
+  void Init(const char* x_filename,
+	    const char* y_filename,
+	    int tau_in) {
+    tau_ = tau_in;
+    LoadVector(x_filename, &x_);
+    LoadVector(y_filename, &y_);
+    Merge();
+  }
+
+
+
+  void PrintAllSpikes() {
+    for(int i = 0; i < all_spikes.size(); i++) {
+      char label;
+      if(all_spikes[i].label() == 0) {
+	label = 'X';
+      }
+      else {
+	label = 'Y';
+      }
+      printf("%f %c\n", all_spikes[i].time(), label);
+    }
+  }
+
+  /*
+  void XRef() {
+    int cur_x = x_.length() - 1;
+    int cur_y = y_.length() - 1;
+
+    int n_gap = 0;
+    printf("(%d,%d) %d\n", cur_x, cur_y, n_gap);
+    while(x_[cur_x] <= y_[cur_y]) {
+      n_gap++;
+      cur_y--;
+      printf("(%d,%d) %d\n", cur_x, cur_y, n_gap);
+    }
+
+    while(n_gap < tau_) {
+      if(cur_y == -1 || cur_x <= 0) {
+	FATAL("Dependence horizon is too large for the spike sequences. Decrease it.");
+      }
+      cur_x--;
+      printf("(%d,%d) %d\n", cur_x, cur_y, n_gap);
+     
+      while(x_[cur_x] <= y_[cur_y]) {
+	n_gap++;
+	cur_y--;
+	printf("(%d,%d) %d\n", cur_x, cur_y, n_gap);
+	if(cur_y == -1) {
+	  break;
+	}
+      } 
+    }
+
+    printf("cur_x by y constraints = %d\n", cur_x);
+
+
+  }
+  */
+
+  void ConstructPoints(Matrix* x_ref_primary_points,
+		       Matrix* x_ref_secondary_points,
+		       Matrix* y_ref_primary_points,
+		       Matrix* y_ref_secondary_points) {
+    ConstructPointsByRefLabel(0,
+			      x_ref_primary_points, x_ref_secondary_points);
+        
+    ConstructPointsByRefLabel(1,
+			      y_ref_primary_points, y_ref_secondary_points);
+  }
+
 
 };
 
