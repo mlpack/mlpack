@@ -145,14 +145,14 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 		
 		initial_parameter->SetZero();
 		
-		/*	
+			
 		(*initial_parameter)[0]=1.2;
 		(*initial_parameter)[1]=1.5;
 		(*initial_parameter)[num_of_betas]=1.7;
-		(*initial_parameter)[num_of_betas+1]=2.1;
+		(*initial_parameter)[num_of_betas+1]=3;
 		
 			
-		
+		/*
 		(*initial_parameter)[0]=1.3392;
 		(*initial_parameter)[1]=1.62639;
 		(*initial_parameter)[num_of_betas]=2.00565;
@@ -410,39 +410,14 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 		(*initial_parameter)[0]=3.1008;
 		(*initial_parameter)[1]=-2.32536;
 		(*initial_parameter)[num_of_betas]=6.50685;
-		(*initial_parameter)[num_of_betas+1]=0.444984;*/
+		(*initial_parameter)[num_of_betas+1]=0.444984;
 
 		(*initial_parameter)[0]=4.89444;
 		(*initial_parameter)[1]=-1.36876;
 		(*initial_parameter)[num_of_betas]=0.267926;
-		(*initial_parameter)[num_of_betas+1]=1.64124e-12;
+		(*initial_parameter)[num_of_betas+1]=1.64124e-12;*/
 
-		      
-
-		   
-   
-		      
-
-		         
-
-		   
-
-		
-
-		   
-
-		   
-
-		      
-      
-		 
-
-   
-		
-		
-		
-		
-		
+		      		
 		
 
 
@@ -569,15 +544,21 @@ void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *adde
 		//cout<<"initial_percent_sample_="<<initial_percent_sample_<<endl;
 		num_added_sample=math::RoundInt((num_of_people_)*(initial_percent_sample_)/100);
 	} else {
-		num_added_sample=math::RoundInt((num_of_selected_sample_)*(percent_added_sample)/100);
+		if(percent_added_sample==0){
+			NOTIFY("Keep the currect sample size");
+			num_added_sample=0;
+		}
+		else{
+			num_added_sample=math::RoundInt((num_of_selected_sample_)*(percent_added_sample)/100);
+			if(num_added_sample==0){
+				NOTIFY("number of sample to add is zero. Add Two samples.");
+				num_added_sample=2;
+			}
+
+		}
+
 	}
 	
-	if(num_added_sample==0 && num_of_selected_sample_!=num_of_people_) {
-			NOTIFY("number of sample to add is zero. Add Two samples.");
-			num_added_sample=2;
-	}	//if
-
-
 
 	//Copy to currect Subset
 	//added_first_stage_x->Init();

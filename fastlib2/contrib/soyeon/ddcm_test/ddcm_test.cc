@@ -125,13 +125,13 @@ int main(int argc, char *argv[]) {
 	
 	Vector tpar;
 	tpar.Init(current_parameter.length());
-	/*
+	
 	tpar[0]=1;
 	tpar[1]=4;
 	tpar[2]=5;
 	tpar[3]=2;
 	
-
+/*
 	tpar[0]=-1;
 	tpar[1]=2;
 	tpar[2]=3;
@@ -145,12 +145,12 @@ int main(int argc, char *argv[]) {
 	tpar[0]=2;
 	tpar[1]=-1.5;
 	tpar[2]=4;
-	tpar[3]=0.8;*/
+	tpar[3]=0.8;
 
 	tpar[0]=3;
 	tpar[1]=-1;
 	tpar[2]=4;
-	tpar[3]=1;
+	tpar[3]=1;*/
 
 	
 
@@ -583,6 +583,7 @@ int main(int argc, char *argv[]) {
 
 
 		//cout<<"current_added_first_stage_x.size("<<current_added_first_stage_x.size()<<")"<<endl;
+		
 		//update sample size
 		
 
@@ -601,16 +602,31 @@ int main(int argc, char *argv[]) {
 																				 &next_choice_probability);
 			
 			double sampling_error=0;
+			//double serror_factor=10*sample_size;
+			double serror_factor=0.055*sample_size;
+			double sampling_deviation=0;
+
 			for(index_t n=0; n<sample_size; n++){
 				sampling_error+= pow(((current_choice_probability[n]-next_choice_probability[n])-(current_objective-next_objective) ),2);
 			}
 			sampling_error*=(correction_factor/(sample_size*(sample_size-1)));
+			sampling_deviation=sqrt(sampling_error);
+
 			cout<<"sampling_error="<<sampling_error<<endl;
-			
-			if(current_delta_m<0.5*sampling_error){
-				current_percent_added_sample=(0.5*sampling_error/current_delta_m)*(0.5*sampling_error/current_delta_m);
+			cout<<"sampling_deviation="<<sampling_deviation<<endl;
+
+			current_percent_added_sample=0;
+
+			//if((-1.0*current_delta_m)<serror_factor*sampling_error){	//current_delta_m is negative in our case
+      if((-1.0*current_delta_m)<serror_factor*sampling_deviation){	//current_delta_m is negative in our case
+				NOTIFY("Expand sample size");
+				//break;
+				//current_percent_added_sample=(serror_factor*sampling_error/current_delta_m)*(serror_factor*sampling_error/current_delta_m)-1.0;
+				//current_percent_added_sample=(serror_factor*sampling_deviation/current_delta_m)*(serror_factor*sampling_deviation/current_delta_m)-1.0;
+				current_percent_added_sample=(serror_factor*sampling_deviation/(-1*current_delta_m))-1.0;
 				current_percent_added_sample*=100.0;
-				//cout<<"percent_added_sample="<<current_percent_added_sample<<endl;
+				cout<<"percent_added_sample="<<current_percent_added_sample<<endl;
+				cout<<"Extended sample size="<<current_percent_added_sample/100.0*sample_size<<endl;
 			}
 
 		}	//if
@@ -621,6 +637,7 @@ int main(int argc, char *argv[]) {
 			NOTIFY("All data are used");
 		}
 		*/
+
 
 		
 		Vector next_gradient;
@@ -820,7 +837,7 @@ int main(int argc, char *argv[]) {
 
 
 
-
+    
 
 
 		
@@ -838,6 +855,7 @@ int main(int argc, char *argv[]) {
 		//radius update
 		optimization.TrustRadiusUpdate(rho, p_norm, &current_radius);
 
+		
 
 
 
@@ -918,6 +936,30 @@ int main(int argc, char *argv[]) {
 		}
 		cout<<endl;
 	}
+  cout<<endl;
+	cout<<endl;
+
+	Matrix eigenvec_hessian2;
+	Vector eigen_hessian2;
+	la::EigenvectorsInit(final_hessian, &eigen_hessian2, 
+																					&eigenvec_hessian2);
+
+	cout<<"eigen values of final hessian-finite-approx"<<endl;
+
+	for(index_t i=0; i<eigen_hessian2.length(); i++){
+		cout<<eigen_hessian2[i]<<" ";
+	}
+	cout<<endl;
+	cout<<endl;
+
+	cout<<"eigen vectors of final hessian-finite-approx"<<endl;
+  for (index_t j=0; j<final_hessian.n_rows(); j++){
+		for (index_t k=0; k<final_hessian.n_cols(); k++){
+			cout<<eigenvec_hessian2.get(j,k) <<"  ";
+		}
+		cout<<endl;
+	}
+	cout<<endl;
 
 	Matrix inverse_hessian;
 	if( !PASSED(la::InverseInit(final_hessian, &inverse_hessian)) ) {

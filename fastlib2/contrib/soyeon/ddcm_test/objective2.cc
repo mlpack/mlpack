@@ -903,14 +903,16 @@ void Objective::ComputeChoiceProbability(Vector &current_parameter,
 
 	for(index_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]<0) { 
-			(*choice_probability)[n]=postponed_probability_[n];
+			(*choice_probability)[n]=log(postponed_probability_[n]);
+			//(*choice_probability)[n]=(postponed_probability_[n]);
       
     } else {
       Vector temp;
       first_stage_x_[n].MakeColumnVector((first_stage_y_[n]-1), &temp);
 			//(*choice_probability)[n]=exp(la::Dot(betas, temp))/exp_betas_times_x1_[n];
-			(*choice_probability)[n]=exp(la::Dot(betas, temp))/exp_betas_times_x1_[n]
-															*(1-postponed_probability_[n]);
+			//(*choice_probability)[n]=exp(la::Dot(betas, temp))/exp_betas_times_x1_[n]
+			//												*(1-postponed_probability_[n]);
+			(*choice_probability)[n]=la::Dot(betas, temp)-log(exp_betas_times_x1_[n])+log((1-postponed_probability_[n]));
 			
 		}
   }
