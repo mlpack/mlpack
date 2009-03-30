@@ -15,44 +15,6 @@
 #include <math.h>
 
 namespace la {
-  enum MemoryAlloc {Init, Overwrite};
-
-  template<MemoryAlloc T>
-  class AllocationTrait {
-    template<typename Container>
-    static inline void Init(index_t length, Container *cont);
-    
-    template<typename Container>
-    static inline void Init(index_t dim1, index_t dim2, Container *cont);
-  };
-
-  template<>
-  class AllocationTrait<Init> {
-    template<typename Container>
-    static inline void Init(index_t length, Container *cont) {
-      cont->Init(length);
-    }
-    
-    template<typename Container>
-    static inline void Init(index_t dim1, index_t dim2, Container *cont) {
-      cont->Init(dim1, dim2);
-    }
-  };
-
-  template<>
-  class AllocationTrait<Overwrite> {
-    template<typename Container>
-    static inline void Init(index_t length, Container *cont) {
-      DEBUG_SAME(length, cont->length());
-    }
-    
-    template<typename Container>
-    static inline void Init(index_t dim1, index_t dim2, Container *cont) {
-      DEBUG_SAME(dim1, cont->n_rows());
-      DEBUG_SAME(dim2, cont->n_cols());
-    }
-  };
-
   /**
    * Entrywise element multiplication of two memory blocks
    * Also known as the Hadamard product
@@ -75,14 +37,14 @@ namespace la {
    * (\f$ C \gets A .* B\f$).
    */
  
-  template<typename Precision,  MemoryAlloc MemeAlloc>
-  void DotMul(const GenMatrix<Precision> &A, 
-              const GenMatrix<Precision> &B, 
-              GenMatrix<Precision> *C) {
+  template<typename Precision,  MemoryAlloc MemAlloc>
+  void DotMul(const GenMatrix<Precision, false> &A, 
+              const GenMatrix<Precision, false> &B, 
+              GenMatrix<Precision, false> *C) {
     DEBUG_SAME_SIZE(A.n_rows(), B.n_rows());
     DEBUG_SAME_SIZE(A.n_cols(), B.n_cols());
     AllocationTrait<MemAlloc>::Init(A.n_rows(), A.n_cols(), &C);
-    DotMul<Precision>(A.n_elements(), A.ptr(), B.ptr(), C.ptr());  
+    DotMul(A.n_elements(), A.ptr(), B.ptr(), C.ptr());  
   }
  
   /**
@@ -92,12 +54,12 @@ namespace la {
    * (\f$ \vec{C} \gets \vec{A} .* \vec{B}\f$).
    */ 
   template<typename Precision, MemoryAlloc MemAlloc>
-  void DotMul(const GenVector<Precision> &A, 
-              const GeVector<Precision> &B, 
-              GenVector<Precision> *C) {
+  void DotMul(const GenMatrix<Precision, true> &A, 
+              const GenMatrix<Precision,, true> &B, 
+              GenMatrix<Precision, true> *C) {
     DEBUG_SAME_SIZE(A.length(), B.length());
     AllocationTrait<MemAlloc>::Init(A.length(), &C);
-    DotMul<Precision>(A.length(), A.ptr(), B.ptr(), C.ptr());  
+    DotMul(A.length(), A.ptr(), B.ptr(), C.ptr());  
   
   }
 
@@ -112,7 +74,7 @@ namespace la {
               const Precision *A, 
               const Precision *B) {
     
-    GenVector<Precision> C;
+    GenMatrix<Precision, true> C;
     C.Init(length);
     CppBlas<Precision>::gbmv("N", 
         length, length, 0, 0, 1, A, 1, B, 1, 0, C.ptr(), 1);
@@ -126,8 +88,8 @@ namespace la {
    */
  
   template<typename Precision, MemoryAlloc MemAlloc>
-  void DotMulTo(const GenMatrix<Precision> *A, 
-              GenMatrix<Precision> &B) {
+  void DotMulTo(const GenMatrix<Precision, false> *A, 
+              GenMatrix<Precision, false> &B) {
     
     DEBUG_SAME_SIZE(A->rows(), B.rows());
     DEBUG_SAME_SIZE(A->cols(), B.cols());
@@ -140,8 +102,8 @@ namespace la {
    * (\f$ \vec{A} \gets \vec{A} .* \vec{B}\f$).
    */ 
   template<typename Precision, MemoryAlloc MemAlloc>
-  void DotMulTo(const GenVector<Precision> *A, 
-              GeVector<Precision> &B) {
+  void DotMulTo(const GenMatrix<Precision, true> *A, 
+              GenMatrix<Precision, true> &B) {
     DEBUG_SAME_SIZE(A->length(), B.length());
     DotMulTo(A.length(), A->ptr(), B.ptr();) 
   }
@@ -167,10 +129,10 @@ namespace la {
    */
   template<typename Precision, MemoryAlloc MemAlloc>
   void DotIntPowInit(index_t power,
-              const GenMatrix<Precision> &A,
-              GenMatrix<Precision> *B) {
+              const GenMatrix<Precision, false> &A,
+              GenMatrix<Precision, false> *B) {
     AllocationTrait<MemAlloc>::Init(A.n_rows(), A.n_cols(), B);
-    DotIntPow<Precision>(A.n_elements, A.ptr(), B->ptr());
+    DotIntPow(A.n_elements, A.ptr(), B->ptr());
   } 
 
   /**
@@ -179,8 +141,8 @@ namespace la {
    */
   template<typename Precision, M>
   void DotIntPowInit(index_t power,
-              const GenVector<Precision> &A,
-              GenVector<Precision> *B) {
+              const GenMatrix<Precision, true> &A,
+              GenMatrix<Precision, true> *B) {
   
     AllocationTrait<MemAlloc>::Init(A.length(), B);
     DotIntPow<Precision>(A.length(), A.ptr(), B->ptr());
@@ -195,7 +157,7 @@ namespace la {
   void DotIntPowTo(const index_t length,
               index_t power,
               Precision *A) {
-    GenVector<Precision> temp;
+    GenMatrix<Precision, true> temp;
     temp.Init(length);
     DotIntPow<Precision>(length, power, A, temp);
     memcpy(A, temp, length*sizeof(Precision));
@@ -207,7 +169,7 @@ namespace la {
    */
   template<typename Precision>
   void DotIntPowTo(index_t power,
-              GenMatrix<Precision> *A) {
+              GenMatrix<Precision, false> *A) {
     DotIntPow<Precision>(A->n_elements(), power, A->ptr());
   } 
 
@@ -217,7 +179,7 @@ namespace la {
    */
   template<typename Precision>
   void DotIntPowTo(index_t power,
-              GenVector<Precision> *A) {
+              GenMatrix<Precision, true> *A) {
     DotIntPow<Precision>(A->length(), power, A->ptr());  
   }
 
@@ -389,8 +351,8 @@ namespace la {
    */
   template<typename Precision, MemoryAlloc MemAlloc, typename Function>
   void DotFun(Function &fun
-              const GenMatrix<Precision> &A, 
-              GenMatrix<Precision> *B) {
+              const GenMatrix<Precision, false> &A, 
+              GenMatrix<Precision, false> *B) {
     AllocatorTrait<MemAlloc>::Init(A.n_rows(), A.n_cols(), B);
     DotFun<Precision, Function>(A.n_elements(), fun, A.ptr(), B->ptr());
   }
@@ -404,8 +366,8 @@ namespace la {
    */
   template<typename Precision, MemoryAlloc MemAlloc, typename Function>
   void DotFun(Function &fun,              
-              const GenVector<Precision> &A, 
-              GenVector<Precision> *B) {
+              const GenMatrix<Precision, true> &A, 
+              GenMatrix<Precision, true> *B) {
     AllocatorTrait<MemAlloc>::Init(A.length(), B);
     DotFun<Precision, Function>(A.length(), fun, A.ptr(), B->ptr());
   }
@@ -438,9 +400,9 @@ namespace la {
    */
   template<typename Precision, MemoryAlloc MemAlloc, typename Function>
   void DotFun(Function &fun
-              const GenMatrix<Precision> &A, 
-              const GenMatrix<Precision> &B,
-              const GenMatrix<Precision> *C) {
+              const GenMatrix<Precision, false> &A, 
+              const GenMatrix<Precision, false> &B,
+              const GenMatrix<Precision, false> *C) {
     DEBUG_SAME_SIZE(A.n_rows(), B.n_rows());
     DEBUG_SAME_SIZE(A.n_cols(), B.n_cols());
     AllocationTrait<MemAlloc>::Init(A.n_rows(), A.n_cols(), C);
@@ -457,9 +419,9 @@ namespace la {
    */
   template<typename Precision, typename Function>
   void DotFun(Function &fun,              
-              const GenVector<Precision> &A, 
-              const GenVector<Precision> &B, 
-              GenVector<Precision> *C) {
+              const GenMatrix<Precision, true> &A, 
+              const GenMatrix<Precision, true> &B, 
+              GenMatrix<Precision, true> *C) {
     DEBUG_SAME_SIZE(A.length(), B.length());
     DotFun(A.length(), fun, A.ptr(), B.ptr(), C->ptr());
   }
@@ -488,7 +450,7 @@ namespace la {
    *
    */ 
   template<typename Precision, typename RetPrecision>
-  RetPrecision Sum(const GenMatrix<Precision> &A) {
+  RetPrecision Sum(const GenMatrix<Precision, false> &A) {
     return Sum<Precision, RetPrecision>(A.n_elements(), A.ptr());  
   }
   
@@ -498,7 +460,7 @@ namespace la {
    *
    */ 
   template<typename Precision, MemoryAlloc MemAlloc, typename RetPrecision>
-  void SumCols(const GenMatrix<Precision> &A,
+  void SumCols(const GenMatrix<Precision, false> &A,
       GenVector<RetPrecision> *col_sums) {
     AllocatorTrait<MemAlloc>::Init(A.n_cols(), col_sums);    
     RetPrecision *ptr=col_sums->ptr();
@@ -514,7 +476,7 @@ namespace la {
    *
    */ 
   template<typename Precision, typename RetPrecision>
-  void SumRows(const GenMatrix<Precision> &A,
+  void SumRows(const GenMatrix<Precision, false> &A,
       GenVector<RetPrecision> *row_sums) {
     AllocatorTrait<MemAlloc>::Init(A.n_rows(), row_sums);    
     RetPrecision *ptr=row_sums->ptr();
@@ -534,7 +496,7 @@ namespace la {
    * of the sum. 
    */
   template<typename Precision, typename RetPrecision>
-  RetPrecision RetPrecision Sum(const GenVector<Precision> &A) {    
+  RetPrecision RetPrecision Sum(const GenMatrix<Precision, true> &A) {    
     return Sum<Precison, RetPrecision>(A.length(), A.ptr());
   }
 
@@ -561,7 +523,7 @@ namespace la {
    *
    */ 
   template<typename Precision, typename RetPrecision>
-  RetPrecision Prod(const GenMatrix<Precision> &A) {
+  RetPrecision Prod(const GenMatrix<Precision, false> &A) {
     return Prod<Precision, RetPrecision>(A.n_elements(), A.ptr());  
   }
   
@@ -571,7 +533,7 @@ namespace la {
    *
    */ 
   template<typename Precision, MemoryAlloc MemAlloc, typename RetPrecision>
-  void ProdCols(const GenMatrix<Precision> &A,
+  void ProdCols(const GenMatrix<Precision, false> &A,
       GenVector<RetPrecision> *col_prods) {
     AllocatorTrait<MemAlloc>::Init(A.n_cols(), col_sums);    
     RetPrecision *ptr=col_prods->ptr();
@@ -587,8 +549,8 @@ namespace la {
    *
    */ 
   template<typename Precision, typename RetPrecision>
-  void ProdRows(const GenMatrix<Precision> &A,
-      GenVector<RetPrecision> *row_prods) {
+  void ProdRows(const GenMatrix<Precision, false> &A,
+      GenMatrix<RetPrecision, true> *row_prods) {
     AllocatorTrait<MemAlloc>::Init(A.n_rows(), row_sums);    
     RetPrecision *ptr=row_prods->ptr();
     for(index_t i=0; i<A.n_prods(); i++) {
@@ -607,7 +569,7 @@ namespace la {
    * of the prod. 
    */
   template<typename Precision, typename RetPrecision>
-  RetPrecision RetPrecision Prod(const GenVector<Precision> &A) {    
+  RetPrecision RetPrecision Prod(const GenMatrix<Precision, true> &A) {    
     return Prod<Precison, RetPrecision>(A.length(), A.ptr());
   }
 
@@ -621,7 +583,7 @@ namespace la {
   template<typename Precision, typename RetPrecision, typename Function>
   RetPrecision FunSum(const index_t length,
       Function *fun, 
-      const GenMatrix<Precision> &A) {
+      const GenMatrix<Precision, false> &A) {
     RetPrecision sum=0;
     for(index_t i=0; i<length; i++) {
       sum+=fun(A[i]);
@@ -639,8 +601,8 @@ namespace la {
   template<typename Precision, typename RetPrecision, 
            MemoryAllocator MemAlloc, typename Function>
   RetPrecision FunSumCols(Function &fun, 
-      const GenMatrix<Precision> &A,
-      GenVector<RetPrecision> *col_sums) {
+      const GenMatrix<Precision, false> &A,
+      GenMatrix<RetPrecision, true> *col_sums) {
     AllocatorTrait<MemAlloc>::Init(A.n_cols(), col_sums);    
     RetPrecision *ptr=col_sums->ptr();
     for(index_t i=0; i<A.n_cols(); i++) {
@@ -652,8 +614,8 @@ namespace la {
   template<typename Precision, typename RetPrecision, 
            MemoryAllocator MemAlloc, typename Function>
   RetPrecision FunSumRows(Function &fun, 
-                          const GenMatrix<Precision> &A,
-                          GenVector<RetPrecision> *rows_sums) {
+                          const GenMatrix<Precision, false> &A,
+                          GenMatrix<RetPrecision, true> *rows_sums) {
     
     AllocatorTrait<MemAlloc>::Init(A.n_rows(), row_sums);    
     RetPrecision *ptr=row_sums->ptr();
@@ -675,7 +637,7 @@ namespace la {
    */
   template<typename Precision, typename RetPrecision, typename Function>
   void RetPrecision FunSum(Function &fun,                      
-                           const GenVector<Precision> &A) {
+                           const GenMatrix<Precision, true> &A) {
    return FunSum<Precison, RetPrecision, Function>(A.length(), fun, A.ptr());
 
   }
@@ -690,7 +652,7 @@ namespace la {
   template<typename Precision>
   void Zeros(const index_t rows, 
              consr index_t cols, 
-             GenMatrix<Precision> *A) {
+             GenMatrix<Precision, false> *A) {
     A->Init(rows, cols, A);
     A->SetAll(Precision(0.0));
   }
@@ -702,7 +664,7 @@ namespace la {
    */
   template<typename Precision>
   void Zeros(const index_t length 
-             GenVector<Precision> *A) {
+             GenMatrix<Precision, true> *A) {
     A->Init(length);
     A->SetAll(0.0);
   }
@@ -715,7 +677,7 @@ namespace la {
   template<typename Precision>
   void Ones(const index_t rows, 
             const index_t cols, 
-            GenMatrix<Precision> *A) {
+            GenMatrix<Precision, false> *A) {
      A->Init(rows, cols, A);
      A->SetAll(Precision(1.0));
   }
@@ -727,7 +689,7 @@ namespace la {
    */
   template<typename Precision>
   void Ones(const index_t length, 
-             GenVector<Precision> *A) {
+             GenMatrix<Precision, true> *A) {
     A->Init(length);
     A->SetAll(1.0);
   }
@@ -742,7 +704,7 @@ namespace la {
             const index_t cols,
             const index_t lo,
             const index_t hi,
-            GenMatrix<Precision> *A) {
+            GenMatrix<Precision, false> *A) {
     A->Init(rows, cols);
     for(index_t i=0; i<rows; i++) {
       for(index_t j=0; j<cols; j++) {
@@ -760,7 +722,7 @@ namespace la {
   void Rand(const index_t length,
             const index_t lo,
             const index_t hi, 
-            GenVector<Precision> *A) {
+            GenMatrix<Precision, true> *A) {
     A->Init(length);
     for(index_t i=0; i<length; i++) {
       A->set(i, math::Rand(lo, hi));
@@ -773,7 +735,7 @@ namespace la {
    */
   template<typename Precision>
   void Eye(index_t dimension, 
-           GenMatrix<Precision> *I) {
+           GenMatrix<Precision, false> *I) {
     I->InitDiagonal(dimension, Precision(1.0));
   }
 };

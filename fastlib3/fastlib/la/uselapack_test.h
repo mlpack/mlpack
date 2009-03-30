@@ -17,7 +17,7 @@
 #define MAKE_MATRIX_TRANS(Precision, name, n_rows, n_cols, contents ...) \
     Precision name ## _values [] = { contents }; \
     DEBUG_ASSERT(sizeof(name ## _values) / sizeof(Precision) == n_rows * n_cols); \
-    GenMatrix<Precision> name; \
+    GenMatrix<Precision, false> name; \
     name.Alias(name ## _values, (n_rows), (n_cols));
 
 /**
@@ -27,11 +27,11 @@
 #define MAKE_VECTOR(Precision, name, length, contents ...) \
     Precision name ## _values [] = { contents }; \
     DEBUG_ASSERT(sizeof(name ## _values) / sizeof(Precision) == (length)); \
-    GenVector<Precision> name; \
+    GenMatrix<Precision, true> name; \
     name.Alias(name ## _values, (length));
 template<typename Precision>
-bool VectorApproxEqual(const GenVector<Precision>& a, 
-                       const GenVector<Precision>& b,
+bool VectorApproxEqual(const GenMatrix<Precision, true>& a, 
+                       const GenMatrix<Precision, true>& b,
                        Precision eps) {
   if (a.length() != b.length()) {
     fprintf(stderr, "XXX Size mismatch.\n");
@@ -61,8 +61,8 @@ bool VectorApproxEqual(const GenVector<Precision>& a,
   return wrong == 0;
 }
 template<typename Precision>
-void AssertApproxVector(const GenVector<Precision>& a, 
-                        const GenVector<Precision>& b, Precision eps) {
+void AssertApproxVector(const GenMatrix<Precision, true>& a, 
+                        const GenMatrix<Precision, true>& b, Precision eps) {
   if (!VectorApproxEqual(a, b, eps)) {
     a.PrintDebug("a");
     b.PrintDebug("b");
@@ -72,8 +72,8 @@ void AssertApproxVector(const GenVector<Precision>& a,
 }
 
 template<typename Precision>
-bool MatrixApproxEqual(const GenMatrix<Precision>& a, 
-                       const GenMatrix<Precision>& b,
+bool MatrixApproxEqual(const GenMatrix<Precision, false>& a, 
+                       const GenMatrix<Precision, false>& b,
      Precision eps) {
   if (a.n_rows() != b.n_rows() || a.n_cols() != b.n_cols()) {
     fprintf(stderr, "XXX Size mismatch.\n");
@@ -106,8 +106,8 @@ bool MatrixApproxEqual(const GenMatrix<Precision>& a,
 }
 
 template<typename Precision>
-void AssertApproxMatrix(const GenMatrix<Precision>& a, 
-                        const GenMatrix<Precision>& b,
+void AssertApproxMatrix(const GenMatrix<Precision, false>& a, 
+                        const GenMatrix<Precision, false>& b,
     Precision eps) {
   if (!MatrixApproxEqual(a, b, eps)) {
     a.PrintDebug("a");
@@ -118,16 +118,16 @@ void AssertApproxMatrix(const GenMatrix<Precision>& a,
 }
 
 template<typename Precision>
-void AssertExactMatrix(const GenMatrix<Precision>& a, 
-                       const GenMatrix<Precision>& b) {
+void AssertExactMatrix(const GenMatrix<Precision, false>& a, 
+                       const GenMatrix<Precision, false>& b) {
   AssertApproxMatrix<Precision>(a, b, 0);
 }
 
 template<typename Precision>
-void AssertApproxTransMatrix(const GenMatrix<Precision>& a, 
-                             const GenMatrix<Precision>& b,
+void AssertApproxTransMatrix(const GenMatrix<Precision, false>& a, 
+                             const GenMatrix<Precision, false>& b,
                              Precision eps) {
-  GenMatrix<Precision> a_trans;
+  GenMatrix<Precision, false> a_trans;
   la::TransposeInit<Precision>(a, &a_trans);
   if (!MatrixApproxEqual(a_trans, b, eps)) {
     a_trans.PrintDebug("a_trans");
@@ -153,7 +153,7 @@ void TestVectorDot() {
 // ----
 // ---- (Except distance tests are omitted)
 template<typename Precision>
-void MakeCountMatrix(index_t n_rows, index_t n_cols, GenMatrix<Precision> *m) {
+void MakeCountMatrix(index_t n_rows, index_t n_cols, GenMatrix<Precision, false> *m) {
   m->Init(n_rows, n_cols);
   
   for (index_t c = 0; c < n_cols; c++) {
@@ -164,7 +164,7 @@ void MakeCountMatrix(index_t n_rows, index_t n_cols, GenMatrix<Precision> *m) {
 }
 
 template<typename Precision>
-void MakeConstantMatrix(index_t n_rows, index_t n_cols, Precision v, GenMatrix<Precision> *m) {
+void MakeConstantMatrix(index_t n_rows, index_t n_cols, Precision v, GenMatrix<Precision, false> *m) {
   m->Init(n_rows, n_cols);
   
   for (index_t c = 0; c < n_cols; c++) {
@@ -177,11 +177,11 @@ void MakeConstantMatrix(index_t n_rows, index_t n_cols, Precision v, GenMatrix<P
 /** Tests level 1 BLAS-ish stuff. */
 template<typename Precision>
 void TestMatrixSimpleMath() {
-  GenMatrix<Precision> m1;
-  GenMatrix<Precision> m2;
-  GenMatrix<Precision> m3;
-  GenMatrix<Precision> m4;
-  GenMatrix<Precision> m5;
+  GenMatrix<Precision, false> m1;
+  GenMatrix<Precision, false> m2;
+  GenMatrix<Precision, false> m3;
+  GenMatrix<Precision, false> m4;
+  GenMatrix<Precision, false> m5;
   
   MakeCountMatrix<Precision>(3, 4, &m1);
   MakeCountMatrix<Precision>(3, 4, &m2);
@@ -202,7 +202,7 @@ void TestMatrixSimpleMath() {
 }
 
 template<typename Precision>
-void MakeCountVector(index_t n, GenVector<Precision> *v) {
+void MakeCountVector(index_t n, GenMatrix<Precision, true> *v) {
   v->Init(n);
   
   for (index_t c = 0; c < n; c++) {
@@ -211,7 +211,7 @@ void MakeCountVector(index_t n, GenVector<Precision> *v) {
 }
 
 template<typename Precision>
-void MakeConstantVector(index_t n, Precision d, GenVector<Precision> *v) {
+void MakeConstantVector(index_t n, Precision d, GenMatrix<Precision, true> *v) {
   v->Init(n);
   
   for (index_t c = 0; c < n; c++) {
@@ -222,11 +222,11 @@ void MakeConstantVector(index_t n, Precision d, GenVector<Precision> *v) {
 /** Tests level 1 BLAS-ish stuff. */
 template<typename Precision>
 void TestVectorSimpleMath() {
-  GenVector<Precision> v1;
-  GenVector<Precision> v2;
-  GenVector<Precision> v3;
-  GenVector<Precision> v4;
-  GenVector<Precision> v5;
+  GenMatrix<Precision, true> v1;
+  GenMatrix<Precision, true> v2;
+  GenMatrix<Precision, true> v3;
+  GenMatrix<Precision, true> v4;
+  GenMatrix<Precision, true> v5;
   
   MakeCountVector<Precision>(6, &v1);
   MakeCountVector<Precision>(6, &v2);
@@ -249,15 +249,15 @@ void TestVectorSimpleMath() {
 /** Tests aliases and copies */
 template<typename Precision>
 void TestVector() {
-  GenVector<Precision> v1;
-  const GenVector<Precision> *v_const;
-  GenVector<Precision> v2;
-  GenVector<Precision> v3;
-  GenVector<Precision> v4;
-  GenVector<Precision> v6;
-  GenVector<Precision> v7;
-  GenVector<Precision> v8;
-  GenVector<Precision> v9;
+  GenMatrix<Precision, true> v1;
+  const GenMatrix<Precision, true> *v_const;
+  GenMatrix<Precision, true> v2;
+  GenMatrix<Precision, true> v3;
+  GenMatrix<Precision, true> v4;
+  GenMatrix<Precision, true> v6;
+  GenMatrix<Precision, true> v7;
+  GenMatrix<Precision, true> v8;
+  GenMatrix<Precision, true> v9;
   
   MakeCountVector<Precision>(10, &v1);
   TEST_ASSERT(v1.length() == 10);
@@ -306,15 +306,15 @@ void TestVector() {
 
 template<typename Precision>
 void TestMatrix() {
-  GenMatrix<Precision> m1;
-  const GenMatrix<Precision> *m_const;
-  GenMatrix<Precision> m2;
-  GenMatrix<Precision> m3;
-  GenMatrix<Precision> m4;
-  GenMatrix<Precision> m6;
-  GenMatrix<Precision> m7;
-  GenMatrix<Precision> m8;
-  GenMatrix<Precision> m9;
+  GenMatrix<Precision, false> m1;
+  const GenMatrix<Precision, false> *m_const;
+  GenMatrix<Precision, false> m2;
+  GenMatrix<Precision, false> m3;
+  GenMatrix<Precision, false> m4;
+  GenMatrix<Precision, false> m6;
+  GenMatrix<Precision, false> m7;
+  GenMatrix<Precision, false> m8;
+  GenMatrix<Precision, false> m9;
   
   MakeCountMatrix<Precision>(13, 10, &m1);
   TEST_ASSERT(m1.n_cols() == 10);
@@ -323,7 +323,7 @@ void TestMatrix() {
   m_const = &m1;
   TEST_ASSERT(m_const->ptr()[3] == (*m_const).get(3, 0));
 
-  GenVector<Precision> v1, v2;  
+  GenMatrix<Precision, true> v1, v2;  
   m1.MakeColumnVector(0, &v1);
   m1.MakeColumnVector(1, &v2);
   TEST_ASSERT(v1[12] == 12);
@@ -395,7 +395,7 @@ void TestMultiply() {
       17, 31, 45,
       40, 64, 98);
   
-  GenMatrix<Precision> product_actual;
+  GenMatrix<Precision, false> product_actual;
   
   // product_actual is uninitialized
   la::MulInit<Precision>(a, b, &product_actual);
@@ -411,11 +411,11 @@ void TestMultiply() {
       23, 40, 33,
       52, 82, 70);
   
-  GenMatrix<Precision> product_actual_transa;
+  GenMatrix<Precision, false> product_actual_transa;
   la::MulTransAInit<Precision>(a, b, &product_actual_transa);
   AssertExactMatrix<Precision>(product_expect_transa, product_actual_transa);
 
-  GenMatrix<Precision> a_t, b_t;
+  GenMatrix<Precision, false> a_t, b_t;
   la::TransposeInit<Precision>(a, &a_t);
   la::TransposeInit<Precision>(b, &b_t);
   
@@ -435,20 +435,20 @@ void TestMultiply() {
   MAKE_VECTOR(Precision, a_v2, 3,   17, 41, 55);
   MAKE_VECTOR(Precision, v2_a, 3,   25, 53, 42);
   
-  GenVector<Precision> a_v1_actual;
+  GenMatrix<Precision, true> a_v1_actual;
   la::MulInit<Precision>(a, v1, &a_v1_actual);
   AssertApproxVector<Precision>(a_v1, a_v1_actual, 0);
   
-  GenVector<Precision> a_v2_actual;
+  GenMatrix<Precision, true> a_v2_actual;
   a_v2_actual.Init(3);
   la::MulOverwrite<Precision>(a, v2, &a_v2_actual);
   AssertApproxVector<Precision>(a_v2, a_v2_actual, 0);
   
-  GenVector<Precision> v1_a_actual;
+  GenMatrix<Precision, true> v1_a_actual;
   la::MulInit<Precision>(v1, a, &v1_a_actual);
   AssertApproxVector<Precision>(v1_a, v1_a_actual, 0);
   
-  GenVector<Precision> v2_a_actual;
+  GenMatrix<Precision, true> v2_a_actual;
   v2_a_actual.Init(3);
   la::MulOverwrite<Precision>(v2, a, &v2_a_actual);
   AssertApproxVector<Precision>(v2_a, v2_a_actual, 0);
@@ -463,7 +463,7 @@ void TestMultiply() {
   la::MulOverwrite<Precision>(b, v3, &b_v3_actual);
   AssertApproxVector<Precision>(b_v3, b_v3_actual, 0);
 
-  GenVector<Precision> v1_b_actual;
+  GenMatrix<Precision, true> v1_b_actual;
   la::MulInit<Precision>(v1, b, &v1_b_actual);
   AssertApproxVector<Precision>(v1_b, v1_b_actual, 0);
   
@@ -493,18 +493,18 @@ void TestInverse() {
       0, 1, 0,
       0, 0, 0);
   
-  GenMatrix<Precision> a_inv_actual;
+  GenMatrix<Precision, false> a_inv_actual;
   
   TEST_ASSERT(PASSED(la::InverseInit<Precision>(a, &a_inv_actual)));
   AssertExactMatrix<Precision>(a_inv_expect, a_inv_actual);
   
-  GenMatrix<Precision> b_inv_actual;
+  GenMatrix<Precision, false> b_inv_actual;
   
   b_inv_actual.Init(3, 3);
   TEST_ASSERT(PASSED(la::InverseOverwrite<Precision>(b, &b_inv_actual)));
   AssertApproxMatrix<Precision>(b_inv_expect, b_inv_actual, 1.0e-5);
   
-  GenMatrix<Precision> c_inv_actual;
+  GenMatrix<Precision, false> c_inv_actual;
   // Try inverting a 3x3 rank-3 matrix
   TEST_ASSERT(!PASSED(la::InverseInit<Precision>(c, &c_inv_actual)));
   
@@ -588,25 +588,25 @@ void TestQR() {
       -9.08582, 3.38347, 0.00000,
      -12.68882, 5.23476, -1.26139);
 
-  GenMatrix<Precision> a_q_actual;
-  GenMatrix<Precision> a_r_actual;
-  GenMatrix<Precision> a_q_r_actual;
+  GenMatrix<Precision, false> a_q_actual;
+  GenMatrix<Precision, false> a_r_actual;
+  GenMatrix<Precision, false> a_q_r_actual;
   
   TEST_ASSERT(PASSED(la::QRInit<Precision>(a, &a_q_actual, &a_r_actual)));
   la::MulInit<Precision>(a_q_actual, a_r_actual, &a_q_r_actual);
   AssertApproxMatrix<Precision>(a, a_q_r_actual, 1.0e-5);
   
-  GenMatrix<Precision> b_q_actual;
-  GenMatrix<Precision> b_r_actual;
-  GenMatrix<Precision> b_q_r_actual;
+  GenMatrix<Precision, false> b_q_actual;
+  GenMatrix<Precision, false> b_r_actual;
+  GenMatrix<Precision, false> b_q_r_actual;
   
   TEST_ASSERT(PASSED(la::QRInit<Precision>(b, &b_q_actual, &b_r_actual)));
   la::MulInit<Precision>(b_q_actual, b_r_actual, &b_q_r_actual);
   AssertApproxMatrix<Precision>(b, b_q_r_actual, 1.0e-5);
   
-  GenMatrix<Precision> c_q_actual;
-  GenMatrix<Precision> c_r_actual;
-  GenMatrix<Precision> c_q_r_actual;
+  GenMatrix<Precision, false> c_q_actual;
+  GenMatrix<Precision, false> c_r_actual;
+  GenMatrix<Precision, false> c_q_r_actual;
   
   TEST_ASSERT(PASSED(la::QRInit<Precision>(c, &c_q_actual, &c_r_actual)));
   la::MulInit<Precision>(c_q_actual, c_r_actual, &c_q_r_actual);
@@ -642,8 +642,8 @@ void TestEigen() {
   MAKE_VECTOR(Precision, b_eigenvalues_imag_expect, 2,
      2.0, -2.0);
 
-  GenMatrix<Precision> a_eigenvectors_actual;
-  GenVector<Precision> a_eigenvalues_actual;
+  GenMatrix<Precision, false> a_eigenvectors_actual;
+  GenMatrix<Precision, true> a_eigenvalues_actual;
   
   TEST_ASSERT(PASSED(la::EigenvectorsInit<Precision>(
       a, &a_eigenvalues_actual, &a_eigenvectors_actual)));
@@ -662,14 +662,14 @@ void TestEigen() {
   }
   AssertApproxTransMatrix<Precision>(a_eigenvectors_expect, a_eigenvectors_actual, 1.0e-3);
 
-  GenVector<Precision> a_eigenvalues_real_actual;
-  GenVector<Precision> a_eigenvalues_imag_actual;
+  GenMatrix<Precision, true> a_eigenvalues_real_actual;
+  GenMatrix<Precision, true> a_eigenvalues_imag_actual;
   TEST_ASSERT(PASSED(la::EigenvaluesInit(
       a, &a_eigenvalues_real_actual, &a_eigenvalues_imag_actual)));
   AssertApproxVector<Precision>(a_eigenvalues_real_expect, a_eigenvalues_real_actual, 1.0e-3);
   AssertApproxVector<Precision>(a_eigenvalues_imag_expect, a_eigenvalues_imag_actual, 0.0);
 
-  GenVector<Precision> a_eigenvalues_actual_2;
+  GenMatrix<Precision, true> a_eigenvalues_actual_2;
   TEST_ASSERT(PASSED(la::EigenvaluesInit(
       a, &a_eigenvalues_actual_2)));
   AssertApproxVector<Precision>(a_eigenvalues_real_expect, a_eigenvalues_actual_2, 1.0e-3);
@@ -684,10 +684,10 @@ void TestEigen() {
   //TEST_ASSERT(!PASSED(la::EigenvectorsInit(
   //    b, &b_eigenvalues_actual, &b_eigenvectors_actual)));
 
-  GenMatrix<Precision> b_eigenvectors_real_actual;
-  GenMatrix<Precision> b_eigenvectors_imag_actual;
-  GenVector<Precision> b_eigenvalues_real_actual;
-  GenVector<Precision> b_eigenvalues_imag_actual;
+  GenMatrix<Precision, false> b_eigenvectors_real_actual;
+  GenMatrix<Precision, false> b_eigenvectors_imag_actual;
+  GenMatrix<Precision, true> b_eigenvalues_real_actual;
+  GenMatrix<Precision, true> b_eigenvalues_imag_actual;
   TEST_ASSERT(PASSED(la::EigenvectorsInit<Precision>(
       b, &b_eigenvalues_real_actual, &b_eigenvalues_imag_actual,
       &b_eigenvectors_real_actual, &b_eigenvectors_imag_actual)));
@@ -698,19 +698,19 @@ void TestEigen() {
 }
 
 template<typename Precision>
-void TrySchur(const GenMatrix<Precision> &orig) {
-  GenMatrix<Precision> z;
-  GenMatrix<Precision> t;
-  GenVector<Precision> eigen_real;
-  GenVector<Precision> eigen_imag;
+void TrySchur(const GenMatrix<Precision, false> &orig) {
+  GenMatrix<Precision, false> z;
+  GenMatrix<Precision, false> t;
+  GenMatrix<Precision, true> eigen_real;
+  GenMatrix<Precision, true> eigen_imag;
   
   la::SchurInit<Precision>(orig, &eigen_real, &eigen_imag, &t, &z);
   
-  GenMatrix<Precision> z_trans;
+  GenMatrix<Precision, false> z_trans;
   la::TransposeInit<Precision>(z, &z_trans);
-  GenMatrix<Precision> tmp;
+  GenMatrix<Precision, false> tmp;
   la::MulInit<Precision>(t, z_trans, &tmp);
-  GenMatrix<Precision> result;
+  GenMatrix<Precision, false> result;
   la::MulInit<Precision>(z, tmp, &result);
   
   AssertApproxMatrix<Precision>(orig, result, 1.0e-4);
@@ -743,24 +743,24 @@ void TestSchur() {
 }
 
 template<typename Precision>
-void AssertProperSVD(const GenMatrix<Precision>& orig,
-    const GenVector<Precision> &s, const GenMatrix<Precision>& u, 
-    const GenMatrix<Precision>& vt) {
-  GenMatrix<Precision> s_matrix;
+void AssertProperSVD(const GenMatrix<Precision, false>& orig,
+    const GenMatrix<Precision, true> &s, const GenMatrix<Precision, false>& u, 
+    const GenMatrix<Precision, false>& vt) {
+  GenMatrix<Precision, false> s_matrix;
   s_matrix.Init(s.length(), s.length());
   s_matrix.SetDiagonal(s);
-  GenMatrix<Precision> tmp;
+  GenMatrix<Precision, false> tmp;
   la::MulInit<Precision>(u, s_matrix, &tmp);
-  GenMatrix<Precision> result;
+  GenMatrix<Precision, false> result;
   la::MulInit<Precision>(tmp, vt, &result);
   AssertApproxMatrix<Precision>(result, orig, 1.0e-4);
 }
 
 template<typename Precision>
-void TrySVD(const GenMatrix<Precision>& orig) {
-  GenVector<Precision> s;
-  GenMatrix<Precision> u;
-  GenMatrix<Precision> vt;
+void TrySVD(const GenMatrix<Precision, false>& orig) {
+  GenMatrix<Precision, true> s;
+  GenMatrix<Precision, false> u;
+  GenMatrix<Precision, false> vt;
   la::SVDInit<Precision>(orig, &s, &u, &vt);
   AssertProperSVD<Precision>(orig, s, u, vt);
 }
@@ -801,9 +801,9 @@ void TestSVD() {
       -1, 0, 0,
       0, 0, 1);
 
-  GenMatrix<Precision> a_u_actual;
-  GenVector<Precision> a_s_actual;
-  GenMatrix<Precision> a_vt_actual;
+  GenMatrix<Precision, false> a_u_actual;
+  GenMatrix<Precision, true> a_s_actual;
+  GenMatrix<Precision, false> a_vt_actual;
 
   la::SVDInit<Precision>(a, &a_s_actual, &a_u_actual, &a_vt_actual);
   AssertProperSVD<Precision>(a, a_s_actual, a_u_actual, a_vt_actual);
@@ -811,7 +811,7 @@ void TestSVD() {
   AssertApproxMatrix<Precision>(a_u_expect, a_u_actual, 1.0e-3);
   AssertApproxMatrix<Precision>(a_vt_expect, a_vt_actual, 1.0e-3);
 
-  GenVector<Precision> a_s_actual_2;
+  GenMatrix<Precision, true> a_s_actual_2;
   la::SVDInit<Precision>(a, &a_s_actual_2);
   AssertApproxVector<Precision>(a_s_expect, a_s_actual_2, 1.0e-3);
 
@@ -820,7 +820,7 @@ void TestSVD() {
   TrySVD<Precision>(d);
 
   // let's try a big, but asymmetric, one
-  GenMatrix<Precision> e;
+  GenMatrix<Precision, false> e;
   e.Init(3000, 10);
   for (index_t j = 0; j < e.n_cols(); j++) {
     for (index_t i = 0; i < e.n_rows(); i++) {
@@ -832,10 +832,10 @@ void TestSVD() {
 }
 
 template<typename Precision>
-void TryCholesky(const GenMatrix<Precision> &orig) {
-  GenMatrix<Precision> u;
+void TryCholesky(const GenMatrix<Precision, false> &orig) {
+  GenMatrix<Precision, false> u;
   TEST_ASSERT(PASSED(la::CholeskyInit<Precision>(orig, &u)));
-  GenMatrix<Precision> result;
+  GenMatrix<Precision, false> result;
   la::MulTransAInit<Precision>(u, u, &result);
   AssertApproxMatrix<Precision>(orig, result, 1.0e-3);
 }
@@ -856,20 +856,20 @@ void TestCholesky() {
 }
 
 template<typename Precision>
-void TrySolveMatrix(const GenMatrix<Precision>& a, const GenMatrix<Precision>& b) {
-  GenMatrix<Precision> x;
+void TrySolveMatrix(const GenMatrix<Precision, false>& a, const GenMatrix<Precision, false>& b) {
+  GenMatrix<Precision, false> x;
   TEST_ASSERT(PASSED(la::SolveInit(a, b, &x)));
-  GenMatrix<Precision> result;
+  GenMatrix<Precision, false> result;
   la::MulInit<Precision>(a, x, &result);
   AssertApproxMatrix<Precision>(b, result, 1.0e-3);
 }
 
 template<typename Precision>
-void TrySolveVector(const GenMatrix<Precision>& a, 
-                    const GenVector<Precision>& b) {
-  GenVector<Precision> x;
+void TrySolveVector(const GenMatrix<Precision, false>& a, 
+                    const GenMatrix<Precision, true>& b) {
+  GenMatrix<Precision, true> x;
   la::SolveInit<Precision>(a, b, &x);
-  GenVector<Precision> result;
+  GenMatrix<Precision, true> result;
   la::MulInit<Precision>(a, x, &result);
   AssertApproxVector<Precision>(b, result, 1.0e-3);
 }
@@ -909,9 +909,9 @@ void TestSolve() {
  */
 template<typename Precision>
 void TestLeastSquareFit() {
-  GenMatrix<Precision> x;
-  GenMatrix<Precision> y;
-  GenMatrix<Precision> a;
+  GenMatrix<Precision, false> x;
+  GenMatrix<Precision, false> y;
+  GenMatrix<Precision, false> a;
   x.Init(3,2);
   x.set(0, 0, 1.0);
   x.set(0, 1, -1.0);
@@ -927,7 +927,7 @@ void TestLeastSquareFit() {
   y.set(2, 0, 0.2);
   y.set(2, 1, -0.4);
   la::LeastSquareFit<Precision>(y, x, &a);
-  GenMatrix<Precision> true_a;
+  GenMatrix<Precision, false> true_a;
   true_a.Init(2, 2);
   true_a.set(0, 0, 0.0596);
   true_a.set(0, 1, 1.0162);
