@@ -19,404 +19,77 @@
 #include <math.h>
 
 /**
- * Double-precision vector for use with LAPACK.
+ * @brief Static assertion for the matrix class
+ *        we use them to make sure people 
+ *        do not accidently give wrong  template arguments
  *
- * This supports aliasing, so you can have weak copies of a vector,
- * or weak copies to subsections of a vector (or weak copies to a column
- * of a matrix).
- *
- * Vectors were never meant to support resizing, nor was it meant to hold
- * anything but floating-point values.  For a suitable structure, see
- * ArrayList.
- *
- * @code
- * Vector orig;
- * orig.Init(5);
- * for (index_t i = 0; i < 5; i++) {
- *   orig[i] = 2.0;
- * }
- * Vector an_alias;
- * an_alias.Alias(orig);
- * an_alias[4] = 99;
- * assert(orig[4] == 9);
- * @endcode
  */
-template<typename T>
-class GenVector {
- private:
-  /** The pointer to the array of doubles. */
-  T *ptr_;
-  /** The length of the vector. */
-  index_t length_;
-  /** Whether this should be freed, i.e. it is not an alias. */
-  bool should_free_;
-  
-  OBJECT_TRAVERSAL_ONLY(GenVector) {
-    OT_OBJ(length_);
-    OT_ALLOC(ptr_, length_);
-  }
-  OT_REFILL_TRANSIENTS(GenVector) {
-    should_free_ = true;
-  }
-  
- public:
-  /**
-   * Creates a completely uninitialized Vector which must be initialized.
-   */
-  GenVector() {
-    DEBUG_ONLY(Uninitialize_());
-    should_free_ = false;
-  }
-  
-  /**
-   * Copy constructor -- for use in collections.
-   */
-  GenVector(const GenVector& other) {
-    DEBUG_ONLY(Uninitialize_());
-    Copy(other);
-  }
-  ASSIGN_VIA_COPY_CONSTRUCTION(GenVector);
-  
-  /**
-   * Destroys the Vector, freeing the memory if this copy is not an alias.
-   */
-  ~GenVector() {
-    Destruct();
-  }
-  
-  /**
-   * Uninitializes so that you can call another initializer.
-   */
-  void Destruct() {
-    DEBUG_ASSERT_MSG(ptr_ != BIG_BAD_POINTER(T),
-       "You forgot to initialize a Vector before it got automatically freed.");
-    
-    /* mark slow case as "unlikely" even if it might be the likely case */
-    if (unlikely(should_free_)) {
-      mem::DebugPoison(ptr_, length_);
-      mem::Free(ptr_);
-    }
-    
-    DEBUG_ONLY(Uninitialize_());
-  }
-
-  /**
-   * Creates a vector of a particular length, but does not initialize the
-   * values in it.
-   */
-  void Init(index_t in_length) {
-    ptr_ = mem::Alloc<T>(in_length);
-    length_ = in_length;
-    should_free_ = true;
-  }
-  
-  /**
-   * Creates a vector of a particular length statically, but does not
-   * initialize the values in it. This vector will not be freed!
-   */
-  void StaticInit(index_t in_length) {
-#ifndef DISABLE_DISK_MATRIX
-    ptr_ = mmapmm::MemoryManager<false>::allocator_->Alloc<T>(in_length);
-    length_ = in_length;
-    should_free_ = false;
-#else
-    Init(in_length);
-#endif
-  }
-
-  /**
-   * Sets all elements to the same value.
-   */
-  void SetAll(T d) {
-    mem::RepeatConstruct(ptr_, d, length_);
-  }
-  
-  /**
-   * Sets all elements to zero.
-   */
-  void SetZero() {
-    // TODO: if IEEE is used, this can be done efficiently with memset
-    SetAll(0);
-  }
-
-  /**
-   * Makes this uninitialized vector a copy of the other vector.
-   *
-   * @param other the vector to explicitly copy
-   */
-  void Copy(const GenVector& other) {
-    Copy(other.ptr(), other.length());
-  }
-
-  /**
-   * Makes this uninitialized vector a copy of the other vector.
-   *
-   * @param doubles the array of doubles to copy
-   * @param in_length the number of doubles in the array
-   */
-  void Copy(const T *doubles, index_t in_length) {
-    DEBUG_ONLY(AssertUninitialized_());
-    
-    ptr_ = mem::AllocCopy(doubles, in_length);
-    length_ = in_length;
-    should_free_ = true;
-  }
-
-  /**
-   * Makes this uninitialized vector a static copy of the other
-   * vector. This copy will not be freed!
-   *
-   * @param other the vector to explicitly copy
-   */
-  void StaticCopy(const GenVector& other) {
-    StaticCopy(other.ptr(), other.length());
-  }
-
-  /**
-   * Makes this uninitialized vector a static copy of the other
-   * vector. This copy will not be freed!
-   *
-   * @param doubles the array of doubles to copy
-   * @param in_length the number of doubles in the array
-   */
-  void StaticCopy(const T *doubles, index_t in_length) {
-#ifndef DISABLE_DISK_MATRIX
-    DEBUG_ONLY(AssertUninitialized_());
-    
-    ptr_ = mmapmm::MemoryManager<false>::allocator_->Alloc<T>(in_length);
-    mem::Copy<T, T, T>(ptr_, doubles, in_length);
-    length_ = in_length;
-    should_free_ = false;
-#else
-    Copy(doubles, in_length);
-#endif
-  }
-  
-  /**
-   * Alias a particular memory region of doubles.
-   */
-  void Alias(T *in_ptr, index_t in_length) {
-    DEBUG_ONLY(AssertUninitialized_());
-    
-    ptr_ = in_ptr;
-    length_ = in_length;
-    should_free_ = false;
-  }
-  
-  /**
-   * Implements the "Copiable" interface using .
-   */
-  void WeakCopy(const GenVector& other) {
-    Alias(other);
-  }
-  
-  /**
-   * Makes this vector an alias of another vector.
-   *
-   * @param other the other vector
-   */
-  void Alias(const GenVector& other) {
-    // we trust in good faith that a const vector won't be abused
-    Alias(other.ptr_, other.length());
-  }
-  
-  /**
-   * Makes this vector the "owning copy" of the other vector; the other
-   * vector becomes an alias and this becomes the standard.
-   *
-   * The other vector must be the "owning copy" of its memory.
-   *
-   * @param other a pointer to the vector whose contents will be owned
-   */
-  void Own(GenVector* other) {
-    Own(other->ptr_, other->length());
-    
-    DEBUG_ASSERT(other->should_free_);
-    other->should_free_ = false;
-  }
-  
-  /**
-   * Become owner of a particular pointer in memory that was allocated
-   * with mem::Alloc<double>.
-   */
-  void Own(T *in_ptr, index_t in_length) {
-    DEBUG_ONLY(AssertUninitialized_());
-    
-    ptr_ = in_ptr;
-    length_ = in_length;
-    should_free_ = true;
-  }
-  
-  /**
-   * Makes this vector the "owning copy" of the other vector; the other
-   * vector becomes an alias and this becomes the standard statically.
-   *
-   * The other vector must have been allocated statically.
-   *
-   * @param other a pointer to the vector whose contents will be owned
-   */
-  void StaticOwn(GenVector* other) {
-#ifndef DISABLE_DISK_MATRIX
-    StaticOwn(other->ptr_, other->length());
-#else
-    Own(other);
-#endif
-  }
-  
-  /**
-   * Become owner of a particular pointer in memory that was allocated
-   * statically.
-   */
-  void StaticOwn(T *in_ptr, index_t in_length) {
-#ifndef DISABLE_DISK_MATRIX
-    DEBUG_ONLY(AssertUninitialized_());
-    
-    ptr_ = in_ptr;
-    length_ = in_length;
-    should_free_ = false;
-#else
-    Own(in_ptr, in_length);
-#endif
-  }
-  
-  /**
-   * Initializes an uninitialized vector as an alias to a a sub-region
-   * of this vector.
-   *
-   * @param start_index the first index
-   * @param len the length
-   * @param dest an UNINITIALIZED vector to use
-   */
-  void MakeSubvector(index_t start_index, index_t len, GenVector* dest) {
-    DEBUG_BOUNDS(start_index, length_);
-    DEBUG_BOUNDS(start_index + len, length_ + 1);
-    
-    dest->Alias(ptr_ + start_index, len);
-  }
-  
-  /**
-   * Swaps all values in this vector with values in the other.
-   *
-   * This is different from Swap, because Swap will only change what these
-   * point to.
-   *
-   * @param other an identically sized vector to swap values with
-   */
-  void SwapValues(GenVector* other) {
-    DEBUG_ASSERT(length() == other->length());
-    mem::Swap(ptr_, other->ptr_, length_);
-  }
-  
-  /**
-   * Copies the values from another vector to this vector.
-   *
-   * @param other the vector to copy from
-   */
-  void CopyValues(const GenVector& other) {
-    DEBUG_ASSERT(length() == other.length());
-    mem::Copy(ptr_, other.ptr_, length_);
-  }
-
-  /**
-   * Copies all of the values from an array of doubles to this vector.
-   *
-   * @param src_ptr the vector to copy from, must have at least
-   *        length() elements
-   */
-  void CopyValues(const T *src_ptr) {
-    mem::Copy(ptr_, src_ptr, length_);
-  }
-  
-  /**
-   * Prints to a stream as a debug message.
-   *
-   * @param name a name that will be printed with the vector
-   * @param stream the stream to print to, such as stderr (default) or stdout
-   */
-  void PrintDebug(const char *name = "", FILE *stream = stderr) const {
-    fprintf(stream, "----- VECTOR %s ------\n", name);
-    for (index_t i = 0; i < length(); i++) {
-      fprintf(stream, "%+3.3f ", get(i));
-    }
-    fprintf(stream, "\n");
-  }
-  
- public:
-  /** The number of elements in this vector. */
-  index_t length() const {
-    return length_;
-  }
-  
-  /**
-   * A pointer to the C-style array containing the elements of this vector.
-   */
-  T *ptr() {
-    return ptr_;
-  }
-  
-  /**
-   * A pointer to the C-style array containing the elements of this vector.
-   */
-  const T *ptr() const {
-    return ptr_;
-  }
-  
-  /**
-   * Gets the i'th element of this vector.
-   */
-  T operator [] (index_t i) const {
-    DEBUG_BOUNDS(i, length_);
-    return ptr_[i];
-  }
-  
-  /**
-   * Gets a mutable reference to the i'th element of this vector.
-   */
-  T &operator [] (index_t i) {
-    DEBUG_BOUNDS(i, length_);
-    return ptr_[i];
-  }
-  
-  /**
-   * Gets a value to the i'th element of this vector (convenient when
-   * you have a pointer to a vector).
-   *
-   * This is identical to the array subscript operator, except for the
-   * following reason:
-   *
-   * @code
-   * void FooBar(Vector *v) {
-   *    v->get(0) // much easier to read than (*v)[0]
-   * }
-   * @endcode
-   */
-  T get(index_t i) const {
-    DEBUG_BOUNDS(i, length_);
-    return ptr_[i];
-  }
-  
- private:
-  void AssertUninitialized_() const {
-    DEBUG_ASSERT_MSG(length_ == BIG_BAD_NUMBER, "Cannot re-init vectors.");
-  }
-  
-  void Uninitialize_() {
-    DEBUG_ONLY(ptr_ = BIG_BAD_POINTER(T));
-    DEBUG_ONLY(length_ = BIG_BAD_NUMBER);
-  }
-  
-  void AssertInitialized_() {
-    DEBUG_ASSERT_MSG(ptr_ != BIG_BAD_POINTER(T),
-        "Vector was not initialized.");
-  }
-};
-
-/** @brief A Vector is a GenVector of double's.
- */
-typedef GenVector<double> Vector;
 
 /**
- * Double-precision column-major matrix for use with LAPACK.
+ * @brief Because we want to be backwards compliant the GenMatrix
+ *        can also be used as an old vector. We use the following 
+ *        assertion so that people don't accidently call matrix 
+ *        member functions that cannot be used for vectors.
+ *  @code 
+ *   template<bool> struct You_are_trying_to_use_a_vector_as_a_matrix;
+     template<> struct You_are_trying_to_use_a_vector_as_a_matrix<false> {};
+ *  @endcode 
+ */
+template<bool> struct You_are_trying_to_use_a_vector_as_a_matrix;
+template<> struct You_are_trying_to_use_a_vector_as_a_matrix<false> {};
+
+/**
+ * @brief Sometimes we want to Copy a GenMatrix of floats
+ *        to a GenMatrix of doubles, which is a valid thing to do
+ *        The following static assertions are trying to prevent the 
+ *        user from doing invalid operations such as copy a 
+ *        GenMatrix of doubles to a GenMatrix of floats, where precision
+ *        is lost
+ *        So you can always copy to larger precision
+ *        And you can always copy int to float double and long double
+ *
+ */
+template<typename Precision1, typename Precision2> struct
+You_have_a_precision_conflict;
+template<typename Precision> struct
+You_have_a_precision_conflict<Precision, Precision> {};
+template<> struct
+You_have_a_precision_conflict<double, float> {};
+template<> struct
+You_have_a_precision_conflict<long double, float> {};
+template<> struct
+You_have_a_precision_conflict<long double, double> {};
+template<> struct
+You_have_a_precision_conflict<float, int> {};
+template<> struct
+You_have_a_precision_conflict<double, int> {};
+template<> struct
+You_have_a_precision_conflict<long double, int> {};
+
+
+/**
+ * @brief  We use this static assertion so that we don't accidently
+ *         try to copy a matrix on a vector
+ *
+ */
+template<bool, bool> struct You_are_assigning_a_matrix_on_a_vector {};
+template<true,false> struct You_are_assigning_a_matrix_on_a_vector;
+
+
+/**
+ * General-Precision column-major matrix for use with LAPACK.
+ * This class is backwords compatible, so that it can represent
+ * the old fastlib GenVector.
+ *
+ * @code
+ *  template<typename Precision, bool IsVector=false>
+ *   class GenMatrix;
+ * @endcode
+ *
+ * @param Precision In general you can choose any precision you want, but 
+ *        our current LAPACK implementation suppors floats and doubles.
+ *        It is not difficult thought to support complex numbers. You can 
+ *        use integers too,  but LAPACK will not work 
  *
  * Your code can have huge performance hits if you fail to realize this
  * is column major.  For datasets, your columns should be individual points
@@ -425,32 +98,105 @@ typedef GenVector<double> Vector;
  * TODO: If it's not entirely obvious or well documented how to use this
  * class please let the FASTlib people know.
  */
-template<typename T>
+
+template<typename Precision, bool IsVector=false>
 class GenMatrix {
  private:
   /** Linearized matrix (column-major). */
-  T *ptr_;
+  Precision *ptr_;
   /** Number of rows. */
   index_t n_rows_;
   /** Number of columns. */
   index_t n_cols_;
+  /** Number of elements for faster access */
+  index_t n_elements_; 
   /** Whether I am a strong copy (not an alias). */
   bool should_free_;
+  
+  /**
+   *  @brief this is a helper trait to make sure that the PrintDebug
+   *         function works correctly
+   */
+  template<typename>
+  class PrintTrait {
+    static void Print(GenMatrix<Precision, IsVector> &mat,
+                      const char *name = "", FILE *stream = stderr) const;  
+  };
+  
+  template<>
+  class PrintTrait<float> {
+   public:
+    static void Print(GenMatrix<Precision, IsVector> &mat,
+                      const char *name = "", FILE *stream = stderr) const {
+      fprintf(stream, "----- MATRIX %s ------\n", name);
+      for (index_t r = 0; r < mat.n_rows(); r++) {
+        for (index_t c = 0; c < mat.n_cols(); c++) {
+          fprintf(stream, "%+3.3f ", mat.get(r, c));
+        }
+        fprintf(stream, "\n");
+      }
+    }
+  };
 
-  OBJECT_TRAVERSAL_ONLY(GenMatrix) {
-    OT_OBJ(n_rows_);
-    OT_OBJ(n_cols_);
-    OT_ALLOC(ptr_, n_elements());
-  }
-  OT_REFILL_TRANSIENTS(GenMatrix) {
-    should_free_ = false;
-  }
+  class PrintTrait<double> {
+   public:
+    static void Print(GenMatrix<Precision, IsVector> &mat,
+                      const char *name = "", FILE *stream = stderr) const {
+      PrintTrait<float>::Print(mat, name, stream);
+    } 
+  };
+
+  class PrintTrait<long double> {
+   public:
+    static void Print(GenMatrix<Precision, IsVector> &mat,
+                      const char *name = "", FILE *stream = stderr) const {
+      PrintTrait<float>::Print(mat, name, stream);
+  };
+
+  class PrintTrait<int> {
+   public:
+    static void Print(GenMatrix<Precision, IsVector> &mat,
+                      const char *name = "", FILE *stream = stderr) const {
+      fprintf(stream, "----- MATRIX %s ------\n", name);
+      for (index_t r = 0; r < mat.n_rows(); r++) {
+        for (index_t c = 0; c < mat.n_cols(); c++) {
+          fprintf(stream, "%+3.3i ", mat.get(r, c));
+        }
+        fprintf(stream, "\n");
+      }
+    }
+  };
+
+  class PrintTrait<long int> {
+   public:
+    static void Print(GenMatrix<Precision, IsVector> &mat,
+                      const char *name = "", FILE *stream = stderr) const {
+      PrintTrait<int>::Print(mat, name, stream);
+
+  };
+
+  class PrintTrait<long long int> {
+   public:
+    static void Print(GenMatrix<Precision, IsVector> &mat,
+                      const char *name = "", FILE *stream = stderr) const {
+      PrintTrait<int>::Print(mat, name, stream);
+
+  };
 
  public:
   /**
    * Creates a Matrix with uninitialized elements of the specified size.
    */
+  GenMatrix(index_t in_rows) {
+    DEBUG_ONLY(Uninitialize_());
+    Init(in_rows);  
+  }
   GenMatrix(index_t in_rows, index_t in_cols) {
+    if (IsVector == true) {
+      if (in_cols!=1) {
+        FATAL("You are trying to initialize a vector with more than one column");
+      }
+    }
     DEBUG_ONLY(Uninitialize_());
     Init(in_rows, in_cols);
   }
@@ -458,11 +204,10 @@ class GenMatrix {
   /**
    * Copy constructor -- for use in collections.
    */
-  GenMatrix(const GenMatrix<T>& other) {
+  GenMatrix(const GenMatrix<Precision, IsVector>& other) {
     DEBUG_ONLY(Uninitialize_());
     Copy(other);
   }
-  ASSIGN_VIA_COPY_CONSTRUCTION(GenMatrix);
 
   /**
    * Creates a matrix that can be initialized.
@@ -484,7 +229,7 @@ class GenMatrix {
    * on this again.
    */
   void Destruct() {
-    DEBUG_ASSERT_MSG(ptr_ != BIG_BAD_POINTER(T),
+    DEBUG_ASSERT_MSG(ptr_ != BIG_BAD_POINTER(Precision),
        "You forgot to initialize a Matrix before it got automatically freed.");
     if (unlikely(should_free_)) {
       mem::DebugPoison(ptr_, n_rows_ * n_cols_);
@@ -494,33 +239,62 @@ class GenMatrix {
     DEBUG_POISON_PTR(ptr_);
     DEBUG_ONLY(n_rows_ = BIG_BAD_NUMBER);
     DEBUG_ONLY(n_cols_ = BIG_BAD_NUMBER);
+    DEBUG_ONLY(n_elements_ = BIG_BAD_NUMBER);
   }
 
   /**
    * Creates a Matrix with uninitialized elements of the specified size.
+   * NOTICE! this should be used only when you are in the matrix mode
+   * if you set IsVector template parameter to true, which means you 
+   * are using it as a vector then you will get a compile time error.
    */
   void Init(index_t in_rows, index_t in_cols) {
+    You_are_trying_to_use_a_vector_as_a_matrix<IsVector>();
     DEBUG_ONLY(AssertUninitialized_());
-    ptr_ = mem::Alloc<T>(in_rows * in_cols);
+    ptr_ = mem::Alloc<Precision>(in_rows * in_cols);
     n_rows_ = in_rows;
     n_cols_ = in_cols;
+    n_elements_ = n_rows_ * n_cols_;
+    should_free_ = true;
+  }
+
+  /**
+   * You can use it to initialize vectors and matrices too. For matrices
+   * it will assume that it is an one column
+   */
+  void Init(index_t in_rows) {
+    You_are_trying_to_use_a_vector_as_a_matrix<IsVector>();
+    DEBUG_ONLY(AssertUninitialized_());
+    ptr_ = mem::Alloc<Precision>(in_rows * in_cols);
+    n_rows_ = in_rows;
+    n_cols_ = 1;
+    n_elements_ = n_rows_ * n_cols_;
     should_free_ = true;
   }
 
   /**
    * Creates a diagonal matrix.
+   * NOTICE! this should be used only when you are in the matrix mode
+   * if you set IsVector template parameter to true, which means you 
+   * are using it as a vector then you will get a compile time error.
    */
-  void InitDiagonal(const GenVector<T>& v) {
-    Init(v.length(), v.length());
+  template<template<typename> SerialContainer>
+  void InitDiagonal(const SerialContainer<Precision>& v) {
+    You_are_trying_to_use_a_vector_as_a_matrix<IsVector>();
+    Init(v.size(), v.size());
     SetZero();
     SetDiagonal(v);
   }
 
   /**
    * Creates a diagonal matrix.
+   * NOTICE! this should be used only when you are in the matrix mode
+   * if you set IsVector template parameter to true, which means you 
+   * are using it as a vector then you will get a compile time error.
    */
-  void InitDiagonal(const index_t dimension, const double value) {
-    Init(dimension, dimension);
+  void InitDiagonal(const index_t dimension, const Precision value) {
+   You_are_trying_to_use_a_vector_as_a_matrix<IsVector>();
+   Init(dimension, dimension);
     SetZero();
     for(index_t i=0; i<dimension; i++) {
       this->set(i, i, value);
@@ -530,31 +304,65 @@ class GenMatrix {
   /**
    * Creates a Matrix with uninitialized elements of the specified
    * size statically. This matrix is not freed!
+   * NOTICE! this should be used only when you are in the matrix mode
+   * if you set IsVector template parameter to true, which means you 
+   * are using it as a vector then you will get a compile time error.
    */
   void StaticInit(index_t in_rows, index_t in_cols) {
+    You_are_trying_to_use_a_vector_as_a_matrix<IsVector>();
 #ifndef DISABLE_DISK_MATRIX
     DEBUG_ONLY(AssertUninitialized_());
-    ptr_ = mmapmm::MemoryManager<false>::allocator_->Alloc<T>
+    ptr_ = mmapmm::MemoryManager<false>::allocator_->Alloc<Precision>
       (in_rows * in_cols);
     n_rows_ = in_rows;
     n_cols_ = in_cols;
+    n_elements_ = n_rows_ * n_cols_;
     should_free_ = false;
 #else
     Init(in_rows, in_cols);
 #endif
   }
-
   /**
-   * Creates a diagonal matrix.
+   * Creates a Matrix/Vector with uninitialized elements of the specified
+   * size statically. This matrix is not freed!
+   * For matrices it assumes column number is one
    */
-  void StaticInitDiagonal(const GenVector<T>& v) {
-    StaticInit(v.length(), v.length());
-    SetDiagonal(v);
+  void StaticInit(index_t in_rows) {
+#ifndef DISABLE_DISK_MATRIX
+    DEBUG_ONLY(AssertUninitialized_());
+    ptr_ = mmapmm::MemoryManager<false>::allocator_->Alloc<Precision>
+      (in_rows );
+    n_rows_ = in_rows;
+    n_cols_ = 1;
+    n_elements_ = n_rows_ * n_cols_;
+    should_free_ = false;
+#else
+    Init(in_rows);
+#endif
   }
+ 
   /**
    * Creates a diagonal matrix.
+   * NOTICE! this should be used only when you are in the matrix mode
+   * if you set IsVector template parameter to true, which means you 
+   * are using it as a vector then you will get a compile time error.
    */
-  void StaticInitDiagonal(const index_t dimension, const double value) {
+  template<template<typename> SerialContainer, typename OtherPrecision>
+  void StaticInitDiagonal(const SerialContainer<OtherPrecision>& v) {
+   You_are_trying_to_use_a_vector_as_a_matrix<IsVector>();
+   You_have_a_precision_conflict<Precision, OtherPrecision>(); 
+   StaticInit(v.size(), v.size());
+   SetDiagonal(v);
+  }
+ 
+  /**
+   * Creates a diagonal matrix.
+   * NOTICE! this should be used only when you are in the matrix mode
+   * if you set IsVector template parameter to true, which means you 
+   * are using it as a vector then you will get a compile time error.
+   */
+  void StaticInitDiagonal(const index_t dimension, const Precision value) {
+    You_are_trying_to_use_a_vector_as_a_matrix<IsVector>();
     StaticInit(dimension, dimension);
     for(index_t i=0; i<dimension; i++) {
       this->set(i, i, value);
@@ -564,7 +372,7 @@ class GenMatrix {
   /**
    * Sets the entire matrix to zero.
    */
-  void SetAll(T d) {
+  void SetAll(Precision d) {
     mem::RepeatConstruct(ptr_, d, n_elements());
   }
 
@@ -579,8 +387,14 @@ class GenMatrix {
 
   /**
    * Makes this a diagonal matrix whose diagonals are the values in v.
+   * NOTICE! this should be used only when you are in the matrix mode
+   * if you set IsVector template parameter to true, which means you 
+   * are using it as a vector then you will get a compile time error.
    */
-  void SetDiagonal(const GenVector<T>& v) {
+  template<template<typename> SerialContainer, typename OtherPrecision>
+  void SetDiagonal(const SerialContainer<OtherPrecision>& v) {
+    You_are_trying_to_use_a_vector_as_a_matrix<IsVector>();
+    You_have_a_precision_conflict<Precision, OtherPrecision>(); 
     DEBUG_ASSERT(n_rows() == v.length());
     DEBUG_ASSERT(n_cols() == v.length());
     SetZero();
@@ -591,11 +405,14 @@ class GenMatrix {
   }
 
   /**
-   * Makes this uninitialized matrix a copy of the other vector.
+   * Makes this uninitialized matrix a copy of the other Matrix.
    *
    * @param other the vector to explicitly copy
    */
-  void Copy(const GenMatrix& other) {
+  template<typename OtherPrecision, bool OtherIsVector>
+  void Copy(const GenMatrix<OtherPrecision>, OtherIsVector>& other) {
+    You_are_assigning_a_matrix_on_a_vector<IsVector, OtherIsVector>();
+    You_have_a_precision_conflict<Precision, OtherPrecision>();
     Copy(other.ptr(), other.n_rows(), other.n_cols());    
   }
 
@@ -605,13 +422,36 @@ class GenMatrix {
    * @param ptr_in the pointer to a block of column-major doubles
    * @param n_rows_in the number of rows
    * @param n_cols_in the number of columns
+   * NOTICE! this should be used only when you are in the matrix mode
+   * if you set IsVector template parameter to true, which means you 
+   * are using it as a vector then you will get a compile time error. 
    */
-  void Copy(const T *ptr_in, index_t n_rows_in, index_t n_cols_in) {
+  template<typename OtherPrecision>
+  void Copy(const OtherPrecision *ptr_in, index_t n_rows_in, index_t n_cols_in) {
+    You_have_a_precision_conflict<Precision, OtherPrecision>();   
+    You_are_trying_to_use_a_vector_as_a_matrix<IsVector>();
     DEBUG_ONLY(AssertUninitialized_());
-    
-    ptr_ = mem::AllocCopy(ptr_in, n_rows_in * n_cols_in);
+    ptr_ = mem::AllocCopyValues<Precision, OtherPrecision>(ptr_in, n_rows_in * n_cols_in);
     n_rows_ = n_rows_in;
     n_cols_ = n_cols_in;
+    n_elements_ = n_rows_ * n_cols_;
+    should_free_ = true;
+  }
+
+  /**
+   * Makes this uninitialized Vector a copy of the other vector.
+   * If you use this for a matrix then it assumes single column
+   * @param ptr_in the pointer to a block of column-major doubles
+   * @param n_rows_in the number of rows
+  */
+  template<typename OtherPrecision>
+  void Copy(const OtherPrecision *ptr_in, index_t n_rows_in) {
+    You_have_a_precision_conflict<Precision, OtherPrecision>();
+    DEBUG_ONLY(AssertUninitialized_());
+    ptr_ = mem::AllocCopyValues<Precision, OtherPrecision>(ptr_in, n_rows_in * n_cols_in);
+    n_rows_ = n_rows_in;
+    n_cols_ = 1;
+    n_elements_ = n_rows_ * n_cols_;   
     should_free_ = true;
   }
 
@@ -621,8 +461,15 @@ class GenMatrix {
    *
    * @param other the vector to explicitly copy
    */
-  void StaticCopy(const GenMatrix& other) {
-    StaticCopy(other.ptr(), other.n_rows(), other.n_cols());    
+  template<typename OtherPrecision, bool OtherIsVector>   
+  void StaticCopy(const GenMatrix<OtherPrecision, OtherIsVector>& other) {
+    You_have_a_precision_conflict<Precision, OtherPrecision>();
+    You_are_assigning_a_matrix_on_a_vector<IsVector, OtherIsVector>();
+    if (IsVector==false) {
+      StaticCopy(other.ptr(), other.n_rows(), other.n_cols());    
+    } else {
+      StaticCopy(other.ptr(), other.n_rows());        
+    }
   }
 
   /**
@@ -632,20 +479,46 @@ class GenMatrix {
    * @param ptr_in the pointer to a block of column-major doubles
    * @param n_rows_in the number of rows
    * @param n_cols_in the number of columns
-   */
-  void StaticCopy(const T *ptr_in, index_t n_rows_in, index_t n_cols_in) {
+   * NOTICE! this should be used only when you are in the matrix mode
+   * if you set IsVector template parameter to true, which means you 
+   * are using it as a vector then you will get a compile time error.
+  */
+  template<typename OtherPrecision>
+  void StaticCopy(const OtherPrecision *ptr_in, index_t n_rows_in, index_t n_cols_in) {
+    You_have_a_precision_conflict<Precision, OtherPrecision>();
+    You_are_trying_to_use_a_vector_as_a_matrix<IsVector>();
 #ifndef DISABLE_DISK_MATRIX
     DEBUG_ONLY(AssertUninitialized_());
 
-    ptr_ = mmapmm::MemoryManager<false>::allocator_->Alloc<T>
+    ptr_ = mmapmm::MemoryManager<false>::allocator_->Alloc<Precision>
       (n_rows_in * n_cols_in);
-    mem::Copy<T, T, T>(ptr_, ptr_in, n_rows_in * n_cols_in);
+    mem::CopyValues<Precision, OtherPrecision>(ptr_, ptr_in, n_rows_in * n_cols_in);
 
     n_rows_ = n_rows_in;
     n_cols_ = n_cols_in;
+    n_elements_ = n_rows_ * n_cols_;
     should_free_ = false;
 #else
     Copy(ptr_in, n_rows_in, n_cols_in);
+#endif
+  }
+ 
+  template<typename OtherPrecision>
+  void StaticCopy(const OtherPrecision *ptr_in, index_t n_rows_in) {
+    You_have_a_precision_conflict<Precision, OtherPrecision>();
+#ifndef DISABLE_DISK_MATRIX
+    DEBUG_ONLY(AssertUninitialized_());
+
+    ptr_ = mmapmm::MemoryManager<false>::allocator_->Alloc<Precision>
+      (n_rows_in * n_cols_in);
+    mem::CopyValues<Precision, OtherPrecision>(ptr_, ptr_in, n_rows_in * n_cols_in);
+
+    n_rows_ = n_rows_in;
+    n_cols_ = 1;
+    n_elements_ = n_rows_ * n_cols_;
+    should_free_ = false;
+#else
+    Copy(ptr_in, n_rows_in);
 #endif
   }
  
@@ -656,9 +529,16 @@ class GenMatrix {
    *
    * @param other the other vector
    */
-  void Alias(const GenMatrix& other) {
-    // we trust in good faith that const-ness won't be abused
-    Alias(other.ptr_, other.n_rows(), other.n_cols());
+  template<typename OtherPrecision, bool OtherIsVector>
+  void Alias(const GenMatrix<OtherPrecision, OtherIsVector> & other) {
+    You_have_a_precision_conflict<Precision, OtherPrecision>();
+    You_are_assigning_a_matrix_on_a_vector<IsVector, OtherIsVector>();
+  // we trust in good faith that const-ness won't be abused
+    if (IsVector==false) {
+      Alias(other.ptr_, other.n_rows(), other.n_cols());
+    } else {
+      Alias(other.ptr_, other.n_rows());
+    }
   }
   
   /**
@@ -667,40 +547,59 @@ class GenMatrix {
    * @param ptr_in the pointer to a block of column-major doubles
    * @param n_rows_in the number of rows
    * @param n_cols_in the number of columns
+   * NOTICE! this should be used only when you are in the matrix mode
+   * if you set IsVector template parameter to true, which means you 
+   * are using it as a vector then you will get a compile time error.
    */
-  void Alias(T *ptr_in, index_t n_rows_in, index_t n_cols_in) {
+  void Alias(Precision *ptr_in, index_t n_rows_in, index_t n_cols_in) {
+    You_are_trying_to_use_a_vector_as_a_matrix<IsVector>();
     DEBUG_ONLY(AssertUninitialized_());
     
     ptr_ = ptr_in;
     n_rows_ = n_rows_in;
     n_cols_ = n_cols_in;
+    n_elements_ = n_rows_ * n_cols_;
     should_free_ = false;
   }
   
+  void Alias(Precision *ptr_in, index_t n_rows_in) {
+    DEBUG_ONLY(AssertUninitialized_());
+    
+    ptr_ = ptr_in;
+    n_rows_ = n_rows_in;
+    n_cols_ = 1;
+    n_elements_ = n_rows_ * n_cols_;
+    should_free_ = false;
+  }
+ 
   /**
    * Makes this a 1 row by N column alias of a vector of length N.
    *
    * @param row_vector the vector to alias
    */
-  void AliasRowVector(const GenVector<T>& row_vector) {
+  
+/*  void AliasRowVector(const GenVector<T>& row_vector) {
     Alias(const_cast<T*>(row_vector.ptr()), 1, row_vector.length());
   }
+*/  
   
   /**
    * Makes this an N row by 1 column alias of a vector of length N.
    *
    * @param col_vector the vector to alias
    */
-  void AliasColVector(const GenVector<T>& col_vector) {
+/*  void AliasColVector(const GenVector<T>& col_vector) {
     Alias(const_cast<T*>(col_vector.ptr()), col_vector.length(), 1);
   }
-  
+*/
+
   /**
    * Makes this a weak copy or alias of the other.
    *
    * This is identical to Alias.
    */
-  void WeakCopy(const GenMatrix& other) {
+  template<bool OherIsVector>
+  void WeakCopy(const GenMatrix<Precision, OtherIsVector>& other) {
     Alias(other);
   }
   
@@ -713,9 +612,14 @@ class GenMatrix {
    *
    * @param other a pointer to the other matrix
    */
-  void Own(GenMatrix* other) {
-    Own(other->ptr(), other->n_rows(), other->n_cols());
-    
+  template<bool OtherIsVector>
+  void Own(GenMatrix<Precision, OtherIsVector>* other) {
+    You_are_assigning_a_matrix_on_a_vector<IsVector, OtherIsVector>();
+    if (IsVector==false) { 
+      Own(other->ptr(), other->n_rows(), other->n_cols());
+    } else {
+      Own(other->ptr(), other->n_rows());  
+    }
     DEBUG_ASSERT(other->should_free_);
     other->should_free_ = false;
   }
@@ -729,12 +633,22 @@ class GenMatrix {
    * @param n_rows_in the number of rows
    * @param n_cols_in the number of columns
    */
-  void Own(T *ptr_in, index_t n_rows_in, index_t n_cols_in) {
-    DEBUG_ONLY(AssertUninitialized_());
-    
+  void Own(Precision *ptr_in, index_t n_rows_in, index_t n_cols_in) {
+    You_are_trying_to_use_a_vector_as_a_matrix<IsVector>();
+    DEBUG_ONLY(AssertUninitialized_());  
     ptr_ = ptr_in;
     n_rows_ = n_rows_in;
     n_cols_ = n_cols_in;
+    n_elements_ = n_rows_ * n_cols_;
+   should_free_ = true;
+  }
+  
+  void Own(Precision *ptr_in, index_t n_rows_in) {
+    DEBUG_ONLY(AssertUninitialized_());  
+    ptr_ = ptr_in;
+    n_rows_ = n_rows_in;
+    n_cols_ = 1;
+    n_elements_ = n_rows_ * n_cols_;
     should_free_ = true;
   }
 
@@ -747,9 +661,15 @@ class GenMatrix {
    *
    * @param other a pointer to the other matrix
    */
-  void StaticOwn(GenMatrix* other) {
+  template<bool OtherIsVector>
+  void StaticOwn(GenMatrix<Precision, OtherIsVector>* other) {
+    You_are_assigning_a_matrix_on_a_vector<IsVector, OtherIsVector>();
 #ifndef DISABLE_DISK_MATRIX
-    StaticOwn(other->ptr(), other->n_rows(), other->n_cols());
+    if (IsVector==false) {
+      StaticOwn(other->ptr(), other->n_rows(), other->n_cols());
+    } else {
+      StaticOwn(other->ptr(), other->n_rows()); 
+    }
 #else
     Own(other);
 #endif
@@ -764,13 +684,16 @@ class GenMatrix {
    * @param n_rows_in the number of rows
    * @param n_cols_in the number of columns
    */
-  void StaticOwn(T *ptr_in, index_t n_rows_in, index_t n_cols_in) {
+  template<bool OtherIsVector>
+  void StaticOwn(OtherPrecision *ptr_in, index_t n_rows_in, index_t n_cols_in) {
+    You_are_trying_to_use_a_vector_as_a_matrix<IsVector>();
 #ifndef DISABLE_DISK_MATRIX
     DEBUG_ONLY(AssertUninitialized_());
     
     ptr_ = ptr_in;
     n_rows_ = n_rows_in;
     n_cols_ = n_cols_in;
+    n_elements_ = n_rows_ * n_cols_;
     should_free_ = false;
 #else
     Own(ptr_in, n_rows_in, n_cols_in);
@@ -785,7 +708,8 @@ class GenMatrix {
    * @param dest an UNINITIALIZED matrix
    */
   void MakeColumnSlice(index_t start_col, index_t n_cols_new,
-      GenMatrix *dest) const {
+      GenMatrix<Precision, IsVector> *dest) const {
+    You_are_trying_to_use_a_vector_as_a_matrix<IsVector>();
     DEBUG_BOUNDS(start_col, n_cols_);
     DEBUG_BOUNDS(start_col + n_cols_new, n_cols_ + 1);
     dest->Alias(ptr_ + start_col * n_rows_,
@@ -813,7 +737,8 @@ class GenMatrix {
    * @return a reshaped matrix backed by the original
    */
   void MakeReshaped(index_t n_rows_in, index_t n_cols_in,
-      GenMatrix *dest) const {
+      GenMatrix<Precision, IsVector> *dest) const {
+    You_are_trying_to_use_a_vector_as_a_matrix<IsVector>();
     DEBUG_ASSERT(n_rows_in * n_cols_in == n_rows() * n_cols());
     dest->Alias(ptr_, n_rows_in, n_cols_in);
   }
@@ -825,7 +750,9 @@ class GenMatrix {
    * @param dest a pointer to an uninitialized vector, which will be
    *        initialized as an alias to the particular column
    */
-  void MakeColumnVector(index_t col, GenVector<T> *dest) const {
+  template<bool OtherIsVector>
+  void MakeColumnVector(index_t col, 
+      GenMatrix<OtherPrecision, OtherIsVector> *dest) const {
     DEBUG_BOUNDS(col, n_cols_);
     dest->Alias(n_rows_ * col + ptr_, n_rows_);
   }
@@ -839,8 +766,9 @@ class GenMatrix {
    * @param dest a pointer to an uninitialized vector, which will be
    *        initialized as an alias to the particular column's subvector
    */
+  template<bool OtherIsVector>
   void MakeColumnSubvector(index_t col, index_t start_row, index_t n_rows_new,
-      GenVector<T> *dest) const {
+      GenMatrix<Precision, OtherIsVector> *dest) const {
     DEBUG_BOUNDS(col, n_cols_);
     DEBUG_BOUNDS(start_row, n_rows_);
     DEBUG_BOUNDS(start_row + n_rows_new, n_rows_ + 1);
@@ -855,7 +783,8 @@ class GenMatrix {
    * @return an array where the i'th element is the i'th row of that
    *         particular column
    */
-  T *GetColumnPtr(index_t col) {
+
+  Precision *GetColumnPtr(index_t col) {
     DEBUG_BOUNDS(col, n_cols_);
     return n_rows_ * col + ptr_;
   }
@@ -868,7 +797,7 @@ class GenMatrix {
    * @return an array where the i'th element is the i'th row of that
    *         particular column
    */
-  const T *GetColumnPtr(index_t col) const {
+  const Precision *GetColumnPtr(index_t col) const {
     DEBUG_BOUNDS(col, n_cols_);
     return n_rows_ * col + ptr_;
   }
@@ -880,12 +809,16 @@ class GenMatrix {
    * @param mat the other matrix
    * @return nothing
    */  
-   void CopyColumnFromMat(index_t col1, index_t col2, GenMatrix<T> &mat) {
+   template<typename OtherPrecision, bool OtherIsVector
+   void CopyColumnFromMat(index_t col1, index_t col2, 
+       GenMatrix<OtherPrecision, OtherIsVector> &mat) {
+     You_have_a_precision_conflict<Precision, OtherPrecision>();
      DEBUG_BOUNDS(col1, n_cols_);
      DEBUG_BOUNDS(col2, mat.n_cols());
      DEBUG_ASSERT(n_rows_==mat.n_rows());
-     memcpy(ptr_ + n_rows_ * col1, mat.GetColumnPtr(col2), n_rows_*sizeof(T));
-   }
+     mem::CopyValues<Precision, OtherPrecision>
+       (ptr_ + n_rows_ * col1,  mat.GetColumnPtr(col2), n_rows_);
+  }
   /**
    * Copies a block of columns to a matrix column.
    * @param col1 the column number of this matrix
@@ -894,13 +827,16 @@ class GenMatrix {
    * @param mat the other matrix
    * @return nothing
    */  
-   void CopyColumnFromMat(index_t col1, index_t col2, index_t ncols, GenMatrix<T> &mat) {
+   template<typename OtherPrecision, bool OtherIsVector>
+   void CopyColumnFromMat(index_t col1, index_t col2, index_t ncols, 
+       GenMatrix<OtherPrecision, OtherIsVector> &mat) {
+     You_have_a_precision_conflict<Precision, OtherPrecision>();
      DEBUG_BOUNDS(col1, n_cols_);
      DEBUG_BOUNDS(col2, mat.n_cols());
      DEBUG_BOUNDS(col1+ncols-1, n_cols_);
      DEBUG_BOUNDS(col2+ncols-1, mat.n_cols());
      DEBUG_ASSERT(n_rows_==mat.n_rows());
-     memcpy(ptr_ + n_rows_ * col1, mat.GetColumnPtr(col2), ncols*n_rows_*sizeof(T));
+     mem::CopyValues<Precision, OtherPrecision>(ptr_ + n_rows_ * col1, mat.GetColumnPtr(col2), ncols*n_rows_);
    }
 
    /**
@@ -908,8 +844,12 @@ class GenMatrix {
    * @param col1 the column number
    * @return nothing
    */  
-   void CopyVectorToColumn(index_t col, GenVector<T> &vec) {
-     DEBUG_BOUNDS(col, n_cols_);
+   template<typename OtherPrecision, bool OtherIsVector>
+   void CopyVectorToColumn(index_t col, 
+       GenMatrix<OtherPrecision, OtherIsVector> &vec) {
+    You_have_a_precision_conflict<Precision, OtherPrecision>();
+    DEBUG_BOUNDS(col, n_cols_);
+     //NEED to FIX THIS !!!!!!!!!
      memcpy(ptr_ + n_rows_ * col, vec.ptr(), n_rows_*sizeof(T));
    }
  
@@ -922,6 +862,7 @@ class GenMatrix {
    * @param new_n_cols the new number of columns
    */
   void ResizeNoalias(index_t new_n_cols) {
+    You_are_trying_to_use_a_vector_as_a_matrix<IsVector>();
     DEBUG_ASSERT(should_free_); // the best assert we can do
     n_cols_ = new_n_cols;
     ptr_ = mem::Realloc(ptr_, n_elements());
@@ -935,7 +876,7 @@ class GenMatrix {
    *
    * @param other an identically sized vector to swap values with
    */
-  void SwapValues(GenMatrix* other) {
+  void SwapValues(GenMatrix<Precision, IsVector>* other) {
     DEBUG_ASSERT(n_cols() == other->n_cols());
     DEBUG_ASSERT(n_rows() == other->n_rows());
     mem::Swap(ptr_, other->ptr_, n_elements());
@@ -946,9 +887,12 @@ class GenMatrix {
    *
    * @param other the vector to copy from
    */
+  template<typename OtherPrecision, bool OtherIsVector>
   void CopyValues(const GenMatrix& other) {
+    You_have_a_precision_conflict<Precision, OtherPrecision>();
     DEBUG_ASSERT(n_rows() == other.n_rows());
     DEBUG_ASSERT(n_cols() == other.n_cols());
+    // Fix this it is Wrong !!!!!!!!!
     mem::Copy(ptr_, other.ptr_, n_elements());
   }
 
@@ -958,14 +902,9 @@ class GenMatrix {
    * @param name a name that will be printed with the matrix
    * @param stream the stream to print to, defaults to @c stderr
    */
+  //We need to templatize this !!!!
   void PrintDebug(const char *name = "", FILE *stream = stderr) const {
-    fprintf(stream, "----- MATRIX %s ------\n", name);
-    for (index_t r = 0; r < n_rows(); r++) {
-      for (index_t c = 0; c < n_cols(); c++) {
-        fprintf(stream, "%+3.3f ", get(r, c));
-      }
-      fprintf(stream, "\n");
-    }
+    PrintTrait<Precision>::Print(*this, name, stream);
   }
   
  public:
@@ -975,7 +914,7 @@ class GenMatrix {
    *
    * This is suitable for BLAS and LAPACK calls.
    */
-  const T *ptr() const {
+  const Precision *ptr() const {
     return ptr_;
   }
   
@@ -985,7 +924,7 @@ class GenMatrix {
    *
    * This is suitable for BLAS and LAPACK calls.
    */
-  T *ptr() {
+  Precision *ptr() {
     return ptr_;
   }
   
@@ -995,10 +934,15 @@ class GenMatrix {
    * @param r the row number
    * @param c the column number
    */
-  T get(index_t r, index_t c) const {
+  Precision get(index_t r, index_t c) const {
     DEBUG_BOUNDS(r, n_rows_);
     DEBUG_BOUNDS(c, n_cols_);
     return ptr_[c * n_rows_ + r];
+  }
+  
+  Precision get(index_t r) const {
+    DEBUG_BOUNDS(r, n_elements_);
+    return ptr_[r];
   }
  
   /**
@@ -1008,10 +952,15 @@ class GenMatrix {
    * @param c the column number
    * @param v the value to set
    */ 
-  void set(index_t r, index_t c, T v) {
+  void set(index_t r, index_t c, Precision v) {
     DEBUG_BOUNDS(r, n_rows_);
     DEBUG_BOUNDS(c, n_cols_);
     ptr_[c * n_rows_ + r] = v;
+  }
+ 
+  void set(index_t r, Precision v) {
+    DEBUG_BOUNDS(r, n_elements_);
+    ptr_[r] = v;
   }
   
   /**
@@ -1021,10 +970,19 @@ class GenMatrix {
    * part of an array; use ColumnSlice or Reshaped instead to make
    * subsections.
    */
-  T &ref(index_t r, index_t c) {
+  Precision &ref(index_t r, index_t c) {
     DEBUG_BOUNDS(r, n_rows_);
     DEBUG_BOUNDS(c, n_cols_);
     return ptr_[c * n_rows_ + r];
+  }
+
+  Precision &ref(index_t r) {
+    DEBUG_BOUNDS(r, n_elements_);
+    return ptr_[r];
+  }
+
+  Precision &operator[](index_t r) {
+    return ptr_[r];
   }
   
   /** Returns the number of columns. */
@@ -1047,7 +1005,7 @@ class GenMatrix {
     // TODO: putting the size_t on the outside may be faster (32-bit
     // versus 64-bit multiplication in cases) but is more likely to result
     // in bugs
-    return size_t(n_rows_) * size_t(n_cols_);
+    return n_elements_;
   }
 
   /**
@@ -1056,8 +1014,13 @@ class GenMatrix {
    * blas/lapck type operations
    */   
   size_t length() const {
-   return size_t(n_rows_) * size_t(n_cols_);
+   return ;
   }
+
+  size_t size() const {
+   return ;
+  }
+
 
  private:
   void AssertUninitialized_() const {
@@ -1068,9 +1031,12 @@ class GenMatrix {
     DEBUG_POISON_PTR(ptr_);
     DEBUG_ONLY(n_rows_ = BIG_BAD_NUMBER);
     DEBUG_ONLY(n_cols_ = BIG_BAD_NUMBER);
+    DEBUG_ONLY(n_elements__ = BIG_BAD_NUMBER);
   } 
 
 };
+
+
 
 /**
  * Low-overhead vector if length is known at compile time.
@@ -1117,13 +1083,17 @@ class SmallVector : public GenVector<Precision> {
 
 /** @brief A Matrix is a GenMatrix of double's.
  */
-typedef GenMatrix<double> Matrix;
+typedef GenMatrix<double, false> Matrix;
+
+/** @brief A Vector is a GenMatrix of double's.
+ */
+typedef GenMatrix<double, true> Vector;
 
 /**
  * Low-overhead matrix if size is known at compile time.
  */
 template<typename Precision, int t_rows, int t_cols>
-class SmallMatrix : public GenMatrix<Precision> {
+class SmallMatrix : public GenMatrix<Precision, true> {
  private:
   Precision array_[t_cols][t_rows];
 
