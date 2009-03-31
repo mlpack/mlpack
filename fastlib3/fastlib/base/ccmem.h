@@ -154,6 +154,13 @@ namespace mem {
   inline T *Copy(T *dest, const U *src, size_t elems = 1) {
     return CopyBytes(dest, src, elems * sizeof(V));
   }
+  template<typename T, typename U>
+  inline T* inline CopyValues(T *dest, const U *src, size_t elems=1) {
+    for(index_t i=0; i<elems; i++) {
+      dest[i]=T(src[i]);
+    }
+    return dest; 
+  }
   template<typename T>
   inline T *Copy(T *dest, const T *src, size_t elems = 1) {
     return Copy<T, T, T>(dest, src, elems);
@@ -170,6 +177,14 @@ namespace mem {
   inline T *AllocCopy(const U *src, size_t elems = 1) {
     return AllocCopyBytes<T>(src, elems * sizeof(T));
   }
+
+  template<typename T, typename U>
+  inline T *AllocCopyValues(const U *src, size_t elems = 1) {
+    T *array = reinterpret_cast<T *>(::malloc(elems*sizeof(T)));
+    MEM__DEBUG_MEMORY(array);
+    return CopyValues<T, U>(dest, src, elems);
+  }
+
   template<typename T>
   inline T *AllocCopy(const T *src, size_t elems = 1) {
     return AllocCopy<T, T>(src, elems);
