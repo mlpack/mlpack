@@ -139,8 +139,9 @@ namespace la {
    * Scales the rows of a column-major matrix by a different value for
    * each row.
    */
+  template<typename Precision>
   inline void ScaleRows(index_t n_rows, index_t n_cols,
-      const double *scales, double *matrix) {
+      const Precision *scales, Precision *matrix) {
     do {
       for (index_t i = 0; i < n_rows; i++) {
         matrix[i] *= scales[i];

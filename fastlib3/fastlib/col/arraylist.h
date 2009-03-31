@@ -996,6 +996,13 @@ class ArrayList {
   index_t size() const {
     return size_;
   }
+  /** The number of active elements in the ArrayList. 
+   * This function is defined so that it provides the same 
+   * interface for lapack/blas operations*/
+  index_t length() const {
+    return size_;
+  }
+
   /** The allocated number of elements, or -1 if alias. */
   index_t capacity() const {
     return cap_;
