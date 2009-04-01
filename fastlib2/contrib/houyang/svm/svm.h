@@ -8,6 +8,7 @@
  *
  * @see opt_smo.h
  * @see opt_sgd.h
+ * @see opt_hcy.h
  */
 
 #ifndef U_SVM_SVM_H
@@ -15,6 +16,7 @@
 
 #include "opt_smo.h"
 #include "opt_sgd.h"
+#include "opt_hcy.h"
 
 #include "fastlib/fastlib.h"
 
@@ -98,7 +100,7 @@ class SVM {
    * Developers may add more learner types if necessary
    */
   int learner_typeid_;
-  // Optimization method: smo, sgd, sample_smo
+  // Optimization method: smo, sgd, hcy
   String opt_method_;
   /* array of models for storage of the 2-class(binary) classifiers 
      Need to train num_classes_*(num_classes_-1)/2 binary models */
@@ -171,6 +173,7 @@ class SVM {
   typedef TKernel Kernel;
   class SMO<Kernel>;
   class SGD<Kernel>;
+  class HCY<Kernel>;
 
   void Init(int learner_typeid, const Dataset& dataset, datanode *module);
   void InitTrain(int learner_typeid, const Dataset& dataset, datanode *module);
@@ -348,13 +351,15 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	param_feed_db.PushBack() = param_.accuracy_;
 	SMO<Kernel> smo;
 	smo.InitPara(learner_typeid, param_feed_db);
-	
+
 	/* Initialize kernel */
 	smo.kernel().Init(fx_submodule(module, "kernel"));
 
 	/* 2-classes SVM training using SMO */
+	fx_timer_start(NULL, "train_smo");
 	smo.Train(learner_typeid, &dataset_bi);
-	
+	fx_timer_stop(NULL, "train_smo");
+
 	/* Get the trained bi-class model */
 	models_[ct].coef_.Init(); // alpha*y
 	models_[ct].bias_ = smo.Bias(); // bias
@@ -372,13 +377,13 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	param_feed_db.PushBack() = param_.accuracy_;
 	SGD<Kernel> sgd;
 	sgd.InitPara(learner_typeid, param_feed_db);
-	
+
 	/* Initialize kernel */
 	sgd.kernel().Init(fx_submodule(module, "kernel"));
 
 	/* 2-classes SVM training using SGD*/
 	sgd.Train(learner_typeid, &dataset_bi);
-	
+
 	/* Get the trained bi-class model */
 	models_[ct].coef_.Init(); // alpha*y, used for nonlinear SVM only
 	if (param_.kerneltypeid_== 0) { // linear SVM
@@ -390,6 +395,37 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	  models_[ct].w_.Init(0); // for linear SVM only. not used here
 	}
 	models_[ct].bias_ = sgd.Bias(); // bias
+      }
+      else if (opt_method_== "hcy") {
+	/* Initialize HCY parameters */
+	ArrayList<double> param_feed_db;
+	param_feed_db.Init();
+	param_feed_db.PushBack() = param_.b_;
+	param_feed_db.PushBack() = param_.Cp_;
+	param_feed_db.PushBack() = param_.Cn_;
+	param_feed_db.PushBack() = param_.wss_;
+	param_feed_db.PushBack() = param_.n_iter_;
+	param_feed_db.PushBack() = param_.accuracy_;
+	param_feed_db.PushBack() = train_labels_ct_[i]; // number of positive samples (with label 1)
+	HCY<Kernel> hcy;
+	hcy.InitPara(learner_typeid, param_feed_db);
+	
+	/* Initialize kernel */
+	hcy.kernel().Init(fx_submodule(module, "kernel"));
+
+	/* 2-classes SVM training using HCY */
+	fx_timer_start(NULL, "train_hcy");
+	hcy.Train(learner_typeid, &dataset_bi);
+	fx_timer_start(NULL, "train_hcy");
+	
+	/* Get the trained bi-class model */
+	models_[ct].coef_.Init(); // alpha*y
+	models_[ct].bias_ = hcy.Bias(); // bias
+	models_[ct].w_.Init(0); // for linear SGD only. not used here
+	hcy.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
+      }
+      else {
+	fprintf(stderr, "ERROR!!! Unknown optimization method!\n");
       }
 
       ct++;
@@ -424,25 +460,21 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
   /* Get the matrix sv_coef_ which stores the coefficients of all sets of SVs */
   /* i.e. models_[x].coef_ -> sv_coef_ */
   index_t ct_model = 0;
-  index_t ct_bi_cv;
   index_t p;
   sv_coef_.Init(num_classes_-1, total_num_sv_);
   sv_coef_.SetZero();
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
-      ct_bi_cv = 0;
       p = sv_list_startpos_[i];
       for (k = 0; k < train_labels_ct_[i]; k++) {
 	if (trainset_sv_indicator_[ train_labels_index_[train_labels_startpos_[i]+k] ]) {
-	  sv_coef_.set(j-1, p++, models_[ct_model].coef_[ct_bi_cv]);
-	  ct_bi_cv ++;
+	  sv_coef_.set(j-1, p++, models_[ct_model].coef_[k]);
 	}
       }
       p = sv_list_startpos_[j];
       for (k = 0; k < train_labels_ct_[j]; k++) {
 	if (trainset_sv_indicator_[ train_labels_index_[train_labels_startpos_[j]+k] ]) {
-	  sv_coef_.set(i, p++, models_[ct_model].coef_[ct_bi_cv]);
-	  ct_bi_cv ++;
+	  sv_coef_.set(i, p++, models_[ct_model].coef_[train_labels_ct_[i] + k]);
 	}
       }
       ct_model++;
@@ -514,7 +546,10 @@ void SVM<TKernel>::SVM_R_Train_(int learner_typeid, const Dataset& dataset, data
     models_[0].scale_w_ = sgd.ScaleW(); // scale of w
     models_[0].coef_.Init(0); // not using
   }
-
+  else {
+    fprintf(stderr, "ERROR!!! Unknown optimization method!");
+  }
+  
   /* Get index list of support vectors */
   for (i = 0; i < n_data_; i++) {
     if (trainset_sv_indicator_[i]) {
@@ -596,7 +631,7 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
   double sum = 0.0;
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
-      if (opt_method_== "smo") {
+      if (opt_method_== "smo" || opt_method_== "hcy") {
 	sum = 0.0;
 	for(k = 0; k < sv_list_ct_[i]; k++) {
 	  sum += sv_coef_.get(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];

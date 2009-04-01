@@ -57,8 +57,8 @@ svm_main --learner_name=svm_c --mode=train --train_data=c_traindata3.csv --kerne
 svm_main --learner_name=svm_c --mode=train --train_data=c_traindata3.csv --kernel=linear --c=0.02 --normalize=0
 
 a3.Support Vector Classification, Training+testing mode
-svm_main --learner_name=svm_c --mode=train_test --train_data=c_traindata3.csv --test_data=c_testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
-svm_main --learner_name=svm_c --mode=train_test --train_data=c_traindata2.csv --test_data=c_testdata2.csv --kernel=linear --c=0.02 --normalize=0
+svm_main --learner_name=svm_c --mode=train_test --train_data=c_traindata3.csv --test_data=c_testdata3.csv --kernel=gaussian --sigma=0.1 --c=1 --normalize=0
+svm_main --learner_name=svm_c --mode=train_test --train_data=c_traindata2.csv --test_data=c_testdata2.csv --kernel=linear --c=0.7 --normalize=0
 
 a4.Support Vector Classification, Testing mode (the model file "svm_model" should exist)
 svm_main --learner_name=svm_c --mode=test --test_data=c_testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
@@ -72,6 +72,10 @@ svm_main --learner_name=svm_c  --accuracy=0.00001 --mode=train_test --train_data
 a6.Support Vector Classification, Training+testing mode, using stochastic gradient descent
 svm_main --learner_name=svm_c --opt=sgd --n_iter=200 --mode=train_test --train_data=c_traindata3.csv --test_data=c_testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
 svm_main --learner_name=svm_c --opt=sgd  --n_iter=300 --mode=train_test --train_data=c_traindata2.csv --test_data=c_testdata2.csv --kernel=linear --c=0.01 --normalize=0
+
+------Using HCY--------
+a7.svm_main --learner_name=svm_c --opt=hcy --leaf_size=5 --mode=train_test --train_data=c_traindata3.csv --test_data=c_testdata3.csv --kernel=gaussian --sigma=0.1 --c=1 --normalize=0
+svm_main --learner_name=svm_c --opt=hcy --leaf_size=5 --mode=train_test --train_data=c_traindata2.csv --test_data=c_testdata2.csv --kernel=linear --c=0.7 --normalize=0
 
 --------------------------------------------------- SVM Regression  -------------------------------------------------------
 b1.Support Vector Regression, Cross validation mode
@@ -97,3 +101,7 @@ svm_main --learner_name=svm_r --opt=sgd --mode=train_test --train_data=r_trainda
 
 --------------------------------------------------- SVM Quantile Estimation --------------------------------------------------
 c1... TODO
+
+
+---- make file ----
+../../../script/fl-build svm_main --mode=debug
