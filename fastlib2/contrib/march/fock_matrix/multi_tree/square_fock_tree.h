@@ -36,6 +36,8 @@ class SquareFockTree {
     // If no approximation has been done, this value is 0
     double approximation_val_;
     
+    double remaining_epsilon_;
+    
     
    public:
       
@@ -121,6 +123,14 @@ class SquareFockTree {
     
     double approximation_val() const {
       return approximation_val_;
+    }
+    
+    void set_remaining_epsilon(double eps) {
+      remaining_epsilon_ = eps;
+    }
+    
+    double remaining_epsilon() const {
+      return remaining_epsilon_;
     }
     
   

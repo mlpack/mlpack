@@ -17,6 +17,8 @@ const fx_entry_doc schwartz_entries[] = {
   "The threshold to include an integral as significant.  Default: 10e-10.\n"},
 {"num_shell_pairs", FX_RESULT, FX_INT, NULL, 
   "The number of significant shell pairs."}, 
+{"num_shell_pairs_screened", FX_RESULT, FX_INT, NULL,
+  "The number of shell pairs that are screened.\n"},
   FX_ENTRY_DOC_DONE
 };
 

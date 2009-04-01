@@ -4,6 +4,10 @@ void CFMMCoulomb::ScreenCharges_() {
 
   num_shell_pairs_ = eri::ComputeShellPairs(&shell_pairs_, shells_, 
                                             charge_thresh_);
+       
+  fx_result_int(mod_, "num_shell_pairs", num_shell_pairs_);
+  fx_result_int(mod_, "num_shell_pairs_screened", 
+                num_shells_ * (num_shells_ - 1) / 2);
                                             
   charge_centers_.Init(3, num_shell_pairs_);
   charge_exponents_.Init(1, num_shell_pairs_);
@@ -141,6 +145,7 @@ void CFMMCoulomb::NaiveComputation_() {
 void CFMMCoulomb::MultipoleCleanup_() {
 
   coulomb_mat_.Init(num_funs_, num_funs_);
+  coulomb_mat_.SetAll(0.0);
   
   for (index_t i = 0; i < num_shell_pairs_; i++) {
     

@@ -55,6 +55,8 @@ class FockMatrixComparison {
   fx_module* naive_mod_;
   
   index_t num_entries_;
+  
+  double rel_error_cutoff_;
 
  public:
 
