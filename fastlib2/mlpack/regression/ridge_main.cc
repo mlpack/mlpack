@@ -94,8 +94,10 @@ considered for pruning for the input dataset.\n"},
 
   if(!strcmp(mode, "regress")) {
 
-    engine.Init(module, predictors, predictions);
-    engine.SVDRegress(lambda_min);
+    engine.Init(module, predictors, predictions, 
+		!strcmp(fx_param_str(fx_root, "inversion_method",
+                                     "normalsvd"), "normalsvd"));
+    engine.QRRegress(lambda_min);
   }
   else if(!strcmp(mode, "cvregress")) {
     NOTIFY("Crossvalidating for the optimal lambda in [ %g %g ] by trying \
@@ -143,7 +145,9 @@ considered for pruning for the input dataset.\n"},
     
     // Run the feature selection.
     GenVector<index_t> output_predictor_indices;
-    engine.Init(module, predictors, predictor_indices, predictions);
+    engine.Init(module, predictors, predictor_indices, predictions,
+		!strcmp(fx_param_str(fx_root, "inversion_method", 
+				     "normalsvd"), "normalsvd"));
     engine.FeatureSelectedRegression(predictor_indices,
 				     prune_predictor_indices,
 				     predictions,

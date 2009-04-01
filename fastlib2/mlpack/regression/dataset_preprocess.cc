@@ -98,6 +98,12 @@ int main(int argc, char *argv[]) {
   fclose(predictor_file);
   fclose(prune_file);
 
+  fx_timer_start(fx_root, "qr_time");
+  Matrix q, r;
+  la::QRInit(initial_dataset.matrix(), &q, &r);
+  fx_timer_stop(fx_root, "qr_time");
+  printf("%d %d %d %d\n", q.n_rows(), q.n_cols(), r.n_rows(), r.n_cols());
+
   fx_done(fx_root);
   return 0;
 }

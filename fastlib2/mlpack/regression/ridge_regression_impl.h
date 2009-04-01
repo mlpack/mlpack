@@ -97,6 +97,41 @@ void RidgeRegression::BuildCovariance_
   NOTIFY("RidgeRegression::BuildCovariance_: complete.");
 }
 
+void RidgeRegression::ExtractDesignMatrixSubset_
+(const GenVector<index_t> *loo_current_predictor_indices,
+ Matrix *extracted_design_matrix_subset) {
+
+  int num_features = 0;
+  
+  if(loo_current_predictor_indices == NULL) {
+    num_features = predictors_.n_rows();
+  }
+  else {
+    num_features = loo_current_predictor_indices->length();
+  }
+  
+  // You have to add 1 to take the constant term into account.
+  extracted_design_matrix_subset->Init(predictors_.n_cols(), num_features + 1);
+  
+  for(index_t i = 0; i < predictors_.n_cols(); i++) {
+    
+    // Set the zero-th column of every row to 1.
+    extracted_design_matrix_subset->set(i, 0, 1.0);
+    
+    for(index_t j = 0; j < num_features; j++) {
+      
+      if(loo_current_predictor_indices != NULL) {
+	extracted_design_matrix_subset->set
+	  (i, j + 1, 
+	   predictors_.get((*loo_current_predictor_indices)[j], i));
+      }
+      else {
+	extracted_design_matrix_subset->set(i, j + 1, predictors_.get(j, i));
+      }
+    }
+  }
+}
+
 void RidgeRegression::ExtractCovarianceSubset_
 (const Matrix &precomputed_covariance,
  const GenVector<index_t> *loo_current_predictor_indices,
@@ -215,7 +250,7 @@ void RidgeRegression::ReInitTargetValues(const Matrix &input_data,
 
   for(index_t i = 0; i < predictions_.n_rows(); i++) {
     predictions_.set(i, 0, input_data.get(target_value_index, i));
-  }  
+  }
 }
 
 void RidgeRegression::ReInitTargetValues(const Matrix &target_values_in) {
@@ -228,40 +263,15 @@ void RidgeRegression::ReInitTargetValues(const Matrix &target_values_in) {
 void RidgeRegression::BuildDesignMatrixFromIndexSet_
 (const Matrix &input_data, const double *predictions,
  const GenVector<index_t> *predictor_indices) {
-  
-  // Extract the rows that are relevant, and construct the appropriate
-  // design matrix from it. We add one more parameter to the model for
-  // the intercept (the constant term). Here we are transposing the
-  // dataset.
-  int num_features = 0;
-  if(predictor_indices == NULL) {
-    num_features = input_data.n_rows();
-  }
-  else {
-    num_features = predictor_indices->length();
-  }  
-  predictors_.Init(input_data.n_cols(), num_features + 1);
+
+  // We just have an alias to the input data, and copy the training
+  // values.
+  predictors_.Alias(input_data);
   predictions_.Init(input_data.n_cols(), 1);
-  
+
   for(index_t i = 0; i < input_data.n_cols(); i++) {
-    
-    // Initialize the first column of the design matrix to be 1.
-    predictors_.set(i, 0, 1.0);
-
-    for(index_t j = 0; j < num_features; j++) {
-      int get_feature_index = -1;
-      if(predictor_indices == NULL) {
-	get_feature_index = j;
-      }
-      else {
-	get_feature_index = (*predictor_indices)[j];
-      }
-      predictors_.set(i, j + 1, input_data.get(get_feature_index, i));
-    }
-
-    // Copy over the predictions.
     predictions_.set(i, 0, predictions[i]);
-  } 
+  }
 }
 
 void RidgeRegression::ComputeLinearModel_
@@ -283,6 +293,36 @@ void RidgeRegression::ComputeLinearModel_
       factors_.set(j, 0, factors_.get(j, 0) + alpha * v_t.get(i, j));
     }
   }
+}
+
+void RidgeRegression::QRRegress
+(double lambda, const GenVector<index_t> *predictor_indices) {
+  
+  // THIS FUNCTION DOES NOT TAKE lambda into ACCOUNT YET! FIX ME!
+
+  NOTIFY("QRRegress: starting.");
+
+  // At this point, QR should not be used when the covariance based
+  // method is used! Only do QR on the design matrix.
+  Matrix extracted_design_matrix_subset;
+  ExtractDesignMatrixSubset_(predictor_indices,
+			     &extracted_design_matrix_subset);
+  Matrix q, r;
+  success_t qr_success = la::QRInit(extracted_design_matrix_subset, &q, &r);
+
+  if(qr_success != SUCCESS_PASS) {
+    NOTIFY("QRRegress: QR decomposition encountered problems!");
+  }
+
+  // Multiply the target training values by the Q^T and solve the
+  // resulting triangular system.
+  Matrix q_transpose_y;
+  la::MulTransAInit(q, predictions_, &q_transpose_y);
+
+  factors_.Destruct();
+  la::SolveInit(r, q_transpose_y, &factors_);
+  
+  NOTIFY("QRRegress: complete.");
 }
 
 void RidgeRegression::SVDRegress
@@ -494,8 +534,12 @@ void RidgeRegression::FeatureSelectedRegression
       ReInitTargetValues
 	(predictors_, (*current_prune_predictor_indices)[i]);
       
+      printf("Current leave one out index: %d\n",
+	     (*current_prune_predictor_indices)[i]);
+
       // Do the regression.
-      SVDRegress(lambda, &loo_current_predictor_indices);
+      // SVDRegress(lambda, &loo_current_predictor_indices);
+      QRRegress(lambda, &loo_current_predictor_indices);
 
       Vector loo_predictions;
       Predict(predictors_, loo_current_predictor_indices, &loo_predictions);
@@ -556,12 +600,14 @@ void RidgeRegression::FeatureSelectedRegression
 
   // Change the target training values to the original prediction values.
   ReInitTargetValues(original_target_training_values);
-  SVDRegress(lambda, output_predictor_indices);
+  // SVDRegress(lambda, output_predictor_indices);
+  QRRegress(lambda, output_predictor_indices);
   
   NOTIFY("VIF feature selection complete.");
 }
 
 double RidgeRegression::ComputeSquareError() {
+
   Matrix error;
   error.Init(predictors_.n_cols(), 1);
   for(index_t i = 0; i < predictors_.n_cols(); i++) {
