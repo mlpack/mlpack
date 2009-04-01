@@ -1,7 +1,7 @@
 /**
  * @author Hua Ouyang
  *
- * @file smo.h
+ * @file opt_smo.h
  *
  * This head file contains functions for performing Sequential Minimal Optimization (SMO) 
  *
@@ -53,9 +53,9 @@
 // maximum # of interations for SMO training
 const index_t MAX_NUM_ITER_SMO = 1000000;
 // after # of iterations to do shrinking
-const index_t NUM_FOR_SHRINKING = 1000;
+const index_t SMO_NUM_FOR_SHRINKING = 1000;
 // threshold that determines whether need to do unshrinking
-const double SMO_UNSHRINKING_TOLERANCE = 10;
+const double SMO_UNSHRINKING_FACTOR = 10;
 // threshold that determines whether an alpha is a SV or not
 const double SMO_ALPHA_ZERO = 1.0e-4;
 // for indefinite kernels
@@ -64,6 +64,8 @@ const double TAU = 1e-12;
 const double ID_LOWER_BOUNDED = -1;
 const double ID_UPPER_BOUNDED = 1;
 const double ID_FREE = 0;
+
+template <class T> inline void swap(T& x, T& y) { T t=x; x=y; y=t; }
 
 template<typename TKernel>
 class SMO {
@@ -78,10 +80,10 @@ class SMO {
   index_t ct_shrinking_; /* counter for doing shrinking  */
 
   Kernel kernel_;
-  const Dataset *dataset_;
   index_t n_data_; /* number of data samples */
   index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
-  Matrix datamatrix_; /* alias for the data matrix */
+  Matrix datamatrix_; /* alias for the data matrix, including labels in the last row */
+  //Matrix datamatrix_samples_only_; /* alias for the data matrix excluding labels */
 
   Vector alpha_; /* the alphas, to be optimized */
   Vector alpha_status_; /*  ID_LOWER_BOUND (-1), ID_UPPER_BOUND (1), ID_FREE (0) */
@@ -89,7 +91,7 @@ class SMO {
   
   index_t n_alpha_; /* number of variables to be optimized */
   index_t n_active_; /* number of samples in the active set */
-  ArrayList<index_t> active_set_; /* list that stores the indices of active alphas */
+  ArrayList<index_t> active_set_; /* list that stores the old indices of active alphas followed by inactive alphas. == old_from_new*/
   bool unshrinked_; /* indicator: where unshrinking has be carried out  */
   index_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
   double cached_kernel_value_; /* cache */
@@ -99,7 +101,7 @@ class SMO {
   double bias_;
 
   Vector grad_; /* gradient value */
-  Vector grad_bar_; /* gradient value when treat free variables as 0 */
+  Vector grad_bar_; /* gradient value when treat un-upperbounded variables as 0: grad_bar_i==C\sum_{j:a_j=C} y_i y_j K_ij */
 
   // parameters
   int budget_;
@@ -150,15 +152,17 @@ class SMO {
  private:
   void LearnersInit_(int learner_typeid);
 
-  int TrainIteration_();
+  int SMOIterations_();
 
   void ReconstructGradient_(int learner_typeid);
   
+  bool TestShrink_(index_t i, double y_grad_max, double y_grad_min);
+
   void Shrinking_();
 
   bool WorkingSetSelection_(index_t &i, index_t &j);
 
-  void UpdatingGradientAlpha_(index_t i, index_t j);
+  void UpdateGradientAlphaBias_(index_t i, index_t j);
 
   void CalcBias_();
 
@@ -196,10 +200,10 @@ class SMO {
   /**
    * Calculate kernel values
    */
-  double CalcKernelValue_(index_t i, index_t j) {
-    // the alpha indices have been swaped in shrinking processes
-    i = active_set_[i];
-    j = active_set_[j];
+  double CalcKernelValue_(index_t ii, index_t jj) {
+    // the indices have been swaped in the shrinking processes
+    index_t i = active_set_[ii]; // ii/jj: index in the new permuted set
+    index_t j = active_set_[jj]; // i/j: index in the old set
 
     // for SVM_R where n_alpha_==2*n_data_
     if (learner_typeid_ == 1) {
@@ -213,6 +217,8 @@ class SMO {
     //}
 
     double *v_i, *v_j;
+    //v_i = datamatrix_samples_only_.GetColumnPtr(i);
+    //v_j = datamatrix_samples_only_.GetColumnPtr(j);
     v_i = datamatrix_.GetColumnPtr(i);
     v_j = datamatrix_.GetColumnPtr(j);
 
@@ -223,6 +229,156 @@ class SMO {
     return cached_kernel_value_;
   }
 };
+
+
+/**
+* Reconstruct inactive elements of G from G_bar and free variables 
+*
+* @param: learner type id
+*/
+template<typename TKernel>
+void SMO<TKernel>::ReconstructGradient_(int learner_typeid) {
+  index_t i, j;
+  if (n_active_ == n_alpha_)
+    return;
+  if (learner_typeid == 0) { // SVM_C
+    for (i=n_active_; i<n_alpha_; i++) {
+      grad_[i] = 1 - grad_bar_[i];
+    }
+  }
+  else if (learner_typeid == 1) { // SVM_R
+    for (i=n_active_; i<n_alpha_; i++) {
+      j = i >= n_data_ ? (i-n_data_) : i;
+      grad_[j] = grad_bar_[j] + datamatrix_.get(datamatrix_.n_rows()-1, active_set_[j]) - epsilon_; // TODO
+    }
+  }
+
+  for (i=0; i<n_active_; i++) {
+    if (alpha_status_[i] == ID_FREE) {
+      for (j=n_active_; j<n_alpha_; j++) {
+	grad_[j] = grad_[j] - y_[j] * alpha_[i] * y_[i] * CalcKernelValue_(i,j);
+      }
+    }
+  }
+
+}
+
+/**
+ * Test whether need to do shrinking for provided index and y_grad_max, y_grad_min
+ * 
+ */
+template<typename TKernel>
+bool SMO<TKernel>::TestShrink_(index_t i, double y_grad_max, double y_grad_min) {
+  if (IsUpperBounded(i)) { // alpha_[i] = C
+    if (y_[i] == 1) {
+      return (grad_[i] > y_grad_max);
+    }
+    else { // y_[i] == -1
+      return (grad_[i] + y_grad_min > 0); // -grad_[i]<y_grad_min
+    }
+  }
+  else if (IsLowerBounded(i)) {
+    if (y_[i] == 1) {
+      return (grad_[i] < y_grad_min);
+    }
+    else { // y_[i] == -1
+      return (grad_[i] + y_grad_max < 0); // -grad_[i]>y_grad_max
+    }
+  }
+  else
+    return false;
+}
+
+/**
+ * Do Shrinking. Temporarily remove alphas (from the active set) that are 
+ * unlikely to be selected in the working set, since they have reached their 
+ * lower/upper bound.
+ * 
+ */
+template<typename TKernel>
+void SMO<TKernel>::Shrinking_() {
+  index_t t;
+
+  // Find m(a) == y_grad_max(i\in I_up) and M(a) == y_grad_min(j\in I_down)
+  double y_grad_max = -INFINITY;
+  double y_grad_min =  INFINITY;
+  for (t=0; t<n_active_; t++) { // find argmax(y*grad), t\in I_up
+    if (y_[t] == 1) {
+      if (!IsUpperBounded(t)) // t\in I_up, y==1: y[t]alpha[t] < C
+	if (grad_[t] > y_grad_max) { // y==1
+	  y_grad_max = grad_[t];
+	}
+    }
+    else { // y[t] == -1
+      if (!IsLowerBounded(t)) // t\in I_up, y==-1: y[t]alpha[t] < 0
+	if (grad_[t] + y_grad_max < 0) { // y==-1... <=> -grad_[t] > y_grad_max
+	  y_grad_max = -grad_[t];
+	}
+    }
+  }
+  for (t=0; t<n_active_; t++) { // find argmin(y*grad), t\in I_down
+    if (y_[t] == 1) {
+      if (!IsLowerBounded(t)) // t\in I_down, y==1: y[t]alpha[t] > 0
+	if (grad_[t] < y_grad_min) { // y==1
+	  y_grad_min = grad_[t];
+	}
+    }
+    else { // y[t] == -1
+      if (!IsUpperBounded(t)) // t\in I_down, y==-1: y[t]alpha[t] > -C
+	if (grad_[t] + y_grad_min > 0) { // y==-1...<=>  -grad_[t] < y_grad_min
+	  y_grad_min = -grad_[t];
+	}
+    }
+  }
+
+  // Find the alpha to be shrunk
+  for (t=0; t<n_active_; t++) {
+    // Shrinking: put inactive alphas behind the active set
+    if (TestShrink_(t, y_grad_max, y_grad_min)) {
+      n_active_ --;
+      while (n_active_ > t) {
+	if (!TestShrink_(n_active_, y_grad_max, y_grad_min)) {
+	  swap(active_set_[t], active_set_[n_active_]);
+	  swap(alpha_[t], alpha_[n_active_]);
+	  swap(alpha_status_[t], alpha_status_[n_active_]);
+	  swap(y_[t], y_[n_active_]);
+	  swap(grad_[t], grad_[n_active_]);
+	  swap(grad_bar_[t], grad_bar_[n_active_]);
+	  break;
+	}
+	n_active_ --;
+      }
+    }
+  }
+
+  // Determine whether need to do Unshrinking
+  if ( unshrinked_==false && y_grad_max - y_grad_min <= SMO_UNSHRINKING_FACTOR * accuracy_ ) {
+    // Unshrinking: put shrinked alphas back to active set
+    // 1.recover gradient
+    ReconstructGradient_(learner_typeid_);
+    // 2.recover active status
+    for (t=n_alpha_-1; t>n_active_; t--) {
+      if (!TestShrink_(t, y_grad_max, y_grad_min)) {
+	while (n_active_ < t) {
+	  if (TestShrink_(n_active_, y_grad_max, y_grad_min)) {
+	    swap(active_set_[t], active_set_[n_active_]);
+	    swap(alpha_[t], alpha_[n_active_]);
+	    swap(alpha_status_[t], alpha_status_[n_active_]);
+	    swap(y_[t], y_[n_active_]);
+	    swap(grad_[t], grad_[n_active_]);
+	    swap(grad_bar_[t], grad_bar_[n_active_]);
+	    break;
+	  }
+	  n_active_ ++;
+	}
+	n_active_ ++;
+      }
+    }
+    
+    unshrinked_ = true; // indicator: unshrinking has been carried out in this round
+  }
+
+}
 
 
 /**
@@ -243,9 +399,7 @@ void SMO<TKernel>::LearnersInit_(int learner_typeid) {
 
     // initialize gradient
     grad_.Init(n_alpha_);
-    for (i=0; i<n_alpha_; i++) {
-      grad_[i] = 1;
-    }
+    grad_.SetAll(1.0);
 
     y_.Init(n_alpha_);
     for (i = 0; i < n_alpha_; i++) {
@@ -269,124 +423,7 @@ void SMO<TKernel>::LearnersInit_(int learner_typeid) {
     }
   }
   else if (learner_typeid_ == 2) { // SVM_DE
-  }
-  
-  // initialize active set
-  n_active_ = n_alpha_;
-  active_set_.Init(n_active_);
-  for (i=0; i<n_active_; i++) {
-      active_set_[i] = i;
-  }
-}
-
-
-/**
-* Reconstruct inactive elements of G from G_bar and free variables 
-*
-* @param: learner type id
-*/
-template<typename TKernel>
-void SMO<TKernel>::ReconstructGradient_(int learner_typeid) {
-  index_t i, j;
-  if (n_active_ == n_alpha_)
-    return;
-  if (learner_typeid == 0) { // SVM_C
-    for (i=n_active_; i<n_alpha_; i++) {
-      grad_[i] = grad_bar_[i] + 1;
-    }
-  }
-  else if (learner_typeid == 1) { // SVM_R
-    for (i=n_active_; i<n_alpha_; i++) {
-      j = i >= n_data_ ? (i-n_data_) : i;
-      grad_[j] = grad_bar_[j] + datamatrix_.get(datamatrix_.n_rows()-1, j) - epsilon_;
-    }
-  }
-
-  for (i=0; i<n_active_; i++) {
-    if (alpha_status_[i] == ID_FREE) {
-      for (j=n_active_; j<n_alpha_; j++) {
-	grad_[j] += alpha_[i] * CalcKernelValue_(i,j);
-      }
-    }
-  }
-}
-
-
-/**
- * Do Shrinking. Temporarily remove alphas (from the active set) that are 
- * unlikely to be selected in the working set, since they have reached their 
- * lower/upper bound.
- * 
- */
-template<typename TKernel>
-void SMO<TKernel>::Shrinking_() {
-  index_t t;
-  double yg;
-
-  // find grad_max and grad_min
-  double grad_max = -INFINITY;
-  double grad_min =  INFINITY;
-  for (t=0; t<n_active_; t++) { // find argmax(y*grad), t\in I_up
-    if (y_[t] == 1) {
-      if (!IsUpperBounded(t)) // t\in I_up, y==1: y[t]alpha[t] <= C
-	if (grad_[t] >= grad_max) { // y==1
-	  grad_max = grad_[t];
-	}
-      if (!IsLowerBounded(t)) // t\in I_down, y==1: y[t]alpha[t] >= 0
-	if (grad_[t] <= grad_min) { // y==1
-	  grad_min = grad_[t];
-	}
-    }
-    else { // y[t] == -1
-      if (!IsLowerBounded(t)) // t\in I_up, y==-1: y[t]alpha[t] <= 0
-	if (-grad_[t] >= grad_max) { // y==-1
-	  grad_max = -grad_[t];
-	}
-      if (!IsUpperBounded(t)) // t\in I_down, y==-1: y[t]alpha[t] >= -C
-	if (-grad_[t] <= grad_min) { // y==-1
-	  grad_min = -grad_[t];
-	}
-    }
-  }
-
-  // find the alpha to be shrunk
-  for (t=0; t<n_active_; t++) {
-    // Shrinking: put inactive alphas behind the active set
-    yg = y_[t] * grad_[t];
-    if ( yg < grad_min || yg > grad_max ) { // this alpha need be shrunk
-      n_active_ --;
-      while (n_active_ > t) {
-	yg = y_[n_active_] * grad_[n_active_];
-	if ( yg >= grad_min && yg <= grad_max ) { // this alpha need not be shrunk
-	  active_set_[t] = n_active_; // swap indices
-	  active_set_[n_active_] = t;
-	  break;
-	}
-	n_active_ --;
-      }
-    }
-  }
-
-  // determine whether need to do Unshrinking
-  if ( unshrinked_ || grad_max - grad_min <= SMO_UNSHRINKING_TOLERANCE * accuracy_ ) {
-    // Unshrinking: put shrinked alphas back to active set
-    ReconstructGradient_(learner_typeid_);
-    for ( t=n_alpha_-1; t>n_active_; t-- ) {
-      yg = y_[t] * grad_[t];
-      if (yg >= grad_min && yg <= grad_max) { // this alpha need be unshrunk
-	while (n_active_ < t) {
-	  yg = y_[n_active_] * grad_[n_active_];
-	  if ( yg < grad_min || yg > grad_max ) { // this alpha need not be unshrunk
-	    active_set_[t] = n_active_; // swap indices
-	    active_set_[n_active_] = t;
-	    break;
-	  }
-	  n_active_ ++;
-	}
-	n_active_ ++;
-      }
-    }
-    unshrinked_ = true; // indicator: unshrinking has been carried out in this round
+    // TODO
   }
 
 }
@@ -400,12 +437,16 @@ void SMO<TKernel>::Shrinking_() {
 template<typename TKernel>
 void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   index_t i,j;
-  /* general learner-independent initializations */
-  dataset_ = dataset_in;
-  datamatrix_.Alias(dataset_->matrix());
+  // Load data
+  datamatrix_.Alias(dataset_in->matrix());
   n_data_ = datamatrix_.n_cols();
-  n_features_ = datamatrix_.n_rows() - 1;
+  n_features_ = datamatrix_.n_rows() - 1; // excluding the last row for labels
+  //datamatrix_samples_only_.Alias(datamatrix_.ptr(), n_features_, n_data_);
 
+  // Learners initialization
+  LearnersInit_(learner_typeid);
+
+  // General learner-independent initializations
   budget_ = min(budget_, n_data_);
   bias_ = 0.0;
   n_sv_ = 0;
@@ -413,49 +454,56 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   i_cache_ = -1; j_cache_ = -1;
   cached_kernel_value_ = INFINITY;
 
-  /* learners initialization */
-  LearnersInit_(learner_typeid);
+  n_active_ = n_alpha_;
+  active_set_.Init(n_alpha_);
+  for (i=0; i<n_alpha_; i++) {
+      active_set_[i] = i;
+  }
   
   alpha_status_.Init(n_alpha_);
   for (i=0; i<n_alpha_; i++)
     UpdateAlphaStatus_(i);
 
+  // initialize gradient (already set to init values)
+  for (i=0; i<n_alpha_; i++) {
+    if(!IsLowerBounded(i)) { // alpha_i > 0
+      for(j=0; j<n_alpha_; j++)
+	grad_[i] = grad_[i] - y_[i] * y_[j] * alpha_[j] * CalcKernelValue_(i,j);
+    }
+  }
   // initialize gradient_bar
   grad_bar_.Init(n_alpha_);
   grad_bar_.SetZero();
-  for(i=0; i<n_alpha_; i++) {
-    if(!IsLowerBounded(i))
-      {
-	for(j=0; j<n_alpha_; j++)
-	  grad_[j] += alpha_[i] * CalcKernelValue_(i,j);
-	if(IsUpperBounded(i))
-	  for(j=0; j<n_alpha_; j++)
-	    grad_bar_[j] += GetC_(i) * CalcKernelValue_(i,j);
-      }
+  for (i=0; i<n_alpha_; i++) {
+    for(j=0; j<n_alpha_; j++) {
+      if(IsUpperBounded(j)) // alpha_j >= C
+	grad_bar_[i] = grad_bar_[i] + GetC_(j) * y_[j] * CalcKernelValue_(i,j);
+    }
+    grad_bar_[i] = y_[i] * grad_bar_[i];
   }
-
+  
+  // Begin SMO iterations
   ct_iter_ = 0;
-  ct_shrinking_ = min(n_data_, NUM_FOR_SHRINKING) + 1;
-  /* Begin SMO iterations */
+  ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING) + 1;
   int stop_condition = 0;
   while (1) {
-    //VERBOSE_GOT_HERE(0);
-    
-    /* for every min(n_data_, 1000) iterations, do shrinking */
+    // for every min(n_data_, 1000) iterations, do shrinking
     if (--ct_shrinking_ == 0) {
       Shrinking_();
-      ct_shrinking_ = min(n_data_, NUM_FOR_SHRINKING);
+      ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING);
     }
 
     // Find working set, check stopping criterion, update gradient and alphas
-    stop_condition = TrainIteration_();
-    // termination check, stop_condition==1 or 2->terminate
+    stop_condition = SMOIterations_();
+    // Termination check, if stop_condition==1 or ==2 => SMO terminates
     if (stop_condition == 1) {// optimality reached
-      printf("Accuracy %f achieved. Number of iterations: %d\n.", accuracy_, ct_iter_);
+      // Calculate the bias term
+      CalcBias_();
+      printf("SMO terminates since the accuracy %f achieved!!! Number of iterations: %d\n.", accuracy_, ct_iter_);
       break;
     }
     else if (stop_condition == 2) {// max num of iterations exceeded
-      fprintf(stderr, "Number of iterations %d exceeded !!!\n", n_iter_);
+      fprintf(stderr, "SMO terminates since the number of iterations %d exceeded !!!\n", n_iter_);
       break;
     }
   }
@@ -467,12 +515,12 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 * @return: stopping condition id
 */
 template<typename TKernel>
-int SMO<TKernel>::TrainIteration_() {
+int SMO<TKernel>::SMOIterations_() {
   ct_iter_ ++;
   index_t i,j;
   if (WorkingSetSelection_(i,j) == true) {
     ReconstructGradient_(learner_typeid_); // reconstruct the whole gradient
-    n_active_ = 1;
+    n_active_ = n_alpha_;
     if (WorkingSetSelection_(i,j) == true) { // optimality reached
       return 1;
     }
@@ -484,24 +532,24 @@ int SMO<TKernel>::TrainIteration_() {
   else if (ct_iter_ >= n_iter_) { // number of iterations exceeded
     return 2;
   }
-  else{ // update gradient and alphas, and continue iterations
-    UpdatingGradientAlpha_(i, j);
+  else{ // update gradient, alphas and bias term, and continue iterations
+    UpdateGradientAlphaBias_(i, j);
     return 0;
   }
 }
 
 /**
-* Try to find a working set (i,j). Both 1st order and 2nd order approximations of 
+* Try to find a working set (i,j). Both 1st(default) and 2nd order approximations of 
 * the objective function Z(\alpha+\lambda u_ij)-Z(\alpha) are implemented.
 *
-* @param: working set (i, j)
+* @param: reference to working set (i, j)
 *
-* @return: indicator of whether the optimal solution is reached (true:reached)
+* @return: working set (i, j); indicator of whether the optimal solution is reached (true:reached)
 */
 template<typename TKernel>
 bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
-  double grad_max = -INFINITY;
-  double grad_min =  INFINITY;
+  double y_grad_max = -INFINITY;
+  double y_grad_min =  INFINITY;
   int idx_i = -1;
   int idx_j = -1;
   
@@ -509,16 +557,16 @@ bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
   index_t t;
   for (t=0; t<n_active_; t++) { // find argmax(y*grad), t\in I_up
     if (y_[t] == 1) {
-      if (!IsUpperBounded(t)) // t\in I_up, y==1: y[t]alpha[t] <= C
-	if (grad_[t] >= grad_max) { // y==1
-	  grad_max = grad_[t];
+      if (!IsUpperBounded(t)) // t\in I_up, y==1: y[t]alpha[t] < C
+	if (grad_[t] > y_grad_max) { // y==1
+	  y_grad_max = grad_[t];
 	  idx_i = t;
 	}
     }
     else { // y[t] == -1
-      if (!IsLowerBounded(t)) // t\in I_up, y==-1: y[t]alpha[t] <= 0
-	if (-grad_[t] >= grad_max) { // y==-1
-	  grad_max = -grad_[t];
+      if (!IsLowerBounded(t)) // t\in I_up, y==-1: y[t]alpha[t] < 0
+	if (grad_[t] + y_grad_max < 0) { // y==-1... <=> -grad_[t] > y_grad_max
+	  y_grad_max = -grad_[t];
 	  idx_i = t;
 	}
     }
@@ -529,21 +577,21 @@ bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
   if (wss_ == 1) {
     for (t=0; t<n_active_; t++) { // find argmin(y*grad), t\in I_down
       if (y_[t] == 1) {
-	if (!IsLowerBounded(t)) // t\in I_down, y==1: y[t]alpha[t] >= 0
-	  if (grad_[t] <= grad_min) { // y==1
-	    grad_min = grad_[t];
+	if (!IsLowerBounded(t)) // t\in I_down, y==1: y[t]alpha[t] > 0
+	  if (grad_[t] < y_grad_min) { // y==1
+	    y_grad_min = grad_[t];
 	    idx_j = t;
 	  }
       }
       else { // y[t] == -1
-	if (!IsUpperBounded(t)) // t\in I_down, y==-1: y[t]alpha[t] >= -C
-	  if (-grad_[t] <= grad_min) { // y==-1
-	    grad_min = -grad_[t];
+	if (!IsUpperBounded(t)) // t\in I_down, y==-1: y[t]alpha[t] > -C
+	  if (grad_[t] + y_grad_min > 0) { // y==-1...<=>  -grad_[t] < y_grad_min
+	    y_grad_min = -grad_[t];
 	    idx_j = t;
 	  }
       }
     }
-    out_j = idx_j; // i found
+    out_j = idx_j; // j found
   }
   /* Find j using 2nd order working set selection scheme; need to calc kernels, but faster convergence */
   else if (wss_ == 2) {
@@ -556,12 +604,12 @@ bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
       double K_it = CalcKernelValue_(out_i, t);
       double K_tt = CalcKernelValue_(t, t);
       if (y_[t] == 1) {
-	if (!IsLowerBounded(t)) { // t\in I_down, y==1: y[t]alpha[t] >= 0
-	  // calculate grad_min for Stopping Criterion
-	  if (grad_[t] <= grad_min) // y==1
-	    grad_min = grad_[t];
+	if (!IsLowerBounded(t)) { // t\in I_down, y==1: y[t]alpha[t] > 0
+	  // calculate y_grad_min for Stopping Criterion
+	  if (grad_[t] < y_grad_min) // y==1
+	    y_grad_min = grad_[t];
 	  // find j
-	  grad_diff = grad_max - grad_[t]; // max(y_i*grad_i) - y_t*grad_t
+	  grad_diff = y_grad_max - grad_[t]; // max(y_i*grad_i) - y_t*grad_t
 	  if (grad_diff > 0) {
 	    quad_kernel = K_ii + K_tt - 2 * K_it;
 	    if (quad_kernel > 0) // for positive definite kernels
@@ -577,12 +625,12 @@ bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
 	}
       }
       else { // y[t] == -1
-	if (!IsUpperBounded(t)) {// t\in I_down, y==-1: y[t]alpha[t] >= -C
-	  // calculate grad_min for Stopping Criterion
-	  if (-grad_[t] <= grad_min) // y==-1
-	    grad_min = -grad_[t];
+	if (!IsUpperBounded(t)) {// t\in I_down, y==-1: y[t]alpha[t] > -C
+	  // calculate y_grad_min for Stopping Criterion
+	  if (grad_[t] + y_grad_min > 0) // y==-1, -grad_[t] < y_grad_min
+	    y_grad_min = -grad_[t];
 	  // find j
-	  grad_diff = grad_max + grad_[t]; // max(y_i*grad_i) - y_t*grad_t
+	  grad_diff = y_grad_max + grad_[t]; // max(y_i*grad_i) - y_t*grad_t
 	  if (grad_diff > 0) {
 	    quad_kernel = K_ii + K_tt - 2 * K_it;
 	    if (quad_kernel > 0) // for positive definite kernels
@@ -602,96 +650,194 @@ bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
   out_j = idx_j; // j found
   
   // Stopping Criterion check
-  if (grad_max - grad_min <= accuracy_)
+  if (y_grad_max - y_grad_min <= accuracy_)
     return true; // optimality reached
 
   return false;
 }
 
 /**
-* Search direction; Update gradient and alphas
+* Search direction; Update gradient, alphas and bias term
 * 
 * @param: a working set (i,j) found by working set selection
 *
 */
 template<typename TKernel>
-void SMO<TKernel>::UpdatingGradientAlpha_(index_t i, index_t j) {
+void SMO<TKernel>::UpdateGradientAlphaBias_(index_t i, index_t j) {
   index_t t;
 
-  double a_i = alpha_[i];
+  double a_i = alpha_[i]; // old alphas
   double a_j = alpha_[j];
   int y_i = y_[i];
   int y_j = y_[j];
   double C_i = GetC_(i); // can be Cp (for y==1) or Cn (for y==-1)
   double C_j = GetC_(j);
 
-  /* cached kernel values */
+  // cached kernel values
   double K_ii, K_ij, K_jj;
   K_ii = CalcKernelValue_(i, i);
   K_ij = CalcKernelValue_(i, j);
   K_jj = CalcKernelValue_(j, j);
-  
 
   double first_order_diff = y_i * grad_[i] - y_j * grad_[j];
   double second_order_diff = K_ii + K_jj - 2 * K_ij;
-  if (second_order_diff < 0) // handle non-positive definite kernels
+  if (second_order_diff <= 0) // handle non-positive definite kernels
     second_order_diff = TAU;
   double newton_step = first_order_diff / second_order_diff;
 
+  /*
   double step_B, step_A;
   if (y_i == 1) {
     step_B = C_i - a_i;
   }
   else { // y_i == -1
-    step_B = a_i;
+    step_B = a_i; // 0-(-1)a_i
   }
   if (y_j == 1) {
     step_A = a_j;
   }
   else { // y_j == -1
-    step_A = C_j - a_j;
+    step_A = C_j - a_j; // (-1)a_j - (-C_j)
   }
   double min_step_temp = min(step_B, step_A);
   double min_step = min(min_step_temp, newton_step);
+  */
 
   // Update alphas
-  alpha_[i] = a_i + y_i * min_step;
-  alpha_[j] = a_j - y_j * min_step;
+  alpha_[i] = a_i + y_i * newton_step;
+  alpha_[j] = a_j - y_j * newton_step;
+  
+  // Update alphas and handle bounds for updated alphas
+  /*
+  if (y_i != y_j) {
+    double alpha_old_diff = a_i - a_j;
+    if (alpha_old_diff > 0) {
+      if (alpha_[i] < alpha_old_diff) {
+	alpha_[i] = alpha_old_diff;
+      }
+      else if (alpha_[i] > C_i) {
+	alpha_[i] = C_i;
+      }
+    }
+    else { // alpha_old_diff <= 0
+      if (alpha_[i] < 0) {
+	alpha_[i] = 0;
+      }
+      else if (alpha_[i] > C_i + alpha_old_diff) {
+	alpha_[i] = C_i + alpha_old_diff;
+      }
+    }
+  }
+  else { // y_i == y_j
+    double alpha_old_sum = a_i + a_j;
+    if (alpha_old_sum > C_i) {
+      if (alpha_[i] < alpha_old_sum - C_i) {
+	alpha_[i] =  alpha_old_sum - C_i;
+      }
+      else if (alpha_[i] > C_i) {
+	alpha_[i] = C_i;
+      }
+    }
+    else { //alpha_old_sum <= C_i
+      if (alpha_[i] < 0) {
+	alpha_[i] = 0;
+      }
+      else if (alpha_[i] > alpha_old_sum) {
+	alpha_[i] = alpha_old_sum;
+      }
+    }
+  }
+  alpha_[j] = a_j + y_i * y_j * (a_i - alpha_[i]);
+  */
 
-  // Update gradient
-  for (t=0; t<n_active_; t++) {
-    grad_[t] = grad_[t] + min_step * y_[t] *( CalcKernelValue_(j, t) - CalcKernelValue_(i, t) );
+  // Handle bounds for updated alphas
+  if (y_i != y_j) {
+    double alpha_old_diff = a_i - a_j;
+    if (alpha_old_diff > 0) {
+      if (alpha_[j] < 0) {
+	alpha_[j] = 0;
+	alpha_[i] = alpha_old_diff;
+      }
+    }
+    else { // alpha_old_diff <= 0
+      if (alpha_[i] < 0) {
+	alpha_[i] = 0;
+	alpha_[j] = - alpha_old_diff;
+      }
+    }
+    if (alpha_old_diff > C_i - C_j) {
+      if (alpha_[i] > C_i) {
+	alpha_[i] = C_i;
+	alpha_[j] = C_i - alpha_old_diff;
+      }
+    }
+    else {
+      if (alpha_[j] > C_j) {
+	alpha_[j] = C_j;
+	alpha_[i] = C_j + alpha_old_diff;
+      }
+    }
+  }
+  else { // y_i == y_j
+    double alpha_old_sum = a_i + a_j;
+    if (alpha_old_sum > C_i) {
+      if (alpha_[i] > C_i) {
+	alpha_[i] = C_i;
+	alpha_[j] = alpha_old_sum - C_i;
+      }
+    }
+    else {
+      if (alpha_[j] < 0) {
+	alpha_[j] = 0;
+	alpha_[i] = alpha_old_sum;
+      }
+    }
+    if (alpha_old_sum > C_j) {
+      if (alpha_[j] > C_j) {
+	alpha_[j] = C_j;
+	alpha_[i] = alpha_old_sum - C_j;
+      }
+    }
+    else {
+      if (alpha_[i] < 0) {
+	alpha_[i] = 0;
+	alpha_[j] = alpha_old_sum;
+      }
+    }
   }
 
+  // Update gradient
+  double diff_i = alpha_[i] - a_i;
+  double diff_j = alpha_[j] - a_j;
+  for (t=0; t<n_active_; t++) {
+    grad_[t] = grad_[t] - y_[t] * (y_[i] * diff_i * CalcKernelValue_(i, t) + y_[j] * diff_j * CalcKernelValue_(j, t));
+  }
+
+  bool ub_i = IsUpperBounded(i);
+  bool ub_j = IsUpperBounded(j);
+  
   // Update alpha active status
   UpdateAlphaStatus_(i);
   UpdateAlphaStatus_(j);
 
   // Update gradient_bar
-  bool ub_i = IsUpperBounded(i);
-  bool ub_j = IsUpperBounded(j);
-  if( ub_i != IsUpperBounded(i) ) {
-      if(ub_i)
+  if( ub_i != IsUpperBounded(i) ) { // updated_alpha_i >= C
+      if(ub_i) // old_alpha_i >= C, new_alpha_i < C
 	for(t=0; t<n_alpha_; t++)
-	  grad_bar_[t] -= C_i * CalcKernelValue_(i, t);
-      else
+	  grad_bar_[t] = grad_bar_[t] - C_i * y_[i] * y_[t] * CalcKernelValue_(i, t);
+      else // old_alpha_i < C, new_alpha_i >= C
 	for(t=0; t<n_alpha_; t++)
-	  grad_bar_[t] += C_i * CalcKernelValue_(i, t);
+	  grad_bar_[t] = grad_bar_[t] + C_i * y_[i] * y_[t] * CalcKernelValue_(i, t);
   }
-  
   if( ub_j != IsUpperBounded(j) ) {
-    if(ub_j)
+    if(ub_j) // old_alpha_j >= C, new_alpha_j < C
       for(t=0; t<n_alpha_; t++)
-	grad_bar_[t] -= C_j * CalcKernelValue_(j, t);
-    else
+	grad_bar_[t] = grad_bar_[t] - C_j * y_[j] * y_[t] * CalcKernelValue_(j, t);
+    else // old_alpha_j < C, new_alpha_j >= C
       for(t=0; t<n_alpha_; t++)
-	grad_bar_[t] += C_j * CalcKernelValue_(j, t);
+	grad_bar_[t] = grad_bar_[t] + C_j * y_[j] * y_[t] * CalcKernelValue_(j, t);
   }
-  
-  // Calculate the bias term
-  CalcBias_();
 
-  VERBOSE_GOT_HERE(0);
 }
 
 /**
@@ -703,33 +849,34 @@ void SMO<TKernel>::UpdatingGradientAlpha_(index_t i, index_t j) {
 template<typename TKernel>
 void SMO<TKernel>::CalcBias_() {
   double b;
-  index_t n_free = 0;
-  double ub = INFINITY, lb = -INFINITY, sum_free = 0;
+  index_t n_free_alpha = 0;
+  double ub = INFINITY, lb = -INFINITY, sum_free_yg = 0.0;
+  
   for (index_t i=0; i<n_active_; i++){
     double yg = y_[i] * grad_[i];
       
-    if (IsUpperBounded(i)) {
+    if (IsUpperBounded(i)) { // bounded: alpha_i >= C
+      if(y_[i] == 1)
+	lb = max(lb, yg);
+      else
+	ub = min(ub, yg);
+    }
+    else if (IsLowerBounded(i)) { // bounded: alpha_i <= 0
       if(y_[i] == -1)
-	ub = min(ub, yg);
-      else
 	lb = max(lb, yg);
-    }
-    else if (IsLowerBounded(i)) {
-      if(y_[i] == +1)
-	ub = min(ub, yg);
       else
-	lb = max(lb, yg);
+	ub = min(ub, yg);
     }
-    else {
-      n_free++;
-      sum_free += yg;
+    else { // free: 0< alpha_i <C
+      n_free_alpha++;
+      sum_free_yg += yg;
     }
   }
   
-  if(n_free>0)
-    b = - sum_free / n_free;
+  if(n_free_alpha>0)
+    b = sum_free_yg / n_free_alpha;
   else
-    b = - (ub + lb) / 2;
+    b = (ub + lb) / 2;
   
   bias_ = b;
 }
@@ -743,11 +890,18 @@ void SMO<TKernel>::CalcBias_() {
 */
 template<typename TKernel>
 void SMO<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
+  ArrayList<index_t> new_from_old; // it's used to retrieve the permuted new index from old index
+  new_from_old.Init(n_alpha_);
+  for (index_t i = 0; i < n_alpha_; i++) {
+    new_from_old[active_set_[i]] = i;
+  }
   if (learner_typeid_ == 0) {// SVM_C
-    for (index_t i = 0; i < n_data_; i++) {
+    for (index_t ii = 0; ii < n_data_; ii++) {
+      index_t i = new_from_old[ii]; // retrive the index of permuted vector
       if (alpha_[i] >= SMO_ALPHA_ZERO) { // support vectors found
+	//printf("%f\n", alpha_[i] * y_[i]);
 	coef.PushBack() = alpha_[i] * y_[i];
-	sv_indicator[dataset_index[i]] = true;
+	sv_indicator[dataset_index[ii]] = true;
 	n_sv_++;
       }
       else {
@@ -756,11 +910,13 @@ void SMO<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &c
     }
   }
   else if (learner_typeid_ == 1) {// SVM_R
-    for (index_t i = 0; i < n_data_; i++) {
-      double alpha_diff = -alpha_[i] + alpha_[i+n_data_]; // alpha_i^* - alpha_i
+    for (index_t ii = 0; ii < n_data_; ii++) {
+      index_t i = new_from_old[ii]; // retrive the index of permuted vector
+      index_t iplusn = new_from_old[ii+n_data_];
+      double alpha_diff = -alpha_[i] + alpha_[iplusn]; // alpha_i^* - alpha_i
       if (fabs(alpha_diff) >= SMO_ALPHA_ZERO) { // support vectors found
 	coef.PushBack() = alpha_diff; 
-	sv_indicator[dataset_index[i]] = true;
+	sv_indicator[dataset_index[ii]] = true;
 	n_sv_++;
       }
       else {

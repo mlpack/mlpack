@@ -1,7 +1,7 @@
 /**
  * @author Hua Ouyang
  *
- * @file sgd.h
+ * @file opt_sgd.h
  *
  * This head file contains functions for performing Stochastic Gradient Descent (SGD) based optimization for SVM
  *
@@ -32,12 +32,12 @@
 
 #include "fastlib/fastlib.h"
 
+// max t_
+const index_t MAX_NUM_ITER_SGD = 1000000;
 // tolerance of sacale_w
 const double SCALE_W_TOLERANCE = 1.0e-9;
 // threshold that determines whether an alpha is a SV or not
 const double SGD_ALPHA_ZERO = 1.0e-4;
-// max t_
-const index_t MAX_NUM_ITER_SGD = 1000000;
 
 
 template<typename TKernel>
@@ -303,9 +303,12 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       double yt_hat = la::Dot(w_, xt) * scale_w_ + bias_;
       double yy_hat = yt * yt_hat;
       if (yy_hat < 1.0) {
+	// standard Stochastic Gradient Descent
         eta_grad = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // also need *xt, but it's done in next line
-	
 	la::AddExpert(eta_grad/ scale_w_, xt, &w_); // update w by Steepest Descent: w_{t+1} = w_t - eta * loss_gradient
+	
+	// Pegasos Stochastic Gradient Descent
+	//eta_grad = ;
 	
 	bias_ += eta_grad * 0.01; // update bias
       }
