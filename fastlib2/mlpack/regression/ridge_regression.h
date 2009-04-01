@@ -55,6 +55,9 @@ class RidgeRegression {
   void SVDRegress(double lambda,
 		  const GenVector<index_t> *predictor_indices = NULL);
 
+  void QRRegress(double lambda,
+		 const GenVector<index_t> *predictor_indices = NULL);
+
   void CrossValidatedRegression(double lambda_min, double lambda_max,
 				index_t num);
 
@@ -116,6 +119,10 @@ class RidgeRegression {
   (const Matrix &precomputed_covariance,
    const GenVector<index_t> *loo_current_predictor_indices,
    Matrix *precomputed_covariance_subset);
+
+  void ExtractDesignMatrixSubset_
+  (const GenVector<index_t> *loo_current_predictor_indices,
+   Matrix *extracted_design_matrix_subset);
 
   void ExtractSubspace_(Matrix *u, Vector *singular_values, Matrix *v_t,
 			const GenVector<index_t> *predictor_indices);
