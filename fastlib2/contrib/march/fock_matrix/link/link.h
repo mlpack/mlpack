@@ -14,6 +14,12 @@ const fx_entry_doc link_entries[] = {
    "The threshold to include an integral as significant.  Default: 10e-10.\n"},
   {"num_shell_pairs", FX_RESULT, FX_INT, NULL, 
    "The number of significant shell pairs."},
+  {"num_shell_pairs_screened", FX_RESULT, FX_INT, NULL, 
+    "The number of possible shell pairs neglected under the threshold.\n"},
+  {"num_neglected_sigma", FX_RESULT, FX_INT, NULL, 
+    "The total number of sigmas avoided due to sorted loops.\n"},
+  {"num_neglected_nu", FX_RESULT, FX_INT, NULL, 
+    "The total number of nus avoided due to the prescreening sorts.\n"},
   FX_ENTRY_DOC_DONE
 }; 
 
@@ -79,6 +85,9 @@ class Link {
   
   // Used in sorting functions 
   index_t current_mu_;
+  
+  index_t num_neglected_sigma_;
+  index_t num_neglected_nu_;
   
   
   ////////////////////////// Functions ///////////////////////////////
@@ -156,6 +165,9 @@ class Link {
     
     exchange_matrix_.Init(num_functions_, num_functions_);
     exchange_matrix_.SetZero();
+    
+    num_neglected_sigma_ = 0;
+    num_neglected_nu_ = 0;
      
   }
     

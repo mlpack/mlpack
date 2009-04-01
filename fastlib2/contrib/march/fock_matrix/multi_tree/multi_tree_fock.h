@@ -8,13 +8,6 @@
 const fx_entry_doc multi_tree_fock_entries[] = {
   {"epsilon", FX_PARAM, FX_DOUBLE, NULL, 
    "The relative error cutoff.  Default:0.01\n"},
-  {"epsilon_absolute", FX_PARAM, FX_DOUBLE, NULL, 
-    "The absolute error cutoff.  Default: 1.0\n"},
-  {"hybrid_cutoff", FX_PARAM, FX_DOUBLE, NULL, 
-  "The cutoff for hybrid error control.  If the value can be proven to be \n"
-  "below the cutoff, then absolute error pruning is used.  For only relative \n"
-  "error, set to 0; for only absolute, set to any value larger than the number\n"
-  "of basis functions.  Default: 0.0 (relative error only)\n"},
   {"N", FX_RESULT, FX_INT, NULL, 
   "The total number of basis functions, as in the dimension of the Fock matrix.\n"},
   {"leaf_size", FX_PARAM, FX_INT, NULL, 
@@ -39,10 +32,8 @@ const fx_entry_doc multi_tree_fock_entries[] = {
    "The number of base cases computed in the coulomb recursion.\n"},
   {"exchange_base_cases", FX_RESULT, FX_INT, NULL, 
    "The number of base_cases_computed in the exchange recursion.\n"},
-  {"abs_prunes", FX_RESULT, FX_INT, NULL, 
-   "The number of prunes made with the absolute error cutoff.\n"},
-  {"rel_prunes", FX_RESULT, FX_INT, NULL, 
-   "The number of prunes made with the relative error cutoff.\n"},
+  {"absolute_error", FX_PARAM, FX_BOOL, NULL, 
+   "Specify this parameter to use absolute error, defaults to relative.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -195,10 +186,6 @@ private:
   int coulomb_approximations_;
   int exchange_approximations_;
   
-  index_t num_absolute_prunes_;
-  index_t num_relative_prunes_;
-  
-  
   // The number of times the base case is called
   int coulomb_base_cases_;
   int exchange_base_cases_;
@@ -207,23 +194,11 @@ private:
   // A value of 1 allocates all of the error to the Coulomb computation
   double epsilon_split_;
   
-  // The value eps governing relative error
+  // The value eps governing error
   double epsilon_;
   
-  // the amount of error allocated to the coulomb matrix
   double epsilon_coulomb_;
-  
-  // the amount of error allocated to the exchange matrix
   double epsilon_exchange_;
-  
-  // The absolute analogs of the above 
-  double epsilon_absolute_;
-  double epsilon_coulomb_absolute_;
-  double epsilon_exchange_absolute_;
-  
-  // Values that can be guaranteed to be less than this value are pruned by the 
-  // absolute criterion
-  double hybrid_cutoff_;
   
   // The return values are stored here
   // fock_matrix__.ref(i, j) is the fock matrix entry i, j
@@ -251,8 +226,23 @@ private:
   // Size of leaves in the tree
   int leaf_size_;
   
+  // true if the error is relative, false if absolute
+  bool relative_error_;
+  
+  // having trouble with bounds very close to zero
+  double bounds_cutoff_;
+  
   
   //////////////// Functions /////////////////////////////
+  
+  /**
+   * Normalization constants
+   */
+  double NodeMaxNorm_(FockTree* mu);
+  
+  double NodeMinNorm_(FockTree* mu);
+  
+  double NodeAveNorm_(FockTree* mu);  
   
   /**
    * Returns the maximum integral between two square tree nodes
@@ -265,6 +255,8 @@ private:
   
   double NodesMidpointIntegral_(FockTree* mu, FockTree* nu, FockTree* rho, 
                                 FockTree* sigma);
+                                
+                                
   
   /**
    * Determines if the pair of nodes represent a non square square node
@@ -385,32 +377,14 @@ private:
     epsilon_exchange_ = (1 - epsilon_split_) * epsilon_;
     DEBUG_ASSERT(epsilon_coulomb_ + epsilon_exchange_ <= epsilon_);
     
-    epsilon_absolute_ = 
-      fx_param_double(module_, "epsilon_absolute", 1.0);
-    
-    epsilon_coulomb_absolute_ = 0.5 * epsilon_absolute_;
-    epsilon_exchange_absolute_ = 0.5 * epsilon_absolute_;
-    
-    hybrid_cutoff_ = fx_param_double(module_, "hybrid_cutoff", 0.0);
-    
-    
     coulomb_approximations_ = 0;
     exchange_approximations_ = 0;
     coulomb_base_cases_ = 0;
     exchange_base_cases_ = 0;
-    num_absolute_prunes_ = 0;
-    num_relative_prunes_ = 0;
-    
     
     number_of_basis_functions_ = centers_.n_cols() + 
         (index_t)2*(index_t)la::Dot(momenta_, momenta_);
     fx_result_int(module_, "N", number_of_basis_functions_);
-    
-    // A hack to make the pruning always absolute, since I can't input infinity
-    // with fx
-    if (hybrid_cutoff_ > number_of_basis_functions_) {
-      hybrid_cutoff_ = DBL_INF;
-    }
     
     coulomb_matrix_.Init(number_of_basis_functions_, 
                          number_of_basis_functions_);
@@ -445,8 +419,14 @@ private:
     ApplyPermutation(old_from_new_centers_, &exponents_);
     ApplyPermutation(old_from_new_centers_, &momenta_);
     
+    relative_error_ = !fx_param_exists(module_, "absolute_error");
     
-  
+    square_tree_->stat().set_remaining_epsilon(epsilon_split_ * epsilon_);
+    
+    PropagateBoundsDown_(square_tree_);
+    
+    bounds_cutoff_ = 10e-50;
+    
   } // Init()
   
   // Should see how CFMM code unpermutes and use that

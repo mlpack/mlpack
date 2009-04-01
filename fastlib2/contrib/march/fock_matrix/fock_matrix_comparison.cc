@@ -35,6 +35,8 @@ void FockMatrixComparison::Init(fx_module* exp_mod, Matrix** exp_mats,
   
   num_entries_ = naive_F_mat_->n_cols();
   
+  rel_error_cutoff_ = 10e-30;
+  
   // check that all matrices are the same size
   
 } // Init()
@@ -56,12 +58,14 @@ void FockMatrixComparison::Compare() {
             
         if (this_diff > max_diff_F_) {
           max_diff_F_ = this_diff;
-          max_index_row_F_ = i;
-          max_index_col_F_ = j;
         }
         
-        if (this_rel_diff > max_rel_F_) {
+        // add in the relative error cutoff to keep from storing large 
+        // relative errors from very small sources
+        if ((this_rel_diff > max_rel_F_) && (this_diff > rel_error_cutoff_)) {
           max_rel_F_ = this_rel_diff;
+          max_index_row_F_ = i;
+          max_index_col_F_ = j;
         }
         
         // account for symmetry
@@ -83,12 +87,13 @@ void FockMatrixComparison::Compare() {
         
         if (this_diff > max_diff_J_) {
           max_diff_J_ = this_diff;
-          max_index_row_J_ = i;
-          max_index_col_J_ = j;
+          
         }
         
-        if (this_rel_diff > max_rel_J_) {
+        if ((this_rel_diff > max_rel_J_) && (this_diff > rel_error_cutoff_)) {
           max_rel_J_ = this_rel_diff;
+          max_index_row_J_ = i;
+          max_index_col_J_ = j;
         }
         
         // account for symmetry
@@ -110,12 +115,12 @@ void FockMatrixComparison::Compare() {
         
         if (this_diff > max_diff_K_) {
           max_diff_K_ = this_diff;
-          max_index_row_K_ = i;
-          max_index_col_K_ = j;
         }
         
-        if (this_rel_diff > max_rel_K_) {
+        if ((this_rel_diff > max_rel_K_) && (this_diff > rel_error_cutoff_)) {
           max_rel_K_ = this_rel_diff;
+          max_index_row_K_ = i;
+          max_index_col_K_ = j;
         }
         
         // account for symmetry

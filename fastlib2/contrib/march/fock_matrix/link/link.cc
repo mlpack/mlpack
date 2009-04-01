@@ -27,7 +27,8 @@ void Link::PrescreeningLoop_() {
                                             &num_significant_sigma_for_nu_);
                                             
   fx_result_int(module_, "num_shell_pairs", num_shell_pairs_);
-  
+  fx_result_int(module_, "num_shell_pairs_screened", 
+                num_shells_ * (num_shells_ - 1) / 2);
   
   //// Find significant \nu for all \mu
   
@@ -173,6 +174,7 @@ void Link::ComputeExchangeMatrix() {
         // leave sigma loop, since it is sorted
         else {
           //printf("left sigma loop, bound: %g\n", bound);
+          num_neglected_sigma_ += num_sigma - sorted_sigma_ind - 1;
           break;
         }
         
@@ -181,6 +183,7 @@ void Link::ComputeExchangeMatrix() {
       // exit loop if this nu has no sigmas that count
       if (significant_sigmas == 0) {
         //printf("left nu loop\n");
+        num_neglected_nu_ += num_nu - sorted_nu_ind - 1;
         break;
       }
     
@@ -229,6 +232,7 @@ void Link::ComputeExchangeMatrix() {
           // leave sigma loop, since it is sorted
           else {
             //printf("left sigma loop\n");
+            num_neglected_sigma_ += num_sigma - sorted_sigma_ind - 1;
             break;
           }
           
@@ -237,6 +241,7 @@ void Link::ComputeExchangeMatrix() {
         // exit loop if this nu has no sigmas that count
         if (significant_sigmas == 0) {
           //printf("left nu loop\n");
+          num_neglected_nu_ += num_nu - sorted_nu_ind - 1;
           break;
         }
         
@@ -324,6 +329,9 @@ void Link::ComputeExchangeMatrix() {
 
 
 void Link::OutputExchangeMatrix(Matrix* exc_out) {
+  
+  fx_result_int(module_, "num_neglected_sigma", num_neglected_sigma_);
+  fx_result_int(module_, "num_neglected_nu", num_neglected_nu_);
   
   la::Scale(0.5, &exchange_matrix_);
   exc_out->Copy(exchange_matrix_);

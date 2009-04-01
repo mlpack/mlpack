@@ -10,8 +10,14 @@ const fx_entry_doc cfmm_mod_entries[] = {
   FX_ENTRY_DOC_DONE
 };
 
+const fx_submodule_doc cfmm_mod_submodules[] = {
+  {"multipole_cfmm", &cfmm_fmm_mod_doc,
+   "Parameters and results for the multipole portion of the code.\n"},
+  FX_SUBMODULE_DOC_DONE
+};
+
 const fx_module_doc cfmm_mod_doc = {
-  cfmm_mod_entries, NULL,
+  cfmm_mod_entries, cfmm_mod_submodules,
   "Algorithm module for CFMM.\n"
 };
 
