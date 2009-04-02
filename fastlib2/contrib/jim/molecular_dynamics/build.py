@@ -2,7 +2,7 @@
 librule(
     name = "particle",                  
     headers = ["particle_tree.h", "two_body_stat.h",
-               "multi_physics_system.h"],   
+               "multi_physics_system.h", "force_error.h"],   
     deplibs = ["fastlib:fastlib", "fastlib:fastlib_int"]
     )
 
