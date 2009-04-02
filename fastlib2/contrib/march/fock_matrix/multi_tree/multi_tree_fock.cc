@@ -1375,6 +1375,9 @@ void MultiTreeFock::UnApplyPermutation(ArrayList<index_t>& old_from_new,
 
 void MultiTreeFock::ComputeFockMatrix() {
 
+  fx_timer_start(module_, "multi_time");
+
+  printf("====Computing J====\n");
   fx_timer_start(module_, "coulomb_recursion");
   ComputeCoulombRecursion_(square_tree_, square_tree_);  
   fx_timer_stop(module_, "coulomb_recursion");
@@ -1383,6 +1386,8 @@ void MultiTreeFock::ComputeFockMatrix() {
   // matrix
   // I think this is the only resetting the tree will need
   // the density and exponent bounds are not set
+
+  printf("====Computing K====\n");
   SetEntryBounds_();
   ResetTreeForExchange_(square_tree_);
   fx_timer_start(module_, "exchange_recursion");
@@ -1391,6 +1396,7 @@ void MultiTreeFock::ComputeFockMatrix() {
     
   la::SubOverwrite(exchange_matrix_, coulomb_matrix_, &fock_matrix_);
   
+  fx_timer_stop(module_, "multi_time");
 
 } // ComputeFockMatrix()
 

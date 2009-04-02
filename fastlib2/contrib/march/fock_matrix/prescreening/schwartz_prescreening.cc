@@ -59,14 +59,22 @@ void SchwartzPrescreening::ComputeFockMatrix(Matrix* fock_out,
                                              Matrix* coulomb_out, 
                                              Matrix* exchange_out) {
 
+  fx_timer_start(module_, "prescreening_time");
+
+  printf("====Screening Shell Pairs====\n");
+  fx_timer_start(module_, "shell_screening_time");
   num_shell_pairs_ = eri::ComputeShellPairs(&shell_pair_list_, basis_list_, 
                                             shell_pair_threshold_);
+  fx_timer_stop(module_, "shell_screening_time");
   
   fx_result_int(module_, "num_shell_pairs", num_shell_pairs_);
   fx_result_int(module_, "num_shell_pairs_screened", 
                 num_shells_ * (num_shells_ - 1) / 2);
   
-  // Is there symmetry I can use here?
+  
+  printf("====Screening and Computing Integrals====\n");
+  
+  fx_timer_start(module_, "integral_time");
   for (index_t i = 0; i < num_shell_pairs_; i++) {
   
     ShellPair& i_pair = shell_pair_list_[i];
@@ -140,6 +148,10 @@ void SchwartzPrescreening::ComputeFockMatrix(Matrix* fock_out,
   // F = J - 1/2 K
   la::Scale(0.5, &exchange_matrix_);
   la::SubInit(exchange_matrix_, coulomb_matrix_, &fock_matrix_);
+  
+  fx_timer_stop(module_, "integral_time");
+  
+  fx_timer_stop(module_, "prescreening_time");
     
   fock_out->Copy(fock_matrix_);
   coulomb_out->Copy(coulomb_matrix_);

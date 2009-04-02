@@ -30,6 +30,31 @@
 #include "contrib/dongryel/proximity_project/cfmm_tree.h"
 #include "contrib/dongryel/multitree_template/multitree_utility.h"
 
+const fx_entry_doc cfmm_fmm_mod_entries[] = {
+{"charge_thresh", FX_PARAM, FX_DOUBLE, NULL,
+  "The screening threshold for including a charge distribution.\n"},
+  {"leaflen", FX_PARAM, FX_INT, NULL, 
+  "The number of points owned by a leaf.  Default: 1\n"},
+  {"precision", FX_PARAM, FX_DOUBLE, NULL,
+  "epsilon used in the definition of extent of distributions.  Default: 0.1\n"},
+  {"min_ws_index", FX_PARAM, FX_DOUBLE, NULL, 
+  "The smallest possible well-separated index at which distributions will be\n"
+  "approximated with multipoles.  Default: 2\n"},
+  {"max_tree_depth", FX_PARAM, FX_DOUBLE, NULL, 
+   "FILL ME IN!\n"},
+  {"num_exact_computations", FX_RESULT, FX_INT, NULL, 
+    "The number of interactions computed exactly in the base case.\n"},
+  {"num_approx_computations", FX_RESULT, FX_INT, NULL, 
+    "The number of interactions approximated with multipole expansions.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc cfmm_fmm_mod_doc = {
+  cfmm_fmm_mod_entries, NULL,
+  "Algorithm module for actual multipole code in CFMM.\n"
+};
+
+
 class ContinuousFmm {
 
  private:
@@ -106,8 +131,10 @@ class ContinuousFmm {
    */
   Vector potentials_;
   
-  Vector test_permutation_;
-
+  /** @brief The number of potentials computed in the base case.
+   */
+  int num_exact_computations_;
+  
   ////////// Private Member Functions //////////
 
   void ReshuffleResults_(Vector &to_be_reshuffled) {
@@ -225,62 +252,68 @@ class ContinuousFmm {
   }
 
   void BaseCase_(proximity::CFmmTree<FmmStat> *query_node,
-		 proximity::CFmmTree<FmmStat> *reference_node,
-		 Vector &potentials) {
+                 proximity::CFmmTree<FmmStat> *reference_node,
+                 Vector &potentials) {
     
     
     index_t query_point_indexing = 
-      (shuffled_reference_particle_set_.ptr() == 
-       shuffled_query_particle_set_.ptr()) ? 0:1;
-     
+    (shuffled_reference_particle_set_.ptr() == 
+     shuffled_query_particle_set_.ptr()) ? 0:1;
+    
     
     for(index_t q = query_node->begin(query_point_indexing); 
-	q < query_node->end(query_point_indexing); q++) {
+        q < query_node->end(query_point_indexing); q++) {
       
       // Get the query point.
       const double *q_col = shuffled_query_particle_set_.GetColumnPtr(q);
-
-      for(index_t r = reference_node->begin(0); r < reference_node->end(0);
-	  r++) {
-	
-	// Compute the pairwise distance, if the query and the
-	// reference are not the same particle.
-    // We need to compute the self-interaction as well - BM
-	if(leave_one_out_ && q == r) {
-	  continue;
-	}
-	const double *r_col = shuffled_reference_particle_set_.GetColumnPtr(r);
-	
-	double sq_dist = la::DistanceSqEuclidean
-	  (shuffled_query_particle_set_.n_rows(), q_col, r_col);
-	double dist = sqrt(sq_dist);
-	double erf_argument = 
-	  sqrt(shuffled_reference_particle_bandwidth_set_[q] *
-	       shuffled_reference_particle_bandwidth_set_[r] /
-	       (shuffled_reference_particle_bandwidth_set_[q] +
-		shuffled_reference_particle_bandwidth_set_[r]));
-
-	// This implements the kernel function used for the base case
-	// in the page 2 of the CFMM paper...
-    
-	if(dist > 0) {
       
-	  potentials[q] += shuffled_reference_particle_charge_set_[r] * 
-                        erf(erf_argument * dist) / dist;
-	}
-	else {
-      if (q == r) {
-        potentials[q] += shuffled_reference_particle_charge_set_[r] * 
-                            erf_argument * 2 / sqrt_pi_;
-      }
-      else {
-      // not sure if I should really multiply by 2 here
-	  potentials[q] += shuffled_reference_particle_charge_set_[r] * erf_argument
-                         * 2 / sqrt_pi_;
+      for(index_t r = reference_node->begin(0); r < reference_node->end(0);
+          r++) {
+        
+        // Compute the pairwise distance, if the query and the
+        // reference are not the same particle.
+        // We need to compute the self-interaction as well - BM
+        if(leave_one_out_ && q == r) {
+          continue;
+        }
+        const double *r_col = shuffled_reference_particle_set_.GetColumnPtr(r);
+        
+        double sq_dist = la::DistanceSqEuclidean
+          (shuffled_query_particle_set_.n_rows(), q_col, r_col);
+        double dist = sqrt(sq_dist);
+        double erf_argument = 
+          sqrt(shuffled_reference_particle_bandwidth_set_[q] *
+               shuffled_reference_particle_bandwidth_set_[r] /
+               (shuffled_reference_particle_bandwidth_set_[q] +
+                shuffled_reference_particle_bandwidth_set_[r]));
+        
+        // This implements the kernel function used for the base case
+        // in the page 2 of the CFMM paper...
+        
+        if(dist > 0) {
+          
+          potentials[q] += shuffled_reference_particle_charge_set_[r] * 
+          erf(erf_argument * dist) / dist;
+        }
+        else {
+          if (q == r) {
+            potentials[q] += shuffled_reference_particle_charge_set_[r] * 
+            erf_argument * 2 / sqrt_pi_;
+          }
+          else {
+            // not sure if I should really multiply by 2 here
+            potentials[q] += shuffled_reference_particle_charge_set_[r] * erf_argument
+            * 2 / sqrt_pi_;
+          }
+        }
       }
     }
-      }
-    }
+    
+    num_exact_computations_ += (query_node->end(query_point_indexing)
+                                - query_node->begin(query_point_indexing))
+                               * (reference_node->end(0)
+                                  - reference_node->begin(0));
+    
   }
 
   void EvaluateLocalExpansion_(proximity::CFmmTree<FmmStat> *query_node) {
@@ -542,8 +575,6 @@ class ContinuousFmm {
     // Reshuffle the results to account for dataset reshuffling
     // resulted from tree constructions.
     ReshuffleResults_(potentials_);
-    ReshuffleResults_(test_permutation_);
-    //test_permutation_.PrintDebug();
     
     // Output the results to the file.
     //OutputResultsToFile_(potentials_, "fast_fmm_output.txt");
@@ -551,6 +582,11 @@ class ContinuousFmm {
     if (potentials_out != NULL) {
       potentials_out->Copy(potentials_);
     }
+    
+    fx_result_int(module_, "num_exact_computations", num_exact_computations_);
+    fx_result_int(module_, "num_approx_computations", 
+                  (num_query_particles_ * num_reference_particles_)
+                     - num_exact_computations_);
     
   }
 
@@ -636,14 +672,6 @@ class ContinuousFmm {
     MultiTreeUtility::ShuffleAccordingToPermutation
       (shuffled_reference_particle_extent_set_, old_from_new_index_[0]);
 
-    test_permutation_.Init(rset_weights.n_cols());
-    for (index_t i = 0; i < rset_weights.n_cols(); i++) {
-      test_permutation_[i] = i;
-    }
-    MultiTreeUtility::ShuffleAccordingToPermutation(test_permutation_, 
-                                                    old_from_new_index_[0]);
-    //test_permutation_.PrintDebug();
-      
     //ot::Print(shuffled_reference_particle_charge_set_);
 
     // Retrieve the lambda order needed for expansion. The CFMM uses
@@ -661,6 +689,10 @@ class ContinuousFmm {
 
     // Compute PI.
     sqrt_pi_ = sqrt(2.0 * acos(0));
+    
+    // initialize statistics
+    num_exact_computations_ = 0;
+    
   }
 };
 

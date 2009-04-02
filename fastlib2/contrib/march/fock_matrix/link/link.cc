@@ -107,12 +107,17 @@ void Link::PrescreeningLoop_() {
 
 void Link::ComputeExchangeMatrix() {
 
+  fx_timer_start(module_, "LinK_time");
 
   // Prescreening loop
-  
+  printf("====LinK Prescreening====\n");
+  fx_timer_start(module_, "prescreening");
   PrescreeningLoop_();
+  fx_timer_stop(module_, "prescreening");
 
   
+  printf("====LinK Screening and Computing Integrals====\n");
+  fx_timer_start(module_, "integrals");
   // loop over bra shell pairs
   
   for (index_t shell_pair_ind = 0; shell_pair_ind < num_shell_pairs_; 
@@ -322,6 +327,10 @@ void Link::ComputeExchangeMatrix() {
     } // for int_ind
 
   } // for bra shell pairs
+  
+  fx_timer_stop(module_, "integrals");
+
+  fx_timer_stop(module_, "LinK_time");
 
   
 } // ComputeExchangeMatrix()

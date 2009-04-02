@@ -20,6 +20,12 @@ const fx_entry_doc link_entries[] = {
     "The total number of sigmas avoided due to sorted loops.\n"},
   {"num_neglected_nu", FX_RESULT, FX_INT, NULL, 
     "The total number of nus avoided due to the prescreening sorts.\n"},
+  {"prescreening", FX_TIMER, FX_CUSTOM, NULL, 
+    "The time taken to screen shell pairs.\n"},
+  {"integrals", FX_TIMER, FX_CUSTOM, NULL, 
+  "The time taken to screen and compute all the exchange integrals.\n"},
+  {"LinK_time", FX_TIMER, FX_CUSTOM, NULL, 
+  "The total time taken for the LinK algorithm, excluding init and output.\n"},
   FX_ENTRY_DOC_DONE
 }; 
 
