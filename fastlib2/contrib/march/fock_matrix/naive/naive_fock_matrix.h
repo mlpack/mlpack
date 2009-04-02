@@ -6,7 +6,8 @@
 
 
 const fx_entry_doc naive_fock_class_entries[] = {
-{},
+{"naive_time", FX_TIMER, FX_CUSTOM, NULL,
+  "The time spent on the naive computation.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -42,7 +43,7 @@ class NaiveFockMatrix {
   void Init(const Matrix& centers, const Matrix& exponents, 
             const Matrix& momenta, const Matrix& density, fx_module* mod_in) {
   
-    printf("Init naive\n");
+    printf("====Init Naive====\n");
   
     centers_.Copy(centers);
     
@@ -72,6 +73,10 @@ class NaiveFockMatrix {
   
   
   void ComputeFock() {
+    
+    printf("====Compute Naive====\n");
+    
+    fx_timer_start(mod_, "naive_time");
     
     for (index_t i = 0; i < num_shells_; i++) {
     
@@ -132,6 +137,8 @@ class NaiveFockMatrix {
     
     la::Scale(0.5, &exchange_mat_);
     la::SubInit(exchange_mat_, coulomb_mat_, &fock_mat_);
+    
+    fx_timer_stop(mod_, "naive_time");
     
   } // ComputeFock()
   

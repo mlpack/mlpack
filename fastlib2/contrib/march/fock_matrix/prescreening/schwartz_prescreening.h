@@ -19,6 +19,12 @@ const fx_entry_doc schwartz_entries[] = {
   "The number of significant shell pairs."}, 
 {"num_shell_pairs_screened", FX_RESULT, FX_INT, NULL,
   "The number of shell pairs that are screened.\n"},
+{"prescreening_time", FX_TIMER, FX_CUSTOM, NULL,
+ "Total time for Schwartz prescreening.\n"},
+{"shell_screening_time", FX_TIMER, FX_CUSTOM, NULL,
+  "Time for selecting important shell pairs.\n"},
+{"integral_time", FX_TIMER, FX_CUSTOM, NULL,
+  "Time for screening and computing integrals.\n"},
   FX_ENTRY_DOC_DONE
 };
 

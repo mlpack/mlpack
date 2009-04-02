@@ -193,6 +193,8 @@ int main(int argc, char* argv[]) {
   // I think this fails if the files exist but --do_naive is specified
   if (do_naive) {
     
+    printf("======== Naive Computation ========\n");
+    
     NaiveFockMatrix naive_alg;
     
     naive_alg.Init(centers, exp_mat, momenta, density, naive_mod);
@@ -220,6 +222,8 @@ int main(int argc, char* argv[]) {
   
   
   if (fx_param_exists(root_mod, "do_cfmm")) {
+  
+    printf("======== CFMM Computation ========\n");
   
     Matrix cfmm_coulomb;
  
@@ -258,6 +262,8 @@ int main(int argc, char* argv[]) {
 
   if (fx_param_exists(root_mod, "do_link")) {
     
+    printf("======== LinK Computation ========\n");
+    
     Matrix link_exchange;
     
     fx_module* link_mod = fx_submodule(root_mod, "link");
@@ -295,6 +301,8 @@ int main(int argc, char* argv[]) {
 
 
   if (fx_param_exists(root_mod, "do_prescreening")) {
+    
+    printf("======== Prescreening Computation ========\n");
     
     Matrix prescreening_fock;
     Matrix prescreening_coulomb;
@@ -339,6 +347,8 @@ int main(int argc, char* argv[]) {
     
 
   if (fx_param_exists(root_mod, "do_multi")) {
+    
+    printf("======== Multi-Tree Computation ========\n");
     
     Matrix multi_fock;
     Matrix multi_coulomb;

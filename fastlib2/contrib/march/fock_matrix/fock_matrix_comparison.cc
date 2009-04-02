@@ -44,6 +44,8 @@ void FockMatrixComparison::Init(fx_module* exp_mod, Matrix** exp_mats,
 
 void FockMatrixComparison::Compare() {
 
+  printf("====== Comparing Matrices ======\n");
+
   for (index_t i = 0; i < num_entries_; i++) {
   
     for (index_t j = i; j < num_entries_; j++) {

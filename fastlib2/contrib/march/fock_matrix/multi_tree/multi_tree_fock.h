@@ -34,6 +34,16 @@ const fx_entry_doc multi_tree_fock_entries[] = {
    "The number of base_cases_computed in the exchange recursion.\n"},
   {"absolute_error", FX_PARAM, FX_BOOL, NULL, 
    "Specify this parameter to use absolute error, defaults to relative.\n"},
+  {"tree_building", FX_TIMER, FX_CUSTOM, NULL, 
+   "Time spent to build the kd-tree.\n"},
+  {"square_tree_building", FX_TIMER, FX_CUSTOM, NULL, 
+    "Time spent to build the square tree.\n"},
+  {"coulomb_recursion", FX_TIMER, FX_CUSTOM, NULL, 
+    "Computing the Coulomb matrix.\n"},
+  {"exchange_recursion", FX_TIMER, FX_CUSTOM, NULL, 
+    "Computing the exchange matrix.\n"},
+  {"multi_time", FX_TIMER, FX_CUSTOM, NULL, 
+    "Total time spent to initialize the trees and compute F.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -399,18 +409,31 @@ private:
     
     leaf_size_ = fx_param_int(module_, "leaf_size", 10);
     
+    printf("====Building Tree====\n");
+    
+    fx_timer_start(module_, "multi_time");
+    
+    fx_timer_start(module_, "tree_building");
     tree_ = tree::MakeKdTreeMidpoint<FockTree>(centers_, leaf_size_, 
                                                &old_from_new_centers_, NULL);
                               
     // set up the min and max exponents                 
     SetExponentBounds_(tree_);
+
+    fx_timer_stop(module_, "tree_building");
+
                                                
     // Do I use this for anything?
     // Set up the indices of the nodes for symmetry pruning
     traversal_index_ = 0;
     
+
+    printf("====Square Tree Building====\n");
+    
+    fx_timer_start(module_, "square_tree_building");
     square_tree_ = new SquareTree();
     square_tree_->Init(tree_, tree_, number_of_basis_functions_);
+    fx_timer_stop(module_, "square_tree_building");
     
     // IMPORTANT: permute the exponents, mommenta, and density
     density_matrix_.Init(number_of_basis_functions_, number_of_basis_functions_);
@@ -424,6 +447,9 @@ private:
     square_tree_->stat().set_remaining_epsilon(epsilon_split_ * epsilon_);
     
     PropagateBoundsDown_(square_tree_);
+    
+    fx_timer_stop(module_, "multi_time");
+
     
     bounds_cutoff_ = 10e-50;
     
