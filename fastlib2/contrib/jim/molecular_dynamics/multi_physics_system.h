@@ -13,6 +13,7 @@
 #include "fastlib/fastlib.h"
 #include "fastlib/fastlib_int.h"
 #include "particle_tree.h"
+#include "force_error.h"
 #include "raddist.h"
 #define PI 3.14159265358979
 
@@ -45,6 +46,9 @@ class MultiPhysicsSystem{
   static const int FREE = 0;
   static const int PERIODIC = 1;
   static const int FIXED = 2;
+  static const int CUTOFF = 0;
+  static const int POTENTIAL = 1;
+  static const int FORCE = 2;
 
 private:
   // Input data set
@@ -60,9 +64,10 @@ private:
   Vector power3a_, power3b_, power3c_;
   Vector signs3_;
   
-  double time_step_, boundary_, virial_, temperature_, cutoff_;
+  double time_step_, virial_, temperature_, cutoff_, cutoff3_;
   bool three_body_;
-  int n_atoms_, n_trips_;
+  int n_atoms_, boundary_, prune_;
+  double n_trips_;
   int total_triples_, range_evals_;
   double max_force_;
   // Tree Parameters
@@ -105,12 +110,7 @@ private:
     if (boundary_ == PERIODIC){
       AdjustVector_(&delta_r);
     }
-    double dist = sqrt(la::Dot(delta_r, delta_r));
-    if (cutoff_ > 0){
-      if (sqrt(dist ) > cutoff_){
-	return;
-      }
-    }
+    double dist = sqrt(la::Dot(delta_r, delta_r));  
     double coef = 0, temp;
     for (int i  = 0; i < forces_.n_rows(); i++){
       temp = -forces_.get(i, left)*right->stat().interactions_[i].coef();
@@ -139,7 +139,7 @@ private:
       AdjustVector_(&delta_r);
     }
     double dist = sqrt(la::Dot(delta_r, delta_r));
-    if (cutoff_ > 0){
+    if (prune_ == CUTOFF){
       if (sqrt(dist ) > cutoff_){
 	return;
       }
@@ -159,7 +159,7 @@ private:
     atoms_.MakeColumnSubvector(right, 4, 3, &right_vec);
     la::AddExpert(time_step_ / atoms_.get(3,left), delta_r, &left_vec);
     la::AddExpert(-time_step_ / atoms_.get(3,right), delta_r, &right_vec);
-    percent_pruned_ = percent_pruned_ + 1;
+    percent_pruned_ = percent_pruned_ + 1;   
   }
 
 
@@ -369,11 +369,11 @@ private:
     AC = la::Dot(r_ij, r_ki);
     AB = la::Dot(r_ij, r_jk);
     BC = la::Dot(r_ki, r_jk);
-    if (cutoff_ > 0){
+    if (prune_ == CUTOFF){
       if (sqrt(AA) > cutoff_ || sqrt(BB) > cutoff_ || sqrt(CC) > cutoff_){
 	return;
       }
-      if (sqrt(AA) > 7.0 & sqrt(BB) > 7.0 & sqrt(CC) > 7.0){
+      if (sqrt(AA) > cutoff3_ & sqrt(BB) > cutoff3_ & sqrt(CC) > cutoff3_){
 	return;
       }
     }
@@ -415,7 +415,7 @@ private:
     la::AddExpert(time_step_ / atoms_.get(3,i), force_i, &pos_i);
     la::AddExpert(time_step_ / atoms_.get(3,j), force_j, &pos_j);
     la::AddExpert(time_step_ / atoms_.get(3,k), force_k, &pos_k);   
-    total_triples_++;
+    total_triples_++;   
   }
     
   /**
@@ -501,14 +501,59 @@ private:
 	pow(rmin,c))+query->stat().axilrod_[0]/(pow(Rmin, b+c)*pow(rmin,a+1)));
       range_r += coef*(Rnorm*query->stat().axilrod_[0]/(pow(Rmin, a+b+2)*
         pow(rmin,c))+ref->stat().axilrod_[0]/(pow(Rmin, b+c)*pow(rmin, a+1)));
+      
     }
     range_q = range_q / query->count();
     range_r = range_r / ref->count();
 
     Vector err; 
     err.Init(2);
-    err[0] = range_q;
-    err[1] = range_r;
+    err[0] = fabs(range_q);
+    err[1] = fabs(range_r);
+  
+    la::ScaleOverwrite(time_step_, err, bounds);
+  }
+
+
+  void GetPotentialRangeDual_(ParticleTree* query, ParticleTree* ref,
+			  Vector* bounds){       
+    double range_q = 0, range_r = 0;   
+    Vector delta;
+    la::SubInit(query->stat().centroid_, ref->stat().centroid_, &delta);
+    AdjustVector_(&delta);
+    double Rad = sqrt(la::Dot(delta, delta));
+
+    Vector node_r;
+    node_r.Init(3);
+    for (int i = 0; i < 3; i++){
+      node_r[i] = (query->bound().width(i, dimensions_[i]) + 
+		   ref->bound().width(i, dimensions_[i]))/ 2;     
+    }
+    double rad = sqrt(la::Dot(node_r, node_r));
+    
+    double coef;
+    for (int i = 0; i < forces_.n_rows(); i++){
+      int power = abs((int)powers_[i]);  
+      coef = fabs(ref->stat().interactions_[i].coef()*
+			 query->stat().interactions_[i].coef()*
+			 GetPotentialTerm_(Rad, rad, power));
+      range_q = range_q + coef;
+      range_r = range_r + coef;
+    }    
+
+    double rmin = 2.8;
+    double Rmin = sqrt(ref->bound().PeriodicMinDistanceSq(query->bound(), dimensions_));
+    coef = fabs(4*ref->stat().axilrod_[0]*query->stat().axilrod_[0] / 
+		(pow(rmin, 3)*pow(Rmin, 6)));
+    range_r = range_r + coef*(ref->stat().axilrod_[0] + query->stat().axilrod_[0]/2.0);
+    range_r = range_r + coef*(query->stat().axilrod_[0] + ref->stat().axilrod_[0]/2.0);
+    range_q = range_q / query->count();
+    range_r = range_r / ref->count();
+
+    Vector err; 
+    err.Init(2);
+    err[0] = fabs(range_q);
+    err[1] = fabs(range_r);
   
     la::ScaleOverwrite(time_step_, err, bounds);
   }
@@ -516,8 +561,8 @@ private:
 
   void GetForceRangeDual_(int query, ParticleTree* ref,
 			  Vector* bounds){       
-    double range_q = 0, range_r = 0;
-    double  rnorm = 0, Rnorm = 0;
+    double range_q = 0, range_r = 0;   
+    double rnorm = 0, Rnorm = 0;
     Vector delta, qpos;
     atoms_.MakeColumnSubvector(query, 0, 3, &qpos);
     la::SubInit(qpos, ref->stat().centroid_, &delta);
@@ -558,30 +603,14 @@ private:
 
     Vector err; 
     err.Init(2);
-    err[0] = range_q;
-    err[1] = range_r;
+    err[0] = fabs(range_q);
+    err[1] = fabs(range_r);
   
     la::ScaleOverwrite(time_step_, err, bounds);
   }
   
 
-  int GetForceRangeDualCutoff_(ParticleTree* query, ParticleTree* ref){   
-   int result;
-   double r_min;
-   if (boundary_ == PERIODIC){
-     r_min = sqrt(query->bound().PeriodicMinDistanceSq(ref->bound(),
-						       dimensions_));      
-   } else {
-     r_min = sqrt(query->bound().MinDistanceSq(ref->bound()));       
-   }        
-   result = (r_min > cutoff_);      
-   return result;
-  }
-
- 
-
-
-  void GetForceRangeTriple_(ParticleTree* i, ParticleTree* j, ParticleTree *k,
+   void GetForceRangeTriple_(ParticleTree* i, ParticleTree* j, ParticleTree *k,
 			  Vector* bounds){       
     double range_i = 0, range_j = 0, range_k = 0;
     double Rij, Rjk, Rki, rij, rki, rjk, ri, rj, rk;
@@ -625,13 +654,13 @@ private:
       int c = abs((int)power3c_[d]);  
       double coef = i->stat().axilrod_[0]*j->stat().axilrod_[0]*
 	k->stat().axilrod_[0]*signs3_[d];
-      range_i += coef*GetPotentialTerm_(Rjk, rjk, b)*
+      range_i += coef*GetPotentialTermPt_(Rjk, rjk, b)*
 	(GetForceTerm_(Rij, rij, Rnij, rnij,a)*GetPotentialTerm_(Rki, rki,c)+
 	 GetForceTerm_(Rki, rki, Rnki, rnki,c)*GetPotentialTerm_(Rij, rij,a));
-      range_j+= coef*GetPotentialTerm_(Rki, rki, c)*
+      range_j+= coef*GetPotentialTermPt_(Rki, rki, c)*
 	(GetForceTerm_(Rij, rij, Rnij, rnij,a)*GetPotentialTerm_(Rjk, rjk,b)+
 	 GetForceTerm_(Rjk, rjk, Rnjk, rnjk,b)*GetPotentialTerm_(Rij, rij,a));
-      range_k+= coef*GetPotentialTerm_(Rij, rij, a)*
+      range_k+= coef*GetPotentialTermPt_(Rij, rij, a)*
 	(GetForceTerm_(Rjk, rjk, Rnjk, rnjk,b)*GetPotentialTerm_(Rki, rki,c)+
 	 GetForceTerm_(Rki, rki, Rnki, rnki,c)*GetPotentialTerm_(Rjk, rjk,b)); 
     }
@@ -640,10 +669,10 @@ private:
     range_k = range_k / k->count();
     Vector err;
     err.Init(3);
-    err[0] = range_i;
-    err[1] = range_j;
-    err[2] = range_k;
-    
+   
+    err[0] = fabs(range_i);
+    err[1] = fabs(range_j);
+    err[2] = fabs(range_k);
     la::ScaleOverwrite(time_step_, err, bounds);
   }
  
@@ -703,10 +732,10 @@ private:
     range_k = range_k / k->count();
     Vector err;
     err.Init(3);
-    err[0] = range_i;
-    err[1] = range_j;
-    err[2] = range_k;
-    
+   
+    err[0] = fabs(range_i);
+    err[1] = fabs(range_j);
+    err[2] = fabs(range_k);
     la::ScaleOverwrite(time_step_, err, bounds);
   }
 
@@ -762,42 +791,171 @@ private:
     range_k = range_k / k->count();
     Vector err;
     err.Init(3);
-    err[0] = range_i;
-    err[1] = range_j;
-    err[2] = range_k;
+    err[0] = fabs(range_i);
+    err[1] = fabs(range_j);
+    err[2] = fabs(range_k);
     
     la::ScaleOverwrite(time_step_, err, bounds);
   }
 
-  int GetForceRangeTripleCutoff_(ParticleTree* i, ParticleTree* j,
-				 ParticleTree* k){    
-    int result;
-    double a_min, b_min, c_min;   
-    if (boundary_ == PERIODIC){
-      a_min = sqrt(i->bound().PeriodicMinDistanceSq(j->bound(),dimensions_));  
-      b_min = sqrt(j->bound().PeriodicMinDistanceSq(k->bound(),dimensions_));  
-      c_min = sqrt(k->bound().PeriodicMinDistanceSq(i->bound(),dimensions_));  
-    } else {
-      a_min = sqrt(i->bound().MinDistanceSq(j->bound()));    
-      b_min = sqrt(j->bound().MinDistanceSq(k->bound()));       
-      c_min = sqrt(k->bound().MinDistanceSq(i->bound()));    
-    }      
-    result = (a_min > cutoff_)+(b_min > cutoff_)+(c_min > cutoff_); 
-    result = result +(a_min > 7.0)*(b_min > 7.0)*(c_min > 7.0);
-    return result;
+  void GetPotentialRangeTriple_(ParticleTree* i, ParticleTree* j, ParticleTree *k,
+			  Vector* bounds){       
+    double range_i = 0, range_j = 0, range_k = 0;
+    double Rij, Rjk, Rki, rij, rki, rjk;
+
+    Vector delta_ij, delta_jk, delta_ki;
+    la::SubInit(i->stat().centroid_, j->stat().centroid_, &delta_ij);
+    la::SubInit(j->stat().centroid_, k->stat().centroid_, &delta_jk);
+    la::SubInit(k->stat().centroid_, i->stat().centroid_, &delta_ki);
+    AdjustVector_(&delta_ij);
+    AdjustVector_(&delta_jk);
+    AdjustVector_(&delta_ki);
+    Rij = sqrt(la::Dot(delta_ij, delta_ij));
+    Rjk = sqrt(la::Dot(delta_jk, delta_jk));
+    Rki = sqrt(la::Dot(delta_ki, delta_ki));
+
+    Vector bi, bj, bk;
+    bi.Init(3);
+    bj.Init(3);
+    bk.Init(3);
+    for (int d = 0; d < 3; d++){
+      bi[d] = i->bound().width(d, dimensions_[d]) / 2;
+      bj[d] = j->bound().width(d, dimensions_[d]) / 2;
+      bk[d] = k->bound().width(d, dimensions_[d]) / 2; 
+    }
+    la::AddOverwrite(bi, bj, &delta_ij);
+    la::AddOverwrite(bj, bk, &delta_jk);
+    la::AddOverwrite(bk, bi, &delta_ki);
+    rij = sqrt(la::Dot(delta_ij, delta_ij))/Rij;
+    rjk = sqrt(la::Dot(delta_jk, delta_jk))/Rjk;
+    rki = sqrt(la::Dot(delta_ki, delta_ki))/Rki;
+    delta_ij[0] =   GetPotentialTerm_(Rij, rij, 3);
+    delta_ij[1] = GetPotentialTermPt_(Rij, rij, 3);
+    delta_jk[0] =   GetPotentialTerm_(Rjk, rjk, 3);
+    delta_jk[1] = GetPotentialTermPt_(Rjk, rjk, 3);
+    delta_ki[0] =   GetPotentialTerm_(Rki, rki, 3);
+    delta_ki[1] = GetPotentialTermPt_(Rki, rki, 3);
+
+
+    double coef = i->stat().axilrod_[0]*j->stat().axilrod_[0]*
+      k->stat().axilrod_[0]*6;
+    range_i = coef*delta_ij[0]*delta_ki[0]*delta_jk[1];
+    range_j = coef*delta_ij[0]*delta_ki[1]*delta_jk[0];
+    range_k = coef*delta_ij[1]*delta_ki[0]*delta_jk[0];
+  
+    range_i = range_i / i->count();
+    range_j = range_j / j->count();
+    range_k = range_k / k->count();
+    Vector err;
+    err.Init(3);
+   
+    err[0] = fabs(range_i);
+    err[1] = fabs(range_j);
+    err[2] = fabs(range_k);
+    la::ScaleOverwrite(time_step_, err, bounds);
+  }
+
+  void GetPotentialRangeTriple_(int i, ParticleTree* j, ParticleTree *k,
+			  Vector* bounds){       
+    double range_i = 0, range_j = 0, range_k = 0;
+    double Rij, Rjk, Rki, rij, rki, rjk;
+
+    Vector delta_ij, delta_jk, delta_ki, pos_i;
+    atoms_.MakeColumnSubvector(i, 0, 3, &pos_i);
+    la::SubInit(pos_i, j->stat().centroid_, &delta_ij);
+    la::SubInit(j->stat().centroid_, k->stat().centroid_, &delta_jk);
+    la::SubInit(k->stat().centroid_, pos_i, &delta_ki);
+    AdjustVector_(&delta_ij);
+    AdjustVector_(&delta_jk);
+    AdjustVector_(&delta_ki);
+    Rij = sqrt(la::Dot(delta_ij, delta_ij));
+    Rjk = sqrt(la::Dot(delta_jk, delta_jk));
+    Rki = sqrt(la::Dot(delta_ki, delta_ki));
+
+    Vector bj, bk;    
+    bj.Init(3);
+    bk.Init(3);
+    for (int d = 0; d < 3; d++){     
+      bj[d] = j->bound().width(d, dimensions_[d]) / 2;
+      bk[d] = k->bound().width(d, dimensions_[d]) / 2; 
+    }  
+    la::AddOverwrite(bj, bk, &delta_jk);   
+    rij = sqrt(la::Dot(bj, bj))/Rij;
+    rjk = sqrt(la::Dot(delta_jk, delta_jk))/Rjk;
+    rki = sqrt(la::Dot(bk, bk))/Rki;
+    delta_ij[0] =   GetPotentialTerm_(Rij, rij, 3);
+    delta_ij[1] = GetPotentialTermPt_(Rij, rij, 3);
+    delta_jk[0] =   GetPotentialTerm_(Rjk, rjk, 3);
+    delta_jk[1] = GetPotentialTermPt_(Rjk, rjk, 3);
+    delta_ki[0] =   GetPotentialTerm_(Rki, rki, 3);
+    delta_ki[1] = GetPotentialTermPt_(Rki, rki, 3);
+
+
+    double coef = axilrod_teller_.get(i, 0)*j->stat().axilrod_[0]*
+      k->stat().axilrod_[0]*6;
+    range_i = coef*delta_ij[1]*delta_ki[1]*delta_jk[1];
+    range_j = coef*delta_ij[0]*delta_ki[1]*delta_jk[0];
+    range_k = coef*delta_ij[1]*delta_ki[0]*delta_jk[0];
+  
+    range_j = range_j / j->count();
+    range_k = range_k / k->count();
+    Vector err;
+    err.Init(3);
+   
+    err[0] = fabs(range_i);
+    err[1] = fabs(range_j);
+    err[2] = fabs(range_k);
+    la::ScaleOverwrite(time_step_, err, bounds);
   }
 
 
+  void GetPotentialRangeTriple_(int i,int j, ParticleTree *k, Vector* bounds){       
+    double range_i = 0, range_j = 0, range_k = 0;
+    double Rij, Rjk, Rki, rk;
+
+    Vector delta_ij, delta_jk, delta_ki, pos_i, pos_j;
+    atoms_.MakeColumnSubvector(i, 0, 3, &pos_i);
+    atoms_.MakeColumnSubvector(j, 0, 3, &pos_j);
+    la::SubInit(pos_i, pos_j, &delta_ij);
+    la::SubInit(pos_j, k->stat().centroid_, &delta_jk);
+    la::SubInit(k->stat().centroid_, pos_i, &delta_ki);
+    AdjustVector_(&delta_ij);
+    AdjustVector_(&delta_jk);
+    AdjustVector_(&delta_ki);
+    Rij = sqrt(la::Dot(delta_ij, delta_ij));
+    Rjk = sqrt(la::Dot(delta_jk, delta_jk));
+    Rki = sqrt(la::Dot(delta_ki, delta_ki));
+
+    Vector bk;       
+    bk.Init(3);
+    for (int d = 0; d < 3; d++){           
+      bk[d] = k->bound().width(d, dimensions_[d]) / 2; 
+    }       
+    rk = sqrt(la::Dot(bk,bk));   
+    delta_ij[0] =   GetPotentialTerm_(Rij, 0, 3);
+    delta_ij[1] = GetPotentialTermPt_(Rij, 0, 3);
+    delta_jk[0] =   GetPotentialTerm_(Rjk, rk/Rjk, 3);
+    delta_jk[1] = GetPotentialTermPt_(Rjk, rk/Rjk, 3);
+    delta_ki[0] =   GetPotentialTerm_(Rki, rk/Rki, 3);
+    delta_ki[1] = GetPotentialTermPt_(Rki, rk/Rki, 3);
 
 
-  /* 
-     Range of multipole expansion of 1/R^nu, truncated after
-     monopole term, from Duan and Krasny.
-  */
-  double RangeDK_(int nu, double r){
-    return (pow(1.0 / (1-r), nu) - 1.0) /nu;
+    double coef = axilrod_teller_.get(i, 0)*axilrod_teller_.get(j, 0)*
+      k->stat().axilrod_[0]*6;
+    range_i = coef*delta_ij[1]*delta_ki[1]*delta_jk[1];
+    range_j = coef*delta_ij[0]*delta_ki[1]*delta_jk[0];
+    range_k = coef*delta_ij[1]*delta_ki[0]*delta_jk[0];
+  
+    range_k = range_k / k->count();
+    Vector err;
+    err.Init(3);
+   
+    err[0] = fabs(range_i);
+    err[1] = fabs(range_j);
+    err[2] = fabs(range_k);
+    la::ScaleOverwrite(time_step_, err, bounds);
   }
- 
+
 
   /**
    * Routines for calling force evaluations
@@ -814,7 +972,7 @@ private:
       }
     }
   }
-
+  
   void EvaluateLeafForcesThree_(int query, ParticleTree* ref1, 
 				ParticleTree* ref2){    
     for(int j = ref1->begin(); j < ref1->count() + ref2->begin(); j++){    
@@ -874,182 +1032,406 @@ private:
   // End Force Evaluation Routines.
 
 
-  /**
+
+  void SplitDual_(ParticleTree* query, ParticleTree* ref, ForceError* err_q,
+		  ForceError* err_r){
+    ForceError err_q2;
+    err_q2.Copy(err_q);    
+    double d1, d2;
+    if (boundary_ == PERIODIC){
+      d1 = ref->bound().PeriodicMinDistanceSq(query->left()->bound(), 
+					      dimensions_);
+      d2 = ref->bound().PeriodicMinDistanceSq(query->right()->bound(), 
+					      dimensions_);
+    } else {
+      d1 = ref->bound().MinDistanceSq(query->left()->bound());
+      d2 = ref->bound().MinDistanceSq(query->right()->bound());  
+    }
+    if (d1 > d2){    
+      UpdateMomentumDual_(query->left(), ref, err_q, err_r);
+      UpdateMomentumDual_(query->right(), ref, &err_q2, err_r);
+    } else {    
+      UpdateMomentumDual_(query->right(), ref, &err_q2, err_r);
+      UpdateMomentumDual_(query->left(), ref, err_q, err_r);
+    }    
+    UpdateMomentumThree_(query->left(), query->right(), ref,
+			 err_q, &err_q2, err_r);
+    err_q->Merge(err_q2);
+  }
+  
+  void SplitThree_(ParticleTree* query, ParticleTree* ref1, ParticleTree* ref2,
+		  ForceError* err_q, ForceError* err_r1, ForceError* err_r2){
+    ForceError err_q2;
+    err_q2.Copy(err_q);
+    double d1, d2;
+    if (boundary_ == PERIODIC){
+      d1 = ref1->bound().PeriodicMinDistanceSq(query->left()->bound(),dimensions_)*
+	ref2->bound().PeriodicMinDistanceSq(query->left()->bound(),dimensions_);
+      d2 = ref1->bound().PeriodicMinDistanceSq(query->right()->bound(),dimensions_)*
+	ref2->bound().PeriodicMinDistanceSq(query->right()->bound(),dimensions_);
+    } else {
+      d1 = ref1->bound().MinDistanceSq(query->left()->bound())*
+	ref2->bound().MinDistanceSq(query->left()->bound());
+      d2 = ref1->bound().MinDistanceSq(query->right()->bound())*
+	ref2->bound().MinDistanceSq(query->right()->bound());  
+    }
+    if (d1 > d2){    
+      UpdateMomentumThree_(query->left(), ref1, ref2, err_q, err_r1, err_r2);
+      UpdateMomentumThree_(query->right(),ref1, ref2, &err_q2, err_r1, err_r2);
+    } else {    
+      UpdateMomentumThree_(query->right(),ref1, ref2, &err_q2, err_r1, err_r2);
+      UpdateMomentumThree_(query->left(), ref1, ref2, err_q, err_r1, err_r2);
+    }       
+    err_q->Merge(err_q2);
+  }
+
+
+
+  int GetPrune_(ParticleTree* i, ParticleTree* j, ParticleTree* k, 
+		ForceError* err_i, ForceError* err_j , ForceError* err_k){
+    int result = 0;
+    if (prune_ == CUTOFF){
+      double a_min, b_min, c_min;   
+      if (boundary_ == PERIODIC){
+	a_min = sqrt(i->bound().PeriodicMinDistanceSq(j->bound(),dimensions_));  
+	b_min = sqrt(j->bound().PeriodicMinDistanceSq(k->bound(),dimensions_));  
+	c_min = sqrt(k->bound().PeriodicMinDistanceSq(i->bound(),dimensions_));  
+      } else {
+	a_min = sqrt(i->bound().MinDistanceSq(j->bound()));    
+	b_min = sqrt(j->bound().MinDistanceSq(k->bound()));       
+	c_min = sqrt(k->bound().MinDistanceSq(i->bound()));    
+      }      
+      result = (a_min > cutoff_)+(b_min > cutoff_)+(c_min > cutoff_); 
+      result = result + (a_min > cutoff3_)*(b_min > cutoff3_)*(c_min > cutoff3_);
+    } else {
+      Vector range;
+      range.Init(3);
+      int c1, c2, c3;
+      c1 = j->count() * k->count();
+      c2 = k->count() * i->count();
+      c3 = i->count() * j->count();
+      if (prune_ == POTENTIAL){
+	GetPotentialRangeTriple_(i,j,k, &range);
+      } else {
+	GetForceRangeTriple_(i,j,k, &range);
+      }
+      result = err_i->Check(range[0], c1) * err_j->Check(range[1], c2) * 
+	err_k->Check(range[2], c3);
+      if (result > 0){
+	ThreeBodyForce_(i, j, k);
+	err_i->AddVisited(range[0], c1);
+	err_j->AddVisited(range[1], c2);
+	err_k->AddVisited(range[2], c3);
+      }      
+    }    
+    return result;
+  }
+
+  int GetPrune_(int i, ParticleTree* j, ParticleTree* k, 
+		ForceError* err_i, ForceError* err_j , ForceError* err_k){
+    int result = 0;
+    if (prune_ == CUTOFF){
+      Vector pos_i;
+      atoms_.MakeColumnSubvector(i, 0, 3, &pos_i);
+      double a_min, b_min, c_min;   
+      if (boundary_ == PERIODIC){
+	a_min = sqrt(j->bound().PeriodicMinDistanceSq(pos_i, dimensions_));  
+	b_min = sqrt(j->bound().PeriodicMinDistanceSq(k->bound(),dimensions_));  
+	c_min = sqrt(k->bound().PeriodicMinDistanceSq(pos_i, dimensions_));  
+      } else {
+	a_min = sqrt(j->bound().MinDistanceSq(pos_i));    
+	b_min = sqrt(j->bound().MinDistanceSq(k->bound()));       
+	c_min = sqrt(k->bound().MinDistanceSq(pos_i));    
+      }      
+      result = (a_min > cutoff_)+(b_min > cutoff_)+(c_min > cutoff_); 
+      result = result + (a_min > cutoff3_)*(b_min > cutoff3_)*(c_min > cutoff3_);
+    } else {
+      Vector range;
+      range.Init(3);
+      int c2, c3;     
+      c2 = k->count();
+      c3 = j->count();
+      if (prune_ == POTENTIAL){
+	GetPotentialRangeTriple_(i,j,k, &range);
+      } else {
+	GetForceRangeTriple_(i,j,k, &range);
+      }
+      result = err_i->Check(range[0], c2*c3) * err_j->Check(range[1], c2) * 
+	err_k->Check(range[2], c3);
+      if (result > 0){
+	ThreeBodyForce_(i, j, k);
+	err_i->AddVisited(range[0], c2*c3);
+	err_j->AddVisited(range[1], c2);
+	err_k->AddVisited(range[2], c3);
+      }      
+    }    
+    return result;
+  }
+
+  int GetPrune_(int i, int j, ParticleTree* k, 
+		ForceError* err_i, ForceError* err_j , ForceError* err_k){
+    int result = 0;
+    if (prune_ == CUTOFF){
+      Vector pos_i, pos_j, delta;
+      atoms_.MakeColumnSubvector(i, 0, 3, &pos_i);
+      atoms_.MakeColumnSubvector(j, 0, 3, &pos_j);
+      double a_min, b_min, c_min;   
+      la::SubInit(pos_i, pos_j, &delta);      
+      if (boundary_ == PERIODIC){
+	AdjustVector_(&delta);
+	b_min = sqrt(k->bound().PeriodicMinDistanceSq(pos_j, dimensions_));  
+	c_min = sqrt(k->bound().PeriodicMinDistanceSq(pos_i, dimensions_));  
+      } else {
+	b_min = sqrt(k->bound().MinDistanceSq(pos_j));       
+	c_min = sqrt(k->bound().MinDistanceSq(pos_i));    
+      }      
+      a_min = sqrt(la::Dot(delta, delta));
+      result = (a_min > cutoff_)+(b_min > cutoff_)+(c_min > cutoff_); 
+      result = result + (a_min > cutoff3_)*(b_min > cutoff3_)*(c_min > cutoff3_);
+    } else {
+      Vector range;
+      range.Init(3);
+      int c;     
+      c = k->count();      
+      if (prune_ == POTENTIAL){
+	GetPotentialRangeTriple_(i,j,k, &range);
+      } else {
+	GetForceRangeTriple_(i,j,k, &range);
+      }
+      result = err_i->Check(range[0], c) * err_j->Check(range[1], c) * 
+	err_k->Check(range[2], 1);
+      if (result > 0){
+	ThreeBodyForce_(i, j, k);
+	err_i->AddVisited(range[0], c);
+	err_j->AddVisited(range[1], c);
+	err_k->AddVisited(range[2], 1);
+      }      
+    }    
+    return result;
+  }
+
+  
+  
+  
+  int GetPrune_(ParticleTree* i, ParticleTree* j,
+		ForceError* err_i, ForceError* err_j){
+    int result = 0;
+    if (prune_ == CUTOFF){
+      double a_min;   
+      if (boundary_ == PERIODIC){
+	a_min = sqrt(i->bound().PeriodicMinDistanceSq(j->bound(),dimensions_));
+      } else {
+	a_min = sqrt(i->bound().MinDistanceSq(j->bound()));   
+      }      
+      result = (a_min > cutoff_);     
+    } else {
+      Vector range;
+      range.Init(2);
+      int c1, c2;
+      c1 = j->count() * (i->count()-1 + (j->count()-1)/2);
+      c2 = i->count() * (j->count()-1 + (i->count()-1)/2);     
+      if (prune_ == POTENTIAL){
+	GetPotentialRangeDual_(i,j,&range);
+      } else {
+	GetForceRangeDual_(i,j,&range);
+     }
+      result = err_i->Check(range[0], c1) * err_j->Check(range[1], c2);
+      if (result > 0){
+	TwoBodyForce_(i, j);
+	err_i->AddVisited(range[0], c1);
+	err_j->AddVisited(range[1], c2);	
+      }      
+    }    
+    return result;
+  }
+  
+  int GetPrune_(int i, ParticleTree* j, ForceError* err_i, ForceError* err_j){
+    int result = 0;
+    if (prune_ == CUTOFF){
+      Vector pos_i;
+      atoms_.MakeColumnSubvector(i, 0, 3, &pos_i);
+      double a_min;   
+      if (boundary_ == PERIODIC){
+	a_min = sqrt(j->bound().PeriodicMinDistanceSq(pos_i,dimensions_)); 
+      } else {
+	a_min = sqrt(j->bound().MinDistanceSq(pos_i));   
+      }      
+      result = (a_min > cutoff_);     
+    } else {
+      Vector range;
+      range.Init(2);
+      int c1, c2;
+      c2 = j->count()-1;
+      c1 = j->count() * c2;          
+      if (prune_ == POTENTIAL){
+	//	GetPotentialRangeDual_(i,j,&range);
+      } else {
+	GetForceRangeDual_(i,j,&range);
+     }
+      result = err_i->Check(range[0], c1) * err_j->Check(range[1], c2);
+      if (result > 0){
+	TwoBodyForce_(i, j);
+	err_i->AddVisited(range[0], c1);
+	err_j->AddVisited(range[1], c2);	
+      }      
+    }    
+    return result;
+  }
+
+    /**
    * Momentum updating routines.
    */
-  void UpdateMomentumDual_(ParticleTree* query, ParticleTree* ref){
-    // if (ref->begin() <= query->begin()){
-    //   return;
-    // }
-    Vector force_range, error_bound;   
-    error_bound.Init(2);
-    force_range.Init(2);
-    GetForceRangeDual_(query, ref, &force_range);
-    error_bound[0] = force_bound_*ref->count()*(ref->count()-1.0) 
-      / (2.0*n_trips_);
-    error_bound[1] = force_bound_*query->count()*(query->count()-1.0) 
-      / (2.0*n_trips_);    
-    // Can we evaluate force here?
-    if (force_range[0] < error_bound[0] & force_range[1] < error_bound[1]){
-      TwoBodyForce_(query, ref);
-    } else {
+  void UpdateMomentumDual_(ParticleTree* query, ParticleTree* ref,
+			   ForceError* err_q, ForceError* err_r){  
+    if (GetPrune_(query, ref, err_q, err_r) == 0){
       // Or do we recurse down further?
       int a,b;
       a = query->count();
       b = ref->count();  
       if (a >= b & a > leaf_size_){
-	UpdateMomentumDual_(query->left(), ref);
-	UpdateMomentumDual_(query->right(), ref);
-	UpdateMomentumThree_(query->left(), query->right(), ref);
+	SplitDual_(query, ref, err_q, err_r);	
       } else {
 	if (b > leaf_size_){
-	  UpdateMomentumDual_(query, ref->left());
-	  UpdateMomentumDual_(query, ref->right());
-	  UpdateMomentumThree_(query, ref->left(), ref->right());
-	} else {
-	  /*
-	  for (int i = query->begin(); i < query->begin()+query->count(); i++){
-	    UpdateMomentumDual_(i, ref);
-	    for (int j = i; j < query->begin()+query->count(); j++){
-	      UpdateMomentumThree_(i,j,ref);
-	    }
-	  }
-	  */
-	  
-	    // Base Case
+	  SplitDual_(ref, query, err_r, err_q);	
+	} else {	  
+	  // Base Case
 	  EvaluateLeafForcesDual_(query, ref);
+	  // Update Error Terms
+	  int c1, c2;
+	  c1 = ref->count() * (query->count()-1 + (ref->count()-1)/2);
+	  c2 = query->count() * (ref->count()-1 + (query->count()-1)/2);     
+	  err_r->AddVisited(0, c2);
+	  err_q->AddVisited(0, c1);
+	  /*
+	    for(int i = query->begin(); i < query->begin()+query->count(); i++){
+	    ForceError err_q2;
+	    err_q2.Copy(err_q);
+	    UpdateMomentumDual_(i, ref, &err_q2, err_r);
+	    for (int j = query->begin(); j < i; j++){
+	      ForceError err_q3;
+	      err_q3.Copy(err_q);
+	      UpdateMomentumThree_(i, j, ref, &err_q2, &err_q3, err_r);
+	    }
+	    err_q->Merge(err_q2);
+	  }	  
+	  err_q->AddVisited(0, c1);
+	  */
 	}	 
       }
     }
   }
 
 
-  void UpdateMomentumDual_(int query, ParticleTree* ref){   
-    Vector force_range, error_bound;   
-    error_bound.Init(2);
-    force_range.Init(2);
-    GetForceRangeDual_(query, ref, &force_range);
-    error_bound[0]=force_bound_*ref->count()*(ref->count()-1.0)/(2.0*n_trips_);
-    error_bound[1] = force_bound_ / n_trips_;    
-    // Can we evaluate force here?
-    if (force_range[0] < error_bound[0] & force_range[1] < error_bound[1]){
-      TwoBodyForce_(query, ref);
-    } else {    
+  void UpdateMomentumDual_(int query, ParticleTree* ref, ForceError* err_q, 
+			   ForceError* err_r){ 
+    if (GetPrune_(query, ref, err_q, err_r) == 0){
+      int c1, c2;
+      c1 = ref->count()*(ref->count()-1)/2;
+      c2 = ref->count()-1;
       EvaluateLeafForcesDual_(query, ref);
+      err_q->AddVisited(0, c1);
+      err_r->AddVisited(0, c2);
     }
   }
 
 
 
-  void UpdateMomentumMain_(ParticleTree* query){
+  void UpdateMomentumMain_(ParticleTree* query, ForceError* err_q){
     if (!query->is_leaf()){
-      UpdateMomentumMain_(query->left());
-      UpdateMomentumMain_(query->right());
-      if (cutoff_ >0){
-	UpdateMomentumDualCutoff_(query->left(), query->right());
-      } else {
-	UpdateMomentumDual_(query->left(), query->right());
-      }
+      ForceError err_q2;
+      err_q2.Copy(err_q);
+      UpdateMomentumMain_(query->left(), err_q);
+      UpdateMomentumMain_(query->right(), &err_q2);     
+      UpdateMomentumDual_(query->left(), query->right(), err_q, &err_q2);
+      err_q->Merge(err_q2);      
     } else {
       EvaluateLeafForcesSame_(query);
+      err_q->AddVisited(0, (query->count()-1.0)*(query->count()-2.0)/2.0);
     }
   }
  
 
-  void UpdateMomentumThree_(int query, int ref1, ParticleTree* ref2){
-    Vector force_range, error_bound;   
-    error_bound.Init(3);
-    force_range.Init(3);
-    GetForceRangeTriple_(query, ref1, ref2, &force_range);
-    error_bound[0] = force_bound_*ref2->count()/n_trips_;
-    error_bound[1] = force_bound_*ref2->count()/n_trips_;
-    error_bound[2] = force_bound_ / n_trips_;
-    // Can we evaluate force here? 
-    if (force_range[0] < error_bound[0] & force_range[1] < error_bound[1] &
-	force_range[2] < error_bound[2]){
-      ThreeBodyForce_(query, ref1, ref2);
-    } else {
+  void UpdateMomentumThree_(int query, int ref1, ParticleTree* ref2, ForceError* err_q,
+			    ForceError* err_r1, ForceError* err_r2){
+    if (GetPrune_(query, ref1, ref2, err_q, err_r1, err_r2) == 0){
       EvaluateLeafForcesThree_(query, ref1, ref2);
+      err_q->AddVisited(0, ref2->count());
+      err_r1->AddVisited(0, ref2->count());
+      err_r2->AddVisited(0, 1);
     }
   }
 
 
-  void UpdateMomentumThree_(int query, ParticleTree* ref1, ParticleTree* ref2){
-     Vector force_range, error_bound;   
-    error_bound.Init(3);
-    force_range.Init(3);
-    GetForceRangeTriple_(query, ref1, ref2, &force_range);
-    error_bound[0] = force_bound_*ref1->count()*ref2->count()/n_trips_;
-    error_bound[1] = force_bound_*ref2->count()/n_trips_;
-    error_bound[2] = force_bound_*ref1->count()/n_trips_;
-    // Can we evaluate force here?
-    if (force_range[0] < error_bound[0] & force_range[1] < error_bound[1] &
-	force_range[2] < error_bound[2]){
-      ThreeBodyForce_(query, ref1, ref2);
-    } else {
-      // Or do we recurse down further?
-      int b,c;     
-      b = ref1->count();
-      c = ref2->count();
-      if (b >= c){
+  void UpdateMomentumThree_(int query, ParticleTree* ref1, ParticleTree* ref2,
+			    ForceError* err_q, ForceError* err_r1, ForceError* err_r2){
+    if (GetPrune_(query, ref1, ref2, err_q, err_r1, err_r2) == 0){
+      int c3, c2;      
+      c2 = ref2->count();
+      c3 = ref1->count();   
+      /*
+      EvaluateLeafForcesThree_(query, ref1, ref2);
+      err_q->AddVisited(0, c2*c3);
+      err_r1->AddVisited(0, c2);
+      err_r2->AddVisited(0, c3);
+      */
+      // Or do we recurse down further?   
+      if (c2 >= c3){
 	for (int i = ref1->begin(); i < ref1->begin() + ref1->count(); i++){  
-	  UpdateMomentumThree_(query, i, ref2);
+	  ForceError err_r12;
+	  err_r12.Copy(err_r1);
+	  UpdateMomentumThree_(query, i, ref2, err_q, &err_r12, err_r2);
+	  err_r1->Merge(err_r12);	 
 	}
-      } else {
-	EvaluateLeafForcesThree_(query, ref1, ref2);
-	/*
+	err_r1->AddVisited(0, c2);
+      } else {      
 	for (int i = ref2->begin(); i < ref2->begin() + ref2->count(); i++){  
-	  UpdateMomentumThree_(query, i, ref1);
+	  ForceError err_r22;
+	  err_r22.Copy(err_r2);
+	  UpdateMomentumThree_(query, i, ref1, err_q, &err_r22, err_r1);
+	  err_r2->Merge(err_r22);	
 	}	
-	*/
+	err_r2->AddVisited(0, c3);
       }
     }
   }
 
-  
   void UpdateMomentumThree_(ParticleTree* query, ParticleTree* ref1, 
-			    ParticleTree* ref2){
-    // Avoid double counting any interactions.
-    //   if (ref1->begin() < query->begin() || ref2->begin() < ref1->begin()){
-    //     return;
-    //    }
-
-    Vector force_range, error_bound;   
-    error_bound.Init(3);
-    force_range.Init(3);
-    GetForceRangeTriple_(query, ref1, ref2, &force_range);
-    error_bound[0] = force_bound_*ref1->count()*ref2->count()/n_trips_;
-    error_bound[1] = force_bound_*query->count()*ref2->count()/n_trips_;
-    error_bound[2] = force_bound_*ref1->count()*query->count()/n_trips_;
-    // Can we evaluate force here?
-    if (force_range[0] < error_bound[0] & force_range[1] < error_bound[1] &
-	force_range[2] < error_bound[2]){
-      ThreeBodyForce_(query, ref1, ref2);
-    } else {
+			    ParticleTree* ref2, ForceError* err_q,
+			    ForceError* err_r1, ForceError* err_r2){
+    if (GetPrune_(query, ref1, ref2, err_q, err_r1, err_r2) == 0) {
       // Or do we recurse down further?
       int a,b,c;
       a = query->count();
       b = ref1->count();
       c = ref2->count();
       if (a >= b & a >= c & a > leaf_size_){
-	UpdateMomentumThree_(query->left(), ref1, ref2);
-	UpdateMomentumThree_(query->right(), ref1, ref2);
+	SplitThree_(query, ref1, ref2, err_q, err_r1, err_r2);
       } else {
 	if (b >= c & b > leaf_size_){
-	  UpdateMomentumThree_(query, ref1->left(), ref2);
-	  UpdateMomentumThree_(query, ref1->right(), ref2);
+	  SplitThree_(ref1, query, ref2, err_r1, err_q, err_r2);
 	} else {
 	  if (c > leaf_size_){
-	    UpdateMomentumThree_(query, ref1, ref2->left());
-	    UpdateMomentumThree_(query, ref1, ref2->right());
+	    SplitThree_(ref2, query, ref1, err_r2, err_q, err_r1);
 	  } else {
 	    // Base Case
-	    EvaluateLeafForcesThree_(query, ref1, ref2);	
+	    int c1, c2, c3;      
+	    c1 = ref1->count()*ref2->count();
+	    c2 = query->count()*ref2->count();
+	    c3 = query->count()*ref1->count();   
+	    
+	    EvaluateLeafForcesThree_(query, ref1, ref2);
+	    err_q->AddVisited(0, c1);
+	    err_r1->AddVisited(0, c2);
+	    err_r2->AddVisited(0, c3);
+	    
 	    /*
-	    for (int i = query->begin(); i < query->begin() + query->count();
-		 i++){
-	      UpdateMomentumThree_(i, ref1, ref2);
-	    }	  
+	    for (int i = query->begin(); i < query->begin() + query->count(); i++){
+	      ForceError err_q2;
+	      err_q2.Copy(err_q);
+	      UpdateMomentumThree_(i, ref1, ref2, &err_q2, err_r1, err_r2);	
+	      err_q->Merge(err_q2);	      
+	    }
+	    err_q->AddVisited(0, c1);
 	    */
 	  }
 	} 
@@ -1057,63 +1439,7 @@ private:
     }
   }  
  
-
-
-  void UpdateMomentumDualCutoff_(ParticleTree* query, ParticleTree* ref){ 
-    int prune;   
-    prune = GetForceRangeDualCutoff_(query, ref);
-    if (!prune){
-      // Or do we recurse down further?
-      int a,b;
-      a = query->count();
-      b = ref->count();  
-      if (a >= b & a > leaf_size_){
-	UpdateMomentumDualCutoff_(query->left(), ref);
-	UpdateMomentumDualCutoff_(query->right(), ref);
-	UpdateMomentumThreeCutoff_(query->left(), query->right(), ref);
-      } else {
-	if (b > leaf_size_){
-	  UpdateMomentumDualCutoff_(query, ref->left());
-	  UpdateMomentumDualCutoff_(query, ref->right());
-	  UpdateMomentumThreeCutoff_(query, ref->left(), ref->right());
-	} else {
-	  // Base Case	  
-	  EvaluateLeafForcesDual_(query, ref);	   	  
-	}	 
-      }
-    }
-  }
-
-
-  void UpdateMomentumThreeCutoff_(ParticleTree* query, ParticleTree* ref1, 
-				  ParticleTree* ref2){   
-    int prune = GetForceRangeTripleCutoff_(query, ref1, ref2);
-    if (!prune) {
-      // Or do we recurse down further?
-      int a,b,c;
-      a = query->count();
-      b = ref1->count();
-      c = ref2->count();
-      if (a >= b & a >= c & a > leaf_size_){
-	UpdateMomentumThreeCutoff_(query->left(), ref1, ref2);
-	UpdateMomentumThreeCutoff_(query->right(), ref1, ref2);
-      } else {
-	if (b >= c & b > leaf_size_){
-	  UpdateMomentumThreeCutoff_(query, ref1->left(), ref2);
-	  UpdateMomentumThreeCutoff_(query, ref1->right(), ref2);
-	} else {
-	  if (c > leaf_size_){
-	    UpdateMomentumThreeCutoff_(query, ref1, ref2->left());
-	    UpdateMomentumThreeCutoff_(query, ref1, ref2->right());
-	  } else {
-	    // Base Case
-	    EvaluateLeafForcesThree_(query, ref1, ref2);	    
-	  }
-	} 
-      }
-    }
-  } 
-  
+ 
   void UpdateMomentumNaive_(){
     for (int i = 0; i < n_atoms_; i++){
       for (int j = i+1; j < n_atoms_; j++){
@@ -1339,7 +1665,12 @@ public:
     system_ = tree::MakeKdTreeMidpointSelective<ParticleTree>(atoms_, dims, 
       leaf_size_, &new_from_old_map_, &old_from_new_map_);   
     cutoff_ = fx_param_double(param, "cutoff", -1);   
-    n_trips_ = n_atoms_*(n_atoms_-1)*(n_atoms_-2) / 6;
+    cutoff3_ = pow(cutoff_, 4)*pow(2.7, 5);
+    cutoff3_ = pow(10*cutoff3_, 1.0/9.0);
+    printf("Cutoff 3: %f \n", cutoff3_);
+    n_trips_ = n_atoms_-1;
+    n_trips_ = n_trips_*(n_atoms_-2) / 2;
+    prune_ = fx_param_int(param, "prune", FORCE);
   } //Init
 
 
@@ -1463,7 +1794,7 @@ public:
       UpdatePositionsRecursion_(system_, &temp);     
     } else {
       UpdatePositionsNaive_();
-    }
+    }    
   }     
 
 
@@ -1476,15 +1807,15 @@ public:
     dims.Init(3);
     dims[0] = 0;
     dims[1] = 1;
-    dims[2] = 2;
+    dims[2] = 2;   
     for (int i = 0; i < n_atoms_; i++){
-      Vector pos, temp, diff;
+      Vector pos, temp, diff;    
       atoms_.MakeColumnSubvector(i, 0, 3, &pos);
       temp.Init(3);
       AdjustVector_(pos, temp);    
       diffusion_.MakeColumnVector(i, &diff);
       la::AddTo(temp, &diff);
-    }
+    }    
     system_ = tree::MakeKdTreeMidpointSelective<ParticleTree>(atoms_, dims, 
                 leaf_size_, &temp_new_old, &temp_old_new);
     Matrix old_diff;
@@ -1518,7 +1849,9 @@ public:
       total_triples_ = 0;
       range_evals_ = 0;    
       percent_pruned_ = 0;       
-      UpdateMomentumMain_(system_);    
+      ForceError error_main;
+      error_main.Init(force_bound_, n_trips_);
+      UpdateMomentumMain_(system_, &error_main);    
       percent_pruned_ = 1.0-2*percent_pruned_/(n_atoms_*n_atoms_ - n_atoms_);  
     } else {
       UpdateMomentumNaive_();
@@ -1663,6 +1996,18 @@ public:
     }
   }
 
+  void CheckNan(){
+    for (int i = 0; i < n_atoms_; i++){
+      for (int j = 0; j < 7; j++){
+	if (isnan(atoms_.get(j, i))){
+	  printf("NaN found! \n");
+	}
+	if (atoms_.get(j,i) ==0){
+	  printf("Zero found \n");
+	}
+      }
+    }
+  }
 
 }; // class PhysicsSystem
 

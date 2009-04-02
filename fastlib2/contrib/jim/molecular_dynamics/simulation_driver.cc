@@ -42,7 +42,9 @@ const fx_entry_doc root_entries[] = {
   {"snapshots", FX_PARAM, FX_INT, NULL,
    "Number of snapshots for diffusion \n"},
   {"three", FX_REQUIRED, FX_STR, NULL,
-   "Parameters fo three-body potential function"},
+   "Parameters fo three-body potential function \n"},
+  {"naive", FX_PARAM, FX_BOOL, NULL, 
+   "Specifies whether to do naive or tree-based simulation \n"},
   FX_ENTRY_DOC_DONE  
 };
 
@@ -174,12 +176,12 @@ int main(int argc, char *argv[])
       target_trips = trips;
     }
     simulation.UpdatePositions(time_step);   
-    //  if (pct < 0.85*target_pct || trips > 1.1*target_trips){
-    //  simulation.RebuildTree();
-    //  simulation.ReinitStats(lj_matrix); 
-    //  simulation.ReinitAxilrodTeller(at_matrix, at_params);
-    // }
-    if ((int)(time / time_step) % 5 == 1){
+    if (pct < 0.85*target_pct || trips > 1.1*target_trips){
+      simulation.RebuildTree();
+      simulation.ReinitStats(lj_matrix); 
+      simulation.ReinitAxilrodTeller(at_matrix, at_params);
+    }
+    if ((int)(time / time_step -0.5) % 5 == 0){      
       tree_simulation.Reset();
       simulation.RadialDistribution(&tree_simulation);
       tree_simulation.Write(radial_distribution);
@@ -187,13 +189,17 @@ int main(int argc, char *argv[])
       temperature = simulation.ComputeTemperature();
       temperature = temperature / (3.0*K_B);     
       pressure = simulation.ComputePressure();
-          
-      for (int j = 0; j < diff_tot; j++){
-	if (j < diff_count){
+                
+      fprintf(diff, "%f, ", time);
+      fflush(diff);
+      for (int j = 0; j < diff_tot; j++){	
+	if (j < diff_count){	  	 
 	  diffusion = simulation.ComputeDiffusion(positions[j]);
 	  fprintf(diff, "%f,", diffusion);
+	   fflush(diff);
 	} else {
 	  fprintf(diff, "%f,", 0.0);
+	  fflush(diff);
 	}
       }
       fprintf(diff, "\n");
@@ -207,7 +213,7 @@ int main(int argc, char *argv[])
       }
       fprintf(stats, "%f %f %f \n", time, pressure,
 	      temperature);
- 
+      fflush(stats);
       if (set_temp > 0){
 	simulation.ScaleToTemperature(set_temp);
       }

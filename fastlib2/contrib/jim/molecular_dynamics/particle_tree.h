@@ -22,7 +22,7 @@ struct ParticleStat {
 
   Vector centroid_;
   Vector velocity_; 
-  double mass_, radius_, error_;
+  double mass_, radius_;
   ArrayList<TwoBodyStat> interactions_;
   Vector axilrod_;
   Vector delta_, temp_delta_;
