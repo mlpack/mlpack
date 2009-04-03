@@ -65,6 +65,10 @@ class ShellPair {
     return schwartz_factor_;
   }
   
+  void set_schwartz_factor(double fac) {
+    schwartz_factor_ = fac;
+  }
+  
   void set_list_index(index_t ind) {
     list_index_ = ind;
   }
