@@ -245,9 +245,9 @@ class AllkFN {
     DEBUG_ASSERT(query_node != NULL);
     // A DEBUG statement with a predefined message
     DEBUG_ASSERT_MSG(reference_node != NULL, "reference node is null");
-    // Make sure the bounding information is correct
-    DEBUG_ASSERT(higher_bound_distance == MaxNodeDistSq_(query_node, 
-        reference_node));
+//    // Make sure the bounding information is correct
+//    DEBUG_ASSERT(higher_bound_distance == MaxNodeDistSq_(query_node, 
+//        reference_node));
     
     if (higher_bound_distance < query_node->stat().min_distance_so_far()) {
       // Pruned by distance
