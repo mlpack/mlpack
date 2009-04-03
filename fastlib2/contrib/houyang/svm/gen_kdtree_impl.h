@@ -125,7 +125,9 @@ namespace tree_gen_kdtree_private {
 	node->set_split_point_idx_old(old_from_new[split_col]);
 
 	left->Init(node->begin(), split_col - node->begin());
-	right->Init(split_col, node->begin() + node->count() - split_col);
+	//right->Init(split_col, node->begin() + node->count() - split_col);
+	// excluding the splitting point from left and right children
+	right->Init(split_col+ 1, node->begin() + node->count() - split_col- 1);
 	
 	SplitGenKdTree<T, TKdTree, TKdTreeSplitter>
 	  (matrix, left, leaf_size, old_from_new);
