@@ -94,7 +94,9 @@ class TestAllkNN {
   Matrix *data_for_tree_;
 };
 
-int main() {
- TestAllkNN test;
- test.TestAll();
+int main(int argc, char *argv[]) {
+  fx_root = fx_init(argc, argv, NULL);
+  TestAllkNN test;
+  test.TestAll();
+  fx_done(fx_root);
 }
