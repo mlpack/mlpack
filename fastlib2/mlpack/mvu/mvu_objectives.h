@@ -69,9 +69,9 @@ class MaxVariance {
   void set_sigma(double sigma); 
   bool IsDiverging(double objective); 
   bool IsOptimizationOver(Matrix &coordinates, 
-      Matrix &gradient, double step) { return false;}
+      Matrix &gradient, double step) ; 
   bool IsIntermediateStepOver(Matrix &coordinates, 
-      Matrix &gradient, double step) {return false;}
+      Matrix &gradient, double step);
   void GiveInitMatrix(Matrix *init_data);
  index_t num_of_points();
 
