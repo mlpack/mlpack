@@ -75,6 +75,9 @@ svm_main --learner_name=svm_c --opt=sgd  --n_iter=300 --mode=train_test --train_
 
 ------Using HCY--------
 a7.svm_main --learner_name=svm_c --opt=hcy --leaf_size=5 --mode=train_test --train_data=c_traindata3.csv --test_data=c_testdata3.csv --kernel=gaussian --sigma=0.1 --c=1 --normalize=0
+
+./svm_main --learner_name=svm_c --mode=train_test --train_data=UCI_iris_c0c1.csv --test_data=UCI_iris_c0c1.csv --kernel=gaussian --sigma=0.1 --c=1 --normalize=0 --opt=hcy --leaf_size=10 
+
 svm_main --learner_name=svm_c --opt=hcy --leaf_size=5 --mode=train_test --train_data=c_traindata2.csv --test_data=c_testdata2.csv --kernel=linear --c=0.7 --normalize=0
 
 --------------------------------------------------- SVM Regression  -------------------------------------------------------

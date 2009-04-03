@@ -191,7 +191,11 @@ class HCY {
  private:
   void LearnersInit_(int learner_typeid);
 
-  int TreeDescentRecursion_(ArrayList<TreeType*> &pos_node_pool, ArrayList<TreeType*> &neg_node_pool, index_t n_untraversed_pos, index_t n_untraversed_neg);
+  int TreeDescentRecursion_(ArrayList<TreeType*> &node_pool_pos, ArrayList<TreeType*> &node_pool_neg,
+			    index_t n_samples_for_opt,
+			    index_t n_splitted_node_pos, index_t n_splitted_node_neg,
+			    index_t n_leaf_node_pos, index_t n_leaf_node_neg,
+			    index_t n_not_splitted_node_pos, index_t n_not_splitted_node_neg);
 
   int TrainIteration_();
 
@@ -572,7 +576,7 @@ void HCY<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   datamatrix_pos_.Copy(dataset_in->matrix().ptr(), n_features_, n_data_pos_);
   datamatrix_neg_.Copy(dataset_in->matrix().GetColumnPtr(n_data_pos_), n_features_, n_data_neg_);
   
-  /* Building trees, here we choose median-split kd-trees */
+  /* Building trees. Here we choose balanced median-split kd-trees */
   printf("Begin kd Tree Building for class 1...\n");
   fx_timer_start(NULL, "tree_build");
   tree_pos_ = proximity::MakeGenKdTree<double, TreeType, proximity::GenKdTreeMedianSplitter>(datamatrix_pos_, 
@@ -588,8 +592,6 @@ void HCY<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   ArrayList<TreeType*> node_pool_neg;
   node_pool_pos.Init();
   node_pool_neg.Init();
-  //node_pool_pos_traversed_.Init(); // no node has been traversed for the top level
-  //node_pool_neg_traversed_.Init();
   node_pool_pos.PushBack() = tree_pos_; // the top level only contains one sample
   node_pool_neg.PushBack() = tree_neg_;
   
@@ -598,7 +600,7 @@ void HCY<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   alpha_[1] = INIT_ROOT_ALPHA_NEG;
   
   index_t idx_tmp;
-  idx_tmp = tree_pos_->get_split_point_idx_old();
+  idx_tmp = tree_pos_->get_split_point_idx_old(); // index in the original dataset
   swap(active_set_[0], active_set_[idx_tmp]);
   swap(alpha_[0], alpha_[idx_tmp]);
   swap(alpha_status_[0], alpha_status_[idx_tmp]);
@@ -606,7 +608,7 @@ void HCY<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   swap(grad_[0], grad_[idx_tmp]);
   swap(grad_bar_[0], grad_bar_[idx_tmp]);
 
-  idx_tmp = tree_neg_->get_split_point_idx_old() + n_data_pos_;
+  idx_tmp = tree_neg_->get_split_point_idx_old() + n_data_pos_; // index in the original dataset
   swap(active_set_[1], active_set_[idx_tmp]);
   swap(alpha_[1], alpha_[idx_tmp]);
   swap(alpha_status_[1], alpha_status_[idx_tmp]);
@@ -633,15 +635,10 @@ void HCY<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     grad_bar_[i] = y_[i] * grad_bar_[i];
   }
 
-  /*
-  index_t idx_tmp = new_from_old_pos_[tree_pos_->get_split_point_idx_old()];
-  alpha_pos_[idx_tmp] = INIT_ROOT_ALPHA_POS;
-  idx_tmp = new_from_old_neg_[tree_neg_->get_split_point_idx_old()];
-  alpha_neg_[idx_tmp] = INIT_ROOT_ALPHA_NEG;
-  */
   // begin recursive hierarchical optimization
+  b_end_of_recursion_ = false;
   int stop_condition;
-  stop_condition = TreeDescentRecursion_(node_pool_pos, node_pool_neg, 1, 1);
+  stop_condition = TreeDescentRecursion_(node_pool_pos, node_pool_neg, 2, 0, 0, 0, 0, 1, 1);
 
   // Calculate the bias term
   CalcBias_();
@@ -650,21 +647,23 @@ void HCY<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 
 template<typename TKernel>
 int HCY<TKernel>::TreeDescentRecursion_(ArrayList<TreeType*> &node_pool_pos, ArrayList<TreeType*> &node_pool_neg,
-					index_t n_untraversed_pos, index_t n_untraversed_neg) {
+					index_t n_samples_for_opt,
+					index_t n_splitted_node_pos, index_t n_splitted_node_neg,
+					index_t n_leaf_node_pos, index_t n_leaf_node_neg,
+					index_t n_not_splitted_node_pos, index_t n_not_splitted_node_neg) {
   index_t i, j;
-  //DEBUG_ASSERT_MSG(n_pos_samples_this_level > 0, "Pool of positive nodes for this level is empty!!!");
-  //DEBUG_ASSERT_MSG(n_neg_samples_this_level > 0, "Pool of negative nodes for this level is empty!!!");
 
-  index_t n_pos_samples_this_level = node_pool_pos.size();
-  index_t n_neg_samples_this_level = node_pool_neg.size();
-  index_t n_used_alpha_ = n_pos_samples_this_level + n_neg_samples_this_level;
+  index_t n_node_pos = node_pool_pos.size();
+  index_t n_node_neg = node_pool_neg.size();
+  printf("n_node_pos=%d, n_node_neg=%d\n", n_node_pos, n_node_neg);
+  printf("n_sum_pos=%d, n_sum_neg=%d\n", n_splitted_node_pos+n_leaf_node_pos+n_not_splitted_node_pos, n_splitted_node_neg+n_leaf_node_neg+n_not_splitted_node_neg);
+  DEBUG_ASSERT_MSG( (n_splitted_node_pos+n_leaf_node_pos+n_not_splitted_node_pos)== n_node_pos, 
+		    "Pool of nodes for positive tree not match!!!");
+  DEBUG_ASSERT_MSG( (n_splitted_node_neg+n_leaf_node_neg+n_not_splitted_node_neg)== n_node_neg, 
+		    "Pool of nodes for negative tree not match!!!");
 
-  printf("%d_%d\n", n_pos_samples_this_level, n_neg_samples_this_level);
-
-  //printf("n_pos=%d, n_neg=%d\n", n_pos_samples_this_level, n_neg_samples_this_level);
-
-  /* SMO Optimization of alphas for this level
-   */
+  /*** SMO Optimization of alphas for this level ***/
+  n_used_alpha_ = n_samples_for_opt;
   n_active_ = n_used_alpha_;
   n_sv_ = 0;
   unshrinked_ = false;
@@ -723,64 +722,69 @@ int HCY<TKernel>::TreeDescentRecursion_(ArrayList<TreeType*> &node_pool_pos, Arr
   for (i = 0; i < max_n_alpha_; i++) {
     new_from_old[active_set_[i]] = i;
   }
+  /*** SMO finished for this level. Begin alpha propagation for next level ***/
 
 
-  /* 1.Generate pool of children for the next level.
-   * 2.Propagate alphas and gradients.
-   * - For already traversed nodes: directly propagate alphas,
-   *   i.e. those alphas remain unchanged.
-   * - For non-traversed nodes with children, divide alphas (by 3 or 2) according how many children they have,
-   *   and propagate alphas.
-   * - For non-traversed nodes without child, i.e. leaf nodes, divide alphas according to how many points 
-   *   there are in this leaf node.
-   * - All old alphas and new alphas become active.
+  /*** if reached the last level, end recursion ***/
+  if (b_end_of_recursion_)
+    return 1;
+
+
+  /* Generate pool of children for the next level. Propagate alphas and gradients.
+   * - For already splitted nodes: directly propagate alphas,
+   *     i.e. those alphas remain unchanged.
+   * - For leaf nodes: directly propagate alphas,
+   *     i.e. those alphas remain unchanged.
+   * - For not-splitted nodes, divide alphas properly according how many samples they have in their children,
+   *     and propagate alphas.
    */
   b_end_of_recursion_ = true;
   double alpha_tmp, two_alpha_tmp;
   index_t old_idx_tmp, new_idx_tmp;
-  ArrayList<TreeType*> new_pool_pos;
-  ArrayList<TreeType*> new_pool_neg;
-  new_pool_pos.Init();
-  new_pool_neg.Init();
+  //ArrayList<TreeType*> new_pool_pos;
+  //ArrayList<TreeType*> new_pool_neg;
+  //new_pool_pos.Init();
+  //new_pool_neg.Init();
 
   ArrayList<index_t> changed_idx;
   ArrayList<double> changed_values;
   changed_idx.Init();
   changed_values.Init();
 
-  // All old alphas of this level (either active or inactive) will be used in the next level
-  n_active_ = n_used_alpha_;
+  // alphas of already splitted nodes of this level (either active or inactive) will be re-optimized in the next level;
   // besides, all new alphas will be used
+  index_t new_n_samples_for_opt = n_samples_for_opt;
+  printf("---new_n_samples_for_opt=%d\n", new_n_samples_for_opt);
+  index_t new_n_splitted_node_pos = n_splitted_node_pos;
+  index_t new_n_splitted_node_neg = n_splitted_node_neg;
+  index_t new_n_leaf_node_pos = n_leaf_node_pos;
+  index_t new_n_leaf_node_neg = n_leaf_node_neg;
+  index_t new_n_not_splitted_node_pos = 0;
+  index_t new_n_not_splitted_node_neg = 0;
 
-  // Handle already traversed nodes of the positive tree, alphas remain unchanged
-  for (index_t k=0; k<n_pos_samples_this_level; k++) {
-    new_pool_pos.PushBack() = node_pool_pos[k];
-  }
-
-  // Handle already traversed nodes of the negative tree, alphas remain unchanged
-  for (index_t k=0; k<n_neg_samples_this_level; k++) {
-    new_pool_neg.PushBack() = node_pool_neg[k];
-  }
-
-  // Handle children for each untraversed node of the positive tree
-  index_t n_untraversed_pos_new = 0;
-  index_t n_traversed_pos = n_pos_samples_this_level - n_untraversed_pos;
-  for (index_t k=n_traversed_pos; k<n_pos_samples_this_level; k++) {
+  printf("begin_n_active=%d\n",n_active_);
+  /**** Handle not-splitted nodes of the positive tree ****/
+  for (index_t k=n_splitted_node_pos; k<n_splitted_node_pos+n_not_splitted_node_pos; k++) {
+    printf("pos_pts_this_node==%d\n", node_pool_pos[k]->count());
+    new_n_splitted_node_pos ++;
     TreeType *left_node, *right_node;
     left_node = node_pool_pos[k]->left();
     right_node = node_pool_pos[k]->right();
-    //if (node_pool_pos[k]->left()) {
-//printf("pos_l:%d\n", left_node->get_split_point_idx_old());
-//printf("pos_r:%d\n", right_node->get_split_point_idx_old());
-    if(left_node->get_split_point_idx_old() != -1) { // left child exists
+printf("pos_l:%d\n", left_node->get_split_point_idx_old());
+printf("pos_r:%d\n", right_node->get_split_point_idx_old());
+    // left child has a splitting sample
+    if(left_node->get_split_point_idx_old() != -1) {
       b_end_of_recursion_ = false;
-      new_pool_pos.PushBack() = node_pool_pos[k]->left();
-      n_untraversed_pos_new ++;
-      //if (node_pool_pos[k]->right()) {
-      if(right_node->get_split_point_idx_old() != -1) { // right child also exists
-	new_pool_pos.PushBack() = node_pool_pos[k]->right();
-	n_untraversed_pos_new ++;
-	// divide alpha into three and propagate
+      node_pool_pos.PushBack() = node_pool_pos[k]->left();
+      new_n_not_splitted_node_pos ++;
+      new_n_samples_for_opt ++;
+      // right child also has a splitting sample
+      if(right_node->get_split_point_idx_old() != -1) {
+	node_pool_pos.PushBack() = node_pool_pos[k]->right();
+	new_n_not_splitted_node_pos ++;
+	new_n_samples_for_opt ++;
+	
+	// divide alpha into 3 and propagate
 	old_idx_tmp = node_pool_pos[k]->get_split_point_idx_old();
 	new_idx_tmp = new_from_old[old_idx_tmp];
 	alpha_tmp = alpha_[new_idx_tmp];
@@ -794,9 +798,8 @@ int HCY<TKernel>::TreeDescentRecursion_(ArrayList<TreeType*> &node_pool_pos, Arr
 	changed_idx.PushBack() = new_idx_tmp;
 	changed_values.PushBack() = y_[new_idx_tmp] * two_alpha_tmp;
 
-	/* Left child of current node */
+	/* Left child */
 	// update alpha
-//printf("k=%d\n", k);
 	old_idx_tmp = node_pool_pos[k]->left()->get_split_point_idx_old();
 //printf("old_idx_tmp=%d\n", old_idx_tmp);
 	new_idx_tmp = new_from_old[old_idx_tmp];
@@ -814,7 +817,7 @@ int HCY<TKernel>::TreeDescentRecursion_(ArrayList<TreeType*> &node_pool_pos, Arr
 	n_used_alpha_ ++;
 	n_active_ ++;
 
-	/* Right child of current node */
+	/* Right child */
 	// update alpha
 	old_idx_tmp = node_pool_pos[k]->right()->get_split_point_idx_old();
 	new_idx_tmp = new_from_old[old_idx_tmp];
@@ -832,21 +835,26 @@ int HCY<TKernel>::TreeDescentRecursion_(ArrayList<TreeType*> &node_pool_pos, Arr
 	n_used_alpha_ ++;
 	n_active_ ++;
       }
-      else { // only left child exists
-	// divide alpha into two and propagate
+      // only left child has a splitting sample; right child is a leaf node
+      else {
+	// Number of samples in the right child, excluding splitting sample;
+	// for kd-trees, split sample belongs to the right child
+	//index_t n_samples_leaf = node_pool_pos[k]->right()->count() - 1;
+	index_t n_samples_leaf = node_pool_pos[k]->right()->count();
+	// divide alpha into (2+#leaf) and propagate
 	old_idx_tmp = node_pool_pos[k]->get_split_point_idx_old();
 	new_idx_tmp = new_from_old[old_idx_tmp];
 	alpha_tmp = alpha_[new_idx_tmp];
-	alpha_tmp = alpha_tmp / 2.0;
+	alpha_tmp = alpha_tmp / (2.0 + n_samples_leaf);
 	
 	/* current node itselft */
 	// update alpha
 	alpha_[new_idx_tmp] = alpha_tmp;
 	// pre-update for gradients
 	changed_idx.PushBack() = new_idx_tmp;
-	changed_values.PushBack() = y_[new_idx_tmp] * alpha_tmp;
+	changed_values.PushBack() = y_[new_idx_tmp] * (1.0 + n_samples_leaf) * alpha_tmp;
 
-	/* left child of current node */
+	/* left child */
 	// update alpha
 	old_idx_tmp = node_pool_pos[k]->left()->get_split_point_idx_old();
 	new_idx_tmp = new_from_old[old_idx_tmp];
@@ -863,26 +871,58 @@ int HCY<TKernel>::TreeDescentRecursion_(ArrayList<TreeType*> &node_pool_pos, Arr
 	changed_values.PushBack() = - y_[n_active_] * alpha_tmp;
 	n_used_alpha_ ++;
 	n_active_ ++;
+
+	/* right child (a leaf node) */
+	new_n_leaf_node_pos ++;
+	new_n_samples_for_opt += n_samples_leaf;
+	node_pool_pos.PushBack() = node_pool_pos[k]->right();
+	for (index_t t=0; t<n_samples_leaf; t++) {
+	  // update alpha
+	  // excluding the first one which is the splitting sample
+	  //old_idx_tmp = node_pool_pos[k]->right()->begin() + 1 + t;
+	  old_idx_tmp = node_pool_pos[k]->right()->begin() + t;
+	  new_idx_tmp = new_from_old[old_idx_tmp];
+	  alpha_[new_idx_tmp] = alpha_tmp;
+	  // update active_set etc.
+	  swap(active_set_[n_active_], active_set_[new_idx_tmp]);
+	  swap(alpha_[n_active_], alpha_[new_idx_tmp]);
+	  swap(alpha_status_[n_active_], alpha_status_[new_idx_tmp]);
+	  swap(y_[n_active_], y_[new_idx_tmp]);
+	  swap(grad_[n_active_], grad_[new_idx_tmp]);
+	  swap(grad_bar_[n_active_], grad_bar_[new_idx_tmp]);
+	  // pre-update for gradients
+	  changed_idx.PushBack() = n_active_;
+	  changed_values.PushBack() = - y_[n_active_] * alpha_tmp;
+	  n_used_alpha_ ++;
+	  n_active_ ++;
+	}
       }
     }
-    else if(right_node->get_split_point_idx_old() != -1) { // only right child exists
+    // only right child has a splitting sample; left child is a leaf node
+    else if(right_node->get_split_point_idx_old() != -1) {
       b_end_of_recursion_ = false;
-      new_pool_pos.PushBack() = node_pool_pos[k]->right();
-      n_untraversed_pos_new ++;
-      // divide alpha into two and propagate
+      node_pool_pos.PushBack() = node_pool_pos[k]->right();
+      new_n_not_splitted_node_pos ++;
+      new_n_samples_for_opt ++;
+
+      // Number of samples in the right child;
+      // for kd-trees, split sample does not belongs to the left child
+      index_t n_samples_leaf = node_pool_pos[k]->left()->count();
+      printf("pos_n_sample_leaf=%d\n", n_samples_leaf);
+      // divide alpha into (2+#leaf) and propagate
       old_idx_tmp = node_pool_pos[k]->get_split_point_idx_old();
       new_idx_tmp = new_from_old[old_idx_tmp];
       alpha_tmp = alpha_[new_idx_tmp];
-      alpha_tmp = alpha_tmp / 2.0;
+      alpha_tmp = alpha_tmp / (2.0 + n_samples_leaf);
 	
       /* current node itselft */
       // update alpha
       alpha_[new_idx_tmp] = alpha_tmp;
       // pre-update for gradients
       changed_idx.PushBack() = new_idx_tmp;
-      changed_values.PushBack() = y_[new_idx_tmp] * alpha_tmp;
+      changed_values.PushBack() = y_[new_idx_tmp] * (1.0 + n_samples_leaf) * alpha_tmp;
 
-      /* right child of current node */
+      /* right child */
       // update alpha
       old_idx_tmp = node_pool_pos[k]->right()->get_split_point_idx_old();
       new_idx_tmp = new_from_old[old_idx_tmp];
@@ -899,48 +939,133 @@ int HCY<TKernel>::TreeDescentRecursion_(ArrayList<TreeType*> &node_pool_pos, Arr
       changed_values.PushBack() = - y_[n_active_] * alpha_tmp;
       n_used_alpha_ ++;
       n_active_ ++;
+
+      /* left child (a leaf node) */
+      new_n_leaf_node_pos ++;
+      new_n_samples_for_opt += n_samples_leaf;
+      node_pool_pos.PushBack() = node_pool_pos[k]->left();
+      for (index_t t=0; t<n_samples_leaf; t++) {
+	// update alpha
+	old_idx_tmp = node_pool_pos[k]->left()->begin() + t;
+	new_idx_tmp = new_from_old[old_idx_tmp];
+	alpha_[new_idx_tmp] = alpha_tmp;
+	// update active_set etc.
+	swap(active_set_[n_active_], active_set_[new_idx_tmp]);
+	swap(alpha_[n_active_], alpha_[new_idx_tmp]);
+	swap(alpha_status_[n_active_], alpha_status_[new_idx_tmp]);
+	swap(y_[n_active_], y_[new_idx_tmp]);
+	swap(grad_[n_active_], grad_[new_idx_tmp]);
+	swap(grad_bar_[n_active_], grad_bar_[new_idx_tmp]);
+	// pre-update for gradients
+	changed_idx.PushBack() = n_active_;
+	changed_values.PushBack() = - y_[n_active_] * alpha_tmp;
+	n_used_alpha_ ++;
+	n_active_ ++;
+      }
     }
-    else { // this is a leaf node
-      /*
-      old_idx_tmp = node_pool_pos[k]->get_split_point_idx_old();
-      new_idx_tmp = new_from_old[old_idx_tmp];
-      index_t n_pts_leaf = node_pool_pos[k]->count();
-      alpha_tmp = alpha_[new_idx_tmp];
-      alpha_tmp = alpha_tmp / (1.0 + n_pts_leaf);
+    // this node has neither left splitting sample, nor right splitting sample
+    else {
+      // both left and right children of this node are leaf nodes
+      //if (left_node && right_node) {
+      if (  (!node_pool_pos[k]->is_leaf()) && 
+	    (node_pool_pos[k]->left()->is_leaf()) && (node_pool_pos[k]->right()->is_leaf())  ) {
+	node_pool_pos.PushBack() = node_pool_pos[k]->left();
+	node_pool_pos.PushBack() = node_pool_pos[k]->right();
+	// for kd-trees, splitting sample belongs to the right child, not left
+	index_t n_samples_left_leaf = node_pool_pos[k]->left()->count();
+	//index_t n_samples_right_leaf = node_pool_pos[k]->right()->count() - 1;
+	index_t n_samples_right_leaf = node_pool_pos[k]->right()->count();
+	printf("pos_idx=%d\n",node_pool_pos[k]->get_split_point_idx_old());
+	printf("pos_n_sample_left_leaf=%d\n", n_samples_left_leaf);
+	printf("pos_n_sample_right_leaf=%d\n", n_samples_right_leaf);
+	new_n_samples_for_opt += n_samples_left_leaf;
+	new_n_samples_for_opt += n_samples_right_leaf;
 
-      // current node itselft
-      // update alpha
-      alpha_[new_idx_tmp] = alpha_tmp;
-      // pre-update for gradients
-      changed_idx.PushBack() = new_idx_tmp;
-      changed_values.PushBack() = y_[new_idx_tmp] * alpha_tmp * n_pts_leaf;
-      */
+	// divide alpha into (1+#left_leaf+#right_leaf) and propagate
+	old_idx_tmp = node_pool_pos[k]->get_split_point_idx_old();
+	new_idx_tmp = new_from_old[old_idx_tmp];
+	alpha_tmp = alpha_[new_idx_tmp];
+	alpha_tmp = alpha_tmp / (1.0 + n_samples_left_leaf + n_samples_right_leaf);
+	
+	/* current node itselft */
+	// update alpha
+	alpha_[new_idx_tmp] = alpha_tmp;
+	// pre-update for gradients
+	changed_idx.PushBack() = new_idx_tmp;
+	changed_values.PushBack() = y_[new_idx_tmp] * (n_samples_left_leaf + n_samples_right_leaf) * alpha_tmp;
 
-      // update alpha for all points in the leaf
-
-      // pre-update for gradients
+	/* left child (a leaf node) */
+	new_n_leaf_node_pos ++;
+	for (index_t t=0; t<n_samples_left_leaf; t++) {
+	  // update alpha
+	  old_idx_tmp = node_pool_pos[k]->left()->begin() + t;
+	  new_idx_tmp = new_from_old[old_idx_tmp];
+	  alpha_[new_idx_tmp] = alpha_tmp;
+	  // update active_set etc.
+	  swap(active_set_[n_active_], active_set_[new_idx_tmp]);
+	  swap(alpha_[n_active_], alpha_[new_idx_tmp]);
+	  swap(alpha_status_[n_active_], alpha_status_[new_idx_tmp]);
+	  swap(y_[n_active_], y_[new_idx_tmp]);
+	  swap(grad_[n_active_], grad_[new_idx_tmp]);
+	  swap(grad_bar_[n_active_], grad_bar_[new_idx_tmp]);
+	  // pre-update for gradients
+	  changed_idx.PushBack() = n_active_;
+	  changed_values.PushBack() = - y_[n_active_] * alpha_tmp;
+	  n_used_alpha_ ++;
+	  n_active_ ++;
+	}
+	/* right child (a leaf node) */
+	new_n_leaf_node_pos ++;
+	for (index_t t=0; t<n_samples_right_leaf; t++) {
+	  // update alpha
+	  // excluding the first one which is the splitting sample
+	  //old_idx_tmp = node_pool_pos[k]->right()->begin() + 1 + t;
+	  old_idx_tmp = node_pool_pos[k]->right()->begin() + t;
+	  new_idx_tmp = new_from_old[old_idx_tmp];
+	  alpha_[new_idx_tmp] = alpha_tmp;
+	  // update active_set etc.
+	  swap(active_set_[n_active_], active_set_[new_idx_tmp]);
+	  swap(alpha_[n_active_], alpha_[new_idx_tmp]);
+	  swap(alpha_status_[n_active_], alpha_status_[new_idx_tmp]);
+	  swap(y_[n_active_], y_[new_idx_tmp]);
+	  swap(grad_[n_active_], grad_[new_idx_tmp]);
+	  swap(grad_bar_[n_active_], grad_bar_[new_idx_tmp]);
+	  // pre-update for gradients
+	  changed_idx.PushBack() = n_active_;
+	  changed_values.PushBack() = - y_[n_active_] * alpha_tmp;
+	  n_used_alpha_ ++;
+	  n_active_ ++;
+	}
+      }
+      // this node has neight left child, nor right child; it is itself a leaf node
+      //else if (!(left_node||right_node)) {
+	
+      //}
     }
   }
-
-  // Handle children for each node of the negative tree
-  index_t n_untraversed_neg_new = 0;
-  index_t n_traversed_neg = n_neg_samples_this_level - n_untraversed_neg;
-  for (index_t k=n_traversed_neg; k<n_neg_samples_this_level; k++) {
+    
+  /**** Handle not-splitted nodes of the negative tree ****/
+  for (index_t k=n_splitted_node_neg; k<n_splitted_node_neg+n_not_splitted_node_neg; k++) {
+    printf("neg_pts_this_node==%d\n", node_pool_neg[k]->count());
+    new_n_splitted_node_neg ++;
     TreeType *left_node, *right_node;
     left_node = node_pool_neg[k]->left();
     right_node = node_pool_neg[k]->right();
-    //if (node_pool_neg[k]->left()) {
-//printf("neg_l:%d\n", left_node->get_split_point_idx_old());
-//printf("neg_r:%d\n", right_node->get_split_point_idx_old());
-    if(left_node->get_split_point_idx_old() != -1) { // left child exist
+printf("neg_l:%d\n", left_node->get_split_point_idx_old());
+printf("neg_r:%d\n", right_node->get_split_point_idx_old());
+    // left child has a splitting sample
+    if(left_node->get_split_point_idx_old() != -1) {
       b_end_of_recursion_ = false;
-      new_pool_neg.PushBack() = node_pool_neg[k]->left();
-      n_untraversed_neg_new ++;
-      //if (node_pool_neg[k]->right()) {
-      if(right_node->get_split_point_idx_old() != -1) { // right child also exist
-	new_pool_neg.PushBack() = node_pool_neg[k]->right();
-	n_untraversed_neg_new ++;
-	// divide alpha into three and propagate
+      node_pool_neg.PushBack() = node_pool_neg[k]->left();
+      new_n_not_splitted_node_neg ++;
+      new_n_samples_for_opt ++;
+      // right child has a splitting sample
+      if(right_node->get_split_point_idx_old() != -1) {
+	node_pool_neg.PushBack() = node_pool_neg[k]->right();
+	new_n_not_splitted_node_neg ++;
+	new_n_samples_for_opt ++;
+	
+	// divide alpha into 3 and propagate
 	old_idx_tmp = node_pool_neg[k]->get_split_point_idx_old();
 	new_idx_tmp = new_from_old[old_idx_tmp];
 	alpha_tmp = alpha_[new_idx_tmp];
@@ -954,9 +1079,10 @@ int HCY<TKernel>::TreeDescentRecursion_(ArrayList<TreeType*> &node_pool_pos, Arr
 	changed_idx.PushBack() = new_idx_tmp;
 	changed_values.PushBack() = y_[new_idx_tmp] * two_alpha_tmp;
 
-	/* Left child of current node */
+	/* Left child */
 	// update alpha
 	old_idx_tmp = node_pool_neg[k]->left()->get_split_point_idx_old();
+//printf("old_idx_tmp=%d\n", old_idx_tmp);
 	new_idx_tmp = new_from_old[old_idx_tmp];
 	alpha_[new_idx_tmp] = alpha_tmp;
 	// update active_set etc.
@@ -972,7 +1098,7 @@ int HCY<TKernel>::TreeDescentRecursion_(ArrayList<TreeType*> &node_pool_pos, Arr
 	n_used_alpha_ ++;
 	n_active_ ++;
 
-	/* Right child of current node */
+	/* Right child */
 	// update alpha
 	old_idx_tmp = node_pool_neg[k]->right()->get_split_point_idx_old();
 	new_idx_tmp = new_from_old[old_idx_tmp];
@@ -990,21 +1116,26 @@ int HCY<TKernel>::TreeDescentRecursion_(ArrayList<TreeType*> &node_pool_pos, Arr
 	n_used_alpha_ ++;
 	n_active_ ++;
       }
-      else { // only left child exists
-	// divide alpha into two and propagate
+      // only left child has a splitting sample; right child is a leaf node
+      else {
+	// Number of samples in the right child, excluding splitting sample;
+	// for kd-trees, split sample belongs to the right child
+	//index_t n_samples_leaf = node_pool_neg[k]->right()->count() - 1;
+	index_t n_samples_leaf = node_pool_neg[k]->right()->count();
+	// divide alpha into (2+#leaf) and propagate
 	old_idx_tmp = node_pool_neg[k]->get_split_point_idx_old();
 	new_idx_tmp = new_from_old[old_idx_tmp];
 	alpha_tmp = alpha_[new_idx_tmp];
-	alpha_tmp = alpha_tmp / 2.0;
+	alpha_tmp = alpha_tmp / (2.0 + n_samples_leaf);
 
 	/* current node itselft */
 	// update alpha
 	alpha_[new_idx_tmp] = alpha_tmp;
 	// pre-update for gradients
 	changed_idx.PushBack() = new_idx_tmp;
-	changed_values.PushBack() = y_[new_idx_tmp] * alpha_tmp;
+	changed_values.PushBack() = y_[new_idx_tmp] * (1.0 + n_samples_leaf) * alpha_tmp;
 
-	/* left child of current node */
+	/* left child */
 	// update alpha
 	old_idx_tmp = node_pool_neg[k]->left()->get_split_point_idx_old();
 	new_idx_tmp = new_from_old[old_idx_tmp];
@@ -1021,26 +1152,58 @@ int HCY<TKernel>::TreeDescentRecursion_(ArrayList<TreeType*> &node_pool_pos, Arr
 	changed_values.PushBack() = - y_[n_active_] * alpha_tmp;
 	n_used_alpha_ ++;
 	n_active_ ++;
+
+	/* right child (a leaf node) */
+	new_n_leaf_node_neg ++;
+	new_n_samples_for_opt += n_samples_leaf;
+	node_pool_neg.PushBack() = node_pool_neg[k]->right();
+	for (index_t t=0; t<n_samples_leaf; t++) {
+	  // update alpha
+	  // excluding the first one which is the splitting sample
+	  //old_idx_tmp = node_pool_neg[k]->right()->begin() + 1 + t;
+	  old_idx_tmp = node_pool_neg[k]->right()->begin() + t;
+	  new_idx_tmp = new_from_old[old_idx_tmp];
+	  alpha_[new_idx_tmp] = alpha_tmp;
+	  // update active_set etc.
+	  swap(active_set_[n_active_], active_set_[new_idx_tmp]);
+	  swap(alpha_[n_active_], alpha_[new_idx_tmp]);
+	  swap(alpha_status_[n_active_], alpha_status_[new_idx_tmp]);
+	  swap(y_[n_active_], y_[new_idx_tmp]);
+	  swap(grad_[n_active_], grad_[new_idx_tmp]);
+	  swap(grad_bar_[n_active_], grad_bar_[new_idx_tmp]);
+	  // pre-update for gradients
+	  changed_idx.PushBack() = n_active_;
+	  changed_values.PushBack() = - y_[n_active_] * alpha_tmp;
+	  n_used_alpha_ ++;
+	  n_active_ ++;
+	}
       }
     }
-    else if(right_node->get_split_point_idx_old() != -1) { // only right child exist
+    // only right child has a splitting sample; left child is a leaf node
+    else if(right_node->get_split_point_idx_old() != -1) {
       b_end_of_recursion_ = false;
-      new_pool_neg.PushBack() = node_pool_neg[k]->right();
-      n_untraversed_neg_new ++;
-      // divide alpha into two and propagate
+      node_pool_neg.PushBack() = node_pool_neg[k]->right();
+      new_n_not_splitted_node_neg ++;
+      new_n_samples_for_opt ++;
+
+      // Number of samples in the right child;
+      // for kd-trees, split sample does not belongs to the left child
+      index_t n_samples_leaf = node_pool_neg[k]->left()->count();
+      printf("neg_n_sample_leaf=%d\n", n_samples_leaf);
+      // divide alpha into (2+#leaf) and propagate
       old_idx_tmp = node_pool_neg[k]->get_split_point_idx_old();
       new_idx_tmp = new_from_old[old_idx_tmp];
       alpha_tmp = alpha_[new_idx_tmp];
-      alpha_tmp = alpha_tmp / 2.0;
+      alpha_tmp = alpha_tmp / (2.0 + n_samples_leaf);
 
       /* current node itselft */
       // update alpha
       alpha_[new_idx_tmp] = alpha_tmp;
       // pre-update for gradients
       changed_idx.PushBack() = new_idx_tmp;
-      changed_values.PushBack() = y_[new_idx_tmp] * alpha_tmp;
+      changed_values.PushBack() = y_[new_idx_tmp] * (1.0 + n_samples_leaf) * alpha_tmp;
 
-      /* right child of current node */
+      /* right child */
       // update alpha
       old_idx_tmp = node_pool_neg[k]->right()->get_split_point_idx_old();
       new_idx_tmp = new_from_old[old_idx_tmp];
@@ -1057,28 +1220,133 @@ int HCY<TKernel>::TreeDescentRecursion_(ArrayList<TreeType*> &node_pool_pos, Arr
       changed_values.PushBack() = - y_[n_active_] * alpha_tmp;
       n_used_alpha_ ++;
       n_active_ ++;
+
+      /* left child (a leaf node) */
+      new_n_leaf_node_neg ++;
+      new_n_samples_for_opt += n_samples_leaf;
+      node_pool_neg.PushBack() = node_pool_neg[k]->left();
+      for (index_t t=0; t<n_samples_leaf; t++) {
+	// update alpha
+	old_idx_tmp = node_pool_neg[k]->left()->begin() + t;
+	new_idx_tmp = new_from_old[old_idx_tmp];
+	alpha_[new_idx_tmp] = alpha_tmp;
+	// update active_set etc.
+	swap(active_set_[n_active_], active_set_[new_idx_tmp]);
+	swap(alpha_[n_active_], alpha_[new_idx_tmp]);
+	swap(alpha_status_[n_active_], alpha_status_[new_idx_tmp]);
+	swap(y_[n_active_], y_[new_idx_tmp]);
+	swap(grad_[n_active_], grad_[new_idx_tmp]);
+	swap(grad_bar_[n_active_], grad_bar_[new_idx_tmp]);
+	// pre-update for gradients
+	changed_idx.PushBack() = n_active_;
+	changed_values.PushBack() = - y_[n_active_] * alpha_tmp;
+	n_used_alpha_ ++;
+	n_active_ ++;
+      }
     }
-    else { // this is a leaf node
-      
+    // this node has neither left splitting sample, nor right splitting sample
+    else {
+      // both left and right children are leaf nodes
+      //if (left_node && right_node) {
+      if (  (!node_pool_neg[k]->is_leaf()) &&
+	    (node_pool_neg[k]->left()->is_leaf()) && (node_pool_neg[k]->right()->is_leaf())  ) {
+	node_pool_neg.PushBack() = node_pool_neg[k]->left();
+	node_pool_neg.PushBack() = node_pool_neg[k]->right();
+	// for kd-trees, splitting sample belongs to the right child, not left
+	index_t n_samples_left_leaf = node_pool_neg[k]->left()->count();
+	//index_t n_samples_right_leaf = node_pool_neg[k]->right()->count() - 1;
+	index_t n_samples_right_leaf = node_pool_neg[k]->right()->count();
+	printf("neg_idx=%d\n",node_pool_neg[k]->get_split_point_idx_old());
+	printf("neg_n_sample_left_leaf=%d\n", n_samples_left_leaf);
+	printf("neg_n_sample_right_leaf=%d\n", n_samples_right_leaf);
+	new_n_samples_for_opt += n_samples_left_leaf;
+	new_n_samples_for_opt += n_samples_right_leaf;
+
+	// divide alpha into (1+#left_leaf+#right_leaf) and propagate
+	old_idx_tmp = node_pool_neg[k]->get_split_point_idx_old();
+	new_idx_tmp = new_from_old[old_idx_tmp];
+	alpha_tmp = alpha_[new_idx_tmp];
+	alpha_tmp = alpha_tmp / (1.0 + n_samples_left_leaf + n_samples_right_leaf);
+	
+	/* current node itselft */
+	// update alpha
+	alpha_[new_idx_tmp] = alpha_tmp;
+	// pre-update for gradients
+	changed_idx.PushBack() = new_idx_tmp;
+	changed_values.PushBack() = y_[new_idx_tmp] * (n_samples_left_leaf + n_samples_right_leaf) * alpha_tmp;
+
+	/* left child (a leaf node) */
+	new_n_leaf_node_neg ++;
+	for (index_t t=0; t<n_samples_left_leaf; t++) {
+	  // update alpha
+	  old_idx_tmp = node_pool_neg[k]->left()->begin() + t;
+	  new_idx_tmp = new_from_old[old_idx_tmp];
+	  alpha_[new_idx_tmp] = alpha_tmp;
+	  // update active_set etc.
+	  printf("n_active=%d, new_idx_tmp=%d\n", n_active_, new_idx_tmp);
+	  swap(active_set_[n_active_], active_set_[new_idx_tmp]);
+	  swap(alpha_[n_active_], alpha_[new_idx_tmp]);
+	  swap(alpha_status_[n_active_], alpha_status_[new_idx_tmp]);
+	  swap(y_[n_active_], y_[new_idx_tmp]);
+	  swap(grad_[n_active_], grad_[new_idx_tmp]);
+	  swap(grad_bar_[n_active_], grad_bar_[new_idx_tmp]);
+	  // pre-update for gradients
+	  changed_idx.PushBack() = n_active_;
+	  changed_values.PushBack() = - y_[n_active_] * alpha_tmp;
+	  n_used_alpha_ ++;
+	  n_active_ ++;
+	}
+	/* right child (a leaf node) */
+	new_n_leaf_node_neg ++;
+	for (index_t t=0; t<n_samples_right_leaf; t++) {
+	  // update alpha
+	  // excluding the first one which is the splitting sample
+	  //old_idx_tmp = node_pool_neg[k]->right()->begin() + 1 + t;
+	  old_idx_tmp = node_pool_neg[k]->right()->begin() + t;
+	  new_idx_tmp = new_from_old[old_idx_tmp];
+	  alpha_[new_idx_tmp] = alpha_tmp;
+	  // update active_set etc.
+	  swap(active_set_[n_active_], active_set_[new_idx_tmp]);
+	  swap(alpha_[n_active_], alpha_[new_idx_tmp]);
+	  swap(alpha_status_[n_active_], alpha_status_[new_idx_tmp]);
+	  swap(y_[n_active_], y_[new_idx_tmp]);
+	  swap(grad_[n_active_], grad_[new_idx_tmp]);
+	  swap(grad_bar_[n_active_], grad_bar_[new_idx_tmp]);
+	  // pre-update for gradients
+	  changed_idx.PushBack() = n_active_;
+	  changed_values.PushBack() = - y_[n_active_] * alpha_tmp;
+	  n_used_alpha_ ++;
+	  n_active_ ++;
+	}
+      }
     }
   }
   
   /* Update and propagate gradients
    */
+  printf("+++new_n_samples_for_opt=%d\n", new_n_samples_for_opt);
+  for(index_t nl=0; nl<new_n_samples_for_opt; nl++) {
+    for (index_t nl_p=0; nl_p<changed_idx.size(); nl_p++) {
+      grad_[nl] = grad_[nl] + y_[nl] * changed_values[nl_p] * CalcKernelValue_(nl_p, nl);
+    }
+  }
+  /*
   for(index_t nl=0; nl<new_pool_pos.size()+new_pool_neg.size(); nl++) {
     for (index_t nl_p=0; nl_p<changed_idx.size(); nl_p++) {
       grad_[nl] = grad_[nl] + changed_values[nl_p] * y_[nl] * CalcKernelValue_(nl_p, nl);
     }
   }
+  */
   
   // the bias term ramains unchanged in propagations
   
-  // if reached the last level, end recursion
-  if (b_end_of_recursion_)
-    return 1;
-  else
-    // recursion for the next level
-    return TreeDescentRecursion_(new_pool_pos, new_pool_neg, n_untraversed_pos_new, n_untraversed_neg_new);
+  
+  // recursion for the next level
+  return TreeDescentRecursion_(node_pool_pos, node_pool_neg, 
+			       new_n_samples_for_opt,
+			       new_n_splitted_node_pos, new_n_splitted_node_neg,
+			       new_n_leaf_node_pos, new_n_leaf_node_neg,
+			       new_n_not_splitted_node_pos, new_n_not_splitted_node_neg);
 }
 
 
