@@ -200,6 +200,8 @@ void Link::ComputeExchangeMatrix() {
     // shell pair
     // shouldn't do this if lambda == mu
 
+    // currently assumes that there is at least one significant integral for 
+    // for this shell pair - this needs to be fixed
     
     if (mu_ind != lambda_ind) {
       //printf("lambda loop\n");
