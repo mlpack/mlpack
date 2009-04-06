@@ -96,6 +96,9 @@ private:
     la::Scale(-1.0, &force);
     right->stat().ApplyForce(force);
     percent_pruned_ = percent_pruned_ + 1;
+    if (fabs(coef) > 1000){
+      printf("Large Force NN \n");
+    }
   }
 
 
@@ -122,6 +125,9 @@ private:
     la::Scale(-time_step_, &delta_r);
     right->stat().ApplyForce(delta_r);
     percent_pruned_ = percent_pruned_ + 1;
+    if (fabs(coef) > 1000){
+      printf("Large Force PN \n");
+    }
   }
 
 
@@ -156,6 +162,9 @@ private:
     la::AddExpert(time_step_ / atoms_.get(3,left), delta_r, &left_vec);
     la::AddExpert(-time_step_ / atoms_.get(3,right), delta_r, &right_vec);
     percent_pruned_ = percent_pruned_ + 1;   
+    if (fabs(coef) > 1000){
+      printf("Large Force PP \n");
+    }
   }
 
   
@@ -814,9 +823,9 @@ public:
 
 
   void RebuildTree(){
-    printf("\n********************************************\n");
-    printf("* Rebuilding Tree...\n");
-    printf("********************************************\n");
+    //   printf("\n********************************************\n");
+    //  printf("* Rebuilding Tree...\n");
+    //  printf("********************************************\n");
     ArrayList<int> temp_old_new, temp_new_old;
     Vector dims;
     dims.Init(3);

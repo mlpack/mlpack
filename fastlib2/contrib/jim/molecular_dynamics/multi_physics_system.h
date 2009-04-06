@@ -1136,7 +1136,7 @@ private:
       double a_min, b_min, c_min;   
       if (boundary_ == PERIODIC){
 	a_min = sqrt(j->bound().PeriodicMinDistanceSq(pos_i, dimensions_));  
-	b_min = sqrt(j->bound().PeriodicMinDistanceSq(k->bound(),dimensions_));  
+	b_min =sqrt(j->bound().PeriodicMinDistanceSq(k->bound(),dimensions_)); 
 	c_min = sqrt(k->bound().PeriodicMinDistanceSq(pos_i, dimensions_));  
       } else {
 	a_min = sqrt(j->bound().MinDistanceSq(pos_i));    
@@ -1144,7 +1144,7 @@ private:
 	c_min = sqrt(k->bound().MinDistanceSq(pos_i));    
       }      
       result = (a_min > cutoff_)+(b_min > cutoff_)+(c_min > cutoff_); 
-      result = result + (a_min > cutoff3_)*(b_min > cutoff3_)*(c_min > cutoff3_);
+      result += (a_min > cutoff3_)*(b_min > cutoff3_)*(c_min > cutoff3_);
     } else {
       Vector range;
       range.Init(3);
@@ -1187,7 +1187,7 @@ private:
       }      
       a_min = sqrt(la::Dot(delta, delta));
       result = (a_min > cutoff_)+(b_min > cutoff_)+(c_min > cutoff_); 
-      result = result + (a_min > cutoff3_)*(b_min > cutoff3_)*(c_min > cutoff3_);
+      result += (a_min > cutoff3_)*(b_min > cutoff3_)*(c_min > cutoff3_);
     } else {
       Vector range;
       range.Init(3);
@@ -1288,10 +1288,10 @@ private:
       int a,b;
       a = query->count();
       b = ref->count();  
-      if (a >= b & a > leaf_size_){
+      if (a >= b & !(query->is_leaf())){
 	SplitDual_(query, ref, err_q, err_r);	
       } else {
-	if (b > leaf_size_){
+	if (!(ref->is_leaf())){
 	  SplitDual_(ref, query, err_r, err_q);	
 	} else {	  
 	  // Base Case
@@ -1302,20 +1302,22 @@ private:
 	  c2 = query->count() * (ref->count()-1 + (query->count()-1)/2);     
 	  err_r->AddVisited(0, c2);
 	  err_q->AddVisited(0, c1);
-	  /*
-	    for(int i = query->begin(); i < query->begin()+query->count(); i++){
+	  
+	  for(int i = query->begin(); i < query->begin()+query->count(); i++){
 	    ForceError err_q2;
 	    err_q2.Copy(err_q);
 	    UpdateMomentumDual_(i, ref, &err_q2, err_r);
+	    err_q->Merge(err_q2);
 	    for (int j = query->begin(); j < i; j++){
 	      ForceError err_q3;
-	      err_q3.Copy(err_q);
-	      UpdateMomentumThree_(i, j, ref, &err_q2, &err_q3, err_r);
-	    }
-	    err_q->Merge(err_q2);
+	      err_q3.Copy(err_q); // We can actually cut ref->count interactions already
+	      UpdateMomentumThree_(i, j, ref, &err_q2, &err_q3, err_r);	     
+	    }	    	    
 	  }	  
+	  // Assume interactions with two points in query were bought at going rate?
+	  
 	  err_q->AddVisited(0, c1);
-	  */
+	  
 	}	 
       }
     }
@@ -1351,7 +1353,8 @@ private:
   }
  
 
-  void UpdateMomentumThree_(int query, int ref1, ParticleTree* ref2, ForceError* err_q,
+  void UpdateMomentumThree_(int query, int ref1, ParticleTree* ref2, 
+			    ForceError* err_q,
 			    ForceError* err_r1, ForceError* err_r2){
     if (GetPrune_(query, ref1, ref2, err_q, err_r1, err_r2) == 0){
       EvaluateLeafForcesThree_(query, ref1, ref2);
@@ -1363,7 +1366,8 @@ private:
 
 
   void UpdateMomentumThree_(int query, ParticleTree* ref1, ParticleTree* ref2,
-			    ForceError* err_q, ForceError* err_r1, ForceError* err_r2){
+			    ForceError* err_q, ForceError* err_r1, 
+			    ForceError* err_r2){
     if (GetPrune_(query, ref1, ref2, err_q, err_r1, err_r2) == 0){
       int c3, c2;      
       c2 = ref2->count();
@@ -1404,13 +1408,13 @@ private:
       a = query->count();
       b = ref1->count();
       c = ref2->count();
-      if (a >= b & a >= c & a > leaf_size_){
+      if (a >= b & a >= c & !(query->is_leaf())){
 	SplitThree_(query, ref1, ref2, err_q, err_r1, err_r2);
       } else {
-	if (b >= c & b > leaf_size_){
+	if (b >= c & !(ref1->is_leaf())){
 	  SplitThree_(ref1, query, ref2, err_r1, err_q, err_r2);
 	} else {
-	  if (c > leaf_size_){
+	  if (!(ref2->is_leaf())){
 	    SplitThree_(ref2, query, ref1, err_r2, err_q, err_r1);
 	  } else {
 	    // Base Case
@@ -1425,10 +1429,10 @@ private:
 	    err_r2->AddVisited(0, c3);
 	    
 	    /*
-	    for (int i = query->begin(); i < query->begin() + query->count(); i++){
+	    for (int i=query->begin(); i < query->begin()+query->count(); i++){
 	      ForceError err_q2;
 	      err_q2.Copy(err_q);
-	      UpdateMomentumThree_(i, ref1, ref2, &err_q2, err_r1, err_r2);	
+	      UpdateMomentumThree_(i, ref1, ref2, &err_q2, err_r1, err_r2);    
 	      err_q->Merge(err_q2);	      
 	    }
 	    err_q->AddVisited(0, c1);
@@ -1798,10 +1802,7 @@ public:
   }     
 
 
-  void RebuildTree(){
-    printf("\n********************************************\n");
-    printf("* Rebuilding Tree...\n");
-    printf("********************************************\n");
+  void RebuildTree(){ 
     ArrayList<int> temp_old_new, temp_new_old;
     Vector dims;
     dims.Init(3);
@@ -1996,18 +1997,6 @@ public:
     }
   }
 
-  void CheckNan(){
-    for (int i = 0; i < n_atoms_; i++){
-      for (int j = 0; j < 7; j++){
-	if (isnan(atoms_.get(j, i))){
-	  printf("NaN found! \n");
-	}
-	if (atoms_.get(j,i) ==0){
-	  printf("Zero found \n");
-	}
-      }
-    }
-  }
 
 }; // class PhysicsSystem
 
