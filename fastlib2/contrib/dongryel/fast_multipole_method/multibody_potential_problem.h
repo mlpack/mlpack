@@ -138,10 +138,16 @@ class MultibodyPotentialProblem {
 
     // Sample the n-tuples and compute the sample mean and the
     // variance.
-    double potential_sums = 0;
-    double potential_avg = 0;
-    double standard_deviation = 0;
-    double squared_potential_sums = 0;
+    double negative_potential_sums = 0;
+    double negative_potential_avg = 0;
+    double negative_standard_deviation = 0;
+    double negative_squared_potential_sums = 0;
+    double positive_potential_sums = 0;
+    double positive_potential_avg = 0;
+    double positive_standard_deviation = 0;
+    double positive_squared_potential_sums = 0;
+    int positive_num_samples = 0;
+    int negative_num_samples = 0;
 
     for(index_t i = 0; i < num_samples; i++) {
 
@@ -150,19 +156,39 @@ class MultibodyPotentialProblem {
 				    globals.hybrid_node_chosen_indices);
       
       // Compute the potential value for the chosen indices.
-      double potential = globals.kernel_aux.EvaluateMain(globals, sets);      
-      potential_sums += potential;
-      squared_potential_sums += math::Sqr(potential);
+      double potential = globals.kernel_aux.EvaluateMain(globals, sets);
+
+      if(potential > 0) {
+	positive_potential_sums += potential;
+	positive_squared_potential_sums += math::Sqr(potential);
+	positive_num_samples++;
+      }
+      else {
+	negative_potential_sums += potential;
+	negative_squared_potential_sums += math::Sqr(potential);
+	negative_num_samples++;
+      }
 
     } // end of iterating over each sample...
 
-    potential_avg = potential_sums / ((double) num_samples);
-    standard_deviation = 
-      sqrt((squared_potential_sums - num_samples * math::Sqr(potential_avg))
-	   / ((double) num_samples - 1)) / sqrt(num_samples);
+    positive_potential_avg = (positive_num_samples == 0) ?
+      0:(positive_potential_sums / ((double) positive_num_samples));
+    positive_standard_deviation = (positive_num_samples == 0) ?
+      0:(sqrt((positive_squared_potential_sums - 
+	       positive_num_samples * math::Sqr(positive_potential_avg))
+	      / ((double) positive_num_samples - 1)));
+    negative_potential_avg = (negative_num_samples == 0) ?
+      0:(negative_potential_sums / ((double) negative_num_samples));
+    negative_standard_deviation = (negative_num_samples == 0) ?
+      0:(sqrt((negative_squared_potential_sums - 
+	       negative_num_samples * math::Sqr(negative_potential_avg))
+	      / ((double) negative_num_samples - 1)));
 
     // Refine delta bounds based on sampling.
-    exact_delta.RefineBounds(globals, potential_avg, standard_deviation);
+    exact_delta.RefineBounds(globals, negative_potential_avg, 
+			     negative_standard_deviation,
+			     positive_potential_avg,
+			     positive_standard_deviation);
 
     // Consider each node in turn whether it can be pruned or not.
     for(index_t i = 0; i < TKernel::order; i++) {

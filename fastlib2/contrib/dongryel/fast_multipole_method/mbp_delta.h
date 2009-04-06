@@ -41,58 +41,58 @@ class MultiTreeDelta {
  public:
   
   template<typename TGlobal>
-  void RefineBounds(TGlobal &globals, double potential_avg, 
-		    double standard_deviation) {
+  void RefineBounds(TGlobal &globals, double negative_potential_avg, 
+		    double negative_standard_deviation,
+		    double positive_potential_avg,
+		    double positive_standard_deviation) {
+
+    double positive_error, negative_error;
 
     for(index_t i = 0; i < positive_potential_e.length(); i++) {
-      if(initialized) {
-	if(potential_avg >= 0) {
-	  positive_potential_e[i] = potential_avg * n_pruned[i];	  
-	}
-	else {
-	  negative_potential_e[i] = potential_avg * n_pruned[i];
-	}
-	used_error[i] = std::min(used_error[i], globals.z_score *
-				 n_pruned[i] * standard_deviation);
+      if(initialized) {	
+	positive_potential_e[i] = positive_potential_avg * n_pruned[i];
+	negative_potential_e[i] = negative_potential_avg * n_pruned[i];
+	positive_error = globals.z_score * n_pruned[i] *
+	  positive_standard_deviation;
+	negative_error = globals.z_score * n_pruned[i] *
+	  negative_standard_deviation;
+	
+	used_error[i] = std::min(used_error[i], 
+				 sqrt(math::Sqr(positive_error) +
+				      math::Sqr(negative_error)));
 
-	if(potential_avg >= 0) {
-	  positive_potential_bound[i].lo = 
-	    std::max(positive_potential_bound[i].lo,
-		     positive_potential_e[i] - used_error[i]);
-	  positive_potential_bound[i].hi = 
-	    std::min(positive_potential_bound[i].hi,
-		     positive_potential_e[i] + used_error[i]);
-	}
-	else {
-	  negative_potential_bound[i].lo = 
-	    std::max(negative_potential_bound[i].lo,
-		     negative_potential_e[i] - used_error[i]);
-	  negative_potential_bound[i].hi = 
-	    std::min(negative_potential_bound[i].hi,
-		     negative_potential_e[i] + used_error[i]);
-	}
+	positive_potential_bound[i].lo = 
+	  std::max(positive_potential_bound[i].lo,
+		   positive_potential_e[i] - positive_error);
+	positive_potential_bound[i].hi = 
+	  std::min(positive_potential_bound[i].hi,
+		   positive_potential_e[i] + positive_error);
+	negative_potential_bound[i].lo = 
+	  std::max(negative_potential_bound[i].lo,
+		   negative_potential_e[i] - negative_error);
+	negative_potential_bound[i].hi = 
+	  std::min(negative_potential_bound[i].hi,
+		   negative_potential_e[i] + negative_error);
       }
       else {
-	if(potential_avg >= 0) {
-	  positive_potential_e[i] = potential_avg * n_pruned[i];
-	}
-	else {
-	  negative_potential_e[i] = potential_avg * n_pruned[i];
-	}
-	used_error[i] = globals.z_score * n_pruned[i] * standard_deviation;
+	positive_potential_e[i] = positive_potential_avg * n_pruned[i];
+	negative_potential_e[i] = negative_potential_avg * n_pruned[i];
+	positive_error = globals.z_score * n_pruned[i] *
+	  positive_standard_deviation;
+	negative_error = globals.z_score * n_pruned[i] *
+	  negative_standard_deviation;
 
-	if(potential_avg >= 0) {
-	  positive_potential_bound[i].lo = 
-	    std::max(0.0, positive_potential_e[i] - used_error[i]);
-	  positive_potential_bound[i].hi = positive_potential_e[i] + 
-	    used_error[i];
-	}
-	else {
-	  negative_potential_bound[i].lo = negative_potential_e[i] - 
-	    used_error[i];
-	  negative_potential_bound[i].hi = 
-	    std::min(0.0, negative_potential_e[i] + used_error[i]);
-	}	
+	used_error[i] = sqrt(math::Sqr(positive_error) +
+			     math::Sqr(negative_error));
+
+	positive_potential_bound[i].lo = 
+	  std::max(0.0, positive_potential_e[i] - positive_error);
+	positive_potential_bound[i].hi = positive_potential_e[i] + 
+	  positive_error;
+	negative_potential_bound[i].lo = negative_potential_e[i] - 
+	  negative_error;
+	negative_potential_bound[i].hi = 
+	  std::min(0.0, negative_potential_e[i] + negative_error);
       }
     } // end of looping over each node entity...
   }
@@ -106,7 +106,10 @@ class MultiTreeDelta {
     // contributions...
     bool flag = 
       globals.kernel_aux.ComputeFiniteDifference(globals, nodes, *this);
-    initialized = true;
+
+    if(flag) {
+      initialized = true;
+    }
     return flag;
   }
   
