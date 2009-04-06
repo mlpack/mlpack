@@ -77,7 +77,7 @@ private:
    */ 
  
   // Two-body force between two nodes
-  void TwoBodyForce_(ParticleTree* left, ParticleTree* right){
+  void TwoBodyForce_(ParticleTree* left, ParticleTree* right){ 
     Vector force;
     la::SubInit(right->stat().centroid_, left->stat().centroid_, &force);
     if (boundary_ == PERIODIC){
@@ -91,14 +91,12 @@ private:
       coef = coef + temp*pow(dist, powers_[i]-2)*powers_[i];
     }     
     virial_ = virial_ + coef*dist*dist;  
-    la::Scale(coef*time_step_, &force);
+    la::Scale(coef*time_step_, &force);    
     left->stat().ApplyForce(force);
     la::Scale(-1.0, &force);
     right->stat().ApplyForce(force);
     percent_pruned_ = percent_pruned_ + 1;
-    if (fabs(coef) > 1000){
-      printf("Large Force NN \n");
-    }
+ 
   }
 
 
@@ -125,14 +123,11 @@ private:
     la::Scale(-time_step_, &delta_r);
     right->stat().ApplyForce(delta_r);
     percent_pruned_ = percent_pruned_ + 1;
-    if (fabs(coef) > 1000){
-      printf("Large Force PN \n");
-    }
   }
 
 
   // Two body force between two atoms
-  void TwoBodyForce_(int left, int right){
+  void TwoBodyForce_(int left, int right){   
     Vector delta_r, left_vec, right_vec;    
     atoms_.MakeColumnSubvector(left, 0, 3, &left_vec);
     atoms_.MakeColumnSubvector(right, 0, 3, &right_vec);
@@ -153,7 +148,7 @@ private:
     }     
   
     virial_ = virial_ +  coef*dist*dist;   
-    la::Scale(coef, &delta_r);    
+    la::Scale(coef, &delta_r);      
     // Apply forces to particles
     left_vec.Destruct();
     right_vec.Destruct();
@@ -162,9 +157,7 @@ private:
     la::AddExpert(time_step_ / atoms_.get(3,left), delta_r, &left_vec);
     la::AddExpert(-time_step_ / atoms_.get(3,right), delta_r, &right_vec);
     percent_pruned_ = percent_pruned_ + 1;   
-    if (fabs(coef) > 1000){
-      printf("Large Force PP \n");
-    }
+ 
   }
 
   
@@ -226,7 +219,7 @@ private:
       rnorm = rnorm + node_r[i];   
       Rnorm = Rnorm + fabs(delta[i]);
     }
-    double rad = sqrt(la::Dot(node_r, node_r));
+    double rad = sqrt(la::Dot(node_r, node_r))/Rad;
     
   
     for (int i = 0; i < forces_.n_rows(); i++){
@@ -265,7 +258,7 @@ private:
       node_r[i] = (query->bound().width(i, dimensions_[i]) + 
 		   ref->bound().width(i, dimensions_[i]))/ 2;     
     }
-    double rad = sqrt(la::Dot(node_r, node_r));
+    double rad = sqrt(la::Dot(node_r, node_r)) / Rad;
     
     double coef;
     for (int i = 0; i < forces_.n_rows(); i++){
@@ -823,9 +816,9 @@ public:
 
 
   void RebuildTree(){
-    //   printf("\n********************************************\n");
-    //  printf("* Rebuilding Tree...\n");
-    //  printf("********************************************\n");
+    printf("\n********************************************\n");
+    printf("* Rebuilding Tree...\n");
+    printf("********************************************\n");
     ArrayList<int> temp_old_new, temp_new_old;
     Vector dims;
     dims.Init(3);
