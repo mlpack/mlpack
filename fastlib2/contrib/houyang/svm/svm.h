@@ -416,7 +416,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	/* 2-classes SVM training using HCY */
 	fx_timer_start(NULL, "train_hcy");
 	hcy.Train(learner_typeid, &dataset_bi);
-	fx_timer_start(NULL, "train_hcy");
+	fx_timer_stop(NULL, "train_hcy");
 	
 	/* Get the trained bi-class model */
 	models_[ct].coef_.Init(); // alpha*y
