@@ -35,7 +35,7 @@ void FockMatrixComparison::Init(fx_module* exp_mod, Matrix** exp_mats,
   
   num_entries_ = naive_F_mat_->n_cols();
   
-  rel_error_cutoff_ = 10e-30;
+  rel_error_cutoff_ = 10e-12;
   
   // check that all matrices are the same size
   
