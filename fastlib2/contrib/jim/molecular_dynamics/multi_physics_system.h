@@ -476,8 +476,8 @@ private:
       rnorm = rnorm + node_r[i];   
       Rnorm = Rnorm + fabs(delta[i]);
     }
-    double rad = sqrt(la::Dot(node_r, node_r));
-    
+    double rad = sqrt(la::Dot(node_r, node_r)) / Rad;
+    rnorm = rnorm / Rnorm;
   
     for (int i = 0; i < forces_.n_rows(); i++){
       int power = abs((int)powers_[i]);  
@@ -529,7 +529,7 @@ private:
       node_r[i] = (query->bound().width(i, dimensions_[i]) + 
 		   ref->bound().width(i, dimensions_[i]))/ 2;     
     }
-    double rad = sqrt(la::Dot(node_r, node_r));
+    double rad = sqrt(la::Dot(node_r, node_r)) / Rad;
     
     double coef;
     for (int i = 0; i < forces_.n_rows(); i++){
@@ -576,8 +576,8 @@ private:
       rnorm = rnorm + node_r[i];   
       Rnorm = Rnorm + fabs(delta[i]);
     }
-    double rad = sqrt(la::Dot(node_r, node_r));
-    
+    double rad = sqrt(la::Dot(node_r, node_r)) / Rad;
+    rnorm = rnorm / Rnorm;
   
     for (int i = 0; i < forces_.n_rows(); i++){
       int power = abs((int)powers_[i]);  
@@ -909,7 +909,7 @@ private:
   }
 
 
-  void GetPotentialRangeTriple_(int i,int j, ParticleTree *k, Vector* bounds){       
+  void GetPotentialRangeTriple_(int i,int j, ParticleTree *k, Vector* bounds){ 
     double range_i = 0, range_j = 0, range_k = 0;
     double Rij, Rjk, Rki, rk;
 
@@ -1302,7 +1302,7 @@ private:
 	  c2 = query->count() * (ref->count()-1 + (query->count()-1)/2);     
 	  err_r->AddVisited(0, c2);
 	  err_q->AddVisited(0, c1);
-	  
+	  /*
 	  for(int i = query->begin(); i < query->begin()+query->count(); i++){
 	    ForceError err_q2;
 	    err_q2.Copy(err_q);
@@ -1314,10 +1314,9 @@ private:
 	      UpdateMomentumThree_(i, j, ref, &err_q2, &err_q3, err_r);	     
 	    }	    	    
 	  }	  
-	  // Assume interactions with two points in query were bought at going rate?
-	  
+	  // Assume interactions with two points in query were bought at going rate?	  
 	  err_q->AddVisited(0, c1);
-	  
+	  */	  
 	}	 
       }
     }
