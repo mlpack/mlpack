@@ -102,7 +102,7 @@ double BinomialCoeff(int pow, int mom1, int mom2, double dist1, double dist2) {
 
 ////////////// Integrals //////////////////////////
 
-double ComputeNormalization(BasisShell& shell) {
+double ComputeNormalization(const BasisShell& shell) {
 
   return ComputeNormalization(shell.exp(), shell.total_momentum());
 

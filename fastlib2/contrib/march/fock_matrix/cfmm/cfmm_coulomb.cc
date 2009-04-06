@@ -76,7 +76,9 @@ void CFMMCoulomb::MultipoleInit_() {
 
 void CFMMCoulomb::MultipoleComputation_() {
 
+  fx_timer_start(mod_, "multipole_computation");
   cfmm_algorithm_.Compute(&multipole_output_);
+  fx_timer_stop(mod_, "multipole_computation");
 
 } // MultipoleComputation
 
@@ -176,6 +178,7 @@ void CFMMCoulomb::MultipoleCleanup_() {
 
 void CFMMCoulomb::ComputeCoulomb() {
 
+  fx_timer_start(mod_, "cfmm_time");
   ScreenCharges_();
   
   MultipoleInit_();
@@ -188,6 +191,9 @@ void CFMMCoulomb::ComputeCoulomb() {
   }
   
   MultipoleCleanup_();
+
+  fx_timer_stop(mod_, "cfmm_time");
+
    
 } // ComputeCoulomb()
 

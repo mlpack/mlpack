@@ -7,7 +7,15 @@
 const fx_entry_doc cfmm_mod_entries[] = {
   {"charge_thresh", FX_PARAM, FX_DOUBLE, NULL,
   "The screening threshold for including a charge distribution.\n"},
-  FX_ENTRY_DOC_DONE
+  {"multipole_computation", FX_TIMER, FX_CUSTOM, NULL,
+    "Time to do the actual multipole computation, with no charge processing.\n"},
+{"cfmm_time", FX_TIMER, FX_CUSTOM, NULL,
+  "Total CFMM time (including charge pre- and post-processing.\n"},
+{"num_shell_pairs", FX_RESULT, FX_INT, NULL,
+  "Number of significant shell pairs.\n"},
+{"num_shell_pairs_screened", FX_RESULT, FX_INT, NULL,
+  "Number of insignificant shell pairs.\n"},
+    FX_ENTRY_DOC_DONE
 };
 
 const fx_submodule_doc cfmm_mod_submodules[] = {

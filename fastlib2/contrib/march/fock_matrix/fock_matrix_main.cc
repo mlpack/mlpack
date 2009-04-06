@@ -188,6 +188,11 @@ int main(int argc, char* argv[]) {
       }
     
     }
+    else {
+      naive_fock.Init(1,1);
+      naive_coulomb.Init(1,1);
+      naive_exchange.Init(1,1);
+    }
   }
     
   // I think this fails if the files exist but --do_naive is specified
