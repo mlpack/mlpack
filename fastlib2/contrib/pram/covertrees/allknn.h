@@ -32,7 +32,6 @@
 #include "cover_tree.h"
 #include "ctree.h"
 #include "distances.h"
-#include "gonzalez.h"
 
 const fx_entry_doc allknn_entries[] = {
   {"dim", FX_PARAM, FX_INT, NULL,
@@ -62,9 +61,6 @@ const fx_entry_doc allknn_entries[] = {
   {"print_tree", FX_PARAM, FX_BOOL, NULL,
    " The variable to decide whether to print"
    " the tree made or not (defaults to false).\n"},
-  {"do_gonzy", FX_PARAM, FX_BOOL, NULL,
-   " This tells us whether we use gonzalez algorithm"
-   " to form the tree of not (defaults to false)"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -238,7 +234,6 @@ private:
     temp = *p;
     *p = *q;
     *q = temp;
-  
   }
 
   // This function halfsorts the cover set in O(n)
@@ -268,7 +263,6 @@ private:
     for (; begin != end; begin++) {
       *begin = d;
     }
-
   }
 
   // While pruning away reference points, we update the 
@@ -296,7 +290,6 @@ private:
     if (end == begin) {
       *begin = d;
     }
-
   }
 
   // This is used for depth first search when a query node 
@@ -455,8 +448,6 @@ public:
     ComputeNeighborRecursion_(query_tree_, neighbor_distances, &cover_sets, 
 			      &leaf_nodes, current_scale, max_scale, 
 			      neighbor_indices);
-
-
   }
 
 private:
@@ -550,7 +541,7 @@ public:
   }
 
   /**
-   * This function computes the nearest neighbors of te 
+   * This function computes the nearest neighbors of the 
    * query set from the reference set using brute 
    * computation
    * 
@@ -656,20 +647,11 @@ public:
     T base = fx_param_double(module_, "ec", 1.3);
 
     fx_timer_start(module_, "tree_building");
-
     datanode *ctree_module = fx_submodule(module_, "ctree");
-
-    if (fx_param_bool(module_, "do_gonzy", 0)) {
-      query_tree_ = gc::Cluster<T, TreeType>(queries_, base);
-      reference_tree_ = gc::Cluster<T, TreeType>(references_, base);
-    }
-    else {
-      query_tree_ = ctree::MakeCoverTree<TreeType, T>(queries_, base, 
-						      ctree_module);
-      reference_tree_ = ctree::MakeCoverTree<TreeType, T>(references_, base,
-							  ctree_module);
-    }
-
+    query_tree_ = ctree::MakeCoverTree<TreeType, T>(queries_, base, 
+						    ctree_module);
+    reference_tree_ = ctree::MakeCoverTree<TreeType, T>(references_, base,
+							ctree_module);
     fx_timer_stop(module_, "tree_building");
 
     
@@ -710,19 +692,10 @@ public:
     T base = fx_param_double(module_, "ec", 1.3);
 
     fx_timer_start(module_, "tree_building");
-
     datanode *ctree_module = fx_submodule(module_, "ctree");
-
-    if (fx_param_bool(module_, "do_gonzy", 0)) {
-      reference_tree_ = gc::Cluster<T, TreeType>(references_, base);
-      query_tree_ = reference_tree_;
-    }
-    else {
-      reference_tree_ = ctree::MakeCoverTree<TreeType, T>(references_, base,
-							  ctree_module);
-      query_tree_ = reference_tree_;
-    }
-
+    reference_tree_ = ctree::MakeCoverTree<TreeType, T>(references_, base,
+							ctree_module);
+    query_tree_ = reference_tree_;
     fx_timer_stop(module_, "tree_building");
 
     

@@ -68,7 +68,6 @@ void AllKNN<T>::halfsort_(ArrayList<TreeType*> *cover_set) {
 
     end = right;
   }
-
 }
 
 template<typename T>
@@ -80,7 +79,6 @@ void AllKNN<T>::reset_leaf_nodes_(ArrayList<TreeType*> *leaf_nodes) {
   for (; begin != end; begin++) {
     (*begin)->stat().pop_last_distance();
   }
-
 }
 
 template<typename T>
@@ -290,8 +288,7 @@ void AllKNN<T>::DescendTheRefTree_(TreeType *query,
 	      }
 	      (*child)->stat().set_distance_to_qnode(d);
 	      (*cover_sets)[(*child)->scale_depth()].PushBackCopy(*child);
-	    }
-	    else {
+	    } else {
 	      if (d <= new_upper_bound - 
 		  (*child)->max_dist_to_grandchild()) {
 		(*child)->stat().set_distance_to_qnode(d);
@@ -345,11 +342,9 @@ void AllKNN<T>::ComputeBaseCase_(TreeType *query,
       // can use these reference nodes
       reset_leaf_nodes_(&new_leaf_nodes);
     }
-  }
+  } else {
   // if the query node is also a leaf, select all the 
   // points in the leaf set that are the kNN
-  else {
-
     TreeType **begin_nn = leaf_nodes->begin();
     TreeType **end_nn = leaf_nodes->end();
     T *begin = upper_bounds->begin() + query->point() * knns_;
@@ -397,8 +392,7 @@ void AllKNN<T>::ComputeNeighborRecursion_(TreeType *query,
   // the query tree
   if (current_scale > max_scale) {
     ComputeBaseCase_(query, upper_bounds, leaf_nodes, neighbor_indices);
-  }
-  else {
+  } else {
     // if the query tree is at a higher scale than the reference tree
     // we descend the query tree
     if ((query->scale_depth() <= current_scale) 
@@ -450,8 +444,7 @@ void AllKNN<T>::ComputeNeighborRecursion_(TreeType *query,
 				upper_bounds, cover_sets, 
 				leaf_nodes, current_scale,
 				max_scale, neighbor_indices);
-    }
-    else {
+    } else {
 
       // halfsorting the cover set to descend the closer reference
       // nodes earlier and prune away more reference nodes later
@@ -497,8 +490,7 @@ void AllKNN<T>::DepthFirst_(TreeType *query, TreeType *reference,
       leaf.Init(reference->point(), reference_query_dist);
       (*neighbors)[query->point()].PushBackCopy(leaf);
     }
-  }
-  else if (reference->is_leaf()) {
+  } else if (reference->is_leaf()) {
 
     // reached the leaf node of the reference node 
     // descending the query tree
@@ -547,8 +539,7 @@ void AllKNN<T>::DepthFirst_(TreeType *query, TreeType *reference,
 	}
       }
     }
-  }
-  else {
+  } else {
     // descend both trees
     // first descend the reference tree choosing those nodes that 
     // are within the required distance
@@ -637,8 +628,7 @@ void AllKNN<T>::DepthFirst_(TreeType *query, TreeType *reference,
 		      neighbors, upper_bounds);
 	}
       }
-    }
-    else {
+    } else {
 
       TreeType **qchild = query->children()->begin();
       TreeType **qend = query->children()->end();
