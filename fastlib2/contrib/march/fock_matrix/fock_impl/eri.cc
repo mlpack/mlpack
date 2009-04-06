@@ -397,7 +397,7 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
 index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
                           ArrayList<BasisShell>& shells_in, 
                           double shell_pair_cutoff, Vector* shell_max, 
-                          ShellPair*** sigma_for_nu, 
+                          ShellPair**** sigma_for_nu, 
                           ArrayList<index_t>* num_sigma_for_nu) {
     
   index_t num_shells = shells_in.size();
@@ -410,6 +410,9 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
   //shell_pairs->Init(num_shells);
   shell_pairs->Init();
 
+  ArrayList<ArrayList<index_t> > significant_sig_index;
+  significant_sig_index.Init(num_shells);
+
   DEBUG_ASSERT(shell_max != NULL);
   shell_max->Init(num_shells);
   
@@ -421,8 +424,8 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
     
     double i_max = -DBL_MAX;
     
-    ArrayList<index_t> significant_sig_index;
-    significant_sig_index.Init(num_shells);
+    //ArrayList<index_t> significant_sig_index;
+    significant_sig_index[i].Init(num_shells);
     
     for (index_t j = i; j < num_shells; j++) {
       
@@ -438,7 +441,7 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
         (*shell_pairs)[num_shell_pairs].Init(i, j, i_shell, j_shell, 
                                              num_shell_pairs);
         (*shell_pairs)[num_shell_pairs].set_integral_upper_bound(this_bound);
-        significant_sig_index[num_for_i] = num_shell_pairs;
+        significant_sig_index[i][num_for_i] = num_shell_pairs;
         (*shell_pairs)[num_shell_pairs].set_schwartz_factor(this_bound);
         num_shell_pairs++;
         
@@ -455,18 +458,25 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
       
     } // for j
 
-
-
     DEBUG_ASSERT(i_max > 0.0);
     (*shell_max)[i] = i_max;
 
     (*num_sigma_for_nu)[i] = num_for_i;
+
+
+  } // for i
+
+
+  // do two loops to avoid invalidating the pointers into shell pair list when calling PushBack
+  for (index_t i = 0; i < num_shells; i++) {
+
+    index_t num_for_i = (*num_sigma_for_nu)[i];
     
-    sigma_for_nu[i] = (ShellPair**)malloc(num_for_i * sizeof(ShellPair**));
+    (*sigma_for_nu)[i] = (ShellPair**)malloc(num_for_i * sizeof(ShellPair**));
 
     for (index_t k = 0; k < num_for_i; k++) {
     
-      sigma_for_nu[i][k] = shell_pairs->begin() + significant_sig_index[k];
+      (*sigma_for_nu)[i][k] = shell_pairs->begin() + significant_sig_index[i][k];
     
     } // for k
   

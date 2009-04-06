@@ -23,7 +23,7 @@ void Link::PrescreeningLoop_() {
   // One list of shell pairs for each mu
   num_shell_pairs_ = eri::ComputeShellPairs(&shell_pair_list_, shell_list_, 
                                             shell_pair_cutoff_, &shell_max_, 
-                                            significant_sigma_for_nu_, 
+                                            &significant_sigma_for_nu_, 
                                             &num_significant_sigma_for_nu_);
                                             
   fx_result_int(module_, "num_shell_pairs", num_shell_pairs_);
@@ -159,6 +159,7 @@ void Link::ComputeExchangeMatrix() {
         //index_t sigma_ind = nu_sigma->N_index();
         double bound = fabs(density_matrix_.ref(mu_ind, nu_ind)) * mu_lambda.schwartz_factor() * 
           nu_sigma->schwartz_factor();
+	printf("bound: %g\n", bound);
         if (bound > threshold_) {
       
           // store or compute the eri
