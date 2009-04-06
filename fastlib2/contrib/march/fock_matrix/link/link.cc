@@ -159,7 +159,7 @@ void Link::ComputeExchangeMatrix() {
         //index_t sigma_ind = nu_sigma->N_index();
         double bound = fabs(density_matrix_.ref(mu_ind, nu_ind)) * mu_lambda.schwartz_factor() * 
           nu_sigma->schwartz_factor();
-	printf("bound: %g\n", bound);
+	//printf("bound: %g\n", bound);
         if (bound > threshold_) {
       
           // store or compute the eri
