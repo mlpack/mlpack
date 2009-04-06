@@ -80,10 +80,10 @@ int main(int argc, char *argv[])
   fp_l = fx_param_str_req(NULL, "two");  
 
   // Output Files
-  fp_stats = fx_param_str(NULL, "stats", "tree_stats.dat");
-  fp_rad = fx_param_str(NULL, "rad", "raddist.dat");
-  fp_coords = fx_param_str(NULL, "coord", "coords.dat");
-  fp_diff = fx_param_str(NULL, "diff", "diffusion.dat");
+  fp_stats = fx_param_str(NULL, "stats", "tree_stats_dual.dat");
+  fp_rad = fx_param_str(NULL, "rad", "raddist_dual.dat");
+  fp_coords = fx_param_str(NULL, "coord", "coords_dual.dat");
+  fp_diff = fx_param_str(NULL, "diff", "diffusion_dual.dat");
 
   bool do_naive = fx_param_bool(NULL, "naive", 0);
   
