@@ -64,7 +64,8 @@ void FockMatrixComparison::Compare() {
         
         // add in the relative error cutoff to keep from storing large 
         // relative errors from very small sources
-        if ((this_rel_diff > max_rel_F_) && (this_diff > rel_error_cutoff_)) {
+        if ((this_rel_diff > max_rel_F_) && (this_diff > rel_error_cutoff_)
+            && (F_entry1 != 0.0)) {
           max_rel_F_ = this_rel_diff;
           max_index_row_F_ = i;
           max_index_col_F_ = j;
@@ -92,7 +93,8 @@ void FockMatrixComparison::Compare() {
           
         }
         
-        if ((this_rel_diff > max_rel_J_) && (this_diff > rel_error_cutoff_)) {
+        if ((this_rel_diff > max_rel_J_) && (this_diff > rel_error_cutoff_)
+            && (J_entry1 != 0.0)) {
           max_rel_J_ = this_rel_diff;
           max_index_row_J_ = i;
           max_index_col_J_ = j;
@@ -119,7 +121,8 @@ void FockMatrixComparison::Compare() {
           max_diff_K_ = this_diff;
         }
         
-        if ((this_rel_diff > max_rel_K_) && (this_diff > rel_error_cutoff_)) {
+        if ((this_rel_diff > max_rel_K_) && (this_diff > rel_error_cutoff_)
+            && (K_entry1 != 0.0)) {
           max_rel_K_ = this_rel_diff;
           max_index_row_K_ = i;
           max_index_col_K_ = j;
