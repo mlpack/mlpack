@@ -30,7 +30,7 @@ namespace pdc {
 	batch -= 2;
       }while(batch);
       if (s > upper_bound) {
-	return sqrt(s) + EPS;
+	return sqrt(s);
       }
       batch = 120;
     }
@@ -42,14 +42,8 @@ namespace pdc {
       s += d * d;
     }
 
-    if (s > upper_bound) {
-      return sqrt(s) + EPS;
-    }
-    else {
-      return sqrt(s);
-    }
+    return sqrt(s);
   }
-
 };
 
 #endif

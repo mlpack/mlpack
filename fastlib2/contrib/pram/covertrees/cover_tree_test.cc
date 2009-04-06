@@ -8,7 +8,6 @@
 
 #include <fastlib/fastlib.h>
 #include "allknn.h"
-#include <time.h>
 
 const fx_entry_doc cover_tree_main_entries[] = {
   {"r", FX_REQUIRED, FX_STR, NULL,
@@ -81,7 +80,6 @@ int main(int argc, char *argv[]) {
   fx_module *root = 
     fx_init(argc, argv, &cover_tree_main_doc);
 
-  clock_t start, end, build=0, find = 0, find1 = 0, find2 = 0;
   const char *rfile = fx_param_str_req(root, "r");
   const char *qfile = fx_param_str(root, "q", rfile);
 
@@ -133,69 +131,68 @@ int main(int argc, char *argv[]) {
   // The query and the reference set is saved in the 
   // object and cover trees are made for each of the 
   // sets
-  start = clock();
   allknn.Init(queries, references, allknn_module);
-  end = clock();
-  build = end - start;
-
   NOTIFY("treeBuilt");
   // This does the recursive breadth first search 
   // of nearest neighbors
   if (fx_param_bool(root, "dorbfs", 1)) {
     fx_timer_start(allknn_module, "rbfs");
-    start = clock();
     allknn.RecursiveBreadthFirstSearch(&rbfs_ind, &rbfs_dist);
-    end = clock();
     fx_timer_stop(allknn_module, "rbfs");
-    find = end - start;
   }
 
   // This does the depth first search of the 
   // nearest neighbors
   if (fx_param_bool(root, "dodfs", 0)) {
     fx_timer_start(allknn_module, "dfs");
-    start = clock();
     allknn.DepthFirstSearch(&dfs_ind, &dfs_dist);
-    end = clock();
     fx_timer_stop(allknn_module, "dfs");
-    find1 = end - start;
   }
 
   // This does the brute computation of the 
   // nearest neighbors
   if (fx_param_bool(root, "donaive", 0)) {
     fx_timer_start(allknn_module, "brute");
-    start = clock();
     allknn.BruteNeighbors(&brute_ind, &brute_dist);
-    end = clock();
     fx_timer_stop(allknn_module, "brute");
-    find2 = end - start;
   }
 
 
 
   if (fx_param_bool(root, "print_results", 0)) {
     
-    NOTIFY("RBFS results");
-    print_results<float>(qsize, knn, &rbfs_ind, &rbfs_dist);
-    
-    NOTIFY("DFS results");
-    print_results<float>(qsize, knn, &dfs_ind, &dfs_dist);
-    
-    NOTIFY("BRUTE results");
-    print_results<float>(qsize, knn, &brute_ind, &brute_dist);
+    if (fx_param_bool(root, "dorbfs", 1)) {
+      NOTIFY("RBFS results");
+      print_results<float>(qsize, knn, &rbfs_ind, &rbfs_dist);
+    }
+
+    if (fx_param_bool(root, "dodfs", 0)) {
+      NOTIFY("DFS results");
+      print_results<float>(qsize, knn, &dfs_ind, &dfs_dist);
+
+    }
+
+    if (fx_param_bool(root, "donaive", 0)) {
+        NOTIFY("BRUTE results");
+	print_results<float>(qsize, knn, &brute_ind, &brute_dist);
+    }
   }
 
   if (fx_param_bool(root, "compare_results", 0)) {  
-    NOTIFY("RBFS\n");
-    compare_neighbors(&rbfs_ind, &rbfs_dist, 
-  		      &brute_ind, &brute_dist);
-    NOTIFY("DFS\n");
-    compare_neighbors(&dfs_ind, &dfs_dist, 
-  		      &brute_ind, &brute_dist); 
+    DEBUG_ASSERT(fx_param_bool(root, "donaive", 0));
+    if (fx_param_bool(root, "dorbfs", 1)) {
+      NOTIFY("RBFS\n");
+      compare_neighbors(&rbfs_ind, &rbfs_dist, 
+			&brute_ind, &brute_dist);
+    }
+
+    if (fx_param_bool(root, "dodfs", 0)) {
+      NOTIFY("DFS\n");
+      compare_neighbors(&dfs_ind, &dfs_dist, 
+			&brute_ind, &brute_dist); 
+    }
   }
   
-  //fx_param_bool(root, "fx/silent", 1);
   fx_done(root);
   return 0;
 }
