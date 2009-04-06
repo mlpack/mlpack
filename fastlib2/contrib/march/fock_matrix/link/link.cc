@@ -73,7 +73,7 @@ void Link::PrescreeningLoop_() {
     for (index_t k = 0; k < next_ind; k++) {
       
       significant_nu_for_mu_[i][k] = shell_list_.begin() + 
-      significant_nu_index[k];
+          significant_nu_index[k];
       significant_nu_for_mu_[i][k]->set_max_schwartz_factor(shell_max_[k]);
       significant_nu_for_mu_[i][k]->set_current_density_entry(density_matrix_.ref(i,k));
       

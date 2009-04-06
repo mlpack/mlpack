@@ -66,7 +66,7 @@ class BasisShell {
   
   }
   
-  double exp() {
+  double exp() const {
     return exponent_;
   }
   
@@ -78,7 +78,7 @@ class BasisShell {
     return num_functions_;
   }
   
-  index_t total_momentum() {
+  index_t total_momentum() const {
     return total_momentum_;
   }
   
