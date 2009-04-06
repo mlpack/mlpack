@@ -233,7 +233,7 @@ namespace ctree {
       //dist = sqrt(la::DistanceSqEuclidean(root_point, point));
       dist = pdc::DistanceEuclidean<T>(root_point, point, sqrt(DBL_MAX));
       node_distances->Init(i, dist);
-      point_set.PushBackCopy(node_distances);
+      *((point_set.PushBackRaw())) = node_distances;
     }
     DEBUG_ASSERT(point_set.size() == n - 1);
 
@@ -247,6 +247,14 @@ namespace ctree {
       private_make_tree<TCoverTreeNode, T>(0, dataset, max_scale,
 					   max_scale, &point_set,
 					   &consumed_set);
+
+    for(index_t i = 0; i < point_set.size(); i++) {
+      delete point_set[i];
+    }
+    for(index_t i = 0; i < consumed_set.size(); i++) {
+      delete consumed_set[i];
+    }
+
     return root_node;
   }
 
