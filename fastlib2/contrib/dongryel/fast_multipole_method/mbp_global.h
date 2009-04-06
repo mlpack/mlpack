@@ -4,7 +4,7 @@
 class MultiTreeGlobal {
 
  public:
-    
+  
   /** @brief The module holding the parameters.
    */
   struct datanode *module;
