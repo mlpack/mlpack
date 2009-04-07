@@ -91,18 +91,18 @@ class MultibodyPotentialKernel {
   }
 
   template<typename Global>
-  double EvaluateMain(const Global &globals, const ArrayList<Matrix *> &sets) {
+  void EvaluateMain(const Global &globals, const ArrayList<Matrix *> &sets,
+		    double *negative_result, double *positive_result) {
 
     // Compute the pairwise distances among the points.
     ComputePairwiseDistances(globals, sets, 
 			     globals.hybrid_node_chosen_indices);
 
     // Call the kernels.
-    double positive_result = 
+    *positive_result = 
       PositiveEvaluate(globals.hybrid_node_chosen_indices, sets);
-    double negative_result =
+    *negative_result =
       NegativeEvaluate(globals.hybrid_node_chosen_indices, sets);
-    return positive_result + negative_result;
   }
 
   template<typename Global, typename Tree, typename Delta>

@@ -129,9 +129,6 @@ class MultibodyPotentialProblem {
    double total_num_tuples, double total_n_minus_one_tuples_root,
    const Vector &total_n_minus_one_tuples) {
 
-    // Perhaps, this should be parameterized by the Global object.
-    const int num_samples = 100;
-
     if(globals.probability >= 1) {
       return false;
     }
@@ -146,9 +143,16 @@ class MultibodyPotentialProblem {
     double positive_potential_avg = 0;
     double positive_standard_deviation = 0;
     double positive_squared_potential_sums = 0;
-    int positive_num_samples = 0;
-    int negative_num_samples = 0;
-
+    
+    double max_total_n_minus_one_tuples = 0;
+    for(index_t i = 0; i < total_n_minus_one_tuples.length(); i++) {
+      max_total_n_minus_one_tuples = 
+	std::max(max_total_n_minus_one_tuples, total_n_minus_one_tuples[i]);
+    }
+    int num_samples = 
+      std::max(std::min((int) ceil(0.04 * max_total_n_minus_one_tuples),
+			INT_MAX), 25);
+    
     for(index_t i = 0; i < num_samples; i++) {
 
       // Choose a random tuple.
@@ -156,33 +160,26 @@ class MultibodyPotentialProblem {
 				    globals.hybrid_node_chosen_indices);
       
       // Compute the potential value for the chosen indices.
-      double potential = globals.kernel_aux.EvaluateMain(globals, sets);
-
-      if(potential > 0) {
-	positive_potential_sums += potential;
-	positive_squared_potential_sums += math::Sqr(potential);
-	positive_num_samples++;
-      }
-      else {
-	negative_potential_sums += potential;
-	negative_squared_potential_sums += math::Sqr(potential);
-	negative_num_samples++;
-      }
-
+      double positive_potential, negative_potential;
+      globals.kernel_aux.EvaluateMain(globals, sets, &negative_potential,
+				      &positive_potential);
+      
+      positive_potential_sums += positive_potential;
+      positive_squared_potential_sums += math::Sqr(positive_potential);
+      negative_potential_sums += negative_potential;
+      negative_squared_potential_sums += math::Sqr(negative_potential);
     } // end of iterating over each sample...
 
-    positive_potential_avg = (positive_num_samples == 0) ?
-      0:(positive_potential_sums / ((double) positive_num_samples));
-    positive_standard_deviation = (positive_num_samples == 0) ?
-      0:(sqrt((positive_squared_potential_sums - 
-	       positive_num_samples * math::Sqr(positive_potential_avg))
-	      / ((double) positive_num_samples - 1)));
-    negative_potential_avg = (negative_num_samples == 0) ?
-      0:(negative_potential_sums / ((double) negative_num_samples));
-    negative_standard_deviation = (negative_num_samples == 0) ?
-      0:(sqrt((negative_squared_potential_sums - 
-	       negative_num_samples * math::Sqr(negative_potential_avg))
-	      / ((double) negative_num_samples - 1)));
+    positive_potential_avg = positive_potential_sums / ((double) num_samples);
+    positive_standard_deviation =
+      sqrt((positive_squared_potential_sums - 
+	    num_samples * math::Sqr(positive_potential_avg))
+	   / ((double) num_samples - 1));
+    negative_potential_avg = negative_potential_sums / ((double) num_samples);
+    negative_standard_deviation =
+      sqrt((negative_squared_potential_sums - 
+	    num_samples * math::Sqr(negative_potential_avg))
+	   / ((double) num_samples - 1));
 
     // Refine delta bounds based on sampling.
     exact_delta.RefineBounds(globals, negative_potential_avg, 
