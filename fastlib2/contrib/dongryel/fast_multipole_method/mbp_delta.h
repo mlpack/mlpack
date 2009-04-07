@@ -57,9 +57,8 @@ class MultiTreeDelta {
 	negative_error = globals.z_score * n_pruned[i] *
 	  negative_standard_deviation;
 	
-	used_error[i] = std::min(used_error[i], 
-				 sqrt(math::Sqr(positive_error) +
-				      math::Sqr(negative_error)));
+	used_error[i] = sqrt(math::Sqr(positive_error) +
+			     math::Sqr(negative_error));
 
 	positive_potential_bound[i].lo = 
 	  std::max(positive_potential_bound[i].lo,
