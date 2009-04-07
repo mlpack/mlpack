@@ -129,6 +129,8 @@ class MultibodyPotentialProblem {
    double total_num_tuples, double total_n_minus_one_tuples_root,
    const Vector &total_n_minus_one_tuples) {
 
+    int num_samples = 50;
+
     if(globals.probability >= 1) {
       return false;
     }
@@ -143,15 +145,6 @@ class MultibodyPotentialProblem {
     double positive_potential_avg = 0;
     double positive_standard_deviation = 0;
     double positive_squared_potential_sums = 0;
-    
-    double max_total_n_minus_one_tuples = 0;
-    for(index_t i = 0; i < total_n_minus_one_tuples.length(); i++) {
-      max_total_n_minus_one_tuples = 
-	std::max(max_total_n_minus_one_tuples, total_n_minus_one_tuples[i]);
-    }
-    int num_samples = 
-      std::max(std::min((int) ceil(0.04 * max_total_n_minus_one_tuples),
-			INT_MAX), 25);
     
     for(index_t i = 0; i < num_samples; i++) {
 
