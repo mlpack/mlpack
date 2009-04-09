@@ -50,6 +50,10 @@ class MultiTreeQueryResult {
     *negative_max_relative_error = 0;
     *positive_max_relative_error = 0;
 
+    const char *error_output_filename = 
+      fx_param_str(fx_root, "error_output", "error.txt");
+    FILE *error_output = fopen(error_output_filename, "w+");
+
     for(index_t i = 0; i < final_results.length(); i++) {
       
       double relative_error, negative_relative_error, positive_relative_error;
@@ -86,14 +90,19 @@ class MultiTreeQueryResult {
       max_absolute_error = std::max(max_absolute_error,
 				    fabs(final_results[i] - 
 					 other_results.final_results[i]));
+
+      fprintf(error_output, "%g %g %g %g\n", relative_error,
+	      negative_relative_error, positive_relative_error,
+	      fabs(final_results[i] - other_results.final_results[i]));
     }
-    NOTIFY("%d particles violated the relative error...", 
+    printf("%d particles violated the relative error...", 
 	   num_over_relative_error);
-    NOTIFY("%d particles violated the relative error in the positive...",
+    printf("%d particles violated the relative error in the positive...",
 	   num_over_positive_relative_error);
-    NOTIFY("%d particles violated the relative error in the negative...",
+    printf("%d particles violated the relative error in the negative...",
 	   num_over_negative_relative_error);
-    NOTIFY("The maximum absolute error was %g...", max_absolute_error);
+    printf("The maximum absolute error was %g...", max_absolute_error);
+    fclose(error_output);
   }
 
   template<typename Tree>

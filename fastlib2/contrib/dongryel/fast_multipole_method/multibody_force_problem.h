@@ -274,6 +274,12 @@ class AxilrodTellerForceProblem {
 	std::max(probabilistic_used_error_u,
 		 query_results.probabilistic_used_error[q_index]);
     }
+    
+    template<typename TGlobal, typename TQueryResult>
+    void PostAccumulate(TGlobal &globals, const TQueryResult &query_results,
+			index_t first, index_t count) {
+
+    }
 
     void SetZero() {
       l1_norm_negative_force_vector_u = 0;

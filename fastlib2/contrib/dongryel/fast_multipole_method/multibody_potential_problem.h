@@ -129,6 +129,186 @@ class MultibodyPotentialProblem {
    double total_num_tuples, double total_n_minus_one_tuples_root,
    const Vector &total_n_minus_one_tuples) {
 
+    if(globals.probability >= 1 || hybrid_nodes[0] == hybrid_nodes[1] ||
+       hybrid_nodes[0] == hybrid_nodes[2] || hybrid_nodes[1] == 
+       hybrid_nodes[2]) {
+      return false;      
+    }
+
+    MultiTreeDelta mc_delta;
+    mc_delta.Init(total_n_minus_one_tuples);
+
+    // Zero out the temporary scratch space.
+    for(index_t i = 0; i < hybrid_nodes.size(); i++) {
+      if(i > 0 && hybrid_nodes[i] == hybrid_nodes[i - 1]) {
+	continue;
+      }
+      mc_delta.negative_potential_bound[i].lo = DBL_MAX;
+      mc_delta.negative_potential_bound[i].hi = -DBL_MAX;
+      mc_delta.positive_potential_bound[i].lo = DBL_MAX;
+      mc_delta.positive_potential_bound[i].hi = -DBL_MAX;    
+      
+      for(index_t j = hybrid_nodes[i]->begin(); j < hybrid_nodes[i]->end();
+	  j++) {
+	globals.neg_tmp_space[j] = 0;
+	globals.tmp_space[j] = 0;
+	globals.neg_tmp_space2[j] = 0;
+	globals.tmp_space2[j] = 0;
+	globals.tmp_num_samples[j] = 0;
+      }
+    }
+
+    // Accumulate samples.
+    const int sample_limit = 30;
+    
+    for(index_t i = 0; i < hybrid_nodes.size(); i++) {
+      if(i > 0 && hybrid_nodes[i] == hybrid_nodes[i - 1]) {
+	continue;
+      }
+      
+      // Loop through each point in the list.
+      for(index_t j = hybrid_nodes[i]->begin(); j < hybrid_nodes[i]->end();
+	  j++) {
+       	
+	globals.hybrid_node_chosen_indices[i] = j;
+
+	while(globals.tmp_num_samples[j] < sample_limit) {
+	  
+	  // Generate a random tuple containing the j-th particle and
+	  // exploit sample correlation.
+	  for(index_t k = 0; k < 2; k++) {
+	    index_t current_node_index = (k + 1 + i) % 3;
+	    globals.hybrid_node_chosen_indices[current_node_index] =
+	      math::RandInt(hybrid_nodes[current_node_index]->begin(),
+			    hybrid_nodes[current_node_index]->end());
+	    (globals.tmp_num_samples[globals.hybrid_node_chosen_indices
+	     [current_node_index]])++;
+	  }	  
+	  
+	  (globals.tmp_num_samples[j])++;
+
+	  // Compute the potential value for the chosen indices.
+	  double positive_potential, negative_potential;
+	  globals.kernel_aux.EvaluateMain(globals, sets, &negative_potential,
+					  &positive_potential);
+	  
+	  for(index_t m = 0; m < hybrid_nodes.size(); m++) {
+	    globals.neg_tmp_space[globals.hybrid_node_chosen_indices[m]] += 
+	      negative_potential;
+	    globals.neg_tmp_space2[globals.hybrid_node_chosen_indices[m]] += 
+	      math::Sqr(negative_potential);
+	    globals.tmp_space[globals.hybrid_node_chosen_indices[m]] += 
+	      positive_potential;
+	    globals.tmp_space2[globals.hybrid_node_chosen_indices[m]] += 
+	      math::Sqr(positive_potential);
+	  }
+	} // end of looping over each sample...
+
+	// Used error for the particle.
+	double negative_average = globals.neg_tmp_space[j] / 
+	  ((double) globals.tmp_num_samples[j]);
+	double positive_average = globals.tmp_space[j] / 
+	  ((double) globals.tmp_num_samples[j]);
+	double negative_error = total_n_minus_one_tuples[i] * globals.z_score *
+	  sqrt((globals.neg_tmp_space2[j] - globals.tmp_num_samples[j] * 
+		math::Sqr(negative_average)) / 
+	       ((double) globals.tmp_num_samples[j] - 1)) / 
+	  sqrt(globals.tmp_num_samples[j]);
+	double positive_error = total_n_minus_one_tuples[i] * globals.z_score *
+	  sqrt((globals.tmp_space2[j] - globals.tmp_num_samples[j] * 
+		math::Sqr(positive_average)) / 
+	       ((double) globals.tmp_num_samples[j] - 1)) / 
+	  sqrt(globals.tmp_num_samples[j]);
+	
+	// Maintain the largest error.
+	double used_error = negative_error + positive_error;
+	double new_summary_used_error_u =
+	  results.used_error[j] + 
+	  hybrid_nodes[i]->stat().postponed.used_error;
+	double delta_negative = 
+	  std::min(negative_average * total_n_minus_one_tuples[i] +
+		   negative_error, 0.0);	
+	double negative_potential_bound_hi =
+	  results.negative_potential_bound[j].hi + 
+	  hybrid_nodes[i]->stat().postponed.negative_potential_bound.hi +
+	  delta_negative;
+	double delta_positive = 
+	  std::min(positive_average * total_n_minus_one_tuples[i] +
+		   positive_error, 0.0);	
+	double positive_potential_bound_lo =
+	  results.positive_potential_bound[j].lo + 
+	  hybrid_nodes[i]->stat().postponed.positive_potential_bound.lo +
+	  delta_positive;
+
+	// Compute the right hand side of the pruning rule.
+	double new_summary_n_pruned_l = 
+	  results.n_pruned[j] + hybrid_nodes[i]->stat().postponed.n_pruned;
+	double right_hand_side = 
+	  (globals.relative_error *
+	   (positive_potential_bound_lo -
+	    negative_potential_bound_hi) -
+	   new_summary_used_error_u) * 
+	  (total_n_minus_one_tuples[i] / 
+	   (total_n_minus_one_tuples_root - new_summary_n_pruned_l));
+
+	if(used_error > right_hand_side &&
+	   -(results.negative_potential_e[j] +
+	     negative_average * total_n_minus_one_tuples[i]) * 
+	   globals.relative_error <=
+	   negative_error &&
+	   (results.positive_potential_e[j] +
+	    positive_average * total_n_minus_one_tuples[i]) * 
+	   globals.relative_error <=
+	   positive_error) {
+	  return false;
+	}
+
+	// Refine the delta lower/upper bound information.
+	mc_delta.negative_potential_bound[i].hi =
+	  std::max(mc_delta.negative_potential_bound[i].hi, delta_negative);
+	mc_delta.positive_potential_bound[i].lo = 
+	  std::min(mc_delta.positive_potential_bound[i].lo, delta_positive);
+      }
+    }
+
+    // If this point is reached, then everything is pruned.
+    for(index_t i = 0; i < TKernel::order; i++) {
+      if(i == 0 || hybrid_nodes[i] != hybrid_nodes[i - 1]) {
+	hybrid_nodes[i]->stat().postponed.ApplyDelta(mc_delta, i);
+
+	for(index_t j = hybrid_nodes[i]->begin(); j < hybrid_nodes[i]->end();
+	    j++) {
+
+	  // Used error for the particle.
+	  double negative_average = globals.neg_tmp_space[j] / 
+	    ((double) globals.tmp_num_samples[j]);
+	  double positive_average = globals.tmp_space[j] / 
+	    ((double) globals.tmp_num_samples[j]);
+	  double negative_error = total_n_minus_one_tuples[i] * 
+	    globals.z_score *
+	    sqrt((globals.neg_tmp_space2[j] - globals.tmp_num_samples[j] * 
+		  math::Sqr(negative_average)) / 
+		 ((double) globals.tmp_num_samples[j] - 1)) / sqrt(globals.tmp_num_samples[j]);
+	  double positive_error = total_n_minus_one_tuples[i] * 
+	    globals.z_score *
+	    sqrt((globals.tmp_space2[j] - globals.tmp_num_samples[j] * 
+		  math::Sqr(positive_average)) / 
+		 ((double) globals.tmp_num_samples[j] - 1)) / sqrt(globals.tmp_num_samples[j]);
+	  
+	  // Maintain the largest error.
+	  double used_error = negative_error + positive_error;
+
+	  results.negative_potential_e[j] += total_n_minus_one_tuples[i] *
+	    negative_average;
+	  results.positive_potential_e[j] += total_n_minus_one_tuples[i] *
+	    positive_average;
+	  results.used_error[j] += used_error;
+	}
+
+      }
+    }  
+
+    /*
     int num_samples = 50;
 
     if(globals.probability >= 1) {
@@ -213,6 +393,7 @@ class MultibodyPotentialProblem {
 	hybrid_nodes[i]->stat().postponed.ApplyDelta(exact_delta, i);
       }
     }
+    */
     
     results.num_monte_carlo_prunes++;
     return true;
