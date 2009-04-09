@@ -193,6 +193,10 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
 
     // Clear postponed information.
     qnode->stat().postponed.SetZero();
+
+    // Post process function
+    qnode->stat().summary.PostAccumulate(globals_, query_results, 
+					 qnode->begin(), qnode->count());
   }
   
   // Add the postponed information to each point for each "query"
@@ -219,6 +223,10 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
 
     // Clear postponed information.
     qnode->stat().postponed.SetZero();
+
+    // Post process function.
+    qnode->stat().summary.PostAccumulate(globals_, query_results,
+					 qnode->begin(), qnode->count());
   }
 
 }
