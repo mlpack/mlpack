@@ -30,6 +30,10 @@ class MultiTreeGlobal {
    */
   double relative_error;
 
+  /** @brief The lower percentile to ignore.
+   */
+  double percentile;
+
   /** @brief The probability requirement.
    */
   double probability;
@@ -39,7 +43,20 @@ class MultiTreeGlobal {
    */
   double z_score;
 
+  /** @brief The dimension of the problem.
+   */
   int dimension;
+
+  /** @brief The scratch space for sorting/Monte Carlo sampling.
+   */
+  Vector neg_tmp_space;
+  Vector tmp_space;
+  Vector neg_tmp_space2;
+  Vector tmp_space2;
+
+  /** @brief The scratch space for accumulating the number of samples.
+   */
+  GenVector<int> tmp_num_samples;
 
  public:
 
@@ -59,12 +76,25 @@ class MultiTreeGlobal {
     // Extract the relative error/probability and the bandwidth from
     // the module.
     relative_error = fx_param_double(module, "relative_error", 0.1);
+    percentile = fx_param_double(module, "percentile", 0.1);
     probability = fx_param_double(module, "probability", 1.0);
     z_score = InverseNormalCDF::Compute(probability + 0.5 * (1 - probability));
     kernel_aux.Init(fx_param_double(module, "bandwidth", 0.3));
 
     // Set the dimension.
     dimension = dimension_in;
+
+    // Allocate temporary storage space.
+    neg_tmp_space.Init(total_num_particles);
+    neg_tmp_space.SetZero();
+    tmp_space.Init(total_num_particles);
+    tmp_space.SetZero();
+    neg_tmp_space2.Init(total_num_particles);
+    neg_tmp_space2.SetZero();
+    tmp_space2.Init(total_num_particles);
+    tmp_space2.SetZero();
+    tmp_num_samples.Init(total_num_particles);
+    tmp_num_samples.SetZero();
   }
 
 };
