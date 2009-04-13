@@ -35,6 +35,9 @@ class FockMatrixComparison {
 
   index_t max_index_row_K_;
   index_t max_index_col_K_;
+  
+  index_t max_abs_index_row_J_;
+  index_t max_abs_index_col_J_;
 
   
   bool compare_fock_;

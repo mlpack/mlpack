@@ -90,7 +90,8 @@ void FockMatrixComparison::Compare() {
         
         if (this_diff > max_diff_J_) {
           max_diff_J_ = this_diff;
-          
+          max_abs_index_row_J_ = i;
+          max_abs_index_col_J_ = j;
         }
         
         if ((this_rel_diff > max_rel_J_) && (this_diff > rel_error_cutoff_)
@@ -151,7 +152,10 @@ void FockMatrixComparison::Compare() {
   } // compare fock eigenvalues
   
   // output results 
-  
+/*  
+  printf("exact: %g, approx: %g\n", naive_J_mat_->ref(max_abs_index_row_J_, max_abs_index_col_J_), 
+         J_mat_->ref(max_abs_index_row_J_, max_abs_index_col_J_));
+  */
   if (compare_fock_) {
     fx_result_double(my_mod_, "max_diff_F", max_diff_F_);
     fx_result_int(my_mod_, "max_index_row_F", max_index_row_F_);
@@ -163,11 +167,15 @@ void FockMatrixComparison::Compare() {
 
   if (compare_coulomb_) {
     fx_result_double(my_mod_, "max_diff_J", max_diff_J_);
+    fx_result_int(my_mod_, "max_abs_index_row_J", max_abs_index_row_J_);
+    fx_result_int(my_mod_, "max_abs_index_col_J", max_abs_index_col_J_);
+    
+    fx_result_double(my_mod_, "max_rel_diff_J", max_rel_J_);
     fx_result_int(my_mod_, "max_index_row_J", max_index_row_J_);
     fx_result_int(my_mod_, "max_index_col_J", max_index_col_J_);
     fx_result_double(my_mod_, "ave_diff_J", 
                      (total_diff_J_/(num_entries_ * num_entries_)));
-    fx_result_double(my_mod_, "max_rel_diff_J", max_rel_J_);
+    
   }
 
   if (compare_exchange_) {

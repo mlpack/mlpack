@@ -451,7 +451,7 @@ private:
     fx_timer_stop(module_, "multi_time");
 
     
-    bounds_cutoff_ = 10e-50;
+    bounds_cutoff_ = 10e-30;
     
   } // Init()
   
