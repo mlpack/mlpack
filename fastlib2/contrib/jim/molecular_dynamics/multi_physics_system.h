@@ -102,33 +102,6 @@ private:
     percent_pruned_ = percent_pruned_ + 1;
   }
 
-
-  void TwoBodyForce_(int left, ParticleTree* right){
-    Vector delta_r, left_vec;    
-    atoms_.MakeColumnSubvector(left, 0, 3, &left_vec);  
-    la::SubInit(right->stat().centroid_, left_vec, &delta_r);
-    if (boundary_ == PERIODIC){
-      AdjustVector_(&delta_r);
-    }
-    double dist = sqrt(la::Dot(delta_r, delta_r));  
-    double coef = 0, temp;
-    for (int i  = 0; i < forces_.n_rows(); i++){
-      temp = -forces_.get(i, left)*right->stat().interactions_[i].coef();
-      coef = coef + signs_[i]*temp*powers_[i]*pow(dist, powers_[i]-2);
-    }     
-  
-    virial_ = virial_ +  coef*dist*dist;   
-    la::Scale(coef, &delta_r);    
-    // Apply forces to particles
-    left_vec.Destruct();    
-    atoms_.MakeColumnSubvector(left, 4, 3, &left_vec);   
-    la::AddExpert(time_step_ / atoms_.get(3,left), delta_r, &left_vec);   
-    la::Scale(-time_step_, &delta_r);
-    right->stat().ApplyForce(delta_r);
-    percent_pruned_ = percent_pruned_ + 1;
-  }
-
-
   // Two body force between two atoms
   void TwoBodyForce_(int left, int right){
     Vector delta_r, left_vec, right_vec;    
@@ -221,131 +194,6 @@ private:
     c->stat().ApplyForce(force_k);   
     total_triples_++;
   }
-
-
-  void ThreeBodyForce_(int a, ParticleTree* b, ParticleTree* c){
-    Vector r_ij, r_jk, r_ki, pos_a;
-    atoms_.MakeColumnSubvector(a, 0, 3, &pos_a);
-    la::SubInit(pos_a, b->stat().centroid_, &r_ij);
-    la::SubInit(b->stat().centroid_, c->stat().centroid_, &r_jk);
-    la::SubInit(c->stat().centroid_, pos_a, &r_ki);
-    if (boundary_ == PERIODIC){
-      AdjustVector_(&r_ij);
-      AdjustVector_(&r_jk);
-      AdjustVector_(&r_ki);
-    }    
-    double AA, BB, CC, AB, AC, BC, coef1, coef2, coef3;
-    double cosines, denom;    
-    // Extra Terms
-    double denom2, coef1b, coef2b, coef3b;
-    AA = la::Dot(r_ij, r_ij);
-    CC = la::Dot(r_ki, r_ki);
-    BB = la::Dot(r_jk, r_jk);
-    AC = la::Dot(r_ij, r_ki);
-    AB = la::Dot(r_ij, r_jk);
-    BC = la::Dot(r_ki, r_jk);
-    cosines = BC*AC*AB;
-    denom = AA*BB*CC;
-    denom2 = pow(denom, 3.5);
-    denom = pow(denom, 2.5);
-    denom = 3.0 * axilrod_teller_.get(0,a) * b->stat().axilrod_[0] *
-       c->stat().axilrod_[0] / denom;   
-    denom = denom * time_step_;
-    Vector force_i, force_j, force_k;
-    coef1 = denom*(2.0*AB*AC + BC*BC - 5.0*cosines/AA);
-    coef2 = denom*(2.0*BC*AC + AB*AB - 5.0*cosines/CC);
-    coef3 = denom*(2.0*AB*BC + AC*AC - 5.0*cosines/BB);	      
-    la::ScaleInit(-coef1, r_ij, &force_i);
-    la::AddExpert( coef2, r_ki, &force_i);
-    la::ScaleInit( coef1, r_ij, &force_j);
-    la::AddExpert(-coef3, r_jk, &force_j);
-    
-    // Extra Term stuff    
-    denom2 = 5.0 *  axilrod_teller_.get(1,a) * b->stat().axilrod_[1] *
-      c->stat().axilrod_[1] / denom2;
-    
-    denom2 = denom2 * time_step_;
-    coef1b = denom2*(BC*AA + BC*BC + 3.0*AC*AB - 14.0*cosines/AA);
-    coef2b = denom2*(AB*CC + AB*AB + 3.0*AC*BC - 14.0*cosines/CC);
-    coef3b = denom2*(AC*BB + AC*AC + 3.0*BC*AB - 14.0*cosines/BB);
-    la::AddExpert(-coef1b, r_ij, &force_i);
-    la::AddExpert( coef2b, r_ki, &force_i);
-    la::AddExpert( coef1b, r_ij, &force_j);
-    la::AddExpert(-coef3b, r_jk, &force_j);    
-    la::AddInit(force_i, force_j, &force_k);
-    la::Scale(-1.0, &force_k);
-    //Apply forces  
-    pos_a.Destruct();
-    atoms_.MakeColumnSubvector(a, 4, 3, &pos_a);
-    la::AddExpert(time_step_ / atoms_.get(3,a), force_i, &pos_a);
-    b->stat().ApplyForce(force_j);
-    c->stat().ApplyForce(force_k);   
-    total_triples_++;
-  }
-
-  void ThreeBodyForce_(int a, int b, ParticleTree* c){
-    Vector r_ij, r_jk, r_ki, pos_a, pos_b;
-    atoms_.MakeColumnSubvector(a, 0, 3, &pos_a);  
-    atoms_.MakeColumnSubvector(b, 0, 3, &pos_b);
-    la::SubInit(pos_a, pos_b, &r_ij);
-    la::SubInit(pos_b, c->stat().centroid_, &r_jk);
-    la::SubInit(c->stat().centroid_, pos_a, &r_ki);
-    if (boundary_ == PERIODIC){
-      AdjustVector_(&r_ij);
-      AdjustVector_(&r_jk);
-      AdjustVector_(&r_ki);
-    }    
-    double AA, BB, CC, AB, AC, BC, coef1, coef2, coef3;
-    double cosines, denom;    
-    // Extra Terms
-    double denom2, coef1b, coef2b, coef3b;
-    AA = la::Dot(r_ij, r_ij);
-    CC = la::Dot(r_ki, r_ki);
-    BB = la::Dot(r_jk, r_jk);
-    AC = la::Dot(r_ij, r_ki);
-    AB = la::Dot(r_ij, r_jk);
-    BC = la::Dot(r_ki, r_jk);
-    cosines = BC*AC*AB;
-    denom = AA*BB*CC;
-    denom2 = pow(denom, 3.5);
-    denom = pow(denom, 2.5);
-    denom = 3.0 * axilrod_teller_.get(0,a) * axilrod_teller_.get(0,b) *
-       c->stat().axilrod_[0] / denom;   
-    denom = denom * time_step_;
-    Vector force_i, force_j, force_k;
-    coef1 = denom*(2.0*AB*AC + BC*BC - 5.0*cosines/AA);
-    coef2 = denom*(2.0*BC*AC + AB*AB - 5.0*cosines/CC);
-    coef3 = denom*(2.0*AB*BC + AC*AC - 5.0*cosines/BB);	      
-    la::ScaleInit(-coef1, r_ij, &force_i);
-    la::AddExpert( coef2, r_ki, &force_i);
-    la::ScaleInit( coef1, r_ij, &force_j);
-    la::AddExpert(-coef3, r_jk, &force_j);
-    
-    // Extra Term stuff    
-    denom2 = 5.0 *  axilrod_teller_.get(1,a) * axilrod_teller_.get(1,b) *
-      c->stat().axilrod_[1] / denom2;
-    
-    denom2 = denom2 * time_step_;
-    coef1b = denom2*(BC*AA + BC*BC + 3.0*AC*AB - 14.0*cosines/AA);
-    coef2b = denom2*(AB*CC + AB*AB + 3.0*AC*BC - 14.0*cosines/CC);
-    coef3b = denom2*(AC*BB + AC*AC + 3.0*BC*AB - 14.0*cosines/BB);
-    la::AddExpert(-coef1b, r_ij, &force_i);
-    la::AddExpert( coef2b, r_ki, &force_i);
-    la::AddExpert( coef1b, r_ij, &force_j);
-    la::AddExpert(-coef3b, r_jk, &force_j);    
-    la::AddInit(force_i, force_j, &force_k);
-    la::Scale(-1.0, &force_k);
-    //Apply forces  
-    pos_a.Destruct();
-    pos_b.Destruct();
-    atoms_.MakeColumnSubvector(a, 4, 3, &pos_a);
-    atoms_.MakeColumnSubvector(b, 4, 3, &pos_b);
-    la::AddExpert(time_step_ / atoms_.get(3,a), force_i, &pos_a);
-    la::AddExpert(time_step_ / atoms_.get(3,b), force_j, &pos_b);   
-    c->stat().ApplyForce(force_k);   
-    total_triples_++;
-  }
-
 
 
   // Three body force between three atoms
@@ -558,58 +406,6 @@ private:
     la::ScaleOverwrite(time_step_, err, bounds);
   }
 
-
-  void GetForceRangeDual_(int query, ParticleTree* ref,
-			  Vector* bounds){       
-    double range_q = 0, range_r = 0;   
-    double rnorm = 0, Rnorm = 0;
-    Vector delta, qpos;
-    atoms_.MakeColumnSubvector(query, 0, 3, &qpos);
-    la::SubInit(qpos, ref->stat().centroid_, &delta);
-    AdjustVector_(&delta);
-    double Rad = sqrt(la::Dot(delta, delta));
-
-    Vector node_r;
-    node_r.Init(3);
-    for (int i = 0; i < 3; i++){
-      node_r[i] = ref->bound().width(i, dimensions_[i])/ 2;
-      rnorm = rnorm + node_r[i];   
-      Rnorm = Rnorm + fabs(delta[i]);
-    }
-    double rad = sqrt(la::Dot(node_r, node_r)) / Rad;
-    rnorm = rnorm / Rnorm;
-  
-    for (int i = 0; i < forces_.n_rows(); i++){
-      int power = abs((int)powers_[i]);  
-      double coef = fabs(ref->stat().interactions_[i].coef()*
-			 forces_.get(i, query));			
-      range_q += coef*GetForceTermPt_(Rad, rad, Rnorm, rnorm, power);
-      range_r += coef*GetForceTerm_(Rad, rad, Rnorm, rnorm, power);
-    }    
-
-    double rmin = 2.8;
-    double Rmin = sqrt(ref->bound().PeriodicMinDistanceSq(qpos,dimensions_));
-    for (int d = 0; d < 10; d++){
-      int a = abs((int)power3a_[d]);  
-      int b = abs((int)power3b_[d]);  
-      int c = abs((int)power3c_[d]);  
-      double coef = fabs(ref->stat().axilrod_[0]*axilrod_teller_.get(0, query)*
-			 a*signs3_[d]);
-      range_q += coef*Rnorm*ref->stat().axilrod_[0]/(pow(Rmin, a+b+2)*
-						      pow(rmin,c));
-      range_r += coef*ref->stat().axilrod_[0]/(pow(Rmin, b+c)*pow(rmin, a+1));
-    }
-    range_r = range_r / ref->count();
-
-    Vector err; 
-    err.Init(2);
-    err[0] = fabs(range_q);
-    err[1] = fabs(range_r);
-  
-    la::ScaleOverwrite(time_step_, err, bounds);
-  }
-  
-
    void GetForceRangeTriple_(ParticleTree* i, ParticleTree* j, ParticleTree *k,
 			  Vector* bounds){       
     double range_i = 0, range_j = 0, range_k = 0;
@@ -675,128 +471,6 @@ private:
     err[2] = fabs(range_k);
     la::ScaleOverwrite(time_step_, err, bounds);
   }
- 
-  void GetForceRangeTriple_(int i, ParticleTree* j, ParticleTree *k,
-			  Vector* bounds){       
-    double range_i = 0, range_j = 0, range_k = 0;
-    double Rij, Rjk, Rki, rj, rk, rjk;
-    double rnj = 0, rnjk = 0, rnk = 0, Rnij = 0, Rnjk = 0, Rnki = 0;
-    Vector delta_ij, delta_jk, delta_ki, pos_i;
-    atoms_.MakeColumnSubvector(i, 0, 3, &pos_i);
-    la::SubInit(pos_i, j->stat().centroid_, &delta_ij);
-    la::SubInit(j->stat().centroid_, k->stat().centroid_, &delta_jk);
-    la::SubInit(k->stat().centroid_, pos_i, &delta_ki);
-    AdjustVector_(&delta_ij);
-    AdjustVector_(&delta_jk);
-    AdjustVector_(&delta_ki);
-    Rij = sqrt(la::Dot(delta_ij, delta_ij));
-    Rjk = sqrt(la::Dot(delta_jk, delta_jk));
-    Rki = sqrt(la::Dot(delta_ki, delta_ki));
-
-    Vector bj, bk;   
-    bj.Init(3);
-    bk.Init(3);
-    for (int d = 0; d < 3; d++){     
-      bj[d] = j->bound().width(d, dimensions_[d]) / 2;
-      bk[d] = k->bound().width(d, dimensions_[d]) / 2;
-      rnj = rnj + bj[d];
-      rnjk = rnjk + bj[d] + bk[d];
-      rnk = rnk + bk[d];
-      Rnij = Rnij + fabs(delta_ij[d]);
-      Rnjk = Rnjk + fabs(delta_jk[d]);
-      Rnki = Rnki + fabs(delta_ki[d]);
-    }  
-    rj = la::Dot(bj, bj);
-    rk = la::Dot(bk, bk);   
-    rjk = sqrt(rj+rk)/Rjk;
-    rj = sqrt(rj)/Rij;
-    rk = sqrt(rk)/Rki;
-  
-    for (int d = 0; d < 10; d++){
-      int a = abs((int)power3a_[d]);  
-      int b = abs((int)power3b_[d]);  
-      int c = abs((int)power3c_[d]);  
-      double coef = j->stat().axilrod_[0]*k->stat().axilrod_[0]*signs3_[d]*
-	axilrod_teller_.get(0,i);
-      range_i += coef*GetPotentialTerm_(Rjk, rjk, b)*
-	(GetForceTermPt_(Rij, rj, Rnij, rnj,a)*GetPotentialTermPt_(Rki, rk,c)+
-	 GetForceTermPt_(Rki, rk, Rnki, rnk,c)*GetPotentialTermPt_(Rij, rj,a));
-      range_j+= coef*GetPotentialTermPt_(Rki, rk, c)*
-	(GetForceTerm_(Rij, rj, Rnij, rnj,a)*GetPotentialTerm_(Rjk, rjk,b)+
-	 GetForceTerm_(Rjk, rjk, Rnjk, rnjk,b)*GetPotentialTerm_(Rij, rj,a));
-      range_k+= coef*GetPotentialTermPt_(Rij, rj, a)*
-	(GetForceTerm_(Rjk, rjk, Rnjk, rnjk,b)*GetPotentialTerm_(Rki, rk,c)+
-	 GetForceTerm_(Rki, rk, Rnki, rnk,c)*GetPotentialTerm_(Rjk, rjk,b)); 
-    }  
-    range_j = range_j / j->count();
-    range_k = range_k / k->count();
-    Vector err;
-    err.Init(3);
-   
-    err[0] = fabs(range_i);
-    err[1] = fabs(range_j);
-    err[2] = fabs(range_k);
-    la::ScaleOverwrite(time_step_, err, bounds);
-  }
-
-
-  void GetForceRangeTriple_(int i, int j, ParticleTree *k,
-			  Vector* bounds){       
-    double range_i = 0, range_j = 0, range_k = 0;
-    double Rij, Rjk, Rki, rki, rjk;
-    double rnk = 0, Rnij = 0, Rnjk = 0, Rnki = 0;
-    Vector delta_ij, delta_jk, delta_ki, pos_i, pos_j;
-    atoms_.MakeColumnSubvector(i, 0, 3, &pos_i);
-    atoms_.MakeColumnSubvector(j, 0, 3, &pos_j);
-    la::SubInit(pos_i, pos_j, &delta_ij);
-    la::SubInit(pos_j, k->stat().centroid_, &delta_jk);
-    la::SubInit(k->stat().centroid_, pos_i, &delta_ki);
-    AdjustVector_(&delta_ij);
-    AdjustVector_(&delta_jk);
-    AdjustVector_(&delta_ki);
-    Rij = sqrt(la::Dot(delta_ij, delta_ij));
-    Rjk = sqrt(la::Dot(delta_jk, delta_jk));
-    Rki = sqrt(la::Dot(delta_ki, delta_ki));
-
-    Vector bk;      
-    bk.Init(3);
-    for (int d = 0; d < 3; d++){           
-      bk[d] = k->bound().width(d, dimensions_[d]) / 2;     
-      rnk = rnk + bk[d];     
-      Rnij = Rnij + fabs(delta_ij[d]);
-      Rnjk = Rnjk + fabs(delta_jk[d]);
-      Rnki = Rnki + fabs(delta_ki[d]);
-    }  
-   
-    double rk = la::Dot(bk, bk);
-    rki = sqrt(rk)/Rki;
-    rjk = sqrt(rk)/Rjk;
-    
-    for (int d = 0; d < 10; d++){
-      int a = abs((int)power3a_[d]);  
-      int b = abs((int)power3b_[d]);  
-      int c = abs((int)power3c_[d]);  
-      double coef = k->stat().axilrod_[0]*signs3_[d]*axilrod_teller_.get(0,i)
-	*axilrod_teller_.get(0,j);    
-      range_i += coef*GetPotentialTerm_(Rjk, rjk, b)*
-	(GetForceTerm_(Rij, 0, Rnij, 0,a)*GetPotentialTerm_(Rki, rki,c)+
-	 GetForceTerm_(Rki, rki, Rnki, rnk,c)*GetPotentialTerm_(Rij, 0,a));
-      range_j += coef*GetPotentialTerm_(Rki, rki, c)*
-	(GetForceTerm_(Rij, 0, Rnij, 0,a)*GetPotentialTerm_(Rjk, rjk,b)+
-	 GetForceTerm_(Rjk, rk, Rnjk, rnk,b)*GetPotentialTerm_(Rij, 0,a));
-      range_k += coef*GetPotentialTerm_(Rij, 0, a)*
-	(GetForceTerm_(Rjk, rjk, Rnjk, rnk,b)*GetPotentialTerm_(Rki, rki,c)+
-	 GetForceTerm_(Rki, rki, Rnki, rnk,c)*GetPotentialTerm_(Rjk, rjk,b));
-    }    
-    range_k = range_k / k->count();
-    Vector err;
-    err.Init(3);
-    err[0] = fabs(range_i);
-    err[1] = fabs(range_j);
-    err[2] = fabs(range_k);
-    
-    la::ScaleOverwrite(time_step_, err, bounds);
-  }
 
   void GetPotentialRangeTriple_(ParticleTree* i, ParticleTree* j, ParticleTree *k,
 			  Vector* bounds){       
@@ -855,108 +529,7 @@ private:
     la::ScaleOverwrite(time_step_, err, bounds);
   }
 
-  void GetPotentialRangeTriple_(int i, ParticleTree* j, ParticleTree *k,
-			  Vector* bounds){       
-    double range_i = 0, range_j = 0, range_k = 0;
-    double Rij, Rjk, Rki, rij, rki, rjk;
-
-    Vector delta_ij, delta_jk, delta_ki, pos_i;
-    atoms_.MakeColumnSubvector(i, 0, 3, &pos_i);
-    la::SubInit(pos_i, j->stat().centroid_, &delta_ij);
-    la::SubInit(j->stat().centroid_, k->stat().centroid_, &delta_jk);
-    la::SubInit(k->stat().centroid_, pos_i, &delta_ki);
-    AdjustVector_(&delta_ij);
-    AdjustVector_(&delta_jk);
-    AdjustVector_(&delta_ki);
-    Rij = sqrt(la::Dot(delta_ij, delta_ij));
-    Rjk = sqrt(la::Dot(delta_jk, delta_jk));
-    Rki = sqrt(la::Dot(delta_ki, delta_ki));
-
-    Vector bj, bk;    
-    bj.Init(3);
-    bk.Init(3);
-    for (int d = 0; d < 3; d++){     
-      bj[d] = j->bound().width(d, dimensions_[d]) / 2;
-      bk[d] = k->bound().width(d, dimensions_[d]) / 2; 
-    }  
-    la::AddOverwrite(bj, bk, &delta_jk);   
-    rij = sqrt(la::Dot(bj, bj))/Rij;
-    rjk = sqrt(la::Dot(delta_jk, delta_jk))/Rjk;
-    rki = sqrt(la::Dot(bk, bk))/Rki;
-    delta_ij[0] =   GetPotentialTerm_(Rij, rij, 3);
-    delta_ij[1] = GetPotentialTermPt_(Rij, rij, 3);
-    delta_jk[0] =   GetPotentialTerm_(Rjk, rjk, 3);
-    delta_jk[1] = GetPotentialTermPt_(Rjk, rjk, 3);
-    delta_ki[0] =   GetPotentialTerm_(Rki, rki, 3);
-    delta_ki[1] = GetPotentialTermPt_(Rki, rki, 3);
-
-
-    double coef = axilrod_teller_.get(i, 0)*j->stat().axilrod_[0]*
-      k->stat().axilrod_[0]*6;
-    range_i = coef*delta_ij[1]*delta_ki[1]*delta_jk[1];
-    range_j = coef*delta_ij[0]*delta_ki[1]*delta_jk[0];
-    range_k = coef*delta_ij[1]*delta_ki[0]*delta_jk[0];
-  
-    range_j = range_j / j->count();
-    range_k = range_k / k->count();
-    Vector err;
-    err.Init(3);
-   
-    err[0] = fabs(range_i);
-    err[1] = fabs(range_j);
-    err[2] = fabs(range_k);
-    la::ScaleOverwrite(time_step_, err, bounds);
-  }
-
-
-  void GetPotentialRangeTriple_(int i,int j, ParticleTree *k, Vector* bounds){ 
-    double range_i = 0, range_j = 0, range_k = 0;
-    double Rij, Rjk, Rki, rk;
-
-    Vector delta_ij, delta_jk, delta_ki, pos_i, pos_j;
-    atoms_.MakeColumnSubvector(i, 0, 3, &pos_i);
-    atoms_.MakeColumnSubvector(j, 0, 3, &pos_j);
-    la::SubInit(pos_i, pos_j, &delta_ij);
-    la::SubInit(pos_j, k->stat().centroid_, &delta_jk);
-    la::SubInit(k->stat().centroid_, pos_i, &delta_ki);
-    AdjustVector_(&delta_ij);
-    AdjustVector_(&delta_jk);
-    AdjustVector_(&delta_ki);
-    Rij = sqrt(la::Dot(delta_ij, delta_ij));
-    Rjk = sqrt(la::Dot(delta_jk, delta_jk));
-    Rki = sqrt(la::Dot(delta_ki, delta_ki));
-
-    Vector bk;       
-    bk.Init(3);
-    for (int d = 0; d < 3; d++){           
-      bk[d] = k->bound().width(d, dimensions_[d]) / 2; 
-    }       
-    rk = sqrt(la::Dot(bk,bk));   
-    delta_ij[0] =   GetPotentialTerm_(Rij, 0, 3);
-    delta_ij[1] = GetPotentialTermPt_(Rij, 0, 3);
-    delta_jk[0] =   GetPotentialTerm_(Rjk, rk/Rjk, 3);
-    delta_jk[1] = GetPotentialTermPt_(Rjk, rk/Rjk, 3);
-    delta_ki[0] =   GetPotentialTerm_(Rki, rk/Rki, 3);
-    delta_ki[1] = GetPotentialTermPt_(Rki, rk/Rki, 3);
-
-
-    double coef = axilrod_teller_.get(i, 0)*axilrod_teller_.get(j, 0)*
-      k->stat().axilrod_[0]*6;
-    range_i = coef*delta_ij[1]*delta_ki[1]*delta_jk[1];
-    range_j = coef*delta_ij[0]*delta_ki[1]*delta_jk[0];
-    range_k = coef*delta_ij[1]*delta_ki[0]*delta_jk[0];
-  
-    range_k = range_k / k->count();
-    Vector err;
-    err.Init(3);
-   
-    err[0] = fabs(range_i);
-    err[1] = fabs(range_j);
-    err[2] = fabs(range_k);
-    la::ScaleOverwrite(time_step_, err, bounds);
-  }
-
-
+ 
   /**
    * Routines for calling force evaluations
    */
@@ -973,21 +546,6 @@ private:
     }
   }
   
-  void EvaluateLeafForcesThree_(int query, ParticleTree* ref1, 
-				ParticleTree* ref2){    
-    for(int j = ref1->begin(); j < ref1->count() + ref2->begin(); j++){    
-      for(int k = ref2->begin(); k < ref2->count() + ref2->begin(); k++){
-	ThreeBodyForce_(query, j, k);	  
-      }
-    }   
-  }
-
-
-  void EvaluateLeafForcesThree_(int query, int ref1, ParticleTree* ref2){    
-    for(int k = ref2->begin(); k < ref2->count() + ref2->begin(); k++){
-      ThreeBodyForce_(query, ref1, k);	  
-    }   
-  }
 
   // This will also cover overlap cases near the diagonal,
   // so query and ref may be the same node. We can evalute three
@@ -1007,16 +565,7 @@ private:
     }
   }
 
-  void EvaluateLeafForcesDual_(int query, ParticleTree* ref){
-    for(int j = ref->begin(); j < ref->count() + ref->begin(); j++){
-      TwoBodyForce_(query, j);	
-      for(int k = j+1; k < ref->count() + ref->begin(); k++){
-	ThreeBodyForce_(query,j,k);	  
-      }   	                 
-    }
-  }
-  
-
+ 
   void EvaluateLeafForcesSame_(ParticleTree* query){
     for (int i = query->begin(); i < query->begin() + query->count(); i++){
       for (int j = i+1; j < query->begin() + query->count(); j++){
@@ -1127,92 +676,7 @@ private:
     return result;
   }
 
-  int GetPrune_(int i, ParticleTree* j, ParticleTree* k, 
-		ForceError* err_i, ForceError* err_j , ForceError* err_k){
-    int result = 0;
-    if (prune_ == CUTOFF){
-      Vector pos_i;
-      atoms_.MakeColumnSubvector(i, 0, 3, &pos_i);
-      double a_min, b_min, c_min;   
-      if (boundary_ == PERIODIC){
-	a_min = sqrt(j->bound().PeriodicMinDistanceSq(pos_i, dimensions_));  
-	b_min =sqrt(j->bound().PeriodicMinDistanceSq(k->bound(),dimensions_)); 
-	c_min = sqrt(k->bound().PeriodicMinDistanceSq(pos_i, dimensions_));  
-      } else {
-	a_min = sqrt(j->bound().MinDistanceSq(pos_i));    
-	b_min = sqrt(j->bound().MinDistanceSq(k->bound()));       
-	c_min = sqrt(k->bound().MinDistanceSq(pos_i));    
-      }      
-      result = (a_min > cutoff_)+(b_min > cutoff_)+(c_min > cutoff_); 
-      result += (a_min > cutoff3_)*(b_min > cutoff3_)*(c_min > cutoff3_);
-    } else {
-      Vector range;
-      range.Init(3);
-      int c2, c3;     
-      c2 = k->count();
-      c3 = j->count();
-      if (prune_ == POTENTIAL){
-	GetPotentialRangeTriple_(i,j,k, &range);
-      } else {
-	GetForceRangeTriple_(i,j,k, &range);
-      }
-      result = err_i->Check(range[0], c2*c3) * err_j->Check(range[1], c2) * 
-	err_k->Check(range[2], c3);
-      if (result > 0){
-	ThreeBodyForce_(i, j, k);
-	err_i->AddVisited(range[0], c2*c3);
-	err_j->AddVisited(range[1], c2);
-	err_k->AddVisited(range[2], c3);
-      }      
-    }    
-    return result;
-  }
-
-  int GetPrune_(int i, int j, ParticleTree* k, 
-		ForceError* err_i, ForceError* err_j , ForceError* err_k){
-    int result = 0;
-    if (prune_ == CUTOFF){
-      Vector pos_i, pos_j, delta;
-      atoms_.MakeColumnSubvector(i, 0, 3, &pos_i);
-      atoms_.MakeColumnSubvector(j, 0, 3, &pos_j);
-      double a_min, b_min, c_min;   
-      la::SubInit(pos_i, pos_j, &delta);      
-      if (boundary_ == PERIODIC){
-	AdjustVector_(&delta);
-	b_min = sqrt(k->bound().PeriodicMinDistanceSq(pos_j, dimensions_));  
-	c_min = sqrt(k->bound().PeriodicMinDistanceSq(pos_i, dimensions_));  
-      } else {
-	b_min = sqrt(k->bound().MinDistanceSq(pos_j));       
-	c_min = sqrt(k->bound().MinDistanceSq(pos_i));    
-      }      
-      a_min = sqrt(la::Dot(delta, delta));
-      result = (a_min > cutoff_)+(b_min > cutoff_)+(c_min > cutoff_); 
-      result += (a_min > cutoff3_)*(b_min > cutoff3_)*(c_min > cutoff3_);
-    } else {
-      Vector range;
-      range.Init(3);
-      int c;     
-      c = k->count();      
-      if (prune_ == POTENTIAL){
-	GetPotentialRangeTriple_(i,j,k, &range);
-      } else {
-	GetForceRangeTriple_(i,j,k, &range);
-      }
-      result = err_i->Check(range[0], c) * err_j->Check(range[1], c) * 
-	err_k->Check(range[2], 1);
-      if (result > 0){
-	ThreeBodyForce_(i, j, k);
-	err_i->AddVisited(range[0], c);
-	err_j->AddVisited(range[1], c);
-	err_k->AddVisited(range[2], 1);
-      }      
-    }    
-    return result;
-  }
-
-  
-  
-  
+ 
   int GetPrune_(ParticleTree* i, ParticleTree* j,
 		ForceError* err_i, ForceError* err_j){
     int result = 0;
@@ -1245,39 +709,6 @@ private:
     return result;
   }
   
-  int GetPrune_(int i, ParticleTree* j, ForceError* err_i, ForceError* err_j){
-    int result = 0;
-    if (prune_ == CUTOFF){
-      Vector pos_i;
-      atoms_.MakeColumnSubvector(i, 0, 3, &pos_i);
-      double a_min;   
-      if (boundary_ == PERIODIC){
-	a_min = sqrt(j->bound().PeriodicMinDistanceSq(pos_i,dimensions_)); 
-      } else {
-	a_min = sqrt(j->bound().MinDistanceSq(pos_i));   
-      }      
-      result = (a_min > cutoff_);     
-    } else {
-      Vector range;
-      range.Init(2);
-      int c1, c2;
-      c2 = j->count()-1;
-      c1 = j->count() * c2;          
-      if (prune_ == POTENTIAL){
-	//	GetPotentialRangeDual_(i,j,&range);
-      } else {
-	GetForceRangeDual_(i,j,&range);
-     }
-      result = err_i->Check(range[0], c1) * err_j->Check(range[1], c2);
-      if (result > 0){
-	TwoBodyForce_(i, j);
-	err_i->AddVisited(range[0], c1);
-	err_j->AddVisited(range[1], c2);	
-      }      
-    }    
-    return result;
-  }
-
     /**
    * Momentum updating routines.
    */
@@ -1301,37 +732,9 @@ private:
 	  c1 = ref->count() * (query->count()-1 + (ref->count()-1)/2);
 	  c2 = query->count() * (ref->count()-1 + (query->count()-1)/2);     
 	  err_r->AddVisited(0, c2);
-	  err_q->AddVisited(0, c1);
-	  /*
-	  for(int i = query->begin(); i < query->begin()+query->count(); i++){
-	    ForceError err_q2;
-	    err_q2.Copy(err_q);
-	    UpdateMomentumDual_(i, ref, &err_q2, err_r);
-	    err_q->Merge(err_q2);
-	    for (int j = query->begin(); j < i; j++){
-	      ForceError err_q3;
-	      err_q3.Copy(err_q); // We can actually cut ref->count interactions already
-	      UpdateMomentumThree_(i, j, ref, &err_q2, &err_q3, err_r);	     
-	    }	    	    
-	  }	  
-	  // Assume interactions with two points in query were bought at going rate?	  
-	  err_q->AddVisited(0, c1);
-	  */	  
+	  err_q->AddVisited(0, c1);	  
 	}	 
       }
-    }
-  }
-
-
-  void UpdateMomentumDual_(int query, ParticleTree* ref, ForceError* err_q, 
-			   ForceError* err_r){ 
-    if (GetPrune_(query, ref, err_q, err_r) == 0){
-      int c1, c2;
-      c1 = ref->count()*(ref->count()-1)/2;
-      c2 = ref->count()-1;
-      EvaluateLeafForcesDual_(query, ref);
-      err_q->AddVisited(0, c1);
-      err_r->AddVisited(0, c2);
     }
   }
 
@@ -1351,52 +754,6 @@ private:
     }
   }
  
-
-  void UpdateMomentumThree_(int query, int ref1, ParticleTree* ref2, 
-			    ForceError* err_q,
-			    ForceError* err_r1, ForceError* err_r2){
-    if (GetPrune_(query, ref1, ref2, err_q, err_r1, err_r2) == 0){
-      EvaluateLeafForcesThree_(query, ref1, ref2);
-      err_q->AddVisited(0, ref2->count());
-      err_r1->AddVisited(0, ref2->count());
-      err_r2->AddVisited(0, 1);
-    }
-  }
-
-
-  void UpdateMomentumThree_(int query, ParticleTree* ref1, ParticleTree* ref2,
-			    ForceError* err_q, ForceError* err_r1, 
-			    ForceError* err_r2){
-    if (GetPrune_(query, ref1, ref2, err_q, err_r1, err_r2) == 0){
-      int c3, c2;      
-      c2 = ref2->count();
-      c3 = ref1->count();   
-      /*
-      EvaluateLeafForcesThree_(query, ref1, ref2);
-      err_q->AddVisited(0, c2*c3);
-      err_r1->AddVisited(0, c2);
-      err_r2->AddVisited(0, c3);
-      */
-      // Or do we recurse down further?   
-      if (c2 >= c3){
-	for (int i = ref1->begin(); i < ref1->begin() + ref1->count(); i++){  
-	  ForceError err_r12;
-	  err_r12.Copy(err_r1);
-	  UpdateMomentumThree_(query, i, ref2, err_q, &err_r12, err_r2);
-	  err_r1->Merge(err_r12);	 
-	}
-	err_r1->AddVisited(0, c2);
-      } else {      
-	for (int i = ref2->begin(); i < ref2->begin() + ref2->count(); i++){  
-	  ForceError err_r22;
-	  err_r22.Copy(err_r2);
-	  UpdateMomentumThree_(query, i, ref1, err_q, &err_r22, err_r1);
-	  err_r2->Merge(err_r22);	
-	}	
-	err_r2->AddVisited(0, c3);
-      }
-    }
-  }
 
   void UpdateMomentumThree_(ParticleTree* query, ParticleTree* ref1, 
 			    ParticleTree* ref2, ForceError* err_q,
@@ -1425,17 +782,7 @@ private:
 	    EvaluateLeafForcesThree_(query, ref1, ref2);
 	    err_q->AddVisited(0, c1);
 	    err_r1->AddVisited(0, c2);
-	    err_r2->AddVisited(0, c3);
-	    
-	    /*
-	    for (int i=query->begin(); i < query->begin()+query->count(); i++){
-	      ForceError err_q2;
-	      err_q2.Copy(err_q);
-	      UpdateMomentumThree_(i, ref1, ref2, &err_q2, err_r1, err_r2);    
-	      err_q->Merge(err_q2);	      
-	    }
-	    err_q->AddVisited(0, c1);
-	    */
+	    err_r2->AddVisited(0, c3);	    	  
 	  }
 	} 
       }
@@ -1485,16 +832,22 @@ private:
       node->bound() |= node->right()->bound();      
     } else {  // Base Case                
       node->bound().Reset();     
-      la::AddTo(node->stat().velocity_, vel); 
+      Vector node_pos, node_vel;
+      node_pos.Init(3);
+      node_pos.SetZero();
+      node_vel.Init(3);
+      node_vel.SetZero();     
       for(int i = node->begin(); i < node->begin() + node->count(); i++){
 	Vector pos, temp;
-	atoms_.MakeColumnSubvector(i, 4, 3, &temp);
+	atoms_.MakeColumnSubvector(i, 4, 3, &temp);	
 	la::AddTo(*vel, &temp);
+	la::AddExpert(atoms_.get(3, i), temp, &node_vel);
 	atoms_.MakeColumnSubvector(i, 0, 3, &pos);
 	la::AddExpert(time_step_, temp, &pos);
+	la::AddExpert(atoms_.get(3, i), pos, &node_pos);
 	node->bound() |= pos;
       }            
-      node->stat().InitKinematics(node->begin(), node->count(), atoms_);
+      node->stat().UpdateKinematics(node_pos, node_vel);
     }      
   }
     
@@ -1635,15 +988,13 @@ private:
 
 public:
      
-    MultiPhysicsSystem(){
-      system_ = NULL;
+    MultiPhysicsSystem(){     
       query_ = NULL;
     }
     
     
-    ~MultiPhysicsSystem(){     
-      if (system_ != NULL){
-      }     
+    ~MultiPhysicsSystem(){      
+      delete system_;
     }
     
   ////////////////////////////// Public Functions ////////////////////////////
@@ -1691,7 +1042,7 @@ public:
     dimensions_[0] = fx_param_double(param, "lx", 60);
     dimensions_[1] = fx_param_double(param, "ly", 60);
     dimensions_[2] = fx_param_double(param, "lz", 60);
-    system_ = NULL; 
+    //   system_ = NULL; 
     old_from_new_map_.Init(0);    
     new_from_old_map_.Init(0);   
   } // InitNaive
@@ -1708,7 +1059,7 @@ public:
     signs_.Init(stats_in.n_rows());
     powers_.CopyValues(power_in);
     signs_.CopyValues(signs_in);
-    if (system_ != NULL){     
+    if (&system_ != NULL){     
       forces_.Init(stats_in.n_rows(), stats_in.n_cols());
       // Reindex cols of stats matrix.
       for (int i = 0; i < n_atoms_; i++){

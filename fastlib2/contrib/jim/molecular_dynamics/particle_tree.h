@@ -20,14 +20,24 @@
 struct ParticleStat { 
   friend class TestParticleStat;
 
+ 
   Vector centroid_;
   Vector velocity_; 
-  double mass_, radius_;
+  double mass_;
   ArrayList<TwoBodyStat> interactions_;
-  Vector axilrod_;
-  Vector delta_, temp_delta_;
+  Vector axilrod_; 
   int start_, count_;
   
+  FORBID_ACCIDENTAL_COPIES(ParticleStat);
+
+  public:
+     
+    ParticleStat(){
+    }
+    
+    
+    ~ParticleStat(){         
+    }
 
   /**
    * Default Initialization
@@ -59,11 +69,6 @@ struct ParticleStat {
     velocity_.SetZero();   
     la::ScaleInit(left_stat.mass_ / mass_, left_stat.centroid_, &centroid_);
     la::AddExpert(right_stat.mass_ /mass_, right_stat.centroid_, &centroid_);  
-    Vector temp;
-    la::ScaleInit(-1.0, left_stat.centroid_, &temp);
-    la::AddTo(right_stat.centroid_, &temp);
-    radius_ = sqrt(la::Dot(temp, temp));
-    radius_ = radius_ + left_stat.radius_ + right_stat.radius_;    
     axilrod_.Init(2);
   }
 
@@ -125,18 +130,14 @@ struct ParticleStat {
       dataset.MakeColumnSubvector(i, 0, 3, &temp);      
       la::AddExpert(dataset.get(3, i), temp, &centroid_);    
     }  
-    la::Scale(1.0 / mass_, &centroid_);   
-    for (int i = start_; i < start_ + count_; i++){
-      double new_rad = 0;
-      Vector temp1, temp2;
-      dataset.MakeColumnSubvector(i, 0, 3, &temp1);
-      la::SubInit(centroid_, temp1, &temp2);     
-      new_rad = la::Dot(temp2, temp2);
-      if (new_rad > radius_){
-	radius_ = new_rad;
-      }     
-    }  
-    radius_ = sqrt(radius_);
+    la::Scale(1.0 / mass_, &centroid_);      
+  }
+
+  void UpdateKinematics(const Vector& centroid_in, const Vector& vel_in){
+    centroid_.Destruct();
+    velocity_.Destruct();
+    la::ScaleInit(1.0 / mass_, centroid_in, &centroid_);
+    la::ScaleInit(1.0 / mass_, vel_in, &velocity_);
   }
 
   void UpdateCentroid(const ParticleStat& left, const ParticleStat& right){
@@ -145,9 +146,7 @@ struct ParticleStat {
     la::AddExpert(right.mass_, right.centroid_, &centroid_);
     la::Scale(1.0 / mass_, &centroid_);
     Vector temp;
-    la::SubInit(left.centroid_, right.centroid_, &temp);
-    radius_ = sqrt(la::Dot(temp, temp));
-    radius_ = radius_ + left.radius_ + right.radius_;    
+    la::SubInit(left.centroid_, right.centroid_, &temp);   
   }
 
   void UpdateCentroid(double time_step, const Vector& external_vel){
