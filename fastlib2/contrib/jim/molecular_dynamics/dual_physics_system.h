@@ -99,33 +99,6 @@ private:
  
   }
 
-
-  void TwoBodyForce_(int left, ParticleTree* right){
-    Vector delta_r, left_vec;    
-    atoms_.MakeColumnSubvector(left, 0, 3, &left_vec);  
-    la::SubInit(right->stat().centroid_, left_vec, &delta_r);
-    if (boundary_ == PERIODIC){
-      AdjustVector_(&delta_r);
-    }
-    double dist = sqrt(la::Dot(delta_r, delta_r));  
-    double coef = 0, temp;
-    for (int i  = 0; i < forces_.n_rows(); i++){
-      temp = -forces_.get(i, left)*right->stat().interactions_[i].coef();
-      coef = coef + signs_[i]*temp*powers_[i]*pow(dist, powers_[i]-2);
-    }     
-  
-    virial_ = virial_ +  coef*dist*dist;   
-    la::Scale(coef, &delta_r);    
-    // Apply forces to particles
-    left_vec.Destruct();    
-    atoms_.MakeColumnSubvector(left, 4, 3, &left_vec);   
-    la::AddExpert(time_step_ / atoms_.get(3,left), delta_r, &left_vec);   
-    la::Scale(-time_step_, &delta_r);
-    right->stat().ApplyForce(delta_r);
-    percent_pruned_ = percent_pruned_ + 1;
-  }
-
-
   // Two body force between two atoms
   void TwoBodyForce_(int left, int right){   
     Vector delta_r, left_vec, right_vec;    
@@ -280,46 +253,7 @@ private:
   
     la::ScaleOverwrite(time_step_, err, bounds);
   }
-
-
-  void GetForceRangeDual_(int query, ParticleTree* ref,
-			  Vector* bounds){       
-    double range_q = 0, range_r = 0;   
-    double rnorm = 0, Rnorm = 0;
-    Vector delta, qpos;
-    atoms_.MakeColumnSubvector(query, 0, 3, &qpos);
-    la::SubInit(qpos, ref->stat().centroid_, &delta);
-    AdjustVector_(&delta);
-    double Rad = sqrt(la::Dot(delta, delta));
-
-    Vector node_r;
-    node_r.Init(3);
-    for (int i = 0; i < 3; i++){
-      node_r[i] = ref->bound().width(i, dimensions_[i])/ 2;
-      rnorm = rnorm + node_r[i];   
-      Rnorm = Rnorm + fabs(delta[i]);
-    }
-    double rad = sqrt(la::Dot(node_r, node_r));
-    
-  
-    for (int i = 0; i < forces_.n_rows(); i++){
-      int power = abs((int)powers_[i]);  
-      double coef = fabs(ref->stat().interactions_[i].coef()*
-			 forces_.get(i, query));			
-      range_q += coef*GetForceTermPt_(Rad, rad, Rnorm, rnorm, power);
-      range_r += coef*GetForceTerm_(Rad, rad, Rnorm, rnorm, power);
-    }    
-
-    range_r = range_r / ref->count();
-
-    Vector err; 
-    err.Init(2);
-    err[0] = fabs(range_q);
-    err[1] = fabs(range_r);
-  
-    la::ScaleOverwrite(time_step_, err, bounds);
-  }
-
+ 
 
  /**
    * Routines for calling force evaluations
@@ -338,13 +272,6 @@ private:
       }           
     }
   }
-
-  void EvaluateLeafForcesDual_(int query, ParticleTree* ref){
-    for(int j = ref->begin(); j < ref->count() + ref->begin(); j++){
-      TwoBodyForce_(query, j);     	                 
-    }
-  }
-  
 
   void EvaluateLeafForcesSame_(ParticleTree* query){
     for (int i = query->begin(); i < query->begin() + query->count(); i++){
@@ -415,38 +342,6 @@ private:
     }    
     return result;
   }
-  
-  int GetPrune_(int i, ParticleTree* j, ForceError* err_i, ForceError* err_j){
-    int result = 0;
-    if (prune_ == CUTOFF){
-      Vector pos_i;
-      atoms_.MakeColumnSubvector(i, 0, 3, &pos_i);
-      double a_min;   
-      if (boundary_ == PERIODIC){
-	a_min = sqrt(j->bound().PeriodicMinDistanceSq(pos_i,dimensions_)); 
-      } else {
-	a_min = sqrt(j->bound().MinDistanceSq(pos_i));   
-      }      
-      result = (a_min > cutoff_);     
-    } else {
-      Vector range;
-      range.Init(2);
-      int c1;     
-      c1 = j->count();          
-      if (prune_ == POTENTIAL){
-	//	GetPotentialRangeDual_(i,j,&range);
-      } else {
-	GetForceRangeDual_(i,j,&range);
-     }
-      result = err_i->Check(range[0], c1) * err_j->Check(range[1], 1);
-      if (result > 0){
-	TwoBodyForce_(i, j);
-	err_i->AddVisited(range[0], c1);
-	err_j->AddVisited(range[1], 1);	
-      }      
-    }    
-    return result;
-  }
 
     /**
    * Momentum updating routines.
@@ -469,30 +364,10 @@ private:
 	  // Update Error Terms	 
 	  err_r->AddVisited(0, ref->count());
 	  err_q->AddVisited(0, query->count());
-	  /*
-	    for(int i = query->begin(); i < query->begin()+query->count(); i++){
-	    ForceError err_q2;
-	    err_q2.Copy(err_q);
-	    UpdateMomentumDual_(i, ref, &err_q2, err_r);
-	    err_q->Merge(err_q2);
-	  }	  
-	  err_q->AddVisited(0, c1);
-	  */
 	}	 
       }
     }
   }
-
-
-  void UpdateMomentumDual_(int query, ParticleTree* ref, ForceError* err_q, 
-			   ForceError* err_r){ 
-    if (GetPrune_(query, ref, err_q, err_r) == 0){     
-      EvaluateLeafForcesDual_(query, ref);
-      err_q->AddVisited(0, ref->count());
-      err_r->AddVisited(0, 1);
-    }
-  }
-
 
 
   void UpdateMomentumMain_(ParticleTree* query, ForceError* err_q){
@@ -548,17 +423,23 @@ private:
       node->bound() |= node->left()->bound();
       node->bound() |= node->right()->bound();      
     } else {  // Base Case                
-      node->bound().Reset();     
-      la::AddTo(node->stat().velocity_, vel); 
+    node->bound().Reset();     
+      Vector node_pos, node_vel;
+      node_pos.Init(3);
+      node_pos.SetZero();
+      node_vel.Init(3);
+      node_vel.SetZero();     
       for(int i = node->begin(); i < node->begin() + node->count(); i++){
 	Vector pos, temp;
-	atoms_.MakeColumnSubvector(i, 4, 3, &temp);
+	atoms_.MakeColumnSubvector(i, 4, 3, &temp);	
 	la::AddTo(*vel, &temp);
+	la::AddExpert(atoms_.get(3, i), temp, &node_vel);
 	atoms_.MakeColumnSubvector(i, 0, 3, &pos);
 	la::AddExpert(time_step_, temp, &pos);
+	la::AddExpert(atoms_.get(3, i), pos, &node_pos);
 	node->bound() |= pos;
       }            
-      node->stat().InitKinematics(node->begin(), node->count(), atoms_);
+      node->stat().UpdateKinematics(node_pos, node_vel);
     }      
   }
     
@@ -696,8 +577,7 @@ public:
     
     
     ~DualPhysicsSystem(){     
-      if (system_ != NULL){
-      }     
+      delete system_;
     }
     
   ////////////////////////////// Public Functions ////////////////////////////
