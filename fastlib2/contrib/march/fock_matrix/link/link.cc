@@ -3,14 +3,14 @@
 
 bool Link::Prescreening_Sort_(BasisShell* shellA, BasisShell* shellB) {
 
-  return ((shellA->max_schwartz_factor() * shellA->current_density_entry()) < 
+  return ((shellA->max_schwartz_factor() * shellA->current_density_entry()) > 
           (shellB->max_schwartz_factor() * shellB->current_density_entry()));
 
 }
 
 bool Link::ShellPairSort_(ShellPair* shellA, ShellPair* shellB) {
 
-  return(shellA->schwartz_factor() < shellB->schwartz_factor());
+  return(shellA->schwartz_factor() > shellB->schwartz_factor());
 
 }
 
@@ -28,7 +28,7 @@ void Link::PrescreeningLoop_() {
                                             
   fx_result_int(module_, "num_shell_pairs", num_shell_pairs_);
   fx_result_int(module_, "num_shell_pairs_screened", 
-                num_shell_pairs_ - (num_shells_ * (num_shells_ - 1) / 2) - num_shells_);
+                (num_shells_ * (num_shells_ - 1) / 2) - num_shell_pairs_);
   
   //// Find significant \nu for all \mu
   
@@ -92,6 +92,7 @@ void Link::PrescreeningLoop_() {
              significant_nu_for_mu_[i][a]->current_density_entry());
       
     }
+    printf("\n\n");
     */
         
     // sort significant_sigma_for_nu_[i] for all i
@@ -99,6 +100,15 @@ void Link::PrescreeningLoop_() {
     std::sort(significant_sigma_for_nu_[i], 
               significant_sigma_for_nu_[i]+num_significant_sigma_for_nu_[i], 
               Link::ShellPairSort_);
+
+    /*
+    for (index_t a = 0; a < num_significant_sigma_for_nu_[i]; a++) {
+      printf("sort_val: %g\n", 
+             significant_sigma_for_nu_[i][a]->schwartz_factor());
+      
+    }
+    printf("\n\n");
+    */
     
   } // for i
   
