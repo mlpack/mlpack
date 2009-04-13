@@ -176,11 +176,13 @@ int main(int argc, char *argv[])
       target_trips = trips;
     }
     simulation.UpdatePositions(time_step);   
+    
     if (pct < 0.85*target_pct || trips > 1.1*target_trips){
       simulation.RebuildTree();
       simulation.ReinitStats(lj_matrix); 
       simulation.ReinitAxilrodTeller(at_matrix, at_params);
     }
+    
     if ((int)(time / time_step -0.5) % 5 == 0){      
       tree_simulation.Reset();
       simulation.RadialDistribution(&tree_simulation);
@@ -211,8 +213,7 @@ int main(int argc, char *argv[])
 	printf("Percent Pruned: %f \n", pct);
 	printf("Triples Computed: %d \n \n", trips);
       }
-      fprintf(stats, "%f %f %f \n", time, pressure,
-	      temperature);
+      fprintf(stats, "%f %f %f \n", time, pressure, temperature);
       fflush(stats);
       if (set_temp > 0){
 	simulation.ScaleToTemperature(set_temp);
