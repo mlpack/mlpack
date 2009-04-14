@@ -152,10 +152,12 @@ int main(int argc, char* argv[]) {
   }
   const char* exp_name = exp_string.c_str();
   
+  /*
   printf(centers_name);
   printf("\n");
   printf(exp_name);
   printf("\n\n");
+  */
   
   std::string directory(dir_char);
   std::string underscore("_");
