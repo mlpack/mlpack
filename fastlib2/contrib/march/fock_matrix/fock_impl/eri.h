@@ -31,7 +31,10 @@ namespace eri {
                            
   double IntegralGPTFactor(double A_exp, Vector& A_vec, 
                            double B_exp, Vector& B_vec);
-                           
+                  
+  double IntegralMomentumFactor(double gamma_p, double gamma_q, 
+                                double four_way_dist_sq);                         
+           
   double IntegralMomentumFactor(double alpha_A, double alpha_B, double alpha_C, 
                                 double alpha_D, double four_way_dist);
                            

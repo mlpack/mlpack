@@ -31,6 +31,57 @@ double MultiTreeFock::NodeAveNorm_(FockTree* mu) {
   
 }
 
+double MultiTreeFock::NodesMaxIntegral_(SquareTree* mu_nu, SquareTree* rho_sigma) {
+
+  double integral = 2 * pow_pi_2point5_;
+  
+  integral *= mu_nu->stat().max_gpt_factor();
+  integral *= rho_sigma->stat().max_gpt_factor();
+  
+  integral *= mu_nu->query1()->stat().max_normalization();
+  integral *= mu_nu->query2()->stat().max_normalization();
+  integral *= rho_sigma->query1()->stat().max_normalization();
+  integral *= rho_sigma->query2()->stat().max_normalization();
+
+  integral /= (mu_nu->stat().min_gamma() * rho_sigma->stat().min_gamma() * 
+               (mu_nu->stat().min_gamma() + rho_sigma->stat().min_gamma()));
+               
+  double four_way_dist_sq = mu_nu->bound().MinDistanceSq(rho_sigma->bound());
+  
+  integral *= eri::IntegralMomentumFactor(mu_nu->stat().min_gamma(), 
+                                          rho_sigma->stat().min_gamma(), 
+                                          four_way_dist_sq);
+
+  return integral;
+
+} // NodesMaxIntegral(SquareTree)
+
+double MultiTreeFock::NodesMinIntegral_(SquareTree* mu_nu, SquareTree* rho_sigma) {
+  
+  double integral = 2 * pow_pi_2point5_;
+  
+  integral *= mu_nu->stat().min_gpt_factor();
+  integral *= rho_sigma->stat().min_gpt_factor();
+  
+  integral *= mu_nu->query1()->stat().min_normalization();
+  integral *= mu_nu->query2()->stat().min_normalization();
+  integral *= rho_sigma->query1()->stat().min_normalization();
+  integral *= rho_sigma->query2()->stat().min_normalization();
+  
+  integral /= (mu_nu->stat().max_gamma() * rho_sigma->stat().max_gamma() * 
+               (mu_nu->stat().max_gamma() + rho_sigma->stat().max_gamma()));
+  
+  double four_way_dist_sq = mu_nu->bound().MaxDistanceSq(rho_sigma->bound());
+  
+  integral *= eri::IntegralMomentumFactor(mu_nu->stat().max_gamma(), 
+                                          rho_sigma->stat().max_gamma(), 
+                                          four_way_dist_sq);
+  
+  return integral;
+  
+} // NodesMaxIntegral(SquareTree)
+
+
 
 double MultiTreeFock::NodesMaxIntegral_(FockTree* mu, FockTree* nu, 
                                         FockTree* rho, FockTree* sigma) {
@@ -222,13 +273,13 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
   
   bool can_prune = false;
   
-  double up_bound = NodesMaxIntegral_(mu, nu, rho, sigma);
+  double up_bound = NodesMaxIntegral_(mu_nu, rho_sigma);
   //printf("up_bound: %g, ", up_bound);
   if (fabs(up_bound) < bounds_cutoff_) {
     up_bound = 0.0;
   } 
                     
-  double low_bound = NodesMinIntegral_(mu, nu, rho, sigma);
+  double low_bound = NodesMinIntegral_(mu_nu, rho_sigma);
   //printf("low_bound: %g\n", low_bound);
   if (fabs(low_bound) < bounds_cutoff_) {
     low_bound = 0.0;
@@ -1325,6 +1376,12 @@ void MultiTreeFock::SetExponentBounds_(FockTree* tree) {
     
     tree->stat().set_max_bandwidth(max_exp);
     tree->stat().set_min_bandwidth(min_exp);
+    
+    double max_norm = eri::ComputeNormalization(max_exp, 0);
+    double min_norm = eri::ComputeNormalization(min_exp, 0);
+    
+    tree->stat().set_max_normalization(max_norm);
+    tree->stat().set_min_normalization(min_norm);
   
   } // is leaf
   else {
@@ -1337,6 +1394,12 @@ void MultiTreeFock::SetExponentBounds_(FockTree* tree) {
 
     tree->stat().set_min_bandwidth(min(tree->left()->stat().min_bandwidth(), 
                                        tree->right()->stat().min_bandwidth()));
+                                       
+    tree->stat().set_max_normalization(max(tree->left()->stat().max_normalization(), 
+                                           tree->right()->stat().max_normalization()));
+
+    tree->stat().set_min_normalization(min(tree->left()->stat().min_normalization(), 
+                                           tree->right()->stat().min_normalization()));
   
   } // not leaf
 
