@@ -181,13 +181,20 @@ double IntegralGPTFactor(double A_exp, Vector& A_vec,
 }
 
 
+double IntegralMomentumFactor(double gamma_p, double gamma_q, 
+                              double four_way_dist_sq) {
+
+  return F_0_(four_way_dist_sq * gamma_p * gamma_q/(gamma_p + gamma_q));
+
+}
+
 double IntegralMomentumFactor(double alpha_A, double alpha_B, double alpha_C, 
                               double alpha_D, double four_way_dist) {
 
   double gamma_AB = alpha_A + alpha_B;
   double gamma_CD = alpha_C + alpha_D;
   
-  return F_0_(four_way_dist * gamma_AB * gamma_CD/(gamma_AB + gamma_CD));
+  return IntegralMomentumFactor(gamma_AB, gamma_CD, four_way_dist);
 
 }
 

@@ -3,7 +3,6 @@
 
 #include "fastlib/fastlib.h"
 #include "square_fock_tree.h"
-#include "contrib/march/fock_matrix/fock_impl/eri.h"
 
 const fx_entry_doc multi_tree_fock_entries[] = {
   {"epsilon", FX_PARAM, FX_DOUBLE, NULL, 
@@ -75,6 +74,10 @@ private:
     // I don't think these matter in single nodes
     double density_upper_bound_;
     double density_lower_bound_;
+    
+    // the minimum and maximum normalization factor for this node
+    double max_normalization_;
+    double min_normalization_;
     
    public:
 
@@ -160,6 +163,23 @@ private:
     double density_lower_bound() const {
       return density_lower_bound_;
     } // density_lower_bound()
+    
+    double max_normalization() const {
+      return max_normalization_;
+    }
+    
+    void set_max_normalization(double max_in) {
+      max_normalization_ = max_in;
+    }
+    
+    double min_normalization() const {
+      return min_normalization_;
+    }
+    
+    void set_min_normalization(double min_in) {
+      min_normalization_ = min_in;
+    }
+    
   
   }; // class SingleNodeStat
   
@@ -242,6 +262,9 @@ private:
   // having trouble with bounds very close to zero
   double bounds_cutoff_;
   
+  // all integrals have a factor of pi^(2.5)
+  double pow_pi_2point5_;
+  
   
   //////////////// Functions /////////////////////////////
   
@@ -259,9 +282,13 @@ private:
    */
   double NodesMaxIntegral_(FockTree* mu, FockTree* nu, FockTree* rho, 
                            FockTree* sigma);
+                           
+  double NodesMaxIntegral_(SquareTree* mu_nu, SquareTree* rho_sigma);                           
   
   double NodesMinIntegral_(FockTree* mu, FockTree* nu, FockTree* rho,
                            FockTree* sigma);
+
+  double NodesMinIntegral_(SquareTree* mu_nu, SquareTree* rho_sigma);
   
   double NodesMidpointIntegral_(FockTree* mu, FockTree* nu, FockTree* rho, 
                                 FockTree* sigma);
@@ -452,6 +479,8 @@ private:
 
     
     bounds_cutoff_ = 10e-30;
+    
+    pow_pi_2point5_ = pow(math::PI, 2.5);
     
   } // Init()
   

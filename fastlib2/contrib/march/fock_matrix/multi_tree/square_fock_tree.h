@@ -1,6 +1,8 @@
 #ifndef SQUARE_FOCK_TREE_H
 #define SQUARE_FOCK_TREE_H
 
+#include "contrib/march/fock_matrix/fock_impl/eri.h"
+
 /**
  * The square tree, necessary for the multi tree fock code.
  */
@@ -38,6 +40,15 @@ class SquareFockTree {
     
     double remaining_epsilon_;
     
+    // the K_1 value in the integral
+    // will only be useful for the coulomb computation
+    double max_gpt_factor_;
+    double min_gpt_factor_;
+    
+    // bounds on sum of exponents
+    double max_gamma_;
+    double min_gamma_;
+    
     
    public:
       
@@ -57,7 +68,7 @@ class SquareFockTree {
       
       remaining_references_ = left.remaining_references();
       DEBUG_ASSERT(remaining_references_ == right.remaining_references());
-      
+     
     } // void Init (2 children)
   
     void Init(index_t start1, index_t end1, index_t start2, index_t end2, 
@@ -133,7 +144,38 @@ class SquareFockTree {
       return remaining_epsilon_;
     }
     
-  
+    double max_gpt_factor() const {
+      return max_gpt_factor_;
+    }
+    
+    void set_max_gpt_factor(double fac) {
+      max_gpt_factor_ = fac;
+    }
+    
+    double min_gpt_factor() const {
+      return min_gpt_factor_;
+    }
+    
+    void set_min_gpt_factor(double fac) {
+      min_gpt_factor_ = fac;
+    }
+    
+    double max_gamma() const {
+      return max_gamma_;
+    }
+    
+    void set_max_gamma(double gam) {
+      max_gamma_ = gam;
+    }
+
+    double min_gamma() const {
+      return min_gamma_;
+    }
+    
+    void set_min_gamma(double gam) {
+      min_gamma_ = gam;
+    }
+    
   }; // class SquareFockStat
   
   ////////////////// Member variables //////////////////////////
@@ -147,6 +189,8 @@ class SquareFockTree {
   SquareFockTree* right_child_;
   
   SquareFockStat stat_;
+  
+  DHrectBound<2> bound_;
   
   
  public:
@@ -166,6 +210,7 @@ class SquareFockTree {
       index_t q1_height = query1_->stat().height();
       index_t q2_height = query2_->stat().height();
       
+      
       DEBUG_ASSERT(query1_root->end() > query2_root->begin());
       
       if (q1_height == 0 && q2_height == 0) {
@@ -175,7 +220,7 @@ class SquareFockTree {
         
         stat_.Init(query1_->begin(), query1_->end(), query2_->begin(), 
                    query2_->end(), num_funs);
-        
+                   
       }
       // I'm assuming that query1_ will always have two significant children
       // it's fine to split q1, since this will only increase it's index
@@ -224,7 +269,7 @@ class SquareFockTree {
           
           stat_.Init(query1_->begin(), query1_->end(), query2_->begin(), 
                      query2_->end(), num_funs);
-          
+                     
         }
         // Idea: since query2 isn't necessary, go farther down query2
         else {
@@ -256,7 +301,7 @@ class SquareFockTree {
           left_child_->Init(query1_->left(), query2_, num_funs);
           right_child_->Init(query1_->right(), query2_, num_funs);
           
-          stat_.Init(left_child_->stat(), right_child_->stat());        
+          stat_.Init(left_child_->stat(), right_child_->stat()); 
           
         }
         // q1 is too low to split twice
@@ -271,7 +316,7 @@ class SquareFockTree {
           
           stat_.Init(query1_->begin(), query1_->end(), query2_->begin(), 
                      query2_->end(), num_funs);
-          
+                               
         }
         // q1 is split twice
         else {
@@ -293,12 +338,61 @@ class SquareFockTree {
         
       } // q1 higher 
       
+      // set stats and bounds
+      // leaf
+      if (left_child_ == NULL) {
+        
+        double min_dist = query1_->bound().MinDistanceSq(query2_->bound());
+        double max_fac = eri::IntegralGPTFactor(query1_->stat().min_bandwidth(), 
+                                                query2_->stat().min_bandwidth(), 
+                                                min_dist);
+                                                
+        double max_dist = query1_->bound().MaxDistanceSq(query2_->bound());
+        double min_fac = eri::IntegralGPTFactor(query1_->stat().max_bandwidth(), 
+                                                query2_->stat().max_bandwidth(), 
+                                                max_dist);
+        
+        stat_.set_max_gpt_factor(max_fac);
+        stat_.set_min_gpt_factor(min_fac);
+        
+        bound_.WeightedAverageBoxesInit(query1_->stat().min_bandwidth(), 
+                                        query1_->stat().max_bandwidth(), 
+                                        query1_->bound(), 
+                                        query2_->stat().min_bandwidth(), 
+                                        query2_->stat().max_bandwidth(), 
+                                        query2_->bound());
+                               
+        stat_.set_max_gamma(query1_->stat().max_bandwidth() 
+                            + query2_->stat().max_bandwidth());
+        stat_.set_min_gamma(query1_->stat().min_bandwidth() 
+                            + query2_->stat().min_bandwidth());
+              
+      }
+      // non-leaf
+      else {
+      
+        stat_.set_max_gpt_factor(max(left_child_->stat().max_gpt_factor(), 
+                                     right_child_->stat().max_gpt_factor()));
+        stat_.set_min_gpt_factor(min(left_child_->stat().min_gpt_factor(), 
+                                     right_child_->stat().min_gpt_factor()));
+                                     
+        bound_.Init(3);
+        bound_|=left_child_->bound();
+        bound_|=right_child_->bound();   
+        
+        stat_.set_max_gamma(max(left_child_->stat().max_gamma(), 
+                                right_child_->stat().max_gamma()));
+        stat_.set_min_gamma(min(left_child_->stat().min_gamma(), 
+                                right_child_->stat().min_gamma()));
+      
+      }
+      
       /*    
         DEBUG_ASSERT(stat_.density_upper_bound() < DBL_MAX);
       DEBUG_ASSERT(stat_.density_lower_bound() > -DBL_MAX);
       */
       
-    } // Init() (two-children)
+  } // Init() (two-children)
   
   QueryTree* query1() {
     return query1_;
@@ -326,6 +420,14 @@ class SquareFockTree {
   
   SquareFockStat& stat() {
     return stat_;
+  }
+  
+  const DHrectBound<2>& bound() const {
+    return bound_;
+  }
+  
+  DHrectBound<2>& bound() {
+    return bound_;
   }
   
   void Print() {
