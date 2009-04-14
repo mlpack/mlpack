@@ -136,6 +136,27 @@ int main(int argc, char* argv[]) {
   // these won't work with fx_run
   const char* dir_char = fx_param_str(root_mod, "naive_storage", 
                                       "naive_storage/");
+                                      
+  // strip the filenames for use with fx-run
+  std::string centers_string(centers_file);
+  size_t centers_last = centers_string.find_last_of("/");
+  if (centers_last != std::string::npos) {
+    centers_string.erase(0, centers_last+1);
+  } 
+  const char* centers_name = centers_string.c_str();
+  
+  std::string exp_string(exp_file);
+  size_t exp_last = exp_string.find_last_of("/");
+  if (exp_last != std::string::npos) {
+    exp_string.erase(0, exp_last+1);
+  }
+  const char* exp_name = exp_string.c_str();
+  
+  printf(centers_name);
+  printf("\n");
+  printf(exp_name);
+  printf("\n\n");
+  
   std::string directory(dir_char);
   std::string underscore("_");
   std::string under_F("_F.csv");
@@ -143,15 +164,15 @@ int main(int argc, char* argv[]) {
   std::string under_K("_K.csv");
   
   std::string naive_fock_string;
-  naive_fock_string = directory + centers_file + underscore + exp_file + under_F;
+  naive_fock_string = directory + centers_name + underscore + exp_name + under_F;
   const char* naive_fock_file = naive_fock_string.c_str();
 
   std::string naive_coulomb_string;
-  naive_coulomb_string = directory + centers_file + underscore + exp_file + under_J;
+  naive_coulomb_string = directory + centers_name + underscore + exp_name + under_J;
   const char* naive_coulomb_file = naive_coulomb_string.c_str();
 
   std::string naive_exchange_string;
-  naive_exchange_string = directory + centers_file + underscore + exp_file + under_K;
+  naive_exchange_string = directory + centers_name + underscore + exp_name + under_K;
   const char* naive_exchange_file = naive_exchange_string.c_str();
 
   
