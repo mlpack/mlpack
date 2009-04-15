@@ -478,7 +478,10 @@ private:
     fx_timer_stop(module_, "multi_time");
 
     
-    bounds_cutoff_ = 10e-30;
+    bounds_cutoff_ = fx_param_double(module_, "bounds_cutoff", 0.0);
+    if (bounds_cutoff_ < 0.0) {
+      bounds_cutoff_ = 0.0;
+    }
     
     pow_pi_2point5_ = pow(math::PI, 2.5);
     
