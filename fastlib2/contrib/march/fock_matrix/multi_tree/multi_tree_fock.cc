@@ -122,9 +122,13 @@ double MultiTreeFock::NodesMaxIntegral_(FockTree* mu, FockTree* nu,
                                    mu_nu_min_dist, rho_sigma_min_dist, 
                                    four_way_min_dist);
                                    
-  integral *= NodeMaxNorm_(mu) * NodeMaxNorm_(nu) * 
-    NodeMaxNorm_(rho) * NodeMaxNorm_(sigma);
-
+  //integral *= NodeMaxNorm_(mu) * NodeMaxNorm_(nu) * 
+  //  NodeMaxNorm_(rho) * NodeMaxNorm_(sigma);
+    
+  integral *= mu->stat().max_normalization();
+  integral *= nu->stat().max_normalization();
+  integral *= rho->stat().max_normalization();
+  integral *= sigma->stat().max_normalization();
   
   return integral;
 
@@ -172,9 +176,14 @@ double MultiTreeFock::NodesMinIntegral_(FockTree* mu, FockTree* nu,
   
   //printf("min_integral: %g\n", integral);
                                    
-  integral *= NodeMinNorm_(mu) * NodeMinNorm_(nu) * 
-    NodeMinNorm_(rho) * NodeMinNorm_(sigma);
+  //integral *= NodeMinNorm_(mu) * NodeMinNorm_(nu) * 
+  //  NodeMinNorm_(rho) * NodeMinNorm_(sigma);
 
+  integral *= mu->stat().min_normalization();
+  integral *= nu->stat().min_normalization();
+  integral *= rho->stat().min_normalization();
+  integral *= sigma->stat().min_normalization();
+  
   
   return integral;
   
@@ -236,7 +245,7 @@ bool MultiTreeFock::RectangleOnDiagonal_(FockTree* mu,
   else {
     return true;
   }
-
+  
 } // RectangleOnDiagonal_  
 
 
@@ -266,10 +275,13 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
                                            SquareTree* rho_sigma, 
                                            double* approx_out) {
 
+  /*
   FockTree* mu = mu_nu->query1();
   FockTree* nu = mu_nu->query2();
+  */
   FockTree* rho = rho_sigma->query1();
   FockTree* sigma = rho_sigma->query2();
+  
   
   bool can_prune = false;
   
@@ -285,7 +297,7 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
     low_bound = 0.0;
   } 
   
-  //printf("up_bound: %g, low_bound: %g\n", up_bound, low_bound);
+  printf("up_bound: %g, low_bound: %g\n", up_bound, low_bound);
   DEBUG_ASSERT(up_bound >= low_bound);
   
   
@@ -395,7 +407,7 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
   
   DEBUG_ONLY(*approx_out = BIG_BAD_NUMBER);
   
-  //printf("max_err: %g, allowed_err: %g\n", my_max_error, my_allowed_error);
+  printf("max_err: %g, allowed_err: %g\n", my_max_error, my_allowed_error);
   
   if (my_max_error <= my_allowed_error) {
     

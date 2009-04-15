@@ -2,6 +2,7 @@
 
 namespace eri {
 
+  const double pow_pi_2point5 = pow(math::PI, 2.5);
 
 double double_factorial(int m) {
   
@@ -145,7 +146,7 @@ double ComputeGPTCenter(Vector& A_vec, double alpha_A, Vector& B_vec,
  */
 double IntegralPrefactor(double gamma_p, double gamma_q) {
 
-  double factor = 2 * pow(math::PI, 2.5);
+  double factor = 2 * pow_pi_2point5;
   factor = factor/(gamma_p * gamma_q * sqrt(gamma_p + gamma_q));
   
   return factor;
