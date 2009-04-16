@@ -338,61 +338,106 @@ class SquareFockTree {
         
       } // q1 higher 
       
-      // set stats and bounds
-      // leaf
-      if (left_child_ == NULL) {
-        
-        double min_dist = query1_->bound().MinDistanceSq(query2_->bound());
-        double max_fac = eri::IntegralGPTFactor(query1_->stat().min_bandwidth(), 
-                                                query2_->stat().min_bandwidth(), 
-                                                min_dist);
-                                                
-        double max_dist = query1_->bound().MaxDistanceSq(query2_->bound());
-        double min_fac = eri::IntegralGPTFactor(query1_->stat().max_bandwidth(), 
-                                                query2_->stat().max_bandwidth(), 
-                                                max_dist);
-        
-        stat_.set_max_gpt_factor(max_fac);
-        stat_.set_min_gpt_factor(min_fac);
-        
-        bound_.WeightedAverageBoxesInit(query1_->stat().min_bandwidth(), 
-                                        query1_->stat().max_bandwidth(), 
-                                        query1_->bound(), 
-                                        query2_->stat().min_bandwidth(), 
-                                        query2_->stat().max_bandwidth(), 
-                                        query2_->bound());
-                               
-        stat_.set_max_gamma(query1_->stat().max_bandwidth() 
-                            + query2_->stat().max_bandwidth());
-        stat_.set_min_gamma(query1_->stat().min_bandwidth() 
-                            + query2_->stat().min_bandwidth());
-              
-      }
-      // non-leaf
-      else {
-      
-        stat_.set_max_gpt_factor(max(left_child_->stat().max_gpt_factor(), 
-                                     right_child_->stat().max_gpt_factor()));
-        stat_.set_min_gpt_factor(min(left_child_->stat().min_gpt_factor(), 
-                                     right_child_->stat().min_gpt_factor()));
-                                     
-        bound_.Init(3);
-        bound_|=left_child_->bound();
-        bound_|=right_child_->bound();   
-        
-        stat_.set_max_gamma(max(left_child_->stat().max_gamma(), 
-                                right_child_->stat().max_gamma()));
-        stat_.set_min_gamma(min(left_child_->stat().min_gamma(), 
-                                right_child_->stat().min_gamma()));
-      
-      }
-      
-      /*    
+            /*    
         DEBUG_ASSERT(stat_.density_upper_bound() < DBL_MAX);
       DEBUG_ASSERT(stat_.density_lower_bound() > -DBL_MAX);
       */
       
   } // Init() (two-children)
+  
+  
+  void SetStatsAndBounds(const Matrix& points, const Vector& exponents) {
+    // set stats and bounds
+    // leaf
+    if (left_child_ == NULL) {
+      
+      double min_dist = query1_->bound().MinDistanceSq(query2_->bound());
+      double max_fac = eri::IntegralGPTFactor(query1_->stat().min_bandwidth(), 
+                                              query2_->stat().min_bandwidth(), 
+                                              min_dist);
+      
+      double max_dist = query1_->bound().MaxDistanceSq(query2_->bound());
+      double min_fac = eri::IntegralGPTFactor(query1_->stat().max_bandwidth(), 
+                                              query2_->stat().max_bandwidth(), 
+                                              max_dist);
+      
+      stat_.set_max_gpt_factor(max_fac);
+      stat_.set_min_gpt_factor(min_fac);
+      
+      /*bound_.WeightedAverageBoxesInit(query1_->stat().min_bandwidth(), 
+        query1_->stat().max_bandwidth(), 
+        query1_->bound(), 
+        query2_->stat().min_bandwidth(), 
+        query2_->stat().max_bandwidth(), 
+        query2_->bound());
+
+  */
+      
+      // set bound exhaustively
+      // need access to bandwidths to do this correctly
+      bound_.Init(3);
+      
+      for (index_t i = query1_->begin(); i < query1_->end(); i++) {
+        
+        Vector i_vec;
+        //points.MakeColumnVector(i ,&i_vec);
+        i_vec.Copy(points.GetColumnPtr(i), 3);
+        la::Scale(exponents[i], &i_vec);
+        
+        for (index_t j = query2_->begin(); j < query2_->end(); j++) {
+          
+          Vector j_vec;
+          //points.MakeColumnVector(j, &j_vec);     
+          j_vec.Copy(points.GetColumnPtr(j), 3);
+          la::Scale(exponents[j], &j_vec);     
+          
+          Vector bound_vec;
+          la::AddInit(i_vec, j_vec, &bound_vec);
+          la::Scale(1/(exponents[i] + exponents[j]), &bound_vec);
+          
+          /*
+          i_vec.PrintDebug("i_vec");
+          j_vec.PrintDebug("j_vec");
+          printf("exp[%d]: %g, exp[%d]: %g\n", i, exponents[i], j, exponents[j]);
+          bound_vec.PrintDebug("bound_vec");
+          printf("\n\n");
+          */
+          
+          bound_|=bound_vec;
+          
+        }
+          
+      }
+        
+      stat_.set_max_gamma(query1_->stat().max_bandwidth() 
+                          + query2_->stat().max_bandwidth());
+      stat_.set_min_gamma(query1_->stat().min_bandwidth() 
+                          + query2_->stat().min_bandwidth());
+      
+    }
+    // non-leaf
+    else {
+      
+      left_child_->SetStatsAndBounds(points, exponents);
+      right_child_->SetStatsAndBounds(points, exponents);
+      
+      stat_.set_max_gpt_factor(max(left_child_->stat().max_gpt_factor(), 
+                                   right_child_->stat().max_gpt_factor()));
+      stat_.set_min_gpt_factor(min(left_child_->stat().min_gpt_factor(), 
+                                   right_child_->stat().min_gpt_factor()));
+      
+      bound_.Init(3);
+      bound_|=left_child_->bound();
+      bound_|=right_child_->bound();   
+      
+      stat_.set_max_gamma(max(left_child_->stat().max_gamma(), 
+                              right_child_->stat().max_gamma()));
+      stat_.set_min_gamma(min(left_child_->stat().min_gamma(), 
+                              right_child_->stat().min_gamma()));
+      
+    }
+  }   
+    
   
   QueryTree* query1() {
     return query1_;

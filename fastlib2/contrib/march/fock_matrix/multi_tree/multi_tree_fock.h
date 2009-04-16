@@ -454,20 +454,22 @@ private:
     // Set up the indices of the nodes for symmetry pruning
     traversal_index_ = 0;
     
+    // IMPORTANT: permute the exponents, mommenta, and density
+    
+    ApplyPermutation(old_from_new_centers_, &exponents_);
+    ApplyPermutation(old_from_new_centers_, &momenta_);
 
     printf("====Square Tree Building====\n");
     
     fx_timer_start(module_, "square_tree_building");
     square_tree_ = new SquareTree();
     square_tree_->Init(tree_, tree_, number_of_basis_functions_);
+    square_tree_->SetStatsAndBounds(centers_, exponents_);
     fx_timer_stop(module_, "square_tree_building");
     
-    // IMPORTANT: permute the exponents, mommenta, and density
     density_matrix_.Init(number_of_basis_functions_, number_of_basis_functions_);
     UpdateMatrices(density_in);
     
-    ApplyPermutation(old_from_new_centers_, &exponents_);
-    ApplyPermutation(old_from_new_centers_, &momenta_);
     
     relative_error_ = !fx_param_exists(module_, "absolute_error");
     
