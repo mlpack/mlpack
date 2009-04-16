@@ -69,7 +69,7 @@ void SchwartzPrescreening::ComputeFockMatrix(Matrix* fock_out,
   
   fx_result_int(module_, "num_shell_pairs", num_shell_pairs_);
   fx_result_int(module_, "num_shell_pairs_screened", 
-                num_shells_ * (num_shells_ - 1) / 2);
+                num_shells_ * ((num_shells_ - 1) / 2) - num_shell_pairs_ + num_shells_);
   
   
   printf("====Screening and Computing Integrals====\n");
