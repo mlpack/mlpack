@@ -35,6 +35,9 @@ double MultiTreeFock::NodesMaxIntegral_(SquareTree* mu_nu, SquareTree* rho_sigma
 
   double integral = 2 * pow_pi_2point5_;
   
+  double mu_nu_dist = mu_nu->query1()->bound().MinDistanceSq(mu_nu->query2()->bound());
+  double rho_sigma_dist = rho_sigma->query1()->bound().MinDistanceSq(rho_sigma->query2()->bound());
+  
   integral *= mu_nu->stat().max_gpt_factor();
   integral *= rho_sigma->stat().max_gpt_factor();
   
@@ -48,6 +51,11 @@ double MultiTreeFock::NodesMaxIntegral_(SquareTree* mu_nu, SquareTree* rho_sigma
                
   double four_way_dist_sq = mu_nu->bound().MinDistanceSq(rho_sigma->bound());
   
+  /*
+  printf("Min Dists: mu_nu = %g, rho_sigma = %g, four_way = %g\n",
+         mu_nu_dist, rho_sigma_dist, four_way_dist_sq);
+  */
+  
   integral *= eri::IntegralMomentumFactor(mu_nu->stat().min_gamma(), 
                                           rho_sigma->stat().min_gamma(), 
                                           four_way_dist_sq);
@@ -59,6 +67,10 @@ double MultiTreeFock::NodesMaxIntegral_(SquareTree* mu_nu, SquareTree* rho_sigma
 double MultiTreeFock::NodesMinIntegral_(SquareTree* mu_nu, SquareTree* rho_sigma) {
   
   double integral = 2 * pow_pi_2point5_;
+  
+  double mu_nu_dist = mu_nu->query1()->bound().MaxDistanceSq(mu_nu->query2()->bound());
+  double rho_sigma_dist = rho_sigma->query1()->bound().MaxDistanceSq(rho_sigma->query2()->bound());
+
   
   integral *= mu_nu->stat().min_gpt_factor();
   integral *= rho_sigma->stat().min_gpt_factor();
@@ -76,6 +88,11 @@ double MultiTreeFock::NodesMinIntegral_(SquareTree* mu_nu, SquareTree* rho_sigma
   integral *= eri::IntegralMomentumFactor(mu_nu->stat().max_gamma(), 
                                           rho_sigma->stat().max_gamma(), 
                                           four_way_dist_sq);
+  
+  /*
+  printf("Max Dists: mu_nu = %g, rho_sigma = %g, four_way = %g\n",
+         mu_nu_dist, rho_sigma_dist, four_way_dist_sq);
+  */
   
   return integral;
   
@@ -297,7 +314,11 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
     low_bound = 0.0;
   } 
   
-  printf("up_bound: %g, low_bound: %g\n", up_bound, low_bound);
+  if (low_bound > 0.0) {
+    printf("low_bound: %g\n", low_bound);
+  }
+  
+  //printf("up_bound: %g, low_bound: %g\n", up_bound, low_bound);
   DEBUG_ASSERT(up_bound >= low_bound);
   
   
@@ -407,7 +428,7 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
   
   DEBUG_ONLY(*approx_out = BIG_BAD_NUMBER);
   
-  printf("max_err: %g, allowed_err: %g\n", my_max_error, my_allowed_error);
+  //printf("max_err: %g, allowed_err: %g\n", my_max_error, my_allowed_error);
   
   if (my_max_error <= my_allowed_error) {
     
@@ -438,8 +459,8 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
       lost_error = 0.0;
     }
     
-    mu_nu->stat().set_remaining_epsilon(mu_nu->stat().remaining_epsilon()
-                                        - lost_error);
+    //mu_nu->stat().set_remaining_epsilon(mu_nu->stat().remaining_epsilon()
+    //                                    - lost_error);
       
     
     DEBUG_ASSERT(mu_nu->stat().remaining_epsilon() >= 0.0);
@@ -556,6 +577,8 @@ bool MultiTreeFock::CanApproximateExchange_(SquareTree* mu_nu,
   up_bound *= rho->count() * sigma->count();
   low_bound *= rho->count() * sigma->count();
   approx_val *= rho->count() * sigma->count();
+  
+  // what about counting the references twice
   
   DEBUG_ASSERT(up_bound >= approx_val);
   DEBUG_ASSERT(approx_val >= low_bound);
@@ -751,8 +774,8 @@ void MultiTreeFock::ComputeCoulombBaseCase_(SquareTree* mu_nu,
                    (rho->end() < sigma->end())));
   }
   
-  mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
-                                         - new_refs);
+  //mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
+  //                                       - new_refs);
   
 } // ComputeCoulombBaseCase_
 
@@ -950,7 +973,7 @@ void MultiTreeFock::FillApproximationCoulomb_(SquareTree* mu_nu,
     }
     
     // reduces remaining references, but never alters epsilon
-    mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() - new_refs);
+    //mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() - new_refs);
     
     
     mu_nu->stat().set_approximation_val(integral_approximation);
