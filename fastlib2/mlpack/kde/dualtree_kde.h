@@ -365,7 +365,16 @@ class DualtreeKde {
   void Compute(Vector *results) {
 
     // compute normalization constant
-    mult_const_ = 1.0 / ka_.kernel_.CalcNormConstant(qset_.n_rows());
+    if(fx_param_exists(module_, "normalizing_dimension"))  {
+      NOTIFY("Using normalizing dimension of %d", 
+	     fx_param_int(module_, "normalizing_dimension", qset_.n_rows()));
+      mult_const_ = 1.0 / ka_.kernel_.CalcNormConstant
+	(fx_param_int(module_, "normalizing_dimension", qset_.n_rows()));
+    }
+    else {
+      NOTIFY("Using the default dimension of %d", qset_.n_rows());
+      mult_const_ = 1.0 / ka_.kernel_.CalcNormConstant(qset_.n_rows());
+    }
 
     // Set accuracy parameters.
     relative_error_ = fx_param_double(module_, "relative_error", 0.1);
