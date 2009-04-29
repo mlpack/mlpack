@@ -38,6 +38,7 @@ class GeneralBinarySpaceTree {
   GeneralBinarySpaceTree *right_;
   index_t begin_;
   index_t count_;
+  index_t node_id_; // the id of this node in the tree
   Statistic stat_;
 
   // index of the splitting point in the old dataset
@@ -73,12 +74,13 @@ class GeneralBinarySpaceTree {
   }
   */
   
-  void Init(index_t begin_in, index_t count_in) {
+  void Init(index_t begin_in, index_t count_in, index_t node_id_in) {
     DEBUG_ASSERT(begin_ == BIG_BAD_NUMBER);
     DEBUG_POISON_PTR(left_);
     DEBUG_POISON_PTR(right_);
     begin_ = begin_in;
     count_ = count_in;
+    node_id_ = node_id_in;
     split_point_idx_old_ = -1;
   }
 
@@ -169,7 +171,7 @@ class GeneralBinarySpaceTree {
   }
 
   bool is_leaf() const {
-    return !left_;
+    return (!left_ && !right_);
   }
 
   /**
@@ -207,6 +209,13 @@ class GeneralBinarySpaceTree {
    */
   index_t count() const {
     return count_;
+  }
+
+  /**
+   * Gets the id of this node
+   */
+  index_t node_id() const {
+    return node_id_;
   }
   
   void Print() const {

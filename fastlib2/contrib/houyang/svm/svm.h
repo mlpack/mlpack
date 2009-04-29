@@ -9,6 +9,7 @@
  * @see opt_smo.h
  * @see opt_sgd.h
  * @see opt_hcy.h
+ * @see opt_sga.h
  */
 
 #ifndef U_SVM_SVM_H
@@ -17,6 +18,7 @@
 #include "opt_smo.h"
 #include "opt_sgd.h"
 #include "opt_hcy.h"
+#include "opt_sga.h"
 
 #include "fastlib/fastlib.h"
 
@@ -100,7 +102,7 @@ class SVM {
    * Developers may add more learner types if necessary
    */
   int learner_typeid_;
-  // Optimization method: smo, sgd, hcy
+  // Optimization method: smo, sgd, hcy, sga
   String opt_method_;
   /* array of models for storage of the 2-class(binary) classifiers 
      Need to train num_classes_*(num_classes_-1)/2 binary models */
@@ -150,6 +152,10 @@ class SVM {
     // for SVM_C of unbalanced data
     double Cp_; // C for y==1
     double Cn_; // C for y==-1
+    // for nu-SVM
+    double nu_;
+    // for bias regularization
+    double mu_;
     // for SVM_R
     double epsilon_;
     // working set selection scheme of SMO, 1 for 1st order expansion; 2 for 2nd order expansion
@@ -174,6 +180,7 @@ class SVM {
   class SMO<Kernel>;
   class SGD<Kernel>;
   class HCY<Kernel>;
+  class SGA<Kernel>;
 
   void Init(int learner_typeid, const Dataset& dataset, datanode *module);
   void InitTrain(int learner_typeid, const Dataset& dataset, datanode *module);
@@ -251,12 +258,17 @@ void SVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *mo
   // accuracy for optimization
   param_.accuracy_ = fx_param_double(NULL, "accuracy", 1e-4);
   // number of iterations
-  param_.n_iter_ = fx_param_int(NULL, "n_iter", 10000);
+  param_.n_iter_ = fx_param_int(NULL, "n_iter", 1000000);
 
   // the tradeoff parameter "C", default: 10.0
   param_.C_ = fx_param_double(NULL, "c", 10.0);
   param_.Cp_ = fx_param_double(NULL, "c_p", param_.C_);
   param_.Cn_ = fx_param_double(NULL, "c_n", param_.C_);
+
+  // for nu-SVM
+  param_.nu_ = fx_param_double(NULL, "nu", 1.0);
+  // for bias regularization
+  param_.mu_ = fx_param_double(NULL, "mu", 1.0);
 
   if (learner_typeid == 1) { // for SVM_R only
     // the "epsilon", default: 0.1
@@ -423,6 +435,31 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	models_[ct].bias_ = hcy.Bias(); // bias
 	models_[ct].w_.Init(0); // for linear SGD only. not used here
 	hcy.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
+      }
+      else if (opt_method_== "sga") {
+	/* Initialize SGA parameters */
+	ArrayList<double> param_feed_db;
+	param_feed_db.Init();
+	param_feed_db.PushBack() = param_.nu_; // for nu-SVM
+	param_feed_db.PushBack() = param_.mu_; // for bias term regularization
+	param_feed_db.PushBack() = param_.n_iter_;
+	param_feed_db.PushBack() = param_.accuracy_;
+	SGA<Kernel> sga;
+	sga.InitPara(learner_typeid, param_feed_db);
+	
+	/* Initialize kernel */
+	sga.kernel().Init(fx_submodule(module, "kernel"));
+
+	/* 2-classes SVM training using SGA */
+	fx_timer_start(NULL, "train_sga");
+	sga.Train(learner_typeid, &dataset_bi);
+	fx_timer_stop(NULL, "train_sga");
+	
+	/* Get the trained bi-class model */
+	models_[ct].coef_.Init(); // alpha*y
+	models_[ct].bias_ = sga.Bias(); // bias
+	models_[ct].w_.Init(0); // for linear SGD only. not used here
+	sga.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
       }
       else {
 	fprintf(stderr, "ERROR!!! Unknown optimization method!\n");
@@ -631,7 +668,7 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
   double sum = 0.0;
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
-      if (opt_method_== "smo" || opt_method_== "hcy") {
+      if (opt_method_== "smo" || opt_method_== "hcy" || opt_method_== "sga") {
 	sum = 0.0;
 	for(k = 0; k < sv_list_ct_[i]; k++) {
 	  sum += sv_coef_.get(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];
