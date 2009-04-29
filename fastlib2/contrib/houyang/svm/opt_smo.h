@@ -162,7 +162,7 @@ class SMO {
 
   bool WorkingSetSelection_(index_t &i, index_t &j);
 
-  void UpdateGradientAlphaBias_(index_t i, index_t j);
+  void UpdateGradientAlpha_(index_t i, index_t j);
 
   void CalcBias_();
 
@@ -332,6 +332,7 @@ void SMO<TKernel>::Shrinking_() {
   }
 
   // Find the alpha to be shrunk
+  printf("Shrinking...\n");
   for (t=0; t<n_active_; t++) {
     // Shrinking: put inactive alphas behind the active set
     if (TestShrink_(t, y_grad_max, y_grad_min)) {
@@ -353,6 +354,7 @@ void SMO<TKernel>::Shrinking_() {
 
   // Determine whether need to do Unshrinking
   if ( unshrinked_==false && y_grad_max - y_grad_min <= SMO_UNSHRINKING_FACTOR * accuracy_ ) {
+    printf("Unshrinking...\n");
     // Unshrinking: put shrinked alphas back to active set
     // 1.recover gradient
     ReconstructGradient_(learner_typeid_);
@@ -484,9 +486,13 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   
   // Begin SMO iterations
   ct_iter_ = 0;
-  ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING) + 1;
+  ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING);
   int stop_condition = 0;
   while (1) {
+    //for(index_t i=0; i<n_alpha_; i++)
+    //  printf("%f.\n", y_[i]*alpha_[i]);
+    //printf("\n\n");
+      
     // for every min(n_data_, 1000) iterations, do shrinking
     if (--ct_shrinking_ == 0) {
       Shrinking_();
@@ -503,6 +509,8 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       break;
     }
     else if (stop_condition == 2) {// max num of iterations exceeded
+      // Calculate the bias term
+      CalcBias_();
       fprintf(stderr, "SMO terminates since the number of iterations %d exceeded !!!\n", n_iter_);
       break;
     }
@@ -519,7 +527,7 @@ int SMO<TKernel>::SMOIterations_() {
   ct_iter_ ++;
   index_t i,j;
   if (WorkingSetSelection_(i,j) == true) {
-    ReconstructGradient_(learner_typeid_); // reconstruct the whole gradient
+    ReconstructGradient_(learner_typeid_); // restore the inactive alphas and reconstruct gradients
     n_active_ = n_alpha_;
     if (WorkingSetSelection_(i,j) == true) { // optimality reached
       return 1;
@@ -533,7 +541,7 @@ int SMO<TKernel>::SMOIterations_() {
     return 2;
   }
   else{ // update gradient, alphas and bias term, and continue iterations
-    UpdateGradientAlphaBias_(i, j);
+    UpdateGradientAlpha_(i, j);
     return 0;
   }
 }
@@ -648,6 +656,9 @@ bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
     }
   }
   out_j = idx_j; // j found
+
+  //printf("y_i+y_j=%d\n", y_[out_i]+y_[out_j]);
+  //printf("a_i=%f, a_j=%f\n", alpha_[out_i], alpha_[out_j]);
   
   // Stopping Criterion check
   if (y_grad_max - y_grad_min <= accuracy_)
@@ -663,7 +674,7 @@ bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
 *
 */
 template<typename TKernel>
-void SMO<TKernel>::UpdateGradientAlphaBias_(index_t i, index_t j) {
+void SMO<TKernel>::UpdateGradientAlpha_(index_t i, index_t j) {
   index_t t;
 
   double a_i = alpha_[i]; // old alphas

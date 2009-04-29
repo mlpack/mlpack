@@ -74,11 +74,17 @@ svm_main --learner_name=svm_c --opt=sgd --n_iter=200 --mode=train_test --train_d
 svm_main --learner_name=svm_c --opt=sgd  --n_iter=300 --mode=train_test --train_data=c_traindata2.csv --test_data=c_testdata2.csv --kernel=linear --c=0.01 --normalize=0
 
 ------Using HCY--------
-a7.svm_main --learner_name=svm_c --opt=hcy --leaf_size=5 --mode=train_test --train_data=c_traindata3.csv --test_data=c_testdata3.csv --kernel=gaussian --sigma=0.1 --c=1 --normalize=0
+a7.svm_main --learner_name=svm_c --mode=train_test --train_data=UCI_magic04_equal.csv --test_data=UCI_magic04_equal.csv --kernel=gaussian --sigma=1 --c=0.001 --normalize=0 --opt=hcy --pm=2 --leaf_size=2 --n_stop=4000
 
-./svm_main --learner_name=svm_c --mode=train_test --train_data=UCI_iris_c0c1.csv --test_data=UCI_iris_c0c1.csv --kernel=gaussian --sigma=0.1 --c=1 --normalize=0 --opt=hcy --leaf_size=10 
 
-svm_main --learner_name=svm_c --opt=hcy --leaf_size=5 --mode=train_test --train_data=c_traindata2.csv --test_data=c_testdata2.csv --kernel=linear --c=0.7 --normalize=0
+------Using SGA---------
+svm_main --learner_name=svm_c --mode=train_test --train_data=UCI_iris_c0c1.csv --test_data=UCI_iris_c0c1.csv --kernel=gaussian --sigma=1 --nu=1 --mu=1 --normalize=0 --opt=sga --n_iter=10
+
+svm_main --learner_name=svm_c --mode=train_test --train_data=UCI_magic04_equal.csv --test_data=UCI_magic04_equal.csv --kernel=gaussian --sigma=1 --nu=50 --mu=1.5 --normalize=0 --opt=sga --n_iter=13377
+
+
+
+
 
 --------------------------------------------------- SVM Regression  -------------------------------------------------------
 b1.Support Vector Regression, Cross validation mode
