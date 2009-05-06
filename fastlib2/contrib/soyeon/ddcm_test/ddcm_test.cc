@@ -122,7 +122,7 @@ int main(int argc, char *argv[]) {
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
 	
-	
+	/*
 	Vector tpar;
 	tpar.Init(current_parameter.length());
 	
@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
 	tpar[2]=5;
 	tpar[3]=2;
 	
-/*
+
 	tpar[0]=-1;
 	tpar[1]=2;
 	tpar[2]=3;
@@ -150,7 +150,7 @@ int main(int argc, char *argv[]) {
 	tpar[0]=3;
 	tpar[1]=-1;
 	tpar[2]=4;
-	tpar[3]=1;*/
+	tpar[3]=1;
 
 	
 
@@ -161,7 +161,7 @@ int main(int argc, char *argv[]) {
 		cout<<tpar[i]<<" ";
 	}
 	cout<<endl;
-  
+  */
 	
 	//hessian update
 	Vector diff_gradient;
