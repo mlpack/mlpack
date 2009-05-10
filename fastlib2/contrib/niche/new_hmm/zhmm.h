@@ -61,29 +61,137 @@ class HMM {
 
 
   void BaumWelch(ArrayList <Matrix> sequences>) {
-    for(int i = 0; i < n_sequences; i++) {
-      Matrix &sequence = sequences[i];
+
+    Vector new_p_initial;
+    new_p_initial.Init(n_states_);
+    new_p_initial.SetZero();
+
+    // Note that new_p_transition_numer and new_p_transition_denom
+    // are treated as their transpose initially for efficiency.
+    // We transpose their resulting fraction at the end of their accumulation.
+    Matrix new_p_transition_numer;
+    new_p_transition_numer.Init(n_states_, n_states_);
+    new_p_transition_numer.SetZero();
+
+    Matrix new_p_transition_denom;
+    new_p_transition_denom.Init(n_states_, n_states_);
+    new_p_transition_denom.SetZero();
+
+
+    for(int m = 0; m < n_sequences; m++) {
+      Matrix &sequence = sequences[m];
       int sequence_length = sequence.n_cols();
       Matrix p_x_given_q;
-      p_x_given_q.Init(n_states_, sequence_length);
-      ComputePxGivenQ(sequence, &p_x_given_q);
 
+      if(MIXTURE) {
+	ComputePxGivenMixtureQ(sequence, &p_x_given_q, &p_p_x_given_mixture_q);
+      }
+      else {
+	ComputePxGivenQ(sequence, &p_x_given_q);
+      }
+
+      Matrix forward_vars;
+      Matrix backward_vars;
+      Vector scaling_vars;
       ForwardAlgorithm(p_x_given_q, &scaling_vars, &forward_vars);
       BackwardAlgorithm(p_x_given_q, scaling_vars, &backward_vars);
 
       // p_qq_t = Rabiner's xi
+      ArrayList<Matrix> p_qq_t;
       ComputePqqt(forward_vars, backward_vars, p_x_given_q, &p_qq_t);
+
       // p_qt = Rabiner's gamma
+      Matrix p_qt;
       ComputePqt(forward_vars ,backward_vars, scaling_vars, p_qq_t, &p_qt);
 
-      update_numerator_p_initial(p_qt, &new_p_initial_numerator);
-      update_denominator_p_initial(p_qt, &new_p_initial_denominator);
-      update_numerator_p_transition(p_qq_t, &new_p_transition_numerator);
-      update_denominator_p_transition(p_qt, &new_p_transition_denominator);
-      //update distribution numerator and denominator
+      for(int i = 0; i < n_states_; i++) {
+	new_p_initial[i] += p_qt(0, i);
+      }
+      for(int i = 0; i < n_states_; i++) {
+	for(int t = 0; t < sequence_length - 1; t++) {
+	  for(int j = 0; j < n_states_; j++) {
+	    new_p_transition_numer.set(j, i,
+				       new_p_transition_numer.get(j, i)
+				       + p_qq_t[i].get(j, t));
+	  }
+	  new_p_transition_denom.set(j, i,
+				     new_p_transition_denom.get(j, i)
+				     + p_qt.get(t, i)); 
+	}
+      }
+
+      if(DISCRETE) {
+	for(int i = 0; i < n_states_; i++) {
+	  Vector& new_p = new_p_arraylist[i];
+	  for(int t = 0; t < sequence_length; t++) {
+	    new_p[sequence.get(0, t)] += p_qt.get(t, i);
+	  }
+	}
+      }
+      else if(GAUSSIAN) {
+	for(int i = 0; i < n_states_; i++) {
+	  Vector &new_mu = new_mu_arraylist[i];
+	  Vector &new_sigma = new_sigma_arraylist[i];
+	  for(int t = 0; t < sequence_length; t++) {
+	    Vector x_t;
+	    sequence.MakeColumnVector(t, &x_t);
+
+	    // update mean
+	    la::AddExpert(p_qt.get(t, i), x_t, &new_mu);
+
+	    // update covariance
+	    la::SubOverwrite(state_distributions[i] -> mu, x_t, &result);
+	    for(int j = 0; j < n_dims_; j++) {
+	      result[j] *= result[j];
+	    }
+	    la::AddExpert(p_qt.get(t, i), result, &new_sigma);
+
+	    // keep track of normalization factor
+	    gaussian_denom[i] += p_qt.get(t, i);
+	  }
+	}
+      }
+      else if(MOG) {
+
+      }
     }
-    la::Scale(1 / new_p_initial_denominator, &new_p_initial_numerator);
-    la::Scale(1 / new_p_transition_denominator, &new_p_transition_numerator);
+
+    la::Scale(1/ Sum(new_p_initial), &new_p_initial);
+
+    for(int i = 0; i < n_states_; i++) {
+      for(int j = 0; j < n_states_; j++) {
+	new_p_transition_numer.set(j, i,
+				   new_p_transition.numer.get(j, i)
+				   / new_p_transition.denom.get(j, i));
+      }
+    }
+    la::TransposeSquare(&new_p_transition_numer);
+
+    if(DISCRETE) {
+      for(int i = 0; i < n_states_; i++) {
+	Vector &new_p = new_p_arraylist[i];
+	la::Scale(((double)1) / Sum(new_p),
+		  &new_p);
+      }
+    }
+    else if(GAUSSIAN) {
+      for(int i = 0; i < n_states_; i++) {
+	double normalization_factor = ((double)1) / gaussian_denom[i];
+	Vector &new_mu = new_mu_arraylist[i];
+	la::Scale(normalization_factor,
+		  &new_mu);
+	Vector &new_sigma = new_mu_arraylist[i];
+	la::Scale(normalization_factor,
+		  &new_sigma);
+      }
+    }
+    else if(MOG) {
+      
+    }
+    
+
+    
+
     // use distribution numerator and denominator
     
     
@@ -93,14 +201,15 @@ class HMM {
 
 
   void ComputePxGivenQ(const Matrix &sequence,
-			Matrix* p_p_x_given_q) {
+		       Matrix* p_p_x_given_q) {
     Matrix &p_x_given_q = *p_p_x_given_q;
-
+    
     int sequence_length = sequence.n_cols();
+    p_x_given_q.Init(n_states_, sequence_length);
     
     for(int t = 0; t < sequence_length; t++) {
       Vector x_t;
-      data.MakeColumnVector(t, &x_t);
+      sequence.MakeColumnVector(t, &x_t);
       
       for(int i = 0; i < n_states_; i++) {
 	p_x_given_q.set(i, t, state_distributions_[i].pdf(x_t));
@@ -111,6 +220,49 @@ class HMM {
       }
     }
   }
+
+  void ComputePxGivenMixtureQ(const Matrix &sequence,
+			      Matrix* p_p_x_given_q,
+			      ArrayList<Matrix>* p_p_x_given_mixture_q) {
+    Matrix &p_x_given_q = *p_p_x_given_q;
+    ArrayList<Matrix> &p_x_given_mixture_q = *p_p_x_given_mixture_q;
+    
+    int sequence_length = sequence.n_cols();
+    p_x_given_q.Init(n_states_, sequence_length);
+    p_x_given_q.SetZero();
+
+    p_x_given_mixture_q.Init(n_mixtures_);
+    for(int k = 0; k < n_mixtures_; k++) {
+      p_x_given_mixture_q[k].Init(n_states_, sequence_length);
+    }
+
+    for(int k = 0; k < n_mixtures_; k++) {
+      for(int t = 0; t < sequence_length; t++) {
+	Vector xt;
+	sequence.MakeColumnVector(t, &xt);
+
+	for(int i = 0; i < n_states_; i++) {
+	  double p_xt_given_qik = state_distributions_[i].PkthComponent(k, xt);
+	  p_xt_given_mixture_q[k].set(i, t,
+				      p_xt_given_qik);
+
+	  p_xt_given_q.set(i, t,
+			   p_xt_given_q.get(i, t) + p_xt_given_qik)
+	}
+      }
+    }
+
+    for(int k = 0; k < n_mixtures_; k++) {
+      for(int t = 0; t < sequence_length; t++) {
+	for(int i = 0; i < n_states_; i++) {
+	  p_xt_given_mixture_q[k].set(i, t,
+				      p_xt_given_mixture_q[k].get(i, t)
+				      / p_xt_given_q.get(i, t));
+	}
+      }
+    }
+  }
+
 
   void ForwardAlgorithm(const Matrix &p_x_given_q,
 			Vector* p_scaling_vars, 
@@ -140,11 +292,11 @@ class HMM {
       forward_vars.MakeColumnVector(t, &forward_t_plus_1);
 
       Vector p_xt_plus_1_given_q;
-      p_x_given_q.MakeColumnVector(t+1, p_xt_plus_1_given_q);
+      p_x_given_q.MakeColumnVector(t + 1, p_xt_plus_1_given_q);
 
       la::MulOverwrite(forward_t, p_transition_, &forward_t_plus_1);
-      HadamardMultiplyBy(p_xt_plus_1, &forward_t_plus_1);
-      ScaleForwardVar(&(c[t+1]), &forward_t_plus_1);
+      HadamardMultiplyBy(p_xt_plus_1_given_q, &forward_t_plus_1);
+      ScaleForwardVar(&(c[t + 1]), &forward_t_plus_1);
     }
   }
 
@@ -183,23 +335,22 @@ class HMM {
 
   void ComputePqqt(const Matrix &forward_vars,
 		   const Matrix &backward_vars,
-		   const Matrix& p_x_given_q,
+		   const Matrix &p_x_given_q,
 		   ArrayList<Matrix>* p_p_qq_t);
   ArrayList<Matrix> &p_qq_t = *p_p_qq_t;
   
-  int sequence_length = forward_vars.n_rows();
+  int sequence_length = forward_vars.n_cols();
   
   p_qq_t.Init(n_states_);
   for(int i = 0; i < n_states_; i++) {
     p_qq_t[i].Init(n_states_, sequence_length);
-  }
-
-  for(int i = 0; i < n_states_; i++) {
+    
     for(int t = 0; t < sequence_length - 1; t++) {
       for(int j = 0; j < n_states_; j++) {
+	//consider transposing forward_vars and p_transition_ for efficiency
 	p_qq_t[i].set(j, t,
-		      forward_vars.get(i, t) // consider transposing, profile?
-		      * p_transition_.get(i, j) //consider transposing, ""?
+		      forward_vars.get(i, t)
+		      * p_transition_.get(i, j)
 		      * p_x_given_q.get(j, t + 1)
 		      * backward_vars.get(j, t + 1));
       }
@@ -218,19 +369,12 @@ class HMM {
     p_qt.Init(sequence_length, n_states_);
 
     for(int i = 0; i < n_states_; i++) {
-      for(int t = 0; t < sequence_length - 1; t++) {
-	double sum = 0;
-	for(int j = 0; j < n_states; j++) {
-	  sum += p_qq_t[i].get(j, t);
-	}
-	p_qt.set(t, i, sum);
+      for(int t = 0; t < sequence_length; t++) {
+	p_qt.set(t, i, 
+		 forward_vars.get(i, t)
+		 * backward_vars.get(i, t)
+		 / scaling_vars.get(t));
       }
-      
-      int t = sequence_length - 1;
-      p_qt.set(t, i, 
-	       forward_vars.get(i, sequence_length - 1)
-	       * backward_vars.get(i, sequence_length - 1)
-	       / scaling_vars.get(sequence_length - 1));
     }
   }
 
@@ -257,12 +401,7 @@ class HMM {
       (*y)[i] *= x[i];
     }
   }
- 
-  void ScaleForwardVar(double* c, Vector *p_forward_var) {
-    (*c) = ((double)1) / Sum(*p_forward_var);
-    la::Scale(*c, p_forward_var);
-  }
- 
+
   double Sum(const Vector &x) {
     double sum = 0;
     for(int i = 0; i < x.length(); i++) {
@@ -270,6 +409,12 @@ class HMM {
     }
     return sum;
   }
+ 
+  void ScaleForwardVar(double* c, Vector *p_forward_var) {
+    (*c) = ((double)1) / Sum(*p_forward_var);
+    la::Scale(*c, p_forward_var);
+  }
+ 
 
 
 
