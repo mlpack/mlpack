@@ -19,12 +19,17 @@ class HMM {
   int n_states_;
   int n_dims_;
 
-  Vector p_initial_;
+ public:
+
+  // p_initial, p_transition, and state_distributions are public because
+  // it's ever so much easier
+
+  Vector p_initial;
 
   /* rows sum to 1: p_transition_.get(i,j) is P(s_j | s_i) */
-  Matrix p_transition_; //
+  Matrix p_transition; //
 
-  TDistribution* state_distributions_;
+  TDistribution* state_distributions;
   
     
 
@@ -34,254 +39,333 @@ class HMM {
     n_states_ = n_states_in;
     n_dims_ = n_dims_in;
     
-    p_initial_.Init(n_states_);
-    p_transition_.Init(n_states_, n_states_);
-
-    state_distributions_ = 
+    p_initial.Init(n_states_);
+    p_transition.Init(n_states_, n_states_);
+    
+    state_distributions = 
       (TDistribution*) malloc(n_states_ * sizeof(TDistribution));
     for(int i = 0; i < n_states_; i++) {
-      state_distributions_[i].Init(n_dims_);
+      state_distributions[i].Init(n_dims_);
     }
   }
 
-  
-  void RandomlyInitialize() {
-    double uniform = ((double) 1) / ((double) n_states_);
+  /*  
+      void RandomlyInitialize() {
+      double uniform = ((double) 1) / ((double) n_states_);
 
-    for(int i = 0; i < n_states_; i++) {
-      p_initial_[i] = uniform;
+      for(int i = 0; i < n_states_; i++) {
+      p_initial[i] = uniform;
       for(int j = 0; j < n_states_; j++) {
-	p_transition_.set(j, i, uniform);
+      p_transition.set(j, i, uniform);
       }
    
-      //state_distributions_[i].Init(n_dims_);
-      state_distributions_[i].RandomlyInitialize();
-    }
-  }
-
+      state_distributions[i].RandomlyInitialize();
+      }
+      }
+  */
 
   void BaumWelch(ArrayList <Matrix> sequences>) {
 
+    // First, we declare an HMM that we can use during EM
     HMM<TDistribution> new_hmm.Init(n_states_, n_dims_);
     
-
+    // used for computing diagonal covariance below
     Vector result;
     result.Init(n_dims_);
-
-    new_hmm.p_initial.SetZero();
-
-    // Note that new_p_transition_numer and new_p_transition_denom
-    // are treated as their transpose initially for efficiency.
-    // We transpose their resulting fraction at the end of their accumulation.
-    //Matrix new_p_transition_numer;
-    //new_p_transition_numer.Init(n_states_, n_states_);
-    //new_p_transition_numer.SetZero();
-    new_hmm.p_transition.SetZero();
-
+    
+    // recycling is good. let's use this repeatedly
     Vector new_p_transition_denom;
     new_p_transition_denom.Init(n_states_);
-    new_p_transition_denom.SetZero();
+
+    Vector gaussian_denom;
+    if(GAUSSIAN) {
+      gaussian_denom.Init(n_states_);
+    }
+    else {
+      gaussian_denom.Init(0);
+    }
 
     Vector weight_qi;
-
+    
     if(MIXTURE) {
       weight_qi.Init(n_states_);
-      weight_qi.SetZero();
     }
     else {
       weight_qi.Init(0);
     }
 
 
-    for(int m = 0; m < n_sequences; m++) {
-      Matrix &sequence = sequences[m];
-      int sequence_length = sequence.n_cols();
-      Matrix p_x_given_q;
-      ArrayList<Matrix> p_x_given_mixture_q;
 
-      if(MIXTURE) {
-	ComputePxGivenMixtureQ(sequence, &p_x_given_q, &p_p_x_given_mixture_q);
-      }
-      else {
-	ComputePxGivenQ(sequence, &p_x_given_q);
-	p_x_given_mixture_q.Init(0);
-      }
+    bool converged = false;
 
-      Matrix forward_vars;
-      Matrix backward_vars;
-      Vector scaling_vars;
-      ForwardAlgorithm(p_x_given_q, &scaling_vars, &forward_vars);
-      BackwardAlgorithm(p_x_given_q, scaling_vars, &backward_vars);
+    while(!converged) {
 
-      // p_qq_t = Rabiner's xi
-      ArrayList<Matrix> p_qq_t;
-      ComputePqqt(forward_vars, backward_vars, p_x_given_q, &p_qq_t);
-
-      // p_qt = Rabiner's gamma
-      Matrix p_qt;
-      ComputePqt(forward_vars ,backward_vars, scaling_vars, p_qq_t, &p_qt);
-      
-      // accumulate initial state probabilities
-      for(int i = 0; i < n_states_; i++) {
-	new_hmm.p_initial[i] += p_qt(0, i);
-      }
-      
-      // accumulate state transition probabilities
-      for(int i = 0; i < n_states_; i++) {
-	for(int t = 0; t < sequence_length - 1; t++) {
-	  for(int j = 0; j < n_states_; j++) {
-	    new_hmm.p_transition(j, i,
-				 new_hmm.p_transition.get(j, i)
-				 + p_qq_t[i].get(j, t));
-	  }
-	  new_p_transition_denom[i] += p_qt.get(t, i)); 
-	}
-      }
-
-      // accumulate density statistics for observables
+      new_hmm.p_initial.SetZero();
+      new_hmm.p_transition.SetZero();
+      new_hmm_p_transition_denom.SetZero();
       if(DISCRETE) {
 	for(int i = 0; i < n_states_; i++) {
-	  Vector& new_p = new_hmm.state_distributions[i] -> p;
-	  for(int t = 0; t < sequence_length; t++) {
-	    new_p[sequence.get(0, t)] += p_qt.get(t, i);
-	  }
+	  new_hmm.state_distributions[i] -> p.SetZero();
 	}
       }
       else if(GAUSSIAN) {
 	for(int i = 0; i < n_states_; i++) {
-	  Vector &new_mu = new_hmm.state_distributions[i] -> mu;
-	  Vector &new_sigma = new_hmm.state_distributions[i] -> sigma;
-	  for(int t = 0; t < sequence_length; t++) {
-	    Vector x_t;
-	    sequence.MakeColumnVector(t, &x_t);
-
-	    // update mean
-	    la::AddExpert(p_qt.get(t, i), x_t, &new_mu);
-
-	    // update covariance
-	    la::SubOverwrite(state_distributions[i] -> mu, x_t, &result);
-	    for(int j = 0; j < n_dims_; j++) {
-	      result[j] *= result[j];
-	    }
-	    la::AddExpert(p_qt.get(t, i), result, &new_sigma);
-
-	    // keep track of normalization factor
-	    gaussian_denom[i] += p_qt.get(t, i);
+	  new_hmm.state_distributions[i] -> mu.SetZero();
+	  new_hmm.state_distributions[i] -> sigma.SetZero();
+	}
+	gaussian_denom.SetZero();
+      }
+      else if(MIXTURE) {
+	for(int i = 0; i < n_states_; i++) {
+	  new_hmm.state_distributions[i].weights.SetZero();
+	  for(int k = 0; k < n_mixtures_; k++) {
+	    new_hmm.state_distributions[i].components[k] -> mu.SetZero();
+	    new_hmm.state_distributions[i].components[k] -> sigma.SetZero();
 	  }
+	}
+	weight_qi.SetZero();
+      }
+
+      for(int m = 0; m < n_sequences; m++) {
+	Matrix &sequence = sequences[m];
+	int sequence_length = sequence.n_cols();
+
+	Matrix p_x_given_q; // Rabiner's b
+	ArrayList<Matrix> p_x_given_mixture_q; // P_qik(x_t) / P_qi(x_t)
+	ArrayList<Matrix> p_qq_t; // Rabiner's xi
+	Matrix p_qt; // Rabiner's gamma
+	double neg_likelihood = 1;
+
+	ExpectationStep(sequence,
+			&p_x_given_q, &p_x_given_mixture_q,
+			&p_qq_t, &p_qt,
+			&neg_likelihood);
+      
+
+	/////////////////////////////
+	// M STEP
+	/////////////////////////////
+     
+	// ACCUMULATE
+       
+	// accumulate initial state probabilities
+	for(int i = 0; i < n_states_; i++) {
+	  new_hmm.p_initial[i] += p_qt(0, i);
+	}
+      
+	// accumulate state transition probabilities
+	for(int i = 0; i < n_states_; i++) {
+	  for(int t = 0; t < sequence_length - 1; t++) {
+	    for(int j = 0; j < n_states_; j++) {
+	      // Note that new_hmm.p_transition is treated as its transpose
+	      // initially for efficiency. We transpose it at the end of
+	      // its computation.
+	      new_hmm.p_transition(j, i,
+				   new_hmm.p_transition.get(j, i)
+				   + p_qq_t[i].get(j, t));
+	    }
+	    new_hmm_p_transition_denom[i] += p_qt.get(t, i); 
+	  }
+	}
+
+	// accumulate density statistics for observables
+	if(DISCRETE) {
+	  for(int i = 0; i < n_states_; i++) {
+	    Vector& new_p = new_hmm.state_distributions[i] -> p;
+	    for(int t = 0; t < sequence_length; t++) {
+	      new_p[sequence.get(0, t)] += p_qt.get(t, i);
+	    }
+	  }
+	}
+	else if(GAUSSIAN) {
+	  for(int i = 0; i < n_states_; i++) {
+	    Vector &new_mu = new_hmm.state_distributions[i] -> mu;
+	    Vector &new_sigma = new_hmm.state_distributions[i] -> sigma;
+	    for(int t = 0; t < sequence_length; t++) {
+	      Vector x_t;
+	      sequence.MakeColumnVector(t, &x_t);
+
+	      // update mean
+	      la::AddExpert(p_qt.get(t, i), x_t, &new_mu);
+
+	      // update covariance
+	      la::SubOverwrite(state_distributions[i] -> mu, x_t, &result);
+	      for(int j = 0; j < n_dims_; j++) {
+		result[j] *= result[j];
+	      }
+	      la::AddExpert(p_qt.get(t, i), result, &new_sigma);
+
+	      // keep track of normalization factor
+	      gaussian_denom[i] += p_qt.get(t, i);
+	    }
+	  }
+	}
+	else if(MIXTURE) {
+	  for(int k = 0; k < n_components_; k++) {
+	    for(int i = 0; i < n_states_; i++) {
+	      Vector &new_mu =
+		new_hmm.state_distributions[i].components[k] -> mu;
+	      Vector &new_sigma =
+		new_hmm.state_distributions[i].components[k] -> sigma;
+	      double sum = new_state_distributions[i].weights[k];
+	      for(int t = 0; t < sequence_length; t++) {
+		Vector x_t;
+		sequence.MakeColumnVector(t, &x_t);
+
+		// hopefully p_xt_given_mixture_q[k].get(i,t) is fast since
+		// n_states_ is usually small (< 20)
+		double scaling_factor =
+		  p_qt.get(t, i) * p_xt_given_mixture_q[k].get(i, t);
+	      
+		sum += scaling_factor;
+
+		// update mean
+		la::AddExpert(scaling_factor, x_t, &new_mu);
+
+		// update covariance
+		la::SubOverwrite(state_distributions[i].components[k] -> mu,
+				 x_t, &result);
+		for(int j = 0; j < n_dims_; j++) {
+		  result[j] *= result[j];
+		}
+		la::AddExpert(scaling_factor, result, &new_sigma);
+	      
+		// keep track of normalization factor
+		//gaussian_denom[i] += p_qt.get(t, i);
+	      }
+	      new_hmm.state_distributions[i].weights[k] = sum;
+	    }
+
+	    // note that new_hmm_p_transition_denom[i] =
+	    //             \sum_{t = 0 -> T - 2} p_qt.get(t, i)
+	    weight_qi[i] +=
+	      new_hmm_p_transition_denom[i] + p_qt.get(n_sequences - 1, i);
+	    // so, weight_qi[i] = \sum_{t = 0 -> T - 1} p_qt.get(t, i)
+	  
+	  }
+	} //end if(MIXTURE)
+      } // end for(all sequences)
+
+
+      // ACCUMULATION COMPLETE, NORMALIZE THE WORLD!
+
+      // normalize initial state probabilities
+      la::Scale(1/ Sum(new_hmm.p_initial), &(new_hmm.p_initial));
+
+      // normalize state transition probabilities
+      for(int i = 0; i < n_states_; i++) {
+	for(int j = 0; j < n_states_; j++) {
+	  // Again, Note that new_hmm.p_transition is treated as its transpose
+	  // initially for efficiency. We transpose it at the end of
+	  // its computation (below).
+	  new_hmm.p_transition.set(j, i,
+				   new_hmm.p_transition.get(j, i)
+				   / new_hmm_p_transition_denom[i]);
+	}
+      }
+      la::TransposeSquare(&(new_hmm.p_transition));
+
+      // normalize density statistics for observables
+      if(DISCRETE) {
+	for(int i = 0; i < n_states_; i++) {
+	  Vector& new_p = new_hmm.state_distributions[i] -> p;
+	  la::Scale(((double)1) / Sum(new_p),
+		    &new_p);
+	}
+      }
+      else if(GAUSSIAN) {
+	for(int i = 0; i < n_states_; i++) {
+	  double normalization_factor = ((double)1) / gaussian_denom[i];
+	  Vector &new_mu = new_hmm.state_distributions[i] -> mu;
+	  la::Scale(normalization_factor,
+		    &new_mu);
+	  Vector &new_sigma = new_hmm.state_distributions[i] -> sigma;
+	  la::Scale(normalization_factor,
+		    &new_sigma);
 	}
       }
       else if(MIXTURE) {
 	for(int k = 0; k < n_components_; k++) {
 	  for(int i = 0; i < n_states_; i++) {
+	    double normalization_factor =
+	      ((double)1) / new_hmm.state_distributions[i].weights[k];
 	    Vector &new_mu =
 	      new_hmm.state_distributions[i].components[k] -> mu;
+	    la::Scale(normalization_factor,
+		      &new_mu);
 	    Vector &new_sigma =
 	      new_hmm.state_distributions[i].components[k] -> sigma;
-	    double sum = new_state_distributions[i].weights[k];
-	    for(int t = 0; t < sequence_length; t++) {
-	      Vector x_t;
-	      sequence.MakeColumnVector(t, &x_t);
-
-	      // hopefully p_xt_given_mixture_q[k].get(i,t) is fast since
-	      // n_states_ is usually small (< 20)
-	      double scaling_factor =
-		p_qt.get(t, i) * p_xt_given_mixture_q[k].get(i, t);
-	      
-	      sum += scaling_factor;
-
-	      // update mean
-	      la::AddExpert(scaling_factor, x_t, &new_mu);
-
-	      // update covariance
-	      la::SubOverwrite(state_distributions[i].components[k] -> mu,
-			       x_t, &result);
-	      for(int j = 0; j < n_dims_; j++) {
-		result[j] *= result[j];
-	      }
-	      la::AddExpert(scaling_factor, result, &new_sigma);
-	      
-	      // keep track of normalization factor
-	      gaussian_denom[i] += p_qt.get(t, i);
-	    }
-	    new_hmm.state_distributions[i].weights[k] = sum;
+	    la::Scale(normalization_factor,
+		      &new_sigma);
+	  
+	    new_hmm.state_distributions[i].weights[k] /= weight_qi[i];
 	  }
 	}
-
-	weight_qi[i] +=
-	  new_p_transition_denom[i] + p_qt.get(n_sequences - 1, i);
       }
-    }
 
-    la::Scale(1/ Sum(new_p_initial), &new_p_initial);
+      // SWAP new and old HMMs' initial state probabilities
+      //                        state transition probabilities
+      //                        state distributions
+      TDistribution* temp_state_distributions;
+      temp_state_distributions = state_distributions;
+      state_distributions = new_hmm.state_distributions;
+      new_hmm.state_distributions = temp_state_distributions;
 
-    for(int i = 0; i < n_states_; i++) {
-      for(int j = 0; j < n_states_; j++) {
-	new_hmm.p_transition.set(j, i,
-				 new_hmm.p_transition.get(j, i)
-				 / new_p_transition_denom[i]);
-      }
-    }
-    la::TransposeSquare(&new_hmm.p_transition);
+      Vector temp_p_initial;
+      temp_p_initial.Own(&p_initial);
+      p_initial.Own(&(new_hmm.p_initial));
+      new_hmm.p_initial.Own(&temp_p_initial);
 
-    if(DISCRETE) {
-      for(int i = 0; i < n_states_; i++) {
-	Vector& new_p = new_hmm.state_distributions[i] -> p;
-	la::Scale(((double)1) / Sum(new_p),
-		  &new_p);
-      }
-    }
-    else if(GAUSSIAN) {
-      for(int i = 0; i < n_states_; i++) {
-	double normalization_factor = ((double)1) / gaussian_denom[i];
-	Vector &new_mu = new_hmm.state_distributions[i] -> mu;
-	la::Scale(normalization_factor,
-		  &new_mu);
-	Vector &new_sigma = new_hmm.state_distributions[i] -> sigma;
-	la::Scale(normalization_factor,
-		  &new_sigma);
-      }
-    }
-    else if(MIXTURE) {
-      for(int k = 0; k < n_components_; k++) {
-	for(int i = 0; i < n_states_; i++) {
-	  double normalization_factor =
-	    ((double)1) / new_hmm.state_distributions[i].weights[k];
-	  Vector &new_mu =
-	    new_hmm.state_distributions[i].components[k] -> mu;
-	  la::Scale(normalization_factor,
-		    &new_mu);
-	  Vector &new_sigma =
-	    new_hmm.state_distributions[i].components[k] -> sigma;
-	  la::Scale(normalization_factor,
-		    &new_sigma);
-	  
-	  new_hmm.state_distributions[i].weights[k] /= weight_qi[i];
-	}
-      }
-    }
-
-    // swap the initial state probabilities
-    //          state transition probabilities
-    //          state distributions
-    // for the new and old HMMs
-    TDistribution* temp_state_distributions;
-    temp_state_distributions = state_distributions;
-    state_distributions = new_hmm.state_distributions;
-    new_hmm.state_distributions = temp_state_distributions;
-
-    Vector temp_p_initial;
-    temp_p_initial.Own(&p_initial);
-    p_initial.Own(&(new_hmm.p_initial));
-    new_hmm.p_initial.Own(&temp_p_initial);
-
-    Matrix temp_p_transition;
-    temp_p_transition.Own(&p_transition);
-    p_transition.Own(&(new_hmm.p_transition));
-    new_hmm.p_transition.Own(&temp_p_transition);
-
+      Matrix temp_p_transition;
+      temp_p_transition.Own(&p_transition);
+      p_transition.Own(&(new_hmm.p_transition));
+      new_hmm.p_transition.Own(&temp_p_transition);
+  
+      // How far have we come? Have we converged? Is there a Buddha?
     
+    } // end while(!converged)
   }
 
+
+
+  void ExpectationStep(const Matrix &sequence,
+		       Matrix* p_p_x_given_q,
+		       ArrayList<Matrix>* p_p_x_given_mixture_q,
+		       ArrayList<Matrix>* p_p_qq_t
+		       Matrix* p_p_qt,
+		       double* p_neg_likelihood) {
+    
+    // embrace readability!
+    Matrix &p_x_given_q = *p_p_x_given_q;
+    ArrayList<Matrix> &p_x_given_mixture_q = *p_p_x_given_mixture_q;
+    ArrayList<Matrix> &p_qq_t = *p_p_qq_t;
+    Matrix &p_qt = *p_p_qt;
+    double &neg_likelihood = *p_neg_likelihood;
+
+    if(MIXTURE) {
+      ComputePxGivenMixtureQ(sequence, &p_x_given_q,
+			     &p_x_given_mixture_q);
+    }
+    else {
+      ComputePxGivenQ(sequence, &p_x_given_q);
+      p_x_given_mixture_q.Init(0);
+    }
+    
+    Matrix forward_vars;
+    Matrix backward_vars;
+    Vector scaling_vars;
+    ForwardAlgorithm(p_x_given_q, &scaling_vars, &forward_vars);
+    BackwardAlgorithm(p_x_given_q, scaling_vars, &backward_vars);
+    
+    ComputePqqt(forward_vars, backward_vars, p_x_given_q, &p_qq_t);
+    ComputePqt(forward_vars ,backward_vars, scaling_vars, p_qq_t, &p_qt);
+
+    neg_likelihood = 0;
+    int sequence_length = sequence.n_cols();
+    for(int i = 0; i < sequence_length; i++) {
+      neg_likelihood -= log(scaling_vars[i]);
+    }
+  }
 
 
   void ComputePxGivenQ(const Matrix &sequence,
@@ -327,11 +411,10 @@ class HMM {
 
 	for(int i = 0; i < n_states_; i++) {
 	  double p_xt_given_qik = state_distributions_[i].PkthComponent(k, xt);
-	  p_xt_given_mixture_q[k].set(i, t,
-				      p_xt_given_qik);
-
-	  p_xt_given_q.set(i, t,
-			   p_xt_given_q.get(i, t) + p_xt_given_qik)
+	  p_x_given_mixture_q[k].set(i, t,
+				     p_xt_given_qik);
+	  p_x_given_q.set(i, t,
+			  p_x_given_q.get(i, t) + p_xt_given_qik);
 	}
       }
     }
@@ -339,9 +422,9 @@ class HMM {
     for(int k = 0; k < n_components_; k++) {
       for(int t = 0; t < sequence_length; t++) {
 	for(int i = 0; i < n_states_; i++) {
-	  p_xt_given_mixture_q[k].set(i, t,
-				      p_xt_given_mixture_q[k].get(i, t)
-				      / p_xt_given_q.get(i, t));
+	  p_x_given_mixture_q[k].set(i, t,
+				     p_x_given_mixture_q[k].get(i, t)
+				     / p_x_given_q.get(i, t));
 	}
       }
     }
