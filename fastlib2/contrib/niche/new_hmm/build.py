@@ -1,6 +1,6 @@
 binrule(
-    name = "new_hmm",
-    sources = ["new_hmm.cc"],
-    headers = ["new_hmm.h"],
+    name = "zhmm",
+    sources = ["zhmm.cc"],
+    headers = ["zhmm.h"],
     deplibs = ["fastlib:fastlib"]
     )
