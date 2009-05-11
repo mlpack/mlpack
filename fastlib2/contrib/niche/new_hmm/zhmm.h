@@ -8,7 +8,7 @@
 
 #define MULTINOMIAL 0
 #define GAUSSIAN 1
-#define MOG 2
+#define MIXTURE 2
 
 
 template <typename TDistribution>
@@ -62,32 +62,49 @@ class HMM {
 
   void BaumWelch(ArrayList <Matrix> sequences>) {
 
-    Vector new_p_initial;
-    new_p_initial.Init(n_states_);
-    new_p_initial.SetZero();
+    HMM<TDistribution> new_hmm.Init(n_states_, n_dims_);
+    
+
+    Vector result;
+    result.Init(n_dims_);
+
+    new_hmm.p_initial.SetZero();
 
     // Note that new_p_transition_numer and new_p_transition_denom
     // are treated as their transpose initially for efficiency.
     // We transpose their resulting fraction at the end of their accumulation.
-    Matrix new_p_transition_numer;
-    new_p_transition_numer.Init(n_states_, n_states_);
-    new_p_transition_numer.SetZero();
+    //Matrix new_p_transition_numer;
+    //new_p_transition_numer.Init(n_states_, n_states_);
+    //new_p_transition_numer.SetZero();
+    new_hmm.p_transition.SetZero();
 
-    Matrix new_p_transition_denom;
-    new_p_transition_denom.Init(n_states_, n_states_);
+    Vector new_p_transition_denom;
+    new_p_transition_denom.Init(n_states_);
     new_p_transition_denom.SetZero();
+
+    Vector weight_qi;
+
+    if(MIXTURE) {
+      weight_qi.Init(n_states_);
+      weight_qi.SetZero();
+    }
+    else {
+      weight_qi.Init(0);
+    }
 
 
     for(int m = 0; m < n_sequences; m++) {
       Matrix &sequence = sequences[m];
       int sequence_length = sequence.n_cols();
       Matrix p_x_given_q;
+      ArrayList<Matrix> p_x_given_mixture_q;
 
       if(MIXTURE) {
 	ComputePxGivenMixtureQ(sequence, &p_x_given_q, &p_p_x_given_mixture_q);
       }
       else {
 	ComputePxGivenQ(sequence, &p_x_given_q);
+	p_x_given_mixture_q.Init(0);
       }
 
       Matrix forward_vars;
@@ -103,26 +120,28 @@ class HMM {
       // p_qt = Rabiner's gamma
       Matrix p_qt;
       ComputePqt(forward_vars ,backward_vars, scaling_vars, p_qq_t, &p_qt);
-
+      
+      // accumulate initial state probabilities
       for(int i = 0; i < n_states_; i++) {
-	new_p_initial[i] += p_qt(0, i);
+	new_hmm.p_initial[i] += p_qt(0, i);
       }
+      
+      // accumulate state transition probabilities
       for(int i = 0; i < n_states_; i++) {
 	for(int t = 0; t < sequence_length - 1; t++) {
 	  for(int j = 0; j < n_states_; j++) {
-	    new_p_transition_numer.set(j, i,
-				       new_p_transition_numer.get(j, i)
-				       + p_qq_t[i].get(j, t));
+	    new_hmm.p_transition(j, i,
+				 new_hmm.p_transition.get(j, i)
+				 + p_qq_t[i].get(j, t));
 	  }
-	  new_p_transition_denom.set(j, i,
-				     new_p_transition_denom.get(j, i)
-				     + p_qt.get(t, i)); 
+	  new_p_transition_denom[i] += p_qt.get(t, i)); 
 	}
       }
 
+      // accumulate density statistics for observables
       if(DISCRETE) {
 	for(int i = 0; i < n_states_; i++) {
-	  Vector& new_p = new_p_arraylist[i];
+	  Vector& new_p = new_hmm.state_distributions[i] -> p;
 	  for(int t = 0; t < sequence_length; t++) {
 	    new_p[sequence.get(0, t)] += p_qt.get(t, i);
 	  }
@@ -130,8 +149,8 @@ class HMM {
       }
       else if(GAUSSIAN) {
 	for(int i = 0; i < n_states_; i++) {
-	  Vector &new_mu = new_mu_arraylist[i];
-	  Vector &new_sigma = new_sigma_arraylist[i];
+	  Vector &new_mu = new_hmm.state_distributions[i] -> mu;
+	  Vector &new_sigma = new_hmm.state_distributions[i] -> sigma;
 	  for(int t = 0; t < sequence_length; t++) {
 	    Vector x_t;
 	    sequence.MakeColumnVector(t, &x_t);
@@ -151,8 +170,45 @@ class HMM {
 	  }
 	}
       }
-      else if(MOG) {
+      else if(MIXTURE) {
+	for(int k = 0; k < n_components_; k++) {
+	  for(int i = 0; i < n_states_; i++) {
+	    Vector &new_mu =
+	      new_hmm.state_distributions[i].components[k] -> mu;
+	    Vector &new_sigma =
+	      new_hmm.state_distributions[i].components[k] -> sigma;
+	    double sum = new_state_distributions[i].weights[k];
+	    for(int t = 0; t < sequence_length; t++) {
+	      Vector x_t;
+	      sequence.MakeColumnVector(t, &x_t);
 
+	      // hopefully p_xt_given_mixture_q[k].get(i,t) is fast since
+	      // n_states_ is usually small (< 20)
+	      double scaling_factor =
+		p_qt.get(t, i) * p_xt_given_mixture_q[k].get(i, t);
+	      
+	      sum += scaling_factor;
+
+	      // update mean
+	      la::AddExpert(scaling_factor, x_t, &new_mu);
+
+	      // update covariance
+	      la::SubOverwrite(state_distributions[i].components[k] -> mu,
+			       x_t, &result);
+	      for(int j = 0; j < n_dims_; j++) {
+		result[j] *= result[j];
+	      }
+	      la::AddExpert(scaling_factor, result, &new_sigma);
+	      
+	      // keep track of normalization factor
+	      gaussian_denom[i] += p_qt.get(t, i);
+	    }
+	    new_hmm.state_distributions[i].weights[k] = sum;
+	  }
+	}
+
+	weight_qi[i] +=
+	  new_p_transition_denom[i] + p_qt.get(n_sequences - 1, i);
       }
     }
 
@@ -160,16 +216,16 @@ class HMM {
 
     for(int i = 0; i < n_states_; i++) {
       for(int j = 0; j < n_states_; j++) {
-	new_p_transition_numer.set(j, i,
-				   new_p_transition.numer.get(j, i)
-				   / new_p_transition.denom.get(j, i));
+	new_hmm.p_transition.set(j, i,
+				 new_hmm.p_transition.get(j, i)
+				 / new_p_transition_denom[i]);
       }
     }
-    la::TransposeSquare(&new_p_transition_numer);
+    la::TransposeSquare(&new_hmm.p_transition);
 
     if(DISCRETE) {
       for(int i = 0; i < n_states_; i++) {
-	Vector &new_p = new_p_arraylist[i];
+	Vector& new_p = new_hmm.state_distributions[i] -> p;
 	la::Scale(((double)1) / Sum(new_p),
 		  &new_p);
       }
@@ -177,24 +233,52 @@ class HMM {
     else if(GAUSSIAN) {
       for(int i = 0; i < n_states_; i++) {
 	double normalization_factor = ((double)1) / gaussian_denom[i];
-	Vector &new_mu = new_mu_arraylist[i];
+	Vector &new_mu = new_hmm.state_distributions[i] -> mu;
 	la::Scale(normalization_factor,
 		  &new_mu);
-	Vector &new_sigma = new_mu_arraylist[i];
+	Vector &new_sigma = new_hmm.state_distributions[i] -> sigma;
 	la::Scale(normalization_factor,
 		  &new_sigma);
       }
     }
-    else if(MOG) {
-      
+    else if(MIXTURE) {
+      for(int k = 0; k < n_components_; k++) {
+	for(int i = 0; i < n_states_; i++) {
+	  double normalization_factor =
+	    ((double)1) / new_hmm.state_distributions[i].weights[k];
+	  Vector &new_mu =
+	    new_hmm.state_distributions[i].components[k] -> mu;
+	  la::Scale(normalization_factor,
+		    &new_mu);
+	  Vector &new_sigma =
+	    new_hmm.state_distributions[i].components[k] -> sigma;
+	  la::Scale(normalization_factor,
+		    &new_sigma);
+	  
+	  new_hmm.state_distributions[i].weights[k] /= weight_qi[i];
+	}
+      }
     }
-    
 
-    
+    // swap the initial state probabilities
+    //          state transition probabilities
+    //          state distributions
+    // for the new and old HMMs
+    TDistribution* temp_state_distributions;
+    temp_state_distributions = state_distributions;
+    state_distributions = new_hmm.state_distributions;
+    new_hmm.state_distributions = temp_state_distributions;
 
-    // use distribution numerator and denominator
-    
-    
+    Vector temp_p_initial;
+    temp_p_initial.Own(&p_initial);
+    p_initial.Own(&(new_hmm.p_initial));
+    new_hmm.p_initial.Own(&temp_p_initial);
+
+    Matrix temp_p_transition;
+    temp_p_transition.Own(&p_transition);
+    p_transition.Own(&(new_hmm.p_transition));
+    new_hmm.p_transition.Own(&temp_p_transition);
+
     
   }
 
@@ -216,7 +300,7 @@ class HMM {
 	// ensure that class member function exists for classes:
 	//                                                       Multinomial
 	//                                                       Gaussian
-	//                                                       MoG
+	//                                                       Mixture
       }
     }
   }
@@ -231,12 +315,12 @@ class HMM {
     p_x_given_q.Init(n_states_, sequence_length);
     p_x_given_q.SetZero();
 
-    p_x_given_mixture_q.Init(n_mixtures_);
-    for(int k = 0; k < n_mixtures_; k++) {
+    p_x_given_mixture_q.Init(n_components_);
+    for(int k = 0; k < n_components_; k++) {
       p_x_given_mixture_q[k].Init(n_states_, sequence_length);
     }
 
-    for(int k = 0; k < n_mixtures_; k++) {
+    for(int k = 0; k < n_components_; k++) {
       for(int t = 0; t < sequence_length; t++) {
 	Vector xt;
 	sequence.MakeColumnVector(t, &xt);
@@ -252,7 +336,7 @@ class HMM {
       }
     }
 
-    for(int k = 0; k < n_mixtures_; k++) {
+    for(int k = 0; k < n_components_; k++) {
       for(int t = 0; t < sequence_length; t++) {
 	for(int i = 0; i < n_states_; i++) {
 	  p_xt_given_mixture_q[k].set(i, t,
@@ -485,4 +569,4 @@ class HMM {
 };
 
 
-#endif /* HMM */
+#endif /* HMM_H */
