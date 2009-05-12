@@ -225,9 +225,9 @@ class HKInteriorPointPredictorCorrector{
   }
   
   
-  void get_test_densities(Vector &densities_res){
-    
-    densities_res.Alias(computed_test_densities_);
+  void get_test_densities(Vector *densities_res){
+
+    densities_res->Copy(computed_test_densities_);    
   }
   
   HKInteriorPointPredictorCorrector(){
@@ -346,6 +346,7 @@ class HKInteriorPointPredictorCorrector{
 
       la::SubFrom(x_p,&vec); //temp <- temp-x_p (temp=2*x_i) 
     }
+
     DTreeEvaluation<GaussianKernel> dte;
     dte.Init(qset_temp,rset_temp,bandwidth,tau);
     dte.Compute();
@@ -355,7 +356,7 @@ class HKInteriorPointPredictorCorrector{
     gk.Init(sigma_hk_*sqrt(2));
     double norm_const=gk.CalcNormConstant(num_dims_);
 
-    //Having go the estimates multiply with <x_p,x_q>_{2\sigm,a^2}
+    //Having got the estimates multiply with <x_p,x_q>_{2\sigm,a^2}
     for(index_t q=p;q<num_train_points_;q++){
       
       double *x_q=train_set_.GetColumnPtr(q);
@@ -429,7 +430,7 @@ class HKInteriorPointPredictorCorrector{
     
     double norm_const_hyperkernel=ghk.CalcNormConstant();
     
-    //printf("Normalization constant is %f...\n",norm_const_hyperkernel);
+    printf("Normalization constant is %f...\n",norm_const_hyperkernel);
 
     //printf("Number of test points are %d..\n",num_test_points_);
 
@@ -1390,12 +1391,12 @@ class HKInteriorPointPredictorCorrector{
     
     GetLinearConstraint_();
     
-    // printf("V vector is...\n");
-    //v_vector_.PrintDebug();
+    /*  printf("V vector is...\n"); */
+/*     v_vector_.PrintDebug(); */
     
     
-    //printf("a vector is..\n");
-    //a_vector_.PrintDebug();
+/*     printf("a vector is..\n"); */
+/*     a_vector_.PrintDebug(); */
   }
   
   
@@ -1438,7 +1439,7 @@ class HKInteriorPointPredictorCorrector{
     
     fx_timer_start(NULL,"preprocess");
     GetLinearPartOfObjectiveAndLinearConstraintVectors_();
-    
+
     //Get the Cholesky factiorization of the matrix M
     
     GetCholeskyFactorizationOfMMatrix_();
@@ -1556,17 +1557,10 @@ class HKInteriorPointPredictorCorrector{
     three_simga_sqd_plus_two_sigma_h_sqd=
       3*sigma_2+2*sigma_h_2;
 
-
-    primal_constant_=
-      sqrt(sqd_num_train_points_*math::PI)* 
-      three_simga_sqd_plus_two_sigma_h_sqd*
-      sqrt(sigma_2+sigma_h_2);
-
-    primal_constant_/=
-      sqrt(3*sigma_4+5*sigma_2*sigma_h_2+
-	   2*sigma_h_4);
-
-    //printf("Primal constant is %f...\n",primal_constant_);
+    primal_constant_=num_train_points_*
+      pow((sqrt(math::PI)*sqrt(sigma_2+sigma_h_2)*(3*sigma_2+2*sigma_h_2)/
+	   sqrt(3*sigma_4+5*sigma_2*sigma_h_2+2*sigma_h_4)),num_dims_);
+    printf("Primal constant is %f...\n",primal_constant_);
     num_iterations_=0;
 
   }
