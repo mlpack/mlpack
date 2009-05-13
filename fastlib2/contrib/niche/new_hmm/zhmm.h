@@ -56,12 +56,7 @@ class HMM {
     state_distributions = 
       (TDistribution*) malloc(n_states_ * sizeof(TDistribution));
     for(int i = 0; i < n_states_; i++) {
-      if(MIXTURE) {
-	state_distributions[i].Init(n_dims_, n_components_);
-      }
-      else {
-	state_distributions[i].Init(n_dims_);
-      }
+      state_distributions[i].Init(n_dims_, n_components_);
     }
   }
 
@@ -183,7 +178,7 @@ class HMM {
     Matrix &p_qt = *p_p_qt;
     double &neg_likelihood = *p_neg_likelihood;
 
-    if(MIXTURE) {
+    if(n_components > 1) { // if MIXTURE
       ComputePxGivenMixtureQ(sequence, &p_x_given_q,
 			     &p_x_given_mixture_q);
     }
@@ -367,7 +362,7 @@ class HMM {
   }
  
 
-  void BaumWelch(ArrayList<Matrix> sequences) {
+  void BaumWelch(const ArrayList<Matrix> &sequences) {
 
     int n_sequences = sequences.size();
 
@@ -414,30 +409,39 @@ class HMM {
       new_hmm_p_transition_denom.SetZero();
       if(DISCRETE) {
 	for(int i = 0; i < n_states_; i++) {
-	  new_hmm.state_distributions[i] -> p.SetZero();
+	  new_hmm.state_distributions[i].SetZero();
+	  // old
+	  //new_hmm.state_distributions[i].p -> SetZero();
+	  // old
 	}
       }
       else if(GAUSSIAN) {
 	for(int i = 0; i < n_states_; i++) {
-	  new_hmm.state_distributions[i] -> mu.SetZero();
-	  new_hmm.state_distributions[i] -> sigma.SetZero();
+	  new_hmm.state_distributions[i].SetZero();
+	  // old
+	  //new_hmm.state_distributions[i].mu -> SetZero();
+	  //new_hmm.state_distributions[i].sigma -> SetZero();
+	  // old
 	}
 	gaussian_denom.SetZero();
       }
       else if(MIXTURE) {
 	for(int i = 0; i < n_states_; i++) {
-	  new_hmm.state_distributions[i].weights.SetZero();
-	  for(int k = 0; k < n_components_; k++) {
-	    new_hmm.state_distributions[i].components[k] -> mu.SetZero();
-	    new_hmm.state_distributions[i].components[k] -> sigma.SetZero();
-	  }
+	  new_hmm.state_distributions[i].SetZero();
+	  // old
+	  //new_hmm.state_distributions[i].weights.SetZero();
+	  //for(int k = 0; k < n_components_; k++) {
+	  //  new_hmm.state_distributions[i].components[k].mu -> SetZero();
+	  //  new_hmm.state_distributions[i].components[k].sigma -> SetZero();
+	  //}
+	  // old
 	}
 	weight_qi.SetZero();
       }
       
       current_total_neg_likelihood = 0;
       for(int m = 0; m < n_sequences; m++) {
-	Matrix &sequence = sequences[m];
+	const Matrix &sequence = sequences[m];
 	int sequence_length = sequence.n_cols();
 
 	Matrix p_x_given_q; // Rabiner's b
@@ -481,30 +485,50 @@ class HMM {
 
 	// accumulate density statistics for observables
 	if(DISCRETE) {
+	  // what changes? new_hmm.state_distributions
+	  // what is given? p_qt
 	  for(int i = 0; i < n_states_; i++) {
-	    Vector& new_p = new_hmm.state_distributions[i] -> p;
+	    // old
+	    //Vector& new_p = new_hmm.state_distributions[i].p;
+	    // old
 	    for(int t = 0; t < sequence_length; t++) {
-	      new_p[sequence.get(0, t)] += p_qt.get(t, i);
+	      Vector x_t;
+	      sequence.MakeColumnVector(t, &x_t);
+	      new_hmm.state_distributions[i].Accumulate1st(p_qt.get(t, i),
+							   x_t,
+							   0);
+	      // old
+	      //new_p[sequence.get(0, t)] += p_qt.get(t, i);
+	      // old
 	    }
 	  }
 	}
 	else if(GAUSSIAN) {
+	  // what changes? new_hmm.state_distributions
+	  //               gaussian_denom
+	  // what is given? p_qt
 	  for(int i = 0; i < n_states_; i++) {
-	    Vector &new_mu = new_hmm.state_distributions[i] -> mu;
-	    Vector &new_sigma = new_hmm.state_distributions[i] -> sigma;
+	    // old
+	    //Vector &new_mu = new_hmm.state_distributions[i].mu;
+	    //Vector &new_sigma = new_hmm.state_distributions[i].sigma;
+	    // old
 	    for(int t = 0; t < sequence_length; t++) {
 	      Vector x_t;
 	      sequence.MakeColumnVector(t, &x_t);
-
-	      // update mean
-	      la::AddExpert(p_qt.get(t, i), x_t, &new_mu);
-
-	      // update covariance
-	      la::SubOverwrite(state_distributions[i] -> mu, x_t, &result);
-	      for(int j = 0; j < n_dims_; j++) {
-		result[j] *= result[j];
-	      }
-	      la::AddExpert(p_qt.get(t, i), result, &new_sigma);
+	      new_hmm.state_distributions[i].Accumulate1st(p_qt.get(t, i),
+							   x_t,
+							   0);
+	      // old
+	      //// update mean
+	      //la::AddExpert(p_qt.get(t, i), x_t, &new_mu);
+	      //
+	      //// update covariance
+	      //la::SubOverwrite(state_distributions[i].mu, x_t, &result);
+	      //for(int j = 0; j < n_dims_; j++) {
+	      //result[j] *= result[j];
+	      //}
+	      //la::AddExpert(p_qt.get(t, i), result, &new_sigma);
+	      // old
 
 	      // keep track of normalization factor
 	      gaussian_denom[i] += p_qt.get(t, i);
@@ -512,13 +536,20 @@ class HMM {
 	  }
 	}
 	else if(MIXTURE) {
+	  // what changes? new_hmm.state_distributions
+	  //               weight_qi
+	  // what is given? p_qt
+	  //                p_x_given_mixture_q
+	  //                new_hmm_p_transition_denom
 	  for(int k = 0; k < n_components_; k++) {
 	    for(int i = 0; i < n_states_; i++) {
-	      Vector &new_mu =
-		new_hmm.state_distributions[i].components[k] -> mu;
-	      Vector &new_sigma =
-		new_hmm.state_distributions[i].components[k] -> sigma;
-	      double sum = new_hmm.state_distributions[i].weights[k];
+	      // old
+	      //Vector &new_mu =
+	      //new_hmm.state_distributions[i].components[k].mu;
+	      //Vector &new_sigma =
+	      //new_hmm.state_distributions[i].components[k].sigma;
+	      //double sum = new_hmm.state_distributions[i].weights[k];
+	      // old
 	      for(int t = 0; t < sequence_length; t++) {
 		Vector x_t;
 		sequence.MakeColumnVector(t, &x_t);
@@ -527,24 +558,28 @@ class HMM {
 		// n_states_ is usually small (< 20)
 		double scaling_factor =
 		  p_qt.get(t, i) * p_x_given_mixture_q[k].get(i, t);
-	      
-		sum += scaling_factor;
-
-		// update mean
-		la::AddExpert(scaling_factor, x_t, &new_mu);
-
-		// update covariance
-		la::SubOverwrite(state_distributions[i].components[k] -> mu,
-				 x_t, &result);
-		for(int j = 0; j < n_dims_; j++) {
-		  result[j] *= result[j];
-		}
-		la::AddExpert(scaling_factor, result, &new_sigma);
-	      
-		// keep track of normalization factor
-		//gaussian_denom[i] += p_qt.get(t, i);
+		
+		new_hmm.state_distributions[i].Accumulate1st(scaling_factor,
+							     x_t,
+							     k);
+		// old
+		//sum += scaling_factor;
+		//
+		//// update mean
+		//la::AddExpert(scaling_factor, x_t, &new_mu);
+		//
+		//// update covariance
+		//la::SubOverwrite(state_distributions[i].components[k].mu,
+		//		 x_t, &result);
+		//for(int j = 0; j < n_dims_; j++) {
+		//  result[j] *= result[j];
+		//}
+		//la::AddExpert(scaling_factor, result, &new_sigma);
+		// old
 	      }
-	      new_hmm.state_distributions[i].weights[k] = sum;
+	      // old
+	      //new_hmm.state_distributions[i].weights[k] = sum;
+	      // old
 	    }	  
 	  }
 	  for(int i = 0; i < n_states_; i++) {
@@ -578,34 +613,40 @@ class HMM {
 
       // normalize density statistics for observables
       if(DISCRETE) {
+	// what changes? new_hmm.state_distributions
+	// what is given? nothing
 	for(int i = 0; i < n_states_; i++) {
-	  Vector& new_p = new_hmm.state_distributions[i] -> p;
+	  Vector& new_p = new_hmm.state_distributions[i].p;
 	  la::Scale(((double)1) / Sum(new_p),
 		    &new_p);
 	}
       }
       else if(GAUSSIAN) {
+	// what changes? new_hmm.state_distributions
+	// what is given? gaussian_denom
 	for(int i = 0; i < n_states_; i++) {
 	  double normalization_factor = ((double)1) / gaussian_denom[i];
-	  Vector &new_mu = new_hmm.state_distributions[i] -> mu;
+	  Vector &new_mu = new_hmm.state_distributions[i].mu;
 	  la::Scale(normalization_factor,
 		    &new_mu);
-	  Vector &new_sigma = new_hmm.state_distributions[i] -> sigma;
+	  Vector &new_sigma = new_hmm.state_distributions[i].sigma;
 	  la::Scale(normalization_factor,
 		    &new_sigma);
 	}
       }
       else if(MIXTURE) {
+	// what changes? new_hmm.state_distributions
+	// what is given? weight_qi
 	for(int k = 0; k < n_components_; k++) {
 	  for(int i = 0; i < n_states_; i++) {
 	    double normalization_factor =
 	      ((double)1) / new_hmm.state_distributions[i].weights[k];
 	    Vector &new_mu =
-	      new_hmm.state_distributions[i].components[k] -> mu;
+	      new_hmm.state_distributions[i].components[k].mu;
 	    la::Scale(normalization_factor,
 		      &new_mu);
 	    Vector &new_sigma =
-	      new_hmm.state_distributions[i].components[k] -> sigma;
+	      new_hmm.state_distributions[i].components[k].sigma;
 	    la::Scale(normalization_factor,
 		      &new_sigma);
 	  
@@ -698,6 +739,79 @@ class HMM {
   }
 
 };
+
+// call the same update function for all HMMs
+Multinomial::SetZero() {
+  p_ -> SetZero();
+}
+
+Multinomial::Accumulate1st(double weight, const Vector &example,
+			   int component_num,) {
+  (*p_)[(int)example] += weight;
+}
+
+Multinomial::Accumulate2nd(double weight, const Vector &example,
+			   int component_num) {
+  // nothing to do
+}
+
+Multinomial::Normalize(component_num, normalization_factor) {
+  la::Scale(normalization_factor, p_);
+}
+
+Gaussian::SetZero() {
+  mu_ -> SetZero();
+  sigma -> SetZero();
+}
+
+Gaussian::Accumulate1st(double weight, const Vector &example,
+			int component_num) {
+  la::AddExpert(weight, example, mu_);
+}
+
+Gaussian::Accumulate2nd(double weight, const Vector &example,
+			int component_num, double weight) {
+  Vector result;
+  result.Init(n_dims_);
+  la::SubOverwrite(*mu_, example, &result);
+  for(int j = 0; j < n_dims_; j++) {
+    result[j] *= result[j];
+  }
+  la::AddExpert(weight, result, sigma_);
+}
+
+Gaussian::Normalize(component_num, normalization_factor) {
+  la::Scale(normalization_factor, mu_);
+  la::Scale(normalization_factor, sigma_);
+}
+
+Mixture::SetZero() {
+  for(int k = 0; k < n_components_; k++) {
+    components_[k].SetZero();
+  }
+  weights_.SetZero();
+}
+
+Mixture::Accumulate1st(double weight, const Vector &example,
+		       int component_num) {
+  components_[component_num].Accumulate1st(weight, example, 0);
+  weights_[component_num] += weight;
+}
+
+Mixture::Accumulate2nd(double weight, const Vector &example,
+		       int component_num) {
+  components_[component_num].Accumulate2nd(weight, example, 0);
+}
+
+Mixture::Normalize(component_num, normalization_factor) {
+  double one_over_weights_k = ((double)1) / weights_[component_num];
+  la::Scale(one_over_weights_k,
+	    &(components_[component_num].mu_));
+  la::Scale(one_over_weights_k,
+	    &(components_[component_num].sigma_));
+  la::Scale(normalization_factor, &weights_);
+}
+  
 
 
 #endif /* HMM_H */
