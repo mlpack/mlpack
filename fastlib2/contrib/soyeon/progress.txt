@@ -146,9 +146,7 @@ fl-build --mode=debug --compiler=gcc main
 >>>>>>> .r3761
 
 
-./main --data1=sim3_data1.csv --data2=sim3_data2.csv --data3=sim3_data3.csv -
--info1=sim3_info1.csv --info_y=sim3_info_y.csv --info_ind_unknown_x=sim2_info_u
-nknown_x.csv --initial_percent_sample=100
+./main --data1=sim3_data1.csv --data2=sim3_data2.csv --data3=sim3_data3.csv --info1=sim3_info1.csv --info_y=sim3_info_y.csv --info_ind_unknown_x=sim2_info_unknown_x.csv --initial_percent_sample=10
 
 
 
@@ -157,3 +155,7 @@ nknown_x.csv --initial_percent_sample=100
  ./main --data1=sim6_data1.csv --data2=sim6_data2.csv --data3=sim6_data3.csv --info1=sim6_info1.csv --info_y=sim6_info_y.csv --info_ind_unknown_x=sim2_info_unknown_x.csv --initial_percent_sample=100
  
  ./main --data1=sim6_data1_m1.txt --data2=sim6_data2_m1.txt --data3=sim6_data3_m1.txt --info1=sim6_info1_m1.txt --info_y=sim6_info_y_m1.txt --info_ind_unknown_x=sim2_info_unknown_x.txt --initial_percent_sample=10
+ 
+ ./main --data1=sim3_data1_sam1.csv --data2=sim3_data2_sam1.csv --data3=sim3_data2_sam1.csv --info1=sim3_info1_sam1.csv --info_y=sim3_info_y_sam1.csv --info_ind_unknown_x=sim2_info_unknown_x.txt --initial_percent_sample=10
+ 
+ sim3_info_y_sam1
