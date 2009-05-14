@@ -82,7 +82,18 @@ svm_main --learner_name=svm_c --mode=train_test --train_data=UCI_iris_c0c1.csv -
 
 svm_main --learner_name=svm_c --mode=train_test --train_data=UCI_magic04_equal.csv --test_data=UCI_magic04_equal.csv --kernel=gaussian --sigma=1 --nu=50 --mu=1.5 --normalize=0 --opt=sga --n_iter=13377
 
+svm_main --learner_name=svm_c --mode=train_test --train_data=UCI_covtype_c1_c2_train_0p7.csv --test_data=UCI_covtype_c1_c2_test_0p3.csv --kernel=gaussian --sigma=1 --nu=100 --mu=1.5 --normalize=0 --opt=sga --n_iter=30000
 
+svm_main --learner_name=svm_c --mode=train_test --train_data=ijcnn1_train_sort.csv --test_data=ijcnn1_train_sort.csv --kernel=gaussian --sigma=0.1 --nu=100 --mu=1.5 --normalize=0 --opt=sga --n_iter=4000
+
+------Using SCG---------
+svm_main --learner_name=svm_c --mode=train_test --train_data=UCI_iris_c0c1.csv --test_data=UCI_iris_c0c1.csv --kernel=gaussian --sigma=1 --nu=1 --mu=1 --normalize=0 --opt=scg --n_iter=10
+
+svm_main --learner_name=svm_c --mode=train_test --train_data=UCI_magic04_equal.csv --test_data=UCI_magic04_equal.csv --kernel=gaussian --sigma=1 --nu=50 --mu=1.5 --normalize=0 --opt=scg --n_iter=13377
+
+svm_main --learner_name=svm_c --mode=train_test --train_data=UCI_covtype_c1_c2_train_0p7.csv --test_data=UCI_covtype_c1_c2_test_0p3.csv --kernel=gaussian --sigma=1 --nu=100 --mu=1.5 --normalize=0 --opt=scg --n_iter=30000
+
+svm_main --learner_name=svm_c --mode=train_test --train_data=ijcnn1_train_sort.csv --test_data=ijcnn1_train_sort.csv --kernel=gaussian --sigma=0.1 --nu=100 --mu=1.5 --normalize=0 --opt=scg --n_iter=15000
 
 
 

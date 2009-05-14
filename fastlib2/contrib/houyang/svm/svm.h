@@ -10,6 +10,7 @@
  * @see opt_sgd.h
  * @see opt_hcy.h
  * @see opt_sga.h
+ * @see opt_scg.h
  */
 
 #ifndef U_SVM_SVM_H
@@ -19,6 +20,7 @@
 #include "opt_sgd.h"
 #include "opt_hcy.h"
 #include "opt_sga.h"
+#include "opt_scg.h"
 
 #include "fastlib/fastlib.h"
 
@@ -102,7 +104,7 @@ class SVM {
    * Developers may add more learner types if necessary
    */
   int learner_typeid_;
-  // Optimization method: smo, sgd, hcy, sga
+  // Optimization method: smo, sgd, hcy, sga, scg
   String opt_method_;
   /* array of models for storage of the 2-class(binary) classifiers 
      Need to train num_classes_*(num_classes_-1)/2 binary models */
@@ -181,6 +183,7 @@ class SVM {
   class SGD<Kernel>;
   class HCY<Kernel>;
   class SGA<Kernel>;
+  class SCG<Kernel>;
 
   void Init(int learner_typeid, const Dataset& dataset, datanode *module);
   void InitTrain(int learner_typeid, const Dataset& dataset, datanode *module);
@@ -461,6 +464,32 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	models_[ct].w_.Init(0); // for linear SGD only. not used here
 	sga.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
       }
+      else if (opt_method_== "scg") {
+	/* Initialize SCG parameters */
+	ArrayList<double> param_feed_db;
+	param_feed_db.Init();
+	param_feed_db.PushBack() = param_.nu_; // for nu-SVM
+	param_feed_db.PushBack() = param_.mu_; // for bias term regularization
+	param_feed_db.PushBack() = param_.n_iter_;
+	param_feed_db.PushBack() = param_.accuracy_;
+	param_feed_db.PushBack() = train_labels_ct_[i]; // number of positive samples (with label 1)
+	SCG<Kernel> scg;
+	scg.InitPara(learner_typeid, param_feed_db);
+	
+	/* Initialize kernel */
+	scg.kernel().Init(fx_submodule(module, "kernel"));
+
+	/* 2-classes SVM training using SCG */
+	fx_timer_start(NULL, "train_scg");
+	scg.Train(learner_typeid, &dataset_bi);
+	fx_timer_stop(NULL, "train_scg");
+	
+	/* Get the trained bi-class model */
+	models_[ct].coef_.Init(); // alpha*y
+	models_[ct].bias_ = scg.Bias(); // bias
+	models_[ct].w_.Init(0); // for linear SGD only. not used here
+	scg.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
+      }
       else {
 	fprintf(stderr, "ERROR!!! Unknown optimization method!\n");
       }
@@ -668,7 +697,7 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
   double sum = 0.0;
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
-      if (opt_method_== "smo" || opt_method_== "hcy" || opt_method_== "sga") {
+      if (opt_method_== "smo" || opt_method_== "hcy" || opt_method_== "sga" || opt_method_== "scg") {
 	sum = 0.0;
 	for(k = 0; k < sv_list_ct_[i]; k++) {
 	  sum += sv_coef_.get(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];
