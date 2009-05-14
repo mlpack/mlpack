@@ -22,7 +22,7 @@ const index_t MAX_NUM_ITER_SGA = 1000000;
 // threshold that determines whether an alpha is a SV or not
 const double SGA_ALPHA_ZERO = 1.0e-4;
 // for inv_mu
-const double SGA_ZERO = 1.0e-6;
+const double SGA_ZERO = 1.0e-12;
 
 
 template<typename TKernel>
@@ -53,13 +53,14 @@ class SGA {
   index_t n_alpha_; /* number of variables to be optimized */
   index_t n_active_; /* number of samples in the active set */
   // n_active + n_inactive == n_alpha;
-  ArrayList<index_t> active_set_; /* list that stores the old indices of active alphas followed by inactive alphas. == old_from_new*/
+  ArrayList<index_t> active_set_; /* list that stores the old indices of active alphas followed by inactive alphas */
 
   ArrayList<int> y_; /* list that stores "labels" */
 
   double bias_;
 
   Vector grad_; /* gradient value */
+  Vector kernel_cache_; /* cache for kernel values */
 
   // parameters
   double nu_; // for nu-svm
@@ -165,7 +166,7 @@ void SGA<TKernel>::LearnersInit_(int learner_typeid) {
     n_alpha_ = n_data_;
     active_set_.Init(n_alpha_);
     for (i=0; i<n_alpha_; i++)
-      active_set_[i] = -1;
+      active_set_[i] = i;
 
     y_.Init(n_data_);
     for (i = 0; i < n_data_; i++) {
@@ -175,8 +176,10 @@ void SGA<TKernel>::LearnersInit_(int learner_typeid) {
     srand(time(NULL));
     p_ = rand() % n_alpha_; // randomly choose a point for opt
 
-    active_set_[0] = p_;
-    n_active_ = 1;
+    n_active_ = 0;
+    swap(active_set_[p_], active_set_[n_active_]);
+    //active_set_[0] = p_;
+    n_active_ ++;
 
     // initialize alpha
     alpha_.Init(n_alpha_);
@@ -189,6 +192,9 @@ void SGA<TKernel>::LearnersInit_(int learner_typeid) {
     for (i=0; i<n_alpha_; i++) {
       grad_[i] = -2 * nu_ * y_[i] * y_[p_] * ( CalcKernelValue_(i, p_) + inv_mu_ );
     }
+
+    kernel_cache_.Init(n_alpha_);
+    kernel_cache_.SetZero();
 
   }
   else if (learner_typeid_ == 1) { // SVM_R
@@ -244,7 +250,8 @@ void SGA<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     else if (stop_condition == 2) {// max num of iterations exceeded
       // Calculate the bias term
       CalcBias_();
-      fprintf(stderr, "SGA terminates since the number of iterations %d exceeded !!!\n", n_iter_);
+      printf("SGA terminates since the number of iterations %d exceeded !!!\n", n_iter_);
+      printf("n_active=%d\n", n_active_);
       break;
     }
   }
@@ -279,38 +286,25 @@ int SGA<TKernel>::SGAIterations_() {
 template<typename TKernel>
 bool SGA<TKernel>::GreedyVectorSelection_() {
   double grad_max = -INFINITY;
-  double grad_min =  INFINITY;
+  //double grad_min =  INFINITY;
   index_t idx_i_grad_max = -1;
-  index_t idx_i_grad_min = -1;
+  //index_t idx_i_grad_min = -1;
   
-  // Find working vector using greedy search: idx_i = argmax_k(grad_k)
-  index_t k;
+  // Find working vector using greedy search: idx_i = argmax_k(grad_k), k = 1...N
+  index_t k, op_pos;
+  index_t p_po_act = -1; // p's position in active set
   for (k=0; k<n_alpha_; k++) {
-    //printf("grad_[k]=%f\n", grad_[k]);
-    if (grad_[k] > grad_max) {
-      grad_max = grad_[k];
-      idx_i_grad_max = k;
+    op_pos = active_set_[k];
+    if (grad_[op_pos] > grad_max) {
+      grad_max = grad_[op_pos];
+      idx_i_grad_max = op_pos;
+      p_po_act = k;
     }
   }
   p_ = idx_i_grad_max; // i found
 
-  // find grad_min for optimality check
-  for (k=0; k<n_alpha_; k++) {
-    if (grad_[k] < grad_min) {
-      grad_min = grad_[k];
-      idx_i_grad_min = k;
-    }
-  }
-
-  // update active_set
-  bool p_is_new = true;
-  for (k=0; k<n_active_; k++) {
-    if (active_set_[k] == p_) {
-      p_is_new = false; // the vector is not a new vector, already in active_set
-    }
-  }
-  if (p_is_new) {
-    active_set_[n_active_] = p_;
+  if (p_po_act >= n_active_) { // this sample is not in active set, update it
+    swap(active_set_[p_po_act], active_set_[n_active_]);
     n_active_ ++;
   }
   
@@ -338,7 +332,8 @@ void SGA<TKernel>::UpdateGradientAlpha_() {
   r_ = 0;
   for (i=0; i<n_active_; i++) {
     op_pos = active_set_[i];
-    r_ = r_ + alpha_[op_pos] * y_[p_] * y_[op_pos] * ( CalcKernelValue_(p_, op_pos) + inv_mu_ );
+    kernel_cache_[i] = CalcKernelValue_(p_,op_pos) + inv_mu_;
+    r_ = r_ + alpha_[op_pos] * y_[p_] * y_[op_pos] * ( kernel_cache_[i] );
   }
   r_ = r_ * nu_;
 
@@ -354,9 +349,21 @@ void SGA<TKernel>::UpdateGradientAlpha_() {
 
   double one_m_lambda = 1 - lambda_;
   double nu_lambda = nu_ * lambda_;
+
+  // update q
+  q_ = one_m_lambda * one_m_lambda * q_ + 2 * lambda_ * one_m_lambda * r_ + lambda_ * lambda_ * sq_nu_App;
+
   // update gradients
-  for (i=0; i<n_alpha_; i++) {
-    grad_[i] = one_m_lambda * grad_[i] - 2 * nu_lambda * y_[i] * y_[p_] * ( CalcKernelValue_(i, p_) + inv_mu_ );
+  //for (i=0; i<n_alpha_; i++) {
+  //  grad_[i] = one_m_lambda * grad_[i] - 2 * nu_lambda * y_[i] * y_[p_] * ( CalcKernelValue_(i, p_) + inv_mu_ );
+  //}
+  for (i=0; i<n_active_; i++) { // for active set
+    op_pos = active_set_[i];
+    grad_[op_pos] = one_m_lambda * grad_[op_pos] - 2 * nu_lambda * y_[op_pos] * y_[p_] * ( kernel_cache_[i] );
+  }
+  for (i=n_active_; i<n_alpha_; i++) { // for inactive set
+    op_pos = active_set_[i];
+    grad_[op_pos] = one_m_lambda * grad_[op_pos] - 2 * nu_lambda * y_[op_pos] * y_[p_] * ( CalcKernelValue_(op_pos, p_) + inv_mu_ );
   }
 
   // update alphas
@@ -365,9 +372,6 @@ void SGA<TKernel>::UpdateGradientAlpha_() {
     alpha_[op_pos] = one_m_lambda * alpha_[op_pos];
   }
   alpha_[p_] = alpha_[p_] + nu_lambda;
-  
-  // update q
-  q_ = one_m_lambda * one_m_lambda * q_ + 2 * lambda_ * one_m_lambda * r_ + lambda_ * lambda_ * sq_nu_App;
 }
 
 
