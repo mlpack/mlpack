@@ -515,7 +515,7 @@ double PeriodicMinDistanceSq(const Vector& point, const Vector& box_size)
 
 
  // Computes width of box in periodic coordinates
- double width(int dim, double box_width){
+ double width(int dim, double box_width) const {
    double result;
    const DRange *a = this->bounds_;
    result = a[dim].hi-a[dim].lo;
