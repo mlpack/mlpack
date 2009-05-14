@@ -89,7 +89,8 @@ class ThorMD {
     index_t reference_count_;
     int bound_type_, prune_type_;
     double prune_value_, prune_value2_;
-    
+    bool no_three_body_;
+
     OT_DEF(Param) {
       OT_MY_OBJECT(potential_);      
       OT_MY_OBJECT(box_size_);
@@ -98,6 +99,7 @@ class ThorMD {
       OT_MY_OBJECT(prune_value_);
       OT_MY_OBJECT(prune_value2_);
       OT_MY_OBJECT(prune_type_);     
+      OT_MY_OBJECT(no_three_body_);
     }
   public:
     
@@ -136,6 +138,7 @@ class ThorMD {
       
       // THree-body Potential
       axilrod_.Init();
+      no_three_body_ = fx_param_bool(module, "no_three", 0);
     }
     
     void FinalizeInit(datanode *module, int dimension) {
@@ -809,7 +812,10 @@ class ThorMD {
 				      QPostponed* q_postponed) {
       
       // compute distance bound between two nodes
-     
+      if (param.no_three_body_){
+	return false;
+      }
+
       if (param.prune_type_ == CUTOFF) {
 	double dij, djk, dki;
 	if (likely(param.bound_type_ == PERIODIC)){
