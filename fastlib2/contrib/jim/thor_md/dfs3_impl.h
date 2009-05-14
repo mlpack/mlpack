@@ -513,7 +513,7 @@ void ThreeTreeDepthFirst<GNP>::BaseCase_(
 
       for (;;) {
         visitor.VisitPair(param_, *q_point, q_i, *r_point, r_i);
-	if (r_left > 1){
+	if (r_left > 1 && !param_.no_three_body_){
 	  r2_point =  mem::PtrAddBytes(r_point, r_point_stride);
 	  r2_i = r_i + 1;
 	  r2_left = r_left - 1;
