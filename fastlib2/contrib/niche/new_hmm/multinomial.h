@@ -1,7 +1,9 @@
-#include "fastlib/fastlib.h"
-
 #ifndef MULTINOMIAL_H
 #define MULTINOMIAL_H
+
+#include "fastlib/fastlib.h"
+#include "la_utils.h"
+
 
 class Multinomial {
  public:
@@ -58,6 +60,31 @@ class Multinomial {
     }
   }
 
+  template<typename T>
+  double PkthComponent(const GenVector<T> &xt, int component_num) {
+    return Pdf(xt);
+  }
+
+  template<typename T>
+  double Pdf(const GenVector<T> &xt) {
+    return (*p_)[((int)(xt[0]))];
+  }
+
+  // call the same update function for all HMMs
+  void SetZero() {
+    p_ -> SetZero();
+  }
+  
+  template<typename T>
+  void Accumulate(double weight, const GenVector<T> &example,
+		  int component_num){
+    (*p_)[(int)(example[0])] += weight; // remove casting if template works
+  }
+  
+  void Normalize(double normalization_factor) {
+    la::Scale(((double)1) / Sum(*p_), p_);
+  }
+  
   void PrintDebug(const char *name = "", FILE *stream = stderr) const {
     fprintf(stream, name);
     p_ -> PrintDebug("p");
