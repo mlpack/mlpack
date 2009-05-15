@@ -64,7 +64,32 @@ class Gaussian {
       (*sigma_).set(i, i, 1);
     }
   }
+  /*
+  void SetZero() {
+    mu_ -> SetZero();
+    sigma_ -> SetZero();
+  }
+  
+  void Accumulate(double weight, const Vector &example,
+		  int component_num) {
+    la::AddExpert(weight, example, mu_);
+    
+    Vector result;
+    result.Init(n_dims_); // inefficient, don't want to have to init this every time we call Accumulate
+    for(int i = 0; i < n_dims_; i++) {
+      result[i] = example[i] * example[i];
+    }
+    la::AddExpert(weight * weight, result, sigma_);
+  }
 
+  void Normalize(double normalization_factor) {
+    la::Scale(normalization_factor, mu_);
+    la::Scale(normalization_factor * normalization_factor, sigma_);
+    for(int i = 0; i < n_dims_; i++) {
+      sigma_[i] -= mu_[i] * mu_[i];
+    }
+  }
+  */
   void PrintDebug(const char *name = "", FILE *stream = stderr) const {
     fprintf(stream, name);
     mu_ -> PrintDebug("mu");
@@ -73,12 +98,10 @@ class Gaussian {
     
   
   ~Gaussian() {
-    //printf("~destroying Gaussian\n");
     Destruct();
   }
 
   void Destruct() {
-    //printf("destroying Gaussian\n");
     delete mu_;
     delete sigma_;
   }
