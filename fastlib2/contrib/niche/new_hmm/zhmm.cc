@@ -6,7 +6,7 @@
 
 void TestMultinomial() {
   HMM<Multinomial> hmm;
-  hmm.Init(2, 1, MULTINOMIAL);
+  hmm.Init(2, 2, MULTINOMIAL);
   srand48(time(0));
   hmm.RandomlyInitialize();
   
@@ -27,7 +27,7 @@ void TestMultinomial() {
 
 void TestGaussian() {
   HMM<DiagGaussian> hmm;
-  hmm.Init(2, 2, GAUSSIAN);
+  hmm.Init(2, 2, GAUSSIAN, 0.001);
   srand48(time(0));
   hmm.RandomlyInitialize();
   
@@ -53,9 +53,10 @@ void TestGaussian() {
   hmm.PrintDebug("hmm");
 }
 
+
 void TestMixture() {
   HMM<Mixture<DiagGaussian> > hmm;
-  hmm.Init(2, 2, MIXTURE, 1);
+  hmm.Init(2, 2, MIXTURE, 0.0001, 2);
   srand48(time(0));
   hmm.RandomlyInitialize();
   
@@ -84,7 +85,7 @@ void TestMixture() {
 
 void TestGaussianPdf() {
   DiagGaussian g;
-  g.Init(2);
+  g.Init(2, 0.001);
   Vector &mu = *(g.mu_);
   mu[0] = -1;
   mu[1] = 0.5;
@@ -107,8 +108,8 @@ void TestGaussianPdf() {
 
 
 int main(int argc, char* argv[]) {
-  TestMultinomial();
-  //TestGaussian();
+  //TestMultinomial();
+  TestGaussian();
   //TestGaussianPdf();
   //TestMixture();
 }

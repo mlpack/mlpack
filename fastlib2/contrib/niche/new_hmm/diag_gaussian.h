@@ -5,6 +5,7 @@ class DiagGaussian {
 
  private:
   double norm_constant_;
+  double min_variance_;
 
  public:
 
@@ -12,13 +13,18 @@ class DiagGaussian {
 
   Vector* mu_;
   Vector* sigma_;
-  
+
   void Init(int n_dims_in) {
-    Init(n_dims_in, 1);
+    Init(n_dims_in, 0);
+  }
+  
+  void Init(int n_dims_in, double min_variance_in) {
+    Init(n_dims_in, min_variance_in, 1);
   }
 
-  void Init(int n_dims_in, int n_components_in) {
+  void Init(int n_dims_in, double min_variance_in, int n_components_in) {
     n_dims_ = n_dims_in;
+    min_variance_ = min_variance_in;
 
     mu_ = new Vector();
     mu_ -> Init(n_dims_);
@@ -115,13 +121,51 @@ class DiagGaussian {
     la::AddExpert(weight, result, sigma_);
   }
 
-  void Normalize(double normalization_factor) {
-    la::Scale(normalization_factor, mu_);
-    la::Scale(normalization_factor, sigma_);
-    for(int i = 0; i < n_dims_; i++) {
-      (*sigma_)[i] -= (*mu_)[i] * (*mu_)[i];
+  void Normalize(double one_over_normalization_factor,
+		 const DiagGaussian &alternate_distribution) {
+    /*
+    if(isinf((*mu_)[0])) {
+      printf("before - mu is infinite\n");
     }
-    ComputeNormConstant();
+   
+      printf("mu = [%e %e]\n", (*mu_)[0], (*mu_)[1]);
+    (*mu_).PrintDebug("mu_");
+    printf("one_over_normalization_factor = %e\n",
+    one_over_normalization_factor);
+    */
+    if(one_over_normalization_factor > 1e-100) {
+      double normalization_factor = 
+	((double)1) / one_over_normalization_factor;
+      //printf("normalization_factor = %e\n", normalization_factor);
+      la::Scale(normalization_factor, mu_);
+      la::Scale(normalization_factor, sigma_);
+      for(int i = 0; i < n_dims_; i++) {
+	(*sigma_)[i] -= (*mu_)[i] * (*mu_)[i];
+	
+	if((*sigma_)[i] < min_variance_) {
+	  (*sigma_)[i] = min_variance_;
+	}
+	
+      }
+      ComputeNormConstant();
+    }
+    else {
+      //printf("alt: %e\n", (*(alternate_distribution.sigma_))[0]);
+      mu_ -> CopyValues(*(alternate_distribution.mu_));
+      sigma_ -> CopyValues(*(alternate_distribution.sigma_));
+      ComputeNormConstant(); // should not be necessary
+      //printf("alternate\n");
+    }
+    /*
+    if(isinf((*mu_)[0])) {
+      printf("after - mu is infinite\n");
+      exit(1);
+    }
+    else if((*sigma_)[0] < min_variance_) {
+      printf("after: (*sigma_)[0] < min_variance_: %e\n", (*sigma_)[0]);
+      exit(1);
+    }
+    */
   }
 
   void PrintDebug(const char *name = "", FILE *stream = stderr) const {
