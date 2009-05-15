@@ -14,10 +14,14 @@ class Multinomial {
   Vector* p_;
 
   void Init(int n_dims_in) {
-    Init(n_dims_in, 1);
+    Init(n_dims_in, 0);
   }
 
-  void Init(int n_dims_in, int n_components_in) {
+  void Init(int n_dims_in, double min_variance_in) {
+    Init(n_dims_in, min_variance_in, 1);
+  }
+
+  void Init(int n_dims_in, double min_variance_in, int n_components_in) {
     n_dims_ = n_dims_in;
     n_components_ = n_components_in;
     
@@ -81,8 +85,15 @@ class Multinomial {
     (*p_)[example[0]] += weight; // remove casting if template works
   }
   
-  void Normalize(double normalization_factor) {
-    la::Scale(((double)1) / Sum(*p_), p_);
+  void Normalize(double normalization_factor,
+		 const Multinomial &alternate_distribution) {
+    double sum = Sum(*p_);
+    if(sum > 0) {
+      la::Scale(((double)1) / sum, p_);
+    }
+    else {
+      p_ -> CopyValues(*(alternate_distribution.p_));
+    }
   }
   
   void PrintDebug(const char *name = "", FILE *stream = stderr) const {

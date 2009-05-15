@@ -10,22 +10,24 @@ class Mixture {
   int n_dims_;
 
   Vector weights_;
-  TDistribution* components_;
 
 
 
  public:
+  TDistribution* components_;
 
-  void Init(int n_dims_in, int n_components_in) {
+  void Init(int n_dims_in, double min_variance_in, int n_components_in) {
+    printf("n_dims == %d\n", n_dims_in);
+    printf("min_variance_ == %f\n", min_variance_in);
+    printf("n_components == %d\n", n_components_in);
     n_dims_ = n_dims_in;
     n_components_ = n_components_in;
 
-    
     weights_.Init(n_components_);
     components_ =
       (TDistribution*) malloc(n_components_ * sizeof(TDistribution));
     for(int i = 0; i < n_components_; i++) {
-      components_[i].Init(n_dims_);
+      components_[i].Init(n_dims_, min_variance_in);
     }
   }
 
@@ -62,14 +64,20 @@ class Mixture {
     weights_[component_num] += weight;
   }
   
-  void Normalize(double normalization_factor) {
+  void Normalize(double one_over_normalization_factor,
+		 const Mixture &alternate_distribution) {
     for(int k = 0; k < n_components_; k++) {
-      double one_over_weights_k = ((double)1) / weights_[k];
-      components_[k].Normalize(one_over_weights_k);
+      components_[k].Normalize(weights_[k],
+			       alternate_distribution.components_[k]);
     }
     
-    // I posit that normalization_factor = sum(weights_)
-    la::Scale(normalization_factor, &weights_);
+    // I posit that one_over_normalization_factor = sum(weights_)
+    if(one_over_normalization_factor > 0) {
+      la::Scale(((double)1) / one_over_normalization_factor, &weights_);
+    }
+    else {
+      weights_.CopyValues(alternate_distribution.weights_);
+    }
   }
 
   void PrintDebug(const char *name = "", FILE *stream = stderr) const {

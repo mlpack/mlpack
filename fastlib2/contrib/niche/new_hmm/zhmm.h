@@ -21,6 +21,7 @@ class HMM {
   int n_states_;
   int n_dims_;
   int type_;
+  double min_variance_;
   int n_components_;
 
  public:
@@ -39,15 +40,23 @@ class HMM {
 
  public:
 
+
   void Init(int n_states_in, int n_dims_in, int type_in) {
-    Init(n_states_in, n_dims_in, type_in, 1);
+    Init(n_states_in, n_dims_in, type_in, 0);
+  }
+
+  void Init(int n_states_in, int n_dims_in, int type_in,
+	    double min_variance_in) {
+    Init(n_states_in, n_dims_in, type_in, min_variance_in, 1);
   }
 
   void Init(int n_states_in, int n_dims_in,
-	    int type_in, int n_components_in) {
+	    int type_in, double min_variance_in,
+	    int n_components_in) {
     n_states_ = n_states_in;
     n_dims_ = n_dims_in;
     type_ = type_in;
+    min_variance_ = min_variance_in;
     n_components_ = n_components_in;
     
     p_initial.Init(n_states_);
@@ -56,7 +65,7 @@ class HMM {
     state_distributions = 
       (TDistribution*) malloc(n_states_ * sizeof(TDistribution));
     for(int i = 0; i < n_states_; i++) {
-      state_distributions[i].Init(n_dims_, n_components_);
+      state_distributions[i].Init(n_dims_, min_variance_in, n_components_);
     }
   }
 
@@ -143,7 +152,7 @@ class HMM {
     double &neg_likelihood = *p_neg_likelihood;
 
 
-    if(MIXTURE) {
+    if(type_ == MIXTURE) {
       ComputePxGivenMixtureQ(sequence, &p_x_given_q,
 			     &p_x_given_mixture_q);
     }
@@ -252,6 +261,7 @@ class HMM {
 
     HadamardMultiplyOverwrite(p_initial, p_x0_given_q, &forward_0);
     ScaleForwardVar(&(scaling_vars[0]), &forward_0);
+    printf("scaling_vars[0] = %f\n", scaling_vars[0]);
 
     for(int t = 0; t < sequence_length - 1; t++) {
       Vector forward_t;
@@ -340,15 +350,14 @@ class HMM {
 
     // First, we declare an HMM that we can use during EM
     HMM<TDistribution> new_hmm;
-    new_hmm.Init(n_states_, n_dims_, n_components_);
+    new_hmm.Init(n_states_, n_dims_, type_, min_variance_, n_components_);
 
-    
     // recycling is good so let's use these repeatedly
     Vector new_hmm_p_transition_denom;
     new_hmm_p_transition_denom.Init(n_states_);
 
     Vector gaussian_denom;
-    if(GAUSSIAN) {
+    if(type_ == GAUSSIAN) {
       gaussian_denom.Init(n_states_);
     }
     else {
@@ -356,7 +365,7 @@ class HMM {
     }
 
     Vector weight_qi;
-    if(MIXTURE) {
+    if(type_ == MIXTURE) {
       weight_qi.Init(n_states_);
     }
     else {
@@ -371,6 +380,7 @@ class HMM {
     bool converged = false;
 
     while(!converged) {
+      printf("iteration %d\n", iteration_num);
       iteration_num++;
       
       new_hmm.p_initial.SetZero();
@@ -405,9 +415,13 @@ class HMM {
 			&p_x_given_q, &p_x_given_mixture_q,
 			&p_qq_t, &p_qt,
 			&neg_likelihood);
+	
 	p_x_given_q.PrintDebug("p_x_given_q");
-	p_x_given_mixture_q[0].PrintDebug("p_x_given_mixture_q");
+	if(type_ == MIXTURE) {
+	  p_x_given_mixture_q[0].PrintDebug("p_x_given_mixture_q");
+	}
 	p_qt.PrintDebug("p_qt");
+	
 	current_total_neg_likelihood += neg_likelihood;
       
 
@@ -476,7 +490,8 @@ class HMM {
 		new_hmm.state_distributions[i].Accumulate(scaling_factor, x_t,
 							  k);
 	      }
-	    }	  
+	    }
+	    printf("done accumulating component %d\n", k);
 	  }
 	  for(int i = 0; i < n_states_; i++) {
 	    // note that new_hmm_p_transition_denom[i] =
@@ -508,7 +523,7 @@ class HMM {
 	// initially for efficiency. We transpose it at the end of
 	// its computation (below).
 
-	// if state i isn't visited, set its transition probabilities to uniform
+	// if state i isn't visited, set its transition probs to uniform
 	if(new_hmm_p_transition_denom[i] == 0) {
 	  double one_over_n_states = ((double)1) / ((double)n_states_);
 	  for(int j = 0; j < n_states_; j++) {
@@ -526,20 +541,24 @@ class HMM {
       la::TransposeSquare(&(new_hmm.p_transition));
 
       // normalize density statistics for observables
+      // should be no risk - took care of cases where states carry no weight
+      // by using the same distribution parameters for those states as they
+      // had in the previous iteration.
       if(type_ == MULTINOMIAL) {
 	for(int i = 0; i < n_states_; i++) {
-	  new_hmm.state_distributions[i].Normalize(0);
+	  new_hmm.state_distributions[i].Normalize(0, state_distributions[i]);
 	}
       }
       else if(type_ == GAUSSIAN) {
 	for(int i = 0; i < n_states_; i++) {
-	  double normalization_factor = ((double)1) / gaussian_denom[i];
-	  new_hmm.state_distributions[i].Normalize(normalization_factor);
+	  new_hmm.state_distributions[i].Normalize(gaussian_denom[i],
+						   state_distributions[i]);
 	}
       }
       else if(type_ == MIXTURE) {
 	for(int i = 0; i < n_states_; i++) {
-	  new_hmm.state_distributions[i].Normalize(((double)1) / weight_qi[i]);
+	  new_hmm.state_distributions[i].Normalize(weight_qi[i],
+						   state_distributions[i]);
 	}
       }
 
@@ -566,6 +585,42 @@ class HMM {
     SwapHMMParameters(&new_hmm);
   }
 
+  template<typename T>
+  void Viterbi(const ArrayList<GenMatrix<T> > &sequences,
+		 double neg_likelihood_threshold,
+		 int max_iterations) {
+    /* algorithm
+     */
+    for(int i = 0; i < n_states_; i++) {
+      p_path.set(i, 0,
+		 p_initial[i] * p_x_given_q.get(i, 0));
+      best_into.set(i, 0,
+		    0);
+    }
+
+    for(int t = 1; t < sequence_length; t++) {
+      int t_minus_1 = t - 1;
+      double max = -inf;
+      int argmax = -1;
+      for(int j = 0; j < n_states_; j++) {
+	for(int i = 0; i < n_states_; i++) {
+	  double value = p_path.get(i, t_minus_1) * p_transition.get(i, j);
+	  if(value > max) {
+	    max = value;
+	    argmax = i;
+	  }
+	}
+	p_path.set(j, t,
+		   max * p_x_given_q.get(j, t));
+	best_into(j, t,
+		  argmax);
+      }
+    }
+
+    
+    
+
+  }
 
 
 
