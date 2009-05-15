@@ -67,7 +67,7 @@ class Multinomial {
 
   template<typename T>
   double Pdf(const GenVector<T> &xt) {
-    return (*p_)[((int)(xt[0]))];
+    return (*p_)[xt[0]];
   }
 
   // call the same update function for all HMMs
@@ -78,7 +78,7 @@ class Multinomial {
   template<typename T>
   void Accumulate(double weight, const GenVector<T> &example,
 		  int component_num){
-    (*p_)[(int)(example[0])] += weight; // remove casting if template works
+    (*p_)[example[0]] += weight; // remove casting if template works
   }
   
   void Normalize(double normalization_factor) {
