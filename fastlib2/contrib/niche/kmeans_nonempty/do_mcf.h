@@ -2,6 +2,7 @@
 #define DO_MCF_H
 
 #define PRIMAL
+// Note: might have to add more include files when #define'ing DUAL
 
 #include "mcf/mcfdefs.h"
 #include "mcf/readmin.c"
@@ -13,7 +14,7 @@
 #include "mcf/pflowup.c"
 #include "mcf/psimplex.c"
 #include "mcf/output.c"
-// might have to add more include files when #define'ing DUAL
+
 
 int DoMCF() {
   MCF_network_t net;
@@ -21,7 +22,7 @@ int DoMCF() {
   
   long stat = 0;
     
-  char* infile = strdup("clustering_problem");
+  const char* infile = "clustering_problem";//strdup("clustering_problem");
   char* outfile = strdup("clustering_problem.sol");
 
   memset( (void *)(&net), 0, (size_t)(sizeof(MCF_network_t)) );
