@@ -45,8 +45,9 @@ void WriteProblem(const Matrix &distances_sq, int min_points_per_cluster) {
 }
 
 // p_cluster_memberships must point to an Init'd Vector
-void ReadSolution(GenVector<int>* p_cluster_memberships) {
+void ReadSolution(GenVector<int>* p_cluster_memberships, int* p_n_changes) {
   GenVector<int> &cluster_memberships = *p_cluster_memberships;
+  int &n_changes = *p_n_changes;
   
   int n_points = cluster_memberships.length();
 
@@ -62,8 +63,15 @@ void ReadSolution(GenVector<int>* p_cluster_memberships) {
   int dest_id;
   int flow;
   int n_points_plus_1 = n_points + 1;
+  n_changes = 0;
   for(int i = 0; i < n_points; i++) {
     fscanf(file, "f %d %d %d\n", &source_id, &dest_id, &flow);
+    int point_num = source_id - 1;
+    int cluster_num = dest_id - n_points_plus_1;
+    if(cluster_memberships[point_num] != cluster_num) {
+      n_changes++;
+      cluster_memberships[point_num] = cluster_num;
+    }
     cluster_memberships[source_id - 1] = dest_id - n_points_plus_1;
   }
   fclose(file);
@@ -72,8 +80,6 @@ void ReadSolution(GenVector<int>* p_cluster_memberships) {
     printf("%d ", cluster_memberships[i]);
   }
   printf("\n");
-
-
 }
 
 
@@ -107,20 +113,21 @@ void ConstrainedKMeans(const ArrayList<GenMatrix<T> > &datasets,
   cluster_memberships.Init(n_points);
   for(i = 0; i < n_points; i++) {
     cluster_memberships[i] = rand() % n_clusters;
+    printf("cluster_memberships[%d] = %d\n", i, cluster_memberships[i]);
   }
 
   int iteration_num = 1;
+  int n_changes = 0;
   bool converged = false;
   while(!converged) {
-    printf("\n\n\n\n\n\n\n\n\n\niteration %d\n\n\n\n\n\n\n\n\n\n\n",
-	   iteration_num);
     // update cluster centers using cluster memberships
     for(int k = 0; k < n_clusters; k++) {
       cluster_centers[k].SetZero();
+      cluster_counts[k] = 0;
     }
     i = 0;
     for(int m = 0; m < n_datasets; m++) {
-      const GenMatrix<T> &data = datasets[i];
+      const GenMatrix<T> &data = datasets[m];
       int n_points_in_data = data.n_cols();
       for(int j = 0; j < n_points_in_data; j++) {
 	Vector point;
@@ -134,8 +141,9 @@ void ConstrainedKMeans(const ArrayList<GenMatrix<T> > &datasets,
     for(int k = 0; k < n_clusters; k++) {
       la::Scale(((double)1) / ((double)(cluster_counts[k])),
 		&(cluster_centers[k]));
+      //cluster_centers[k].PrintDebug("cluster");
     }
-    
+   
     // update cluster memberships using cluster centers
     Matrix distances_sq;
     distances_sq.Init(n_clusters, n_points);
@@ -157,15 +165,14 @@ void ConstrainedKMeans(const ArrayList<GenMatrix<T> > &datasets,
     
     WriteProblem(distances_sq, min_points_per_cluster);
     DoMCF();
-    ReadSolution(&cluster_memberships);
-    
-    
+    ReadSolution(&cluster_memberships, &n_changes);
 
-    int n_changes = 1;
+    printf("n_changes = %d\n", n_changes);
 
     iteration_num++;
     if((n_changes == 0) || (iteration_num > max_iterations)) {
       converged = true;
     }
   }
+  printf("converged in %d iterations\n", iteration_num);
 }
