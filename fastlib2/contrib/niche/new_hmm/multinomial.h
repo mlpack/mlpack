@@ -82,9 +82,14 @@ class Multinomial {
   template<typename T>
   void Accumulate(double weight, const GenVector<T> &example,
 		  int component_num){
-    (*p_)[example[0]] += weight; // remove casting if template works
+    (*p_)[example[0]] += weight;
   }
   
+  void Normalize(double normalization_factor) {
+    double sum = Sum(*p_);
+    la::Scale(((double)1) / sum, p_);
+  }
+
   void Normalize(double normalization_factor,
 		 const Multinomial &alternate_distribution) {
     double sum = Sum(*p_);

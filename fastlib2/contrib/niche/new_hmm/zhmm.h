@@ -313,9 +313,6 @@ class HMM {
   }
 
 
-
-
-
   void SwapHMMParameters(HMM* p_other_hmm) {
     HMM &other_hmm = *p_other_hmm;
 
@@ -341,7 +338,153 @@ class HMM {
     other_hmm.p_transition.Destruct();
     other_hmm.p_transition.Own(&temp_p_transition);
   }
+
+
+  template<typename T>
+  void InitParameters(const ArrayList<GenMatrix<T> > &sequences) {
+    double uniform = ((double) 1) / ((double) n_states_);
+    
+    for(int i = 0; i < n_states_; i++) {
+      p_initial[i] = uniform;
+      for(int j = 0; j < n_states_; j++) {
+	p_transition.set(j, i, uniform);
+      }
+    }
+
+    if(type_ == MULTINOMIAL) {
+      for(int i = 0; i < n_states_; i++) {
+	state_distributions[i].RandomlyInitialize();
+      }
+    }
+    else if(type_ == GAUSSIAN) {
+
+      for(int i = 0; i < n_states_; i++) {
+	state_distributions[i].SetZero();
+      }
+
+      // k-means cluster the data into n_states clusters
+
+      Vector cluster_memberships;
+      int cluster_counts[n_states_];
+      KMeans(sequences, n_states_, 100, &cluster_memberships);
+
+      int n_sequences = sequences.length();
+      int i = 0;
+      for(int m = 0; m < n_sequences; m++) {
+	Matrix &sequence = sequences[i];
+	int sequence_length = sequence.n_cols();
+	for(int j = 0; j < sequence_length; j++) {
+	  Vector point;
+	  sequence.MakeColumnVector(j, &point);
+	  state_distributions[cluster_memberships[i]].Accumulate(point, 1,
+								 0);
+	  i++;
+	}
+      }
+      for(int i = 0; i < n_states_; i++) {
+	state_distributions[i].Normalize(cluster_counts);
+      }
+    }
+    else if(type_ == MIXTURE) {
+      // crazy!
+
+    }
+
+  }
+
+
+  template<typename T>
+  void KMeans(const ArrayList<GenMatrix<T> > &datasets,
+	      int n_clusters,
+	      int max_iterations,
+	      Vector* p_cluster_memberships,
+	      int cluster_counts[]) {
+    Vector &cluster_memberships= *p_cluster_memberships;
+    
+    ArrayList<Vector> cluster_centers;
+    cluster_centers.Init(n_clusters);
+    for(int k = 0; k < n_clusters; k++) {
+      cluster_centers[k].Init(n_dims_);
+    }
+    
+    int n_datasets = datasets.length();
+    int n_points = 0;
+    for(int m = 0; m < n_datasets; m++) {
+      n_points += datasets[m].n_cols();
+    }
+
+    int i;
+
+    // random initialization
+    cluster_memberships.Init(n_points);
+    for(i = 0; i < n_points; i++) {
+      cluster_memberships[i] = rand() % n_clusters;
+    }
+
+    int iteration_num = 1;
+    bool converged = false;
+    while(!converged) {
+      // update cluster centers using cluster memberships
+      for(int k = 0; k < n_clusters; k++) {
+	cluster_centers[k].SetZero();
+      }
+      i = 0;
+      for(int m = 0; m < n_datasets; m++) {
+	Matrix &data = datasets[i];
+	int n_points_in_data = data.n_cols();
+	for(int j = 0; j < n_points_in_data; j++) {
+	  Vector point;
+	  data.MakeColumnVector(j, &point);
+	  int cluster_index = cluster_memberships[i];
+	  la::AddTo(point, &(cluster_centers[cluster_index]));
+	  cluster_counts[cluster_index]++;
+	  i++;
+	}
+      }
+      for(int k = 0; k < n_clusters; k++) {
+	la::Scale(((double)1) / ((double)(cluster_counts[k])),
+		  &(cluster_centers[k]));
+      }
+    
+      // update cluster memberships using cluster centers
+      int n_changes = 0;
+      i = 0;
+      for(int m = 0; m < n_datasets; m++) {
+	Matrix &data = datasets[i];
+	int n_points_in_data = data.n_cols();
+	for(int j = 0; j < n_points_in_data; j++) {
+	  Vector point;
+	  data.MakeColumnVector(j, &point);
+	  double min_dist_sq = std::numeric_limits<double>::max();
+	  int nearest_cluster_index = -1;
+	  for(int k = 0; k < n_clusters; k++) {
+	    double dist_sq =
+	      la::DistanceSqEuclidean(point, cluster_centers[k]);
+	    if(dist_sq < min_dist_sq) {
+	      min_dist_sq = dist_sq;
+	      nearest_cluster_index = k;
+	    }
+	  }
+	  if(cluster_memberships[i] != nearest_cluster_index) {
+	    n_changes++;
+	    cluster_memberships[i] = nearest_cluster_index;
+	  }
+	  i++;
+	}
+      }
+
+      iteration_num++;
+      if((n_changes == 0) || (iteration_num > max_iterations)) {
+	converged = true;
+      }
+    }
+    
+
+  }
+
+
  
+
   template<typename T>
   void BaumWelch(const ArrayList<GenMatrix<T> > &sequences,
 		 double neg_likelihood_threshold,
@@ -373,8 +516,8 @@ class HMM {
     }
 
 
-    double last_total_neg_likelihood = DBL_MAX;
-    double current_total_neg_likelihood = DBL_MAX; // an irrelevant assignment
+    double last_total_neg_likelihood = std::numeric_limits<double>::max();
+    double current_total_neg_likelihood = 0; // an irrelevant assignment
 
     int iteration_num = 0;
     bool converged = false;
@@ -584,44 +727,136 @@ class HMM {
     //new_hmm is one iteration lesser than 'this' but it matches current_total_neg_likelihood, so we'll use it instead
     SwapHMMParameters(&new_hmm);
   }
-
+  
   template<typename T>
-  void Viterbi(const ArrayList<GenMatrix<T> > &sequences,
-		 double neg_likelihood_threshold,
-		 int max_iterations) {
-    /* algorithm
-     */
+  void Viterbi(const GenMatrix<T> &sequence,
+	       double* p_neg_ll,
+	       Vector* p_best_path) {
+    double &neg_ll = *p_neg_ll;
+    Vector &best_path = *p_best_path;
+    
+    int sequence_length = sequence.n_cols();
+
+    Matrix p_x_given_q;
+    ComputePxGivenQ(sequence, &p_x_given_q);
+    
+    Matrix logp_path;
+    logp_path.Init(n_states_, sequence_length);
+    
+    Matrix best_into;
+    best_into.Init(n_states_, sequence_length);
+    
+    Matrix logp_transition;
+    logp_transition.Init(n_states_, n_states_);
+    for(int j = 0; j < n_states; j++) {
+      for(int i = 0; i < n_states; i++) {
+	logp_transition.set(i, j,
+			    log(p_transition.get(i, j)));
+      }
+    }
+    
     for(int i = 0; i < n_states_; i++) {
-      p_path.set(i, 0,
-		 p_initial[i] * p_x_given_q.get(i, 0));
+      logp_path.set(i, 0,
+		    log(p_initial[i]) + log(p_x_given_q.get(i, 0)));
       best_into.set(i, 0,
 		    0);
     }
 
     for(int t = 1; t < sequence_length; t++) {
-      int t_minus_1 = t - 1;
-      double max = -inf;
-      int argmax = -1;
+      Vector logp_path_t_minus_1;
+      logp_path.MakeColumnVector(t - 1, &logp_path_t_minus_1);
+	
       for(int j = 0; j < n_states_; j++) {
-	for(int i = 0; i < n_states_; i++) {
-	  double value = p_path.get(i, t_minus_1) * p_transition.get(i, j);
-	  if(value > max) {
-	    max = value;
-	    argmax = i;
-	  }
-	}
-	p_path.set(j, t,
-		   max * p_x_given_q.get(j, t));
-	best_into(j, t,
-		  argmax);
+	Vector logp_transition_to_j;
+	logp_transition.MakeColumnVector(j, &logp_transition_to_j);
+	  
+	double max;
+	int argmax;
+	MaxLogProduct(logp_path_t_minus_1, logp_transition_to_j,
+		      &max, &argmax);
+	logp_path.set(j, t,
+		      max + log(p_x_given_q.get(j, t)));
+	best_into.set(j, t,
+		      argmax);
       }
     }
 
-    
-    
+    best_path.Init(sequence_length);
+      
+    Vector logp_path_T_minus_1;
+    logp_path.MakeColumnVector(sequence_length - 1, &logp_path_T_minus_1);
+    double max;
+    int argmax;
+    Max(logp_path_T_minus_1, &max, &argmax);
+    best_path[sequence_length - 1] = argmax;
+    neg_ll = -logp_path.get(argmax, sequence_length - 1);
+
+    for(int t = sequence_length - 1; t >= 1; t++) {
+      best_path[t - 1] = best_into.get(best_path[t], t);
+    }
 
   }
 
+
+  void Max(const Vector &x, double* p_max, int* p_argmax) {
+    double &max = *p_max;
+    int &argmax = *p_argmax;
+
+    max = -std::numeric_limits<double>::max();
+    argmax = -1;
+
+    int set_size = x.length();
+    for(int i = 0; i < set_size; i++) {
+      if(x[i] > max) {
+	max = x[i];
+	argmax = i;
+      }
+    }
+  }
+
+
+  void MaxProduct(const Vector &x, const Vector &y,
+		  double* p_max, int* p_argmax) {
+    double &max = *p_max;
+    int &argmax = *p_argmax;
+
+    max = -std::numeric_limits<double>::max();
+    argmax = -1;
+
+    int set_size = x.length();
+    for(int i = 0; i < set_size; i++) {
+      double value = x[i] * y[i];
+      if(value > max) {
+	max = value;
+	argmax = i;
+      }
+    }
+  }
+
+
+  void MaxLogProduct(const Vector &x, const Vector &y,
+		     double* p_max, int* p_argmax) {
+    double &max = *p_max;
+    int &argmax = *p_argmax;
+    
+    max = -std::numeric_limits<double>::max();
+    argmax = -1;
+    
+    int set_size = x.length();
+    for(int i = 0; i < set_size; i++) {
+      double value = x[i] + y[i];
+      if(value > max) {
+	max = value;
+	argmax = i;
+      }
+    }
+  }
+    
+
+
+
+    
+  
 
 
 
