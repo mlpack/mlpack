@@ -309,6 +309,29 @@ private:
    */
   index_t CountOnDiagonal_(SquareTree* rho_sigma);
   
+  /**
+   * Multiplies the upper and lower bounds, along with the approximation and
+   * the allowed error by the number of references, accounting for entries on 
+   * and off the diagonal.
+   */
+  void CountFactorCoulomb_(double* up_bound, double* low_bound, 
+                           double* approx_val, double* allowed_error,
+                           FockTree* rho, FockTree* sigma);
+    
+  
+  /** 
+   * Multiplies the given upper and lower bounds by the appropriate density 
+   * matrix bounds, taking into account the possiblity of a negative density
+   * matrix entry.
+   */
+  void DensityFactor_(double* up_bound, double* low_bound, 
+                       double density_upper, double density_lower);    
+  
+  /**
+   * 
+   */
+  void SchwartzBound_(SquareTree* mu_nu, SquareTree* rho_sigma, double* upper,
+                      double* lower);
   
   /**
    * Determines if the Coulomb interaction between the given square nodes can 

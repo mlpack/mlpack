@@ -287,65 +287,134 @@ index_t MultiTreeFock::CountOnDiagonal_(SquareTree* rho_sigma) {
   
 } // CountOnDiagonal_()
 
-
-bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu, 
-                                           SquareTree* rho_sigma, 
-                                           double* approx_out) {
-
-  /*
-  FockTree* mu = mu_nu->query1();
-  FockTree* nu = mu_nu->query2();
-  */
-  FockTree* rho = rho_sigma->query1();
-  FockTree* sigma = rho_sigma->query2();
-  
-  
-  bool can_prune = false;
-  
-  double up_bound = NodesMaxIntegral_(mu_nu, rho_sigma);
-  //printf("up_bound: %g, ", up_bound);
-  if (fabs(up_bound) < bounds_cutoff_) {
-    up_bound = 0.0;
-  } 
-                    
-  double low_bound = NodesMinIntegral_(mu_nu, rho_sigma);
-  //printf("low_bound: %g\n", low_bound);
-  if (fabs(low_bound) < bounds_cutoff_) {
-    low_bound = 0.0;
-  } 
-  
-  if (low_bound > 0.0) {
-    printf("low_bound: %g\n", low_bound);
-  }
-  
-  //printf("up_bound: %g, low_bound: %g\n", up_bound, low_bound);
-  DEBUG_ASSERT(up_bound >= low_bound);
-  
+void MultiTreeFock::DensityFactor_(double* up_bound, double* low_bound, 
+                                   double density_upper, 
+                                   double density_lower) {
   
   // Need to account for the change in bounds if the density matrix entries 
   // are negative.  If the density lower bound is negative, then the lower 
   // bound becomes the largest integral times the density lower bound, 
   // instead of the smallest integral and vice versa.  
-  double old_up_bound = up_bound;
-  if (rho_sigma->stat().density_upper_bound() >= 0.0) {
-    up_bound = up_bound * rho_sigma->stat().density_upper_bound();
+  
+  double old_up_bound = *up_bound;
+  if (density_upper >= 0.0) {
+    *up_bound = *up_bound * density_upper;
   }
   else {
-    up_bound = low_bound * rho_sigma->stat().density_upper_bound();
+    *up_bound = *low_bound * density_upper;
   }
-  if (rho_sigma->stat().density_lower_bound() >= 0.0) {
-    low_bound = low_bound * rho_sigma->stat().density_lower_bound();
+  if (density_lower >= 0.0) {
+    *low_bound = *low_bound * density_lower;
   }
   else {
-    low_bound = old_up_bound * rho_sigma->stat().density_lower_bound();
+    *low_bound = old_up_bound * density_lower;
   }
   
+  DEBUG_ASSERT(*up_bound >= *low_bound);
+  
+  
+}
+
+void MultiTreeFock::CountFactorCoulomb_(double* up_bound, double* low_bound, 
+                                        double* approx_val, double* allowed_error,
+                                        FockTree* rho, FockTree* sigma) {
+
+  // Need to make this work with on diagonal non-square boxes
+  if (RectangleOnDiagonal_(rho, sigma)) {
+    index_t on_diagonal = CountOnDiagonal_(rho_sigma);
+    index_t off_diagonal = (rho->count() * sigma->count()) - on_diagonal;
+    *up_bound = (on_diagonal * *up_bound) + (2 * off_diagonal * *up_bound);
+    // These two were missing, I think they needed to be here
+    *low_bound = (on_diagonal * *low_bound) + (2 * off_diagonal * *low_bound);
+    *approx_val = (on_diagonal * *approx_val) + (2 * off_diagonal * *approx_val);
+    *allowed_error = (on_diagonal * *allowed_error)
+      + (2 * off_diagonal * *allowed_error);
+  }
+  else if (rho != sigma) {
+    *up_bound = 2 * *up_bound * rho->count() * sigma->count();
+    *low_bound = 2 * *low_bound * rho->count() * sigma->count();
+    *approx_val = 2 * *approx_val * rho->count() * sigma->count();
+    *my_allowed_error = 2 * *my_allowed_error * rho->count() * sigma->count();
+  }
+  else {
+    *up_bound = *up_bound * rho->count() * sigma->count();
+    *low_bound = *low_bound * rho->count() * sigma->count();
+    *approx_val = *approx_val * rho->count() * sigma->count();
+    *allowed_error = *allowed_error * rho->count() * sigma->count();
+  }
+  
+  DEBUG_ASSERT(up_bound >= approx_val);
+  DEBUG_ASSERT(approx_val >= low_bound);
+  
+
+} // CountFactorCoulomb_
+
+
+void MultiTreeFock::SchwartzBound_(SquareTree* mu_nu, SquareTree* rho_sigma,
+                                     double* upper, double* lower) {
+
+  double up_bound = mu_nu->stat().max_schwartz_factor();
+  up_bound *= rho_sigma->stat().max_schwartz_factor();
+  
+  double low_bound = 0.0;
+  
+  // densities
+  DensityFactor_(&up_bound, &low_bound, rho_sigma->stat().density_upper_bound(),
+                 rho_sigma->stat().density_lower_bound());
+                 
+  *upper = up_bound;
+  *lower = low_bound;
+  
+} // SchwartzBound_
+
+bool MultiTreeFock::CanPrune_(double upper, double lower, SquareTree* mu_nu, 
+                              SquareTree* rho_sigma) {
+
+  
+
+}
+
+
+bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu, 
+                                           SquareTree* rho_sigma, 
+                                           double* approx_out) {
+
+  double schwartz_upper;
+  double schwartz_lower;
+  SchwartzBound_(mu_nu, rho_sigma, &schwartz_upper, &schwartz_lower);
+
+  FockTree* rho = rho_sigma->query1();
+  FockTree* sigma = rho_sigma->query2();
+  
+  double my_allowed_error = mu_nu->stat().remaining_epsilon() 
+    / mu_nu->stat().remaining_references();
+  
+  if (CanPrune_(schwartz_upper, schwartz_lower, mu_nu, rho_sigma)) {
+  
+  }
+  else {
+  
+  }
+  
+  double up_bound = NodesMaxIntegral_(mu_nu, rho_sigma);
+  if (fabs(up_bound) < bounds_cutoff_) {
+    up_bound = 0.0;
+  } 
+                    
+  double low_bound = NodesMinIntegral_(mu_nu, rho_sigma);
+  if (fabs(low_bound) < bounds_cutoff_) {
+    low_bound = 0.0;
+  } 
+  
+  //printf("up_bound: %g, low_bound: %g\n", up_bound, low_bound);
   DEBUG_ASSERT(up_bound >= low_bound);
   
-    
+  
+  
+  DensityFactor_(&up_bound, &low_bound, rho_sigma->stat().density_upper_bound(),
+                 rho_sigma->stat().density_lower_bound());
+      
   //double approx_val = NodesMidpointIntegral_(mu, nu, rho, sigma);
-  //approx_val *= 0.5 * (rho_sigma->stat().density_upper_bound() 
-  //                     + rho_sigma->stat().density_lower_bound());
   double approx_val = 0.5 * (up_bound + low_bound);
   
   //double lost_error = max((up_bound - approx_val), (approx_val - low_bound));
@@ -354,40 +423,9 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
   
   // Multiply by number of references here, make sure to account for symmetry
   
-  double my_allowed_error = mu_nu->stat().remaining_epsilon() 
-                              / mu_nu->stat().remaining_references();
+  CountFactorCoulomb_(&up_bound, &low_bound, &approx_val, &my_allowed_error, 
+                      rho, sigma);
   
-  // Need to make this work with on diagonal non-square boxes
-  if (RectangleOnDiagonal_(rho, sigma)) {
-    index_t on_diagonal = CountOnDiagonal_(rho_sigma);
-    index_t off_diagonal = (rho->count() * sigma->count()) - on_diagonal;
-    up_bound = (on_diagonal * up_bound) + (2 * off_diagonal * up_bound);
-    // These two were missing, I think they needed to be here
-    low_bound = (on_diagonal * low_bound) + (2 * off_diagonal * low_bound);
-    approx_val = (on_diagonal * approx_val) + (2 * off_diagonal * approx_val);
-    my_allowed_error = (on_diagonal * my_allowed_error)
-                        + (2 * off_diagonal * my_allowed_error);
-  }
-  else if (rho != sigma) {
-    up_bound = 2 * up_bound * rho->count() * sigma->count();
-    low_bound = 2 * low_bound * rho->count() * sigma->count();
-    approx_val = 2 * approx_val * rho->count() * sigma->count();
-    my_allowed_error = 2 * my_allowed_error * rho->count() * sigma->count();
-  }
-  else {
-    up_bound = up_bound * rho->count() * sigma->count();
-    low_bound = low_bound * rho->count() * sigma->count();
-    approx_val = approx_val * rho->count() * sigma->count();
-    my_allowed_error = my_allowed_error * rho->count() * sigma->count();
-  }
-  
-  //double my_allowed_error = mu_nu->stat().remaining_epsilon() * rho->count() 
-  //    * sigma->count() / mu_nu->stat().remaining_references();
-  
-  // The total error I'm incurring is the max error for one integral times 
-  // the number of approximations I'm making
-  DEBUG_ASSERT(up_bound >= approx_val);
-  DEBUG_ASSERT(approx_val >= low_bound);
   double my_max_error = max((up_bound - approx_val), 
                             (approx_val - low_bound));
                             
