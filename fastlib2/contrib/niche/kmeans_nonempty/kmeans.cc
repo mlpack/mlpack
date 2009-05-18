@@ -17,6 +17,14 @@ int main(int argc, char* argv[]) {
   
   ArrayList<GenMatrix<double> > datasets;
   datasets.Init(n_datasets);
+  data::Load("data.csv", &(datasets[0]));
+  datasets[0].PrintDebug("dataset");
+  n_dims = datasets[0].n_rows();
+  n_points = datasets[0].n_cols();
+  printf("n_dims = %d\n", n_dims);
+  printf("n_points = %d\n", n_points);
+
+  /*
   for(int m = 0; m < n_datasets; m++) {
     datasets[m].Init(n_dims, n_points);
     for(int i = 0; i < n_points; i++) {
@@ -24,11 +32,14 @@ int main(int argc, char* argv[]) {
 	datasets[m].set(j, i, drand48());
       }
     }
-  }
+    datasets[m].PrintDebug("dataset");
 
-  int n_clusters = 20;
+  }
+  */
+ 
+  int n_clusters = 4;
   int max_iterations = 50;
-  int min_points_per_cluster = 10;
+  int min_points_per_cluster = 20;
 
   GenVector<int> cluster_memberships;
   int cluster_counts[n_clusters];
