@@ -196,6 +196,7 @@ class ThorTree {
   Param& param() { return param_; }
   /** Gets the decomposition dividing this tree. */
   const ThorTreeDecomposition<Node>& decomp() const { return decomp_; }
+  ThorTreeDecomposition<Node>& decomp() { return decomp_; }
   /** Gets the array of points comporising this tree. */
   DistributedCache& points() { return *points_; }
   /** Gets the array of nodes dividing this tree. */
@@ -205,7 +206,7 @@ class ThorTree {
   const Node& root() const {
     // we cheat by using the tree decomposition as a cache of the node
     return decomp().root()->node();
-  }
+  }   
   /** Gets the number of points. */
   index_t n_points() const {
     return root().count();
