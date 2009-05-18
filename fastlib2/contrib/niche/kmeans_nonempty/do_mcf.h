@@ -3,16 +3,16 @@
 
 #define PRIMAL
 
-#include "src/mcfdefs.h"
-#include "src/readmin.c"
-#include "src/mcfutil.c"
-#include "src/pbeampp2.c"
-#include "src/pstart.c"
-#include "src/pbla.c"
-#include "src/treeup.c"
-#include "src/pflowup.c"
-#include "src/psimplex.c"
-#include "src/output.c"
+#include "mcf/mcfdefs.h"
+#include "mcf/readmin.c"
+#include "mcf/mcfutil.c"
+#include "mcf/pbeampp2.c"
+#include "mcf/pstart.c"
+#include "mcf/pbla.c"
+#include "mcf/treeup.c"
+#include "mcf/pflowup.c"
+#include "mcf/psimplex.c"
+#include "mcf/output.c"
 // might have to add more include files when #define'ing DUAL
 
 int DoMCF() {
