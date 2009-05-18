@@ -76,10 +76,10 @@ void ReadSolution(GenVector<int>* p_cluster_memberships, int* p_n_changes) {
   }
   fclose(file);
 
-  for(int i = 0; i < n_points; i++) {
-    printf("%d ", cluster_memberships[i]);
-  }
-  printf("\n");
+  //for(int i = 0; i < n_points; i++) {
+  //  printf("%d ", cluster_memberships[i]);
+  //}
+  //printf("\n");
 }
 
 
@@ -89,6 +89,8 @@ void ConstrainedKMeans(const ArrayList<GenMatrix<T> > &datasets,
 		       int n_clusters,
 		       int max_iterations,
 		       int min_points_per_cluster,
+		       const char* problem_filename,
+		       const char* solution_filename,
 		       GenVector<int>* p_cluster_memberships,
 		       int cluster_counts[]) {
   GenVector<int> &cluster_memberships= *p_cluster_memberships;
@@ -164,7 +166,7 @@ void ConstrainedKMeans(const ArrayList<GenMatrix<T> > &datasets,
     }
     
     WriteProblem(distances_sq, min_points_per_cluster);
-    DoMCF();
+    DoMCF(problem_filename, solution_filename);
     ReadSolution(&cluster_memberships, &n_changes);
 
     printf("n_changes = %d\n", n_changes);

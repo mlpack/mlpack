@@ -32,8 +32,8 @@ Copyright (c) 2000-2003 ZIB & Loebel.   All rights reserved.
 
 
 long MCF_write_solution( 
-                   char *infile,
-                   char *outfile,
+                   const char *infile,
+                   const char *outfile,
                    MCF_network_p net,
                    time_t sec
                    )

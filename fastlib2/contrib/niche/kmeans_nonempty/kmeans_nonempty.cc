@@ -1,5 +1,5 @@
 #include "fastlib/fastlib.h"
-#include "kmeans.h"
+#include "kmeans_nonempty.h"
 
 int main(int argc, char* argv[]) {
   fx_module* root = fx_init(argc, argv, NULL);
@@ -44,12 +44,16 @@ int main(int argc, char* argv[]) {
   GenVector<int> cluster_memberships;
   int cluster_counts[n_clusters];
 
+      
+  const char* problem_filename = "clustering_problem";
+  const char* solution_filename = "clustering_problem.sol";
   
-
   ConstrainedKMeans(datasets,
 		    n_clusters,
 		    max_iterations,
 		    min_points_per_cluster,
+		    problem_filename,
+		    solution_filename,
 		    &cluster_memberships,
 		    cluster_counts);
 

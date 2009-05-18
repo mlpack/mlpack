@@ -36,7 +36,7 @@ Copyright (c) 2000-2003 ZIB & Loebel.   All rights reserved.
 
 
 
-long MCF_read_dimacs_min( char *filename, MCF_network_p net )
+long MCF_read_dimacs_min( const char *filename, MCF_network_p net )
 {                                       
     FILE *in = NULL;
     char instring[81];

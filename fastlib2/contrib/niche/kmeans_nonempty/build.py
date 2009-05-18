@@ -8,8 +8,8 @@ librule(
 binrule(
     name = "kmeans_nonempty_test",
     sources = ["kmeans_nonempty.cc"],
-    headers = ["kmeans_nonempty.h", "do_mcf.h", "mcf/readmin.c", "mcf/mcfutil.c","mcf/pbeampp2.c","mcf/pstart.c","mcf/pbla.c", "mcf/treeup.c", "mcf/pflowup.c", "mcf/psimplex.c","mcf/output.c"],
-    deplibs = ["fastlib:fastlib"]
+    headers = [],
+    deplibs = [":kmeans_nonempty"]
     )
 
 binrule(
