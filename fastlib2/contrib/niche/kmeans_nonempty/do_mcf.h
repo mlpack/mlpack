@@ -1,0 +1,100 @@
+#ifndef DO_MCF_H
+#define DO_MCF_H
+
+#define PRIMAL
+
+#include "src/mcfdefs.h"
+#include "src/readmin.c"
+#include "src/mcfutil.c"
+#include "src/pbeampp2.c"
+#include "src/pstart.c"
+#include "src/pbla.c"
+#include "src/treeup.c"
+#include "src/pflowup.c"
+#include "src/psimplex.c"
+#include "src/output.c"
+// might have to add more include files when #define'ing DUAL
+
+int DoMCF() {
+  MCF_network_t net;
+  
+  
+  long stat = 0;
+    
+  char* infile = strdup("clustering_problem");
+  char* outfile = strdup("clustering_problem.sol");
+
+  memset( (void *)(&net), 0, (size_t)(sizeof(MCF_network_t)) );
+  stat = MCF_read_dimacs_min( infile, &net );
+  if( stat )
+    return -1;
+  
+
+  #ifdef PRIMAL
+
+  //if( net.m < 10000 )       net.find_bea = MCF_primal_bea_mpp_30_5;
+  //else if( net.m > 100000 ) net.find_bea = MCF_primal_bea_mpp_200_20;
+  /*else*/                      net.find_bea = MCF_primal_bea_mpp_50_10;
+
+  MCF_primal_start_artificial( &net );
+  MCF_primal_net_simplex( &net );
+
+  #elif defined DUAL
+
+  //if( net.n < 10000 ) net.find_iminus = MCF_dual_iminus_mpp_30_5;
+  /*else*/                net.find_iminus = MCF_dual_iminus_mpp_50_10;
+
+  dual_start_artificial( &net );
+  dual_net_simplex( &net );
+
+  #endif   
+  
+    
+  printf( "\n%s: %ld nodes / %ld arcs\n", infile, (net.n), (net.m) );
+  if( net.primal_unbounded )
+  {
+  printf( "\n   >>> problem primal unbounded <<<\n" );
+  return -1;
+  }
+    
+  if( net.dual_unbounded )
+  {
+  printf( "\n   >>> problem dual unbounded <<<\n" );
+  return -1;
+  }
+    
+  if( net.feasible == 0 )
+  {
+  printf( "\n   >>> problem infeasible or unbounded <<<\n" );
+  return -1;
+  }
+    
+    
+  printf( "Iterations                        : %ld\n", net.iterations );
+  net.optcost = MCF_primal_obj(&net);
+  if( MCF_ABS(MCF_dual_obj(&net)-net.optcost)>(double)MCF_ZERO_EPS )
+  printf( "NETWORK SIMPLEX: primal-dual objective mismatch!?\n" );
+  #ifdef MCF_FLOAT
+  printf( "Primal optimal objective          : %10.6f\n",
+  MCF_primal_obj(&net) );
+  printf( "Dual optimal objective            : %10.6f\n", 
+  MCF_dual_obj(&net) );
+  #else
+  printf( "Primal optimal objective          : %10.0f\n", 
+  MCF_primal_obj(&net) );
+  printf( "Dual optimal objective            : %10.0f\n", 
+  MCF_dual_obj(&net) );
+  #endif
+
+  printf( "Write solution to file %s\n", outfile );
+  MCF_write_solution( infile, outfile, &net, 0 );
+
+  MCF_free( &net ); 
+  
+  free(infile);
+  free(outfile);
+  
+  return 1;
+}
+
+#endif /* DO_MCF_H */
