@@ -7,6 +7,7 @@
 #include "multinomial.h"
 #include "mixture.h"
 #include "la_utils.h"
+#include "contrib/niche/kmeans_nonempty/kmeans_nonempty.h"
 
 #define MULTINOMIAL 1
 #define GAUSSIAN 2
@@ -342,8 +343,10 @@ class HMM {
 
   template<typename T>
   void InitParameters(const ArrayList<GenMatrix<T> > &sequences) {
-    double uniform = ((double) 1) / ((double) n_states_);
     
+    // use uniform distribution for the initial state probabilities and
+    // the state transition probabilities
+    double uniform = ((double) 1) / ((double) n_states_);
     for(int i = 0; i < n_states_; i++) {
       p_initial[i] = uniform;
       for(int j = 0; j < n_states_; j++) {
@@ -352,6 +355,8 @@ class HMM {
     }
 
     if(type_ == MULTINOMIAL) {
+      // we can't cluster discrete data,
+      // so we randomly intialize the state distributions
       for(int i = 0; i < n_states_; i++) {
 	state_distributions[i].RandomlyInitialize();
       }
@@ -363,26 +368,36 @@ class HMM {
       }
 
       // k-means cluster the data into n_states clusters
-
-      Vector cluster_memberships;
+      int max_iterations = 100;
+      int min_points_per_cluster = 5;
+      GenVector<int> cluster_memberships;
       int cluster_counts[n_states_];
-      KMeans(sequences, n_states_, 100, &cluster_memberships);
+      ConstrainedKMeans(sequences,
+			n_states_,
+			max_iterations,
+			min_points_per_cluster,
+			"clustering_problem",
+			"clustering_problem.sol",
+			&cluster_memberships,
+			cluster_counts);
 
-      int n_sequences = sequences.length();
+      int n_sequences = sequences.size();
       int i = 0;
       for(int m = 0; m < n_sequences; m++) {
-	Matrix &sequence = sequences[i];
+	const GenMatrix<T> &sequence = sequences[i];
 	int sequence_length = sequence.n_cols();
 	for(int j = 0; j < sequence_length; j++) {
-	  Vector point;
+	  GenVector<T> point;
 	  sequence.MakeColumnVector(j, &point);
-	  state_distributions[cluster_memberships[i]].Accumulate(point, 1,
+	  state_distributions[cluster_memberships[i]].Accumulate(1, point,
 								 0);
 	  i++;
 	}
       }
       for(int i = 0; i < n_states_; i++) {
-	state_distributions[i].Normalize(cluster_counts);
+	state_distributions[i].Normalize(cluster_counts[i]);
+	printf("distribution %d\n", i);
+	state_distributions[i].PrintDebug("");
       }
     }
     else if(type_ == MIXTURE) {

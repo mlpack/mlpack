@@ -27,16 +27,17 @@ void TestMultinomial() {
 
 void TestGaussian() {
   HMM<DiagGaussian> hmm;
-  hmm.Init(2, 2, GAUSSIAN, 0.001);
+  hmm.Init(2, 2, GAUSSIAN, 0.0001);
   srand48(time(0));
-  hmm.RandomlyInitialize();
+  //hmm.InitParameters
+  //hmm.RandomlyInitialize();
   
   ArrayList<GenMatrix<double> > sequences;
   sequences.Init(1);
   sequences[0].Init(2, 100);
   for(int i = 0; i < 100; i++) {
-    double num1 = drand48() / ((double)10);
-    double num2 = drand48() / ((double)10);
+    double num1 = drand48() / ((double)10) - 0.05;
+    double num2 = drand48() / ((double)10) - 0.05;
     if(i >= 50) {
       num1 += ((double)1);
       num2 -= ((double)1);
@@ -46,11 +47,15 @@ void TestGaussian() {
   }
   sequences[0].PrintDebug("sequences[0]");
   
+  hmm.InitParameters(sequences);
+  /*
   hmm.PrintDebug("hmm");
+  
   hmm.BaumWelch(sequences,
 		1e-10 * ((double)1),
 		1000);
   hmm.PrintDebug("hmm");
+  */
 }
 
 
