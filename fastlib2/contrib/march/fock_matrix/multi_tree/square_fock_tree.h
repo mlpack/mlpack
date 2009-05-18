@@ -45,6 +45,9 @@ class SquareFockTree {
     double max_gpt_factor_;
     double min_gpt_factor_;
     
+    double max_schwartz_factor_;
+    double min_schwartz_factor_;
+    
     // bounds on sum of exponents
     double max_gamma_;
     double min_gamma_;
@@ -175,6 +178,23 @@ class SquareFockTree {
     void set_min_gamma(double gam) {
       min_gamma_ = gam;
     }
+    
+    double max_schwartz_factor() {
+      return max_schwartz_factor_;
+    } 
+    
+    void set_max_schwartz_factor(double max_s) {
+      max_schwartz_factor_ = max_s;
+    }
+
+    double min_schwartz_factor() {
+      return min_schwartz_factor_;
+    } 
+
+    void set_min_schwartz_factor(double min_s) {
+      min_schwartz_factor_ = min_s;
+    }
+    
     
   }; // class SquareFockStat
   
@@ -364,6 +384,30 @@ class SquareFockTree {
       stat_.set_max_gpt_factor(max_fac);
       stat_.set_min_gpt_factor(min_fac);
       
+      double max_schwartz = eri::DistanceIntegral(query1_->stat().min_bandwidth(),
+                                                  query2_->stat().min_bandwidth(),
+                                                  query1_->stat().min_bandwidth(),
+                                                  query2_->stat().min_bandwidth(),
+                                                  min_dist, min_dist, 0.0);
+      max_schwartz *= query1_->stat().max_normalization();
+      max_schwartz *= query1_->stat().max_normalization();
+      max_schwartz *= query2_->stat().max_normalization();
+      max_schwartz *= query2_->stat().max_normalization();
+
+      double min_schwartz = eri::DistanceIntegral(query1_->stat().max_bandwidth(),
+                                                  query2_->stat().max_bandwidth(),
+                                                  query1_->stat().max_bandwidth(),
+                                                  query2_->stat().max_bandwidth(),
+                                                  max_dist, max_dist, 0.0);      
+      min_schwartz *= query1_->stat().min_normalization();
+      min_schwartz *= query1_->stat().min_normalization();
+      min_schwartz *= query2_->stat().min_normalization();
+      min_schwartz *= query2_->stat().min_normalization();
+      
+      
+      stat_.set_max_schwartz_factor(max_schwartz);
+      stat_.set_min_schwartz_factor(min_schwartz);
+      
       /*bound_.WeightedAverageBoxesInit(query1_->stat().min_bandwidth(), 
         query1_->stat().max_bandwidth(), 
         query1_->bound(), 
@@ -434,6 +478,11 @@ class SquareFockTree {
                               right_child_->stat().max_gamma()));
       stat_.set_min_gamma(min(left_child_->stat().min_gamma(), 
                               right_child_->stat().min_gamma()));
+                              
+      stat_.set_max_schwartz_factor(max(left_child_->stat().max_schwartz_factor(),
+                                        right_child_->stat().max_schwartz_factor()));
+      stat_.set_min_schwartz_factor(min(left_child_->stat().min_schwartz_factor(),
+                                        right_child_->stat().min_schwartz_factor()));
       
     }
   }   
