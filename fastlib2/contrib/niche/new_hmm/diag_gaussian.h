@@ -121,6 +121,23 @@ class DiagGaussian {
     la::AddExpert(weight, result, sigma_);
   }
 
+  void Normalize(double one_over_normalization_factor) {
+    double normalization_factor = 
+      ((double)1) / one_over_normalization_factor;
+    //printf("normalization_factor = %e\n", normalization_factor);
+    la::Scale(normalization_factor, mu_);
+    la::Scale(normalization_factor, sigma_);
+    for(int i = 0; i < n_dims_; i++) {
+      (*sigma_)[i] -= (*mu_)[i] * (*mu_)[i];
+      
+      if((*sigma_)[i] < min_variance_) {
+	(*sigma_)[i] = min_variance_;
+      }
+      
+    }
+    ComputeNormConstant();
+  }
+
   void Normalize(double one_over_normalization_factor,
 		 const DiagGaussian &alternate_distribution) {
     /*

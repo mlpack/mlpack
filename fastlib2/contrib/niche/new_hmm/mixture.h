@@ -63,6 +63,15 @@ class Mixture {
     components_[component_num].Accumulate(weight, example, 0);
     weights_[component_num] += weight;
   }
+
+  void Normalize(double one_over_normalization_factor) {
+    for(int k = 0; k < n_components_; k++) {
+      components_[k].Normalize(weights_[k]);
+    }
+    
+    // I posit that one_over_normalization_factor = sum(weights_)
+    la::Scale(((double)1) / one_over_normalization_factor, &weights_);
+  }
   
   void Normalize(double one_over_normalization_factor,
 		 const Mixture &alternate_distribution) {
