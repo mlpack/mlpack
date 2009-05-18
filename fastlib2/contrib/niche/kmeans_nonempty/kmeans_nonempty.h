@@ -1,12 +1,20 @@
 #include "fastlib/fastlib.h"
 #include "do_mcf.h"
 
+bool CheckFileWritten(const char* problem_filename, int iteration_num) {
+  FILE* file = fopen(problem_filename, "r");
+  int read_iteration_num;
+  fscanf(file, "c %d", &read_iteration_num);
+  fclose(file);
+  return (read_iteration_num == iteration_num);
+}
+  
 
-void WriteProblem(const Matrix &distances_sq, int min_points_per_cluster) {
+void WriteProblem(const char* filename, const Matrix &distances_sq, int min_points_per_cluster, int iteration_num) {
   int n_clusters = distances_sq.n_rows();
   int n_points = distances_sq.n_cols();
   
-  const char* filename = "clustering_problem";
+  //const char* filename = "clustering_problem";
   FILE* file = fopen(filename, "w");
  
 
@@ -20,6 +28,7 @@ void WriteProblem(const Matrix &distances_sq, int min_points_per_cluster) {
 
   int sink_id = n_points + n_clusters + 1;
  
+  fprintf(file, "c %d\n", iteration_num);
   fprintf(file, "p min %d %d\n", n_nodes, n_arcs);
   for(int i = 0; i < n_points; i++) {
     fprintf(file, "n %d 1\n", i + 1);
@@ -45,13 +54,13 @@ void WriteProblem(const Matrix &distances_sq, int min_points_per_cluster) {
 }
 
 // p_cluster_memberships must point to an Init'd Vector
-void ReadSolution(GenVector<int>* p_cluster_memberships, int* p_n_changes) {
+void ReadSolution(const char* filename, GenVector<int>* p_cluster_memberships, int* p_n_changes) {
   GenVector<int> &cluster_memberships = *p_cluster_memberships;
   int &n_changes = *p_n_changes;
   
   int n_points = cluster_memberships.length();
 
-  FILE* file = fopen("clustering_problem.sol", "r");
+  FILE* file = fopen(filename, "r");
   
   char* buffer = (char*) malloc(80 * sizeof(char));
   for(int i = 0; i < 5; i++) {
@@ -76,10 +85,10 @@ void ReadSolution(GenVector<int>* p_cluster_memberships, int* p_n_changes) {
   }
   fclose(file);
 
-  //for(int i = 0; i < n_points; i++) {
-  //  printf("%d ", cluster_memberships[i]);
-  //}
-  //printf("\n");
+  for(int i = 0; i < n_points; i++) {
+    printf("%d ", cluster_memberships[i]);
+  }
+  printf("\n");
 }
 
 
@@ -165,9 +174,13 @@ void ConstrainedKMeans(const ArrayList<GenMatrix<T> > &datasets,
       }
     }
     
-    WriteProblem(distances_sq, min_points_per_cluster);
+    WriteProblem(problem_filename, distances_sq, min_points_per_cluster, iteration_num);
+    if(!CheckFileWritten(problem_filename, iteration_num)) {
+      printf("file not yet written!\n");
+      exit(1);
+    }
     DoMCF(problem_filename, solution_filename);
-    ReadSolution(&cluster_memberships, &n_changes);
+    ReadSolution(solution_filename, &cluster_memberships, &n_changes);
 
     printf("n_changes = %d\n", n_changes);
 
