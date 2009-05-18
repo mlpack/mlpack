@@ -1043,13 +1043,10 @@ class ThorMD {
     		       results_megs, &q_results_);    
   }
 
-  void RebuildTree(datanode* module){   
-    //  delete q_tree_;
+  void RebuildTree(datanode* module){      
     delete &r_tree_->nodes();
     r_tree_->param().Renew();
-    r_tree_->decomp().Renew();
-    //delete r_tree_;
-    //r_tree_ = new ThorTree<Param, RPoint, RNode>();
+    r_tree_->decomp().Renew();  
     thor::CreateKdTree<RPoint, RNode>(parameters_, DATA_CHANNEL + 4, 
 				      DATA_CHANNEL + 5,
 				      fx_submodule(module, "r_tree"),
@@ -1059,7 +1056,21 @@ class ThorMD {
   }
 
   double GetDiffusion(Matrix& positions){
-    return 0.0;
+    double diff = 0;   
+    CacheArray<QPoint> points_array;
+    points_array.Init(q_points_cache_, BlockDevice::M_READ);
+    CacheReadIter<QPoint> points_iter(&points_array, 0);
+    for (index_t i = 0; i < parameters_.query_count_; i++,
+	   points_iter.Next()){
+      Vector point;
+      int k = (*points_iter).GetPositionVector(&point);
+      for (index_t j = 0; j < 3; j++){
+	diff = diff + (point[j] - positions.get(j, k))*
+	  (point[j] - positions.get(j, k));
+      }
+    }
+    diff = diff / parameters_.query_count_;
+    return diff;
   }
 
   void UpdatePoints(double time_step){

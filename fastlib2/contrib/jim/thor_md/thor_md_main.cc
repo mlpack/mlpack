@@ -28,8 +28,14 @@ int main(int argc, char *argv[]) {
 
   // Output files
   const char* fp_coords;
+  const char* fp_diff;
+
   FILE *coords;
+  FILE *diff;
+
   fp_coords = fx_param_str(NULL, "coord", "coords.dat");
+  fp_diff = fx_param_str(NULL, "diff", "diffusion.dat");
+  diff = fopen(fp_diff, "w+");
 
   double time = 0, time_step_, final_time_;
   double set_temp_, temperature_;
@@ -46,6 +52,12 @@ int main(int argc, char *argv[]) {
 
   // Open files for output
 
+  // Diffusion computation stuff
+  int diff_tot = fx_param_int(0, "snapshots", 1);
+  ArrayList<Matrix> reference_positions;
+  double delta = 100*time_step_, last_time = -2*delta;
+  int diff_count = 0;
+  reference_positions.Init(diff_tot);
 
   // Loop over all time steps
   while (time < final_time_){
@@ -54,14 +66,28 @@ int main(int argc, char *argv[]) {
     simulation.UpdatePoints(time_step_);
     simulation.RebuildTree(parameters);
     simulation.Compute(parameters);
-    // Take snapshot, if nesc.
-    if (0){
+    // Take snapshot, if nesc.   
+    if (diff_count < diff_tot & time > last_time + delta){ 
+      last_time = time;    
+      simulation.TakeSnapshot(&reference_positions[diff_count]);
+      diff_count++;    
     }
 
     // Do we get stats this time?
     if ((int)(time / time_step_ -0.5) % 5 == 0){      
       // Get radial distribution
       // Get diffusion, temp, etc.
+      fprintf(diff, "%f, ", time);
+      for (int j = 0; j < diff_tot; j++){	
+	double diffusion;
+	if (j < diff_count){	  	 
+	  diffusion = simulation.GetDiffusion(reference_positions[j]);
+	  fprintf(diff, "%f,", diffusion);	  
+	} else {
+	  fprintf(diff, "%f,", 0.0);	 
+	}
+      }
+      fprintf(diff, "\n");
       temperature_ = simulation.global_result_.old_temp_;
       temperature_ = temperature_ / K_B;
       printf("Temperature: %f \n", temperature_);
