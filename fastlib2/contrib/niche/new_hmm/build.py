@@ -2,7 +2,8 @@ binrule(
     name = "zhmm",
     sources = ["zhmm.cc"],
     headers = ["zhmm.h","multinomial.h","diag_gaussian.h","mixture.h"],
-    deplibs = ["fastlib:fastlib"]
+    deplibs = ["fastlib:fastlib",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
     )
 
 binrule(

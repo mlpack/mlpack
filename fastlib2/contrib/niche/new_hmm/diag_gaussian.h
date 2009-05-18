@@ -131,7 +131,11 @@ class DiagGaussian {
       (*sigma_)[i] -= (*mu_)[i] * (*mu_)[i];
       
       if((*sigma_)[i] < min_variance_) {
+	printf("was %f\n", (*sigma_)[i]);
 	(*sigma_)[i] = min_variance_;
+      }
+      else {
+	printf("is %f\n", (*sigma_)[i]);
       }
       
     }
