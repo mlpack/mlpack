@@ -876,7 +876,7 @@ class GenMatrix {
    * @param mat the other matrix
    * @return nothing
    */  
-   void CopyColumnFromMat(index_t col1, index_t col2, GenMatrix<T> &mat) {
+   void CopyColumnFromMat(index_t col1, index_t col2, const GenMatrix<T> &mat) {
      DEBUG_BOUNDS(col1, n_cols_);
      DEBUG_BOUNDS(col2, mat.n_cols());
      DEBUG_ASSERT(n_rows_==mat.n_rows());
@@ -890,7 +890,7 @@ class GenMatrix {
    * @param mat the other matrix
    * @return nothing
    */  
-   void CopyColumnFromMat(index_t col1, index_t col2, index_t ncols, GenMatrix<T> &mat) {
+   void CopyColumnFromMat(index_t col1, index_t col2, index_t ncols, const GenMatrix<T> &mat) {
      DEBUG_BOUNDS(col1, n_cols_);
      DEBUG_BOUNDS(col2, mat.n_cols());
      DEBUG_BOUNDS(col1+ncols-1, n_cols_);
@@ -904,7 +904,7 @@ class GenMatrix {
    * @param col1 the column number
    * @return nothing
    */  
-   void CopyVectorToColumn(index_t col, GenVector<T> &vec) {
+   void CopyVectorToColumn(index_t col, const GenVector<T> &vec) {
      DEBUG_BOUNDS(col, n_cols_);
      memcpy(ptr_ + n_rows_ * col, vec.ptr(), n_rows_*sizeof(T));
    }
