@@ -3,6 +3,31 @@
 
 namespace oeints {
 
+  double ComputeOverlapIntegral(const Vector& center_A, double exp_A, int mom_A, 
+                                const Vector& center_B, double exp_B, int mom_B) {
+    
+    /*
+    Vector p_vec;
+    double gamma =  eri::ComputeGPTCenter(center_A, exp_A, center_B, exp_B, 
+                                          &p_vec);
+    */
+    double gamma = exp_A + exp_B;
+     
+    double dist_sq = la::DistanceSqEuclidean(center_A, center_B);
+    
+    double gpt = eri::IntegralGPTFactor(exp_A, exp_B, dist_sq);
+    
+    double prefactor = pow((math::PI/gamma), 1.5);
+    
+    // momentum stuff goes here later
+    
+    double normalization_A = eri::ComputeNormalization(exp_A, mom_A);
+    double normalization_B = eri::ComputeNormalization(exp_B, mom_B);
+    
+    return (normalization_A * normalization_B * prefactor * gpt);
+    
+  }
+  
   /**
    * Only works for S-overlap
    *
@@ -46,7 +71,31 @@ namespace oeints {
   
   } // ComputeOverlapIntegral
   
-  
+  // only works with s-type functions for now
+  double ComputeKineticIntegral(const Vector& center_A, double exp_A, int mom_A, 
+                                const Vector& center_B, double exp_B, int mom_B) {
+    
+    double normalization_A = eri::ComputeNormalization(exp_A, mom_A);
+    double normalization_B = eri::ComputeNormalization(exp_B, mom_B);
+    
+    double dist_sq = la::DistanceSqEuclidean(center_A, center_B);
+    
+    double gamma = exp_A + exp_B;
+    
+    double gpt = eri::IntegralGPTFactor(exp_A, exp_B, dist_sq);
+    
+    double prefac = 3 * exp_A * exp_B / gamma;
+    prefac = prefac - (2 * dist_sq * exp_A*exp_A 
+                       * exp_B*exp_B/(gamma * gamma));
+    
+    double integral = pow((math::PI/gamma), 1.5);
+    integral *= normalization_A * normalization_B;
+    integral *= gpt * prefac;
+    
+    return integral;
+    
+  } // ComputeKineticIntegral
+
   
   double ComputeKineticIntegral(BasisShell& shellA, BasisShell& shellB) {
     
@@ -71,6 +120,33 @@ namespace oeints {
     return integral;
     
   }
+  
+  double ComputeNuclearIntegral(const Vector& center_A, double exp_A, int mom_A, 
+                                const Vector& center_B, double exp_B, int mom_B, 
+                                const Vector& nuclear_center, 
+                                int nuclear_charge) {
+    
+    Vector p_vec;
+    double gamma = eri::ComputeGPTCenter(center_A, exp_A, 
+                                         center_B, exp_B, &p_vec);
+    
+    double integral = 2 * math::PI / gamma;
+    
+    double AB_dist_sq = la::DistanceSqEuclidean(center_A, center_B);
+    double gpt = eri::IntegralGPTFactor(exp_A, exp_B, AB_dist_sq);
+    
+    integral *= gpt;
+    
+    double CP_dist_sq = la::DistanceSqEuclidean(p_vec, nuclear_center);
+    double f_part = eri::F_0_(CP_dist_sq * gamma);
+    integral *= f_part;
+    
+    integral *= eri::ComputeNormalization(exp_A, mom_A);
+    integral *= eri::ComputeNormalization(exp_B, mom_B);
+    
+    return integral;
+    
+  } // ComputeNuclearIntegral
   
   double ComputeNuclearIntegral(BasisShell& shellA, BasisShell& shellB, 
                                 const Vector& nuclear_center) {

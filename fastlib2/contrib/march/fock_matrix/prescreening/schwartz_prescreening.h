@@ -108,6 +108,7 @@ class SchwartzPrescreening {
   } // Init()
   
   
+  
  private:
 
   fx_module* module_;
@@ -155,7 +156,6 @@ class SchwartzPrescreening {
    * Inner computation for Schwartz bound
    */
   double ComputeSchwartzIntegral_(BasisShell& mu, BasisShell& nu);
-  
   
 
 
