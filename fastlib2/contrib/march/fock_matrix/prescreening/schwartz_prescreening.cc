@@ -55,7 +55,19 @@ double SchwartzPrescreening::SchwartzBound_(BasisShell &mu,
 } // SchwartzBound_()
 
 
-void SchwartzPrescreening::ComputeFockMatrix() {
+void SchwartzPrescreening::UpdateDensity(const Matrix& new_density) {
+ 
+  density_matrix_.CopyValues(new_density);
+  
+  coulomb_matrix_.SetZero();
+  exchange_matrix_.SetZero();
+  
+  num_prunes_ = 0;
+  
+}
+
+
+void SchwartzPrescreening::Compute() {
 
   fx_timer_start(module_, "prescreening_time");
 
@@ -151,14 +163,15 @@ void SchwartzPrescreening::ComputeFockMatrix() {
   
   fx_timer_stop(module_, "prescreening_time");
     
-    fx_result_int(module_, "num_prunes", num_prunes_);
+  fx_result_int(module_, "num_prunes", num_prunes_);
 
 //  printf("num_prunes: %d\n", num_prunes_);
 
-} // ComputeFockMatrix()
+} // Compute()
 
 
-void OutputFock(Matrix* fock_out, Matrix* coulomb_out, Matrix* exchange_out) {
+void SchwartzPrescreening::OutputFock(Matrix* fock_out, Matrix* coulomb_out, 
+                                      Matrix* exchange_out) {
   
   if (fock_out) {
     fock_out->Copy(fock_matrix_);
@@ -172,13 +185,13 @@ void OutputFock(Matrix* fock_out, Matrix* coulomb_out, Matrix* exchange_out) {
   
 } // OutputFock
 
-void OutputCoulomb(Matrix* coulomb_out) {
+void SchwartzPrescreening::OutputCoulomb(Matrix* coulomb_out) {
   if (coulomb_out) {
     coulomb_out->Copy(coulomb_matrix_);
   }  
 }
 
-void OutputExchange(Matrix* exchange_out) {
+void SchwartzPrescreening::OutputExchange(Matrix* exchange_out) {
   if (exchange_out) {
     exchange_out->Copy(exchange_matrix_);
   }

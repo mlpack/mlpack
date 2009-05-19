@@ -348,12 +348,12 @@ void Link::Compute() {
   
 } // ComputeExchangeMatrix()
 
-void UpdateDensity(const Matrix& new_density) {
+void Link::UpdateDensity(const Matrix& new_density) {
   
   // not sure if density will need to be freed first
   density_matrix_.Copy(new_density);
   
-  free(significant_nu_for_mu);
+  free(significant_nu_for_mu_);
   free(significant_sigma_for_nu_);
   
   num_significant_nu_for_mu_.Clear();

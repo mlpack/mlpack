@@ -141,6 +141,24 @@ double ComputeGPTCenter(Vector& A_vec, double alpha_A, Vector& B_vec,
   
 }
 
+double ComputeGPTCenter(const Vector& A_vec, double alpha_A, const Vector& B_vec, 
+                        double alpha_B, Vector* p_vec) {
+  
+  double gamma = alpha_A + alpha_B;
+  
+  Vector A_vec_scaled;
+  Vector B_vec_scaled;
+  
+  la::ScaleInit(alpha_A, A_vec, &A_vec_scaled);
+  la::ScaleInit(alpha_B, B_vec, &B_vec_scaled);
+  
+  la::AddInit(A_vec_scaled, B_vec_scaled, p_vec);
+  la::Scale(1/gamma, p_vec);
+  
+  return gamma;
+  
+}  
+
 /**
  * 2 pi^(5/2)/(gamma_p * gamma_q * sqrt(gamma_p + gamma_q))
  */

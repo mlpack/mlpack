@@ -328,10 +328,19 @@ private:
                        double density_upper, double density_lower);    
   
   /**
-   * 
+   * Computes an upper bound using the Schwartz inequality.  Uses a (loose)
+   * lower bound of 0.0
    */
   void SchwartzBound_(SquareTree* mu_nu, SquareTree* rho_sigma, double* upper,
                       double* lower);
+  
+  /**
+   * Determine if the given bounds and square tree nodes permit a prune.  
+   * Assumes that the bounds have not been multiplied by the number of points
+   * in the reference nodes, which is done in this function.  
+   */
+  bool CanPrune_(double* upper, double* lower, double* approx_val,
+                 SquareTree* mu_nu, SquareTree* rho_sigma);
   
   /**
    * Determines if the Coulomb interaction between the given square nodes can 

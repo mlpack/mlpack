@@ -23,7 +23,10 @@ namespace eri {
   
   double ComputeGPTCenter(Vector& A_vec, double alpha_A, Vector& B_vec, 
                           double alpha_B, Vector* p_vec);
-                          
+
+  double ComputeGPTCenter(const Vector& A_vec, double alpha_A, 
+                          const Vector& B_vec, double alpha_B, Vector* p_vec);
+
   double IntegralPrefactor(double alpha_A, double alpha_B, double alpha_C, 
                            double alpha_D);
                            

@@ -137,6 +137,12 @@ class CFMMCoulomb {
   
   void OutputCoulomb(Matrix* coulomb_out);
   
+  // only here to avoid compilation errors 
+  // generates an error message if called
+  void OutputExchange(Matrix* exchange_out) {
+    FATAL("Tried to compute exchange matrix with CFMM.\n");
+  }
+  
 }; // class CFMMCoulomb
 
 

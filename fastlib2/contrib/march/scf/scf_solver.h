@@ -124,10 +124,12 @@ class SCFSolver {
     module_ = mod;
     number_of_electrons_ = num_electrons;
     
+    /*
     struct datanode* integral_mod = fx_submodule(module_, "integrals");
                                                 
     struct datanode* naive_mod = fx_submodule(module_, "naive_integrals");
-        
+    */  
+    
     // Set to 1 to perform no diis iterations
     diis_count_ = fx_param_int(NULL, "diis_states", 1);
     diis_index_ = 0;
@@ -210,7 +212,7 @@ class SCFSolver {
     coulomb_alg_ = coul_alg;
     exchange_alg_ = exc_alg;
     
-    single_fock_alg_ = (coulomb_alg_ == exchange_alg_);
+    single_fock_alg_ = ((void *)coulomb_alg_ == (void *)exchange_alg_);
 
   } // Init()
   
@@ -248,13 +250,130 @@ class SCFSolver {
    * For now, just using loops.  In the future, it's an N-body problem but 
    * probably a very small fraction of the total running time.  
    */
-  void ComputeOneElectronMatrices_();
- 
+  //void ComputeOneElectronMatrices_();
+  void ComputeOneElectronMatrices_() {
+    
+    for (index_t row_index = 0; row_index < number_of_basis_functions_; 
+         row_index++) {
+      
+      for (index_t col_index = row_index; col_index < number_of_basis_functions_; 
+           col_index++) {
+        
+        Vector row_vec;
+        basis_centers_.MakeColumnVector(row_index, &row_vec);
+        double row_exp = exponents_[row_index];
+        int row_mom = (int)momenta_[row_index];
+        
+        Vector col_vec;
+        basis_centers_.MakeColumnVector(col_index, &col_vec);
+        double col_exp = exponents_[col_index];
+        int col_mom = (int)momenta_[col_index];
+        
+        double kinetic_integral = 
+            oeints::ComputeKineticIntegral(row_vec, row_exp, row_mom, 
+                                           col_vec, col_exp, col_mom);
+        
+        double overlap_integral = 
+            oeints::ComputeOverlapIntegral(row_vec, row_exp, row_mom, 
+                                           col_vec, col_exp, col_mom);
+        
+        double nuclear_integral = 0.0;
+        for (index_t nuclear_index = 0; nuclear_index < number_of_nuclei_; 
+             nuclear_index++) {
+          
+          Vector nuclear_position;
+          nuclear_centers_.MakeColumnVector(nuclear_index, &nuclear_position);
+          
+          int nuclear_charge = (int)nuclear_masses_[nuclear_index];
+          
+          nuclear_integral += 
+              oeints::ComputeNuclearIntegral(row_vec, row_exp, row_mom, 
+                                             col_vec, col_exp, col_mom, 
+                                             nuclear_position, nuclear_charge);
+          
+        } // nuclear_index
+        
+        kinetic_energy_integrals_.set(row_index, col_index, kinetic_integral);
+        potential_energy_integrals_.set(row_index, col_index, nuclear_integral);
+        overlap_matrix_.set(row_index, col_index, overlap_integral);
+        
+        if (likely(row_index != col_index)) {
+          kinetic_energy_integrals_.set(col_index, row_index, kinetic_integral);
+          potential_energy_integrals_.set(col_index, row_index, nuclear_integral);
+          overlap_matrix_.set(col_index, row_index, overlap_integral);
+        }
+        
+      } // column_index
+      
+    } // row_index
+    
+    la::AddInit(kinetic_energy_integrals_, potential_energy_integrals_, 
+                &core_matrix_);
+    
+  } // ComputeOneElectronMatrices_()
+  
  
   /**
    * Create the matrix S^{-1/2} using the eigenvector decomposition.     *
    */
-  void FormChangeOfBasisMatrix_();
+  //void FormChangeOfBasisMatrix_();
+  void FormChangeOfBasisMatrix_() {
+    
+    Matrix left_vectors;
+    Vector eigenvalues;
+    Matrix right_vectors_trans;
+    
+    la::SVDInit(overlap_matrix_, &eigenvalues, &left_vectors, 
+                &right_vectors_trans);
+    
+#ifdef DEBUG
+    
+    eigenvalues.PrintDebug();
+    
+    for (index_t i = 0; i < eigenvalues.length(); i++) {
+      DEBUG_ASSERT_MSG(!isnan(eigenvalues[i]), 
+                       "Complex eigenvalue in diagonalizing overlap matrix.\n");
+      
+      DEBUG_WARN_MSG_IF(fabs(eigenvalues[i]) < 0.001, 
+                        "near-zero eigenvalue in overlap_matrix");
+      
+      Vector eigenvec;
+      left_vectors.MakeColumnVector(i, &eigenvec);
+      double len = la::LengthEuclidean(eigenvec);
+      DEBUG_APPROX_DOUBLE(len, 1.0, 0.001);
+      
+      for (index_t j = i+1; j < eigenvalues.length(); j++) {
+        
+        Vector eigenvec2;
+        left_vectors.MakeColumnVector(j, &eigenvec2);
+        
+        double dotprod = la::Dot(eigenvec, eigenvec2);
+        DEBUG_APPROX_DOUBLE(dotprod, 0.0, 0.001);
+        
+      }
+    }
+    
+#endif
+    
+    for (index_t i = 0; i < eigenvalues.length(); i++) {
+      DEBUG_ASSERT(eigenvalues[i] > 0.0);
+      eigenvalues[i] = 1/sqrt(eigenvalues[i]);
+    }
+    
+    Matrix sqrt_lambda;
+    sqrt_lambda.InitDiagonal(eigenvalues);
+    
+    Matrix lambda_times_u_transpose;
+    la::MulTransBInit(sqrt_lambda, left_vectors, &lambda_times_u_transpose);
+    la::MulInit(left_vectors, lambda_times_u_transpose, 
+                &change_of_basis_matrix_);
+    
+    printf("Change Of Basis Matrix:\n");
+    change_of_basis_matrix_.PrintDebug();
+    
+    
+  } // FormChangeOfBasisMatrix_()
+  
   
   
   /**
@@ -273,21 +392,201 @@ class SCFSolver {
    *
    * Don't forget to fill in the Init fn. and the linear system solver
    */ 
-  void ComputeDensityMatrixDIIS_();
+  //void ComputeDensityMatrixDIIS_();
+  
+  void ComputeDensityMatrixDIIS_() {
+    
+    FillOrbitals_();
+    
+    //density_matrix_norms_.SetZero();
+    
+    // Rows of density_matrix
+    for (index_t density_row = 0; density_row < number_of_basis_functions_;
+         density_row++) {
+      
+      // Columns of density matrix
+      for (index_t density_column = 0; 
+           density_column < number_of_basis_functions_; density_column++) {
+        
+        // Occupied orbitals
+        double this_sum = 0.0;
+        
+        for (index_t occupied_index = 0; 
+             occupied_index < number_to_fill_; occupied_index++) {
+          
+          this_sum = this_sum + (coefficient_matrix_.ref(density_row, 
+                                                         occupied_indices_[occupied_index]) * 
+                                 coefficient_matrix_.ref(density_column, 
+                                                         occupied_indices_[occupied_index]));
+          
+        } // occupied_index
+        
+        this_sum = 2 * this_sum;
+        
+        density_matrices_[diis_index_].set(density_row, density_column, 
+                                           this_sum);
+        
+        // find the difference between this matrix and last iterations soln.
+        double this_error = this_sum - 
+        density_matrix_.ref(density_row, density_column);
+        
+        density_matrix_errors_[diis_index_].set(density_row, density_column, 
+                                                this_error);
+        
+      } // density_column
+      
+    } //density_row
+    
+    const double* err_ptr = density_matrix_errors_[diis_index_].ptr();
+    
+    index_t len = number_of_basis_functions_ * number_of_basis_functions_;
+    
+    for (index_t i = 0; i < diis_count_; i++) {
+      
+      const double* this_err_ptr = density_matrix_errors_[i].ptr();
+      
+      double this_norm = la::Dot(len, err_ptr, this_err_ptr);
+      
+      density_matrix_norms_.set(diis_index_, i, this_norm);
+      density_matrix_norms_.set(i, diis_index_, this_norm);
+      
+      /*
+       density_matrix_norms_.set(diis_count_, i, -1);
+       density_matrix_norms_.set(i, diis_count_, -1);
+       */
+      
+    }
+    
+    printf("diis_index: %d\n", diis_index_);
+    density_matrix_norms_.PrintDebug();
+    
+    DIISSolver_();
+    
+    diis_index_++;
+    diis_index_ = diis_index_ % diis_count_;
+    
+  } // ComputeDensityMatrixDIIS_()
+  
   
   /**
    * Given that the array density_matrices_ and the matrix density_matrix_norms_
    * are full, this performs the DIIS step to get the best linear combination of 
    * the matrices in density_matrices_ and puts it in density_matrix_
    */
-  void DIISSolver_();  
+//  void DIISSolver_();  
+  
+  void DIISSolver_() {
+    
+    Matrix old_density;
+    old_density.Copy(density_matrix_);
+    
+    // Make this plus one, since the first entry doesn't mean much
+    if (likely(current_iteration_ > diis_count_ + 1)) {
+      
+      Vector diis_coeffs;
+      
+      la::SolveInit(density_matrix_norms_, diis_rhs_, &diis_coeffs);
+      
+      density_matrix_.SetZero();
+      
+      for (index_t i = 0; i < diis_count_; i++) {
+        
+        // Should scale density_matrices_[i] by the right value and add to 
+        // the overall density matrix
+        la::AddExpert(diis_coeffs[i], density_matrices_[i], &density_matrix_);
+        
+      }
+      
+      diis_coeffs.PrintDebug();
+      
+    }
+    else {
+      
+      
+      density_matrix_.CopyValues(density_matrices_[diis_index_]);
+      
+      
+    }
+    
+    la::SubFrom(density_matrix_, &old_density);
+    
+    density_matrix_frobenius_norm_ = la::Dot(number_of_basis_functions_ * 
+                                             number_of_basis_functions_, 
+                                             old_density.ptr(), 
+                                             old_density.ptr());
+    
+    
+    iteration_density_norms_[current_iteration_] = 
+    density_matrix_frobenius_norm_;    
+    
+  } // DIISSolver_()
+  
   
   /**
     * Given that the Fock matrix has been transformed to the orthonormal basis
    * (F'), this function determines the energy_vector e and the transformed 
    * coefficient matrix C'.  It then untransforms the matrix to get C.
    */
-  void DiagonalizeFockMatrix_();  
+//  void DiagonalizeFockMatrix_();  
+  
+  void DiagonalizeFockMatrix_() {
+    
+    energy_vector_.Destruct();
+    Matrix coefficients_prime;
+    Matrix right_vectors_trans;
+    
+    //la::EigenvectorsInit(fock_matrix_, &energy_vector_, &coefficients_prime);
+    
+    la::SVDInit(fock_matrix_, &energy_vector_, &coefficients_prime, 
+                &right_vectors_trans);
+    
+    
+    for (index_t i = 0; i < number_of_basis_functions_; i++) {
+      
+      // if the left and right vector don't have equal signs the eigenvector 
+      // is negative
+      
+      if ((coefficients_prime.ref(0,i) > 0 && right_vectors_trans.ref(i,0) < 0) 
+          || (coefficients_prime.ref(0,i) < 0 && 
+              right_vectors_trans.ref(i,0) > 0)){
+        
+        energy_vector_[i] = -1 * energy_vector_[i];
+        
+      }
+      
+    }
+    
+    
+    /*
+     printf("Fock matrix:\n");
+     fock_matrix_.PrintDebug();
+     
+     printf("Right vector:\n");
+     right_vectors_trans.PrintDebug();
+     
+     printf("Energies:\n");
+     energy_vector_.PrintDebug();
+     
+     printf("Coefficients (prime):\n");
+     coefficients_prime.PrintDebug();
+     */
+    
+#ifdef DEBUG
+    
+    for (index_t i = 0; i < energy_vector_.length(); i++) {
+      DEBUG_ASSERT_MSG(!isnan(energy_vector_[i]), 
+                       "Complex eigenvalue in diagonalizing Fock matrix.\n");
+    }
+    
+#endif
+    
+    // 3. Find the untransformed eigenvector matrix
+    la::MulOverwrite(change_of_basis_matrix_, coefficients_prime, 
+                     &coefficient_matrix_);
+    
+  } // DiagonalizeFockMatrix_
+  
+  
   
   /**
    * Determine the K/2 lowest energy orbitals.  
@@ -470,27 +769,27 @@ class SCFSolver {
 
     // give new density to fock matrix algs
     
-    coulomb_alg_.UpdateDensity(density_matrix_);
+    coulomb_alg_->UpdateDensity(density_matrix_);
     
     if (!single_fock_alg_) {
-      exchange_alg_.UpdateDensity(density_matrix_);
+      exchange_alg_->UpdateDensity(density_matrix_);
     }
     
     // compute coulomb
     
-    coulomb_alg_.Compute();
-    coulomb_alg_.OutputCoulomb(&coulomb_mat_);
+    coulomb_alg_->Compute();
+    coulomb_alg_->OutputCoulomb(&coulomb_mat_);
     
     // if necessary, compute exchange
     if (single_fock_alg_) {
       
-      coulomb_alg_.OutputExchange(&exchange_mat_);
+      coulomb_alg_->OutputExchange(&exchange_mat_);
       
     }
     else { 
       
-      exchange_alg_.Compute();
-      exchange_alg_.OutputExchange(&exchange_mat_);
+      exchange_alg_->Compute();
+      exchange_alg_->OutputExchange(&exchange_mat_);
       
     }
     
@@ -530,8 +829,8 @@ class SCFSolver {
       */
       
       //total_energy_[current_iteration_] = ComputeElectronicEnergy_();
-      total_energy_.AddBack(ComputeElectronicEnergy_());
-      iteration_density_norms_.AddBack();
+      total_energy_.PushBack(ComputeElectronicEnergy_());
+      iteration_density_norms_.PushBack();
       
       // Step 4c.
       TransformFockBasis_();
@@ -563,7 +862,32 @@ class SCFSolver {
    *
    * I'm only counting each pair once, which I think is correct.  
    */
-  double ComputeNuclearRepulsion_();
+  //double ComputeNuclearRepulsion_();
+  double ComputeNuclearRepulsion_() {
+    
+    double nuclear_energy = 0.0;
+    
+    for (index_t a = 0; a < number_of_nuclei_; a++) {
+      
+      for (index_t b = a+1; b < number_of_nuclei_; b++) {
+        
+        Vector a_vec; 
+        nuclear_centers_.MakeColumnVector(a, &a_vec);
+        Vector b_vec;
+        nuclear_centers_.MakeColumnVector(b, &b_vec);
+        
+        double dist_sq = la::DistanceSqEuclidean(a_vec, b_vec);
+        double dist = sqrt(dist_sq);
+        
+        nuclear_energy += nuclear_masses_[a] * nuclear_masses_[b] / dist;
+        
+      } // b
+      
+    } // a
+    
+    return nuclear_energy;
+    
+  } // ComputeNuclearRepulsion_()
   
   /**
    * Sets up the matrices for the SCF iterations 
