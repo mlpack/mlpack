@@ -29,7 +29,6 @@ void TestGaussian() {
   HMM<DiagGaussian> hmm;
   hmm.Init(2, 2, GAUSSIAN, 0.0001);
   srand48(time(0));
-  //hmm.InitParameters
   //hmm.RandomlyInitialize();
   
   ArrayList<GenMatrix<double> > sequences;
@@ -63,7 +62,7 @@ void TestMixture() {
   HMM<Mixture<DiagGaussian> > hmm;
   hmm.Init(2, 2, MIXTURE, 0.0001, 2);
   srand48(time(0));
-  hmm.RandomlyInitialize();
+  //hmm.RandomlyInitialize();
   
   ArrayList<GenMatrix<double> > sequences;
   sequences.Init(1);
@@ -79,12 +78,15 @@ void TestMixture() {
     sequences[0].set(1, i, num2);
   }
   sequences[0].PrintDebug("sequences[0]");
-  
+
+  hmm.InitParameters(sequences);
+  /*
   hmm.PrintDebug("hmm");
   hmm.BaumWelch(sequences,
 		1e-10 * ((double)1),
 		1000);
   hmm.PrintDebug("hmm");
+  */
 }
 
 
@@ -114,7 +116,7 @@ void TestGaussianPdf() {
 
 int main(int argc, char* argv[]) {
   //TestMultinomial();
-  TestGaussian();
+  //TestGaussian();
   //TestGaussianPdf();
-  //TestMixture();
+  TestMixture();
 }

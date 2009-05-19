@@ -401,7 +401,81 @@ class HMM {
       }
     }
     else if(type_ == MIXTURE) {
-      // crazy!
+
+      // first, cluster the data into n_states clusters
+      int max_iterations = 100;
+      int min_points_per_cluster = 5 * n_components_;
+      GenVector<int> cluster_memberships;
+      int cluster_counts[n_states_];
+      ConstrainedKMeans(sequences,
+			n_states_,
+			max_iterations,
+			min_points_per_cluster,
+			"clustering_problem",
+			"clustering_problem.sol",
+			&cluster_memberships,
+			cluster_counts);
+
+      // for each state's corresponding cluster,
+      // construct an alias dataset of points assigned to the state
+      ArrayList<GenMatrix<T> > state_datasets;
+      state_datasets.Init(n_states_);
+      int state_cur_point_num[n_states_];
+      for(int i = 0; i < n_states_; i++) {
+	state_datasets[i].Init(n_dims_, cluster_counts[i]);
+	state_cur_point_num[i] = 0;
+      }
+
+      int n_sequences = sequences.size();
+      int i = 0;
+      for(int m = 0; m < n_sequences; m++) {
+	const GenMatrix<T> &sequence = sequences[i];
+	int sequence_length = sequence.n_cols();
+	for(int j = 0; j < sequence_length; j++) {
+	  int cluster_index = cluster_memberships[i];
+	  state_datasets[cluster_index].
+	    CopyColumnFromMat(state_cur_point_num[cluster_index],
+			      j, sequence);
+	  state_cur_point_num[cluster_index]++;
+	  i++;
+	}
+      }
+      
+      for(int i = 0; i < n_states_; i++) {
+	state_datasets[i].PrintDebug("state dataset");
+      }
+
+      // we refer to the clusters within a state as subclusters because
+      // we are clustering each of the original clusters
+
+      // now, within each cluster, further cluster
+      max_iterations = 3;
+      for(int i = 0; i < n_states_; i++) {
+	// cluster the state's data into n_components subclusters
+	int min_points_per_subcluster = 5;
+	GenVector<int> subcluster_memberships;
+	int subcluster_counts[n_states_];
+	ConstrainedKMeans(state_datasets[i],
+			  n_components_,
+			  max_iterations,
+			  min_points_per_subcluster,
+			  "clustering_problem",
+			  "clustering_problem.sol",
+			  &subcluster_memberships,
+			  subcluster_counts);
+	//do something with subcluster_memberships
+	//do something with subcluster_counts
+      }
+
+
+      // the points into n_components clusters
+      
+      
+      // for each state
+      //   assign each state's point indices to 1 of n_components clusters
+      //   
+      
+
 
     }
 
@@ -927,7 +1001,6 @@ class HMM {
   
 
   ~HMM() {
-    //printf("destroying HMM\n");
     Destruct();
   }
 
