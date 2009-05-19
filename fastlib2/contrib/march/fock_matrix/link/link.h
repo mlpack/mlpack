@@ -177,9 +177,11 @@ class Link {
      
   }
     
-  void ComputeExchangeMatrix();
+  void Compute();
+  
+  void UpdateDensity(const Matrix& new_density);
 
-  void OutputExchangeMatrix(Matrix* exc_out);
+  void OutputExchange(Matrix* exc_out);
 
 }; // class Link
 

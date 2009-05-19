@@ -316,7 +316,7 @@ private:
    */
   void CountFactorCoulomb_(double* up_bound, double* low_bound, 
                            double* approx_val, double* allowed_error,
-                           FockTree* rho, FockTree* sigma);
+                           SquareTree* rho_sigma);
     
   
   /** 
@@ -491,7 +491,7 @@ private:
     fx_timer_stop(module_, "square_tree_building");
     
     density_matrix_.Init(number_of_basis_functions_, number_of_basis_functions_);
-    UpdateMatrices(density_in);
+    UpdateDensity(density_in);
     
     
     relative_error_ = !fx_param_exists(module_, "absolute_error");
@@ -520,12 +520,12 @@ private:
   /**
    * For use in between iterations of SCF solver
    */
-  void UpdateMatrices(const Matrix& new_density);
+  void UpdateDensity(const Matrix& new_density);
     
   /**
    * Algorithm driver
    */
-  void ComputeFockMatrix();
+  void Compute();
   
   /**
    * Output matrices
@@ -535,6 +535,10 @@ private:
   void OutputFockMatrix(Matrix* fock_out, Matrix* coulomb_out, 
                         Matrix* exchange_out, 
                         ArrayList<index_t>* old_from_new);
+  
+  void OutputCoulomb(Matrix* coulomb_out);
+  
+  void OutputExchange(Matrix* exchange_out);
   
   
 }; // class MultiTreeFock

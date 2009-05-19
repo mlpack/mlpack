@@ -85,6 +85,12 @@ class CFMMCoulomb {
   void NaiveComputation_();
   
   void MultipoleCleanup_();
+  
+  /**
+   * Contract the density with the integral GPT factors and normalization
+   * constants.
+   */
+  void ComputeCharges_();
 
  public:
 
@@ -115,14 +121,21 @@ class CFMMCoulomb {
     // set charge_thresh_ from the module
     charge_thresh_ = fx_param_double(mod_, "charge_thresh", 10e-10);
     
+    coulomb_mat_.Init(num_funs_, num_funs_);
+    
+    fx_timer_start(mod_, "cfmm_time");
+    ScreenCharges_();
+    fx_timer_stop(mod_, "cfmm_time");
     
     
   } // Init()
   
-  void ComputeCoulomb();
+  void UpdateDensity(const Matrix& new_density);
+  
+  void Compute();
   
   
-  void Output(Matrix* coulomb_out);
+  void OutputCoulomb(Matrix* coulomb_out);
   
 }; // class CFMMCoulomb
 

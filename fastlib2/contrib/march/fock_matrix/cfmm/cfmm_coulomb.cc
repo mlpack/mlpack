@@ -1,9 +1,38 @@
 #include "cfmm_coulomb.h"
 
+void CFMMCoulomb::ComputeCharges_() {
+  
+  // this loop should be combined with the one above
+  for (index_t i = 0; i < num_shell_pairs_; i++) {
+    
+    // this won't work when I go to higher momenta
+    index_t m_ind = shell_pairs_[i].M_index();
+    index_t n_ind = shell_pairs_[i].N_index();
+    double new_charge = density_.ref(m_ind, n_ind);
+    
+    // Lumping the coefficients of the integral into the charges
+    new_charge *= shell_pairs_[i].integral_factor();
+    new_charge /= pow(shell_pairs_[i].exponent(), 1.5);
+    new_charge *= shell_pairs_[i].M_Shell().normalization_constant();
+    new_charge *= shell_pairs_[i].N_Shell().normalization_constant();
+    
+    // If not on diagonal, then needs to be counted twice
+    if (m_ind != n_ind) {
+      new_charge *= 2;
+    }
+    
+    charges_.set(0, i, new_charge);
+    
+  } // for i
+  
+}
+
 void CFMMCoulomb::ScreenCharges_() {
 
   num_shell_pairs_ = eri::ComputeShellPairs(&shell_pairs_, shells_, 
                                             charge_thresh_);
+  
+  charges_.Init(1,num_shell_pairs_);
        
   fx_result_int(mod_, "num_shell_pairs", num_shell_pairs_);
   fx_result_int(mod_, "num_shell_pairs_screened", 
@@ -31,33 +60,11 @@ void CFMMCoulomb::ScreenCharges_() {
   } // for i
   
   
+  ComputeCharges_();
+  
   // Replace this with reading in the matrix and processing it later
-  charges_.Init(1,num_shell_pairs_);
   
-  // this loop should be combined with the one above
-  for (index_t i = 0; i < num_shell_pairs_; i++) {
-    
-    // this won't work when I go to higher momenta
-    index_t m_ind = shell_pairs_[i].M_index();
-    index_t n_ind = shell_pairs_[i].N_index();
-    double new_charge = density_.ref(m_ind, n_ind);
-    
-    // Lumping the coefficients of the integral into the charges
-    new_charge *= shell_pairs_[i].integral_factor();
-    new_charge /= pow(shell_pairs_[i].exponent(), 1.5);
-    new_charge *= shell_pairs_[i].M_Shell().normalization_constant();
-    new_charge *= shell_pairs_[i].N_Shell().normalization_constant();
-    
-    // If not on diagonal, then needs to be counted twice
-    if (m_ind != n_ind) {
-      new_charge *= 2;
-    }
-    
-    charges_.set(0, i, new_charge);
-    
-  } // for i
-  
-
+ 
 } // ScreenCharges()
 
 
@@ -65,7 +72,6 @@ void CFMMCoulomb::MultipoleInit_() {
 
   fx_module* multipole_mod = fx_submodule(mod_, "multipole_cfmm");
   
-  //charges_.PrintDebug();
 
   cfmm_algorithm_.Init(charge_centers_, charge_centers_, charges_, 
                        charge_exponents_, true, multipole_mod);
@@ -146,7 +152,6 @@ void CFMMCoulomb::NaiveComputation_() {
 
 void CFMMCoulomb::MultipoleCleanup_() {
 
-  coulomb_mat_.Init(num_funs_, num_funs_);
   coulomb_mat_.SetAll(0.0);
   
   for (index_t i = 0; i < num_shell_pairs_; i++) {
@@ -176,10 +181,9 @@ void CFMMCoulomb::MultipoleCleanup_() {
 
 /////////////////// Public Functions ///////////////////////////
 
-void CFMMCoulomb::ComputeCoulomb() {
+void CFMMCoulomb::Compute() {
 
   fx_timer_start(mod_, "cfmm_time");
-  ScreenCharges_();
   
   MultipoleInit_();
   
@@ -198,10 +202,22 @@ void CFMMCoulomb::ComputeCoulomb() {
 } // ComputeCoulomb()
 
 
-void CFMMCoulomb::Output(Matrix* coulomb_out) {
+void CFMMCoulomb::OutputCoulomb(Matrix* coulomb_out) {
 
   coulomb_out->Copy(coulomb_mat_);
 
 } // Output()
 
 
+void CFMMCoulomb::UpdateDensity(const Matrix& new_density) {
+  
+  density_.CopyValues(new_density);
+  
+  // need to update charges
+  ComputeCharges_();
+  
+  // not sure if this is the right way to destruct this
+  cfmm_algorithm_.~ContinuousFmm();
+  MultipoleInit_();
+  
+}

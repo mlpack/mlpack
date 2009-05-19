@@ -42,8 +42,15 @@ class SchwartzPrescreening {
   ~SchwartzPrescreening() {}
   
   // Change this to match the format of the others
-  void ComputeFockMatrix(Matrix* fock_out, Matrix* coulomb_out, 
-                         Matrix* exchange_out);
+  void Compute();
+  
+  void OutputFock(Matrix* fock_out, Matrix* coulomb_out, Matrix* exchange_out);
+  
+  void OutputCoulomb(Matrix* coulomb_out);
+  
+  void OutputExchange(Matrix* exchange_out);
+  
+  void UpdateDensity(const Matrix& new_density);
   
   void Init(const Matrix& cent, const Matrix& exp, const Matrix& mom, 
             const Matrix& density_in, fx_module* mod) {

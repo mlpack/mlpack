@@ -115,7 +115,7 @@ void Link::PrescreeningLoop_() {
 }
 
 
-void Link::ComputeExchangeMatrix() {
+void Link::Compute() {
 
   fx_timer_start(module_, "LinK_time");
 
@@ -348,9 +348,28 @@ void Link::ComputeExchangeMatrix() {
   
 } // ComputeExchangeMatrix()
 
+void UpdateDensity(const Matrix& new_density) {
+  
+  // not sure if density will need to be freed first
+  density_matrix_.Copy(new_density);
+  
+  free(significant_nu_for_mu);
+  free(significant_sigma_for_nu_);
+  
+  num_significant_nu_for_mu_.Clear();
+  num_significant_nu_for_mu_.Init(num_shells_);
+  
+  num_significant_sigma_for_nu_.Clear();
+  num_significant_sigma_for_nu_.Init(num_shells_);
+  
+  exchange_matrix_.SetZero();
+  
+  num_neglected_sigma_ = 0;
+  num_neglected_nu_ = 0;
+  
+} // UpdateDensity
 
-
-void Link::OutputExchangeMatrix(Matrix* exc_out) {
+void Link::OutputExchange(Matrix* exc_out) {
   
   fx_result_int(module_, "num_neglected_sigma", num_neglected_sigma_);
   fx_result_int(module_, "num_neglected_nu", num_neglected_nu_);

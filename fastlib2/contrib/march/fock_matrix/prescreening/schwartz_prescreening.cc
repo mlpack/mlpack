@@ -55,9 +55,7 @@ double SchwartzPrescreening::SchwartzBound_(BasisShell &mu,
 } // SchwartzBound_()
 
 
-void SchwartzPrescreening::ComputeFockMatrix(Matrix* fock_out, 
-                                             Matrix* coulomb_out, 
-                                             Matrix* exchange_out) {
+void SchwartzPrescreening::ComputeFockMatrix() {
 
   fx_timer_start(module_, "prescreening_time");
 
@@ -153,15 +151,38 @@ void SchwartzPrescreening::ComputeFockMatrix(Matrix* fock_out,
   
   fx_timer_stop(module_, "prescreening_time");
     
-  fock_out->Copy(fock_matrix_);
-  coulomb_out->Copy(coulomb_matrix_);
-  exchange_out->Copy(exchange_matrix_);
-  
-  fx_result_int(module_, "num_prunes", num_prunes_);
+    fx_result_int(module_, "num_prunes", num_prunes_);
 
 //  printf("num_prunes: %d\n", num_prunes_);
 
 } // ComputeFockMatrix()
+
+
+void OutputFock(Matrix* fock_out, Matrix* coulomb_out, Matrix* exchange_out) {
+  
+  if (fock_out) {
+    fock_out->Copy(fock_matrix_);
+  }
+  if (coulomb_out) {
+    coulomb_out->Copy(coulomb_matrix_);
+  }
+  if (exchange_out) {
+    exchange_out->Copy(exchange_matrix_);
+  }
+  
+} // OutputFock
+
+void OutputCoulomb(Matrix* coulomb_out) {
+  if (coulomb_out) {
+    coulomb_out->Copy(coulomb_matrix_);
+  }  
+}
+
+void OutputExchange(Matrix* exchange_out) {
+  if (exchange_out) {
+    exchange_out->Copy(exchange_matrix_);
+  }
+}
 
 
 

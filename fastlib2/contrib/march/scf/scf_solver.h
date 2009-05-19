@@ -24,6 +24,11 @@ class SCFSolver {
   
  private:
   
+  CoulombAlg* coulomb_alg_;
+  ExchangeAlg* exchange_alg_;
+  
+  bool single_fock_alg_;
+  
   // Columns are the coordinates of centers of basis functions
   Matrix basis_centers_;
   // Centers of the nuclei
@@ -45,6 +50,10 @@ class SCFSolver {
   Matrix overlap_matrix_; // S 
   Matrix change_of_basis_matrix_; // S^{-1/2} 
   Matrix density_matrix_; // D
+  
+  Matrix coulomb_mat_;
+  Matrix exchange_mat_;
+  
   Matrix fock_matrix_; // F or F', depending on the basis
   
   Vector energy_vector_; // The diagonal matrix of eigenvalues of F/F'
@@ -86,7 +95,7 @@ class SCFSolver {
   Vector basis_energies_;
   
   // Initial size of the density norm and total energy arrays
-  static const index_t expected_number_of_iterations_ = 20;
+  //static const index_t expected_number_of_iterations_ = 10;
   
   // Convergence tolerances
   double density_convergence_;
@@ -107,10 +116,10 @@ class SCFSolver {
   ~SCFSolver() {}
   
 
-  void Init(fx_module* mod, index_t num_electrons, 
-            const Matrix& basis_centers, const Matrix& density, 
-            const Matrix& nuclear, const Vector& nuclear_mass, 
-            const Matrix& exp, const Matrix& mom) {
+  void Init(const Matrix& basis_centers, const Matrix& exp, 
+            const Matrix& mom, const Matrix& density, fx_module* mod, 
+            const Matrix& nuclear_cent, const Matrix& nuclear_mass, 
+            CoulombAlg* coul_alg, ExchangeAlg* exc_alg, index_t num_electrons) {
     
     module_ = mod;
     number_of_electrons_ = num_electrons;
@@ -118,9 +127,7 @@ class SCFSolver {
     struct datanode* integral_mod = fx_submodule(module_, "integrals");
                                                 
     struct datanode* naive_mod = fx_submodule(module_, "naive_integrals");
-    
-    bandwidth_ = fx_param_double(module_, "bandwidth", 0.1);
-    
+        
     // Set to 1 to perform no diis iterations
     diis_count_ = fx_param_int(NULL, "diis_states", 1);
     diis_index_ = 0;
@@ -134,17 +141,12 @@ class SCFSolver {
     diis_rhs_.SetZero();
     diis_rhs_[diis_count_] = -1;
     
-    naive_integrals_.Init(basis_centers, naive_mod, density, bandwidth_);
+    nuclear_centers_.Copy(nuclear_cent);
     
-    integrals_.Init(basis_centers, integral_mod, bandwidth_);
-            
-    nuclear_centers_.Copy(nuclear);
+    nuclear_masses_.Copy(nuclear_mass.ptr(), nuclear_centers_.n_cols());
     
-    nuclear_masses_.Copy(nuclear_mass);
-    
-    exponents_.Copy(exp_in.ptr(), basis_centers_.n_cols());
-    momenta_.Copy(momenta_in.ptr(), basis_centers_.n_cols());
-    
+    exponents_.Copy(exp.ptr(), basis_centers_.n_cols());
+    momenta_.Copy(mom.ptr(), basis_centers_.n_cols());
     
     number_of_nuclei_ = nuclear_centers_.n_cols();
     
@@ -188,8 +190,11 @@ class SCFSolver {
     
     energy_vector_.Init(number_of_basis_functions_);
     
-    total_energy_.Init(expected_number_of_iterations_);
-    iteration_density_norms_.Init(expected_number_of_iterations_);
+    //total_energy_.Init(expected_number_of_iterations_);
+    total_energy_.Init();
+    
+    //iteration_density_norms_.Init(expected_number_of_iterations_);
+    iteration_density_norms_.Init();
     
     density_convergence_ = fx_param_double(module_, "density_convergence", 0.1);
     energy_convergence_ = fx_param_double(module_, "energy_convergence", 0.1);
@@ -199,14 +204,14 @@ class SCFSolver {
     
     current_iteration_ = 0;
     
-    normalization_constant_squared_ = pow((2 * bandwidth_)/math::PI, 1.5);
-    
-    fx_format_result(module_, "normalization", "%g", 
-                     normalization_constant_squared_);
-    
     basis_energies_.Init(number_of_basis_functions_);
     basis_energies_.SetZero();
     
+    coulomb_alg_ = coul_alg;
+    exchange_alg_ = exc_alg;
+    
+    single_fock_alg_ = (coulomb_alg_ == exchange_alg_);
+
   } // Init()
   
  private:
@@ -358,11 +363,6 @@ class SCFSolver {
     one_electron_energy_ = 0.0;
     two_electron_energy_ = 0.0;
     
-    fock_max_ = -DBL_INF;
-    fock_min_ = DBL_INF;
-    density_max_ = -DBL_INF;
-    density_min_ = DBL_INF;
-    
     for (index_t i = 0; i < number_of_basis_functions_; i++) {
       
       // for the diagonal entries
@@ -462,12 +462,45 @@ class SCFSolver {
     
   } // TransformFockBasis_
   
-  /////////// UPDATE ME ////////////////////
+ /**
+  * Tell the coulomb and exchange algorithms to compute a new Fock matrix after
+  * giving them the updated density.
+  */
   void UpdateFockMatrix_() {
 
+    // give new density to fock matrix algs
     
+    coulomb_alg_.UpdateDensity(density_matrix_);
     
-  }
+    if (!single_fock_alg_) {
+      exchange_alg_.UpdateDensity(density_matrix_);
+    }
+    
+    // compute coulomb
+    
+    coulomb_alg_.Compute();
+    coulomb_alg_.OutputCoulomb(&coulomb_mat_);
+    
+    // if necessary, compute exchange
+    if (single_fock_alg_) {
+      
+      coulomb_alg_.OutputExchange(&exchange_mat_);
+      
+    }
+    else { 
+      
+      exchange_alg_.Compute();
+      exchange_alg_.OutputExchange(&exchange_mat_);
+      
+    }
+    
+    // output results and fill in Fock matrix
+
+    //fock_matrix_ = core_matrix_ + coulomb_mat_ - exchange_mat_;
+    la::AddOverwrite(core_matrix_, coulomb_mat_, &fock_matrix_);
+    la::SubFrom(exchange_mat_, &fock_matrix_);
+    
+  } // UpdateFockMatrix_()
   
   /**
     * Does the SCF iterations to find the HF wavefunction
@@ -487,13 +520,18 @@ class SCFSolver {
       UpdateFockMatrix_();
       
       // Step 4b.
+      // replace this with add back
+      /*
       if (unlikely(current_iteration_ >= total_energy_.size())) {
         total_energy_.EnsureSizeAtLeast(2*total_energy_.size());
         iteration_density_norms_.EnsureSizeAtLeast(
             2*iteration_density_norms_.size());
       }
+      */
       
-      total_energy_[current_iteration_] = ComputeElectronicEnergy_();
+      //total_energy_[current_iteration_] = ComputeElectronicEnergy_();
+      total_energy_.AddBack(ComputeElectronicEnergy_());
+      iteration_density_norms_.AddBack();
       
       // Step 4c.
       TransformFockBasis_();
