@@ -35,8 +35,8 @@ double MultiTreeFock::NodesMaxIntegral_(SquareTree* mu_nu, SquareTree* rho_sigma
 
   double integral = 2 * pow_pi_2point5_;
   
-  double mu_nu_dist = mu_nu->query1()->bound().MinDistanceSq(mu_nu->query2()->bound());
-  double rho_sigma_dist = rho_sigma->query1()->bound().MinDistanceSq(rho_sigma->query2()->bound());
+  //double mu_nu_dist = mu_nu->query1()->bound().MinDistanceSq(mu_nu->query2()->bound());
+  //double rho_sigma_dist = rho_sigma->query1()->bound().MinDistanceSq(rho_sigma->query2()->bound());
   
   integral *= mu_nu->stat().max_gpt_factor();
   integral *= rho_sigma->stat().max_gpt_factor();
@@ -68,8 +68,8 @@ double MultiTreeFock::NodesMinIntegral_(SquareTree* mu_nu, SquareTree* rho_sigma
   
   double integral = 2 * pow_pi_2point5_;
   
-  double mu_nu_dist = mu_nu->query1()->bound().MaxDistanceSq(mu_nu->query2()->bound());
-  double rho_sigma_dist = rho_sigma->query1()->bound().MaxDistanceSq(rho_sigma->query2()->bound());
+  //double mu_nu_dist = mu_nu->query1()->bound().MaxDistanceSq(mu_nu->query2()->bound());
+  //double rho_sigma_dist = rho_sigma->query1()->bound().MaxDistanceSq(rho_sigma->query2()->bound());
 
   
   integral *= mu_nu->stat().min_gpt_factor();
@@ -265,7 +265,7 @@ bool MultiTreeFock::RectangleOnDiagonal_(FockTree* mu,
   
 } // RectangleOnDiagonal_  
 
-
+// this assumes that the node is really on the diagonal
 index_t MultiTreeFock::CountOnDiagonal_(SquareTree* rho_sigma) {
   
   index_t on_diagonal;
@@ -286,6 +286,7 @@ index_t MultiTreeFock::CountOnDiagonal_(SquareTree* rho_sigma) {
   return on_diagonal;                                   
   
 } // CountOnDiagonal_()
+
 
 void MultiTreeFock::DensityFactor_(double* up_bound, double* low_bound, 
                                    double density_upper, 
@@ -317,8 +318,11 @@ void MultiTreeFock::DensityFactor_(double* up_bound, double* low_bound,
 
 void MultiTreeFock::CountFactorCoulomb_(double* up_bound, double* low_bound, 
                                         double* approx_val, double* allowed_error,
-                                        FockTree* rho, FockTree* sigma) {
+                                        SquareTree* rho_sigma) {
 
+  FockTree* rho = rho_sigma->query1();
+  FockTree* sigma = rho_sigma->query2();
+  
   // Need to make this work with on diagonal non-square boxes
   if (RectangleOnDiagonal_(rho, sigma)) {
     index_t on_diagonal = CountOnDiagonal_(rho_sigma);
@@ -334,7 +338,7 @@ void MultiTreeFock::CountFactorCoulomb_(double* up_bound, double* low_bound,
     *up_bound = 2 * *up_bound * rho->count() * sigma->count();
     *low_bound = 2 * *low_bound * rho->count() * sigma->count();
     *approx_val = 2 * *approx_val * rho->count() * sigma->count();
-    *my_allowed_error = 2 * *my_allowed_error * rho->count() * sigma->count();
+    *allowed_error = 2 * *allowed_error * rho->count() * sigma->count();
   }
   else {
     *up_bound = *up_bound * rho->count() * sigma->count();
@@ -367,13 +371,14 @@ void MultiTreeFock::SchwartzBound_(SquareTree* mu_nu, SquareTree* rho_sigma,
   
 } // SchwartzBound_
 
+/*
 bool MultiTreeFock::CanPrune_(double upper, double lower, SquareTree* mu_nu, 
                               SquareTree* rho_sigma) {
 
   
 
 }
-
+*/
 
 bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu, 
                                            SquareTree* rho_sigma, 
@@ -424,7 +429,7 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
   // Multiply by number of references here, make sure to account for symmetry
   
   CountFactorCoulomb_(&up_bound, &low_bound, &approx_val, &my_allowed_error, 
-                      rho, sigma);
+                      rho_sigma);
   
   double my_max_error = max((up_bound - approx_val), 
                             (approx_val - low_bound));
@@ -1557,7 +1562,7 @@ void MultiTreeFock::UnApplyPermutation(ArrayList<index_t>& old_from_new,
 
 ///////////////////// public functions ////////////////////////////////////
 
-void MultiTreeFock::ComputeFockMatrix() {
+void MultiTreeFock::Compute() {
 
   fx_timer_start(module_, "multi_time");
 
@@ -1584,7 +1589,7 @@ void MultiTreeFock::ComputeFockMatrix() {
 
 } // ComputeFockMatrix()
 
-void MultiTreeFock::UpdateMatrices(const Matrix& new_density) {
+void MultiTreeFock::UpdateDensity(const Matrix& new_density) {
   
   density_matrix_.CopyValues(new_density);
   // this won't be correct when I switch to higher momentum
@@ -1640,6 +1645,25 @@ void MultiTreeFock::OutputFockMatrix(Matrix* fock_out, Matrix* coulomb_out,
   }
     
 } // OutputFockMatrix()
+
+void MultiTreeFock::OutputCoulomb(Matrix* coulomb_out) {
+  
+  if (coulomb_out) {
+    coulomb_out->Copy(coulomb_matrix_);
+    UnApplyPermutation(old_from_new_centers_, coulomb_out);
+  }
+  
+} // OutputCoulomb
+
+void MultiTreeFock::OutputExchange(Matrix* exchange_out) {
+  
+  if (exchange_out) {
+    exchange_out->Copy(exchange_matrix_);
+    UnApplyPermutation(old_from_new_centers_, exchange_out);
+  }
+  
+} // OutputExchange
+
 
 
 

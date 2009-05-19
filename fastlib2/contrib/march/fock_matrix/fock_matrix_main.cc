@@ -226,7 +226,7 @@ int main(int argc, char* argv[]) {
     NaiveFockMatrix naive_alg;
     
     naive_alg.Init(centers, exp_mat, momenta, density, naive_mod);
-    naive_alg.ComputeFock();
+    naive_alg.Compute();
     naive_alg.OutputFock(&naive_fock, &naive_coulomb, &naive_exchange);
     
     if (fx_param_exists(root_mod, "print_naive")) {
@@ -260,8 +260,8 @@ int main(int argc, char* argv[]) {
     CFMMCoulomb coulomb_alg;
     
     coulomb_alg.Init(centers, exp_mat, momenta, density, cfmm_mod);
-    coulomb_alg.ComputeCoulomb();
-    coulomb_alg.Output(&cfmm_coulomb);
+    coulomb_alg.Compute();
+    coulomb_alg.OutputCoulomb(&cfmm_coulomb);
   
     if (fx_param_exists(root_mod, "print_cfmm")) {
       cfmm_coulomb.PrintDebug("CFMM J");
@@ -298,8 +298,8 @@ int main(int argc, char* argv[]) {
     
     Link link_alg;
     link_alg.Init(centers, exp_mat, momenta, density, link_mod);
-    link_alg.ComputeExchangeMatrix();
-    link_alg.OutputExchangeMatrix(&link_exchange);
+    link_alg.Compute();
+    link_alg.OutputExchange(&link_exchange);
     
     if (fx_param_exists(root_mod, "print_link")) {
       
@@ -341,8 +341,9 @@ int main(int argc, char* argv[]) {
     SchwartzPrescreening prescreen_alg;
     prescreen_alg.Init(centers, exp_mat, momenta, density, prescreening_mod);
     
-    prescreen_alg.ComputeFockMatrix(&prescreening_fock, &prescreening_coulomb, 
-                                    &prescreening_exchange);
+    prescreen_alg.Compute();
+    prescreen_alg.OutputFock(&prescreening_fock, &prescreening_coulomb, 
+                             &prescreening_exchange);
     
     if (fx_param_exists(root_mod, "print_prescreening")) {
       
@@ -387,7 +388,7 @@ int main(int argc, char* argv[]) {
     MultiTreeFock multi_alg;
     
     multi_alg.Init(centers, exp_mat, momenta, density, multi_mod);
-    multi_alg.ComputeFockMatrix();
+    multi_alg.Compute();
     multi_alg.OutputFockMatrix(&multi_fock, &multi_coulomb, &multi_exchange, 
                                NULL);
     

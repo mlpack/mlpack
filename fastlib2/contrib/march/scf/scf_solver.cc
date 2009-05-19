@@ -1,5 +1,6 @@
 #include "scf_solver.h"
 
+template <class CoulombAlg, class ExchangeAlg>
 void SCFSolver::FormChangeOfBasisMatrix_() {
   
   Matrix left_vectors;
@@ -58,7 +59,7 @@ void SCFSolver::FormChangeOfBasisMatrix_() {
 } // FormChangeOfBasisMatrix_()
 
 
-
+template <class CoulombAlg, class ExchangeAlg>
 void SCFSolver::ComputeDensityMatrix_() {
   
   FillOrbitals_();
@@ -116,7 +117,7 @@ void SCFSolver::ComputeDensityMatrix_() {
   
 } // ComputeDensityMatrix_
 
-
+template <class CoulombAlg, class ExchangeAlg>
 void SCFSolver::ComputeDensityMatrixDIIS_() {
   
   FillOrbitals_();
@@ -190,6 +191,7 @@ void SCFSolver::ComputeDensityMatrixDIIS_() {
   
 } // ComputeDensityMatrixDIIS_()
 
+template <class CoulombAlg, class ExchangeAlg>
 void SCFSolver::DIISSolver_() {
   
   Matrix old_density;
@@ -236,7 +238,7 @@ void SCFSolver::DIISSolver_() {
   
 } // DIISSolver_()
 
-
+template <class CoulombAlg, class ExchangeAlg>
 void SCFSolver::DiagonalizeFockMatrix_() {
   
   energy_vector_.Destruct();
@@ -295,6 +297,7 @@ void SCFSolver::DiagonalizeFockMatrix_() {
 } // DiagonalizeFockMatrix_
 
 
+template <class CoulombAlg, class ExchangeAlg>
 void SCFSolver::ComputeOneElectronMatrices_() {
   
   for (index_t row_index = 0; row_index < number_of_basis_functions_; 
@@ -346,7 +349,7 @@ void SCFSolver::ComputeOneElectronMatrices_() {
 } // ComputeOneElectronMatrices_()
 
 
-
+template <class CoulombAlg, class ExchangeAlg>
 double SCFSolver::ComputeNuclearRepulsion_() {
   
   double nuclear_energy = 0.0;

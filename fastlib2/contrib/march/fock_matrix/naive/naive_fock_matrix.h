@@ -72,7 +72,7 @@ class NaiveFockMatrix {
   } // Init()
   
   
-  void ComputeFock() {
+  void Compute() {
     
     printf("====Compute Naive====\n");
     
@@ -143,6 +143,12 @@ class NaiveFockMatrix {
   } // ComputeFock()
   
   
+  
+  void UpdateDensity(const Matrix& new_density) {
+    
+  }
+
+  
   /**
    * Save the results to matrices for comparison.  Also saves fx results.
    */
@@ -162,6 +168,22 @@ class NaiveFockMatrix {
     
     // output results
   
+  }
+  
+  void OutputCoulomb(Matrix* coulomb_out) {
+   
+    if (coulomb_out) {
+      coulomb_out->Copy(coulomb_mat_);
+    }
+    
+  }
+
+  void OutputExchange(Matrix* exchange_out) {
+    
+    if (exchange_out) {
+      exchange_out->Copy(exchange_mat_);
+    }
+    
   }
   
 
