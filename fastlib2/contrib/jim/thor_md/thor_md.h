@@ -957,16 +957,13 @@ class ThorMD {
 
 
   /** KDE computation using THOR */
-  void Compute(datanode *module) {
-    
-    printf("Starting dualtree MD...\n");
+  void Compute(datanode *module) { 
     fx_timer_start(module, "dualtree md");  
     thor::RpcDualTree<ThorMD, ThreeTreeDepthFirst<ThorMD> >
       (fx_submodule(module, "gnp"), GNP_CHANNEL,
        parameters_, q_tree_, r_tree_, &q_results_, &global_result_);
 
-    fx_timer_stop(module, "dualtree md");
-    printf("Dualtree MD completed...\n");    
+    fx_timer_stop(module, "dualtree md");  
     global_result_.Postprocess(parameters_);
   }
 
@@ -1074,19 +1071,23 @@ class ThorMD {
   }
 
   void UpdatePoints(double time_step){
-    CacheArray<QResult> result_array;
-    CacheArray<QPoint> points_array;
-    result_array.Init(&q_results_, BlockDevice::M_READ);
-    points_array.Init(q_points_cache_, BlockDevice::M_OVERWRITE);
-    CacheReadIter<QResult> result_iter(&result_array, 0);
-    CacheWriteIter<QPoint> points_iter(&points_array, 0);
-    for (index_t i = 0; i < parameters_.query_count_; i++,
-	   result_iter.Next(), points_iter.Next()) {
-      (*points_iter).Accelerate((*result_iter).old_velocity_, time_step);
-      if (parameters_.bound_type_ ==PERIODIC){
-	(*points_iter).MapBack(parameters_.box_size_);
+    if (rpc::is_root()){
+      CacheArray<QResult> result_array;
+      CacheArray<QPoint> points_array;
+      result_array.Init(&q_results_, BlockDevice::M_READ);
+      points_array.Init(q_points_cache_, BlockDevice::M_OVERWRITE);
+      CacheReadIter<QResult> result_iter(&result_array, 0);
+      CacheWriteIter<QPoint> points_iter(&points_array, 0);
+      for (index_t i = 0; i < parameters_.query_count_; i++,
+	     result_iter.Next(), points_iter.Next()) {
+	(*points_iter).Accelerate((*result_iter).old_velocity_, time_step);
+	if (parameters_.bound_type_ ==PERIODIC){
+	  (*points_iter).MapBack(parameters_.box_size_);
+	}
       }
-    }   
+    }
+    q_points_cache_->StartSync();
+    q_points_cache_->WaitSync();
   }
 
   void ScaleToTemperature(double ratio){
