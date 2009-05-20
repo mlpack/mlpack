@@ -367,7 +367,7 @@ class HMM {
       }
 
       // k-means cluster the data into n_states clusters
-      int max_iterations = 10000;
+      int max_iterations = 100;
       int min_points_per_cluster = 5;
       GenVector<int> cluster_memberships;
       int cluster_counts[n_states_];
@@ -400,6 +400,10 @@ class HMM {
       }
     }
     else if(type_ == MIXTURE) {
+
+      for(int i = 0; i < n_states_; i++) {
+	state_distributions[i].SetZero();
+      }
 
       // first, cluster the data into n_states clusters
       int max_iterations = 100;
@@ -442,7 +446,7 @@ class HMM {
       }
       
       for(int i = 0; i < n_states_; i++) {
-	state_datasets[i].PrintDebug("state dataset");
+	//state_datasets[i].PrintDebug("state dataset");
       }
 
       // we refer to the clusters within a state as subclusters because
@@ -463,22 +467,20 @@ class HMM {
 			  "clustering_problem.sol",
 			  &subcluster_memberships,
 			  subcluster_counts);
-	//do something with subcluster_memberships
-	//do something with subcluster_counts
+
+
+	int n_points_in_cluster = cluster_counts[i];
+	for(int j = 0; j < n_points_in_cluster; j++) {
+	  GenVector<T> x_t;
+	  state_datasets[i].MakeColumnVector(j, &x_t);
+	  state_distributions[i].Accumulate(1, x_t,
+					    subcluster_memberships[j]);
+	}
+	
+	state_distributions[i].Normalize(cluster_counts[i]);
+
       }
-
-
-      // the points into n_components clusters
-      
-      
-      // for each state
-      //   assign each state's point indices to 1 of n_components clusters
-      //   
-      
-
-
     }
-
   }
 
 
@@ -820,9 +822,9 @@ class HMM {
   template<typename T>
   void Viterbi(const GenMatrix<T> &sequence,
 	       double* p_neg_ll,
-	       Vector* p_best_path) {
+	       GenVector<int>* p_best_path) {
     double &neg_ll = *p_neg_ll;
-    Vector &best_path = *p_best_path;
+    GenVector<int> &best_path = *p_best_path;
     
     int sequence_length = sequence.n_cols();
 
@@ -832,18 +834,18 @@ class HMM {
     Matrix logp_path;
     logp_path.Init(n_states_, sequence_length);
     
-    Matrix best_into;
+    GenMatrix<int> best_into;
     best_into.Init(n_states_, sequence_length);
     
     Matrix logp_transition;
     logp_transition.Init(n_states_, n_states_);
-    for(int j = 0; j < n_states; j++) {
-      for(int i = 0; i < n_states; i++) {
+    for(int j = 0; j < n_states_; j++) {
+      for(int i = 0; i < n_states_; i++) {
 	logp_transition.set(i, j,
 			    log(p_transition.get(i, j)));
       }
     }
-    
+
     for(int i = 0; i < n_states_; i++) {
       logp_path.set(i, 0,
 		    log(p_initial[i]) + log(p_x_given_q.get(i, 0)));
@@ -880,11 +882,244 @@ class HMM {
     best_path[sequence_length - 1] = argmax;
     neg_ll = -logp_path.get(argmax, sequence_length - 1);
 
-    for(int t = sequence_length - 1; t >= 1; t++) {
+    for(int t = sequence_length - 1; t >= 1; t--) {
       best_path[t - 1] = best_into.get(best_path[t], t);
     }
 
   }
+
+
+  void AccumulatePInitialFromPath(const GenVector<int> &path) {
+    p_initial[path[0]]++;
+  }
+
+  void NormalizePInitial(int normalization_factor, bool ensure_no_zeros) {
+    if(ensure_no_zeros) {
+      bool has_zero = false;
+      for(int i = 0; i < n_states_; i++) {
+	if(p_initial[i] == 0) {
+	  has_zero = true;
+	  break;
+	}
+      }
+      
+      if(has_zero) {
+	for(int i = 0; i < n_states_; i++) {
+	  p_initial[i]++;
+	}
+	normalization_factor += n_states_;
+      }
+    }
+
+    la::Scale(((double)1) / ((double)normalization_factor),
+	      &p_initial);
+  }
+
+  void AccumulatePTransitionFromPath(const GenVector<int> &path) {
+    int sequence_length_minus_1 = path.length() - 1;
+    for(int t = 0; t < sequence_length_minus_1; t++) {
+      int first_state = path[t];
+      int second_state = path[t + 1];
+      p_transition.set(first_state, second_state,
+		       p_transition.get(first_state, second_state) + 1);
+    }
+  }
+
+  void NormalizePTransition(int normalization_factor, bool ensure_no_zeros) {
+    if(ensure_no_zeros) {
+      bool has_zero = false;
+      for(int j = 0; j < n_states_; j++) {
+	for(int i = 0; i < n_states_; i++) {
+	  if(p_transition.get(i, j) == 0) {
+	    has_zero = true;
+	    break;
+	  }
+	}
+	if(has_zero) {
+	  break;
+	}
+      }
+
+      if(has_zero) {
+	for(int j = 0; j < n_states_; j++) {
+	  for(int i = 0; i < n_states_; i++) {
+	    p_transition.set(i, j,
+			     p_transition.get(i, j) + 1);
+	  }
+	}
+	normalization_factor += (n_states_ * n_states_);
+      }
+    }
+    
+    la::Scale(((double)1) / ((double)normalization_factor),
+	      &p_transition);
+  }
+
+
+  template<typename T>
+    void ViterbiUpdate(const ArrayList<GenMatrix<T> > &sequences) {
+
+    int n_sequences = sequences.size();
+
+    // First, we declare an HMM
+    HMM<TDistribution> new_hmm;
+    new_hmm.Init(n_states_, n_dims_, type_, min_variance_, n_components_);
+    
+
+    ArrayList<GenVector<int> > best_paths;
+    best_paths.Init(n_sequences);
+
+    for(int m = 0; m < n_sequences; m++) {
+      double neg_ll;
+      Viterbi(sequences[m], &neg_ll, &(best_paths[m]));
+    }
+
+    
+    // update initial state and state transition probabilities
+    new_hmm.p_initial.SetZero();
+    new_hmm.p_transition.SetZero();
+    int p_transition_normalization_factor = 0;
+    for(int m = 0; m < n_sequences; m++) {
+      const GenVector<int> &best_path = best_paths[m];
+      new_hmm.AccumulatePInitialFromPath(best_path);
+      p_transition_normalization_factor += best_path.length();
+      
+      new_hmm.AccumulatePTransitionFromPath(best_path);
+    }
+    new_hmm.NormalizePInitial(n_sequences, true);
+    new_hmm.NormalizePTransition(p_transition_normalization_factor 
+				 - n_sequences,
+				 true);
+
+    // zero out state distributions
+    for(int i = 0; i < n_states_; i++) {
+      new_hmm.state_distributions[i].SetZero();
+    }
+
+    if(type_ == MULTINOMIAL) {
+      // Accumulate
+      for(int m = 0; m < n_sequences; m++) {
+	const GenMatrix<T> &sequence = sequences[m];
+	const GenVector<int> &best_path = best_paths[m];
+	int sequence_length = best_path.length();
+	for(int t = 0; t < sequence_length; t++) {
+	  GenVector<T> x_t;
+	  sequence.MakeColumnVector(t, &x_t);
+	  new_hmm.state_distributions[best_path[t]].Accumulate(1, x_t, 0);
+	}
+      }
+
+      // Normalize
+      for(int i = 0; i < n_states_; i++) {
+	new_hmm.state_distributions[i].Normalize(0, state_distributions[i]);
+      }
+    }
+    else if(type_ == GAUSSIAN) {
+      // Accumulate
+      GenVector<int> state_counts;
+      state_counts.Init(n_states_);
+      state_counts.SetZero();
+
+      for(int m = 0; m < n_sequences; m++) {
+	const GenMatrix<T> &sequence = sequences[m];
+	const GenVector<int> &best_path = best_paths[m];
+	int sequence_length = best_path.length();
+	for(int t = 0; t < sequence_length; t++) {
+	  GenVector<T> x_t;
+	  sequence.MakeColumnVector(t, &x_t);
+	  new_hmm.state_distributions[best_path[t]].Accumulate(1, x_t, 0);
+	  state_counts[best_path[t]]++;
+	}
+      }
+
+      // Normalize
+      for(int i = 0; i < n_states_; i++) {
+	new_hmm.state_distributions[i].Normalize(state_counts[i],
+						 state_distributions[i]);
+      }
+    }
+    else if(type_ == MIXTURE) {
+      GenVector<int> state_counts;
+      state_counts.Init(n_states_);
+      state_counts.SetZero();
+
+      for(int m = 0; m < n_sequences; m++) {
+	GenVector<int> &best_path = best_paths[m];
+	int sequence_length = best_path.length();
+	for(int t = 0; t < sequence_length; t++) {
+	  state_counts[best_path[t]]++;
+	}
+      }
+    
+      ArrayList<GenMatrix<T> > state_datasets;
+      state_datasets.Init(n_states_);
+      GenVector<int> state_cur_point_num;
+      state_cur_point_num.Init(n_states_);
+      state_cur_point_num.SetZero();
+      for(int i = 0; i < n_states_; i++) {
+	state_datasets[i].Init(n_dims_, state_counts[i]);
+	printf("state_counts[%d] = %d\n", i, state_counts[i]);
+      }
+
+      int i = 0;
+      for(int m = 0; m < n_sequences; m++) {
+	const GenMatrix<T> &sequence = sequences[m];
+	const GenVector<int> &best_path = best_paths[m];
+	int sequence_length = sequence.n_cols();
+	for(int t = 0; t < sequence_length; t++) {
+	  int state_index = best_path[t];
+	  state_datasets[state_index].
+	    CopyColumnFromMat(state_cur_point_num[state_index],
+			      t, sequence);
+	  state_cur_point_num[state_index]++;
+	  i++;
+	}
+      }
+
+      for(int i = 0; i < n_states_; i++) {
+	//state_datasets[i].PrintDebug("state dataset");
+      }
+
+      //////
+      // now, within each state, further cluster for MIXTURE case
+      int max_iterations = 20;
+      for(int i = 0; i < n_states_; i++) {
+	// cluster the state's data into n_components subclusters
+	int min_points_per_subcluster = 5;
+	GenVector<int> subcluster_memberships;
+	int subcluster_counts[n_states_];
+	ConstrainedKMeans(state_datasets[i],
+			  n_components_,
+			  max_iterations,
+			  min_points_per_subcluster,
+			  "clustering_problem",
+			  "clustering_problem.sol",
+			  &subcluster_memberships,
+			  subcluster_counts);
+
+	int n_points_in_state = state_counts[i];
+	for(int j = 0; j < n_components_; j++) {
+	  printf("subcluster_counts[%d] = %d\n", j, subcluster_counts[j]);
+	}
+
+	// Accumulate
+	for(int j = 0; j < n_points_in_state; j++) {
+	  GenVector<T> x_t;
+	  state_datasets[i].MakeColumnVector(j, &x_t);
+	  new_hmm.state_distributions[i].Accumulate(1, x_t,
+						    subcluster_memberships[j]);
+	}
+	printf("state_counts[%d] = %d\n", i, state_counts[i]);
+
+	// Normalize
+	new_hmm.state_distributions[i].Normalize(state_counts[i],
+						 state_distributions[i]);
+      }
+    } // end if(MIXTURE)
+
+    SwapHMMParameters(&new_hmm);
+  }
+
 
 
   void Max(const Vector &x, double* p_max, int* p_argmax) {
