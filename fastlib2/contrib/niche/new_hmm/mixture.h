@@ -108,6 +108,7 @@ class Mixture {
       components_[i].Destruct();
     }
     free(components_);
+    weights_.Destruct();
   }
 
 };

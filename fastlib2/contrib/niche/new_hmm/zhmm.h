@@ -51,9 +51,8 @@ class HMM {
     Init(n_states_in, n_dims_in, type_in, min_variance_in, 1);
   }
 
-  void Init(int n_states_in, int n_dims_in,
-	    int type_in, double min_variance_in,
-	    int n_components_in) {
+  void Init(int n_states_in, int n_dims_in, int type_in,
+	    double min_variance_in, int n_components_in) {
     n_states_ = n_states_in;
     n_dims_ = n_dims_in;
     type_ = type_in;
@@ -368,7 +367,7 @@ class HMM {
       }
 
       // k-means cluster the data into n_states clusters
-      int max_iterations = 100;
+      int max_iterations = 10000;
       int min_points_per_cluster = 5;
       GenVector<int> cluster_memberships;
       int cluster_counts[n_states_];
@@ -384,7 +383,7 @@ class HMM {
       int n_sequences = sequences.size();
       int i = 0;
       for(int m = 0; m < n_sequences; m++) {
-	const GenMatrix<T> &sequence = sequences[i];
+	const GenMatrix<T> &sequence = sequences[m];
 	int sequence_length = sequence.n_cols();
 	for(int j = 0; j < sequence_length; j++) {
 	  GenVector<T> point;
@@ -423,13 +422,14 @@ class HMM {
       int state_cur_point_num[n_states_];
       for(int i = 0; i < n_states_; i++) {
 	state_datasets[i].Init(n_dims_, cluster_counts[i]);
+	printf("cluster_counts[%d] = %d\n", i, cluster_counts[i]);
 	state_cur_point_num[i] = 0;
       }
 
       int n_sequences = sequences.size();
       int i = 0;
       for(int m = 0; m < n_sequences; m++) {
-	const GenMatrix<T> &sequence = sequences[i];
+	const GenMatrix<T> &sequence = sequences[m];
 	int sequence_length = sequence.n_cols();
 	for(int j = 0; j < sequence_length; j++) {
 	  int cluster_index = cluster_memberships[i];
@@ -449,7 +449,7 @@ class HMM {
       // we are clustering each of the original clusters
 
       // now, within each cluster, further cluster
-      max_iterations = 3;
+      max_iterations = 20;
       for(int i = 0; i < n_states_; i++) {
 	// cluster the state's data into n_components subclusters
 	int min_points_per_subcluster = 5;
@@ -519,7 +519,7 @@ class HMM {
       }
       i = 0;
       for(int m = 0; m < n_datasets; m++) {
-	Matrix &data = datasets[i];
+	Matrix &data = datasets[m];
 	int n_points_in_data = data.n_cols();
 	for(int j = 0; j < n_points_in_data; j++) {
 	  Vector point;
@@ -539,7 +539,7 @@ class HMM {
       int n_changes = 0;
       i = 0;
       for(int m = 0; m < n_datasets; m++) {
-	Matrix &data = datasets[i];
+	Matrix &data = datasets[m];
 	int n_points_in_data = data.n_cols();
 	for(int j = 0; j < n_points_in_data; j++) {
 	  Vector point;
