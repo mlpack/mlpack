@@ -53,28 +53,37 @@ int main(int argc, char *argv[]) {
   // Open files for output
 
   // Diffusion computation stuff
-  int diff_tot = fx_param_int(0, "snapshots", 1);
-  ArrayList<Matrix> reference_positions;
-  double delta = 100*time_step_, last_time = -2*delta;
-  int diff_count = 0;
-  reference_positions.Init(diff_tot);
-
+  int diff_tot, diff_count = 0;
+  double delta = 100*time_step_, last_time = -2*delta;  
+  ArrayList<Matrix> reference_positions;    
+  if (rpc::is_root()){
+    diff_tot = fx_param_int(0, "snapshots", 1);   
+    reference_positions.Init(diff_tot);
+  } else {
+    diff_tot = 0;
+    reference_positions.Init(0);
+  }
+    
   // Loop over all time steps
   while (time < final_time_){
 
     // Update positions
     simulation.UpdatePoints(time_step_);
-    simulation.RebuildTree(parameters);
+    simulation.RebuildTree(parameters);   
     simulation.Compute(parameters);
+   
+  
     // Take snapshot, if nesc.   
-    if (diff_count < diff_tot & time > last_time + delta){ 
-      last_time = time;    
-      simulation.TakeSnapshot(&reference_positions[diff_count]);
-      diff_count++;    
+    if (rpc::is_root()){
+      if (diff_count < diff_tot & time > last_time + delta){
+	last_time = time;    
+	simulation.TakeSnapshot(&reference_positions[diff_count]);
+	diff_count++;    
+      }
     }
 
     // Do we get stats this time?
-    if ((int)(time / time_step_ -0.5) % 5 == 0){      
+    if (((int)(time / time_step_ -0.5) % 5 == 0) && (rpc::is_root()) ){      
       // Get radial distribution
       // Get diffusion, temp, etc.
       fprintf(diff, "%f, ", time);
@@ -101,19 +110,21 @@ int main(int argc, char *argv[]) {
     time = time + time_step_;
   }
 
-  Matrix positions;
-  simulation.GetFinalPositions(&positions);
-  coords = fopen(fp_coords, "w+");
-  for (int i = 0; i < positions.n_cols(); i++){
-    for (int j = 0; j < positions.n_rows()-1; j++){
-      fprintf(coords, "%f,\t ", positions.get(j,i));
+  if (rpc::is_root()){
+    Matrix positions;
+    simulation.GetFinalPositions(&positions);
+    coords = fopen(fp_coords, "w+");
+    for (int i = 0; i < positions.n_cols(); i++){
+      for (int j = 0; j < positions.n_rows()-1; j++){
+	fprintf(coords, "%f,\t ", positions.get(j,i));
+      }
+      fprintf(coords, "%f\n", positions.get(positions.n_rows()-1, i));
     }
-    fprintf(coords, "%f\n", positions.get(positions.n_rows()-1, i));
   }
 
   // Close output files
   simulation.Fin();
 
-  //fx_done(fx_root);
+  fx_done(fx_root);
   return 0;
 }

@@ -134,9 +134,9 @@ void ThreeTreeDepthFirst<GNP>::Triple_(
     QMutables *q_node_mut) {
  
   VERBOSE_MSG(1.0, "Checking (%d,%d) x (%d,%d) x (%d, %d)",
-	      q_node->begin(), q_node->end(),
-	      r_node1->begin(), r_node1->end(),
-	      r_node2->begin(), r_node2->end());
+  	      q_node->begin(), q_node->end(),
+  	      r_node1->begin(), r_node1->end(),
+  	      r_node2->begin(), r_node2->end());
   DEBUG_ONLY(stats_.node_node_considered++);
 
   /* begin prune checks */
@@ -151,7 +151,7 @@ void ThreeTreeDepthFirst<GNP>::Triple_(
     VERBOSE_MSG(1.0, "Extrinsic prune");
   } else {
     if (q_node->is_leaf() && r_node1->is_leaf() && r_node2->is_leaf()) {
-      VERBOSE_MSG(1.0, "Base case");
+     
       BaseCase_(q_node, r_node1, r_node2, delta, unvisited, q_node_mut);
     } else if (q_node->count() >= r_node1->count() && 
 	       q_node->count() >= r_node2->count()){
@@ -199,7 +199,7 @@ void ThreeTreeDepthFirst<GNP>::Triple_(
       
       if (!explore_r1) {
         if (explore_r2) {
-          Triple_(q_node, r_child1_2, r_node2, delta2, unvisited, q_node_mut);
+          Triple_(q_node, r_child1_2, r_node2, delta2, unvisited, q_node_mut);	 
         }
       } else if (!explore_r2) {
         Triple_(q_node, r_child1_1, r_node2, delta1, unvisited, q_node_mut);
@@ -242,7 +242,7 @@ void ThreeTreeDepthFirst<GNP>::Triple_(
       
       if (!explore_r1) {
         if (explore_r2) {
-          Triple_(q_node, r_node1, r_child2_2, delta2, unvisited, q_node_mut);
+          Triple_(q_node, r_node1, r_child2_2, delta2, unvisited, q_node_mut);	 
         }
       } else if (!explore_r2) {
         Triple_(q_node, r_node1, r_child2_1, delta1, unvisited, q_node_mut);
@@ -282,8 +282,8 @@ void ThreeTreeDepthFirst<GNP>::Pair_(
     QMutables *q_node_mut) {
  
   VERBOSE_MSG(1.0, "Checking (%d,%d) x (%d,%d)",
-	      q_node->begin(), q_node->end(),
-	      r_node->begin(), r_node->end());
+  	      q_node->begin(), q_node->end(),
+  	      r_node->begin(), r_node->end());
   DEBUG_ONLY(stats_.node_node_considered++);
 
   /* begin prune checks */
@@ -298,7 +298,7 @@ void ThreeTreeDepthFirst<GNP>::Pair_(
     VERBOSE_MSG(1.0, "Extrinsic prune");
   } else {
     if (q_node->is_leaf() && r_node->is_leaf()) {
-      VERBOSE_MSG(1.0, "Base case");
+     
       BaseCase_(q_node, r_node, delta, unvisited, q_node_mut);
     } else if (r_node->is_leaf()
         || (q_node->count() >= r_node->count() && !q_node->is_leaf())) {
@@ -360,7 +360,7 @@ void ThreeTreeDepthFirst<GNP>::Pair_(
 
       if (!explore_r1) {
         if (explore_r2) {
-          Pair_(q_node, r_child2, delta2, unvisited, q_node_mut);
+          Pair_(q_node, r_child2, delta2, unvisited, q_node_mut);	  
         }
       } else if (!explore_r2) {
         Pair_(q_node, r_child1, delta1, unvisited, q_node_mut);
@@ -406,7 +406,10 @@ void ThreeTreeDepthFirst<GNP>::BaseCase_(
     QMutables *q_node_mut) {
 
   DEBUG_ONLY(stats_.node_point_considered += q_node->count());
-
+  VERBOSE_MSG(1.0, "Base case (%d,%d) x (%d,%d) x (%d, %d)",
+	      q_node->begin(), q_node->end(),
+	      r_node1->begin(), r_node1->end(),
+	      r_node2->begin(), r_node2->end());
   q_node_mut->summary_result.StartReaccumulate(param_, *q_node);
 
   typename GNP::TripleVisitor visitor;
@@ -483,7 +486,9 @@ void ThreeTreeDepthFirst<GNP>::BaseCase_(
     QMutables *q_node_mut) {
 
   DEBUG_ONLY(stats_.node_point_considered += q_node->count());
-
+  VERBOSE_MSG(1.0, "Base case (%d,%d) x (%d,%d)",
+	      q_node->begin(), q_node->end(),
+	      r_node->begin(), r_node->end());
   q_node_mut->summary_result.StartReaccumulate(param_, *q_node);
 
   typename GNP::PairVisitor visitor;
