@@ -23,7 +23,6 @@ void TestMultinomial() {
   }
   printf("\n");
 
-  /////
   hmm.InitParameters(sequences);
 
   hmm.PrintDebug("hmm after calling InitParameters(sequences)");
@@ -37,15 +36,8 @@ void TestMultinomial() {
 		1000);
   
   hmm.PrintDebug("hmm after calling BaumWelch");
-  /*
-  
-  hmm.PrintDebug("hmm");
-  hmm.BaumWelch(sequences,
-		1e-10 * ((double)1),
-		1000);
-  hmm.PrintDebug("hmm");
-  */
 }
+
 
 void TestGaussian() {
   HMM<DiagGaussian> hmm;
@@ -159,8 +151,8 @@ void TestGaussianPdf() {
 
 
 int main(int argc, char* argv[]) {
-  TestMultinomial();
+  //TestMultinomial();
   //TestGaussian();
   //TestGaussianPdf();
-  //TestMixture();
+  TestMixture();
 }
