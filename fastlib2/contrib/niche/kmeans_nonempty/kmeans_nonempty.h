@@ -1,5 +1,45 @@
 #include "fastlib/fastlib.h"
 #include "do_mcf.h"
+#include "la_augment.h"
+
+template<typename T>
+void FindFarthestPoint(int n_points,
+		       const ArrayList<GenMatrix<T> > &datasets,
+		       const ArrayList<GenVector<T> > &cluster_centers,
+		       const GenVector<int> &cluster_memberships,
+		       int* p_argmax_dataset_index,
+		       int* p_argmax_point_index_in_dataset) {
+  
+  int &argmax_dataset_index = *p_argmax_dataset_index;
+  int &argmax_point_index_in_dataset = *p_argmax_point_index_in_dataset;
+  
+
+  int n_datasets = datasets.size();
+  int n_dims = datasets[0].n_rows();
+
+  double max_dist = -std::numeric_limits<double>::max();
+  argmax_dataset_index = -1;
+  argmax_point_index_in_dataset = -1;
+
+  int i = 0;
+  for(int m = 0; m < n_datasets; m++) {
+    int n_points_in_dataset = datasets[m].n_cols();
+    for(int j = 0; j < n_points_in_dataset; j++) {
+      double dist =
+	la::DistanceSqEuclidean(n_dims,
+				datasets[m].GetColumnPtr(j),
+				cluster_centers[cluster_memberships[i]].ptr());
+      if(dist > max_dist) {
+	max_dist = dist;
+	argmax_dataset_index = m;
+	argmax_point_index_in_dataset = j;
+      }
+      i++;
+    }
+  }
+}
+
+
 
 bool CheckFileWritten(const char* problem_filename, int iteration_num) {
   FILE* file = fopen(problem_filename, "r");
@@ -130,7 +170,7 @@ void ConstrainedKMeans(const ArrayList<GenMatrix<T> > &datasets,
 
   int n_dims = datasets[0].n_rows();
     
-  ArrayList<Vector> cluster_centers;
+  ArrayList<GenVector<T> > cluster_centers;
   cluster_centers.Init(n_clusters);
   for(int k = 0; k < n_clusters; k++) {
     cluster_centers[k].Init(n_dims);
@@ -141,15 +181,58 @@ void ConstrainedKMeans(const ArrayList<GenMatrix<T> > &datasets,
   for(int m = 0; m < n_datasets; m++) {
     n_points += datasets[m].n_cols();
   }
-
-  int i;
-
-  // random initialization
   cluster_memberships.Init(n_points);
-  for(i = 0; i < n_points; i++) {
-    cluster_memberships[i] = rand() % n_clusters;
-    printf("cluster_memberships[%d] = %d\n", i, cluster_memberships[i]);
+
+  /* Gonzales algorithm to initialize clusters */
+  int current_n_clusters = 1;
+  cluster_centers[0].CopyValues(datasets[0].GetColumnPtr(0));
+  for(int i = 0; i < n_points; i++) {
+    // assign all points the single existing cluster
+    cluster_memberships[i] = 0;
   }
+  
+  while(current_n_clusters < n_clusters) {
+    int farthest_dataset;
+    int farthest_point;
+    FindFarthestPoint(n_points, datasets,
+		      cluster_centers, cluster_memberships,
+		      &farthest_dataset,
+		      &farthest_point);
+    cluster_centers[current_n_clusters].
+      CopyValues(datasets[farthest_dataset].GetColumnPtr(farthest_point));
+    current_n_clusters++;
+
+    // update cluster memberships using cluster centers
+    int i = 0;
+    for(int m = 0; m < n_datasets; m++) {
+      const GenMatrix<T> &data = datasets[m];
+      int n_points_in_data = data.n_cols();
+      for(int j = 0; j < n_points_in_data; j++) {
+	GenVector<T> point;
+	data.MakeColumnVector(j, &point);
+	double min_dist_sq = std::numeric_limits<double>::max();
+	int nearest_cluster_index = -1;
+	for(int k = 0; k < current_n_clusters; k++) {
+	  double dist_sq =
+	    la::DistanceSqEuclidean(point, cluster_centers[k]);
+	  if(dist_sq < min_dist_sq) {
+	    min_dist_sq = dist_sq;
+	    nearest_cluster_index = k;
+	  }
+	}
+	cluster_memberships[i] = nearest_cluster_index;
+	i++;
+      }
+    }
+  }
+
+
+  for(int i = 0; i < n_clusters; i++) {
+    printf("cluster center %d\n", i);
+    cluster_centers[i].PrintDebug("");
+  }
+
+  // the clusters are now initialized using the Gonzales algorithm
 
   int iteration_num = 1;
   int n_changes = 0;
@@ -160,12 +243,12 @@ void ConstrainedKMeans(const ArrayList<GenMatrix<T> > &datasets,
       cluster_centers[k].SetZero();
       cluster_counts[k] = 0;
     }
-    i = 0;
+    int i = 0;
     for(int m = 0; m < n_datasets; m++) {
       const GenMatrix<T> &data = datasets[m];
       int n_points_in_data = data.n_cols();
       for(int j = 0; j < n_points_in_data; j++) {
-	Vector point;
+	GenVector<T> point;
 	data.MakeColumnVector(j, &point);
 	int cluster_index = cluster_memberships[i];
 	la::AddTo(point, &(cluster_centers[cluster_index]));
@@ -176,7 +259,6 @@ void ConstrainedKMeans(const ArrayList<GenMatrix<T> > &datasets,
     for(int k = 0; k < n_clusters; k++) {
       la::Scale(((double)1) / ((double)(cluster_counts[k])),
 		&(cluster_centers[k]));
-      //cluster_centers[k].PrintDebug("cluster");
     }
    
     // update cluster memberships using cluster centers
@@ -187,7 +269,7 @@ void ConstrainedKMeans(const ArrayList<GenMatrix<T> > &datasets,
       const GenMatrix<T> &data = datasets[i];
       int n_points_in_data = data.n_cols();
       for(int j = 0; j < n_points_in_data; j++) {
-	Vector point;
+	GenVector<T> point;
 	data.MakeColumnVector(j, &point);
 	for(int k = 0; k < n_clusters; k++) {
 	  distances_sq.set(k, i, 
@@ -199,10 +281,14 @@ void ConstrainedKMeans(const ArrayList<GenMatrix<T> > &datasets,
     }
     
     WriteProblem(problem_filename, distances_sq, min_points_per_cluster, iteration_num);
+    
+    /* // not necessary!
     if(!CheckFileWritten(problem_filename, iteration_num)) {
       printf("Not calling WriteProblem() becuase file not yet written!\n");
       exit(1);
     }
+    */ 
+
     DoMCF(problem_filename, solution_filename);
     ReadSolution(solution_filename, &cluster_memberships, &n_changes);
 
