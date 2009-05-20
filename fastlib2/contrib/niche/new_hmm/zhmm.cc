@@ -29,6 +29,7 @@ void TestGaussian() {
   HMM<DiagGaussian> hmm;
   hmm.Init(2, 2, GAUSSIAN, 0.0001);
   srand48(time(0));
+  return;
   //hmm.RandomlyInitialize();
   
   ArrayList<GenMatrix<double> > sequences;
@@ -63,7 +64,7 @@ void TestMixture() {
   hmm.Init(2, 2, MIXTURE, 0.0001, 2);
   srand48(time(0));
   //hmm.RandomlyInitialize();
-  
+
   ArrayList<GenMatrix<double> > sequences;
   sequences.Init(1);
   sequences[0].Init(2, 100);
