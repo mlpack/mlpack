@@ -1,7 +1,7 @@
 librule(
     name = "kmeans_nonempty",
     sources = [],
-    headers = ["kmeans_nonempty.h", "do_mcf.h", "mcf/readmin.c", "mcf/mcfutil.c","mcf/pbeampp2.c","mcf/pstart.c","mcf/pbla.c", "mcf/treeup.c", "mcf/pflowup.c", "mcf/psimplex.c","mcf/output.c"],
+    headers = ["kmeans_nonempty.h", "la_augment.h", "do_mcf.h", "mcf/readmin.c", "mcf/mcfutil.c","mcf/pbeampp2.c","mcf/pstart.c","mcf/pbla.c", "mcf/treeup.c", "mcf/pflowup.c", "mcf/psimplex.c","mcf/output.c"],
     deplibs = ["fastlib:fastlib"]
     )
 
