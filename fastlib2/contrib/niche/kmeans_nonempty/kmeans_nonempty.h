@@ -91,6 +91,28 @@ void ReadSolution(const char* filename, GenVector<int>* p_cluster_memberships, i
   printf("\n");
 }
 
+template<typename T>
+void ConstrainedKMeans(const GenMatrix<T> &dataset,
+		       int n_clusters,
+		       int max_iterations,
+		       int min_points_per_cluster,
+		       const char* problem_filename,
+		       const char* solution_filename,
+		       GenVector<int>* p_cluster_memberships,
+		       int cluster_counts[]) {
+  ArrayList<GenMatrix<T> > datasets;
+  datasets.Init(1);
+  datasets[0].Alias(dataset);
+  ConstrainedKMeans(datasets,
+		    n_clusters,
+		    max_iterations,
+		    min_points_per_cluster,
+		    problem_filename,
+		    solution_filename,
+		    p_cluster_memberships,
+		    cluster_counts);
+}
+
 
 
 template<typename T>
@@ -176,7 +198,7 @@ void ConstrainedKMeans(const ArrayList<GenMatrix<T> > &datasets,
     
     WriteProblem(problem_filename, distances_sq, min_points_per_cluster, iteration_num);
     if(!CheckFileWritten(problem_filename, iteration_num)) {
-      printf("file not yet written!\n");
+      printf("Not calling WriteProblem() becuase file not yet written!\n");
       exit(1);
     }
     DoMCF(problem_filename, solution_filename);
