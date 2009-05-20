@@ -30,7 +30,6 @@ namespace la {
   }
   
   inline void Scale(int alpha, GenVector<int> *x) {
-    printf("called it\n");
     Scale(x->length(), alpha, x->ptr());
   }
   
