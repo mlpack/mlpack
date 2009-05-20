@@ -10,7 +10,8 @@ bool CheckFileWritten(const char* problem_filename, int iteration_num) {
 }
   
 
-void WriteProblem(const char* filename, const Matrix &distances_sq, int min_points_per_cluster, int iteration_num) {
+void WriteProblem(const char* filename, const Matrix &distances_sq,
+		  int min_points_per_cluster, int iteration_num) {
   int n_clusters = distances_sq.n_rows();
   int n_points = distances_sq.n_cols();
   
@@ -54,7 +55,8 @@ void WriteProblem(const char* filename, const Matrix &distances_sq, int min_poin
 }
 
 // p_cluster_memberships must point to an Init'd Vector
-void ReadSolution(const char* filename, GenVector<int>* p_cluster_memberships, int* p_n_changes) {
+void ReadSolution(const char* filename, GenVector<int>* p_cluster_memberships,
+		  int* p_n_changes) {
   GenVector<int> &cluster_memberships = *p_cluster_memberships;
   int &n_changes = *p_n_changes;
   
@@ -212,4 +214,12 @@ void ConstrainedKMeans(const ArrayList<GenMatrix<T> > &datasets,
     }
   }
   printf("converged in %d iterations\n", iteration_num);
+
+  for(int i = 0; i < n_clusters; i++) {
+    cluster_counts[i] = 0;
+  }
+  for(int i = 0; i < n_points; i++) {
+    cluster_counts[cluster_memberships[i]]++;
+  }
+
 }
