@@ -1,4 +1,4 @@
-#include "zhmm.h"
+#include "hmm.h"
 #include "multinomial.h"
 #include "diag_gaussian.h"
 #include "mixture.h"
