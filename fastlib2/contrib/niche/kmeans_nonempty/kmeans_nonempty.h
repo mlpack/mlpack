@@ -266,7 +266,7 @@ void ConstrainedKMeans(const ArrayList<GenMatrix<T> > &datasets,
     distances_sq.Init(n_clusters, n_points);
     i = 0;
     for(int m = 0; m < n_datasets; m++) {
-      const GenMatrix<T> &data = datasets[i];
+      const GenMatrix<T> &data = datasets[m];
       int n_points_in_data = data.n_cols();
       for(int j = 0; j < n_points_in_data; j++) {
 	GenVector<T> point;
