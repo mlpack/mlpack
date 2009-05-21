@@ -11,10 +11,14 @@ void TestMultinomial() {
   hmm.RandomlyInitialize();
   
   ArrayList<GenMatrix<int> > sequences;
-  sequences.Init(1);
+  sequences.Init(2);
   sequences[0].Init(1, 100);
   for(int i = 0; i < 100; i++) {
     sequences[0].set(0, i, i >= 50);
+  }
+  sequences[1].Init(1, 100);
+  for(int i = 0; i < 100; i++) {
+    sequences[1].set(0, i, i < 50);
   }
 
   printf("sequences[0]\n");
@@ -22,6 +26,13 @@ void TestMultinomial() {
     printf("%d ", sequences[0].get(0, i));
   }
   printf("\n");
+
+  printf("sequences[1]\n");
+  for(int i = 0; i < 100; i++) {
+    printf("%d ", sequences[1].get(0, i));
+  }
+  printf("\n");
+
 
   hmm.InitParameters(sequences);
 
@@ -45,7 +56,7 @@ void TestGaussian() {
   srand48(time(0));
   
   ArrayList<GenMatrix<double> > sequences;
-  sequences.Init(1);
+  sequences.Init(2);
   sequences[0].Init(2, 100);
   for(int i = 0; i < 100; i++) {
     double num1 = drand48() / ((double)10) - 0.05;
@@ -58,7 +69,20 @@ void TestGaussian() {
     sequences[0].set(1, i, num2);
   }
   sequences[0].PrintDebug("sequences[0]");
-  
+
+  sequences[1].Init(2, 100);
+  for(int i = 0; i < 100; i++) {
+    double num1 = drand48() / ((double)10) - 0.05;
+    double num2 = drand48() / ((double)10) - 0.05;
+    if(i >= 50) {
+      num1 += ((double)1);
+      num2 -= ((double)1);
+    }
+    sequences[1].set(0, i, num1);
+    sequences[1].set(1, i, num2);
+  }
+  sequences[1].PrintDebug("sequences[1]");
+
   hmm.InitParameters(sequences);
 
   hmm.PrintDebug("hmm after calling InitParameters(sequences)");
@@ -82,18 +106,21 @@ void TestMixture() {
 
   ArrayList<GenMatrix<double> > sequences;
   sequences.Init(1);
-  sequences[0].Init(2, 200);
-  for(int i = 0; i < 200; i++) {
-    double num1 = drand48() / ((double)10);
-    double num2 = drand48() / ((double)10);
-    if(i >= 50) {
-      num1 += ((double)1) * (int)(i/50);
-      num2 -= ((double)1) * (int)(i/50);
+  for(int m = 0; m < 1; m++) {
+    sequences[m].Init(2, 200);
+    for(int i = 0; i < 200; i++) {
+      double num1 = drand48() / ((double)10);
+      double num2 = drand48() / ((double)10);
+      if(i >= 50) {
+	num1 += ((double)1) * (int)(i/50);
+	num2 -= ((double)1) * (int)(i/50);
+      }
+      sequences[m].set(0, i, num1);
+      sequences[m].set(1, i, num2);
     }
-    sequences[0].set(0, i, num1);
-    sequences[0].set(1, i, num2);
   }
   sequences[0].PrintDebug("sequences[0]");
+  //sequences[1].PrintDebug("sequences[1]");
 
   hmm.InitParameters(sequences);
 
@@ -102,27 +129,36 @@ void TestMixture() {
   hmm.ViterbiUpdate(sequences);
 
   hmm.PrintDebug("hmm after calling ViterbiUpdate(sequences)");
-  
-  /*
-  double neg_ll;
-  GenVector<int> best_path;
-  hmm.Viterbi(sequences[0], &neg_ll, &best_path);
-  
 
-  printf("best path\n");
-  for(int t = 0; t < best_path.length(); t++) {
-    printf("%d ", best_path[t]);
-  }
-  printf("\n");
-  */
-
-  /*
-  hmm.PrintDebug("hmm");
   hmm.BaumWelch(sequences,
-		1e-10 * ((double)1),
+		1e-6 * ((double)1),
 		1000);
-  hmm.PrintDebug("hmm");
+
+  hmm.PrintDebug("hmm after calling BaumWelch");
+
+  Matrix p_x_given_q; // Rabiner's b
+
+  ArrayList<Matrix> p_qq_t; // Rabiner's xi = P(q_t, q_{t+1} | X)
+  Matrix p_qt; // Rabiner's gamma = P(q_t | X)
+  double neg_likelihood = 1;
+  
+  printf("hmm.ExpectationStepNoLearning()\n");
+  hmm.ExpectationStepNoLearning(sequences[0],
+				&p_x_given_q,
+				&p_qq_t,
+				&p_qt,
+				&neg_likelihood);
+  /*
+  p_x_given_q.PrintDebug("p_x_given_q");
+  for(int i = 0; i < p_qq_t.size(); i++) {
+    printf("state %d\n", i);
+    p_qq_t[i].PrintDebug("p_qq_t");
+  }
+  p_qt.PrintDebug("p_qt");
   */
+  printf("neg_likelihood = %f\n", neg_likelihood);
+  
+  
 }
 
 
@@ -151,8 +187,9 @@ void TestGaussianPdf() {
 
 
 int main(int argc, char* argv[]) {
+  //TestGaussianPdf();
+
   //TestMultinomial();
   //TestGaussian();
-  //TestGaussianPdf();
   TestMixture();
 }

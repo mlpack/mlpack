@@ -17,9 +17,6 @@ class Mixture {
   TDistribution* components_;
 
   void Init(int n_dims_in, double min_variance_in, int n_components_in) {
-    printf("n_dims == %d\n", n_dims_in);
-    printf("min_variance_ == %f\n", min_variance_in);
-    printf("n_components == %d\n", n_components_in);
     n_dims_ = n_dims_in;
     n_components_ = n_components_in;
 
