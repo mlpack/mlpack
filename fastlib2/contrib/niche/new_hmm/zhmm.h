@@ -177,6 +177,38 @@ class HMM {
     }
   }
 
+  template<typename T>
+    void ExpectationStepNoLearning(const GenMatrix<T> &sequence,
+				   Matrix* p_p_x_given_q,
+				   ArrayList<Matrix>* p_p_qq_t,
+				   Matrix* p_p_qt,
+				   double* p_neg_likelihood) {
+    // embrace readability!
+    Matrix &p_x_given_q = *p_p_x_given_q;
+    ArrayList<Matrix> &p_qq_t = *p_p_qq_t;
+    Matrix &p_qt = *p_p_qt;
+    double &neg_likelihood = *p_neg_likelihood;
+
+
+    ComputePxGivenQ(sequence, &p_x_given_q);
+    
+    Matrix forward_vars;
+    Matrix backward_vars;
+    Vector scaling_vars;
+    ForwardAlgorithm(p_x_given_q, &scaling_vars, &forward_vars);
+    BackwardAlgorithm(p_x_given_q, scaling_vars, &backward_vars);
+    
+    ComputePqqt(forward_vars, backward_vars, p_x_given_q, &p_qq_t);
+    ComputePqt(forward_vars ,backward_vars, scaling_vars, p_qq_t, &p_qt);
+
+    neg_likelihood = 0;
+    int sequence_length = sequence.n_cols();
+    for(int i = 0; i < sequence_length; i++) {
+      neg_likelihood += log(scaling_vars[i]);
+    }
+  }
+
+
   // no risk
   template<typename T>
   void ComputePxGivenQ(const GenMatrix<T> &sequence,
@@ -195,7 +227,7 @@ class HMM {
     }
   }
 
-  // should be no risk after addressing division
+  // should be no risk after addressing division by
   // using "if(p_x_given_q.get(i, t) != 0)..."
   template<typename T>
   void ComputePxGivenMixtureQ(const GenMatrix<T> &sequence,
@@ -261,7 +293,7 @@ class HMM {
 
     HadamardMultiplyOverwrite(p_initial, p_x0_given_q, &forward_0);
     ScaleForwardVar(&(scaling_vars[0]), &forward_0);
-    printf("scaling_vars[0] = %f\n", scaling_vars[0]);
+    //printf("scaling_vars[0] = %f\n", scaling_vars[0]);
 
     for(int t = 0; t < sequence_length - 1; t++) {
       Vector forward_t;
@@ -638,23 +670,23 @@ class HMM {
 	int sequence_length = sequence.n_cols();
 
 	Matrix p_x_given_q; // Rabiner's b
-	
 	ArrayList<Matrix> p_x_given_mixture_q; // P_{q_{i,k}}(x_t)/P_{q_i}(x_t)
+
 	ArrayList<Matrix> p_qq_t; // Rabiner's xi = P(q_t, q_{t+1} | X)
 	Matrix p_qt; // Rabiner's gamma = P(q_t | X)
 	double neg_likelihood = 1;
 
-	PrintDebug("current HMM");
+	//PrintDebug("current HMM");
 	ExpectationStep(sequence,
 			&p_x_given_q, &p_x_given_mixture_q,
 			&p_qq_t, &p_qt,
 			&neg_likelihood);
 	
-	p_x_given_q.PrintDebug("p_x_given_q");
-	if(type_ == MIXTURE) {
-	  p_x_given_mixture_q[0].PrintDebug("p_x_given_mixture_q");
-	}
-	p_qt.PrintDebug("p_qt");
+	//p_x_given_q.PrintDebug("p_x_given_q");
+	//if(type_ == MIXTURE) {
+	// p_x_given_mixture_q[0].PrintDebug("p_x_given_mixture_q");
+	//}
+	//p_qt.PrintDebug("p_qt");
 	
 	current_total_neg_likelihood += neg_likelihood;
       
@@ -710,7 +742,7 @@ class HMM {
 	}
 	else if(type_ == MIXTURE) {
 	  for(int k = 0; k < n_components_; k++) {
-	    printf("accumulating component %d\n", k);
+	    //printf("accumulating component %d\n", k);
 	    for(int i = 0; i < n_states_; i++) {
 	      for(int t = 0; t < sequence_length; t++) {
 		GenVector<T> x_t;
@@ -725,7 +757,7 @@ class HMM {
 							  k);
 	      }
 	    }
-	    printf("done accumulating component %d\n", k);
+	    //printf("done accumulating component %d\n", k);
 	  }
 	  for(int i = 0; i < n_states_; i++) {
 	    // note that new_hmm_p_transition_denom[i] =
@@ -742,7 +774,7 @@ class HMM {
 
       // NORMALIZE - control NaN risk!
 
-      weight_qi.PrintDebug("weight_qi");
+      //weight_qi.PrintDebug("weight_qi");
 
       // normalize initial state probabilities
       // no risk - Sum must be positive
