@@ -1,7 +1,7 @@
 binrule(
-    name = "zhmm",
-    sources = ["zhmm.cc"],
-    headers = ["zhmm.h","multinomial.h","diag_gaussian.h","mixture.h"],
+    name = "hmm",
+    sources = ["hmm.cc"],
+    headers = ["hmm.h","multinomial.h","diag_gaussian.h","mixture.h"],
     deplibs = ["fastlib:fastlib",
                "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
     )
