@@ -7,6 +7,12 @@ const fx_entry_doc root_entries[] = {
    "Specifies time step of dynamic simulation. \n"},
   {"tf", FX_PARAM, FX_DOUBLE, NULL,
    "Specifies duration of simulation \n"},
+  {"snapshots", FX_PARAM, FX_DOUBLE, NULL,
+   "Number of starting points for diffusion calculation"},
+  {"diff", FX_PARAM, FX_STR, NULL,
+   "Output file for diffusion data"},
+  {"temp", FX_PARAM, FX_DOUBLE, NULL,
+   "Set temperature. If no temp is specified, simulation runs at const. energy."},
   FX_ENTRY_DOC_DONE  
 };
 
@@ -33,12 +39,10 @@ int main(int argc, char *argv[]) {
   FILE *coords;
   FILE *diff;
 
-  fp_coords = fx_param_str(NULL, "coord", "coords.dat");
-  fp_diff = fx_param_str(NULL, "diff", "diffusion.dat");
-  diff = fopen(fp_diff, "w+");
-
+  fp_coords = fx_param_str(NULL, "coord", "coords.dat");  
+ 
   double time = 0, time_step_, final_time_;
-  double set_temp_, temperature_;
+  double set_temp_, temperature_, pressure_;
   // Get Input values
   time_step_ = fx_param_double(0, "dt", 0.1);
   final_time_ = fx_param_double(0, "tf", 1.0e3);
@@ -57,6 +61,8 @@ int main(int argc, char *argv[]) {
   double delta = 100*time_step_, last_time = -2*delta;  
   ArrayList<Matrix> reference_positions;    
   if (rpc::is_root()){
+    fp_diff = fx_param_str(NULL, "diff", "diffusion.dat");
+    diff = fopen(fp_diff, "w+");
     diff_tot = fx_param_int(0, "snapshots", 1);   
     reference_positions.Init(diff_tot);
   } else {
@@ -99,7 +105,9 @@ int main(int argc, char *argv[]) {
       fprintf(diff, "\n");
       temperature_ = simulation.global_result_.old_temp_;
       temperature_ = temperature_ / K_B;
+      pressure_ = simulation.global_result_.pressure_;
       printf("Temperature: %f \n", temperature_);
+      printf("Pressure: %f \n", pressure_);
       if (set_temp_ > 0){
 	double ratio = sqrt(set_temp_ / temperature_);
 	simulation.ScaleToTemperature(ratio);
@@ -124,6 +132,9 @@ int main(int argc, char *argv[]) {
 
   // Close output files
   simulation.Fin();
+  if (rpc::is_root()){
+    fclose(diff);
+  }
 
   fx_done(fx_root);
   return 0;

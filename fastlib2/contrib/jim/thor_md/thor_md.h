@@ -31,6 +31,8 @@ const fx_entry_doc module_entries[] = {
    "Specifies width of box in y-direction. If not supplied, lx will be used."},
   {"lz", FX_PARAM, FX_DOUBLE, NULL,
    "Specifies width of box in z-direction. If not supplied, lx will be used."},
+  {"data", FX_PARAM, FX_STR, NULL,
+   "Input file with positions, velocities, potential coefficients"},
    FX_ENTRY_DOC_DONE  
 };
 
@@ -207,8 +209,8 @@ class ThorMD {
       old_index_ = index;
     }    
 
-    void Accelerate(const Vector& vel_in, double time_step) {
-      la::AddExpert(time_step, vel_in, &vel_);      
+    void Accelerate(const Vector& acceleration_in, double time_step) {
+      la::AddExpert(time_step, acceleration_in, &vel_);      
       la::AddExpert(time_step, vel_, &pos_);
     }    
 
@@ -350,11 +352,11 @@ class ThorMD {
   class QPostponed {
   public:
 
-    Vector velocity_;
+    Vector acceleration_;
     double error_budget_, triples_left_;
 
     OT_DEF_BASIC(QPostponed) {
-      OT_MY_OBJECT(velocity_);
+      OT_MY_OBJECT(acceleration_);
       OT_MY_OBJECT(error_budget_);
       OT_MY_OBJECT(triples_left_);
     }
@@ -368,8 +370,8 @@ class ThorMD {
       } else {
 	error_budget_ = param.prune_value_;
       }
-      velocity_.Init(3);
-      velocity_.SetZero();
+      acceleration_.Init(3);
+      acceleration_.SetZero();
     }
 
     void Reset(const Param& param) {
@@ -378,7 +380,7 @@ class ThorMD {
 
     /** accumulate postponed information passed down from above */
     void ApplyPostponed(const Param& param, const QPostponed& other) {
-      la::AddTo(other.velocity_, &velocity_);    
+      la::AddTo(other.acceleration_, &acceleration_);    
       // Merge error statistics
     }
   };
@@ -386,22 +388,22 @@ class ThorMD {
   /** individual query result */
   class QResult {
   public:
-    Vector velocity_, old_velocity_;
+    Vector acceleration_, old_acceleration_;
     double error_budget_, triples_left_;
 
     OT_DEF_BASIC(QResult) {
-      OT_MY_OBJECT(velocity_);
-      OT_MY_OBJECT(old_velocity_);
+      OT_MY_OBJECT(acceleration_);
+      OT_MY_OBJECT(old_acceleration_);
       OT_MY_OBJECT(error_budget_);
       OT_MY_OBJECT(triples_left_);
     }
 
   public:
     void Init(const Param& param) {      
-      velocity_.Init(3);
-      velocity_.SetZero();
-      old_velocity_.Init(3);
-      old_velocity_.SetZero();
+      acceleration_.Init(3);
+      acceleration_.SetZero();
+      old_acceleration_.Init(3);
+      old_acceleration_.SetZero();
       if (param.prune_type_ != CUTOFF){
 	error_budget_ = param.prune_value_;
       }
@@ -424,18 +426,18 @@ class ThorMD {
     // Apply accelration to query point, and reset velocity.
     void Postprocess(const Param& param, const QPoint& q, index_t q_index,
 		     const RNode& r_root) {
-      old_velocity_.CopyValues(velocity_);
-      velocity_.SetZero();
+      old_acceleration_.CopyValues(acceleration_);
+      acceleration_.SetZero();
     }   
 
-    void AddVelocity(const Vector& vel_in){
-      la::AddTo(vel_in, &velocity_);
+    void AddVelocity(const Vector& acceleration_in){
+      la::AddTo(acceleration_in, &acceleration_);
     }
 
     /** apply left over postponed contributions */
     void ApplyPostponed(const Param& param, const QPostponed& postponed,
 			const QPoint& q, index_t q_index) {
-      la::AddTo(postponed.velocity_, &velocity_);
+      la::AddTo(postponed.acceleration_, &acceleration_);
     }
   };
 
@@ -511,11 +513,12 @@ class ThorMD {
   class GlobalResult {
   public:
     
-    double virial_, temperature_, old_temp_;
+    double virial_, temperature_, old_temp_, pressure_;
     OT_DEF_BASIC(GlobalResult) {
       OT_MY_OBJECT(virial_);
       OT_MY_OBJECT(temperature_);     
       OT_MY_OBJECT(old_temp_);
+      OT_MY_OBJECT(pressure_);
     }
 
 
@@ -527,13 +530,23 @@ class ThorMD {
     }
     void Accumulate(const Param& param, const GlobalResult& other) {
       temperature_ = temperature_ + other.temperature_;
+      virial_ = virial_ + other.virial_;
     }
     void ApplyDelta(const Param& param, const Delta& delta) {}
     void UndoDelta(const Param& param, const Delta& delta) {}
 
     void Postprocess(const Param& param) {
+      if (param.box_size_.length() == 3){
+	double volume = param.box_size_[0]*param.box_size_[1]*
+	  param.box_size_[2];
+	pressure_ = (temperature_ + virial_) / (3*volume);
+      } else {
+	pressure_ = 0;	
+      }
       old_temp_ = temperature_ / (3*param.query_count_); 
+      
       temperature_ = 0;
+      virial_ = 0;
     }
 
     void Report(const Param& param, datanode *datanode) {
@@ -541,8 +554,10 @@ class ThorMD {
     void ApplyResult(const Param& param, const QPoint& q_point, index_t q_i,
 		     const QResult& result) {
       Vector vel_;
-      la::AddInit(result.old_velocity_, q_point.vel_, &vel_);      
+      la::AddInit(result.old_acceleration_, q_point.vel_, &vel_);      
       temperature_ = temperature_ + q_point.mass_*la::Dot(vel_, vel_);
+      virial_ = virial_ + la::Dot(q_point.pos_, result.acceleration_)*
+	q_point.mass_;
     }
   };
   
@@ -553,15 +568,15 @@ class ThorMD {
   class PairVisitor {
   public:
     // Velocity of q resulting from reference node
-    Vector velocity_;
+    Vector acceleration_;
     
   private:
     
     
   public:
     void Init(const Param& param) {
-      velocity_.Init(3);
-      velocity_.SetZero();
+      acceleration_.Init(3);
+      acceleration_.SetZero();
     }
     
     /** apply single-tree based pruning by iterating over each query point
@@ -571,7 +586,7 @@ class ThorMD {
        const RNode& r_node, const Delta& delta,
        const QSummaryResult& unapplied_summary_results, QResult* q_result,
        GlobalResult* global_result) {         
-      velocity_.SetZero();
+      acceleration_.SetZero();
       // if we can prune the entire reference node for the given query point,
       // then we are done
       double bound;
@@ -620,7 +635,7 @@ class ThorMD {
      } else {
        param.potential_.ForceVector(q, r, param.box_size_, &force);
      }
-     la::AddTo(force, &velocity_);
+     la::AddTo(force, &acceleration_);
     }
     
     void VisitTriple(const Param& param, const QPoint& q, index_t q_index,
@@ -636,7 +651,7 @@ class ThorMD {
       } else {
 	param.axilrod_.ForceVector(q, r1, r2, param.box_size_, &force);
       }
-      la::AddTo(force, &velocity_);
+      la::AddTo(force, &acceleration_);
     }
     
 
@@ -646,8 +661,8 @@ class ThorMD {
       (const Param& param, const QPoint& q, index_t q_index,
        const RNode& r_node, const QSummaryResult& unapplied_summary_results,
        QResult* q_result, GlobalResult* global_result) {
-      q_result->AddVelocity(velocity_);
-      velocity_.SetZero();
+      q_result->AddVelocity(acceleration_);
+      acceleration_.SetZero();
     }
   };
 
@@ -657,15 +672,15 @@ class ThorMD {
   public:
     
    // Acceleration for query from these refs
-   Vector velocity_;
+   Vector acceleration_;
 
  private: 
   
 
  public:
     void Init(const Param& param) {
-      velocity_.Init(3);
-      velocity_.SetZero();
+      acceleration_.Init(3);
+      acceleration_.SetZero();
     }    
   
     /** apply single-tree based pruning by iterating over each query point
@@ -742,7 +757,7 @@ class ThorMD {
       } else {
 	param.axilrod_.ForceVector(q, r1, r2, param.box_size_, &force);
       }
-      la::AddTo(force, &velocity_);
+      la::AddTo(force, &acceleration_);
     }
     
 
@@ -753,8 +768,8 @@ class ThorMD {
        const RNode& r_node1, const RNode& rnode2, 
        const QSummaryResult& unapplied_summary_results,
        QResult* q_result, GlobalResult* global_result) {
-      q_result->AddVelocity(velocity_);
-      velocity_.SetZero();
+      q_result->AddVelocity(acceleration_);
+      acceleration_.SetZero();
     }
 
     
@@ -897,7 +912,7 @@ class ThorMD {
 	  // Evaluate Force Here
 	  Vector force;
 	  param.potential_.ForceVector(q_node,r_node, param.box_size_, &force);
-	  la::AddTo(force, &(q_postponed->velocity_));
+	  la::AddTo(force, &(q_postponed->acceleration_));
 	  q_postponed->error_budget_ = q_postponed->error_budget_ - bound;
 	  q_postponed->triples_left_ = q_postponed->triples_left_ - n_trips;
 	  return false;
@@ -962,7 +977,6 @@ class ThorMD {
     thor::RpcDualTree<ThorMD, ThreeTreeDepthFirst<ThorMD> >
       (fx_submodule(module, "gnp"), GNP_CHANNEL,
        parameters_, q_tree_, r_tree_, &q_results_, &global_result_);
-
     fx_timer_stop(module, "dualtree md");  
     global_result_.Postprocess(parameters_);
   }
@@ -1080,16 +1094,16 @@ class ThorMD {
       CacheWriteIter<QPoint> points_iter(&points_array, 0);
       for (index_t i = 0; i < parameters_.query_count_; i++,
 	     result_iter.Next(), points_iter.Next()) {
-	(*points_iter).Accelerate((*result_iter).old_velocity_, time_step);
+	(*points_iter).Accelerate((*result_iter).old_acceleration_, time_step);
 	if (parameters_.bound_type_ ==PERIODIC){
 	  (*points_iter).MapBack(parameters_.box_size_);
 	}
       }
     }
     q_points_cache_->StartSync();
-    q_points_cache_->WaitSync();
+    q_points_cache_->WaitSync();    
   }
-
+  
   void ScaleToTemperature(double ratio){
     CacheArray<QPoint> points_array;   
     points_array.Init(q_points_cache_, BlockDevice::M_OVERWRITE);   
