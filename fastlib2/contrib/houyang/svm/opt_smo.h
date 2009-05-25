@@ -53,11 +53,11 @@
 // maximum # of interations for SMO training
 const index_t MAX_NUM_ITER_SMO = 1000000;
 // after # of iterations to do shrinking
-const index_t SMO_NUM_FOR_SHRINKING = 1000;
+const index_t SMO_NUM_FOR_SHRINKING = 1000000;
 // threshold that determines whether need to do unshrinking
 const double SMO_UNSHRINKING_FACTOR = 10;
 // threshold that determines whether an alpha is a SV or not
-const double SMO_ALPHA_ZERO = 1.0e-4;
+const double SMO_ALPHA_ZERO = 1.0e-7;
 // for indefinite kernels
 const double TAU = 1e-12;
 
@@ -486,7 +486,8 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   
   // Begin SMO iterations
   ct_iter_ = 0;
-  ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING);
+  //ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING);
+  ct_shrinking_ =SMO_NUM_FOR_SHRINKING;
   int stop_condition = 0;
   while (1) {
     //for(index_t i=0; i<n_alpha_; i++)
@@ -505,7 +506,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     if (stop_condition == 1) {// optimality reached
       // Calculate the bias term
       CalcBias_();
-      printf("SMO terminates since the accuracy %f achieved!!! Number of iterations: %d\n.", accuracy_, ct_iter_);
+      printf("SMO terminates since the accuracy %f achieved!!! Number of iterations: %d.\n", accuracy_, ct_iter_);
       break;
     }
     else if (stop_condition == 2) {// max num of iterations exceeded
@@ -661,8 +662,12 @@ bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
   //printf("a_i=%f, a_j=%f\n", alpha_[out_i], alpha_[out_j]);
   
   // Stopping Criterion check
-  if (y_grad_max - y_grad_min <= accuracy_)
+  //printf("ct_iter:%d, accu:%f\n", ct_iter_, y_grad_max - y_grad_min);
+  double gap = y_grad_max - y_grad_min;
+  printf("%d: gap=%f\n", ct_iter_, gap);
+  if (gap <= accuracy_) {
     return true; // optimality reached
+  }
 
   return false;
 }
@@ -919,6 +924,7 @@ void SMO<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &c
 	coef.PushBack() = 0;
       }
     }
+    printf("Number of SVs: %d\n", n_sv_);
   }
   else if (learner_typeid_ == 1) {// SVM_R
     for (index_t ii = 0; ii < n_data_; ii++) {

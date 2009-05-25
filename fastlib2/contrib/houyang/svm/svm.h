@@ -10,7 +10,8 @@
  * @see opt_sgd.h
  * @see opt_hcy.h
  * @see opt_sga.h
- * @see opt_scg.h
+ * @see opt_mfw.h
+ * @see opt_sfw.h
  */
 
 #ifndef U_SVM_SVM_H
@@ -20,7 +21,8 @@
 #include "opt_sgd.h"
 #include "opt_hcy.h"
 #include "opt_sga.h"
-#include "opt_scg.h"
+#include "opt_mfw.h"
+#include "opt_sfw.h"
 
 #include "fastlib/fastlib.h"
 
@@ -104,7 +106,7 @@ class SVM {
    * Developers may add more learner types if necessary
    */
   int learner_typeid_;
-  // Optimization method: smo, sgd, hcy, sga, scg
+  // Optimization method: smo, sgd, hcy, sga, mfw, sfw
   String opt_method_;
   /* array of models for storage of the 2-class(binary) classifiers 
      Need to train num_classes_*(num_classes_-1)/2 binary models */
@@ -183,7 +185,8 @@ class SVM {
   class SGD<Kernel>;
   class HCY<Kernel>;
   class SGA<Kernel>;
-  class SCG<Kernel>;
+  class MFW<Kernel>;
+  class SFW<Kernel>;
 
   void Init(int learner_typeid, const Dataset& dataset, datanode *module);
   void InitTrain(int learner_typeid, const Dataset& dataset, datanode *module);
@@ -443,8 +446,8 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	/* Initialize SGA parameters */
 	ArrayList<double> param_feed_db;
 	param_feed_db.Init();
-	param_feed_db.PushBack() = param_.nu_; // for nu-SVM
-	param_feed_db.PushBack() = param_.mu_; // for bias term regularization
+	//param_feed_db.PushBack() = param_.nu_; // for nu-SVM
+	param_feed_db.PushBack() = param_.C_;
 	param_feed_db.PushBack() = param_.n_iter_;
 	param_feed_db.PushBack() = param_.accuracy_;
 	SGA<Kernel> sga;
@@ -464,31 +467,56 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	models_[ct].w_.Init(0); // for linear SGD only. not used here
 	sga.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
       }
-      else if (opt_method_== "scg") {
-	/* Initialize SCG parameters */
+      else if (opt_method_== "mfw") {
+	/* Initialize MFW parameters */
 	ArrayList<double> param_feed_db;
 	param_feed_db.Init();
-	param_feed_db.PushBack() = param_.nu_; // for nu-SVM
-	param_feed_db.PushBack() = param_.mu_; // for bias term regularization
+	//param_feed_db.PushBack() = param_.nu_; // for nu-SVM
+	param_feed_db.PushBack() = param_.C_;
 	param_feed_db.PushBack() = param_.n_iter_;
 	param_feed_db.PushBack() = param_.accuracy_;
-	param_feed_db.PushBack() = train_labels_ct_[i]; // number of positive samples (with label 1)
-	SCG<Kernel> scg;
-	scg.InitPara(learner_typeid, param_feed_db);
+	MFW<Kernel> mfw;
+	mfw.InitPara(learner_typeid, param_feed_db);
 	
 	/* Initialize kernel */
-	scg.kernel().Init(fx_submodule(module, "kernel"));
+	mfw.kernel().Init(fx_submodule(module, "kernel"));
 
-	/* 2-classes SVM training using SCG */
-	fx_timer_start(NULL, "train_scg");
-	scg.Train(learner_typeid, &dataset_bi);
-	fx_timer_stop(NULL, "train_scg");
+	/* 2-classes SVM training using MFW */
+	fx_timer_start(NULL, "train_mfw");
+	mfw.Train(learner_typeid, &dataset_bi);
+	fx_timer_stop(NULL, "train_mfw");
 	
 	/* Get the trained bi-class model */
 	models_[ct].coef_.Init(); // alpha*y
-	models_[ct].bias_ = scg.Bias(); // bias
+	models_[ct].bias_ = mfw.Bias(); // bias
 	models_[ct].w_.Init(0); // for linear SGD only. not used here
-	scg.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
+	mfw.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
+      }
+      else if (opt_method_== "sfw") {
+	/* Initialize SFW parameters */
+	ArrayList<double> param_feed_db;
+	param_feed_db.Init();
+	//param_feed_db.PushBack() = param_.nu_; // for nu-SVM
+	param_feed_db.PushBack() = param_.C_;
+	param_feed_db.PushBack() = param_.n_iter_;
+	param_feed_db.PushBack() = param_.accuracy_;
+	param_feed_db.PushBack() = train_labels_ct_[i]; // number of positive samples (with label 1)
+	SFW<Kernel> sfw;
+	sfw.InitPara(learner_typeid, param_feed_db);
+	
+	/* Initialize kernel */
+	sfw.kernel().Init(fx_submodule(module, "kernel"));
+
+	/* 2-classes SVM training using SFW */
+	fx_timer_start(NULL, "train_sfw");
+	sfw.Train(learner_typeid, &dataset_bi);
+	fx_timer_stop(NULL, "train_sfw");
+	
+	/* Get the trained bi-class model */
+	models_[ct].coef_.Init(); // alpha*y
+	models_[ct].bias_ = sfw.Bias(); // bias
+	models_[ct].w_.Init(0); // for linear SGD only. not used here
+	sfw.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
       }
       else {
 	fprintf(stderr, "ERROR!!! Unknown optimization method!\n");
@@ -697,7 +725,7 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
   double sum = 0.0;
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
-      if (opt_method_== "smo" || opt_method_== "hcy" || opt_method_== "sga" || opt_method_== "scg") {
+      if (opt_method_== "smo" || opt_method_== "hcy" || opt_method_== "sga" || opt_method_== "mfw" || opt_method_== "sfw") {
 	sum = 0.0;
 	for(k = 0; k < sv_list_ct_[i]; k++) {
 	  sum += sv_coef_.get(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];
@@ -809,21 +837,21 @@ void SVM<TKernel>::BatchPredict(int learner_typeid, Dataset& testset, String pre
     fprintf(stderr, "Cannot save predicted values to file!");
     return;
   }
-  //index_t err_ct = 0;
+  index_t err_ct = 0;
   num_features_ = testset.n_features()-1;
   for (index_t i = 0; i < testset.n_points(); i++) {
     Vector testvec;
     testset.matrix().MakeColumnSubvector(i, 0, num_features_, &testvec);
     double predictedvalue = Predict(learner_typeid, testvec);
-    //if (testlabel != testset.matrix().get(num_features_, i))
-    //  err_ct++;
+    if (predictedvalue != testset.matrix().get(num_features_, i))
+      err_ct++;
     /* save predicted values to file*/
-    fprintf(fp, "%f\n", predictedvalue);
+    //fprintf(fp, "%f\n", predictedvalue);
   }
   fclose(fp);
   /* calculate testing error */
-  //fprintf( stderr, "\n*** %d out of %d misclassified ***\n", err_ct, testset.n_points() );
-  //fprintf( stderr, "*** Testing error is %f ***\n", double(err_ct)/double(testset.n_points()) );
+  printf( "\n*** %d out of %d misclassified ***\n", err_ct, testset.n_points() );
+  printf( "*** Testing error is %f ***\n", double(err_ct)/double(testset.n_points()) );
   //fprintf( stderr, "*** Results are save in \"%s\" ***\n\n", predictedvalue_filename.c_str());
 }
 
