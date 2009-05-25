@@ -95,6 +95,9 @@ class Link {
   index_t num_neglected_sigma_;
   index_t num_neglected_nu_;
   
+  // used in the first call to UpdateDensity()
+  bool first_computation;
+  
   
   ////////////////////////// Functions ///////////////////////////////
  private:
@@ -174,6 +177,8 @@ class Link {
     
     num_neglected_sigma_ = 0;
     num_neglected_nu_ = 0;
+    
+    first_computation = true;
      
   }
     

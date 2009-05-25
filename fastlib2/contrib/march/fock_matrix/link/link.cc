@@ -223,7 +223,9 @@ void Link::Compute() {
         index_t significant_sigmas = 0;
         
         // need to get this from the first sorted list
-        BasisShell* nu_shell = significant_nu_for_mu_[mu_ind][sorted_nu_ind];
+        // should this be lambda?
+        // changed this to lambda, I think this is right
+        BasisShell* nu_shell = significant_nu_for_mu_[lambda_ind][sorted_nu_ind];
         // not sure this will be right for higher momenta
         index_t nu_ind = nu_shell->start_index();
         
@@ -312,26 +314,33 @@ void Link::Compute() {
       // contract with mu, nu; mu, sigma; lambda, nu; lambda, sigma
       // sum into lambda, sigma; lambda, nu; mu, sigma; mu, nu
       
-      double mu_nu_int = density_matrix_.ref(mu_ind, nu_ind) * integral;
-      double mu_sigma_int = density_matrix_.ref(mu_ind, sigma_ind) * integral;
-      double lambda_nu_int = density_matrix_.ref(lambda_ind, nu_ind) * integral;
+      // move some of these into if statements below
       double lambda_sigma_int = density_matrix_.ref(lambda_ind, sigma_ind) * integral;
       
       double mu_nu_exc = exchange_matrix_.ref(mu_ind, nu_ind);
-      double mu_sigma_exc = exchange_matrix_.ref(mu_ind, sigma_ind);
-      double lambda_nu_exc = exchange_matrix_.ref(lambda_ind, nu_ind);
-      double lambda_sigma_exc = exchange_matrix_.ref(lambda_ind, sigma_ind);
       
       exchange_matrix_.set(mu_ind, nu_ind, mu_nu_exc + lambda_sigma_int);
       if (sigma_ind != nu_ind) {
+      
+        double mu_sigma_exc = exchange_matrix_.ref(mu_ind, sigma_ind);
+        double lambda_nu_int = density_matrix_.ref(lambda_ind, nu_ind) * integral;
+        
         exchange_matrix_.set(mu_ind, sigma_ind, 
                              mu_sigma_exc + lambda_nu_int);
       }
       if (lambda_ind != mu_ind){
+
+        double mu_sigma_int = density_matrix_.ref(mu_ind, sigma_ind) * integral;
+        double lambda_nu_exc = exchange_matrix_.ref(lambda_ind, nu_ind);
+
         exchange_matrix_.set(lambda_ind, nu_ind, 
                              lambda_nu_exc + mu_sigma_int);
       }
       if ((lambda_ind != mu_ind) && (nu_ind != sigma_ind)) {
+      
+        double mu_nu_int = density_matrix_.ref(mu_ind, nu_ind) * integral;
+        double lambda_sigma_exc = exchange_matrix_.ref(lambda_ind, sigma_ind);
+        
         exchange_matrix_.set(lambda_ind, sigma_ind, 
                              lambda_sigma_exc + mu_nu_int);
       }
@@ -345,28 +354,53 @@ void Link::Compute() {
 
   fx_timer_stop(module_, "LinK_time");
 
+  first_computation = false;
   
 } // ComputeExchangeMatrix()
 
 void Link::UpdateDensity(const Matrix& new_density) {
   
   // not sure if density will need to be freed first
-  density_matrix_.Copy(new_density);
+  density_matrix_.CopyValues(new_density);
   
-  free(significant_nu_for_mu_);
-  free(significant_sigma_for_nu_);
-  
-  num_significant_nu_for_mu_.Clear();
-  num_significant_nu_for_mu_.Init(num_shells_);
-  
-  num_significant_sigma_for_nu_.Clear();
-  num_significant_sigma_for_nu_.Init(num_shells_);
-  
+  if (!first_computation) {
+    for (index_t i = 0; i < num_shells_; i++) {
+      /*for (index_t j = 0; j < num_significant_nu_for_mu_[i]; j++) {
+        free(significant_nu_for_mu_[i][j]);
+      }*/
+      free(significant_nu_for_mu_[i]);
+    }
+    free(significant_nu_for_mu_);
+    
+    for (index_t i = 0; i < num_shells_; i++) {
+      /*for (index_t j = 0; j < num_significant_sigma_for_nu_[i]; j++) {
+        free(significant_sigma_for_nu_[i][j]);
+      }*/
+      free(significant_sigma_for_nu_[i]);
+    }
+    free(significant_sigma_for_nu_);
+    
+    significant_nu_for_mu_ = 
+    (BasisShell***)malloc(num_shells_*sizeof(BasisShell**));
+    
+    significant_sigma_for_nu_ = 
+    (ShellPair***)malloc(num_shells_*sizeof(ShellPair**));
+    
+    num_significant_nu_for_mu_.Destruct();
+    num_significant_nu_for_mu_.Init(num_shells_);
+    
+    num_significant_sigma_for_nu_.Destruct();
+    num_significant_sigma_for_nu_.Init(num_shells_);
+    
+    shell_pair_list_.Destruct();
+  }
+    
   exchange_matrix_.SetZero();
   
+  /*
   num_neglected_sigma_ = 0;
   num_neglected_nu_ = 0;
-  
+  */
 } // UpdateDensity
 
 void Link::OutputExchange(Matrix* exc_out) {
