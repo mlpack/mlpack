@@ -83,7 +83,7 @@ class HMM {
     }
   }
  
-  void ScaleForwardVar(double* c, Vector *p_forward_var) {
+  void ScaleForwardVar(double* c, Vector *p_forward_var) const{
     (*c) = ((double)1) / Sum(*p_forward_var);
     la::Scale(*c, p_forward_var);
   }
@@ -92,7 +92,7 @@ class HMM {
   void ComputePqqt(const Matrix &forward_vars,
 		   const Matrix &backward_vars,
 		   const Matrix &p_x_given_q,
-		   ArrayList<Matrix>* p_p_qq_t) {
+		   ArrayList<Matrix>* p_p_qq_t) const{
     ArrayList<Matrix> &p_qq_t = *p_p_qq_t;
     
     int sequence_length = forward_vars.n_cols();
@@ -119,7 +119,7 @@ class HMM {
 		  const Matrix &backward_vars,
 		  const Vector &scaling_vars,
 		  const ArrayList<Matrix> &p_qq_t,
-		  Matrix* p_p_qt) {
+		  Matrix* p_p_qt) const{
     Matrix &p_qt = *p_p_qt;
 
     int sequence_length = forward_vars.n_cols();
@@ -182,7 +182,7 @@ class HMM {
 				   Matrix* p_p_x_given_q,
 				   ArrayList<Matrix>* p_p_qq_t,
 				   Matrix* p_p_qt,
-				   double* p_neg_likelihood) {
+				   double* p_neg_likelihood) const {
     // embrace readability!
     Matrix &p_x_given_q = *p_p_x_given_q;
     ArrayList<Matrix> &p_qq_t = *p_p_qq_t;
@@ -212,7 +212,7 @@ class HMM {
   // no risk
   template<typename T>
   void ComputePxGivenQ(const GenMatrix<T> &sequence,
-		       Matrix* p_p_x_given_q) {
+		       Matrix* p_p_x_given_q) const{
     Matrix &p_x_given_q = *p_p_x_given_q;
     
     int sequence_length = sequence.n_cols();
@@ -232,7 +232,7 @@ class HMM {
   template<typename T>
   void ComputePxGivenMixtureQ(const GenMatrix<T> &sequence,
 			      Matrix* p_p_x_given_q,
-			      ArrayList<Matrix>* p_p_x_given_mixture_q) {
+			      ArrayList<Matrix>* p_p_x_given_mixture_q) const{
     Matrix &p_x_given_q = *p_p_x_given_q;
     ArrayList<Matrix> &p_x_given_mixture_q = *p_p_x_given_mixture_q;
     
@@ -276,7 +276,7 @@ class HMM {
   // no risk
   void ForwardAlgorithm(const Matrix &p_x_given_q,
 			Vector* p_scaling_vars, 
-			Matrix* p_forward_vars) {
+			Matrix* p_forward_vars) const{
     Vector& scaling_vars = *p_scaling_vars;
     Matrix& forward_vars = *p_forward_vars;
 
@@ -314,7 +314,7 @@ class HMM {
   // no risk
   void BackwardAlgorithm(const Matrix &p_x_given_q,
 			 const Vector &scaling_vars,
-			 Matrix *p_backward_vars) {
+			 Matrix *p_backward_vars) const{
     Matrix& backward_vars = *p_backward_vars;
     
     int sequence_length = p_x_given_q.n_cols();
