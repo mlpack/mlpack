@@ -70,13 +70,15 @@ void CFMMCoulomb::ScreenCharges_() {
 
 void CFMMCoulomb::MultipoleInit_() {
 
+  printf("MultipoleInit_() called\n");
+  
   fx_module* multipole_mod = fx_submodule(mod_, "multipole_cfmm");
   
 
   cfmm_algorithm_.Init(charge_centers_, charge_centers_, charges_, 
                        charge_exponents_, true, multipole_mod);
                        
-                       
+  multipole_init_called_ = true;
 
 } // MultipoleInit()
 
@@ -183,6 +185,8 @@ void CFMMCoulomb::MultipoleCleanup_() {
 
 void CFMMCoulomb::Compute() {
 
+  printf("====CFMM Compute====\n");
+  
   fx_timer_start(mod_, "cfmm_time");
   
   MultipoleInit_();
@@ -216,8 +220,13 @@ void CFMMCoulomb::UpdateDensity(const Matrix& new_density) {
   // need to update charges
   ComputeCharges_();
   
+  printf("cfmm update density\n");
+  
   // not sure if this is the right way to destruct this
-  cfmm_algorithm_.~ContinuousFmm();
-  MultipoleInit_();
+  if (multipole_init_called_) {
+    printf("destroying ContinuousFmm\n");
+    cfmm_algorithm_.~ContinuousFmm();
+  }
+  //MultipoleInit_();
   
 }

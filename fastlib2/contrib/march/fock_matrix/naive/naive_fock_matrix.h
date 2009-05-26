@@ -8,6 +8,8 @@
 const fx_entry_doc naive_fock_class_entries[] = {
 {"naive_time", FX_TIMER, FX_CUSTOM, NULL,
   "The time spent on the naive computation.\n"},
+{"num_integrals_computed", FX_RESULT, FX_INT, NULL,
+  "The total number of integrals computed.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -31,6 +33,8 @@ class NaiveFockMatrix {
   index_t num_funs_;
   
   index_t num_shells_;
+  
+  index_t num_integrals_computed_;
   
   fx_module* mod_;
   
@@ -66,7 +70,12 @@ class NaiveFockMatrix {
     
     coulomb_mat_.Init(num_funs_, num_funs_);
     exchange_mat_.Init(num_funs_, num_funs_);
+    fock_mat_.Init(num_funs_, num_funs_);
+    coulomb_mat_.SetZero();
     exchange_mat_.SetZero();
+    fock_mat_.SetZero();
+    
+    num_integrals_computed_ = 0;
     
   
   } // Init()
@@ -93,6 +102,8 @@ class NaiveFockMatrix {
                                                             shells_[j], 
                                                             shells_[k], 
                                                             shells_[l]);
+            
+            num_integrals_computed_++;
             
             double coulomb_int = density_.ref(k, l) * integral;
             double exchange_ik = density_.ref(j, l) * integral;
@@ -136,15 +147,23 @@ class NaiveFockMatrix {
     } // for i
     
     la::Scale(0.5, &exchange_mat_);
-    la::SubInit(exchange_mat_, coulomb_mat_, &fock_mat_);
+    la::SubOverwrite(exchange_mat_, coulomb_mat_, &fock_mat_);
     
     fx_timer_stop(mod_, "naive_time");
+    
+    fx_result_int(mod_, "num_integrals_computed", num_integrals_computed_);
     
   } // ComputeFock()
   
   
   
   void UpdateDensity(const Matrix& new_density) {
+    
+    density_.CopyValues(new_density);
+    //fock_mat_.Destruct();
+    
+    coulomb_mat_.SetZero();
+    exchange_mat_.SetZero();
     
   }
 
@@ -154,15 +173,15 @@ class NaiveFockMatrix {
    */
   void OutputFock(Matrix* fock_out, Matrix* coulomb_out, Matrix* exchange_out) {
   
-    if (fock_out != NULL) {
+    if (fock_out) {
       fock_out->Copy(fock_mat_);
     }
     
-    if (coulomb_out != NULL) {
+    if (coulomb_out) {
       coulomb_out->Copy(coulomb_mat_);
     }
     
-    if (exchange_out != NULL) {
+    if (exchange_out) {
       exchange_out->Copy(exchange_mat_);
     }
     
@@ -173,7 +192,7 @@ class NaiveFockMatrix {
   void OutputCoulomb(Matrix* coulomb_out) {
    
     if (coulomb_out) {
-      coulomb_out->Copy(coulomb_mat_);
+      coulomb_out->Copy(coulomb_mat_); 
     }
     
   }

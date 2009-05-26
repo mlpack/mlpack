@@ -496,7 +496,8 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
   } // for i
 
 
-  // do two loops to avoid invalidating the pointers into shell pair list when calling PushBack
+  // do two loops to avoid invalidating the pointers into shell pair list when 
+  // calling PushBack
   for (index_t i = 0; i < num_shells; i++) {
 
     index_t num_for_i = (*num_sigma_for_nu)[i];
@@ -512,7 +513,6 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
     // sort here?
         
   } // for i 
-  
   
   
   return num_shell_pairs;

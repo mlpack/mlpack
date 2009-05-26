@@ -30,8 +30,8 @@ int main(int argc, char* argv[]) {
   }
   else {
     density.Init(centers.n_cols(), centers.n_cols());
-    density.SetAll(1.0);
-    printf("Using all ones density matrix.\n\n");
+    density.SetZero();
+    printf("Using only core integrals for initial matrix.\n\n");
   }
   
   if ((density.n_cols() != centers.n_cols()) || 
@@ -88,62 +88,21 @@ int main(int argc, char* argv[]) {
   const char* coulomb_alg_str = fx_param_str(root_mod, "coulomb_alg", "naive");
   const char* exchange_alg_str = fx_param_str(root_mod, "exchange_alg", "naive");
   
-  CFMMCoulomb cfmm_alg;
-  Link link_alg;
-  SchwartzPrescreening prescreening_alg;
-  MultiTreeFock multi_alg;
-  NaiveFockMatrix naive_alg;
-  
-  if (strcmp(coulomb_alg_str, "cfmm") == 0) {
-    fx_module* cfmm_mod = fx_submodule(root_mod, "cfmm");
-    cfmm_alg.Init(centers, exp_mat, momenta, density, cfmm_mod);
-  }
-  else if (strcmp(coulomb_alg_str, "prescreening") == 0) {
-    fx_module* prescreening_mod = fx_submodule(root_mod, "prescreening");
-    prescreening_alg.Init(centers, exp_mat, momenta, density, prescreening_mod);
-  }
-  else if (strcmp(coulomb_alg_str, "multi") == 0) {
-    fx_module* multi_mod = fx_submodule(root_mod, "multi");
-    multi_alg.Init(centers, exp_mat, momenta, density, multi_mod);
-  }
-  else if (strcmp(coulomb_alg_str, "naive") == 0) {
-    fx_module* naive_mod = fx_submodule(root_mod, "naive");
-    naive_alg.Init(centers, exp_mat, momenta, density, naive_mod);
-  }
-  else {
-    FATAL("Must specify one of \"cfmm\", \"prescreening\", \"multi\", or \"naive\" \n");
-  }
-  
-  if (strcmp(exchange_alg_str, "link") == 0) {
-    fx_module* link_mod = fx_submodule(root_mod, "link");
-    link_alg.Init(centers, exp_mat, momenta, density, link_mod);
-  }
-  else if ((strcmp(exchange_alg_str, "prescreening") == 0) &&
-           (strcmp(coulomb_alg_str, "prescreening") != 0)) {
-    fx_module* prescreening_mod = fx_submodule(root_mod, "prescreening");
-    prescreening_alg.Init(centers, exp_mat, momenta, density, prescreening_mod);
-  }
-  else if ((strcmp(exchange_alg_str, "multi") == 0) &&
-           (strcmp(coulomb_alg_str, "multi") != 0)) {
-    fx_module* multi_mod = fx_submodule(root_mod, "multi");
-    multi_alg.Init(centers, exp_mat, momenta, density, multi_mod);
-  }
-  else if ((strcmp(exchange_alg_str, "naive") == 0) &&
-           (strcmp(coulomb_alg_str, "naive") != 0)) {
-    fx_module* naive_mod = fx_submodule(root_mod, "naive");
-    naive_alg.Init(centers, exp_mat, momenta, density, naive_mod);
-  }
-  else {
-    FATAL("Must specify one of \"cfmm\", \"prescreening\", \"multi\", or \"naive\" \n");
-  }
+  fx_module* solver_mod = fx_submodule(root_mod, "solver");
   
   // make cases for SCFSolver
   // have to make calls to it here to keep it in scope
-  
-  fx_module* solver_mod = fx_submodule(root_mod, "solver");
-  
   if (strcmp(coulomb_alg_str, "cfmm") == 0 
       && strcmp(exchange_alg_str, "link") == 0) {
+  
+    CFMMCoulomb cfmm_alg;
+    fx_module* cfmm_mod = fx_submodule(root_mod, "cfmm");
+    cfmm_alg.Init(centers, exp_mat, momenta, density, cfmm_mod);
+
+    Link link_alg;
+    fx_module* link_mod = fx_submodule(root_mod, "link");
+    link_alg.Init(centers, exp_mat, momenta, density, link_mod);
+
     SCFSolver<CFMMCoulomb, Link> solver;
     // fix these to be correct
     solver.Init(centers, exp_mat, momenta, density, solver_mod, nuclear_centers, 
@@ -152,6 +111,15 @@ int main(int argc, char* argv[]) {
   }
   else if (strcmp(coulomb_alg_str, "cfmm") == 0 
            && strcmp(exchange_alg_str, "prescreening") == 0) {
+    
+    CFMMCoulomb cfmm_alg;
+    fx_module* cfmm_mod = fx_submodule(root_mod, "cfmm");
+    cfmm_alg.Init(centers, exp_mat, momenta, density, cfmm_mod);
+
+    SchwartzPrescreening prescreening_alg;
+    fx_module* prescreening_mod = fx_submodule(root_mod, "prescreening");
+    prescreening_alg.Init(centers, exp_mat, momenta, density, prescreening_mod);
+    
     SCFSolver<CFMMCoulomb, SchwartzPrescreening> solver;
     solver.Init(centers, exp_mat, momenta, density, solver_mod, nuclear_centers, 
                 nuclear_charges, &cfmm_alg, &prescreening_alg, num_electrons);
@@ -159,6 +127,15 @@ int main(int argc, char* argv[]) {
   }
   else if (strcmp(coulomb_alg_str, "cfmm") == 0 
            && strcmp(exchange_alg_str, "multi") == 0) {
+    
+    CFMMCoulomb cfmm_alg;
+    fx_module* cfmm_mod = fx_submodule(root_mod, "cfmm");
+    cfmm_alg.Init(centers, exp_mat, momenta, density, cfmm_mod);
+
+    MultiTreeFock multi_alg;
+    fx_module* multi_mod = fx_submodule(root_mod, "multi");
+    multi_alg.Init(centers, exp_mat, momenta, density, multi_mod);
+    
     SCFSolver<CFMMCoulomb, MultiTreeFock> solver;
     solver.Init(centers, exp_mat, momenta, density, solver_mod, nuclear_centers, 
                 nuclear_charges, &cfmm_alg, &multi_alg, num_electrons);
@@ -166,6 +143,15 @@ int main(int argc, char* argv[]) {
   }
   else if (strcmp(coulomb_alg_str, "cfmm") == 0 
            && strcmp(exchange_alg_str, "naive") == 0) {
+    
+    CFMMCoulomb cfmm_alg;
+    fx_module* cfmm_mod = fx_submodule(root_mod, "cfmm");
+    cfmm_alg.Init(centers, exp_mat, momenta, density, cfmm_mod);
+
+    NaiveFockMatrix naive_alg;
+    fx_module* naive_mod = fx_submodule(root_mod, "naive");
+    naive_alg.Init(centers, exp_mat, momenta, density, naive_mod);
+
     SCFSolver<CFMMCoulomb, NaiveFockMatrix> solver;
     solver.Init(centers, exp_mat, momenta, density, solver_mod, nuclear_centers, 
                 nuclear_charges, &cfmm_alg, &naive_alg, num_electrons);
@@ -173,6 +159,15 @@ int main(int argc, char* argv[]) {
   }
   else if (strcmp(coulomb_alg_str, "prescreening") == 0 
            && strcmp(exchange_alg_str, "link") == 0) {
+    
+    SchwartzPrescreening prescreening_alg;
+    fx_module* prescreening_mod = fx_submodule(root_mod, "prescreening");
+    prescreening_alg.Init(centers, exp_mat, momenta, density, prescreening_mod);
+    
+    Link link_alg;
+    fx_module* link_mod = fx_submodule(root_mod, "link");
+    link_alg.Init(centers, exp_mat, momenta, density, link_mod);
+
     SCFSolver<SchwartzPrescreening, Link> solver;
     solver.Init(centers, exp_mat, momenta, density, solver_mod, nuclear_centers, 
                 nuclear_charges, &prescreening_alg, &link_alg, num_electrons);
@@ -180,6 +175,11 @@ int main(int argc, char* argv[]) {
   }
   else if (strcmp(coulomb_alg_str, "prescreening") == 0 
            && strcmp(exchange_alg_str, "prescreening") == 0) {
+    
+    SchwartzPrescreening prescreening_alg;
+    fx_module* prescreening_mod = fx_submodule(root_mod, "prescreening");
+    prescreening_alg.Init(centers, exp_mat, momenta, density, prescreening_mod);
+    
     SCFSolver<SchwartzPrescreening, SchwartzPrescreening> solver;
     solver.Init(centers, exp_mat, momenta, density, solver_mod, nuclear_centers, 
                 nuclear_charges, &prescreening_alg, &prescreening_alg, 
@@ -188,6 +188,15 @@ int main(int argc, char* argv[]) {
   }
   else if (strcmp(coulomb_alg_str, "prescreening") == 0 
            && strcmp(exchange_alg_str, "multi") == 0) {
+    
+    SchwartzPrescreening prescreening_alg;
+    fx_module* prescreening_mod = fx_submodule(root_mod, "prescreening");
+    prescreening_alg.Init(centers, exp_mat, momenta, density, prescreening_mod);
+    
+    MultiTreeFock multi_alg;
+    fx_module* multi_mod = fx_submodule(root_mod, "multi");
+    multi_alg.Init(centers, exp_mat, momenta, density, multi_mod);
+
     SCFSolver<SchwartzPrescreening, MultiTreeFock> solver;
     solver.Init(centers, exp_mat, momenta, density, solver_mod, nuclear_centers, 
                 nuclear_charges, &prescreening_alg, &multi_alg, num_electrons);
@@ -195,6 +204,15 @@ int main(int argc, char* argv[]) {
   }
   else if (strcmp(coulomb_alg_str, "prescreening") == 0 
            && strcmp(exchange_alg_str, "naive") == 0) {
+    
+    SchwartzPrescreening prescreening_alg;
+    fx_module* prescreening_mod = fx_submodule(root_mod, "prescreening");
+    prescreening_alg.Init(centers, exp_mat, momenta, density, prescreening_mod);
+    
+    NaiveFockMatrix naive_alg;
+    fx_module* naive_mod = fx_submodule(root_mod, "naive");
+    naive_alg.Init(centers, exp_mat, momenta, density, naive_mod);
+
     SCFSolver<SchwartzPrescreening, NaiveFockMatrix> solver;
     solver.Init(centers, exp_mat, momenta, density, solver_mod, nuclear_centers, 
                 nuclear_charges, &prescreening_alg, &naive_alg, num_electrons);
@@ -202,6 +220,15 @@ int main(int argc, char* argv[]) {
   }
   else if (strcmp(coulomb_alg_str, "multi") == 0 
            && strcmp(exchange_alg_str, "link") == 0) {
+    
+    MultiTreeFock multi_alg;
+    fx_module* multi_mod = fx_submodule(root_mod, "multi");
+    multi_alg.Init(centers, exp_mat, momenta, density, multi_mod);
+
+    Link link_alg;
+    fx_module* link_mod = fx_submodule(root_mod, "link");
+    link_alg.Init(centers, exp_mat, momenta, density, link_mod);
+
     SCFSolver<MultiTreeFock, Link> solver;
     solver.Init(centers, exp_mat, momenta, density, solver_mod, nuclear_centers, 
                 nuclear_charges, &multi_alg, &link_alg, num_electrons);
@@ -209,6 +236,15 @@ int main(int argc, char* argv[]) {
   }
   else if (strcmp(coulomb_alg_str, "multi") == 0 
            && strcmp(exchange_alg_str, "prescreening") == 0) {
+    
+    MultiTreeFock multi_alg;
+    fx_module* multi_mod = fx_submodule(root_mod, "multi");
+    multi_alg.Init(centers, exp_mat, momenta, density, multi_mod);
+
+    SchwartzPrescreening prescreening_alg;
+    fx_module* prescreening_mod = fx_submodule(root_mod, "prescreening");
+    prescreening_alg.Init(centers, exp_mat, momenta, density, prescreening_mod);
+    
     SCFSolver<MultiTreeFock, SchwartzPrescreening> solver;
     solver.Init(centers, exp_mat, momenta, density, solver_mod, nuclear_centers, 
                 nuclear_charges, &multi_alg, &prescreening_alg, num_electrons);
@@ -216,6 +252,11 @@ int main(int argc, char* argv[]) {
   }
   else if (strcmp(coulomb_alg_str, "multi") == 0 
            && strcmp(exchange_alg_str, "multi") == 0) {
+    
+    MultiTreeFock multi_alg;
+    fx_module* multi_mod = fx_submodule(root_mod, "multi");
+    multi_alg.Init(centers, exp_mat, momenta, density, multi_mod);
+
     SCFSolver<MultiTreeFock, MultiTreeFock> solver;
     solver.Init(centers, exp_mat, momenta, density, solver_mod, nuclear_centers, 
                 nuclear_charges, &multi_alg, &multi_alg, num_electrons);
@@ -223,6 +264,15 @@ int main(int argc, char* argv[]) {
   }
   else if (strcmp(coulomb_alg_str, "multi") == 0 
            && strcmp(exchange_alg_str, "naive") == 0) {
+    
+    MultiTreeFock multi_alg;
+    fx_module* multi_mod = fx_submodule(root_mod, "multi");
+    multi_alg.Init(centers, exp_mat, momenta, density, multi_mod);
+
+    NaiveFockMatrix naive_alg;
+    fx_module* naive_mod = fx_submodule(root_mod, "naive");
+    naive_alg.Init(centers, exp_mat, momenta, density, naive_mod);
+
     SCFSolver<MultiTreeFock, NaiveFockMatrix> solver;
     solver.Init(centers, exp_mat, momenta, density, solver_mod, nuclear_centers, 
                 nuclear_charges, &multi_alg, &naive_alg, num_electrons);
@@ -230,6 +280,15 @@ int main(int argc, char* argv[]) {
   }
   else if (strcmp(coulomb_alg_str, "naive") == 0 
            && strcmp(exchange_alg_str, "link") == 0) {
+    
+    NaiveFockMatrix naive_alg;
+    fx_module* naive_mod = fx_submodule(root_mod, "naive");
+    naive_alg.Init(centers, exp_mat, momenta, density, naive_mod);
+
+    Link link_alg;
+    fx_module* link_mod = fx_submodule(root_mod, "link");
+    link_alg.Init(centers, exp_mat, momenta, density, link_mod);
+
     SCFSolver<NaiveFockMatrix, Link> solver;
     solver.Init(centers, exp_mat, momenta, density, solver_mod, nuclear_centers, 
                 nuclear_charges, &naive_alg, &link_alg, num_electrons);
@@ -237,6 +296,15 @@ int main(int argc, char* argv[]) {
   }
   else if (strcmp(coulomb_alg_str, "naive") == 0 
            && strcmp(exchange_alg_str, "prescreening") == 0) {
+    
+    NaiveFockMatrix naive_alg;
+    fx_module* naive_mod = fx_submodule(root_mod, "naive");
+    naive_alg.Init(centers, exp_mat, momenta, density, naive_mod);
+
+    SchwartzPrescreening prescreening_alg;
+    fx_module* prescreening_mod = fx_submodule(root_mod, "prescreening");
+    prescreening_alg.Init(centers, exp_mat, momenta, density, prescreening_mod);
+    
     SCFSolver<NaiveFockMatrix, SchwartzPrescreening> solver;
     solver.Init(centers, exp_mat, momenta, density, solver_mod, nuclear_centers, 
                 nuclear_charges, &naive_alg, &prescreening_alg, num_electrons);
@@ -244,6 +312,15 @@ int main(int argc, char* argv[]) {
   }
   else if (strcmp(coulomb_alg_str, "naive") == 0 
            && strcmp(exchange_alg_str, "multi") == 0) {
+    
+    NaiveFockMatrix naive_alg;
+    fx_module* naive_mod = fx_submodule(root_mod, "naive");
+    naive_alg.Init(centers, exp_mat, momenta, density, naive_mod);
+
+    MultiTreeFock multi_alg;
+    fx_module* multi_mod = fx_submodule(root_mod, "multi");
+    multi_alg.Init(centers, exp_mat, momenta, density, multi_mod);
+
     SCFSolver<NaiveFockMatrix, MultiTreeFock> solver;
     solver.Init(centers, exp_mat, momenta, density, solver_mod, nuclear_centers, 
                 nuclear_charges, &naive_alg, &multi_alg, num_electrons);
@@ -251,6 +328,11 @@ int main(int argc, char* argv[]) {
   }
   else if (strcmp(coulomb_alg_str, "naive") == 0 
            && strcmp(exchange_alg_str, "naive") == 0) {
+  
+    NaiveFockMatrix naive_alg;
+    fx_module* naive_mod = fx_submodule(root_mod, "naive");
+    naive_alg.Init(centers, exp_mat, momenta, density, naive_mod);
+
     SCFSolver<NaiveFockMatrix, NaiveFockMatrix> solver;
     solver.Init(centers, exp_mat, momenta, density, solver_mod, nuclear_centers, 
                 nuclear_charges, &naive_alg, &naive_alg, num_electrons);

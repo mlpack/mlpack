@@ -25,10 +25,18 @@ void Link::PrescreeningLoop_() {
                                             shell_pair_cutoff_, &shell_max_, 
                                             &significant_sigma_for_nu_, 
                                             &num_significant_sigma_for_nu_);
-                                            
+  
+  //shell_max_.PrintDebug("shell_max_");
+  /*
+  for (index_t i = 0; i < num_shells_; i++) {
+    printf("num_significant_sigma_for_nu_[%d] = %d\n", i, 
+           num_significant_sigma_for_nu_[i]);
+  }
+  */
   fx_result_int(module_, "num_shell_pairs", num_shell_pairs_);
   fx_result_int(module_, "num_shell_pairs_screened", 
-                (num_shells_ * (num_shells_ - 1) / 2) - num_shell_pairs_);
+                (num_shells_ * (num_shells_ - 1) / 2)
+                 + num_shells_ - num_shell_pairs_);
   
   //// Find significant \nu for all \mu
   
@@ -49,7 +57,9 @@ void Link::PrescreeningLoop_() {
       
       // I think this threshold should be the same as the others 
       // Not sure if this is the right density matrix entry
-      if (density_matrix_.ref(i,j) * shell_max_[i] * shell_max_[j] > threshold_) {
+      double density_check = fabs(density_matrix_.ref(i,j)) * shell_max_[i] 
+                              * shell_max_[j];
+      if (density_check > threshold_) {
         
         // Store significant j for each i
         // What is the best way to do this?  This list will have to be sorted
@@ -60,6 +70,10 @@ void Link::PrescreeningLoop_() {
         // later
         next_ind++;
         
+      }
+      else {
+        //printf("insignificant density: %d, %d, %g\n", i, j, density_check);
+        num_insignificant_densities_++;
       }
       
     } // for j
@@ -85,31 +99,10 @@ void Link::PrescreeningLoop_() {
               Link::Prescreening_Sort_);
               
     
-    /*
-    for (index_t a = 0; a < next_ind; a++) {
-      printf("sort_val: %g\n", 
-             significant_nu_for_mu_[i][a]->max_schwartz_factor() * 
-             significant_nu_for_mu_[i][a]->current_density_entry());
-      
-    }
-    printf("\n\n");
-    */
-        
-    // sort significant_sigma_for_nu_[i] for all i
-    // should I do this here?  
     std::sort(significant_sigma_for_nu_[i], 
               significant_sigma_for_nu_[i]+num_significant_sigma_for_nu_[i], 
               Link::ShellPairSort_);
 
-    /*
-    for (index_t a = 0; a < num_significant_sigma_for_nu_[i]; a++) {
-      printf("sort_val: %g\n", 
-             significant_sigma_for_nu_[i][a]->schwartz_factor());
-      
-    }
-    printf("\n\n");
-    */
-    
   } // for i
   
 }
@@ -139,6 +132,8 @@ void Link::Compute() {
     
     index_t lambda_ind = mu_lambda.N_index();
     
+    //printf("mu_ind: %d, lambda_ind: %d\n", mu_ind, lambda_ind);
+    
     index_t num_mu_integrals = 0;
     index_t num_lambda_integrals = 0;
     ArrayList<index_t> mu_integrals;
@@ -150,6 +145,7 @@ void Link::Compute() {
     // loop over nu corresponding to mu
     // what is num_nu? 
     index_t num_nu = num_significant_nu_for_mu_[mu_ind];
+    //printf("num_nu: %d\n", num_nu);
     for (index_t sorted_nu_ind = 0; sorted_nu_ind < num_nu; sorted_nu_ind++) {
     
       index_t significant_sigmas = 0;
@@ -161,6 +157,8 @@ void Link::Compute() {
     
       index_t num_sigma = num_significant_sigma_for_nu_[nu_ind];
 
+      //printf("num_sigma: %d\n", num_sigma);
+      
       for (index_t sorted_sigma_ind = 0; sorted_sigma_ind < num_sigma; 
            sorted_sigma_ind++) {
       
@@ -225,6 +223,7 @@ void Link::Compute() {
         // need to get this from the first sorted list
         // should this be lambda?
         // changed this to lambda, I think this is right
+        // seems to be okay, tested on the first three equilibrated helium sets
         BasisShell* nu_shell = significant_nu_for_mu_[lambda_ind][sorted_nu_ind];
         // not sure this will be right for higher momenta
         index_t nu_ind = nu_shell->start_index();
@@ -238,6 +237,8 @@ void Link::Compute() {
           
           //index_t sigma_ind = nu_sigma->N_index();
           
+          // shouldn't this be the largest of the four possible density entries?
+          // but this is how it's given in the paper
           if (fabs(density_matrix_.ref(mu_ind, nu_ind)) * mu_lambda.schwartz_factor() * 
               nu_sigma->schwartz_factor() > threshold_) {
             
@@ -311,10 +312,12 @@ void Link::Compute() {
         //     nu_ind, lambda_ind, sigma_ind);
       
       double integral = eri::ComputeShellIntegrals(mu_lambda, nu_sigma);
+      //printf("(%d %d | %d %d)\n", mu_lambda.M_index(), mu_lambda.N_index(), 
+      //       nu_sigma.M_index(), nu_sigma.N_index());
+      num_integrals_computed_++;
       // contract with mu, nu; mu, sigma; lambda, nu; lambda, sigma
       // sum into lambda, sigma; lambda, nu; mu, sigma; mu, nu
       
-      // move some of these into if statements below
       double lambda_sigma_int = density_matrix_.ref(lambda_ind, sigma_ind) * integral;
       
       double mu_nu_exc = exchange_matrix_.ref(mu_ind, nu_ind);
@@ -392,10 +395,16 @@ void Link::UpdateDensity(const Matrix& new_density) {
     num_significant_sigma_for_nu_.Destruct();
     num_significant_sigma_for_nu_.Init(num_shells_);
     
+    // does this free the shell pairs in it?
+    // doesn't look like it matters
     shell_pair_list_.Destruct();
+  
+    shell_max_.Destruct();
+    
   }
     
   exchange_matrix_.SetZero();
+  
   
   /*
   num_neglected_sigma_ = 0;
@@ -407,6 +416,9 @@ void Link::OutputExchange(Matrix* exc_out) {
   
   fx_result_int(module_, "num_neglected_sigma", num_neglected_sigma_);
   fx_result_int(module_, "num_neglected_nu", num_neglected_nu_);
+  fx_result_int(module_, "num_integrals_computed", num_integrals_computed_);
+  fx_result_int(module_, "num_insignificant_densities", 
+                num_insignificant_densities_);
   
   la::Scale(0.5, &exchange_matrix_);
   exc_out->Copy(exchange_matrix_);
