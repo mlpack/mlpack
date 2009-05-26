@@ -91,9 +91,10 @@ class SchwartzPrescreening {
     coulomb_matrix_.SetZero();
     exchange_matrix_.Init(matrix_size_, matrix_size_);
     exchange_matrix_.SetZero();
-
-    //fock_matrix_.Init(matrix_size_, matrix_size_);
+    fock_matrix_.Init(matrix_size_, matrix_size_);
+    fock_matrix_.SetZero();
     
+
     
     for (index_t i = 0; i < num_shells_; i++) {
     
@@ -105,6 +106,8 @@ class SchwartzPrescreening {
     
     } // for i
   
+    num_integrals_computed_ = 0;
+    
   } // Init()
   
   
@@ -137,6 +140,8 @@ class SchwartzPrescreening {
   index_t num_prunes_;
   
   index_t matrix_size_;
+  
+  index_t num_integrals_computed_;
   
   // The threshold for ignoring a shell quartet
   double threshold_;

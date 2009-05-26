@@ -60,15 +60,16 @@ void SCFSolver::FormChangeOfBasisMatrix_() {
 } // FormChangeOfBasisMatrix_()
 */
 
+/*
 template <class CoulombAlg, class ExchangeAlg>
 void SCFSolver::ComputeDensityMatrix_() {
   
   FillOrbitals_();
   
-  /*
+  
    ot::Print(occupied_indices_);
    energy_vector_.PrintDebug();
-   */
+   
   
   density_matrix_frobenius_norm_ = 0.0;
   
@@ -117,6 +118,7 @@ void SCFSolver::ComputeDensityMatrix_() {
     density_matrix_frobenius_norm_;
   
 } // ComputeDensityMatrix_
+*/
 
 /*
 template <class CoulombAlg, class ExchangeAlg>
@@ -176,11 +178,11 @@ void SCFSolver::ComputeDensityMatrixDIIS_() {
     density_matrix_norms_.set(diis_index_, i, this_norm);
     density_matrix_norms_.set(i, diis_index_, this_norm);
     
-    /*
+    
      density_matrix_norms_.set(diis_count_, i, -1);
      density_matrix_norms_.set(i, diis_count_, -1);
-     */
-/*    
+     
+    
   }
   
   printf("diis_index: %d\n", diis_index_);
@@ -273,7 +275,7 @@ void SCFSolver::DiagonalizeFockMatrix_() {
   }
   
   
-  /*
+  
    printf("Fock matrix:\n");
    fock_matrix_.PrintDebug();
    
@@ -285,8 +287,8 @@ void SCFSolver::DiagonalizeFockMatrix_() {
    
    printf("Coefficients (prime):\n");
    coefficients_prime.PrintDebug();
-   */
-/*  
+   
+  
 #ifdef DEBUG
   
   for (index_t i = 0; i < energy_vector_.length(); i++) {

@@ -131,7 +131,7 @@ class SCFSolver {
     */  
     
     // Set to 1 to perform no diis iterations
-    diis_count_ = fx_param_int(NULL, "diis_states", 1);
+    diis_count_ = fx_param_int(module_, "diis_states", 1);
     diis_index_ = 0;
     
     density_matrices_.Init(diis_count_);
@@ -142,6 +142,8 @@ class SCFSolver {
     diis_rhs_.Init(diis_count_ + 1);
     diis_rhs_.SetZero();
     diis_rhs_[diis_count_] = -1;
+    
+    basis_centers_.Copy(basis_centers);
     
     nuclear_centers_.Copy(nuclear_cent);
     
@@ -176,6 +178,7 @@ class SCFSolver {
       
     }
     
+    density_matrix_.Init(number_of_basis_functions_, number_of_basis_functions_);
     
     DEBUG_ASSERT(number_of_basis_functions_ >= number_to_fill_);
     
@@ -196,10 +199,12 @@ class SCFSolver {
     total_energy_.Init();
     
     //iteration_density_norms_.Init(expected_number_of_iterations_);
-    iteration_density_norms_.Init();
+    iteration_density_norms_.Init(1);
     
-    density_convergence_ = fx_param_double(module_, "density_convergence", 0.1);
-    energy_convergence_ = fx_param_double(module_, "energy_convergence", 0.1);
+    density_convergence_ = fx_param_double(module_, "density_convergence", 
+                                           10e-8);
+    energy_convergence_ = fx_param_double(module_, "energy_convergence", 
+                                          10e-6);
     
     // Need to double check that this is right
     density_matrix_frobenius_norm_ = DBL_MAX;
@@ -328,13 +333,13 @@ class SCFSolver {
     
 #ifdef DEBUG
     
-    eigenvalues.PrintDebug();
+    eigenvalues.PrintDebug("eigenvalues");
     
     for (index_t i = 0; i < eigenvalues.length(); i++) {
       DEBUG_ASSERT_MSG(!isnan(eigenvalues[i]), 
                        "Complex eigenvalue in diagonalizing overlap matrix.\n");
       
-      DEBUG_WARN_MSG_IF(fabs(eigenvalues[i]) < 0.001, 
+      DEBUG_WARN_MSG_IF(fabs(eigenvalues[i]) < 0.0001, 
                         "near-zero eigenvalue in overlap_matrix");
       
       Vector eigenvec;
@@ -368,8 +373,8 @@ class SCFSolver {
     la::MulInit(left_vectors, lambda_times_u_transpose, 
                 &change_of_basis_matrix_);
     
-    printf("Change Of Basis Matrix:\n");
-    change_of_basis_matrix_.PrintDebug();
+    //printf("Change Of Basis Matrix:\n");
+    change_of_basis_matrix_.PrintDebug("Change of Basis");
     
     
   } // FormChangeOfBasisMatrix_()
@@ -382,7 +387,63 @@ class SCFSolver {
    * TODO: Consider an SVD or some eigenvalue solver that will find the 
    * eigenvalues in ascending order.
    */
-  void ComputeDensityMatrix_();
+  //void ComputeDensityMatrix_();
+  void ComputeDensityMatrix_() {
+    
+    FillOrbitals_();
+    
+    /*
+     ot::Print(occupied_indices_);
+     energy_vector_.PrintDebug();
+     */
+    
+    density_matrix_frobenius_norm_ = 0.0;
+    
+    // Rows of density_matrix
+    for (index_t density_row = 0; density_row < number_of_basis_functions_;
+         density_row++) {
+      
+      // Columns of density matrix
+      for (index_t density_column = 0; 
+           density_column < number_of_basis_functions_; density_column++) {
+        
+        // Occupied orbitals
+        double this_sum = 0.0;
+        for (index_t occupied_index = 0; 
+             occupied_index < number_to_fill_; occupied_index++) {
+          
+          this_sum = this_sum + (
+                                 coefficient_matrix_.ref(
+                                                         density_row, occupied_indices_[occupied_index]) * 
+                                 coefficient_matrix_.ref(
+                                                         density_column, occupied_indices_[occupied_index]));
+          
+        } // occupied_index
+        
+        double this_entry = density_matrix_.ref(density_row, density_column);
+        
+        // Leach says there is a factor of 2 here
+        this_sum = 2 * this_sum;
+        
+        double this_diff = this_sum - this_entry;
+        
+        // Computing the frobenius norm of the difference between this 
+        // iteration's density matrix and the previous one for testing 
+        // convergence
+        
+        density_matrix_frobenius_norm_ += (this_diff * this_diff); 
+        
+        
+        density_matrix_.set(density_row, density_column, this_sum);
+        
+      } // density_column
+      
+    } //density_row
+    
+    iteration_density_norms_[current_iteration_] = 
+    density_matrix_frobenius_norm_;
+    
+  } // ComputeDensityMatrix_
   
   /**
    * Pulay's DIIS method, as described by David
@@ -458,7 +519,7 @@ class SCFSolver {
     }
     
     printf("diis_index: %d\n", diis_index_);
-    density_matrix_norms_.PrintDebug();
+    density_matrix_norms_.PrintDebug("Density Matrix Norms");
     
     DIISSolver_();
     
@@ -497,7 +558,7 @@ class SCFSolver {
         
       }
       
-      diis_coeffs.PrintDebug();
+      diis_coeffs.PrintDebug("DIIS Coefficients");
       
     }
     else {
@@ -517,7 +578,7 @@ class SCFSolver {
     
     
     iteration_density_norms_[current_iteration_] = 
-    density_matrix_frobenius_norm_;    
+        density_matrix_frobenius_norm_;    
     
   } // DIISSolver_()
   
@@ -799,6 +860,9 @@ class SCFSolver {
     la::AddOverwrite(core_matrix_, coulomb_mat_, &fock_matrix_);
     la::SubFrom(exchange_mat_, &fock_matrix_);
     
+    coulomb_mat_.Destruct();
+    exchange_mat_.Destruct();
+    
   } // UpdateFockMatrix_()
   
   /**
@@ -828,8 +892,8 @@ class SCFSolver {
       }
       */
       
-      //total_energy_[current_iteration_] = ComputeElectronicEnergy_();
-      total_energy_.PushBack(ComputeElectronicEnergy_());
+      total_energy_.PushBack();
+      total_energy_[current_iteration_] = ComputeElectronicEnergy_();
       iteration_density_norms_.PushBack();
       
       // Step 4c.
@@ -851,7 +915,10 @@ class SCFSolver {
     } // end while
     
     current_iteration_--;
-    
+
+      
+    coulomb_mat_.Init(1,1);
+    exchange_mat_.Init(1,1);
     //total_energy_[current_iteration_] = ComputeElectronicEnergy_();
     
   } // FindSCFSolution_

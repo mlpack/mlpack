@@ -9,7 +9,7 @@
 const fx_entry_doc link_entries[] = {
   {"shell_pair_cutoff", FX_PARAM, FX_DOUBLE, NULL, 
   "The threshold for a shell pair to be counted as \"significant\".\n"
-  "Default: equal to the ERI threshold.\n"},
+  "Default: equal to the ERI threshold.\n" },
   {"thresh", FX_PARAM, FX_DOUBLE, NULL, 
    "The threshold to include an integral as significant.  Default: 10e-10.\n"},
   {"num_shell_pairs", FX_RESULT, FX_INT, NULL, 
@@ -26,6 +26,8 @@ const fx_entry_doc link_entries[] = {
   "The time taken to screen and compute all the exchange integrals.\n"},
   {"LinK_time", FX_TIMER, FX_CUSTOM, NULL, 
   "The total time taken for the LinK algorithm, excluding init and output.\n"},
+  {"num_integrals_computed", FX_RESULT, FX_INT, NULL, 
+  "The total number of integrals computed.\n"},
   FX_ENTRY_DOC_DONE
 }; 
 
@@ -94,6 +96,10 @@ class Link {
   
   index_t num_neglected_sigma_;
   index_t num_neglected_nu_;
+  
+  index_t num_integrals_computed_;
+  
+  index_t num_insignificant_densities_;
   
   // used in the first call to UpdateDensity()
   bool first_computation;
@@ -179,6 +185,9 @@ class Link {
     num_neglected_nu_ = 0;
     
     first_computation = true;
+    
+    num_integrals_computed_ = 0;
+    num_insignificant_densities_ = 0;
      
   }
     

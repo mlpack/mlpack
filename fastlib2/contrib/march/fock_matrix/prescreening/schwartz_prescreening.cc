@@ -62,6 +62,8 @@ void SchwartzPrescreening::UpdateDensity(const Matrix& new_density) {
   coulomb_matrix_.SetZero();
   exchange_matrix_.SetZero();
   
+  shell_pair_list_.Destruct();
+  
   num_prunes_ = 0;
   
 }
@@ -93,9 +95,27 @@ void SchwartzPrescreening::Compute() {
     
       ShellPair& j_pair = shell_pair_list_[j];
 
+      // extend this for general case
+      index_t i_ind = i_pair.M_index();
+      index_t j_ind = i_pair.N_index();
+      
+      index_t k_ind = j_pair.M_index();
+      index_t l_ind = j_pair.N_index();
+      
       // consider all the relevant entries here 
-      double density_bound = 1.0;
-    
+      double density_bound = max(density_matrix_.ref(k_ind, l_ind), 
+                                 density_matrix_.ref(i_ind, j_ind));
+      density_bound = max(density_bound, 
+                          0.25 * density_matrix_.ref(k_ind, i_ind));
+      density_bound = max(density_bound, 
+                          0.25 * density_matrix_.ref(l_ind, i_ind));
+      density_bound = max(density_bound, 
+                          0.25 * density_matrix_.ref(k_ind, j_ind));
+      density_bound = max(density_bound, 
+                          0.25 * density_matrix_.ref(l_ind, j_ind));
+      
+      printf("density_bound: %g\n", density_bound);
+      
       double this_est = i_pair.schwartz_factor() * 
           j_pair.schwartz_factor() * density_bound;
           
@@ -103,16 +123,10 @@ void SchwartzPrescreening::Compute() {
       if (this_est > threshold_) {
       
         double integral = eri::ComputeShellIntegrals(i_pair, j_pair);
-        
+        num_integrals_computed_++;
         //printf("this_int: %g\n", this_int);
         
-        // extend this for general case
-        index_t i_ind = i_pair.M_index();
-        index_t j_ind = i_pair.N_index();
-        
-        index_t k_ind = j_pair.M_index();
-        index_t l_ind = j_pair.N_index();
-        
+                
         double coulomb_int = integral * density_matrix_.ref(k_ind, l_ind);
         
         double coulomb_val = coulomb_matrix_.get(i_ind, j_ind);
@@ -157,13 +171,15 @@ void SchwartzPrescreening::Compute() {
     
   // F = J - 1/2 K
   la::Scale(0.5, &exchange_matrix_);
-  la::SubInit(exchange_matrix_, coulomb_matrix_, &fock_matrix_);
+  la::SubOverwrite(exchange_matrix_, coulomb_matrix_, &fock_matrix_);
   
   fx_timer_stop(module_, "integral_time");
   
   fx_timer_stop(module_, "prescreening_time");
     
   fx_result_int(module_, "num_prunes", num_prunes_);
+  
+  fx_result_int(module_, "num_integrals_computed", num_integrals_computed_);
 
 //  printf("num_prunes: %d\n", num_prunes_);
 

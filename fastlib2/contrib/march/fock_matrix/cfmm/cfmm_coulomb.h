@@ -71,6 +71,9 @@ class CFMMCoulomb {
   
   ContinuousFmm cfmm_algorithm_;
   
+  // used with scf computations
+  bool multipole_init_called_;
+  
   ////////////////// Functions /////////////////////////////
   
   void ScreenCharges_();
@@ -127,6 +130,7 @@ class CFMMCoulomb {
     ScreenCharges_();
     fx_timer_stop(mod_, "cfmm_time");
     
+    multipole_init_called_ = false;
     
   } // Init()
   
