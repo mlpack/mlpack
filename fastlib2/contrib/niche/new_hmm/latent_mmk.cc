@@ -44,16 +44,10 @@ int main(int argc, char* argv[]) {
   
   hmm.PrintDebug("hmm after calling BaumWelch");
 
-  double lmmk_1_2 = HMMLatentMMK(1, hmm, sequences[0], sequences[1]);
+  double lmmk_1_2 = LatentMMK(1, hmm, sequences[0], sequences[1]);
   printf("lmmk(seq1, seq2 = %f\n", lmmk_1_2);
 
   Matrix kernel_matrix;
-  HMMLatentMMKBatch(1, hmm, sequences, &kernel_matrix);
+  LatentMMKBatch(1, hmm, sequences, &kernel_matrix);
   kernel_matrix.PrintDebug("kernel matrix");
-
-  /*
-  
-  HMMLatentMMK
-  */
-
 }

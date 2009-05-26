@@ -312,4 +312,4 @@ class DiagGaussian {
   */
 };
     
-#endif /* DIAGGAUSSIAN_H */
+#endif /* DIAG_GAUSSIAN_H */
