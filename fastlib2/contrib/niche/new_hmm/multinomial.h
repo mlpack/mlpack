@@ -40,11 +40,11 @@ class Multinomial {
     p_ -> CopyValues(other.p());
   }
 
-  int n_dims () const {
+  int n_dims() const {
     return n_dims_;
   }
 
-  const Vector p () const {
+  const Vector p() const {
     return *p_;
   }
 
