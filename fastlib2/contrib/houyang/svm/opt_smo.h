@@ -53,7 +53,7 @@
 // maximum # of interations for SMO training
 const index_t MAX_NUM_ITER_SMO = 1000000;
 // after # of iterations to do shrinking
-const index_t SMO_NUM_FOR_SHRINKING = 1000000;
+const index_t SMO_NUM_FOR_SHRINKING = 1000;
 // threshold that determines whether need to do unshrinking
 const double SMO_UNSHRINKING_FACTOR = 10;
 // threshold that determines whether an alpha is a SV or not
@@ -78,6 +78,7 @@ class SMO {
   int learner_typeid_;
   index_t ct_iter_; /* counter for the number of iterations */
   index_t ct_shrinking_; /* counter for doing shrinking  */
+  int do_shrinking_; // 1(default): do shrinking after 1000 iterations; 0: don't do shrinking
 
   Kernel kernel_;
   index_t n_data_; /* number of data samples */
@@ -486,8 +487,14 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   
   // Begin SMO iterations
   ct_iter_ = 0;
-  //ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING);
-  ct_shrinking_ =SMO_NUM_FOR_SHRINKING;
+
+  do_shrinking_ = fx_param_int(NULL, "shrink", 1);
+  if (do_shrinking_ == 1) {
+    ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING);
+  }
+  else {
+    ct_shrinking_ = 100000000;
+  }
   int stop_condition = 0;
   while (1) {
     //for(index_t i=0; i<n_alpha_; i++)

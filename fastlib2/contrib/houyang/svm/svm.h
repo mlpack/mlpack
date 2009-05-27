@@ -851,7 +851,7 @@ void SVM<TKernel>::BatchPredict(int learner_typeid, Dataset& testset, String pre
   fclose(fp);
   /* calculate testing error */
   printf( "\n*** %d out of %d misclassified ***\n", err_ct, testset.n_points() );
-  printf( "*** Testing error is %f ***\n", double(err_ct)/double(testset.n_points()) );
+  printf( "*** Testing error is %f, accuracy is %f. ***\n", double(err_ct)/double(testset.n_points()), 1- double(err_ct)/double(testset.n_points()) );
   //fprintf( stderr, "*** Results are save in \"%s\" ***\n\n", predictedvalue_filename.c_str());
 }
 
