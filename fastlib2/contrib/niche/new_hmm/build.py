@@ -1,3 +1,23 @@
+binrule(
+    name = "test_engine",
+    sources = ["test_engine.cc"],
+    headers = ["test_engine.h",
+               "../svm/smo.h",
+               "../svm/svm.h",
+               "generative_mmk.h",
+               "generative_mmk_impl.h",
+               "utils.h",
+               "isotropic_gaussian.h",
+               "multinomial.h",               
+               "hmm.h",
+               "diag_gaussian.h",
+               "mixture.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
 # The driver for the bandwidth cross-validator.
 binrule(
     name = "get_optimal_kde_bandwidth",
@@ -21,6 +41,7 @@ binrule(
     sources = ["generative_mmk.cc"],
     headers = ["generative_mmk.h",
                "generative_mmk_impl.h",
+               "utils.h",
                "isotropic_gaussian.h",
                "multinomial.h",               
                "hmm.h",
@@ -37,6 +58,7 @@ binrule(
     sources = ["test_latent_mmk.cc"],
     headers = ["latent_mmk.h",
                "latent_mmk_impl.h",
+               "utils.h",
                "hmm.h",
                "multinomial.h",
                "diag_gaussian.h",

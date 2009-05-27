@@ -1,37 +1,6 @@
 #include "latent_mmk.h"
+#include "utils.h"
 
-void LoadVaryingLengthData(const char* filename,
-			   ArrayList<GenMatrix<int> >* p_data) {
-  ArrayList<GenMatrix<int> > &data = *p_data;
-  
-  data.Init();
-
-  FILE* file = fopen(filename, "r");
-
-  char* buffer = (char*) malloc(sizeof(char) * 70000);
-  size_t len = 70000;
-
-
-  int n_read;
-  while((n_read = getline(&buffer, &len, file)) != -1) {
-    int sequence_length = (int) ((n_read - 1) / 2);
-  
-    GenMatrix<int> sequence;
-    sequence.Init(1, sequence_length);
-    int* sequence_ptr = sequence.ptr();
-    for(int i = 0; i < sequence_length; i++) {
-      sscanf(buffer + (2 * i), "%d", sequence_ptr + i);
-    }
-    
-    //sequence.PrintDebug("sequence");
-    
-    data.PushBackCopy(sequence);
-  }
-
-  free(buffer);
-
-  fclose(file);
-}
 
 void PrintDebugGenMatrixInt(const char* name, GenMatrix<int> x) {
   int n_rows = x.n_rows();
