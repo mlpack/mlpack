@@ -32,7 +32,7 @@ double GenerativeMMK(double lambda,
   
   return 
     pow(h, -((double)n_dims) / ((double)2))
-    * exp(-lambda * la::DistanceSqEuclidean(x.mu(), y.mu()) / h);
+    * exp(-0.5 * lambda * la::DistanceSqEuclidean(x.mu(), y.mu()) / h);
 }
 
 template <typename TDistribution>
@@ -130,9 +130,9 @@ double KDEGenerativeMMK(double lambda,
   int n_samples1 = samples1.n_cols();
   int n_samples2 = samples2.n_cols();
 
-  double h = ((double)1) + ((double)2) * lambda * (bandwidth1 + bandwidth2);
-  double normalization_factor = pow(h, -((double)n_dims) / ((double)2));
-  double neg_lambda_over_h = -lambda / h;
+  double h = 1.0 + (lambda * (bandwidth1 + bandwidth2));
+  double normalization_factor = pow(h, -((double)n_dims) / 2.0);
+  double neg_half_lambda_over_h = -0.5 * lambda / h;
 
   double sum = 0;
   for(int i = 0; i < n_samples1; i++) {
@@ -143,10 +143,26 @@ double KDEGenerativeMMK(double lambda,
       Vector y;
       samples2.MakeColumnVector(j, &y);
 
-      sum += exp(neg_lambda_over_h * la::DistanceSqEuclidean(x, y));
+      double val = exp(neg_half_lambda_over_h * la::DistanceSqEuclidean(x, y));
+      /*
+      if((val > 0) && (i != j)) {
+	printf("hit!\n");
+	x.PrintDebug("x");
+	y.PrintDebug("y");
+	printf("dist_sq = %3e\n", la::DistanceSqEuclidean(x, y));
+	printf("neg_half_lambda_over_h = %3e\n", neg_half_lambda_over_h);
+      }
+      */
+      //x.PrintDebug("x");
+      //y.PrintDebug("y");
+      //if(i == j) {
+      //printf("%3e\n", val);
+      //}
+      sum += val;
     }
   }
-  
+  //exit(1);
+  normalization_factor = 1.0;
   return normalization_factor * sum / ((double)(n_samples1 * n_samples2));
 }
 
@@ -184,12 +200,14 @@ void KDEGenerativeMMKBatch(double lambda,
 						       reference_weights);
   }
 
+  optimal_bandwidths.SetAll(1e-12);
   optimal_bandwidths.PrintDebug("optimal_bandwidths");
 
   kernel_matrix.Init(n_samplings, n_samplings);
   for(int i = 0; i < n_samplings; i++) {
     printf("%f%%\n", ((double)(i + 1)) / ((double)n_samplings));
     for(int j = i; j < n_samplings; j++) {
+      printf("i = %d, j = %d\n", i, j);
       double gmmk = 
 	KDEGenerativeMMK(lambda,
 			 samplings[i], samplings[j],
