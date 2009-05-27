@@ -119,3 +119,128 @@ void GenerativeMMKBatch(double lambda, int n_T,
     }
   }
 }
+
+double KDEGenerativeMMK(double lambda,
+			const Matrix &samples1,
+			const Matrix &samples2,
+			double bandwidth1,
+			double bandwidth2) {
+  
+  int n_dims = samples1.n_rows();
+  int n_samples1 = samples1.n_cols();
+  int n_samples2 = samples2.n_cols();
+
+  double h = ((double)1) + ((double)2) * lambda * (bandwidth1 + bandwidth2);
+  double normalization_factor = pow(h, -((double)n_dims) / ((double)2));
+  double neg_lambda_over_h = -lambda / h;
+
+  double sum = 0;
+  for(int i = 0; i < n_samples1; i++) {
+    Vector x;
+    samples1.MakeColumnVector(i, &x);
+
+    for(int j = 0; j < n_samples2; j++) {
+      Vector y;
+      samples2.MakeColumnVector(j, &y);
+
+      sum += exp(neg_lambda_over_h * la::DistanceSqEuclidean(x, y));
+    }
+  }
+  
+  return normalization_factor * sum / ((double)(n_samples1 * n_samples2));
+}
+
+// scales the data permanently!
+void KDEGenerativeMMKBatch(double lambda,
+			   const ArrayList<Matrix> &samplings,
+			   Matrix *p_kernel_matrix) {
+  Matrix &kernel_matrix = *p_kernel_matrix;
+
+  int n_samplings = samplings.size();
+  
+  // we make the user do this call so we don't have to change samplings here
+  //ScaleSamplingsToCube(&samplings);
+
+  Vector optimal_bandwidths;
+  optimal_bandwidths.Init(n_samplings);
+  for(int k = 0; k < n_samplings; k++) {
+    // Query and reference datasets, reference weight dataset.
+    const Matrix &references = samplings[k];
+    Matrix reference_weights;
+    Matrix queries;
+    references.PrintDebug("references");
+
+    // data::Load inits a matrix with the contents of a .csv or .arff.
+    queries.Alias(references);
+    queries.PrintDebug("queries");
+  
+    // initialize to uniform weights.
+    reference_weights.Init(1, queries.n_cols());
+    reference_weights.SetAll(1);
+
+    printf("sampling %d\n", k);
+    optimal_bandwidths[k] =
+      BandwidthLSCV::OptimizeReturn<GaussianKernelAux>(references, 
+						       reference_weights);
+  }
+
+  optimal_bandwidths.PrintDebug("optimal_bandwidths");
+
+  kernel_matrix.Init(n_samplings, n_samplings);
+  for(int i = 0; i < n_samplings; i++) {
+    printf("%f%%\n", ((double)(i + 1)) / ((double)n_samplings));
+    for(int j = i; j < n_samplings; j++) {
+      double gmmk = 
+	KDEGenerativeMMK(lambda,
+			 samplings[i], samplings[j],
+			 optimal_bandwidths[i], optimal_bandwidths[j]);
+      
+      kernel_matrix.set(j, i, gmmk);
+      if(i != j) {
+	kernel_matrix.set(i, j, gmmk);
+      }
+    }
+  }
+}
+
+void ScaleSamplingsToCube(ArrayList<Matrix> *p_samplings) {
+  ArrayList<Matrix> &samplings = *p_samplings;
+
+  int n_samplings = samplings.size();
+  int n_dims = samplings[0].n_rows();
+
+  DHrectBound<2> total_bound;
+  total_bound.Init(n_dims);
+
+  for(int k = 0; k < n_samplings; k++) {
+    const Matrix &sampling = samplings[k];
+    int n_points = sampling.n_cols();
+    for(int i = 0; i < n_points; i++) {
+      Vector point;
+      sampling.MakeColumnVector(i, &point);
+      total_bound |= point;
+    }
+  }
+
+  Vector mins;
+  mins.Init(n_dims);
+  
+  Vector ranges;
+  ranges.Init(n_dims);
+  
+  for(int i = 0; i < n_dims; i++) {
+    mins[i] = total_bound.get(i).lo;
+    ranges[i] = total_bound.get(i).hi - mins[i];
+  }
+  
+  for(int k = 0; k < n_samplings; k++) {
+    Matrix &sampling = samplings[k];
+    int n_points = sampling.n_cols();
+    for(int i = 0; i < n_points; i++) {
+      for(int j = 0; j < n_dims; j++) {
+	sampling.set(j, i,
+		    (sampling.get(j, i) - mins[j]) / ranges[j]);
+      }
+    }
+  }
+}

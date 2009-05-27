@@ -1,3 +1,14 @@
+# The driver for the bandwidth cross-validator.
+binrule(
+    name = "get_optimal_kde_bandwidth",
+    sources = ["get_optimal_kde_bandwidth.cc"],
+    headers = [],
+    deplibs = ["mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "fastlib:fastlib_int"]
+    )
+
+
 binrule(
     name = "test_isotropic_gaussian",
     sources = ["test_isotropic_gaussian.cc"],
@@ -16,6 +27,8 @@ binrule(
                "diag_gaussian.h",
                "mixture.h"],
     deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
                "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
     )
 

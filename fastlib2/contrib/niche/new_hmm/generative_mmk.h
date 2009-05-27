@@ -4,6 +4,10 @@
 #include "multinomial.h"
 #include "isotropic_gaussian.h"
 #include "hmm.h"
+#include "mlpack/kde/bandwidth_lscv.h"
+#include "mlpack/kde/dataset_scaler.h"
+#include "mlpack/kde/dualtree_kde.h"
+#include "mlpack/kde/naive_kde.h"
 
 #define INSIDE_GENERATIVE_MMK_IMPL_H
 
@@ -24,6 +28,17 @@ template <typename TDistribution>
 void GenerativeMMKBatch(double lambda, int n_T,
 			const ArrayList<HMM<TDistribution> > &hmms,
 			Matrix *p_kernel_matrix);
+
+double KDEGenerativeMMK(double lambda,
+			const Matrix &samples1,
+			const Matrix &samples2);
+
+void KDEGenerativeMMKBatch(double lambda,
+			   const ArrayList<Matrix> &samplings,
+			   Matrix *p_kernel_matrix);
+
+void ScaleSamplingsToCube(ArrayList<Matrix> *p_samplings);
+
 
 
 #include "generative_mmk_impl.h"

@@ -1,7 +1,6 @@
 #include "generative_mmk.h"
 
-int main(int argc, char* argv[]) {
-
+void TestIsotropicGaussian() {
   IsotropicGaussian g1;
   g1.Init(2, 0.001);
   Vector &mu1 = *(g1.mu_);
@@ -15,15 +14,12 @@ int main(int argc, char* argv[]) {
   mu2[0] = -1;
   mu2[1] = 0.5;
   g2.sigma_ = 0.5;
-
+  
   printf("gmmk(isotropic_gaussian1, isotropic_gaussian2) = %f\n",
 	 GenerativeMMK(1, g1, g2));
-  
+}
 
-
-  
-
-
+void TestHMM() {
   ArrayList<HMM<Multinomial> > hmms;
   hmms.Init(2);
 
@@ -75,4 +71,53 @@ int main(int argc, char* argv[]) {
   Matrix kernel_matrix;
   GenerativeMMKBatch(1, 100, hmms, &kernel_matrix);
   kernel_matrix.PrintDebug("kernel matrix");
+}
+
+void TestKDE() {
+  srand48(time(0));
+
+  ArrayList<Matrix> samplings;
+  int n_samplings = 10;
+  int half_n_samplings = n_samplings / 2;
+  n_samplings = 2 * half_n_samplings;
+  samplings.Init(n_samplings);
+ 
+  int n_points_per_sampling = 1000;
+  int n_dims = 1;
+ 
+  for(int k = 0; k < half_n_samplings; k++) {
+    Matrix &sampling = samplings[k];
+    sampling.Init(n_dims, n_points_per_sampling);
+    for(int i = 0; i < n_points_per_sampling; i++) {
+      for(int j = 0; j < n_dims; j++) {
+	sampling.set(j, i, 2 * drand48());
+      }
+    }
+  }
+
+  for(int k = half_n_samplings; k < n_samplings; k++) {
+    Matrix &sampling = samplings[k];
+    sampling.Init(n_dims, n_points_per_sampling);
+    for(int i = 0; i < n_points_per_sampling; i++) {
+      for(int j = 0; j < n_dims; j++) {
+	sampling.set(j, i, (2 * drand48()) - ((double)1));
+      }
+    }
+  }
+
+  ScaleSamplingsToCube(&samplings);
+
+  Matrix kernel_matrix;
+  KDEGenerativeMMKBatch(1, samplings, &kernel_matrix);
+  kernel_matrix.PrintDebug("kernel matrix");
+}
+
+int main(int argc, char* argv[]) {
+  fx_init(argc, argv, NULL);
+  
+  //TestIsotropicGaussian();
+  //TestHMM();
+  TestKDE();
+
+  fx_done(fx_root);
 }
