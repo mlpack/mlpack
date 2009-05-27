@@ -82,7 +82,7 @@ void TestKDE() {
   n_samplings = 2 * half_n_samplings;
   samplings.Init(n_samplings);
  
-  int n_points_per_sampling = 1000;
+  int n_points_per_sampling = 100;
   int n_dims = 1;
  
   for(int k = 0; k < half_n_samplings; k++) {
@@ -108,8 +108,15 @@ void TestKDE() {
   ScaleSamplingsToCube(&samplings);
 
   Matrix kernel_matrix;
-  KDEGenerativeMMKBatch(1, samplings, &kernel_matrix);
-  kernel_matrix.PrintDebug("kernel matrix");
+  KDEGenerativeMMKBatch(1e1, samplings, &kernel_matrix);
+  printf("\t\tKernel Matrix\t\t\n");
+  for(int i = 0; i < n_samplings; i++) {
+    for(int j = 0; j < n_samplings; j++) {
+      printf("%3e ", kernel_matrix.get(j, i));
+    }
+    printf("\n");
+  } 
+  //kernel_matrix.PrintDebug("kernel matrix");
 }
 
 int main(int argc, char* argv[]) {
