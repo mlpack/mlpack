@@ -107,7 +107,7 @@ void GenerativeMMKBatch(double lambda, int n_T,
   
   kernel_matrix.Init(n_hmms, n_hmms);
   for(int i = 0; i < n_hmms; i++) {
-    printf("%f%%\n", ((double)(i + 1)) / ((double)n_hmms));
+    printf("%f%%\n", 100.0 * ((double)(i + 1)) / ((double)n_hmms));
     for(int j = i; j < n_hmms; j++) {
       double gmmk = 
 	GenerativeMMK(lambda, n_T, hmms[i], hmms[j]);
@@ -205,7 +205,7 @@ void KDEGenerativeMMKBatch(double lambda,
 
   kernel_matrix.Init(n_samplings, n_samplings);
   for(int i = 0; i < n_samplings; i++) {
-    printf("%f%%\n", ((double)(i + 1)) / ((double)n_samplings));
+    printf("%f%%\n", 100.0 * ((double)(i + 1)) / ((double)n_samplings));
     for(int j = i; j < n_samplings; j++) {
       printf("i = %d, j = %d\n", i, j);
       double gmmk = 

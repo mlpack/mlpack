@@ -1,4 +1,6 @@
 #include "generative_mmk.h"
+#include "utils.h"
+
 
 void TestIsotropicGaussian() {
   IsotropicGaussian g1;
@@ -70,7 +72,7 @@ void TestHMM() {
   
   Matrix kernel_matrix;
   GenerativeMMKBatch(1, 100, hmms, &kernel_matrix);
-  kernel_matrix.PrintDebug("kernel matrix");
+  PrintDebug("kernel matrix", kernel_matrix, "%3e");
 }
 
 void TestKDE() {
@@ -109,14 +111,20 @@ void TestKDE() {
 
   Matrix kernel_matrix;
   KDEGenerativeMMKBatch(1e1, samplings, &kernel_matrix);
-  printf("\t\tKernel Matrix\t\t\n");
-  for(int i = 0; i < n_samplings; i++) {
-    for(int j = 0; j < n_samplings; j++) {
-      printf("%3e ", kernel_matrix.get(j, i));
-    }
-    printf("\n");
-  } 
-  //kernel_matrix.PrintDebug("kernel matrix");
+  PrintDebug("original kernel matrix", kernel_matrix, "%3e");
+
+  Vector original_eigenvalues;
+  la::EigenvaluesInit(kernel_matrix,
+		      &original_eigenvalues);
+  PrintDebug("original eigenvalues", original_eigenvalues, "%3e");
+
+  NormalizeKernelMatrix(&kernel_matrix);
+  PrintDebug("normalized kernel matrix", kernel_matrix, "%3e");
+  
+  Vector normalized_eigenvalues;
+  la::EigenvaluesInit(kernel_matrix,
+		      &normalized_eigenvalues);
+  PrintDebug("normalized eigenvalues", normalized_eigenvalues, "%3e");
 }
 
 int main(int argc, char* argv[]) {

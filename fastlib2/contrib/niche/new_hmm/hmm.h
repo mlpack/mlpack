@@ -646,7 +646,7 @@ class HMM {
     bool converged = false;
 
     while(!converged) {
-      printf("iteration %d\n", iteration_num);
+      //printf("iteration %d\n", iteration_num);
       iteration_num++;
       
       new_hmm.p_initial.SetZero();
@@ -768,8 +768,8 @@ class HMM {
 	  }
 	} //end if(MIXTURE)
       } // end for(all sequences)
-      printf("current_total_neg_likelihood = %f\n",
-	     current_total_neg_likelihood);
+      //printf("current_total_neg_likelihood = %f\n",
+      //current_total_neg_likelihood);
 
 
       // NORMALIZE - control NaN risk!
@@ -833,7 +833,7 @@ class HMM {
       // How far have we come? Have we converged?
       double improvement_total_neg_likelihood =
 	last_total_neg_likelihood - current_total_neg_likelihood;
-      printf("improvement = %e\n", improvement_total_neg_likelihood);
+      //printf("improvement = %e\n", improvement_total_neg_likelihood);
       if(improvement_total_neg_likelihood < neg_likelihood_threshold) {
 	converged = true;
       }

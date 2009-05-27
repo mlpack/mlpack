@@ -114,7 +114,7 @@ template <typename TDistribution, typename T>
 
   kernel_matrix.Init(n_sequences, n_sequences);
   for(int i = 0; i < n_sequences; i++) {
-    printf("%f%%\n", ((double)(i + 1)) / ((double)n_sequences));
+    printf("%f%%\n", 100.0 * ((double)(i + 1)) / ((double)n_sequences));
     for(int j = i; j < n_sequences; j++) {
       double lmmk = 
 	HMMLatentMMK(lambda, n_states, n_dims,
