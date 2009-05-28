@@ -1,11 +1,4 @@
 binrule(
-    name = "stupid",
-    sources = ["stupid_test.cc"],
-    headers = [],
-    deplibs = ["fastlib:fastlib"]
-    )
-
-binrule(
     name = "test_engine",
     sources = ["test_engine.cc"],
     headers = ["test_engine.h",
