@@ -200,7 +200,11 @@ void TestHMMClassification(const ArrayList<HMM<Multinomial> > &hmms,
 }
 
 void SaveDNAHMMs() {
-  const char* hmms_filename = "frozen_dna_hmms_topo2";
+  int n_states = fx_param_int_req(NULL, "n_states");
+  const char* hmms_partial_filename = "frozen_dna_hmms_topo";
+  char hmms_filename[80];
+  sprintf(hmms_filename, "%s%d", hmms_partial_filename, n_states);
+  printf("hmms_filename = \"%s\"\n", hmms_filename);
   const char* labels_filename = "frozen_dna_labels";
   
   struct stat stFileInfo;
@@ -212,7 +216,7 @@ void SaveDNAHMMs() {
   GenVector<int> labels;
   
   //GetStrawmanData(&hmms, &labels);
-  GetDnaData(2, &hmms, &labels);
+  GetDnaData(n_states, &hmms, &labels);
   
   WriteOutOTObject(hmms_filename, hmms);
   WriteOutOTObject(labels_filename, labels);
@@ -240,12 +244,12 @@ void LoadDNAHMMs(ArrayList<HMM<Multinomial> >* p_hmms,
 int main(int argc, char* argv[]) {
   fx_init(argc, argv, NULL);
 
-//   SaveDNAHMMs();
+  SaveDNAHMMs();
 
-  ArrayList<HMM<Multinomial> > hmms;
-  GenVector<int> labels;
-  LoadDNAHMMs(&hmms, &labels);
-  TestHMMClassification(hmms, labels);
+//   ArrayList<HMM<Multinomial> > hmms;
+//   GenVector<int> labels;
+//   LoadDNAHMMs(&hmms, &labels);
+//   TestHMMClassification(hmms, labels);
   
   fx_done(fx_root);
 }

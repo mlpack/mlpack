@@ -5,27 +5,31 @@
 template<typename T>
 void WriteOutOTObject(const char* filename,
 		      const T &object) {
-  FILE* file = fopen(filename, "wb");
-  index_t size = ot::FrozenSize(object);
+  size_t size = ot::FrozenSize(object);
   char* buf = mem::Alloc<char>(size);
   ot::Freeze(buf, object);
+
+  FILE* file = fopen(filename, "wb");
   fwrite(&size, sizeof(size), 1, file);
   fwrite(buf, 1, size, file);
-  mem::Free(buf);
   fclose(file);
+
+  mem::Free(buf);
 }
 
 template<typename T>
 void ReadInOTObject(const char* filename,
 		    T* p_object) {
+  size_t size;
+
   FILE* file = fopen(filename, "rb");
-  index_t size;
   fread(&size, sizeof(size), 1, file);
   char* buf = mem::Alloc<char>(size);
   fread(buf, 1, size, file);
+  fclose(file);
+
   ot::InitThaw(p_object, buf);
   mem::Free(buf);
-  fclose(file);
 }
 
 
