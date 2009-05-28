@@ -4,8 +4,9 @@
 #include "utils.h"
 
 
-void GetDnaData(ArrayList<HMM<Multinomial> > *p_hmms,
-		  GenVector<int> *p_labels) {
+void GetDnaData(int n_states,
+		ArrayList<HMM<Multinomial> > *p_hmms,
+		GenVector<int> *p_labels) {
   ArrayList<HMM<Multinomial> > &hmms = *p_hmms;
   GenVector<int> &labels = *p_labels;
   
@@ -13,7 +14,6 @@ void GetDnaData(ArrayList<HMM<Multinomial> > *p_hmms,
   const char* introns_filename = "introns_small.dat";
 
   int n_dims = 4;
-  int n_states = 10;
   
   ArrayList<GenMatrix<int> > exon_sequences;
   LoadVaryingLengthData(exons_filename, &exon_sequences);
@@ -33,7 +33,7 @@ void GetDnaData(ArrayList<HMM<Multinomial> > *p_hmms,
     hmms[i].ViterbiUpdate(one_sequence);
     //hmms[i].PrintDebug("hmm after calling ViterbiUpdate(sequences)");
     hmms[i].BaumWelch(one_sequence,
-		      1e-10 * ((double)1),
+		      1e-6 * ((double)1),
 		      1000);
     //hmms[i].PrintDebug("hmm after calling BaumWelch");
     //one_sequence.ReleasePtr();
@@ -59,7 +59,7 @@ void GetDnaData(ArrayList<HMM<Multinomial> > *p_hmms,
     intron_hmms[i].ViterbiUpdate(one_sequence);
     //intron_hmms[i].PrintDebug("hmm after calling ViterbiUpdate(sequences)");
     intron_hmms[i].BaumWelch(one_sequence,
-		      1e-10 * ((double)1),
+		      1e-6 * ((double)1),
 		      1000);
     //intron_hmms[i].PrintDebug("hmm after calling BaumWelch");
   }
@@ -131,28 +131,33 @@ void GetStrawmanData(ArrayList<HMM<Multinomial> > *p_hmms,
     hmms[i].PrintDebug("hmm after calling ViterbiUpdate(sequences)");
   
     hmms[i].BaumWelch(sequences[i],
-		      1e-10 * ((double)1),
+		      1e-6 * ((double)1),
 		      1000);
     
     hmms[i].PrintDebug("hmm after calling BaumWelch");
   }
 }
 
-void TestHMMClassification() {
-  
+void TestHMMClassification(const ArrayList<HMM<Multinomial> > &hmms,
+			   const GenVector<int> &labels) {
+  /*
   ArrayList<HMM<Multinomial> > hmms;
   GenVector<int> labels;
   
   //GetStrawmanData(&hmms, &labels);
-  GetDnaData(&hmms, &labels);
+  GetDnaData(10, &hmms, &labels);
+  */
   int n_hmms = labels.length();
   printf("n_hmms = %d\n", n_hmms);
-
+  
   double lambda = fx_param_double_req(NULL, "lambda");
+  printf("lambda = %f\n", lambda);
+  int witness_length = fx_param_int(NULL, "witness_length", 50);
+  printf("witness_length = %d\n", witness_length);
 
 
   Matrix kernel_matrix;
-  GenerativeMMKBatch(lambda, 100, hmms, &kernel_matrix);
+  GenerativeMMKBatch(lambda, witness_length, hmms, &kernel_matrix);
   //PrintDebug("original kernel matrix", kernel_matrix, "%3e");
 
   Vector original_eigenvalues;
@@ -194,11 +199,53 @@ void TestHMMClassification() {
 
 }
 
+void SaveDNAHMMs() {
+  const char* hmms_filename = "frozen_dna_hmms_topo5";
+  const char* labels_filename = "frozen_dna_labels";
+  
+  struct stat stFileInfo;
+  if(stat(hmms_filename, &stFileInfo) == 0) {
+    FATAL("Error: File to which HMMs are to be saved already exists! Bypassing learning and exiting...");
+  }
+
+  ArrayList<HMM<Multinomial> > hmms;
+  GenVector<int> labels;
+  
+  //GetStrawmanData(&hmms, &labels);
+  GetDnaData(5, &hmms, &labels);
+  
+  WriteOutOTObject(hmms_filename, hmms);
+  WriteOutOTObject(labels_filename, labels);
+}
+
+
+void LoadDNAHMMs(ArrayList<HMM<Multinomial> >* p_hmms,
+		 GenVector<int>* p_labels) {
+  ReadInOTObject("frozen_dna_hmms_topo5", p_hmms);
+  ReadInOTObject("frozen_dna_labels", p_labels);
+
+  
+//   PrintDebug("labels", *p_labels, "%d");
+//   char hmm_name[80];
+//   for(int i = 0; i < 1000; i++) {
+//     sprintf(hmm_name, "hmm %d", i);
+//     (*p_hmms)[i].PrintDebug(hmm_name);
+//   }
+  
+}
+
+
+
 
 int main(int argc, char* argv[]) {
   fx_init(argc, argv, NULL);
-  
-  TestHMMClassification();
+
+  //SaveDNAHMMs();
+
+  ArrayList<HMM<Multinomial> > hmms;
+  GenVector<int> labels;
+  LoadDNAHMMs(&hmms, &labels);
+  TestHMMClassification(hmms, labels);
   
   fx_done(fx_root);
 }

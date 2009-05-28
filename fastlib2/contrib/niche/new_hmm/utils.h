@@ -2,59 +2,63 @@
 #define UTILS_H
 
 
-void WriteOutHMMArrayList(const char* filename,
-			  const ArrayList<HMM<Multinomial> > &hmms) {
+template<typename T>
+void WriteOutOTObject(const char* filename,
+		      const T &object) {
   FILE* file = fopen(filename, "wb");
-  index_t size = ot::FrozenSize(hmms);
+  index_t size = ot::FrozenSize(object);
   char* buf = mem::Alloc<char>(size);
-  ot::Freeze(buf, hmms);
+  ot::Freeze(buf, object);
   fwrite(&size, sizeof(size), 1, file);
   fwrite(buf, 1, size, file);
   mem::Free(buf);
   fclose(file);
 }
 
-void ReadInHMMArrayList(const char* filename,
-			ArrayList<HMM<Multinomial> >* p_hmms) {
+template<typename T>
+void ReadInOTObject(const char* filename,
+		    T* p_object) {
   FILE* file = fopen(filename, "rb");
   index_t size;
   fread(&size, sizeof(size), 1, file);
   char* buf = mem::Alloc<char>(size);
   fread(buf, 1, size, file);
-  ot::InitThaw(p_hmms, buf);
+  ot::InitThaw(p_object, buf);
   mem::Free(buf);
   fclose(file);
 }
 
 
 template<typename T>
-void PrintDebug(const char* name, GenMatrix<T> x, const char* disp_format) {
+void PrintDebug(const char* name, GenMatrix<T> x, const char* disp_format,
+		FILE* stream = stderr) {
   char printstring[80];
   sprintf(printstring, "%s ", disp_format);
   
   int n_rows = x.n_rows();
   int n_cols = x.n_cols();
-  printf("----- GENMATRIX<T> %s ------\n", name);
+  fprintf(stream, "----- GENMATRIX<T> %s ------\n", name);
   for(int i = 0; i < n_rows; i++) {
     for(int j = 0; j < n_cols; j++) {
-      printf(printstring, x.get(i, j));
+      fprintf(stream, printstring, x.get(i, j));
     }
-    printf("\n");
+    fprintf(stream, "\n");
   }
-  printf("\n");
+  fprintf(stream, "\n");
 }
 
 template<typename T>
-void PrintDebug(const char* name, GenVector<T> x, const char* disp_format) {
+void PrintDebug(const char* name, GenVector<T> x, const char* disp_format,
+		FILE* stream = stderr) {
   char printstring[80];
   sprintf(printstring, "%s ", disp_format);
   
   int n_dims = x.length();
-  printf("----- GENVECTOR<T> %s ------\n", name);
+  fprintf(stream, "----- GENVECTOR<T> %s ------\n", name);
   for(int i = 0; i < n_dims; i++) {
-    printf(printstring, x[i]);
+    fprintf(stream, printstring, x[i]);
   }
-  printf("\n");
+  fprintf(stream, "\n");
 }
 
 void LoadVaryingLengthData(const char* filename,
