@@ -25,6 +25,9 @@ class HMM {
   double min_variance_;
   int n_components_;
 
+
+
+
  public:
 
   // p_initial, p_transition, and state_distributions are public because
@@ -37,11 +40,24 @@ class HMM {
 
   TDistribution* state_distributions;
   
-    
+
+ private:
+  OBJECT_TRAVERSAL(HMM<TDistribution>) {
+    OT_OBJ(n_states_);
+    OT_OBJ(n_dims_);
+    OT_OBJ(type_);
+    OT_OBJ(min_variance_);
+    OT_OBJ(n_components_);
+    OT_OBJ(p_transition);
+    OT_OBJ(p_initial);
+    OT_ALLOC_EXPERT(state_distributions, n_states_, true,
+		    i, OT_OBJ(state_distributions[i]));
+  }
+
 
  public:
-
-
+  
+    
   void Init(int n_states_in, int n_dims_in, int type_in) {
     Init(n_states_in, n_dims_in, type_in, 0);
   }

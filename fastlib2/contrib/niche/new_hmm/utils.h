@@ -2,6 +2,31 @@
 #define UTILS_H
 
 
+void WriteOutHMMArrayList(const char* filename,
+			  const ArrayList<HMM<Multinomial> > &hmms) {
+  FILE* file = fopen(filename, "wb");
+  index_t size = ot::FrozenSize(hmms);
+  char* buf = mem::Alloc<char>(size);
+  ot::Freeze(buf, hmms);
+  fwrite(&size, sizeof(size), 1, file);
+  fwrite(buf, 1, size, file);
+  mem::Free(buf);
+  fclose(file);
+}
+
+void ReadInHMMArrayList(const char* filename,
+			ArrayList<HMM<Multinomial> >* p_hmms) {
+  FILE* file = fopen(filename, "rb");
+  index_t size;
+  fread(&size, sizeof(size), 1, file);
+  char* buf = mem::Alloc<char>(size);
+  fread(buf, 1, size, file);
+  ot::InitThaw(p_hmms, buf);
+  mem::Free(buf);
+  fclose(file);
+}
+
+
 template<typename T>
 void PrintDebug(const char* name, GenMatrix<T> x, const char* disp_format) {
   char printstring[80];

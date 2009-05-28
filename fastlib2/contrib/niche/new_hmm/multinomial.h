@@ -13,6 +13,16 @@ class Multinomial {
 
   Vector* p_;
 
+ private:
+
+
+  OBJECT_TRAVERSAL_ONLY(Multinomial) {
+    OT_PTR(p_);
+  }
+
+
+ public:
+
   void Init(int n_dims_in) {
     Init(n_dims_in, 0);
   }
