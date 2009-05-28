@@ -152,7 +152,7 @@ void TestHMMClassification(const ArrayList<HMM<Multinomial> > &hmms,
   
   double lambda = fx_param_double_req(NULL, "lambda");
   printf("lambda = %f\n", lambda);
-  int witness_length = fx_param_int(NULL, "witness_length", 50);
+  int witness_length = fx_param_int(NULL, "witness_length", 70);
   printf("witness_length = %d\n", witness_length);
 
 
@@ -200,7 +200,7 @@ void TestHMMClassification(const ArrayList<HMM<Multinomial> > &hmms,
 }
 
 void SaveDNAHMMs() {
-  const char* hmms_filename = "frozen_dna_hmms_topo5";
+  const char* hmms_filename = "frozen_dna_hmms_topo2";
   const char* labels_filename = "frozen_dna_labels";
   
   struct stat stFileInfo;
@@ -212,7 +212,7 @@ void SaveDNAHMMs() {
   GenVector<int> labels;
   
   //GetStrawmanData(&hmms, &labels);
-  GetDnaData(5, &hmms, &labels);
+  GetDnaData(2, &hmms, &labels);
   
   WriteOutOTObject(hmms_filename, hmms);
   WriteOutOTObject(labels_filename, labels);
@@ -221,7 +221,7 @@ void SaveDNAHMMs() {
 
 void LoadDNAHMMs(ArrayList<HMM<Multinomial> >* p_hmms,
 		 GenVector<int>* p_labels) {
-  ReadInOTObject("frozen_dna_hmms_topo5", p_hmms);
+  ReadInOTObject("frozen_dna_hmms_topo2", p_hmms);
   ReadInOTObject("frozen_dna_labels", p_labels);
 
   
@@ -240,7 +240,7 @@ void LoadDNAHMMs(ArrayList<HMM<Multinomial> >* p_hmms,
 int main(int argc, char* argv[]) {
   fx_init(argc, argv, NULL);
 
-  //SaveDNAHMMs();
+//   SaveDNAHMMs();
 
   ArrayList<HMM<Multinomial> > hmms;
   GenVector<int> labels;
