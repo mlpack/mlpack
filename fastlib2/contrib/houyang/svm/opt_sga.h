@@ -457,7 +457,7 @@ bool SGA<TKernel>::GreedyVectorSelection_() {
   
   // Stopping Criterion check
   double gap = max_grad_inact - min_gradinvCalpha_act;
-  printf("%d: gap=%f\n", ct_iter_, gap);
+  //printf("%d: gap=%f\n", ct_iter_, gap);
   if (gap <= accuracy_) {
     return true; // optimality reached
   }
@@ -503,7 +503,7 @@ void SGA<TKernel>::UpdateGradientAlpha_() {
   }
   */
 
-  printf("%d: lambda =%f\n", ct_iter_, lambda_);
+  //printf("%d: lambda =%f\n", ct_iter_, lambda_);
 
   one_m_lambda = 1 - lambda_;
 

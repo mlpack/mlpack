@@ -280,6 +280,7 @@ void SFW<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       // Calculate the bias term
       CalcBias_();
       printf("SFW terminates since the accuracy %f achieved!!! Number of iterations: %d\n.", accuracy_, ct_iter_);
+      printf("n_act_pos=%d, n_act_neg=%d, n_act=%d\n", n_active_pos_, n_active_neg_, n_active_pos_+n_active_neg_);
       break;
     }
     else if (stop_condition == 2) {// max num of iterations exceeded
@@ -482,7 +483,7 @@ void SFW<TKernel>::UpdateGradientAlpha_() {
   else if (lambda_ < 0)
     lambda_ = 0;
 
-  printf("%d: lambda =%f\n", ct_iter_, lambda_);
+  //printf("%d: lambda =%f\n", ct_iter_, lambda_);
 
   one_m_lambda = 1 - lambda_;
 

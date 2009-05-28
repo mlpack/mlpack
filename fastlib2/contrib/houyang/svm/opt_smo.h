@@ -671,7 +671,7 @@ bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
   // Stopping Criterion check
   //printf("ct_iter:%d, accu:%f\n", ct_iter_, y_grad_max - y_grad_min);
   double gap = y_grad_max - y_grad_min;
-  printf("%d: gap=%f\n", ct_iter_, gap);
+  //printf("%d: gap=%f\n", ct_iter_, gap);
   if (gap <= accuracy_) {
     return true; // optimality reached
   }

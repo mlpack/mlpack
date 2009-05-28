@@ -400,7 +400,9 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	sgd.kernel().Init(fx_submodule(module, "kernel"));
 
 	/* 2-classes SVM training using SGD*/
+	fx_timer_start(NULL, "train_sgd");
 	sgd.Train(learner_typeid, &dataset_bi);
+	fx_timer_stop(NULL, "train_sgd");
 
 	/* Get the trained bi-class model */
 	models_[ct].coef_.Init(); // alpha*y, used for nonlinear SVM only
