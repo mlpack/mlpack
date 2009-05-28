@@ -79,6 +79,8 @@ class SGD {
   double eta_; // step length. eta = 1/(lambda*t)
   double t_;
 
+  double rho_;// for soft margin nonlinear SGD SVM
+
  public:
   SGD() {}
   ~SGD() {}
@@ -217,6 +219,7 @@ template<typename TKernel>
 void SGD<TKernel>::LearnersInit_(int learner_typeid) {
   index_t i;
   learner_typeid_ = learner_typeid;
+  rho_ = fx_param_double(NULL, "rho", 1.0); // specify the soft margin. default value 1.0: hard margin
   
   if (learner_typeid_ == 0) { // SVM_C
     if (b_linear_) { // linear SVM
@@ -305,7 +308,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       if (yy_hat < 1.0) {
 	// standard Stochastic Gradient Descent
         eta_grad = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // also need *xt, but it's done in next line
-	la::AddExpert(eta_grad/ scale_w_, xt, &w_); // update w by Steepest Descent: w_{t+1} = w_t - eta * loss_gradient
+	la::AddExpert(eta_grad/ scale_w_, xt, &w_); // update w by Steepest Descent: w_{t+1} = w_t - eta * loss_gradient * xt
 	
 	// Pegasos Stochastic Gradient Descent
 	//eta_grad = ;
@@ -325,6 +328,8 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     coef_long.Init(n_iter_);
     coef_long.SetZero();
 
+    double delta;
+
     while (ct < n_iter_) {
       work_idx = ct % n_data_;
       //work_idx = rand() % n_data_;
@@ -338,16 +343,28 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       // update step length
       eta_ = 1.0 / (lambda_ * t_);
 
-      // update bias
-      bias_ += coef_long[ct];
-
       // update old coefs (for i<t)
       double one_minus_eta_lambda = 1.0 - eta_ * lambda_;
+      //printf("%d: %f\n", ct, one_minus_eta_lambda);
       for (index_t i=0; i<ct; i++)
 	coef_long[i] = coef_long[i] * one_minus_eta_lambda; 
 
       // update current coef (for i==t)
-      coef_long[ct] = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt;
+
+      //coef_long[ct] = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // Hard margin SVM
+      //printf("%f, %f, %f\n", eta_, LossFunctionGradient_(learner_typeid, yy_hat), yt);
+
+      // soft margin svm
+      if (yy_hat <= rho_) {
+	delta = 1.0;
+      }
+      else {
+	delta = 0.0;
+      }
+      coef_long[ct] = eta_ * delta * yt;
+
+      // update bias
+      bias_ += coef_long[ct] * 0.01;
  
       t_ += 1.0;
       ct ++;
