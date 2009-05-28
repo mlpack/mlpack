@@ -37,7 +37,7 @@ const index_t MAX_NUM_ITER_SGD = 1000000;
 // tolerance of sacale_w
 const double SCALE_W_TOLERANCE = 1.0e-9;
 // threshold that determines whether an alpha is a SV or not
-const double SGD_ALPHA_ZERO = 1.0e-4;
+const double SGD_ALPHA_ZERO = 1.0e-7;
 
 
 template<typename TKernel>
@@ -327,6 +327,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 
     while (ct < n_iter_) {
       work_idx = ct % n_data_;
+      //work_idx = rand() % n_data_;
 
       double yt = y_[work_idx];
       double yt_hat = 0.0;
@@ -381,6 +382,7 @@ void SGD<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &c
 	coef.PushBack() = 0;
       }
     }
+    printf("Number of support vectors: %d.\n", n_sv_);
   }
   else if (learner_typeid_ == 1) {// SVM_R
     // TODO

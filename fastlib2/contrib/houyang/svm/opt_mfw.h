@@ -396,7 +396,7 @@ bool MFW<TKernel>::GreedyVectorSelection_() {
   
   // Stopping Criterion check
   double gap = max_grad_inact - min_gradinvCalpha_act;
-  printf("%d: gap=%f\n", ct_iter_, gap);
+  //printf("%d: gap=%f\n", ct_iter_, gap);
   if (gap <= accuracy_) {
     return true; // optimality reached
   }
@@ -437,7 +437,7 @@ void MFW<TKernel>::UpdateGradientAlpha_() {
     else if (lambda_ < 0)
       lambda_ = 0;
 
-    printf("%d: lambda_+ =%f\n", ct_iter_, lambda_);
+    //printf("%d: lambda_+ =%f\n", ct_iter_, lambda_);
 
     one_m_lambda = 1 - lambda_;
 
@@ -471,7 +471,7 @@ void MFW<TKernel>::UpdateGradientAlpha_() {
     else if (lambda_ < 0)
       lambda_ = 0;
 
-    printf("%d: lambda_- =%f\n", ct_iter_, lambda_);
+    //printf("%d: lambda_- =%f\n", ct_iter_, lambda_);
 
     one_p_lambda = 1 + lambda_;
 
