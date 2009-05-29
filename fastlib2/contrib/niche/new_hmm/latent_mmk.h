@@ -32,7 +32,7 @@ double HMMLatentMMKComponentQX(double exp_neg_lambda,
 			       const Matrix &p_qt_1,
 			       const Matrix &p_qt_2);
 
-		      double HMMLatentMMKComponentQQ(double exp_neg_lambda, int n_states,
+double HMMLatentMMKComponentQQ(double exp_neg_lambda, int n_states,
 			       const Matrix &p_qq_1,
 			       const Matrix &p_qq_2,
 			       int sequence1_length,
