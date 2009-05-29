@@ -81,7 +81,8 @@ class SGA {
   
   //double epsilon_; // for SVM_R
   index_t n_iter_; // number of iterations
-  double accuracy_; // accuracy for stopping creterion
+  double accuracy_; // accuracy for stopping criterion
+  double gap_;  // for stopping criterion
 
   //bool do_shrinking_; // whether this iteration is on the shrunk set(active set) or the whole data set
 
@@ -348,7 +349,7 @@ void SGA<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     else if (stop_condition == 2) {// max num of iterations exceeded
       // Calculate the bias term
       CalcBias_();
-      printf("SGA terminates since the number of iterations %d exceeded !!!\n", n_iter_);
+      printf("SGA terminates since the number of iterations %d exceeded !!! Gap: %f.\n", n_iter_, gap_);
       printf("n_active=%d\n", n_active_);
       break;
     }
@@ -456,9 +457,9 @@ bool SGA<TKernel>::GreedyVectorSelection_() {
   }
   
   // Stopping Criterion check
-  double gap = max_grad_inact - min_gradinvCalpha_act;
-  //printf("%d: gap=%f\n", ct_iter_, gap);
-  if (gap <= accuracy_) {
+  gap_ = max_grad_inact - min_gradinvCalpha_act;
+  //printf("%d: gap=%f\n", ct_iter_, gap_);
+  if (gap_ <= accuracy_) {
     return true; // optimality reached
   }
 
