@@ -130,7 +130,9 @@ class CFMMCoulomb {
     ScreenCharges_();
     fx_timer_stop(mod_, "cfmm_time");
     
-    multipole_init_called_ = false;
+    MultipoleInit_();
+    
+    multipole_init_called_ = true;
     
   } // Init()
   

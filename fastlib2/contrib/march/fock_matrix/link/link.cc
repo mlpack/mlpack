@@ -389,15 +389,15 @@ void Link::UpdateDensity(const Matrix& new_density) {
     significant_sigma_for_nu_ = 
     (ShellPair***)malloc(num_shells_*sizeof(ShellPair**));
     
-    num_significant_nu_for_mu_.Destruct();
+    num_significant_nu_for_mu_.Clear();
     num_significant_nu_for_mu_.Init(num_shells_);
     
-    num_significant_sigma_for_nu_.Destruct();
+    num_significant_sigma_for_nu_.Clear();
     num_significant_sigma_for_nu_.Init(num_shells_);
     
     // does this free the shell pairs in it?
     // doesn't look like it matters
-    shell_pair_list_.Destruct();
+    shell_pair_list_.Clear();
   
     shell_max_.Destruct();
     

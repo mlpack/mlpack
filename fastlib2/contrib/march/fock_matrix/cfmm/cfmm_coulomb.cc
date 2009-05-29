@@ -189,9 +189,6 @@ void CFMMCoulomb::Compute() {
   
   fx_timer_start(mod_, "cfmm_time");
   
-  MultipoleInit_();
-  
-  
   MultipoleComputation_();
   
   if (fx_param_exists(mod_, "do_naive")) {
@@ -210,7 +207,7 @@ void CFMMCoulomb::OutputCoulomb(Matrix* coulomb_out) {
 
   coulomb_out->Copy(coulomb_mat_);
 
-} // Output()
+} // OutputCoulomb()
 
 
 void CFMMCoulomb::UpdateDensity(const Matrix& new_density) {
@@ -225,8 +222,10 @@ void CFMMCoulomb::UpdateDensity(const Matrix& new_density) {
   // not sure if this is the right way to destruct this
   if (multipole_init_called_) {
     printf("destroying ContinuousFmm\n");
-    cfmm_algorithm_.~ContinuousFmm();
+    //cfmm_algorithm_.~ContinuousFmm();
+    //delete cfmm_algorithm_;
+    //cfmm_algorithm_.Destruct();
+    cfmm_algorithm_.Reset(charges_);
   }
-  //MultipoleInit_();
   
 }

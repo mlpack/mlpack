@@ -265,6 +265,9 @@ private:
   // all integrals have a factor of pi^(2.5)
   double pow_pi_2point5_;
   
+  // the number of times the schwartz bound works for a prune
+  index_t num_schwartz_prunes_;;
+  
   
   //////////////// Functions /////////////////////////////
   
@@ -518,6 +521,8 @@ private:
     }
     
     pow_pi_2point5_ = pow(math::PI, 2.5);
+    
+    num_schwartz_prunes_ = 0;
     
   } // Init()
   
