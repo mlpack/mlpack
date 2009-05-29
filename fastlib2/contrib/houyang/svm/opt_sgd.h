@@ -277,15 +277,17 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   lambda_ = 1.0/(C_*n_data_);
   bias_ = 0.0;
   
-  double sqrt_n = sqrt(n_data_);
-  double eta0 = sqrt_n / max(1.0, LossFunctionGradient_(learner_typeid, -sqrt_n)); // initial step length
-  t_ = 1.0 / (eta0 * lambda_);
 
   /* learners initialization */
   LearnersInit_(learner_typeid);
 
   /* Begin SGD iterations */
   if (b_linear_) { // linear SVM, output: w, bias
+
+    double sqrt_n = sqrt(n_data_);
+    double eta0 = sqrt_n / max(1.0, LossFunctionGradient_(learner_typeid, -sqrt_n)); // initial step length
+    t_ = 1.0 / (eta0 * lambda_);
+
     scale_w_ = 0.0;
     //for (index_t ct=0; ct<n_data_; ct++) {
     double eta_grad = INFINITY;
@@ -311,7 +313,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	la::AddExpert(eta_grad/ scale_w_, xt, &w_); // update w by Steepest Descent: w_{t+1} = w_t - eta * loss_gradient * xt
 	
 	// Pegasos Stochastic Gradient Descent
-	//eta_grad = ;
+	//eta_grad = ; 
 	
 	bias_ += eta_grad * 0.01; // update bias
       }
@@ -323,6 +325,14 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     // it's more expensive to calc the accuracy then linear SVM, so we just use n_iter_ as stop criterion
     index_t work_idx = 0;
     index_t ct = 0;
+
+    // initial step length
+    //double sqrt_n = sqrt(n_data_);
+    //double eta0 = sqrt_n / max(1.0, LossFunctionGradient_(learner_typeid, -sqrt_n)); // initial step length
+    //t_ = 1.0 / (eta0 * lambda_);
+
+    //double eta0 = 1.0 / (2*lambda_);
+    t_ = 1.0;
 
     Vector coef_long;
     coef_long.Init(n_iter_);
@@ -336,12 +346,18 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 
       double yt = y_[work_idx];
       double yt_hat = 0.0;
-      for (index_t i=0; i<ct; i++)
-	yt_hat += coef_long[i] * CalcKernelValue_(i%n_data_, work_idx) + bias_;
+      for (index_t i=0; i<ct; i++) {
+	yt_hat += coef_long[i] * CalcKernelValue_(i%n_data_, work_idx);
+      }
+      yt_hat += bias_;
       double yy_hat = yt * yt_hat;
 
       // update step length
       eta_ = 1.0 / (lambda_ * t_);
+      //eta_ = eta0 / sqrt(t_);
+
+      if (ct >= 1)
+	bias_ += coef_long[ct-1];
 
       // update old coefs (for i<t)
       double one_minus_eta_lambda = 1.0 - eta_ * lambda_;
@@ -356,6 +372,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 
       // soft margin svm
       if (yy_hat <= rho_) {
+	//printf("%d: %f, %f\n", ct, yy_hat, yt);
 	delta = 1.0;
       }
       else {
@@ -364,7 +381,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       coef_long[ct] = eta_ * delta * yt;
 
       // update bias
-      bias_ += coef_long[ct] * 0.01;
+      //bias_ += coef_long[ct];
  
       t_ += 1.0;
       ct ++;

@@ -74,7 +74,8 @@ class MFW {
   
   //double epsilon_; // for SVM_R
   index_t n_iter_; // number of iterations
-  double accuracy_; // accuracy for stopping creterion
+  double accuracy_; // accuracy for stopping criterion
+  double gap_; //for stopping criterion
 
   int step_type_; // 1: Toward Step; -1: Away Step
   index_t n_away_steps_;
@@ -395,9 +396,9 @@ bool MFW<TKernel>::GreedyVectorSelection_() {
   
   
   // Stopping Criterion check
-  double gap = max_grad_inact - min_gradinvCalpha_act;
-  //printf("%d: gap=%f\n", ct_iter_, gap);
-  if (gap <= accuracy_) {
+  gap_ = max_grad_inact - min_gradinvCalpha_act;
+  //printf("%d: gap=%f\n", ct_iter_, gap_);
+  if (gap_ <= accuracy_) {
     return true; // optimality reached
   }
 
