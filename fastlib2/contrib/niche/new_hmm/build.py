@@ -6,9 +6,52 @@ binrule(
     )
 
 binrule(
+    name = "test_dna_lmmk",
+    sources = ["test_dna_lmmk.cc"],
+    headers = ["test_engine.h",
+               "test_engine_impl.h",
+               "latent_mmk.h",
+               "latent_mmk_impl.h",
+               "utils.h",
+               "multinomial.h",               
+               "isotropic_gaussian.h",
+               "diag_gaussian.h",
+               "mixture.h",
+               "hmm.h",
+               "../svm/svm.h",
+               "../svm/smo.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
+binrule(
+    name = "test_dna_gmmk",
+    sources = ["test_dna_gmmk.cc"],
+    headers = ["test_engine.h",
+               "test_engine_impl.h",
+               "generative_mmk.h",
+               "generative_mmk_impl.h",
+               "utils.h",
+               "multinomial.h",               
+               "isotropic_gaussian.h",
+               "diag_gaussian.h",
+               "mixture.h",
+               "hmm.h",
+               "../svm/svm.h",
+               "../svm/smo.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
+binrule(
     name = "test_engine",
     sources = ["test_engine.cc"],
     headers = ["test_engine.h",
+               "test_engine_impl.h",
                "../svm/smo.h",
                "../svm/svm.h",
                "generative_mmk.h",

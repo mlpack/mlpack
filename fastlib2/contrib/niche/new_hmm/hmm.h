@@ -785,7 +785,7 @@ class HMM {
 	} //end if(MIXTURE)
       } // end for(all sequences)
       //printf("current_total_neg_likelihood = %f\n",
-      //current_total_neg_likelihood);
+      //     current_total_neg_likelihood);
 
 
       // NORMALIZE - control NaN risk!
