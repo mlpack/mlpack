@@ -277,7 +277,7 @@ void MFW<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     else if (stop_condition == 2) {// max num of iterations exceeded
       // Calculate the bias term
       CalcBias_();
-      printf("MFW terminates since the number of iterations %d exceeded !!!\n", n_iter_);
+      printf("MFW terminates since the number of iterations %d exceeded !!! Gap: %f.\n", n_iter_, gap_);
       printf("Portion of away steps: %f\n", double(n_away_steps_)/double(n_iter_)); 
       printf("Numver of active=%d\n", n_active_);
       break;
