@@ -1,8 +1,30 @@
 binrule(
-    name = "otrav_mem_test",
-    sources = ["otrav_mem_test.cc"],
-    headers = [],
-    deplibs = ["fastlib:fastlib"]
+    name = "empirical_markov",
+    sources = ["empirical_markov.cc"],
+    headers = ["empirical_mmk.h",
+               "empirical_mmk_impl.h",
+               "utils.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
+binrule(
+    name = "test_dna_bayes",
+    sources = ["test_dna_bayes.cc"],
+    headers = ["test_engine.h",
+               "test_engine_impl.h",
+               "utils.h",
+               "multinomial.h",               
+               "isotropic_gaussian.h",
+               "diag_gaussian.h",
+               "mixture.h",
+               "hmm.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
     )
 
 binrule(
@@ -155,6 +177,13 @@ binrule(
 binrule(
     name = "testMatrix",
     sources = ["testMatrix.cc"],
+    headers = [],
+    deplibs = ["fastlib:fastlib"]
+    )
+
+binrule(
+    name = "otrav_mem_test",
+    sources = ["otrav_mem_test.cc"],
     headers = [],
     deplibs = ["fastlib:fastlib"]
     )

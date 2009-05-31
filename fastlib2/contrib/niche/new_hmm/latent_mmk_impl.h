@@ -148,7 +148,8 @@ double HMMLatentMMKComponentQX(double exp_neg_lambda,
     for(int a = 0; a < n_dims; a++) {
       double sum_p_qt_given_xs_equals_a = 0;
       for(int s = 0; s < sequence1_length; s++) {
-	sum_p_qt_given_xs_equals_a += p_qt_1.get(s, i);
+	sum_p_qt_given_xs_equals_a +=
+	  p_qt_1.get(s, i) * (sequence1.get(0, s) == a);
       }
       
       // 1
