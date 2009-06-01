@@ -1,4 +1,16 @@
 binrule(
+    name = "save_one_dna_hmm",
+    sources = ["save_one_dna_hmm.cc"],
+    headers = ["test_engine.h",
+               "test_engine_impl.h",
+               "utils.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
+binrule(
     name = "test_dna_fisher_kernel",
     sources = ["test_dna_fisher_kernel.cc"],
     headers = ["test_engine.h",

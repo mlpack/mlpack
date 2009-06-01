@@ -2,7 +2,6 @@
 #include "test_engine.h"
 #include "utils.h"
 
-
 void GetModelClasses(bool *p_model_exons, bool *p_model_introns) {
   bool &model_exons = *p_model_exons;
   bool &model_introns = *p_model_introns;
@@ -22,8 +21,6 @@ void GetModelClasses(bool *p_model_exons, bool *p_model_introns) {
     FATAL("Error: Parameter 'model_classes' must be set to \"both\", \"exons\", or \"introns\". Exiting...");
   }
 }
-
-
 
 void GetOneDNAHMM(bool model_exons, bool model_introns,
 		  int n_states,
@@ -56,13 +53,13 @@ void GetOneDNAHMM(bool model_exons, bool model_introns,
     sequences.AppendSteal(&intron_sequences);
   }
 
-  /*
-  char seq_name[80];
-  for(int i = 0; i < sequences.size(); i++) {
-    sprintf(seq_name, "sequences[%d]", i);    
-    PrintDebug(seq_name, sequences[i], "%d");
-  }
-  */
+  
+//   char seq_name[80];
+//   for(int i = 0; i < sequences.size(); i++) {
+//     sprintf(seq_name, "sequences[%d]", i);    
+//     PrintDebug(seq_name, sequences[i], "%d");
+//   }
+  
 
   hmm.Init(n_states, n_dims, MULTINOMIAL);
   hmm.InitParameters(sequences);
@@ -118,14 +115,19 @@ void SaveOneDNAHMM() {
   WriteOutOTObject(labels_filename, labels);
 }
 
-
 void SaveKFoldDNAHMMs(int n_folds) {
+
+  const char* exons_filename = "exons_small.dat";
+  const char* introns_filename = "introns_small.dat";
 
   const int exon_label = 1;
   const int intron_label = 0;
+
+  int n_dims = 4;
+  int n_states = fx_param_int_req(NULL, "n_states");
   
-  int selected_label;
   const char* model_classes = fx_param_str_req(NULL, "model_classes");
+  int selected_label;
   if(strcmp(model_classes, "exons") == 0) {
     selected_label = exon_label;
   }
@@ -145,16 +147,10 @@ void SaveKFoldDNAHMMs(int n_folds) {
   int n_introns = intron_sequences.size();
 
   sequences.AppendSteal(&intron_sequences);
+  int n_sequences = n_exons + n_introns;
 
-
-
-  // k-fold model using just exons
-  // figure out which exons appear in the training part of each fold and populate an arraylist with only those
-
-  Dataset cv_set;
   Matrix id_label_pairs;
   id_label_pairs.Init(2, n_sequences);
-  
   for(int i = 0; i < n_exons; i++) {
     id_label_pairs.set(0, i, i);
     id_label_pairs.set(1, i, exon_label);
@@ -163,25 +159,44 @@ void SaveKFoldDNAHMMs(int n_folds) {
     id_label_pairs.set(0, i, i);
     id_label_pairs.set(1, i, intron_label);
   }
+  Dataset cv_set;
   cv_set.CopyMatrix(id_label_pairs);
 
   ArrayList<index_t> permutation;
-  math::MakeIdentityPermutation(n_points, &permutation);
+  math::MakeIdentityPermutation(n_sequences, &permutation);
 
-  
+
   for(int fold_num = 0; fold_num < n_folds; fold_num++) {
     Dataset training_set;
     Dataset test_set;
     
     cv_set.SplitTrainTest(n_folds, fold_num, permutation, &training_set, &test_set);
-
     const Matrix &training_set_matrix = training_set.matrix();
+
+    ArrayList<GenMatrix<int> > selected_training_sequences;
+    selected_training_sequences.Init(0);
+    // should set capacity to n_sequences / n_folds
     for(int i = 0; i < training_set.n_points(); i++) {
       if(training_set_matrix.get(1, i) == selected_label) {
 	selected_training_sequences.PushBackCopy(sequences[training_set_matrix.get(0, i)]);
       }
     }
 
+    char hmm_filename[80];
+    if(selected_label == exon_label) {
+      sprintf(hmm_filename, "frozen/frozen_dna_one_hmm_topo%d_model_exons_fold%dof%d", n_states, fold_num, n_folds);
+    }
+    else {
+      sprintf(hmm_filename, "frozen/frozen_dna_one_hmm_topo%d_model_introns_fold%dof%d", n_states, fold_num, n_folds);
+    }
+
+    printf("Fold %d hmm_filename = \"%s\"\n", fold_num, hmm_filename);
+    struct stat stFileInfo;
+    if(stat(hmm_filename, &stFileInfo) == 0) {
+      FATAL("Error: File to which HMM is to be saved already exists! Bypassing learning and exiting...");
+    }
+
+    HMM<Multinomial> hmm;
     hmm.Init(n_states, n_dims, MULTINOMIAL);
     hmm.InitParameters(selected_training_sequences);
     //hmm.PrintDebug("hmm after calling InitParameters(sequences)");
@@ -192,28 +207,28 @@ void SaveKFoldDNAHMMs(int n_folds) {
 		  1e-6 * ((double)1),
 		  1000);
 
-
-
-
-
-    
-
+    WriteOutOTObject(hmm_filename, hmm);
   }
-
-
-
-
 }
-
 
 
 
 int main(int argc, char* argv[]) {
   fx_init(argc, argv, NULL);
 
+  srand48(time(0));
+  srand(time(0));
 
-  SaveOneDNAHMM();
-  SaveKFoldDNAHMMs();
+  const char* mode = fx_param_str_req(NULL, "mode");
+  if(strcmp(mode, "full") == 0) {
+    SaveOneDNAHMM();
+  }
+  else if(strcmp(mode, "kfold") == 0) {
+    SaveKFoldDNAHMMs(10);
+  }
+  else {
+    FATAL("Error: Parameter 'mode' must be set to \"full\" or \"kfold\". Exiting...");
+  }    
   
   fx_done(fx_root);
 }
