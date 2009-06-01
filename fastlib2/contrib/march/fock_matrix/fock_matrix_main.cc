@@ -94,14 +94,17 @@ int main(int argc, char* argv[]) {
     FATAL("Number of basis centers must equal number of exponents.\n");
   }
   
+  std::string density_str;
   Matrix density;
   if (fx_param_exists(root_mod, "density")) {
     const char* density_file = fx_param_str_req(root_mod, "density");
     data::Load(density_file, &density);
+    density_str = density_file;
   }
   else {
     density.Init(centers.n_cols(), centers.n_cols());
     density.SetAll(1.0);
+    density_str = "default";
   }
   
   if ((density.n_cols() != centers.n_cols()) || 
@@ -152,12 +155,11 @@ int main(int argc, char* argv[]) {
   }
   const char* exp_name = exp_string.c_str();
   
-  /*
-  printf(centers_name);
-  printf("\n");
-  printf(exp_name);
-  printf("\n\n");
-  */
+  size_t density_last = density_str.find_last_of("/");
+  if (density_last != std::string::npos) {
+    density_str.erase(0, density_last+1);
+  }
+  const char* density_name = density_str.c_str();
   
   std::string directory(dir_char);
   std::string underscore("_");
@@ -166,16 +168,19 @@ int main(int argc, char* argv[]) {
   std::string under_K("_K.csv");
   
   std::string naive_fock_string;
-  naive_fock_string = directory + centers_name + underscore + exp_name + under_F;
+  naive_fock_string = directory + centers_name + underscore + exp_name 
+                      + underscore + density_name +  under_F;
   const char* naive_fock_file = naive_fock_string.c_str();
 
   std::string naive_coulomb_string;
-  naive_coulomb_string = directory + centers_name + underscore + exp_name + under_J;
+  naive_coulomb_string = directory + centers_name + underscore + exp_name 
+                         + underscore + density_name + under_J;
   const char* naive_coulomb_file = naive_coulomb_string.c_str();
 
   std::string naive_exchange_string;
-  naive_exchange_string = directory + centers_name + underscore + exp_name + under_K;
-  const char* naive_exchange_file = naive_exchange_string.c_str();
+  naive_exchange_string = directory + centers_name + underscore + exp_name
+                          + underscore + density_name + under_K;
+  cons t char* naive_exchange_file = naive_exchange_string.c_str();
 
   
   bool do_naive = fx_param_exists(root_mod, "do_naive");

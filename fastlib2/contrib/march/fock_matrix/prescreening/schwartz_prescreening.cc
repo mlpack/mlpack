@@ -62,7 +62,7 @@ void SchwartzPrescreening::UpdateDensity(const Matrix& new_density) {
   coulomb_matrix_.SetZero();
   exchange_matrix_.SetZero();
   
-  shell_pair_list_.Destruct();
+  shell_pair_list_.Clear();
   
   num_prunes_ = 0;
   
@@ -114,7 +114,7 @@ void SchwartzPrescreening::Compute() {
       density_bound = max(density_bound, 
                           0.25 * density_matrix_.ref(l_ind, j_ind));
       
-      printf("density_bound: %g\n", density_bound);
+      //printf("density_bound: %g\n", density_bound);
       
       double this_est = i_pair.schwartz_factor() * 
           j_pair.schwartz_factor() * density_bound;

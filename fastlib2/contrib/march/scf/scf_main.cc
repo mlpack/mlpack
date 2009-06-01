@@ -7,9 +7,67 @@
 #include "contrib/march/fock_matrix/cfmm/cfmm_coulomb.h"
 
 
+
+const fx_entry_doc scf_main_entries[] = {
+{"centers", FX_REQUIRED, FX_STR, NULL, 
+"A file containing the centers of the basis functions.\n"},
+{"bohr", FX_PARAM, FX_STR, NULL, 
+"Specify this parameter if the data are in bohr.  Otherwise they are assumed\n"
+" to be in angstroms.\n"},
+{"exponents", FX_REQUIRED, FX_STR, NULL, 
+"A file containing the exponents of the basis functions.\n"
+"Must have the same number of rows as centers.\n"},
+{"density", FX_PARAM, FX_STR, NULL, 
+"A file containing the density matrix.  If it is not provided, an all-ones\n"
+"matrix is assumed.\n"},
+{"momenta", FX_PARAM, FX_STR, NULL, 
+"A file containing the momenta.  If not specified, then all functions are\n"
+"assumed to be s-type.\n"},
+{"density", FX_PARAM, FX_STR, NULL,
+"A file containing the initial guess for the density.  If not specified, then\n"
+"the all-zero density is used.\n"},
+{"nuclear_centers", FX_REQUIRED, FX_STR, NULL,
+"A file containing the locations of the nuclei.  Required.\n"},
+{"nuclear_charges", FX_PARAM, FX_STR, NULL,
+"A file containing the charges of the nuclei.  If not specified, then all\n"
+"atoms are assumed to be H.\n"},
+{"num_electrons", FX_REQUIRED, FX_INT, NULL,
+"The total number of electrons.  Must be even, since only RHF supported.\n"},
+{"coulomb_alg", FX_PARAM, FX_STR, NULL,
+"Specify an algorithm to compute the Coulomb matrix:\n"
+"\tnaive, prescreening, cfmm, multi.  Default: naive\n"},
+{"exchange_alg", FX_PARAM, FX_STR, NULL,
+"Specify an algorithm to compute the exchange matrix:\n"
+"\tnaive, prescreening, link, multi.  Default: naive\n"},
+FX_ENTRY_DOC_DONE
+};
+
+const fx_submodule_doc scf_main_submodules[] = {
+{"cfmm", &cfmm_mod_doc, 
+"Parameters and results for the CFMM.\n"},
+{"link", &link_mod_doc,
+"Parameters and results for LinK.\n"},
+{"prescreening", &prescreening_mod_doc,
+"Parameters and results for Schwartz prescreening.\n"},
+{"naive", &naive_mod_doc,
+"Parameters and results for naive.\n"},
+{"multi", &multi_mod_doc,
+"Parameters and results for multi-tree algorithm.\n"},
+{"solver", &scf_mod_doc, 
+"Parameters and results for the SCF main routine.\n"},
+FX_SUBMODULE_DOC_DONE
+};
+
+
+const fx_module_doc scf_main_doc = {
+scf_main_entries, scf_main_submodules, 
+"Runs and compares different fock matrix construction methods.\n"
+};
+
+
 int main(int argc, char* argv[]) {
 
-  fx_module* root_mod = fx_init(argc, argv, NULL);
+  fx_module* root_mod = fx_init(argc, argv, &scf_main_doc);
   
   Matrix centers;
   const char* centers_file = fx_param_str_req(root_mod, "centers");
