@@ -3,6 +3,19 @@
 #endif
 
 
+void LoadCommonCSet(Vector* p_c_set) {
+  Vector &c_set = *p_c_set;
+
+  int min_c_exp = -60;
+  int max_c_exp = 16;
+  c_set.Init(max_c_exp - min_c_exp + 1);
+  for(int i = min_c_exp; i <= max_c_exp; i++) {
+    c_set[i - min_c_exp] = pow(2, ((double)i)/4.0);
+  }
+
+  PrintDebug("c_set", c_set, "%3e");
+}
+
 void CreateIDLabelPairs(const GenVector<int> &labels,
 			Matrix* p_id_label_pairs) {
   Matrix &id_label_pairs = *p_id_label_pairs;
@@ -23,41 +36,23 @@ void TestHMMGenMMKClassification(const ArrayList<HMM<Multinomial> > &hmms,
   
   double lambda = fx_param_double_req(NULL, "lambda");
   printf("lambda = %f\n", lambda);
+
   int witness_length = fx_param_int(NULL, "witness_length", 70);
   printf("witness_length = %d\n", witness_length);
 
+  double rho = fx_param_double(NULL, "rho", 1);
+  printf("rho = %f\n", rho);
 
   Matrix kernel_matrix;
-  GenerativeMMKBatch(lambda, witness_length, hmms, &kernel_matrix);
-  //PrintDebug("original kernel matrix", kernel_matrix, "%3e");
-
-//   Vector original_eigenvalues;
-//   la::EigenvaluesInit(kernel_matrix,
-// 		      &original_eigenvalues);
-  //PrintDebug("original eigenvalues", original_eigenvalues, "%3e");
-
+  GenerativeMMKBatch(lambda, rho, witness_length, hmms, &kernel_matrix);
   NormalizeKernelMatrix(&kernel_matrix);
-  //PrintDebug("normalized kernel matrix", kernel_matrix, "%3e");
-
-//   Vector normalized_eigenvalues;
-//   la::EigenvaluesInit(kernel_matrix,
-// 		      &normalized_eigenvalues);
-  //PrintDebug("normalized eigenvalues", normalized_eigenvalues, "%3e");
-  //data::Save("kernel_matrix.csv", kernel_matrix);
   
   Matrix id_label_pairs;
   CreateIDLabelPairs(labels, &id_label_pairs);
   id_label_pairs.PrintDebug("id_label_pairs");
 
   Vector c_set;
-  int min_c_exp = -30;
-  int max_c_exp = 8;
-  c_set.Init(max_c_exp - min_c_exp + 1);
-  for(int i = min_c_exp; i <= max_c_exp; i++) {
-    c_set[i - min_c_exp] = pow(2, ((double)i)/2.0);
-  }
-  PrintDebug("c_set", c_set, "%3e");
-
+  LoadCommonCSet(&c_set);
   
   SVMKFoldCV(id_label_pairs, kernel_matrix, c_set);
 }
@@ -75,39 +70,66 @@ void TestHMMLatMMKClassification(const HMM<Multinomial> &hmm,
 
   Matrix kernel_matrix;
   LatentMMKBatch(lambda, hmm, sequences, &kernel_matrix);
-  //PrintDebug("original kernel matrix", kernel_matrix, "%3e");
-
-//   Vector original_eigenvalues;
-//   la::EigenvaluesInit(kernel_matrix,
-// 		      &original_eigenvalues);
-  //PrintDebug("original eigenvalues", original_eigenvalues, "%3e");
-
   NormalizeKernelMatrix(&kernel_matrix);
-  //PrintDebug("normalized kernel matrix", kernel_matrix, "%3e");
-
-//   Vector normalized_eigenvalues;
-//   la::EigenvaluesInit(kernel_matrix,
-// 		      &normalized_eigenvalues);
-  //PrintDebug("normalized eigenvalues", normalized_eigenvalues, "%3e");
-  //data::Save("kernel_matrix.csv", kernel_matrix);
   
   Matrix id_label_pairs;
   CreateIDLabelPairs(labels, &id_label_pairs);
   id_label_pairs.PrintDebug("id_label_pairs");
 
   Vector c_set;
-  int min_c_exp = -15;
-  int max_c_exp = 4;
-  c_set.Init(max_c_exp - min_c_exp + 1);
-  for(int i = min_c_exp; i <= max_c_exp; i++) {
-    c_set[i - min_c_exp] = pow(2, i);
-  }
-  PrintDebug("c_set", c_set, "%3e");
-
+  LoadCommonCSet(&c_set);
   
   SVMKFoldCV(id_label_pairs, kernel_matrix, c_set);
 }
 
+
+void TestHMMFisherKernelClassification(const HMM<Multinomial> &hmm,
+				       const ArrayList<GenMatrix<int> > &sequences,
+				       const GenVector<int> &labels) {
+  
+  int n_sequences = labels.length();
+  printf("n_sequences = %d\n", n_sequences);
+  
+  Matrix kernel_matrix;
+  FisherKernelBatch(hmm, sequences, &kernel_matrix);
+  NormalizeKernelMatrix(&kernel_matrix);
+  
+  Matrix id_label_pairs;
+  CreateIDLabelPairs(labels, &id_label_pairs);
+  id_label_pairs.PrintDebug("id_label_pairs");
+
+  Vector c_set;
+  LoadCommonCSet(&c_set);
+  
+  SVMKFoldCV(id_label_pairs, kernel_matrix, c_set);
+}
+
+
+void TestMarkovMMKClassification(int n_symbols,
+				 const ArrayList<GenMatrix<int> > &sequences,
+				 const GenVector<int> &labels) {
+  int n_sequences = labels.length();
+  printf("n_sequences = %d\n", n_sequences);
+  
+  double lambda = fx_param_double_req(NULL, "lambda");
+  printf("lambda = %f\n", lambda);
+
+  int order = fx_param_int_req(NULL, "order");
+  printf("order = %d\n", order);
+
+  Matrix kernel_matrix;
+  MarkovEmpiricalMMKBatch(lambda, order, n_symbols, sequences, &kernel_matrix);
+  NormalizeKernelMatrix(&kernel_matrix);
+  
+  Matrix id_label_pairs;
+  CreateIDLabelPairs(labels, &id_label_pairs);
+  id_label_pairs.PrintDebug("id_label_pairs");
+
+  Vector c_set;
+  LoadCommonCSet(&c_set);
+  
+  SVMKFoldCV(id_label_pairs, kernel_matrix, c_set);
+}
 
 int EvalKFoldSVM(double c, int n_points,
 		 int n_folds,
@@ -226,5 +248,3 @@ void SVMKFoldCV(const Matrix &id_label_pairs,
   fx_result_double(NULL, "best_accuracy", best_accuracy);
   
 }
-
-

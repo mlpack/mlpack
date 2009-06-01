@@ -1,6 +1,38 @@
 binrule(
-    name = "empirical_markov",
-    sources = ["empirical_markov.cc"],
+    name = "test_dna_fisher_kernel",
+    sources = ["test_dna_fisher_kernel.cc"],
+    headers = ["test_engine.h",
+               "test_engine_impl.h",
+               "fisher_kernel.h",
+               "fisher_kernel_impl.h",
+               "utils.h",
+               "../svm/svm.h",
+               "../svm/smo.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
+binrule(
+    name = "test_dna_emmk",
+    sources = ["test_dna_emmk.cc"],
+    headers = ["test_engine.h",
+               "test_engine_impl.h",
+               "empirical_mmk.h",
+               "empirical_mmk_impl.h",
+               "utils.h",
+               "../svm/svm.h",
+               "../svm/smo.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
+binrule(
+    name = "empirical_mmk",
+    sources = ["empirical_mmk.cc"],
     headers = ["empirical_mmk.h",
                "empirical_mmk_impl.h",
                "utils.h"],

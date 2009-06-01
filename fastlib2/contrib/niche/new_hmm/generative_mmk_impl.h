@@ -97,6 +97,111 @@ template <typename TDistribution>
   return sum;
 }
 
+double GenerativeMMK(double lambda, double rho, int n_T,
+		     const HMM<Multinomial> &hmm_a,
+		     const HMM<Multinomial> &hmm_b) {
+  
+  int n1 = hmm_a.n_states();
+  int n2 = hmm_b.n_states();
+  
+  int n_dims = hmm_a.n_dims();
+  
+  Multinomial* state_distributions1;
+  state_distributions1 =
+    (Multinomial*) malloc(n1 * sizeof(Multinomial));
+  for(int i = 0; i < n1; i++) {
+    state_distributions1[i].Init(hmm_a.state_distributions[i].p());
+    for(int j = 0; j < n_dims; j++) {
+      (*(state_distributions1[i].p_))[j] =
+	pow((*(state_distributions1[i].p_))[j], rho);
+    }
+  }
+
+  Multinomial* state_distributions2;
+  state_distributions2 =
+    (Multinomial*) malloc(n2 * sizeof(Multinomial));
+  for(int i = 0; i < n2; i++) {
+    state_distributions2[i].Init(hmm_b.state_distributions[i].p());
+    for(int j = 0; j < n_dims; j++) {
+      (*(state_distributions2[i].p_))[j] =
+	pow((*(state_distributions2[i].p_))[j], rho);
+    }
+  }
+
+
+  
+  Matrix psi;
+  psi.Init(n2, n1);
+  for(int i1 = 0; i1 < n1; i1++) {
+    for(int i2 = 0; i2 < n2; i2++) {
+      psi.set(i2, i1,
+	      GenerativeMMK(lambda,
+			    state_distributions1[i1],
+			    state_distributions2[i2]));
+    }
+  }
+
+  Matrix phi;
+  phi.Init(n2, n1);
+  //double unif1 = ((double)1) / ((double)n1);
+  //double unif2 = ((double)2) / ((double)n2);
+  for(int i1 = 0; i1 < n1; i1++) {
+    for(int i2 = 0; i2 < n2; i2++) {
+      phi.set(i2, i1,
+	      pow(hmm_a.p_initial[i1] * hmm_b.p_initial[i2], rho));
+	      //unif1 * unif2);
+    }
+  }
+
+  for(int i1 = 0; i1 < n1; i1++) {
+    for(int i2 = 0; i2 < n2; i2++) {
+      phi.set(i2, i1, phi.get(i2, i1) * psi.get(i2, i1));
+    }
+  }
+
+
+  Matrix transition1;
+  transition1.Copy(hmm_a.p_transition);
+  for(int j = 0; j < n1; j++) {
+    for(int i = 0; i < n1; i++) {
+      transition1.set(i, j,
+		      pow(transition1.get(i, j), rho));
+    }
+  }
+
+  Matrix transition2_transpose;
+  la::TransposeInit(hmm_b.p_transition, &transition2_transpose);
+  for(int i = 0; i < n2; i++) {
+    for(int j = 0; j < n2; j++) {
+      transition2_transpose.set(j, i,
+				pow(transition2_transpose.get(j, i), rho));
+    }
+  }
+
+  
+  Matrix temp1;
+  temp1.Init(n2, n1);
+
+  // main iteration
+  for(int t = 1; t <= n_T; t++) {
+    la::MulOverwrite(transition2_transpose, phi, &temp1);
+    la::MulOverwrite(temp1, transition1, &phi);
+    for(int i1 = 0; i1 < n1; i1++) {
+      for(int i2 = 0; i2 < n2; i2++) {
+	phi.set(i2, i1, phi.get(i2, i1) * psi.get(i2, i1));
+      }
+    }
+  }
+
+  double sum = 0;
+  for(int i1 = 0; i1 < n1; i1++) {
+    for(int i2 = 0; i2 < n2; i2++) {
+      sum += phi.get(i2, i1);
+    }
+  }
+  return sum;
+}
+
 template <typename TDistribution>
 void GenerativeMMKBatch(double lambda, int n_T,
 			const ArrayList<HMM<TDistribution> > &hmms,
@@ -111,6 +216,28 @@ void GenerativeMMKBatch(double lambda, int n_T,
     for(int j = i; j < n_hmms; j++) {
       double gmmk = 
 	GenerativeMMK(lambda, n_T, hmms[i], hmms[j]);
+
+      kernel_matrix.set(j, i, gmmk);
+      if(i != j) {
+	kernel_matrix.set(i, j, gmmk);
+      }
+    }
+  }
+}
+
+void GenerativeMMKBatch(double lambda, double rho, int n_T,
+			const ArrayList<HMM<Multinomial> > &hmms,
+			Matrix *p_kernel_matrix) {
+  Matrix &kernel_matrix = *p_kernel_matrix;
+
+  int n_hmms = hmms.size();
+  
+  kernel_matrix.Init(n_hmms, n_hmms);
+  for(int i = 0; i < n_hmms; i++) {
+    printf("%f%%\n", 100.0 * ((double)(i + 1)) / ((double)n_hmms));
+    for(int j = i; j < n_hmms; j++) {
+      double gmmk = 
+	GenerativeMMK(lambda, rho, n_T, hmms[i], hmms[j]);
 
       kernel_matrix.set(j, i, gmmk);
       if(i != j) {
