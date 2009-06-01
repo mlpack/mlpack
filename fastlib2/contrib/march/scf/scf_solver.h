@@ -162,8 +162,7 @@ class SCFSolver {
     struct datanode* naive_mod = fx_submodule(module_, "naive_integrals");
     */  
     
-    // Set to 1 to perform no diis iterations
-    diis_count_ = fx_param_int(module_, "diis_states", 1);
+    diis_count_ = fx_param_int(module_, "diis_states", 15);
     diis_index_ = 0;
     
     density_matrices_.Init(diis_count_);
@@ -249,6 +248,7 @@ class SCFSolver {
     coulomb_alg_ = coul_alg;
     exchange_alg_ = exc_alg;
     
+    // are they the same algorithm object?
     single_fock_alg_ = ((void *)coulomb_alg_ == (void *)exchange_alg_);
 
   } // Init()
@@ -406,7 +406,7 @@ class SCFSolver {
                 &change_of_basis_matrix_);
     
     //printf("Change Of Basis Matrix:\n");
-    change_of_basis_matrix_.PrintDebug("Change of Basis");
+    //change_of_basis_matrix_.PrintDebug("Change of Basis");
     
     
   } // FormChangeOfBasisMatrix_()
@@ -546,8 +546,8 @@ class SCFSolver {
       
     }
     
-    printf("diis_index: %d\n", diis_index_);
-    density_matrix_norms_.PrintDebug("Density Matrix Norms");
+    //printf("diis_index: %d\n", diis_index_);
+    //density_matrix_norms_.PrintDebug("Density Matrix Norms");
     
     DIISSolver_();
     
@@ -586,7 +586,7 @@ class SCFSolver {
         
       }
       
-      diis_coeffs.PrintDebug("DIIS Coefficients");
+      //diis_coeffs.PrintDebug("DIIS Coefficients");
       
     }
     else {
@@ -806,16 +806,16 @@ class SCFSolver {
                               total_energy_[(current_iteration_ - 1)]);
     
    
-    printf("\n");
-    printf("current_iteration: %d\n", current_iteration_);
+    printf("================\n");
+    printf("Current Iteration: %d\n", current_iteration_);
     
-    printf("density_matrix_frobenius_norm_: %g\n", 
+    printf("Frobenius norm of difference of density matrices: %g\n", 
            density_matrix_frobenius_norm_);
            
-    printf("total_energy_[%d]: %g\n", current_iteration_, 
-           total_energy_[current_iteration_]);
+    printf("Total Energy: %g\n", total_energy_[current_iteration_]);
            
-    printf("energy_diff: %g\n", energy_diff);
+    printf("Difference in energy: %g\n", energy_diff);
+    printf("================\n\n");
     
     if (likely(density_matrix_frobenius_norm_ > density_convergence_)) {
       return false;
@@ -925,7 +925,7 @@ class SCFSolver {
       //Step 4f.
       ComputeDensityMatrixDIIS_();
       
-      density_matrix_.PrintDebug("Density Matrix");
+      //density_matrix_.PrintDebug("Density Matrix");
       
       // Step 4g.
       converged = TestConvergence_();

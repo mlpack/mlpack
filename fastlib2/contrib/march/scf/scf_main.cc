@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
   else {
     density.Init(centers.n_cols(), centers.n_cols());
     density.SetZero();
-    printf("Using only core integrals for initial matrix.\n\n");
+    printf("\nUsing only core integrals for initial matrix.\n\n");
   }
   
   if ((density.n_cols() != centers.n_cols()) || 
