@@ -2,6 +2,42 @@
 #error "This is not a public header file!"
 #endif
 
+void EmitResults(const Vector &c_set,
+		 const GenVector<int> &n_correct_results,
+		 int n_sequences) {
+
+  int c_set_size = c_set.length();
+
+  int n_correct_max = -1;
+  int argmax = -1;
+  
+  Matrix c_accuracy_pairs;
+  c_accuracy_pairs.Init(2, c_set_size);
+  char c_result_name[80];
+  for(int i = 0; i < c_set_size; i++) {
+    int val = n_correct_results[i];
+    
+    c_accuracy_pairs.set(0, i, c_set[i]);
+    c_accuracy_pairs.set(1, i, val);
+    
+    if(val > n_correct_max) {
+      n_correct_max = val;
+      argmax = i;
+    }
+    
+    sprintf(c_result_name, "C%f", c_set[i]);
+    fx_result_double(NULL, c_result_name, val);
+  }
+  data::Save("c_accuracy.csv", c_accuracy_pairs);
+  
+  double c_opt = c_set[argmax];
+  printf("optimal c = %f\n", c_opt);
+  double best_accuracy =
+    ((double)n_correct_results[argmax]) / ((double)n_sequences);
+  printf("accuracy = %f\n", best_accuracy);
+  fx_result_double(NULL, "optimal_c", c_opt);
+  fx_result_double(NULL, "best_accuracy", best_accuracy);
+}
 
 void LoadCommonCSet(Vector* p_c_set) {
   Vector &c_set = *p_c_set;
@@ -101,11 +137,9 @@ void TestHMMLatMMKClassificationKFold(int n_folds,
   GenVector<int> n_correct_results;
   GenVector<int> n_correct_class1_results;
   GenVector<int> n_correct_class0_results;
-
   n_correct_results.Init(c_set_size);
   n_correct_class1_results.Init(c_set_size);
   n_correct_class0_results.Init(c_set_size);
-
   n_correct_results.SetZero();
   n_correct_class1_results.SetZero();
   n_correct_class0_results.SetZero();
@@ -127,7 +161,6 @@ void TestHMMLatMMKClassificationKFold(int n_folds,
     Dataset test_set;
     
     cv_set.SplitTrainTest(n_folds, fold_num, permutation, &training_set, &test_set);
-    
     
     Matrix kernel_matrix;
     LatentMMKBatch(lambda, kfold_hmms[fold_num], sequences, &kernel_matrix);
@@ -172,6 +205,7 @@ void TestHMMLatMMKClassificationKFold(int n_folds,
     }
   }
   
+  /*
   int n_correct_max = -1;
   int argmax = -1;
   
@@ -201,6 +235,10 @@ void TestHMMLatMMKClassificationKFold(int n_folds,
   printf("accuracy = %f\n", best_accuracy);
   fx_result_double(NULL, "optimal_c", c_opt);
   fx_result_double(NULL, "best_accuracy", best_accuracy);
+  */
+
+  EmitResults(c_set, n_correct_results, n_sequences);
+
 
 }
 

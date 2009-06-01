@@ -190,10 +190,10 @@ void LoadKFoldDNAHMMAndSequences(int n_folds,
   for(int fold_num = 0; fold_num < n_folds; fold_num++) {
     char hmm_filename[80];
     if(model_exons) {
-      sprintf(hmm_filename, "frozen/frozen_dna_one_hmm_topo%d_model_exons_fold%dof%d", n_states, fold_num, n_folds);
+      sprintf(hmm_filename, "../../../../frozen/frozen_dna_one_hmm_topo%d_model_exons_fold%dof%d", n_states, fold_num, n_folds);
     }
     else { // model_introns
-      sprintf(hmm_filename, "frozen/frozen_dna_one_hmm_topo%d_model_introns_fold%dof%d", n_states, fold_num, n_folds);
+      sprintf(hmm_filename, "../../../../frozen/frozen_dna_one_hmm_topo%d_model_introns_fold%dof%d", n_states, fold_num, n_folds);
     }
     
     printf("Fold %d hmm_filename = \"%s\"\n", fold_num, hmm_filename);
@@ -202,8 +202,8 @@ void LoadKFoldDNAHMMAndSequences(int n_folds,
 
 //   const char* exons_filename = "../../../../exons_small.dat";
 //   const char* introns_filename = "../../../../introns_small.dat";
-  const char* exons_filename = "exons_small.dat";
-  const char* introns_filename = "introns_small.dat";
+  const char* exons_filename = "../../../../exons_small.dat";
+  const char* introns_filename = "../../../../introns_small.dat";
 
   LoadVaryingLengthData(exons_filename, &sequences);
   int n_exons = sequences.size();
