@@ -79,6 +79,9 @@ class SGD {
   double eta_; // step length. eta = 1/(lambda*t)
   double t_;
 
+  ArrayList<index_t> old_from_new_; // for generating a random sequence of training data
+  ArrayList<index_t> new_from_old_; // for generating a random sequence of training data
+
   double rho_;// for soft margin nonlinear SGD SVM
 
  public:
@@ -267,6 +270,8 @@ void SGD<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
+  index_t i, j;
+  
   /* general learner-independent initializations */
   dataset_ = dataset_in;
   datamatrix_.Alias(dataset_->matrix());
@@ -281,6 +286,21 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   /* learners initialization */
   LearnersInit_(learner_typeid);
 
+  /* To mimic the online learning senario, we randomly permutate the training set for SGD, indexed by old_from_new_ */
+  old_from_new_.Init(n_data_);
+  new_from_old_.Init(n_data_);
+  for (i=0; i<n_data_; i++) {
+    old_from_new_[i] = i; 
+  }
+  for (i=0; i<n_data_; i++) {
+    j = rand() % n_data_;
+    swap(old_from_new_[i], old_from_new_[j]);
+  }
+  for (i=0; i<n_data_; i++) {
+    new_from_old_[old_from_new_[i]] = i;
+  }
+
+
   /* Begin SGD iterations */
   if (b_linear_) { // linear SVM, output: w, bias
 
@@ -291,11 +311,12 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     scale_w_ = 0.0;
     //for (index_t ct=0; ct<n_data_; ct++) {
     double eta_grad = INFINITY;
-    index_t work_idx = 0;
+    index_t work_idx_old = 0;
     index_t ct = 0;
     //while (ct<=n_iter_ && fabs(eta_grad)>=accuracy_) {
-    while (ct<=n_iter_) {
-      work_idx = ct % n_data_;
+    while (ct <= n_iter_) {
+      //work_idx = ct % n_data_;
+      work_idx_old = old_from_new_[ct % n_data_];
       eta_ = 1.0 / (lambda_ * t_); // update step length
       scale_w_ = scale_w_ - scale_w_ / t_; // update scale of w
       if (scale_w_ < SCALE_W_TOLERANCE) {
@@ -303,8 +324,8 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	scale_w_ = 1.0;
       }
       Vector xt;
-      datamatrix_.MakeColumnSubvector(work_idx, 0, n_features_, &xt);
-      double yt = y_[work_idx];
+      datamatrix_.MakeColumnSubvector(work_idx_old, 0, n_features_, &xt);
+      double yt = y_[work_idx_old];
       double yt_hat = la::Dot(w_, xt) * scale_w_ + bias_;
       double yy_hat = yt * yt_hat;
       if (yy_hat < 1.0) {
@@ -323,7 +344,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   }
   else { // nonlinear SVM, output: coefs(i.e. alpha*y), bias
     // it's more expensive to calc the accuracy then linear SVM, so we just use n_iter_ as stop criterion
-    index_t work_idx = 0;
+    index_t work_idx_old = 0;
     index_t ct = 0;
 
     // initial step length
@@ -341,13 +362,13 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     double delta;
 
     while (ct < n_iter_) {
-      work_idx = ct % n_data_;
-      //work_idx = rand() % n_data_;
+      //work_idx = ct % n_data_;
+      work_idx_old = old_from_new_[ct % n_data_];
 
-      double yt = y_[work_idx];
+      double yt = y_[work_idx_old];
       double yt_hat = 0.0;
-      for (index_t i=0; i<ct; i++) {
-	yt_hat += coef_long[i] * CalcKernelValue_(i%n_data_, work_idx);
+      for (i=0; i<ct; i++) {
+	yt_hat += coef_long[i] * CalcKernelValue_(old_from_new_[i%n_data_], work_idx_old);
       }
       yt_hat += bias_;
       double yy_hat = yt * yt_hat;
@@ -362,7 +383,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       // update old coefs (for i<t)
       double one_minus_eta_lambda = 1.0 - eta_ * lambda_;
       //printf("%d: %f\n", ct, one_minus_eta_lambda);
-      for (index_t i=0; i<ct; i++)
+      for (i=0; i<ct; i++)
 	coef_long[i] = coef_long[i] * one_minus_eta_lambda; 
 
       // update current coef (for i==t)
@@ -387,9 +408,9 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       ct ++;
     }
     // convert coef_long to coef_
-    for (index_t i=0; i<n_iter_; i++) {
-      work_idx = i % n_data_;
-      coef_[work_idx] = coef_[work_idx] + coef_long[i];
+    for (i=0; i<n_iter_; i++) {
+      work_idx_old = old_from_new_[i % n_data_];
+      coef_[work_idx_old] = coef_[work_idx_old] + coef_long[i];
     }
   }
 }
