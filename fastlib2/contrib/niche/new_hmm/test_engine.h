@@ -4,12 +4,15 @@
 #include "fastlib/fastlib.h"
 #include "generative_mmk.h"
 #include "latent_mmk.h"
+#include "fisher_kernel.h"
+#include "empirical_mmk.h"
 #include "utils.h"
 #include "contrib/niche/svm/smo.h"
 #include "contrib/niche/svm/svm.h"
 
 #define INSIDE_TEST_ENGINE_IMPL_H
 
+void LoadCommonCSet(Vector* p_c_set);
 
 void CreateIDLabelPairs(const GenVector<int> &labels,
 			Matrix* p_id_label_pairs);
@@ -18,6 +21,14 @@ void TestHMMGenMMKClassification(const ArrayList<HMM<Multinomial> > &hmms,
 				 const GenVector<int> &labels);
 
 void TestHMMLatMMKClassification(const HMM<Multinomial> &hmm,
+				 const ArrayList<GenMatrix<int> > &sequences,
+				 const GenVector<int> &labels);
+
+void TestHMMFisherKernelClassification(const HMM<Multinomial> &hmm,
+				       const ArrayList<GenMatrix<int> > &sequences,
+				       const GenVector<int> &labels);
+
+void TestMarkovMMKClassification(int n_symbols,
 				 const ArrayList<GenMatrix<int> > &sequences,
 				 const GenVector<int> &labels);
 

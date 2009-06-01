@@ -45,13 +45,13 @@ double MarkovEmpiricalMMK(double lambda,
   int n_strings = counts1.length();
 
   int clique_size = order + 1;
-  int powers[clique_size];
+  int powers[clique_size + 1];
   double exp_neg_lambdas[clique_size];
   for(int r = 0; r < clique_size; r++) {
     powers[r] = (int) pow(n_symbols, r);    
     exp_neg_lambdas[r] = exp(-((double)r) * lambda);
-    printf("exp_neg_lambdas[%d] = %f\n", r, exp_neg_lambdas[r]);
   }
+  powers[clique_size] = (int) pow(n_symbols, clique_size);
 
   int encoding1[clique_size];
   int encoding2[clique_size];
@@ -72,7 +72,6 @@ double MarkovEmpiricalMMK(double lambda,
       int n_different = 0;
       for(int r = 0; r < clique_size; r++) {
 	if(encoding1[r] != encoding2[r]) {
-	  //printf("hit: %d\t%d\n", counts1[i], counts2[i]);
 	  n_different++;
 	}
       }
@@ -106,8 +105,8 @@ void MarkovEmpiricalMMKBatch(double lambda,
     for(int j = i; j < n_sequences; j++) {
       double emmk = 
 	MarkovEmpiricalMMK(lambda, order, n_symbols,
-			   sequences[i], sequences[j])
-	kernel_matrix.set(j, i, emmk);
+			   sequences[i], sequences[j]);
+      kernel_matrix.set(j, i, emmk);
       if(i != j) {
 	kernel_matrix.set(i, j, emmk);
       }

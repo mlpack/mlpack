@@ -24,9 +24,17 @@ double GenerativeMMK(double lambda, int n_T,
 		     const HMM<TDistribution> &hmm_a,
 		     const HMM<TDistribution> &hmm_b);
 
+double GenerativeMMK(double lambda, double rho, int n_T,
+		     const HMM<Multinomial> &hmm_a,
+		     const HMM<Multinomial> &hmm_b);
+
 template <typename TDistribution>
 void GenerativeMMKBatch(double lambda, int n_T,
 			const ArrayList<HMM<TDistribution> > &hmms,
+			Matrix *p_kernel_matrix);
+
+void GenerativeMMKBatch(double lambda, double rho, int n_T,
+			const ArrayList<HMM<Multinomial> > &hmms,
 			Matrix *p_kernel_matrix);
 
 double KDEGenerativeMMK(double lambda,
