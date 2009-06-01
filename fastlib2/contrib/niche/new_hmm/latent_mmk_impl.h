@@ -32,12 +32,17 @@ template <typename TDistribution, typename T>
 				&p_qt_2,
 				&neg_likelihood_2);
   
-
   Matrix p_qq_1;
   Matrix p_qq_2;
   
   ComputePqq(p_qq_t_1, &p_qq_1);
   ComputePqq(p_qq_t_2, &p_qq_2);
+
+  Matrix p_q_1;
+  Matrix p_q_2;
+  
+  ComputePq(sequence1, n_dims, p_qt_1, &p_q_1);
+  ComputePq(sequence2, n_dims, p_qt_2, &p_q_2);
 
   //p_qq_1.PrintDebug("p_qq_1");
   //p_qq_2.PrintDebug("p_qq_2");
@@ -45,7 +50,7 @@ template <typename TDistribution, typename T>
   // everything is ready for call to other function
   return HMMLatentMMK(lambda, n_states, n_dims,
 		      sequence1, sequence2,
-		      p_qt_1, p_qt_2,
+		      p_q_1, p_q_2,
 		      p_qq_1, p_qq_2);
 }
 
@@ -53,14 +58,14 @@ template <typename T>
 double HMMLatentMMK(double lambda, int n_states, int n_dims,
 		    const GenMatrix<T> &sequence1,
 		    const GenMatrix<T> &sequence2,
-		    const Matrix &p_qt_1, const Matrix &p_qt_2,
+		    const Matrix &p_q_1, const Matrix &p_q_2,
 		    const Matrix &p_qq_1, const Matrix &p_qq_2) {
   double exp_neg_lambda = exp(-lambda);
   
   double p_qt_component = 
     HMMLatentMMKComponentQX(exp_neg_lambda, n_states, n_dims,
 			    sequence1, sequence2,
-			    p_qt_1, p_qt_2);
+			    p_q_1, p_q_2);
 
   double p_qq_t_component =
     HMMLatentMMKComponentQQ(exp_neg_lambda, n_states,
@@ -89,27 +94,33 @@ template <typename TDistribution, typename T>
   p_x_given_q.Init(0, 0);
   ArrayList<Matrix> p_qq_t;
   p_qq_t.Init(0);
+  Matrix p_qt;
+  p_qt.Init(0, 0);
   double neg_likelihood;
 
-  ArrayList<Matrix> p_qt_arraylist;
+  //ArrayList<Matrix> p_qt_arraylist;
   ArrayList<Matrix> p_qq_arraylist;
+  ArrayList<Matrix> p_q_arraylist;
 
   int n_sequences = sequences.size();
   
-  p_qt_arraylist.Init(n_sequences);
+  //p_qt_arraylist.Init(n_sequences);
   p_qq_arraylist.Init(n_sequences);
+  p_q_arraylist.Init(n_sequences);
   
   for(int i = 0; i < n_sequences; i++) {
     p_x_given_q.Destruct();
     p_qq_t.Renew();
+    p_qt.Destruct();
 
     hmm.ExpectationStepNoLearning(sequences[i],
 				  &p_x_given_q,
 				  &p_qq_t,
-				  &(p_qt_arraylist[i]),
+				  &p_qt,
 				  &neg_likelihood);
 
     ComputePqq(p_qq_t, &(p_qq_arraylist[i]));
+    ComputePq(sequences[i], n_dims, p_qt, &(p_q_arraylist[i]));
   }
 
   kernel_matrix.Init(n_sequences, n_sequences);
@@ -119,7 +130,7 @@ template <typename TDistribution, typename T>
       double lmmk = 
 	HMMLatentMMK(lambda, n_states, n_dims,
 		     sequences[i], sequences[j],
-		     p_qt_arraylist[i], p_qt_arraylist[j],
+		     p_q_arraylist[i], p_q_arraylist[j],
 		     p_qq_arraylist[i], p_qq_arraylist[j]);
 
       kernel_matrix.set(j, i, lmmk);
@@ -135,8 +146,8 @@ double HMMLatentMMKComponentQX(double exp_neg_lambda,
 			       int n_dims,
 			       const GenMatrix<int> &sequence1,
 			       const GenMatrix<int> &sequence2,
-			       const Matrix &p_qt_1,
-			       const Matrix &p_qt_2) {
+			       const Matrix &p_q_1,
+			       const Matrix &p_q_2) {
   int sequence1_length = sequence1.n_cols();
   int sequence2_length = sequence2.n_cols();
 
@@ -146,17 +157,10 @@ double HMMLatentMMKComponentQX(double exp_neg_lambda,
   double sum = 0;
   for(int i = 0; i < n_states; i++) {
     for(int a = 0; a < n_dims; a++) {
-      double sum_p_qt_given_xs_equals_a = 0;
-      for(int s = 0; s < sequence1_length; s++) {
-	sum_p_qt_given_xs_equals_a +=
-	  p_qt_1.get(s, i) * (sequence1.get(0, s) == a);
-      }
+      double sum_p_qt_given_xs_equals_a = p_q_1.get(a, i);
       
       // 1
-      double sum1 = 0;
-      for(int t = 0; t < sequence2_length; t++) {
-	sum1 += p_qt_2.get(t, i) * (sequence2.get(0, t) == a);
-      }
+      double sum1 = p_q_2.get(a, i);
       
       // 2
       double sum2 = 0;
@@ -164,9 +168,7 @@ double HMMLatentMMKComponentQX(double exp_neg_lambda,
 	if(j == i) {
 	  continue;
 	}
-	for(int t = 0; t < sequence2_length; t++) {
-	  sum2 += p_qt_2.get(t, j) * (sequence2.get(0, t) == a);
-	}
+	sum2 += p_q_2.get(a, j);
       }
       sum2 *= exp_neg_lambda;
       
@@ -177,19 +179,14 @@ double HMMLatentMMKComponentQX(double exp_neg_lambda,
 	  continue;
 	}
 	
-	double subsum3_1 = 0;
-	for(int t = 0; t < sequence2_length; t++) {
-	  subsum3_1 += p_qt_2.get(t, i) * (sequence2.get(0, t) == b);
-	}
+	double subsum3_1 = p_q_2.get(b, i);
 	
 	double subsum3_2 = 0;
 	for(int j = 0; j < n_states; j++) {
 	  if(j == i) {
 	    continue;
 	  }
-	  for(int t = 0; t < sequence2_length; t++) {
-	    subsum3_2 += p_qt_2.get(t, j) * (sequence2.get(0, t) == b);
-	  }
+	  subsum3_2 += p_q_2.get(b, j);
 	}
 	subsum3_2 *= exp_neg_lambda;
 	sum3 += subsum3_1 + subsum3_2;
@@ -251,6 +248,29 @@ double HMMLatentMMKComponentQQ(double exp_neg_lambda, int n_states,
   }
   
   return sum / ((double)((sequence1_length - 1) * (sequence2_length - 1)));
+}
+
+void ComputePq(const GenMatrix<int> &sequence,
+	       int n_dims,
+	       const Matrix &p_qt,
+	       Matrix *p_p_q) {
+  Matrix &p_q = *p_p_q;
+  
+  int n_states = p_qt.n_cols();
+
+  p_q.Init(n_dims, n_states);
+
+  int sequence_length = sequence.n_cols();
+
+  for(int i = 0; i < n_states; i++) {
+    for(int a = 0; a < n_dims; a++) {
+      double sum = 0;
+      for(int t = 0; t < sequence_length; t++) {
+	sum += p_qt.get(t, i) * (sequence.get(0, t) == a);
+      }
+      p_q.set(a, i, sum);
+    }
+  }
 }
 
 void ComputePqq(const ArrayList<Matrix> &p_qq_t,

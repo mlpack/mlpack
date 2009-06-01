@@ -38,6 +38,10 @@ double HMMLatentMMKComponentQQ(double exp_neg_lambda, int n_states,
 			       int sequence1_length,
 			       int sequence2_length);
 
+void ComputePq(const GenMatrix<int> &sequence,
+	       int n_dims,
+	       const Matrix &p_qt,
+	       Matrix *p_p_q);
 
 void ComputePqq(const ArrayList<Matrix> &p_qq_t,
 		Matrix *p_p_qq);

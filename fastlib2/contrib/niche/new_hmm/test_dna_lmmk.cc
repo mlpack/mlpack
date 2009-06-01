@@ -54,13 +54,13 @@ void GetOneDNAHMM(bool model_exons, bool model_introns,
     sequences.AppendSteal(&intron_sequences);
   }
 
-  /*
-  char seq_name[80];
-  for(int i = 0; i < sequences.size(); i++) {
-    sprintf(seq_name, "sequences[%d]", i);    
-    PrintDebug(seq_name, sequences[i], "%d");
-  }
-  */
+  
+//   char seq_name[80];
+//   for(int i = 0; i < sequences.size(); i++) {
+//     sprintf(seq_name, "sequences[%d]", i);    
+//     PrintDebug(seq_name, sequences[i], "%d");
+//   }
+  
 
   hmm.Init(n_states, n_dims, MULTINOMIAL);
   hmm.InitParameters(sequences);
@@ -83,6 +83,7 @@ void GetOneDNAHMM(bool model_exons, bool model_introns,
   }
 }
 
+/*
 void SaveOneDNAHMM() {
   int n_states = fx_param_int_req(NULL, "n_states");
   const char* one_hmm_partial_filename = "frozen_dna_one_hmm_topo";
@@ -117,6 +118,7 @@ void SaveOneDNAHMM() {
   WriteOutOTObject(one_hmm_filename, hmm);
   WriteOutOTObject(labels_filename, labels);
 }
+*/
 
 void LoadOneDNAHMMAndSequences(HMM<Multinomial>* p_hmm,
 			       ArrayList<GenMatrix<int> >* p_sequences,
@@ -146,13 +148,6 @@ void LoadOneDNAHMMAndSequences(HMM<Multinomial>* p_hmm,
   ReadInOTObject(one_hmm_filename, p_hmm);
   ReadInOTObject(labels_filename, p_labels);
   
-//   PrintDebug("labels", *p_labels, "%d");
-//   char hmm_name[80];
-//   for(int i = 0; i < 1000; i++) {
-//     sprintf(hmm_name, "hmm %d", i);
-//     (*p_hmms)[i].PrintDebug(hmm_name);
-//   }
-
 
   const char* exons_filename = "../../../../exons_small.dat";
   const char* introns_filename = "../../../../introns_small.dat";
@@ -165,25 +160,81 @@ void LoadOneDNAHMMAndSequences(HMM<Multinomial>* p_hmm,
   sequences.AppendSteal(&intron_sequences);
 }
 
+void LoadKFoldDNAHMMAndSequences(int n_folds,
+				 ArrayList<HMM<Multinomial> >* p_kfold_hmms,
+				 ArrayList<GenMatrix<int> >* p_sequences,
+				 GenVector<int>* p_labels) {
+  ArrayList<HMM<Multinomial> > &kfold_hmms = *p_kfold_hmms;
+  ArrayList<GenMatrix<int> > &sequences = *p_sequences;
+  GenVector<int> &labels = *p_labels;
+
+  int n_states = fx_param_int_req(NULL, "n_states");
+
+  const int exon_label = 1;
+  const int intron_label = 0;
+
+  bool model_exons = false;
+  bool model_introns = false;
+  const char* model_classes = fx_param_str_req(NULL, "model_classes");
+  if(strcmp(model_classes, "exons") == 0) {
+    model_exons = true;
+  }
+  else if(strcmp(model_classes, "introns") == 0) {
+    model_introns = true;
+  }
+  else {
+    FATAL("Error: For k-fold cross-validation, parameter 'model_classes' must be set to \"exons\" or \"introns\". Exiting...");
+  }
+
+  kfold_hmms.Init(n_folds);
+  for(int fold_num = 0; fold_num < n_folds; fold_num++) {
+    char hmm_filename[80];
+    if(model_exons) {
+      sprintf(hmm_filename, "frozen/frozen_dna_one_hmm_topo%d_model_exons_fold%dof%d", n_states, fold_num, n_folds);
+    }
+    else { // model_introns
+      sprintf(hmm_filename, "frozen/frozen_dna_one_hmm_topo%d_model_introns_fold%dof%d", n_states, fold_num, n_folds);
+    }
+    
+    printf("Fold %d hmm_filename = \"%s\"\n", fold_num, hmm_filename);
+    ReadInOTObject(hmm_filename, &(kfold_hmms[fold_num]));
+  }
+
+//   const char* exons_filename = "../../../../exons_small.dat";
+//   const char* introns_filename = "../../../../introns_small.dat";
+  const char* exons_filename = "exons_small.dat";
+  const char* introns_filename = "introns_small.dat";
+
+  LoadVaryingLengthData(exons_filename, &sequences);
+  int n_exons = sequences.size();
+
+  ArrayList<GenMatrix<int> > intron_sequences;
+  LoadVaryingLengthData(introns_filename, &intron_sequences);
+  int n_introns = intron_sequences.size();
+
+  sequences.AppendSteal(&intron_sequences);
+
+  int n_sequences = n_exons + n_introns;
+
+  labels.Init(n_sequences);
+  for(int i = 0; i < n_exons; i++) {
+    labels[i] = exon_label;
+  }
+  for(int i = n_exons; i < n_sequences; i++) {
+    labels[i] = intron_label;
+  }
+}
+
 
 int main(int argc, char* argv[]) {
   fx_init(argc, argv, NULL);
 
-  const char* mode = fx_param_str_req(NULL, "mode");
-
-  if(strcmp(mode, "save") == 0) {
-    SaveOneDNAHMM();
-  }
-  else if(strcmp(mode, "test") == 0) {
-    HMM<Multinomial> hmm;
-    ArrayList<GenMatrix<int> > sequences;
-    GenVector<int> labels;
-    LoadOneDNAHMMAndSequences(&hmm, &sequences, &labels);
-    TestHMMLatMMKClassification(hmm, sequences, labels);
-  }
-  else {
-    FATAL("Error: Invalid choice of parameter /mode. Valid settings are \"save\" and \"test\". Exiting...");
-  }
+  ArrayList<HMM<Multinomial> > kfold_hmms;
+  ArrayList<GenMatrix<int> > sequences;
+  GenVector<int> labels;
+  int n_folds = 10;
+  LoadKFoldDNAHMMAndSequences(n_folds, &kfold_hmms, &sequences, &labels);
+  TestHMMLatMMKClassificationKFold(n_folds, kfold_hmms, sequences, labels);
   
   fx_done(fx_root);
 }
