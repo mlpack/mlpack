@@ -14,6 +14,38 @@
 #include "contrib/march/fock_matrix/fock_impl/oeints.h"
 
 
+const fx_entry_doc scf_entries[] = {
+{"diis_states", FX_PARAM, FX_INT, NULL, 
+"The number of previous density matrices used in the interpolation. (default 1)\n"},
+{"density_convergence", FX_PARAM, FX_DOUBLE, NULL,
+  "The convergence tolerance for the Frobenius norm of the difference of\n"
+  "successive density matrices.  (Default: 10e-8\n"},
+{"energy_convergence", FX_PARAM, FX_DOUBLE, NULL,
+  "Convergence tolerance for successive energies.  (Default: 10e-6)\n"},
+{"num_iterations", FX_RESULT, FX_INT, NULL,
+  "The total number of iterations until convergence.\n"},
+{"nuclear_repulsion_energy", FX_RESULT, FX_DOUBLE, NULL,
+  "The energy from nuclear-nuclear interactions.\n"},
+{"one_electron_energy", FX_RESULT, FX_DOUBLE, NULL,
+  "The kinetic and nuclear-electronic energies.\n"},
+{"two_electron_energy", FX_RESULT, FX_DOUBLE, NULL,
+  "The electron-electrion interactions.\n"},
+{"total_energy", FX_RESULT, FX_DOUBLE, NULL,
+  "The total energy.\n"},
+{"SCF_Setup", FX_TIMER, FX_CUSTOM, NULL,
+  "Time to initialize for SCF computation.\n"},
+{"SCF_Iterations", FX_TIMER, FX_CUSTOM, NULL,
+"Total time to for the SCF iterations.\n"},
+FX_ENTRY_DOC_DONE
+};
+
+const fx_module_doc scf_mod_doc = {
+scf_entries, NULL, 
+"Algorithm module for SCF code.\n"
+};
+
+
+
 /**
  * Algorithm class for the SCF part of the HF computation.  This class assumes 
  * the integrals have been computed and does the SVD-like part of the 
@@ -383,11 +415,7 @@ class SCFSolver {
   
   /**
    * Compute the density matrix.
-   * 
-   * TODO: Consider an SVD or some eigenvalue solver that will find the 
-   * eigenvalues in ascending order.
    */
-  //void ComputeDensityMatrix_();
   void ComputeDensityMatrix_() {
     
     FillOrbitals_();
@@ -652,14 +680,6 @@ class SCFSolver {
   /**
    * Determine the K/2 lowest energy orbitals.  
    * 
-   * TODO: If K is odd, then the last entry here is the orbital that should 
-   * have one electron.  I think the closed-shell RHF formulation I'm using
-   * forbids an odd number of electons.
-   *
-   * I should use the built in C++ iterator-driven routines.  Ryan suggested
-   * that I write iterators for ArrayLists, since that would open up a lot of
-   * functionality, including sorting. 
-   *
    * Now that I'm using SVD, the eigenvalues are in order up to signs.  So, I 
    * should be able to use that info to make this code more efficient.
    *
@@ -981,6 +1001,9 @@ class SCFSolver {
    * Save the coefficient matrix, total energy, and energy vector to files.
    *
    * TODO: think about a better way to separate the filled and virtual orbitals
+   *
+   * TODO: Write cleaner and more useful output code.
+   * How to make this work around the fx-run outputs?  Write it to a file?
    */
   void OutputResults_() {
     
@@ -988,6 +1011,8 @@ class SCFSolver {
         fx_param_str(module_, "C", "coefficients.csv");
     data::Save(coefficients_file, coefficient_matrix_);
     
+    // do I really care about this?
+    /*
     const char* energy_file = fx_param_str(module_, "Etot", "total_energy.csv");
     FILE* energy_pointer = fopen(energy_file, "w");
     for (index_t i = 0; i < current_iteration_; i++) {
@@ -996,6 +1021,7 @@ class SCFSolver {
       
     }
     fclose(energy_pointer);
+    */
     
     const char* energy_vector_file = 
         fx_param_str(module_, "Evec", "energy_vector.csv");
@@ -1003,6 +1029,7 @@ class SCFSolver {
     energy_vector_matrix.AliasColVector(energy_vector_);
     data::Save(energy_vector_file, energy_vector_matrix);
     
+     
     const char* basis_vector_file = fx_param_str(module_, "basis_energy", 
                                                  "basis_energies.csv");
     
@@ -1010,28 +1037,26 @@ class SCFSolver {
     basis_energy_matrix.AliasColVector(basis_energies_);
     data::Save(basis_vector_file, basis_energy_matrix);
     
-    fx_format_result(module_, "density_matrix_norm", "%g", 
-                     density_matrix_frobenius_norm_);
+    //fx_format_result(module_, "density_matrix_norm", "%g", 
+    //                 density_matrix_frobenius_norm_);
     
-    /*
-    fx_format_result(module_, "fock_max", "%g", fock_max_);
-    fx_format_result(module_, "fock_min", "%g", fock_min_);
-    fx_format_result(module_, "density_max", "%g", density_max_);
-    fx_format_result(module_, "density_min", "%g", density_min_);
-    */
+    const char* density_matrix_file = fx_param_str(module_, "density_file", 
+                                                   "density_mat.csv");
     
-    fx_format_result(module_, "nuclear_repulsion", "%g", 
+    data::Save(density_matrix_file, density_matrix_);
+    
+    fx_result_int(module_, "num_iterations", current_iteration_);
+    
+    fx_result_double(module_, "nuclear_repulsion_energy", 
                      nuclear_repulsion_energy_);
                      
-    fx_format_result(module_, "one_electron_energy", "%g", 
+    fx_result_double(module_, "one_electron_energy", 
                      one_electron_energy_);
     
-    fx_format_result(module_, "two_electron_energy", "%g", 
+    fx_result_double(module_, "two_electron_energy", 
                      two_electron_energy_);
     
-    fx_format_result(module_, "num_iterations", "%d", current_iteration_);
-    
-    fx_format_result(module_, "total_energy", "%g", 
+    fx_result_double(module_, "total_energy", 
                      total_energy_[current_iteration_]);
     
   }
@@ -1039,8 +1064,8 @@ class SCFSolver {
  public:
   
   /**
-   * Compute the Hartree-Fock wavefunction for the given values of the 
-   * integrals. 
+   * Compute the restricted Hartree-Fock wavefunction for the given values of  
+   * the integrals. 
    */
   void ComputeWavefunction() {
       

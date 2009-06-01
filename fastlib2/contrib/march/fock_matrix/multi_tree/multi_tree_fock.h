@@ -31,6 +31,8 @@ const fx_entry_doc multi_tree_fock_entries[] = {
    "The number of base cases computed in the coulomb recursion.\n"},
   {"exchange_base_cases", FX_RESULT, FX_INT, NULL, 
    "The number of base_cases_computed in the exchange recursion.\n"},
+  {"num_schwartz_prunes", FX_RESULT, FX_INT, NULL,
+   "The number of times the Schwartz prescreening estimate allowed a prune.\n"},
   {"absolute_error", FX_PARAM, FX_BOOL, NULL, 
    "Specify this parameter to use absolute error, defaults to relative.\n"},
   {"tree_building", FX_TIMER, FX_CUSTOM, NULL, 
@@ -43,6 +45,8 @@ const fx_entry_doc multi_tree_fock_entries[] = {
     "Computing the exchange matrix.\n"},
   {"multi_time", FX_TIMER, FX_CUSTOM, NULL, 
     "Total time spent to initialize the trees and compute F.\n"},
+  {"bounds_cutoff", FX_PARAM, FX_DOUBLE, NULL,
+    "Bounds computed to be below this value are set to zero.  Default: 0.0\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -53,9 +57,6 @@ const fx_module_doc multi_mod_doc = {
 
 
 class MultiTreeFock {
-
-public:
-
 
 private:
 
