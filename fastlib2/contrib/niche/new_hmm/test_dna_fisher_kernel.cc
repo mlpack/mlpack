@@ -9,7 +9,7 @@ int main(int argc, char* argv[]) {
   ArrayList<GenMatrix<int> > sequences;
   GenVector<int> labels;
 
-  ReadInOTObject("frozen_dna_one_hmm_topo4_model_introns", &hmm);
+  ReadInOTObject("frozen_dna_one_hmm_topo4_model_exons", &hmm);
   ReadInOTObject("frozen_dna_labels", &labels);
 
   const char* exons_filename = "exons_small.dat";

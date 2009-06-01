@@ -2,8 +2,10 @@
 #define LATENT_MMK_H
 
 #include "hmm.h"
+#include "hmm_kernel_utils.h"
 
 #define INSIDE_LATENT_MMK_IMPL_H
+
 
 template <typename TDistribution, typename T>
   double LatentMMK(double lambda,
@@ -37,14 +39,6 @@ double HMMLatentMMKComponentQQ(double exp_neg_lambda, int n_states,
 			       const Matrix &p_qq_2,
 			       int sequence1_length,
 			       int sequence2_length);
-
-void ComputePq(const GenMatrix<int> &sequence,
-	       int n_dims,
-	       const Matrix &p_qt,
-	       Matrix *p_p_q);
-
-void ComputePqq(const ArrayList<Matrix> &p_qq_t,
-		Matrix *p_p_qq);
 
 
 #include "latent_mmk_impl.h"

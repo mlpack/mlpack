@@ -178,7 +178,7 @@ void SaveKFoldDNAHMMs(int n_folds) {
     // should set capacity to n_sequences / n_folds
     for(int i = 0; i < training_set.n_points(); i++) {
       if(training_set_matrix.get(1, i) == selected_label) {
-	selected_training_sequences.PushBackCopy(sequences[training_set_matrix.get(0, i)]);
+	selected_training_sequences.PushBackCopy(sequences[(int)(training_set_matrix.get(0, i))]);
       }
     }
 
