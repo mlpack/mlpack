@@ -13,7 +13,8 @@ binrule(
 binrule(
     name = "test_dna_fisher_kernel",
     sources = ["test_dna_fisher_kernel.cc"],
-    headers = ["test_engine.h",
+    headers = ["test_dna_utils.h",
+               "test_engine.h",
                "test_engine_impl.h",
                "fisher_kernel.h",
                "fisher_kernel_impl.h",
@@ -75,7 +76,8 @@ binrule(
 binrule(
     name = "test_dna_lmmk",
     sources = ["test_dna_lmmk.cc"],
-    headers = ["test_engine.h",
+    headers = ["test_dna_utils.h",
+               "test_engine.h",
                "test_engine_impl.h",
                "latent_mmk.h",
                "latent_mmk_impl.h",

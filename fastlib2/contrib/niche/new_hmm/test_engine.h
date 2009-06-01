@@ -12,6 +12,11 @@
 
 #define INSIDE_TEST_ENGINE_IMPL_H
 
+
+void EmitResults(const Vector &c_set,
+		 const GenVector<int> &n_correct_results,
+		 int n_sequences);
+
 void LoadCommonCSet(Vector* p_c_set);
 
 void CreateIDLabelPairs(const GenVector<int> &labels,
@@ -32,6 +37,11 @@ void TestHMMLatMMKClassificationKFold(int n_folds,
 void TestHMMFisherKernelClassification(const HMM<Multinomial> &hmm,
 				       const ArrayList<GenMatrix<int> > &sequences,
 				       const GenVector<int> &labels);
+
+void TestHMMFisherKernelClassificationKFold(int n_folds,
+					    const ArrayList<HMM<Multinomial> > &kfold_hmms,
+					    const ArrayList<GenMatrix<int> > &sequences,
+					    const GenVector<int> &labels);
 
 void TestMarkovMMKClassification(int n_symbols,
 				 const ArrayList<GenMatrix<int> > &sequences,
