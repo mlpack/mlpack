@@ -25,7 +25,7 @@ void KillDuplicatePoints(const GenMatrix<T> &data,
   last_point.Alias(new_points_arraylist[0]);
 
   int cur_point_num = 0;
-  for(int i = 0; i < n_points; i++) {
+  for(int i = 1; i < n_points; i++) {
     GenVector<T> cur_point;
     data.MakeColumnVector(i, &cur_point);
     
