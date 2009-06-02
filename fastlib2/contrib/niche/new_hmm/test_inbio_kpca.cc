@@ -1,20 +1,19 @@
 #include "fastlib/fastlib.h"
 #include "utils.h"
+#include "generative_mmk.h"
 
 
-int main(int argc, char* argv[]) {
-  fx_init(argc, argv, NULL);
+void LoadInbioData(ArrayList<Matrix>* p_samplings) {
+  ArrayList<Matrix> &samplings = *p_samplings;
 
   const char* sampling_file_list = "inbio_data/sampling_file_list.txt";
-
-  ArrayList<Matrix> samplings;
-  samplings.Init(0);
 
   FILE* file = fopen(sampling_file_list, "r");
   
   char filename[80];
  
   int n_samplings = 0;
+  samplings.Init(0);
   while(fgets(filename, 80, file) != NULL) {
     filename[strlen(filename) - 1] = '\0'; // kill the newline character
 
@@ -25,8 +24,17 @@ int main(int argc, char* argv[]) {
     data::Load(full_filename, &(samplings[n_samplings]));
     n_samplings++;
   }
-
   fclose(file);
+}
+  
+int main(int argc, char* argv[]) {
+  fx_init(argc, argv, NULL);
+
+  ArrayList<Matrix> samplings;
+  ScaleSamplingsToCube(&samplings);
+  
+  Matrix kernel_matrix;
+  KDEGenerativeMMKBatch(1e1, samplings, &kernel_matrix);
 
   fx_done(fx_root);
 }

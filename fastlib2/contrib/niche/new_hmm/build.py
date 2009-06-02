@@ -1,8 +1,12 @@
 binrule(
     name = "test_inbio_kpca",
     sources = ["test_inbio_kpca.cc"],
-    headers = ["utils.h"],
-    deplibs = ["fastlib:fastlib"]
+    headers = ["generative_mmk.h",
+               "generative_mmk_impl.h",
+               "utils.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion"]
     )
 
 binrule(
