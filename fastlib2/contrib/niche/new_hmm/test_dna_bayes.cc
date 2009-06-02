@@ -1,4 +1,5 @@
 #include "fastlib/fastlib.h"
+#include "test_dna_utils.h"
 #include "test_engine.h"
 #include "utils.h"
 
@@ -160,6 +161,26 @@ int main(int argc, char* argv[]) {
   srand48(time(0));
   srand(time(0));
 
+
+  ArrayList<HMM<Multinomial> > kfold_exon_hmms;
+  ArrayList<HMM<Multinomial> > kfold_intron_hmms;
+  ArrayList<GenMatrix<int> > sequences;
+  GenVector<int> labels;
+  int n_folds = fx_param_int(NULL, "n_folds", 10);
+  LoadKFoldDNAHMMPairAndSequences(n_folds,
+				  &kfold_exon_hmms, &kfold_intron_hmms,
+				  &sequences, &labels);
+  TestHMMBayesClassificationKFold(n_folds, kfold_exon_hmms, kfold_intron_hmms,
+				  sequences, labels);
+
+  fx_done(fx_root);
+}
+
+
+/*
+
+
+
   int n_states = fx_param_int_req(NULL, "n_states");
 
   HMM<Multinomial> exons_hmm;
@@ -243,3 +264,4 @@ int main(int argc, char* argv[]) {
 
   fx_done(fx_root);
 }
+*/

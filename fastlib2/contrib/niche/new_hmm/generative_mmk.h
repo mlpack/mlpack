@@ -4,6 +4,7 @@
 #include "multinomial.h"
 #include "isotropic_gaussian.h"
 #include "hmm.h"
+#include "utils.h"
 #include "mlpack/kde/bandwidth_lscv.h"
 #include "mlpack/kde/dataset_scaler.h"
 #include "mlpack/kde/dualtree_kde.h"

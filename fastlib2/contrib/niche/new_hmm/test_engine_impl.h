@@ -351,6 +351,81 @@ void TestHMMFisherKernelClassificationKFold(int n_folds,
   EmitResults(c_set, n_correct_results, n_sequences);
 }
 
+void TestHMMBayesClassificationKFold(int n_folds,
+				     const ArrayList<HMM<Multinomial> > &kfold_exon_hmms,
+				     const ArrayList<HMM<Multinomial> > &kfold_intron_hmms,
+				     const ArrayList<GenMatrix<int> > &sequences,
+				     const GenVector<int> &labels) {
+  
+  Matrix id_label_pairs;
+  CreateIDLabelPairs(labels, &id_label_pairs);
+  id_label_pairs.PrintDebug("id_label_pairs");
+
+  Dataset cv_set;
+  cv_set.CopyMatrix(id_label_pairs);
+
+  int n_correct = 0;
+  int n_exons_correct = 0;
+  int n_introns_correct = 0;
+
+  int n_sequences = sequences.size();
+  ArrayList<index_t> permutation;
+  math::MakeIdentityPermutation(n_sequences, &permutation);
+
+  printf("n_sequences = %d\n", n_sequences);
+
+  for(int fold_num = 0; fold_num < n_folds; fold_num++) {
+    printf("fold %d\n", fold_num);
+    Dataset training_set;
+    Dataset test_set;
+    
+    cv_set.SplitTrainTest(n_folds, fold_num, permutation, &training_set, &test_set);
+    
+    for(int i = 0; i < test_set.n_points(); i++) {
+      int test_sequence_index = (int)(test_set.get(0, i));
+      ///
+      Matrix p_x_given_q;
+      ArrayList<Matrix> p_qq_t;
+      Matrix p_qt;
+      double exon_neg_likelihood;
+      double intron_neg_likelihood;
+
+      const HMM<Multinomial> &fold_exon_hmm = kfold_exon_hmms[fold_num];
+      const HMM<Multinomial> &fold_intron_hmm = kfold_intron_hmms[fold_num];
+
+      fold_exon_hmm.ExpectationStepNoLearning(sequences[test_sequence_index],
+					      &p_x_given_q,
+					      &p_qq_t,
+					      &p_qt,
+					      &exon_neg_likelihood);
+      p_x_given_q.Destruct();
+      p_qq_t.Renew();
+      p_qt.Destruct();
+      fold_intron_hmm.ExpectationStepNoLearning(sequences[test_sequence_index],
+						&p_x_given_q,
+						&p_qq_t,
+						&p_qt,
+						&intron_neg_likelihood);
+      if(exon_neg_likelihood < intron_neg_likelihood) { // predict exon (1)
+	if(test_set.get(1, i) == 1) {
+	  n_exons_correct++;
+	}
+      }
+      else { // predict intron (0)
+	if(test_set.get(1, i) == 0) {
+	  n_introns_correct++;
+	}
+      }
+    }
+  }
+
+  n_correct = n_exons_correct + n_introns_correct;
+  double accuracy =
+    ((double)n_correct) / ((double)n_sequences);
+  printf("accuracy = %f\n", accuracy);
+  fx_result_double(NULL, "best_accuracy", accuracy);
+}
+
 
 
 void TestMarkovMMKClassification(int n_symbols,

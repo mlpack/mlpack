@@ -8,11 +8,11 @@ void LoadSequencesAndLabels(ArrayList<GenMatrix<int> >* p_sequences,
   ArrayList<GenMatrix<int> > &sequences = *p_sequences;
   GenVector<int> &labels = *p_labels;
 
-  //const char* exons_filename = "../../../../exons_small.dat";
-  //const char* introns_filename = "../../../../introns_small.dat";
+  const char* exons_filename = "../../../../exons_small.dat";
+  const char* introns_filename = "../../../../introns_small.dat";
 
-  const char* exons_filename = "exons_small.dat";
-  const char* introns_filename = "introns_small.dat";
+  //const char* exons_filename = "exons_small.dat";
+  //const char* introns_filename = "introns_small.dat";
 
 
   LoadVaryingLengthData(exons_filename, &sequences);
