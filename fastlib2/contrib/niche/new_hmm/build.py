@@ -1,4 +1,11 @@
 binrule(
+    name = "test_inbio_kpca",
+    sources = ["test_inbio_kpca.cc"],
+    headers = ["utils.h"],
+    deplibs = ["fastlib:fastlib"]
+    )
+
+binrule(
     name = "test_kill_duplicate_points",
     sources = ["test_kill_duplicate_points.cc"],
     headers = ["utils.h"],
