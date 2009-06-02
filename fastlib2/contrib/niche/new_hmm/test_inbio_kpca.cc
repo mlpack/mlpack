@@ -31,11 +31,15 @@ int main(int argc, char* argv[]) {
   fx_init(argc, argv, NULL);
 
   ArrayList<Matrix> samplings;
+  LoadInbioData(&samplings);
   ScaleSamplingsToCube(&samplings);
+
+
   
   Matrix kernel_matrix;
   KDEGenerativeMMKBatch(1e1, samplings, &kernel_matrix);
-
+  data::Save("kde_kernel_matrix.csv", kernel_matrix);
+  
   fx_done(fx_root);
 }
   

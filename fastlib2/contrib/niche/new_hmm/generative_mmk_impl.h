@@ -288,8 +288,7 @@ double KDEGenerativeMMK(double lambda,
       sum += val;
     }
   }
-  //exit(1);
-  normalization_factor = 1.0;
+  //normalization_factor = 1.0;
   return normalization_factor * sum / ((double)(n_samples1 * n_samples2));
 }
 
@@ -310,7 +309,6 @@ void KDEGenerativeMMKBatch(double lambda,
     Matrix references;
     Matrix reference_weights;
     KillDuplicatePoints(samplings[k], &references, &reference_weights);
-    ///
 
 
     // Query and reference datasets, reference weight dataset.
@@ -333,14 +331,13 @@ void KDEGenerativeMMKBatch(double lambda,
 						       reference_weights);
   }
 
-  optimal_bandwidths.SetAll(1e-12);
-  optimal_bandwidths.PrintDebug("optimal_bandwidths");
+  PrintDebug("optimal_bandwidths", optimal_bandwidths, "%3e");
 
   kernel_matrix.Init(n_samplings, n_samplings);
   for(int i = 0; i < n_samplings; i++) {
     printf("%f%%\n", 100.0 * ((double)(i + 1)) / ((double)n_samplings));
     for(int j = i; j < n_samplings; j++) {
-      printf("i = %d, j = %d\n", i, j);
+      //printf("i = %d, j = %d\n", i, j);
       double gmmk = 
 	KDEGenerativeMMK(lambda,
 			 samplings[i], samplings[j],
