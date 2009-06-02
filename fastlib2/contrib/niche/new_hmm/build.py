@@ -3,6 +3,7 @@ binrule(
     sources = ["test_inbio_kpca.cc"],
     headers = ["generative_mmk.h",
                "generative_mmk_impl.h",
+               "kernel_pca.h",
                "utils.h"],
     deplibs = ["fastlib:fastlib",
                "mlpack/kde:dualtree_kde",

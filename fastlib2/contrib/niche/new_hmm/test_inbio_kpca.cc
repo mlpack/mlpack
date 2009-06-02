@@ -1,6 +1,7 @@
 #include "fastlib/fastlib.h"
-#include "utils.h"
 #include "generative_mmk.h"
+#include "kernel_pca.h"
+#include "utils.h"
 
 
 void LoadInbioData(ArrayList<Matrix>* p_samplings) {
@@ -39,6 +40,9 @@ int main(int argc, char* argv[]) {
   Matrix kernel_matrix;
   KDEGenerativeMMKBatch(1e1, samplings, &kernel_matrix);
   data::Save("kde_kernel_matrix.csv", kernel_matrix);
+
+  Matrix kernel_principal_components;
+  KernelPCA(kernel_matrix, &kernel_principal_components);
   
   fx_done(fx_root);
 }
