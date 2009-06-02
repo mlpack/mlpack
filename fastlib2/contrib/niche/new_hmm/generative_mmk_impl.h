@@ -293,24 +293,17 @@ double KDEGenerativeMMK(double lambda,
   return normalization_factor * sum / ((double)(n_samples1 * n_samples2));
 }
 
+// be sure to pre-scale data appropriately (we suggest ScaleSamplingsToCube())
 void KDEGenerativeMMKBatch(double lambda,
 			   const ArrayList<Matrix> &samplings,
 			   Matrix *p_kernel_matrix) {
   Matrix &kernel_matrix = *p_kernel_matrix;
 
   int n_samplings = samplings.size();
-
-
-
-
   
-  // we make the user do this call so we don't have to change samplings here
-  //ScaleSamplingsToCube(&samplings);
-
   Vector optimal_bandwidths;
   optimal_bandwidths.Init(n_samplings);
   for(int k = 0; k < n_samplings; k++) {
-
 
 
     /// kill duplicate points

@@ -1,4 +1,11 @@
 binrule(
+    name = "test_kill_duplicate_points",
+    sources = ["test_kill_duplicate_points.cc"],
+    headers = ["utils.h"],
+    deplibs = ["fastlib:fastlib"]
+    )
+
+binrule(
     name = "save_one_dna_hmm",
     sources = ["save_one_dna_hmm.cc"],
     headers = ["test_engine.h",
@@ -31,7 +38,8 @@ binrule(
 binrule(
     name = "test_dna_emmk",
     sources = ["test_dna_emmk.cc"],
-    headers = ["test_engine.h",
+    headers = ["test_dna_utils.h",
+               "test_engine.h",
                "test_engine_impl.h",
                "empirical_mmk.h",
                "empirical_mmk_impl.h",
