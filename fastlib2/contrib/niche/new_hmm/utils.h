@@ -2,6 +2,72 @@
 #define UTILS_H
 
 
+template <typename T>
+void KillDuplicatePoints(const GenMatrix<T> &data,
+			 GenMatrix<T> *p_new_data,
+			 Matrix* p_weights) {
+  GenMatrix<T> &new_data = *p_new_data;
+  Matrix &weights = *p_weights;
+
+  int n_points = data.n_cols();
+  int n_dims = data.n_rows();
+
+  ArrayList<int> weights_arraylist;
+  weights_arraylist.Init(1);
+
+  ArrayList<GenVector<T> > new_points_arraylist;
+  new_points_arraylist.Init(1);
+
+  new_points_arraylist[0].Copy(data.GetColumnPtr(0), n_dims);
+  weights_arraylist[0] = 1;
+
+  GenVector<T> last_point;
+  last_point.Alias(new_points_arraylist[0]);
+
+  int cur_point_num = 0;
+  for(int i = 0; i < n_points; i++) {
+    GenVector<T> cur_point;
+    data.MakeColumnVector(i, &cur_point);
+    
+    if(VectorEquals(cur_point, last_point)) {
+      weights_arraylist[cur_point_num]++;
+    }
+    else {
+      new_points_arraylist.PushBackCopy(cur_point);
+      cur_point_num++;
+      weights_arraylist.Resize(cur_point_num + 1);
+      weights_arraylist[cur_point_num] = 1;
+      last_point.Destruct();
+      last_point.Alias(cur_point);
+    }
+  }
+
+  int n_distinct_points = cur_point_num + 1;
+
+  weights.Init(1, n_distinct_points);
+  for(int i = 0; i < n_distinct_points; i++) {
+    weights.set(0, i, weights_arraylist[i]);
+  }
+
+  new_data.Init(n_dims, n_distinct_points);
+  for(int i = 0; i < n_distinct_points; i++) {
+    new_data.CopyVectorToColumn(i, new_points_arraylist[i]);
+  }
+}
+
+template <typename T>
+bool VectorEquals(const GenVector<T> &x,
+		  const GenVector<T> &y) {
+  int n_dims = x.length();
+  for(int i = 0; i < n_dims; i++) {
+    if(x[i] != y[i]) {
+      return false;
+    }
+  }
+  
+  return true;
+}
+
 template<typename T>
 void WriteOutOTObject(const char* filename,
 		      const T &object) {

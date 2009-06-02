@@ -107,6 +107,7 @@ void TestKDE() {
     }
   }
 
+
   ScaleSamplingsToCube(&samplings);
 
   Matrix kernel_matrix;

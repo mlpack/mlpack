@@ -43,6 +43,12 @@ void TestHMMFisherKernelClassificationKFold(int n_folds,
 					    const ArrayList<GenMatrix<int> > &sequences,
 					    const GenVector<int> &labels);
 
+void TestHMMBayesClassificationKFold(int n_folds,
+				     const ArrayList<HMM<Multinomial> > &kfold_exon_hmms,
+				     const ArrayList<HMM<Multinomial> > &kfold_intron_hmms,
+				     const ArrayList<GenMatrix<int> > &sequences,
+				     const GenVector<int> &labels);
+
 void TestMarkovMMKClassification(int n_symbols,
 				 const ArrayList<GenMatrix<int> > &sequences,
 				 const GenVector<int> &labels);

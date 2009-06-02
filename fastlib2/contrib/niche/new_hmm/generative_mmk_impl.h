@@ -293,13 +293,16 @@ double KDEGenerativeMMK(double lambda,
   return normalization_factor * sum / ((double)(n_samples1 * n_samples2));
 }
 
-// scales the data permanently!
 void KDEGenerativeMMKBatch(double lambda,
 			   const ArrayList<Matrix> &samplings,
 			   Matrix *p_kernel_matrix) {
   Matrix &kernel_matrix = *p_kernel_matrix;
 
   int n_samplings = samplings.size();
+
+
+
+
   
   // we make the user do this call so we don't have to change samplings here
   //ScaleSamplingsToCube(&samplings);
@@ -307,9 +310,19 @@ void KDEGenerativeMMKBatch(double lambda,
   Vector optimal_bandwidths;
   optimal_bandwidths.Init(n_samplings);
   for(int k = 0; k < n_samplings; k++) {
-    // Query and reference datasets, reference weight dataset.
-    const Matrix &references = samplings[k];
+
+
+
+    /// kill duplicate points
+    Matrix references;
     Matrix reference_weights;
+    KillDuplicatePoints(samplings[k], &references, &reference_weights);
+    ///
+
+
+    // Query and reference datasets, reference weight dataset.
+    //const Matrix references;
+    //Matrix reference_weights;
     Matrix queries;
     references.PrintDebug("references");
 
@@ -318,8 +331,8 @@ void KDEGenerativeMMKBatch(double lambda,
     queries.PrintDebug("queries");
   
     // initialize to uniform weights.
-    reference_weights.Init(1, queries.n_cols());
-    reference_weights.SetAll(1);
+    //reference_weights.Init(1, queries.n_cols());
+    //reference_weights.SetAll(1);
 
     printf("sampling %d\n", k);
     optimal_bandwidths[k] =
