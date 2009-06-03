@@ -84,6 +84,8 @@ class SGD {
 
   double rho_;// for soft margin nonlinear SGD SVM
 
+  int pegasos_; // whether need to do pegasos(1) or just sgd (0)
+
  public:
   SGD() {}
   ~SGD() {}
@@ -223,6 +225,8 @@ void SGD<TKernel>::LearnersInit_(int learner_typeid) {
   index_t i;
   learner_typeid_ = learner_typeid;
   rho_ = fx_param_double(NULL, "rho", 1.0); // specify the soft margin. default value 1.0: hard margin
+
+  pegasos_ = fx_param_int(NULL, "pegasos", 0); // do pegasos or sgd. default: do sgd
   
   if (learner_typeid_ == 0) { // SVM_C
     if (b_linear_) { // linear SVM
@@ -303,43 +307,76 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 
   /* Begin SGD iterations */
   if (b_linear_) { // linear SVM, output: w, bias
-
-    double sqrt_n = sqrt(n_data_);
-    double eta0 = sqrt_n / max(1.0, LossFunctionGradient_(learner_typeid, -sqrt_n)); // initial step length
-    t_ = 1.0 / (eta0 * lambda_);
-
-    scale_w_ = 0.0;
     //for (index_t ct=0; ct<n_data_; ct++) {
     double eta_grad = INFINITY;
     index_t work_idx_old = 0;
     index_t ct = 0;
     //while (ct<=n_iter_ && fabs(eta_grad)>=accuracy_) {
-    while (ct <= n_iter_) {
+    
       //work_idx = ct % n_data_;
-      work_idx_old = old_from_new_[ct % n_data_];
-      eta_ = 1.0 / (lambda_ * t_); // update step length
-      scale_w_ = scale_w_ - scale_w_ / t_; // update scale of w
-      if (scale_w_ < SCALE_W_TOLERANCE) {
-	la::Scale(scale_w_, &w_);
-	scale_w_ = 1.0;
+    if (pegasos_ == 0) { // Use standard Stochastic Gradient Descent
+      double sqrt_n = sqrt(n_data_);
+      double eta0 = sqrt_n / max(1.0, LossFunctionGradient_(learner_typeid, -sqrt_n)); // initial step length
+      t_ = 1.0 / (eta0 * lambda_);
+      scale_w_ = 0.0;
+      while (ct <= n_iter_) {
+	work_idx_old = old_from_new_[ct % n_data_];
+	eta_ = 1.0 / (lambda_ * t_); // update step length
+	scale_w_ = scale_w_ - scale_w_ / t_; // update scale of w
+	if (scale_w_ < SCALE_W_TOLERANCE) {
+	  la::Scale(scale_w_, &w_);
+	  scale_w_ = 1.0;
+	}
+	Vector xt;
+	datamatrix_.MakeColumnSubvector(work_idx_old, 0, n_features_, &xt);
+	double yt = y_[work_idx_old];
+	double yt_hat = la::Dot(w_, xt) * scale_w_ + bias_;
+	double yy_hat = yt * yt_hat;
+	if (yy_hat < 1.0) {
+	  eta_grad = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // also need *xt, but it's done in next line
+	  la::AddExpert(eta_grad/ scale_w_, xt, &w_); // update w by Steepest Descent: w_{t+1} = w_t - eta * loss_gradient * xt
+	  // update bias
+	  bias_ += eta_grad * 0.01;
+	}
+	t_ += 1.0;
+	ct ++;
       }
-      Vector xt;
-      datamatrix_.MakeColumnSubvector(work_idx_old, 0, n_features_, &xt);
-      double yt = y_[work_idx_old];
-      double yt_hat = la::Dot(w_, xt) * scale_w_ + bias_;
-      double yy_hat = yt * yt_hat;
-      if (yy_hat < 1.0) {
-	// standard Stochastic Gradient Descent
-        eta_grad = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // also need *xt, but it's done in next line
-	la::AddExpert(eta_grad/ scale_w_, xt, &w_); // update w by Steepest Descent: w_{t+1} = w_t - eta * loss_gradient * xt
+    }
+    else { // Use Pegasos Stochastic Gradient Descent
+      scale_w_ = 1; // dummy
+      while (ct <= n_iter_) {
+	work_idx_old = old_from_new_[ct % n_data_];
+	eta_ = 1.0 / (lambda_ * (t_+2)); // update step length
+	Vector xt;
+	datamatrix_.MakeColumnSubvector(work_idx_old, 0, n_features_, &xt);
+	double yt = y_[work_idx_old];
+	double yt_hat = la::Dot(w_, xt);
+	double yy_hat = yt * yt_hat;
+	double cur_loss = 1.0 - yy_hat;
+	if (cur_loss < 0.0) cur_loss = 0.0;
+	la::Scale(1.0 - eta_*lambda_ , &w_);
+	if (cur_loss > 0.0) {
+	  la::AddExpert( eta_* yt, xt, &w_ );  // w <- w+ eta* y * x
+	}
 	
-	// Pegasos Stochastic Gradient Descent
-	//eta_grad = ; 
-	
-	bias_ += eta_grad * 0.01; // update bias
+	//if (yy_hat < 1.0) {
+	//eta_grad = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // also need *xt, but it's done in next line
+	//	  la::AddExpert(eta_grad, xt , &w_);  // w_{t+1/2} obtained
+	//	}
+
+	// Do projection if needed
+	double w_norm_sq = 0.0;
+	for (i=0; i<w_.length() ; i++) {
+	  w_norm_sq += math::Sqr(w_[i]);
+	}
+	if (w_norm_sq > 1.0/lambda_) {
+	  la::Scale( sqrt(1.0/ (lambda_*w_norm_sq)), &w_);
+	}
+	// update bias
+	//bias_ += eta_grad * 0.01;
+	t_ += 1.0;
+	ct ++;
       }
-      t_ += 1.0;
-      ct ++;
     }
   }
   else { // nonlinear SVM, output: coefs(i.e. alpha*y), bias
