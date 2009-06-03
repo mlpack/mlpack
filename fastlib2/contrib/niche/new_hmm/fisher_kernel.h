@@ -24,6 +24,12 @@ void FisherKernelBatch(const HMM<TDistribution> &hmm,
 		       const ArrayList<GenMatrix<T> > &sequences,
 		       Matrix* p_kernel_matrix);
 
+template <typename TDistribution, typename T>
+  void FisherKernelBatch(double lambda,
+			 const HMM<TDistribution> &hmm,
+			 const ArrayList<GenMatrix<T> > &sequences,
+			 Matrix* p_kernel_matrix);
+
 
 #include "fisher_kernel_impl.h"
 #undef INSIDE_FISHER_KERNEL_IMPL_H

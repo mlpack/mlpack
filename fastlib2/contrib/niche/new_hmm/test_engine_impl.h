@@ -429,6 +429,9 @@ void TestHMMFisherKernelClassificationKFold(int n_folds,
 
   datanode* svm_module = fx_submodule(fx_root, "svm");
 
+  double lambda = fx_param_double_req(NULL, "lambda");
+  printf("lambda = %f\n", lambda);
+
   printf("n_sequences = %d\n", n_sequences);
 
   for(int fold_num = 0; fold_num < n_folds; fold_num++) {
@@ -439,7 +442,7 @@ void TestHMMFisherKernelClassificationKFold(int n_folds,
     cv_set.SplitTrainTest(n_folds, fold_num, permutation, &training_set, &test_set);
     
     Matrix kernel_matrix;
-    FisherKernelBatch(kfold_hmms[fold_num], sequences, &kernel_matrix);
+    FisherKernelBatch(lambda, kfold_hmms[fold_num], sequences, &kernel_matrix);
     NormalizeKernelMatrix(&kernel_matrix);
 
     for(int c_index = 0; c_index < c_set_size; c_index++) {
