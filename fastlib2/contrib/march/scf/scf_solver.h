@@ -16,10 +16,10 @@
 
 const fx_entry_doc scf_entries[] = {
 {"diis_states", FX_PARAM, FX_INT, NULL, 
-"The number of previous density matrices used in the interpolation. (default 1)\n"},
+"The number of previous density matrices used in the interpolation. (default 15)\n"},
 {"density_convergence", FX_PARAM, FX_DOUBLE, NULL,
   "The convergence tolerance for the Frobenius norm of the difference of\n"
-  "successive density matrices.  (Default: 10e-8\n"},
+  "successive density matrices.  (Default: 10e-5\n"},
 {"energy_convergence", FX_PARAM, FX_DOUBLE, NULL,
   "Convergence tolerance for successive energies.  (Default: 10e-6)\n"},
 {"num_iterations", FX_RESULT, FX_INT, NULL,
@@ -92,7 +92,7 @@ class SCFSolver {
   
   index_t number_of_basis_functions_; // N
   index_t number_of_electrons_; // K
-  index_t number_of_nuclei_;
+  index_t number_of_nuclei_; // A
   // Number of orbitals to fill, i.e. K/2 
   index_t number_to_fill_; 
   
@@ -136,7 +136,7 @@ class SCFSolver {
   // The norm of the difference between this density matrix and the previous one
   double density_matrix_frobenius_norm_;
   
-  struct datanode* module_;
+  fx_module* module_;
   
   ArrayList<index_t> occupied_indices_;
   
@@ -233,7 +233,7 @@ class SCFSolver {
     iteration_density_norms_.Init(1);
     
     density_convergence_ = fx_param_double(module_, "density_convergence", 
-                                           10e-8);
+                                           10e-5);
     energy_convergence_ = fx_param_double(module_, "energy_convergence", 
                                           10e-6);
     
@@ -293,13 +293,13 @@ class SCFSolver {
     for (index_t row_index = 0; row_index < number_of_basis_functions_; 
          row_index++) {
       
+      Vector row_vec;
+      basis_centers_.MakeColumnVector(row_index, &row_vec);
+      double row_exp = exponents_[row_index];
+      int row_mom = (int)momenta_[row_index];
+      
       for (index_t col_index = row_index; col_index < number_of_basis_functions_; 
            col_index++) {
-        
-        Vector row_vec;
-        basis_centers_.MakeColumnVector(row_index, &row_vec);
-        double row_exp = exponents_[row_index];
-        int row_mom = (int)momenta_[row_index];
         
         Vector col_vec;
         basis_centers_.MakeColumnVector(col_index, &col_vec);
@@ -344,6 +344,11 @@ class SCFSolver {
       
     } // row_index
     
+    //kinetic_energy_integrals_.PrintDebug("kinetic");
+    //potential_energy_integrals_.PrintDebug("potential");
+    //la::Scale(-1.0, &kinetic_energy_integrals_);
+    la::Scale(-1.0, &potential_energy_integrals_);
+    
     la::AddInit(kinetic_energy_integrals_, potential_energy_integrals_, 
                 &core_matrix_);
     
@@ -362,6 +367,10 @@ class SCFSolver {
     
     la::SVDInit(overlap_matrix_, &eigenvalues, &left_vectors, 
                 &right_vectors_trans);
+    
+    //overlap_matrix_.PrintDebug("Overlap Matrix");
+    //left_vectors.PrintDebug("Left Vectors");
+    //right_vectors_trans.PrintDebug("Right Vectors");
     
 #ifdef DEBUG
     
@@ -394,7 +403,7 @@ class SCFSolver {
     
     for (index_t i = 0; i < eigenvalues.length(); i++) {
       DEBUG_ASSERT(eigenvalues[i] > 0.0);
-      eigenvalues[i] = 1/sqrt(eigenvalues[i]);
+      eigenvalues[i] = 1.0/sqrt(eigenvalues[i]);
     }
     
     Matrix sqrt_lambda;
@@ -406,8 +415,7 @@ class SCFSolver {
                 &change_of_basis_matrix_);
     
     //printf("Change Of Basis Matrix:\n");
-    //change_of_basis_matrix_.PrintDebug("Change of Basis");
-    
+    //change_of_basis_matrix_.PrintDebug("Change of Basis Matrix");
     
   } // FormChangeOfBasisMatrix_()
   
@@ -417,6 +425,8 @@ class SCFSolver {
    * Compute the density matrix.
    */
   void ComputeDensityMatrix_() {
+    
+    // this doesn't get called anymore, replaced by the diis version
     
     FillOrbitals_();
     
@@ -489,6 +499,17 @@ class SCFSolver {
     
     //density_matrix_norms_.SetZero();
     
+    //coefficient_matrix_.PrintDebug("Coefficient Matrix (in AO basis)");
+    
+    //printf("energies:\n");
+    //energy_vector_.PrintDebug("Energies");
+    /*
+    printf("occupied indices: \n");
+    for (index_t i = 0; i < number_to_fill_; i++) {
+      printf("%d, ", occupied_indices_[i]);
+    }
+    printf("\n");
+    */
     // Rows of density_matrix
     for (index_t density_row = 0; density_row < number_of_basis_functions_;
          density_row++) {
@@ -510,6 +531,7 @@ class SCFSolver {
           
         } // occupied_index
         
+        // for two electrons
         this_sum = 2 * this_sum;
         
         density_matrices_[diis_index_].set(density_row, density_column, 
@@ -670,6 +692,8 @@ class SCFSolver {
 #endif
     
     // 3. Find the untransformed eigenvector matrix
+    // coefficient_matrix_ is always in the AO basis
+    //coefficients_prime.PrintDebug("Coefficients matrix (in MO basis)");
     la::MulOverwrite(change_of_basis_matrix_, coefficients_prime, 
                      &coefficient_matrix_);
     
@@ -709,6 +733,7 @@ class SCFSolver {
         occupied_indices_[next_to_go] = i;
         
         // Find the new index to throw out
+        // this is really inefficient
         double new_max = -DBL_INF;
         next_to_go = -1;
         for (index_t j = 0; j < number_to_fill_; j++) {
@@ -750,6 +775,7 @@ class SCFSolver {
       two_electron_energy_ += density_matrix_.ref(i,i) * 
                               (fock_matrix_.ref(i,i) - core_matrix_.ref(i,i));
                               
+      // this double counts the core?
       double current_energy = density_matrix_.ref(i,i) * 
           (core_matrix_.ref(i,i) + fock_matrix_.ref(i,i));
       
@@ -768,7 +794,7 @@ class SCFSolver {
         double this_energy = 2 * density_matrix_.ref(i, j) * 
             (core_matrix_.ref(i, j) + fock_matrix_.ref(i, j));
             
-        total_energy = total_energy + this_energy;
+        total_energy += this_energy;
         
         basis_energies_[i] += this_energy;
 
@@ -779,8 +805,7 @@ class SCFSolver {
     // Leach says there is a factor of 1/2
     total_energy = (0.5 * total_energy) + nuclear_repulsion_energy_;
     
-    // No factor of two because there's no overcounting of electrons
-    //one_electron_energy_ = one_electron_energy_;
+    one_electron_energy_ = 0.5 * one_electron_energy_;
     two_electron_energy_ = 0.5 * two_electron_energy_;
     
     /*
@@ -877,6 +902,7 @@ class SCFSolver {
     // output results and fill in Fock matrix
 
     //fock_matrix_ = core_matrix_ + coulomb_mat_ - exchange_mat_;
+    // exchange_mat_ should already have been multiplied by 1/2
     la::AddOverwrite(core_matrix_, coulomb_mat_, &fock_matrix_);
     la::SubFrom(exchange_mat_, &fock_matrix_);
     
@@ -903,15 +929,6 @@ class SCFSolver {
       UpdateFockMatrix_();
       
       // Step 4b.
-      // replace this with add back
-      /*
-      if (unlikely(current_iteration_ >= total_energy_.size())) {
-        total_energy_.EnsureSizeAtLeast(2*total_energy_.size());
-        iteration_density_norms_.EnsureSizeAtLeast(
-            2*iteration_density_norms_.size());
-      }
-      */
-      
       total_energy_.PushBack();
       total_energy_[current_iteration_] = ComputeElectronicEnergy_();
       iteration_density_norms_.PushBack();
@@ -926,6 +943,9 @@ class SCFSolver {
       ComputeDensityMatrixDIIS_();
       
       //density_matrix_.PrintDebug("Density Matrix");
+      
+      // store the density matrix to file if needed
+      // maybe have a counter for when to store it?  
       
       // Step 4g.
       converged = TestConvergence_();
@@ -999,11 +1019,6 @@ class SCFSolver {
 
   /**
    * Save the coefficient matrix, total energy, and energy vector to files.
-   *
-   * TODO: think about a better way to separate the filled and virtual orbitals
-   *
-   * TODO: Write cleaner and more useful output code.
-   * How to make this work around the fx-run outputs?  Write it to a file?
    */
   void OutputResults_() {
     
@@ -1066,6 +1081,8 @@ class SCFSolver {
   /**
    * Compute the restricted Hartree-Fock wavefunction for the given values of  
    * the integrals. 
+   *
+   * TODO: Clean this up and make it useful
    */
   void ComputeWavefunction() {
       
@@ -1083,8 +1100,6 @@ class SCFSolver {
   
   void PrintMatrices() {
     
-    // These should be changed to print debug or something
-    
     core_matrix_.PrintDebug("Core Matrix");
     
     coefficient_matrix_.PrintDebug("Coefficient matrix");
@@ -1097,9 +1112,11 @@ class SCFSolver {
     
     energy_vector_.PrintDebug("Energy vector");
     
+    /*
     printf("Total energy:\n");
     ot::Print(total_energy_);  
-      
+    */  
+     
   } // PrintMatrices
   
 }; // class HFSolver

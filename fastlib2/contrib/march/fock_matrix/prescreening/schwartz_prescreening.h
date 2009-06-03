@@ -25,6 +25,8 @@ const fx_entry_doc schwartz_entries[] = {
   "Time for selecting important shell pairs.\n"},
 {"integral_time", FX_TIMER, FX_CUSTOM, NULL,
   "Time for screening and computing integrals.\n"},
+{"num_integrals_computed", FX_RESULT, FX_INT, NULL,
+  "The total number of integrals computed in all the iterations.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -108,6 +110,22 @@ class SchwartzPrescreening {
   
     num_integrals_computed_ = 0;
     
+    fx_timer_start(module_, "prescreening_time");
+    
+    printf("====Screening Shell Pairs====\n");
+    fx_timer_start(module_, "shell_screening_time");
+    num_shell_pairs_ = eri::ComputeShellPairs(&shell_pair_list_, basis_list_, 
+                                              shell_pair_threshold_);
+    fx_timer_stop(module_, "shell_screening_time");
+
+    fx_result_int(module_, "num_shell_pairs", num_shell_pairs_);
+    fx_result_int(module_, "num_shell_pairs_screened", 
+                  num_shells_ * ((num_shells_ - 1) / 2) - num_shell_pairs_ + num_shells_);
+    
+    fx_timer_stop(module_, "prescreening_time");
+    
+    first_computation_ = true;
+    
   } // Init()
   
   
@@ -142,6 +160,9 @@ class SchwartzPrescreening {
   index_t matrix_size_;
   
   index_t num_integrals_computed_;
+  
+  // used for resetting during SCF iterations
+  bool first_computation_;
   
   // The threshold for ignoring a shell quartet
   double threshold_;

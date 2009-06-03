@@ -107,15 +107,7 @@ int main(int argc, char* argv[]) {
     momenta.SetAll(0);
     printf("Assuming all s-type functions.\n\n");
   }
-  
-  const double angstrom_to_bohr = 1.889725989;
-  // if the data are not input in bohr, assume they are in angstroms
-  if (!fx_param_exists(root_mod, "bohr")) {
     
-    la::Scale(angstrom_to_bohr, &centers);
-    
-  }
-  
   Matrix nuclear_centers;
   const char* nuclear_centers_file = fx_param_str_req(root_mod, 
                                                       "nuclear_centers");
@@ -142,6 +134,14 @@ int main(int argc, char* argv[]) {
     FATAL("Only RHF supported -- must specify an even number of electrons.\n");
   }
   
+  const double angstrom_to_bohr = 1.889725989;
+  // if the data are not input in bohr, assume they are in angstroms
+  if (!fx_param_exists(root_mod, "bohr")) {
+    
+    la::Scale(angstrom_to_bohr, &centers);
+    la::Scale(angstrom_to_bohr, &nuclear_centers);
+    
+  }  
   
   const char* coulomb_alg_str = fx_param_str(root_mod, "coulomb_alg", "naive");
   const char* exchange_alg_str = fx_param_str(root_mod, "exchange_alg", "naive");
@@ -162,7 +162,6 @@ int main(int argc, char* argv[]) {
     link_alg.Init(centers, exp_mat, momenta, density, link_mod);
 
     SCFSolver<CFMMCoulomb, Link> solver;
-    // fix these to be correct
     solver.Init(centers, exp_mat, momenta, density, solver_mod, nuclear_centers, 
                 nuclear_charges, &cfmm_alg, &link_alg, num_electrons);
     solver.ComputeWavefunction();
