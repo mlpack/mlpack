@@ -1,4 +1,11 @@
 binrule(
+    name = "kpca",
+    sources = ["kpca.cc"],
+    headers = ["kernel_pca.h"],
+    deplibs = ["fastlib:fastlib"]
+    )
+
+binrule(
     name = "test_inbio_kpca",
     sources = ["test_inbio_kpca.cc"],
     headers = ["generative_mmk.h",

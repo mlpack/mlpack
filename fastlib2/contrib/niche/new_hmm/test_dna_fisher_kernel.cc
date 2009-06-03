@@ -1,7 +1,6 @@
 #include "fastlib/fastlib.h"
 #include "test_dna_utils.h"
 #include "test_engine.h"
-//#include "utils.h"
 
 
 int main(int argc, char* argv[]) {
@@ -13,32 +12,37 @@ int main(int argc, char* argv[]) {
     ArrayList<GenMatrix<int> > sequences;
     GenVector<int> labels;
     LoadOneDNAHMMAndSequences(&hmm, &sequences, &labels);
-    /*
-      ReadInOTObject("frozen_dna_one_hmm_topo4_model_exons", &hmm);
-      ReadInOTObject("frozen_dna_labels", &labels);
-
-      const char* exons_filename = "exons_small.dat";
-      const char* introns_filename = "introns_small.dat";
-
-      LoadVaryingLengthData(exons_filename, &sequences);
-
-      ArrayList<GenMatrix<int> > intron_sequences;
-      LoadVaryingLengthData(introns_filename, &intron_sequences);
-      sequences.AppendSteal(&intron_sequences);
-
-      double val = FisherKernel(hmm, sequences[0], sequences[1]);
-      printf("fisher kernel = %f\n", val);
-    */
-  
     TestHMMFisherKernelClassification(hmm, sequences, labels);
   }
   else if(strcmp(mode, "kfold") == 0) {
-    ArrayList<HMM<Multinomial> > kfold_hmms;
-    ArrayList<GenMatrix<int> > sequences;
-    GenVector<int> labels;
-    int n_folds = fx_param_int(NULL, "n_folds", 10);
-    LoadKFoldDNAHMMAndSequences(n_folds, &kfold_hmms, &sequences, &labels);
-    TestHMMFisherKernelClassificationKFold(n_folds, kfold_hmms, sequences, labels);
+    const char* model_classes = fx_param_str_req(NULL, "model_classes");
+    if((strcmp(model_classes, "exons") == 0)
+       || (strcmp(model_classes, "introns") == 0)) {
+      ArrayList<HMM<Multinomial> > kfold_hmms;
+      ArrayList<GenMatrix<int> > sequences;
+      GenVector<int> labels;
+      int n_folds = fx_param_int(NULL, "n_folds", 10);
+      LoadKFoldDNAHMMAndSequences(n_folds, &kfold_hmms, &sequences, &labels);
+      TestHMMFisherKernelClassificationKFold(n_folds,
+					     kfold_hmms,
+					     sequences, labels);
+    }
+    else if(strcmp(model_classes, "both") == 0) {
+      ArrayList<HMM<Multinomial> > kfold_exon_hmms;
+      ArrayList<HMM<Multinomial> > kfold_intron_hmms;
+      ArrayList<GenMatrix<int> > sequences;
+      GenVector<int> labels;
+      int n_folds = fx_param_int(NULL, "n_folds", 10);
+      LoadKFoldDNAHMMPairAndSequences(n_folds,
+				      &kfold_exon_hmms, &kfold_intron_hmms,
+				      &sequences, &labels);
+      TestHMMFisherKernelClassificationKFold(n_folds,
+					     kfold_exon_hmms, kfold_intron_hmms,
+					     sequences, labels);
+    }
+    else {
+      FATAL("Error: For k-fold cross-validation, parameter 'model_classes' must be set to \"exons\", \"introns\", or \"both\". Exiting...");
+    }
   }
   else {
     FATAL("Error: Parameter 'mode' must be set to \"full\" or \"kfold\". Exiting...");

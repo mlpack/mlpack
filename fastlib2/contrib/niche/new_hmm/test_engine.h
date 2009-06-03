@@ -34,12 +34,24 @@ void TestHMMLatMMKClassificationKFold(int n_folds,
 				      const ArrayList<GenMatrix<int> > &sequences,
 				      const GenVector<int> &labels);
 
+void TestHMMLatMMKClassificationKFold(int n_folds,
+				      const ArrayList<HMM<Multinomial> > &kfold_exon_hmms,
+				      const ArrayList<HMM<Multinomial> > &kfold_intron_hmms,
+				      const ArrayList<GenMatrix<int> > &sequences,
+				      const GenVector<int> &labels);
+
 void TestHMMFisherKernelClassification(const HMM<Multinomial> &hmm,
 				       const ArrayList<GenMatrix<int> > &sequences,
 				       const GenVector<int> &labels);
 
 void TestHMMFisherKernelClassificationKFold(int n_folds,
 					    const ArrayList<HMM<Multinomial> > &kfold_hmms,
+					    const ArrayList<GenMatrix<int> > &sequences,
+					    const GenVector<int> &labels);
+
+void TestHMMFisherKernelClassificationKFold(int n_folds,
+					    const ArrayList<HMM<Multinomial> > &kfold_exon_hmms,
+					    const ArrayList<HMM<Multinomial> > &kfold_intron_hmms,
 					    const ArrayList<GenMatrix<int> > &sequences,
 					    const GenVector<int> &labels);
 
