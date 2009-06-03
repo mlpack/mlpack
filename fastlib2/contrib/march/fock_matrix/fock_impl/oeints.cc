@@ -143,6 +143,7 @@ namespace oeints {
     
     integral *= eri::ComputeNormalization(exp_A, mom_A);
     integral *= eri::ComputeNormalization(exp_B, mom_B);
+    integral *= nuclear_charge;
     
     return integral;
     

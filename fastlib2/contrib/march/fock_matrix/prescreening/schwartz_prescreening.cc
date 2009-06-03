@@ -62,29 +62,22 @@ void SchwartzPrescreening::UpdateDensity(const Matrix& new_density) {
   coulomb_matrix_.SetZero();
   exchange_matrix_.SetZero();
   
-  shell_pair_list_.Clear();
+  /*
+  if (!first_computation_) {
+    shell_pair_list_.Clear();
+  }
+  */
   
-  num_prunes_ = 0;
+  //num_prunes_ = 0;
   
 }
 
 
 void SchwartzPrescreening::Compute() {
 
-  fx_timer_start(module_, "prescreening_time");
-
-  printf("====Screening Shell Pairs====\n");
-  fx_timer_start(module_, "shell_screening_time");
-  num_shell_pairs_ = eri::ComputeShellPairs(&shell_pair_list_, basis_list_, 
-                                            shell_pair_threshold_);
-  fx_timer_stop(module_, "shell_screening_time");
-  
-  fx_result_int(module_, "num_shell_pairs", num_shell_pairs_);
-  fx_result_int(module_, "num_shell_pairs_screened", 
-                num_shells_ * ((num_shells_ - 1) / 2) - num_shell_pairs_ + num_shells_);
-  
-  
   printf("====Screening and Computing Integrals====\n");
+  
+  fx_timer_start(module_, "prescreening_time");
   
   fx_timer_start(module_, "integral_time");
   for (index_t i = 0; i < num_shell_pairs_; i++) {
@@ -166,6 +159,8 @@ void SchwartzPrescreening::Compute() {
       }
     
     }
+    
+    first_computation_ = false;
     
   } // for i
     
