@@ -118,8 +118,8 @@ void SaveOneSynthHMM() {
 
 void SaveKFoldSynthHMMs(int n_folds) {
 
-  const char* class1_filename = "class1_small.dat";
-  const char* class0_filename = "class0_small.dat";
+  const char* class1_filename = "synth1000_pos.dat";
+  const char* class0_filename = "synth1000_neg.dat";
 
   const int class1_label = 1;
   const int class0_label = 0;
