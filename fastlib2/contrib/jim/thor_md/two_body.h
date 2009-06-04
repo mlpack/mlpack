@@ -76,6 +76,35 @@ class TwoBody{
     }
   } 
 
+  double ForceRange(const TPoint& query, const RNode& ref, const Vector& box)
+    const{
+    double range_q = 0;
+    double  rnorm = 0, Rnorm = 0;
+    Vector delta;
+    la::SubInit(query.pos_, ref.stat().centroid_, &delta);
+    if (box.length() == query.pos_.length()){
+      AdjustVector_(&delta, box);
+    }
+    double Rad = sqrt(la::Dot(delta, delta));
+    
+    Vector node_r;
+    node_r.Init(3);
+    for (int i = 0; i < 3; i++){
+      node_r[i] = ref.bound().width(i, box[i])/ 2;
+      rnorm = rnorm + node_r[i];   
+      Rnorm = Rnorm + fabs(delta[i]);
+    }
+    double rad = sqrt(la::Dot(node_r, node_r)) / Rad;
+    rnorm = rnorm / Rnorm;
+    
+    for (int i = 0; i < powers_.length(); i++){  
+      double coef = fabs(ref.stat().coefs_[i]*query.coefs_[i]*
+	 signs_[i]*GetForceTermPt_(Rad, rad, Rnorm, rnorm, -(int)powers_[i]));
+      range_q = range_q + coef;     
+    }       
+    return range_q;
+  }
+
   double ForceRange(const QNode& query, const RNode& ref, const Vector& box)
     const{
     double range_q = 0;
@@ -106,6 +135,34 @@ class TwoBody{
     range_q = range_q / query.count();  
     return range_q;
   }
+
+
+  double PotentialRange(const TPoint& query, const RNode& ref,
+			const Vector& box) const {
+    double range_q = 0;   
+    Vector delta;
+    la::SubInit(query.pos_, ref.stat().centroid_, &delta);
+    if (box.length() == query.pos_.length()){
+      AdjustVector_(&delta, box);
+    }
+    double Rad = sqrt(la::Dot(delta, delta));
+    
+    Vector node_r;
+    node_r.Init(3);
+    for (int i = 0; i < 3; i++){
+      node_r[i] = ref.bound().width(i, box[i])/ 2;     
+    }
+    double rad = sqrt(la::Dot(node_r, node_r)) / Rad;
+    
+    double coef;
+    for (int i = 0; i < powers_.length(); i++){
+       coef = fabs(ref.stat().coefs_[i]*query.coefs_[i]*
+		   signs_[i]*GetPotentialTermPt_(Rad, rad, -(int)powers_[i]));
+       range_q = range_q + coef;     
+    }      
+    return range_q;
+  }
+
 
   double PotentialRange(const QNode& query, const RNode& ref,
 			const Vector& box) const {

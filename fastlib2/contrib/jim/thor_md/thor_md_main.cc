@@ -28,8 +28,9 @@ const fx_module_doc root_doc = {
 
 static const double K_B = 8.61734e-5;
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {  
   fx_module *root = fx_init(argc, argv, &root_doc);
+  rpc::Init();
   ThorMD simulation;
 
   // Output files
@@ -51,6 +52,7 @@ int main(int argc, char *argv[]) {
 
   // Read in positions and velocities
   struct datanode* parameters = fx_submodule(root, "param");
+  
   simulation.Init(parameters);
   simulation.Compute(parameters);
 
@@ -62,14 +64,12 @@ int main(int argc, char *argv[]) {
   ArrayList<Matrix> reference_positions;    
   if (rpc::is_root()){
     fp_diff = fx_param_str(NULL, "diff", "diffusion.dat");
-    diff = fopen(fp_diff, "w+");
-    diff_tot = fx_param_int(0, "snapshots", 1);   
-    reference_positions.Init(diff_tot);
-  } else {
-    diff_tot = 0;
-    reference_positions.Init(0);
+    diff = fopen(fp_diff, "w+");  
   }
-    
+  diff_tot = fx_param_int(0, "snapshots", 1);   
+  reference_positions.Init(diff_tot);
+     
+  
   // Loop over all time steps
   while (time < final_time_){
 
@@ -79,35 +79,43 @@ int main(int argc, char *argv[]) {
     simulation.Compute(parameters);
    
   
-    // Take snapshot, if nesc.   
-    if (rpc::is_root()){
-      if (diff_count < diff_tot & time > last_time + delta){
-	last_time = time;    
-	simulation.TakeSnapshot(&reference_positions[diff_count]);
-	diff_count++;    
-      }
+    // Take snapshot, if nesc.      
+    if (diff_count < diff_tot & time > last_time + delta){
+      last_time = time;    
+      simulation.TakeSnapshot(&reference_positions[diff_count]);
+      diff_count++;    
     }
+    
 
     // Do we get stats this time?
-    if (((int)(time / time_step_ -0.5) % 5 == 0) && (rpc::is_root()) ){      
+    if (((int)(time / time_step_ -0.5) % 5 == 0)){      
       // Get radial distribution
       // Get diffusion, temp, etc.
-      fprintf(diff, "%f, ", time);
+      if (rpc::is_root()){
+	fprintf(diff, "%f, ", time);
+      }
       for (int j = 0; j < diff_tot; j++){	
 	double diffusion;
 	if (j < diff_count){	  	 
 	  diffusion = simulation.GetDiffusion(reference_positions[j]);
-	  fprintf(diff, "%f,", diffusion);	  
+	  if (rpc::is_root()){
+	    fprintf(diff, "%f,", diffusion);	  
+	  }
 	} else {
-	  fprintf(diff, "%f,", 0.0);	 
+	  if (rpc::is_root()){
+	    fprintf(diff, "%f,", 0.0);	 
+	  }
 	}
       }
-      fprintf(diff, "\n");
-      temperature_ = simulation.global_result_.old_temp_;
-      temperature_ = temperature_ / K_B;
-      pressure_ = simulation.global_result_.pressure_;
-      printf("Temperature: %f \n", temperature_);
-      printf("Pressure: %f \n", pressure_);
+      if (rpc::is_root()){
+	fprintf(diff, "\n");
+	temperature_ = simulation.global_result_.old_temp_;
+	temperature_ = temperature_ / K_B;
+	pressure_ = simulation.global_result_.pressure_;
+	printf("Time: %f \n--------------\n", time);
+	printf("Temperature: %f \n", temperature_);
+	printf("Pressure: %f \n \n", pressure_);	
+      }
       if (set_temp_ > 0){
 	double ratio = sqrt(set_temp_ / temperature_);
 	simulation.ScaleToTemperature(ratio);
@@ -118,9 +126,11 @@ int main(int argc, char *argv[]) {
     time = time + time_step_;
   }
 
+  
+ 
+  Matrix positions;
+  simulation.GetFinalPositions(&positions);
   if (rpc::is_root()){
-    Matrix positions;
-    simulation.GetFinalPositions(&positions);
     coords = fopen(fp_coords, "w+");
     for (int i = 0; i < positions.n_cols(); i++){
       for (int j = 0; j < positions.n_rows()-1; j++){
@@ -129,13 +139,14 @@ int main(int argc, char *argv[]) {
       fprintf(coords, "%f\n", positions.get(positions.n_rows()-1, i));
     }
   }
+  
 
   // Close output files
   simulation.Fin();
   if (rpc::is_root()){
     fclose(diff);
   }
-
+  
   fx_done(fx_root);
   return 0;
 }
