@@ -603,9 +603,11 @@ class ThorMD {
       } else {
 	int n_trips = r_node.count()*(r_node.count()-1)/2;
 	if (param.bound_type_ == POTENTIAL){
-	  bound = 0.0;	
+	  bound = param.potential_.PotentialRange(q, r_node, param.box_size_); 
+	  // bound += param.axilrod_.PotentialRange(q, r_node, param.box_size_); 
 	} else {
-	  bound = 0.0;
+	  bound = param.potential_.ForceRange(q, r_node, param.box_size_); 
+	  // bound += param.axilrod_.ForceRange(q, r_node, param.box_size_);
 	}
 	if (bound < 0){
 	  Vector force;	
@@ -717,10 +719,12 @@ class ThorMD {
       } else { 
 	double bound; 
 	int n_trips = r_node2.count()*r_node1.count();	
-	if (param.prune_type_ == POTENTIAL){
-	  bound = 0.0;
-	} else {
-	  bound = 0.0;
+	if (param.prune_type_ == POTENTIAL){	 
+	  //	  bound = param.axilrod_.PotentialRange(q, r_node1, r_node2, 
+	  //					    param.box_size_); 
+	} else {	 
+	  //	  bound = param.axilrod_.ForceRange(q, r_node1, r_node2, 
+	  //					    param.box_size_); 
 	}
 	if (bound/n_trips < q_result->ErrorRate()){
 	  // Apply Force
@@ -793,7 +797,7 @@ class ThorMD {
 				      const Delta& parent_delta,
 				      Delta* delta,
 				      GlobalResult* global_result,
-				      QPostponed* q_postponed) {
+				      QPostponed* q_postponed) {   
       if (param.prune_type_ == CUTOFF){
 	// compute distance bound between two nodes
 	double dist;
@@ -904,8 +908,12 @@ class ThorMD {
 	if (param.bound_type_ == POTENTIAL){
 	  bound = param.potential_.PotentialRange(q_node, r_node, 
 						   param.box_size_);
+	  //	  bound = bound + param.axilrod_.PotentialRange(q_node, r_node, 
+	  //						    param.box_size_);
 	} else {
 	  bound = param.potential_.ForceRange(q_node,r_node, param.box_size_);
+	  //	  bound = bound + param.axilrod_.ForceRange(q_node, r_node, 
+	  //						    param.box_size_);
 	} 
 	if (bound / n_trips < q_postponed->error_budget_ / 
 	    q_postponed->triples_left_){
@@ -986,16 +994,15 @@ class ThorMD {
   /** read datasets, build trees */    
   void Init(datanode *module) {
 
+    chan_ = 8;
     // I don't quite understand what these mean, since I copied and pasted
     // from an example code.
     double results_megs = fx_param_double(module, "results/megs", 1000);
 
-    rpc::Init();
-    
+    // rpc::Init();    
     if (!rpc::is_root()) {
-      //fx_silence();
+      //   fx_silence();
     }
-
     // initialize parameter set    
     parameters_.Init(module);
     
@@ -1031,7 +1038,7 @@ class ThorMD {
     fx_timer_start(module, "tree_construction");
     r_tree_ = new ThorTree<Param, RPoint, RNode>();
     thor::CreateKdTree<RPoint, RNode>(parameters_, DATA_CHANNEL + 4, 
-				      DATA_CHANNEL + 5,
+				      DATA_CHANNEL + chan_,
 				      fx_submodule(module, "r_tree"),
 				      parameters_.reference_count_, 
 				      r_points_cache_, r_tree_);
@@ -1054,33 +1061,46 @@ class ThorMD {
     		       results_megs, &q_results_);    
   }
 
-  void RebuildTree(datanode* module){      
+  void RebuildTree(datanode* module){     
+    r_tree_->nodes().StartSync();
+    r_tree_->nodes().WaitSync();  
     delete &r_tree_->nodes();
     r_tree_->param().Renew();
-    r_tree_->decomp().Renew();  
-    thor::CreateKdTree<RPoint, RNode>(parameters_, DATA_CHANNEL + 4, 
+    r_tree_->decomp().Renew();         
+    thor::CreateKdTree<RPoint, RNode>(parameters_, DATA_CHANNEL + chan_, 
 				      DATA_CHANNEL + 5,
 				      fx_submodule(module, "r_tree"),
 				      parameters_.reference_count_, 
 				      r_points_cache_, r_tree_);
-    q_tree_ = r_tree_;       
+    if (chan_ == 9){
+      chan_ = 8;
+    } else {
+      chan_ = 9;
+    }
+
+    q_tree_ = r_tree_;      
+ 
   }
 
   double GetDiffusion(Matrix& positions){
     double diff = 0;   
-    CacheArray<QPoint> points_array;
-    points_array.Init(q_points_cache_, BlockDevice::M_READ);
-    CacheReadIter<QPoint> points_iter(&points_array, 0);
-    for (index_t i = 0; i < parameters_.query_count_; i++,
-	   points_iter.Next()){
-      Vector point;
-      int k = (*points_iter).GetPositionVector(&point);
-      for (index_t j = 0; j < 3; j++){
-	diff = diff + (point[j] - positions.get(j, k))*
-	  (point[j] - positions.get(j, k));
+    if (rpc::is_root()){      
+      CacheArray<QPoint> points_array;
+      points_array.Init(q_points_cache_, BlockDevice::M_READ);
+      CacheReadIter<QPoint> points_iter(&points_array, 0);
+      for (index_t i = 0; i < parameters_.query_count_; i++,
+	     points_iter.Next()){
+	Vector point;
+	int k = (*points_iter).GetPositionVector(&point);
+	for (index_t j = 0; j < 3; j++){
+	  diff = diff + (point[j] - positions.get(j, k))*
+	    (point[j] - positions.get(j, k));
+	}
       }
+      diff = diff / parameters_.query_count_;
     }
-    diff = diff / parameters_.query_count_;
+    q_points_cache_->StartSync();
+    q_points_cache_->WaitSync();   
     return diff;
   }
 
@@ -1105,13 +1125,17 @@ class ThorMD {
   }
   
   void ScaleToTemperature(double ratio){
-    CacheArray<QPoint> points_array;   
-    points_array.Init(q_points_cache_, BlockDevice::M_OVERWRITE);   
-    CacheWriteIter<QPoint> points_iter(&points_array, 0);
-    for (index_t i = 0; i < parameters_.query_count_; i++, 
-	   points_iter.Next()) {
-      (*points_iter).ScaleVelocity(ratio);    
-    }   
+    if (rpc::is_root()){
+      CacheArray<QPoint> points_array;   
+      points_array.Init(q_points_cache_, BlockDevice::M_OVERWRITE);   
+      CacheWriteIter<QPoint> points_iter(&points_array, 0);
+      for (index_t i = 0; i < parameters_.query_count_; i++, 
+	     points_iter.Next()) {
+	(*points_iter).ScaleVelocity(ratio);    
+      }   
+    }
+    q_points_cache_->StartSync();
+    q_points_cache_->WaitSync(); 
   }
 
 
@@ -1121,34 +1145,46 @@ class ThorMD {
   }
 
   void TakeSnapshot(Matrix* out_positions){
-    out_positions->Init(3, parameters_.query_count_);
-    CacheArray<QPoint> points_array;
-    points_array.Init(q_points_cache_, BlockDevice::M_READ);
-    CacheReadIter<QPoint> points_iter(&points_array, 0);
-    for (index_t i = 0; i < parameters_.query_count_; i++,
-	   points_iter.Next()){
-      Vector out_point;
-      int k = (*points_iter).GetPositionVector(&out_point);
-      for (index_t j = 0; j < 3; j++){
-	out_positions->set(j, k, out_point[j]);
+    if (rpc::is_root()){
+      out_positions->Init(3, parameters_.query_count_);
+      CacheArray<QPoint> points_array;
+      points_array.Init(q_points_cache_, BlockDevice::M_READ);
+      CacheReadIter<QPoint> points_iter(&points_array, 0);
+      for (index_t i = 0; i < parameters_.query_count_; i++,
+	     points_iter.Next()){
+	Vector out_point;
+	int k = (*points_iter).GetPositionVector(&out_point);
+	for (index_t j = 0; j < 3; j++){
+	  out_positions->set(j, k, out_point[j]);
+	}
       }
+    } else {
+      out_positions->Init(0,0);
     }
+    q_points_cache_->StartSync();
+    q_points_cache_->WaitSync();    
   }
 
   void GetFinalPositions(Matrix* out_positions){
-    out_positions->Init(parameters_.potential_.n_terms() + 9,
-			parameters_.query_count_);
-    CacheArray<QPoint> points_array;
-    points_array.Init(q_points_cache_, BlockDevice::M_READ);
-    CacheReadIter<QPoint> points_iter(&points_array, 0);
-    for (index_t i = 0; i < parameters_.query_count_; i++,
-	   points_iter.Next()){
-      Vector out_point;
-      int k = (*points_iter).GetFullVector(&out_point);
-      for (index_t j = 0; j < out_point.length(); j++){
-	out_positions->set(j, k, out_point[j]);
+    if (rpc::is_root()){
+      out_positions->Init(parameters_.potential_.n_terms() + 9,
+			  parameters_.query_count_);
+      CacheArray<QPoint> points_array;
+      points_array.Init(q_points_cache_, BlockDevice::M_READ);
+      CacheReadIter<QPoint> points_iter(&points_array, 0);
+      for (index_t i = 0; i < parameters_.query_count_; i++,
+	     points_iter.Next()){
+	Vector out_point;
+	int k = (*points_iter).GetFullVector(&out_point);
+	for (index_t j = 0; j < out_point.length(); j++){
+	  out_positions->set(j, k, out_point[j]);
+	}
       }
+    } else {
+      out_positions->Init(0,0);
     }
+    q_points_cache_->StartSync();
+    q_points_cache_->WaitSync();    
   }
 
 
@@ -1172,6 +1208,8 @@ class ThorMD {
 
   /** global results */
   GlobalResult global_result_;
+
+  int chan_;
 
   /** data channel */
   static const int DATA_CHANNEL = 110;
