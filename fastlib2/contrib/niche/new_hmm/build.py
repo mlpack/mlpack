@@ -1,4 +1,11 @@
 binrule(
+    name = "test_k",
+    sources = ["test_k.cc"],
+    headers = [],
+    deplibs = ["fastlib:fastlib"]
+)
+
+binrule(
     name = "kpca",
     sources = ["kpca.cc"],
     headers = ["kernel_pca.h"],
@@ -103,6 +110,29 @@ binrule(
 binrule(
     name = "test_dna_lmmk",
     sources = ["test_dna_lmmk.cc"],
+    headers = ["test_dna_utils.h",
+               "test_engine.h",
+               "test_engine_impl.h",
+               "latent_mmk.h",
+               "latent_mmk_impl.h",
+               "hmm_kernel_utils.h",
+               "utils.h",
+               "multinomial.h",               
+               "isotropic_gaussian.h",
+               "diag_gaussian.h",
+               "mixture.h",
+               "hmm.h",
+               "../svm/svm.h",
+               "../svm/smo.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
+binrule(
+    name = "test_dna_lmmk2",
+    sources = ["test_dna_lmmk2.cc"],
     headers = ["test_dna_utils.h",
                "test_engine.h",
                "test_engine_impl.h",
