@@ -34,9 +34,9 @@ int main(int argc, char* argv[]) {
       LoadKFoldDNAHMMPairAndSequences(n_folds,
 				      &kfold_exon_hmms, &kfold_intron_hmms,
 				      &sequences, &labels);
-//       TestHMMLatMMKClassificationKFold(n_folds,
-// 				       kfold_exon_hmms, kfold_intron_hmms,
-// 				       sequences, labels);
+      TestHMMLatMMK2ClassificationKFold(n_folds,
+					kfold_exon_hmms, kfold_intron_hmms,
+					sequences, labels);
     }
     else {
       FATAL("Error: For k-fold cross-validation, parameter 'model_classes' must be set to \"exons\", \"introns\", or \"both\". Exiting...");
