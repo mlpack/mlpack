@@ -5,12 +5,14 @@ binrule(
     deplibs = ["fastlib:fastlib"]
 )
 
+
 binrule(
     name = "kpca",
     sources = ["kpca.cc"],
     headers = ["kernel_pca.h"],
     deplibs = ["fastlib:fastlib"]
     )
+
 
 binrule(
     name = "test_inbio_kpca",
@@ -24,12 +26,14 @@ binrule(
                "mlpack/series_expansion:series_expansion"]
     )
 
+
 binrule(
     name = "test_kill_duplicate_points",
     sources = ["test_kill_duplicate_points.cc"],
     headers = ["utils.h"],
     deplibs = ["fastlib:fastlib"]
     )
+
 
 binrule(
     name = "save_one_dna_hmm",
@@ -42,6 +46,19 @@ binrule(
                "mlpack/series_expansion:series_expansion",
                "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
     )
+
+binrule(
+    name = "save_one_synth_hmm",
+    sources = ["save_one_synth_hmm.cc"],
+    headers = ["test_engine.h",
+               "test_engine_impl.h",
+               "utils.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
 
 binrule(
     name = "test_dna_fisher_kernel",
@@ -62,6 +79,25 @@ binrule(
     )
 
 binrule(
+    name = "test_synth_fisher_kernel",
+    sources = ["test_synth_fisher_kernel.cc"],
+    headers = ["test_synth_utils.h",
+               "test_engine.h",
+               "test_engine_impl.h",
+               "fisher_kernel.h",
+               "fisher_kernel_impl.h",
+               "hmm_kernel_utils.h",
+               "utils.h",
+               "../svm/svm.h",
+               "../svm/smo.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
+
+binrule(
     name = "test_dna_emmk",
     sources = ["test_dna_emmk.cc"],
     headers = ["test_dna_utils.h",
@@ -79,16 +115,22 @@ binrule(
     )
 
 binrule(
-    name = "empirical_mmk",
-    sources = ["empirical_mmk.cc"],
-    headers = ["empirical_mmk.h",
+    name = "test_synth_emmk",
+    sources = ["test_synth_emmk.cc"],
+    headers = ["test_synth_utils.h",
+               "test_engine.h",
+               "test_engine_impl.h",
+               "empirical_mmk.h",
                "empirical_mmk_impl.h",
-               "utils.h"],
+               "utils.h",
+               "../svm/svm.h",
+               "../svm/smo.h"],
     deplibs = ["fastlib:fastlib",
                "mlpack/kde:dualtree_kde",
                "mlpack/series_expansion:series_expansion",
                "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
     )
+
 
 binrule(
     name = "test_dna_bayes",
@@ -106,6 +148,24 @@ binrule(
                "mlpack/series_expansion:series_expansion",
                "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
     )
+
+binrule(
+    name = "test_synth_bayes",
+    sources = ["test_synth_bayes.cc"],
+    headers = ["test_engine.h",
+               "test_engine_impl.h",
+               "utils.h",
+               "multinomial.h",               
+               "isotropic_gaussian.h",
+               "diag_gaussian.h",
+               "mixture.h",
+               "hmm.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
 
 binrule(
     name = "test_dna_lmmk",
@@ -131,6 +191,30 @@ binrule(
     )
 
 binrule(
+    name = "test_synth_lmmk",
+    sources = ["test_synth_lmmk.cc"],
+    headers = ["test_synth_utils.h",
+               "test_engine.h",
+               "test_engine_impl.h",
+               "latent_mmk.h",
+               "latent_mmk_impl.h",
+               "hmm_kernel_utils.h",
+               "utils.h",
+               "multinomial.h",               
+               "isotropic_gaussian.h",
+               "diag_gaussian.h",
+               "mixture.h",
+               "hmm.h",
+               "../svm/svm.h",
+               "../svm/smo.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
+
+binrule(
     name = "test_dna_lmmk2",
     sources = ["test_dna_lmmk2.cc"],
     headers = ["test_dna_utils.h",
@@ -154,6 +238,30 @@ binrule(
     )
 
 binrule(
+    name = "test_synth_lmmk2",
+    sources = ["test_synth_lmmk2.cc"],
+    headers = ["test_synth_utils.h",
+               "test_engine.h",
+               "test_engine_impl.h",
+               "latent_mmk.h",
+               "latent_mmk_impl.h",
+               "hmm_kernel_utils.h",
+               "utils.h",
+               "multinomial.h",               
+               "isotropic_gaussian.h",
+               "diag_gaussian.h",
+               "mixture.h",
+               "hmm.h",
+               "../svm/svm.h",
+               "../svm/smo.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
+
+binrule(
     name = "test_dna_gmmk",
     sources = ["test_dna_gmmk.cc"],
     headers = ["test_engine.h",
@@ -173,6 +281,41 @@ binrule(
                "mlpack/series_expansion:series_expansion",
                "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
     )
+
+binrule(
+    name = "test_synth_gmmk",
+    sources = ["test_synth_gmmk.cc"],
+    headers = ["test_engine.h",
+               "test_engine_impl.h",
+               "generative_mmk.h",
+               "generative_mmk_impl.h",
+               "utils.h",
+               "multinomial.h",               
+               "isotropic_gaussian.h",
+               "diag_gaussian.h",
+               "mixture.h",
+               "hmm.h",
+               "../svm/svm.h",
+               "../svm/smo.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
+
+binrule(
+    name = "empirical_mmk",
+    sources = ["empirical_mmk.cc"],
+    headers = ["empirical_mmk.h",
+               "empirical_mmk_impl.h",
+               "utils.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
 
 binrule(
     name = "test_engine",
