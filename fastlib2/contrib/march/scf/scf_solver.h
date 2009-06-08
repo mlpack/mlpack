@@ -36,6 +36,9 @@ const fx_entry_doc scf_entries[] = {
   "Time to initialize for SCF computation.\n"},
 {"SCF_Iterations", FX_TIMER, FX_CUSTOM, NULL,
 "Total time to for the SCF iterations.\n"},
+{"smallest_overlap_eigenvalue", FX_RESULT, FX_DOUBLE,
+  "The smallest eigenvalue of the overlap matrix.  Creates convergence\n"
+  "problems if it is too small.\n"},
 FX_ENTRY_DOC_DONE
 };
 
@@ -371,6 +374,13 @@ class SCFSolver {
     //overlap_matrix_.PrintDebug("Overlap Matrix");
     //left_vectors.PrintDebug("Left Vectors");
     //right_vectors_trans.PrintDebug("Right Vectors");
+    
+    double *min_eigenval;
+    min_eigenval = std::min_element(eigenvalues.ptr(), 
+                                    eigenvalues.ptr() + eigenvalues.length());
+    
+    printf("Smallest Eigenvalue of Overlap Matrix: %g\n", *min_eigenval);
+    fx_result_double(module_, "smallest_overlap_eigenvalue", *min_eigenval);
     
 #ifdef DEBUG
     

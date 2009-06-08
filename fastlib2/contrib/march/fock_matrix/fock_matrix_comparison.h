@@ -5,8 +5,8 @@
 #ifndef FOCK_MATRIX_COMPARISON_H
 #define FOCK_MATRIX_COMPARISON_H
 
-
 #include "fastlib/fastlib.h"
+#include "fock_impl/oeints.h"
 
 class FockMatrixComparison {
 
@@ -43,14 +43,36 @@ class FockMatrixComparison {
   bool compare_fock_;
   bool compare_coulomb_;
   bool compare_exchange_;
+  bool compare_energies_;
   
-  Matrix* F_mat_;
+  Matrix* G_mat_;
   Matrix* J_mat_;
   Matrix* K_mat_;
   
-  Matrix* naive_F_mat_;
+  Matrix fock_mat_;
+  
+  Matrix* naive_G_mat_;
   Matrix* naive_J_mat_;
   Matrix* naive_K_mat_;
+  
+  Matrix naive_fock_mat_;
+  
+  Vector naive_energies_;
+  Vector comp_energies_;
+  
+  double naive_total_energy_;
+  double comp_total_energy_;
+  
+  Matrix core_hamiltonian_;
+  Matrix overlap_matrix_;
+  Matrix change_of_basis_matrix_;
+  
+  Matrix centers_;
+  Matrix nuclear_centers_;
+  Vector nuclear_charges_;
+  Matrix density_;
+  Vector momenta_;
+  Vector exponents_;
   
   fx_module* my_mod_;
   
@@ -60,11 +82,22 @@ class FockMatrixComparison {
   index_t num_entries_;
   
   double rel_error_cutoff_;
+  
+  void ComputeCoreMatrices_();
+  
+  void ComputeChangeOfBasisMatrix_();
+  
+  void DiagonalizeFockMatrix_();
+  
+  void CompareEigenvalues_();
 
  public:
 
   void Init(fx_module* mod1, Matrix** mat1, fx_module* mod2, 
-            Matrix** mat2, fx_module* my_mod);
+            Matrix** mat2, const Matrix& centers, const Matrix& exp, 
+            const Matrix& momenta, const Matrix& density, 
+            Matrix* nuclear_centers, const Matrix& nuclear_charges, 
+            fx_module* my_mod);
 
   void Compare();
   
