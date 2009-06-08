@@ -1,8 +1,8 @@
 librule(
 	name="fock_matrix_comparison",
-	headers=["fock_matrix_comparison.h"],
+	headers=["fock_matrix_comparison.h", "fock_impl/oeints.h"],
 	sources=["fock_matrix_comparison.cc"],
-	deplibs=["fastlib:fastlib"],
+	deplibs=["fastlib:fastlib", "contrib/march/fock_matrix/fock_impl:oeints"],
 )
 
 binrule(

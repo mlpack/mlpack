@@ -122,12 +122,45 @@ int main(int argc, char* argv[]) {
     momenta.SetAll(0);
   }
   
+  Matrix nuclear_centers_mat;
+  Matrix* nuclear_centers;
+  if (fx_param_exists(root_mod, "nuclear_centers")) {
+    const char* nuclear_centers_file = fx_param_str_req(root_mod, 
+                                                        "nuclear_centers");
+    data::Load(nuclear_centers_file, &nuclear_centers_mat);
+    nuclear_centers = &nuclear_centers_mat;
+  }
+  else {
+    nuclear_centers_mat.Init(1,1);
+    nuclear_centers = NULL; 
+  }
+  
+  Matrix nuclear_charges;
+  if (fx_param_exists(root_mod, "nuclear_charges")) {
+    const char* nuclear_charges_file = fx_param_str_req(root_mod, 
+                                                        "nuclear_charges");
+    data::Load(nuclear_charges_file, &nuclear_charges);
+  }
+  else {
+    nuclear_charges.Init(1, nuclear_centers->n_cols());
+    nuclear_charges.SetAll(1.0);
+    printf("Assuming all H atoms.\n\n");
+  }
+  
+  if (nuclear_centers) {
+    if (nuclear_centers->n_cols() != nuclear_charges.n_cols()) {
+      FATAL("Must provide a charge for every nuclear center!\n");
+    }
+  }
+  
   const double angstrom_to_bohr = 1.889725989;
   // if the data are not input in bohr, assume they are in angstroms
   if (!fx_param_exists(root_mod, "bohr")) {
     
     la::Scale(angstrom_to_bohr, &centers);
-  
+    if (nuclear_centers) {
+      la::Scale(angstrom_to_bohr, nuclear_centers);
+    }
   }
   
   // Have the naive matrices on hand if needed 
@@ -180,7 +213,7 @@ int main(int argc, char* argv[]) {
   std::string naive_exchange_string;
   naive_exchange_string = directory + centers_name + underscore + exp_name
                           + underscore + density_name + under_K;
-  cons t char* naive_exchange_file = naive_exchange_string.c_str();
+  const char* naive_exchange_file = naive_exchange_string.c_str();
 
   
   bool do_naive = fx_param_exists(root_mod, "do_naive");
@@ -284,7 +317,8 @@ int main(int argc, char* argv[]) {
       
       FockMatrixComparison cfmm_compare;
       cfmm_compare.Init(cfmm_mod, cfmm_mats, naive_mod, naive_mats, 
-                        cfmm_compare_mod);
+                        centers, exp_mat, momenta, density, nuclear_centers,
+                        nuclear_charges, cfmm_compare_mod);
       cfmm_compare.Compare();
     
     } // cfmm comparison
@@ -324,7 +358,8 @@ int main(int argc, char* argv[]) {
       
       FockMatrixComparison link_compare;
       link_compare.Init(link_mod, link_mats, naive_mod, naive_mats, 
-                        link_compare_mod);
+                        centers, exp_mat, momenta, density, nuclear_centers,
+                        nuclear_charges, link_compare_mod);
       link_compare.Compare();
       
     } // cfmm comparison
@@ -370,7 +405,9 @@ int main(int argc, char* argv[]) {
       
       FockMatrixComparison prescreening_compare;
       prescreening_compare.Init(prescreening_mod, prescreening_mats, naive_mod, 
-                                naive_mats, prescreening_compare_mod);
+                                naive_mats, centers, exp_mat, momenta, density, 
+                                nuclear_centers, nuclear_charges, 
+                                prescreening_compare_mod);
       prescreening_compare.Compare();
       
     } // cfmm comparison
@@ -417,7 +454,8 @@ int main(int argc, char* argv[]) {
       
       FockMatrixComparison multi_compare;
       multi_compare.Init(multi_mod, multi_mats, naive_mod, 
-                                naive_mats, multi_compare_mod);
+                         naive_mats, centers, exp_mat, momenta, density, 
+                         nuclear_centers, nuclear_charges, multi_compare_mod);
       multi_compare.Compare();
       
     } // cfmm comparison        

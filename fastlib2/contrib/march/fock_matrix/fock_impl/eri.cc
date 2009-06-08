@@ -1,4 +1,5 @@
 #include "eri.h"
+#include "oeints.h"
 
 namespace eri {
 
@@ -400,6 +401,7 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
       
       // Do they use the overlap integral here?
       double this_bound = SchwartzBound(i_shell, j_shell);
+      //double this_bound = oeints::ComputeOverlapIntegral(i_shell, j_shell);
       
       if (this_bound > shell_pair_cutoff) {
       
@@ -417,6 +419,8 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
     } // for j
     
   } // for i 
+  
+  //printf("num_shell_pairs: %d\n", num_shell_pairs);
   
   return num_shell_pairs;
 
@@ -648,7 +652,6 @@ void TwoElectronIntegral(BasisShell& shellA, BasisShell& shellB,
 
   
 } // TwoElectronIntegral
-
 
 
 
