@@ -141,10 +141,13 @@ int main(int argc, char* argv[]) {
                                                         "nuclear_charges");
     data::Load(nuclear_charges_file, &nuclear_charges);
   }
-  else {
+  else if (nuclear_centers) {
     nuclear_charges.Init(1, nuclear_centers->n_cols());
     nuclear_charges.SetAll(1.0);
     printf("Assuming all H atoms.\n\n");
+  }
+  else {
+    nuclear_charges.Init(1,1); 
   }
   
   if (nuclear_centers) {
