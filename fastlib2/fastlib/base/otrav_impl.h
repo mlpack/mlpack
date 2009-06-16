@@ -934,9 +934,9 @@ namespace ot__private {
 
     template<typename T>
     void Untraversed(T &obj) {
-      DEBUG_ONLY(NONFATAL(
-	  "Freezing untraversed %s with bit-copy.",
-          typeid(T).name()));
+      //   DEBUG_ONLY(NONFATAL(
+      //	  "Freezing untraversed %s with bit-copy.",
+      //    typeid(T).name()));
     }
 
     template<typename T>
