@@ -301,7 +301,7 @@ class ThreeBody{
   }
 
 
-  void ForceVector(const TPoint& q, const TPoint& r1, const TPoint& r2, 
+  int ForceVector(const TPoint& q, const TPoint& r1, const TPoint& r2, 
 		   const Vector& box, double cutoff, double cutoff2, 
 		   Vector* force_out) const{
     Vector r_ij, r_jk, r_ki;  
@@ -328,7 +328,7 @@ class ThreeBody{
 	((AA > cutoff2) && (BB > cutoff2) && (CC > cutoff2))){
       force_out->Init(3);
       force_out->SetZero();
-      return;
+      return 0;
     }  
     cosines = BC*AC*AB;
     denom = AA*BB*CC;
@@ -348,6 +348,7 @@ class ThreeBody{
     la::AddExpert( coef2b, r_ki, force_out);    
 
     la::Scale(1.0/q.mass_, force_out);
+    return 1;
   }
 
   

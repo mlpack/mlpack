@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
   fx_timer_stop(parameters, "Building Tree");
   printf("Finished Initialization. Updating Momentum. \n");
   fx_timer_start(parameters, "Tree Based");
-  simulation.UpdateMomentum(time_step / 2);
+  //  simulation.UpdateMomentum(time_step);
   time = 0;  
   double target_pct = 0.9;
   int target_trips = 0;
@@ -175,6 +175,7 @@ int main(int argc, char *argv[])
       target_pct = pct;
       target_trips = trips;
     }
+    simulation.UpdateMomentum(time_step);
     simulation.UpdatePositions(time_step);   
     
     if (pct < 0.85*target_pct || trips > 1.1*target_trips){
@@ -220,7 +221,7 @@ int main(int argc, char *argv[])
       }
     }    
     
-    simulation.UpdateMomentum(time_step);
+    //    simulation.UpdateMomentum(time_step);
     pct = simulation.GetPercent();
     time = time + time_step;
   }
