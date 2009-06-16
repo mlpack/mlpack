@@ -32,6 +32,7 @@
 #include <math.h>
 #include <limits.h>
 #include <float.h>
+#include <assert.h>
 
 EXTERN_C_BEGIN
 
