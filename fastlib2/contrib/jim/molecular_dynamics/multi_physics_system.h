@@ -110,10 +110,10 @@ private:
     la::SubInit(right_vec, left_vec, &delta_r);
     if (boundary_ == PERIODIC){
       AdjustVector_(&delta_r);
-    }
+    }   
     double dist = sqrt(la::Dot(delta_r, delta_r));
     if (prune_ == CUTOFF){
-      if (sqrt(dist ) > cutoff_){
+      if (dist  > cutoff_){
 	return;
       }
     }
@@ -205,7 +205,12 @@ private:
     atoms_.MakeColumnSubvector(k, 0, 3, &pos_k);
     la::SubInit(pos_i, pos_j, &r_ij);
     la::SubInit(pos_j, pos_k, &r_jk);
-    la::SubInit(pos_k, pos_i, &r_ki);
+    la::SubInit(pos_k, pos_i, &r_ki); 
+    if (boundary_ == PERIODIC){
+      AdjustVector_(&r_ij);
+      AdjustVector_(&r_jk);
+      AdjustVector_(&r_ki);
+    }    
     double AA, BB, CC, AB, AC, BC, coef1, coef2, coef3;
     double cosines, denom;
     
@@ -393,7 +398,7 @@ private:
     double Rmin = sqrt(ref->bound().PeriodicMinDistanceSq(query->bound(), dimensions_));
     coef = fabs(4*ref->stat().axilrod_[0]*query->stat().axilrod_[0] / 
 		(pow(rmin, 3)*pow(Rmin, 6)));
-    range_r = range_r + coef*(ref->stat().axilrod_[0] + query->stat().axilrod_[0]/2.0);
+    range_q = range_q + coef*(ref->stat().axilrod_[0] + query->stat().axilrod_[0]/2.0);
     range_r = range_r + coef*(query->stat().axilrod_[0] + ref->stat().axilrod_[0]/2.0);
     range_q = range_q / query->count();
     range_r = range_r / ref->count();
@@ -1149,6 +1154,7 @@ public:
     } else {
       UpdatePositionsNaive_();
     }    
+  
   }     
 
 
@@ -1203,6 +1209,7 @@ public:
       ForceError error_main;
       error_main.Init(force_bound_, n_trips_);
       UpdateMomentumMain_(system_, &error_main);    
+      printf("Pairs: %4.0f Triples: %d \n", percent_pruned_, total_triples_);
       percent_pruned_ = 1.0-2*percent_pruned_/(n_atoms_*n_atoms_ - n_atoms_);  
     } else {
       UpdateMomentumNaive_();

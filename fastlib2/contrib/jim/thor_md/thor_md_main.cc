@@ -36,9 +36,11 @@ int main(int argc, char *argv[]) {
   // Output files
   const char* fp_coords;
   const char* fp_diff;
+  const char* fp_stats;
 
   FILE *coords;
   FILE *diff;
+  FILE *stats;
 
   fp_coords = fx_param_str(NULL, "coord", "coords.dat");  
  
@@ -54,7 +56,7 @@ int main(int argc, char *argv[]) {
   struct datanode* parameters = fx_submodule(root, "param");
   
   simulation.Init(parameters);
-  simulation.Compute(parameters);
+  //  simulation.Compute(parameters);
 
   // Open files for output
 
@@ -65,6 +67,8 @@ int main(int argc, char *argv[]) {
   if (rpc::is_root()){
     fp_diff = fx_param_str(NULL, "diff", "diffusion.dat");
     diff = fopen(fp_diff, "w+");  
+    fp_stats = fx_param_str(NULL, "stats", "stats.dat");
+    stats = fopen(fp_stats, "w+");  
   }
   diff_tot = fx_param_int(0, "snapshots", 1);   
   reference_positions.Init(diff_tot);
@@ -74,11 +78,9 @@ int main(int argc, char *argv[]) {
   while (time < final_time_){
 
     // Update positions
-    simulation.UpdatePoints(time_step_);
-    simulation.RebuildTree(parameters);   
     simulation.Compute(parameters);
-   
-  
+    simulation.UpdatePoints(time_step_);  
+    simulation.RebuildTree(parameters);   
     // Take snapshot, if nesc.      
     if (diff_count < diff_tot & time > last_time + delta){
       last_time = time;    
@@ -86,7 +88,6 @@ int main(int argc, char *argv[]) {
       diff_count++;    
     }
     
-
     // Do we get stats this time?
     if (((int)(time / time_step_ -0.5) % 5 == 0)){      
       // Get radial distribution
@@ -106,7 +107,8 @@ int main(int argc, char *argv[]) {
 	    fprintf(diff, "%f,", 0.0);	 
 	  }
 	}
-      }
+      }   
+    
       if (rpc::is_root()){
 	fprintf(diff, "\n");
 	temperature_ = simulation.global_result_.old_temp_;
@@ -115,14 +117,13 @@ int main(int argc, char *argv[]) {
 	printf("Time: %f \n--------------\n", time);
 	printf("Temperature: %f \n", temperature_);
 	printf("Pressure: %f \n \n", pressure_);	
-      }
+	fprintf(stats, "% f %f %f \n", time, temperature_, pressure_);
+      }     
       if (set_temp_ > 0){
 	double ratio = sqrt(set_temp_ / temperature_);
 	simulation.ScaleToTemperature(ratio);
       }
-    }    
-       
-
+    }      
     time = time + time_step_;
   }
 
@@ -145,6 +146,7 @@ int main(int argc, char *argv[]) {
   simulation.Fin();
   if (rpc::is_root()){
     fclose(diff);
+    fclose(stats);
   }
   
   fx_done(fx_root);

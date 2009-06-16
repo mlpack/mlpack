@@ -513,12 +513,12 @@ class ThorMD {
   class GlobalResult {
   public:
     
-    double virial_, temperature_, old_temp_, pressure_;
+    double virial_, temperature_, old_temp_, pressure_; 
     OT_DEF_BASIC(GlobalResult) {
       OT_MY_OBJECT(virial_);
       OT_MY_OBJECT(temperature_);     
       OT_MY_OBJECT(old_temp_);
-      OT_MY_OBJECT(pressure_);
+      OT_MY_OBJECT(pressure_);    
     }
 
 
@@ -526,7 +526,7 @@ class ThorMD {
   public:
     void Init(const Param& param) {     
       temperature_ = 0;
-      virial_ = 0;
+      virial_ = 0;     
     }
     void Accumulate(const Param& param, const GlobalResult& other) {
       temperature_ = temperature_ + other.temperature_;
@@ -546,7 +546,7 @@ class ThorMD {
       old_temp_ = temperature_ / (3*param.query_count_); 
       
       temperature_ = 0;
-      virial_ = 0;
+      virial_ = 0;   
     }
 
     void Report(const Param& param, datanode *datanode) {
@@ -558,7 +558,8 @@ class ThorMD {
       temperature_ = temperature_ + q_point.mass_*la::Dot(vel_, vel_);
       virial_ = virial_ + la::Dot(q_point.pos_, result.acceleration_)*
 	q_point.mass_;
-    }
+    }    
+
   };
   
   /**
@@ -568,15 +569,14 @@ class ThorMD {
   class PairVisitor {
   public:
     // Velocity of q resulting from reference node
-    Vector acceleration_;
-    
+    Vector acceleration_;  
   private:
     
     
   public:
     void Init(const Param& param) {
       acceleration_.Init(3);
-      acceleration_.SetZero();
+      acceleration_.SetZero();  
     }
     
     /** apply single-tree based pruning by iterating over each query point
@@ -632,10 +632,9 @@ class ThorMD {
      }    
      Vector force;     
      if (param.prune_type_ == CUTOFF){
-       param.potential_.ForceVector(q, r, param.box_size_, 
-				    param.prune_value_, &force);
+      param.potential_.ForceVector(q, r, param.box_size_,param.prune_value_, &force);     
      } else {
-       param.potential_.ForceVector(q, r, param.box_size_, &force);
+       param.potential_.ForceVector(q, r, param.box_size_, &force);        
      }
      la::AddTo(force, &acceleration_);
     }
@@ -647,9 +646,9 @@ class ThorMD {
 	return;
       }            
       Vector force;
-      if (param.bound_type_ == CUTOFF){
-	param.axilrod_.ForceVector(q,r1,r2,param.box_size_, param.prune_value_,
-				   param.prune_value2_, &force);      
+      if (param.prune_type_ == CUTOFF){
+	param.axilrod_.ForceVector(q, r1, r2, param.box_size_, 
+				   param.prune_value_, param.prune_value2_, &force);    
       } else {
 	param.axilrod_.ForceVector(q, r1, r2, param.box_size_, &force);
       }
@@ -664,7 +663,7 @@ class ThorMD {
        const RNode& r_node, const QSummaryResult& unapplied_summary_results,
        QResult* q_result, GlobalResult* global_result) {
       q_result->AddVelocity(acceleration_);
-      acceleration_.SetZero();
+      acceleration_.SetZero();     
     }
   };
 
@@ -674,15 +673,14 @@ class ThorMD {
   public:
     
    // Acceleration for query from these refs
-   Vector acceleration_;
-
+   Vector acceleration_;  
  private: 
   
 
  public:
     void Init(const Param& param) {
       acceleration_.Init(3);
-      acceleration_.SetZero();
+      acceleration_.SetZero();     
     }    
   
     /** apply single-tree based pruning by iterating over each query point
@@ -756,12 +754,13 @@ class ThorMD {
       }   
       Vector force;
       if (param.prune_type_ == CUTOFF){
-	param.axilrod_.ForceVector(q,r1,r2,param.box_size_,param.prune_value_,
-				   param.prune_value2_, &force);
+	param.axilrod_.ForceVector(q, r1, r2, param.box_size_, 
+				   param.prune_value_, param.prune_value2_, &force);
+
       } else {
 	param.axilrod_.ForceVector(q, r1, r2, param.box_size_, &force);
+	la::AddTo(force, &acceleration_);
       }
-      la::AddTo(force, &acceleration_);
     }
     
 
@@ -773,10 +772,8 @@ class ThorMD {
        const QSummaryResult& unapplied_summary_results,
        QResult* q_result, GlobalResult* global_result) {
       q_result->AddVelocity(acceleration_);
-      acceleration_.SetZero();
-    }
-
-    
+      acceleration_.SetZero();    
+    }    
   };
 
 

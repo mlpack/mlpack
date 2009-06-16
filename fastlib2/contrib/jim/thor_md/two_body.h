@@ -249,7 +249,7 @@ class TwoBody{
   // Point-point force vector. This may still return zero, if its outside
   // cutoff distance. This is the only force vector function used by cutoff
   // pruning.
-  void ForceVector(const TPoint& q, const TPoint& r, const Vector& box, 
+  int ForceVector(const TPoint& q, const TPoint& r, const Vector& box, 
 		   double cutoff, Vector* force_out) const{    
     la::SubInit(r.pos_, q.pos_, force_out);
     if (box.length() == q.pos_.length()){
@@ -259,7 +259,7 @@ class TwoBody{
     if (dist > sqrt(cutoff)){
       //      force_out->Init(3);
       force_out->SetZero();
-      return;
+      return  0;
     }
     double coef = 0, temp;
     for (int i  = 0; i < powers_.length(); i++){
@@ -267,6 +267,7 @@ class TwoBody{
       coef = coef + signs_[i]*temp*powers_[i]*pow(dist, powers_[i]-2);
     }             
     la::Scale(coef / q.mass_, force_out);    
+    return 1;
   }
 
   index_t n_terms() const{

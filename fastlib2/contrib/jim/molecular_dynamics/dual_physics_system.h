@@ -482,6 +482,9 @@ private:
   void AdjustVector_(Vector& vector_in, Vector& diff){
     for(int i = 0; i < 3; i++){     
       diff[i] = -floor(vector_in[i] / dimensions_[i] +0.5);
+      if(diff[i] != 0){
+	printf("Is this the problem? \n");
+      }
       vector_in[i] = vector_in[i] + dimensions_[i]*diff[i];     
     }
   }
