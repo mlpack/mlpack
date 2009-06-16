@@ -351,8 +351,9 @@ class HeaderSummaryRule(dep.Metarule):
     return [(Types.PLACEHOLDER, libfile)]
 
 class BinRule(dep.Metarule):
-  def __init__(self, name, deplibs):
+  def __init__(self, name, deplibs, cflags):
     self.name = name
+    self.cflags = cflags
     dep.Metarule.__init__(self, deplibs=deplibs)
   def doit(self, realrule, files, params):
     compiler = compilers[params["compiler"]]
@@ -364,10 +365,10 @@ class BinRule(dep.Metarule):
     cflags = compiler.mode_dictionary[params["mode"]]
     reversed_libs = list(files["deplibs"].to_names())
     reversed_libs.reverse()
-    realrule.command(compiler.linker + " -o %s %s %s %s %s %s" % (
+    realrule.command(compiler.linker + " -o %s %s %s %s %s %s %s" % (
         sq(binfile.name), cflags,
         lflags_start, " ".join(sq(reversed_libs)), lflags_end,
-        params["cflags"]))
+        self.cflags, params["cflags"]))
     return [(Types.BINFILE, binfile)]
 
 class LibRule(dep.Metarule):
@@ -614,7 +615,7 @@ class Loader:
         test_name = test_source[:test_source.rindex(".")]
         test_lib = LibRule(long_name + "_" + test_name,
             [sourcerule(Types.GCC_SOURCE, test_source)], [], [lib], cflags)
-        test_bin = BinRule(pathify_fake(test_name), [test_lib])
+        test_bin = BinRule(pathify_fake(test_name), [test_lib], cflags)
         register(test_name, test_bin)
       return lib
     def wgetrule(name, url, type = Types.ANY, fname = None):
@@ -633,7 +634,7 @@ class Loader:
             sources = sources, headers = headers, deplibs = deplibs,
             cflags = cflags)
         deplibs = deplibs + [lib]
-      register(name, BinRule(longname, sourcerules(Types.LINKABLE, deplibs)))
+      register(name, BinRule(longname, sourcerules(Types.LINKABLE, deplibs), cflags))
     build_file_path = os.path.join(real_path, BUILD_FILE)
     print "... Reading %s" % (build_file_path)
     try:
