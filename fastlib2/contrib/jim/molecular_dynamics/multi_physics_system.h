@@ -15,6 +15,7 @@
 #include "particle_tree.h"
 #include "force_error.h"
 #include "raddist.h"
+#include "../thor_md/periodic_tree.h"
 #define PI 3.14159265358979
 
 
@@ -342,8 +343,8 @@ private:
     }    
 
     double rmin = 2.8;
-    double Rmin = sqrt(ref->bound().PeriodicMinDistanceSq(query->bound(),
-							  dimensions_));
+    double Rmin = sqrt(prdc::MinDistanceSqWrap(ref->bound(), query->bound(),
+					       dimensions_));
     for (int d = 0; d < 10; d++){
       int a = abs((int)power3a_[d]);  
       int b = abs((int)power3b_[d]);  
@@ -395,7 +396,8 @@ private:
     }    
 
     double rmin = 2.8;
-    double Rmin = sqrt(ref->bound().PeriodicMinDistanceSq(query->bound(), dimensions_));
+    double Rmin = sqrt(prdc::MinDistanceSqWrap(ref->bound(), 
+					       query->bound(), dimensions_));
     coef = fabs(4*ref->stat().axilrod_[0]*query->stat().axilrod_[0] / 
 		(pow(rmin, 3)*pow(Rmin, 6)));
     range_q = range_q + coef*(ref->stat().axilrod_[0] + query->stat().axilrod_[0]/2.0);
@@ -593,10 +595,10 @@ private:
     err_q2.Copy(err_q);    
     double d1, d2;
     if (boundary_ == PERIODIC){
-      d1 = ref->bound().PeriodicMinDistanceSq(query->left()->bound(), 
-					      dimensions_);
-      d2 = ref->bound().PeriodicMinDistanceSq(query->right()->bound(), 
-					      dimensions_);
+      d1 = prdc::MinDistanceSqWrap(ref->bound(), query->left()->bound(), 
+				   dimensions_);
+      d2 = prdc::MinDistanceSqWrap(ref->bound(), query->right()->bound(), 
+				   dimensions_);
     } else {
       d1 = ref->bound().MinDistanceSq(query->left()->bound());
       d2 = ref->bound().MinDistanceSq(query->right()->bound());  
@@ -619,10 +621,10 @@ private:
     err_q2.Copy(err_q);
     double d1, d2;
     if (boundary_ == PERIODIC){
-      d1 = ref1->bound().PeriodicMinDistanceSq(query->left()->bound(),dimensions_)*
-	ref2->bound().PeriodicMinDistanceSq(query->left()->bound(),dimensions_);
-      d2 = ref1->bound().PeriodicMinDistanceSq(query->right()->bound(),dimensions_)*
-	ref2->bound().PeriodicMinDistanceSq(query->right()->bound(),dimensions_);
+      d1 = prdc::MinDistanceSqWrap(ref1->bound(), query->left()->bound(),dimensions_)*
+	prdc::MinDistanceSqWrap(ref2->bound(), query->left()->bound(),dimensions_);
+      d2 = prdc::MinDistanceSqWrap(ref1->bound(), query->right()->bound(),dimensions_)*
+	prdc::MinDistanceSqWrap(ref2->bound(), query->right()->bound(),dimensions_);
     } else {
       d1 = ref1->bound().MinDistanceSq(query->left()->bound())*
 	ref2->bound().MinDistanceSq(query->left()->bound());
@@ -647,9 +649,9 @@ private:
     if (prune_ == CUTOFF){
       double a_min, b_min, c_min;   
       if (boundary_ == PERIODIC){
-	a_min = sqrt(i->bound().PeriodicMinDistanceSq(j->bound(),dimensions_));  
-	b_min = sqrt(j->bound().PeriodicMinDistanceSq(k->bound(),dimensions_));  
-	c_min = sqrt(k->bound().PeriodicMinDistanceSq(i->bound(),dimensions_));  
+	a_min = sqrt(prdc::MinDistanceSqWrap(i->bound(), j->bound(),dimensions_));  
+	b_min = sqrt(prdc::MinDistanceSqWrap(j->bound(), k->bound(),dimensions_));  
+	c_min = sqrt(prdc::MinDistanceSqWrap(k->bound(), i->bound(),dimensions_));  
       } else {
 	a_min = sqrt(i->bound().MinDistanceSq(j->bound()));    
 	b_min = sqrt(j->bound().MinDistanceSq(k->bound()));       
@@ -688,7 +690,7 @@ private:
     if (prune_ == CUTOFF){
       double a_min;   
       if (boundary_ == PERIODIC){
-	a_min = sqrt(i->bound().PeriodicMinDistanceSq(j->bound(),dimensions_));
+	a_min = sqrt(prdc::MinDistanceSqWrap(i->bound(), j->bound(),dimensions_));
       } else {
 	a_min = sqrt(i->bound().MinDistanceSq(j->bound()));   
       }      
@@ -924,8 +926,8 @@ private:
 			ParticleTree* ref){    
     double r_min;
     if (boundary_ == PERIODIC){
-      r_min = sqrt(query->bound().PeriodicMinDistanceSq(ref->bound(),
-							dimensions_));
+      r_min = sqrt(prdc::MinDistanceSqWrap(query->bound(), ref->bound(),
+					   dimensions_));
     } else {    
       r_min = sqrt(query->bound().MinDistanceSq(ref->bound()));
     }    
