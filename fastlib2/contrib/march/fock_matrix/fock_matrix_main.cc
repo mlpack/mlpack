@@ -104,13 +104,15 @@ int main(int argc, char* argv[]) {
     
     size_t density_ext = density_str.find_last_of(".");
     if (!strcmp("qcmat", 
-                density_str.substr(density_ext, std::string::npos).c_str())) {
+                density_str.substr(density_ext+1, std::string::npos).c_str())) {
      
+      printf("Reading QChem Style Density Matrix.\n");
       chem_reader::ReadQChemDensity(density_file, &density, centers.n_cols());
       
     }
     else {
       
+      printf("Reading csv Density Matrix.\n");
       data::Load(density_file, &density);
       
     }
@@ -121,7 +123,7 @@ int main(int argc, char* argv[]) {
     density_str = "default";
   }
   
-  density.PrintDebug("Density (from input file)");
+  //density.PrintDebug("Density (from input file)");
   
   if ((density.n_cols() != centers.n_cols()) || 
       (density.n_rows() != centers.n_cols())) {
