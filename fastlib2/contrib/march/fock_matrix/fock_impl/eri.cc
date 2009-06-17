@@ -36,7 +36,7 @@ double F_0_(double z) {
 double F_m(double t, int m) {
 
   if (t == 0.0) {
-    return 1/((double)(2*m + 1));
+    return 1.0/((double)(2*m + 1));
   }
   else {
   

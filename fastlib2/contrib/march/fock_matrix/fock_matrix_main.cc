@@ -5,6 +5,7 @@
 #include "contrib/march/fock_matrix/link/link.h"
 #include "contrib/march/fock_matrix/cfmm/cfmm_coulomb.h"
 #include "fock_matrix_comparison.h"
+#include "chem_reader/chem_reader.h"
 
 
 const fx_entry_doc fock_matrix_main_entries[] = {
@@ -97,15 +98,30 @@ int main(int argc, char* argv[]) {
   std::string density_str;
   Matrix density;
   if (fx_param_exists(root_mod, "density")) {
+ 
     const char* density_file = fx_param_str_req(root_mod, "density");
-    data::Load(density_file, &density);
     density_str = density_file;
+    
+    size_t density_ext = density_str.find_last_of(".");
+    if (!strcmp("qcmat", 
+                density_str.substr(density_ext, std::string::npos).c_str())) {
+     
+      chem_reader::ReadQChemDensity(density_file, &density, centers.n_cols());
+      
+    }
+    else {
+      
+      data::Load(density_file, &density);
+      
+    }
   }
   else {
     density.Init(centers.n_cols(), centers.n_cols());
     density.SetAll(1.0);
     density_str = "default";
   }
+  
+  density.PrintDebug("Density (from input file)");
   
   if ((density.n_cols() != centers.n_cols()) || 
       (density.n_rows() != centers.n_cols())) {
