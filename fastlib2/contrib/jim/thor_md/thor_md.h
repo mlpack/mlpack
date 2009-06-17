@@ -10,6 +10,7 @@
 #include "dfs3.h"
 #include "two_body.h"
 #include "three_body.h"
+#include "periodic_tree.h"
 
 /**
  * THOR-based Molecular Dynamics
@@ -593,7 +594,8 @@ class ThorMD {
       if (param.prune_type_ == CUTOFF){
 	// Check distances
 	if (param.bound_type_ == PERIODIC){
-	  bound = r_node.bound().PeriodicMinDistanceSq(q.pos_,param.box_size_);
+	  bound = prdc::MinDistanceSq(r_node.bound(), q.pos_,
+					  param.box_size_);
 	} else {
 	  bound = r_node.bound().MinDistanceSq(q.pos_);
 	}
@@ -698,10 +700,10 @@ class ThorMD {
 	// Check distances
 	double dij, djk, dki;
 	if (param.bound_type_ == PERIODIC){
-	  dij = r_node2.bound().PeriodicMinDistanceSq(q.pos_, param.box_size_);
-	  dki = r_node1.bound().PeriodicMinDistanceSq(q.pos_, param.box_size_);
-	  djk = r_node2.bound().PeriodicMinDistanceSq(r_node1.bound(), 
-						      param.box_size_);
+	  dij = prdc::MinDistanceSq(r_node2.bound(), q.pos_, param.box_size_);
+	  dki = prdc::MinDistanceSq(r_node1.bound(), q.pos_, param.box_size_);
+	  djk = prdc::MinDistanceSq(r_node2.bound(), r_node1.bound(), 
+				    param.box_size_);
 	} else {
 	  dij = r_node2.bound().MinDistanceSq(q.pos_);
 	  dki = r_node1.bound().MinDistanceSq(q.pos_);
@@ -799,8 +801,8 @@ class ThorMD {
 	// compute distance bound between two nodes
 	double dist;
 	if (likely(param.bound_type_ == PERIODIC)){
-	  dist = q_node.bound().PeriodicMinDistanceSq(r_node.bound(), 
-						    param.box_size_);
+	  dist = prdc::MinDistanceSq(q_node.bound(), r_node.bound(), 
+					 param.box_size_);
 	} else {
 	  dist = q_node.bound().MinDistanceSq(r_node.bound());
 	}
@@ -835,12 +837,12 @@ class ThorMD {
       if (param.prune_type_ == CUTOFF) {
 	double dij, djk, dki;
 	if (likely(param.bound_type_ == PERIODIC)){
-	  dij = q_node.bound().PeriodicMinDistanceSq(r_node1.bound(), 
-						     param.box_size_);
-	  dki = q_node.bound().PeriodicMinDistanceSq(r_node2.bound(), 
-						     param.box_size_);
-	  djk = r_node2.bound().PeriodicMinDistanceSq(r_node1.bound(), 
-						      param.box_size_);
+	  dij = prdc::MinDistanceSq(q_node.bound(), r_node1.bound(), 
+				    param.box_size_);	 
+	  dki = prdc::MinDistanceSq(q_node.bound(), r_node2.bound(), 
+				    param.box_size_);	 
+	  djk = prdc::MinDistanceSq(r_node2.bound(), r_node1.bound(), 
+				    param.box_size_);	 
 	} else {
 	  dij = q_node.bound().MinDistanceSq(r_node1.bound());
 	  dki = q_node.bound().MinDistanceSq(r_node2.bound());
@@ -849,7 +851,7 @@ class ThorMD {
 	double c1, c2;
 	c1 = param.prune_value_;
 	c2 = param.prune_value2_;
-	if ((dij > c1) || (djk > c1) || (dki > c1) || 
+	if ((dij > c1 || djk > c1 || dki > c1) ||
 	    ((dij > c2) && (djk > c2) && (dki > c2))){
 	  return false;
 	}
@@ -905,7 +907,7 @@ class ThorMD {
 	if (param.bound_type_ == POTENTIAL){
 	  bound = param.potential_.PotentialRange(q_node, r_node, 
 						   param.box_size_);
-	  //	  bound = bound + param.axilrod_.PotentialRange(q_node, r_node, 
+	  //  bound = bound + param.axilrod_.PotentialRange(q_node, r_node, 
 	  //						    param.box_size_);
 	} else {
 	  bound = param.potential_.ForceRange(q_node,r_node, param.box_size_);
@@ -947,8 +949,8 @@ class ThorMD {
 			    const RNode& r_node, const Delta& delta) {
       double dist;
       if (likely(param.bound_type_ == PERIODIC)){
-	dist = r_node.bound().PeriodicMinDistanceSq(q_node.bound(), 
-						    param.box_size_);
+	dist = prdc::MinDistanceSq(r_node.bound(), q_node.bound(),
+				   param.box_size_);
       } else {
 	dist = r_node.bound().MinDistanceSq(q_node.bound());
       }
@@ -960,10 +962,13 @@ class ThorMD {
 			    const Delta& delta) {
       double dist;
       if (likely(param.bound_type_ == PERIODIC)){
+	return 1;
+	/*
 	dist = 
-	r_node1.bound().PeriodicMinDistanceSq(q_node.bound(), param.box_size_)*
-	r_node1.bound().PeriodicMinDistanceSq(r_node2.bound(),param.box_size_)*
-	q_node.bound().PeriodicMinDistanceSq(r_node2.bound(),param.box_size_);
+	  prdc::MinDistanceSq(r_node1.bound(),q_node.bound(),param.box_size_)*
+	  prdc::MinDistanceSq(r_node1.bound(),r_node2.bound(),param.box_size_)*
+	  prdc::MinDistanceSq(q_node.bound(), r_node2.bound(),param.box_size_);
+	*/
       } else{
 	dist = r_node1.bound().MinDistanceSq(q_node.bound())*
 	  r_node1.bound().MinDistanceSq(r_node2.bound())*
