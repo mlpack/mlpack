@@ -5,6 +5,13 @@
 
 template<typename QNode, typename RNode, typename TPoint>
 class ThreeBody{
+ public:
+  Vector box_size_;
+  int periodic_;
+  OT_DEF_BASIC(ThreeBody){
+    OT_MY_OBJECT(periodic_);
+    OT_MY_OBJECT(box_size_);
+  }
 
  private:
  
@@ -43,31 +50,39 @@ class ThreeBody{
     }
   }
 
-
-  void AdjustVector_(Vector* vector_in, const Vector& dimensions_) const{
+  
+  void AdjustVector_(Vector* vector_in) const{ 
+    double L, x;
     for(int i = 0; i < 3; i++){
-      (*vector_in)[i] = (*vector_in)[i] - dimensions_[i]*
-	floor((*vector_in)[i] / dimensions_[i] +0.5);
+      L = box_size_[i];      
+      x = (*vector_in)[i];
+      if (unlikely(x  > L / 2)){
+	(*vector_in)[i] -= L;
+      } else { 
+	if (unlikely(x  < -L / 2)){
+	  (*vector_in)[i] += L;
+	}
+      }
     }
-  }
-
-  FORBID_ACCIDENTAL_COPIES(ThreeBody);
+  }   
+ 
 
  public:
-
-  ThreeBody(){
-  }
-
-  ~ThreeBody(){
-  }
-
-  
-
-  void Init(){       
+  void Init(const Vector& box_size_in){       
+    if (box_size_in.length() == 3){
+      box_size_.Init(3);
+      for (int i = 0; i < 3; i++){
+	box_size_[i] = box_size_in[i];
+      }
+      periodic_ = 1;
+    } else {
+      box_size_.Init(0);
+      periodic_ = 0;
+    }
   } 
 
-  double ForceRange(const QNode& query, const RNode& ref1, const RNode& ref2,
-		    const Vector& box)  const{
+  double ForceRange(const QNode& query, const RNode& ref1, const RNode& ref2)
+    const{
 
     double range_i = 0;
     double Rij, Rjk, Rki, rij, rki, rjk, ri, rj, rk;
@@ -75,11 +90,11 @@ class ThreeBody{
     Vector delta_ij, delta_jk, delta_ki;
     la::SubInit(query.stat().centroid_, ref1.stat().centroid_, &delta_ij);
     la::SubInit(ref1.stat().centroid_, ref2.stat().centroid_, &delta_jk);
-    la::SubInit(ref2.stat().centroid_, query.stat().centroid_, &delta_ki);
-    if (box.length() == query.stat().centroid_.length()){
-      AdjustVector_(&delta_ij, box);
-      AdjustVector_(&delta_jk, box);
-      AdjustVector_(&delta_ki, box);
+    la::SubInit(ref2.stat().centroid_, query.stat().centroid_, &delta_ki); 
+    if (periodic_){
+      AdjustVector_(&delta_ij);
+      AdjustVector_(&delta_jk);
+      AdjustVector_(&delta_ki);
     }
     Rij = sqrt(la::Dot(delta_ij, delta_ij));
     Rjk = sqrt(la::Dot(delta_jk, delta_jk));
@@ -90,9 +105,13 @@ class ThreeBody{
     bj.Init(3);
     bk.Init(3);
     for (int d = 0; d < 3; d++){
-      bi[d] = query.bound().width(d, box[d]) / 2;
-      bj[d] = ref1.bound().width(d, box[d]) / 2;
-      bk[d] = ref2.bound().width(d, box[d]) / 2;
+      double size = 0;
+      if (periodic_){
+	size = box_size_[d];
+      }
+      bi[d] = query.bound().width(d, size) / 2;
+      bj[d] = ref1.bound().width(d, size) / 2;
+      bk[d] = ref2.bound().width(d, size) / 2;      
       rnij = rnij + bi[d] + bj[d];    
       rnki = rnki + bk[d] + bi[d];
       Rnij = Rnij + fabs(delta_ij[d]);     
@@ -121,7 +140,7 @@ class ThreeBody{
   }
 
   double PotentialRange(const QNode& query, const RNode& ref1,
-			const RNode& ref2, const Vector& box) const {
+			const RNode& ref2) const {
     double range_i;
     double Rij, Rjk, Rki, rij, rki, rjk;
     
@@ -129,10 +148,10 @@ class ThreeBody{
     la::SubInit(query.stat().centroid_, ref1.stat().centroid_, &delta_ij);
     la::SubInit(ref1.stat().centroid_, ref2.stat().centroid_, &delta_jk);
     la::SubInit(ref2.stat().centroid_, query.stat().centroid_, &delta_ki);
-    if (box.length() == query.stat().centroid_.length()){
-      AdjustVector_(&delta_ij, box);
-      AdjustVector_(&delta_jk, box);
-      AdjustVector_(&delta_ki, box);
+    if (periodic_){
+      AdjustVector_(&delta_ij);
+      AdjustVector_(&delta_jk);
+      AdjustVector_(&delta_ki);
     }
     Rij = sqrt(la::Dot(delta_ij, delta_ij));
     Rjk = sqrt(la::Dot(delta_jk, delta_jk));
@@ -143,9 +162,13 @@ class ThreeBody{
     bj.Init(3);
     bk.Init(3);
     for (int d = 0; d < 3; d++){
-      bi[d] = query.bound().width(d, box[d]) / 2;
-      bj[d] = ref1.bound().width(d, box[d]) / 2;
-      bk[d] = ref2.bound().width(d, box[d]) / 2; 
+      double size = 0;
+      if (periodic_){
+	size = box_size_[d];
+      }
+      bi[d] = query.bound().width(d, size) / 2;
+      bj[d] = ref1.bound().width(d, size) / 2;
+      bk[d] = ref2.bound().width(d, size) / 2; 
     }
     la::AddOverwrite(bi, bj, &delta_ij);
     la::AddOverwrite(bj, bk, &delta_jk);
@@ -169,15 +192,15 @@ class ThreeBody{
   }
   
   void ForceVector(const QNode& q, const RNode& r1, const RNode& r2,
-		   const Vector& box, Vector* force_out) const{    
+		   Vector* force_out) const{    
     Vector r_ij, r_jk, r_ki;
     la::SubInit( q.stat().centroid_, r1.stat().centroid_, &r_ij);
     la::SubInit(r1.stat().centroid_, r2.stat().centroid_, &r_jk);
-    la::SubInit(r2.stat().centroid_,  q.stat().centroid_, &r_ki);
-    if (box.length() == q.stat().centroid_.length()){
-      AdjustVector_(&r_ij, box);
-      AdjustVector_(&r_jk, box);
-      AdjustVector_(&r_ki, box);
+    la::SubInit(r2.stat().centroid_,  q.stat().centroid_, &r_ki); 
+    if (periodic_){
+      AdjustVector_(&r_ij);
+      AdjustVector_(&r_jk);
+      AdjustVector_(&r_ki);
     }    
     double AA, BB, CC, AB, AC, BC, coef1, coef2;
     double cosines, denom;    
@@ -214,15 +237,15 @@ class ThreeBody{
 
 
   void ForceVector(const TPoint& q, const RNode& r1, const RNode& r2,
-		   const Vector& box, Vector* force_out) const{   
+		   Vector* force_out) const{   
     Vector r_ij, r_jk, r_ki;
     la::SubInit(q.pos_, r1.stat().centroid_, &r_ij);
     la::SubInit(r1.stat().centroid_, r2.stat().centroid_, &r_jk);
     la::SubInit(r2.stat().centroid_, q.pos_, &r_ki);
-    if (box.length() == q.pos_.length()){
-      AdjustVector_(&r_ij, box);
-      AdjustVector_(&r_jk, box);
-      AdjustVector_(&r_ki, box);
+    if (periodic_){
+      AdjustVector_(&r_ij);
+      AdjustVector_(&r_jk);
+      AdjustVector_(&r_ki);
     }    
     double AA, BB, CC, AB, AC, BC, coef1, coef2;
     double cosines, denom;    
@@ -257,16 +280,16 @@ class ThreeBody{
   }
 
   void ForceVector(const TPoint& q, const TPoint& r1, const TPoint& r2,
-		   const Vector& box, Vector* force_out) const{  
+		   Vector* force_out) const{  
    
     Vector r_ij, r_jk, r_ki;  
     la::SubInit(q.pos_, r1.pos_, &r_ij);
     la::SubInit(r1.pos_, r2.pos_, &r_jk);
     la::SubInit(r2.pos_, q.pos_, &r_ki);
-    if (box.length() == q.pos_.length()){
-      AdjustVector_(&r_ij, box);
-      AdjustVector_(&r_jk, box);
-      AdjustVector_(&r_ki, box);
+    if (periodic_){
+      AdjustVector_(&r_ij);
+      AdjustVector_(&r_jk);
+      AdjustVector_(&r_ki);
     }   
     double AA, BB, CC, AB, AC, BC, coef1, coef2;
     double cosines, denom;
@@ -301,35 +324,37 @@ class ThreeBody{
   }
 
 
-  int ForceVector(const TPoint& q, const TPoint& r1, const TPoint& r2, 
-		   const Vector& box, double cutoff, double cutoff2, 
-		   Vector* force_out) const{
-    Vector r_ij, r_jk, r_ki;  
-    la::SubInit(q.pos_, r1.pos_, &r_ij);
-    la::SubInit(r1.pos_, r2.pos_, &r_jk);
-    la::SubInit(r2.pos_, q.pos_, &r_ki);
-    if (box.length() == q.pos_.length()){
-      AdjustVector_(&r_ij, box);
-      AdjustVector_(&r_jk, box);
-      AdjustVector_(&r_ki, box);
+  void ForceVector(const TPoint& q, const TPoint& r1, const TPoint& r2, 
+		  double cutoff, double cutoff2, Vector* force_out) const{
+    Vector r_ij, r_jk, r_ki;     
+    r_ij.Init(3);
+    r_jk.Init(3);
+    r_ki.Init(3);
+    la::SubOverwrite(q.pos_, r1.pos_, &r_ij);
+    la::SubOverwrite(r1.pos_, r2.pos_, &r_jk);
+    la::SubOverwrite(r2.pos_, q.pos_, &r_ki);
+    if (periodic_){
+      AdjustVector_(&r_ij);
+      AdjustVector_(&r_jk);
+      AdjustVector_(&r_ki);
     }   
     double AA, BB, CC, AB, AC, BC, coef1, coef2;
     double cosines, denom;
     
     // Extra Terms
-    double denom2, coef1b, coef2b;   
+    double denom2;   
     AA = la::Dot(r_ij, r_ij);
     CC = la::Dot(r_ki, r_ki);
-    BB = la::Dot(r_jk, r_jk);
-    AC = la::Dot(r_ij, r_ki);
-    AB = la::Dot(r_ij, r_jk);
-    BC = la::Dot(r_ki, r_jk);   
+    BB = la::Dot(r_jk, r_jk);    
     if (((AA > cutoff) || (BB > cutoff) || (CC > cutoff)) ||
 	((AA > cutoff2) && (BB > cutoff2) && (CC > cutoff2))){
       force_out->Init(3);
       force_out->SetZero();
-      return 0;
-    }  
+      return;
+    }     
+    AC = 0.5*(BB - CC - AA);
+    AB = 0.5*(CC - AA - BB);
+    BC = 0.5*(AA - BB - CC);
     cosines = BC*AC*AB;
     denom = AA*BB*CC;
     denom2 = pow(denom, 3.5);      
@@ -342,13 +367,13 @@ class ThreeBody{
       
     // Extra Term stuff      
     denom2 = 5.0 * q.axilrod_[1] * r1.axilrod_[1]* r2.axilrod_[1] / denom2;
-    coef1b = denom2*(BC*AA + BC*BC + 3.0*AC*AB - 14.0*cosines/AA);
-    coef2b = denom2*(AB*CC + AB*AB + 3.0*AC*BC - 14.0*cosines/CC);   
-    la::AddExpert(-coef1b, r_ij, force_out);
-    la::AddExpert( coef2b, r_ki, force_out);    
+    coef1 = denom2*(BC*AA + BC*BC + 3.0*AC*AB - 14.0*cosines/AA);
+    coef2 = denom2*(AB*CC + AB*AB + 3.0*AC*BC - 14.0*cosines/CC);   
+    la::AddExpert(-coef1, r_ij, force_out);
+    la::AddExpert( coef2, r_ki, force_out);    
 
     la::Scale(1.0/q.mass_, force_out);
-    return 1;
+    return;
   }
 
   

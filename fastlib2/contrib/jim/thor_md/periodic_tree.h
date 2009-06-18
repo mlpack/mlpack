@@ -35,11 +35,10 @@ namespace prdc {
      const DRange b = ref.get(d);  
      d1 = a - b.hi + L*(a < b.lo);
      d2 = b.lo - a + L*(a > b.hi);
-     v = d1 + fabs(d1) + d2 + fabs(d2);
+     v =  max(min(d1, d2), 0.0);     
      sum += v*v;
-   }
-   
-   return sum / 4;
+   }   
+   return sum;
  }
 
   inline double MinDistanceSqWrap(const DHrectBound<2>& ref, 
@@ -80,6 +79,39 @@ namespace prdc {
    
    return sum;
  }
+
+
+ /**
+  * Expand this bounding box to encompass another point. Done to 
+  * minimize added volume in periodic coordinates.
+  */
+  /*
+  void Add(DHrectBound<2>* this, const Vector&  other, const Vector& size){
+   // Catch case of uninitialized bounds 
+   if ((this->get(0)).hi < -10*size[0]){
+     (*this) |= other;    
+   }
+
+   for (index_t i= 0; i < this->dim(); i++){
+     double ah, al;
+     ah = (this->get(i)).hi - other[i];
+     al = (this->get(i)).lo - other[i];
+     // Project onto range 0 to L
+     ah = ah - floor(ah / size[i])*size[i];
+     al = al - floor(al / size[i])*size[i];
+     if (ah >= al){
+       if (size[i] - al < ah){
+	 bounds_[i].hi = other[i] - floor(other[i] / size[i] + 0.5)*size[i];
+       } else {
+	 bounds_[i].lo = other[i] - floor(other[i] / size[i] + 0.5)*size[i];;
+       }      
+     }    
+   }
+   return *this;
+   }*/
+
+
+
 
   /*
     These are some functions for max distances in periodic coordinates that
