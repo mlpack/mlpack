@@ -104,8 +104,6 @@ void GenerateArtificialDataset(Dataset* dataset){
   double margin = fx_param_double(NULL, "margin", 1.0);
   double var = fx_param_double(NULL, "var", 1.0);
   double intercept = fx_param_double(NULL, "intercept", 0.0);
-
-  srand(time(NULL));
     
   // 2 dimensional dataset, size n, 3 classes
   m.Init(3, n);
@@ -174,6 +172,8 @@ int LoadData(Dataset* dataset, String datafilename){
 */
 int main(int argc, char *argv[]) {
   fx_init(argc, argv, NULL);
+
+  srand(time(NULL));
 
   String mode = fx_param_str_req(NULL, "mode");
   String kernel = fx_param_str_req(NULL, "kernel");
