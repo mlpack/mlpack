@@ -84,7 +84,7 @@ class SMO {
   index_t n_alpha_; /* number of variables to be optimized */
   index_t n_active_; /* number of samples in the active set */
   ArrayList<index_t> active_set_; /* list that stores the old indices of active alphas followed by inactive alphas. == old_from_new*/
-  bool unshrinked_; /* indicator: where unshrinking has been carried out  */
+  bool reconstructed_; /* indicator: where unshrinking has been carried out  */
   index_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
   double cached_kernel_value_; /* cache */
 
@@ -345,8 +345,8 @@ void SMO<TKernel>::Shrinking_() {
     }
   }
 
-  // Determine whether need to do Unshrinking
-  if ( unshrinked_==false && y_grad_max - y_grad_min <= SMO_UNSHRINKING_FACTOR * accuracy_ ) {
+  // do unshrinking for the first time when y_grad_max - y_grad_min <= SMO_UNSHRINKING_FACTOR * accuracy_
+  if ( reconstructed_==false && y_grad_max - y_grad_min <= SMO_UNSHRINKING_FACTOR * accuracy_ ) {
     printf("Unshrinking...\n");
     // Unshrinking: put shrinked alphas back to active set
     // 1.recover gradient
@@ -369,8 +369,7 @@ void SMO<TKernel>::Shrinking_() {
 	n_active_ ++;
       }
     }
-    
-    unshrinked_ = true; // indicator: unshrinking has been carried out in this round
+    reconstructed_ = true; // indicator: unshrinking has been carried out in this round
   }
 
 }
@@ -445,7 +444,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   budget_ = min(budget_, n_data_);
   bias_ = 0.0;
   n_sv_ = 0;
-  unshrinked_ = false;
+  reconstructed_ = false;
   i_cache_ = -1; j_cache_ = -1;
   cached_kernel_value_ = INFINITY;
 
@@ -547,10 +546,13 @@ int SMO<TKernel>::SMOIterations_() {
     if (do_shrinking_ == 0) { // no shrinking, optimality reached
       return 2;
     }
-    else { // shrinking, need to calculate the true gap
+    else if ( ct_iter_ >= min(n_data_, SMO_NUM_FOR_SHRINKING) ) { // shrinking has been carried out, need to calculate the true gap
       ReconstructGradient_(learner_typeid_); // restore the inactive alphas and reconstruct gradients
       n_active_ = n_alpha_;
       WorkingSetSelection_(i,j);
+      return 2;
+    }
+    else {
       return 2;
     }
   }
