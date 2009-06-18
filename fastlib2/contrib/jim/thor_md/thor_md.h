@@ -95,6 +95,7 @@ class ThorMD {
     bool no_three_body_;
 
     OT_DEF(Param) {
+      OT_MY_OBJECT(axilrod_);
       OT_MY_OBJECT(potential_);      
       OT_MY_OBJECT(box_size_);
       OT_MY_OBJECT(query_count_);
@@ -140,7 +141,7 @@ class ThorMD {
       potential_.Init(potential_params);
       
       // THree-body Potential
-      axilrod_.Init();
+      axilrod_.Init(box_size_);
       no_three_body_ = fx_param_bool(module, "no_three", 0);
     }
     
@@ -604,12 +605,12 @@ class ThorMD {
 	}
       } else {
 	int n_trips = r_node.count()*(r_node.count()-1)/2;
-	if (param.bound_type_ == POTENTIAL){
+	if (param.prune_type_ == POTENTIAL){
 	  bound = param.potential_.PotentialRange(q, r_node, param.box_size_); 
-	  // bound += param.axilrod_.PotentialRange(q, r_node, param.box_size_); 
+	  // bound += param.axilrod_.PotentialRange(q, r_node); 
 	} else {
 	  bound = param.potential_.ForceRange(q, r_node, param.box_size_); 
-	  // bound += param.axilrod_.ForceRange(q, r_node, param.box_size_);
+	  // bound += param.axilrod_.ForceRange(q, r_node);
 	}
 	if (bound < 0){
 	  Vector force;	
@@ -649,10 +650,10 @@ class ThorMD {
       }            
       Vector force;
       if (param.prune_type_ == CUTOFF){
-	param.axilrod_.ForceVector(q, r1, r2, param.box_size_, 
-				   param.prune_value_, param.prune_value2_, &force);    
+	param.axilrod_.ForceVector(q, r1, r2, param.prune_value_, 
+				   param.prune_value2_, &force);    
       } else {
-	param.axilrod_.ForceVector(q, r1, r2, param.box_size_, &force);
+	param.axilrod_.ForceVector(q, r1, r2, &force);
       }
       la::AddTo(force, &acceleration_);
     }
@@ -720,17 +721,14 @@ class ThorMD {
 	double bound; 
 	int n_trips = r_node2.count()*r_node1.count();	
 	if (param.prune_type_ == POTENTIAL){	 
-	  //	  bound = param.axilrod_.PotentialRange(q, r_node1, r_node2, 
-	  //					    param.box_size_); 
+	  //	  bound = param.axilrod_.PotentialRange(q, r_node1, r_node2); 
 	} else {	 
-	  //	  bound = param.axilrod_.ForceRange(q, r_node1, r_node2, 
-	  //					    param.box_size_); 
+	  //	  bound = param.axilrod_.ForceRange(q, r_node1, r_node2); 
 	}
 	if (bound/n_trips < q_result->ErrorRate()){
 	  // Apply Force
 	  Vector force;
-	  param.axilrod_.ForceVector(q, r_node1, r_node2, param.box_size_,  
-				     &force);	
+	  param.axilrod_.ForceVector(q, r_node1, r_node2, &force);	
 	  q_result->AddVelocity(force);
 	  q_result->UpdateError(bound, n_trips);	  
 	  return false;
@@ -756,11 +754,11 @@ class ThorMD {
       }   
       Vector force;
       if (param.prune_type_ == CUTOFF){
-	param.axilrod_.ForceVector(q, r1, r2, param.box_size_, 
-				   param.prune_value_, param.prune_value2_, &force);
+	param.axilrod_.ForceVector(q, r1, r2, param.prune_value_, 
+				   param.prune_value2_, &force);
 
       } else {
-	param.axilrod_.ForceVector(q, r1, r2, param.box_size_, &force);
+	param.axilrod_.ForceVector(q, r1, r2, &force);
 	la::AddTo(force, &acceleration_);
       }
     }
@@ -802,7 +800,7 @@ class ThorMD {
 	double dist;
 	if (likely(param.bound_type_ == PERIODIC)){
 	  dist = prdc::MinDistanceSq(q_node.bound(), r_node.bound(), 
-					 param.box_size_);
+					 param.box_size_);	
 	} else {
 	  dist = q_node.bound().MinDistanceSq(r_node.bound());
 	}
@@ -842,7 +840,7 @@ class ThorMD {
 	  dki = prdc::MinDistanceSq(q_node.bound(), r_node2.bound(), 
 				    param.box_size_);	 
 	  djk = prdc::MinDistanceSq(r_node2.bound(), r_node1.bound(), 
-				    param.box_size_);	 
+				    param.box_size_);	
 	} else {
 	  dij = q_node.bound().MinDistanceSq(r_node1.bound());
 	  dki = q_node.bound().MinDistanceSq(r_node2.bound());
@@ -870,23 +868,20 @@ class ThorMD {
 					const QSummaryResult& q_summary_result,
 					const GlobalResult& global_result,
 					QPostponed* q_postponed) {     
-      if (param.bound_type_ != CUTOFF){
+      if (param.prune_type_ != CUTOFF){
 	int n_trips;
 	n_trips = r_node1.count()*r_node2.count();
 	double bound = BIG_BAD_NUMBER;
-	if (param.bound_type_ == POTENTIAL){
-	  bound = param.axilrod_.PotentialRange(q_node, r_node1, r_node2, 
-						param.box_size_);
+	if (param.prune_type_ == POTENTIAL){
+	  bound = param.axilrod_.PotentialRange(q_node, r_node1, r_node2);
 	} else {
-	  bound = param.axilrod_.ForceRange(q_node, r_node1, r_node2, 
-					    param.box_size_);  
+	  bound = param.axilrod_.ForceRange(q_node, r_node1, r_node2);  
 	} 
 	if (bound / n_trips < q_postponed->error_budget_ / 
 	    q_postponed->triples_left_){
 	  // Evaluate Force Here
 	  Vector force;
-	  param.axilrod_.ForceVector(q_node, r_node1, r_node2, 
-				     param.box_size_, &force);
+	  param.axilrod_.ForceVector(q_node, r_node1, r_node2, &force);
 	  q_postponed->error_budget_ = q_postponed->error_budget_ - bound;
 	  q_postponed->triples_left_ = q_postponed->triples_left_ - n_trips;
 	  return false;
@@ -900,19 +895,17 @@ class ThorMD {
 				      const QSummaryResult& q_summary_result,
 				      const GlobalResult& global_result,
 				      QPostponed* q_postponed) {
-      if (param.bound_type_ != CUTOFF){
+      if (param.prune_type_ != CUTOFF){
 	int n_trips;
 	double bound = BIG_BAD_NUMBER;
 	n_trips = (r_node.count()*(r_node.count()-1)) / 2;
-	if (param.bound_type_ == POTENTIAL){
+	if (param.prune_type_ == POTENTIAL){
 	  bound = param.potential_.PotentialRange(q_node, r_node, 
 						   param.box_size_);
-	  //  bound = bound + param.axilrod_.PotentialRange(q_node, r_node, 
-	  //						    param.box_size_);
+	  //  bound = bound + param.axilrod_.PotentialRange(q_node, r_node);
 	} else {
 	  bound = param.potential_.ForceRange(q_node,r_node, param.box_size_);
-	  //	  bound = bound + param.axilrod_.ForceRange(q_node, r_node, 
-	  //						    param.box_size_);
+	  //	  bound = bound + param.axilrod_.ForceRange(q_node, r_node);
 	} 
 	if (bound / n_trips < q_postponed->error_budget_ / 
 	    q_postponed->triples_left_){
