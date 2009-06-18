@@ -1,7 +1,7 @@
 /**
  * @author Hua Ouyang
  *
- * @file opt_sga.h
+ * @file opt_fw.h
  *
  * This head file contains functions for performing Frank Wolfe for Large Scale SVMs
  *
@@ -11,27 +11,27 @@
  * @see svm.h
  */
 
-#ifndef U_SVM_OPT_SGA_H
-#define U_SVM_OPT_SGA_H
+#ifndef U_SVM_OPT_FW_H
+#define U_SVM_OPT_FW_H
 
 #include "fastlib/fastlib.h"
 #include "fastlib/base/test.h"
 
-// maximum # of iterations for SGA training
-const index_t MAX_NUM_ITER_SGA = 1000000;
+// maximum # of iterations for FW training
+const index_t MAX_NUM_ITER_FW = 10000000;
 // threshold that determines whether an alpha is a SV or not
-const double SGA_ALPHA_ZERO = 1.0e-7;
+const double FW_ALPHA_ZERO = 1.0e-7;
 // for inv_C
-const double SGA_ZERO = 1.0e-12;
+const double FW_ZERO = 1.0e-12;
 // after # of iterations to do shrinking
-//const index_t SGA_NUM_FOR_SHRINKING = 1000;
+//const index_t FW_NUM_FOR_SHRINKING = 1000;
 // threshold that determines whether need to do unshrinking
-//const double SGA_UNSHRINKING_FACTOR = 10;
+//const double FW_UNSHRINKING_FACTOR = 10;
 
 
 template<typename TKernel>
-class SGA {
-  FORBID_ACCIDENTAL_COPIES(SGA);
+class FW {
+  FORBID_ACCIDENTAL_COPIES(FW);
 
  public:
   typedef TKernel Kernel;
@@ -87,8 +87,8 @@ class SGA {
   //bool do_shrinking_; // whether this iteration is on the shrunk set(active set) or the whole data set
 
  public:
-  SGA() {}
-  ~SGA() {}
+  FW() {}
+  ~FW() {}
 
   /**
    * Initialization for parameters
@@ -99,7 +99,7 @@ class SGA {
     //sq_nu_ = nu_ * nu_;
     /*
     mu_ = param_[1];
-    if (mu_ > SGA_ZERO) {
+    if (mu_ > FW_ZERO) {
       inv_mu_ = 1 / mu_;
     }
     else {
@@ -108,7 +108,7 @@ class SGA {
     }
     */
     C_ = param_[0];
-    if (C_ > SGA_ZERO) {
+    if (C_ > FW_ZERO) {
       inv_two_C_ = 1 / (2 * C_);
       inv_C_ = 1 / C_;
     }
@@ -118,7 +118,7 @@ class SGA {
       inv_C_ = 1;
     }
     n_iter_ = (index_t) param_[1];
-    n_iter_ = n_iter_ < MAX_NUM_ITER_SGA ? n_iter_: MAX_NUM_ITER_SGA;
+    n_iter_ = n_iter_ < MAX_NUM_ITER_FW ? n_iter_: MAX_NUM_ITER_FW;
     accuracy_ = param_[2];
     if (learner_typeid == 0) { // SVM_C
       //Cp_ = param_[1];
@@ -144,7 +144,7 @@ class SGA {
  private:
   void LearnersInit_(int learner_typeid);
 
-  int SGAIterations_();
+  int FWIterations_();
 
   bool GreedyVectorSelection_();
 
@@ -188,7 +188,7 @@ class SGA {
  */
 /*
 template<typename TKernel>
-void SGA<TKernel>::Shrinking_() {
+void FW<TKernel>::Shrinking_() {
   // do shrinking
   do_shrinking_ = true;
 
@@ -214,7 +214,7 @@ void SGA<TKernel>::Shrinking_() {
   // Stopping Criterion check
   double gap = max_grad_inact - min_gradinvCalpha_act;
   
-  if ( unshrinked_==false && gap <= SGA_UNSHRINKING_FACTOR * accuracy_ ) {
+  if ( unshrinked_==false && gap <= FW_UNSHRINKING_FACTOR * accuracy_ ) {
     do_shrinking_ = false;
     unshrinked_ = true; // indicator: unshrinking has been carried out in this round
   }
@@ -228,7 +228,7 @@ void SGA<TKernel>::Shrinking_() {
  * @param: learner type id 
  */
 template<typename TKernel>
-void SGA<TKernel>::LearnersInit_(int learner_typeid) {
+void FW<TKernel>::LearnersInit_(int learner_typeid) {
   index_t i;
   learner_typeid_ = learner_typeid;
   
@@ -294,12 +294,12 @@ void SGA<TKernel>::LearnersInit_(int learner_typeid) {
 }
 
 /**
-* SGA training for 2-classes
+* FW training for 2-classes
 *
 * @param: input 2-classes data matrix with labels (1,-1) in the last row
 */
 template<typename TKernel>
-void SGA<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
+void FW<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   // Load data
   datamatrix_.Alias(dataset_in->matrix());
   n_data_ = datamatrix_.n_cols();
@@ -316,11 +316,13 @@ void SGA<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   bias_ = 0.0;
   n_sv_ = 0;
 
-  //unshrinked_ = false;
-  //ct_shrinking_ = min(n_data_, SGA_NUM_FOR_SHRINKING);
-  //do_shrinking_ = false;
+  /*
+  do_shrinking_ = fx_param_int(NULL, "shrink", 1);
+  ct_shrinking_ = min(n_data_, FW_NUM_FOR_SHRINKING);
+  unshrinked_ = false;
+  */
   
-  // Begin SGA iterations
+  // Begin FW iterations
   ct_iter_ = 0;
   int stop_condition = 0;
   while (1) {
@@ -332,24 +334,24 @@ void SGA<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     /*
     if (--ct_shrinking_ == 0) {
       Shrinking_();
-      ct_shrinking_ = min(n_data_, SGA_NUM_FOR_SHRINKING);
+      ct_shrinking_ = min(n_data_, FW_NUM_FOR_SHRINKING);
     }
     */
 
     // Find working set, check stopping criterion, update gradient and alphas
-    stop_condition = SGAIterations_();
-    // Termination check, if stop_condition==1 or ==2 => SGA terminates
+    stop_condition = FWIterations_();
+    // Termination check, if stop_condition==1 or ==2 => FW terminates
     if (stop_condition == 1) {// optimality reached
       // Calculate the bias term
       CalcBias_();
-      printf("SGA terminates since the accuracy %f achieved!!! Number of iterations: %d.\n", accuracy_, ct_iter_);
+      printf("FW terminates since the accuracy %f achieved!!! Number of iterations: %d.\n", accuracy_, ct_iter_);
       printf("n_active=%d\n", n_active_);
       break;
     }
     else if (stop_condition == 2) {// max num of iterations exceeded
       // Calculate the bias term
       CalcBias_();
-      printf("SGA terminates since the number of iterations %d exceeded !!! Gap: %f.\n", n_iter_, gap_);
+      printf("FW terminates since the number of iterations %d exceeded !!! Gap: %f.\n", n_iter_, gap_);
       printf("n_active=%d\n", n_active_);
       break;
     }
@@ -357,12 +359,12 @@ void SGA<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 }
 
 /**
-* SGA training iterations
+* FW training iterations
 * 
 * @return: stopping condition id
 */
 template<typename TKernel>
-int SGA<TKernel>::SGAIterations_() {
+int FW<TKernel>::FWIterations_() {
   ct_iter_ ++;
   if (GreedyVectorSelection_() == true) {
     return 1;
@@ -392,7 +394,7 @@ int SGA<TKernel>::SGAIterations_() {
 * @return: indicator of whether the optimal solution is reached (true:reached)
 */
 template<typename TKernel>
-bool SGA<TKernel>::GreedyVectorSelection_() {
+bool FW<TKernel>::GreedyVectorSelection_() {
   double grad_max = -INFINITY;
   index_t idx_i_grad_max = -1;
   
@@ -474,7 +476,7 @@ bool SGA<TKernel>::GreedyVectorSelection_() {
 *
 */
 template<typename TKernel>
-void SGA<TKernel>::UpdateGradientAlpha_() {
+void FW<TKernel>::UpdateGradientAlpha_() {
   index_t i, op_pos;
   double one_m_lambda;
   double App = CalcKernelValue_(p_, p_) + 1 + inv_two_C_;
@@ -538,7 +540,7 @@ void SGA<TKernel>::UpdateGradientAlpha_() {
 *
 */
 template<typename TKernel>
-void SGA<TKernel>::CalcBias_() {
+void FW<TKernel>::CalcBias_() {
   index_t op_pos;
   bias_ = 0;
   for (index_t i=0; i<n_active_; i++) {
@@ -555,11 +557,11 @@ void SGA<TKernel>::CalcBias_() {
 *
 */
 template<typename TKernel>
-void SGA<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
+void FW<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
 
   if (learner_typeid_ == 0) {// SVM_C
     for (index_t i = 0; i < n_data_; i++) {
-      if (alpha_[i] >= SGA_ALPHA_ZERO) { // support vectors found
+      if (alpha_[i] >= FW_ALPHA_ZERO) { // support vectors found
 	//printf("%f\n", alpha_[i] * y_[i]);
 	coef.PushBack() = alpha_[i] * y_[i];
 	sv_indicator[dataset_index[i]] = true;

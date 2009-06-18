@@ -9,7 +9,7 @@
  * @see opt_smo.h
  * @see opt_sgd.h
  * @see opt_hcy.h
- * @see opt_sga.h
+ * @see opt_fw.h
  * @see opt_mfw.h
  * @see opt_sfw.h
  */
@@ -20,7 +20,7 @@
 #include "opt_smo.h"
 #include "opt_sgd.h"
 #include "opt_hcy.h"
-#include "opt_sga.h"
+#include "opt_fw.h"
 #include "opt_mfw.h"
 #include "opt_sfw.h"
 
@@ -106,7 +106,7 @@ class SVM {
    * Developers may add more learner types if necessary
    */
   int learner_typeid_;
-  // Optimization method: smo, sgd, hcy, sga, mfw, sfw
+  // Optimization method: smo, sgd, hcy, fw, mfw, sfw
   String opt_method_;
   /* array of models for storage of the 2-class(binary) classifiers 
      Need to train num_classes_*(num_classes_-1)/2 binary models */
@@ -184,7 +184,7 @@ class SVM {
   class SMO<Kernel>;
   class SGD<Kernel>;
   class HCY<Kernel>;
-  class SGA<Kernel>;
+  class FW<Kernel>;
   class MFW<Kernel>;
   class SFW<Kernel>;
 
@@ -444,30 +444,30 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	models_[ct].w_.Init(0); // for linear SGD only. not used here
 	hcy.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
       }
-      else if (opt_method_== "sga") {
-	/* Initialize SGA parameters */
+      else if (opt_method_== "fw") {
+	/* Initialize FW parameters */
 	ArrayList<double> param_feed_db;
 	param_feed_db.Init();
 	//param_feed_db.PushBack() = param_.nu_; // for nu-SVM
 	param_feed_db.PushBack() = param_.C_;
 	param_feed_db.PushBack() = param_.n_iter_;
 	param_feed_db.PushBack() = param_.accuracy_;
-	SGA<Kernel> sga;
-	sga.InitPara(learner_typeid, param_feed_db);
+	FW<Kernel> fw;
+	fw.InitPara(learner_typeid, param_feed_db);
 	
 	/* Initialize kernel */
-	sga.kernel().Init(fx_submodule(module, "kernel"));
+	fw.kernel().Init(fx_submodule(module, "kernel"));
 
-	/* 2-classes SVM training using SGA */
-	fx_timer_start(NULL, "train_sga");
-	sga.Train(learner_typeid, &dataset_bi);
-	fx_timer_stop(NULL, "train_sga");
+	/* 2-classes SVM training using FW */
+	fx_timer_start(NULL, "train_fw");
+	fw.Train(learner_typeid, &dataset_bi);
+	fx_timer_stop(NULL, "train_fw");
 	
 	/* Get the trained bi-class model */
 	models_[ct].coef_.Init(); // alpha*y
-	models_[ct].bias_ = sga.Bias(); // bias
+	models_[ct].bias_ = fw.Bias(); // bias
 	models_[ct].w_.Init(0); // for linear SGD only. not used here
-	sga.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
+	fw.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
       }
       else if (opt_method_== "mfw") {
 	/* Initialize MFW parameters */
@@ -727,7 +727,7 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
   double sum = 0.0;
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
-      if (opt_method_== "smo" || opt_method_== "hcy" || opt_method_== "sga" || opt_method_== "mfw" || opt_method_== "sfw") {
+      if (opt_method_== "smo" || opt_method_== "hcy" || opt_method_== "fw" || opt_method_== "mfw" || opt_method_== "sfw") {
 	sum = 0.0;
 	for(k = 0; k < sv_list_ct_[i]; k++) {
 	  sum += sv_coef_.get(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];
@@ -848,7 +848,7 @@ void SVM<TKernel>::BatchPredict(int learner_typeid, Dataset& testset, String pre
     if (predictedvalue != testset.matrix().get(num_features_, i))
       err_ct++;
     /* save predicted values to file*/
-    //fprintf(fp, "%f\n", predictedvalue);
+    fprintf(fp, "%f\n", predictedvalue);
   }
   fclose(fp);
   /* calculate testing error */
