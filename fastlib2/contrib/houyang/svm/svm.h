@@ -1011,7 +1011,7 @@ void SVM<TKernel>::LoadModel_(int learner_typeid, String model_filename) {
     }
     else if (strcmp(cmd, "sv_list_ct")==0) {
       for ( i= 0; i < num_classes_; i++) {
-	fscanf(fp,"%d",&temp_d); 
+	fscanf(fp,"%d",&temp_d); 
 	sv_list_ct_[i]= temp_d;
       }
     }

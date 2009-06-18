@@ -33,15 +33,6 @@
  * year = 2005
  * }
  *
- * 4. TODO: budget L2 SVM
- * @INPROCEEDINGS{Budge_SVM,
- * author = "O. Dekel and Y. Singer",
- * title = "{Support Vector Machines on a Budget}",
- * booktitle = NIPS,
- * number = 19,
- * year = 2006
- * }
- *
  * @see svm.h
  */
 
@@ -51,7 +42,7 @@
 #include "fastlib/fastlib.h"
 
 // maximum # of interations for SMO training
-const index_t MAX_NUM_ITER_SMO = 1000000;
+const index_t MAX_NUM_ITER_SMO = 10000000;
 // after # of iterations to do shrinking
 const index_t SMO_NUM_FOR_SHRINKING = 1000;
 // threshold that determines whether need to do unshrinking
@@ -93,7 +84,7 @@ class SMO {
   index_t n_alpha_; /* number of variables to be optimized */
   index_t n_active_; /* number of samples in the active set */
   ArrayList<index_t> active_set_; /* list that stores the old indices of active alphas followed by inactive alphas. == old_from_new*/
-  bool unshrinked_; /* indicator: where unshrinking has be carried out  */
+  bool unshrinked_; /* indicator: where unshrinking has been carried out  */
   index_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
   double cached_kernel_value_; /* cache */
 
@@ -112,6 +103,7 @@ class SMO {
   int wss_; // working set selection scheme, 1 for 1st order expansion; 2 for 2nd order expansion
   index_t n_iter_; // number of iterations
   double accuracy_; // accuracy for stopping creterion
+  double gap_; // for stopping criterion
 
  public:
   SMO() {}
@@ -477,24 +469,23 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   // initialize gradient_bar
   grad_bar_.Init(n_alpha_);
   grad_bar_.SetZero();
-  for (i=0; i<n_alpha_; i++) {
-    for(j=0; j<n_alpha_; j++) {
-      if(IsUpperBounded(j)) // alpha_j >= C
-	grad_bar_[i] = grad_bar_[i] + GetC_(j) * y_[j] * CalcKernelValue_(i,j);
+
+  if (do_shrinking_ == 1) {
+    for (i=0; i<n_alpha_; i++) {
+      for(j=0; j<n_alpha_; j++) {
+	if(IsUpperBounded(j)) // alpha_j >= C
+	  grad_bar_[i] = grad_bar_[i] + GetC_(j) * y_[j] * CalcKernelValue_(i,j);
+      }
+      grad_bar_[i] = y_[i] * grad_bar_[i];
     }
-    grad_bar_[i] = y_[i] * grad_bar_[i];
   }
   
   // Begin SMO iterations
   ct_iter_ = 0;
 
   do_shrinking_ = fx_param_int(NULL, "shrink", 1);
-  if (do_shrinking_ == 1) {
-    ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING);
-  }
-  else {
-    ct_shrinking_ = 100000000;
-  }
+  ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING);
+
   int stop_condition = 0;
   while (1) {
     //for(index_t i=0; i<n_alpha_; i++)
@@ -502,9 +493,11 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     //printf("\n\n");
       
     // for every min(n_data_, 1000) iterations, do shrinking
-    if (--ct_shrinking_ == 0) {
-      Shrinking_();
-      ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING);
+    if (do_shrinking_ == 1) {
+      if ( --ct_shrinking_ == 0) {
+	Shrinking_();
+	ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING);
+      }
     }
 
     // Find working set, check stopping criterion, update gradient and alphas
@@ -519,7 +512,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     else if (stop_condition == 2) {// max num of iterations exceeded
       // Calculate the bias term
       CalcBias_();
-      fprintf(stderr, "SMO terminates since the number of iterations %d exceeded !!!\n", n_iter_);
+      fprintf(stderr, "SMO terminates since the number of iterations %d exceeded !!! Gap: %f.\n", n_iter_, gap_);
       break;
     }
   }
@@ -535,14 +528,19 @@ int SMO<TKernel>::SMOIterations_() {
   ct_iter_ ++;
   index_t i,j;
   if (WorkingSetSelection_(i,j) == true) {
-    ReconstructGradient_(learner_typeid_); // restore the inactive alphas and reconstruct gradients
-    n_active_ = n_alpha_;
-    if (WorkingSetSelection_(i,j) == true) { // optimality reached
+    if (do_shrinking_ == 0) { // no shrinking, optimality reached
       return 1;
     }
-    else {
-      ct_shrinking_ = 1; // do shrinking in the next iteration
-      return 0;
+    else { // shrinking, need to check whether optimality really reached
+      ReconstructGradient_(learner_typeid_); // restore the inactive alphas and reconstruct gradients
+      n_active_ = n_alpha_;
+      if (WorkingSetSelection_(i,j) == true) { // optimality reached
+	return 1;
+      }
+      else {
+	ct_shrinking_ = 1; // do shrinking in the next iteration
+	return 0;
+      }
     }
   }
   else if (ct_iter_ >= n_iter_) { // number of iterations exceeded
@@ -670,9 +668,9 @@ bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
   
   // Stopping Criterion check
   //printf("ct_iter:%d, accu:%f\n", ct_iter_, y_grad_max - y_grad_min);
-  double gap = y_grad_max - y_grad_min;
-  //printf("%d: gap=%f\n", ct_iter_, gap);
-  if (gap <= accuracy_) {
+  gap_ = y_grad_max - y_grad_min;
+  //printf("%d: gap=%f\n", ct_iter_, gap_);
+  if (gap_ <= accuracy_) {
     return true; // optimality reached
   }
 
@@ -843,24 +841,27 @@ void SMO<TKernel>::UpdateGradientAlpha_(index_t i, index_t j) {
   UpdateAlphaStatus_(i);
   UpdateAlphaStatus_(j);
 
-  // Update gradient_bar
-  if( ub_i != IsUpperBounded(i) ) { // updated_alpha_i >= C
+
+  if (do_shrinking_ == 1) {
+    // Update gradient_bar
+    if( ub_i != IsUpperBounded(i) ) { // updated_alpha_i >= C
       if(ub_i) // old_alpha_i >= C, new_alpha_i < C
 	for(t=0; t<n_alpha_; t++)
 	  grad_bar_[t] = grad_bar_[t] - C_i * y_[i] * y_[t] * CalcKernelValue_(i, t);
       else // old_alpha_i < C, new_alpha_i >= C
 	for(t=0; t<n_alpha_; t++)
 	  grad_bar_[t] = grad_bar_[t] + C_i * y_[i] * y_[t] * CalcKernelValue_(i, t);
+    }
+    if( ub_j != IsUpperBounded(j) ) {
+      if(ub_j) // old_alpha_j >= C, new_alpha_j < C
+	for(t=0; t<n_alpha_; t++)
+	  grad_bar_[t] = grad_bar_[t] - C_j * y_[j] * y_[t] * CalcKernelValue_(j, t);
+      else // old_alpha_j < C, new_alpha_j >= C
+	for(t=0; t<n_alpha_; t++)
+	  grad_bar_[t] = grad_bar_[t] + C_j * y_[j] * y_[t] * CalcKernelValue_(j, t);
+    }
   }
-  if( ub_j != IsUpperBounded(j) ) {
-    if(ub_j) // old_alpha_j >= C, new_alpha_j < C
-      for(t=0; t<n_alpha_; t++)
-	grad_bar_[t] = grad_bar_[t] - C_j * y_[j] * y_[t] * CalcKernelValue_(j, t);
-    else // old_alpha_j < C, new_alpha_j >= C
-      for(t=0; t<n_alpha_; t++)
-	grad_bar_[t] = grad_bar_[t] + C_j * y_[j] * y_[t] * CalcKernelValue_(j, t);
-  }
-
+  
 }
 
 /**

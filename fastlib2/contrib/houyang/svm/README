@@ -48,7 +48,7 @@ Explanation of arguments:
 12. epsilon (for SVM_R,optional): the epsilon in SVM regression. Default value: 0.1.
 13. wss (optional): working set selection scheme. 1 for 1st order expansion; 2 for 2nd order expansion. Default value: 1.
 14. normalize (optional): where need to do data normalization before training/testing, values: "0" for no normalize, "1" for normalize.
-15. accuracy (optional): the accuracty of optimization method ( i.e. stop optimization when f(w_{t+1})-f(w_t) <= accuracy ). Default value: 1e-5.
+15. accuracy (optional): the accuracty of optimization method ( i.e. stop optimization when f(w_{t+1})-f(w_t) <= accuracy ). Default value: 1e-4.
 16. n_iter (for SGD, optional): number of iterations for SGD only. Default value: 1e4
 
 Examples:
