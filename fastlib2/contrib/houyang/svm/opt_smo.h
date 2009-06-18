@@ -544,7 +544,15 @@ int SMO<TKernel>::SMOIterations_() {
     }
   }
   else if (ct_iter_ >= n_iter_) { // number of iterations exceeded
-    return 2;
+    if (do_shrinking_ == 0) { // no shrinking, optimality reached
+      return 2;
+    }
+    else { // shrinking, need to calculate the true gap
+      ReconstructGradient_(learner_typeid_); // restore the inactive alphas and reconstruct gradients
+      n_active_ = n_alpha_;
+      WorkingSetSelection_(i,j);
+      return 2;
+    }
   }
   else{ // update gradient, alphas and bias term, and continue iterations
     UpdateGradientAlpha_(i, j);
