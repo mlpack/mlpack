@@ -33,7 +33,7 @@
 #include "fastlib/fastlib.h"
 
 // max t_
-const index_t MAX_NUM_ITER_SGD = INFINITY;
+const index_t MAX_NUM_ITER_SGD = index_t(INFINITY);
 // tolerance of sacale_w
 const double SCALE_W_TOLERANCE = 1.0e-9;
 // threshold that determines whether an alpha is a SV or not
