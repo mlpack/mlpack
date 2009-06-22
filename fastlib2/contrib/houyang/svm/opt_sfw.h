@@ -18,7 +18,7 @@
 #include "fastlib/base/test.h"
 
 // maximum # of iterations for SFW training
-const index_t MAX_NUM_ITER_SFW = 1000000;
+const index_t MAX_NUM_ITER_SFW = 100000000;
 // threshold that determines whether an alpha is a SV or not
 const double SFW_ALPHA_ZERO = 1.0e-7;
 // for inv_mu

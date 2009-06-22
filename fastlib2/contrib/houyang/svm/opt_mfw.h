@@ -18,7 +18,7 @@
 #include "fastlib/base/test.h"
 
 // maximum # of iterations for MFW training
-const index_t MAX_NUM_ITER_MFW = 1000000;
+const index_t MAX_NUM_ITER_MFW = 100000000;
 // threshold that determines whether an alpha is a SV or not
 const double MFW_ALPHA_ZERO = 1.0e-7;
 // for inv_C
@@ -193,7 +193,7 @@ void MFW<TKernel>::LearnersInit_(int learner_typeid) {
       y_[i] = datamatrix_.get(datamatrix_.n_rows()-1, i) > 0 ? 1 : -1;
     }
 
-    srand(time(NULL));
+    //srand(time(NULL));
     //p_ = rand() % n_alpha_; // randomly choose a point for opt
     p_ = fx_param_int(NULL, "p_rand", rand() % n_alpha_);
     p_ = p_>n_data_ ? (rand() % n_alpha_): p_;
