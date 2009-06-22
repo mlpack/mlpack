@@ -18,7 +18,7 @@
 #include "fastlib/base/test.h"
 
 // maximum # of iterations for FW training
-const index_t MAX_NUM_ITER_FW = 10000000;
+const index_t MAX_NUM_ITER_FW = 100000000;
 // threshold that determines whether an alpha is a SV or not
 const double FW_ALPHA_ZERO = 1.0e-7;
 // for inv_C
