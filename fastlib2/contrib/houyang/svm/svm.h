@@ -264,7 +264,7 @@ void SVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *mo
   // accuracy for optimization
   param_.accuracy_ = fx_param_double(NULL, "accuracy", 1e-4);
   // number of iterations
-  param_.n_iter_ = fx_param_int(NULL, "n_iter", 1000000);
+  param_.n_iter_ = fx_param_int(NULL, "n_iter", 100000000);
 
   // the tradeoff parameter "C", default: 10.0
   param_.C_ = fx_param_double(NULL, "c", 10.0);
@@ -871,7 +871,7 @@ void SVM<TKernel>::LoadModelBatchPredict(int learner_typeid, Dataset& testset, S
   BatchPredict(learner_typeid, testset, predictedvalue_filename);
 }
 
-
+
 /**
 * Save SVM model to a text file
 *
@@ -1011,7 +1011,7 @@ void SVM<TKernel>::LoadModel_(int learner_typeid, String model_filename) {
     }
     else if (strcmp(cmd, "sv_list_ct")==0) {
       for ( i= 0; i < num_classes_; i++) {
-	fscanf(fp,"%d",&temp_d); 
+	fscanf(fp,"%d",&temp_d); 
 	sv_list_ct_[i]= temp_d;
       }
     }
