@@ -78,9 +78,9 @@ int main(int argc, char *argv[]) {
   while (time < final_time_){
 
     // Update positions
-    simulation.Compute(parameters);
+    simulation.Compute(parameters);     
     simulation.UpdatePoints(time_step_);  
-    simulation.RebuildTree(parameters);   
+    simulation.RebuildTree(parameters);
     // Take snapshot, if nesc.      
     if (diff_count < diff_tot & time > last_time + delta){
       last_time = time;    
