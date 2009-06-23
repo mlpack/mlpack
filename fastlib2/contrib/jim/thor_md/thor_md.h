@@ -140,7 +140,7 @@ class ThorMD {
       data::Load(fp_pot_param, &potential_params);
       potential_.Init(potential_params);
       
-      // THree-body Potential
+      // Three-body Potential
       axilrod_.Init(box_size_);
       no_three_body_ = fx_param_bool(module, "no_three", 0);
     }
@@ -211,7 +211,7 @@ class ThorMD {
       old_index_ = index;
     }    
 
-    void Accelerate(const Vector& acceleration_in, double time_step) {
+    void Accelerate(const Vector& acceleration_in, double time_step) {     
       la::AddExpert(time_step, acceleration_in, &vel_);      
       la::AddExpert(time_step, vel_, &pos_);
     }    
@@ -635,7 +635,7 @@ class ThorMD {
      }    
      Vector force;     
      if (param.prune_type_ == CUTOFF){
-      param.potential_.ForceVector(q, r, param.box_size_,param.prune_value_, &force);     
+       param.potential_.ForceVector(q, r, param.box_size_,param.prune_value_, &force);      
      } else {
        param.potential_.ForceVector(q, r, param.box_size_, &force);        
      }
@@ -651,7 +651,7 @@ class ThorMD {
       Vector force;
       if (param.prune_type_ == CUTOFF){
 	param.axilrod_.ForceVector(q, r1, r2, param.prune_value_, 
-				   param.prune_value2_, &force);    
+				   param.prune_value2_, &force); 
       } else {
 	param.axilrod_.ForceVector(q, r1, r2, &force);
       }
@@ -754,9 +754,8 @@ class ThorMD {
       }   
       Vector force;
       if (param.prune_type_ == CUTOFF){
-	param.axilrod_.ForceVector(q, r1, r2, param.prune_value_, 
+	param.axilrod_.ForceVector(q, r1, r2, param.prune_value_, 	   
 				   param.prune_value2_, &force);
-
       } else {
 	param.axilrod_.ForceVector(q, r1, r2, &force);
 	la::AddTo(force, &acceleration_);
@@ -974,14 +973,16 @@ class ThorMD {
   // functions
 
 
-  /** KDE computation using THOR */
-  void Compute(datanode *module) { 
+  /** KDE computation using THOR */ 
+  void Compute(datanode *module) {      
+    q_results_.StartSync();
     fx_timer_start(module, "dualtree md");  
     thor::RpcDualTree<ThorMD, ThreeTreeDepthFirst<ThorMD> >
       (fx_submodule(module, "gnp"), GNP_CHANNEL,
        parameters_, q_tree_, r_tree_, &q_results_, &global_result_);
     fx_timer_stop(module, "dualtree md");  
-    global_result_.Postprocess(parameters_);
+    global_result_.Postprocess(parameters_);   
+    q_results_.WaitSync();
   }
 
   
@@ -1056,9 +1057,9 @@ class ThorMD {
     		       results_megs, &q_results_);    
   }
 
-  void RebuildTree(datanode* module){     
-    r_tree_->nodes().StartSync();
-    r_tree_->nodes().WaitSync();  
+  void RebuildTree(datanode* module){  
+    r_tree_->nodes().StartSync();   
+    r_tree_->nodes().WaitSync();    
     delete &r_tree_->nodes();
     r_tree_->param().Renew();
     r_tree_->decomp().Renew();         
@@ -1072,13 +1073,11 @@ class ThorMD {
     } else {
       chan_ = 9;
     }
-
-    q_tree_ = r_tree_;      
- 
+    q_tree_ = r_tree_;     
   }
 
   double GetDiffusion(Matrix& positions){
-    double diff = 0;   
+    double diff = 0;         
     if (rpc::is_root()){      
       CacheArray<QPoint> points_array;
       points_array.Init(q_points_cache_, BlockDevice::M_READ);
@@ -1099,7 +1098,8 @@ class ThorMD {
     return diff;
   }
 
-  void UpdatePoints(double time_step){
+  void UpdatePoints(double time_step){   
+    q_points_cache_->StartSync();
     if (rpc::is_root()){
       CacheArray<QResult> result_array;
       CacheArray<QPoint> points_array;
@@ -1114,12 +1114,12 @@ class ThorMD {
 	  (*points_iter).MapBack(parameters_.box_size_);
 	}
       }
-    }
-    q_points_cache_->StartSync();
+    }  
     q_points_cache_->WaitSync();    
   }
   
   void ScaleToTemperature(double ratio){
+
     if (rpc::is_root()){
       CacheArray<QPoint> points_array;   
       points_array.Init(q_points_cache_, BlockDevice::M_OVERWRITE);   
@@ -1128,7 +1128,7 @@ class ThorMD {
 	     points_iter.Next()) {
 	(*points_iter).ScaleVelocity(ratio);    
       }   
-    }
+    }       
     q_points_cache_->StartSync();
     q_points_cache_->WaitSync(); 
   }
