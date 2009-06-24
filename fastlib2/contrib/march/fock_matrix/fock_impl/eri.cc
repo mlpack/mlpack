@@ -9,10 +9,10 @@ double double_factorial(int m) {
   
   DEBUG_ASSERT(m >= 0);
 
-  double ret = (double)m;
+  double ret = 1.0;
   while (m > 1) {
-    m = m - 2;
     ret = ret * (double)m;
+    m = m - 2;
   }
   
   return ret;
