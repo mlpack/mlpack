@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
     simulation.UpdatePoints(time_step_);  
     simulation.RebuildTree(parameters);
     // Take snapshot, if nesc.      
-    if (diff_count < diff_tot & time > last_time + delta){
+    if (diff_count < diff_tot && time > last_time + delta){
       last_time = time;    
       simulation.TakeSnapshot(&reference_positions[diff_count]);
       diff_count++;    

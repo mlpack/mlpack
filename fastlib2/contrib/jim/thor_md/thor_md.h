@@ -211,7 +211,14 @@ class ThorMD {
       old_index_ = index;
     }    
 
-    void Accelerate(const Vector& acceleration_in, double time_step) {     
+    void Accelerate(const Vector& acceleration_in, double time_step) {    
+      /*
+      if (old_index_ == 7371){
+	printf("Acc: %f %f %f \n", acceleration_in[0], acceleration_in[1],  acceleration_in[2]);
+	printf("Vel: %f %f %f \n", vel_[0], vel_[1], vel_[2]);
+	printf("Pos: %f %f %f \n \n", pos_[0], pos_[1], pos_[2]);
+      }
+      */
       la::AddExpert(time_step, acceleration_in, &vel_);      
       la::AddExpert(time_step, vel_, &pos_);
     }    
@@ -649,9 +656,17 @@ class ThorMD {
 	return;
       }            
       Vector force;
-      if (param.prune_type_ == CUTOFF){
+      if (param.prune_type_ == CUTOFF){	  
 	param.axilrod_.ForceVector(q, r1, r2, param.prune_value_, 
-				   param.prune_value2_, &force); 
+				   param.prune_value2_, &force);
+	/*
+	  if (q.old_index_ == 7371){  
+	    FILE* stuff;
+	    stuff = fopen("stuff.dat", "a+");
+	    fprintf(stuff, "%d %d %f %f %f \n", r1.old_index_, r2.old_index_, 
+		    force[0], force[1], force[2]);
+	  }
+	*/
       } else {
 	param.axilrod_.ForceVector(q, r1, r2, &force);
       }
@@ -754,8 +769,19 @@ class ThorMD {
       }   
       Vector force;
       if (param.prune_type_ == CUTOFF){
-	param.axilrod_.ForceVector(q, r1, r2, param.prune_value_, 	   
-				   param.prune_value2_, &force);
+	param.axilrod_.ForceVector(q, r1, r2, param.prune_value_, param.prune_value2_, 
+				   &force);
+	  /*
+	  if (q.old_index_ == 7371){	   
+	    FILE* stuff;
+	    stuff = fopen("stuff.dat", "a+");
+	    fprintf(stuff, "%d %d %f %f %f \n", r1.old_index_, r2.old_index_, 
+		    force[0], force[1], force[2]);
+	    printf("%d %d %f %f %f \n", r1.old_index_, r2.old_index_, 
+		    force[0], force[1], force[2]);
+	  }
+	  */
+	
       } else {
 	param.axilrod_.ForceVector(q, r1, r2, &force);
 	la::AddTo(force, &acceleration_);
@@ -976,12 +1002,14 @@ class ThorMD {
   /** KDE computation using THOR */ 
   void Compute(datanode *module) {      
     q_results_.StartSync();
+    q_results_.WaitSync();
     fx_timer_start(module, "dualtree md");  
     thor::RpcDualTree<ThorMD, ThreeTreeDepthFirst<ThorMD> >
       (fx_submodule(module, "gnp"), GNP_CHANNEL,
        parameters_, q_tree_, r_tree_, &q_results_, &global_result_);
     fx_timer_stop(module, "dualtree md");  
-    global_result_.Postprocess(parameters_);   
+    global_result_.Postprocess(parameters_);  
+    q_results_.StartSync();
     q_results_.WaitSync();
   }
 

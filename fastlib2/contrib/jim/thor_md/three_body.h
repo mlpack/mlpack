@@ -324,7 +324,7 @@ class ThreeBody{
   }
 
 
-  void ForceVector(const TPoint& q, const TPoint& r1, const TPoint& r2, 
+  int ForceVector(const TPoint& q, const TPoint& r1, const TPoint& r2, 
 		  double cutoff, double cutoff2, Vector* force_out) const{   
     Vector r_ij, r_jk, r_ki;     
     r_ij.Init(3);
@@ -350,7 +350,7 @@ class ThreeBody{
 	((AA > cutoff2) && (BB > cutoff2) && (CC > cutoff2))){
       force_out->Init(3);
       force_out->SetZero();    
-      return;
+      return 0;
     }     
     AC = 0.5*(BB - CC - AA);
     AB = 0.5*(CC - AA - BB);
@@ -372,8 +372,16 @@ class ThreeBody{
     la::AddExpert(-coef1, r_ij, force_out);
     la::AddExpert( coef2, r_ki, force_out);    
 
-    la::Scale(1.0/q.mass_, force_out);   
-    return;
+    la::Scale(1.0/q.mass_, force_out);  
+    /*
+    Vector foo;
+    foo.Init(3);
+    foo[0] = sqrt(AA);
+    foo[1] = sqrt(BB);
+    foo[2] = sqrt(CC);
+    la::ScaleOverwrite(1.0, foo, force_out);
+    */
+    return 1;
   }
 
   
