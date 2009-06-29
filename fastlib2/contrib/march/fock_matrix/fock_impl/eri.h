@@ -2,13 +2,14 @@
 #define ERI_H
 
 #include "fastlib/fastlib.h"
+//#include "libint_wrappers.h"
 
 class BasisShell;
 class ShellPair;
 
 namespace eri {
 
-  double double_factorial(int m);
+  double double_fact(int m);
   
   // The erf-like function
   double F_0_(double z);

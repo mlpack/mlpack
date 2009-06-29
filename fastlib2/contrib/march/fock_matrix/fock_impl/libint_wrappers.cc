@@ -11,23 +11,59 @@
 
 namespace eri {
   
+  void ERIInit() {
+    
+    init_libint_base();
+    
+    // PSI just uses 100
+    index_t num_factorials = MAX_FAC;
+    
+    double_factorial = (double*)malloc(num_factorials * sizeof(double));
+    
+    double_factorial[0] = 1.0;
+    double_factorial[1] = 1.0;
+    for (index_t i = 2; i < num_factorials; i++) {
+      
+      double_factorial[i] = (double)i * double_factorial[i-2];
+      
+    }
+    
+  }
+  
+  void ERIFree() {
+   
+    free(double_factorial);
+    
+  }
+  
+  
+  double* ComputeERI(const Vector& A_vec, double A_exp, int A_mom, 
+                     const Vector& B_vec, double B_exp, int B_mom,
+                     const Vector& C_vec, double C_exp, int C_mom,
+                     const Vector& D_vec, double D_exp, int D_mom) {
+    
+    int num_primitives = 1;
+    int max_momentum = max(max(A_mom, B_mom), max(C_mom, D_mom));
+    
+    Libint_t tester;
+    init_libint(&tester, max_momentum, num_primitives);
+    
+    double* results = Libint_Eri(A_vec, A_exp, A_mom, B_vec, B_exp, B_mom, 
+                                 C_vec, C_exp, C_mom, D_vec, D_exp, D_mom,
+                                 tester);
+    
+    free_libint(&tester);
+    
+    return results;
+    
+    
+  } // ComputeERI()
+  
+  
   // copied from development verion of PSI3 on 6/17/09
   // part of libmint, from eri.cc
   void Compute_F(double *F, int n, double t)
   {
-    // this is a macro in libmints/wavefunction.h
-    // I think it stands for max factorial
-    int MAX_FAC = 100;
-    
-    // very inefficient, needs to be stored somewhere
-    double* df;
-    // needs to go up to 2*(n+MAX_FAC+1)
-    df = (double*)malloc(2 * (n + MAX_FAC + 1) * sizeof(double));    
-    df[0] = 1.0;
-    df[1] = 1.0;
-    for(index_t a = 2; a < 2 * (n + MAX_FAC + 1); a++) {
-      df[a] = a * df[a-2];
-    }
     
     int i, m, k;
     int m2;
@@ -55,13 +91,13 @@ namespace eri {
       et = exp(-t);
       t2 = 2*t;
       m2 = 2*n;
-      num = df[m2];
+      num = double_factorial[m2];
       i=0;
       sum = 1.0/(m2+1);
       do{
         i++;
         num = num*t2;
-        term1 = num/df[m2+2*i+2];
+        term1 = num/double_factorial[m2+2*i+2];
         sum += term1;
       } while (fabs(term1) > EPS && i < MAX_FAC);
       F[n] = sum*et;
