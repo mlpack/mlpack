@@ -323,7 +323,6 @@ void MultiTreeFock::CountFactorCoulomb_(double* up_bound, double* low_bound,
   FockTree* rho = rho_sigma->query1();
   FockTree* sigma = rho_sigma->query2();
   
-  // Need to make this work with on diagonal non-square boxes
   if (RectangleOnDiagonal_(rho, sigma)) {
     index_t on_diagonal = CountOnDiagonal_(rho_sigma);
     index_t off_diagonal = (rho->count() * sigma->count()) - on_diagonal;
@@ -385,7 +384,7 @@ bool MultiTreeFock::CanPrune_(double* upper, double* lower, double* approx_val,
   CountFactorCoulomb_(upper, lower, approx_val, &my_allowed_error,
                       rho_sigma);
   
-  double max_error = max(abs(upper - approx_val), abs(lower - approx_val));
+  double max_error = max(fabs(*upper - *approx_val), fabs(*lower - *approx_val));
   
   return (max_error <= my_allowed_error);
 
@@ -396,6 +395,10 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
                                            SquareTree* rho_sigma, 
                                            double* approx_out) {
 
+  double lost_error;
+  
+  // Schwartz pruning
+  
   double schwartz_upper;
   double schwartz_lower;
   // this includes the density matrix entries
@@ -403,7 +406,7 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
 
   double schwartz_approx = 0.5 * (schwartz_lower + schwartz_upper);
   
-  double lost_error = max(fabs(schwartz_upper - schwartz_approx), 
+  lost_error = max(fabs(schwartz_upper - schwartz_approx), 
                           fabs(schwartz_approx - schwartz_lower));
   
   //FockTree* rho = rho_sigma->query1();
@@ -436,7 +439,8 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
     return true;
     
   }
-
+  
+  
   double up_bound = NodesMaxIntegral_(mu_nu, rho_sigma);
   if (fabs(up_bound) < bounds_cutoff_) {
     up_bound = 0.0;
@@ -452,12 +456,13 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
   
   DensityFactor_(&up_bound, &low_bound, rho_sigma->stat().density_upper_bound(),
                  rho_sigma->stat().density_lower_bound());
+  
       
   //double approx_val = NodesMidpointIntegral_(mu, nu, rho, sigma);
   double approx_val = 0.5 * (up_bound + low_bound);
-  
+
   lost_error = max(fabs(up_bound - approx_val), fabs(approx_val - low_bound));
-  
+
   if (CanPrune_(&up_bound, &low_bound, &approx_val, mu_nu, rho_sigma)) {
     
     // fill in approximation
@@ -472,6 +477,7 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
       lost_error = 0.0;
     }
     
+    // need to move this somewhere else
     mu_nu->stat().set_remaining_epsilon(mu_nu->stat().remaining_epsilon()
                                         - lost_error);
     
@@ -780,8 +786,8 @@ void MultiTreeFock::ComputeCoulombBaseCase_(SquareTree* mu_nu,
                    (rho->end() < sigma->end())));
   }
   
-  //mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
-  //                                       - new_refs);
+  mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
+                                         - new_refs);
   
 } // ComputeCoulombBaseCase_
 
@@ -851,8 +857,13 @@ void MultiTreeFock::ComputeExchangeBaseCase_(SquareTree* mu_nu,
           // diagonal
           if (rho != sigma) {  
             
-            DEBUG_ASSERT(density_matrix_.ref(rho_index, sigma_index) == 
-                         density_matrix_.ref(sigma_index, rho_index));
+            // not actually true, since it's being read from a file
+            //DEBUG_ASSERT(density_matrix_.ref(rho_index, sigma_index) == 
+            //             density_matrix_.ref(sigma_index, rho_index));
+            
+            //DEBUG_APPROX_DOUBLE(density_matrix_.ref(rho_index, sigma_index),
+            //                    density_matrix_.ref(sigma_index, rho_index),
+            //                    1e-6);
             
             double lk_integral = density_matrix_.ref(sigma_index, rho_index) * 
               mu_norm * nu_norm * rho_norm * sigma_norm * 
@@ -944,7 +955,9 @@ void MultiTreeFock::FillApproximationCoulomb_(SquareTree* mu_nu,
   }
   else {
     
-    
+    // this may be inefficient
+    // might be able to push the results down and do this in one 
+    // post-processing step 
     for (index_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
       
       for (index_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {

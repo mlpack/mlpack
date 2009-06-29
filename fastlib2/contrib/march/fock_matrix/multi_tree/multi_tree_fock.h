@@ -499,8 +499,9 @@ private:
     
     fx_timer_start(module_, "square_tree_building");
     square_tree_ = new SquareTree();
-    square_tree_->Init(tree_, tree_, number_of_basis_functions_);
-    square_tree_->SetStatsAndBounds(centers_, exponents_);
+    square_tree_->Init(tree_, tree_, number_of_basis_functions_, centers_, 
+                       exponents_);
+    //square_tree_->SetStatsAndBounds(centers_, exponents_);
     fx_timer_stop(module_, "square_tree_building");
     
     density_matrix_.Init(number_of_basis_functions_, number_of_basis_functions_);

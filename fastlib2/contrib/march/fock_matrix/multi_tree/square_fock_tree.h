@@ -222,7 +222,7 @@ class SquareFockTree {
      *  greater than that of q2
      */
     void Init(QueryTree* query1_root, QueryTree* query2_root, 
-              index_t num_funs) {
+              index_t num_funs, const Matrix& points, const Vector& exp) {
       
       query1_ = query1_root;
       query2_ = query2_root;
@@ -252,8 +252,8 @@ class SquareFockTree {
         DEBUG_ASSERT(query1_->right()->end() > query2_->begin());
         DEBUG_ASSERT(query1_->left()->end() > query2_->begin());
         
-        left_child_->Init(query1_->left(), query2_, num_funs);
-        right_child_->Init(query1_->right(), query2_, num_funs);
+        left_child_->Init(query1_->left(), query2_, num_funs, points, exp);
+        right_child_->Init(query1_->right(), query2_, num_funs, points, exp);
         
         stat_.Init(left_child_->stat(), right_child_->stat());
         
@@ -269,8 +269,8 @@ class SquareFockTree {
           left_child_ = new SquareFockTree<QueryTree>();
           right_child_ = new SquareFockTree<QueryTree>();
           
-          left_child_->Init(query1_, query2_->left(), num_funs);
-          right_child_->Init(query1_, query2_->right(), num_funs);
+          left_child_->Init(query1_, query2_->left(), num_funs, points, exp);
+          right_child_->Init(query1_, query2_->right(), num_funs, points, exp);
           
           stat_.Init(left_child_->stat(), right_child_->stat());
           
@@ -302,8 +302,8 @@ class SquareFockTree {
           DEBUG_ASSERT(query1_->end() > query2_->left()->begin());
           DEBUG_ASSERT(query1_->end() > query2_->right()->begin());
           
-          left_child_->Init(query1_, query2_->left(), num_funs);
-          right_child_->Init(query1_, query2_->right(), num_funs);
+          left_child_->Init(query1_, query2_->left(), num_funs, points, exp);
+          right_child_->Init(query1_, query2_->right(), num_funs, points, exp);
           
           stat_.Init(left_child_->stat(), right_child_->stat());
           
@@ -318,8 +318,8 @@ class SquareFockTree {
           left_child_ = new SquareFockTree<QueryTree>();
           right_child_ = new SquareFockTree<QueryTree>();
           
-          left_child_->Init(query1_->left(), query2_, num_funs);
-          right_child_->Init(query1_->right(), query2_, num_funs);
+          left_child_->Init(query1_->left(), query2_, num_funs, points, exp);
+          right_child_->Init(query1_->right(), query2_, num_funs, points, exp);
           
           stat_.Init(left_child_->stat(), right_child_->stat()); 
           
@@ -349,8 +349,8 @@ class SquareFockTree {
           DEBUG_ASSERT(query1_->left()->end() > query2_->begin());
           DEBUG_ASSERT(query1_->right()->end() > query2_->begin());
           
-          left_child_->Init(query1_->left(), query2_, num_funs);
-          right_child_->Init(query1_->right(), query2_, num_funs);
+          left_child_->Init(query1_->left(), query2_, num_funs, points, exp);
+          right_child_->Init(query1_->right(), query2_, num_funs, points, exp);
           
           stat_.Init(left_child_->stat(), right_child_->stat());  
           
@@ -363,9 +363,13 @@ class SquareFockTree {
       DEBUG_ASSERT(stat_.density_lower_bound() > -DBL_MAX);
       */
       
+      SetStatsAndBounds(points, exp);
+      
   } // Init() (two-children)
   
   
+  // I think this will need to be called from Init if I'm going to prune the 
+  // square tree with a shell pair cutoff
   void SetStatsAndBounds(const Matrix& points, const Vector& exponents) {
     // set stats and bounds
     // leaf

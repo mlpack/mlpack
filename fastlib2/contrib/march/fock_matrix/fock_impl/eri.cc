@@ -5,7 +5,8 @@ namespace eri {
 
   const double pow_pi_2point5 = pow(math::PI, 2.5);
 
-double double_factorial(int m) {
+
+ double double_fact(int m) {
   
   DEBUG_ASSERT(m >= 0);
 
@@ -18,6 +19,8 @@ double double_factorial(int m) {
   return ret;
 
 }
+
+  
 
 double F_0_(double z) {
 
@@ -40,14 +43,14 @@ double F_m(double t, int m) {
   }
   else {
   
-    double term1 = double_factorial(2*m - 1) * sqrt(math::PI) * erf(sqrt(t));
+    double term1 = double_fact(2*m - 1) * sqrt(math::PI) * erf(sqrt(t));
     term1 = term1 / (pow(2, m+1) * pow(t, (double)((m+1)/2)));
     
     double term2 = 0.0;
     int n = 0;
     while (n < 2*m) {
       
-      term2 += pow(2*t, n) * double_factorial(2*m - 1) / double_factorial(n+1);
+      term2 += pow(2*t, n) * double_fact(2*m - 1) / double_fact(n+1);
       
     }
     
