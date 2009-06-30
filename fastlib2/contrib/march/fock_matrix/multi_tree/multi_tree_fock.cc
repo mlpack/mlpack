@@ -1132,6 +1132,10 @@ void MultiTreeFock::PropagateBoundsUp_(SquareTree* query) {
   
   // should I mess with the remaining epsilon in this function?
   
+  double min_error = query->left()->stat().remaining_epsilon();
+  min_error = min(min_error, query->right()->stat().remaining_epsilon());
+  query->stat().set_remaining_epsilon(min_error);
+  
 } // PropagateBoundsUp_()
 
 
