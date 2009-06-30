@@ -265,7 +265,7 @@ bool MultiTreeFock::RectangleOnDiagonal_(FockTree* mu,
   
 } // RectangleOnDiagonal_  
 
-// this assumes that the node is really on the diagonal
+
 index_t MultiTreeFock::CountOnDiagonal_(SquareTree* rho_sigma) {
   
   index_t on_diagonal;
@@ -277,10 +277,13 @@ index_t MultiTreeFock::CountOnDiagonal_(SquareTree* rho_sigma) {
   if (left_child->query1() == left_child->query2()) {
     on_diagonal = left_child->query1()->count() * left_child->query2()->count();
   }
-  else {
+  else if (right_child->query1() == right_child->query2()) {
     DEBUG_ASSERT(right_child->query1() == right_child->query2());
     on_diagonal = right_child->query1()->count() * 
       right_child->query2()->count();
+  }
+  else {
+    on_diagonal = 0;
   }
   
   return on_diagonal;                                   
@@ -393,7 +396,8 @@ bool MultiTreeFock::CanPrune_(double* upper, double* lower, double* approx_val,
 
 bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu, 
                                            SquareTree* rho_sigma, 
-                                           double* approx_out) {
+                                           double* approx_out, 
+                                           double* lost_error_out) {
 
   double lost_error;
   
@@ -407,7 +411,7 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
   double schwartz_approx = 0.5 * (schwartz_lower + schwartz_upper);
   
   lost_error = max(fabs(schwartz_upper - schwartz_approx), 
-                          fabs(schwartz_approx - schwartz_lower));
+                   fabs(schwartz_approx - schwartz_lower));
   
   //FockTree* rho = rho_sigma->query1();
   //FockTree* sigma = rho_sigma->query2();
@@ -429,10 +433,12 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
       lost_error = 0.0;
     }
     
+    *lost_error_out = lost_error;
+    
     //mu_nu->stat().set_remaining_epsilon(mu_nu->stat().remaining_epsilon()
     //                                    - lost_error);
     
-    DEBUG_ASSERT(mu_nu->stat().remaining_epsilon() >= 0.0);
+    //DEBUG_ASSERT(mu_nu->stat().remaining_epsilon() >= 0.0);
     
     
     num_schwartz_prunes_++;
@@ -477,11 +483,13 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
       lost_error = 0.0;
     }
     
+    *lost_error_out = lost_error;
+    
     // need to move this somewhere else
     //mu_nu->stat().set_remaining_epsilon(mu_nu->stat().remaining_epsilon()
     //                                    - lost_error);
     
-    DEBUG_ASSERT(mu_nu->stat().remaining_epsilon() >= 0.0);
+    //DEBUG_ASSERT(mu_nu->stat().remaining_epsilon() >= 0.0);
     
     return true;
     
@@ -702,11 +710,16 @@ void MultiTreeFock::ComputeCoulombBaseCase_(SquareTree* mu_nu,
     double alpha_mu = exponents_[mu_index];
     double mu_norm = eri::ComputeNormalization(alpha_mu, momenta_[mu_index]);
     
+    Vector mu_vec;
+    centers_.MakeColumnVector(mu_index, &mu_vec);
+    
     for (index_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
       
       double alpha_nu = exponents_[nu_index];
       double nu_norm = eri::ComputeNormalization(alpha_nu, momenta_[nu_index]);
       
+      Vector nu_vec;
+      centers_.MakeColumnVector(nu_index, &nu_vec);
       
       double integral_value = coulomb_matrix_.ref(mu_index, nu_index);
       
@@ -716,16 +729,12 @@ void MultiTreeFock::ComputeCoulombBaseCase_(SquareTree* mu_nu,
         double alpha_rho = exponents_[rho_index];
         double rho_norm = eri::ComputeNormalization(alpha_rho, 
                                                     momenta_[rho_index]);
+        Vector rho_vec;
+        centers_.MakeColumnVector(rho_index, &rho_vec);
         
         for (index_t sigma_index = sigma->begin(); sigma_index < sigma->end(); 
              sigma_index++) {
           
-          Vector mu_vec;
-          centers_.MakeColumnVector(mu_index, &mu_vec);
-          Vector nu_vec;
-          centers_.MakeColumnVector(nu_index, &nu_vec);
-          Vector rho_vec;
-          centers_.MakeColumnVector(rho_index, &rho_vec);
           Vector sigma_vec;
           centers_.MakeColumnVector(sigma_index, &sigma_vec);
           
@@ -786,8 +795,8 @@ void MultiTreeFock::ComputeCoulombBaseCase_(SquareTree* mu_nu,
                    (rho->end() < sigma->end())));
   }
   
-  //mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
-  //                                       - new_refs);
+  mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
+                                         - new_refs);
   
   
 } // ComputeCoulombBaseCase_
@@ -813,10 +822,16 @@ void MultiTreeFock::ComputeExchangeBaseCase_(SquareTree* mu_nu,
     double alpha_mu = exponents_[mu_index];
     double mu_norm = eri::ComputeNormalization(alpha_mu, momenta_[mu_index]);
     
+    Vector mu_vec;
+    centers_.MakeColumnVector(mu_index, &mu_vec);
+    
     for (index_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
       
       double alpha_nu = exponents_[nu_index];
       double nu_norm = eri::ComputeNormalization(alpha_nu, momenta_[nu_index]);
+      
+      Vector nu_vec;
+      centers_.MakeColumnVector(nu_index, &nu_vec);
       
       double integral_value = exchange_matrix_.ref(mu_index, nu_index);
       
@@ -827,16 +842,13 @@ void MultiTreeFock::ComputeExchangeBaseCase_(SquareTree* mu_nu,
         double rho_norm = eri::ComputeNormalization(alpha_rho, 
                                                     momenta_[rho_index]);
         
+        Vector rho_vec;
+        centers_.MakeColumnVector(rho_index, &rho_vec);
+        
         for (index_t sigma_index = sigma->begin(); sigma_index < sigma->end(); 
              sigma_index++) {
           
           
-          Vector mu_vec;
-          centers_.MakeColumnVector(mu_index, &mu_vec);
-          Vector nu_vec;
-          centers_.MakeColumnVector(nu_index, &nu_vec);
-          Vector rho_vec;
-          centers_.MakeColumnVector(rho_index, &rho_vec);
           Vector sigma_vec;
           centers_.MakeColumnVector(sigma_index, &sigma_vec);
           
@@ -911,7 +923,8 @@ void MultiTreeFock::ComputeExchangeBaseCase_(SquareTree* mu_nu,
 
 void MultiTreeFock::FillApproximationCoulomb_(SquareTree* mu_nu, 
                                               SquareTree* rho_sigma,
-                                              double integral_approximation) {
+                                              double integral_approximation,
+                                              double lost_error) {
   
   FockTree* mu = mu_nu->query1();
   FockTree* nu = mu_nu->query2();
@@ -928,32 +941,35 @@ void MultiTreeFock::FillApproximationCoulomb_(SquareTree* mu_nu,
     
     PropagateBoundsDown_(mu_nu);
     
-    // this doesn't hold because I haven't propagated them down this far
     DEBUG_ASSERT(mu_nu->stat().remaining_references() ==
                  mu_nu->left()->stat().remaining_references());
     
     FillApproximationCoulomb_(mu_nu->left(), rho_sigma, 
-                              integral_approximation);
+                              integral_approximation, lost_error);
     FillApproximationCoulomb_(mu_nu->right(), rho_sigma, 
-                              integral_approximation);
+                              integral_approximation, lost_error);
     
     PropagateBoundsUp_(mu_nu);
     
   }
+  // is this necessary?
+  /*
   else if (RectangleOnDiagonal_(rho, sigma)) {
     
     FillApproximationCoulomb_(mu_nu, rho_sigma->left(), 
-                              integral_approximation);
+                              integral_approximation, lost_error);
     FillApproximationCoulomb_(mu_nu, rho_sigma->right(), 
-                              integral_approximation);
+                              integral_approximation, lost_error);
     
     // Because the approximation has been counted twice
+    // everything else has been done twice too
     mu_nu->stat().set_entry_upper_bound(mu_nu->stat().entry_upper_bound() - 
                                         integral_approximation);
     mu_nu->stat().set_entry_lower_bound(mu_nu->stat().entry_lower_bound() - 
                                         integral_approximation);
     
   }
+   */
   else {
     
     // this may be inefficient
@@ -982,6 +998,22 @@ void MultiTreeFock::FillApproximationCoulomb_(SquareTree* mu_nu,
     mu_nu->stat().set_entry_lower_bound(mu_nu->stat().entry_lower_bound() + 
                                         integral_approximation);
     
+    index_t new_refs;
+
+    if (RectangleOnDiagonal_(rho, sigma)) {
+      index_t on_diagonal = CountOnDiagonal_(rho_sigma);
+      index_t off_diagonal = (rho->count() * sigma->count()) - on_diagonal;
+      new_refs = on_diagonal + 2 * off_diagonal;
+    }
+    else if (rho == sigma){
+      new_refs = rho->count() * sigma->count();
+    }
+    else {
+      new_refs = 2 * rho->count() * sigma->count();
+    }
+    
+    // replace this with CountOnDiagonal to get rid of extra call above
+    /*
     index_t new_refs = rho->count() * sigma->count();
     
     if (rho != sigma) {
@@ -991,12 +1023,17 @@ void MultiTreeFock::FillApproximationCoulomb_(SquareTree* mu_nu,
                      (rho->end() <= sigma->end())));
       new_refs = 2 * new_refs;
     }
+    */
     
     // reduces remaining references, but never alters epsilon
-    //mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
-    //                                       - new_refs);
+    mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
+                                           - new_refs);
     
     DEBUG_ASSERT(mu_nu->stat().remaining_references() >= 0);
+    
+    mu_nu->stat().set_remaining_epsilon(mu_nu->stat().remaining_epsilon() - lost_error);
+
+    DEBUG_ASSERT(mu_nu->stat().remaining_epsilon() >= 0.0);
     
     mu_nu->stat().set_approximation_val(integral_approximation);
     
@@ -1147,6 +1184,7 @@ void MultiTreeFock::ComputeCoulombRecursion_(SquareTree* query,
   DEBUG_ASSERT(reference->query1()->end() > reference->query2()->begin());
   
   double integral_approximation;
+  double lost_error;
   
   // should I check pruning for the leaf as well?
   if (query->is_leaf() && reference->is_leaf()) {
@@ -1155,13 +1193,16 @@ void MultiTreeFock::ComputeCoulombRecursion_(SquareTree* query,
     ComputeCoulombBaseCase_(query, reference);
     
   }
-  else if(CanApproximateCoulomb_(query, reference, &integral_approximation)) {
+  else if(CanApproximateCoulomb_(query, reference, &integral_approximation,
+                                 &lost_error)) {
     
     DEBUG_ASSERT(integral_approximation != BIG_BAD_NUMBER);
+    DEBUG_ASSERT(lost_error != BIG_BAD_NUMBER);
     
     coulomb_approximations_++;
     
-    FillApproximationCoulomb_(query, reference, integral_approximation);
+    FillApproximationCoulomb_(query, reference, integral_approximation, 
+                              lost_error);
     
   }        
   else if (query->is_leaf()) {

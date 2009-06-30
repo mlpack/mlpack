@@ -351,7 +351,7 @@ private:
    * currently be approximated.  If so, then *approx_val holds the estimate
    */
   bool CanApproximateCoulomb_(SquareTree* mu_nu, SquareTree* rho_sigma, 
-                              double* approx_val);
+                              double* approx_val, double* lost_error_out);
   
   /**
    * Determines if the Exchange interaction can be approximated, and if so, 
@@ -378,7 +378,8 @@ private:
    */
   void FillApproximationCoulomb_(SquareTree* mu_nu, 
                                  SquareTree* rho_sigma,
-                                 double integral_approximation);
+                                 double integral_approximation,
+                                 double lost_error);
                                  
   void FillApproximationExchange_(SquareTree* mu_nu, 
                                   SquareTree* rho_sigma,
