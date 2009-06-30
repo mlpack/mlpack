@@ -429,8 +429,8 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
       lost_error = 0.0;
     }
     
-    mu_nu->stat().set_remaining_epsilon(mu_nu->stat().remaining_epsilon()
-                                        - lost_error);
+    //mu_nu->stat().set_remaining_epsilon(mu_nu->stat().remaining_epsilon()
+    //                                    - lost_error);
     
     DEBUG_ASSERT(mu_nu->stat().remaining_epsilon() >= 0.0);
     
@@ -992,8 +992,8 @@ void MultiTreeFock::FillApproximationCoulomb_(SquareTree* mu_nu,
     }
     
     // reduces remaining references, but never alters epsilon
-    mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
-                                           - new_refs);
+    //mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
+    //                                       - new_refs);
     
     DEBUG_ASSERT(mu_nu->stat().remaining_references() >= 0);
     
