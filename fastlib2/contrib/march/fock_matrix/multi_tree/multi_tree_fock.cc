@@ -478,8 +478,8 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
     }
     
     // need to move this somewhere else
-    mu_nu->stat().set_remaining_epsilon(mu_nu->stat().remaining_epsilon()
-                                        - lost_error);
+    //mu_nu->stat().set_remaining_epsilon(mu_nu->stat().remaining_epsilon()
+    //                                    - lost_error);
     
     DEBUG_ASSERT(mu_nu->stat().remaining_epsilon() >= 0.0);
     
@@ -786,8 +786,8 @@ void MultiTreeFock::ComputeCoulombBaseCase_(SquareTree* mu_nu,
                    (rho->end() < sigma->end())));
   }
   
-  mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
-                                         - new_refs);
+  //mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
+  //                                       - new_refs);
   
 } // ComputeCoulombBaseCase_
 
