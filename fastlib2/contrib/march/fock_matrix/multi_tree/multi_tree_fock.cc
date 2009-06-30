@@ -789,6 +789,7 @@ void MultiTreeFock::ComputeCoulombBaseCase_(SquareTree* mu_nu,
   //mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
   //                                       - new_refs);
   
+  
 } // ComputeCoulombBaseCase_
 
 
