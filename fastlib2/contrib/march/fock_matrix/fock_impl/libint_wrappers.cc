@@ -36,6 +36,26 @@ namespace eri {
     
   }
   
+  index_t NumFunctions(int momentum) {
+    
+    if (momentum == 0) {
+      return 1;
+    }
+    else if (momentum == 1) {
+      return 3;
+    }
+    else if (momentum == 2) {
+      return 6;
+    }
+    else if (momentum == 3) {
+      return 10;
+    }
+    else {
+      FATAL("Momenta higher than 3 not supported.");
+    }
+    
+  }
+  
   
   double* ComputeERI(const Vector& A_vec, double A_exp, int A_mom, 
                      const Vector& B_vec, double B_exp, int B_mom,
@@ -51,6 +71,37 @@ namespace eri {
     double* results = Libint_Eri(A_vec, A_exp, A_mom, B_vec, B_exp, B_mom, 
                                  C_vec, C_exp, C_mom, D_vec, D_exp, D_mom,
                                  tester);
+    
+    index_t num_integrals = NumFunctions(A_mom) * NumFunctions(B_mom)
+                            * NumFunctions(C_mom) * NumFunctions(D_mom);
+    
+    // the normalization factor used for all integrals in libint
+    double norm_denom = ComputeNormalization(A_exp, A_mom, 0, 0)
+                        * ComputeNormalization(B_exp, B_mom, 0, 0)
+                        * ComputeNormalization(C_exp, C_mom, 0, 0)
+                        * ComputeNormalization(D_exp, D_mom, 0, 0);
+    
+    for (index_t a_ind = 0; a_ind < A_mom; a_ind++) {
+      
+      double a_norm;
+      
+      for (index_t b_ind = 0; b_ind < B_mom; b_ind++) {
+      
+        double b_norm;
+      
+        for (index_t c_ind = 0; c_ind < C_mom; c_ind++) {
+        
+          double c_norm;
+      
+          for (index_t d_ind = 0; d_ind < D_mom; d_ind++) {
+          
+            double d_norm;
+            
+          }
+        }
+      }
+    }
+    
     
     free_libint(&tester);
     
