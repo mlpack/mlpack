@@ -41,6 +41,11 @@ namespace eri {
   void ERIFree();
   
   /**
+   * 
+   */
+  index_t NumFunctions(int momentum);
+  
+  /**
    * This is the function to call from outside.
    *
    * IMPORTANT: must have called ERIInit() before calling this function

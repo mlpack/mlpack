@@ -280,6 +280,8 @@ void FockMatrixComparison::Init(fx_module* exp_mod, Matrix** exp_mats,
   else {
     //printf("setting compare energies to false\n");
     compare_energies_ = false;
+    nuclear_charges_.Init(1);
+    nuclear_centers_.Init(1,1);
   }
     
   // check that all matrices are the same size
@@ -422,7 +424,7 @@ void FockMatrixComparison::Compare() {
     // need to initialize the matrices to prevent a crash
     
     core_hamiltonian_.Init(1,1);
-    overlap_matrix_.Init(1,1);
+    //overlap_matrix_.Init(1,1);
     change_of_basis_matrix_.Init(1,1);
     fock_mat_.Init(1,1);
     naive_fock_mat_.Init(1,1);

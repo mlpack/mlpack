@@ -300,6 +300,10 @@ void MultiTreeFock::DensityFactor_(double* up_bound, double* low_bound,
   // bound becomes the largest integral times the density lower bound, 
   // instead of the smallest integral and vice versa.  
   
+  // does this work if the upper and lower bounds are less than zero?
+  
+  DEBUG_ASSERT(density_upper >= density_lower);
+  
   double old_up_bound = *up_bound;
   if (density_upper >= 0.0) {
     *up_bound = *up_bound * density_upper;
@@ -316,7 +320,6 @@ void MultiTreeFock::DensityFactor_(double* up_bound, double* low_bound,
   
   DEBUG_ASSERT(*up_bound >= *low_bound);
   
-  
 }
 
 void MultiTreeFock::CountFactorCoulomb_(double* up_bound, double* low_bound, 
@@ -330,8 +333,8 @@ void MultiTreeFock::CountFactorCoulomb_(double* up_bound, double* low_bound,
     index_t on_diagonal = CountOnDiagonal_(rho_sigma);
     index_t off_diagonal = (rho->count() * sigma->count()) - on_diagonal;
     *up_bound = (on_diagonal * *up_bound) + (2 * off_diagonal * *up_bound);
-    // These two were missing, I think they needed to be here
     *low_bound = (on_diagonal * *low_bound) + (2 * off_diagonal * *low_bound);
+    // These two were missing, I think they needed to be here
     *approx_val = (on_diagonal * *approx_val) + (2 * off_diagonal * *approx_val);
     *allowed_error = (on_diagonal * *allowed_error)
       + (2 * off_diagonal * *allowed_error);
@@ -363,6 +366,7 @@ void MultiTreeFock::SchwartzBound_(SquareTree* mu_nu, SquareTree* rho_sigma,
   up_bound *= rho_sigma->stat().max_schwartz_factor();
   
   // can I do any better?
+  // is this still true in the higher momenta case?
   double low_bound = 0.0;
   
   // densities
@@ -380,15 +384,19 @@ void MultiTreeFock::SchwartzBound_(SquareTree* mu_nu, SquareTree* rho_sigma,
 bool MultiTreeFock::CanPrune_(double* upper, double* lower, double* approx_val,
                               SquareTree* mu_nu, SquareTree* rho_sigma) {
 
+  DEBUG_ASSERT(*upper >= *approx_val);
+  DEBUG_ASSERT(*approx_val >= *lower);
+  
   // works for absolute error
   double my_allowed_error = mu_nu->stat().remaining_epsilon() 
-                            / mu_nu->stat().remaining_references();
+                            / (double)mu_nu->stat().remaining_references();
   
   CountFactorCoulomb_(upper, lower, approx_val, &my_allowed_error,
                       rho_sigma);
   
   double max_error = max(fabs(*upper - *approx_val), fabs(*lower - *approx_val));
   
+  //printf("max_error: %g, allowed_error: %g\n\n", max_error, my_allowed_error);
   return (max_error <= my_allowed_error);
 
 }
@@ -410,8 +418,6 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
 
   double schwartz_approx = 0.5 * (schwartz_lower + schwartz_upper);
   
-  lost_error = max(fabs(schwartz_upper - schwartz_approx), 
-                   fabs(schwartz_approx - schwartz_lower));
   
   //FockTree* rho = rho_sigma->query1();
   //FockTree* sigma = rho_sigma->query2();
@@ -419,6 +425,9 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
   if (CanPrune_(&schwartz_upper, &schwartz_lower, &schwartz_approx, mu_nu, 
                 rho_sigma)) {
   
+    lost_error = max(fabs(schwartz_upper - schwartz_approx), 
+                     fabs(schwartz_approx - schwartz_lower));
+    
     // fill in the approximations and return
     *approx_out = schwartz_approx;
     
@@ -435,6 +444,7 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
     
     *lost_error_out = lost_error;
     
+    // moved this to FillApproximationCoulomb_()
     //mu_nu->stat().set_remaining_epsilon(mu_nu->stat().remaining_epsilon()
     //                                    - lost_error);
     
@@ -467,9 +477,10 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
   //double approx_val = NodesMidpointIntegral_(mu, nu, rho, sigma);
   double approx_val = 0.5 * (up_bound + low_bound);
 
-  lost_error = max(fabs(up_bound - approx_val), fabs(approx_val - low_bound));
-
+  
   if (CanPrune_(&up_bound, &low_bound, &approx_val, mu_nu, rho_sigma)) {
+    
+    lost_error = max(fabs(up_bound - approx_val), fabs(approx_val - low_bound));
     
     // fill in approximation
     *approx_out = approx_val;
@@ -485,7 +496,7 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
     
     *lost_error_out = lost_error;
     
-    // need to move this somewhere else
+    // moved this to FillApproximation
     //mu_nu->stat().set_remaining_epsilon(mu_nu->stat().remaining_epsilon()
     //                                    - lost_error);
     
@@ -1450,6 +1461,8 @@ void MultiTreeFock::ResetTree_(SquareTree* root) {
   
   root->stat().set_remaining_references(number_of_basis_functions_ * 
                                         number_of_basis_functions_);
+  
+  root->stat().set_remaining_epsilon(epsilon_ * epsilon_split_);
   
   root->stat().set_approximation_val(0.0);
   
