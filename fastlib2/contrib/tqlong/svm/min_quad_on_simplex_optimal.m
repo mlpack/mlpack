@@ -13,13 +13,13 @@ iter = 0;
 tol = 1e-8
 while (1)
     iter = iter + 1;
-    a = K*x;
-    L1 = norm(a)/norm(x);
+    a = K(:,~Iw)*w(~Iw);
+    L1 = norm(a)/norm(w);
     if (L < L1) L = L1; end
     x_old = x;
     I_old = I;
     
-    [x, I] = simplex_project(K(:,~Iw)*w(~Iw), L, w);
+    [x, I] = simplex_project(a, L, w);
     
     alpha = 1/2*(1+sqrt(1+alpha^2));
     w = x + (alpha-1)/(alpha+1)*(x-x_old);
