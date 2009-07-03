@@ -6,6 +6,29 @@
 namespace SVMLib {
   /** Kernel function definition */
   typedef double (*KernelFunc)(const Vector& x, const Vector& y);
+  class KernelFunction {
+    enum TYPE { LINEAR, POLYNOMIAL, RBF, CUSTOM } type;
+    double d; // for polynomial kernel
+    double sigma2; // for rbf kernel
+    double operator() (const Vector& x, const Vector& y) {
+      DEBUG_ASSERT(y.length() == x.length());
+      switch (type) {
+      case LINEAR:
+	return la::Dot(x, y);
+	break;
+      case POLYNOMIAL:
+	return pow(la::Dot(x, y)+1, d);
+	break;
+      case RBF:
+	return exp(-0.5*s/sigma2);
+	break;
+      case CUSTOM:
+	break;
+      case default:
+      }
+    }
+  };
+
   /** SMO options */
   struct SMOOptions {
     enum VERBOSE {NONE = 0, ITER, FINAL} verbose;
