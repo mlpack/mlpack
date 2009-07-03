@@ -152,6 +152,8 @@ void UpdateAlphas(index_t i, index_t j, Kernel& kernel,
     grad[k] = grad[k] - col_i[k]*y[k]*(alpha_i-alpha[i])*y[i]
       - col_j[k]*y[k]*(alpha_j-alpha[j])*y[j];
   }
+
+  // update Iup and Idown
   Iup.addremove(i, lt(y[i]*alpha_i, Bvec[i], svTol));
   Idown.addremove(i, gt(y[i]*alpha_i, Avec[i], svTol));
   Iup.addremove(j, lt(y[j]*alpha_j, Bvec[j], svTol));
