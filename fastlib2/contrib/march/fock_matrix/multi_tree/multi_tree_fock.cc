@@ -360,6 +360,24 @@ void MultiTreeFock::CountFactorCoulomb_(double* up_bound, double* low_bound,
 } // CountFactorCoulomb_
 
 
+void MultiTreeFock::CountFactorExchange_(double* up_bound, double* low_bound, 
+                                         double* approx_val, double* allowed_error,
+                                         SquareTree* rho_sigma) {
+  
+  // the lower triangle has already been accounted for in the computation of the
+  // bounds
+  
+  FockTree* rho = rho_sigma->query1();
+  FockTree* sigma = rho_sigma->query2();
+  
+  *up_bound = *up_bound * rho->count() * sigma->count();
+  *low_bound = *low_bound * rho->count() * sigma->count();
+  *approx_val = *approx_val * rho->count() * sigma->count();
+  *allowed_error = *allowed_error * rho->count() * sigma->count();
+  
+} // CountFactorExchange_
+
+
 void MultiTreeFock::SchwartzBound_(SquareTree* mu_nu, SquareTree* rho_sigma,
                                      double* upper, double* lower) {
 
@@ -382,8 +400,9 @@ void MultiTreeFock::SchwartzBound_(SquareTree* mu_nu, SquareTree* rho_sigma,
 
 // should the bounds have been multiplied by the appropriate counts?
 // maybe not, will have to do it several times
-bool MultiTreeFock::CanPrune_(double* upper, double* lower, double* approx_val,
-                              SquareTree* mu_nu, SquareTree* rho_sigma) {
+bool MultiTreeFock::CanPruneCoulomb_(double* upper, double* lower, 
+                                     double* approx_val,
+                                     SquareTree* mu_nu, SquareTree* rho_sigma) {
 
   DEBUG_ASSERT(*upper >= *approx_val);
   DEBUG_ASSERT(*approx_val >= *lower);
@@ -403,6 +422,28 @@ bool MultiTreeFock::CanPrune_(double* upper, double* lower, double* approx_val,
 }
 
 
+bool MultiTreeFock::CanPruneExchange_(double* upper, double* lower, 
+                                      double* approx_val,
+                                      SquareTree* mu_nu, SquareTree* rho_sigma) {
+  
+  DEBUG_ASSERT(*upper >= *approx_val);
+  DEBUG_ASSERT(*approx_val >= *lower);
+  
+  double allowed_err = mu_nu->stat().remaining_epsilon() 
+                       / (double)mu_nu->stat().remaining_references();
+  
+  CountFactorExchange_(upper, lower, approx_val, &allowed_err, 
+                       rho_sigma);
+  
+  double max_error = max(fabs(*upper - *approx_val), fabs(*lower - *approx_val));
+  
+  //printf("max_error: %g, allowed_error: %g\n\n", max_error, my_allowed_error);
+  return (max_error <= allowed_err);
+  
+} // CanPruneExchange_
+
+
+
 bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu, 
                                            SquareTree* rho_sigma, 
                                            double* approx_out, 
@@ -411,56 +452,52 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
   double lost_error;
   
   // Schwartz pruning
-  
-  double schwartz_upper;
-  double schwartz_lower;
-  // this includes the density matrix entries
-  SchwartzBound_(mu_nu, rho_sigma, &schwartz_upper, &schwartz_lower);
+  if (schwartz_pruning_) {
+    double schwartz_upper;
+    double schwartz_lower;
+    // this includes the density matrix entries
+    SchwartzBound_(mu_nu, rho_sigma, &schwartz_upper, &schwartz_lower);
 
-  double schwartz_approx = 0.5 * (schwartz_lower + schwartz_upper);
-  
-  
-  //FockTree* rho = rho_sigma->query1();
-  //FockTree* sigma = rho_sigma->query2();
-  
-  if (CanPrune_(&schwartz_upper, &schwartz_lower, &schwartz_approx, mu_nu, 
-                rho_sigma)) {
-  
-    //lost_error = max(fabs(schwartz_upper - schwartz_approx), 
-    //                 fabs(schwartz_approx - schwartz_lower)) 
-    //            / mu_nu->stat().remaining_references();
+    double schwartz_approx = 0.5 * (schwartz_lower + schwartz_upper);
     
-    lost_error = max(fabs(schwartz_upper - schwartz_approx), 
-                     fabs(schwartz_approx - schwartz_lower));
     
-    // fill in the approximations and return
-    *approx_out = schwartz_approx;
+    //FockTree* rho = rho_sigma->query1();
+    //FockTree* sigma = rho_sigma->query2();
     
-    // need to redistribute error
-    double new_entry_lower_bound = mu_nu->stat().entry_lower_bound() 
-                                   + schwartz_approx;
+    if (CanPruneCoulomb_(&schwartz_upper, &schwartz_lower, &schwartz_approx, 
+                         mu_nu, rho_sigma)) {
     
-    if (relative_error_ && (new_entry_lower_bound != 0.0)) {
-      lost_error /= new_entry_lower_bound;
+      lost_error = max(fabs(schwartz_upper - schwartz_approx), 
+                       fabs(schwartz_approx - schwartz_lower));
+      
+      // fill in the approximations and return
+      *approx_out = schwartz_approx;
+      
+      // need to redistribute error
+      double new_entry_lower_bound = mu_nu->stat().entry_lower_bound() 
+                                     + schwartz_approx;
+      
+      if (relative_error_ && (new_entry_lower_bound != 0.0)) {
+        lost_error /= new_entry_lower_bound;
+      }
+      else if (relative_error_) {
+        lost_error = 0.0;
+      }
+      
+      *lost_error_out = lost_error;
+      
+      // moved this to FillApproximationCoulomb_()
+      //mu_nu->stat().set_remaining_epsilon(mu_nu->stat().remaining_epsilon()
+      //                                    - lost_error);
+      
+      //DEBUG_ASSERT(mu_nu->stat().remaining_epsilon() >= 0.0);
+      
+      
+      num_schwartz_prunes_++;
+      return true;
+      
     }
-    else if (relative_error_) {
-      lost_error = 0.0;
-    }
-    
-    *lost_error_out = lost_error;
-    
-    // moved this to FillApproximationCoulomb_()
-    //mu_nu->stat().set_remaining_epsilon(mu_nu->stat().remaining_epsilon()
-    //                                    - lost_error);
-    
-    //DEBUG_ASSERT(mu_nu->stat().remaining_epsilon() >= 0.0);
-    
-    
-    num_schwartz_prunes_++;
-    return true;
-    
-  }
-  
+  } // schwartz pruning
   
   double up_bound = NodesMaxIntegral_(mu_nu, rho_sigma);
   if (fabs(up_bound) < bounds_cutoff_) {
@@ -483,10 +520,13 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
   double approx_val = 0.5 * (up_bound + low_bound);
 
   
-  if (CanPrune_(&up_bound, &low_bound, &approx_val, mu_nu, rho_sigma)) {
+  if (CanPruneCoulomb_(&up_bound, &low_bound, &approx_val, mu_nu, rho_sigma)) {
     
     //lost_error = max(fabs(up_bound - approx_val), fabs(approx_val - low_bound))
     //              / mu_nu->stat().remaining_references();
+    
+    DEBUG_ASSERT(up_bound >= approx_val);
+    DEBUG_ASSERT(approx_val >= low_bound);
     
     lost_error = max(fabs(up_bound - approx_val), fabs(approx_val - low_bound));
     
@@ -521,7 +561,8 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
 
 bool MultiTreeFock::CanApproximateExchange_(SquareTree* mu_nu, 
                                             SquareTree* rho_sigma, 
-                                            double* approximate_value) { 
+                                            double* approximate_value,
+                                            double* lost_error_out) { 
                                             
   FockTree* mu = mu_nu->query1();
   FockTree* nu = mu_nu->query2();
@@ -547,41 +588,9 @@ bool MultiTreeFock::CanApproximateExchange_(SquareTree* mu_nu,
     low_bound = 0.0;
   } 
   
-  /*
-  Vector mu_center;
-  mu->bound().CalculateMidpoint(&mu_center);
-  Vector nu_center;
-  nu->bound().CalculateMidpoint(&nu_center);
-  Vector rho_center;
-  rho->bound().CalculateMidpoint(&rho_center);
-  Vector sigma_center;
-  sigma->bound().CalculateMidpoint(&sigma_center);
-  */
-   
-  //double approx_val = NodesMidpointIntegral_(mu, rho, nu, sigma);
-  //double approx_val = 0.5 * (up_bound + low_bound);
-  
-  //DEBUG_ASSERT(up_bound >= approx_val);
-  //DEBUG_ASSERT(approx_val >= low_bound);
   DEBUG_ASSERT(up_bound >= low_bound);  
   
   if (rho != sigma) {
-    
-    /*
-    double mu_sigma_min_dist = mu->bound().MinDistanceSq(sigma->bound());
-    double mu_sigma_max_dist = mu->bound().MaxDistanceSq(sigma->bound());
-    
-    double nu_rho_min_dist = nu->bound().MinDistanceSq(rho->bound());
-    double nu_rho_max_dist = nu->bound().MaxDistanceSq(rho->bound());
-    
-    DHrectBound<2> mu_sigma_ave;
-    mu_sigma_ave.AverageBoxesInit(mu->bound(), sigma->bound());
-    DHrectBound<2> nu_rho_ave;
-    nu_rho_ave.AverageBoxesInit(nu->bound(), rho->bound());
-    
-    double mu_sigma_four_way_min_dist = mu_sigma_ave.MinDistanceSq(nu_rho_ave);
-    double mu_sigma_four_way_max_dist = mu_sigma_ave.MaxDistanceSq(nu_rho_ave);
-    */
     
     double mu_sigma_upper = NodesMaxIntegral_(mu, sigma, nu, rho);
     if (fabs(mu_sigma_upper) < bounds_cutoff_) {
@@ -614,79 +623,29 @@ bool MultiTreeFock::CanApproximateExchange_(SquareTree* mu_nu,
   
   //double lost_error = max((up_bound - approx_val), (approx_val - low_bound));
   
-  // can be certain that the entry is not on the diagonal
   //DEBUG_ASSERT(up_bound >= approx_val);
   //DEBUG_ASSERT(approx_val >= low_bound);
   DEBUG_ASSERT(up_bound >= low_bound);
-  
-  /*
-  double old_up_bound = up_bound;
-  
-  // account for possibly negative density matrix entries
-  if (rho_sigma->stat().density_upper_bound() >= 0.0) {
-    up_bound = up_bound * rho_sigma->stat().density_upper_bound();
-  }
-  else {
-    up_bound = low_bound * rho_sigma->stat().density_upper_bound();
-  }
-  if (rho_sigma->stat().density_lower_bound() >= 0.0) {
-    low_bound = low_bound * rho_sigma->stat().density_lower_bound();
-  }
-  else {
-    low_bound = old_up_bound * rho_sigma->stat().density_lower_bound();
-  }
-  */
   
   DensityFactor_(&up_bound, &low_bound, rho_sigma->stat().density_upper_bound(), 
                  rho_sigma->stat().density_lower_bound());
   
   DEBUG_ASSERT(up_bound >= low_bound);
-
+  
   double approx_val = 0.5 * (up_bound + low_bound);
-  double lost_error = max(fabs(up_bound - approx_val), 
-                          fabs(approx_val - low_bound));
   
-  up_bound *= rho->count() * sigma->count();
-  low_bound *= rho->count() * sigma->count();
-  approx_val *= rho->count() * sigma->count();
+  if (CanPruneExchange_(&up_bound, &low_bound, &approx_val, mu_nu, rho_sigma)) {
   
-  DEBUG_ASSERT(up_bound >= approx_val);
-  DEBUG_ASSERT(approx_val >= low_bound);
-  
-  // This is absolute error, I'll need to get the lower bound out of the 
-  // mu_nu square tree to do relative
-  double my_allowed_error = mu_nu->stat().remaining_epsilon() * rho->count() 
-    * sigma->count() / mu_nu->stat().remaining_references();
-  
-  // The total error I'm incurring is the max error for one integral times 
-  // the number of approximations I'm making
-  DEBUG_ASSERT(up_bound >= approx_val);
-  DEBUG_ASSERT(approx_val >= low_bound);
-  double my_max_error = max((up_bound - approx_val), 
-                            (approx_val - low_bound));
-    
-  if (relative_error_) {
-    my_allowed_error *= mu_nu->stat().entry_lower_bound();
-  }
-  
-  DEBUG_ONLY(*approximate_value = BIG_BAD_NUMBER);
-  if (my_max_error <= my_allowed_error) {
-    
-    /*
-    printf("up_bound: %g, low_bound: %g, approx: %g\n", up_bound, low_bound, 
-           approx_val);
-    
-    printf("max_err: %g, allowed_err: %g, eps: %g\n", my_max_error, 
-           my_allowed_error, mu_nu->stat().remaining_epsilon());
-    */
-    
+    DEBUG_ASSERT(up_bound >= approx_val);
+    DEBUG_ASSERT(approx_val >= low_bound);
+
+    double lost_error = max(fabs(up_bound - approx_val), 
+                            fabs(approx_val - low_bound));
+
     can_prune = true;
     
     *approximate_value = approx_val;
-    //printf("approx_val = %g\n", *approximate_value);
-    
 
-    //double lost_error = my_max_error;
     double new_entry_lower_bound = mu_nu->stat().entry_lower_bound() + approx_val;
     
     if (relative_error_ && (new_entry_lower_bound != 0.0)) {
@@ -696,12 +655,12 @@ bool MultiTreeFock::CanApproximateExchange_(SquareTree* mu_nu,
       lost_error = 0.0;
     }
     
-    mu_nu->stat().set_remaining_epsilon(mu_nu->stat().remaining_epsilon()
-                                        - lost_error);
+    *lost_error_out = lost_error;
     
+    //mu_nu->stat().set_remaining_epsilon(mu_nu->stat().remaining_epsilon()
+    //                                    - lost_error);
     
-    DEBUG_ASSERT(mu_nu->stat().remaining_epsilon() >= 0.0);
-    
+    //DEBUG_ASSERT(mu_nu->stat().remaining_epsilon() >= 0.0);
   }
   
   return can_prune;
@@ -806,6 +765,7 @@ void MultiTreeFock::ComputeCoulombBaseCase_(SquareTree* mu_nu,
   
   index_t new_refs = rho->count() * sigma->count();
   
+  // a base case can't be on the diagonal, so this is okay
   if (rho != sigma) {
     new_refs = 2 * new_refs;
     DEBUG_ASSERT(!((rho->begin() < sigma->begin()) && 
@@ -1063,7 +1023,8 @@ void MultiTreeFock::FillApproximationCoulomb_(SquareTree* mu_nu,
 
 void MultiTreeFock::FillApproximationExchange_(SquareTree* mu_nu, 
                                                SquareTree* rho_sigma,
-                                               double integral_approximation) {
+                                               double integral_approximation,
+                                               double lost_error) {
   
   FockTree* mu = mu_nu->query1();
   FockTree* nu = mu_nu->query2();
@@ -1078,13 +1039,16 @@ void MultiTreeFock::FillApproximationExchange_(SquareTree* mu_nu,
                  mu_nu->left()->stat().remaining_references());
     
     FillApproximationExchange_(mu_nu->left(), rho_sigma, 
-                               integral_approximation);
+                               integral_approximation, lost_error);
     FillApproximationExchange_(mu_nu->right(), rho_sigma, 
-                               integral_approximation);
+                               integral_approximation, lost_error);
     
     PropagateBoundsUp_(mu_nu);
     
   }
+  // this case should never happen, since there are no prunes when rho_sigma
+  // is on the diagonal
+  /*
   else if (RectangleOnDiagonal_(rho, sigma)) {
     
     FillApproximationExchange_(mu_nu, rho_sigma->left(), 
@@ -1099,6 +1063,7 @@ void MultiTreeFock::FillApproximationExchange_(SquareTree* mu_nu,
                                         integral_approximation);
     
   }
+  */
   else {
     
     for (index_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
@@ -1130,6 +1095,11 @@ void MultiTreeFock::FillApproximationExchange_(SquareTree* mu_nu,
     if (rho != sigma) {
       new_refs = 2 * new_refs;
     }
+    
+    mu_nu->stat().set_remaining_epsilon(mu_nu->stat().remaining_epsilon() 
+                                        - lost_error);
+    DEBUG_ASSERT(mu_nu->stat().remaining_epsilon() >= 0.0);
+    
     mu_nu->stat().set_remaining_references(mu_nu->stat().remaining_references() 
                                            - new_refs);
     
@@ -1263,6 +1233,7 @@ void MultiTreeFock::ComputeExchangeRecursion_(SquareTree* query,
                                               SquareTree* reference) {
   
   double integral_approximation;
+  double lost_error;
   
   if (query->is_leaf() && reference->is_leaf()) {
     
@@ -1270,13 +1241,15 @@ void MultiTreeFock::ComputeExchangeRecursion_(SquareTree* query,
     ComputeExchangeBaseCase_(query, reference);
     
   }
-  else if (CanApproximateExchange_(query, reference, &integral_approximation)) {
+  else if (CanApproximateExchange_(query, reference, &integral_approximation,
+                                   &lost_error)) {
     
     DEBUG_ASSERT(integral_approximation != BIG_BAD_NUMBER);
     
     exchange_approximations_++;
     
-    FillApproximationExchange_(query, reference, integral_approximation);
+    FillApproximationExchange_(query, reference, integral_approximation, 
+                               lost_error);
     
   }        
   else if (query->is_leaf()) {

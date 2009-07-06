@@ -47,6 +47,8 @@ const fx_entry_doc multi_tree_fock_entries[] = {
     "Total time spent to initialize the trees and compute F.\n"},
   {"bounds_cutoff", FX_PARAM, FX_DOUBLE, NULL,
     "Bounds computed to be below this value are set to zero.  Default: 0.0\n"},
+  {"schwartz_pruning", FX_PARAM, FX_BOOL, NULL,
+   "Specify this parameter to activate pruning based on the Schwartz inequality.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -185,9 +187,7 @@ private:
   }; // class SingleNodeStat
   
  public:
-  // This assumes identical bandwidth small Gaussians
-  // Otherwise, I'll need something other than a Matrix
-  // I should also consider something better than bounding boxes
+  
   typedef BinarySpaceTree<DHrectBound<2>, Matrix, SingleNodeStat> FockTree; 
   
   typedef SquareFockTree<FockTree> SquareTree;
@@ -260,6 +260,11 @@ private:
   // true if the error is relative, false if absolute
   bool relative_error_;
   
+  // if true, then attempts to prune Coulomb computations with the Schwartz 
+  // inequality estimate
+  // if this fails, it still tries the normal bounds
+  bool schwartz_pruning_;
+  
   // having trouble with bounds very close to zero
   double bounds_cutoff_;
   
@@ -321,6 +326,14 @@ private:
   void CountFactorCoulomb_(double* up_bound, double* low_bound, 
                            double* approx_val, double* allowed_error,
                            SquareTree* rho_sigma);
+  
+  /**
+   * Simpler than the Coulomb version since the node is assumed to not be on the 
+   * diagonal.
+   */
+  void CountFactorExchange_(double* up_bound, double* low_bound, 
+                            double* approx_val, double* allowed_error,
+                            SquareTree* rho_sigma);
     
   
   /** 
@@ -343,9 +356,15 @@ private:
    * Assumes that the bounds have not been multiplied by the number of points
    * in the reference nodes, which is done in this function.  
    */
-  bool CanPrune_(double* upper, double* lower, double* approx_val,
-                 SquareTree* mu_nu, SquareTree* rho_sigma);
-  
+  bool CanPruneCoulomb_(double* upper, double* lower, double* approx_val,
+                        SquareTree* mu_nu, SquareTree* rho_sigma);
+
+  /**
+   * Exchange variant of the above.
+   */
+  bool CanPruneExchange_(double* upper, double* lower, double* approx_val,
+                         SquareTree* mu_nu, SquareTree* rho_sigma);
+
   /**
    * Determines if the Coulomb interaction between the given square nodes can 
    * currently be approximated.  If so, then *approx_val holds the estimate
@@ -358,7 +377,7 @@ private:
    * fills in *approx_val with the estimate.
    */
   bool CanApproximateExchange_(SquareTree* mu_nu, SquareTree* rho_sigma, 
-                               double* approx_val);
+                               double* approx_val, double* lost_error_out);
              
  /**
   * Base cases
@@ -383,7 +402,8 @@ private:
                                  
   void FillApproximationExchange_(SquareTree* mu_nu, 
                                   SquareTree* rho_sigma,
-                                  double integral_approximation);
+                                  double integral_approximation,
+                                  double lost_error);
     
 
 
@@ -511,6 +531,7 @@ private:
     
     
     relative_error_ = !fx_param_exists(module_, "absolute_error");
+    schwartz_pruning_ = fx_param_bool(module_, "schwartz_pruning", false);
     
     square_tree_->stat().set_remaining_epsilon(epsilon_split_ * epsilon_);
     
