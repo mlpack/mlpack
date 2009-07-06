@@ -506,6 +506,7 @@ private:
     fx_timer_stop(module_, "square_tree_building");
     
     density_matrix_.Init(number_of_basis_functions_, number_of_basis_functions_);
+    // density is permuted here
     UpdateDensity(density_in);
     
     
@@ -514,6 +515,8 @@ private:
     square_tree_->stat().set_remaining_epsilon(epsilon_split_ * epsilon_);
     
     PropagateBoundsDown_(square_tree_);
+    
+    //square_tree_->Print();
     
     fx_timer_stop(module_, "multi_time");
 

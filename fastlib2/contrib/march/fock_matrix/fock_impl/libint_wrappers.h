@@ -18,12 +18,8 @@
 // copied from libint or libmint
 #define MAX_FAC 100
 
-namespace eri {
+namespace libint_wrappers {
   
-  /**
-   * Stores the quantities n!! needed for integrals
-   */
-  double* double_factorial;
   
   /**
    * Overall initializer for ERI's.  Computes the double factorials and 
@@ -41,9 +37,20 @@ namespace eri {
   void ERIFree();
   
   /**
-   * 
+   * Computes the number of functions in a shell of the given momentum.
    */
   index_t NumFunctions(int momentum);
+  
+  /**
+   * Returns the index of the given integral in the array returned from LIBINT.
+   */
+  index_t IntegralIndex(int a_ind, int A_mom, int b_ind, int B_mom, 
+                        int c_ind, int C_mom, int d_ind, int D_mom);
+  
+  /**
+   * Normalization function for higher momenta
+   */
+  double ComputeNormalization(double exp, int x_mom, int y_mom, int z_mom);
   
   /**
    * This is the function to call from outside.
