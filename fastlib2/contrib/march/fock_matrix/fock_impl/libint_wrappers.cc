@@ -9,7 +9,13 @@
 
 #include "libint_wrappers.h"
 
-namespace eri {
+namespace libint_wrappers {
+  
+  /**
+   * Stores the quantities n!! needed for integrals
+   */
+  double double_factorial[MAX_FAC];
+  
   
   void ERIInit() {
     
@@ -18,7 +24,7 @@ namespace eri {
     // PSI just uses 100
     index_t num_factorials = MAX_FAC;
     
-    double_factorial = (double*)malloc(num_factorials * sizeof(double));
+    //double_factorial = (double*)malloc(num_factorials * sizeof(double));
     
     double_factorial[0] = 1.0;
     double_factorial[1] = 1.0;
@@ -36,6 +42,8 @@ namespace eri {
     
   }
   
+  
+  
   index_t NumFunctions(int momentum) {
     
     if (momentum == 0) {
@@ -51,10 +59,40 @@ namespace eri {
       return 10;
     }
     else {
-      FATAL("Momenta higher than 3 not supported.");
+      FATAL("Momenta higher than 3 not yet supported.");
     }
     
-  }
+  }  // NumFunctions
+  
+  
+  double ComputeNormalization(double exp, int x_mom, int y_mom, int z_mom) {
+    
+    int total_momentum = x_mom + y_mom + z_mom;
+    
+    // should be able to do this more efficiently
+    double result = pow(2.0/math::PI, 0.75);
+    
+    result *= pow(2.0, total_momentum); 
+    result *= pow(exp, ((2.0 * total_momentum + 3.0)/4.0));
+    result /= sqrt(double_factorial[2*x_mom - 1] 
+                   * double_factorial[2*y_mom - 1] 
+                   * double_factorial[2*z_mom - 1]);
+    
+    return result;
+    
+  } // ComputeNormalization
+  
+  
+  
+  index_t IntegralIndex(int a_ind, int A_mom, int b_ind, int B_mom, 
+                        int c_ind, int C_mom, int d_ind, int D_mom) {
+    
+    index_t result = ((a_ind * B_mom + b_ind) * C_mom + c_ind) * D_mom + d_ind;
+    
+    return result;
+    
+  } // IntegralIndex
+  
   
   
   double* ComputeERI(const Vector& A_vec, double A_exp, int A_mom, 
@@ -81,26 +119,76 @@ namespace eri {
                         * ComputeNormalization(C_exp, C_mom, 0, 0)
                         * ComputeNormalization(D_exp, D_mom, 0, 0);
     
+    
     for (index_t a_ind = 0; a_ind < A_mom; a_ind++) {
       
-      double a_norm;
+      index_t a_x = A_mom - a_ind;
       
-      for (index_t b_ind = 0; b_ind < B_mom; b_ind++) {
-      
-        double b_norm;
-      
-        for (index_t c_ind = 0; c_ind < C_mom; c_ind++) {
+      for (index_t a_ind2 = 0; a_ind2 <= a_ind; a_ind2++) {
+       
+        index_t a_y = a_ind - a_ind2;
+        index_t a_z = a_ind2;
         
-          double c_norm;
-      
-          for (index_t d_ind = 0; d_ind < D_mom; d_ind++) {
+        double A_norm = ComputeNormalization(A_exp, a_x, a_y, a_z);
+     
+        for (index_t b_ind = 0; b_ind < B_mom; b_ind++) {
           
-            double d_norm;
+          index_t b_x = B_mom - b_ind;
+          
+          for (index_t b_ind2 = 0; b_ind2 <= b_ind; b_ind2++) {
             
-          }
-        }
-      }
-    }
+            index_t b_y = b_ind - b_ind2;
+            index_t b_z = b_ind2;
+            
+            double B_norm = ComputeNormalization(B_exp, b_x, b_y, b_z);
+            
+            for (index_t c_ind = 0; c_ind < C_mom; c_ind++) {
+              
+              index_t c_x = C_mom - c_ind;
+              
+              for (index_t c_ind2 = 0; c_ind2 <= c_ind; c_ind2++) {
+                
+                index_t c_y = c_ind - c_ind2;
+                index_t c_z = c_ind2;
+                
+                double C_norm = ComputeNormalization(C_exp, c_x, c_y, c_z);
+                
+                for (index_t d_ind = 0; d_ind < D_mom; d_ind++) {
+                  
+                  index_t d_x = D_mom - d_ind;
+                  
+                  index_t integral_ind = IntegralIndex(a_ind, A_mom, 
+                                                       b_ind, B_mom, 
+                                                       c_ind, C_mom, 
+                                                       d_ind, D_mom);
+                  
+                  for (index_t d_ind2 = 0; d_ind2 <= d_ind; d_ind2++) {
+                    
+                    index_t d_y = d_ind - d_ind2;
+                    index_t d_z = d_ind2;
+                    
+                    double D_norm = ComputeNormalization(D_exp, d_x, d_y, d_z);
+                    
+                    
+                    results[integral_ind] = results[integral_ind] * A_norm 
+                        * B_norm * C_norm * D_norm / norm_denom;
+                    
+                    
+                  } // d_ind2
+                  
+                }// d_ind
+                
+              }// c_ind2
+              
+            }// c_ind
+            
+          }// b_ind2
+          
+        } // b_ind
+        
+      } //a_ind2
+     
+    }// a_ind
     
     
     free_libint(&tester);

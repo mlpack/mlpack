@@ -303,6 +303,7 @@ void MultiTreeFock::DensityFactor_(double* up_bound, double* low_bound,
   // does this work if the upper and lower bounds are less than zero?
   
   DEBUG_ASSERT(density_upper >= density_lower);
+  DEBUG_ASSERT(*up_bound >= *low_bound);
   
   double old_up_bound = *up_bound;
   if (density_upper >= 0.0) {
@@ -425,6 +426,10 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
   if (CanPrune_(&schwartz_upper, &schwartz_lower, &schwartz_approx, mu_nu, 
                 rho_sigma)) {
   
+    //lost_error = max(fabs(schwartz_upper - schwartz_approx), 
+    //                 fabs(schwartz_approx - schwartz_lower)) 
+    //            / mu_nu->stat().remaining_references();
+    
     lost_error = max(fabs(schwartz_upper - schwartz_approx), 
                      fabs(schwartz_approx - schwartz_lower));
     
@@ -479,6 +484,9 @@ bool MultiTreeFock::CanApproximateCoulomb_(SquareTree* mu_nu,
 
   
   if (CanPrune_(&up_bound, &low_bound, &approx_val, mu_nu, rho_sigma)) {
+    
+    //lost_error = max(fabs(up_bound - approx_val), fabs(approx_val - low_bound))
+    //              / mu_nu->stat().remaining_references();
     
     lost_error = max(fabs(up_bound - approx_val), fabs(approx_val - low_bound));
     
@@ -1336,34 +1344,10 @@ void MultiTreeFock::SetEntryBounds_() {
                                               max_dist, max_dist);
   min_integral *= pow(min_norm, 4.0);
   
-  if (density_upper > 0) {
-    // then, the largest value is when all the distances are 0
-    
-    entry_upper = density_upper * number_of_basis_functions_ * 
-        number_of_basis_functions_ * max_integral;
-    
-  }
-  else {
-    // then, the largest value is when all the distances are max
-    
-    entry_upper = density_upper * min_integral * number_of_basis_functions_ 
-                 * number_of_basis_functions_;
-    
-  }
+  entry_upper = max_integral * number_of_basis_functions_ * number_of_basis_functions_;
+  entry_lower = min_integral * number_of_basis_functions_ * number_of_basis_functions_;
   
-  if (density_lower > 0) {
-    //then, the smallest value is when all the distances are max
-    
-    entry_lower = density_lower * min_integral * 
-        number_of_basis_functions_ * number_of_basis_functions_;
-    
-  }
-  else {
-    
-    entry_lower = density_lower * number_of_basis_functions_ * 
-        number_of_basis_functions_ * max_integral;
-    
-  }
+  DensityFactor_(&entry_upper, &entry_lower, density_upper, density_lower);
   
   DEBUG_ASSERT(entry_upper >= entry_lower);
   
@@ -1533,12 +1517,15 @@ void MultiTreeFock::ApplyPermutation(ArrayList<index_t>& old_from_new,
   
   for (index_t i = 0; i < old_from_new.size(); i++) {
   
+    Vector temp_vec;
+    mat->MakeColumnVector(old_from_new[i], &temp_vec);
+    ApplyPermutation(old_from_new, &temp_vec);
     temp_mat.CopyColumnFromMat(i, old_from_new[i], *mat);
   
   } // for i
 
   mat->CopyValues(temp_mat);
-
+  
 }
 
 void MultiTreeFock::ApplyPermutation(ArrayList<index_t>& old_from_new, 

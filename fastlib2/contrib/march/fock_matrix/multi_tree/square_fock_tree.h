@@ -195,6 +195,17 @@ class SquareFockTree {
       min_schwartz_factor_ = min_s;
     }
     
+    void Print() {
+      
+      printf("\t Density bounds: (%g, %g)\n", density_lower_bound_, 
+             density_upper_bound_);
+      printf("\t Entry bounds: (%g, %g)\n", entry_lower_bound_, 
+             entry_upper_bound_);
+      printf("Remaining epsilon: %g\n", remaining_epsilon_);
+      printf("Remaining references: %d\n", remaining_references_);
+      
+    }
+    
     
   }; // class SquareFockStat
   
@@ -428,14 +439,12 @@ class SquareFockTree {
       for (index_t i = query1_->begin(); i < query1_->end(); i++) {
         
         Vector i_vec;
-        //points.MakeColumnVector(i ,&i_vec);
         i_vec.Copy(points.GetColumnPtr(i), 3);
         la::Scale(exponents[i], &i_vec);
         
         for (index_t j = query2_->begin(); j < query2_->end(); j++) {
           
           Vector j_vec;
-          //points.MakeColumnVector(j, &j_vec);     
           j_vec.Copy(points.GetColumnPtr(j), 3);
           la::Scale(exponents[j], &j_vec);     
           
@@ -466,8 +475,8 @@ class SquareFockTree {
     // non-leaf
     else {
       
-      left_child_->SetStatsAndBounds(points, exponents);
-      right_child_->SetStatsAndBounds(points, exponents);
+      //left_child_->SetStatsAndBounds(points, exponents);
+      //right_child_->SetStatsAndBounds(points, exponents);
       
       stat_.set_max_gpt_factor(max(left_child_->stat().max_gpt_factor(), 
                                    right_child_->stat().max_gpt_factor()));
@@ -533,9 +542,15 @@ class SquareFockTree {
     printf("query1: %d to %d: %d total\t\t query2: %d to %d: %d total\n",
            query1_->begin(), query1_->end(), query1_->count(),
            query2_->begin(), query2_->end(), query2_->count());
+    stat_.Print();
+    printf("\n");
+    
+    /*
     printf("density_upper_bound: %g, density_lower_bound: %g\n\n", 
            stat_.density_upper_bound(), stat_.density_lower_bound());
-    
+    printf();
+    */
+     
     if (left_child_ != NULL) {
       left_child_->Print();
     }
