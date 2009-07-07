@@ -28,6 +28,8 @@ const fx_entry_doc link_entries[] = {
   "The total time taken for the LinK algorithm, excluding init and output.\n"},
   {"num_integrals_computed", FX_RESULT, FX_INT, NULL, 
   "The total number of integrals computed.\n"},
+{"N", FX_RESULT, FX_INT, NULL, 
+"The total number of basis functions, as in the dimension of the Fock matrix.\n"},
   FX_ENTRY_DOC_DONE
 }; 
 
@@ -145,6 +147,8 @@ class Link {
     // only works for s and p type functions
     num_functions_ = num_shells_ + (index_t)(2*la::Dot(basis_momenta_, 
                                                        basis_momenta_));
+    
+    fx_result_int(module_, "N", num_functions_);
     
     if ((density_matrix_.n_cols() != num_functions_) || 
         (density_matrix_.n_rows() != num_functions_)) {

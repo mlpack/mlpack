@@ -27,6 +27,8 @@ const fx_entry_doc schwartz_entries[] = {
   "Time for screening and computing integrals.\n"},
 {"num_integrals_computed", FX_RESULT, FX_INT, NULL,
   "The total number of integrals computed in all the iterations.\n"},
+{"N", FX_RESULT, FX_INT, NULL, 
+"The total number of basis functions, as in the dimension of the Fock matrix.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -74,8 +76,11 @@ class SchwartzPrescreening {
     num_shells_ = basis_centers_.n_cols();
     basis_list_.Init(num_shells_);
 
-    //printf("num_shells: %d\n", num_shells_);
-
+    // WARNING: only true for s type functions
+    num_functions_ = num_shells_;
+    
+    fx_result_int(module_, "N", num_functions_);
+    
     num_shell_pairs_ = 0;
     
     //shell_pair_list_.Init(num_shells_ + num_shells_*(num_shells_-1)/2);
@@ -154,6 +159,7 @@ class SchwartzPrescreening {
   
   index_t num_shells_;
   index_t num_shell_pairs_;
+  index_t num_functions_;
   
   index_t num_prunes_;
   

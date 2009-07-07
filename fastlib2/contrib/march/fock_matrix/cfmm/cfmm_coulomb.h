@@ -15,6 +15,8 @@ const fx_entry_doc cfmm_mod_entries[] = {
   "Number of significant shell pairs.\n"},
 {"num_shell_pairs_screened", FX_RESULT, FX_INT, NULL,
   "Number of insignificant shell pairs.\n"},
+{"N", FX_RESULT, FX_INT, NULL, 
+"The total number of basis functions, as in the dimension of the Fock matrix.\n"},
     FX_ENTRY_DOC_DONE
 };
 
@@ -100,6 +102,8 @@ class CFMMCoulomb {
   void Init(const Matrix& centers, const Matrix& exponents, 
             const Matrix& momenta, const Matrix& density, fx_module* mod_in) {
     
+    mod_ = mod_in;
+    
     centers_.Copy(centers);
     
     DEBUG_ASSERT(exponents.n_cols() == momenta.n_cols());
@@ -114,12 +118,11 @@ class CFMMCoulomb {
     
     // This only works for s and p type functions
     num_funs_ = centers_.n_cols() + (index_t)2*la::Dot(momenta_, momenta_);
+    fx_result_int(mod_, "N", num_funs_);
     
     eri::CreateShells(centers_, exponents_, momenta_, &shells_);
     
     num_shells_ = shells_.size();
-    
-    mod_ = mod_in;
     
     // set charge_thresh_ from the module
     charge_thresh_ = fx_param_double(mod_, "charge_thresh", 10e-10);
