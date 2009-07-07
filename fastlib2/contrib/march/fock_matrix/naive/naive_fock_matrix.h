@@ -10,6 +10,8 @@ const fx_entry_doc naive_fock_class_entries[] = {
   "The time spent on the naive computation.\n"},
 {"num_integrals_computed", FX_RESULT, FX_INT, NULL,
   "The total number of integrals computed.\n"},
+{"N", FX_RESULT, FX_INT, NULL, 
+"The total number of basis functions, as in the dimension of the Fock matrix.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -49,6 +51,8 @@ class NaiveFockMatrix {
   
     printf("====Init Naive====\n");
   
+    mod_ = mod_in;
+    
     centers_.Copy(centers);
     
     DEBUG_ASSERT(exponents.n_cols() == momenta.n_cols());
@@ -61,12 +65,11 @@ class NaiveFockMatrix {
     
     // This only works for s and p type functions
     num_funs_ = centers_.n_cols() + (index_t)2*la::Dot(momenta_, momenta_);
+    fx_result_int(mod_, "N", num_funs_);
     
     eri::CreateShells(centers_, exponents_, momenta_, &shells_);
     
     num_shells_ = shells_.size();
-    
-    mod_ = mod_in;
     
     coulomb_mat_.Init(num_funs_, num_funs_);
     exchange_mat_.Init(num_funs_, num_funs_);

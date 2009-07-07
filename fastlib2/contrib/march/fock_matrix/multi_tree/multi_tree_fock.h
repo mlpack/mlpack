@@ -476,6 +476,7 @@ private:
     coulomb_base_cases_ = 0;
     exchange_base_cases_ = 0;
     
+    // warning: only works for s and p functions
     number_of_basis_functions_ = centers_.n_cols() + 
         (index_t)2*(index_t)la::Dot(momenta_, momenta_);
     fx_result_int(module_, "N", number_of_basis_functions_);
