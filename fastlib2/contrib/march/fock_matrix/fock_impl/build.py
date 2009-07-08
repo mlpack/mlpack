@@ -3,7 +3,7 @@ librule(
     headers=["libint_wrappers.h"],
     sources=["libint_wrappers.cc"],
     deplibs=["fastlib:fastlib"],
-    cflags = "-L../../libint/lib -lint"
+    cflags = "-L/Users/march/Desktop/fastlib2/contrib/march/libint/lib -lint"
 )
 
 librule(

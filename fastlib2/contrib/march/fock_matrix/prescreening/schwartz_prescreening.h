@@ -12,7 +12,7 @@ const fx_entry_doc schwartz_entries[] = {
   "The number of integral computations pruned.\n"},
 {"shell_pair_threshold", FX_PARAM, FX_DOUBLE, NULL, 
  "The threshold for a shell pair to be included.\n"
- "Default: 0.0 (i.e. no shell pair screening.)\n"},
+ "Default: same as integral threshold (i.e. no shell pair screening.)\n"},
 {"thresh", FX_PARAM, FX_DOUBLE, NULL, 
   "The threshold to include an integral as significant.  Default: 10e-10.\n"},
 {"num_shell_pairs", FX_RESULT, FX_INT, NULL, 
@@ -69,7 +69,7 @@ class SchwartzPrescreening {
     threshold_ = fx_param_double(module_, "thresh", 10e-10);
     
     shell_pair_threshold_ = fx_param_double(module_, "shell_pair_threshold", 
-                                            10e-10);
+                                            threshold_);
     
     // Set up shells here
     // This is correct even for higher momenta

@@ -45,15 +45,15 @@ const fx_entry_doc fock_matrix_main_entries[] = {
 {"print_multi", FX_PARAM, FX_STR, NULL,
   "Print the multi-tree Fock matrix.  The value is irrelevant.\n"}, 
 {"compare_cfmm", FX_PARAM, FX_STR, NULL,
-  "Compare the result to naive. \n"}, 
+  "Compare the result to prescreening. \n"}, 
 {"compare_link", FX_PARAM, FX_STR, NULL,
-  "Compare the result to naive. \n"}, 
-{"compare_prescreening", FX_PARAM, FX_STR, NULL,
-  "Compare the result to naive. \n"}, 
+  "Compare the result to prescreening. \n"}, 
 {"compare_multi", FX_PARAM, FX_STR, NULL,
-  "Compare the result to naive. \n"}, 
-{"naive_storage", FX_PARAM, FX_STR, NULL,
-  "Location of saved naive results.\n"},
+  "Compare the result to prescreening. \n"}, 
+{"compare_naive", FX_PARAM, FX_STR, NULL,
+  "Compare the naive result to prescreening.\n"},
+{"prescreening_storage", FX_PARAM, FX_STR, NULL,
+  "Location of saved prescreening results.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -186,13 +186,13 @@ int main(int argc, char* argv[]) {
   
   // Have the naive matrices on hand if needed 
   // maybe turn these into pointers if so I can see if they're filled
-  Matrix naive_fock;
-  Matrix naive_coulomb;
-  Matrix naive_exchange;
+  Matrix prescreening_fock;
+  Matrix prescreening_coulomb;
+  Matrix prescreening_exchange;
   
   // these won't work with fx_run
-  const char* dir_char = fx_param_str(root_mod, "naive_storage", 
-                                      "naive_storage/");
+  const char* dir_char = fx_param_str(root_mod, "prescreening_storage", 
+                                      "prescreening_storage/");
                                       
   // strip the filenames for use with fx-run
   std::string centers_string(centers_file);
@@ -220,92 +220,105 @@ int main(int argc, char* argv[]) {
   std::string under_F("_F.csv");
   std::string under_J("_J.csv");
   std::string under_K("_K.csv");
+  std::string thresh_str;
   
-  std::string naive_fock_string;
-  naive_fock_string = directory + centers_name + underscore + exp_name 
-                      + underscore + density_name +  under_F;
-  const char* naive_fock_file = naive_fock_string.c_str();
+  double prescreening_threshold = fx_param_double(root_mod, 
+                                                  "prescreening/thresh", 
+                                                  10e-10);
+  
+  std::ostringstream oss;
+  oss << prescreening_threshold;
+  thresh_str = oss.str();
+  
+  std::string prescreening_fock_string;
+  prescreening_fock_string = directory + centers_name + underscore + exp_name 
+                              + underscore + density_name + underscore  
+                              + thresh_str + under_F;
+  const char* prescreening_fock_file = prescreening_fock_string.c_str();
 
-  std::string naive_coulomb_string;
-  naive_coulomb_string = directory + centers_name + underscore + exp_name 
-                         + underscore + density_name + under_J;
-  const char* naive_coulomb_file = naive_coulomb_string.c_str();
+  std::string prescreening_coulomb_string;
+  prescreening_coulomb_string = directory + centers_name + underscore + exp_name 
+                          + underscore + density_name + underscore  
+                          + thresh_str + under_J;
+  const char* prescreening_coulomb_file = prescreening_coulomb_string.c_str();
 
-  std::string naive_exchange_string;
-  naive_exchange_string = directory + centers_name + underscore + exp_name
-                          + underscore + density_name + under_K;
-  const char* naive_exchange_file = naive_exchange_string.c_str();
+  std::string prescreening_exchange_string;
+  prescreening_exchange_string = directory + centers_name + underscore + exp_name
+                          + underscore + density_name + underscore  
+                          + thresh_str + under_K;
+  const char* prescreening_exchange_file = prescreening_exchange_string.c_str();
 
   
-  bool do_naive = fx_param_exists(root_mod, "do_naive");
+  bool do_prescreening = fx_param_exists(root_mod, "do_prescreening");
   
-  fx_module* naive_mod = fx_submodule(root_mod, "naive");
+  fx_module* prescreening_mod = fx_submodule(root_mod, "prescreening");
   
-  Matrix** naive_mats;
+  Matrix** prescreening_mats;
   
   // if we are going to compare
-  if (!do_naive) {
+  if (!do_prescreening) {
     if (fx_param_exists(root_mod, "compare_cfmm") || 
         fx_param_exists(root_mod, "compare_link") || 
-        fx_param_exists(root_mod, "compare_prescreening") || 
+        fx_param_exists(root_mod, "compare_naive") || 
         fx_param_exists(root_mod, "compare_multi")) {
 
 
       // try to load them
       // assuming that all will load or none will
-      if (data::Load(naive_fock_file, &naive_fock) == SUCCESS_FAIL) {
+      if (data::Load(prescreening_fock_file, &prescreening_fock) == SUCCESS_FAIL) {
        
         // destruct them if they didn't load
-        naive_fock.Destruct();
+        prescreening_fock.Destruct();
         
         // if it's not already going to get done, it needs to be done
-        do_naive = true;
+        do_prescreening = true;
         
       }
       else {
       
-        data::Load(naive_coulomb_file, &naive_coulomb);
-        data::Load(naive_exchange_file, &naive_exchange);
+        data::Load(prescreening_coulomb_file, &prescreening_coulomb);
+        data::Load(prescreening_exchange_file, &prescreening_exchange);
       
       }
     
     }
     else {
-      naive_fock.Init(1,1);
-      naive_coulomb.Init(1,1);
-      naive_exchange.Init(1,1);
+      prescreening_fock.Init(1,1);
+      prescreening_coulomb.Init(1,1);
+      prescreening_exchange.Init(1,1);
     }
   }
     
   // I think this fails if the files exist but --do_naive is specified
-  if (do_naive) {
+  if (do_prescreening) {
     
-    printf("======== Naive Computation ========\n");
+    printf("======== Prescreening Computation ========\n");
     
-    NaiveFockMatrix naive_alg;
+    SchwartzPrescreening prescreen_alg;
+    prescreen_alg.Init(centers, exp_mat, momenta, density, prescreening_mod);
     
-    naive_alg.Init(centers, exp_mat, momenta, density, naive_mod);
-    naive_alg.Compute();
-    naive_alg.OutputFock(&naive_fock, &naive_coulomb, &naive_exchange);
+    prescreen_alg.Compute();
+    prescreen_alg.OutputFock(&prescreening_fock, &prescreening_coulomb, 
+                             &prescreening_exchange);
     
-    if (fx_param_exists(root_mod, "print_naive")) {
+    if (fx_param_exists(root_mod, "print_prescreening")) {
       
-      naive_fock.PrintDebug("Naive F");
-      naive_coulomb.PrintDebug("Naive J");
-      naive_exchange.PrintDebug("Naive K");
+      prescreening_fock.PrintDebug("Schwartz Prescreening F");
+      prescreening_coulomb.PrintDebug("Schwartz Prescreening J");
+      prescreening_exchange.PrintDebug("Schwartz Prescreening K");
       
     }
     
-    data::Save(naive_fock_file, naive_fock);
-    data::Save(naive_coulomb_file, naive_coulomb);
-    data::Save(naive_exchange_file, naive_exchange);
+    data::Save(prescreening_fock_file, prescreening_fock);
+    data::Save(prescreening_coulomb_file, prescreening_coulomb);
+    data::Save(prescreening_exchange_file, prescreening_exchange);
     
-  } // do_naive
+  } // do_prescreening
   
-  naive_mats = (Matrix**)malloc(3*sizeof(Matrix*));
-  naive_mats[0] = &naive_fock;
-  naive_mats[1] = &naive_coulomb;
-  naive_mats[2] = &naive_exchange;
+  prescreening_mats = (Matrix**)malloc(3*sizeof(Matrix*));
+  prescreening_mats[0] = &prescreening_fock;
+  prescreening_mats[1] = &prescreening_coulomb;
+  prescreening_mats[2] = &prescreening_exchange;
   
   
   if (fx_param_exists(root_mod, "do_cfmm")) {
@@ -337,7 +350,7 @@ int main(int argc, char* argv[]) {
       cfmm_mats[2] = NULL;
       
       FockMatrixComparison cfmm_compare;
-      cfmm_compare.Init(cfmm_mod, cfmm_mats, naive_mod, naive_mats, 
+      cfmm_compare.Init(cfmm_mod, cfmm_mats, prescreening_mod, prescreening_mats, 
                         centers, exp_mat, momenta, density, nuclear_centers,
                         nuclear_charges, cfmm_compare_mod);
       cfmm_compare.Compare();
@@ -378,7 +391,7 @@ int main(int argc, char* argv[]) {
       link_mats[2] = &link_exchange;
       
       FockMatrixComparison link_compare;
-      link_compare.Init(link_mod, link_mats, naive_mod, naive_mats, 
+      link_compare.Init(link_mod, link_mats, prescreening_mod, prescreening_mats, 
                         centers, exp_mat, momenta, density, nuclear_centers,
                         nuclear_charges, link_compare_mod);
       link_compare.Compare();
@@ -389,52 +402,53 @@ int main(int argc, char* argv[]) {
   } // do_link
 
 
-  if (fx_param_exists(root_mod, "do_prescreening")) {
+  if (fx_param_exists(root_mod, "do_naive")) {
     
-    printf("======== Prescreening Computation ========\n");
+    printf("======== Naive Computation ========\n");
     
-    Matrix prescreening_fock;
-    Matrix prescreening_coulomb;
-    Matrix prescreening_exchange;
+    Matrix naive_fock;
+    Matrix naive_coulomb;
+    Matrix naive_exchange;
     
-    fx_module* prescreening_mod = fx_submodule(root_mod, "prescreening");
+    fx_module* naive_mod = fx_submodule(root_mod, "naive");
     
-    SchwartzPrescreening prescreen_alg;
-    prescreen_alg.Init(centers, exp_mat, momenta, density, prescreening_mod);
+    NaiveFockMatrix naive_alg;
+    naive_alg.Init(centers, exp_mat, momenta, density, prescreening_mod);
     
-    prescreen_alg.Compute();
-    prescreen_alg.OutputFock(&prescreening_fock, &prescreening_coulomb, 
-                             &prescreening_exchange);
+    naive_alg.Compute();
+    naive_alg.OutputFock(&naive_fock, &naive_coulomb, 
+                             &naive_exchange);
     
-    if (fx_param_exists(root_mod, "print_prescreening")) {
+    if (fx_param_exists(root_mod, "print_naive")) {
       
-      prescreening_fock.PrintDebug("Schwartz Prescreening F");
-      prescreening_coulomb.PrintDebug("Schwartz Prescreening J");
-      prescreening_exchange.PrintDebug("Schwartz Prescreening K");
+      naive_fock.PrintDebug("Naive F");
+      naive_coulomb.PrintDebug("Naive J");
+      naive_exchange.PrintDebug("Naive K");
       
     }
     
-    if (fx_param_exists(root_mod, "compare_prescreening")) {
+    
+    if (fx_param_exists(root_mod, "compare_naive")) {
       
-      fx_module* prescreening_compare_mod = fx_submodule(prescreening_mod, "compare");
+      fx_module* naive_compare_mod = fx_submodule(naive_mod, "compare");
       
-      Matrix** prescreening_mats;
-      prescreening_mats = (Matrix**)malloc(3 * sizeof(Matrix*));
-      prescreening_mats[0] = &prescreening_fock;
-      prescreening_mats[1] = &prescreening_coulomb;
-      prescreening_mats[2] = &prescreening_exchange;
+      Matrix** naive_mats;
+      naive_mats = (Matrix**)malloc(3 * sizeof(Matrix*));
+      naive_mats[0] = &naive_fock;
+      naive_mats[1] = &naive_coulomb;
+      naive_mats[2] = &naive_exchange;
       
-      FockMatrixComparison prescreening_compare;
-      prescreening_compare.Init(prescreening_mod, prescreening_mats, naive_mod, 
-                                naive_mats, centers, exp_mat, momenta, density, 
-                                nuclear_centers, nuclear_charges, 
-                                prescreening_compare_mod);
-      prescreening_compare.Compare();
+      FockMatrixComparison naive_compare;
+      naive_compare.Init(naive_mod, naive_mats, prescreening_mod, 
+                         prescreening_mats, centers, exp_mat, momenta, 
+                         density, nuclear_centers, nuclear_charges, 
+                         naive_compare_mod);
+      naive_compare.Compare();
       
-    } // cfmm comparison
+    } // Naive comparison
         
     
-  } // do_prescreening
+  } // do_naive
   
     
 
@@ -474,8 +488,8 @@ int main(int argc, char* argv[]) {
       multi_mats[2] = &multi_exchange;
       
       FockMatrixComparison multi_compare;
-      multi_compare.Init(multi_mod, multi_mats, naive_mod, 
-                         naive_mats, centers, exp_mat, momenta, density, 
+      multi_compare.Init(multi_mod, multi_mats, prescreening_mod, 
+                         prescreening_mats, centers, exp_mat, momenta, density, 
                          nuclear_centers, nuclear_charges, multi_compare_mod);
       multi_compare.Compare();
       

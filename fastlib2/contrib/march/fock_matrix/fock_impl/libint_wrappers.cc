@@ -38,7 +38,7 @@ namespace libint_wrappers {
   
   void ERIFree() {
    
-    free(double_factorial);
+    //free(double_factorial);
     
   }
   
