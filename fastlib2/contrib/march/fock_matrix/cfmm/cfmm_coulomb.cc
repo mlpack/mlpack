@@ -70,8 +70,6 @@ void CFMMCoulomb::ScreenCharges_() {
 
 void CFMMCoulomb::MultipoleInit_() {
 
-  printf("MultipoleInit_() called\n");
-  
   fx_module* multipole_mod = fx_submodule(mod_, "multipole_cfmm");
   
 
