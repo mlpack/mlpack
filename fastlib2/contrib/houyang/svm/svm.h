@@ -118,7 +118,7 @@ class SVM {
     /* the slope w */
     Vector w_;
     /* scale for w*/
-    double scale_w_;
+    // double scale_w_; // Use it if w's scaling is not done in training session
   };
   ArrayList<SVM_MODELS> models_;
 
@@ -408,7 +408,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	models_[ct].coef_.Init(); // alpha*y, used for nonlinear SVM only
 	if (param_.kerneltypeid_== 0) { // linear SVM
 	  models_[ct].w_.Copy(*(sgd.W())); // w
-	  models_[ct].scale_w_ = sgd.ScaleW(); // scale of w, for linear SVM
+	  //models_[ct].scale_w_ = sgd.ScaleW(); // scale of w for linear SVM. Use it if w's scaling is not done in training session
 	}
 	else { // nonlinear SVM
 	  sgd.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
@@ -639,7 +639,7 @@ void SVM<TKernel>::SVM_R_Train_(int learner_typeid, const Dataset& dataset, data
     /* Get the trained model */
     models_[0].bias_ = sgd.Bias(); // bias
     models_[0].w_.Copy(*(sgd.W())); // w
-    models_[0].scale_w_ = sgd.ScaleW(); // scale of w
+    //models_[0].scale_w_ = sgd.ScaleW(); // scale of w for linear SVM. Use it if w's scaling is not done in training session
     models_[0].coef_.Init(0); // not using
   }
   else {
@@ -739,7 +739,7 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
       else if (opt_method_== "sgd") {
 	if (param_.kerneltypeid_== 0) { // linear SVM
 	  sum = la::Dot(models_[ct].w_, datum);
-	  sum *= models_[ct].scale_w_;
+	  // sum *= models_[ct].scale_w_; // Use this if scaling of w is not done in the training session
 	}
 	else { // nonlinear SVM
 	  sum = 0.0;
@@ -871,7 +871,7 @@ void SVM<TKernel>::LoadModelBatchPredict(int learner_typeid, Dataset& testset, S
   BatchPredict(learner_typeid, testset, predictedvalue_filename);
 }
 
-
+
 /**
 * Save SVM model to a text file
 *

@@ -323,8 +323,9 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	work_idx_old = old_from_new_[ct % n_data_];
 	eta_ = 1.0 / (lambda_ * t_); // update step length
 	scale_w_ = scale_w_ - scale_w_ / t_; // update scale of w
+	la::Scale(scale_w_, &w_); // Note: moving w's scaling calculation to the testing session could be faster
 	if (scale_w_ < SCALE_W_TOLERANCE) {
-	  la::Scale(scale_w_, &w_);
+	  // la::Scale(scale_w_, &w_);
 	  scale_w_ = 1.0;
 	}
 	Vector xt;
@@ -333,8 +334,10 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	double yt_hat = la::Dot(w_, xt) * scale_w_ + bias_;
 	double yy_hat = yt * yt_hat;
 	if (yy_hat < 1.0) {
+	  // update w by Stochastic Gradient Descent: w_{t+1} = (1-eta*lambda) * w_t + eta * [yt*xt]^+
 	  eta_grad = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // also need *xt, but it's done in next line
-	  la::AddExpert(eta_grad/ scale_w_, xt, &w_); // update w by Steepest Descent: w_{t+1} = w_t - eta * loss_gradient * xt
+	  la::AddExpert(eta_grad, xt, &w_); // Note: moving w's scaling calculation to the testing session is faster
+	  //la::AddExpert(eta_grad/scale_w_, xt, &w_);
 	  // update bias
 	  bias_ += eta_grad * 0.01;
 	}
