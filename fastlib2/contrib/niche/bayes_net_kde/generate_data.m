@@ -1,7 +1,5 @@
 function [A, B, C] = generate_data(m)
 
-%m = 1000;
-
 A_mu = 1;
 A_sigma = 1;
 
