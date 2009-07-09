@@ -6,7 +6,7 @@ h = 1;
 
 I = eye(m);
 
-lambda = 1e-3;%1e-12;
+lambda = 1e-6;%1e-12;
 
 H = I - (1/m * ones(m, 1) * ones(1, m));
 
@@ -32,9 +32,9 @@ for ip = 1:m
   for j = 1:m
     jp_sum = 0;
     for jp = 1:m
-      jp_sum = jp_sum + JAji(jp, ip) * KB(j, jp);
+      jp_sum = jp_sum + JAji(jp, ip) * KB(jp, j);
     end
-    message_ip_j(ip, j) = jp_sum;
+    message_j_ip(j, ip) = jp_sum;
   end
 end
 
@@ -46,9 +46,9 @@ for i = 1:m
     end
     j_sum = 0;
     for j = 1:m
-      j_sum = j_sum + JAji(j, i) * message_ip_j(ip, j);
+      j_sum = j_sum + JAji(j, i) * message_j_ip(j, ip);
     end
-    sum = sum + KA(i, ip) * j_sum;
+    sum = sum + KA(ip, i) * j_sum;
   end
 end
 dag_dot_dag = sum / (m * (m-1))
@@ -82,7 +82,7 @@ for i = 1:m
     if ip == i
       continue;
     end
-    sum = sum + KA(i, ip) * KB(i, ip);
+    sum = sum + KA(ip, i) * KB(ip, i);
   end
 end
 full_dot_full = sum / (m * (m-1))
