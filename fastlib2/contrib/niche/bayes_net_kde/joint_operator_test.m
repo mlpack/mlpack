@@ -41,6 +41,9 @@ end
 sum = 0;
 for i = 1:m
   for ip = 1:m
+    if ip == i
+      continue;
+    end
     j_sum = 0;
     for j = 1:m
       j_sum = j_sum + JAji(j, i) * message_ip_j(ip, j);
@@ -48,7 +51,7 @@ for i = 1:m
     sum = sum + KA(i, ip) * j_sum;
   end
 end
-dag_dot_dag = sum / m^2
+dag_dot_dag = sum / (m * (m-1))
 
 
 
@@ -57,6 +60,9 @@ dag_dot_dag = sum / m^2
 sum = 0;
 for l = 1:m
   for i = 1:m
+    if i == l
+      continue;
+    end
     j_sum = 0;
     for j = 1:m
       j_sum = j_sum + JAji(j, i) * KB(j, l);
@@ -64,7 +70,7 @@ for l = 1:m
     sum = sum + KA(i, l) * j_sum;
   end
 end
-dag_dot_full = sum / m^2
+dag_dot_full = sum / (m * (m-1))
 
 
 
@@ -79,7 +85,7 @@ for i = 1:m
     sum = sum + KA(i, ip) * KB(i, ip);
   end
 end
-full_dot_full = sum / (m * (m-1));
+full_dot_full = sum / (m * (m-1))
 
 
 hs_norm = dag_dot_dag - 2 * dag_dot_full + full_dot_full
