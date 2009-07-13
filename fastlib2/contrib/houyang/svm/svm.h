@@ -12,6 +12,7 @@
  * @see opt_fw.h
  * @see opt_mfw.h
  * @see opt_sfw.h
+ * @see opt_par.h
  */
 
 #ifndef U_SVM_SVM_H
@@ -23,6 +24,8 @@
 #include "opt_fw.h"
 #include "opt_mfw.h"
 #include "opt_sfw.h"
+#include "opt_par.h"
+
 
 #include "fastlib/fastlib.h"
 
@@ -106,7 +109,7 @@ class SVM {
    * Developers may add more learner types if necessary
    */
   int learner_typeid_;
-  // Optimization method: smo, sgd, hcy, fw, mfw, sfw
+  // Optimization method: smo, sgd, hcy, fw, mfw, sfw, par
   String opt_method_;
   /* array of models for storage of the 2-class(binary) classifiers 
      Need to train num_classes_*(num_classes_-1)/2 binary models */
@@ -158,12 +161,12 @@ class SVM {
     double Cn_; // C for y==-1
     // for nu-SVM
     double nu_;
-    // for bias regularization
-    double mu_;
     // for SVM_R
     double epsilon_;
     // working set selection scheme of SMO, 1 for 1st order expansion; 2 for 2nd order expansion
     double wss_;
+    // whether do L2-SVM (1) or not (0)
+    int l2_;
     // accuracy for the optimization stopping creterion
     double accuracy_;
     // number of iterations
@@ -187,6 +190,7 @@ class SVM {
   class FW<Kernel>;
   class MFW<Kernel>;
   class SFW<Kernel>;
+  class PAR<Kernel>;
 
   void Init(int learner_typeid, const Dataset& dataset, datanode *module);
   void InitTrain(int learner_typeid, const Dataset& dataset, datanode *module);
@@ -261,20 +265,20 @@ void SVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *mo
   param_.b_ = fx_param_int(NULL, "b", dataset.n_points());
   // working set selection scheme. default: 1st order expansion
   param_.wss_ = fx_param_int(NULL, "wss", 1);
+  // whether do L2-SVM(1) or not (0)
+  param_.l2_ = fx_param_int(NULL, "l2", 0); // default do L1-svm;
   // accuracy for optimization
   param_.accuracy_ = fx_param_double(NULL, "accuracy", 1e-4);
   // number of iterations
   param_.n_iter_ = fx_param_int(NULL, "n_iter", 100000000);
 
-  // the tradeoff parameter "C", default: 10.0
+  // tradeoff parameter for C-SV
   param_.C_ = fx_param_double(NULL, "c", 10.0);
   param_.Cp_ = fx_param_double(NULL, "c_p", param_.C_);
   param_.Cn_ = fx_param_double(NULL, "c_n", param_.C_);
 
-  // for nu-SVM
-  param_.nu_ = fx_param_double(NULL, "nu", 1.0);
-  // for bias regularization
-  param_.mu_ = fx_param_double(NULL, "mu", 1.0);
+  // portion of SVs for nu-SVM
+  param_.nu_ = fx_param_double(NULL, "nu", 0.1);
 
   if (learner_typeid == 1) { // for SVM_R only
     // the "epsilon", default: 0.1
@@ -364,6 +368,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	param_feed_db.PushBack() = param_.b_;
 	param_feed_db.PushBack() = param_.Cp_;
 	param_feed_db.PushBack() = param_.Cn_;
+	param_feed_db.PushBack() = param_.l2_;
 	param_feed_db.PushBack() = param_.wss_;
 	param_feed_db.PushBack() = param_.n_iter_;
 	param_feed_db.PushBack() = param_.accuracy_;
@@ -448,8 +453,8 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	/* Initialize FW parameters */
 	ArrayList<double> param_feed_db;
 	param_feed_db.Init();
-	//param_feed_db.PushBack() = param_.nu_; // for nu-SVM
-	param_feed_db.PushBack() = param_.C_;
+	param_feed_db.PushBack() = param_.nu_; // for L1-nu-SVM
+	param_feed_db.PushBack() = param_.C_; // for L2-C-SVM
 	param_feed_db.PushBack() = param_.n_iter_;
 	param_feed_db.PushBack() = param_.accuracy_;
 	FW<Kernel> fw;
@@ -519,6 +524,34 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	models_[ct].bias_ = sfw.Bias(); // bias
 	models_[ct].w_.Init(0); // for linear SGD only. not used here
 	sfw.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
+      }
+      else if (opt_method_== "par") {
+	/* Initialize PAR parameters */
+	ArrayList<double> param_feed_db;
+	param_feed_db.Init();
+	param_feed_db.PushBack() = param_.b_;
+	param_feed_db.PushBack() = param_.Cp_;
+	param_feed_db.PushBack() = param_.Cn_;
+	param_feed_db.PushBack() = param_.l2_;
+	param_feed_db.PushBack() = param_.wss_;
+	param_feed_db.PushBack() = param_.n_iter_;
+	param_feed_db.PushBack() = param_.accuracy_;
+	PAR<Kernel> par;
+	par.InitPara(learner_typeid, param_feed_db);
+
+	/* Initialize kernel */
+	par.kernel().Init(fx_submodule(module, "kernel"));
+
+	/* 2-classes SVM training using PAR */
+	fx_timer_start(NULL, "train_par");
+	par.Train(learner_typeid, &dataset_bi);
+	fx_timer_stop(NULL, "train_par");
+
+	/* Get the trained bi-class model */
+	models_[ct].coef_.Init(); // alpha*y
+	models_[ct].bias_ = par.Bias(); // bias
+	models_[ct].w_.Init(0); // for linear SGD only. not used here
+	par.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
       }
       else {
 	fprintf(stderr, "ERROR!!! Unknown optimization method!\n");
@@ -727,7 +760,7 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
   double sum = 0.0;
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
-      if (opt_method_== "smo" || opt_method_== "hcy" || opt_method_== "fw" || opt_method_== "mfw" || opt_method_== "sfw") {
+      if (opt_method_== "smo" || opt_method_== "hcy" || opt_method_== "fw" || opt_method_== "mfw" || opt_method_== "sfw" || opt_method_== "par") {
 	sum = 0.0;
 	for(k = 0; k < sv_list_ct_[i]; k++) {
 	  sum += sv_coef_.get(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];
