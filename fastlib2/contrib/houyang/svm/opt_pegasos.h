@@ -307,7 +307,7 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       double yy_hat = yt * yt_hat;
       double cur_loss = 1.0 - yy_hat;
       if (cur_loss < 0.0) cur_loss = 0.0;
-      la::Scale(1.0 - eta_*lambda_ , &w_);
+      //la::Scale(1.0 - eta_*lambda_ , &w_);
       if (cur_loss > 0.0) {
 	la::AddExpert( eta_* yt, xt, &w_ );  // w <- w+ eta* y * x
       }
