@@ -35,7 +35,7 @@
 // max t_
 const index_t MAX_NUM_ITER_SGD = index_t(INFINITY);
 // tolerance of sacale_w
-const double SCALE_W_TOLERANCE = 1.0e-9;
+//const double SCALE_W_TOLERANCE = 1.0e-9;
 // threshold that determines whether an alpha is a SV or not
 const double SGD_ALPHA_ZERO = 1.0e-7;
 
@@ -67,7 +67,7 @@ class SGD {
 
   Vector w_; /* the slope of the decision hyperplane y=w^T x+b */
   double bias_;
-  double scale_w_; // the scale for w
+  //  double scale_w_; // the scale for w
 
   // parameters
   double C_; // for SVM_C
@@ -119,11 +119,11 @@ class SGD {
   Vector* W() {
     return &w_;
   }
-
+  /*
   double ScaleW() const {
     return scale_w_;
   }
-
+  */
   void GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
 
  private:
@@ -318,20 +318,24 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       double sqrt_n = sqrt(n_data_);
       double eta0 = sqrt_n / max(1.0, LossFunctionGradient_(learner_typeid, -sqrt_n)); // initial step length
       t_ = 1.0 / (eta0 * lambda_);
-      scale_w_ = 0.0;
+      //scale_w_ = 0.0;
       while (ct <= n_iter_) {
 	work_idx_old = old_from_new_[ct % n_data_];
-	eta_ = 1.0 / (lambda_ * t_); // update step length
-	scale_w_ = scale_w_ - scale_w_ / t_; // update scale of w
-	la::Scale(scale_w_, &w_); // Note: moving w's scaling calculation to the testing session could be faster
+	eta_ = 1.0 / (lambda_ * t_); // update step size
+	//scale_w_ = scale_w_ - scale_w_ / t_; // update scale of w
+	//la::Scale(scale_w, &w_); // Note: moving w's scaling calculation to the testing session could be faster
+	la::Scale(1 - 1/ t_, &w_);
+	/*
 	if (scale_w_ < SCALE_W_TOLERANCE) {
 	  // la::Scale(scale_w_, &w_);
 	  scale_w_ = 1.0;
 	}
+	*/
 	Vector xt;
 	datamatrix_.MakeColumnSubvector(work_idx_old, 0, n_features_, &xt);
 	double yt = y_[work_idx_old];
-	double yt_hat = la::Dot(w_, xt) * scale_w_ + bias_;
+	//double yt_hat = la::Dot(w_, xt) * scale_w_ + bias_;
+	double yt_hat = la::Dot(w_, xt) + bias_;
 	double yy_hat = yt * yt_hat;
 	if (yy_hat < 1.0) {
 	  // update w by Stochastic Gradient Descent: w_{t+1} = (1-eta*lambda) * w_t + eta * [yt*xt]^+
@@ -346,7 +350,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       }
     }
     else { // Use Pegasos Stochastic Gradient Descent
-      scale_w_ = 1; // dummy
+      //      scale_w_ = 1; // dummy
       while (ct <= n_iter_) {
 	work_idx_old = old_from_new_[ct % n_data_];
 	eta_ = 1.0 / (lambda_ * (t_+2)); // update step length
