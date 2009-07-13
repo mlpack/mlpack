@@ -310,18 +310,22 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       double yt_hat = la::Dot(w_, xt);
       double yy_hat = yt * yt_hat;
       double cur_loss = 1.0 - yy_hat;
-      if (cur_loss < 0.0) {
+      if (cur_loss <= 0.0) {
 	cur_loss = 0.0;
       }
       if (do_scale_) { // pegasos
 	la::Scale(1.0 - eta_*lambda_ , &w_);
 	if (cur_loss > 0.0) {
-	  la::AddExpert( eta_* yt, xt, &w_ );  // w <- w+ eta* y * x
+	  la::AddExpert( eta_* yt, xt, &w_ );  // w_{t+1} = (1-eta*lambda) * w_t + eta * [yt*xt]^+
+	  // update bias
+	  bias_ += eta_ * yt * 0.01;
 	}
       }
       else { // simple projection with no scaling on w
 	if (cur_loss > 0.0) {
-	  la::AddExpert( yt / t_, xt, &w_ );  // w <- w+ eta* y * x
+	  la::AddExpert( yt / t_, xt, &w_ );  // w_{t+1} = w_t + eta * [yt*xt]^+
+	  // update bias
+	  bias_ += eta_ * yt * 0.01;
 	}
       }
       
@@ -338,8 +342,7 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       if (w_norm_sq > 1.0/lambda_) {
 	la::Scale( sqrt(1.0/ (lambda_*w_norm_sq)), &w_);
       }
-      // update bias
-      //bias_ += eta_grad * 0.01;
+
       t_ += 1.0;
       ct ++;
     }
