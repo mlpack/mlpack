@@ -70,6 +70,8 @@ class PEGASOS {
   double eta_; // step length. eta = 1/(lambda*t)
   double t_;
 
+  bool do_scale_; // whether do scaling on w. default: original pegasos do scaling
+
   ArrayList<index_t> old_from_new_; // for generating a random sequence of training data
   ArrayList<index_t> new_from_old_; // for generating a random sequence of training data
 
@@ -150,7 +152,7 @@ class PEGASOS {
    * Hinge Loss function
    */
   double HingeLoss_(double yy_hat) {
-    if (yy_hat < 1.0)
+    if (yy_hat < 1.0)
       return 1.0 - yy_hat;
     else
       return 0.0;
@@ -259,6 +261,8 @@ void PEGASOS<TKernel>::LearnersInit_(int learner_typeid) {
 template<typename TKernel>
 void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   index_t i, j;
+
+  do_scale_ = fx_param_int(NULL, "wscaling", 1);
   
   /* general learner-independent initializations */
   dataset_ = dataset_in;
@@ -306,10 +310,19 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       double yt_hat = la::Dot(w_, xt);
       double yy_hat = yt * yt_hat;
       double cur_loss = 1.0 - yy_hat;
-      if (cur_loss < 0.0) cur_loss = 0.0;
-      //la::Scale(1.0 - eta_*lambda_ , &w_);
-      if (cur_loss > 0.0) {
-	la::AddExpert( eta_* yt, xt, &w_ );  // w <- w+ eta* y * x
+      if (cur_loss < 0.0) {
+	cur_loss = 0.0;
+      }
+      if (do_scale_) { // pegasos
+	la::Scale(1.0 - eta_*lambda_ , &w_);
+	if (cur_loss > 0.0) {
+	  la::AddExpert( eta_* yt, xt, &w_ );  // w <- w+ eta* y * x
+	}
+      }
+      else { // simple projection with no scaling on w
+	if (cur_loss > 0.0) {
+	  la::AddExpert( yt / t_, xt, &w_ );  // w <- w+ eta* y * x
+	}
       }
       
       //if (yy_hat < 1.0) {
