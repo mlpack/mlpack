@@ -318,14 +318,14 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	if (cur_loss > 0.0) {
 	  la::AddExpert( eta_* yt, xt, &w_ );  // w_{t+1} = (1-eta*lambda) * w_t + eta * [yt*xt]^+
 	  // update bias
-	  bias_ += eta_ * yt * 0.01;
+	  //bias_ += eta_ * yt * 0.01;
 	}
       }
       else { // simple projection with no scaling on w
 	if (cur_loss > 0.0) {
-	  la::AddExpert( yt / t_, xt, &w_ );  // w_{t+1} = w_t + eta * [yt*xt]^+
+	  la::AddExpert( eta_* yt, xt, &w_ );  // w_{t+1} = w_t + eta * [yt*xt]^+
 	  // update bias
-	  bias_ += eta_ * yt * 0.01;
+	  //bias_ += eta_ * yt * 0.01;
 	}
       }
       
