@@ -8,6 +8,7 @@
  *
  * @see opt_smo.h
  * @see opt_sgd.h
+ * @see opt_pegasos.h
  * @see opt_hcy.h
  * @see opt_fw.h
  * @see opt_mfw.h
@@ -20,6 +21,7 @@
 
 #include "opt_smo.h"
 #include "opt_sgd.h"
+#include "opt_pegasos.h"
 #include "opt_hcy.h"
 #include "opt_fw.h"
 #include "opt_mfw.h"
@@ -109,7 +111,7 @@ class SVM {
    * Developers may add more learner types if necessary
    */
   int learner_typeid_;
-  // Optimization method: smo, sgd, hcy, fw, mfw, sfw, par
+  // Optimization method: smo, sgd, pegasos, hcy, fw, mfw, sfw, par
   String opt_method_;
   /* array of models for storage of the 2-class(binary) classifiers 
      Need to train num_classes_*(num_classes_-1)/2 binary models */
@@ -121,7 +123,7 @@ class SVM {
     /* the slope w */
     Vector w_;
     /* scale for w*/
-    // double scale_w_; // Use it if w's scaling is not done in training session
+    double scale_w_; // Use it if w's scaling is not done in training session
   };
   ArrayList<SVM_MODELS> models_;
 
@@ -186,6 +188,7 @@ class SVM {
   typedef TKernel Kernel;
   class SMO<Kernel>;
   class SGD<Kernel>;
+  class PEGASOS<Kernel>;
   class HCY<Kernel>;
   class FW<Kernel>;
   class MFW<Kernel>;
@@ -386,7 +389,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	/* Get the trained bi-class model */
 	models_[ct].coef_.Init(); // alpha*y
 	models_[ct].bias_ = smo.Bias(); // bias
-	models_[ct].w_.Init(0); // for linear SGD only. not used here
+	models_[ct].w_.Init(0); // for linear classifiers only. not used here
 	smo.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
       }
       else if (opt_method_== "sgd") {
@@ -413,13 +416,44 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	models_[ct].coef_.Init(); // alpha*y, used for nonlinear SVM only
 	if (param_.kerneltypeid_== 0) { // linear SVM
 	  models_[ct].w_.Copy(*(sgd.W())); // w
-	  //models_[ct].scale_w_ = sgd.ScaleW(); // scale of w for linear SVM. Use it if w's scaling is not done in training session
+	  models_[ct].scale_w_ = sgd.ScaleW(); // scale of w for linear SVM. Use it if w's scaling is not done in training session
 	}
 	else { // nonlinear SVM
 	  sgd.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
 	  models_[ct].w_.Init(0); // for linear SVM only. not used here
 	}
 	models_[ct].bias_ = sgd.Bias(); // bias
+      }
+      else if (opt_method_== "pegasos") {
+	/* Initialize PEGASOS parameters */
+	ArrayList<double> param_feed_db;
+	param_feed_db.Init();
+	param_feed_db.PushBack() = param_.Cp_;
+	param_feed_db.PushBack() = param_.Cn_;
+	param_feed_db.PushBack() = param_.kerneltypeid_== 0 ? 0.0: 1.0;
+	param_feed_db.PushBack() = param_.n_iter_;
+	param_feed_db.PushBack() = param_.accuracy_;
+	PEGASOS<Kernel> pegasos;
+	pegasos.InitPara(learner_typeid, param_feed_db);
+
+	/* Initialize kernel */
+	pegasos.kernel().Init(fx_submodule(module, "kernel"));
+
+	/* 2-classes SVM training using PEGASOS*/
+	fx_timer_start(NULL, "train_pegasos");
+	pegasos.Train(learner_typeid, &dataset_bi);
+	fx_timer_stop(NULL, "train_pegasos");
+
+	/* Get the trained bi-class model */
+	models_[ct].coef_.Init(); // alpha*y, used for nonlinear SVM only
+	if (param_.kerneltypeid_== 0) { // linear SVM
+	  models_[ct].w_.Copy(*(pegasos.W())); // w
+	}
+	else { // nonlinear SVM
+	  pegasos.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
+	  models_[ct].w_.Init(0); // for linear SVM only. not used here
+	}
+	models_[ct].bias_ = pegasos.Bias(); // bias
       }
       else if (opt_method_== "hcy") {
 	/* Initialize HCY parameters */
@@ -446,7 +480,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	/* Get the trained bi-class model */
 	models_[ct].coef_.Init(); // alpha*y
 	models_[ct].bias_ = hcy.Bias(); // bias
-	models_[ct].w_.Init(0); // for linear SGD only. not used here
+	models_[ct].w_.Init(0); // for linear classifiers only. not used here
 	hcy.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
       }
       else if (opt_method_== "fw") {
@@ -471,7 +505,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	/* Get the trained bi-class model */
 	models_[ct].coef_.Init(); // alpha*y
 	models_[ct].bias_ = fw.Bias(); // bias
-	models_[ct].w_.Init(0); // for linear SGD only. not used here
+	models_[ct].w_.Init(0); // for linear classifiers only. not used here
 	fw.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
       }
       else if (opt_method_== "mfw") {
@@ -496,7 +530,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	/* Get the trained bi-class model */
 	models_[ct].coef_.Init(); // alpha*y
 	models_[ct].bias_ = mfw.Bias(); // bias
-	models_[ct].w_.Init(0); // for linear SGD only. not used here
+	models_[ct].w_.Init(0); // for linear classifiers only. not used here
 	mfw.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
       }
       else if (opt_method_== "sfw") {
@@ -522,7 +556,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	/* Get the trained bi-class model */
 	models_[ct].coef_.Init(); // alpha*y
 	models_[ct].bias_ = sfw.Bias(); // bias
-	models_[ct].w_.Init(0); // for linear SGD only. not used here
+	models_[ct].w_.Init(0); // for linear classifiers only. not used here
 	sfw.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
       }
       else if (opt_method_== "par") {
@@ -550,7 +584,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	/* Get the trained bi-class model */
 	models_[ct].coef_.Init(); // alpha*y
 	models_[ct].bias_ = par.Bias(); // bias
-	models_[ct].w_.Init(0); // for linear SGD only. not used here
+	models_[ct].w_.Init(0); // for linear classifiers only. not used here
 	par.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
       }
       else {
@@ -672,7 +706,7 @@ void SVM<TKernel>::SVM_R_Train_(int learner_typeid, const Dataset& dataset, data
     /* Get the trained model */
     models_[0].bias_ = sgd.Bias(); // bias
     models_[0].w_.Copy(*(sgd.W())); // w
-    //models_[0].scale_w_ = sgd.ScaleW(); // scale of w for linear SVM. Use it if w's scaling is not done in training session
+    models_[0].scale_w_ = sgd.ScaleW(); // scale of w for linear SVM. Use it if w's scaling is not done in training session
     models_[0].coef_.Init(0); // not using
   }
   else {
@@ -770,11 +804,25 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
 	}
       }
       else if (opt_method_== "sgd") {
-	if (param_.kerneltypeid_== 0) { // linear SVM
+	if (param_.kerneltypeid_== 0) { // linear
 	  sum = la::Dot(models_[ct].w_, datum);
-	  // sum *= models_[ct].scale_w_; // Use this if scaling of w is not done in the training session
+	  sum *= models_[ct].scale_w_; // Use this if scaling of w is not done in the training session
 	}
-	else { // nonlinear SVM
+	else { // nonlinear
+	  sum = 0.0;
+	  for(k = 0; k < sv_list_ct_[i]; k++) {
+	    sum += sv_coef_.get(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];
+	  }
+	  for(k = 0; k < sv_list_ct_[j]; k++) {
+	    sum += sv_coef_.get(i, sv_list_startpos_[j]+k) * keval[sv_list_startpos_[j]+k];
+	  }
+	}
+      }
+      else if (opt_method_== "pegasos") {
+	if (param_.kerneltypeid_== 0) { // linear
+	  sum = la::Dot(models_[ct].w_, datum);
+	}
+	else { // nonlinear
 	  sum = 0.0;
 	  for(k = 0; k < sv_list_ct_[i]; k++) {
 	    sum += sv_coef_.get(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];
