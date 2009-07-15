@@ -1,37 +1,43 @@
 /**
  * @author Hua Ouyang
  *
- * @file opt_pegasos.h
+ * @file opt_cd.h
  *
- * This head file contains functions for performing Pegasos optimization for linear SVM
+ * This head file contains functions for performing Coordinate Descent based optimization for linear L1- and L2- SVMs
  *
  * The algorithms in the following papers are implemented:
  *
- * 1. Pegasos for linear SVM
- * @ARTICLE{SSS_pegasos
- * author = "Shai Shalev-Shawartz, Yoram SInger, Nathan Srebro",
- * title = "{Pegasos: Primal Estimated sub-GrAdient SOlver for SVM}",
- * booktitle = "{International Conference on Machine Learning}",
- * year = 2007,
+ * 1. Primal Coordinate Descent for L2-SVM
+ * @ARTICLE{Chang_PCD,
+ * author = "Kai-Wei Chang, Cho-Jui Hsieh, Chih-Jen Lin",
+ * title = "{Coordinate Descent Method for Large-scale L2-loss Linear Support Vector Machines}",
+ * booktitle = "{Journal of Machines Learning Research}",
+ * year = 2008,
+ * }
+ *
+ * 2. Dual Coordinate Descent for L1- and L2-SVM
+ * @ARTICLE{Hsieh_DCD,
+ * author = "Cho-Jui Hsieh, Kai-Wei Chang, Chih-Jen Lin",
+ * title = "{A Dual Coordinate Descent Method for Large Scale Linear SVM}",
+ * booktitle = ICML,
+ * year = 2008,
  * }
  *
  * @see svm.h
  */
 
-#ifndef U_SVM_OPT_PEGASOS_H
-#define U_SVM_OPT_PEGASOS_H
+#ifndef U_SVM_OPT_CD_H
+#define U_SVM_OPT_CD_H
 
 #include "fastlib/fastlib.h"
 
-// tolerance of sacale_w
-//const double SCALE_W_TOLERANCE = 1.0e-9;
 // threshold that determines whether an alpha is a SV or not
-const double PEGASOS_ALPHA_ZERO = 1.0e-7;
+const double CD_ALPHA_ZERO = 1.0e-7;
 
 
 template<typename TKernel>
-class PEGASOS {
-  FORBID_ACCIDENTAL_COPIES(PEGASOS);
+class CD {
+  FORBID_ACCIDENTAL_COPIES(CD);
 
  public:
   typedef TKernel Kernel;
@@ -46,8 +52,7 @@ class PEGASOS {
   Matrix datamatrix_; /* alias for the data matrix */
 
   Vector coef_; /* alpha*y, to be optimized */
-  index_t n_alpha_; /* number of lagrangian multipliers in the dual  */
-  index_t n_sv_; /* number of support vectors */
+  index_t n_alpha_; /* number of lagrangian multipliers in the dual */
   
   index_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
   double cached_kernel_value_; /* cache */
@@ -56,12 +61,11 @@ class PEGASOS {
 
   Vector w_; /* the slope of the decision hyperplane y=w^T x+b */
   double bias_;
-  double scale_w_; // the scale for w
 
   // parameters
   double C_; // for SVM_C
   double epsilon_; // for SVM_R
-  bool b_linear_; // whether it's a linear SVM
+
   double lambda_; // regularization parameter. lambda = 1/(C*n_data)
   index_t n_iter_; // number of iterations
   index_t n_epochs_; // number of epochs; if provided, n_iter_ <- n_data_*n_epochs_
@@ -69,14 +73,12 @@ class PEGASOS {
   double eta_; // step length. eta = 1/(lambda*t)
   double t_;
 
-  bool do_scale_; // whether do scaling on w. default: original pegasos do scaling
-
   ArrayList<index_t> old_from_new_; // for generating a random sequence of training data
   ArrayList<index_t> new_from_old_; // for generating a random sequence of training data
 
  public:
-  PEGASOS() {}
-  ~PEGASOS() {}
+  CD() {}
+  ~CD() {}
 
   /**
    * Initialization for parameters
@@ -85,9 +87,8 @@ class PEGASOS {
     // init parameters
     if (learner_typeid == 0) { // SVM_C
       C_ = param_[0];
-      b_linear_ = param_[2]>0.0 ? false: true; // whether it's a linear learner
-      n_iter_ = (index_t)param_[3];
-      accuracy_ = param_[4];
+      n_iter_ = (index_t)param_[2];
+      accuracy_ = param_[3];
     }
     else if (learner_typeid == 1) { // SVM_R
     }
@@ -107,11 +108,6 @@ class PEGASOS {
     return &w_;
   }
 
-  double ScaleW() const {
-    return scale_w_;
-  }
-
-  //void GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
 
  private:
   /**
@@ -208,24 +204,15 @@ class PEGASOS {
  * @param: learner type id 
  */
 template<typename TKernel>
-void PEGASOS<TKernel>::LearnersInit_(int learner_typeid) {
+void CD<TKernel>::LearnersInit_(int learner_typeid) {
   index_t i;
   learner_typeid_ = learner_typeid;
   
   if (learner_typeid_ == 0) { // SVM_C
-    if (b_linear_) { // linear SVM
-      w_.Init(n_features_);
-      w_.SetZero();
-
-      coef_.Init(0); // not used, plain init
-    }
-    else { // nonlinear SVM
-      n_alpha_ = n_data_;
-      coef_.Init(n_alpha_);
-      coef_.SetZero();
-
-      w_.Init(0); // not used, plain init
-    }
+    w_.Init(n_features_);
+    w_.SetZero();
+    
+    coef_.Init(0); // not used, plain init
 
     y_.Init(n_data_);
     for (i = 0; i < n_data_; i++) {
@@ -252,15 +239,13 @@ void PEGASOS<TKernel>::LearnersInit_(int learner_typeid) {
 
 
 /**
-* Pegasos training for 2-classes
+* Coordinate descent based SVM training for 2-classes
 *
 * @param: input 2-classes data matrix with labels (1,-1) in the last row
 */
 template<typename TKernel>
-void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
+void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   index_t i, j;
-
-  do_scale_ = fx_param_int(NULL, "wscaling", 1);
   
   /* general learner-independent initializations */
   dataset_ = dataset_in;
@@ -282,7 +267,7 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   /* learners initialization */
   LearnersInit_(learner_typeid);
 
-  /* To mimic the online learning senario, we randomly permutate the training set for Pegasos, indexed by old_from_new_ */
+  /* To mimic the online learning senario, we randomly permutate the training set for CD, indexed by old_from_new_ */
   old_from_new_.Init(n_data_);
   new_from_old_.Init(n_data_);
   for (i=0; i<n_data_; i++) {
@@ -296,95 +281,40 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     new_from_old_[old_from_new_[i]] = i;
   }
 
-  /* Begin Pegasos iterations */
-  if (b_linear_) { // linear SVM, output: w, bias
-    //for (index_t ct=0; ct<n_data_; ct++) {
-    index_t work_idx_old = 0;
-    index_t ct = 0;
-    //while (ct<=n_iter_ && fabs(eta_grad)>=accuracy_) {
+
+  /* Begin CD iterations */
+  
+  //for (index_t ct=0; ct<n_data_; ct++) {
+  double eta_grad = INFINITY;
+  index_t work_idx_old = 0;
+  index_t ct = 0;
+  //while (ct<=n_iter_ && fabs(eta_grad)>=accuracy_) {
+  
+  //work_idx = ct % n_data_;
+  double sqrt_n = sqrt(n_data_);
+  double eta0 = sqrt_n / max(1.0, LossFunctionGradient_(learner_typeid, -sqrt_n)); // initial step length
+  t_ = 1.0 / (eta0 * lambda_);
+  while (ct <= n_iter_) {
+    work_idx_old = old_from_new_[ct % n_data_];
+    eta_ = 1.0 / (lambda_ * t_); // update step size
     
-    //work_idx = ct % n_data_;
-    scale_w_ = 1; // dummy
-    while (ct <= n_iter_) {
-      work_idx_old = old_from_new_[ct % n_data_];
-      eta_ = 1.0 / (lambda_ * (t_+2)); // update step length
-      Vector xt;
-      datamatrix_.MakeColumnSubvector(work_idx_old, 0, n_features_, &xt);
-      double yt = y_[work_idx_old];
-      double yt_hat = la::Dot(w_, xt);
-      double yy_hat = yt * yt_hat;
-      double cur_loss = 1.0 - yy_hat;
-      if (cur_loss <= 0.0) {
-	cur_loss = 0.0;
-      }
-      if (do_scale_) { // pegasos
-	la::Scale(1.0 - eta_*lambda_ , &w_);
-	if (cur_loss > 0.0) {
-	  la::AddExpert( eta_* yt, xt, &w_ );  // w_{t+1} = (1-eta*lambda) * w_t + eta * [yt*xt]^+
-	  // update bias
-	  //bias_ += eta_ * yt * 0.01;
-	}
-      }
-      else { // simple projection with no scaling on w
-	if (cur_loss > 0.0) {
-	  la::AddExpert( eta_* yt, xt, &w_ );  // w_{t+1} = w_t + eta * [yt*xt]^+
-	  // update bias
-	  //bias_ += eta_ * yt * 0.01;
-	}
-      }
-      
-      //if (yy_hat < 1.0) {
-      //eta_grad = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // also need *xt, but it's done in next line
-      //	  la::AddExpert(eta_grad, xt , &w_);  // w_{t+1/2} obtained
-      //	}
-      
-      // Do projection if needed
-      double w_norm_sq = 0.0;
-      for (i=0; i<w_.length() ; i++) {
-	w_norm_sq += math::Sqr(w_[i]);
-      }
-      if (w_norm_sq > 1.0/lambda_) {
-	la::Scale( sqrt(1.0/ (lambda_*w_norm_sq)), &w_);
-      }
-
-      t_ += 1.0;
-      ct ++;
+    Vector xt;
+    datamatrix_.MakeColumnSubvector(work_idx_old, 0, n_features_, &xt);
+    double yt = y_[work_idx_old];
+    double yt_hat = la::Dot(w_, xt) + bias_;
+    double yy_hat = yt * yt_hat;
+    if (yy_hat < 1.0) {
+      // update w by Stochastic Gradient Descent: w_{t+1} = (1-eta*lambda) * w_t + eta * [yt*xt]^+
+      eta_grad = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // also need *xt, but it's done in next line
+      la::AddExpert(eta_grad, xt, &w_); // Note: moving w's scaling calculation to the testing session is faster
+      // update bias
+      bias_ += eta_grad * 0.01;
     }
+    t_ += 1.0;
+    ct ++;
   }
-  else { // nonlinear SVM, output: coefs(i.e. alpha*y), bias
-    // TODO
-  }
+  
 }
 
-
-/* Get SVM results: coefficients(alpha*y), number and indecies of SVs, for nonlinear SVM only
-*
-* @param: sample indices of the training (sub)set in the total training set
-* @param: support vector coefficients: alpha*y
-* @param: bool indicators  FOR THE TRAINING SET: is/isn't a support vector
-*
-*/
-/*
-template<typename TKernel>
-void PEGASOS<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
-  n_sv_ = 0;
-  if (learner_typeid_ == 0) {// SVM_C
-    for (index_t i = 0; i < n_data_; i++) {
-      if (fabs(coef_[i]) >= PEGASOS_ALPHA_ZERO) { // support vectors found
-	coef.PushBack() = coef_[i];
-	sv_indicator[dataset_index[i]] = true;
-	n_sv_++;
-      }
-      else {
-	coef.PushBack() = 0;
-      }
-    }
-    printf("Number of support vectors: %d.\n", n_sv_);
-  }
-  else if (learner_typeid_ == 1) {// SVM_R
-    // TODO
-  }
-}
-*/
 
 #endif

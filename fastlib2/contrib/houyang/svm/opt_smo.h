@@ -67,7 +67,7 @@ class SMO {
 
  private:
   int learner_typeid_;
-  int l2_svm_; // do L2-SVM or L1-SVM, default: L1
+  int regularization_; // do L2-SVM or L1-SVM, default: L1
 
   index_t ct_iter_; /* counter for the number of iterations */
   index_t ct_shrinking_; /* counter for doing shrinking  */
@@ -120,18 +120,18 @@ class SMO {
     // init parameters
     budget_ = (int)param_[0];
     wss_ = (int) param_[4];
-    l2_svm_ = (int) param_[3];
+    regularization_ = (int) param_[3];
     n_iter_ = (index_t) param_[5];
     n_iter_ = n_iter_ < MAX_NUM_ITER_SMO ? n_iter_: MAX_NUM_ITER_SMO;
     accuracy_ = param_[6];
     if (learner_typeid == 0) { // SVM_C
-      if (l2_svm_) {
+      if (regularization_==2) { // L2-SVM
 	Cp_ = INFINITY;
 	Cn_ = INFINITY;
 	C_ = param_[1];
 	inv_two_C_ = 1/(2*C_);
       }
-      else {
+      else { // L1-SVM
 	Cp_ = param_[1];
 	Cn_ = param_[2];
       }
@@ -233,7 +233,7 @@ class SMO {
     //j_cache_ = j;
     cached_kernel_value_ = kernel_.Eval(v_i, v_j, n_features_);
     
-    if (l2_svm_) {
+    if (regularization_ == 2) { // L2-SVM
       if (i == j) {
 	cached_kernel_value_ = cached_kernel_value_ + inv_two_C_;
       }

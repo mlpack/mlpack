@@ -8,6 +8,7 @@
  *
  * @see opt_smo.h
  * @see opt_sgd.h
+ * @see opt_cd.h
  * @see opt_pegasos.h
  * @see opt_hcy.h
  * @see opt_fw.h
@@ -21,6 +22,7 @@
 
 #include "opt_smo.h"
 #include "opt_sgd.h"
+#include "opt_cd.h"
 #include "opt_pegasos.h"
 #include "opt_hcy.h"
 #include "opt_fw.h"
@@ -111,7 +113,7 @@ class SVM {
    * Developers may add more learner types if necessary
    */
   int learner_typeid_;
-  // Optimization method: smo, sgd, pegasos, hcy, fw, mfw, sfw, par
+  // Optimization method: smo, sgd, cd, pegasos, hcy, fw, mfw, sfw, par
   String opt_method_;
   /* array of models for storage of the 2-class(binary) classifiers 
      Need to train num_classes_*(num_classes_-1)/2 binary models */
@@ -167,8 +169,8 @@ class SVM {
     double epsilon_;
     // working set selection scheme of SMO, 1 for 1st order expansion; 2 for 2nd order expansion
     double wss_;
-    // whether do L2-SVM (1) or not (0)
-    int l2_;
+    // whether do L1-SVM (1) or L2-SVM (2)
+    int regularization_;
     // accuracy for the optimization stopping creterion
     double accuracy_;
     // number of iterations
@@ -188,6 +190,7 @@ class SVM {
   typedef TKernel Kernel;
   class SMO<Kernel>;
   class SGD<Kernel>;
+  class CD<Kernel>;
   class PEGASOS<Kernel>;
   class HCY<Kernel>;
   class FW<Kernel>;
@@ -268,8 +271,8 @@ void SVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *mo
   param_.b_ = fx_param_int(NULL, "b", dataset.n_points());
   // working set selection scheme. default: 1st order expansion
   param_.wss_ = fx_param_int(NULL, "wss", 1);
-  // whether do L2-SVM(1) or not (0)
-  param_.l2_ = fx_param_int(NULL, "l2", 0); // default do L1-svm;
+  // whether do L1-SVM(1) or L2-SVM (2)
+  param_.regularization_ = fx_param_int(NULL, "regularization", 1); // default do L1-SVM
   // accuracy for optimization
   param_.accuracy_ = fx_param_double(NULL, "accuracy", 1e-4);
   // number of iterations
@@ -371,7 +374,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	param_feed_db.PushBack() = param_.b_;
 	param_feed_db.PushBack() = param_.Cp_;
 	param_feed_db.PushBack() = param_.Cn_;
-	param_feed_db.PushBack() = param_.l2_;
+	param_feed_db.PushBack() = param_.regularization_;
 	param_feed_db.PushBack() = param_.wss_;
 	param_feed_db.PushBack() = param_.n_iter_;
 	param_feed_db.PushBack() = param_.accuracy_;
@@ -415,7 +418,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	/* Get the trained bi-class model */
 	models_[ct].coef_.Init(); // alpha*y, used for nonlinear SVM only
 	if (param_.kerneltypeid_== 0) { // linear SVM
-	  models_[ct].w_.Copy(*(sgd.W())); // w
+	  models_[ct].w_.Copy(*(sgd.GetW())); // w
 	  models_[ct].scale_w_ = sgd.ScaleW(); // scale of w for linear SVM. Use it if w's scaling is not done in training session
 	}
 	else { // nonlinear SVM
@@ -423,6 +426,30 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	  models_[ct].w_.Init(0); // for linear SVM only. not used here
 	}
 	models_[ct].bias_ = sgd.Bias(); // bias
+      }
+      else if (opt_method_== "cd") {
+	/* Initialize CD parameters */
+	ArrayList<double> param_feed_db;
+	param_feed_db.Init();
+	param_feed_db.PushBack() = param_.Cp_;
+	param_feed_db.PushBack() = param_.Cn_;
+	param_feed_db.PushBack() = param_.n_iter_;
+	param_feed_db.PushBack() = param_.accuracy_;
+	CD<Kernel> cd;
+	cd.InitPara(learner_typeid, param_feed_db);
+
+	/* Initialize kernel */
+	cd.kernel().Init(fx_submodule(module, "kernel"));
+
+	/* 2-classes SVM training using CD*/
+	fx_timer_start(NULL, "train_cd");
+	cd.Train(learner_typeid, &dataset_bi);
+	fx_timer_stop(NULL, "train_cd");
+
+	/* Get the trained bi-class model */
+	models_[ct].coef_.Init(); // alpha*y, dummy init, used for nonlinear SVM only
+	models_[ct].w_.Copy(*(cd.GetW())); // w
+	models_[ct].bias_ = cd.Bias(); // bias
       }
       else if (opt_method_== "pegasos") {
 	/* Initialize PEGASOS parameters */
@@ -445,14 +472,8 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	fx_timer_stop(NULL, "train_pegasos");
 
 	/* Get the trained bi-class model */
-	models_[ct].coef_.Init(); // alpha*y, used for nonlinear SVM only
-	if (param_.kerneltypeid_== 0) { // linear SVM
-	  models_[ct].w_.Copy(*(pegasos.W())); // w
-	}
-	else { // nonlinear SVM
-	  pegasos.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
-	  models_[ct].w_.Init(0); // for linear SVM only. not used here
-	}
+	models_[ct].coef_.Init(); // alpha*y, dummy init, used for nonlinear SVM only
+	models_[ct].w_.Copy(*(pegasos.GetW())); // w
 	models_[ct].bias_ = pegasos.Bias(); // bias
       }
       else if (opt_method_== "hcy") {
@@ -566,7 +587,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	param_feed_db.PushBack() = param_.b_;
 	param_feed_db.PushBack() = param_.Cp_;
 	param_feed_db.PushBack() = param_.Cn_;
-	param_feed_db.PushBack() = param_.l2_;
+	param_feed_db.PushBack() = param_.regularization_;
 	param_feed_db.PushBack() = param_.wss_;
 	param_feed_db.PushBack() = param_.n_iter_;
 	param_feed_db.PushBack() = param_.accuracy_;
@@ -705,7 +726,7 @@ void SVM<TKernel>::SVM_R_Train_(int learner_typeid, const Dataset& dataset, data
     
     /* Get the trained model */
     models_[0].bias_ = sgd.Bias(); // bias
-    models_[0].w_.Copy(*(sgd.W())); // w
+    models_[0].w_.Copy(*(sgd.GetW())); // w
     models_[0].scale_w_ = sgd.ScaleW(); // scale of w for linear SVM. Use it if w's scaling is not done in training session
     models_[0].coef_.Init(0); // not using
   }
@@ -818,19 +839,8 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
 	  }
 	}
       }
-      else if (opt_method_== "pegasos") {
-	if (param_.kerneltypeid_== 0) { // linear
-	  sum = la::Dot(models_[ct].w_, datum);
-	}
-	else { // nonlinear
-	  sum = 0.0;
-	  for(k = 0; k < sv_list_ct_[i]; k++) {
-	    sum += sv_coef_.get(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];
-	  }
-	  for(k = 0; k < sv_list_ct_[j]; k++) {
-	    sum += sv_coef_.get(i, sv_list_startpos_[j]+k) * keval[sv_list_startpos_[j]+k];
-	  }
-	}
+      else if (opt_method_== "cd" || opt_method_== "pegasos") {
+	sum = la::Dot(models_[ct].w_, datum);
       }
       sum += models_[ct].bias_;
       values[ct] = sum;
