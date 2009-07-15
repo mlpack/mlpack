@@ -56,7 +56,7 @@ class PEGASOS {
 
   Vector w_; /* the slope of the decision hyperplane y=w^T x+b */
   double bias_;
-  double scale_w_; // the scale for w
+  //double scale_w_; // the scale for w
 
   // parameters
   double C_; // for SVM_C
@@ -106,10 +106,12 @@ class PEGASOS {
   Vector* GetW() {
     return &w_;
   }
-
+  
+  /*
   double ScaleW() const {
     return scale_w_;
   }
+  */
 
   //void GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
 
@@ -258,7 +260,7 @@ void PEGASOS<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
-  index_t i, j, epo;
+  index_t i, j, epo, ct;
 
   do_scale_ = fx_param_int(NULL, "wscaling", 1);
   
@@ -282,19 +284,14 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 
   /* learners initialization */
   LearnersInit_(learner_typeid);
-
-  /* To mimic the online learning senario, we randomly permutate the training set for Pegasos, indexed by old_from_new_ */
   old_from_new_.Init(n_data_);
+
+  index_t work_idx_old = 0;
 
   /* Begin Pegasos iterations */
   if (b_linear_) { // linear SVM, output: w, bias
-    //for (index_t ct=0; ct<n_data_; ct++) {
-    index_t work_idx_old = 0;
-    index_t ct = 0;
-    //while (ct<=n_iter_ && fabs(eta_grad)>=accuracy_) {
-    
-    //work_idx = ct % n_data_;
-    scale_w_ = 1; // dummy
+    double yt, yt_hat, yy_hat, cur_loss;
+    t_ = 0.0;
 
     for (epo = 0; epo<n_epochs_; epo++) {
       /* To mimic the online learning senario, in each epoch, 
@@ -307,15 +304,16 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	swap(old_from_new_[i], old_from_new_[j]);
       }
 
+      ct = 0;
       while (ct <= n_iter_) {
 	work_idx_old = old_from_new_[ct % n_data_];
 	eta_ = 1.0 / (lambda_ * (t_+2)); // update step length
 	Vector xt;
 	datamatrix_.MakeColumnSubvector(work_idx_old, 0, n_features_, &xt);
-	double yt = y_[work_idx_old];
-	double yt_hat = la::Dot(w_, xt);
-	double yy_hat = yt * yt_hat;
-	double cur_loss = 1.0 - yy_hat;
+	yt = y_[work_idx_old];
+	yt_hat = la::Dot(w_, xt);
+	yy_hat = yt * yt_hat;
+	cur_loss = 1.0 - yy_hat;
 	if (cur_loss <= 0.0) {
 	  cur_loss = 0.0;
 	}
@@ -352,7 +350,7 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	t_ += 1.0;
 	ct ++;
       }
-    }
+    }// for epo
   }
   else { // nonlinear SVM, output: coefs(i.e. alpha*y), bias
     // TODO
