@@ -245,7 +245,7 @@ void CD<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
-  index_t i, j, epo;
+  index_t i, j, epo, ct;
   
   /* general learner-independent initializations */
   dataset_ = dataset_in;
@@ -267,20 +267,16 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 
   /* learners initialization */
   LearnersInit_(learner_typeid);
+  old_from_new_.Init(n_data_);
 
-  /* Begin CD iterations */
-  
-  //for (index_t ct=0; ct<n_data_; ct++) {
-  double eta_grad = INFINITY;
   index_t work_idx_old = 0;
-  index_t ct = 0;
-  //while (ct<=n_iter_ && fabs(eta_grad)>=accuracy_) {
-  
-  //work_idx = ct % n_data_;
+
   double sqrt_n = sqrt(n_data_);
   double eta0 = sqrt_n / max(1.0, LossFunctionGradient_(learner_typeid, -sqrt_n)); // initial step length
+  double eta_grad = INFINITY;
   t_ = 1.0 / (eta0 * lambda_);
 
+  /* Begin CD iterations */
   for (epo = 0; epo<n_epochs_; epo++) {
     /* To mimic the online learning senario, in each epoch, 
        we randomly permutate the training set, indexed by old_from_new_ */
@@ -291,6 +287,8 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       j = rand() % n_data_;
       swap(old_from_new_[i], old_from_new_[j]);
     }
+
+    ct = 0;
     while (ct <= n_iter_) {
       work_idx_old = old_from_new_[ct % n_data_];
       

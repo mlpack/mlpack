@@ -54,7 +54,7 @@ Explanation of arguments:
 14. normalize (optional): where need to do data normalization before training/testing, values: "0" for no normalize, "1" for normalize.
 15. accuracy (optional): the accuracty of optimization method ( i.e. stop optimization when KKT gap <= accuracy ). Default value: 1e-4.
 16. n_iter (optional): maximum number of iterations. Default value: 1e8
-17. n_epochs (optional, for stochastic algorithms): number of epochs; when provided, n_iter <- n_data_ * n_epochs
+17. n_epochs (optional, for stochastic algorithms): number of epochs; when provided, n_iter <- n_data_ * n_epochs; should set to 1 to mimic online learning senario
 18. regularization (optional): do L1-SVM (1) or L2-SVM (2). Default value: 1 -> do L1-SVM
 
 Examples:

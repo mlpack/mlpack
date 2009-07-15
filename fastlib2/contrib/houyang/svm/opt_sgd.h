@@ -269,7 +269,7 @@ void SGD<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
-  index_t i, j, epo;
+  index_t i, j, epo, ct;
   
   /* general learner-independent initializations */
   dataset_ = dataset_in;
@@ -291,19 +291,15 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 
   /* learners initialization */
   LearnersInit_(learner_typeid);
-
   old_from_new_.Init(n_data_);
 
+  index_t work_idx_old = 0;
+
   /* Begin SGD iterations */
-  if (b_linear_) { // linear SVM, output: w, bias
-    //for (index_t ct=0; ct<n_data_; ct++) {
-    double eta_grad = INFINITY;
-    index_t work_idx_old = 0;
-    index_t ct = 0;
-    //while (ct<=n_iter_ && fabs(eta_grad)>=accuracy_) {
-    
+  if (b_linear_) { // linear SVM, output: w, bias    
     double sqrt_n = sqrt(n_data_);
     double eta0 = sqrt_n / max(1.0, LossFunctionGradient_(learner_typeid, -sqrt_n)); // initial step length
+    double eta_grad = INFINITY;
     t_ = 1.0 / (eta0 * lambda_);
     scale_w_ = 0.0;
 
@@ -318,6 +314,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	swap(old_from_new_[i], old_from_new_[j]);
       }
       
+      ct = 0;
       while (ct <= n_iter_) {
 	work_idx_old = old_from_new_[ct % n_data_];
 	eta_ = 1.0 / (lambda_ * t_); // update step size
@@ -344,89 +341,85 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	t_ += 1.0;
 	ct ++;
       }
-    }
+    } // for epo
   }
   else { // nonlinear SVM, output: coefs(i.e. alpha*y), bias
     // it's more expensive to calc the accuracy then linear SVM, so we just use n_iter_ as stop criterion
-    index_t work_idx_old = 0;
-    index_t ct = 0;
+    double delta;
+
+    Vector coef_long;
+    n_iter_ = n_iter_ * n_epochs_;
+    coef_long.Init(n_iter_);
 
     // initial step length
     //double sqrt_n = sqrt(n_data_);
     //double eta0 = sqrt_n / max(1.0, LossFunctionGradient_(learner_typeid, -sqrt_n)); // initial step length
     //t_ = 1.0 / (eta0 * lambda_);
-
     //double eta0 = 1.0 / (2*lambda_);
+
+    /* To mimic the online learning senario, we randomly permutate the training set, indexed by old_from_new_ */
+    for (i=0; i<n_data_; i++) {
+      old_from_new_[i] = i; 
+    }
+    for (i=0; i<n_data_; i++) {
+      j = rand() % n_data_;
+      swap(old_from_new_[i], old_from_new_[j]);
+    }
+
     t_ = 1.0;
-
-    Vector coef_long;
-    coef_long.Init(n_iter_);
-    coef_long.SetZero();
-
-    double delta;
-    
-    for (epo = 0; epo<n_epochs_; epo++) {
-      /* To mimic the online learning senario, in each epoch, 
-	 we randomly permutate the training set, indexed by old_from_new_ */
-      for (i=0; i<n_data_; i++) {
-	old_from_new_[i] = i; 
+    ct = 0;
+    while (ct < n_iter_) {
+      work_idx_old = old_from_new_[ct % n_data_];
+      
+      double yt = y_[work_idx_old];
+      double yt_hat = 0.0;
+      for (i=0; i<ct; i++) {
+	yt_hat += coef_long[i] * CalcKernelValue_(old_from_new_[i%n_data_], work_idx_old);
       }
-      for (i=0; i<n_data_; i++) {
-	j = rand() % n_data_;
-	swap(old_from_new_[i], old_from_new_[j]);
+      yt_hat += bias_;
+      double yy_hat = yt * yt_hat;
+      
+      // update step length
+      eta_ = 1.0 / (lambda_ * t_);
+      //eta_ = eta0 / sqrt(t_);
+      
+      if (ct >= 1) {
+	bias_ += coef_long[ct-1];
       }
-      while (ct < n_iter_) {
-	//work_idx = ct % n_data_;
-	work_idx_old = old_from_new_[ct % n_data_];
-	
-	double yt = y_[work_idx_old];
-	double yt_hat = 0.0;
-	for (i=0; i<ct; i++) {
-	  yt_hat += coef_long[i] * CalcKernelValue_(old_from_new_[i%n_data_], work_idx_old);
-	}
-	yt_hat += bias_;
-	double yy_hat = yt * yt_hat;
-	
-	// update step length
-	eta_ = 1.0 / (lambda_ * t_);
-	//eta_ = eta0 / sqrt(t_);
-	
-	if (ct >= 1)
-	  bias_ += coef_long[ct-1];
-	
-	// update old coefs (for i<t)
-	double one_minus_eta_lambda = 1.0 - eta_ * lambda_;
-	//printf("%d: %f\n", ct, one_minus_eta_lambda);
-	for (i=0; i<ct; i++)
+      
+      // update old coefs (for i<t)
+      double one_minus_eta_lambda = 1.0 - eta_ * lambda_;
+      //printf("%d: %f\n", ct, one_minus_eta_lambda);
+      for (i=0; i<ct; i++) {
 	coef_long[i] = coef_long[i] * one_minus_eta_lambda; 
-	
-	// update current coef (for i==t)
-	
-	//coef_long[ct] = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // Hard margin SVM
-	//printf("%f, %f, %f\n", eta_, LossFunctionGradient_(learner_typeid, yy_hat), yt);
-	
-	// soft margin svm
-	if (yy_hat <= rho_) {
-	  //printf("%d: %f, %f\n", ct, yy_hat, yt);
-	  delta = 1.0;
-	}
-	else {
-	  delta = 0.0;
-	}
-	coef_long[ct] = eta_ * delta * yt;
-	
-	// update bias
-	//bias_ += coef_long[ct];
-	
-	t_ += 1.0;
-	ct ++;
       }
-      // convert coef_long to coef_
-      for (i=0; i<n_iter_; i++) {
-	work_idx_old = old_from_new_[i % n_data_];
-	coef_[work_idx_old] = coef_[work_idx_old] + coef_long[i];
+      
+      // update current coef (for i==t)
+      
+      //coef_long[ct] = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // Hard margin SVM
+      //printf("%f, %f, %f\n", eta_, LossFunctionGradient_(learner_typeid, yy_hat), yt);
+      
+      // soft margin svm
+      if (yy_hat <= rho_) {
+	//printf("%d: %f, %f\n", ct, yy_hat, yt);
+	delta = 1.0;
       }
-    } // for epo
+      else {
+	delta = 0.0;
+      }
+      coef_long[ct] = eta_ * delta * yt;
+      
+      // update bias
+      //bias_ += coef_long[ct];
+      
+      t_ += 1.0;
+      ct ++;
+    }
+    // convert coef_long to coef_
+    for (i=0; i<n_iter_; i++) {
+      work_idx_old = old_from_new_[i % n_data_];
+      coef_[work_idx_old] = coef_[work_idx_old] + coef_long[i];
+    }
   } // else
 }
 
