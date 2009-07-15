@@ -21,7 +21,7 @@ class PAR {
 
  private:
   int learner_typeid_;
-  int l2_svm_; // do L2-SVM or L1-SVM, default: L1
+  int regularization_; // do L2-SVM or L1-SVM, default: L1
 
   index_t ct_iter_; /* counter for the number of iterations */
   index_t ct_shrinking_; /* counter for doing shrinking  */
@@ -73,12 +73,12 @@ class PAR {
   void InitPara(int learner_typeid, ArrayList<double> &param_) {
     // init parameters
     wss_ = (int) param_[4];
-    l2_svm_ = (int) param_[3];
+    regularization_ = (int) param_[3];
     n_iter_ = (index_t) param_[5];
     n_iter_ = n_iter_ < MAX_NUM_ITER_PAR ? n_iter_: MAX_NUM_ITER_PAR;
     accuracy_ = param_[6];
     if (learner_typeid == 0) { // SVM_C
-      if (l2_svm_) {
+      if (regularization_ == 2) { // L2-SVM
 	Cp_ = INFINITY;
 	Cn_ = INFINITY;
 	C_ = param_[1];
@@ -135,7 +135,7 @@ class PAR {
    * Instead of C, we use C_+ and C_- to handle unbalanced data
    */
   double GetC_(index_t i) {
-    if (l2_svm_) {
+    if (regularization_ == 2) { // L2-SVM
       return C_;
     }
     else {
@@ -421,7 +421,7 @@ void PAR<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       break;
     }
   }
-}
+}
 
 /**
 * PAR training iterations

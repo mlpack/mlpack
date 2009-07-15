@@ -32,8 +32,6 @@
 
 #include "fastlib/fastlib.h"
 
-// max t_
-const index_t MAX_NUM_ITER_SGD = index_t(INFINITY);
 // tolerance of sacale_w
 const double SCALE_W_TOLERANCE = 1.0e-9;
 // threshold that determines whether an alpha is a SV or not
@@ -57,7 +55,7 @@ class SGD {
   Matrix datamatrix_; /* alias for the data matrix */
 
   Vector coef_; /* alpha*y, to be optimized */
-  index_t n_alpha_; /* number of variables to be optimized */
+  index_t n_alpha_; /* number of lagrangian multipliers in the dual */
   index_t n_sv_; /* number of support vectors */
   
   index_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
@@ -98,7 +96,6 @@ class SGD {
       C_ = param_[0];
       b_linear_ = param_[2]>0.0 ? false: true; // whether it's a linear learner
       n_iter_ = (index_t)param_[3];
-      n_iter_ = n_iter_ < MAX_NUM_ITER_SGD? n_iter_: MAX_NUM_ITER_SGD;
       accuracy_ = param_[4];
     }
     else if (learner_typeid == 1) { // SVM_R
@@ -115,7 +112,7 @@ class SGD {
     return bias_;
   }
 
-  Vector* W() {
+  Vector* GetW() {
     return &w_;
   }
 
@@ -340,7 +337,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       if (yy_hat < 1.0) {
 	// update w by Stochastic Gradient Descent: w_{t+1} = (1-eta*lambda) * w_t + eta * [yt*xt]^+
 	eta_grad = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // also need *xt, but it's done in next line
-	la::AddExpert(eta_grad/scale_w_, xt, &w_); // Note: moving w's scaling calculation to the testing session is faster
+	la::AddExpert(eta_grad/scale_w_, xt, &w_); // Note: moving w's scaling calculation w_t*(1-1/t) to the testing session is faster
 	// update bias
 	bias_ += eta_grad * 0.01;
       }
