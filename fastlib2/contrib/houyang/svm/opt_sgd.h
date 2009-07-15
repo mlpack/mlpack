@@ -73,13 +73,13 @@ class SGD {
   bool b_linear_; // whether it's a linear SVM
   double lambda_; // regularization parameter. lambda = 1/(C*n_data)
   index_t n_iter_; // number of iterations
-  index_t n_epochs_; // number of epochs; if provided, n_iter_ <- n_data_*n_epochs_
+  index_t n_epochs_; // number of epochs
   double accuracy_; // accuracy for stopping creterion
   double eta_; // step length. eta = 1/(lambda*t)
   double t_;
 
   ArrayList<index_t> old_from_new_; // for generating a random sequence of training data
-  ArrayList<index_t> new_from_old_; // for generating a random sequence of training data
+  //ArrayList<index_t> new_from_old_; // for generating a random sequence of training data
 
   double rho_;// for soft margin nonlinear SGD SVM
 
@@ -95,8 +95,9 @@ class SGD {
     if (learner_typeid == 0) { // SVM_C
       C_ = param_[0];
       b_linear_ = param_[2]>0.0 ? false: true; // whether it's a linear learner
-      n_iter_ = (index_t)param_[3];
-      accuracy_ = param_[4];
+      n_epochs_ = (index_t)param_[3];
+      n_iter_ = (index_t)param_[4];
+      accuracy_ = param_[5];
     }
     else if (learner_typeid == 1) { // SVM_R
     }
@@ -268,7 +269,7 @@ void SGD<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
-  index_t i, j;
+  index_t i, j, epo;
   
   /* general learner-independent initializations */
   dataset_ = dataset_in;
@@ -276,10 +277,11 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   n_data_ = datamatrix_.n_cols();
   n_features_ = datamatrix_.n_rows() - 1;
 
-  // number of epochs; use it if provided by user
-  n_epochs_ = fx_param_int(NULL, "n_epochs", 0);
-  if (n_epochs_ > 0) {
-    n_iter_ = index_t(n_epochs_ * n_data_);
+  if (n_epochs_ > 0) { // # of epochs provided, use it
+    n_iter_ = n_data_;
+  }
+  else { // # of epochs not provided, use n_iter_ to count iterations
+    n_epochs_ = 1; // not exactly one epoch, just use it for one loop
   }
   
   DEBUG_ASSERT(C_ != 0);
@@ -290,20 +292,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   /* learners initialization */
   LearnersInit_(learner_typeid);
 
-  /* To mimic the online learning senario, we randomly permutate the training set for SGD, indexed by old_from_new_ */
   old_from_new_.Init(n_data_);
-  new_from_old_.Init(n_data_);
-  for (i=0; i<n_data_; i++) {
-    old_from_new_[i] = i; 
-  }
-  for (i=0; i<n_data_; i++) {
-    j = rand() % n_data_;
-    swap(old_from_new_[i], old_from_new_[j]);
-  }
-  for (i=0; i<n_data_; i++) {
-    new_from_old_[old_from_new_[i]] = i;
-  }
-
 
   /* Begin SGD iterations */
   if (b_linear_) { // linear SVM, output: w, bias
@@ -313,36 +302,48 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     index_t ct = 0;
     //while (ct<=n_iter_ && fabs(eta_grad)>=accuracy_) {
     
-    //work_idx = ct % n_data_;
     double sqrt_n = sqrt(n_data_);
     double eta0 = sqrt_n / max(1.0, LossFunctionGradient_(learner_typeid, -sqrt_n)); // initial step length
     t_ = 1.0 / (eta0 * lambda_);
     scale_w_ = 0.0;
-    while (ct <= n_iter_) {
-      work_idx_old = old_from_new_[ct % n_data_];
-      eta_ = 1.0 / (lambda_ * t_); // update step size
-      scale_w_ = scale_w_ - scale_w_ / t_; // update scale of w
-      //la::Scale(scale_w, &w_); // Note: moving w's scaling calculation to the testing session is faster
-      
-      if (scale_w_ < SCALE_W_TOLERANCE) {
-	la::Scale(scale_w_, &w_);
-	scale_w_ = 1.0;
-      }
 
-      Vector xt;
-      datamatrix_.MakeColumnSubvector(work_idx_old, 0, n_features_, &xt);
-      double yt = y_[work_idx_old];
-      double yt_hat = la::Dot(w_, xt) * scale_w_ + bias_;
-      double yy_hat = yt * yt_hat;
-      if (yy_hat < 1.0) {
-	// update w by Stochastic Gradient Descent: w_{t+1} = (1-eta*lambda) * w_t + eta * [yt*xt]^+
-	eta_grad = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // also need *xt, but it's done in next line
-	la::AddExpert(eta_grad/scale_w_, xt, &w_); // Note: moving w's scaling calculation w_t*(1-1/t) to the testing session is faster
-	// update bias
-	bias_ += eta_grad * 0.01;
+    for (epo = 0; epo<n_epochs_; epo++) {
+      /* To mimic the online learning senario, in each epoch, 
+	 we randomly permutate the training set, indexed by old_from_new_ */
+      for (i=0; i<n_data_; i++) {
+	old_from_new_[i] = i; 
       }
-      t_ += 1.0;
-      ct ++;
+      for (i=0; i<n_data_; i++) {
+	j = rand() % n_data_;
+	swap(old_from_new_[i], old_from_new_[j]);
+      }
+      
+      while (ct <= n_iter_) {
+	work_idx_old = old_from_new_[ct % n_data_];
+	eta_ = 1.0 / (lambda_ * t_); // update step size
+	scale_w_ = scale_w_ - scale_w_ / t_; // update scale of w
+	//la::Scale(scale_w, &w_); // Note: moving w's scaling calculation to the testing session is faster
+	
+	if (scale_w_ < SCALE_W_TOLERANCE) {
+	  la::Scale(scale_w_, &w_);
+	  scale_w_ = 1.0;
+	}
+	
+	Vector xt;
+	datamatrix_.MakeColumnSubvector(work_idx_old, 0, n_features_, &xt);
+	double yt = y_[work_idx_old];
+	double yt_hat = la::Dot(w_, xt) * scale_w_ + bias_;
+	double yy_hat = yt * yt_hat;
+	if (yy_hat < 1.0) {
+	  // update w by Stochastic Gradient Descent: w_{t+1} = (1-eta*lambda) * w_t + eta * [yt*xt]^+
+	  eta_grad = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // also need *xt, but it's done in next line
+	  la::AddExpert(eta_grad/scale_w_, xt, &w_); // Note: moving w's scaling calculation w_t*(1-1/t) to the testing session is faster
+	  // update bias
+	  bias_ += eta_grad * 0.01;
+	}
+	t_ += 1.0;
+	ct ++;
+      }
     }
   }
   else { // nonlinear SVM, output: coefs(i.e. alpha*y), bias
@@ -363,63 +364,74 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     coef_long.SetZero();
 
     double delta;
-
-    while (ct < n_iter_) {
-      //work_idx = ct % n_data_;
-      work_idx_old = old_from_new_[ct % n_data_];
-
-      double yt = y_[work_idx_old];
-      double yt_hat = 0.0;
-      for (i=0; i<ct; i++) {
-	yt_hat += coef_long[i] * CalcKernelValue_(old_from_new_[i%n_data_], work_idx_old);
+    
+    for (epo = 0; epo<n_epochs_; epo++) {
+      /* To mimic the online learning senario, in each epoch, 
+	 we randomly permutate the training set, indexed by old_from_new_ */
+      for (i=0; i<n_data_; i++) {
+	old_from_new_[i] = i; 
       }
-      yt_hat += bias_;
-      double yy_hat = yt * yt_hat;
-
-      // update step length
-      eta_ = 1.0 / (lambda_ * t_);
-      //eta_ = eta0 / sqrt(t_);
-
-      if (ct >= 1)
-	bias_ += coef_long[ct-1];
-
-      // update old coefs (for i<t)
-      double one_minus_eta_lambda = 1.0 - eta_ * lambda_;
-      //printf("%d: %f\n", ct, one_minus_eta_lambda);
-      for (i=0; i<ct; i++)
+      for (i=0; i<n_data_; i++) {
+	j = rand() % n_data_;
+	swap(old_from_new_[i], old_from_new_[j]);
+      }
+      while (ct < n_iter_) {
+	//work_idx = ct % n_data_;
+	work_idx_old = old_from_new_[ct % n_data_];
+	
+	double yt = y_[work_idx_old];
+	double yt_hat = 0.0;
+	for (i=0; i<ct; i++) {
+	  yt_hat += coef_long[i] * CalcKernelValue_(old_from_new_[i%n_data_], work_idx_old);
+	}
+	yt_hat += bias_;
+	double yy_hat = yt * yt_hat;
+	
+	// update step length
+	eta_ = 1.0 / (lambda_ * t_);
+	//eta_ = eta0 / sqrt(t_);
+	
+	if (ct >= 1)
+	  bias_ += coef_long[ct-1];
+	
+	// update old coefs (for i<t)
+	double one_minus_eta_lambda = 1.0 - eta_ * lambda_;
+	//printf("%d: %f\n", ct, one_minus_eta_lambda);
+	for (i=0; i<ct; i++)
 	coef_long[i] = coef_long[i] * one_minus_eta_lambda; 
-
-      // update current coef (for i==t)
-
-      //coef_long[ct] = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // Hard margin SVM
-      //printf("%f, %f, %f\n", eta_, LossFunctionGradient_(learner_typeid, yy_hat), yt);
-
-      // soft margin svm
-      if (yy_hat <= rho_) {
-	//printf("%d: %f, %f\n", ct, yy_hat, yt);
-	delta = 1.0;
+	
+	// update current coef (for i==t)
+	
+	//coef_long[ct] = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // Hard margin SVM
+	//printf("%f, %f, %f\n", eta_, LossFunctionGradient_(learner_typeid, yy_hat), yt);
+	
+	// soft margin svm
+	if (yy_hat <= rho_) {
+	  //printf("%d: %f, %f\n", ct, yy_hat, yt);
+	  delta = 1.0;
+	}
+	else {
+	  delta = 0.0;
+	}
+	coef_long[ct] = eta_ * delta * yt;
+	
+	// update bias
+	//bias_ += coef_long[ct];
+	
+	t_ += 1.0;
+	ct ++;
       }
-      else {
-	delta = 0.0;
+      // convert coef_long to coef_
+      for (i=0; i<n_iter_; i++) {
+	work_idx_old = old_from_new_[i % n_data_];
+	coef_[work_idx_old] = coef_[work_idx_old] + coef_long[i];
       }
-      coef_long[ct] = eta_ * delta * yt;
-
-      // update bias
-      //bias_ += coef_long[ct];
- 
-      t_ += 1.0;
-      ct ++;
-    }
-    // convert coef_long to coef_
-    for (i=0; i<n_iter_; i++) {
-      work_idx_old = old_from_new_[i % n_data_];
-      coef_[work_idx_old] = coef_[work_idx_old] + coef_long[i];
-    }
-  }
+    } // for epo
+  } // else
 }
 
 
-/* Get SVM results: coefficients(alpha*y), number and indecies of SVs, for nonlinear SVM only
+/* Get results for nonlinear SGD: coefficients(alpha*y), number and indecies of SVs
 *
 * @param: sample indices of the training (sub)set in the total training set
 * @param: support vector coefficients: alpha*y
