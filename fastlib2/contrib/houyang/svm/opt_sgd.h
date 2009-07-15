@@ -75,6 +75,7 @@ class SGD {
   bool b_linear_; // whether it's a linear SVM
   double lambda_; // regularization parameter. lambda = 1/(C*n_data)
   index_t n_iter_; // number of iterations
+  index_t n_epochs_; // number of epochs; if provided, n_iter_ <- n_data_*n_epochs_
   double accuracy_; // accuracy for stopping creterion
   double eta_; // step length. eta = 1/(lambda*t)
   double t_;
@@ -277,6 +278,12 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   datamatrix_.Alias(dataset_->matrix());
   n_data_ = datamatrix_.n_cols();
   n_features_ = datamatrix_.n_rows() - 1;
+
+  // number of epochs; use it if provided by user
+  n_epochs_ = fx_param_int(NULL, "n_epochs", 0);
+  if (n_epochs_ > 0) {
+    n_iter_ = index_t(n_epochs_ * n_data_);
+  }
   
   DEBUG_ASSERT(C_ != 0);
   lambda_ = 1.0/(C_*n_data_);

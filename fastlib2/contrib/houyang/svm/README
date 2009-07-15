@@ -42,15 +42,16 @@ Explanation of arguments:
 6. test_data (optional): file name for testing data, only required under "test" or "train_test" mode.
 7. kernel (REQUIRED): kernel name, values:"linear", "gaussian".
 8. sigma (optional): sigma in the gaussian kernel k(x1,x2)=exp(-(x1-x2)^2/(2sigma^2)), only required when using "guassian" kernel.
-9. c (for SVM_C,optional): the weight that controls compromise between large margins and small margin violations. Default value: 10.0.
+9. c (for SVM_C,optional): the weight that controls compromise between large margins and small margin violations. Default value: 10.
 10. c_p (for SVM_C,optional): the weight for the positive class (y==1). Default value: c.
 11. c_n (for SVM_C,optional): the weight for the negative class (y==-1). Default value: c.
 12. epsilon (for SVM_R,optional): the epsilon in SVM regression. Default value: 0.1.
 13. wss (optional): working set selection scheme. 1 for 1st order expansion; 2 for 2nd order expansion. Default value: 1.
 14. normalize (optional): where need to do data normalization before training/testing, values: "0" for no normalize, "1" for normalize.
 15. accuracy (optional): the accuracty of optimization method ( i.e. stop optimization when KKT gap <= accuracy ). Default value: 1e-4.
-16. n_iter (for SGD, optional): number of iterations for SGD only. Default value: 1e4
-17. l2 (optional): do L2-SVM (l2=1) or not (l2=0). Default value: 0 -> do L1-SVM
+16. n_iter (optional): maximum number of iterations. Default value: 1e8
+17. n_epochs (optional, for stochastic algorithms): number of epochs; when provided, n_iter <- n_data_ * n_epochs
+18. l2 (optional): do L2-SVM (l2=1) or not (l2=0). Default value: 0 -> do L1-SVM
 
 Examples:
 --------------------------------------------------- SVM Classificaation ------------------------------------------------
@@ -89,16 +90,22 @@ svm_main --learner_name=svm_c --mode=train_test --train_data=ijcnn1_train_sort.c
 svm_main --learner_name=svm_c  --accuracy=0.00001 --mode=train_test --train_data=c_traindata3.csv --test_data=c_testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0 --l2=1
 
 ------Using SGD--------
-1.Linear stochastic gradient descent
-svm_main --learner_name=svm_c --mode=train_test --train_data=svmguide1_train_sort.csv --test_data=svmguide1_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=sgd --n_iter=3000
+1.Linear stochastic gradient descent, stopping criterion: number of iterations
+svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=sgd --n_iter=49120
 
-2.Linear Pegasos algorithm
-svm_main --learner_name=svm_c --mode=train_test --train_data=svmguide1_train_sort.csv --test_data=svmguide1_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=sgd --pegasos=1 --n_iter=400000
+2.Linear stochastic gradient descent, stopping criterion: number of epochs
+svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=sgd --n_epochs=10
 
 3.Nonlinear stochastic gradient descent using Gaussian kernel
 svm_main --learner_name=svm_c --mode=train_test --train_data=ijcnn1_train_sort.csv --test_data=ijcnn1_test_sort.csv --kernel=gaussian --sigma=0.61 --c=8 --normalize=0 --opt=sgd --n_iter=35000 --rho=0.5
 
 
+------Using Pegasos------
+1.Linear Pegasos, stopping criterion: number of iterations
+svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=pegasos --n_iter=49120
+
+2.Linear Pegasos, stopping criterion: number of epochs
+svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=pegasos --n_epochs=10
 
 ------Using FW---------
 svm_main --learner_name=svm_c --mode=train_test --train_data=ijcnn1_train_sort.csv --test_data=ijcnn1_test_sort.csv --kernel=gaussian --normalize=0 --opt=fw --p_rand=1333 --accuracy=0.001 --sigma=0.61 --c=5
