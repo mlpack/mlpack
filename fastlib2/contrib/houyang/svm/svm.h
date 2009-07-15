@@ -175,6 +175,8 @@ class SVM {
     double accuracy_;
     // number of iterations
     index_t n_iter_;
+    // number of epochs for stochastic algorithms
+    index_t n_epochs_;
   };
   PARAMETERS param_;
   
@@ -277,6 +279,8 @@ void SVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *mo
   param_.accuracy_ = fx_param_double(NULL, "accuracy", 1e-4);
   // number of iterations
   param_.n_iter_ = fx_param_int(NULL, "n_iter", 100000000);
+  // number of iterations
+  param_.n_epochs_ = fx_param_int(NULL, "n_epochs", 0);
 
   // tradeoff parameter for C-SV
   param_.C_ = fx_param_double(NULL, "c", 10.0);
@@ -402,6 +406,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	param_feed_db.PushBack() = param_.Cp_;
 	param_feed_db.PushBack() = param_.Cn_;
 	param_feed_db.PushBack() = param_.kerneltypeid_== 0 ? 0.0: 1.0;
+	param_feed_db.PushBack() = param_.n_epochs_;
 	param_feed_db.PushBack() = param_.n_iter_;
 	param_feed_db.PushBack() = param_.accuracy_;
 	SGD<Kernel> sgd;
@@ -433,6 +438,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	param_feed_db.Init();
 	param_feed_db.PushBack() = param_.Cp_;
 	param_feed_db.PushBack() = param_.Cn_;
+	param_feed_db.PushBack() = param_.n_epochs_;
 	param_feed_db.PushBack() = param_.n_iter_;
 	param_feed_db.PushBack() = param_.accuracy_;
 	CD<Kernel> cd;
@@ -458,6 +464,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	param_feed_db.PushBack() = param_.Cp_;
 	param_feed_db.PushBack() = param_.Cn_;
 	param_feed_db.PushBack() = param_.kerneltypeid_== 0 ? 0.0: 1.0;
+	param_feed_db.PushBack() = param_.n_epochs_;
 	param_feed_db.PushBack() = param_.n_iter_;
 	param_feed_db.PushBack() = param_.accuracy_;
 	PEGASOS<Kernel> pegasos;
@@ -533,7 +540,6 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	/* Initialize MFW parameters */
 	ArrayList<double> param_feed_db;
 	param_feed_db.Init();
-	//param_feed_db.PushBack() = param_.nu_; // for nu-SVM
 	param_feed_db.PushBack() = param_.C_;
 	param_feed_db.PushBack() = param_.n_iter_;
 	param_feed_db.PushBack() = param_.accuracy_;
@@ -558,7 +564,6 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	/* Initialize SFW parameters */
 	ArrayList<double> param_feed_db;
 	param_feed_db.Init();
-	//param_feed_db.PushBack() = param_.nu_; // for nu-SVM
 	param_feed_db.PushBack() = param_.C_;
 	param_feed_db.PushBack() = param_.n_iter_;
 	param_feed_db.PushBack() = param_.accuracy_;

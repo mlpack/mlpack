@@ -64,7 +64,7 @@ class PEGASOS {
   bool b_linear_; // whether it's a linear SVM
   double lambda_; // regularization parameter. lambda = 1/(C*n_data)
   index_t n_iter_; // number of iterations
-  index_t n_epochs_; // number of epochs; if provided, n_iter_ <- n_data_*n_epochs_
+  index_t n_epochs_; // number of epochs
   double accuracy_; // accuracy for stopping creterion
   double eta_; // step length. eta = 1/(lambda*t)
   double t_;
@@ -72,7 +72,6 @@ class PEGASOS {
   bool do_scale_; // whether do scaling on w. default: original pegasos do scaling
 
   ArrayList<index_t> old_from_new_; // for generating a random sequence of training data
-  ArrayList<index_t> new_from_old_; // for generating a random sequence of training data
 
  public:
   PEGASOS() {}
@@ -86,8 +85,9 @@ class PEGASOS {
     if (learner_typeid == 0) { // SVM_C
       C_ = param_[0];
       b_linear_ = param_[2]>0.0 ? false: true; // whether it's a linear learner
-      n_iter_ = (index_t)param_[3];
-      accuracy_ = param_[4];
+      n_epochs_ = (index_t)param_[3];
+      n_iter_ = (index_t)param_[4];
+      accuracy_ = param_[5];
     }
     else if (learner_typeid == 1) { // SVM_R
     }
@@ -258,7 +258,7 @@ void PEGASOS<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
-  index_t i, j;
+  index_t i, j, epo;
 
   do_scale_ = fx_param_int(NULL, "wscaling", 1);
   
@@ -268,10 +268,11 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   n_data_ = datamatrix_.n_cols();
   n_features_ = datamatrix_.n_rows() - 1;
 
-  // number of epochs; use it if provided by user
-  n_epochs_ = fx_param_int(NULL, "n_epochs", 0);
-  if (n_epochs_ > 0) {
-    n_iter_ = index_t(n_epochs_ * n_data_);
+  if (n_epochs_ > 0) { // # of epochs provided, use it
+    n_iter_ = n_data_;
+  }
+  else { // # of epochs not provided, use n_iter_ to count iterations
+    n_epochs_ = 1; // not exactly one epoch, just use it for one loop
   }
   
   DEBUG_ASSERT(C_ != 0);
@@ -284,17 +285,6 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 
   /* To mimic the online learning senario, we randomly permutate the training set for Pegasos, indexed by old_from_new_ */
   old_from_new_.Init(n_data_);
-  new_from_old_.Init(n_data_);
-  for (i=0; i<n_data_; i++) {
-    old_from_new_[i] = i; 
-  }
-  for (i=0; i<n_data_; i++) {
-    j = rand() % n_data_;
-    swap(old_from_new_[i], old_from_new_[j]);
-  }
-  for (i=0; i<n_data_; i++) {
-    new_from_old_[old_from_new_[i]] = i;
-  }
 
   /* Begin Pegasos iterations */
   if (b_linear_) { // linear SVM, output: w, bias
@@ -305,50 +295,63 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     
     //work_idx = ct % n_data_;
     scale_w_ = 1; // dummy
-    while (ct <= n_iter_) {
-      work_idx_old = old_from_new_[ct % n_data_];
-      eta_ = 1.0 / (lambda_ * (t_+2)); // update step length
-      Vector xt;
-      datamatrix_.MakeColumnSubvector(work_idx_old, 0, n_features_, &xt);
-      double yt = y_[work_idx_old];
-      double yt_hat = la::Dot(w_, xt);
-      double yy_hat = yt * yt_hat;
-      double cur_loss = 1.0 - yy_hat;
-      if (cur_loss <= 0.0) {
-	cur_loss = 0.0;
+
+    for (epo = 0; epo<n_epochs_; epo++) {
+      /* To mimic the online learning senario, in each epoch, 
+	 we randomly permutate the training set, indexed by old_from_new_ */
+      for (i=0; i<n_data_; i++) {
+	old_from_new_[i] = i; 
       }
-      if (do_scale_) { // pegasos
-	la::Scale(1.0 - eta_*lambda_ , &w_);
-	if (cur_loss > 0.0) {
-	  la::AddExpert( eta_* yt, xt, &w_ );  // w_{t+1} = (1-eta*lambda) * w_t + eta * [yt*xt]^+
-	  // update bias
-	  //bias_ += eta_ * yt * 0.01;
-	}
-      }
-      else { // simple projection with no scaling on w
-	if (cur_loss > 0.0) {
-	  la::AddExpert( eta_* yt, xt, &w_ );  // w_{t+1} = w_t + eta * [yt*xt]^+
-	  // update bias
-	  //bias_ += eta_ * yt * 0.01;
-	}
-      }
-      
-      //if (yy_hat < 1.0) {
-      //eta_grad = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // also need *xt, but it's done in next line
-      //	  la::AddExpert(eta_grad, xt , &w_);  // w_{t+1/2} obtained
-      //	}
-      
-      // Do projection if needed
-      double w_norm_sq = 0.0;
-      for (i=0; i<w_.length() ; i++) {
-	w_norm_sq += math::Sqr(w_[i]);
-      }
-      if (w_norm_sq > 1.0/lambda_) {
-	la::Scale( sqrt(1.0/ (lambda_*w_norm_sq)), &w_);
+      for (i=0; i<n_data_; i++) {
+	j = rand() % n_data_;
+	swap(old_from_new_[i], old_from_new_[j]);
       }
 
-      t_ += 1.0;
-      ct ++;
+      while (ct <= n_iter_) {
+	work_idx_old = old_from_new_[ct % n_data_];
+	eta_ = 1.0 / (lambda_ * (t_+2)); // update step length
+	Vector xt;
+	datamatrix_.MakeColumnSubvector(work_idx_old, 0, n_features_, &xt);
+	double yt = y_[work_idx_old];
+	double yt_hat = la::Dot(w_, xt);
+	double yy_hat = yt * yt_hat;
+	double cur_loss = 1.0 - yy_hat;
+	if (cur_loss <= 0.0) {
+	  cur_loss = 0.0;
+	}
+	if (do_scale_) { // pegasos
+	  la::Scale(1.0 - eta_*lambda_ , &w_);
+	  if (cur_loss > 0.0) {
+	    la::AddExpert( eta_* yt, xt, &w_ );  // w_{t+1} = (1-eta*lambda) * w_t + eta * [yt*xt]^+
+	    // update bias
+	    //bias_ += eta_ * yt * 0.01;
+	  }
+	}
+	else { // simple projection with no scaling on w
+	  if (cur_loss > 0.0) {
+	    la::AddExpert( eta_* yt, xt, &w_ );  // w_{t+1} = w_t + eta * [yt*xt]^+
+	    // update bias
+	    //bias_ += eta_ * yt * 0.01;
+	  }
+	}
+	
+	//if (yy_hat < 1.0) {
+	//eta_grad = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // also need *xt, but it's done in next line
+	//	  la::AddExpert(eta_grad, xt , &w_);  // w_{t+1/2} obtained
+	//	}
+	
+	// Do projection if needed
+	double w_norm_sq = 0.0;
+	for (i=0; i<w_.length() ; i++) {
+	  w_norm_sq += math::Sqr(w_[i]);
+	}
+	if (w_norm_sq > 1.0/lambda_) {
+	  la::Scale( sqrt(1.0/ (lambda_*w_norm_sq)), &w_);
+	}
+	
+	t_ += 1.0;
+	ct ++;
+      }
     }
   }
   else { // nonlinear SVM, output: coefs(i.e. alpha*y), bias
@@ -357,7 +360,7 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 }
 
 
-/* Get SVM results: coefficients(alpha*y), number and indecies of SVs, for nonlinear SVM only
+/* Get results for nonlinear SGD: coefficients(alpha*y), number and indecies of SVs
 *
 * @param: sample indices of the training (sub)set in the total training set
 * @param: support vector coefficients: alpha*y
@@ -367,23 +370,7 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 /*
 template<typename TKernel>
 void PEGASOS<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
-  n_sv_ = 0;
-  if (learner_typeid_ == 0) {// SVM_C
-    for (index_t i = 0; i < n_data_; i++) {
-      if (fabs(coef_[i]) >= PEGASOS_ALPHA_ZERO) { // support vectors found
-	coef.PushBack() = coef_[i];
-	sv_indicator[dataset_index[i]] = true;
-	n_sv_++;
-      }
-      else {
-	coef.PushBack() = 0;
-      }
-    }
-    printf("Number of support vectors: %d.\n", n_sv_);
-  }
-  else if (learner_typeid_ == 1) {// SVM_R
-    // TODO
-  }
+  // TODO
 }
 */
 
