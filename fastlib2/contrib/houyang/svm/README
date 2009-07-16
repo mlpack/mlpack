@@ -114,10 +114,10 @@ svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv 
 
 ------Using Dual Coordinate Descent------
 1.L1-SVM, display objective values
-svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=cd --n_epochs=100 --objvalue=1
+svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=cd --objvalue=1 --n_epochs=100
 
 2.L2-SVM, display objective values
-svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=cd --regularization=2 --n_epochs=100 --objvalue=1
+svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=cd --regularization=2 --objvalue=1 --n_epochs=100
 
 
 ------Using FW---------

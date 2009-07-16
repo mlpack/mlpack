@@ -283,7 +283,7 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       QD[i] = diag_n;
     }
     for (j=0; j< n_features_; j++) {
-      QD[i] = QD[i] + sqrt( datamatrix_.get(j, i) );
+      QD[i] = QD[i] + math::Sqr( datamatrix_.get(j, i) );
     }
     QD[i] = QD[i] + 1;
   }
@@ -300,7 +300,7 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 
   /* Begin CD outer iterations */
   epo = 0;
-  while (stopping_condition == 0) {
+  while (1) {
     /* To mimic the online learning senario, in each epoch, 
        we randomly permutate the training set, indexed by old_from_new */
     for (i=0; i<n_data_; i++) {
@@ -314,7 +314,6 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     pgrad_max_new = -INFINITY;
     pgrad_min_new = INFINITY;
 
-    t = 0;
     /* Begin CD inner iterations */
     for (t=0; t <= n_iter_; t++) {
       wi = old_from_new[t % n_data_];
@@ -363,10 +362,10 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       }
       */
       
-      if (alpha_[wi] <= CD_ALPHA_ZERO) {
+      if ( alpha_[wi] <= CD_ALPHA_ZERO ) {
 	pgrad = min(G, 0.0);
       }
-      else if ( (C-alpha_[wi]) <= CD_ALPHA_ZERO) {
+      else if ( alpha_[wi] >= (C-CD_ALPHA_ZERO) ) {
 	pgrad = max(G, 0.0);
       }
       else {
@@ -376,9 +375,9 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       pgrad_max_new = max(pgrad_max_new, pgrad);
       pgrad_min_new = min(pgrad_min_new, pgrad);
 
-      if ( fabs(pgrad)>1.0e-12 ) {
+      if ( fabs(pgrad) > 1.0e-12 ) {
 	double alpha_old = alpha_[wi];
-	alpha_[wi] = min(  max(alpha_[wi]-G/QD[wi], 0.0), C );
+	alpha_[wi] = min(  max( alpha_[wi]-G/QD[wi], 0.0 ), C );
 	diff = (alpha_[wi]-alpha_old) * yi;
 	for (j=0; j<n_features_bias_; j++) {
 	  w_[j] = w_[j] + diff * xi[j];
@@ -408,7 +407,7 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       stopping_condition = 2;
       break;
     }
-  } // for epo
+  } // while
   
   if (stopping_condition == 1) {
     printf("CD terminates since the accuracy %f reached !!! Number of epochs run: %d\n", accuracy_, epo);
@@ -423,7 +422,7 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     double v = 0;
     index_t n_sv = 0;
     for (j=0; j<n_features_bias_; j++) {
-      v += w_[j];
+      v += math::Sqr(w_[j]);
     }
     for (i=0; i<n_alpha_; i++) {
       if (y_[i] > 0) {
