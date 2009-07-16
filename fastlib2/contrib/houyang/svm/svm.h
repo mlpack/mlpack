@@ -438,6 +438,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	param_feed_db.Init();
 	param_feed_db.PushBack() = param_.Cp_;
 	param_feed_db.PushBack() = param_.Cn_;
+	param_feed_db.PushBack() = param_.regularization_;
 	param_feed_db.PushBack() = param_.n_epochs_;
 	param_feed_db.PushBack() = param_.n_iter_;
 	param_feed_db.PushBack() = param_.accuracy_;
@@ -828,6 +829,7 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
 	for(k = 0; k < sv_list_ct_[j]; k++) {
 	  sum += sv_coef_.get(i, sv_list_startpos_[j]+k) * keval[sv_list_startpos_[j]+k];
 	}
+	sum += models_[ct].bias_;
       }
       else if (opt_method_== "sgd") {
 	if (param_.kerneltypeid_== 0) { // linear
@@ -843,11 +845,18 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
 	    sum += sv_coef_.get(i, sv_list_startpos_[j]+k) * keval[sv_list_startpos_[j]+k];
 	  }
 	}
+	sum += models_[ct].bias_;
       }
-      else if (opt_method_== "cd" || opt_method_== "pegasos") {
+      else if (opt_method_== "pegasos") {
 	sum = la::Dot(models_[ct].w_, datum);
+	// TODO: add bias term
       }
-      sum += models_[ct].bias_;
+      else if (opt_method_== "cd") {
+	Vector w_no_bias;
+	models_[ct].w_.MakeSubvector(0, num_features_, &w_no_bias);
+	sum = la::Dot(w_no_bias, datum);
+	sum += (models_[ct].w_)[num_features_]; // add bias term
+      }
       values[ct] = sum;
       ct++;
     }
