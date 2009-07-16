@@ -111,6 +111,15 @@ svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv 
 2.Linear Pegasos, stopping criterion: number of epochs
 svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=pegasos --n_epochs=10
 
+
+------Using Dual Coordinate Descent------
+1.L1-SVM, display objective values
+svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=cd --n_epochs=100 --objvalue=1
+
+2.L2-SVM, display objective values
+svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=cd --regularization=2 --n_epochs=100 --objvalue=1
+
+
 ------Using FW---------
 svm_main --learner_name=svm_c --mode=train_test --train_data=ijcnn1_train_sort.csv --test_data=ijcnn1_test_sort.csv --kernel=gaussian --normalize=0 --opt=fw --p_rand=1333 --accuracy=0.001 --sigma=0.61 --c=5
 

@@ -3,19 +3,11 @@
  *
  * @file opt_cd.h
  *
- * This head file contains functions for performing Coordinate Descent based optimization for linear L1- and L2- SVMs
+ * This head file contains functions for performing Dual Coordinate Descent based optimization for linear L1- and L2- SVMs
  *
- * The algorithms in the following papers are implemented:
+ * The algorithms in the following paper is implemented:
  *
- * 1. Primal Coordinate Descent for L2-SVM
- * @ARTICLE{Chang_PCD,
- * author = "Kai-Wei Chang, Cho-Jui Hsieh, Chih-Jen Lin",
- * title = "{Coordinate Descent Method for Large-scale L2-loss Linear Support Vector Machines}",
- * booktitle = "{Journal of Machines Learning Research}",
- * year = 2008,
- * }
- *
- * 2. Dual Coordinate Descent for L1- and L2-SVM
+ * 1. Dual Coordinate Descent for L1- and L2-SVM
  * @ARTICLE{Hsieh_DCD,
  * author = "Cho-Jui Hsieh, Kai-Wei Chang, Chih-Jen Lin",
  * title = "{A Dual Coordinate Descent Method for Large Scale Linear SVM}",
@@ -44,12 +36,16 @@ class CD {
 
  private:
   int learner_typeid_;
+  int regularization_; // do L2-SVM or L1-SVM, default: L1
 
   Kernel kernel_;
   const Dataset *dataset_;
   index_t n_data_; /* number of data samples */
   index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
+  index_t n_features_bias_; /* # of features + 1 , for the bias term */
   Matrix datamatrix_; /* alias for the data matrix */
+
+  Vector alpha_; /* the Lagrangian multipliers */
 
   Vector coef_; /* alpha*y, to be optimized */
   index_t n_alpha_; /* number of lagrangian multipliers in the dual */
@@ -64,6 +60,8 @@ class CD {
 
   // parameters
   double C_; // for SVM_C
+  double Cp_; // C for positive samples
+  double Cn_; // C for negative samples
   double epsilon_; // for SVM_R
 
   double lambda_; // regularization parameter. lambda = 1/(C*n_data)
@@ -71,9 +69,6 @@ class CD {
   index_t n_epochs_; // number of epochs
   double accuracy_; // accuracy for stopping creterion
   double t_;
-
-  ArrayList<index_t> old_from_new_; // for generating a random sequence of training data
-  ArrayList<index_t> new_from_old_; // for generating a random sequence of training data
 
  public:
   CD() {}
@@ -85,10 +80,14 @@ class CD {
   void InitPara(int learner_typeid, ArrayList<double> &param_) {
     // init parameters
     if (learner_typeid == 0) { // SVM_C
-      C_ = param_[0];
-      n_epochs_ = (index_t)param_[2];
-      n_iter_ = (index_t)param_[3];
-      accuracy_ = param_[4];
+      Cp_ = param_[0];
+      Cn_ = param_[1];
+      DEBUG_ASSERT(Cp_ != 0);
+      DEBUG_ASSERT(Cn_ != 0);
+      regularization_ = (int) param_[2];
+      n_epochs_ = (index_t)param_[3];
+      n_iter_ = (index_t)param_[4];
+      accuracy_ = param_[5];
     }
     else if (learner_typeid == 1) { // SVM_R
     }
@@ -209,8 +208,14 @@ void CD<TKernel>::LearnersInit_(int learner_typeid) {
   learner_typeid_ = learner_typeid;
   
   if (learner_typeid_ == 0) { // SVM_C
-    w_.Init(n_features_);
+    n_alpha_ = n_data_;
+    alpha_.Init(n_alpha_);
+    alpha_.SetZero();
+
+    w_.Init(n_features_bias_);
     w_.SetZero();
+
+    alpha_.Init(n_alpha_);
     
     coef_.Init(0); // not used, plain init
 
@@ -221,16 +226,6 @@ void CD<TKernel>::LearnersInit_(int learner_typeid) {
   }
   else if (learner_typeid_ == 1) { // SVM_R
     // TODO
-    n_alpha_ = 2 * n_data_;
-    
-    coef_.Init(n_alpha_);
-    coef_.SetZero();
-
-    y_.Init(n_alpha_);
-    for (i = 0; i < n_data_; i++) {
-      y_[i] = 1; // -> alpha_i
-      y_[i + n_data_] = -1; // -> alpha_i^*
-    }
   }
   else if (learner_typeid_ == 2) { // SVM_DE
     // TODO
@@ -245,13 +240,53 @@ void CD<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
-  index_t i, j, epo, ct;
+  index_t i, j, epo, t, wi;
+  int yi;
+  double G, C, diff;
+  int stopping_condition = 0;
   
   /* general learner-independent initializations */
   dataset_ = dataset_in;
   datamatrix_.Alias(dataset_->matrix());
   n_data_ = datamatrix_.n_cols();
   n_features_ = datamatrix_.n_rows() - 1;
+  n_features_bias_ = n_features_ + 1;
+
+  /* learners initialization */
+  LearnersInit_(learner_typeid);
+
+  double pgrad; // projected gradient
+  double pgrad_max_old = INFINITY;
+  double pgrad_min_old = -INFINITY;
+  double pgrad_max_new;
+  double pgrad_min_new;
+  double diag_p = 0.5/ Cp_;
+  double diag_n = 0.5/ Cn_;
+  double upper_bound_p = INFINITY;
+  double upper_bound_n = INFINITY;
+  Vector QD;
+  QD.Init(n_alpha_);
+  QD.SetZero();
+
+  if (regularization_ == 1) { // L1-SVM
+    diag_p = 0;
+    diag_n = 0;
+    upper_bound_p = Cp_;
+    upper_bound_n = Cn_;
+  }
+  
+  for (i=0; i< n_alpha_; i++) {
+    if (y_[i] >0) {
+      QD[i] = diag_p;
+    }
+    else {
+      QD[i] = diag_n;
+    }
+    for (j=0; j< n_features_; j++) {
+      QD[i] = QD[i] + sqrt( datamatrix_.get(j, i) );
+    }
+    QD[i] = QD[i] + 1;
+  }
 
   if (n_epochs_ > 0) { // # of epochs provided, use it
     n_iter_ = n_data_;
@@ -260,55 +295,152 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     n_epochs_ = 1; // not exactly one epoch, just use it for one loop
   }
   
-  DEBUG_ASSERT(C_ != 0);
-  lambda_ = 1.0/(C_*n_data_);
-  bias_ = 0.0;
-  
+  ArrayList<index_t> old_from_new;
+  old_from_new.Init(n_data_);
 
-  /* learners initialization */
-  LearnersInit_(learner_typeid);
-  old_from_new_.Init(n_data_);
-
-  index_t work_idx_old = 0;
-
-  double sqrt_n = sqrt(n_data_);
-  double eta0 = sqrt_n / max(1.0, LossFunctionGradient_(learner_typeid, -sqrt_n)); // initial step length
-  double eta_grad = INFINITY;
-  t_ = 1.0 / (eta0 * lambda_);
-
-  /* Begin CD iterations */
-  for (epo = 0; epo<n_epochs_; epo++) {
+  /* Begin CD outer iterations */
+  epo = 0;
+  while (stopping_condition == 0) {
     /* To mimic the online learning senario, in each epoch, 
-       we randomly permutate the training set, indexed by old_from_new_ */
+       we randomly permutate the training set, indexed by old_from_new */
     for (i=0; i<n_data_; i++) {
-      old_from_new_[i] = i; 
+      old_from_new[i] = i; 
     }
     for (i=0; i<n_data_; i++) {
       j = rand() % n_data_;
-      swap(old_from_new_[i], old_from_new_[j]);
+      swap(old_from_new[i], old_from_new[j]);
     }
 
-    ct = 0;
-    while (ct <= n_iter_) {
-      work_idx_old = old_from_new_[ct % n_data_];
+    pgrad_max_new = -INFINITY;
+    pgrad_min_new = INFINITY;
+
+    t = 0;
+    /* Begin CD inner iterations */
+    for (t=0; t <= n_iter_; t++) {
+      wi = old_from_new[t % n_data_];
+
+      Vector xi;
+      datamatrix_.MakeColumnVector(wi, &xi);
+      xi[n_features_] = 1.0; // for bias term, x <- [x,1], w <- [w, b]
+      yi = y_[wi];
       
-      Vector xt;
-      datamatrix_.MakeColumnSubvector(work_idx_old, 0, n_features_, &xt);
-      double yt = y_[work_idx_old];
-      double yt_hat = la::Dot(w_, xt) + bias_;
-      double yy_hat = yt * yt_hat;
-      if (yy_hat < 1.0) {
-	// update w by Stochastic Gradient Descent: w_{t+1} = (1-eta*lambda) * w_t + eta * [yt*xt]^+
-	eta_grad = LossFunctionGradient_(learner_typeid, yy_hat) * yt; // also need *xt, but it's done in next line
-	la::AddExpert(eta_grad, xt, &w_); // Note: moving w's scaling calculation to the testing session is faster
-	// update bias
-	bias_ += eta_grad * 0.01;
+      G = 0;
+      for (j=0; j< n_features_bias_; j++) {
+	G += w_[j] * xi[j];
       }
-      t_ += 1.0;
-      ct ++;
+      G = G * yi - 1;
+
+      if (yi > 0) {
+	C = upper_bound_p;
+	G += alpha_[wi] * diag_p;
+      }
+      else {
+	C = upper_bound_n;
+	G += alpha_[wi] * diag_n;
+      }
+      
+      /*
+      // TODO: shrinking
+      pgrad = 0;
+      if (alpha_[wi] == 0) {
+	if (G > pgrad_max_old) {
+	  //shrinking
+	}
+	else if (G < 0) {
+	  pgrad = G;
+	}
+      }
+      else if (alpha_[wi] == C) {
+	if (G < pgrad_min_old) {
+	  //shrinking
+	}
+	else if (G > 0) {
+	  pgrad = G;
+	}
+      }
+      else {
+	pgrad = G;
+      }
+      */
+      
+      if (alpha_[wi] <= CD_ALPHA_ZERO) {
+	pgrad = min(G, 0.0);
+      }
+      else if ( (C-alpha_[wi]) <= CD_ALPHA_ZERO) {
+	pgrad = max(G, 0.0);
+      }
+      else {
+	pgrad = G;
+      }
+
+      pgrad_max_new = max(pgrad_max_new, pgrad);
+      pgrad_min_new = min(pgrad_min_new, pgrad);
+
+      if ( fabs(pgrad)>1.0e-12 ) {
+	double alpha_old = alpha_[wi];
+	alpha_[wi] = min(  max(alpha_[wi]-G/QD[wi], 0.0), C );
+	diff = (alpha_[wi]-alpha_old) * yi;
+	for (j=0; j<n_features_bias_; j++) {
+	  w_[j] = w_[j] + diff * xi[j];
+	}
+      }
+    } // for t
+
+    // check optimality
+    //printf("eps:%d, pgrad_max_new=%lf pgrad_min_new=%lf\n", epo, pgrad_max_new, pgrad_min_new);
+    if (pgrad_max_new - pgrad_min_new <= accuracy_) {
+      // TODO: unshrinking
+      stopping_condition = 1;
+      break;
     }
+    
+    pgrad_max_old = pgrad_max_new;
+    pgrad_min_old = pgrad_min_new;
+    if (pgrad_max_old <= 0) {
+      pgrad_max_old = INFINITY;
+    }
+    if (pgrad_min_old >= 0) {
+      pgrad_min_old = -INFINITY;
+    }
+    
+    epo ++;
+    if (epo >= n_epochs_) {
+      stopping_condition = 2;
+      break;
+    }
+  } // for epo
+  
+  if (stopping_condition == 1) {
+    printf("CD terminates since the accuracy %f reached !!! Number of epochs run: %d\n", accuracy_, epo);
+  }
+  else if (stopping_condition == 2) {
+    printf("CD terminates since the number of epochs %d reached !!!\n", n_epochs_);
   }
   
+  // Calculate objective value; default: not calculation to save time
+  int objvalue = fx_param_int(NULL, "objvalue", 0);
+  if (objvalue > 0) {
+    double v = 0;
+    index_t n_sv = 0;
+    for (j=0; j<n_features_bias_; j++) {
+      v += w_[j];
+    }
+    for (i=0; i<n_alpha_; i++) {
+      if (y_[i] > 0) {
+	v += alpha_[i] * (alpha_[i] * diag_p - 2);
+      }
+      else {
+	v += alpha_[i] * (alpha_[i] * diag_n - 2);
+      }
+      if (alpha_[i] > CD_ALPHA_ZERO) {
+	n_sv ++;
+      }
+    }
+    
+    printf("Objective value: %lf\n", v);
+    printf("Number of SVs: %d\n", n_sv);
+  }
+
 }
 
 
