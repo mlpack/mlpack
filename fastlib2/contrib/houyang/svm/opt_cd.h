@@ -42,7 +42,7 @@ class CD {
   const Dataset *dataset_;
   index_t n_data_; /* number of data samples */
   index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
-  index_t n_features_bias_; /* # of features + 1 , for the bias term */
+  index_t n_features_bias_; /* # of features + 1 , [x, 1], for the bias term */
   Matrix datamatrix_; /* alias for the data matrix */
 
   Vector alpha_; /* the Lagrangian multipliers */
@@ -50,13 +50,9 @@ class CD {
   Vector coef_; /* alpha*y, to be optimized */
   index_t n_alpha_; /* number of lagrangian multipliers in the dual */
   
-  index_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
-  double cached_kernel_value_; /* cache */
-
   ArrayList<int> y_; /* list that stores "labels" */
 
-  Vector w_; /* the slope of the decision hyperplane y=w^T x+b */
-  double bias_;
+  Vector w_; /* the slope of the decision hyperplane, including bias: [w, b] */
 
   // parameters
   double C_; // for SVM_C
@@ -97,10 +93,6 @@ class CD {
 
   Kernel& kernel() {
     return kernel_;
-  }
-
-  double Bias() const {
-    return bias_;
   }
 
   Vector* GetW() {
@@ -169,31 +161,6 @@ class CD {
     return C_;
   }
 
-  /**
-   * Calculate kernel values
-   */
-  double CalcKernelValue_(index_t i, index_t j) {
-    // for SVM_R where n_alpha_==2*n_data_
-    if (learner_typeid_ == 1) {
-      i = i >= n_data_ ? (i-n_data_) : i;
-      j = j >= n_data_ ? (j-n_data_) : j;
-    }
-
-    // Check cache
-    //if (i == i_cache_ && j == j_cache_) {
-    //  return cached_kernel_value_;
-    //}
-
-    double *v_i, *v_j;
-    v_i = datamatrix_.GetColumnPtr(i);
-    v_j = datamatrix_.GetColumnPtr(j);
-
-    // Do Caching. Store the recently caculated kernel values.
-    //i_cache_ = i;
-    //j_cache_ = j;
-    cached_kernel_value_ = kernel_.Eval(v_i, v_j, n_features_);
-    return cached_kernel_value_;
-  }
 };
 
 
@@ -320,7 +287,7 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 
       Vector xi;
       datamatrix_.MakeColumnVector(wi, &xi);
-      xi[n_features_] = 1.0; // for bias term, x <- [x,1], w <- [w, b]
+      xi[n_features_] = 1.0; // for bias term: x <- [x,1], w <- [w, b]
       yi = y_[wi];
       
       G = 0;
@@ -416,7 +383,7 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     printf("CD terminates since the number of epochs %d reached !!!\n", n_epochs_);
   }
   
-  // Calculate objective value; default: not calculation to save time
+  // Calculate objective value; default: no calculation to save time
   int objvalue = fx_param_int(NULL, "objvalue", 0);
   if (objvalue > 0) {
     double v = 0;
