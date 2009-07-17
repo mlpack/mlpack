@@ -455,8 +455,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 
 	/* Get the trained bi-class model */
 	models_[ct].coef_.Init(); // alpha*y, dummy init, used for nonlinear SVM only
-	models_[ct].w_.Copy(*(cd.GetW())); // w
-	models_[ct].bias_ = cd.Bias(); // bias
+	models_[ct].w_.Copy(*(cd.GetW())); // [w, b]
       }
       else if (opt_method_== "pegasos") {
 	/* Initialize PEGASOS parameters */
@@ -481,8 +480,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 
 	/* Get the trained bi-class model */
 	models_[ct].coef_.Init(); // alpha*y, dummy init, used for nonlinear SVM only
-	models_[ct].w_.Copy(*(pegasos.GetW())); // w
-	models_[ct].bias_ = pegasos.Bias(); // bias
+	models_[ct].w_.Copy(*(pegasos.GetW())); // [w, b]
       }
       else if (opt_method_== "hcy") {
 	/* Initialize HCY parameters */
@@ -847,11 +845,7 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
 	}
 	sum += models_[ct].bias_;
       }
-      else if (opt_method_== "pegasos") {
-	sum = la::Dot(models_[ct].w_, datum);
-	// TODO: add bias term
-      }
-      else if (opt_method_== "cd") {
+      else if (opt_method_== "cd" || opt_method_== "pegasos") {
 	Vector w_no_bias;
 	models_[ct].w_.MakeSubvector(0, num_features_, &w_no_bias);
 	sum = la::Dot(w_no_bias, datum);

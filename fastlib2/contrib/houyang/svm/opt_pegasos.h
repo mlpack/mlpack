@@ -43,6 +43,7 @@ class PEGASOS {
   const Dataset *dataset_;
   index_t n_data_; /* number of data samples */
   index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
+  index_t n_features_bias_; /* # of features + 1 , [x, 1], for the bias term */
   Matrix datamatrix_; /* alias for the data matrix */
 
   Vector coef_; /* alpha*y, to be optimized */
@@ -54,7 +55,7 @@ class PEGASOS {
 
   ArrayList<int> y_; /* list that stores "labels" */
 
-  Vector w_; /* the slope of the decision hyperplane y=w^T x+b */
+  Vector w_; /* the slope of the decision hyperplane, including bias: [w, b] */
   double bias_;
   //double scale_w_; // the scale for w
 
@@ -97,10 +98,6 @@ class PEGASOS {
 
   Kernel& kernel() {
     return kernel_;
-  }
-
-  double Bias() const {
-    return bias_;
   }
 
   Vector* GetW() {
@@ -216,7 +213,7 @@ void PEGASOS<TKernel>::LearnersInit_(int learner_typeid) {
   
   if (learner_typeid_ == 0) { // SVM_C
     if (b_linear_) { // linear SVM
-      w_.Init(n_features_);
+      w_.Init(n_features_bias_);
       w_.SetZero();
 
       coef_.Init(0); // not used, plain init
@@ -269,6 +266,7 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   datamatrix_.Alias(dataset_->matrix());
   n_data_ = datamatrix_.n_cols();
   n_features_ = datamatrix_.n_rows() - 1;
+  n_features_bias_ = n_features_ + 1;
 
   if (n_epochs_ > 0) { // # of epochs provided, use it
     n_iter_ = n_data_;
@@ -309,7 +307,8 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	work_idx_old = old_from_new_[ct % n_data_];
 	eta_ = 1.0 / (lambda_ * (t_+2)); // update step length
 	Vector xt;
-	datamatrix_.MakeColumnSubvector(work_idx_old, 0, n_features_, &xt);
+	datamatrix_.MakeColumnVector(work_idx_old, &xt);
+	xt[n_features_] = 1.0; // for bias term: x <- [x,1], w <- [w, b]
 	yt = y_[work_idx_old];
 	yt_hat = la::Dot(w_, xt);
 	yy_hat = yt * yt_hat;
@@ -317,7 +316,7 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	if (cur_loss <= 0.0) {
 	  cur_loss = 0.0;
 	}
-	if (do_scale_) { // pegasos
+	if (do_scale_) { // pegasos does scaling on w
 	  la::Scale(1.0 - eta_*lambda_ , &w_);
 	  if (cur_loss > 0.0) {
 	    la::AddExpert( eta_* yt, xt, &w_ );  // w_{t+1} = (1-eta*lambda) * w_t + eta * [yt*xt]^+

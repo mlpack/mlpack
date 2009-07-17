@@ -56,6 +56,7 @@ Explanation of arguments:
 16. n_iter (optional): maximum number of iterations. Default value: 1e8
 17. n_epochs (optional, for stochastic algorithms): number of epochs; when provided, n_iter <- n_data_ * n_epochs; should set to 1 to mimic online learning senario
 18. regularization (optional): do L1-SVM (1) or L2-SVM (2). Default value: 1 -> do L1-SVM
+19. objvalue (optional): display (1) the value of the objective function or not (0). Default value: 0 -> do not display
 
 Examples:
 --------------------------------------------------- SVM Classification ------------------------------------------------
