@@ -155,7 +155,7 @@ class SGD {
 	return 0.0;
     }
   }
-
+
   /**
    * Hinge Loss function
    */
@@ -300,7 +300,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     double yt, yt_hat, yy_hat;
     double sqrt_n = sqrt(n_data_);
     double eta0 = sqrt_n / max(1.0, LossFunctionGradient_(learner_typeid, -sqrt_n)); // initial step length
-    double eta_grad = INFINITY;
+    double eta_grad = 0;
     t_ = 1.0 / (eta0 * lambda_);
     scale_w_ = 1.0;
 
@@ -317,7 +317,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       
       ct = 0;
       while (ct <= n_iter_) {
-	work_idx_old = old_from_new_[ct % n_data_];
+	work_idx_old = old_from_new_[ct % n_data_];
 	eta_ = 1.0 / (lambda_ * t_); // update step size
 	scale_w_ = scale_w_ - scale_w_ / t_; // update scale of w
 	//la::Scale(scale_w, &w_); // Note: moving w's scaling calculation to the testing session is faster
