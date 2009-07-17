@@ -33,7 +33,7 @@
 #include "fastlib/fastlib.h"
 
 // tolerance of sacale_w
-const double SCALE_W_TOLERANCE = 1.0e-9;
+const double SGD_SCALE_W_TOLERANCE = 1.0e-9;
 // threshold that determines whether an alpha is a SV or not
 const double SGD_ALPHA_ZERO = 1.0e-7;
 
@@ -296,7 +296,8 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   index_t work_idx_old = 0;
 
   /* Begin SGD iterations */
-  if (b_linear_) { // linear SVM, output: w, bias    
+  if (b_linear_) { // linear SVM, output: w, bias
+    double yt, yt_hat, yy_hat;
     double sqrt_n = sqrt(n_data_);
     double eta0 = sqrt_n / max(1.0, LossFunctionGradient_(learner_typeid, -sqrt_n)); // initial step length
     double eta_grad = INFINITY;
@@ -321,16 +322,17 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	scale_w_ = scale_w_ - scale_w_ / t_; // update scale of w
 	//la::Scale(scale_w, &w_); // Note: moving w's scaling calculation to the testing session is faster
 	
-	if (scale_w_ < SCALE_W_TOLERANCE) {
+	if (scale_w_ < SGD_SCALE_W_TOLERANCE) {
 	  la::Scale(scale_w_, &w_);
 	  scale_w_ = 1.0;
 	}
 	
 	Vector xt;
 	datamatrix_.MakeColumnSubvector(work_idx_old, 0, n_features_, &xt);
-	double yt = y_[work_idx_old];
-	double yt_hat = la::Dot(w_, xt) * scale_w_ + bias_;
-	double yy_hat = yt * yt_hat;
+	yt = y_[work_idx_old];
+	yt_hat = la::Dot(w_, xt) * scale_w_ + bias_;
+	yy_hat = yt * yt_hat;
+
 	if (yy_hat < 1.0) {
 	  // update w by Stochastic Gradient Descent: w_{t+1} = (1-eta*lambda) * w_t + eta * [yt*xt]^+
 	  eta_grad = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // also need *xt, but it's done in next line
