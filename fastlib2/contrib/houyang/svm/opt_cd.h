@@ -209,7 +209,7 @@ template<typename TKernel>
 void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   index_t i, j, epo, t, wi;
   int yi;
-  double G, C, diff;
+  double G, C, diff, gap;
   int stopping_condition = 0;
   
   /* general learner-independent initializations */
@@ -353,9 +353,10 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     } // for t
 
     // check optimality
-    //printf("eps:%d, pgrad_max_new=%lf pgrad_min_new=%lf\n", epo, pgrad_max_new, pgrad_min_new);
-    if (pgrad_max_new - pgrad_min_new <= accuracy_) {
+    gap = pgrad_max_new - pgrad_min_new;
+    if (gap <= accuracy_) {
       // TODO: unshrinking
+      //printf("eps:%d, pgrad_max_new=%lf pgrad_min_new=%lf, gap=%lf\n", epo, pgrad_max_new, pgrad_min_new, gap);
       stopping_condition = 1;
       break;
     }
@@ -381,6 +382,7 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   }
   else if (stopping_condition == 2) {
     printf("CD terminates since the number of epochs %d reached !!!\n", n_epochs_);
+    printf("Gap = %lf\n", gap);
   }
   
   // Calculate objective value; default: no calculation to save time
