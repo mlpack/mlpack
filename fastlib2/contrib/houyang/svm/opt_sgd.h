@@ -155,7 +155,7 @@ class SGD {
 	return 0.0;
     }
   }
-
+
   /**
    * Hinge Loss function
    */
@@ -317,7 +317,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       
       ct = 0;
       while (ct <= n_iter_) {
-	work_idx_old = old_from_new_[ct % n_data_];
+	work_idx_old = old_from_new_[ct % n_data_];
 	eta_ = 1.0 / (lambda_ * t_); // update step size
 	scale_w_ = scale_w_ - scale_w_ / t_; // update scale of w
 	//la::Scale(scale_w, &w_); // Note: moving w's scaling calculation to the testing session is faster
@@ -325,7 +325,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	if (scale_w_ < SGD_SCALE_W_TOLERANCE) {
 	  la::Scale(scale_w_, &w_);
 	  scale_w_ = 1.0;
-	  printf("epo %d: scale_w tolerance reached.\n", epo);
+	  //printf("epo %d: scale_w tolerance reached.\n", epo);
 	}
 	
 	Vector xt;

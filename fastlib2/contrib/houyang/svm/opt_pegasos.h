@@ -335,7 +335,7 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	    w_norm_sq += math::Sqr(w_[i]);
 	  }
 	  if (w_norm_sq * lambda_ > 1.0) {
-	    printf("epo:%d, projection\n", epo);
+	    //printf("epo:%d, projection\n", epo);
 	    la::Scale( sqrt(1.0/ (lambda_*w_norm_sq)), &w_);
 	  }
 	}
