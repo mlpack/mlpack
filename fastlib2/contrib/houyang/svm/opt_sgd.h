@@ -302,7 +302,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     double eta0 = sqrt_n / max(1.0, LossFunctionGradient_(learner_typeid, -sqrt_n)); // initial step length
     double eta_grad = INFINITY;
     t_ = 1.0 / (eta0 * lambda_);
-    scale_w_ = 0.0;
+    scale_w_ = 1.0;
 
     for (epo = 0; epo<n_epochs_; epo++) {
       /* To mimic the online learning senario, in each epoch, 
@@ -321,10 +321,11 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	eta_ = 1.0 / (lambda_ * t_); // update step size
 	scale_w_ = scale_w_ - scale_w_ / t_; // update scale of w
 	//la::Scale(scale_w, &w_); // Note: moving w's scaling calculation to the testing session is faster
-	
+
 	if (scale_w_ < SGD_SCALE_W_TOLERANCE) {
 	  la::Scale(scale_w_, &w_);
 	  scale_w_ = 1.0;
+	  printf("epo %d: scale_w tolerance reached.\n", epo);
 	}
 	
 	Vector xt;
