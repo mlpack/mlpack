@@ -290,9 +290,10 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 
   /* Begin Pegasos iterations */
   if (b_linear_) { // linear SVM, output: w, bias
-    double yt, yt_hat, yy_hat, cur_loss;
+    double yt, yt_hat, yy_hat;
     double sqrt_n = sqrt(n_data_);
     double eta0 = sqrt_n / max(1.0, LossFunctionGradient_(learner_typeid, -sqrt_n)); // initial step length
+    double eta_grad = 0;
     t_ = 1.0 / (eta0 * lambda_);
 
     for (epo = 0; epo<n_epochs_; epo++) {
@@ -318,24 +319,13 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	yt_hat = la::Dot(w_, xt);
 	yy_hat = yt * yt_hat;
 
-	cur_loss = 1.0 - yy_hat;
-	if (cur_loss <= 0.0) {
-	  cur_loss = 0.0;
-	}
+	// w_{t+1} = (1-eta*lambda) * w_t + eta * [yt*xt]^+
 	if (do_scale_) { // pegasos does scaling on w
-	  la::Scale(1.0 - eta_*lambda_ , &w_);
-	  if (cur_loss > 0.0) {
-	    la::AddExpert( eta_* yt, xt, &w_ );  // w_{t+1} = (1-eta*lambda) * w_t + eta * [yt*xt]^+
-	    // update bias
-	    //bias_ += eta_ * yt * 0.01;
-	  }
+	  la::Scale(1.0 - 1.0 / t_ , &w_);
 	}
-	else { // simple projection with no scaling on w
-	  if (cur_loss > 0.0) {
-	    la::AddExpert( eta_* yt, xt, &w_ );  // w_{t+1} = w_t + eta * [yt*xt]^+
-	    // update bias
-	    //bias_ += eta_ * yt * 0.01;
-	  }
+	if (yy_hat < 1.0) {
+	    eta_grad = eta_ * LossFunctionGradient_(learner_typeid, yy_hat) * yt; // also need *xt, but it's done in next line
+	    la::AddExpert(eta_grad, xt, &w_);
 	}
 	
 	if (do_projection_) {
@@ -345,6 +335,7 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	    w_norm_sq += math::Sqr(w_[i]);
 	  }
 	  if (w_norm_sq * lambda_ > 1.0) {
+	    printf("epo:%d, projection\n", epo);
 	    la::Scale( sqrt(1.0/ (lambda_*w_norm_sq)), &w_);
 	  }
 	}
