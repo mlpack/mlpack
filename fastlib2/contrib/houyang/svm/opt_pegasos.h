@@ -344,6 +344,30 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	ct ++;
       }
     }// for epo
+
+    // Calculate objective value; default: no calculation to save time
+    int objvalue = fx_param_int(NULL, "objvalue", 0);
+    if (objvalue > 0) {
+      double v = 0.0, hinge_loss = 0.0, loss_sum= 0.0;
+      
+      // primal objective value
+      for (i=0; i< n_data_; i++) {
+	Vector xt;
+	datamatrix_.MakeColumnVector(i, &xt);
+	xt[n_features_] = 1.0; // for bias term: x <- [x,1], w <- [w, b]
+	hinge_loss = 1- y_[i] * la::Dot(w_, xt);
+	if (hinge_loss > 0) {
+	  loss_sum += hinge_loss * C_;
+	}
+      }
+      for (j=0; j<n_features_; j++) {
+	v += math::Sqr(w_[j]);
+      }
+      v = v / 2.0 + loss_sum;
+      
+      printf("Primal objective value: %lf\n", v);
+    }
+
   }
   else { // nonlinear SVM, output: coefs(i.e. alpha*y), bias
     // TODO

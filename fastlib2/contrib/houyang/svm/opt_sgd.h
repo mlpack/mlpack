@@ -345,11 +345,34 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	ct ++;
       }
     } // for epo
+
+    // Calculate objective value; default: no calculation to save time
+    int objvalue = fx_param_int(NULL, "objvalue", 0);
+    if (objvalue > 0) {
+      double v = 0.0, hinge_loss = 0.0, loss_sum= 0.0;
+      
+      // primal objective value
+      for (i=0; i< n_data_; i++) {
+	Vector xt;
+	datamatrix_.MakeColumnSubvector(i, 0, n_features_, &xt);
+	hinge_loss = 1- y_[i] * (scale_w_ * la::Dot(w_, xt) + bias_);
+	if (hinge_loss > 0) {
+	  loss_sum += hinge_loss * C_;
+	}
+      }
+      for (j=0; j<n_features_; j++) {
+	v += math::Sqr(w_[j]);
+      }
+      v = v * scale_w_ * scale_w_ / 2.0 + loss_sum;
+      
+      printf("Primal objective value: %lf\n", v);
+    }
+
   }
   else { // nonlinear SVM, output: coefs(i.e. alpha*y), bias
     // it's more expensive to calc the accuracy then linear SVM, so we just use n_iter_ as stop criterion
     double delta;
-
+    
     Vector coef_long;
     n_iter_ = n_iter_ * n_epochs_;
     coef_long.Init(n_iter_);
