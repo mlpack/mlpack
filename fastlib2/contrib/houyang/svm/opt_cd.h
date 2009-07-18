@@ -388,24 +388,43 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   // Calculate objective value; default: no calculation to save time
   int objvalue = fx_param_int(NULL, "objvalue", 0);
   if (objvalue > 0) {
-    double v = 0;
+    double v = 0.0, hinge_loss = 0.0, loss_sum= 0.0;
     index_t n_sv = 0;
-    for (j=0; j<n_features_bias_; j++) {
-      v += math::Sqr(w_[j]);
-    }
-    for (i=0; i<n_alpha_; i++) {
-      if (y_[i] > 0) {
-	v += alpha_[i] * (alpha_[i] * diag_p - 2);
-      }
-      else {
-	v += alpha_[i] * (alpha_[i] * diag_n - 2);
+
+    // primal objective value
+    for (i=0; i< n_data_; i++) {
+      Vector xi;
+      datamatrix_.MakeColumnVector(i, &xi);
+      xi[n_features_] = 1.0; // for bias term: x <- [x,1], w <- [w, b]
+      hinge_loss = 1- y_[i] * la::Dot(w_, xi);
+      if (hinge_loss > 0) {
+	if (regularization_ == 1) { // L1-SVM
+	  if (y_[i] > 0) {
+	    loss_sum += hinge_loss * Cp_;
+	  }
+	  else {
+	    loss_sum += hinge_loss * Cn_;
+	  }
+	}
+	else if (regularization_ == 2) { // L2-SVM
+	  if (y_[i] > 0) {
+	    loss_sum += hinge_loss * hinge_loss * Cp_;
+	  }
+	  else {
+	    loss_sum += hinge_loss * hinge_loss * Cn_;
+	  }
+	}
       }
       if (alpha_[i] > CD_ALPHA_ZERO) {
 	n_sv ++;
       }
     }
+    for (j=0; j<n_features_bias_; j++) {
+      v += math::Sqr(w_[j]);
+    }
+    v = v / 2.0 + loss_sum;
     
-    printf("Objective value: %lf\n", v);
+    printf("Primal objective value: %lf\n", v);
     printf("Number of SVs: %d\n", n_sv);
   }
 
