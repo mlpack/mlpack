@@ -885,7 +885,7 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
 	models_[ct].w_.MakeSubvector(0, num_features_, &w_no_bias);
 	sum = la::Dot(w_no_bias, datum);
 	sum *= models_[ct].scale_w_;
-	sum += (models_[ct].w_)[num_features_]; // add bias term
+	sum += models_[ct].scale_w_ * (models_[ct].w_)[num_features_]; // add bias term
       }
       else if (opt_method_== "cd" || opt_method_== "pegasos") {
 	Vector w_no_bias;
