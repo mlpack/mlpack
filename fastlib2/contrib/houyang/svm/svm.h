@@ -7,7 +7,8 @@
  * Supported SVM learner type:SVM_C, SVM_R, SVM_Q
  *
  * @see opt_smo.h
- * @see opt_sgd.h
+ * @see opt_sgd.h 
+ * @see opt_sgdwb.h
  * @see opt_cd.h
  * @see opt_pegasos.h
  * @see opt_hcy.h
@@ -22,6 +23,7 @@
 
 #include "opt_smo.h"
 #include "opt_sgd.h"
+#include "opt_sgdwb.h"
 #include "opt_cd.h"
 #include "opt_pegasos.h"
 #include "opt_hcy.h"
@@ -113,7 +115,7 @@ class SVM {
    * Developers may add more learner types if necessary
    */
   int learner_typeid_;
-  // Optimization method: smo, sgd, cd, pegasos, hcy, fw, mfw, sfw, par
+  // Optimization method: smo, sgd, sgdwb, cd, pegasos, hcy, fw, mfw, sfw, par
   String opt_method_;
   /* array of models for storage of the 2-class(binary) classifiers 
      Need to train num_classes_*(num_classes_-1)/2 binary models */
@@ -192,6 +194,7 @@ class SVM {
   typedef TKernel Kernel;
   class SMO<Kernel>;
   class SGD<Kernel>;
+  class SGDWB<Kernel>;
   class CD<Kernel>;
   class PEGASOS<Kernel>;
   class HCY<Kernel>;
@@ -431,6 +434,38 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	  models_[ct].w_.Init(0); // for linear SVM only. not used here
 	}
 	models_[ct].bias_ = sgd.Bias(); // bias
+      }
+      else if (opt_method_== "sgdwb") {
+	/* Initialize SGDWB parameters */
+	ArrayList<double> param_feed_db;
+	param_feed_db.Init();
+	param_feed_db.PushBack() = param_.Cp_;
+	param_feed_db.PushBack() = param_.Cn_;
+	param_feed_db.PushBack() = param_.kerneltypeid_== 0 ? 0.0: 1.0;
+	param_feed_db.PushBack() = param_.n_epochs_;
+	param_feed_db.PushBack() = param_.n_iter_;
+	param_feed_db.PushBack() = param_.accuracy_;
+	SGDWB<Kernel> sgdwb;
+	sgdwb.InitPara(learner_typeid, param_feed_db);
+
+	/* Initialize kernel */
+	sgdwb.kernel().Init(fx_submodule(module, "kernel"));
+
+	/* 2-classes SVM training using SGDWB*/
+	fx_timer_start(NULL, "train_sgdwb");
+	sgdwb.Train(learner_typeid, &dataset_bi);
+	fx_timer_stop(NULL, "train_sgdwb");
+
+	/* Get the trained bi-class model */
+	models_[ct].coef_.Init(); // alpha*y, used for nonlinear SVM only
+	if (param_.kerneltypeid_== 0) { // linear SVM
+	  models_[ct].w_.Copy(*(sgdwb.GetW())); // w
+	  models_[ct].scale_w_ = sgdwb.ScaleW(); // scale of w for linear SVM. Use it if w's scaling is not done in training session
+	}
+	else { // nonlinear SVM
+	  sgdwb.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
+	  models_[ct].w_.Init(0); // for linear SVM only. not used here
+	}
       }
       else if (opt_method_== "cd") {
 	/* Initialize CD parameters */
@@ -844,6 +879,13 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
 	  }
 	}
 	sum += models_[ct].bias_;
+      }
+      else if (opt_method_== "sgdwb") {
+	Vector w_no_bias;
+	models_[ct].w_.MakeSubvector(0, num_features_, &w_no_bias);
+	sum = la::Dot(w_no_bias, datum);
+	sum *= models_[ct].scale_w_;
+	sum += (models_[ct].w_)[num_features_]; // add bias term
       }
       else if (opt_method_== "cd" || opt_method_== "pegasos") {
 	Vector w_no_bias;
