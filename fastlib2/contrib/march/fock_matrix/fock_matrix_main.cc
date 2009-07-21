@@ -487,6 +487,8 @@ int main(int argc, char* argv[]) {
       multi_mats[1] = &multi_coulomb;
       multi_mats[2] = &multi_exchange;
       
+      multi_alg.Destruct();
+      
       FockMatrixComparison multi_compare;
       multi_compare.Init(multi_mod, multi_mats, prescreening_mod, 
                          prescreening_mats, centers, exp_mat, momenta, density, 

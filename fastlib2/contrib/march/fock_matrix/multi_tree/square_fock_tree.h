@@ -30,6 +30,10 @@ class SquareFockTree {
     double entry_lower_bound_;
     double entry_upper_bound_;
     
+    // can't just use the entry_lower_bound for relative error prunes because
+    // the entries can be positive or negative.  
+    double relative_error_bound_;
+    
     // The number of reference PAIRS that haven't been accounted for by either
     // approximation or a base case
     index_t remaining_references_;
@@ -64,8 +68,9 @@ class SquareFockTree {
                                  right.density_lower_bound());
       
       
-      entry_lower_bound_ = 0.0;
-      entry_upper_bound_ = 0.0;
+      entry_lower_bound_ = -DBL_MAX;
+      entry_upper_bound_ = DBL_MAX;
+      relative_error_bound_ = 0.0;
       
       approximation_val_ = 0.0;
       
@@ -80,9 +85,9 @@ class SquareFockTree {
       density_upper_bound_ = DBL_MAX;
       density_lower_bound_ = -DBL_MAX;
       
-      
-      entry_upper_bound_ = 0.0;
-      entry_lower_bound_ = 0.0;
+      entry_lower_bound_ = -DBL_MAX;
+      entry_upper_bound_ = DBL_MAX;
+      relative_error_bound_ = 0.0;
       
       approximation_val_ = 0.0;
       
@@ -120,6 +125,29 @@ class SquareFockTree {
     
     double entry_upper_bound() const {
       return entry_upper_bound_;
+    }
+    
+    // The lower bound for relative error needs to account for the possibility 
+    // of the upper and lower bounds on the value of the result being either
+    // positive or negative.  
+    void set_relative_error_bound(double min_entry, double max_entry) {
+      
+      DEBUG_ASSERT(max_entry >= min_entry);
+      
+      if (max_entry < 0.0) {
+        relative_error_bound_ = fabs(max_entry);
+      }
+      else if(min_entry > 0.0) {
+        relative_error_bound_ = min_entry;
+      }
+      else { 
+        relative_error_bound_ = min(max_entry, fabs(min_entry));
+      }
+      
+    }
+    
+    double relative_error_bound() const {
+      return relative_error_bound_;
     }
     
     void set_remaining_references(index_t ref) {

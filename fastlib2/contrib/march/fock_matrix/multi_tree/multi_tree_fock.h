@@ -49,6 +49,8 @@ const fx_entry_doc multi_tree_fock_entries[] = {
     "Bounds computed to be below this value are set to zero.  Default: 0.0\n"},
   {"schwartz_pruning", FX_PARAM, FX_BOOL, NULL,
    "Specify this parameter to activate pruning based on the Schwartz inequality.\n"},
+  {"num_integrals_computed", FX_RESULT, FX_INT, NULL,
+  "The total number of integral computations.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -216,6 +218,8 @@ private:
   // The number of times an approximation is invoked
   int coulomb_approximations_;
   int exchange_approximations_;
+  
+  index_t num_integrals_computed_;
   
   // The number of times the base case is called
   int coulomb_base_cases_;
@@ -416,7 +420,7 @@ private:
   
   void PropagateBoundsUp_(SquareTree* query);
 
-  void SetEntryBounds_();
+  void SetEntryBounds_(SquareTree *root);
 
   void ResetTreeForExchange_(SquareTree* root);
   
@@ -551,8 +555,37 @@ private:
     pow_pi_2point5_ = pow(math::PI, 2.5);
     
     num_schwartz_prunes_ = 0;
+    num_integrals_computed_ = 0;
     
   } // Init()
+  
+  void Destruct() {
+    
+    centers_.Destruct();
+    centers_.Init(1,1);
+    
+    exponents_.Destruct();
+    exponents_.Init(1);
+    
+    momenta_.Destruct();
+    momenta_.Init(1);
+    
+    coulomb_matrix_.Destruct();
+    coulomb_matrix_.Init(1,1);
+    
+    exchange_matrix_.Destruct();
+    exchange_matrix_.Init(1,1);
+    
+    fock_matrix_.Destruct();
+    fock_matrix_.Init(1,1);
+    
+    old_from_new_centers_.Clear();
+    //old_from_new_centers_.Init(1);
+    
+    density_matrix_.Destruct();
+    density_matrix_.Init(1,1);
+    
+  } // Destruct()
   
   // Should see how CFMM code unpermutes and use that
   void GetPermutation(ArrayList<index_t>* perm) {
