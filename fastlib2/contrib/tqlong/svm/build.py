@@ -8,9 +8,22 @@ librule(
 librule(
 	name = "svm",
 	headers = ["svm.h"],
-        sources = ["seqminopt.cc"],
+        sources = ["seqminopt.cc","kernel_cache.cc","index_set.cc",
+                   "kernel_function.cc", "ptswarmopt.cc"],
       	deplibs = ["fastlib:fastlib"],
 )
+
+binrule(
+    name = "smo_test",
+    sources = ["smo_test.cc"],
+    deplibs = [":svm"]
+    )
+
+binrule(
+    name = "pso_test",
+    sources = ["pso_test.cc"],
+    deplibs = [":svm"]
+    )
 
 binrule(
 	# The name of the executable.
