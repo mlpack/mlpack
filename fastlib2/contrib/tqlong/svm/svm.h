@@ -6,28 +6,20 @@
 namespace SVMLib {
   /** Kernel function definition */
   typedef double (*KernelFunc)(const Vector& x, const Vector& y);
+
   class KernelFunction {
-    enum TYPE { LINEAR, POLYNOMIAL, RBF, CUSTOM } type;
     double d; // for polynomial kernel
-    double sigma2; // for rbf kernel
-    double operator() (const Vector& x, const Vector& y) {
-      DEBUG_ASSERT(y.length() == x.length());
-      switch (type) {
-      case LINEAR:
-	return la::Dot(x, y);
-	break;
-      case POLYNOMIAL:
-	return pow(la::Dot(x, y)+1, d);
-	break;
-      case RBF:
-	return exp(-0.5*s/sigma2);
-	break;
-      case CUSTOM:
-	break;
-      case default:
-      }
-    }
-  };
+    double sigma2; // for rbf kernel = -0.5/sigma^2
+    KernelFunc kfunc;
+  public:
+    enum TYPE { LINEAR, POLYNOMIAL, RBF, CUSTOM } type;
+
+    KernelFunction(TYPE type_ = LINEAR, double param = 1);
+
+    KernelFunction(KernelFunc kfunc_);
+
+    double operator() (const Vector& x, const Vector& y);
+  };  
 
   /** SMO options */
   struct SMOOptions {
@@ -36,42 +28,30 @@ namespace SVMLib {
     double KKTViolationLevel; // default 1e-3
   };
 
+  /* Implement a set of indices, O(1) read, write */
   class IndexSet {
     index_t n_total, n_set; // number of points
     ArrayList<index_t> index_set; // index subset, size n_set
     ArrayList<index_t> set_index; // index of points in the index_set, size n_total
   public:
-    IndexSet(index_t n) {
-      n_total = n;
-      n_set = 0;
-      index_set.Init();
-      set_index.Init();
-      InitEmpty();
+    IndexSet(index_t n);
+    IndexSet(const IndexSet& ind) {
+      n_total = ind.n_total; n_set = ind.n_set;
+      index_set.InitCopy(ind.index_set); set_index.InitCopy(ind.set_index);
     }
-    void InitEmpty() {
-      for (index_t i = 0; i < n_total; i++) set_index[i] = -1;
-      index_set.Clear();
+    void operator=(const IndexSet& ind) {
+      this->n_total = ind.n_total;
+      this->n_set = ind.n_set;
+      this->index_set.Renew(); this->index_set.InitCopy(ind.index_set);
+      this->set_index.Renew(); this->set_index.InitCopy(ind.set_index);
     }
-    void addremove(index_t i, bool b = true) {
-      DEBUG_ASSERT(i < n_total);
-      // adding
-      if (b && set_index[i] == -1) {
-	index_set.PushBackCopy(i);
-	set_index[i] = n_set;
-	n_set++;
-      }
-      // removing
-      if (!b && set_index[i] != -1) {
-	index_t index = set_index[i];
-	set_index[i] = -1;
-	if (index < n_set-1) {
-	  index_set[index] = index_set[n_set-1]; // move the last point to index position
-	  set_index[index_set[n_set-1]] = index; // set the new index
-	}
-	n_set--;
-      }
-    }
+
+    void InitEmpty();
+
+    void addremove(index_t i, bool b = true);
+
     index_t get_n() const { return n_set; }
+    index_t get_n_total() const { return n_total; }
     const ArrayList<index_t>& get_index() const { return index_set; }
     bool is_set(index_t i) const { 
       DEBUG_ASSERT(i < n_total);
@@ -81,6 +61,56 @@ namespace SVMLib {
       DEBUG_ASSERT(i < n_set);
       return index_set[i];
     }
+    void print();
+
+    void print(const Vector& x);
+  };
+
+  class Kernel {
+    int n_points;
+    bool kernel_stored;
+    const Matrix& X_;
+    KernelFunction kfunc_;
+
+    Vector kernel_diag;
+
+    Matrix full_kernel;
+
+    Matrix sub_kernel;
+    ArrayList<index_t> col_index;
+    ArrayList<index_t> lru_col;
+    index_t n_cols, lru_ptr;
+    index_t n_loads;
+  public:
+    Kernel(const KernelFunction& kfunc, const Matrix& X);
+
+    void get_element(index_t i, index_t j, 
+		     double& Kii, double& Kjj, double& Kij);
+
+    double get_element(index_t i, index_t j) {
+      if (kernel_stored)
+	return full_kernel.get(i, j);
+      else
+	if (col_index[i] >= 0)
+	  return sub_kernel.get(j, col_index[i]);
+	else if (col_index[j] >= 0)
+	  return sub_kernel.get(i, col_index[j]);
+	else 
+	  return sub_kernel.get(i, loadColumn(j));
+    }
+
+    /** Get a kernel matrix column, col_i must be uninitialized */
+    void get_column(index_t i, Vector* col_i);
+    
+    /** Get the diagonal of the kernel matrix, diag must be uninitialized*/
+    void get_diag(Vector* diag);
+
+    /** Number of load columns */
+    index_t n_load() { return n_loads; }
+    index_t n_point() { return n_points; }
+  private:
+    double kernel_call(index_t i, index_t j);
+    index_t loadColumn(index_t i);
   };
 
   /** SMO main function
@@ -90,70 +120,28 @@ namespace SVMLib {
    *      alpha^T y = 0
    */
   int seqminopt(const Matrix& X, const Vector& y, const Vector& box,
-		KernelFunc kfunc, SMOOptions options,
+		Kernel& kernel, SMOOptions options,
 		Vector& alpha, IndexSet& SVindex, double& offset);
 
-  class Kernel {
-    int n_points;
-    bool kernel_stored;
-    const Matrix& X_;
-    KernelFunc kfunc_;
-    Matrix full_kernel;
-    Vector kernel_diag;
-  public:
-    Kernel(KernelFunc kfunc, const Matrix& X) : X_(X) {
-      n_points = X_.n_cols();
-      kernel_stored = (n_points <= 1000);
-      kfunc_ = kfunc;
-      kernel_diag.Init(n_points);
-      if (kernel_stored) {
-	full_kernel.Init(n_points, n_points);
-	for (index_t i = 0; i < n_points; i++)
-	  for (index_t j = 0; j < n_points; j++)
-	    full_kernel.ref(i, j) = kernel_call(i, j);
-	for (index_t i = 0; i < n_points; i++)
-	  kernel_diag[i] = full_kernel.get(i, i);
-      }
-      else {
-	// TODO
-	full_kernel.Init(0, 0);
-      }
-    }
-    void get_element(index_t i, index_t j, 
-		     double& Kii, double& Kjj, double Kij) {
-      if (kernel_stored) {
-	Kii = kernel_diag[i];
-	Kjj = kernel_diag[j];
-	Kij = full_kernel.get(i, j);
-      }
-      else {
-	// TODO
-      }
-    }
+  double svm_output_on_sample(index_t i, Kernel& kernel, 
+			      const Vector& y, const Vector& alpha, 
+			      const IndexSet& SVindex, double offset);
 
-    /** Get a kernel matrix column, col_i must be uninitialized */
-    void get_column(index_t i, Vector* col_i) {
-      if (kernel_stored) {
-	full_kernel.MakeColumnVector(i, col_i);
-      }
-      else {
-	// TODO
-      }
-    }
-    
-    /** Get the diagonal of the kernel matrix, diag must be uninitialized*/
-    void get_diag(Vector* diag) {
-      diag->Alias(kernel_diag);
-    }
-  private:
-    double kernel_call(index_t i, index_t j) {
-      Vector col_i;
-      Vector col_j;
-      X_.MakeColumnVector(i, &col_i);
-      X_.MakeColumnVector(j, &col_j);
-      return kfunc_(col_i, col_j);
-    }
-  };
+  index_t svm_total_error(Kernel& kernel, 
+			  const Vector& y, const Vector& alpha, 
+			  const IndexSet& SVindex, double offset);
+
+  int ptswarmopt(const Matrix& X, const Vector& y, const Vector& box,
+		 Kernel& kernel, /* PSOOptions options, */
+		 Vector& alpha, IndexSet& SVs, double& offset);
+
+  /** Utility function for data processing */
+  void SplitDataToXy(const Matrix& data, Matrix& X, Vector& y);
+
+  void ScaleData(Matrix& X, Vector& shift, Vector& scale);
+
+  void SetBoxConstraint(const Vector& y, double C, Vector& box);
+
 };
 
 #endif
