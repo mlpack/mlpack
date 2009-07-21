@@ -321,12 +321,69 @@ int main(int argc, char* argv[]) {
   prescreening_mats[2] = &prescreening_exchange;
   
   
-  if (fx_param_exists(root_mod, "do_cfmm")) {
+  Matrix cfmm_coulomb;
+  Matrix link_exchange;
+  
+  
+  if (fx_param_exists(root_mod, "do_cfmm") 
+      && fx_param_exists(root_mod, "do_link")) {
+    
+    printf("======== CFMM Computation ========\n");
+    
+    
+    fx_module* cfmm_mod = fx_submodule(root_mod, "cfmm");
+    
+    CFMMCoulomb coulomb_alg;
+    
+    coulomb_alg.Init(centers, exp_mat, momenta, density, cfmm_mod);
+    coulomb_alg.Compute();
+    coulomb_alg.OutputCoulomb(&cfmm_coulomb);
+    
+    if (fx_param_exists(root_mod, "print_cfmm")) {
+      cfmm_coulomb.PrintDebug("CFMM J");
+    }
+    
+    printf("======== LinK Computation ========\n");
+    
+    
+    fx_module* link_mod = fx_submodule(root_mod, "link");
+    
+    Link link_alg;
+    link_alg.Init(centers, exp_mat, momenta, density, link_mod);
+    link_alg.Compute();
+    link_alg.OutputExchange(&link_exchange);
+    
+    if (fx_param_exists(root_mod, "print_link")) {
+      
+      link_exchange.PrintDebug("LinK K");
+      
+    }
+    
+    fx_module* cfmm_compare_mod = fx_submodule(cfmm_mod, "compare");
+    
+    Matrix cfmm_link_fock;
+    la::SubInit(link_exchange, cfmm_coulomb, &cfmm_link_fock);
+    
+    Matrix** cfmm_mats;
+    cfmm_mats = (Matrix**)malloc(3 * sizeof(Matrix*));
+    cfmm_mats[0] = &cfmm_link_fock;
+    cfmm_mats[1] = &cfmm_coulomb;
+    cfmm_mats[2] = &link_exchange;
+    
+    FockMatrixComparison cfmm_compare;
+    cfmm_compare.Init(cfmm_mod, cfmm_mats, prescreening_mod, prescreening_mats, 
+                      centers, exp_mat, momenta, density, nuclear_centers,
+                      nuclear_charges, cfmm_compare_mod);
+    cfmm_compare.Compare();
+    
+    
+    
+  }
+  else if (fx_param_exists(root_mod, "do_cfmm")) {
   
     printf("======== CFMM Computation ========\n");
   
-    Matrix cfmm_coulomb;
- 
+    
     fx_module* cfmm_mod = fx_submodule(root_mod, "cfmm");
     
     CFMMCoulomb coulomb_alg;
@@ -344,6 +401,7 @@ int main(int argc, char* argv[]) {
       fx_module* cfmm_compare_mod = fx_submodule(cfmm_mod, "compare");
       
       Matrix** cfmm_mats;
+      
       cfmm_mats = (Matrix**)malloc(3 * sizeof(Matrix*));
       cfmm_mats[0] = NULL;
       cfmm_mats[1] = &cfmm_coulomb;
@@ -358,14 +416,10 @@ int main(int argc, char* argv[]) {
     } // cfmm comparison
         
   } // do_cfmm
-  
-
-
-  if (fx_param_exists(root_mod, "do_link")) {
+  else if (fx_param_exists(root_mod, "do_link")) {
     
     printf("======== LinK Computation ========\n");
     
-    Matrix link_exchange;
     
     fx_module* link_mod = fx_submodule(root_mod, "link");
     
