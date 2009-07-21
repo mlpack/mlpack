@@ -52,8 +52,14 @@ namespace libint_wrappers {
    */
   double ComputeNormalization(double exp, int x_mom, int y_mom, int z_mom);
   
+  
   /**
    * This is the function to call from outside.
+   *
+   * This currently assumes that the momenta obey the conditions:
+   * A_mom >= B_mom
+   * C_mom >= D_mom
+   * A_mom + B_mom <= C_mom + D_mom
    *
    * IMPORTANT: must have called ERIInit() before calling this function
    */

@@ -157,6 +157,8 @@ namespace libint_wrappers {
                   
                   index_t d_x = D_mom - d_ind;
                   
+                  // by permuting a,b,c,d here I could access the integrals in
+                  // the right order
                   index_t integral_ind = IntegralIndex(a_ind, A_mom, 
                                                        b_ind, B_mom, 
                                                        c_ind, C_mom, 
