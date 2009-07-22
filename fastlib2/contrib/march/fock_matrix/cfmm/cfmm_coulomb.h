@@ -139,6 +139,29 @@ class CFMMCoulomb {
     
   } // Init()
   
+  void Destruct() {
+    
+    centers_.Destruct();
+    centers_.Init(1,1);
+    
+    exponents_.Destruct();
+    exponents_.Init(1);
+    
+    momenta_.Destruct();
+    momenta_.Init(1);
+    
+    density_.Destruct();
+    density_.Init(1,1);
+    
+    shells_.Clear();
+    
+    coulomb_mat_.Destruct();
+    coulomb_mat_.Init(1,1);
+    
+    // should try to clear up the multipole alg too, but probably not necessary
+    
+  } // Destruct()
+  
   void UpdateDensity(const Matrix& new_density);
   
   void Compute();

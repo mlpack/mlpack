@@ -30,6 +30,10 @@ void FockMatrixComparison::ComputeCoreMatrices_() {
       oeints::ComputeOverlapIntegral(row_vec, row_exp, row_mom, 
                                      col_vec, col_exp, col_mom);
       
+      
+      DEBUG_ASSERT(overlap_integral >= 0.0);
+      
+      
       double nuclear_integral = 0.0;
       for (index_t nuclear_index = 0; nuclear_index < nuclear_centers_.n_cols(); 
            nuclear_index++) {
@@ -73,8 +77,16 @@ void FockMatrixComparison::ComputeChangeOfBasisMatrix_() {
   Vector eigenvalues;
   Matrix right_vectors_trans;
   
-  la::SVDInit(overlap_matrix_, &eigenvalues, &left_vectors, 
-              &right_vectors_trans);
+  data::Save("he_200K_200atom_overlap.csv", overlap_matrix_);
+  
+  success_t eigenval_success = la::SVDInit(overlap_matrix_, &eigenvalues, 
+                                           &left_vectors, &right_vectors_trans);
+  
+  if (eigenval_success == SUCCESS_FAIL) {
+    FATAL("Unable to Compute Eigenvalues of Overlap Matrix");
+  }
+  
+  eigenvalues.PrintDebug("eigenvalues");
   
   double *min_eigenval;
   min_eigenval = std::min_element(eigenvalues.ptr(), 
@@ -91,14 +103,24 @@ void FockMatrixComparison::ComputeChangeOfBasisMatrix_() {
     DEBUG_ASSERT_MSG(!isnan(eigenvalues[i]), 
                      "Complex eigenvalue in diagonalizing overlap matrix.\n");
     
-    DEBUG_WARN_MSG_IF(fabs(eigenvalues[i]) < 0.0001, 
-                      "near-zero eigenvalue in overlap_matrix");
+    if (eigenvalues[i] < 0.0) {
+     
+      printf("eigenvalue: %g, left_vec: %g, right_vec: %g\n", eigenvalues[i], 
+             left_vectors.ref(0,i), right_vectors_trans.ref(i,0));
+      
+    }
     
+    DEBUG_WARN_MSG_IF(eigenvalues[i] < 0.0001, 
+                      "negative or near-zero eigenvalue in overlap_matrix");
+    
+    /*
     Vector eigenvec;
     left_vectors.MakeColumnVector(i, &eigenvec);
     double len = la::LengthEuclidean(eigenvec);
     DEBUG_APPROX_DOUBLE(len, 1.0, 0.001);
+    */
     
+    /*
     for (index_t j = i+1; j < eigenvalues.length(); j++) {
       
       Vector eigenvec2;
@@ -108,6 +130,7 @@ void FockMatrixComparison::ComputeChangeOfBasisMatrix_() {
       DEBUG_APPROX_DOUBLE(dotprod, 0.0, 0.001);
       
     }
+     */
   }
   
 #endif
