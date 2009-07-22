@@ -23,6 +23,8 @@ const fx_module_doc root_doc = {
 int main(int argc, char *argv[]) {  
   fx_module *root = fx_init(argc, argv, &root_doc);
 
+  const char* fp_results;
+  FILE * results;
   Thor2PC sky;
 
    // Read in positions
@@ -30,11 +32,18 @@ int main(int argc, char *argv[]) {
   
   sky.Init(parameters);
   sky.Compute(parameters);
-  Vector results, bins;
-  sky.OutputResults(results);
+  Vector counts, bins;
+  sky.OutputResults(counts);
   sky.GetBins(bins);
 
   // Write Results
+  fp_results = fx_param_str(NULL, "output", "results.dat");
+  results = fopen(fp_results, "w+");
+  fprintf(results,"Start \t Stop \t Count \n");
+  for (int i = 0; i< counts.length(); i++){
+    fprintf(results, "%7.6f \t %7.6f \t %8.1f \n", bins[i], 
+	    bins[i+1], counts[i]);
+  }
 
   fx_done(fx_root);
   return 0;

@@ -9,7 +9,7 @@
 #include "fastlib/thor/thor.h"
 #include "two_point.h"
 #include "dfs3.h"
-
+#include "metric.h"
 
 /**
  * THOR-based N-Point Correlation Functions
@@ -64,13 +64,15 @@ class Thor2PC {
   public:
    
     index_t query_count_;
-    index_t reference_count_;   
+    index_t reference_count_; 
+    int redshift_;
     Vector bounds_;
    
     OT_DEF(Param) {          
       OT_MY_OBJECT(query_count_);
       OT_MY_OBJECT(reference_count_);
       OT_MY_OBJECT(bounds_);
+      OT_MY_OBJECT(redshift_);
     }
   public:
     
@@ -84,8 +86,9 @@ class Thor2PC {
       data::Load(fp_bounds, &temp_bounds);   
       bounds_.Init(temp_bounds.n_rows());
       for (int i = 0; i < temp_bounds.n_rows(); i++){
-	bounds_[i] = temp_bounds.get(i,0)*temp_bounds.get(i, 0);
+	bounds_[i] = temp_bounds.get(i,0);
       }   
+      redshift_ = fx_param_int(module, "red", 0);
     }
     
     void FinalizeInit(datanode *module, int dimension) {
@@ -123,7 +126,11 @@ class Thor2PC {
     
     /** initializes all memory for a point */
     void Init(const Param& param, const DatasetInfo& schema) {
-      pos_.Init(2);     
+      if(param.redshift_){
+	pos_.Init(3);     
+      } else {
+	pos_.Init(2);
+      }
     }
     
     /** 
@@ -131,7 +138,7 @@ class Thor2PC {
      * Any attempt to allocate memory here will lead to a core dump.
      */
     void Set(const Param& param, index_t index, Vector& data) {          
-      for (int i = 0; i < 2; i++){
+      for (int i = 0; i < pos_.length(); i++){
 	pos_[i] = data[i];
       }     
       old_index_ = index;
@@ -383,15 +390,15 @@ class Thor2PC {
        GlobalResult* global_result) {         
       
       double bound;
-      bound = r_node.bound().MinDistanceSq(q.pos_);      
-      if (bound < local_two_.Min()) {
-	return false;
-      }    
-
-      bound = r_node.bound().MaxDistanceSq(q.pos_);      
+      if(param.redshift_){
+	bound = mtrc::MinRedShiftDistSq(r_node.bound(), q.pos_);
+      } else {
+	bound = mtrc::MinSphereDistSq(r_node.bound(), q.pos_);      
+      }
       if (bound > local_two_.Max()) {
 	return false;
       }    
+     
       // otherwise, we need to iterate over each reference point     
       return true;
     }
@@ -405,7 +412,11 @@ class Thor2PC {
 	return;
       }
       double dist;
-      dist = la::DistanceSqEuclidean(q.pos_, r.pos_);
+      if (param.redshift_){
+	dist = mtrc::RedShiftDistSq(q.pos_, r.pos_);
+      } else {
+	dist = mtrc::SphereDistSq(q.pos_, r.pos_);
+      }
       local_two_.Add(dist);
     }
 
@@ -439,11 +450,13 @@ class Thor2PC {
 				      Delta* delta,
 				      GlobalResult* global_result,
 				      QPostponed* q_postponed) {
-      double dmax, dmin;
-      dmin = q_node.bound().MinDistanceSq(r_node.bound());
-      dmax = q_node.bound().MaxDistanceSq(r_node.bound());
-      if(dmin > global_result->two_point_.Max() ||
-	 dmax < global_result->two_point_.Min()){
+      double dmin;
+      if (param.redshift_){
+	dmin = mtrc::MinRedShiftDistSq(q_node.bound(), r_node.bound());	
+      } else {      
+	dmin = mtrc::MinSphereDistSq(q_node.bound(), r_node.bound());	
+      }
+      if(dmin > global_result->two_point_.Max()){
 	return false;
       }
       
