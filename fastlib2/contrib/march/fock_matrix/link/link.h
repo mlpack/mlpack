@@ -194,6 +194,30 @@ class Link {
     num_insignificant_densities_ = 0;
      
   }
+  
+  void Destruct() {
+    
+    basis_centers_.Destruct();
+    basis_centers_.Init(1,1);
+    
+    basis_exponents_.Destruct();
+    basis_exponents_.Init(1);
+    
+    basis_momenta_.Destruct();
+    basis_momenta_.Init(1);
+    
+    density_matrix_.Destruct();
+    density_matrix_.Init(1,1);
+    
+    shell_list_.Clear();
+    
+    free(significant_nu_for_mu_);
+    free(significant_sigma_for_nu_);
+    
+    exchange_matrix_.Destruct();
+    exchange_matrix_.Init(1,1);
+    
+  } // Destruct()
     
   void Compute();
   

@@ -339,6 +339,8 @@ int main(int argc, char* argv[]) {
     coulomb_alg.Compute();
     coulomb_alg.OutputCoulomb(&cfmm_coulomb);
     
+    coulomb_alg.Destruct();
+    
     if (fx_param_exists(root_mod, "print_cfmm")) {
       cfmm_coulomb.PrintDebug("CFMM J");
     }
@@ -353,11 +355,15 @@ int main(int argc, char* argv[]) {
     link_alg.Compute();
     link_alg.OutputExchange(&link_exchange);
     
+    link_alg.Destruct();
+    
     if (fx_param_exists(root_mod, "print_link")) {
       
       link_exchange.PrintDebug("LinK K");
       
     }
+    
+    
     
     fx_module* cfmm_compare_mod = fx_submodule(cfmm_mod, "compare");
     
