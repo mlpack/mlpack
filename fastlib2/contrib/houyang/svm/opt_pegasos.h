@@ -360,10 +360,15 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	  loss_sum += hinge_loss * C_;
 	}
       }
-      for (j=0; j<n_features_bias_; j++) {
-	v += math::Sqr(w_[j]);
+      if (do_scale_) { // objective function includes 1/2 ||w||^2
+	for (j=0; j<n_features_bias_; j++) {
+	  v += math::Sqr(w_[j]);
+	}
+	v = v / 2.0 + loss_sum;
       }
-      v = v / 2.0 + loss_sum;
+      else {
+	v = loss_sum / C_;
+      }
       
       printf("Primal objective value: %lf\n", v);
     }
