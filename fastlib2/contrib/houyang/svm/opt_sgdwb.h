@@ -322,7 +322,7 @@ void SGDWB<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       // primal objective value
       for (i=0; i< n_data_; i++) {
 	Vector xt;
-	datamatrix_.MakeColumnVector(work_idx_old, &xt);
+	datamatrix_.MakeColumnVector(i, &xt);
 	xt[n_features_] = 1.0; // for bias term: x <- [x,1], w <- [w, b]
 	hinge_loss = 1- y_[i] * scale_w_ * la::Dot(w_, xt);
 	if (hinge_loss > 0) {
