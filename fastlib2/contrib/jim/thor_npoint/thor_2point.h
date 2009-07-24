@@ -516,7 +516,7 @@ class Thor2PC {
  };
 
   // functions
-
+ /*
  void ComputeNaive(){
    // create cache array for the distriuted caches storing the query
    // reference points and query results
@@ -542,8 +542,10 @@ class Thor2PC {
 					       r_point->vec());
        } else {
 	 if (parameters_.redshift_){
-	   distance_sq = 
+	   distance_sq = mtrc::RedShiftDistSq(q_point->vec(),
+					      r_point->vec());	   
 	 } else {
+	   distance_sq = mtrc::SphereDistSq(q_point->vec(), r_point->vec());
 	 }
        }
        
@@ -551,8 +553,8 @@ class Thor2PC {
        
      } // finish looping over each reference point
      
-      
- }
+  }    
+  }*/
  
  
  
@@ -566,7 +568,7 @@ class Thor2PC {
    
    if (do_naive){
      printf("Performing Naive Computation \n");
-     ComputeNaive();
+     //   ComputeNaive();
    } else {
      printf("Performing Dual-Tree Computation using THOR \n");
      thor::RpcDualTree<Thor2PC, DualTreeDepthFirst<Thor2PC> >
