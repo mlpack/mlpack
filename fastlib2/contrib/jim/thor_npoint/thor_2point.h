@@ -8,7 +8,6 @@
 #include <fastlib/fastlib.h>
 #include "fastlib/thor/thor.h"
 #include "two_point.h"
-#include "dfs3.h"
 #include "metric.h"
 
 /**
@@ -18,7 +17,11 @@
 const fx_entry_doc module_entries[] = {  
   {"bins", FX_PARAM, FX_STR, NULL,
    "Specifies bins for two point correlation."}, 
-   FX_ENTRY_DOC_DONE  
+  {"red", FX_PARAM, FX_INT, NULL,
+   "Specifies whether to use red shift in computing correlation"},
+  {"cart", FX_PARAM, FX_INT, NULL,
+   "Specifies whether to use cartesian coordinates"},
+  FX_ENTRY_DOC_DONE  
 };
 
 const fx_module_doc param_doc = {
@@ -28,12 +31,12 @@ const fx_module_doc param_doc = {
 
 
 class Thor2PC {
-
+  
   static const int POS = 0;
   static const int RED = 1;
   static const int LUM = 2;
   
-
+  
  public:
   
   /** the bounding type which is required by THOR */
@@ -41,7 +44,7 @@ class Thor2PC {
   
   class Thor2PCStat;
   class Thor2PCPoint;
-
+  
   typedef Thor2PCPoint QPoint;
   typedef Thor2PCPoint RPoint;
   
@@ -66,6 +69,7 @@ class Thor2PC {
     index_t query_count_;
     index_t reference_count_; 
     int redshift_;
+    int cartesian_;
     Vector bounds_;
    
     OT_DEF(Param) {          
@@ -86,9 +90,10 @@ class Thor2PC {
       data::Load(fp_bounds, &temp_bounds);   
       bounds_.Init(temp_bounds.n_rows());
       for (int i = 0; i < temp_bounds.n_rows(); i++){
-	bounds_[i] = temp_bounds.get(i,0);
+	bounds_[i] = temp_bounds.get(i,0)*temp_bounds.get(i,0);
       }   
       redshift_ = fx_param_int(module, "red", 0);
+      cartesian_ = fx_param_int(module, "cart", 0);
     }
     
     void FinalizeInit(datanode *module, int dimension) {
@@ -126,10 +131,14 @@ class Thor2PC {
     
     /** initializes all memory for a point */
     void Init(const Param& param, const DatasetInfo& schema) {
-      if(param.redshift_){
-	pos_.Init(3);     
-      } else {
-	pos_.Init(2);
+      if (param.cartesian_){
+	pos_.Init(schema.n_features());
+      } else{
+	if(param.redshift_){
+	  pos_.Init(3);     
+	} else {
+	  pos_.Init(2);
+	}
       }
     }
     
@@ -390,15 +399,19 @@ class Thor2PC {
        GlobalResult* global_result) {         
       
       double bound;
-      if(param.redshift_){
-	bound = mtrc::MinRedShiftDistSq(r_node.bound(), q.pos_);
-      } else {
-	bound = mtrc::MinSphereDistSq(r_node.bound(), q.pos_);      
+      if (param.cartesian_){
+	bound = r_node.bound().MinDistanceSq(q.pos_);
+      } else{
+	if(param.redshift_){
+	  bound = mtrc::MinRedShiftDistSq(r_node.bound(), q.pos_);
+	} else {
+	  bound = mtrc::MinSphereDistSq(r_node.bound(), q.pos_);      
+	}
       }
       if (bound > local_two_.Max()) {
 	return false;
       }    
-     
+      
       // otherwise, we need to iterate over each reference point     
       return true;
     }
@@ -412,12 +425,16 @@ class Thor2PC {
 	return;
       }
       double dist;
-      if (param.redshift_){
-	dist = mtrc::RedShiftDistSq(q.pos_, r.pos_);
+      if (param.cartesian_){
+	dist = la::DistanceSqEuclidean(q.pos_, r.pos_);
       } else {
-	dist = mtrc::SphereDistSq(q.pos_, r.pos_);
+	if (param.redshift_){
+	  dist = mtrc::RedShiftDistSq(q.pos_, r.pos_);
+	} else {
+	  dist = mtrc::SphereDistSq(q.pos_, r.pos_);
+	}
       }
-      local_two_.Add(dist);
+      local_two_.Add(dist);      
     }
 
   
@@ -451,15 +468,18 @@ class Thor2PC {
 				      GlobalResult* global_result,
 				      QPostponed* q_postponed) {
       double dmin;
-      if (param.redshift_){
-	dmin = mtrc::MinRedShiftDistSq(q_node.bound(), r_node.bound());	
-      } else {      
-	dmin = mtrc::MinSphereDistSq(q_node.bound(), r_node.bound());	
+      if (param.cartesian_){
+	dmin = q_node.bound().MinDistanceSq(r_node.bound());
+      } else{ 
+	if (param.redshift_){
+	  dmin = mtrc::MinRedShiftDistSq(q_node.bound(), r_node.bound());  
+	} else {      
+	  dmin = mtrc::MinSphereDistSq(q_node.bound(), r_node.bound());	
+	}
       }
       if(dmin > global_result->two_point_.Max()){
 	return false;
-      }
-      
+      }      
       return true;      	
     }
 
@@ -493,137 +513,182 @@ class Thor2PC {
 			    const RNode& r_node, const Delta& delta) {
       return 1.0;
     }  
-  };
+ };
 
   // functions
 
-
-  /** KDE computation using THOR */
-  void Compute(datanode *module) {
-    
-    printf("Starting 2-Point Correlation...\n");
-    fx_timer_start(module, "two_point");  
-    thor::RpcDualTree<Thor2PC, DualTreeDepthFirst<Thor2PC> >
-      (fx_submodule(module, "gnp"), GNP_CHANNEL,
-       parameters_, q_tree_, r_tree_, &q_results_, &global_result_);
-
-    fx_timer_stop(module, "two_point");
-    printf("2-Point Correlation completed...\n");    
-    global_result_.Postprocess(parameters_);
-  }
-
-  
-
-  /** read datasets, build trees */    
-  void Init(datanode *module) {
-
-    // I don't quite understand what these mean, since I copied and pasted
-    // from an example code.
-    double results_megs = fx_param_double(module, "results/megs", 1000);
-
-    rpc::Init();
-    
-    if (!rpc::is_root()) {
-      //fx_silence();
-    }
-
-    // initialize parameter set    
-    parameters_.Init(module);
-    
-    // read reference dataset
-    // "data" gives name of input file
-    fx_timer_start(module, "read_datasets");
-    r_points_cache_ = new DistributedCache();
-    parameters_.reference_count_ = 
-      thor::ReadPoints<RPoint>(parameters_, DATA_CHANNEL + 0, DATA_CHANNEL + 1,
-			       fx_submodule(module, "data"),
-			       r_points_cache_);
-
-    // read the query dataset if present
-    if(fx_param_exists(module, "query")) {
-      q_points_cache_ = new DistributedCache();
-      parameters_.query_count_ = thor::ReadPoints<QPoint>
-	(parameters_, DATA_CHANNEL + 2, DATA_CHANNEL + 3,
-	 fx_submodule(module, "query"), q_points_cache_);
-    } 
-    else {
-      q_points_cache_ = r_points_cache_;
-      parameters_.query_count_ = parameters_.reference_count_;
-    }
-    fx_timer_stop(module, "read_datasets");
+ void ComputeNaive(){
+   // create cache array for the distriuted caches storing the query
+   // reference points and query results
+   CacheArray<QPoint> q_points_cache_array;
+   CacheArray<RPoint> r_points_cache_array;
+   q_points_cache_array.Init(q_points_cache_, BlockDevice::M_READ);
+   r_points_cache_array.Init(r_points_cache_, BlockDevice::M_READ);
    
-    Thor2PCPoint default_point;
-    CacheArray<Thor2PCPoint>::GetDefaultElement(r_points_cache_, 
-						&default_point);   
-    parameters_.FinalizeInit(module, default_point.vec().length());
-
-    
-    // construct trees
-    fx_timer_start(module, "tree_construction");
-    r_tree_ = new ThorTree<Param, RPoint, RNode>();
-    thor::CreateKdTree<RPoint, RNode>(parameters_, DATA_CHANNEL + 4, 
-				      DATA_CHANNEL + 5,
-				      fx_submodule(module, "r_tree"),
-				      parameters_.reference_count_, 
-				      r_points_cache_, r_tree_);
-    if (fx_param_exists(module, "query")) {
-      q_tree_ = new ThorTree<Param, QPoint, QNode>();
-      thor::CreateKdTree<QPoint, QNode>
-	(parameters_, DATA_CHANNEL + 6, DATA_CHANNEL + 7, 
-	 fx_submodule(module, "q_tree"), parameters_.query_count_,
-	 q_points_cache_, q_tree_);
-    } 
-    else {
-      q_tree_ = r_tree_;
-    }
-    fx_timer_stop(module, "tree_construction");
-
-    // set up the cache holding query results
-    QResult default_result;
-    default_result.Init(parameters_);
-    q_tree_->CreateResultCache(Q_RESULTS_CHANNEL, default_result,
-    		       results_megs, &q_results_);    
-  }
-
-
-  void OutputResults(Vector& counts_out){
-    global_result_.two_point_.WriteResult(counts_out);
-  }
-
-  void GetBins(Vector& bins_out){
-    parameters_.GetBins(bins_out);
-  }
+   index_t q_end = (q_tree_->root()).end();
+   index_t r_end = (r_tree_->root()).end();
+   for(index_t q = (q_tree_->root()).begin(); q < q_end; q++) {
+     
+     CacheRead<QPoint> q_point(&q_points_cache_array, q);
+     
+     for(index_t r = (r_tree_->root()).begin(); r < r_end; r++) {
+       
+       CacheRead<RPoint> r_point(&r_points_cache_array, r);
+       
+       // compute pairwise and add contribution
+       double distance_sq;
+       if (parameters_.cartesian_){
+	 distance_sq = la::DistanceSqEuclidean(q_point->vec(), 
+					       r_point->vec());
+       } else {
+	 if (parameters_.redshift_){
+	   distance_sq = 
+	 } else {
+	 }
+       }
+       
+       // Add to correlation function
+       
+     } // finish looping over each reference point
+     
+      
+ }
  
-  /** distributed cache for storing query results */
-  DistributedCache q_results_;
-  
-  /** distributed cache for query points */
-  DistributedCache *q_points_cache_;
-
-  /** thor tree on query points */
-  ThorTree<Param, QPoint, QNode> *q_tree_;
-  
-  /** distributed cache for reference points */
-  DistributedCache *r_points_cache_;
-
-  /** thor tree on reference points */
-  ThorTree<Param, RPoint, RNode> *r_tree_;
-
-  /** global parameter collection */
-  Param parameters_;
-
-  /** global results */
-  GlobalResult global_result_;
-
-  /** data channel */
-  static const int DATA_CHANNEL = 110;
-
-  /** query results channel */
-  static const int Q_RESULTS_CHANNEL = 120;
-
-  /** GNP channel ? */
-  static const int GNP_CHANNEL = 200;
-
+ 
+ 
+ /** KDE computation using THOR */
+ void Compute(datanode *module) {
+   int do_naive = fx_param_int(module, "naive", 0);
+   
+   
+   printf("Starting 2-Point Correlation...\n");
+   fx_timer_start(module, "two_point");  
+   
+   if (do_naive){
+     printf("Performing Naive Computation \n");
+     ComputeNaive();
+   } else {
+     printf("Performing Dual-Tree Computation using THOR \n");
+     thor::RpcDualTree<Thor2PC, DualTreeDepthFirst<Thor2PC> >
+       (fx_submodule(module, "gnp"), GNP_CHANNEL,
+	parameters_, q_tree_, r_tree_, &q_results_, &global_result_);
+   }
+   fx_timer_stop(module, "two_point");
+   printf("2-Point Correlation completed...\n");    
+   global_result_.Postprocess(parameters_);
+ }
+ 
+ 
+ 
+ /** read datasets, build trees */    
+ void Init(datanode *module) {
+   
+   // I don't quite understand what these mean, since I copied and pasted
+   // from an example code.
+   double results_megs = fx_param_double(module, "results/megs", 1000);
+   
+   // rpc::Init();    
+   if (!rpc::is_root()) {
+     //fx_silence();
+   }
+   
+   // initialize parameter set    
+   parameters_.Init(module);
+   
+   // read reference dataset
+   // "data" gives name of input file
+   fx_timer_start(module, "read_datasets");
+   r_points_cache_ = new DistributedCache();
+   parameters_.reference_count_ = 
+     thor::ReadPoints<RPoint>(parameters_, DATA_CHANNEL + 0, DATA_CHANNEL + 1,
+			      fx_submodule(module, "data"),
+			      r_points_cache_);
+   
+   // read the query dataset if present
+   if(fx_param_exists(module, "query")) {
+     q_points_cache_ = new DistributedCache();
+     parameters_.query_count_ = thor::ReadPoints<QPoint>
+       (parameters_, DATA_CHANNEL + 2, DATA_CHANNEL + 3,
+	fx_submodule(module, "query"), q_points_cache_);
+   } 
+   else {
+     q_points_cache_ = r_points_cache_;
+     parameters_.query_count_ = parameters_.reference_count_;
+   }
+   fx_timer_stop(module, "read_datasets");
+   
+   Thor2PCPoint default_point;
+   CacheArray<Thor2PCPoint>::GetDefaultElement(r_points_cache_, 
+					       &default_point);   
+   parameters_.FinalizeInit(module, default_point.vec().length());
+   
+   
+   // construct trees
+   fx_timer_start(module, "tree_construction");
+   r_tree_ = new ThorTree<Param, RPoint, RNode>();
+   thor::CreateKdTree<RPoint, RNode>(parameters_, DATA_CHANNEL + 4, 
+				     DATA_CHANNEL + 5,
+				     fx_submodule(module, "r_tree"),
+				     parameters_.reference_count_, 
+				     r_points_cache_, r_tree_);
+   if (fx_param_exists(module, "query")) {
+     q_tree_ = new ThorTree<Param, QPoint, QNode>();
+     thor::CreateKdTree<QPoint, QNode>
+       (parameters_, DATA_CHANNEL + 6, DATA_CHANNEL + 7, 
+	fx_submodule(module, "q_tree"), parameters_.query_count_,
+	q_points_cache_, q_tree_);
+   } 
+   else {
+     q_tree_ = r_tree_;
+   }
+   fx_timer_stop(module, "tree_construction");
+   
+   // set up the cache holding query results
+   QResult default_result;
+   default_result.Init(parameters_);
+   q_tree_->CreateResultCache(Q_RESULTS_CHANNEL, default_result,
+			      results_megs, &q_results_);    
+ }
+ 
+ 
+ void OutputResults(Vector& counts_out){
+   global_result_.two_point_.WriteResult(counts_out);
+ }
+ 
+ void GetBins(Vector& bins_out){
+   parameters_.GetBins(bins_out);
+ }
+ 
+ /** distributed cache for storing query results */
+ DistributedCache q_results_;
+ 
+ /** distributed cache for query points */
+ DistributedCache *q_points_cache_;
+ 
+ /** thor tree on query points */
+ ThorTree<Param, QPoint, QNode> *q_tree_;
+ 
+ /** distributed cache for reference points */
+ DistributedCache *r_points_cache_;
+ 
+ /** thor tree on reference points */
+ ThorTree<Param, RPoint, RNode> *r_tree_;
+ 
+ /** global parameter collection */
+ Param parameters_;
+ 
+ /** global results */
+ GlobalResult global_result_;
+ 
+ /** data channel */
+ static const int DATA_CHANNEL = 110;
+ 
+ /** query results channel */
+ static const int Q_RESULTS_CHANNEL = 120;
+ 
+ /** GNP channel ? */
+ static const int GNP_CHANNEL = 200;
+ 
 };
 
 #endif
