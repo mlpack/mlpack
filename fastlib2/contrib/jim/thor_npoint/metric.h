@@ -77,8 +77,9 @@ namespace mtrc{
  }
 
   inline double SphereDistSq(const Vector& query, const Vector& ref){
-    return acos(sin(query[1])*sin(ref[1]) + cos(ref[1])*cos(query[1])*
-		cos(ref[0]-query[0]));
+    double dist =  acos(sin(query[1])*sin(ref[1]) + cos(ref[1])*cos(query[1])*
+			cos(ref[0]-query[0]));
+    return dist*dist;
   }
 
   inline double RedShiftDistSq(const Vector& query, const Vector& ref){
