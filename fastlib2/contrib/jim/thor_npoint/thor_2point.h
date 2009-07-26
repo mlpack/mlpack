@@ -16,11 +16,13 @@
 
 const fx_entry_doc module_entries[] = {  
   {"bins", FX_PARAM, FX_STR, NULL,
-   "Specifies bins for two point correlation."}, 
+   "Name of file which specifies range of bins for two point correlation. Each bin is assumed to begin where previous bin ends, e.g. '1 2 5' will give counts in ranges 1-2 and 2-5."}, 
   {"red", FX_PARAM, FX_INT, NULL,
-   "Specifies whether to use red shift in computing correlation"},
+   "red=1 means program will use redshift in computing correlation. red=0 or unspecified means redshift will not be used. Option is ignored if using Cartesian coordinates."},
   {"cart", FX_PARAM, FX_INT, NULL,
-   "Specifies whether to use cartesian coordinates"},
+   "cart=1 specifies cartesian coordinates, of arbitrary dimensionality. cart=0 (or unused) will use projected spherical coordinates, assumed to be in radians."},
+  {"naive", FX_PARAM, FX_INT, NULL,
+   "naive=1 performs naive computation, for the purpose of testing results of dual-tree algorithm. naive=0 (or unused) will use dual-tree method. No approximations are made in tree method, so both should return the same results."},
   FX_ENTRY_DOC_DONE  
 };
 
@@ -35,8 +37,7 @@ class Thor2PC {
   static const int POS = 0;
   static const int RED = 1;
   static const int LUM = 2;
-  
-  
+    
  public:
   
   /** the bounding type which is required by THOR */
@@ -70,6 +71,7 @@ class Thor2PC {
     index_t reference_count_; 
     int redshift_;
     int cartesian_;
+    int auto_corr_;
     Vector bounds_;
    
     OT_DEF(Param) {          
@@ -84,6 +86,7 @@ class Thor2PC {
      * Initializes parameters from a data node (Req THOR).
      */
     void Init(datanode *module) {
+      auto_corr_ = 1;
       Matrix temp_bounds;
       const char* fp_bounds;
       fp_bounds = fx_param_str_req(module, "bins");
@@ -105,6 +108,13 @@ class Thor2PC {
       bins_out.CopyValues(bounds_);
     }
 
+    void SetAuto(){
+      auto_corr_ = 0;
+    }
+
+    int Auto() const{
+      return auto_corr_;
+    }
   };
   
   /** 
@@ -421,7 +431,7 @@ class Thor2PC {
      */
     void VisitPair(const Param& param, const QPoint& q, index_t q_index,
 		   const RPoint& r, index_t r_index) {   
-      if (unlikely(q_index == r_index)){
+      if (unlikely((q_index == r_index) && param.Auto() )){
 	return;
       }
       double dist;
@@ -516,7 +526,7 @@ class Thor2PC {
  };
 
   // functions
- /*
+ 
  void ComputeNaive(){
    // create cache array for the distriuted caches storing the query
    // reference points and query results
@@ -525,6 +535,9 @@ class Thor2PC {
    q_points_cache_array.Init(q_points_cache_, BlockDevice::M_READ);
    r_points_cache_array.Init(r_points_cache_, BlockDevice::M_READ);
    
+   TwoPoint naive_two;
+   naive_two.Init(parameters_.bounds_);
+
    index_t q_end = (q_tree_->root()).end();
    index_t r_end = (r_tree_->root()).end();
    for(index_t q = (q_tree_->root()).begin(); q < q_end; q++) {
@@ -532,29 +545,32 @@ class Thor2PC {
      CacheRead<QPoint> q_point(&q_points_cache_array, q);
      
      for(index_t r = (r_tree_->root()).begin(); r < r_end; r++) {
-       
-       CacheRead<RPoint> r_point(&r_points_cache_array, r);
-       
-       // compute pairwise and add contribution
-       double distance_sq;
-       if (parameters_.cartesian_){
-	 distance_sq = la::DistanceSqEuclidean(q_point->vec(), 
-					       r_point->vec());
-       } else {
-	 if (parameters_.redshift_){
-	   distance_sq = mtrc::RedShiftDistSq(q_point->vec(),
-					      r_point->vec());	   
+       if (likely((r != q) || !parameters_.Auto())){
+	 CacheRead<RPoint> r_point(&r_points_cache_array, r);
+	 
+	 // compute pairwise and add contribution
+	 double distance_sq;
+	 if (parameters_.cartesian_){
+	   distance_sq = la::DistanceSqEuclidean(q_point->vec(), 
+						 r_point->vec());
 	 } else {
-	   distance_sq = mtrc::SphereDistSq(q_point->vec(), r_point->vec());
-	 }
+	   if (parameters_.redshift_){
+	     distance_sq = mtrc::RedShiftDistSq(q_point->vec(),
+						r_point->vec());	   
+	   } else {
+	     distance_sq = mtrc::SphereDistSq(q_point->vec(), r_point->vec());
+	   }
+	 }       
+	 // Add to correlation function
+	 naive_two.Add(distance_sq);  
        }
-       
-       // Add to correlation function
-       
-     } // finish looping over each reference point
-     
-  }    
-  }*/
+
+     } // finish looping over each reference point     
+   }  // finish looping over each query point
+   global_result_.Init(parameters_);
+   global_result_.two_point_.Merge(naive_two);     
+   naive_two.Reset();
+ }
  
  
  
@@ -568,7 +584,7 @@ class Thor2PC {
    
    if (do_naive){
      printf("Performing Naive Computation \n");
-     //   ComputeNaive();
+     ComputeNaive();
    } else {
      printf("Performing Dual-Tree Computation using THOR \n");
      thor::RpcDualTree<Thor2PC, DualTreeDepthFirst<Thor2PC> >
@@ -612,6 +628,7 @@ class Thor2PC {
      parameters_.query_count_ = thor::ReadPoints<QPoint>
        (parameters_, DATA_CHANNEL + 2, DATA_CHANNEL + 3,
 	fx_submodule(module, "query"), q_points_cache_);
+     parameters_.SetAuto();
    } 
    else {
      q_points_cache_ = r_points_cache_;
