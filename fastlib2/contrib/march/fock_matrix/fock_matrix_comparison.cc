@@ -86,7 +86,7 @@ void FockMatrixComparison::ComputeChangeOfBasisMatrix_() {
     FATAL("Unable to Compute Eigenvalues of Overlap Matrix");
   }
   
-  eigenvalues.PrintDebug("eigenvalues");
+  //eigenvalues.PrintDebug("eigenvalues");
   
   double *min_eigenval;
   min_eigenval = std::min_element(eigenvalues.ptr(), 
