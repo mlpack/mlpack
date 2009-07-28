@@ -23,6 +23,11 @@ const fx_entry_doc fock_matrix_main_entries[] = {
 {"momenta", FX_PARAM, FX_STR, NULL, 
 "A file containing the momenta.  If not specified, then all functions are\n"
 "assumed to be s-type.\n"},
+{"nuclear_centers", FX_PARAM, FX_STR, NULL,
+  "The centers of the nuclei for comparing the final energies.  If not specified\n"
+"then the algorithm will not compare energies.\n"},
+{"nuclear_charges", FX_PARAM, FX_STR, NULL,
+  "The charges of the nuclei.  If not specified, all atoms are assumed to be H.\n"},
 {"do_cfmm", FX_PARAM, FX_STR, NULL,
   "Compute the CFMM Coulomb matrix.  The value is irrelevant.\n"},
 {"do_link", FX_PARAM, FX_STR, NULL,

@@ -95,7 +95,7 @@ void FockMatrixComparison::ComputeChangeOfBasisMatrix_() {
                                   eigenvalues.ptr() + eigenvalues.length());
   
   printf("Smallest Eigenvalue of Overlap Matrix: %g\n", *min_eigenval);
-  //fx_result_double(module_, "smallest_overlap_eigenvalue", *min_eigenval);
+  fx_result_double(my_mod_, "smallest_overlap_eigenvalue", *min_eigenval);
   
 #ifdef DEBUG
   
