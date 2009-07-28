@@ -2,6 +2,8 @@
 
 void FockMatrixComparison::ComputeCoreMatrices_() {
   
+  printf("=== Computing Core Matrices ===\n");
+  
   Matrix kinetic_energy_integrals;
   kinetic_energy_integrals.Init(num_entries_, num_entries_);
   Matrix potential_energy_integrals;
@@ -251,7 +253,21 @@ void FockMatrixComparison::Init(fx_module* exp_mod, Matrix** exp_mats,
                                 const Matrix& exp, const Matrix& momenta, 
                                 const Matrix& density, Matrix* nuclear_centers, 
                                 const Matrix& nuclear_charges, 
-                                fx_module* my_mod) {
+                                fx_module* my_mod,
+                                const char* one_electron_name, 
+                                const char* change_of_basis_name) {
+  
+  
+  /*
+  core_file_ = (char *)malloc(strlen(one_electron_name) * sizeof(char));
+  change_file_ = (char *)malloc(strlen(change_of_basis_name) * sizeof(char));
+
+  memcpy(core_file_, one_electron_name, strlen(one_electron_name));
+  memcpy(change_file_, change_of_basis_name, strlen(change_of_basis_name));
+  */
+  
+  core_string_ = one_electron_name;
+  change_string_ = change_of_basis_name;
   
   approx_mod_ = exp_mod;
   naive_mod_ = naive_mod;
@@ -423,17 +439,39 @@ void FockMatrixComparison::Compare() {
     
     printf("=== Comparing Spectra ===\n");
     
+    
+    const char* core_file = core_string_.c_str();
+    const char* change_file = change_string_.c_str();
     // compute H and S
     // this will require the centers and exponents and momenta and nuclear 
     // centers
     
-    ComputeCoreMatrices_();
+    bool matrices_loaded = true;
+    if (data::Load(core_file, &core_hamiltonian_) == SUCCESS_FAIL) {
+      core_hamiltonian_.Destruct();
+      matrices_loaded = false;
+    }
+    if (matrices_loaded && 
+        (data::Load(change_file, &change_of_basis_matrix_) == SUCCESS_FAIL)) {
+      change_of_basis_matrix_.Destruct();
+      matrices_loaded = false;
+    }
     
-    // compute change of basis matrix
-    
-    ComputeChangeOfBasisMatrix_();
-    
-    
+    if (!matrices_loaded) {
+      ComputeCoreMatrices_();
+      
+      ComputeChangeOfBasisMatrix_();
+      
+      // save the matrices to files
+      
+      data::Save(core_file, core_hamiltonian_);
+      data::Save(change_file, change_of_basis_matrix_);
+    }
+    else {
+      // to keep it from complaining at the end
+      //overlap_matrix_.Init(1,1); 
+    }
+        
     // compute eigenvalues
     
     DiagonalizeFockMatrix_();

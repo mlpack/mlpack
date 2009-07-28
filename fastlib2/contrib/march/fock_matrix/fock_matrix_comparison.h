@@ -81,6 +81,9 @@ class FockMatrixComparison {
   
   index_t num_entries_;
   
+  std::string core_string_;
+  std::string change_string_;
+  
   double rel_error_cutoff_;
   
   void ComputeCoreMatrices_();
@@ -97,7 +100,8 @@ class FockMatrixComparison {
             Matrix** mat2, const Matrix& centers, const Matrix& exp, 
             const Matrix& momenta, const Matrix& density, 
             Matrix* nuclear_centers, const Matrix& nuclear_charges, 
-            fx_module* my_mod);
+            fx_module* my_mod, const char* one_electron_name, 
+            const char* change_of_basis_name);
 
   void Compare();
   

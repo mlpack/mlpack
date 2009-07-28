@@ -220,6 +220,8 @@ int main(int argc, char* argv[]) {
   std::string under_F("_F.csv");
   std::string under_J("_J.csv");
   std::string under_K("_K.csv");
+  std::string core_name("core.csv");
+  std::string change_name("change.csv");
   std::string thresh_str;
   
   double prescreening_threshold = fx_param_double(root_mod, 
@@ -247,6 +249,17 @@ int main(int argc, char* argv[]) {
                           + underscore + density_name + underscore  
                           + thresh_str + under_K;
   const char* prescreening_exchange_file = prescreening_exchange_string.c_str();
+  
+  
+  std::string core_string;
+  core_string = directory + centers_name + underscore + exp_name + underscore 
+                + core_name;
+  const char* core_file = core_string.c_str();
+  
+  std::string change_string;
+  change_string = directory + centers_name + underscore + exp_name + underscore 
+                  + change_name;
+  const char* change_file = change_string.c_str();
 
   
   bool do_prescreening = fx_param_exists(root_mod, "do_prescreening");
@@ -379,7 +392,7 @@ int main(int argc, char* argv[]) {
     FockMatrixComparison cfmm_compare;
     cfmm_compare.Init(cfmm_mod, cfmm_mats, prescreening_mod, prescreening_mats, 
                       centers, exp_mat, momenta, density, nuclear_centers,
-                      nuclear_charges, cfmm_compare_mod);
+                      nuclear_charges, cfmm_compare_mod, core_file, change_file);
     cfmm_compare.Compare();
     
     
@@ -416,7 +429,7 @@ int main(int argc, char* argv[]) {
       FockMatrixComparison cfmm_compare;
       cfmm_compare.Init(cfmm_mod, cfmm_mats, prescreening_mod, prescreening_mats, 
                         centers, exp_mat, momenta, density, nuclear_centers,
-                        nuclear_charges, cfmm_compare_mod);
+                        nuclear_charges, cfmm_compare_mod, core_file, change_file);
       cfmm_compare.Compare();
     
     } // cfmm comparison
@@ -453,7 +466,7 @@ int main(int argc, char* argv[]) {
       FockMatrixComparison link_compare;
       link_compare.Init(link_mod, link_mats, prescreening_mod, prescreening_mats, 
                         centers, exp_mat, momenta, density, nuclear_centers,
-                        nuclear_charges, link_compare_mod);
+                        nuclear_charges, link_compare_mod, core_file, change_file);
       link_compare.Compare();
       
     } // cfmm comparison
@@ -502,7 +515,7 @@ int main(int argc, char* argv[]) {
       naive_compare.Init(naive_mod, naive_mats, prescreening_mod, 
                          prescreening_mats, centers, exp_mat, momenta, 
                          density, nuclear_centers, nuclear_charges, 
-                         naive_compare_mod);
+                         naive_compare_mod, core_file, change_file);
       naive_compare.Compare();
       
     } // Naive comparison
@@ -552,7 +565,8 @@ int main(int argc, char* argv[]) {
       FockMatrixComparison multi_compare;
       multi_compare.Init(multi_mod, multi_mats, prescreening_mod, 
                          prescreening_mats, centers, exp_mat, momenta, density, 
-                         nuclear_centers, nuclear_charges, multi_compare_mod);
+                         nuclear_centers, nuclear_charges, multi_compare_mod,
+                         core_file, change_file);
       multi_compare.Compare();
       
     } // cfmm comparison        
