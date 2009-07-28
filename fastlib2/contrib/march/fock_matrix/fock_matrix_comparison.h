@@ -26,6 +26,11 @@ class FockMatrixComparison {
   double max_rel_J_;
   double max_rel_K_;
   
+  // root mean square error
+  double rms_F_;
+  double rms_J_;
+  double rms_K_;
+  
   // The row and column index of the maximum difference
   index_t max_index_row_F_;
   index_t max_index_col_F_;

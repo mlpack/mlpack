@@ -300,6 +300,10 @@ void FockMatrixComparison::Init(fx_module* exp_mod, Matrix** exp_mats,
   total_diff_J_ = 0.0;
   total_diff_K_ = 0.0;
   
+  rms_F_ = 0.0;
+  rms_J_ = 0.0;
+  rms_K_ = 0.0;
+  
   num_entries_ = naive_G_mat_->n_cols();
   
   rel_error_cutoff_ = 10e-12;
@@ -363,6 +367,7 @@ void FockMatrixComparison::Compare() {
         }
         
         total_diff_F_ += this_diff;
+        rms_F_ += this_diff * this_diff;
             
       } // compare_fock
       
@@ -392,7 +397,8 @@ void FockMatrixComparison::Compare() {
           this_diff *= 2;
         }
         
-        total_diff_J_ += this_diff;        
+        total_diff_J_ += this_diff;  
+        rms_J_ += this_diff * this_diff;
       
       } // compare coulomb
       
@@ -421,6 +427,7 @@ void FockMatrixComparison::Compare() {
         }
         
         total_diff_K_ += this_diff;
+        rms_K_ += this_diff * this_diff;
         
       } // compare exchange
       
@@ -506,6 +513,7 @@ void FockMatrixComparison::Compare() {
     //fx_result_double(my_mod_, "ave_diff_F", 
     //                 (total_diff_F_/(num_entries_ * num_entries_)));
     fx_result_double(my_mod_, "max_rel_diff_F", max_rel_F_);
+    fx_result_double(my_mod_, "rms_F", sqrt(rms_F_ / (double)(num_entries_ * num_entries_)));
   }
 
   if (compare_coulomb_) {
@@ -518,6 +526,7 @@ void FockMatrixComparison::Compare() {
     //fx_result_int(my_mod_, "max_index_col_J", max_index_col_J_);
     //fx_result_double(my_mod_, "ave_diff_J", 
     //                 (total_diff_J_/(num_entries_ * num_entries_)));
+    fx_result_double(my_mod_, "rms_J", sqrt(rms_J_ / (double)(num_entries_ * num_entries_)));
     
   }
 
@@ -528,6 +537,7 @@ void FockMatrixComparison::Compare() {
     //fx_result_double(my_mod_, "ave_diff_K", 
     //                 (total_diff_K_/(num_entries_ * num_entries_)));
     fx_result_double(my_mod_, "max_rel_diff_K", max_rel_K_);
+    fx_result_double(my_mod_, "rms_K", sqrt(rms_K_ / (double)(num_entries_ * num_entries_)));
   }
                    
 } // Compare()
