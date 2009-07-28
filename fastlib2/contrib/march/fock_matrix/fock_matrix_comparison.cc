@@ -237,7 +237,7 @@ void FockMatrixComparison::CompareEigenvalues_() {
   fx_result_double(my_mod_, "comp_energy", comp_total_energy_);
   
   double total_energy_diff = fabs(naive_total_energy_ - comp_total_energy_);
-  double total_rel_energy_diff = total_energy_diff / naive_total_energy_;
+  double total_rel_energy_diff = total_energy_diff / fabs(naive_total_energy_);
   
   // note that these lack the nuclear repulsion energy
   fx_result_double(my_mod_, "energy_diff", total_energy_diff);
