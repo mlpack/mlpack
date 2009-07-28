@@ -438,6 +438,8 @@ int main(int argc, char* argv[]) {
       cfmm_compare.Compare();
     
     } // cfmm comparison
+    
+    link_exchange.Init(1,1);
         
   } // do_cfmm
   else if (fx_param_exists(root_mod, "do_link")) {
@@ -474,10 +476,17 @@ int main(int argc, char* argv[]) {
                         nuclear_charges, link_compare_mod, core_file, change_file);
       link_compare.Compare();
       
-    } // cfmm comparison
+    } // link comparison
         
+    cfmm_coulomb.Init(1,1);
     
   } // do_link
+  else {
+    
+    cfmm_coulomb.Init(1,1);
+    link_exchange.Init(1,1);
+    
+  }
 
 
   if (fx_param_exists(root_mod, "do_naive")) {
