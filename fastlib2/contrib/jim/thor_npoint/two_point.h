@@ -30,6 +30,7 @@ class TwoPoint{
     bounds_.CopyValues(bounds_in);    
     counts_.Init(n_boxes_); 
     counts_.SetZero();
+    max_dist_ = bounds_[n_boxes_];
   } 
 
   void Add(double dist){

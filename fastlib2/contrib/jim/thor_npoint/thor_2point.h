@@ -585,15 +585,20 @@ class Thor2PC {
    if (do_naive){
      printf("Performing Naive Computation \n");
      ComputeNaive();
-   } else {
+   } else {   
+     q_results_.StartSync();
+     q_results_.WaitSync();
      printf("Performing Dual-Tree Computation using THOR \n");
      thor::RpcDualTree<Thor2PC, DualTreeDepthFirst<Thor2PC> >
        (fx_submodule(module, "gnp"), GNP_CHANNEL,
 	parameters_, q_tree_, r_tree_, &q_results_, &global_result_);
+     q_results_.StartSync();
+     q_results_.WaitSync();
    }
    fx_timer_stop(module, "two_point");
    printf("2-Point Correlation completed...\n");    
    global_result_.Postprocess(parameters_);
+ 
  }
  
  
