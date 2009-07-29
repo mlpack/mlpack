@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
   rpc::Init();
 
   const char* fp_results;
-  FILE * results;
+  FILE *results;
   Thor2PC sky;
 
    // Read in positions
@@ -48,6 +48,7 @@ int main(int argc, char *argv[]) {
     }    
   }
 
+  rpc::Done();
   fx_done(fx_root);
   return 0;
 }
