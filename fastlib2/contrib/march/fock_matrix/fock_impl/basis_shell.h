@@ -4,8 +4,6 @@
 #include "fastlib/fastlib.h"
 #include "eri.h"
 
-//namespace eri {};
-
 /**
  * A shell is a set of integrals with the same center, total angular momentum, 
  * and exponents, but with different orientations of the momentum.  
@@ -24,6 +22,13 @@ class BasisShell {
   ~BasisShell() {}
   */
   
+  // the index here is the first index into the Fock matrix for this shell
+  // the code that creates the list of BasisShells should keep up with
+  // how many functions there are
+  // Compute list of BasisShells - returns total number of functions
+  // then this number is the dimensionality of the matrices that can be 
+  // used to init them / check that this matches the size of the input density
+  // matrix
   void Init(const Vector& cent, double exp, index_t mom, index_t ind) {
   
     DEBUG_ASSERT(mom >= 0);
@@ -31,50 +36,72 @@ class BasisShell {
     DEBUG_ASSERT(exp >= 0);
     
     total_momentum_ = mom;
-    start_index_ = ind;
     exponent_ = exp;
   
+    // alias instead?  I shouldn't need to change it
     center_.Copy(cent);
   
-    if (mom == 0) {
+    num_functions_ = eri::NumFunctions(total_momentum_);
     
-      num_functions_ = 1;
-    
-    }
-    else if (mom == 1) {
-    
-      num_functions_ = 3;
-    
-    }
-    else {
-      FATAL("Higher momenta not supported.");
+    matrix_indices_.Init(num_functions_);
+    for (index_t i = 0; i < num_functions_; i++) {
+      matrix_indices_[i] = ind + i;
     }
     
-    normalization_constant_ = eri::ComputeNormalization(exponent_, 
-                                                        total_momentum_);
-  
+    ComputeShellNormalization();
+    
   } // Init()
   
   void Copy(BasisShell& inshell) {
   
     total_momentum_ = inshell.total_momentum();
-    start_index_ = inshell.start_index();
     exponent_ = inshell.exp();
+    // does this need to be Copy?  alias instead?
     center_.Copy(inshell.center());
     num_functions_ = inshell.num_functions();
-    normalization_constant_ = inshell.normalization_constant();
-  
+    normalization_constants_.InitCopy(inshell.normalization_constants());
+    matrix_indices_.InitCopy(inshell.matrix_indices());
+    
   }
+  
+  /**
+   * Fills in the array of normalization constants in Libint order.
+   */
+  void ComputeShellNormalization() {
+    
+    normalization_constants_.Init(num_functions_);
+    
+    index_t fun_index = 0;
+    
+    for (index_t i = 0; i <= total_momentum_; i++) {
+      
+      int nx = total_momentum_ - i;
+      
+      for (index_t j = 0; j <= i; j++) {
+        
+        int ny = i - j;
+        int nz = j;
+        
+        normalization_constants_[fun_index] = eri::ComputeNormalization(exponent_, 
+                                                                        nx, ny, nz);
+        fun_index++; 
+        
+      }
+      
+    }
+    
+  } // ComputeNormalization Basis Shell
+  
   
   double exp() const {
     return exponent_;
   }
   
-  Vector& center() {
+  const Vector& center() const {
     return center_;
   }
   
-  index_t num_functions() {
+  index_t num_functions() const {
     return num_functions_;
   }
   
@@ -82,13 +109,34 @@ class BasisShell {
     return total_momentum_;
   }
   
-  index_t start_index() {
-    return start_index_;
+  const ArrayList<double>& normalization_constants() const {
+    return normalization_constants_;
   }
   
-  double normalization_constant() {
-    return normalization_constant_;
+  const ArrayList<index_t>& matrix_indices() const {
+    return matrix_indices_; 
   }
+  
+  double normalization_constant(index_t i) {
+    
+    DEBUG_ASSERT(i < num_functions_);
+    DEBUG_ASSERT(i >= 0);
+    
+    return normalization_constants_[i];
+    
+  }
+  
+  index_t matrix_index(index_t i) {
+
+    DEBUG_ASSERT(i < num_functions_);
+    DEBUG_ASSERT(i >= 0);
+    
+    return matrix_indices_[i];
+    
+  }
+  
+  
+  // these functions are all for LinK
   
   index_t current_mu() {
     return current_mu_;
@@ -117,28 +165,27 @@ class BasisShell {
 
  private:
 
-  // right now, only 0 (s) and 1 (p) are supported
   index_t total_momentum_;
 
-  // number of contracted basis functions in the shell
+  // number of basis functions in the shell, depends on the momentum
+  // do I actually need to store this?  
   index_t num_functions_;
   
+  // need to be able to index the density and Fock matrix for each function
+  // these are accessed in the libint order
+  // i.e. p_x, p_y, p_z
+  // see the Libint programmer's manual for more info
+  ArrayList<index_t> matrix_indices_;
+
   Vector center_;
   
   double exponent_;
   
-  // The index of the center in the Matrix
-  index_t start_index_;
+  ArrayList<double> normalization_constants_;
   
-  //ArrayList<index_t> functions_;
-  
-  // I'll need to define these somewhere
-  char* atom_type_;
-  
-  // need to multiply integrals by this
-  double normalization_constant_;
-  
-  // used in sorting
+  // used in sorting for LinK
+  // is it really necessary to have these?
+  // could I handle LinK some other way?
   index_t current_mu_;
   double current_density_entry_;
   

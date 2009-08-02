@@ -2,95 +2,152 @@
 #define ERI_H
 
 #include "fastlib/fastlib.h"
-//#include "libint_wrappers.h"
+#include "../../libint/include/libint/libint.h"
+#include "../../libint/include/libint/hrr_header.h"
+#include "../../libint/include/libint/vrr_header.h"
+
+// copied from libint or libmint
+#define MAX_FAC 100
+
 
 class BasisShell;
 class ShellPair;
 
 namespace eri {
-
-  double double_fact(int m);
   
-  // The erf-like function
-  double F_0_(double z);
+  /////////////////////////// constants //////////////////////////// 
   
-  double F_m(double z, int m);
+  const double pow_pi_2point5 = pow(math::PI, 2.5);
   
-  double BinomialCoeff(int pow, int mom1, int mom2, double dist1, double dist2);
   
-  double ComputeNormalization(const BasisShell& shell);
+  ///////////////////////// initialization ////////////////////////
   
-  double ComputeNormalization(double exp, index_t momentum);
+  /**
+   * Overall initializer for ERI's.  Computes the double factorials and 
+   * initializes Libint with init_libint_base()
+   *
+   * Call this function before using any other functions in namespace eri
+   *
+   * Only needs to be called once per program.
+   */
+  void ERIInit();
   
-  double ComputeGPTCenter(Vector& A_vec, double alpha_A, Vector& B_vec, 
-                          double alpha_B, Vector* p_vec);
+  /**
+   * Frees the double factorial array.  
+   */
+  void ERIFree();
+  
+  
+  //////////////////////// Helpers //////////////////////////
+  
+  /**
+   * Computes the number of functions in a shell of the given momentum.
+   */
+  index_t NumFunctions(int momentum);
+  
+  /**
+   * Used to swap entries of the array list permutation.
+   *
+   * This should really go in the ArrayList class.
+   */
+  void ArrayListSwap(index_t ind1, index_t ind2, ArrayList<index_t>* perm);
+  
+  /**
+   * Returns the index of the given integral in the array returned from LIBINT.
+   * indices holds the a, b, c, d indices and momenta holds the momenta
+   */
+  index_t IntegralIndex(ArrayList<index_t> indices, ArrayList<index_t> momenta);
+  
+  index_t IntegralIndex(index_t a_ind, int A_mom, index_t b_ind, int B_mom,
+                        index_t c_ind, int C_mom, index_t d_ind, int D_mom);
+  
+  
+  /**
+   * For the given Libint index and total momentum, 
+   * returns the x y and z momenta
+   */
+  //void BasisMomenta(index_t ind, index_t momentum, int* x_mom, int* y_mom, 
+  //                  int* z_mom);
+  
+  /**
+   * For the given Cartesian momenta, returns this functions index in 
+   * the Libint order
+   */
+  //index_t BasisIndex(int x_mom, int y_mom, int z_mom, index_t total_mom);
+  
+  
+  /**
+   * Normalization function for higher momenta
+   */
+  double ComputeNormalization(double exp, int x_mom, int y_mom, int z_mom);
+  
+  // not sure what this is for
+  //double ComputeGPTCenter(Vector& A_vec, double alpha_A, Vector& B_vec, 
+  //                        double alpha_B, Vector* p_vec);
 
   double ComputeGPTCenter(const Vector& A_vec, double alpha_A, 
                           const Vector& B_vec, double alpha_B, Vector* p_vec);
-
-  double IntegralPrefactor(double alpha_A, double alpha_B, double alpha_C, 
-                           double alpha_D);
-                           
-  double IntegralGPTFactor(double A_exp, double B_exp, double ab_dist_sq);
-                           
-  double IntegralGPTFactor(double A_exp, Vector& A_vec, 
-                           double B_exp, Vector& B_vec);
-                  
-  double IntegralMomentumFactor(double gamma_p, double gamma_q, 
-                                double four_way_dist_sq);                         
-           
-  double IntegralMomentumFactor(double alpha_A, double alpha_B, double alpha_C, 
-                                double alpha_D, double four_way_dist);
-                           
-  double IntegralMomentumFactor(double gamma_AB, Vector& AB_center, 
-                                double gamma_CD, Vector& CD_center);
-                                
-  double IntegralMomentumFactor(double alpha_A,  Vector& A_vec, double alpha_B, 
-                                Vector& B_vec, double alpha_C, 
-                                Vector& C_vec, double alpha_D, 
-                                Vector& D_vec);
   
-  // An ERI between four s-type gaussians with arbitrary bandwidth
-  // This function does not currently normalize the gaussians
-  double SSSSIntegral(double alpha_A,  Vector& A_vec, double alpha_B, 
-                       Vector& B_vec, double alpha_C,  Vector& C_vec, 
-                      double alpha_D,  Vector& D_vec);
-                      
-  // Compute the integral for general basis functions
-  // I should add a shell version of this to take advantage of shell symmetry
-/*  double ComputeIntegral(const BasisFunction& mu_fun, 
-                         const BasisFunction& nu_fun, 
-                         const BasisFunction& rho_fun, 
-                         const BasisFunction& sigma_fun);
-  */
-                        
-  // These won't really return doubles, they'll return lists of doubles
-  double ComputeShellIntegrals(BasisShell& mu_fun, 
-                               BasisShell& nu_fun, 
-                               BasisShell& rho_fun, 
-                               BasisShell& sigma_fun);
-                               
-  double ComputeShellIntegrals(ShellPair& AB_shell, 
-                               ShellPair& CD_shell);
-                          
- /**
-  * Used for computing bounds in the multi-tree code
-  * Should eventually take a momentum argument
-  */
-  double DistanceIntegral(double alpha_A, double alpha_B, double alpha_C, 
-                          double alpha_D, double AB_dist, double CD_dist, 
-                          double four_way_dist);
-                               
+  void Compute_F(double* F, int n, double t);
+  
+  ////////////////////////// External Integral Routines //////////////////
+  
   /**
    * Computes the Schwartz factor Q_{i j} = (i j|i j)^1/2
    */
   double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell);
   
+  double* ComputeShellIntegrals(BasisShell& mu_fun, 
+                                BasisShell& nu_fun, 
+                                BasisShell& rho_fun, 
+                                BasisShell& sigma_fun);
+                               
+  double* ComputeShellIntegrals(ShellPair& AB_shell, 
+                                ShellPair& CD_shell);
+                          
+  
+  ////////////////////////// Internal Integral Routines ///////////////
+  
+  /**
+   * Call this function from outside.  
+   *
+   * It returns the permutation applied to the shells for use in reading the 
+   * integrals.
+   *
+   * After calling this, reference the integrals using the permutations
+   */
+  double* ComputeERI(const ArrayList<BasisShell*>& shells, 
+                     ArrayList<index_t>* perm, index_t* num_ints);
+  
+  /**
+   * This currently assumes that the momenta obey the conditions:
+   * A_mom >= B_mom
+   * C_mom >= D_mom
+   * A_mom + B_mom <= C_mom + D_mom
+   *
+   * IMPORTANT: must have called ERIInit() before calling this function
+   */
+  double* ComputeERIInternal(const Vector& A_vec, double A_exp, int A_mom, 
+                             const Vector& B_vec, double B_exp, int B_mom,
+                             const Vector& C_vec, double C_exp, int C_mom,
+                             const Vector& D_vec, double D_exp, int D_mom,
+                             index_t* num_ints);
+  
+  double* Libint_Eri(const Vector& A_vec, double A_exp, int A_mom, 
+                     const Vector& B_vec, double B_exp, int B_mom,
+                     const Vector& C_vec, double C_exp, int C_mom,
+                     const Vector& D_vec, double D_exp, int D_mom,
+                     Libint_t& libint);
+  
+  
+  ////////////////// Create Shells and ShellPairs ///////////////////////
   
   /**
    * Forms the list of BasisShells from the centers, exponents, and momenta
+   *
+   * Returns the total number of basis functions
    */
-  void CreateShells(const Matrix& centers, const Vector& exponents, 
+  index_t CreateShells(const Matrix& centers, const Vector& exponents, 
                     const Vector& momenta, ArrayList<BasisShell>* shells_out);
                             
   /**
@@ -116,13 +173,6 @@ namespace eri {
                             double shell_pair_cutoff, Vector* shell_max, 
                             ShellPair**** sigma_for_nu, 
                             ArrayList<index_t>* num_per_shell);
-                    
-  /**
-   * The main function, will replace all future function calls to compute 
-   * an ERI
-   */        
-  void TwoElectronIntegral(BasisShell& shellA, BasisShell& shellB, 
-                           BasisShell& shellC, BasisShell& shellD);
   
 
 }
