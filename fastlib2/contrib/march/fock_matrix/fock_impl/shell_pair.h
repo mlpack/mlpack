@@ -32,9 +32,11 @@ class ShellPair {
     return N_shell_;
   }
   
+  /*
   double integral_factor() {
     return integral_factor_;
   } 
+  */
   
   double exponent() {
     return exponent_;
@@ -100,7 +102,7 @@ class ShellPair {
   index_t list_index_;
   
   // for the integrals
-  double integral_factor_;
+  //double integral_factor_;
   
   // gamma
   double exponent_;

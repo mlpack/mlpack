@@ -17,8 +17,8 @@ void ShellPair::Init(index_t M_index, index_t N_index, BasisShell& M_shell,
                                     N_shell_.center(), N_shell_.exp(), 
                                     &center_);
   
-  integral_factor_ = eri::IntegralGPTFactor(M_shell_.exp(), M_shell_.center(), 
-                                            N_shell_.exp(), N_shell_.center());
+  //integral_factor_ = eri::IntegralGPTFactor(M_shell_.exp(), M_shell_.center(), 
+  //                                          N_shell_.exp(), N_shell_.center());
   
   list_index_ = list_ind;
 
