@@ -64,12 +64,18 @@ class NaiveFockMatrix {
     density_.Copy(density);
     
     // This only works for s and p type functions
-    num_funs_ = centers_.n_cols() + (index_t)2*la::Dot(momenta_, momenta_);
+    //num_funs_ = centers_.n_cols() + (index_t)2*la::Dot(momenta_, momenta_);
+    
+    num_funs_ = eri::CreateShells(centers_, exponents_, momenta_, &shells_);
     fx_result_int(mod_, "N", num_funs_);
     
-    eri::CreateShells(centers_, exponents_, momenta_, &shells_);
+    if (density_.n_cols() != num_funs_) {
+      FATAL("Given density matrix does not match basis!\n");
+    }
     
     num_shells_ = shells_.size();
+    
+    
     
     coulomb_mat_.Init(num_funs_, num_funs_);
     exchange_mat_.Init(num_funs_, num_funs_);
@@ -100,13 +106,21 @@ class NaiveFockMatrix {
         for (index_t k = 0; k < num_shells_; k++) {
         
           for (index_t l = 0; l <= k; l++) {
+            
+            index_t num_integrals;
+            ArrayList<index_t> perm;
           
-            double integral = eri::ComputeShellIntegrals(shells_[i], 
-                                                            shells_[j], 
-                                                            shells_[k], 
-                                                            shells_[l]);
+            double* integrals = eri::ComputeShellIntegrals(shells_[i], 
+                                                           shells_[j], 
+                                                           shells_[k], 
+                                                           shells_[l],
+                                                           &num_integrals,
+                                                           &perm);
             
             num_integrals_computed_++;
+            
+            // now, contract with appropriate density entries and sum into 
+            // matrices
             
             double coulomb_int = density_.ref(k, l) * integral;
             double exchange_ik = density_.ref(j, l) * integral;

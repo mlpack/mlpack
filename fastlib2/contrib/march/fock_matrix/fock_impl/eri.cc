@@ -198,11 +198,12 @@ namespace eri {
     
   } // Compute_F
   
-////////////// External Integrals //////////////////////////
 
-double* ComputeShellIntegrals(BasisShell& mu_fun, BasisShell& nu_fun, 
-                              BasisShell& rho_fun, BasisShell& sigma_fun, 
-                              index_t* num_functions, ArrayList<index_t>* perm) {
+  ////////////// External Integrals //////////////////////////
+
+void ComputeShellIntegrals(BasisShell& mu_fun, BasisShell& nu_fun, 
+                           BasisShell& rho_fun, BasisShell& sigma_fun,
+                           IntegralTensor* integrals) {
 
   
   ArrayList<BasisShell*> shells;
@@ -212,36 +213,28 @@ double* ComputeShellIntegrals(BasisShell& mu_fun, BasisShell& nu_fun,
   shells[2] = &rho_fun;
   shells[3] = &sigma_fun;
   
-  double* integrals = ComputeERI(shells, perm, num_functions);
-  
-  return integrals;
+  ComputeERI(shells, integrals);
   
 }
 
-double* ComputeShellIntegrals(ShellPair& AB_shell, ShellPair& CD_shell, 
-                              index_t* num_functions, ArrayList<index_t>* perm) {
+void ComputeShellIntegrals(ShellPair& AB_shell, ShellPair& CD_shell,
+                           IntegralTensor* integrals) {
  
 
-  double* integrals = ComputeShellIntegrals(AB_shell.M_Shell(), 
-                                            AB_shell.N_Shell(),
-                                            CD_shell.M_Shell(), 
-                                            CD_shell.N_Shell(),
-                                            num_functions, perm);
-
-  return integrals;
-
+  ComputeShellIntegrals(AB_shell.M_Shell(), AB_shell.N_Shell(),
+                        CD_shell.M_Shell(), CD_shell.N_Shell(), integrals);
+  
 }
 
 double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
 
-  ArrayList<index_t>* perm;
-  
-  index_t num_functions;
-  double* bound = ComputeShellIntegrals(i_shell, j_shell, i_shell, j_shell,
-                                        &num_functions, perm);
+  IntegralTensor bound;
+  ComputeShellIntegrals(i_shell, j_shell, i_shell, j_shell, &bound);
 
-  double* max_bound = std::max_element(bound, bound + num_functions);
-  double* min_bound = std::min_element(bound, bound + num_functions);
+  double* max_bound = std::max_element(bound.ptr(), 
+                                       bound.ptr() + bound.num_integrals());
+  double* min_bound = std::min_element(bound.ptr(), 
+                                       bound.ptr() + bound.num_integrals());
   
   return max(fabs(*max_bound), fabs(*min_bound));
 
@@ -249,16 +242,19 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
 
   ////////////////// Internal Integrals ///////////////////////
   
-  double* ComputeERI(const ArrayList<BasisShell*>& shells, 
-                     ArrayList<index_t>* perm, index_t* num_ints) {
+  void ComputeERI(const ArrayList<BasisShell*>& shells, 
+                  IntegralTensor* integrals) {
     
     // should this come in initialized or be initialized here
-    perm->Init(4);
-    (*perm)[0] = 0;
-    (*perm)[1] = 1;
-    (*perm)[2] = 2;
-    (*perm)[3] = 3;
+    // this is new from old
+    ArrayList<index_t> perm;
+    perm.Init(4);
+    perm[0] = 0;
+    perm[1] = 1;
+    perm[2] = 2;
+    perm[3] = 3;
     
+        
     // determine the permutation
     
     index_t momA = shells[0]->total_momentum();
@@ -270,57 +266,71 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     if (momA < momB) {
       
       //printf("swap1\n");
-      ArrayListSwap(0, 1, perm);
+      ArrayListSwap(0, 1, &perm);
     }
     if (momC < momD) {
       //printf("swap2\n");
-      ArrayListSwap(2, 3, perm);
+      ArrayListSwap(2, 3, &perm);
     }
     
     if (momC + momD < momA + momB) {
       //printf("swap3\n");
       
-      ArrayListSwap(0, 2, perm);
-      ArrayListSwap(1, 3, perm);
+      ArrayListSwap(0, 2, &perm);
+      ArrayListSwap(1, 3, &perm);
       
     }
     
-    //printf("perm[0]: %d, perm[1]: %d, perm[2]: %d, perm[3]: %d\n", 
-    //       (*perm)[0], (*perm)[1], (*perm)[2], (*perm)[3]);
+    ArrayList<index_t> anti_perm;
+    anti_perm.Init(4);
+    
+    for (index_t i = 0; i < 4; i++) {
+      
+      anti_perm[perm[i]] = i;
+      
+    }
+    
+    /*
+    printf("perm[0]: %d, perm[1]: %d, perm[2]: %d, perm[3]: %d\n", 
+           perm[0], perm[1], perm[2], perm[3]);
+    printf("a-perm[0]: %d, a-perm[1]: %d, a-perm[2]: %d, a-perm[3]: %d\n", 
+           anti_perm[0], anti_perm[1], anti_perm[2], anti_perm[3]);
+    */
+    
     
     // now call the internal function
     
-    Vector A_vec = shells[(*perm)[0]]->center();
-    Vector B_vec = shells[(*perm)[1]]->center();
-    Vector C_vec = shells[(*perm)[2]]->center();
-    Vector D_vec = shells[(*perm)[3]]->center();
+    Vector A_vec = shells[perm[0]]->center();
+    Vector B_vec = shells[perm[1]]->center();
+    Vector C_vec = shells[perm[2]]->center();
+    Vector D_vec = shells[perm[3]]->center();
     
-    double A_exp = shells[(*perm)[0]]->exp();
-    double B_exp = shells[(*perm)[1]]->exp();
-    double C_exp = shells[(*perm)[2]]->exp();
-    double D_exp = shells[(*perm)[3]]->exp();
+    double A_exp = shells[perm[0]]->exp();
+    double B_exp = shells[perm[1]]->exp();
+    double C_exp = shells[perm[2]]->exp();
+    double D_exp = shells[perm[3]]->exp();
     
-    momA = shells[(*perm)[0]]->total_momentum();
-    momB = shells[(*perm)[1]]->total_momentum();
-    momC = shells[(*perm)[2]]->total_momentum();
-    momD = shells[(*perm)[3]]->total_momentum();
+    momA = shells[perm[0]]->total_momentum();
+    momB = shells[perm[1]]->total_momentum();
+    momC = shells[perm[2]]->total_momentum();
+    momD = shells[perm[3]]->total_momentum();
     
-    double* result = ComputeERIInternal(A_vec, A_exp, momA, B_vec, B_exp, momB,
-                                        C_vec, C_exp, momC, D_vec, D_exp, momD,
-                                        num_ints);
+    ComputeERIInternal(A_vec, A_exp, momA, B_vec, B_exp, momB,
+                       C_vec, C_exp, momC, D_vec, D_exp, momD, 
+                       integrals);
     
-    return result;
-    
+    // unpermute the integrals
+    integrals->UnPermute(anti_perm);
     
   } // ComputeERI
   
   
   
-  double* ComputeERIInternal(const Vector& A_vec, double A_exp, int A_mom, 
-                             const Vector& B_vec, double B_exp, int B_mom,
-                             const Vector& C_vec, double C_exp, int C_mom,
-                             const Vector& D_vec, double D_exp, int D_mom,
-                             index_t* num_ints) {
+  void ComputeERIInternal(const Vector& A_vec, double A_exp, int A_mom, 
+                          const Vector& B_vec, double B_exp, int B_mom,
+                          const Vector& C_vec, double C_exp, int C_mom,
+                          const Vector& D_vec, double D_exp, int D_mom, 
+                          IntegralTensor* integrals) {
     
     int num_primitives = 1;
     int max_momentum = max(max(A_mom, B_mom), max(C_mom, D_mom));
@@ -332,8 +342,10 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
                                  C_vec, C_exp, C_mom, D_vec, D_exp, D_mom,
                                  tester);
     
-    index_t num_integrals = NumFunctions(A_mom) * NumFunctions(B_mom)
-    * NumFunctions(C_mom) * NumFunctions(D_mom);
+    index_t num_funs_a = NumFunctions(A_mom);
+    index_t num_funs_b = NumFunctions(B_mom);
+    index_t num_funs_c = NumFunctions(C_mom);
+    index_t num_funs_d = NumFunctions(D_mom);
     
     // the normalization factor used for all integrals in libint
     double norm_denom = ComputeNormalization(A_exp, A_mom, 0, 0)
@@ -433,17 +445,26 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     }// a_ind
     
     
-    // need to copy the results array here
-    // it gets freed with tester
-    
-    double* retval = (double*)malloc(num_integrals * sizeof(double));
-    memcpy(retval, results, num_integrals * sizeof(double));
-    
-    *num_ints = num_integrals;
-    
+    integrals->Init(num_funs_a, num_funs_b, num_funs_c, num_funs_d, results);
     free_libint(&tester);
     
-    return retval;
+    for (index_t a = 0; a < integrals->dim_a(); a++) {
+      
+      for (index_t b = 0; b < integrals->dim_b(); b++) {
+        
+        for (index_t c = 0; c < integrals->dim_c(); c++) {
+          
+          for (index_t d = 0; d < integrals->dim_d(); d++) {
+            
+            printf("integrals[%d, %d, %d, %d] = %g\n", a, b, c, d, 
+                   integrals->ref(a, b, c, d));
+            
+          }
+        }
+      }
+    }
+    
+    printf("\n\n");
     
     
   } // ComputeERIInternal()

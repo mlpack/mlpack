@@ -5,6 +5,7 @@
 #include "../../libint/include/libint/libint.h"
 #include "../../libint/include/libint/hrr_header.h"
 #include "../../libint/include/libint/vrr_header.h"
+#include "integral_tensor.h"
 
 // copied from libint or libmint
 #define MAX_FAC 100
@@ -90,6 +91,7 @@ namespace eri {
   
   void Compute_F(double* F, int n, double t);
   
+
   ////////////////////////// External Integral Routines //////////////////
   
   /**
@@ -97,13 +99,15 @@ namespace eri {
    */
   double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell);
   
-  double* ComputeShellIntegrals(BasisShell& mu_fun, 
-                                BasisShell& nu_fun, 
-                                BasisShell& rho_fun, 
-                                BasisShell& sigma_fun);
+  void ComputeShellIntegrals(BasisShell& mu_fun, 
+                             BasisShell& nu_fun, 
+                             BasisShell& rho_fun, 
+                             BasisShell& sigma_fun,
+                             IntegralTensor* integrals);
                                
-  double* ComputeShellIntegrals(ShellPair& AB_shell, 
-                                ShellPair& CD_shell);
+  void ComputeShellIntegrals(ShellPair& AB_shell, 
+                             ShellPair& CD_shell,
+                             IntegralTensor* integrals);
                           
   
   ////////////////////////// Internal Integral Routines ///////////////
@@ -116,8 +120,8 @@ namespace eri {
    *
    * After calling this, reference the integrals using the permutations
    */
-  double* ComputeERI(const ArrayList<BasisShell*>& shells, 
-                     ArrayList<index_t>* perm, index_t* num_ints);
+  void ComputeERI(const ArrayList<BasisShell*>& shells,
+                             IntegralTensor* integrals);
   
   /**
    * This currently assumes that the momenta obey the conditions:
@@ -127,11 +131,11 @@ namespace eri {
    *
    * IMPORTANT: must have called ERIInit() before calling this function
    */
-  double* ComputeERIInternal(const Vector& A_vec, double A_exp, int A_mom, 
-                             const Vector& B_vec, double B_exp, int B_mom,
-                             const Vector& C_vec, double C_exp, int C_mom,
-                             const Vector& D_vec, double D_exp, int D_mom,
-                             index_t* num_ints);
+  void ComputeERIInternal(const Vector& A_vec, double A_exp, int A_mom, 
+                          const Vector& B_vec, double B_exp, int B_mom,
+                          const Vector& C_vec, double C_exp, int C_mom,
+                          const Vector& D_vec, double D_exp, int D_mom,
+                          IntegralTensor* integrals);
   
   double* Libint_Eri(const Vector& A_vec, double A_exp, int A_mom, 
                      const Vector& B_vec, double B_exp, int B_mom,
