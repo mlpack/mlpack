@@ -89,7 +89,16 @@ namespace eri {
   double ComputeGPTCenter(const Vector& A_vec, double alpha_A, 
                           const Vector& B_vec, double alpha_B, Vector* p_vec);
   
+  double ComputeShellOverlap(const BasisShell& shellA, const BasisShell& shellB);
+  
   void Compute_F(double* F, int n, double t);
+  
+  /**
+   * Used to add the contracted integrals into the global matrix
+   */
+  void AddSubmatrix(const ArrayList<index_t>& rows,
+                    const ArrayList<index_t>& cols,
+                    const Matrix& submat, Matrix* out_mat);
   
 
   ////////////////////////// External Integral Routines //////////////////
@@ -120,8 +129,8 @@ namespace eri {
    *
    * After calling this, reference the integrals using the permutations
    */
-  void ComputeERI(const ArrayList<BasisShell*>& shells,
-                             IntegralTensor* integrals);
+  void ComputeERI(const ArrayList<BasisShell*>& shells, double overlapAB, 
+                  double overlapCD, IntegralTensor* integrals);
   
   /**
    * This currently assumes that the momenta obey the conditions:
@@ -131,17 +140,18 @@ namespace eri {
    *
    * IMPORTANT: must have called ERIInit() before calling this function
    */
-  void ComputeERIInternal(const Vector& A_vec, double A_exp, int A_mom, 
-                          const Vector& B_vec, double B_exp, int B_mom,
-                          const Vector& C_vec, double C_exp, int C_mom,
-                          const Vector& D_vec, double D_exp, int D_mom,
+  void ComputeERIInternal(const Vector& A_vec, double A_exp, int A_mom, double normA,
+                          const Vector& B_vec, double B_exp, int B_mom, double normB,
+                          const Vector& C_vec, double C_exp, int C_mom, double normC,
+                          const Vector& D_vec, double D_exp, int D_mom, double normD,
+                          double overlapAB, double overlapCD,
                           IntegralTensor* integrals);
   
   double* Libint_Eri(const Vector& A_vec, double A_exp, int A_mom, 
                      const Vector& B_vec, double B_exp, int B_mom,
                      const Vector& C_vec, double C_exp, int C_mom,
                      const Vector& D_vec, double D_exp, int D_mom,
-                     Libint_t& libint);
+                     double aux_fac, Libint_t* libint);
   
   
   ////////////////// Create Shells and ShellPairs ///////////////////////

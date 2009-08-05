@@ -70,15 +70,36 @@ public:
     return dim_d_;
   }
   
+  index_t num_integrals() const {
+    return num_integrals_;
+  }
+  
   void set(index_t a, index_t b, index_t c, index_t d, double val);
   
   double ref(index_t a, index_t b, index_t c, index_t d);
   
-  index_t num_integrals() const {
+  /**
+   * The given matrix is assumed to be intitialized and needs to be set to zero
+   * before calling this function.  
+   */
+  void ContractCoulomb(const ArrayList<index_t>& rho_ind,
+                       const ArrayList<index_t>& sigma_ind, 
+                       const Matrix& density, Matrix* coulomb);
+  
+  /**
+   * Only specify the pointers needed for the BasisShells
+   *
+   * Make them NULL if they aren't needed for symmetry
+   */
+  void ContractExchange(const ArrayList<index_t>& mu_ind,
+                        const ArrayList<index_t>& nu_ind,
+                        const ArrayList<index_t>& rho_ind,
+                        const ArrayList<index_t>& sigma_ind, 
+                        const Matrix& density, Matrix* exchange_ik,
+                        Matrix* exchange_jk, Matrix* exchange_il,
+                        Matrix* exchange_jl);
     
-    return num_integrals_;
-    
-  }
+  
   
   void Init(int num_a, int num_b, int num_c, int num_d, double* integrals);
   

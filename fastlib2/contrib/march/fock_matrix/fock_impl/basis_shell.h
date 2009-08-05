@@ -9,7 +9,8 @@
  * and exponents, but with different orientations of the momentum.  
  * For example, the px, py, pz orbitals on a single atom form a shell
  *
- * I could consider the s orbital in an sp set as a part of the shell as well
+ * I could consider the s orbital in an sp set as a part of the shell as well,
+ * but the benefits are probably small.
  */
 class BasisShell {
 

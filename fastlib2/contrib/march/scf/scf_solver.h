@@ -194,7 +194,7 @@ class SCFSolver {
     DEBUG_ASSERT(number_of_nuclei_ == nuclear_masses_.length());
     
     
-    number_of_basis_functions_ = basis_centers_.n_cols();
+    number_of_basis_functions_ = density.n_cols();
     
     for (index_t i = 0; i < diis_count_; i++) {
       

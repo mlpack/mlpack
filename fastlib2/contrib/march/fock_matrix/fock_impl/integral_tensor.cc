@@ -285,12 +285,124 @@ double IntegralTensor::ref(index_t a, index_t b, index_t c, index_t d) {
   
 }
 
+void IntegralTensor::ContractCoulomb(const ArrayList<index_t>& rho_ind,
+                                     const ArrayList<index_t>& sigma_ind, 
+                                     const Matrix& density, Matrix* coulomb) {
+  
+  // sum over index 3 and 4 and contract into a matrix of size 
+  // mu_ind.size() * nu_ind.size()
+  
+  // number of shells used to create the integral array should be equal to the 
+  // number of indices in the basis shell
+  DEBUG_ASSERT(rho_ind.size() == dim_c_);
+  DEBUG_ASSERT(sigma_ind.size() == dim_d_);
+  
+  bool same_ref = (rho_ind[0] == sigma_ind[0]) && (rho_ind.back() == sigma_ind.back());
+
+  for (index_t a = 0; a < dim_a_; a++) {
+    
+    for (index_t b = 0; b < dim_b_; b++) {
+      
+      double ab_entry = coulomb->ref(a, b);
+      
+      for (index_t c = 0; c < dim_c_; c++) {
+        
+        index_t c_ind = rho_ind[c];
+        
+        for (index_t d = 0; d < dim_d_; d++) {
+          
+          index_t d_ind = sigma_ind[d];
+          
+          double this_entry = density.get(c_ind, d_ind) * ref(a, b, c, d);
+          
+          // takes care of reference symmetry
+          if (!same_ref) {
+            this_entry *= 2;
+          } 
+          
+          ab_entry += this_entry;
+          
+        } // d
+      } // c
+      
+      // take care of query symmetry outside by summing the submatrix into 
+      // both sides of the diagonal if necessary
+      coulomb->set(a, b, ab_entry);
+      
+    } // b
+  } // a
+  
+} // ContractCoulomb
+
+void IntegralTensor::ContractExchange(const ArrayList<index_t>& mu_ind,
+                                      const ArrayList<index_t>& nu_ind,
+                                      const ArrayList<index_t>& rho_ind,
+                                      const ArrayList<index_t>& sigma_ind, 
+                                      const Matrix& density, Matrix* exchange_ik,
+                                      Matrix* exchange_jk, Matrix* exchange_il,
+                                      Matrix* exchange_jl) {
+  
+  // four integrals here
+  // does this mean four output matrices
+    // don't actually need four if some of the BasisShells are the same
+    // but will need to sum over all the integrals even if they are
+      // not true - will get to them anyway
+  
+    
+  for (index_t a = 0; a < dim_a_; a++) {
+    
+    index_t a_ind = mu_ind[a];
+    
+    for (index_t b = 0; b < dim_b_; b++) {
+      
+      index_t b_ind = nu_ind[b];
+      
+      for (index_t c = 0; c < dim_c_; c++) {
+        
+        index_t c_ind = rho_ind[c];
+        
+        for (index_t d = 0; d < dim_d_; d++) {
+          
+          index_t d_ind = sigma_ind[d];
+          
+          double this_int = ref(a, b, c, d);
+          
+          double ik_int = density.get(b_ind, d_ind) * this_int;
+          
+          exchange_ik->set(a, c, exchange_ik->get(a, c) + ik_int);
+          
+          if (exchange_jk) {
+            double jk_int = density.get(a_ind, d_ind) * this_int;
+            exchange_jk->set(b, c, exchange_jk->get(b, c) + jk_int);
+          }
+          
+          if (exchange_il) {
+            double il_int = density.get(b_ind, c_ind) * this_int;
+            exchange_il->set(a, d, exchange_il->get(a, d) + il_int);
+          }
+          
+          if (exchange_jl) {
+            double jl_int = density.get(a_ind, c_ind) * this_int;
+            exchange_jl->set(b, d, exchange_jl->get(b, d) + jl_int);
+          }
+            
+        } // d
+      } // c
+    } // b
+  } // a
+  
+  
+} // ContractExchange
+
+
 
 void IntegralTensor::UnPermute(const ArrayList<index_t>& anti_perm) {
  
+  /*
   printf("a-perm[0]: %d, a-perm[1]: %d, a-perm[2]: %d, a-perm[3]: %d\n", 
          anti_perm[0], anti_perm[1], anti_perm[2], anti_perm[3]);
-  
+  */
+   
   SwapIndices_(0, anti_perm[0]);
   SwapIndices_(1, anti_perm[1]);
   SwapIndices_(2, anti_perm[2]);
