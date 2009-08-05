@@ -81,22 +81,6 @@ int main(int argc, char* argv[]) {
     FATAL("Number of basis centers must equal number of exponents.\n");
   }
   
-  Matrix density;
-  if (fx_param_exists(root_mod, "density")) {
-    const char* density_file = fx_param_str_req(root_mod, "density");
-    data::Load(density_file, &density);
-  }
-  else {
-    density.Init(centers.n_cols(), centers.n_cols());
-    density.SetZero();
-    printf("\nUsing only core integrals for initial matrix.\n\n");
-  }
-  
-  if ((density.n_cols() != centers.n_cols()) || 
-      (density.n_rows() != centers.n_cols())) {
-    FATAL("Density matrix has wrong dimensions.\n");
-  }
-  
   Matrix momenta;
   if (fx_param_exists(root_mod, "momenta")) {
     const char* momenta_file = fx_param_str_req(root_mod, "momenta");
@@ -107,7 +91,27 @@ int main(int argc, char* argv[]) {
     momenta.SetAll(0);
     printf("Assuming all s-type functions.\n\n");
   }
-    
+
+  // WARNING: this hack only works for s and p functions
+  index_t num_funs = centers.n_cols() + 2 * (index_t)la::Dot(momenta, momenta);
+  
+  Matrix density;
+  if (fx_param_exists(root_mod, "density")) {
+    const char* density_file = fx_param_str_req(root_mod, "density");
+    data::Load(density_file, &density);
+  }
+  else {
+    density.Init(num_funs, num_funs);
+    density.SetZero();
+    printf("\nUsing only core integrals for initial matrix.\n\n");
+  }
+  
+  if ((density.n_cols() != num_funs) || 
+      (density.n_rows() != num_funs)) {
+    FATAL("Density matrix has wrong dimensions.\n");
+  }
+  
+      
   Matrix nuclear_centers;
   const char* nuclear_centers_file = fx_param_str_req(root_mod, 
                                                       "nuclear_centers");

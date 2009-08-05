@@ -152,6 +152,18 @@ namespace eri {
     
   }  
   
+  double ComputeShellOverlap(const BasisShell& shellA, const BasisShell& shellB) {
+    
+    double gamma = shellA.exp() + shellB.exp();
+    double overlap = pow(math::PI/gamma, 1.5);
+    double dist_sq = la::DistanceSqEuclidean(shellA.center(), shellB.center());
+    double exp_fac = exp(-1 * shellA.exp() * shellB.exp() * dist_sq / gamma);
+    overlap *= exp_fac;
+    
+    return overlap;
+    
+  } // ComputeShellOverlap
+
 
   void Compute_F(double* F, int n, double t) {
     
@@ -167,6 +179,7 @@ namespace eri {
     static double K = 1.0/M_2_SQRTPI;
     double et;
     
+    // forward recurrence?
     if (t>20.0){
       t2 = 2*t;
       et = exp(-t);
@@ -176,6 +189,7 @@ namespace eri {
         F[m+1] = ((2*m + 1)*F[m] - et)/(t2);
       }
     }
+    // backward?
     else {
       et = exp(-t);
       t2 = 2*t;
@@ -195,8 +209,30 @@ namespace eri {
       }
     }
     
-    
   } // Compute_F
+  
+  // IMPORTANT: currently assumes the rows and columns are contiguous
+  void AddSubmatrix(const ArrayList<index_t>& rows,
+                    const ArrayList<index_t>& cols,
+                    const Matrix& submat, Matrix* out_mat) {
+    
+    Matrix col_slice;
+    out_mat->MakeColumnSlice(cols[0], cols.size(), &col_slice);
+    
+    for (index_t i = 0; i < cols.size(); i++) {
+      // for each column, make the subvector and do the addition
+      
+      Vector out_row;
+      col_slice.MakeColumnSubvector(i, rows[0], rows.size(), &out_row);
+      
+      Vector in_row;
+      submat.MakeColumnVector(i, &in_row);
+      
+      la::AddTo(in_row, &out_row);
+      
+    }
+    
+  } // AddSubmatrix
   
 
   ////////////// External Integrals //////////////////////////
@@ -213,7 +249,10 @@ void ComputeShellIntegrals(BasisShell& mu_fun, BasisShell& nu_fun,
   shells[2] = &rho_fun;
   shells[3] = &sigma_fun;
   
-  ComputeERI(shells, integrals);
+  double overlapAB = ComputeShellOverlap(mu_fun, nu_fun);
+  double overlapCD = ComputeShellOverlap(rho_fun, sigma_fun);
+  
+  ComputeERI(shells, overlapAB, overlapCD, integrals);
   
 }
 
@@ -221,8 +260,15 @@ void ComputeShellIntegrals(ShellPair& AB_shell, ShellPair& CD_shell,
                            IntegralTensor* integrals) {
  
 
-  ComputeShellIntegrals(AB_shell.M_Shell(), AB_shell.N_Shell(),
-                        CD_shell.M_Shell(), CD_shell.N_Shell(), integrals);
+  ArrayList<BasisShell*> shells;
+  shells.Init(4);
+  shells[0] = &(AB_shell.M_Shell());
+  shells[1] = &(AB_shell.N_Shell());
+  shells[2] = &(CD_shell.M_Shell());
+  shells[3] = &(CD_shell.N_Shell());
+  
+  
+  ComputeERI(shells, AB_shell.overlap(), CD_shell.overlap(), integrals);
   
 }
 
@@ -242,8 +288,8 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
 
   ////////////////// Internal Integrals ///////////////////////
   
-  void ComputeERI(const ArrayList<BasisShell*>& shells, 
-                  IntegralTensor* integrals) {
+  void ComputeERI(const ArrayList<BasisShell*>& shells, double overlapAB, 
+                  double overlapCD, IntegralTensor* integrals) {
     
     // should this come in initialized or be initialized here
     // this is new from old
@@ -278,6 +324,8 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
       
       ArrayListSwap(0, 2, &perm);
       ArrayListSwap(1, 3, &perm);
+      
+      std::swap(overlapAB, overlapCD);
       
     }
     
@@ -315,8 +363,14 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     momC = shells[perm[2]]->total_momentum();
     momD = shells[perm[3]]->total_momentum();
     
-    ComputeERIInternal(A_vec, A_exp, momA, B_vec, B_exp, momB,
-                       C_vec, C_exp, momC, D_vec, D_exp, momD, 
+    double normA = shells[perm[0]]->normalization_constant(0);
+    double normB = shells[perm[1]]->normalization_constant(0);
+    double normC = shells[perm[2]]->normalization_constant(0);
+    double normD = shells[perm[3]]->normalization_constant(0);
+
+    ComputeERIInternal(A_vec, A_exp, momA, normA, B_vec, B_exp, momB, normB,
+                       C_vec, C_exp, momC, normC, D_vec, D_exp, momD, normD,
+                       overlapAB, overlapCD,
                        integrals);
     
     // unpermute the integrals
@@ -326,32 +380,42 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
   
   
   
-  void ComputeERIInternal(const Vector& A_vec, double A_exp, int A_mom, 
-                          const Vector& B_vec, double B_exp, int B_mom,
-                          const Vector& C_vec, double C_exp, int C_mom,
-                          const Vector& D_vec, double D_exp, int D_mom, 
+  void ComputeERIInternal(const Vector& A_vec, double A_exp, int A_mom, double normA,
+                          const Vector& B_vec, double B_exp, int B_mom, double normB,
+                          const Vector& C_vec, double C_exp, int C_mom, double normC,
+                          const Vector& D_vec, double D_exp, int D_mom, double normD,
+                          double overlapAB, double overlapCD,
                           IntegralTensor* integrals) {
     
     int num_primitives = 1;
     int max_momentum = max(max(A_mom, B_mom), max(C_mom, D_mom));
+    int total_momentum = A_mom + B_mom + C_mom + D_mom;
     
     Libint_t tester;
     init_libint(&tester, max_momentum, num_primitives);
     
+    // set up tester with overlaps and normalizationss
+    
+    // the normalization factor used for all integrals in libint
+    double norm_denom = normA * normB * normC * normD;
+    
+    double sqrt_rho_pi = (A_exp + B_exp) * (C_exp + D_exp);
+    sqrt_rho_pi /= (A_exp + B_exp + C_exp + D_exp);
+    sqrt_rho_pi = sqrt(sqrt_rho_pi / math::PI);
+    
+    double aux_fac = 2 * sqrt_rho_pi * overlapAB * overlapCD;
+    
+    printf("aux_fac: %g\n", aux_fac);
+    
     double* results = Libint_Eri(A_vec, A_exp, A_mom, B_vec, B_exp, B_mom, 
                                  C_vec, C_exp, C_mom, D_vec, D_exp, D_mom,
-                                 tester);
+                                 aux_fac, &tester);
     
     index_t num_funs_a = NumFunctions(A_mom);
     index_t num_funs_b = NumFunctions(B_mom);
     index_t num_funs_c = NumFunctions(C_mom);
     index_t num_funs_d = NumFunctions(D_mom);
     
-    // the normalization factor used for all integrals in libint
-    double norm_denom = ComputeNormalization(A_exp, A_mom, 0, 0)
-    * ComputeNormalization(B_exp, B_mom, 0, 0)
-    * ComputeNormalization(C_exp, C_mom, 0, 0)
-    * ComputeNormalization(D_exp, D_mom, 0, 0);
     
     
     //printf("results: %p\n", results);
@@ -416,8 +480,8 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
                     results[integral_ind] = results[integral_ind] * A_norm 
                     * B_norm * C_norm * D_norm / norm_denom;
                     
-                    //printf("results[%d]: %g\n", integral_ind, 
-                    //       results[integral_ind]);
+                    printf("results[%d]: %g\n", integral_ind, 
+                           results[integral_ind]);
                     
                     
                     d++;
@@ -448,6 +512,7 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     integrals->Init(num_funs_a, num_funs_b, num_funs_c, num_funs_d, results);
     free_libint(&tester);
     
+    /*
     for (index_t a = 0; a < integrals->dim_a(); a++) {
       
       for (index_t b = 0; b < integrals->dim_b(); b++) {
@@ -465,6 +530,7 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     }
     
     printf("\n\n");
+    */
     
     
   } // ComputeERIInternal()
@@ -473,27 +539,25 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
   double* Libint_Eri(const Vector& A_vec, double A_exp, int A_mom, 
                      const Vector& B_vec, double B_exp, int B_mom,
                      const Vector& C_vec, double C_exp, int C_mom,
-                     const Vector& D_vec, double D_exp, int D_mom,
-                     Libint_t& libint) {
+                     const Vector& D_vec, double D_exp, int D_mom, 
+                     double aux_fac, Libint_t* libint) {
     
     // assuming libint has been initialized, but PrimQuartet hasn't been set up
-    double* integrals; 
     
-    // TODO: Make sure these subtractions go the right way
     // fill in the other stuff
     Vector AB;
-    la::SubInit(A_vec, B_vec, &AB);
+    la::SubInit(B_vec, A_vec, &AB);
     
     Vector CD;
-    la::SubInit(C_vec, D_vec, &CD);
+    la::SubInit(D_vec, C_vec, &CD);
     
-    libint.AB[0] = AB[0];
-    libint.AB[1] = AB[1];
-    libint.AB[2] = AB[2];
+    libint->AB[0] = AB[0];
+    libint->AB[1] = AB[1];
+    libint->AB[2] = AB[2];
     
-    libint.CD[0] = CD[0];
-    libint.CD[1] = CD[1];
-    libint.CD[2] = CD[2];
+    libint->CD[0] = CD[0];
+    libint->CD[1] = CD[1];
+    libint->CD[2] = CD[2];
     
     
     Vector P_vec;
@@ -505,40 +569,37 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     Vector W_vec;
     double gamma_p_eta = ComputeGPTCenter(P_vec, gamma, Q_vec, eta, &W_vec);
     
-    // TODO: Make sure these subtractions go the right way
-    // I think the la ones go backwards sometimes
-    
     //goes in U[0]
     Vector PA;
-    la::SubInit(P_vec, A_vec, &PA);
+    la::SubInit(A_vec, P_vec, &PA);
     
-    libint.PrimQuartet[0].U[0][0] = PA[0];
-    libint.PrimQuartet[0].U[0][1] = PA[1];
-    libint.PrimQuartet[0].U[0][2] = PA[2];
+    libint->PrimQuartet[0].U[0][0] = PA[0];
+    libint->PrimQuartet[0].U[0][1] = PA[1];
+    libint->PrimQuartet[0].U[0][2] = PA[2];
     
     // goes in U[2]
     Vector QC;
-    la::SubInit(Q_vec, C_vec, &QC);
+    la::SubInit(C_vec, Q_vec, &QC);
     
-    libint.PrimQuartet[0].U[2][0] = QC[0];
-    libint.PrimQuartet[0].U[2][1] = QC[1];
-    libint.PrimQuartet[0].U[2][2] = QC[2];
+    libint->PrimQuartet[0].U[2][0] = QC[0];
+    libint->PrimQuartet[0].U[2][1] = QC[1];
+    libint->PrimQuartet[0].U[2][2] = QC[2];
     
     // goes in U[4]
     Vector WP;
-    la::SubInit(W_vec, P_vec, &WP);
+    la::SubInit(P_vec, W_vec, &WP);
     
-    libint.PrimQuartet[0].U[4][0] = WP[0];
-    libint.PrimQuartet[0].U[4][1] = WP[1];
-    libint.PrimQuartet[0].U[4][2] = WP[2];
+    libint->PrimQuartet[0].U[4][0] = WP[0];
+    libint->PrimQuartet[0].U[4][1] = WP[1];
+    libint->PrimQuartet[0].U[4][2] = WP[2];
     
     // goes in U[5]
     Vector WQ;
-    la::SubInit(W_vec, Q_vec, &WQ);
+    la::SubInit(Q_vec, W_vec, &WQ);
     
-    libint.PrimQuartet[0].U[5][0] = WQ[0];
-    libint.PrimQuartet[0].U[5][1] = WQ[1];
-    libint.PrimQuartet[0].U[5][2] = WQ[2];
+    libint->PrimQuartet[0].U[5][0] = WQ[0];
+    libint->PrimQuartet[0].U[5][1] = WQ[1];
+    libint->PrimQuartet[0].U[5][2] = WQ[2];
     
     
     int total_momentum = A_mom + B_mom + C_mom + D_mom;
@@ -547,18 +608,27 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     
     // fill in PrimQuartet
     // will continue to assume uncontracted bases
-    // I think this means that I only need libint.PrimQuartet[0]
+    // I think this means that I only need libint->PrimQuartet[0]
     
     double PQ_dist_sq = la::DistanceSqEuclidean(P_vec, Q_vec);
     double T = rho * PQ_dist_sq;
-    Compute_F(libint.PrimQuartet[0].F, total_momentum, T);
     
-    libint.PrimQuartet[0].oo2z = 1.0/(2.0 * gamma);
-    libint.PrimQuartet[0].oo2n = 1.0/(2.0 * eta);
-    libint.PrimQuartet[0].oo2zn = 1.0 / (2.0 * (gamma + eta));
-    libint.PrimQuartet[0].poz = rho / gamma;
-    libint.PrimQuartet[0].pon = rho / eta;
-    libint.PrimQuartet[0].oo2p = 1.0 / (2.0 * rho);
+    // TODO: Libmints uses am + 1 here (probably for derivatives)
+    Compute_F(libint->PrimQuartet[0].F, total_momentum, T);
+    
+    la::Scale(total_momentum, aux_fac, libint->PrimQuartet[0].F);
+    
+    libint->PrimQuartet[0].oo2z = 1.0/(2.0 * gamma);
+    libint->PrimQuartet[0].oo2n = 1.0/(2.0 * eta);
+    libint->PrimQuartet[0].oo2zn = 1.0 / (2.0 * (gamma + eta));
+    libint->PrimQuartet[0].poz = rho / gamma;
+    libint->PrimQuartet[0].pon = rho / eta;
+    libint->PrimQuartet[0].oo2p = 1.0 / (2.0 * rho);
+    
+    // TODO: modify the array F to hold the auxiliary integrals given in 
+    // eqns 14 - 16 of libint programmers manual
+    // this means the overlaps
+    // what about normalizations?  
     
     
     
@@ -568,9 +638,15 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     //// compute the integrals
     
     //integrals = (double*)malloc(num_integrals * sizeof(double));
-    
-    integrals = build_eri[A_mom][B_mom][C_mom][D_mom](&libint, 1);
-    
+  
+    double* integrals;
+    if (total_momentum) {
+      integrals = (build_eri[A_mom][B_mom][C_mom][D_mom](libint, 1));
+    }
+    else {
+      integrals = libint->PrimQuartet[0].F;
+    }
+      
     // integrals get renormalized outside
     
     return integrals;
@@ -593,7 +669,7 @@ index_t CreateShells(const Matrix& centers, const Vector& exponents,
     Vector new_cent;
     centers.MakeColumnVector(i, &new_cent);
     
-    (*shells_out)[i].Init(new_cent, exponents[i], momenta[i], i);
+    (*shells_out)[i].Init(new_cent, exponents[i], momenta[i], num_functions);
     
     num_functions += (*shells_out)[i].num_functions();
     

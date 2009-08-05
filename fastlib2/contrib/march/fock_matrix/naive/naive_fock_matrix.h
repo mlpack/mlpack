@@ -100,67 +100,121 @@ class NaiveFockMatrix {
     
       for (index_t j = 0; j <= i; j++) {
       
-        double ij_coulomb = 0.0;
-        //double ij_exchange = 0.0;
+        Matrix coulomb_ij;
+        coulomb_ij.Init(shells_[i].num_functions(), shells_[j].num_functions());
+        coulomb_ij.SetZero();
       
         for (index_t k = 0; k < num_shells_; k++) {
         
           for (index_t l = 0; l <= k; l++) {
             
-            index_t num_integrals;
             ArrayList<index_t> perm;
           
-            double* integrals = eri::ComputeShellIntegrals(shells_[i], 
-                                                           shells_[j], 
-                                                           shells_[k], 
-                                                           shells_[l],
-                                                           &num_integrals,
-                                                           &perm);
+            IntegralTensor integrals;
+            eri::ComputeShellIntegrals(shells_[i], shells_[j], 
+                                       shells_[k], shells_[l], &integrals);
             
             num_integrals_computed_++;
             
             // now, contract with appropriate density entries and sum into 
             // matrices
             
-            double coulomb_int = density_.ref(k, l) * integral;
-            double exchange_ik = density_.ref(j, l) * integral;
-            double exchange_il = density_.ref(j, k) * integral;
-            double exchange_jk = density_.ref(i, l) * integral;
-            double exchange_jl = density_.ref(i, k) * integral;
-          
-          
-            if (likely(k != l)) {
+            // should I write code to do this inside the integral tensor?
             
-              coulomb_int *= 2;
+            integrals.ContractCoulomb(shells_[k].matrix_indices(),
+                                      shells_[l].matrix_indices(),
+                                      density_, &coulomb_ij);
             
-            }
-          
-            ij_coulomb += coulomb_int;
-
-            // don't overcount when indices are equal
-            exchange_mat_.set(i, k, exchange_mat_.ref(i,k) + exchange_ik);
-            if (likely(k != l)) {
-              exchange_mat_.set(i, l, exchange_mat_.ref(i,l) + exchange_il);
-            }
-            if (likely(i != j)) {
-              exchange_mat_.set(j, k, exchange_mat_.ref(j,k) + exchange_jk);
-            }
-            if (likely((k != l) && (i != j))) {
-              exchange_mat_.set(j, l, exchange_mat_.ref(j,l) + exchange_jl);
-            }
-
+            Matrix exchange_ik;
+            exchange_ik.Init(shells_[i].num_functions(), 
+                             shells_[k].num_functions());
+            exchange_ik.SetZero();
             
+            Matrix* exchange_jk;
+            Matrix* exchange_il;
+            Matrix* exchange_jl;
+            
+            if (i != j) {
+              exchange_jk = new Matrix();
+              exchange_jk->Init(shells_[j].num_functions(), 
+                                shells_[k].num_functions());
+              exchange_jk->SetZero();
+            }
+            else {
+              exchange_jk = NULL;
+            }
+            
+            if (l != k) {
+              exchange_il = new Matrix();
+              exchange_il->Init(shells_[i].num_functions(), 
+                                shells_[l].num_functions());
+              exchange_il->SetZero();
+              
+            }
+            else {
+              exchange_il = NULL;
+            }
+            
+            if (i != j && l != k) {
+              exchange_jl = new Matrix();
+              exchange_jl->Init(shells_[j].num_functions(), 
+                                shells_[l].num_functions());
+              exchange_jl->SetZero();
+              
+            }
+            else {
+              exchange_jl = NULL; 
+            }
+            
+            integrals.ContractExchange(shells_[i].matrix_indices(),
+                                       shells_[j].matrix_indices(),
+                                       shells_[k].matrix_indices(),
+                                       shells_[l].matrix_indices(),
+                                       density_, &exchange_ik, exchange_jk, 
+                                       exchange_il, exchange_jl);
+            
+            eri::AddSubmatrix(shells_[i].matrix_indices(), 
+                              shells_[k].matrix_indices(),
+                              exchange_ik, &exchange_mat_);
+            
+            if (exchange_jk) {
+              eri::AddSubmatrix(shells_[j].matrix_indices(), 
+                                shells_[k].matrix_indices(),
+                                *exchange_jk, &exchange_mat_);
+            }
+            
+            if (exchange_il) {
+              eri::AddSubmatrix(shells_[i].matrix_indices(), 
+                                shells_[l].matrix_indices(),
+                                *exchange_il, &exchange_mat_);
+            }
+            
+            if (exchange_jl) {
+              eri::AddSubmatrix(shells_[j].matrix_indices(), 
+                                shells_[l].matrix_indices(),
+                                *exchange_jl, &exchange_mat_);
+            }
+                        
           } // for l
         
         } // for k
         
-        coulomb_mat_.set(i, j, ij_coulomb);
-        coulomb_mat_.set(j, i, ij_coulomb);
+        // write coulomb into the global matrix
+        eri::AddSubmatrix(shells_[i].matrix_indices(), 
+                          shells_[j].matrix_indices(),
+                          coulomb_ij, &coulomb_mat_);
+        
+        if (i != j) {
+          
+          Matrix coulomb_ji;
+          la::TransposeInit(coulomb_ij, &coulomb_ji);
+          eri::AddSubmatrix(shells_[j].matrix_indices(), 
+                            shells_[i].matrix_indices(),
+                            coulomb_ji, &coulomb_mat_);
+        }
         
       } // for j
       
-      
-    
     } // for i
     
     la::Scale(0.5, &exchange_mat_);

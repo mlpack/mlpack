@@ -78,6 +78,10 @@ class ShellPair {
   index_t list_index() {
     return list_index_;
   }
+  
+  double overlap() {
+    return overlap_;
+  }
 
  private:
 
@@ -113,6 +117,8 @@ class ShellPair {
   // the Schwartz factor
   double schwartz_factor_;
 
+  double overlap_;
+  
 }; // class ShellPair
 
 

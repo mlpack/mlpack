@@ -129,11 +129,12 @@ int main(int argc, char* argv[]) {
   }
   
   //density.PrintDebug("Density (from input file)");
-  
+  /* NO LONGER TRUE
   if ((density.n_cols() != centers.n_cols()) || 
       (density.n_rows() != centers.n_cols())) {
     FATAL("Density matrix has wrong dimensions.\n");
   }
+   */
   
   Matrix momenta;
   if (fx_param_exists(root_mod, "momenta")) {
@@ -500,7 +501,7 @@ int main(int argc, char* argv[]) {
     fx_module* naive_mod = fx_submodule(root_mod, "naive");
     
     NaiveFockMatrix naive_alg;
-    naive_alg.Init(centers, exp_mat, momenta, density, prescreening_mod);
+    naive_alg.Init(centers, exp_mat, momenta, density, naive_mod);
     
     naive_alg.Compute();
     naive_alg.OutputFock(&naive_fock, &naive_coulomb, 
