@@ -6,9 +6,9 @@ librule(
         cflags = "-L/Users/march/Desktop/fastlib2/contrib/march/libint/lib -lint"
 )
 
-librule(
-	name="oeints",
-	headers=["oeints.h", "basis_shell.h"],
-	sources=["oeints.cc"],
-	deplibs=["fastlib:fastlib", ":eri"]
+binrule(
+    name="eri_test",
+    sources=["eri_test.cc"],
+    deplibs=[":eri"],
+    cflags = "-L/Users/march/Desktop/fastlib2/contrib/march/libint/lib -lint"
 )

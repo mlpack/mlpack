@@ -1,14 +1,17 @@
 #include "eri.h"
-#include "oeints.h"
 
 namespace eri {
 
+     
   ///////////////////////// constants /////////////////////////////////
   
   /**
    * Stores the quantities n!! needed for integrals
    */
   double double_factorial[MAX_FAC];
+  
+  double factorial[MAX_FAC];
+  
   
   ///////////////////////// initialization ///////////////////////////////
   
@@ -20,9 +23,11 @@ namespace eri {
     
     double_factorial[0] = 1.0;
     double_factorial[1] = 1.0;
+    factorial[0] = 1.0;
     for (index_t i = 2; i < MAX_FAC; i++) {
       
       double_factorial[i] = (double)i * double_factorial[i-2];
+      factorial[i] = (double)i * factorial[i-1];
       
     }
     
@@ -33,10 +38,10 @@ namespace eri {
     //free(double_factorial);
     
   }
-
+  
   
   ////////////// Helpers ///////////////////////////
-
+  
   index_t NumFunctions(int momentum) {
     
     if (momentum == 0) {
@@ -57,6 +62,387 @@ namespace eri {
     
   }  // NumFunctions
   
+  
+  
+  double ComputeNormalization(double exp, int x_mom, int y_mom, int z_mom) {
+    
+    int total_momentum = x_mom + y_mom + z_mom;
+    
+    // should be able to do this more efficiently
+    double result = pow(2.0/math::PI, 0.75);
+    
+    result *= pow(2.0, total_momentum); 
+    result *= pow(exp, ((2.0 * total_momentum + 3.0)/4.0));
+    
+    double sqrt_fac = 1.0;
+    if (x_mom > 0) {
+      sqrt_fac *= double_factorial[2 * x_mom - 1];
+    }
+    if (y_mom > 0) {
+      sqrt_fac *= double_factorial[2 * y_mom - 1];
+    }
+    if (z_mom > 0) {
+      sqrt_fac *= double_factorial[2 * z_mom - 1];
+    }
+    
+    result /= sqrt(sqrt_fac);
+    
+    return result;
+    
+  } // ComputeNormalization
+  
+  
+  double ComputeGPTCenter(const Vector& A_vec, double alpha_A, const Vector& B_vec, 
+                          double alpha_B, Vector* p_vec) {
+    
+    double gamma = alpha_A + alpha_B;
+    
+    la::ScaleInit(alpha_A, A_vec, p_vec);
+    la::AddExpert(3, alpha_B, B_vec.ptr(), p_vec->ptr());
+    la::Scale(1/gamma, p_vec);
+    
+    return gamma;
+    
+  }  
+  
+  double ComputeShellOverlap(const BasisShell& shellA, const BasisShell& shellB) {
+    
+    double gamma = shellA.exp() + shellB.exp();
+    double overlap = pow(math::PI/gamma, 3.0/2.0);
+    double dist_sq = la::DistanceSqEuclidean(shellA.center(), shellB.center());
+    double exp_fac = exp(-1 * shellA.exp() * shellB.exp() * dist_sq / gamma);
+    overlap *= exp_fac;
+    
+    return overlap;
+    
+  } // ComputeShellOverlap
+  
+  
+  void Compute_F(double* F, int n, double t) {
+    
+    // copied from eri.cc in libmint
+    double EPS = 1.0e-17;
+    
+    int i, m, k;
+    int m2;
+    double t2;
+    double num;
+    double sum;
+    double term1, term2;
+    static double K = 1.0/M_2_SQRTPI;
+    double et;
+    
+    // forward recurrence?
+    if (t>20.0){
+      t2 = 2*t;
+      et = exp(-t);
+      t = sqrt(t);
+      F[0] = K*erf(t)/t;
+      for(m=0; m<=n-1; m++){
+        F[m+1] = ((2*m + 1)*F[m] - et)/(t2);
+      }
+    }
+    // backward?
+    else {
+      et = exp(-t);
+      t2 = 2*t;
+      m2 = 2*n;
+      num = double_factorial[m2];
+      i=0;
+      sum = 1.0/(m2+1);
+      do{
+        i++;
+        num = num*t2;
+        term1 = num/double_factorial[m2+2*i+2];
+        sum += term1;
+      } while (fabs(term1) > EPS && i < MAX_FAC);
+      F[n] = sum*et;
+      for(m=n-1;m>=0;m--){
+        F[m] = (t2*F[m+1] + et)/(2*m+1);
+      }
+    }
+    
+  } // Compute_F
+  
+  double BinomialCoefficient(int l1, int i) {
+    
+    DEBUG_ASSERT(l1 >= i);
+    DEBUG_ASSERT(l1 >= 0);
+    DEBUG_ASSERT(i >= 0);
+    
+    return factorial[l1] / (factorial[i] * factorial[l1 - i]);
+    
+  }
+  
+  
+  // what about edge cases?
+  // should only occur when k is only zero - i.e. when there's no sum
+  // should just be 1 in that case
+  double GPTCoefficient(int k, int l1, int l2, double PA_x, double PB_x) {
+    
+    DEBUG_ASSERT(k >= 0);
+    DEBUG_ASSERT(l1 >= 0);
+    DEBUG_ASSERT(l2 >= 0);
+    
+    // should take care of all the edge cases
+    if (k == 0) {
+      return 1.0;
+    }
+    
+    double sum = 0.0;
+    
+    for (int q = max(-1*k, k - (2*l2)); q <= min(k, (2*l1) - k); q +=2) {
+      
+      // k and q have the same parity, so integer division is fine
+      int i = (k + q) / 2;
+      int j = (k - q) / 2;
+      
+      sum += BinomialCoefficient(l1, i) * BinomialCoefficient(l2, j) 
+      * pow(PA_x, (double)(l1 - i)) * pow(PB_x, (double)(l2 - j));
+      
+    } // for q
+    
+    return sum;
+    
+  } // GPTCoefficient
+  
+  
+  
+  /*
+  double ComputeOverlapIntegral(const Vector& center_A, double exp_A, int mom_A, 
+                                const Vector& center_B, double exp_B, int mom_B) {
+    
+    
+     //Vector p_vec;
+     //double gamma =  eri::ComputeGPTCenter(center_A, exp_A, center_B, exp_B, 
+     //&p_vec);
+     
+    double gamma = exp_A + exp_B;
+    
+    double dist_sq = la::DistanceSqEuclidean(center_A, center_B);
+    
+    double gpt = eri::IntegralGPTFactor(exp_A, exp_B, dist_sq);
+    
+    double prefactor = pow((math::PI/gamma), 1.5);
+    
+    // momentum stuff goes here later
+    
+    double normalization_A = eri::ComputeNormalization(exp_A, mom_A);
+    double normalization_B = eri::ComputeNormalization(exp_B, mom_B);
+    
+    return (normalization_A * normalization_B * prefactor * gpt);
+    
+  }
+  */
+  
+  double OverlapCartesianFactor(int l1, int l2, double PA_x, double PB_x, 
+                                double gamma) {
+    
+    int total_momentum = l1 + l2;
+    if (total_momentum == 0) {
+      return 1.0;
+    }
+    
+    double retval = 0.0;
+    
+    for (index_t i = 0; i <= total_momentum/2; i++) {
+      
+      double this_val = GPTCoefficient(2*i, l1, l2, PA_x, PB_x);
+      this_val /= pow(2.0 * gamma, (double)i);
+      if (i > 0) {
+        this_val *= double_factorial[2*i - 1]; 
+      }
+      retval += this_val;
+      
+    } // for i
+    
+    return retval;
+    
+  }
+  
+  
+  /**
+   * Only works for S-overlap
+   *
+   * This needs to return up to 9 integrals
+   */
+  double* ComputeOverlapIntegrals(BasisShell& shellA, BasisShell& shellB) {
+    
+    index_t num_integrals = shellA.num_functions() * shellB.num_functions();
+    
+    double* integrals = (double*)malloc(num_integrals * sizeof(double));
+    
+    double prefactor = ComputeShellOverlap(shellA, shellB);
+    
+    Vector p_vec;
+    double gamma = ComputeGPTCenter(shellA.center(), shellA.exp(), 
+                                    shellB.center(), shellB.exp(), &p_vec);
+    
+    Vector PA;
+    la::SubInit(shellA.center(), p_vec, &PA);
+    
+    Vector PB;
+    la::SubInit(shellB.center(), p_vec, &PB);
+    
+    // iterate over the basis functions, compute their I_x, I_y, I_z factors
+    // multiply them by the prefactor and write to the array
+    
+    index_t integral_index = 0;
+    index_t a_ind = 0;
+    
+    for (index_t ai = 0; ai <= shellA.total_momentum(); ai++) {
+      int l1 = shellA.total_momentum() - ai;
+      
+      for (index_t aj = 0; aj <= ai; aj ++) {
+        
+        int m1 = ai - aj;
+        int n1 = aj;
+        
+        index_t b_ind = 0;
+        
+        for (index_t bi = 0; bi <= shellB.total_momentum(); bi++) {
+          
+          int l2 = shellB.total_momentum() - bi;
+          
+          double I_x = OverlapCartesianFactor(l1, l2, PA[0], PB[0], gamma);
+          
+          for (index_t bj = 0; bj <= bi; bj++) {
+            
+            int m2 = bi - bj;
+            int n2 = bj;
+            
+            double I_y = OverlapCartesianFactor(m1, m2, PA[1], PB[1], gamma);
+            double I_z = OverlapCartesianFactor(n1, n2, PA[2], PB[2], gamma);
+            
+            integrals[integral_index] = prefactor * I_x * I_y * I_z
+                                        * shellA.normalization_constant(a_ind) 
+                                        * shellB.normalization_constant(b_ind);
+            
+            integral_index++;
+            b_ind++;
+            
+          } // bj
+          
+        } // bi
+        
+        a_ind++;
+        
+      } // aj
+    } // ai
+    
+    
+    return integrals;
+    
+  } // ComputeOverlapIntegral
+  
+  
+  /*
+   // only works with s-type functions for now
+   double ComputeKineticIntegral(const Vector& center_A, double exp_A, int mom_A, 
+   const Vector& center_B, double exp_B, int mom_B) {
+   
+   double normalization_A = eri::ComputeNormalization(exp_A, mom_A);
+   double normalization_B = eri::ComputeNormalization(exp_B, mom_B);
+   
+   double dist_sq = la::DistanceSqEuclidean(center_A, center_B);
+   
+   double gamma = exp_A + exp_B;
+   
+   double gpt = eri::IntegralGPTFactor(exp_A, exp_B, dist_sq);
+   
+   double prefac = 3 * exp_A * exp_B / gamma;
+   prefac = prefac - (2 * dist_sq * exp_A*exp_A 
+   * exp_B*exp_B/(gamma * gamma));
+   
+   double integral = pow((math::PI/gamma), 1.5);
+   integral *= normalization_A * normalization_B;
+   integral *= gpt * prefac;
+   
+   return integral;
+   
+   } // ComputeKineticIntegral
+   
+   
+   double ComputeKineticIntegral(BasisShell& shellA, BasisShell& shellB) {
+   
+   double integral;
+   
+   double AB_dist_sq = la::DistanceSqEuclidean(shellA.center(), shellB.center());
+   double gamma = shellA.exp() + shellB.exp();
+   
+   double gpt = eri::IntegralGPTFactor(shellA.exp(), shellB.exp(), AB_dist_sq);
+   
+   integral = pow((math::PI/gamma), 1.5);
+   integral *= gpt;
+   
+   double prefac = 3 * shellA.exp() * shellB.exp() / gamma;
+   prefac = prefac - (2 * AB_dist_sq * shellA.exp()*shellA.exp() 
+   * shellB.exp()*shellB.exp()/(gamma * gamma));
+   
+   integral *= prefac;
+   
+   integral *= shellA.normalization_constant() * shellB.normalization_constant();
+   
+   return integral;
+   
+   }
+   
+   double ComputeNuclearIntegral(const Vector& center_A, double exp_A, int mom_A, 
+   const Vector& center_B, double exp_B, int mom_B, 
+   const Vector& nuclear_center, 
+   int nuclear_charge) {
+   
+   Vector p_vec;
+   double gamma = eri::ComputeGPTCenter(center_A, exp_A, 
+   center_B, exp_B, &p_vec);
+   
+   double integral = 2 * math::PI / gamma;
+   
+   double AB_dist_sq = la::DistanceSqEuclidean(center_A, center_B);
+   double gpt = eri::IntegralGPTFactor(exp_A, exp_B, AB_dist_sq);
+   
+   integral *= gpt;
+   
+   double CP_dist_sq = la::DistanceSqEuclidean(p_vec, nuclear_center);
+   double f_part = eri::F_0_(CP_dist_sq * gamma);
+   integral *= f_part;
+   
+   integral *= eri::ComputeNormalization(exp_A, mom_A);
+   integral *= eri::ComputeNormalization(exp_B, mom_B);
+   integral *= nuclear_charge;
+   
+   return integral;
+   
+   } // ComputeNuclearIntegral
+   
+   double ComputeNuclearIntegral(BasisShell& shellA, BasisShell& shellB, 
+   const Vector& nuclear_center) {
+   
+   double integral;
+   
+   Vector p_vec;
+   double gamma = eri::ComputeGPTCenter(shellA.center(), shellA.exp(), 
+   shellB.center(), shellB.exp(), &p_vec);
+   
+   double prefac = 2 * math::PI / gamma;
+   integral = prefac;
+   
+   double AB_dist_sq = la::DistanceSqEuclidean(shellA.center(), shellB.center());
+   double gpt = eri::IntegralGPTFactor(shellA.exp(), shellB.exp(), AB_dist_sq);
+   
+   integral *= gpt;
+   
+   double CP_dist_sq = la::DistanceSqEuclidean(p_vec, nuclear_center);
+   double f_part = eri::F_0_(CP_dist_sq * gamma);
+   integral *= f_part;
+   
+   integral *= shellA.normalization_constant();
+   integral *= shellB.normalization_constant();
+   
+   return integral;
+   
+   }
+   */
 
   void ArrayListSwap(index_t ind1, index_t ind2, ArrayList<index_t>* perm) {
     
@@ -110,108 +496,7 @@ namespace eri {
   } // IntegralIndex
   
    
-  
-  double ComputeNormalization(double exp, int x_mom, int y_mom, int z_mom) {
-    
-    int total_momentum = x_mom + y_mom + z_mom;
-    
-    // should be able to do this more efficiently
-    double result = pow(2.0/math::PI, 0.75);
-    
-    result *= pow(2.0, total_momentum); 
-    result *= pow(exp, ((2.0 * total_momentum + 3.0)/4.0));
-    
-    double sqrt_fac = 1.0;
-    if (x_mom > 0) {
-      sqrt_fac *= double_factorial[2 * x_mom - 1];
-    }
-    if (y_mom > 0) {
-      sqrt_fac *= double_factorial[2 * y_mom - 1];
-    }
-    if (z_mom > 0) {
-      sqrt_fac *= double_factorial[2 * z_mom - 1];
-    }
-    
-    result /= sqrt(sqrt_fac);
-    
-    return result;
-    
-  } // ComputeNormalization
-  
-  
-  double ComputeGPTCenter(const Vector& A_vec, double alpha_A, const Vector& B_vec, 
-                          double alpha_B, Vector* p_vec) {
-    
-    double gamma = alpha_A + alpha_B;
-    
-    la::ScaleInit(alpha_A, A_vec, p_vec);
-    la::AddExpert(3, alpha_B, B_vec.ptr(), p_vec->ptr());
-    la::Scale(1/gamma, p_vec);
-    
-    return gamma;
-    
-  }  
-  
-  double ComputeShellOverlap(const BasisShell& shellA, const BasisShell& shellB) {
-    
-    double gamma = shellA.exp() + shellB.exp();
-    double overlap = pow(math::PI/gamma, 1.5);
-    double dist_sq = la::DistanceSqEuclidean(shellA.center(), shellB.center());
-    double exp_fac = exp(-1 * shellA.exp() * shellB.exp() * dist_sq / gamma);
-    overlap *= exp_fac;
-    
-    return overlap;
-    
-  } // ComputeShellOverlap
-
-
-  void Compute_F(double* F, int n, double t) {
-    
-    // copied from eri.cc in libmint
-    double EPS = 1.0e-17;
-    
-    int i, m, k;
-    int m2;
-    double t2;
-    double num;
-    double sum;
-    double term1, term2;
-    static double K = 1.0/M_2_SQRTPI;
-    double et;
-    
-    // forward recurrence?
-    if (t>20.0){
-      t2 = 2*t;
-      et = exp(-t);
-      t = sqrt(t);
-      F[0] = K*erf(t)/t;
-      for(m=0; m<=n-1; m++){
-        F[m+1] = ((2*m + 1)*F[m] - et)/(t2);
-      }
-    }
-    // backward?
-    else {
-      et = exp(-t);
-      t2 = 2*t;
-      m2 = 2*n;
-      num = double_factorial[m2];
-      i=0;
-      sum = 1.0/(m2+1);
-      do{
-        i++;
-        num = num*t2;
-        term1 = num/double_factorial[m2+2*i+2];
-        sum += term1;
-      } while (fabs(term1) > EPS && i < MAX_FAC);
-      F[n] = sum*et;
-      for(m=n-1;m>=0;m--){
-        F[m] = (t2*F[m+1] + et)/(2*m+1);
-      }
-    }
-    
-  } // Compute_F
-  
-  // IMPORTANT: currently assumes the rows and columns are contiguous
+   // IMPORTANT: currently assumes the rows and columns are contiguous
   void AddSubmatrix(const ArrayList<index_t>& rows,
                     const ArrayList<index_t>& cols,
                     const Matrix& submat, Matrix* out_mat) {
@@ -430,7 +715,7 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
         index_t a_y = a_ind - a_ind2;
         index_t a_z = a_ind2;
         
-        double A_norm = ComputeNormalization(A_exp, a_x, a_y, a_z);
+        double A_norm = eri::ComputeNormalization(A_exp, a_x, a_y, a_z);
         
         index_t b = 0;
         
@@ -443,7 +728,7 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
             index_t b_y = b_ind - b_ind2;
             index_t b_z = b_ind2;
             
-            double B_norm = ComputeNormalization(B_exp, b_x, b_y, b_z);
+            double B_norm = eri::ComputeNormalization(B_exp, b_x, b_y, b_z);
             
             index_t c = 0;
             
@@ -456,7 +741,7 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
                 index_t c_y = c_ind - c_ind2;
                 index_t c_z = c_ind2;
                 
-                double C_norm = ComputeNormalization(C_exp, c_x, c_y, c_z);
+                double C_norm = eri::ComputeNormalization(C_exp, c_x, c_y, c_z);
                 
                 index_t d = 0;
                 
@@ -470,7 +755,7 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
                     index_t d_y = d_ind - d_ind2;
                     index_t d_z = d_ind2;
                     
-                    double D_norm = ComputeNormalization(D_exp, d_x, d_y, d_z);
+                    double D_norm = eri::ComputeNormalization(D_exp, d_x, d_y, d_z);
                     
                     index_t integral_ind = IntegralIndex(a, A_mom, 
                                                          b, B_mom, 
@@ -703,7 +988,7 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
       
       // Do they use the overlap integral here?
       double this_bound = SchwartzBound(i_shell, j_shell);
-      //double this_bound = oeints::ComputeOverlapIntegral(i_shell, j_shell);
+      //double this_bound = eri::ComputeOverlapIntegral(i_shell, j_shell);
       
       if (this_bound > shell_pair_cutoff) {
       

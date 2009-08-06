@@ -7,19 +7,15 @@
 #include "../../libint/include/libint/vrr_header.h"
 #include "integral_tensor.h"
 
-// copied from libint or libmint
 #define MAX_FAC 100
 
-
-class BasisShell;
 class ShellPair;
+class BasisShell;
 
 namespace eri {
   
-  /////////////////////////// constants //////////////////////////// 
   
-  const double pow_pi_2point5 = pow(math::PI, 2.5);
-  
+
   
   ///////////////////////// initialization ////////////////////////
   
@@ -47,6 +43,55 @@ namespace eri {
   index_t NumFunctions(int momentum);
   
   /**
+   * Normalization function for higher momenta
+   */
+  double ComputeNormalization(double exp, int x_mom, int y_mom, int z_mom);
+  
+  
+  double ComputeGPTCenter(const Vector& A_vec, double alpha_A, 
+                          const Vector& B_vec, double alpha_B, Vector* p_vec);
+  
+  double ComputeShellOverlap(const BasisShell& shellA, const BasisShell& shellB);
+  
+  void Compute_F(double* F, int n, double t);
+  
+  
+  
+  /**
+   * The coefficient in the binomial expansion in the GPT.
+   */
+  double GPTCoefficient(int k, int l1, int l2, double PA_x, double PB_x);
+  
+  
+  double ComputeOverlapIntegral(const Vector& center_A, double exp_A, int mom_A, 
+                                const Vector& center_B, double exp_B, int mom_B);
+  
+  double OverlapCartesianFactor(int l1, int l2, double PA_x, double PB_x, 
+                                double gamma);
+  
+  double* ComputeOverlapIntegrals(BasisShell& shellA, BasisShell& shellB);
+  
+  /*
+   double ComputeKineticIntegral(const Vector& center_A, double exp_A, int mom_A, 
+   const Vector& center_B, double exp_B, int mom_B);
+   
+   double ComputeKineticIntegral(BasisShell& shellA, BasisShell& shellB);
+   
+   double ComputeNuclearIntegral(const Vector& center_A, double exp_A, int mom_A, 
+   const Vector& center_B, double exp_B, int mom_B, 
+   const Vector& nuclear_center, 
+   int nuclear_charge);
+   
+   double ComputeNuclearIntegral(BasisShell& shellA, BasisShell& shellB, 
+   const Vector& nuclear_center, int nuclear_mass);
+   */
+  
+  /////////////////////////// constants //////////////////////////// 
+  
+  const double pow_pi_2point5 = pow(math::PI, 2.5);
+  
+  
+    /**
    * Used to swap entries of the array list permutation.
    *
    * This should really go in the ArrayList class.
@@ -77,21 +122,11 @@ namespace eri {
   //index_t BasisIndex(int x_mom, int y_mom, int z_mom, index_t total_mom);
   
   
-  /**
-   * Normalization function for higher momenta
-   */
-  double ComputeNormalization(double exp, int x_mom, int y_mom, int z_mom);
-  
-  // not sure what this is for
+    // not sure what this is for
   //double ComputeGPTCenter(Vector& A_vec, double alpha_A, Vector& B_vec, 
   //                        double alpha_B, Vector* p_vec);
 
-  double ComputeGPTCenter(const Vector& A_vec, double alpha_A, 
-                          const Vector& B_vec, double alpha_B, Vector* p_vec);
-  
-  double ComputeShellOverlap(const BasisShell& shellA, const BasisShell& shellB);
-  
-  void Compute_F(double* F, int n, double t);
+
   
   /**
    * Used to add the contracted integrals into the global matrix
