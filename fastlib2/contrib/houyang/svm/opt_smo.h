@@ -491,6 +491,8 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   grad_bar_.Init(n_alpha_);
   grad_bar_.SetZero();
 
+  do_shrinking_ = fx_param_int(NULL, "shrink", 0);
+  ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING);
   if (do_shrinking_) {
     for (i=0; i<n_alpha_; i++) {
       for(j=0; j<n_alpha_; j++) {
@@ -505,9 +507,6 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   
   // Begin SMO iterations
   ct_iter_ = 0;
-
-  do_shrinking_ = fx_param_int(NULL, "shrink", 0);
-  ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING);
 
   int stop_condition = 0;
   while (1) {
