@@ -2,31 +2,20 @@
 #define OEINTS_H
 
 #include "fastlib/fastlib.h"
-#include "eri.h"
+#include "../../libint/include/libint/libint.h"
+#include "../../libint/include/libint/hrr_header.h"
+#include "../../libint/include/libint/vrr_header.h"
 
-//class BasisShell;
+// copied from libint or libmint
 
-namespace oeints {
+class BasisShell;
 
-  double ComputeOverlapIntegral(const Vector& center_A, double exp_A, int mom_A, 
-                                const Vector& center_B, double exp_B, int mom_B);
-  
-  double ComputeOverlapIntegral(BasisShell& shellA, BasisShell& shellB);
-  
-  double ComputeKineticIntegral(const Vector& center_A, double exp_A, int mom_A, 
-                                const Vector& center_B, double exp_B, int mom_B);
-  
-  double ComputeKineticIntegral(BasisShell& shellA, BasisShell& shellB);
-  
-  double ComputeNuclearIntegral(const Vector& center_A, double exp_A, int mom_A, 
-                                const Vector& center_B, double exp_B, int mom_B, 
-                                const Vector& nuclear_center, 
-                                int nuclear_charge);
-  
-  double ComputeNuclearIntegral(BasisShell& shellA, BasisShell& shellB, 
-                                const Vector& nuclear_center, int nuclear_mass);
+namespace eri {
 
-}; // oeints namespace
+  
+}; // eri namespace
+
+//#include "basis_shell.h"
 
 
 #endif

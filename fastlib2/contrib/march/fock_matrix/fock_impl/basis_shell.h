@@ -118,7 +118,7 @@ class BasisShell {
     return matrix_indices_; 
   }
   
-  double normalization_constant(index_t i) {
+  double normalization_constant(index_t i) const {
     
     DEBUG_ASSERT(i < num_functions_);
     DEBUG_ASSERT(i >= 0);

@@ -4,6 +4,8 @@
 #include "basis_shell.h"
 #include "eri.h"
 
+//class BasisShell;
+
 class ShellPair {
 
  public:
@@ -120,6 +122,7 @@ class ShellPair {
   double overlap_;
   
 }; // class ShellPair
+
 
 
 
