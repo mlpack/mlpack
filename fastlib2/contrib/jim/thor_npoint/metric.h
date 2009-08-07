@@ -5,46 +5,41 @@
 
 namespace mtrc{
 
+  inline double GetRad(const DHrectBound<2>& ref, Vector& center){
+    center.Init(2);
+    DRange a = ref.get(0);
+    DRange b = ref.get(1);
+    center[0] = 0.5*(a.hi + a.lo);
+    center[1] = 0.5*(b.hi + b.lo);
+    double theta = max(fabs(b.hi), fabs(b.lo));
+    double rad = acos(sin(theta)*sin(center[1]) + cos(theta)*cos(center[1])*
+		      cos(center[0]-a.lo));
+    return rad;
+
+  }
 
   inline double MinSphereDistSq(const DHrectBound<2>& query,
 			     const DHrectBound<2>& ref){
-     
-    DRange a = query.get(1);
-    DRange b = ref.get(1);
-    
-    double t1 = b.lo - a.hi;
-    double t2 = a.lo - b.hi;    
-    double t = (t1 + fabs(t1)) + (t2 + fabs(t2));
-    double theta = max(fabs(a.hi), fabs(a.lo));
-    theta = max(max(fabs(b.hi), fabs(b.lo)), theta);
+    Vector c1, c2;
+    double r1 = GetRad(query, c1);
+    double r2 = GetRad(ref, c2);
+    double dist = acos(sin(c1[1])*sin(c2[1]) + cos(c1[1])*cos(c2[1])*
+		       cos(c1[0] - c2[0]));
 
-    a = query.get(0);
-    b = ref.get(0);
-    double p1 = b.lo - a.hi;
-    double p2 = a.lo - b.hi;    
-    double p = (p1 + fabs(p1)) + (p2 + fabs(p2));   
-   
-    p = p*sin(theta);
-    return (t*t + p*p) / 4;
+    dist = max(dist - r1 - r2, 0.0);
+    return dist*dist;
   }
+
+  
 
  inline double MinSphereDistSq(const DHrectBound<2>& ref, const Vector& query){
      
-    DRange b = ref.get(1);
-    
-    double t1 = b.lo - query[1];
-    double t2 = query[1] - b.hi;    
-    double t = (t1 + fabs(t1)) + (t2 + fabs(t2));
-    double theta = fabs(query[1]);
-    theta = max(max(fabs(b.hi), fabs(b.lo)), theta);
-
-    b = ref.get(0);
-    double p1 = b.lo - query[0];
-    double p2 = query[0] - b.hi;    
-    double p = (p1 + fabs(p1)) + (p2 + fabs(p2));   
-
-    p = p*sin(theta);
-    return (t*t + p*p) / 4;
+   Vector cr;
+   double r = GetRad(ref, cr);   
+   double dist = acos(sin(cr[1])*sin(query[1]) + cos(cr[1])*cos(query[1])*
+		       cos(cr[0] - query[0]));
+    dist = max(dist - r, 0.0);
+    return dist*dist;
   }
 
   inline double MinRedShiftDistSq(const DHrectBound<2>& query,
