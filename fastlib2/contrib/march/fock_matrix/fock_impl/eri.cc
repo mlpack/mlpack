@@ -24,6 +24,7 @@ namespace eri {
     double_factorial[0] = 1.0;
     double_factorial[1] = 1.0;
     factorial[0] = 1.0;
+    factorial[1] = 1.0;
     for (index_t i = 2; i < MAX_FAC; i++) {
       
       double_factorial[i] = (double)i * double_factorial[i-2];
@@ -185,19 +186,22 @@ namespace eri {
     DEBUG_ASSERT(l2 >= 0);
     
     // should take care of all the edge cases
+    /*
     if (k == 0) {
       return 1.0;
     }
+     */
     
     double sum = 0.0;
     
-    for (int q = max(-1*k, k - (2*l2)); q <= min(k, (2*l1) - k); q +=2) {
+    for (int q = max(-1*k, k - (2*l2)); q <= min(k, (2*l1) - k); q += 2) {
       
       // k and q have the same parity, so integer division is fine
       int i = (k + q) / 2;
       int j = (k - q) / 2;
       
-      sum += BinomialCoefficient(l1, i) * BinomialCoefficient(l2, j) 
+      // 0^0 here needs to be one
+      sum += BinomialCoefficient(l1, i) * BinomialCoefficient(l2, j)
       * pow(PA_x, (double)(l1 - i)) * pow(PB_x, (double)(l2 - j));
       
     } // for q
@@ -238,6 +242,13 @@ namespace eri {
   double OverlapCartesianFactor(int l1, int l2, double PA_x, double PB_x, 
                                 double gamma) {
     
+    if (l1 < 0) {
+      return 0.0;
+    }
+    if (l2 < 0) {
+      return 0.0;
+    }
+    
     int total_momentum = l1 + l2;
     if (total_momentum == 0) {
       return 1.0;
@@ -266,7 +277,8 @@ namespace eri {
    *
    * This needs to return up to 9 integrals
    */
-  double* ComputeOverlapIntegrals(BasisShell& shellA, BasisShell& shellB) {
+  double* ComputeOverlapIntegrals(const BasisShell& shellA, 
+                                  const BasisShell& shellB) {
     
     index_t num_integrals = shellA.num_functions() * shellB.num_functions();
     
@@ -335,6 +347,263 @@ namespace eri {
     
   } // ComputeOverlapIntegral
   
+  
+  // need ability to get particular overlap integrals
+  // <G1 G2> = prefactor * I_x * I_y * I_z
+  // just need to compute the OverlapCartesianFactors above
+  // NOTE: <-1|x etc. are zero if the minus 1 would make the integral exponent
+  // negative
+  double KineticCartesianFactors(int l1, int l2, int m1, int m2, int n1, int n2,
+                                 const Vector& PA, const Vector& PB, double expA, 
+                                 double expB) {
+    
+    double gamma = expA + expB;
+    
+    double orig_x_fac = OverlapCartesianFactor(l1, l2, PA[0], PB[0], gamma);
+    double orig_y_fac = OverlapCartesianFactor(m1, m2, PA[1], PB[1], gamma);
+    double orig_z_fac = OverlapCartesianFactor(n1, n2, PA[2], PB[2], gamma);
+    
+    double x_term = 0.5 * l1 * l2 * OverlapCartesianFactor(l1-1, l2-1, PA[0], PB[0], gamma);
+    x_term += 2.0 * expA * expB * OverlapCartesianFactor(l1+1, l2+1, PA[0], PB[0], gamma);
+    x_term += -1.0 * expA * l2 * OverlapCartesianFactor(l1+1, l2-1, PA[0], PB[0], gamma);
+    x_term += -1.0 * expB * l1 * OverlapCartesianFactor(l1-1, l2+1, PA[0], PB[0], gamma);
+    x_term *= orig_y_fac * orig_z_fac;
+    
+    double y_term = 0.5 * m1 * m2 * OverlapCartesianFactor(m1-1, m2-1, PA[1], PB[1], gamma);
+    y_term += 2.0 * expA * expB * OverlapCartesianFactor(m1+1, m2+1, PA[1], PB[1], gamma);
+    y_term += -1.0 * expA * m2 * OverlapCartesianFactor(m1+1, m2-1, PA[1], PB[1], gamma);
+    y_term += -1.0 * expB * m1 * OverlapCartesianFactor(m1-1, m2+1, PA[1], PB[1], gamma);
+    y_term *= orig_x_fac * orig_z_fac;
+    
+    double z_term = 0.5 * n1 * n2 * OverlapCartesianFactor(n1-1, n2-1, PA[2], PB[2], gamma);
+    z_term += 2.0 * expA * expB * OverlapCartesianFactor(n1+1, n2+1, PA[2], PB[2], gamma);
+    z_term += -1.0 * expA * n2 * OverlapCartesianFactor(n1+1, n2-1, PA[2], PB[2], gamma);
+    z_term += -1.0 * expB * n1 * OverlapCartesianFactor(n1-1, n2+1, PA[2], PB[2], gamma);
+    z_term *= orig_y_fac * orig_x_fac;
+    
+    return (x_term + y_term + z_term);
+    
+  } // KineticCartesianFactor()
+  
+  
+  double* ComputeKineticIntegrals(const BasisShell& shellA, 
+                                  const BasisShell& shellB) {
+    
+    index_t num_integrals = shellA.num_functions() * shellB.num_functions();
+    
+    double* integrals = (double*)malloc(num_integrals * sizeof(double));
+    
+    double prefactor = ComputeShellOverlap(shellA, shellB);
+    
+    Vector p_vec;
+    double gamma = ComputeGPTCenter(shellA.center(), shellA.exp(), 
+                                    shellB.center(), shellB.exp(), &p_vec);
+    
+    Vector PA;
+    la::SubInit(shellA.center(), p_vec, &PA);
+    
+    Vector PB;
+    la::SubInit(shellB.center(), p_vec, &PB);
+    
+    index_t integral_index = 0;
+    index_t a_ind = 0;
+    
+    for (index_t ai = 0; ai <= shellA.total_momentum(); ai++) {
+      int l1 = shellA.total_momentum() - ai;
+      
+      for (index_t aj = 0; aj <= ai; aj ++) {
+        
+        int m1 = ai - aj;
+        int n1 = aj;
+        
+        index_t b_ind = 0;
+        
+        for (index_t bi = 0; bi <= shellB.total_momentum(); bi++) {
+          
+          int l2 = shellB.total_momentum() - bi;
+          
+          
+          for (index_t bj = 0; bj <= bi; bj++) {
+            
+            int m2 = bi - bj;
+            int n2 = bj;
+            
+            integrals[integral_index] = prefactor 
+                                        * shellA.normalization_constant(a_ind) 
+                                        * shellB.normalization_constant(b_ind);
+            
+            integrals[integral_index] *= 
+                KineticCartesianFactors(l1, l2, m1, m2, n1, n2, PA, PB, 
+                                        shellA.exp(), shellB.exp());
+            
+            integral_index++;
+            b_ind++;
+            
+          } // bj
+          
+        } // bi
+        
+        a_ind++;
+        
+      } // aj
+    } // ai
+    
+    
+    return integrals;
+    
+  } // ComputeKineticIntegrals
+  
+  
+  double NuclearFactor(int l1, int l2, int m1, int m2, int n1, int n2, 
+                       const Vector& PA, const Vector& PB, const Vector& CP, 
+                       const double* F) {
+    
+    double retval = 0.0;
+    
+    for (int l = 0; l <= l1 + l2; l++) {
+      
+      double l_term = GPTCoefficient(l, l1, l2, PA[0], PB[0]);
+      //printf("l_term: %g\n", l_term);
+      
+      for (int m = 0; m <= m1 + m2; m++) {
+        
+        double m_term = GPTCoefficient(m, m1, m2, PA[1], PB[1]);
+        //printf("m_term: %g\n", m_term);
+        
+        for (int n = 0; n <= n1 + n2; n++) {
+          
+          double n_term = GPTCoefficient(n, n1, n2, PA[2], PB[2]);
+          //printf("n_term: %g\n", n_term);
+          
+          for (int i = 0; i <= l/2; i++) {
+            
+            double i_term = BinomialCoefficient(l, 2*i) * pow(CP[0], (double)(l-2*i));
+            if (2*i - 1 >= 0) {
+              i_term *= double_factorial[2*i-1];
+            }
+            //printf("i_term: %g\n", i_term);
+            
+            for (int j = 0; j <= m/2; j++) {
+              
+              double j_term = BinomialCoefficient(m, 2*j) * pow(CP[1], (double)(m - 2*j));
+              if (2*j -1 >= 0) {
+                j_term *= double_factorial[2*j-1];
+              }
+              //printf("j_term: %g\n", j_term);
+              
+              for (int k = 0; k <= n/2; k++) {
+                
+                double k_term = BinomialCoefficient(n, 2*k) * pow(CP[2], (double)(n-2*k));
+                if (2*k-1 >= 0) {
+                  k_term *= double_factorial[2*k-1];
+                }
+                //printf("k_term: %g\n", k_term);
+                
+                for (int p = 0; p <= i + j + k; p++) {
+                  
+                  double p_term = pow(-1.0, (double)p) * BinomialCoefficient(i+j+k, p) * F[2*(l-2*i+m-2*j+n-2*k+p)];
+                  //printf("p_term: %g\n", p_term);
+                  
+                  retval += l_term * m_term * n_term * i_term * j_term * k_term * p_term;
+                  
+                } // sum p
+                
+              } // sum k
+              
+            } // sum j
+            
+          } // sum i
+          
+        } // sum n
+        
+      } // sum m
+            
+    } // sum l
+    
+    return retval;
+    
+  } // NuclearFactor
+  
+  double* ComputeNuclearIntegrals(const BasisShell& shellA, 
+                                  const BasisShell& shellB,
+                                  const Vector& Cvec) {
+    
+    index_t num_integrals = shellA.num_functions() * shellB.num_functions();
+    
+    double* integrals = (double*)malloc(num_integrals * sizeof(double));
+    
+    Vector p_vec;
+    double gamma = ComputeGPTCenter(shellA.center(), shellA.exp(), 
+                                    shellB.center(), shellB.exp(), &p_vec);
+    
+    double AB_dist_sq = la::DistanceSqEuclidean(shellA.center(), shellB.center());
+    double prefactor = 2 * math::PI / gamma;
+    prefactor *= exp(-shellA.exp() * shellB.exp() * AB_dist_sq / gamma);
+    
+    
+    Vector PA;
+    la::SubInit(shellA.center(), p_vec, &PA);
+    
+    Vector PB;
+    la::SubInit(shellB.center(), p_vec, &PB);
+    
+    Vector CP;
+    la::SubInit(p_vec, Cvec, &CP);
+    
+    int total_momentum = shellA.total_momentum() + shellB.total_momentum();
+    double F_arg = gamma * la::DistanceSqEuclidean(Cvec, p_vec);
+    
+    // not sure I really need twice the total momentum here
+    double* F_m = (double*)malloc(2 * total_momentum * sizeof(double));
+    Compute_F(F_m, 2 * total_momentum, F_arg);
+    
+    index_t integral_index = 0;
+    index_t a_ind = 0;
+    
+    for (index_t ai = 0; ai <= shellA.total_momentum(); ai++) {
+      int l1 = shellA.total_momentum() - ai;
+      
+      for (index_t aj = 0; aj <= ai; aj ++) {
+        
+        int m1 = ai - aj;
+        int n1 = aj;
+        
+        index_t b_ind = 0;
+        
+        for (index_t bi = 0; bi <= shellB.total_momentum(); bi++) {
+          
+          int l2 = shellB.total_momentum() - bi;
+          
+          for (index_t bj = 0; bj <= bi; bj++) {
+            
+            int m2 = bi - bj;
+            int n2 = bj;
+            
+            integrals[integral_index] = prefactor 
+                                        * shellA.normalization_constant(a_ind)
+                                        * shellB.normalization_constant(b_ind);
+            integrals[integral_index] *= NuclearFactor(l1, l2, m1, m2, n1, n2, 
+                                                       PA, PB, CP, F_m);
+            
+            //printf("\n");
+            
+            integral_index++;
+            b_ind++;
+            
+          } // bj
+          
+        } // bi
+        
+        a_ind++;
+        
+      } // aj
+    } // ai
+    
+    free(F_m);
+    
+    return integrals;
+    
+  } // ComputeNuclearIntegrals
   
   /*
    // only works with s-type functions for now

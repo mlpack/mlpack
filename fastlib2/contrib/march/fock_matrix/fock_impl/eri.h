@@ -69,7 +69,23 @@ namespace eri {
   double OverlapCartesianFactor(int l1, int l2, double PA_x, double PB_x, 
                                 double gamma);
   
-  double* ComputeOverlapIntegrals(BasisShell& shellA, BasisShell& shellB);
+  double* ComputeOverlapIntegrals(const BasisShell& shellA, 
+                                  const BasisShell& shellB);
+  
+  double KineticCartesianFactors(int l1, int l2, int m1, int m2, int n1, int n2,
+                                 const Vector& PA, const Vector& PB, double expA, 
+                                 double expB);
+  
+  double* ComputeKineticIntegrals(const BasisShell& shellA, 
+                                  const BasisShell& shellB);
+  
+  double NuclearFactor(int l1, int l2, int m1, int m2, int n1, int n2, 
+                       const Vector& PA, const Vector& PB, const Vector& CP, 
+                       const double* F);
+  
+  double* ComputeNuclearIntegrals(const BasisShell& shellA, 
+                                  const BasisShell& shellB,
+                                  const Vector& Cvec);
   
   /*
    double ComputeKineticIntegral(const Vector& center_A, double exp_A, int mom_A, 
