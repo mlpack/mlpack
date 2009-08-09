@@ -1,10 +1,10 @@
 #include "fastlib/fastlib.h"
 #include "scf_solver.h"
-#include "contrib/march/fock_matrix/multi_tree/multi_tree_fock.h"
+//#include "contrib/march/fock_matrix/multi_tree/multi_tree_fock.h"
 #include "contrib/march/fock_matrix/naive/naive_fock_matrix.h"
-#include "contrib/march/fock_matrix/prescreening/schwartz_prescreening.h"
-#include "contrib/march/fock_matrix/link/link.h"
-#include "contrib/march/fock_matrix/cfmm/cfmm_coulomb.h"
+//#include "contrib/march/fock_matrix/prescreening/schwartz_prescreening.h"
+//#include "contrib/march/fock_matrix/link/link.h"
+//#include "contrib/march/fock_matrix/cfmm/cfmm_coulomb.h"
 
 
 
@@ -43,16 +43,16 @@ FX_ENTRY_DOC_DONE
 };
 
 const fx_submodule_doc scf_main_submodules[] = {
-{"cfmm", &cfmm_mod_doc, 
-"Parameters and results for the CFMM.\n"},
-{"link", &link_mod_doc,
-"Parameters and results for LinK.\n"},
-{"prescreening", &prescreening_mod_doc,
-"Parameters and results for Schwartz prescreening.\n"},
+//{"cfmm", &cfmm_mod_doc, 
+//"Parameters and results for the CFMM.\n"},
+//{"link", &link_mod_doc,
+//"Parameters and results for LinK.\n"},
+//{"prescreening", &prescreening_mod_doc,
+//"Parameters and results for Schwartz prescreening.\n"},
 {"naive", &naive_mod_doc,
 "Parameters and results for naive.\n"},
-{"multi", &multi_mod_doc,
-"Parameters and results for multi-tree algorithm.\n"},
+//{"multi", &multi_mod_doc,
+//"Parameters and results for multi-tree algorithm.\n"},
 {"solver", &scf_mod_doc, 
 "Parameters and results for the SCF main routine.\n"},
 FX_SUBMODULE_DOC_DONE
@@ -154,6 +154,7 @@ int main(int argc, char* argv[]) {
   
   // make cases for SCFSolver
   // have to make calls to it here to keep it in scope
+  /*
   if (strcmp(coulomb_alg_str, "cfmm") == 0 
       && strcmp(exchange_alg_str, "link") == 0) {
   
@@ -387,7 +388,7 @@ int main(int argc, char* argv[]) {
                 nuclear_charges, &naive_alg, &multi_alg, num_electrons);
     solver.ComputeWavefunction();
   }
-  else if (strcmp(coulomb_alg_str, "naive") == 0 
+  else*/ if (strcmp(coulomb_alg_str, "naive") == 0 
            && strcmp(exchange_alg_str, "naive") == 0) {
   
     NaiveFockMatrix naive_alg;

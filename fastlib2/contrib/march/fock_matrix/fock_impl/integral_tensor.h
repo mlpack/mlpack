@@ -103,7 +103,7 @@ public:
   
   void Init(int num_a, int num_b, int num_c, int num_d, double* integrals);
   
-  void UnPermute(const ArrayList<index_t>& anti_perm);
+  void UnPermute(int anti_perm);
   
 }; // class IntegralTensor
 

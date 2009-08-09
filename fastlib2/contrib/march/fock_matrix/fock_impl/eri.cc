@@ -277,12 +277,14 @@ namespace eri {
    *
    * This needs to return up to 9 integrals
    */
-  double* ComputeOverlapIntegrals(const BasisShell& shellA, 
-                                  const BasisShell& shellB) {
+  void ComputeOverlapIntegrals(const BasisShell& shellA, 
+                               const BasisShell& shellB, 
+                               Vector* integrals) {
     
     index_t num_integrals = shellA.num_functions() * shellB.num_functions();
     
-    double* integrals = (double*)malloc(num_integrals * sizeof(double));
+    //double* integrals = (double*)malloc(num_integrals * sizeof(double));
+    integrals->Init(num_integrals);
     
     double prefactor = ComputeShellOverlap(shellA, shellB);
     
@@ -326,9 +328,9 @@ namespace eri {
             double I_y = OverlapCartesianFactor(m1, m2, PA[1], PB[1], gamma);
             double I_z = OverlapCartesianFactor(n1, n2, PA[2], PB[2], gamma);
             
-            integrals[integral_index] = prefactor * I_x * I_y * I_z
-                                        * shellA.normalization_constant(a_ind) 
-                                        * shellB.normalization_constant(b_ind);
+            (*integrals)[integral_index] = prefactor * I_x * I_y * I_z
+                                           * shellA.normalization_constant(a_ind) 
+                                           * shellB.normalization_constant(b_ind);
             
             integral_index++;
             b_ind++;
@@ -343,7 +345,7 @@ namespace eri {
     } // ai
     
     
-    return integrals;
+    //return integrals;
     
   } // ComputeOverlapIntegral
   
@@ -386,12 +388,14 @@ namespace eri {
   } // KineticCartesianFactor()
   
   
-  double* ComputeKineticIntegrals(const BasisShell& shellA, 
-                                  const BasisShell& shellB) {
+  void ComputeKineticIntegrals(const BasisShell& shellA, 
+                               const BasisShell& shellB,
+                               Vector* integrals) {
     
     index_t num_integrals = shellA.num_functions() * shellB.num_functions();
     
-    double* integrals = (double*)malloc(num_integrals * sizeof(double));
+    //double* integrals = (double*)malloc(num_integrals * sizeof(double));
+    integrals->Init(num_integrals);
     
     double prefactor = ComputeShellOverlap(shellA, shellB);
     
@@ -428,11 +432,11 @@ namespace eri {
             int m2 = bi - bj;
             int n2 = bj;
             
-            integrals[integral_index] = prefactor 
+            (*integrals)[integral_index] = prefactor 
                                         * shellA.normalization_constant(a_ind) 
                                         * shellB.normalization_constant(b_ind);
             
-            integrals[integral_index] *= 
+            (*integrals)[integral_index] *= 
                 KineticCartesianFactors(l1, l2, m1, m2, n1, n2, PA, PB, 
                                         shellA.exp(), shellB.exp());
             
@@ -449,14 +453,14 @@ namespace eri {
     } // ai
     
     
-    return integrals;
+    //return integrals;
     
   } // ComputeKineticIntegrals
   
   
   double NuclearFactor(int l1, int l2, int m1, int m2, int n1, int n2, 
                        const Vector& PA, const Vector& PB, const Vector& CP, 
-                       const double* F) {
+                       const Vector& F) {
     
     double retval = 0.0;
     
@@ -524,13 +528,15 @@ namespace eri {
     
   } // NuclearFactor
   
-  double* ComputeNuclearIntegrals(const BasisShell& shellA, 
-                                  const BasisShell& shellB,
-                                  const Vector& Cvec) {
+  void ComputeNuclearIntegrals(const BasisShell& shellA, 
+                               const BasisShell& shellB,
+                               const Vector& Cvec, 
+                               Vector* integrals) {
     
     index_t num_integrals = shellA.num_functions() * shellB.num_functions();
     
-    double* integrals = (double*)malloc(num_integrals * sizeof(double));
+    //double* integrals = (double*)malloc(num_integrals * sizeof(double));
+    integrals->Init(num_integrals);
     
     Vector p_vec;
     double gamma = ComputeGPTCenter(shellA.center(), shellA.exp(), 
@@ -554,8 +560,10 @@ namespace eri {
     double F_arg = gamma * la::DistanceSqEuclidean(Cvec, p_vec);
     
     // not sure I really need twice the total momentum here
-    double* F_m = (double*)malloc(2 * total_momentum * sizeof(double));
-    Compute_F(F_m, 2 * total_momentum, F_arg);
+    //double* F_m = (double*)malloc(2 * total_momentum * sizeof(double));
+    Vector F_m;
+    F_m.Init(2*total_momentum + 1);
+    Compute_F(F_m.ptr(), 2 * total_momentum + 1, F_arg);
     
     index_t integral_index = 0;
     index_t a_ind = 0;
@@ -579,11 +587,11 @@ namespace eri {
             int m2 = bi - bj;
             int n2 = bj;
             
-            integrals[integral_index] = prefactor 
+            (*integrals)[integral_index] = prefactor 
                                         * shellA.normalization_constant(a_ind)
                                         * shellB.normalization_constant(b_ind);
-            integrals[integral_index] *= NuclearFactor(l1, l2, m1, m2, n1, n2, 
-                                                       PA, PB, CP, F_m);
+            (*integrals)[integral_index] *= NuclearFactor(l1, l2, m1, m2, n1, n2, 
+                                                          PA, PB, CP, F_m);
             
             //printf("\n");
             
@@ -599,9 +607,9 @@ namespace eri {
       } // aj
     } // ai
     
-    free(F_m);
+    //free(F_m);
     
-    return integrals;
+    //return integrals;
     
   } // ComputeNuclearIntegrals
   
@@ -862,15 +870,16 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     index_t momC = shells[2]->total_momentum();
     index_t momD = shells[3]->total_momentum();
     
-    
+    int anti_perm = 0;
     if (momA < momB) {
-      
       //printf("swap1\n");
       ArrayListSwap(0, 1, &perm);
+      anti_perm += 1;
     }
     if (momC < momD) {
       //printf("swap2\n");
       ArrayListSwap(2, 3, &perm);
+      anti_perm += 2;
     }
     
     if (momC + momD < momA + momB) {
@@ -880,17 +889,17 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
       ArrayListSwap(1, 3, &perm);
       
       std::swap(overlapAB, overlapCD);
+      anti_perm += 4; 
       
     }
     
-    ArrayList<index_t> anti_perm;
-    anti_perm.Init(4);
-    
+    //ArrayList<index_t> anti_perm;
+    //anti_perm.Init(4);
+    /*
     for (index_t i = 0; i < 4; i++) {
-      
       anti_perm[perm[i]] = i;
-      
     }
+    */
     
     /*
     printf("perm[0]: %d, perm[1]: %d, perm[2]: %d, perm[3]: %d\n", 
@@ -959,7 +968,7 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     
     double aux_fac = 2 * sqrt_rho_pi * overlapAB * overlapCD;
     
-    printf("aux_fac: %g\n", aux_fac);
+    //printf("aux_fac: %g\n", aux_fac);
     
     double* results = Libint_Eri(A_vec, A_exp, A_mom, B_vec, B_exp, B_mom, 
                                  C_vec, C_exp, C_mom, D_vec, D_exp, D_mom,
@@ -1034,8 +1043,8 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
                     results[integral_ind] = results[integral_ind] * A_norm 
                     * B_norm * C_norm * D_norm / norm_denom;
                     
-                    printf("results[%d]: %g\n", integral_ind, 
-                           results[integral_ind]);
+                    //printf("results[%d]: %g\n", integral_ind, 
+                    //       results[integral_ind]);
                     
                     
                     d++;

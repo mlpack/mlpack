@@ -396,16 +396,35 @@ void IntegralTensor::ContractExchange(const ArrayList<index_t>& mu_ind,
 
 
 
-void IntegralTensor::UnPermute(const ArrayList<index_t>& anti_perm) {
+void IntegralTensor::UnPermute(int anti_perm) {
  
   /*
   printf("a-perm[0]: %d, a-perm[1]: %d, a-perm[2]: %d, a-perm[3]: %d\n", 
          anti_perm[0], anti_perm[1], anti_perm[2], anti_perm[3]);
   */
-   
+  if (anti_perm >= 4) {
+    // need to unpermute both
+    SwapIndices_(0, 2);
+    SwapIndices_(1, 3);
+    anti_perm -= 4;
+  }
+  
+  if (anti_perm - 2 >= 0) {
+    SwapIndices_(2, 3);
+    anti_perm -= 2;
+  }
+  
+  if (anti_perm % 2 == 1) {
+    // unpermute the first two
+    SwapIndices_(0, 1);
+  }
+
+  
+  /*
   SwapIndices_(0, anti_perm[0]);
   SwapIndices_(1, anti_perm[1]);
   SwapIndices_(2, anti_perm[2]);
+  */
   
 }
 

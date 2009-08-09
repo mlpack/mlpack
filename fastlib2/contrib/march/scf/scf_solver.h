@@ -11,7 +11,6 @@
 
 #include "fastlib/fastlib.h"
 #include "contrib/march/fock_matrix/fock_impl/eri.h"
-#include "contrib/march/fock_matrix/fock_impl/oeints.h"
 
 
 const fx_entry_doc scf_entries[] = {
@@ -156,6 +155,8 @@ class SCFSolver {
             const Matrix& nuclear_cent, const Matrix& nuclear_mass, 
             CoulombAlg* coul_alg, ExchangeAlg* exc_alg, index_t num_electrons) {
     
+    eri::ERIInit();
+    
     module_ = mod;
     number_of_electrons_ = num_electrons;
     
@@ -213,16 +214,20 @@ class SCFSolver {
     }
     
     density_matrix_.Init(number_of_basis_functions_, number_of_basis_functions_);
+    density_matrix_.SetZero();
     
     DEBUG_ASSERT(number_of_basis_functions_ >= number_to_fill_);
     
     // Empty inits to prevent errors on closing
     overlap_matrix_.Init(number_of_basis_functions_, 
                          number_of_basis_functions_);
+    overlap_matrix_.SetZero();
     kinetic_energy_integrals_.Init(number_of_basis_functions_, 
                                    number_of_basis_functions_);
+    kinetic_energy_integrals_.SetZero();
     potential_energy_integrals_.Init(number_of_basis_functions_, 
                                      number_of_basis_functions_);
+    potential_energy_integrals_.SetZero();
     
     coefficient_matrix_.Init(number_of_basis_functions_, 
                              number_of_basis_functions_);
@@ -293,62 +298,125 @@ class SCFSolver {
   //void ComputeOneElectronMatrices_();
   void ComputeOneElectronMatrices_() {
     
-    for (index_t row_index = 0; row_index < number_of_basis_functions_; 
-         row_index++) {
-      
-      Vector row_vec;
-      basis_centers_.MakeColumnVector(row_index, &row_vec);
-      double row_exp = exponents_[row_index];
-      int row_mom = (int)momenta_[row_index];
-      
-      for (index_t col_index = row_index; col_index < number_of_basis_functions_; 
-           col_index++) {
-        
-        Vector col_vec;
-        basis_centers_.MakeColumnVector(col_index, &col_vec);
-        double col_exp = exponents_[col_index];
-        int col_mom = (int)momenta_[col_index];
-        
-        double kinetic_integral = 
-            oeints::ComputeKineticIntegral(row_vec, row_exp, row_mom, 
-                                           col_vec, col_exp, col_mom);
-        
-        double overlap_integral = 
-            oeints::ComputeOverlapIntegral(row_vec, row_exp, row_mom, 
-                                           col_vec, col_exp, col_mom);
-        
-        double nuclear_integral = 0.0;
-        for (index_t nuclear_index = 0; nuclear_index < number_of_nuclei_; 
-             nuclear_index++) {
-          
-          Vector nuclear_position;
-          nuclear_centers_.MakeColumnVector(nuclear_index, &nuclear_position);
-          
-          int nuclear_charge = (int)nuclear_masses_[nuclear_index];
-          
-          nuclear_integral += 
-              oeints::ComputeNuclearIntegral(row_vec, row_exp, row_mom, 
-                                             col_vec, col_exp, col_mom, 
-                                             nuclear_position, nuclear_charge);
-          
-        } // nuclear_index
-        
-        kinetic_energy_integrals_.set(row_index, col_index, kinetic_integral);
-        potential_energy_integrals_.set(row_index, col_index, nuclear_integral);
-        overlap_matrix_.set(row_index, col_index, overlap_integral);
-        
-        if (likely(row_index != col_index)) {
-          kinetic_energy_integrals_.set(col_index, row_index, kinetic_integral);
-          potential_energy_integrals_.set(col_index, row_index, nuclear_integral);
-          overlap_matrix_.set(col_index, row_index, overlap_integral);
-        }
-        
-      } // column_index
-      
-    } // row_index
+    // form list of shells
     
-    //kinetic_energy_integrals_.PrintDebug("kinetic");
-    //potential_energy_integrals_.PrintDebug("potential");
+    ArrayList<BasisShell> shells;
+    eri::CreateShells(basis_centers_, exponents_, momenta_, &shells);
+    
+    // iterate over list, compute integrals, and sum them into matrix
+    
+    for (index_t i = 0; i < shells.size(); i++) {
+      
+      for (index_t j = 0; j < i; j++) {
+        
+        // compute overlap (don't forget to free the memory)
+        Vector overlap; 
+        eri::ComputeOverlapIntegrals(shells[i], shells[j], &overlap);
+        Matrix overlap_mat;
+        overlap_mat.Copy(overlap.ptr(), shells[i].num_functions(), 
+                         shells[j].num_functions());
+        //free(overlap);
+        
+        eri::AddSubmatrix(shells[i].matrix_indices(), shells[j].matrix_indices(),
+                          overlap_mat, &overlap_matrix_);
+        
+        // now transpose and add below the diagonal
+        Matrix overlap_trans;
+        la::TransposeInit(overlap_mat, &overlap_trans);
+        eri::AddSubmatrix(shells[j].matrix_indices(), shells[i].matrix_indices(), 
+                          overlap_trans, &overlap_matrix_);
+        
+        // compute kinetic
+        Vector kinetic;
+        eri::ComputeKineticIntegrals(shells[i], shells[j], &kinetic);
+        
+        Matrix kinetic_mat;
+        kinetic_mat.Copy(kinetic.ptr(), shells[i].num_functions(), 
+                         shells[j].num_functions());
+        //free(kinetic);
+        
+        eri::AddSubmatrix(shells[i].matrix_indices(), shells[j].matrix_indices(),
+                          kinetic_mat, &kinetic_energy_integrals_);
+        
+        Matrix kinetic_trans;
+        la::TransposeInit(kinetic_mat, &kinetic_trans);
+        eri::AddSubmatrix(shells[j].matrix_indices(), shells[i].matrix_indices(),
+                          kinetic_trans, &kinetic_energy_integrals_);
+        
+        for (index_t k = 0; k < nuclear_centers_.n_cols(); k++) {
+          
+          // compute nuclear
+          Vector c_vec;
+          nuclear_centers_.MakeColumnVector(k, &c_vec);
+          Vector nuclear;
+          eri::ComputeNuclearIntegrals(shells[i], shells[j], 
+                                       c_vec, &nuclear);
+          nuclear.PrintDebug("Nuclear integrals");
+          
+          Matrix nuclear_mat;
+          nuclear_mat.Copy(nuclear.ptr(), shells[i].num_functions(), 
+                           shells[j].num_functions());
+          //free(nuclear);
+          
+          eri::AddSubmatrix(shells[i].matrix_indices(), shells[j].matrix_indices(), 
+                            nuclear_mat, &potential_energy_integrals_);
+          
+          Matrix nuclear_trans;
+          la::TransposeInit(nuclear_mat, &nuclear_trans);
+          eri::AddSubmatrix(shells[j].matrix_indices(), shells[i].matrix_indices(), 
+                            nuclear_trans, &potential_energy_integrals_);
+          
+        } // for k 
+        
+      } // for j
+      
+      // don't forget the entries on the diagonal
+      
+      Vector overlap;
+      eri::ComputeOverlapIntegrals(shells[i], shells[i], &overlap);
+      Matrix overlap_mat;
+      overlap_mat.Copy(overlap.ptr(), shells[i].num_functions(), 
+                       shells[i].num_functions());
+      //free(overlap);
+      
+      eri::AddSubmatrix(shells[i].matrix_indices(), shells[i].matrix_indices(),
+                        overlap_mat, &overlap_matrix_);
+      
+      Vector kinetic;
+      eri::ComputeKineticIntegrals(shells[i], shells[i], &kinetic);
+      
+      Matrix kinetic_mat;
+      kinetic_mat.Copy(kinetic.ptr(), shells[i].num_functions(), 
+                       shells[i].num_functions());
+      //free(kinetic);
+      
+      eri::AddSubmatrix(shells[i].matrix_indices(), shells[i].matrix_indices(),
+                        kinetic_mat, &kinetic_energy_integrals_);
+      
+      for (index_t k = 0; k < nuclear_centers_.n_cols(); k++) {
+        
+        // compute nuclear
+        Vector c_vec;
+        nuclear_centers_.MakeColumnVector(k, &c_vec);
+        Vector nuclear;
+        eri::ComputeNuclearIntegrals(shells[i], shells[i], 
+                                     c_vec, &nuclear);
+        nuclear.PrintDebug("Nuclear integrals");
+        
+        Matrix nuclear_mat;
+        nuclear_mat.Copy(nuclear.ptr(), shells[i].num_functions(), 
+                         shells[i].num_functions());
+        //free(nuclear);
+        
+        eri::AddSubmatrix(shells[i].matrix_indices(), shells[i].matrix_indices(), 
+                          nuclear_mat, &potential_energy_integrals_);
+        
+      } // for k      
+      
+    } // for i
+    
+    kinetic_energy_integrals_.PrintDebug("kinetic");
+    potential_energy_integrals_.PrintDebug("potential");
     //la::Scale(-1.0, &kinetic_energy_integrals_);
     la::Scale(-1.0, &potential_energy_integrals_);
     
@@ -447,6 +515,8 @@ class SCFSolver {
     
     density_matrix_frobenius_norm_ = 0.0;
     
+    //density_matrix_.PrintDebug("Density Before Update");
+    
     // Rows of density_matrix
     for (index_t density_row = 0; density_row < number_of_basis_functions_;
          density_row++) {
@@ -467,6 +537,7 @@ class SCFSolver {
                                                          density_column, occupied_indices_[occupied_index]));
           
         } // occupied_index
+    
         
         double this_entry = density_matrix_.ref(density_row, density_column);
         
@@ -507,6 +578,10 @@ class SCFSolver {
     
     FillOrbitals_();
     
+    
+    //density_matrix_.PrintDebug("Density before update");
+    
+    //coefficient_matrix_.PrintDebug("Coefficient Matrix");
     //density_matrix_norms_.SetZero();
     
     //coefficient_matrix_.PrintDebug("Coefficient Matrix (in AO basis)");
@@ -585,6 +660,8 @@ class SCFSolver {
     
     diis_index_++;
     diis_index_ = diis_index_ % diis_count_;
+    
+    //density_matrix_.PrintDebug("Density AFTER update");
     
   } // ComputeDensityMatrixDIIS_()
   
@@ -695,8 +772,9 @@ class SCFSolver {
 #ifdef DEBUG
     
     for (index_t i = 0; i < energy_vector_.length(); i++) {
-      DEBUG_ASSERT_MSG(!isnan(energy_vector_[i]), 
-                       "Complex eigenvalue in diagonalizing Fock matrix.\n");
+      //DEBUG_ASSERT_MSG(!isnan(energy_vector_[i]), 
+      //                 "Complex eigenvalue in diagonalizing Fock matrix.\n");
+      DEBUG_ASSERT(isnan(energy_vector_[i]));
     }
     
 #endif
@@ -1018,6 +1096,7 @@ class SCFSolver {
     FormChangeOfBasisMatrix_();
     
     fock_matrix_.Copy(core_matrix_);
+    //fock_matrix_.PrintDebug("After copy core matrix");
     
     TransformFockBasis_();
     
@@ -1105,6 +1184,8 @@ class SCFSolver {
     fx_timer_stop(module_, "SCF_Iterations");
     
     OutputResults_();
+    
+    eri::ERIFree();
       
   } // ComputeWavefunction
   
