@@ -99,9 +99,12 @@ class SCFSolver {
   index_t number_to_fill_; 
   
   double nuclear_repulsion_energy_;
-  
   double one_electron_energy_;
   double two_electron_energy_;
+  double total_coulomb_energy_;
+  double exchange_energy_;
+  double nuclear_attraction_energy_;
+  double kinetic_energy_;
   
   // The total energy in each iteration
   ArrayList<double> total_energy_;
@@ -154,8 +157,6 @@ class SCFSolver {
             const Matrix& mom, const Matrix& density, fx_module* mod, 
             const Matrix& nuclear_cent, const Matrix& nuclear_mass, 
             CoulombAlg* coul_alg, ExchangeAlg* exc_alg, index_t num_electrons) {
-    
-    eri::ERIInit();
     
     module_ = mod;
     number_of_electrons_ = num_electrons;
@@ -258,6 +259,10 @@ class SCFSolver {
     
     // are they the same algorithm object?
     single_fock_alg_ = ((void *)coulomb_alg_ == (void *)exchange_alg_);
+    
+    // to prevent errors on calling destruct
+    coulomb_mat_.Init(1,1);
+    exchange_mat_.Init(1,1);
 
   } // Init()
   
@@ -350,8 +355,8 @@ class SCFSolver {
           nuclear_centers_.MakeColumnVector(k, &c_vec);
           Vector nuclear;
           eri::ComputeNuclearIntegrals(shells[i], shells[j], 
-                                       c_vec, &nuclear);
-          nuclear.PrintDebug("Nuclear integrals");
+                                       c_vec, nuclear_masses_[k], &nuclear);
+          //nuclear.PrintDebug("Nuclear integrals");
           
           Matrix nuclear_mat;
           nuclear_mat.Copy(nuclear.ptr(), shells[i].num_functions(), 
@@ -400,8 +405,8 @@ class SCFSolver {
         nuclear_centers_.MakeColumnVector(k, &c_vec);
         Vector nuclear;
         eri::ComputeNuclearIntegrals(shells[i], shells[i], 
-                                     c_vec, &nuclear);
-        nuclear.PrintDebug("Nuclear integrals");
+                                     c_vec, nuclear_masses_[k], &nuclear);
+        //nuclear.PrintDebug("Nuclear integrals");
         
         Matrix nuclear_mat;
         nuclear_mat.Copy(nuclear.ptr(), shells[i].num_functions(), 
@@ -415,8 +420,8 @@ class SCFSolver {
       
     } // for i
     
-    kinetic_energy_integrals_.PrintDebug("kinetic");
-    potential_energy_integrals_.PrintDebug("potential");
+    //kinetic_energy_integrals_.PrintDebug("kinetic");
+    //potential_energy_integrals_.PrintDebug("potential");
     //la::Scale(-1.0, &kinetic_energy_integrals_);
     la::Scale(-1.0, &potential_energy_integrals_);
     
@@ -447,12 +452,12 @@ class SCFSolver {
     min_eigenval = std::min_element(eigenvalues.ptr(), 
                                     eigenvalues.ptr() + eigenvalues.length());
     
-    printf("Smallest Eigenvalue of Overlap Matrix: %g\n", *min_eigenval);
+    //printf("Smallest Eigenvalue of Overlap Matrix: %g\n", *min_eigenval);
     fx_result_double(module_, "smallest_overlap_eigenvalue", *min_eigenval);
     
 #ifdef DEBUG
     
-    eigenvalues.PrintDebug("eigenvalues");
+    //eigenvalues.PrintDebug("eigenvalues");
     
     for (index_t i = 0; i < eigenvalues.length(); i++) {
       DEBUG_ASSERT_MSG(!isnan(eigenvalues[i]), 
@@ -774,7 +779,7 @@ class SCFSolver {
     for (index_t i = 0; i < energy_vector_.length(); i++) {
       //DEBUG_ASSERT_MSG(!isnan(energy_vector_[i]), 
       //                 "Complex eigenvalue in diagonalizing Fock matrix.\n");
-      DEBUG_ASSERT(isnan(energy_vector_[i]));
+      DEBUG_ASSERT(!isnan(energy_vector_[i]));
     }
     
 #endif
@@ -855,6 +860,22 @@ class SCFSolver {
     double total_energy = 0.0;
     one_electron_energy_ = 0.0;
     two_electron_energy_ = 0.0;
+    total_coulomb_energy_ = 0.0;
+    exchange_energy_ = 0.0;
+    nuclear_attraction_energy_ = 0.0;
+    kinetic_energy_ = 0.0;
+    
+    
+    density_matrix_.PrintDebug("Density Matrix");
+    fock_matrix_.PrintDebug("Fock Matrix");
+    core_matrix_.PrintDebug("Core Matrix");
+    kinetic_energy_integrals_.PrintDebug("Kinetic Matrix");
+    
+    potential_energy_integrals_.PrintDebug("Potential Matrix");
+    
+    coulomb_mat_.PrintDebug("Coulomb Matrix");
+    exchange_mat_.PrintDebug("Exchange Matrix");
+    
     
     for (index_t i = 0; i < number_of_basis_functions_; i++) {
       
@@ -862,7 +883,13 @@ class SCFSolver {
       one_electron_energy_ += density_matrix_.ref(i,i) * core_matrix_.ref(i,i);
       two_electron_energy_ += density_matrix_.ref(i,i) * 
                               (fock_matrix_.ref(i,i) - core_matrix_.ref(i,i));
+      
+      kinetic_energy_ += density_matrix_.ref(i,i) * kinetic_energy_integrals_.ref(i,i);
+      nuclear_attraction_energy_ += density_matrix_.ref(i,i) * potential_energy_integrals_.ref(i,i);
                               
+      total_coulomb_energy_ += density_matrix_.ref(i,i) * coulomb_mat_.ref(i,i);
+      exchange_energy_ -= density_matrix_.ref(i,i) * exchange_mat_.ref(i,i);
+      
       // this double counts the core?
       double current_energy = density_matrix_.ref(i,i) * 
           (core_matrix_.ref(i,i) + fock_matrix_.ref(i,i));
@@ -879,6 +906,14 @@ class SCFSolver {
         two_electron_energy_ += 2 * density_matrix_.ref(i,j) * 
                                 (fock_matrix_.ref(i,j) - core_matrix_.ref(i,j));
         
+        kinetic_energy_ += 2 * density_matrix_.ref(i,j) * kinetic_energy_integrals_.ref(i,j);
+        nuclear_attraction_energy_ += 2 * density_matrix_.ref(i,j) * potential_energy_integrals_.ref(i,j);
+        
+        total_coulomb_energy_ += 2 * density_matrix_.ref(i,j) * coulomb_mat_.ref(i,j);
+        // Factor of 1/2 already included 
+        exchange_energy_ -= 2 * density_matrix_.ref(i,j) * exchange_mat_.ref(i,j);
+
+        
         double this_energy = 2 * density_matrix_.ref(i, j) * 
             (core_matrix_.ref(i, j) + fock_matrix_.ref(i, j));
             
@@ -893,8 +928,11 @@ class SCFSolver {
     // Leach says there is a factor of 1/2
     total_energy = (0.5 * total_energy) + nuclear_repulsion_energy_;
     
-    one_electron_energy_ = 0.5 * one_electron_energy_;
+    //one_electron_energy_ = 0.5 * one_electron_energy_;
     two_electron_energy_ = 0.5 * two_electron_energy_;
+    total_coulomb_energy_ = 0.5 * total_coulomb_energy_;
+    exchange_energy_ *= 0.5;
+    
     
     /*
     printf("one_electron_energy: %g\n", one_electron_energy_);
@@ -961,6 +999,9 @@ class SCFSolver {
   */
   void UpdateFockMatrix_() {
 
+    coulomb_mat_.Destruct();
+    exchange_mat_.Destruct();
+    
     // give new density to fock matrix algs
     
     coulomb_alg_->UpdateDensity(density_matrix_);
@@ -993,9 +1034,6 @@ class SCFSolver {
     // exchange_mat_ should already have been multiplied by 1/2
     la::AddOverwrite(core_matrix_, coulomb_mat_, &fock_matrix_);
     la::SubFrom(exchange_mat_, &fock_matrix_);
-    
-    coulomb_mat_.Destruct();
-    exchange_mat_.Destruct();
     
   } // UpdateFockMatrix_()
   
@@ -1045,8 +1083,8 @@ class SCFSolver {
     current_iteration_--;
 
       
-    coulomb_mat_.Init(1,1);
-    exchange_mat_.Init(1,1);
+    //coulomb_mat_.Init(1,1);
+    //exchange_mat_.Init(1,1);
     //total_energy_[current_iteration_] = ComputeElectronicEnergy_();
     
   } // FindSCFSolution_
@@ -1151,15 +1189,24 @@ class SCFSolver {
     
     fx_result_int(module_, "num_iterations", current_iteration_);
     
-    fx_result_double(module_, "nuclear_repulsion_energy", 
-                     nuclear_repulsion_energy_);
-                     
     fx_result_double(module_, "one_electron_energy", 
                      one_electron_energy_);
     
+    fx_result_double(module_, "total_coulomb_energy", total_coulomb_energy_);
+    
+    fx_result_double(module_, "exchange_energy", exchange_energy_);
+    
+    fx_result_double(module_, "nuclear_repulsion_energy", 
+                     nuclear_repulsion_energy_);
+                     
+    fx_result_double(module_, "nuclear_attraction_energy", 
+                     nuclear_attraction_energy_);
+    
+    fx_result_double(module_, "kinetic_energy", kinetic_energy_);
+    
     fx_result_double(module_, "two_electron_energy", 
                      two_electron_energy_);
-    
+
     fx_result_double(module_, "total_energy", 
                      total_energy_[current_iteration_]);
     

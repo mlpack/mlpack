@@ -83,8 +83,9 @@ class BasisShell {
         int ny = i - j;
         int nz = j;
         
-        normalization_constants_[fun_index] = eri::ComputeNormalization(exponent_, 
-                                                                        nx, ny, nz);
+        double this_norm = eri::ComputeNormalization(exponent_, nx, ny, nz);
+        DEBUG_ASSERT(!isinf(this_norm));
+        normalization_constants_[fun_index] = this_norm;
         fun_index++; 
         
       }

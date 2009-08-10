@@ -87,7 +87,8 @@ namespace eri {
   
   void ComputeNuclearIntegrals(const BasisShell& shellA, 
                                const BasisShell& shellB,
-                               const Vector& Cvec, Vector* integrals);
+                               const Vector& Cvec, int nuclear_charge,
+                               Vector* integrals);
   
   /*
    double ComputeKineticIntegral(const Vector& center_A, double exp_A, int mom_A, 

@@ -68,6 +68,8 @@ scf_main_entries, scf_main_submodules,
 int main(int argc, char* argv[]) {
 
   fx_module* root_mod = fx_init(argc, argv, &scf_main_doc);
+  eri::ERIInit();
+  
   
   Matrix centers;
   const char* centers_file = fx_param_str_req(root_mod, "centers");
@@ -404,6 +406,7 @@ int main(int argc, char* argv[]) {
     FATAL("Incorrectly specified fock matrix algorithms.\n");
   }
   
+  eri::ERIFree();
   fx_done(root_mod);
 
   return 0;
