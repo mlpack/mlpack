@@ -17,6 +17,7 @@ namespace eri {
   
   void ERIInit() {
     
+    //printf("ERIInit Called\n");
     init_libint_base();
     
     //double_factorial = (double*)malloc(num_factorials * sizeof(double));
@@ -121,6 +122,8 @@ namespace eri {
   
   void Compute_F(double* F, int n, double t) {
     
+    DEBUG_ASSERT(n < MAX_FAC);
+    
     // copied from eri.cc in libmint
     double EPS = 1.0e-17;
     
@@ -144,6 +147,7 @@ namespace eri {
       }
     }
     // backward?
+    // looks like some kind of Taylor series, followed by a backward recursion
     else {
       et = exp(-t);
       t2 = 2*t;
@@ -156,10 +160,29 @@ namespace eri {
         num = num*t2;
         term1 = num/double_factorial[m2+2*i+2];
         sum += term1;
-      } while (fabs(term1) > EPS && i < MAX_FAC);
+        /*
+        if (m2 + 2*i + 2 > MAX_FAC) {
+          printf("exceeded double factorial array\n");
+        }
+        printf("double fac arg: %d\n", m2 + 2*i + 2);
+        */ 
+        /*
+        if (isinf(term1)) {
+          printf("term1 is inf\n");
+        }
+        */
+        // changed i < MAX_FAC to actually check the boundaries of the double
+        // factorial array
+      } while (fabs(term1) > EPS && (m2 + 2*i + 4) < MAX_FAC);
       F[n] = sum*et;
       for(m=n-1;m>=0;m--){
         F[m] = (t2*F[m+1] + et)/(2*m+1);
+      }
+    }
+    
+    for (int j = 0; j < n; j++) {
+      if (isnan(F[j]) || isinf(F[j])) {
+        printf("Bad value of F\n");
       }
     }
     
@@ -463,6 +486,7 @@ namespace eri {
                        const Vector& F) {
     
     double retval = 0.0;
+    //printf("l1: %d, l2: %d, m1: %d, m2: %d, n1: %d, n2: %d\n", l1, l2, m1, m2, n1, n2);
     
     for (int l = 0; l <= l1 + l2; l++) {
       
@@ -523,6 +547,10 @@ namespace eri {
       } // sum m
             
     } // sum l
+    printf("Nuclear Factor: %g\n", retval);
+    if (isnan(retval)) {
+      printf("Nuclear integral returned nan\n");
+    }
     
     return retval;
     
@@ -530,10 +558,12 @@ namespace eri {
   
   void ComputeNuclearIntegrals(const BasisShell& shellA, 
                                const BasisShell& shellB,
-                               const Vector& Cvec, 
+                               const Vector& Cvec, int nuclear_charge,
                                Vector* integrals) {
-    
+
     index_t num_integrals = shellA.num_functions() * shellB.num_functions();
+    printf("num_integrals: %d\n", num_integrals);
+
     
     //double* integrals = (double*)malloc(num_integrals * sizeof(double));
     integrals->Init(num_integrals);
@@ -564,6 +594,7 @@ namespace eri {
     Vector F_m;
     F_m.Init(2*total_momentum + 1);
     Compute_F(F_m.ptr(), 2 * total_momentum + 1, F_arg);
+    //F_m.PrintDebug("F_m");
     
     index_t integral_index = 0;
     index_t a_ind = 0;
@@ -587,13 +618,17 @@ namespace eri {
             int m2 = bi - bj;
             int n2 = bj;
             
-            (*integrals)[integral_index] = prefactor 
+            (*integrals)[integral_index] = prefactor * (double)nuclear_charge
                                         * shellA.normalization_constant(a_ind)
                                         * shellB.normalization_constant(b_ind);
             (*integrals)[integral_index] *= NuclearFactor(l1, l2, m1, m2, n1, n2, 
                                                           PA, PB, CP, F_m);
             
-            //printf("\n");
+            printf("prefactor: %g\n", prefactor);
+            printf("nuclear_charge: %d\n", nuclear_charge);
+            printf("normalizations: %g, %g\n", shellA.normalization_constant(a_ind),
+                   shellB.normalization_constant(b_ind));
+            printf("integral: %g\n\n", (*integrals)[integral_index]);
             
             integral_index++;
             b_ind++;
@@ -606,6 +641,8 @@ namespace eri {
         
       } // aj
     } // ai
+    
+    printf("\n\n");
     
     //free(F_m);
     
@@ -966,9 +1003,18 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     sqrt_rho_pi /= (A_exp + B_exp + C_exp + D_exp);
     sqrt_rho_pi = sqrt(sqrt_rho_pi / math::PI);
     
-    double aux_fac = 2 * sqrt_rho_pi * overlapAB * overlapCD;
+    /*
+    printf("overlapAB: %g\n", overlapAB);
+    printf("overlapCD: %g\n", overlapCD);
+    printf("norm_denom: %g\n", norm_denom);
+    printf("sqrt_rho_pi: %g\n", sqrt_rho_pi);
+    */
     
-    //printf("aux_fac: %g\n", aux_fac);
+    //printf("normA: %g, normB: %g, normC: %g, normD: %g\n", normA, normB, normC, normD);
+    
+    double aux_fac = 2 * sqrt_rho_pi * overlapAB * overlapCD * norm_denom;
+    
+    //printf("aux_fac: %g\n\n", aux_fac);
     
     double* results = Libint_Eri(A_vec, A_exp, A_mom, B_vec, B_exp, B_mom, 
                                  C_vec, C_exp, C_mom, D_vec, D_exp, D_mom,
@@ -1179,7 +1225,13 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     // TODO: Libmints uses am + 1 here (probably for derivatives)
     Compute_F(libint->PrimQuartet[0].F, total_momentum, T);
     
-    la::Scale(total_momentum, aux_fac, libint->PrimQuartet[0].F);
+    //printf("F_0[T]: %g\n", libint->PrimQuartet[0].F[0]);
+    
+    // this isn't scaling due to total_momentum being 0
+    la::Scale(((total_momentum > 0) ? total_momentum : 1), aux_fac,
+              libint->PrimQuartet[0].F);
+    
+    //printf("(ss|ss) integral: %g\n", libint->PrimQuartet[0].F[0]);
     
     libint->PrimQuartet[0].oo2z = 1.0/(2.0 * gamma);
     libint->PrimQuartet[0].oo2n = 1.0/(2.0 * eta);
