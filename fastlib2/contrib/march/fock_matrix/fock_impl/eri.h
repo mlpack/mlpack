@@ -13,8 +13,6 @@ class ShellPair;
 class BasisShell;
 
 namespace eri {
-  
-  
 
   
   ///////////////////////// initialization ////////////////////////
@@ -81,7 +79,7 @@ namespace eri {
                                const BasisShell& shellB,
                                Vector* integrals);
   
-  double NuclearFactor(int l1, int l2, int m1, int m2, int n1, int n2, 
+  double NuclearFactor(int l1, int l2, int m1, int m2, int n1, int n2, double gamma, 
                        const Vector& PA, const Vector& PB, const Vector& CP, 
                        const Vector& F);
   

@@ -199,9 +199,6 @@ namespace eri {
   }
   
   
-  // what about edge cases?
-  // should only occur when k is only zero - i.e. when there's no sum
-  // should just be 1 in that case
   double GPTCoefficient(int k, int l1, int l2, double PA_x, double PB_x) {
     
     DEBUG_ASSERT(k >= 0);
@@ -222,6 +219,9 @@ namespace eri {
       // k and q have the same parity, so integer division is fine
       int i = (k + q) / 2;
       int j = (k - q) / 2;
+      
+      DEBUG_ASSERT(i <= l1);
+      DEBUG_ASSERT(j <= l2);
       
       // 0^0 here needs to be one
       sum += BinomialCoefficient(l1, i) * BinomialCoefficient(l2, j)
@@ -481,7 +481,7 @@ namespace eri {
   } // ComputeKineticIntegrals
   
   
-  double NuclearFactor(int l1, int l2, int m1, int m2, int n1, int n2, 
+  double NuclearFactor(int l1, int l2, int m1, int m2, int n1, int n2, double gamma,
                        const Vector& PA, const Vector& PB, const Vector& CP, 
                        const Vector& F) {
     
@@ -529,9 +529,11 @@ namespace eri {
                 
                 for (int p = 0; p <= i + j + k; p++) {
                   
-                  double p_term = pow(-1.0, (double)p) * BinomialCoefficient(i+j+k, p) * F[2*(l-2*i+m-2*j+n-2*k+p)];
+                  //printf("F_val: %g\n", F[(l-2*i+m-2*j+n-2*k+p)]);
+                  double p_term = pow(2.0 * gamma, -1.0*(i+j+k)) * pow(-1.0, (double)p) * BinomialCoefficient(i+j+k, p) * F[(l-2*i+m-2*j+n-2*k+p)];
                   //printf("p_term: %g\n", p_term);
-                  
+                  //printf("l: %d, m: %d, n: %d, i: %d, j: %d, k: %d, p: %d\n", l, m, n, i, j, k, p);
+                  //printf("added to retval: %g\n", l_term * m_term * n_term * i_term * j_term * k_term * p_term);
                   retval += l_term * m_term * n_term * i_term * j_term * k_term * p_term;
                   
                 } // sum p
@@ -547,7 +549,7 @@ namespace eri {
       } // sum m
             
     } // sum l
-    printf("Nuclear Factor: %g\n", retval);
+    //printf("Nuclear Factor: %g\n", retval);
     if (isnan(retval)) {
       printf("Nuclear integral returned nan\n");
     }
@@ -562,7 +564,7 @@ namespace eri {
                                Vector* integrals) {
 
     index_t num_integrals = shellA.num_functions() * shellB.num_functions();
-    printf("num_integrals: %d\n", num_integrals);
+    //printf("num_integrals: %d\n", num_integrals);
 
     
     //double* integrals = (double*)malloc(num_integrals * sizeof(double));
@@ -621,15 +623,15 @@ namespace eri {
             (*integrals)[integral_index] = prefactor * (double)nuclear_charge
                                         * shellA.normalization_constant(a_ind)
                                         * shellB.normalization_constant(b_ind);
-            (*integrals)[integral_index] *= NuclearFactor(l1, l2, m1, m2, n1, n2, 
+            (*integrals)[integral_index] *= NuclearFactor(l1, l2, m1, m2, n1, n2, gamma,
                                                           PA, PB, CP, F_m);
-            
+            /*
             printf("prefactor: %g\n", prefactor);
             printf("nuclear_charge: %d\n", nuclear_charge);
             printf("normalizations: %g, %g\n", shellA.normalization_constant(a_ind),
                    shellB.normalization_constant(b_ind));
             printf("integral: %g\n\n", (*integrals)[integral_index]);
-            
+            */
             integral_index++;
             b_ind++;
             
@@ -642,11 +644,9 @@ namespace eri {
       } // aj
     } // ai
     
-    printf("\n\n");
+    //printf("\n\n");
     
     //free(F_m);
-    
-    //return integrals;
     
   } // ComputeNuclearIntegrals
   
