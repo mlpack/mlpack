@@ -6,11 +6,13 @@
  * This head file contains functions for performing SVM training and prediction
  * Supported SVM learner type:SVM_C, SVM_R, SVM_Q
  *
- * @see opt_smo.h
+ * @see opt_smo.h 
+ * @see opt_lasvm.h
  * @see opt_sgd.h 
  * @see opt_sgdwb.h
  * @see opt_cd.h
  * @see opt_pegasos.h
+ * @see opt_rivanov.h
  * @see opt_hcy.h
  * @see opt_fw.h
  * @see opt_mfw.h
@@ -22,10 +24,12 @@
 #define U_SVM_SVM_H
 
 #include "opt_smo.h"
+#include "opt_lasvm.h"
 #include "opt_sgd.h"
 #include "opt_sgdwb.h"
 #include "opt_cd.h"
 #include "opt_pegasos.h"
+#include "opt_rivanov.h"
 #include "opt_hcy.h"
 #include "opt_fw.h"
 #include "opt_mfw.h"
@@ -115,7 +119,7 @@ class SVM {
    * Developers may add more learner types if necessary
    */
   int learner_typeid_;
-  // Optimization method: smo, sgd, sgdwb, cd, pegasos, hcy, fw, mfw, sfw, par
+  // Optimization method: smo, lasvm, sgd, sgdwb, cd, pegasos, rivanov, hcy, fw, mfw, sfw, par
   String opt_method_;
   /* array of models for storage of the 2-class(binary) classifiers 
      Need to train num_classes_*(num_classes_-1)/2 binary models */
@@ -193,10 +197,12 @@ class SVM {
  public:
   typedef TKernel Kernel;
   class SMO<Kernel>;
+  class LASVM<Kernel>;
   class SGD<Kernel>;
   class SGDWB<Kernel>;
   class CD<Kernel>;
   class PEGASOS<Kernel>;
+  class RIVANOV<Kernel>;
   class HCY<Kernel>;
   class FW<Kernel>;
   class MFW<Kernel>;
@@ -366,7 +372,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
       }
       for (index_t n = 0; n < train_labels_ct_[j]; n++) {
 	Vector source, dest;
-	dataset_bi.matrix().MakeColumnVector(n+train_labels_ct_[i], &dest);
+	dataset_bi.matrix().MakeColumnVector(n+train_labels_ct_[i], &dest);
 	dataset.matrix().MakeColumnVector(train_labels_index_[train_labels_startpos_[j]+n], &source);
 	dest.CopyValues(source);
 	/* last row for labels -1 */
@@ -401,6 +407,34 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	models_[ct].bias_ = smo.Bias(); // bias
 	models_[ct].w_.Init(0); // for linear classifiers only. not used here
 	smo.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
+      }
+      if (opt_method_== "lasvm") {
+	/* Initialize LASVM parameters */
+	ArrayList<double> param_feed_db;
+	param_feed_db.Init();
+	param_feed_db.PushBack() = param_.Cp_;
+	param_feed_db.PushBack() = param_.Cn_;
+	param_feed_db.PushBack() = param_.regularization_;
+	param_feed_db.PushBack() = param_.wss_;
+	param_feed_db.PushBack() = param_.n_epochs_;
+	param_feed_db.PushBack() = param_.n_iter_;
+	param_feed_db.PushBack() = param_.accuracy_;
+	LASVM<Kernel> lasvm;
+	lasvm.InitPara(learner_typeid, param_feed_db);
+
+	/* Initialize kernel */
+	lasvm.kernel().Init(fx_submodule(module, "kernel"));
+
+	/* 2-classes SVM training using LASVM */
+	fx_timer_start(NULL, "train_lasvm");
+	lasvm.Train(learner_typeid, &dataset_bi);
+	fx_timer_stop(NULL, "train_lasvm");
+
+	/* Get the trained bi-class model */
+	models_[ct].coef_.Init(); // alpha*y
+	models_[ct].bias_ = lasvm.Bias(); // bias
+	models_[ct].w_.Init(0); // for linear classifiers only. not used here
+	lasvm.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
       }
       else if (opt_method_== "sgd") {
 	/* Initialize SGD parameters */
@@ -517,6 +551,31 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	models_[ct].coef_.Init(); // alpha*y, dummy init, used for nonlinear SVM only
 	models_[ct].w_.Copy(*(pegasos.GetW())); // [w, b]
       }
+      else if (opt_method_== "rivanov") {
+	/* Initialize Robust Ivanov parameters */
+	ArrayList<double> param_feed_db;
+	param_feed_db.Init();
+	param_feed_db.PushBack() = param_.Cp_;
+	param_feed_db.PushBack() = param_.Cn_;
+	param_feed_db.PushBack() = param_.kerneltypeid_== 0 ? 0.0: 1.0;
+	param_feed_db.PushBack() = param_.n_epochs_;
+	param_feed_db.PushBack() = param_.n_iter_;
+	param_feed_db.PushBack() = param_.accuracy_;
+	RIVANOV<Kernel> rivanov;
+	rivanov.InitPara(learner_typeid, param_feed_db);
+
+	/* Initialize kernel */
+	rivanov.kernel().Init(fx_submodule(module, "kernel"));
+
+	/* 2-classes SVM training using Robust Ivanov*/
+	fx_timer_start(NULL, "train_rivanov");
+	rivanov.Train(learner_typeid, &dataset_bi);
+	fx_timer_stop(NULL, "train_rivanov");
+
+	/* Get the trained bi-class model */
+	models_[ct].coef_.Init(); // alpha*y, dummy init, used for nonlinear SVM only
+	models_[ct].w_.Copy(*(rivanov.GetW())); // [w, b]
+      }
       else if (opt_method_== "hcy") {
 	/* Initialize HCY parameters */
 	ArrayList<double> param_feed_db;
@@ -526,7 +585,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	param_feed_db.PushBack() = param_.Cn_;
 	param_feed_db.PushBack() = param_.wss_;
 	param_feed_db.PushBack() = param_.n_iter_;
-	param_feed_db.PushBack() = param_.accuracy_;
+	param_feed_db.PushBack() = param_.accuracy_;
 	param_feed_db.PushBack() = train_labels_ct_[i]; // number of positive samples (with label 1)
 	HCY<Kernel> hcy;
 	hcy.InitPara(learner_typeid, param_feed_db);
@@ -854,7 +913,7 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
   double sum = 0.0;
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
-      if (opt_method_== "smo" || opt_method_== "hcy" || opt_method_== "fw" || opt_method_== "mfw" || opt_method_== "sfw" || opt_method_== "par") {
+      if (opt_method_== "smo" || opt_method_== "lasvm" || opt_method_== "hcy" || opt_method_== "fw" || opt_method_== "mfw" || opt_method_== "sfw" || opt_method_== "par") {
 	sum = 0.0;
 	for(k = 0; k < sv_list_ct_[i]; k++) {
 	  sum += sv_coef_.get(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];
@@ -887,7 +946,7 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
 	sum *= models_[ct].scale_w_;
 	sum += models_[ct].scale_w_ * (models_[ct].w_)[num_features_]; // add bias term
       }
-      else if (opt_method_== "cd" || opt_method_== "pegasos") {
+      else if (opt_method_== "cd" || opt_method_== "pegasos" || opt_method_== "rivanov") {
 	Vector w_no_bias;
 	models_[ct].w_.MakeSubvector(0, num_features_, &w_no_bias);
 	sum = la::Dot(w_no_bias, datum);

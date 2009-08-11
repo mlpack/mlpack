@@ -52,9 +52,9 @@ const double SMO_ALPHA_ZERO = 1.0e-7;
 // for indefinite kernels
 const double TAU = 1e-12;
 
-const double ID_LOWER_BOUNDED = -1;
-const double ID_UPPER_BOUNDED = 1;
-const double ID_FREE = 0;
+const double SMO_ID_LOWER_BOUNDED = -1;
+const double SMO_ID_UPPER_BOUNDED = 1;
+const double SMO_ID_FREE = 0;
 
 template <class T> inline void swap(T& x, T& y) { T t=x; x=y; y=t; }
 
@@ -160,7 +160,7 @@ class SMO {
 
   int SMOIterations_();
 
-  void ReconstructGradient_(int learner_typeid);
+  void ReconstructGradient_();
   
   bool TestShrink_(index_t i, double y_grad_max, double y_grad_min);
 
@@ -186,21 +186,21 @@ class SMO {
 
   void UpdateAlphaStatus_(index_t i) {
     if (alpha_[i] >= GetC_(i)) {
-      alpha_status_[i] = ID_UPPER_BOUNDED;
+      alpha_status_[i] = SMO_ID_UPPER_BOUNDED;
     }
     else if (alpha_[i] <= 0) {
-      alpha_status_[i] = ID_LOWER_BOUNDED;
+      alpha_status_[i] = SMO_ID_LOWER_BOUNDED;
     }
     else { // 0 < alpha_[i] < C
-      alpha_status_[i] = ID_FREE;
+      alpha_status_[i] = SMO_ID_FREE;
     }
   }
 
   bool IsUpperBounded(index_t i) {
-    return alpha_status_[i] == ID_UPPER_BOUNDED;
+    return alpha_status_[i] == SMO_ID_UPPER_BOUNDED;
   }
   bool IsLowerBounded(index_t i) {
-    return alpha_status_[i] == ID_LOWER_BOUNDED;
+    return alpha_status_[i] == SMO_ID_LOWER_BOUNDED;
   }
 
   /**
@@ -250,16 +250,16 @@ class SMO {
 * @param: learner type id
 */
 template<typename TKernel>
-void SMO<TKernel>::ReconstructGradient_(int learner_typeid) {
+void SMO<TKernel>::ReconstructGradient_() {
   index_t i, j;
   if (n_active_ == n_alpha_)
     return;
-  if (learner_typeid == 0) { // SVM_C
+  if (learner_typeid_ == 0) { // SVM_C
     for (i=n_active_; i<n_alpha_; i++) {
       grad_[i] = 1 - grad_bar_[i];
     }
   }
-  else if (learner_typeid == 1) { // SVM_R
+  else if (learner_typeid_ == 1) { // SVM_R
     for (i=n_active_; i<n_alpha_; i++) {
       j = i >= n_data_ ? (i-n_data_) : i;
       grad_[j] = grad_bar_[j] + datamatrix_.get(datamatrix_.n_rows()-1, active_set_[j]) - epsilon_; // TODO
@@ -267,7 +267,7 @@ void SMO<TKernel>::ReconstructGradient_(int learner_typeid) {
   }
 
   for (i=0; i<n_active_; i++) {
-    if (alpha_status_[i] == ID_FREE) {
+    if (alpha_status_[i] == SMO_ID_FREE) {
       for (j=n_active_; j<n_alpha_; j++) {
 	grad_[j] = grad_[j] - y_[j] * alpha_[i] * y_[i] * CalcKernelValue_(i,j);
       }
@@ -372,7 +372,7 @@ void SMO<TKernel>::Shrinking_() {
     printf("Unshrinking...\n");
     // Unshrinking: put shrinked alphas back to active set
     // 1.recover gradient
-    ReconstructGradient_(learner_typeid_);
+    ReconstructGradient_();
     // 2.recover active status
     for (t=n_alpha_-1; t>n_active_; t--) {
       if (!TestShrink_(t, y_grad_max, y_grad_min)) {
@@ -473,20 +473,25 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   n_active_ = n_alpha_;
   active_set_.Init(n_alpha_);
   for (i=0; i<n_alpha_; i++) {
-      active_set_[i] = i;
+    active_set_[i] = i;
   }
   
   alpha_status_.Init(n_alpha_);
   for (i=0; i<n_alpha_; i++)
     UpdateAlphaStatus_(i);
 
+
   // initialize gradient (already set to init values)
+  /*
   for (i=0; i<n_alpha_; i++) {
-    if(!IsLowerBounded(i)) { // alpha_i > 0
-      for(j=0; j<n_alpha_; j++)
+    for(j=0; j<n_alpha_; j++) {
+      if (!IsLowerbounded(j)) { // alpha_j >0
 	grad_[i] = grad_[i] - y_[i] * y_[j] * alpha_[j] * CalcKernelValue_(i,j);
+      }
     }
   }
+  */
+
   // initialize gradient_bar
   grad_bar_.Init(n_alpha_);
   grad_bar_.SetZero();
@@ -554,7 +559,7 @@ int SMO<TKernel>::SMOIterations_() {
       return 1;
     }
     else { // shrinking, need to check whether optimality really reached
-      ReconstructGradient_(learner_typeid_); // restore the inactive alphas and reconstruct gradients
+      ReconstructGradient_(); // restore the inactive alphas and reconstruct gradients
       n_active_ = n_alpha_;
       if (WorkingSetSelection_(i,j) == true) { // optimality reached
 	return 1;
@@ -570,7 +575,7 @@ int SMO<TKernel>::SMOIterations_() {
       return 2;
     }
     else if ( ct_iter_ >= min(n_data_, SMO_NUM_FOR_SHRINKING) ) { // shrinking has been carried out, need to calculate the true gap
-      ReconstructGradient_(learner_typeid_); // restore the inactive alphas and reconstruct gradients
+      ReconstructGradient_(); // restore the inactive alphas and reconstruct gradients
       n_active_ = n_alpha_;
       WorkingSetSelection_(i,j);
       return 2;
@@ -674,7 +679,7 @@ bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
       else { // y[t] == -1
 	if (!IsUpperBounded(t)) {// t\in I_down, y==-1: y[t]alpha[t] > -C
 	  // calculate y_grad_min for Stopping Criterion
-	  if (grad_[t] + y_grad_min > 0) // y==-1, -grad_[t] < y_grad_min
+	  if (grad_[t] + y_grad_min > 0) // y==-1, -grad_[t] < y_grad_min
 	    y_grad_min = -grad_[t];
 	  // find j
 	  grad_diff = y_grad_max + grad_[t]; // max(y_i*grad_i) - y_t*grad_t
