@@ -34,6 +34,10 @@ const double INIT_ROOT_ALPHA_NEG = 1.0;
 
 const double HCY_ZERO = 1.0e-3;
 
+const double HCY_ID_LOWER_BOUNDED = -1;
+const double HCY_ID_UPPER_BOUNDED = 1;
+const double HCY_ID_FREE = 0;
+
 
 template<typename TKernel>
 class HCY {
@@ -262,21 +266,21 @@ class HCY {
 
   void UpdateAlphaStatus_(index_t i) {
     if (alpha_[i] >= GetC_(i)) {
-      alpha_status_[i] = ID_UPPER_BOUNDED;
+      alpha_status_[i] = HCY_ID_UPPER_BOUNDED;
     }
     else if (alpha_[i] <= 0) {
-      alpha_status_[i] = ID_LOWER_BOUNDED;
+      alpha_status_[i] = HCY_ID_LOWER_BOUNDED;
     }
     else { // 0 < alpha_[i] < C
-      alpha_status_[i] = ID_FREE;
+      alpha_status_[i] = HCY_ID_FREE;
     }
   }
 
   bool IsUpperBounded(index_t i) {
-    return alpha_status_[i] == ID_UPPER_BOUNDED;
+    return alpha_status_[i] == HCY_ID_UPPER_BOUNDED;
   }
   bool IsLowerBounded(index_t i) {
-    return alpha_status_[i] == ID_LOWER_BOUNDED;
+    return alpha_status_[i] == HCY_ID_LOWER_BOUNDED;
   }
 
   /**
@@ -349,7 +353,7 @@ void HCY<TKernel>::ReconstructGradient_(int learner_typeid) {
   }
 
   for (i=0; i<n_active_; i++) {
-    if (alpha_status_[i] == ID_FREE) {
+    if (alpha_status_[i] == HCY_ID_FREE) {
       for (j=n_active_; j<n_used_alpha_; j++) {
 	grad_[j] = grad_[j] - y_[j] * alpha_[i] * y_[i] * CalcKernelValue_(i,j);
       }
@@ -485,7 +489,7 @@ void HCY<TKernel>::LearnersInit_(int learner_typeid) {
     grad_.Init(max_n_alpha_);
     grad_.SetAll(1.0);
 
-    y_.Init(n_data_);
+    y_.Init(n_data_);
     for (i = 0; i < n_data_; i++) {
       y_[i] = datamatrix_.get(datamatrix_.n_rows()-1, i) > 0 ? 1 : -1;
     }
