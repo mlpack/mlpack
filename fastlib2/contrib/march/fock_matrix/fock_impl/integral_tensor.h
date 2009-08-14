@@ -103,6 +103,8 @@ public:
   
   void Init(int num_a, int num_b, int num_c, int num_d, double* integrals);
   
+  void Print();
+  
   void UnPermute(int anti_perm);
   
 }; // class IntegralTensor

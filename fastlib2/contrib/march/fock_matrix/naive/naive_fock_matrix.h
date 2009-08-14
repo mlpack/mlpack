@@ -113,6 +113,7 @@ class NaiveFockMatrix {
             IntegralTensor integrals;
             eri::ComputeShellIntegrals(shells_[i], shells_[j], 
                                        shells_[k], shells_[l], &integrals);
+            //integrals.Print();
             
             num_integrals_computed_++;
             

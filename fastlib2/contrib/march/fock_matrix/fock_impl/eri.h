@@ -7,7 +7,7 @@
 #include "../../libint/include/libint/vrr_header.h"
 #include "integral_tensor.h"
 
-#define MAX_FAC 100
+#define MAX_FAC 200
 
 class ShellPair;
 class BasisShell;
@@ -50,6 +50,11 @@ namespace eri {
                           const Vector& B_vec, double alpha_B, Vector* p_vec);
   
   double ComputeShellOverlap(const BasisShell& shellA, const BasisShell& shellB);
+  
+  double GammaLn(double xx);
+  void GammaSeries(double* gamser, double a, double x, double* gln);
+  void GammaCF(double* gammcf, double a, double x, double* gln);
+  double GammaP(double a, double x);
   
   void Compute_F(double* F, int n, double t);
   
