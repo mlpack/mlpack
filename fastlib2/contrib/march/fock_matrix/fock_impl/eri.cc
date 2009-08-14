@@ -136,8 +136,12 @@ namespace eri {
     static double K = 1.0/M_2_SQRTPI;
     double et;
     
+    double dist_cutoff = 20.0;
+    //double dist_cutoff = 5.0;
+    
+    
     // forward recurrence?
-    if (t>20.0){
+    if (t>dist_cutoff){
       t2 = 2*t;
       et = exp(-t);
       t = sqrt(t);
@@ -173,18 +177,41 @@ namespace eri {
         */
         // changed i < MAX_FAC to actually check the boundaries of the double
         // factorial array
+        /*
+        if (m2 + 2*i + 4 >= MAX_FAC) {
+          printf("Taylor expansion terminated early.\n");
+        }
+        */
       } while (fabs(term1) > EPS && (m2 + 2*i + 4) < MAX_FAC);
       F[n] = sum*et;
+      // edited to handle F_0 separately
+      // this makes the all s-function cases work, but h2o still doesn't
+      /*
       for(m=n-1;m>=0;m--){
         F[m] = (t2*F[m+1] + et)/(2*m+1);
       }
+      */
+      
+      for(m=n-1;m>=1;m--){
+        F[m] = (t2*F[m+1] + et)/(2*m+1);
+      }
+      if (t > 0.0) {
+        double sqrt_t = sqrt(t);
+        F[0] = K*erf(sqrt_t)/sqrt_t;
+      }
+      else {
+        F[0] = 1.0;
+      }
+       
     }
     
+#ifdef DEBUG
     for (int j = 0; j < n; j++) {
       if (isnan(F[j]) || isinf(F[j])) {
         printf("Bad value of F\n");
       }
     }
+#endif
     
   } // Compute_F
   
@@ -851,6 +878,7 @@ void ComputeShellIntegrals(BasisShell& mu_fun, BasisShell& nu_fun,
   double overlapAB = ComputeShellOverlap(mu_fun, nu_fun);
   double overlapCD = ComputeShellOverlap(rho_fun, sigma_fun);
   
+  // this has (pi/gamma)^3/2 in it twice - is that right?
   ComputeERI(shells, overlapAB, overlapCD, integrals);
   
 }
@@ -1119,6 +1147,7 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     
     
     integrals->Init(num_funs_a, num_funs_b, num_funs_c, num_funs_d, results);
+    //printf("ssss integral: %g\n", integrals->ref(0,0,0,0));
     free_libint(&tester);
     
     /*
@@ -1227,7 +1256,6 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     
     //printf("F_0[T]: %g\n", libint->PrimQuartet[0].F[0]);
     
-    // this isn't scaling due to total_momentum being 0
     la::Scale(((total_momentum > 0) ? total_momentum : 1), aux_fac,
               libint->PrimQuartet[0].F);
     
@@ -1258,6 +1286,7 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     if (total_momentum) {
       integrals = (build_eri[A_mom][B_mom][C_mom][D_mom](libint, 1));
     }
+    // move this case up to avoid the other computations
     else {
       integrals = libint->PrimQuartet[0].F;
     }
