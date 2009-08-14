@@ -763,8 +763,9 @@ class SCFSolver {
       
     }
     
-    
     /*
+    core_matrix_.PrintDebug("Core Matrix");
+    
      printf("Fock matrix:\n");
      fock_matrix_.PrintDebug();
      
@@ -1030,7 +1031,11 @@ class SCFSolver {
       exchange_alg_->OutputExchange(&exchange_mat_);
       
     }
-    
+
+    /*
+    coulomb_mat_.PrintDebug("J");
+    exchange_mat_.PrintDebug("K");
+     */
     // output results and fill in Fock matrix
 
     //fock_matrix_ = core_matrix_ + coulomb_mat_ - exchange_mat_;

@@ -397,6 +397,24 @@ void IntegralTensor::ContractExchange(const ArrayList<index_t>& mu_ind,
   
 } // ContractExchange
 
+void IntegralTensor::Print() {
+  
+  printf("\nIntegrals:\n");
+  for (int a = 0; a < dim_a_; a++) {
+    for (int b = 0; b < dim_b_; b++) {
+      for (int c = 0; c < dim_c_; c++) {
+        for (int d = 0; d < dim_d_; d++) {
+          
+          printf("(%d %d | %d %d) = %g\n", a, b, c, d, ref(a, b, c, d));
+          
+        }
+      }
+    }
+  }
+  printf("\n");
+  
+} // Print()
+
 
 
 void IntegralTensor::UnPermute(int anti_perm) {

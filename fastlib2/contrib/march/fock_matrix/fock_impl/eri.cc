@@ -120,6 +120,11 @@ namespace eri {
   } // ComputeShellOverlap
   
   
+  // This version was copied from Libmints
+  // I made some modifications to the exit condition for the Taylor expansion to
+  // prevent overrunning the double factorial array
+  // I also experimented with setting F_0 directly
+  
   void Compute_F(double* F, int n, double t) {
     
     DEBUG_ASSERT(n < MAX_FAC);
@@ -164,24 +169,24 @@ namespace eri {
         num = num*t2;
         term1 = num/double_factorial[m2+2*i+2];
         sum += term1;
-        /*
-        if (m2 + 2*i + 2 > MAX_FAC) {
-          printf("exceeded double factorial array\n");
-        }
-        printf("double fac arg: %d\n", m2 + 2*i + 2);
-        */ 
-        /*
-        if (isinf(term1)) {
-          printf("term1 is inf\n");
-        }
-        */
+        
+        //if (m2 + 2*i + 2 > MAX_FAC) {
+        //  printf("exceeded double factorial array\n");
+        //}
+        //printf("double fac arg: %d\n", m2 + 2*i + 2);
+         
+        
+        //if (isinf(term1)) {
+        //  printf("term1 is inf\n");
+        //}
+        
         // changed i < MAX_FAC to actually check the boundaries of the double
         // factorial array
-        /*
+        
         if (m2 + 2*i + 4 >= MAX_FAC) {
           printf("Taylor expansion terminated early.\n");
         }
-        */
+        
       } while (fabs(term1) > EPS && (m2 + 2*i + 4) < MAX_FAC);
       F[n] = sum*et;
       // edited to handle F_0 separately
@@ -213,7 +218,186 @@ namespace eri {
     }
 #endif
     
-  } // Compute_F
+  } // Compute_F (from Libmints)
+
+  
+  double GammaLn(double xx) {
+    
+    double x, y, tmp, ser;
+    static double cof[6] = {76.18009172947146, -86.50532032941677, 
+    24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, 
+    -0.5395239384953e-5};
+    
+    y = xx;
+    x = xx;
+    tmp = x+5.5;
+    
+    tmp -= (x+0.5)*log(tmp);
+    
+    ser = 1.000000000190015;
+    
+    for (int j = 0; j<=5; j++) {
+      
+      ser += cof[j]/++y;
+      
+    } // for j
+    
+    return(-tmp + log(2.5066282746310005 * ser/x));
+    
+  }
+  
+  // copied from numerical recipes
+  void GammaSeries(double* gamser, double a, double x, double* gln) {
+    
+    *gln = GammaLn(a);
+    
+    DEBUG_ASSERT(x >= 0.0);
+    
+    double ap = a;
+    double del = 1.0/a;
+    double sum = 1.0/a;
+    
+    int iter_max = 100;
+    double eps = 3.0e-16;
+    
+    for (int n= 1; n <= iter_max; n++) {
+      
+      ++ap;
+      del *= x/ap;
+      sum += del;
+      if (fabs(del) < fabs(sum) * eps) {
+        *gamser = sum * exp(-x + a *log(x) - (*gln));
+        DEBUG_ASSERT(!isnan(*gamser) && !isinf(*gamser));
+        return;
+      }
+      
+    } // for n
+    
+    FATAL("Too few iterations to compute GammaSeries.\n");
+    
+  } //GammaSeries()
+  
+  // Copied from Numerical Recipes
+  void GammaCF(double* gammcf, double a, double x, double* gln) {
+    
+    double fpmin = 1.0e-30;
+    int iter_max = 100;
+    double eps = 3.0e-16;
+    
+    double an, b, c, d, del, h;
+    *gln = GammaLn(a);
+    
+    b = x + 1.0 - a;
+    c = 1.0/fpmin;
+    d = 1.0/b;
+    h = d;
+    int i;
+    
+    for (i = 1; i <= iter_max; i++) {
+      
+      an = -i*(i-a);
+      b += 2.0;
+      d = an * d + b;
+      if (fabs(d) < fpmin) {
+        d = fpmin;
+      }
+      c = b + an / c;
+      if (fabs(c) < fpmin) {
+        c = fpmin;
+      }
+      d = 1.0 / d;
+      del = d * c;
+      h *= del;
+      if (fabs(del - 1.0) < eps) {
+        break;
+      }
+      
+    } // for i
+    
+    if (i > iter_max) {
+      FATAL("Too few iterations to compute GammaCF");
+    }
+    
+    DEBUG_ASSERT(!isnan(*gammcf) && !isinf(*gammcf));
+    
+    *gammcf = exp(-x + a *log(x) - (*gln)) * h;
+    
+    
+  } // GammaCF
+  
+  
+  // also copied from numerical recipes
+  double GammaP(double a, double x) {
+    
+    DEBUG_ASSERT(x >= 0.0);
+    DEBUG_ASSERT(a > 0.0);
+    
+    if (x < (a + 1.0)) {
+      
+      double gamser, gln;
+      
+      // use Series representation
+      GammaSeries(&gamser, a, x, &gln);
+      
+      return gamser;
+      
+    }
+    else {
+     // use continued fraction representation
+      
+      double gammcf, gln;
+      
+      GammaCF(&gammcf, a, x, &gln);
+      
+      return(1.0 - gammcf);
+      
+    }
+    
+  }
+  // this version based on functions copied from Numerical Recpies
+  // it makes use of the identity 
+  // F_m(x) = \frac{\Gamma((2m + 1)/2)}{2 x^{(2m+1)/2}} P((2m+1)/2, x)
+  /*
+  void Compute_F(double* F, int n, double t) {
+    
+    DEBUG_ASSERT(n >= 0);
+    DEBUG_ASSERT(t >= 0.0);
+    
+    double sqrt_t = sqrt(t);
+    if (t > 0.0) {
+      F[0] = 0.5 * sqrt(math::PI) * erf(sqrt_t) / sqrt_t;
+    
+      for (int i = 1; i <= n; i++) {
+        
+        double a_fac = 0.5 * (2 * n + 1);
+        
+        F[i] = exp(GammaLn(a_fac)) / (2.0 * pow(t, a_fac));
+        F[i] *= GammaP(a_fac, t);
+        
+        DEBUG_ASSERT(!isnan(F[i]));
+        DEBUG_ASSERT(F[i] > 0.0);
+        
+      } // for i
+    
+    }
+    else {
+      
+      F[0] = 1.0;
+      
+      for (int i = 1; i <= n; i++) {
+        
+        F[i] = 1.0 / (2.0 * i + 1.0);
+        
+        DEBUG_ASSERT(!isnan(F[i]));
+        
+        
+      } // for i
+
+    }
+    
+        
+  } // Compute_F (numerical recipes)
+  */
   
   double BinomialCoefficient(int l1, int i) {
     
@@ -1114,10 +1298,13 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
                                                          c, C_mom, 
                                                          d, D_mom);
                     
+                    //printf("(before norm) results[%d]: %g\n", integral_ind, 
+                    //       results[integral_ind]);
+                    
                     results[integral_ind] = results[integral_ind] * A_norm 
                     * B_norm * C_norm * D_norm / norm_denom;
                     
-                    //printf("results[%d]: %g\n", integral_ind, 
+                    //printf("(after norm) results[%d]: %g\n", integral_ind, 
                     //       results[integral_ind]);
                     
                     
@@ -1255,7 +1442,7 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     Compute_F(libint->PrimQuartet[0].F, total_momentum, T);
     
     //printf("F_0[T]: %g\n", libint->PrimQuartet[0].F[0]);
-    
+
     la::Scale(((total_momentum > 0) ? total_momentum : 1), aux_fac,
               libint->PrimQuartet[0].F);
     
@@ -1290,7 +1477,8 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     else {
       integrals = libint->PrimQuartet[0].F;
     }
-      
+    //printf("(ss|ss) integral: %g\n", integrals[0]);
+    
     // integrals get renormalized outside
     
     return integrals;
