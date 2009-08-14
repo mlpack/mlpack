@@ -317,8 +317,11 @@ void IntegralTensor::ContractCoulomb(const ArrayList<index_t>& rho_ind,
           
           // takes care of reference symmetry
           if (!same_ref) {
+            //printf("accounting for reference symmetry\n");
             this_entry *= 2;
-          } 
+          }
+          
+          //printf("Coulomb integral(%d, %d, %d, %d): %g\n", a, b, c_ind, d_ind, this_entry);
           
           ab_entry += this_entry;
           

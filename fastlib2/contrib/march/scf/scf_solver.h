@@ -427,9 +427,11 @@ class SCFSolver {
     
     la::AddInit(kinetic_energy_integrals_, potential_energy_integrals_, 
                 &core_matrix_);
+    /*
     kinetic_energy_integrals_.PrintDebug("kinetic");
     potential_energy_integrals_.PrintDebug("potential");
     core_matrix_.PrintDebug("core");
+     */
   } // ComputeOneElectronMatrices_()
   
  
@@ -869,9 +871,7 @@ class SCFSolver {
     
     /*
     overlap_matrix_.PrintDebug("Overlap Matrix");
-    
     density_matrix_.PrintDebug("Density Matrix");
-    
     fock_matrix_.PrintDebug("Fock Matrix");
     core_matrix_.PrintDebug("Core Matrix");
     kinetic_energy_integrals_.PrintDebug("Kinetic Matrix");

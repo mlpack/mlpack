@@ -96,6 +96,8 @@ class NaiveFockMatrix {
     
     fx_timer_start(mod_, "naive_time");
     
+    //printf("num_shells: %d\n", num_shells_);
+    
     for (index_t i = 0; i < num_shells_; i++) {
     
       for (index_t j = 0; j <= i; j++) {
@@ -108,8 +110,6 @@ class NaiveFockMatrix {
         
           for (index_t l = 0; l <= k; l++) {
             
-            ArrayList<index_t> perm;
-          
             IntegralTensor integrals;
             eri::ComputeShellIntegrals(shells_[i], shells_[j], 
                                        shells_[k], shells_[l], &integrals);
@@ -119,11 +119,11 @@ class NaiveFockMatrix {
             // now, contract with appropriate density entries and sum into 
             // matrices
             
-            // should I write code to do this inside the integral tensor?
-            
             integrals.ContractCoulomb(shells_[k].matrix_indices(),
                                       shells_[l].matrix_indices(),
                                       density_, &coulomb_ij);
+            //printf("Coulomb integral: (%d, %d, %d, %d): %g\n", i, j, k, l, 
+            //       integrals.ref(0, 0, 0, 0) * density_.ref(k, l));
             
             Matrix exchange_ik;
             exchange_ik.Init(shells_[i].num_functions(), 
@@ -200,6 +200,8 @@ class NaiveFockMatrix {
         } // for k
         
         // write coulomb into the global matrix
+        //printf("adding to Coulomb: %d, %d, %g\n", shells_[i].matrix_index(0),
+        //       shells_[j].matrix_index(0), coulomb_ij.ref(0,0));
         eri::AddSubmatrix(shells_[i].matrix_indices(), 
                           shells_[j].matrix_indices(),
                           coulomb_ij, &coulomb_mat_);
