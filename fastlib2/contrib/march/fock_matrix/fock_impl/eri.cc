@@ -1094,6 +1094,29 @@ namespace eri {
     
   } // DensityBound()
   
+  double DensityBound(const BasisShell& A_shell, const BasisShell& B_shell, 
+                      const Matrix& density) {
+    
+    double density_bound = -DBL_MAX;
+    
+    for (index_t a = 0; a < A_shell.num_functions(); a++) {
+      
+      for (index_t b = 0; b < B_shell.num_functions(); b++) {
+        
+        density_bound = max(density_bound, 
+                            fabs(density.get(A_shell.matrix_index(a), 
+                                             B_shell.matrix_index(b))));
+        
+      } // for b
+      
+    } // for a
+    
+    DEBUG_ASSERT(density_bound >= 0.0);
+    
+    return density_bound;
+    
+  } // DensityBound()
+  
   
   ////////////// External Integrals //////////////////////////
 
@@ -1553,7 +1576,7 @@ index_t CreateShells(const Matrix& centers, const Vector& exponents,
     Vector new_cent;
     centers.MakeColumnVector(i, &new_cent);
     
-    (*shells_out)[i].Init(new_cent, exponents[i], momenta[i], num_functions);
+    (*shells_out)[i].Init(new_cent, exponents[i], momenta[i], num_functions, i);
     
     num_functions += (*shells_out)[i].num_functions();
     
@@ -1640,7 +1663,7 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
   
   for (index_t i = 0; i < num_shells; i++) {
     
-    BasisShell i_shell = shells_in[i];
+    BasisShell& i_shell = shells_in[i];
     index_t num_for_i = 0;
     
     
@@ -1651,7 +1674,7 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
     
     for (index_t j = i; j < num_shells; j++) {
       
-      BasisShell j_shell = shells_in[j];
+      BasisShell& j_shell = shells_in[j];
       
       // Do they use the overlap integral here?
       double this_bound = SchwartzBound(i_shell, j_shell);

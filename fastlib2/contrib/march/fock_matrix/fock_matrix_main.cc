@@ -2,7 +2,7 @@
 //#include "contrib/march/fock_matrix/multi_tree/multi_tree_fock.h"
 #include "contrib/march/fock_matrix/naive/naive_fock_matrix.h"
 #include "contrib/march/fock_matrix/prescreening/schwartz_prescreening.h"
-//#include "contrib/march/fock_matrix/link/link.h"
+#include "contrib/march/fock_matrix/link/link.h"
 //#include "contrib/march/fock_matrix/cfmm/cfmm_coulomb.h"
 #include "fock_matrix_comparison.h"
 #include "chem_reader/chem_reader.h"
@@ -355,10 +355,10 @@ int main(int argc, char* argv[]) {
   prescreening_mats[1] = &prescreening_coulomb;
   prescreening_mats[2] = &prescreening_exchange;
   
-  /*
-  Matrix cfmm_coulomb;
-  Matrix link_exchange;
   
+  //Matrix cfmm_coulomb;
+  Matrix link_exchange;
+  /*
   
   if (fx_param_exists(root_mod, "do_cfmm") 
       && fx_param_exists(root_mod, "do_link")) {
@@ -459,7 +459,7 @@ int main(int argc, char* argv[]) {
     link_exchange.Init(1,1);
         
   } // do_cfmm
-  else if (fx_param_exists(root_mod, "do_link")) {
+  else*/ if (fx_param_exists(root_mod, "do_link")) {
     
     printf("======== LinK Computation ========\n");
     
@@ -495,16 +495,16 @@ int main(int argc, char* argv[]) {
       
     } // link comparison
         
-    cfmm_coulomb.Init(1,1);
+    //cfmm_coulomb.Init(1,1);
     
   } // do_link
   else {
     
-    cfmm_coulomb.Init(1,1);
+    //cfmm_coulomb.Init(1,1);
     link_exchange.Init(1,1);
     
   }
-   */
+   
 
   if (fx_param_exists(root_mod, "do_naive")) {
     

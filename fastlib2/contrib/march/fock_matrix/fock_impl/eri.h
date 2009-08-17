@@ -95,9 +95,16 @@ namespace eri {
   
   
   /**
-   * Computes the maximum density entry for use in prescreening and LinK
+   * Computes the maximum density entry among the four basis shells
+   * for use in prescreening 
    */
   double DensityBound(ShellPair& shellA, ShellPair& shellB, 
+                      const Matrix& density);
+  
+  /**
+   * Computes the maximum density among the two shells for use in LinK
+   */
+  double DensityBound(const BasisShell& A_shell, const BasisShell& B_shell, 
                       const Matrix& density);
   
   /*
