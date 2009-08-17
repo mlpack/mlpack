@@ -24,7 +24,8 @@ void Link::PrescreeningLoop_() {
   num_shell_pairs_ = eri::ComputeShellPairs(&shell_pair_list_, shell_list_, 
                                             shell_pair_cutoff_, &shell_max_, 
                                             &significant_sigma_for_nu_, 
-                                            &num_significant_sigma_for_nu_);
+                                            &num_significant_sigma_for_nu_, 
+                                            density_matrix_);
   
   //shell_max_.PrintDebug("shell_max_");
   /*
@@ -57,8 +58,26 @@ void Link::PrescreeningLoop_() {
       
       // I think this threshold should be the same as the others 
       // Not sure if this is the right density matrix entry
-      // TODO: make this check all of the relevant density entries
-      double density_check = fabs(density_matrix_.ref(i,j)) * shell_max_[i] 
+      // TODO: should this check all the density entries and take the max?
+      /*
+      double density_bound = -DBL_MAX;
+      for (index_t a = 0; a < shell_list_[i].num_functions(); a++) {
+        for (index_t b = 0; b < shell_list_[j].num_functions(); b++) {
+          
+          density_bound = max(density_bound, 
+                              fabs(density.ref(shell_list_[i].matrix_index(a), 
+                                               shell_list_[j].matrix_index(b))));
+          
+        } // for b
+      } // for a
+      
+      DEBUG_ASSERT(density_bound >= 0.0);
+       */
+      
+      double density_bound = eri::DensityBound(shell_list_[i], shell_list_[j], 
+                                               density_matrix_);
+      
+      double density_check = density_bound * shell_max_[i] 
                               * shell_max_[j];
       if (density_check > threshold_) {
         
@@ -90,7 +109,12 @@ void Link::PrescreeningLoop_() {
       significant_nu_for_mu_[i][k] = shell_list_.begin() + 
           significant_nu_index[k];
       significant_nu_for_mu_[i][k]->set_max_schwartz_factor(shell_max_[k]);
-      significant_nu_for_mu_[i][k]->set_current_density_entry(density_matrix_.ref(i,k));
+      
+      //significant_nu_for_mu_[i][k]->set_current_density_entry(density_matrix_.ref(i,k));
+      double density_entry = eri::DensityBound(shell_list_[i], 
+                                               *(shell_list_.begin() + significant_nu_index[k]),
+                                               density_matrix_);
+      significant_nu_for_mu_[i][k]->set_current_density_entry(density_entry);
       
     } // for k
     
@@ -129,8 +153,10 @@ void Link::Compute() {
        
     ShellPair& mu_lambda = shell_pair_list_[shell_pair_ind];
     
+    // these are the indices into the shell list
+    // they're correct, just need to make sure they're not used to access
+    // the density matrix
     index_t mu_ind = mu_lambda.M_index();
-    
     index_t lambda_ind = mu_lambda.N_index();
     
     //printf("mu_ind: %d, lambda_ind: %d\n", mu_ind, lambda_ind);
@@ -153,8 +179,9 @@ void Link::Compute() {
       
       // need to get this from the first sorted list
       BasisShell* nu_shell = significant_nu_for_mu_[mu_ind][sorted_nu_ind];
-      // not sure this will be right for higher momenta
-      index_t nu_ind = nu_shell->start_index();
+      
+      // this doesn't exist anymore - what was it for?
+      index_t nu_ind = nu_shell->list_index();
     
       index_t num_sigma = num_significant_sigma_for_nu_[nu_ind];
 
@@ -167,8 +194,11 @@ void Link::Compute() {
         
         // need to replace this with appropriate integral call
         // does this need to take into account the other density entries?
-        double bound = fabs(density_matrix_.ref(mu_ind, nu_ind)) * mu_lambda.schwartz_factor() * 
-          nu_sigma->schwartz_factor();
+        //double density_bound = fabs(density_matrix_.ref(mu_ind, nu_ind));
+        double density_bound = eri::DensityBound(*(mu_lambda.M_Shell()), *nu_shell, 
+                                                 density_matrix_);
+        double bound = density_bound * mu_lambda.schwartz_factor() * 
+            nu_sigma->schwartz_factor();
 	//printf("bound: %g\n", bound);
         if (bound > threshold_) {
       
@@ -227,8 +257,8 @@ void Link::Compute() {
         // changed this to lambda, I think this is right
         // seems to be okay, tested on the first three equilibrated helium sets
         BasisShell* nu_shell = significant_nu_for_mu_[lambda_ind][sorted_nu_ind];
-        // not sure this will be right for higher momenta
-        index_t nu_ind = nu_shell->start_index();
+        
+        index_t nu_ind = nu_shell->list_index();
         
         index_t num_sigma = num_significant_sigma_for_nu_[nu_ind];
         
@@ -239,9 +269,12 @@ void Link::Compute() {
           
           //index_t sigma_ind = nu_sigma->N_index();
           
-          // shouldn't this be the largest of the four possible density entries?
-          // but this is how it's given in the paper
-          if (fabs(density_matrix_.ref(mu_ind, nu_ind)) * mu_lambda.schwartz_factor() * 
+          // shouldn't this involve lambda?
+          //double density_bound = fabs(density_matrix_.ref(mu_ind, nu_ind));
+          // IMPORTANT: changed this to use lambda's density matrix entry
+          double density_bound = eri::DensityBound(*(mu_lambda.N_Shell()), *nu_shell, 
+                                                   density_matrix_);
+          if (density_bound * mu_lambda.schwartz_factor() * 
               nu_sigma->schwartz_factor() > threshold_) {
             
             lambda_integrals.PushBack();

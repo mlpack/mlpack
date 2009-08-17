@@ -30,7 +30,8 @@ class BasisShell {
   // then this number is the dimensionality of the matrices that can be 
   // used to init them / check that this matches the size of the input density
   // matrix
-  void Init(const Vector& cent, double exp, index_t mom, index_t ind) {
+  void Init(const Vector& cent, double exp, index_t mom, index_t ind, 
+            index_t list_ind) {
   
     DEBUG_ASSERT(mom >= 0);
     DEBUG_ASSERT(ind >= 0);
@@ -48,6 +49,8 @@ class BasisShell {
     for (index_t i = 0; i < num_functions_; i++) {
       matrix_indices_[i] = ind + i;
     }
+    
+    list_index_ = list_ind;
     
     ComputeShellNormalization();
     
@@ -128,7 +131,7 @@ class BasisShell {
     
   }
   
-  index_t matrix_index(index_t i) {
+  index_t matrix_index(index_t i) const {
 
     DEBUG_ASSERT(i < num_functions_);
     DEBUG_ASSERT(i >= 0);
@@ -163,6 +166,10 @@ class BasisShell {
   void set_current_density_entry(double entry) {
     current_density_entry_ = entry;
   }
+  
+  index_t list_index() const {
+    return list_index_;
+  }
     
 
  private:
@@ -183,6 +190,10 @@ class BasisShell {
   double exponent_;
   
   ArrayList<double> normalization_constants_;
+  
+  // this shell's location in the master list of shells
+  // used in LinK
+  index_t list_index_;
   
   // used in sorting for LinK
   // is it really necessary to have these?
