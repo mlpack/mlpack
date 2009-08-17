@@ -71,13 +71,9 @@ class SchwartzPrescreening {
     shell_pair_threshold_ = fx_param_double(module_, "shell_pair_threshold", 
                                             threshold_);
     
-    // Set up shells here
-    // This is correct even for higher momenta
     num_shells_ = basis_centers_.n_cols();
-    basis_list_.Init(num_shells_);
-
-    // WARNING: only true for s type functions
-    num_functions_ = num_shells_;
+    num_functions_ = eri::CreateShells(basis_centers_, basis_exponents_, 
+                                       basis_momenta_, &basis_list_);
     
     fx_result_int(module_, "N", num_functions_);
     
@@ -93,6 +89,9 @@ class SchwartzPrescreening {
     
     // Is this correct?
     matrix_size_ = density_matrix_.n_cols();
+    if (matrix_size_ != num_functions_) {
+      FATAL("Density matrix size does not match basis.");
+    }
     
     coulomb_matrix_.Init(matrix_size_, matrix_size_);
     coulomb_matrix_.SetZero();
@@ -101,8 +100,7 @@ class SchwartzPrescreening {
     fock_matrix_.Init(matrix_size_, matrix_size_);
     fock_matrix_.SetZero();
     
-
-    
+    /*
     for (index_t i = 0; i < num_shells_; i++) {
     
       Vector new_cent;
@@ -112,7 +110,8 @@ class SchwartzPrescreening {
                           (index_t)basis_momenta_[i], i);
     
     } // for i
-  
+    */
+    
     num_integrals_computed_ = 0;
     
     fx_timer_start(module_, "prescreening_time");
@@ -120,7 +119,8 @@ class SchwartzPrescreening {
     printf("====Screening Shell Pairs====\n");
     fx_timer_start(module_, "shell_screening_time");
     num_shell_pairs_ = eri::ComputeShellPairs(&shell_pair_list_, basis_list_, 
-                                              shell_pair_threshold_);
+                                              shell_pair_threshold_, 
+                                              density_matrix_);
     fx_timer_stop(module_, "shell_screening_time");
 
     fx_result_int(module_, "num_shell_pairs", num_shell_pairs_);
@@ -181,7 +181,7 @@ class SchwartzPrescreening {
    *
    * Maybe the inputs should be shells somehow?  
    */
-  double SchwartzBound_(BasisShell &mu, BasisShell &nu);
+  //double SchwartzBound_(BasisShell &mu, BasisShell &nu);
                         
   
   /**

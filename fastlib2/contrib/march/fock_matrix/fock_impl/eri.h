@@ -93,6 +93,13 @@ namespace eri {
                                const Vector& Cvec, int nuclear_charge,
                                Vector* integrals);
   
+  
+  /**
+   * Computes the maximum density entry for use in prescreening and LinK
+   */
+  double DensityBound(ShellPair& shellA, ShellPair& shellB, 
+                      const Matrix& density);
+  
   /*
    double ComputeKineticIntegral(const Vector& center_A, double exp_A, int mom_A, 
    const Vector& center_B, double exp_B, int mom_B);
@@ -229,7 +236,7 @@ namespace eri {
    */
   index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
                             ArrayList<BasisShell>& shells_in, 
-                            double shell_pair_cutoff);
+                            double shell_pair_cutoff, const Matrix& density);
 
   /**
    * Compute the list of significant shell pairs.  shell_max[i] is the 
@@ -243,7 +250,8 @@ namespace eri {
                             ArrayList<BasisShell>& shells_in, 
                             double shell_pair_cutoff, Vector* shell_max, 
                             ShellPair**** sigma_for_nu, 
-                            ArrayList<index_t>* num_per_shell);
+                            ArrayList<index_t>* num_per_shell, 
+                            const Matrix& density);
   
 
 }

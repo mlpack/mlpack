@@ -170,7 +170,6 @@ class BasisShell {
   index_t total_momentum_;
 
   // number of basis functions in the shell, depends on the momentum
-  // do I actually need to store this?  
   index_t num_functions_;
   
   // need to be able to index the density and Fock matrix for each function

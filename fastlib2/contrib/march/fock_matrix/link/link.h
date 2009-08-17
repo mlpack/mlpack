@@ -142,11 +142,11 @@ class Link {
     density_matrix_.Copy(density_in);
     
     num_shells_ = basis_centers_.n_cols();
-    shell_list_.Init(num_shells_);
+    //shell_list_.Init(num_shells_);
     
     // only works for s and p type functions
-    num_functions_ = num_shells_ + (index_t)(2*la::Dot(basis_momenta_, 
-                                                       basis_momenta_));
+    num_functions_ = eri::CreateShells(basis_centers_, basis_exponents_, 
+                                       basis_momenta_, &shell_list_);
     
     fx_result_int(module_, "N", num_functions_);
     
@@ -157,21 +157,10 @@ class Link {
             
     } 
     
-    // Change to use the code in eri
-    // Fill in shell_list_
-    for (index_t i = 0; i < num_shells_; i++) {
-    
-      Vector new_cent;
-      basis_centers_.MakeColumnVector(i, &new_cent);
-      
-      shell_list_[i].Init(new_cent, basis_exponents_[i], 
-                          (index_t)basis_momenta_[i], i);
-    
-    } // for i
-  
     shell_pair_cutoff_ = fx_param_double(module_, "shell_pair_cutoff", 
                                          threshold_);
-                                         
+    
+    // change this to use array Lists
     significant_nu_for_mu_ = 
         (BasisShell***)malloc(num_shells_*sizeof(BasisShell**));
         

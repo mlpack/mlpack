@@ -6,66 +6,129 @@ void FockMatrixComparison::ComputeCoreMatrices_() {
   
   Matrix kinetic_energy_integrals;
   kinetic_energy_integrals.Init(num_entries_, num_entries_);
+  kinetic_energy_integrals.SetZero();
   Matrix potential_energy_integrals;
   potential_energy_integrals.Init(num_entries_, num_entries_);
+  potential_energy_integrals.SetZero();
   
-  for (index_t row_index = 0; row_index < num_entries_; row_index++) {
-    
-    Vector row_vec;
-    centers_.MakeColumnVector(row_index, &row_vec);
-    double row_exp = exponents_[row_index];
-    int row_mom = (int)momenta_[row_index];
-    
-    for (index_t col_index = row_index; col_index < num_entries_; 
-         col_index++) {
-      
-      Vector col_vec;
-      centers_.MakeColumnVector(col_index, &col_vec);
-      double col_exp = exponents_[col_index];
-      int col_mom = (int)momenta_[col_index];
-      
-      double kinetic_integral = 
-      oeints::ComputeKineticIntegral(row_vec, row_exp, row_mom, 
-                                     col_vec, col_exp, col_mom);
-      
-      double overlap_integral = 
-      oeints::ComputeOverlapIntegral(row_vec, row_exp, row_mom, 
-                                     col_vec, col_exp, col_mom);
-      
-      
-      DEBUG_ASSERT(overlap_integral >= 0.0);
-      
-      
-      double nuclear_integral = 0.0;
-      for (index_t nuclear_index = 0; nuclear_index < nuclear_centers_.n_cols(); 
-           nuclear_index++) {
-        
-        Vector nuclear_position;
-        nuclear_centers_.MakeColumnVector(nuclear_index, &nuclear_position);
-        
-        int nuclear_charge = (int)nuclear_charges_[nuclear_index];
-        
-        nuclear_integral += 
-        oeints::ComputeNuclearIntegral(row_vec, row_exp, row_mom, 
-                                       col_vec, col_exp, col_mom, 
-                                       nuclear_position, nuclear_charge);
-        
-      } // nuclear_index
-      
-      kinetic_energy_integrals.set(row_index, col_index, kinetic_integral);
-      potential_energy_integrals.set(row_index, col_index, nuclear_integral);
-      overlap_matrix_.set(row_index, col_index, overlap_integral);
-      
-      if (likely(row_index != col_index)) {
-        kinetic_energy_integrals.set(col_index, row_index, kinetic_integral);
-        potential_energy_integrals.set(col_index, row_index, nuclear_integral);
-        overlap_matrix_.set(col_index, row_index, overlap_integral);
-      }
-      
-    } // column_index
-    
-  } // row_index
   
+  ArrayList<BasisShell> shells;
+  eri::CreateShells(centers_, exponents_, momenta_, &shells);
+  
+  // iterate over list, compute integrals, and sum them into matrix
+  
+  for (index_t i = 0; i < shells.size(); i++) {
+    
+    for (index_t j = 0; j < i; j++) {
+      
+      // compute overlap
+      Vector overlap; 
+      eri::ComputeOverlapIntegrals(shells[i], shells[j], &overlap);
+      Matrix overlap_mat;
+      overlap_mat.Copy(overlap.ptr(), shells[i].num_functions(), 
+                       shells[j].num_functions());
+      
+      
+      eri::AddSubmatrix(shells[i].matrix_indices(), shells[j].matrix_indices(),
+                        overlap_mat, &overlap_matrix_);
+      
+      // now transpose and add below the diagonal
+      Matrix overlap_trans;
+      la::TransposeInit(overlap_mat, &overlap_trans);
+      eri::AddSubmatrix(shells[j].matrix_indices(), shells[i].matrix_indices(), 
+                        overlap_trans, &overlap_matrix_);
+      
+      // compute kinetic
+      Vector kinetic;
+      eri::ComputeKineticIntegrals(shells[i], shells[j], &kinetic);
+      
+      Matrix kinetic_mat;
+      kinetic_mat.Copy(kinetic.ptr(), shells[i].num_functions(), 
+                       shells[j].num_functions());
+      
+      eri::AddSubmatrix(shells[i].matrix_indices(), shells[j].matrix_indices(),
+                        kinetic_mat, &kinetic_energy_integrals);
+      
+      Matrix kinetic_trans;
+      la::TransposeInit(kinetic_mat, &kinetic_trans);
+      eri::AddSubmatrix(shells[j].matrix_indices(), shells[i].matrix_indices(),
+                        kinetic_trans, &kinetic_energy_integrals);
+      
+      for (index_t k = 0; k < nuclear_centers_.n_cols(); k++) {
+        
+        // compute nuclear
+        Vector c_vec;
+        nuclear_centers_.MakeColumnVector(k, &c_vec);
+        Vector nuclear;
+        eri::ComputeNuclearIntegrals(shells[i], shells[j], 
+                                     c_vec, nuclear_charges_[k], &nuclear);
+        //nuclear.PrintDebug("Nuclear integrals");
+        
+        Matrix nuclear_mat;
+        nuclear_mat.Copy(nuclear.ptr(), shells[i].num_functions(), 
+                         shells[j].num_functions());
+        
+        eri::AddSubmatrix(shells[i].matrix_indices(), shells[j].matrix_indices(), 
+                          nuclear_mat, &potential_energy_integrals);
+        
+        Matrix nuclear_trans;
+        la::TransposeInit(nuclear_mat, &nuclear_trans);
+        eri::AddSubmatrix(shells[j].matrix_indices(), shells[i].matrix_indices(), 
+                          nuclear_trans, &potential_energy_integrals);
+        
+      } // for k 
+      
+    } // for j
+    
+    // don't forget the entries on the diagonal
+    
+    Vector overlap;
+    eri::ComputeOverlapIntegrals(shells[i], shells[i], &overlap);
+    Matrix overlap_mat;
+    overlap_mat.Copy(overlap.ptr(), shells[i].num_functions(), 
+                     shells[i].num_functions());
+    //free(overlap);
+    
+    eri::AddSubmatrix(shells[i].matrix_indices(), shells[i].matrix_indices(),
+                      overlap_mat, &overlap_matrix_);
+    
+    Vector kinetic;
+    eri::ComputeKineticIntegrals(shells[i], shells[i], &kinetic);
+    
+    Matrix kinetic_mat;
+    kinetic_mat.Copy(kinetic.ptr(), shells[i].num_functions(), 
+                     shells[i].num_functions());
+    //free(kinetic);
+    
+    eri::AddSubmatrix(shells[i].matrix_indices(), shells[i].matrix_indices(),
+                      kinetic_mat, &kinetic_energy_integrals);
+    
+    for (index_t k = 0; k < nuclear_centers_.n_cols(); k++) {
+      
+      // compute nuclear
+      Vector c_vec;
+      nuclear_centers_.MakeColumnVector(k, &c_vec);
+      Vector nuclear;
+      eri::ComputeNuclearIntegrals(shells[i], shells[i], 
+                                   c_vec, nuclear_charges_[k], &nuclear);
+      //nuclear.PrintDebug("Nuclear integrals");
+      
+      Matrix nuclear_mat;
+      nuclear_mat.Copy(nuclear.ptr(), shells[i].num_functions(), 
+                       shells[i].num_functions());
+      //free(nuclear);
+      
+      eri::AddSubmatrix(shells[i].matrix_indices(), shells[i].matrix_indices(), 
+                        nuclear_mat, &potential_energy_integrals);
+      
+    } // for k      
+    
+  } // for i
+  
+  //overlap_matrix_.PrintDebug("overlap");
+  //kinetic_energy_integrals.PrintDebug("kinetic");
+  //potential_energy_integrals.PrintDebug("potential");
+  //la::Scale(-1.0, &kinetic_energy_integrals_);
   la::Scale(-1.0, &potential_energy_integrals);
   
   la::AddInit(kinetic_energy_integrals, potential_energy_integrals, 
@@ -79,16 +142,16 @@ void FockMatrixComparison::ComputeChangeOfBasisMatrix_() {
   Vector eigenvalues;
   Matrix right_vectors_trans;
   
-  //data::Save("he_200K_200atom_overlap.csv", overlap_matrix_);
+  //overlap_matrix_.PrintDebug("Overlap matrix");
   
   success_t eigenval_success = la::SVDInit(overlap_matrix_, &eigenvalues, 
                                            &left_vectors, &right_vectors_trans);
   
+  //eigenvalues.PrintDebug("eigenvalues");
+  
   if (eigenval_success == SUCCESS_FAIL) {
     FATAL("Unable to Compute Eigenvalues of Overlap Matrix");
   }
-  
-  //eigenvalues.PrintDebug("eigenvalues");
   
   double *min_eigenval;
   min_eigenval = std::min_element(eigenvalues.ptr(), 
@@ -314,6 +377,7 @@ void FockMatrixComparison::Init(fx_module* exp_mod, Matrix** exp_mats,
   density_.Copy(density);
   
   overlap_matrix_.Init(num_entries_, num_entries_);
+  overlap_matrix_.SetZero();
   
   // if no centers specified, then can't compare energies
   if (nuclear_centers) {

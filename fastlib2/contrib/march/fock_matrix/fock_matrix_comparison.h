@@ -6,7 +6,8 @@
 #define FOCK_MATRIX_COMPARISON_H
 
 #include "fastlib/fastlib.h"
-#include "fock_impl/oeints.h"
+#include "fock_impl/eri.h"
+#include "fock_impl/basis_shell.h"
 
 class FockMatrixComparison {
 
