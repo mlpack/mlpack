@@ -132,12 +132,15 @@ namespace eri {
     // copied from eri.cc in libmint
     double EPS = 1.0e-17;
     
-    int i, m, k;
+    int i;
+    int m;
+    //int k;
     int m2;
     double t2;
     double num;
     double sum;
-    double term1, term2;
+    double term1;
+    //double term2;
     static double K = 1.0/M_2_SQRTPI;
     double et;
     
@@ -1045,6 +1048,53 @@ namespace eri {
   } // AddSubmatrix
   
 
+  double DensityBound(ShellPair& A_pair, ShellPair& B_pair, 
+                      const Matrix& density) { 
+    
+    double density_bound = max(A_pair.density_bound(), B_pair.density_bound());
+    
+    for (index_t k_ind = 0; k_ind < B_pair.M_Shell()->num_functions(); k_ind++) {
+      
+      for (index_t i_ind = 0; i_ind < A_pair.M_Shell()->num_functions(); i_ind++) {
+        
+        density_bound = max(density_bound, 
+                            0.25 * fabs(density.get(k_ind, i_ind)));
+        
+      } // i_ind
+      
+      for (index_t j_ind = 0; j_ind < A_pair.N_Shell()->num_functions(); j_ind++) {
+        
+        density_bound = max(density_bound, 
+                            0.25 * fabs(density.get(k_ind, j_ind)));
+        
+      } // j_ind
+      
+    } // for k_ind
+    
+    // should wrap this in a check to see if k and l are different to save time
+    for (index_t l_ind = 0; l_ind < B_pair.N_Shell()->num_functions(); l_ind++) {
+      
+      for (index_t i_ind = 0; i_ind < A_pair.M_Shell()->num_functions(); i_ind++) {
+        
+        density_bound = max(density_bound, 
+                            0.25 * fabs(density.get(l_ind, i_ind)));
+        
+      } // i_ind
+      
+      for (index_t j_ind = 0; j_ind < A_pair.N_Shell()->num_functions(); j_ind++) {
+        
+        density_bound = max(density_bound, 
+                            0.25 * fabs(density.get(l_ind, j_ind)));
+        
+      } // j_ind
+      
+    } // for l_ind
+    
+    return density_bound;
+    
+  } // DensityBound()
+  
+  
   ////////////// External Integrals //////////////////////////
 
 void ComputeShellIntegrals(BasisShell& mu_fun, BasisShell& nu_fun, 
@@ -1073,10 +1123,10 @@ void ComputeShellIntegrals(ShellPair& AB_shell, ShellPair& CD_shell,
 
   ArrayList<BasisShell*> shells;
   shells.Init(4);
-  shells[0] = &(AB_shell.M_Shell());
-  shells[1] = &(AB_shell.N_Shell());
-  shells[2] = &(CD_shell.M_Shell());
-  shells[3] = &(CD_shell.N_Shell());
+  shells[0] = AB_shell.M_Shell();
+  shells[1] = AB_shell.N_Shell();
+  shells[2] = CD_shell.M_Shell();
+  shells[3] = CD_shell.N_Shell();
   
   
   ComputeERI(shells, AB_shell.overlap(), CD_shell.overlap(), integrals);
@@ -1093,8 +1143,10 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
   double* min_bound = std::min_element(bound.ptr(), 
                                        bound.ptr() + bound.num_integrals());
   
-  return max(fabs(*max_bound), fabs(*min_bound));
+  double schwartz_bound = max(fabs(*max_bound), fabs(*min_bound));
 
+  return(sqrt(schwartz_bound));
+  
 }
 
   ////////////////// Internal Integrals ///////////////////////
@@ -1201,7 +1253,7 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     
     int num_primitives = 1;
     int max_momentum = max(max(A_mom, B_mom), max(C_mom, D_mom));
-    int total_momentum = A_mom + B_mom + C_mom + D_mom;
+    //int total_momentum = A_mom + B_mom + C_mom + D_mom;
     
     Libint_t tester;
     init_libint(&tester, max_momentum, num_primitives);
@@ -1516,7 +1568,7 @@ index_t CreateShells(const Matrix& centers, const Vector& exponents,
 
 index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
                           ArrayList<BasisShell>& shells_in, 
-                          double shell_pair_cutoff) {
+                          double shell_pair_cutoff, const Matrix& density) {
 
   index_t num_shells = shells_in.size();
   
@@ -1527,22 +1579,24 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
   
   for (index_t i = 0; i < num_shells; i++) {
   
-    BasisShell i_shell = shells_in[i];
+    //BasisShell i_shell = shells_in[i];
     
     for (index_t j = i; j < num_shells; j++) {
     
-      BasisShell j_shell = shells_in[j];
+      //BasisShell j_shell = shells_in[j];
       
       // Do they use the overlap integral here?
-      double this_bound = SchwartzBound(i_shell, j_shell);
+      double this_bound = SchwartzBound(shells_in[i], shells_in[j]);
       //double this_bound = eri::ComputeOverlapIntegral(i_shell, j_shell);
+      
+      //printf("Schwartz Bound: %g\n", this_bound);
       
       if (this_bound > shell_pair_cutoff) {
       
         shell_pairs->PushBack();
         
-        (*shell_pairs)[num_shell_pairs].Init(i, j, i_shell, j_shell, 
-                                             num_shell_pairs);
+        (*shell_pairs)[num_shell_pairs].Init(i, j, &(shells_in[i]), &(shells_in[j]), 
+                                             num_shell_pairs, density);
         (*shell_pairs)[num_shell_pairs].set_integral_upper_bound(this_bound);
         (*shell_pairs)[num_shell_pairs].set_schwartz_factor(this_bound);
         num_shell_pairs++;
@@ -1565,7 +1619,8 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
                           ArrayList<BasisShell>& shells_in, 
                           double shell_pair_cutoff, Vector* shell_max, 
                           ShellPair**** sigma_for_nu, 
-                          ArrayList<index_t>* num_sigma_for_nu) {
+                          ArrayList<index_t>* num_sigma_for_nu, 
+                          const Matrix& density) {
     
   index_t num_shells = shells_in.size();
   
@@ -1605,8 +1660,8 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
         
         shell_pairs->PushBack();
         
-        (*shell_pairs)[num_shell_pairs].Init(i, j, i_shell, j_shell, 
-                                             num_shell_pairs);
+        (*shell_pairs)[num_shell_pairs].Init(i, j, &(shells_in[i]), &(shells_in[j]), 
+                                             num_shell_pairs, density);
         (*shell_pairs)[num_shell_pairs].set_integral_upper_bound(this_bound);
         significant_sig_index[i][num_for_i] = num_shell_pairs;
         (*shell_pairs)[num_shell_pairs].set_schwartz_factor(this_bound);

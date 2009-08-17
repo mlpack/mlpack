@@ -57,6 +57,7 @@ void Link::PrescreeningLoop_() {
       
       // I think this threshold should be the same as the others 
       // Not sure if this is the right density matrix entry
+      // TODO: make this check all of the relevant density entries
       double density_check = fabs(density_matrix_.ref(i,j)) * shell_max_[i] 
                               * shell_max_[j];
       if (density_check > threshold_) {
@@ -126,7 +127,7 @@ void Link::Compute() {
   for (index_t shell_pair_ind = 0; shell_pair_ind < num_shell_pairs_; 
        shell_pair_ind++) {
        
-    ShellPair mu_lambda = shell_pair_list_[shell_pair_ind];
+    ShellPair& mu_lambda = shell_pair_list_[shell_pair_ind];
     
     index_t mu_ind = mu_lambda.M_index();
     
@@ -164,7 +165,8 @@ void Link::Compute() {
       
         ShellPair* nu_sigma = significant_sigma_for_nu_[nu_ind][sorted_sigma_ind];
         
-        //index_t sigma_ind = nu_sigma->N_index();
+        // need to replace this with appropriate integral call
+        // does this need to take into account the other density entries?
         double bound = fabs(density_matrix_.ref(mu_ind, nu_ind)) * mu_lambda.schwartz_factor() * 
           nu_sigma->schwartz_factor();
 	//printf("bound: %g\n", bound);
@@ -306,18 +308,90 @@ void Link::Compute() {
     
       ShellPair nu_sigma = shell_pair_list_[integral_list[int_ind]];
       
-      index_t nu_ind = nu_sigma.M_index();
-      index_t sigma_ind = nu_sigma.N_index();
-      //printf("mu_ind: %d, nu_ind: %d, lambda_ind: %d, sigma_ind: %d\n", mu_ind, 
-        //     nu_ind, lambda_ind, sigma_ind);
+      IntegralTensor integrals;
+      eri::ComputeShellIntegrals(mu_lambda, nu_sigma, &integrals);
       
-      double integral = eri::ComputeShellIntegrals(mu_lambda, nu_sigma);
-      //printf("(%d %d | %d %d)\n", mu_lambda.M_index(), mu_lambda.N_index(), 
-      //       nu_sigma.M_index(), nu_sigma.N_index());
       num_integrals_computed_++;
+      
       // contract with mu, nu; mu, sigma; lambda, nu; lambda, sigma
       // sum into lambda, sigma; lambda, nu; mu, sigma; mu, nu
+      Matrix exchange_ik;
+      exchange_ik.Init(mu_lambda.M_Shell()->num_functions(), 
+                       nu_sigma.M_Shell()->num_functions());
+      exchange_ik.SetZero();
       
+      Matrix* exchange_jk;
+      Matrix* exchange_il;
+      Matrix* exchange_jl;
+      
+      // not sure if this will work with the references
+      // if i != j
+      if (mu_lambda.M_Shell() != mu_lambda.N_Shell()) {
+        exchange_jk = new Matrix();
+        exchange_jk->Init(mu_lambda.N_Shell()->num_functions(), 
+                          nu_sigma.M_Shell()->num_functions());
+        exchange_jk->SetZero();
+      }
+      else {
+        exchange_jk = NULL;
+      }
+      
+      // if k != l
+      if (nu_sigma.N_Shell() != nu_sigma.M_Shell()) {
+        exchange_il = new Matrix();
+        exchange_il->Init(mu_lambda.M_Shell()->num_functions(), 
+                          nu_sigma.N_Shell()->num_functions());
+        exchange_il->SetZero();
+        
+      }
+      else {
+        exchange_il = NULL;
+      }
+      
+      if (mu_lambda.M_Shell() != mu_lambda.N_Shell() && 
+          nu_sigma.N_Shell() != nu_sigma.M_Shell()) {
+        exchange_jl = new Matrix();
+        exchange_jl->Init(mu_lambda.N_Shell()->num_functions(), 
+                          nu_sigma.N_Shell()->num_functions());
+        exchange_jl->SetZero();
+        
+      }
+      else {
+        exchange_jl = NULL; 
+      }
+      
+      integrals.ContractExchange(mu_lambda.M_Shell()->matrix_indices(),
+                                 mu_lambda.N_Shell()->matrix_indices(),
+                                 nu_sigma.M_Shell()->matrix_indices(),
+                                 nu_sigma.N_Shell()->matrix_indices(),
+                                 density_matrix_, &exchange_ik, exchange_jk, 
+                                 exchange_il, exchange_jl);
+      
+      eri::AddSubmatrix(mu_lambda.M_Shell()->matrix_indices(), 
+                        nu_sigma.M_Shell()->matrix_indices(),
+                        exchange_ik, &exchange_matrix_);
+      
+      if (exchange_jk) {
+        eri::AddSubmatrix(mu_lambda.N_Shell()->matrix_indices(), 
+                          nu_sigma.M_Shell()->matrix_indices(),
+                          *exchange_jk, &exchange_matrix_);
+      }
+      
+      if (exchange_il) {
+        eri::AddSubmatrix(mu_lambda.M_Shell()->matrix_indices(), 
+                          nu_sigma.N_Shell()->matrix_indices(),
+                          *exchange_il, &exchange_matrix_);
+      }
+      
+      if (exchange_jl) {
+        eri::AddSubmatrix(mu_lambda.N_Shell()->matrix_indices(), 
+                          nu_sigma.N_Shell()->matrix_indices(),
+                          *exchange_jl, &exchange_matrix_);
+      }
+      
+      
+      //// old (only s function) code
+      /*
       double lambda_sigma_int = density_matrix_.ref(lambda_ind, sigma_ind) * integral;
       
       double mu_nu_exc = exchange_matrix_.ref(mu_ind, nu_ind);
@@ -347,6 +421,8 @@ void Link::Compute() {
         exchange_matrix_.set(lambda_ind, sigma_ind, 
                              lambda_sigma_exc + mu_nu_int);
       }
+      */ 
+       
       
     
     } // for int_ind

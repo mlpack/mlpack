@@ -1,9 +1,9 @@
 #include "fastlib/fastlib.h"
-#include "contrib/march/fock_matrix/multi_tree/multi_tree_fock.h"
+//#include "contrib/march/fock_matrix/multi_tree/multi_tree_fock.h"
 #include "contrib/march/fock_matrix/naive/naive_fock_matrix.h"
 #include "contrib/march/fock_matrix/prescreening/schwartz_prescreening.h"
-#include "contrib/march/fock_matrix/link/link.h"
-#include "contrib/march/fock_matrix/cfmm/cfmm_coulomb.h"
+//#include "contrib/march/fock_matrix/link/link.h"
+//#include "contrib/march/fock_matrix/cfmm/cfmm_coulomb.h"
 #include "fock_matrix_comparison.h"
 #include "chem_reader/chem_reader.h"
 
@@ -63,16 +63,16 @@ const fx_entry_doc fock_matrix_main_entries[] = {
 };
 
 const fx_submodule_doc fock_matrix_main_submodules[] = {
-  {"cfmm", &cfmm_mod_doc, 
-   "Parameters and results for the CFMM.\n"},
-  {"link", &link_mod_doc,
-   "Parameters and results for LinK.\n"},
+  //{"cfmm", &cfmm_mod_doc, 
+  // "Parameters and results for the CFMM.\n"},
+  //{"link", &link_mod_doc,
+  // "Parameters and results for LinK.\n"},
   {"prescreening", &prescreening_mod_doc,
    "Parameters and results for Schwartz prescreening.\n"},
   {"naive", &naive_mod_doc,
    "Parameters and results for naive.\n"},
-  {"multi", &multi_mod_doc,
-   "Parameters and results for multi-tree algorithm.\n"},
+  //{"multi", &multi_mod_doc,
+  // "Parameters and results for multi-tree algorithm.\n"},
   FX_SUBMODULE_DOC_DONE
 };
 
@@ -88,6 +88,8 @@ int main(int argc, char* argv[]) {
 
   fx_module* root_mod = fx_init(argc, argv, &fock_matrix_main_doc);
   
+  eri::ERIInit();
+  
   Matrix centers;
   const char* centers_file = fx_param_str_req(root_mod, "centers");
   data::Load(centers_file, &centers);
@@ -99,6 +101,17 @@ int main(int argc, char* argv[]) {
   if (centers.n_cols() != exp_mat.n_cols()) {
     FATAL("Number of basis centers must equal number of exponents.\n");
   }
+  
+  Matrix momenta;
+  if (fx_param_exists(root_mod, "momenta")) {
+    const char* momenta_file = fx_param_str_req(root_mod, "momenta");
+    data::Load(momenta_file, &momenta);
+  }
+  else {
+    momenta.Init(1, centers.n_cols());
+    momenta.SetAll(0);
+  }
+  
   
   std::string density_str;
   Matrix density;
@@ -123,7 +136,9 @@ int main(int argc, char* argv[]) {
     }
   }
   else {
-    density.Init(centers.n_cols(), centers.n_cols());
+    // WARNING: this hack only works for s and p functions
+    int num_functions = centers.n_cols() + 2*(int)la::Dot(momenta, momenta);
+    density.Init(num_functions, num_functions);
     density.SetAll(1.0);
     density_str = "default";
   }
@@ -136,16 +151,7 @@ int main(int argc, char* argv[]) {
   }
    */
   
-  Matrix momenta;
-  if (fx_param_exists(root_mod, "momenta")) {
-    const char* momenta_file = fx_param_str_req(root_mod, "momenta");
-    data::Load(momenta_file, &momenta);
-  }
-  else {
-    momenta.Init(1, centers.n_cols());
-    momenta.SetAll(0);
-  }
-  
+    
   Matrix nuclear_centers_mat;
   Matrix* nuclear_centers;
   if (fx_param_exists(root_mod, "nuclear_centers")) {
@@ -234,26 +240,36 @@ int main(int argc, char* argv[]) {
                                                   "prescreening/thresh", 
                                                   10e-10);
   
-  std::ostringstream oss;
-  oss << prescreening_threshold;
-  thresh_str = oss.str();
+  // this stopped compiling for some reason - needs to be fixed
+  //std::ostringstream oss;
+  //oss << prescreening_threshold;
+  //thresh_str = oss.str();
   
   std::string prescreening_fock_string;
+  //prescreening_fock_string = directory + centers_name + underscore + exp_name 
+  //                            + underscore + density_name + underscore  
+  //                            + thresh_str + under_F;
   prescreening_fock_string = directory + centers_name + underscore + exp_name 
-                              + underscore + density_name + underscore  
-                              + thresh_str + under_F;
+  + underscore + density_name + underscore  
+  + under_F;
   const char* prescreening_fock_file = prescreening_fock_string.c_str();
 
   std::string prescreening_coulomb_string;
+  //prescreening_coulomb_string = directory + centers_name + underscore + exp_name 
+  //                        + underscore + density_name + underscore  
+  //                        + thresh_str + under_J;
   prescreening_coulomb_string = directory + centers_name + underscore + exp_name 
-                          + underscore + density_name + underscore  
-                          + thresh_str + under_J;
+  + underscore + density_name + underscore  
+  + under_J;
   const char* prescreening_coulomb_file = prescreening_coulomb_string.c_str();
 
   std::string prescreening_exchange_string;
+  //prescreening_exchange_string = directory + centers_name + underscore + exp_name
+  //                        + underscore + density_name + underscore  
+  //                        + thresh_str + under_K;
   prescreening_exchange_string = directory + centers_name + underscore + exp_name
-                          + underscore + density_name + underscore  
-                          + thresh_str + under_K;
+  + underscore + density_name + underscore  
+  + under_K;
   const char* prescreening_exchange_file = prescreening_exchange_string.c_str();
   
   
@@ -339,7 +355,7 @@ int main(int argc, char* argv[]) {
   prescreening_mats[1] = &prescreening_coulomb;
   prescreening_mats[2] = &prescreening_exchange;
   
-  
+  /*
   Matrix cfmm_coulomb;
   Matrix link_exchange;
   
@@ -488,7 +504,7 @@ int main(int argc, char* argv[]) {
     link_exchange.Init(1,1);
     
   }
-
+   */
 
   if (fx_param_exists(root_mod, "do_naive")) {
     
@@ -539,7 +555,7 @@ int main(int argc, char* argv[]) {
   } // do_naive
   
     
-
+  /*
   if (fx_param_exists(root_mod, "do_multi")) {
     
     printf("======== Multi-Tree Computation ========\n");
@@ -587,9 +603,10 @@ int main(int argc, char* argv[]) {
     } // cfmm comparison        
     
   } // do_multi
+  */
 
-
-
+  eri::ERIFree();
+  
   fx_done(root_mod);
 
   return 0;
