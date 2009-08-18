@@ -6,7 +6,8 @@ librule(
     deplibs = ["fastlib:fastlib_int",
                "contrib/dongryel/multitree_template:multitree_template",
                "contrib/dongryel/proximity_project:proximity_project",
-               "mlpack/series_expansion:series_expansion"]
+               "mlpack/series_expansion:series_expansion", 
+               "contrib/march/fock_matrix/fock_impl:eri"]
     )
 
 librule(

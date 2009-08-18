@@ -29,6 +29,13 @@
 #include "mlpack/series_expansion/inverse_pow_dist_local_expansion.h"
 #include "contrib/dongryel/proximity_project/cfmm_tree.h"
 #include "contrib/dongryel/multitree_template/multitree_utility.h"
+#include "contrib/march/fock_matrix/fock_impl/eri.h"
+#include "contrib/march/fock_matrix/fock_impl/shell_pair.h"
+#include "contrib/march/libint/include/libint/libint.h"
+#include "contrib/march/libint/include/libint/hrr_header.h"
+#include "contrib/march/libint/include/libint/vrr_header.h"
+#include "contrib/march/fock_matrix/fock_impl/integral_tensor.h"
+
 
 const fx_entry_doc cfmm_fmm_mod_entries[] = {
 {"charge_thresh", FX_PARAM, FX_DOUBLE, NULL,
@@ -37,10 +44,10 @@ const fx_entry_doc cfmm_fmm_mod_entries[] = {
   "The number of points owned by a leaf.  Default: 1\n"},
   {"precision", FX_PARAM, FX_DOUBLE, NULL,
   "epsilon used in the definition of extent of distributions.  Default: 0.1\n"},
-  {"min_ws_index", FX_PARAM, FX_DOUBLE, NULL, 
+  {"min_ws_index", FX_PARAM, FX_INT, NULL, 
   "The smallest possible well-separated index at which distributions will be\n"
   "approximated with multipoles.  Default: 2\n"},
-  {"max_tree_depth", FX_PARAM, FX_DOUBLE, NULL, 
+  {"max_tree_depth", FX_PARAM, FX_INT, NULL, 
    "FILL ME IN!\n"},
   {"num_exact_computations", FX_RESULT, FX_INT, NULL, 
     "The number of interactions computed exactly in the base case.\n"},
@@ -135,6 +142,24 @@ class ContinuousFmm {
    */
   int num_exact_computations_;
   
+  /**
+   * @brief Stores the results of the near-field computations for use with 
+   * Libint, used pointer to avoid copying - added by BM, 8/18/09
+   */
+  Matrix* near_field_results_;
+  
+  /**
+   * @brief The list of shell pairs, needed to use the libint wrappers in the 
+   * base case - added by BM, 8/18/09
+   */
+  ArrayList<ShellPair*> shell_pairs_;
+  
+  /**
+   * @brief The density matrix, needed to accurately compute the base case
+   * used pointer to avoid copying - added by BM, 8/18/09
+   */
+  Matrix* density_;
+  
   ////////// Private Member Functions //////////
 
   void ReshuffleResults_(Vector &to_be_reshuffled) {
@@ -156,6 +181,20 @@ class ContinuousFmm {
       to_be_reshuffled[i] = tmp_results[i];
     }
   }
+  
+  // Lame way to do this - added by BM, 8/18/09
+  void ShuffleShellPairList(ArrayList<ShellPair*>& pairs, 
+                            const ArrayList<index_t>& permutation) {
+    
+    ArrayList<ShellPair*> temp;
+    temp.Init(pairs.size());
+    
+    for (int i = 0; i < pairs.size(); i++) {
+      temp[i] = pairs[permutation[i]];
+    }
+    pairs.Swap(&temp);
+    
+  } // ShuffleShellPairsList
 
   void FormMultipoleExpansions_() {
     
@@ -264,12 +303,32 @@ class ContinuousFmm {
     for(index_t q = query_node->begin(query_point_indexing); 
         q < query_node->end(query_point_indexing); q++) {
       
+      // q and r should be able to index into shell_pairs_ as well
+    
       // Get the query point.
-      const double *q_col = shuffled_query_particle_set_.GetColumnPtr(q);
+      //const double *q_col = shuffled_query_particle_set_.GetColumnPtr(q);
+      ShellPair* query = shell_pairs_[q];
+      
+      Matrix query_results;
+      query_results.Init(query->M_Shell()->num_functions(), 
+                         query->N_Shell()->num_functions());
+      query_results.SetZero();
       
       for(index_t r = reference_node->begin(0); r < reference_node->end(0);
           r++) {
         
+        ShellPair* reference = shell_pairs_[r];
+        
+        IntegralTensor integrals;
+        eri::ComputeShellIntegrals(*query, *reference, &integrals);
+        
+        // now contract with the density and sum into the results matrix
+        integrals.ContractCoulomb(reference->M_Shell()->matrix_indices(),
+                                  reference->N_Shell()->matrix_indices(),
+                                  *density_, &query_results);
+        
+        /// old base case code
+        /*
         // Compute the pairwise distance, if the query and the
         // reference are not the same particle.
         // We need to compute the self-interaction as well - BM
@@ -306,8 +365,26 @@ class ContinuousFmm {
             * 2 / sqrt_pi_;
           }
         }
+        */
+        
+      } // for r
+      
+      eri::AddSubmatrix(query->M_Shell()->matrix_indices(), 
+                        query->N_Shell()->matrix_indices(),
+                        query_results, near_field_results_);
+      
+      // handle entries below the diagonal
+      if (query->M_Shell() != query->N_Shell()) {
+        
+        Matrix query_trans;
+        la::TransposeInit(query_results, &query_trans);
+        eri::AddSubmatrix(query->N_Shell()->matrix_indices(), 
+                          query->M_Shell()->matrix_indices(),
+                          query_trans, near_field_results_);
+        
       }
-    }
+      
+    } // for q
     
     num_exact_computations_ += (query_node->end(query_point_indexing)
                                 - query_node->begin(query_point_indexing))
@@ -517,11 +594,36 @@ class ContinuousFmm {
   ContinuousFmm() {
   }
 
+  /*
   ~ContinuousFmm() {
     if(tree_ != NULL) {
+      //tree_->~CFmmTree();
       delete tree_;
       tree_ = NULL;
     }
+    
+    old_from_new_index_.Clear();
+    new_from_old_index_.Clear();
+    nodes_in_each_level_.Clear();
+    //sea_.~InversePowDistSeriesExpansionAux();
+    //shuffled_reference_particle_set_.Destruct();
+    //shuffled_reference_particle_charge_set_.Destruct();
+  }
+  */
+  void Destruct() {
+   
+    if(tree_ != NULL) {
+      //tree_->~CFmmTree();
+      delete tree_;
+      tree_ = NULL;
+    }
+    old_from_new_index_.Clear();
+    new_from_old_index_.Clear();
+    nodes_in_each_level_.Clear();
+    shuffled_reference_particle_set_.Destruct();
+    shuffled_query_particle_set_.Destruct();
+    //sea_.~InversePowDistSeriesExpansionAux();
+    
   }
 
   void NaiveCompute(Vector *naively_computed_potentials) {
@@ -547,12 +649,26 @@ class ContinuousFmm {
     //OutputResultsToFile_(*naively_computed_potentials, "naive_fmm_output.txt");
     
   }
-
+ 
+  /*
+  void Update(const Matrix &rset_weights) {
+   
+    for(index_t i = 0; i < rset_weights.n_cols(); i++) {
+      shuffled_reference_particle_charge_set_[i] = rset_weights.get(0, i);
+    }
+    
+    MultiTreeUtility::ShuffleAccordingToPermutation
+        (shuffled_reference_particle_charge_set_, old_from_new_index_[0]);
+    
+  
+  }
+*/
+  
   void Compute(Vector* potentials_out) {
     
     printf("Starting the computation...\n");
 
-    fx_timer_start(NULL, "fmm_compute");
+    fx_timer_start(module_, "fmm_compute");
 
     // Reset the accumulated sum.
     potentials_.SetZero();
@@ -568,7 +684,7 @@ class ContinuousFmm {
       DownwardPass_();
     }
 
-    fx_timer_stop(NULL, "fmm_compute");
+    fx_timer_stop(module_, "fmm_compute");
 
     printf("Finished the computation...\n");
 
@@ -589,10 +705,27 @@ class ContinuousFmm {
                      - num_exact_computations_);
     
   }
+  
+  void Reset(const Matrix& new_charges) {
+    
+    for(index_t i = 0; i < new_charges.n_cols(); i++) {
+      shuffled_reference_particle_charge_set_[i] = new_charges.get(0, i);
+    }
+    
+    MultiTreeUtility::ShuffleAccordingToPermutation
+    (shuffled_reference_particle_charge_set_, old_from_new_index_[0]);
+    
+    potentials_.SetZero();
+    
+    // the remaining problems are: kernel_, sea_, and the tree
+    
+  }
 
   void Init(const Matrix &queries, const Matrix &references,
-	    const Matrix &rset_weights, const Matrix &rset_bandwidths,
-	    bool queries_equal_references, struct datanode *module_in) {
+            const Matrix &rset_weights, const Matrix &rset_bandwidths,
+            bool queries_equal_references, struct datanode *module_in, 
+            Matrix* near_field, const ArrayList<ShellPair*>& shell_pairs, 
+            Matrix* density) {
     
     // Point to the incoming module.
     module_ = module_in;
@@ -693,7 +826,17 @@ class ContinuousFmm {
     // initialize statistics
     num_exact_computations_ = 0;
     
+    // for the base case
+    near_field_results_ = near_field;
+    
+    shell_pairs_.Copy(shell_pairs);
+    ShuffleShellPairList(shell_pairs_, old_from_new_index_[0]);
+    
+    density_ = density;
+    
   }
+  
+  
 };
 
 #endif
