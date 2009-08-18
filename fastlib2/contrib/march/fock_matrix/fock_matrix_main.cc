@@ -3,7 +3,7 @@
 #include "contrib/march/fock_matrix/naive/naive_fock_matrix.h"
 #include "contrib/march/fock_matrix/prescreening/schwartz_prescreening.h"
 #include "contrib/march/fock_matrix/link/link.h"
-//#include "contrib/march/fock_matrix/cfmm/cfmm_coulomb.h"
+#include "contrib/march/fock_matrix/cfmm/cfmm_coulomb.h"
 #include "fock_matrix_comparison.h"
 #include "chem_reader/chem_reader.h"
 
@@ -63,10 +63,10 @@ const fx_entry_doc fock_matrix_main_entries[] = {
 };
 
 const fx_submodule_doc fock_matrix_main_submodules[] = {
-  //{"cfmm", &cfmm_mod_doc, 
-  // "Parameters and results for the CFMM.\n"},
-  //{"link", &link_mod_doc,
-  // "Parameters and results for LinK.\n"},
+  {"cfmm", &cfmm_mod_doc, 
+   "Parameters and results for the CFMM.\n"},
+  {"link", &link_mod_doc,
+   "Parameters and results for LinK.\n"},
   {"prescreening", &prescreening_mod_doc,
    "Parameters and results for Schwartz prescreening.\n"},
   {"naive", &naive_mod_doc,
@@ -115,6 +115,9 @@ int main(int argc, char* argv[]) {
   
   std::string density_str;
   Matrix density;
+  // WARNING: this hack only works for s and p functions
+  int num_functions = centers.n_cols() + 2*(int)la::Dot(momenta, momenta);
+  
   if (fx_param_exists(root_mod, "density")) {
  
     const char* density_file = fx_param_str_req(root_mod, "density");
@@ -125,7 +128,9 @@ int main(int argc, char* argv[]) {
                 density_str.substr(density_ext+1, std::string::npos).c_str())) {
      
       printf("Reading QChem Style Density Matrix.\n");
-      chem_reader::ReadQChemDensity(density_file, &density, centers.n_cols());
+      chem_reader::ReadQChemDensity(density_file, &density, num_functions);
+      // QC density matrices are only for alpha electrons
+      la::Scale(2.0, &density);
       
     }
     else {
@@ -136,8 +141,6 @@ int main(int argc, char* argv[]) {
     }
   }
   else {
-    // WARNING: this hack only works for s and p functions
-    int num_functions = centers.n_cols() + 2*(int)la::Dot(momenta, momenta);
     density.Init(num_functions, num_functions);
     density.SetAll(1.0);
     density_str = "default";
@@ -356,9 +359,9 @@ int main(int argc, char* argv[]) {
   prescreening_mats[2] = &prescreening_exchange;
   
   
-  //Matrix cfmm_coulomb;
+  Matrix cfmm_coulomb;
   Matrix link_exchange;
-  /*
+  
   
   if (fx_param_exists(root_mod, "do_cfmm") 
       && fx_param_exists(root_mod, "do_link")) {
@@ -459,7 +462,7 @@ int main(int argc, char* argv[]) {
     link_exchange.Init(1,1);
         
   } // do_cfmm
-  else*/ if (fx_param_exists(root_mod, "do_link")) {
+  else if (fx_param_exists(root_mod, "do_link")) {
     
     printf("======== LinK Computation ========\n");
     
@@ -495,12 +498,12 @@ int main(int argc, char* argv[]) {
       
     } // link comparison
         
-    //cfmm_coulomb.Init(1,1);
+    cfmm_coulomb.Init(1,1);
     
   } // do_link
   else {
     
-    //cfmm_coulomb.Init(1,1);
+    cfmm_coulomb.Init(1,1);
     link_exchange.Init(1,1);
     
   }

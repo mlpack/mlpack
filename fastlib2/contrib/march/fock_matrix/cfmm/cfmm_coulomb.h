@@ -116,11 +116,9 @@ class CFMMCoulomb {
     density_.Copy(density);
     
     
-    // This only works for s and p type functions
-    num_funs_ = centers_.n_cols() + (index_t)2*la::Dot(momenta_, momenta_);
-    fx_result_int(mod_, "N", num_funs_);
+    num_funs_ = eri::CreateShells(centers_, exponents_, momenta_, &shells_);
     
-    eri::CreateShells(centers_, exponents_, momenta_, &shells_);
+    fx_result_int(mod_, "N", num_funs_);
     
     num_shells_ = shells_.size();
     
@@ -128,6 +126,7 @@ class CFMMCoulomb {
     charge_thresh_ = fx_param_double(mod_, "charge_thresh", 10e-10);
     
     coulomb_mat_.Init(num_funs_, num_funs_);
+    coulomb_mat_.SetZero();
     
     fx_timer_start(mod_, "cfmm_time");
     ScreenCharges_();

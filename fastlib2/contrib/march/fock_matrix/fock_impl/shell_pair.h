@@ -34,6 +34,7 @@ class ShellPair {
     
     list_index_ = list_ind;
     
+    // this includes a factor of pi
     overlap_ = eri::ComputeShellOverlap(*M_shell_, *N_shell_);
     
     density_bound_ = -DBL_MAX;
