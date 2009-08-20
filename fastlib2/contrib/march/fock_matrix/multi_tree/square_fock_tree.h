@@ -26,7 +26,6 @@ class SquareFockTree {
     // and base cases
     // i.e. the minimum and maximum values actually written to the Coulomb/
     // exchange matrix
-    // They start at 0, since there has been no computation
     double entry_lower_bound_;
     double entry_upper_bound_;
     

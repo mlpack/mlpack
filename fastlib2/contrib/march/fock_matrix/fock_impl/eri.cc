@@ -972,6 +972,7 @@ namespace eri {
    }
    */
 
+  // need to templatize these
   void ArrayListSwap(index_t ind1, index_t ind2, ArrayList<index_t>* perm) {
     
     DEBUG_ASSERT(ind1 < perm->size());
@@ -985,6 +986,21 @@ namespace eri {
     (*perm)[ind1] = ind2_temp;
     
   } // ArrayListSwap
+  
+  void ArrayListSwapPointers(index_t ind1, index_t ind2, 
+                             ArrayList<BasisShell*>* list) {
+    
+    DEBUG_ASSERT(ind1 < list->size());
+    DEBUG_ASSERT(ind2 < list->size());
+    
+    DEBUG_ASSERT(ind1 >= 0);
+    DEBUG_ASSERT(ind2 >= 0);
+    
+    BasisShell* ind2_temp = (*list)[ind2];
+    (*list)[ind2] = (*list)[ind1];
+    (*list)[ind1] = ind2_temp;
+    
+  } 
   
   
   // a_ind needs to be the first index after the permutation for 

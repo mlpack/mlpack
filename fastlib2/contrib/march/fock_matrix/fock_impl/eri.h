@@ -134,6 +134,9 @@ namespace eri {
    */
   void ArrayListSwap(index_t ind1, index_t ind2, ArrayList<index_t>* perm);
   
+  void ArrayListSwapPointers(index_t ind1, index_t ind2, 
+                             ArrayList<BasisShell*>* list);
+  
   /**
    * Returns the index of the given integral in the array returned from LIBINT.
    * indices holds the a, b, c, d indices and momenta holds the momenta
