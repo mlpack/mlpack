@@ -185,7 +185,6 @@ private:
       min_normalization_ = min_in;
     }
     
-  
   }; // class SingleNodeStat
   
  public:
