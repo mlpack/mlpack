@@ -58,6 +58,7 @@ int main (int argc, char* argv[]) {
                                                           NULL);
   
   tree->Print();
+  old_from_new.Print("old from new");
   
   return 0;
   
