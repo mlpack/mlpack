@@ -101,7 +101,7 @@ public:
   void Print() {
    
     printf("Node: Start: %d, Count: %d\n", start_index_, num_shells_);
-    printf("Spatial dimensions: {(%g, %g), (%g, %g), (%g, %g)\n}",
+    printf("Spatial dimensions: {(%g, %g), (%g, %g), (%g, %g)}\n",
            bound_.get(0).lo, bound_.get(0).hi,
            bound_.get(1).lo, bound_.get(1).hi,
            bound_.get(2).lo, bound_.get(2).hi);

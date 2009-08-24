@@ -22,11 +22,12 @@ namespace shell_tree_impl {
     
     DEBUG_ASSERT(split_dim >= 0);
     DEBUG_ASSERT(split_dim <= 4);
+    DEBUG_ASSERT(count >= 1);
     
     index_t left = begin;
     index_t right = begin + count - 1;
     
-    while (1) {
+    for(;;) {
       
       double left_splitval;
       if (split_dim == 4) {
@@ -51,6 +52,20 @@ namespace shell_tree_impl {
         *left_mom |= shells[left]->total_momentum();                    
         
         left++;
+        
+        if (split_dim == 4) {
+          //split on momentum
+          left_splitval = shells[left]->total_momentum();
+        }
+        else if (split_dim == 3) {
+          //split on exponent
+          left_splitval = shells[left]->exp();
+        }
+        else {
+          // split on space
+          left_splitval = shells[left]->center()[split_dim];
+        }
+        
         
       } // increment left
       
@@ -78,6 +93,20 @@ namespace shell_tree_impl {
         *right_mom |= shells[right]->total_momentum();                    
         
         right--;
+        
+        if (split_dim == 4) {
+          //split on momentum
+          right_splitval = shells[right]->total_momentum();
+        }
+        else if (split_dim == 3) {
+          //split on exponent
+          right_splitval = shells[right]->exp();
+        }
+        else {
+          // split on space
+          right_splitval = shells[right]->center()[split_dim];
+        }
+        
         
       } // decrement right
       
@@ -124,8 +153,8 @@ namespace shell_tree_impl {
     double max_width = -1;
     index_t split_dim = BIG_BAD_NUMBER;
     double w;
-    // are there different momenta?  
     
+    // are there different momenta?  
     if (!node->single_momentum()) {
      
       max_width = DBL_MAX;
@@ -186,9 +215,11 @@ namespace shell_tree_impl {
       left->Init(node->begin(), split_col - node->begin());
       right->Init(split_col, node->begin() + node->count() - split_col);
       
+      /*
       for (index_t i = 0; i < shells.size(); i++) {
         printf("momentum: %d\n", shells[i]->total_momentum());
       }
+      */
       
       SelectSplit(shells, left, leaf_size, old_from_new);
       SelectSplit(shells, right, leaf_size, old_from_new);
@@ -219,6 +250,16 @@ namespace shell_tree_impl {
     node->exponents().InitEmptySet();
     node->momenta().InitEmptySet();
     node->Init(0, shells.size());
+    
+    // need to iniut these to right ranges
+    for (index_t i = 0; i < shells.size(); i++) {
+      
+      node->bound() |= shells[i]->center();
+      node->exponents() |= shells[i]->exp();
+      node->momenta() |= shells[i]->total_momentum();
+      
+    }
+    
     
     SelectSplit(shells, node, leaf_size, old_from_new);
     
