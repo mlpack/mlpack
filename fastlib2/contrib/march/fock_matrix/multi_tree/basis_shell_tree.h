@@ -39,15 +39,16 @@ private:
   // maybe make these DRanges or something?
   
   DRange exponents_;
-  double min_exponent_;
-  double max_exponent_;
-
+  
   DRange momenta_;
   
-  double min_normalization_;
-  double max_normalization_;
+  // TODO: add this to the tree building code 
+  DRange normalizations_;
   
   bool single_momentum_;
+  
+  // used in MatrixTree construction
+  index_t height_;
   
 public:
   
@@ -71,6 +72,10 @@ public:
     return start_index_;
   }
   
+  index_t end() const {
+    return(begin_ + count_);
+  }
+  
   bool single_momentum() const {
     return single_momentum_;
   }
@@ -91,11 +96,28 @@ public:
     return (left_ == NULL);
   }
   
+  index_t height() const {
+    return height_; 
+  }
+  
+  /*
+  void set_height(index_t new_height) {
+    DEBUG_ASSERT(new_height >= 0);
+    height_ = new_height;
+  }
+   */
+  
   void set_children(BasisShellTree* left, BasisShellTree* right) {
    
     left_ = left;
     right_ = right;
     
+    if (left_) {
+      height_ = max(left->height(), right->height()) + 1;
+    }
+    else {
+      height_ = 0; 
+    }
   }
   
   void Print() {

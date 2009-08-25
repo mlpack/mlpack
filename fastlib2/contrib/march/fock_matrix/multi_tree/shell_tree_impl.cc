@@ -225,7 +225,7 @@ namespace shell_tree_impl {
       SelectSplit(shells, right, leaf_size, old_from_new);
       
     } // node is wide enough to split
-
+    
     node->set_children(left, right);
         
   } // SelectSplit
