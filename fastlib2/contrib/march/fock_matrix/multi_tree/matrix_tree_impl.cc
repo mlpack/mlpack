@@ -11,6 +11,73 @@
 
 namespace matrix_tree_impl {
 
+  void FormDenseMatrixHelper(MatrixTree* node, Matrix* mat_out, 
+                             double approx_val) {
+    
+    double this_approx = node->approx_val() + approx_val;
+    
+    if (node->left()) {
+      // recursively build the matrix
+      // how to pass the submatrices around? 
+      FormDenseMatrixHelper(node->left(), mat_out, this_approx);
+      
+      FormDenseMatrixHelper(node->right(), mat_out, this_approx);
+      
+    } // not leaf
+    else if (node->fock_entries()){
+      
+      // Iterate over the fock_entries matrix
+      for (index_t i = 0; i < node->row_indices().size(); i++) {
+        
+        index_t row_ind = node->row_indices()[i];
+        
+        for (index_t j = 0; j < node->col_indices().size(); j++) {
+          
+          index_t col_ind = node->col_indices()[j];
+          double this_val = mat_out->get(row_ind, col_ind) + this_approx 
+          + node->fock_entries()->get(i,j);
+          
+          mat_out->set(row_ind, col_ind, this_val);
+          
+          // handle below the diagonal
+          if (!node->on_diagonal()) {
+            mat_out->set(col_ind, row_ind, this_val); 
+          }
+          
+        } // for j
+      } // for i
+      
+    } // leaf (with matrix)
+    else {
+      // no base case matrix
+      
+      // Iterate over the fock_entries matrix
+      for (index_t i = 0; i < node->row_indices().size(); i++) {
+        
+        index_t row_ind = node->row_indices()[i];
+        
+        for (index_t j = 0; j < node->col_indices().size(); j++) {
+          
+          index_t col_ind = node->col_indices()[j];
+          double this_val = mat_out->get(row_ind, col_ind) + this_approx;
+          
+          mat_out->set(row_ind, col_ind, this_val);
+          
+          // handle below the diagonal
+          if (!node->on_diagonal()) {
+            // matrix should always be symmetric
+            DEBUG_ASSERT(mat_out->get(row_ind, col_ind) 
+                         == mat_out->get(col_ind, row_ind));
+            mat_out->set(col_ind, row_ind, this_val); 
+          }
+          
+        } // for j
+      } // for i
+      
+    } // was pruned, so no base case to iterate over
+    
+  } // FormDensityMatrixHelper()
+  
   void FormDenseMatrix(MatrixTree* root, Matrix* fock_out) {
     
     // The root should represent a square matrix
@@ -22,49 +89,6 @@ namespace matrix_tree_impl {
     FormDenseMatrixHelper(root, fock_out, 0.0);
     
   } // FormDenseMatrix()
-  
-  void FormDenseMatrixHelper(MatrixTree* node, Matrix* mat_out, 
-                             double approx_val) {
-    
-    if (node->left()) {
-      // recursively build the matrix
-      // how to pass the submatrices around? 
-      FormDenseMatrixHelper(node->left(), &mat_out, 
-                            approx_val + node->approx_val());
-      
-      Matrix right_submat;
-      FormDenseMatrixHelper(node->right(), &mat_out, 
-                            approx_val + node->approx_val());
-      
-    } // not leaf
-    else {
-      
-      double this_approx = approx_val + node->approx_val();
-      
-      // Iterate over the fock_entries matrix
-      for (index_t i = 0; i < node->row_indices().size(); i++) {
-        
-        index_t row_ind = node->row_indices()[i];
-        
-        for (index_t j = 0; j < node->col_indices().size(); j++) {
-          
-          index_t col_ind = node->col_indices()[j];
-          double this_val = fock_out->get(row_ind, col_ind) + this_approx 
-                            + node->fock_entries()->get(i,j);
-          
-          fock_out->set(row_ind, col_ind, this_val);
-          
-          // handle below the diagonal
-          if (!node->on_diagonal()) {
-            fock_out->set(col_ind, row_ind, this_val); 
-          }
-          
-        } // for j
-      } // for i
-      
-    } // leaf
-    
-  } // FormDensityMatrixHelper()
   
   MatrixTree* CreateMatrixTree(BasisShellTree* shell_root, 
                                const ArrayList<BasisShell*>& shells,
@@ -93,7 +117,7 @@ namespace matrix_tree_impl {
     
     DEBUG_ASSERT(cols->height() > 0 || rows->height() > 0);
     
-    if (rows->height() >= cols()->height()) {
+    if (rows->height() >= cols->height()) {
       // split rows
       
       if (rows->left()->end() > cols->begin()) {
@@ -125,10 +149,10 @@ namespace matrix_tree_impl {
     else {
       // splitting the cols
       
-      if (rows->end() > cols->right->begin()) {
+      if (rows->end() > cols->right()->begin()) {
         // fine to split cols 
       }
-      else if (cols->left->height() == 0) {
+      else if (cols->left()->height() == 0) {
         // cols are too low to split twice, needs to be a leaf
         
         node->make_leaf();
@@ -144,7 +168,11 @@ namespace matrix_tree_impl {
       MatrixTree* right_child = new MatrixTree();
       
       left_child->Init(rows, cols->left(), shells, density);
+      left_child->add_approx(node->approx_val());
       right_child->Init(rows, cols->right(), shells, density);
+      right_child->add_approx(node->approx_val());
+      // it's been passed down to the children
+      node->set_approx_val(0.0);
       
       node->set_children(left_child, right_child);
       
