@@ -1041,6 +1041,7 @@ namespace eri {
   
    
    // IMPORTANT: currently assumes the rows and columns are contiguous
+  // could rewrite with two for loops to get rid of this assumption
   void AddSubmatrix(const ArrayList<index_t>& rows,
                     const ArrayList<index_t>& cols,
                     const Matrix& submat, Matrix* out_mat) {
@@ -1062,6 +1063,15 @@ namespace eri {
     }
     
   } // AddSubmatrix
+  
+  // Experimental version for use with MatrixTree
+  void AddSubmatrix(const ArrayList<index_t>& rows,
+                    const ArrayList<index_t>& cols,
+                    const Matrix& submat, Matrix* out_mat) {
+    
+    
+    
+  }
   
 
   double DensityBound(ShellPair& A_pair, ShellPair& B_pair, 
