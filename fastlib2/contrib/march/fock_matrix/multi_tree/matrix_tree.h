@@ -67,7 +67,7 @@ private:
   Matrix* fock_entries_;
   
   bool on_diagonal_;
-  
+    
 public:
   
   ArrayList<index_t>& row_indices() {
@@ -92,6 +92,10 @@ public:
   
   void add_approx(double val) {
     approx_val_ += val;
+  }
+  
+  void set_approx_val(double val) {
+    approx_val_ = val;
   }
   
   MatrixTree* left() {
@@ -139,8 +143,8 @@ public:
     is_leaf_ = true;
     
     fock_entries_ = new Matrix();
-    fock_entries_.Init(row_indices_.size(), col_indices_.size());
-    fock_entries_.SetZero(); 
+    fock_entries_->Init(row_indices_.size(), col_indices_.size());
+    fock_entries_->SetZero(); 
     
   }
   
@@ -155,20 +159,20 @@ public:
     
     row_indices_.Init();
     for (index_t i = row_shells_->begin(); i < row_shells_->end(); i++) {
-      row_indices_.AppendCopy(shells_[i]->matrix_indices());
+      row_indices_.AppendCopy(shells[i]->matrix_indices());
     }
     DEBUG_ASSERT(row_indices_.size() > 0);
     
     col_indices_.Init();
     for (index_t i = col_shells_->begin(); i < col_shells_->end(); i++) {
-      col_indices_.AppendCopy(shells_[i]->matrix_indices());
+      col_indices_.AppendCopy(shells[i]->matrix_indices());
     }
     DEBUG_ASSERT(col_indices_.size() > 0);
 
     density_bounds_.InitEmptySet();
     for (index_t i = 0; i < row_indices_.size(); i++) {
       for (index_t j = 0; j < col_indices_.size(); j++) {
-        density_bounds_ |= density.get(row_indices_[i], row_indices[j]);
+        density_bounds_ |= density.get(row_indices_[i], col_indices_[j]);
       }
     }
     
@@ -195,12 +199,26 @@ public:
     
     if (is_leaf_) {
       fock_entries_ = new Matrix();
-      fock_entries_.Init(row_indices_.size(), col_indices_.size());
-      fock_entries_.SetZero();
+      fock_entries_->Init(row_indices_.size(), col_indices_.size());
+      fock_entries_->SetZero();
     }
     else {
       fock_entries_ = NULL; 
     }
+    
+  } // Init()
+  
+  void Print() {
+    
+    //row_indices_.Print("row_indices");
+    //col_indices_.Print("col_indices");
+    printf("row begin: %d, row count: %d, row end: %d\n", row_shells_->begin(),
+           row_shells_->count(), row_shells_->end());
+    printf("col begin: %d, col count: %d, col end: %d\n", col_shells_->begin(),
+           col_shells_->count(), col_shells_->end());
+    printf("density bounds: (%g, %g)\n", density_bounds_.lo, density_bounds_.hi);
+    printf("left child: %p, right child: %p\n", left_, right_);
+    printf("\n");
     
   }
     

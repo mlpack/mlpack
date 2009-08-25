@@ -2,7 +2,7 @@
 #define MULTI_TREE_FOCK_H
 
 #include "fastlib/fastlib.h"
-#include "square_fock_tree.h"
+#include "matrix_tree_impl.h"
 
 const fx_entry_doc multi_tree_fock_entries[] = {
   {"epsilon", FX_PARAM, FX_DOUBLE, NULL, 
@@ -62,144 +62,13 @@ const fx_module_doc multi_mod_doc = {
 
 class MultiTreeFock {
 
-private:
-
-  class SingleNodeStat {
-  
-   private:
-  
-    // The node's index in a pre-order depth-first traversal of the tree
-    index_t node_index_;
-    
-    double min_bandwidth_;
-    double max_bandwidth_;
-    
-    index_t height_;
-    
-    // I don't think these matter in single nodes
-    double density_upper_bound_;
-    double density_lower_bound_;
-    
-    // the minimum and maximum normalization factor for this node
-    double max_normalization_;
-    double min_normalization_;
-    
-   public:
-
-    void Init() {
-      
-      node_index_ = -1;
-      min_bandwidth_ = 0.0;
-      max_bandwidth_ = DBL_MAX;
-      
-    } // Init
-  
-    void Init(const Matrix& matrix, index_t start, index_t count) {
-      
-      Init();
-      height_ = 0;
-      
-      // need to set min and max bandwidth here
-      // can't, the entries are being permuted, so I can't reference the 
-      // exponents_ vector
-      
-    } // Init (leaves)
-    
-    void Init(const Matrix& matrix, index_t start, index_t count, 
-              const SingleNodeStat& left, const SingleNodeStat& right) {
-      
-      Init();
-      height_ = max(left.height(), right.height()) + 1;
-      
-      min_bandwidth_ = min(left.min_bandwidth(), right.min_bandwidth());
-      max_bandwidth_ = max(left.max_bandwidth(), right.max_bandwidth());
-      
-    } // Init (non-leaves)
-    
-    index_t height() const {
-      return height_;
-    } // height()
-    
-    void set_height(index_t new_height) {
-      height_ = new_height;
-    } // set_height
-    
-    
-    index_t node_index() const {
-      return node_index_;
-    } // node_index
-    
-    void set_node_index(index_t new_index) {
-      node_index_ =  new_index;
-    } // set_node_index
-    
-    double min_bandwidth() const {
-      return min_bandwidth_; 
-    } // min_bandwdith
-    
-    void set_min_bandwidth(double new_min) {
-      DEBUG_ASSERT(new_min <= max_bandwidth_);
-      DEBUG_ASSERT(new_min > 0);
-      min_bandwidth_ = new_min;
-    } //set_min_bandwidth
-    
-    void set_max_bandwidth(double new_max) {
-      DEBUG_ASSERT(new_max >= min_bandwidth_);
-      DEBUG_ASSERT(new_max > 0);
-      max_bandwidth_ = new_max;
-    } // set_max_bandwidth
-    
-    double max_bandwidth() const {
-      return max_bandwidth_;
-    } // max_bandwidth_
-    
-    void set_density_upper_bound(double upper_bound) {
-      density_upper_bound_ = upper_bound;
-    } // set_density_upper_bound_()
-    
-    double density_upper_bound() const {
-      return density_upper_bound_;
-    } // density_upper_bound()
-    
-    void set_density_lower_bound(double lower_bound) {
-      density_lower_bound_ = lower_bound;
-    } // set_density_lower_bound_()
-    
-    double density_lower_bound() const {
-      return density_lower_bound_;
-    } // density_lower_bound()
-    
-    double max_normalization() const {
-      return max_normalization_;
-    }
-    
-    void set_max_normalization(double max_in) {
-      max_normalization_ = max_in;
-    }
-    
-    double min_normalization() const {
-      return min_normalization_;
-    }
-    
-    void set_min_normalization(double min_in) {
-      min_normalization_ = min_in;
-    }
-    
-  }; // class SingleNodeStat
-  
- public:
-  
-  typedef BinarySpaceTree<DHrectBound<2>, Matrix, SingleNodeStat> FockTree; 
-  
-  typedef SquareFockTree<FockTree> SquareTree;
-  
  private:
     
   // The tree 
-  FockTree* tree_;
+  BasisShellTree* tree_;
   
   // the square tree
-  SquareTree* square_tree_;
+  MatrixTree* matrix_tree_;
   
   // Centers of the basis functions
   // assuming one entry per function
@@ -255,7 +124,7 @@ private:
   index_t traversal_index_;
   
   // Stores the permutation used in tree-building
-  ArrayList<index_t> old_from_new_centers_;
+  ArrayList<index_t> old_from_new_shells_;
   
   // Size of leaves in the tree
   int leaf_size_;
@@ -275,7 +144,10 @@ private:
   double pow_pi_2point5_;
   
   // the number of times the schwartz bound works for a prune
-  index_t num_schwartz_prunes_;;
+  index_t num_schwartz_prunes_;
+  
+  ArrayList<BasisShell> shell_list_;
+  ArrayList<BasisShell*> shell_ptr_list_;
   
   
   //////////////// Functions /////////////////////////////
@@ -462,7 +334,8 @@ private:
     
     exponents_.Copy(exp_in.ptr(), centers_.n_cols());
     momenta_.Copy(momenta_in.ptr(), centers_.n_cols());
-    
+    density_matrix_.Copy(density_in);
+
     epsilon_ = fx_param_double(module_, "epsilon", 0.01);
     
     epsilon_split_ = fx_param_double(module_, "epsilon_split", 0.5);
@@ -479,21 +352,15 @@ private:
     coulomb_base_cases_ = 0;
     exchange_base_cases_ = 0;
     
-    // warning: only works for s and p functions
-    number_of_basis_functions_ = centers_.n_cols() + 
-        (index_t)2*(index_t)la::Dot(momenta_, momenta_);
+    
+    number_of_basis_functions_ = eri::CreateShells(centers_, exponents_, momenta_,
+                                                   &shell_list_);
     fx_result_int(module_, "N", number_of_basis_functions_);
     
-    coulomb_matrix_.Init(number_of_basis_functions_, 
-                         number_of_basis_functions_);
-    coulomb_matrix_.SetZero();
-    
-    exchange_matrix_.Init(number_of_basis_functions_, 
-                          number_of_basis_functions_);
-    exchange_matrix_.SetZero();
-    
-    fock_matrix_.Init(number_of_basis_functions_, number_of_basis_functions_);
-    fock_matrix_.SetZero();
+    shell_ptr_list_.Init(number_of_basis_functions_);
+    for (index_t i = 0; i < number_of_basis_functions_; i++) {
+      shell_ptr_list_[i] = &(shell_list_[i]);
+    }
     
     leaf_size_ = fx_param_int(module_, "leaf_size", 10);
     
@@ -502,46 +369,23 @@ private:
     fx_timer_start(module_, "multi_time");
     
     fx_timer_start(module_, "tree_building");
-    tree_ = tree::MakeKdTreeMidpoint<FockTree>(centers_, leaf_size_, 
-                                               &old_from_new_centers_, NULL);
+    tree_ = shell_tree_impl::CreateShellTree(shell_ptr_list_, leaf_size_, 
+                                             old_from_new_shells_, NULL);
                               
-    // set up the min and max exponents                 
-    SetExponentBounds_(tree_);
-
     fx_timer_stop(module_, "tree_building");
 
-                                               
-    // Do I use this for anything?
-    // Set up the indices of the nodes for symmetry pruning
-    traversal_index_ = 0;
+    printf("====Matrix Tree Building====\n");
     
-    // IMPORTANT: permute the exponents, mommenta, and density
+    fx_timer_start(module_, "matrix_tree_building");
+    matrix_tree_ = matrix_tree_impl::CreateMatrixTree(&tree_, shell_ptr_list_, 
+                                                      density_);
     
-    ApplyPermutation(old_from_new_centers_, &exponents_);
-    ApplyPermutation(old_from_new_centers_, &momenta_);
-
-    printf("====Square Tree Building====\n");
+    fx_timer_stop(module_, "matrix_tree_building");
     
-    fx_timer_start(module_, "square_tree_building");
-    square_tree_ = new SquareTree();
-    square_tree_->Init(tree_, tree_, number_of_basis_functions_, centers_, 
-                       exponents_);
-    //square_tree_->SetStatsAndBounds(centers_, exponents_);
-    fx_timer_stop(module_, "square_tree_building");
-    
-    density_matrix_.Init(number_of_basis_functions_, number_of_basis_functions_);
-    // density is permuted here
-    UpdateDensity(density_in);
     
     
     relative_error_ = !fx_param_exists(module_, "absolute_error");
     schwartz_pruning_ = fx_param_bool(module_, "schwartz_pruning", false);
-    
-    square_tree_->stat().set_remaining_epsilon(epsilon_split_ * epsilon_);
-    
-    PropagateBoundsDown_(square_tree_);
-    
-    //square_tree_->Print();
     
     fx_timer_stop(module_, "multi_time");
 
@@ -578,7 +422,7 @@ private:
     fock_matrix_.Destruct();
     fock_matrix_.Init(1,1);
     
-    old_from_new_centers_.Clear();
+    old_from_new_shells_.Clear();
     //old_from_new_centers_.Init(1);
     
     density_matrix_.Destruct();

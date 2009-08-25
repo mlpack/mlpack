@@ -73,7 +73,7 @@ public:
   }
   
   index_t end() const {
-    return(begin_ + count_);
+    return(start_index_ + num_shells_);
   }
   
   bool single_momentum() const {
@@ -98,6 +98,14 @@ public:
   
   index_t height() const {
     return height_; 
+  }
+  
+  BasisShellTree* left() {
+    return left_; 
+  }
+
+  BasisShellTree* right() {
+    return right_; 
   }
   
   /*
