@@ -2,7 +2,7 @@ librule(
     name = "thor_npc",                       # this line can be safely omitted
     sources = [],                            # files that must be compiled
     headers = ["thor_npoint.h", "dfs3.h", "dfs3_impl.h", "two_point.h",
-               "three_point.h"],
+               "three_point.h", "thor_3point.h"],
     deplibs =
     ["fastlib:fastlib_int","fastlib/thor:thor"]     
     )
@@ -22,7 +22,12 @@ binrule(
     deplibs = [":thor_2pc"]
     )
 
-
+binrule(
+    name = "thor_3pc_bin",
+    sources = ["thor_3pt_main.cc"],
+    headers = [],
+    deplibs = [":thor_npc"]
+    )
 
 
 # to build:
