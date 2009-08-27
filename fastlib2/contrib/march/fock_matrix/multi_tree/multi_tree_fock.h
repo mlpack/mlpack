@@ -143,7 +143,12 @@ class MultiTreeFock {
    */
   bool SplitQuery(MatrixTree* query, MatrixTree* reference);
   
-  bool CanPrune(MatrixTree* query, MatrixTree* reference);
+  void NodeBounds(MatrixTree* query, MatrixTree* reference,
+                  double* max_coulomb, double* max_exchange,
+                  double* min_coulomb, doulbe* min_exchange);
+  
+  bool CanPrune(MatrixTree* query, MatrixTree* reference,
+                double* approx_coulomb, double* approx_exchange);
   
   void DepthFirstRecursion(MatrixTree* query, MatrixTree* reference);
   
