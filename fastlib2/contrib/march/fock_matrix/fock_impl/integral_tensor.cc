@@ -287,7 +287,8 @@ double IntegralTensor::ref(index_t a, index_t b, index_t c, index_t d) {
 
 void IntegralTensor::ContractCoulomb(const ArrayList<index_t>& rho_ind,
                                      const ArrayList<index_t>& sigma_ind, 
-                                     const Matrix& density, Matrix* coulomb) {
+                                     const Matrix& density, Matrix* coulomb, 
+                                     bool same_ref) {
   
   // sum over index 3 and 4 and contract into a matrix of size 
   // mu_ind.size() * nu_ind.size()
@@ -297,7 +298,7 @@ void IntegralTensor::ContractCoulomb(const ArrayList<index_t>& rho_ind,
   DEBUG_ASSERT(rho_ind.size() == dim_c_);
   DEBUG_ASSERT(sigma_ind.size() == dim_d_);
   
-  bool same_ref = (rho_ind[0] == sigma_ind[0]) && (rho_ind.back() == sigma_ind.back());
+  //bool same_ref = (rho_ind[0] == sigma_ind[0]) && (rho_ind.back() == sigma_ind.back());
 
   for (index_t a = 0; a < dim_a_; a++) {
     

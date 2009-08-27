@@ -11,20 +11,29 @@
 
 namespace matrix_tree_impl {
 
-  void FormDenseMatrixHelper(MatrixTree* node, Matrix* mat_out, 
-                             double approx_val) {
+  void FormDenseMatrixHelper(MatrixTree* node, Matrix* coul_out, Matrix* exc_out,
+                             double coul_approx, double exc_approx) {
     
-    double this_approx = node->approx_val() + approx_val;
+    double this_coul_approx = node->coulomb_approx_val() + coul_approx;
+    double this_exc_approx = node->exchange_approx_val() + exc_approx;
+    
+    //printf("coul_approx: %g, exc_approx: %g\n", this_coul_approx, this_exc_approx);
     
     if (node->left()) {
       // recursively build the matrix
       // how to pass the submatrices around? 
-      FormDenseMatrixHelper(node->left(), mat_out, this_approx);
-      
-      FormDenseMatrixHelper(node->right(), mat_out, this_approx);
+      FormDenseMatrixHelper(node->left(), coul_out, exc_out, this_coul_approx,
+                            this_exc_approx);
+      FormDenseMatrixHelper(node->right(), coul_out, exc_out, this_coul_approx,
+                            this_exc_approx);
       
     } // not leaf
-    else if (node->fock_entries()){
+    else if (node->coulomb_entries()){
+      
+      //node->coulomb_entries()->PrintDebug("Coulomb Base");
+      
+      
+      DEBUG_ASSERT(node->exchange_entries());
       
       // Iterate over the fock_entries matrix
       for (index_t i = 0; i < node->row_indices().size(); i++) {
@@ -34,14 +43,20 @@ namespace matrix_tree_impl {
         for (index_t j = 0; j < node->col_indices().size(); j++) {
           
           index_t col_ind = node->col_indices()[j];
-          double this_val = mat_out->get(row_ind, col_ind) + this_approx 
-          + node->fock_entries()->get(i,j);
+          double coul_val = coul_out->get(row_ind, col_ind) + this_coul_approx 
+                            + node->coulomb_entries()->get(i,j);
+          double exc_val = exc_out->get(row_ind, col_ind) + this_exc_approx 
+                           + node->exchange_entries()->get(i,j);
           
-          mat_out->set(row_ind, col_ind, this_val);
+          //printf("i: %d, j: %d, row_end: %d, col_ind: %d, prev_val: %g, new_val: %g\n", i, j, row_ind, col_ind, 
+          //       coul_out->get(row_ind, col_ind), node->coulomb_entries()->get(i,j));
+          coul_out->set(row_ind, col_ind, coul_val);
+          exc_out->set(row_ind, col_ind, exc_val);
           
           // handle below the diagonal
-          if (!node->on_diagonal()) {
-            mat_out->set(col_ind, row_ind, this_val); 
+          if (!(node->on_diagonal())) {
+            coul_out->set(col_ind, row_ind, coul_val); 
+            exc_out->set(col_ind, row_ind, exc_val); 
           }
           
         } // for j
@@ -59,16 +74,16 @@ namespace matrix_tree_impl {
         for (index_t j = 0; j < node->col_indices().size(); j++) {
           
           index_t col_ind = node->col_indices()[j];
-          double this_val = mat_out->get(row_ind, col_ind) + this_approx;
+          double coul_val = coul_out->get(row_ind, col_ind) + this_coul_approx;
+          double exc_val = exc_out->get(row_ind, col_ind) + this_exc_approx;
           
-          mat_out->set(row_ind, col_ind, this_val);
+          coul_out->set(row_ind, col_ind, coul_val);
+          exc_out->set(row_ind, col_ind, exc_val);
           
           // handle below the diagonal
           if (!node->on_diagonal()) {
-            // matrix should always be symmetric
-            DEBUG_ASSERT(mat_out->get(row_ind, col_ind) 
-                         == mat_out->get(col_ind, row_ind));
-            mat_out->set(col_ind, row_ind, this_val); 
+            coul_out->set(col_ind, row_ind, coul_val); 
+            exc_out->set(col_ind, row_ind, exc_val);
           }
           
         } // for j
@@ -78,15 +93,21 @@ namespace matrix_tree_impl {
     
   } // FormDensityMatrixHelper()
   
-  void FormDenseMatrix(MatrixTree* root, Matrix* fock_out) {
+  void FormDenseMatrix(MatrixTree* root, Matrix* coulomb_out, 
+                       Matrix* exchange_out) {
     
     // The root should represent a square matrix
     DEBUG_ASSERT(root->row_indices().size() == root->col_indices().size());
     
-    fock_out->Init(root->row_indices().size(), root->row_indices().size());
-    fock_out->SetZero();
+    coulomb_out->Init(root->row_indices().size(), root->row_indices().size());
+    coulomb_out->SetZero();
+    exchange_out->Init(root->row_indices().size(), root->row_indices().size());
+    exchange_out->SetZero();
     
-    FormDenseMatrixHelper(root, fock_out, 0.0);
+    //root->coulomb_entries()->PrintDebug("Coulomb Entries");
+    //root->exchange_entries()->PrintDebug("Exchange Entries");
+    
+    FormDenseMatrixHelper(root, coulomb_out, exchange_out, 0.0, 0.0);
     
   } // FormDenseMatrix()
   
@@ -101,8 +122,8 @@ namespace matrix_tree_impl {
     
   } // CreateMatrixTree()
   
-  void SplitMatrixTree(MatrixTree* node, const ArrayList<BasisShell*>& shells,
-                       const Matrix& density) {
+  success_t SplitMatrixTree(MatrixTree* node, const ArrayList<BasisShell*>& shells,
+                            const Matrix& density) {
     
     DEBUG_ASSERT(!node->is_leaf());
     
@@ -114,6 +135,9 @@ namespace matrix_tree_impl {
     // for simplicity
     BasisShellTree* rows = node->row_shells();
     BasisShellTree* cols = node->col_shells();
+    
+    MatrixTree* left_child;
+    MatrixTree* right_child;
     
     DEBUG_ASSERT(cols->height() > 0 || rows->height() > 0);
     
@@ -127,9 +151,15 @@ namespace matrix_tree_impl {
         // the rows are too low to split
         // this is either a leaf, or we try to split the columns
         // I don't think splitting the columns would work
-        
+        //printf("Making leaf\n");
+        node->set_rows(rows->right());
+        node->row_indices().Clear();
+        for (index_t i = node->row_shells()->begin(); 
+             i < node->row_shells()->end(); i++) {
+            node->row_indices().AppendCopy(shells[i]->matrix_indices());
+        }
         node->make_leaf();
-        return;
+        return SUCCESS_FAIL;
         
       }
       else {
@@ -137,13 +167,12 @@ namespace matrix_tree_impl {
         rows = rows->right();
       }
       
-      MatrixTree* left_child = new MatrixTree();
-      MatrixTree* right_child = new MatrixTree();
+      left_child = new MatrixTree();
+      right_child = new MatrixTree();
       
       left_child->Init(rows->left(), cols, shells, density);
       right_child->Init(rows->right(), cols, shells, density);
       
-      node->set_children(left_child, right_child);
       
     } // splitting row shells
     else {
@@ -155,8 +184,15 @@ namespace matrix_tree_impl {
       else if (cols->left()->height() == 0) {
         // cols are too low to split twice, needs to be a leaf
         
+        //printf("Making leaf\n");
+        node->set_cols(cols->left());
+        node->col_indices().Clear();
+        for (index_t i = node->col_shells()->begin(); 
+             i < node->col_shells()->end(); i++) {
+            node->col_indices().AppendCopy(shells[i]->matrix_indices());
+        }
         node->make_leaf();
-        return;
+        return SUCCESS_FAIL;
         
       }
       else {
@@ -164,20 +200,29 @@ namespace matrix_tree_impl {
         cols = cols->left();
       }
       
-      MatrixTree* left_child = new MatrixTree();
-      MatrixTree* right_child = new MatrixTree();
+      left_child = new MatrixTree();
+      right_child = new MatrixTree();
       
       left_child->Init(rows, cols->left(), shells, density);
-      left_child->add_approx(node->approx_val());
       right_child->Init(rows, cols->right(), shells, density);
-      right_child->add_approx(node->approx_val());
-      // it's been passed down to the children
-      node->set_approx_val(0.0);
-      
-      node->set_children(left_child, right_child);
-      
       
     } // splitting col shells
+    
+    left_child->set_remaining_epsilon(node->remaining_epsilon());
+    left_child->set_remaining_references(node->remaining_references());
+    left_child->add_coulomb_approx(node->coulomb_approx_val());
+    left_child->add_exchange_approx(node->exchange_approx_val());
+    
+    right_child->set_remaining_epsilon(node->remaining_epsilon());
+    right_child->set_remaining_references(node->remaining_references());
+    right_child->add_coulomb_approx(node->coulomb_approx_val());
+    right_child->add_exchange_approx(node->exchange_approx_val());
+    
+    node->set_coulomb_approx_val(0.0);
+    node->set_exchange_approx_val(0.0);
+    node->set_children(left_child, right_child);
+    
+    return SUCCESS_PASS;
     
   } // SplitMatrixTree()
   

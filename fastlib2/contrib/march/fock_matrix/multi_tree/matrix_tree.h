@@ -21,6 +21,7 @@ private:
   
   /**
    * @brief The list of indices in the fock matrix this node is responsible for.
+   * These are the global indices - i.e. the ones to reference the density with
    */
   // how to set these correctly?  The shell tree doesn't know this, other than 
   // through the shells themselves. 
@@ -35,10 +36,10 @@ private:
   /**
    * @brief Any approximations that need to be added to all matrix entries in 
    * this node.
-   * This doesn't need to be passed down the tree, since the matrix reconstruction
-   * code will take care of this.
+   * This does need to be passed down the tree in order to prune accurately.
    */
-  double approx_val_;
+  double coulomb_approx_val_;
+  double exchange_approx_val_;
   
   /**
    * @brief Upper and lower bounds on the Fock matrix entries (i.e. query bounds)
@@ -64,9 +65,13 @@ private:
   
   bool is_leaf_;
   
-  Matrix* fock_entries_;
+  Matrix* coulomb_entries_;
+  Matrix* exchange_entries_;
   
   bool on_diagonal_;
+  
+  double remaining_epsilon_;
+  int remaining_references_;
     
 public:
   
@@ -86,22 +91,34 @@ public:
     return density_bounds_;
   }
   
-  double approx_val() const {
-    return approx_val_;
+  double coulomb_approx_val() const {
+    return coulomb_approx_val_;
+  }
+
+  double exchange_approx_val() const {
+    return exchange_approx_val_;
   }
   
-  void add_approx(double val) {
-    approx_val_ += val;
+  void add_coulomb_approx(double val) {
+    coulomb_approx_val_ += val;
   }
   
-  void set_approx_val(double val) {
-    approx_val_ = val;
+  void add_exchange_approx(double val) {
+    exchange_approx_val_ += val;
+  }
+  
+  void set_coulomb_approx_val(double val) {
+    coulomb_approx_val_ = val;
+  }
+
+  void set_exchange_approx_val(double val) {
+    exchange_approx_val_ = val;
   }
   
   MatrixTree* left() {
     return left_;
   }
-
+  
   MatrixTree* right() {
     return right_;
   }
@@ -110,20 +127,48 @@ public:
     return row_shells_;
   }
 
+  void set_rows(BasisShellTree* r) {
+    row_shells_ = r;
+  }
+  
   BasisShellTree* col_shells() {
     return col_shells_;
+  }
+  
+  void set_cols(BasisShellTree* c) {
+    col_shells_ = c;
   }
   
   bool is_leaf() const {
     return is_leaf_;
   }
   
-  Matrix* fock_entries() {
-    return fock_entries_; 
+  Matrix* coulomb_entries() {
+    return coulomb_entries_; 
+  }
+
+  Matrix* exchange_entries() {
+    return exchange_entries_; 
   }
   
   bool on_diagonal() const {
     return on_diagonal_;
+  }
+  
+  double remaining_epsilon() const {
+    return remaining_epsilon_;
+  }
+  
+  void set_remaining_epsilon(double eps) {
+    remaining_epsilon_ = eps;
+  }
+
+  int remaining_references() const {
+    return remaining_references_;
+  }
+  
+  void set_remaining_references(int ref) {
+    remaining_references_ = ref;
   }
   
   void set_children(MatrixTree* left, MatrixTree* right) {
@@ -139,12 +184,20 @@ public:
     
     // it shouldn't already be a leaf
     DEBUG_ASSERT(!is_leaf_);
+    // TODO: should I update the bounds here
+    // might not matter, because it's a leaf I don't need to care - only 
+    // doing the base case
+    // I do need to update the row and column indices
     
     is_leaf_ = true;
+    on_diagonal_ = (row_shells_ == col_shells_);
     
-    fock_entries_ = new Matrix();
-    fock_entries_->Init(row_indices_.size(), col_indices_.size());
-    fock_entries_->SetZero(); 
+    coulomb_entries_ = new Matrix();
+    coulomb_entries_->Init(row_indices_.size(), col_indices_.size());
+    coulomb_entries_->SetZero();
+    exchange_entries_ = new Matrix();
+    exchange_entries_->Init(row_indices_.size(), col_indices_.size());
+    exchange_entries_->SetZero();
     
   }
   
@@ -188,7 +241,8 @@ public:
     // pending references.  
     fock_bounds_.InitUniversalSet();
     
-    approx_val_ = 0.0;
+    coulomb_approx_val_ = 0.0;
+    exchange_approx_val_ = 0.0;
     
     // These start as NULL since we don't perform the split when creating the
     // tree node
@@ -198,12 +252,17 @@ public:
     is_leaf_ = (row_shells_->is_leaf() && col_shells_->is_leaf());
     
     if (is_leaf_) {
-      fock_entries_ = new Matrix();
-      fock_entries_->Init(row_indices_.size(), col_indices_.size());
-      fock_entries_->SetZero();
+      coulomb_entries_ = new Matrix();
+      coulomb_entries_->Init(row_indices_.size(), col_indices_.size());
+      coulomb_entries_->SetZero();
+      exchange_entries_ = new Matrix();
+      exchange_entries_->Init(row_indices_.size(), col_indices_.size());
+      exchange_entries_->SetZero();
+      
     }
     else {
-      fock_entries_ = NULL; 
+      coulomb_entries_ = NULL; 
+      exchange_entries_ = NULL; 
     }
     
   } // Init()
@@ -216,9 +275,15 @@ public:
            row_shells_->count(), row_shells_->end());
     printf("col begin: %d, col count: %d, col end: %d\n", col_shells_->begin(),
            col_shells_->count(), col_shells_->end());
+    printf("on diagonal: %d\n", on_diagonal());
     printf("density bounds: (%g, %g)\n", density_bounds_.lo, density_bounds_.hi);
     printf("left child: %p, right child: %p\n", left_, right_);
     printf("\n");
+    
+    if (left_) {
+      left_->Print();
+      right_->Print();
+    }
     
   }
     

@@ -1,5 +1,5 @@
 #include "fastlib/fastlib.h"
-//#include "contrib/march/fock_matrix/multi_tree/multi_tree_fock.h"
+#include "contrib/march/fock_matrix/multi_tree/multi_tree_fock.h"
 #include "contrib/march/fock_matrix/naive/naive_fock_matrix.h"
 #include "contrib/march/fock_matrix/prescreening/schwartz_prescreening.h"
 #include "contrib/march/fock_matrix/link/link.h"
@@ -71,8 +71,8 @@ const fx_submodule_doc fock_matrix_main_submodules[] = {
    "Parameters and results for Schwartz prescreening.\n"},
   {"naive", &naive_mod_doc,
    "Parameters and results for naive.\n"},
-  //{"multi", &multi_mod_doc,
-  // "Parameters and results for multi-tree algorithm.\n"},
+  {"multi", &multi_mod_doc,
+   "Parameters and results for multi-tree algorithm.\n"},
   FX_SUBMODULE_DOC_DONE
 };
 
@@ -558,7 +558,7 @@ int main(int argc, char* argv[]) {
   } // do_naive
   
     
-  /*
+  
   if (fx_param_exists(root_mod, "do_multi")) {
     
     printf("======== Multi-Tree Computation ========\n");
@@ -606,7 +606,7 @@ int main(int argc, char* argv[]) {
     } // cfmm comparison        
     
   } // do_multi
-  */
+  
 
   eri::ERIFree();
   

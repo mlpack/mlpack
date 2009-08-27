@@ -84,7 +84,7 @@ public:
    */
   void ContractCoulomb(const ArrayList<index_t>& rho_ind,
                        const ArrayList<index_t>& sigma_ind, 
-                       const Matrix& density, Matrix* coulomb);
+                       const Matrix& density, Matrix* coulomb, bool same_ref);
   
   /**
    * Only specify the pointers needed for the BasisShells

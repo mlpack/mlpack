@@ -22,6 +22,6 @@ binrule(
 binrule(
 	name="fock_matrix_main",
 	sources=["fock_matrix_main.cc"],
-	deplibs=["fastlib:fastlib", "contrib/march/fock_matrix/prescreening:schwartz_prescreening", "contrib/march/fock_matrix/naive:naive_fock_matrix", ":fock_matrix_comparison", "contrib/march/fock_matrix/chem_reader:chem_reader", "contrib/march/fock_matrix/link:link_exchange", "contrib/march/fock_matrix/cfmm:cfmm_coulomb"],
+	deplibs=["fastlib:fastlib", "contrib/march/fock_matrix/prescreening:schwartz_prescreening", "contrib/march/fock_matrix/naive:naive_fock_matrix", ":fock_matrix_comparison", "contrib/march/fock_matrix/chem_reader:chem_reader", "contrib/march/fock_matrix/link:link_exchange", "contrib/march/fock_matrix/cfmm:cfmm_coulomb", "contrib/march/fock_matrix/multi_tree:multi_tree_fock"],
         cflags = "-L/Users/march/Desktop/fastlib2/contrib/march/libint/lib -lint"
 )

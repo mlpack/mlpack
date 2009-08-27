@@ -249,7 +249,6 @@ namespace shell_tree_impl {
     node->bound().Init(3);
     node->exponents().InitEmptySet();
     node->momenta().InitEmptySet();
-    node->Init(0, shells.size());
     
     // need to iniut these to right ranges
     for (index_t i = 0; i < shells.size(); i++) {
@@ -260,6 +259,7 @@ namespace shell_tree_impl {
       
     }
     
+    node->Init(0, shells.size());
     
     SelectSplit(shells, node, leaf_size, old_from_new);
     
