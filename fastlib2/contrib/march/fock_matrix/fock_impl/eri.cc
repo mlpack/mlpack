@@ -1064,14 +1064,27 @@ namespace eri {
     
   } // AddSubmatrix
   
-  // Experimental version for use with MatrixTree
-  void AddSubmatrix(const ArrayList<index_t>& rows,
-                    const ArrayList<index_t>& cols,
+  void AddSubmatrix(index_t row_begin, index_t row_count,
+                    index_t col_begin, index_t col_count,
                     const Matrix& submat, Matrix* out_mat) {
     
+    Matrix col_slice;
+    out_mat->MakeColumnSlice(col_begin, col_count, &col_slice);
     
+    for (index_t i = 0; i < col_count; i++) {
+      // for each column, make the subvector and do the addition
+      
+      Vector out_row;
+      col_slice.MakeColumnSubvector(i, row_begin, row_count, &out_row);
+      
+      Vector in_row;
+      submat.MakeColumnVector(i, &in_row);
+      
+      la::AddTo(in_row, &out_row);
+      
+    }
     
-  }
+  } // AddSubmatrix
   
 
   double DensityBound(ShellPair& A_pair, ShellPair& B_pair, 

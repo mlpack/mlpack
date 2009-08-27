@@ -163,7 +163,8 @@ void SchwartzPrescreening::Compute() {
         
         integrals.ContractCoulomb(B_pair.M_Shell()->matrix_indices(),
                                   B_pair.N_Shell()->matrix_indices(),
-                                  density_matrix_, &coulomb_ij);
+                                  density_matrix_, &coulomb_ij, 
+                                  (B_pair.M_Shell() == B_pair.N_Shell()));
         //printf("Coulomb integral: (%d, %d, %d, %d): %g\n", i, j, k, l, 
         //       integrals.ref(0, 0, 0, 0) * density_.ref(k, l));
         

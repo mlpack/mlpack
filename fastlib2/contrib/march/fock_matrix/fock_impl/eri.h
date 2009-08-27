@@ -173,6 +173,10 @@ namespace eri {
   void AddSubmatrix(const ArrayList<index_t>& rows,
                     const ArrayList<index_t>& cols,
                     const Matrix& submat, Matrix* out_mat);
+
+  void AddSubmatrix(index_t row_begin, index_t row_count,
+                    index_t col_begin, index_t col_count,
+                    const Matrix& submat, Matrix* out_mat);
   
 
   ////////////////////////// External Integral Routines //////////////////

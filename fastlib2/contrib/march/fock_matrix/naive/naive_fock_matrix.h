@@ -122,7 +122,7 @@ class NaiveFockMatrix {
             
             integrals.ContractCoulomb(shells_[k].matrix_indices(),
                                       shells_[l].matrix_indices(),
-                                      density_, &coulomb_ij);
+                                      density_, &coulomb_ij, (k == l));
             //printf("Coulomb integral: (%d, %d, %d, %d): %g\n", i, j, k, l, 
             //       integrals.ref(0, 0, 0, 0) * density_.ref(k, l));
             

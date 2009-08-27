@@ -15,16 +15,16 @@
 
 namespace matrix_tree_impl {
   
-  void FormDenseMatrixHelper(MatrixTree* node, Matrix* mat_out, 
-                             double approx_val);
+  void FormDenseMatrixHelper(MatrixTree* node, Matrix* coul_out, Matrix* exc_out,
+                             double coul_approx, double exc_approx);
   
-  void FormDenseMatrix(MatrixTree* root, Matrix* fock_out);
+  void FormDenseMatrix(MatrixTree* root, Matrix* coul_out, Matrix* exc_out);
   
   MatrixTree* CreateMatrixTree(BasisShellTree* shell_root, 
                                const ArrayList<BasisShell*>& shells,
                                const Matrix& density);
   
-  void SplitMatrixTree(MatrixTree* node, const ArrayList<BasisShell*>& shells,
+  success_t SplitMatrixTree(MatrixTree* node, const ArrayList<BasisShell*>& shells,
                        const Matrix& density);
   
 }; // namespace matrix_tree_impl

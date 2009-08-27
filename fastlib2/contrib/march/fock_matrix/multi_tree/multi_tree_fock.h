@@ -71,7 +71,6 @@ class MultiTreeFock {
   MatrixTree* matrix_tree_;
   
   // Centers of the basis functions
-  // assuming one entry per function
   Matrix centers_;
   
   // The fx module
@@ -84,24 +83,12 @@ class MultiTreeFock {
   Vector momenta_;
   
   // The number of times an approximation is invoked
-  int coulomb_approximations_;
-  int exchange_approximations_;
+  int num_approximations_;
   
   index_t num_integrals_computed_;
   
   // The number of times the base case is called
-  int coulomb_base_cases_;
-  int exchange_base_cases_;
-  
-  // Controls the allocation of error between Coulomb and exchange computations
-  // A value of 1 allocates all of the error to the Coulomb computation
-  double epsilon_split_;
-  
-  // The value eps governing error
-  double epsilon_;
-  
-  double epsilon_coulomb_;
-  double epsilon_exchange_;
+  int num_base_cases_;
   
   // The return values are stored here
   // fock_matrix__.ref(i, j) is the fock matrix entry i, j
@@ -120,9 +107,6 @@ class MultiTreeFock {
   // this is the dimensionality of the density matrix
   index_t number_of_basis_functions_;
   
-  // what is this for?
-  index_t traversal_index_;
-  
   // Stores the permutation used in tree-building
   ArrayList<index_t> old_from_new_shells_;
   
@@ -132,16 +116,8 @@ class MultiTreeFock {
   // true if the error is relative, false if absolute
   bool relative_error_;
   
-  // if true, then attempts to prune Coulomb computations with the Schwartz 
-  // inequality estimate
-  // if this fails, it still tries the normal bounds
-  bool schwartz_pruning_;
-  
   // having trouble with bounds very close to zero
   double bounds_cutoff_;
-  
-  // all integrals have a factor of pi^(2.5)
-  double pow_pi_2point5_;
   
   // the number of times the schwartz bound works for a prune
   index_t num_schwartz_prunes_;
@@ -149,157 +125,34 @@ class MultiTreeFock {
   ArrayList<BasisShell> shell_list_;
   ArrayList<BasisShell*> shell_ptr_list_;
   
+  // The available error
+  double epsilon_;
   
   //////////////// Functions /////////////////////////////
   
-  /**
-   * Normalization constants
-   */
-  double NodeMaxNorm_(FockTree* mu);
   
-  double NodeMinNorm_(FockTree* mu);
   
-  double NodeAveNorm_(FockTree* mu);  
+  ///////// Recursive Calls ////////////////////////
+  
+  void ComputeBaseCase(MatrixTree* query, MatrixTree* reference);
   
   /**
-   * Returns the maximum integral between two square tree nodes
+   * Heuristic to determine which node to split
+   * Returns true if query should be split
+   * Returns false if reference
    */
-  double NodesMaxIntegral_(FockTree* mu, FockTree* nu, FockTree* rho, 
-                           FockTree* sigma);
-                           
-  double NodesMaxIntegral_(SquareTree* mu_nu, SquareTree* rho_sigma);                           
+  bool SplitQuery(MatrixTree* query, MatrixTree* reference);
   
-  double NodesMinIntegral_(FockTree* mu, FockTree* nu, FockTree* rho,
-                           FockTree* sigma);
-
-  double NodesMinIntegral_(SquareTree* mu_nu, SquareTree* rho_sigma);
+  bool CanPrune(MatrixTree* query, MatrixTree* reference);
   
-  double NodesMidpointIntegral_(FockTree* mu, FockTree* nu, FockTree* rho, 
-                                FockTree* sigma);
-                                
-                                
+  void DepthFirstRecursion(MatrixTree* query, MatrixTree* reference);
   
-  /**
-   * Determines if the pair of nodes represent a non square square node
-   * on the diagonal.  This is important for counting the number of repeated 
-   * reference pairs accurately.  
-   */
-  bool RectangleOnDiagonal_(FockTree* mu, FockTree* nu);
   
-  /**
-   * Counts the number of entries on the diagonal in the square node.  This 
-   * is needed for accurately counting how many references are involved in 
-   * an approximation.  
-   */
-  index_t CountOnDiagonal_(SquareTree* rho_sigma);
-  
-  /**
-   * Multiplies the upper and lower bounds, along with the approximation and
-   * the allowed error by the number of references, accounting for entries on 
-   * and off the diagonal.
-   */
-  void CountFactorCoulomb_(double* up_bound, double* low_bound, 
-                           double* approx_val, double* allowed_error,
-                           SquareTree* rho_sigma);
-  
-  /**
-   * Simpler than the Coulomb version since the node is assumed to not be on the 
-   * diagonal.
-   */
-  void CountFactorExchange_(double* up_bound, double* low_bound, 
-                            double* approx_val, double* allowed_error,
-                            SquareTree* rho_sigma);
-    
-  
-  /** 
-   * Multiplies the given upper and lower bounds by the appropriate density 
-   * matrix bounds, taking into account the possiblity of a negative density
-   * matrix entry.
-   */
-  void DensityFactor_(double* up_bound, double* low_bound, 
-                       double density_upper, double density_lower);    
-  
-  /**
-   * Computes an upper bound using the Schwartz inequality.  Uses a (loose)
-   * lower bound of 0.0
-   */
-  void SchwartzBound_(SquareTree* mu_nu, SquareTree* rho_sigma, double* upper,
-                      double* lower);
-  
-  /**
-   * Determine if the given bounds and square tree nodes permit a prune.  
-   * Assumes that the bounds have not been multiplied by the number of points
-   * in the reference nodes, which is done in this function.  
-   */
-  bool CanPruneCoulomb_(double* upper, double* lower, double* approx_val,
-                        SquareTree* mu_nu, SquareTree* rho_sigma);
-
-  /**
-   * Exchange variant of the above.
-   */
-  bool CanPruneExchange_(double* upper, double* lower, double* approx_val,
-                         SquareTree* mu_nu, SquareTree* rho_sigma);
-
-  /**
-   * Determines if the Coulomb interaction between the given square nodes can 
-   * currently be approximated.  If so, then *approx_val holds the estimate
-   */
-  bool CanApproximateCoulomb_(SquareTree* mu_nu, SquareTree* rho_sigma, 
-                              double* approx_val, double* lost_error_out);
-  
-  /**
-   * Determines if the Exchange interaction can be approximated, and if so, 
-   * fills in *approx_val with the estimate.
-   */
-  bool CanApproximateExchange_(SquareTree* mu_nu, SquareTree* rho_sigma, 
-                               double* approx_val, double* lost_error_out);
-             
- /**
-  * Base cases
-  */                  
-  void ComputeCoulombBaseCase_(SquareTree* mu_nu, 
-                               SquareTree* rho_sigma);
-
-  void ComputeExchangeBaseCase_(SquareTree* mu_nu, 
-                                SquareTree* rho_sigma);
-                                
-  /**
-   * Fill in approximations after pruning
-   *
-   * NOTE: these are almost the same function, the only difference is which
-   * matrix gets written to at the end
-   * How can I make them the same?
-   */
-  void FillApproximationCoulomb_(SquareTree* mu_nu, 
-                                 SquareTree* rho_sigma,
-                                 double integral_approximation,
-                                 double lost_error);
-                                 
-  void FillApproximationExchange_(SquareTree* mu_nu, 
-                                  SquareTree* rho_sigma,
-                                  double integral_approximation,
-                                  double lost_error);
-    
-
-
-  /**
-   * Keep track of bounds
-   */
-  void SetExponentBounds_(FockTree *tree);
-   
-  void PropagateBoundsDown_(SquareTree* query);
-  
-  void PropagateBoundsUp_(SquareTree* query);
-
-  void SetEntryBounds_(SquareTree *root);
-
-  void ResetTreeForExchange_(SquareTree* root);
-  
-  void ResetTree_(SquareTree* root);
   
   /**
    * PermuteMatrices and vectors
    */
+  /*
   void ApplyPermutation(ArrayList<index_t>& old_from_new, Matrix* mat);
 
   void ApplyPermutation(ArrayList<index_t>& old_from_new, Vector* vec);
@@ -307,19 +160,8 @@ class MultiTreeFock {
   void UnApplyPermutation(ArrayList<index_t>& old_from_new, Matrix* mat);
 
   void UnApplyPermutation(ArrayList<index_t>& old_from_new, Vector* vec);
+   */
 
-
-  /**
-   * Recursive calls
-   */  
-  void ComputeCoulombRecursion_(SquareTree* query, 
-                                SquareTree* ref);
-  
-  
-  void ComputeExchangeRecursion_(SquareTree* query, 
-                                 SquareTree* ref);
-                                
-  
   
  public:
  
@@ -338,27 +180,16 @@ class MultiTreeFock {
 
     epsilon_ = fx_param_double(module_, "epsilon", 0.01);
     
-    epsilon_split_ = fx_param_double(module_, "epsilon_split", 0.5);
-    if ((epsilon_split_ > 1.0) || (epsilon_split_ < 0.0)) {
-      FATAL("Epsilon split must be between 0 and 1.\n");
-    }
-    
-    epsilon_coulomb_ = epsilon_split_ * epsilon_;
-    epsilon_exchange_ = (1 - epsilon_split_) * epsilon_;
-    DEBUG_ASSERT(epsilon_coulomb_ + epsilon_exchange_ <= epsilon_);
-    
-    coulomb_approximations_ = 0;
-    exchange_approximations_ = 0;
-    coulomb_base_cases_ = 0;
-    exchange_base_cases_ = 0;
-    
+    num_approximations_ = 0;
+    num_integrals_computed_ = 0;
+    num_base_cases_ = 0;
     
     number_of_basis_functions_ = eri::CreateShells(centers_, exponents_, momenta_,
                                                    &shell_list_);
     fx_result_int(module_, "N", number_of_basis_functions_);
     
-    shell_ptr_list_.Init(number_of_basis_functions_);
-    for (index_t i = 0; i < number_of_basis_functions_; i++) {
+    shell_ptr_list_.Init(shell_list_.size());
+    for (index_t i = 0; i < shell_list_.size(); i++) {
       shell_ptr_list_[i] = &(shell_list_[i]);
     }
     
@@ -370,22 +201,21 @@ class MultiTreeFock {
     
     fx_timer_start(module_, "tree_building");
     tree_ = shell_tree_impl::CreateShellTree(shell_ptr_list_, leaf_size_, 
-                                             old_from_new_shells_, NULL);
+                                             &old_from_new_shells_, NULL);
                               
     fx_timer_stop(module_, "tree_building");
 
     printf("====Matrix Tree Building====\n");
     
     fx_timer_start(module_, "matrix_tree_building");
-    matrix_tree_ = matrix_tree_impl::CreateMatrixTree(&tree_, shell_ptr_list_, 
-                                                      density_);
+    matrix_tree_ = matrix_tree_impl::CreateMatrixTree(tree_, shell_ptr_list_, 
+                                                      density_matrix_);
     
     fx_timer_stop(module_, "matrix_tree_building");
     
     
     
     relative_error_ = !fx_param_exists(module_, "absolute_error");
-    schwartz_pruning_ = fx_param_bool(module_, "schwartz_pruning", false);
     
     fx_timer_stop(module_, "multi_time");
 
@@ -395,10 +225,7 @@ class MultiTreeFock {
       bounds_cutoff_ = 0.0;
     }
     
-    pow_pi_2point5_ = pow(math::PI, 2.5);
-    
     num_schwartz_prunes_ = 0;
-    num_integrals_computed_ = 0;
     
   } // Init()
   
@@ -432,7 +259,7 @@ class MultiTreeFock {
   
   // Should see how CFMM code unpermutes and use that
   void GetPermutation(ArrayList<index_t>* perm) {
-    perm->InitCopy(old_from_new_centers_);
+    perm->InitCopy(old_from_new_shells_);
   } // GetPermutation()
   
   /**
