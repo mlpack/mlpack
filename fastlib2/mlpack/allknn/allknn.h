@@ -534,6 +534,8 @@ class AllkNN {
   }
   void Init(const Matrix& queries_in, const Matrix& references_in, 
       index_t leaf_size, index_t knns, const char *mode="dual") {
+    // set module_ toa default value of NULL to avoid future badness
+    module_ = NULL;
     
     // track the number of prunes
     number_of_prunes_ = 0;
@@ -578,6 +580,9 @@ class AllkNN {
 
   void Init(const Matrix& references_in, index_t leaf_size, 
             index_t knns, const char *mode="dual") {
+    // set module_ toa default value of NULL to avoid future badness
+    module_ = NULL;
+
     // track the number of prunes
     number_of_prunes_ = 0;
     mode_=mode; 
