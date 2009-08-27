@@ -71,7 +71,13 @@ private:
   bool on_diagonal_;
   
   double remaining_epsilon_;
+  
+  // The number of reference pairs this query hasn't yet accounted for
   int remaining_references_;
+  
+  // the number of pairs of functions contained in this node
+  // this counts those below the diagonal as well
+  int num_pairs_;
     
 public:
   
@@ -160,6 +166,7 @@ public:
   }
   
   void set_remaining_epsilon(double eps) {
+    DEBUG_ASSERT(eps >= 0.0);
     remaining_epsilon_ = eps;
   }
 
@@ -168,7 +175,17 @@ public:
   }
   
   void set_remaining_references(int ref) {
+    DEBUG_ASSERT(ref >= 0);
     remaining_references_ = ref;
+  }
+  
+  int num_pairs() const {
+    return num_pairs_;
+  }
+  
+  void set_num_pairs(int pairs) {
+    DEBUG_ASSERT(pairs >= 0);
+    num_pairs_ = pairs;
   }
   
   void set_children(MatrixTree* left, MatrixTree* right) {
@@ -190,7 +207,16 @@ public:
     // I do need to update the row and column indices
     
     is_leaf_ = true;
+    
+    // this should work here, since I should only be making "square" nodes
+    // into leaves
     on_diagonal_ = (row_shells_ == col_shells_);
+    
+    num_pairs_ = row_indices_.size() * col_indices_.size();
+    if (!on_diagonal_) {
+      // account for symmetry
+      num_pairs_ *= 2;
+    }
     
     coulomb_entries_ = new Matrix();
     coulomb_entries_->Init(row_indices_.size(), col_indices_.size());
@@ -229,7 +255,13 @@ public:
       }
     }
     
-    on_diagonal_ = (rows == cols);
+    // this doesn't account for the possibilty of a rectangular node 
+    // that straddles the diagonal
+    // I can determine this from the begin and end of the BasisShellTrees
+    on_diagonal_ = ((row_shells_->begin() >= col_shells_->begin()) 
+                    && (row_shells_->begin() < col_shells_->end())) ||
+                   ((col_shells_->begin() >= row_shells_->begin()) 
+                    && (col_shells_->begin() < row_shells_->end()));
     
     // Alternately, could use the Scwartz upper bound times the total number
     // of references
@@ -263,6 +295,32 @@ public:
     else {
       coulomb_entries_ = NULL; 
       exchange_entries_ = NULL; 
+    }
+    
+    DRange row_range;
+    row_range.Init((double)(row_shells_->begin()), (double)(row_shells_->end()));
+    DRange col_range;
+    col_range.Init((double)(col_shells_->begin()), (double)(col_shells_->end()));
+    row_range &= col_range;
+    int num_on_diagonal = (int)(row_range.width()) * (int)(row_range.width());
+    int num_off_diagonal = row_shells_->count() * col_shells_->count() - num_on_diagonal;
+    
+    if (!on_diagonal_) {
+      // off diagonal, count the entire thing twice
+      num_pairs_ = row_indices_.size() * col_indices_.size() * 2;
+    }
+    else {
+      // this is a rectangle on the diagonal
+      // this node should never be involved in a base case. 
+      DRange row_range;
+      row_range.Init((double)(row_shells_->begin()), (double)(row_shells_->end()));
+      DRange col_range;
+      col_range.Init((double)(col_shells_->begin()), (double)(col_shells_->end()));
+      row_range &= col_range;
+      int num_on_diagonal = (int)(row_range.width()) * (int)(row_range.width());
+      int num_off_diagonal = row_shells_->count() * col_shells_->count() - num_on_diagonal;
+      
+      num_pairs_ = 2 * num_off_diagonal + num_on_diagonal;
     }
     
   } // Init()

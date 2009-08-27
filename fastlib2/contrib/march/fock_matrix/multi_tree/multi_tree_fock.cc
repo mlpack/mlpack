@@ -142,28 +142,106 @@ bool MultiTreeFock::SplitQuery(MatrixTree* query, MatrixTree* reference) {
   
 } //SplitQuery()
 
+void MultiTreeFock::NodeBounds(MatrixTree* query, MatrixTree* reference,
+                               double* max_coulomb, double* max_exchange,
+                               double* min_coulomb, double* min_exchange) {
+  
+  
+  // compute these in ERI somehow
+  double max_coulomb_integral, min_coulomb_integral;
+  double max_exchange_integral, min_exchange_integral;
+  
+  // make calls to eri
+  // or possibly create an eri_bounds namespace to keep things neat
+  // choose which function to call based on momenta of the shells
+  
+    
+  // factor in the density
+  if (reference->density_bounds().hi >= 0.0) {
+    
+    *max_coulomb = reference->density_bound().hi * max_coulomb_integral;
+    *max_exchange = reference->density_bound().hi * max_exchange_integral;
+    
+  }
+  else {
+    
+    *max_coulomb = reference->density_bound().hi * min_coulomb_integral;
+    *max_exchange = reference->density_bound().hi * min_exchange_integral;
+    
+  }
+  
+  if (reference->density_bounds().lo >= 0.0) {
+    
+    *min_coulomb = reference->density_bound().lo * min_coulomb_integral;
+    *min_exchange = reference->density_bound().lo * min_exchange_integral;
+    
+  }
+  else {
+
+    *min_coulomb = reference->density_bound().lo * max_coulomb_integral;
+    *min_exchange = reference->density_bound().lo * max_exchange_integral;
+
+  }
+  
+} // NodesUpperBound()
+
 // For hybrid expansion, this may have to work on a query and list of refs
-bool MultiTreeFock::CanPrune(MatrixTree* query, MatrixTree* reference) {
+bool MultiTreeFock::CanPrune(MatrixTree* query, MatrixTree* reference, 
+                             double* approx_coulomb, double* approx_exchange,
+                             double* lost_error) {
   
   // to be implemented later
-  return false;
   
-  // compute upper and lower bounds
-  /*
-  double max_fock = NodesUpperBound(query, reference);
-  double min_fock = NodesLowerBound(query, reference);
+  if (!(query->row_shells()->single_momentum()) ||
+      !(query->col_shells()->single_momentum()) ||
+      !(reference->row_shells()->single_momentum()) ||
+      !(reference->col_shells()->single_momentum())) {
+    
+    DEBUG_ONLY(*approx_coulomb = BIG_BAD_NUMBER);
+    DEBUG_ONLY(*approx_exchange = BIG_BAD_NUMBER);
+    
+    return false;
+    
+  } // not all one momentum, don't prune
+      
+  double max_coulomb, min_coulomb;
+  double max_exchange, min_exchange;
+  NodesBounds(query, reference, &max_coulomb, &max_exchange, 
+              &min_coulomb, &min_exchange);
+  
+  // create global bounds from the coulomb and exchange
+  double max_fock = max_coulomb - min_exchange;
+  double min_fock = min_coulomb - max_exchange;
+  DEBUG_ASSERT(max_fock >= min_fock);
+  
+  
+  // factor in the number of reference pairs to be accounted for 
+  // this takes care of reference symmetry
+  max_fock *= reference->num_pairs();
+  min_fock *= reference->num_pairs();
   
   // how to bound the coulomb and exchange contributions together, while still
   // maintaining separate approximation values?
   
-  double max_err = 0.5 * (max_fock - min_fock);
+  *lost_error = 0.5 * (max_fock - min_fock);
   double allowed_err = query->remaining_epsilon() * query->remaining_references();
-  if (max_err <= allowed_err) {
+  if (*lost_error <= allowed_err) {
+    
+    *approx_coulomb = 0.5 * (max_coulomb + min_coulomb);
+    *approx_exchange = 0.5 * (max_exchange + min_exchange);
     
     return true;
     
-  }
-  */
+  } // can prune
+  else {
+   
+    DEBUG_ONLY(*approx_coulomb = BIG_BAD_NUMBER);
+    DEBUG_ONLY(*approx_exchange = BIG_BAD_NUMBER);
+    
+    return false;
+    
+  } // can't prune
+  
 } // CanPrune()
 
 void MultiTreeFock::DepthFirstRecursion(MatrixTree* query, 
@@ -178,15 +256,19 @@ void MultiTreeFock::DepthFirstRecursion(MatrixTree* query,
   } // base case
   else {
 
+    double approx_coulomb;
+    double approx_exchange;
+    double lost_error;
     // attempt to prune
-    if (CanPrune(query, reference)) {
+    if (CanPrune(query, reference, &approx_coulomb, 
+                 &approx_exchange, &lost_error)) {
      
-      // compute approx vals (maybe do this in above function)
-      
       // fill in approx vals 
-      
-      // update remaining_epsilon and remaining_references
-      
+      query->set_remaining_epsilon(query->remaining_epsilon() - lost_error);
+      query->set_remaining_references(query->remaining_references() 
+                                      - reference->num_pairs());
+      query->add_coulomb_approx(approx_coulomb);
+      query->add_exchange_approx(approx_exchange);
       
     } // pruning
     else if (SplitQuery(query, reference)) {
