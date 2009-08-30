@@ -137,22 +137,27 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 	}	//if
 	else {
 		NOTIFY("Starting points are not given. Use default...");
-		NOTIFY("Number of parameters is %d", num_of_betas+2);
+		//NOTIFY("Number of parameters is %d", num_of_betas+2);
+		cout<<"Number of parameters is "<<(num_of_betas+2)<<endl;
 		initial_parameter->Init(num_of_betas+2);
 		
 		//initial_parameter->SetAll(1.5);
 
 		
-		initial_parameter->SetZero();
+		initial_parameter->SetAll(2);
 		
-			
+	cout<<"NUM_OF_BETAS="<<num_of_betas<<endl;
+		(*initial_parameter)[num_of_betas]=2;
+		(*initial_parameter)[num_of_betas+1]=2;
+		
+/*			
 		(*initial_parameter)[0]=1.2;
 		(*initial_parameter)[1]=1.5;
 		(*initial_parameter)[num_of_betas]=1.7;
 		(*initial_parameter)[num_of_betas+1]=3;
 		
 			
-		/*
+		
 		(*initial_parameter)[0]=1.3392;
 		(*initial_parameter)[1]=1.62639;
 		(*initial_parameter)[num_of_betas]=2.00565;
@@ -541,17 +546,20 @@ void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *adde
 	*/
 	if(num_of_selected_sample_==0) {
 		NOTIFY("Initial sampling...");
+		cout<<"Initial sampling..."<<endl;
 		//cout<<"initial_percent_sample_="<<initial_percent_sample_<<endl;
 		num_added_sample=math::RoundInt((num_of_people_)*(initial_percent_sample_)/100);
 	} else {
 		if(percent_added_sample==0){
 			NOTIFY("Keep the currect sample size");
+			cout<<"Keep the current sample size"<<endl;
 			num_added_sample=0;
 		}
 		else{
 			num_added_sample=math::RoundInt((num_of_selected_sample_)*(percent_added_sample)/100);
 			if(num_added_sample==0){
 				NOTIFY("number of sample to add is zero. Add Two samples.");
+				cout<<"number of sample to add is zero. Add Two samples."<<endl;
 				num_added_sample=2;
 			}
 
@@ -598,7 +606,9 @@ void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *adde
 	if(num_of_selected_sample_!=num_of_people_){
 		count_num_sampling_+=1;
 		NOTIFY("Extend subset (%d)", count_num_sampling_);
+		cout<<"Extend subset "<<count_num_sampling_<<endl;
 		NOTIFY("Add %d sample(s)", num_added_sample);
+		cout<<"Add "<<num_added_sample<<" sample(s)"<<endl;
 	}
 
 

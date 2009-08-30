@@ -52,12 +52,15 @@ int main(int argc, char *argv[]) {
 		cout<<initial_parameter[i]<<" ";
 	}
 	cout<<endl;
-	NOTIFY("Number of people in dataset is %d", num_of_people);
-	NOTIFY("Shuffling");
+	//NOTIFY("Number of people in dataset is %d", num_of_people);
+	cout<<"Number of people in dataset is "<<num_of_people<<endl;
+	//NOTIFY("Shuffling");
+	cout<<"Shuffling"<<endl;
 	sampling.Shuffle();
 	//sampling.Shuffle();
 	//sampling.Shuffle();
-	NOTIFY("Initial sampling percent is %f", initial_percent_sampling);
+	//NOTIFY("Initial sampling percent is %f", initial_percent_sampling);
+	cout<<"Initial sampling percent is "<<initial_percent_sampling<<endl;
 		
 	int count_init2=0;
 	objective.Init2(ind_unknown_x, count_init2);
@@ -189,7 +192,8 @@ int main(int argc, char *argv[]) {
 		}
 		else {
 			
-			NOTIFY("All data are used");
+			//NOTIFY("All data are used");
+			cout<<"All data are used"<<endl;
 	
 		}
 		double current_sample_size;
@@ -212,7 +216,8 @@ int main(int argc, char *argv[]) {
 															 &current_objective);
 		
 		//current_objective/=current_added_first_stage_x.size();
-		NOTIFY("The objective is %g", current_objective);
+		//NOTIFY("The objective is %g", current_objective);
+		cout<<"The objective is "<<current_objective<<endl;
 
 		cout<<"current_sample_size="<<current_sample_size<<endl;
 		//NOTIFY("Gradient calculation starts");
@@ -294,7 +299,8 @@ int main(int argc, char *argv[]) {
 
 		//NOTIFY("Gradient calculation ends");
 		/*
-    NOTIFY("True hessian");
+    //NOTIFY("True hessian");
+		cout<<"True hessian"<<endl;
 		Matrix opt_hessian;
 		objective.ComputeHessian(current_sample_size, tpar, &opt_hessian);
 		//la::Scale(1.0/current_added_first_stage_x.size(), &opt_hessian);
@@ -320,7 +326,8 @@ int main(int argc, char *argv[]) {
 		Matrix current_hessian;
 		if(iteration_count==1){
 
-			NOTIFY("Exact hessian calculation");
+			//NOTIFY("Exact hessian calculation");
+			cout<<"Exact hessian calculation"<<endl;
 			
 			objective.ComputeHessian(current_sample_size, current_parameter, &current_hessian);
 		
@@ -424,7 +431,8 @@ int main(int argc, char *argv[]) {
 			}
 			cout<<endl;
 				
-		  NOTIFY("Constraint Violation...Shrink Trust region Radius...");
+		  //NOTIFY("Constraint Violation...Shrink Trust region Radius...");
+		  cout<<"Constraint Violation...Shrink Trust region Radius..."<<endl;
 		  current_radius=0.75*current_radius;
 			
 			NOTIFY("Projection");
@@ -460,7 +468,8 @@ int main(int argc, char *argv[]) {
 		objective.ComputeObjective(current_sample_size, next_parameter, 
 														 &next_objective);
 		//next_objective/=current_added_first_stage_x.size();
-		NOTIFY("The candidate Next objective is %g", next_objective);
+		//NOTIFY("The candidate Next objective is %g", next_objective);
+		cout<<"The candidate Next objective is "<<next_objective<<endl;
 
 	
 
@@ -503,7 +512,8 @@ int main(int argc, char *argv[]) {
 		/*
 		if(sample_size==num_of_people &&end_sampling==0){
 			end_sampling+=1;
-			NOTIFY("All data are used");
+			//NOTIFY("All data are used");
+			cout<<"All data are used"<<endl;
 		}
 		*/
 
@@ -550,7 +560,7 @@ int main(int argc, char *argv[]) {
 		la::SubOverwrite(current_parameter, next_parameter, &diff_par);
 
 		
-    Matrix mtx_diff_par;
+              Matrix mtx_diff_par;
 		mtx_diff_par.Alias(diff_par.ptr(), diff_par.length(), 1);
 
 		Matrix mtx_diff_gradient;
@@ -583,7 +593,8 @@ int main(int argc, char *argv[]) {
 		cout<<"rho= "<<rho<<endl;
 		if(rho>eta){
 			current_parameter.CopyValues(next_parameter);
-			NOTIFY("Accepting the step...");
+			//NOTIFY("Accepting the step...");
+			cout<<"Accepting the step..."<<endl;
 			//current_hessian.CopyValues(updated_hessian);
 		
 
@@ -608,7 +619,8 @@ int main(int argc, char *argv[]) {
 			//	cout<<current_parameter[i]<<" ";
 			//}
 			//cout<<endl;
-			NOTIFY("Gradient for the calculation of norm");
+			//NOTIFY("Gradient for the calculation of norm");
+			cout<<"Gradient for the calculation of norm"<<endl;
 			for(index_t i=0; i<current_parameter.length(); i++){
 				cout<<next_gradient[i]<<" ";
 			}
@@ -621,7 +633,8 @@ int main(int argc, char *argv[]) {
 			cout<<"gradient_norm="<<gradient_norm<<endl;
 
 			if(gradient_norm<zero_tolerance){
-				NOTIFY("Gradient norm is small enough...Exit...");
+				//NOTIFY("Gradient norm is small enough...Exit...");
+				cout<<"Gradient norm is small enough...Exit..."<<endl;
 				break;
 			}
 			
@@ -636,7 +649,8 @@ int main(int argc, char *argv[]) {
 
 	
 	cout<<"Total_iteration_count="<<iteration_count<<endl;
-	NOTIFY("Final solution: ");
+	//NOTIFY("Final solution: ");
+	cout<<"Final solution: "<<endl;
 	for(index_t i=0; i<current_parameter.length(); i++) {
 		cout<<current_parameter[i]<<" ";
 	}
