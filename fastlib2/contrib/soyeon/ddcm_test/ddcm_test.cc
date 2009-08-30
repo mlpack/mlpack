@@ -52,12 +52,15 @@ int main(int argc, char *argv[]) {
 		cout<<initial_parameter[i]<<" ";
 	}
 	cout<<endl;
-	NOTIFY("Number of people in dataset is %d", num_of_people);
-	NOTIFY("Shuffling");
+	//NOTIFY("Number of people in dataset is %d", num_of_people);
+	cout<<"Number of people in dataset is "<<num_of_people<<endl;
+	//NOTIFY("Shuffling");
+	cout<<"Shuffling"<<endl;
 	sampling.Shuffle();
 	//sampling.Shuffle();
 	//sampling.Shuffle();
-	NOTIFY("Initial sampling percent is %f", initial_percent_sampling);
+	//NOTIFY("Initial sampling percent is %f", initial_percent_sampling);
+	cout<<"Initial sampling percent is "<<initial_percent_sampling<<endl;
 		
 	int count_init2=0;
 	objective.Init2(ind_unknown_x, count_init2);
@@ -194,7 +197,7 @@ int main(int argc, char *argv[]) {
 
 
   //iteration
-  int max_iteration=100;
+       int max_iteration=100;
 	int iteration_count=0;
 
 	/*
@@ -239,7 +242,8 @@ int main(int argc, char *argv[]) {
 		}
 		else {
 			
-			NOTIFY("All data are used");
+			//NOTIFY("All data are used");
+			cout<<"All data are used"<<endl;
 	
 		}
 		double current_sample_size;
@@ -256,13 +260,15 @@ int main(int argc, char *argv[]) {
 		*/
 
 
-    //double current_objective;
+    		//double current_objective;
 		//current_objective=0;
 		objective.ComputeObjective(current_sample_size, current_parameter, 
 															 &current_objective);
 		
 		//current_objective/=current_added_first_stage_x.size();
 		NOTIFY("The objective is %g", current_objective);
+		cout<<"The objective is "<<current_objective<<endl;
+		
 
 		cout<<"current_sample_size="<<current_sample_size<<endl;
 		//NOTIFY("Gradient calculation starts");
@@ -280,7 +286,7 @@ int main(int argc, char *argv[]) {
 		cout<<"max objective="<<tobjective<<endl;
     
 			
-    Vector opt_gradient;
+    		Vector opt_gradient;
 		//gradient.Init(num_of_betas_);
 		objective.ComputeGradient(current_sample_size, tpar, &opt_gradient);
 		
@@ -347,7 +353,7 @@ int main(int argc, char *argv[]) {
 
 		//NOTIFY("Gradient calculation ends");
 
-				if(sample_size==num_of_people){
+			if(sample_size==num_of_people){
 			end_sampling+=1;
 			double gradient_norm;
 			//la::Scale(1.0/num_of_people, &current_gradient);
@@ -362,7 +368,8 @@ int main(int argc, char *argv[]) {
 			//	cout<<current_parameter[i]<<" ";
 			//}
 			//cout<<endl;
-			NOTIFY("Gradient for the calculation of norm");
+			//NOTIFY("Gradient for the calculation of norm");
+			cout<<"Gradient for the calculation of norm"<<endl;
 			for(index_t i=0; i<current_parameter.length(); i++){
 				cout<<next_gradient[i]<<" ";
 			}
@@ -376,6 +383,7 @@ int main(int argc, char *argv[]) {
 
 			if(gradient_norm<zero_tolerance){
 				NOTIFY("Gradient norm is small enough...Exit...");
+				cout<<"Gradient norm is small enough...Exit..."<<endl;
 				break;
 			}
 			
@@ -386,6 +394,7 @@ int main(int argc, char *argv[]) {
 
 		/*
     NOTIFY("True hessian");
+    cout<<"True hessian"<<endl;
 		Matrix opt_hessian;
 		objective.ComputeHessian(current_sample_size, tpar, &opt_hessian);
 		//la::Scale(1.0/current_added_first_stage_x.size(), &opt_hessian);
@@ -405,7 +414,7 @@ int main(int argc, char *argv[]) {
 		/*
 		///////////////////////////////////////////////////////////////////////
     ///////////////////////////////Exact hessian calculation
-		/NOTIFY("Exact hessian calculation starts");
+		//NOTIFY("Exact hessian calculation starts");
 
 		Matrix current_hessian;
 		objective.ComputeHessian(current_sample_size, current_parameter, &current_hessian);
@@ -425,6 +434,7 @@ int main(int argc, char *argv[]) {
 		
 /*
 		NOTIFY("Hessian approximation");
+		cout<<"Hessian approximation"<<endl;
 		Matrix approx_hessian;
 		objective.CheckHessian(current_sample_size, current_parameter, &approx_hessian);
 
@@ -496,7 +506,7 @@ int main(int argc, char *argv[]) {
   
 	if(iteration_count==1){
 		cout<<"iteration_count==1"<<endl;
-		objective.CheckHessian(current_sample_size, current_parameter, &current_hessian);
+		objective.CheckHessian3(current_sample_size, current_parameter, &current_hessian);
 
 		cout<<"hessian0"<<endl;
 		for (index_t j=0; j<current_hessian.n_rows(); j++){
@@ -577,7 +587,7 @@ int main(int argc, char *argv[]) {
 														 &next_objective);
 		//next_objective/=current_added_first_stage_x.size();
 		NOTIFY("The candidate Next objective is %g", next_objective);
-
+		cout<<"The candidate Next objective is "<<next_objective<<endl;
 	
 
 
@@ -604,6 +614,7 @@ int main(int argc, char *argv[]) {
 			double sampling_error=0;
 			//double serror_factor=10*sample_size;
 			double serror_factor=0.055*sample_size;
+			cout<<"serror_factor="<<serror_factor<<endl;
 			double sampling_deviation=0;
 
 			for(index_t n=0; n<sample_size; n++){
@@ -614,12 +625,14 @@ int main(int argc, char *argv[]) {
 
 			cout<<"sampling_error="<<sampling_error<<endl;
 			cout<<"sampling_deviation="<<sampling_deviation<<endl;
+			cout<<"current_delta_m="<<current_delta_m<<endl;
 
 			current_percent_added_sample=0;
 
 			//if((-1.0*current_delta_m)<serror_factor*sampling_error){	//current_delta_m is negative in our case
       if((-1.0*current_delta_m)<serror_factor*sampling_deviation){	//current_delta_m is negative in our case
 				NOTIFY("Expand sample size");
+				cout<<"Expand sample size"<<endl;
 				//break;
 				//current_percent_added_sample=(serror_factor*sampling_error/current_delta_m)*(serror_factor*sampling_error/current_delta_m)-1.0;
 				//current_percent_added_sample=(serror_factor*sampling_deviation/current_delta_m)*(serror_factor*sampling_deviation/current_delta_m)-1.0;
@@ -635,6 +648,7 @@ int main(int argc, char *argv[]) {
 		if(sample_size==num_of_people &&end_sampling==0){
 			end_sampling+=1;
 			NOTIFY("All data are used");
+			cout<<"All data are used"<<endl;
 		}
 		*/
 
@@ -845,10 +859,11 @@ int main(int argc, char *argv[]) {
 		if(rho>eta){
 			current_parameter.CopyValues(next_parameter);
 			NOTIFY("Accepting the step...");
+			cout<<"Accepting the step"<<endl;
 			current_hessian.CopyValues(updated_hessian);
 			
 			NOTIFY("Update the hessian matrix by BFGS method...");
-		
+			cout<<"Update the hessian matrix by BFGS method..."<<endl;		
 
 		}
 		
@@ -868,6 +883,7 @@ int main(int argc, char *argv[]) {
 	
 	cout<<"Total_iteration_count="<<iteration_count<<endl;
 	NOTIFY("Final solution: ");
+	cout<<"Final solution"<<endl;
 	for(index_t i=0; i<current_parameter.length(); i++) {
 		cout<<current_parameter[i]<<" ";
 	}
@@ -926,6 +942,7 @@ int main(int argc, char *argv[]) {
 	}
   
 	NOTIFY("Final hessian calculation2");
+	cout<<"Final hessian calculation2"<<endl;
 	Matrix final_hessian;
   objective.CheckHessian(num_of_people, current_parameter, &final_hessian);
 
