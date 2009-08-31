@@ -807,10 +807,12 @@ namespace eri {
     
     // not sure I really need twice the total momentum here
     //double* F_m = (double*)malloc(2 * total_momentum * sizeof(double));
-    Vector F_m;
-    F_m.Init(2*total_momentum + 1);
-    Compute_F(F_m.ptr(), 2 * total_momentum + 1, F_arg);
-    //F_m.PrintDebug("F_m");
+    double* F_m = mem::Alloc <double> (2 * total_momentum + 1);
+    Vector F_m_vec;
+    //F_m.Init(2*total_momentum + 1);
+    Compute_F(F_m, 2 * total_momentum + 1, F_arg);
+    F_m_vec.Own(F_m, 2 * total_momentum + 1);
+    F_m_vec.PrintDebug("F_m");
     
     index_t integral_index = 0;
     index_t a_ind = 0;
@@ -838,7 +840,7 @@ namespace eri {
                                         * shellA.normalization_constant(a_ind)
                                         * shellB.normalization_constant(b_ind);
             (*integrals)[integral_index] *= NuclearFactor(l1, l2, m1, m2, n1, n2, gamma,
-                                                          PA, PB, CP, F_m);
+                                                          PA, PB, CP, F_m_vec);
             /*
             printf("prefactor: %g\n", prefactor);
             printf("nuclear_charge: %d\n", nuclear_charge);
@@ -856,8 +858,9 @@ namespace eri {
         a_ind++;
         
       } // aj
+
     } // ai
-    
+      
     //printf("\n\n");
     
     //free(F_m);
