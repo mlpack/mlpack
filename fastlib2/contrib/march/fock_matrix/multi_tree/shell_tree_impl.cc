@@ -18,6 +18,7 @@ namespace shell_tree_impl {
                               DHrectBound<2>* left_space, DRange* left_exp, 
                               DRange* left_mom, DHrectBound<2>* right_space, 
                               DRange* right_exp, DRange* right_mom, 
+                              DRange* left_norms, DRange* right_norms,
                               ArrayList<index_t>* perm) {
     
     DEBUG_ASSERT(split_dim >= 0);
@@ -49,7 +50,11 @@ namespace shell_tree_impl {
         
         *left_space |= shells[left]->center();
         *left_exp |= shells[left]->exp();
-        *left_mom |= shells[left]->total_momentum();                    
+        *left_mom |= shells[left]->total_momentum();  
+        
+        for (index_t j = 0; j < shells[left]->num_functions(); j++) {
+          *left_norms |= shells[left]->normalization_constant(j);
+        }
         
         left++;
         
@@ -90,7 +95,11 @@ namespace shell_tree_impl {
         
         *right_space |= shells[right]->center();
         *right_exp |= shells[right]->exp();
-        *right_mom |= shells[right]->total_momentum();                    
+        *right_mom |= shells[right]->total_momentum();    
+        
+        for (index_t j = 0; j < shells[right]->num_functions(); j++) {
+          *right_norms |= shells[right]->normalization_constant(j);
+        }
         
         right--;
         
@@ -122,9 +131,18 @@ namespace shell_tree_impl {
       *left_exp |= shells[left]->exp();
       *left_mom |= shells[left]->total_momentum();
       
+      for (index_t j = 0; j < shells[left]->num_functions(); j++) {
+        *left_norms |= shells[left]->normalization_constant(j);
+      }
+      
       *right_space |= shells[right]->center();
       *right_exp |= shells[right]->exp();
       *right_mom |= shells[right]->total_momentum();
+      
+      for (index_t j = 0; j < shells[right]->num_functions(); j++) {
+        *right_norms |= shells[right]->normalization_constant(j);
+      }
+      
       
       if (perm) {
         eri::ArrayListSwap(left, right, perm);
@@ -198,11 +216,13 @@ namespace shell_tree_impl {
       left->bound().Init(3);
       left->exponents().InitEmptySet();
       left->momenta().InitEmptySet();
+      left->normalizations().InitEmptySet();
       
       right = new BasisShellTree();
       right->bound().Init(3);
       right->exponents().InitEmptySet();
       right->momenta().InitEmptySet();
+      right->normalizations().InitEmptySet();
       
       // shells get rearranged here
       index_t split_col = SelectListPartition(shells, split_val, split_dim,
@@ -210,6 +230,7 @@ namespace shell_tree_impl {
                                               &(left->bound()), &(left->exponents()),
                                               &(left->momenta()), &(right->bound()),
                                               &(right->exponents()), &(right->momenta()),
+                                              &(left->normalizations()), &(right->normalizations()),
                                               old_from_new);
       
       left->Init(node->begin(), split_col - node->begin());
@@ -249,6 +270,7 @@ namespace shell_tree_impl {
     node->bound().Init(3);
     node->exponents().InitEmptySet();
     node->momenta().InitEmptySet();
+    node->normalizations().InitEmptySet();
     
     // need to iniut these to right ranges
     for (index_t i = 0; i < shells.size(); i++) {
@@ -256,6 +278,10 @@ namespace shell_tree_impl {
       node->bound() |= shells[i]->center();
       node->exponents() |= shells[i]->exp();
       node->momenta() |= shells[i]->total_momentum();
+      
+      for (index_t j = 0; j < shells[i]->num_functions(); j++) {
+        node->normalizations() |= shells[i]->normalization_constant(j);
+      }
       
     }
     

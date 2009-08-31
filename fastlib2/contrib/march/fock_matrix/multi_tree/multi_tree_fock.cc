@@ -5,6 +5,38 @@
 
 /////////// Recursive Code /////////////////////////
 
+void MultiTreeFock::PassBoundsUp_(MatrixTree* query) {
+  
+  query->set_remaining_epsilon(min(query->left()->remaining_epsilon(),
+                                   query->right()->remaining_epsilon()));
+  
+  DEBUG_ASSERT(query->left()->remaining_references() == query->right()->remaining_references());
+  //printf("query->remaining_references(): %d\n", query->remaining_references());
+  query->set_remaining_references(max(query->left()->remaining_references(),
+                                      query->right()->remaining_references()));
+  
+  //printf("Passing bounds up for %p\n", query);
+  
+}
+
+void MultiTreeFock::PassBoundsDown_(MatrixTree* query) {
+  
+  query->left()->set_remaining_epsilon(query->remaining_epsilon());
+  query->right()->set_remaining_epsilon(query->remaining_epsilon());
+  
+  query->left()->set_remaining_references(query->remaining_references());
+  query->right()->set_remaining_references(query->remaining_references());
+  
+  query->left()->add_coulomb_approx(query->coulomb_approx_val());
+  query->left()->add_exchange_approx(query->exchange_approx_val());
+  query->right()->add_coulomb_approx(query->coulomb_approx_val());
+  query->right()->add_exchange_approx(query->exchange_approx_val());
+  // since it's been passed down now
+  query->set_coulomb_approx_val(0.0);
+  query->set_exchange_approx_val(0.0);
+  
+}
+
 
 
 void MultiTreeFock::ComputeBaseCase(MatrixTree* query, MatrixTree* reference) {
@@ -123,6 +155,9 @@ void MultiTreeFock::ComputeBaseCase(MatrixTree* query, MatrixTree* reference) {
       
   } // for i
   
+  query->set_remaining_references(query->remaining_references() 
+                                  - reference->num_pairs());
+  
 } // ComputeBaseCase
 
 bool MultiTreeFock::SplitQuery(MatrixTree* query, MatrixTree* reference) {
@@ -154,34 +189,51 @@ void MultiTreeFock::NodeBounds(MatrixTree* query, MatrixTree* reference,
   // make calls to eri
   // or possibly create an eri_bounds namespace to keep things neat
   // choose which function to call based on momenta of the shells
-  
+  max_coulomb_integral = eri_bounds::BoundIntegrals(query->row_shells(),
+                                                    query->col_shells(),
+                                                    reference->row_shells(),
+                                                    reference->col_shells());
     
+  // TODO: is this right?  What about the reference symmetry?
+  // Do I need to compute both sides and take the max?
+  // Only for off diagonal queries?
+  max_exchange_integral = eri_bounds::BoundIntegrals(query->row_shells(),
+                                                     reference->row_shells(),
+                                                     query->col_shells(),
+                                                     reference->col_shells());
+  
+  min_coulomb_integral = -1 * max_coulomb_integral;
+  min_exchange_integral = -1 * max_exchange_integral;
+  
   // factor in the density
   if (reference->density_bounds().hi >= 0.0) {
     
-    *max_coulomb = reference->density_bound().hi * max_coulomb_integral;
-    *max_exchange = reference->density_bound().hi * max_exchange_integral;
+    *max_coulomb = reference->density_bounds().hi * max_coulomb_integral;
+    *max_exchange = reference->density_bounds().hi * max_exchange_integral;
     
   }
   else {
     
-    *max_coulomb = reference->density_bound().hi * min_coulomb_integral;
-    *max_exchange = reference->density_bound().hi * min_exchange_integral;
+    *max_coulomb = reference->density_bounds().hi * min_coulomb_integral;
+    *max_exchange = reference->density_bounds().hi * min_exchange_integral;
     
   }
   
   if (reference->density_bounds().lo >= 0.0) {
     
-    *min_coulomb = reference->density_bound().lo * min_coulomb_integral;
-    *min_exchange = reference->density_bound().lo * min_exchange_integral;
+    *min_coulomb = reference->density_bounds().lo * min_coulomb_integral;
+    *min_exchange = reference->density_bounds().lo * min_exchange_integral;
     
   }
   else {
 
-    *min_coulomb = reference->density_bound().lo * max_coulomb_integral;
-    *min_exchange = reference->density_bound().lo * max_exchange_integral;
+    *min_coulomb = reference->density_bounds().lo * max_coulomb_integral;
+    *min_exchange = reference->density_bounds().lo * max_exchange_integral;
 
   }
+  
+  DEBUG_ASSERT(*max_coulomb >= *min_coulomb);
+  DEBUG_ASSERT(*max_exchange >= *min_exchange);
   
 } // NodesUpperBound()
 
@@ -206,7 +258,7 @@ bool MultiTreeFock::CanPrune(MatrixTree* query, MatrixTree* reference,
       
   double max_coulomb, min_coulomb;
   double max_exchange, min_exchange;
-  NodesBounds(query, reference, &max_coulomb, &max_exchange, 
+  NodeBounds(query, reference, &max_coulomb, &max_exchange, 
               &min_coulomb, &min_exchange);
   
   // create global bounds from the coulomb and exchange
@@ -224,11 +276,18 @@ bool MultiTreeFock::CanPrune(MatrixTree* query, MatrixTree* reference,
   // maintaining separate approximation values?
   
   *lost_error = 0.5 * (max_fock - min_fock);
-  double allowed_err = query->remaining_epsilon() * query->remaining_references();
+  // need to account for the number of functions in a shell in this count
+  double num_functions_per_shell = (double)eri::NumFunctions(reference->row_shells()->momenta().lo)
+  * (double)eri::NumFunctions(reference->col_shells()->momenta().lo);
+  double allowed_err = query->remaining_epsilon() * reference->num_pairs() 
+                       * num_functions_per_shell
+                       / query->remaining_references();
   if (*lost_error <= allowed_err) {
     
+    //printf("lost_error: %g, allowed_err: %g\n", *lost_error, allowed_err);
     *approx_coulomb = 0.5 * (max_coulomb + min_coulomb);
     *approx_exchange = 0.5 * (max_exchange + min_exchange);
+    num_approximations_++;
     
     return true;
     
@@ -279,34 +338,27 @@ void MultiTreeFock::DepthFirstRecursion(MatrixTree* query,
         // the node hasn't been split
         split = matrix_tree_impl::SplitMatrixTree(query, shell_ptr_list_, 
                                                             density_matrix_);
+        // bounds get passed down in splitting code
+        
       }
       else {
         
         split = SUCCESS_PASS;
-        // make sure the approx vals etc. are appropriately passed down
-        query->left()->set_remaining_epsilon(query->remaining_epsilon());
-        query->right()->set_remaining_epsilon(query->remaining_epsilon());
-        
-        query->left()->set_remaining_references(query->remaining_references());
-        query->right()->set_remaining_references(query->remaining_references());
-        
-        query->left()->add_coulomb_approx(query->coulomb_approx_val());
-        query->left()->add_exchange_approx(query->exchange_approx_val());
-        query->right()->add_coulomb_approx(query->coulomb_approx_val());
-        query->right()->add_exchange_approx(query->exchange_approx_val());
-        // since it's been passed down now
-        query->set_coulomb_approx_val(0.0);
-        query->set_exchange_approx_val(0.0);
         
       }
       // don't forget to handle the internal bounds too
       
       if (split == SUCCESS_PASS) {
+        
+        PassBoundsDown_(query);
+        
         DepthFirstRecursion(query->left(), reference);
         DepthFirstRecursion(query->right(), reference);
+        
+        PassBoundsUp_(query);
+        
       }
       else if (reference->is_leaf()) {
-        // not sure this is right, might want to split other side
         ComputeBaseCase(query, reference); 
       }
       else {
@@ -329,6 +381,7 @@ void MultiTreeFock::DepthFirstRecursion(MatrixTree* query,
         split = SUCCESS_PASS;
       }
       //don't need to pass info down
+      // TODO: need to pass info back up for this case?
 
       // may want to prioritize these somehow
       if (split == SUCCESS_PASS) {
@@ -443,6 +496,8 @@ void MultiTreeFock::Compute() {
 
   printf("====Computing J and K====\n");
   
+  //printf("remaining_references: %d\n", matrix_tree_->remaining_references());
+  //printf("num_pairs: %d\n", matrix_tree_->num_pairs());
   DepthFirstRecursion(matrix_tree_, matrix_tree_);
   
   //tree_->Print();
@@ -456,6 +511,7 @@ void MultiTreeFock::Compute() {
   fx_timer_stop(module_, "multi_time");
   
   fx_result_int(module_, "num_integrals_computed", num_integrals_computed_);
+  fx_result_int(module_, "num_approximations", num_approximations_);
 
 } // ComputeFockMatrix()
 

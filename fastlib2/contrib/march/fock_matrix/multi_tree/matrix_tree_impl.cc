@@ -170,9 +170,14 @@ namespace matrix_tree_impl {
       left_child = new MatrixTree();
       right_child = new MatrixTree();
       
-      left_child->Init(rows->left(), cols, shells, density);
+      if (cols->left()->end() < cols->end()) {
+        //printf("Double row split\n");
+        left_child->Init(rows->left(), cols->left(), shells, density);
+      }
+      else {
+        left_child->Init(rows->left(), cols, shells, density);
+      }
       right_child->Init(rows->right(), cols, shells, density);
-      
       
     } // splitting row shells
     else {
@@ -180,6 +185,7 @@ namespace matrix_tree_impl {
       
       if (rows->end() > cols->right()->begin()) {
         // fine to split cols 
+        
       }
       else if (cols->left()->height() == 0) {
         // cols are too low to split twice, needs to be a leaf
@@ -200,14 +206,28 @@ namespace matrix_tree_impl {
         cols = cols->left();
       }
       
+      
+      
       left_child = new MatrixTree();
       right_child = new MatrixTree();
       
       left_child->Init(rows, cols->left(), shells, density);
-      right_child->Init(rows, cols->right(), shells, density);
+      // have some nodes above the diagonal
+      // split the cols again?
+      // NO, in place of cols->right() below, I want cols->right()->right()?
+      // what about if right is too shallow for this?
+      if (cols->right()->begin() > rows->begin()) {
+        //printf("Double col split\n");
+        right_child->Init(rows->right(), cols->right(), shells, density);
+      }
+      else {
+        right_child->Init(rows, cols->right(), shells, density);
+      }
       
     } // splitting col shells
     
+    // Taking the query passing out for now
+    /*
     left_child->set_remaining_epsilon(node->remaining_epsilon());
     left_child->set_remaining_references(node->remaining_references());
     left_child->add_coulomb_approx(node->coulomb_approx_val());
@@ -218,8 +238,35 @@ namespace matrix_tree_impl {
     right_child->add_coulomb_approx(node->coulomb_approx_val());
     right_child->add_exchange_approx(node->exchange_approx_val());
     
+    
     node->set_coulomb_approx_val(0.0);
     node->set_exchange_approx_val(0.0);
+    */
+    
+    /*
+    int num_left_pairs = left_child->row_shells()->count() 
+                         * left_child->col_shells()->count();
+    int num_right_pairs = right_child->row_shells()->count() 
+                          * right_child->col_shells()->count();
+    if (!(node->on_diagonal())) {
+      num_left_pairs *= 2;
+      num_right_pairs *= 2;
+    }
+    else if (left_child->on_diagonal() && right_child->on_diagonal()){
+      // counts are already correct
+    }
+    else if (left_child->on_diagonal()){
+      num_right_pairs *= 2;
+    }
+    else {
+      DEBUG_ASSERT(right_child->on_diagonal());
+      num_left_pairs *= 2;
+    }
+    //
+    left_child->set_num_pairs(num_left_pairs);
+    right_child->set_num_pairs(num_right_pairs);
+     */
+    DEBUG_ASSERT(node->num_pairs() == left_child->num_pairs() + right_child->num_pairs());
     node->set_children(left_child, right_child);
     
     return SUCCESS_PASS;
