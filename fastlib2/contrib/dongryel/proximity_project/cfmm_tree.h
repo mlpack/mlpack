@@ -227,10 +227,11 @@ namespace proximity {
     ~CFmmTree() {
       if(partitions_based_on_ws_indices_.size() > 0) {
 
-	for(index_t i = 0; i < partitions_based_on_ws_indices_.size(); i++) {
-	  delete partitions_based_on_ws_indices_[i];
-	}
+        for(index_t i = 0; i < partitions_based_on_ws_indices_.size(); i++) {
+          delete partitions_based_on_ws_indices_[i];
+        }
       }
+      
     }
 
     const Statistics& stat() const {
