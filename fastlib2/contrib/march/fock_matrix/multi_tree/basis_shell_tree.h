@@ -92,6 +92,10 @@ public:
     return momenta_;
   }
   
+  DRange& normalizations() {
+    return normalizations_;
+  }
+  
   bool is_leaf() {
     return (left_ == NULL);
   }

@@ -26,6 +26,7 @@ namespace shell_tree_impl {
                               DHrectBound<2>* left_space, DRange* left_exp, 
                               DRange* left_mom, DHrectBound<2>* right_space, 
                               DRange* right_exp, DRange* right_mom, 
+                              DRange* left_norms, DRange* right_norms,
                               ArrayList<index_t>* perm);
   
   /**

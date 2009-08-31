@@ -1,7 +1,7 @@
 librule(
 	name="multi_tree_fock",
-	headers=["multi_tree_fock.h", "basis_shell_tree.h", "shell_tree_impl.h", "matrix_tree_impl.h", "matrix_tree.h"],
-	sources=["multi_tree_fock.cc", "basis_shell_tree.cc", "shell_tree_impl.cc", "matrix_tree.cc", "matrix_tree_impl.cc"],
+	headers=["multi_tree_fock.h", "basis_shell_tree.h", "shell_tree_impl.h", "matrix_tree_impl.h", "matrix_tree.h", "eri_bounds.h"],
+	sources=["multi_tree_fock.cc", "basis_shell_tree.cc", "shell_tree_impl.cc", "matrix_tree.cc", "matrix_tree_impl.cc", "eri_bounds.cc"],
 	deplibs=["fastlib:fastlib", "contrib/march/fock_matrix/fock_impl:eri"],
 )
 

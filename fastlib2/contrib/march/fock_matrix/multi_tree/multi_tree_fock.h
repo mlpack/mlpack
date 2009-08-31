@@ -3,6 +3,7 @@
 
 #include "fastlib/fastlib.h"
 #include "matrix_tree_impl.h"
+#include "eri_bounds.h"
 
 const fx_entry_doc multi_tree_fock_entries[] = {
   {"epsilon", FX_PARAM, FX_DOUBLE, NULL, 
@@ -130,7 +131,9 @@ class MultiTreeFock {
   
   //////////////// Functions /////////////////////////////
   
+  void PassBoundsUp_(MatrixTree* query);
   
+  void PassBoundsDown_(MatrixTree* query);
   
   ///////// Recursive Calls ////////////////////////
   
@@ -145,10 +148,11 @@ class MultiTreeFock {
   
   void NodeBounds(MatrixTree* query, MatrixTree* reference,
                   double* max_coulomb, double* max_exchange,
-                  double* min_coulomb, doulbe* min_exchange);
+                  double* min_coulomb, double* min_exchange);
   
   bool CanPrune(MatrixTree* query, MatrixTree* reference,
-                double* approx_coulomb, double* approx_exchange);
+                double* approx_coulomb, double* approx_exchange,
+                double* lost_error);
   
   void DepthFirstRecursion(MatrixTree* query, MatrixTree* reference);
   
@@ -215,6 +219,10 @@ class MultiTreeFock {
     fx_timer_start(module_, "matrix_tree_building");
     matrix_tree_ = matrix_tree_impl::CreateMatrixTree(tree_, shell_ptr_list_, 
                                                       density_matrix_);
+    
+    // set up the pruning values
+    matrix_tree_->set_remaining_references(matrix_tree_->num_pairs());
+    matrix_tree_->set_remaining_epsilon(epsilon_);
     
     fx_timer_stop(module_, "matrix_tree_building");
     
