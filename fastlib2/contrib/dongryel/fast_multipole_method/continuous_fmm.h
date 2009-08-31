@@ -325,7 +325,8 @@ class ContinuousFmm {
         // now contract with the density and sum into the results matrix
         integrals.ContractCoulomb(reference->M_Shell()->matrix_indices(),
                                   reference->N_Shell()->matrix_indices(),
-                                  *density_, &query_results);
+                                  *density_, &query_results, 
+                                  (reference->M_Shell() == reference->N_Shell()));
         
         /// old base case code
         /*
