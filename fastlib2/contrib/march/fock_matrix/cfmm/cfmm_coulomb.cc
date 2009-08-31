@@ -264,7 +264,7 @@ void CFMMCoulomb::UpdateDensity(const Matrix& new_density) {
     //cfmm_algorithm_.~ContinuousFmm();
     //delete cfmm_algorithm_;
     //cfmm_algorithm_.Destruct();
-    cfmm_algorithm_.Reset(charges_);
+    //cfmm_algorithm_.Reset(charges_);
   }
   
 }
