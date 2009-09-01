@@ -201,7 +201,8 @@ namespace eri {
       */
       
       for(m=n-1;m>=1;m--){
-        F[m] = (t2*F[m+1] + et)/(2*m+1);
+	//printf("m: %d, n:%d\n", m, n);
+	F[m] = (t2*F[m+1] + et)/(2*m+1);
       }
       if (t > 0.0) {
         double sqrt_t = sqrt(t);
@@ -743,7 +744,8 @@ namespace eri {
                 
                 for (int p = 0; p <= i + j + k; p++) {
                   
-                  //printf("F_val: %g\n", F[(l-2*i+m-2*j+n-2*k+p)]);
+                  //printf("F_arg: %d\n", l - 2*i + m - 2*j + n - 2*k + p);
+		  //printf("F_val: %g\n", F[(l-2*i+m-2*j+n-2*k+p)]);
                   double p_term = pow(2.0 * gamma, -1.0*(i+j+k)) * pow(-1.0, (double)p) * BinomialCoefficient(i+j+k, p) * F[(l-2*i+m-2*j+n-2*k+p)];
                   //printf("p_term: %g\n", p_term);
                   //printf("l: %d, m: %d, n: %d, i: %d, j: %d, k: %d, p: %d\n", l, m, n, i, j, k, p);
@@ -768,6 +770,8 @@ namespace eri {
       printf("Nuclear integral returned nan\n");
     }
     
+    //F.PrintDebug("F (inside NuclearFactor)");    
+
     return retval;
     
   } // NuclearFactor
@@ -806,12 +810,13 @@ namespace eri {
     double F_arg = gamma * la::DistanceSqEuclidean(Cvec, p_vec);
     
     // not sure I really need twice the total momentum here
-    //double* F_m = (double*)malloc(2 * total_momentum * sizeof(double));
+    //double* F_m = (double*)malloc((2 * total_momentum + 1) * sizeof(double));
     double* F_m = mem::Alloc <double> (2 * total_momentum + 1);
     Vector F_m_vec;
     //F_m.Init(2*total_momentum + 1);
-    Compute_F(F_m, 2 * total_momentum + 1, F_arg);
+    Compute_F(F_m, 2 * total_momentum, F_arg);
     F_m_vec.Copy(F_m, 2 * total_momentum + 1);
+    mem::Free(F_m);
     //F_m_vec.PrintDebug("F_m");
     
     index_t integral_index = 0;
@@ -839,6 +844,7 @@ namespace eri {
             (*integrals)[integral_index] = prefactor * (double)nuclear_charge
                                         * shellA.normalization_constant(a_ind)
                                         * shellB.normalization_constant(b_ind);
+	    //printf("size of F: %d\n", 2*total_momentum + 1);
             (*integrals)[integral_index] *= NuclearFactor(l1, l2, m1, m2, n1, n2, gamma,
                                                           PA, PB, CP, F_m_vec);
             /*
@@ -860,12 +866,12 @@ namespace eri {
       } // aj
 
     } // ai
-    
-    
       
     //printf("\n\n");
     
     //free(F_m);
+
+    //F_m_vec.PrintDebug("F_m_vec");
     
   } // ComputeNuclearIntegrals
   
