@@ -811,8 +811,8 @@ namespace eri {
     Vector F_m_vec;
     //F_m.Init(2*total_momentum + 1);
     Compute_F(F_m, 2 * total_momentum + 1, F_arg);
-    F_m_vec.Own(F_m, 2 * total_momentum + 1);
-    F_m_vec.PrintDebug("F_m");
+    F_m_vec.Copy(F_m, 2 * total_momentum + 1);
+    //F_m_vec.PrintDebug("F_m");
     
     index_t integral_index = 0;
     index_t a_ind = 0;
@@ -860,6 +860,8 @@ namespace eri {
       } // aj
 
     } // ai
+    
+    
       
     //printf("\n\n");
     
