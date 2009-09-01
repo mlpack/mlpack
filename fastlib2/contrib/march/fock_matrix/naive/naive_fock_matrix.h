@@ -182,19 +182,22 @@ class NaiveFockMatrix {
               eri::AddSubmatrix(shells_[j].matrix_indices(), 
                                 shells_[k].matrix_indices(),
                                 *exchange_jk, &exchange_mat_);
+	      delete exchange_jk;
             }
             
             if (exchange_il) {
               eri::AddSubmatrix(shells_[i].matrix_indices(), 
                                 shells_[l].matrix_indices(),
                                 *exchange_il, &exchange_mat_);
-            }
+	      delete exchange_il;
+	    }
             
             if (exchange_jl) {
               eri::AddSubmatrix(shells_[j].matrix_indices(), 
                                 shells_[l].matrix_indices(),
                                 *exchange_jl, &exchange_mat_);
-            }
+	      delete exchange_jl;
+	    }
                         
           } // for l
         

@@ -228,19 +228,22 @@ void SchwartzPrescreening::Compute() {
           eri::AddSubmatrix(A_pair.N_Shell()->matrix_indices(), 
                             B_pair.M_Shell()->matrix_indices(),
                             *exchange_jk, &exchange_matrix_);
-        }
+	  delete exchange_jk;
+	}
         
         if (exchange_il) {
           eri::AddSubmatrix(A_pair.M_Shell()->matrix_indices(), 
                             B_pair.N_Shell()->matrix_indices(),
                             *exchange_il, &exchange_matrix_);
-        }
+	  delete exchange_il;
+	}
         
         if (exchange_jl) {
           eri::AddSubmatrix(A_pair.N_Shell()->matrix_indices(), 
                             B_pair.N_Shell()->matrix_indices(),
                             *exchange_jl, &exchange_matrix_);
-        }
+	  delete exchange_jl;
+	}
         
       } // estimate meets the threshold
       else {
