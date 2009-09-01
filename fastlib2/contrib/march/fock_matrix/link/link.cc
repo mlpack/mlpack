@@ -408,18 +408,21 @@ void Link::Compute() {
         eri::AddSubmatrix(mu_lambda.N_Shell()->matrix_indices(), 
                           nu_sigma.M_Shell()->matrix_indices(),
                           *exchange_jk, &exchange_matrix_);
+	delete exchange_jk;
       }
       
       if (exchange_il) {
         eri::AddSubmatrix(mu_lambda.M_Shell()->matrix_indices(), 
                           nu_sigma.N_Shell()->matrix_indices(),
                           *exchange_il, &exchange_matrix_);
+	delete exchange_il;
       }
       
       if (exchange_jl) {
         eri::AddSubmatrix(mu_lambda.N_Shell()->matrix_indices(), 
                           nu_sigma.N_Shell()->matrix_indices(),
                           *exchange_jl, &exchange_matrix_);
+	delete exchange_jl;
       }
       
       
