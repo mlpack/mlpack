@@ -170,11 +170,12 @@ namespace matrix_tree_impl {
       left_child = new MatrixTree();
       right_child = new MatrixTree();
       
-      if (cols->left()->end() < cols->end()) {
-        //printf("Double row split\n");
+      if (node->on_diagonal() && (cols->left()->end() < cols->end())) {
+        printf("Double row split\n");
         left_child->Init(rows->left(), cols->left(), shells, density);
       }
       else {
+        printf("Row split\n");
         left_child->Init(rows->left(), cols, shells, density);
       }
       right_child->Init(rows->right(), cols, shells, density);
@@ -216,11 +217,12 @@ namespace matrix_tree_impl {
       // split the cols again?
       // NO, in place of cols->right() below, I want cols->right()->right()?
       // what about if right is too shallow for this?
-      if (cols->right()->begin() > rows->begin()) {
-        //printf("Double col split\n");
+      if (node->on_diagonal() && (cols->right()->begin() > rows->begin())) {
+        printf("Double col split\n");
         right_child->Init(rows->right(), cols->right(), shells, density);
       }
       else {
+        printf("Col split\n");
         right_child->Init(rows, cols->right(), shells, density);
       }
       
