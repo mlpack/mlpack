@@ -63,7 +63,7 @@ class KernelPCA {
 
 
 
-  void Compute(Vector *eigenvalues, Matrix* eigenvectors) {
+  void Compute(Vector* p_eigenvalues, Matrix* p_eigenvectors) {
     
 
     // center kernel matrix (center data in kernel space)
@@ -91,7 +91,29 @@ class KernelPCA {
     
     
     // compute eigenvalues and eigenvectors of centered kernel matrix
-    la::EigenvectorsInit(centered_kernel_matrix, eigenvalues, eigenvectors);
+    Matrix right_singular_vectors;
+    la::SVDInit(centered_kernel_matrix,
+		p_eigenvalues, // singular values
+		p_eigenvectors, // left singular vectors
+		&right_singular_vectors);
+    //la::EigenvectorsInit(centered_kernel_matrix, eigenvalues, eigenvectors);
+    
+    const Matrix &eigenvectors = *p_eigenvectors;
+    const Vector &eigenvalues = *p_eigenvalues;
+    
+    
+    for(int i = 0; i < num_points_; i++) {
+      Vector cur_eigenvector;
+      eigenvectors.MakeColumnVector(i, &cur_eigenvector);
+      la::Scale(1.0 / sqrt(eigenvalues[i]), &cur_eigenvector);
+    }
+    
+    for(int i = 0; i < num_points_; i++) {
+      Vector cur_eigenvector;
+      eigenvectors.MakeColumnVector(i, &cur_eigenvector);
+      printf("%3e\n",
+	     la::Dot(cur_eigenvector, cur_eigenvector) * eigenvalues[i]);
+    }
   }
-
+  
 };
