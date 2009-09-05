@@ -373,9 +373,9 @@ void Objective::ComputeObjective(double current_sample,
                                p, 
                                q);
 
-cout<<"term1="<<ComputeTerm1_(betas)<<endl;
-cout<<"term2="<<ComputeTerm2_()<<endl;
-cout<<"term3="<<ComputeTerm3_()<<endl;
+//cout<<"term1="<<ComputeTerm1_(betas)<<endl;
+//cout<<"term2="<<ComputeTerm2_()<<endl;
+//cout<<"term3="<<ComputeTerm3_()<<endl;
   /**objective = ComputeTerm1_(betas) 
                + ComputeTerm2_()
                + ComputeTerm3_();
@@ -386,7 +386,7 @@ cout<<"term3="<<ComputeTerm3_()<<endl;
                + ComputeTerm2_()
                + ComputeTerm3_());
 
-	cout<<"The objective="<<*objective<<endl;
+//	cout<<"The objective="<<*objective<<endl;
 	
 
 
@@ -3123,6 +3123,7 @@ void Objective::CheckHessian3(double current_sample,
 
 	cout<<"hessian0(1,1)="<<dummy_approx_hessian.get(1,1)<<endl;
 
+/*
 	cout<<"hessian0"<<endl;
 	for (index_t j=0; j<dummy_approx_hessian.n_rows(); j++){
 		for (index_t k=0; k<dummy_approx_hessian.n_cols(); k++){
@@ -3130,7 +3131,7 @@ void Objective::CheckHessian3(double current_sample,
 		}
 		cout<<endl;
 	}
-
+*/
 	approx_hessian->Copy(dummy_approx_hessian);
 
 }

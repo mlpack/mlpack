@@ -794,19 +794,24 @@ void Optimization::ComputeSteihaugDirection(double radius,
 void Optimization::TrustRadiusUpdate(double rho, double p_norm, 
 																		 double *current_radius) {
 																			 
-	//if(rho<0.25)
-  if(rho<0.001)
+	if(rho<0.25)
+  //if(rho<0.001)
 	{
 		cout<<"Shrinking trust region radius..."<<endl;
-		(*current_radius)=p_norm/4.0; //(*radius)=(*radius)/4.0;
+		//(*current_radius)=p_norm/4.0; //(*radius)=(*radius)/4.0;
+		(*current_radius)=(*current_radius)/4.0;
 	}
-	//else if( (rho>0.75) && (p_norm > (0.99*(*current_radius))) )
-	else if( (rho>0.99) && (p_norm > (0.99*(*current_radius))) )
+	else if( (rho>0.75) && (p_norm > (0.99*(*current_radius))) )
+	//else if( (rho>0.99) && (p_norm > (0.99*(*current_radius))) )
 	{
+		//cout<<"radius before expanding="<<(*current_radius)<<endl;
 		cout<<"Expanding trust region radius..."<<endl;
 		//(*current_radius)=min(2.0*(*current_radius),max_radius_);
-		//(*current_radius)=min(2.0*(*current_radius),max_radius_);
-		(*current_radius)=min(3.5*(*current_radius),max_radius_);
+		//(*current_radius)=min((2*(*current_radius)),max_radius_);
+		(*current_radius)=min((2*(*current_radius)),1000.0);
+		//cout<<"Expanded radius="<<(*current_radius)<<endl;
+		//cout<<"radius 2="<<(2.0*(*current_radius))<<endl;
+		//(*current_radius)=min(3.5*(*current_radius),max_radius_);
 		
 	}
 }
