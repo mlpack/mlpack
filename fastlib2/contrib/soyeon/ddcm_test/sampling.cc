@@ -20,6 +20,10 @@ void Sampling::Init(fx_module *module, int *num_of_people,
   Matrix info1;
   data::Load(info_file1, &info1);
 	num_of_people_=info1.n_cols();
+	
+	//Experiment with 5000 ppl
+	num_of_people_=5000;
+	
 	*num_of_people=num_of_people_;
   population_first_stage_x_.Init(num_of_people_);
 	index_t start_col=0;
@@ -144,7 +148,7 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 		//initial_parameter->SetAll(1.5);
 
 		
-		initial_parameter->SetAll(2);
+		initial_parameter->SetAll(0);
 		
 	cout<<"NUM_OF_BETAS="<<num_of_betas<<endl;
 		(*initial_parameter)[num_of_betas]=2;
@@ -507,13 +511,13 @@ void Sampling::Shuffle() {
 		swap( shuffled_array_[j], shuffled_array_[random] );
 	}	//j
 
-	/*
+	
 	cout<<"shuffled_array :";
 	for(index_t i=0; i<num_of_people_; i++){
 		cout<<shuffled_array_[i] <<" ";
 	}
 	cout<<endl;
-	*/
+	
 
 
 }
@@ -550,17 +554,17 @@ void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *adde
 		//cout<<"initial_percent_sample_="<<initial_percent_sample_<<endl;
 		num_added_sample=math::RoundInt((num_of_people_)*(initial_percent_sample_)/100);
 	} else {
-		if(percent_added_sample==0){
+		if(percent_added_sample==0 && (num_of_selected_sample_ < num_of_people_) ){
 			NOTIFY("Keep the currect sample size");
-			cout<<"Keep the current sample size"<<endl;
-			num_added_sample=0;
+			cout<<"Keep the current sample size? Add 100 samples"<<endl;
+			num_added_sample=100;
 		}
 		else{
 			num_added_sample=math::RoundInt((num_of_selected_sample_)*(percent_added_sample)/100);
 			if(num_added_sample==0){
-				NOTIFY("number of sample to add is zero. Add Two samples.");
-				cout<<"number of sample to add is zero. Add Two samples."<<endl;
-				num_added_sample=2;
+				NOTIFY("number of sample to add is zero. Add 100 samples.");
+				cout<<"number of sample to add is zero. Add 100 samples."<<endl;
+				num_added_sample=100;
 			}
 
 		}

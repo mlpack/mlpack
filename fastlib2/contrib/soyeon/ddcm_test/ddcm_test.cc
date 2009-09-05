@@ -54,6 +54,8 @@ int main(int argc, char *argv[]) {
 	cout<<endl;
 	//NOTIFY("Number of people in dataset is %d", num_of_people);
 	cout<<"Number of people in dataset is "<<num_of_people<<endl;
+	//num_of_people=5000;
+	cout<<"Number of people in dataset is "<<num_of_people<<endl;
 	//NOTIFY("Shuffling");
 	cout<<"Shuffling"<<endl;
 	sampling.Shuffle();
@@ -108,11 +110,11 @@ int main(int argc, char *argv[]) {
 	double current_radius=0.1;	//initial_radius
 	//double eta=0.25;
 	//double eta=0.0001;
-	double eta=0.001;
+	double eta=0.2;
 	
 	double rho=0; //agreement(ratio)
 	
-	
+	double old_objective=0;
 
 	double correction_factor=0;
 	Vector current_choice_probability;
@@ -120,7 +122,8 @@ int main(int argc, char *argv[]) {
 
 	//for stopping rule
 	double error_tolerance=1e-16;
-	double zero_tolerance=0.0001;	//for gradient norm 10^-5?
+	//double zero_tolerance=0.0001;	//for gradient norm 10^-5?
+	double zero_tolerance=0.01;
 
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
@@ -223,9 +226,10 @@ int main(int argc, char *argv[]) {
 		
 		iteration_count+=1;
 		cout<<"iteration_count="<<iteration_count<<endl;
+		//cout<<"end_sampling="<<end_sampling<<endl;
 
 		if(end_sampling==0) {
-			//NOTIFY("All data are used");
+			//NOTIFY("All data are NOT used");
 		sampling.ExpandSubset(current_percent_added_sample, &current_added_first_stage_x,
 					&current_added_second_stage_x, &current_added_unknown_x_past, 
 					&current_added_first_stage_y);
@@ -244,6 +248,7 @@ int main(int argc, char *argv[]) {
 			
 			//NOTIFY("All data are used");
 			cout<<"All data are used"<<endl;
+			//old_objective=current_objective;
 	
 		}
 		double current_sample_size;
@@ -269,8 +274,11 @@ int main(int argc, char *argv[]) {
 		NOTIFY("The objective is %g", current_objective);
 		cout<<"The objective is "<<current_objective<<endl;
 		
-
+		
 		cout<<"current_sample_size="<<current_sample_size<<endl;
+
+	
+
 		//NOTIFY("Gradient calculation starts");
 		
 		
@@ -352,8 +360,10 @@ int main(int argc, char *argv[]) {
 				
 
 		//NOTIFY("Gradient calculation ends");
-
-			if(sample_size==num_of_people){
+			cout<<"="<<current_sample_size<<endl;
+			cout<<"num_of_people="<<num_of_people<<endl;
+			//if(sample_size==num_of_people){
+			if(current_sample_size>=num_of_people){
 			end_sampling+=1;
 			double gradient_norm;
 			//la::Scale(1.0/num_of_people, &current_gradient);
@@ -386,7 +396,11 @@ int main(int argc, char *argv[]) {
 				cout<<"Gradient norm is small enough...Exit..."<<endl;
 				break;
 			}
+
+
+
 			
+
 			//NOTIFY("All data are used");
 				}
 
@@ -507,7 +521,7 @@ int main(int argc, char *argv[]) {
 	if(iteration_count==1){
 		cout<<"iteration_count==1"<<endl;
 		objective.CheckHessian3(current_sample_size, current_parameter, &current_hessian);
-
+/*
 		cout<<"hessian0"<<endl;
 		for (index_t j=0; j<current_hessian.n_rows(); j++){
 			for (index_t k=0; k<current_hessian.n_cols(); k++){
@@ -516,7 +530,7 @@ int main(int argc, char *argv[]) {
 			cout<<endl;
 		}
 		
-
+*/
 	}
 	  //Matrix current_hessian;
 		
@@ -613,8 +627,11 @@ int main(int argc, char *argv[]) {
 			
 			double sampling_error=0;
 			//double serror_factor=10*sample_size;
-			double serror_factor=0.055*sample_size;
+			//double serror_factor=0.055*sample_size;
+			double serror_factor=0.02*sample_size;
 			cout<<"serror_factor="<<serror_factor<<endl;
+			//serror_factor=0.5;
+			//cout<<"serror_factor="<<serror_factor<<endl;
 			double sampling_deviation=0;
 
 			for(index_t n=0; n<sample_size; n++){
@@ -645,7 +662,7 @@ int main(int argc, char *argv[]) {
 		}	//if
 
 				/*
-		if(sample_size==num_of_people &&end_sampling==0){
+		if(sample_size>=num_of_people &&end_sampling==0){
 			end_sampling+=1;
 			NOTIFY("All data are used");
 			cout<<"All data are used"<<endl;
@@ -759,6 +776,7 @@ int main(int argc, char *argv[]) {
 
 		la::Scale( (1/la::Dot(mtx_diff_par, mtx_diff_gradient)), &temp2);
 
+
 		cout<<"temp2"<<endl;
 		for (index_t j=0; j<updated_hessian.n_rows(); j++){
 			for (index_t k=0; k<updated_hessian.n_cols(); k++){
@@ -815,8 +833,7 @@ int main(int argc, char *argv[]) {
 		Matrix eigenvec_hessian;
 
     
-		la::EigenvectorsInit(updated_hessian, &eigen_hessian, 
-																					&eigenvec_hessian);
+		la::EigenvectorsInit(updated_hessian, &eigen_hessian, &eigenvec_hessian);
 
 		cout<<"eigen values of updated hessian"<<endl;
 
@@ -826,14 +843,16 @@ int main(int argc, char *argv[]) {
 		cout<<endl;
 		cout<<endl;
 
+/*
 		cout<<"eigen vectors of updated hessian"<<endl;
-    for (index_t j=0; j<updated_hessian.n_rows(); j++){
+    		for (index_t j=0; j<updated_hessian.n_rows(); j++){
 			for (index_t k=0; k<updated_hessian.n_cols(); k++){
 				cout<<eigenvec_hessian.get(j,k) <<"  ";
 			}
 			cout<<endl;
 		}
 		cout<<endl;
+*/
 
 		/*
 		double max_eigen=0;
@@ -860,6 +879,25 @@ int main(int argc, char *argv[]) {
 			current_parameter.CopyValues(next_parameter);
 			NOTIFY("Accepting the step...");
 			cout<<"Accepting the step"<<endl;
+
+			cout<<"diff="<<(current_objective-next_objective)<<endl;
+			//cout<<"current_radius="<<current_radius<<endl;
+			if(current_sample_size>=num_of_people && iteration_count>1){
+				if(current_objective-next_objective < 0.001 && current_radius <0.001){
+					cout<<"Improvement in objective fn is small enough...Exit..."<<(current_objective-next_objective)<<endl;
+					cout<<"current radius is small enough...Exit..."<<current_radius<<endl;
+					break;
+				}
+			}
+
+
+			/*
+			if(current_radius <0.001) {
+				cout<<"current radius is small enough...Exit..."<<current_radius<<endl;
+				break;
+			}
+			*/
+
 			current_hessian.CopyValues(updated_hessian);
 			
 			NOTIFY("Update the hessian matrix by BFGS method...");
@@ -942,9 +980,10 @@ int main(int argc, char *argv[]) {
 	}
   
 	NOTIFY("Final hessian calculation2");
+	/*
 	cout<<"Final hessian calculation2"<<endl;
 	Matrix final_hessian;
-  objective.CheckHessian(num_of_people, current_parameter, &final_hessian);
+	objective.CheckHessian(num_of_people, current_parameter, &final_hessian);
 
 	cout<<"Final_hessian2 from finite approx."<<endl;
 	for (index_t j=0; j<final_hessian.n_rows(); j++){
@@ -953,7 +992,7 @@ int main(int argc, char *argv[]) {
 		}
 		cout<<endl;
 	}
-  cout<<endl;
+  	cout<<endl;
 	cout<<endl;
 
 	Matrix eigenvec_hessian2;
@@ -970,7 +1009,7 @@ int main(int argc, char *argv[]) {
 	cout<<endl;
 
 	cout<<"eigen vectors of final hessian-finite-approx"<<endl;
-  for (index_t j=0; j<final_hessian.n_rows(); j++){
+  	for (index_t j=0; j<final_hessian.n_rows(); j++){
 		for (index_t k=0; k<final_hessian.n_cols(); k++){
 			cout<<eigenvec_hessian2.get(j,k) <<"  ";
 		}
@@ -1010,6 +1049,7 @@ int main(int argc, char *argv[]) {
 		cout<<endl;
 
 	}
+*/
 
 	/*
 
