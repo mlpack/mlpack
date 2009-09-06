@@ -812,6 +812,8 @@ void MultiTreeFock::Compute() {
                 num_coulomb_prescreening_prunes_);
   fx_result_int(module_, "num_exchange_prescreening_prunes", 
                 num_exchange_prescreening_prunes_);
+  
+  delete matrix_tree_;
 
 } // ComputeFockMatrix()
 

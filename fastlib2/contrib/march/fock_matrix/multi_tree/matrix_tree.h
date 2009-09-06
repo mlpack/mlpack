@@ -381,6 +381,10 @@ public:
       delete right_;
     }
     
+    if (entries_) {
+      delete entries_;
+    }
+    
   }
     
   void Print() {
