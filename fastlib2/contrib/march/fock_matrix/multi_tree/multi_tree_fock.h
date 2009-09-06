@@ -84,12 +84,14 @@ class MultiTreeFock {
   Vector momenta_;
   
   // The number of times an approximation is invoked
-  int num_approximations_;
+  int num_coulomb_approximations_;
+  int num_exchange_approximations_;
   
   index_t num_integrals_computed_;
   
   // The number of times the base case is called
-  int num_base_cases_;
+  int num_coulomb_base_cases_;
+  int num_exchange_base_cases_;
   
   // The return values are stored here
   // fock_matrix__.ref(i, j) is the fock matrix entry i, j
@@ -129,6 +131,10 @@ class MultiTreeFock {
   // The available error
   double epsilon_;
   
+  double prescreening_cutoff_;
+  int num_coulomb_prescreening_prunes_;
+  int num_exchange_prescreening_prunes_;
+  
   //////////////// Functions /////////////////////////////
   
   void PassBoundsUp_(MatrixTree* query);
@@ -137,7 +143,8 @@ class MultiTreeFock {
   
   ///////// Recursive Calls ////////////////////////
   
-  void ComputeBaseCase(MatrixTree* query, MatrixTree* reference);
+  void ComputeBaseCaseCoulomb(MatrixTree* query, MatrixTree* reference);
+  void ComputeBaseCaseExchange(MatrixTree* query, MatrixTree* reference);
   
   /**
    * Heuristic to determine which node to split
@@ -146,15 +153,20 @@ class MultiTreeFock {
    */
   bool SplitQuery(MatrixTree* query, MatrixTree* reference);
   
-  void NodeBounds(MatrixTree* query, MatrixTree* reference,
-                  double* max_coulomb, double* max_exchange,
-                  double* min_coulomb, double* min_exchange);
+  void NodeBoundsCoulomb(MatrixTree* query, MatrixTree* reference,
+                  double* max_coulomb, double* min_coulomb);
+
+  void NodeBoundsExchange(MatrixTree* query, MatrixTree* reference,
+                          double* max_exchange, double* min_exchange);
   
-  bool CanPrune(MatrixTree* query, MatrixTree* reference,
-                double* approx_coulomb, double* approx_exchange,
-                double* lost_error);
+  bool CanPruneCoulomb(MatrixTree* query, MatrixTree* reference,
+                       double* approx_val, double* lost_error);
+
+  bool CanPruneExchange(MatrixTree* query, MatrixTree* reference,
+                        double* approx_val, double* lost_error);
   
-  void DepthFirstRecursion(MatrixTree* query, MatrixTree* reference);
+  void DepthFirstRecursionCoulomb(MatrixTree* query, MatrixTree* reference);
+  void DepthFirstRecursionExchange(MatrixTree* query, MatrixTree* reference);
   
   
   
@@ -189,9 +201,15 @@ class MultiTreeFock {
 
     epsilon_ = fx_param_double(module_, "epsilon", 0.01);
     
-    num_approximations_ = 0;
+    prescreening_cutoff_ = fx_param_double(module_, "prescreening_cutoff", 0.0);
+    
+    num_coulomb_approximations_ = 0;
+    num_exchange_approximations_ = 0;
     num_integrals_computed_ = 0;
-    num_base_cases_ = 0;
+    num_coulomb_base_cases_ = 0;
+    num_exchange_base_cases_ = 0;    
+    num_coulomb_prescreening_prunes_ = 0;
+    num_exchange_prescreening_prunes_ = 0;
     
     number_of_basis_functions_ = eri::CreateShells(centers_, exponents_, momenta_,
                                                    &shell_list_);
@@ -216,17 +234,13 @@ class MultiTreeFock {
 
     printf("====Matrix Tree Building====\n");
     
-    fx_timer_start(module_, "matrix_tree_building");
     matrix_tree_ = matrix_tree_impl::CreateMatrixTree(tree_, shell_ptr_list_, 
                                                       density_matrix_);
     
     // set up the pruning values
     matrix_tree_->set_remaining_references(matrix_tree_->num_pairs());
-    matrix_tree_->set_remaining_epsilon(epsilon_);
-    
-    fx_timer_stop(module_, "matrix_tree_building");
-    
-    
+    // half for coulomb, half for exchange
+    matrix_tree_->set_remaining_epsilon(epsilon_ * 0.5);
     
     relative_error_ = !fx_param_exists(module_, "absolute_error");
     

@@ -119,6 +119,17 @@ namespace eri {
     
   } // ComputeShellOverlap
   
+  double ComputeShellOverlap(double AB_dist_sq, double exp_A, double exp_B) {
+    
+    double gamma = exp_A + exp_B;
+    double overlap = pow(math::PI/gamma, 3.0/2.0);
+    double exp_fac = exp(-1 * exp_A * exp_B * AB_dist_sq / gamma);
+    overlap *= exp_fac;
+    
+    return overlap;
+    
+  }
+  
   
   
   // This version was copied from Libmints
@@ -1660,8 +1671,40 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
       //BasisShell j_shell = shells_in[j];
       
       // Do they use the overlap integral here?
-      double this_bound = SchwartzBound(shells_in[i], shells_in[j]);
-      //double this_bound = eri::ComputeOverlapIntegral(i_shell, j_shell);
+      // close, but not quite
+      //double this_bound = SchwartzBound(shells_in[i], shells_in[j]);
+      
+      // doesn't work
+      //this_bound = this_bound * this_bound;
+      // doesn't work
+      double this_bound = ComputeShellOverlap(shells_in[i], shells_in[j]);
+      // doesn't work
+      //this_bound *= shells_in[i].normalization_constant(0);
+      //this_bound *= shells_in[j].normalization_constant(0);
+      
+      // doesn't work
+      /*
+      double max_density = -DBL_MAX;
+      for (index_t k = 0; k < shells_in[i].num_functions(); k++) {
+       for (index_t l = 0; l < shells_in[j].num_functions(); l++) {
+         max_density = max(max_density, 
+                           fabs(density.get(shells_in[i].matrix_index(k),
+                                            shells_in[j].matrix_index(l))));
+       } 
+      }
+      this_bound *= max_density;
+      */
+      
+      // doesn't help
+      //this_bound += 0.01 * shell_pair_cutoff;
+      
+      // doesn't work
+      /*
+      Vector overlaps;
+      eri::ComputeOverlapIntegrals(shells_in[i], shells_in[j], &overlaps);
+      double this_bound = *(std::max_element(overlaps.ptr(), 
+                                           overlaps.ptr() + overlaps.length()));
+      */
       
       //printf("Schwartz Bound: %g\n", this_bound);
       
@@ -1672,7 +1715,8 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
         (*shell_pairs)[num_shell_pairs].Init(i, j, &(shells_in[i]), &(shells_in[j]), 
                                              num_shell_pairs, density);
         (*shell_pairs)[num_shell_pairs].set_integral_upper_bound(this_bound);
-        (*shell_pairs)[num_shell_pairs].set_schwartz_factor(this_bound);
+        double schwarz_bound = SchwartzBound(shells_in[i], shells_in[j]);
+        (*shell_pairs)[num_shell_pairs].set_schwartz_factor(schwarz_bound);
         num_shell_pairs++;
         
               
@@ -1728,7 +1772,8 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
       BasisShell& j_shell = shells_in[j];
       
       // Do they use the overlap integral here?
-      double this_bound = SchwartzBound(i_shell, j_shell);
+      //double this_bound = SchwartzBound(i_shell, j_shell);
+      double this_bound = ComputeShellOverlap(i_shell, j_shell);
       
       if (this_bound > shell_pair_cutoff) {
         
@@ -1738,7 +1783,8 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
                                              num_shell_pairs, density);
         (*shell_pairs)[num_shell_pairs].set_integral_upper_bound(this_bound);
         significant_sig_index[i][num_for_i] = num_shell_pairs;
-        (*shell_pairs)[num_shell_pairs].set_schwartz_factor(this_bound);
+        double schwarz_bound = SchwartzBound(shells_in[i], shells_in[j]);
+        (*shell_pairs)[num_shell_pairs].set_schwartz_factor(schwarz_bound);
         num_shell_pairs++;
         
         

@@ -1,4 +1,4 @@
-/*
+  /*
  *  matrix_tree.h
  *  
  *
@@ -38,13 +38,17 @@ private:
    * this node.
    * This does need to be passed down the tree in order to prune accurately.
    */
+  /*
   double coulomb_approx_val_;
   double exchange_approx_val_;
+  */
+  
+  double approx_val_;
   
   /**
-   * @brief Upper and lower bounds on the Fock matrix entries (i.e. query bounds)
+   * @brief Upper and lower bounds on the query
    */
-  DRange fock_bounds_;
+  DRange entry_bounds_;
   
   /**
    * @brief Density matrix bounds (i.e. reference bounds)
@@ -65,8 +69,7 @@ private:
   
   bool is_leaf_;
   
-  Matrix* coulomb_entries_;
-  Matrix* exchange_entries_;
+  Matrix* entries_;
   
   bool on_diagonal_;
   
@@ -89,14 +92,15 @@ public:
     return col_indices_;
   }
   
-  DRange& fock_bounds() {
-    return fock_bounds_;
+  DRange& entry_bounds() {
+    return entry_bounds_;
   } 
   
   DRange& density_bounds() {
     return density_bounds_;
   }
   
+  /*
   double coulomb_approx_val() const {
     return coulomb_approx_val_;
   }
@@ -119,6 +123,19 @@ public:
 
   void set_exchange_approx_val(double val) {
     exchange_approx_val_ = val;
+  }
+   */
+  
+  double approx_val() const {
+    return approx_val_; 
+  }
+  
+  void add_approx(double val) {
+    approx_val_ += val;
+  }
+  
+  void set_approx_val(double val) {
+    approx_val_ = val;
   }
   
   MatrixTree* left() {
@@ -149,12 +166,18 @@ public:
     return is_leaf_;
   }
   
+  /*
   Matrix* coulomb_entries() {
     return coulomb_entries_; 
   }
 
   Matrix* exchange_entries() {
     return exchange_entries_; 
+  }
+  */
+  
+  Matrix* entries() {
+    return entries_;
   }
   
   bool on_diagonal() const {
@@ -220,12 +243,17 @@ public:
     }
     */
     
+    /*
     coulomb_entries_ = new Matrix();
     coulomb_entries_->Init(row_indices_.size(), col_indices_.size());
     coulomb_entries_->SetZero();
     exchange_entries_ = new Matrix();
     exchange_entries_->Init(row_indices_.size(), col_indices_.size());
     exchange_entries_->SetZero();
+    */
+    entries_ = new Matrix();
+    entries_->Init(row_indices_.size(), col_indices_.size());
+    entries_->SetZero();
     
   }
   
@@ -273,10 +301,13 @@ public:
     // and lower bound integral, then the bound at any time is the current approximations
     // plus the current computation plus the global bound times the number of 
     // pending references.  
-    fock_bounds_.InitUniversalSet();
+    entry_bounds_.InitUniversalSet();
     
+    /*
     coulomb_approx_val_ = 0.0;
     exchange_approx_val_ = 0.0;
+    */
+    approx_val_ = 0.0;
     
     // These start as NULL since we don't perform the split when creating the
     // tree node
@@ -286,17 +317,26 @@ public:
     is_leaf_ = (row_shells_->is_leaf() && col_shells_->is_leaf());
     
     if (is_leaf_) {
+      /*
       coulomb_entries_ = new Matrix();
       coulomb_entries_->Init(row_indices_.size(), col_indices_.size());
       coulomb_entries_->SetZero();
       exchange_entries_ = new Matrix();
       exchange_entries_->Init(row_indices_.size(), col_indices_.size());
       exchange_entries_->SetZero();
+      */
+      entries_ = new Matrix();
+      entries_->Init(row_indices_.size(), col_indices_.size());
+      entries_->SetZero();
       
     }
     else {
+      /*
       coulomb_entries_ = NULL; 
-      exchange_entries_ = NULL; 
+      exchange_entries_ = NULL;
+       */
+      entries_ = NULL;
+      
     }
     
     
@@ -333,7 +373,7 @@ public:
      
     
   } // Init()
-  
+    
   void Print() {
     
     //row_indices_.Print("row_indices");

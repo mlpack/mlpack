@@ -51,6 +51,11 @@ namespace eri {
   
   double ComputeShellOverlap(const BasisShell& shellA, const BasisShell& shellB);
   
+  /**
+   * @brief Used for prescreening-like prune in multi tree code
+   */
+  double ComputeShellOverlap(double AB_dist_sq, double exp_A, double exp_B);
+  
   double GammaLn(double xx);
   void GammaSeries(double* gamser, double a, double x, double* gln);
   void GammaCF(double* gammcf, double a, double x, double* gln);
