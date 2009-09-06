@@ -15,10 +15,9 @@
 
 namespace matrix_tree_impl {
   
-  void FormDenseMatrixHelper(MatrixTree* node, Matrix* coul_out, Matrix* exc_out,
-                             double coul_approx, double exc_approx);
+  void FormDenseMatrixHelper(MatrixTree* node, Matrix* mat_out, double approx);
   
-  void FormDenseMatrix(MatrixTree* root, Matrix* coul_out, Matrix* exc_out);
+  void FormDenseMatrix(MatrixTree* root, Matrix* mat_out);
   
   MatrixTree* CreateMatrixTree(BasisShellTree* shell_root, 
                                const ArrayList<BasisShell*>& shells,

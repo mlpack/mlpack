@@ -11,29 +11,18 @@
 
 namespace matrix_tree_impl {
 
-  void FormDenseMatrixHelper(MatrixTree* node, Matrix* coul_out, Matrix* exc_out,
-                             double coul_approx, double exc_approx) {
+  void FormDenseMatrixHelper(MatrixTree* node, Matrix* mat_out, double approx) {
     
-    double this_coul_approx = node->coulomb_approx_val() + coul_approx;
-    double this_exc_approx = node->exchange_approx_val() + exc_approx;
-    
-    //printf("coul_approx: %g, exc_approx: %g\n", this_coul_approx, this_exc_approx);
+    double this_approx = node->approx_val() + approx;
     
     if (node->left()) {
       // recursively build the matrix
       // how to pass the submatrices around? 
-      FormDenseMatrixHelper(node->left(), coul_out, exc_out, this_coul_approx,
-                            this_exc_approx);
-      FormDenseMatrixHelper(node->right(), coul_out, exc_out, this_coul_approx,
-                            this_exc_approx);
+      FormDenseMatrixHelper(node->left(), mat_out, this_approx);
+      FormDenseMatrixHelper(node->right(), mat_out, this_approx);
       
     } // not leaf
-    else if (node->coulomb_entries()){
-      
-      //node->coulomb_entries()->PrintDebug("Coulomb Base");
-      
-      
-      DEBUG_ASSERT(node->exchange_entries());
+    else if (node->entries()){
       
       // Iterate over the fock_entries matrix
       for (index_t i = 0; i < node->row_indices().size(); i++) {
@@ -43,20 +32,14 @@ namespace matrix_tree_impl {
         for (index_t j = 0; j < node->col_indices().size(); j++) {
           
           index_t col_ind = node->col_indices()[j];
-          double coul_val = coul_out->get(row_ind, col_ind) + this_coul_approx 
-                            + node->coulomb_entries()->get(i,j);
-          double exc_val = exc_out->get(row_ind, col_ind) + this_exc_approx 
-                           + node->exchange_entries()->get(i,j);
+          double val = mat_out->get(row_ind, col_ind) + this_approx 
+                       + node->entries()->get(i,j);
           
-          //printf("i: %d, j: %d, row_end: %d, col_ind: %d, prev_val: %g, new_val: %g\n", i, j, row_ind, col_ind, 
-          //       coul_out->get(row_ind, col_ind), node->coulomb_entries()->get(i,j));
-          coul_out->set(row_ind, col_ind, coul_val);
-          exc_out->set(row_ind, col_ind, exc_val);
-          
+          mat_out->set(row_ind, col_ind, val);
+
           // handle below the diagonal
           if (!(node->on_diagonal())) {
-            coul_out->set(col_ind, row_ind, coul_val); 
-            exc_out->set(col_ind, row_ind, exc_val); 
+            mat_out->set(col_ind, row_ind, val); 
           }
           
         } // for j
@@ -74,16 +57,13 @@ namespace matrix_tree_impl {
         for (index_t j = 0; j < node->col_indices().size(); j++) {
           
           index_t col_ind = node->col_indices()[j];
-          double coul_val = coul_out->get(row_ind, col_ind) + this_coul_approx;
-          double exc_val = exc_out->get(row_ind, col_ind) + this_exc_approx;
-          
-          coul_out->set(row_ind, col_ind, coul_val);
-          exc_out->set(row_ind, col_ind, exc_val);
+          double val = mat_out->get(row_ind, col_ind) + this_approx;
+
+          mat_out->set(row_ind, col_ind, val);
           
           // handle below the diagonal
           if (!node->on_diagonal()) {
-            coul_out->set(col_ind, row_ind, coul_val); 
-            exc_out->set(col_ind, row_ind, exc_val);
+            mat_out->set(col_ind, row_ind, val); 
           }
           
         } // for j
@@ -93,21 +73,15 @@ namespace matrix_tree_impl {
     
   } // FormDensityMatrixHelper()
   
-  void FormDenseMatrix(MatrixTree* root, Matrix* coulomb_out, 
-                       Matrix* exchange_out) {
+  void FormDenseMatrix(MatrixTree* root, Matrix* mat_out) {
     
     // The root should represent a square matrix
     DEBUG_ASSERT(root->row_indices().size() == root->col_indices().size());
     
-    coulomb_out->Init(root->row_indices().size(), root->row_indices().size());
-    coulomb_out->SetZero();
-    exchange_out->Init(root->row_indices().size(), root->row_indices().size());
-    exchange_out->SetZero();
+    mat_out->Init(root->row_indices().size(), root->row_indices().size());
+    mat_out->SetZero();
     
-    //root->coulomb_entries()->PrintDebug("Coulomb Entries");
-    //root->exchange_entries()->PrintDebug("Exchange Entries");
-    
-    FormDenseMatrixHelper(root, coulomb_out, exchange_out, 0.0, 0.0);
+    FormDenseMatrixHelper(root, mat_out, 0.0);
     
   } // FormDenseMatrix()
   

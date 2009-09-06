@@ -121,6 +121,10 @@ class SchwartzPrescreening {
     num_shell_pairs_ = eri::ComputeShellPairs(&shell_pair_list_, basis_list_, 
                                               shell_pair_threshold_, 
                                               density_matrix_);
+    
+    printf("num_shells: %d\n", num_shells_);
+    printf("num_shell_pairs: %d, shell_pair_threshold: %g\n", num_shell_pairs_,
+           shell_pair_threshold_);
     fx_timer_stop(module_, "shell_screening_time");
 
     fx_result_int(module_, "num_shell_pairs", num_shell_pairs_);
