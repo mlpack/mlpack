@@ -6,13 +6,13 @@
  * This head file contains functions for performing SVM training and prediction
  * Supported SVM learner type:SVM_C, SVM_R, SVM_DE
  *
- * @see smo.h
+ * @see opt_smo.h
  */
 
 #ifndef U_SVM_SVM_H
 #define U_SVM_SVM_H
 
-#include "smo.h"
+#include "opt_smo.h"
 
 #include "fastlib/fastlib.h"
 
@@ -96,12 +96,14 @@ class SVM {
    * Developers may add more learner types if necessary
    */
   int learner_typeid_;
+  // Optimization method: smo
+  String opt_method_;
   /* array of models for storage of the 2-class(binary) classifiers 
      Need to train num_classes_*(num_classes_-1)/2 binary models */
   struct SVM_MODELS {
     /* bias term in each binary model */
     double bias_;
-    /* all coefficients of the binary dataset, not necessarily thoes of SVs */
+    /* all coefficients (alpha*y) of the binary dataset, not necessarily thoes of SVs */
     ArrayList<double> coef_;
   };
   ArrayList<SVM_MODELS> models_;
@@ -144,6 +146,12 @@ class SVM {
     double epsilon_;
     // working set selection scheme, 1 for 1st order expansion; 2 for 2nd order expansion
     double wss_;
+    // whether do L1-SVM (1) or L2-SVM (2)
+    int hinge_sqhinge_; // L1-SVM uses hinge loss, L2-SVM uses squared hinge loss
+    // accuracy for the optimization stopping creterion
+    double accuracy_;
+    // number of iterations
+    index_t n_iter_;
   };
   PARAMETERS param_;
   
@@ -189,6 +197,8 @@ template<typename TKernel>
 void SVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *module){
   learner_typeid_ = learner_typeid;
 
+  opt_method_ = fx_param_str(NULL, "opt", "smo"); // optimization method: default using SMO
+
   n_data_ = dataset.n_points();
   // # of features == # of row - 1, exclude the last row (for labels)
   num_features_ = dataset.n_features()-1;
@@ -226,12 +236,17 @@ void SVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *mo
   param_.kernel_.Init(fx_submodule(module, "kernel"));
   param_.kernel_.GetName(&param_.kernelname_);
   param_.kerneltypeid_ = param_.kernel_.GetTypeId();
-  // budget parameter, contorls # of support vectors; default: # of data samples (use all)
-  //param_.b_ = fx_param_int(NULL, "b", dataset.n_points());
   // working set selection scheme. default: 1st order expansion
   param_.wss_ = fx_param_int(NULL, "wss", 1);
+  // whether do L1-SVM(1) or L2-SVM (2)
+  param_.hinge_sqhinge_ = fx_param_int(NULL, "hinge", 1); // default do L1-SVM
 
-  // the tradeoff parameter "C", default: 10.0
+  // accuracy for optimization
+  param_.accuracy_ = fx_param_double(NULL, "accuracy", 1e-4);
+  // number of iterations
+  param_.n_iter_ = fx_param_int(NULL, "n_iter", 100000000);
+
+  // tradeoff parameter for C-SV
   param_.C_ = fx_param_double(NULL, "c", 10.0);
   param_.Cp_ = fx_param_double(NULL, "c_p", param_.C_);
   param_.Cn_ = fx_param_double(NULL, "c_n", param_.C_);
@@ -284,25 +299,13 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
   num_classes_ = dataset.n_labels();
   /* Group labels, split the training dataset for training bi-class SVM classifiers */
   dataset.GetLabels(train_labels_list_, train_labels_index_, train_labels_ct_, train_labels_startpos_);
-  /* Train num_classes*(num_classes-1)/2 binary class(labels:-1, 1) models using SMO */
+
+  /* Train num_classes*(num_classes-1)/2 binary class(labels:-1, 1) models */
   index_t ct = 0;
   index_t i, j;
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
       models_.PushBack();
-
-      SMO<Kernel> smo;
-      /* Initialize SMO parameters */
-      ArrayList<double> param_feed_db;
-      param_feed_db.Init();
-      param_feed_db.PushBack() = param_.b_;
-      param_feed_db.PushBack() = param_.Cp_;
-      param_feed_db.PushBack() = param_.Cn_;
-      param_feed_db.PushBack() = param_.wss_;
-      smo.InitPara(learner_typeid, param_feed_db);
-      /* Initialize kernel */
-      smo.kernel().Init(fx_submodule(module, "kernel"));
-
       /* Construct dataset consists of two classes i and j (reassign labels 1 and -1) */
       // TODO: avoid these ugly and time-consuming memory allocation
       Dataset dataset_bi;
@@ -330,13 +333,35 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	dataset_bi_index[n+train_labels_ct_[i]] = train_labels_index_[train_labels_startpos_[j]+n];
       }
 
-      /* 2-classes SVM training */
-      smo.Train(learner_typeid, &dataset_bi);
+      if (opt_method_== "smo") {
+	/* Initialize SMO parameters */
+	ArrayList<double> param_feed_db;
+	param_feed_db.Init();
+	param_feed_db.PushBack() = param_.Cp_;
+	param_feed_db.PushBack() = param_.Cn_;
+	param_feed_db.PushBack() = param_.hinge_sqhinge_;
+	param_feed_db.PushBack() = param_.wss_;
+	param_feed_db.PushBack() = param_.n_iter_;
+	param_feed_db.PushBack() = param_.accuracy_;
+	SMO<Kernel> smo;
+	smo.InitPara(learner_typeid, param_feed_db);
 
-      /* Get the trained bi-class model */
-      models_[ct].bias_ = smo.Bias();
-      models_[ct].coef_.Init();
-      smo.GetSVM(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_);
+	/* Initialize kernel */
+	smo.kernel().Init(fx_submodule(module, "kernel"));
+
+	/* 2-classes SVM training using SMO */
+	fx_timer_start(NULL, "train_smo");
+	smo.Train(learner_typeid, &dataset_bi);
+	fx_timer_stop(NULL, "train_smo");
+
+	/* Get the trained bi-class model */
+	models_[ct].coef_.Init(); // alpha*y
+	models_[ct].bias_ = smo.Bias(); // bias
+	smo.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
+      }
+      else {
+	fprintf(stderr, "ERROR!!! Unknown optimization method!\n");
+      }
 
       ct++;
     }
@@ -370,25 +395,21 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
   /* Get the matrix sv_coef_ which stores the coefficients of all sets of SVs */
   /* i.e. models_[x].coef_ -> sv_coef_ */
   index_t ct_model = 0;
-  index_t ct_bi_cv;
   index_t p;
   sv_coef_.Init(num_classes_-1, total_num_sv_);
   sv_coef_.SetZero();
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
-      ct_bi_cv = 0;
       p = sv_list_startpos_[i];
       for (k = 0; k < train_labels_ct_[i]; k++) {
 	if (trainset_sv_indicator_[ train_labels_index_[train_labels_startpos_[i]+k] ]) {
-	  sv_coef_.set(j-1, p++, models_[ct_model].coef_[ct_bi_cv]);
-	  ct_bi_cv ++;
+	  sv_coef_.set(j-1, p++, models_[ct_model].coef_[k]);
 	}
       }
       p = sv_list_startpos_[j];
       for (k = 0; k < train_labels_ct_[j]; k++) {
 	if (trainset_sv_indicator_[ train_labels_index_[train_labels_startpos_[j]+k] ]) {
-	  sv_coef_.set(i, p++, models_[ct_model].coef_[ct_bi_cv]);
-	  ct_bi_cv ++;
+	  sv_coef_.set(i, p++, models_[ct_model].coef_[train_labels_ct_[i] + k]);
 	}
       }
       ct_model++;
@@ -413,24 +434,33 @@ void SVM<TKernel>::SVM_R_Train_(int learner_typeid, const Dataset& dataset, data
 
   models_.PushBack();
 
-  SMO<Kernel> smo;
-  /* Initialize SMO parameters */
-  ArrayList<double> param_feed_db;
-  param_feed_db.Init();
-  param_feed_db.PushBack() = param_.b_;
-  param_feed_db.PushBack() = param_.C_;
-  param_feed_db.PushBack() = param_.epsilon_;
-  param_feed_db.PushBack() = param_.wss_;
-  smo.InitPara(learner_typeid, param_feed_db);
-  /* Initialize kernel */
-  smo.kernel().Init(fx_submodule(module, "kernel"));
-  /* SVM_R Training */
-  smo.Train(learner_typeid, &dataset);
+  if (opt_method_== "smo") {
+    /* Initialize SMO parameters */
+    ArrayList<double> param_feed_db;
+    param_feed_db.Init();
+    param_feed_db.PushBack() = param_.C_;
+    param_feed_db.PushBack() = param_.epsilon_;
+    param_feed_db.PushBack() = param_.wss_;
+    param_feed_db.PushBack() = param_.n_iter_;
+    param_feed_db.PushBack() = param_.accuracy_;
+    SMO<Kernel> smo;
+    smo.InitPara(learner_typeid, param_feed_db);
+    
+    /* Initialize kernel */
+    smo.kernel().Init(fx_submodule(module, "kernel"));
 
-  /* Get the trained model */
-  models_[0].bias_ = smo.Bias();
-  models_[0].coef_.Init();
-  smo.GetSVM(dataset_index, models_[0].coef_, trainset_sv_indicator_);
+    /* SVM_R Training using SMO*/
+    smo.Train(learner_typeid, &dataset);
+    
+    /* Get the trained model */
+    models_[0].bias_ = smo.Bias(); // bias
+    models_[0].coef_.Init(); // alpha*y
+    smo.GetSV(dataset_index, models_[0].coef_, trainset_sv_indicator_); // get support vectors
+  }
+  else {
+    fprintf(stderr, "ERROR!!! Unknown optimization method!");
+  }
+
   /* Get index list of support vectors */
   for (i = 0; i < n_data_; i++) {
     if (trainset_sv_indicator_[i]) {
@@ -509,16 +539,19 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
   ArrayList<double> values;
   values.Init(num_models_);
   index_t ct = 0;
+  double sum = 0.0;
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
-      double sum = 0;
-      for(k = 0; k < sv_list_ct_[i]; k++) {
-	sum += sv_coef_.get(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];
+      if (opt_method_== "smo") {
+	sum = 0.0;
+	for(k = 0; k < sv_list_ct_[i]; k++) {
+	  sum += sv_coef_.get(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];
+	}
+	for(k = 0; k < sv_list_ct_[j]; k++) {
+	  sum += sv_coef_.get(i, sv_list_startpos_[j]+k) * keval[sv_list_startpos_[j]+k];
+	}
+	sum += models_[ct].bias_;
       }
-      for(k = 0; k < sv_list_ct_[j]; k++) {
-	sum += sv_coef_.get(i, sv_list_startpos_[j]+k) * keval[sv_list_startpos_[j]+k];
-      }
-      sum += models_[ct].bias_;
       values[ct] = sum;
       ct++;
     }
@@ -561,8 +594,10 @@ template<typename TKernel>
 double SVM<TKernel>::SVM_R_Predict_(const Vector& datum) {
   index_t i;
   double sum = 0.0;
-  for (i = 0; i < total_num_sv_; i++) {
-    sum += sv_coef_.get(0, i) * param_.kernel_.Eval(datum.ptr(), sv_.GetColumnPtr(i), num_features_);
+  if (opt_method_== "smo") {
+    for (i = 0; i < total_num_sv_; i++) {
+      sum += sv_coef_.get(0, i) * param_.kernel_.Eval(datum.ptr(), sv_.GetColumnPtr(i), num_features_);
+    }
   }
   sum += models_[0].bias_;
   return sum;
@@ -584,7 +619,7 @@ double SVM<TKernel>::SVM_DE_Predict_(const Vector& datum) {
 
 
 /**
-* Online batch classification for multiple testing vectors. No need to load model file, 
+* Batch classification for multiple testing vectors. No need to load model file, 
 * since models are already in RAM.
 *
 * Note: for test set, if no true test labels provided, just put some dummy labels 
@@ -601,21 +636,21 @@ void SVM<TKernel>::BatchPredict(int learner_typeid, Dataset& testset, String pre
     fprintf(stderr, "Cannot save predicted values to file!");
     return;
   }
-  //index_t err_ct = 0;
+  index_t err_ct = 0;
   num_features_ = testset.n_features()-1;
   for (index_t i = 0; i < testset.n_points(); i++) {
     Vector testvec;
     testset.matrix().MakeColumnSubvector(i, 0, num_features_, &testvec);
     double predictedvalue = Predict(learner_typeid, testvec);
-    //if (testlabel != testset.matrix().get(num_features_, i))
-    //  err_ct++;
+    if (predictedvalue != testset.matrix().get(num_features_, i))
+      err_ct++;
     /* save predicted values to file*/
     fprintf(fp, "%f\n", predictedvalue);
   }
   fclose(fp);
   /* calculate testing error */
-  //fprintf( stderr, "\n*** %d out of %d misclassified ***\n", err_ct, testset.n_points() );
-  //fprintf( stderr, "*** Testing error is %f ***\n", double(err_ct)/double(testset.n_points()) );
+  printf( "\n*** %d out of %d misclassified ***\n", err_ct, testset.n_points() );
+  printf( "*** Testing error is %f, accuracy is %f. ***\n", double(err_ct)/double(testset.n_points()), 1- double(err_ct)/double(testset.n_points()) );
   //fprintf( stderr, "*** Results are save in \"%s\" ***\n\n", predictedvalue_filename.c_str());
 }
 

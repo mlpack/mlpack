@@ -17,7 +17,7 @@
  * Please refer to README for detail description of usage and examples.
  *
  * @see svm.h
- * @see smo.h
+ * @see opt_smo.h
  */
 
 #include "svm.h"
