@@ -22,7 +22,7 @@ void Sampling::Init(fx_module *module, int *num_of_people,
 	num_of_people_=info1.n_cols();
 	
 	//Experiment with 5000 ppl
-	num_of_people_=5000;
+	//num_of_people_=5000;
 	
 	*num_of_people=num_of_people_;
   population_first_stage_x_.Init(num_of_people_);
@@ -518,6 +518,8 @@ void Sampling::Shuffle() {
 	}
 	cout<<endl;
 	
+	//subset
+	num_of_people_=5000;
 
 
 }
@@ -628,4 +630,3 @@ void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *adde
 
 }
 */
-
