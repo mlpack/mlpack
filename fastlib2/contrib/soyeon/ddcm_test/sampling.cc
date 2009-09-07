@@ -519,12 +519,43 @@ void Sampling::Shuffle() {
 	cout<<endl;
 	
 	//subset
-	num_of_people_=5000;
+	//num_of_people_=5000;
 
 
 }
 
+void Sampling::Shuffle2() {
+	//check - can be done in initilization
+	int random =0;
+	for(index_t i=0; i<num_of_people_; i++){
+		shuffled_array_[i]=i;
+	}	//i
 
+	//http://www.cppreference.com/wiki/stl/algorithm/random_shuffle
+//	std::random_shuffle(shuffled_array_.ptr(),
+//	                  shuffled_array_.ptr()+num_of_people_);
+		
+   
+	//Shuffle elements by randomly exchanging each with one other.
+	for(index_t j=0; j<num_of_people_-1; j++){
+		//random number for remaining position
+		random = j+(rand() % (num_of_people_-j));	
+		//shuffle
+		swap( shuffled_array_[j], shuffled_array_[random] );
+	}	//j
+
+	
+	cout<<"shuffled_array :";
+	for(index_t i=0; i<num_of_people_; i++){
+		cout<<shuffled_array_[i] <<" ";
+	}
+	cout<<endl;
+	
+	//subset
+	num_of_people_=5000;
+
+
+}
 
 /*void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *added_first_stage_x, 
 											 ArrayList<Matrix> *added_second_stage_x, ArrayList<Matrix> *added_unknown_x_past, 
