@@ -14,6 +14,7 @@ class Sampling {
 										 ArrayList<index_t> *added_first_stage_y, Vector *ind_unknown_x);
 	 */
 	 void Shuffle();
+	 void Shuffle2();
 	 void ExpandSubset(double percent_added_sample, ArrayList<Matrix> *added_first_stage_x, 
 										 ArrayList<Matrix> *added_second_stage_x, ArrayList<Matrix> *added_unknown_x_past, 
 										 ArrayList<index_t> *added_first_stage_y);
