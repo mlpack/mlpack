@@ -59,7 +59,8 @@ int main(int argc, char *argv[]) {
 	//NOTIFY("Shuffling");
 	cout<<"Shuffling"<<endl;
 	sampling.Shuffle();
-	//sampling.Shuffle();
+	cout<<"Shuffling2"<<endl;
+	sampling.Shuffle2();
 	//sampling.Shuffle();
 	//NOTIFY("Initial sampling percent is %f", initial_percent_sampling);
 	cout<<"Initial sampling percent is "<<initial_percent_sampling<<endl;
