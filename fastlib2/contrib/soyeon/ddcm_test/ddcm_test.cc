@@ -58,8 +58,8 @@ int main(int argc, char *argv[]) {
 	cout<<"Number of people in dataset is "<<num_of_people<<endl;
 	//NOTIFY("Shuffling");
 	cout<<"Shuffling"<<endl;
-	sampling.Shuffle();
-	cout<<"Shuffling2"<<endl;
+	//sampling.Shuffle();
+	//cout<<"Shuffling2"<<endl;
 	sampling.Shuffle2();
 	//sampling.Shuffle();
 	//NOTIFY("Initial sampling percent is %f", initial_percent_sampling);
@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
 	//for stopping rule
 	double error_tolerance=1e-16;
 	//double zero_tolerance=0.0001;	//for gradient norm 10^-5?
-	double zero_tolerance=0.01;
+	double zero_tolerance=0.001;
 
 	//error_tolerance*=100000;
 	//cout<<"error_tolerance="<<error_tolerance<<endl;
