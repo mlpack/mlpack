@@ -155,7 +155,7 @@ class SGD {
 	return 0.0;
     }
   }
-
+
   /**
    * Hinge Loss function
    */
@@ -317,7 +317,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       
       ct = 0;
       while (ct <= n_iter_) {
-	work_idx_old = old_from_new_[ct % n_data_];
+	work_idx_old = old_from_new_[ct % n_data_];
 	eta_ = 1.0 / (lambda_ * t_); // update step size
 	scale_w_ = scale_w_ - scale_w_ / t_; // update scale of w
 	//la::Scale(scale_w, &w_); // Note: moving w's scaling calculation to the testing session is faster
@@ -366,6 +366,14 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       v = v * scale_w_ * scale_w_ / 2.0 + loss_sum;
       
       printf("Primal objective value: %lf\n", v);
+
+      index_t w_ct = 0;
+      for (i=0; i<n_features_; i++) {
+	if ( fabs(w_[i]) > SGD_ALPHA_ZERO ) {
+	  w_ct ++;
+	}
+      }
+      printf("%d out of %d features are non zero\n", w_ct, n_features_);
     }
 
   }
