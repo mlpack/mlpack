@@ -36,7 +36,7 @@ class CD {
 
  private:
   int learner_typeid_;
-  int regularization_; // do L2-SVM or L1-SVM, default: L1
+  int hinge_; // do L2-SVM (squared hinge loss) or L1-SVM (hinge loss), default: L1
 
   Kernel kernel_;
   const Dataset *dataset_;
@@ -80,7 +80,7 @@ class CD {
       Cn_ = param_[1];
       DEBUG_ASSERT(Cp_ != 0);
       DEBUG_ASSERT(Cn_ != 0);
-      regularization_ = (int) param_[2];
+      hinge_ = (int) param_[2];
       n_epochs_ = (index_t)param_[3];
       n_iter_ = (index_t)param_[4];
       accuracy_ = param_[5];
@@ -101,58 +101,6 @@ class CD {
 
 
  private:
-  /**
-   * Loss functions
-   */
-  double LossFunction_(int learner_typeid, double yy_hat) {
-    if (learner_typeid_ == 0) { // SVM_C
-      return HingeLoss_(yy_hat);
-    }
-    else if (learner_typeid_ == 1) { // SVM_R
-      return 0.0; // TODO
-    }
-    else
-      return HingeLoss_(yy_hat);
-  }
-
-  /**
-   * Gradient of loss functions
-   */
-  double LossFunctionGradient_(int learner_typeid, double yy_hat) {
-    if (learner_typeid_ == 0) { // SVM_C
-      return HingeLossGradient_(yy_hat);
-    }
-    else if (learner_typeid_ == 1) { // SVM_R
-      return 0.0; // TODO
-    }
-    else {
-      if (yy_hat < 1.0)
-	return 1.0;
-      else
-	return 0.0;
-    }
-  }
-
-  /**
-   * Hinge Loss function
-   */
-  double HingeLoss_(double yy_hat) {
-    if (yy_hat < 1.0)
-      return 1.0 - yy_hat;
-    else
-      return 0.0;
-  }
-  
-  /**
-   * Gradient of the Hinge Loss function
-   */
-  double HingeLossGradient_(double yy_hat) {
-    if (yy_hat < 1.0)
-      return 1.0;
-    else
-      return 0.0;
-  }
-
   void LearnersInit_(int learner_typeid);
 
   int TrainIteration_();
@@ -235,7 +183,7 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   QD.Init(n_alpha_);
   QD.SetZero();
 
-  if (regularization_ == 1) { // L1-SVM
+  if (hinge_ == 1) { // L1-SVM
     diag_p = 0;
     diag_n = 0;
     upper_bound_p = Cp_;
@@ -398,7 +346,7 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       xi[n_features_] = 1.0; // for bias term: x <- [x,1], w <- [w, b]
       hinge_loss = 1- y_[i] * la::Dot(w_, xi);
       if (hinge_loss > 0) {
-	if (regularization_ == 1) { // L1-SVM
+	if (hinge_ == 1) { // L1-SVM
 	  if (y_[i] > 0) {
 	    loss_sum += hinge_loss * Cp_;
 	  }
@@ -406,7 +354,7 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	    loss_sum += hinge_loss * Cn_;
 	  }
 	}
-	else if (regularization_ == 2) { // L2-SVM
+	else if (hinge_ == 2) { // L2-SVM
 	  if (y_[i] > 0) {
 	    loss_sum += hinge_loss * hinge_loss * Cp_;
 	  }

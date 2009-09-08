@@ -67,7 +67,7 @@ class SMO {
 
  private:
   int learner_typeid_;
-  int regularization_; // do L2-SVM or L1-SVM, default: L1
+  int hinge_; // do L2-SVM or L1-SVM, default: L1
 
   index_t ct_iter_; /* counter for the number of iterations */
   index_t ct_shrinking_; /* counter for doing shrinking  */
@@ -120,12 +120,12 @@ class SMO {
     // init parameters
     budget_ = (int)param_[0];
     wss_ = (int) param_[4];
-    regularization_ = (int) param_[3];
+    hinge_ = (int) param_[3];
     n_iter_ = (index_t) param_[5];
     n_iter_ = n_iter_ < MAX_NUM_ITER_SMO ? n_iter_: MAX_NUM_ITER_SMO;
     accuracy_ = param_[6];
     if (learner_typeid == 0) { // SVM_C
-      if (regularization_==2) { // L2-SVM
+      if (hinge_==2) { // L2-SVM: squated hinge loss
 	Cp_ = INFINITY;
 	Cn_ = INFINITY;
 	C_ = param_[1];
@@ -233,7 +233,7 @@ class SMO {
     //j_cache_ = j;
     cached_kernel_value_ = kernel_.Eval(v_i, v_j, n_features_);
     
-    if (regularization_ == 2) { // L2-SVM
+    if (hinge_ == 2) { // L2-SVM
       if (i == j) {
 	cached_kernel_value_ = cached_kernel_value_ + inv_two_C_;
       }
@@ -679,7 +679,7 @@ bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
       else { // y[t] == -1
 	if (!IsUpperBounded(t)) {// t\in I_down, y==-1: y[t]alpha[t] > -C
 	  // calculate y_grad_min for Stopping Criterion
-	  if (grad_[t] + y_grad_min > 0) // y==-1, -grad_[t] < y_grad_min
+	  if (grad_[t] + y_grad_min > 0) // y==-1, -grad_[t] < y_grad_min
 	    y_grad_min = -grad_[t];
 	  // find j
 	  grad_diff = y_grad_max + grad_[t]; // max(y_i*grad_i) - y_t*grad_t

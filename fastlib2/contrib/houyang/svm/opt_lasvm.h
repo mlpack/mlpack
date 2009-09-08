@@ -45,7 +45,7 @@ class LASVM {
 
  private:
   int learner_typeid_;
-  int regularization_; // do L2-SVM or L1-SVM, default: L1
+  int hinge_; // do L2-SVM or L1-SVM, default: L1
 
   index_t ct_iter_; /* counter for the number of iterations (per epoch) */
   index_t ct_epo_; /* counter for the number of epochs */
@@ -101,14 +101,14 @@ class LASVM {
    */
   void InitPara(int learner_typeid, ArrayList<double> &param_) {
     // init parameters
-    regularization_ = (int) param_[2];
+    hinge_ = (int) param_[2];
     wss_ = (int) param_[3];
     n_epochs_ = (index_t) param_[4];
     n_iter_ = (index_t) param_[5];
     n_iter_ = n_iter_ < MAX_NUM_ITER_LASVM ? n_iter_: MAX_NUM_ITER_LASVM;
     accuracy_ = param_[6];
     if (learner_typeid == 0) { // SVM_C
-      if (regularization_==2) { // L2-SVM
+      if (hinge_==2) { // L2-SVM: squared hinge loss
 	Cp_ = INFINITY;
 	Cn_ = INFINITY;
 	C_ = param_[1];
@@ -209,7 +209,7 @@ class LASVM {
     //j_cache_ = j;
     cached_kernel_value_ = kernel_.Eval(v_i, v_j, n_features_);
     
-    if (regularization_ == 2) { // L2-SVM
+    if (hinge_ == 2) { // L2-SVM
       if (i_o == j_o) {
 	cached_kernel_value_ = cached_kernel_value_ + inv_two_C_;
       }

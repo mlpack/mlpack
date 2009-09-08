@@ -55,7 +55,7 @@ Explanation of arguments:
 15. accuracy (optional): the accuracty of optimization method ( i.e. stop optimization when KKT gap <= accuracy ). Default value: 1e-4.
 16. n_iter (optional): maximum number of iterations. Default value: 1e8
 17. n_epochs (optional, for stochastic algorithms): number of epochs; when provided, n_iter <- n_data_ * n_epochs; should set to 1 to mimic online learning senario
-18. regularization (optional): do L1-SVM (1) or L2-SVM (2). Default value: 1 -> do L1-SVM
+18. hinge (optional): do L1-SVM (1): hinge loss, or L2-SVM (2): squared hinge loss. Default value: 1 -> do L1-SVM
 19. objvalue (optional): display (1) the value of the objective function or not (0). Default value: 0 -> do not display
 
 Examples:
@@ -92,7 +92,7 @@ svm_main --learner_name=svm_c --mode=train_test --train_data=ijcnn1_train_sort.c
 svm_main --learner_name=svm_c --mode=train_test --train_data=ijcnn1_train_sort.csv --test_data=ijcnn1_test_sort.csv --kernel=gaussian --normalize=0 --opt=smo --accuracy=0.001 --shrink=1 --wss=2 --sigma=0.61 --c=7
 
 9.L2-SVM
-svm_main --learner_name=svm_c  --accuracy=0.00001 --mode=train_test --train_data=c_traindata3.csv --test_data=c_testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0 --regularization=2
+svm_main --learner_name=svm_c  --accuracy=0.00001 --mode=train_test --train_data=c_traindata3.csv --test_data=c_testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0 --hinge=2
 
 ------Using SGD--------
 1.Linear stochastic gradient descent, stopping criterion: number of iterations
@@ -118,7 +118,7 @@ svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv 
 svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=cd --objvalue=1 --n_epochs=100
 
 2.L2-SVM, display objective values
-svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=cd --regularization=2 --objvalue=1 --n_epochs=100
+svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=cd --hinge=2 --objvalue=1 --n_epochs=100
 
 
 ------Using FW---------

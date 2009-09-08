@@ -18,6 +18,7 @@
  * @see opt_mfw.h
  * @see opt_sfw.h
  * @see opt_par.h
+ * @see opt_sparsereg.h
  */
 
 #ifndef U_SVM_SVM_H
@@ -35,6 +36,7 @@
 #include "opt_mfw.h"
 #include "opt_sfw.h"
 #include "opt_par.h"
+#include "opt_sparsereg.h"
 
 
 #include "fastlib/fastlib.h"
@@ -119,7 +121,7 @@ class SVM {
    * Developers may add more learner types if necessary
    */
   int learner_typeid_;
-  // Optimization method: smo, lasvm, sgd, sgdwb, cd, pegasos, rivanov, hcy, fw, mfw, sfw, par
+  // Optimization method: smo, lasvm, sgd, sgdwb, cd, pegasos, rivanov, hcy, fw, mfw, sfw, par, sparsereg
   String opt_method_;
   /* array of models for storage of the 2-class(binary) classifiers 
      Need to train num_classes_*(num_classes_-1)/2 binary models */
@@ -176,7 +178,7 @@ class SVM {
     // working set selection scheme of SMO, 1 for 1st order expansion; 2 for 2nd order expansion
     double wss_;
     // whether do L1-SVM (1) or L2-SVM (2)
-    int regularization_;
+    int hinge_;
     // accuracy for the optimization stopping creterion
     double accuracy_;
     // number of iterations
@@ -208,6 +210,7 @@ class SVM {
   class MFW<Kernel>;
   class SFW<Kernel>;
   class PAR<Kernel>;
+  class SPARSEREG<Kernel>;
 
   void Init(int learner_typeid, const Dataset& dataset, datanode *module);
   void InitTrain(int learner_typeid, const Dataset& dataset, datanode *module);
@@ -283,7 +286,7 @@ void SVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *mo
   // working set selection scheme. default: 1st order expansion
   param_.wss_ = fx_param_int(NULL, "wss", 1);
   // whether do L1-SVM(1) or L2-SVM (2)
-  param_.regularization_ = fx_param_int(NULL, "regularization", 1); // default do L1-SVM
+  param_.hinge_ = fx_param_int(NULL, "hinge", 1); // default do L1-SVM
   // accuracy for optimization
   param_.accuracy_ = fx_param_double(NULL, "accuracy", 1e-4);
   // number of iterations
@@ -372,7 +375,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
       }
       for (index_t n = 0; n < train_labels_ct_[j]; n++) {
 	Vector source, dest;
-	dataset_bi.matrix().MakeColumnVector(n+train_labels_ct_[i], &dest);
+	dataset_bi.matrix().MakeColumnVector(n+train_labels_ct_[i], &dest);
 	dataset.matrix().MakeColumnVector(train_labels_index_[train_labels_startpos_[j]+n], &source);
 	dest.CopyValues(source);
 	/* last row for labels -1 */
@@ -387,7 +390,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	param_feed_db.PushBack() = param_.b_;
 	param_feed_db.PushBack() = param_.Cp_;
 	param_feed_db.PushBack() = param_.Cn_;
-	param_feed_db.PushBack() = param_.regularization_;
+	param_feed_db.PushBack() = param_.hinge_;
 	param_feed_db.PushBack() = param_.wss_;
 	param_feed_db.PushBack() = param_.n_iter_;
 	param_feed_db.PushBack() = param_.accuracy_;
@@ -414,7 +417,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	param_feed_db.Init();
 	param_feed_db.PushBack() = param_.Cp_;
 	param_feed_db.PushBack() = param_.Cn_;
-	param_feed_db.PushBack() = param_.regularization_;
+	param_feed_db.PushBack() = param_.hinge_;
 	param_feed_db.PushBack() = param_.wss_;
 	param_feed_db.PushBack() = param_.n_epochs_;
 	param_feed_db.PushBack() = param_.n_iter_;
@@ -507,7 +510,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	param_feed_db.Init();
 	param_feed_db.PushBack() = param_.Cp_;
 	param_feed_db.PushBack() = param_.Cn_;
-	param_feed_db.PushBack() = param_.regularization_;
+	param_feed_db.PushBack() = param_.hinge_;
 	param_feed_db.PushBack() = param_.n_epochs_;
 	param_feed_db.PushBack() = param_.n_iter_;
 	param_feed_db.PushBack() = param_.accuracy_;
@@ -585,7 +588,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	param_feed_db.PushBack() = param_.Cn_;
 	param_feed_db.PushBack() = param_.wss_;
 	param_feed_db.PushBack() = param_.n_iter_;
-	param_feed_db.PushBack() = param_.accuracy_;
+	param_feed_db.PushBack() = param_.accuracy_;
 	param_feed_db.PushBack() = train_labels_ct_[i]; // number of positive samples (with label 1)
 	HCY<Kernel> hcy;
 	hcy.InitPara(learner_typeid, param_feed_db);
@@ -685,7 +688,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	param_feed_db.PushBack() = param_.b_;
 	param_feed_db.PushBack() = param_.Cp_;
 	param_feed_db.PushBack() = param_.Cn_;
-	param_feed_db.PushBack() = param_.regularization_;
+	param_feed_db.PushBack() = param_.hinge_;
 	param_feed_db.PushBack() = param_.wss_;
 	param_feed_db.PushBack() = param_.n_iter_;
 	param_feed_db.PushBack() = param_.accuracy_;
@@ -705,6 +708,30 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	models_[ct].bias_ = par.Bias(); // bias
 	models_[ct].w_.Init(0); // for linear classifiers only. not used here
 	par.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
+      }
+      else if (opt_method_== "sparsereg") {
+	/* Initialize Sparse-Regularization parameters */
+	ArrayList<double> param_feed_db;
+	param_feed_db.Init();
+	param_feed_db.PushBack() = param_.Cp_;
+	param_feed_db.PushBack() = param_.Cn_;
+	param_feed_db.PushBack() = param_.n_epochs_;
+	param_feed_db.PushBack() = param_.n_iter_;
+	param_feed_db.PushBack() = param_.accuracy_;
+	SPARSEREG<Kernel> sparsereg;
+	sparsereg.InitPara(learner_typeid, param_feed_db);
+
+	/* Initialize kernel */
+	sparsereg.kernel().Init(fx_submodule(module, "kernel"));
+
+	/* 2-classes SVM training using Sparse Reg*/
+	fx_timer_start(NULL, "train_sparsereg");
+	sparsereg.Train(learner_typeid, &dataset_bi);
+	fx_timer_stop(NULL, "train_sparsereg");
+
+	/* Get the trained bi-class model */
+	models_[ct].coef_.Init(); // alpha*y, dummy init, used for nonlinear SVM only
+	models_[ct].w_.Copy(*(sparsereg.GetW())); // [w, b]
       }
       else {
 	fprintf(stderr, "ERROR!!! Unknown optimization method!\n");
@@ -946,7 +973,7 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
 	sum *= models_[ct].scale_w_;
 	sum += models_[ct].scale_w_ * (models_[ct].w_)[num_features_]; // add bias term
       }
-      else if (opt_method_== "cd" || opt_method_== "pegasos" || opt_method_== "rivanov") {
+      else if (opt_method_== "cd" || opt_method_== "pegasos" || opt_method_== "rivanov" || opt_method_== "sparsereg") {
 	Vector w_no_bias;
 	models_[ct].w_.MakeSubvector(0, num_features_, &w_no_bias);
 	sum = la::Dot(w_no_bias, datum);
