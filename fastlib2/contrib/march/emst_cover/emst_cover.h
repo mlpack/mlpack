@@ -11,7 +11,6 @@
 #define EMST_H
 
 #include "fastlib/fastlib.h"
-#include "union_find.h"
 
 /**
  * An edge pair is simply two indices and a distance.  It is used as the 

@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
     data::Load(data_file_name, &data_points);
     
     /////////////// Initialize DTB //////////////////////
-    DualTreeBoruvka dtb;
+    DualCoverTreeBoruvka dtb;
     struct datanode* dtb_module = fx_submodule(NULL, "dtb_module");
     dtb.Init(data_points, dtb_module);
     
@@ -40,6 +40,7 @@ int main(int argc, char* argv[]) {
     dtb.ComputeMST(&results);
     
     //////////////// Check against naive //////////////////////////
+#if 0    
     if (fx_param_bool(NULL, "do_naive", 0)) {
      
       DualTreeBoruvka naive;
@@ -51,7 +52,6 @@ int main(int argc, char* argv[]) {
       Matrix naive_results;
       naive.ComputeMST(&naive_results);
       
-      /* Compare the naive output to the DTB output */
       
       fx_timer_start(naive_module, "comparison");
       
@@ -133,7 +133,7 @@ int main(int argc, char* argv[]) {
       ot::Print(naive_results, naive_output);
       
     }
-    
+#endif
     //////////////// Output the Results ////////////////
     
     const char* output_filename = 
