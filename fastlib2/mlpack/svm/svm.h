@@ -729,13 +729,13 @@ void SVM<TKernel>::SaveModel_(int learner_typeid, String model_filename) {
   // save models: bias, coefficients and support vectors
   fprintf(fp, "bias ");
   for (i = 0; i < num_models_; i++)
-    fprintf(fp, "%f ", models_[i].bias_);
+    fprintf(fp, "%g ", models_[i].bias_);
   fprintf(fp, "\n");
   
   fprintf(fp, "SV_coefs\n");
   for (i = 0; i < total_num_sv_; i++) {
     for (j = 0; j < num_classes_-1; j++) {
-      fprintf(fp, "%f ", sv_coef_.get(j,i));
+      fprintf(fp, "%g ", sv_coef_.get(j,i));
     }
     fprintf(fp, "\n");
   }
@@ -743,7 +743,7 @@ void SVM<TKernel>::SaveModel_(int learner_typeid, String model_filename) {
   fprintf(fp, "SVs\n");
   for (i = 0; i < total_num_sv_; i++) {
     for (j = 0; j < num_features_; j++) { // n_rows-1
-      fprintf(fp, "%f ", sv_.get(j,i));
+      fprintf(fp, "%g ", sv_.get(j,i));
     }
     fprintf(fp, "\n");
   }
