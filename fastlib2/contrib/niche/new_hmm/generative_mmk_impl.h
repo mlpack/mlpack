@@ -35,10 +35,40 @@ double GenerativeMMK(double lambda,
     * exp(-0.5 * lambda * la::DistanceSqEuclidean(x.mu(), y.mu()) / h);
 }
 
+double GenerativeMMK(double lambda,
+		     const DiagGaussian &x,
+		     const DiagGaussian &y) {
+
+  int n_dims = x.n_dims();    
+
+  Vector normalization_factors;
+  normalization_factors.Init(n_dims);
+  for(int i = 0; i < n_dims; i++) {
+    normalization_factors[i] = 1 / (1 + lambda * (x.sigma()[i] + y.sigma()[i]));
+  }
+
+  double global_normalization_factor = 1;
+  for(int i = 0; i < n_dims; i++) {
+    global_normalization_factor *= normalization_factors[i];
+  }
+  global_normalization_factor = sqrt(global_normalization_factor);
+
+  double sum = 0;
+  for(int i = 0; i < n_dims; i++) {
+    double mu_diff = x.mu()[i] - y.mu()[i];
+    sum += (mu_diff * mu_diff) * normalization_factors[i];
+  }
+  sum *= -lambda / 2;
+  
+  return global_normalization_factor * exp(sum * -lambda / 2);
+}
+
+
+
 template <typename TDistribution>
-  double GenerativeMMK(double lambda, int n_T,
-		       const HMM<TDistribution> &hmm_a,
-		       const HMM<TDistribution> &hmm_b) {
+double GenerativeMMK(double lambda, int n_T,
+		     const HMM<TDistribution> &hmm_a,
+		     const HMM<TDistribution> &hmm_b) {
   
   int n1 = hmm_a.n_states();
   int n2 = hmm_b.n_states();
@@ -149,7 +179,7 @@ double GenerativeMMK(double lambda, double rho, int n_T,
     for(int i2 = 0; i2 < n2; i2++) {
       phi.set(i2, i1,
 	      pow(hmm_a.p_initial[i1] * hmm_b.p_initial[i2], rho));
-	      //unif1 * unif2);
+      //unif1 * unif2);
     }
   }
 
@@ -272,13 +302,13 @@ double KDEGenerativeMMK(double lambda,
 
       double val = exp(neg_half_lambda_over_h * la::DistanceSqEuclidean(x, y));
       /*
-      if((val > 0) && (i != j)) {
+	if((val > 0) && (i != j)) {
 	printf("hit!\n");
 	x.PrintDebug("x");
 	y.PrintDebug("y");
 	printf("dist_sq = %3e\n", la::DistanceSqEuclidean(x, y));
 	printf("neg_half_lambda_over_h = %3e\n", neg_half_lambda_over_h);
-      }
+	}
       */
       //x.PrintDebug("x");
       //y.PrintDebug("y");
@@ -387,7 +417,7 @@ void ScaleSamplingsToCube(ArrayList<Matrix> *p_samplings) {
     for(int i = 0; i < n_points; i++) {
       for(int j = 0; j < n_dims; j++) {
 	sampling.set(j, i,
-		    (sampling.get(j, i) - mins[j]) / ranges[j]);
+		     (sampling.get(j, i) - mins[j]) / ranges[j]);
       }
     }
   }

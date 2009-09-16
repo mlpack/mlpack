@@ -1,4 +1,65 @@
 binrule(
+    name = "save_one_fmri_hmm",
+    sources = ["save_one_fmri_hmm.cc"],
+    headers = ["test_engine.h",
+               "test_engine_impl.h",
+               "utils.h",
+               "diag_gaussian.h",
+               "hmm.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
+binrule(
+    name = "test_fmri_gmmk",
+    sources = ["test_fmri_gmmk.cc"],
+    headers = ["test_fmri_utils.h",
+               "test_engine.h",
+               "test_engine_impl.h",
+               "generative_mmk.h",
+               "generative_mmk_impl.h",
+               "utils.h",
+               "multinomial.h",               
+               "isotropic_gaussian.h",
+               "diag_gaussian.h",
+               "mixture.h",
+               "hmm.h",
+               "../svm/svm.h",
+               "../svm/smo.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
+binrule(
+    name = "test_fmri_bayes",
+    sources = ["test_fmri_bayes.cc"],
+    headers = ["test_engine.h",
+               "test_engine_impl.h",
+               "utils.h",
+               "multinomial.h",               
+               "isotropic_gaussian.h",
+               "diag_gaussian.h",
+               "mixture.h",
+               "hmm.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
+
+binrule(
+    name = "test_load",
+    sources = ["test_load.cc"],
+    headers = ["utils.h"],
+    deplibs = ["fastlib:fastlib"]
+)
+
+binrule(
     name = "test_k",
     sources = ["test_k.cc"],
     headers = [],
@@ -152,7 +213,8 @@ binrule(
 binrule(
     name = "test_synth_bayes",
     sources = ["test_synth_bayes.cc"],
-    headers = ["test_engine.h",
+    headers = ["test_synth_utils.h",
+               "test_engine.h",
                "test_engine_impl.h",
                "utils.h",
                "multinomial.h",               

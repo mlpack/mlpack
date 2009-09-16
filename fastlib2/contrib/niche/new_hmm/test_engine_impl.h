@@ -94,6 +94,37 @@ void TestHMMGenMMKClassification(const ArrayList<HMM<Multinomial> > &hmms,
   SVMKFoldCV(id_label_pairs, kernel_matrix, c_set);
 }
 
+void TestHMMGenMMKClassification(const ArrayList<HMM<DiagGaussian> > &hmms,
+				 const GenVector<int> &labels) {
+
+  int n_hmms = labels.length();
+  printf("n_hmms = %d\n", n_hmms);
+  
+  double lambda = fx_param_double_req(NULL, "lambda");
+  printf("lambda = %f\n", lambda);
+
+  int witness_length = fx_param_int(NULL, "witness_length", 70);
+  printf("witness_length = %d\n", witness_length);
+
+  //double rho = fx_param_double(NULL, "rho", 1);
+  //printf("rho = %f\n", rho);
+
+  Matrix kernel_matrix;
+  //GenerativeMMKBatch(lambda, rho, witness_length, hmms, &kernel_matrix);
+  GenerativeMMKBatch(lambda, witness_length, hmms, &kernel_matrix);
+  NormalizeKernelMatrix(&kernel_matrix);
+  
+  Matrix id_label_pairs;
+  CreateIDLabelPairs(labels, &id_label_pairs);
+  id_label_pairs.PrintDebug("id_label_pairs");
+
+  Vector c_set;
+  LoadCommonCSet(&c_set);
+  
+  SVMKFoldCV(id_label_pairs, kernel_matrix, c_set);
+}
+
+
 void TestHMMLatMMKClassification(const HMM<Multinomial> &hmm,
 				 const ArrayList<GenMatrix<int> > &sequences,
 				 const GenVector<int> &labels) {
@@ -1005,6 +1036,82 @@ void TestHMMBayesClassificationKFold(int n_folds,
   }
 
   n_correct = n_exons_correct + n_introns_correct;
+  double accuracy =
+    ((double)n_correct) / ((double)n_sequences);
+  printf("accuracy = %f\n", accuracy);
+  fx_result_double(NULL, "best_accuracy", accuracy);
+}
+
+
+void TestHMMBayesClassificationKFold(int n_folds,
+				     const ArrayList<HMM<DiagGaussian> > &kfold_class1_hmms,
+				     const ArrayList<HMM<DiagGaussian> > &kfold_class0_hmms,
+				     const ArrayList<GenMatrix<double> > &sequences,
+				     const GenVector<int> &labels) {
+  
+  Matrix id_label_pairs;
+  CreateIDLabelPairs(labels, &id_label_pairs);
+  id_label_pairs.PrintDebug("id_label_pairs");
+
+  Dataset cv_set;
+  cv_set.CopyMatrix(id_label_pairs);
+
+  int n_correct = 0;
+  int n_class1_correct = 0;
+  int n_class0_correct = 0;
+
+  int n_sequences = sequences.size();
+  ArrayList<index_t> permutation;
+  math::MakeIdentityPermutation(n_sequences, &permutation);
+
+  printf("n_sequences = %d\n", n_sequences);
+
+  for(int fold_num = 0; fold_num < n_folds; fold_num++) {
+    printf("fold %d\n", fold_num);
+    Dataset training_set;
+    Dataset test_set;
+    
+    cv_set.SplitTrainTest(n_folds, fold_num, permutation, &training_set, &test_set);
+    
+    for(int i = 0; i < test_set.n_points(); i++) {
+      int test_sequence_index = (int)(test_set.get(0, i));
+      ///
+      Matrix p_x_given_q;
+      ArrayList<Matrix> p_qq_t;
+      Matrix p_qt;
+      double class1_neg_likelihood;
+      double class0_neg_likelihood;
+
+      const HMM<DiagGaussian> &fold_class1_hmm = kfold_class1_hmms[fold_num];
+      const HMM<DiagGaussian> &fold_class0_hmm = kfold_class0_hmms[fold_num];
+
+      fold_class1_hmm.ExpectationStepNoLearning(sequences[test_sequence_index],
+						&p_x_given_q,
+						&p_qq_t,
+						&p_qt,
+						&class1_neg_likelihood);
+      p_x_given_q.Destruct();
+      p_qq_t.Renew();
+      p_qt.Destruct();
+      fold_class0_hmm.ExpectationStepNoLearning(sequences[test_sequence_index],
+						&p_x_given_q,
+						&p_qq_t,
+						&p_qt,
+						&class0_neg_likelihood);
+      if(class1_neg_likelihood < class0_neg_likelihood) { // predict class 1
+	if(test_set.get(1, i) == 1) {
+	  n_class1_correct++;
+	}
+      }
+      else { // predict class 0
+	if(test_set.get(1, i) == 0) {
+	  n_class0_correct++;
+	}
+      }
+    }
+  }
+
+  n_correct = n_class1_correct + n_class0_correct;
   double accuracy =
     ((double)n_correct) / ((double)n_sequences);
   printf("accuracy = %f\n", accuracy);

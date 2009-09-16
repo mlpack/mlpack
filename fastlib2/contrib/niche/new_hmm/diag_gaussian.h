@@ -5,7 +5,13 @@ class DiagGaussian {
 
  private:
   double norm_constant_;
+  double log_norm_constant_;
   double min_variance_;
+
+  OBJECT_TRAVERSAL_ONLY(DiagGaussian) {
+    OT_PTR(mu_);
+    OT_PTR(sigma_);
+  }
 
  public:
 
@@ -82,10 +88,13 @@ class DiagGaussian {
 
   void ComputeNormConstant() {
     double prod = 1;
+    double sum = 0; // for log
     for(int i = 0; i < n_dims_; i++) {
       prod *= (*sigma_)[i];
+      sum += log((*sigma_)[i]);
     }
-    norm_constant_ = 1 / (pow(2 * M_PI, n_dims_ / ((double)2)) * sqrt(prod));
+    norm_constant_ = 1 / (pow(2.0 * M_PI, n_dims_ / ((double)2)) * sqrt(prod));
+    log_norm_constant_ = -(((double)n_dims_) / ((double)2) * log(2.0 * M_PI) + 0.5 * sum);
   }
 
   template<typename T>
@@ -100,7 +109,11 @@ class DiagGaussian {
       double diff = x[i] - (*mu_)[i];
       sum += (diff * diff / (*sigma_)[i]);
     }
-    return exp(-0.5 * sum) * norm_constant_;
+    //sigma_ -> PrintDebug("sigma_");
+    //printf("sum = %f, log_norm_constant = %f\n", sum, log_norm_constant_);
+    //return exp(-0.5 * sum) * norm_constant_;
+    //return exp(-0.5 * sum + log(norm_constant_));
+    return exp(-0.5 * sum + log_norm_constant_);
   }
 
   void SetZero() {
