@@ -20,6 +20,10 @@ double GenerativeMMK(double lambda,
 		     const IsotropicGaussian &x,
 		     const IsotropicGaussian &y);
 
+double GenerativeMMK(double lambda,
+		     const DiagGaussian &x,
+		     const DiagGaussian &y);
+
 template <typename TDistribution>
 double GenerativeMMK(double lambda, int n_T,
 		     const HMM<TDistribution> &hmm_a,

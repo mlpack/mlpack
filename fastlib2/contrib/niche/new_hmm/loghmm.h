@@ -13,6 +13,7 @@
 #define GAUSSIAN 2
 #define MIXTURE 3
 
+#define NEG_INFTY -std::numeric_limits<double>::infinity()
 
 template <typename TDistribution>
 class HMM {
@@ -26,7 +27,7 @@ class HMM {
   int n_components_;
 
 
-
+  // log probabilities version
 
  public:
 
@@ -81,13 +82,13 @@ class HMM {
     state_distributions = 
       (TDistribution*) malloc(n_states_ * sizeof(TDistribution));
     for(int i = 0; i < n_states_; i++) {
+      // below function to be checked for log conversion
       state_distributions[i].Init(n_dims_, min_variance_in, n_components_);
     }
   }
 
-    
   void RandomlyInitialize() {
-    double uniform = ((double) 1) / ((double) n_states_);
+    double uniform = log(((double) 1) / ((double) n_states_));
     
     for(int i = 0; i < n_states_; i++) {
       p_initial[i] = uniform;
@@ -95,10 +96,12 @@ class HMM {
 	p_transition.set(j, i, uniform);
       }
       
+      // to be checked for log conversion
       state_distributions[i].RandomlyInitialize();
     }
   }
  
+  // no longer necessary for log conversion
   void ScaleForwardVar(double* c, Vector *p_forward_var) const{
     (*c) = ((double)1) / Sum(*p_forward_var);
     la::Scale(*c, p_forward_var);
@@ -122,34 +125,44 @@ class HMM {
 	  //consider transposing forward_vars and p_transition for efficiency
 	  p_qq_t[i].set(j, t,
 			forward_vars.get(i, t)
-			* p_transition.get(i, j)
-			* p_x_given_q.get(j, t + 1)
-			* backward_vars.get(j, t + 1));
+			+ p_transition.get(i, j)
+			+ p_x_given_q.get(j, t + 1)
+			+ backward_vars.get(j, t + 1));
 	}
       }
     }
   }
 
   // no risk
-  void ComputePqt(const Matrix &forward_vars,
-		  const Matrix &backward_vars,
-		  const Vector &scaling_vars,
-		  const ArrayList<Matrix> &p_qq_t,
-		  Matrix* p_p_qt) const{
+  double ComputePqt(const Matrix &forward_vars,
+		    const Matrix &backward_vars,
+		    const ArrayList<Matrix> &p_qq_t,
+		    Matrix* p_p_qt) const{
     Matrix &p_qt = *p_p_qt;
-
+    
     int sequence_length = forward_vars.n_cols();
 
     p_qt.Init(sequence_length, n_states_);
 
-    for(int i = 0; i < n_states_; i++) {
-      for(int t = 0; t < sequence_length; t++) {
-	p_qt.set(t, i, 
-		 forward_vars.get(i, t)
-		 * backward_vars.get(i, t)
-		 / scaling_vars.get(t));
+    Vector forward_0;
+    forward_vars.MakeColumnVector(0, &forward_0);
+    Vector backward_0;
+    backward_vars.MakeColumnVector(0, &backward_0);
+
+    double p_X = LogSumMapExpVectors(forward_0, backward_0)
+
+    for(int t = 0; t < sequence_length; t++) {
+      Vector forward_t;
+      forward_vars.MakeColumnVector(t, &forward_t);
+      Vector backward_t;
+      backward_vars.MakeColumnVector(t, &backward_t);
+
+      for(int i = 0; i < n_states_; i++) {
+	p_qt.set(t, i, LogSumExp(forward_t[i], backward_t[i]) - p_X);
       }
     }
+
+    return p_X;
   }
 
 
@@ -169,10 +182,12 @@ class HMM {
 
 
     if(type_ == MIXTURE) {
+      // below function to be checked for log conversion
       ComputePxGivenMixtureQ(sequence, &p_x_given_q,
 			     &p_x_given_mixture_q);
     }
     else {
+      // below function to be checked for log conversion
       ComputePxGivenQ(sequence, &p_x_given_q);
       p_x_given_mixture_q.Init(0);
     }
@@ -180,17 +195,13 @@ class HMM {
     Matrix forward_vars;
     Matrix backward_vars;
     Vector scaling_vars;
+    // below 2 functions to be checked for log conversion
     ForwardAlgorithm(p_x_given_q, &scaling_vars, &forward_vars);
     BackwardAlgorithm(p_x_given_q, scaling_vars, &backward_vars);
     
+    // below 2 functions to be checked for log conversion
     ComputePqqt(forward_vars, backward_vars, p_x_given_q, &p_qq_t);
-    ComputePqt(forward_vars ,backward_vars, scaling_vars, p_qq_t, &p_qt);
-
-    neg_likelihood = 0;
-    int sequence_length = sequence.n_cols();
-    for(int i = 0; i < sequence_length; i++) {
-      neg_likelihood += log(scaling_vars[i]);
-    }
+    double neg_likelihood = -ComputePqt(forward_vars ,backward_vars, p_qq_t, &p_qt);
   }
 
   template<typename T>
@@ -205,23 +216,19 @@ class HMM {
     Matrix &p_qt = *p_p_qt;
     double &neg_likelihood = *p_neg_likelihood;
 
-
+    // below function to be checked for log conversion
     ComputePxGivenQ(sequence, &p_x_given_q);
     
     Matrix forward_vars;
     Matrix backward_vars;
+    // no longer need scaling_vars for log conversion
     Vector scaling_vars;
+    // below 2 functions to be checked for log conversion
     ForwardAlgorithm(p_x_given_q, &scaling_vars, &forward_vars);
     BackwardAlgorithm(p_x_given_q, scaling_vars, &backward_vars);
     
     ComputePqqt(forward_vars, backward_vars, p_x_given_q, &p_qq_t);
-    ComputePqt(forward_vars ,backward_vars, scaling_vars, p_qq_t, &p_qt);
-
-    neg_likelihood = 0;
-    int sequence_length = sequence.n_cols();
-    for(int i = 0; i < sequence_length; i++) {
-      neg_likelihood += log(scaling_vars[i]);
-    }
+    double neg_likelihood = -ComputePqt(forward_vars ,backward_vars, p_qq_t, &p_qt);
   }
 
 
@@ -240,6 +247,7 @@ class HMM {
       GenVector<T> x_t;
       sequence.MakeColumnVector(t, &x_t);
       for(int i = 0; i < n_states_; i++) {
+	// below function (Pdf for all state distributions) needs to be redone to provide log probabilities in log conversion
 	p_x_given_q.set(i, t, state_distributions[i].Pdf(x_t));
       }
     }
@@ -256,24 +264,28 @@ class HMM {
     
     int sequence_length = sequence.n_cols();
     p_x_given_q.Init(n_states_, sequence_length);
-    p_x_given_q.SetZero();
+    p_x_given_q.SetAll(NEG_INFTY);
 
     p_x_given_mixture_q.Init(n_components_);
     for(int k = 0; k < n_components_; k++) {
       p_x_given_mixture_q[k].Init(n_states_, sequence_length);
     }
 
+    Vector logprobs;
+    logprobs.Init(n_states_);
     for(int k = 0; k < n_components_; k++) {
       for(int t = 0; t < sequence_length; t++) {
 	GenVector<T> xt;
 	sequence.MakeColumnVector(t, &xt);
 
 	for(int i = 0; i < n_states_; i++) {
+	  // below function (PkthComponent) needs to be changed for log conversion
 	  double p_xt_given_qik = state_distributions[i].PkthComponent(xt, k);
 	  p_x_given_mixture_q[k].set(i, t,
 				     p_xt_given_qik);
+
 	  p_x_given_q.set(i, t,
-			  p_x_given_q.get(i, t) + p_xt_given_qik);
+			  LogSumExp(p_x_given_q.get(i, t), p_xt_given_qik));
 	}
       }
     }
@@ -281,10 +293,11 @@ class HMM {
     for(int k = 0; k < n_components_; k++) {
       for(int t = 0; t < sequence_length; t++) {
 	for(int i = 0; i < n_states_; i++) {
-	  if(p_x_given_q.get(i, t) != 0) {
+	  // below conditional and accumulation need to be changed for log conversion
+	  if(p_x_given_q.get(i, t) > NEG_INFTY) {
 	    p_x_given_mixture_q[k].set(i, t,
 				       p_x_given_mixture_q[k].get(i, t)
-				       / p_x_given_q.get(i, t));
+				       - p_x_given_q.get(i, t));
 	  }
 	}
       }
@@ -293,14 +306,11 @@ class HMM {
 
   // no risk
   void ForwardAlgorithm(const Matrix &p_x_given_q,
-			Vector* p_scaling_vars, 
 			Matrix* p_forward_vars) const{
-    Vector& scaling_vars = *p_scaling_vars;
     Matrix& forward_vars = *p_forward_vars;
 
     int sequence_length = p_x_given_q.n_cols();
 
-    scaling_vars.Init(sequence_length);
     forward_vars.Init(n_states_, sequence_length);
 
     Vector forward_0;
@@ -309,9 +319,9 @@ class HMM {
     Vector p_x0_given_q;
     p_x_given_q.MakeColumnVector(0, &p_x0_given_q);
 
-    HadamardMultiplyOverwrite(p_initial, p_x0_given_q, &forward_0);
+    AddOverwrite(p_initial, p_x0_given_q, &forward_0);
     for(int i = 1; i < n_states_; i++) {
-      if(forward_0[i] > 0) {
+      if(forward_0[i] > NEG_INFTY) {
 	printf("!\n");
 	for(int j = 0; j < n_states_; j++) {
 	  printf("forward_0[%d] = %3e ", j, forward_0[j]);
@@ -323,8 +333,6 @@ class HMM {
 	FATAL("forward fail");
       }
     }
-    ScaleForwardVar(&(scaling_vars[0]), &forward_0);
-    //printf("scaling_vars[0] = %f\n", scaling_vars[0]);
 
     for(int t = 0; t < sequence_length - 1; t++) {
       Vector forward_t;
@@ -336,9 +344,8 @@ class HMM {
       Vector p_xt_plus_1_given_q;
       p_x_given_q.MakeColumnVector(t + 1, &p_xt_plus_1_given_q);
 
-      la::MulOverwrite(forward_t, p_transition, &forward_t_plus_1);
-      HadamardMultiplyBy(p_xt_plus_1_given_q, &forward_t_plus_1);
-      ScaleForwardVar(&(scaling_vars[t + 1]), &forward_t_plus_1);
+      LogMatrixMultiplyOverwrite(forward_t, p_transition, &forward_t_plus_1);
+      la::AddTo(p_xt_plus_1_given_q, &forward_t_plus_1);
     }
   }
 
@@ -347,6 +354,9 @@ class HMM {
 			 const Vector &scaling_vars,
 			 Matrix *p_backward_vars) const{
     Matrix& backward_vars = *p_backward_vars;
+
+    Matrix p_transition_transpose;
+    la::TransposeInit(p_transition, &p_transition_transpose);
     
     int sequence_length = p_x_given_q.n_cols();
     
@@ -354,8 +364,8 @@ class HMM {
     
     Vector backward_T_minus_1;
     backward_vars.MakeColumnVector(sequence_length - 1, &backward_T_minus_1);
-    
-    backward_T_minus_1.SetAll(scaling_vars[sequence_length - 1]);
+
+    backward_T_minus_1.SetAll(0);
 
     for(int t = sequence_length - 2; t >= 0; t--) {
       Vector backward_t_plus_1;
@@ -368,10 +378,10 @@ class HMM {
       p_x_given_q.MakeColumnVector(t + 1, &p_xt_plus_1_given_q);
 
       Vector result;
-      HadamardMultiplyInit(p_xt_plus_1_given_q, backward_t_plus_1,
-			   &result);
-      la::MulOverwrite(p_transition, result, &backward_t);
-      la::Scale(scaling_vars[t], &backward_t);
+      la::AddInit(p_xt_plus_1_given_q, backward_t_plus_1,
+		  &result);
+      // needs to be changed to log matrix multiply for log conversion
+      LogMatrixMultiplyATransOverwrite(p_transition_transpose, result, &backward_t);
     }
   }
 
@@ -403,6 +413,7 @@ class HMM {
   }
 
 
+  // everything needs to be changed to handle log conversion
   template<typename T>
   void InitParameters(const ArrayList<GenMatrix<T> > &sequences, bool is_ergodic = true) {
 
@@ -410,7 +421,7 @@ class HMM {
       FATAL("ERGODIC!");
       // use uniform distribution for the initial state probabilities and
       // the state transition probabilities
-      double uniform = ((double) 1) / ((double) n_states_);
+      double uniform = log(((double) 1) / ((double) n_states_));
       for(int i = 0; i < n_states_; i++) {
 	p_initial[i] = uniform;
 	for(int j = 0; j < n_states_; j++) {
@@ -419,14 +430,14 @@ class HMM {
       }
     }
     else { // left-right
-      p_initial[0] = 1;
+      p_initial[0] = 0;
       for(int i = 1; i < n_states_; i++) {
-	p_initial[i] = 0;
+	p_initial[i] = NEG_INFTY;
       }
 
-      p_transition.SetAll(0);
+      p_transition.SetAll(NEG_INFTY);
       for(int i = 0; i < n_states_; i++) {
-	double uniform = ((double) 1) / ((double) (n_states_ - i));
+	double uniform = log(((double) 1) / ((double) (n_states_ - i)));
 	for(int j = i; j < n_states_; j++) {
 	  p_transition.set(i, j, uniform);
 	}
@@ -450,6 +461,7 @@ class HMM {
     else if(type_ == GAUSSIAN) {
 
       for(int i = 0; i < n_states_; i++) {
+	// need to check this for log conversion
 	state_distributions[i].SetZero();
       }
 
@@ -740,12 +752,13 @@ class HMM {
     while(!converged) {
       //printf("iteration %d\n", iteration_num);
       iteration_num++;
-      
-      new_hmm.p_initial.SetZero();
-      new_hmm.p_transition.SetZero();
-      new_hmm_p_transition_denom.SetZero();
+
+      new_hmm.p_initial.SetAll(NEG_INFTY);
+      new_hmm.p_transition.SetAll(NEG_INFTY);
+      new_hmm_p_transition_denom.SetAll(NEG_INFTY);
       
       for(int i = 0; i < n_states_; i++) {
+	// check for log conversion
 	new_hmm.state_distributions[i].SetZero();
       }
 
@@ -791,7 +804,8 @@ class HMM {
        
 	// accumulate initial state probabilities
 	for(int i = 0; i < n_states_; i++) {
-	  new_hmm.p_initial[i] += p_qt.get(0, i);
+	  new_hmm.p_initial[i] =
+	    LogSumExp(new_hmm.p_initial[i], p_qt.get(0, i));
 	}
 	/*
 	if(new_hmm.p_initial[0] < 1) {
@@ -809,11 +823,13 @@ class HMM {
 	      // Note that new_hmm.p_transition is treated as its transpose
 	      // initially for efficiency. We transpose it at the end of
 	      // its computation.
+	      // below accumulation needs to be changed for log conversion
 	      new_hmm.p_transition.set(j, i,
-				       new_hmm.p_transition.get(j, i)
-				       + p_qq_t[i].get(j, t));
+				       LogSumExp(new_hmm.p_transition.get(j,i),
+						 p_qq_t[i].get(j, t)));
 	    }
-	    new_hmm_p_transition_denom[i] += p_qt.get(t, i); 
+	    // below accumulation needs to be changed for log conversion
+	    new_hmm_p_transition_denom[i] = LogSumExp(new_hmm_p_transition_denom[i], p_qt.get(t, i)); 
 	  }
 	}
 
@@ -823,7 +839,8 @@ class HMM {
 	    for(int t = 0; t < sequence_length; t++) {
 	      GenVector<T> x_t;
 	      sequence.MakeColumnVector(t, &x_t);
-	      new_hmm.state_distributions[i].Accumulate(p_qt.get(t, i), x_t,
+	      new_hmm.state_distributions[i].Accumulate(exp(p_qt.get(t, i)),
+							x_t,
 							0);
 	    }
 	  }
@@ -833,10 +850,12 @@ class HMM {
 	    for(int t = 0; t < sequence_length; t++) {
 	      GenVector<T> x_t;
 	      sequence.MakeColumnVector(t, &x_t);
-	      new_hmm.state_distributions[i].Accumulate(p_qt.get(t, i), x_t,
+	      new_hmm.state_distributions[i].Accumulate(exp(p_qt.get(t, i)),
+							x_t,
 							0);
 	      // keep track of normalization factor
-	      gaussian_denom[i] += p_qt.get(t, i);
+	      // check below sum for log conversion
+	      gaussian_denom[i] += exp(p_qt.get(t, i));
 	    }
 	  }
 	}
@@ -850,10 +869,13 @@ class HMM {
 
 		// hopefully p_x_given_mixture_q[k].get(i,t) is fast since
 		// n_states_ is usually small (< 20)
+		// check below scaling_factor for log conversion
 		double scaling_factor =
-		  p_qt.get(t, i) * p_x_given_mixture_q[k].get(i, t);
+		  p_qt.get(t, i) + p_x_given_mixture_q[k].get(i, t);
 		
-		new_hmm.state_distributions[i].Accumulate(scaling_factor, x_t,
+		// check Accumulate for log conversion
+		new_hmm.state_distributions[i].Accumulate(exp(scaling_factor),
+							  x_t,
 							  k);
 	      }
 	    }
@@ -862,8 +884,9 @@ class HMM {
 	  for(int i = 0; i < n_states_; i++) {
 	    // note that new_hmm_p_transition_denom[i] =
 	    //             \sum_{t = 0 -> T - 2} p_qt.get(t, i)
+	    // check below accumulation for log conversion
 	    weight_qi[i] +=
-	      new_hmm_p_transition_denom[i] + p_qt.get(sequence_length - 1, i);
+	     exp(new_hmm_p_transition_denom[i]) + exp(p_qt.get(sequence_length - 1, i));
 	    // so, weight_qi[i] = \sum_{t = 0 -> T - 1} p_qt.get(t, i)
 	  }
 	} //end if(MIXTURE)
@@ -871,16 +894,20 @@ class HMM {
 /*       printf("current_total_neg_likelihood = %f\n", */
 /* 	     current_total_neg_likelihood); */
 
-
+    
       // NORMALIZE - control NaN risk!
 
       //weight_qi.PrintDebug("weight_qi");
 
       // normalize initial state probabilities
       // no risk - Sum must be positive
-      la::Scale(((double)1) / Sum(new_hmm.p_initial),
-		&(new_hmm.p_initial));
-      if(new_hmm.p_initial[0] < 1) {
+      // check below for log conversion
+      double sum_p_initial = LogSumExp(new_hmm.p_initial);
+      for(int i = 0; i < n_states_; i++) {
+	new_hmm.p_initial[i] -= sum_p_initial;	
+      }
+
+      if(new_hmm.p_initial[0] < 0) {
 	FATAL("fail scale");
       }
 
@@ -893,8 +920,9 @@ class HMM {
 	// its computation (below).
 
 	// if state i isn't visited, set its transition probs to uniform
-	if(new_hmm_p_transition_denom[i] == 0) {
-	  double one_over_n_states = ((double)1) / ((double)n_states_);
+	// check everything below for log conversion
+	if(new_hmm_p_transition_denom[i] == NEG_INFTY) {
+	  double one_over_n_states = log(((double)1) / ((double)n_states_));
 	  for(int j = 0; j < n_states_; j++) {
 	    new_hmm.p_transition.set(j, i, one_over_n_states);
 	  }
@@ -903,7 +931,7 @@ class HMM {
 	  for(int j = 0; j < n_states_; j++) {
 	    new_hmm.p_transition.set(j, i,
 				     new_hmm.p_transition.get(j, i)
-				     / new_hmm_p_transition_denom[i]);
+				     - new_hmm_p_transition_denom[i]);
 	  }
 	}
       }
@@ -973,23 +1001,14 @@ class HMM {
     
     GenMatrix<int> best_into;
     best_into.Init(n_states_, sequence_length);
-    
-    Matrix logp_transition;
-    logp_transition.Init(n_states_, n_states_);
-    for(int j = 0; j < n_states_; j++) {
-      for(int i = 0; i < n_states_; i++) {
-	logp_transition.set(i, j,
-			    log(p_transition.get(i, j)));
-      }
-    }
 
-    if(p_initial[0] < 1) {
+    if(p_initial[0] < 0) {
       FATAL("v fail");
     }
 
     for(int i = 0; i < n_states_; i++) {
       logp_path.set(i, 0,
-		    log(p_initial[i]) + log(p_x_given_q.get(i, 0)));
+		    p_initial[i] + p_x_given_q.get(i, 0));
       best_into.set(i, 0,
 		    0);
     }
@@ -1006,15 +1025,15 @@ class HMM {
 	
       for(int j = 0; j < n_states_; j++) {
 	printf("j = %d\n", j);
-	Vector logp_transition_to_j;
-	logp_transition.MakeColumnVector(j, &logp_transition_to_j);
+	Vector p_transition_to_j;
+	p_transition.MakeColumnVector(j, &p_transition_to_j);
 	  
 	double max;
 	int argmax;
-	MaxLogProduct(logp_path_t_minus_1, logp_transition_to_j,
+	MaxLogProduct(logp_path_t_minus_1, p_transition_to_j,
 		      &max, &argmax);
 	if(argmax == -1) {
-	  logp_transition_to_j.PrintDebug("logp_transition_to_j");
+	  p_transition_to_j.PrintDebug("p_transition_to_j");
 	  logp_path_t_minus_1.PrintDebug("logp_path_t_minus_1");
 	  //
 	  int n_rows = p_x_given_q.n_rows();
@@ -1032,7 +1051,7 @@ class HMM {
 	  FATAL("argmax == -1");
 	}
 	logp_path.set(j, t,
-		      max + log(p_x_given_q.get(j, t)));
+		      max + p_x_given_q.get(j, t));
 	best_into.set(j, t,
 		      argmax);
       }
@@ -1070,11 +1089,12 @@ class HMM {
     
   }
 
-
+  // check for log conversion - this is funny - need to add just 1
   void AccumulatePInitialFromPath(const GenVector<int> &path) {
     p_initial[path[0]]++;
   }
 
+  // check for log conversion
   void NormalizePInitial(int normalization_factor, bool ensure_no_zeros) {
     if(ensure_no_zeros) {
       bool has_zero = false;
@@ -1095,8 +1115,13 @@ class HMM {
 
     la::Scale(((double)1) / ((double)normalization_factor),
 	      &p_initial);
+
+    for(int i = 0; i < n_states_; i++) {
+      p_initial[i] = log(p_initial[i]);
+    }
   }
 
+  // check for log conversion
   void AccumulatePTransitionFromPath(const GenVector<int> &path) {
     int sequence_length_minus_1 = path.length() - 1;
     for(int t = 0; t < sequence_length_minus_1; t++) {
@@ -1107,6 +1132,7 @@ class HMM {
     }
   }
 
+  // check for log conversion
   void NormalizePTransition(int normalization_factor, bool ensure_no_zeros) {
     if(ensure_no_zeros) {
       bool has_zero = false;
@@ -1135,15 +1161,23 @@ class HMM {
     
     la::Scale(((double)1) / ((double)normalization_factor),
 	      &p_transition);
+
+    for(int j = 0; j < n_states_; j++) {
+      for(int i = 0; i < n_states_; i++) {
+	p_transition.set(i, j,
+			 log(p_transition.get(i, j)));
+      }
+    }
   }
 
 
+  // note: we may be able to leave much of the maximization/update step intact, without having to use log probabilities / log weights
   template<typename T>
     void ViterbiUpdate(const ArrayList<GenMatrix<T> > &sequences, bool is_ergodic) {
 
     int n_sequences = sequences.size();
 
-    if(p_initial[0] < 1) {
+    if(p_initial[0] < 0) {
       FATAL("pre viterbi update fail");
     }
 
@@ -1163,6 +1197,7 @@ class HMM {
 
     
     // update initial state and state transition probabilities
+    // Note! we initialized these are regular probabilities and they are converted to log probabilities inside their respective Normalize* functions
     new_hmm.p_initial.SetZero();
     new_hmm.p_transition.SetZero();
     int p_transition_normalization_factor = 0;
@@ -1194,6 +1229,7 @@ class HMM {
 				 is_ergodic);
 
     // zero out state distributions
+    // need to modify state distribution SetZero for log conversion
     for(int i = 0; i < n_states_; i++) {
       new_hmm.state_distributions[i].SetZero();
     }
@@ -1207,12 +1243,14 @@ class HMM {
 	for(int t = 0; t < sequence_length; t++) {
 	  GenVector<T> x_t;
 	  sequence.MakeColumnVector(t, &x_t);
+	  // need to check for log conversion
 	  new_hmm.state_distributions[best_path[t]].Accumulate(1, x_t, 0);
 	}
       }
 
       // Normalize
       for(int i = 0; i < n_states_; i++) {
+	// need to check for log conversion
 	new_hmm.state_distributions[i].Normalize(0, state_distributions[i]);
       }
     }
@@ -1371,18 +1409,12 @@ class HMM {
     int set_size = x.length();
     for(int i = 0; i < set_size; i++) {
       double value = x[i] + y[i];
-      if(value > max) {
+      if(unlikely(value > max)) {
 	max = value;
 	argmax = i;
       }
     }
   }
-    
-
-
-
-    
-  
 
 
 

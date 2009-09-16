@@ -25,6 +25,9 @@ void CreateIDLabelPairs(const GenVector<int> &labels,
 void TestHMMGenMMKClassification(const ArrayList<HMM<Multinomial> > &hmms,
 				 const GenVector<int> &labels);
 
+void TestHMMGenMMKClassification(const ArrayList<HMM<DiagGaussian> > &hmms,
+				 const GenVector<int> &labels);
+
 void TestHMMLatMMKClassification(const HMM<Multinomial> &hmm,
 				 const ArrayList<GenMatrix<int> > &sequences,
 				 const GenVector<int> &labels);

@@ -48,7 +48,7 @@ void TestMultinomial() {
 		1000);
   
   hmm.PrintDebug("hmm after calling BaumWelch");
-  
+  /*
   hmm.PrintDebug("frozen HMM");
   
 
@@ -97,7 +97,7 @@ void TestMultinomial() {
     printf("thawed hmm %d\n", i);
     thawed_hmms[i].PrintDebug("");
   }
-
+  */
 
 }
 
@@ -135,7 +135,7 @@ void TestGaussian() {
   }
   sequences[1].PrintDebug("sequences[1]");
 
-  hmm.InitParameters(sequences);
+  hmm.InitParameters(sequences, false);
 
   hmm.PrintDebug("hmm after calling InitParameters(sequences)");
 
@@ -241,7 +241,7 @@ void TestGaussianPdf() {
 int main(int argc, char* argv[]) {
   //TestGaussianPdf();
 
-  TestMultinomial();
-  //TestGaussian();
+  //TestMultinomial();
+  TestGaussian();
   //TestMixture();
 }

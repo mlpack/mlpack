@@ -163,6 +163,121 @@ void LoadVaryingLengthData(const char* filename,
   fclose(file);
 }
 
+// for time series observations in R^n for n >= 1
+void LoadVaryingLengthData(const char* filename,
+			   ArrayList<GenMatrix<double> >* p_data) {
+  ArrayList<GenMatrix<double> > &data = *p_data;
+  
+  data.Init();
+
+  FILE* file = fopen(filename, "r");
+
+  char* buffer = (char*) malloc(sizeof(char) * 70000);
+  size_t len = 70000;
+  int n_read;
+
+  while((n_read = getline(&buffer, &len, file)) != -1) {
+    if(buffer[0] != '%') {
+      break;
+    }
+  }
+  fclose(file);
+  
+  bool on_number = false;
+  int n_numbers = 0;
+  for(int i = 0; i < n_read; i++) {
+    int c = buffer[i];
+    if((('0' <= c) && (c <= '9'))
+       || (c == '-')
+       || (c == '.')
+       || (c == 'e')
+       || (c == 'E')) {
+      if(!on_number) {
+	on_number = true;
+	n_numbers++;
+      }
+    }
+    else {
+      on_number = false;
+    }
+  }
+  
+  int n_dims = n_numbers;
+  printf("n_dims = %d\n", n_dims);
+
+
+ 
+  file = fopen(filename, "r");
+ 
+
+  int n_elements = 0;
+  bool waiting = true;
+  
+  ArrayList<Vector> point_list;
+  point_list.Init();
+
+  int n_points_in_cur_point_list = 0;
+
+
+  while((n_read = getline(&buffer, &len, file)) != -1) {
+    if(buffer[0] == '%') {
+      if(waiting == false) {
+	printf("n_points_in_cur_point_list = %d\n", n_points_in_cur_point_list);
+	GenMatrix<double> &data_sequence = data[n_elements - 1];
+	data_sequence.Init(n_dims, n_points_in_cur_point_list);
+	for(int i = 0; i < n_points_in_cur_point_list; i++) {
+	  data_sequence.CopyVectorToColumn(i, point_list[i]);
+	}
+      }
+      waiting = true;
+      continue;
+    }
+    else {
+      if(waiting) {
+	waiting = false;
+	n_elements++;
+	data.GrowTo(n_elements);
+    
+	n_points_in_cur_point_list = 0;
+	point_list.Renew();
+	point_list.Init();
+      }
+
+      n_points_in_cur_point_list++;
+      point_list.GrowTo(n_points_in_cur_point_list);
+      Vector &new_point = point_list[n_points_in_cur_point_list - 1];
+      new_point.Init(n_dims);
+      double* new_point_ptr = new_point.ptr();
+      char* buffer_copy = strdup(buffer);
+      char* token = strtok(buffer_copy, " \t,");
+      sscanf(token, "%lf", new_point_ptr);
+
+      int n_dims_read = 1;
+      while((token = strtok(NULL, " \t,")) != NULL) {
+	sscanf(token, "%lf", new_point_ptr + n_dims_read);
+	n_dims_read++;
+      }
+
+      free(buffer_copy);
+    }
+  }
+
+  if(waiting == false) {
+    printf("n_points_in_cur_point_list = %d\n", n_points_in_cur_point_list);
+    GenMatrix<double> &data_sequence = data[n_elements - 1];
+    data_sequence.Init(n_dims, n_points_in_cur_point_list);
+    for(int i = 0; i < n_points_in_cur_point_list; i++) {
+      data_sequence.CopyVectorToColumn(i, point_list[i]);
+    }
+  }
+
+
+  free(buffer);
+  fclose(file);
+}
+
+
+
 void NormalizeKernelMatrix(Matrix* p_kernel_matrix) {
   Matrix &kernel_matrix = *p_kernel_matrix;
 
