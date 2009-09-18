@@ -1,7 +1,8 @@
-#include "hmm.h"
+#include "fastlib/fastlib.h"
+#include "loghmm.h"
 #include "multinomial.h"
-#include "diag_gaussian.h"
-#include "mixture.h"
+//#include "diag_gaussian.h"
+//#include "mixture.h"
 #include "utils.h"
 
 
@@ -39,15 +40,16 @@ void TestMultinomial() {
 
   hmm.PrintDebug("hmm after calling InitParameters(sequences)");
 
-  hmm.ViterbiUpdate(sequences);
+  //hmm.ViterbiUpdate(sequences);
 
-  hmm.PrintDebug("hmm after calling ViterbiUpdate(sequences)");
-  
+  //hmm.PrintDebug("hmm after calling ViterbiUpdate(sequences)");
+    
   hmm.BaumWelch(sequences,
 		1e-10 * ((double)1),
 		1000);
   
   hmm.PrintDebug("hmm after calling BaumWelch");
+  
   /*
   hmm.PrintDebug("frozen HMM");
   
@@ -101,7 +103,7 @@ void TestMultinomial() {
 
 }
 
-
+/*
 void TestGaussian() {
   HMM<DiagGaussian> hmm;
   hmm.Init(2, 2, GAUSSIAN, 0.0001);
@@ -200,14 +202,14 @@ void TestMixture() {
 				&p_qq_t,
 				&p_qt,
 				&neg_likelihood);
-  /*
-    p_x_given_q.PrintDebug("p_x_given_q");
-    for(int i = 0; i < p_qq_t.size(); i++) {
-    printf("state %d\n", i);
-    p_qq_t[i].PrintDebug("p_qq_t");
-    }
-    p_qt.PrintDebug("p_qt");
-  */
+
+//     p_x_given_q.PrintDebug("p_x_given_q");
+//     for(int i = 0; i < p_qq_t.size(); i++) {
+//     printf("state %d\n", i);
+//     p_qq_t[i].PrintDebug("p_qq_t");
+//     }
+//     p_qt.PrintDebug("p_qt");
+
   printf("neg_likelihood = %f\n", neg_likelihood);
   
   
@@ -236,12 +238,12 @@ void TestGaussianPdf() {
 
 
 }
-
+*/
 
 int main(int argc, char* argv[]) {
   //TestGaussianPdf();
 
-  //TestMultinomial();
-  TestGaussian();
+  TestMultinomial();
+  //TestGaussian();
   //TestMixture();
 }

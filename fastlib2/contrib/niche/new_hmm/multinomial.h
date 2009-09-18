@@ -12,12 +12,14 @@ class Multinomial {
   int n_components_;
 
   Vector* p_;
+  Vector* logp_;
 
  private:
 
 
   OBJECT_TRAVERSAL_ONLY(Multinomial) {
     OT_PTR(p_);
+    OT_PTR(logp_);
   }
 
 
@@ -37,6 +39,9 @@ class Multinomial {
     
     p_ = new Vector();
     p_ -> Init(n_dims_);
+
+    logp_ = new Vector();
+    logp_ -> Init(n_dims_);
   }
   
   void Init(const Vector &p_in) {
@@ -44,10 +49,15 @@ class Multinomial {
     p_ -> Copy(p_in);
 
     n_dims_ = p_ -> length();
+
+    logp_ = new Vector();
+    logp_ -> Init(n_dims_);
+    UpdateLogP();
   }
 
   void CopyValues(const Multinomial &other) {
     p_ -> CopyValues(other.p());
+    logp_ -> CopyValues(other.logp());
   }
 
   int n_dims() const {
@@ -57,9 +67,21 @@ class Multinomial {
   const Vector p() const {
     return *p_;
   }
+  
+  const Vector logp() const {
+    return *logp_;
+  }
 
   void SetP(const Vector &p_in) {
     p_ ->CopyValues(p_in);
+    
+    UpdateLogP();
+  }
+
+  void UpdateLogP() {
+    for(int i = 0; i < n_dims_; i++) {
+      (*logp_)[i] = log((*p_)[i]);
+    }
   }
 
   void RandomlyInitialize() {
@@ -72,6 +94,8 @@ class Multinomial {
     for(int i = 0; i < n_dims_; i++) {
       (*p_)[i] = (*p_)[i] / sum;
     }
+
+    UpdateLogP();
   }
 
   template<typename T>
@@ -80,8 +104,18 @@ class Multinomial {
   }
 
   template<typename T>
+    double LogPkthComponent(const GenVector<T> &xt, int component_num) {
+    return LogPdf(xt);
+  }
+
+  template<typename T>
   double Pdf(const GenVector<T> &xt) {
     return (*p_)[xt[0]];
+  }
+
+  template<typename T>
+  double LogPdf(const GenVector<T> &xt) {
+    return (*logp_)[xt[0]];
   }
 
   // call the same update function for all HMMs
@@ -98,6 +132,8 @@ class Multinomial {
   void Normalize(double normalization_factor) {
     double sum = Sum(*p_);
     la::Scale(((double)1) / sum, p_);
+
+    UpdateLogP();
   }
 
   void Normalize(double normalization_factor,
@@ -109,11 +145,14 @@ class Multinomial {
     else {
       p_ -> CopyValues(*(alternate_distribution.p_));
     }
+
+    UpdateLogP();
   }
   
   void PrintDebug(const char *name = "", FILE *stream = stderr) const {
     fprintf(stream, name);
     p_ -> PrintDebug("p");
+    logp_ -> PrintDebug("logp");
   }
 
   ~Multinomial() {
@@ -122,6 +161,7 @@ class Multinomial {
 
   void Destruct() {
     delete p_;
+    delete logp_;
   }
 
 };
