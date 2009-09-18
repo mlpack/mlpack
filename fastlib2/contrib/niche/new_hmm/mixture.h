@@ -1,6 +1,8 @@
 #ifndef MIXTURE_H
 #define MIXTURE_H
 
+#include "utils.h"
+
 template <typename TDistribution>
 class Mixture {
 
@@ -40,10 +42,23 @@ class Mixture {
     return weights_[component_num] * components_[component_num].Pdf(xt);
   }
 
+  template<typename T>
+  double LogPkthComponent(const GenVector<T> &xt, int component_num) {
+    return weights_[component_num] + components_[component_num].LogPdf(xt);
+  }
+
   double Pdf(const Vector &xt) {
     double sum = 0;
     for(int k = 0; k < n_components_; k++) {
       sum += PkthComponent(xt, k);
+    }
+    return sum;
+  }
+
+  double LogPdf(const Vector &xt) {
+    double sum = LogPkthComponent(xt, 0);
+    for(int k = 1; k < n_components_; k++) {
+      sum = LogSumExp(sum, LogPkthComponent(xt, k));
     }
     return sum;
   }

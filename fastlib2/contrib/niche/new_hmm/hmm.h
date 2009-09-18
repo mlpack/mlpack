@@ -407,7 +407,7 @@ class HMM {
   void InitParameters(const ArrayList<GenMatrix<T> > &sequences, bool is_ergodic = true) {
 
     if(is_ergodic) {
-      FATAL("ERGODIC!");
+      //FATAL("ERGODIC!");
       // use uniform distribution for the initial state probabilities and
       // the state transition probabilities
       double uniform = ((double) 1) / ((double) n_states_);
