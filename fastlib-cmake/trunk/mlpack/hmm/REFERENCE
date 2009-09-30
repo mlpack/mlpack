@@ -1,0 +1,9 @@
+@article{rabiner1989thm,
+  title={{A tutorial on hidden Markov models and selected applications inspeech recognition}},
+  author={Rabiner, LR},
+  journal={Proceedings of the IEEE},
+  volume={77},
+  number={2},
+  pages={257--286},
+  year={1989}
+}
