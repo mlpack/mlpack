@@ -1,0 +1,103 @@
+... Making /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/fastica/fastica /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/fastica/libfastlib_base_base.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/fastica/libfastlib_col_col.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/fastica/libblas.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/fastica/liblapack.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/fastica/libfastlib_la_la.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/fastica/libfastlib_fx_fx.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/fastica/libfastlib_file_file.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/fastica/libfastlib_data_data.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/fastica/libfastlib_math_math.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/fastica/libmlpack_fastica_fastica__auto.a
+*** Created 11 symlinks in /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/fastica.
+... Making /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/kde_cv_bin /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/fft_kde_bin /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/original_ifgt_bin /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/fgt_kde_bin /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/dualtree_kde_bin /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/libfastlib_base_base.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/libfastlib_col_col.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/libblas.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/liblapack.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/libfastlib_la_la.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/libfastlib_fx_fx.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/libfastlib_file_file.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/libfastlib_data_data.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/libfastlib_math_math.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/libfastlib_par_par.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/libmlpack_series_expansion_series_expansion.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/libmlpack_kde_dualtree_kde_bin__auto.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/libmlpack_kde_kde_cv_bin__auto.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/libmlpack_kde_original_ifgt_bin__auto.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/libmlpack_kde_fgt_kde_bin__auto.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/libmlpack_kde_fft_kde_bin__auto.a
+*** Created 21 symlinks in /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde.
+... Making /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allknn/allknn_test /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allknn/libfastlib_base_base.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allknn/libfastlib_col_col.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allknn/libblas.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allknn/liblapack.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allknn/libfastlib_la_la.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allknn/libfastlib_fx_fx.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allknn/libfastlib_file_file.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allknn/libfastlib_data_data.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allknn/libfastlib_math_math.a
+*** Created 10 symlinks in /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allknn.
+... Making /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/viterbi /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/train /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/loglik /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/generate /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/libfastlib_base_base.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/libfastlib_col_col.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/libblas.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/liblapack.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/libfastlib_la_la.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/libfastlib_fx_fx.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/libfastlib_file_file.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/libfastlib_data_data.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/libfastlib_math_math.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/libfastlib_par_par.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/libmlpack_hmm_hmm.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/libmlpack_hmm_generate__auto.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/libmlpack_hmm_loglik__auto.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/libmlpack_hmm_train__auto.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/libmlpack_hmm_viterbi__auto.a
+*** Created 19 symlinks in /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm.
+Makefile:55: warning: overriding commands for target `/home/leif/Desktop/gatech-ML/tmp/fastlib2/bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_svm_svm_main.o'
+Makefile:41: warning: ignoring old commands for target `/home/leif/Desktop/gatech-ML/tmp/fastlib2/bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_svm_svm_main.o'
+... Making /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/svm/svm_main /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/svm/libfastlib_base_base.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/svm/libfastlib_col_col.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/svm/libblas.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/svm/liblapack.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/svm/libfastlib_la_la.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/svm/libfastlib_fx_fx.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/svm/libfastlib_file_file.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/svm/libfastlib_data_data.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/svm/libfastlib_math_math.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/svm/libmlpack_svm_svm.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/svm/libmlpack_svm_svm_main__auto.a
+*** Created 12 symlinks in /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/svm.
+Makefile:118: warning: overriding commands for target `/home/leif/Desktop/gatech-ML/tmp/fastlib2/bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_svm_svm_main.o'
+Makefile:104: warning: ignoring old commands for target `/home/leif/Desktop/gatech-ML/tmp/fastlib2/bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_svm_svm_main.o'
+... Making /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kalman/kalman_main /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kalman/libfastlib_base_base.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kalman/libfastlib_col_col.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kalman/libblas.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kalman/liblapack.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kalman/libfastlib_la_la.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kalman/libfastlib_fx_fx.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kalman/libfastlib_file_file.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kalman/libfastlib_data_data.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kalman/libfastlib_math_math.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kalman/libfastlib_par_par.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kalman/libmlpack_kalman_kalman.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kalman/libmlpack_kalman_kalman_main__auto.a
+*** Created 13 symlinks in /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kalman.
+Makefile:193: warning: overriding commands for target `/home/leif/Desktop/gatech-ML/tmp/fastlib2/bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_svm_svm_main.o'
+Makefile:179: warning: ignoring old commands for target `/home/leif/Desktop/gatech-ML/tmp/fastlib2/bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_svm_svm_main.o'
+... Making /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/infomax_ica/infomax_ica_test_main /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/infomax_ica/infomax_ica_main /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/infomax_ica/libfastlib_base_base.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/infomax_ica/libfastlib_col_col.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/infomax_ica/libblas.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/infomax_ica/liblapack.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/infomax_ica/libfastlib_la_la.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/infomax_ica/libfastlib_fx_fx.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/infomax_ica/libfastlib_file_file.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/infomax_ica/libfastlib_data_data.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/infomax_ica/libfastlib_math_math.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/infomax_ica/libmlpack_infomax_ica_infomax_ica.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/infomax_ica/libmlpack_infomax_ica_infomax_ica_main__auto.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/infomax_ica/libmlpack_infomax_ica_infomax_ica_test_main__auto.a
+*** Created 14 symlinks in /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/infomax_ica.
+Makefile:256: warning: overriding commands for target `/home/leif/Desktop/gatech-ML/tmp/fastlib2/bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_svm_svm_main.o'
+Makefile:242: warning: ignoring old commands for target `/home/leif/Desktop/gatech-ML/tmp/fastlib2/bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_svm_svm_main.o'
+... Making /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allnn/allnn_test /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allnn/main /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allnn/libfastlib_base_base.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allnn/libfastlib_col_col.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allnn/libblas.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allnn/liblapack.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allnn/libfastlib_la_la.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allnn/libfastlib_fx_fx.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allnn/libfastlib_file_file.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allnn/libfastlib_data_data.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allnn/libfastlib_math_math.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allnn/libmlpack_allnn_main__auto.a
+*** Created 12 symlinks in /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allnn.
+Makefile:291: warning: overriding commands for target `/home/leif/Desktop/gatech-ML/tmp/fastlib2/bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_svm_svm_main.o'
+Makefile:277: warning: ignoring old commands for target `/home/leif/Desktop/gatech-ML/tmp/fastlib2/bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_svm_svm_main.o'
+... Making /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/optimization/libfastlib_base_base.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/optimization/libfastlib_col_col.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/optimization/libblas.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/optimization/liblapack.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/optimization/libfastlib_la_la.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/optimization/libfastlib_fx_fx.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/optimization/libfastlib_file_file.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/optimization/libfastlib_data_data.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/optimization/libfastlib_math_math.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/optimization/libmlpack_optimization_optimization.a
+*** Created 10 symlinks in /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/optimization.
+Makefile:354: warning: overriding commands for target `/home/leif/Desktop/gatech-ML/tmp/fastlib2/bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_svm_svm_main.o'
+Makefile:340: warning: ignoring old commands for target `/home/leif/Desktop/gatech-ML/tmp/fastlib2/bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_svm_svm_main.o'
+... Making /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/naive_bayes/test_simple_nbc_main /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/naive_bayes/nbc_main /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/naive_bayes/libfastlib_base_base.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/naive_bayes/libfastlib_col_col.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/naive_bayes/libblas.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/naive_bayes/liblapack.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/naive_bayes/libfastlib_la_la.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/naive_bayes/libfastlib_fx_fx.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/naive_bayes/libfastlib_file_file.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/naive_bayes/libfastlib_data_data.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/naive_bayes/libfastlib_math_math.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/naive_bayes/libmlpack_naive_bayes_nbc_main__auto.a
+*** Created 12 symlinks in /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/naive_bayes.
+Makefile:451: warning: overriding commands for target `/home/leif/Desktop/gatech-ML/tmp/fastlib2/bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_svm_svm_main.o'
+Makefile:437: warning: ignoring old commands for target `/home/leif/Desktop/gatech-ML/tmp/fastlib2/bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_svm_svm_main.o'
+... Making bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_mog_mog_em_main.o
+... Making bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_mog_mog_l2e_main.o
+/home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/base/otrav_impl.h: In member function ‘void ot__private::Deserializer::Read_(T*, index_t) [with T = bool]’:
+/home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/base/otrav_impl.h:1399:   instantiated from here
+/home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/base/otrav_impl.h:1283: warning: ignoring return value of ‘size_t fread(void*, size_t, size_t, FILE*)’, declared with attribute warn_unused_result
+/home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/base/otrav_impl.h: In member function ‘void ot__private::Deserializer::Read_(T*, index_t) [with T = char]’:
+/home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/base/otrav_impl.h:1411:   instantiated from here
+/home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/base/otrav_impl.h:1283: warning: ignoring return value of ‘size_t fread(void*, size_t, size_t, FILE*)’, declared with attribute warn_unused_result
+/home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/base/otrav_impl.h: In member function ‘void ot__private::Deserializer::Read_(T*, index_t) [with T = bool]’:
+/home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/base/otrav_impl.h:1399:   instantiated from here
+/home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/base/otrav_impl.h:1283: warning: ignoring return value of ‘size_t fread(void*, size_t, size_t, FILE*)’, declared with attribute warn_unused_result
+/home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/base/otrav_impl.h: In member function ‘void ot__private::Deserializer::Read_(T*, index_t) [with T = char]’:
+/home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/base/otrav_impl.h:1411:   instantiated from here
+/home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/base/otrav_impl.h:1283: warning: ignoring return value of ‘size_t fread(void*, size_t, size_t, FILE*)’, declared with attribute warn_unused_result
+mog_em_main.cc: In function ‘int main(int, char**)’:
+mog_em_main.cc:93: internal compiler error: Segmentation fault
+Please submit a full bug report,
+with preprocessed source if appropriate.
+See <file:///usr/share/doc/gcc-4.3/README.Bugs> for instructions.
+make: *** [/home/leif/Desktop/gatech-ML/tmp/fastlib2/bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_mog_mog_em_main.o] Error 1
+make: *** Waiting for unfinished jobs....
+mog_l2e.h: In static member function ‘static long double MoGL2E::L2ErrorForOpt(Vector&, const Matrix&, Vector*)’:
+mog_l2e.h:613: internal compiler error: Segmentation fault
+Please submit a full bug report,
+with preprocessed source if appropriate.
+See <file:///usr/share/doc/gcc-4.3/README.Bugs> for instructions.
+make: *** [/home/leif/Desktop/gatech-ML/tmp/fastlib2/bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_mog_mog_l2e_main.o] Error 1
+Makefile:496: warning: overriding commands for target `/home/leif/Desktop/gatech-ML/tmp/fastlib2/bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_svm_svm_main.o'
+Makefile:482: warning: ignoring old commands for target `/home/leif/Desktop/gatech-ML/tmp/fastlib2/bin/x86_64_Linux_fast_gcc4_-DDISABLE_DISK_MATRIX/obj/mlpack_svm_svm_main.o'
+... Making /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/series_expansion/main /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/series_expansion/libfastlib_base_base.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/series_expansion/libfastlib_col_col.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/series_expansion/libblas.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/series_expansion/liblapack.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/series_expansion/libfastlib_la_la.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/series_expansion/libfastlib_fx_fx.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/series_expansion/libfastlib_file_file.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/series_expansion/libfastlib_data_data.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/series_expansion/libfastlib_math_math.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/series_expansion/libfastlib_par_par.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/series_expansion/libmlpack_series_expansion_series_expansion.a /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/series_expansion/libmlpack_series_expansion_main__auto.a
+*** Created 13 symlinks in /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/series_expansion.
+*** Building from within build system
+*** Generating Makefile in current directory
+*** Target Rule: ':VERYSPECIALPYTHONSTRING'
+Recursive build-all...
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/fastica/build.py
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/build.py
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/la/build.py
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/base/build.py
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/col/build.py
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/fx/build.py
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/file/build.py
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/data/build.py
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/math/build.py
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/tree/build.py
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/fastlib/par/build.py
+*** Running Makefile
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kde/build.py
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/series_expansion/build.py
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allknn/build.py
+*** Running Makefile
+*** Running Makefile
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/hmm/build.py
+*** Running Makefile
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/svm/build.py
+*** Running Makefile
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/kalman/build.py
+*** Running Makefile
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/infomax_ica/build.py
+*** Running Makefile
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/allnn/build.py
+*** Running Makefile
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/optimization/build.py
+*** Running Makefile
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/naive_bayes/build.py
+*** Running Makefile
+... Reading /home/leif/Desktop/gatech-ML/tmp/fastlib2/mlpack/mog/build.py
+*** Running Makefile
+*** Running Makefile

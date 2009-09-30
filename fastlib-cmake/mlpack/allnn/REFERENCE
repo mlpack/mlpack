@@ -1,0 +1,8 @@
+@conference{gray2000nbp,
+  title={{N-body problems in statistical learning}},
+  author={Gray, A.G. and Moore, A.W.},
+  booktitle={NIPS},
+  volume={4},
+  pages={521--527},
+  year={2000}
+}

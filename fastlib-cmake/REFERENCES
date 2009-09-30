@@ -1,0 +1,167 @@
+==========
+MLPACK 0.1
+==========
+
+The references to the implemented algorithms in MLPACK are the followings:
+
+@article{bell1995ima,
+  title={{An Information-Maximization Approach to Blind Separation and Blind Deconvolution}},
+  author={Bell, A.J. and Sejnowski, T.J.},
+  journal={Neural Computation},
+  volume={7},
+  number={6},
+  pages={1129--1159},
+  year={1995},
+  publisher={MIT Press}
+}
+
+@article{davidon1991vmm,
+  title={{Variable Metric Method for Minimization}},
+  author={Davidon, W.C.},
+  journal={SIAM Journal on Optimization},
+  volume={1},
+  pages={1},
+  year={1991},
+  publisher={SIAM}
+}
+
+@article{dempster1977mli,
+  title={{Maximum likelihood from incomplete data via the EM algorithm}},
+  author={Dempster, A.P. and Laird, N.M. and Rubin, D.B. and others},
+  journal={Journal of the Royal Statistical Society},
+  volume={39},
+  number={1},
+  pages={1--38},
+  year={1977}
+}
+
+@article{fan2005wss,
+  title={{Working Set Selection Using Second Order Information for Training Support Vector Machines}},
+  author={Fan, R.E. and Chen, P.H. and Lin, C.J.},
+  journal={The Journal of Machine Learning Research},
+  volume={6},
+  pages={1889--1918},
+  year={2005},
+  publisher={MIT Press Cambridge, MA, USA}
+}
+
+@conference{gray2000nbp,
+  title={{N-body problems in statistical learning}},
+  author={Gray, A.G. and Moore, A.W.},
+  booktitle={NIPS},
+  volume={4},
+  pages={521--527},
+  year={2000}
+}
+
+@conference{gray2003nde,
+  title={{Nonparametric density estimation: Toward computational tractability}},
+  author={Gray, A.G.},
+  booktitle={SIAM International Conference on Data Mining},
+  volume={2003},
+  year={2003}
+}
+
+@conference{gray2003rem,
+  title={{Rapid evaluation of multiple density models}},
+  author={Gray, A. and Moore, A.},
+  booktitle={Artificial Intelligence and Statistics},
+  volume={2003},
+  year={2003}
+}
+
+@article{greengard1991fgt,
+  title={{The fast Gauss transform.}},
+  author={Greengard, L. and Strain, J.},
+  journal={SIAM J. SCI. STAT. COMPUT.},
+  volume={12},
+  number={1},
+  pages={79--94},
+  year={1991}
+}
+
+@article{hyvarinen1999far,
+  title={{Fast and robust fixed-point algorithms for independent componentanalysis}},
+  author={Hyvarinen, A.},
+  journal={Neural Networks, IEEE Transactions on},
+  volume={10},
+  number={3},
+  pages={626--634},
+  year={1999}
+}
+
+@article{joachims1998mls,
+  title={{Making large-scale support vector machine learning practical}},
+  author={Joachims, T.},
+  journal={Advances in Kernel Methods: Support Vector Learning},
+  year={1998},
+  publisher={MIT Press, Cambridge, MA}
+}
+
+@book{kailath:le,
+  title={{Linear Estimation}},
+  author={Kailath, T. and Sayed, A.H. and Hassibi, B.},
+  publisher={Prentice Hall}
+}
+
+@article{lee:dtf,
+  title={{Dual-Tree Fast Gauss Transforms$\}$}},
+  author={Lee, D. and Gray, A. and Moore, A.},
+  journal={Advances in Neural Information Processing Systems},
+  pages={747--754},
+  publisher={MIT Press$\}$}
+}
+
+@conference{lee2006fgs,
+  title={{Faster gaussian summation: Theory and experiment}},
+  author={Lee, D. and Gray, A.},
+  booktitle={Proceedings of the 22nd Annual Conference on Uncertainty in Artificial Intelligence (UAI-06), Arlington, Virginia},
+  year={2006}
+}
+
+@article{nelder1965smf,
+  title={{A Simplex Method for Function Minimization}},
+  author={Nelder, JA and Mead, R.},
+  journal={The Computer Journal},
+  volume={7},
+  number={4},
+  pages={308},
+  year={1965},
+  publisher={Br Computer Soc}
+}
+
+@article{platt1999fts,
+  title={{Fast training of support vector machines using sequential minimal optimization}},
+  author={Platt, J.C.},
+  year={1999},
+  publisher={MIT Press Cambridge, MA, USA}
+}
+
+@article{scott2001psm,
+  title={{Parametric Statistical Modeling by Minimum Integrated Square Error}},
+  author={Scott, DW},
+  journal={Technometrics},
+  volume={43},
+  number={3},
+  pages={274--285},
+  year={2001},
+  publisher={American Statistical Association}
+}
+
+@article{wand1994fcm,
+  title={{Fast computation of multivariate kernel estimators}},
+  author={Wand, MP},
+  journal={Journal of Computational and Graphical Statistics},
+  volume={3},
+  number={4},
+  pages={433--445},
+  year={1994}
+}
+
+@conference{yang2003ifg,
+  title={{Improved fast gauss transform and efficient kernel density estimation}},
+  author={Yang, C. and Duraiswami, R. and Gumerov, NA and Davis, L.},
+  booktitle={Computer Vision, 2003. Proceedings. Ninth IEEE International Conference on},
+  pages={664--671},
+  year={2003}
+}
