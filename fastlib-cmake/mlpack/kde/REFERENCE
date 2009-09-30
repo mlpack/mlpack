@@ -1,0 +1,67 @@
+@conference{gray2000nbp,
+  title={{N-body problems in statistical learning}},
+  author={Gray, A.G. and Moore, A.W.},
+  booktitle={NIPS},
+  volume={4},
+  pages={521--527},
+  year={2000}
+}
+
+@conference{gray2003nde,
+  title={{Nonparametric density estimation: Toward computational tractability}},
+  author={Gray, A.G.},
+  booktitle={SIAM International Conference on Data Mining},
+  volume={2003},
+  year={2003}
+}
+
+@conference{gray2003rem,
+  title={{Rapid evaluation of multiple density models}},
+  author={Gray, A. and Moore, A.},
+  booktitle={Artificial Intelligence and Statistics},
+  volume={2003},
+  year={2003}
+}
+
+@article{greengard1991fgt,
+  title={{The fast Gauss transform.}},
+  author={Greengard, L. and Strain, J.},
+  journal={SIAM J. SCI. STAT. COMPUT.},
+  volume={12},
+  number={1},
+  pages={79--94},
+  year={1991}
+}
+
+@article{lee:dtf,
+  title={{Dual-Tree Fast Gauss Transforms$\}$}},
+  author={Lee, D. and Gray, A. and Moore, A.},
+  journal={Advances in Neural Information Processing Systems},
+  pages={747--754},
+  publisher={MIT Press$\}$}
+}
+
+@conference{lee2006fgs,
+  title={{Faster gaussian summation: Theory and experiment}},
+  author={Lee, D. and Gray, A.},
+  booktitle={Proceedings of the 22nd Annual Conference on Uncertainty in Artificial Intelligence (UAI-06), Arlington, Virginia},
+  year={2006}
+}
+
+@article{wand1994fcm,
+  title={{Fast computation of multivariate kernel estimators}},
+  author={Wand, MP},
+  journal={Journal of Computational and Graphical Statistics},
+  volume={3},
+  number={4},
+  pages={433--445},
+  year={1994}
+}
+
+@conference{yang2003ifg,
+  title={{Improved fast gauss transform and efficient kernel density estimation}},
+  author={Yang, C. and Duraiswami, R. and Gumerov, NA and Davis, L.},
+  booktitle={Computer Vision, 2003. Proceedings. Ninth IEEE International Conference on},
+  pages={664--671},
+  year={2003}
+}
