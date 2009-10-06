@@ -145,7 +145,8 @@ char *TextLineReader::ReadLine_() {
   for (;;) {
     size = size * 2 + extra;
     buf = mem::Realloc(buf, size);
-    char *result = ::fgets(buf + len, size - len, f_);
+    //! doesn't handle mac eol - OK?
+    char *result = ::fgets(buf + len, size - len, f_); 
     if (len == 0 && result == NULL) {
       mem::Free(buf);
       return NULL;
