@@ -33,6 +33,11 @@
  * @file dataset.h
  *
  * Generic datasets and associated utilities.
+ * 
+ * @bug These routines fail when trying to read files linewise that use the Mac
+ * eol '\r'.  Both Windows and Unix eol ("\r\n" and '\n') work.  Use the
+ * programs 'dos2unix' or 'tr' to convert the '\r's to '\n's.
+ *
  */
 
 #ifndef DATA_DATASET_H
