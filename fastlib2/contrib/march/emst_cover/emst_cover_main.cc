@@ -1,5 +1,5 @@
 /**
-* @file emst_main.cc
+* @file emst_cover_main.cc
  *
  * Cover tree implementation of DualTreBoruvka algorithm.
  *
@@ -38,6 +38,8 @@ int main(int argc, char* argv[]) {
     Matrix results;
     
     dtb.ComputeMST(&results);
+    
+    results.PrintDebug("Results");
     
     //////////////// Check against naive //////////////////////////
 #if 0    
