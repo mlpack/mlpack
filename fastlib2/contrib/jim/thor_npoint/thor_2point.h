@@ -497,9 +497,9 @@ class Thor2PC {
       }
       if(dmin > global_result->two_point_.Max()){
 	return false;
-      }  else { 
+      } /* else { 
 	if (!param.auto_corr_ || dmin > 0){
-	  /* Check if q_node in r_node  */	
+	   Check if q_node in r_node 
 	  int count = q_node.count();
 	  double dmax;
 	  if (param.cartesian_){
@@ -507,7 +507,7 @@ class Thor2PC {
 	    return global_result->two_point_.InclusionPrune(dmin, dmax, count);
 	  } 	  
 	}        
-      }
+	} */
       return true;
     }
 
