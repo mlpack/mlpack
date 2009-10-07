@@ -426,7 +426,7 @@ class Thor2PC {
       if (param.cartesian_){
 	double upper_bound;
 	upper_bound = r_node.bound().MaxDistanceSq(q.pos_);
-	return local_two_.InclusionPrune(bound, upper_bound, r_node.count());
+	return global_result->two_point_.InclusionPrune(bound, upper_bound, r_node.count());
       } 
       return true;
     }
