@@ -497,17 +497,16 @@ class Thor2PC {
       }
       if(dmin > global_result->two_point_.Max()){
 	return false;
-      } /* else { 
-	if (!param.auto_corr_ || dmin > 0){
-	   Check if q_node in r_node 
-	  int count = q_node.count();
+      } else { 
+	if (!param.auto_corr_ || dmin > 0){	
+	  int count = q_node.count()*r_node.count();
 	  double dmax;
 	  if (param.cartesian_){
 	    dmax = q_node.bound().MaxDistanceSq(r_node.bound());
 	    return global_result->two_point_.InclusionPrune(dmin, dmax, count);
 	  } 	  
 	}        
-	} */
+      } 
       return true;
     }
 
