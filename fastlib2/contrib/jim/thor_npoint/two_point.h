@@ -42,6 +42,20 @@ class TwoPoint{
     }
   }
 
+  bool InclusionPrune(double min, double max, int count){
+    for (int i = 0; i < n_boxes_; i++){
+      if (min >= bounds_[i] && min < bounds_[i+1]){
+	if(max < bounds_[i+1]){
+	  counts_[i] = counts_[i] + count;	 
+	  return false;	 
+	} else {
+	  return true;
+	}
+      } 
+    }
+    return false;
+  }
+
   void Merge(const TwoPoint& other){
     for (int i = 0; i < n_boxes_; i++){
       counts_[i] = counts_[i] + other.counts_[i];
