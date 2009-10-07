@@ -53,7 +53,7 @@ class TwoPoint{
 	}
       } 
     }
-    return false;
+    return true;
   }
 
   void Merge(const TwoPoint& other){
