@@ -411,7 +411,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	models_[ct].w_.Init(0); // for linear classifiers only. not used here
 	smo.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
       }
-      if (opt_method_== "lasvm") {
+      else if (opt_method_== "lasvm") {
 	/* Initialize LASVM parameters */
 	ArrayList<double> param_feed_db;
 	param_feed_db.Init();
