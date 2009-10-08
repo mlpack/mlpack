@@ -367,10 +367,26 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       
       printf("Primal objective value: %lf\n", v);
 
-      index_t w_ct = 0;
+
+      // find max(abs(w_i))
+      double wi_abs_max = -INFINITY;
+      double wi_abs;
       for (i=0; i<n_features_; i++) {
-	if ( fabs(w_[i]) > SGD_ALPHA_ZERO ) {
+	wi_abs = fabs(w_[i]);
+	if (wi_abs > wi_abs_max) {
+	  wi_abs_max = wi_abs;
+	}
+      }
+      // round small w_i to 0
+      index_t w_ct = 0;
+      double round_factor = fx_param_double(NULL, "round_factor", 1.0e32);
+      double round_thd = wi_abs_max / round_factor;
+      for (i=0; i<n_features_; i++) {
+	if ( fabs(w_[i]) > round_thd ) {
 	  w_ct ++;
+	}
+	else {
+	  w_[i] = 0;
 	}
       }
       printf("%d out of %d features are non zero\n", w_ct, n_features_);
@@ -378,7 +394,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 
   }
   else { // nonlinear SVM, output: coefs(i.e. alpha*y), bias
-    // it's more expensive to calc the accuracy then linear SVM, so we just use n_iter_ as stop criterion
+    // it's more expensive to calc the accuracy than linear SVM, so we just use n_iter_ as stop criterion
     double delta;
     
     Vector coef_long;

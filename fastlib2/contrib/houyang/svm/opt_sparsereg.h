@@ -14,7 +14,7 @@
 
 #include "fastlib/fastlib.h"
 
-const double SPARSEREG_ZERO = 1.0e-6;
+const double SPARSEREG_ZERO = 1.0e-30;
 
 template<typename TKernel>
 class SPARSEREG {
@@ -168,11 +168,11 @@ void SPARSEREG<TKernel>::LearnersInit_(int learner_typeid) {
   w_.Init(n_features_bias_);
   w_.SetZero();
   w_p_.Init(n_features_bias_);
-  //w_p_.SetAll(10 * SPARSEREG_ZERO);
-  w_p_.SetAll(0.1);
+  w_p_.SetAll(0.00001); // TODO
+  //w_p_.SetAll(SPARSEREG_ZERO);
   w_n_.Init(n_features_bias_);
-  //w_n_.SetAll(10 * SPARSEREG_ZERO);
-  w_n_.SetAll(0.1);
+  w_n_.SetAll(0.00001); // TODO
+  //w_n_.SetAll(SPARSEREG_ZERO);
   
   y_.Init(n_data_);
   for (i = 0; i < n_data_; i++) {
@@ -322,9 +322,21 @@ void SPARSEREG<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   }// for epo
   la::ScaleOverwrite(1.0/eta_sum, eta_w_sum, &w_);
 
-  index_t w_ct = 0;
+  // find max(abs(w_i))
+  double wi_abs_max = -INFINITY;
+  double wi_abs;
   for (i=0; i<n_features_bias_; i++) {
-    if ( fabs(w_[i]) > SPARSEREG_ZERO ) {
+    wi_abs = fabs(w_[i]);
+    if (wi_abs > wi_abs_max) {
+      wi_abs_max = wi_abs;
+    }
+  }
+  // round small w_i to 0
+  index_t w_ct = 0;
+  double round_factor = fx_param_double(NULL, "round_factor", 1.0e32);
+  double round_thd = wi_abs_max / round_factor;
+  for (i=0; i<n_features_bias_; i++) {
+    if ( fabs(w_[i]) > round_thd ) {
       w_ct ++;
       printf("w_dim:%d, w_value:%lf\n", i, w_[i]);
     }

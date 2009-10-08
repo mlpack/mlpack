@@ -364,7 +364,7 @@ void LASVM<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void LASVM<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
-  index_t i_o, j_o, i_n, j_n;
+  index_t i_o, i_n;
   int stop_condition = 0;
 
   // Load data
@@ -379,11 +379,13 @@ void LASVM<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     n_epochs_ = 1; // not exactly one epoch, just use it for one loop
   }
 
+  gap_ = INFINITY;
+
   // Learners initialization
   LearnersInit_(learner_typeid);
 
   // General learner-independent initializations
-  do_shrinking_ = fx_param_int(NULL, "shrink", 1);
+  do_shrinking_ = fx_param_int(NULL, "shrink", 0);
   do_finishing_ = fx_param_int(NULL, "finish", 1);
   bias_ = 0.0;
   n_sv_ = 0;
@@ -419,17 +421,6 @@ void LASVM<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       break;
     }
   }
-
-  // Update gradients for the above 2x5 samples
-  for (i_n = 0; i_n < n_alpha_; i_n++) {
-    i_o = active_set_[i_n];
-    for(j_n = 0; j_n < n_alpha_; j_n++) {
-      j_o = active_set_[j_n];
-      if( !IsLowerBounded(j_o) ) {
-	grad_[i_o] = grad_[i_o] - y_[i_o] * y_[j_o] * alpha_[j_o] * CalcKernelValue_(i_o, j_o);
-      }
-    }
-  }
   
   printf("LASVM initialization done!\n");
 
@@ -445,16 +436,16 @@ void LASVM<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       // Find working set, check stopping criterion, update gradient and alphas
       stop_condition = LASVMIterations_();
       // Termination check
-      if (stop_condition == 1) {// optimality reached
-	// Calculate the bias term
-	CalcBias_();
-	printf("LASVM terminates since the accuracy %f achieved!!! Number of epochs: %d; Number of iterations: %d.\n", accuracy_, ct_epo_+1, ct_iter_);
-	break;
-      }
-      else if (stop_condition == 2) {// max num of iterations exceeded
+      if (stop_condition == 1) {// max num of iterations exceeded
 	// Calculate the bias term
 	CalcBias_();
 	fprintf(stderr, "LASVM terminates since the number of iterations %d exceeded !!! Gap: %f.\n", n_iter_, gap_);
+	break;
+      }
+      else if (stop_condition == 2) {// optimality reached
+	// Calculate the bias term
+	CalcBias_();
+	printf("LASVM terminates since the accuracy %g achieved!!! Number of epochs: %d; Number of iterations: %d.\n", accuracy_, ct_epo_+1, ct_iter_);
 	break;
       }
     }
@@ -470,10 +461,13 @@ template<typename TKernel>
 int LASVM<TKernel>::LASVMIterations_() {
   index_t k_n = -1;
   ct_iter_++;
-  // printf("epo=%d, iter=%d\n", ct_epo_, ct_iter_);
+  //printf("epo=%d, iter=%d\n", ct_epo_, ct_iter_);
 
   // if number of epochs and iterations exceeded, do Finishing: repeat REPROCESS until accuracy reached
-  if ( ( ct_epo_ == n_epochs_ -1 ) && ( ct_iter_ >= n_iter_ ) ) {
+  if ( gap_ <= accuracy_ ) {
+    return 2;
+  }
+  else if ( ( ct_epo_ == n_epochs_ -1 ) && ( ct_iter_ >= n_iter_ ) ) {
     if (do_finishing_) {
       while (gap_ > accuracy_) {
 	if (do_shrinking_) {
@@ -508,8 +502,13 @@ int LASVM<TKernel>::LASVMIterations_() {
     if ( n_active_ > n_active_sv_) {
       k_n = n_active_sv_ + ct_iter_ % (n_active_ - n_active_sv_);
     }
-    else {
+    else { // all samples are in S, PROCESS just do nothing, so only need REPROCESS
       k_n = -1;
+      if ( Reprocess_() == 0 ) {
+	// bail out since i, j is not a violating pair
+	return 0;
+      }
+      return 0;
     }
   }
   else if(wss_ == 2) { // Active learning via gradient
@@ -547,7 +546,7 @@ template<typename TKernel>
 int LASVM<TKernel>::Process_(index_t k_n) {
   index_t i_n, j_n, t_n, t_o, k_o;
 
-  //printf("epo:%d, iter:%d, k_n=%d, n_active_sv_=%d\n", ct_epo_, ct_iter_, k_n, n_active_sv_);
+  //printf("Process: epo:%d, iter:%d, k_n=%d, n_active_sv_=%d, n_active_=%d\n", ct_epo_, ct_iter_, k_n, n_active_sv_, n_active_);
 
   // if k is already in the expansion, bail it out
   if (k_n < n_active_sv_) {
@@ -568,7 +567,7 @@ int LASVM<TKernel>::Process_(index_t k_n) {
 
   WorkingSetSelection_(n_active_sv_-1, i_n, j_n, yg_max_, yg_min_);
   if (yg_max_ - yg_min_ <= accuracy_) { // i, j is not a violating pair, bailed out
-    printf("Bail out; epo:%d, iter:%d, k_n=%d, n_active_sv_=%d, gap=%f\n", ct_epo_, ct_iter_, k_n, n_active_sv_, yg_max_ - yg_min_);
+    //printf("Bail out; epo:%d, iter:%d, k_n=%d, n_active_sv_=%d, gap=%f\n", ct_epo_, ct_iter_, k_n, n_active_sv_, yg_max_ - yg_min_);
     return 0;
   }
   UpdateGradientAlpha_(i_n, j_n);
@@ -587,22 +586,28 @@ template<typename TKernel>
 int LASVM<TKernel>::Reprocess_() {
   index_t i_n, j_n, t_n, t_o;
   
-  WorkingSetSelection_(-1, i_n, j_n, yg_max_, yg_min_);
-  if (yg_max_ - yg_min_ <= accuracy_) { // i, j is not a violating pair, bailed out
+  WorkingSetSelection_(-2, i_n, j_n, yg_max_, yg_min_);
+  //printf("REProcess: epo:%d, iter:%d, n_active_sv_=%d, gap=%f\n", ct_epo_, ct_iter_, n_active_sv_, yg_max_ - yg_min_);
+  gap_ = yg_max_ - yg_min_;
+  if (gap_ <= accuracy_) { // i, j is not a violating pair, bailed out
     return 0;
   }
   UpdateGradientAlpha_(i_n, j_n);
 
   // remove samples from S
+  WorkingSetSelection_(-2, i_n, j_n, yg_max_, yg_min_);
+  gap_ = yg_max_ - yg_min_;
   for (t_n = 0; t_n < n_active_sv_; t_n++) {
     t_o = active_set_[t_n];
-    if ( y_[t_o] == 1 && grad_[t_o] <= yg_min_ ) {
-      swap( active_set_[t_n], active_set_[n_active_sv_-1] );
-      n_active_sv_ --;
-    }
-    else if ( y_[t_o] == -1 && grad_[t_o] + yg_max_ <= 0 ) {
-      swap( active_set_[t_n], active_set_[n_active_sv_-1] );
-      n_active_sv_ --;
+    if (alpha_[t_o] < LASVM_ALPHA_ZERO ) {
+      if ( y_[t_o] == 1 && grad_[t_o] <= yg_min_ ) {
+	swap( active_set_[t_n], active_set_[n_active_sv_-1] );
+	n_active_sv_ --;
+      }
+      else if ( y_[t_o] == -1 && grad_[t_o] + yg_max_ <= 0 ) {
+	swap( active_set_[t_n], active_set_[n_active_sv_-1] );
+	n_active_sv_ --;
+      }
     }
   }
 
@@ -610,7 +615,7 @@ int LASVM<TKernel>::Reprocess_() {
 
   gap_ = yg_max_ - yg_min_;
 
-  //printf("REPROCESS epo:%d, iter:%d, n_active_sv_=%d, gap=%f\n", ct_epo_, ct_iter_, n_active_sv_, gap_);
+  printf("REPROCESS ct_iter:%d, n_active_sv_=%d, gap=%f\n", ct_iter_, n_active_sv_, gap_);
   
   return 1;
 }
