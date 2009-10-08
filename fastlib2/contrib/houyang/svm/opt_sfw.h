@@ -279,14 +279,14 @@ void SFW<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     if (stop_condition == 1) {// optimality reached
       // Calculate the bias term
       CalcBias_();
-      printf("SFW terminates since the accuracy %f achieved!!! Number of iterations: %d. Number of Away steps:%d\n.", accuracy_, ct_iter_, n_away_steps_);
+      printf("SFW terminates since the accuracy %f achieved!!! Number of iterations: %d. Portion of Away steps:%f\n.", accuracy_, ct_iter_, double(n_away_steps_)/double(ct_iter_));
       printf("n_work_pos=%d, n_work_neg=%d, n_work=%d, alpha_scale=%g\n", n_working_pos_, n_working_neg_, n_working_pos_+n_working_neg_, alpha_scale_);
       break;
     }
     else if (stop_condition == 2) {// max num of iterations exceeded
       // Calculate the bias term
       CalcBias_();
-      printf("SFW terminates since the number of iterations %d exceeded !!! Number of Away steps:%d\n", n_iter_, n_away_steps_);
+      printf("SFW terminates since the number of iterations %d exceeded !!! Portion of Away steps:%f\n", n_iter_, double(n_away_steps_)/double(n_iter_));
       printf("n_work_pos=%d, n_work_neg=%d, n_work=%d, alpha_scale_=%g\n", n_working_pos_, n_working_neg_, n_working_pos_+n_working_neg_, alpha_scale_);
       break;
     }
