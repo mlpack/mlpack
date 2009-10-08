@@ -17,7 +17,6 @@
  * @see opt_fw.h
  * @see opt_mfw.h
  * @see opt_sfw.h
- * @see opt_msfw.h
  * @see opt_par.h
  * @see opt_sparsereg.h
  */
@@ -36,7 +35,6 @@
 #include "opt_fw.h"
 #include "opt_mfw.h"
 #include "opt_sfw.h"
-#include "opt_msfw.h"
 #include "opt_par.h"
 #include "opt_sparsereg.h"
 
@@ -211,7 +209,6 @@ class SVM {
   class FW<Kernel>;
   class MFW<Kernel>;
   class SFW<Kernel>;
-  class MSFW<Kernel>;
   class PAR<Kernel>;
   class SPARSEREG<Kernel>;
 
@@ -686,30 +683,6 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	models_[ct].w_.Init(0); // for linear classifiers only. not used here
 	sfw.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
       }
-      else if (opt_method_== "msfw") {
-	/* Initialize MSFW parameters */
-	ArrayList<double> param_feed_db;
-	param_feed_db.Init();
-	param_feed_db.PushBack() = param_.C_;
-	param_feed_db.PushBack() = param_.n_iter_;
-	param_feed_db.PushBack() = param_.accuracy_;
-	MSFW<Kernel> msfw;
-	msfw.InitPara(learner_typeid, param_feed_db);
-	
-	/* Initialize kernel */
-	msfw.kernel().Init(fx_submodule(module, "kernel"));
-
-	/* 2-classes SVM training using MSFW */
-	fx_timer_start(NULL, "train_msfw");
-	msfw.Train(learner_typeid, &dataset_bi);
-	fx_timer_stop(NULL, "train_msfw");
-	
-	/* Get the trained bi-class model */
-	models_[ct].coef_.Init(); // alpha*y
-	models_[ct].bias_ = msfw.Bias(); // bias
-	models_[ct].w_.Init(0); // for linear classifiers only. not used here
-	msfw.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
-      }
       else if (opt_method_== "par") {
 	/* Initialize PAR parameters */
 	ArrayList<double> param_feed_db;
@@ -969,7 +942,7 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
   double sum = 0.0;
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
-      if (opt_method_== "smo" || opt_method_== "lasvm" || opt_method_== "hcy" || opt_method_== "fw" || opt_method_== "mfw" || opt_method_== "sfw" || opt_method_== "msfw" || opt_method_== "par") {
+      if (opt_method_== "smo" || opt_method_== "lasvm" || opt_method_== "hcy" || opt_method_== "fw" || opt_method_== "mfw" || opt_method_== "sfw" || opt_method_== "par") {
 	sum = 0.0;
 	for(k = 0; k < sv_list_ct_[i]; k++) {
 	  sum += sv_coef_.get(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];
