@@ -452,7 +452,7 @@ void SMO<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
-  index_t i,j;
+  index_t i;
   // Load data
   datamatrix_.Alias(dataset_in->matrix());
   n_data_ = datamatrix_.n_cols();
@@ -498,6 +498,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 
   do_shrinking_ = fx_param_int(NULL, "shrink", 0);
   ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING);
+  /*
   if (do_shrinking_) {
     for (i=0; i<n_alpha_; i++) {
       for(j=0; j<n_alpha_; j++) {
@@ -507,6 +508,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       grad_bar_[i] = y_[i] * grad_bar_[i];
     }
   }
+  */
 
   printf("SMO initialization done!\n");
   
