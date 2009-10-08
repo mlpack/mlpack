@@ -335,6 +335,30 @@ void SGDWB<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       v = v * scale_w_ * scale_w_ / 2.0 + loss_sum;
       
       printf("Primal objective value: %lf\n", v);
+
+
+      // find max(abs(w_i))
+      double wi_abs_max = -INFINITY;
+      double wi_abs;
+      for (i=0; i<n_features_bias_; i++) {
+	wi_abs = fabs(w_[i]);
+	if (wi_abs > wi_abs_max) {
+	  wi_abs_max = wi_abs;
+	}
+      }
+      // round small w_i to 0
+      index_t w_ct = 0;
+      double round_factor = fx_param_double(NULL, "round_factor", 1.0e32);
+      double round_thd = wi_abs_max / round_factor;
+      for (i=0; i<n_features_; i++) {
+	if ( fabs(w_[i]) > round_thd ) {
+	  w_ct ++;
+	}
+	else {
+	  w_[i] = 0;
+	}
+      }
+      printf("%d out of %d features are non zero\n", w_ct, n_features_);
     }
 
   }

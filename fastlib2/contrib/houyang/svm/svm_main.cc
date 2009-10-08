@@ -155,7 +155,7 @@ int LoadData(Dataset* dataset, String datafilename){
     GenerateArtificialDataset(dataset);
   }
   
-  if (fx_param_bool(NULL, "normalize", 1)) {
+  if (fx_param_bool(NULL, "normalize", 0)) {
     fprintf(stderr, "Normalizing...\n");
     DoSvmNormalize(dataset);
   } else {

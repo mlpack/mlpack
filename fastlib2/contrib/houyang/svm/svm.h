@@ -17,6 +17,7 @@
  * @see opt_fw.h
  * @see opt_mfw.h
  * @see opt_sfw.h
+ * @see opt_msfw.h
  * @see opt_par.h
  * @see opt_sparsereg.h
  */
@@ -35,6 +36,7 @@
 #include "opt_fw.h"
 #include "opt_mfw.h"
 #include "opt_sfw.h"
+#include "opt_msfw.h"
 #include "opt_par.h"
 #include "opt_sparsereg.h"
 
@@ -121,7 +123,7 @@ class SVM {
    * Developers may add more learner types if necessary
    */
   int learner_typeid_;
-  // Optimization method: smo, lasvm, sgd, sgdwb, cd, pegasos, rivanov, hcy, fw, mfw, sfw, par, sparsereg
+  // Optimization method: smo, lasvm, sgd, sgdwb, cd, pegasos, rivanov, hcy, fw, mfw, sfw, mfw, par, sparsereg
   String opt_method_;
   /* array of models for storage of the 2-class(binary) classifiers 
      Need to train num_classes_*(num_classes_-1)/2 binary models */
@@ -209,6 +211,7 @@ class SVM {
   class FW<Kernel>;
   class MFW<Kernel>;
   class SFW<Kernel>;
+  class MSFW<Kernel>;
   class PAR<Kernel>;
   class SPARSEREG<Kernel>;
 
@@ -290,7 +293,7 @@ void SVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *mo
   // accuracy for optimization
   param_.accuracy_ = fx_param_double(NULL, "accuracy", 1e-4);
   // number of iterations
-  param_.n_iter_ = fx_param_int(NULL, "n_iter", 100000000);
+  param_.n_iter_ = fx_param_int(NULL, "n_iter", n_data_);
   // number of iterations
   param_.n_epochs_ = fx_param_int(NULL, "n_epochs", 0);
 
@@ -661,9 +664,11 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	ArrayList<double> param_feed_db;
 	param_feed_db.Init();
 	param_feed_db.PushBack() = param_.C_;
+	param_feed_db.PushBack() = param_.hinge_;
 	param_feed_db.PushBack() = param_.n_iter_;
 	param_feed_db.PushBack() = param_.accuracy_;
 	param_feed_db.PushBack() = train_labels_ct_[i]; // number of positive samples (with label 1)
+	param_feed_db.PushBack() = train_labels_ct_[j]; // number of negative samples (with label -1)
 	SFW<Kernel> sfw;
 	sfw.InitPara(learner_typeid, param_feed_db);
 	
@@ -680,6 +685,30 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 	models_[ct].bias_ = sfw.Bias(); // bias
 	models_[ct].w_.Init(0); // for linear classifiers only. not used here
 	sfw.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
+      }
+      else if (opt_method_== "msfw") {
+	/* Initialize MSFW parameters */
+	ArrayList<double> param_feed_db;
+	param_feed_db.Init();
+	param_feed_db.PushBack() = param_.C_;
+	param_feed_db.PushBack() = param_.n_iter_;
+	param_feed_db.PushBack() = param_.accuracy_;
+	MSFW<Kernel> msfw;
+	msfw.InitPara(learner_typeid, param_feed_db);
+	
+	/* Initialize kernel */
+	msfw.kernel().Init(fx_submodule(module, "kernel"));
+
+	/* 2-classes SVM training using MSFW */
+	fx_timer_start(NULL, "train_msfw");
+	msfw.Train(learner_typeid, &dataset_bi);
+	fx_timer_stop(NULL, "train_msfw");
+	
+	/* Get the trained bi-class model */
+	models_[ct].coef_.Init(); // alpha*y
+	models_[ct].bias_ = msfw.Bias(); // bias
+	models_[ct].w_.Init(0); // for linear classifiers only. not used here
+	msfw.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
       }
       else if (opt_method_== "par") {
 	/* Initialize PAR parameters */
@@ -940,7 +969,7 @@ double SVM<TKernel>::SVM_C_Predict_(const Vector& datum) {
   double sum = 0.0;
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
-      if (opt_method_== "smo" || opt_method_== "lasvm" || opt_method_== "hcy" || opt_method_== "fw" || opt_method_== "mfw" || opt_method_== "sfw" || opt_method_== "par") {
+      if (opt_method_== "smo" || opt_method_== "lasvm" || opt_method_== "hcy" || opt_method_== "fw" || opt_method_== "mfw" || opt_method_== "sfw" || opt_method_== "msfw" || opt_method_== "par") {
 	sum = 0.0;
 	for(k = 0; k < sv_list_ct_[i]; k++) {
 	  sum += sv_coef_.get(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];
@@ -1159,13 +1188,13 @@ void SVM<TKernel>::SaveModel_(int learner_typeid, String model_filename) {
   // save models: bias, coefficients and support vectors
   fprintf(fp, "bias ");
   for (i = 0; i < num_models_; i++)
-    fprintf(fp, "%f ", models_[i].bias_);
+    fprintf(fp, "%.16g ", models_[i].bias_);
   fprintf(fp, "\n");
   
   fprintf(fp, "SV_coefs\n");
   for (i = 0; i < total_num_sv_; i++) {
     for (j = 0; j < num_classes_-1; j++) {
-      fprintf(fp, "%f ", sv_coef_.get(j,i));
+      fprintf(fp, "%.16g ", sv_coef_.get(j,i));
     }
     fprintf(fp, "\n");
   }
@@ -1173,7 +1202,7 @@ void SVM<TKernel>::SaveModel_(int learner_typeid, String model_filename) {
   fprintf(fp, "SVs\n");
   for (i = 0; i < total_num_sv_; i++) {
     for (j = 0; j < num_features_; j++) { // n_rows-1
-      fprintf(fp, "%f ", sv_.get(j,i));
+      fprintf(fp, "%.8g ", sv_.get(j,i));
     }
     fprintf(fp, "\n");
   }

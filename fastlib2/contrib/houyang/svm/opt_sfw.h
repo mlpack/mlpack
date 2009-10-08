@@ -46,25 +46,27 @@ class SFW {
   index_t n_sv_; /* number of support vectors */
 
   double q_;
-  double r_;
   double lambda_; // optimal step length
   index_t p_; // optimal index of the subgradient
 
   index_t n_alpha_; /* number of variables to be optimized */
-  //index_t n_active_; /* number of samples in the active set */
-  index_t n_active_pos_; /* number of samples in the active set with label +1 */
-  index_t n_active_neg_; /* number of samples in the active set with label -1 */
-  // n_active + n_inactive == n_alpha;
-  /* list that stores the old indices of active alphas followed by inactive alphas. 1st half for +1 class, 2nd half for -1 class */
-  // active_set = [active_+1, inactive_+1, active_-1, inactive_-1]
-  ArrayList<index_t> active_set_;
+
+  index_t n_working_pos_; /* number of samples in the working set with label +1 */
+  index_t n_working_neg_; /* number of samples in the working set with label -1 */
+
+  // List that stores the old indices of working alphas followed by nonworking alphas;
+  // 1st half for +1 class, 2nd half for -1 class: [working_+1, nonworking_+1, working_-1, nonworking_-1]
+  ArrayList<index_t> old_from_new_;
 
   ArrayList<int> y_; /* list that stores "labels" */
 
   double bias_;
 
+  double alpha_scale_; // scaler for alpha, using it will not need to scale all alphas during every iteration
+
   Vector grad_; /* gradient value */
-  Vector kernel_cache_; /* cache for kernel values */
+  Vector A_cache_; /* cache for kernel values */
+  bool b_A_cached_;
 
   // parameters
   //double nu_; // for nu-svm
@@ -79,6 +81,10 @@ class SFW {
   //double epsilon_; // for SVM_R
   index_t n_iter_; // number of iterations
   double accuracy_; // accuracy for stopping creterion
+
+  int step_type_; // 1: Toward Step; -1: Away Step
+  bool b_away_; // whether use both toward and away steps
+  index_t n_away_steps_;
 
   // indicator for balanced sampling
   bool sample_pos_;
@@ -113,10 +119,10 @@ class SFW {
       inv_two_C_ = 0.5;
       inv_C_ = 1;
     }
-    n_iter_ = (index_t) param_[1];
+    n_iter_ = (index_t) param_[2];
     n_iter_ = n_iter_ < MAX_NUM_ITER_SFW ? n_iter_: MAX_NUM_ITER_SFW;
-    accuracy_ = param_[2];
-    n_data_pos_ = (index_t)param_[3];
+    accuracy_ = param_[3];
+    n_data_pos_ = (index_t)param_[4];
     if (learner_typeid == 0) { // SVM_C
       //Cp_ = param_[1];
       //Cn_ = param_[2];
@@ -186,28 +192,28 @@ void SFW<TKernel>::LearnersInit_(int learner_typeid) {
   
   if (learner_typeid_ == 0) { // SVM_C
     n_alpha_ = n_data_;
-    active_set_.Init(n_alpha_);
+    old_from_new_.Init(n_alpha_);
     for (i=0; i<n_alpha_; i++)
-      active_set_[i] = i;
+      old_from_new_[i] = i;
 
     y_.Init(n_data_);
     for (i = 0; i < n_data_; i++) {
       y_[i] = datamatrix_.get(datamatrix_.n_rows()-1, i) > 0 ? 1 : -1;
     }
 
-    n_active_pos_ = 0;
-    n_active_neg_ = 0;
+    n_working_pos_ = 0;
+    n_working_neg_ = 0;
     //p_ = rand() % n_alpha_; // randomly choose a point for opt
     p_ = fx_param_int(NULL, "p_rand", rand() % n_alpha_);
     printf("p_rand=%d\n", p_);
     if (y_[p_] == 1) {
-      swap(active_set_[p_], active_set_[n_active_pos_]);
-      n_active_pos_ ++;
+      swap(old_from_new_[p_], old_from_new_[n_working_pos_]);
+      n_working_pos_ ++;
       sample_pos_ = true;
     }
     else { // y_[p_] == -1
-      swap(active_set_[p_], active_set_[n_data_pos_ + n_active_neg_]);
-      n_active_neg_ ++;
+      swap(old_from_new_[p_], old_from_new_[n_data_pos_ + n_working_neg_]);
+      n_working_neg_ ++;
       sample_pos_ = false;
     }
 
@@ -220,15 +226,12 @@ void SFW<TKernel>::LearnersInit_(int learner_typeid) {
     grad_.Init(n_alpha_);
     grad_.SetZero();
     grad_[p_] = -2 * ( CalcKernelValue_(p_, p_) + 1 + inv_two_C_ );
-    /*
-    for (i=0; i<n_active_; i++) {
-      op_pos = active_set_[i];
-      grad_[op_pos] = -2 * nu_ * y_[op_pos] * y_[p_] * ( CalcKernelValue_(op_pos, p_) + inv_mu_ );
-    }
-    */
 
-    kernel_cache_.Init(n_alpha_);
-    kernel_cache_.SetZero();
+    // init q
+    q_ = -grad_[p_] / 2;
+
+    A_cache_.Init(n_alpha_);
+    A_cache_.SetZero();
 
   }
   else if (learner_typeid_ == 1) { // SVM_R
@@ -254,13 +257,14 @@ void SFW<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   n_features_ = datamatrix_.n_rows() - 1; // excluding the last row for labels
 
   // General learner-independent initializations
-  r_ = 0.0;
   lambda_ = 1.0; // optimal step length  
   // Learners initialization
   LearnersInit_(learner_typeid);
   // General learner-independent initializations
-  q_ = CalcKernelValue_(p_, p_) + 1 + inv_two_C_;
-
+  b_away_ = fx_param_int(NULL, "away", 1); // default use both toward and away steps
+  alpha_scale_ = 1.0;
+  step_type_ = 1;
+  n_away_steps_ = 0;
   bias_ = 0.0;
   n_sv_ = 0;
 
@@ -269,25 +273,21 @@ void SFW<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   ct_iter_ = 0;
   int stop_condition = 0;
   while (1) {
-    //for(index_t i=0; i<n_alpha_; i++)
-    //  printf("%f.\n", y_[i]*alpha_[i]);
-    //printf("\n\n");
-
     // Find working set, check stopping criterion, update gradient and alphas
     stop_condition = SFWIterations_();
     // Termination check, if stop_condition==1 or ==2 => SFW terminates
     if (stop_condition == 1) {// optimality reached
       // Calculate the bias term
       CalcBias_();
-      printf("SFW terminates since the accuracy %f achieved!!! Number of iterations: %d\n.", accuracy_, ct_iter_);
-      printf("n_act_pos=%d, n_act_neg=%d, n_act=%d\n", n_active_pos_, n_active_neg_, n_active_pos_+n_active_neg_);
+      printf("SFW terminates since the accuracy %f achieved!!! Number of iterations: %d. Number of Away steps:%d\n.", accuracy_, ct_iter_, n_away_steps_);
+      printf("n_work_pos=%d, n_work_neg=%d, n_work=%d, alpha_scale=%g\n", n_working_pos_, n_working_neg_, n_working_pos_+n_working_neg_, alpha_scale_);
       break;
     }
     else if (stop_condition == 2) {// max num of iterations exceeded
       // Calculate the bias term
       CalcBias_();
-      printf("SFW terminates since the number of iterations %d exceeded !!!\n", n_iter_);
-      printf("n_act_pos=%d, n_act_neg=%d, n_act=%d\n", n_active_pos_, n_active_neg_, n_active_pos_+n_active_neg_);
+      printf("SFW terminates since the number of iterations %d exceeded !!! Number of Away steps:%d\n", n_iter_, n_away_steps_);
+      printf("n_work_pos=%d, n_work_neg=%d, n_work=%d, alpha_scale_=%g\n", n_working_pos_, n_working_neg_, n_working_pos_+n_working_neg_, alpha_scale_);
       break;
     }
   }
@@ -304,11 +304,9 @@ int SFW<TKernel>::SFWIterations_() {
   if (ct_iter_ >= n_iter_) { // number of iterations exceeded
     return 2;
   }
-  else if (GreedyVectorSelection_() == 1) // optimality reached
+  else if (GreedyVectorSelection_() == 1){ // optimality reached
     return 1;
-  //else if (GreedyVectorSelection_() == 2) { // new sample not included in the candidate set, find another
-  //  return 0;
-  //}
+  }
   else{ // new sample included in the candidate set, update gradient, alphas and bias term, and continue iterations
     UpdateGradientAlpha_();
     return 0;
@@ -325,110 +323,190 @@ int SFW<TKernel>::SFWIterations_() {
 template<typename TKernel>
 int SFW<TKernel>::GreedyVectorSelection_() {
   double grad_max = -INFINITY;
-  //double grad_min =  INFINITY;
-  index_t idx_i_grad_max = -1;
-  //index_t idx_i_grad_min = -1;
+  double grad_min =  INFINITY;
+  index_t idx_grad_max_o = -1;
+  index_t idx_grad_min_o = -1;
 
-  index_t k, op_pos;
+  index_t k, op_pos, neg_tmp;
+
+  double alpha_zero_scaled = SFW_ALPHA_ZERO / alpha_scale_;
 
   //double max_grad_inact = -INFINITY; // for optimiality check
   //double min_gradinvCalpha_act = INFINITY; // for optimiality check
 
-  index_t p_rnd, p_rnd_idx;
+  index_t p_rnd, p_rnd_o;
 
   // balanced sampling (for unbalanced classes)
-  index_t n_inactive_pos, n_inactive_neg;
+  index_t n_nonworking_pos, n_nonworking_neg;
   if (sample_pos_) { // last sample is +1, this sample should be -1
-    n_inactive_neg = n_alpha_ - n_data_pos_ - n_active_neg_;
-    if (n_inactive_neg >0) {
-      p_rnd = n_data_pos_ + n_active_neg_ + rand() % n_inactive_neg; // choose a random sample x_{p_rnd} from the inactive set
+    n_nonworking_neg = n_alpha_ - n_data_pos_ - n_working_neg_;
+    if (n_nonworking_neg >0) {
+      p_rnd = n_data_pos_ + n_working_neg_ + rand() % n_nonworking_neg; // choose a random sample x_{p_rnd} from the nonworking set
       sample_pos_ = false;
     }
     else { // no more neg points to sample, use positive points
-      n_inactive_pos = n_data_pos_ - n_active_pos_;
-      p_rnd = n_active_pos_ + rand() % n_inactive_pos; // choose a random sample x_{p_rnd} from the inactive set
+      printf("No more -1 new samples\n");
+      n_nonworking_pos = n_data_pos_ - n_working_pos_;
+      p_rnd = n_working_pos_ + rand() % n_nonworking_pos; // choose a random sample x_{p_rnd} from the nonworking set
       sample_pos_ = true;
     }
-    //printf("n_act_pos=%d, n_act_neg=%d, p_rnd_neg=%d\n", n_active_pos_, n_active_neg_, p_rnd);
+    //printf("n_act_pos=%d, n_act_neg=%d, p_rnd_neg=%d\n", n_working_pos_, n_working_neg_, p_rnd);
   }
   else { // last sample is -1, this sample should be +1
-    n_inactive_pos = n_data_pos_ - n_active_pos_;
-    if (n_inactive_pos >0) {
-      p_rnd = n_active_pos_ + rand() % (n_data_pos_ - n_active_pos_); // choose a random sample x_{p_rnd} from the inactive set
+    n_nonworking_pos = n_data_pos_ - n_working_pos_;
+    if (n_nonworking_pos >0) {
+      p_rnd = n_working_pos_ + rand() % (n_data_pos_ - n_working_pos_); // choose a random sample x_{p_rnd} from the nonworking set
       sample_pos_ = true;
     }
     else{ // no more positive points to sample, use negative points
-      n_inactive_neg = n_alpha_ - n_data_pos_ - n_active_neg_;
-      p_rnd = n_data_pos_ + n_active_neg_ + rand() % n_inactive_neg; // choose a random sample x_{p_rnd} from the inactive set
+      printf("No more +1 new samples\n");
+      n_nonworking_neg = n_alpha_ - n_data_pos_ - n_working_neg_;
+      p_rnd = n_data_pos_ + n_working_neg_ + rand() % n_nonworking_neg; // choose a random sample x_{p_rnd} from the nonworking set
       sample_pos_ = false;
     }
-    //printf("n_act_pos=%d, n_act_neg=%d, p_rnd_pos=%d\n", n_active_pos_, n_active_neg_, p_rnd);
+    //printf("n_act_pos=%d, n_act_neg=%d, p_rnd_pos=%d\n", n_working_pos_, n_working_neg_, p_rnd);
   }
-  p_rnd_idx = active_set_[p_rnd];
+  p_rnd_o = old_from_new_[p_rnd];
   
 
-  // caculate p_rnd th component of the gradient
-  double grad_tmp = 0;
-  for (k=0; k<n_active_pos_; k++) {
-    op_pos = active_set_[k];
-    grad_tmp = grad_tmp - y_[op_pos] * alpha_[op_pos] * ( CalcKernelValue_(p_rnd_idx, op_pos) + 1 );
-  }
-  for (k=0; k<n_active_neg_; k++) {
-    op_pos = active_set_[n_data_pos_ + k];
-    grad_tmp = grad_tmp - y_[op_pos] * alpha_[op_pos] * ( CalcKernelValue_(p_rnd_idx, op_pos) + 1 );
-  }
-  grad_tmp = 2 * y_[p_rnd_idx] * grad_tmp;
-  grad_tmp = grad_tmp - alpha_[p_rnd_idx] * inv_C_;
-
-  //max_grad_inact = grad_tmp;
-
-  // Find working vector using greedy search: idx_i = argmax_k(grad_k), k \in active_set
-  for (k=0; k<n_active_pos_; k++) {
-    op_pos = active_set_[k];
-    if (grad_[op_pos] > grad_max) {
-      grad_max = grad_[op_pos];
-      idx_i_grad_max = op_pos;
+  // Caculate p_rnd th component of the gradient
+  double grad_k = 0;
+  neg_tmp = n_data_pos_+n_working_neg_;
+  for (k=0; k<n_working_pos_; k++) {
+    op_pos = old_from_new_[k];
+    if (alpha_[op_pos] > alpha_zero_scaled) {
+      A_cache_[k] = y_[op_pos] * y_[p_rnd_o] * ( CalcKernelValue_(p_rnd_o,op_pos) + 1 );
+      grad_k = grad_k - alpha_[op_pos] * A_cache_[k];
+    }
+    else {
+      A_cache_[k] = INFINITY;
     }
   }
-  for (k=0; k<n_active_neg_; k++) {
-    op_pos = active_set_[n_data_pos_ + k];
+  for (k=n_data_pos_; k<neg_tmp; k++) {
+    op_pos = old_from_new_[k];
+    if (alpha_[op_pos] > alpha_zero_scaled) {
+      A_cache_[k] = y_[op_pos] * y_[p_rnd_o] * ( CalcKernelValue_(p_rnd_o,op_pos) + 1 );
+      grad_k = grad_k - alpha_[op_pos] * A_cache_[k];
+    }
+    else {
+      A_cache_[k] = INFINITY;
+    }
+  }
+  grad_k = 2 * grad_k;
+  grad_k = alpha_scale_ * (grad_k - alpha_[p_rnd_o] * inv_C_);
+
+  /*
+  for (k=0; k<n_working_pos_; k++) {
+    op_pos = old_from_new_[k];
+    grad_k = grad_k - y_[op_pos] * alpha_[op_pos] * ( CalcKernelValue_(p_rnd_o, op_pos) + 1 );
+  }
+  for (k=0; k<n_working_neg_; k++) {
+    op_pos = old_from_new_[n_data_pos_ + k];
+    grad_k = grad_k - y_[op_pos] * alpha_[op_pos] * ( CalcKernelValue_(p_rnd_o, op_pos) + 1 );
+  }
+  grad_k = 2 * y_[p_rnd_o] * grad_k;
+  grad_k = grad_k - alpha_[p_rnd_o] * inv_C_;
+  */
+
+  //max_grad_inact = grad_k;
+
+  // Find grad_max
+  for (k=0; k<n_working_pos_; k++) {
+    op_pos = old_from_new_[k];
     if (grad_[op_pos] > grad_max) {
       grad_max = grad_[op_pos];
-      idx_i_grad_max = op_pos;
+      idx_grad_max_o = op_pos;
+    }
+  }
+  for (k=n_data_pos_; k<neg_tmp; k++) {
+    op_pos = old_from_new_[k];
+    if (grad_[op_pos] > grad_max) {
+      grad_max = grad_[op_pos];
+      idx_grad_max_o = op_pos;
     }
   }
 
-  //printf("grad_max=%f, grad_[p_rnd_idx]=%f\n", grad_max, grad_[p_rnd_idx]);
-  if ( grad_tmp >= grad_max) { // include new ramdom sample in active_set
-    grad_[p_rnd_idx] = grad_tmp;
-    p_ = p_rnd_idx;
-    //printf("new:%d\n", p_);
+  //printf("grad_k=%g, grad_max=%g\n", grad_k, grad_max);
+  if ( grad_k >= grad_max) { // include new ramdom sample in active_set
+    grad_[p_rnd_o] = grad_k;
+    p_ = p_rnd_o;
+    step_type_ = 1; // Toward step
+    b_A_cached_ = 1;
+    //printf("Use New Sample:%d!!!!!!!\n", p_);
     // update active_set
     if (sample_pos_) { // this sample is +1
-      swap(active_set_[p_rnd], active_set_[n_active_pos_]);
-      n_active_pos_ ++;
+      swap(old_from_new_[p_rnd], old_from_new_[n_working_pos_]);
+      //A_cache_[n_working_pos_] = CalcKernelValue_(p_,p_) + 1;
+      n_working_pos_ ++;
     }
     else { // this sample is -1
-      swap(active_set_[p_rnd], active_set_[n_data_pos_ + n_active_neg_]);
-      n_active_neg_ ++;
+      swap(old_from_new_[p_rnd], old_from_new_[neg_tmp]);
+      //A_cache_[neg_tmp] = CalcKernelValue_(p_,p_) + 1;
+      n_working_neg_ ++;
     }
   }
   else { // new random sample not selected for opt
-    p_ = idx_i_grad_max;
-    //printf("old:%d\n", p_);
+    if (b_away_) { // consider both toward and away steps
+      // find grad_min
+      for (k=0; k<n_working_pos_; k++) {
+	op_pos = old_from_new_[k];
+	if (  (grad_[op_pos] < grad_min) && (alpha_[op_pos] > alpha_zero_scaled)  ) {
+	  grad_min = grad_[op_pos];
+	  idx_grad_min_o = op_pos;
+	}
+      }
+      for (k=n_data_pos_; k<neg_tmp; k++) {
+	op_pos = old_from_new_[k];
+	if (  (grad_[op_pos] < grad_min) && (alpha_[op_pos] > alpha_zero_scaled)  ) {
+	  grad_min = grad_[op_pos];
+	  idx_grad_min_o = op_pos;
+	}
+      }
+      // Calc alpha^T * grad
+      double alpha_grad = 0.0;
+      for (k=0; k<n_working_pos_; k++) {
+	op_pos = old_from_new_[k];
+	alpha_grad += alpha_[op_pos] * grad_[op_pos];
+      }
+      for (k=n_data_pos_; k<neg_tmp; k++) {
+	op_pos = old_from_new_[k];
+	alpha_grad += alpha_[op_pos] * grad_[op_pos];
+      }
+      alpha_grad *= alpha_scale_;
+      
+      //printf("ct_iter:%d, max=%g, min=%g, max+min=%g, 2*alpha_grad=%g\n",ct_iter_, grad_max, grad_min, grad_max + grad_min, 2 * alpha_grad);
+      //printf("ct_iter:%d, max=%g, min=%g, |max|=%g, |min|=%g\n",ct_iter_, grad_max, grad_min, fabs(grad_max), fabs(grad_min));
+      if ( (grad_max + grad_min) >= (2 * alpha_grad) ) { // Guelat's MFW
+      //if (fabs(grad_max) >= fabs(grad_min)) { // Wolfe's MFW
+	step_type_ = 1; // Toward step
+	p_ = idx_grad_max_o;
+	b_A_cached_ = 0;
+      }
+      else {
+	step_type_ = -1; // Away step
+	n_away_steps_ ++; 
+	p_ = idx_grad_min_o;
+	b_A_cached_ = 0;
+      }
+    }
+    else { // only use toward steps
+      p_ = idx_grad_max_o;
+      b_A_cached_ = 0;
+      //printf("Use Old Sample:%d\n", p_);
+    }
   }
 
   /*
   double min_tmp;
-  for (k=0; k<n_active_pos_; k++) {
-    op_pos = active_set_[k];
+  for (k=0; k<n_working_pos_; k++) {
+    op_pos = old_from_new_[k];
     min_tmp = grad_[op_pos] + inv_C_ * alpha_[op_pos];
     if ( min_tmp <min_gradinvCalpha_act ) {
       min_gradinvCalpha_act = min_tmp;
     }
   }
-  for (k=0; k<n_active_neg_; k++) {
-    op_pos = active_set_[n_data_pos_ + k];
+  for (k=0; k<n_working_neg_; k++) {
+    op_pos = old_from_new_[n_data_pos_ + k];
     min_tmp = grad_[op_pos] + inv_C_ * alpha_[op_pos];
     if ( min_tmp <min_gradinvCalpha_act ) {
       min_gradinvCalpha_act = min_tmp;
@@ -455,62 +533,133 @@ int SFW<TKernel>::GreedyVectorSelection_() {
 */
 template<typename TKernel>
 void SFW<TKernel>::UpdateGradientAlpha_() {
-  index_t i, op_pos;
-  double one_m_lambda;
+  index_t i, op_pos, neg_tmp;
+  double one_m_lambda, one_p_lambda, two_lambda;
+  double alpha_zero_scaled = SFW_ALPHA_ZERO / alpha_scale_;
   double App = CalcKernelValue_(p_, p_) + 1 + inv_two_C_;
-  
-  // update r
-  r_ = 0;
-  for (i=0; i<n_active_pos_; i++) {
-    op_pos = active_set_[i];
-    kernel_cache_[i] = y_[op_pos] * y_[p_] * ( CalcKernelValue_(p_,op_pos) + 1 );
-    r_ = r_ + alpha_[op_pos] * kernel_cache_[i];
+
+  if (step_type_ == 1) { // Make a Toward Step
+    // update step length: lambda
+    lambda_ = 1 - ( grad_[p_]/2 + App ) / ( q_ + grad_[p_] + App );
+    //printf("TOWARD: ct_iter:%d, lambda=%g, p=%d, scale:%g, alpha_p=%g ", ct_iter_, lambda_, p_, alpha_scale_, alpha_[p_]*alpha_scale_);
+    if (lambda_ > 1) { // clamp to [0 1]
+      lambda_ = 1;
+    }
+    else if (lambda_ < 0) {
+      lambda_ = 0;
+    }
+    
+    if (lambda_ > 0) {
+      one_m_lambda = 1 - lambda_;
+      two_lambda = 2 * lambda_;
+      
+      // update q
+      q_ = one_m_lambda * one_m_lambda * q_ - lambda_ * one_m_lambda * grad_[p_] + lambda_ * lambda_ * App;
+      
+      // update gradients
+      neg_tmp = n_data_pos_+n_working_neg_;
+      if (b_A_cached_) { // p_ is new, using cache
+	for (i=0; i<n_working_pos_; i++) {
+	  op_pos = old_from_new_[i];
+	  if (alpha_[op_pos] > alpha_zero_scaled) {
+	    grad_[op_pos] = one_m_lambda * grad_[op_pos] - two_lambda * A_cache_[i];
+	  }
+	  else {
+	    grad_[op_pos] = one_m_lambda * grad_[op_pos] - two_lambda * y_[op_pos] * y_[p_] * ( CalcKernelValue_(op_pos, p_) + 1 );
+	  }
+	}
+	for (i=n_data_pos_; i<neg_tmp; i++) {
+	  op_pos = old_from_new_[i];
+	  if (alpha_[op_pos] > alpha_zero_scaled) {
+	    grad_[op_pos] = one_m_lambda * grad_[op_pos] - two_lambda * A_cache_[i];
+	  }
+	  else {
+	    grad_[op_pos] = one_m_lambda * grad_[op_pos] - two_lambda * y_[op_pos] * y_[p_] * ( CalcKernelValue_(op_pos, p_) + 1 );
+	  }
+	}
+	grad_[p_] = grad_[p_] - lambda_ * inv_C_;
+      }
+      else { // p_ is old
+	for (i=0; i<n_working_pos_; i++) {
+	  op_pos = old_from_new_[i];
+	  grad_[op_pos] = one_m_lambda * grad_[op_pos] - two_lambda * y_[op_pos] * y_[p_] * ( CalcKernelValue_(op_pos, p_) + 1 );
+	}
+	for (i=n_data_pos_; i<neg_tmp; i++) {
+	  op_pos = old_from_new_[i];
+	  grad_[op_pos] = one_m_lambda * grad_[op_pos] - two_lambda * y_[op_pos] * y_[p_] * ( CalcKernelValue_(op_pos, p_) + 1 );
+	}
+	grad_[p_] = grad_[p_] - lambda_ * inv_C_;
+      }
+      
+      // update alphas
+      alpha_scale_ *= one_m_lambda;
+      alpha_[p_] = alpha_[p_] + lambda_ / alpha_scale_;
+    }
+    //printf("after_p=%g\n", alpha_[p_]*alpha_scale_);
   }
-  for (i=0; i<n_active_neg_; i++) {
-    op_pos = active_set_[n_data_pos_ + i];
-    kernel_cache_[n_active_pos_+i] = y_[op_pos] * y_[p_] * ( CalcKernelValue_(p_,op_pos) + 1 );
-    r_ = r_ + alpha_[op_pos] * kernel_cache_[n_active_pos_+i];
+  else { // Make an Away step
+    // update step length: lambda
+    lambda_ = ( grad_[p_]/2 + App ) / ( q_ + grad_[p_] + App ) - 1;
+    // clamp to [0 eta]
+    double eta = alpha_[p_]*alpha_scale_ / (1 - alpha_[p_]*alpha_scale_);
+    //printf("AWAY: ct_iter:%d, lambda=%g, eta=%g, p=%d, scale:%g, alpha_p=%g ", ct_iter_, lambda_, eta, p_, alpha_scale_, alpha_[p_]*alpha_scale_);
+    if (lambda_ > eta) {
+      lambda_ = eta;
+    }
+    else if (lambda_ < 0) {
+      lambda_ = 0;
+    }
+    
+    if (lambda_ > 0) {
+      one_p_lambda = 1 + lambda_;
+      two_lambda = 2 * lambda_;
+      
+      // update q
+      q_ = one_p_lambda * one_p_lambda * q_ + lambda_ * one_p_lambda * grad_[p_] + lambda_ * lambda_ * App;
+      
+      // update gradients
+      neg_tmp = n_data_pos_+n_working_neg_;
+      if (b_A_cached_) { // p_ is new, using cache
+	for (i=0; i<n_working_pos_; i++) {
+	  op_pos = old_from_new_[i];
+	  if (alpha_[op_pos] > alpha_zero_scaled) {
+	    grad_[op_pos] = one_p_lambda * grad_[op_pos] + two_lambda * A_cache_[i];
+	  }
+	  else {
+	    grad_[op_pos] = one_p_lambda * grad_[op_pos] + two_lambda * y_[op_pos] * y_[p_] * ( CalcKernelValue_(op_pos, p_) + 1 );
+	  }
+	}
+	for (i=n_data_pos_; i<neg_tmp; i++) {
+	  op_pos = old_from_new_[i];
+	  if (alpha_[op_pos] > alpha_zero_scaled) {
+	    grad_[op_pos] = one_p_lambda * grad_[op_pos] + two_lambda * A_cache_[i];
+	  }
+	  else {
+	    grad_[op_pos] = one_p_lambda * grad_[op_pos] + two_lambda * y_[op_pos] * y_[p_] * ( CalcKernelValue_(op_pos, p_) + 1 );
+	  }
+	}
+	grad_[p_] = grad_[p_] + lambda_ * inv_C_;
+      }
+      else { // p_ is old
+	for (i=0; i<n_working_pos_; i++) {
+	  op_pos = old_from_new_[i];
+	  grad_[op_pos] = one_p_lambda * grad_[op_pos] + two_lambda * y_[op_pos] * y_[p_] * ( CalcKernelValue_(op_pos, p_) + 1 );
+	}
+	for (i=n_data_pos_; i<neg_tmp; i++) {
+	  op_pos = old_from_new_[i];
+	  grad_[op_pos] = one_p_lambda * grad_[op_pos] + two_lambda * y_[op_pos] * y_[p_] * ( CalcKernelValue_(op_pos, p_) + 1 );
+	}
+	grad_[p_] = grad_[p_] + lambda_ * inv_C_;
+      }
+      
+      // update alphas
+      alpha_scale_ *= one_p_lambda;
+      alpha_[p_] = alpha_[p_] - lambda_ / alpha_scale_;
+    }
+    //printf("after_p=%g\n", alpha_[p_]*alpha_scale_);
   }
-  r_ = r_ + alpha_[p_] * inv_two_C_;
 
-  //printf("lambda=%f\n", lambda_);
-  //printf("p_star_=%d\n", p_);
-
-  // update step length: lambda
-  lambda_ = 1 + ( r_ - App ) / ( q_ - 2 * r_ + App );
-  if (lambda_ > 1) // clamp to [0 1]
-    lambda_ = 1;
-  else if (lambda_ < 0)
-    lambda_ = 0;
-
-  //printf("%d: lambda =%f\n", ct_iter_, lambda_);
-
-  one_m_lambda = 1 - lambda_;
-
-  // update q
-  q_ = one_m_lambda * one_m_lambda * q_ + 2 * lambda_ * one_m_lambda * r_ + lambda_ * lambda_ * App;
-
-  // update gradients
-  for (i=0; i<n_active_pos_; i++) {
-    op_pos = active_set_[i];
-    grad_[op_pos] = one_m_lambda * grad_[op_pos] - 2 * lambda_ * kernel_cache_[i];
-  }
-  for (i=0; i<n_active_neg_; i++) {
-    op_pos = active_set_[n_data_pos_ + i];
-    grad_[op_pos] = one_m_lambda * grad_[op_pos] - 2 * lambda_ * kernel_cache_[n_active_pos_+i];
-  }
-  grad_[p_] = grad_[p_] - lambda_ * inv_C_;
-
-  // update alphas
-  for (i=0; i<n_active_pos_; i++) {
-    op_pos = active_set_[i];
-    alpha_[op_pos] = one_m_lambda * alpha_[op_pos];
-  }
-  for (i=0; i<n_active_neg_; i++) {
-    op_pos = active_set_[n_data_pos_ + i];
-    alpha_[op_pos] = one_m_lambda * alpha_[op_pos];
-  }
-  alpha_[p_] = alpha_[p_] + lambda_;
+  //printf("ct_iter:%d, p:%d, y_p:%d, step_size:%g, n_work=%d, alpha_scale_=%g, lambda_=%g\n\n", ct_iter_, p_, y_[p_], lambda_,  n_working_pos_ + n_working_neg_, alpha_scale_, lambda_);
 }
 
 
@@ -522,17 +671,19 @@ void SFW<TKernel>::UpdateGradientAlpha_() {
 */
 template<typename TKernel>
 void SFW<TKernel>::CalcBias_() {
-  index_t op_pos;
+  index_t i, op_pos, neg_tmp;
   
   bias_ = 0;
-  for (index_t i=0; i<n_active_pos_; i++) {
-    op_pos = active_set_[i];
+  for (i=0; i<n_working_pos_; i++) {
+    op_pos = old_from_new_[i];
     bias_ = bias_ + y_[op_pos] * alpha_[op_pos];
   }
-  for (index_t i=0; i<n_active_neg_; i++) {
-    op_pos = active_set_[n_data_pos_ + i];
+  neg_tmp = n_data_pos_+n_working_neg_;
+  for (i=n_data_pos_; i<neg_tmp; i++) {
+    op_pos = old_from_new_[i];
     bias_ = bias_ + y_[op_pos] * alpha_[op_pos];
   }
+
 }
 
 /* Get SVM results:coefficients, number and indecies of SVs
@@ -544,10 +695,11 @@ void SFW<TKernel>::CalcBias_() {
 */
 template<typename TKernel>
 void SFW<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
-
+  n_sv_ = 0;
+  double alpha_zero_scaled = SFW_ALPHA_ZERO / alpha_scale_;
   if (learner_typeid_ == 0) {// SVM_C
     for (index_t i = 0; i < n_data_; i++) {
-      if (alpha_[i] >= SFW_ALPHA_ZERO) { // support vectors found
+      if (alpha_[i] > alpha_zero_scaled) { // support vectors found
 	//printf("%f\n", alpha_[i] * y_[i]);
 	coef.PushBack() = alpha_[i] * y_[i];
 	sv_indicator[dataset_index[i]] = true;
@@ -557,6 +709,7 @@ void SFW<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &c
 	coef.PushBack() = 0;
       }
     }
+    printf("Number of SVs: %d.................\n", n_sv_);
   }
   else if (learner_typeid_ == 1) {// SVM_R
     // TODO
@@ -564,3 +717,4 @@ void SFW<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &c
 }
 
 #endif
+// ./svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=gaussian --normalize=0 --opt=sfw --sigma=4 --c=5 --p_rand=680 --away=1 --n_iter=9824
