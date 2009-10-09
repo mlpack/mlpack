@@ -25,11 +25,7 @@ class HMM {
   int type_;
   double min_variance_;
   int n_components_;
-
   bool is_ergodic_;
-
-
-  // log probabilities version
 
  public:
 
@@ -531,8 +527,8 @@ class HMM {
       }
       for(int i = 0; i < n_states_; i++) {
 	state_distributions[i].Normalize(cluster_counts[i]);
-	printf("distribution %d\n", i);
-	state_distributions[i].PrintDebug("");
+	//printf("distribution %d\n", i);
+	//state_distributions[i].PrintDebug("");
       }
     }
     else if(type_ == MIXTURE) {
@@ -751,8 +747,8 @@ class HMM {
     bool converged = false;
 
     while(!converged) {
-      printf("iteration %d\n", iteration_num);
-      PrintDebug("hmm at start of iteration");
+      //printf("iteration %d\n", iteration_num);
+      //PrintDebug("hmm at start of iteration");
 
       iteration_num++;
 
@@ -794,11 +790,11 @@ class HMM {
 	// p_x_given_mixture_q[0].PrintDebug("p_x_given_mixture_q");
 	//}
 	
-	p_qt.PrintDebug("p_qt");
-	for(int i = 0; i < n_states_; i++) {
-	  printf("p_qq_t[%d]\n", i);
-	  p_qq_t[i].PrintDebug("p_qq_t[i]");
-	}
+	//p_qt.PrintDebug("p_qt");
+	//for(int i = 0; i < n_states_; i++) {
+	//  printf("p_qq_t[%d]\n", i);
+	//  p_qq_t[i].PrintDebug("p_qq_t[i]");
+	//}
 	
 	
 	current_total_neg_likelihood += neg_likelihood;
@@ -927,11 +923,12 @@ class HMM {
 		// hopefully p_x_given_mixture_q[k].get(i,t) is fast since
 		// n_states_ is usually small (< 20)
 		double scaling_factor =
-		  p_qt.get(t, i) + p_x_given_mixture_q[k].get(i, t);
+		  exp(p_qt.get(t, i) + p_x_given_mixture_q[k].get(i, t));
 		
-		new_hmm.state_distributions[i].Accumulate(exp(scaling_factor),
+		new_hmm.state_distributions[i].Accumulate(scaling_factor,
 							  x_t,
 							  k);
+		weight_qi[i] += scaling_factor;
 	      }
 	    }
 	    //printf("done accumulating component %d\n", k);
@@ -939,8 +936,8 @@ class HMM {
 	  for(int i = 0; i < n_states_; i++) {
 	    // note that new_hmm_p_transition_denom[i] =
 	    //             \sum_{t = 0 -> T - 2} p_qt.get(t, i)
-	    weight_qi[i] +=
-	     exp(new_hmm_p_transition_denom[i]) + exp(p_qt.get(sequence_length - 1, i));
+	    //weight_qi[i] +=
+	    //exp(new_hmm_p_transition_denom[i]) + exp(p_qt.get(sequence_length - 1, i));
 	    // so, weight_qi[i] = \sum_{t = 0 -> T - 1} p_qt.get(t, i)
 	  }
 	} //end if(MIXTURE)
@@ -958,7 +955,7 @@ class HMM {
       // normalize initial state probabilities
       // no risk - Sum must be positive
       double sum_p_initial = LogSumExp(new_hmm.p_initial);
-      printf("sum_p_initial = %f\n", sum_p_initial);
+      //printf("sum_p_initial = %f\n", sum_p_initial);
       for(int i = 0; i < n_states_; i++) {
 	new_hmm.p_initial[i] -= sum_p_initial;	
       }
@@ -1031,7 +1028,7 @@ class HMM {
       }
 
       
-      new_hmm.PrintDebug("new hmm after normalization");
+      //new_hmm.PrintDebug("new hmm after normalization");
 
       SwapHMMParameters(&new_hmm);
   
@@ -1040,7 +1037,7 @@ class HMM {
       // How far have we come? Have we converged?
       double improvement_total_neg_likelihood =
 	last_total_neg_likelihood - current_total_neg_likelihood;
-      printf("improvement = %e\n", improvement_total_neg_likelihood);
+      printf("iteration %d, improvement = %e\n", iteration_num, improvement_total_neg_likelihood);
       if(improvement_total_neg_likelihood < neg_likelihood_threshold) {
 	converged = true;
       }
@@ -1127,6 +1124,7 @@ class HMM {
 	  fprintf(stderr, "\n");
 	  //
 	  printf("t = %d, state j == %d\n", t, j);
+	  printf("log\n\n");
 	  FATAL("argmax == -1");
 	}
 	logp_path.set(j, t,
@@ -1160,11 +1158,11 @@ class HMM {
       printf("\n");
     }
     */
-    printf("best path\n");
-    for(int i = 0; i < best_path.length(); i++) {
-      printf("%d ", best_path[i]);
-    }
-    printf("\n");
+/*     printf("best path\n"); */
+/*     for(int i = 0; i < best_path.length(); i++) { */
+/*       printf("%d ", best_path[i]); */
+/*     } */
+/*     printf("\n"); */
     
   }
 
@@ -1297,7 +1295,7 @@ class HMM {
     }
     new_hmm.NormalizePInitial(n_sequences, is_ergodic_);
     if(!is_ergodic_) {
-      if(new_hmm.p_initial[0] < 1) {
+      if(new_hmm.p_initial[0] < 0) {
 	for(int i = 0; i < n_states_; i++) {
 	  printf("new_hmm.p_initial[%d] = %3e ", i, new_hmm.p_initial[i]);
 	}
@@ -1531,9 +1529,8 @@ class HMM {
 
     char string[100];    
     for(int i = 0 ;i < n_states_; i++) {
-      sprintf(string, "state %d:\n", i+1);
+      sprintf(string, "State %d:\n", i+1);
       state_distributions[i].PrintDebug(string);
-      fprintf(stream, "\n");
     }
   }
 

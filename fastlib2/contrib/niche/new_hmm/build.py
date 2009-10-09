@@ -1,4 +1,37 @@
 binrule(
+    name = "test_bayes",
+    sources = ["test_bayes.cc"],
+    headers = ["test_engine.h",
+               "test_engine_impl.h",
+               "test_utils.h",
+               "utils.h",
+               "multinomial.h",               
+               "isotropic_gaussian.h",
+               "diag_gaussian.h",
+               "mixture.h",
+               "loghmm.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
+binrule(
+    name = "save_one_hmm",
+    sources = ["save_one_hmm.cc"],
+    headers = ["test_engine.h",
+               "test_engine_impl.h",
+               "utils.h",
+               "diag_gaussian.h",
+               "loghmm.h"],
+    deplibs = ["fastlib:fastlib",
+               "mlpack/kde:dualtree_kde",
+               "mlpack/series_expansion:series_expansion",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
+
+binrule(
     name = "save_one_fmri_hmm",
     sources = ["save_one_fmri_hmm.cc"],
     headers = ["test_engine.h",
@@ -465,7 +498,7 @@ binrule(
     )
 
 binrule(
-    name = "hmm",
+    name = "loghmm",
     sources = ["hmm.cc"],
     headers = ["loghmm.h",
                "multinomial.h",
@@ -475,6 +508,19 @@ binrule(
     deplibs = ["fastlib:fastlib",
                "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
     )
+
+binrule(
+    name = "hmm",
+    sources = ["hmm.cc"],
+    headers = ["hmm.h",
+               "multinomial.h",
+               "diag_gaussian.h",
+               "mixture.h",
+               "utils.h"],
+    deplibs = ["fastlib:fastlib",
+               "contrib/niche/kmeans_nonempty:kmeans_nonempty"]
+    )
+
 
 binrule(
     name = "tc",

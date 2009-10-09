@@ -226,6 +226,10 @@ class DiagGaussian {
     fprintf(stream, name);
     mu_ -> PrintDebug("mu");
     sigma_ -> PrintDebug("sigma");
+/*     for(int i = 0; i < n_dims_; i++) { */
+/*       printf("sigma[%d] = %e\n", i, (*sigma_)[i]); */
+/*     } */
+
   }
     
   

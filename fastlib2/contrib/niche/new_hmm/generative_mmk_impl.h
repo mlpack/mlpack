@@ -64,7 +64,7 @@ double GenerativeMMK(double lambda,
 }
 
 
-
+// TODO: create log probability equivalent of this function
 template <typename TDistribution>
 double GenerativeMMK(double lambda, int n_T,
 		     const HMM<TDistribution> &hmm_a,

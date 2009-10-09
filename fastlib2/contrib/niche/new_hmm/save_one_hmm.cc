@@ -23,7 +23,7 @@ void GetModelClasses(bool *p_model_class1, bool *p_model_class0) {
   }
 }
 
-void GetOneFMRIHMM(bool model_class1, bool model_class0,
+void GetOneHMM(bool model_class1, bool model_class0,
 		   int n_states,
 		   HMM<DiagGaussian> *p_hmm,
 		   GenVector<int> *p_labels) {
@@ -33,8 +33,12 @@ void GetOneFMRIHMM(bool model_class1, bool model_class0,
   ArrayList<GenMatrix<double> > sequences;
   sequences.Init(0);
 
-  const char* class1_filename = "fmri20_pos.dat";
-  const char* class0_filename = "fmri20_neg.dat";
+  const char* class1_filename =
+    fx_param_str(NULL, "data_class1", "data_pos.dat");
+  const char* class0_filename =
+    fx_param_str(NULL, "data_class0", "data_neg.dat");
+
+
 
   ArrayList<GenMatrix<double> > class1_sequences;
   LoadVaryingLengthData(class1_filename, &class1_sequences);
@@ -83,10 +87,10 @@ void GetOneFMRIHMM(bool model_class1, bool model_class0,
   }
 }
 
-void SaveOneFMRIHMM() {
+void SaveOneHMM() {
   int n_states = fx_param_int_req(NULL, "n_states");
-  const char* labels_filename = "frozen_fmri_labels";
-  const char* one_hmm_partial_filename = "frozen_fmri_one_hmm_topo";
+  const char* labels_filename = "frozen_labels";
+  const char* one_hmm_partial_filename = "frozen_one_hmm_topo";
   char one_hmm_filename[80];
 
   bool model_class1 = false;
@@ -110,16 +114,18 @@ void SaveOneFMRIHMM() {
   HMM<DiagGaussian> hmm;
   GenVector<int> labels;
   
-  GetOneFMRIHMM(model_class1, model_class0, n_states, &hmm, &labels);
+  GetOneHMM(model_class1, model_class0, n_states, &hmm, &labels);
   
   WriteOutOTObject(one_hmm_filename, hmm);
   WriteOutOTObject(labels_filename, labels);
 }
 
-void SaveKFoldFMRIHMMs(int n_folds) {
+void SaveKFoldHMMs(int n_folds) {
 
-  const char* class1_filename = "fmri20_pos.dat";
-  const char* class0_filename = "fmri20_neg.dat";
+  const char* class1_filename =
+    fx_param_str(NULL, "data_class1", "data_pos.dat");
+  const char* class0_filename =
+    fx_param_str(NULL, "data_class0", "data_neg.dat");
 
   const int class1_label = 1;
   const int class0_label = 0;
@@ -186,10 +192,10 @@ void SaveKFoldFMRIHMMs(int n_folds) {
 
     char hmm_filename[80];
     if(selected_label == class1_label) {
-      sprintf(hmm_filename, "frozen/frozen_fmri_one_hmm_topo%d_model_class1_fold%dof%d", n_states, fold_num, n_folds);
+      sprintf(hmm_filename, "frozen/frozen_one_hmm_topo%d_model_class1_fold%dof%d", n_states, fold_num, n_folds);
     }
     else {
-      sprintf(hmm_filename, "frozen/frozen_fmri_one_hmm_topo%d_model_class0_fold%dof%d", n_states, fold_num, n_folds);
+      sprintf(hmm_filename, "frozen/frozen_one_hmm_topo%d_model_class0_fold%dof%d", n_states, fold_num, n_folds);
     }
 
     printf("Fold %d hmm_filename = \"%s\"\n", fold_num, hmm_filename);
@@ -225,10 +231,10 @@ int main(int argc, char* argv[]) {
 
   const char* mode = fx_param_str_req(NULL, "mode");
   if(strcmp(mode, "full") == 0) {
-    SaveOneFMRIHMM();
+    SaveOneHMM();
   }
   else if(strcmp(mode, "kfold") == 0) {
-    SaveKFoldFMRIHMMs(10);
+    SaveKFoldHMMs(10);
   }
   else {
     FATAL("Error: Parameter 'mode' must be set to \"full\" or \"kfold\". Exiting...");

@@ -113,6 +113,7 @@ void TestHMMGenMMKClassification(const ArrayList<HMM<DiagGaussian> > &hmms,
   //GenerativeMMKBatch(lambda, rho, witness_length, hmms, &kernel_matrix);
   GenerativeMMKBatch(lambda, witness_length, hmms, &kernel_matrix);
   NormalizeKernelMatrix(&kernel_matrix);
+  kernel_matrix.PrintDebug("kernel_matrix");
   
   Matrix id_label_pairs;
   CreateIDLabelPairs(labels, &id_label_pairs);

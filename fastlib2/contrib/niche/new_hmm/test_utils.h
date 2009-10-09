@@ -1,5 +1,5 @@
-#ifndef TEST_SYNTH_UTILS_H
-#define TEST_SYNTH_UTILS_H
+#ifndef TEST_UTILS_H
+#define TEST_UTILS_H
 
 #include "loghmm.h"
 #include "utils.h"
@@ -25,18 +25,22 @@ void GetModelClasses(bool *p_model_class1, bool *p_model_class0) {
   }
 }
 
-void LoadSequencesAndLabels(ArrayList<GenMatrix<int> >* p_sequences,
+void LoadSequencesAndLabels(ArrayList<GenMatrix<double> >* p_sequences,
 			    GenVector<int>* p_labels) {
-  ArrayList<GenMatrix<int> > &sequences = *p_sequences;
+  ArrayList<GenMatrix<double> > &sequences = *p_sequences;
   GenVector<int> &labels = *p_labels;
 
-  const char* class1_filename = "../../../../synth1000_pos.dat";
-  const char* class0_filename = "../../../../synth1000_neg.dat";
+  const char* class1_filename =
+    fx_param_str(NULL, "data_class1", "../../../../data_pos.dat");
+  const char* class0_filename =
+    fx_param_str(NULL, "data_class0", "../../../../data_neg.dat");
+
+
 
   LoadVaryingLengthData(class1_filename, &sequences);
   int n_class1 = sequences.size();
 
-  ArrayList<GenMatrix<int> > class0_sequences;
+  ArrayList<GenMatrix<double> > class0_sequences;
   LoadVaryingLengthData(class0_filename, &class0_sequences);
   int n_class0 = class0_sequences.size();
 
@@ -52,13 +56,13 @@ void LoadSequencesAndLabels(ArrayList<GenMatrix<int> >* p_sequences,
   }
 }
 
-void LoadOneSynthHMMAndSequences(HMM<Multinomial>* p_hmm,
-				 ArrayList<GenMatrix<int> >* p_sequences,
-				 GenVector<int>* p_labels) {
-  ArrayList<GenMatrix<int> > &sequences = *p_sequences;
+void LoadOneHMMAndSequences(HMM<DiagGaussian>* p_hmm,
+			    ArrayList<GenMatrix<double> >* p_sequences,
+			    GenVector<int>* p_labels) {
+  ArrayList<GenMatrix<double> > &sequences = *p_sequences;
   
   int n_states = fx_param_int_req(NULL, "n_states");
-  const char* one_hmm_partial_filename = "../../../../frozen_synth_one_hmm_topo";
+  const char* one_hmm_partial_filename = "../../../../frozen_one_hmm_topo";
   char one_hmm_filename[80];
 
   bool model_class1 = false;
@@ -75,29 +79,32 @@ void LoadOneSynthHMMAndSequences(HMM<Multinomial>* p_hmm,
   }
 
   printf("one_hmm_filename = \"%s\"\n", one_hmm_filename);
-  const char* labels_filename = "../../../../frozen_synth_labels";
+  const char* labels_filename = "../../../../frozen_labels";
 
   ReadInOTObject(one_hmm_filename, p_hmm);
   ReadInOTObject(labels_filename, p_labels);
   
 
-  const char* class1_filename = "../../../../synth1000_pos.dat";
-  const char* class0_filename = "../../../../synth1000_neg.dat";
+  const char* class1_filename =
+    fx_param_str(NULL, "data_class1", "../../../../data_pos.dat");
+  const char* class0_filename =
+    fx_param_str(NULL, "data_class0", "../../../../data_neg.dat");
+
 
   LoadVaryingLengthData(class1_filename, &sequences);
 
-  ArrayList<GenMatrix<int> > class0_sequences;
+  ArrayList<GenMatrix<double> > class0_sequences;
   LoadVaryingLengthData(class0_filename, &class0_sequences);
 
   sequences.AppendSteal(&class0_sequences);
 }
 
-void LoadKFoldSynthHMMAndSequences(int n_folds,
-				   ArrayList<HMM<Multinomial> >* p_kfold_hmms,
-				   ArrayList<GenMatrix<int> >* p_sequences,
+void LoadKFoldHMMAndSequences(int n_folds,
+				   ArrayList<HMM<DiagGaussian> >* p_kfold_hmms,
+				   ArrayList<GenMatrix<double> >* p_sequences,
 				   GenVector<int>* p_labels) {
-  ArrayList<HMM<Multinomial> > &kfold_hmms = *p_kfold_hmms;
-  ArrayList<GenMatrix<int> > &sequences = *p_sequences;
+  ArrayList<HMM<DiagGaussian> > &kfold_hmms = *p_kfold_hmms;
+  ArrayList<GenMatrix<double> > &sequences = *p_sequences;
   GenVector<int> &labels = *p_labels;
 
   int n_states = fx_param_int_req(NULL, "n_states");
@@ -122,23 +129,25 @@ void LoadKFoldSynthHMMAndSequences(int n_folds,
   for(int fold_num = 0; fold_num < n_folds; fold_num++) {
     char hmm_filename[80];
     if(model_class1) {
-      sprintf(hmm_filename, "../../../../frozen/frozen_synth_one_hmm_topo%d_model_class1_fold%dof%d", n_states, fold_num, n_folds);
+      sprintf(hmm_filename, "../../../../frozen/frozen_one_hmm_topo%d_model_class1_fold%dof%d", n_states, fold_num, n_folds);
     }
     else { // model_class0
-      sprintf(hmm_filename, "../../../../frozen/frozen_synth_one_hmm_topo%d_model_class0_fold%dof%d", n_states, fold_num, n_folds);
+      sprintf(hmm_filename, "../../../../frozen/frozen_one_hmm_topo%d_model_class0_fold%dof%d", n_states, fold_num, n_folds);
     }
     
     printf("Fold %d hmm_filename = \"%s\"\n", fold_num, hmm_filename);
     ReadInOTObject(hmm_filename, &(kfold_hmms[fold_num]));
   }
 
-  const char* class1_filename = "../../../../synth1000_pos.dat";
-  const char* class0_filename = "../../../../synth1000_neg.dat";
+  const char* class1_filename =
+    fx_param_str(NULL, "data_class1", "../../../../data_pos.dat");
+  const char* class0_filename =
+    fx_param_str(NULL, "data_class0", "../../../../data_neg.dat");
 
   LoadVaryingLengthData(class1_filename, &sequences);
   int n_class1 = sequences.size();
 
-  ArrayList<GenMatrix<int> > class0_sequences;
+  ArrayList<GenMatrix<double> > class0_sequences;
   LoadVaryingLengthData(class0_filename, &class0_sequences);
   int n_class0 = class0_sequences.size();
 
@@ -155,14 +164,14 @@ void LoadKFoldSynthHMMAndSequences(int n_folds,
   }
 }
 
-void LoadKFoldSynthHMMPairAndSequences(int n_folds,
-				     ArrayList<HMM<Multinomial> >* p_kfold_class1_hmms,
-				     ArrayList<HMM<Multinomial> >* p_kfold_class0_hmms,
-				     ArrayList<GenMatrix<int> >* p_sequences,
-				     GenVector<int>* p_labels) {
-  ArrayList<HMM<Multinomial> > &kfold_class1_hmms = *p_kfold_class1_hmms;
-  ArrayList<HMM<Multinomial> > &kfold_class0_hmms = *p_kfold_class0_hmms;
-  ArrayList<GenMatrix<int> > &sequences = *p_sequences;
+void LoadKFoldHMMPairAndSequences(int n_folds,
+				  ArrayList<HMM<DiagGaussian> >* p_kfold_class1_hmms,
+				  ArrayList<HMM<DiagGaussian> >* p_kfold_class0_hmms,
+				  ArrayList<GenMatrix<double> >* p_sequences,
+				  GenVector<int>* p_labels) {
+  ArrayList<HMM<DiagGaussian> > &kfold_class1_hmms = *p_kfold_class1_hmms;
+  ArrayList<HMM<DiagGaussian> > &kfold_class0_hmms = *p_kfold_class0_hmms;
+  ArrayList<GenMatrix<double> > &sequences = *p_sequences;
   GenVector<int> &labels = *p_labels;
 
   int n_states_class1 = fx_param_int_req(NULL, "n_states_class1");
@@ -176,8 +185,8 @@ void LoadKFoldSynthHMMPairAndSequences(int n_folds,
   for(int fold_num = 0; fold_num < n_folds; fold_num++) {
     char class1_hmm_filename[80];
     char class0_hmm_filename[80];
-    sprintf(class1_hmm_filename, "../../../../frozen/frozen_synth_one_hmm_topo%d_model_class1_fold%dof%d", n_states_class1, fold_num, n_folds);
-    sprintf(class0_hmm_filename, "../../../../frozen/frozen_synth_one_hmm_topo%d_model_class0_fold%dof%d", n_states_class0, fold_num, n_folds);
+    sprintf(class1_hmm_filename, "../../../../frozen/frozen_one_hmm_topo%d_model_class1_fold%dof%d", n_states_class1, fold_num, n_folds);
+    sprintf(class0_hmm_filename, "../../../../frozen/frozen_one_hmm_topo%d_model_class0_fold%dof%d", n_states_class0, fold_num, n_folds);
     
     printf("Fold %d class1_hmm_filename = \"%s\"\n",
 	   fold_num, class1_hmm_filename);
@@ -187,13 +196,15 @@ void LoadKFoldSynthHMMPairAndSequences(int n_folds,
     ReadInOTObject(class0_hmm_filename, &(kfold_class0_hmms[fold_num]));
   }
 
-  const char* class1_filename = "../../../../synth1000_pos.dat";
-  const char* class0_filename = "../../../../synth1000_neg.dat";
+  const char* class1_filename =
+    fx_param_str(NULL, "data_class1", "../../../../data_pos.dat");
+  const char* class0_filename =
+    fx_param_str(NULL, "data_class0", "../../../../data_neg.dat");
 
   LoadVaryingLengthData(class1_filename, &sequences);
   int n_class1 = sequences.size();
 
-  ArrayList<GenMatrix<int> > class0_sequences;
+  ArrayList<GenMatrix<double> > class0_sequences;
   LoadVaryingLengthData(class0_filename, &class0_sequences);
   int n_class0 = class0_sequences.size();
 
@@ -211,4 +222,4 @@ void LoadKFoldSynthHMMPairAndSequences(int n_folds,
 }
 
 
-#endif /* TEST_SYNTH_UTILS_H */
+#endif /* TEST_UTILS_H */

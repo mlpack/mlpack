@@ -223,7 +223,7 @@ void LoadVaryingLengthData(const char* filename,
   while((n_read = getline(&buffer, &len, file)) != -1) {
     if(buffer[0] == '%') {
       if(waiting == false) {
-	printf("n_points_in_cur_point_list = %d\n", n_points_in_cur_point_list);
+	//printf("n_points_in_cur_point_list = %d\n", n_points_in_cur_point_list);
 	GenMatrix<double> &data_sequence = data[n_elements - 1];
 	data_sequence.Init(n_dims, n_points_in_cur_point_list);
 	for(int i = 0; i < n_points_in_cur_point_list; i++) {
@@ -264,7 +264,7 @@ void LoadVaryingLengthData(const char* filename,
   }
 
   if(waiting == false) {
-    printf("n_points_in_cur_point_list = %d\n", n_points_in_cur_point_list);
+    //printf("n_points_in_cur_point_list = %d\n", n_points_in_cur_point_list);
     GenMatrix<double> &data_sequence = data[n_elements - 1];
     data_sequence.Init(n_dims, n_points_in_cur_point_list);
     for(int i = 0; i < n_points_in_cur_point_list; i++) {

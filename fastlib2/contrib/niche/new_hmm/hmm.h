@@ -24,9 +24,7 @@ class HMM {
   int type_;
   double min_variance_;
   int n_components_;
-
-
-
+  bool is_ergodic_;
 
  public:
 
@@ -48,6 +46,7 @@ class HMM {
     OT_OBJ(type_);
     OT_OBJ(min_variance_);
     OT_OBJ(n_components_);
+    OT_OBJ(is_ergodic_);
     OT_OBJ(p_transition);
     OT_OBJ(p_initial);
     OT_ALLOC_EXPERT(state_distributions, n_states_, true,
@@ -58,22 +57,26 @@ class HMM {
  public:
   
     
-  void Init(int n_states_in, int n_dims_in, int type_in) {
-    Init(n_states_in, n_dims_in, type_in, 0);
+  void Init(int n_states_in, int n_dims_in, int type_in,
+	    bool is_ergodic_in = true) {
+    Init(n_states_in, n_dims_in, type_in, 0, is_ergodic_in);
   }
 
   void Init(int n_states_in, int n_dims_in, int type_in,
-	    double min_variance_in) {
-    Init(n_states_in, n_dims_in, type_in, min_variance_in, 1);
+	    double min_variance_in,
+	    bool is_ergodic_in = true) {
+    Init(n_states_in, n_dims_in, type_in, min_variance_in, 1, is_ergodic_in);
   }
 
   void Init(int n_states_in, int n_dims_in, int type_in,
-	    double min_variance_in, int n_components_in) {
+	    double min_variance_in, int n_components_in,
+	    bool is_ergodic_in = true) {
     n_states_ = n_states_in;
     n_dims_ = n_dims_in;
     type_ = type_in;
     min_variance_ = min_variance_in;
     n_components_ = n_components_in;
+    is_ergodic_ = is_ergodic_in;
     
     p_initial.Init(n_states_);
     p_transition.Init(n_states_, n_states_);
@@ -310,17 +313,19 @@ class HMM {
     p_x_given_q.MakeColumnVector(0, &p_x0_given_q);
 
     HadamardMultiplyOverwrite(p_initial, p_x0_given_q, &forward_0);
-    for(int i = 1; i < n_states_; i++) {
-      if(forward_0[i] > 0) {
-	printf("!\n");
-	for(int j = 0; j < n_states_; j++) {
-	  printf("forward_0[%d] = %3e ", j, forward_0[j]);
+    if(!is_ergodic_) {
+      for(int i = 1; i < n_states_; i++) {
+	if(forward_0[i] > 0) {
+	  printf("!\n");
+	  for(int j = 0; j < n_states_; j++) {
+	    printf("forward_0[%d] = %3e ", j, forward_0[j]);
+	  }
+	  printf("\n");
+	  for(int j = 0; j < n_states_; j++) {
+	    printf("p_initial[%d] = %3e ", j, p_initial[j]);
+	  }
+	  FATAL("forward fail");
 	}
-	printf("\n");
-	for(int j = 0; j < n_states_; j++) {
-	  printf("p_initial[%d] = %3e ", j, p_initial[j]);
-	}
-	FATAL("forward fail");
       }
     }
     ScaleForwardVar(&(scaling_vars[0]), &forward_0);
@@ -404,9 +409,9 @@ class HMM {
 
 
   template<typename T>
-  void InitParameters(const ArrayList<GenMatrix<T> > &sequences, bool is_ergodic = true) {
+  void InitParameters(const ArrayList<GenMatrix<T> > &sequences) {
 
-    if(is_ergodic) {
+    if(is_ergodic_) {
       //FATAL("ERGODIC!");
       // use uniform distribution for the initial state probabilities and
       // the state transition probabilities
@@ -438,7 +443,7 @@ class HMM {
     if(type_ == MULTINOMIAL) {
       // we can't cluster discrete data,
       // so we randomly intialize the state distributions
-      if(is_ergodic) {
+      if(is_ergodic_) {
 	for(int i = 0; i < n_states_; i++) {
 	  state_distributions[i].RandomlyInitialize();
 	}
@@ -455,7 +460,7 @@ class HMM {
 
       GenVector<int> cluster_memberships;
       int cluster_counts[n_states_];
-      if(is_ergodic) {
+      if(is_ergodic_) {
 	// k-means cluster the data into n_states clusters
 	int max_iterations = 100;
 	int min_points_per_cluster = 5;
@@ -708,7 +713,8 @@ class HMM {
 
     // First, we declare an HMM that we can use during EM
     HMM<TDistribution> new_hmm;
-    new_hmm.Init(n_states_, n_dims_, type_, min_variance_, n_components_);
+    new_hmm.Init(n_states_, n_dims_, type_, min_variance_, n_components_,
+		 is_ergodic_);
 
     // recycling is good so let's use these repeatedly
     Vector new_hmm_p_transition_denom;
@@ -855,6 +861,7 @@ class HMM {
 		
 		new_hmm.state_distributions[i].Accumulate(scaling_factor, x_t,
 							  k);
+		weight_qi[i] += scaling_factor;
 	      }
 	    }
 	    //printf("done accumulating component %d\n", k);
@@ -862,8 +869,8 @@ class HMM {
 	  for(int i = 0; i < n_states_; i++) {
 	    // note that new_hmm_p_transition_denom[i] =
 	    //             \sum_{t = 0 -> T - 2} p_qt.get(t, i)
-	    weight_qi[i] +=
-	      new_hmm_p_transition_denom[i] + p_qt.get(sequence_length - 1, i);
+	    //weight_qi[i] +=
+	    //new_hmm_p_transition_denom[i] + p_qt.get(sequence_length - 1, i);
 	    // so, weight_qi[i] = \sum_{t = 0 -> T - 1} p_qt.get(t, i)
 	  }
 	} //end if(MIXTURE)
@@ -880,8 +887,10 @@ class HMM {
       // no risk - Sum must be positive
       la::Scale(((double)1) / Sum(new_hmm.p_initial),
 		&(new_hmm.p_initial));
-      if(new_hmm.p_initial[0] < 1) {
-	FATAL("fail scale");
+      if(!is_ergodic_) {
+	if(new_hmm.p_initial[0] < 1) {
+	  FATAL("fail scale");
+	}
       }
 
       //new_hmm_p_transition_denom.PrintDebug("new_hmm_p_transition_denom");
@@ -983,8 +992,10 @@ class HMM {
       }
     }
 
-    if(p_initial[0] < 1) {
-      FATAL("v fail");
+    if(!is_ergodic_) {
+      if(p_initial[0] < 1) {
+	FATAL("v fail");
+      }
     }
 
     for(int i = 0; i < n_states_; i++) {
@@ -997,15 +1008,15 @@ class HMM {
 
 
     for(int t = 1; t < sequence_length; t++) {
-      printf("t = %d\n", t);
-      logp_path.PrintDebug("logp_path");
+      //printf("t = %d\n", t);
+      //logp_path.PrintDebug("logp_path");
       Vector logp_path_t_minus_1;
 
       logp_path.MakeColumnVector(t - 1, &logp_path_t_minus_1);
 
 	
       for(int j = 0; j < n_states_; j++) {
-	printf("j = %d\n", j);
+	//printf("j = %d\n", j);
 	Vector logp_transition_to_j;
 	logp_transition.MakeColumnVector(j, &logp_transition_to_j);
 	  
@@ -1139,18 +1150,21 @@ class HMM {
 
 
   template<typename T>
-    void ViterbiUpdate(const ArrayList<GenMatrix<T> > &sequences, bool is_ergodic) {
+    void ViterbiUpdate(const ArrayList<GenMatrix<T> > &sequences) {
 
     int n_sequences = sequences.size();
 
-    if(p_initial[0] < 1) {
-      FATAL("pre viterbi update fail");
+    if(!is_ergodic_) {
+      if(p_initial[0] < 1) {
+	FATAL("pre viterbi update fail");
+      }
     }
 
 
     // First, we declare an HMM
     HMM<TDistribution> new_hmm;
-    new_hmm.Init(n_states_, n_dims_, type_, min_variance_, n_components_);
+    new_hmm.Init(n_states_, n_dims_, type_, min_variance_, n_components_,
+		 is_ergodic_);
     
 
     ArrayList<GenVector<int> > best_paths;
@@ -1182,16 +1196,18 @@ class HMM {
       
       new_hmm.AccumulatePTransitionFromPath(best_path);
     }
-    new_hmm.NormalizePInitial(n_sequences, is_ergodic);
-    if(new_hmm.p_initial[0] < 1) {
-      for(int i = 0; i < n_states_; i++) {
-	printf("new_hmm.p_initial[%d] = %3e ", i, new_hmm.p_initial[i]);
+    new_hmm.NormalizePInitial(n_sequences, is_ergodic_);
+    if(!is_ergodic_) {
+      if(new_hmm.p_initial[0] < 1) {
+	for(int i = 0; i < n_states_; i++) {
+	  printf("new_hmm.p_initial[%d] = %3e ", i, new_hmm.p_initial[i]);
+	}
+	FATAL("viterbi update fail");
       }
-      FATAL("viterbi update fail");
     }
     new_hmm.NormalizePTransition(p_transition_normalization_factor 
 				 - n_sequences,
-				 is_ergodic);
+				 is_ergodic_);
 
     // zero out state distributions
     for(int i = 0; i < n_states_; i++) {
@@ -1422,9 +1438,8 @@ class HMM {
 
     char string[100];    
     for(int i = 0 ;i < n_states_; i++) {
-      sprintf(string, "state %d:\n", i+1);
+      sprintf(string, "State %d:\n", i+1);
       state_distributions[i].PrintDebug(string);
-      fprintf(stream, "\n");
     }
   }
 

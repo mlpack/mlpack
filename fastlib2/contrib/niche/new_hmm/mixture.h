@@ -93,6 +93,12 @@ class Mixture {
     }
     
     // I posit that one_over_normalization_factor = sum(weights_)
+/*     printf("one_over_normalization_factor = %f\n", one_over_normalization_factor); */
+/*     printf("weights = ["); */
+/*     for(int k = 0; k < n_components_; k++) { */
+/*       printf("%f ", weights_[k]); */
+/*     } */
+/*     printf("]\n"); */
     if(one_over_normalization_factor > 0) {
       la::Scale(((double)1) / one_over_normalization_factor, &weights_);
     }
@@ -106,7 +112,7 @@ class Mixture {
     weights_.PrintDebug("weights");
     char string[100];
     for(int k = 0; k < n_components_; k++) {
-      sprintf(string, "component %d", k + 1);
+      sprintf(string, "component %d\n", k + 1);
       components_[k].PrintDebug(string);
     }
   }
@@ -120,7 +126,7 @@ class Mixture {
       components_[i].Destruct();
     }
     free(components_);
-    weights_.Destruct();
+    //weights_.Destruct();
   }
 
 };
