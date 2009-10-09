@@ -40,70 +40,21 @@ void TestMultinomial() {
 
   hmm.PrintDebug("hmm after calling InitParameters(sequences)");
 
-  //hmm.ViterbiUpdate(sequences);
+  hmm.ViterbiUpdate(sequences);
 
-  //hmm.PrintDebug("hmm after calling ViterbiUpdate(sequences)");
+  hmm.PrintDebug("hmm after calling ViterbiUpdate(sequences)");
     
   hmm.BaumWelch(sequences,
-		1e-10 * ((double)1),
+		1e-10,
 		1000);
   
   hmm.PrintDebug("hmm after calling BaumWelch");
   
-  /*
-  hmm.PrintDebug("frozen HMM");
-  
-
-  const char* filename = "frozen_hmm";
-  FILE* file = fopen(filename, "wb");
-  index_t size = ot::FrozenSize(hmm);
-  char* buf = mem::Alloc<char>(size);
-  ot::Freeze(buf, hmm);
-  fwrite(&size, sizeof(size), 1, file);
-  fwrite(buf, 1, size, file);
-  mem::Free(buf);
-  fclose(file);
-  
-  HMM<Multinomial> thawed_hmm;
-  FILE* file2 = fopen(filename, "rb");
-  fread(&size, sizeof(size), 1, file2);
-  char* buf2 = mem::Alloc<char>(size);
-  fread(buf2, 1, size, file2);
-  ot::InitThaw(&thawed_hmm, buf2);
-  mem::Free(buf2);
-  fclose(file2);
-
-  thawed_hmm.PrintDebug("thawed HMM");
-  
-
-
-
-  ArrayList<HMM<Multinomial> > frozen_hmms;
-  frozen_hmms.Init(2);
-  for(int i = 0; i < 2; i++) {
-    frozen_hmms[i].Init(2, 2, MULTINOMIAL);
-    frozen_hmms[i].RandomlyInitialize();
-  }
-
-  for(int i = 0; i < 2; i++) {
-    printf("frozen hmm %d\n", i);
-    frozen_hmms[i].PrintDebug("");
-  }
-
-  WriteOutHMMArrayList("frozen_hmms", frozen_hmms);
-  
-  ArrayList<HMM<Multinomial> > thawed_hmms;
-  ReadInHMMArrayList("frozen_hmms", &thawed_hmms);
-
-  for(int i = 0; i < 2; i++) {
-    printf("thawed hmm %d\n", i);
-    thawed_hmms[i].PrintDebug("");
-  }
-  */
-
+ 
 }
 
-/*
+
+
 void TestGaussian() {
   HMM<DiagGaussian> hmm;
   hmm.Init(2, 2, GAUSSIAN, 0.0001);
@@ -137,7 +88,7 @@ void TestGaussian() {
   }
   sequences[1].PrintDebug("sequences[1]");
 
-  hmm.InitParameters(sequences, false);
+  hmm.InitParameters(sequences);
 
   hmm.PrintDebug("hmm after calling InitParameters(sequences)");
 
@@ -146,7 +97,7 @@ void TestGaussian() {
   hmm.PrintDebug("hmm after calling ViterbiUpdate(sequences)");
   
   hmm.BaumWelch(sequences,
-		1e-10 * ((double)1),
+		1e-10,
 		1000);
 
   hmm.PrintDebug("hmm after calling BaumWelch");
@@ -157,8 +108,9 @@ void TestMixture() {
   HMM<Mixture<DiagGaussian> > hmm;
   hmm.Init(4, 2, MIXTURE, 0.0001, 2);
   srand48(time(0));
-
+  
   ArrayList<GenMatrix<double> > sequences;
+  /*
   sequences.Init(1);
   for(int m = 0; m < 1; m++) {
     sequences[m].Init(2, 200);
@@ -175,17 +127,29 @@ void TestMixture() {
   }
   sequences[0].PrintDebug("sequences[0]");
   //sequences[1].PrintDebug("sequences[1]");
+  */
+
+  LoadVaryingLengthData("generate_mixture_data/generated_data", &sequences);
+  
+//   int n_sequences = sequences.size();
+//   for(int i = 0; i < n_sequences; i++) {
+//     printf("PRINTING SEQUENCE %d\n", i);
+//     sequences[i].PrintDebug("sequence");
+//   }
 
   hmm.InitParameters(sequences);
 
-  hmm.PrintDebug("hmm after calling InitParameters(sequences)");
+  
 
+  
+  hmm.PrintDebug("hmm after calling InitParameters(sequences)");
+  
   hmm.ViterbiUpdate(sequences);
 
   hmm.PrintDebug("hmm after calling ViterbiUpdate(sequences)");
-
+  
   hmm.BaumWelch(sequences,
-		1e-6 * ((double)1),
+		1e-6,
 		1000);
 
   hmm.PrintDebug("hmm after calling BaumWelch");
@@ -215,7 +179,7 @@ void TestMixture() {
   
 }
 
-
+/*
 void TestGaussianPdf() {
   DiagGaussian g;
   g.Init(2, 0.001);
@@ -243,7 +207,7 @@ void TestGaussianPdf() {
 int main(int argc, char* argv[]) {
   //TestGaussianPdf();
 
-  TestMultinomial();
+  //TestMultinomial();
   //TestGaussian();
-  //TestMixture();
+  TestMixture();
 }

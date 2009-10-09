@@ -1,7 +1,7 @@
 #ifndef TEST_FMRI_UTILS_H
 #define TEST_FMRI_UTILS_H
 
-#include "hmm.h"
+#include "loghmm.h"
 #include "utils.h"
 
 

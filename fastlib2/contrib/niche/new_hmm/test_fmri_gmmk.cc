@@ -44,10 +44,10 @@ void GetFMRIHMMs(int n_states,
       n_states = ComputeNStates(n_dims, ratio, class1_sequences[i].n_cols());
     }
 
-    hmms[i].Init(n_states, n_dims, GAUSSIAN, 1e-8);
-    hmms[i].InitParameters(one_sequence, false);
+    hmms[i].Init(n_states, n_dims, GAUSSIAN, 1e-8, false);
+    hmms[i].InitParameters(one_sequence);
     hmms[i].PrintDebug("hmm after calling InitParameters(sequences)");
-    hmms[i].ViterbiUpdate(one_sequence, false);
+    hmms[i].ViterbiUpdate(one_sequence);
     hmms[i].PrintDebug("hmm after calling ViterbiUpdate(sequences)");
     hmms[i].BaumWelch(one_sequence,
 		      1e-6 * ((double)1),
@@ -74,10 +74,10 @@ void GetFMRIHMMs(int n_states,
       n_states = ComputeNStates(n_dims, ratio, class0_sequences[i].n_cols());
     }
 
-    class0_hmms[i].Init(n_states, n_dims, GAUSSIAN, 1e-4);
-    class0_hmms[i].InitParameters(one_sequence, false);
+    class0_hmms[i].Init(n_states, n_dims, GAUSSIAN, 1e-4, false);
+    class0_hmms[i].InitParameters(one_sequence);
     //class0_hmms[i].PrintDebug("hmm after calling InitParameters(sequences)");
-    class0_hmms[i].ViterbiUpdate(one_sequence, false);
+    class0_hmms[i].ViterbiUpdate(one_sequence);
     //class0_hmms[i].PrintDebug("hmm after calling ViterbiUpdate(sequences)");
     class0_hmms[i].BaumWelch(one_sequence,
 		      1e-6 * ((double)1),
