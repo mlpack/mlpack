@@ -127,10 +127,10 @@ void ReadSolution(const char* filename, GenVector<int>* p_cluster_memberships,
   }
   fclose(file);
 
-  for(int i = 0; i < n_points; i++) {
-    printf("%d ", cluster_memberships[i]);
-  }
-  printf("\n");
+/*   for(int i = 0; i < n_points; i++) { */
+/*     printf("%d ", cluster_memberships[i]); */
+/*   } */
+/*   printf("\n"); */
 }
 
 template<typename T>
@@ -226,11 +226,11 @@ void ConstrainedKMeans(const ArrayList<GenMatrix<T> > &datasets,
     }
   }
 
-
-  for(int i = 0; i < n_clusters; i++) {
-    printf("cluster center %d\n", i);
-    cluster_centers[i].PrintDebug("");
-  }
+  
+/*   for(int i = 0; i < n_clusters; i++) { */
+/*     printf("cluster center %d\n", i); */
+/*     cluster_centers[i].PrintDebug(""); */
+/*   } */
 
   // the clusters are now initialized using the Gonzales algorithm
 
@@ -299,7 +299,7 @@ void ConstrainedKMeans(const ArrayList<GenMatrix<T> > &datasets,
       converged = true;
     }
   }
-  printf("converged in %d iterations\n", iteration_num);
+  printf("clustering optimizer converged in %d iterations\n", iteration_num);
 
   for(int i = 0; i < n_clusters; i++) {
     cluster_counts[i] = 0;
