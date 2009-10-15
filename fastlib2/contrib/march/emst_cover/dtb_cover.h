@@ -350,6 +350,8 @@ class DualCoverTreeBoruvka {
 
   void ComputeBaseCase_(DTBTree* query, ArrayList<DTBTree*> *leaves) {
     
+    printf("Computing Base Case for query: %d\n", query->point());
+    
     if (query->num_of_children() > 0) {
       
       DTBTree** child = query->children()->begin();
@@ -380,20 +382,23 @@ class DualCoverTreeBoruvka {
         
         if (query_comp != ref_comp) {
           
-#ifdef DEBUG
+//#ifdef DEBUG
+          // check that the correct distance is stored in the stat
       
+          // TODO: figure out if I can get away without recomputing this
           Vector q_vec, r_vec;
           data_points_.MakeColumnVector(query->point(), &q_vec);
           data_points_.MakeColumnVector(leaf->point(), &r_vec);
           
           double real_dist = sqrt(la::DistanceSqEuclidean(q_vec, r_vec));
           
-          DEBUG_APPROX_DOUBLE(real_dist, leaf->stat().distance_to_qnode(), 10e-5);
+          //DEBUG_APPROX_DOUBLE(real_dist, leaf->stat().distance_to_qnode(), 10e-5);
           
-#endif
+//#endif
           
-          if (leaf->stat().distance_to_qnode() < candidate_dists_[query_comp]) {
-            
+          //if (leaf->stat().distance_to_qnode() < candidate_dists_[query_comp]) {
+          if (real_dist <= candidate_dists_[query_comp]) {  
+          
             candidate_dists_[query_comp] = leaf->stat().distance_to_qnode();
             candidate_refs_[query_comp] = ref_comp;
             
@@ -434,9 +439,9 @@ class DualCoverTreeBoruvka {
         double dist = sqrt(la::DistanceSqEuclidean(q_vec, r_vec));
         
         // is it close enough to be the new neighbor
-        if (dist < candidate_dists_[query_comp_index]) {
+        if (dist <= candidate_dists_[query_comp_index]) {
           
-          DEBUG_ASSERT(dist < neighbors_distances_[query_comp_index]);
+          DEBUG_ASSERT(dist <= neighbors_distances_[query_comp_index]);
           
           candidate_dists_[query_comp_index] = dist;
           candidate_refs_[query_comp_index] = ref_comp_index;
@@ -749,7 +754,7 @@ class DualCoverTreeBoruvka {
       
       DEBUG_ASSERT(current_scale == (*begin)->scale_depth());
       
-      if (query_bound <= (*begin)->stat().distance_to_qnode() 
+      if ((*begin)->stat().distance_to_qnode() <= query_bound 
                          + (*begin)->max_dist_to_grandchild()) {
       
         // iterate over the children of this member of the reference set
@@ -763,10 +768,12 @@ class DualCoverTreeBoruvka {
             data_points_.MakeColumnVector((*child)->point(), &r_vec);
             
             double dist = sqrt(la::DistanceSqEuclidean(q_vec, r_vec));
-            (*child)->stat().set_distance_to_qnode(dist);
             double dist_bound = dist;
             
             // the upper bound needs to be streched 
+            
+            // tried deleting this because points weren't all finding neighbors
+            /*
             if (query_comp == connections_.Find((*child)->point())) {
               dist_bound += (*child)->max_dist_to_grandchild();
             } // do we need the extra 2^i
@@ -775,11 +782,13 @@ class DualCoverTreeBoruvka {
             if (dist_bound < query_bound) {
               query_bound = dist_bound;
             } // is this the new d?
+            */
             
             if (dist <= query_bound + (*child)->max_dist_to_grandchild() 
                                    + query->max_dist_to_grandchild()) {
              
               ref_children.PushBackCopy(*child);
+              (*child)->stat().set_distance_to_qnode(dist);
               
             } // this child may make it to the next cover set
             
@@ -920,6 +929,11 @@ class DualCoverTreeBoruvka {
           
           double dist = sqrt(la::DistanceSqEuclidean(q_vec, r_vec));
           double dist_bound = dist;
+          
+          // tried commenting this out since some points aren't finding neighbors
+          // I think the point of this is to use the minimum possible upper
+          // bound we can use at this point
+          /*
           if (q_comp == connections_.Find((*begin)->point())) {
             dist_bound += (*begin)->max_dist_to_grandchild();
           } 
@@ -927,7 +941,7 @@ class DualCoverTreeBoruvka {
           if (dist_bound < upper_bound) {
             upper_bound = dist_bound;
           }
-          
+          */
           // do the distances work? 
           if (dist <= upper_bound + (*begin)->max_dist_to_grandchild() 
                                   + query->max_dist_to_grandchild()) {
@@ -942,6 +956,8 @@ class DualCoverTreeBoruvka {
       } // iterate over the nodes at this scale
       
     } // iterate over the scales
+    
+    // TODO: should I store the upper bound here?
     
   } // CopyCoverSets_()
   
@@ -964,9 +980,11 @@ class DualCoverTreeBoruvka {
       ComputeBaseCase_(query, leaf_nodes);
       
     } // base case
-    else if ((query->scale_depth() <= current_scale)
+    else if ((query->scale_depth() < current_scale)
              && (query->scale_depth() != 100)) {
       // descend query tree
+      
+      printf("Query Tree Descend, query = %d\n", query->point());
       
       DTBTree** child = query->children()->begin();
       DTBTree** child_end = query->children()->end();
@@ -1009,6 +1027,9 @@ class DualCoverTreeBoruvka {
     } // descend query
     else {
       // descend references 
+      
+      printf("Reference Tree Descend, query = %d\n", query->point());
+      
       index_t new_max = max_scale;
       DescendRefSet_(query, ref_cover, leaf_nodes, current_scale, &new_max);
       index_t new_current = current_scale + 1;
@@ -1036,6 +1057,7 @@ class DualCoverTreeBoruvka {
       leaves.Init(0);
       
       tree_->stat().set_distance_to_qnode(0.0);
+      
       
       cover[0].PushBackCopy(tree_);
       
@@ -1179,6 +1201,8 @@ class DualCoverTreeBoruvka {
           (data_points_, base_, tree_mod);
       
       fx_timer_stop(module_, "tree_building");
+      
+      ctree::PrintTree(tree_);
       
     }
     else {
