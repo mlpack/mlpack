@@ -1,7 +1,7 @@
 #ifndef TEST_SYNTH_UTILS_H
 #define TEST_SYNTH_UTILS_H
 
-#include "loghmm.h"
+#include "hmm.h"
 #include "utils.h"
 
 
