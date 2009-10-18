@@ -234,7 +234,7 @@ int main(int argc, char* argv[]) {
     ArrayList<HMM<Multinomial> > hmms;
     GenVector<int> labels;
     LoadSynthHMMs(&hmms, &labels);
-    TestHMMGenMMKClassification(hmms, labels);
+    TestHMMGenMMK2Classification(hmms, labels);
   }
   else {
     FATAL("Error: Invalid choice of parameter /mode. Valid settings are \"save\" and \"test\". Exiting...");

@@ -1,7 +1,7 @@
 #ifndef LATENT_MMK_H
 #define LATENT_MMK_H
 
-#include "loghmm.h"
+#include "hmm.h"
 #include "hmm_kernel_utils.h"
 
 #define INSIDE_LATENT_MMK_IMPL_H

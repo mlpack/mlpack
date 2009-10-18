@@ -1,7 +1,7 @@
 #ifndef FISHER_KERNEL_H
 #define FISHER_KERNEL_H
 
-#include "loghmm.h"
+#include "hmm.h"
 #include "hmm_kernel_utils.h"
 
 #define INSIDE_FISHER_KERNEL_IMPL_H

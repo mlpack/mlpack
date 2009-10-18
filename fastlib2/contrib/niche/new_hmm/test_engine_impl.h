@@ -94,6 +94,85 @@ void TestHMMGenMMKClassification(const ArrayList<HMM<Multinomial> > &hmms,
   SVMKFoldCV(id_label_pairs, kernel_matrix, c_set);
 }
 
+void TestHMMGenMMK2Classification(const ArrayList<HMM<Multinomial> > &hmms,
+				 const GenVector<int> &labels) {
+
+  int n_hmms = labels.length();
+  printf("n_hmms = %d\n", n_hmms);
+  
+  double lambda = fx_param_double_req(NULL, "lambda");
+  printf("lambda = %f\n", lambda);
+
+  int witness_length = fx_param_int(NULL, "witness_length", 70);
+  printf("witness_length = %d\n", witness_length);
+
+  double rho = fx_param_double(NULL, "rho", 1);
+  printf("rho = %f\n", rho);
+
+  Matrix kernel_matrix;
+  GenerativeMMKBatch(lambda, rho, witness_length, hmms, &kernel_matrix);
+
+  ////////// - gaussianification of the kernel
+
+  //NormalizeKernelMatrix(&kernel_matrix);
+
+  Vector k_diagonal;
+  k_diagonal.Init(n_hmms);
+  for(int i = 0; i < n_hmms; i++) {
+    k_diagonal[i] = kernel_matrix.get(i, i);
+  }
+
+  la::Scale(-2.0, &kernel_matrix);
+
+  for(int i = 0; i < n_hmms; i++) {
+    for(int j = 0; j < n_hmms; j++) {
+      kernel_matrix.set(j, i,
+			kernel_matrix.get(j, i)
+			+ k_diagonal[i]);
+    }
+  }
+
+  la::TransposeSquare(&kernel_matrix);
+
+  for(int i = 0; i < n_hmms; i++) {
+    for(int j = 0; j < n_hmms; j++) {
+      kernel_matrix.set(j, i,
+			kernel_matrix.get(j, i)
+			+ k_diagonal[i]);
+    }
+  }
+  
+  double meta_sigma = fx_param_double_req(NULL, "meta_sigma");
+  double scaling_factor = -0.5 / (meta_sigma * meta_sigma);
+
+
+  data::Save("mmk_dist_matrix.csv", kernel_matrix);
+
+  for(int i = 0; i < n_hmms; i++) {
+    for(int j = 0; j < n_hmms; j++) {
+      kernel_matrix.set(j, i,
+			exp(scaling_factor * kernel_matrix.get(j, i)));
+    }
+  }
+
+  data::Save("kernel_matrix.csv", kernel_matrix);
+
+
+
+
+  //////////
+  
+  Matrix id_label_pairs;
+  CreateIDLabelPairs(labels, &id_label_pairs);
+  id_label_pairs.PrintDebug("id_label_pairs");
+
+  Vector c_set;
+  LoadCommonCSet(&c_set);
+  
+  SVMKFoldCV(id_label_pairs, kernel_matrix, c_set);
+}
+
+
 void TestHMMGenMMKClassification(const ArrayList<HMM<DiagGaussian> > &hmms,
 				 const GenVector<int> &labels) {
 

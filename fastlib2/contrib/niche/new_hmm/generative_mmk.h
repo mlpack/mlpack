@@ -3,7 +3,7 @@
 
 #include "multinomial.h"
 #include "isotropic_gaussian.h"
-#include "loghmm.h"
+#include "hmm.h"
 #include "utils.h"
 #include "mlpack/kde/bandwidth_lscv.h"
 #include "mlpack/kde/dataset_scaler.h"
