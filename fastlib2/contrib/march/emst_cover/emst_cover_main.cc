@@ -39,10 +39,10 @@ int main(int argc, char* argv[]) {
     
     dtb.ComputeMST(&results);
     
-    results.PrintDebug("Results");
+    //results.PrintDebug("Results");
     
     //////////////// Check against naive //////////////////////////
-#if 0    
+#if 0
     if (fx_param_bool(NULL, "do_naive", 0)) {
      
       DualTreeBoruvka naive;
@@ -54,87 +54,16 @@ int main(int argc, char* argv[]) {
       Matrix naive_results;
       naive.ComputeMST(&naive_results);
       
+      MSTComparison compare;
+      compare.Init(results, naive_results);
       
-      fx_timer_start(naive_module, "comparison");
+      bool same = compare.Compare();
       
-           
-      // Check if the edge lists are the same
-      // Loop over the naive edge list
-      int is_correct = 1;
-      /*
-      for (index_t naive_index = 0; naive_index < results.size(); 
-           naive_index++) {
-       
-        int this_loop_correct = 0;
-        index_t naive_lesser_index = results[naive_index].lesser_index();
-        index_t naive_greater_index = results[naive_index].greater_index();
-        double naive_distance = results[naive_index].distance();
-        
-        // Loop over the DTB edge list and compare against naive
-        // Break when an edge is found that matches the current naive edge
-        for (index_t dual_index = 0; dual_index < naive_results.size();
-             dual_index++) {
-          
-          index_t dual_lesser_index = results[dual_index].lesser_index();
-          index_t dual_greater_index = results[dual_index].greater_index();
-          double dual_distance = results[dual_index].distance();
-          
-          if (naive_lesser_index == dual_lesser_index) {
-            if (naive_greater_index == dual_greater_index) {
-              DEBUG_ASSERT(naive_distance == dual_distance);
-              this_loop_correct = 1;
-              break;
-            }
-          }
-          
-        }
-       
-        if (this_loop_correct == 0) {
-          is_correct = 0;
-          break;
-        }
-        
+      if (same) {
+        printf("MST's are equal.\n");
       }
-      */
-      if (is_correct == 0) {
-       
-        printf("Naive check failed!\n  Edge lists are different.\n\n");
-        // Check if the outputs have the same length
-        if (fx_get_result_double(dtb_module, "total_squared_length") !=
-            fx_get_result_double(naive_module, "total_squared_length")) { 
-          
-          printf("Total lengths are different!  One algorithm has failed.\n");
-          
-          fx_done(NULL);
-          return 1;
-          
-        }
-        else {
-          // NOTE: if the edge lists are different, but the total lengths are
-          // the same, the algorithm may still be correct.  The MST is not 
-          // uniquely defined for some point sets.  For example, an equilateral
-          // triangle has three minimum spanning trees.  It is possible for 
-          // naive and DTB to find different spanning trees in this case.
-          printf("Total lengths are the same.");
-          printf("It is possible the point set"); 
-          printf("has more than one minimum spanning tree.\n");
-        }
-      
-      }
-      else {
-        printf("Naive and DualTreeBoruvka produced the same MST.\n\n");
-      }
-      
-      fx_timer_stop(naive_module, "comparison");
-      
-      const char* naive_output_filename = 
-        fx_param_str(naive_module, "output_filename", "naive_output.txt");
-      
-      FILE* naive_output = fopen(naive_output_filename, "w");
-      
-      ot::Print(naive_results, naive_output);
-      
-    }
+            
+    } // doing naive
 #endif
     //////////////// Output the Results ////////////////
     

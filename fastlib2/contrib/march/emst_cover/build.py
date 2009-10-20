@@ -18,3 +18,8 @@ binrule (
     deplibs = [":emst_cover"]
 )
 
+binrule (
+   name = "comparison_main",
+   sources = ["comparison_main.cc"],
+   deplibs = [":emst_cover", "mlpack/emst:dtb", "mlpack/emst:union_find"]
+)
