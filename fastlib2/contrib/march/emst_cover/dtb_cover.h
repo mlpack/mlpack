@@ -26,7 +26,7 @@
  * points in this node.  If points in this node are in different components, 
  * this value will be negative.  
  */
-class DTBStat {
+class DTBCoverStat {
   
 private:
   
@@ -37,7 +37,7 @@ private:
   
 public:
     
-  bool not_connected(const DTBStat& other) {
+  bool not_connected(const DTBCoverStat& other) {
     
     if (component_membership_ < 0) {
       return true;
@@ -112,13 +112,13 @@ public:
     * An initializer for non-leaves.  Simply calls the leaf initializer.
    */
   void Init(const Matrix& dataset, index_t start, index_t count,
-            const DTBStat& left_stat, const DTBStat& right_stat) {
+            const DTBCoverStat& left_stat, const DTBCoverStat& right_stat) {
     
     Init(dataset, start, count);
     
   }
   
-}; // class DTBStat
+}; // class DTBCoverStat
 
 
 /**
@@ -133,8 +133,8 @@ class DualCoverTreeBoruvka {
   // For now, everything is in Euclidean space
   static const index_t metric = 2;
 
-  //typedef BinarySpaceTree<DHrectBound<metric>, Matrix, DTBStat> DTBTree;
-  typedef CoverTreeNode<DTBStat, double> DTBTree;
+  //typedef BinarySpaceTree<DHrectBound<metric>, Matrix, DTBCoverStat> DTBTree;
+  typedef CoverTreeNode<DTBCoverStat, double> DTBTree;
   
   //////// Member Variables /////////////////////
   
