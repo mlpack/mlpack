@@ -401,6 +401,10 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     index_t n_real_epo, n_data_res;
     double kernel_value;
     
+    Vector b_calc_kernel;
+    b_calc_kernel.Init(n_data_);
+    b_calc_kernel.SetAll(0);
+
     Vector coef_long;
     n_iter_ = n_iter_ * n_epochs_;
     coef_long.Init(n_iter_);
@@ -431,16 +435,25 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       n_real_epo = index_t(ceil(ct/n_data_));
       n_data_res = ct - n_real_epo * n_data_;
       if (n_real_epo > 0) {
+	for (i=0; i<ct; i++) {
+	  if (fabs(coef_long[i]) >= SGD_ALPHA_ZERO) {
+	    b_calc_kernel[i%n_data_] = 1;
+	  }
+	}
 	for (i=0; i<n_data_res; i++) {
-	  kernel_value = CalcKernelValue_(old_from_new_[i], work_idx_old);
-	  for (j=0; j<n_real_epo+1; j++) {
-	    yt_hat += coef_long[j*n_data_+i] * kernel_value;
+	  if (b_calc_kernel[i]>0) {
+	    kernel_value = CalcKernelValue_(old_from_new_[i], work_idx_old);
+	    for (j=0; j<n_real_epo+1; j++) {
+	      yt_hat += coef_long[j*n_data_+i] * kernel_value;
+	    }
 	  }
 	}
 	for (i=n_data_res; i<n_data_; i++) {
-	  kernel_value = CalcKernelValue_(old_from_new_[i], work_idx_old);
-	  for (j=0; j<n_real_epo; j++) {
-	    yt_hat += coef_long[j*n_data_+i] * kernel_value;
+	  if (b_calc_kernel[i]>0) {
+	    kernel_value = CalcKernelValue_(old_from_new_[i], work_idx_old);
+	    for (j=0; j<n_real_epo; j++) {
+	      yt_hat += coef_long[j*n_data_+i] * kernel_value;
+	    }
 	  }
 	}
       }
