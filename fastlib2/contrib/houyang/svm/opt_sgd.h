@@ -396,6 +396,10 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   else { // nonlinear SVM, output: coefs(i.e. alpha*y), bias
     // it's more expensive to calc the accuracy than linear SVM, so we just use n_iter_ as stop criterion
     double delta;
+    double yt, yt_hat, yy_hat;
+    double one_minus_eta_lambda;
+    index_t n_real_epo, n_data_res;
+    double kernel_value;
     
     Vector coef_long;
     n_iter_ = n_iter_ * n_epochs_;
@@ -421,13 +425,26 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     while (ct < n_iter_) {
       work_idx_old = old_from_new_[ct % n_data_];
       
-      double yt = y_[work_idx_old];
-      double yt_hat = 0.0;
-      for (i=0; i<ct; i++) {
-	yt_hat += coef_long[i] * CalcKernelValue_(old_from_new_[i%n_data_], work_idx_old);
+      yt = y_[work_idx_old];
+      yt_hat = 0.0;
+      
+      n_real_epo = ceil(ct/n_data_);
+      n_data_res = ct - n_real_epo * n_data_;
+      for (i=0; i<n_data_res; i++) {
+	kernel_value = CalcKernelValue_(old_from_new_[i], work_idx_old);
+	for (j=0; j<n_real_epo+1; j++) {
+	  yt_hat += coef_long[j*n_data_+i] * kernel_value;
+	}
       }
+      for (i=n_data_res; i<n_data_; i++) {
+x	kernel_value = CalcKernelValue_(old_from_new_[i], work_idx_old);
+	for (j=0; j<n_real_epo; j++) {
+	  yt_hat += coef_long[j*n_data_+i] * kernel_value;
+	}
+      }
+      
       yt_hat += bias_;
-      double yy_hat = yt * yt_hat;
+      yy_hat = yt * yt_hat;
       
       // update step length
       eta_ = 1.0 / (lambda_ * t_);
@@ -438,7 +455,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       }
       
       // update old coefs (for i<t)
-      double one_minus_eta_lambda = 1.0 - eta_ * lambda_;
+      one_minus_eta_lambda = 1.0 - eta_ * lambda_;
       //printf("%d: %f\n", ct, one_minus_eta_lambda);
       for (i=0; i<ct; i++) {
 	coef_long[i] = coef_long[i] * one_minus_eta_lambda; 
