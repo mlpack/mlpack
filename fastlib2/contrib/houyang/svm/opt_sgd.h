@@ -428,18 +428,22 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       yt = y_[work_idx_old];
       yt_hat = 0.0;
       
-      n_real_epo = ceil(ct/n_data_);
+      n_real_epo = index_t(ceil(ct/n_data_));
       n_data_res = ct - n_real_epo * n_data_;
       for (i=0; i<n_data_res; i++) {
 	kernel_value = CalcKernelValue_(old_from_new_[i], work_idx_old);
 	for (j=0; j<n_real_epo+1; j++) {
-	  yt_hat += coef_long[j*n_data_+i] * kernel_value;
+	  if (fabs(coef_long[j*n_data_+i]) >= SGD_ALPHA_ZERO) {
+	    yt_hat += coef_long[j*n_data_+i] * kernel_value;
+	  }
 	}
       }
       for (i=n_data_res; i<n_data_; i++) {
 	kernel_value = CalcKernelValue_(old_from_new_[i], work_idx_old);
 	for (j=0; j<n_real_epo; j++) {
-	  yt_hat += coef_long[j*n_data_+i] * kernel_value;
+	  if (fabs(coef_long[j*n_data_+i]) >= SGD_ALPHA_ZERO) {
+	    yt_hat += coef_long[j*n_data_+i] * kernel_value;
+	  }
 	}
       }
       
