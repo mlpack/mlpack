@@ -428,9 +428,9 @@ class Thor2PC {
 	  double upper_bound;
 	  upper_bound = r_node.bound().MaxDistanceSq(q.pos_);
 	  return global_result->two_point_.InclusionPrune(bound, 
-	    upper_bound, r_node.count());
+			  upper_bound, r_node.count());
 	} 
-      }
+      } 
       return true;
     }
 
@@ -505,8 +505,8 @@ class Thor2PC {
 	    dmax = q_node.bound().MaxDistanceSq(r_node.bound());
 	    return global_result->two_point_.InclusionPrune(dmin, dmax, count);
 	  } 	  
-	}        
-      } 
+	} 
+      }
       return true;
     }
 
