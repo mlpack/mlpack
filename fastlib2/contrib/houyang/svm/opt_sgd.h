@@ -437,7 +437,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	}
       }
       for (i=n_data_res; i<n_data_; i++) {
-x	kernel_value = CalcKernelValue_(old_from_new_[i], work_idx_old);
+	kernel_value = CalcKernelValue_(old_from_new_[i], work_idx_old);
 	for (j=0; j<n_real_epo; j++) {
 	  yt_hat += coef_long[j*n_data_+i] * kernel_value;
 	}
