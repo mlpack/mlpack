@@ -1018,7 +1018,7 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 			//cout<<"beta_fn_temp="<<beta_function_temp<<endl;
 		
 			
-			//Calculate x^2_{ni}(alpha_l)
+			//Calculate x^2_{ni}(alpha_l)=alpha*z3(1st-stage)+alpha(1-alpha)Z2(back0)+(1-alpha)^2*Z1(back-1)
 			//int count=0;
 			double j=ind_unknown_x_[0];
 
@@ -1236,10 +1236,10 @@ void Objective::ComputeDerivativeBetaTerm1_(Vector *beta_term1) {
 			//check2
 
 			la::SubOverwrite(num_of_betas_, temp.ptr(), first_stage_x_[n].GetColumnPtr(first_stage_y_[n]-1), temp2.ptr());
-			
+			la::AddTo(temp2, &temp3);
 																									
 		}	//else
-		la::AddTo(temp2, &temp3);
+		//la::AddTo(temp2, &temp3);
 		
   }	//n
 	//beta_term1=&temp3;
@@ -1764,10 +1764,11 @@ void Objective::ComputeDerivativeBetaTerm2_(Vector *beta_term2) {
 			la::ScaleOverwrite((1/(1-postponed_probability_[n])), sum_first_derivative_conditional_postpond_prob_[n], &temp);
 			//temp=SumFirstDerivativeConditionalPostpondProb_[n]/(1-postponed_probability_[n]);
 			//check
+			la::AddTo(temp, &temp2);
 			
 
 		}	//if-else
-		la::AddTo(temp, &temp2);
+		//la::AddTo(temp, &temp2);
 		
 
 	}	//n
@@ -2001,10 +2002,11 @@ void Objective::ComputeDerivativeBetaTerm3_(Vector *beta_term3) {
 			//cout<<"postponed_probability_[n]="<<postponed_probability_[n]<<endl;
 			//temp=SumFirstDerivativeConditionalPostpondProb_[n]/(postponed_probability_[n]);
 			//check
-			
+			la::AddTo(temp, &temp2);
+
 
 		}	//if-else
-		la::AddTo(temp, &temp2);
+		//la::AddTo(temp, &temp2);
 
 	}	//n
 
@@ -2064,9 +2066,11 @@ void Objective::ComputeSecondDerivativeBetaTerm3_(Matrix *second_beta_term3) {
 															 tmatrix_sum_first_derivative_conditional_postpond_prob, &second_temp);
 
 
-				la::Scale( 1/pow((1-postponed_probability_[n]), 2), &second_temp);
+				//la::Scale( 1/pow((1-postponed_probability_[n]), 2), &second_temp);
+				la::Scale( 1/pow((postponed_probability_[n]), 2), &second_temp);
 
-				la::AddOverwrite(second_temp, first_temp, &second_derivative_beta_temp);
+				//la::AddOverwrite(second_temp, first_temp, &second_derivative_beta_temp);
+				la::SubOverwrite(second_temp, first_temp, &second_derivative_beta_temp);
 
 				//check
 				la::AddTo(second_derivative_beta_temp, &second_derivative_beta_term3);

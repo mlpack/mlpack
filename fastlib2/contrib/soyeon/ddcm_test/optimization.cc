@@ -987,7 +987,46 @@ void Optimization::ComputeScaledDerectionUnderConstraints(double radius,
 }
 
 
+void Optimization::ComputeDerectionNoConstraints(double radius, 
+																					Vector &gradient,
+																					Matrix &hessian,
+																					Vector &current_parameter,
+																					Vector *p,
+																					double *delta_m,
+																					Vector *next_parameter,
+																					double *new_radius) {
 
+		//double constraints_check=1;
+		Vector candidate_p;
+		double candidate_delta_m;
+		Vector candidate_next_parameter;
+		candidate_next_parameter.Init(current_parameter.length());
+
+		double candidate_radius=radius;
+
+		
+		ComputeDoglegDirection(candidate_radius, gradient, hessian, &candidate_p, &candidate_delta_m);
+		//double p_norm=0;
+				
+
+			
+			//cout<<"p="<<" ";
+			//for(index_t i=0; i<current_p.length(); i++){
+			//	cout<<current_p[i]<<" ";
+			//}
+			//cout<<endl;
+			
+			//cout<<"delta_m="<<candidate_delta_m<<endl;
+
+			
+			la::AddOverwrite(candidate_p, current_parameter, &candidate_next_parameter);
+
+			p->Copy(candidate_p);
+			next_parameter->Copy(candidate_next_parameter);
+			(*delta_m)=candidate_delta_m;
+			(*new_radius)=candidate_radius;
+				
+}
 	
 
 

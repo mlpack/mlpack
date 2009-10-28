@@ -41,7 +41,15 @@ class Optimization {
 																					Vector *p,
 																					double *delta_m,
 																					Vector *next_parameter,
-																					double *new_radius);									
+																					double *new_radius);
+		void ComputeDerectionNoConstraints(double radius, 
+																					Vector &gradient,
+																					Matrix &hessian,
+																					Vector &current_parameter,
+																					Vector *p,
+																					double *delta_m,
+																					Vector *next_parameter,
+																					double *new_radius);
 
 
 
