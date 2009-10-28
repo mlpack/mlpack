@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
 	Vector initial_parameter;
 
 
-  sampling.Init(module, &num_of_people, &ind_unknown_x, 
+  sampling.Init2(module, &num_of_people, &ind_unknown_x, 
 								&initial_percent_sampling,
 								&initial_parameter);
 	cout<<"Starting points:"<<endl;
@@ -884,7 +884,7 @@ int main(int argc, char *argv[]) {
 			cout<<"diff="<<(current_objective-next_objective)<<endl;
 			//cout<<"current_radius="<<current_radius<<endl;
 			if(current_sample_size>=num_of_people && iteration_count>1){
-				if(current_objective-next_objective < 0.001 && current_radius <0.001){
+				if(current_objective-next_objective < 0.001 && current_radius <0.01){
 					cout<<"Improvement in objective fn is small enough...Exit..."<<(current_objective-next_objective)<<endl;
 					cout<<"current radius is small enough...Exit..."<<current_radius<<endl;
 					break;
