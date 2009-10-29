@@ -17,8 +17,5 @@ add_library( fastlib_optpp
 set_target_properties( fastlib_optpp PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries( fastlib_optpp ${OPTPP_LIBS} )
 
-add_executable( foo foo.cc)
-target_link_libraries( foo fastlib_optpp ) #! ${OPTPP_LIBS} )
-
 add_executable( optimizer_tests optimizer_tests.cc)
 target_link_libraries( optimizer_tests fastlib_optpp ) #! ${OPTPP_LIBS} )

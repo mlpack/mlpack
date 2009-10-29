@@ -300,7 +300,7 @@ template<>
 class OptimizationTrait<OPTPP::OptQNewton> {
  public:
   typedef OPTPP::NLF1 NlpType;
-  static void InitializeMethod(fx_module *module, OPTPP::OptFDNewton *method) {
+  static void InitializeMethod(fx_module *module, OPTPP::OptQNewton *method) {
     OptimizationTrait<OPTPP::OptNewtonLike>::InitializeMethod(
         module, method);  
   }
