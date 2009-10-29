@@ -46,8 +46,8 @@ class TwoPoint{
     for (int i = 0; i < n_boxes_; i++){
       if (min >= bounds_[i] && min < bounds_[i+1]){
 	if(max < bounds_[i+1]){
-	  counts_[i] = counts_[i] + count;	 
-	  return false;	 
+	  counts_[i] = counts_[i] + count;	 	 
+	  return false;	 	  
 	} else {
 	  return true;
 	}

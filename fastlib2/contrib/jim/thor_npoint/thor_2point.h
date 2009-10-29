@@ -443,7 +443,7 @@ class Thor2PC {
 	  double upper_bound;
 	  upper_bound = r_node.bound().MaxDistanceSq(q.pos_);
 	  return global_result->two_point_.InclusionPrune(bound, upper_bound, 
-	    r_node.stat().weight_*r_node.count()*q.weight_);
+	   r_node.stat().weight_*q.weight_);
 	} 
       } 
       return true;
@@ -513,11 +513,10 @@ class Thor2PC {
       if(dmin > global_result->two_point_.Max()){
 	return false;
       } else { 
-	if (!param.auto_corr_ || dmin > 0){	
-	  double count = q_node.stat().weight_*q_node.count()*
-	    r_node.stat().weight_*r_node.count();
-	  double dmax;
+	if (!param.auto_corr_ || dmin > 0){		 
 	  if (param.cartesian_){
+	    double count = q_node.stat().weight_*r_node.stat().weight_;
+	    double dmax;
 	    dmax = q_node.bound().MaxDistanceSq(r_node.bound());
 	    return global_result->two_point_.InclusionPrune(dmin, dmax, count);
 	  } 	  
