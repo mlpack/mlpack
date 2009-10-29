@@ -33,6 +33,11 @@
  * @file dataset.h
  *
  * Generic datasets and associated utilities.
+ * 
+ * @bug These routines fail when trying to read files linewise that use the Mac
+ * eol '\r'.  Both Windows and Unix eol ("\r\n" and '\n') work.  Use the
+ * programs 'dos2unix' or 'tr' to convert the '\r's to '\n's.
+ *
  */
 
 #ifndef DATA_DATASET_H
@@ -82,7 +87,17 @@ class DatasetFeature {
       OT_ENUM_VAL(NOMINAL));
     OT_OBJ(value_names_);
   }
-  
+
+ /**
+  * Initialization common to all features.
+  *
+  * @param name_in the name of the feature
+  */ 
+ void InitGeneral(const char *name_in) {
+    name_.Copy(name_in);
+    value_names_.Init();
+ }
+
  public:
   /**
    * Initialize to be a continuous feature.
@@ -90,9 +105,8 @@ class DatasetFeature {
    * @param name_in the name of the feature
    */
   void InitContinuous(const char *name_in) {
-    name_.Copy(name_in);
+    InitGeneral(name_in);
     type_ = CONTINUOUS;
-    value_names_.Init();
   }
 
   /**
@@ -101,9 +115,8 @@ class DatasetFeature {
    * @param name_in the name of the feature
    */
   void InitInteger(const char *name_in) {
-    name_.Copy(name_in);
-    type_ = CONTINUOUS;
-    value_names_.Init();
+    InitGeneral(name_in);
+    type_ = INTEGER;
   }
 
   /**
@@ -116,9 +129,8 @@ class DatasetFeature {
    * @param name_in the name of the feature
    */
   void InitNominal(const char *name_in) {
-    name_.Copy(name_in);
+    InitGeneral(name_in);
     type_ = NOMINAL;
-    value_names_.Init();
   }
   
   /**

@@ -103,7 +103,7 @@ class GaussianKernel {
 
   /** Unnormalized range on a range of squared distances. */
   DRange RangeUnnormOnSq(const DRange& range) const {
-    return DRange(EvalUnnormOnSq(range.hi), EvalUnnormOnSq(range.lo));
+    return DRange(EvalUnnormOnSq(range.hi), EvalUnnormOnSq(range.lo));  //!! TODO explain
   }
 
   /**
@@ -196,7 +196,7 @@ class GaussianStarKernel {
         return DRange(std::min(eval_lo, eval_hi), critical_point_value_);
       }
     } else {
-      return DRange(eval_hi, eval_lo);
+      return DRange(eval_hi, eval_lo);  //!! TODO explain
     }
   }
 
@@ -272,7 +272,7 @@ class EpanKernel {
 
   /** Unnormalized range on a range of squared distances. */
   DRange RangeUnnormOnSq(const DRange& range) const {
-    return DRange(EvalUnnormOnSq(range.hi), EvalUnnormOnSq(range.lo));
+    return DRange(EvalUnnormOnSq(range.hi), EvalUnnormOnSq(range.lo));  //!! TODO explain
   }
 
   /**

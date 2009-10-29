@@ -54,7 +54,7 @@ void MultLocalExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
   neg_inv_multiindex_factorials.Alias
     (sea_->get_neg_inv_multiindex_factorials());
 
-  // declare deritave mapping
+  // declare derivative mapping
   Matrix derivative_map;
   ka_->AllocateDerivativeMap(dim, order, &derivative_map);
   
