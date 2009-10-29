@@ -47,9 +47,9 @@ set( DIRS
     mog
     mvu
     naive_bayes
-    optimization
+    # optimization
     # quicsvd
-    # range_search
+    # range_search  ##! uses contrib code
     # regression
     series_expansion
     svm
