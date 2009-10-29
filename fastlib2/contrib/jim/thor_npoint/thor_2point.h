@@ -72,6 +72,7 @@ class Thor2PC {
     int redshift_;
     int cartesian_;
     int auto_corr_;
+    int weight_;
     Vector bounds_;
    
     OT_DEF(Param) {          
@@ -97,6 +98,7 @@ class Thor2PC {
       }   
       redshift_ = fx_param_int(module, "red", 0);
       cartesian_ = fx_param_int(module, "cart", 0);
+      weight_ = fx_param_int(module, "weight", 0);
     }
     
     void FinalizeInit(datanode *module, int dimension) {
@@ -127,9 +129,11 @@ class Thor2PC {
     /** the point's position */
     Vector pos_;
     index_t old_index_;
+    double weight_;
     OT_DEF(Thor2PCPoint) {    
       OT_MY_OBJECT(pos_);
       OT_MY_OBJECT(old_index_);
+      OT_MY_OBJECT(weight_);
     }
     
   public:
@@ -140,9 +144,9 @@ class Thor2PC {
     Vector& vec() { return pos_; }
     
     /** initializes all memory for a point */
-    void Init(const Param& param, const DatasetInfo& schema) {
+    void Init(const Param& param, const DatasetInfo& schema) {      
       if (param.cartesian_){
-	pos_.Init(schema.n_features());
+	pos_.Init(schema.n_features() - param.weight_);
       } else{
 	if(param.redshift_){
 	  pos_.Init(3);     
@@ -160,6 +164,11 @@ class Thor2PC {
       for (int i = 0; i < pos_.length(); i++){
 	pos_[i] = data[i];
       }     
+      if( param.weight_){
+	weight_ = data[pos_.length()];
+      } else {
+	weight_ = 1;
+      }
       old_index_ = index;
     }      
 
@@ -178,7 +187,9 @@ class Thor2PC {
     
   public:    
    
+    double weight_;
     OT_DEF(Thor2PCStat) {    
+      OT_MY_OBJECT(weight_);
     }
     
     /**
@@ -188,19 +199,23 @@ class Thor2PC {
      */
   public:
     void Init(const Param& param) {     
+      weight_ = 0;
     }
     
     /**
      * Accumulate data from a single point (Req THOR).
      */
-    void Accumulate(const Param& param, const Thor2PCPoint& point) {    
+    void Accumulate(const Param& param, const Thor2PCPoint& point) {  
+      weight_ = weight_ + point.weight_;
     }
     
     /**
      * Accumulate data from one of your children (Req THOR).
      */
     void Accumulate(const Param& param, const Thor2PCStat& child_stat, 
-		    const Bound& bound, index_t child_n_points) {     
+		    const Bound& bound, index_t child_n_points) {  
+      weight_ = weight_ + child_stat.weight_;
+   
     }
     
     /**
@@ -427,8 +442,8 @@ class Thor2PC {
 	if (param.cartesian_){
 	  double upper_bound;
 	  upper_bound = r_node.bound().MaxDistanceSq(q.pos_);
-	  return global_result->two_point_.InclusionPrune(bound, 
-			  upper_bound, r_node.count());
+	  return global_result->two_point_.InclusionPrune(bound, upper_bound, 
+	    r_node.stat().weight_*r_node.count()*q.weight_);
 	} 
       } 
       return true;
@@ -452,7 +467,7 @@ class Thor2PC {
 	  dist = mtrc::SphereDistSq(q.pos_, r.pos_);
 	}
       }
-      local_two_.Add(dist);      
+      local_two_.Add(dist, q.weight_*r.weight_);      
     }
 
   
@@ -499,7 +514,8 @@ class Thor2PC {
 	return false;
       } else { 
 	if (!param.auto_corr_ || dmin > 0){	
-	  int count = q_node.count()*r_node.count();
+	  double count = q_node.stat().weight_*q_node.count()*
+	    r_node.stat().weight_*r_node.count();
 	  double dmax;
 	  if (param.cartesian_){
 	    dmax = q_node.bound().MaxDistanceSq(r_node.bound());
@@ -579,7 +595,7 @@ class Thor2PC {
 	   }
 	 }       
 	 // Add to correlation function
-	 naive_two.Add(distance_sq);  
+	 naive_two.Add(distance_sq, r_point->weight_*q_point->weight_);  
        }
 
      } // finish looping over each reference point     

@@ -33,16 +33,16 @@ class TwoPoint{
     max_dist_ = bounds_[n_boxes_];
   } 
 
-  void Add(double dist){
+  void Add(double dist, double weight){
     for (int i = 0; i < n_boxes_; i++){
       if (dist >= bounds_[i] && dist < bounds_[i+1]){
-	counts_[i] = counts_[i]+1;
+	counts_[i] = counts_[i]+weight;
 	break;
       }      
     }
   }
 
-  bool InclusionPrune(double min, double max, int count){
+  bool InclusionPrune(double min, double max, double count){
     for (int i = 0; i < n_boxes_; i++){
       if (min >= bounds_[i] && min < bounds_[i+1]){
 	if(max < bounds_[i+1]){
