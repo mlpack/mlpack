@@ -24,7 +24,7 @@ binrule(
 librule(
     name = "lkm_lib",                            # this line can be safely omitted
     sources = [],                            # files that must be compiled
-    #headers = ["local_kernel_machines_def.h","utils_lkm.h","local_kernel_machines_impl.h","my_crossvalidation.h"],
+   # headers = ["local_kernel_machines_def.h","utils_lkm.h","local_kernel_machines_impl.h","my_crossvalidation.h"],
     deplibs =["fastlib:fastlib_int","mlpack/fastica:fastica_lib","mlpack/svm:svm"]
     )
 
