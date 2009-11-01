@@ -1,4 +1,36 @@
+#ifndef MY_CROSSVALIDATION_H
+#define MY_CROSSVALIDATION_H
 
+
+template <typename TKernel> void  LocalKernelMachines <TKernel>::
+GenerateSmoothingBandwidthVectorForCV_(Vector &smoothing_bandwidth_vector){
+  
+  smoothing_bandwidth_vector.Init(3);
+  for(index_t i=0; i<3;i++){
+    smoothing_bandwidth_vector[i]=0.1*(1+i);
+  }
+
+}
+
+template <typename TKernel> void  LocalKernelMachines <TKernel>::
+GenerateLambdaVectorForCV_(Vector &lambda_vector){
+  
+ lambda_vector.Init(4);
+  for(index_t i=0; i<4;i++){
+    lambda_vector[i]=(1+i);
+  }
+ 
+}
+template <typename TKernel> void  LocalKernelMachines <TKernel>::
+GenerateSVMBandwidthVectorForCV_(Vector &svm_bandwidth_vector){
+  
+  svm_bandwidth_vector.Init(2);
+  for(index_t i=0; i<2;i++){
+    svm_bandwidth_vector[i]=0.4+0.1*i;
+  }
+  
+}
+ 
 template <typename TKernel> void  LocalKernelMachines <TKernel>:: 
 GetTheFold_(Dataset &cv_train_data,Dataset &cv_test_data,
 	    Vector &cv_train_labels, Vector &cv_test_labels,index_t fold_num)
@@ -6,8 +38,6 @@ GetTheFold_(Dataset &cv_train_data,Dataset &cv_test_data,
   
   // The crossvalidation folds
   
-  printf("dset is ...\n");
-  dset_.matrix().PrintDebug();
   dset_.SplitTrainTest(k_folds_,fold_num,random_permutation_array_list_,
 		       &cv_train_data,&cv_test_data);
   
@@ -17,82 +47,107 @@ GetTheFold_(Dataset &cv_train_data,Dataset &cv_test_data,
   
   RemoveLastRowFromMatrixInit_(cv_train_data.matrix(),cv_train_labels);
   RemoveLastRowFromMatrixInit_(cv_test_data.matrix(),cv_test_labels);
- 
-  printf("cv train labels is....\n");
-  cv_train_labels.PrintDebug();
-  
-  printf("cv test labels is ....\n");
-  cv_test_labels.PrintDebug();
   
 }
 
 template <typename TKernel> void LocalKernelMachines<TKernel>::
-CrossValidateOverAllThreeParameters_(){
-  
-  printf("Will crossvalidate over all three parameters...\n");
-
-
-}
-
-template <typename TKernel> void  LocalKernelMachines<TKernel>::
-CrossValidateOverSVMKernelBandwidthAndSmoothingKernelBandwidth_(){
-  
-  printf("Will crossvalidate over svm and smoothing...\n");
-  
-}
-
-
-template <typename TKernel> void  LocalKernelMachines<TKernel>::
-CrossValidateOverSVMKernelBandwidthAndLambda_(){
-
-
-  printf("Will crossvalidate over svm and lambda...\n");    
-
-}
-
-template <typename TKernel> LocalKernelMachines<TKernel>::
-GenerateSmoothingBandwidthVectorForCV_(){
-
-
-
-}
-
-  
-template <typename TKernel> void  LocalKernelMachines<TKernel>::
-GenerateLambdaVectorForCV_(){
-
-}
-
-template <typename TKernel> void  LocalKernelMachines<TKernel>::
 CrossValidateOverSmoothingKernelBandwidthAndLambda_(){
   
-  printf("Will crossvalidate over smoothing and lambda...\n");
-  
-  // For cv puproses
-  printf("We will do crossvalidation ...\n");
-  printf("svm_kernel is %d...\n",svm_kernel_);
-  
+   printf("Will crossvalidate over smoothing and lambda...\n");
+
   
   Vector smoothing_bandwidth_vector;
   Vector lambda_vector;
   
-  GenerateSmoothingBandwidthVectorForCV_();
-  GenerateLambdaVectorForCV_();
+  GenerateSmoothingBandwidthVectorForCV_(smoothing_bandwidth_vector);
+  GenerateLambdaVectorForCV_(lambda_vector);
   
   index_t smoothing_bandwidth_vector_length=
     smoothing_bandwidth_vector.length();
   
   index_t lambda_vector_length=
     lambda_vector.length();
+
+  printf("Smoothing bandwidth vector is...\n");
+  smoothing_bandwidth_vector.PrintDebug();
+
+  printf("Lambda vector is...\n");
+  lambda_vector.PrintDebug();
   
   
+  optimal_svm_kernel_bandwidth_=
+    fx_param_double_req(fx_root,"svm_kernel_bandwidth");
+
   for(index_t i=0;i<smoothing_bandwidth_vector_length;i++){
+    
+    optimal_smoothing_kernel_bandwidth_=smoothing_bandwidth_vector[i];
     
     for(index_t j=0;j<lambda_vector_length;j++){
       
+      optimal_lambda_=lambda_vector[j];
+	
       for(index_t fold_num=0;fold_num<k_folds_;fold_num++){
 	
 	
+	Dataset cv_train_data,cv_test_data;
+	Vector cv_train_labels,cv_test_labels;
+	
+	// Will get the train and test folds 
+	GetTheFold_(cv_train_data,cv_test_data,cv_train_labels, 
+		    cv_test_labels,fold_num);
+	
+	// This routine will take the train fold and the test fold
+	// and solve the local SVM problem
+
+	
+
+	RunLocalKernelMachines_(cv_train_data.matrix(),cv_test_data.matrix(),
+				cv_train_labels);
+      }
+    
+    }
+  }
+}
+
+template <typename TKernel> void  LocalKernelMachines<TKernel>::
+CrossValidateOverSVMKernelBandwidthAndSmoothingKernelBandwidth_(){
+  
+  printf("Will crossvalidate over svm and smoothing...\n");
+
+  Vector svm_bandwidth_vector;
+  Vector smoothing_bandwidth_vector;
+  
+  GenerateSmoothingBandwidthVectorForCV_(smoothing_bandwidth_vector);
+  GenerateSVMBandwidthVectorForCV_(svm_bandwidth_vector);
+  
+  index_t smoothing_bandwidth_vector_length=
+    smoothing_bandwidth_vector.length();
+  
+  index_t svm_bandwidth_vector_length=
+    svm_bandwidth_vector.length();
+
+  printf("Smoothing bandwidth vector is...\n");
+  smoothing_bandwidth_vector.PrintDebug();
+
+  printf("svm bandwidth vector is...\n");
+  svm_bandwidth_vector.PrintDebug();
+  
+  
+  optimal_smoothing_kernel_bandwidth_=
+    fx_param_double_req(fx_root,"smoothing_kernel_bandwidth");
+  
+  for(index_t i=0;i<smoothing_bandwidth_vector_length;i++){
+    
+    optimal_smoothing_kernel_bandwidth_=
+      smoothing_bandwidth_vector[i];
+    
+    for(index_t j=0;j<svm_bandwidth_vector_length;j++){
+      
+      optimal_svm_kernel_bandwidth_=
+	svm_bandwidth_vector[j];
+	
+      for(index_t fold_num=0;fold_num<k_folds_;fold_num++){
+     
 	Dataset cv_train_data,cv_test_data;
 	Vector cv_train_labels,cv_test_labels;
 	
@@ -107,6 +162,140 @@ CrossValidateOverSmoothingKernelBandwidthAndLambda_(){
 				cv_train_labels);
       }
     }
+  } 
+}
+
+
+template <typename TKernel> void  LocalKernelMachines<TKernel>::
+CrossValidateOverSVMKernelBandwidthAndLambda_(){
+
+
+  printf("Will crossvalidate over svm and lambda...\n");    
+  
+  Vector svm_bandwidth_vector;
+  Vector lambda_vector;
+  
+  GenerateSVMBandwidthVectorForCV_(svm_bandwidth_vector);
+  GenerateLambdaVectorForCV_(lambda_vector);
+  
+  index_t svm_bandwidth_vector_length=
+    svm_bandwidth_vector.length();
+  
+  index_t lambda_vector_length=
+    lambda_vector.length();
+
+  printf("Svm bandwidth vector is...\n");
+  svm_bandwidth_vector.PrintDebug();
+
+  printf("Lambda vector is...\n");
+  lambda_vector.PrintDebug();
+  
+  optimal_smoothing_kernel_bandwidth_=
+    fx_param_double_req(fx_root,"smoothing_kernel_bandwidth");
+
+  for(index_t i=0;i<svm_bandwidth_vector_length;i++){
+    
+    optimal_svm_kernel_bandwidth_=svm_bandwidth_vector[i];
+    
+    for(index_t j=0;j<lambda_vector_length;j++){
+      
+      optimal_lambda_=lambda_vector[j];
+	
+      for(index_t fold_num=0;fold_num<k_folds_;fold_num++){
+	
+	
+	Dataset cv_train_data,cv_test_data;
+	Vector cv_train_labels,cv_test_labels;
+	
+	// Will get the train and test folds 
+	GetTheFold_(cv_train_data,cv_test_data,cv_train_labels, 
+		    cv_test_labels,fold_num);
+	
+	// This routine will take the train fold and the test fold
+	// and solve the local SVM problem
+
+	RunLocalKernelMachines_(cv_train_data.matrix(),cv_test_data.matrix(),
+				cv_train_labels);
+      }
+     
+    }
+  }
+}
+
+
+
+  
+
+
+template <typename TKernel> void  LocalKernelMachines<TKernel>::
+CrossValidateOverAllThreeParameters_(){
+  
+  printf("Will crossvalidate over all 3 parameters...\n");
+  
+  // For cv puproses
+  printf("We will do crossvalidation ...\n");
+ 
+  
+  
+  Vector smoothing_bandwidth_vector;
+  Vector lambda_vector;
+  Vector svm_bandwidth_vector;
+
+  GenerateSmoothingBandwidthVectorForCV_(smoothing_bandwidth_vector);
+
+  GenerateSVMBandwidthVectorForCV_(svm_bandwidth_vector);
+
+  GenerateLambdaVectorForCV_(lambda_vector);
+
+  index_t smoothing_bandwidth_vector_length=
+    smoothing_bandwidth_vector.length();
+
+
+  printf("Smoothing bandwidthss are...\n");
+  smoothing_bandwidth_vector.PrintDebug();
+  index_t svm_bandwidth_vector_length=
+    svm_bandwidth_vector.length();
+
+  printf("SVM bandwidthss are...\n");
+  svm_bandwidth_vector.PrintDebug();
+  
+  
+  index_t lambda_vector_length=
+    lambda_vector.length();
+  
+  printf("lambda are...\n");
+  lambda_vector.PrintDebug();
+
+  for(index_t i=0;i<smoothing_bandwidth_vector_length;i++){
+    
+    for(index_t j=0;j<svm_bandwidth_vector_length;j++){
+
+      for(index_t k=0;k<lambda_vector_length;k++){
+	
+	for(index_t fold_num=0;fold_num<k_folds_;fold_num++){
+	
+	
+	  Dataset cv_train_data,cv_test_data;
+	  Vector cv_train_labels,cv_test_labels;
+	  
+	  // Will get the train and test folds 
+	  GetTheFold_(cv_train_data,cv_test_data,cv_train_labels, 
+		      cv_test_labels,fold_num);
+	  
+	  // This routine will take the train fold and the test fold
+	  // and solve the local SVM problem
+	  
+	  //Before running local svm, we shall first setup the parameters
+
+	  optimal_smoothing_kernel_bandwidth_=smoothing_bandwidth_vector[i];
+	  optimal_svm_kernel_bandwidth_=svm_bandwidth_vector[j];
+	  optimal_lambda_=lambda_vector[k];
+		  
+	  RunLocalKernelMachines_(cv_train_data.matrix(),cv_test_data.matrix(),
+				  cv_train_labels);
+	}
+      }
+    }
   }
 }
 
@@ -114,27 +303,144 @@ CrossValidateOverSmoothingKernelBandwidthAndLambda_(){
 template <typename TKernel> void  LocalKernelMachines<TKernel>::CrossValidateOverSmoothingKernelBandwidth_(){
 
   printf("Will crossvalidate over smoothing...\n");
-    
 
+
+  Vector smoothing_bandwidth_vector;
+  
+  GenerateSmoothingBandwidthVectorForCV_(smoothing_bandwidth_vector);
+  
+  index_t smoothing_bandwidth_vector_length=
+    smoothing_bandwidth_vector.length();
+  
+  printf("Smoothing bandwidth vector is...\n");
+  smoothing_bandwidth_vector.PrintDebug();
+
+  
+  optimal_svm_kernel_bandwidth_=
+    fx_param_double_req(fx_root,"svm_kernel_bandwidth");
+
+  optimal_lambda_=
+    fx_param_double_req(fx_root,"lambda");
+
+  for(index_t i=0;i<smoothing_bandwidth_vector_length;i++){
+    
+    optimal_smoothing_kernel_bandwidth_=smoothing_bandwidth_vector[i];
+    
+    for(index_t fold_num=0;fold_num<k_folds_;fold_num++){
+        
+      Dataset cv_train_data,cv_test_data;
+      Vector cv_train_labels,cv_test_labels;
+	
+      // Will get the train and test folds 
+      GetTheFold_(cv_train_data,cv_test_data,cv_train_labels, 
+		  cv_test_labels,fold_num);
+      
+      // This routine will take the train fold and the test fold
+      // and solve the local SVM problem
+      
+      RunLocalKernelMachines_(cv_train_data.matrix(),cv_test_data.matrix(),
+				cv_train_labels);
+    } 
+  }
 }
  
 template <typename TKernel> void  LocalKernelMachines<TKernel>::CrossValidateOverSVMKernelBandwidth_(){
   
   printf("Will crossvalidate over similarity...\n");
+
+  Vector svm_bandwidth_vector;
+
+  GenerateSVMBandwidthVectorForCV_(svm_bandwidth_vector);
+
+  index_t svm_bandwidth_vector_length=
+    svm_bandwidth_vector.length();
+
+
+  printf("SVM bandwidthss are...\n");
+  svm_bandwidth_vector.PrintDebug();
+  
+  optimal_smoothing_kernel_bandwidth_=
+    fx_param_double_req(fx_root,"smoothing_kernel_bandwidth");
+  
+  optimal_lambda_=
+    fx_param_double_req(fx_root,"lambda");
+
+  
+  for(index_t i=0;i<svm_bandwidth_vector_length;i++){
     
-   
+    for(index_t fold_num=0;fold_num<k_folds_;fold_num++){
+	
+	
+      Dataset cv_train_data,cv_test_data;
+      Vector cv_train_labels,cv_test_labels;
+      
+      // Will get the train and test folds 
+      GetTheFold_(cv_train_data,cv_test_data,cv_train_labels, 
+		  cv_test_labels,fold_num);
+      
+      // This routine will take the train fold and the test fold
+      // and solve the local SVM problem
+      
+      //Before running local svm, we shall first setup the parameters
+      
+     
+      optimal_svm_kernel_bandwidth_=svm_bandwidth_vector[i];
+      
+      RunLocalKernelMachines_(cv_train_data.matrix(),cv_test_data.matrix(),
+			      cv_train_labels);
+    }
+  }
 }  
  
 template <typename TKernel> void  LocalKernelMachines<TKernel>::CrossValidateOverLambda_(){
    
   printf("Will crossvalidate over lambda...\n");
+
+  Vector lambda_vector;
+  
+  GenerateLambdaVectorForCV_(lambda_vector);
+
+  index_t lambda_vector_length=
+    lambda_vector.length();
+  
+  printf("lambda are...\n");
+  lambda_vector.PrintDebug();
+  
+  optimal_smoothing_kernel_bandwidth_=
+    fx_param_double_req(fx_root,"smoothing_kernel_bandwidth");
+  
+  optimal_svm_kernel_bandwidth_=
+    fx_param_double_req(fx_root,"svm_kernel_bandwidth");
+
+  
+  for(index_t i=0;i<lambda_vector_length;i++){
     
-   
+    for(index_t fold_num=0;fold_num<k_folds_;fold_num++){
+      
+      
+      Dataset cv_train_data,cv_test_data;
+      Vector cv_train_labels,cv_test_labels;
+      
+      // Will get the train and test folds 
+      GetTheFold_(cv_train_data,cv_test_data,cv_train_labels, 
+		  cv_test_labels,fold_num);
+      
+      // This routine will take the train fold and the test fold
+      // and solve the local SVM problem
+      
+      //Before running local svm, we shall first setup the parameters
+      
+      optimal_lambda_=lambda_vector[i];
+      
+      RunLocalKernelMachines_(cv_train_data.matrix(),cv_test_data.matrix(),
+			      cv_train_labels);
+    }
+  } 
 }
 
 
  
-template <typename TKernel> void LocalKernelMachines<TKernel>::PerformCrossvalidation_(){
+template <typename TKernel> void LocalKernelMachines<TKernel>::PerformCrossValidation_(){
   
   if(svm_kernel_==SVM_LINEAR_KERNEL){
       
@@ -174,6 +480,8 @@ template <typename TKernel> void LocalKernelMachines<TKernel>::PerformCrossvalid
       
     if(cv_smoothing_kernel_bandwidth_flag_==1&&cv_lambda_flag_==1&&
        cv_svm_kernel_bandwidth_flag_==1){
+
+      printf("Came here to crossvalidate over all 3 parameters.....\n");
 	
       CrossValidateOverAllThreeParameters_();
     }
@@ -280,6 +588,8 @@ template <typename TKernel> void LocalKernelMachines<TKernel>::PrepareForCrossVa
    
 template <typename TKernel> void LocalKernelMachines< TKernel>::SetUpCrossValidationFlags_(){
     
+
+  printf("Setting up corssvalidation flags......\n");
   // Check what all parameters we need to crossvalidate over.
     
   if (svm_kernel_==SVM_RBF_KERNEL){
@@ -339,10 +649,6 @@ template <typename TKernel> void LocalKernelMachines< TKernel>::SetUpCrossValida
   }
 }
 
-
-
-
-
 template <typename TKernel> void LocalKernelMachines<TKernel>::CrossValidation_(){
   
   SetUpCrossValidationFlags_();
@@ -359,6 +665,7 @@ template <typename TKernel> void LocalKernelMachines<TKernel>::CrossValidation_(
     }
   else{
     
+    printf("We dont need to crossvalidate...\n");
     // Straight away run the local kernel machine with the given parameters.
     
     // We don't use dset here. Hence set it to empty so as to avoid segfault
@@ -368,3 +675,4 @@ template <typename TKernel> void LocalKernelMachines<TKernel>::CrossValidation_(
   }
   
 }
+#endif
