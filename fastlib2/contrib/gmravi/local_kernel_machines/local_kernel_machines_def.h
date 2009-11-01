@@ -1,14 +1,14 @@
 #include "fastlib/fastlib.h"
 #include "mlpack/svm/svm.h"
-#include "utils_lkm.h"
+#include "utils.h"
 #define SVM_RBF_KERNEL 1
 #define SVM_LINEAR_KERNEL 2
 
 #define GAUSSIAN_SMOOTHING_KERNEL 3
 #define EPAN_SMOOTHING_KERNEL 4
 
-#ifndef LOCAL_KERNEL_MACHINES_DEF_H_
-#define LOCAL_KERNEL_MACHINES_DEF_H_
+#ifndef LOCAL_KERNEL_MACHINES_DEF_H
+#define LOCAL_KERNEL_MACHINES_DEF_H
 
 
 
@@ -91,9 +91,11 @@ class LocalKernelMachines{
   void  CrossValidateOverSVMKernelBandwidthAndLambda_();
  
  
-  void  GenerateSmoothingBandwidthVectorForCV_();
+  void  GenerateSmoothingBandwidthVectorForCV_(Vector &);
  
-  void  GenerateLambdaVectorForCV_();
+  void  GenerateLambdaVectorForCV_(Vector &);
+
+  void GenerateSVMBandwidthVectorForCV_(Vector &);
  
   void  CrossValidateOverSmoothingKernelBandwidthAndLambda_();
  
@@ -107,7 +109,7 @@ class LocalKernelMachines{
   void PerformCrossValidation_();
  
  
-  void SetCrossValidationFlags_();
+  void SetUpCrossValidationFlags_();
  
   void PrepareForCrossValidation_();
   void CrossValidation_();
@@ -117,6 +119,8 @@ class LocalKernelMachines{
  
  void Init(Matrix &train_data,Matrix &test_data,Vector &train_labels_vector,
 	   struct datanode *module_in);
+ 
+ void RunLocalKernelMachines_(Matrix&, Matrix&, Vector&);
 };
 #include "local_kernel_machines_impl.h"
 #include "my_crossvalidation.h"
