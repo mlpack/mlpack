@@ -1,5 +1,5 @@
 
-void  LocalKernelMachines <typename TKernel>:: 
+template <typename TKernel> void  LocalKernelMachines <TKernel>:: 
 GetTheFold_(Dataset &cv_train_data,Dataset &cv_test_data,
 	    Vector &cv_train_labels, Vector &cv_test_labels,index_t fold_num)
 {
@@ -17,7 +17,7 @@ GetTheFold_(Dataset &cv_train_data,Dataset &cv_test_data,
   
   RemoveLastRowFromMatrixInit_(cv_train_data.matrix(),cv_train_labels);
   RemoveLastRowFromMatrixInit_(cv_test_data.matrix(),cv_test_labels);
-  
+ 
   printf("cv train labels is....\n");
   cv_train_labels.PrintDebug();
   
@@ -26,7 +26,7 @@ GetTheFold_(Dataset &cv_train_data,Dataset &cv_test_data,
   
 }
 
-void LocalKernelMachines<typename TKernel>::
+template <typename TKernel> void LocalKernelMachines<TKernel>::
 CrossValidateOverAllThreeParameters_(){
   
   printf("Will crossvalidate over all three parameters...\n");
@@ -34,7 +34,7 @@ CrossValidateOverAllThreeParameters_(){
 
 }
 
-void  LocalKernelMachines<typename TKernel>::
+template <typename TKernel> void  LocalKernelMachines<TKernel>::
 CrossValidateOverSVMKernelBandwidthAndSmoothingKernelBandwidth_(){
   
   printf("Will crossvalidate over svm and smoothing...\n");
@@ -42,7 +42,7 @@ CrossValidateOverSVMKernelBandwidthAndSmoothingKernelBandwidth_(){
 }
 
 
-void  LocalKernelMachines<typename TKernel>::
+template <typename TKernel> void  LocalKernelMachines<TKernel>::
 CrossValidateOverSVMKernelBandwidthAndLambda_(){
 
 
@@ -50,7 +50,7 @@ CrossValidateOverSVMKernelBandwidthAndLambda_(){
 
 }
 
-void  LocalKernelMachines<typename TKernel>::
+template <typename TKernel> LocalKernelMachines<TKernel>::
 GenerateSmoothingBandwidthVectorForCV_(){
 
 
@@ -58,12 +58,12 @@ GenerateSmoothingBandwidthVectorForCV_(){
 }
 
   
-void  LocalKernelMachines<typename TKernel>::
+template <typename TKernel> void  LocalKernelMachines<TKernel>::
 GenerateLambdaVectorForCV_(){
 
 }
 
-void  LocalKernelMachines<typename TKernel>::
+template <typename TKernel> void  LocalKernelMachines<TKernel>::
 CrossValidateOverSmoothingKernelBandwidthAndLambda_(){
   
   printf("Will crossvalidate over smoothing and lambda...\n");
@@ -111,21 +111,21 @@ CrossValidateOverSmoothingKernelBandwidthAndLambda_(){
 }
 
 
-void  LocalKernelMachines<typename TKernel>::CrossValidateOverSmoothingKernelBandwidth_(){
+template <typename TKernel> void  LocalKernelMachines<TKernel>::CrossValidateOverSmoothingKernelBandwidth_(){
 
   printf("Will crossvalidate over smoothing...\n");
     
 
 }
  
-void  LocalKernelMachines<typename TKernel>::CrossValidateOverSVMKernelBandwidth_(){
+template <typename TKernel> void  LocalKernelMachines<TKernel>::CrossValidateOverSVMKernelBandwidth_(){
   
   printf("Will crossvalidate over similarity...\n");
     
    
 }  
  
-void  LocalKernelMachines<typename TKernel>::CrossValidateOverLambda_(){
+template <typename TKernel> void  LocalKernelMachines<TKernel>::CrossValidateOverLambda_(){
    
   printf("Will crossvalidate over lambda...\n");
     
@@ -134,7 +134,7 @@ void  LocalKernelMachines<typename TKernel>::CrossValidateOverLambda_(){
 
 
  
-void LocalKernelMachines<typename TKernel>::PerformCrossvalidation_(){
+template <typename TKernel> void LocalKernelMachines<TKernel>::PerformCrossvalidation_(){
   
   if(svm_kernel_==SVM_LINEAR_KERNEL){
       
@@ -237,7 +237,7 @@ void LocalKernelMachines<typename TKernel>::PerformCrossvalidation_(){
   // We now have the optimal parameters.
 }
  
-void LocalKernelMachines<typename TKernel>::PrepareForCrossValidation_(){
+template <typename TKernel> void LocalKernelMachines<TKernel>::PrepareForCrossValidation_(){
   
   // The purpose of this function is simply to setup the stage for crossvalidation. 
   
@@ -278,7 +278,7 @@ void LocalKernelMachines<typename TKernel>::PrepareForCrossValidation_(){
   dset_.matrix().PrintDebug();
 }
    
-void LocalKernelMachines< typename TKernel>::SetUpCrossValidationFlags_(){
+template <typename TKernel> void LocalKernelMachines< TKernel>::SetUpCrossValidationFlags_(){
     
   // Check what all parameters we need to crossvalidate over.
     
@@ -343,7 +343,7 @@ void LocalKernelMachines< typename TKernel>::SetUpCrossValidationFlags_(){
 
 
 
-void LocalKernelMachines<typename TKernel>::CrossValidation_(){
+template <typename TKernel> void LocalKernelMachines<TKernel>::CrossValidation_(){
   
   SetUpCrossValidationFlags_();
 
