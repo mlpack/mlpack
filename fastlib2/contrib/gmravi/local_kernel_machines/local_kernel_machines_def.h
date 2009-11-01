@@ -1,7 +1,6 @@
 #include "fastlib/fastlib.h"
 #include "mlpack/svm/svm.h"
 #include "utils_lkm.h"
-#include "my_crossvalidation.h"
 #define SVM_RBF_KERNEL 1
 #define SVM_LINEAR_KERNEL 2
 
