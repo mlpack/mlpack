@@ -1,7 +1,4 @@
-
-
-
-void  LocalKernelMachines< typename TKernel>:: 
+template <typename TKernel> void  LocalKernelMachines< TKernel>:: 
 RunLocalKernelMachines_(Matrix &local_train_data, Matrix &local_test_data, 
 			Vector &local_train_data_labels){
   
@@ -13,7 +10,7 @@ RunLocalKernelMachines_(Matrix &local_train_data, Matrix &local_test_data,
 }
 
 
-void LocalKernelMachines< typename TKernel>::TrainLocalKernelMachines(){
+template <typename TKernel> void LocalKernelMachines< TKernel>::TrainLocalKernelMachines(){
 
   Crossvalidation_();
   
@@ -23,7 +20,7 @@ void LocalKernelMachines< typename TKernel>::TrainLocalKernelMachines(){
   RunLocalKernelMachines_();
 }
   
-void LocalKernelMachines< typename TKernel>::Init(Matrix &train_data,Matrix &test_data,Vector &train_labels_vector,
+template <typename TKernel> void LocalKernelMachines< TKernel>::Init(Matrix &train_data,Matrix &test_data,Vector &train_labels_vector,
 						  struct datanode *module_in){
     
   //Initialize
