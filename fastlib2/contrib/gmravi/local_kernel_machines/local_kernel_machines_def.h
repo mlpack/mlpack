@@ -12,6 +12,7 @@
 
 
 
+
 template<typename TKernel>
 class LocalKernelMachines{
   
@@ -78,76 +79,44 @@ class LocalKernelMachines{
   index_t k_folds_;
   
   void  SolveLocalSVMProblem_(Matrix &local_train_data, Matrix &local_test_data, 
-			      Vector &local_train_data_labels, Vector local_test_data_labels){
-
-    
-  }
+			      Vector &local_train_data_labels, Vector local_test_data_labels);
 
   void GetTheFold_(Dataset &cv_train_data,Dataset &cv_test_data,
-		  Vector &cv_train_labels, Vector &cv_test_labels,index_t fold_num){
-  }
+		   Vector &cv_train_labels, Vector &cv_test_labels,index_t fold_num);
   
-  void CrossValidateOverAllThreeParameters_(){
+  void CrossValidateOverAllThreeParameters_();
 
-  }
+  void  CrossValidateOverSVMKernelBandwidthAndSmoothingKernelBandwidth_();
 
-void  CrossValidateOverSVMKernelBandwidthAndSmoothingKernelBandwidth_(){
-
-}
-
- void  CrossValidateOverSVMKernelBandwidthAndLambda_(){
-   
- }
+  void  CrossValidateOverSVMKernelBandwidthAndLambda_();
  
  
- void  GenerateSmoothingBandwidthVectorForCV_(){
-   
- }
+  void  GenerateSmoothingBandwidthVectorForCV_();
  
- void  GenerateLambdaVectorForCV_(){
-   
- }
+  void  GenerateLambdaVectorForCV_();
  
- void  CrossValidateOverSmoothingKernelBandwidthAndLambda_(){
-
- }
+  void  CrossValidateOverSmoothingKernelBandwidthAndLambda_();
  
- void  CrossValidateOverSmoothingKernelBandwidth_(){
-   
- }
+  void  CrossValidateOverSmoothingKernelBandwidth_();
  
  
- void  CrossValidateOverSVMKernelBandwidth_(){
-   
- }
+  void  CrossValidateOverSVMKernelBandwidth_();
  
- void  CrossValidateOverLambda_(){
-   
- }
+  void  CrossValidateOverLambda_();
  
- void PerformCrossValidation_(){
-   
- }
+  void PerformCrossValidation_();
  
  
- void SetCrossValidationFlags_(){
-   
- }
+  void SetCrossValidationFlags_();
  
- void PrepareForCrossValidation_(){
-   
- }
- void CrossValidation_(){
- }
+  void PrepareForCrossValidation_();
+  void CrossValidation_();
  public:
  
- void TrainLocalKernelMachines(){
-   
- }
+  void TrainLocalKernelMachines();
  
  void Init(Matrix &train_data,Matrix &test_data,Vector &train_labels_vector,
-	   struct datanode *module_in){
- }
+	   struct datanode *module_in);
 };
 #include "local_kernel_machines_impl.h"
 #include "my_crossvalidation.h"
