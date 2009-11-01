@@ -1,27 +1,38 @@
+#ifndef LOCAL_KERNEL_MACHINES_IMPL_H_
+#define LOCAL_KERNEL_MACHINES_IMPL_H_
 template <typename TKernel> void  LocalKernelMachines< TKernel>:: 
 RunLocalKernelMachines_(Matrix &local_train_data, Matrix &local_test_data, 
 			Vector &local_train_data_labels){
+
   
+  printf("Smoothing kernel bandwidth=%f..\n",optimal_smoothing_kernel_bandwidth_);
+
+  printf("Svm kernel bandwidth=%f..\n",optimal_svm_kernel_bandwidth_);
   
-  
-  
+  printf("lambda=%f..\n",optimal_lambda_);
+
+
+
   
   
 }
 
-
 template <typename TKernel> void LocalKernelMachines< TKernel>::TrainLocalKernelMachines(){
 
-  Crossvalidation_();
+  CrossValidation_();
+
+  printf("Status of crossvalidation is...\n");
+  printf("cv_svm=%d...... cv_smoothing=%d.... cv_lambda=%d",cv_svm_kernel_bandwidth_flag_,cv_smoothing_kernel_bandwidth_flag_,cv_lambda_flag_);
   
   // Having performed crossvalidation (if it was required) 
   // we now have the necessary parameters
 
-  RunLocalKernelMachines_();
+  RunLocalKernelMachines_(train_data_,test_data_,train_labels_vector_);
 }
   
-template <typename TKernel> void LocalKernelMachines< TKernel>::Init(Matrix &train_data,Matrix &test_data,Vector &train_labels_vector,
-						  struct datanode *module_in){
+template <typename TKernel> void LocalKernelMachines< TKernel>::
+Init(Matrix &train_data,Matrix &test_data,Vector &train_labels_vector,
+     struct datanode *module_in){
     
   //Initialize
     
@@ -91,3 +102,4 @@ template <typename TKernel> void LocalKernelMachines< TKernel>::Init(Matrix &tra
   printf("svm_kernel=%d..\n",svm_kernel_);
   printf("Basic initializations done...\n");
 }
+#endif
