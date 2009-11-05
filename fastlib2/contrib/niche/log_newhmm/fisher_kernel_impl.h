@@ -500,14 +500,14 @@ void FisherKernelBatch(double lambda,
       sum_sigma.SetZero();
       double sum_gamma = 0;
       for(int t = 0; t < seq_length; t++) {
-	sum_gamma += p_qt.get(i, t);
+	sum_gamma += p_qt.get(t, i);
 	for(int d = 0; d < n_dims; d++) {
 	  double difference =
 	    sequences[k].get(d, t) - hmm.state_distributions[i].mu()[d];
 	  sum_mu[d] +=
-	    p_qt.get(i, t) * difference;
+	    p_qt.get(t, i) * difference;
 	  sum_sigma[d] +=
-	    p_qt.get(i, t) * difference * difference;
+	    p_qt.get(t, i) * difference * difference;
 	}
       }
       for(int d = 0; d < n_dims; d++) {
