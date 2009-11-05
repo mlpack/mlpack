@@ -1152,7 +1152,7 @@ void TestHMMFisherKernelClassificationKFold(int n_folds,
     
     Matrix kernel_matrix;
     FisherKernelBatch(lambda, kfold_hmms[fold_num], sequences, &kernel_matrix);
-    NormalizeKernelMatrix(&kernel_matrix);
+    //NormalizeKernelMatrix(&kernel_matrix);
 
     for(int c_index = 0; c_index < c_set_size; c_index++) {
       fx_set_param_double(svm_module, "c", c_set[c_index]);
@@ -1244,11 +1244,11 @@ void TestHMMFisherKernelClassificationKFold(int n_folds,
     
     Matrix exon_kernel_matrix;
     FisherKernelBatch(lambda, kfold_exon_hmms[fold_num], sequences, &exon_kernel_matrix);
-    NormalizeKernelMatrix(&exon_kernel_matrix);
-
+    //NormalizeKernelMatrix(&exon_kernel_matrix);
+    
     Matrix intron_kernel_matrix;
     FisherKernelBatch(lambda, kfold_intron_hmms[fold_num], sequences, &intron_kernel_matrix);
-    NormalizeKernelMatrix(&intron_kernel_matrix);
+    //NormalizeKernelMatrix(&intron_kernel_matrix);
 
     Matrix kernel_matrix;
     la::AddInit(exon_kernel_matrix, intron_kernel_matrix, &kernel_matrix);
