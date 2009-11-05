@@ -442,7 +442,7 @@ void FisherKernelBatch(double lambda,
   p_initial.Init(n_states);
 
   Matrix p_transition;
-  p_initial.Init(n_states, n_states);
+  p_transition.Init(n_states, n_states);
 
   for(int i = 0; i < n_states; i++) {
     p_initial[i] = exp(hmm.p_initial[i]);
