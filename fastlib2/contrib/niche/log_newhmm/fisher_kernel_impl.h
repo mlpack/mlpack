@@ -577,7 +577,7 @@ void FisherKernelBatch(double lambda,
   if(lambda < 0) {
     // scale the kernel matrix when using the standard plain Fisher kernel
     double max_val = -1;
-    for(int i = 0; < n_sequences; i++) {
+    for(int i = 0; i < n_sequences; i++) {
       if(unlikely(kernel_matrix.get(i, i) > max_val)) {
 	max_val = kernel_matrix.get(i, i);
       }
