@@ -474,14 +474,14 @@ void FisherKernelBatch(double lambda,
 
     // go from log space back to normal space
     for(int i = 0; i < n_states; i++) {
-      for(int t = 0; t < sequence_length; t++) {
+      for(int t = 0; t < seq_length; t++) {
 	p_qt.set(t, i, exp(p_qt.get(t, i)));
       }
     }
 
     // go from log space back to normal space
     for(int i = 0; i < n_states; i++) {
-      for(int t = 0; t < sequence_length; t++) {
+      for(int t = 0; t < seq_length; t++) {
 	for(int j = 0; j < n_states; j++) {
 	  p_qq_t[i].set(j, t, exp(p_qq_t[i].get(j, t)));
 	}
