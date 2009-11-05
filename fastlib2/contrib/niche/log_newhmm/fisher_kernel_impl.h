@@ -424,10 +424,12 @@ void FisherKernelBatch(double lambda,
     u_arraylist[k].Init(n_score_components);
   }
 
+  /*
   // copy p_transition and transpose its copy for loop efficiency
   Matrix p_transition;
   p_transition.Copy(hmm.p_transition);
   la::TransposeSquare(&p_transition);
+  */
 
 
   Vector sum_mu; // reused in loop below
@@ -435,6 +437,23 @@ void FisherKernelBatch(double lambda,
   
   Vector sum_sigma; // reused in loop below
   sum_sigma.Init(n_dims);
+
+  Vector p_initial;
+  p_initial.Init(n_states);
+
+  Matrix p_transition;
+  p_initial.Init(n_states, n_states);
+
+  for(int i = 0; i < n_states; i++) {
+    p_initial[i] = exp(hmm.p_initial[i]);
+    for(int j = 0; j < n_states; j++) {
+      // transpose for loop efficiency
+      p_transition.set(j, i, exp(hmm.p_transition.get(i, j));
+		       }
+    }
+  }
+
+
 
   for(int k = 0; k < n_sequences; k++) {
     p_x_given_q.Destruct();
@@ -452,6 +471,24 @@ void FisherKernelBatch(double lambda,
 				  &p_qt,
 				  &neg_likelihood);
 
+    int seq_length = sequences[k].n_cols();
+
+    // go from log space back to normal space
+    for(int i = 0; i < n_states; i++) {
+      for(int t = 0; t < sequence_length; t++) {
+	p_qt.set(t, i, exp(p_qt.get(t, i)));
+      }
+    }
+
+    // go from log space back to normal space
+    for(int i = 0; i < n_states; i++) {
+      for(int t = 0; t < sequence_length; t++) {
+	for(int j = 0; j < n_states; j++) {
+	  p_qq_t[i].set(j, t, exp(p_qq_t[i].get(j, t)));
+	}
+      }
+    }
+
     ComputePqq(p_qq_t, &p_qq);
     ComputePq(p_qt, &p_q);
     //ComputePqx(sequences[k], n_dims, p_qt, &p_qx);
@@ -465,11 +502,13 @@ void FisherKernelBatch(double lambda,
     
     // construct Fisher score vectors
     int u_index = 0;
+
+
     
     // initial components
     for(int i = 0; i < n_states; i++) {
-      if(hmm.p_initial[i] > 1e-100) {
-	double weight = 1 / hmm.p_initial[i];
+      if(p_initial[i] > 1e-100) {
+	double weight = 1 / p_initial[i];
 	u_arraylist[k][u_index] = weight * p_q0[k] - p_q[k];
       }
       else {
@@ -491,8 +530,6 @@ void FisherKernelBatch(double lambda,
 	u_index++;
       }
     }
-
-    int seq_length = sequences[k].n_cols();
 
     // observation components - mean and diagonal covariance
     for(int i = 0; i < n_states; i++) {
