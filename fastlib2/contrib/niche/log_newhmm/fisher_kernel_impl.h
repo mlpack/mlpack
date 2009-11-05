@@ -564,11 +564,12 @@ void FisherKernelBatch(double lambda,
   for(int i = 0; i < n_sequences; i++) {
     printf("%f%%\n", 100.0 * ((double)(i + 1)) / ((double)n_sequences));
     for(int j = i; j < n_sequences; j++) {
+      double fk;
       if(lambda < 0) {
-	double fk = la::Dot(u_arraylist[i], u_arraylist[j]);
+	fk = la::Dot(u_arraylist[i], u_arraylist[j]);
       }
       else {
-	exp(-lambda * la::DistanceSqEuclidean(u_arraylist[i], u_arraylist[j]));
+	fk = exp(-lambda * la::DistanceSqEuclidean(u_arraylist[i], u_arraylist[j]));
       }
       kernel_matrix.set(j, i, fk);
       if(i != j) {
