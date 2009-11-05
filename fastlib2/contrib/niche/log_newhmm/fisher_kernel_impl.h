@@ -508,6 +508,7 @@ void FisherKernelBatch(double lambda,
 	    p_qt.get(t, i) * difference;
 	  sum_sigma[d] +=
 	    p_qt.get(t, i) * difference * difference;
+	  printf("p_qt.get(t, i) = %f\n", p_qt.get(t, i));
 	}
       }
       for(int d = 0; d < n_dims; d++) {
