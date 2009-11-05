@@ -582,7 +582,7 @@ void FisherKernelBatch(double lambda,
 	max_val = kernel_matrix.get(i, i);
       }
     }
-    la::Scale(1 / max_val, &kernel_matrix);
+    la::Scale(1 / (((double)n_sequences) * max_val), &kernel_matrix);
   }
    
 
