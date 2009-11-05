@@ -516,7 +516,7 @@ void FisherKernelBatch(double lambda,
 	  sum_mu[d] / sig;
 	u_index++;
 	u_arraylist[k][u_index] =
-	  -((sum_sigma[d] / pow(sig, seq_length)) + (sum_gamma / sig));
+	  (sum_sigma[d] / pow(sig, 1.5)) + (sum_gamma / sqrt(sig));
 	u_index++;
       }
     }
