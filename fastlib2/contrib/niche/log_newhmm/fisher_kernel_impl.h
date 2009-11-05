@@ -555,6 +555,16 @@ void FisherKernelBatch(double lambda,
 
     ///////////////////////////
   }
+
+  double max_norm = -1;
+  for(int i = 0; i < n_sequences; i++) {
+    double cur_norm = la::LengthEuclidean(u_arraylist[i]);
+    if(cur_norm > max_norm) {
+      max_norm = cur_norm;
+    }
+  }
+ 
+  
   
   kernel_matrix.Init(n_sequences, n_sequences);
   for(int i = 0; i < n_sequences; i++) {
@@ -565,7 +575,7 @@ void FisherKernelBatch(double lambda,
 	fk = la::Dot(u_arraylist[i], u_arraylist[j]);
       }
       else {
-	fk = exp(-lambda * la::DistanceSqEuclidean(u_arraylist[i], u_arraylist[j]));
+	fk = exp(-lambda * la::DistanceSqEuclidean(u_arraylist[i], u_arraylist[j]) / max_norm);
       }
       kernel_matrix.set(j, i, fk);
       if(i != j) {
