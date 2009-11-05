@@ -384,10 +384,6 @@ void FisherKernelBatch(double lambda,
 		       const HMM<DiagGaussian> &hmm,
 		       const ArrayList<GenMatrix<T> > &sequences,
 		       Matrix* p_kernel_matrix) {
-  if(lambda < 0) {
-    //FisherKernelBatch(hmm, sequences, p_kernel_matrix);
-    return;
-  }
 
   Matrix &kernel_matrix = *p_kernel_matrix;
 
