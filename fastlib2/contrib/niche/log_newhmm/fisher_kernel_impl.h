@@ -449,7 +449,6 @@ void FisherKernelBatch(double lambda,
     for(int j = 0; j < n_states; j++) {
       // transpose for loop efficiency
       p_transition.set(j, i, exp(hmm.p_transition.get(i, j)));
-		       }
     }
   }
 
