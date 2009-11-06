@@ -13,6 +13,9 @@ double PPKLog(double rho,
     if(rho == 0.5) {
       sum += sqrt(x.p()[i] * y.p()[i]);
     }
+    else if(rho == 1) {
+      sum += (x.p()[i] * y.p()[i]);
+    }
     else {
       sum += pow(x.p()[i] * y.p()[i], rho);
     }
@@ -275,6 +278,7 @@ double PPKLog(double rho, int n_T,
   int n1 = hmm_a.n_states();
   int n2 = hmm_b.n_states();
 
+  // scaling the log probs by rho is the same as raising probs by rho
   Matrix hmm_a_p_transition_rho;
   la::ScaleInit(rho, hmm_a.p_transition, &hmm_a_p_transition_rho); 
   
@@ -296,6 +300,7 @@ double PPKLog(double rho, int n_T,
   phi.Init(n2, n1);
   for(int i1 = 0; i1 < n1; i1++) {
     for(int i2 = 0; i2 < n2; i2++) {
+      // raise product to rho (all in log space)
       phi.set(i2, i1,
 	      rho * (hmm_a.p_initial[i1] + hmm_b.p_initial[i2]));
     }
