@@ -413,14 +413,18 @@ void TestHMMGenMMKClassificationLog(const ArrayList<HMM<DiagGaussian> > &hmms,
   int n_hmms = labels.length();
   printf("n_hmms = %d\n", n_hmms);
   
-  double lambda = fx_param_double_req(NULL, "lambda");
-  printf("lambda = %f\n", lambda);
+  double rho = fx_param_double(NULL, "rho", -10);
+  printf("rho = %f\n", rho);
+
+  double lambda = -1;
+  if(rho < 0) {
+    lambda = fx_param_double_req(NULL, "lambda");
+    printf("lambda = %f\n", lambda);
+  }
 
   int witness_length = fx_param_int(NULL, "witness_length", 70);
   printf("witness_length = %d\n", witness_length);
 
-  double rho = fx_param_double(NULL, "rho", -10);
-  printf("rho = %f\n", rho);
 
   Matrix kernel_matrix_log;
   //GenerativeMMKBatch(lambda, rho, witness_length, hmms, &kernel_matrix);
