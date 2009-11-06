@@ -118,7 +118,8 @@ double PPKLog(double rho,
   int n_dims = x.n_dims();
   
   double sum = 0;
-  sum += (1 - 2.0 * rho) * 0.5 * n_dims * log(2.0 * M_PI);
+  sum += (1 - 2.0 * rho) * 0.5 * ((double)n_dims) * log(2.0 * M_PI);
+  sum -= 0.5 * ((double)n_dims) * log(rho);
  
   // log determinant of sigma x, sigma y and sigma x-y combined
   double log_det_sigma_x = 0;
@@ -138,8 +139,7 @@ double PPKLog(double rho,
     y_term += y.mu()[i] * y.mu()[i] / y.sigma()[i];
 
     double temp = (x.mu()[i] / x.sigma()[i]) + (y.mu()[i] / y.sigma()[i]);
-    xy_term += temp * temp * (x.sigma()[i] + y.sigma()[i])
-      / (x.sigma()[i] * y.sigma()[i]);
+    xy_term += temp * temp / ( (1 / x.sigma()[i]) + (1 / y.sigma()[i]));
   }
 
   sum += 0.5 * log_det_sigma_xy;

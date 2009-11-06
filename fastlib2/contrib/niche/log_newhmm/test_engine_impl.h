@@ -422,7 +422,7 @@ void TestHMMGenMMKClassificationLog(const ArrayList<HMM<DiagGaussian> > &hmms,
     printf("lambda = %f\n", lambda);
   }
 
-  int witness_length = fx_param_int(NULL, "witness_length", 70);
+  int witness_length = fx_param_int_req(NULL, "witness_length");
   printf("witness_length = %d\n", witness_length);
 
 
