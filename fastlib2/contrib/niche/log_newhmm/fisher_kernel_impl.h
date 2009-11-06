@@ -557,24 +557,25 @@ void FisherKernelBatch(double lambda,
   }
 
   double max_norm = -1;
-  for(int i = 0; i < n_sequences; i++) {
-    double cur_norm = la::LengthEuclidean(u_arraylist[i]);
-    if(cur_norm > max_norm) {
-      max_norm = cur_norm;
+  if(lambda > 0) { // Gaussianized Fisher kernel
+    for(int i = 0; i < n_sequences; i++) {
+      double cur_norm = la::LengthEuclidean(u_arraylist[i]);
+      if(cur_norm > max_norm) {
+	max_norm = cur_norm;
+      }
     }
   }
  
-  
   
   kernel_matrix.Init(n_sequences, n_sequences);
   for(int i = 0; i < n_sequences; i++) {
     printf("%f%%\n", 100.0 * ((double)(i + 1)) / ((double)n_sequences));
     for(int j = i; j < n_sequences; j++) {
       double fk;
-      if(lambda < 0) {
+      if(lambda < 0) { // standard Fisher kernel
 	fk = la::Dot(u_arraylist[i], u_arraylist[j]);
       }
-      else {
+      else { // Gaussianized Fisher kernel
 	fk = exp(-lambda * la::DistanceSqEuclidean(u_arraylist[i], u_arraylist[j]) / max_norm);
       }
       kernel_matrix.set(j, i, fk);
@@ -584,7 +585,8 @@ void FisherKernelBatch(double lambda,
     }
   }
 
-  if(lambda < 0) {
+  
+  if(lambda < 0) { // standard Fisher kernel
     // scale the kernel matrix when using the standard plain Fisher kernel
     double max_val = -1;
     for(int i = 0; i < n_sequences; i++) {
