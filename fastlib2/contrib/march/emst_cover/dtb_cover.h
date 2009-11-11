@@ -350,7 +350,7 @@ class DualCoverTreeBoruvka {
 
   void ComputeBaseCase_(DTBTree* query, ArrayList<DTBTree*> *leaves) {
     
-    printf("Computing Base Case for query: %d\n", query->point());
+    //printf("Computing Base Case for query: %d\n", query->point());
     
     if (query->num_of_children() > 0) {
       
@@ -768,7 +768,7 @@ class DualCoverTreeBoruvka {
             data_points_.MakeColumnVector((*child)->point(), &r_vec);
             
             double dist = sqrt(la::DistanceSqEuclidean(q_vec, r_vec));
-            double dist_bound = dist;
+            //double dist_bound = dist;
             
             // the upper bound needs to be streched 
             
@@ -928,7 +928,7 @@ class DualCoverTreeBoruvka {
           data_points_.MakeColumnVector((*begin)->point(), &r_vec);
           
           double dist = sqrt(la::DistanceSqEuclidean(q_vec, r_vec));
-          double dist_bound = dist;
+          //double dist_bound = dist;
           
           // tried commenting this out since some points aren't finding neighbors
           // I think the point of this is to use the minimum possible upper
@@ -984,7 +984,7 @@ class DualCoverTreeBoruvka {
              && (query->scale_depth() != 100)) {
       // descend query tree
       
-      printf("Query Tree Descend, query = %d\n", query->point());
+      //printf("Query Tree Descend, query = %d\n", query->point());
       
       DTBTree** child = query->children()->begin();
       DTBTree** child_end = query->children()->end();
@@ -1028,7 +1028,7 @@ class DualCoverTreeBoruvka {
     else {
       // descend references 
       
-      printf("Reference Tree Descend, query = %d\n", query->point());
+      //printf("Reference Tree Descend, query = %d\n", query->point());
       
       index_t new_max = max_scale;
       DescendRefSet_(query, ref_cover, leaf_nodes, current_scale, &new_max);
@@ -1066,6 +1066,31 @@ class DualCoverTreeBoruvka {
     }
   } // ComputeNeighbors_
   
+  /**
+   *
+   */
+  
+  struct EdgeSortHelper_ {
+  
+    bool operator() (const EdgePair& pairA, const EdgePair& pairB) {
+      return (pairA.distance() > pairB.distance());
+    }
+    
+  } SortFun;
+  
+  /**
+   *
+   */
+  void SortEdges_() {
+    
+    //EdgePair** first_edge = &(edges_.begin());
+    //EdgePair** last_edge = &(edges_.end());
+    
+    //std::sort(first_edge, last_edge, &DualCoverTreeBoruvka::EdgeSortHelper_);
+    std::sort(edges_.begin(), edges_.end(), SortFun);
+    
+  } // SortEdges_()
+  
   
   /**
     * Unpermute the edge list and output it to results
@@ -1074,6 +1099,8 @@ class DualCoverTreeBoruvka {
    * clusterings.
    */
   void EmitResults_(Matrix* results) {
+    
+    SortEdges_();
     
     DEBUG_ASSERT(number_of_edges_ == number_of_points_ - 1);
     results->Init(3, number_of_edges_);
@@ -1202,7 +1229,7 @@ class DualCoverTreeBoruvka {
       
       fx_timer_stop(module_, "tree_building");
       
-      ctree::PrintTree(tree_);
+      //ctree::PrintTree(tree_);
       
     }
     else {

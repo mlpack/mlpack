@@ -66,7 +66,7 @@ public:
     greater_index_ = index;
   }
   
-  double distance() {
+  double distance() const {
     return distance_;
   }
   
