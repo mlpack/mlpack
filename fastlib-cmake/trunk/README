@@ -65,187 +65,108 @@ All algorithms are available in both executable and linkable form.
 2.1. Quick start
 ----------------
 
-1. Extract the tar/gzipped file, mlpack-0.1-distribution.tar.gz.
+The CMake build system has been tested to work on Linux or Windows XP/Vista
+under Cygwin using gcc4 and gcc3.4.  It will probably work on Mac OSX using gcc
+also.  In the future, we will test it under the other build systems that CMake
+supports, like Visual Studio and Eclipse, but for now a gcc/make development
+environment is your best bet.  
 
-2. After this, you will need to make sure your environment variables
-are set up properly. Simply add $FASTLIBPATH/script into your $PATH
-environment variable. First find out what shell you are using by
-typing
+1. Use the Cygwin installer or your Linux package manager to install:
 
-echo $0
+* gcc
+* g++
+* g77 or gfortran (cmake wants a Fortran compiler--make it happy)
+* make
+* cmake 2.6 or higher
+* BLAS & LAPACK (usually separate in Linux, both included as "lapack" under
+  "Math" in the Cygwin installer)
 
-and it will be bash, ksh, csh, or tcsh. If you are using the bash or
-ksh shell, you should add this to your ~/.bashrc (for bash) or
-~/.kshrc (for ksh), or ~/.profile if the other doesn't exist,
-substituting $FASTLIBPATH accordingly:
-
-export PATH="$FASTLIBPATH/script:$PATH"
-
-If you are using csh or tcsh, put the following in your ~/.cshrc file:
-setenv PATH "$FASTLIBPATH/script:""$PATH"
-
-Close your terminal and re-open it. Check to see if FASTlib is working
-by typing:
-
-fl-build # that is lowercase "FL-BUILD"
-
-It should give you the help message for FASTlib's build system. If it
-doesn't, type:
-
-echo $PATH
-
-and make sure the $FASTLIBPATH/script is there and is spelled exactly
-correctly. Try typing the export or setenv command by hand and see if
-it starts working afterwards. Consult your friend who knows Unix when
-necessary.
-
-3. Now, change into your $FASTLIBPATH/mlpack by typing:
-
-cd $FASTLIBPATH/mlpack
-
-4. Compile all of the algorithms in mlpack by typing:
-
-fl-build-all --mode=fast --recursive
-
-Note that this will initially ask you to specify where to download
-BLAS and LAPACK; we recommend choosing the option 1 for both (to
-download and install from Netlib website). Option 2 tries to use the
-preinstalled versions on the user's machine, but we did not have
-success using this option:
-
-First time installing BLAS, Here are your options: 
-
-1)Press 1 if you want fastlib to download and install it from Netlib
-website
-
-2)Press 2 if you think you have a better version already installed
-press 2
-  You will be asked to give the full path along with the library name
-(/path/libexample.a)
-  if after giving the path you realize that it is wrong or it doesn't
-work
-  delete the $instalation_dir/fastlib/lapack.lock file and build your
-code again Give me your choice now:
-
-Now I will download BLAS from netlib.org
-Generating a blas.lock file, if you want to reinstall differently delete it
-
-First time installing LAPACK, Here are your options: 1)Press 1 if you
-want fastlib to download and install it from Netlib website 2)Press 2
-if you think you have a better version already installed press 2
-  You will be asked to give the full path along with the library name
-(/path/libexample.a)
-  if after giving the path you realize that it is wrong or it doesn't work
-  delete the $instalation_dir/fastlib/lapack.lock file and build your
-code again
-
-Give me your choice now:
-
-Bascially, entering both options will create the two lock files,
-blas.lock and lapack.lock.
-
-CAUTION: If the user wants to recompile/reinstall BLAS/LAPACK, then
-he/she would have to delete blas.lock and lapack.lock files.
+Optional, but strongly recommended:
+* The optimization library opt++ (needed for optimization routines)
+* The Boost C++ libraries (not directly used, but useful)
 
 
+2. Extract the tar or zip file, mlpack-distribution.tar.gz.  Let's say
+you've just created /path/to/fastlib2 (it's the directory this file is in)
 
-2.2. Using the FASTlib Build Tool
----------------------------------
+3. After this, you will need to make sure your environment variables are set up
+properly. Set FASTLIBPATH to this directory, e.g.
 
-Underneath the Makefile under $FASTLIBPATH/mlpack directory, the
-building is done via the fl-build tool, which stands for FASTlib
-build. This tool reads through very short files which just have a list
-of sources (.cc files), headers (.h files), and other sub-packages it
-depends on, and produces a Makefile, which it runs automatically.
+export FASTLIBPATH=/path/to/fastlib2  (bash)
+setenv FASTLIBPATH=/path/to/fastlib2  (csh/tcsh)
 
-There are a handful of compilation modes supported by fl-build,
-specified by the --mode=mode parameter. Each mode has a use, and
-enables certain flags:
+4. Change to the fastlib subdirectory and create a build directory:
 
-* verbose: tracking the execution of a program when it's infeasible to
-step through manually. disables optimizations, enables printing of
-verbosity messages
+cd $FASTLIBPATH/fastlib
+mkdir build  (this can actually go anywhere you want)
+cd build
 
-* debug: allow best use with gdb for tracking bugs. disables
-optimization, enables all debug checks, enables highest level of gdb.
+5. CMake's default is to install things in /usr/local/, which may not be what
+you want.  So, let's configure our cmake project:
 
-* check (default mode): regular development. enables code
-optimizations and leaves in debug checks, at a 25% or so penalty. gdb
-symbols are compiled in but may be inaccurate due to optimizations.
+% ccmake .. (if in build subdir)
+% ccmake $FASTLIBPATH/fastlib  (if you put the build dir some weird place)
 
-* fast: timing runs, for the fairest timing comparisons. debug symbols
-still enabled but may be inaccurate.
+This will bring up a curses interface (GUIs exist for cmake; feel free to
+install one).  Hit "c" to configure.  You should see a screen like this:
 
-* unsafe: optimizations that might alter correctness, and often
-will slow the program down.
+ CMAKE_BUILD_TYPE                *                                             
+ CMAKE_INSTALL_PREFIX            */usr/local                                   
 
-* profile: speed profiling. compile with --mode=profile, run your
-program, and run gprof ./binaryfile | less to see what the bottleneck
-is.
+Eventually lots of CMAKE_BUILD_TYPE's will be supported.  For now just leave
+this blank.  One choice for the install prefix that will make things similar to
+the old build system is to use FASTLIBPATH as the CMAKE_INSTALL_PREFIX.  This
+will pust the libraries and header files in the lib/ and include/
+subdirectories.  So, go to the CMAKE_INSTALL_PREFIX line, hit Enter, change it
+to whatever you want, and hit Enter again.  Hit "c" to update the
+configuration, then hit "g" to generate the build files and exit.  There should
+now be a Makefile in the build directory.  Now run
 
-Using fl-build, you can compile each algorithm individually. Each
-directory has a file called build.py, which specifies the various
-"librule"s and "binrule"s. Building a "librule" makes the library
-files that may be linked against other libary/binary files.
+% make
+% make install
 
-To add custom flags, add --cflags. To get increased performance on
-Pentium 4 and define a macro called COAGULATE for the dual-tree KDE
-implementation under $FASTLIBPATH/mlpack/kde directory, you would use:
+Let's assume you installed things to $FASTLIBPATH.  If you look in
+$FASTLIBPATH/lib and $FASTLIBPATH/include, you should see a static library and
+a bunch of header files.  At this point, you should be able to develop your
+code using whatever tools you want.
 
-fl-build dualtree_kde_bin --mode=fast --cflags="-march=pentium4
--DCOAGULATE"
+6. Quick Test
 
-2.3. How to run MLPACK
-----------------------
+For instance, let's test out the install by compiling one of the mlpack
+programs by hand:
 
-Following the steps in Seciton 2.1 will populate each directory with
-all of the symbolic links to the binary files.
+% cd $FASTLIBPATH/mlpack/allnn
+% g++ allnn_test.cc -o allnn_test -DDISABLE_DISK_MATRIX -L$FASTLIBPATH/lib -I$FASTLIBPATH/include -lfastlib -llapack
+% ./allnn_test (tests should pass)
 
-For example, take dualtree_kde_bin binary file under
-$FASTLIBPATH/mlpack/kde directory. Change directory into it and typing
-the following:
+That "-DDISABLE_DISK_MATRIX" is an annoying define that you'll have to add
+until we add support for the memory manager to the CMake build.
 
-./dualtree_kde_bin --help
+7. Compiling MLPACK code with CMake
 
-brings up the parameters that can be used, "--data" and "--query", and
-a submodule that is used to specify parameters that are specific to
-kernel density estimation algorithm. Typing the following:
+% cd $FASTLIBPATH/mlpack
+% mkdir build && cd build
+% ccmake ..
 
-./dualtree_kde_bin --help=kde
+Hit 'c' to configure.
+You have to tell CMake where to find the fastlib you just installed.  By
+default, it looks in /usr/local, so it won't find the library.  Change 
+FASTLIB_BASE_DIR to where you installed fastlib (e.g. the path in $FASTLIBPATH)
+and hit 'c' again.  FASTLIB_LIB should now be correct.  Hit 'g' to generate the
+Makefiles.
 
-brings up more parameter options you can use for specifying how the
-algorithm can be run: by specifying the parameters under "--kde/".
+% make
 
-Foe example, we can run KDE by typing the following in one line:
+This builds libraries and executables for each algorithm in its corresponding
+subdirectory.  You can run the programs from there.  There is no sensible 
+'make install' target yet.
 
-./dualtree_kde_bin --data=name_of_the_reference_dataset
-                   --dwgts=name_of_the_reference_weight_dataset
-                   --query=name_of_the_query_dataset 
-                   --kde/kernel=gaussian
-                   --kde/bandwidth=0.0130619
-                   --kde/scaling=range 
-                   --kde/multiplicative_expansion
-                   --kde/fast_kde_output=fast_kde_output.txt
-                   --kde/naive_kde_output=naive_kde_output.txt 
-                   --kde/do_naive
-                   --kde/relative_error=0.01
-
-2.4. Linking to MLPACK 
-----------------------
-When doing the initial install, you can provide --prefix option to
-optionally export the header files and the compiled library files
-under an external directory. For example,
-
-fl-build-all --mode=fast --recursive --prefix=/usr/fastlib_export
-
-will install the required headers under
-/usr/fastlib_export/include/fastlib2 and the required library files
-under /usr/fastlib_export/lib. You can link against the generated
-library and header files outside FASTlib system using the g++
-compiler:
-
-g++ external_program.cc /usr/fastlib_export/lib/*.a
--I/usr/fastlib_export/include/fastlib2 -L/usr/fastlib_export/lib
+One easy(ish) way to develop your code would be to make a subdirectory for it
+in mlpack.  Then you could copy and modify the CMakeLists.txt file from another
+subdirectory to create your libraries and executables.  You also have to modify
+the CMakeLists.txt file in the mlpack directory to recurse into your
+subdirectory.  Then, when you configure mlpack, it will also create make
+targets for your code.
 
 FUTURE PLANS
 ------------
@@ -283,6 +204,7 @@ LLE, Isomap).
 
 - Sparse KDE using QP.
 
+Happy coding!
 
 CONTACTS
 --------

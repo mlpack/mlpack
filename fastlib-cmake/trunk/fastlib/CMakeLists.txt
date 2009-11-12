@@ -28,8 +28,12 @@ message("include: ${FASTLIB_INCLUDE_DIRS}")
 
 set(FASTLIB_SRCS)
 ## recurse
-set(DIRS base col data file fx la math optimization par tree)
-#set(DIRS base col data file fx la math par tree)
+set(DIRS base col data file fx la math par tree)
+
+option(FASTLIB_WITH_OPTIMIZERS "Include optimization code - requires OPT++." ON)
+if(FASTLIB_WITH_OPTIMIZERS)
+   set(DIRS ${DIRS} optimization)
+endif(FASTLIB_WITH_OPTIMIZERS)
 
 foreach(dir ${DIRS})
   add_subdirectory( ${dir} fastlib/${dir} )
@@ -38,6 +42,7 @@ endforeach()
 set_source_files_properties(${CMAKE_BINARY_DIR}/fastlib/base/basic_types.h 
     PROPERTIES GENERATED TRUE)
 
+message( ${FASTLIB_SRCS} )
 add_library( fastlib ${FASTLIB_SRCS} )
 add_dependencies( fastlib ${DIRS} template_types_detect ) #FIXME
 
