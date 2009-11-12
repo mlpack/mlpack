@@ -366,6 +366,8 @@ class BoundConstraintTrait<Method, Objective, true> {
     OPTPP::Constraint bc;
     Vector lower_bound;
     Vector upper_bound;
+    lower_bound.Init(dimension);
+    upper_bound.Init(dimension);
     objective->GetBoundConstraint(&lower_bound, &upper_bound);
     if (lower_bound.length()!=BIG_BAD_NUMBER and 
         upper_bound.length()==BIG_BAD_NUMBER) {
@@ -749,6 +751,16 @@ class StaticOptppOptimizer {
        result = OPTPP::NLPGradient;   
     }
   }
+
+  /**
+   * Copy a Fastlib Matrix to a NEWMAT::SymmetricMatrix.
+   */
+  static void CopyFLMatrixToNMSymMatrix(int ndim, const Matrix& flmat,
+      NEWMAT::SymmetricMatrix &hx) {
+    for(int m=1; m <= ndim; ++m)
+      for(int n=1; n <= m; ++n)
+        hx(m,n) = flmat.get(m-1, n-1);
+  }
     
   static void ComputeObjective(int mode, int ndim, const NEWMAT::ColumnVector &x, 
       double &fx, NEWMAT::ColumnVector &gx, 
@@ -768,9 +780,11 @@ class StaticOptppOptimizer {
     }
     if (mode & OPTPP::NLPHessian) {
       Matrix hessian;
-      hessian.Alias(hx.data(), ndim, ndim);  
+      hessian.Init(ndim, ndim);
+      //!hessian.Alias(hx.data(), ndim, ndim);  
       //!objective_->ComputeHessian(vecx, hessian);  
       objective_->ComputeHessian(vecx, &hessian);  
+      CopyFLMatrixToNMSymMatrix(ndim, hessian, /*&*/hx);
       result = OPTPP::NLPHessian;
     }
   } 
