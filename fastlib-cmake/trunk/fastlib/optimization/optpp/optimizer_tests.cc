@@ -63,7 +63,12 @@ public:
     hx->set(0,0,-400.*f1+800.*x1*x1 + 2.);
     hx->set(0,1,-400.*x1);
     hx->set(1,0,-400.*x1);
-    hx->set(1,1,200.);
+    //!hx->set(1,0,-400.*x1);
+    //!hx->set(0,1,200.); //! hx(1,1) in newmat memoryland
+    //!TODO err... memory laid out completely differently for fastlib & newmat
+    //!TODO but later data blocks are aliased
+    hx->set(1,1,200.); //! opt++ uses a symm matrix, this tramples
+                           //! the memory
   }
 
   void GetBoundConstraint(Vector *lb, Vector *ub) {
