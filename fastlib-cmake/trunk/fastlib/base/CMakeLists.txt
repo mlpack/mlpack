@@ -9,7 +9,6 @@ add_subdirectory( config )
 #~                      ${FASTLIB_INCLUDE_DIRS}
 #~ )
 include_directories( . )
-message("${FASTLIB_INCLUDE_DIRS}")
 
 set( TMP_HEADERS 
     ansi_colors.h  cc.h	common.h    debug.h	  fortran.h  otrav_impl.h

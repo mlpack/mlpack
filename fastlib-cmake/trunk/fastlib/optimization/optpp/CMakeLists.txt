@@ -13,22 +13,14 @@ set( OPTPP_LIBS opt newmat blas ) #! FLIBS?
 #add_definitions( -DUSING_DOUBLE -DHAVE_STD -DHAVE_NAMESPACES -DSETUP_C_SUBSCRIPTS ) 
 #add_definitions( -DDEBUG )
 
-set( TMP_HEADERS 
-    optimizer.h
-)
+set( TMP_HEADERS optimizer.h )
 set( TMP_CXX )
 set( TMP_SRCS ${TMP_HEADERS} ${TMP_CXX})
-
 set(OPTPP_SRCS)
 foreach(file ${TMP_SRCS})
   set(OPTPP_SRCS ${OPTPP_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${OPTPP_SRCS} PARENT_SCOPE )
-
-message("in opt++:")
-message("TMP_SRCS: ${TMP_SRCS}")
-message("OPTPP_SRCS: ${OPTPP_SRCS}")
-message("FASTLIB_SRCS: ${FASTLIB_SRCS}")
 
 add_library( fastlib_optpp ${OPTPP_SRCS} )
 set_target_properties( fastlib_optpp PROPERTIES LINKER_LANGUAGE CXX)

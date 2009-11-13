@@ -722,14 +722,15 @@ class StaticOptppOptimizer {
   
   static void Initialize(int ndim, NEWMAT::ColumnVector &x) {
     Vector vec;  
-    vec.Alias(x.data(), ndim);
+    //vec.Alias(x.data(), ndim);
+    vec.Alias(const_cast<double*>(x.data()), ndim); //! non-const alias of const data
     objective_->GiveInit(&vec);
     
   }
   static void ComputeObjective(int ndim, const NEWMAT::ColumnVector &x, 
       double &fx, int &result) {
     Vector vec;  
-    //!vec.Alias(const_cast<double*>(x.data()), ndim); //! non-const alias of const data
+    //!vec.Alias(x.data(), ndim); //! non-const alias of const data
     vec.Alias(const_cast<double*>(x.data()), ndim); //! non-const alias of const data
     objective_->ComputeObjective(vec, &fx);
     result = OPTPP::NLPFunction;
@@ -758,7 +759,7 @@ class StaticOptppOptimizer {
   static void CopyFLMatrixToNMSymMatrix(int ndim, const Matrix& flmat,
       NEWMAT::SymmetricMatrix &hx) {
     for(int m=1; m <= ndim; ++m)
-      for(int n=1; n <= m; ++n)
+      for(int n=1; n <= m; ++n) //only need the lower half
         hx(m,n) = flmat.get(m-1, n-1);
   }
     
