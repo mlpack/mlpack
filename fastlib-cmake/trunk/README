@@ -80,28 +80,41 @@ environment is your best bet.
 * cmake 2.6 or higher
 * BLAS & LAPACK (usually separate in Linux, both included as "lapack" under
   "Math" in the Cygwin installer)
+* The library opt++, needed for optimization routines.  This is technically 
+  optional, but very many machine learning algorithms need to do optimization.
 
 Optional, but strongly recommended:
-* The optimization library opt++ (needed for optimization routines)
 * The Boost C++ libraries (not directly used, but useful)
 
+2. Install the opt++ optimization library.  Again, this is optional, but will
+be useful if you are developing new ML algorithms.  The opt++ library seems to
+only be supported on systems with GNU autotools.  MS VC++ users are on your own.
 
-2. Extract the tar or zip file, mlpack-distribution.tar.gz.  Let's say
-you've just created /path/to/fastlib2 (it's the directory this file is in)
+* The source code can be obtained from !!! http://
+* Extract the tar file to some OPTPP_DIR.
+* In the file OPTPP_DIR/newmat11/include.h, uncomment the line 
+  "#define SETUP_C_SUBSCRIPTS".
+* Now just follow the directions in the INSTALL file for opt++.  By default, it
+  installs in /usr/local.  It uses some fairly generic filenames, so you might 
+  have to install in another location if you get conflicts.
 
-3. After this, you will need to make sure your environment variables are set up
+3. Now all dependencies should be installed.  Extract the MLPACK tar or zip 
+file, mlpack-distribution.tar.gz.  Let's say you've just created 
+/path/to/fastlib (it's the directory this file is in)
+
+4. After this, you will need to make sure your environment variables are set up
 properly. Set FASTLIBPATH to this directory, e.g.
 
-export FASTLIBPATH=/path/to/fastlib2  (bash)
-setenv FASTLIBPATH=/path/to/fastlib2  (csh/tcsh)
+export FASTLIBPATH=/path/to/fastlib  (bash)
+setenv FASTLIBPATH=/path/to/fastlib  (csh/tcsh)
 
-4. Change to the fastlib subdirectory and create a build directory:
+5. Change to the fastlib subdirectory and create a build directory:
 
 cd $FASTLIBPATH/fastlib
 mkdir build  (this can actually go anywhere you want)
 cd build
 
-5. CMake's default is to install things in /usr/local/, which may not be what
+6. CMake's default is to install things in /usr/local/, which may not be what
 you want.  So, let's configure our cmake project:
 
 % ccmake .. (if in build subdir)
@@ -110,19 +123,29 @@ you want.  So, let's configure our cmake project:
 This will bring up a curses interface (GUIs exist for cmake; feel free to
 install one).  Hit "c" to configure.  You should see a screen like this:
 
- CMAKE_BUILD_TYPE                *                                             
- CMAKE_INSTALL_PREFIX            */usr/local                                   
+ CMAKE_BUILD_TYPE                *
+ CMAKE_INSTALL_PREFIX            */usr/local
+ FASTLIB_WITH_OPTIMIZERS         *ON
+ OPTPP_BASE_DIR                  */usr/local
+ OPTPP_LIB                       */usr/local/lib/libopt.a
 
-Eventually lots of CMAKE_BUILD_TYPE's will be supported.  For now just leave
-this blank.  One choice for the install prefix that will make things similar to
-the old build system is to use FASTLIBPATH as the CMAKE_INSTALL_PREFIX.  This
-will pust the libraries and header files in the lib/ and include/
-subdirectories.  So, go to the CMAKE_INSTALL_PREFIX line, hit Enter, change it
-to whatever you want, and hit Enter again.  Hit "c" to update the
-configuration, then hit "g" to generate the build files and exit.  There should
-now be a Makefile in the build directory.  Now run
+From the CMake docs: "CMAKE_BUILD_TYPE... Possible values are empty, Debug,
+Release, RelWithDebInfo and MinSizeRel. This variable is only supported for
+make based generators."  
 
-% make
+One choice for the install prefix that will make things similar to the old
+build system is to use FASTLIBPATH as the CMAKE_INSTALL_PREFIX.  This will put
+the libraries and header files in the lib/ and include/ subdirectories.  So, go
+to the CMAKE_INSTALL_PREFIX line, hit Enter, change it to whatever you want,
+and hit Enter again.  
+
+Change FASTLIB_WITH_OPTIMIZERS to OFF if you don't want to include opt++ 
+support (e.g. if the opt++ build failed for some reason)
+
+Hit "c" to update the configuration, then hit "g" to generate the build files
+and exit.  There should now be a Makefile in the build directory.  Now run
+
+% make  (or "VERBOSE=1 make &> make.log" if you want to know all the details)
 % make install
 
 Let's assume you installed things to $FASTLIBPATH.  If you look in
@@ -130,19 +153,25 @@ $FASTLIBPATH/lib and $FASTLIBPATH/include, you should see a static library and
 a bunch of header files.  At this point, you should be able to develop your
 code using whatever tools you want.
 
-6. Quick Test
+7. Quick Test
 
 For instance, let's test out the install by compiling one of the mlpack
 programs by hand:
 
 % cd $FASTLIBPATH/mlpack/allnn
-% g++ allnn_test.cc -o allnn_test -DDISABLE_DISK_MATRIX -L$FASTLIBPATH/lib -I$FASTLIBPATH/include -lfastlib -llapack
+% g++ allnn_test.cc -o allnn_test -DDISABLE_DISK_MATRIX -L$FASTLIBPATH/lib \
+  -I$FASTLIBPATH/include -lfastlib -llapack
 % ./allnn_test (tests should pass)
 
 That "-DDISABLE_DISK_MATRIX" is an annoying define that you'll have to add
 until we add support for the memory manager to the CMake build.
 
-7. Compiling MLPACK code with CMake
+An example of building a program that requires opt++:
+% cd $FASTLIBPATH/examples/optimization
+% g++ optimizer_tests.cc -o optimizer_tests -DDISABLE_DISK_MATRIX \
+  -L$FASTLIBPATH/lib -I$FASTLIBPATH/include -lfastlib -lopt -lnewmat -llapack
+
+8. Compiling MLPACK code with CMake
 
 % cd $FASTLIBPATH/mlpack
 % mkdir build && cd build
