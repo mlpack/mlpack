@@ -30,7 +30,7 @@ add_executable( ncmvu
 )
 target_link_libraries( ncmvu
     mvu
-    lbfgs  #TODO
+#   lbfgs  #TODO
     ${MLPACK_STD_LIBS}
 )
 ## install(FILES ${TMP_HEADERS} DESTINATION include/fastlib/mvu)

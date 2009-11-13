@@ -24,6 +24,6 @@ add_executable( mog_l2e_main
 )
 target_link_libraries( mog_l2e_main
     mog_l2e
-    optimization
+#   optimization
 #    ${MLPACK_STD_LIBS}
 )
