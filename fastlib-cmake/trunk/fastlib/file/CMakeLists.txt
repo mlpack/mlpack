@@ -11,8 +11,8 @@ set(FILE_SRCS)
 foreach(file ${TMP_SRCS})
   set(FILE_SRCS ${FILE_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
-
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${FILE_SRCS} PARENT_SCOPE )
+
 add_library( file ${FILE_SRCS} )
 target_link_libraries( file base col )
 #add_dependencies( file base col )
