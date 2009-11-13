@@ -21,8 +21,8 @@
 #include "fastlib/fastlib.h"
 #include "mlpack/allknn/allknn.h"
 #include "mlpack/allkfn/allkfn.h"
-#include "mlpack/optimization/lbfgs/optimization_utils.h"
-//#include "fastlib/optimization/lbfgs/optimization_utils.h"
+//#include "mlpack/optimization/lbfgs/optimization_utils.h"
+#include "fastlib/optimization/lbfgs/optimization_utils.h"
 
 const fx_entry_doc mvu_entries[] = {
   {"new_dimension", FX_REQUIRED, FX_INT, NULL,
