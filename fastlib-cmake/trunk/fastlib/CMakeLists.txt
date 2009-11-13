@@ -43,17 +43,6 @@ set_source_files_properties(${CMAKE_BINARY_DIR}/fastlib/base/basic_types.h
 
 add_library( fastlib ${FASTLIB_SRCS} )
 add_dependencies( fastlib ${DIRS} template_types_detect ) #FIXME
-# add_dependencies( fastlib 
-#     base                          fastlib_contrib_optimization
-#     fastlib_optpp
-#     file 
-#     fx
-#     la                            par
-#     col                           
-#     data                          
-#     math                          
-#     optimization                  tree
-#     template_types_detect ) #FIXME
 
 add_executable( otrav_test otrav_test.cc )
 target_link_libraries( otrav_test fastlib )
