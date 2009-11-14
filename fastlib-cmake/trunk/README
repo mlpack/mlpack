@@ -90,7 +90,7 @@ Optional, but strongly recommended:
 be useful if you are developing new ML algorithms.  The opt++ library seems to
 only be supported on systems with GNU autotools.  MS VC++ users are on your own.
 
-* The source code can be obtained from !!! http://
+* The source code can be obtained from https://software.sandia.gov/opt++/
 * Extract the tar file to some OPTPP_DIR.
 * In the file OPTPP_DIR/newmat11/include.h, uncomment the line 
   "#define SETUP_C_SUBSCRIPTS".
@@ -98,9 +98,9 @@ only be supported on systems with GNU autotools.  MS VC++ users are on your own.
   installs in /usr/local.  It uses some fairly generic filenames, so you might 
   have to install in another location if you get conflicts.
 
-3. Now all dependencies should be installed.  Extract the MLPACK tar or zip 
-file, mlpack-distribution.tar.gz.  Let's say you've just created 
-/path/to/fastlib (it's the directory this file is in)
+3. Now all dependencies should be installed.  For the rest of the instructions,
+assume you've extracted the MLPACK tar or zip file to /path/to/fastlib (it's 
+the directory this file is in).
 
 4. After this, you will need to make sure your environment variables are set up
 properly. Set FASTLIBPATH to this directory, e.g.
@@ -170,6 +170,9 @@ An example of building a program that requires opt++:
 % cd $FASTLIBPATH/examples/optimization
 % g++ optimizer_tests.cc -o optimizer_tests -DDISABLE_DISK_MATRIX \
   -L$FASTLIBPATH/lib -I$FASTLIBPATH/include -lfastlib -lopt -lnewmat -llapack
+
+You might have to add the opt++ library and include paths if you installed it
+somewhere nonstandard.
 
 8. Compiling MLPACK code with CMake
 
