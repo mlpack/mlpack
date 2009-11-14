@@ -8,6 +8,8 @@ find_library(OPTPP_LIB opt ${OPTPP_LIB_DIR}) #!
 find_library(OPTPP_LIB newmat ${OPTPP_LIB_DIR}) #!
 ## include dirs
 include_directories( ${OPTPP_INCLUDE_DIR} )
+## libs
+link_directories( ${OPTPP_LIB_DIR} )
 set( OPTPP_LIBS opt newmat blas ) #! FLIBS?
 
 #add_definitions( -DUSING_DOUBLE -DHAVE_STD -DHAVE_NAMESPACES -DSETUP_C_SUBSCRIPTS ) 
