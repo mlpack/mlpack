@@ -1,0 +1,67 @@
+***************************************************
+May 5th,2008
+
+Looks like the density estimates are coming out right, which means the density equations are hopefully right. 
+
+However the cross validation score for local linear seems to be favouring  bandwidths which are very small. As a result the density estimates for local linear estimates are coming out to be very noisy.
+
+This probably means that there is something wrong with the cross validation score for the local linear estimator. I probably will have to look back into the cross validation equations for local linear estimator. I dont think I have coded them wrong for it is simple to code. 
+
+I will have to probably look back into my code and make sure that the crossvalidation functions are all correctly written. 
+
+I have been generating skewed densities by generating points from mog(mixture of gaussians). A nice way of doing that is by  having a lot of mixtures in the mog with small variances. For e.g
+ 
+y=1/3*N(0,1/3)+|1/3*N(1/3,1/9)+1/3*N(1/9,1/27)|
+               |------------------------------|
+                 small variance components
+
+Next steps:
+
+Check if the code has been properly written ( Since small bandwidths are being favoured, it means there may be a missing 'h' n the equations)
+
+******************************************************************************
+
+May 6th,2008
+
+Silverman in the 2nd chapter of his book talks abt cross-validation and what range of bandwidths should be used for cross validation.. The biggest error that I was commiting til now was choosing an inapporpriate range of bandwidths for my corssvalidation.  This is a huge huge error because due to discretization of the data we may get extremely low cvs for small bandwidths and gradually the cvs becomes -infinity as h->0 (Silverman pg 51). This was what i was doing till now. I used to test my cvs for really small bandwidths and the cvs for kde used to come out to really small values. This should be completely avoided. Silverman suggests using  a range of bandwidths between [0.25h*,1.50h*], where 
+
+   -------------------------------------------------|-
+   |                                                |
+   |     h*=0.90 A n^-0.2 where A=min(sd,iqr/1.34)  |  (Silverman pg-47)
+   |                                                |
+   |------------------------------------------------|-
+
+
+ The above equation is an improvement over previous equations which are in terms of only sd(standard deviation or the inter irq(inter quartile range). The above equations assume that a gausssian kernel is being used and that the underlying density is normal. Silverman claims that the above equation is robust to a variety of deisities. An interesting thing to do would be to get an analogous equation for the erf kernel which i am using. This would involve calculating the following integrals for the erf kernel(silverman pg 41)
+
+1) k2= \int_{t=-infty}^{t=+infty} t^2 K\left(t\right) dt
+
+2) k1= \int_{t=-infty]^{t=+infty} K^2\left(t\right) dt 
+
+
+and then the optimal bandwidth is h*=k2^0.4 k1^0.80. 
+
+******************************************************************************
+
+
+May 7th,2008
+
+
+So I plan to caclulate the efficiency of the erf kernel and an expression for the optimal bandwidth of the erf kernel. Howeve after a lot of attempts and then trying to use the mathematica i realise that it involves an intractable integral. The problem is while k2= \int_{t=-infty}^{t=+infty} t^2 K\left(t\right) dt is easily solvable the other integral k1= \int_{t=-infty]^{t=+infty} K^2\left(t\right) dt involves an intractable integral, which even mathematica could not come up with.
+
+Precious waste of time but a useful lesson learnt is to use mathematica to see if the integral is possible to solve before trying to dive deep into integration.  Also it is nice to make sure that u have typed in the right integrand in mathematica to make sure that u are solving the right integral. I usually do this by delibreately making a mistake in typing the integrand( make the valriable of integration t when it should have been x and provide some artificial ( or real if required) limits for integration.  This way mathematica spits out the integrand that was typed in and u can see if u typed in the right integral. 
+
+So i am back to my cross validation code. I really dont understand how to make sure that the erf kernel is correcting the bias error. Don suggests me to come up with an analytical proof of the bias correction and suggests me to look into how the proof of local linear methods correcting error follows. 
+
+
+*******************************************************
+
+
+May 8th,2008
+
+
+So I find a lot of mistakes in my implementation of the cross validation function. A very major mistake is the confusion in notation. While Silverman has an explicit h outside the summation in KDE I consider h to be a part  of the normalization factor of the kernel. So for silverman the normalization constant of the gaussian kernel is sqrt(2\pi) and for me the normalization constanf for the gaussian kernel is h*sqrt(2 \pi). This led to me making mistakes in the cross validation score for KDE, which i have noted down in my research notes. 
+
+With this i am pretty confident that the cross validation scores of KDE and local likelihood are correctly coded and correctly derived. However Least squares cross validation seems to be wrong. It is monotonically decreasing and even when i gave absurd values for the bandwidth ( e.g. h=100000000) the cvs seems to be outputting really small values and hence chooses the largest bandwidth of all bandwidths. I need to look into the cross validation score of local least squares.
+
+Yayy!! Finally i fixed it up. Preliminary results suggest that the local linear method willl pick up a  larger bandwidth than as compared to likelihood and KDE.  I need to test it on a larger dataset and see if everything is going fine or not. However as of now it looks like local linear doesnt correct the bias. Need to test it more.
