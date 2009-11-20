@@ -140,13 +140,13 @@ class SparseMatrix {
   /** 
    * The same as above but we use STL vector for values
    */
-  template<template<typename> class IndexContainer, 
-           template<typename> class ValueContainer>
-  void Init(const IndexContainer<IndexPrecision> &row_indices,
-            const IndexContainer<IndexPrecision> &col_indices,
-            const ValueContainer<ValuePrecision> &values, 
-            IndexPrecision nnz_per_row, 
-            IndexPrecision dimension);
+  //template<template<typename> class IndexContainer, 
+           //template<typename> class ValueContainer>
+  //void Init(const IndexContainer<IndexPrecision> &row_indices,
+            //const IndexContainer<IndexPrecision> &col_indices,
+            //const ValueContainer<ValuePrecision> &values, 
+            //IndexPrecision nnz_per_row, 
+            //IndexPrecision dimension);
 
   /** Initialize from a text file in the following format
    *   row column value \n
@@ -171,7 +171,7 @@ class SparseMatrix {
   /** 
    * Initialize the diagonal 
    */
-  template<template<typename> ValueContainer>
+  template<template<typename> class ValueContainer>
   void InitDiagonal(const ValueContainer<ValuePrecision> &vec); 
   /** 
    * Initialize the diagonal with a constant
@@ -188,24 +188,24 @@ class SparseMatrix {
    * If you load the same row twice or the row has duplicate columns
    * then you will get unexpected results
    */
-  template<template<typename> IndexContainer, 
-           template<typename> ValueContainer>
+  template<template<typename> class IndexContainer, 
+           template<typename> class ValueContainer>
   void LoadRow(IndexContainer<IndexPrecision> row, 
                IndexContainer<IndexPrecision> &columns, 
-               ValueContainer<ValuesPrecision> &values);
-  template<template<typename> IndexContainer, 
-           template<typename> ValueContainer>
+               ValueContainer<ValuePrecision> &values);
+  template<template<typename> class IndexContainer, 
+           template<typename> class ValueContainer>
   void LoadRow(IndexContainer<IndexPrecision> row, 
                IndexContainer<IndexPrecision> *columns, 
                ValueContainer<ValuePrecision> &values);
-  template<template<typename> IndexContainer, 
-           template<typename> ValueContainer>
+  template<template<typename> class IndexContainer, 
+           template<typename> class ValueContainer>
   void LoadRow(IndexContainer<IndexPrecision> row, 
                IndexContainer<IndexPrecision> num, 
                IndexPrecision *columns, 
                ValueContainer<ValuePrecision>  *values);
-  template<template<typename> IndexContainer, 
-           template<typename> ValueContainer> 
+  template<template<typename> class IndexContainer, 
+           template<typename> class ValueContainer> 
   void LoadRow(IndexPrecision row, 
                IndexContainer<IndexPrecision> &columns, 
                ValueContainer<ValuePrecision>  &values);
@@ -246,7 +246,7 @@ class SparseMatrix {
   /** 
    * Sets the diagonal with the values of the vector
    */
-  template<template<typename> ValueContainer> 
+  template<template<typename> class ValueContainer> 
   void SetDiagonal(const ValueContainer<ValuePrecision> &vector); 
   /** 
    * Sets the diagonal withe a scalar
@@ -290,7 +290,7 @@ class SparseMatrix {
    *  where i denotes the global row number of A and j denotes the  column number 
    *  You must have called EndLoading()
    */
-  template<template<typename> ValueContainer>
+  template<template<typename> class ValueContainer>
   void ColumnScale(const ValueContainer<ValuePrecision> &vec) {
     if (unlikely(!matrix_->Filled())) {
       FATAL("You should call EndLoading first...\n");
@@ -303,7 +303,7 @@ class SparseMatrix {
    *   where i denotes the row number of A and j denotes the column number of A.
    *   You must have called EndLoading()
    */
-  template<template<typename> ValueVector>
+  template<template<typename> class ValueVector>
   void RowScale(const ValueVector<ValuePrecision> &vec) {
     if (unlikely(!matrix_->Filled())) {
       FATAL("You should call EndLoading first...\n");
@@ -326,7 +326,7 @@ class SparseMatrix {
    * L infinity norm
    * You must have called EndLoading()
    */
-  Precision LInfNorm() {
+  ValuePrecision LInfNorm() {
     if (unlikely(!matrix_->Filled())) {
       FATAL("You should call EndLoading first...\n");
     }
@@ -337,7 +337,7 @@ class SparseMatrix {
    *   of the matrix 
    *   You must have called EndLoading()
    */
-  template<template<typename> ValueVector>
+  template<template<typename> class ValueVector>
   void InvRowSums(ValueVector<ValuePrecision> *result) {
     if (unlikely(!matrix_->Filled())) {
       FATAL("You have to call EndLoading first...\n");
@@ -352,13 +352,13 @@ class SparseMatrix {
    * of the matrix 
    * You must have called EndLoading()
   */
-  typename<template<typename> ValueContainer>
+  template<template<typename> class ValueContainer>
   void RowSums(ValueContainer<ValuePrecision> *result) {
     if (unlikely(!matrix_->Filled())) {
       FATAL("You have to call EndLoading first...\n");
     }
     result->Init(dimension_);
-    Tpetra::Vector temp(View, *map_, result->ptr());
+    Tpetra::Vector<IndexPrecision, ValuePrecision> temp(View, *map_, result->ptr());
     matrix_->InvRowSums(temp);
     for(IndexPrecision i=0; i<dimension_; i++) {
       (*result)[i]= 1/(*result)[i];
@@ -369,7 +369,7 @@ class SparseMatrix {
    * Computes the inv of max of absolute values of the rows of the matrixa
    * You must have called EndLoading()
    */
-  template<template<typename> ValueContainer>
+  template<template<typename> class ValueContainer>
   void InvRowMaxs(ValueContainer<ValuePrecision> *result) {
     if (unlikely(!matrix_->Filled())) {
       FATAL("You have to call EndLoading first...\n");
@@ -382,7 +382,7 @@ class SparseMatrix {
    *  matrix
    *  You must have called EndLoading()
    */
-  template<template<typename> ValueContainer>
+  template<template<typename> class ValueContainer>
   void InvColSums(ValueContainer<ValuePrecision> *result) {
     if (unlikely(!matrix_->Filled())) {
       FATAL("You have to call EndLoading first...\n");
@@ -395,7 +395,7 @@ class SparseMatrix {
    *  Computes the inv of max of absolute values of the columns of the matrix
    *  You must have called EndLoading()
    */
-  template<template<typename> ValueContainer>
+  template<template<typename> class ValueContainer>
   void InvColMaxs(ValueContainer<ValuePrecision> *result) {
     if (unlikely(!matrix_->Filled())) {
       FATAL("You have to call EndLoading first...\n");
@@ -502,7 +502,7 @@ class SparseMatrix {
   void IncompleteCholesky(IndexPrecision level_fill,
                           ValuePrecision drop_tol,
                           SparseMatrixT *u, 
-                          GenVector<ValuePrecision *d,
+                          GenVector<ValuePrecision> *d,
                           ValuePrecision *condest);     
 
  private:
@@ -513,13 +513,13 @@ class SparseMatrix {
   bool issymmetric_;
   bool indices_sorted_;
   Tpetra::Map<IndexPrecision> *map_;
-  Teuchos::RCP<Tpetra::CrsMatrix<IndexPrecision,  ValuePrecision> matrix_;
+  Teuchos::RCP<Tpetra::CrsMatrix<IndexPrecision, ValuePrecision> > matrix_;
   IndexPrecision *my_global_elements_;
 
-  void Init(const Tpetra_CrsMatrix<IndexPrecision, ValuePrecision> &other); 
-  template<template<typename> IndexContainer, 
-           template<typename> ValueContainer>
-  void Load(const IndeContainer<IndexPrecision> &rows, 
+  void Init(const Tpetra::CrsMatrix<IndexPrecision, ValuePrecision> &other); 
+  template<template<typename> class IndexContainer, 
+           template<typename> class ValueContainer>
+  void Load(const IndexContainer<IndexPrecision> &rows, 
             const IndexContainer<IndexPrecision> &columns, 
             const ValueContainer<ValuePrecision> &values);
   void AllRowsLoad(GenVector<ValuePrecision> &rows, 
@@ -573,7 +573,7 @@ class SparseMatrix {
   template<typename IndexPrecision, typename ValuePrecision, IsVector=false>
   inline void Multiply(const SparseMatrix<IndexPrecision, ValuePrecision> &mat,
                        const GenMatrix<ValuePrecision, IsVector>  &vec,
-                       GenMatric<Precision, IsVector> *result,
+                       GenMatrix<ValuePrecision, IsVector> *result,
                        bool transpose_flag);
   /** 
    * Multiply the matrix with a scalar
@@ -581,7 +581,7 @@ class SparseMatrix {
   template<typename IndexPrecision, typename ValuePrecision>
   inline void Multiply(const SparseMatrix<IndexPrecision, ValuePrecision> &mat,
                        const ValuePrecision scalar,
-                       SparseMatrix<IndexPrecisin, ValuePrecision> *result);
+                       SparseMatrix<IndexPrecision, ValuePrecision> *result);
   
   /** 
    * element wise multiplication of the matrices
@@ -594,7 +594,7 @@ class SparseMatrix {
 /***********************************************************/
   template<typename IndexPrecision, typename ValuePrecision, bool IsVector=true>
   inline void ScaleRows(const GenMatrix<ValuePrecision, IsVector> &scales, 
-                        SparseMatrix<IndexPrecision, ValuePrecision> *matrix)
+                        SparseMatrix<IndexPrecision, ValuePrecision> *matrix);
 
   template<typename IndexPrecision, typename ValuePrecision>
   inline ValuePrecision LengthEuclidean(
@@ -614,22 +614,22 @@ class SparseMatrix {
       const SparseMatrix<IndexPrecision, ValuePrecision> &x, 
       SparseMatrix<IndexPrecision, ValuePrecision> *y); 
   
-  template<typename IndexPrecision, typename ValuePrecision
+  template<typename IndexPrecision, typename ValuePrecision>
   inline void AddExpert(ValuePrecision alpha, 
       const SparseMatrix<IndexPrecision, ValuePrecision> &x, 
       SparseMatrix<IndexPrecision, ValuePrecision> *y); 
 
   template<typename Precision>
-  inline void AddTo(index_t length, const Precision *x, Precision *y)
+  inline void AddTo(index_t length, const Precision *x, Precision *y);
 
   template<typename IndexPrecision, typename ValuePrecision, MemoryAlloc M>
   inline void Add(const SparseMatrix<IndexPrecision, ValuePrecision> &x, 
       const SparseMatrix<IndexPrecision, ValuePrecision> &y, 
-      SparseMatrix<IndexPrecision, ValuePrecisin> *z); 
+      SparseMatrix<IndexPrecision, ValuePrecision> *z); 
 
   template<typename IndexPrecision, typename ValuePrecision>
   inline void SubFrom(const SparseMatrix<IndexPrecision, ValuePrecision> &x, 
-                      SparseMatrix<IndexPrecision, ValuePrecision> *y) 
+                      SparseMatrix<IndexPrecision, ValuePrecision> *y);
 
   template<typename IndexPrecision, typename ValuePrecision, MemoryAlloc M>
   inline void Sub(const SparseMatrix<IndexPrecision, ValuePrecision> &x, 
@@ -637,14 +637,14 @@ class SparseMatrix {
       SparseMatrix<IndexPrecision, ValuePrecision> *z); 
 
   template<typename Precision>
-  inline void TransposeSquare(GenMatrix<Precision, false> *X)
+  inline void TransposeSquare(GenMatrix<Precision, false> *X);
 
   template<typename Precision, TransMode IsTransA, bool IsVector=false>
   inline void MulExpert(
       Precision alpha, 
       const GenMatrix<Precision, false> &A,
       const GenMatrix<Precision, IsVector> &x, 
-      Precision beta, GenVector<Precision, IsVector> *y) 
+      Precision beta, GenVector<Precision, IsVector> *y);
 
   template<typename Precision, TransMode IsTransA, TransMode IsTransB>
   inline void MulExpert(
