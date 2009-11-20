@@ -56,16 +56,21 @@
 #ifdef F77_FUNC
 #undef F77_FUNC
 #endif
-#include "trilinos/include/Tpetra_CrsMatrix.hpp"
-#include "trilinos/include/Tpetra_SerialPlatform.hpp"
-#include "trilinos/include/Tpetra_Map.hpp"
-#include "trilinos/include/Tpetra_Vector.hpp"
-#include "trilinos/include/Tpetra_MultiVector.hpp"
-#include "trilinos/include/AnasaziBasicEigenproblem.hpp"
-#include "trilinos/include/AnasaziEpetraAdapter.hpp"
-#include "trilinos/include/AnasaziBlockKrylovSchurSolMgr.hpp"
-#include "trilinos/include/AztecOO.hpp"
-#include "trilinos/include/Ifpack_CrsIct.hpp"
+// trilinos uses this identifier, which is not so surprising.
+// this is why you should think twice about macros.
+#ifdef LI
+#undef LI
+#endif
+#include <Tpetra_CrsMatrix.hpp>
+#include <Tpetra_SerialPlatform.hpp>
+#include <Tpetra_Map.hpp>
+#include <Tpetra_Vector.hpp>
+#include <Tpetra_MultiVector.hpp>
+#include <AnasaziBasicEigenproblem.hpp>
+#include <AnasaziEpetraAdapter.hpp>
+#include <AnasaziBlockKrylovSchurSolMgr.hpp>
+#include <AztecOO.h>
+#include <Ifpack_CrsIct.h>
 
 
 namespace la {
@@ -83,12 +88,12 @@ namespace la {
  *  elements with n<j<m are zero
  */
 
-template<typename IndexPrecision, ValuePrecision>
+template<typename IndexPrecision, typename ValuePrecision>
 class SparseMatrix {
  public:
   // Some typedefs for oft-used data types
-  typedef Tpetra::MultiVector<IndexPrecision, ValuePrecision> MV;
-  typedef Tpetra::Operator OP;
+  typedef Tpetra::MultiVector<ValuePrecision, IndexPrecision> MV;
+  typedef Tpetra::Operator<ValuePrecision, IndexPrecision> OP;
   typedef Anasazi::MultiVecTraits<ValuePrecision, MV> MVT;
   typedef SparseMatrix<IndexPrecision, ValuePrecision> SparseMatrixT;
   SparseMatrix() ;
@@ -125,8 +130,8 @@ class SparseMatrix {
    *   If the dimension (number of rows)and the expected (nnz elements per row)
    *   are set to a negative value, the function will automatically detect it 
   */
-  template<template<typename> IndexContainer, 
-           template<typename> ValueContainer>
+  template<template<typename> class IndexContainer, 
+           template<typename> class ValueContainer>
   void Init(const IndexContainer<IndexPrecision> &row_indices,
             const IndexContainer<IndexPrecision> &col_indices,
             const ValueContainer<ValuePrecision>  &values, 
@@ -135,8 +140,8 @@ class SparseMatrix {
   /** 
    * The same as above but we use STL vector for values
    */
-  template<template<typename> IndexContainer, 
-           template<typename> ValueContainer>
+  template<template<typename> class IndexContainer, 
+           template<typename> class ValueContainer>
   void Init(const IndexContainer<IndexPrecision> &row_indices,
             const IndexContainer<IndexPrecision> &col_indices,
             const ValueContainer<ValuePrecision> &values, 
