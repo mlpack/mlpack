@@ -84,7 +84,9 @@ environment is your best bet.
   optional, but very many machine learning algorithms need to do optimization.
 
 Optional, but strongly recommended:
-* The Boost C++ libraries (not directly used, but useful)
+* Trilinos 10.0 or above, if you want sparse matrices.
+* The Boost C++ libraries (not directly used, but useful, may become mandatory 
+  later)
 
 2. Install the opt++ optimization library.  Again, this is optional, but will
 be useful if you are developing new ML algorithms.  The opt++ library seems to
@@ -98,23 +100,42 @@ only be supported on systems with GNU autotools.  MS VC++ users are on your own.
   installs in /usr/local.  It uses some fairly generic filenames, so you might 
   have to install in another location if you get conflicts.
 
-3. Now all dependencies should be installed.  For the rest of the instructions,
+3. If you want sparse matrices, install the Trilinos package.
+
+* The source code can be obtained from http://trilinos.sandia.gov/
+* Extract the tar file to some directory and cd there.
+* Create a build directory there.
+* Trilinos has very many configuration options.  For the minimal configuration
+  that will work:
+  - cp FASTLIB/script/fastlib-trilinos-minimal-serial-debug-cmake \
+       TRILINOS/build
+  - Optionally edit the script to make CMAKE_INSTALL_PREFIX point where you'd
+    like.  Fastlib will automatically check standard install dirs and 
+    /opt/trilinos during its build.
+  - Make any other changes you'd like (see TRILINOS/sampleScripts and 
+    TRILINOS/cmake/TrilinosCMakeQuickstart.txt for ideas) and run the script.
+  - You may get an error saying that you don't have a recent enough version of
+    CMake.  You can install a newer version, but the configuration script 
+    above seems to work with CMake 2.6.2.  Just change the first line of 
+    TRILINOS/CMakeLists.txt to read "CMAKE_MINIMUM_REQUIRED(VERSION 2.6)"
+
+4. Now all dependencies should be installed.  For the rest of the instructions,
 assume you've extracted the MLPACK tar or zip file to /path/to/fastlib (it's 
 the directory this file is in).
 
-4. After this, you will need to make sure your environment variables are set up
+5. After this, you will need to make sure your environment variables are set up
 properly. Set FASTLIBPATH to this directory, e.g.
 
 export FASTLIBPATH=/path/to/fastlib  (bash)
 setenv FASTLIBPATH=/path/to/fastlib  (csh/tcsh)
 
-5. Change to the fastlib subdirectory and create a build directory:
+6. Change to the fastlib subdirectory and create a build directory:
 
 cd $FASTLIBPATH/fastlib
 mkdir build  (this can actually go anywhere you want)
 cd build
 
-6. CMake's default is to install things in /usr/local/, which may not be what
+7. CMake's default is to install things in /usr/local/, which may not be what
 you want.  So, let's configure our cmake project:
 
 % ccmake .. (if in build subdir)
@@ -126,8 +147,10 @@ install one).  Hit "c" to configure.  You should see a screen like this:
  CMAKE_BUILD_TYPE                *
  CMAKE_INSTALL_PREFIX            */usr/local
  FASTLIB_WITH_OPTIMIZERS         *ON
+ FASTLIB_WITH_SPARSE             *ON                                           
  OPTPP_BASE_DIR                  */usr/local
- OPTPP_LIB                       */usr/local/lib/libopt.a
+ TRILINOS_BASE_DIR               */usr/local                                   
+
 
 From the CMake docs: "CMAKE_BUILD_TYPE... Possible values are empty, Debug,
 Release, RelWithDebInfo and MinSizeRel. This variable is only supported for
@@ -142,8 +165,13 @@ and hit Enter again.
 Change FASTLIB_WITH_OPTIMIZERS to OFF if you don't want to include opt++ 
 support (e.g. if the opt++ build failed for some reason)
 
-Hit "c" to update the configuration, then hit "g" to generate the build files
-and exit.  There should now be a Makefile in the build directory.  Now run
+Change FASTLIB_WITH_SPARSE to OFF if you don't want to include sparse 
+matrices (e.g. if the Trilinos build failed for some reason)
+
+Hit "c" to update the configuration.  If Trilinos or opt++ is required but not
+found, there should be an error.  Otherwise, hit "g" to generate the build 
+files and exit.  There should now be a Makefile in the build directory.  Now 
+run
 
 % make  (or "VERBOSE=1 make &> make.log" if you want to know all the details)
 % make install
@@ -153,7 +181,7 @@ $FASTLIBPATH/lib and $FASTLIBPATH/include, you should see a static library and
 a bunch of header files.  At this point, you should be able to develop your
 code using whatever tools you want.
 
-7. Quick Test
+8. Quick Test
 
 For instance, let's test out the install by compiling one of the mlpack
 programs by hand:
@@ -174,7 +202,7 @@ An example of building a program that requires opt++:
 You might have to add the opt++ library and include paths if you installed it
 somewhere nonstandard.
 
-8. Compiling MLPACK code with CMake
+9. Compiling MLPACK code with CMake
 
 % cd $FASTLIBPATH/mlpack
 % mkdir build && cd build
