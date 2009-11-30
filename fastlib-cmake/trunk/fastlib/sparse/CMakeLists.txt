@@ -1,14 +1,46 @@
-cmake_minimum_required(VERSION 2.6)
+#include_directories( $ENV{FASTLIBPATH}		     
+#                     ${CMAKE_CURRENT_BINARY_DIR}/../base/config
+#)
 
-include_directories( $ENV{FASTLIBPATH}		     
-                     ${CMAKE_CURRENT_BINARY_DIR}/../base/config
+## Location of trilinos
+set(TRILINOS_BASE_DIR /usr/local CACHE PATH
+  "Directory where trilinos is installed." )
+#set(TRILINOS_LIB_DIR ${TRILINOS_BASE_DIR}/lib )
+## library 
+#set(TRILINOS_REQUIRED_LIBS epetra anasazi aztecoo ifpack kokkos teuchos)
+set(TRILINOS_REQUIRED_LIBS epetra anasazi aztecoo ifpack teuchos)
+set(TRILINOS_LIBS)
+foreach(lib ${TRILINOS_REQUIRED_LIBS})
+    set(trilinos_lib trilinos_lib-NOTFOUND CACHE INTERNAL "")
+    find_library(trilinos_lib ${lib}
+        PATHS 
+        ${TRILINOS_BASE_DIR}/lib 
+        /opt/trilinos/lib 
+    )
+    if(${trilinos_lib} EQUAL "trilinos_lib-NOTFOUND")
+        message(FATAL_ERROR "Trilinos library ${lib} not found.")
+    endif()
+    set(TRILINOS_LIBS ${TRILINOS_LIBS} ${trilinos_lib})
+endforeach()
+## include dirs
+find_path(TRILINOS_INCLUDE_DIR Trilinos_version.h 
+    PATHS
+    ${TRILINOS_BASE_DIR}/include 
+    /opt/trilinos/include
 )
-include_directories( $ENV{FASTLIBPATH}		     
-                     ${CMAKE_CURRENT_BINARY_DIR}/../base/config
-                     /opt/trilinos/include
-)
-link_directories( /opt/trilinos/lib )
-set(TRILINOS_LIBS tpetra anasazi aztecoo ifpack kokkos teuchos)
+
+if(TRILINOS_INCLUDE_DIR AND TRILINOS_LIBS)
+    set(TRILINOS_FOUND "YES")
+else()
+    message(FATAL_ERROR "Couldn't find trilinos.")
+endif()
+mark_as_advanced(TRILINOS_INCLUDE_DIR trilinos_lib)
+
+include_directories( ${TRILINOS_INCLUDE_DIR} )
+## libs
+#link_directories( ${TRILINOS_LIB_DIR} )
+#set(TRILINOS_LIBS ${TRILINOS_LIBS})
+#set(TRILINOS_LIBS tpetra anasazi aztecoo ifpack kokkos teuchos)
 
 set( TMP_HEADERS 
     sparse_matrix.h
@@ -32,6 +64,7 @@ add_dependencies( sparse
 target_link_libraries( sparse 
     base
     ${TRILINOS_LIBS}
+    lapack
 )
 
 add_executable( sparse_test

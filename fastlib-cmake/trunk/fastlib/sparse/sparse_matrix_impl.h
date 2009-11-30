@@ -135,7 +135,7 @@ void SparseMatrix::Init(const std::vector<index_t> &rows,
     std::map<index_t, index_t> frequencies;
     for(index_t i=0; i<(index_t)rows.size(); i++) {
       frequencies[rows[i]]++;
-      frequencies[columns[i]]++;
+      frequencies[columns[i]]++;  //TODO huh?
       if (rows[i]>num_of_rows_) {
         num_of_rows_ = rows[i];
       }
@@ -636,7 +636,7 @@ void SparseMatrix::Eig(SparseMatrix &pencil_matrix,
   // Compute the 2-norm of each vector in the MultiVector
   // and store them to a std::vector<double>
   std::vector<double> norm_res(num_of_eigvalues);
-  MVT::MvNorm(res, &norm_res);
+  MVT::MvNorm(res, norm_res);
 }
 
 void SparseMatrix::LinSolve(Vector &b, // must be initialized (space allocated)

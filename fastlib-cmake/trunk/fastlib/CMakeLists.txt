@@ -27,12 +27,17 @@ include_directories( ${FASTLIB_INCLUDE_DIRS} )
 
 set(FASTLIB_SRCS)
 ## recurse
-set(DIRS base col data file fx la math par tree)
+set(DIRS base col data file fx la math par tree)  #!!
 
 option(FASTLIB_WITH_OPTIMIZERS "Include optimization code - requires OPT++." ON)
 if(FASTLIB_WITH_OPTIMIZERS)
    set(DIRS ${DIRS} optimization)
 endif(FASTLIB_WITH_OPTIMIZERS)
+
+option(FASTLIB_WITH_SPARSE "Include sparse matrix code - requires Trilinos." ON)
+if(FASTLIB_WITH_SPARSE)
+   set(DIRS ${DIRS} sparse)
+endif(FASTLIB_WITH_SPARSE)
 
 foreach(dir ${DIRS})
   add_subdirectory( ${dir} fastlib/${dir} )
