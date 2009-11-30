@@ -33,7 +33,8 @@ private:
   //double max_candidate_distance_;
   index_t component_membership_;
   //index_t candidate_ref_;
-  double distance_to_qnode_;
+  //double distance_to_qnode_;
+  ArrayList<double> distance_to_qnode_;
   
 public:
     
@@ -47,17 +48,7 @@ public:
     }
     
   }
-  
-  /*
-  void set_max_candidate_distance(double distance) {
-    max_candidate_distance_ = distance;
-  }
 
-  double max_candidate_distance() {
-    return max_candidate_distance_;
-  }
-   */
-  
   void set_component_membership(index_t membership) {
     component_membership_ = membership;
   }
@@ -65,22 +56,20 @@ public:
   index_t component_membership() const {
     return component_membership_; 
   }
-  /*
-  index_t candidate_ref() const {
-    return candidate_ref_;
-  }
-  
-  void set_candidate_ref(index_t ref) {
-    candidate_ref_ = ref;
-  }
-  */
-  
+
   void set_distance_to_qnode(double dist) {
-    distance_to_qnode_ = dist;
+    //printf("Setting qnode distance to %g\n", dist);
+    //distance_to_qnode_ = dist;
+    distance_to_qnode_.PushBackCopy(dist);
   }
   
   double distance_to_qnode() const {
-    return distance_to_qnode_;
+    //return distance_to_qnode_;
+    return distance_to_qnode_.back();
+  }
+  
+  void pop_last_distance() {
+    distance_to_qnode_.PopBack();
   }
   
   /** 
@@ -90,6 +79,8 @@ public:
     
     //set_max_neighbor_distance(DBL_MAX);
     set_component_membership(-1);
+    //distance_to_qnode_ = -1.0;
+    distance_to_qnode_.Init(0);
     
   }
   
@@ -100,7 +91,9 @@ public:
     
     if (count == 1) {
       set_component_membership(start);
+      //distance_to_qnode_ = -1.0;
       //set_max_neighbor_distance(DBL_MAX);
+      distance_to_qnode_.Init(0);
     }
     else {
       Init();
@@ -157,6 +150,9 @@ class DualCoverTreeBoruvka {
   ArrayList<double> candidate_dists_;
   // this stores the component of the candidate reference
   ArrayList<index_t> candidate_refs_;
+  
+  // used to eliminate pruning in debugging
+  double prune_factor_;
   
   // output info
   double total_dist_;
@@ -309,35 +305,6 @@ class DualCoverTreeBoruvka {
   } // SortReferences_
   
   /**
-   * Finds the component of the candidate nearest neighbor for the given query
-   *
-   * Needs to check both arrays of neighbors, take the one that doesn't contain 
-   * the query, and go with it.
-   * Also needs a way to handle the non-existence of a candidate
-   */
-  /*
-  index_t FindCandidateComp_(index_t query_comp) {
-    
-    index_t ret_comp;
-    
-    index_t in_comp = connections_.Find(neighbors_in_component_[query_comp]);
-    index_t out_comp = connections_.Find(neighbors_out_component_[query_comp]);
-    
-    DEBUG_ASSERT(in_comp != out_comp);
-    
-    if (in_comp == query_comp) {
-      ret_comp = out_comp;
-    }
-    else {
-      ret_comp = in_comp;
-    }
-    
-    return ret_comp;
-    
-  }
-   */
-  
-  /**
    * Determines if the bound for the parent is also valid for the child
    * Is not valid if the child is connected to the candidate for the parent
    */
@@ -346,6 +313,35 @@ class DualCoverTreeBoruvka {
     return !(child == candidate_refs_[parent]);
     
   }
+  
+  void reset_leaf_nodes_(ArrayList<DTBTree*> *leaves) {
+    
+    DTBTree** begin = leaves->begin();
+    DTBTree** end = leaves->end();
+    
+    for (; begin != end; begin++) {
+      (*begin)->stat().pop_last_distance();
+    }
+    
+  } // reset_leaf_nodes ()
+  
+  void reset_cover_sets_(ArrayList<ArrayList<DTBTree*> > *cover_set, 
+                         index_t current_scale, index_t max_scale) {
+    
+    for (index_t i = current_scale; i <= max_scale; i++) {
+      
+      DTBTree** begin = (*cover_set)[i].begin();
+      DTBTree** end = (*cover_set)[i].end();
+
+      for (; begin != end; begin++) {
+        
+        (*begin)->stat().pop_last_distance();
+        
+      }
+      
+    } 
+    
+  } // reset_cover_sets()
   
 
   void ComputeBaseCase_(DTBTree* query, ArrayList<DTBTree*> *leaves) {
@@ -367,6 +363,8 @@ class DualCoverTreeBoruvka {
         
         ComputeBaseCase_(*child, &new_leaves);
         
+        reset_leaf_nodes_(&new_leaves);
+        
       } // iterate over children
       
     } // query not leaf
@@ -382,27 +380,33 @@ class DualCoverTreeBoruvka {
         
         if (query_comp != ref_comp) {
           
-//#ifdef DEBUG
+#ifdef DEBUG
           // check that the correct distance is stored in the stat
       
-          // TODO: figure out if I can get away without recomputing this
           Vector q_vec, r_vec;
           data_points_.MakeColumnVector(query->point(), &q_vec);
           data_points_.MakeColumnVector(leaf->point(), &r_vec);
           
           double real_dist = sqrt(la::DistanceSqEuclidean(q_vec, r_vec));
           
-          //DEBUG_APPROX_DOUBLE(real_dist, leaf->stat().distance_to_qnode(), 10e-5);
+          DEBUG_APPROX_DOUBLE(real_dist, leaf->stat().distance_to_qnode(), 10e-5);
           
-//#endif
+#endif
           
-          //if (leaf->stat().distance_to_qnode() < candidate_dists_[query_comp]) {
-          if (real_dist <= candidate_dists_[query_comp]) {  
+          if (leaf->stat().distance_to_qnode() < candidate_dists_[query_comp]) {
+          //if (real_dist <= candidate_dists_[query_comp]) {  
           
+            //candidate_dists_[query_comp] = real_dist;
             candidate_dists_[query_comp] = leaf->stat().distance_to_qnode();
             candidate_refs_[query_comp] = ref_comp;
             
+            /*
+            if (leaf->stat().distance_to_qnode() == 0.0) {
+              printf("Adding zero distance\n");
+            }
+             */
             neighbors_distances_[query_comp] = leaf->stat().distance_to_qnode();
+            //neighbors_distances_[query_comp] = real_dist;
             neighbors_in_component_[query_comp] = query->point();
             neighbors_out_component_[query_comp] = leaf->point();
             
@@ -416,323 +420,7 @@ class DualCoverTreeBoruvka {
     
   } // ComputeBaseCase_
   
-  
-  /**
-    * Handles the recursive calls to find the nearest neighbors in an iteration
-   */
-  void DepthFirst_(DTBTree *query_node, DTBTree *reference_node) {
-   
-    index_t query_comp_index = connections_.Find(query_node->point());
-    index_t ref_comp_index = connections_.Find(reference_node->point());
-    
-    Vector q_vec, r_vec;
-    data_points_.MakeColumnVector(query_node->point(), &q_vec);
-    data_points_.MakeColumnVector(reference_node->point(), &r_vec);
-    
-    
-    if (query_node->is_leaf() && reference_node->is_leaf()) {
-      // base case
-      
-      // are they connected?
-      if (query_comp_index != ref_comp_index) {
-        
-        double dist = sqrt(la::DistanceSqEuclidean(q_vec, r_vec));
-        
-        // is it close enough to be the new neighbor
-        if (dist <= candidate_dists_[query_comp_index]) {
-          
-          DEBUG_ASSERT(dist <= neighbors_distances_[query_comp_index]);
-          
-          candidate_dists_[query_comp_index] = dist;
-          candidate_refs_[query_comp_index] = ref_comp_index;
-          neighbors_distances_[query_comp_index] = dist;
-          neighbors_in_component_[query_comp_index] = query_node->point();
-          neighbors_out_component_[query_comp_index] = reference_node->point();
-          
-        } // close enough to be new neighbor
-        
-      } // not connected
-      
-    }
-    else if (reference_node->is_leaf()) {
-      // only recurse on queries
-      
-      DTBTree** q_child = query_node->children()->begin();
-      
-      DepthFirst_(*q_child, reference_node);
-      
-      DTBTree** q_end = query_node->children()->end();
-      
-      // iterate over query children
-      for (++q_child; q_child != q_end; q_child++) {
-        
-        index_t q_child_index = connections_.Find((*q_child)->point());
-        
-        Vector q_child_vec;
-        data_points_.MakeColumnVector((*q_child)->point(), &q_child_vec);
-        
-        // pass the bound down to the query child
-        if (ValidBound_(query_comp_index, q_child_index)) {
-          
-          // is it close enough to count
-          if (candidate_dists_[query_comp_index] 
-              < candidate_dists_[q_child_index]) {
-            candidate_dists_[q_child_index] = candidate_dists_[query_comp_index];
-            candidate_refs_[q_child_index] = candidate_refs_[query_comp_index];
-          } // close enough
-          
-        } // can the bound be passed down due to connections?
-        
-        double query_upper_bound = candidate_dists_[q_child_index];
-        query_upper_bound += 2.0 * (*q_child)->max_dist_to_grandchild();
-        
-        double ref_lower_bound = reference_node->stat().distance_to_qnode();
-        ref_lower_bound -= (*q_child)->dist_to_parent();
-        
-        // preliminary distance check
-        if (ref_lower_bound <= query_upper_bound) {
-          
-          double dist = sqrt(la::DistanceSqEuclidean(q_child_vec, r_vec));
-          
-          // real distance check
-          if (dist <= query_upper_bound) {
-            
-            // update bound?
-            if (dist < candidate_dists_[q_child_index]) {
-              
-              // is the bound valid
-              index_t reference_comp_index = connections_.Find(reference_node->point());
-              if (q_child_index != reference_comp_index) {
-                candidate_dists_[q_child_index] = dist;
-                candidate_refs_[q_child_index] = reference_comp_index;
-              } // updating bound if valid
-              
-            } // is the bound close enough to update?
-            
-            reference_node->stat().set_distance_to_qnode(dist);
-            DepthFirst_(*q_child, reference_node);
-            
-            // TODO: the allnn code pops the bound here, why?
-            
-          } // real distance check
-          
-        } // preliminary distance check
-        
-      } // iterate over query children
-      
-    } // only recurse on queries
-    else {
-      // recurse on both
-      
-      ArrayList<DTBTree*> ref_set;
-      ref_set.Init(0);
-      
-      double dist_lower_bd = reference_node->stat().distance_to_qnode();
-      dist_lower_bd = dist_lower_bd - query_node->max_dist_to_grandchild();
-      dist_lower_bd = dist_lower_bd - reference_node->max_dist_to_grandchild();
-      double cand_upper_bd = candidate_dists_[query_comp_index];
-      cand_upper_bd += query_node->max_dist_to_grandchild();
-      
-      double query_upper = candidate_dists_[query_comp_index];
-      query_upper += 2.0 * query_node->max_dist_to_grandchild();
-      
-      double ref_lower = reference_node->stat().distance_to_qnode();
-      ref_lower -= reference_node->max_dist_to_grandchild();
-      
-      // recheck the pruning criterion
-      if (ref_lower <= query_upper) {
-        
-        DTBTree** r_child = reference_node->children()->begin();
-        
-        // check that they're not connected
-        if (query_node->stat().not_connected((*r_child)->stat())) {
-        
-          ref_lower = reference_node->stat().distance_to_qnode() 
-                      - (*r_child)->max_dist_to_grandchild();
-          
-          // check the reference self-child
-          if (ref_lower <= query_upper) {
-            (*r_child)->stat().set_distance_to_qnode(reference_node->stat().distance_to_qnode());
-            ref_set.PushBackCopy(*r_child);
-          }
-        } // check for connection
-        
-        DTBTree** r_end = reference_node->children()->end();
-        
-        // iterate over other reference children
-        for (++r_child; r_child != r_end; r_child++) {
-        
-          // check for connection
-          if (query_node->stat().not_connected((*r_child)->stat())) {
-          
-            // d(q, r_c) >= d(q, r) - d(r, r_c) 
-            // this is a first approx
-            ref_lower = reference_node->stat().distance_to_qnode();
-            ref_lower -= (*r_child)->dist_to_parent();
-            ref_lower -= (*r_child)->max_dist_to_grandchild();
-            
-            if (ref_lower <= query_upper) {
-              
-              Vector r_child_vec;
-              data_points_.MakeColumnVector((*r_child)->point(), &r_child_vec);
-              
-              double dist = sqrt(la::DistanceSqEuclidean(q_vec, r_child_vec));
-              
-              ref_lower = dist - (*r_child)->max_dist_to_grandchild();
-              
-              // check true lower bound
-              if (ref_lower <= query_upper) {
-                
-                // is this dist the new candidate
-                if (dist < candidate_dists_[query_comp_index]) {
-                  
-                  // is the candidate valid for the query point
-                  index_t r_child_comp_index = connections_.Find((*r_child)->point());
-                  if (r_child_comp_index != query_comp_index) {
-                    
-                    candidate_dists_[query_comp_index] = dist;
-                    candidate_refs_[query_comp_index] = r_child_comp_index;
-                    
-                  } // is the candidate valid for the query point
-                  
-                }// is this dist the new candidate
-                
-                (*r_child)->stat().set_distance_to_qnode(dist);
-                ref_set.PushBackCopy(*r_child);
-                
-              } // check true lower bound
-              
-            } // check approx bound
-              
-          } // check connection
-          
-        } // iterate over reference children
-        
-      } // intial prune check
-      
-      // did we prune them all?
-      if (ref_set.size() == 0){
-        return; 
-      }
-      
-      SortReferences_(&ref_set);
-      
-      DTBTree** r_begin = ref_set.begin();
-      DTBTree** r_end = ref_set.end();
-      
-      if (query_node->is_leaf()) {
-        
-        //iterate over references
-        for (DTBTree** begin = r_begin; begin != r_end; begin++) {
-          
-          // NOTE: the nodes were already checked to see if they're connected
-          
-          // close enough?
-          if ((*begin)->stat().distance_to_qnode() 
-              - (*begin)->max_dist_to_grandchild() 
-              <= candidate_dists_[query_comp_index]) {
-            
-            DepthFirst_(query_node, *begin);
-            
-          } // passed distance prune
-          
-        } // iterating over references
-        
-      } // query is leaf
-      else {
-        // query isn't leaf
-        
-        DTBTree** q_child = query_node->children()->begin();
-        DTBTree** q_end = query_node->children()->end();
-        
-        // descend all the self children, since their bounds and connectedness
-        // were checked above
-        for (DTBTree** begin = r_begin; begin != r_end; begin++) {
-          
-          DepthFirst_(*q_child, *begin);
-          
-        } // iterate over all references with query self-child
-        
-        // iterate over query children
-        for (++q_child; q_child != q_end; q_child++) {
-          
-          index_t q_child_index = connections_.Find((*q_child)->point());
-          
-          Vector q_child_vec;
-          data_points_.MakeColumnVector((*q_child)->point(), &q_child_vec);
-          
-          // pass the bound down to the query child
-          if (ValidBound_(query_comp_index, q_child_index)) {
-            
-            // is it close enough to count
-            if (candidate_dists_[query_comp_index] 
-                < candidate_dists_[q_child_index]) {
-              candidate_dists_[q_child_index] = candidate_dists_[query_comp_index];
-              candidate_refs_[q_child_index] = candidate_refs_[query_comp_index];
-            } // close enough
-            
-          } // can the bound be passed down due to connections?
-          
-          // iterate over references
-          for (DTBTree** begin = r_begin; begin != r_end; begin++) {
-            
-            // check if the nodes are connected
-            if ((*q_child)->stat().not_connected((*begin)->stat())) {
-            
-              double query_upper_bd = candidate_dists_[q_child_index];
-              query_upper_bd += 2.0 * (*q_child)->max_dist_to_grandchild();
-              
-              double ref_lower_bd = (*begin)->stat().distance_to_qnode();
-              ref_lower_bd -= (*begin)->max_dist_to_grandchild();
-              // haven't yet computed the actual distance between this query
-              // and reference - this is a lower bound using the
-              // distance to qnode above
-              ref_lower_bd -= (*q_child)->dist_to_parent();
-              
-              // preliminary distance check
-              if (ref_lower_bd <= query_upper_bd) {
-                
-                Vector r_child_vec;
-                data_points_.MakeColumnVector((*begin)->point(), &r_child_vec);
-                
-                double dist = sqrt(la::DistanceSqEuclidean(q_child_vec, r_child_vec));
-                
-                ref_lower_bd = dist - (*begin)->max_dist_to_grandchild();
-                
-                // real dist check
-                if (ref_lower_bd <= query_upper_bd) {
-                  
-                  // only update the bound if it is a valid connection
-                  index_t r_child_comp_index = connections_.Find((*begin)->point());
-                  if (q_child_index != r_child_comp_index) {
-                    // is this the new upper bound?
-                    if (dist < candidate_dists_[q_child_index]) {
-                      candidate_dists_[q_child_index] = dist;
-                      candidate_refs_[q_child_index] = r_child_comp_index;
-                    } // set new upper bound
-                  } // is the new bound valid through non-connection?
-                  
-                  (*begin)->stat().set_distance_to_qnode(dist);
-                  DepthFirst_(*q_child, *begin);
-                  
-                  // TODO: There's a pop here in the NN code, why?
-                  
-                } // real dist check
-                
-              } // preliminary distance check
-                
-            } // not connected
-            
-          } // iterate over references
-          
-        } // iterate over query non-self children
-        
-      } // query not leaf
-      
-    } // recurse on both
-  
-  } // DepthFirst_
-  
+ 
   void DescendRefSet_(DTBTree* query, ArrayList<ArrayList<DTBTree*> > *cover,
                       ArrayList<DTBTree*> *leaf_nodes, index_t current_scale, 
                       index_t *max_scale) {
@@ -752,10 +440,27 @@ class DualCoverTreeBoruvka {
     // fill in the reference children
     for (; begin != end; begin++) {
       
-      DEBUG_ASSERT(current_scale == (*begin)->scale_depth());
+      // This is just a warning in Pari's code
+      //DEBUG_ASSERT(current_scale == (*begin)->scale_depth());
       
+#ifdef DEBUG
+      
+      Vector q_vec, r_vec;
+      data_points_.MakeColumnVector(query->point(), &q_vec);
+      data_points_.MakeColumnVector((*begin)->point(), &r_vec);
+      
+      double real_dist = sqrt(la::DistanceSqEuclidean(q_vec, r_vec));
+      
+      DEBUG_APPROX_DOUBLE(real_dist, (*begin)->stat().distance_to_qnode(), 10e-5);
+      
+#endif
+      
+      // TODO: remove prune factor
+      // added check for query's grandchild
       if ((*begin)->stat().distance_to_qnode() <= query_bound 
-                         + (*begin)->max_dist_to_grandchild()) {
+                         + (*begin)->max_dist_to_grandchild() 
+                         + query->max_dist_to_grandchild()
+                         + prune_factor_) {
       
         // iterate over the children of this member of the reference set
         DTBTree** child = (*begin)->children()->begin();
@@ -784,8 +489,10 @@ class DualCoverTreeBoruvka {
             } // is this the new d?
             */
             
+            // TODO: remove prune factor
             if (dist <= query_bound + (*child)->max_dist_to_grandchild() 
-                                   + query->max_dist_to_grandchild()) {
+                                   + query->max_dist_to_grandchild()
+                                    + prune_factor_) {
              
               ref_children.PushBackCopy(*child);
               (*child)->stat().set_distance_to_qnode(dist);
@@ -812,9 +519,23 @@ class DualCoverTreeBoruvka {
       
       for (; begin != end; begin++) {
         
+#ifdef DEBUG
+        
+        Vector q_vec, r_vec;
+        data_points_.MakeColumnVector(query->point(), &q_vec);
+        data_points_.MakeColumnVector((*begin)->point(), &r_vec);
+        
+        double real_dist = sqrt(la::DistanceSqEuclidean(q_vec, r_vec));
+        
+        DEBUG_ASSERT(real_dist == (*begin)->stat().distance_to_qnode());
+        
+#endif
+        
+        // TODO: remove prune factor
         if ((*begin)->stat().distance_to_qnode() <= query_bound 
               + (*begin)->max_dist_to_grandchild() 
-              + query->max_dist_to_grandchild()) {
+              + query->max_dist_to_grandchild()
+              + prune_factor_) {
           
           if ((*begin)->num_of_children() > 0) {
             
@@ -872,12 +593,9 @@ class DualCoverTreeBoruvka {
         
         double dist = sqrt(la::DistanceSqEuclidean(q_vec, r_vec));
         
-        // don't need this case because the ref is a leaf
-        //if (q_comp == connections_.Find((*begin)->point())) {
-        //  dist_bound += (*begin)->max_dist_to_grandchild();
-        //}
-        
-        if (dist <= upper_bound + query->max_dist_to_grandchild()) {
+        // TODO: remove prune factor
+        if (dist <= upper_bound + query->max_dist_to_grandchild()
+                    + prune_factor_) {
 
           if (dist < upper_bound) {
             upper_bound = dist;
@@ -930,6 +648,7 @@ class DualCoverTreeBoruvka {
           double dist = sqrt(la::DistanceSqEuclidean(q_vec, r_vec));
           //double dist_bound = dist;
           
+          // TODO: is this right?
           // tried commenting this out since some points aren't finding neighbors
           // I think the point of this is to use the minimum possible upper
           // bound we can use at this point
@@ -944,7 +663,8 @@ class DualCoverTreeBoruvka {
           */
           // do the distances work? 
           if (dist <= upper_bound + (*begin)->max_dist_to_grandchild() 
-                                  + query->max_dist_to_grandchild()) {
+                                  + query->max_dist_to_grandchild()
+                                  + prune_factor_) {
             
             (*begin)->stat().set_distance_to_qnode(dist);
             (*new_cover)[scale].PushBackCopy(*begin);
@@ -1013,9 +733,9 @@ class DualCoverTreeBoruvka {
         HybridExpansion_(*child, &new_cover, &new_leaf, current_scale, 
                          max_scale);
         
-        // clean out the new lists somehow
-        // the other code cleans out the distances to the qnodes
-        // this shouldn't matter since it's depth-first here, right?
+        
+        reset_leaf_nodes_(&new_leaf);
+        reset_cover_sets_(&new_cover, current_scale, max_scale);
         
       } // iterate over children 
       
@@ -1045,7 +765,8 @@ class DualCoverTreeBoruvka {
    */
   void ComputeNeighbors_() {
     if (do_depth_first_) {
-      DepthFirst_(tree_, tree_);
+      FATAL("Depth first no longer supported.\n");
+      //DepthFirst_(tree_, tree_);
     }
     else {
       ArrayList<ArrayList<DTBTree*> > cover;
@@ -1061,6 +782,8 @@ class DualCoverTreeBoruvka {
       
       cover[0].PushBackCopy(tree_);
       
+      // Current scale is set to 0 here, but the scale of the root seems to be 
+      // 1 sometimes?
       HybridExpansion_(tree_, &cover, &leaves, 0, 0);
       
     }
@@ -1268,6 +991,8 @@ class DualCoverTreeBoruvka {
     number_both_recursions_ = 0;
     
     do_depth_first_ = fx_param_bool(module_, "depth_first", false);
+    
+    prune_factor_ = fx_param_double(module_, "prune_factor", 0.0);
     
   } // Init
     
