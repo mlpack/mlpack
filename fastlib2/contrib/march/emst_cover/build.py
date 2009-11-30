@@ -21,5 +21,6 @@ binrule (
 binrule (
    name = "comparison_main",
    sources = ["comparison_main.cc"],
+   headers = ["mst_comparison.h"],
    deplibs = [":emst_cover", "mlpack/emst:dtb", "mlpack/emst:union_find"]
 )

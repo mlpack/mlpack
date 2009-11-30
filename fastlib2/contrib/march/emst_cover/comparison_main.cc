@@ -30,6 +30,8 @@ int main(int argc, char* argv[]) {
   Matrix kd_results;
   
   dtb.ComputeMST(&kd_results);
+  
+  kd_results.PrintDebug("kd-tree results");
 
   
   DualCoverTreeBoruvka dtb_cover;
@@ -39,6 +41,7 @@ int main(int argc, char* argv[]) {
   Matrix cover_results;
   dtb_cover.ComputeMST(&cover_results);
   
+  cover_results.PrintDebug("cover results");
   
   MSTComparison compare;
   compare.Init(kd_results, cover_results);
