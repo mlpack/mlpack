@@ -72,6 +72,10 @@ public:
     distance_to_qnode_.PopBack();
   }
   
+  ArrayList<double>& distances() {
+    return distance_to_qnode_;
+  }
+  
   /** 
     * A generic initializer.
     */
@@ -370,6 +374,8 @@ class DualCoverTreeBoruvka {
     } // query not leaf
     else {
       
+      //printf("query: %d\n", query->point());
+      
       index_t query_comp = connections_.Find(query->point());
       
       for (index_t i = 0; i < leaves->size(); i++) {
@@ -377,6 +383,11 @@ class DualCoverTreeBoruvka {
         DTBTree* leaf = (*leaves)[i];
         
         index_t ref_comp = connections_.Find(leaf->point());
+        
+        //printf("Considering query: %d, leaf: %d\n", query->point(), leaf->point());
+        if (query->point() == 0 || query->point() == 12) {
+          printf("Found them\n");
+        }
         
         if (query_comp != ref_comp) {
           
@@ -393,7 +404,7 @@ class DualCoverTreeBoruvka {
           
 #endif
           
-          if (leaf->stat().distance_to_qnode() < candidate_dists_[query_comp]) {
+          if (leaf->stat().distance_to_qnode() <= candidate_dists_[query_comp]) {
           //if (real_dist <= candidate_dists_[query_comp]) {  
           
             //candidate_dists_[query_comp] = real_dist;
@@ -405,11 +416,16 @@ class DualCoverTreeBoruvka {
               printf("Adding zero distance\n");
             }
              */
-            neighbors_distances_[query_comp] = leaf->stat().distance_to_qnode();
-            //neighbors_distances_[query_comp] = real_dist;
-            neighbors_in_component_[query_comp] = query->point();
-            neighbors_out_component_[query_comp] = leaf->point();
+            // added this check in debugging, doesn't help
+            if (leaf->stat().distance_to_qnode() <= neighbors_distances_[query_comp]) {
+
+              neighbors_distances_[query_comp] = leaf->stat().distance_to_qnode();
+              //neighbors_distances_[query_comp] = real_dist;
+              neighbors_in_component_[query_comp] = query->point();
+              neighbors_out_component_[query_comp] = leaf->point();
             
+            } // is it the edge to be added? 
+          
           } // is it the new candidate
           
         } // is connected?
@@ -429,7 +445,9 @@ class DualCoverTreeBoruvka {
     DTBTree** end = (*cover)[current_scale].end();
     
     index_t query_comp = connections_.Find(query->point());
+    DEBUG_ASSERT(query_comp == connections_.Find(query->point()));
     double query_bound = candidate_dists_[query_comp];
+    index_t ref_comp = candidate_refs_[query_comp];
     
     Vector q_vec;
     data_points_.MakeColumnVector(query->point(), &q_vec);
@@ -473,21 +491,45 @@ class DualCoverTreeBoruvka {
             data_points_.MakeColumnVector((*child)->point(), &r_vec);
             
             double dist = sqrt(la::DistanceSqEuclidean(q_vec, r_vec));
-            //double dist_bound = dist;
+            double dist_bound = dist;
             
             // the upper bound needs to be streched 
             
             // tried deleting this because points weren't all finding neighbors
-            /*
+            
+            // IMPORTANT: need to keep the bound for this query from being set 
+            // to itself
+            // the problem case is when the reference considered here (*child)
+            // is a leaf, and (*child)->point() == query->point(), but the 
+            // query is not connected to all of its children.  
+            
             if (query_comp == connections_.Find((*child)->point())) {
-              dist_bound += (*child)->max_dist_to_grandchild();
+              if ((*child)->is_leaf()) {
+                dist_bound = DBL_MAX;
+              }
+              // need to account for the possibility that the ref and all 
+              // its descendants are connected to the query and thus not 
+              // count any of those descendants toward the upper bound
+              else if (query_comp == (*child)->stat().component_membership()) {
+                dist_bound = DBL_MAX;
+              }
+              else {
+                dist_bound += (*child)->max_dist_to_grandchild();
+              }
             } // do we need the extra 2^i
+            
+            if (dist_bound == 0.0) {
+              printf("dist bound of 0\n");
+            }
             
             // is the dist the new candidate to be the minimum? 
             if (dist_bound < query_bound) {
               query_bound = dist_bound;
+              ref_comp = connections_.Find((*child)->point());
             } // is this the new d?
-            */
+            
+            //printf("query_bound: %g, dist_bound: %g\n", query_bound, dist_bound);
+            
             
             // TODO: remove prune factor
             if (dist <= query_bound + (*child)->max_dist_to_grandchild() 
@@ -511,6 +553,7 @@ class DualCoverTreeBoruvka {
     // TODO: what about the candidate point?  I need to know it to pass the 
     // bounds down the tree
     candidate_dists_[query_comp] = query_bound;
+    candidate_refs_[query_comp] = ref_comp;
     
     if (ref_children.size() > 0) {
       
@@ -646,13 +689,13 @@ class DualCoverTreeBoruvka {
           data_points_.MakeColumnVector((*begin)->point(), &r_vec);
           
           double dist = sqrt(la::DistanceSqEuclidean(q_vec, r_vec));
-          //double dist_bound = dist;
+          double dist_bound = dist;
           
           // TODO: is this right?
           // tried commenting this out since some points aren't finding neighbors
           // I think the point of this is to use the minimum possible upper
           // bound we can use at this point
-          /*
+          
           if (q_comp == connections_.Find((*begin)->point())) {
             dist_bound += (*begin)->max_dist_to_grandchild();
           } 
@@ -660,7 +703,7 @@ class DualCoverTreeBoruvka {
           if (dist_bound < upper_bound) {
             upper_bound = dist_bound;
           }
-          */
+          
           // do the distances work? 
           if (dist <= upper_bound + (*begin)->max_dist_to_grandchild() 
                                   + query->max_dist_to_grandchild()
@@ -678,6 +721,7 @@ class DualCoverTreeBoruvka {
     } // iterate over the scales
     
     // TODO: should I store the upper bound here?
+    candidate_dists_[q_comp] = upper_bound;
     
   } // CopyCoverSets_()
   
@@ -697,6 +741,9 @@ class DualCoverTreeBoruvka {
     if (current_scale > max_scale) {
       // base case
       
+      //printf("Computing base case.\n");
+      // TODO: what about the remaining references in the cover set?
+      // There shouldn't be any because of the max_scale
       ComputeBaseCase_(query, leaf_nodes);
       
     } // base case
@@ -848,7 +895,9 @@ class DualCoverTreeBoruvka {
     if (!(tree->is_leaf())) {
       
       // iterate over children
+      CleanupHelper_(tree->child(0));
       index_t comp = tree->child(0)->stat().component_membership();
+      
       for (index_t i = 1; i < tree->num_of_children(); i++) {
         
         CleanupHelper_(tree->child(i));
@@ -862,8 +911,14 @@ class DualCoverTreeBoruvka {
       tree->stat().set_component_membership(comp);
       
     } // descend children
+    else {
+      //printf("Setting leaf's component membership\n");
+      tree->stat().set_component_membership(connections_.Find(tree->point()));
+    }
      
     // leaf should already have the right component membership
+    
+    tree->stat().distances().Clear();
         
   } // CleanupHelper_
   
@@ -872,10 +927,12 @@ class DualCoverTreeBoruvka {
    */
   void Cleanup_() {
     
+    //printf("Cleanup called\n");
+    
     for (index_t i = 0; i < number_of_points_; i++) {
       
       neighbors_distances_[i] = DBL_MAX;
-      DEBUG_ONLY(neighbors_in_component_[i] = BIG_BAD_NUMBER);
+      DEBUG_ONLY(neighbors_in_component_[i] = -2);
       DEBUG_ONLY(neighbors_out_component_[i] = BIG_BAD_NUMBER);
       
       candidate_dists_[i] = DBL_MAX;
@@ -928,8 +985,6 @@ class DualCoverTreeBoruvka {
    * Takes in a reference to the data set and a module.  Copies the data, 
    * builds the tree, and initializes all of the member variables.
    *
-   * This module will be checked for the optional parameters "leaf_size" and 
-   * "do_naive".  
    */
   void Init(const Matrix& data, struct datanode* mod) {
     
@@ -994,6 +1049,8 @@ class DualCoverTreeBoruvka {
     
     prune_factor_ = fx_param_double(module_, "prune_factor", 0.0);
     
+    Cleanup_();
+    
   } // Init
     
     
@@ -1006,8 +1063,10 @@ class DualCoverTreeBoruvka {
     fx_timer_start(module_, "MST_computation");
     
     while (number_of_edges_ < (number_of_points_ - 1)) {
+      printf("=== Finding Neighbors ===\n");
       ComputeNeighbors_();
       
+      printf("=== Adding Edges ===\n");
       AddAllEdges_();
       
       Cleanup_();
