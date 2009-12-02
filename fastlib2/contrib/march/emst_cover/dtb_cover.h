@@ -4,7 +4,7 @@
  * @author Bill March (march@gatech.edu)
  *
  * Contains an implementation of the DualTreeBoruvka algorithm for finding a 
- * Euclidean Minimum Spanning Tree.  
+ * Euclidean Minimum Spanning Tree using a cover tree.  
  */
 
 #ifndef DTB_COVER_H
@@ -14,6 +14,41 @@
 #include "cover_tree.h"
 #include "ctree.h"
 #include "mlpack/emst/union_find.h"
+
+const fx_entry_doc dtb_cover_entries[] = {
+{"MST_computation", FX_TIMER, FX_CUSTOM, NULL, 
+  "Total time required to compute the MST.\n"},
+{"total_squared_length", FX_RESULT, FX_DOUBLE, NULL, 
+  "The total length of the MST.\n"},
+{"number_of_points", FX_RESULT, FX_INT, NULL,
+  "The number of points in the data set.\n"},
+{"dimension", FX_RESULT, FX_INT, NULL,
+  "The dimensionality of the data.\n"},
+{"number_of_loops", FX_RESULT, FX_INT, NULL,
+  "The number of iterations required to find the MST.\n"},
+{"do_naive", FX_PARAM, FX_BOOL, NULL,
+  "Not currently supported, do not use.\n"},
+{"base", FX_PARAM, FX_DOUBLE, NULL,
+  "The base distance for the levels of the cover tree.  2 in the paper,\n"
+  "defaults to 1.3 here.\n"},
+{"prune_factor", FX_PARAM, FX_DOUBLE, NULL,
+  "Loosens the bounds for debugging.  Defaults to 0.\n"},
+{"tree_building", FX_TIMER, FX_CUSTOM, NULL,
+  "Time taken to construct the cover tree.\n"},
+FX_ENTRY_DOC_DONE
+};
+
+const fx_submodule_doc dtb_cover_submodules[] = {
+{"tree", &tree_construction_doc,
+"Tree construction.\n"},
+FX_SUBMODULE_DOC_DONE
+};
+
+const fx_module_doc dtb_cover_doc = {
+  dtb_cover_entries, dtb_cover_submodules,
+  "Algorithm module for DualTreeBoruvka on a cover tree.\n"
+};
+
 
 /**
 * A Stat class for use with fastlib's trees.  This one only stores two values.
@@ -161,16 +196,17 @@ class DualCoverTreeBoruvka {
   // output info
   double total_dist_;
   index_t number_of_loops_;
+  /*
   index_t number_distance_prunes_;
   index_t number_component_prunes_;
   index_t number_leaf_computations_;
   index_t number_q_recursions_;
   index_t number_r_recursions_;
   index_t number_both_recursions_;
-  
+  */
   int do_naive_;
   
-  bool do_depth_first_;
+  //bool do_depth_first_;
   
   DTBTree* tree_;
    
@@ -385,9 +421,11 @@ class DualCoverTreeBoruvka {
         index_t ref_comp = connections_.Find(leaf->point());
         
         //printf("Considering query: %d, leaf: %d\n", query->point(), leaf->point());
+        /*
         if (query->point() == 0 || query->point() == 12) {
           printf("Found them\n");
         }
+         */
         
         if (query_comp != ref_comp) {
           
@@ -473,7 +511,6 @@ class DualCoverTreeBoruvka {
       
 #endif
       
-      // TODO: remove prune factor
       // added check for query's grandchild
       if ((*begin)->stat().distance_to_qnode() <= query_bound 
                          + (*begin)->max_dist_to_grandchild() 
@@ -531,7 +568,6 @@ class DualCoverTreeBoruvka {
             //printf("query_bound: %g, dist_bound: %g\n", query_bound, dist_bound);
             
             
-            // TODO: remove prune factor
             if (dist <= query_bound + (*child)->max_dist_to_grandchild() 
                                    + query->max_dist_to_grandchild()
                                     + prune_factor_) {
@@ -550,8 +586,6 @@ class DualCoverTreeBoruvka {
       
     } // fill in the reference children
     
-    // TODO: what about the candidate point?  I need to know it to pass the 
-    // bounds down the tree
     candidate_dists_[query_comp] = query_bound;
     candidate_refs_[query_comp] = ref_comp;
     
@@ -574,7 +608,6 @@ class DualCoverTreeBoruvka {
         
 #endif
         
-        // TODO: remove prune factor
         if ((*begin)->stat().distance_to_qnode() <= query_bound 
               + (*begin)->max_dist_to_grandchild() 
               + query->max_dist_to_grandchild()
@@ -603,8 +636,9 @@ class DualCoverTreeBoruvka {
       
     } // if there are any children at this scale
     
-    // TODO: what if there aren't any valid children?
-    // need to make sure the leaves get examined in the base case
+    // What if there aren't any valid children?
+    // This can't happen, since one of the points in the reference cover set
+    // is the candidate (or the parent of the candidate)
     
   } // DescendRefSet_()
   
@@ -636,7 +670,6 @@ class DualCoverTreeBoruvka {
         
         double dist = sqrt(la::DistanceSqEuclidean(q_vec, r_vec));
         
-        // TODO: remove prune factor
         if (dist <= upper_bound + query->max_dist_to_grandchild()
                     + prune_factor_) {
 
@@ -691,11 +724,6 @@ class DualCoverTreeBoruvka {
           double dist = sqrt(la::DistanceSqEuclidean(q_vec, r_vec));
           double dist_bound = dist;
           
-          // TODO: is this right?
-          // tried commenting this out since some points aren't finding neighbors
-          // I think the point of this is to use the minimum possible upper
-          // bound we can use at this point
-          
           if (q_comp == connections_.Find((*begin)->point())) {
             dist_bound += (*begin)->max_dist_to_grandchild();
           } 
@@ -704,7 +732,6 @@ class DualCoverTreeBoruvka {
             upper_bound = dist_bound;
           }
           
-          // do the distances work? 
           if (dist <= upper_bound + (*begin)->max_dist_to_grandchild() 
                                   + query->max_dist_to_grandchild()
                                   + prune_factor_) {
@@ -720,7 +747,6 @@ class DualCoverTreeBoruvka {
       
     } // iterate over the scales
     
-    // TODO: should I store the upper bound here?
     candidate_dists_[q_comp] = upper_bound;
     
   } // CopyCoverSets_()
@@ -742,7 +768,8 @@ class DualCoverTreeBoruvka {
       // base case
       
       //printf("Computing base case.\n");
-      // TODO: what about the remaining references in the cover set?
+      
+      // What about the remaining references in the cover set?
       // There shouldn't be any because of the max_scale
       ComputeBaseCase_(query, leaf_nodes);
       
@@ -811,12 +838,14 @@ class DualCoverTreeBoruvka {
    * of the algorithm
    */
   void ComputeNeighbors_() {
+    /*
     if (do_depth_first_) {
       FATAL("Depth first no longer supported.\n");
       //DepthFirst_(tree_, tree_);
     }
     else {
-      ArrayList<ArrayList<DTBTree*> > cover;
+     */ 
+     ArrayList<ArrayList<DTBTree*> > cover;
       cover.Init(101);
       for (index_t i = 0; i < 101; i++) {
         cover[i].Init(0);
@@ -833,7 +862,7 @@ class DualCoverTreeBoruvka {
       // 1 sometimes?
       HybridExpansion_(tree_, &cover, &leaves, 0, 0);
       
-    }
+    //}
   } // ComputeNeighbors_
   
   /**
@@ -853,20 +882,13 @@ class DualCoverTreeBoruvka {
    */
   void SortEdges_() {
     
-    //EdgePair** first_edge = &(edges_.begin());
-    //EdgePair** last_edge = &(edges_.end());
-    
-    //std::sort(first_edge, last_edge, &DualCoverTreeBoruvka::EdgeSortHelper_);
     std::sort(edges_.begin(), edges_.end(), SortFun);
     
   } // SortEdges_()
   
   
   /**
-    * Unpermute the edge list and output it to results
-   *
-   * TODO: Make this sort the edge list by distance as well for hierarchical
-   * clusterings.
+   * Sort the edges and output them.
    */
   void EmitResults_(Matrix* results) {
     
@@ -939,7 +961,6 @@ class DualCoverTreeBoruvka {
       candidate_refs_[i] = -1;
       
     }
-    number_of_loops_++;
     
     if (!do_naive_) {
       CleanupHelper_(tree_);
@@ -953,10 +974,13 @@ class DualCoverTreeBoruvka {
     
     //VERBOSE_ONLY(ot::Print(edges));
     
-    fx_format_result(module_, "total_squared_length", "%f", total_dist_);
-    fx_format_result(module_, "number_of_points", "%d", number_of_points_);
-    fx_format_result(module_, "dimension", "%d", data_points_.n_rows());
-    fx_format_result(module_, "number_of_loops", "%d", number_of_loops_);
+    fx_result_double(module_, "total_squared_length", total_dist_);
+    fx_result_int(module_, "number_of_points", number_of_points_);
+    fx_result_int(module_, "dimension", data_points_.n_rows());
+    fx_result_int(module_, "number_of_loops", number_of_loops_);
+    
+    
+    /*
     fx_format_result(module_, "number_distance_prunes", 
                      "%d", number_distance_prunes_);
     fx_format_result(module_, "number_component_prunes", 
@@ -969,6 +993,7 @@ class DualCoverTreeBoruvka {
                      "%d", number_r_recursions_);
     fx_format_result(module_, "number_both_recursions", 
                      "%d", number_both_recursions_);
+    */
     
   } // OutputResults_
   
@@ -1038,14 +1063,15 @@ class DualCoverTreeBoruvka {
     
     total_dist_ = 0.0;
     number_of_loops_ = 0;
+    /*
     number_distance_prunes_ = 0;
     number_component_prunes_ = 0;
     number_leaf_computations_ = 0;
     number_q_recursions_ = 0;
     number_r_recursions_ = 0;
     number_both_recursions_ = 0;
-    
-    do_depth_first_ = fx_param_bool(module_, "depth_first", false);
+    */
+    //do_depth_first_ = fx_param_bool(module_, "depth_first", false);
     
     prune_factor_ = fx_param_double(module_, "prune_factor", 0.0);
     
@@ -1068,6 +1094,8 @@ class DualCoverTreeBoruvka {
       
       printf("=== Adding Edges ===\n");
       AddAllEdges_();
+      
+      number_of_loops_++;
       
       Cleanup_();
     
