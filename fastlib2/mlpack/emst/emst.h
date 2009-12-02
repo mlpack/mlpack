@@ -67,10 +67,10 @@ public:
     greater_index_ = index;
   }
   
-  double distance() {
+  double distance() const {
     return distance_;
   }
-  
+    
   void set_distance(double new_dist) {
     distance_ = new_dist; 
   }

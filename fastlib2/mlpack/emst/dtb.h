@@ -13,6 +13,52 @@
 
 #include "emst.h"
 
+const fx_entry_doc dtb_entries[] = {
+  
+  {"do_naive", FX_PARAM, FX_BOOL, NULL,
+  "Perform a naive computation.\n"},
+  {"leaf_size", FX_PARAM, FX_INT, NULL,
+    "The size of the leaves.  Best performance when set to 1.\n"},
+  {"total_squared_length", FX_RESULT, FX_DOUBLE, NULL, 
+  "The total length of the MST.\n"},
+  {"number_of_points", FX_RESULT, FX_INT, NULL,
+  "The number of points in the data set.\n"},
+  {"dimension", FX_RESULT, FX_INT, NULL,
+  "The dimensionality of the data.\n"},
+  {"number_of_loops", FX_RESULT, FX_INT, NULL,
+  "The number of iterations required to find the MST.\n"},
+  {"tree_building", FX_TIMER, FX_CUSTOM, NULL,
+  "Time taken to construct the cover tree.\n"},
+  {"MST_computation", FX_TIMER, FX_CUSTOM, NULL, 
+  "Total time required to compute the MST.\n"},
+  
+  {"number_distance_prunes", FX_RESULT, FX_INT, NULL,
+    "Number of prunes based on distance.\n"},
+  {"number_component_prunes", FX_RESULT, FX_INT, NULL,
+  "Number of prunes based on points belonging to the same component.\n"},
+  {"number_leaf_computations", FX_RESULT, FX_INT, NULL,
+  "Number of base cases computed.\n"},
+  {"number_q_recursions", FX_RESULT, FX_INT, NULL,
+  "Number of descends of the query tree only.\n"},
+  {"number_r_recursions", FX_RESULT, FX_INT, NULL,
+  "Number of descends of the reference tree only.\n"},
+  {"number_both_recursions", FX_RESULT, FX_INT, NULL,
+  "Number of descends of the both trees.\n"},
+   
+FX_ENTRY_DOC_DONE
+};
+
+/*
+const fx_submodule_doc dtb_submodules[] = {
+FX_SUBMODULE_DOC_DONE
+};
+ */
+
+const fx_module_doc dtb_doc = {
+dtb_entries, NULL,
+"Runs the DualTreeBoruvka algorithm on a kd-tree.\n"
+};
+
 /**
 * A Stat class for use with fastlib's trees.  This one only stores two values.
  *
@@ -187,7 +233,9 @@ class DualTreeBoruvka {
       index_t out_edge_i = neighbors_out_component_[component_i];
       if (connections_.Find(in_edge_i) != connections_.Find(out_edge_i)) {
         double dist = neighbors_distances_[component_i];
-        total_dist_ = total_dist_ + dist;
+        //total_dist_ = total_dist_ + dist;
+        // changed to make this agree with the cover tree code
+        total_dist_ = total_dist_ + sqrt(dist);
         AddEdge_(in_edge_i, out_edge_i, dist);
         connections_.Union(in_edge_i, out_edge_i);
       }
@@ -402,6 +450,18 @@ class DualTreeBoruvka {
   } // ComputeNeighbors_
   
   
+  struct SortEdgesHelper_ {
+    bool operator() (const EdgePair& pairA, const EdgePair& pairB) {
+      return (pairA.distance() > pairB.distance());
+    }
+  } SortFun;
+  
+  void SortEdges_() {
+
+    std::sort(edges_.begin(), edges_.end(), SortFun);
+    
+  } // SortEdges_()
+  
   /**
     * Unpermute the edge list and output it to results
    *
@@ -409,6 +469,8 @@ class DualTreeBoruvka {
    * clusterings.
    */
   void EmitResults_(Matrix* results) {
+    
+    SortEdges_();
     
     DEBUG_ASSERT(number_of_edges_ == number_of_points_ - 1);
     results->Init(3, number_of_edges_);
@@ -424,7 +486,7 @@ class DualTreeBoruvka {
         
         results->set(0, i, edges_[i].lesser_index());
         results->set(1, i, edges_[i].greater_index());
-        results->set(2, i, edges_[i].distance());
+        results->set(2, i, sqrt(edges_[i].distance()));
         
       }
     }
@@ -433,7 +495,7 @@ class DualTreeBoruvka {
       for (index_t i = 0; i < number_of_edges_; i++) {
         results->set(0, i, edges_[i].lesser_index());
         results->set(1, i, edges_[i].greater_index());
-        results->set(2, i, edges_[i].distance());
+        results->set(2, i, sqrt(edges_[i].distance()));
       }
       
     }
@@ -503,22 +565,22 @@ class DualTreeBoruvka {
     
     //VERBOSE_ONLY(ot::Print(edges));
     
-    fx_format_result(module_, "total_squared_length", "%f", total_dist_);
-    fx_format_result(module_, "number_of_points", "%d", number_of_points_);
-    fx_format_result(module_, "dimension", "%d", data_points_.n_rows());
-    fx_format_result(module_, "number_of_loops", "%d", number_of_loops_);
-    fx_format_result(module_, "number_distance_prunes", 
-                     "%d", number_distance_prunes_);
-    fx_format_result(module_, "number_component_prunes", 
-                     "%d", number_component_prunes_);
-    fx_format_result(module_, "number_leaf_computations", 
-                     "%d", number_leaf_computations_);
-    fx_format_result(module_, "number_q_recursions", 
-                     "%d", number_q_recursions_);
-    fx_format_result(module_, "number_r_recursions", 
-                     "%d", number_r_recursions_);
-    fx_format_result(module_, "number_both_recursions", 
-                     "%d", number_both_recursions_);
+    fx_result_double(module_, "total_squared_length", total_dist_);
+    fx_result_int(module_, "number_of_points", number_of_points_);
+    fx_result_int(module_, "dimension", data_points_.n_rows());
+    fx_result_int(module_, "number_of_loops", number_of_loops_);
+    fx_result_int(module_, "number_distance_prunes", 
+                     number_distance_prunes_);
+    fx_result_int(module_, "number_component_prunes", 
+                     number_component_prunes_);
+    fx_result_int(module_, "number_leaf_computations", 
+                     number_leaf_computations_);
+    fx_result_int(module_, "number_q_recursions", 
+                     number_q_recursions_);
+    fx_result_int(module_, "number_r_recursions", 
+                     number_r_recursions_);
+    fx_result_int(module_, "number_both_recursions", 
+                     number_both_recursions_);
     
   } // OutputResults_
   
