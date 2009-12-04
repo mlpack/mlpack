@@ -12,6 +12,12 @@ librule(
     deplibs = ["fastlib:fastlib", "mlpack/emst:union_find", ":cover_tree"]
 )
 
+librule(
+    name = "geomst2",
+    headers = ["geomst2.h", "emst_cover.h"],
+    deplibs = ["fastlib:fastlib", "mlpack/emst:union_find"]
+)
+
 binrule (
     name = "emst_cover_main",
     sources = ["emst_cover_main.cc"],
@@ -22,5 +28,5 @@ binrule (
    name = "comparison_main",
    sources = ["comparison_main.cc"],
    headers = ["mst_comparison.h"],
-   deplibs = [":emst_cover", "mlpack/emst:dtb", "mlpack/emst:union_find"]
+   deplibs = [":emst_cover", "mlpack/emst:dtb", "mlpack/emst:union_find", ":geomst2"]
 )

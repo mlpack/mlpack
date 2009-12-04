@@ -10,6 +10,7 @@
 #include "mst_comparison.h"
 #include "dtb_cover.h"
 #include "mlpack/emst/dtb.h"
+#include "geomst2.h"
 
 const fx_entry_doc comparison_main_entries[] = {
   {"data", FX_REQUIRED, FX_STR, NULL,
@@ -69,7 +70,31 @@ int main(int argc, char* argv[]) {
   bool same = compare.Compare();
   
   if (same) {
-    printf("\n====== MST's are equal. ======\n\n");
+    printf("\n====== kd and cover MST's are equal. ======\n\n");
+  }
+  
+  
+  /////////////////////////////
+  
+  Matrix geomst_results;
+  
+  printf("====== Computing geomst ======");
+  
+  GeoMST2 geo;
+  fx_module* geo_mod = fx_submodule(NULL, "geo_module");
+  
+  geo.Init(data, geo_mod);
+  
+  geo.ComputeMST(&geomst_results);
+  
+  
+  MSTComparison geo_compare;
+  geo_compare.Init(kd_results, geomst_results);
+  
+  bool geo_same = compare.Compare();
+  
+  if (geo_same) {
+    printf("\n ===== kd and geomst are same =====\n");
   }
   
   
