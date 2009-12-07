@@ -14,6 +14,37 @@
 #include "emst_cover.h"
 #include "mlpack/emst/union_find.h"
 
+const fx_entry_doc geomst_entries[] = {
+{"MST_computation", FX_TIMER, FX_CUSTOM, NULL, 
+"Total time required to compute the MST.\n"},
+{"total_length", FX_RESULT, FX_DOUBLE, NULL, 
+"The total length of the MST.\n"},
+{"number_of_points", FX_RESULT, FX_INT, NULL,
+"The number of points in the data set.\n"},
+{"dimension", FX_RESULT, FX_INT, NULL,
+"The dimensionality of the data.\n"},
+{"tree_building", FX_TIMER, FX_CUSTOM, NULL,
+"Time taken to construct the cover tree.\n"},
+{"finding_pairs", FX_TIMER, FX_CUSTOM, NULL,
+  "Time taken finding the closest pair of points.\n"},
+{"number_of_pairs", FX_RESULT, FX_INT, NULL,
+  "The number of pairs in the WSPD.\n"},
+{"number_of_bcp_computations", FX_RESULT, FX_INT, NULL,
+  "The number of closest pairs computed.\n"},
+FX_ENTRY_DOC_DONE
+};
+
+const fx_submodule_doc geomst_submodules[] = {
+FX_SUBMODULE_DOC_DONE
+};
+
+const fx_module_doc geomst_doc = {
+geomst_entries, geomst_submodules,
+"Algorithm module for DualTreeBoruvka on a cover tree.\n"
+};
+
+
+
 class GeoMST2 {
   
 private:
@@ -142,6 +173,7 @@ private:
   fx_module* mod_;
   UnionFind connections_;
   Matrix data_points_;
+  index_t number_of_bcp_;
   
   ArrayList<NodePair> wspd_;
   
@@ -424,6 +456,8 @@ public:
     
     heap_.Init();
     
+    number_of_bcp_ = 0;
+    
   } // Init
   
   void ComputeMST(Matrix* results) {
@@ -475,6 +509,7 @@ public:
           index_t point1, point2;
           FindClosestPair_(this_pair->node1(), this_pair->node2(), &point1, 
                            &point2, &cp_dist);
+          number_of_bcp_++;
           
           this_pair->set_pair(point1, point2, cp_dist);
           
@@ -497,6 +532,9 @@ public:
     EmitResults_(results);
     
     fx_result_double(mod_, "total_length", total_dist_);
+    fx_result_int(mod_, "number_of_points", data_points_.n_cols());
+    fx_result_int(mod_, "number_of_pairs", wspd_.size());
+    fx_result_int(mod_, "number_of_bcp_computations", number_of_bcp_);
     
   } // ComputeMST
   

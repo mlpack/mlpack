@@ -21,7 +21,7 @@ librule(
 binrule (
     name = "emst_cover_main",
     sources = ["emst_cover_main.cc"],
-    deplibs = [":emst_cover"]
+    deplibs = [":emst_cover", "mlpack/emst:dtb", "mlpack/emst:union_find", ":geomst2"]
 )
 
 binrule (
