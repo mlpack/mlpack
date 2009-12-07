@@ -51,7 +51,24 @@ int main(int argc, char* argv[]) {
   dtb.ComputeMST(&kd_results);
   
   //kd_results.PrintDebug("kd-tree results");
-
+  
+  Matrix naive_results;
+  DualTreeBoruvka naive;
+  
+  fx_module *naive_module = fx_submodule(NULL, "naive_module");
+  fx_set_param_bool(naive_module, "do_naive", 1);
+  
+  naive.Init(data, naive_module);
+  naive.ComputeMST(&naive_results);
+  
+  MSTComparison naive_compare;
+  naive_compare.Init(kd_results, naive_results);
+  
+  bool naive_same = naive_compare.Compare();
+  
+  if (naive_same) {
+    printf("\n ====== Naive and kd-tree are same. ====== \n");
+  }
   
   DualCoverTreeBoruvka dtb_cover;
   fx_module* cover_module = fx_submodule(NULL, "cover_module");
