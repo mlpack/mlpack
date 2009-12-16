@@ -43,14 +43,14 @@ namespace mtrc{
   }
 
   inline double MinRedShiftDistSq(const DHrectBound<2>& query,
-			     const DHrectBound<2>& ref){
+			     const DHrectBound<2>& ref, double dz){
      
     DRange a = query.get(2);
     DRange b = ref.get(2);
     
     double z1 = b.lo - a.hi;
     double z2 = a.lo - b.hi;
-    if ((z1+ fabs(z1)) + (z2 +fabs(z2)) > 0.4 ){
+    if ((z1+ fabs(z1)) + (z2 +fabs(z2)) > 2*dz){
       return BIG_BAD_NUMBER;
     } else {
       return MinSphereDistSq(query, ref);
@@ -58,13 +58,13 @@ namespace mtrc{
   }
 
  inline double MinRedShiftDistSq(const DHrectBound<2>& ref, 
-				 const Vector& query){
+				 const Vector& query, double dz){
      
    DRange b = ref.get(2);
    
    double z1 = b.lo - query[2];
    double z2 = query[2] - b.hi;
-   if ((z1+ fabs(z1)) + (z2 +fabs(z2)) > 0.4 ){
+   if ((z1+ fabs(z1)) + (z2 +fabs(z2)) >  2*dz){
      return BIG_BAD_NUMBER;
    } else {
      return MinSphereDistSq(ref, query);
@@ -77,8 +77,9 @@ namespace mtrc{
     return dist*dist;
   }
 
-  inline double RedShiftDistSq(const Vector& query, const Vector& ref){
-    if (fabs(query[2] - ref[2]) > 0.2){
+  inline double RedShiftDistSq(const Vector& query, const Vector& ref,
+	double dz){
+    if (fabs(query[2] - ref[2]) > dz){
       return BIG_BAD_NUMBER;
     } else {
       return SphereDistSq(query, ref);
