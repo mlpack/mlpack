@@ -69,6 +69,7 @@ class Thor2PC {
    
     index_t query_count_;
     index_t reference_count_; 
+	double redshift_val_;
     int redshift_;
     int cartesian_;
     int auto_corr_;
@@ -99,6 +100,7 @@ class Thor2PC {
       redshift_ = fx_param_int(module, "red", 0);
       cartesian_ = fx_param_int(module, "cart", 0);
       weight_ = fx_param_int(module, "weight", 0);
+	redshift_val_ = fx_param_double(module, "dz", 0.2);
     }
     
     void FinalizeInit(datanode *module, int dimension) {
@@ -428,7 +430,8 @@ class Thor2PC {
 	bound = r_node.bound().MinDistanceSq(q.pos_);
       } else{
 	if(param.redshift_){
-	  bound = mtrc::MinRedShiftDistSq(r_node.bound(), q.pos_);
+	  bound = mtrc::MinRedShiftDistSq(r_node.bound(), q.pos_, 
+					  param.redshift_val_);
 	} else {
 	  bound = mtrc::MinSphereDistSq(r_node.bound(), q.pos_);      
 	}
@@ -462,7 +465,7 @@ class Thor2PC {
 	dist = la::DistanceSqEuclidean(q.pos_, r.pos_);
       } else {
 	if (param.redshift_){
-	  dist = mtrc::RedShiftDistSq(q.pos_, r.pos_);
+	  dist = mtrc::RedShiftDistSq(q.pos_, r.pos_, param.redshift_val_);
 	} else {
 	  dist = mtrc::SphereDistSq(q.pos_, r.pos_);
 	}
@@ -505,7 +508,8 @@ class Thor2PC {
 	dmin = q_node.bound().MinDistanceSq(r_node.bound());
       } else{ 
 	if (param.redshift_){
-	  dmin = mtrc::MinRedShiftDistSq(q_node.bound(), r_node.bound());  
+	  dmin = mtrc::MinRedShiftDistSq(q_node.bound(), r_node.bound(),
+					 param.redshift_val_);  
 	} else {      
 	  dmin = mtrc::MinSphereDistSq(q_node.bound(), r_node.bound());	
 	}
@@ -588,7 +592,8 @@ class Thor2PC {
 	 } else {
 	   if (parameters_.redshift_){
 	     distance_sq = mtrc::RedShiftDistSq(q_point->vec(),
-						r_point->vec());	   
+						r_point->vec(),
+						parameters_.redshift_val_);
 	   } else {
 	     distance_sq = mtrc::SphereDistSq(q_point->vec(), r_point->vec());
 	   }

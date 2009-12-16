@@ -420,7 +420,8 @@ class Thor3PC {
 	bound = r_node.bound().MinDistanceSq(q.pos_);
       } else{
 	if(param.redshift_){
-	  bound = mtrc::MinRedShiftDistSq(r_node.bound(), q.pos_);
+	  bound = mtrc::MinRedShiftDistSq(r_node.bound(), q.pos_,
+					  param.redshift_val_);
 	} else {
 	  bound = mtrc::MinSphereDistSq(r_node.bound(), q.pos_);      
 	}
@@ -446,7 +447,7 @@ class Thor3PC {
 	dist = la::DistanceSqEuclidean(q.pos_, r.pos_);
       } else {
 	if (param.redshift_){
-	  dist = mtrc::RedShiftDistSq(q.pos_, r.pos_);
+	  dist = mtrc::RedShiftDistSq(q.pos_, r.pos_, param.redshift_val_);
 	} else {
 	  dist = mtrc::SphereDistSq(q.pos_, r.pos_);
 	}
@@ -473,9 +474,12 @@ class Thor3PC {
 	dist[2] = la::DistanceSqEuclidean(r1.pos_, r2.pos_);
       } else {
 	if (param.redshift_){
-	  dist[0] = mtrc::RedShiftDistSq(q.pos_, r1.pos_);
-	  dist[1] = mtrc::RedShiftDistSq(q.pos_, r2.pos_);
-	  dist[2] = mtrc::RedShiftDistSq(r1.pos_, r2.pos_);
+	  dist[0] = mtrc::RedShiftDistSq(q.pos_, r1.pos_,
+					 param.redshift_val_);
+	  dist[1] = mtrc::RedShiftDistSq(q.pos_, r2.pos_,
+					 param.redshift_val_);
+	  dist[2] = mtrc::RedShiftDistSq(r1.pos_, r2.pos_,
+					 param.redshift_val_);
 	} else {
 	  dist[0] = mtrc::SphereDistSq(q.pos_, r1.pos_);
 	  dist[1] = mtrc::SphereDistSq(q.pos_, r2.pos_);
@@ -527,9 +531,12 @@ class Thor3PC {
 	d3 = r_node1.bound().MinDistanceSq(r_node2.bound());
       } else {
 	if (param.redshift_){
-	  d1 = mtrc::MinRedShiftDistSq(r_node1.bound(), q.pos_);
-	  d2 = mtrc::MinRedShiftDistSq(r_node2.bound(), q.pos_);
-	  d3 = mtrc::MinRedShiftDistSq(r_node1.bound(), r_node2.bound());
+	  d1 = mtrc::MinRedShiftDistSq(r_node1.bound(), q.pos_,
+				       param.redshift_val_);
+	  d2 = mtrc::MinRedShiftDistSq(r_node2.bound(), q.pos_,
+				       param.redshift_val_);
+	  d3 = mtrc::MinRedShiftDistSq(r_node1.bound(), r_node2.bound(),
+				       param.redshift_val_);
 	} else {
 	  d1 = mtrc::MinSphereDistSq(r_node1.bound(), q.pos_);
 	  d2 = mtrc::MinSphereDistSq(r_node2.bound(), q.pos_);
@@ -565,9 +572,12 @@ class Thor3PC {
 	dist[2] = la::DistanceSqEuclidean(r1.pos_, r2.pos_);
       } else {
 	if (param.redshift_){
-	  dist[0] = mtrc::RedShiftDistSq(q.pos_, r1.pos_);
-	  dist[1] = mtrc::RedShiftDistSq(q.pos_, r2.pos_);
-	  dist[2] = mtrc::RedShiftDistSq(r1.pos_, r2.pos_);
+	  dist[0] = mtrc::RedShiftDistSq(q.pos_, r1.pos_,
+					 param.redshift_val_);
+	  dist[1] = mtrc::RedShiftDistSq(q.pos_, r2.pos_,
+					 param.redshift_val_);
+	  dist[2] = mtrc::RedShiftDistSq(r1.pos_, r2.pos_,
+					 param.redshift_val_);
 	} else {
 	  dist[0] = mtrc::SphereDistSq(q.pos_, r1.pos_);
 	  dist[1] = mtrc::SphereDistSq(q.pos_, r2.pos_);
@@ -618,9 +628,11 @@ class Thor3PC {
 	dmin = q_node.bound().MinDistanceSq(r_node.bound());
       } else{ 
 	if (param.redshift_){
-	  dmin = mtrc::MinRedShiftDistSq(q_node.bound(), r_node.bound());  
+	  dmin = mtrc::MinRedShiftDistSq(q_node.bound(), r_node.bound(),
+					 param.redshift_val_);  
 	} else {      
-	  dmin = mtrc::MinSphereDistSq(q_node.bound(), r_node.bound());	
+	  dmin = mtrc::MinSphereDistSq(q_node.bound(), r_node.bound(),
+				       param.redshift_val_);	
 	}
       }
       if(dmin > global_result->two_point_.Max() &&
@@ -645,9 +657,12 @@ class Thor3PC {
 	djk = r_node2.bound().MinDistanceSq(r_node1.bound());
       } else {
 	if (param.redshift_){
-	  dij = mtrc::MinRedShiftDistSq(q_node.bound(), r_node1.bound());  
-	  dki = mtrc::MinRedShiftDistSq(q_node.bound(), r_node2.bound());  
-	  djk = mtrc::MinRedShiftDistSq(r_node2.bound(), r_node1.bound());  
+	  dij = mtrc::MinRedShiftDistSq(q_node.bound(), r_node1.bound(),
+					param.redshift_val_);  
+	  dki = mtrc::MinRedShiftDistSq(q_node.bound(), r_node2.bound(),
+					param.redshift_val_);  
+	  djk = mtrc::MinRedShiftDistSq(r_node2.bound(), r_node1.bound(),
+					param.redshift_val_);  
 	} else {
 	  dij = mtrc::MinSphereDistSq(q_node.bound(), r_node1.bound());  
 	  dki = mtrc::MinSphereDistSq(q_node.bound(), r_node2.bound());  
@@ -744,7 +759,8 @@ class Thor3PC {
 	 } else {
 	   if (parameters_.redshift_){
 	     distance_sq = mtrc::RedShiftDistSq(q_point->vec(),
-						r_point->vec());	   
+						r_point->vec(),
+						param.redshift_val_);	   
 	   } else {
 	     distance_sq = mtrc::SphereDistSq(q_point->vec(), r_point->vec());
 	   }
@@ -763,9 +779,12 @@ class Thor3PC {
 	       dist[2]=la::DistanceSqEuclidean(r_point->vec(),r2_point->vec());
 	     } else {
 	       if (parameters_.redshift_){
-		 dist[0]=mtrc::RedShiftDistSq(q_point->vec(), r_point->vec());
-		 dist[1]=mtrc::RedShiftDistSq(q_point->vec(), r2_point->vec());
-		 dist[2]=mtrc::RedShiftDistSq(r_point->vec(), r2_point->vec());
+		 dist[0]=mtrc::RedShiftDistSq(q_point->vec(), r_point->vec(),
+					      param.redshift_val_);
+		 dist[1]=mtrc::RedShiftDistSq(q_point->vec(), r2_point->vec(),
+					      param.redshift_val_);
+		 dist[2]=mtrc::RedShiftDistSq(r_point->vec(), r2_point->vec(),
+					      param.redshift_val_);
 	       } else {
 		 dist[0] = mtrc::SphereDistSq(q_point->vec(), r_point->vec());
 		 dist[1] = mtrc::SphereDistSq(q_point->vec(), r2_point->vec());
