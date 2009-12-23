@@ -1,0 +1,1176 @@
+#include "fastlib/fastlib.h"
+#include "utils.h"
+#include "ocas_smo.h"
+#define SMALL pow(10,-9)
+
+//////////////*** SMO OPTIMIZATION PROBLEM//////////////////////////
+
+/** This simply resets the position of the variable that we are
+ *  currently examining. So that we recalculate its position.
+ */
+
+void OCASSMO::ResetPositions_(){
+
+  /* position_of_i_in_I0_=-1;
+  position_of_i_in_I1_=-1;
+  position_of_i_in_I2_=-1;
+
+  position_of_j_in_I0_=-1;
+  position_of_j_in_I1_=-1;
+  position_of_j_in_I2_=-1;*/
+}
+
+
+void OCASSMO::DeleteFromI0_(int position_of_variable_in_I0,int position){
+
+  if(I0_indices_[position_of_variable_in_I0]!=position){
+    
+    printf("There is a mistake here4...\n");
+    exit(0);
+  }
+  I0_indices_.Remove(position_of_variable_in_I0,1);
+}
+
+void OCASSMO::DeleteFromI1_(int position_of_variable_in_I1,int position){
+  
+  
+  if(I1_indices_[position_of_variable_in_I1]!=position){
+
+    printf("There is a mistake here5...\n");
+    exit(0);
+  }
+  I1_indices_.Remove(position_of_variable_in_I1,1);
+
+}
+
+/** This function is called if a variable initially in I0 after update
+ * is either in I1 or in I2
+ */
+
+void OCASSMO::DeleteFromFiForI0_(int position_of_variable_in_I0){
+
+  // printf("Will delete from Fi..\n");
+  Fi_for_I0_.Remove(position_of_variable_in_I0,1);
+  
+}
+
+void OCASSMO::DeleteFromI2_(int position_of_variable_in_I2,int position){
+
+  
+  if(I2_indices_[position_of_variable_in_I2]!=position){
+
+    printf("There is a mistake here6...\n");
+    exit(0);
+  }
+  I2_indices_.Remove(position_of_variable_in_I2,1);
+
+}
+
+void OCASSMO::AddToI0_(int position){
+
+  I0_indices_.PushBack(1);
+  I0_indices_[I0_indices_.size()-1]=position;
+  
+}
+
+void OCASSMO::AddToFiForI0_(double F_val){
+  
+  Fi_for_I0_.PushBack(1);
+  Fi_for_I0_[Fi_for_I0_.size()-1]=F_val;
+  
+}
+
+void OCASSMO::AddToI1_(int position){
+  
+  I1_indices_.PushBack(1);
+  I1_indices_[I1_indices_.size()-1]=position;
+
+}
+
+void OCASSMO::AddToI2_(int position){
+
+  I2_indices_.PushBack(1);
+  I2_indices_[I2_indices_.size()-1]=position;
+
+}
+
+
+void OCASSMO::UpdateFiForI0_(double alpha_i_new,double alpha_j_new){
+
+  // Subtract off old contributions and add new contributions
+  
+  Vector a_i,a_j;
+  a_i.Alias(subgradients_mat_[index_working_set_variables_1_]);
+  a_j.Alias(subgradients_mat_[index_working_set_variables_2_]);
+
+  double alpha_i_old=alpha_vec_[index_working_set_variables_1_];
+  double alpha_j_old=alpha_vec_[index_working_set_variables_2_];
+  
+  for(index_t l=0;l<Fi_for_I0_.size();l++){
+    
+    Vector a_l=subgradients_mat_[l];
+    
+    double F_val=Fi_for_I0_[l];
+    F_val-=
+      (la::Dot(a_l,a_i)*alpha_i_old+la::Dot(a_l,a_j)*alpha_j_old)/
+      lambda_reg_const_;
+    F_val+=(la::Dot(a_l,a_i)*alpha_i_new+la::Dot(a_l,a_j)*alpha_j_new)/
+      lambda_reg_const_;
+    
+    // Store it back
+    Fi_for_I0_[l]=F_val;
+  }
+}
+
+void OCASSMO::UpdateSets_(double new_value, int position_I0,int position_I1,
+			  int position_I2,int position,int which_variable){
+  
+  // The argument which_variable tells us the variable for which we
+  // are making these set updates
+  // Remember we have the positions the
+  // working set variable before the updates in the sets I0,I1,I2
+
+  // This flag will tell us from which set the element was deleted from
+  int delete_flag=-1;
+  
+  if(fabs(new_value)<SMALL){
+    // This implies the new value is 0.
+    
+    if(position_I0!=-1){
+      
+      //This means this element was originally in I0
+      
+      // First delete from I0 and then add it to I2. We need to pass
+      // in the index in I0 from where we should delete and the
+      // original index of this variable w.r.t the subgradient matrix
+      
+      DeleteFromI0_(position_I0,position);
+      // Since Fi values are the cache values, hence delete it from the cache too
+      DeleteFromFiForI0_(position_I0);
+
+      delete_flag=0;
+
+      //Finally add this element to I2
+      AddToI2_(position);
+
+      // Since this element is being deleted from I0 and added to
+      // I2. Hence effect the position of the second working variable
+    }
+    else{
+
+      // Check if this element was originally in I1
+      if(position_I1!=-1){   
+	
+	//So we delete from I1 and add it to I2
+	DeleteFromI1_(position_I1,position);
+
+	//Finally add this element to I2
+	AddToI2_(position);
+	
+	delete_flag=1;
+      }
+      else{
+	
+	// this element was originally in I2. 
+	// In this case dont do anything
+	
+      }
+    }     
+  }
+  
+  else{
+    
+    if(fabs(1-new_value)<SMALL){
+      // This means the new value is =1.
+      if(position_I0!=-1){
+	
+	//This means this element was originally in I0
+	
+	// First delete from I0 and then add it to I2. We need to pass
+	// in the index in I0 from where we should delete and the
+	// original index of this variable w.r.t the sungradient matrix
+	
+	DeleteFromI0_(position_I0,position);
+	DeleteFromFiForI0_(position_I0);
+
+	delete_flag=0;
+	// Finally add to I1
+	AddToI1_(position);
+      }
+      else{
+	
+	// Check if this element was originally in I2
+	if(position_I2!=-1){
+	  
+	  //So we delete from I2 and add it to I1
+	  DeleteFromI2_(position_I2,position);
+
+	  delete_flag=2;
+
+	  
+	  // Finally add to I1
+	  AddToI1_(position);
+	}
+	else{ // This element was originally in I1.  Hence nothing
+	      // needs to be done
+	}
+      }
+    }
+    else{
+      
+      // The new value is strictly between 0 and 1
+      if(position_I0!=-1){
+	
+	// Previously the element was in I0. Also since the cache was
+	// updated before updating sets, we have nothing more to do
+	printf("Previously the element was in I0...\n");
+      }
+      else{
+	// Check if this element was in I1
+	
+
+	//printf("Position in I1 was %d...\n",position_I1);
+	if(position_I1!=-1){
+	  
+	  // This means previously the variable was in I1
+	  DeleteFromI1_(position_I1,position);
+	  delete_flag=1;
+	}
+	else{
+	  // This element was in I2. hence delete from I2
+	  
+	  if(position_I2==-1){
+	    
+	    printf("There was a mistake here3..........\n");
+	    exit(0);
+	  }
+	  DeleteFromI2_(position_I2,position);
+	  delete_flag=2;
+	}
+	
+	// Finally add it to I0
+	
+	AddToI0_(position);
+	if(which_variable==1){
+	  
+	  AddToFiForI0_(F_working_set_variables_1_);
+	}
+	else{
+
+	  AddToFiForI0_(F_working_set_variables_2_);
+	}
+      }
+    }
+  }
+
+
+  if(delete_flag==1){
+    // The element was deleted from I1
+
+    if(which_variable==1){
+      
+      if(position_of_j_in_I1_!=-1){
+	
+	position_of_j_in_I1_--;
+      }
+      else{
+	//Dont care
+	
+      }
+
+    }
+  }
+  else{
+    if(delete_flag==2){
+      // The element was deleted from I2
+      
+      if(which_variable==1){
+      
+	if(position_of_j_in_I2_!=-1){
+	  
+	  position_of_j_in_I2_--;
+	}
+	else{
+	  //Dont care
+	  
+	}
+
+      }
+    }
+    else{
+
+      if(delete_flag==0){
+	if(which_variable==1){
+	
+	  if(position_of_j_in_I0_!=-1){
+	    
+	    position_of_j_in_I0_--;
+	  }
+	  else{
+	  //Dont care
+	    
+	  }
+
+	}
+      }
+    }
+    
+  }
+
+  // The reason why we dont do anything if which_variable=2 is because
+  // after updating sets we never ever again use the position of
+  // working set variables.
+}
+
+
+
+void OCASSMO::UpdateFiValuesOfWorkingSetVariables_(double alpha_i_new,
+						   double alpha_j_new){
+
+  Vector a_i,a_j;
+  a_i.Alias(subgradients_mat_[index_working_set_variables_1_]);
+  a_j.Alias(subgradients_mat_[index_working_set_variables_2_]);
+
+  double alpha_i_old=alpha_vec_[index_working_set_variables_1_];
+  double alpha_j_old=alpha_vec_[index_working_set_variables_2_];
+
+  Vector a_l=
+    subgradients_mat_[index_working_set_variables_1_];
+  
+  double F_val=F_working_set_variables_1_;
+  F_val-=
+    (la::Dot(a_l,a_i)*alpha_i_old+la::Dot(a_l,a_j)*alpha_j_old)/
+    lambda_reg_const_;
+
+  F_val+=(la::Dot(a_l,a_i)*alpha_i_new+la::Dot(a_l,a_j)*alpha_j_new)/
+    lambda_reg_const_;
+  
+  // Store it back
+  F_working_set_variables_1_=F_val;
+  
+  
+  a_l=
+    subgradients_mat_[index_working_set_variables_2_];
+  
+  F_val=F_working_set_variables_2_;
+  F_val-=
+    (la::Dot(a_l,a_i)*alpha_i_old+la::Dot(a_l,a_j)*alpha_j_old)/
+    lambda_reg_const_;
+  F_val+=(la::Dot(a_l,a_i)*alpha_i_new+la::Dot(a_l,a_j)*alpha_j_new)/
+    lambda_reg_const_;
+  
+  // Store it back
+  F_working_set_variables_2_=F_val;
+
+}
+
+
+
+
+int OCASSMO::TakeStep_(){
+
+    
+  if(index_working_set_variables_1_==index_working_set_variables_2_){
+
+    return 0;
+  }
+
+  // \gamma1=\frac{1}{2\lambda} <a_i,a_i>
+
+   
+  Vector a_i=subgradients_mat_[index_working_set_variables_1_];
+  double gamma1=la::Dot(a_i,a_i)/(2*lambda_reg_const_);
+  
+  //\gamma2=\frac{1}{2\lambda} <a_j,a_j>
+
+  Vector a_j=subgradients_mat_[index_working_set_variables_2_];
+  double gamma2=la::Dot(a_j,a_j)/(2*lambda_reg_const_);
+
+
+  // gamma5=\frac{1}{\lambda} <a_i,a_j>
+  double gamma5=la::Dot(a_i,a_j)/lambda_reg_const_;
+
+  
+  // \gamma3=\frac{1}{2\lambda} \sum_{l\neq i,j} \alpha_l <a_l,a_i> -b_i
+
+  // Alternatively gamma3 and gamma4 can be expressed in terms of F values
+
+  // double gamma3=(F_working_set_variables_1_-intercepts_vec_[index_working_set_variables_1_])/2.0;
+  //gamma3-=(alpha_vec_[index_working_set_variables_1_]*gamma1+
+  //   0.5*alpha_vec_[index_working_set_variables_2_]*gamma5);
+  
+
+  double gamma3=F_working_set_variables_1_-
+  (2*gamma1*alpha_vec_[index_working_set_variables_1_]+
+   gamma5*alpha_vec_[index_working_set_variables_2_]);
+  
+
+  //double gamma4=(F_working_set_variables_2_-intercepts_vec_[index_working_set_variables_2_])/2.0;
+  //gamma4-=(alpha_vec_[index_working_set_variables_2_]*gamma2+
+  //   0.5*alpha_vec_[index_working_set_variables_1_]*gamma5);
+    
+  
+  double gamma4=F_working_set_variables_2_-
+    (2*alpha_vec_[index_working_set_variables_2_]*gamma2+
+     alpha_vec_[index_working_set_variables_1_]*gamma5);
+  
+  // gamma6=\sum_{l\neq i,j} 1-\alpha_l
+  
+  double gamma6=1.0;
+  for (int l=0;l<num_subgradients_available_;l++){
+    if(l!=index_working_set_variables_1_ && l!=index_working_set_variables_2_){
+      
+      gamma6+=(-alpha_vec_[l]);
+    }
+  }
+  
+
+  // \chi=2\gamma_1+2\gamma_2-2\gamma5
+
+  double chi=2*gamma1+ 2*gamma2- 2*gamma5;
+
+  //\psi =gamma4-gamma3+2gamma6gamma2-gamma6gamma5
+  
+  double psi=gamma4-gamma3+2*gamma6*gamma2-gamma6*gamma5;
+ 
+  // L=max(0,gamma6-1)
+
+  double L=max(0.0,gamma6-1);
+  double H=min(1.0,gamma6);
+
+  //alpha_i_new=min(max(L,\xi^-1 \chi),H)
+  
+  double alpha_i_new;
+  double alpha_j_new;
+  if(chi>0){
+    alpha_i_new=min(max(L,psi/chi),H);
+    alpha_j_new=gamma6-alpha_i_new; 
+  }
+  else{
+
+    printf("I STILL NEED TO FILL UP THIS PART OF THE CODE.....\n");
+    exit(0);
+  }
+
+  //Check if enough progress was made or not
+  if(fabs(alpha_j_new-alpha_vec_[index_working_set_variables_2_]) < 
+     eps_*(alpha_j_new+alpha_vec_[index_working_set_variables_2_]+eps_)){
+
+    return 0;
+  }
+
+  printf("Previously we had ...\n");
+  alpha_vec_.PrintDebug();
+ 
+  
+
+  // Since alpha values have changed, modify the F values for $i\in
+  // I0$ 
+  
+  UpdateFiForI0_(alpha_i_new,alpha_j_new);
+
+
+  // Now compute the updated F values for the variables involved in
+  // TakeStep. Remember these variables need not be in I0.
+  // This is important to be done before set updates
+  
+  UpdateFiValuesOfWorkingSetVariables_(alpha_i_new,alpha_j_new);
+
+  // Update sets for working set variable 1
+  UpdateSets_(alpha_i_new,position_of_i_in_I0_,position_of_i_in_I1_,
+	      position_of_i_in_I2_,index_working_set_variables_1_,1);
+  
+
+   // Now update sets for working set variable 2
+  UpdateSets_(alpha_j_new,position_of_j_in_I0_,position_of_j_in_I1_,
+	      position_of_j_in_I2_,index_working_set_variables_2_,2);
+  
+   // Finally update beta_up and beta_low using indices in I0 and
+  // i,j(the working set variables).
+  
+  UpdateBetaUpAndBetaLowUsingI0_(alpha_i_new,alpha_j_new);
+    
+  //Finally update the alpha vector
+
+  alpha_vec_[index_working_set_variables_1_]=alpha_i_new;
+  alpha_vec_[index_working_set_variables_2_]=alpha_j_new;
+
+  printf("After update in the take step function we have...\n");
+  alpha_vec_.PrintDebug();
+
+  // Lets do some sanity checks
+
+  if(Fi_for_I0_.size()!=I0_indices_.size()){
+    
+    printf("Size of Fi is %d...\n",Fi_for_I0_.size());
+    printf("Size of I0 indices  is %d..\n",I0_indices_.size());
+    exit(0);
+  }
+  if(I0_indices_.size()+I1_indices_.size()+
+     I2_indices_.size()!=num_subgradients_available_){
+    
+    printf("There are some missing elements....\n");
+    exit(0);
+  }
+   // Since this step was a success return 1
+  return 1;
+  
+}
+
+
+
+
+
+int OCASSMO::CheckIfInI1_(int position){
+  
+  // lets check if this position(w.r.t subgradient matrix) is in I0
+  
+  if(I1_indices_.size()==0){
+    
+   
+    
+    // This means there are no elements. Hence return -1
+    return -1;
+  }
+  for(index_t i=0;i<I1_indices_.size();i++){
+    
+    if(I1_indices_[i]==position){
+      
+      // This element exists in I1. Hence return the 
+      // position of the element in I1
+      return i;
+    }
+  }
+  return -1;
+}
+
+int OCASSMO::CheckIfInI2_(int position){
+  
+  // lets check if this position(w.r.t subgradient matrix) is in I0
+ 
+  if(I2_indices_.size()==0){
+
+   
+
+    // This means there are no elements. Hence return -1
+    return -1;
+  }
+  for(index_t i=0;i<I2_indices_.size();i++){
+    
+    if(I2_indices_[i]==position){
+      
+      // This element exists in I2. Hence return the 
+      // position of the element in I2
+      return i;
+    }
+  }
+  return -1;
+}
+
+
+/** This function calculates beta_up and beta_low using elements in I0 and
+ *  the working set variables only.
+ */
+
+void OCASSMO::UpdateBetaUpAndBetaLowUsingI0_(double alpha_i_new_value, 
+					     double alpha_j_new_value){
+  
+  // Iterate over all elements in I0
+
+  beta_up_=DBL_MAX;
+  beta_low_=-DBL_MAX;
+
+  // beta_up=min{F_i| i\in I0 \or I2}
+
+  for(int i=0;i<I0_indices_.size();i++){
+    
+    if(beta_up_>Fi_for_I0_[i]){
+      
+      beta_up_=Fi_for_I0_[i];
+      i_up_=i;
+    }
+
+    if(beta_low_<Fi_for_I0_[i]){
+      
+      beta_low_=Fi_for_I0_[i];
+      i_low_=i;
+    }
+  }
+  
+  // Take a look at the working_set_variable_1_
+  
+  if(fabs(alpha_i_new_value)<SMALL){
+
+    // This implies the working set variable is now in I2.
+    
+    if(beta_up_>F_working_set_variables_1_){
+      
+      beta_up_=F_working_set_variables_1_;
+      i_up_=index_working_set_variables_1_;
+    }
+  }
+  else{
+    if(fabs(1-alpha_i_new_value)<SMALL){
+      
+      // This implies this working set variable is in I1.
+      
+      if(beta_low_<F_working_set_variables_1_){
+	
+	beta_low_=F_working_set_variables_1_;
+	i_low_=index_working_set_variables_1_;
+      }
+    }
+    else{
+      
+      //This implies the working set variable is now in I0
+
+      if(beta_up_>F_working_set_variables_1_){
+	
+	beta_up_=F_working_set_variables_1_;
+	i_up_=index_working_set_variables_1_;
+      }
+
+      if(beta_low_<F_working_set_variables_1_){
+	
+	beta_low_=F_working_set_variables_1_;
+	i_low_=index_working_set_variables_1_;
+      }
+    }
+  }
+
+  // Working set variable 2
+  
+  if(fabs(alpha_j_new_value)<SMALL){
+    
+    // This implies the working set variable is now in I2.
+    
+    if(beta_up_>F_working_set_variables_2_){
+      
+      beta_up_=F_working_set_variables_2_;
+      i_up_=index_working_set_variables_2_;
+    }
+  }
+  else{
+    if(fabs(1-alpha_j_new_value)<SMALL){
+      
+      // This implies this working set variable is in I1.
+      
+      if(beta_low_<F_working_set_variables_2_){
+	
+	beta_low_=F_working_set_variables_2_;
+	i_low_=index_working_set_variables_2_;
+      }
+    }
+    else{
+      
+      //This implies the working set variable is now in I0
+      
+      if(beta_up_>F_working_set_variables_2_){
+	
+	beta_up_=F_working_set_variables_2_;
+	i_up_=index_working_set_variables_2_;
+      }
+      
+      if(beta_low_<F_working_set_variables_2_){
+	
+	beta_low_=F_working_set_variables_2_;
+	i_low_=index_working_set_variables_2_;
+      }
+    }
+  }
+}
+
+
+
+
+/** This updates the values of beta_hi and beta_low value using the
+  * calculated F_value of the element whose position in the
+  * subgradient matrix is given. Remember beta-up and beta_low are
+  * simply the values F_up and F_low
+ */
+
+
+void OCASSMO::UpdateBetaUpAndBetaLow_(double F_val,int position){
+  
+  if(position_of_j_in_I2_!=-1&&F_val<beta_up_){
+    //We have found an element in I2 with a smaller beta value
+    
+    beta_up_=F_val;
+    i_up_=position;
+    return;
+  }
+  
+  if(position_of_j_in_I1_!=-1&& F_val>beta_low_){
+    
+    
+    //We have found an element which has a better F-value than the
+    //present beta_low
+    
+    beta_low_=F_val;
+    i_low_=position;
+  }
+  
+}
+
+/** Fi value needs to be calculate from scratch as it is not available
+ * in the cache
+ */
+
+double OCASSMO::ComputeFiValue_(int position){
+  
+  // As usual this position is w.r.t the subgradient matrix.
+    
+  //F_i=\frac{1}{\lambda} \sum_{j=1}^{t+1} <a_i,a_j>\alpha_j -b_i
+
+  
+  Vector subgrad_i;
+  subgrad_i.Alias(subgradients_mat_[position]);
+
+  double sum=0;
+
+  for (int j=0;j<num_subgradients_available_;j++){
+
+    Vector subgrad_j;
+
+    subgrad_j.Alias(subgradients_mat_[j]);
+    
+    // Calculate <a_i,a_j>
+
+    double a_i_dot_a_j=la::Dot(subgrad_i,subgrad_j);
+    sum+=a_i_dot_a_j*alpha_vec_[j];
+  }
+
+  // Divide the sum by \lambda and subtract b_i
+  
+  double val=(1.0/lambda_reg_const_)*sum-intercepts_vec_[position];
+  return val;
+}
+
+
+
+
+/** This function simply checks if a certain element given by the
+ * position w.r.t subgradient matrix is actually in I0 or not 
+ */
+
+int OCASSMO::CheckIfInI0_(int position){
+ 
+  
+  // lets check if this position(w.r.t subgradient matrix) is in I0
+  
+  if(I0_indices_.size()==0){
+    
+    // This means there are no elements. Hence return -1
+    return -1;
+  }
+  for(index_t i=0;i<I0_indices_.size();i++){
+    
+    if(I0_indices_[i]==position){
+      
+      // This element exists in I0. Hence return the 
+      // position of the element in I0
+      return i;
+    }
+  }
+  return -1;
+}
+
+/** This procedure checks for optimality w.r.t i_up and i_low
+ */
+int OCASSMO::CheckForOptimality_(int position,double F_val){
+  
+  // We already know if this element is in I0 or not.
+
+  bool optimality=true;
+
+  // This means the element is in I0
+  if(position_of_j_in_I0_!=-1){
+    
+    if(F_val<beta_low_-2*tau_){
+      
+      // There is violation. When seen as a part of I2
+      optimality=false;
+    }
+    if(F_val>beta_up_+2*tau_){
+
+      
+      // violation of optimality. When seen as a part of I1
+      optimality=false;
+    }
+    // If there was no violation just return
+    
+    if(optimality==true){
+
+      return 0;
+    }
+    else{ // The variable has violated. Lets see what is the best
+	  // variable to work with
+
+      // Pick the best pair to optimize with
+      if(beta_low_-F_val>F_val-beta_up_){
+	
+	// The other  variable will be i_up
+	index_working_set_variables_1_=i_up_;
+
+	position_of_i_in_I1_=-1;
+	position_of_i_in_I2_=CheckIfInI2_(i_up_);
+	if(position_of_i_in_I2_==-1){
+
+	  // So this i is I0 
+	  position_of_i_in_I0_=CheckIfInI0_(i_up_);
+	}
+	else{
+	  
+	  position_of_i_in_I0_=-1;
+	}
+
+	// Also dont forget to cache the value of F_working_set_variables_1_
+
+	F_working_set_variables_1_=beta_up_;
+      }
+      else{
+	
+	index_working_set_variables_1_=i_low_;
+	
+	position_of_i_in_I2_=-1;
+	position_of_i_in_I1_=CheckIfInI1_(i_low_);
+	if(position_of_i_in_I1_==-1){
+	  
+	  // So this i is I0 
+	  position_of_i_in_I0_=CheckIfInI0_(i_low_);
+	}
+	else{
+	  
+	  position_of_i_in_I0_=-1;
+	}
+
+	// Also dont forget to cache the value of F_working_set_variables_1_
+	
+	F_working_set_variables_1_=beta_low_;
+
+      }
+    }
+  }
+  
+  else{ //either the variable is in I1 or I2
+    
+    if(position_of_j_in_I1_!=-1){
+      
+      if(F_val>beta_up_+2*tau_){
+	
+	index_working_set_variables_1_=i_up_;
+	optimality=false;
+	
+	position_of_i_in_I1_=-1;
+	position_of_i_in_I2_=CheckIfInI2_(i_up_);
+
+	if(position_of_i_in_I2_==-1){
+	  
+	  // So this i is I0 
+	  position_of_i_in_I0_=CheckIfInI0_(i_up_);
+	}
+	else{
+	  
+	  position_of_i_in_I0_=-1;
+	}
+
+	// Also dont forget to cache the value of F_working_set_variables_1_
+
+	F_working_set_variables_1_=beta_up_;
+
+      }
+    }
+    else{
+      
+      if(position_of_j_in_I2_==-1){
+
+	printf("There is a mistake. THIS PARTICULAR VARIABLE IS NOWHERE...\n");
+	exit(0);
+      }
+      // The variable j is in I2
+      if(F_val<beta_low_-2*tau_){
+	
+	// There is violation.
+	
+	index_working_set_variables_1_=i_low_;
+	optimality=false;
+	
+	position_of_i_in_I2_=-1;
+	position_of_i_in_I1_=CheckIfInI1_(i_low_);
+	if(position_of_i_in_I1_==-1){
+	  
+	  // So this i is I0 
+	  position_of_i_in_I0_=CheckIfInI0_(i_low_);
+	}
+	else{
+	  
+	  position_of_i_in_I0_=-1;
+	}
+
+	// Also dont forget to cache the value of F_working_set_variables_1_
+	
+	F_working_set_variables_1_=beta_low_;
+	
+      }
+    }
+  }
+  if(optimality){
+
+    printf("This pair is already optimal...\n");
+    return 0;
+  }
+  else{
+    
+    // Check if it is beneficial to work with the above derived pairs
+    // of variables
+
+    index_working_set_variables_2_=position;
+    
+    int ret_val= TakeStep_();
+    return ret_val;
+  }
+}
+
+
+
+int OCASSMO::ExamineSubgradient_(int position){
+  
+  
+  // In this routine we examine this particular subgradient and see 
+  
+  // Pull out the value of F_i. In case i\in I0 then this value will
+  // be in the cache itself.
+  
+  position_of_j_in_I0_=CheckIfInI0_(position);
+
+ 
+  double F2_value;
+  if(position_of_j_in_I0_!=-1){
+  
+    // This element is in I0. Hence pull out its F_i value from the
+    // cache
+
+
+    F2_value=Fi_for_I0_[position_of_j_in_I0_];
+    //Also mark the position in I1 and I2 as -1
+
+    
+    position_of_j_in_I1_=-1;
+    position_of_j_in_I2_=-1;
+    
+    
+    F_working_set_variables_2_=F2_value;
+  }
+
+  else{
+    //The F_i value is not in cache and hence compute it from scratch.
+    // Remember the position is w.r.t the subgradient matrix
+    
+    F2_value=ComputeFiValue_(position);
+
+    printf("Computed F value for index at position=%d from scratch to be=%f..\n",position,F2_value);
+
+    // Cache this value
+    F_working_set_variables_2_=F2_value;
+    
+    // Update beta_up and beta_low.
+    
+    // Find out the position of j in I1 and I2
+    
+
+    //printf("Position that we are presently examining =%d..\n",position);
+
+    position_of_j_in_I0_=-1;
+    position_of_j_in_I1_=CheckIfInI1_(position);
+    
+    //printf("position of j in I1 is %d...\n",position_of_j_in_I1_);
+    if(position_of_j_in_I1_==-1){
+
+      position_of_j_in_I2_=CheckIfInI2_(position);
+    }
+    else{
+      // The element is in I1
+      position_of_j_in_I2_=-1;
+    }
+
+    printf("Position of j in I1=%d..\n",position_of_j_in_I1_);
+    printf("Position of j in I2=%d..\n",position_of_j_in_I2_);
+  }
+
+  printf("Before update beta_up=%f and beta_low=%f...\n",beta_up_,beta_low_);
+
+  UpdateBetaUpAndBetaLow_(F2_value,position);
+  printf("After update beta_up=%f and beta_low=%f...\n",beta_up_,beta_low_); 
+  //Finally check for optimality
+  
+  int ret_val= CheckForOptimality_(position,F2_value); 
+  //printf("Returning value=%d from check for optimality..\n",ret_val);
+  return ret_val;
+}
+
+void OCASSMO::SMOMainRoutine_(){
+  
+  // variables that keep track of KKT conditions
+  int num_changed=0;
+  bool examine_all_subgradients=true;
+
+  while(num_changed>0||examine_all_subgradients){
+
+    //printf("hi....\n");
+    
+    // Set num_changed to 0
+
+    num_changed=0;
+    
+    if(examine_all_subgradients){
+      
+      //loop over all subgradients.
+    
+      for(int i=0;i<num_subgradients_available_;i++){
+
+	int position=i;
+	
+	num_changed+=ExamineSubgradient_(position);
+	printf("alpha vector returned is ...\n");
+	alpha_vec_.PrintDebug();
+
+	printf("Before going for next iteration the beta values are...\n");
+	printf("beta_up=%f,beta_low=%f...\n",beta_up_,beta_low_);
+
+	ResetPositions_();
+	// reset all positions
+      }
+      printf("NUmber changed=%d...\n",num_changed);
+      printf("Finished examining all subgradients**************.....\n");
+    }
+    else{
+      //Now we shall loop over subgradients that are in I0.
+      printf("Will loop over only those that are in I0...\n");
+      printf("Size of I0 is=%d...\n",I0_indices_.size());
+     
+      for(int i=0;i<I0_indices_.size();i++){
+	
+	int position=I0_indices_[i];
+	position_of_j_in_I0_=i;
+	position_of_j_in_I1_=-1;
+	position_of_j_in_I2_=-1;
+	num_changed+=ExamineSubgradient_(position);
+	
+	ResetPositions_();
+	// May be we can quit if optimality looks satisfied. However
+	// I am omitting this piece of code for now.
+	
+      }
+    }
+    if(examine_all_subgradients==true){
+
+      examine_all_subgradients=false;
+    }
+    else{
+      if(num_changed==0){
+
+	examine_all_subgradients=true;
+      }
+    }
+  }
+  printf("Finished everything. Bailing out.....\n");
+}
+
+void OCASSMO::SolveOCASSMOProblem_(){
+  
+  SMOMainRoutine_();
+
+  printf("alpha vector learnt is...\n");
+  alpha_vec_.PrintDebug();
+
+}
+
+void OCASSMO::Init(ArrayList <Vector> &subgradients_mat, 
+		   ArrayList<double> &intercepts_vec, 
+		   double lambda_reg_const){
+
+
+  
+
+
+  // Copy the value of the regularization constant
+
+  lambda_reg_const_=lambda_reg_const;  
+
+  // Assume that the 0 subgradients that we always have is already added
+  num_subgradients_available_=subgradients_mat.size();
+  
+  
+
+  // Remember SMO always maintains feasibility. Since we want the
+  // alpha's to sum upto 1. Let's set one of the components to 1.
+  alpha_vec_.Init(num_subgradients_available_);
+  alpha_vec_.SetZero();
+
+  // Always set the first component to 1.
+
+  alpha_vec_[0]=1.0;
+
+  subgradients_mat_=subgradients_mat;
+  intercepts_vec_=intercepts_vec;
+    // This element of the structure will grow dynamically
+
+  // The sizes of I0, Fi are  0 and hence we dont need to do
+  // any allocation. Remember the maximum size of any of these lists is 
+  // equal to num_subgradients_available_
+
+  // I_0 =\{i|\alpha_i \in (0,1)\}
+  
+  I0_indices_.Init(0,num_subgradients_available_);
+  
+  Fi_for_I0_.Init(0,num_subgradients_available_);
+
+
+  // I_1=\{i|\alpha_i=1\}. We initialize the first element of alpha
+  // vector to 1.
+
+  I1_indices_.Init(1,num_subgradients_available_);
+  I1_indices_[0]=0;
+  
+  
+
+  //I2=\{i|\alpha_i=0\} Note since we have set all alpha's to 0, hence
+  //initially this arraylist has size
+  //=num_subgradients_available_. Also set the capacity of the array
+  //list to num_subgradients_available_. This will potentially help in
+  //debugging.
+
+  
+  I2_indices_.Init(num_subgradients_available_-1,num_subgradients_available_);
+
+  // Add indices of all subgradients except the first one.
+
+  for(int i=0;i<num_subgradients_available_-1;i++){
+
+    I2_indices_[i]=i+1;
+  }
+  
+  // Initialize beta_up and beta_low
+  
+  beta_up_=DBL_MAX;
+  beta_low_=-DBL_MAX;
+
+  i_up_=0;
+  i_low_=-1;
+  tau_=pow(10,-6);
+  eps_=pow(10,-6);
+
+  position_of_i_in_I0_=-1;
+  position_of_i_in_I1_=-1;
+  position_of_i_in_I2_=-1;
+
+  position_of_j_in_I0_=-1;
+  position_of_j_in_I1_=-1;
+  position_of_j_in_I2_=-1;
+
+  printf("Intercepts vector is ....\n");
+  for(int i=0;i<intercepts_vec_.size();i++){
+    printf("%f,",intercepts_vec_[i]);
+
+  }
+}
