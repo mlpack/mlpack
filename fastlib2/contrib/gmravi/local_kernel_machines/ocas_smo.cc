@@ -1,7 +1,7 @@
 #include "fastlib/fastlib.h"
 #include "utils.h"
 #include "ocas_smo.h"
-#define SMALL pow(10,-9)
+#define SMALL pow(10,-3)
 
 //////////////*** SMO OPTIMIZATION PROBLEM//////////////////////////
 
@@ -63,7 +63,6 @@ void OCASSMO::DeleteFromI2_(int position_of_variable_in_I2,int position){
     exit(0);
   }
   I2_indices_.Remove(position_of_variable_in_I2,1);
-
 }
 
 void OCASSMO::AddToI0_(int position){
@@ -114,6 +113,7 @@ void OCASSMO::UpdateFiForI0_(double alpha_i_new,double alpha_j_new){
     F_val-=
       (la::Dot(a_l,a_i)*alpha_i_old+la::Dot(a_l,a_j)*alpha_j_old)/
       lambda_reg_const_;
+
     F_val+=(la::Dot(a_l,a_i)*alpha_i_new+la::Dot(a_l,a_j)*alpha_j_new)/
       lambda_reg_const_;
     
@@ -145,14 +145,15 @@ void OCASSMO::UpdateSets_(double new_value, int position_I0,int position_I1,
       // original index of this variable w.r.t the subgradient matrix
       
       DeleteFromI0_(position_I0,position);
-      // Since Fi values are the cache values, hence delete it from the cache too
+      // Since Fi values are the cache values, hence delete it from
+      // the cache too
+      
       DeleteFromFiForI0_(position_I0);
-
+      
       delete_flag=0;
-
+      
       //Finally add this element to I2
       AddToI2_(position);
-
       // Since this element is being deleted from I0 and added to
       // I2. Hence effect the position of the second working variable
     }
@@ -226,8 +227,7 @@ void OCASSMO::UpdateSets_(double new_value, int position_I0,int position_I1,
 	printf("Previously the element was in I0...\n");
       }
       else{
-	// Check if this element was in I1
-	
+	// Check if this element was in I1	
 
 	//printf("Position in I1 was %d...\n",position_I1);
 	if(position_I1!=-1){
@@ -247,7 +247,6 @@ void OCASSMO::UpdateSets_(double new_value, int position_I0,int position_I1,
 	  DeleteFromI2_(position_I2,position);
 	  delete_flag=2;
 	}
-	
 	// Finally add it to I0
 	
 	AddToI0_(position);
@@ -269,10 +268,13 @@ void OCASSMO::UpdateSets_(double new_value, int position_I0,int position_I1,
 
     if(which_variable==1){
       
-      if(position_of_j_in_I1_!=-1){
+      if(position_of_j_in_I1_!=-1&&
+	 position_of_i_in_I1_<position_of_j_in_I1_){
 	
+	// j is behind i in I1
 	position_of_j_in_I1_--;
       }
+      
       else{
 	//Dont care
 	
@@ -286,7 +288,8 @@ void OCASSMO::UpdateSets_(double new_value, int position_I0,int position_I1,
       
       if(which_variable==1){
       
-	if(position_of_j_in_I2_!=-1){
+	if(position_of_j_in_I2_!=-1&&
+	   position_of_i_in_I2_<position_of_j_in_I2_){
 	  
 	  position_of_j_in_I2_--;
 	}
@@ -302,8 +305,10 @@ void OCASSMO::UpdateSets_(double new_value, int position_I0,int position_I1,
       if(delete_flag==0){
 	if(which_variable==1){
 	
-	  if(position_of_j_in_I0_!=-1){
-	    
+	  if(position_of_j_in_I0_!=-1&&
+	     position_of_i_in_I0_<position_of_j_in_I0_){
+
+	    // j is behind i	    
 	    position_of_j_in_I0_--;
 	  }
 	  else{
@@ -316,7 +321,7 @@ void OCASSMO::UpdateSets_(double new_value, int position_I0,int position_I1,
     }
     
   }
-
+  
   // The reason why we dont do anything if which_variable=2 is because
   // after updating sets we never ever again use the position of
   // working set variables.
@@ -326,11 +331,11 @@ void OCASSMO::UpdateSets_(double new_value, int position_I0,int position_I1,
 
 void OCASSMO::UpdateFiValuesOfWorkingSetVariables_(double alpha_i_new,
 						   double alpha_j_new){
-
+  
   Vector a_i,a_j;
   a_i.Alias(subgradients_mat_[index_working_set_variables_1_]);
   a_j.Alias(subgradients_mat_[index_working_set_variables_2_]);
-
+  
   double alpha_i_old=alpha_vec_[index_working_set_variables_1_];
   double alpha_j_old=alpha_vec_[index_working_set_variables_2_];
 
@@ -341,7 +346,7 @@ void OCASSMO::UpdateFiValuesOfWorkingSetVariables_(double alpha_i_new,
   F_val-=
     (la::Dot(a_l,a_i)*alpha_i_old+la::Dot(a_l,a_j)*alpha_j_old)/
     lambda_reg_const_;
-
+  
   F_val+=(la::Dot(a_l,a_i)*alpha_i_new+la::Dot(a_l,a_j)*alpha_j_new)/
     lambda_reg_const_;
   
@@ -469,7 +474,6 @@ int OCASSMO::TakeStep_(){
   
   UpdateFiForI0_(alpha_i_new,alpha_j_new);
 
-
   // Now compute the updated F values for the variables involved in
   // TakeStep. Remember these variables need not be in I0.
   // This is important to be done before set updates
@@ -479,15 +483,20 @@ int OCASSMO::TakeStep_(){
   // Update sets for working set variable 1
   UpdateSets_(alpha_i_new,position_of_i_in_I0_,position_of_i_in_I1_,
 	      position_of_i_in_I2_,index_working_set_variables_1_,1);
-  
+  printf("Updated sets for the first variable....\n");
 
    // Now update sets for working set variable 2
   UpdateSets_(alpha_j_new,position_of_j_in_I0_,position_of_j_in_I1_,
 	      position_of_j_in_I2_,index_working_set_variables_2_,2);
+  printf("Updated sets for 2nd variable....\n");
   
    // Finally update beta_up and beta_low using indices in I0 and
   // i,j(the working set variables).
   
+  printf("before updating beta up and beta low using I0...\n");
+  printf("i_up=%d..\n",i_up_);
+  printf("i_low=%d..\n",i_low_);
+    
   UpdateBetaUpAndBetaLowUsingI0_(alpha_i_new,alpha_j_new);
     
   //Finally update the alpha vector
@@ -575,25 +584,26 @@ int OCASSMO::CheckIfInI2_(int position){
 void OCASSMO::UpdateBetaUpAndBetaLowUsingI0_(double alpha_i_new_value, 
 					     double alpha_j_new_value){
   
+  printf("alpha_i_new_value=%f..\n",alpha_i_new_value);
   // Iterate over all elements in I0
 
   beta_up_=DBL_MAX;
   beta_low_=-DBL_MAX;
 
   // beta_up=min{F_i| i\in I0 \or I2}
-
+  
   for(int i=0;i<I0_indices_.size();i++){
     
     if(beta_up_>Fi_for_I0_[i]){
       
       beta_up_=Fi_for_I0_[i];
-      i_up_=i;
-    }
+      i_up_=I0_indices_[i];
+    } 
 
     if(beta_low_<Fi_for_I0_[i]){
       
       beta_low_=Fi_for_I0_[i];
-      i_low_=i;
+      i_low_=I0_indices_[i];
     }
   }
   
@@ -607,7 +617,7 @@ void OCASSMO::UpdateBetaUpAndBetaLowUsingI0_(double alpha_i_new_value,
       
       beta_up_=F_working_set_variables_1_;
       i_up_=index_working_set_variables_1_;
-    }
+    }     
   }
   else{
     if(fabs(1-alpha_i_new_value)<SMALL){
@@ -637,7 +647,7 @@ void OCASSMO::UpdateBetaUpAndBetaLowUsingI0_(double alpha_i_new_value,
       }
     }
   }
-
+  
   // Working set variable 2
   
   if(fabs(alpha_j_new_value)<SMALL){
@@ -670,7 +680,6 @@ void OCASSMO::UpdateBetaUpAndBetaLowUsingI0_(double alpha_i_new_value,
 	beta_up_=F_working_set_variables_2_;
 	i_up_=index_working_set_variables_2_;
       }
-      
       if(beta_low_<F_working_set_variables_2_){
 	
 	beta_low_=F_working_set_variables_2_;
@@ -678,6 +687,9 @@ void OCASSMO::UpdateBetaUpAndBetaLowUsingI0_(double alpha_i_new_value,
       }
     }
   }
+  printf("After updates we have...\n");
+  printf("i_up=%d...\n",i_up_);
+  printf("i_low=%d...\n",i_low_);
 }
 
 
@@ -687,18 +699,20 @@ void OCASSMO::UpdateBetaUpAndBetaLowUsingI0_(double alpha_i_new_value,
   * calculated F_value of the element whose position in the
   * subgradient matrix is given. Remember beta-up and beta_low are
   * simply the values F_up and F_low
- */
+  */
 
 
 void OCASSMO::UpdateBetaUpAndBetaLow_(double F_val,int position){
   
   if(position_of_j_in_I2_!=-1&&F_val<beta_up_){
-    //We have found an element in I2 with a smaller beta value
+
+    // We have found an element in 
+    // I2 with a smaller beta value
     
     beta_up_=F_val;
     i_up_=position;
     return;
-  }
+  }  
   
   if(position_of_j_in_I1_!=-1&& F_val>beta_low_){
     
@@ -708,8 +722,7 @@ void OCASSMO::UpdateBetaUpAndBetaLow_(double F_val,int position){
     
     beta_low_=F_val;
     i_low_=position;
-  }
-  
+  }  
 }
 
 /** Fi value needs to be calculate from scratch as it is not available
@@ -783,7 +796,6 @@ int OCASSMO::CheckForOptimality_(int position,double F_val){
 
   bool optimality=true;
 
-  // This means the element is in I0
   if(position_of_j_in_I0_!=-1){
     
     if(F_val<beta_low_-2*tau_){
@@ -809,15 +821,23 @@ int OCASSMO::CheckForOptimality_(int position,double F_val){
       // Pick the best pair to optimize with
       if(beta_low_-F_val>F_val-beta_up_){
 	
-	// The other  variable will be i_up
-	index_working_set_variables_1_=i_up_;
+	// The other  variable will be i_low_
+	index_working_set_variables_1_=i_low_;
 
-	position_of_i_in_I1_=-1;
-	position_of_i_in_I2_=CheckIfInI2_(i_up_);
-	if(position_of_i_in_I2_==-1){
+	position_of_i_in_I2_=-1;
+	position_of_i_in_I1_=CheckIfInI1_(i_low_);
+
+	printf("i_low_ is =%d\n",i_low_);
+	if(position_of_i_in_I1_==-1){
 
 	  // So this i is I0 
-	  position_of_i_in_I0_=CheckIfInI0_(i_up_);
+	  position_of_i_in_I0_=CheckIfInI0_(i_low_);
+	 
+	  if(position_of_i_in_I0_==-1){
+
+	    printf("There is a mistake here8..\n");
+	    exit(0);
+	  }
 	}
 	else{
 	  
@@ -826,18 +846,23 @@ int OCASSMO::CheckForOptimality_(int position,double F_val){
 
 	// Also dont forget to cache the value of F_working_set_variables_1_
 
-	F_working_set_variables_1_=beta_up_;
+	F_working_set_variables_1_=beta_low_;
       }
       else{
 	
-	index_working_set_variables_1_=i_low_;
+	index_working_set_variables_1_=i_up_;
 	
-	position_of_i_in_I2_=-1;
-	position_of_i_in_I1_=CheckIfInI1_(i_low_);
-	if(position_of_i_in_I1_==-1){
+	position_of_i_in_I1_=-1;
+	position_of_i_in_I2_=CheckIfInI2_(i_up_);
+	if(position_of_i_in_I2_==-1){
 	  
 	  // So this i is I0 
-	  position_of_i_in_I0_=CheckIfInI0_(i_low_);
+	  position_of_i_in_I0_=CheckIfInI0_(i_up_);
+	  if(position_of_i_in_I0_==-1){
+	    
+	    printf("There is a mistake here9...\n");
+	    exit(0);
+	  }
 	}
 	else{
 	  
@@ -846,7 +871,7 @@ int OCASSMO::CheckForOptimality_(int position,double F_val){
 
 	// Also dont forget to cache the value of F_working_set_variables_1_
 	
-	F_working_set_variables_1_=beta_low_;
+	F_working_set_variables_1_=beta_up_;
 
       }
     }
@@ -868,6 +893,11 @@ int OCASSMO::CheckForOptimality_(int position,double F_val){
 	  
 	  // So this i is I0 
 	  position_of_i_in_I0_=CheckIfInI0_(i_up_);
+	  if(position_of_i_in_I0_==-1){
+	    
+	    printf("There is a mistake here10...\n");
+	    exit(0);
+	  }
 	}
 	else{
 	  
@@ -901,6 +931,11 @@ int OCASSMO::CheckForOptimality_(int position,double F_val){
 	  
 	  // So this i is I0 
 	  position_of_i_in_I0_=CheckIfInI0_(i_low_);
+	  if(position_of_i_in_I0_==-1){
+	    
+	    printf("There is a mistake here11...\n");
+	    exit(0);
+	  }
 	}
 	else{
 	  
@@ -927,8 +962,10 @@ int OCASSMO::CheckForOptimality_(int position,double F_val){
     index_working_set_variables_2_=position;
     
     int ret_val= TakeStep_();
+    printf("ret_val=%d...\n",ret_val);
     return ret_val;
   }
+  
 }
 
 
@@ -968,8 +1005,6 @@ int OCASSMO::ExamineSubgradient_(int position){
     
     F2_value=ComputeFiValue_(position);
 
-    printf("Computed F value for index at position=%d from scratch to be=%f..\n",position,F2_value);
-
     // Cache this value
     F_working_set_variables_2_=F2_value;
     
@@ -987,6 +1022,10 @@ int OCASSMO::ExamineSubgradient_(int position){
     if(position_of_j_in_I1_==-1){
 
       position_of_j_in_I2_=CheckIfInI2_(position);
+      if(position_of_j_in_I2_==-1){
+	
+	printf("There is a mistake here12...\n");
+      }
     }
     else{
       // The element is in I1
@@ -995,12 +1034,13 @@ int OCASSMO::ExamineSubgradient_(int position){
 
     printf("Position of j in I1=%d..\n",position_of_j_in_I1_);
     printf("Position of j in I2=%d..\n",position_of_j_in_I2_);
+
+    printf("Before update beta_up=%f and beta_low=%f...\n",beta_up_,beta_low_);
+
+    UpdateBetaUpAndBetaLow_(F2_value,position);
+    printf("After update beta_up=%f and beta_low=%f...\n",beta_up_,beta_low_); 
   }
 
-  printf("Before update beta_up=%f and beta_low=%f...\n",beta_up_,beta_low_);
-
-  UpdateBetaUpAndBetaLow_(F2_value,position);
-  printf("After update beta_up=%f and beta_low=%f...\n",beta_up_,beta_low_); 
   //Finally check for optimality
   
   int ret_val= CheckForOptimality_(position,F2_value); 
@@ -1157,8 +1197,8 @@ void OCASSMO::Init(ArrayList <Vector> &subgradients_mat,
 
   i_up_=0;
   i_low_=-1;
-  tau_=pow(10,-6);
-  eps_=pow(10,-6);
+  tau_=pow(10,-3);
+  eps_=pow(10,-3);
 
   position_of_i_in_I0_=-1;
   position_of_i_in_I1_=-1;
