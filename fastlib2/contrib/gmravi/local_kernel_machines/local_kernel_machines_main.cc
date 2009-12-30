@@ -1,11 +1,9 @@
-#include "local_kernel_machines_def.h"
-#include "utils.h"
-#include "my_crossvalidation.h"
 #include "fastlib/fastlib.h"
 #include "mlpack/svm/svm.h"
-//#include "declarations.h"
-//#include "example.h"
-#include "new_ext_header.h"
+#include "local_kernel_machines_def.h"
+#include "local_kernel_machines_impl.h"
+#include "utils.h"
+#include "my_crossvalidation.h"
 int main(int argc, char *argv[]){
 
   // Initialize FastExec
@@ -48,16 +46,17 @@ int main(int argc, char *argv[]){
   // Convert the above matrix to a vector
 
   Vector train_labels;
-  ConvertMatrixToVector(train_labels_mat,train_labels);
+  ConvertOneColumnMatrixToVector(train_labels_mat,train_labels);
   
 
   // Get the kernels used
 
   const char *smoothing_kernel=
     fx_param_str(fx_root,"smoothing_kernel","epan");
-
+  
   const char *similarity_kernel=
     fx_param_str(fx_root,"svm_kernel","linear");
+  
   
   if (strcmp(similarity_kernel,"linear")){
     
@@ -80,7 +79,5 @@ int main(int argc, char *argv[]){
   
   }
 
-  //Run the gateway function
 
-  gateway();
 }
