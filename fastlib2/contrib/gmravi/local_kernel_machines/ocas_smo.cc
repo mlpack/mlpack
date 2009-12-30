@@ -50,25 +50,25 @@ void OCASSMO::DeleteFromI1_(int position_of_variable_in_I1,int position){
 
 void OCASSMO::DeleteFromFiForI0_(int position_of_variable_in_I0){
 
-  printf("Before deleting from Fi...\n");
+  /*printf("Before deleting from Fi...\n");
   for(int i=0;i<I0_indices_.size();i++){
     
-    printf("I0 position is %d..\n",I0_indices_[i]);
-    }
+  printf("I0 position is %d..\n",I0_indices_[i]);
+  }*/
 
-  printf("Position of variable in I0 is %d...\n",position_of_variable_in_I0);
+  //printf("Position of variable in I0 is %d...\n",position_of_variable_in_I0);
 
   // printf("Will delete from Fi..\n");
 
   
   Fi_for_I0_.Remove(position_of_variable_in_I0,1);
   
-  printf("After deleting from Fi in the function we have...\n");
+  /*printf("After deleting from Fi in the function we have...\n");
 
   for(int i=0;i<I0_indices_.size();i++){
     
     printf("I0 position is %d..\n",I0_indices_[i]);
-  }
+    }*/
   
 }
 
@@ -85,20 +85,20 @@ void OCASSMO::DeleteFromI2_(int position_of_variable_in_I2,int position){
 
 void OCASSMO::AddToI0_(int position){
 
-  printf("Before I add an element to I0...\n");
+  /*  printf("Before I add an element to I0...\n");
   for(int i=0;i<I0_indices_.size();i++){
     
     printf("I0 position is %d..\n",I0_indices_[i]);
-  }
+    }*/
 
   I0_indices_.PushBack(1);
   I0_indices_[I0_indices_.size()-1]=position;
   
-  printf("After I have added an element to I0...\n");
+  /*printf("After I have added an element to I0...\n");
   for(int i=0;i<I0_indices_.size();i++){
     
     printf("I0 position is %d..\n",I0_indices_[i]);
-  }
+    }*/
 }
 
 void OCASSMO::AddToFiForI0_(double F_val){
@@ -206,11 +206,12 @@ int OCASSMO::CheckIfInI0_(int position){
 
 void OCASSMO::UpdateFiForI0_(double alpha_i_new,double alpha_j_new){
 
-  printf("In update Fi function. We have I0 as...\n");
+  /*printf("In update Fi function. We have I0 as...\n");
   for(int i=0;i<I0_indices_.size();i++){
     
     printf("I0 position is %d..\n",I0_indices_[i]);
-  }
+    }*/
+
   // Subtract off old contributions and add new contributions
   
   Vector a_i,a_j;
@@ -220,19 +221,19 @@ void OCASSMO::UpdateFiForI0_(double alpha_i_new,double alpha_j_new){
   double alpha_i_old=alpha_vec_[index_working_set_variables_1_];
   double alpha_j_old=alpha_vec_[index_working_set_variables_2_];
   
-  printf("Size of I0 indices is %d...\n",I0_indices_.size());
+  //printf("Size of I0 indices is %d...\n",I0_indices_.size());
 
-  for(int i=0;i<I0_indices_.size();i++){
+  /*for(int i=0;i<I0_indices_.size();i++){
     
     printf("I0 position is %d..\n",I0_indices_[i]);
-  }
+    }*/
  
 
-  for(int z=0;z<I0_indices_.size();z++){
+  /*for(int z=0;z<I0_indices_.size();z++){
     
     printf("I0 position is %d..\n",I0_indices_[z]);
   }
-  printf("The size of Fi vector is %d...\n",Fi_for_I0_.size());
+  printf("The size of Fi vector is %d...\n",Fi_for_I0_.size());*/
 
   //ArrayList<double> temp;
   //temp.Init(Fi_for_I0_.size());
@@ -242,7 +243,7 @@ void OCASSMO::UpdateFiForI0_(double alpha_i_new,double alpha_j_new){
     Vector a_z;
     int pos_in_subgrad_matrix=I0_indices_[z];
    
-    printf("z=%d,I0 holds the following position=%d..\n",z,pos_in_subgrad_matrix);
+    // printf("z=%d,I0 holds the following position=%d..\n",z,pos_in_subgrad_matrix);
     a_z.Alias(subgradients_mat_[pos_in_subgrad_matrix]);
     
     double F_val=Fi_for_I0_[z];
@@ -254,19 +255,19 @@ void OCASSMO::UpdateFiForI0_(double alpha_i_new,double alpha_j_new){
       lambda_reg_const_;
 
 
-    printf("Before updating Fi for I0 we have...\n");
+    /*printf("Before updating Fi for I0 we have...\n");
     for(int z=0;z<I0_indices_.size();z++){
       
       printf("I0 position is %d..\n",I0_indices_[z]);
-    }
+      }*/
     // Store it back.  Remember to uncomment it out.
     Fi_for_I0_[z]=F_val;
 
-    printf("After one round of iteration we have...\n");
+    /*printf("After one round of iteration we have...\n");
     for(int z=0;z<I0_indices_.size();z++){
       
       printf("I0 position is %d..\n",I0_indices_[z]);
-    }
+      }*/
   }  
 }
 
@@ -281,11 +282,11 @@ void OCASSMO::UpdateSets_(double new_value, int position_I0,int position_I1,
   // This flag will tell us from which set the element was deleted from
 
 
-  printf("position I0:%d...\n",position_I0);
+  /*printf("position I0:%d...\n",position_I0);
   printf("position I1:%d...\n",position_I1);
   printf("position I2:%d...\n",position_I2);
   printf("position:%d...\n",position);
-  printf("new value=%f..\n",new_value);
+  printf("new value=%f..\n",new_value);*/
 
   // Delete flag will tell us from which set we need to delete an
   // element, during the set update process.
@@ -308,18 +309,19 @@ void OCASSMO::UpdateSets_(double new_value, int position_I0,int position_I1,
       // Since Fi values are the cache values, hence delete it from
       // the cache too
       
-      printf("Having deleted from I0...\n");
+      /*printf("Having deleted from I0...\n");
       for(int i=0;i<I0_indices_.size();i++){
 	
-	printf("I0 position is %d..\n",I0_indices_[i]);
-      }
+      printf("I0 position is %d..\n",I0_indices_[i]);
+      }*/
+      
       DeleteFromFiForI0_(position_I0);
 
-      printf("Having deleted from Fi...\n");
+      /*printf("Having deleted from Fi...\n");
       for(int i=0;i<I0_indices_.size();i++){
 	
 	printf("I0 position is %d..\n",I0_indices_[i]);
-      }
+	}*/
 
       delete_flag=0;
       
@@ -400,11 +402,11 @@ void OCASSMO::UpdateSets_(double new_value, int position_I0,int position_I1,
     }
     else{  // The new value is strictly between 0 and 1
 
-      printf("Before I verify how to update the sets we have  I0 as...\n");
+      /*printf("Before I verify how to update the sets we have  I0 as...\n");
       for(int i=0;i<I0_indices_.size();i++){
 	
 	printf("I0 position is %d..\n",I0_indices_[i]);
-      }
+	}*/
      
       if(position_I0!=-1){
 	
@@ -420,7 +422,7 @@ void OCASSMO::UpdateSets_(double new_value, int position_I0,int position_I1,
 	  DeleteFromI1_(position_I1,position);
 	  delete_flag=1;
 
-	  printf("Adding to I0 the position=%d*********************\n",position);
+	  //printf("Adding to I0 the position=%d*********************\n",position);
 	  AddToI0_(position);
 	}
 	else{
@@ -434,7 +436,7 @@ void OCASSMO::UpdateSets_(double new_value, int position_I0,int position_I1,
 	  DeleteFromI2_(position_I2,position);
 	  delete_flag=2;
 
-	  printf("Adding to I0 the position=%d*********************\n",position);
+	  //printf("Adding to I0 the position=%d*********************\n",position);
 	  AddToI0_(position);
 
 	}
@@ -448,11 +450,11 @@ void OCASSMO::UpdateSets_(double new_value, int position_I0,int position_I1,
 	  AddToFiForI0_(F_working_set_variables_2_);
 	}
 
-	printf("After adding an element to I0 we have...\n");
+	/*printf("After adding an element to I0 we have...\n");
 	for(int i=0;i<I0_indices_.size();i++){
 	  
 	  printf("I0 position is %d..\n",I0_indices_[i]);
-	}
+	  }*/
       }
     }
   }
@@ -592,9 +594,9 @@ void OCASSMO::UpdateBetaUpAndBetaLowUsingI0_(double alpha_i_new_value,
     }
   }
 
-  printf("After using I0 only...\n");
+  /*printf("After using I0 only...\n");
   printf("i_low=%d..\n",i_low_);
-  printf("i_up=%d..\n",i_up_);
+  printf("i_up=%d..\n",i_up_);*/
   
   // Take a look at the working_set_variable_1_
   
@@ -676,9 +678,9 @@ void OCASSMO::UpdateBetaUpAndBetaLowUsingI0_(double alpha_i_new_value,
       }
     }
   }
-  printf("After updates we have...\n");
+  /*printf("After updates we have...\n");
   printf("i_up=%d...\n",i_up_);
-  printf("i_low=%d...\n",i_low_);
+  printf("i_low=%d...\n",i_low_);*/
 }
 
 
@@ -872,12 +874,13 @@ int OCASSMO::TakeStep_(){
   // Since alpha values have changed, modify the F values for $i\in
   // I0$ 
   
-  printf("Before updating Fi's we have ...\n");
+  /*printf("Before updating Fi's we have ...\n");
 
   for(int i=0;i<I0_indices_.size();i++){
     
     printf("I0 position is %d..\n",I0_indices_[i]);
-  }
+    }*/
+
   printf("Will now update Fi's...\n");
   UpdateFiForI0_(alpha_i_new,alpha_j_new);
 
@@ -888,23 +891,25 @@ int OCASSMO::TakeStep_(){
   UpdateFiValuesOfWorkingSetVariables_(alpha_i_new,alpha_j_new);
 
 
-  printf("Before updating I0 for first set we have...\n");
+  /*printf("Before updating I0 for first set we have...\n");
   for(int i=0;i<I0_indices_.size();i++){
     
     printf("I0 position is %d..\n",I0_indices_[i]);
-  }
+    }*/
 
   // Update sets for working set variable 1
   UpdateSets_(alpha_i_new,position_of_i_in_I0_,position_of_i_in_I1_,
 	      position_of_i_in_I2_,index_working_set_variables_1_,1);
   printf("Updated sets for the first variable....\n");
-  printf("After updating I0 for first set we have...\n");
+
+  /*printf("After updating I0 for first set we have...\n");
   for(int i=0;i<I0_indices_.size();i++){
     
-    printf("I0 position is %d..\n",I0_indices_[i]);
-  }
-    printf("will now update sets for the second variable....\n");
-    
+  printf("I0 position is %d..\n",I0_indices_[i]);
+  }*/
+
+  printf("will now update sets for the second variable....\n");
+  
     // Now update sets for working set variable 2
     
     
@@ -915,15 +920,15 @@ int OCASSMO::TakeStep_(){
    // Finally update beta_up and beta_low using indices in I0 and
   // i,j(the working set variables).
   
-  printf("before updating beta up and beta low using I0...\n");
+  /*printf("before updating beta up and beta low using I0...\n");
   printf("i_up=%d..\n",i_up_);
-  printf("i_low=%d..\n",i_low_);
+  printf("i_low=%d..\n",i_low_);*/
   
   UpdateBetaUpAndBetaLowUsingI0_(alpha_i_new,alpha_j_new);
   
-  printf("After updating beta using I0...\n");
+  /*printf("After updating beta using I0...\n");
   printf("i_up=%d..\n",i_up_);
-  printf("i_low=%d..\n",i_low_);
+  printf("i_low=%d..\n",i_low_);*/
   
     
   //Finally update the alpha vector
@@ -931,8 +936,8 @@ int OCASSMO::TakeStep_(){
   alpha_vec_[index_working_set_variables_1_]=alpha_i_new;
   alpha_vec_[index_working_set_variables_2_]=alpha_j_new;
 
-  printf("After update in the take step function we have...\n");
-  alpha_vec_.PrintDebug();
+  /*printf("After update in the take step function we have...\n");
+    alpha_vec_.PrintDebug();*/
 
   // Lets do some sanity checks
 
@@ -1283,8 +1288,8 @@ void OCASSMO::SolveOCASSMOProblem_(){
   
   SMOMainRoutine_();
 
-  printf("alpha vector learnt is...\n");
-  alpha_vec_.PrintDebug();
+  /*  printf("alpha vector learnt is...\n");
+      alpha_vec_.PrintDebug();*/
 
   printf("Lets perform final KKT checks....\n");
   for(int i=0;i<num_subgradients_available_;i++){
@@ -1297,7 +1302,7 @@ void OCASSMO::SolveOCASSMOProblem_(){
       // This is in I2
       if(F_val<beta_up_){
 
-	printf("There is a mistake here12...\n");
+	printf("There is a mistake here18...\n");
 	exit(0);
       }
     }
@@ -1323,6 +1328,7 @@ void OCASSMO::SolveOCASSMOProblem_(){
 	  printf("beta_up=%f...\n",beta_up_);
 	  printf("beta_low=%f...\n",beta_low_);
 	  printf("There is a mistake here14...\n");
+	  exit(0);
 	  int pos=CheckIfInI0_(i);
 	  printf("alpha value=%f and position in I0=%d...\n",alpha_vec_[i],pos);
 	  printf("F value from the cache is =%f\n",Fi_for_I0_[pos]);
@@ -1338,13 +1344,16 @@ void OCASSMO::SolveOCASSMOProblem_(){
 	    printf("I0_[%d]=%d..\n",i,I0_indices_[i]);
 	    
 	  }
-	  exit(0);
 	}
       }
     }
   }
 
+  printf("The alpha vector finally learnt is...\n");
+  alpha_vec_.PrintDebug();
+
   printf("KKT CONDITIONS VERIFIED SUCCESSFULLY..\n");
+
 
 }
 
@@ -1418,8 +1427,8 @@ void OCASSMO::Init(ArrayList <Vector> &subgradients_mat,
   beta_low_=-DBL_MAX;
   i_up_=1;
   i_low_=0;
-  tau_=pow(10,-3);
-  eps_=pow(10,-3);
+  tau_=pow(10,-4);
+  eps_=pow(10,-4);
 
   position_of_i_in_I0_=-1;
   position_of_i_in_I1_=-1;
