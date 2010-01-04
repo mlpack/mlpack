@@ -11,6 +11,7 @@
 #include "dtb_cover.h"
 #include "mlpack/emst/dtb.h"
 #include "geomst2.h"
+#include "friedman_bentley.h" 
 
 const fx_entry_doc comparison_main_entries[] = {
   {"data", FX_REQUIRED, FX_STR, NULL,
@@ -108,12 +109,29 @@ int main(int argc, char* argv[]) {
   MSTComparison geo_compare;
   geo_compare.Init(kd_results, geomst_results);
   
-  bool geo_same = compare.Compare();
+  bool geo_same = geo_compare.Compare();
   
   if (geo_same) {
     printf("\n ===== kd and geomst are same =====\n");
   }
   
+  
+  Matrix single_results;
+  
+  FriedmanBentley fb_alg;
+  fx_module* fb_mod = fx_submodule(NULL, "single_fragment_module");
+  
+  fb_alg.Init(data, fb_mod);
+  fb_alg.ComputeMST(&single_results);
+  
+  MSTComparison single_compare;
+  single_compare.Init(kd_results, single_results);
+  
+  bool single_same = single_compare.Compare();
+  
+  if (single_same) {
+    printf("\n ===== kd and single fragment are same ===== \n");
+  }
   
   fx_done(NULL);
   
