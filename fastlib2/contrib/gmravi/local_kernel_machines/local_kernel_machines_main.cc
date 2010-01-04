@@ -27,7 +27,9 @@ int main(int argc, char *argv[]){
   const char *train_labels_file_name=
     fx_param_str_req(fx_root,"train_labels");  
   
-  
+   // test labels
+  const char *test_labels_file_name=
+    fx_param_str_req(fx_root,"test_labels");  
   
 
   Matrix train_data;
@@ -42,12 +44,16 @@ int main(int argc, char *argv[]){
   Matrix train_labels_mat;
   data::Load(train_labels_file_name,&train_labels_mat);
 
+  Matrix test_labels_mat;
+  data::Load(test_labels_file_name,&test_labels_mat);
  
   // Convert the above matrix to a vector
 
   Vector train_labels;
   ConvertOneColumnMatrixToVector(train_labels_mat,train_labels);
   
+  Vector test_labels;
+  ConvertOneColumnMatrixToVector(test_labels_mat,test_labels);
 
   // Get the kernels used
 
@@ -58,11 +64,11 @@ int main(int argc, char *argv[]){
     fx_param_str(fx_root,"svm_kernel","linear");
   
   
-  if (strcmp(similarity_kernel,"linear")){
+  if (strcmp(similarity_kernel,"linear")==0){
     
     // The similarity kernel being used is the Linear kernel
     LocalKernelMachines <SVMLinearKernel> lkm;
-    lkm.Init(train_data,test_data,train_labels,lkm_module);
+    lkm.Init(train_data,test_data,train_labels,test_labels,lkm_module);
 
     // Train
     lkm.TrainLocalKernelMachines();
@@ -70,12 +76,7 @@ int main(int argc, char *argv[]){
   }
   else{
     
-    //The similarity kernel being used is the SVMRBF kernel
-    LocalKernelMachines<SVMRBFKernel> lkm;
-    lkm.Init(train_data,test_data,train_labels,lkm_module);
-
-    // Train
-    lkm.TrainLocalKernelMachines();
+    printf("We dont yet support SVMRBF kernels..\n");
   
   }
 
