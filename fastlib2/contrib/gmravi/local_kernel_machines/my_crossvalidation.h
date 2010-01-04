@@ -8,64 +8,55 @@
 template <typename TKernel> void  LocalKernelMachines <TKernel>::
 GenerateSmoothingBandwidthVectorForCV_(Vector &smoothing_bandwidth_vector){
   
-  smoothing_bandwidth_vector.Init(1);
-  for(index_t i=0; i<1;i++){
-    smoothing_bandwidth_vector[i]=0.1*(1+i);
-  }
+  int num_smoothing_bandwidth=20;
+   smoothing_bandwidth_vector.Init(num_smoothing_bandwidth);
 
+   double low=0.05;
+   double hi=1.0;
+   double gap=(hi-low)/num_smoothing_bandwidth;
+  for(index_t i=0; i<num_smoothing_bandwidth;i++){
+
+    //smoothing_bandwidth_vector[i]=pow(10,-3)*pow(2,i/2);
+    smoothing_bandwidth_vector[i]=low+gap*i;
+  }
 }
 
 template <typename TKernel> void  LocalKernelMachines <TKernel>::
 GenerateLambdaVectorForCV_(Vector &lambda_vector){
   
- lambda_vector.Init(1);
-  for(index_t i=0; i<1;i++){
-    lambda_vector[i]=(1+i);
+  int num_lambda=20;
+  double low=pow(10,0);
+  double hi=pow(10,2);
+  double range=(hi-low)/num_lambda;
+  lambda_vector.Init(num_lambda);
+  for(index_t i=0; i<num_lambda;i++){
+    lambda_vector[i]=low+i*range;
   }
  
 }
-template <typename TKernel> void  LocalKernelMachines <TKernel>::
-GenerateSVMBandwidthVectorForCV_(Vector &svm_bandwidth_vector){
-  
-  svm_bandwidth_vector.Init(1);
-  for(index_t i=0; i<1;i++){
-    svm_bandwidth_vector[i]=0.4+0.1*i;
-  }
-  
-}
+
 /////////////////////////////////////////////////////////////////////////////////
 
  
 template <typename TKernel> void  LocalKernelMachines <TKernel>:: 
-GetTheFold_(Dataset &cv_train_data,Dataset &cv_test_data,
+GetTheFold_(Dataset &cv_train_data_appended,Dataset &cv_test_data_appended,
 	    Vector &cv_train_labels, Vector &cv_test_labels,index_t fold_num)
 {
   
   // The crossvalidation folds
   
   dset_.SplitTrainTest(k_folds_,fold_num,random_permutation_array_list_,
-		       &cv_train_data,&cv_test_data);
+		       &cv_train_data_appended,&cv_test_data_appended);
   
   // In the stiched dataset, the last column was the label column. .
   // So now remove the label column.
   
-  // printf("Removing last row from matrix....\n");
-  RemoveLastRowFromMatrixInit(cv_train_data.matrix(),cv_train_labels);
-  //printf("After removing last row we have.....\n");
-  //printf("The train data is....\n");
-  //  cv_train_data.matrix().PrintDebug();
-
-  //printf("The labels are....\n");
-  //cv_train_labels.PrintDebug();
-
-  RemoveLastRowFromMatrixInit(cv_test_data.matrix(),cv_test_labels);
-  
+  RemoveLastRowFromMatrixInit(cv_train_data_appended.matrix(),cv_train_labels);
+  RemoveLastRowFromMatrixInit(cv_test_data_appended.matrix(),cv_test_labels);
 }
 
 template <typename TKernel> void LocalKernelMachines<TKernel>::
 CrossValidateOverSmoothingKernelBandwidthAndLambda_(){
-  
-  printf("Will crossvalidate over smoothing and lambda...\n");
   
   
   Vector smoothing_kernel_bandwidth_vector;
@@ -80,179 +71,100 @@ CrossValidateOverSmoothingKernelBandwidthAndLambda_(){
   index_t lambda_vector_length=
     lambda_vector.length();
   
-  printf("Smoothing kernel bandwidth vector is...\n");
-  smoothing_kernel_bandwidth_vector.PrintDebug();
+   double optimal_error_rate=1.0;
   
-  printf("Lambda vector is...\n");
-  lambda_vector.PrintDebug();
-  
-  
-  optimal_svm_kernel_bandwidth_=
-    fx_param_double_req(fx_root,"svm_kernel_bandwidth");
-
   for(index_t i=0;i<smoothing_kernel_bandwidth_vector_length;i++){
     
-    smoothing_kernel_bandwidth_cv_=
+    double smoothing_kernel_bandwidth=
       smoothing_kernel_bandwidth_vector[i];
     
     for(index_t j=0;j<lambda_vector_length;j++){
       
-      lambda_cv_=lambda_vector[j];
+      double lambda=lambda_vector[j];
+
+      double average_error_rate=0.0;
 	
       for(index_t fold_num=0;fold_num<k_folds_;fold_num++){
 	
-	printf("i=%d,j=%d,fold_num=%d..\n",i,j,fold_num);
-	Dataset cv_train_data,cv_test_data;
+
+	Dataset cv_train_data_appended,cv_test_data_appended;
 	Vector cv_train_labels,cv_test_labels;
 	
 	// Will get the train and test folds 
 	//printf("Get the fold...\n");
-	GetTheFold_(cv_train_data,cv_test_data,cv_train_labels, 
-		    cv_test_labels,fold_num);
-
-	//printf("cv train labels is...\n");
-	//cv_train_labels.PrintDebug();
+	GetTheFold_(cv_train_data_appended,cv_test_data_appended,
+		    cv_train_labels,cv_test_labels,fold_num);
 	
-	//printf("cv test labels is...\n");
-	//cv_test_labels.PrintDebug();
 	
 	// This routine will take the train fold and the test fold
 	// and solve the local SVM problem
 
-	RunLocalKernelMachines_(cv_train_data.matrix(),cv_test_data.matrix(),
-				cv_train_labels);
+        average_error_rate+=
+	  RunLocalKernelMachines_(cv_train_data_appended.matrix(),
+				  cv_test_data_appended.matrix(),
+				  cv_train_labels,cv_test_labels,
+				  smoothing_kernel_bandwidth,lambda);
       }
+      average_error_rate/=k_folds_;
+      if(average_error_rate<optimal_error_rate){
+	
+	optimal_error_rate=average_error_rate;
+	optimal_smoothing_kernel_bandwidth_=smoothing_kernel_bandwidth;
+	optimal_lambda_=lambda;
+	
+      }
+
+      printf("bandwidth=%f, lambda=%f, error_rate=%f...\n",smoothing_kernel_bandwidth_vector[i],lambda_vector[j],average_error_rate);
+     
     }
   }
+
+  printf("Optimal error rate=%f...\n",optimal_error_rate);
+  printf("optimal_lambda_=%f...\n",optimal_lambda_);
+  printf("Optimal bandwidth=%f...\n",optimal_smoothing_kernel_bandwidth_);
 }
 
  
-template <typename TKernel> void LocalKernelMachines<TKernel>::PerformCrossValidation_(){
+template <typename TKernel> void LocalKernelMachines<TKernel>::
+PrepareForCrossValidation_(Matrix &train_data_appended, Matrix &test_data_appended){
+  
+  // The purpose of this function is simply to setup the stage for
+  // crossvalidation.
+  
+  // If no crossvalidation is required then this code will not be
+  // invoked.,
+  
+  // In this case we are crossvalidating. hence lets stich the train
+  // data with the train labels.
+  
+  Matrix stiched_train_data_appended;
 
-  
-  CrossValidateOverSmoothingKernelBandwidthAndLambda_();
-  
-  // We now have the optimal parameters.
-}
- 
-template <typename TKernel> void LocalKernelMachines<TKernel>::PrepareForCrossValidation_(){
-  
-  // The purpose of this function is simply to setup the stage for crossvalidation. 
-  
-  // If no crossvalidation is required then this code will not be invoked.,
-  
-  // In this case we are crossvalidating. hence lets stich the 
-  // train data with the train labels.
-  
-  Matrix stiched_train_data;
-  printf("Train labels are....\n");
-  train_labels_vector_.PrintDebug();
-  AppendVectorToMatrixAsLastRow(train_labels_vector_,train_data_,
-				stiched_train_data);
+  AppendVectorToMatrixAsLastRow(train_labels_vector_,train_data_appended,
+				stiched_train_data_appended);
   
   void *random_permutation;
   random_permutation=(void *)malloc(num_train_points_*sizeof(index_t));
-  math::MakeRandomPermutation(num_train_points_,(index_t *) random_permutation);
+  math::MakeRandomPermutation(num_train_points_,
+			      (index_t *) random_permutation);
   
   // Lets typecast random_permutation as ArrayList <index_t>
   
-  random_permutation_array_list_.InitAlias((int *)random_permutation,num_train_points_);
-  
+  random_permutation_array_list_.InitAlias((int *)random_permutation,
+					   num_train_points_);
    
   // Now set the matrix part of dset to the train dataset
   
-  dset_.matrix().Copy(stiched_train_data);
-  
-  printf("training data is...\n");
-  dset_.matrix().PrintDebug();
+  dset_.matrix().Copy(stiched_train_data_appended);
 }
    
-template <typename TKernel> void LocalKernelMachines< TKernel>::SetUpCrossValidationFlags_(){
-    
 
-  printf("Setting up corssvalidation flags......\n");
-  // Check what all parameters we need to crossvalidate over.
+template <typename TKernel> void LocalKernelMachines<TKernel>::
+CrossValidation_(Matrix &train_data_appended,
+		 Matrix &test_data_appended){
   
-  if (svm_kernel_==SVM_RBF_KERNEL){
-    
-    if(optimal_svm_kernel_bandwidth_<0){
-      
-      // Then we need to crossvalidate
-      
-      cv_svm_kernel_bandwidth_flag_=1;
-      
-      printf("Will crossvalidate for the bandwidth of RBF kernel...\n");
-    }
-    else{
-      
-      cv_svm_kernel_bandwidth_flag_=0;
-      
-      printf("NO need to  crossvalidate for the bandwidth of RBF kernel...\n");
-    }
-  }
-  else{
-    
-    // SVM kernel is a linear kernel A linear kernel has no
-    // bandwidth so we dont need to crossvalidate
-    
-    cv_svm_kernel_bandwidth_flag_=0;
-    printf("No need to crossvalidate since this is a linear kernel...\n");
-  }
   
-  // Check if we need to crossvalidate for smoothing kernel 
-  if(optimal_smoothing_kernel_bandwidth_<0){
-    
-    cv_smoothing_kernel_bandwidth_flag_=1;	
-    
-    printf("Will crossvalidate for the optimal bandwidth of the smoothing kernel...\n");
-  }
-  else{
-    
-    // This parameter is already provided. Hence do not
-    // crossvalidate
-    cv_smoothing_kernel_bandwidth_flag_=0;	
-    printf("No need to crossvalidate for the optimal bandwidth of the smoothing kernel...\n");
-  }
-  
-  // Check if we need to crossvalidate for lambda 
-  if(optimal_lambda_<0){
-    
-    cv_lambda_flag_=1;	
-    printf("Will have to crossvalidate for the optimal regularization value....\n");
-  }
-  else{
-    
-    // This parameter is already provided. Hence do not
-    // crossvalidate
-    cv_lambda_flag_=0;	
-    printf("NO need to  crossvalidate for the optimal regularization value....\n");
-    
-  }
+  PrepareForCrossValidation_(train_data_appended,test_data_appended);
+  CrossValidateOverSmoothingKernelBandwidthAndLambda_();
 }
 
-template <typename TKernel> void LocalKernelMachines<TKernel>::CrossValidation_(){
-  
-  SetUpCrossValidationFlags_();
-  
-  if(cv_svm_kernel_bandwidth_flag_!=0||
-     cv_smoothing_kernel_bandwidth_flag_!=0||
-     cv_lambda_flag_!=0 )
-    {
-      
-      // This means there is atleast one parameter over 
-      // which we need to crossvalidate 
-      PrepareForCrossValidation_();
-      PerformCrossValidation_();
-    }
-  else{
-    
-    printf("We dont need to crossvalidate...\n");
-    // Straight away run the local kernel machine with the given parameters.
-    
-    // We don't use dset here. Hence set it to empty so as to avoid segfault
-    
-    dset_.InitBlank();
-    
-  }
-}
 #endif
