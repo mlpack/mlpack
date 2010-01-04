@@ -2,6 +2,14 @@
 #include "ocas.h"
 #include "ocas_line_search.h"
 #define SMALL pow(10,-4)
+
+/** A getter utility that returns the value of optimal k
+ */
+
+double OCASLineSearch::get_optimal_k(){
+  
+  return k_star_;
+}
 void OCASLineSearch::Swap_(int *a,int *b){
 
   int temp=*a;
@@ -19,37 +27,38 @@ void OCASLineSearch::Swap_(double *a,double *b){
 
 void  OCASLineSearch::CalculateThresholdsForPointsInRange_(){
 
-  printf("Calculate thresholds....\n");
-  // C_i=K_i/n
+
+  // C_i=K_i(1-y_i<w_1,x_i>)/n
   // B_i=-K_iy_i <w_2-w_1,x_i>/n
-  // threshold= -C_i/B_i=1/y_i <w_2-w_1,x_i>
+  // threshold= -C_i/B_i=(1-y_i<w_1,x_i>)/y_i<w_2-w_1,x_i>
   
-  w_1_vec_.PrintDebug();
-  w_2_vec_.PrintDebug();
+  //  w_1_vec_.PrintDebug();
+  // w_2_vec_.PrintDebug();
 
   for(int i=0;i<num_points_in_range_;i++){
 
     int original_index=indices_in_range_[i];
-
-    printf("original_index=%d..\n",original_index);
-
-   
     Vector w_2_minus_w_1;
     la::SubInit(w_1_vec_, w_2_vec_, &w_2_minus_w_1);
-
-    double w_2_minus_w_1_dot_x;
     
     Vector x_i;
+
     train_data_appended_.MakeColumnVector(original_index,&x_i); 
-    w_2_minus_w_1_dot_x=la::Dot (w_2_minus_w_1,x_i);
+
+    double w_2_minus_w_1_dot_x_i=la::Dot (w_2_minus_w_1,x_i);
+    double w_1_dot_x_i=la::Dot(w_1_vec_,x_i);
     
+    double y_lab=train_labels_[original_index];
+
     // Set C_i_vec and B_i_vec
 
     C_i_vec_[i]=
-      smoothing_kernel_values_in_range_[i]/num_train_points_;
+      smoothing_kernel_values_in_range_[i]*(1-y_lab*w_1_dot_x_i)/
+      num_train_points_;
     
-    B_i_vec_[i]=
-      -1*C_i_vec_[i]*train_labels_[original_index]*w_2_minus_w_1_dot_x;
+    B_i_vec_[i]=-y_lab*w_2_minus_w_1_dot_x_i*
+      smoothing_kernel_values_in_range_[i]/num_train_points_;
+     
     
     if(fabs(B_i_vec_[i])<SMALL){
       
@@ -93,10 +102,17 @@ void OCASLineSearch::SortThresholds_(){
 // having sorted)
 void OCASLineSearch::CalculateDerivativesAtEachThreshold(int index){
 
-  // The derivative has 2 parts
+  // The derivative has 2 parts. The first part has 2 contributions.
+
+
+  Vector w_2_minus_w_1;
+  la::SubInit(w_1_vec_, w_2_vec_, &w_2_minus_w_1);
+   
+  double B_0=lambda_reg_const_*la::Dot(w_1_vec_,w_2_minus_w_1);
 
   double delta_g_0_k=
-    lambda_w_2_minus_w_1_sqd_*thresholds_vec_[index];
+    lambda_w_2_minus_w_1_sqd_*thresholds_vec_[index]+B_0;
+  
   
   double delta_g_i_k=0.0;
   for(int i=0;i<num_points_in_range_;i++){
@@ -132,18 +148,6 @@ void OCASLineSearch::CalculateDerivatives_(){
 
     CalculateDerivativesAtEachThreshold(i);    
   }
-  printf("after having calculated the derivatives at each point....\n");
-  
-  for(int i=0;i<num_points_in_range_;i++){
-    
-    printf("derivatives_low[%d]=%f..\n",
-	   i,derivative_line_search_objective_[i].low);
-  
-    printf("derivatives_up_[%d]=%f..\n",
-	   i,derivative_line_search_objective_[i].up);
-  
-  }
-  printf("lambda_w2_minus_w1_sqd=%f..\n",lambda_w_2_minus_w_1_sqd_);
 }
 
 /** This function has been called because the optimal k seems to lie
@@ -167,19 +171,13 @@ double OCASLineSearch::ComputeGradientBeyondAndOptimalK_(int index){
 
   // The optimal k is  simply max(0,-constant/linear_coeff);
 
-  printf("linear coefficient is %f...\n",linear_coeff);
-
-  printf("constant is %f...\n",constant);
-
+  
   double k_opt=max(0.0,-constant/linear_coeff);
-  return max(0.0,-constant/linear_coeff);
+  return k_opt;
 
 }
 
 double OCASLineSearch::ComputeGradientBeforeAndOptimalK_(int index){
-
-  printf("will compute gradient before this index=%d...\n",index);
-  
 
   double linear_coeff=lambda_w_2_minus_w_1_sqd_;
   
@@ -192,10 +190,6 @@ double OCASLineSearch::ComputeGradientBeforeAndOptimalK_(int index){
 
   // The optimal k is  simply max(0,-constant/linear_coeff);
 
-  printf("linear coefficient is %f...\n",linear_coeff);
-
-  printf("constant is %f...\n",constant);
-
   double k_opt=max(0.0,-constant/linear_coeff);
   return max(0.0,-constant/linear_coeff);
 }
@@ -203,25 +197,7 @@ double OCASLineSearch::ComputeGradientBeforeAndOptimalK_(int index){
 double OCASLineSearch::CalculateOptimalK_(){
 
   // Creating dummy test cases.
-  
-  /* thresholds_vec_[0]=2.3;
-  thresholds_vec_[1]=3.0;
-  thresholds_vec_[2]=3.5;
-  
-  B_i_vec_[0]=math::Random(-1,1);
-  B_i_vec_[1]=math::Random(-1,1);
-  B_i_vec_[2]=math::Random(-1,1);
-
-  derivative_line_search_objective_[0].low= -1.2;
-  derivative_line_search_objective_[0].up= -1.0;
-  
-  derivative_line_search_objective_[1].low= -0.8;
-  derivative_line_search_objective_[1].up= -0.6;
-
-  derivative_line_search_objective_[2].low= 0.2;
-  derivative_line_search_objective_[2].up= 1.2;*/
-
-
+ 
   double previous_upper;
   double next_lower;
 
@@ -247,7 +223,6 @@ double OCASLineSearch::CalculateOptimalK_(){
   
        if(derivative_interval.CheckIfIntervalHasZero()){
   
-	 printf("Found an interval at index=%d that has 0...\n",num_points_in_range_-1);
 	 // We have found the optimal k
 	 return max(0.0,thresholds_vec_[num_points_in_range_-1]);
        }
@@ -263,11 +238,7 @@ double OCASLineSearch::CalculateOptimalK_(){
     // The max threshold is itself negative. hence the optimal k lies
     // to the right of it. Check if the derivative here has 0.
 
-    printf("The max threshold is negative....\n");
-
     if(derivative_interval.CheckIfIntervalHasZero()){
-      
-      printf("The derivative has a 0 at index=%d...\n",num_points_in_range_-1);
 
       return 0.0;
       
@@ -278,21 +249,19 @@ double OCASLineSearch::CalculateOptimalK_(){
 
       if(derivative_interval.CheckIfIntervalIsPositive()){
 
-	printf("The derivative is positive...\n");
-	return 0;
+	return 0.0;
       }
 
       // The interval is negative
       
-      printf("The derivative is negative...\n");
       return ComputeGradientBeyondAndOptimalK_(num_points_in_range_-1);
       
     }
   }
     
  
-// Now we have reached a point where we are guaranteed that the
-// optimal k is in the line segment defined by the thresholds
+  // Now we have reached a point where we are guaranteed that the
+  // optimal k is in the line segment defined by the thresholds
 
   double present_up,next_low;
 
@@ -300,8 +269,6 @@ double OCASLineSearch::CalculateOptimalK_(){
 
     // Skip all those indices for which the threshold value is
     // negative
-
-    
 
     Interval derivative_interval=derivative_line_search_objective_[i];
     
@@ -311,7 +278,6 @@ double OCASLineSearch::CalculateOptimalK_(){
       
       // if flag=true then this interval has zero. 
       // Hence return this threshold value
-      printf("Found an interval at index=%d that has 0...\n",i);
       
       return max(0.0,thresholds_vec_[i]);
     }
@@ -333,12 +299,9 @@ double OCASLineSearch::CalculateOptimalK_(){
       // the interval and the lowwer end of the derivative at the
       // next threshold
      
-      printf("The interval doesn't have a 0...\n");
+
       present_up=derivative_interval.up;
       next_low=derivative_line_search_objective_[i+1].low;
-      
-      printf("Present up=%f...\n",present_up);
-      printf("Next loww=%f...\n",next_low);
       Interval test_interval;
       test_interval.low=present_up;
       test_interval.up=next_low;
@@ -348,9 +311,7 @@ double OCASLineSearch::CalculateOptimalK_(){
 	
 	// This test interval has zero.
 
-	printf("Found a threshold range beyond index=%d where there is a guarantee of 0 derivative \n",i);
-	printf("Interval considered was [%f,%f]\n",present_up,next_low);
-	
+		
 	return ComputeGradientBeyondAndOptimalK_(i);
       }
       else{
@@ -375,27 +336,7 @@ void OCASLineSearch::PerformLineSearch(){
 
 
   CalculateThresholdsForPointsInRange_();
-  printf("Immediately after calculating the thresholds we have...\n");
-  thresholds_vec_.PrintDebug();
-
-  printf("Before sorting we have...\n");
-  printf("Indices in range are...\n");
-  for(int i=0;i<num_points_in_range_;i++){
-    
-    printf("indices_in_range_[%d]=%d..\n",i,indices_in_range_[i]);
-    printf("B[%d]=%f...\n",i,B_i_vec_[i]);
-    printf("C[%d]=%f...\n",i,C_i_vec_[i]);
-  }
   SortThresholds_();
-  printf("After sorting the thresholds we have....\n");
-  thresholds_vec_.PrintDebug();
-  printf("The indices are ...\n");
-  for(int i=0;i<num_points_in_range_;i++){
-
-    printf("indices_in_range_[%d]=%d..\n",i,indices_in_range_[i]);
-    printf("B[%d]=%f...\n",i,B_i_vec_[i]);
-    printf("C[%d]=%f...\n",i,C_i_vec_[i]);
-  }
 
   // Now with the sorted thresholds populate the
   // derivative_line_search_objective_ array
@@ -405,8 +346,6 @@ void OCASLineSearch::PerformLineSearch(){
   //Finally obtain k*
 
   k_star_=CalculateOptimalK_();
-
-  printf("k_star is %f..\n",k_star_);
 
 
 }
@@ -427,8 +366,7 @@ void OCASLineSearch ::Init(Matrix &train_data_appended,
 
   //Initialize all structures
   
-  printf("train data appended is...\n");
-  train_data_appended.PrintDebug();
+ 
   train_data_appended_.Copy(train_data_appended);
   
   //  train_data_appended_=train_data_appended;
@@ -451,8 +389,6 @@ void OCASLineSearch ::Init(Matrix &train_data_appended,
   // because we also want to retain the unpermuted order for future
   // iterations.
   
-  printf("num_points_in_range=%d...\n",num_points_in_range_);
-  
   
   // Initialize the thresholds
   
@@ -468,18 +404,6 @@ void OCASLineSearch ::Init(Matrix &train_data_appended,
   w_2_vec_.Copy(w_2);
 
 
-  printf("Printing from init function of line search...\n");
-
-  printf("train data is.....\n");
-  train_data_appended_.PrintDebug();
-
-  printf("Query point appended is...\n");
-  query_point_appended_.PrintDebug();
-
-
-  printf("train labels are ....\n");
-  train_labels_.PrintDebug();
-
   // Also calculate lambda_w_2_minus_w_1_sqd
 
   // Get w2_minus_w1
@@ -493,18 +417,6 @@ void OCASLineSearch ::Init(Matrix &train_data_appended,
 
   C_i_vec_.Init(num_points_in_range_);
   B_i_vec_.Init(num_points_in_range_);
-
-
-  printf("num_points_in_range are %d...\n",num_points_in_range_);
-
-  for(int i=0;i<num_points_in_range_;i++){
-    printf("indices_in_range_[%d]=%d..\n",i,indices_in_range_[i]);
-    printf("smootupng_kernel_values_in_range_[%d]=%f..\n",i,smoothing_kernel_values_in_range_[i]);
-  
-  }
-  printf("Hellow came to initialize function of ocas line search...\n");
-
-
 }
 
 
