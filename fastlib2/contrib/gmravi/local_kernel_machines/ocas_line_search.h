@@ -1,6 +1,4 @@
 #include "fastlib/fastlib.h"
-#include "ocas.h"
-
 #ifndef OCAS_LINE_SEARCH_H_
 #define OCAS_LINE_SEARCH_H_
 
@@ -110,6 +108,11 @@ class OCASLineSearch{
   Vector C_i_vec_;
 
   Vector B_i_vec_;
+
+  // The getter function
+  double get_optimal_k();
+
+  
   
   void  CalculateThresholdsForPointsInRange_();
   void SortThresholds_();
