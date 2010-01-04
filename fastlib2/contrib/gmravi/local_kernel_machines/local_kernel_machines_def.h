@@ -24,6 +24,8 @@ class LocalKernelMachines{
 
   Vector train_labels_vector_;
 
+  Vector test_labels_vector_;
+
   index_t num_train_points_;
 
   index_t num_test_points_;
@@ -44,28 +46,9 @@ class LocalKernelMachines{
 
   double optimal_lambda_;
 
-  // Bandwidth of the svm kernel (if used);
-
-  double optimal_svm_kernel_bandwidth_;
-
   // Optimal bandwidth of the smoothing kernel used
   double optimal_smoothing_kernel_bandwidth_;
   
-
-  // Temporary variables we use during the crossvalidation time
-
-
-  // The regularization constant
-
-  double lambda_cv_;
-
-  // Bandwidth of the svm kernel (if used);
-
-  double svm_kernel_bandwidth_cv_;
-
-  // Optimal bandwidth of the smoothing kernel used
-  double smoothing_kernel_bandwidth_cv_;
-
   // Some auxiliary variables
   
   // The different kernels used
@@ -96,45 +79,29 @@ class LocalKernelMachines{
   void GetTheFold_(Dataset &cv_train_data,Dataset &cv_test_data,
 		   Vector &cv_train_labels, Vector &cv_test_labels,index_t fold_num);
   
-  void CrossValidateOverAllThreeParameters_();
-  
-  void  CrossValidateOverSVMKernelBandwidthAndSmoothingKernelBandwidth_();
-  
-  void  CrossValidateOverSVMKernelBandwidthAndLambda_();
-  
-  
-  void  GenerateSmoothingBandwidthVectorForCV_(Vector &);
-  
   void  GenerateLambdaVectorForCV_(Vector &);
-  
-  void GenerateSVMBandwidthVectorForCV_(Vector &);
- 
+  void GenerateSmoothingBandwidthVectorForCV_(Vector &);  
+
   void  CrossValidateOverSmoothingKernelBandwidthAndLambda_();
  
-  void  CrossValidateOverSmoothingKernelBandwidth_();
- 
- 
-  void  CrossValidateOverSVMKernelBandwidth_();
- 
-  void  CrossValidateOverLambda_();
- 
-  void PerformCrossValidation_();
   
+  void PerformCrossValidation_();
   
   void SetUpCrossValidationFlags_();
   
-  void PrepareForCrossValidation_();
-  void CrossValidation_();
+  void PrepareForCrossValidation_(Matrix &, Matrix &);
+  void CrossValidation_(Matrix &, Matrix &);
  public:
   
   void TrainLocalKernelMachines();
   
   void Init(Matrix &train_data,Matrix &test_data,Vector &train_labels_vector,
-	    struct datanode *module_in);
+	    Vector &test_labels_vector,struct datanode *module_in);
   
-  void RunLocalKernelMachines_(Matrix&, Matrix&, Vector&);
-
-  void FindPointsInNeighbourhood_(Matrix &, double *,ArrayList <index_t>&, ArrayList<double> &);
+  double RunLocalKernelMachines_(Matrix&, Matrix&, Vector&, 
+				 Vector&, double,double);
+  
+  void FindPointsInNeighbourhood_(Matrix &, double *,ArrayList <index_t>&, ArrayList<double> &,double);
   
   
 };
