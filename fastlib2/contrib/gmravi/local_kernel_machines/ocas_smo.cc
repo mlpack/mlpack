@@ -1,7 +1,12 @@
 #include "fastlib/fastlib.h"
 #include "utils.h"
 #include "ocas_smo.h"
-#define SMALL pow(10,-3)
+#define SMALL pow(10,-2)
+
+void OCASSMO::get_primal_solution(Vector &return_val){
+  
+  return_val.CopyValues(primal_solution_);
+}
 
 //////////////*** SMO OPTIMIZATION PROBLEM//////////////////////////
 
@@ -28,7 +33,7 @@ void OCASSMO::DeleteFromI0_(int position_of_variable_in_I0,int position){
     printf("There is a mistake here4...\n");
     exit(0);
   }
-  printf("removing from I0, position of variable in I0 is %d..\n",position_of_variable_in_I0);
+  //printf("removing from I0, position of variable in I0 is %d..\n",position_of_variable_in_I0);
   I0_indices_.Remove(position_of_variable_in_I0,1);
 }
 
@@ -304,11 +309,12 @@ void OCASSMO::UpdateSets_(double new_value, int position_I0,int position_I1,
       // in the index in I0 from where we should delete and the
       // original index of this variable w.r.t the subgradient matrix
       
-      printf("will delete from I0..\n");
+      //printf("will delete from I0..\n");
       DeleteFromI0_(position_I0,position);
       // Since Fi values are the cache values, hence delete it from
       // the cache too
       
+
       /*printf("Having deleted from I0...\n");
       for(int i=0;i<I0_indices_.size();i++){
 	
@@ -566,7 +572,6 @@ void OCASSMO::UpdateFiValuesOfWorkingSetVariables_(double alpha_i_new,
 void OCASSMO::UpdateBetaUpAndBetaLowUsingI0_(double alpha_i_new_value, 
 					     double alpha_j_new_value){
   
-  printf("alpha_i_new_value=%f..\n",alpha_i_new_value);
   // Iterate over all elements in I0
 
 
@@ -746,7 +751,7 @@ double OCASSMO::ComputeFiValue_(int position){
     
   //F_i=\frac{1}{\lambda} \sum_{j=1}^{t+1} <a_i,a_j>\alpha_j -b_i
 
-  printf("The position is %d and alpha value is %f..\n",position,alpha_vec_[position]);
+  //printf("The position is %d and alpha value is %f..\n",position,alpha_vec_[position]);
   
   Vector subgrad_i;
   subgrad_i.Alias(subgradients_mat_[position]);
@@ -855,8 +860,17 @@ int OCASSMO::TakeStep_(){
   }
   else{
 
-    printf("I STILL NEED TO FILL UP THIS PART OF THE CODE.....\n");
-    exit(0);
+    if(psi>0){
+
+      alpha_i_new=H;
+      alpha_j_new=gamma6-alpha_i_new;
+    }
+    else{
+      
+      alpha_i_new=L;
+      alpha_j_new=gamma6-alpha_i_new;
+
+    }
   }
 
   //Check if enough progress was made or not
@@ -881,7 +895,8 @@ int OCASSMO::TakeStep_(){
     printf("I0 position is %d..\n",I0_indices_[i]);
     }*/
 
-  printf("Will now update Fi's...\n");
+  //printf("Will now update Fi's...\n");
+
   UpdateFiForI0_(alpha_i_new,alpha_j_new);
 
   // Now compute the updated F values for the variables involved in
@@ -900,7 +915,7 @@ int OCASSMO::TakeStep_(){
   // Update sets for working set variable 1
   UpdateSets_(alpha_i_new,position_of_i_in_I0_,position_of_i_in_I1_,
 	      position_of_i_in_I2_,index_working_set_variables_1_,1);
-  printf("Updated sets for the first variable....\n");
+  //printf("Updated sets for the first variable....\n");
 
   /*printf("After updating I0 for first set we have...\n");
   for(int i=0;i<I0_indices_.size();i++){
@@ -908,14 +923,14 @@ int OCASSMO::TakeStep_(){
   printf("I0 position is %d..\n",I0_indices_[i]);
   }*/
 
-  printf("will now update sets for the second variable....\n");
+  //  printf("will now update sets for the second variable....\n");
   
     // Now update sets for working set variable 2
     
     
   UpdateSets_(alpha_j_new,position_of_j_in_I0_,position_of_j_in_I1_,
 	      position_of_j_in_I2_,index_working_set_variables_2_,2);
-  printf("Updated sets for 2nd variable....\n");
+  //printf("Updated sets for 2nd variable....\n");
   
    // Finally update beta_up and beta_low using indices in I0 and
   // i,j(the working set variables).
@@ -931,10 +946,15 @@ int OCASSMO::TakeStep_(){
   printf("i_low=%d..\n",i_low_);*/
   
     
+  // Also update the primal_solution
+
+  UpdatePrimalSolution_(alpha_i_new,alpha_j_new);
   //Finally update the alpha vector
 
   alpha_vec_[index_working_set_variables_1_]=alpha_i_new;
   alpha_vec_[index_working_set_variables_2_]=alpha_j_new;
+
+  
 
   /*printf("After update in the take step function we have...\n");
     alpha_vec_.PrintDebug();*/
@@ -956,6 +976,49 @@ int OCASSMO::TakeStep_(){
    // Since this step was a success return 1
   return 1;
   
+}
+
+void OCASSMO::UpdatePrimalSolution_(double alpha_i_new,double alpha_j_new){
+
+  // Subtract off the old contribution
+
+  // w <-w- [-1/lambda (\alpha_i a_i+\alpha_j a_j)]
+  
+  double alpha_i_old=alpha_vec_[index_working_set_variables_1_];
+  double alpha_j_old=alpha_vec_[index_working_set_variables_2_];
+
+  Vector alpha_i_old_a_i;
+  la::ScaleInit(alpha_i_old,subgradients_mat_[index_working_set_variables_1_],
+		&alpha_i_old_a_i);
+
+  Vector alpha_j_old_a_j; 
+  la::ScaleInit(alpha_j_old,subgradients_mat_[index_working_set_variables_2_],
+		&alpha_j_old_a_j);
+   
+  Vector temp;
+  la::AddInit(alpha_i_old_a_i,alpha_j_old_a_j,&temp);
+
+ 
+  la::ScaleOverwrite (-1.0/lambda_reg_const_,temp,&temp);
+  
+  // Subtract of temp from primal_solution
+
+  la::SubFrom(temp,&primal_solution_);
+
+  Vector alpha_i_new_a_i;
+  la::ScaleInit(alpha_i_new,subgradients_mat_[index_working_set_variables_1_],
+		&alpha_i_new_a_i);
+
+  Vector alpha_j_new_a_j;
+  la::ScaleInit(alpha_j_new,subgradients_mat_[index_working_set_variables_2_],
+		&alpha_j_new_a_j);
+
+  Vector new_add;
+  la::AddInit(alpha_i_new_a_i,alpha_j_new_a_j,&new_add);
+  la::ScaleOverwrite(-1.0/lambda_reg_const_,new_add,&new_add);
+
+  // Add to primal_solution
+  la::AddTo(new_add,&primal_solution_);
 }
 
 
@@ -998,15 +1061,15 @@ int OCASSMO::CheckForOptimality_(int position,double F_val){
 	position_of_i_in_I2_=-1;
 	position_of_i_in_I1_=CheckIfInI1_(i_low_);
 
-	printf("i_low_ is =%d\n",i_low_);
+	//printf("i_low_ is =%d\n",i_low_);
 	if(position_of_i_in_I1_==-1){
 
 	  // So this i is in I0 
 	  position_of_i_in_I0_=CheckIfInI0_(i_low_);
 	  
 
-	  printf("position of i in I0 is %d...\n",position_of_i_in_I0_);
-	  printf("i_low=%d..\n",i_low_);
+	  //printf("position of i in I0 is %d...\n",position_of_i_in_I0_);
+	  //printf("i_low=%d..\n",i_low_);
 	  if(position_of_i_in_I0_==-1){
 
 	    printf("There is a mistake here8..\n");
@@ -1125,7 +1188,7 @@ int OCASSMO::CheckForOptimality_(int position,double F_val){
   }
   if(optimality){
 
-    printf("This pair is already optimal...\n");
+    //    printf("This pair is already optimal...\n");
     return 0;
   }
   else{
@@ -1136,7 +1199,7 @@ int OCASSMO::CheckForOptimality_(int position,double F_val){
     index_working_set_variables_2_=position;
     
     int ret_val= TakeStep_();
-    printf("ret_val=%d...\n",ret_val);
+    
     return ret_val;
   }
   
@@ -1152,9 +1215,8 @@ int OCASSMO::ExamineSubgradient_(int position){
   // Pull out the value of F_i. In case i\in I0 then this value will
   // be in the cache itself.
 
-  printf("position=%d,alpha_value=%f...\n",position,alpha_vec_[position]);
   position_of_j_in_I0_=CheckIfInI0_(position);
-  printf("position_of_j_in_I0=%d...\n",position_of_j_in_I0_);
+
  
   double F2_value;
   if(position_of_j_in_I0_!=-1){
@@ -1200,14 +1262,7 @@ int OCASSMO::ExamineSubgradient_(int position){
       position_of_j_in_I2_=-1;
     }
 
-    printf("Position of j in I1=%d..\n",position_of_j_in_I1_);
-    printf("Position of j in I2=%d..\n",position_of_j_in_I2_);
-
-    printf("Before update beta_up=%f and beta_low=%f...\n",beta_up_,beta_low_);
-
-    
-    printf("After update beta_up=%f and beta_low=%f...\n",beta_up_,beta_low_); 
-
+  
     UpdateBetaUpAndBetaLow_(F2_value,position);
   //Finally check for optimality
   }
@@ -1249,14 +1304,11 @@ void OCASSMO::SMOMainRoutine_(){
 	// Reset all positions
 	ResetPositions_();
       }
-      printf("NUmber changed=%d...\n",num_changed);
-      printf("Finished examining all subgradients**************.....\n");
+     
     }
     else{
       //Now we shall loop over swubgradients that are in I0.
-      printf("Will loop over only those that are in I0...\n");
-      printf("Size of I0 is=%d...\n",I0_indices_.size());
-     
+      
       for(int i=0;i<I0_indices_.size();i++){
 	
 	int position=I0_indices_[i];
@@ -1281,7 +1333,7 @@ void OCASSMO::SMOMainRoutine_(){
       }
     }
   }
-  printf("Finished everything. Bailing out.....\n");
+  //  printf("Finished everything. Bailing out.....\n");
 }
 
 void OCASSMO::SolveOCASSMOProblem_(){
@@ -1291,10 +1343,10 @@ void OCASSMO::SolveOCASSMOProblem_(){
   /*  printf("alpha vector learnt is...\n");
       alpha_vec_.PrintDebug();*/
 
-  printf("Lets perform final KKT checks....\n");
+
   for(int i=0;i<num_subgradients_available_;i++){
 
-    printf("Testing index=%d...\n",i);
+
     
     double F_val=ComputeFiValue_(i);
     if(fabs(alpha_vec_[i])<SMALL){
@@ -1321,14 +1373,14 @@ void OCASSMO::SolveOCASSMOProblem_(){
       else{
 	
 	// This element is in I0
-	if(fabs(F_val-(beta_low_+beta_up_)/2.0)>SMALL){
+	if(fabs(F_val-beta_up_)>SMALL&&fabs(F_val-beta_low_)>SMALL){
 
 	  // There is a violation
 	  printf("F_val calculated from scratch=%f...\n",F_val);
 	  printf("beta_up=%f...\n",beta_up_);
 	  printf("beta_low=%f...\n",beta_low_);
 	  printf("There is a mistake here14...\n");
-	  exit(0);
+	  // exit(0);
 	  int pos=CheckIfInI0_(i);
 	  printf("alpha value=%f and position in I0=%d...\n",alpha_vec_[i],pos);
 	  printf("F value from the cache is =%f\n",Fi_for_I0_[pos]);
@@ -1349,11 +1401,10 @@ void OCASSMO::SolveOCASSMOProblem_(){
     }
   }
 
-  printf("The alpha vector finally learnt is...\n");
-  alpha_vec_.PrintDebug();
+  // printf("The alpha vector finally learnt is...\n");
+  //alpha_vec_.PrintDebug();
 
-  printf("KKT CONDITIONS VERIFIED SUCCESSFULLY..\n");
-
+  //  printf("KKT CONDITIONS VERIFIED SUCCESSFULLY..\n");
 
 }
 
@@ -1420,15 +1471,29 @@ void OCASSMO::Init(ArrayList <Vector> &subgradients_mat,
 
     I2_indices_[i]=i+1;
   }
+
+  // The number of dimensions (actually after having appended the
+  // dataset with 1).
+
+  num_dims_=subgradients_mat_[0].length();
+
+  //Initialize the primal solution. The primal
+  // solution is w=-\frac{1}{\lambda}\sum \alpha_l a_l. Since
+  // initially \alpha_0=1.0 and a_o=0 vector. Hence the initial value
+  // is the 0 vector
   
+
+  primal_solution_.Init(num_dims_);
+  primal_solution_.SetZero();
+
   // Initialize beta_up and beta_low
   
   beta_up_=DBL_MAX;
   beta_low_=-DBL_MAX;
   i_up_=1;
   i_low_=0;
-  tau_=pow(10,-4);
-  eps_=pow(10,-4);
+  tau_=pow(10,-5);
+  eps_=pow(10,-5);
 
   position_of_i_in_I0_=-1;
   position_of_i_in_I1_=-1;
@@ -1438,18 +1503,13 @@ void OCASSMO::Init(ArrayList <Vector> &subgradients_mat,
   position_of_j_in_I1_=-1;
   position_of_j_in_I2_=-1;
 
-  printf("Intercepts vector is ....\n");
-  for(int i=0;i<intercepts_vec_.size();i++){
-    printf("%f,",intercepts_vec_[i]);
-
-  }
-
-  printf("number of subgradients available are %d....\n",num_subgradients_available_);
-
+  
+  //  printf("number of subgradients available are %d....\n",num_subgradients_available_);
+  /*
   printf("Printing the sizes and capacity..\n");
   printf("I0:size=%d, capacity=%d..\n",I0_indices_.size(),I0_indices_.capacity());
   printf("I1:size=%d, capacity=%d..\n",I1_indices_.size(),I1_indices_.capacity());
   printf("I2:size=%d, capacity=%d..\n",I2_indices_.size(),I2_indices_.capacity());
-  printf("Fi_for_I0: size=%d, capacity=%d...\n",Fi_for_I0_.size(),Fi_for_I0_.capacity());
+  printf("Fi_for_I0: size=%d, capacity=%d...\n",Fi_for_I0_.size(),Fi_for_I0_.capacity());*/
   
 }
