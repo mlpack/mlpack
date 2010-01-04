@@ -9,6 +9,7 @@
 #include "dtb_cover.h"
 #include "mlpack/emst/dtb.h"
 #include "geomst2.h"
+#include "friedman_bentley.h"
 
 const fx_entry_doc cover_main_entries[] = {
 {"data", FX_REQUIRED, FX_STR, NULL,
@@ -128,6 +129,19 @@ int main(int argc, char* argv[]) {
       geo.ComputeMST(&geomst_results);
       
       //results.PrintDebug("Results");
+      
+    }
+    
+    ///////// Single Fragment Friedman-Bentley algorithm ///////
+    if (fx_param_exists(NULL, "do_single_fragment")) {
+      
+      Matrix single_fragment_results;
+      
+      FriedmanBentley fb_alg;
+      fx_module* fb_mod = fx_submodule(NULL, "single_fragment_module");
+      
+      fb_alg.Init(data_points, fb_mod);
+      fb_alg.ComputeMST(&single_fragment_results);
       
     }
     
