@@ -16,6 +16,10 @@ class OCASSMO{
     
   // The alpha_vec that is used in the SMO step of the OCAS algorithm.
   Vector  alpha_vec_;
+
+  // The primal solution
+
+  Vector primal_solution_;
   
   // The subgradients of the non-differentiable part og the objective
   // R(w)=\frac{1}{n}\sum_{i=1}^n max{(1-y-i \langle w,x_i\rangle)K(x_i,x
@@ -73,6 +77,8 @@ class OCASSMO{
   int position_of_j_in_I1_;
   int position_of_j_in_I2_;
 
+  int num_dims_;
+
   double eps_;
 
   void SMOMainRoutine_();
@@ -124,7 +130,9 @@ class OCASSMO{
   
   void SolveOCASSMOProblem_();
 
-  
+  void get_primal_solution(Vector &);
+
+  void UpdatePrimalSolution_(double,double);
 
 
   
