@@ -10,6 +10,7 @@
 #ifndef LOCAL_KERNEL_MACHINES_DEF_H_
 #define LOCAL_KERNEL_MACHINES_DEF_H_
 
+
 template<typename TKernel>
 class LocalKernelMachines{
   
@@ -107,7 +108,9 @@ class LocalKernelMachines{
 };
 #include "local_kernel_machines_impl.h"
 #include "my_crossvalidation.h"
+#include "range_search.h"
 #include "utils.h"
 #include "ocas.h"
+#include "range_search.h"
 #endif
 

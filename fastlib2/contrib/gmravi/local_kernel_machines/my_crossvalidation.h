@@ -11,28 +11,32 @@ GenerateSmoothingBandwidthVectorForCV_(Vector &smoothing_bandwidth_vector){
   int num_smoothing_bandwidth=20;
    smoothing_bandwidth_vector.Init(num_smoothing_bandwidth);
 
-   double low=0.05;
-   double hi=1.0;
+   double low=0.005;
+   double hi=0.8;
    double gap=(hi-low)/num_smoothing_bandwidth;
   for(index_t i=0; i<num_smoothing_bandwidth;i++){
 
     //smoothing_bandwidth_vector[i]=pow(10,-3)*pow(2,i/2);
     smoothing_bandwidth_vector[i]=low+gap*i;
   }
+  printf("Crossvalidating over smoothing kernel bandwidth....\n");
+  smoothing_bandwidth_vector.PrintDebug();
 }
 
 template <typename TKernel> void  LocalKernelMachines <TKernel>::
 GenerateLambdaVectorForCV_(Vector &lambda_vector){
   
   int num_lambda=20;
-  double low=pow(10,0);
-  double hi=pow(10,2);
+  double low=pow(10,-4);
+  double hi=pow(10,5);
   double range=(hi-low)/num_lambda;
   lambda_vector.Init(num_lambda);
   for(index_t i=0; i<num_lambda;i++){
+
     lambda_vector[i]=low+i*range;
   }
- 
+  printf("lambda vector for crossvalidation is ...\n");
+  lambda_vector.PrintDebug();
 }
 
 /////////////////////////////////////////////////////////////////////////////////
@@ -119,7 +123,7 @@ CrossValidateOverSmoothingKernelBandwidthAndLambda_(){
     }
   }
 
-  printf("Optimal error rate=%f...\n",optimal_error_rate);
+  printf("Optimal cv error rate=%f...\n",optimal_error_rate);
   printf("optimal_lambda_=%f...\n",optimal_lambda_);
   printf("Optimal bandwidth=%f...\n",optimal_smoothing_kernel_bandwidth_);
 }

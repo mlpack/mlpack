@@ -3,6 +3,7 @@
 #include "ocas.h"
 #include "ocas_smo.h"
 #include "ocas_line_search.h"
+#include "range_search.h"
 #define SMALL pow(10,-3)
 
 template <typename TKernel> double  LocalKernelMachines< TKernel>:: 
@@ -20,42 +21,54 @@ RunLocalKernelMachines_(Matrix &train_data_local,
 
   int num_mistakes=0;
 
+  // We first start by finding for each test point, points that lie in
+  // its sigma neighbourhood.
+  
+  // get the indices in range and their corresponding kernel values
+  ArrayList< ArrayList <int> > indices_in_range;
+  ArrayList< ArrayList <double> > smoothing_kernel_values_in_range;
+
+  RangeSearch rs;
+  rs.Init(train_data_local,test_data_local,smoothing_kernel_bandwidth);
+  rs.PerformRangeSearch();
+  rs.get_indices_in_range(indices_in_range);
+  rs.get_smoothing_kernel_values_in_range(smoothing_kernel_values_in_range);
+  
   for(index_t i=0;i<test_data_local.n_cols();i++){
+    
+    //ArrayList<int> indices_in_range;
+    //ArrayList<double> smoothing_kernel_values_in_range;
+    
+    //indices_in_range.Init(20);
+    //smoothing_kernel_values_in_range.Init(20);
+    // FindPointsInNeighbourhood_( train_data_local, 
+    //			 test_data_local.GetColumnPtr(i),  
+    //			 indices_in_range,  
+    //			 smoothing_kernel_values_in_range, 
+    //			 smoothing_kernel_bandwidth);
+    
+
 
     // The label local svm will predict
-
+    
     double y_pred_label;
-    
-    // get the indices in range and their corresponding kernel values
-    ArrayList<int> indices_in_range;
-    ArrayList<double> smoothing_kernel_values_in_range;
-    
-    // I am allocating memory for 20 elements
-    indices_in_range.Init(20);
-    smoothing_kernel_values_in_range.Init(20);
-    FindPointsInNeighbourhood_(train_data_local,test_data_local.GetColumnPtr(i),
-			       indices_in_range,
-			       smoothing_kernel_values_in_range,
-			       smoothing_kernel_bandwidth);  
-    printf("Number of points in neighbourhood =%d...\n",
-	   indices_in_range.size());
 
-    if(indices_in_range.size()==0){
+    if(smoothing_kernel_values_in_range.size()==0){
 
       // This means there are no points in this neighbourhood. 
       // Hence assign a random label.
 
 
       double rand_num=math::Random(-1,1);
-      y_pred_label=2;
+      y_pred_label=rand_num>0?1.0:-1.0;
     }
     else{
    
       // Perform Optimization.
       OCAS ocas;
       ocas.Init(test_data_local.GetColumnPtr(i),train_data_local,
-		train_labels_local,indices_in_range,
-		smoothing_kernel_values_in_range,smoothing_kernel_bandwidth,
+		train_labels_local,indices_in_range[i],
+		smoothing_kernel_values_in_range[i],smoothing_kernel_bandwidth,
 		lambda);
       ocas.Optimize(); 
 
@@ -86,66 +99,67 @@ RunLocalKernelMachines_(Matrix &train_data_local,
   return (double)num_mistakes/test_data_local.n_cols();
 }
 
-template <typename TKernel> void LocalKernelMachines< TKernel>::
-FindPointsInNeighbourhood_( Matrix &ref_data, double *q_point, 
-			    ArrayList <index_t> &indices_in_range, 
-			    ArrayList<double> &smoothing_kernel_values_in_range,
-			    double smoothing_kernel_bandwidth){
+template <typename TKernel> void LocalKernelMachines< TKernel>:: 
+FindPointsInNeighbourhood_( Matrix &ref_data, double *q_point,  
+			    ArrayList <int> &indices_in_range,  
+			    ArrayList<double> &smoothing_kernel_values_in_range, 
+			    double smoothing_kernel_bandwidth){ 
   
-  Vector q_point_vec;
-  q_point_vec.Alias(q_point,num_dims_);
-  //printf("Query point is...\n");
-  //q_point_vec.PrintDebug();
-
-
-  EpanKernel ek;
-  ek.Init(smoothing_kernel_bandwidth);
-  index_t length=0;
-  printf("smoothing kernel bandwidth=%f..\n",smoothing_kernel_bandwidth);
   
-  for(index_t i=0;i<ref_data.n_cols();i++){
-        
-    double sqd_distance=
-      la::DistanceSqEuclidean(num_dims_,ref_data.GetColumnPtr(i),q_point);
-   
-
-    double distance=sqrt(sqd_distance);
+  
+  Vector q_point_vec; 
+  q_point_vec.Alias(q_point,num_dims_); 
+  //printf("Query point is...\n"); 
+  //q_point_vec.PrintDebug(); 
+  
+  
+  EpanKernel ek; 
+  ek.Init(smoothing_kernel_bandwidth); 
+  index_t length=0; 
+  
+  for(index_t i=0;i<ref_data.n_cols();i++){ 
     
-    double kernel_value=ek.EvalUnnorm(distance);
-    double norm_const=ek.CalcNormConstant(num_dims_);
+    double sqd_distance= 
+      la::DistanceSqEuclidean(num_dims_,ref_data.GetColumnPtr(i),q_point); 
     
-    //norm_const=1.0;
-    kernel_value/=norm_const;
-
+    
+    double distance=sqrt(sqd_distance); 
+    
+    double kernel_value=ek.EvalUnnorm(distance); 
+    double norm_const=ek.CalcNormConstant(num_dims_); 
+    
+    //norm_const=1.0; 
+    kernel_value/=norm_const; 
+    
   
-    if(distance<smoothing_kernel_bandwidth){
+    if(distance<smoothing_kernel_bandwidth){ 
       
       //This point is in the range
-      if(length<20){
+      if(length<20){ 
 	
-	//We have enough space
-	indices_in_range[length]=i;
-	smoothing_kernel_values_in_range[length]=kernel_value;
-      }
-      else{
-	// printf("Adding extra space....\n");
-	// We dont have enough space. Hence allocate space for one more element
-	indices_in_range.PushBack(1);
-	smoothing_kernel_values_in_range.PushBack(1);
-	indices_in_range[length]=i;
-	smoothing_kernel_values_in_range[length]=kernel_value;
+ 	//We have enough space 
+ 	indices_in_range[length]=i; 
+ 	smoothing_kernel_values_in_range[length]=kernel_value;
       } 
-      length++;
-    }
-  }
-  //printf("Length is %d...\n",length);
-  // If we have less than 20 elements then lets remove the extra space
+      else{ 
+ 	// printf("Adding extra space....\n"); 
+ 	// We dont have enough space. Hence allocate space for one more element 
+ 	indices_in_range.PushBack(1); 
+ 	smoothing_kernel_values_in_range.PushBack(1); 
+ 	indices_in_range[length]=i; 
+ 	smoothing_kernel_values_in_range[length]=kernel_value; 
+      }  
+       length++;
+    } 
+  } 
+  //printf("Length is %d...\n",length); 
+  // If we have less than 20 elements then lets remove the extra space */
   
-  if(length<20){
-    indices_in_range.Remove(length,20 -length);
-    smoothing_kernel_values_in_range.Remove(length,20 -length);
-  }
-}
+  if(length<20){ 
+    indices_in_range.Remove(length,20 -length); 
+    smoothing_kernel_values_in_range.Remove(length,20 -length); 
+  } 
+} 
   
 
 template <typename TKernel> void LocalKernelMachines< TKernel>::TrainLocalKernelMachines(){
@@ -191,8 +205,7 @@ template <typename TKernel> void LocalKernelMachines< TKernel>::TrainLocalKernel
     // Having performed crossvalidation (if it was required) 
   // we now have the necessary parameters
     
-    printf("DONT FORGET TO RUN THE CODE WITH OPTIMAL PARAMETERS.....\n");
-    printf("CODE IS STILL INCOMPLETE ........\n");
+    printf("Run the code with the optimal parameter setting...\n");
     double error_rate=
       RunLocalKernelMachines_(train_data_appended,test_data_appended,
 			      train_labels_vector_,test_labels_vector_,
