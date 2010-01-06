@@ -1373,29 +1373,30 @@ void OCASSMO::SolveOCASSMOProblem_(){
       else{
 	
 	// This element is in I0
-	if(fabs(F_val-beta_up_)>SMALL&&fabs(F_val-beta_low_)>SMALL){
-
-	  // There is a violation
-	  printf("F_val calculated from scratch=%f...\n",F_val);
-	  printf("beta_up=%f...\n",beta_up_);
-	  printf("beta_low=%f...\n",beta_low_);
-	  printf("There is a mistake here14...\n");
-	  // exit(0);
-	  int pos=CheckIfInI0_(i);
-	  printf("alpha value=%f and position in I0=%d...\n",alpha_vec_[i],pos);
-	  printf("F value from the cache is =%f\n",Fi_for_I0_[pos]);
-
-	  printf("The Fi cache is...\n");
-	  for(int i=0;i<I0_indices_.size();i++){
-	    printf("Fi_for_I0_[%d]=%f..\n",i,Fi_for_I0_[i]);
-	    
-	  }
+	if(fabs(F_val-(beta_up_+beta_low_)/2.0)>SMALL){
 	  
-	  printf("I0 is ...\n");
+	  // There is a violation
+	  //printf("F_val calculated from scratch=%f...\n",F_val);
+	  //printf("beta_up=%f...\n",beta_up_);
+	  //printf("beta_low=%f...\n",beta_low_);
+	  
+	  //printf("There is a mistake here14...\n");
+	  // exit(0);
+	  //int pos=CheckIfInI0_(i);
+	  //printf("alpha value=%f and position in I0=%d...\n",alpha_vec_[i],pos);
+	  //printf("F value from the cache is =%f\n",Fi_for_I0_[pos]);
+
+	  /*printf("The Fi cache is...\n");
+	  for(int i=0;i<I0_indices_.size();i++){
+	  printf("Fi_for_I0_[%d]=%f..\n",i,Fi_for_I0_[i]);
+	  
+	  }*/
+	  
+	  /*printf("I0 is ...\n");
 	  for(int i=0;i<I0_indices_.size();i++){
 	    printf("I0_[%d]=%d..\n",i,I0_indices_[i]);
 	    
-	  }
+	    }*/
 	}
       }
     }
@@ -1434,8 +1435,8 @@ void OCASSMO::Init(ArrayList <Vector> &subgradients_mat,
 
   alpha_vec_[0]=1.0;
 
-  subgradients_mat_=subgradients_mat;
-  intercepts_vec_=intercepts_vec;
+  subgradients_mat_.Copy(subgradients_mat);
+  intercepts_vec_.Copy(intercepts_vec);
     // This element of the structure will grow dynamically
 
   // The sizes of I0, Fi are  0 and hence we dont need to do

@@ -92,6 +92,8 @@ void OCASLineSearch::SortThresholds_(){
 	Swap_(&indices_in_range_[i],&indices_in_range_[j]);
 	Swap_(&C_i_vec_[i],&C_i_vec_[j]);
 	Swap_(&B_i_vec_[i],&B_i_vec_[j]);
+	Swap_(&smoothing_kernel_values_in_range_[i],
+	  &smoothing_kernel_values_in_range_[j]);
       }
     }
   }  
@@ -366,29 +368,29 @@ void OCASLineSearch ::Init(Matrix &train_data_appended,
 
   //Initialize all structures
   
- 
-  train_data_appended_.Copy(train_data_appended);
+  // Alias the dataset
+  train_data_appended_.Alias(train_data_appended);
   
   //  train_data_appended_=train_data_appended;
   
 
-  query_point_appended_.Copy(query_point_appended);
+  query_point_appended_.Alias(query_point_appended);
   //  query_point_appended_=query_point_appended;
   
   lambda_reg_const_=lambda_reg_const;
-  
-  indices_in_range_.Copy(indices_in_range);
 
-  smoothing_kernel_values_in_range_.Copy(smoothing_kernel_values_in_range);
-
-  train_labels_.Copy(train_labels);
-  //  train_labels_=train_labels;
-  
+    
   // We shall initialize indices_in_range to the argument
-  // provided. But note that we are copying it and not aliasing it,
-  // because we also want to retain the unpermuted order for future
-  // iterations.
+  // provided. But note that we are copying only the values and not
+  // aliasing it, because we also want to retain the unpermuted order
+  // for future iterations.
+
+  smoothing_kernel_values_in_range_.
+    Copy(smoothing_kernel_values_in_range);
+
+  indices_in_range_.Copy(indices_in_range);
   
+  train_labels_.Alias(train_labels);
   
   // Initialize the thresholds
   
@@ -400,8 +402,8 @@ void OCASLineSearch ::Init(Matrix &train_data_appended,
   
   // Finally alias w_1 and w_2
   
-  w_1_vec_.Copy(w_1);
-  w_2_vec_.Copy(w_2);
+  w_1_vec_.Alias(w_1);
+  w_2_vec_.Alias(w_2);
 
 
   // Also calculate lambda_w_2_minus_w_1_sqd
@@ -411,7 +413,8 @@ void OCASLineSearch ::Init(Matrix &train_data_appended,
   Vector w_2_minus_w_1;
   la::SubInit (w_1_vec_, w_2_vec_,&w_2_minus_w_1);
 
-  lambda_w_2_minus_w_1_sqd_=pow(la::LengthEuclidean(w_2_minus_w_1),2)*lambda_reg_const_;
+  lambda_w_2_minus_w_1_sqd_=
+    pow(la::LengthEuclidean(w_2_minus_w_1),2)*lambda_reg_const_;
 
   //Initialize C_i_vec and B_i_vec
 
