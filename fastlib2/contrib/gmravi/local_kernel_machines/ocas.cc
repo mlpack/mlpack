@@ -53,7 +53,7 @@ void OCAS::Optimize(){
 	ocas_smo.Init(subgradients_mat_,intercepts_vec_,lambda_reg_const_);
 	ocas_smo.SolveOCASSMOProblem_();
 	ocas_smo.get_primal_solution(w_smo_at_t_);
-	//printf("w_smo_at_t learnt is...\n");
+        //printf("w_smo_at_t learnt is...\n");
 	//w_smo_at_t_.PrintDebug();
 	// This gets us w_best_at_t
 	k_star=DoLineSearch_();
@@ -64,26 +64,28 @@ void OCAS::Optimize(){
       w_smo_at_t_.SetZero();
       k_star=0.0;
     }
-    
-        
+           
     // Get w_b_at_t
     GetWBAtT_(k_star);
-    double new_F_val=CalculateObjectiveFunctionValueAtAPoint_(w_best_at_t_);
-    double new_F_t_val=CalculateApproximatedObjectiveValueAtAPoint_(w_best_at_t_);
+    double new_F_val=
+      CalculateObjectiveFunctionValueAtAPoint_(w_best_at_t_);
+
+    double new_F_t_val=
+      CalculateApproximatedObjectiveValueAtAPoint_(w_best_at_t_);
 
 
-    printf("prev_F_val=%f,new_F_val=%f,prev_F_t_val=%f,new_F_t_val=%f,k_star=%f",prev_F_val,new_F_val,prev_F_t_val,new_F_t_val,k_star);
+    /*  printf("prev_F_val=%f,new_F_val=%f,prev_F_t_val=%f,new_F_t_val=%f,k_star=%f",prev_F_val,new_F_val,prev_F_t_val,new_F_t_val,k_star);
 
     if(new_F_val-prev_F_val>pow(10,-3)||new_F_t_val-prev_F_t_val<-pow(10,-3)){
-      
-      printf("....Not Improved\n");
-      
+    
+    printf("....Not Improved\n");
+    
     }
     else{
-      
-      printf("...Improved\n");      
-    }
-   
+    
+    printf("...Improved\n");      
+    }*/
+    
     prev_F_val=new_F_val;
     prev_F_t_val=new_F_t_val;
 
@@ -97,13 +99,13 @@ void OCAS::Optimize(){
       CalculateObjectiveFunctionValueAtAPoint_(w_best_at_t_);
     
     gap=fabs(approximate_value_w_best_at_t-objective_value_w_best_at_t);
-    printf("gap is %f..\n",gap);
+    /* printf("gap is %f..\n",gap);
     printf("Current best solution is ...\n");
     for(int i=0;i<num_dims_appended_;i++){
-      
-      printf("%f,",w_best_at_t_[i]);
+    
+    printf("%f,",w_best_at_t_[i]);
     }
-    printf("\n");
+    printf("\n");*/
 
     //Get the new point where the cutting plane has to be added
     GetWCAtT_();
@@ -134,8 +136,6 @@ void OCAS::Optimize(){
       printf("obj_value=%f,approx_value=%f, ..........Fine...\n",
       obj_value_w_c_at_t,approx_value_w_c_at_t);
       }*/
-    
-   
     num_iterations++;
   }
 
@@ -154,7 +154,7 @@ void OCAS::Optimize(){
   gap=fabs(objective_value_w_best_at_t-approximate_value_w_best_at_t);
   printf("gap is %f..\n",gap);*/
 
-  printf("finished OCAS. Required %d iterations...\n",num_iterations); 
+  //printf("finished OCAS. Required %d iterations...\n",num_iterations); 
 }
 
 
@@ -354,22 +354,23 @@ void OCAS::Init(double *query_point, Matrix &train_data,
   
   
   // Initialize query_point and set up its value.
-  // Do not forget to append this quantity with a 1
- 
+  
   query_point_appended_.Init(num_dims_appended_);
   query_point_appended_.CopyValues(query_point);
-  query_point[num_dims_appended_-1]=1.0;
   
-  //Copy the training labels
+  //Alias the training labels
 
   train_labels_.Copy(train_labels);
   
-  // The training data
+  // Alias The training data
 
   train_data_appended_.Copy(train_data);
     
     
-  // Initialize the other variables
+  // Alias the other variables
+
+  //indices_in_range_.InitAlias(indices_in_range);
+  //smoothing_kernel_values_in_range_.InitAlias(smoothing_kernel_values_in_range);
 
   indices_in_range_.Init(num_points_in_range_);
   smoothing_kernel_values_in_range_.Init(num_points_in_range_);

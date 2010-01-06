@@ -8,7 +8,7 @@ int main(int argc, char *argv[]){
 
   // Initialize FastExec
 
-  fx_init(argc, argv, NULL);
+  fx_module *root = fx_init(argc, argv, NULL);
 
   // Do the usual initialization.
 
@@ -71,7 +71,10 @@ int main(int argc, char *argv[]){
     lkm.Init(train_data,test_data,train_labels,test_labels,lkm_module);
 
     // Train
+    fx_timer_start(NULL,"train");
     lkm.TrainLocalKernelMachines();
+    printf("Done with all calculations...\n");
+    fx_timer_stop(NULL,"train");
   
   }
   else{
@@ -79,6 +82,7 @@ int main(int argc, char *argv[]){
     printf("We dont yet support SVMRBF kernels..\n");
   
   }
+  fx_done(NULL);
 
 
 }
