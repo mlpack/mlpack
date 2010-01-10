@@ -1,7 +1,7 @@
 #include "fastlib/fastlib.h"
 #include "ocas.h"
 #include "ocas_line_search.h"
-#define SMALL pow(10,-4)
+
 
 /** A getter utility that returns the value of optimal k
  */
@@ -96,7 +96,19 @@ void OCASLineSearch::SortThresholds_(){
 	  &smoothing_kernel_values_in_range_[j]);
       }
     }
-  }  
+  }
+
+  printf("Testing after sort of thresholds...\n");
+  
+  for(int i=0;i<num_points_in_range_-1;i++){
+    
+    if(thresholds_vec_[i]>thresholds_vec_[i+1]){
+      
+      printf("Sorting was incorrect....\n");
+      printf("thresholds_vec_[%d]=%f,thresholds_vec_[%d]=%f...\n",i,thresholds_vec_[i],i,thresholds_vec_[i+1]);
+      exit(0);
+    }
+  }
 }
 
 
@@ -105,8 +117,7 @@ void OCASLineSearch::SortThresholds_(){
 void OCASLineSearch::CalculateDerivativesAtEachThreshold(int index){
 
   // The derivative has 2 parts. The first part has 2 contributions.
-
-
+  
   Vector w_2_minus_w_1;
   la::SubInit(w_1_vec_, w_2_vec_, &w_2_minus_w_1);
    
@@ -118,9 +129,7 @@ void OCASLineSearch::CalculateDerivativesAtEachThreshold(int index){
   
   double delta_g_i_k=0.0;
   for(int i=0;i<num_points_in_range_;i++){
-    
-    //    int original_index=indices_in_range_[index];
-
+        
     if(i<index){
 
       // The contribution is max(0,B_i)
@@ -150,7 +159,73 @@ void OCASLineSearch::CalculateDerivatives_(){
 
     CalculateDerivativesAtEachThreshold(i);    
   }
+
+  // This is just a test to make sure that the derivatives are increasing
+
+  for(int l=0;l>num_points_in_range_-1;l++){
+    
+    if(derivative_line_search_objective_[l].low>
+       derivative_line_search_objective_[l].up+SMALL){
+      
+      printf("derivative calculation mistake..\n");
+      printf("derivative_line_search_objective_[%d].low=%f...\n",
+	     l,derivative_line_search_objective_[l].low);
+      printf("derivative_line_search_objective_[%d].up=%f...\n",
+	     l,derivative_line_search_objective_[l].up);
+
+    }
+    
+    double prev_up=derivative_line_search_objective_[l].up;
+    double next_low=derivative_line_search_objective_[l+1].low;
+
+    if(prev_up>next_low+SMALL){
+      
+      printf("derivative calculation mistake...\n");
+      
+      printf("prev_up=%f...\n",prev_up);
+      printf("next_low=%f..\n",next_low);
+    }
+  }
 }
+
+/** Computing gradient beyond the given index but before the next index
+ */
+
+
+
+double OCASLineSearch::ComputeGradientInIntervalAndOptimalK_(int index){
+
+  // The gradient in this region is a linear function of k. We are
+  // required to solve this linear equation
+
+  double linear_coeff=lambda_w_2_minus_w_1_sqd_;
+
+  // We shall reuse the derivative at the threshold provided by index
+  // to calculate the linear part. Alternatively this can be
+  // calculated from scratch
+
+  double constant=derivative_line_search_objective_[index].up-
+    (lambda_w_2_minus_w_1_sqd_*thresholds_vec_[index]);
+
+  // The optimal k is  simply max(0,-constant/linear_coeff);
+  
+  double k_opt=max(0.0,-constant/linear_coeff);
+  printf("k_opt is %f..\n",k_opt);
+  printf("the next threshold is %f..\n",thresholds_vec_[index+1]);
+
+  if(k_opt-thresholds_vec_[index+1]>=SMALL){
+    printf("There is a mistake in line search calculations...\n");
+
+    for(int i=0;i<num_points_in_range_;i++){
+      printf("threshold=%f,derivative=[%f,%f]...\n",
+	     thresholds_vec_[i],derivative_line_search_objective_[i].low,
+	     derivative_line_search_objective_[i].up);
+    }
+    exit(0);
+  }
+  return k_opt;
+}
+
 
 /** This function has been called because the optimal k seems to lie
     beyond the threshold given by the argument index
@@ -172,11 +247,9 @@ double OCASLineSearch::ComputeGradientBeyondAndOptimalK_(int index){
     (lambda_w_2_minus_w_1_sqd_*thresholds_vec_[index]);
 
   // The optimal k is  simply max(0,-constant/linear_coeff);
-
   
   double k_opt=max(0.0,-constant/linear_coeff);
   return k_opt;
-
 }
 
 double OCASLineSearch::ComputeGradientBeforeAndOptimalK_(int index){
@@ -193,144 +266,206 @@ double OCASLineSearch::ComputeGradientBeforeAndOptimalK_(int index){
   // The optimal k is  simply max(0,-constant/linear_coeff);
 
   double k_opt=max(0.0,-constant/linear_coeff);
-  return max(0.0,-constant/linear_coeff);
+  return k_opt;
+}
+
+void OCASLineSearch::CalculateGradientAtAPoint(double k,Interval &derivative_interval){
+  
+  // The derivative has 2 parts. The first part has 2 contributions.
+  
+
+  double kA0= k*lambda_w_2_minus_w_1_sqd_;
+
+  Vector w_2_minus_w_1;
+  la::SubInit(w_1_vec_, w_2_vec_, &w_2_minus_w_1);
+   
+  double B_0=lambda_reg_const_*la::Dot(w_1_vec_,w_2_minus_w_1);
+  derivative_interval.up=B_0+kA0;
+  derivative_interval.low=B_0+kA0;
+
+  for(int i=0;i<num_points_in_range_;i++){
+    
+    //    int original_index=indices_in_range_[index];
+    
+    double k_i=thresholds_vec_[i];
+
+    if(fabs(k_i-k)<SMALL){
+      
+      // The contribution is [0,B_i]
+      // The contribution is max(0,B_i)
+      derivative_interval.low+=min(0.0,B_i_vec_[i]); 
+      derivative_interval.up+=max(0.0,B_i_vec_[i]); 
+    }
+    else{
+      
+      if(k_i<k){
+	
+	// Contribution is max(0,B_i)
+	derivative_interval.low+=max(0.0,B_i_vec_[i]);
+	derivative_interval.up+=max(0.0,B_i_vec_[i]);
+	
+      }
+      else{
+	
+	// Contribution is min(0,B_i)
+	derivative_interval.low+=min(0.0,B_i_vec_[i]);
+	derivative_interval.up+=min(0.0,B_i_vec_[i]);
+
+      } 
+    }    
+  }
 }
 
 double OCASLineSearch::CalculateOptimalK_(){
-
-  // Creating dummy test cases.
- 
-  double previous_upper;
-  double next_lower;
-
-  // Check edge cases first
-
-  Interval derivative_interval=
-    derivative_line_search_objective_[num_points_in_range_-1];
+   
   
-  if(thresholds_vec_[num_points_in_range_-1]>0){
-    
-     // This means the highest threshold value is negative
-    
-    
+  // The first thing to do is calculate the derivative at k=0
 
-     if(derivative_interval.CheckIfIntervalIsNegative()){
+  Interval derivative_interval;
 
-       // The optimal k lies beyond the max threshold
-       return ComputeGradientBeyondAndOptimalK_(num_points_in_range_-1);
-     }
-     else{
-      
-       // either the interval is greater than 0 or it has 0
-  
-       if(derivative_interval.CheckIfIntervalHasZero()){
-  
-	 // We have found the optimal k
-	 return max(0.0,thresholds_vec_[num_points_in_range_-1]);
-       }
-       else{
-	 // The interval is positive, hence the optimal k is somewhere
-	 // to the left of this threshold
-       }
-       
-     }
+  CalculateGradientAtAPoint(0.0,derivative_interval);
+
+  if(derivative_interval.up>0||fabs(derivative_interval.up)<SMALL){
+    
+    // In this case the optimal solution is k_star=0;
+    return 0.0;
+    
   }
-  else{
+  else{// The gradient at 0 is entirely negative 
+    // Check out the gradient at the right most threshold
     
-    // The max threshold is itself negative. hence the optimal k lies
-    // to the right of it. Check if the derivative here has 0.
-
-    if(derivative_interval.CheckIfIntervalHasZero()){
-
-      return 0.0;
-      
-    }
-    else{
-
-      // Either the interval is completely positive or completely negative
-
-      if(derivative_interval.CheckIfIntervalIsPositive()){
-
-	return 0.0;
-      }
-
-      // The interval is negative
-      
-      return ComputeGradientBeyondAndOptimalK_(num_points_in_range_-1);
-      
-    }
-  }
+    Interval derivative_interval=
+      derivative_line_search_objective_[num_points_in_range_-1];
     
- 
-  // Now we have reached a point where we are guaranteed that the
-  // optimal k is in the line segment defined by the thresholds
-
-  double present_up,next_low;
-
-  for(int i=0;i<num_points_in_range_;i++){
-
-    // Skip all those indices for which the threshold value is
-    // negative
-
-    Interval derivative_interval=derivative_line_search_objective_[i];
-    
-    bool flag=derivative_interval.CheckIfIntervalHasZero();
-    
-    if(flag){
+    if(thresholds_vec_[num_points_in_range_-1]>0){
       
-      // if flag=true then this interval has zero. 
-      // Hence return this threshold value
+      // This means the highest threshold value is positive
       
-      return max(0.0,thresholds_vec_[i]);
-    }
-    else{
-
-      // Suppose the derivative interval is completely positive.  This
-      // happens in a very special case, that is when all thresholds
-      // are positive and also the derivative at the first threshold
-      // is completely positive.
-
-      if(derivative_interval.CheckIfIntervalIsPositive()){
+      if(derivative_interval.CheckIfIntervalIsNegative()){
 	
-	// Hence search for optimal k before this threshold
-	
-	return ComputeGradientBeforeAndOptimalK_(i);
-      }
-
-      // This interval doesn't have a zero.  Obtain the upper end of
-      // the interval and the lowwer end of the derivative at the
-      // next threshold
-     
-
-      present_up=derivative_interval.up;
-      next_low=derivative_line_search_objective_[i+1].low;
-      Interval test_interval;
-      test_interval.low=present_up;
-      test_interval.up=next_low;
-      // Now check if this test_interval has 0 
-      
-      if(test_interval.CheckIfIntervalHasZero()){
-	
-	// This test interval has zero.
-
-		
-	return ComputeGradientBeyondAndOptimalK_(i);
+	// The optimal k lies beyond the max threshold
+	return ComputeGradientBeyondAndOptimalK_(num_points_in_range_-1);
       }
       else{
-	// We continue 
 	
-      }      
+	// either the interval is greater than 0 or it has 0
+	
+	if(derivative_interval.CheckIfIntervalHasZero()){
+	  
+	  // We have found the optimal k
+	  return max(0.0,thresholds_vec_[num_points_in_range_-1]);
+	}
+	else{
+	  // The interval is positive, hence the optimal k is somewhere
+	  // to the left of this threshold
+	}
+	
+      }
     }
-  }   
+    else{
+      
+      // The max threshold is itself negative. hence the optimal k lies
+      // to the right of it. Check if the derivative here has 0.
+      
+      if(derivative_interval.CheckIfIntervalHasZero()){
+	
+	return 0.0;
+	
+      }
+      else{
+	
+	// Either the interval is completely positive or completely negative
+	
+	if(derivative_interval.CheckIfIntervalIsPositive()){
+	  
+	  return 0.0;
+	}
+	
+	// The interval is negative
+	
+	return ComputeGradientBeyondAndOptimalK_(num_points_in_range_-1);
+	
+      }
+    }
+    
+ 
+    // Now we have reached a point where we are guaranteed that the
+    // optimal k is in the line segment defined by the thresholds
+    
+    double present_up;
+    double next_low;
+    
+    for(int i=0;i<num_points_in_range_;i++){
+      
+      Interval derivative_interval=derivative_line_search_objective_[i];
+      
+      bool flag=derivative_interval.CheckIfIntervalHasZero();
+      
+      if(flag){
+	
+	// if flag=true then this interval has zero. 
+	// Hence return the max of 0 and this threshold value
+	
+	return max(0.0,thresholds_vec_[i]);
+      }
+      else{
+	
+	// Suppose the derivative interval is completely positive.
+	// This happens in a very special case, that is when the
+	// derivative at the first threshold is completely positive.
+	
+	if(derivative_interval.CheckIfIntervalIsPositive()){
+	  
+	  // Hence search for optimal k before this threshold
+	  
+	  return ComputeGradientBeforeAndOptimalK_(i);
+	}
+	
+	// This interval doesn't have a zero.  Obtain the upper end of
+	// the interval and the lower end of the derivative at the
+	// next threshold
+	
+	present_up=derivative_interval.up;
+	next_low=derivative_line_search_objective_[i+1].low;
+
+
+
+	Interval gradient_interval;
+	gradient_interval.low=present_up;
+	gradient_interval.up=next_low;
+
+	// Now check if this test_interval has 0 	
+	if(gradient_interval.CheckIfIntervalHasZero()){
+	  
+
+	  printf("derivative interval is [%f,%f]...\n",
+		 derivative_interval.low,derivative_interval.up);
+
+	  printf("i=%d,threshold=%f,present up=%f, next low=%f...\n",
+		 i,thresholds_vec_[i],present_up,next_low);
+	  // This test interval has zero.
+	  
+	  printf("The interval of k_opt is %f,%f",thresholds_vec_[i],thresholds_vec_[i+1]);
+	  printf("The gradient in this interval is [%f,%f]..\n",gradient_interval.low,gradient_interval.up);
+	  
+	  return ComputeGradientInIntervalAndOptimalK_(i);
+	}
+	else{
+	  // We continue 
+	  
+	}      
+      }
+    }
+  }
+  // If we have reached here then there is a mistake in calculations
+  printf("There is an error in calculations...\n");
+  exit(0);
 }
 
 
 
 
 void OCASLineSearch::PerformLineSearch(){
-
-
-
 
   // The first task is to calculate the thresholds for all points. 
   // Remember we are doing this calculation only for points which are in the 
@@ -349,7 +484,58 @@ void OCASLineSearch::PerformLineSearch(){
 
   k_star_=CalculateOptimalK_();
 
+  // Having got the k_star_ verify if this is optimal.
 
+  if(fabs(k_star_)>SMALL){
+
+    // This means k_star_ is not 0
+    double linear_term=lambda_w_2_minus_w_1_sqd_*k_star_;
+
+    Vector w_2_minus_w_1;
+    la::SubInit(w_1_vec_, w_2_vec_, &w_2_minus_w_1);    
+    double B_0=lambda_reg_const_*la::Dot(w_1_vec_,w_2_minus_w_1);
+
+    Interval derivative_interval;
+    derivative_interval.up=0.0;
+    derivative_interval.low=0.0;
+    double temp=0.0;
+    for(int i=0;i<num_points_in_range_;i++){
+      
+      if(fabs(k_star_-thresholds_vec_[i])<SMALL*SMALL){
+	
+	derivative_interval.up+=max(0.0,B_i_vec_[i]);
+	derivative_interval.low+=min(0.0,B_i_vec_[i]);	
+      }
+      else{
+	if(k_star_>thresholds_vec_[i]){
+	  
+	  derivative_interval.up+=max(0.0,B_i_vec_[i]);
+	  derivative_interval.low+=max(0.0,B_i_vec_[i]);
+	}
+	else{
+	  
+	  derivative_interval.up+=min(0.0,B_i_vec_[i]);
+	  derivative_interval.low+=min(0.0,B_i_vec_[i]);
+	}
+	
+      }
+    }
+    printf("linear_term+B_0=%f...\n",linear_term+B_0);
+    
+    //Add up all these terms
+
+    derivative_interval.up+=linear_term+B_0;
+    derivative_interval.low+=linear_term+B_0;
+    
+    // Finally check if the interval has 0
+    int flag=derivative_interval.CheckIfIntervalHasZero();
+    if(!flag){
+
+      printf("k_star calculation is wrong....\n");
+      printf("The derivative interval is [%f,%f]..\n",
+	     derivative_interval.low,derivative_interval.up);
+    }
+  }
 }
 
 void OCASLineSearch ::Init(Matrix &train_data_appended,
@@ -387,7 +573,7 @@ void OCASLineSearch ::Init(Matrix &train_data_appended,
 
   smoothing_kernel_values_in_range_.
     Copy(smoothing_kernel_values_in_range);
-
+  
   indices_in_range_.Copy(indices_in_range);
   
   train_labels_.Alias(train_labels);
@@ -402,9 +588,8 @@ void OCASLineSearch ::Init(Matrix &train_data_appended,
   
   // Finally alias w_1 and w_2
   
-  w_1_vec_.Alias(w_1);
-  w_2_vec_.Alias(w_2);
-
+  w_1_vec_.Copy(w_1);
+  w_2_vec_.Copy(w_2);
 
   // Also calculate lambda_w_2_minus_w_1_sqd
 
