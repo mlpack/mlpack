@@ -4,7 +4,7 @@
 #include "ocas_smo.h"
 #include "ocas_line_search.h"
 #include "range_search.h"
-#define SMALL pow(10,-3)
+
 
 template <typename TKernel> double  LocalKernelMachines< TKernel>:: 
 RunLocalKernelMachines_(Matrix &train_data_local, 
@@ -33,6 +33,8 @@ RunLocalKernelMachines_(Matrix &train_data_local,
   rs.PerformRangeSearch();
   rs.get_indices_in_range(indices_in_range);
   rs.get_smoothing_kernel_values_in_range(smoothing_kernel_values_in_range);
+
+  //printf("Range search completed...\n");
   
   for(index_t i=0;i<test_data_local.n_cols();i++){
     
@@ -47,8 +49,8 @@ RunLocalKernelMachines_(Matrix &train_data_local,
     //			 smoothing_kernel_values_in_range, 
     //			 smoothing_kernel_bandwidth);
     
-
-
+    
+    
     // The label local svm will predict
     
     double y_pred_label;
@@ -61,6 +63,7 @@ RunLocalKernelMachines_(Matrix &train_data_local,
 
       double rand_num=math::Random(-1,1);
       y_pred_label=rand_num>0?1.0:-1.0;
+      printf("Empty neighbourhood...\n");
     }
     else{
    
@@ -85,6 +88,7 @@ RunLocalKernelMachines_(Matrix &train_data_local,
 	
 	y_pred_label=-1.0;
       }
+      // printf("Performed optimization...\n");
     }
     if(fabs(test_labels_local[i]-y_pred_label)>SMALL){
 
@@ -93,7 +97,10 @@ RunLocalKernelMachines_(Matrix &train_data_local,
       //printf("Made a mistake...\n");
       num_mistakes++;
     } 
+
+    //printf("Finished working on point:%d..\n",i);
   }
+  //  printf("Finished working on this data...\n");
   // Return the error rate
 
   return (double)num_mistakes/test_data_local.n_cols();
