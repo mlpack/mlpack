@@ -3,8 +3,6 @@
 #include "ocas.h"
 #include "ocas_smo.h"
 #include "ocas_line_search.h"
-#define SMALL 0.0001
-
 
 void OCAS::get_optimal_vector(Vector &result){
   
@@ -12,9 +10,6 @@ void OCAS::get_optimal_vector(Vector &result){
 }
 
 void OCAS::Optimize(){
-  
-  
-  int max_num_iterations=1;
   
   // The vector obtained by solving the quadratic program involved in
   // ocas algorithm
@@ -26,21 +21,28 @@ void OCAS::Optimize(){
   
   int num_iterations=0;
 
-  double prev_F_val=DBL_MAX;
-
-  double prev_F_t_val=-DBL_MAX;
+  double prev_F_t_value=0.0;
 
   double gap=DBL_MAX;
 
-  while(num_iterations<20&&fabs(gap)>SMALL){
+  Vector alpha_vec_seed;
+  Vector alpha_vec_prev;
+
+  alpha_vec_prev.Init(num_subgradients_available_);
+  alpha_vec_seed.Init(num_subgradients_available_);
+
+  double approximate_value_w_smo_at_t;
+  double objective_value_w_smo_at_t;
+
+  int MAX_NUM_ITERATIONS=1000;
+  while(num_iterations<MAX_NUM_ITERATIONS&&fabs(gap)>SMALL){
     
        
     // OCAS requires us to solve a QP problem where the
     // non-differentiable part of the objective is replaced by
     // subgradient. We solve this problem by calling the SMO.
     // This returns us w_at_t
-
-    
+       
     if(num_iterations>0)
       {
 	
@@ -50,111 +52,171 @@ void OCAS::Optimize(){
 	// Firstly create an object of the type OCASSMO and initialize it
 	OCASSMO ocas_smo;
 	
-	ocas_smo.Init(subgradients_mat_,intercepts_vec_,lambda_reg_const_);
+	ocas_smo.Init(subgradients_mat_,intercepts_vec_,lambda_reg_const_,
+		      alpha_vec_seed,w_smo_at_t_);
+	//printf("Initialized ocas smo...\n");
+
 	ocas_smo.SolveOCASSMOProblem_();
+	//printf("Finished ocas smo..\n");
+
 	ocas_smo.get_primal_solution(w_smo_at_t_);
-        //printf("w_smo_at_t learnt is...\n");
-	//w_smo_at_t_.PrintDebug();
+	ocas_smo.get_dual_solution(alpha_vec_prev);
+	
 	// This gets us w_best_at_t
 	k_star=DoLineSearch_();
-    
       }
     else{
       
       w_smo_at_t_.SetZero();
+      alpha_vec_prev[0]=1.0;
       k_star=0.0;
     }
+
+    // Get F(w_b^t-1)
+    double prev_F_val_w_b_at_t=
+      CalculateObjectiveFunctionValueAtAPoint_(w_best_at_t_);
+
            
     // Get w_b_at_t
     GetWBAtT_(k_star);
-    double new_F_val=
+
+    // Get F(w_b^t)
+    double new_F_val_w_b_at_t=
       CalculateObjectiveFunctionValueAtAPoint_(w_best_at_t_);
 
-    double new_F_t_val=
-      CalculateApproximatedObjectiveValueAtAPoint_(w_best_at_t_);
-
-
-    /*  printf("prev_F_val=%f,new_F_val=%f,prev_F_t_val=%f,new_F_t_val=%f,k_star=%f",prev_F_val,new_F_val,prev_F_t_val,new_F_t_val,k_star);
-
-    if(new_F_val-prev_F_val>pow(10,-3)||new_F_t_val-prev_F_t_val<-pow(10,-3)){
+    printf("prev_F_val_w_b_at_t=%f,new_F_val_w_b_at_t=%f,k_star=%f",
+	   prev_F_val_w_b_at_t,new_F_val_w_b_at_t,k_star);
     
-    printf("....Not Improved\n");
-    
+    // Note: F(w_b^t)>= F(w_b^t-1), since W_b^t is obtained by line search
+    if(new_F_val_w_b_at_t-prev_F_val_w_b_at_t>SMALL){
+      
+      printf("Line Search did not Improved on the original objective, new_F_val_w_b_at_t=%f,prev_F_val_w_b_at_t=%f...\n",
+	     new_F_val_w_b_at_t,prev_F_val_w_b_at_t);
+      
     }
     else{
-    
-    printf("...Improved\n");      
-    }*/
-    
-    prev_F_val=new_F_val;
-    prev_F_t_val=new_F_t_val;
-
-    // Get approximate objective value at w_best_at_t
-    double approximate_value_w_best_at_t=
-      CalculateApproximatedObjectiveValueAtAPoint_(w_best_at_t_);
-    
-    
-    //get objective value at w_best_at_t
-    double objective_value_w_best_at_t=
-      CalculateObjectiveFunctionValueAtAPoint_(w_best_at_t_);
-    
-    gap=fabs(approximate_value_w_best_at_t-objective_value_w_best_at_t);
-    /* printf("gap is %f..\n",gap);
-    printf("Current best solution is ...\n");
-    for(int i=0;i<num_dims_appended_;i++){
-    
-    printf("%f,",w_best_at_t_[i]);
+      
+      printf("Improved on original objective...\n");
+      
     }
-    printf("\n");*/
+
+    // Get approximate objective value at w_smo_at_t
+
+    approximate_value_w_smo_at_t=
+      CalculateApproximatedObjectiveValueAtAPoint_(w_smo_at_t_);
+    
+    
+    //get objective value at w_smo_at_t
+
+    objective_value_w_smo_at_t=
+      CalculateObjectiveFunctionValueAtAPoint_(w_smo_at_t_);
+
+    printf("approximate_value_w_smo_at_t=%f..\n",
+	   approximate_value_w_smo_at_t);
+
+    printf("objective_value_w_smo_at_t=%f..\n",
+	   objective_value_w_smo_at_t);
+
+    if(objective_value_w_smo_at_t-approximate_value_w_smo_at_t<-SMALL){
+      
+      printf("Minorization error...\n");
+      printf("approximate value at w_smo is %f..\n",approximate_value_w_smo_at_t);
+      printf("objective value at w_smo is %f..\n",objective_value_w_smo_at_t);
+    }
+   
+    // If F represents the true objective then gap=F(w)-F_t(w)
+    gap=fabs(approximate_value_w_smo_at_t-objective_value_w_smo_at_t);
+    
+    
+    // Get F_t(w^t)
+    
+    double new_F_t_value=
+      CalculateApproximatedObjectiveValueAtAPoint_(w_smo_at_t_);
+
+    // Note: new_F_t_value should be better than previous F_t value
+
+    if(new_F_t_value<prev_F_t_value-SMALL){
+      
+      printf("Not improvement to approximate function:new_F_t_value=%f,prev_F_t_value=%f...\n",
+	     new_F_t_value,prev_F_t_value);
+    }
+    else{
+      printf("Improved on approximate objective:new_F_t_value=%f,prev_F_t_value=%f...\n",
+	     new_F_t_value,prev_F_t_value);
+    }
+
+    prev_F_t_value=new_F_t_value;
 
     //Get the new point where the cutting plane has to be added
     GetWCAtT_();
-    GetSubGradientAndInterceptAtNewPoint_();
+    
+    GetSubGradientAndInterceptAtNewPoint_(); 
+    printf("Making a simple check...\n");
+    // NOw calculate the original objective value at w_c_at_t and also
+    // the approximate objective. These 2 quantities should be the
+    // same
 
-    /*
-      printf("Making a simple check...\n");
-      // NOw calculate the original objective value at w_c_at_t and also
-      // the approximate objective. These 2 quantities should be the
-      // same
-      double obj_value_w_c_at_t=
+    double obj_value_w_c_at_t=
       CalculateObjectiveFunctionValueAtAPoint_(w_c_at_t_);
-      
-      double approx_value_w_c_at_t=CalculateApproximatedObjectiveValueAtAPoint_(w_c_at_t_);
-      
-      
-      if(fabs(obj_value_w_c_at_t-approx_value_w_c_at_t)>pow(10,-3)){
+    
+    double approx_value_w_c_at_t=CalculateApproximatedObjectiveValueAtAPoint_(w_c_at_t_);
+    
+    // Note: The above 2 quants should match as we have added a subgradient at w_c^t
+    
+    if(fabs(obj_value_w_c_at_t-approx_value_w_c_at_t)>pow(10,-3)){
       
       printf("obj_value=%f,approx_value=%f, ..........Seems like a mistake...\n",
-      obj_value_w_c_at_t,approx_value_w_c_at_t);
-      
-      double val=la::Dot(subgradients_mat_[num_subgradients_available_-1],w_c_at_t_)+
-      intercepts_vec_[num_subgradients_available_-1];
-      printf("Expecting the contribution due to subgradient to the approximate objective function to be %f..\n",val);
-      }
-      else{
+	     obj_value_w_c_at_t,approx_value_w_c_at_t);
+
+      printf("Expecting the contribution of non_diff_part to be=%f..\n",
+	     la::Dot(subgradients_mat_[num_subgradients_available_-1],w_c_at_t_)+
+	     intercepts_vec_[num_subgradients_available_-1]);
+    }
+    else{
       
       printf("obj_value=%f,approx_value=%f, ..........Fine...\n",
-      obj_value_w_c_at_t,approx_value_w_c_at_t);
-      }*/
+	     obj_value_w_c_at_t,approx_value_w_c_at_t);
+      printf("Expecting the contribution of non_diff_part to be=%f..\n",
+	     la::Dot(subgradients_mat_[num_subgradients_available_-1],w_c_at_t_)+
+	     intercepts_vec_[num_subgradients_available_-1]);
+    }
+    
+    // Now set up alpha_vec_seed. But first destroy the prev seed and
+    // create a new one.
+    
+    alpha_vec_seed.Destruct();
+    alpha_vec_seed.Init(num_subgradients_available_);
+    
+    for(int i=0;i<num_subgradients_available_-1;i++){
+      
+	alpha_vec_seed[i]=alpha_vec_prev[i];
+    }
+    alpha_vec_seed[num_subgradients_available_-1]=0.0;
+    
+    // Now destroy previous alpha vector and initialize it. 
+    // This is because its size has changed
+    
+    alpha_vec_prev.Destruct();
+    alpha_vec_prev.Init(num_subgradients_available_);
+    
     num_iterations++;
+      // printf("NUmber of iterations=%d..\n",num_iterations);
   }
+  
+  printf("Finally at the end of OCAS we have...\n");
+  printf("approximate_value_w_smo_at_t=%f...\n",approximate_value_w_smo_at_t);
+  printf("objective_value_w_smo_at_t=%f..\n",objective_value_w_smo_at_t);
+  printf("gap=%f...\n",gap);
 
-  /*
-  // Get approximate objective value at w_smo_at_t
-  double approximate_value_w_best_at_t=
-  CalculateApproximatedObjectiveValueAtAPoint_(w_best_at_t_);
-  
-  
-  //get objective value at w_best_at_t
-  double objective_value_w_best_at_t=
-  CalculateObjectiveFunctionValueAtAPoint_(w_best_at_t_);
-  
-  printf("obj_value=%f, approx-value=%f...\n",objective_value,approximate_value);
-  
-  gap=fabs(objective_value_w_best_at_t-approximate_value_w_best_at_t);
-  printf("gap is %f..\n",gap);*/
+  if(num_iterations==MAX_NUM_ITERATIONS){
 
-  //printf("finished OCAS. Required %d iterations...\n",num_iterations); 
+    printf("CAUTION:OCAS Required %d iterations...\n",num_iterations); 
+    printf("gap=%f..\n",gap);
+  }
+  else{
+    printf("Number of OCAS iterations=%d..\n",num_iterations);
+
+  }
 }
 
 
@@ -205,6 +267,7 @@ void OCAS::GetSubGradientAndInterceptAtNewPoint_(){
     int original_index=indices_in_range_[i];
     
     double y_label=train_labels_[original_index];
+
     double smoothing_kernel_value=smoothing_kernel_values_in_range_[i];
 
     Vector x_i;
@@ -215,7 +278,7 @@ void OCAS::GetSubGradientAndInterceptAtNewPoint_(){
 
     double val=1.0-(y_label*w_c_at_t_dot_xi);
 
-    if(val>0||fabs(val)<SMALL){
+    if(val>0){
     
       Vector scaled_x_i;
       la::ScaleInit(-1.0*y_label*smoothing_kernel_value,x_i,
@@ -229,13 +292,14 @@ void OCAS::GetSubGradientAndInterceptAtNewPoint_(){
   
   //  Finally calculate the intercept to be added
 
-  double obj_value=
+  double non_diff_obj_value=
     CalculateNonDifferentiablePartOfObjective_(w_c_at_t_);
 
   double w_c_dot_subgradient=
     la::Dot(new_subgradient_to_be_added,w_c_at_t_);
 
-  double new_intercept_to_be_added=obj_value-w_c_dot_subgradient;
+  double new_intercept_to_be_added=
+    non_diff_obj_value-w_c_dot_subgradient;
   
    // Dont forget to add the new subgradient and intercept
  
@@ -262,17 +326,17 @@ double OCAS::CalculateObjectiveFunctionValueAtAPoint_(Vector &w){
   
 
   double non_diff_part=CalculateNonDifferentiablePartOfObjective_(w);
-
+  
+  printf("The contribution of non differentiable part=%f...\n",non_diff_part);
   double obj_value=lambda_by2_w_sqd+non_diff_part;
   return obj_value;
 }
 
 
-
 double OCAS::CalculateNonDifferentiablePartOfObjective_(Vector &w){
-
+  
   // This part is \frac{1}{n} max{1-y_i<w,x_i>,0} K_i
-
+  
   double non_diff_part=0.0;
   for(int i=0;i<num_points_in_range_;i++){
     
@@ -290,6 +354,7 @@ double OCAS::CalculateNonDifferentiablePartOfObjective_(Vector &w){
     double val=1-(y_label*w_dot_xi);
     non_diff_part+=max(0.0,val)*smoothing_kernel_value/num_train_points_;
   }
+
   return non_diff_part; 
 }
 
@@ -308,22 +373,23 @@ double OCAS::CalculateApproximatedObjectiveValueAtAPoint_(Vector &w){
     val+=intercepts_vec_[i];
     max_value=max(val,max_value);
   }
-  //printf("Contribution of max of subgradients to approximate objective is %f..\n",max_value);
+  printf("Contribution of max of subgradients to approximate objective is %f..\n",max_value);
   return lambda_by2_w_sqd+max_value;
 }
 
 double OCAS::DoLineSearch_(){
   
   OCASLineSearch ocas_line_search;
+  
   ocas_line_search.Init(train_data_appended_,train_labels_,
 			query_point_appended_,lambda_reg_const_,
 			indices_in_range_,
 			smoothing_kernel_values_in_range_,
 			num_points_in_range_,num_train_points_,
 			w_best_at_t_,w_smo_at_t_);
-
+  
   ocas_line_search.PerformLineSearch();
-  return ocas_line_search.get_optimal_k();
+    return ocas_line_search.get_optimal_k();
 }
 
 void OCAS::Init(double *query_point, Matrix &train_data, 
@@ -360,11 +426,11 @@ void OCAS::Init(double *query_point, Matrix &train_data,
   
   //Alias the training labels
 
-  train_labels_.Copy(train_labels);
+  train_labels_.Alias(train_labels);
   
   // Alias The training data
 
-  train_data_appended_.Copy(train_data);
+  train_data_appended_.Alias(train_data);
     
     
   // Alias the other variables
