@@ -126,12 +126,17 @@ class OCASSMO{
   int TakeStep_();
   
   void Init( ArrayList<Vector>& ,
-	     ArrayList <double>&,double);
+	     ArrayList <double>&,double, 
+	     Vector&, Vector &);
   
   void SolveOCASSMOProblem_();
 
   void get_primal_solution(Vector &);
 
+  void get_dual_solution(Vector &);
+  void InitializeUsingWarmStart_(Vector &, Vector &);
+  void InitializeIndexSets_();
+  void InitializeFiForI0_();
   void UpdatePrimalSolution_(double,double);
 
 

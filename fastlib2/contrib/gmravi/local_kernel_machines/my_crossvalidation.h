@@ -26,14 +26,12 @@ GenerateSmoothingBandwidthVectorForCV_(Vector &smoothing_bandwidth_vector){
 template <typename TKernel> void  LocalKernelMachines <TKernel>::
 GenerateLambdaVectorForCV_(Vector &lambda_vector){
   
-  int num_lambda=20;
+  int num_lambda=9;
   double low=pow(10,-4);
-  double hi=pow(10,5);
-  double range=(hi-low)/num_lambda;
   lambda_vector.Init(num_lambda);
   for(index_t i=0; i<num_lambda;i++){
 
-    lambda_vector[i]=low+i*range;
+    lambda_vector[i]=low*pow(10,i);
   }
   printf("lambda vector for crossvalidation is ...\n");
   lambda_vector.PrintDebug();

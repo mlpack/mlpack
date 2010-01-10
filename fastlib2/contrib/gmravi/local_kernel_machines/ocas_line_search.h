@@ -1,8 +1,7 @@
 #include "fastlib/fastlib.h"
 #ifndef OCAS_LINE_SEARCH_H_
 #define OCAS_LINE_SEARCH_H_
-
-
+#define SMALL pow(10,-4)
 class Interval{
 
  public:
@@ -14,8 +13,14 @@ class Interval{
 
   bool CheckIfIntervalHasZero(){
     if(this->low<0&& this->up>0) return true;
-    return false;
-
+    else{
+      
+      if(fabs(this->low)<SMALL&& fabs(this->up)<SMALL&& this->low*this->up<0){
+	
+	return true;
+      }
+      return false;
+    }
   }
 
   bool CheckIfIntervalIsPositive(){
@@ -29,7 +34,6 @@ class Interval{
     return false;
 
   }
- 
 };
 class OCASLineSearch{
 
@@ -114,7 +118,7 @@ class OCASLineSearch{
 
   
   
-  void  CalculateThresholdsForPointsInRange_();
+  void CalculateThresholdsForPointsInRange_();
   void SortThresholds_();
   void Swap_(int *a,int *b);
   void Swap_(double *a,double *b);
@@ -123,6 +127,8 @@ class OCASLineSearch{
   double CalculateOptimalK_();
   double ComputeGradientBeyondAndOptimalK_(int);
   double ComputeGradientBeforeAndOptimalK_(int index);
+  double ComputeGradientInIntervalAndOptimalK_(int index);
+  void  CalculateGradientAtAPoint(double k,Interval &derivative_interval);
  public:
   void Init(Matrix &train_data_appended,Vector &train_labels, 
 	    Vector &query_point_appended, double lambda_reg_const, 
