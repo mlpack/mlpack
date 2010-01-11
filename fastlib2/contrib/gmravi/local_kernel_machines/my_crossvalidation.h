@@ -26,7 +26,7 @@ GenerateSmoothingBandwidthVectorForCV_(Vector &smoothing_bandwidth_vector){
 template <typename TKernel> void  LocalKernelMachines <TKernel>::
 GenerateLambdaVectorForCV_(Vector &lambda_vector){
   
-  int num_lambda=9;
+  int num_lambda=10;
   double low=pow(10,-4);
   lambda_vector.Init(num_lambda);
   for(index_t i=0; i<num_lambda;i++){
@@ -94,9 +94,16 @@ CrossValidateOverSmoothingKernelBandwidthAndLambda_(){
 	
 	// Will get the train and test folds 
 	//printf("Get the fold...\n");
+
 	GetTheFold_(cv_train_data_appended,cv_test_data_appended,
 		    cv_train_labels,cv_test_labels,fold_num);
 	
+	printf("The number of points in cv fold of train data is %d..\n",
+	       cv_train_data_appended.matrix().n_cols());
+	
+	
+	printf("The number of points in cv fold of test data is %d..\n",
+	       cv_test_data_appended.matrix().n_cols());
 	
 	// This routine will take the train fold and the test fold
 	// and solve the local SVM problem
