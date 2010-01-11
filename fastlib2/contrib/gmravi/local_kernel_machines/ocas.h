@@ -84,6 +84,7 @@ private:
   void GetSubGradientAndInterceptAtNewPoint_();
   double DoLineSearch_();
   void SMOMainRoutine_();
+  void PrintSubgradientsAndIntercepts_();
  public:
     
   void Optimize();  

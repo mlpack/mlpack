@@ -54,8 +54,7 @@ RunLocalKernelMachines_(Matrix &train_data_local,
     // The label local svm will predict
     
     double y_pred_label;
-
-    if(smoothing_kernel_values_in_range.size()==0){
+    if(smoothing_kernel_values_in_range[i].size()==0){
 
       // This means there are no points in this neighbourhood. 
       // Hence assign a random label.
@@ -63,7 +62,7 @@ RunLocalKernelMachines_(Matrix &train_data_local,
 
       double rand_num=math::Random(-1,1);
       y_pred_label=rand_num>0?1.0:-1.0;
-      printf("Empty neighbourhood...\n");
+      //printf("Empty neighbourhood...\n");
     }
     else{
    
@@ -74,7 +73,7 @@ RunLocalKernelMachines_(Matrix &train_data_local,
 		smoothing_kernel_values_in_range[i],smoothing_kernel_bandwidth,
 		lambda);
       ocas.Optimize(); 
-
+      
       Vector w_opt;
       w_opt.Init(num_dims_);
       ocas.get_optimal_vector(w_opt);
@@ -204,6 +203,11 @@ template <typename TKernel> void LocalKernelMachines< TKernel>::TrainLocalKernel
     
     k_folds_=fx_param_int(fx_root,"k_folds",2);
     
+    printf("Number of points in train data appended is %d...\n",
+	   train_data_appended.n_cols());
+    
+    printf("Number of points in test data appended is %d...\n",
+	   test_data_appended.n_cols());
     
     
     // In this case do crossvalidation
@@ -226,7 +230,7 @@ template <typename TKernel> void LocalKernelMachines< TKernel>::TrainLocalKernel
   }
   else{
     
-   
+    
     
     optimal_smoothing_kernel_bandwidth_=
       fx_param_double(fx_root,"smoothing_kernel_bandwidth",-DBL_MAX);
@@ -240,11 +244,11 @@ template <typename TKernel> void LocalKernelMachines< TKernel>::TrainLocalKernel
     printf("lambda=%f..\n",optimal_lambda_);
     printf("Optimal smoothing kernel bandwidth=%f",
 	  optimal_smoothing_kernel_bandwidth_);
-    double error_rate=
-      RunLocalKernelMachines_(train_data_appended,test_data_appended,
-			      train_labels_vector_,test_labels_vector_,
-			      optimal_smoothing_kernel_bandwidth_,
-			      optimal_lambda_);
+     double error_rate=
+    RunLocalKernelMachines_(train_data_appended,test_data_appended,
+    		      train_labels_vector_,test_labels_vector_,
+    		      optimal_smoothing_kernel_bandwidth_,
+    		      optimal_lambda_);
 
     printf("error rate =%f..\n",error_rate);
     
