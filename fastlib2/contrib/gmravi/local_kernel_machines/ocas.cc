@@ -57,11 +57,21 @@ void OCAS::Optimize(){
 	//printf("Initialized ocas smo...\n");
 
 	ocas_smo.SolveOCASSMOProblem_();
-	//printf("Finished ocas smo..\n");
 
-	ocas_smo.get_primal_solution(w_smo_at_t_);
+	//Note there is no need to
+	//get the primal solution because we are aliasing
+	
 	ocas_smo.get_dual_solution(alpha_vec_prev);
 	
+	printf("alpha_vec_prev solution in OCAS is...\n");
+
+	for(int z=0;z<alpha_vec_prev.length();z++){
+	  
+	  printf("%f,",alpha_vec_prev[z]);
+	}
+       
+	printf("...\n");
+
 	// This gets us w_best_at_t
 	k_star=DoLineSearch_();
       }
@@ -94,11 +104,7 @@ void OCAS::Optimize(){
 	     new_F_val_w_b_at_t,prev_F_val_w_b_at_t);
       
     }
-    else{
-      
-      printf("Improved on original objective...\n");
-      
-    }
+    
 
     // Get approximate objective value at w_smo_at_t
 
@@ -148,8 +154,18 @@ void OCAS::Optimize(){
     prev_F_t_value=new_F_t_value;
 
     //Get the new point where the cutting plane has to be added
-    GetWCAtT_();
+
+  
+    // This is simply (1-\lambda)w_best_at_t+\lambda w_t
+    Vector temp1;
+    la::ScaleInit(1-lambda_ocas_const_,w_best_at_t_,&temp1);
     
+    Vector temp2;
+    
+    la::ScaleInit(lambda_ocas_const_,w_smo_at_t_,&temp2);
+    
+    la::AddOverwrite(temp1,temp2,&w_c_at_t_);
+
     GetSubGradientAndInterceptAtNewPoint_(); 
     printf("Making a simple check...\n");
     // NOw calculate the original objective value at w_c_at_t and also
@@ -192,6 +208,14 @@ void OCAS::Optimize(){
 	alpha_vec_seed[i]=alpha_vec_prev[i];
     }
     alpha_vec_seed[num_subgradients_available_-1]=0.0;
+
+    printf("for the next round alpha_vec_seed is...\n");
+    for(int z=0;z<alpha_vec_seed.length();z++){
+
+      printf("%f,",alpha_vec_seed[z]);      
+    }
+    
+    printf(".....\n");
     
     // Now destroy previous alpha vector and initialize it. 
     // This is because its size has changed
@@ -236,19 +260,26 @@ void OCAS::GetWBAtT_(double k_star){
 
 }
 
-void OCAS:: GetWCAtT_(){
+
+
+void OCAS::PrintSubgradientsAndIntercepts_(){
   
-  // This is simply (1-\lambda)w_best_at_t+\lambda w_t
-  Vector temp1;
-  la::ScaleInit(1-lambda_ocas_const_,w_best_at_t_,&temp1);
+  for(int i=0;i<num_subgradients_available_;i++){
 
-  Vector temp2;
+    printf("Subgradient is:");
+    for(int j=0;j<num_dims_appended_;j++){
 
-  la::ScaleInit(lambda_ocas_const_,w_smo_at_t_,&temp2);
+      printf("%f,",subgradients_mat_[i][j]);
+    }
+    printf("...\n");
+  }
 
-  la::AddOverwrite(temp1,temp2,&w_c_at_t_);
+  printf("The intercepts are...\n");
+  for(int i=0;i<num_subgradients_available_;i++){
+
+    printf("%f,",intercepts_vec_[i]);
+  }
 }
-
 
 void OCAS::GetSubGradientAndInterceptAtNewPoint_(){
 
@@ -257,6 +288,20 @@ void OCAS::GetSubGradientAndInterceptAtNewPoint_(){
 
   // The new subgradient is -\frac{1}{n} \sum_{i=1}^n -\gamma_i y_i x_i K_i
   // where \gamma_i is a 0-1 indicator variable
+
+  printf("Indices in range are..\n");
+  for(int l=0;l<indices_in_range_.size();l++){
+    
+    printf("%d,",indices_in_range_[l]);
+
+  }
+  printf("...\n");
+
+  printf("smoothing_kernel_values_in_range...\n");
+
+  for(int l=0;l<smoothing_kernel_values_in_range_.size();l++){
+    printf("%f,",smoothing_kernel_values_in_range_[l]);
+  }
 
   Vector new_subgradient_to_be_added;
   new_subgradient_to_be_added.Init(num_dims_appended_);
@@ -278,14 +323,18 @@ void OCAS::GetSubGradientAndInterceptAtNewPoint_(){
 
     double val=1.0-(y_label*w_c_at_t_dot_xi);
 
-    if(val>0){
+
+    if(val>0||fabs(val)<SMALL){
     
+
+  
       Vector scaled_x_i;
       la::ScaleInit(-1.0*y_label*smoothing_kernel_value,x_i,
 		    &scaled_x_i);
       
       la::AddTo(scaled_x_i,&new_subgradient_to_be_added);
     }
+    
   }
   // Scale the subgradient by number of train points
   la::Scale(1.0/num_train_points_,&new_subgradient_to_be_added);
@@ -295,12 +344,14 @@ void OCAS::GetSubGradientAndInterceptAtNewPoint_(){
   double non_diff_obj_value=
     CalculateNonDifferentiablePartOfObjective_(w_c_at_t_);
 
+  printf("Non differentiable objective value=%f..\n",non_diff_obj_value);
+
   double w_c_dot_subgradient=
     la::Dot(new_subgradient_to_be_added,w_c_at_t_);
 
   double new_intercept_to_be_added=
     non_diff_obj_value-w_c_dot_subgradient;
-  
+
    // Dont forget to add the new subgradient and intercept
  
   subgradients_mat_.PushBack(1);
@@ -311,6 +362,48 @@ void OCAS::GetSubGradientAndInterceptAtNewPoint_(){
 
   // Also dont forget to increment the number of subgradients by 1
   num_subgradients_available_++;
+  
+  PrintSubgradientsAndIntercepts_();
+  
+  /*printf("The subgradient at w_c is ...\n");
+
+  for(int j=0;j<num_dims_appended_;j++){
+    
+    printf("%f,",subgradients_mat_[num_subgradients_available_-1][j]);
+  }
+  printf("...\n");
+
+  printf("The point w_c where the subgradient is being added is..\n");
+  for(int j=0;j<num_dims_appended_;j++){
+    
+    printf("%f,",w_c_at_t_[j]);
+  }
+  printf("...\n");
+
+  
+  double non_diff_obj_value_using_subgradient=
+    la::Dot(subgradients_mat_[num_subgradients_available_-1],w_c_at_t_)+
+    intercepts_vec_[num_subgradients_available_-1];
+
+  // Dont forget to add the contribution of regularization
+  //obj_value_using_subgradient+=
+  //0.5*lambda_reg_const_*
+  //pow(la::LengthEuclidean (subgradients_mat_[num_subgradients_available_-1]),2);
+
+  double non_diff_obj_value_from_scratch=
+    CalculateNonDifferentiablePartOfObjective_(w_c_at_t_);
+
+  printf("non diff objective value using subgradient=%f,non diff objective value calculated from scratch=%f..\n",
+	 non_diff_obj_value_using_subgradient,non_diff_obj_value_from_scratch);
+  if(fabs(non_diff_obj_value_from_scratch-non_diff_obj_value_using_subgradient)>SMALL){
+    
+    printf("There was a mistake in subgradient calculations..\n");
+
+  }
+  else{
+    printf("subgradient calculation was fine...\n");
+
+    }*/
 }
 
 
@@ -327,7 +420,7 @@ double OCAS::CalculateObjectiveFunctionValueAtAPoint_(Vector &w){
 
   double non_diff_part=CalculateNonDifferentiablePartOfObjective_(w);
   
-  printf("The contribution of non differentiable part=%f...\n",non_diff_part);
+  printf("The contribution of non differentiable part while calculating objective is =%f...\n",non_diff_part);
   double obj_value=lambda_by2_w_sqd+non_diff_part;
   return obj_value;
 }
@@ -354,6 +447,7 @@ double OCAS::CalculateNonDifferentiablePartOfObjective_(Vector &w){
     double val=1-(y_label*w_dot_xi);
     non_diff_part+=max(0.0,val)*smoothing_kernel_value/num_train_points_;
   }
+  printf("Number of train points are %d...\n",num_train_points_);
 
   return non_diff_part; 
 }
