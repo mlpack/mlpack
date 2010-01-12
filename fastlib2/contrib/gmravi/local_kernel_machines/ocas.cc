@@ -175,11 +175,11 @@ void OCAS::Optimize(){
     
     for(int i=0;i<num_subgradients_available_-1;i++){
       if(i==0){
-	alpha_vec_seed[i]=1.0;
+	alpha_vec_seed[i]=alpha_vec_prev[i];
       }
       else{
 
-	alpha_vec_seed[i]=0.0;
+	alpha_vec_seed[i]=alpha_vec_prev[i];
       }
       //alpha_vec_seed[i]=alpha_vec_prev[i];
     }
@@ -449,9 +449,12 @@ void OCAS::Init(double *query_point, Matrix &train_data,
   
   // Initialize query_point and set up its value.
   
-  query_point_appended_.Init(num_dims_appended_);
-  query_point_appended_.CopyValues(query_point);
+  //query_point_appended_.Init(num_dims_appended_);
+  //query_point_appended_.CopyValues(query_point);
   
+  // CHANGE: ALIASING the query
+  query_point_appended_.Alias(query_point,num_dims_appended_);
+
   //Alias the training labels
 
   train_labels_.Alias(train_labels);
@@ -463,20 +466,22 @@ void OCAS::Init(double *query_point, Matrix &train_data,
     
   // Alias the other variables
 
-  //indices_in_range_.InitAlias(indices_in_range);
-  //smoothing_kernel_values_in_range_.InitAlias(smoothing_kernel_values_in_range);
+  // CHANGE: InitAliasing instead of element wise copying
 
-  indices_in_range_.Init(num_points_in_range_);
-  smoothing_kernel_values_in_range_.Init(num_points_in_range_);
-  for(int i=0;i<num_points_in_range_;i++){
+  indices_in_range_.InitAlias(indices_in_range);
+  smoothing_kernel_values_in_range_.InitAlias(smoothing_kernel_values_in_range);
+
+  // indices_in_range_.Init(num_points_in_range_);
+//   smoothing_kernel_values_in_range_.Init(num_points_in_range_);
+//   for(int i=0;i<num_points_in_range_;i++){
     
-    indices_in_range_[i]=indices_in_range[i];
-    smoothing_kernel_values_in_range_[i]=
-      smoothing_kernel_values_in_range[i];
-  }
+//     indices_in_range_[i]=indices_in_range[i];
+//     smoothing_kernel_values_in_range_[i]=
+//       smoothing_kernel_values_in_range[i];
+//   }
 
-
-
+  
+  
   // The bandwidth and the regularization constant values  
   smoothing_kernel_bandwidth_=bw;
   lambda_reg_const_=lambda_reg_const;
