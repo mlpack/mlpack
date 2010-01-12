@@ -565,6 +565,13 @@ void OCASLineSearch ::Init(Matrix &train_data_appended,
   
   indices_in_range_.Copy(indices_in_range);
   
+  // CHANGE: Aliasing smoothing_kernel_values and indices in range
+  // instead of copying them
+
+  // smoothing_kernel_values_in_range_.InitAlias(smoothing_kernel_values_in_range);
+  //indices_in_range_.InitAlias(indices_in_range);
+
+
   train_labels_.Alias(train_labels);
   
   // Initialize the thresholds
@@ -577,8 +584,14 @@ void OCASLineSearch ::Init(Matrix &train_data_appended,
   
   // Finally alias w_1 and w_2
   
-  w_1_vec_.Copy(w_1);
-  w_2_vec_.Copy(w_2);
+  //w_1_vec_.Copy(w_1);
+  //w_2_vec_.Copy(w_2);
+
+  // CHANGE: Aliasing instead of copying
+  w_1_vec_.Alias(w_1);
+  w_2_vec_.Alias(w_2);
+
+
 
   // Also calculate lambda_w_2_minus_w_1_sqd
 
