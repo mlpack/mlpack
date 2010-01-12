@@ -438,8 +438,7 @@ public:
       //leaf_size_=max(10.0,ceil(50*log(min(num_query_points_,num_ref_points_))));
       leaf_size_=20;
     }
-    leaf_size_=1;
-    //    printf("Leaf size=%d..\n",leaf_size_);
+
   // Lets build the trees
     
     fx_timer_start(NULL,"tree_build");

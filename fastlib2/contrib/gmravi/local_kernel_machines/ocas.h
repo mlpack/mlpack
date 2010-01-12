@@ -17,7 +17,7 @@ private:
   
   // The bandwidth of the smoothing kernel.
 
-  double bw_smoothing_kernel_;
+  double smoothing_kernel_bandwidth_;
 
   // The regularization constant
 

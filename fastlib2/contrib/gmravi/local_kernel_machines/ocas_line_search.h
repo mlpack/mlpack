@@ -1,7 +1,6 @@
 #include "fastlib/fastlib.h"
 #ifndef OCAS_LINE_SEARCH_H_
 #define OCAS_LINE_SEARCH_H_
-#define SMALL pow(10,-4)
 class Interval{
 
  public:
@@ -12,11 +11,14 @@ class Interval{
   // some useful functions
 
   bool CheckIfIntervalHasZero(){
-    if(this->low<0&& this->up>0) return true;
+
+    double low=this->low;
+    double up=this->up;
+    if(low<0 && up>0) return true;
     else{
       
-      if(fabs(this->low)<SMALL&& fabs(this->up)<SMALL&& this->low*this->up<0){
-	
+      if(fabs(low*up)<SMALL*SMALL&&low*up<0.0){
+	printf("low=%f,up=%f...\n",low,up);
 	return true;
       }
       return false;
