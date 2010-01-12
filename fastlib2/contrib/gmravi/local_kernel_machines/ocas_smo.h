@@ -3,7 +3,7 @@
 
 #ifndef OCAS_SMO_H_
 #define OCAS_SMO_H_
-
+#define SMALL pow(10,-6)
 class OCASSMO{
 
  public:
@@ -13,6 +13,10 @@ class OCASSMO{
   // The regularization constant
 
   double lambda_reg_const_;
+
+  // The smoothing kernel bandwidth
+
+  double smoothing_kernel_bandwidth_;
     
   // The alpha_vec that is used in the SMO step of the OCAS algorithm.
   Vector  alpha_vec_;
@@ -127,18 +131,18 @@ class OCASSMO{
   
   void Init( ArrayList<Vector>& ,
 	     ArrayList <double>&,double, 
-	     Vector&, Vector &);
+	     Vector&,double);
   
   void SolveOCASSMOProblem_();
 
   void get_primal_solution(Vector &);
 
   void get_dual_solution(Vector &);
-  void InitializeUsingWarmStart_(Vector &, Vector &);
+  void InitializeUsingWarmStart_(Vector &);
   void InitializeIndexSets_();
   void InitializeFiForI0_();
-  void UpdatePrimalSolution_(double,double);
-
+  void CalculatePrimalSolution_();
+  void PrintSubgradientsAndIntercepts_();
 
   
 }; 

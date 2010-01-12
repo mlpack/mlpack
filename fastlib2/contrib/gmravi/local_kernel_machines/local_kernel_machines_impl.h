@@ -201,14 +201,7 @@ template <typename TKernel> void LocalKernelMachines< TKernel>::TrainLocalKernel
 
     // Get the number of folds of crossvalidation
     
-    k_folds_=fx_param_int(fx_root,"k_folds",2);
-    
-    printf("Number of points in train data appended is %d...\n",
-	   train_data_appended.n_cols());
-    
-    printf("Number of points in test data appended is %d...\n",
-	   test_data_appended.n_cols());
-    
+    k_folds_=fx_param_int(fx_root,"k_folds",5);
     
     // In this case do crossvalidation
     CrossValidation_(train_data_appended,test_data_appended);
@@ -250,7 +243,7 @@ template <typename TKernel> void LocalKernelMachines< TKernel>::TrainLocalKernel
     		      optimal_smoothing_kernel_bandwidth_,
     		      optimal_lambda_);
 
-    printf("error rate =%f..\n",error_rate);
+    printf("final error rate =%f..\n",error_rate);
     
   }
 }
