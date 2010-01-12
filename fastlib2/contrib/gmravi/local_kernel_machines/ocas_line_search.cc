@@ -97,8 +97,6 @@ void OCASLineSearch::SortThresholds_(){
       }
     }
   }
-
-  printf("Testing after sort of thresholds...\n");
   
   for(int i=0;i<num_points_in_range_-1;i++){
     
@@ -172,7 +170,7 @@ void OCASLineSearch::CalculateDerivatives_(){
 	     l,derivative_line_search_objective_[l].low);
       printf("derivative_line_search_objective_[%d].up=%f...\n",
 	     l,derivative_line_search_objective_[l].up);
-
+      
     }
     
     double prev_up=derivative_line_search_objective_[l].up;
@@ -211,6 +209,7 @@ double OCASLineSearch::ComputeGradientInIntervalAndOptimalK_(int index){
   
   double k_opt=max(0.0,-constant/linear_coeff);
   printf("k_opt is %f..\n",k_opt);
+  printf("Investigating index=%d..\n",index);
   printf("the next threshold is %f..\n",thresholds_vec_[index+1]);
 
   if(k_opt-thresholds_vec_[index+1]>=SMALL){
@@ -221,6 +220,7 @@ double OCASLineSearch::ComputeGradientInIntervalAndOptimalK_(int index){
 	     thresholds_vec_[i],derivative_line_search_objective_[i].low,
 	     derivative_line_search_objective_[i].up);
     }
+
     exit(0);
   }
   return k_opt;
@@ -437,17 +437,7 @@ double OCASLineSearch::CalculateOptimalK_(){
 	// Now check if this test_interval has 0 	
 	if(gradient_interval.CheckIfIntervalHasZero()){
 	  
-
-	  printf("derivative interval is [%f,%f]...\n",
-		 derivative_interval.low,derivative_interval.up);
-
-	  printf("i=%d,threshold=%f,present up=%f, next low=%f...\n",
-		 i,thresholds_vec_[i],present_up,next_low);
-	  // This test interval has zero.
-	  
-	  printf("The interval of k_opt is %f,%f",thresholds_vec_[i],thresholds_vec_[i+1]);
-	  printf("The gradient in this interval is [%f,%f]..\n",gradient_interval.low,gradient_interval.up);
-	  
+	  // This test interval has zero.  
 	  return ComputeGradientInIntervalAndOptimalK_(i);
 	}
 	else{
@@ -458,7 +448,7 @@ double OCASLineSearch::CalculateOptimalK_(){
     }
   }
   // If we have reached here then there is a mistake in calculations
-  printf("There is an error in calculations...\n");
+  printf("There is an error in calculation of k_star...\n");
   exit(0);
 }
 
@@ -501,7 +491,7 @@ void OCASLineSearch::PerformLineSearch(){
     double temp=0.0;
     for(int i=0;i<num_points_in_range_;i++){
       
-      if(fabs(k_star_-thresholds_vec_[i])<SMALL*SMALL){
+      if(fabs(k_star_-thresholds_vec_[i])<SMALL){
 	
 	derivative_interval.up+=max(0.0,B_i_vec_[i]);
 	derivative_interval.low+=min(0.0,B_i_vec_[i]);	
@@ -520,7 +510,6 @@ void OCASLineSearch::PerformLineSearch(){
 	
       }
     }
-    printf("linear_term+B_0=%f...\n",linear_term+B_0);
     
     //Add up all these terms
 
