@@ -8,15 +8,13 @@
 template <typename TKernel> void  LocalKernelMachines <TKernel>::
 GenerateSmoothingBandwidthVectorForCV_(Vector &smoothing_bandwidth_vector){
   
-  int num_smoothing_bandwidth=20;
+  int num_smoothing_bandwidth=8;
    smoothing_bandwidth_vector.Init(num_smoothing_bandwidth);
 
    double low=0.005;
    double hi=0.8;
    double gap=(hi-low)/num_smoothing_bandwidth;
   for(index_t i=0; i<num_smoothing_bandwidth;i++){
-
-    //smoothing_bandwidth_vector[i]=pow(10,-3)*pow(2,i/2);
     smoothing_bandwidth_vector[i]=low+gap*i;
   }
   printf("Crossvalidating over smoothing kernel bandwidth....\n");
@@ -26,18 +24,19 @@ GenerateSmoothingBandwidthVectorForCV_(Vector &smoothing_bandwidth_vector){
 template <typename TKernel> void  LocalKernelMachines <TKernel>::
 GenerateLambdaVectorForCV_(Vector &lambda_vector){
   
-  int num_lambda=10;
+  int num_lambda=8;
   double low=pow(10,-4);
   lambda_vector.Init(num_lambda);
   for(index_t i=0; i<num_lambda;i++){
 
-    lambda_vector[i]=low*pow(10,i);
+     lambda_vector[i]=0.5+0.5*i;
+    //lambda_vector[i]=low*pow(10,i);
   }
   printf("lambda vector for crossvalidation is ...\n");
   lambda_vector.PrintDebug();
 }
 
-/////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////
 
  
 template <typename TKernel> void  LocalKernelMachines <TKernel>:: 
@@ -98,12 +97,6 @@ CrossValidateOverSmoothingKernelBandwidthAndLambda_(){
 	GetTheFold_(cv_train_data_appended,cv_test_data_appended,
 		    cv_train_labels,cv_test_labels,fold_num);
 	
-	printf("The number of points in cv fold of train data is %d..\n",
-	       cv_train_data_appended.matrix().n_cols());
-	
-	
-	printf("The number of points in cv fold of test data is %d..\n",
-	       cv_test_data_appended.matrix().n_cols());
 	
 	// This routine will take the train fold and the test fold
 	// and solve the local SVM problem
@@ -123,7 +116,9 @@ CrossValidateOverSmoothingKernelBandwidthAndLambda_(){
 	
       }
 
-      printf("bandwidth=%f, lambda=%f, error_rate=%f...\n",smoothing_kernel_bandwidth_vector[i],lambda_vector[j],average_error_rate);
+      printf("bandwidth=%f, lambda=%f, error_rate=%f...\n",
+	     smoothing_kernel_bandwidth_vector[i],
+	     lambda_vector[j],average_error_rate);
      
     }
   }
@@ -158,12 +153,14 @@ PrepareForCrossValidation_(Matrix &train_data_appended, Matrix &test_data_append
   
   // Lets typecast random_permutation as ArrayList <index_t>
   
-  random_permutation_array_list_.InitAlias((int *)random_permutation,
+  random_permutation_array_list_.Copy((int *)random_permutation,
 					   num_train_points_);
    
   // Now set the matrix part of dset to the train dataset
   
   dset_.matrix().Copy(stiched_train_data_appended);
+
+  free(random_permutation);
 }
    
 

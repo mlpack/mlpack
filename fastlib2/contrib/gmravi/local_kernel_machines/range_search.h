@@ -135,7 +135,7 @@ class RangeSearch{
 
 	  double kernel_value;
 	  kernel_value=ek_.EvalUnnormOnSq(sqd_dist);
-	  kernel_value/=ek_.CalcNormConstant(num_dims_);
+	  //kernel_value/=ek_.CalcNormConstant(num_dims_);
 
 	  smoothing_kernel_values_in_range_[original_index_q].PushBack(1);
 	  smoothing_kernel_values_in_range_[original_index_q][size-1]=
@@ -181,7 +181,7 @@ class RangeSearch{
 	
 	double kernel_value;
 	kernel_value=ek_.EvalUnnormOnSq(sqd_dist);
-	kernel_value/=ek_.CalcNormConstant(num_dims_);
+	//kernel_value/=ek_.CalcNormConstant(num_dims_);
 	
 	smoothing_kernel_values_in_range_[original_index_q].PushBack(1);
 	smoothing_kernel_values_in_range_[original_index_q][size-1]=
