@@ -1383,6 +1383,9 @@ void OCASSMO::SMOMainRoutine_(){
 
   if(num_iterations==MAX_NUM_ITERATIONS){
     printf("CAUTION: SMO used all iterations\n");
+
+    printf("lambda=%f,bandwidth=%f...\n",
+	   lambda_reg_const_,smoothing_kernel_bandwidth_);
     //PrintSubgradientsAndIntercepts_(); 
   }
     //  printf("Finished everything. Bailing out.....\n");

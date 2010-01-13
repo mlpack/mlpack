@@ -204,6 +204,8 @@ void OCAS::Optimize(){
   if(num_iterations==MAX_NUM_ITERATIONS){
 
     printf("CAUTION:OCAS Required %d iterations...\n",num_iterations); 
+    printf("lambda=%f,smoothing_kernel_bandwidth=%f..\n",
+	   lambda_reg_const_,smoothing_kernel_bandwidth_);
     printf("gap=%f..\n",gap);
   }
   else{
