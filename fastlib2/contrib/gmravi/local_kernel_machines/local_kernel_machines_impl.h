@@ -62,6 +62,7 @@ RunLocalKernelMachines_(Matrix &train_data_local,
 
       double rand_num=math::Random(-1,1);
       y_pred_label=rand_num>0?1.0:-1.0;
+      //y_pred_label=2.0;
       //printf("Empty neighbourhood...\n");
     }
     else{
@@ -132,9 +133,9 @@ FindPointsInNeighbourhood_( Matrix &ref_data, double *q_point,
     double distance=sqrt(sqd_distance); 
     
     double kernel_value=ek.EvalUnnorm(distance); 
-    double norm_const=ek.CalcNormConstant(num_dims_); 
+    //double norm_const=ek.CalcNormConstant(num_dims_); 
     
-    //norm_const=1.0; 
+    double norm_const=1.0; 
     kernel_value/=norm_const; 
     
   
