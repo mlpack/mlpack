@@ -22,6 +22,8 @@ const fx_entry_doc cover_main_entries[] = {
 "Specify to run the kd-tree DTB algorithm.\n"},
 {"do_geomst", FX_PARAM, FX_BOOL, NULL,
 "Specify to run the GeoMST2 algorithm.\n"},
+{"do_single_fragment", FX_PARAM, FX_BOOL, NULL,
+  "Specify to run the Friedman-Bentley single fragment algorithm\n"},
 {"using_thor", FX_PARAM, FX_BOOL, NULL,
   "Not yet supported, do not specify.\n"},
 };
@@ -33,6 +35,8 @@ const fx_submodule_doc cover_main_submodules[] = {
 "kd-tree module.\n"},
 {"naive_module", &dtb_doc, "naive module\n"},
 {"geo_module", &geomst_doc, "geomst module\n"},
+{"single_fragment_module", &fb_doc, "single fragment module.\n"},
+{"multi_fragment_module", &mf_doc, "multi fragment module\n"},
 FX_SUBMODULE_DOC_DONE
 };
 
@@ -145,8 +149,18 @@ int main(int argc, char* argv[]) {
       
     }
     
-    
-    
+    /////////// Multi Fragment (NEKMA) algorithm //////////////
+    if (fx_param_exists(NULL, "do_multi_fragment")) {
+      
+      Matrix multi_fragment_results;
+      
+      MultiFragment mf_alg;
+      fx_module* mf_mod = fx_submodule(NULL, "multi_fragment_module");
+      
+      mf_alg.Init(data_points, mf_mod);
+      mf_alg.ComputeMST(&multi_fragment_results);
+      
+    }
     
     
     

@@ -25,11 +25,18 @@ librule(
     deplibs = ["fastlib:fastlib", "mlpack/emst:union_find"]
 )
 
+librule(
+    name = "multi_fragment",
+    headers = ["multi_fragment.h", "emst_cover.h"],
+    sources = ["multi_fragment.cc"],
+    deplibs = ["fastlib:fastlib", "mlpack/emst:union_find"]
+)
+
 binrule (
     name = "emst_cover_main",
     sources = ["emst_cover_main.cc"],
     deplibs = [":emst_cover", "mlpack/emst:dtb", "mlpack/emst:union_find", ":geomst2",
-               ":single_fragment"]
+               ":single_fragment", ":multi_fragment"]
 )
 
 binrule (
@@ -37,5 +44,5 @@ binrule (
    sources = ["comparison_main.cc"],
    headers = ["mst_comparison.h"],
    deplibs = [":emst_cover", "mlpack/emst:dtb", "mlpack/emst:union_find", ":geomst2",
-              ":single_fragment"]
+              ":single_fragment", ":multi_fragment"]
 )

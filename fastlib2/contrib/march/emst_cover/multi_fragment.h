@@ -1,23 +1,23 @@
 /*
- *  friedman_bentley.h
+ *  multi_fragment.h
  *  
- *  Implements the single and multi-fragment kd-tree algorithms from Friedman & 
- *  Bentley's 1977 paper.
+ *  Implementation of the NEKMA algorithm of Nevalainen, Ernvall, & Katajainen
+ *  (1981).  
  *
- *  Created by William March on 1/4/10.
+ *  Created by William March on 1/19/10.
  *  Copyright 2010 __MyCompanyName__. All rights reserved.
  *
  */
 
-#ifndef FRIEDMAN_BENTLEY_H
-#define FRIEDMAN_BENTLEY_H
+
+#ifndef MULTI_FRAGMENT_H
+#define MULTI_FRAGMENT_H
 
 #include "fastlib/fastlib.h"
 #include "mlpack/emst/union_find.h"
 #include "emst_cover.h"
 
-
-const fx_entry_doc fb_entries[] = {
+const fx_entry_doc mf_entries[] = {
 {"MST_computation", FX_TIMER, FX_CUSTOM, NULL, 
 "Total time required to compute the MST.\n"},
 {"total_length", FX_RESULT, FX_DOUBLE, NULL, 
@@ -31,22 +31,21 @@ const fx_entry_doc fb_entries[] = {
 FX_ENTRY_DOC_DONE
 };
 
-const fx_submodule_doc fb_submodules[] = {
+const fx_submodule_doc mf_submodules[] = {
 FX_SUBMODULE_DOC_DONE
 };
 
-const fx_module_doc fb_doc = {
-fb_entries, fb_submodules,
-"Algorithm module for Bentley-Friedman single-fragment method.\n"
+const fx_module_doc mf_doc = {
+mf_entries, mf_submodules,
+"Algorithm module for NEKMA multi-fragment method.\n"
 };
 
 
-
-class FriedmanBentley {
+class MultiFragment {
   
 private:
   
-  class FBStat {
+  class MFStat {
     
   private:
     
@@ -57,12 +56,12 @@ private:
     void Init(const Matrix& dataset, index_t start, index_t count) {
       
       if (count == 1) {
-       
+        
         component_membership_ = start;
         
       }
       else {
-       
+        
         component_membership_ = -1;
         
       }
@@ -70,7 +69,7 @@ private:
     } // leaf init
     
     void Init(const Matrix& dataset, index_t start, index_t count,
-              const FBStat& left_stat, const FBStat& right_stat) {
+              const MFStat& left_stat, const MFStat& right_stat) {
       
       Init(dataset, start, count);
       
@@ -85,16 +84,15 @@ private:
     }
     
     
-    
-  }; // tree stat
+  };
   
-  typedef BinarySpaceTree<DHrectBound<2>, Matrix, FBStat> FBTree;
+  typedef BinarySpaceTree<DHrectBound<2>, Matrix, MFStat> MFTree;
   
-  FBTree* tree_;
+  /////////// Variables //////////////
+  
+  MFTree* tree_;
   ArrayList<EdgePair> edges_;
-  
   fx_module* mod_;
-  
   index_t number_of_points_;
   index_t number_of_edges_;
   UnionFind connections_;
@@ -104,12 +102,15 @@ private:
   
   double total_dist_;
   
-  // is this the right type?
-  MinHeap<double, index_t> heap_;
+  // keeps the smallest fragment
+  MinHeap<index_t, index_t> fragment_size_heap_;
+  // fragment_sizes_[i] is the number of points in fragment i
+  // is -1 if i is no longer a valid fragment
+  ArrayList<index_t> fragment_sizes_;
+  
+  ArrayList<MinHeap<double, index_t> > fragment_queues_;
   
   ArrayList<index_t> candidate_neighbors_;
-  
-  /////////////// functions ///////////////////
   
   void AddEdge_(index_t e1, index_t e2, double distance) {
     
@@ -133,12 +134,12 @@ private:
     //total_dist_ += distance;
     
   } // AddEdge_
-
   
-  void FindNeighbor_(FBTree* tree, const Vector& point, index_t point_index, 
+  
+  void FindNeighbor_(MFTree* tree, const Vector& point, index_t point_index, 
                      index_t* cand, double* dist);
   
-  void UpdateMemberships_(FBTree* tree, index_t point_index);
+  void UpdateMemberships_(MFTree* tree, index_t point_index);
   
   
   struct SortEdgesHelper_ {
@@ -152,8 +153,7 @@ private:
     std::sort(edges_.begin(), edges_.end(), SortFun);
     
   } // SortEdges_()
-  
-  
+
   void EmitResults_(Matrix* results) {
     
     SortEdges_();
@@ -180,6 +180,9 @@ private:
     
   } // EmitResults_
   
+  void MergeQueues_(index_t comp1, index_t comp2);
+
+  
 public:
   
   void Init(const Matrix& data, fx_module* mod) {
@@ -192,9 +195,9 @@ public:
     
     index_t leaf_size = fx_param_int(mod_, "leaf_size", 1);
     
-    tree_ = tree::MakeKdTreeMidpoint<FBTree>
+    tree_ = tree::MakeKdTreeMidpoint<MFTree>
     (data_points_, leaf_size, &old_from_new_permutation_, NULL);
-        
+    
     fx_timer_stop(mod_, "tree_building");
     
     number_of_points_ = data_points_.n_cols();
@@ -206,7 +209,24 @@ public:
     candidate_neighbors_.Init(number_of_points_);
     //candidate_neighbors_.SetAll(-1);
     
-    heap_.Init();
+  
+    fragment_size_heap_.Init();
+    fragment_sizes_.Init(number_of_points_);
+    fragment_queues_.Init(number_of_points_);
+    
+    for (index_t i = 0; i < number_of_points_; i++) {
+      
+      fragment_size_heap_.Put(1, i);
+      fragment_sizes_[i] = 1;
+    
+      fragment_queues_[i].Init();
+      fragment_queues_[i].Put(0.0, i);
+      
+      candidate_neighbors_[i] = i;
+      
+    } // i
+    
+    
     
     
   } // Init()
@@ -215,10 +235,12 @@ public:
   void ComputeMST(Matrix* results);
   
   
-}; // class
-
+  
+  
+}; 
 
 
 
 
 #endif
+

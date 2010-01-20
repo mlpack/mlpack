@@ -12,6 +12,7 @@
 #include "mlpack/emst/dtb.h"
 #include "geomst2.h"
 #include "friedman_bentley.h" 
+#include "multi_fragment.h"
 
 const fx_entry_doc comparison_main_entries[] = {
   {"data", FX_REQUIRED, FX_STR, NULL,
@@ -23,6 +24,12 @@ const fx_submodule_doc comparison_main_submodules[] = {
   "Cover tree module.\n"},
 {"dtb_module", &dtb_doc,
   "kd-tree module.\n"},
+{"single_fragment_module", &fb_doc, "single fragment module.\n"},
+{"cover_module", &dtb_cover_doc,
+"Cover tree module.\n"},
+{"geo_module", &geomst_doc, "geomst module\n"},
+{"naive_module", &dtb_doc, "naive module\n"},
+{"multi_fragment_module", &mf_doc, "multi fragment module.\n"},
 FX_SUBMODULE_DOC_DONE
 };
 
@@ -51,7 +58,7 @@ int main(int argc, char* argv[]) {
   printf("===== Computing kd-tree results =====\n");
   dtb.ComputeMST(&kd_results);
   
-  //kd_results.PrintDebug("kd-tree results");
+  kd_results.PrintDebug("kd-tree results");
   
   Matrix naive_results;
   DualTreeBoruvka naive;
@@ -132,6 +139,24 @@ int main(int argc, char* argv[]) {
   if (single_same) {
     printf("\n ===== kd and single fragment are same ===== \n");
   }
+  
+  Matrix multi_results;
+  MultiFragment multi_alg;
+  fx_module* mf_mod = fx_submodule(NULL, "multi_fragment_module");
+  
+  multi_alg.Init(data, mf_mod);
+  multi_alg.ComputeMST(&multi_results);
+  
+  MSTComparison multi_compare;
+  multi_compare.Init(kd_results, multi_results);
+  
+  bool multi_same = multi_compare.Compare();
+  
+  if (multi_same) {
+    printf("\n ===== kd and multi fragment are same ===== \n");
+  }
+  
+  multi_results.PrintDebug("multi results");
   
   fx_done(NULL);
   
