@@ -23,6 +23,7 @@ void MultiFragment::FindNeighbor_(MFTree* tree, const Vector& point,
         
         data_points_.MakeColumnVector(i, &point_i);
         double this_dist = la::DistanceSqEuclidean(point, point_i);
+        //double this_dist = sqrt(la::DistanceSqEuclidean(point, point_i));
         
         if (this_dist < *dist) {
           *dist = this_dist;
@@ -38,14 +39,16 @@ void MultiFragment::FindNeighbor_(MFTree* tree, const Vector& point,
     
     double left_dist, right_dist;
     
-    if (tree->left()->stat().component_membership() != point_index) {
+    if (tree->left()->stat().component_membership() != 
+        connections_.Find(point_index)) {
       left_dist = tree->left()->bound().MinDistanceSq(point);
     }
     else {
       left_dist = DBL_MAX;
     }
     
-    if (tree->right()->stat().component_membership() != point_index) {
+    if (tree->right()->stat().component_membership() != 
+        connections_.Find(point_index)) {
       right_dist = tree->right()->bound().MinDistanceSq(point);
     }
     else {
@@ -119,6 +122,7 @@ void MultiFragment::UpdateMemberships_(MFTree* tree, index_t point_index) {
   }
   else { // go right
     
+    DEBUG_ASSERT(point_index >= tree->right()->begin());
     UpdateMemberships_(tree->right(), point_index);
     
     if (tree->left()->stat().component_membership() 
@@ -134,15 +138,15 @@ void MultiFragment::MergeQueues_(index_t comp1, index_t comp2) {
   
   index_t union_comp = connections_.Find(comp1);
   
-  MinHeap<double, index_t> queue_rec, queue_give;
+  MinHeap<double, CandidateEdge> *queue_rec, *queue_give;
   index_t ind_rec, ind_give;
   
   if (comp1 == union_comp) {
     
     // merge comp2 into comp 1
     
-    queue_rec = fragment_queues_[comp1];
-    queue_give = fragment_queues_[comp2];
+    queue_rec = &(fragment_queues_[comp1]);
+    queue_give = &(fragment_queues_[comp2]);
     
     ind_rec = comp1;
     ind_give = comp2;
@@ -152,8 +156,8 @@ void MultiFragment::MergeQueues_(index_t comp1, index_t comp2) {
     
     DEBUG_ASSERT(comp2 == union_comp);
 
-    queue_rec = fragment_queues_[comp2];
-    queue_give = fragment_queues_[comp1];
+    queue_rec = &(fragment_queues_[comp2]);
+    queue_give = &(fragment_queues_[comp1]);
 
     ind_rec = comp2;
     ind_give = comp1;
@@ -162,17 +166,20 @@ void MultiFragment::MergeQueues_(index_t comp1, index_t comp2) {
   
   index_t new_size = fragment_sizes_[ind_rec] 
                      + fragment_sizes_[ind_give];
-  fragment_sizes_[ind_rec] = new_size;
+  fragment_sizes_[ind_rec] = -1;
   fragment_sizes_[ind_give] = -1;
-  fragment_size_heap_.Put(new_size, ind_rec);
+  fragment_sizes_[union_comp] = new_size;
+  fragment_size_heap_.Put(new_size, union_comp);
   
   
-  for (index_t i = 0; i < queue_give.size(); i++) {
+  for (index_t i = 0; i < queue_give->size(); i++) {
     
-    double key = queue_give.top_key();
-    index_t val = queue_give.Pop();
-    queue_rec.Put(key, val);
-    
+    double key = queue_give->top_key();
+    CandidateEdge val = queue_give->Pop();
+
+    if (val.is_valid(connections_)) {
+      queue_rec->Put(key, val);
+    }
   } // for i
   
 } // MergeQueues_
@@ -193,67 +200,95 @@ void MultiFragment::ComputeMST(Matrix* results) {
     while (1) {
       
       double dist = fragment_queues_[current_frag].top_key();
-      index_t point_in_frag = fragment_queues_[current_frag].Pop();
-      index_t point_out_frag = candidate_neighbors_[point_in_frag];
+      CandidateEdge this_edge = fragment_queues_[current_frag].Pop();
+      index_t point_in = this_edge.point_in();
+      index_t point_out = this_edge.point_out();
       
-      index_t point_in_comp = connections_.Find(point_in_frag);
-      index_t point_out_comp = connections_.Find(point_out_frag);
-      DEBUG_ASSERT(point_in_comp == current_frag);
+      /*
+      index_t point_in = fragment_queues_[current_frag].Pop();
+      index_t point_out = candidate_neighbors_[point_in];
+      */
       
-      if (point_in_comp == point_out_comp) {
+#ifdef DEBUG
+      
+      Vector in_vec, out_vec;
+      data_points_.MakeColumnVector(point_in, &in_vec);
+      data_points_.MakeColumnVector(point_out, &out_vec);
+
+      //double true_dist = sqrt(la::DistanceSqEuclidean(in_vec, out_vec));
+      double true_dist = la::DistanceSqEuclidean(in_vec, out_vec);
+      
+      DEBUG_ASSERT((true_dist - dist) < 10e-5);
+      
+#endif
+      
+      index_t comp_in = connections_.Find(point_in);
+      index_t comp_out = connections_.Find(point_out);
+      DEBUG_ASSERT(comp_in == current_frag);
+      
+      //if (comp_in == comp_out) {
+      if (!(this_edge.is_valid(connections_))) {  
         // the link isn't real, find a real one and re-insert
         
         Vector point_vec;
-        data_points_.MakeColumnVector(point_in_frag, &point_vec);
+        data_points_.MakeColumnVector(point_in, &point_vec);
         
         index_t new_point = -1;
         double new_dist = DBL_MAX;
         
-        FindNeighbor_(tree_, point_vec, point_in_frag, &new_point, 
+        FindNeighbor_(tree_, point_vec, point_in, &new_point, 
                       &new_dist);
-        candidate_neighbors_[point_in_frag] = new_point;
+        //candidate_neighbors_[point_in] = new_point;
         
-        fragment_queues_[current_frag].Put(new_dist, point_in_frag);
-        
+        //fragment_queues_[current_frag].Put(new_dist, point_in);
+        CandidateEdge new_edge;
+        new_edge.Init(point_in, new_point);
+        fragment_queues_[current_frag].Put(new_dist, new_edge);
         
       } // link not real
       else {
         // the link is real, add the edge + update the queues, break
 
-        AddEdge_(point_in_frag, point_out_frag, dist);
-        connections_.Union(point_in_comp, point_out_comp);
+        AddEdge_(point_in, point_out, dist);
+        connections_.Union(point_in, point_out);
         
         // merge the fragment_queues & fragment sizes
-        MergeQueues_(point_in_comp, point_out_comp);
+        MergeQueues_(comp_in, comp_out);
         
-        index_t new_comp = connections_.Find(point_in_frag);
+        index_t new_comp = connections_.Find(point_in);
+        DEBUG_ASSERT(new_comp == comp_in || new_comp == comp_out);
         
-        UpdateMemberships_(tree_, point_in_frag);
-        UpdateMemberships_(tree_, point_out_frag);
+        UpdateMemberships_(tree_, point_in);
+        UpdateMemberships_(tree_, point_out);
         
         Vector point_out_vec;
-        data_points_.MakeColumnVector(point_out_frag, &point_out_vec);
+        data_points_.MakeColumnVector(point_out, &point_out_vec);
         
         index_t new_point = -1;
         double new_dist = DBL_MAX;
         
-        FindNeighbor_(tree_, point_out_vec, point_out_frag, &new_point, 
+        FindNeighbor_(tree_, point_out_vec, point_out, &new_point, 
                       &new_dist);
-        candidate_neighbors_[point_out_frag] = new_point;
+        //candidate_neighbors_[point_out] = new_point;
+        //fragment_queues_[new_comp].Put(new_dist, point_out);
         
-        fragment_queues_[new_comp].Put(new_dist, point_out_frag);
+        CandidateEdge new_out_edge;
+        new_out_edge.Init(point_out, new_point);
+        fragment_queues_[new_comp].Put(new_dist, new_out_edge);
         
         Vector point_in_vec;
-        data_points_.MakeColumnVector(point_in_frag, &point_in_vec);
+        data_points_.MakeColumnVector(point_in, &point_in_vec);
         
         new_point = -1;
         new_dist = DBL_MAX;
         
-        FindNeighbor_(tree_, point_in_vec, point_in_frag, &new_point, 
+        FindNeighbor_(tree_, point_in_vec, point_in, &new_point, 
                       &new_dist);
-        candidate_neighbors_[point_in_frag] = new_point;
-        
-        fragment_queues_[new_comp].Put(new_dist, point_in_frag);
+        //candidate_neighbors_[point_in] = new_point;
+        //fragment_queues_[new_comp].Put(new_dist, point_in);
+        CandidateEdge new_in_edge;
+        new_in_edge.Init(point_in, new_point);
+        fragment_queues_[new_comp].Put(new_dist, new_in_edge);
         
         break; // time for a new smallest component
         
