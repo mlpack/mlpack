@@ -84,9 +84,46 @@ private:
     }
     
     
-  };
-  
+  }; // class MFStat
+
   typedef BinarySpaceTree<DHrectBound<2>, Matrix, MFStat> MFTree;
+
+  class CandidateEdge {
+    
+  private:
+    
+    index_t point_in_;
+    index_t point_out_;
+    //double dist_;
+    
+  public:
+
+    index_t point_in() {
+      return point_in_;
+    }
+    
+    index_t point_out() {
+      return point_out_; 
+    }
+    
+    /*
+    double dist() {
+      return dist_;
+    }
+     */
+    
+    bool is_valid(UnionFind& connect) {
+      return (connect.Find(point_in_) != connect.Find(point_out_)); 
+    }
+    
+    void Init(index_t pt_in, index_t pt_out) {
+      point_in_ = pt_in;
+      point_out_ = pt_out;
+      //dist_ = distance;
+    }
+    
+  }; // class CandidateEdge
+  
   
   /////////// Variables //////////////
   
@@ -108,9 +145,9 @@ private:
   // is -1 if i is no longer a valid fragment
   ArrayList<index_t> fragment_sizes_;
   
-  ArrayList<MinHeap<double, index_t> > fragment_queues_;
+  ArrayList<MinHeap<double, CandidateEdge> > fragment_queues_;
   
-  ArrayList<index_t> candidate_neighbors_;
+  //ArrayList<index_t> candidate_neighbors_;
   
   void AddEdge_(index_t e1, index_t e2, double distance) {
     
@@ -206,7 +243,7 @@ public:
     
     total_dist_ = 0.0;
     
-    candidate_neighbors_.Init(number_of_points_);
+    //candidate_neighbors_.Init(number_of_points_);
     //candidate_neighbors_.SetAll(-1);
     
   
@@ -220,9 +257,11 @@ public:
       fragment_sizes_[i] = 1;
     
       fragment_queues_[i].Init();
-      fragment_queues_[i].Put(0.0, i);
+      CandidateEdge edge;
+      edge.Init(i, i);
+      fragment_queues_[i].Put(0.0, edge);
       
-      candidate_neighbors_[i] = i;
+      //candidate_neighbors_[i] = i;
       
     } // i
     

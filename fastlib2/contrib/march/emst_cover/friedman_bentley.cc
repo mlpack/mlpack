@@ -38,14 +38,16 @@ void FriedmanBentley::FindNeighbor_(FBTree* tree, const Vector& point,
   
     double left_dist, right_dist;
     
-    if (tree->left()->stat().component_membership() != point_index) {
+    if (tree->left()->stat().component_membership() != 
+        connections_.Find(point_index)) {
       left_dist = tree->left()->bound().MinDistanceSq(point);
     }
     else {
       left_dist = DBL_MAX;
     }
     
-    if (tree->right()->stat().component_membership() != point_index) {
+    if (tree->right()->stat().component_membership() != 
+        connections_.Find(point_index)) {
       right_dist = tree->right()->bound().MinDistanceSq(point);
     }
     else {
