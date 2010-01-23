@@ -447,7 +447,17 @@ class DualCoverTreeBoruvka {
           
             //candidate_dists_[query_comp] = real_dist;
             candidate_dists_[query_comp] = leaf->stat().distance_to_qnode();
+            
+            /*
+            // this could be the new bound for the other component as well
+            if (candidate_dists_[query_comp] < candidate_dists_[ref_comp]) {
+              candidate_dists_[ref_comp] = candidate_dists_[query_comp];
+              candidate_refs_[ref_comp] = query_comp;
+            }
+             */
+            
             candidate_refs_[query_comp] = ref_comp;
+            
             
             /*
             if (leaf->stat().distance_to_qnode() == 0.0) {
@@ -541,17 +551,22 @@ class DualCoverTreeBoruvka {
             // query is not connected to all of its children.  
             
             if (query_comp == connections_.Find((*child)->point())) {
-              if ((*child)->is_leaf()) {
+              if (unlikely((*child)->is_leaf())) {
                 dist_bound = DBL_MAX;
               }
               // need to account for the possibility that the ref and all 
               // its descendants are connected to the query and thus not 
               // count any of those descendants toward the upper bound
-              else if (query_comp == (*child)->stat().component_membership()) {
+              else if (unlikely(query_comp == (*child)->stat().component_membership())) {
                 dist_bound = DBL_MAX;
               }
               else {
                 dist_bound += (*child)->max_dist_to_grandchild();
+                /*
+                if ((*child)->max_dist_to_grandchild()) {
+                  
+                }
+                 */
               }
             } // do we need the extra 2^i
             
@@ -588,6 +603,15 @@ class DualCoverTreeBoruvka {
     
     candidate_dists_[query_comp] = query_bound;
     candidate_refs_[query_comp] = ref_comp;
+    
+    /*
+    // this could be the new bound for the other component as well
+    if (candidate_dists_[query_comp] < candidate_dists_[ref_comp]) {
+      candidate_dists_[ref_comp] = candidate_dists_[query_comp];
+      candidate_refs_[ref_comp] = query_comp;
+    }
+     */
+    
     
     if (ref_children.size() > 0) {
       

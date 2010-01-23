@@ -164,43 +164,80 @@ void MultiFragment::MergeQueues_(index_t comp1, index_t comp2) {
 
   }
   
+  //DEBUG_ASSERT(queue_give->size() == fragment_sizes_[ind_give]);
+  
+  
+  //for (index_t i = 0; i < queue_give->size(); i++) {
+  while (queue_give->size() > 0) {
+    
+    double key = queue_give->top_key();
+    CandidateEdge val = queue_give->Pop();
+
+    //if (val.is_valid(connections_)) {
+    // want to make sure that each point has a candidate
+      queue_rec->Put(key, val);
+    //}
+  } // for i
+
+  //printf("%d, %d\n", fragment_sizes_[ind_rec], fragment_sizes_[ind_give]);
   index_t new_size = fragment_sizes_[ind_rec] 
-                     + fragment_sizes_[ind_give];
+  + fragment_sizes_[ind_give];
   fragment_sizes_[ind_rec] = -1;
   fragment_sizes_[ind_give] = -1;
   fragment_sizes_[union_comp] = new_size;
   fragment_size_heap_.Put(new_size, union_comp);
   
-  
-  for (index_t i = 0; i < queue_give->size(); i++) {
-    
-    double key = queue_give->top_key();
-    CandidateEdge val = queue_give->Pop();
-
-    if (val.is_valid(connections_)) {
-      queue_rec->Put(key, val);
-    }
-  } // for i
-  
 } // MergeQueues_
 
 void MultiFragment::ComputeMST(Matrix* results) {
 
+  fx_timer_start(mod_, "MST_computation");
+  
   while (number_of_edges_ < number_of_points_ - 1) {
     
     // find smallest fragment
     
+    /*
     index_t current_frag;
     index_t current_size = -1;
     while (current_size < 0) { // look for a real component index
       current_frag = fragment_size_heap_.Pop();
       current_size = fragment_sizes_[current_frag];
     }
-      
+     */
+    
+    // not quite right either, the component I just popped may not be the one 
+    // that still exists
+    
+    
+    bool real_frag = 0;
+    index_t current_frag;
+    while (!real_frag) {
+      index_t frag_size = fragment_size_heap_.top_key();
+      current_frag = fragment_size_heap_.Pop();
+      real_frag = ((current_frag == connections_.Find(current_frag))
+                   && (frag_size == fragment_sizes_[current_frag]));
+      //real_frag = (current_frag == connections_.Find(current_frag));
+    } 
+     
+    
+    //DEBUG_ASSERT(fragment_size_heap_.size() == number_of_points_ - number_of_edges_ - 1);
+     
+    // this should make it act like single-tree, since it will always grow 
+    // one component
+    //index_t current_frag = connections_.Find(0);
+    
+    // there should be one candidate point per point in the fragment
+    // not true, when merging can wind up with more than one
+    //DEBUG_ASSERT(fragment_queues_[current_frag].size() == fragment_sizes_[current_frag]);
+    
     while (1) {
       
       double dist = fragment_queues_[current_frag].top_key();
       CandidateEdge this_edge = fragment_queues_[current_frag].Pop();
+      
+      DEBUG_ASSERT(current_frag == connections_.Find(this_edge.point_in()));
+      
       index_t point_in = this_edge.point_in();
       index_t point_out = this_edge.point_out();
       
@@ -226,8 +263,8 @@ void MultiFragment::ComputeMST(Matrix* results) {
       index_t comp_out = connections_.Find(point_out);
       DEBUG_ASSERT(comp_in == current_frag);
       
-      //if (comp_in == comp_out) {
-      if (!(this_edge.is_valid(connections_))) {  
+      if (comp_in == comp_out) {
+      //if (!(this_edge.is_valid(connections_))) {  
         // the link isn't real, find a real one and re-insert
         
         Vector point_vec;
@@ -248,6 +285,10 @@ void MultiFragment::ComputeMST(Matrix* results) {
       } // link not real
       else {
         // the link is real, add the edge + update the queues, break
+        
+        // minus 1 because one has been popped
+        DEBUG_ASSERT(fragment_sizes_[comp_in] - 1 == fragment_queues_[comp_in].size());
+        DEBUG_ASSERT(fragment_sizes_[comp_out] == fragment_queues_[comp_out].size());
 
         AddEdge_(point_in, point_out, dist);
         connections_.Union(point_in, point_out);
@@ -255,11 +296,15 @@ void MultiFragment::ComputeMST(Matrix* results) {
         // merge the fragment_queues & fragment sizes
         MergeQueues_(comp_in, comp_out);
         
+        
         index_t new_comp = connections_.Find(point_in);
         DEBUG_ASSERT(new_comp == comp_in || new_comp == comp_out);
+
+        DEBUG_ASSERT(fragment_sizes_[new_comp] - 1 == fragment_queues_[new_comp].size());
         
         UpdateMemberships_(tree_, point_in);
         UpdateMemberships_(tree_, point_out);
+        // update the other point again?
         
         Vector point_out_vec;
         data_points_.MakeColumnVector(point_out, &point_out_vec);
@@ -267,6 +312,8 @@ void MultiFragment::ComputeMST(Matrix* results) {
         index_t new_point = -1;
         double new_dist = DBL_MAX;
         
+        // don't need this, it should already have a neighbor in its own queue
+        /*
         FindNeighbor_(tree_, point_out_vec, point_out, &new_point, 
                       &new_dist);
         //candidate_neighbors_[point_out] = new_point;
@@ -275,6 +322,7 @@ void MultiFragment::ComputeMST(Matrix* results) {
         CandidateEdge new_out_edge;
         new_out_edge.Init(point_out, new_point);
         fragment_queues_[new_comp].Put(new_dist, new_out_edge);
+        */
         
         Vector point_in_vec;
         data_points_.MakeColumnVector(point_in, &point_in_vec);
@@ -290,6 +338,8 @@ void MultiFragment::ComputeMST(Matrix* results) {
         new_in_edge.Init(point_in, new_point);
         fragment_queues_[new_comp].Put(new_dist, new_in_edge);
         
+        DEBUG_ASSERT(fragment_queues_[new_comp].size() == fragment_sizes_[new_comp]);
+        
         break; // time for a new smallest component
         
       } // link real
@@ -301,7 +351,8 @@ void MultiFragment::ComputeMST(Matrix* results) {
     
   } // while more than one fragment
   
-  
+  fx_timer_stop(mod_, "MST_computation");
+
   EmitResults_(results);
   
 } // ComputeMST()

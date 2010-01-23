@@ -28,6 +28,8 @@ const fx_entry_doc mf_entries[] = {
 "The dimensionality of the data.\n"},
 {"tree_building", FX_TIMER, FX_CUSTOM, NULL,
 "Time taken to construct the kd-tree.\n"},
+{"leaf_size", FX_PARAM, FX_INT, NULL,
+  "Size of leaves in the kd-tree, default 1."},
 FX_ENTRY_DOC_DONE
 };
 
@@ -150,6 +152,8 @@ private:
   //ArrayList<index_t> candidate_neighbors_;
   
   void AddEdge_(index_t e1, index_t e2, double distance) {
+    
+    DEBUG_ASSERT(connections_.Find(e1) != connections_.Find(e2));
     
     //EdgePair edge;
     DEBUG_ASSERT_MSG((e1 != e2), 
