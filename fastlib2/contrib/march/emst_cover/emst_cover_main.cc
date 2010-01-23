@@ -10,6 +10,7 @@
 #include "mlpack/emst/dtb.h"
 #include "geomst2.h"
 #include "friedman_bentley.h"
+#include "multi_fragment.h"
 
 const fx_entry_doc cover_main_entries[] = {
 {"data", FX_REQUIRED, FX_STR, NULL,
@@ -24,6 +25,8 @@ const fx_entry_doc cover_main_entries[] = {
 "Specify to run the GeoMST2 algorithm.\n"},
 {"do_single_fragment", FX_PARAM, FX_BOOL, NULL,
   "Specify to run the Friedman-Bentley single fragment algorithm\n"},
+{"do_multi_fragment", FX_PARAM, FX_BOOL, NULL,
+"Specify to run the NEKMA multi fragment algorithm\n"},
 {"using_thor", FX_PARAM, FX_BOOL, NULL,
   "Not yet supported, do not specify.\n"},
 };

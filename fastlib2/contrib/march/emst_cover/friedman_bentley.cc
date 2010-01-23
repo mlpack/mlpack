@@ -135,6 +135,8 @@ void FriedmanBentley::UpdateMemberships_(FBTree* tree, index_t point_index) {
 
 void FriedmanBentley::ComputeMST(Matrix* results) {
 
+  fx_timer_start(mod_, "MST_computation");
+  
   index_t cand = -1;
   double cand_dist = DBL_MAX;
   
@@ -209,7 +211,8 @@ void FriedmanBentley::ComputeMST(Matrix* results) {
   } // while tree is not finished
   
   
-  
+  fx_timer_stop(mod_, "MST_computation");
+
   EmitResults_(results);
   
 } // ComputeMST

@@ -28,6 +28,8 @@ const fx_entry_doc fb_entries[] = {
 "The dimensionality of the data.\n"},
 {"tree_building", FX_TIMER, FX_CUSTOM, NULL,
 "Time taken to construct the kd-tree.\n"},
+{"leaf_size", FX_PARAM, FX_INT, NULL,
+"Size of leaves in the kd-tree, default 1."},
 FX_ENTRY_DOC_DONE
 };
 
