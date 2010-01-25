@@ -58,8 +58,9 @@ int main(int argc, char* argv[]) {
   printf("===== Computing kd-tree results =====\n");
   dtb.ComputeMST(&kd_results);
   
-  kd_results.PrintDebug("kd-tree results");
+  //kd_results.PrintDebug("kd-tree results");
   
+  /*
   Matrix naive_results;
   DualTreeBoruvka naive;
   
@@ -77,7 +78,7 @@ int main(int argc, char* argv[]) {
   if (naive_same) {
     printf("\n ====== Naive and kd-tree are same. ====== \n");
   }
-  
+  */
   DualCoverTreeBoruvka dtb_cover;
   fx_module* cover_module = fx_submodule(NULL, "cover_module");
   dtb_cover.Init(data, cover_module);
@@ -100,7 +101,7 @@ int main(int argc, char* argv[]) {
   
   
   /////////////////////////////
-  
+  /*
   Matrix geomst_results;
   
   printf("====== Computing geomst ======");
@@ -157,7 +158,7 @@ int main(int argc, char* argv[]) {
   }
   
   multi_results.PrintDebug("multi results");
-  
+  */
   fx_done(NULL);
   
   return 0;

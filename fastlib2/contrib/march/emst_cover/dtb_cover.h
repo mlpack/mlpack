@@ -50,6 +50,7 @@ const fx_module_doc dtb_cover_doc = {
 };
 
 
+
 /**
 * A Stat class for use with fastlib's trees.  This one only stores two values.
  *
@@ -260,6 +261,7 @@ class DualCoverTreeBoruvka {
     
     for (index_t i = 0; i < number_of_points_; i++) {
       index_t component_i = connections_.Find(i);
+      
       index_t in_edge_i = neighbors_in_component_[component_i];
       index_t out_edge_i = neighbors_out_component_[component_i];
       if (connections_.Find(in_edge_i) != connections_.Find(out_edge_i)) {
@@ -524,7 +526,7 @@ class DualCoverTreeBoruvka {
       // added check for query's grandchild
       if ((*begin)->stat().distance_to_qnode() <= query_bound 
                          + (*begin)->max_dist_to_grandchild() 
-                         + query->max_dist_to_grandchild()
+                         + (2.0 * query->max_dist_to_grandchild())
                          + prune_factor_) {
       
         // iterate over the children of this member of the reference set
@@ -584,7 +586,7 @@ class DualCoverTreeBoruvka {
             
             
             if (dist <= query_bound + (*child)->max_dist_to_grandchild() 
-                                   + query->max_dist_to_grandchild()
+                                   + (2.0 * query->max_dist_to_grandchild())
                                     + prune_factor_) {
              
               ref_children.PushBackCopy(*child);
@@ -634,7 +636,7 @@ class DualCoverTreeBoruvka {
         
         if ((*begin)->stat().distance_to_qnode() <= query_bound 
               + (*begin)->max_dist_to_grandchild() 
-              + query->max_dist_to_grandchild()
+              + (2.0 * query->max_dist_to_grandchild())
               + prune_factor_) {
           
           if ((*begin)->num_of_children() > 0) {
@@ -684,6 +686,7 @@ class DualCoverTreeBoruvka {
     
     double upper_bound = candidate_dists_[q_comp];
     
+    
     for (; begin != end; begin++) {
       
       // check if this leaf still works
@@ -694,11 +697,17 @@ class DualCoverTreeBoruvka {
         
         double dist = sqrt(la::DistanceSqEuclidean(q_vec, r_vec));
         
-        if (dist <= upper_bound + query->max_dist_to_grandchild()
+        if (dist <= upper_bound + (2.0 * query->max_dist_to_grandchild())
                     + prune_factor_) {
 
-          if (dist < upper_bound) {
-            upper_bound = dist;
+          // need to make sure this is a valid bound for the query
+          // we may have to keep the leaf for some of the query's children
+          // while the query itself can't use the leaf because they're already
+          // connected
+          if (q_comp != connections_.Find((*begin)->point())) {
+            if (dist < upper_bound) {
+              upper_bound = dist;
+            }
           }
           
           (*begin)->stat().set_distance_to_qnode(dist);
@@ -710,6 +719,8 @@ class DualCoverTreeBoruvka {
       
     } // iterate over leaves
     
+    candidate_dists_[q_comp] = upper_bound;
+    
   } // CopyLeafNodes_()
   
   /**
@@ -719,6 +730,7 @@ class DualCoverTreeBoruvka {
                       ArrayList<ArrayList<DTBTree*> >* old_cover,
                       ArrayList<ArrayList<DTBTree*> >* new_cover, 
                       index_t current_scale, index_t max_scale) {
+    
     
     new_cover->Init(101);
     for (index_t i = 0; i < 101; i++) {
@@ -731,6 +743,7 @@ class DualCoverTreeBoruvka {
     index_t q_comp = connections_.Find(query->point());
     
     double upper_bound = candidate_dists_[q_comp];
+    //index_t cand_ref = candidate_refs_[q_comp];
     
     for (index_t scale = current_scale; scale <= max_scale; scale++) {
       
@@ -748,21 +761,45 @@ class DualCoverTreeBoruvka {
           double dist = sqrt(la::DistanceSqEuclidean(q_vec, r_vec));
           double dist_bound = dist;
           
+          /*
           if (q_comp == connections_.Find((*begin)->point())) {
             dist_bound += (*begin)->max_dist_to_grandchild();
+            DEBUG_ASSERT((*begin)->num_of_children() > 0);
           } 
+          */
+          // need this for same reason as above
+          if (q_comp == connections_.Find((*begin)->point())) {
+            if (unlikely((*begin)->is_leaf())) {
+              dist_bound = DBL_MAX;
+            }
+            // need to account for the possibility that the ref and all 
+            // its descendants are connected to the query and thus not 
+            // count any of those descendants toward the upper bound
+            else if (unlikely(q_comp == (*begin)->stat().component_membership())) {
+              dist_bound = DBL_MAX;
+            }
+            else {
+              dist_bound += (*begin)->max_dist_to_grandchild();
+              /*
+               if ((*child)->max_dist_to_grandchild()) {
+               
+               }
+               */
+            }
+          } // do we need the extra 2^i
           
           if (dist_bound < upper_bound) {
             upper_bound = dist_bound;
           }
           
+          
           if (dist <= upper_bound + (*begin)->max_dist_to_grandchild() 
-                                  + query->max_dist_to_grandchild()
+                                  + (2.0 * query->max_dist_to_grandchild())
                                   + prune_factor_) {
             
             (*begin)->stat().set_distance_to_qnode(dist);
             (*new_cover)[scale].PushBackCopy(*begin);
-            
+          
           } // distance check
           
         } // are they fully connected?
@@ -770,6 +807,7 @@ class DualCoverTreeBoruvka {
       } // iterate over the nodes at this scale
       
     } // iterate over the scales
+    
     
     candidate_dists_[q_comp] = upper_bound;
     
