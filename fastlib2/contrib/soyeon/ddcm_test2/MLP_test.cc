@@ -850,7 +850,7 @@ int main(int argc, char *argv[]) {
 			cout<<"diff="<<(current_objective-next_objective)<<endl;
 			//cout<<"current_radius="<<current_radius<<endl;
 			if(current_sample_size>=num_of_people && iteration_count>1){
-				if(current_objective-next_objective < 0.001 && current_radius <0.01){
+				if(current_objective-next_objective < 0.00001 && current_radius <0.00001){
 					cout<<"Improvement in objective fn is small enough...Exit..."<<(current_objective-next_objective)<<endl;
 					cout<<"current radius is small enough...Exit..."<<current_radius<<endl;
 					break;

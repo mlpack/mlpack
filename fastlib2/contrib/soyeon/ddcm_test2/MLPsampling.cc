@@ -99,7 +99,7 @@ void MLPSampling::Init(fx_module *module, int *num_of_people,
 		//initial_parameter->SetAll(1.5);
 
 		
-		initial_parameter->SetAll(0);
+		initial_parameter->SetAll(1);
 		
 	cout<<"NUM_OF_BETAS="<<num_of_betas<<endl;
 	
@@ -298,7 +298,7 @@ void MLPSampling::Init2(fx_module *module, int *num_of_people,
 		//initial_parameter->SetAll(1.5);
 
 		
-		initial_parameter->SetAll(0);
+		initial_parameter->SetAll(-1);
 		(*initial_parameter)[num_of_betas]=1;
 		
 		

@@ -55,8 +55,8 @@ int main(int argc, char *argv[]) {
 	cout<<endl;
 	//NOTIFY("Number of people in dataset is %d", num_of_people);
 	cout<<"Number of people in dataset is "<<num_of_people<<endl;
-	num_of_people=5000;
-	cout<<"Number of people in dataset is "<<num_of_people<<endl;
+	//num_of_people=5000;
+	//cout<<"Number of people in dataset is "<<num_of_people<<endl;
 	//NOTIFY("Shuffling");
 	cout<<"Shuffling"<<endl;
 	//sampling.Shuffle();
