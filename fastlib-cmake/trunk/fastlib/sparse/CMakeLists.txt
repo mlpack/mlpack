@@ -6,6 +6,7 @@
 set(TRILINOS_BASE_DIR /usr/local CACHE PATH
   "Directory where trilinos is installed." )
 #set(TRILINOS_LIB_DIR ${TRILINOS_BASE_DIR}/lib )
+
 ## library 
 #set(TRILINOS_REQUIRED_LIBS epetra anasazi aztecoo ifpack kokkos teuchos)
 set(TRILINOS_REQUIRED_LIBS epetra anasazi aztecoo ifpack teuchos)
@@ -17,17 +18,34 @@ foreach(lib ${TRILINOS_REQUIRED_LIBS})
         ${TRILINOS_BASE_DIR}/lib 
         /opt/trilinos/lib 
     )
-    if(${trilinos_lib} EQUAL "trilinos_lib-NOTFOUND")
-        message(FATAL_ERROR "Trilinos library ${lib} not found.")
+    if(NOT trilinos_lib)
+        # try looking for libtrilinos_${lib}
+        find_library(trilinos_lib trilinos_${lib}
+            PATHS
+            ${TRILINOS_BASE_DIR}/lib
+            /opt/trilinos/lib
+        )
+        if(NOT trilinos_lib)
+            message(FATAL_ERROR "Trilinos library ${lib} not found.")
+        endif()
     endif()
     set(TRILINOS_LIBS ${TRILINOS_LIBS} ${trilinos_lib})
 endforeach()
+
 ## include dirs
 find_path(TRILINOS_INCLUDE_DIR Trilinos_version.h 
     PATHS
     ${TRILINOS_BASE_DIR}/include 
     /opt/trilinos/include
 )
+if(NOT TRILINOS_INCLUDE_DIR)
+    # try $includepath/trilinos/
+    find_path(TRILINOS_INCLUDE_DIR trilinos/Trilinos_version.h
+        PATHS
+        ${TRILINOS_BASE_DIR}/include
+        /opt/trilinos/include
+    )
+endif()
 
 if(TRILINOS_INCLUDE_DIR AND TRILINOS_LIBS)
     set(TRILINOS_FOUND "YES")
