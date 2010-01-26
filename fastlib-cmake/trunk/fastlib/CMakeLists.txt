@@ -29,7 +29,7 @@ set(FASTLIB_SRCS)
 ## recurse
 set(DIRS base col data file fx la math par tree)  #!!
 
-option(FASTLIB_WITH_OPTIMIZERS "Include optimization code - requires OPT++." ON)
+option(FASTLIB_WITH_OPTIMIZERS "Include optimization code - requires OPT++." OFF)
 if(FASTLIB_WITH_OPTIMIZERS)
    set(DIRS ${DIRS} optimization)
 endif(FASTLIB_WITH_OPTIMIZERS)
