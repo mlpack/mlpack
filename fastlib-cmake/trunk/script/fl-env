@@ -1,1 +1,0 @@
-FL_ORIGINAL_DIR=`pwd`;cd -P "$1";export FASTLIBPATH=`pwd`;export PATH="$PATH:$FASTLIBPATH/script";cd $FL_ORIGINAL_DIR;
