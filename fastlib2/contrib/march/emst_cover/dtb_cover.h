@@ -588,8 +588,11 @@ class DualCoverTreeBoruvka {
               // neighbors
               // SOLN: only apply this when the query is connected to all of its
               // descendants
-              else if ((query_comp == query->stat().component_membership()) 
-                       && (*child)->max_dist_to_grandchild() < dist_bound) {
+              // Have to make sure that the query and reference are far enough apart
+              else if ((query_comp == query->stat().component_membership())
+                       && (dist > query->max_dist_to_grandchild()
+                                  + 2.0 * (*child)->max_dist_to_grandchild()) 
+                       && ((*child)->max_dist_to_grandchild() < dist_bound)) {
                 dist_bound = (*child)->max_dist_to_grandchild();
                 //printf("New prune.\n");
               }
