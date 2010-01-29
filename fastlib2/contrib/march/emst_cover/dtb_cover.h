@@ -473,6 +473,19 @@ class DualCoverTreeBoruvka {
               //neighbors_distances_[query_comp] = real_dist;
               neighbors_in_component_[query_comp] = query->point();
               neighbors_out_component_[query_comp] = leaf->point();
+              
+              // can add a reverse bound here
+              // this bound could work for the reference component
+              if (neighbors_distances_[query_comp] < neighbors_distances_[ref_comp]) {
+                neighbors_distances_[ref_comp] = neighbors_distances_[query_comp];
+                neighbors_in_component_[ref_comp] = leaf->point();
+                neighbors_out_component_[ref_comp] = query->point();
+                
+                // PROBLEM: can this prevent children of the reference points
+                // from finding neighbors?
+                candidate_dists_[ref_comp] = neighbors_distances_[ref_comp];
+                
+              }
             
             } // is it the edge to be added? 
           
@@ -562,6 +575,24 @@ class DualCoverTreeBoruvka {
               else if (unlikely(query_comp == (*child)->stat().component_membership())) {
                 dist_bound = DBL_MAX;
               }
+              // the query is connected to the reference, but not to all of the 
+              // reference's children
+              // this means that the query's component has a neighbor within 
+              // the distance to the reference's children
+              // PROBLEM: what about descendants of the query that aren't 
+              // connected to the query?
+              // the reference could be very close to its children, which
+              // might lead this query to prune all of its potential neighbors, 
+              // including itself
+              // This would leave the descendants of the query without any 
+              // neighbors
+              // SOLN: only apply this when the query is connected to all of its
+              // descendants
+              else if ((query_comp == query->stat().component_membership()) 
+                       && (*child)->max_dist_to_grandchild() < dist_bound) {
+                dist_bound = (*child)->max_dist_to_grandchild();
+                //printf("New prune.\n");
+              }
               else {
                 dist_bound += (*child)->max_dist_to_grandchild();
                 /*
@@ -572,9 +603,11 @@ class DualCoverTreeBoruvka {
               }
             } // do we need the extra 2^i
             
+            /*
             if (dist_bound == 0.0) {
               printf("dist bound of 0\n");
             }
+             */
             
             // is the dist the new candidate to be the minimum? 
             if (dist_bound < query_bound) {
