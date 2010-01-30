@@ -725,8 +725,8 @@ void Sampling::Init2(fx_module *module, int *num_of_people,
 		initial_parameter->SetAll(0);
 		
 	cout<<"NUM_OF_BETAS="<<num_of_betas<<endl;
-		(*initial_parameter)[num_of_betas]=7;
-		(*initial_parameter)[num_of_betas+1]=0.3;
+		(*initial_parameter)[num_of_betas]=10;
+		(*initial_parameter)[num_of_betas+1]=10;
 		
 /*			
 		(*initial_parameter)[0]=1.2;

@@ -832,16 +832,23 @@ void MLPObjective::ComputeDerivativeBetaTerm1_(Vector *beta_term1) {
 	temp5.SetAll(0);
 
 
+	Vector double_first_stage_dot_logit;
+  
+
   for(index_t n=0; n<first_stage_x_.size(); n++) {
 		
     if (first_stage_y_[n]<0) { 
 			//first_stage_y_[n]=-1 if all==zero, j_i is n chose j_i
 	
-		temp4+=( 1- first_stage_dot_logit_postponed_[n] );
+		temp4+=( 1- 2*first_stage_dot_logit_postponed_[n] );
       
     } else {
-  
-			la::MulOverwrite(first_stage_x_[n], first_stage_dot_logit_[n], &temp);
+
+			
+			la::ScaleInit(2, first_stage_dot_logit_[n], &double_first_stage_dot_logit); 
+			   
+			//la::MulOverwrite(first_stage_x_[n], first_stage_dot_logit_[n], &temp);
+			la::MulOverwrite(first_stage_x_[n], double_first_stage_dot_logit, &temp);
 			//check2
 
 			la::SubOverwrite(num_of_betas_-1, temp.ptr(), first_stage_x_[n].GetColumnPtr(first_stage_y_[n]-1), temp2.ptr());
@@ -864,7 +871,7 @@ void MLPObjective::ComputeDerivativeBetaTerm1_(Vector *beta_term1) {
 }
 
 
-
+//need to be corrected - not done yet
 void MLPObjective::ComputeSecondDerivativeBetaTerm1_(Matrix *second_beta_term1) {
 	//check
 	Matrix second_derivative_beta_term1;
@@ -1462,8 +1469,8 @@ void MLPObjective::ComputePredictionError(double current_sample,
 
 	ComputePostponedProbability_(betas);
 	  	
-	ComputeDotLogit_(betas);
-	ComputeDDotLogit_();
+	//ComputeDotLogit_(betas);
+	//ComputeDDotLogit_();
 	//cout<<"ddot done"<<endl;
 	
 	//Vector predicted_postponed_probability;
@@ -1617,7 +1624,13 @@ void MLPObjective::ComputePredictionError(double current_sample,
 	double temp_choice_prediction_error_prob=0;
 	double temp_postpone_prediction_error_prob=0;
 	for(index_t n=0; n<number_of_test; n++){
-		temp_choice_prediction_error_prob+=(1-predicted_prob_of_n_choose_i[n]);
+		//temp_choice_prediction_error_prob+=(1-predicted_prob_of_n_choose_i[n]);
+		if(true_decision[n]<0) {
+			temp_choice_prediction_error_prob+=(1-postponed_probability_[n]);
+		}
+		else {
+			temp_choice_prediction_error_prob+=(1-predicted_prob_of_n_choose_i[n]);
+		}
 		temp_postpone_prediction_error_prob+=(1-postponed_probability_[n]);
 	}
 	temp_choice_prediction_error_prob*=2;
@@ -1628,7 +1641,12 @@ void MLPObjective::ComputePredictionError(double current_sample,
 	(*postponed_prediction_error)=temp_postponed_prediction_error;
 	(*choice_prediction_error)=temp_choice_prediction_error;
 
+	//Calculate error for all alternatives
 	
+
+
+
+
 	//cout<<"predicted_decision"<<endl;
 	//for(index_t n=0; n<number_of_test; n++){
 	//	cout<<predicted_decision[n]<<" ";
