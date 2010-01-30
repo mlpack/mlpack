@@ -1347,7 +1347,13 @@ void MLObjective::ComputePredictionError(double current_sample,
 	double temp_choice_prediction_error_prob=0;
 	double temp_postpone_prediction_error_prob=0;
 	for(index_t n=0; n<number_of_test; n++){
-		temp_choice_prediction_error_prob+=(1-predicted_prob_of_n_choose_i[n]);
+
+		if(true_decision[n]<0) {
+			temp_choice_prediction_error_prob+=(1-0);
+		}
+		else {
+			temp_choice_prediction_error_prob+=(1-predicted_prob_of_n_choose_i[n]);
+		}
 		temp_postpone_prediction_error_prob+=(1-0);
 		//temp_postpone_prediction_error_prob+=(1-postponed_probability_[n]);
 	}
