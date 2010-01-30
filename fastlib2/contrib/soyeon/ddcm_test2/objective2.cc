@@ -1028,10 +1028,6 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 													+(alpha_temp)*(1-alpha_temp)*unknown_x_past_[n].get(0, i)
 													+pow((1-alpha_temp),2)*unknown_x_past_[n].get(1,i);
 				second_stage_x_[n].set(j-1, i, exponential_temp);
-
-				//second_stage_x_[n].set(j-1, i, exponential_temp/(1.005833333) );
-				//second_stage_x_[n].set(j-1, i, exponential_temp*5 );
-				
 				//count+=first_stage_x_[n].n_cols();
 				
 
@@ -1401,9 +1397,6 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 													+(alpha_temp)*(1-alpha_temp)*unknown_x_past_[n].get(0, i)
 													+pow((1-alpha_temp),2)*unknown_x_past_[n].get(1,i);
 				second_stage_x_[n].set(j-1, i, exponential_temp);
-				//second_stage_x_[n].set(j-1, i, exponential_temp/(1.005833333) );
-				//second_stage_x_[n].set(j-1, i, exponential_temp*5 );
-				
 				//count+=first_stage_x_[n].n_cols();
 				
 
@@ -2254,8 +2247,6 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 													+(alpha_temp)*(1-alpha_temp)*unknown_x_past_[n].get(0, i)
 													+pow((1-alpha_temp),2)*unknown_x_past_[n].get(1,i);
 				second_stage_x_[n].set(j-1, i, exponential_temp);
-				//second_stage_x_[n].set(j-1, i, exponential_temp/(1.005833333) );
-				//second_stage_x_[n].set(j-1, i, exponential_temp*5 );
 				//count+=first_stage_x_[n].n_cols();
 				
 
@@ -3447,7 +3438,14 @@ void Objective::ComputePredictionError(double current_sample,
 	double temp_choice_prediction_error_prob=0;
 	double temp_postpone_prediction_error_prob=0;
 	for(index_t n=0; n<number_of_test; n++){
-		temp_choice_prediction_error_prob+=(1-predicted_prob_of_n_choose_i[n]);
+		//temp_choice_prediction_error_prob+=(1-predicted_prob_of_n_choose_i[n]);
+		if(true_decision[n]<0) {
+			temp_choice_prediction_error_prob+=(1-postponed_probability_[n]);
+		}
+		else {
+			temp_choice_prediction_error_prob+=(1-predicted_prob_of_n_choose_i[n]);
+		}
+
 		temp_postpone_prediction_error_prob+=(1-postponed_probability_[n]);
 	}
 	temp_choice_prediction_error_prob*=2;
