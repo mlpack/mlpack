@@ -12,45 +12,31 @@ RunLocalKernelMachines_(Matrix &train_data_local,
 			Vector &train_labels_local,
 			Vector &test_labels_local,
 			double smoothing_kernel_bandwidth,
-			double lambda){
-
+			double lambda, 
+			ArrayList< ArrayList <double> > &
+			smoothing_kernel_values_in_range,
+			ArrayList< ArrayList <int> > &indices_in_range){
   
-  //printf("Smoothing kernel bandwidth=%f..\n",smoothing_kernel_bandwidth);
-
-  //printf("lambda=%f..\n",lambda);
-
   int num_mistakes=0;
-
+  
+  
   // We first start by finding for each test point, points that lie in
   // its sigma neighbourhood.
   
   // get the indices in range and their corresponding kernel values
-  ArrayList< ArrayList <int> > indices_in_range;
-  ArrayList< ArrayList <double> > smoothing_kernel_values_in_range;
+/*   ArrayList< ArrayList <int> > indices_in_range; */
+/*   ArrayList< ArrayList <double> > smoothing_kernel_values_in_range; */
 
-  RangeSearch rs;
-  rs.Init(train_data_local,test_data_local,smoothing_kernel_bandwidth);
-  rs.PerformRangeSearch();
-  rs.get_indices_in_range(indices_in_range);
-  rs.get_smoothing_kernel_values_in_range(smoothing_kernel_values_in_range);
+/*   RangeSearch rs; */
+/*   rs.Init(train_data_local,test_data_local,smoothing_kernel_bandwidth); */
+/*   rs.PerformRangeSearch(); */
+/*   rs.get_indices_in_range(indices_in_range); */
+/*   rs.get_smoothing_kernel_values_in_range(smoothing_kernel_values_in_range); */
 
   //printf("Range search completed...\n");
   
   for(index_t i=0;i<test_data_local.n_cols();i++){
-    
-    //ArrayList<int> indices_in_range;
-    //ArrayList<double> smoothing_kernel_values_in_range;
-    
-    //indices_in_range.Init(20);
-    //smoothing_kernel_values_in_range.Init(20);
-    // FindPointsInNeighbourhood_( train_data_local, 
-    //			 test_data_local.GetColumnPtr(i),  
-    //			 indices_in_range,  
-    //			 smoothing_kernel_values_in_range, 
-    //			 smoothing_kernel_bandwidth);
-    
-    
-    
+     
     // The label local svm will predict
     
     double y_pred_label;
@@ -211,11 +197,24 @@ template <typename TKernel> void LocalKernelMachines< TKernel>::TrainLocalKernel
   // we now have the necessary parameters
     
     printf("Run the code with the optimal parameter setting...\n");
+
+    ArrayList< ArrayList <int> > indices_in_range;
+    ArrayList< ArrayList <double> > smoothing_kernel_values_in_range;
+    
+    RangeSearch rs;
+    rs.Init(train_data_appended,test_data_appended,
+	    optimal_smoothing_kernel_bandwidth_);
+    rs.PerformRangeSearch();
+    rs.get_indices_in_range(indices_in_range);
+    rs.get_smoothing_kernel_values_in_range(smoothing_kernel_values_in_range);
+
     double error_rate=
       RunLocalKernelMachines_(train_data_appended,test_data_appended,
 			      train_labels_vector_,test_labels_vector_,
 			      optimal_smoothing_kernel_bandwidth_,
-			      optimal_lambda_);
+			      optimal_lambda_,
+			      smoothing_kernel_values_in_range,
+			      indices_in_range);
     printf("Final error rate is %f..\n",error_rate);
     printf("optimal_smoothing_kernel_bandwidth=%f...\n",
 	   optimal_smoothing_kernel_bandwidth_);
@@ -223,7 +222,6 @@ template <typename TKernel> void LocalKernelMachines< TKernel>::TrainLocalKernel
 	   optimal_lambda_);
   }
   else{
-    
     
     
     optimal_smoothing_kernel_bandwidth_=
@@ -238,12 +236,26 @@ template <typename TKernel> void LocalKernelMachines< TKernel>::TrainLocalKernel
     printf("lambda=%f..\n",optimal_lambda_);
     printf("Optimal smoothing kernel bandwidth=%f",
 	  optimal_smoothing_kernel_bandwidth_);
-     double error_rate=
-    RunLocalKernelMachines_(train_data_appended,test_data_appended,
-    		      train_labels_vector_,test_labels_vector_,
-    		      optimal_smoothing_kernel_bandwidth_,
-    		      optimal_lambda_);
 
+
+    ArrayList< ArrayList <int> > indices_in_range;
+    ArrayList< ArrayList <double> > smoothing_kernel_values_in_range;
+    
+    RangeSearch rs;
+    rs.Init(train_data_appended,test_data_appended,
+	    optimal_smoothing_kernel_bandwidth_);
+    rs.PerformRangeSearch();
+    rs.get_indices_in_range(indices_in_range);
+    rs.get_smoothing_kernel_values_in_range(smoothing_kernel_values_in_range);
+    
+    double error_rate=
+      RunLocalKernelMachines_(train_data_appended,test_data_appended,
+			      train_labels_vector_,test_labels_vector_,
+			      optimal_smoothing_kernel_bandwidth_,
+			      optimal_lambda_,
+			      smoothing_kernel_values_in_range,
+			      indices_in_range);
+    
     printf("final error rate =%f..\n",error_rate);
     
   }
