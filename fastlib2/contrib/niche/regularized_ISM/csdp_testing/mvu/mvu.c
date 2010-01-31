@@ -109,8 +109,8 @@ int main()
    */
 
   distance_constraints_file =
-    fopen("upper_triangularized_distance_constraints.csv", "r");
-
+    fopen("../../write_cvxmod_program/upper_triangularized_distance_constraints.csv", "r");
+  
   n_points = 0;
   fscanf(distance_constraints_file, "%d %d", &n_points, &n_dist_constraints);
   

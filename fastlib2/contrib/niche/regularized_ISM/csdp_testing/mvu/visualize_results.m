@@ -1,4 +1,4 @@
-X = load('swiss1500.sol_X');
+X = load('swiss1500_csdp.sol_X');
 X = X(:,3:end);
 sparse_K = spconvert(X);
 K = full(sparse_K);
