@@ -100,9 +100,12 @@ class LocalKernelMachines{
 	    Vector &test_labels_vector,struct datanode *module_in);
   
   double RunLocalKernelMachines_(Matrix&, Matrix&, Vector&, 
-				 Vector&, double,double);
-  
-  void FindPointsInNeighbourhood_(Matrix &, double *,ArrayList <index_t>&, ArrayList<double> &,double);
+				 Vector&, double,double,
+				 ArrayList< ArrayList <double> > &,
+				 ArrayList< ArrayList <int> > &);
+    
+  void FindPointsInNeighbourhood_(Matrix &, double *,ArrayList <index_t>&, 
+				  ArrayList<double> &,double);
   
   
 };

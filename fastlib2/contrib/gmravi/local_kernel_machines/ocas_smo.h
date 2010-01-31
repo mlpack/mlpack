@@ -81,6 +81,13 @@ class OCASSMO{
   int position_of_j_in_I1_;
   int position_of_j_in_I2_;
 
+  // flags to check if one of the sets is destructed.
+  
+  int flag_I0_indices_;
+  int flag_I1_indices_;
+  int flag_I2_indices_;
+
+
   int num_dims_;
 
   double eps_;
