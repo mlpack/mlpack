@@ -16,19 +16,22 @@ int main(int argc, char* argv[]) {
   }
   NOTIFY("Loaded data from file %s", data_file.c_str());
 
+  index_t n_points = data.n_cols();
+
+
   if (data::Load(labels_file.c_str(), &labels_mat)==SUCCESS_FAIL) {
     FATAL("Labels file %s not found", labels_file.c_str());
   }
   NOTIFY("Loaded labels from file %s", labels_file.c_str());
 
-  Matrix labels_mat_trans;
-  la::TransposeInit(labels_mat, &labels_mat_trans);
-
   Vector labels;
-  labels_mat_trans.MakeColumnVector(0, &labels);
+  labels.Init(n_points);
+  labels.SetZero();
 
-  //labels.PrintDebug("labels");
-  //data.PrintDebug("data");
+  for(index_t i = 1; i < labels_mat.n_cols(); i++) {
+    labels[i-1] = labels_mat.get(0, i);
+  }
+
  
   AllkNN allknn; 
   NOTIFY("Building reference tree");
@@ -43,7 +46,6 @@ int main(int argc, char* argv[]) {
 
   // Note: Distances are actually squared distances.
 
-  index_t n_points = data.n_cols();
   index_t n_constraints = n_points * knns;
 
   Matrix constraints;
@@ -60,19 +62,6 @@ int main(int argc, char* argv[]) {
   }
 
 
-  FILE* fid = fopen("distance_constraints.csv", "w");
-  fprintf(fid, "%d %d -1\n", n_points, n_constraints);
-  for(index_t i = 0; i < n_constraints; i++) {
-    fprintf(fid, "%d %d %.18e\n",
-	    (int) constraints.get(i, 0),
-	    (int) constraints.get(i, 1),
-	    constraints.get(i, 2));
-  }
-  fclose(fid);
-  
-
-
-
   int killed_constraints = 0;
   for(index_t i = 0; i < n_constraints; i++) {
     if(labels[(int)constraints.get(i, 0)] * labels[(int)constraints.get(i, 1)] < -0.5) {
@@ -85,7 +74,7 @@ int main(int argc, char* argv[]) {
 
 
   // prepare to write python code
-  fid = fopen("problem_x.py", "w");
+  FILE* fid = fopen("problem_x.py", "w");
 
   // import modules
   fprintf(fid, "from cvxmod import *\n");
