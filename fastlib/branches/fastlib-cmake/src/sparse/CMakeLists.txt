@@ -37,15 +37,9 @@ find_path(TRILINOS_INCLUDE_DIR Trilinos_version.h
     PATHS
     ${TRILINOS_BASE_DIR}/include 
     /opt/trilinos/include
+    PATH_SUFFIXES
+    trilinos
 )
-if(NOT TRILINOS_INCLUDE_DIR)
-    # try $includepath/trilinos/
-    find_path(TRILINOS_INCLUDE_DIR trilinos/Trilinos_version.h
-        PATHS
-        ${TRILINOS_BASE_DIR}/include
-        /opt/trilinos/include
-    )
-endif()
 
 if(TRILINOS_INCLUDE_DIR AND TRILINOS_LIBS)
     set(TRILINOS_FOUND "YES")
@@ -54,7 +48,20 @@ else()
 endif()
 mark_as_advanced(TRILINOS_INCLUDE_DIR trilinos_lib)
 
-include_directories( ${TRILINOS_INCLUDE_DIR} )
+find_path(MPI_INCLUDE_DIR mpi.h
+    PATHS
+    /opt/openmpi/include
+    PATH_SUFFIXES
+    mpi
+    openmpi
+)
+if(MPI_INCLUDE_DIR)
+    set(MPI_FOUND "YES")
+else()
+    message(FATAL_ERROR "Couldn't find MPI headers.")
+endif()
+
+include_directories( ${TRILINOS_INCLUDE_DIR} ${MPI_INCLUDE_DIR} )
 ## libs
 #link_directories( ${TRILINOS_LIB_DIR} )
 #set(TRILINOS_LIBS ${TRILINOS_LIBS})
