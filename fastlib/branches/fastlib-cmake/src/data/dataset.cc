@@ -40,10 +40,9 @@
  *
  */
 
-#include "fastlib/base/base.h"
+#include "base/base.h"
 
-#include "fastlib/data/dataset.h"
-//#include "dataset.h"
+#include "dataset.h"
 
 
 void DatasetFeature::Format(double value, String *result) const {
@@ -265,10 +264,7 @@ success_t DatasetInfo::InitFromCsv(TextLineReader *reader,
   } else {
     for (index_t i = 0; i < headers.size(); i++) {
       String name;
-#ifndef LI
-#define LI ""
-#endif
-      name.InitSprintf("feature%"LI"d", i);
+      name.InitSprintf("feature%"LI, i);
       features_.PushBack().InitContinuous(name);
     }
   }

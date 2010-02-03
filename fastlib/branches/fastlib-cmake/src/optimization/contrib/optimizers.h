@@ -40,7 +40,7 @@
 #ifndef OPTIMIZERS_H
 #define OPTIMIZERS_H
 
-#include <fastlib/fastlib.h>
+#include "fastlib.h"
 
 const fx_entry_doc opt_entries[] = {
   {"method", FX_PARAM, FX_STR, NULL,

@@ -29,20 +29,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
-#include "fastlib/col/arraylist.h"
-#include "fastlib/col/heap.h"
-#include "fastlib/col/fastalloc.h"
-#include "fastlib/col/intmap.h"
-#include "fastlib/col/rangeset.h"
-#include "fastlib/col/queue.h"
-//#include "arraylist.h"
-//#include "heap.h"
-//#include "fastalloc.h"
-//#include "intmap.h"
-//#include "rangeset.h"
-//#include "queue.h"
+#include "arraylist.h"
+#include "heap.h"
+#include "fastalloc.h"
+#include "intmap.h"
+#include "rangeset.h"
+#include "queue.h"
 
-#include "fastlib/base/test.h"
+#include "base/test.h"
 
 TEST_SUITE_BEGIN(col)
 

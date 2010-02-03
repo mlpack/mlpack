@@ -38,8 +38,7 @@
 #ifndef COL_RANGESET_H
 #define COL_RANGESET_H
 
-#include "fastlib/col/arraylist.h"
-//#include "arraylist.h"
+#include "arraylist.h"
 
 /**
  * A set containing a union of  [start,end) ranges that are automatically

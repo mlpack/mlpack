@@ -38,9 +38,8 @@
 #ifndef COLLECTIONS_STRING_H
 #define COLLECTIONS_STRING_H
 
-#include "fastlib/base/base.h"
-#include "fastlib/col/arraylist.h"
-//#include "arraylist.h"
+#include "base/base.h"
+#include "arraylist.h"
 
 #include <cstring>
 

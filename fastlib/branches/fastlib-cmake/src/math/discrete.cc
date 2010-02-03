@@ -35,7 +35,7 @@
  * Helpers for discrete math (implementation).
  */
 
-#include "fastlib/math/discrete.h"
+#include "discrete.h"
 //#include "discrete.h"
 
 #include <stdlib.h>

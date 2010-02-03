@@ -38,11 +38,11 @@
 #ifndef DATA_CROSSVALIDATION
 #define DATA_CROSSVALIDATION
 
-#include "fastlib/data/dataset.h"
+#include "dataset.h"
 //#include "dataset.h"
 
-#include "fastlib/la/matrix.h"
-#include "fastlib/fx/fx.h"
+#include "la/matrix.h"
+#include "fx/fx.h"
 
 /**
  * Cross-validator for simple classifiers, integrating tightly with

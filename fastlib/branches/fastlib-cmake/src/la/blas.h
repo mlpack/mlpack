@@ -32,8 +32,8 @@
 #ifndef LA_BLAS_H
 #define LA_BLAS_H
 
-#include "fastlib/base/fortran.h"
-#include "fastlib/base/compiler.h"
+#include "base/fortran.h"
+#include "base/compiler.h"
 namespace la {
 
 EXTERN_C_BEGIN

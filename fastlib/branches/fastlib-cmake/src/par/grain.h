@@ -43,9 +43,9 @@
 #ifndef PAR_GRAIN_H
 #define PAR_GRAIN_H
 
-#include "fastlib/col/heap.h"
+#include "col/heap.h"
 
-#include "fastlib/par/thread.h"
+#include "thread.h"
 //#include "thread.h"
 
 /**

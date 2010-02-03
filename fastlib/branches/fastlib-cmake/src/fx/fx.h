@@ -42,12 +42,12 @@
 #ifndef FX_H
 #define FX_H
 
-#include "fastlib/fx/datanode.h"
-#include "fastlib/fx/stopwatch.h"
+#include "datanode.h"
+#include "stopwatch.h"
 //#include "datanode.h"
 //#include "stopwatch.h"
 
-#include "fastlib/base/common.h"
+#include "base/common.h"
 
 EXTERN_C_BEGIN
 

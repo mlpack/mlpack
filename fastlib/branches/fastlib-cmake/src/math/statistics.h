@@ -38,8 +38,8 @@
 #ifndef MATH_STATISTICS_H
 #define MATH_STATISTICS_H
 
-#include "fastlib/base/base.h"
-#include "fastlib/la/matrix.h"
+#include "base/base.h"
+#include "la/matrix.h"
 #include <math.h>
 
 namespace math {

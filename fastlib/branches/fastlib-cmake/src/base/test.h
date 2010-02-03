@@ -41,7 +41,7 @@
 #ifndef BASE_TEST_H
 #define BASE_TEST_H
 
-#include "fastlib/base/common.h"
+#include "common.h"
 
 /**
  * Make a testing assertion.

@@ -43,17 +43,17 @@
 #ifndef TREE_KDTREE_H
 #define TREE_KDTREE_H
 
-#include "fastlib/base/base.h"
+#include "base/base.h"
 
-#include "fastlib/tree/spacetree.h"
-#include "fastlib/tree/bounds.h"
+#include "spacetree.h"
+#include "bounds.h"
 //#include "spacetree.h"
 //#include "bounds.h"
 
-#include "fastlib/col/arraylist.h"
-#include "fastlib/fx/fx.h"
+#include "col/arraylist.h"
+#include "fx/fx.h"
 
-#include "fastlib/tree/kdtree_impl.h"
+#include "kdtree_impl.h"
 //#include "kdtree_impl.h"
 
 /**

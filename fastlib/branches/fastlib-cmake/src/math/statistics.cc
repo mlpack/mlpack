@@ -35,7 +35,7 @@
  * Implementation for statistics helpers.
  */
 
-#include "fastlib/math/statistics.h"
+#include "statistics.h"
 #include <math.h>
 //#include "statistics.h"
 

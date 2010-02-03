@@ -38,9 +38,9 @@
 #ifndef MATH_KERNEL_H
 #define MATH_KERNEL_H
 
-#include "fastlib/base/base.h"
-#include "fastlib/math/geometry.h"
-#include "fastlib/math/math_lib.h"
+#include "base/base.h"
+#include "geometry.h"
+#include "math_lib.h"
 
 #include <math.h>
 

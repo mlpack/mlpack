@@ -35,7 +35,7 @@
  * Implementations for bare-necessities FASTlib programming in C.
  */
 
-#include "fastlib/base/common.h"
+#include "common.h"
 
 #include <stdarg.h>
 #include <unistd.h>

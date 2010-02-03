@@ -38,8 +38,8 @@
 #ifndef MATH_DISCRETE_H
 #define MATH_DISCRETE_H
 
-#include "fastlib/base/base.h"
-#include "fastlib/col/arraylist.h"
+#include "base/base.h"
+#include "col/arraylist.h"
 
 #include <math.h>
 

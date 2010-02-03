@@ -54,8 +54,8 @@
 #include <limits>
 #include <vector>
 #include <map>
-#include "fastlib/fastlib.h"
-#include "fastlib/base/test.h"
+#include "fastlib.h"
+#include "base/test.h"
 #include "sparse_matrix.h"
 
 class SparseMatrixTest {

@@ -41,9 +41,9 @@
 #ifndef BASE_CCMEM_H
 #define BASE_CCMEM_H
 
-#include "fastlib/base/common.h"
-#include "fastlib/base/debug.h"
-#include "fastlib/base/cc.h"
+#include "common.h"
+#include "debug.h"
+#include "cc.h"
 
 #include <new>
 

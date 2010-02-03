@@ -35,7 +35,7 @@
  * Default variable settings for debug options.
  */
 
-#include "fastlib/base/debug.h"
+#include "debug.h"
 
 double verbosity_level = 0.0;
 int print_got_heres = 1;

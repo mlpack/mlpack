@@ -35,12 +35,12 @@
  * Tests for LAPACK integration.
  */
 
-#include "fastlib/base/test.h"
+#include "base/test.h"
 
-#include "fastlib/la/uselapack.h"
+#include "uselapack.h"
 //#include "uselapack.h"
 
-#include "fastlib/la/la.h"
+#include "la.h"
 //#include "la.h"
 TEST_SUITE_BEGIN(uselapack);
 

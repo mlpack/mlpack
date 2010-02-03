@@ -38,8 +38,8 @@
 #ifndef LA_CLAPACK_H
 #define LA_CLAPACK_H
 
-#include "fastlib/base/fortran.h"
-#include "fastlib/base/compiler.h"
+#include "base/fortran.h"
+#include "base/compiler.h"
 namespace la {
 EXTERN_C_BEGIN
 

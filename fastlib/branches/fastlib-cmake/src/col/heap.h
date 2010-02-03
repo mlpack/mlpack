@@ -38,8 +38,7 @@
 #ifndef COLLECTIONS_HEAP_H
 #define COLLECTIONS_HEAP_H
 
-#include "fastlib/col/arraylist.h"
-//#include "arraylist.h"
+#include "arraylist.h"
 
 /**
  * Priority queue implemented as a heap.

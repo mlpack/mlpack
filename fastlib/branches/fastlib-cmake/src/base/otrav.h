@@ -41,10 +41,10 @@
 #ifndef BASE_OTRAV_H
 #define BASE_OTRAV_H
 
-#include "fastlib/base/common.h"
-#include "fastlib/base/debug.h"
-#include "fastlib/base/cc.h"
-#include "fastlib/base/ccmem.h"
+#include "common.h"
+#include "debug.h"
+#include "cc.h"
+#include "ccmem.h"
 
 #include <typeinfo>
 
@@ -1486,7 +1486,7 @@
 
 
 #define NEED_OTRAV_IMPL
-#include "fastlib/base/otrav_impl.h"
+#include "otrav_impl.h"
 #undef NEED_OTRAV_IMPL
 
 
