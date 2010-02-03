@@ -38,9 +38,9 @@
 #ifndef LA_USELAPACK_H
 #define LA_USELAPACK_H
 
-#include "fastlib/la/matrix.h"
+#include "matrix.h"
 //#include "matrix.h"
-#include "fastlib/col/arraylist.h"
+#include "col/arraylist.h"
 
 #define DEBUG_VECSIZE(a, b) \
     DEBUG_SAME_SIZE((a).length(), (b).length())
@@ -70,8 +70,8 @@
 #endif
 
 #ifdef USE_LAPACK
-#include "fastlib/la/blas.h"
-#include "fastlib/la/clapack.h"
+#include "blas.h"
+#include "clapack.h"
 //#include "blas.h"
 //#include "clapack.h"
 #endif

@@ -49,7 +49,7 @@
 #ifndef BASE_DEBUG_H
 #define BASE_DEBUG_H
 
-#include "fastlib/base/common.h"
+#include "common.h"
 
 /**
  * Performs an expression only in debug mode.

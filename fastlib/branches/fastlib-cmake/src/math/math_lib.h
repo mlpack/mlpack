@@ -38,7 +38,7 @@
 #ifndef MATH_MATH_LIB_H
 #define MATH_MATH_LIB_H
 
-#include "fastlib/base/base.h"
+#include "base/base.h"
 
 #include <math.h>
 
@@ -143,7 +143,7 @@ namespace math {
   }
 };
 
-#include "fastlib/math/math_lib_impl.h"
+#include "math_lib_impl.h"
 //#include "math_lib_impl.h"
 
 namespace math {
@@ -537,9 +537,9 @@ struct DRange {
   }
 };
 
-#include "fastlib/math/discrete.h"
-#include "fastlib/math/kernel.h"
-#include "fastlib/math/geometry.h"
+#include "discrete.h"
+#include "kernel.h"
+#include "geometry.h"
 //#include "discrete.h"
 //#include "kernel.h"
 //#include "geometry.h"

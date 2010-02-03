@@ -35,7 +35,7 @@
  * Implementation of the thread abstraction.
  */
 
-#include "fastlib/par/thread.h"
+#include "thread.h"
 //#include "thread.h"
 
 Mutex Mutex::global;

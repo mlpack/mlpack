@@ -35,8 +35,8 @@
  * Implementations for bare-necessities FASTlib programming in C++.
  */
 
-#include "fastlib/base/cc.h"
-#include "fastlib/base/debug.h"
+#include "cc.h"
+#include "debug.h"
 //#include "cc.h"
 //#include "debug.h"
 

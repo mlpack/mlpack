@@ -35,7 +35,7 @@
  * Implementation for path-based string data storage.
  */
 
-#include "fastlib/fx/datanode.h"
+#include "datanode.h"
 /*#include "datanode.h"*/
 
 #ifndef LINE_MAX

@@ -46,13 +46,13 @@
 
 //#include "common.h"
 //#include "debug.h"
-#include "fastlib/base/common.h"
-#include "fastlib/base/debug.h"
+#include "common.h"
+#include "debug.h"
 
 #ifdef __cplusplus
-#include "fastlib/base/cc.h"
-#include "fastlib/base/ccmem.h"
-#include "fastlib/base/otrav.h"
+#include "cc.h"
+#include "ccmem.h"
+#include "otrav.h"
 //#include "cc.h"
 //#include "ccmem.h"
 //#include "otrav.h"

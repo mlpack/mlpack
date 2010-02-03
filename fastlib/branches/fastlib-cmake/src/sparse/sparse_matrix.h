@@ -19,8 +19,8 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
-#include "fastlib/fastlib.h"
-#include "fastlib/la/matrix.h"
+#include "fastlib.h"
+#include "la/matrix.h"
 // you need this because trillinos redifines it. It's ok
 // if you don't have it, but you will get an annoying warning
 #ifdef F77_FUNC
@@ -518,5 +518,5 @@ class Sparsem {
                                  const SparseMatrix &b,
                                  SparseMatrix *result);
 }; 
-#include "fastlib/sparse/sparse_matrix_impl.h"
+#include "sparse/sparse_matrix_impl.h"
 #endif

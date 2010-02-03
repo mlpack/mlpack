@@ -38,9 +38,9 @@
 #ifndef LA_MATRIX_H
 #define LA_MATRIX_H
 
-#include "fastlib/base/base.h"
+#include "base/base.h"
 #ifndef DISABLE_DISK_MATRIX
-#include "fastlib/mmanager/memory_manager.h"
+#include "mmanager/memory_manager.h"
 #endif
 
 #include <stdlib.h>

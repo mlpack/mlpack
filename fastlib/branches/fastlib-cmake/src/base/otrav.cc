@@ -36,7 +36,7 @@
  * is constrained to printer formats.
  */
 
-#include "fastlib/base/otrav.h"
+#include "otrav.h"
 //#include "otrav.h"
 
 void ot::StandardFormat::PrintIndent_() {

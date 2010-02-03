@@ -35,10 +35,10 @@
  * Definitions for integration with the experiment-running system.
  */
 
-#include "fastlib/fx/fx.h"
+#include "fx.h"
 /*#include "fx.h"*/
 
-#include "fastlib/base/debug.h"
+#include "base/debug.h"
 
 #include <stdarg.h>
 #include <unistd.h>

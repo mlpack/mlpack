@@ -38,7 +38,7 @@
 #ifndef COL_INTMAP_H
 #define COL_INTMAP_H
 
-#include "fastlib/base/base.h"
+#include "base/base.h"
 
 /**
  * A dense grow-as-needed array that serves as an integer-keyed map.

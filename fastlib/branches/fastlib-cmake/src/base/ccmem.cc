@@ -38,7 +38,7 @@
  * @see namespace mem
  */
 
-#include "fastlib/base/ccmem.h"
+#include "ccmem.h"
 
 const int32 mem__private::BIG_BAD_BUF[] = {
   BIG_BAD_NUMBER,

@@ -35,10 +35,8 @@
  * Non-templated implementations of various collections.
  */
 
-#include "fastlib/col/arraylist.h"
-#include "fastlib/col/col_string.h"
-//#include "arraylist.h"
-//#include "col_string.h"
+#include "arraylist.h"
+#include "col_string.h"
 
 #include <stdarg.h>
 

@@ -40,8 +40,8 @@
 #ifndef TREE_SPACETREE_H
 #define TREE_SPACETREE_H
 
-#include "fastlib/base/base.h"
-#include "fastlib/tree/statistic.h"
+#include "base/base.h"
+#include "statistic.h"
 //#include "statistic.h"
 
 /**

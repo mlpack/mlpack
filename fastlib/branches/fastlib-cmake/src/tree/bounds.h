@@ -43,10 +43,10 @@
 #ifndef TREE_BOUNDS_H
 #define TREE_BOUNDS_H
 
-#include "fastlib/la/matrix.h"
-#include "fastlib/la/la.h"
+#include "la/matrix.h"
+#include "la/la.h"
 
-#include "fastlib/math/math_lib.h"
+#include "math/math_lib.h"
 
 /**
  * Hyper-rectangle bound for an L-metric.

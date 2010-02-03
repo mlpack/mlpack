@@ -35,8 +35,8 @@
  * implementstion of the LAPACK wrappers.
  */
 
-#include "fastlib/la/uselapack.h"
-#include "fastlib/la/la.h"
+#include "uselapack.h"
+#include "la.h"
 //#include "uselapack.h"
 //#include "la.h"
 

@@ -37,10 +37,10 @@
 #ifndef PAR_THREAD_H
 #define PAR_THREAD_H
 
-#include "fastlib/par/task.h"
+#include "task.h"
 //#include "task.h"
 
-#include "fastlib/base/base.h"
+#include "base/base.h"
 
 #include <pthread.h>
 

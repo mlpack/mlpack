@@ -35,9 +35,9 @@
  * Implementation for geometry helpers.
  */
 
-#include "fastlib/math/geometry.h"
-#include "fastlib/math/discrete.h"
-#include "fastlib/math/math_lib.h"
+#include "geometry.h"
+#include "discrete.h"
+#include "math_lib.h"
 //#include "geometry.h"
 //#include "discrete.h"
 //#include "math_lib.h"

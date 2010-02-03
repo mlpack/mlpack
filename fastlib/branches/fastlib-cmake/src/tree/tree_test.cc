@@ -35,10 +35,10 @@
  * Tests for LAPACK integration.
  */
 
-#include "fastlib/tree/bounds.h"
+#include "bounds.h"
 //#include "bounds.h"
 
-#include "fastlib/base/test.h"
+#include "base/test.h"
 
 TEST_SUITE_BEGIN(uselapack);
 

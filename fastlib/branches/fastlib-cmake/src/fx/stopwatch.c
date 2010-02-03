@@ -35,10 +35,10 @@
  * Definitions for timer utilities.
  */
 
-#include "fastlib/fx/stopwatch.h"
+#include "stopwatch.h"
 /*#include "stopwatch.h"*/
 
-#include "fastlib/base/debug.h"
+#include "base/debug.h"
 
 #include <unistd.h>
 #include <time.h>

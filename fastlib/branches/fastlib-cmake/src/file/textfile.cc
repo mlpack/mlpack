@@ -40,7 +40,7 @@
  *
  */
 
-#include "fastlib/file/textfile.h"
+#include "textfile.h"
 //#include "textfile.h"
 
 #include <ctype.h>
@@ -289,7 +289,7 @@ void TextTokenizer::Error(const char *format, ...) {
 void TextTokenizer::Error_(const char *msg, const ArrayList<char>& token) {
   next_type_ = INVALID;
   
-  printf("size is %"LI"d, token[0] = %d\n", token.size(), token[0]);
+  printf("size is %"LI", token[0] = %d\n", token.size(), token[0]);
   next_.Copy(token.begin(), token.size());
   Error("%s", msg);
   next_.Destruct();

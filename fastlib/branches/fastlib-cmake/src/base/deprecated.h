@@ -38,7 +38,7 @@
 #ifndef BASE_DEPRECATED_H
 #define BASE_DEPRECATED_H
 
-#include "fastlib/base/base.h"
+#include "base.h"
 
 /* common.h */
 #define print_notify_headers print_notify_locs

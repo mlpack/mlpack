@@ -29,9 +29,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
-#include "fastlib/file/textfile.h"
+#include "textfile.h"
 //#include "textfile.h"
-#include "fastlib/base/test.h"
+#include "base/test.h"
 
 #include <math.h>
 

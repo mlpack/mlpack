@@ -37,7 +37,7 @@
 #ifndef BASE_CC_H
 #define BASE_CC_H
 
-#include "fastlib/base/common.h"
+#include "common.h"
 
 #include <algorithm>
 #include <limits>

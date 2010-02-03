@@ -40,12 +40,12 @@
 #ifndef LINEAR_H
 #define LINEAR_H
 
-#include "fastlib/la/matrix.h"
-#include "fastlib/la/uselapack.h"
+#include "matrix.h"
+#include "uselapack.h"
 //#include "matrix.h"
 //#include "uselapack.h"
 
-#include "fastlib/math/math_lib.h"
+#include "math/math_lib.h"
 
 #include <math.h>
 
