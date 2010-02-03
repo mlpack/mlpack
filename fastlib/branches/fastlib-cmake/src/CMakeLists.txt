@@ -16,12 +16,13 @@ add_definitions( -DDISABLE_DISK_MATRIX )
 #SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(FASTLIB_INCLUDE_DIRS 
-    #${FASTLIB_SOURCE_DIR}
-    ${FASTLIB_SOURCE_DIR}/.. 
+    ${FASTLIB_SOURCE_DIR}
+    #${FASTLIB_SOURCE_DIR}/.. 
     #${FASTLIB_SOURCE_DIR}/base/config  # standardize #includes
     #${FASTLIB_BINARY_DIR}/..
     ${FASTLIB_BINARY_DIR}
 )
+message( ${FASTLIB_INCLUDE_DIRS})
 include_directories( ${FASTLIB_INCLUDE_DIRS} )
 #TODO link_directories()
 
