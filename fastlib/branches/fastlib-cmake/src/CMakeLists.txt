@@ -22,7 +22,6 @@ set(FASTLIB_INCLUDE_DIRS
     #${FASTLIB_BINARY_DIR}/..
     ${FASTLIB_BINARY_DIR}
 )
-message( ${FASTLIB_INCLUDE_DIRS})
 include_directories( ${FASTLIB_INCLUDE_DIRS} )
 #TODO link_directories()
 
