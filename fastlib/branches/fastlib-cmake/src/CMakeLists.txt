@@ -40,7 +40,7 @@ if(FASTLIB_WITH_SPARSE)
 endif(FASTLIB_WITH_SPARSE)
 
 foreach(dir ${DIRS})
-  add_subdirectory( ${dir} fastlib/${dir} )
+  add_subdirectory( ${dir} )
 endforeach()
   
 set_source_files_properties(${CMAKE_BINARY_DIR}/fastlib/base/basic_types.h 
