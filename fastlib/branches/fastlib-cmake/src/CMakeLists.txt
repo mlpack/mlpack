@@ -9,6 +9,9 @@ find_package(LAPACK REQUIRED)
 
 #include(CMake/FastlibMacros.cmake)
 
+# distclean option because cmake doesn't support it
+include( CMake/TargetDistclean.cmake OPTIONAL )
+
 ## Global compiler flags (dep. on platform TODO)
 add_definitions( -DDISABLE_DISK_MATRIX )
 
