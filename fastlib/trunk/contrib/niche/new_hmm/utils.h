@@ -298,6 +298,26 @@ void NormalizeKernelMatrix(Matrix* p_kernel_matrix) {
   }
 }
 
+void NormalizeKernelMatrixLog(Matrix* p_kernel_matrix_log) {
+  Matrix &kernel_matrix_log = *p_kernel_matrix_log;
+  
+  int n_points = kernel_matrix_log.n_rows();
+  
+  Vector half_diag;
+  half_diag.Init(n_points);
+  for(int i = 0; i < n_points; i++) {
+    half_diag[i] = 0.5 * kernel_matrix_log.get(i, i);
+  }
+  for(int i = 0; i < n_points; i++) {
+    for(int j = 0; j < n_points; j++) {
+      kernel_matrix_log.set(j, i,
+			    exp(kernel_matrix_log.get(j, i)
+				- half_diag[i] - half_diag[j]));
+    }
+  }
+}
+
+
 
 double LogSumExp(double x, double y) {
   if(x > y) {
@@ -337,6 +357,29 @@ double LogSumExp(const Vector &x) {
     return max + log(sum);
   }
 }
+
+double LogSumExp(const double* x, int n_dims) {
+
+  double max = -std::numeric_limits<double>::max();
+  
+  for(int i = 0; i < n_dims; i++) {
+    if(unlikely(x[i] > max)) {
+      max = x[i];
+    }
+  }
+
+  if(max == NEG_INFTY) {
+    return NEG_INFTY;
+  }
+  else {
+    double sum = 0;
+    for(int i = 0; i < n_dims; i++) {
+      sum += exp(x[i] - max);
+    }
+    return max + log(sum);
+  }
+}
+
     
 
 double LogSumMapExpVectors(const Vector &a, const Vector &b) {
@@ -378,18 +421,62 @@ void LogMatrixMultiplyOverwrite(const Matrix &A,
   index_t n_At_cols = At.n_cols();
   index_t n_B_cols = B.n_cols();
 
-  for(int i = 0; i < n_At_cols; i++) {
-    Vector A_i;
-    At.MakeColumnVector(i, &A_i);
-
-    for(int k = 0; k < n_B_cols; k++) {
-      Vector B_k;
-      B.MakeColumnVector(k, &B_k);
-
+  for(int k = 0; k < n_B_cols; k++) {
+    Vector B_k;
+    B.MakeColumnVector(k, &B_k);
+    
+    for(int i = 0; i < n_At_cols; i++) {
+      Vector A_i;
+      At.MakeColumnVector(i, &A_i);
+      
       C.set(i, k, LogSumMapExpVectors(A_i, B_k));
     }
   }
 }
+
+void LogMatrixMultiplyATransOverwrite(const Matrix &At,
+				      const Matrix &B,
+				      Matrix* p_C) {
+  Matrix& C = *p_C;
+
+  index_t n_At_cols = At.n_cols();
+  index_t n_B_cols = B.n_cols();
+
+  for(int k = 0; k < n_B_cols; k++) {
+    Vector B_k;
+    B.MakeColumnVector(k, &B_k);
+    
+    for(int i = 0; i < n_At_cols; i++) {
+      Vector A_i;
+      At.MakeColumnVector(i, &A_i);
+      
+      C.set(i, k, LogSumMapExpVectors(A_i, B_k));
+    }
+  }
+}
+
+void LogMatrixMultiplyATransOverwriteResultTrans(const Matrix &At,
+						 const Matrix &B,
+						 Matrix* p_Ct) {
+  Matrix& Ct = *p_Ct;
+
+  index_t n_At_cols = At.n_cols();
+  index_t n_B_cols = B.n_cols();
+
+  for(int i = 0; i < n_At_cols; i++) {
+    Vector A_i;
+    At.MakeColumnVector(i, &A_i);
+  
+    for(int k = 0; k < n_B_cols; k++) {
+      Vector B_k;
+      B.MakeColumnVector(k, &B_k);
+      
+      Ct.set(k, i, LogSumMapExpVectors(A_i, B_k));
+    }
+  }
+}
+
+
 
 void LogMatrixMultiplyATransOverwrite(const Matrix &At,
 				      const Vector &x,
