@@ -14,8 +14,8 @@ void LoadTimeSeries(const char* filename, Vector* p_time_series) {
   }
 }
 
-double ComputeDTWAlignmentScore(const Vector &x, const Vector &y,
-				ArrayList< GenVector<int> >* p_best_path) {
+double ComputeDTWAlignmentScore(const Vector &x, const Vector &y, 
+  				ArrayList< GenVector<int> >* p_best_path) {
   ArrayList< GenVector<int> > &best_path = *p_best_path;
 
   int n_x = x.length();
@@ -65,7 +65,7 @@ double ComputeDTWAlignmentScore(const Vector &x, const Vector &y,
 
   // reconstruct best path through a trace back
   
-  best_path.Init(0, n_x + n_y + 2);
+  best_path.Init();
   
   int cur_i = n_x;
   int cur_j = n_y;
@@ -95,7 +95,8 @@ double ComputeDTWAlignmentScore(const Vector &x, const Vector &y,
       cur_j--;
     }
   }
-
+  
+  
   printf("best path length = %d\n", best_path.size());
   printf("path_length = %d\n", path_length);
   
