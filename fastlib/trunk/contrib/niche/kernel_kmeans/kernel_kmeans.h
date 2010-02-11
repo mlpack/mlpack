@@ -70,7 +70,7 @@ class KernelKmeans {
 
     double sum_weights[k_];
     char info[100];
-    int max_iterations = 5;
+    int max_iterations = 100;
     
     for(int iteration = 0; iteration < max_iterations; iteration++) {
     
@@ -100,7 +100,7 @@ class KernelKmeans {
 
       for(int a = 0; a < n_points_; a++) {
 	int min_dist_cluster = -1;
-	double min_dist = INT_MAX;
+	double min_dist = DBL_MAX;
 
 	for(int c = 0; c < k_; c++) {
 	  int n_points_in_cluster = old_cluster_sizes[c];
@@ -131,6 +131,7 @@ class KernelKmeans {
 	    min_dist_cluster = c;
 	  }
 	}
+	
 	
 	current_clusters[min_dist_cluster][current_cluster_sizes[min_dist_cluster]] = a;
 	current_cluster_sizes[min_dist_cluster]++;

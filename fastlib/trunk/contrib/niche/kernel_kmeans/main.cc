@@ -53,9 +53,11 @@ int main(int argc, char *argv[]) {
   }
   */
 
-  Matrix kernel_matrix;
-  data::Load("../hshmm/kernel_matrix.csv", &kernel_matrix);
+  const char* kernel_matrix_filename = fx_param_str_req(NULL, "k_filename");
 
+  Matrix kernel_matrix;
+  data::Load(kernel_matrix_filename, &kernel_matrix);
+  //la::Scale(1000, &kernel_matrix);
 
   int n_points;
   n_points = kernel_matrix.n_cols();
@@ -76,6 +78,23 @@ int main(int argc, char *argv[]) {
   for(int i = 0; i < n_points; i++) {
     printf("%d\n", cluster_memberships[i]);
   }
+
+  int n_matches = 0;
+  for(int i = 0; i < (n_points / 2); i++) {
+    n_matches += (cluster_memberships[i] == 1);
+  }
+  for(int i = (n_points / 2); i < n_points; i++) {
+    n_matches += (cluster_memberships[i] == 0);
+  }
+
+  if(n_matches < (n_points / 2)) {
+    n_matches = n_points - n_matches;
+  }
+
+  printf("%d correct cluster assignments out of %d points\n",
+	 n_matches, n_points);
+  printf("Accuracy: %f\n", ((double)n_matches) / ((double)n_points));
+    
     
   
   fx_done(root);
