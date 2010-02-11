@@ -122,7 +122,7 @@ class ArrayList {
    */
   Elem *InitRaw(index_t size, index_t cap) {
     ARRAYLIST__DEBUG_INIT_OK(this, size, cap);
-    ptr_ = mem::Alloc<Elem>(size);
+    ptr_ = mem::Alloc<Elem>(cap); // cap used to be size - nishant
     size_ = size;
     cap_ = cap;
     return ptr_;
