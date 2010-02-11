@@ -57,7 +57,3 @@ for k = 1:size(X, 1)
 end
 
 fclose(fid);
-
-  
-  
-   

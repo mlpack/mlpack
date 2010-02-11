@@ -67,7 +67,8 @@ int main()
   double* labels;
   FILE* labels_file;
   
-  double lambda_k = 0.001;
+  double lambda_w = 1000;
+  double lambda_k = 1;
   double lambda_s = 1;
 
   /*
@@ -175,7 +176,7 @@ int main()
       }
     }
   }
-  C.blocks[1].data.mat[ijtok(n_points_w, n_points_w, n_points_w)] = -1;
+  C.blocks[1].data.mat[ijtok(n_points_w, n_points_w, n_points_w)] = -lambda_w;
 
   
   C.blocks[2].blockcategory = DIAG;
