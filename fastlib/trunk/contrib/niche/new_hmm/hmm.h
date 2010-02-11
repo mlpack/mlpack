@@ -1073,11 +1073,13 @@ class HMM {
       printf("\n");
     }
     */
+    /*
     printf("best path\n");
     for(int i = 0; i < best_path.length(); i++) {
       printf("%d ", best_path[i]);
     }
     printf("\n");
+    */
     
   }
 

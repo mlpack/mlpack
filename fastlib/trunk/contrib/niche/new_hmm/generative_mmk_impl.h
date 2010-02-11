@@ -58,13 +58,38 @@ double GenerativeMMK(double lambda,
     double mu_diff = x.mu()[i] - y.mu()[i];
     sum += (mu_diff * mu_diff) * normalization_factors[i];
   }
-  sum *= -lambda / 2;
   
   return global_normalization_factor * exp(sum * -lambda / 2);
 }
 
 
-// TODO: create log probability equivalent of this function
+double GenerativeMMKLog(double lambda,
+			const DiagGaussian &x,
+			const DiagGaussian &y) {
+
+  int n_dims = x.n_dims();    
+
+  Vector normalization_factors;
+  normalization_factors.Init(n_dims);
+  for(int i = 0; i < n_dims; i++) {
+    normalization_factors[i] = (1 + lambda * (x.sigma()[i] + y.sigma()[i]));
+  }
+
+  double sum = 0;
+  for(int i = 0; i < n_dims; i++) {
+    double mu_diff = x.mu()[i] - y.mu()[i];
+    sum += (mu_diff * mu_diff) / normalization_factors[i];
+  }
+  sum *= lambda;
+
+  for(int i = 0; i < n_dims; i++) {
+    sum += log(normalization_factors[i]);
+  }
+
+  return sum / ((double)(-2));
+}
+
+
 template <typename TDistribution>
 double GenerativeMMK(double lambda, int n_T,
 		     const HMM<TDistribution> &hmm_a,
@@ -126,6 +151,65 @@ double GenerativeMMK(double lambda, int n_T,
   }
   return sum;
 }
+
+template <typename TDistribution>
+double GenerativeMMKLog(double lambda, int n_T,
+		     const HMM<TDistribution> &hmm_a,
+		     const HMM<TDistribution> &hmm_b) {
+  
+  int n1 = hmm_a.n_states();
+  int n2 = hmm_b.n_states();
+  
+  Matrix psi;
+  psi.Init(n2, n1);
+  for(int i1 = 0; i1 < n1; i1++) {
+    for(int i2 = 0; i2 < n2; i2++) {
+      psi.set(i2, i1,
+	      GenerativeMMKLog(lambda,
+			    hmm_a.state_distributions[i1],
+			    hmm_b.state_distributions[i2]));
+    }/////////////////////
+  }
+
+  Matrix phi;
+  phi.Init(n2, n1);
+  //double unif1 = log(((double)1) / ((double)n1));
+  //double unif2 = log(((double)2) / ((double)n2));
+  for(int i1 = 0; i1 < n1; i1++) {
+    for(int i2 = 0; i2 < n2; i2++) {
+      phi.set(i2, i1,
+	      hmm_a.p_initial[i1] + hmm_b.p_initial[i2]);//unif1 + unif2);
+    }
+  }
+
+  for(int i1 = 0; i1 < n1; i1++) {
+    for(int i2 = 0; i2 < n2; i2++) {
+      phi.set(i2, i1, phi.get(i2, i1) + psi.get(i2, i1));
+    }
+  }
+
+  Matrix transition2_transpose;
+  la::TransposeInit(hmm_b.p_transition, &transition2_transpose);
+
+  Matrix temp1_trans;
+  temp1_trans.Init(n1, n2);
+
+  // main iteration
+  for(int t = 1; t <= n_T; t++) {
+    LogMatrixMultiplyATransOverwriteResultTrans(hmm_b.p_transition, phi, &temp1_trans);
+    LogMatrixMultiplyATransOverwrite(temp1_trans, hmm_a.p_transition, &phi);
+    for(int i1 = 0; i1 < n1; i1++) {
+      for(int i2 = 0; i2 < n2; i2++) {
+	phi.set(i2, i1, phi.get(i2, i1) + psi.get(i2, i1));
+      }
+    }
+  }
+
+  double sum = LogSumExp(phi.ptr(), n1 * n2);
+
+  return sum;
+}
+
 
 double GenerativeMMK(double lambda, double rho, int n_T,
 		     const HMM<Multinomial> &hmm_a,
@@ -254,6 +338,30 @@ void GenerativeMMKBatch(double lambda, int n_T,
     }
   }
 }
+
+template <typename TDistribution>
+void GenerativeMMKBatchLog(double lambda, int n_T,
+			   const ArrayList<HMM<TDistribution> > &hmms,
+			   Matrix *p_kernel_matrix_log) {
+  Matrix &kernel_matrix_log = *p_kernel_matrix_log;
+
+  int n_hmms = hmms.size();
+  
+  kernel_matrix_log.Init(n_hmms, n_hmms);
+  for(int i = 0; i < n_hmms; i++) {
+    printf("%f%%\n", 100.0 * ((double)(i + 1)) / ((double)n_hmms));
+    for(int j = i; j < n_hmms; j++) {
+      double gmmk = 
+	GenerativeMMKLog(lambda, n_T, hmms[i], hmms[j]);
+
+      kernel_matrix_log.set(j, i, gmmk);
+      if(i != j) {
+	kernel_matrix_log.set(i, j, gmmk);
+      }
+    }
+  }
+}
+
 
 void GenerativeMMKBatch(double lambda, double rho, int n_T,
 			const ArrayList<HMM<Multinomial> > &hmms,
