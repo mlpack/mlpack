@@ -32,6 +32,22 @@ class SpikeSeqPair {
   ArrayList<Spike> all_spikes;
   int tau_; // dependence horizon
 
+  void RandPerm(Vector* p_x) {
+    Vector &x = *p_x;
+
+    int length =- x.length();
+    int length_minus_1 = length - 1;
+    
+    int swap_index;
+    double temp;
+    for(int i = 0; i < length_minus_1; i++) {
+      swap_index = (rand() % (length - i)) + i;
+      temp = x[i];
+      x[i] = x[swap_index];
+      x[swap_index] = temp;
+    }
+  }
+    
   void LoadVector(const char* filename, Vector* vector) {
     ArrayList<double> linearized;
     linearized.Init();
@@ -171,7 +187,8 @@ class SpikeSeqPair {
     Merge();
   }
 
-
+  //void Init() {
+  // }
 
   void PrintAllSpikes() {
     for(int i = 0; i < all_spikes.size(); i++) {
@@ -186,42 +203,6 @@ class SpikeSeqPair {
     }
   }
 
-  /*
-  void XRef() {
-    int cur_x = x_.length() - 1;
-    int cur_y = y_.length() - 1;
-
-    int n_gap = 0;
-    printf("(%d,%d) %d\n", cur_x, cur_y, n_gap);
-    while(x_[cur_x] <= y_[cur_y]) {
-      n_gap++;
-      cur_y--;
-      printf("(%d,%d) %d\n", cur_x, cur_y, n_gap);
-    }
-
-    while(n_gap < tau_) {
-      if(cur_y == -1 || cur_x <= 0) {
-	FATAL("Dependence horizon is too large for the spike sequences. Decrease it.");
-      }
-      cur_x--;
-      printf("(%d,%d) %d\n", cur_x, cur_y, n_gap);
-     
-      while(x_[cur_x] <= y_[cur_y]) {
-	n_gap++;
-	cur_y--;
-	printf("(%d,%d) %d\n", cur_x, cur_y, n_gap);
-	if(cur_y == -1) {
-	  break;
-	}
-      } 
-    }
-
-    printf("cur_x by y constraints = %d\n", cur_x);
-
-
-  }
-  */
-
   void ConstructPoints(Matrix* x_ref_primary_points,
 		       Matrix* x_ref_secondary_points,
 		       Matrix* y_ref_primary_points,
@@ -233,6 +214,27 @@ class SpikeSeqPair {
 			      y_ref_primary_points, y_ref_secondary_points);
   }
 
+  void CreatePermutation(SpikeSeqPair* p_permed_pair) {
+    SpikeSeqPair &permed_pair = *p_permed_pair;
+    //permed_pair.Init();
+    permed_pair.x_.Copy(x_);
+    int y_len = y_.length();
+    Vector y_isi;
+    y_isi.Init(y_len - 1);
+    for(int i = 1; i < y_len; i++) {
+      y_isi[i] = y_[i] - y_[i-1];
+    }
+
+    RandPerm(&y_isi);
+    permed_pair.y_.Init(y_len);
+    permed_pair.y_[0] = y_[0];
+    for(int i = 1; i < y_len; i++) {
+      permed_pair.y_[i] = permed_pair.y_[i-1] + y_isi[i];
+    }
+
+    permed_pair.tau_ = tau_;
+    permed_pair.Merge();
+  }
 
 };
 
