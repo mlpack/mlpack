@@ -4,3 +4,10 @@ binrule(
     headers = ["dtw.h"],
     deplibs = ["fastlib:fastlib"]
     )
+
+binrule(
+    name = "test_arraylist",
+    sources = ["test_arraylist.cc"],
+    headers = [],
+    deplibs = ["fastlib:fastlib"]
+    )
