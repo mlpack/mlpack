@@ -14,12 +14,17 @@ void LoadTimeSeries(const char* filename, Vector* p_time_series) {
   }
 }
 
-double ComputeDTWAlignmentScore(const Vector &x, const Vector &y, 
+double ComputeDTWAlignmentScore(int b,
+				const Vector &x, const Vector &y, 
   				ArrayList< GenVector<int> >* p_best_path) {
   ArrayList< GenVector<int> > &best_path = *p_best_path;
 
   int n_x = x.length();
   int n_y = y.length();
+
+  if(b == -1) {
+    b = n_x + n_y + 1;
+  }
 
   Matrix gamma;
   gamma.Init(n_x + 1, n_y + 1);
@@ -40,32 +45,59 @@ double ComputeDTWAlignmentScore(const Vector &x, const Vector &y,
 
   for(int i = 1; i <= n_x; i++) {
     for(int j = 1; j <= n_y; j++) {
-      double cost = fabs(x[i - 1] - y[j - 1]);
+      double diff = x[i - 1] - y[j - 1];
+      //double cost = fabs(diff);
+      double cost = diff * diff;
 
-      double c1 = gamma.get(i - 1, j - 1);
-      double c2 = gamma.get(i - 1, j);
-      double c3 = gamma.get(i, j - 1);
-      
-      if((c1 <= c2) && (c1 <= c3)) {
-	gamma.set(i, j, cost + c1);
-	best_in.set(i, j, 0); // best path in is through (i-1, j-1)
-      }
-      else if((c2 <= c1) && (c2 <= c3)) {
-	gamma.set(i, j, cost + c2);
-	best_in.set(i, j, -1); // best path in is through (i-1, j)
+      double c_both = gamma.get(i - 1, j - 1);
+      double c_i = gamma.get(i - 1, j);
+      double c_j = gamma.get(i, j - 1);
+
+      // unconstrained DTW
+      if((j - b < i) && (i < j + b)) {
+	if((c_both <= c_i) && (c_both <= c_j)) {
+	  gamma.set(i, j, cost + c_both);
+	  best_in.set(i, j, 0); // best path in is through (i-1, j-1)
+	}
+	else if((c_i <= c_both) && (c_i <= c_j)) {
+	  gamma.set(i, j, cost + c_i);
+	  best_in.set(i, j, -1); // best path in is through (i-1, j)
+	}
+	else {
+	  gamma.set(i, j, cost + c_j);
+	  best_in.set(i, j, 1); // best path in is through (i, j-1)
+	}
       }
       else {
-	gamma.set(i, j, cost + c3);
-	best_in.set(i, j, 1); // best path in is through (i, j-1)
+	if(i <= (j - b) ) {
+	  if(c_both <= c_j) {
+	    gamma.set(i, j, cost + c_both);
+	    best_in.set(i, j, 0);
+	  }
+	  else {
+	    gamma.set(i, j, cost + c_j);
+	    best_in.set(i, j, 1);
+	  }
+	}
+	else if(j <= (i - b)) {
+	  if(c_both <= c_i) {
+	    gamma.set(i, j, cost + c_both);
+	    best_in.set(i, j, 0);
+	  }
+	  else {
+	    gamma.set(i, j, cost + c_i);
+	    best_in.set(i, j, -1);
+	  }
+	}
       }
     }
   }
 
-  printf("cost of best path = %f\n", gamma.get(n_x, n_y));
+  //printf("cost of best path = %f\n", gamma.get(n_x, n_y));
 
   // reconstruct best path through a trace back
   
-  best_path.Init();
+  best_path.Init(0, n_x + n_y);
   
   int cur_i = n_x;
   int cur_j = n_y;
@@ -78,8 +110,12 @@ double ComputeDTWAlignmentScore(const Vector &x, const Vector &y,
     best_path[path_length][0] = cur_i;
     best_path[path_length][1] = cur_j;
 
+    if(abs(cur_i - cur_j) > b) {
+      printf("band exceeded!\n");
+    }
+
     
-    printf("best_path[%d](cur_i, cur_j) = (%d, %d)\n", path_length, cur_i, cur_j);
+    //printf("best_path[%d](cur_i, cur_j) = (%d, %d)\n", path_length, cur_i, cur_j);
 
     path_length++;
     
@@ -97,16 +133,15 @@ double ComputeDTWAlignmentScore(const Vector &x, const Vector &y,
   }
   
   
-  printf("best path length = %d\n", best_path.size());
-  printf("path_length = %d\n", path_length);
+  //printf("best path length = %d\n", best_path.size());
+  //printf("path_length = %d\n", path_length);
   
-  printf("n_x + n_y = %d + %d = %d\n", n_x, n_y, n_x + n_y);
+  //printf("n_x + n_y = %d + %d = %d\n", n_x, n_y, n_x + n_y);
   
-  printf("Printing best path:\n");
-
-  for(int i = best_path.size() - 1; i >= 0; i--) {
-    printf("(%d, %d)\n", best_path[i][0], best_path[i][1]);
-  }
+  //printf("Printing best path:\n");
+  //for(int i = best_path.size() - 1; i >= 0; i--) {
+  //  printf("(%d, %d)\n", best_path[i][0], best_path[i][1]);
+  //}
   
-  return gamma.get(n_x, n_y);
+  return ((double) gamma.get(n_x, n_y)) / ((double) path_length);
 }
