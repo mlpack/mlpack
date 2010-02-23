@@ -47,6 +47,7 @@ double ComputeDTWAlignmentScore(int b,
     for(int j = 1; j <= n_y; j++) {
       double diff = x[i - 1] - y[j - 1];
       //double cost = fabs(diff);
+      //double cost = fabs(diff * diff * diff * diff);
       double cost = diff * diff;
 
       double c_both = gamma.get(i - 1, j - 1);
@@ -93,6 +94,8 @@ double ComputeDTWAlignmentScore(int b,
     }
   }
 
+  gamma.PrintDebug("gamma");
+  exit(1);
   //printf("cost of best path = %f\n", gamma.get(n_x, n_y));
 
   // reconstruct best path through a trace back
@@ -142,6 +145,18 @@ double ComputeDTWAlignmentScore(int b,
   //for(int i = best_path.size() - 1; i >= 0; i--) {
   //  printf("(%d, %d)\n", best_path[i][0], best_path[i][1]);
   //}
-  
-  return ((double) gamma.get(n_x, n_y)) / ((double) path_length);
+
+  int max_diag_dev = -1;
+  for(int i = 0; i < path_length; i++) {
+    int dev = abs(best_path[i][0] - best_path[i][1]);
+    if(unlikely(dev > max_diag_dev)) {
+      max_diag_dev= dev;
+    }
+  }
+
+  //return (double) max_diag_dev;
+  //return (double) max_diag_dev / ((double) path_length);
+  //return ((double) path_length);
+  //return ((double) gamma.get(n_x, n_y)) / ((double) path_length);
+  return ((double) gamma.get(n_x, n_y));
 }
