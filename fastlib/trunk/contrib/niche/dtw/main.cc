@@ -4,18 +4,23 @@
 int main(int argc, char* argv[]) {
   fx_init(argc, argv, NULL);
 
+  const char* training_data_filename = "/Users/niche/Downloads/ucr_time_series_datasets/FaceFour/FaceFour_TRAIN";
+  const char* test_data_filename = "/Users/niche/Downloads/ucr_time_series_datasets/FaceFour/FaceFour_TEST";
   
+  //const char* training_data_filename = "/scratch/niche/ucr_time_series_datasets/FaceFour/FaceFour_TRAIN";
+  //const char* test_data_filename = "/scratch/niche/ucr_time_series_datasets/FaceFour/FaceFour_TEST";
+ 
   // 1-NN classification test
   Matrix training_data_with_labels;
-  data::Load("/scratch/niche/ucr_time_series_datasets/FaceFour/FaceFour_TRAIN",
-	     &training_data_with_labels);
+  data::Load(training_data_filename, &training_data_with_labels);
 
   Matrix test_data_with_labels;
-  data::Load("/scratch/niche/ucr_time_series_datasets/FaceFour/FaceFour_TEST",
-	     &test_data_with_labels);
+  data::Load(test_data_filename, &test_data_with_labels);
 
   index_t n_training_points = training_data_with_labels.n_cols();
   index_t n_test_points = test_data_with_labels.n_cols();
+
+  index_t n_dims = training_data_with_labels.n_rows() - 1;
 
   GenVector<int> predicted_labels;
   predicted_labels.Init(n_test_points);
@@ -25,7 +30,7 @@ int main(int argc, char* argv[]) {
 
   for(int i = 0; i < n_training_points; i++) {
     Vector cur_training_ts;
-    training_data_with_labels.MakeColumnSubvector(i, 1, 60, &cur_training_ts);
+    training_data_with_labels.MakeColumnSubvector(i, 1, n_dims, &cur_training_ts);
 
     char* training_data_filename = (char*) malloc(100 * sizeof(char));
     sprintf(training_data_filename, "results/training_%03d.dat", i);
@@ -44,7 +49,7 @@ int main(int argc, char* argv[]) {
   
   for(int i = 0; i < n_test_points; i++) {
     Vector cur_test_ts;
-    test_data_with_labels.MakeColumnSubvector(i, 1, 60, &cur_test_ts);
+    test_data_with_labels.MakeColumnSubvector(i, 1, n_dims, &cur_test_ts);
 
     char* test_data_filename = (char*) malloc(100 * sizeof(char));
     sprintf(test_data_filename, "results/test_%03d.dat", i);
@@ -59,7 +64,7 @@ int main(int argc, char* argv[]) {
     
     for(int j = 0; j < n_training_points; j++) {
       Vector cur_training_ts;
-      training_data_with_labels.MakeColumnSubvector(j, 1, 60, &cur_training_ts);
+      training_data_with_labels.MakeColumnSubvector(j, 1, n_dims, &cur_training_ts);
       
       ArrayList< GenVector<int> > optimal_path;
       double score =
