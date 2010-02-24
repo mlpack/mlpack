@@ -28,7 +28,7 @@ bool Matcher::TestPointPair(double dist_sq, index_t tuple_index_1,
                             index_t tuple_index_2, 
                             ArrayList<bool> permutation_ok) {
 
-  DEBUG_ASSERT(permutation_ok.size() == factorial(tuple_size_));
+  DEBUG_ASSERT(permutation_ok.size() == perms_.factorials(tuple_size_));
 
   bool any_matches = false;
   
