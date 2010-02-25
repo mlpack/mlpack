@@ -103,7 +103,21 @@ private:
 
       GeneratePermutations_(0, &index, trial_perm);
       
-      permutation_indices_.PrintDebug("Permutations");
+#ifdef DEBUG
+      printf("\n");
+      for (index_t i = 0; i < n; i++) {
+        
+        for (index_t j = 0; j < num_perms_; j++) {
+          
+          printf("%d, ", permutation_indices_.ref(i, j));
+          
+        } // for j
+        
+        printf("\n");
+        
+      } // for i
+      printf("\n");
+#endif
       
       
       
@@ -200,7 +214,7 @@ public:
    *
    */
   bool TestPointPair(double dist_sq, index_t tuple_index_1, 
-                     index_t tuple_index_2, ArrayList<bool> permutation_ok);
+                     index_t tuple_index_2, ArrayList<bool>& permutation_ok);
   
   
   // TODO: how will I know what the nodes are inside this function?

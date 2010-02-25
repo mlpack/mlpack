@@ -26,7 +26,7 @@ bool Matcher::CheckDistances_(double dist_sq, index_t ind1, index_t ind2) {
 // symmetry
 bool Matcher::TestPointPair(double dist_sq, index_t tuple_index_1, 
                             index_t tuple_index_2, 
-                            ArrayList<bool> permutation_ok) {
+                            ArrayList<bool>& permutation_ok) {
 
   DEBUG_ASSERT(permutation_ok.size() == perms_.factorials(tuple_size_));
 
