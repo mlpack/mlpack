@@ -41,7 +41,7 @@ int NPointAlg::BaseCaseHelper_(ArrayList<ArrayList<index_t> >& point_sets,
     
     // TODO: is this too inefficient?
     permutation_ok_copy.Clear();
-    permutation_ok_copy.InitCopy(permutation_ok);
+    permutation_ok_copy.AppendCopy(permutation_ok);
     
     // loop over previously chosen points to see if there is a conflict
     for (index_t j = 0; !bad_symmetry && this_point_works && j < k; j++) {
@@ -64,13 +64,18 @@ int NPointAlg::BaseCaseHelper_(ArrayList<ArrayList<index_t> >& point_sets,
       
     } // for j
     
+    /*
+    printf("Considering point %d in position %d.  bad_symmetry: %d, works: %d\n",
+           point_index_i, k, bad_symmetry, this_point_works);
+    */
+    
     // now, if the point passed, we put it in place and recurse
     if (this_point_works && !bad_symmetry) {
       
       points_in_tuple[k] = point_index_i;
       
       // base case of the recursion
-      if (k == num_tuples_ - 1) {
+      if (k == tuple_size_ - 1) {
         
         result++;
         

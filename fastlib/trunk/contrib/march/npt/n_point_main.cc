@@ -16,11 +16,15 @@ const fx_entry_doc n_point_main_entries[] = {
 "Matrix containing the data points.\n"},
 {"weights", FX_PARAM, FX_STR, NULL,
   "File with weights for the points.  If not specified, all weights are 1.\n"},
+{"upper_bounds", FX_REQUIRED, FX_STR, NULL,
+"File with upper bounds for the matcher.\n"},
+{"lower_bounds", FX_PARAM, FX_STR, NULL,
+"File with lower bounds for the matcher.  Assumed to be zero if unspecified.\n"},
 FX_ENTRY_DOC_DONE
 };
 
 const fx_submodule_doc n_point_main_submodules[] = {
-{"naive_mod", &n_point_doc,
+{"naive", &n_point_doc,
   "Naive implementation module.\n"},
 FX_SUBMODULE_DOC_DONE
 };

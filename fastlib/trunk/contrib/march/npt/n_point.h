@@ -18,10 +18,12 @@ const fx_entry_doc n_point_entries[] = {
 "Total time required to compute the n-point correlation.\n"},
 {"n_point_time", FX_TIMER, FX_CUSTOM, NULL, 
 "Time required for just the n-point computation (after tree building).\n"},
-{"num_tuples", FX_RESULT, FX_DOUBLE, NULL,
+{"num_tuples", FX_RESULT, FX_INT, NULL,
 "The number of matching tuples found.\n"},
 {"weighted_num_tuples", FX_RESULT, FX_DOUBLE, NULL,
 "The sum of the product of the weights over all matching tuples found.\n"},
+{"do_naive", FX_PARAM, FX_BOOL, NULL,
+ "If true, the algorithm just runs the base case on the entire data set.\n"},
 FX_ENTRY_DOC_DONE
 };
 
@@ -94,7 +96,7 @@ public:
     data_points_.Copy(data);
     data_weights_.Copy(weights);
     
-    num_points_ = data_points_.n_rows();
+    num_points_ = data_points_.n_cols();
     
     tuple_size_ = n;
     
@@ -121,7 +123,7 @@ public:
       for (index_t i = 0; i < tuple_size_; i++) {
         point_sets[i].Init(num_points_);
         
-        for (index_t j = 0; j < tuple_size_; j++) {
+        for (index_t j = 0; j < num_points_; j++) {
           point_sets[i][j] = j;
         } // for j
         
