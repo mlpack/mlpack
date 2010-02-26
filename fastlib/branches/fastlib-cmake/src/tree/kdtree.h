@@ -43,15 +43,15 @@
 #ifndef TREE_KDTREE_H
 #define TREE_KDTREE_H
 
-#include "base/base.h"
+#include "../base/base.h"
 
 #include "spacetree.h"
 #include "bounds.h"
 //#include "spacetree.h"
 //#include "bounds.h"
 
-#include "col/arraylist.h"
-#include "fx/fx.h"
+#include "../col/arraylist.h"
+#include "../fx/fx.h"
 
 #include "kdtree_impl.h"
 //#include "kdtree_impl.h"

@@ -38,7 +38,7 @@
 #ifndef COLLECTIONS_STRING_H
 #define COLLECTIONS_STRING_H
 
-#include "base/base.h"
+#include "../base/base.h"
 #include "arraylist.h"
 
 #include <cstring>

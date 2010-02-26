@@ -40,7 +40,7 @@
 
 #include "matrix.h"
 //#include "matrix.h"
-#include "col/arraylist.h"
+#include "../col/arraylist.h"
 
 #define DEBUG_VECSIZE(a, b) \
     DEBUG_SAME_SIZE((a).length(), (b).length())

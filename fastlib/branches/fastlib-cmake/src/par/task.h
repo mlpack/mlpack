@@ -38,7 +38,7 @@
 #ifndef PAR_TASK_H
 #define PAR_TASK_H
 
-#include "base/base.h"
+#include "../base/base.h"
 
 /**
  * Single start-to-finish task to be executed.

@@ -43,10 +43,10 @@
 #ifndef DATA_DATASET_H
 #define DATA_DATASET_H
 
-#include "col/col_string.h"
-#include "la/matrix.h"
-#include "math/discrete.h"
-#include "file/textfile.h"
+#include "../col/col_string.h"
+#include "../la/matrix.h"
+#include "../math/discrete.h"
+#include "../file/textfile.h"
 
 class TextLineReader;
 class TextWriter;

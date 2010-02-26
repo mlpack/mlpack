@@ -44,8 +44,8 @@
 #ifndef FILE_TEXTFILE_H
 #define FILE_TEXTFILE_H
 
-#include "base/base.h"
-#include "col/col_string.h"
+#include "../base/base.h"
+#include "../col/col_string.h"
 
 #include <cstdio>
 #include <ctype.h>

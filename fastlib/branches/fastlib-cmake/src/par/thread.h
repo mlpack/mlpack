@@ -38,9 +38,8 @@
 #define PAR_THREAD_H
 
 #include "task.h"
-//#include "task.h"
 
-#include "base/base.h"
+#include "../base/base.h"
 
 #include <pthread.h>
 

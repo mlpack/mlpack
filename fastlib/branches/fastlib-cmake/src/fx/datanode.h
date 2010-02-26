@@ -40,7 +40,7 @@
 #ifndef FX_DATANODE_H
 #define FX_DATANODE_H
 
-#include "base/common.h"
+#include "../base/common.h"
 
 EXTERN_C_BEGIN
 

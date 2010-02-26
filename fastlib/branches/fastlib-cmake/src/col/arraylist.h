@@ -38,7 +38,7 @@
 #ifndef COL_ARRAYLIST_H
 #define COL_ARRAYLIST_H
 
-#include "base/base.h"
+#include "../base/base.h"
 
 #define ARRAYLIST__DEBUG_INIT_OK(who, size, cap) \
     DEBUG_INIT_OK(who); \

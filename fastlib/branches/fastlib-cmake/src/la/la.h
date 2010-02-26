@@ -45,7 +45,7 @@
 //#include "matrix.h"
 //#include "uselapack.h"
 
-#include "math/math_lib.h"
+#include "../math/math_lib.h"
 
 #include <math.h>
 
