@@ -31,7 +31,7 @@
  */
 #include "textfile.h"
 //#include "textfile.h"
-#include "base/test.h"
+#include "../base/test.h"
 
 #include <math.h>
 
