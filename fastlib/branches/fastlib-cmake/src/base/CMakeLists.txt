@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 
 #~ include_directories( config
 #~                      $ENV{FASTLIBPATH}
@@ -25,6 +25,8 @@ foreach(file ${TMP_SRCS})
 endforeach()
 
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${BASE_SRCS} PARENT_SCOPE )
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ./)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ./)
 add_library( base ${BASE_SRCS} )
 
 add_dependencies( base template_types_detect )

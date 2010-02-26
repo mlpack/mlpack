@@ -21,6 +21,8 @@ foreach(file ${TMP_SRCS})
   set(LA_SRCS ${LA_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${LA_SRCS} PARENT_SCOPE )
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ./)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ./)
 add_library( la ${LA_SRCS} )
 
 #target_link_libraries( la base col blas lapack )

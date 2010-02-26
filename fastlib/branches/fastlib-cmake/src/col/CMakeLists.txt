@@ -15,6 +15,8 @@ foreach(file ${TMP_SRCS})
 endforeach()
 
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${COL_SRCS} PARENT_SCOPE )
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ./)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ./)
 add_library( col ${COL_SRCS} )
 add_dependencies( col base )
 

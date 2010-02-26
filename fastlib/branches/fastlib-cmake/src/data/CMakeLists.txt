@@ -17,6 +17,8 @@ foreach(file ${TMP_SRCS})
   set(DATA_SRCS ${DATA_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DATA_SRCS} PARENT_SCOPE )
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ./)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ./)
 add_library( data ${DATA_SRCS} )
 
 target_link_libraries( data

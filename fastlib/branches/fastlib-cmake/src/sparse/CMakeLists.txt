@@ -79,6 +79,8 @@ foreach(file ${TMP_SRCS})
 endforeach()
 
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${sparse_SRCS} PARENT_SCOPE )
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ./)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ./)
 add_library( sparse ${sparse_SRCS} ) 
 set_target_properties( sparse PROPERTIES LINKER_LANGUAGE CXX)
 
