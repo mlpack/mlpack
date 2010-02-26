@@ -18,6 +18,8 @@ foreach(file ${TMP_SRCS})
 endforeach()
 
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${FX_SRCS} PARENT_SCOPE )
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ./)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ./)
 add_library( fx ${FX_SRCS} )
 
 add_dependencies( fx base )

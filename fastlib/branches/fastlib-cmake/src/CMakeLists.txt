@@ -1,16 +1,16 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 project(FASTLIB C CXX Fortran)
 
 ## External Libraries
 #  ls /usr/share/cmake-2.6/Modules/Find* | \
 #  perl -ne 's#.*Modules/Find(.*)>cmake#\1#; print'
-find_package(BLAS REQUIRED)
-find_package(LAPACK REQUIRED)
+#find_package(BLAS REQUIRED)
+#find_package(LAPACK REQUIRED)
 
 #include(CMake/FastlibMacros.cmake)
 
 # distclean option because cmake doesn't support it
-include( CMake/TargetDistclean.cmake OPTIONAL )
+#include( CMake/TargetDistclean.cmake OPTIONAL )
 
 ## Global compiler flags (dep. on platform TODO)
 add_definitions( -DDISABLE_DISK_MATRIX )
@@ -18,14 +18,14 @@ add_definitions( -DDISABLE_DISK_MATRIX )
 ## include dirs
 #SET(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(FASTLIB_INCLUDE_DIRS 
-    ${FASTLIB_SOURCE_DIR}
+#set(FASTLIB_INCLUDE_DIRS 
+#    ${FASTLIB_SOURCE_DIR}
     #${FASTLIB_SOURCE_DIR}/.. 
     #${FASTLIB_SOURCE_DIR}/base/config  # standardize #includes
     #${FASTLIB_BINARY_DIR}/..
-    ${FASTLIB_BINARY_DIR}
-)
-include_directories( ${FASTLIB_INCLUDE_DIRS} )
+#    ${FASTLIB_BINARY_DIR}
+#)
+#include_directories( ${FASTLIB_INCLUDE_DIRS} )
 #TODO link_directories()
 
 set(FASTLIB_SRCS)
@@ -45,13 +45,21 @@ endif(FASTLIB_WITH_SPARSE)
 foreach(dir ${DIRS})
   add_subdirectory( ${dir} )
 endforeach()
-  
-set_source_files_properties(${CMAKE_BINARY_DIR}/fastlib/base/basic_types.h 
-    PROPERTIES GENERATED TRUE)
 
 add_library( fastlib ${FASTLIB_SRCS} )
 add_dependencies( fastlib ${DIRS} template_types_detect ) #FIXME
 target_link_libraries( fastlib lapack )
+
+# move include files to correct directory for mlpack compilation
+file(GLOB_RECURSE INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h )
+add_custom_command(TARGET fastlib POST_BUILD
+  COMMENT "Moving header files to include/fastlib/"
+  COMMAND ${CMAKE_COMMAND} ARGS -E make_directory ../include/fastlib/)
+foreach(incl_file ${INCLUDE_FILES})
+  add_custom_command(TARGET fastlib POST_BUILD
+    COMMAND ${CMAKE_COMMAND} ARGS -E copy ${incl_file} ../include/fastlib/${incl_file} )
+endforeach()
+	
 
 add_executable( otrav_test otrav_test.cc )
 target_link_libraries( otrav_test fastlib )

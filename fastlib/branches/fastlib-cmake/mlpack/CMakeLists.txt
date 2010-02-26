@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.6)
 project(MLPACK C CXX Fortran)
 
-find_package(BLAS REQUIRED)
-find_package(LAPACK REQUIRED)
+#find_package(BLAS REQUIRED)
+#find_package(LAPACK REQUIRED)
 
 ## Global compiler flags (dep. on platform TODO)
 set(CMAKE_CXX_FLAGS "-g -Wall")
@@ -26,6 +26,7 @@ find_library(FASTLIB_LIB fastlib ${FASTLIB_LIB_DIR})
 ## include dirs
 include_directories( ${FASTLIB_INCLUDE_DIR} )
 include_directories( .. )  # mlpack
+include_directories( ../include/ )
 
 ## link directories
 link_directories( ${FASTLIB_LIB_DIR} )
@@ -44,8 +45,8 @@ set( DIRS
     kalman
     kde
     # kernel_pca  # requires sparse 
-    mog
-    mvu
+    #mog # requires optimization
+    #mvu # requires optimization
     naive_bayes
     quicsvd
     # range_search  ##! uses contrib code

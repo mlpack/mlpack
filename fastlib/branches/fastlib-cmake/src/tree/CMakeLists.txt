@@ -19,6 +19,8 @@ foreach(file ${TMP_SRCS})
 endforeach()
 
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${TREE_SRCS} PARENT_SCOPE )
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ./)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ./)
 add_library( tree ${TREE_SRCS} ) 
 set_target_properties( tree PROPERTIES LINKER_LANGUAGE CXX)
 
