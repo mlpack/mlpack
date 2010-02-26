@@ -17,5 +17,6 @@ IF (UNIX)
     COMMAND find ARGS ${FASTLIB_SOURCE_DIR} -iname cmake_install.cmake -delete
     COMMAND find ARGS ${FASTLIB_SOURCE_DIR} -iname Makefile -delete
     COMMAND find ARGS ${FASTLIB_SOURCE_DIR} -depth -type d -iname CMakeFiles -exec rm -rf {} \;
+    COMMAND rm ARGS -rf bin lib include
     VERBATIM )
 ENDIF(UNIX)
