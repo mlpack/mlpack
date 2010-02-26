@@ -41,8 +41,8 @@
 #include "dataset.h"
 //#include "dataset.h"
 
-#include "la/matrix.h"
-#include "fx/fx.h"
+#include "../la/matrix.h"
+#include "../fx/fx.h"
 
 /**
  * Cross-validator for simple classifiers, integrating tightly with

@@ -38,7 +38,7 @@
 #ifndef MATH_MATH_LIB_H
 #define MATH_MATH_LIB_H
 
-#include "base/base.h"
+#include "../base/base.h"
 
 #include <math.h>
 

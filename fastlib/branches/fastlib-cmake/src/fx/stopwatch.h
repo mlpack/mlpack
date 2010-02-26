@@ -40,7 +40,7 @@
 #ifndef FX_TIMER_H
 #define FX_TIMER_H
 
-#include "base/common.h"
+#include "../base/common.h"
 
 #include <sys/times.h>
 

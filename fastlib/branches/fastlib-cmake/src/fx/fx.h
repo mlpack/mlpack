@@ -47,7 +47,7 @@
 //#include "datanode.h"
 //#include "stopwatch.h"
 
-#include "base/common.h"
+#include "../base/common.h"
 
 EXTERN_C_BEGIN
 

@@ -40,7 +40,7 @@
 #ifndef TREE_SPACETREE_H
 #define TREE_SPACETREE_H
 
-#include "base/base.h"
+#include "../base/base.h"
 #include "statistic.h"
 //#include "statistic.h"
 
