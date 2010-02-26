@@ -38,7 +38,7 @@
 #include "bounds.h"
 //#include "bounds.h"
 
-#include "base/test.h"
+#include "../base/test.h"
 
 TEST_SUITE_BEGIN(uselapack);
 

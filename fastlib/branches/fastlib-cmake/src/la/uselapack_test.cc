@@ -35,7 +35,7 @@
  * Tests for LAPACK integration.
  */
 
-#include "base/test.h"
+#include "../base/test.h"
 
 #include "uselapack.h"
 //#include "uselapack.h"

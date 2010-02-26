@@ -32,8 +32,8 @@
 #include "dataset.h"
 //#include "dataset.h"
 
-#include "math/discrete.h"
-#include "base/test.h"
+#include "../math/discrete.h"
+#include "../base/test.h"
 
 TEST_SUITE_BEGIN(dataset)
 

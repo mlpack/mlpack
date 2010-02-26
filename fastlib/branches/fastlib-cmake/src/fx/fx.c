@@ -38,7 +38,7 @@
 #include "fx.h"
 /*#include "fx.h"*/
 
-#include "base/debug.h"
+#include "../base/debug.h"
 
 #include <stdarg.h>
 #include <unistd.h>
