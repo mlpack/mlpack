@@ -8,19 +8,11 @@
 # yacked and brought out of 2003 by rcurtin
 
 IF (UNIX)
-  ADD_CUSTOM_TARGET (distclean @echo cleaning for source distribution)
-  SET(DISTCLEANED
-   CMakeFiles
-   CMakeCache.txt
-   cmake_install.cmake
-   Makefile
-  )
-  
-  ADD_CUSTOM_COMMAND(
-    DEPENDS clean
-    COMMENT "distribution clean"
-    COMMAND rm
-    ARGS    -Rf CMakeFiles ${DISTCLEANED}
-    TARGET  distclean
-  )
+  # since it's unix-specific we will use bash
+  ADD_CUSTOM_TARGET (distclean @echo cleaning ${FASTLIB_SOURCE_DIR} for source distribution
+    COMMAND find ${FASTLIB_SOURCE_DIR} -iname CMakeCache.txt -delete
+    COMMAND find ${FASTLIB_SOURCE_DIR} -iname cmake_install.cmake -delete
+    COMMAND find ${FASTLIB_SOURCE_DIR} -iname Makefile -delete
+    COMMAND find ${FASTLIB_SOURCE_DIR} -depth -type d -iname CMakeFiles -exec rm -rf {} \;
+    VERBATIM )
 ENDIF(UNIX)
