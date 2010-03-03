@@ -1,6 +1,4 @@
-#include_directories( $ENV{FASTLIBPATH}		     
-#                     ${CMAKE_CURRENT_BINARY_DIR}/../base/config
-#)
+cmake_minimum_required(VERSION 2.8)
 
 ## Location of trilinos
 set(TRILINOS_BASE_DIR /usr/local CACHE PATH
@@ -67,40 +65,41 @@ include_directories( ${TRILINOS_INCLUDE_DIR} ${MPI_INCLUDE_DIR} )
 #set(TRILINOS_LIBS ${TRILINOS_LIBS})
 #set(TRILINOS_LIBS tpetra anasazi aztecoo ifpack kokkos teuchos)
 
-set( TMP_HEADERS 
-    sparse_matrix.h
-    sparse_matrix_impl.h
+
+
+# Define the files we need to compile
+# Anything not in this list will not be compiled into the output library
+# Do not include test programs here
+set(SOURCES
+   sparse_matrix.h
+   sparse_matrix_impl.h
 )
-set( TMP_CXX )
-set( TMP_SRCS ${TMP_HEADERS} ${TMP_CXX})
-set(sparse_SRCS)
-foreach(file ${TMP_SRCS})
-  set(sparse_SRCS ${sparse_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+
+# add directory name to sources
+set(DIR_SRCS)
+foreach(file ${SOURCES})
+  set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
+# append sources (with directory name) to list of all FASTLIB sources (used at the parent scope)
+set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-set(FASTLIB_SRCS ${FASTLIB_SRCS} ${sparse_SRCS} PARENT_SCOPE )
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ./)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ./)
-add_library( sparse ${sparse_SRCS} ) 
-set_target_properties( sparse PROPERTIES LINKER_LANGUAGE CXX)
-
-add_dependencies( sparse 
-    #    trilinos base
-    base
-)
-target_link_libraries( sparse 
-    base
-    ${TRILINOS_LIBS}
-    lapack
+add_library(sparse ${SOURCES})
+# link dependencies of sparse
+target_link_libraries(sparse
+   base
+   ${TRILINOS_LIBS}
+   lapack
 )
 
-add_executable( sparse_test
-    sparse_matrix_test.cc
+# test executable
+add_executable(sparse_test
+   sparse_matrix_test.cc
 )
-set_target_properties( sparse_test PROPERTIES 
-    COMPILE_FLAGS -fexceptions #req. for trilinos; portable?
+set_target_properties(sparse_test PROPERTIES
+   COMPILE_FLAGS -fexceptions # required for trilinos
 )
-target_link_libraries( sparse_test 
-    sparse ${TRILINOS_LIBS} )
-
-install(FILES ${TMP_HEADERS} DESTINATION include/fastlib/sparse)
+# link dependencies of test executable
+target_link_libraries(sparse_test
+   sparse
+   ${TRILINOS_LIBS}
+)

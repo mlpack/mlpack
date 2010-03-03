@@ -1,22 +1,26 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 
-include_directories( $ENV{FASTLIBPATH}		     
-                     ${CMAKE_CURRENT_BINARY_DIR}/../base/config
+# Define the files we need to compile
+# Anything not in this list will not be compiled into the output library
+# Do not include test programs here
+set(SOURCES
+   grain.h
+   task.h
+   thread.h
+   thread.cc
 )
 
-set( TMP_HEADERS grain.h task.h thread.h)
-set( TMP_CXX thread.cc )
-set( TMP_SRCS ${TMP_HEADERS} ${TMP_CXX})
-set(PAR_SRCS)
-foreach(file ${TMP_SRCS})
-  set(PAR_SRCS ${PAR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+# add directory name to sources
+set(DIR_SRCS)
+foreach(file ${SOURCES})
+  set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
+# append sources (with directory name) to list of all FASTLIB sources (used at the parent scope)
+set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-set(FASTLIB_SRCS ${FASTLIB_SRCS} ${PAR_SRCS} PARENT_SCOPE )
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ./)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ./)
-add_library( par ${PAR_SRCS} )
-
-add_dependencies( par col base )
-
-install(FILES ${TMP_HEADERS} DESTINATION include/fastlib/par)
+add_library(par ${SOURCES})
+# link dependencies of data
+target_link_libraries(par
+   base
+   col
+)

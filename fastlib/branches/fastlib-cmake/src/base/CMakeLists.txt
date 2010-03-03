@@ -1,34 +1,34 @@
 cmake_minimum_required(VERSION 2.8)
 
-#~ include_directories( config
-#~                      $ENV{FASTLIBPATH}
-#~                      $ENV{FASTLIBPATH}/fastlib
-#~                      ${CMAKE_CURRENT_BINARY_DIR}/config
-#~                      ${FASTLIB_INCLUDE_DIRS}
-#~ )
-include_directories( . )
+# Define the files we need to compile
+# Anything not in this list will not be compiled into the output library
+# Do not include test programs here
+set(SOURCES
+   ansi_colors.h
+   base.h
+   cc.h
+   cc.cc
+   ccmem.h
+   ccmem.cc
+   common.h
+   common.c
+   compiler.h
+   debug.h
+   debug.c
+   deprecated.h
+   fortran.h
+   otrav.h
+   otrav.cc
+   otrav_impl.h
+   test.h
+)
 
-set( TMP_HEADERS 
-    ansi_colors.h  cc.h	common.h    debug.h	  fortran.h  otrav_impl.h
-    base.h	       ccmem.h	compiler.h  deprecated.h  otrav.h    test.h
-)
-set( TMP_CXX 
-    cc.cc  ccmem.cc  otrav.cc
-)
-set( TMP_C 
-    common.c  debug.c
-)
-set( TMP_SRCS ${TMP_HEADERS} ${TMP_CXX} ${TMP_C})
-set(BASE_SRCS)
-foreach(file ${TMP_SRCS})
-    set(BASE_SRCS ${BASE_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+# add directory name to sources
+set(DIR_SRCS)
+foreach(file ${SOURCES})
+    set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
+# append sources (with directory name) to list of all FASTLIB sources (used at the parent cmake scope)
+set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-set(FASTLIB_SRCS ${FASTLIB_SRCS} ${BASE_SRCS} PARENT_SCOPE )
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ./)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ./)
-add_library( base ${BASE_SRCS} )
-
-add_dependencies( base template_types_detect )
-
-install(FILES ${TMP_HEADERS} DESTINATION include/fastlib/base)
+add_library(base ${SOURCES})
