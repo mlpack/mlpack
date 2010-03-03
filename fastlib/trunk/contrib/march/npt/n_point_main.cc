@@ -20,12 +20,16 @@ const fx_entry_doc n_point_main_entries[] = {
 "File with upper bounds for the matcher.\n"},
 {"lower_bounds", FX_PARAM, FX_STR, NULL,
 "File with lower bounds for the matcher.  Assumed to be zero if unspecified.\n"},
+{"do_naive", FX_PARAM, FX_BOOL, NULL,
+  "Run a naive implementation, default: false\n"},
 FX_ENTRY_DOC_DONE
 };
 
 const fx_submodule_doc n_point_main_submodules[] = {
 {"naive", &n_point_doc,
   "Naive implementation module.\n"},
+{"depth_first", &n_point_doc, 
+  "Depth first recursion implementation module.\n"},
 FX_SUBMODULE_DOC_DONE
 };
 
@@ -85,13 +89,30 @@ int main(int argc, char* argv[]) {
   
   /////////// run algorithm //////////////
 
-  fx_module* naive_mod = fx_submodule(NULL, "naive");
+  if (fx_param_exists(NULL, "do_naive")) {
   
-  NPointAlg alg;
-  alg.Init(data, weights, lower_bounds, upper_bounds, upper_bounds.n_cols(), 
-           naive_mod);
+    fx_module* naive_mod = fx_submodule(NULL, "naive");
+    fx_set_param_bool(naive_mod, "do_naive", true);
+    
+    NPointAlg alg;
+    alg.Init(data, weights, lower_bounds, upper_bounds, upper_bounds.n_cols(), 
+             naive_mod);
+    
+    alg.Compute();
+        
+  }
+  else {
+   
+    fx_module* depth_mod = fx_submodule(NULL, "depth_first");
+    
+    NPointAlg alg;
+    alg.Init(data, weights, lower_bounds, upper_bounds, upper_bounds.n_cols(), 
+             depth_mod);
+    
+    alg.Compute();
+    
+  }
   
-  alg.Compute();
   
   fx_done(NULL);
   

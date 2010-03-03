@@ -24,6 +24,10 @@ const fx_entry_doc n_point_entries[] = {
 "The sum of the product of the weights over all matching tuples found.\n"},
 {"do_naive", FX_PARAM, FX_BOOL, NULL,
  "If true, the algorithm just runs the base case on the entire data set.\n"},
+{"leaf_size", FX_PARAM, FX_INT, NULL,
+  "Size of leaves in the kd-tree.  Default: 1.\n"},
+{"tree_building", FX_TIMER, FX_CUSTOM, NULL,
+  "Time to build the kd-tree.\n"},
 FX_ENTRY_DOC_DONE
 };
 
@@ -44,6 +48,43 @@ class NPointAlg {
 
 private:
   
+  class NPointStat {
+    
+  private:
+    
+    index_t node_index_;
+    
+  public:
+    
+    void Init(const Matrix& dataset, index_t start, index_t count) {
+      
+      node_index_ = -1;
+      
+    } // Init() leaves
+    
+    void Init(const Matrix& dataset, index_t start, index_t count,
+              const NPointStat& left_stat, const NPointStat& right_stat) {
+      
+      node_index_ = -1;
+      
+    } // Init() non-leaves
+    
+    index_t node_index() const {
+      return node_index_; 
+    }
+    
+    void set_node_index(index_t ind) {
+      node_index_ = ind;
+    }
+    
+  }; // NPointStat
+
+  typedef BinarySpaceTree<DHrectBound<2>, Matrix, NPointStat> NPointNode;
+
+  
+  
+  ////////////// variables ////////////
+
   Matrix data_points_;
   Vector data_weights_;
   
@@ -58,7 +99,39 @@ private:
   
   int num_tuples_;
   double weighted_num_tuples_;
+  
+  int num_exclusion_prunes_;
+  
+  
+  NPointNode* tree_;
+  ArrayList<index_t> old_from_new_permutation_;
+  int leaf_size_;
+  
   ////////////// functions ////////////
+  
+  /**
+   *
+   */
+  void NodeIndexTraversal_(NPointNode* tree_, index_t* ind) {
+    
+    if (tree_->is_leaf()) {
+      tree_->stat().set_node_index(*ind);
+      //printf("Setting leaf %d\n", *ind);
+      *ind = *ind + 1;
+    }
+    else {
+     
+      // post order traversal preserves nesting relationship
+      NodeIndexTraversal_(tree_->left(), ind);
+      NodeIndexTraversal_(tree_->right(), ind);
+      
+      tree_->stat().set_node_index(*ind);
+      //printf("Setting node %d\n", *ind);
+      *ind = *ind + 1;
+      
+    }
+    
+  } // NodeIndexTraversal_
   
   /**
    *
@@ -82,6 +155,14 @@ private:
   int BaseCase_(ArrayList<ArrayList<index_t> >& point_sets, 
                    double* weighted_result);
   
+
+  /**
+   *
+   */
+  int DepthFirstRecursion_(ArrayList<NPointNode*>& nodes, 
+                           index_t previous_split);
+
+  
   
 public:
   
@@ -102,10 +183,44 @@ public:
     
     matcher_.Init(lower_bds, upper_bds, tuple_size_);
     
-    do_naive_ = fx_param_bool(mod_, "do_naive", true);
+    do_naive_ = fx_param_bool(mod_, "do_naive", false);
+    
+    if (!do_naive_) {
+      
+      leaf_size_ = fx_param_int(mod_, "leaf_size", 1);
+      
+      if (leaf_size_ <= 0) {
+        FATAL("Leaf size must be strictly positive.\n");
+      }
+      
+      fx_timer_start(mod_, "tree_building");
+      
+      //printf("node string: %s\n", mod_->key);
+      
+      tree_ = tree::MakeKdTreeMidpoint<NPointNode>(data_points_, leaf_size_, 
+                                                   &old_from_new_permutation_, 
+                                                   NULL);
+      
+      //tree_->Print();
+      //printf("======\n\n");
+      
+      //printf("tree built, leaf_size: %d\n", leaf_size_);
+      
+      index_t ind = 0;
+      NodeIndexTraversal_(tree_, &ind);
+      
+      fx_timer_stop(mod_, "tree_building");
+      
+      //printf("timer stopped\n");
+      
+    } // tree building
     
     num_tuples_ = 0;
     weighted_num_tuples_ = 0.0;
+    
+    num_exclusion_prunes_ = 0;
+    
+    
     
   } // Init()
   
@@ -134,7 +249,16 @@ public:
     } // do naive
     else {
       
-      FATAL("Multi tree version not yet implemented.\n");
+      ArrayList<NPointNode*> nodes;
+      nodes.Init(tuple_size_);
+      
+      for (index_t i = 0; i < tuple_size_; i++) {
+        
+        nodes[i] = tree_;
+        
+      } // for i
+      
+      num_tuples_ = DepthFirstRecursion_(nodes, -1);
       
     } // do multi-tree
 
