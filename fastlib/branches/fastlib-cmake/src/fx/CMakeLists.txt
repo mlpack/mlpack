@@ -18,7 +18,7 @@ foreach(file ${SOURCES})
     set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
 # append sources (with directory name) to list of all FASTLIB sources (used at parent scope)
-set(FASTLIB_SRCS ${FASTLIB_SRCS} ${FX_SRCS} PARENT_SCOPE)
+set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_library(fx ${SOURCES})
 # link dependencies of libfx
