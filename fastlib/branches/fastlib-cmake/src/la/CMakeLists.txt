@@ -1,31 +1,30 @@
-# file( DOWNLOAD            
-#       http://www.netlib.org/blas/blas.tgz 
-#       ${CMAKE_CURRENT_BINARY_DIR}/blas.tgz
-# )
+cmake_minimum_required(VERSION 2.8)
 
-# file( DOWNLOAD
-#       http://www.netlib/org/lapack/lapack.tgz
-#       ${CMAKE_CURRENT_BINARY_DIR}/lapack.tgz   
-# )
-
-set( TMP_HEADERS 
-    blas.h	clapack.h  la.h  matrix.h  uselapack.h
+# Define the files we need to compile
+# Anything not in this list will not be compiled into the output library
+# Do not include test programs here
+set(SOURCES
+   blas.h
+   clapack.h
+   la.h
+   matrix.h
+   uselapack.h
+   uselapack.cc
 )
-set( TMP_CXX 
-    uselapack.cc  #uselapack_test.cc
-    )
-set( TMP_SRCS ${TMP_HEADERS} ${TMP_CXX})
 
-set(LA_SRCS)
-foreach(file ${TMP_SRCS})
-  set(LA_SRCS ${LA_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+# add directory name to sources
+set(DIR_SRCS)
+foreach(file ${SOURCES})
+  set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
-set(FASTLIB_SRCS ${FASTLIB_SRCS} ${LA_SRCS} PARENT_SCOPE )
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ./)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ./)
-add_library( la ${LA_SRCS} )
+# append sources (with directory name) to list of all FASTLIB sources (used at the parent scope)
+set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-#target_link_libraries( la base col blas lapack )
-target_link_libraries( la base col ${BLAS_LIBRARIES} ${LAPACK_LIBRARIES} )
-
-install(FILES ${TMP_HEADERS} DESTINATION include/fastlib/la)
+add_library(la ${SOURCES})
+# link dependencies of la
+target_link_libraries(la
+   base
+   col
+   ${BLAS_LIBRARIES}
+   ${LAPACK_LIBRARIES}
+)

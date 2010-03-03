@@ -46,9 +46,11 @@ foreach(dir ${DIRS})
   add_subdirectory( ${dir} )
 endforeach()
 
-add_library( fastlib ${FASTLIB_SRCS} )
-add_dependencies( fastlib ${DIRS} template_types_detect ) #FIXME
-target_link_libraries( fastlib lapack )
+add_library(fastlib ${FASTLIB_SRCS})
+target_link_libraries(fastlib
+   lapack
+   ${TRILINOS_LIBS}
+)
 
 # move include files to correct directory for mlpack compilation
 file(GLOB_RECURSE INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h )
@@ -59,7 +61,6 @@ foreach(incl_file ${INCLUDE_FILES})
   add_custom_command(TARGET fastlib POST_BUILD
     COMMAND ${CMAKE_COMMAND} ARGS -E copy ${incl_file} ../include/fastlib/${incl_file} )
 endforeach()
-	
 
 add_executable( otrav_test otrav_test.cc )
 target_link_libraries( otrav_test fastlib )

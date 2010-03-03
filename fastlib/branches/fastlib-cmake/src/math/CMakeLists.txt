@@ -1,45 +1,31 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 
-include_directories( $ENV{FASTLIBPATH}		     
-                     ${CMAKE_CURRENT_BINARY_DIR}/../base/config
+# Define the files we need to compile
+# Anything not in this list will not be compiled into the output library
+# Do not include test programs here
+set(SOURCES
+   discrete.h
+   discrete.cc
+   geometry.h
+   geometry.cc
+   kernel.h
+   math_lib.h
+   math_lib_impl.h
+   statistics.h
+   statistics.cc
 )
 
-set(TMP_HEADERS 
-    discrete.h
-    geometry.h
-    kernel.h
-    math_lib.h
-    math_lib_impl.h
-    statistics.h
-)
-set(TMP_CXX 
-    discrete.cc
-    geometry.cc
-    statistics.cc
-)
-set(TMP_SRCS ${TMP_HEADERS} ${TMP_CXX})
-
-set(MATH_SRCS)
-foreach(file ${TMP_SRCS})
-  set(MATH_SRCS ${MATH_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+# add directory name to sources
+set(DIR_SRCS)
+foreach(file ${SOURCES})
+  set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
+# append sources (with directory name) to list of all FASTLIB sources (used at the parent scope)
+set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-set(FASTLIB_SRCS ${FASTLIB_SRCS} ${MATH_SRCS} PARENT_SCOPE )
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ./)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ./)
-add_library( math ${MATH_SRCS} )
-
-add_dependencies( math col base )
-
-##!! doesn't exist??
-# add_executable( math_test
-# 		math_test.cc
-# )
-# 
-# target_link_libraries( math_test
-#                math
-#                #col
-#                #base	#needed?
-# )
-
-install(FILES ${TMP_HEADERS} DESTINATION include/fastlib/math)
+add_library(math ${SOURCES})
+# link dependencies of math
+target_link_libraries(math
+   base
+   col
+)

@@ -1,27 +1,27 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 
-include_directories( $ENV{FASTLIBPATH}
-                     ${CMAKE_CURRENT_BINARY_DIR}/../base/config
+# Define the files that we need to compile
+# Anything not in this list will not be compiled into the output library
+# Do not add test executables here
+set(SOURCES
+   datanode.h
+   datanode.c
+   fx.h
+   fx.c
+   stopwatch.h
+   stopwatch.c
 )
 
-set( TMP_HEADERS 
-    datanode.h  fx.h  stopwatch.h
-)
-set( TMP_CXX )
-set( TMP_C 
-    datanode.c  fx.c  stopwatch.c
-)
-set( TMP_SRCS ${TMP_HEADERS} ${TMP_CXX} ${TMP_C})
-set(FX_SRCS)
-foreach(file ${TMP_SRCS})
-    set(FX_SRCS ${FX_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+# add directory name to sources
+set(DIR_SRCS)
+foreach(file ${SOURCES})
+    set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
+# append sources (with directory name) to list of all FASTLIB sources (used at parent scope)
+set(FASTLIB_SRCS ${FASTLIB_SRCS} ${FX_SRCS} PARENT_SCOPE)
 
-set(FASTLIB_SRCS ${FASTLIB_SRCS} ${FX_SRCS} PARENT_SCOPE )
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ./)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ./)
-add_library( fx ${FX_SRCS} )
-
-add_dependencies( fx base )
-
-install(FILES ${TMP_HEADERS} DESTINATION include/fastlib/fx)
+add_library(fx ${SOURCES})
+# link dependencies of libfx
+target_link_libraries(fx
+   base
+)
