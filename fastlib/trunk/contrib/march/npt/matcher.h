@@ -18,7 +18,11 @@
 
 #include "fastlib/fastlib.h"
 
+// TODO: replace these with something better
 #define MAX_FAC 10
+#define EXCLUDE 0
+#define INCONCLUSIVE 1
+#define SUBSUME 2
 
 class Matcher {
   
@@ -103,6 +107,7 @@ private:
 
       GeneratePermutations_(0, &index, trial_perm);
       
+      /*
 #ifdef DEBUG
       printf("\n");
       for (index_t i = 0; i < n; i++) {
@@ -118,7 +123,7 @@ private:
       } // for i
       printf("\n");
 #endif
-      
+      */
       
       
     } // Init()
@@ -217,13 +222,13 @@ public:
                      index_t tuple_index_2, ArrayList<bool>& permutation_ok);
   
   
-  // TODO: how will I know what the nodes are inside this function?
-  // I think the Auton code just passes the hrects
   /**
    *
    */
-  bool TestNodePair();
-  
+  int TestHrectPair(const DHrectBound<2>& box1, const DHrectBound<2>& box2,
+                    index_t tuple_index_1, index_t tuple_index_2,
+                    ArrayList<int>& permutation_ok);
+    
 }; // Matcher
 
 #endif
