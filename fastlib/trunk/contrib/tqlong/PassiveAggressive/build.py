@@ -1,7 +1,7 @@
 librule(
     name = "pa",                 # the executable name
-    sources = ["pa.cc"],
-    headers = ["pa.h"],
+    sources = ["pa.cc", "kernel.cc", "dataGenerator.cc"],
+    headers = ["pa.h", "kernel.h", "dataGenerator.h"],
     deplibs = ["fastlib:fastlib_int"]       # depends on faslib core library
     )
 
