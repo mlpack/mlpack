@@ -31,6 +31,11 @@ public:
   }
   /** generate next point, TO BE IMPLEMENT in child class, TRUE if next point available  */
   virtual bool generateNextPoint(Vector& X_out, double& y_out) = 0;
+
+  /** If possible, restart the data generator */
+  virtual bool restart() {
+    return false;
+  }
 };
 
 
@@ -62,10 +67,17 @@ public:
   // virtual methods
   int n_features() { return m_dpData->n_features()-1; }
   bool generateNextPoint(Vector& X_out, double& y_out);
+  bool restart() {
+    m_iPoints = 0;
+    m_iPositives = 0;
+    m_iNegatives = 0;
+    m_iCurrentPoint = 0;
+    return true;
+  }
 };
 
 /** Online generating of file rows, used in case data cannot
- *  fit into memory.
+ *  fit into memory
  */
 struct FileRowGenerator : DataGenerator {
   const char* m_sFileName;
@@ -90,10 +102,42 @@ public:
   bool generateNextPoint(Vector& X_out, double& y_out);
 };
 
-/** Genetors for crossvalidation */
+/** Genetors for crossvalidation. The underlying data generator must be
+ *  able to restart (i.e. restart() return true).
+ */
 struct CrossValidationGenerator : DataGenerator {
+  DataGenerator& m_dData;
+  const ArrayList<index_t>& m_liValidationIndex;
+  index_t m_iCurrentSet;
+  index_t m_iCurrentPoint;
+  index_t m_iNSets;
+  bool m_bTesting;
 public:
   CrossValidationGenerator(DataGenerator&, const ArrayList<index_t>&);
+
+  /** Start a validation */
+  void setValidationSet(index_t idx, bool testing = false) { 
+    m_iCurrentSet = idx; 
+    m_iCurrentPoint = -1;
+    m_bTesting = testing;
+    m_iPoints = 0;
+    m_iPositives = 0;
+    m_iNegatives = 0;
+    bool restart_able = m_dData.restart();
+    DEBUG_ASSERT(restart_able);
+  }
+  
+  index_t n_sets() { return m_iNSets; }
+  
+  // virtual methods
+  int n_features() { return m_dData.n_features(); }
+  bool generateNextPoint(Vector& X_out, double& y_out);
+
+  // static helpers
+  static void createLOOCVindex(ArrayList<index_t>& vIdx, index_t N) {
+    vIdx.Init(N);
+    for (index_t i = 0; i < N; i++) vIdx[i] = i;
+  }
 };
 
 #endif /* DATA_GENERATOR_H */

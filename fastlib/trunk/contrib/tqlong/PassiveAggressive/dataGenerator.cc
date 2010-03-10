@@ -57,3 +57,38 @@ bool FileRowGenerator::generateNextPoint(Vector& X_out, double& y_out) {
     return true;
   }
 }
+
+CrossValidationGenerator::CrossValidationGenerator
+  (DataGenerator& dg, const ArrayList<index_t>& validation_index) : 
+    m_dData(dg), m_liValidationIndex(validation_index) {
+  m_iNSets = 0;
+  for (index_t i = 0; i < validation_index.size(); i++)
+    if (validation_index[i] > m_iNSets) m_iNSets = validation_index[i];
+}
+
+bool CrossValidationGenerator::generateNextPoint(Vector& X_out,double& y_out) {
+  while (true) {
+    Vector X_tmp; 
+    double y_tmp;
+    m_iCurrentPoint = (m_iCurrentPoint+1) % m_liValidationIndex.size();
+    if (!m_dData.getNextPoint(X_tmp, y_tmp)) {
+      X_out.Init(0);
+      return false;
+    }
+    else {
+      if (m_bTesting && 
+	  m_liValidationIndex[m_iCurrentPoint] == m_iCurrentSet) {
+	X_out.Copy(X_tmp); y_out = y_tmp;
+	return true;
+      }
+      if (!m_bTesting && 
+	  m_liValidationIndex[m_iCurrentPoint] != m_iCurrentSet){
+	X_out.Copy(X_tmp); y_out = y_tmp;
+	return true;
+      }
+      else { // skip a point 
+      }
+    }
+  }
+  return false;
+}
