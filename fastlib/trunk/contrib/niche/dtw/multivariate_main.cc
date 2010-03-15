@@ -2,6 +2,19 @@
 #include "dtw.h"
 
 
+void GetPointAsMatrix(Matrix data_with_labels,
+		      index_t ind, index_t n_times, index_t n_features,
+		      index_t prod_n_times_n_features, Matrix* p_point_mat) {
+  Vector point_vec;
+  Matrix point_skinny_mat;
+    
+  data_with_labels.MakeColumnSubvector(ind, 1, prod_n_times_n_features,
+				       &point_vec);
+  point_skinny_mat.AliasColVector(point_vec);
+  point_skinny_mat.MakeReshaped(n_times, n_features,
+				p_point_mat);
+}
+  
 
 void Normalize(Vector* p_ts) {
   Vector &ts = *p_ts;
@@ -96,48 +109,32 @@ int main(int argc, char* argv[]) {
 
 
 
-  ArrayList<Matrix> warping_cost_matrices;
-  warping_cost_matrices.Init(n_features, n_features);
-  for(int k = 0; k < n_features; k++) {
-    warping_cost_matrices[k].Init(n_training_points, n_test_points);
-  }
-  
-  for(int k = 0; k < n_features; k++) {
-    printf("k = %d\n", k);
-    for(int j = 0; j < n_test_points; j++) {
-      Vector ts_j;
-      test_data_with_labels.MakeColumnSubvector(j,
-						(k * n_times) + 1,
-						n_times, &ts_j);
-      for(int i = 0; i < n_training_points; i++) {
-	Vector ts_i;
-	training_data_with_labels.MakeColumnSubvector(i,
-						      (k * n_times) + 1,
-						      n_times, &ts_i);
-	ArrayList< GenVector<int> > optimal_path;
-	double score = ComputeDTWAlignmentScore(-1, ts_i, ts_j, &optimal_path);
-	warping_cost_matrices[k].set(i, j, score);
-      }
-    }
-  }
-
-
-
   Vector scores;
   scores.Init(n_training_points);
-
 
   GenVector<int> predicted_labels;
   predicted_labels.Init(n_test_points);
 
+  double prod_n_times_n_features = n_times * n_features;
 
   for(int j = 0; j < n_test_points; j++) {
     scores.SetZero();
-    for(int k = 0; k < n_features; k++) {
-      for(int i = 0; i < n_training_points; i++) {
-	scores[i] += log(warping_cost_matrices[k].get(i, j));
-      }
+
+    Matrix test_point_mat;
+    GetPointAsMatrix(test_data_with_labels, j, n_times, n_features,
+		     prod_n_times_n_features,
+		     &test_point_mat);
+    
+    for(int i = 0; i < n_training_points; i++) {
+      Matrix training_point_mat;
+      GetPointAsMatrix(training_data_with_labels, i, n_times, n_features,
+		       prod_n_times_n_features,
+		       &training_point_mat);
+      
+      scores[i] =
+	ComputeDTWAlignmentScore(-1, test_point_mat, training_point_mat);
     }
+    
     printf("test point %d\n", j);
     scores.PrintDebug("scores");
     

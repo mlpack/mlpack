@@ -8,7 +8,7 @@ binrule(
 binrule(
     name = "multidtw",
     sources = ["multivariate_main.cc"],
-    headers = ["dtw.h"],
+    headers = ["dtw.h","dtw_impl.h"],
     deplibs = ["fastlib:fastlib"]
     )
 
