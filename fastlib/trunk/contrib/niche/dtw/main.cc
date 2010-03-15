@@ -4,11 +4,11 @@
 int main(int argc, char* argv[]) {
   fx_init(argc, argv, NULL);
 
-  const char* training_data_filename = "/Users/niche/Downloads/ucr_time_series_datasets/FaceFour/FaceFour_TRAIN";
-  const char* test_data_filename = "/Users/niche/Downloads/ucr_time_series_datasets/FaceFour/FaceFour_TEST";
+  //const char* training_data_filename = "/Users/niche/Downloads/ucr_time_series_datasets/FaceFour/FaceFour_TRAIN";
+  //const char* test_data_filename = "/Users/niche/Downloads/ucr_time_series_datasets/FaceFour/FaceFour_TEST";
   
-  //const char* training_data_filename = "/scratch/niche/ucr_time_series_datasets/FaceFour/FaceFour_TRAIN";
-  //const char* test_data_filename = "/scratch/niche/ucr_time_series_datasets/FaceFour/FaceFour_TEST";
+  const char* training_data_filename = "/scratch/niche/ucr_time_series_datasets/CBF/CBF_TRAIN";
+  const char* test_data_filename = "/scratch/niche/ucr_time_series_datasets/CBF/CBF_TEST";
  
   // 1-NN classification test
   Matrix training_data_with_labels;
@@ -32,6 +32,7 @@ int main(int argc, char* argv[]) {
     Vector cur_training_ts;
     training_data_with_labels.MakeColumnSubvector(i, 1, n_dims, &cur_training_ts);
 
+    /// Print training data to files - only used for viewing warping results
     char* training_data_filename = (char*) malloc(100 * sizeof(char));
     sprintf(training_data_filename, "results/training_%03d.dat", i);
     FILE* training_data_file = fopen(training_data_filename, "w");
@@ -39,18 +40,21 @@ int main(int argc, char* argv[]) {
       fprintf(training_data_file, "%f\n", cur_training_ts[k]);
     }
     fclose(training_data_file);
+    // Done ///
   }
     
 
 
 
-
+  /// Open nn file - only used for viewing warping results
   FILE* nn_file = fopen("results/nn.dat", "w");
+  // Done ///
   
   for(int i = 0; i < n_test_points; i++) {
     Vector cur_test_ts;
     test_data_with_labels.MakeColumnSubvector(i, 1, n_dims, &cur_test_ts);
 
+    ///Print test data to files - only used for viewing warping results
     char* test_data_filename = (char*) malloc(100 * sizeof(char));
     sprintf(test_data_filename, "results/test_%03d.dat", i);
     FILE* test_data_file = fopen(test_data_filename, "w");
@@ -58,6 +62,7 @@ int main(int argc, char* argv[]) {
       fprintf(test_data_file, "%f\n", cur_test_ts[k]);
     }
     fclose(test_data_file);
+    // Done ///
     
     double min_score = std::numeric_limits<double>::max();
     int best_training_ind = -1;
@@ -79,8 +84,11 @@ int main(int argc, char* argv[]) {
       }
     }
 
+    /// Print nearest neighbors to file - only used for viewing warping results
     fprintf(nn_file, "%d %d\n", i, best_training_ind);
-    
+    // Done ///
+   
+    /// Print optimal paths to files - only used for viewing warping results
     char* optimal_path_filename = (char*) malloc(100 * sizeof(char));
     sprintf(optimal_path_filename, "results/optimal_path_%03d.dat", i);
     FILE* optimal_path_file = fopen(optimal_path_filename, "w");
@@ -90,13 +98,14 @@ int main(int argc, char* argv[]) {
 	      best_optimal_path[k][0], best_optimal_path[k][1]);
     }
     fclose(optimal_path_file);
-    
+    // Done ///
 
     predicted_labels[i] = (int) training_data_with_labels.get(0, best_training_ind);
   }
 
   fclose(nn_file);
 
+  /// Print loss results to file - only used for viewing warping results
   FILE* loss_file = fopen("results/loss.dat", "w");
   int n_correct = 0;
   for(int i = 0; i < n_test_points; i++){
@@ -109,6 +118,7 @@ int main(int argc, char* argv[]) {
     }
   }
   fclose(loss_file);
+  // Done ///
 
   printf("Accuracy: %d/%d = %f\n", n_correct, n_test_points,
 	 ((double)n_correct) / ((double)n_test_points));
