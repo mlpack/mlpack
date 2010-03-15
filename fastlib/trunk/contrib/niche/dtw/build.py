@@ -13,6 +13,13 @@ binrule(
     )
 
 binrule(
+    name = "nearest_centroid",
+    sources = ["mean_ts_classifier.cc"],
+    headers = [],
+    deplibs = ["fastlib:fastlib"]
+    )
+
+binrule(
     name = "test_arraylist",
     sources = ["test_arraylist.cc"],
     headers = [],
