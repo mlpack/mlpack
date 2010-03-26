@@ -1,77 +1,85 @@
-# The linkable library for original dualtree KDE algorithm
-add_library( dualtree_kde 
-    bandwidth_lscv.h
-    dataset_scaler.h
-    dualtree_kde.h
-    dualtree_kde_common.h
-    dualtree_kde_cv.h
-    dualtree_kde_cv_common.h
-    dualtree_kde_cv_impl.h
-    dualtree_kde_impl.h
-    dualtree_vkde.h
-    dualtree_vkde_impl.h
-    general_spacetree.h
-    gen_metric_tree.h
-    gen_metric_tree_impl.h
-    inverse_normal_cdf.h
-    kde_stat.h
-    naive_kde.h
-)
-set_target_properties( dualtree_kde PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries( dualtree_kde
-    series_expansion
-    allknn
-    ${MLPACK_STD_LIBS}
+cmake_minimum_required(VERSION 2.8)
+
+# Define the files we need to compile
+# Anything not in this list will not be compiled into the output library
+# Do not include test programs here
+# In this library, these are specified twice, once here, and once for the individual library it belongs to, so make sure
+# that you have files in both sections
+set(SOURCES
+   # for dualtree_kde
+   bandwidth_lscv.h
+   dataset_scaler.h
+   dualtree_kde.h
+   dualtree_kde_common.h
+   dualtree_kde_cv.h
+   dualtree_kde_cv_common.h
+   dualtree_kde_cv_impl.h
+   dualtree_kde_impl.h
+   dualtree_vkde.h
+   dualtree_vkde_impl.h
+   general_spacetree.h
+   gen_metric_tree.h
+   gen_metric_tree_impl.h
+   inverse_normal_cdf.h
+   kde_stat.h
+   naive_kde.h
+   # for fgt_kde
+   fgt_kde.h
+   # for original_ifgt
+   original_ifgt.h
+   # for fft_kde
+   fft_kde.h
 )
 
-# The linkable library for KDE using the original fast Gauss transform
-add_library( fgt_kde
-    fgt_kde.h
-)
-set_target_properties( fgt_kde PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries( fgt_kde ${MLPACK_STD_LIBS} )
+# add directory name to sources
+set(DIR_SRCS)
+foreach(file ${SOURCES})
+  set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+endforeach()
+# append sources (with directory name) to list of all MLPACK sources (used at the parent scope)
+set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-# The linkable library for KDE based on the original improved fast
-# Gauss transform.
-add_library( original_ifgt
-    original_ifgt.h
-)
-set_target_properties( original_ifgt PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries( original_ifgt ${MLPACK_STD_LIBS} )
-
-# The linkable library for FFT-based KDE
-add_library( fft_kde
-    fft_kde.h
-)
-set_target_properties( fft_kde PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries( fft_kde ${MLPACK_STD_LIBS} )
-
-# The test driver for the FFT-based KDE
-add_executable( fft_kde_bin
+# The executable for the FFT-based KDE
+add_executable(fft_kde
     fft_kde_main.cc
-    fft_kde.h
 )
-target_link_libraries( fft_kde_bin ${MLPACK_STD_LIBS} )
+target_link_libraries(fft_kde
+   mlpack
+   fastlib
+)   
 
-# The test driver for the FGT-based KDE
-add_executable( fgt_kde_bin
-    fgt_kde_main.cc
-    fgt_kde.h
+# The executable for the FGT-based KDE
+add_executable(fgt_kde
+   fgt_kde_main.cc
 )
-target_link_libraries( fgt_kde_bin ${MLPACK_STD_LIBS} )
+target_link_libraries(fgt_kde
+   mlpack
+   fastlib
+)
 
-# The test-driver for the original dualtree KDE
-add_executable( dualtree_kde_bin dualtree_kde_main.cc )
-target_link_libraries(dualtree_kde_bin dualtree_kde)
-#    headers = [],
-#    deplibs = [":dualtree_kde",
-#               "../series_expansion:series_expansion",
-#               "fastlib:fastlib_int"]
+# The executable for the original dualtree KDE
+add_executable(dualtree_kde
+   dualtree_kde_main.cc
+)
+target_link_libraries(dualtree_kde
+   mlpack
+   fastlib
+)
 
-# The test-driver for the original IFGT-based KDE
-add_executable( original_ifgt_bin original_ifgt_main.cc )
-target_link_libraries( original_ifgt_bin original_ifgt )  # ${MLPACK_STD_LIBS} )
+# The executable for the original IFGT-based KDE
+add_executable(original_ifgt
+   original_ifgt_main.cc
+)
+target_link_libraries(original_ifgt
+   mlpack
+   fastlib
+)
 
-# The driver for the bandwidth cross-validator.
-add_executable( kde_cv_bin kde_bandwidth_cv_main.cc )
-target_link_libraries( kde_cv_bin dualtree_kde )
+# The executable for the bandwidth cross-validator.
+add_executable(kde_cv
+   kde_bandwidth_cv_main.cc
+)
+target_link_libraries(kde_cv
+   mlpack
+   fastlib
+)

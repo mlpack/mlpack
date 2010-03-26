@@ -1,38 +1,27 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 
-## include_directories( $ENV{FASTLIBPATH}		     
-##                      ${CMAKE_CURRENT_BINARY_DIR}/../base/config
-## )
-
-set( TMP_HEADERS 
-    kernel_pca.h
-    kernel_pca_impl.h
+# Define the files we need to compile
+# Anything not in this list will not be compiled into the output library
+# Do not include test programs here
+set(SOURCES
+   kernel_pca.h
+   kernel_pca_impl.h
 )
-set( TMP_CXX 
-    
-)	
-set( TMP_SRCS ${TMP_HEADERS} ${TMP_CXX})
-set(kernel_pca_SRCS)
-foreach(file ${TMP_SRCS})
-  set(kernel_pca_SRCS ${kernel_pca_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+
+# add directory name to sources
+set(DIR_SRCS)
+foreach(file ${SOURCES})
+  set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
+# append sources (with directory name) to list of all MLPACK sources (used at the parent scope)
+set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-## set(MLPACK_SRCS ${MLPACK_SRCS} ${kernel_pca_SRCS} PARENT_SCOPE )
-add_library( kernel_pca ${kernel_pca_SRCS} )
-set_target_properties( kernel_pca PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries( kernel_pca
-    # fastlib/sparse #TODO
-    ${MLPACK_STD_LIBS}
+# test executable
+add_executable(kernel_pca_test
+   kernel_pca_test.cc
 )
-
-add_executable( kernel_pca_test
-		kernel_pca_test.cc
+# link dependencies of test executable
+target_link_libraries(kernel_pca_test
+   mlpack
+   fastlib
 )
-set_target_properties( kernel_pca_test PROPERTIES 
-    COMPILE_FLAGS -fexceptions #portable?
-)
-target_link_libraries( kernel_pca_test
-    kernel_pca
-    ${MLPACK_STD_LIBS}
-)
-## install(FILES ${TMP_HEADERS} DESTINATION include/fastlib/kernel_pca)

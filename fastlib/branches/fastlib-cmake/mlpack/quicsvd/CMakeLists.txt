@@ -1,43 +1,39 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 
-## include_directories( $ENV{FASTLIBPATH}		     
-##                      ${CMAKE_CURRENT_BINARY_DIR}/../base/config
-## )
-
-set( TMP_HEADERS 
-    cosine_tree.h
-    quicsvd.h   
+# Define the files we need to compile
+# Anything not in this list will not be compiled into the output library
+# Do not include test programs here
+set(SOURCES
+   cosine_tree.h
+   cosine_tree.cc
+   quicsvd.h
+   quicsvd.cc
 )
-set( TMP_CXX 
-    cosine_tree.cc
-    quicsvd.cc
-)	
-set( TMP_SRCS ${TMP_HEADERS} ${TMP_CXX})
-set(quicsvd_SRCS)
-foreach(file ${TMP_SRCS})
-  set(quicsvd_SRCS ${quicsvd_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+
+# add directory name to sources
+set(DIR_SRCS)
+foreach(file ${SOURCES})
+  set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
+# append sources (with directory name) to list of all MLPACK sources (used at the parent scope)
+set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-## set(MLPACK_SRCS ${MLPACK_SRCS} ${quicsvd_SRCS} PARENT_SCOPE )
-add_library( quicsvd ${quicsvd_SRCS} )
-## set_target_properties( quicsvd PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries( quicsvd
-    ${MLPACK_STD_LIBS}
+# test executable
+add_executable(quicsvd_test
+   quicsvd_test.cc
 )
-
-add_executable( quicsvd_test
-		quicsvd_test.cc
-)
-target_link_libraries( quicsvd_test
-    quicsvd
-    ${MLPACK_STD_LIBS}
+# link dependencies of test executable
+target_link_libraries(quicsvd_test
+   mlpack
+   fastlib
 )
 
-add_executable( quicsvd_main
-		quicsvd_main.cc
+# main executable
+add_executable(quicsvd
+   quicsvd_main.cc
 )
-target_link_libraries( quicsvd_main
-    quicsvd
-    ${MLPACK_STD_LIBS}
+# link dependencies of allnn
+target_link_libraries(quicsvd
+   mlpack
+   fastlib
 )
-## install(FILES ${TMP_HEADERS} DESTINATION include/fastlib/quicsvd)

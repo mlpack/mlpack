@@ -1,17 +1,37 @@
+cmake_minimum_required(VERSION 2.8)
 
-add_library( infomax_ica
-    infomax_ica.cc
-    infomax_ica.h
+# Define the files we need to compile
+# Anything not in this list will not be compiled into the output library
+# Do not include test programs here
+set(SOURCES
+   infomax_ica.h
+   infomax_ica.cc
 )
-target_link_libraries( infomax_ica ${MLPACK_STD_LIBS} )
 
-add_executable( infomax_ica_main
-    main.cc
+# add directory name to sources
+set(DIR_SRCS)
+foreach(file ${SOURCES})
+  set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+endforeach()
+# append sources (with directory name) to list of all MLPACK sources (used at the parent scope)
+set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+# test executable
+add_executable(infomax_ica_test
+   test_main.cc
 )
-target_link_libraries( infomax_ica_main infomax_ica )
-
-add_executable( infomax_ica_test_main
-    test_main.cc
+# link dependencies of test executable
+target_link_libraries(infomax_ica_test
+   mlpack
+   fastlib
 )
-target_link_libraries( infomax_ica_test_main infomax_ica )
 
+# main executable
+add_executable(infomax_ica
+   main.cc
+)
+# link dependencies of allknn
+target_link_libraries(infomax_ica
+   mlpack
+   fastlib
+)

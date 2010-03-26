@@ -1,14 +1,28 @@
-add_library( nbc
-    simple_nbc.h
-    phi.h
-    math_functions.h
-)
-#    tests = ["test_simple_nbc_main.cc"]
-set_target_properties( nbc PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries( nbc ${MLPACK_STD_LIBS} )
+cmake_minimum_required(VERSION 2.8)
 
-add_executable( nbc_main
-    nbc_main.cc
+# Define the files we need to compile
+# Anything not in this list will not be compiled into the output library
+# Do not include test programs here
+set(SOURCES
+   simple_nbc.h
+   phi.h
+   math_functions.h
 )
-#target_link_libraries( nbc_main nbc ${MLPACK_STD_LIBS} )
-target_link_libraries( nbc_main nbc )
+
+# add directory name to sources
+set(DIR_SRCS)
+foreach(file ${SOURCES})
+  set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+endforeach()
+# append sources (with directory name) to list of all MLPACK sources (used at the parent scope)
+set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+# main executable
+add_executable(nbc
+   nbc_main.cc
+)
+# link dependencies of nbc
+target_link_libraries(nbc
+   mlpack
+   fastlib
+)

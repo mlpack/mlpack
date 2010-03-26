@@ -1,34 +1,28 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 
-## include_directories( $ENV{FASTLIBPATH}		     
-##                      ${CMAKE_CURRENT_BINARY_DIR}/../base/config
-## )
-
-set( TMP_HEADERS 
-    
+# Define the files we need to compile
+# Anything not in this list will not be compiled into the output library
+# Do not include test programs here
+set(SOURCES
+   data_aux.h
+   naive_ortho_range_search.h
+   ortho_range_search.h
 )
-set( TMP_CXX 
-    
-)	
-set( TMP_SRCS ${TMP_HEADERS} ${TMP_CXX})
-set(<{DIR}>_SRCS)
-foreach(file ${TMP_SRCS})
-  set(<{DIR}>_SRCS ${<{DIR}>_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+
+# add directory name to sources
+set(DIR_SRCS)
+foreach(file ${SOURCES})
+  set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
+# append sources (with directory name) to list of all MLPACK sources (used at the parent scope)
+set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-## set(MLPACK_SRCS ${MLPACK_SRCS} ${<{DIR}>_SRCS} PARENT_SCOPE )
-add_library( <{DIR}> ${<{DIR}>_SRCS} )
-## set_target_properties( <{DIR}> PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries( <{DIR}>
-    ...
-    ${MLPACK_STD_LIBS}
+# main executable
+add_executable(ortho_range_search
+   ortho_range_search_main.cc
 )
-
-add_executable( <{DIR}>_test
-		<{DIR}>_test.cc
+# link dependencies of allnn
+target_link_libraries(ortho_range_search
+   mlpack
+   fastlib
 )
-target_link_libraries( <{DIR}>_test
-    <{DIR}>
-    ${MLPACK_STD_LIBS}
-)
-## install(FILES ${TMP_HEADERS} DESTINATION include/fastlib/<{DIR}>)
