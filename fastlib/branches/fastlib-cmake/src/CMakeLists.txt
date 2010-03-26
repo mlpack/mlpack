@@ -56,10 +56,10 @@ target_link_libraries(fastlib
 file(GLOB_RECURSE INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h )
 add_custom_command(TARGET fastlib POST_BUILD
   COMMENT "Moving header files to include/fastlib/"
-  COMMAND ${CMAKE_COMMAND} ARGS -E make_directory ../include/fastlib/)
+  COMMAND ${CMAKE_COMMAND} ARGS -E make_directory ${CMAKE_BINARY_DIR}/include/fastlib/)
 foreach(incl_file ${INCLUDE_FILES})
   add_custom_command(TARGET fastlib POST_BUILD
-    COMMAND ${CMAKE_COMMAND} ARGS -E copy ${incl_file} ../include/fastlib/${incl_file} )
+    COMMAND ${CMAKE_COMMAND} ARGS -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${incl_file} ${CMAKE_BINARY_DIR}/include/fastlib/${incl_file} )
 endforeach()
 
 add_executable( otrav_test otrav_test.cc )

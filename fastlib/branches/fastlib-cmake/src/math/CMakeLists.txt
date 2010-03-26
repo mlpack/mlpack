@@ -23,9 +23,9 @@ endforeach()
 # append sources (with directory name) to list of all FASTLIB sources (used at the parent scope)
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_library(math ${SOURCES})
+#add_library(math ${SOURCES})
 # link dependencies of math
-target_link_libraries(math
-   base
-   col
-)
+#target_link_libraries(math
+#   base
+#   col
+#)

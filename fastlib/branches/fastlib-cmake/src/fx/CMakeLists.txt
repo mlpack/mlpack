@@ -20,8 +20,8 @@ endforeach()
 # append sources (with directory name) to list of all FASTLIB sources (used at parent scope)
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_library(fx ${SOURCES})
+#add_library(fx ${SOURCES})
 # link dependencies of libfx
-target_link_libraries(fx
-   base
-)
+#target_link_libraries(fx
+#   base
+#)
