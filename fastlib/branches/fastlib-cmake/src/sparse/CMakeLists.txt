@@ -8,7 +8,7 @@ set(TRILINOS_BASE_DIR /usr/local CACHE PATH
 ## library 
 #set(TRILINOS_REQUIRED_LIBS epetra anasazi aztecoo ifpack kokkos teuchos)
 set(TRILINOS_REQUIRED_LIBS epetra anasazi aztecoo ifpack teuchos)
-set(TRILINOS_LIBS)
+set(TRILINOS_LIBS PARENT_SCOPE)
 foreach(lib ${TRILINOS_REQUIRED_LIBS})
     set(trilinos_lib trilinos_lib-NOTFOUND CACHE INTERNAL "")
     find_library(trilinos_lib ${lib}
@@ -83,13 +83,13 @@ endforeach()
 # append sources (with directory name) to list of all FASTLIB sources (used at the parent scope)
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_library(sparse ${SOURCES})
+#add_library(sparse ${SOURCES})
 # link dependencies of sparse
-target_link_libraries(sparse
-   base
-   ${TRILINOS_LIBS}
-   lapack
-)
+#target_link_libraries(sparse
+#   base
+#   ${TRILINOS_LIBS}
+#   lapack
+#)
 
 # test executable
 add_executable(sparse_test
@@ -100,6 +100,7 @@ set_target_properties(sparse_test PROPERTIES
 )
 # link dependencies of test executable
 target_link_libraries(sparse_test
-   sparse
+#   sparse
+   fastlib
    ${TRILINOS_LIBS}
 )

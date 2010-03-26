@@ -16,12 +16,12 @@ endforeach()
 # append sources (with directory name) to list of all FASTLIB sources (used at parent scope)
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_library(file ${SOURCES})
+#add_library(file ${SOURCES})
 # dependencies of file
-target_link_libraries(file
-   base
-   col
-)
+#target_link_libraries(file
+#   base
+#   col
+#)
 
 # test executable
 add_executable(textfile_test
@@ -29,7 +29,8 @@ add_executable(textfile_test
 )
 # dependencies of test executable
 target_link_libraries(textfile_test
-   base
-   col
-   file
+#   base
+#   col
+#   file
+   fastlib
 )

@@ -20,11 +20,11 @@ endforeach()
 # append sources (with directory name) to list of all FASTLIB sources (used at the parent scope)
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_library(la ${SOURCES})
+#add_library(la ${SOURCES})
 # link dependencies of la
-target_link_libraries(la
-   base
-   col
-   ${BLAS_LIBRARIES}
-   ${LAPACK_LIBRARIES}
-)
+#target_link_libraries(la
+#   base
+#   col
+#   ${BLAS_LIBRARIES}
+#   ${LAPACK_LIBRARIES}
+#)

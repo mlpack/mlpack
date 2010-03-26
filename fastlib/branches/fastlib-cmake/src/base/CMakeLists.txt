@@ -31,4 +31,4 @@ endforeach()
 # append sources (with directory name) to list of all FASTLIB sources (used at the parent cmake scope)
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-add_library(base ${SOURCES})
+#add_library(base ${SOURCES})
