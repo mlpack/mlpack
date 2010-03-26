@@ -59,4 +59,12 @@ foreach(dir ${DIRS})
     add_subdirectory(${dir})
 endforeach()
 
+add_library(mlpack ${MLPACK_SRCS})
+add_dependencies(mlpack fastlib)
+
+install(TARGETS mlpack
+   RUNTIME DESTINATION bin
+   LIBRARY DESTINATION lib
+   ARCHIVE DESTINATION lib)
+
 ## installation

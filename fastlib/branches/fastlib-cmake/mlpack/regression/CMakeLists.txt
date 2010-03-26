@@ -1,44 +1,47 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 
-## include_directories( $ENV{FASTLIBPATH}		     
-##                      ${CMAKE_CURRENT_BINARY_DIR}/../base/config
-## )
-
-set( TMP_HEADERS 
-    ridge_regression.h
-    ridge_regression_impl.h
-    ridge_regression_util.h    
+# Define the files we need to compile
+# Anything not in this list will not be compiled into the output library
+# Do not include test programs here
+set(SOURCES
+   ridge_regression.h
+   ridge_regression_impl.h
+   ridge_regression_util.h    
 )
-set( TMP_CXX 
 
-)	
-set( TMP_SRCS ${TMP_HEADERS} ${TMP_CXX})
-set(ridge_regression_SRCS)
-foreach(file ${TMP_SRCS})
-  set(ridge_regression_SRCS ${ridge_regression_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+# add directory name to sources
+set(DIR_SRCS)
+foreach(file ${SOURCES})
+  set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
+# append sources (with directory name) to list of all MLPACK sources (used at the parent scope)
+set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-## set(MLPACK_SRCS ${MLPACK_SRCS} ${ridge_regression_SRCS} PARENT_SCOPE )
-add_library( ridge_regression ${ridge_regression_SRCS} )
-set_target_properties( ridge_regression PROPERTIES LINKER_LANGUAGE CXX)
-target_link_libraries( ridge_regression
-    quicsvd
-    ${MLPACK_STD_LIBS}
+# test executable
+add_executable(ridge_regression_test
+   ridge_regression_test.cc
 )
-
-add_executable( ridge_regression_test
-		ridge_regression_test.cc
-)
-target_link_libraries( ridge_regression_test
-    ridge_regression
-#   ${MLPACK_STD_LIBS}
+# link dependencies of test executable
+target_link_libraries(ridge_regression_test
+   mlpack
+   fastlib
 )
 
-add_executable( ridge
-		ridge_main.cc
+# main executable
+add_executable(ridge_regression
+   ridge_main.cc
 )
-target_link_libraries( ridge
-    ridge_regression
-    ${MLPACK_STD_LIBS}
+# link dependencies of ridge_regression
+target_link_libraries(ridge_regression
+   mlpack
+   fastlib
 )
-## install(FILES ${TMP_HEADERS} DESTINATION include/fastlib/ridge_regression)
+
+# dataset preprocessing
+add_executable(dataset_preprocess
+   dataset_preprocess.cc
+)
+target_link_libraries(dataset_preprocess
+   mlpack
+   fastlib
+)
