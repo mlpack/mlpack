@@ -16,6 +16,7 @@ include( CMake/TargetDistclean.cmake OPTIONAL )
 add_definitions( -DDISABLE_DISK_MATRIX )
 
 include_directories( ${FASTLIB_INCLUDE_DIRS} )
+include_directories(${CMAKE_BINARY_DIR}/include/)
 #TODO link_directories()
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
