@@ -9,6 +9,116 @@
 
 #include "n_point.h"
 
+int NPointAlg::NChooseR_(int n, int r) {
+  
+  DEBUG_ASSERT(n >= r);
+  DEBUG_ASSERT(r >= 0);
+  
+  int divisor = 1;
+  int multiplier = n;
+  
+  int answer = 1;
+  
+  while (divisor <= r) {
+    
+    answer = (answer * multiplier) / divisor;
+    
+    multiplier--;
+    divisor++;
+    
+  } 
+  
+  return answer;
+  
+} // NChooseR
+
+
+int NPointAlg::CountTuples_(ArrayList<NPointNode*>& nodes) {
+  
+  // counts[i] = j means that there are j copies of node i
+  // negative value means that this node is counted elsewhere
+  ArrayList<int> counts;
+  counts.Init(tuple_size_);
+  
+  for (index_t i = 0; i < tuple_size_; i++) {
+    counts[i] = 1;
+  } // initialize counts
+  
+  // check all pairs of nodes
+  for (index_t i = 0; i < tuple_size_; i++) {
+    
+    NPointNode* node_i = nodes[i];
+    
+    for (index_t j = i+1; j < tuple_size_; j++) {
+      
+      NPointNode* node_j = nodes[j];
+      
+      // do they overlap
+      if ((node_i->begin() >= node_j->end()) || 
+          (node_j->begin() >= node_i->end())) {
+        
+        // don't need to do anything
+        
+      } // they definitely don't overlap
+      else if ((node_i->begin() == node_j->begin()) &&
+               (node_i->end() == node_j->end())) {
+        
+        // add 1, set j to -1
+        counts[i] += 1;
+        counts[j] = -1;
+        
+      } // the are identical
+      else if (node_j->count() > node_i->count()) {
+        
+        // split j and recurse
+        nodes[j] = node_j->left();
+        int left_count = CountTuples_(nodes);
+        nodes[j] = node_j->right();
+        int right_count = CountTuples_(nodes);
+        
+        nodes[j] = node_j;
+        return left_count + right_count;
+        
+      } // i is bigger
+      else {
+        
+        // split i and recurse
+        nodes[i] = node_i->left();
+        int left_count = CountTuples_(nodes);
+        nodes[i] = node_i->right();
+        int right_count = CountTuples_(nodes);
+        
+        nodes[i] = node_i;
+        return left_count + right_count;
+        
+      } // j is bigger
+      
+    } // for j
+  } // for i
+  
+  // we didn't recurse, so now count them up
+
+  int total_count = 1;
+  
+  for (index_t i = 0; i < tuple_size_; i++) {
+    
+    if (counts[i] > 0) {
+      
+      NPointNode* node_i = nodes[i];
+      int size = node_i->count();
+      
+      total_count *= NChooseR_(size, counts[i]);
+      
+    }
+    
+  } // count the sizes
+  
+  return total_count;
+  
+  
+} // CountTuples_()
+
+
 // returns true if the indices violate the symmetry requirement
 bool NPointAlg::PointsViolateSymmetry_(index_t ind1, index_t ind2) {
   return (ind2 <= ind1);
@@ -138,6 +248,39 @@ int NPointAlg::BaseCase_(ArrayList<ArrayList<index_t> >& point_sets,
   
 } // BaseCase_()
 
+/*
+int NPointAlg::BreadthFirstRecursion_() {
+  
+  Queue<ArrayList<NPointNode*>&> queue;
+  queue.Init();
+  
+  ArrayList<NPointNode*> starting_nodes;
+  starting_nodes.Init(tuple_size_);
+  for (int i = 0; i < tuple_size_; i++) {
+    
+    starting_nodes[i] = tree_;
+    
+  }
+  
+  queue.Add(starting_nodes);
+  
+  /////////////////
+  
+  while(!queue.is_empty()) {
+    
+    ArrayList<NPointNode*>& current_nodes = queue.Pop();
+    
+    // check for base case
+    
+    // test nodes
+    
+    // split and add to queue
+    
+  } // queue not empty
+  
+  
+} // BFS()
+*/
 
 // TODO: make this handle weighted results, should be easy
 int NPointAlg::DepthFirstRecursion_(ArrayList<NPointNode*>& nodes, 
@@ -155,6 +298,8 @@ int NPointAlg::DepthFirstRecursion_(ArrayList<NPointNode*>& nodes,
   
   index_t split_index = -1;
   int split_count = -1;
+  
+  // TODO: turn this into a function, it's the same in all expansion patterns
   
   ArrayList<int> permutation_ok;
   permutation_ok.Init(matcher_.num_permutations());

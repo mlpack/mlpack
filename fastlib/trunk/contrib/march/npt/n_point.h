@@ -40,12 +40,16 @@ n_point_entries, n_point_submodules,
 "Algorithm module for n-point correlation.\n"
 };
 
+class NPointTester;
+
 
 /**
  *
  */
 class NPointAlg {
 
+  friend class NPointTester;
+  
 private:
   
   class NPointStat {
@@ -132,6 +136,14 @@ private:
     }
     
   } // NodeIndexTraversal_
+  
+  /**
+   * 
+   */
+  int NChooseR_(int n, int r);
+
+  
+  int CountTuples_(ArrayList<NPointNode*>& nodes);
   
   /**
    *
