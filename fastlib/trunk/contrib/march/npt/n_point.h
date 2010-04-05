@@ -28,6 +28,8 @@ const fx_entry_doc n_point_entries[] = {
   "Size of leaves in the kd-tree.  Default: 1.\n"},
 {"tree_building", FX_TIMER, FX_CUSTOM, NULL,
   "Time to build the kd-tree.\n"},
+{"error", FX_PARAM, FX_DOUBLE, NULL,
+  "The relative error allowed between the upper and lower bounds.\n"},
 FX_ENTRY_DOC_DONE
 };
 
@@ -85,6 +87,8 @@ private:
 
   typedef BinarySpaceTree<DHrectBound<2>, Matrix, NPointStat> NPointNode;
 
+  // TODO: make a class for a node list, store the count for it (and other 
+  // data for the splitting heuristics)
   
   
   ////////////// variables ////////////
@@ -110,6 +114,10 @@ private:
   NPointNode* tree_;
   ArrayList<index_t> old_from_new_permutation_;
   int leaf_size_;
+  
+  int upper_bound_;
+  int lower_bound_;
+  double error_tolerance_;
   
   ////////////// functions ////////////
   
@@ -199,6 +207,8 @@ public:
     
     if (!do_naive_) {
       
+      error_tolerance_ = fx_param_double(mod_, "error", 0.01);
+      
       leaf_size_ = fx_param_int(mod_, "leaf_size", 1);
       
       if (leaf_size_ <= 0) {
@@ -226,6 +236,9 @@ public:
       //printf("timer stopped\n");
       
     } // tree building
+    
+    upper_bound_ = NChooseR_(num_points_, tuple_size_);
+    lower_bound_ = 0;
     
     num_tuples_ = 0;
     weighted_num_tuples_ = 0.0;
