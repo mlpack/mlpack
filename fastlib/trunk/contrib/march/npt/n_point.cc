@@ -79,7 +79,7 @@ int NPointAlg::CountTuples_(ArrayList<NPointNode*>& nodes) {
         nodes[j] = node_j;
         return left_count + right_count;
         
-      } // i is bigger
+      } // j is bigger
       else {
         
         // split i and recurse
@@ -91,7 +91,7 @@ int NPointAlg::CountTuples_(ArrayList<NPointNode*>& nodes) {
         nodes[i] = node_i;
         return left_count + right_count;
         
-      } // j is bigger
+      } // i is bigger
       
     } // for j
   } // for i
@@ -248,39 +248,190 @@ int NPointAlg::BaseCase_(ArrayList<ArrayList<index_t> >& point_sets,
   
 } // BaseCase_()
 
-/*
-int NPointAlg::BreadthFirstRecursion_() {
+
+// Computes the heuristic priority of the node list
+// IMPORTANT: lower number means higher priority
+// Make the heuristic express how likely we are to be able to prune vs. how 
+// likely we are to not have to bother because we can ignore this part of the 
+// computation
+double NPointAlg::HybridHeuristic_(ArrayList<NPointNode*>& nodes) {
+
+  // for now, really dumb heuristic, just split the potentially largest tuples
+  return -1.0 * CountTuples_(nodes);
   
-  Queue<ArrayList<NPointNode*>&> queue;
+} // HybridHeuristic_()
+
+int NPointAlg::HybridExpansion_() {
+  
+  MinHeap<double, ArrayList<NPointNode*> > queue;
+  
   queue.Init();
   
-  ArrayList<NPointNode*> starting_nodes;
-  starting_nodes.Init(tuple_size_);
+  ArrayList<NPointNode*> first_comp;
+  first_comp.Init(tuple_size_);
   for (int i = 0; i < tuple_size_; i++) {
-    
-    starting_nodes[i] = tree_;
-    
+    first_comp[i] = tree_;
   }
   
-  queue.Add(starting_nodes);
+  queue.Put(1.0, first_comp);
   
-  /////////////////
+  while (!queue.is_empty()) {
+    
+    // see if we're done - i.e. if the bounds work
+    if ((double)abs(upper_bound - lower_bound) / (double)lower_bound 
+        < error_tolerance_) {
+      
+      return;
+      
+    }
+    else {
+     
+      ArrayList<NPointNode*> nodes = queue.Pop();
+      bool all_leaves = true;
+      index_t split_ind;
+      int split_size = -1;
+      
+      for (index_t i = 0; i < tuple_size_; i++) {
+        
+        if (!nodes[i]->is_leaf()) {
+          all_leaves = false;
+          
+          // choose node to split
+          // for now, splitting largest
+          if (nodes[i]->count() > split_size) {
+            split_ind = i;
+            split_size = nodes[i]->count();
+          }
+          
+        }
+        
+      } // check for leaves and splitting
+      
+      // is it a base case?
+      if (all_leaves) {
+
+        ArrayList<ArrayList<index_t> > point_sets;
+        point_sets.Init(tuple_size_);
+        for (index_t i = 0; i < tuple_size_; i++) {
+          point_sets[i].Init(nodes[i]->count());
+          
+          for (index_t j = 0; j < nodes[i]->count(); j++) {
+            point_sets[i][j] = j + nodes[i]->begin();
+          } // for j
+          
+        } // for i
+        
+        int num_tuples_here = BaseCase_(point_sets, &this_weighted_result);
+        int max_tuples = CountTuples_(point_sets);
+        
+        lower_bound_ += num_tuples_here;
+        upper_bound_ = upper_bound_ - max_tuples + num_tuples_here;
+        
+      }
+      else {
+        
+        ArrayList<NPointNode*> new_nodes;
+        NPointNode* split_node = nodes[split_ind];
+        
+        nodes[split_ind] = split_node->left();
+        
+        int left_status = CheckNodeList_(nodes);
+        // TODO: add subsume check
+        if (left_status != EXCLUDE) {
+          double left_key = HybridHeuristic(nodes);
+          queue.Put(left_key, nodes);          
+        } 
+        else {
+          
+          num_exclusion_prunes_++;
+          
+          upper_bound -= CountTuples_(nodes); 
+          
+        }
+        
+        
+        new_nodes.InitCopy(nodes);
+        new_nodes[split_ind] = split_node->right();
+        
+        int right_status = CheckNodeList_(new_nodes);
+       
+        if (right_status != EXCLUDE) {
+          double right_key = HybridHeuristic(new_nodes);
+          queue.Put(right_key, new_nodes);          
+        } 
+        else {
+          
+          num_exclusion_prunes_++;
+          
+          upper_bound -= CountTuples_(new_nodes); 
+          
+        }
+        
+      } // not all leaves
+      
+    } // couldn't stop computation
+    
+  } // main loop
   
-  while(!queue.is_empty()) {
+  
+} // HybridExpansion_()
+
+
+// Determines if the list of nodes violates the matcher
+int NPointAlg::CheckNodeList_(ArrayList<NPointNode*>& nodes) {
+  
+  ArrayList<int> permutation_ok;
+  permutation_ok.Init(matcher_.num_permutations());
+  for (index_t i = 0; i < permutation_ok.size(); i++) {
+    permutation_ok[i] = SUBSUME;
+  }
+  
+  for (index_t i = 0; i < tuple_size_; i++) {
     
-    ArrayList<NPointNode*>& current_nodes = queue.Pop();
+    NPointNode* node_i = nodes[i];
     
-    // check for base case
+    for (index_t j = i+1; j < tuple_size_; j++) {
+      
+      NPointNode* node_j = nodes[j];
+      
+      // TODO: would it be more efficient to make this check outside, without
+      // possibly doing some permutation checks with the matcher
+      // Another possibility would be to check this before making a recursive 
+      // call -> this is closer to the way my HF code works
+      
+      // check if the nodes are in the right order, if not, return 0
+      //if (node_j->stat().node_index() < node_i->stat().node_index()) {
+      if (node_j->end() <= node_i->begin()) {  
+        
+        //printf("Returning for violated symmetry.\n\n");
+        return EXCLUDE;
+        
+      }
+      
+      int status = matcher_.TestHrectPair(node_i->bound(), node_j->bound(), i, 
+                                          j, permutation_ok);
+      
+      // TODO: the auton code doesn't exit the loops here, why?
+      // the comments say it has something to do with accumulating bounds
+      if (status == EXCLUDE) {
+        // we should be able to prune
+        
+        return EXCLUDE;
+        
+      } // are we able to exclude this n-tuple?
+      
+      
+    } // looping over other nodes (j)
     
-    // test nodes
-    
-    // split and add to queue
-    
-  } // queue not empty
+  } // looping over nodes in the tuple (i)
+  
+  // TODO: check if it is really subsume here
+  
+  return INCONCLUSIVE;
   
   
-} // BFS()
-*/
+} //CheckNodeList_()
+
 
 // TODO: make this handle weighted results, should be easy
 int NPointAlg::DepthFirstRecursion_(ArrayList<NPointNode*>& nodes, 
@@ -299,14 +450,6 @@ int NPointAlg::DepthFirstRecursion_(ArrayList<NPointNode*>& nodes,
   index_t split_index = -1;
   int split_count = -1;
   
-  // TODO: turn this into a function, it's the same in all expansion patterns
-  
-  ArrayList<int> permutation_ok;
-  permutation_ok.Init(matcher_.num_permutations());
-  for (index_t i = 0; i < permutation_ok.size(); i++) {
-    permutation_ok[i] = SUBSUME;
-  }
-  
   // main loop
   for (index_t i = 0; i < tuple_size_; i++) {
     
@@ -322,51 +465,18 @@ int NPointAlg::DepthFirstRecursion_(ArrayList<NPointNode*>& nodes,
       }
       
     } // is this a leaf?
-    
-    for (index_t j = i+1; j < tuple_size_; j++) {
-      
-      NPointNode* node_j = nodes[j];
-      
-      // TODO: would it be more efficient to make this check outside, without
-      // possibly doing some permutation checks with the matcher
-      // Another possibility would be to check this before making a recursive 
-      // call -> this is closer to the way my HF code works
-      
-      // check if the nodes are in the right order, if not, return 0
-      //if (node_j->stat().node_index() < node_i->stat().node_index()) {
-      if (node_j->end() <= node_i->begin()) {  
-      
-        //printf("Returning for violated symmetry.\n\n");
-        return 0;
-        
-      }
-      
-      int status = matcher_.TestHrectPair(node_i->bound(), node_j->bound(), i, 
-                                          j, permutation_ok);
-      
-      // TODO: the auton code doesn't exit the loops here, why?
-      // the comments say it has something to do with accumulating bounds
-      if (status == EXCLUDE) {
-        // we should be able to prune
-        
-        num_exclusion_prunes_++;
-        
-        num_tuples_here = 0;
-        
-        //printf("Returning for exclusion prune.\n\n");
-        return num_tuples_here;
-        
-      } // are we able to exclude this n-tuple?
-      
 
-    } // looping over other nodes (j)
-    
   } // looping over nodes in the tuple (i)
   
-  // this is where we would check for a subsume prune
+  int status = CheckNodeList_(nodes);
   
-  // now, recurse, but how?
+  if (status == EXCLUDE) {
+    num_exclusion_prunes_++;
+    num_tuples_here = 0;
+    return num_tuples_here;
+  }
   
+  // recurse
   if (all_leaves) {
     // call the base case
     // TODO: is it worth doing this after the prune checks?  
