@@ -1,4 +1,4 @@
-/*
+/**
  *  n_point.cc
  *  
  *
@@ -11,8 +11,10 @@
 
 int NPointAlg::NChooseR_(int n, int r) {
   
-  DEBUG_ASSERT(n >= r);
+  DEBUG_ASSERT(n >= 0);
   DEBUG_ASSERT(r >= 0);
+  
+  if(n < r) return 0;
   
   int divisor = 1;
   int multiplier = n;
@@ -107,6 +109,7 @@ int NPointAlg::CountTuples_(ArrayList<NPointNode*>& nodes) {
       NPointNode* node_i = nodes[i];
       int size = node_i->count();
       
+      // error here: I have a repeated node of size 1
       total_count *= NChooseR_(size, counts[i]);
       
     }
@@ -263,30 +266,36 @@ double NPointAlg::HybridHeuristic_(ArrayList<NPointNode*>& nodes) {
 
 int NPointAlg::HybridExpansion_() {
   
-  MinHeap<double, ArrayList<NPointNode*> > queue;
+  int num_tuples = 0;
   
-  queue.Init();
+  ArrayList<ArrayList<NPointNode*> > tuple_list;
+  tuple_list.Init();
   
-  ArrayList<NPointNode*> first_comp;
-  first_comp.Init(tuple_size_);
+  ArrayList<NPointNode*> first_list;
+  first_list.Init(tuple_size_);
   for (int i = 0; i < tuple_size_; i++) {
-    first_comp[i] = tree_;
+    first_list[i] = tree_;
   }
   
-  queue.Put(1.0, first_comp);
+  tuple_list.PushBackCopy(first_list);
   
-  while (!queue.is_empty()) {
+  // loop until we can terminate
+  while ((double)abs(upper_bound_ - lower_bound_) / (double)lower_bound_ 
+         >= error_tolerance_) {
     
-    // see if we're done - i.e. if the bounds work
-    if ((double)abs(upper_bound - lower_bound) / (double)lower_bound 
-        < error_tolerance_) {
+    DEBUG_ASSERT(lower_bound_ >= 0);
+    DEBUG_ASSERT(upper_bound_ >= lower_bound_);
+    
+    printf("upper_bound: %d, lower_bound: %d\n", upper_bound_, lower_bound_);
+    
+    ArrayList<ArrayList<NPointNode*> > new_tuple_list;
+    new_tuple_list.Init();
+    
+    // split the entire list
+    for (index_t i = 0; i < tuple_list.size(); i++) {
       
-      return;
+      ArrayList<NPointNode*>& nodes = tuple_list[i];
       
-    }
-    else {
-     
-      ArrayList<NPointNode*> nodes = queue.Pop();
       bool all_leaves = true;
       index_t split_ind;
       int split_size = -1;
@@ -309,7 +318,7 @@ int NPointAlg::HybridExpansion_() {
       
       // is it a base case?
       if (all_leaves) {
-
+        
         ArrayList<ArrayList<index_t> > point_sets;
         point_sets.Init(tuple_size_);
         for (index_t i = 0; i < tuple_size_; i++) {
@@ -321,11 +330,19 @@ int NPointAlg::HybridExpansion_() {
           
         } // for i
         
+        double this_weighted_result;
+        
         int num_tuples_here = BaseCase_(point_sets, &this_weighted_result);
-        int max_tuples = CountTuples_(point_sets);
+        int max_tuples = CountTuples_(nodes);
+        
+        printf("Base Case, num_tuples: %d, max_tuples: %d\n", num_tuples_here, max_tuples);
         
         lower_bound_ += num_tuples_here;
         upper_bound_ = upper_bound_ - max_tuples + num_tuples_here;
+        num_tuples += num_tuples_here;
+        
+        DEBUG_ASSERT(lower_bound_ >= 0);
+        DEBUG_ASSERT(upper_bound_ >= lower_bound_);
         
       }
       else {
@@ -337,41 +354,65 @@ int NPointAlg::HybridExpansion_() {
         
         int left_status = CheckNodeList_(nodes);
         // TODO: add subsume check
-        if (left_status != EXCLUDE) {
-          double left_key = HybridHeuristic(nodes);
-          queue.Put(left_key, nodes);          
-        } 
-        else {
-          
+        if (left_status == EXCLUDE) {
+
           num_exclusion_prunes_++;
           
-          upper_bound -= CountTuples_(nodes); 
+          upper_bound_ -= CountTuples_(nodes); 
+
+          DEBUG_ASSERT(lower_bound_ >= 0);
+          DEBUG_ASSERT(upper_bound_ >= lower_bound_);
+
+        }
+        else if (left_status == BAD_SYMMETRY) {
+          
+          // do nothing
           
         }
-        
+        else {
+          
+          new_tuple_list.PushBackCopy(nodes);
+          
+        } // what to do with left child?
         
         new_nodes.InitCopy(nodes);
         new_nodes[split_ind] = split_node->right();
         
         int right_status = CheckNodeList_(new_nodes);
-       
-        if (right_status != EXCLUDE) {
-          double right_key = HybridHeuristic(new_nodes);
-          queue.Put(right_key, new_nodes);          
-        } 
-        else {
+        
+        if (right_status == EXCLUDE) {
           
           num_exclusion_prunes_++;
           
-          upper_bound -= CountTuples_(new_nodes); 
+          upper_bound_ -= CountTuples_(new_nodes); 
+          
+          DEBUG_ASSERT(lower_bound_ >= 0);
+          DEBUG_ASSERT(upper_bound_ >= lower_bound_);
           
         }
+        else if (right_status == BAD_SYMMETRY) {
+          
+          // do nothing
+          
+        }
+        else {
+          
+          new_tuple_list.PushBackCopy(new_nodes);
+          
+        } // what to do with right child?
         
       } // not all leaves
       
-    } // couldn't stop computation
+    } // iterate over all tuples in the list
+
+    // copy the list over and repeat
+    //tuple_list.Destruct();
+    //tuple_list.InitSteal(new_tuple_list.begin(), new_tuple_list.size());
+    tuple_list.Swap(&new_tuple_list);
     
   } // main loop
+  
+  return num_tuples;
   
   
 } // HybridExpansion_()
@@ -404,7 +445,7 @@ int NPointAlg::CheckNodeList_(ArrayList<NPointNode*>& nodes) {
       if (node_j->end() <= node_i->begin()) {  
         
         //printf("Returning for violated symmetry.\n\n");
-        return EXCLUDE;
+        return BAD_SYMMETRY;
         
       }
       
