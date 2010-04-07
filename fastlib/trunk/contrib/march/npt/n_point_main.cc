@@ -22,6 +22,8 @@ const fx_entry_doc n_point_main_entries[] = {
 "File with lower bounds for the matcher.  Assumed to be zero if unspecified.\n"},
 {"do_naive", FX_PARAM, FX_BOOL, NULL,
   "Run a naive implementation, default: false\n"},
+{"do_hybrid", FX_PARAM, FX_BOOL, NULL,
+"Do the hybrid expansion pattern, default: false\n"},
 FX_ENTRY_DOC_DONE
 };
 
@@ -30,6 +32,8 @@ const fx_submodule_doc n_point_main_submodules[] = {
   "Naive implementation module.\n"},
 {"depth_first", &n_point_doc, 
   "Depth first recursion implementation module.\n"},
+{"hybrid_expansion", &n_point_doc,
+  "Hybrid expansion module.\n"},
 FX_SUBMODULE_DOC_DONE
 };
 
@@ -101,9 +105,24 @@ int main(int argc, char* argv[]) {
     alg.Compute();
         
   }
+  else if (fx_param_exists(NULL, "do_hybrid")) {
+    
+    fx_module* hybrid_mod = fx_submodule(NULL, "hybrid_expansion");
+    fx_set_param_bool(hybrid_mod, "do_hybrid", true);
+    
+    NPointAlg alg;
+    alg.Init(data, weights, lower_bounds, upper_bounds, upper_bounds.n_cols(), 
+             hybrid_mod);
+    
+    alg.Compute();
+    
+    
+  }
   else {
    
     fx_module* depth_mod = fx_submodule(NULL, "depth_first");
+    
+    
     
     NPointAlg alg;
     alg.Init(data, weights, lower_bounds, upper_bounds, upper_bounds.n_cols(), 

@@ -23,6 +23,7 @@
 #define EXCLUDE 0
 #define INCONCLUSIVE 1
 #define SUBSUME 2
+#define BAD_SYMMETRY 3
 
 class Matcher {
   

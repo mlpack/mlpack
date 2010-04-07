@@ -24,6 +24,8 @@ const fx_entry_doc n_point_entries[] = {
 "The sum of the product of the weights over all matching tuples found.\n"},
 {"do_naive", FX_PARAM, FX_BOOL, NULL,
  "If true, the algorithm just runs the base case on the entire data set.\n"},
+{"do_hybrid", FX_PARAM, FX_BOOL, NULL,
+  "If true, uses hybrid expansion pattern, default: false.\n"},
 {"leaf_size", FX_PARAM, FX_INT, NULL,
   "Size of leaves in the kd-tree.  Default: 1.\n"},
 {"tree_building", FX_TIMER, FX_CUSTOM, NULL,
@@ -87,9 +89,35 @@ private:
 
   typedef BinarySpaceTree<DHrectBound<2>, Matrix, NPointStat> NPointNode;
 
-  // TODO: make a class for a node list, store the count for it (and other 
-  // data for the splitting heuristics)
-  
+
+  // later, can add useful stuff here
+  class NodeTuple {
+    
+  private:
+    
+    ArrayList<NPointNode*> node_list_;
+    
+    //int num_tuples_;
+    
+  public:
+    
+    NPointNode* node_list(index_t i) {
+     
+      return node_list_[i];
+      
+    }
+    /*
+    int num_tuples() {
+      return num_tuples_;
+    }
+    */
+    void Init(ArrayList<NPointNode*>& list_in) {
+     
+      node_list_.InitCopy(list_in);
+      
+    }
+    
+  }; // NodeTuple
   
   ////////////// variables ////////////
 
@@ -104,6 +132,7 @@ private:
   fx_module* mod_;
   
   bool do_naive_;
+  bool do_hybrid_;
   
   int num_tuples_;
   double weighted_num_tuples_;
@@ -159,6 +188,23 @@ private:
   bool PointsViolateSymmetry_(index_t ind1, index_t ind2);
   
   
+  /**
+   *
+   */
+  double HybridHeuristic_(ArrayList<NPointNode*>& nodes);
+
+  
+  /**
+   *
+   */
+  int HybridExpansion_();
+
+  
+  /**
+   *
+   */
+  int CheckNodeList_(ArrayList<NPointNode*>& nodes);
+
   
   /**
    *
@@ -204,6 +250,7 @@ public:
     matcher_.Init(lower_bds, upper_bds, tuple_size_);
     
     do_naive_ = fx_param_bool(mod_, "do_naive", false);
+    do_hybrid_ = fx_param_bool(mod_, "do_hybrid", false);
     
     if (!do_naive_) {
       
@@ -272,7 +319,7 @@ public:
       num_tuples_ = BaseCase_(point_sets, &weighted_num_tuples_);
       
     } // do naive
-    else {
+    else if (!do_hybrid_) {
       
       ArrayList<NPointNode*> nodes;
       nodes.Init(tuple_size_);
@@ -285,7 +332,16 @@ public:
       
       num_tuples_ = DepthFirstRecursion_(nodes, -1);
       
-    } // do multi-tree
+    } // do depth-first
+    else {
+      // do hybrid
+      
+      printf("Doing hybrid expansion.\n\n");
+      
+      num_tuples_ = HybridExpansion_();
+      
+    } // do hybrid
+    
 
     fx_timer_stop(mod_, "n_point_time");
 
