@@ -65,6 +65,10 @@ endforeach()
 add_executable( otrav_test otrav_test.cc )
 target_link_libraries( otrav_test fastlib )
 
+# make sure header files are installed correctly
+install(FILES ${CMAKE_BINARY_DIR}/include/fastlib/
+   DESTINATION include/fastlib)
+
 ## installation
 install(TARGETS fastlib 
     RUNTIME DESTINATION bin

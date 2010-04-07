@@ -15,7 +15,7 @@ include( CMake/TargetDistclean.cmake OPTIONAL )
 ## Global compiler flags (dep. on platform TODO)
 add_definitions( -DDISABLE_DISK_MATRIX )
 
-include_directories( ${FASTLIB_INCLUDE_DIRS} )
+#include_directories( ${FASTLIB_INCLUDE_DIRS} )
 include_directories(${CMAKE_BINARY_DIR}/include/)
 #TODO link_directories()
 

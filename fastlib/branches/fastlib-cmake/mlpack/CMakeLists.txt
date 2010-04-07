@@ -72,6 +72,14 @@ foreach(incl_file ${INCLUDE_FILES})
       COMMAND ${CMAKE_COMMAND} ARGS -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${incl_file} ${CMAKE_BINARY_DIR}/include/mlpack/${incl_file} )
 endforeach()
 
+# set installation rules for include files
+install(FILES ${CMAKE_BINARY_DIR}/include/mlpack/
+   DESTINATION include/mlpack)
+
+# set installation rules for mlpack programs
+install(PROGRAMS ${CMAKE_BINARY_DIR}/bin/
+   DESTINATION bin)
+
 install(TARGETS mlpack
    RUNTIME DESTINATION bin
    LIBRARY DESTINATION lib
