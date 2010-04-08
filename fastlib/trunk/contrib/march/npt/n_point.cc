@@ -279,14 +279,18 @@ int NPointAlg::HybridExpansion_() {
   
   tuple_list.PushBackCopy(first_list);
   
+  upper_bound_ = CountTuples_(first_list);
+  
   // loop until we can terminate
-  while ((double)abs(upper_bound_ - lower_bound_) / (double)lower_bound_ 
+  while ((double)abs(upper_bound_ - num_tuples) / (double)num_tuples 
          >= error_tolerance_) {
     
-    DEBUG_ASSERT(lower_bound_ >= 0);
-    DEBUG_ASSERT(upper_bound_ >= lower_bound_);
+    DEBUG_ASSERT(num_tuples >= 0);
+    DEBUG_ASSERT(upper_bound_ >= num_tuples);
     
-    //printf("upper_bound: %d, lower_bound: %d\n", upper_bound_, lower_bound_);
+    int new_upper_bound = 0;
+    
+    //printf("upper_bound: %d, num_tuples: %d\n", upper_bound_, num_tuples);
     
     ArrayList<ArrayList<NPointNode*> > new_tuple_list;
     new_tuple_list.Init();
@@ -333,16 +337,11 @@ int NPointAlg::HybridExpansion_() {
         double this_weighted_result;
         
         int num_tuples_here = BaseCase_(point_sets, &this_weighted_result);
-        int max_tuples = CountTuples_(nodes);
         
-        //printf("Base Case, num_tuples: %d, max_tuples: %d\n", num_tuples_here, max_tuples);
-        
-        lower_bound_ += num_tuples_here;
-        upper_bound_ = upper_bound_ - max_tuples + num_tuples_here;
         num_tuples += num_tuples_here;
+        //new_upper_bound += num_tuples_here;
         
-        DEBUG_ASSERT(lower_bound_ >= 0);
-        DEBUG_ASSERT(upper_bound_ >= lower_bound_);
+        //printf("new_upper_bound: %d, num_tuples: %d\n", new_upper_bound, num_tuples);
         
       }
       else {
@@ -358,11 +357,6 @@ int NPointAlg::HybridExpansion_() {
 
           num_exclusion_prunes_++;
           
-          upper_bound_ -= CountTuples_(nodes); 
-
-          DEBUG_ASSERT(lower_bound_ >= 0);
-          DEBUG_ASSERT(upper_bound_ >= lower_bound_);
-
         }
         else if (left_status == BAD_SYMMETRY) {
           
@@ -372,6 +366,8 @@ int NPointAlg::HybridExpansion_() {
         else {
           
           new_tuple_list.PushBackCopy(nodes);
+          new_upper_bound += CountTuples_(nodes);
+          //printf("new_upper_bound: %d, num_tuples: %d\n", new_upper_bound, num_tuples);
           
         } // what to do with left child?
         
@@ -384,11 +380,6 @@ int NPointAlg::HybridExpansion_() {
           
           num_exclusion_prunes_++;
           
-          upper_bound_ -= CountTuples_(new_nodes); 
-          
-          DEBUG_ASSERT(lower_bound_ >= 0);
-          DEBUG_ASSERT(upper_bound_ >= lower_bound_);
-          
         }
         else if (right_status == BAD_SYMMETRY) {
           
@@ -398,6 +389,8 @@ int NPointAlg::HybridExpansion_() {
         else {
           
           new_tuple_list.PushBackCopy(new_nodes);
+          new_upper_bound += CountTuples_(new_nodes);
+          //printf("new_upper_bound: %d, num_tuples: %d\n", new_upper_bound, num_tuples);
           
         } // what to do with right child?
         
@@ -409,6 +402,7 @@ int NPointAlg::HybridExpansion_() {
     //tuple_list.Destruct();
     //tuple_list.InitSteal(new_tuple_list.begin(), new_tuple_list.size());
     tuple_list.Swap(&new_tuple_list);
+    upper_bound_ = new_upper_bound + num_tuples;
     
   } // main loop
   
@@ -421,7 +415,7 @@ int NPointAlg::HybridExpansion_() {
 // Determines if the list of nodes violates the matcher
 int NPointAlg::CheckNodeList_(ArrayList<NPointNode*>& nodes) {
   
-  int status = INCONCLUSIVE;
+  int return_status = INCONCLUSIVE;
   
   ArrayList<int> permutation_ok;
   permutation_ok.Init(matcher_.num_permutations());
@@ -454,12 +448,11 @@ int NPointAlg::CheckNodeList_(ArrayList<NPointNode*>& nodes) {
       int status = matcher_.TestHrectPair(node_i->bound(), node_j->bound(), i, 
                                           j, permutation_ok);
       
-      // TODO: the auton code doesn't exit the loops here, why?
-      // the comments say it has something to do with accumulating bounds
+      // IMPORTANT: can't exit here, messes up the tracking of bounds
       if (status == EXCLUDE) {
         // we should be able to prune
         
-        status = EXCLUDE;
+        return_status = EXCLUDE;
         
       } // are we able to exclude this n-tuple?
       
@@ -470,7 +463,7 @@ int NPointAlg::CheckNodeList_(ArrayList<NPointNode*>& nodes) {
   
   // TODO: check if it is really subsume here
   
-  return status;
+  return return_status;
   
   
 } //CheckNodeList_()
@@ -518,6 +511,11 @@ int NPointAlg::DepthFirstRecursion_(ArrayList<NPointNode*>& nodes,
     num_tuples_here = 0;
     return num_tuples_here;
   }
+  else if (status == BAD_SYMMETRY) {
+    num_tuples_here = 0;
+    return num_tuples_here;
+  }
+  // TODO: add subsuming prunes
   
   // recurse
   if (all_leaves) {
