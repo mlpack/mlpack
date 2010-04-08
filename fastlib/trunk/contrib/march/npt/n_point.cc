@@ -286,7 +286,7 @@ int NPointAlg::HybridExpansion_() {
     DEBUG_ASSERT(lower_bound_ >= 0);
     DEBUG_ASSERT(upper_bound_ >= lower_bound_);
     
-    printf("upper_bound: %d, lower_bound: %d\n", upper_bound_, lower_bound_);
+    //printf("upper_bound: %d, lower_bound: %d\n", upper_bound_, lower_bound_);
     
     ArrayList<ArrayList<NPointNode*> > new_tuple_list;
     new_tuple_list.Init();
@@ -335,7 +335,7 @@ int NPointAlg::HybridExpansion_() {
         int num_tuples_here = BaseCase_(point_sets, &this_weighted_result);
         int max_tuples = CountTuples_(nodes);
         
-        printf("Base Case, num_tuples: %d, max_tuples: %d\n", num_tuples_here, max_tuples);
+        //printf("Base Case, num_tuples: %d, max_tuples: %d\n", num_tuples_here, max_tuples);
         
         lower_bound_ += num_tuples_here;
         upper_bound_ = upper_bound_ - max_tuples + num_tuples_here;
@@ -421,6 +421,8 @@ int NPointAlg::HybridExpansion_() {
 // Determines if the list of nodes violates the matcher
 int NPointAlg::CheckNodeList_(ArrayList<NPointNode*>& nodes) {
   
+  int status = INCONCLUSIVE;
+  
   ArrayList<int> permutation_ok;
   permutation_ok.Init(matcher_.num_permutations());
   for (index_t i = 0; i < permutation_ok.size(); i++) {
@@ -457,7 +459,7 @@ int NPointAlg::CheckNodeList_(ArrayList<NPointNode*>& nodes) {
       if (status == EXCLUDE) {
         // we should be able to prune
         
-        return EXCLUDE;
+        status = EXCLUDE;
         
       } // are we able to exclude this n-tuple?
       
@@ -468,7 +470,7 @@ int NPointAlg::CheckNodeList_(ArrayList<NPointNode*>& nodes) {
   
   // TODO: check if it is really subsume here
   
-  return INCONCLUSIVE;
+  return status;
   
   
 } //CheckNodeList_()
