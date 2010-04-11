@@ -15,7 +15,7 @@ binrule(
 binrule(
     name = "nearest_centroid",
     sources = ["mean_ts_classifier.cc"],
-    headers = [],
+    headers = ["dtw.h","dtw_impl.h"],
     deplibs = ["fastlib:fastlib"]
     )
 

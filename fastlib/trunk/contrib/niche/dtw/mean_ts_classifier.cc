@@ -72,9 +72,12 @@ int main(int argc, char* argv[]) {
 
   int product_n_features_n_times = n_features * n_times;
   ArrayList<Vector> means;
+  ArrayList<Matrix> means_mats;
   means.Init(n_classes);
+  means_mats.Init(n_classes);
   for(int c = 0; c < n_classes; c++) {
     means[c].Init(product_n_features_n_times);
+    //means_mats[c].Init(n_times, n_features);
   }
 
 
@@ -88,7 +91,7 @@ int main(int argc, char* argv[]) {
 
 
   for(int i = 0; i < n_points; i++) { // leave out point i
-
+    printf("i = %d\n", i);
 
 
     // reset means (and counts)
@@ -116,6 +119,10 @@ int main(int argc, char* argv[]) {
 
     for(int c = 0; c < n_classes; c++) {
       la::Scale(1.0 / ((double)(counts[c])), &(means[c]));
+      
+      Matrix mean_skinny_mat;
+      mean_skinny_mat.AliasColVector(means[c]);
+      mean_skinny_mat.MakeReshaped(n_times, n_features, &(means_mats[c]));
     }
 
     // nearest centroid classifier
@@ -123,14 +130,26 @@ int main(int argc, char* argv[]) {
     data_with_labels.MakeColumnSubvector(i, 1,
 					 n_features * n_times,
 					 &test_point);
+    Matrix test_point_skinny_mat;
+    test_point_skinny_mat.AliasColVector(test_point);
+    Matrix test_point_mat;
+    test_point_skinny_mat.MakeReshaped(n_times, n_features, &test_point_mat);
     int argmin = 0;
-    double min = la::DistanceSqEuclidean(test_point, means[0]);
+    //double min = la::DistanceSqEuclidean(test_point, means[0]);
+    double min = ComputeDTWAlignmentScore(1, test_point_mat, means_mats[0]);
     for(int c = 1; c < n_classes; c++) {
-      double test_dist_sq = la::DistanceSqEuclidean(test_point, means[c]);
-      if(test_dist_sq < min) {
+      //double test_dist_sq = la::DistanceSqEuclidean(test_point, means[c]);
+      double test_dtw_score =
+	ComputeDTWAlignmentScore(-1, test_point_mat, means_mats[c]);
+      /*if(test_dist_sq < min) {
 	min = test_dist_sq;
 	argmin = c;
+	}*/
+      if(test_dtw_score < min) {
+	min = test_dtw_score;
+	argmin = c;
       }
+
     }
     predicted_labels[i] = argmin + 1;
   }
