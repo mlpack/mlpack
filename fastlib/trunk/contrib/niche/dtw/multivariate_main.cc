@@ -59,11 +59,31 @@ void Normalize(Vector* p_ts) {
 int main(int argc, char* argv[]) {
   fx_init(argc, argv, NULL);
 
-  //const char* data_filename = "/Volumes/Tera/CABI_data/AFNI/analysis/1_8_2010/hi_res_ts.dat";
-  const char* training_data_filename = "training_hi_res_ts_2.dat";
-  const char* test_data_filename = "test_hi_res_ts_2.dat";
+  //const char* training_data_filename = 
+  //  "/Volumes/Tera/CABI_data/AFNI/analysis/1_8_2010/training_hi_res_ts.dat";
+  //const char* test_data_filename = 
+  //  "/Volumes/Tera/CABI_data/AFNI/analysis/1_8_2010/test_hi_res_ts.dat";
   //const char* training_data_filename = "training_noisy_generated_hi_res_ts.dat";
   //const char* test_data_filename = "test_noisy_generated_hi_res_ts.dat";
+
+  const char* directory = "/Volumes/Tera/CABI_data/AFNI/analysis/1_8_2010";
+  const char* file_descriptor = fx_param_str_req(NULL, "desc");
+  
+  char training_data_filename[200];
+  sprintf(training_data_filename, "%s/training_hi_res_ts%s.dat", directory, file_descriptor);
+
+  char test_data_filename[200];
+  sprintf(test_data_filename, "%s/test_hi_res_ts%s.dat", directory, file_descriptor);
+
+  
+  
+  const int n_features = fx_param_int_req(NULL, "n_features");
+  
+  const bool locked_features = fx_param_bool_req(NULL, "locked");
+  //int n_features = 56;
+  //int n_features = 82;
+  //bool locked_features = false;
+
   
   Matrix training_data_with_labels;
   data::Load(training_data_filename, &training_data_with_labels);
@@ -78,9 +98,6 @@ int main(int argc, char* argv[]) {
 
   // for each feature, we want to construct a warping cost matrix between all pairs of points
   
-  //int n_features = 56;
-  int n_features = 82;
-  bool locked_features = true;
 
   double temp1 = ((double)(training_data_with_labels.n_rows() - 1.0)) / ((double)n_features);
   double temp2 = ((double)(test_data_with_labels.n_rows() - 1.0)) / ((double)n_features);
