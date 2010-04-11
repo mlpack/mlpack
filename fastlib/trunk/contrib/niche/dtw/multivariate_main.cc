@@ -11,8 +11,10 @@ void GetPointAsMatrix(Matrix data_with_labels,
   data_with_labels.MakeColumnSubvector(ind, 1, prod_n_times_n_features,
 				       &point_vec);
   point_skinny_mat.AliasColVector(point_vec);
+  Matrix q;
   point_skinny_mat.MakeReshaped(n_times, n_features,
-				p_point_mat);
+				&q);
+  p_point_mat -> Copy(q);
 }
   
 
@@ -39,10 +41,14 @@ void Normalize(Vector* p_ts) {
     variance += ts[t] * ts[t];
   }
   variance /= ((double)(n_times - 1));
-  double inv_std_dev = 1 / sqrt(variance);
-  
-  // scale by 1 / (standard deviation)
-  la::Scale(inv_std_dev, &ts);
+  if(variance > 0) {
+    double inv_std_dev = 1 / sqrt(variance);
+    // scale by 1 / (standard deviation)
+    la::Scale(inv_std_dev, &ts);
+  }
+  else {
+    printf("skipping variance normalization\n");
+  }
 }
   
   
@@ -54,9 +60,11 @@ int main(int argc, char* argv[]) {
   fx_init(argc, argv, NULL);
 
   //const char* data_filename = "/Volumes/Tera/CABI_data/AFNI/analysis/1_8_2010/hi_res_ts.dat";
-  const char* training_data_filename = "training_hi_res_ts.dat";
-  const char* test_data_filename = "test_hi_res_ts.dat";
-
+  const char* training_data_filename = "training_hi_res_ts_2.dat";
+  const char* test_data_filename = "test_hi_res_ts_2.dat";
+  //const char* training_data_filename = "training_noisy_generated_hi_res_ts.dat";
+  //const char* test_data_filename = "test_noisy_generated_hi_res_ts.dat";
+  
   Matrix training_data_with_labels;
   data::Load(training_data_filename, &training_data_with_labels);
 
@@ -70,7 +78,9 @@ int main(int argc, char* argv[]) {
 
   // for each feature, we want to construct a warping cost matrix between all pairs of points
   
-  int n_features = 56;
+  //int n_features = 56;
+  int n_features = 82;
+  bool locked_features = true;
 
   double temp1 = ((double)(training_data_with_labels.n_rows() - 1.0)) / ((double)n_features);
   double temp2 = ((double)(test_data_with_labels.n_rows() - 1.0)) / ((double)n_features);
@@ -107,6 +117,11 @@ int main(int argc, char* argv[]) {
     
   printf("done normalizing data\n");
 
+  /* transpose data for DTW with locked features
+     note: do not transpose data for DTW with unlocked features
+  */
+
+  
 
 
   Vector scores;
@@ -115,7 +130,7 @@ int main(int argc, char* argv[]) {
   GenVector<int> predicted_labels;
   predicted_labels.Init(n_test_points);
 
-  double prod_n_times_n_features = n_times * n_features;
+  index_t prod_n_times_n_features = n_times * n_features;
 
   for(int j = 0; j < n_test_points; j++) {
     scores.SetZero();
@@ -124,15 +139,36 @@ int main(int argc, char* argv[]) {
     GetPointAsMatrix(test_data_with_labels, j, n_times, n_features,
 		     prod_n_times_n_features,
 		     &test_point_mat);
-    
+    Matrix test_point_mat_to_use;
+    if(locked_features) {
+      la::TransposeInit(test_point_mat, &test_point_mat_to_use);
+    }
+    else {
+      test_point_mat_to_use.Alias(test_point_mat);
+    }
+
     for(int i = 0; i < n_training_points; i++) {
       Matrix training_point_mat;
       GetPointAsMatrix(training_data_with_labels, i, n_times, n_features,
 		       prod_n_times_n_features,
 		       &training_point_mat);
-      
+      Matrix training_point_mat_to_use;
+      if(locked_features) {
+	la::TransposeInit(training_point_mat, &training_point_mat_to_use);
+      }
+      else {
+	training_point_mat_to_use.Alias(training_point_mat);
+      }
+
+      //test_point_mat.PrintDebug("test point");
+      //training_point_mat.PrintDebug("training_point");
       scores[i] =
-	ComputeDTWAlignmentScore(-1, test_point_mat, training_point_mat);
+	ComputeDTWAlignmentScore(-1,
+				 test_point_mat_to_use,
+				 training_point_mat_to_use,
+				 locked_features);
+      //printf("scores[%d] = %f\n", i, scores[i]);
+      //exit(1);
     }
     
     printf("test point %d\n", j);
