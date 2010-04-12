@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# run to learn hmms
+#./hmm_testing --load_data=true --n_symbols=4 --n_sequences_per_class=200 --save_hmms=true --hmms=genes200_11states_hmms.dat --lambda=1 --max_iter_bw=1000
+
+# full run
+fx-run gene400_11states ./hmm_testing --load_hmms=true --hmms=../../../../genes200_11states_hmms.dat --lambda=0,1e-4,1e-3,1e-2,1e-1,1,1e1,1e2,1e3,1e9,5,50,4,6,2.5,4.5,4.25,4.75,4.625,4.325,4.4,4.55 --svm/c=1e-4,1e-3,1e-2,1e-1,1,1e1,1e2,1e3,1e4,1e5,1e6,1e7,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.999,1.1,1.2,9,10,11,1e-5,1e-6
+
+# quick run
+#fx-run gene400 ./hmm_testing --load_hmms=true --hmms=../../../../genes200_hmms.dat --lambda=1e-1 --svm/c=1e-4,1e4
