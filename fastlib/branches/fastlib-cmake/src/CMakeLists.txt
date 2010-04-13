@@ -15,19 +15,6 @@ project(FASTLIB C CXX Fortran)
 ## Global compiler flags (dep. on platform TODO)
 add_definitions( -DDISABLE_DISK_MATRIX )
 
-## include dirs
-#SET(CMAKE_INCLUDE_CURRENT_DIR ON)
-
-#set(FASTLIB_INCLUDE_DIRS 
-#    ${FASTLIB_SOURCE_DIR}
-    #${FASTLIB_SOURCE_DIR}/.. 
-    #${FASTLIB_SOURCE_DIR}/base/config  # standardize #includes
-    #${FASTLIB_BINARY_DIR}/..
-#    ${FASTLIB_BINARY_DIR}
-#)
-#include_directories( ${FASTLIB_INCLUDE_DIRS} )
-#TODO link_directories()
-
 set(FASTLIB_SRCS)
 ## recurse
 set(DIRS base col data file fx la math par tree)  #!!
