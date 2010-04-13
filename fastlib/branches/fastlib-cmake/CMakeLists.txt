@@ -4,8 +4,13 @@ project(FASTLIB C CXX Fortran)
 ## External Libraries
 #  ls /usr/share/cmake-2.6/Modules/Find* | \
 #  perl -ne 's#.*Modules/Find(.*)>cmake#\1#; print'
+
+# set path right
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
+
 find_package(BLAS REQUIRED)
 find_package(LAPACK REQUIRED)
+find_package(Pthreads REQUIRED)
 
 #include(CMake/FastlibMacros.cmake)
 
@@ -26,22 +31,4 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 ## recurse
 add_subdirectory(src) # fastlib
 add_subdirectory(mlpack) # mlpack
-  
-#set_source_files_properties(${CMAKE_BINARY_DIR}/fastlib/base/basic_types.h 
-#    PROPERTIES GENERATED TRUE)
-
-#add_library( fastlib ${FASTLIB_SRCS} )
-#add_dependencies( fastlib ${DIRS} template_types_detect ) #FIXME
-#target_link_libraries( fastlib lapack )
-
-#add_executable( otrav_test otrav_test.cc )
-#target_link_libraries( otrav_test fastlib )
-
-## installation
-#install(TARGETS fastlib 
-#    RUNTIME DESTINATION bin
-#    LIBRARY DESTINATION lib
-#    ARCHIVE DESTINATION lib
-#)
-
-#install(FILES fastlib.h DESTINATION include/fastlib)
+add_subdirectory(contrib) # mlpack_contrib

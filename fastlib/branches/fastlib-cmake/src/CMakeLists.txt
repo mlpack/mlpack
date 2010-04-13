@@ -17,7 +17,20 @@ add_definitions( -DDISABLE_DISK_MATRIX )
 
 set(FASTLIB_SRCS)
 ## recurse
-set(DIRS base col data file fx la math par tree)  #!!
+set(DIRS
+   base
+   col
+   data
+   file
+   fx
+   la
+   math
+#   mmanager  ## not yet
+   par
+   thor  # requires pthread linking
+   tree
+#   sparse
+)  #!!
 
 option(FASTLIB_WITH_OPTIMIZERS "Include optimization code - requires OPT++." OFF)
 if(FASTLIB_WITH_OPTIMIZERS)
@@ -36,6 +49,7 @@ endforeach()
 add_library(fastlib ${FASTLIB_SRCS})
 target_link_libraries(fastlib
    lapack
+   pthread
    ${TRILINOS_LIBS}
 )
 
@@ -53,8 +67,8 @@ add_executable( otrav_test otrav_test.cc )
 target_link_libraries( otrav_test fastlib )
 
 # make sure header files are installed correctly
-install(FILES ${CMAKE_BINARY_DIR}/include/fastlib/
-   DESTINATION include/fastlib)
+#install(FILES ${CMAKE_BINARY_DIR}/include/fastlib/
+#   DESTINATION include/fastlib)
 
 ## installation
 install(TARGETS fastlib 
