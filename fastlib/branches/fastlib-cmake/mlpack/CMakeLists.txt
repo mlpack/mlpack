@@ -39,6 +39,7 @@ set( DIRS
     allkfn
     allknn allnn
     # disk_allnn  #requires mmanager
+    emst
     fastica
     hmm
     infomax_ica
