@@ -59,6 +59,7 @@ foreach(dir ${DIRS})
     add_subdirectory(${dir})
 endforeach()
 
+# MLPACK_SRCS is set in the subdirectories
 add_library(mlpack ${MLPACK_SRCS})
 add_dependencies(mlpack fastlib)
 
@@ -77,8 +78,8 @@ install(FILES ${CMAKE_BINARY_DIR}/include/mlpack/
    DESTINATION include/mlpack)
 
 # set installation rules for mlpack programs
-install(PROGRAMS ${CMAKE_BINARY_DIR}/bin/
-   DESTINATION bin)
+#install(PROGRAMS ${CMAKE_BINARY_DIR}/bin
+#   DESTINATION bin)
 
 install(TARGETS mlpack
    RUNTIME DESTINATION bin
