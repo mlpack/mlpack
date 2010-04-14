@@ -17,6 +17,7 @@
  */
 
 #include <string>
+#include <errno.h>
 #include "fastlib/fastlib.h"
 #include "allknn.h"
 
