@@ -259,8 +259,8 @@ class MemoryManager {
     system_page_size_ = getpagesize();
     capacity_ = capacity;
 		if (unlikely(capacity % system_page_size_ != 0)) {
-			FATAL("\n Error!, the capacity "L64" is not a multiple of the "
-            "page size "L32" \n", capacity_, system_page_size_);
+			FATAL("\n Error!, the capacity %"L64"d is not a multiple of the "
+            "page size %d \n", capacity_, system_page_size_);
     }
     page_access_filename_ = page_access_filename;
 		pool_=NULL;
@@ -310,7 +310,7 @@ class MemoryManager {
 				if ((uint64)info.st_size < capacity_) {
 				 const char *temp="There is a filename for memory manager "
 					                "but the size is smaller than the requested "
-													"capacity "L64"<"L64"";
+													"capacity %"L64"u<%"L64"u";
 				 FATAL(temp,
 							 info.st_size,
 							 capacity_);
@@ -644,7 +644,7 @@ class MemoryManager {
   /**
    *  Verify to see if your system really took your advice into consideration
    */
-  float32 VerifyAdvise(std::vector<uint64> &pages_needed, 
+  float VerifyAdvise(std::vector<uint64> &pages_needed, 
                        std::vector<uint64> pages_not_needed) {
     uint32 num_of_pages = (capacity_ + system_page_size_ - 1)/system_page_size_;
     unsigned char vec[num_of_pages];
@@ -688,8 +688,8 @@ class MemoryManager {
 		}
 		if (capacity % system_page_size_ != 0) {
 			const char *temp=
-				"\n Error!, the capacity "L64"  is not a multiple of the "
-        "page size "L32" \n";
+				"\n Error!, the capacity %"L64"u  is not a multiple of the "
+        "page size %d \n";
       FATAL(temp, (unsigned long long) capacity_, system_page_size_);
     }
    capacity_ = capacity;

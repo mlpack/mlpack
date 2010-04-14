@@ -25,7 +25,7 @@ set(DIRS
    fx
    la
    math
-#   mmanager  ## not yet
+   mmanager  ## not yet
    par
    thor  # requires pthread linking
    tree
