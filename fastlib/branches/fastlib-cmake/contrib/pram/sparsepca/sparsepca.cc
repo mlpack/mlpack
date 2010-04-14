@@ -325,7 +325,7 @@ void SparsePCA::Sparsify() {
 void SparsePCA::SolveForBeta_(Vector& y_vec, Vector *beta_vec,
 			      double lambda_2, double lambda_1) {
 
-  datanode *solver_module = fx_submodule(spca_module_, "BetaSolver", "BetaSolver");
+  datanode *solver_module = fx_submodule(spca_module_, "BetaSolver");
   index_t n = x_centered().n_cols(), d = x_centered().n_rows();
   index_t max_vars = -1;
   double d1 = sqrt(lambda_2), d2 = 1.0 / sqrt(1 + lambda_2);
@@ -660,9 +660,9 @@ void SparsePCA::SolveForBeta_(Vector& y_vec, Vector *beta_vec,
       *(penalties.AddBack()) = penalties[iters - 1] - fabs(gam_hat * a);
 
       // exit strategy
-      if (*(penalties.last()) * 2 / d2 <= lambda_1) {
+      if (*(penalties.end()) * 2 / d2 <= lambda_1) {
 	double s1 = *(penalties.PopBackPtr()) * 2 / d2;
-	double s2 = *(penalties.last()) * 2 / d2;
+	double s2 = *(penalties.end()) * 2 / d2;
 	double factor_1 = (s2 - lambda_1) / (s2 - s1);
 	double factor_2 = (lambda_1 - s1) / (s2 - s1);
 
