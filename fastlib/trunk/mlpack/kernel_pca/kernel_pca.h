@@ -10,10 +10,13 @@
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
-#include "fastlib/fastlib.h"
-#include "fastlib/la/matrix.h"
-#include "fastlib/sparse/sparse_matrix.h"
+#include <fastlib/fastlib.h>
+#include <fastlib/la/matrix.h>
 #include "mlpack/allknn/allknn.h"
+
+// sparse_matrix.h undefines LI; see #13
+// so we must include allknn.h (which uses LI) first
+#include <fastlib/sparse/sparse_matrix.h>
 
 class KernelPCATest;
 /**
