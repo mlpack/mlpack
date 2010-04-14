@@ -43,12 +43,15 @@ set( DIRS
     fastica
     hmm
     infomax_ica
+#    isonmf  ## nothing here yet
     kalman
     kde
     # kernel_pca  # requires sparse 
     #mog # requires optimization
+#    mlpackdemo  ## matlab routines
     #mvu # requires optimization
     naive_bayes
+    nnsvm
     quicsvd
     # range_search  ##! uses contrib code
     regression

@@ -123,7 +123,7 @@ class NNSVM {
 */
 template<typename TKernel>
 void NNSVM<TKernel>::Init(const Dataset& dataset, int n_classes, datanode *module){
-  param_.kernel_.Init(fx_submodule(module, "kernel", "kernel"));
+  param_.kernel_.Init(fx_submodule(module, "kernel"));
   param_.kernel_.GetName(&param_.kernelname_);
   param_.kerneltypeid_ = param_.kernel_.GetTypeId();
   // c; default:10
@@ -151,7 +151,7 @@ void NNSVM<TKernel>::InitTrain(
   /* # of features = # of rows in data matrix - 1, as last row is for labels*/
   num_features_ = dataset.n_features() - 1;
   DEBUG_ASSERT_MSG(n_classes == 2, "SVM is only a binary classifier");
-  fx_set_param(module, "kernel_type", typeid(TKernel).name());
+  fx_set_param_str(module, "kernel_type", typeid(TKernel).name());
   
   /* Initialize parameters c_, budget_, eps_, max_iter_, VTA_, alpha_, error_, thresh_ */
   NNSMO<Kernel> nnsmo;
