@@ -29,7 +29,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 
 ## recurse
-add_subdirectory(src) # fastlib
+add_subdirectory(fastlib) # fastlib
 add_subdirectory(mlpack) # mlpack
 add_subdirectory(contrib) # mlpack_contrib
 #add_subdirectory(physpack) # physpack  ## do not build by default
