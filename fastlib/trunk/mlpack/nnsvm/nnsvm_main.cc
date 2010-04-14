@@ -45,7 +45,7 @@ int LoadData(Dataset* dataset, String datafilename){
 */
 int main(int argc, char *argv[]) {  
 
-  fx_init(argc, argv);
+  fx_init(argc, argv, NULL);
 
   String mode = fx_param_str_req(NULL, "mode");
   String kernel = fx_param_str_req(NULL, "kernel");  
@@ -60,13 +60,14 @@ int main(int argc, char *argv[]) {
       return 1;
     
     // Begin NNSVM Training 
-    datanode *nnsvm_module = fx_submodule(fx_root, NULL, "nnsvm");
+    datanode *nnsvm_module = fx_submodule(fx_root, "nnsvm");
     
     if (kernel == "linear") {
       NNSVM<SVMLinearKernel> nnsvm;
       nnsvm.InitTrain(trainset, 2, nnsvm_module);
   	
-      timer *nnsvm_train_time = fx_timer(NULL, "nnsvm_train");
+      fx_timer_start(NULL, "nnsvm_train");
+      fx_timer *nnsvm_train_time = fx_get_timer(NULL, "nnsvm_train");
       fprintf(stderr, "nnsvm_train_time %g \n", nnsvm_train_time->total.micros / 1e6);
       /* training and testing, thus no need to load model from file */
       if (mode=="train_test"){
@@ -89,7 +90,7 @@ int main(int argc, char *argv[]) {
       return 1;
 
     /* Begin Classification */
-    datanode *nnsvm_module = fx_submodule(fx_root, NULL, "nnsvm");
+    datanode *nnsvm_module = fx_submodule(fx_root, "nnsvm");
 
     if (kernel == "linear") {
       NNSVM<SVMLinearKernel> nnsvm;
@@ -98,7 +99,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  fx_done();
+  fx_done(NULL);
 
 }
 
