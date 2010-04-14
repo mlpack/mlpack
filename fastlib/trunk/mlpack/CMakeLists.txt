@@ -38,7 +38,7 @@ set(MLPACK_STD_LIBS fastlib lapack blas )  ##! this ordering matters :(
 set( DIRS
     allkfn
     allknn allnn
-    # disk_allnn  #requires mmanager
+#    disk_allnn  # does not compile, perhaps due to an API change
     emst
     fastica
     hmm
@@ -46,7 +46,7 @@ set( DIRS
 #    isonmf  ## nothing here yet
     kalman
     kde
-    # kernel_pca  # requires sparse 
+#    kernel_pca  # requires sparse 
     #mog # requires optimization
 #    mlpackdemo  ## matlab routines
     #mvu # requires optimization
@@ -59,6 +59,10 @@ set( DIRS
     svm
 )
 
+if(WITH_SPARSE)
+   set(DIRS ${DIRS} kernel_pca)
+endif()
+
 foreach(dir ${DIRS})
     add_subdirectory(${dir})
 endforeach()
@@ -66,6 +70,15 @@ endforeach()
 # MLPACK_SRCS is set in the subdirectories
 add_library(mlpack ${MLPACK_SRCS})
 add_dependencies(mlpack fastlib)
+target_link_libraries(mlpack
+   fastlib
+)
+
+if(WITH_SPARSE)
+   target_link_libraries(mlpack
+      ${TRILINOS_LIBS}
+   )
+endif()
 
 # move header files to the right directory
 file(GLOB_RECURSE INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)

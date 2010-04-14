@@ -17,9 +17,10 @@
  */
 
 #include "kernel_pca.h"
-#include "fastlib/fastlib.h"
-#include "fastlib/base/test.h"
 #include <vector>
+#include <fastlib/fastlib.h>
+#include <fastlib/base/test.h>
+#include <fastlib/base/common.h>
 
 class KernelPCATest {
  public:    
