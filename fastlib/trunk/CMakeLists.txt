@@ -8,17 +8,24 @@ project(FASTLIB C CXX Fortran)
 # set path right
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
-find_package(BLAS REQUIRED)
-find_package(LAPACK REQUIRED)
+find_package(LAPACK REQUIRED)  # LAPACK finds BLAS as a dependency
 find_package(Pthreads REQUIRED)
 
-#include(CMake/FastlibMacros.cmake)
+option(WITH_OPTIMIZERS "Include optimization code - requires OPT++." OFF)
+option(WITH_SPARSE "Include sparse matrix code - requires Trilinos." ON)
+if(WITH_SPARSE)
+   set(TRILINOS_REQUIRED_LIBS epetra anasazi aztecoo ifpack teuchos)
+   find_package(Trilinos REQUIRED)
+
+   include_directories(${TRILINOS_INCLUDE_DIR})
+   include_directories(${MPI_INCLUDE_DIR})
+endif(WITH_SPARSE)
 
 # distclean option because cmake doesn't support it
-include( CMake/TargetDistclean.cmake OPTIONAL )
+include(CMake/TargetDistclean.cmake OPTIONAL)
 
 ## Global compiler flags (dep. on platform TODO)
-add_definitions( -DDISABLE_DISK_MATRIX )
+add_definitions(-DDISABLE_DISK_MATRIX)
 
 #include_directories( ${FASTLIB_INCLUDE_DIRS} )
 include_directories(${CMAKE_BINARY_DIR}/include/)

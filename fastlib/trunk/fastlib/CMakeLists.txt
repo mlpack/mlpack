@@ -32,15 +32,13 @@ set(DIRS
 #   sparse
 )  #!!
 
-option(FASTLIB_WITH_OPTIMIZERS "Include optimization code - requires OPT++." OFF)
-if(FASTLIB_WITH_OPTIMIZERS)
+if(WITH_OPTIMIZERS)
    set(DIRS ${DIRS} optimization)
-endif(FASTLIB_WITH_OPTIMIZERS)
+endif(WITH_OPTIMIZERS)
 
-option(FASTLIB_WITH_SPARSE "Include sparse matrix code - requires Trilinos." ON)
-if(FASTLIB_WITH_SPARSE)
+if(WITH_SPARSE)
    set(DIRS ${DIRS} sparse)
-endif(FASTLIB_WITH_SPARSE)
+endif(WITH_SPARSE)
 
 foreach(dir ${DIRS})
   add_subdirectory( ${dir} )
@@ -50,8 +48,13 @@ add_library(fastlib ${FASTLIB_SRCS})
 target_link_libraries(fastlib
    lapack
    pthread
-   ${TRILINOS_LIBS}
 )
+
+if(OPTION_WITH_SPARSE)
+   target_link_libraries(fastlib
+      ${TRILINOS_LIBS}
+   )
+endif()
 
 # move include files to correct directory for mlpack compilation
 file(GLOB_RECURSE INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h )
