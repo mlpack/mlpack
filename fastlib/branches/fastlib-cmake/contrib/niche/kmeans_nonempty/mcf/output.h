@@ -27,7 +27,7 @@ Copyright (c) 2000-2003 ZIB & Loebel.   All rights reserved.
 #include "mcfdefs.h"
 
 
-extern long MCF_write_solution( char *infile, char *outfile,  
+extern long MCF_write_solution( const char *infile, const char *outfile,  
                                 MCF_network_p net, time_t sec );
 
 

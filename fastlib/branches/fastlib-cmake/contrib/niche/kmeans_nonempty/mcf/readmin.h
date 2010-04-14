@@ -28,7 +28,7 @@ Copyright (c) 2000-2003 ZIB & Loebel.   All rights reserved.
 #include "mcfutil.h"
 
 
-extern long MCF_read_dimacs_min( char *filename, MCF_network_p net );
+extern long MCF_read_dimacs_min( const char *filename, MCF_network_p net );
 
 
 #endif
