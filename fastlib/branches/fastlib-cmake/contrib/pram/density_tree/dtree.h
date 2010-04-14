@@ -16,7 +16,7 @@
 #define MIN_LEAF_SIZE 1
 
 class DTree{
-  k;
+  //k;
  
   ////////////////////// Member Variables /////////////////////////////////////
   
