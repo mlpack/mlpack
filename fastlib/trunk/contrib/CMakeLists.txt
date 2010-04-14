@@ -49,8 +49,8 @@ foreach(incl_file ${INCLUDE_FILES})
 endforeach()
 
 # set installation rules for include files
-install(FILES ${CMAKE_BINARY_DIR}/include/mlpack_contrib/
-   DESTINATION include/mlpack_contrib)
+#install(FILES ${CMAKE_BINARY_DIR}/include/mlpack_contrib/
+#   DESTINATION include/mlpack_contrib)
 
 # set installation rules for mlpack_contrib programs
 #install(PROGRAMS ${CMAKE_BINARY_DIR}/bin/
