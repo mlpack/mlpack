@@ -2,7 +2,7 @@
 #define MULTI_CONJUGATE_GRADIENT_H
 
 #include "fastlib/fastlib.h"
-#include "fastlib/sparse/trilinos/include/az_blas_wrappers.h"
+#include <trilinos/az_blas_wrappers.h>
 
 template<typename TAlgorithm>
 class MultiConjugateGradient {
