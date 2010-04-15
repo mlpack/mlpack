@@ -4,16 +4,16 @@ cmake_minimum_required(VERSION 2.8)
 set(DIRS
    compression
 #   fast_multipole_method  ## awaiting resolution of #10 (libint dependency)
-#   kde  ## requires memory manager (mmapmm)
+#   kde  ## does not compile
    linear_algebra
-   linear_regression  ## requires memory manager (mmapmm)
-#   lprcde  ## requires memory manager (mmapmm)
+   linear_regression  
+#   lprcde  ## does not compile (missing NWRCdeProblem<>::MultiTreeQuerySummary::PostAccumulate)
 #   matrix_factorized_fmm  ## does not compile right
-#   multitree_template  ## requires memory manager (mmapmm)
+   multitree_template  ## requires memory manager (mmapmm)
    nested_summation_template
    pca
-#   proximity_project  ## requires memorymanager (mmapmm)
-#   regression
+   proximity_project  ## requires memorymanager (mmapmm)
+   regression
 #   thor_kde  ## does not compile: linker error (investigate)
 )
 
