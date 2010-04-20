@@ -44,7 +44,9 @@
 
 #include <sys/times.h>
 
-EXTERN_C_BEGIN
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /** Cycle counter data type. */
 typedef uint64 tsc_t;
@@ -109,6 +111,8 @@ void stopwatch_stop(struct stopwatch *timer, const struct timestamp *now);
 /** Test whether a timer is active. */
 #define STOPWATCH_ACTIVE(timer) ((timer)->start.micros != 0)
 
-EXTERN_C_END
+#ifdef __cplusplus
+}; /* extern "C" */
+#endif
 
 #endif

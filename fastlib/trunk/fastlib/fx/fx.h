@@ -49,7 +49,9 @@
 
 #include "../base/common.h"
 
-EXTERN_C_BEGIN
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /** Somewhat clearer module typename for use with fx. */
 typedef struct datanode fx_module;
@@ -642,7 +644,7 @@ void fx_set_param_bool_array(fx_module *mod, const char *key,
  *
  * @see fx_param_str, fx_default_param_list, fx_format_param
  */
-COMPILER_PRINTF(3, 4)
+__attribute__((format(printf, 3, 4)))
 void fx_default_param(fx_module *mod, const char *key,
 		      const char *def_format, ...);
 /**
@@ -668,7 +670,7 @@ void fx_default_param_list(fx_module *mod, const char *key,
  *
  * @see fx_set_param_str, fx_default_param, fx_format_param_list
  */
-COMPILER_PRINTF(3, 4)
+__attribute__((format(printf, 3, 4)))
 void fx_format_param(fx_module *mod, const char *key,
 		     const char *format, ...);
 /**
@@ -874,7 +876,7 @@ void fx_result_bool_array(fx_module *mod, const char *key,
  *
  * @see fx_result_str, fx_format_result_list, fx_format_param
  */
-COMPILER_PRINTF(3, 4)
+__attribute__((format(printf, 3, 4)))
 void fx_format_result(fx_module *mod, const char *key,
 		      const char *format, ...);
 /**
@@ -1039,7 +1041,7 @@ fx_module *fx_submodule(fx_module *mod, const char *key);
  *
  * @see fx_submodule, fx_param_str, fx_init, fx_done
  */
-COMPILER_PRINTF(3, 4)
+__attribute__((format(printf, 3, 4)))
 fx_module *fx_copy_module(fx_module *mod, const char *src_key,
 			  const char *dest_format, ...);
 
@@ -1108,6 +1110,8 @@ fx_module *fx_init(int argc, char **argv, const fx_module_doc *doc);
  */
 void fx_done(fx_module *root);
 
-EXTERN_C_END
+#ifdef __cplusplus
+}; /* extern "C" */
+#endif
 
 #endif

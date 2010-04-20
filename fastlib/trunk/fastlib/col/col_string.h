@@ -97,7 +97,7 @@ class String {
    *
    * @param format the printf-style format string and arguments
    */
-  COMPILER_PRINTF(2, 3)
+  __attribute__((format(printf, 2, 3)))
   const String& InitSprintf(const char *format, ...);
   
   /**

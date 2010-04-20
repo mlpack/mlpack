@@ -258,7 +258,7 @@ extern int print_warnings;
  *
  * @see DEBUG_POISON_PTR
  */
-#define BIG_BAD_POINTER(type) (REINTERPRET_CAST(type *, 0xDEADBEEF))
+#define BIG_BAD_POINTER(type) (reinterpret_cast<type *>(0xDEADBEEF))
 
 /** Implementation for DEBUG_POISON_PTR. */
 #ifdef __cplusplus
@@ -300,9 +300,9 @@ const T *poison_ptr(T *&x) {
  * @see DEBUG_BOUNDS_INCLUSIVE, DEBUG_SAME_INT
  */
 #define DEBUG_BOUNDS(x, bound) \
-    DEBUG_ASSERT_MSG(STATIC_CAST(uint64, x) < STATIC_CAST(uint64, bound), \
+    DEBUG_ASSERT_MSG(static_cast<uint64>(x) < static_cast<uint64>(bound), \
         "DEBUG_BOUNDS failed: %s = %"L64"d not in [0, %s = %"L64"d)\n", \
-        #x, STATIC_CAST(int64, x), #bound, STATIC_CAST(int64, bound))
+        #x, static_cast<int64>(x), #bound, static_cast<int64>(bound))
 
 /**
  * Asserts than an index is positive and less than or equal to its
@@ -317,9 +317,9 @@ const T *poison_ptr(T *&x) {
  * @see DEBUG_BOUNDS, DEBUG_SAME_INT
  */
 #define DEBUG_BOUNDS_INCLUSIVE(x, bound) \
-    DEBUG_ASSERT_MSG(STATIC_CAST(uint64, x) <= STATIC_CAST(uint64, bound), \
+    DEBUG_ASSERT_MSG(static_cast<uint64>(x) <= static_cast<uint64>(bound), \
         "DEBUG_BOUNDS failed: %s = %"L64"d not in [0, %s = %"L64"d]\n", \
-        #x, STATIC_CAST(int64, x), #bound, STATIC_CAST(int64, bound))
+        #x, static_cast<int64>(x), #bound, static_cast<int64>(bound))
 
 /**
  * Asserts that two integers are the same.
@@ -336,7 +336,7 @@ const T *poison_ptr(T *&x) {
 #define DEBUG_SAME_INT(x, y) \
     DEBUG_ASSERT_MSG((x) == (y), \
         "DEBUG_SAME_INT failed: %s = %"L64"d not equal to %s = %"L64"d\n", \
-        #x, STATIC_CAST(int64, x), #y, STATIC_CAST(int64, y))
+        #x, static_cast<int64>(x), #y, static_cast<int64>(y))
 
 /**
  * Asserts that two integers are the same.
@@ -356,7 +356,7 @@ const T *poison_ptr(T *&x) {
 #define DEBUG_SAME_SIZE(x, y) \
     DEBUG_ASSERT_MSG((x) == (y), \
         "DEBUG_SAME_SIZE failed: %s = %"L64"d not equal to %s = %"L64"d\n", \
-        #x, STATIC_CAST(int64, x), #y, STATIC_CAST(int64, y))
+        #x, static_cast<int64>(x), #y, static_cast<int64>(y))
 
 /**
  * Asserts that two floating-point numbers are the same.
@@ -373,7 +373,7 @@ const T *poison_ptr(T *&x) {
 #define DEBUG_SAME_DOUBLE(x, y) \
     DEBUG_ASSERT_MSG((x) == (y), \
         "DEBUG_SAME_DOUBLE failed: %s = %g not equal to %s = %g\n", \
-        #x, STATIC_CAST(double, x), #y, STATIC_CAST(double, y))
+        #x, static_cast<double>(x), #y, static_cast<double>(y))
 
 /**
  * Asserts that two floating-point numbers are within epsilon of each
@@ -389,9 +389,9 @@ const T *poison_ptr(T *&x) {
  * @see DEBUG_SAME_INT, DEBUG_SAME_DOUBLE
  */
 #define DEBUG_APPROX_DOUBLE(x, y, eps) \
-    DEBUG_ASSERT_MSG(fabs(STATIC_CAST(double, (x) - (y))) < eps, \
+    DEBUG_ASSERT_MSG(fabs(static_cast<double>((x) - (y))) < eps, \
         "DEBUG_APPROX_DOUBLE failed: %s = %g not within %g of %s = %g\n", \
-        #x, STATIC_CAST(double, x), STATIC_CAST(double, eps), \
-        #y, STATIC_CAST(double, y))
+        #x, static_cast<double>(x), static_cast<double>(eps), \
+        #y, static_cast<double>(y))
 
 #endif /* BASE_DEBUG_H */

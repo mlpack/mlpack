@@ -41,38 +41,6 @@
 #define BASE_COMPILER_H
 
 /**
- * Begin listing C function prototypes.
- *
- * Needed for proper linking in C++.
- */
-#ifdef __cplusplus
-#define EXTERN_C_BEGIN extern "C" {
-#else
-#define EXTERN_C_BEGIN
-#endif
-
-/**
- * Finish listing C function prototypes.
- *
- * Needed for proper linking in C++.
- */
-#ifdef __cplusplus
-#define EXTERN_C_END };
-#else
-#define EXTERN_C_END
-#endif
-
-/* Check for availability of compiler optimizations and directives. */
-#if !defined(__GNUC__) && !defined(__INTEL_COMPILER)
-#warning Unknown compiler; optimizations and directives disabled.
-#ifndef NO_COMPILER_DEFS
-#define NO_COMPILER_DEFS
-#endif
-#endif
-
-
-
-/**
  * Optimize compilation for an expression having a given value.
  *
  * @param expr the expression to evaluate
@@ -81,7 +49,7 @@
  *
  * @see likely, unlikely
  */
-#ifndef NO_COMPILER_DEFS
+#ifdef __GNUC__
 #define expect(expr, value) (__builtin_expect((expr), (value)))
 #else
 #define expect(expr, value) (expr)
@@ -128,124 +96,18 @@
 #define unlikely(cond) expect(!!(cond), 0)
 
 /** Returns 1 if the compiler can prove the expression is constant. */
-#ifndef NO_COMPILER_DEFS
+#ifndef __GNUC__
 #define IS_CONST_EXPR(expr) (__builtin_constant_p(expr))
 #else
 #define IS_CONST_EXPR(expr) 0
 #endif
 
-
-
 /**
- * Indicates a function will not return, e.g. will abort the program.
- *
- * Use this to supress potential warning messages about not returning
- * a value in non-void functions.
- *
- * Example:
- * @code
- *   COMPILER_NO_RETURN
- *   void my_abort();
- * @endcode
+ * Define __attribute__(( )) as nothing on compilers that don't support it.
  */
-#ifndef NO_COMPILER_DEFS
-#define COMPILER_NO_RETURN __attribute__((noreturn))
-#else
-#define COMPILER_NO_RETURN
+#ifndef __GNUC__
+  #define __attribute__(x)
 #endif
-
-/**
- * Indicates a function has printf-style arguments.
- *
- * Use this to enable compile-time warning messages for mismatched
- * printf format strings and argument lists.
- *
- * Example:
- * @code
- *   COMPILER_PRINTF(2, 4)
- *   void my_printf(int i, const char *format, int j, ...);
- * @endcode
- *
- * Note that C++ member funtions reserve argument 1 for "this", so the
- * first visible argument is 2.
- *
- * @param format_arg the position of the format string argument
- * @param dotdotdot_arg the position of the ... argument
- */
-#ifndef NO_COMPILER_DEFS
-#define COMPILER_PRINTF(format_arg, dotdotdot_arg) \
-    __attribute__((format(printf, format_arg, dotdotdot_arg)))
-#else
-#define COMPILER_PRINTF(format_arg, dotdotdot_arg)
-#endif
-
-/**
- * Indicates a function has no (visible) side-effects.
- *
- * Use this to allow the compiler to optimize out repeated calls or
- * rearrange calls, and to supress warning messages when multiple
- * functions are called in an expression.  (By definition, C/C++ may
- * evaluate subexpressions and function arguments in any order,
- * causing problems they contain functions with side-effects).
- *
- * WARNING: Due to complier bugs, never use for functions of pointers.
- *
- * Example:
- * @code
- *   COMPILER_FUNCTIONAL
- *   double my_hypot(double x, double y);
- * @endcode
- */
-#ifndef NO_COMPILER_DEFS
-#define COMPILER_FUNCTIONAL __attribute__((const))
-#else
-#define COMPILER_FUNCTIONAL
-#endif
-
-/**
- * Disables the in-lining of a function.
- *
- * Used to reduce compiled binary size, but rarely worthwhile.
- */
-#ifndef NO_COMPILER_DEFS
-#define COMPILER_NO_INLINE __attribute__((noinline))
-#else
-#define COMPILER_NO_INLINE
-#endif
-
-/**
- * Denotes a function as deprecated.
- *
- * This will raise warnings when compiling with features that may
- * eventually be removed.
- *
- * @see COMPILER_DEPRECATED_MSG
- */
-#if !defined(NO_COMPILER_DEFS) && !defined(NO_DEPRECATION_WARNINGS)
-#define COMPILER_DEPRECATED __attribute__((deprecated))
-#else
-#define COMPILER_DEPRECATED
-#endif
-
-/**
- * Denotes a function as deprecated with a warning message.
- *
- * This will eventually raise the provided warning message when
- * compiling, but this feature is not currently available in all
- * compilers, so instead, the behavior is identical to
- * COMPILER_DEPRECATED.
- *
- * @param msg printed when compiling with a deprecated function
- *
- * @see COMPILER_DEPRECATED
- */
-#if !defined(NO_COMPILER_DEFS) && !defined(NO_DEPRECATION_WARNINGS)
-#define COMPILER_DEPRECATED_MSG(msg) COMPILER_DEPRECATED
-#else
-#define COMPILER_DEPRECATED_MSG(msg)
-#endif
-
-
 
 /**
  * Computes the stride (alignment) of a type.
@@ -310,29 +172,6 @@ struct compiler_strideof {
 #ifndef offsetof
 #define offsetof(S, member) ((size_t)(&((S const *)0)->member))
 #endif
-
-
-
-/** Performs C++ casts in either C or C++. */
-#ifdef __cplusplus
-#define COMPILER_CAST(cast, T, val) (cast< T >(val))
-#else
-#define COMPILER_CAST(cast, T, val) ((T)(val))
-#endif
-
-/**
- * Performs the equivalent of static_cast in either C or C++.
- *
- * This is useful if you compile with -Wold-style-cast.
- */
-#define STATIC_CAST(T, val) COMPILER_CAST(static_cast, T, val)
-
-/**
- * Performs the equivalent of reinterpret_cast in either C or C++.
- *
- * This is useful if you compile with -Wold-style-cast.
- */
-#define REINTERPRET_CAST(T, val) COMPILER_CAST(reinterpret_cast, T, val)
 
 
 

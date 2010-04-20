@@ -78,10 +78,8 @@ class DualTreeDepthFirst {
   }
 
  private:
-  COMPILER_NO_INLINE
-  void Begin_(index_t q_root_index);
-  COMPILER_NO_INLINE
-  void Pair_(
+  __attribute__((noinline)) void Begin_(index_t q_root_index);
+  __attribute__((noinline)) void Pair_(
       const typename GNP::QNode *q_node,
       const typename GNP::RNode *r_node,
       const typename GNP::Delta& delta,

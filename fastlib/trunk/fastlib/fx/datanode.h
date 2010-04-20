@@ -42,7 +42,9 @@
 
 #include "../base/common.h"
 
-EXTERN_C_BEGIN
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /**
  * A node composed of a key-value pair, metadata, and child nodes.
@@ -225,6 +227,8 @@ void datanode_write(struct datanode *node, FILE *stream,
 void datanode_read(struct datanode *node, FILE *stream,
 		   const char *type_char, int overwrite);
 
-EXTERN_C_END
+#ifdef __cplusplus
+}; /* extern "C" */
+#endif
 
 #endif /* FX_DATANODE_H */

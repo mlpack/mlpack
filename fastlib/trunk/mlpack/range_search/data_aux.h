@@ -29,7 +29,7 @@ namespace data_aux {
     matrix->StaticInit(tmp_matrix.n_rows(), tmp_matrix.n_cols());
     for(index_t c = 0; c < tmp_matrix.n_cols(); c++) {
       for(index_t r = 0; r < tmp_matrix.n_rows(); r++) {
-	matrix->set(r, c, STATIC_CAST(T, tmp_matrix.get(r, c)));
+	matrix->set(r, c, static_cast<T>(tmp_matrix.get(r, c)));
       }
     }
 
@@ -60,7 +60,7 @@ namespace data_aux {
     matrix->StaticInit(tmp_matrix.n_cols(), tmp_matrix.n_rows());
     for(index_t c = 0; c < tmp_matrix.n_cols(); c++) {
       for(index_t r = 0; r < tmp_matrix.n_rows(); r++) {
-	matrix->set(c, r, STATIC_CAST(T, tmp_matrix.get(r, c)));
+	matrix->set(c, r, static_cast<T>(tmp_matrix.get(r, c)));
       }
     }
 
