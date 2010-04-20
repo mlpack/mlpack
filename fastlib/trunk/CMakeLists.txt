@@ -13,6 +13,10 @@ find_package(Pthreads REQUIRED)
 
 option(WITH_OPTIMIZERS "Include optimization code - requires OPT++." OFF)
 option(WITH_SPARSE "Include sparse matrix code - requires Trilinos." ON)
+option(SCALE_NORMAL "Compile with supported indices up to native int type" OFF)
+option(SCALE_LARGE "Support indices up to the maximum the machine's architecture can support" OFF)
+option(SCALE_MASSIVE "Use 64-bit indexes regardless of architecture" OFF)
+
 if(WITH_SPARSE)
    set(TRILINOS_REQUIRED_LIBS epetra anasazi aztecoo ifpack teuchos)
    find_package(Trilinos REQUIRED)
@@ -20,6 +24,24 @@ if(WITH_SPARSE)
    include_directories(${TRILINOS_INCLUDE_DIR})
    include_directories(${MPI_INCLUDE_DIR})
 endif(WITH_SPARSE)
+
+# ensure we are only using one of the SCALE_x options
+if(SCALE_MASSIVE)
+   if(SCALE_LARGE OR SCALE_NORMAL)
+      message(FATAL_ERROR "Only one of SCALE_MASSIVE, SCALE_LARGE, or SCALE_NORMAL options allowed")
+   endif()
+
+   add_definitions(-DSCALE_MASSIVE)
+elseif(SCALE_LARGE)
+   if(SCALE_NORMAL)
+      message(FATAL_ERROR "Only one of SCALE_MASSIVE, SCALE_LARGE, or SCALE_NORMAL options allowed")
+   endif()
+
+   add_definitions(-DSCALE_LARGE)
+else()
+   # default to normal scale
+   add_definitions(-DSCALE_NORMAL)
+endif()
 
 # distclean option because cmake doesn't support it
 include(CMake/TargetDistclean.cmake OPTIONAL)
