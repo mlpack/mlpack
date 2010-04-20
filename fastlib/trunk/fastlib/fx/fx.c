@@ -258,7 +258,7 @@ static void fx__write_path(fx_module *entry, FILE *stream)
   fprintf(stream, "%s", entry->key);
 }
 
-COMPILER_NO_RETURN
+__attribute((noreturn))
 static void fx__print_fatal_msg(const char *file, const char *func, int line,
                                 const char *prefix, fx_module *entry,
                                 const char *suffix, ...)
@@ -1707,7 +1707,7 @@ success_t fx_help(const fx_module_doc *doc, const char *key)
   return retval;
 }
 
-COMPILER_NO_RETURN
+__attribute__((noreturn))
 static void fx__std_help(const char *prog, const char *help,
                          const fx_module_doc *doc)
 {

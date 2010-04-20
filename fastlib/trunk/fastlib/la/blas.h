@@ -36,7 +36,7 @@
 #include "../base/compiler.h"
 namespace la {
 
-EXTERN_C_BEGIN
+extern "C" {
 
 f77_ret_void F77_FUNC(srot)(f77_integer CONST_REF, f77_real *, f77_integer CONST_REF, f77_real *, f77_integer CONST_REF, const f77_real *, const f77_real *);
 f77_ret_void F77_FUNC(srotg)(f77_real *, f77_real *, f77_real *, f77_real *);
@@ -184,6 +184,7 @@ f77_ret_void F77_FUNC(zher2k)(const char *, const char *, f77_integer CONST_REF,
 f77_ret_void F77_FUNC(ztrmm)(const char *, const char *, const char *, const char *, f77_integer CONST_REF, f77_integer CONST_REF, const f77_doublecomplex *, const f77_doublecomplex *, f77_integer CONST_REF, f77_doublecomplex *, f77_integer CONST_REF);
 f77_ret_void F77_FUNC(ztrsm)(const char *, const char *, const char *, const char *, f77_integer CONST_REF, f77_integer CONST_REF, const f77_doublecomplex *, const f77_doublecomplex *, f77_integer CONST_REF, f77_doublecomplex *, f77_integer CONST_REF);
 
-EXTERN_C_END
+}; /* extern "C" */
+
 };
 #endif

@@ -387,8 +387,7 @@ class CacheArray {
   }
 
   /** Handles a miss from the internal FIFO. */
-  COMPILER_NO_INLINE
-  Element *HandleCacheMiss_(index_t element_id);
+  __attribute__((noinline)) Element *HandleCacheMiss_(index_t element_id);
 
   /** Checks out an element (happy-path). */
   Element *CheckoutElement_(index_t element_id) {

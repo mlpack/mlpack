@@ -47,8 +47,7 @@ namespace math {
   /**
    * Computes the factorial of an integer.
    */
-  COMPILER_FUNCTIONAL
-  double Factorial(int d);
+  __attribute__((const)) double Factorial(int d);
   
   /**
    * Computes the binomial coefficient, n choose k for nonnegative integers
@@ -58,8 +57,7 @@ namespace math {
    * @param k the second nonnegative integer argument
    * @return the binomial coefficient n choose k
    */
-  COMPILER_FUNCTIONAL
-  double BinomialCoefficient(int n, int k);
+  __attribute__((const)) double BinomialCoefficient(int n, int k);
 
   /**
    * Creates an identity permutation where the element i equals i.

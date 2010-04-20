@@ -178,8 +178,7 @@ extern const char *fl_msg_color[];
  * Behavior adjustable with segfault_on_abort, which may be handy for
  * valgrind or other debuggers.
  */
-COMPILER_NO_RETURN
-void fl_abort(void);
+__attribute__((noreturn)) void fl_abort(void);
 
 /**
  * Waits for the user to press return.
@@ -195,13 +194,12 @@ void fl_print_msg_header(char marker, const char *color);
 void fl_print_msg_loc(const char *file, const char *func, int line);
 
 /** Implementation for FATAL. */
-COMPILER_NO_RETURN
-COMPILER_PRINTF(4, 5)
+__attribute__((noreturn, format(printf, 4, 5)))
 void fl_print_fatal_msg(const char *file, const char *func, int line,
                         const char* format, ...);
 
 /** Implementation for NONFATAL, NOTIFY_STAR, and NOTIFY. */
-COMPILER_PRINTF(5, 6)
+__attribute__((format(printf, 5, 6)))
 void fl_print_msg(const char *file, const char *func, int line,
                   fl_msg_t msg_type, const char* format, ...);
 

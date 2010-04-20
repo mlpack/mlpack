@@ -382,8 +382,7 @@ class ZCacheIterImpl_ {
   }
 
  private:
-  COMPILER_NO_INLINE
-  void NextBlock_();
+  __attribute__((noinline)) void NextBlock_();
 };
 
 template<typename Element>

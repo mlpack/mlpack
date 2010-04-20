@@ -1086,53 +1086,53 @@ class ArrayList {
 
   ////////// Deprecated //////////////////////////////////////////////
 
-  COMPILER_DEPRECATED_MSG("Renamed InitCopy")
-  void Copy(const Elem *src, index_t size) {
+  /* Renamed InitCopy */
+  __attribute__((deprecated)) void Copy(const Elem *src, index_t size) {
     InitCopy(src, size);
   }
-  COMPILER_DEPRECATED_MSG("Renamed InitSteal")
-  void Steal(const Elem *src, index_t size) {
+  /* Renamed InitSteal */
+  __attribute__((deprecated)) void Steal(const Elem *src, index_t size) {
     InitSteal(src, size);
   }
-  COMPILER_DEPRECATED_MSG("Renamed InitSteal; other will alias")
-  void Steal(ArrayList *other) {
+  /* Renamed InitSteal; other will alias */
+  __attribute__((deprecated)) void Steal(ArrayList *other) {
     InitSteal(other);
     other->Reset_();
   }
 
-  COMPILER_DEPRECATED_MSG("Renamed ReleasePtr; will become alias")
-  Elem *ReleasePointer() {
+  /* Renamed ReleasePtr; will become alias */
+  __attribute__((deprecated)) Elem *ReleasePointer() {
     Elem *retval = ReleasePtr();
     Reset_();
     return retval;
   }
-  COMPILER_DEPRECATED_MSG("Renamed Renew")
-  void Destruct() {
+  /* Renamed Renew */
+  __attribute__((deprecated)) void Destruct() {
     Renew();
   }
 
-  COMPILER_DEPRECATED_MSG("Renamed SizeAtLeast")
-  void EnsureSizeAtLeast(index_t size) {
+  /* Renamed SizeAtLeast */
+  __attribute__((deprecated)) void EnsureSizeAtLeast(index_t size) {
     SizeAtLeast(size);
   }
 
-  COMPILER_DEPRECATED_MSG("Renamed PushBack; no longer returns pointer")
-  Elem *AddBack(index_t inc = 1) {
+  /* Renamed PushBack; no longer returns pointer */
+  __attribute__((deprecated)) Elem *AddBack(index_t inc = 1) {
     index_t offset = size_;
     PushBack(inc);
     return ptr_ + offset;
   }
-  COMPILER_DEPRECATED_MSG("Renamed PushBackRaw")
-  Elem *AddBackUnconstructed(index_t inc = 1) {
+  /* Renamed PushBackRaw */
+  __attribute__((deprecated)) Elem *AddBackUnconstructed(index_t inc = 1) {
     return PushBackRaw(inc);
   }
-  COMPILER_DEPRECATED_MSG("Renamed PushBackCopy")
-  Elem *AddBackItem(const Elem &elem) {
+  /* Renamed PushBackCopy */
+  __attribute__((deprecated)) Elem *AddBackItem(const Elem &elem) {
     return &PushBackCopy(elem);
   }
 
-  COMPILER_DEPRECATED_MSG("Use PopBackInit instead")
-  Elem *PopBackPtr() {
+  /* Use PopBackInit instead */
+  __attribute__((deprecated)) Elem *PopBackPtr() {
     PopBackRaw();
     return end();
   }

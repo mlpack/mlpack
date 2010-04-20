@@ -136,8 +136,7 @@ class TextLineReader {
   /**
    * Prints a formatted error message with line number info.
    */
-  COMPILER_PRINTF(2, 3)
-  void Error(const char *msg, ...);
+  __attribute__((format(printf, 2, 3))) void Error(const char *msg, ...);
   
  private:
   char *ReadLine_();
@@ -291,8 +290,7 @@ class TextTokenizer {
     return line_;
   }
 
-  COMPILER_PRINTF(2, 3)
-  void Error(const char *msg, ...);
+  __attribute__((format(printf, 2, 3))) void Error(const char *msg, ...);
   
  private:
   int GetChar_() {

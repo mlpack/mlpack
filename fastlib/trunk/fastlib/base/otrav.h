@@ -591,7 +591,7 @@
  */
 #define OT_DEPRECATED_COPY_CONSTRUCTOR(C) \
    public: \
-    COMPILER_DEPRECATED \
+    __attribute__((deprecated)) \
     C(const C &src) { \
       ot__private::Copier<false> ot__copier(this, &src); \
     } \
@@ -637,7 +637,7 @@
     void InitCopy(const C &src) { \
       ot::InitCopy(this, src); \
     } \
-    COMPILER_DEPRECATED \
+    __attribute__((deprecated)) \
     void Copy(const C &src) { \
       ot::InitCopy(this, src); \
     } \
@@ -1969,42 +1969,42 @@ namespace ot {
 
   /** Renamed InitCopy */
   template<typename T>
-  COMPILER_DEPRECATED
+  __attribute__((deprecated))
   void Copy(const T &src, T *dest) {
     InitCopy(dest, src);
   }
 
   /** Renamed FrozenSize */
   template<typename T>
-  COMPILER_DEPRECATED
+  __attribute__((deprecated))
   size_t PointerFrozenSize(const T &obj) {
     return FrozenSize(obj);
   }
 
   /** Renamed Freeze */
   template<typename T>
-  COMPILER_DEPRECATED
+  __attribute__((deprecated))
   void PointerFreeze(const T &obj, char *block) {
     Freeze(block, obj);
   }
 
   /** Renamed SemiFreeze */
   template<typename T>
-  COMPILER_DEPRECATED
+  __attribute__((deprecated))
   void PointerRefreeze(const T *src, char *dest) {
     SemiFreeze(dest, src);
   }
 
   /** Renamed SemiThaw */
   template<typename T>
-  COMPILER_DEPRECATED
+  __attribute__((deprecated))
   T *PointerThaw(char *block) {
     return SemiThaw<T>(block);
   }
 
   /** Behavior similar to SemiCopy; beware memory leaks */
   template<typename T>
-  COMPILER_DEPRECATED
+  __attribute__((deprecated))
   void PointerRelocate(const char *old_loc, char *new_loc) {
     /*
      * TODO: Perhaps detect if Shallow, doing nothing, or try function
