@@ -13,8 +13,8 @@
 #include <string>
 #include <vector>
 //#include "fastlib/fastlib.h"
-#include "fastlib/base/common.h"
-#include "fastlib/fx/fx.h"
+#include "../base/common.h"
+#include "../fx/fx.h"
 
 namespace mmapmm {
 
