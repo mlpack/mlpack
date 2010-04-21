@@ -332,8 +332,8 @@ class ZCacheIterImpl_ {
 
  private:
   Element *element_;
-  uint stride_;
-  uint left_;
+  unsigned int stride_;
+  unsigned int left_;
   CacheArray<BaseElement> *cache_;
   BlockDevice::blockid_t blockid_;
 

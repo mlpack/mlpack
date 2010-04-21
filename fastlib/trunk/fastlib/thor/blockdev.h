@@ -343,8 +343,8 @@ class IoStats {
  private:
   uint64 n_read_bytes_;
   uint64 n_write_bytes_;
-  uint n_reads_;
-  uint n_writes_;
+  unsigned int n_reads_;
+  unsigned int n_writes_;
   
   OT_DEF(IoStats) {
     OT_MY_OBJECT(n_read_bytes_);
@@ -360,7 +360,7 @@ class IoStats {
   }
 
   /** Gets the number of read operations performed. */
-  uint n_reads() const {
+  unsigned int n_reads() const {
     return n_reads_;
   }
   /** Gets the number of bytes read. */
@@ -368,7 +368,7 @@ class IoStats {
     return n_read_bytes_;
   }
   /** Gets the number of write operations performed. */
-  uint n_writes() const {
+  unsigned int n_writes() const {
     return n_writes_;
   }
   /** Gets the number of bytes written. */
@@ -376,7 +376,7 @@ class IoStats {
     return n_write_bytes_;
   }
   /** Gets the number of read or write operations total. */
-  uint n_io() const {
+  unsigned int n_io() const {
     return n_reads_ + n_writes_;
   }
   /** Gets the number bytes read or writen total. */
