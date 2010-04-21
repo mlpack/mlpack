@@ -28,6 +28,9 @@ int Matcher::TestHrectPair(const DHrectBound<2>& box1, const DHrectBound<2>& box
   
   // we'll only return EXCLUDE if all the permutations are excluded
   int result = EXCLUDE;
+
+  double min_dist_sq = box1.MinDistanceSq(box2);
+  double max_dist_sq = box1.MaxDistanceSq(box2);
   
   for (index_t i = 0; i < num_permutations_; i++) {
     
@@ -38,8 +41,6 @@ int Matcher::TestHrectPair(const DHrectBound<2>& box1, const DHrectBound<2>& box
     index_t template_index_1 = GetPermutationIndex_(i, tuple_index_1);
     index_t template_index_2 = GetPermutationIndex_(i, tuple_index_2);
     
-    double min_dist_sq = box1.MinDistanceSq(box2);
-    double max_dist_sq = box1.MaxDistanceSq(box2);
     
     double upper_bound_sq = upper_bounds_sqr_.ref(template_index_1, 
                                                   template_index_2);

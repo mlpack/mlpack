@@ -174,12 +174,6 @@ private:
     
   } // NodeIndexTraversal_
   
-  /**
-   * 
-   */
-  int NChooseR_(int n, int r);
-
-  
   int CountTuples_(ArrayList<NPointNode*>& nodes);
   
   /**
@@ -284,7 +278,7 @@ public:
       
     } // tree building
     
-    upper_bound_ = NChooseR_(num_points_, tuple_size_);
+    upper_bound_ = n_point_impl::NChooseR(num_points_, tuple_size_);
     lower_bound_ = 0;
     
     num_tuples_ = 0;

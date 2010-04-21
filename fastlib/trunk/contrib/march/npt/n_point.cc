@@ -9,31 +9,6 @@
 
 #include "n_point.h"
 
-int NPointAlg::NChooseR_(int n, int r) {
-  
-  DEBUG_ASSERT(n >= 0);
-  DEBUG_ASSERT(r >= 0);
-  
-  if(n < r) return 0;
-  
-  int divisor = 1;
-  int multiplier = n;
-  
-  int answer = 1;
-  
-  while (divisor <= r) {
-    
-    answer = (answer * multiplier) / divisor;
-    
-    multiplier--;
-    divisor++;
-    
-  } 
-  
-  return answer;
-  
-} // NChooseR
-
 
 int NPointAlg::CountTuples_(ArrayList<NPointNode*>& nodes) {
   
@@ -110,7 +85,7 @@ int NPointAlg::CountTuples_(ArrayList<NPointNode*>& nodes) {
       int size = node_i->count();
       
       // error here: I have a repeated node of size 1
-      total_count *= NChooseR_(size, counts[i]);
+      total_count *= n_point_impl::NChooseR(size, counts[i]);
       
     }
     
@@ -419,6 +394,7 @@ int NPointAlg::CheckNodeList_(ArrayList<NPointNode*>& nodes) {
   
   ArrayList<int> permutation_ok;
   permutation_ok.Init(matcher_.num_permutations());
+  // TODO: replace with InitRepeat
   for (index_t i = 0; i < permutation_ok.size(); i++) {
     permutation_ok[i] = SUBSUME;
   }
@@ -449,6 +425,8 @@ int NPointAlg::CheckNodeList_(ArrayList<NPointNode*>& nodes) {
                                           j, permutation_ok);
       
       // IMPORTANT: can't exit here, messes up the tracking of bounds
+      // but this doesn't make sense, nothing in the rest of the checks gets 
+      // passed to the outside
       if (status == EXCLUDE) {
         // we should be able to prune
         
