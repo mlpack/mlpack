@@ -37,6 +37,13 @@ endforeach()
 #message("output: ${MLPACK_CONTRIB_SRCS}")
 add_library(mlpack_contrib ${MLPACK_CONTRIB_SRCS})
 add_dependencies(mlpack_contrib mlpack fastlib)
+target_link_libraries(mlpack_contrib
+   mlpack
+   fastlib
+   lapack
+   blas
+   ${Boost_LIBRARIES}
+)
 
 # move header files to the right directory
 file(GLOB_RECURSE INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)

@@ -51,6 +51,7 @@ target_link_libraries(fastlib
    lapack
    pthread
    ${TRILINOS_LIBS}
+   ${Boost_LIBRARIES}
 )
 
 # move include files to correct directory for mlpack compilation

@@ -63,6 +63,12 @@ endforeach()
 # MLPACK_SRCS is set in the subdirectories
 add_library(mlpack ${MLPACK_SRCS})
 add_dependencies(mlpack fastlib)
+target_link_libraries(mlpack
+   fastlib
+   lapack
+   blas
+   ${Boost_LIBRARIES}
+)
 
 # move header files to the right directory
 file(GLOB_RECURSE INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)

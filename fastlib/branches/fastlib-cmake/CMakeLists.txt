@@ -11,6 +11,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 find_package(BLAS REQUIRED)
 find_package(LAPACK REQUIRED)
 find_package(Pthreads REQUIRED)
+find_package(Boost 1.33 COMPONENTS serialization program_options REQUIRED)
 
 #include(CMake/FastlibMacros.cmake)
 
