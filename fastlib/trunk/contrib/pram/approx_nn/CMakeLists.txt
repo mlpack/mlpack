@@ -20,6 +20,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(approx_nn
+   EXCLUDE_FROM_ALL
    main.cc
 )
 # link dependencies of executable
@@ -30,6 +31,7 @@ target_link_libraries(approx_nn
 )
 
 add_executable(approx_nn_dual
+   EXCLUDE_FROM_ALL
    main_dual.cc
 )
 target_link_libraries(approx_nn_dual

@@ -30,6 +30,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(hk_ippc
+   EXCLUDE_FROM_ALL
    interior_point_pred_corr_main.cc
 )
 # link dependencies of executable
@@ -49,6 +50,7 @@ target_link_libraries(hk_ippc
 #)
 
 add_executable(special_la_test # renamed from nonexplanatory "test"
+   EXCLUDE_FROM_ALL
    special_la_main.cc
 )
 target_link_libraries(special_la_test
@@ -67,6 +69,7 @@ target_link_libraries(special_la_test
 #)
 
 add_executable(adaptive_kde
+   EXCLUDE_FROM_ALL
    adaptive_kde_main.cc
 )
 target_link_libraries(adaptive_kde
@@ -76,6 +79,7 @@ target_link_libraries(adaptive_kde
 )
 
 add_executable(variable_nn_based_kde
+   EXCLUDE_FROM_ALL
    variable_nn_based_kde.h
    variable_nn_based_kde_main.cc
 )
@@ -86,6 +90,7 @@ target_link_libraries(variable_nn_based_kde
 )
 
 add_executable(nn_kde
+   EXCLUDE_FROM_ALL
    nn_kde_main.cc
 )
 target_link_libraries(nn_kde

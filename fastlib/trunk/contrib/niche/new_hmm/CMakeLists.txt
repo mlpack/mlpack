@@ -57,6 +57,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 #)
 
 add_executable(test_bayes_2
+   EXCLUDE_FROM_ALL
    test_bayes.cc
    test_engine.h
    test_engine_impl.h
@@ -69,6 +70,7 @@ target_link_libraries(test_bayes_2
 )
 
 add_executable(save_one_hmm_2
+   EXCLUDE_FROM_ALL
    save_one_hmm.cc
    test_engine.h
    test_engine_impl.h
@@ -80,6 +82,7 @@ target_link_libraries(save_one_hmm_2
 )
 
 add_executable(save_one_fmri_hmm_2
+   EXCLUDE_FROM_ALL
    save_one_fmri_hmm.cc
    test_engine.h
    test_engine_impl.h
@@ -91,6 +94,7 @@ target_link_libraries(save_one_fmri_hmm_2
 )
 
 add_executable(test_fmri_gmmk_2
+   EXCLUDE_FROM_ALL
    test_fmri_gmmk.cc
 #   test_fmri_utils.cc
    test_engine.h
@@ -103,6 +107,7 @@ target_link_libraries(test_fmri_gmmk_2
 )
 
 add_executable(test_fmri_bayes_2
+   EXCLUDE_FROM_ALL
    test_fmri_bayes.cc
    test_engine.h
    test_engine_impl.h
@@ -132,6 +137,7 @@ target_link_libraries(test_fmri_bayes_2
 #)
 
 add_executable(kernel_pca_2
+   EXCLUDE_FROM_ALL
    kpca.cc
    kernel_pca.h
 )
@@ -142,6 +148,7 @@ target_link_libraries(kernel_pca_2
 )
 
 add_executable(test_inbio_kpca_2
+   EXCLUDE_FROM_ALL
    test_inbio_kpca.cc
 )
 target_link_libraries(test_inbio_kpca_2
@@ -151,6 +158,7 @@ target_link_libraries(test_inbio_kpca_2
 )
 
 add_executable(test_kill_duplicate_points_2
+   EXCLUDE_FROM_ALL
    test_kill_duplicate_points.cc
 )
 target_link_libraries(test_kill_duplicate_points_2
@@ -160,6 +168,7 @@ target_link_libraries(test_kill_duplicate_points_2
 )
 
 add_executable(save_one_dna_hmm_2
+   EXCLUDE_FROM_ALL
    save_one_dna_hmm.cc
 )
 target_link_libraries(save_one_dna_hmm_2
@@ -169,6 +178,7 @@ target_link_libraries(save_one_dna_hmm_2
 )
 
 add_executable(save_one_synth_hmm_2
+   EXCLUDE_FROM_ALL
    save_one_synth_hmm.cc
    test_engine.h
    test_engine_impl.h
@@ -180,6 +190,7 @@ target_link_libraries(save_one_synth_hmm_2
 )
 
 add_executable(test_dna_fisher_kernel_2
+   EXCLUDE_FROM_ALL
    test_dna_fisher_kernel.cc
    test_dna_utils.h
    test_engine.h
@@ -192,6 +203,7 @@ target_link_libraries(test_dna_fisher_kernel_2
 )
 
 add_executable(test_synth_fisher_kernel_2
+   EXCLUDE_FROM_ALL
    test_synth_fisher_kernel.cc
    test_synth_utils.h
    test_engine.h
@@ -204,6 +216,7 @@ target_link_libraries(test_synth_fisher_kernel_2
 )
 
 add_executable(test_dna_emmk_2
+   EXCLUDE_FROM_ALL
    test_dna_emmk.cc
    test_dna_utils.h
    test_engine.h
@@ -216,6 +229,7 @@ target_link_libraries(test_dna_emmk_2
 )
 
 add_executable(test_synth_emmk_2
+   EXCLUDE_FROM_ALL
    test_synth_emmk.cc
    test_synth_utils.h
    test_engine.h
@@ -228,6 +242,7 @@ target_link_libraries(test_synth_emmk_2
 )
 
 add_executable(test_dna_bayes_2
+   EXCLUDE_FROM_ALL
    test_dna_bayes.cc
    test_engine.h
    test_engine_impl.h
@@ -239,6 +254,7 @@ target_link_libraries(test_dna_bayes_2
 )
 
 add_executable(test_synth_bayes_2
+   EXCLUDE_FROM_ALL
    test_synth_bayes.cc
    test_synth_utils.h
    test_engine.h
@@ -251,6 +267,7 @@ target_link_libraries(test_synth_bayes_2
 )
 
 add_executable(test_dna_lmmk_2
+   EXCLUDE_FROM_ALL
    test_dna_lmmk.cc
    test_dna_utils.h
    test_engine.h
@@ -263,6 +280,7 @@ target_link_libraries(test_dna_lmmk_2
 )
 
 add_executable(test_synth_lmmk_2
+   EXCLUDE_FROM_ALL
    test_synth_lmmk.cc
    test_synth_utils.h
    test_engine.h
@@ -275,6 +293,7 @@ target_link_libraries(test_synth_lmmk_2
 )
 
 add_executable(test_dna_lmmk2_2
+   EXCLUDE_FROM_ALL
    test_dna_lmmk2.cc
    test_dna_utils.h
    test_engine.h
@@ -287,6 +306,7 @@ target_link_libraries(test_dna_lmmk2_2
 )
 
 add_executable(test_synth_lmmk2_2
+   EXCLUDE_FROM_ALL
    test_synth_lmmk2.cc
    test_synth_utils.h
    test_engine.h
@@ -299,6 +319,7 @@ target_link_libraries(test_synth_lmmk2_2
 )
 
 add_executable(test_dna_gmmk_2
+   EXCLUDE_FROM_ALL
    test_dna_gmmk.cc
    test_engine.h
    test_engine_impl.h
@@ -310,6 +331,7 @@ target_link_libraries(test_dna_gmmk_2
 )
 
 add_executable(test_synth_gmmk_2
+   EXCLUDE_FROM_ALL
    test_synth_gmmk.cc
    test_engine.h
    test_engine_impl.h
@@ -321,6 +343,7 @@ target_link_libraries(test_synth_gmmk_2
 )
 
 add_executable(empirical_mmk_2
+   EXCLUDE_FROM_ALL
    empirical_mmk.h
    empirical_mmk_impl.h
    empirical_mmk.cc
@@ -332,6 +355,7 @@ target_link_libraries(empirical_mmk_2
 )
 
 add_executable(test_engine_2
+   EXCLUDE_FROM_ALL
    test_engine.cc
    test_engine.h
    test_engine_impl.h
@@ -343,6 +367,7 @@ target_link_libraries(test_engine_2
 )
 
 add_executable(get_optimal_kde_bandwidth_2
+   EXCLUDE_FROM_ALL
    get_optimal_kde_bandwidth.cc
 )
 target_link_libraries(get_optimal_kde_bandwidth_2
@@ -352,6 +377,7 @@ target_link_libraries(get_optimal_kde_bandwidth_2
 )
 
 add_executable(test_isotropic_gaussian_2
+   EXCLUDE_FROM_ALL
    test_isotropic_gaussian.cc
    isotropic_gaussian.h
 )
@@ -362,6 +388,7 @@ target_link_libraries(test_isotropic_gaussian_2
 )
 
 add_executable(generative_mmk_2
+   EXCLUDE_FROM_ALL
    generative_mmk.cc
 )
 target_link_libraries(generative_mmk_2
@@ -371,6 +398,7 @@ target_link_libraries(generative_mmk_2
 )
 
 add_executable(test_latent_mmk_2
+   EXCLUDE_FROM_ALL
    test_latent_mmk.cc
 )
 target_link_libraries(test_latent_mmk_2
@@ -380,6 +408,7 @@ target_link_libraries(test_latent_mmk_2
 )
 
 add_executable(latent_mmk_2
+   EXCLUDE_FROM_ALL
    latent_mmk.cc
 )
 target_link_libraries(latent_mmk_2
@@ -389,6 +418,7 @@ target_link_libraries(latent_mmk_2
 )
 
 add_executable(loghmm_2
+   EXCLUDE_FROM_ALL
    hmm.cc
    loghmm.h
 )
@@ -399,6 +429,7 @@ target_link_libraries(loghmm_2
 )
 
 add_executable(hmm_niche_2
+   EXCLUDE_FROM_ALL
    hmm.cc
    hmm.h
 )
@@ -428,6 +459,7 @@ target_link_libraries(hmm_niche_2
 #)
 
 add_executable(otrav_mem_test_2
+   EXCLUDE_FROM_ALL
    otrav_mem_test.cc
 )
 target_link_libraries(otrav_mem_test_2

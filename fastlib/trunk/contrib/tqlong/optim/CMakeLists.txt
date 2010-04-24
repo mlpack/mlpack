@@ -18,6 +18,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(optim_tqlong_test
+   EXCLUDE_FROM_ALL
    optim_test.cc
    myfun.h
 )

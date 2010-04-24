@@ -17,6 +17,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(nbc_single
+   EXCLUDE_FROM_ALL
    nbc-single.cc
 )
 # link dependencies of executable
@@ -28,6 +29,7 @@ target_link_libraries(nbc_single
 
 # test executable
 add_executable(nbc_multi
+   EXCLUDE_FROM_ALL
    nbc-multi.cc
 )
 target_link_libraries(nbc_multi

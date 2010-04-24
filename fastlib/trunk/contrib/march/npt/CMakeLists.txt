@@ -20,6 +20,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(n_point_testing
+   EXCLUDE_FROM_ALL
    n_point_testing.h
    n_point_testing.cc
 )
@@ -31,6 +32,7 @@ target_link_libraries(n_point_testing
 )
 
 add_executable(n_point
+   EXCLUDE_FROM_ALL
    n_point_main.cc
 )
 target_link_libraries(n_point

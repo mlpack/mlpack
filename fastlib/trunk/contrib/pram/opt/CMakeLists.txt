@@ -18,6 +18,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(optimizer_pram
+   EXCLUDE_FROM_ALL
    phi.h
    main.cc
 )

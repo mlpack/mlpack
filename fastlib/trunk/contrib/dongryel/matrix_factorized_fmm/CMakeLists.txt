@@ -26,6 +26,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(matrix_factorized_fmm
+   EXCLUDE_FROM_ALL
    matrix_factorized_fmm_main.cc
 )
 # link dependencies of executable

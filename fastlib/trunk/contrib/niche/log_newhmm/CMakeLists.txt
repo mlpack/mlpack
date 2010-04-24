@@ -36,6 +36,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(test_emmk
+   EXCLUDE_FROM_ALL
    test_emmk.cc
    test_utils.h
    test_engine.h
@@ -49,6 +50,7 @@ target_link_libraries(test_emmk
 )
 
 add_executable(test_clique_mult
+   EXCLUDE_FROM_ALL
    test_clique_mult.cc
 )
 target_link_libraries(test_clique_mult
@@ -58,6 +60,7 @@ target_link_libraries(test_clique_mult
 )
 
 add_executable(test_fisher_kernel
+   EXCLUDE_FROM_ALL
    test_fisher_kernel.cc
    test_utils.h
    test_engine.h
@@ -70,6 +73,7 @@ target_link_libraries(test_fisher_kernel
 )
 
 add_executable(test_gmmk_cont
+   EXCLUDE_FROM_ALL
    test_gmmk.cc
    test_engine.h
    test_engine_impl.h
@@ -81,6 +85,7 @@ target_link_libraries(test_gmmk_cont
 )
 
 add_executable(test_bayes
+   EXCLUDE_FROM_ALL
    test_bayes.cc
    test_engine.h
    test_engine_impl.h
@@ -93,6 +98,7 @@ target_link_libraries(test_bayes
 )
 
 add_executable(save_one_hmm
+   EXCLUDE_FROM_ALL
    save_one_hmm.cc
    test_engine.h
    test_engine_impl.h
@@ -104,6 +110,7 @@ target_link_libraries(save_one_hmm
 )
 
 add_executable(save_one_fmri_hmm
+   EXCLUDE_FROM_ALL
    save_one_fmri_hmm.cc
    test_engine.h
    test_engine_impl.h
@@ -115,6 +122,7 @@ target_link_libraries(save_one_fmri_hmm
 )
 
 add_executable(test_fmri_gmmk
+   EXCLUDE_FROM_ALL
    test_fmri_gmmk.cc
 #   test_fmri_utils.cc
    test_engine.h
@@ -127,6 +135,7 @@ target_link_libraries(test_fmri_gmmk
 )
 
 add_executable(test_fmri_bayes
+   EXCLUDE_FROM_ALL
    test_fmri_bayes.cc
    test_engine.h
    test_engine_impl.h
@@ -138,6 +147,7 @@ target_link_libraries(test_fmri_bayes
 )
 
 add_executable(test_load
+   EXCLUDE_FROM_ALL
    test_load.cc
 )
 target_link_libraries(test_load
@@ -156,6 +166,7 @@ target_link_libraries(test_load
 #)
 
 add_executable(kernel_pca
+   EXCLUDE_FROM_ALL
    kpca.cc
    kernel_pca.h
 )
@@ -166,6 +177,7 @@ target_link_libraries(kernel_pca
 )
 
 add_executable(test_inbio_kpca
+   EXCLUDE_FROM_ALL
    test_inbio_kpca.cc
 )
 target_link_libraries(test_inbio_kpca
@@ -175,6 +187,7 @@ target_link_libraries(test_inbio_kpca
 )
 
 add_executable(test_kill_duplicate_points
+   EXCLUDE_FROM_ALL
    test_kill_duplicate_points.cc
 )
 target_link_libraries(test_kill_duplicate_points
@@ -184,6 +197,7 @@ target_link_libraries(test_kill_duplicate_points
 )
 
 add_executable(save_one_dna_hmm
+   EXCLUDE_FROM_ALL
    save_one_dna_hmm.cc
 )
 target_link_libraries(save_one_dna_hmm
@@ -193,6 +207,7 @@ target_link_libraries(save_one_dna_hmm
 )
 
 add_executable(save_one_synth_hmm
+   EXCLUDE_FROM_ALL
    save_one_synth_hmm.cc
    test_engine.h
    test_engine_impl.h
@@ -204,6 +219,7 @@ target_link_libraries(save_one_synth_hmm
 )
 
 add_executable(test_dna_fisher_kernel
+   EXCLUDE_FROM_ALL
    test_dna_fisher_kernel.cc
    test_dna_utils.h
    test_engine.h
@@ -216,6 +232,7 @@ target_link_libraries(test_dna_fisher_kernel
 )
 
 add_executable(test_synth_fisher_kernel
+   EXCLUDE_FROM_ALL
    test_synth_fisher_kernel.cc
    test_synth_utils.h
    test_engine.h
@@ -228,6 +245,7 @@ target_link_libraries(test_synth_fisher_kernel
 )
 
 add_executable(test_dna_emmk
+   EXCLUDE_FROM_ALL
    test_dna_emmk.cc
    test_dna_utils.h
    test_engine.h
@@ -240,6 +258,7 @@ target_link_libraries(test_dna_emmk
 )
 
 add_executable(test_synth_emmk
+   EXCLUDE_FROM_ALL
    test_synth_emmk.cc
    test_synth_utils.h
    test_engine.h
@@ -252,6 +271,7 @@ target_link_libraries(test_synth_emmk
 )
 
 add_executable(test_dna_bayes
+   EXCLUDE_FROM_ALL
    test_dna_bayes.cc
    test_engine.h
    test_engine_impl.h
@@ -263,6 +283,7 @@ target_link_libraries(test_dna_bayes
 )
 
 add_executable(test_synth_bayes
+   EXCLUDE_FROM_ALL
    test_synth_bayes.cc
    test_synth_utils.h
    test_engine.h
@@ -275,6 +296,7 @@ target_link_libraries(test_synth_bayes
 )
 
 add_executable(test_dna_lmmk
+   EXCLUDE_FROM_ALL
    test_dna_lmmk.cc
    test_dna_utils.h
    test_engine.h
@@ -287,6 +309,7 @@ target_link_libraries(test_dna_lmmk
 )
 
 add_executable(test_synth_lmmk
+   EXCLUDE_FROM_ALL
    test_synth_lmmk.cc
    test_synth_utils.h
    test_engine.h
@@ -299,6 +322,7 @@ target_link_libraries(test_synth_lmmk
 )
 
 add_executable(test_dna_lmmk2
+   EXCLUDE_FROM_ALL
    test_dna_lmmk2.cc
    test_dna_utils.h
    test_engine.h
@@ -311,6 +335,7 @@ target_link_libraries(test_dna_lmmk2
 )
 
 add_executable(test_synth_lmmk2
+   EXCLUDE_FROM_ALL
    test_synth_lmmk2.cc
    test_synth_utils.h
    test_engine.h
@@ -323,6 +348,7 @@ target_link_libraries(test_synth_lmmk2
 )
 
 add_executable(test_dna_gmmk
+   EXCLUDE_FROM_ALL
    test_dna_gmmk.cc
    test_engine.h
    test_engine_impl.h
@@ -334,6 +360,7 @@ target_link_libraries(test_dna_gmmk
 )
 
 add_executable(test_synth_gmmk
+   EXCLUDE_FROM_ALL
    test_synth_gmmk.cc
    test_engine.h
    test_engine_impl.h
@@ -345,6 +372,7 @@ target_link_libraries(test_synth_gmmk
 )
 
 add_executable(empirical_mmk
+   EXCLUDE_FROM_ALL
    empirical_mmk.h
    empirical_mmk_impl.h
    empirical_mmk.cc
@@ -356,6 +384,7 @@ target_link_libraries(empirical_mmk
 )
 
 add_executable(test_engine
+   EXCLUDE_FROM_ALL
    test_engine.cc
    test_engine.h
    test_engine_impl.h
@@ -367,6 +396,7 @@ target_link_libraries(test_engine
 )
 
 add_executable(get_optimal_kde_bandwidth
+   EXCLUDE_FROM_ALL
    get_optimal_kde_bandwidth.cc
 )
 target_link_libraries(get_optimal_kde_bandwidth
@@ -376,6 +406,7 @@ target_link_libraries(get_optimal_kde_bandwidth
 )
 
 add_executable(test_isotropic_gaussian
+   EXCLUDE_FROM_ALL
    test_isotropic_gaussian.cc
    isotropic_gaussian.h
 )
@@ -386,6 +417,7 @@ target_link_libraries(test_isotropic_gaussian
 )
 
 add_executable(generative_mmk
+   EXCLUDE_FROM_ALL
    generative_mmk.cc
 )
 target_link_libraries(generative_mmk
@@ -395,6 +427,7 @@ target_link_libraries(generative_mmk
 )
 
 add_executable(test_latent_mmk
+   EXCLUDE_FROM_ALL
    test_latent_mmk.cc
 )
 target_link_libraries(test_latent_mmk
@@ -404,6 +437,7 @@ target_link_libraries(test_latent_mmk
 )
 
 add_executable(latent_mmk
+   EXCLUDE_FROM_ALL
    latent_mmk.cc
 )
 target_link_libraries(latent_mmk
@@ -413,6 +447,7 @@ target_link_libraries(latent_mmk
 )
 
 add_executable(loghmm
+   EXCLUDE_FROM_ALL
    hmm.cc
    loghmm.h
 )
@@ -423,6 +458,7 @@ target_link_libraries(loghmm
 )
 
 add_executable(hmm_niche
+   EXCLUDE_FROM_ALL
    hmm.cc
    hmm.h
 )
@@ -452,6 +488,7 @@ target_link_libraries(hmm_niche
 #)
 
 add_executable(otrav_mem_test
+   EXCLUDE_FROM_ALL
    otrav_mem_test.cc
 )
 target_link_libraries(otrav_mem_test

@@ -28,6 +28,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(kmeans_nonempty_test
+   EXCLUDE_FROM_ALL
    kmeans_nonempty.cc
 )
 # link dependencies of executable
@@ -38,6 +39,7 @@ target_link_libraries(kmeans_nonempty_test
 )
 
 add_executable(do_mcf
+   EXCLUDE_FROM_ALL
    do_mcf.cc
 )
 target_link_libraries(do_mcf

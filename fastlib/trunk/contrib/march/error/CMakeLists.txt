@@ -21,6 +21,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(error_tester
+   EXCLUDE_FROM_ALL
    hybrid_error.cc
 )
 # link dependencies of executable

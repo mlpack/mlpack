@@ -25,6 +25,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # test executable
 add_executable(vif_test
+   EXCLUDE_FROM_ALL
    vif_test.cc
 )
 # link dependencies of test executable

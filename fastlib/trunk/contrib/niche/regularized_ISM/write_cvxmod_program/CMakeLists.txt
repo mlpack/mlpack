@@ -17,6 +17,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(write_cvxmod_prog
+   EXCLUDE_FROM_ALL
    write_cvxmod_prog.cc
 )
 # link dependencies of executable
@@ -27,6 +28,7 @@ target_link_libraries(write_cvxmod_prog
 )
 
 add_executable(extract_dists
+   EXCLUDE_FROM_ALL
    extract_dists.cc
 )
 target_link_libraries(extract_dists

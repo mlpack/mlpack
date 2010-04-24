@@ -27,6 +27,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 # all executables suffixed with _niche because I believe they already all exist in fastlib
 # executable
 add_executable(generate_niche
+   EXCLUDE_FROM_ALL
    generate.cc
 )
 # link dependencies of executable
@@ -37,6 +38,7 @@ target_link_libraries(generate_niche
 )
 
 add_executable(loglik_niche
+   EXCLUDE_FROM_ALL
    loglik.cc
 )
 target_link_libraries(loglik_niche
@@ -46,6 +48,7 @@ target_link_libraries(loglik_niche
 )
 
 add_executable(viterbi_niche
+   EXCLUDE_FROM_ALL
    viterbi.cc
 )
 target_link_libraries(viterbi_niche
@@ -55,6 +58,7 @@ target_link_libraries(viterbi_niche
 )
 
 add_executable(train_niche
+   EXCLUDE_FROM_ALL
    train.cc
 )
 target_link_libraries(train_niche
@@ -64,6 +68,7 @@ target_link_libraries(train_niche
 )
 
 add_executable(mmf_niche
+   EXCLUDE_FROM_ALL
    mmf.cc
 )
 target_link_libraries(mmf_niche
@@ -73,6 +78,7 @@ target_link_libraries(mmf_niche
 )
 
 add_executable(mmf1_niche
+   EXCLUDE_FROM_ALL
    mmf1.cc
 )
 target_link_libraries(mmf1_niche
@@ -82,6 +88,7 @@ target_link_libraries(mmf1_niche
 )
 
 add_executable(mmf2_niche
+   EXCLUDE_FROM_ALL
    mmf2.cc
 )
 target_link_libraries(mmf2_niche
@@ -91,6 +98,7 @@ target_link_libraries(mmf2_niche
 )
 
 add_executable(mmf3_niche
+   EXCLUDE_FROM_ALL
    mmf3.cc
 )
 target_link_libraries(mmf3_niche

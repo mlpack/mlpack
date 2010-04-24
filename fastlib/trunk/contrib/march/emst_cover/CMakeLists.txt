@@ -34,6 +34,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(emst_cover
+   EXCLUDE_FROM_ALL
    emst_cover_main.cc
 )
 # link dependencies of executable
@@ -44,6 +45,7 @@ target_link_libraries(emst_cover
 )
 
 add_executable(mst_comparison
+   EXCLUDE_FROM_ALL
    mst_comparison.h
    comparison_main.cc
 )

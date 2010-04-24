@@ -38,6 +38,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # test executable
 add_executable(compression_test
+   EXCLUDE_FROM_ALL
    compressed_matrix.h
    compression_test.cc
 )

@@ -20,6 +20,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(bt_knn
+   EXCLUDE_FROM_ALL
    allknn_balltree_test.cc
 )
 # link dependencies of executable
@@ -30,6 +31,7 @@ target_link_libraries(bt_knn
 )
 
 add_executable(allknn_balltree_graph
+   EXCLUDE_FROM_ALL
    allknn_balltree_construct_graph.cc
 )
 target_link_libraries(allknn_balltree_graph

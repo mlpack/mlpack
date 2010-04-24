@@ -25,6 +25,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(smo_tqlong_test
+   EXCLUDE_FROM_ALL
    smo_test.cc
 )
 # link dependencies of executable
@@ -44,6 +45,7 @@ target_link_libraries(smo_tqlong_test
 #)
 
 add_executable(svm_projection_test
+   EXCLUDE_FROM_ALL
    svm_projection_test.cc
 )
 target_link_libraries(svm_projection_test

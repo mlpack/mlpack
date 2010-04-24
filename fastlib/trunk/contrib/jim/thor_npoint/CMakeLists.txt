@@ -25,6 +25,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(thor_2pc
+   EXCLUDE_FROM_ALL
    thor_2pt_main.cc
 )
 # link dependencies of executable

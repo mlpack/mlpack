@@ -17,6 +17,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(kernel_pca_standalone
+   EXCLUDE_FROM_ALL
    kernel_pca_main.cc
 )
 # link dependencies of executable
@@ -25,6 +26,7 @@ target_link_libraries(kernel_pca_standalone
 )
 
 add_executable(kernel_pca_from_lib
+   EXCLUDE_FROM_ALL
    kernel_pca_main.cc
 )
 target_link_libraries(kernel_pca_from_lib

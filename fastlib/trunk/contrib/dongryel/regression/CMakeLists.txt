@@ -35,6 +35,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(krylov_lpr
+   EXCLUDE_FROM_ALL
    krylov_lpr_main.cc
 )
 # link dependencies of executable
@@ -45,6 +46,7 @@ target_link_libraries(krylov_lpr
 )
 
 add_executable(dense_lpr
+   EXCLUDE_FROM_ALL
    dense_lpr_main.cc
 )
 target_link_libraries(dense_lpr

@@ -30,6 +30,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(naive_fock_comparison
+   EXCLUDE_FROM_ALL
 #   naive_fock_matrix.h
    naive_comparison.cc
 )
@@ -41,6 +42,7 @@ target_link_libraries(naive_fock_comparison
 )
 
 add_executable(old_fock_matrix
+   EXCLUDE_FROM_ALL
    cfmm/cfmm_coulomb.h
    fock_matrix_main.cc
 )
@@ -51,6 +53,7 @@ target_link_libraries(old_fock_matrix
 )
 
 add_executable(fock_matrix
+   EXCLUDE_FROM_ALL
    fock_matrix_main.cc
 )
 target_link_libraries(fock_matrix

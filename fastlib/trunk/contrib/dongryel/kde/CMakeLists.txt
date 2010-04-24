@@ -25,6 +25,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable, renamed because MLPACK has a 'kde' program
 add_executable(kde_dongryel
+   EXCLUDE_FROM_ALL
    kde_main.cc
 )
 # link dependencies of test executable
@@ -35,6 +36,7 @@ target_link_libraries(kde_dongryel
 )
 
 add_executable(kde_cv_dongryel
+   EXCLUDE_FROM_ALL
    kde_cv_main.cc
 )
 target_link_libraries(kde_cv_dongryel

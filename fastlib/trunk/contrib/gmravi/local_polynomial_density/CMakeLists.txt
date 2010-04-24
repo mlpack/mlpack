@@ -23,6 +23,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(naive_kde_lp
+   EXCLUDE_FROM_ALL
    naive_kde_local_polynomial_main.cc
 )
 # link dependencies of executable
@@ -34,6 +35,7 @@ target_link_libraries(naive_kde_lp
 
 # test executables (not documented in build.py)
 add_executable(crossvalidation
+   EXCLUDE_FROM_ALL
    crossvalidation_density_estimates_main.cc
 )
 target_link_libraries(crossvalidation

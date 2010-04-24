@@ -26,9 +26,9 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(test_hmm_multinomial
+   EXCLUDE_FROM_ALL
    load_profile.cc
    test_hmm_multinomial.cc
-   
 )
 # link dependencies of executable
 target_link_libraries(test_hmm_multinomial
@@ -38,6 +38,7 @@ target_link_libraries(test_hmm_multinomial
 )
 
 add_executable(test_hmm_gaussian
+   EXCLUDE_FROM_ALL
    test_hmm_gaussian.cc
 )
 target_link_libraries(test_hmm_gaussian
@@ -47,6 +48,7 @@ target_link_libraries(test_hmm_gaussian
 )
 
 add_executable(test_lds
+   EXCLUDE_FROM_ALL
    test_lds.cc
 )
 target_link_libraries(test_lds
@@ -56,6 +58,7 @@ target_link_libraries(test_lds
 )
 
 add_executable(test_gaussian
+   EXCLUDE_FROM_ALL
    test_gaussian.cc
 )
 target_link_libraries(test_gaussian
@@ -65,6 +68,7 @@ target_link_libraries(test_gaussian
 )
 
 add_executable(test_distribution
+   EXCLUDE_FROM_ALL
    test_distribution.cc
 )
 target_link_libraries(test_distribution
@@ -83,6 +87,7 @@ target_link_libraries(test_distribution
 #)
 
 add_executable(load_profile
+   EXCLUDE_FROM_ALL
    load_profile.cc
 )
 target_link_libraries(load_profile
@@ -92,6 +97,7 @@ target_link_libraries(load_profile
 )
 
 add_executable(hmm_testing
+   EXCLUDE_FROM_ALL
    hmm_testing.cc
    hmm_testing.h
    test_hmm_multinomial.cc
@@ -106,6 +112,7 @@ target_link_libraries(hmm_testing
 )
 
 add_executable(hmm_generative_classifier
+   EXCLUDE_FROM_ALL
    hmm_generative_classifier.cc
    test_hmm_multinomial.cc
    ../mmf/mmf3.cc
@@ -119,6 +126,7 @@ target_link_libraries(hmm_generative_classifier
 )
 
 add_executable(read_variable_file
+   EXCLUDE_FROM_ALL
    read_variable_file.cc
    test_hmm_multinomial.cc
    ../mmf/mmf3.cc
@@ -154,6 +162,7 @@ target_link_libraries(read_variable_file
 #)
 
 add_executable(test_obs_kernel
+   EXCLUDE_FROM_ALL
    test_obs_kernel.cc
    mmk.h
 #   ppk.h  ## does not exist!

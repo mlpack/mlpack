@@ -37,6 +37,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(svm_houyang
+   EXCLUDE_FROM_ALL
    svm_main.cc
    opt_smo.h
    opt_sgd.h
