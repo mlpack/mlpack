@@ -60,7 +60,10 @@ void RandomAccessFile::Init(const char *fname, BlockDevice::mode_t mode) {
     FATAL("Could not open file '%s'.", fname);
   }
 
+#ifdef __GLIBC__
+  // this function is not implemented on all platforms
   posix_fadvise(fd_, 0, 0, POSIX_FADV_RANDOM);
+#endif
 
   mode_ = mode;
 }
