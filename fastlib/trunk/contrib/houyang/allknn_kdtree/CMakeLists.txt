@@ -17,6 +17,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(kdt_knn
+   EXCLUDE_FROM_ALL
    allknn_kdtree_test.cc
 )
 # link dependencies of executable

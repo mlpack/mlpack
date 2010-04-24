@@ -38,6 +38,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # fast_multipole_method_bin executable
 add_executable(fast_multipole_method
+   EXCLUDE_FROM_ALL
    fast_multipole_method_main.cc
 )
 target_link_libraries(fast_multipole_method
@@ -47,6 +48,7 @@ target_link_libraries(fast_multipole_method
 )
 
 add_executable(continuous_fmm
+   EXCLUDE_FROM_ALL
    cfmm_main.cc
 )
 target_link_libraries(continuous_fmm
@@ -56,6 +58,7 @@ target_link_libraries(continuous_fmm
 )
 
 add_executable(multibody_force
+   EXCLUDE_FROM_ALL
    multibody_force_main.cc
 )
 target_link_libraries(multibody_force
@@ -65,6 +68,7 @@ target_link_libraries(multibody_force
 )
 
 add_executable(multibody_potential
+   EXCLUDE_FROM_ALL
    multibody_potential_main.cc
 )
 target_link_libraries(multibody_potential
@@ -75,6 +79,7 @@ target_link_libraries(multibody_potential
 
 # test executable
 add_executable(chebyshev_fit_test
+   EXCLUDE_FROM_ALL
    chebyshev_fit_test.cc
 )
 target_link_libraries(chebyshev_fit_test

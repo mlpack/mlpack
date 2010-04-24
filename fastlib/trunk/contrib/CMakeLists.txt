@@ -35,7 +35,8 @@ endforeach()
 
 # MLPACK_CONTRIB_SRCS is set in the subdirectories above
 #message("output: ${MLPACK_CONTRIB_SRCS}")
-add_library(mlpack_contrib ${MLPACK_CONTRIB_SRCS})
+# don't build mlpack_contrib.a by default, user must specify they want it
+add_library(mlpack_contrib EXCLUDE_FROM_ALL ${MLPACK_CONTRIB_SRCS})
 add_dependencies(mlpack_contrib mlpack fastlib)
 
 # move header files to the right directory

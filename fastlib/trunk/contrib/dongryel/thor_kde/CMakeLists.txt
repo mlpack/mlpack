@@ -17,6 +17,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(thor_kde
+   EXCLUDE_FROM_ALL
    thor_kde_main.cc
 )
 # link dependencies of executable

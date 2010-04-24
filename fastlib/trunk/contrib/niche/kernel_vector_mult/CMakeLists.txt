@@ -18,6 +18,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(kernel_vector_mult
+   EXCLUDE_FROM_ALL
    kernel_vector_mult_main.cc
 )
 # link dependencies of executable
@@ -26,6 +27,7 @@ target_link_libraries(kernel_vector_mult
 )
 
 add_executable(solvelinsys
+   EXCLUDE_FROM_ALL
    solvelinsys_main.cc
 )
 target_link_libraries(solvelinsys

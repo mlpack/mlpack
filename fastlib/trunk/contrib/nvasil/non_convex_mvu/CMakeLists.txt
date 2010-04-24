@@ -18,6 +18,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(ncmvu_2
+   EXCLUDE_FROM_ALL
    main.cc
 )
 # link dependencies of executable
@@ -29,6 +30,7 @@ target_link_libraries(ncmvu_2
 
 # test executable
 add_executable(ncmvu_test
+   EXCLUDE_FROM_ALL
    non_convex_mvu_test.cc
 )
 target_link_libraries(ncmvu_test

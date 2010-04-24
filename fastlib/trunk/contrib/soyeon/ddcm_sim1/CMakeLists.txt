@@ -25,6 +25,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(ddcm_test
+   EXCLUDE_FROM_ALL
    ddcm_test.cc
 )
 # link dependencies of executable

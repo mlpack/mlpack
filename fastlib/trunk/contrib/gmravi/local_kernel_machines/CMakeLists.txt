@@ -35,6 +35,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(local_kernel_machines
+   EXCLUDE_FROM_ALL
    local_kernel_machines_main.cc
 )
 # link dependencies of executable
@@ -46,6 +47,7 @@ target_link_libraries(local_kernel_machines
 
 # test executables (not documented in build.py)
 add_executable(ocas_smo_test
+   EXCLUDE_FROM_ALL
    ocas_smo_test.cc
 )
 target_link_libraries(ocas_smo_test
@@ -55,6 +57,7 @@ target_link_libraries(ocas_smo_test
 )
 
 add_executable(range_search_test
+   EXCLUDE_FROM_ALL
    range_search_test.cc
 )
 target_link_libraries(range_search_test

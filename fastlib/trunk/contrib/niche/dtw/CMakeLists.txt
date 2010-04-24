@@ -18,6 +18,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(dtw
+   EXCLUDE_FROM_ALL
    main.cc
    dtw.h
 )
@@ -29,6 +30,7 @@ target_link_libraries(dtw
 )
 
 add_executable(multidtw
+   EXCLUDE_FROM_ALL
    dtw.h
    dtw_impl.h
    multivariate_main.cc
@@ -40,6 +42,7 @@ target_link_libraries(multidtw
 )
 
 add_executable(nearest_centroid
+   EXCLUDE_FROM_ALL
    mean_ts_classifier.cc
    dtw.h
    dtw_impl.h
@@ -51,6 +54,7 @@ target_link_libraries(nearest_centroid
 )
 
 add_executable(arraylist_test
+   EXCLUDE_FROM_ALL
    test_arraylist.cc
 )
 target_link_libraries(arraylist_test

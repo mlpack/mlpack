@@ -18,6 +18,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(scf_solver
+   EXCLUDE_FROM_ALL
    scf_main.cc
 )
 # link dependencies of executable

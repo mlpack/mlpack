@@ -25,6 +25,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(particle_simulation
+   EXCLUDE_FROM_ALL
    simulation_driver.cc
 )
 # link dependencies of executable
@@ -35,6 +36,7 @@ target_link_libraries(particle_simulation
 )
 
 add_executable(particle_stat_test
+   EXCLUDE_FROM_ALL
    test_particle_stat.cc
 )
 target_link_libraries(particle_stat_test
@@ -44,6 +46,7 @@ target_link_libraries(particle_stat_test
 )
 
 add_executable(particle_dual_simulation
+   EXCLUDE_FROM_ALL
    dual_simulation_driver.cc
 )
 target_link_libraries(particle_dual_simulation

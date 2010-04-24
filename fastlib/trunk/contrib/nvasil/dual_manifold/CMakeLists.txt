@@ -20,6 +20,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(dual_manifold
+   EXCLUDE_FROM_ALL
    main.cc
 )
 # link dependencies of executable
@@ -31,6 +32,7 @@ target_link_libraries(dual_manifold
 
 # test executable
 add_executable(dual_manifold_test
+   EXCLUDE_FROM_ALL
    dual_manifold_engine_test.cc
 )
 target_link_libraries(dual_manifold_test

@@ -17,6 +17,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(dtree
+   EXCLUDE_FROM_ALL
    main.cc
 )
 # link dependencies of executable

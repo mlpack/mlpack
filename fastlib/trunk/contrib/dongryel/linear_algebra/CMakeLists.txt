@@ -17,6 +17,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # test executable
 add_executable(linear_algebra_test
+   EXCLUDE_FROM_ALL
    linear_algebra_test.cc
 )
 # link dependencies of test executable

@@ -17,6 +17,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(centroids
+   EXCLUDE_FROM_ALL
    get_nodes.cc
 )
 # link dependencies of executable

@@ -24,6 +24,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(dual_tree_integrals
+   EXCLUDE_FROM_ALL
    dual_tree_integrals.h
    naive_fock_matrix.h
    dual_tree_integrals_main.cc
@@ -36,6 +37,7 @@ target_link_libraries(dual_tree_integrals
 )
 
 add_executable(dualtree_fock_matrix_test
+   EXCLUDE_FROM_ALL
    dual_tree_integrals.h
    naive_fock_matrix.h
    fock_matrix_test.cc
@@ -47,6 +49,7 @@ target_link_libraries(dualtree_fock_matrix_test
 )
 
 add_executable(hartree-fock
+   EXCLUDE_FROM_ALL
    hf.cc
 )
 target_link_libraries(hartree-fock

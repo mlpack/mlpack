@@ -20,6 +20,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(cart
+   EXCLUDE_FROM_ALL
    cart_driver.cc
 )
 # link dependencies of executable

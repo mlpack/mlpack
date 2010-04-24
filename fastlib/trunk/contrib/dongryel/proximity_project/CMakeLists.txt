@@ -32,6 +32,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(cfmm_tree_test
+   EXCLUDE_FROM_ALL
    cfmm_tree_test.cc
 )
 # link dependencies of executable
@@ -42,6 +43,7 @@ target_link_libraries(cfmm_tree_test
 )
 
 add_executable(gen_hypercube_tree_test
+   EXCLUDE_FROM_ALL
    gen_hypercube_tree_test.cc
 )
 target_link_libraries(gen_hypercube_tree_test
@@ -51,6 +53,7 @@ target_link_libraries(gen_hypercube_tree_test
 )
 
 add_executable(proximity_project
+   EXCLUDE_FROM_ALL
    main.cc
 )
 target_link_libraries(proximity_project
@@ -60,6 +63,7 @@ target_link_libraries(proximity_project
 )
 
 add_executable(kfold_splitter
+   EXCLUDE_FROM_ALL
    kfold_splitter.h
    kfold_splitter.cc
 )

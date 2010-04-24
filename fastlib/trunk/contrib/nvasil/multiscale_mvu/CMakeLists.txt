@@ -17,6 +17,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(multiscale_mvu_test
+   EXCLUDE_FROM_ALL
    multiscale_mvu_test.cc
 )
 # link dependencies of executable

@@ -23,6 +23,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(regmin
+   EXCLUDE_FROM_ALL
    regmin.cc
 )
 # link dependencies of executable

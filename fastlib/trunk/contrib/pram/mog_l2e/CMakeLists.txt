@@ -19,6 +19,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executable
 add_executable(mog_l2e_pram
+   EXCLUDE_FROM_ALL
    mog_l2e_main.cc
 )
 # link dependencies of executable
