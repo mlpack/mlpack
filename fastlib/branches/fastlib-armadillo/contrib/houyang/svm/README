@@ -1,0 +1,176 @@
+@author Hua Ouyang
+@file README
+
+Support Vector Machines (Multiclass classification; Regression; Quantile estimation)
+
+Files in this folder:
+README: this file
+# Source codes:
+build.py: build scripts
+svm_main.cc: contains main function of SVM
+svm.h: contains classification/regression/quantile estimation main routines
+
+Batch Algorithms:
+-opt_smo.h: Sequential Minimal Optimization for L1- and L2-SVM
+-opt_fw.h : Frank-Wolfe algorithm for nonlinear L2-SVM
+-opt_mfw.h: Modified Frank-Wolfe algorithm with 'away steps' for nonlinear L2-SVM
+-opt_hcy.h: Hierarchical propagative optimization (under construction!)
+
+Online Algorithms:
+-opt_sgd.h: Stochastic Gradient Descent optimization (both linear and nolinear) for L1-SVM
+-opt_pegasos.h: Primal Estimated sub-GrAdient SOlver for linear L1-SVM
+-opt_cd.h:  Primal coordinate descent for linear L2-SVM; Dual coordinate descent for linear L1- and L2-SVM
+-opt_sfw.h: Stochastic Frank-Wolfe algorithm for nonlinear L2-SVM
+
+# Unit test data:
+c_traindata2.csv: training data for a 2 classes toy problem. 10 samples in each class.
+c_testdata2.csv: testing data for a 2 classes toy problem. 10 samples in each class.
+c_traindata3.csv: training data for a 3 classes toy problem. 10 samples in each class.
+c_testdata3.csv: testing data for a 3 classes toy problem. 10 samples in each class.
+
+r_traindata.csv: training data for regression, 100 samples of a 1-dim sinc function.
+r_testdata.csv: testing data for regression, 100 samples of a 1-dim sinc function.
+
+# Generated files:
+artificialdata.csv: artificial data if no training/testing data file provided
+svm_model: SVM model file
+predicted_values: predicted result
+
+Explanation of arguments:
+0. learner_name (REQUIRED): the name of the support vecotr learner, values: "svm_c" for classification, "svm_r" for regression, "svm_q" for quantile estimation
+1. mode (REQUIRED) : the mode of svm_main, values: "cv", "train", "train_test", "test".
+2. opt (optional): the optimization method, values: "smo" for Sequential Minimal Optimization and "sgd" for Stochastic Gradient Descent. Default value: "smo".
+3. k_cv (optional): the number of folds for cross validation, only required under "cv" mode.
+4. cv_data (optional): file name for cross validation data, only required under "cv" mode.
+5. train_data (optional): file name for training data, only required under "train" or "train_test" mode.
+6. test_data (optional): file name for testing data, only required under "test" or "train_test" mode.
+7. kernel (REQUIRED): kernel name, values:"linear", "gaussian".
+8. sigma (optional): sigma in the gaussian kernel k(x1,x2)=exp(-(x1-x2)^2/(2sigma^2)), only required when using "guassian" kernel.
+9. c (for SVM_C,optional): the weight that controls compromise between large margins and small margin violations. Default value: 10.
+10. c_p (for SVM_C,optional): the weight for the positive class (y==1). Default value: c.
+11. c_n (for SVM_C,optional): the weight for the negative class (y==-1). Default value: c.
+12. epsilon (for SVM_R,optional): the epsilon in SVM regression. Default value: 0.1.
+13. wss (optional): working set selection scheme. 1 for 1st order expansion; 2 for 2nd order expansion. Default value: 1.
+14. normalize (optional): where need to do data normalization before training/testing, values: "0" for no normalize, "1" for normalize.
+15. accuracy (optional): the accuracty of optimization method ( i.e. stop optimization when KKT gap <= accuracy ). Default value: 1e-4.
+16. n_iter (optional): maximum number of iterations. Default value: 1e8
+17. n_epochs (optional, for stochastic algorithms): number of epochs; when provided, n_iter <- n_data_ * n_epochs; should set to 1 to mimic online learning senario
+18. hinge (optional): do L1-SVM (1): hinge loss, or L2-SVM (2): squared hinge loss. Default value: 1 -> do L1-SVM
+19. objvalue (optional): display (1) the value of the objective function or not (0). Default value: 0 -> do not display
+
+Examples:
+--------------------------------------------------- SVM Classification ------------------------------------------------
+
+------Using SMO--------
+1.Support Vector Classification, Stratified cross validation mode
+svm_main --learner_name=svm_c --mode=cv --k_cv=4 --cv_data=c_traindata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --learner_name=svm_c --mode=cv --k_cv=4 --cv_data=c_traindata3.csv --kernel=linear --c=0.02 --normalize=0
+
+2.Support Vector Classification, Training mode (model will be saved as "svm_model")
+svm_main --learner_name=svm_c --mode=train --train_data=c_traindata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --learner_name=svm_c --mode=train --train_data=c_traindata3.csv --kernel=linear --c=0.02 --normalize=0
+
+3.Support Vector Classification, Training+testing mode
+svm_main --learner_name=svm_c --mode=train_test --train_data=c_traindata3.csv --test_data=c_testdata3.csv --kernel=gaussian --sigma=0.1 --c=1 --normalize=0
+svm_main --learner_name=svm_c --mode=train_test --train_data=c_traindata2.csv --test_data=c_testdata2.csv --kernel=linear --c=0.7 --normalize=0
+
+4.Support Vector Classification, Testing mode (the model file "svm_model" should exist)
+svm_main --learner_name=svm_c --mode=test --test_data=c_testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --learner_name=svm_c --mode=test --test_data=c_testdata3.csv --kernel=linear --c=0.02 --normalize=0
+
+5.Support Vector Classification, Training+testing mode, with specified optimization accuracy
+svm_main --learner_name=svm_c  --accuracy=0.00001 --mode=train_test --train_data=c_traindata3.csv --test_data=c_testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0
+svm_main --learner_name=svm_c  --accuracy=0.00001 --mode=train_test --train_data=c_traindata3.csv --test_data=c_testdata3.csv --kernel=linear --c=0.02 --normalize=0
+
+6.Early stopping (specify the maximum number of iterations)
+svm_main --learner_name=svm_c --mode=train_test --train_data=ijcnn1_train_sort.csv --test_data=ijcnn1_test_sort.csv --kernel=gaussian --sigma=0.61 --c=7 --normalize=0 --opt=smo --n_iter=10000
+
+7.No shrinking
+svm_main --learner_name=svm_c --mode=train_test --train_data=ijcnn1_train_sort.csv --test_data=ijcnn1_test_sort.csv --kernel=gaussian --normalize=0 --opt=smo --accuracy=0.001 --shrink=0 --sigma=0.61 --c=7
+
+8.shrinking + working set selection using 2nd order information
+svm_main --learner_name=svm_c --mode=train_test --train_data=ijcnn1_train_sort.csv --test_data=ijcnn1_test_sort.csv --kernel=gaussian --normalize=0 --opt=smo --accuracy=0.001 --shrink=1 --wss=2 --sigma=0.61 --c=7
+
+9.L2-SVM
+svm_main --learner_name=svm_c  --accuracy=0.00001 --mode=train_test --train_data=c_traindata3.csv --test_data=c_testdata3.csv --kernel=gaussian --sigma=0.1 --c=10 --normalize=0 --hinge=2
+
+------Using SGD--------
+1.Linear stochastic gradient descent, stopping criterion: number of iterations
+svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=sgd --n_iter=49120
+
+2.Linear stochastic gradient descent, stopping criterion: number of epochs
+svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=sgd --n_epochs=10
+
+3.Nonlinear stochastic gradient descent using Gaussian kernel
+svm_main --learner_name=svm_c --mode=train_test --train_data=ijcnn1_train_sort.csv --test_data=ijcnn1_test_sort.csv --kernel=gaussian --sigma=0.61 --c=8 --normalize=0 --opt=sgd --n_iter=35000 --rho=0.5
+
+
+------Using Pegasos------
+1.Linear Pegasos, stopping criterion: number of iterations
+svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=pegasos --n_iter=49120
+
+2.Linear Pegasos, stopping criterion: number of epochs
+svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=pegasos --n_epochs=10
+
+
+------Using Dual Coordinate Descent------
+1.L1-SVM, display objective values
+svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=cd --objvalue=1 --n_epochs=100
+
+2.L2-SVM, display objective values
+svm_main --learner_name=svm_c --mode=train_test --train_data=w3a_train_sort.csv --test_data=w3a_test_sort.csv --kernel=linear --c=1 --normalize=0 --opt=cd --hinge=2 --objvalue=1 --n_epochs=100
+
+
+------Using FW---------
+svm_main --learner_name=svm_c --mode=train_test --train_data=ijcnn1_train_sort.csv --test_data=ijcnn1_test_sort.csv --kernel=gaussian --normalize=0 --opt=fw --p_rand=1333 --accuracy=0.001 --sigma=0.61 --c=5
+
+
+
+------Using MFW---------
+svm_main --learner_name=svm_c --mode=train_test --train_data=ijcnn1_train_sort.csv --test_data=ijcnn1_test_sort.csv --kernel=gaussian --normalize=0 --opt=mfw --p_rand=1333 --accuracy=0.001 --sigma=0.61 --c=5
+
+
+
+------Using SFW---------
+svm_main --learner_name=svm_c --mode=train_test --train_data=ijcnn1_train_sort.csv --test_data=ijcnn1_test_sort.csv --kernel=gaussian --normalize=0 --opt=sfw --p_rand=1333 --sigma=0.61 --c=5 --n_iter=30000
+
+
+
+------Using HCY--------
+svm_main --learner_name=svm_c --mode=train_test --train_data=UCI_magic04_equal.csv --test_data=UCI_magic04_equal.csv --kernel=gaussian --sigma=1 --c=0.001 --normalize=0 --opt=hcy --pm=2 --leaf_size=2 --n_stop=4000
+
+
+
+--------------------------------------------------- SVM Regression  -------------------------------------------------------
+1.Support Vector Regression, Cross validation mode
+svm_main --learner_name=svm_r --mode=cv --k_cv=4 --cv_data=r_traindata.csv --kernel=gaussian --sigma=0.1 --epsilon=0.1 --c=10 --normalize=0
+svm_main --learner_name=svm_r --mode=cv --k_cv=4 --cv_data=r_traindata.csv --kernel=linear --epsilon=0.1 --c=10 --normalize=0
+
+2.Support Vector Regression, Training mode (model will be saved as "svm_model")
+svm_main --learner_name=svm_r --mode=train --train_data=r_traindata.csv --kernel=gaussian --sigma=0.1 --epsilon=0.1 --c=10 --normalize=0
+svm_main --learner_name=svm_r --mode=train --train_data=r_traindata.csv --kernel=linear --epsilon=0.1 --c=10 --normalize=0
+
+3.Support Vector Regression, Training+testing mode
+svm_main --learner_name=svm_r --mode=train_test --train_data=r_traindata.csv --test_data=r_testdata.csv --kernel=gaussian --sigma=0.1 --epsilon=0.1 --c=10 --normalize=0
+svm_main --learner_name=svm_r --mode=train_test --train_data=r_traindata.csv --test_data=r_testdata.csv --kernel=linear --epsilon=0.1 --c=10 --normalize=0
+
+4.Support Vector Regression, Testing mode (the model file "svm_model" should exist)
+svm_main --learner_name=svm_r --mode=test --test_data=r_testdata.csv --kernel=gaussian --sigma=0.1 --epsilon=0.1 --c=10 --normalize=0
+svm_main --learner_name=svm_r --mode=test --test_data=r_testdata.csv --kernel=linear --epsilon=0.1 --c=10 --normalize=0
+
+TODO:
+5.Support Vector Regression, Training+testing mode, using stochastic gradient descent
+svm_main --learner_name=svm_r --opt=sgd --mode=train_test --train_data=r_traindata.csv --test_data=r_testdata.csv --kernel=gaussian --sigma=0.1 --epsilon=0.1 --c=10 --normalize=0
+svm_main --learner_name=svm_r --opt=sgd --mode=train_test --train_data=r_traindata.csv --test_data=r_testdata.csv --kernel=linear --epsilon=0.1 --c=10 --normalize=0
+
+--------------------------------------------------- SVM Quantile Estimation --------------------------------------------------
+Under construction
+
+
+
+
+
+
+
+---- make file ----
+../../../script/fl-build svm_main --mode=debug
