@@ -1,0 +1,11 @@
+librule(name="tightgopnmf",
+        headers=["gop_tight_nmf_engine.h",
+                 "gop_tight_nmf_engine_impl.h",
+                 "relaxed_nmf_bound_tightener.h",
+                 "relaxed_nmf_bound_tightener_impl.h"
+                 ],
+        tests=["gop_tight_nmf_engine_test.cc"],
+        deplibs=["fastlib:fastlib", 
+                 "contrib/nvasil/l_bfgs:l_bfgs",
+                 "contrib/nvasil/convex_nmf:gopnmflib"]
+       );
