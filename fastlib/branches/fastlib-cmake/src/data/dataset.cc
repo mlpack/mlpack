@@ -264,7 +264,7 @@ success_t DatasetInfo::InitFromCsv(TextLineReader *reader,
   } else {
     for (index_t i = 0; i < headers.size(); i++) {
       String name;
-      name.InitSprintf("feature%"LI, i);
+      name.InitSprintf("feature%"LI"d", i);
       features_.PushBack().InitContinuous(name);
     }
   }
