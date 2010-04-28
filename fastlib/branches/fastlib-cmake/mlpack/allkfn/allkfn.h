@@ -46,6 +46,18 @@
 #include <fastlib/fastlib.h>
 #include <vector>
 #include <functional>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/string.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/serialization.hpp>
+#include <boost/program_options.hpp>
+
+using namespace std;
+namespace boost_po = boost::program_options;
+
+boost_po::variables_map vm;
+
 /**
  * Forward declaration for the tester class
  */
@@ -69,12 +81,21 @@ class AllkFN {
     
     // Defines many useful things for a class, including a pretty 
     // printer and copy constructor
-    OT_DEF_BASIC(QueryStat) {
+
+    friend class boost::serialization::access; // Should be removed later
+
+    template<class Archive>
+    void serialize(Archive & ar, QueryStat & query)
+    {
+       ar & query.min_distance_so_far_;
+    }
+
+    /*OT_DEF_BASIC(QueryStat) {
       // Include this line for all non-pointer members
       // There are other versions for arrays and pointers, see base/otrav.h
       OT_MY_OBJECT(min_distance_so_far_); 
     } // OT_DEF_BASIC
-    
+    */
    private:
     
     /**
@@ -392,7 +413,9 @@ class AllkFN {
     number_of_prunes_ = 0;
     
     // Get the leaf size from the module
-    leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+    //leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+    leaf_size_ = vm["leaf_size"].as<int>();
+    
     // Make sure the leaf size is valid
     DEBUG_ASSERT(leaf_size_ > 0);
     
@@ -404,8 +427,9 @@ class AllkFN {
     DEBUG_SAME_SIZE(queries_.n_rows(), references_.n_rows());
     
 		// K-nearest neighbors initialization
-		kfns_ = fx_param_int(module_, "kfns", 1);
-  
+		//kfns_ = fx_param_int(module_, "kfns", 1);
+    kfns_ = vm["kfns"].as<int>();
+
     // Initialize the list of nearest neighbor candidates
     neighbor_indices_.Init(queries_.n_cols() * kfns_);
     
@@ -441,7 +465,10 @@ class AllkFN {
     number_of_prunes_ = 0;
     
     // Get the leaf size from the module
-    leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+    //leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+    cout << "Leaf size:" << leaf_size_ << endl;
+    leaf_size_ = vm["leaf_size"].as<int>();
+  
     // Make sure the leaf size is valid
     DEBUG_ASSERT(leaf_size_ > 0);
     
@@ -449,8 +476,9 @@ class AllkFN {
     references_.Copy(references_in);
     queries_.Alias(references_);    
 		// K-nearest neighbors initialization
-		kfns_ = fx_param_int(module_, "kfns", 1);
-  
+		//kfns_ = fx_param_int(module_, "kfns", 1);
+    kfns_ = vm["kfns"].as<int>();
+   
     // Initialize the list of nearest neighbor candidates
     neighbor_indices_.Init(references_.n_cols() * kfns_);
     
