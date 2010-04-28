@@ -108,6 +108,7 @@ void TextLineReader::Error(const char *format, ...) {
 
 success_t TextLineReader::Open(const char *fname) {
   f_ = fopen(fname, "r");
+  fname_ = strncpy(new char[strlen(fname) + 1], fname, strlen(fname) + 1);
   line_num_ = 0;
   has_line_ = false;
   line_.Init();
