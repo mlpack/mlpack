@@ -7,6 +7,9 @@
  *
  */
 
+#ifndef ARMA_COMPAT_H
+#define ARMA_COMPAT_H
+
 #include <armadillo>
 #include "../la/matrix.h"
 
@@ -16,3 +19,5 @@ namespace arma_compat {
   void matrixToArma(const Matrix &gm, arma::mat &mat);
 
 }
+
+#endif /* ARMA_COMPAT_H */
