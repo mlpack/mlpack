@@ -54,7 +54,22 @@ int main (int argc, char *argv[]) {
   fx_module *fx_root=fx_init(argc, argv, NULL);
   AllNN allnn;
   Matrix data_for_tree;
-  std::string filename=fx_param_str_req(fx_root, "file");
+   std::string filename;
+
+  //std::string filename=fx_param_str_req(fx_root, "file");
+
+  boost_po::options_description desc("Allowed options");
+  desc.add_options()
+      ("leaf_size", boost_po::value<int>()->default_value(20), "  The maximum number of points to store at a leaf.\n")
+      ("file", boost_po::value<std::string>(), "  The reference file name.\n");
+
+  boost_po::store(boost_po::parse_command_line(argc, argv, desc), vm);
+  boost_po::notify(vm);
+
+  if( 0 == vm.count("file")) {
+     cerr << "Required parameter leaf_size not entered" << endl;
+     exit(1);
+  }
   NOTIFY("Loading file...");
   data::Load(filename.c_str(), &data_for_tree);
   NOTIFY("File loaded...");

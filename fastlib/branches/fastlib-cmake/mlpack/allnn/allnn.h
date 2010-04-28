@@ -39,7 +39,13 @@
 #ifndef MLPACK_ALLNN_H_
 #define MLPACK_ALLNN_H_
 
+#include <iostream>
 #include <fastlib/fastlib.h>
+#include <boost/program_options.hpp>
+
+using namespace std;
+namespace boost_po = boost::program_options;
+boost_po::variables_map vm;
 
 const fx_entry_doc allnn_entries[] = {
   {"leaf_size", FX_PARAM, FX_INT, NULL,
@@ -496,7 +502,12 @@ class AllNN {
     queries_.Alias(queries_in);
     references_.Alias(references_in);
 
-    leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+    //leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+    leaf_size_ = vm["leaf_size"].as<int>();
+
+    if ( 0 == vm.count("leaf_size")) {
+      leaf_size_ = 20;
+    }
     DEBUG_ASSERT(leaf_size_ > 0);
 
     
@@ -544,7 +555,13 @@ class AllNN {
      * They are too big to copy*/
     references_.Alias(references_in);
     queries_.Alias(references_in);
-    leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+    //leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+    leaf_size_ = vm["leaf_size"].as<int>();
+
+    if ( 0 == vm.count("leaf_size")) {
+      leaf_size_ = 20;
+    }
+ 
     DEBUG_ASSERT(leaf_size_ > 0);
 
 
