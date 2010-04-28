@@ -55,19 +55,36 @@
 
 int main(int argc, char *argv[]) {
   fx_module *module = fx_init(argc, argv, NULL);
-  std::string result_file = fx_param_str(module, "result_file", "result.txt");
-  std::string reference_file = fx_param_str_req(module, "reference_file");
+  //std::string result_file = fx_param_str(module, "result_file", "result.txt");
+  //std::string reference_file = fx_param_str_req(module, "reference_file");
   Matrix reference_data;
   ArrayList<index_t> neighbors;
   ArrayList<double> distances;
+  std::string result_file;
+  std::string reference_file;
+  std::string query_file;
+
+  boost_po::options_description desc("Allowed options");
+  desc.add_options()
+    ("help", "Display options")
+    ("reference_file", boost_po::value<std::string>(&reference_file), "  The reference file name")
+    ("result_file", boost_po::value<std::string>(&result_file), "  The result file name")
+    ("query_file", boost_po::value<std::string>(&query_file), "Number of nearest neighbours" )
+    ("knns", boost_po::value<int>(), "Number of nearest neighbours" );
+
+  boost_po::store(boost_po::parse_command_line(argc, argv, desc), vm);
+  boost_po::notify(vm);
+
   if (data::Load(reference_file.c_str(), &reference_data)==SUCCESS_FAIL) {
     FATAL("Reference file %s not found", reference_file.c_str());
   }
   NOTIFY("Loaded reference data from file %s", reference_file.c_str());
  
   AllkNN allknn; 
-  if (fx_param_exists(module, "query_file")) {
-    std::string query_file=fx_param_str_req(module, "query_file");
+//  if (fx_param_exists(module, "query_file")) {
+//    std::string query_file=fx_param_str_req(module, "query_file");
+  if ( 0 != vm.count("query_file")) {
+    std::string query_file = vm["query_file"].as<std::string>();
     Matrix query_data;
     if (data::Load(query_file.c_str(), &query_data)==SUCCESS_FAIL) {
       FATAL("Query file %s not found", query_file.c_str());
@@ -80,7 +97,8 @@ int main(int argc, char *argv[]) {
     allknn.Init(reference_data, module);
   }
   NOTIFY("Tree(s) built");
-  index_t knns=fx_param_int_req(module, "knns");
+  //index_t knns=fx_param_int_req(module, "knns");
+  index_t knns = vm["knns"].as<index_t>();
   NOTIFY("Computing %"LI"d nearest neighbors", knns);
   allknn.ComputeNeighbors(&neighbors, &distances);
   NOTIFY("Neighbors computed");
