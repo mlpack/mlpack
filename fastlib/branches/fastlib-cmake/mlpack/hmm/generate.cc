@@ -46,7 +46,12 @@
 #include "gaussianHMM.h"
 #include "mixgaussHMM.h"
 #include "mixtureDST.h"
+#include <iostream>
+#include <boost/program_options.hpp>
 
+namespace boost_po = boost::program_options;
+boost_po::variables_map vm;
+using namespace std;
 using namespace hmm_support;
 
 success_t generate_discrete();
@@ -84,13 +89,34 @@ const fx_module_doc hmm_generate_main_doc = {
 int main(int argc, char* argv[]) {
   fx_init(argc, argv, &hmm_generate_main_doc );
   success_t s = SUCCESS_PASS;
-  if (fx_param_exists(NULL,"type")) {
-    const char* type = fx_param_str_req(NULL, "type");
-    if (strcmp(type, "discrete")==0)
+ 
+  boost_po::options_description desc("Allowed options");
+  desc.add_options()
+      ("type", boost_po::value<std::string>(), "  HMM type : discrete | gaussian | mixture.\n")
+      ("profile", boost_po::value<std::string>(), "  A file containing HMM profile.\n")
+      ("length", boost_po::value<int>()->default_value(10), "  Sequence length, default = 10.\n")
+      ("lenmax", boost_po::value<int>(), "  Maximum sequence length, default = length\n")
+      ("numseq", boost_po::value<int>()->default_value(10), "  Number of sequance, default = 10.\n")
+      ("seqfile", boost_po::value<std::string>()->default_value("seq.mix.out"), "  Output file for the generated sequences.\n")
+      ("statefile", boost_po::value<std::string>()->default_value("state.mix.out"), "  Output file for the generated state sequences.\n");
+
+  boost_po::store(boost_po::parse_command_line(argc, argv, desc), vm);
+  boost_po::notify(vm);
+
+//  if (fx_param_exists(NULL,"type")) {
+  if ( 0 != vm.count("type")) {
+    //const char* type = fx_param_str_req(NULL, "type");
+    if ( 0 == vm.count("type") ) {
+      cerr << "Required parameter type not entered" << endl;
+      exit(1);
+    }
+    std::string type = vm["type"].as<std::string>();
+
+    if (strcmp(type.c_str(), "discrete")==0)
       s = generate_discrete();
-    else if (strcmp(type, "gaussian")==0) 
+    else if (strcmp(type.c_str(), "gaussian")==0) 
       s = generate_gaussian();
-    else if (strcmp(type, "mixture")==0)
+    else if (strcmp(type.c_str(), "mixture")==0)
       s = generate_mixture();
     else {
       printf("Unrecognized type: must be: discrete | gaussian | mixture !!!\n");
@@ -119,16 +145,32 @@ void usage() {
 }
 
 success_t generate_mixture() {
-  if (!fx_param_exists(NULL, "profile")) {
+//  if (!fx_param_exists(NULL, "profile")) {
+  if ( 0 == vm.count("profile")) {
     printf("--profile must be defined.\n");
     return SUCCESS_FAIL;
   }
-  const char* profile = fx_param_str_req(NULL, "profile");
+/*  const char* profile = fx_param_str_req(NULL, "profile");
   const int seqlen = fx_param_int(NULL, "length", 10);
   const int seqlmax = fx_param_int(NULL, "lenmax", seqlen);
   const int numseq = fx_param_int(NULL, "numseq", 10);
   const char* seqout = fx_param_str(NULL, "seqfile", "seq.mix.out");
   const char* stateout = fx_param_str(NULL, "statefile", "state.mix.out");
+*/
+
+  std::string profile = vm["profile"].as<std::string>();
+  const int seqlen = vm["length"].as<int>();
+  int seqlmax;
+  const int numseq = vm["numseq"].as<int>();
+  std::string seqout = vm["seqfile"].as<std::string>();
+  std::string stateout = vm["statefile"].as<std::string>();
+
+  if ( 0 ==  vm.count("lenmax")) {
+    seqlmax = seqlen;
+  }
+  else {
+    seqlmax = vm["lenmax"].as<int>();
+  }
 
   DEBUG_ASSERT_MSG(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
   DEBUG_ASSERT_MSG(numseq > 0, "NUMSEQ must be positive");
@@ -136,16 +178,16 @@ success_t generate_mixture() {
   double step = (double) (seqlmax-seqlen) / numseq;
 
   MixtureofGaussianHMM hmm;
-  hmm.InitFromFile(profile);
+  hmm.InitFromFile(profile.c_str());
   
   TextWriter w_seq, w_state;
-  if (!PASSED(w_seq.Open(seqout))) {
-    NONFATAL("Couldn't open '%s' for writing.", seqout);
+  if (!PASSED(w_seq.Open(seqout.c_str()))) {
+    NONFATAL("Couldn't open '%s' for writing.", seqout.c_str());
     return SUCCESS_FAIL;
   }
 
-  if (!PASSED(w_state.Open(stateout))) {
-    NONFATAL("Couldn't open '%s' for writing.", stateout);
+  if (!PASSED(w_state.Open(stateout.c_str()))) {
+    NONFATAL("Couldn't open '%s' for writing.", stateout.c_str());
     return SUCCESS_FAIL;
   }
 
@@ -168,16 +210,32 @@ success_t generate_mixture() {
 }
 
 success_t generate_gaussian() {
-  if (!fx_param_exists(NULL, "profile")) {
+//  if (!fx_param_exists(NULL, "profile")) {
+  if ( 0 == vm.count("profile")) {
     printf("--profile must be defined.\n");
     return SUCCESS_FAIL;
   }
-  const char* profile = fx_param_str_req(NULL, "profile");
+  /*const char* profile = fx_param_str_req(NULL, "profile");
   const int seqlen = fx_param_int(NULL, "length", 10);
   const int seqlmax = fx_param_int(NULL, "lenmax", seqlen);
   const int numseq = fx_param_int(NULL, "numseq", 10);
   const char* seqout = fx_param_str(NULL, "seqfile", "seq.gauss.out");
   const char* stateout = fx_param_str(NULL, "statefile", "state.gauss.out");
+  */
+
+  std::string profile = vm["profile"].as<std::string>();
+  const int seqlen = vm["length"].as<int>();
+  int seqlmax;
+  const int numseq = vm["numseq"].as<int>();
+  std::string seqout = vm["seqfile"].as<std::string>();
+  std::string stateout = vm["statefile"].as<std::string>();
+
+  if ( 0 ==  vm.count("lenmax")) {
+    seqlmax = seqlen;
+  }
+  else {
+    seqlmax = vm["lenmax"].as<int>();
+  }
 
   DEBUG_ASSERT_MSG(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
   DEBUG_ASSERT_MSG(numseq > 0, "NUMSEQ must be positive");
@@ -185,16 +243,16 @@ success_t generate_gaussian() {
   double step = (double) (seqlmax-seqlen) / numseq;
 
   GaussianHMM hmm;
-  hmm.InitFromFile(profile);
+  hmm.InitFromFile(profile.c_str());
   
   TextWriter w_seq, w_state;
-  if (!PASSED(w_seq.Open(seqout))) {
-    NONFATAL("Couldn't open '%s' for writing.", seqout);
+  if (!PASSED(w_seq.Open(seqout.c_str()))) {
+    NONFATAL("Couldn't open '%s' for writing.", seqout.c_str());
     return SUCCESS_FAIL;
   }
 
-  if (!PASSED(w_state.Open(stateout))) {
-    NONFATAL("Couldn't open '%s' for writing.", stateout);
+  if (!PASSED(w_state.Open(stateout.c_str()))) {
+    NONFATAL("Couldn't open '%s' for writing.", stateout.c_str());
     return SUCCESS_FAIL;
   }
 
@@ -215,16 +273,32 @@ success_t generate_gaussian() {
 }
 
 success_t generate_discrete() {
-  if (!fx_param_exists(NULL, "profile")) {
+//  if (!fx_param_exists(NULL, "profile")) {
+  if ( 0 == vm.count("profile")) {
     printf("--profile must be defined.\n");
     return SUCCESS_FAIL;
   }
-  const char* profile = fx_param_str_req(NULL, "profile");
+/*  const char* profile = fx_param_str_req(NULL, "profile");
   const int seqlen = fx_param_int(NULL, "length", 10);
   const int seqlmax = fx_param_int(NULL, "lenmax", seqlen);
   const int numseq = fx_param_int(NULL, "numseq", 10);
   const char* seqout = fx_param_str(NULL, "seqfile", "seq.out");
   const char* stateout = fx_param_str(NULL, "statefile", "state.out");
+*/
+
+  std::string profile = vm["profile"].as<std::string>();
+  const int seqlen = vm["length"].as<int>();
+  int seqlmax;
+  const int numseq = vm["numseq"].as<int>();
+  std::string seqout = vm["seqfile"].as<std::string>();
+  std::string stateout = vm["statefile"].as<std::string>();
+
+  if ( 0 ==  vm.count("lenmax")) {
+    seqlmax = seqlen;
+  }
+  else {
+    seqlmax = vm["lenmax"].as<int>();
+  }
 
   DEBUG_ASSERT_MSG(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
   DEBUG_ASSERT_MSG(numseq > 0, "NUMSEQ must be positive");
@@ -232,16 +306,16 @@ success_t generate_discrete() {
   double step = (double) (seqlmax-seqlen) / numseq;
 
   DiscreteHMM hmm;
-  hmm.InitFromFile(profile);
+  hmm.InitFromFile(profile.c_str());
 
   TextWriter w_seq, w_state;
-  if (!PASSED(w_seq.Open(seqout))) {
-    NONFATAL("Couldn't open '%s' for writing.", seqout);
+  if (!PASSED(w_seq.Open(seqout.c_str()))) {
+    NONFATAL("Couldn't open '%s' for writing.", seqout.c_str());
     return SUCCESS_FAIL;
   }
 
-  if (!PASSED(w_state.Open(stateout))) {
-    NONFATAL("Couldn't open '%s' for writing.", stateout);
+  if (!PASSED(w_state.Open(stateout.c_str()))) {
+    NONFATAL("Couldn't open '%s' for writing.", stateout.c_str());
     return SUCCESS_FAIL;
   }
 
