@@ -37,15 +37,20 @@
 
 #include "arraylist.h"
 #include "col_string.h"
-
+#include <iostream>
 #include <stdarg.h>
+using namespace std;
 
 const String& String::InitSprintf(const char *format, ...) {
   int size = 128;
   int len;
-  char *s = mem::Alloc<char>(size);
+  //char *s = mem::Alloc<char>(size);
+  char *s = (char *)malloc(size);
   va_list vl;
-  
+  printf("Format: %s", format);
+  if (s == NULL )
+    cout << "NULL" << endl;
+
   while (1) {
     va_start(vl, format);
     len = vsnprintf(s, size, format, vl);
