@@ -10,6 +10,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
 find_package(LAPACK REQUIRED)  # LAPACK finds BLAS as a dependency
 find_package(Pthreads REQUIRED)
+find_package(Armadillo REQUIRED)
 
 option(WITH_OPTIMIZERS "Include optimization code - requires OPT++." OFF)
 option(WITH_SPARSE "Include sparse matrix code - requires Trilinos." ON)
