@@ -110,7 +110,13 @@ class TestAllNN {
 
 int main(int argc, char *argv[]) {
  fx_module *fx_root=fx_init(argc, argv, NULL); 
- fx_set_param_int(fx_root, "leaf_size", 20);
+ //fx_set_param_int(fx_root, "leaf_size", 20);
+ int leaf_size_ = vm["leaf_size"].as<int>();
+
+  if ( 0 == vm.count("leaf_size")) {
+    leaf_size_ = 20;
+  }
+ 
  TestAllNN test(fx_root);
  test.TestAll();
 }
