@@ -126,6 +126,26 @@ class TestAllkNN {
 };
 
 int main(int argc, char** argv) {
+
+  boost_po::options_description desc("Allowed options");
+  desc.add_options()
+    ("help", "Display options")
+    ("reference_file", boost_po::value<std::string>(), "  The reference file name")
+    ("result_file", boost_po::value<std::string>(), "  The result file name")
+    ("query_file", boost_po::value<std::string>(), "Number of nearest neighbours" )
+    ("leaf_size", boost_po::value<index_t>(), "The number of points in a leaf")
+    ("mode", boost_po::value<std::string>() , "This can be either single or dual referring to dual tree and single tree algorithm")
+    ("knns", boost_po::value<int>(), "Number of nearest neighbours" );
+
+  boost_po::store(boost_po::parse_command_line(argc, argv, desc), vm);
+  boost_po::notify(vm);
+
+  if( vm.count("help"))
+  {
+    cout  << desc << endl;
+    exit(1);
+  }
+  
   fx_module *module = fx_init(argc, argv, NULL);
   TestAllkNN test;
   test.TestAll();
