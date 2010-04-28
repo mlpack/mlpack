@@ -78,6 +78,16 @@ class InversePowDistGradientKernelAux {
     OT_MY_OBJECT(sea_);
   }
 
+  friend class boost::serialization::access; // Should be removed later
+
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+     ar & kernel_;
+     ar & sea_;
+  }
+
+
  public:
 
   void Init(double bandwidth, int max_order, int dim) {

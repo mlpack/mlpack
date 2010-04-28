@@ -77,7 +77,7 @@ class SeriesExpansionAux {
   /** row index is for n, column index is for k */
   Matrix n_choose_k_;
 
-  OT_DEF_BASIC(SeriesExpansionAux) {
+/*  OT_DEF_BASIC(SeriesExpansionAux) {
     OT_MY_OBJECT(dim_);
     OT_MY_OBJECT(max_order_);
     OT_MY_OBJECT(factorials_);
@@ -90,6 +90,26 @@ class SeriesExpansionAux {
     OT_MY_OBJECT(upper_mapping_index_);
     OT_MY_OBJECT(n_choose_k_);
   }
+*/
+
+    friend class boost::serialization::access; // Should be removed later
+
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+       ar & dim_;
+       ar & max_order_;
+       ar & factorials_;
+       ar & list_total_num_coeffs_;
+       ar & inv_multiindex_factorials_;
+       ar & neg_inv_multiindex_factorials_;
+       ar & multiindex_combination_;
+       ar & multiindex_mapping_;
+       ar & lower_mapping_index_;
+       ar & upper_mapping_index_;
+       ar & n_choose_k_;
+    }
+
 
  public:
 

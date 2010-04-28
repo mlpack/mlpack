@@ -84,7 +84,7 @@ class MultSeriesExpansionAux {
    */
   ArrayList< ArrayList<int> > traversal_mapping_;
 
-  OT_DEF_BASIC(MultSeriesExpansionAux) {
+/*  OT_DEF_BASIC(MultSeriesExpansionAux) {
     OT_MY_OBJECT(dim_);
     OT_MY_OBJECT(max_order_);
     OT_MY_OBJECT(factorials_);
@@ -97,6 +97,26 @@ class MultSeriesExpansionAux {
     OT_MY_OBJECT(upper_mapping_index_);
     OT_MY_OBJECT(n_choose_k_);
     OT_MY_OBJECT(traversal_mapping_);
+  }
+*/
+
+  friend class boost::serialization::access; // Should be removed later
+
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    ar & dim_;
+    ar & max_order_;
+    ar & factorials_;
+    ar & list_total_num_coeffs_;
+    ar & inv_multiindex_factorials_;
+    ar & neg_inv_multiindex_factorials_;
+    ar & multiindex_combination_;
+    ar & multiindex_mapping_;
+    ar & lower_mapping_index_;
+    ar & upper_mapping_index_;
+    ar & n_choose_k_;
+    ar & traversal_mapping_;
   }
 
  public:

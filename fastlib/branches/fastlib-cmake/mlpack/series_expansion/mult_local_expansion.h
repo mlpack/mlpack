@@ -84,6 +84,17 @@ class MultLocalExpansion {
     OT_MY_OBJECT(coeffs_);
     OT_MY_OBJECT(order_);
   }
+
+  friend class boost::serialization::access; // Should be removed later
+
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    ar & center_;
+    ar & coeffs_;
+    ar & order_;
+  }
+
   
  public:
   
