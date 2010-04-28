@@ -62,6 +62,7 @@ class TextLineReader {
   
  private:
   FILE *f_;
+  char *fname_;
   String line_;
   int line_num_;
   bool has_line_;
@@ -70,15 +71,17 @@ class TextLineReader {
   /** Creates an unitialized object. */
   TextLineReader() {
     f_ = NULL;
+    fname_ = NULL;
   }
   
   /**
    * Automatically closes the file.
    */
   ~TextLineReader() {
-    if (f_) {
+    if(f_)
       ::fclose(f_);
-    }
+    if(fname_)
+      delete[] fname_;
   }
   
   /**
@@ -96,6 +99,16 @@ class TextLineReader {
   void Close() {
     (void)fclose(f_);
     f_ = NULL;
+    if(fname_)
+      delete[] fname_;
+  }
+
+  /**
+   * Return the name of the file we are working with.
+   * This will return NULL if no file has been opened yet.
+   */
+  const char *filename() const {
+    return fname_;
   }
   
   /**
