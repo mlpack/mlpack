@@ -45,14 +45,18 @@
 #include "fastlib/fastlib.h"
 #include "phi.h"
 #include "math_functions.h"
+#include <iostream>
+#include <boost/program_options.hpp>
+
+using namespace std;
+namespace boost_po = boost::program_options;
+boost_po::variables_map vm;
 
 const fx_entry_doc parm_nbc_entries[] ={
   {"training", FX_TIMER, FX_CUSTOM, NULL,
    " The timer to record the training time\n"},
   {"testing", FX_TIMER, FX_CUSTOM, NULL,
    " The timer to record the testing time\n"},
-  {"classes", FX_REQUIRED, FX_INT, NULL,
-   " The number of classes present in the data\n"},
   {"features", FX_RESULT, FX_INT, NULL,
    " The number of features in the data\n"},
   {"examples", FX_RESULT, FX_INT, NULL,
@@ -155,7 +159,13 @@ class SimpleNaiveBayesClassifier {
 
     // updating the variables, private and local, according to
     // the number of features and classes present in the data
-    number_of_classes_ = fx_param_int_req(nbc_module_,"classes");
+    //number_of_classes_ = fx_param_int_req(nbc_module_,"classes");
+    number_of_classes_ = vm["classes"].as<index_t>();
+   
+    if  ( 0 == vm.count("classes")) {
+      cerr << "The required parameter classes not entered" << endl;
+      exit(1);
+    }
     class_probabilities_.Resize(number_of_classes_);
     means_.Destruct();
     means_.Init(number_features, number_of_classes_ );

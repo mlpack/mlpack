@@ -86,16 +86,28 @@ const fx_module_doc parm_nbc_main_doc = {
 int main(int argc, char* argv[]) {
 
   fx_module *root = fx_init(argc, argv, &parm_nbc_main_doc);
-
+  std::string training_data_filename;
+  std::string testing_data_filename;
+  std::string output_filename; 
   ////// READING PARAMETERS AND LOADING DATA //////
 
-  const char *training_data_filename = fx_param_str_req(root, "train");
-  Matrix training_data;
-  data::Load(training_data_filename, &training_data);
+  boost_po::options_description desc("Allowed options");
+  desc.add_options()
+      ("train", boost_po::value<std::string>(&training_data_filename), "  The training file name")
+      ("test", boost_po::value<std::string>(&testing_data_filename), "  The testing file name")
+      ("output", boost_po::value<std::string>(&output_filename), "  The output file name")
+      ("classes", boost_po::value<index_t>(), " Number of classes");
 
-  const char *testing_data_filename = fx_param_str_req(root, "test");
+ boost_po::store(boost_po::parse_command_line(argc, argv, desc), vm);
+ boost_po::notify(vm);
+
+  //const char *training_data_filename = fx_param_str_req(root, "train");
+  Matrix training_data;
+  data::Load(training_data_filename.c_str(), &training_data);
+
+  //const char *testing_data_filename = fx_param_str_req(root, "test");
   Matrix testing_data;
-  data::Load(testing_data_filename, &testing_data);
+  data::Load(testing_data_filename.c_str(), &testing_data);
 
   ////// SIMPLE NAIVE BAYES CLASSIFICATION ASSUMING THE DATA TO BE UNIFORMLY DISTRIBUTED //////
 
@@ -125,9 +137,9 @@ int main(int argc, char* argv[]) {
 
   ////// OUTPUT RESULTS //////
 
-  const char *output_filename = fx_param_str(root, "output", "output.csv");
+  //const char *output_filename = fx_param_str(root, "output", "output.csv");
 
-  FILE *output_file = fopen(output_filename, "w");
+  FILE *output_file = fopen(output_filename.c_str(), "w");
 
   ot::Print(results, output_file);
 
