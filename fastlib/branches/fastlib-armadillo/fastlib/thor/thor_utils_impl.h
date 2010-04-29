@@ -87,7 +87,7 @@ index_t thor::ReadPointsMaster(
     FATAL("Could not open data file '%s'", filename);
   }
 
-  schema.InitFromFile(&reader, "data");
+  schema.InitFromFile(reader, "data");
   dimension = schema.n_features();
 
   default_point.Init(param, schema);
@@ -103,7 +103,7 @@ index_t thor::ReadPointsMaster(
 
   for (;;) {
     bool is_done;
-    success_t rv = schema.ReadPoint(&reader, vector.ptr(), &is_done);
+    success_t rv = schema.ReadPoint(reader, vector.ptr(), is_done);
 
     if (unlikely(FAILED(rv))) {
       FATAL("Data file has problems");
