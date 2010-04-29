@@ -18,6 +18,9 @@
 #include <vector>
 #include <queue>
 
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
+
 class QuicSVD {
 
   // An alias for the priority queue of CosineNode
@@ -115,16 +118,22 @@ class QuicSVDTest {
 
   void test_QuicSVD() {
     Matrix A;
+    arma::mat tmpA;
     printf("Load data from input1.txt.\n");
-    data::Load("input1.txt", &A);
+    data::Load("input1.txt", tmpA);
+    arma_compat::armaToMatrix(tmpA, A);
     QuicSVD svd(A, 0.1);
     Vector s;
     Matrix U, VT, S;
     svd.ComputeSVD(&s, &U, &VT);
-    data::Save("U.txt", U);
+    arma::mat tmpU, tmpVT, tmpS;
+    arma_compat::matrixToArma(U, tmpU);
+    arma_compat::matrixToArma(VT, tmpVT);
+    arma_compat::matrixToArma(S, tmpS);
+    data::Save("U.txt", tmpU);
     S.InitDiagonal(s);
-    data::Save("S.txt", S);
-    data::Save("VT.txt", VT);
+    data::Save("S.txt", tmpS);
+    data::Save("VT.txt", tmpVT);
     printf("U,s,VT are saved to U.txt, S.txt, VT.txt, respectively.\n");
   }
 public:

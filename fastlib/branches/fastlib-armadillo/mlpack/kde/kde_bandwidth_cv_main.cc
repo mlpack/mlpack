@@ -5,11 +5,14 @@
  *  @author Dongryeol Lee (dongryel)
  */
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
 #include "bandwidth_lscv.h"
 #include "dataset_scaler.h"
 #include "dualtree_kde.h"
 #include "naive_kde.h"
+
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
 
 /**
  * Main function which reads parameters and determines which
@@ -106,18 +109,22 @@ int main(int argc, char *argv[]) {
     !strcmp(queries_file_name, references_file_name);
 
   // data::Load inits a matrix with the contents of a .csv or .arff.
-  data::Load(references_file_name, &references);  
+  arma::mat tmp;
+  data::Load(references_file_name, tmp);
+  arma_compat::armaToMatrix(tmp, references);
   if(queries_equal_references) {
     queries.Alias(references);
   }
   else {
-    data::Load(queries_file_name, &queries);
+    data::Load(queries_file_name, tmp);
+    arma_compat::armaToMatrix(tmp, queries);
   }
   
   // If the reference weight file name is specified, then read in,
   // otherwise, initialize to uniform weights.
   if(fx_param_exists(fx_root, "dwgts")) {
-    data::Load(fx_param_str(fx_root, "dwgts", NULL), &reference_weights);
+    data::Load(fx_param_str(fx_root, "dwgts", NULL), tmp);
+    arma_compat::armaToMatrix(tmp, reference_weights);
   }
   else {
     reference_weights.Init(1, queries.n_cols());

@@ -7,8 +7,11 @@
 
 #include "infomax_ica.h"
 #include "test_infomax_ica.h"
-#include "fastlib/fastlib.h"
-#include "fastlib/data/dataset.h"
+#include <fastlib/fastlib.h>
+#include <fastlib/data/dataset.h>
+
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
 
 const fx_entry_doc infomax_ica_main_entries[] = {
   {"data", FX_REQUIRED, FX_STR, NULL,
@@ -39,7 +42,9 @@ int main(int argc, char *argv[]) {
   int B = fx_param_int(root,"B",5);
   double epsilon = fx_param_double(root,"epsilon",0.001);
   Matrix dataset;
-  data::Load(data_file_name,&dataset);
+  arma::mat tmp_dataset;
+  data::Load(data_file_name, tmp_dataset);
+  arma_compat::armaToMatrix(tmp_dataset, dataset);
   InfomaxICA *ica = new InfomaxICA(lambda, B, epsilon);
 
   ica->applyICA(dataset);  

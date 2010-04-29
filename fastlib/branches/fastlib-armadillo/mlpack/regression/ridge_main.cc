@@ -16,9 +16,12 @@
  * ============================================================================
  */
 #include <string>
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
 #include "ridge_regression.h"
 #include "ridge_regression_util.h"
+
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
 
 int main(int argc, char *argv[]) {
 
@@ -80,14 +83,17 @@ considered for pruning for the input dataset.\n"},
   std::string predictions_file = fx_param_str_req(module, "predictions");
 
   Matrix predictors;
-  if (data::Load(predictors_file.c_str(), &predictors) == SUCCESS_FAIL) {
+  arma::mat tmp;
+  if (data::Load(predictors_file.c_str(), tmp) == SUCCESS_FAIL) {
     FATAL("Unable to open file %s", predictors_file.c_str());
   }
+  arma_compat::armaToMatrix(tmp, predictors);
 
   Matrix predictions;
-  if (data::Load(predictions_file.c_str(), &predictions) == SUCCESS_FAIL) {
+  if (data::Load(predictions_file.c_str(), tmp) == SUCCESS_FAIL) {
     FATAL("Unable to open file %s", predictions_file.c_str());
   }
+  arma_compat::armaToMatrix(tmp, predictions);
 
   RidgeRegression engine;
   NOTIFY("Computing Regression...");
@@ -115,14 +121,14 @@ considered for pruning for the input dataset.\n"},
 							  "predictor_indices");
     std::string prune_predictor_indices_file = 
       fx_param_str_req(module, "prune_predictor_indices");
-    if(data::Load(predictor_indices_file.c_str(),
-		  &predictor_indices_intermediate) == SUCCESS_FAIL) {
+    if(data::Load(predictor_indices_file.c_str(), tmp) == SUCCESS_FAIL) {
       FATAL("Unable to open file %s", predictor_indices_file.c_str());
     }
-    if(data::Load(prune_predictor_indices_file.c_str(),
-		  &prune_predictor_indices_intermediate) == SUCCESS_FAIL) {
+    arma_compat::armaToMatrix(tmp, predictor_indices_intermediate);
+    if(data::Load(prune_predictor_indices_file.c_str(), tmp) == SUCCESS_FAIL) {
       FATAL("Unable to open file %s", prune_predictor_indices_file.c_str());
     }
+    arma_compat::armaToMatrix(tmp, prune_predictor_indices_intermediate);
 
     GenVector<index_t> predictor_indices;
     GenVector<index_t> prune_predictor_indices;
@@ -162,7 +168,8 @@ considered for pruning for the input dataset.\n"},
   engine.factors(&factors);
   std::string factors_file = fx_param_str(module, "factors", "factors.csv");
   NOTIFY("Saving factors...");
-  data::Save(factors_file.c_str(), factors);
+  arma_compat::matrixToArma(factors, tmp);
+  data::Save(factors_file.c_str(), tmp);
 
   fx_done(module);
   return 0;

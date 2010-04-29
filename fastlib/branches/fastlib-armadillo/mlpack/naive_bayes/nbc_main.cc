@@ -27,6 +27,9 @@
  */
 #include "simple_nbc.h"
 
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
+
 const fx_entry_doc parm_nbc_main_entries[] = {
   {"train", FX_REQUIRED, FX_STR, NULL,
    " A file containing the training set\n"},
@@ -60,11 +63,14 @@ int main(int argc, char* argv[]) {
 
   const char *training_data_filename = fx_param_str_req(root, "train");
   Matrix training_data;
-  data::Load(training_data_filename, &training_data);
+  arma::mat tmp;
+  data::Load(training_data_filename, tmp);
+  arma_compat::armaToMatrix(tmp, training_data);
 
   const char *testing_data_filename = fx_param_str_req(root, "test");
   Matrix testing_data;
-  data::Load(testing_data_filename, &testing_data);
+  data::Load(testing_data_filename, tmp);
+  arma_compat::armaToMatrix(tmp, testing_data);
 
   ////// SIMPLE NAIVE BAYES CLASSIFICATION ASSUMING THE DATA TO BE UNIFORMLY DISTRIBUTED //////
 

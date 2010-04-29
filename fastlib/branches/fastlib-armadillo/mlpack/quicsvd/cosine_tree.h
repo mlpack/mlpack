@@ -13,7 +13,10 @@
 
 #ifndef QUICSVD_COSINE_TREE_H
 #define QUICSVD_COSINE_TREE_H
+
+#include <armadillo>
 #include <fastlib/fastlib.h>
+#include <fastlib/base/arma_compat.h>
 
 class CosineNode {
   /** The alias of the matrix to be approximated A ~ A' = U S VT*/
@@ -146,7 +149,9 @@ class CosineNodeTest {
 
   void test_CosineTreeNode() {
     Matrix A;
-    data::Load("input.txt", &A);
+    arma::mat tmpA;
+    data::Load("input.txt", tmpA);
+    arma_compat::armaToMatrix(tmpA, A);
     CosineNode root(A);
     //ot::Print(root, "cosine root", logfile);
 
