@@ -38,8 +38,9 @@
 #ifndef DATA_CROSSVALIDATION
 #define DATA_CROSSVALIDATION
 
+#include <armadillo>
+
 #include "dataset.h"
-//#include "dataset.h"
 
 #include "../la/matrix.h"
 #include "../fx/fx.h"
@@ -135,7 +136,7 @@ class SimpleCrossValidator {
   /** Total number correct classified. */
   index_t n_correct_;
   /** Confusion matrix. */
-  Matrix confusion_matrix_;
+  arma::mat confusion_matrix_;
   
  public:
   SimpleCrossValidator() {}
@@ -194,7 +195,7 @@ class SimpleCrossValidator {
    * The element at row i column j is the number of training samples where
    * the actual classification is i but the predicted classification is j.
    */
-  const Matrix& confusion_matrix() const {
+  const arma::mat& confusion_matrix() const {
     return confusion_matrix_;
   }
   
@@ -251,8 +252,7 @@ void SimpleCrossValidator<TClassifier>::Init(
   
   DEBUG_ONLY(n_correct_ = BIG_BAD_NUMBER);
   
-  confusion_matrix_.Init(n_classes_, n_classes_);
-  confusion_matrix_.SetZero();
+  confusion_matrix_.zeros(n_classes_, n_classes_);
 }
 
 template<class TClassifier>
@@ -279,7 +279,7 @@ void SimpleCrossValidator<TClassifier>::Run(bool randomized) {
         kfold_module_->key, i_fold, classifier_fx_name_);
     datanode *foldmodule = fx_submodule(classifier_module, "..");
 
-    data_->SplitTrainTest(n_folds_, i_fold, permutation, &train, &test);
+    data_->SplitTrainTest(n_folds_, i_fold, permutation, train, test);
     
     if (fx_param_bool(kfold_module_, "save", 0)) {
       SaveTrainTest_(i_fold, train, test);
@@ -293,15 +293,14 @@ void SimpleCrossValidator<TClassifier>::Run(bool randomized) {
     fx_timer_start(foldmodule, "test");
     VERBOSE_MSG(1, "cross: Testing fold %d", i_fold);
     for (index_t i = 0; i < test.n_points(); i++) {
-      Vector test_vector_with_label;
       Vector test_vector;
       
-      test.matrix().MakeColumnVector(i, &test_vector_with_label);
-      test_vector_with_label.MakeSubvector(
-          0, test.n_features()-1, &test_vector);
+      test_vector.Init(test.n_features() - 1);
+      for(int j = 0; j < test.n_features() - 1; j++)
+        test_vector[j] = test.matrix()(i, j);
       
       int label_predict = classifier.Classify(test_vector);
-      double label_expect_dbl = test_vector_with_label[test.n_features()-1];
+      double label_expect_dbl = test.matrix()(i, test.n_features() - 1);
       int label_expect = int(label_expect_dbl);
       
       DEBUG_ASSERT(double(label_expect) == label_expect_dbl);
@@ -314,7 +313,7 @@ void SimpleCrossValidator<TClassifier>::Run(bool randomized) {
         local_n_correct++;
       }
       
-      confusion_matrix_.ref(label_expect, label_predict) += 1;
+      confusion_matrix_(label_expect, label_predict) += 1;
     }
     fx_timer_stop(foldmodule, "test");
     
@@ -398,7 +397,7 @@ class GeneralCrossValidator {
   /** Total number correct classified */
   index_t clsf_n_correct_;
   /** Confusion matrix */
-  Matrix clsf_confusion_matrix_;
+  arma::mat clsf_confusion_matrix_;
 
   /** variables for type 1/2: regression, density estimation, etc. */
   /** mean squared error over all folds*/
@@ -461,7 +460,7 @@ class GeneralCrossValidator {
    * The element at row i column j is the number of training samples where
    * the actual classification is i but the predicted classification is j.
    */
-  const Matrix& clsf_confusion_matrix() const {
+  const arma::mat& clsf_confusion_matrix() const {
     return clsf_confusion_matrix_;
   }
 
@@ -482,9 +481,9 @@ class GeneralCrossValidator {
     // detemine the number of data samples for training and validation according to i_fold
     index_t n_cv_validation, i_validation, i_train;
     n_cv_validation = 0;
-    for (index_t i_classes=0; i_classes<num_classes; i_classes++) {
+    for (index_t i_classes = 0; i_classes < num_classes; i_classes++) {
       i_validation = 0;
-      for (index_t j=0; j<cv_labels_ct[i_classes]; j++) {
+      for (index_t j = 0; j < cv_labels_ct[i_classes]; j++) {
 	if ((j - i_fold) % n_folds_ == 0) { // point for validation
 	  i_validation++;
 	}
@@ -494,28 +493,28 @@ class GeneralCrossValidator {
     index_t n_cv_train = num_data_points_ - n_cv_validation;
     train->InitBlank();
     train->info().InitContinuous(n_cv_features);
-    train->matrix().Init(n_cv_features, n_cv_train);
+    train->matrix().set_size(n_cv_features, n_cv_train);
 
     validation->InitBlank();
     validation->info().InitContinuous(n_cv_features);
-    validation->matrix().Init(n_cv_features, n_cv_validation);
+    validation->matrix().set_size(n_cv_features, n_cv_validation);
 
     // make training set and vaidation set by concatenation
     i_train = 0;
     i_validation = 0;
-    for (index_t i_classes=0; i_classes<num_classes; i_classes++) {
-      for (index_t j=0; j<cv_labels_ct[i_classes]; j++) {
-	Vector source, dest;
+    for (index_t i_classes = 0; i_classes < num_classes; i_classes++) {
+      for (index_t j = 0; j < cv_labels_ct[i_classes]; j++) {
+	double *dest;
 	if ((j - i_fold) % n_folds_ != 0) { // add to training set
-	  train->matrix().MakeColumnVector(i_train, &dest);
+	  dest = train->matrix().colptr(i_train);
 	  i_train++;
 	}
 	else { // add to validation set
-	  validation->matrix().MakeColumnVector(i_validation, &dest);
+	  dest = validation->matrix().colptr(i_validation);
 	  i_validation++;
 	}
-	data_->matrix().MakeColumnVector(cv_labels_startpos[i_classes]+j, &source);
-	dest.CopyValues(source);
+        memcpy(dest, data_->matrix().colptr(cv_labels_startpos[i_classes] + j),
+          sizeof(double) * data_->matrix().n_rows);
       }
     }
   }
@@ -559,11 +558,10 @@ void GeneralCrossValidator<TLearner>::Init(
     clsf_n_classes_ = data_->n_labels();
     clsf_n_correct_ = 0;
     // initialize confusion matrix
-    clsf_confusion_matrix_.Init(clsf_n_classes_, clsf_n_classes_);
-    clsf_confusion_matrix_.SetZero();
+    clsf_confusion_matrix_.zeros(clsf_n_classes_, clsf_n_classes_);
   }
   else if (learner_typeid_ == 1 || learner_typeid_ == 2) {
-    clsf_confusion_matrix_.Init(1,1);
+    clsf_confusion_matrix_ = 0.0; /* 1x1 matrix */
     // initialize mean squared error over all folds
     msq_err_all_folds_ = 0.0;
   }
@@ -648,14 +646,15 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
       VERBOSE_MSG(1, "cross: Validation fold %d", i_fold);
 
       for (index_t i = 0; i < validation.n_points(); i++) {
-	Vector validation_vector_with_label;
 	Vector validation_vector;
+        validation_vector.Init(validation.n_features() - 1);
+
+        memcpy(validation_vector.ptr(), validation.matrix().colptr(i),
+          sizeof(double) * (validation.n_features() - 1));
 	
-	validation.matrix().MakeColumnVector(i, &validation_vector_with_label);
-	validation_vector_with_label.MakeSubvector(0, validation.n_features()-1, &validation_vector);
 	// testing (classification)
 	int label_predict = int(classifier.Predict(learner_typeid_, validation_vector));
-	double label_expect_dbl = validation_vector_with_label[validation.n_features()-1];
+	double label_expect_dbl = validation.matrix()(i, validation.n_features() - 1);
 	int label_expect = int(label_expect_dbl);
 
 	DEBUG_ASSERT(double(label_expect) == label_expect_dbl);
@@ -667,7 +666,7 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
 	if (label_expect == label_predict) {
 	  local_n_correct++;
 	}
-	clsf_confusion_matrix_.ref(label_expect, label_predict) += 1;
+	clsf_confusion_matrix_(label_expect, label_predict) += 1;
       }
       fx_timer_stop(foldmodule, "validation");
 
@@ -709,7 +708,7 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
       datanode *foldmodule = fx_submodule(learner_module, "..");
       
       // Split general data sets according to i_fold
-      data_->SplitTrainTest(n_folds_, i_fold, permutation, &train, &validation);
+      data_->SplitTrainTest(n_folds_, i_fold, permutation, train, validation);
       
       if (fx_param_bool(kfold_module_, "save", 0)) {
 	SaveTrainValidationSet_(i_fold, train, validation);
@@ -725,15 +724,15 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
       fx_timer_start(foldmodule, "validation");
       VERBOSE_MSG(1, "cross: Validation fold %d", i_fold);
       for (index_t i = 0; i < validation.n_points(); i++) {
-	Vector validation_vector_with_label;
 	Vector validation_vector;
+        validation_vector.Init(validation.n_features() - 1);
+
+        memcpy(validation_vector.ptr(), validation.matrix().colptr(i),
+          sizeof(double) * (validation.n_features() - 1));
 	
-	validation.matrix().MakeColumnVector(i, &validation_vector_with_label);
-	validation_vector_with_label.MakeSubvector(
-					     0, validation.n_features()-1, &validation_vector);
-	// testing
+        // testing
 	double value_predict = learner.Predict(learner_typeid_, validation_vector);
-	double value_true = validation_vector_with_label[validation.n_features()-1];
+	double value_true = validation.matrix()(i, validation.n_features() - 1);
 	double value_err = value_predict - value_true;
 	
 	// Calculate squared error: sublevel
@@ -757,6 +756,5 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
     return;
   }
 }
-
 
 #endif
