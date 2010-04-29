@@ -21,26 +21,33 @@
 #include "fastlib/fastlib.h"
 #include "allknn.h"
 
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
 
 int main(int argc, char *argv[]) {
   fx_module *module = fx_init(argc, argv, NULL);
   std::string result_file = fx_param_str(module, "result_file", "result.txt");
   std::string reference_file = fx_param_str_req(module, "reference_file");
   Matrix reference_data;
+  arma::mat tmp_ref;
+
   ArrayList<index_t> neighbors;
   ArrayList<double> distances;
-  if (data::Load(reference_file.c_str(), &reference_data)==SUCCESS_FAIL) {
+  if (data::Load(reference_file.c_str(), tmp_ref)==SUCCESS_FAIL) {
     FATAL("Reference file %s not found", reference_file.c_str());
   }
+  arma_compat::armaToMatrix(tmp_ref, reference_data);
   NOTIFY("Loaded reference data from file %s", reference_file.c_str());
  
   AllkNN allknn; 
   if (fx_param_exists(module, "query_file")) {
     std::string query_file=fx_param_str_req(module, "query_file");
     Matrix query_data;
-    if (data::Load(query_file.c_str(), &query_data)==SUCCESS_FAIL) {
+    arma::mat tmp_query;
+    if (data::Load(query_file.c_str(), tmp_query)==SUCCESS_FAIL) {
       FATAL("Query file %s not found", query_file.c_str());
     }
+    arma_compat::armaToMatrix(tmp_query, query_data);
     NOTIFY("Query data loaded from %s", query_file.c_str());
     NOTIFY("Building query and reference tree"); 
     allknn.Init(query_data, reference_data, module);

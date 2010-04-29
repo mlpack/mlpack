@@ -15,18 +15,25 @@
  *
  * =====================================================================================
  */
-#include "fastlib/fastlib.h"
-#include "fastlib/base/test.h"
+#include <fastlib/fastlib.h>
+#include <fastlib/base/test.h>
 #include "ridge_regression.h"
 #include "ridge_regression_util.h"
+
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
 
 class RidgeRegressionTest {
  public:
   void Init(fx_module *module) {
     module_ = module;
-    data::Load("predictors.csv", &predictors_);
-    data::Load("predictions.csv", &predictions_);
-    data::Load("true_factors.csv", &true_factors_);
+    arma::mat tmp;
+    data::Load("predictors.csv", tmp);
+    arma_compat::armaToMatrix(tmp, predictors_);
+    data::Load("predictions.csv", tmp);
+    arma_compat::armaToMatrix(tmp, predictions_);
+    data::Load("true_factors.csv", tmp);
+    arma_compat::armaToMatrix(tmp, true_factors_);
   }
 
   void TestSVDNormalEquationRegressVersusSVDRegress() {

@@ -4,6 +4,9 @@
  * This file contains implementation of functions in mixtureDST.h
  */
 
+#include <armadillo>
+#include "fastlib/base/arma_compat.h"
+
 #include "fastlib/fastlib.h"
 #include "support.h"
 #include "mixtureDST.h"
@@ -77,13 +80,18 @@ void MixtureGauss::Init(int K, const Matrix& data, const ArrayList<int>& labels)
 
 void MixtureGauss::InitFromFile(const char* mean_fn, const char* covs_fn, const char* prior_fn) {
   Matrix meansmat;
-  data::Load(mean_fn, &meansmat);
+  arma::mat tmpmeansmat;
+  data::Load(mean_fn, tmpmeansmat);
+  arma_compat::armaToMatrix(tmpmeansmat, meansmat); // compatibility layer
+
   mat2arrlst(meansmat, &means);
   int N = means[0].length();
   int K = means.size();
   if (covs_fn != NULL) {
     Matrix covsmat;
-    data::Load(covs_fn, &covsmat);
+    arma::mat tmpcovsmat;
+    data::Load(covs_fn, tmpcovsmat);
+    arma_compat::armaToMatrix(tmpcovsmat, covsmat);
     mat2arrlstmat(N, covsmat, &covs);
     DEBUG_ASSERT_MSG(K==covs.size(), "InitFromFile: sizes do not match !");
   }
@@ -98,7 +106,9 @@ void MixtureGauss::InitFromFile(const char* mean_fn, const char* covs_fn, const 
   }
   if (prior_fn != NULL) {
     Matrix priormat;
-    data::Load(prior_fn, &priormat);
+    arma::mat tmppriormat;
+    data::Load(prior_fn, tmppriormat);
+    arma_compat::armaToMatrix(tmppriormat, priormat);
     DEBUG_ASSERT_MSG(K==priormat.n_cols(), "InitFromFile: sizes do not match !!");
     prior.Init(K);
     for (int i = 0; i < K; i++) prior[i] = priormat.get(0, i);

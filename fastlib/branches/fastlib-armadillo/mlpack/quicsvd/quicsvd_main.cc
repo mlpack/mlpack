@@ -14,6 +14,9 @@
 #include <fastlib/fastlib.h>
 #include "quicsvd.h"
 
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
+
 const fx_entry_doc quicsvd_main_entries[] = {
   {"A_in", FX_REQUIRED, FX_STR, NULL,
    " File consists of matrix A to be decomposed A = U S VT. \n"},
@@ -71,7 +74,9 @@ int main(int argc, char* argv[]) {
 
   printf("Loading data ... ");
   fflush(stdout);
-  data::Load(A_in, &A);
+  arma::mat tmp;
+  data::Load(A_in, tmp);
+  arma_compat::armaToMatrix(tmp, A);
   printf("n_rows = %d, n_cols = %d, done.\n", A.n_rows(), A.n_cols());
 
   // parse target relative error, default = 0.1
@@ -88,27 +93,33 @@ int main(int argc, char* argv[]) {
   fx_result_double(NULL, "actualErr", actualErr);
   fx_result_int(NULL, "dimension", s.length());
 
-  if (fx_param_exists(NULL, "U_out"))
-    data::Save(fx_param_str(NULL, "U_out", NULL), U);
+  if (fx_param_exists(NULL, "U_out")) {
+    arma_compat::matrixToArma(U, tmp);
+    data::Save(fx_param_str(NULL, "U_out", NULL), tmp);
+  }
   //else // use OT to write to standard output
   //  ot::Print(U, "U", stdout);
 
   if (fx_param_exists(NULL, "s_out")) {
     Matrix S;
     S.AliasColVector(s);
-    data::Save(fx_param_str(NULL, "s_out", NULL), S);
+    arma_compat::matrixToArma(S, tmp);
+    data::Save(fx_param_str(NULL, "s_out", NULL), tmp);
   }
   //else 
   //  ot::Print(s, "s", stdout);
 
-  if (fx_param_exists(NULL, "VT_out"))
-    data::Save(fx_param_str(NULL, "VT_out", NULL), VT);
+  if (fx_param_exists(NULL, "VT_out")) {
+    arma_compat::matrixToArma(VT, tmp);
+    data::Save(fx_param_str(NULL, "VT_out", NULL), tmp);
+  }
   //else 
   //  ot::Print(VT, "VT", stdout);
 
   if (fx_param_exists(NULL, "SVT_out")) {
     la::ScaleRows(s, &VT);
-    data::Save(fx_param_str(NULL, "SVT_out", NULL), VT);
+    arma_compat::matrixToArma(VT, tmp);
+    data::Save(fx_param_str(NULL, "SVT_out", NULL), tmp);
   }
 
   /*

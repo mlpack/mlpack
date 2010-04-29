@@ -25,6 +25,9 @@
 #include "allnn.h"
 #include "fastlib/base/test.h"
 
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
+
 class TestAllNN {
  public:
   TestAllNN(fx_module *module) {
@@ -35,8 +38,12 @@ class TestAllNN {
     naive_  = new AllNN();
     data_for_tree_ = new Matrix();
     data_for_naive_= new Matrix();
-    data::Load("test_data_3_1000.csv", data_for_tree_);
-    data::Load("test_data_3_1000.csv", data_for_naive_);
+    arma::mat tmp_data;
+    arma::mat tmp_data_naive;
+    data::Load("test_data_3_1000.csv", tmp_data);
+    data::Load("test_data_3_1000.csv", tmp_data_naive);
+    arma_compat::armaToMatrix(tmp_data, *data_for_tree_);
+    arma_compat::armaToMatrix(tmp_data_naive, *data_for_naive_);
  }
 
   void Destruct() {
