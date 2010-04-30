@@ -12,7 +12,7 @@
  *
  * This wasn't written to be fast or efficient.
  */
-void arma_compat::armaToMatrix(const arma::mat &mat, Matrix &mg) {
+void arma_compat::armaToMatrix(const arma::mat& mat, Matrix& mg) {
   // initialize our matrix correctly
   mg.Init(mat.n_rows, mat.n_cols);
 
@@ -29,7 +29,7 @@ void arma_compat::armaToMatrix(const arma::mat &mat, Matrix &mg) {
  *
  * This wasn't written to be fast or efficient.
  */
-void arma_compat::matrixToArma(const Matrix &gm, arma::mat &mat) {
+void arma_compat::matrixToArma(const Matrix& gm, arma::mat& mat) {
   // initialize our matrix to the correct size
   mat.set_size(gm.n_rows(), gm.n_cols());
 
@@ -39,4 +39,18 @@ void arma_compat::matrixToArma(const Matrix &gm, arma::mat &mat) {
       mat(r, c) = gm.get(r, c);
     }
   }
+}
+
+/***
+ * Write the selected column of the matrix into the uninitialized Vector.
+ *
+ * This wasn't written to be fast or efficient.
+ */
+void arma_compat::armaColVector(const arma::mat& mat, int col, Vector& v) {
+  // initialize our vector to the correct size
+  v.Init(mat.n_rows);
+
+  // copy elementwise.  this is slow as hell
+  for(int r = 0; r < mat.n_rows; r++)
+    v[r] = mat(r, col);
 }
