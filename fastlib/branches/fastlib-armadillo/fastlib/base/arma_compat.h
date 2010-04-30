@@ -18,6 +18,8 @@ namespace arma_compat {
   void armaToMatrix(const arma::mat &mat, Matrix &mg);
   void matrixToArma(const Matrix &gm, arma::mat &mat);
 
+  // write a column into an uninitialized vector
+  void armaColVector(const arma::mat &mat, int col, Vector &v);
 }
 
 #endif /* ARMA_COMPAT_H */
