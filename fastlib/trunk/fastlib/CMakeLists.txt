@@ -46,8 +46,9 @@ endforeach()
 
 add_library(fastlib ${FASTLIB_SRCS})
 target_link_libraries(fastlib
-   lapack
-   pthread
+  lapack
+  blas
+  pthread
 )
 
 if(OPTION_WITH_SPARSE)

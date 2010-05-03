@@ -71,7 +71,9 @@ endforeach()
 add_library(mlpack ${MLPACK_SRCS})
 add_dependencies(mlpack fastlib)
 target_link_libraries(mlpack
-   fastlib
+  fastlib
+  lapack
+  blas
 )
 
 if(WITH_SPARSE)

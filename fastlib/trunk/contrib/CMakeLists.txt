@@ -38,6 +38,12 @@ endforeach()
 # don't build mlpack_contrib.a by default, user must specify they want it
 add_library(mlpack_contrib EXCLUDE_FROM_ALL ${MLPACK_CONTRIB_SRCS})
 add_dependencies(mlpack_contrib mlpack fastlib)
+target_link_libraries(mlpack_contrib
+  mlpack
+  fastlib
+  lapack
+  blas
+)
 
 # move header files to the right directory
 file(GLOB_RECURSE INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
