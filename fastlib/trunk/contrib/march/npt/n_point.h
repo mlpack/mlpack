@@ -12,6 +12,8 @@
 
 #include "matcher.h"
 #include "fastlib/fastlib.h"
+#include "n_point_nodes.h"
+#include "n_point_impl.h"
 
 const fx_entry_doc n_point_entries[] = {
 {"total_runtime", FX_TIMER, FX_CUSTOM, NULL, 
@@ -56,68 +58,8 @@ class NPointAlg {
   
 private:
   
-  class NPointStat {
-    
-  private:
-    
-    index_t node_index_;
-    
-  public:
-    
-    void Init(const Matrix& dataset, index_t start, index_t count) {
-      
-      node_index_ = -1;
-      
-    } // Init() leaves
-    
-    void Init(const Matrix& dataset, index_t start, index_t count,
-              const NPointStat& left_stat, const NPointStat& right_stat) {
-      
-      node_index_ = -1;
-      
-    } // Init() non-leaves
-    
-    index_t node_index() const {
-      return node_index_; 
-    }
-    
-    void set_node_index(index_t ind) {
-      node_index_ = ind;
-    }
-    
-  }; // NPointStat
+  
 
-  typedef BinarySpaceTree<DHrectBound<2>, Matrix, NPointStat> NPointNode;
-
-
-  // later, can add useful stuff here
-  class NodeTuple {
-    
-  private:
-    
-    ArrayList<NPointNode*> node_list_;
-    
-    //int num_tuples_;
-    
-  public:
-    
-    NPointNode* node_list(index_t i) {
-     
-      return node_list_[i];
-      
-    }
-    /*
-    int num_tuples() {
-      return num_tuples_;
-    }
-    */
-    void Init(ArrayList<NPointNode*>& list_in) {
-     
-      node_list_.InitCopy(list_in);
-      
-    }
-    
-  }; // NodeTuple
   
   ////////////// variables ////////////
 
@@ -139,7 +81,6 @@ private:
   
   int num_exclusion_prunes_;
   
-  
   NPointNode* tree_;
   ArrayList<index_t> old_from_new_permutation_;
   int leaf_size_;
@@ -150,9 +91,7 @@ private:
   
   ////////////// functions ////////////
   
-  /**
-   *
-   */
+  
   void NodeIndexTraversal_(NPointNode* tree_, index_t* ind) {
     
     if (tree_->is_leaf()) {
@@ -173,6 +112,7 @@ private:
     }
     
   } // NodeIndexTraversal_
+  
   
   int CountTuples_(ArrayList<NPointNode*>& nodes);
   
@@ -315,16 +255,16 @@ public:
     } // do naive
     else if (!do_hybrid_) {
       
-      ArrayList<NPointNode*> nodes;
-      nodes.Init(tuple_size_);
+      ArrayList<NPointNode*> node_list;
+      node_list.Init(tuple_size_);
       
       for (index_t i = 0; i < tuple_size_; i++) {
         
-        nodes[i] = tree_;
+        node_list[i] = tree_;
         
       } // for i
-      
-      num_tuples_ = DepthFirstRecursion_(nodes, -1);
+
+      num_tuples_ = DepthFirstRecursion_(node_list, -1);
       
     } // do depth-first
     else {

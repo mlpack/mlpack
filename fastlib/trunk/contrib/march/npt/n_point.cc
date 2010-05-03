@@ -251,7 +251,7 @@ int NPointAlg::HybridExpansion_() {
   for (int i = 0; i < tuple_size_; i++) {
     first_list[i] = tree_;
   }
-  
+
   tuple_list.PushBackCopy(first_list);
   
   upper_bound_ = CountTuples_(first_list);
@@ -427,6 +427,7 @@ int NPointAlg::CheckNodeList_(ArrayList<NPointNode*>& nodes) {
       // IMPORTANT: can't exit here, messes up the tracking of bounds
       // but this doesn't make sense, nothing in the rest of the checks gets 
       // passed to the outside
+      // TODO: figure out if this is really true
       if (status == EXCLUDE) {
         // we should be able to prune
         
@@ -550,7 +551,5 @@ int NPointAlg::DepthFirstRecursion_(ArrayList<NPointNode*>& nodes,
   return num_tuples_here;
   
 } // DepthFirstRecursion_()
-
-
 
 
