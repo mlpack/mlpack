@@ -1,7 +1,7 @@
 librule(
     name = "n_point_alg",
-    sources = ["matcher.cc", "n_point.cc"],
-    headers = ["matcher.h", "n_point.h"],
+    sources = ["matcher.cc", "n_point.cc", "n_point_impl.cc", "n_point_nodes.cc", "n_point_perm_free.cc", "perm_free_matcher.cc"],
+    headers = ["matcher.h", "n_point.h", "n_point_impl.h", "n_point_nodes.h", "n_point_perm_free.h", "perm_free_matcher.h"],
     deplibs = ["fastlib:fastlib"]
 )
 

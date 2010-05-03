@@ -9,6 +9,7 @@
 
 #include "fastlib/fastlib.h"
 #include "n_point.h"
+#include "n_point_perm_free.h"
 
 
 const fx_entry_doc n_point_main_entries[] = {
@@ -116,6 +117,17 @@ int main(int argc, char* argv[]) {
     
     alg.Compute();
     
+    
+  }
+  else if (fx_param_exists(NULL, "do_perm_free")) {
+    
+    fx_module* perm_free_mod = fx_submodule(NULL, "perm_free");
+    
+    NPointPermFree perm_free_alg;
+    
+    perm_free_alg.Init(data, lower_bounds, upper_bounds, upper_bounds.n_cols(),
+                       perm_free_mod);
+    perm_free_alg.Compute();
     
   }
   else {

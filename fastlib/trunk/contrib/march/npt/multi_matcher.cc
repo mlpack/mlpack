@@ -10,50 +10,35 @@
 #include "multi_matcher.h"
 
 // fills in the ranges of indices in the bandwidth
-void MultiMatcher::FindBandwidths_(double min_dist_sq, double max_dist_sq,
-                                   DRange* subsumed, DRange* excluded, 
-                                   DRange* inconclusive) {
+void MultiMatcher::FindBandwidths_(double min_dist_sq, double max_dist_sq, 
+                                   double* max_subsume, double* min_exclude) {
 
   
   
 } // FindBandwidths_()
 
 
-
+// this needs to return the correct range of inconclusive bandwidths for the
+// pair of nodes (i.e. everything inside is subsumed, everything outside is 
+// excluded)
+// PROBLEM: the range for one permutation and that for another need not overlap
 void MultiMatcher::TestNodes_(const DHrectBound<2>& box1, 
                               const DHrectBound<2>& box2,
                               index_t tuple_index_1, index_t tuple_index_2,
-                              ArrayList<ResultsTensor>& permutation_ok) {
+                              perm_ind, DRange range_out) {
   
   double max_dist_sq = box1.MaxDistanceSq(box2);
   double min_dist_sq = box1.MinDistanceSq(box2);
 
-  // where does it fit?  
+  double max_subsume, min_exclude;
+  FindBandwidths_(min_dist_sq, max_dist_sq, &max_subsume, &min_exclude);
   
-  DRange subsumed, excluded, inconclusive;
-  FindBandwidths_(min_dist_sq, max_dist_sq, &subsumed, &excluded, 
-                  &inconclusive);
+  // these are the indices in the results matrix
+  index_t template_index_1 = GetPermutationIndex_(perm_ind, tuple_index_1);
+  index_t template_index_2 = GetPermutationIndex_(perm_ind, tuple_index_2);
   
-  for (index_t i = 0; i < num_permutations; i++) {
+  range_out.Init(max_subsume, min_exclude);
     
-    ResultsTensor& results_i = permutation_ok[i];
-    
-    // these are the indices in the results matrix
-    index_t template_index_1 = GetPermutationIndex_(i, tuple_index_1);
-    index_t template_index_2 = GetPermutationIndex_(i, tuple_index_2);
-    
-    // this needs 
-    results_i.FillRowsStatus(template_index_1, template_index_2, status);
-    
-  } // iterate over permutations
-  
-  
-  
-  
 } // TestNodes_
-
-
-
-
 
 

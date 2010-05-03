@@ -13,6 +13,8 @@
 #include "multi_matcher.h"
 #include "fastlib/fastlib.h"
 #include "n_point_impl.h"
+#include "status_tensor.h"
+#include "results_tensor.h"
 
 class NPointMulti { 
   

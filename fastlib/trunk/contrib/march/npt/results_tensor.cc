@@ -9,13 +9,8 @@
 
 #include "n_point_results.h"
 
+// TODO: test me!
 index_t ResultsTensor::FindIndex_(const ArrayList<index_t>& indices) {
-  
-  DEBUG_ASSERT(indices.length() == tuple_size_);
-  
-  // Do we assume that the indices are in order?  Let's do it for now, I think
-  // they might be because the nodes will be ordered
-  // What about the base case, though?
   
   ArrayList<index_t> sort_ind;
   sort_ind.InitCopy(indices);
@@ -25,10 +20,19 @@ index_t ResultsTensor::FindIndex_(const ArrayList<index_t>& indices) {
   
   // assuming the smallest index is first
   index_t return_ind = 0;
-  for (index_t i = 0; i < tuple_size_; i++) {
+  for (index_t i = 1; i <= tensor_rank_; i++) {
     
-    // TODO: this probably isn't correct
-    return_ind += sort_ind[i] * pow(tuple_size_, i);
+    index_t this_prod = 1;
+    
+    for (index_t j = 0; j < i; j++) {
+      
+      this_prod *= indices[i-1] + j;
+      
+    } // for j
+    
+    this_prod = this_prod / n_point_impl::factorial(i);
+    
+    return_ind += this_prod;
     
   } // for i
   
@@ -36,33 +40,13 @@ index_t ResultsTensor::FindIndex_(const ArrayList<index_t>& indices) {
   
 } // FindIndex_
 
-void ResultsTensor::SetRange(const ArrayList<index_t>& lower_ind, 
-                             const ArrayList<index_t>& upper_ind, int val) {
-  
-  
-  
-} // SetRange
 
-
-void ResultsTensor::AddToRange(const ArrayList<index_t>& lower_ind, 
-                               const ArrayList<index_t>& upper_ind, int val) {
+// There is a range for each of the n! permutations
+void ResultsTensor::FillRanges(ArrayList<DRange>& ranges) {
   
   
   
-  
-} // AddToRange
-
-
-// look at whole results tensor, fill in subsumes and excludes based on 
-// the distances
-void ResultsTensor::FillRows(index_t position_ind_1, index_t position_ind_2,
-                             double max_dist_sq, double min_dist_sq) {
-  
-  // determine which ranges are excluded and which subsumed
-  
-  // fill in the entire sub-tensor where the pos_ind_1th 
-  
-} // FillRows
+} // FillRanges
 
 
 

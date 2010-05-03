@@ -21,7 +21,7 @@ class ResultsTensor {
   
 private:
   
-  int tuple_size_;
+  int tensor_rank_;
   
   int num_bandwidths_;
   
