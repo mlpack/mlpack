@@ -8,6 +8,14 @@ set(SOURCES
    matcher.cc
    n_point.h
    n_point.cc
+   n_point_impl.h
+   n_point_impl.cc
+   n_point_nodes.h
+   n_point_nodes.cc
+   n_point_perm_free.h
+   n_point_perm_free.cc
+   perm_free_matcher.h
+   perm_free_matcher.cc
 )
 
 # add directory name to sources
