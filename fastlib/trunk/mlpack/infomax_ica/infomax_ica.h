@@ -17,9 +17,9 @@
 #define U_INFOMAX_ICA
 
 #include <math.h>
-#include <limits>
-#include <values.h>
-#include "fastlib/fastlib.h"
+#include <limits.h>
+#include <float.h>
+#include <fastlib/fastlib.h>
 
 class TestInfomaxICA; // forward reference
 
