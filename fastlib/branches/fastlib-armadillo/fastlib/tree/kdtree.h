@@ -47,14 +47,13 @@
 
 #include "spacetree.h"
 #include "bounds.h"
-//#include "spacetree.h"
-//#include "bounds.h"
 
 #include "../col/arraylist.h"
 #include "../fx/fx.h"
 
 #include "kdtree_impl.h"
-//#include "kdtree_impl.h"
+
+#include <armadillo>
 
 /**
  * Regular pointer-style trees (as opposed to THOR trees).
@@ -65,32 +64,33 @@ namespace tree {
    *
    * @experimental
    *
-   * This requires you to pass in two unitialized ArrayLists which will contain
-   * index mappings so you can account for the re-ordering of the matrix.
-   * (By unitialized I mean don't call Init on it)
+   * This requires you to pass in two unitialized ArrayLists (or Vectors) which
+   * will contain index mappings so you can account for the re-ordering of the
+   * matrix.  (By unitialized I mean don't call Init on it)
    *
    * @param matrix data where each column is a point, WHICH WILL BE RE-ORDERED
+   * @param split_dimensions ordering of the dimensions that we should split on;
+   *        the first element in this vector will be the first element we split
+   *        on, and so on
    * @param leaf_size the maximum points in a leaf
    * @param old_from_new pointer to an unitialized arraylist; it will map
    *        new indices to original
    * @param new_from_old pointer to an unitialized arraylist; it will map
    *        original indexes to new indices
    */
-  
-
   template<typename TKdTree, typename T>
-  TKdTree *MakeKdTreeMidpointSelective(GenMatrix<T>& matrix, 
+  TKdTree *MakeKdTreeMidpointSelective(arma::Mat<T>& matrix, 
 				       const Vector& split_dimensions,
-      index_t leaf_size,
-      ArrayList<index_t> *old_from_new = NULL,
-      ArrayList<index_t> *new_from_old = NULL) {
+                                       index_t leaf_size,
+                                       ArrayList<index_t> *old_from_new = NULL,
+                                       ArrayList<index_t> *new_from_old = NULL) {
     TKdTree *node = new TKdTree();
     index_t *old_from_new_ptr;
    
     if (old_from_new) {
-      old_from_new->Init(matrix.n_cols());
+      old_from_new->Init(matrix.n_cols);
       
-      for (index_t i = 0; i < matrix.n_cols(); i++) {
+      for (index_t i = 0; i < matrix.n_cols; i++) {
         (*old_from_new)[i] = i;
       }
       
@@ -99,36 +99,55 @@ namespace tree {
       old_from_new_ptr = NULL;
     }
       
-    node->Init(0, matrix.n_cols());
+    node->Init(0, matrix.n_cols);
     node->bound().Init(split_dimensions.length());
     tree_kdtree_private::SelectFindBoundFromMatrix(matrix, split_dimensions,
-        0, matrix.n_cols(), &node->bound());
+        0, matrix.n_cols, &node->bound());
 
     tree_kdtree_private::SelectSplitKdTreeMidpoint(matrix, split_dimensions, 
 	node, leaf_size, old_from_new_ptr);
     
     if (new_from_old) {
-      new_from_old->Init(matrix.n_cols());
-      for (index_t i = 0; i < matrix.n_cols(); i++) {
+      new_from_old->Init(matrix.n_cols);
+      for (index_t i = 0; i < matrix.n_cols; i++) {
         (*new_from_old)[(*old_from_new)[i]] = i;
       }
     }    
     return node;
   }
 
+  /**
+   * Creates a KD tree from data, splitting on the midpoint.
+   *
+   * @experimental
+   *
+   * This requires you to pass in two unitialized Vectors which will contain
+   * index mappings so you can account for the re-ordering of the matrix.
+   * (By unitialized I mean don't call Init on it)
+   *
+   * @param matrix data where each column is a point, WHICH WILL BE RE-ORDERED
+   * @param split_dimensions ordering of the dimensions that we should split on;
+   *        the first element in this vector will be the first element we split
+   *        on, and so on
+   * @param leaf_size the maximum points in a leaf
+   * @param old_from_new pointer to an unitialized vector; it will map
+   *        new indices to original
+   * @param new_from_old pointer to an unitialized vector; it will map
+   *        original indexes to new indices
+   */
   template<typename TKdTree, typename T>
-  TKdTree *MakeKdTreeMidpointSelective(GenMatrix<T>& matrix, 
+  TKdTree *MakeKdTreeMidpointSelective(arma::Mat<T>& matrix, 
 				       const Vector& split_dimensions,
-      index_t leaf_size,
-      GenVector<index_t> *old_from_new = NULL,
-      GenVector<index_t> *new_from_old = NULL) {
+                                       index_t leaf_size,
+                                       GenVector<index_t> *old_from_new = NULL,
+                                       GenVector<index_t> *new_from_old = NULL) {
     TKdTree *node = new TKdTree();
     index_t *old_from_new_ptr;
    
     if (old_from_new) {
-      old_from_new->Init(matrix.n_cols());
+      old_from_new->Init(matrix.n_cols);
       
-      for (index_t i = 0; i < matrix.n_cols(); i++) {
+      for (index_t i = 0; i < matrix.n_cols; i++) {
         (*old_from_new)[i] = i;
       }
       
@@ -137,17 +156,17 @@ namespace tree {
       old_from_new_ptr = NULL;
     }
       
-    node->Init(0, matrix.n_cols());
+    node->Init(0, matrix.n_cols);
     node->bound().Init(split_dimensions.length());
     tree_kdtree_private::SelectFindBoundFromMatrix(matrix, split_dimensions,
-        0, matrix.n_cols(), &node->bound());
+        0, matrix.n_cols, &node->bound());
 
     tree_kdtree_private::SelectSplitKdTreeMidpoint(matrix, split_dimensions, 
 	node, leaf_size, old_from_new_ptr);
     
     if (new_from_old) {
-      new_from_old->Init(matrix.n_cols());
-      for (index_t i = 0; i < matrix.n_cols(); i++) {
+      new_from_old->Init(matrix.n_cols);
+      for (index_t i = 0; i < matrix.n_cols; i++) {
         (*new_from_old)[(*old_from_new)[i]] = i;
       }
     }    
@@ -156,15 +175,17 @@ namespace tree {
 
   
   template<typename TKdTree, typename T>
-    TKdTree *MakeKdTreeMidpoint(GenMatrix<T>& matrix, index_t leaf_size,
-				ArrayList<index_t> *old_from_new = NULL,
-				ArrayList<index_t> *new_from_old = NULL) {  
+  TKdTree *MakeKdTreeMidpoint(arma::Mat<T>& matrix,
+                              index_t leaf_size,
+                              ArrayList<index_t> *old_from_new = NULL,
+                              ArrayList<index_t> *new_from_old = NULL) {
+    // create vector of dimensions that we will split on
+    // by default we'll just split the first dimension first, and so on
     Vector split_dimensions;
-    split_dimensions.Init(matrix.n_rows());
-    int i;
-    for (i = 0; i < matrix.n_rows(); i++){
+    split_dimensions.Init(matrix.n_rows);
+    for(int i = 0; i < matrix.n_rows; i++)
       split_dimensions[i] = i;
-    }
+
     TKdTree *result;
     result = MakeKdTreeMidpointSelective<TKdTree>(matrix, split_dimensions,
 		   leaf_size, old_from_new, new_from_old);
@@ -172,20 +193,21 @@ namespace tree {
   }
   
   template<typename TKdTree, typename T>
-    TKdTree *MakeKdTreeMidpoint(GenMatrix<T>& matrix, 
-        index_t leaf_size,
-				GenVector<index_t> *old_from_new = NULL,
-				GenVector<index_t> *new_from_old = NULL) {  
+  TKdTree *MakeKdTreeMidpoint(arma::Mat<T>& matrix, 
+                              index_t leaf_size,
+                              GenVector<index_t> *old_from_new = NULL,
+                              GenVector<index_t> *new_from_old = NULL) {  
+    // create vector of dimensions that we will split on
+    // by default we'll just split the first dimension first, and so on
     Vector split_dimensions;
-    split_dimensions.Init(matrix.n_rows());
-    int i;
-    for (i = 0; i < matrix.n_rows(); i++){
+    split_dimensions.Init(matrix.n_rows);
+    for(int i = 0; i < matrix.n_rows; i++)
       split_dimensions[i] = i;
-    }
+
     TKdTree *result;
     result = MakeKdTreeMidpointSelective<TKdTree>(matrix, 
-        split_dimensions,
-		    leaf_size, old_from_new, new_from_old);
+      split_dimensions, leaf_size, old_from_new, new_from_old);
+
     return result;
   }
 
@@ -228,9 +250,10 @@ namespace tree {
    * @return SUCCESS_PASS or SUCCESS_FAIL
    */
   template<typename TKdTree, typename T>
-  success_t LoadKdTree(datanode *module,
-      GenMatrix<T> *matrix, TKdTree **tree_pp,
-      ArrayList<index_t> *old_from_new) {
+  success_t LoadKdTree(datanode* module,
+                       arma::Mat<T>& matrix,
+                       TKdTree** tree_pp,
+                       ArrayList<index_t>* old_from_new) {
     const char *type = fx_param_str(module, "type", "text");
     const char *fname = fx_param_str(module, "", NULL);
     success_t success = SUCCESS_PASS;
@@ -247,7 +270,7 @@ namespace tree {
 
       fx_timer_start(module, "make_tree");
       *tree_pp = MakeKdTreeMidpoint<TKdTree>(
-          *matrix, leaflen, old_from_new);
+          matrix, leaflen, old_from_new);
       fx_timer_stop(module, "make_tree");
     }
     fx_timer_stop(module, "load");

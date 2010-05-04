@@ -50,24 +50,22 @@
  */
 template<class TDataset>
 class EmptyStatistic {
- public:
-  EmptyStatistic() {}
-  ~EmptyStatistic() {}
+  public:
+    EmptyStatistic() {}
+    ~EmptyStatistic() {}
   
-  /**
-   * Initializes by taking statistics on raw data.
-   */
-  void Init(const TDataset& dataset, index_t start, index_t count) {
-  }
+    /**
+     * Initializes by taking statistics on raw data.
+     */
+    void Init(const TDataset& dataset, index_t start, index_t count) { }
 
-  /**
-   * Initializes by combining statistics of two partitions.
-   *
-   * This lets you build fast bottom-up statistics when building trees.
-   */
-  void Init(const TDataset& dataset, index_t start, index_t count,
-      const EmptyStatistic& left_stat, const EmptyStatistic& right_stat) {
-  }
+    /**
+     * Initializes by combining statistics of two partitions.
+     *
+     * This lets you build fast bottom-up statistics when building trees.
+     */
+    void Init(const TDataset& dataset, index_t start, index_t count,
+        const EmptyStatistic& left_stat, const EmptyStatistic& right_stat) { }
 };
 
 #endif
