@@ -13,6 +13,9 @@
 
 #include "emst.h"
 
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
+
 const fx_entry_doc dtb_entries[] = {
   
   {"do_naive", FX_PARAM, FX_BOOL, NULL,
@@ -616,8 +619,10 @@ class DualTreeBoruvka {
       
       fx_timer_start(module_, "tree_building");
 
+      arma::mat tmp;
+      arma_compat::matrixToArma(data_points_, tmp);
       tree_ = tree::MakeKdTreeMidpoint<DTBTree>
-          (data_points_, leaf_size_, &old_from_new_permutation_, NULL);
+          (tmp, leaf_size_, &old_from_new_permutation_, NULL);
       
       fx_timer_stop(module_, "tree_building");
     }

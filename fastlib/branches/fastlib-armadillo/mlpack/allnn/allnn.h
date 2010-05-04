@@ -484,10 +484,13 @@ class AllNN {
     // initialize the reverse of said.
 
     /* Build the trees */
-    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(
-	  queries_, leaf_size_, &old_from_new_queries_, NULL);
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(
-        references_, leaf_size_, &old_from_new_references_, NULL);
+    arma::mat tmp;
+    arma_compat::matrixToArma(queries_, tmp);
+    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
+	  leaf_size_, &old_from_new_queries_, NULL);
+    arma_compat::matrixToArma(references_, tmp);
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
+        leaf_size_, &old_from_new_references_, NULL);
 
     // While we don't make use of this here, it is possible to start
     // timers after stopping them.  They continue where they left off.
@@ -532,8 +535,10 @@ class AllNN {
     // initialize the reverse of said.
 
     /* Build the trees */
-    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(
-	      queries_, leaf_size_, &old_from_new_queries_, NULL);
+    arma::mat tmp;
+    arma_compat::matrixToArma(queries_, tmp);
+    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
+	      leaf_size_, &old_from_new_queries_, NULL);
     reference_tree_ = query_tree_; 
     old_from_new_references_.Alias(old_from_new_queries_);
 
@@ -595,10 +600,13 @@ class AllNN {
     leaf_size_ = max(queries_.n_cols(), references_.n_cols());
 
     /* Build the (single node) trees */
-    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(
-	      queries_, leaf_size_, &old_from_new_queries_, NULL);
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(
-        references_, leaf_size_, &old_from_new_references_, NULL);
+    arma::mat tmp;
+    arma_compat::matrixToArma(queries_, tmp);
+    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
+        leaf_size_, &old_from_new_queries_, NULL);
+    arma_compat::matrixToArma(references_, tmp);
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
+        leaf_size_, &old_from_new_references_, NULL);
 
     /* Ready the list of nearest neighbor candidates to be filled. */
     neighbor_indices_.Init(queries_.n_cols());
@@ -638,8 +646,10 @@ class AllNN {
     leaf_size_ = max(queries_.n_cols(), references_.n_cols());
 
     /* Build the (single node) trees */
-    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(
-	      queries_, leaf_size_, &old_from_new_queries_, NULL);
+    arma::mat tmp;
+    arma_compat::matrixToArma(queries_, tmp);
+    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
+	      leaf_size_, &old_from_new_queries_, NULL);
     reference_tree_ =  query_tree_;
     old_from_new_references_.Alias(old_from_new_queries_);
     /* Ready the list of nearest neighbor candidates to be filled. */
