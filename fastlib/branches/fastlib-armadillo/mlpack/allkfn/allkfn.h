@@ -15,6 +15,9 @@
 #include <fastlib/fastlib.h>
 #include <vector>
 #include <functional>
+
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
 /**
  * Forward declaration for the tester class
  */
@@ -388,9 +391,12 @@ class AllkFN {
     // This call makes each tree from a matrix, leaf size, and two arrays 
 		// that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
-    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(queries_, leaf_size_, 
+    arma::mat tmp;
+    arma_compat::matrixToArma(queries_, tmp);
+    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, leaf_size_, 
 				&old_from_new_queries_, NULL);
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_, 
+    arma_compat::matrixToArma(references_, tmp);
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, 
 				leaf_size_, &old_from_new_references_, NULL);
     
     // Stop the timer we started above
@@ -434,7 +440,9 @@ class AllkFN {
 		// that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
     query_tree_ = NULL;
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_, 
+    arma::mat tmp;
+    arma_compat::matrixToArma(references_, tmp);
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, 
 				leaf_size_, &old_from_new_references_, NULL);
     
     // Stop the timer we started above
@@ -473,9 +481,12 @@ class AllkFN {
     // This call makes each tree from a matrix, leaf size, and two arrays 
     // that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
-    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(queries_, leaf_size_, 
+    arma::mat tmp;
+    arma_compat::matrixToArma(queries_, tmp);
+    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, leaf_size_, 
         &old_from_new_queries_, NULL);
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_, 
+    arma_compat::matrixToArma(references_, tmp);
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, 
         leaf_size_, &old_from_new_references_, NULL);
 
   } // Init
@@ -507,7 +518,9 @@ class AllkFN {
     // that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
     query_tree_ = NULL;
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_, 
+    arma::mat tmp;
+    arma_compat::matrixToArma(references_, tmp);
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, 
         leaf_size_, &old_from_new_references_, NULL);
    // This is an annoying feature of fastlib
     old_from_new_queries_.Init();
@@ -551,10 +564,13 @@ class AllkFN {
     // that each tree has only one node
     leaf_size_ = max(queries_.n_cols(), references_.n_cols());
     
-    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(queries_, 
+    arma::mat tmp;
+    arma_compat::matrixToArma(queries_, tmp);
+    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, 
         leaf_size_, &old_from_new_queries_, NULL);
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(
-        references_, leaf_size_, &old_from_new_references_, NULL);
+    arma_compat::matrixToArma(references_, tmp);
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
+        leaf_size_, &old_from_new_references_, NULL);
         
   } // InitNaive
   
@@ -572,9 +588,11 @@ class AllkFN {
     // that each tree has only one node
     leaf_size_ = references_.n_cols();
     
+    arma::mat tmp;
+    arma_compat::matrixToArma(references_, tmp);
     query_tree_ = NULL;
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(
-        references_, leaf_size_, &old_from_new_references_, NULL);
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
+        leaf_size_, &old_from_new_references_, NULL);
     // This is an annoying feature of fastlib
     old_from_new_queries_.Init();
   } // InitNaive
