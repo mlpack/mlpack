@@ -5,6 +5,11 @@ cmake_minimum_required(VERSION 2.8)
 # Do not include test programs here
 set(SOURCES
    bounds.h
+   lmetric.h
+   dhrectbound.h
+   dhrectbound_impl.h
+   dballbound.h
+   dballbound_impl.h
    kdtree.h
    kdtree_impl.h
    spacetree.h

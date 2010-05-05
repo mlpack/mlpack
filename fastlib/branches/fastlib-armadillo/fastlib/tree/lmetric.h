@@ -30,21 +30,47 @@
  * 02110-1301, USA.
  */
 /**
- * @file tree/bounds.h
+ * @file tree/lmetric.h
  *
  * Bounds that are useful for binary space partitioning trees.
  *
- * TODO: Come up with a better design so you can do plug-and-play distance
- * metrics.
+ * This file describes the LMetric policy class.
  *
  * @experimental
  */
 
-#ifndef TREE_BOUNDS_H
-#define TREE_BOUNDS_H
+#include "../la/la.h"
+#include "../la/matrix.h"
 
-#include "lmetric.h"
-#include "dhrectbound.h"
-#include "dballbound.h"
+#include "../math/math_lib.h"
 
-#endif // TREE_BOUNDS_H
+/**
+ * An L_p metric for vector spaces.
+ *
+ * A generic Metric class should simply compute the distance between
+ * two points.  An LMetric operates for integer powers on Vector spaces.
+ */
+template<int t_pow>
+class LMetric {
+  public:
+    /**
+     * Computes the distance metric between two points.
+     */
+    static double Distance(const Vector& a, const Vector& b) {
+      return math::Pow<1, t_pow>(
+          la::RawLMetric<t_pow>(a.length(), a.ptr(), b.ptr()));
+    }
+
+    /**
+     * Computes the distance metric between two points, raised to a
+     * particular power.
+     *
+     * This might be faster so that you could get, for instance, squared
+     * L2 distance.
+     */
+    template<int t_result_pow>
+      static double PowDistance(const Vector& a, const Vector& b) {
+        return math::Pow<t_result_pow, t_pow>(
+            la::RawLMetric<t_pow>(a.length(), a.ptr(), b.ptr()));
+      }
+};
