@@ -11,9 +11,18 @@
 #define N_POINT_NODES_H
 
 #include "fastlib/fastlib.h"  
+#include "n_point_impl.h"
 
+class NPointTester;
+
+
+
+
+/**
+ *
+ */
 class NPointStat {
-  
+    
 private:
   
   index_t node_index_;
@@ -46,7 +55,12 @@ public:
 typedef BinarySpaceTree<DHrectBound<2>, Matrix, NPointStat> NPointNode;
 
 
+/**
+ *
+ */
 class NodeTuple {
+  
+  friend class NPointTester;
   
 private:
   
@@ -65,6 +79,7 @@ private:
   ArrayList<index_t> input_to_lower_;
   
   index_t ind_to_split_;
+  bool all_leaves_;
   
   ////////////////// functions ///////////////////////
   
@@ -99,7 +114,7 @@ public:
   
 
   bool all_leaves() {
-    return (ind_to_split_ < 0);
+    return all_leaves_;
   }
   
   
@@ -116,9 +131,15 @@ public:
     ind_to_split_ = -1;
     int split_size = -1;
     
+    all_leaves_ = true;
+    
     for (index_t i = 0; i < tuple_size_; i++) {
       
       NPointNode* node_i = node_list_[i];
+      
+      if (!(node_i->is_leaf())) {
+        all_leaves_ = false;
+      }
       
       if (node_i->count() > split_size && !node_i->is_leaf()) {
         split_size = node_i->count();
@@ -168,7 +189,38 @@ public:
   /**
    * Splits the node in position ind_to_split and updates the lists
    */
-  bool PerformSplit(NodeTuple* right_node);
+  void PerformSplit(NodeTuple*& left_node, NodeTuple*& right_node);
+  
+  void Print() {
+    
+    /*
+    ArrayList<NPointNode*> node_list_;
+    
+    int tuple_size_;
+    
+    // the distance ranges, in the order specified by the tuple (i.e. unsorted)
+    ArrayList<DRange> ranges_;
+    
+    // sorted distances
+    ArrayList<std::pair<double, index_t> > sorted_upper_;
+    ArrayList<std::pair<double, index_t> > sorted_lower_;
+    
+    ArrayList<index_t> input_to_upper_;
+    ArrayList<index_t> input_to_lower_;
+    
+    index_t ind_to_split_;
+    bool all_leaves_;
+*/
+    //printf("Node List:\n");
+    //ot::Print(node_list_);
+    
+    printf("Sorted minimum distances:\n");
+    for (index_t i = 0; i < sorted_lower_.size(); i++) {
+      printf("%g, ", sorted_lower_[i].first);
+    }
+    printf("\n\n");
+    
+  } // Print()
   
 }; // NodeTuple
 

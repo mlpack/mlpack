@@ -9,6 +9,7 @@
 
 #include "fastlib/fastlib.h"
 #include "n_point.h"
+#include "n_point_nodes.h"
 
 class NPointTester {
     
@@ -37,7 +38,7 @@ public:
     NPointAlg alg;
     alg.Init(data, weights, lower_bounds, upper_bounds, n, test_mod);
     
-    ArrayList<NPointAlg::NPointNode *> test_nodes;
+    ArrayList<NPointNode*> test_nodes;
     test_nodes.Init(n);
     
     alg.tree_->Print();
@@ -48,6 +49,37 @@ public:
     
     int count = alg.CountTuples_(test_nodes);
     printf("Count: %d\n", count);
+    
+  }
+  
+  void TestInvalidIndices() {
+   
+    Matrix data;
+    const char* data_file = "test_invalid_indices.csv";
+    data::Load(data_file, &data);
+    
+    ArrayList<index_t> old_from_new;
+    NPointNode* tree = tree::MakeKdTreeMidpoint<NPointNode>(data, 1, 
+                                                            &old_from_new, NULL);
+    
+    ArrayList<NPointNode*> node_list;
+    node_list.Init(5);
+    node_list[0] = tree->left();
+    node_list[1] = tree->left()->right();
+    node_list[2] = tree->right()->left();
+    node_list[3] = tree->right()->right();
+    node_list[4] = tree->right()->right()->right();
+    
+    NodeTuple tuple;
+    tuple.Init(node_list);
+    
+    ArrayList<index_t> bad_inds;
+    bad_inds.Init();
+    
+    tuple.ind_to_split_ = 4;
+    tuple.FindInvalidIndices_(&bad_inds);
+    
+    ot::Print(bad_inds);
     
   }
   

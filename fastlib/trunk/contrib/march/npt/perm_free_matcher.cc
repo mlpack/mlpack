@@ -13,7 +13,7 @@
 
 int PermFreeMatcher::CheckNodes(NodeTuple& nodes) {
   
-  for (int i = 0; i < tuple_size_; i++) {
+  for (int i = 0; i < upper_bounds_sq_.size(); i++) {
     
     double lower_dist = nodes.lower_bound(i);
     

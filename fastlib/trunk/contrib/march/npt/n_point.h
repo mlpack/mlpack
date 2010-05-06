@@ -13,7 +13,6 @@
 #include "matcher.h"
 #include "fastlib/fastlib.h"
 #include "n_point_nodes.h"
-#include "n_point_impl.h"
 
 const fx_entry_doc n_point_entries[] = {
 {"total_runtime", FX_TIMER, FX_CUSTOM, NULL, 
@@ -282,6 +281,7 @@ public:
     printf("\n====  Number of tuples: %d ====\n\n", num_tuples_);
     
     fx_result_int(mod_, "num_tuples", num_tuples_);
+    fx_result_int(mod_, "num_exclusion_prunes", num_exclusion_prunes_);
     fx_result_double(mod_, "weighted_num_tuples", weighted_num_tuples_);
     
   } // Compute()
