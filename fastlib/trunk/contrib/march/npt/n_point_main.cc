@@ -8,8 +8,8 @@
  */
 
 #include "fastlib/fastlib.h"
-#include "n_point.h"
 #include "n_point_perm_free.h"
+#include "n_point.h"
 
 
 const fx_entry_doc n_point_main_entries[] = {

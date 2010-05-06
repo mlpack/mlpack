@@ -46,7 +46,7 @@ private:
 
   bool CanPrune_(NodeTuple& nodes);
 
-  void DepthFirstRecursion_(NodeTuple& nodes);
+  int DepthFirstRecursion_(NodeTuple& nodes);
   
 public:
   
@@ -83,6 +83,8 @@ public:
     tree_ = tree::MakeKdTreeMidpoint<NPointNode> (data_points_, leaf_size_,
                                                   &old_from_new, NULL);
     
+    //tree_->Print();
+    
     num_exclusion_prunes_ = 0;
     
   } // Init()
@@ -107,7 +109,7 @@ public:
     
     nodes.Init(node_list);
     
-    DepthFirstRecursion_(nodes);
+    num_tuples_ = DepthFirstRecursion_(nodes);
     
     
     

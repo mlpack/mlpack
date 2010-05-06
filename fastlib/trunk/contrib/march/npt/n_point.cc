@@ -118,7 +118,11 @@ int NPointAlg::BaseCaseHelper_(ArrayList<ArrayList<index_t> >& point_sets,
   bool bad_symmetry = false;
   
   // loop over possible points for the kth member of the tuple
-  for (index_t i = 0; !bad_symmetry && i < k_rows.size(); i++) {
+  // can't exit for bad symmetry here, because points only get larger
+  //for (index_t i = 0; !bad_symmetry && i < k_rows.size(); i++) {
+  // TODO: think through exiting because of symmetry carefully
+  // I think I fixed it for now, but not sure
+  for (index_t i = 0; i < k_rows.size(); i++) {
     
     index_t point_index_i = k_rows[i];
     
@@ -136,12 +140,26 @@ int NPointAlg::BaseCaseHelper_(ArrayList<ArrayList<index_t> >& point_sets,
     // all the other points will too
     // This means I'm assuming that the lists of points are in a continuous 
     // order
-    for (index_t j = 0; !bad_symmetry && this_point_works && j < k; j++) {
-      
+    // This isn't actually true, 
+    // can exit for bad symmetry 
+    //for (index_t j = 0; !bad_symmetry && this_point_works && j < k; j++) {
+    for (index_t j = 0; this_point_works && j < k; j++) {
+        
       index_t point_index_j = points_in_tuple[j];
+
+      // I think this is necessary for leaves larger than 1
+      // This isn't quite right
+      /*
+      if (point_index_i == point_index_j) {
+        continue;
+      }
+       */
+            
       
-      // need to swap indices here, j should come before i
+    // need to swap indices here, j should come before i
       bad_symmetry = PointsViolateSymmetry_(point_index_j, point_index_i);
+      //printf("point_j: %d, point_i: %d, bad_symmetry: %d\n", point_index_j, 
+      //       point_index_i, bad_symmetry);
       
       // don't compute the distances if we don't have to
       if (!bad_symmetry) {
@@ -153,6 +171,7 @@ int NPointAlg::BaseCaseHelper_(ArrayList<ArrayList<index_t> >& point_sets,
         //printf("Testing point pair (%d, %d)\n", j, k);
         this_point_works = matcher_.TestPointPair(point_dist_sq, j, k, 
                                                   permutation_ok_copy);
+        //printf("this_point_works: %d\n", this_point_works);
         
       } // compute the distances and check the matcher
       
@@ -191,6 +210,8 @@ int NPointAlg::BaseCaseHelper_(ArrayList<ArrayList<index_t> >& point_sets,
       } // recurse
       
       DEBUG_ONLY(points_in_tuple[k] = -1);
+      
+      points_in_tuple[k] = -1;
       
     } // did the point work
     

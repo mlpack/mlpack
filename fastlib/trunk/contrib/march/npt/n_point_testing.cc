@@ -14,9 +14,14 @@ int main(int argc, char* argv[]) {
   
   fx_init(argc, argv, NULL);
   
+/*
   NPointTester test;
   
   test.TestCounting();
+  */
+  
+  NPointTester test_indices;
+  test_indices.TestInvalidIndices();
   
   fx_done(NULL);
   
