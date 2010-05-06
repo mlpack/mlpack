@@ -108,7 +108,7 @@
  *   //
  *   void InitTrain(const Dataset& dataset, int n_classes, datanode *module);
  *   // For a test datum, returns the class label 0 <= label < n_classes
- *   int Classify(const Vector& test_datum);
+ *   int Classify(const vec& test_datum);
  * };
  * @endcode
  */
@@ -293,9 +293,7 @@ void SimpleCrossValidator<TClassifier>::Run(bool randomized) {
     fx_timer_start(foldmodule, "test");
     VERBOSE_MSG(1, "cross: Testing fold %d", i_fold);
     for (index_t i = 0; i < test.n_points(); i++) {
-      Vector test_vector;
-      
-      test_vector.Init(test.n_features() - 1);
+      arma::vec test_vector(test.n_features() - 1);
       for(int j = 0; j < test.n_features() - 1; j++)
         test_vector[j] = test.matrix()(i, j);
       
