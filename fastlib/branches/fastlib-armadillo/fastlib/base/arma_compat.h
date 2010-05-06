@@ -19,7 +19,10 @@ namespace arma_compat {
   void matrixToArma(const Matrix &gm, arma::mat &mat);
 
   // write a column into an uninitialized vector
-  void armaColVector(const arma::mat &mat, int col, Vector &v);
+  void armaColVector(const arma::mat& mat, int col, Vector& v);
+
+  void vectorToVec(const Vector& gv, arma::vec& vec);
+  void vecToVector(const arma::vec& vec, Vector& gv);
 }
 
 #endif /* ARMA_COMPAT_H */
