@@ -23,6 +23,9 @@
 #define FFT_KDE_H
 
 #include <fastlib/fastlib.h>
+  
+/** constant TAU */
+#define TAU 4.0
 
 /** @brief A computation class for FFT based kernel density estimation
  *
@@ -66,8 +69,7 @@ class FFTKde {
   /** pointer to the module holding the relevant parameters */
   struct datanode *module_;
 
-  /** constant TAU */
-  static const double TAU = 4.0;
+
 
   /** query dataset */
   Matrix qset_;
