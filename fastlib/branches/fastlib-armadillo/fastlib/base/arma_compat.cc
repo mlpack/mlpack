@@ -54,3 +54,27 @@ void arma_compat::armaColVector(const arma::mat& mat, int col, Vector& v) {
   for(int r = 0; r < mat.n_rows; r++)
     v[r] = mat(r, col);
 }
+
+/***
+ * Turn the supplied FASTLIB GenVector into an arma::vec.
+ *
+ * This wasn't written to be fast or efficient.
+ */
+void arma_compat::vectorToVec(const Vector& gv, arma::vec& vec) {
+  vec.set_size(gv.length());
+
+  for(int i = 0; i < gv.length(); i++)
+    vec[i] = gv[i];
+}
+
+/***
+ * Turn the supplied arma::vec into a FASTLIB GenVector.
+ *
+ * This wasn't written to be fast or efficient.
+ */
+void arma_compat::vecToVector(const arma::vec& vec, Vector& gv) {
+  gv.Init(vec.n_cols);
+
+  for(int i = 0; i < vec.n_cols; i++)
+    gv[i] = vec[i];
+}
