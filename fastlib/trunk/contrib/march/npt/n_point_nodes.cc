@@ -12,7 +12,7 @@
 // fills inds with the indices in the range list that need to be recomputed
 void NodeTuple::FindInvalidIndices_(ArrayList<index_t>* inds) {
   
-  printf("ind_to_split: %d\n", ind_to_split_);
+  //printf("ind_to_split: %d\n", ind_to_split_);
   
   // inserted this easy fix, not sure if the rest is right yet
   if (tuple_size_ == 2) {
@@ -103,13 +103,14 @@ void NodeTuple::UpdateIndices_(index_t split_ind,
       
       ranges_[bad_ind] = this_range;
       
+      // Is this right?  Am I using these correctly
       index_t upper_bad_ind = input_to_upper_[bad_ind];
       index_t lower_bad_ind = input_to_lower_[bad_ind];
       
       sorted_upper_[upper_bad_ind] = std::pair<double, index_t>(max_dist_sq,
-                                                                upper_bad_ind);
+                                                                bad_ind);
       sorted_lower_[lower_bad_ind] = std::pair<double, index_t>(min_dist_sq,
-                                                                lower_bad_ind);
+                                                                bad_ind);
 
     }
     
@@ -229,10 +230,10 @@ void NodeTuple::PerformSplit(NodeTuple*& left_node, NodeTuple*& right_node) {
   node_list_[ind_to_split_] = split_node->right();
   
   if (CheckSymmetry_(node_list_)) {
-    //right_node->SplitHelper_(node_list_, ind_to_split_, ranges_, 
-    //                         sorted_upper_, sorted_lower_, 
-    //                         invalid_indices, input_to_upper_, input_to_lower_);
-    right_node->Init(node_list_);
+    right_node->SplitHelper_(node_list_, ind_to_split_, ranges_, 
+                             sorted_upper_, sorted_lower_, 
+                             invalid_indices, input_to_upper_, input_to_lower_);
+    //right_node->Init(node_list_);
     DEBUG_ASSERT(right_node->node_list(0));
   }
   else {
@@ -243,11 +244,11 @@ void NodeTuple::PerformSplit(NodeTuple*& left_node, NodeTuple*& right_node) {
   node_list_[ind_to_split_] = split_node->left();
   
   if (CheckSymmetry_(node_list_)) {
-    //left_node->SplitHelper_(node_list_, ind_to_split_, ranges_, 
-    //                        sorted_upper_, sorted_lower_, 
-    //                        invalid_indices, input_to_upper_, input_to_lower_);
+    left_node->SplitHelper_(node_list_, ind_to_split_, ranges_, 
+                            sorted_upper_, sorted_lower_, 
+                            invalid_indices, input_to_upper_, input_to_lower_);
     //DEBUG_ASSERT(left_node->node_list(0));
-    left_node->Init(node_list_);
+    //left_node->Init(node_list_);
   }
   else {
     left_node = NULL;
