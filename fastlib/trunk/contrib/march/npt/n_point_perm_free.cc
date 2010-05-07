@@ -169,7 +169,7 @@ int NPointPermFree::DepthFirstRecursion_(NodeTuple& nodes) {
   
   if (CanPrune_(nodes)) {
 
-    printf("Pruning.\n");
+    //printf("Pruning.\n");
     // do it
     num_exclusion_prunes_++;
     return num_tuples_here;
@@ -177,9 +177,9 @@ int NPointPermFree::DepthFirstRecursion_(NodeTuple& nodes) {
   }
   else if (nodes.all_leaves()) {
     
-    printf("Performing Base Case.\n");
+    //printf("Performing Base Case.\n");
     int base_case_count = BaseCase_(nodes);
-    printf("Num points in base case: %d\n", base_case_count);
+    //printf("Num points in base case: %d\n", base_case_count);
     num_tuples_here = base_case_count;
     
   }// base case
@@ -189,7 +189,7 @@ int NPointPermFree::DepthFirstRecursion_(NodeTuple& nodes) {
     // check symmetry
     // check prunes
     
-    printf("Recursing.\n");
+    //printf("Recursing.\n");
     
     NodeTuple left_node;
     NodeTuple* left_node_ptr = &left_node;
@@ -204,15 +204,15 @@ int NPointPermFree::DepthFirstRecursion_(NodeTuple& nodes) {
     
     if (left_node_ptr) {
       
-      printf("Left node\n");
-      left_node.Print();
+      //printf("Left node\n");
+      //left_node.Print();
       DEBUG_ASSERT(left_node.node_list(0));
       num_tuples_here += DepthFirstRecursion_(left_node);
     }
     if (right_node_ptr) {
       
-      printf("Right node\n");
-      right_node.Print();
+      //printf("Right node\n");
+      //right_node.Print();
       DEBUG_ASSERT(right_node.node_list(0));
       num_tuples_here += DepthFirstRecursion_(right_node);
     }
