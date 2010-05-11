@@ -4,7 +4,7 @@
 # It sets TRILINOS_INCLUDE_DIR and TRILINOS_LIBS and also finds MPI_INCLUDE_DIR
 
 ## Location of trilinos
-set(TRILINOS_BASE_DIR /usr/local CACHE PATH
+set(TRILINOS_LIB_DIR /usr/local/lib CACHE PATH
   "Directory where trilinos is installed.")
 
 ## library 
@@ -17,14 +17,14 @@ foreach(lib ${TRILINOS_REQUIRED_LIBS})
     set(trilinos_lib trilinos_lib-NOTFOUND CACHE INTERNAL "")
     find_library(trilinos_lib ${lib}
         PATHS 
-        ${TRILINOS_BASE_DIR}/lib 
+        ${TRILINOS_LIB_DIR}
         /opt/trilinos/lib 
     )
     if(NOT trilinos_lib)
         # try looking for libtrilinos_${lib}
         find_library(trilinos_lib trilinos_${lib}
             PATHS
-            ${TRILINOS_BASE_DIR}/lib
+            ${TRILINOS_LIB_DIR}
             /opt/trilinos/lib
         )
         if(NOT trilinos_lib)
@@ -37,7 +37,7 @@ endforeach()
 ## include dirs
 find_path(TRILINOS_INCLUDE_DIR Trilinos_version.h 
     PATHS
-    ${TRILINOS_BASE_DIR}/include 
+    ${TRILINOS_LIB_DIR}/../include 
     /opt/trilinos/include
     PATH_SUFFIXES
     trilinos
