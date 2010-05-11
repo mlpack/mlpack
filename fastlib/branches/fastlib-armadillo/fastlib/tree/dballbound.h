@@ -45,6 +45,9 @@
 #include "../la/la.h"
 
 #include "../math/math_lib.h"
+#include "lmetric.h"
+
+#include <armadillo>
 
 /**
  * Ball bound that works in arbitrary metric spaces.
@@ -54,7 +57,7 @@
  * To initialize this, set the radius with @c set_radius
  * and set the point by initializing @c point() directly.
  */
-template<typename TMetric = LMetric<2>, typename TPoint = Vector>
+template<typename TMetric = LMetric<2>, typename TPoint = arma::vec>
 class DBallBound {
   public:
     typedef TPoint Point;
