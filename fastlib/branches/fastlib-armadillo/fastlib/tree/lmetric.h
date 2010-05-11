@@ -39,16 +39,20 @@
  * @experimental
  */
 
+#ifndef TREE_LMETRIC_H
+#define TREE_LMETRIC_H
+
 #include "../la/la.h"
 #include "../la/matrix.h"
 
-#include "../math/math_lib.h"
+#include <math.h>
+#include <armadillo>
 
 /**
  * An L_p metric for vector spaces.
  *
  * A generic Metric class should simply compute the distance between
- * two points.  An LMetric operates for integer powers on Vector spaces.
+ * two points.  An LMetric operates for integer powers on vector spaces.
  */
 template<int t_pow>
 class LMetric {
@@ -56,9 +60,10 @@ class LMetric {
     /**
      * Computes the distance metric between two points.
      */
-    static double Distance(const Vector& a, const Vector& b) {
-      return math::Pow<1, t_pow>(
-          la::RawLMetric<t_pow>(a.length(), a.ptr(), b.ptr()));
+    static double Distance(const arma::vec& a, const arma::vec& b) {
+      // subtract b from a elementwise, and then raise to t_pow;
+      // then sum all that and take the t_pow'th root of it
+      return pow(accu(pow((a - b), t_pow)), 1.0 / (double) t_pow);
     }
 
     /**
@@ -69,8 +74,10 @@ class LMetric {
      * L2 distance.
      */
     template<int t_result_pow>
-      static double PowDistance(const Vector& a, const Vector& b) {
-        return math::Pow<t_result_pow, t_pow>(
-            la::RawLMetric<t_pow>(a.length(), a.ptr(), b.ptr()));
+      static double PowDistance(const arma::vec& a, const arma::vec& b) {
+        // accu() sums all elements of a vector
+        return pow(accu(pow((a - b), t_pow)), (double) t_result_pow / (double) t_pow);
       }
 };
+
+#endif
