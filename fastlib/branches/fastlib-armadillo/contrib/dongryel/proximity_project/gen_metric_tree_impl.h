@@ -5,7 +5,10 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#include "fastlib/fastlib_int.h"
+#include <fastlib/fastlib_int.h>
+
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
 
 namespace tree_gen_metric_tree_private {
 
@@ -19,7 +22,7 @@ namespace tree_gen_metric_tree_private {
 
     index_t end = begin + count;
     for (index_t i = begin; i < end; i++) {
-      Vector col;      
+      Vector col;
       matrix.MakeColumnVector(i, &col);
       la::AddTo(col, &(bounds->center()));
     }
@@ -46,13 +49,18 @@ namespace tree_gen_metric_tree_private {
 
       // Make alias of the current point.
       Vector point;
+      arma::vec tmp;
+      arma::vec tmp2;
       matrix.MakeColumnVector(left, &point);
+      arma_compat::vectorToVec(point, tmp);
 
       // Compute the distances from the two pivots.
+      arma_compat::vectorToVec(left_bound.center(), tmp2);
       double distance_from_left_pivot =
-	LMetric<2>::Distance(point, left_bound.center());
+	LMetric<2>::Distance(tmp, tmp2);
+      arma_compat::vectorToVec(right_bound.center(), tmp2);
       double distance_from_right_pivot =
-	LMetric<2>::Distance(point, right_bound.center());
+	LMetric<2>::Distance(tmp, tmp2);
 
       // We swap if the point is further away from the left pivot.
       if(distance_from_left_pivot > distance_from_right_pivot) {	
@@ -124,8 +132,11 @@ namespace tree_gen_metric_tree_private {
     for(index_t i = begin; i < end; i++) {
       Vector point;
       matrix.MakeColumnVector(i, &point);
+      arma::vec tmp1, tmp2;
+      arma_compat::vectorToVec(pivot, tmp1);
+      arma_compat::vectorToVec(point, tmp2);
       double distance_between_center_and_point = 
-	LMetric<2>::Distance(pivot, point);
+	LMetric<2>::Distance(tmp1, tmp2);
       
       if((*furthest_distance) < distance_between_center_and_point) {
 	*furthest_distance = distance_between_center_and_point;
