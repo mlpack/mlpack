@@ -9,6 +9,9 @@
 #include "thor.h"
 #include "../fastlib.h"
 
+#include <armadillo>
+#include "../base/arma_compat.h"
+
 /**
  * An N-Body-Reduce problem.
  */
@@ -148,7 +151,9 @@ class Allnn {
       /* ignore horizontal join operator */
       distance_sq = q_result->distance_sq;
       neighbor_i = q_result->neighbor_i;
-      return r_node.bound().MinDistanceSq(q_point.vec()) <= distance_sq;
+      arma::vec tmp;
+      arma_compat::vectorToVec(q_point.vec(), tmp);
+      return (r_node.bound().MinDistanceSq(tmp) <= distance_sq);
     }
 
     bool StartVisitingQueryPoint(const Param& param,

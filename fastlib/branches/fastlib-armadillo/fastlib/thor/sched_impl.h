@@ -1,5 +1,8 @@
 /* Templated Implementations for GNP scheduling. */
 
+#include <armadillo>
+#include "../base/arma_compat.h"
+
 template<typename Node>
 void CentroidScheduler<Node>::Init(CacheArray<Node> *tree,
     const DecompNode *decomp_root, int n_threads, datanode *module) {
@@ -38,8 +41,10 @@ void CentroidScheduler<Node>::DistributeInitialWork_(
     // case where we're trying to subdivide a leaf between rankors.
     // If we're subdividing a leaf between rankors, then some rankors
     // won't have any work to do...
+    arma::vec tmp;
+    node->node().bound().CalculateMidpoint(tmp);
     Vector center;
-    node->node().bound().CalculateMidpoint(&center);
+    arma_compat::vecToVector(tmp, center);
     index_t max_grain_size = math::RoundInt(
         node->count() / granularity_ / n_threads_);
 
@@ -123,7 +128,9 @@ void CentroidScheduler<Node>::GetWork(int rank_num, ArrayList<Grain> *work) {
             DEBUG_ASSERT(node->is_complete());
             for (int i = 0; i < Node::CARDINALITY; i++) {
               InternalNode *child = node->child(i);
-              prio.Put(child->node().bound().MinDistanceSq(center), child);
+              arma::vec tmp;
+              arma_compat::vectorToVec(center, tmp);
+              prio.Put(child->node().bound().MinDistanceSq(tmp), child);
             }
           }
         }
@@ -178,8 +185,10 @@ void CentroidScheduler<Node>::GetWork(int rank_num, ArrayList<Grain> *work) {
     grain->point_begin_index = found_node->node().begin();
     grain->point_end_index = found_node->node().end();
 
+    arma::vec tmp;
     Vector midpoint;
-    found_node->node().bound().CalculateMidpoint(&midpoint);
+    found_node->node().bound().CalculateMidpoint(tmp);
+    arma_compat::vecToVector(tmp, midpoint);
     la::AddTo(midpoint, &queue->sum_centers);
     queue->n_centers++;
   }
