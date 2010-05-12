@@ -260,8 +260,10 @@ class AllNN {
       // These are easy to search for, though for some reason, Garry
       // was more partial to "where's WALDO".  More memorable, maybe?
 
+      arma::vec tmp;
+      arma_compat::vectorToVec(query_point, tmp);
       double distance_to_hrect = 
-	  reference_node->bound().MinDistanceSq(query_point);
+	  reference_node->bound().MinDistanceSq(tmp);
 
       /* Try to prune one last time */
       if (distance_to_hrect < neighbor_distances_[query_index]) {
