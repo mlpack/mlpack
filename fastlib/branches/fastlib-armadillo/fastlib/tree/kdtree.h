@@ -100,7 +100,7 @@ namespace tree {
     }
       
     node->Init(0, matrix.n_cols);
-    node->bound().Init(split_dimensions.length());
+    node->bound().SetSize(split_dimensions.length());
     tree_kdtree_private::SelectFindBoundFromMatrix(matrix, split_dimensions,
         0, matrix.n_cols, &node->bound());
 
@@ -157,7 +157,7 @@ namespace tree {
     }
       
     node->Init(0, matrix.n_cols);
-    node->bound().Init(split_dimensions.length());
+    node->bound().SetSize(split_dimensions.length());
     tree_kdtree_private::SelectFindBoundFromMatrix(matrix, split_dimensions,
         0, matrix.n_cols, &node->bound());
 

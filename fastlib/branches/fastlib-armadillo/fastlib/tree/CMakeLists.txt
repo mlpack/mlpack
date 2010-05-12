@@ -12,6 +12,7 @@ set(SOURCES
    dballbound_impl.h
    kdtree.h
    kdtree_impl.h
+   kdtree_impl.cc
    spacetree.h
    statistic.h
 )

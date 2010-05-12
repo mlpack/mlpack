@@ -41,17 +41,39 @@
 #ifndef TREE_DHRECTBOUND_IMPL_H
 #define TREE_DHRECTBOUND_IMPL_H
 
+#include <math.h>
+
+using arma::vec;
+
+/**
+ * Empty constructor
+ */
+template<int t_pow>
+DHrectBound<t_pow>::DHrectBound() {
+  bounds_ = NULL;
+  dim_ = 0;
+}
+
 /**
  * Initializes to specified dimensionality with each dimension the empty
  * set.
  */
 template<int t_pow>
-void DHrectBound<t_pow>::Init(index_t dimension) {
+DHrectBound<t_pow>::DHrectBound(index_t dimension) {
   //DEBUG_ASSERT_MSG(dim_ == BIG_BAD_NUMBER, "Already initialized");
-  bounds_ = mem::Alloc<DRange>(dimension);
+  bounds_ = new DRange[dimension];
 
   dim_ = dimension;
   Reset();
+}
+
+/**
+ * Destructor: clean up memory
+ */
+template<int t_pow>
+DHrectBound<t_pow>::~DHrectBound() {
+  if(bounds_)
+    delete[] bounds_;
 }
 
 /**
@@ -64,21 +86,20 @@ void DHrectBound<t_pow>::Init(index_t dimension) {
 template<int t_pow>
 void DHrectBound<t_pow>::AverageBoxesInit(const DHrectBound& box1, const DHrectBound& box2) {
 
-  index_t dim = box1.dim();
-  DEBUG_ASSERT(dim == box2.dim());
+  dim_ = box1.dim();
+  DEBUG_ASSERT(dim_ == box2.dim());
 
-  Init(dim);
+  if(bounds_)
+    delete[] bounds_;
+  bounds_ = new DRange[dim_];
 
-  for (index_t i = 0; i < dim; i++) {
-
+  for (index_t i = 0; i < dim_; i++) {
     DRange range;
     range = box1.get(i) +  box2.get(i);
     range *= 0.5;
     bounds_[i] = range;
-
-  } 
-
-} // AverageBoxes()
+  }
+}
 
 /**
  * Resets all dimensions to the empty set.
@@ -91,12 +112,25 @@ void DHrectBound<t_pow>::Reset() {
 }
 
 /**
+ * Sets the dimensionality.
+ */
+template<int t_pow>
+void DHrectBound<t_pow>::SetSize(index_t dim) {
+  if(bounds_)
+    delete[] bounds_;
+
+  bounds_ = new DRange[dim];
+  dim_ = dim;
+  Reset();
+}
+
+/**
  * Determines if a point is within this bound.
  */
 template<int t_pow>
-bool DHrectBound<t_pow>::Contains(const Vector& point) const {
-  for (index_t i = 0; i < point.length(); i++) {
-    if (!bounds_[i].Contains(point[i])) {
+bool DHrectBound<t_pow>::Contains(const vec& point) const {
+  for (index_t i = 0; i < point.n_elem; i++) {
+    if (!bounds_[i].Contains(point(i))) {
       return false;
     }
   }
@@ -104,28 +138,11 @@ bool DHrectBound<t_pow>::Contains(const Vector& point) const {
   return true;
 }
 
-template<int t_pow>
-bool DHrectBound<t_pow>::Contains(const Vector& point, const Vector& box) const {
-  const DRange *a = this->bounds_;
-  for (index_t i = 0; i < point.length(); i++){
-    if (a[i].hi > a[i].lo){
-      if (!bounds_[i].Contains(point[i])){
-        return false;
-      }
-    } else if(point[i] > a[i].hi & point[i] < a[i].lo){
-      return false;
-    }       
-  }
-  return true;
-} 
-
-
 /**
  * Gets the range for a particular dimension.
  */
 template<int t_pow>
-const DRange& DHrectBound<t_pow>::get(index_t i) const {
-  DEBUG_BOUNDS(i, dim_);
+const DRange DHrectBound<t_pow>::operator[](index_t i) const {
   return bounds_[i];
 }
 
@@ -135,52 +152,22 @@ const DRange& DHrectBound<t_pow>::get(index_t i) const {
 template<int t_pow>
 double DHrectBound<t_pow>::CalculateMaxDistanceSq() const {
   double max_distance = 0;
-  for (index_t i = 0; i < dim_; i++) {
-    max_distance+=math::Sqr(bounds_[i].width());
-  }
+  for (index_t i = 0; i < dim_; i++)
+    max_distance += pow(bounds_[i].width(), 2);
+
   return max_distance;  
 }
 
 /** Calculates the midpoint of the range */
 template<int t_pow>
-void DHrectBound<t_pow>::CalculateMidpoint(Vector *centroid) const {
-  centroid->Init(dim_);
-  for (index_t i = 0; i < dim_; i++) {
-    (*centroid)[i] = bounds_[i].mid();
+void DHrectBound<t_pow>::CalculateMidpoint(vec& centroid) const {
+  // set size correctly if necessary
+  if(!(centroid.n_elem == dim_))
+    centroid.set_size(dim_);
+
+  for(index_t i = 0; i < dim_; i++) {
+    centroid(i) = bounds_[i].mid();
   }
-}
-/** Calculates the midpoint of the range */
-template<int t_pow>
-void DHrectBound<t_pow>::CalculateMidpointOverwrite(Vector *centroid) const {
-  for (index_t i = 0; i < dim_; i++) {
-    (*centroid)[i] = bounds_[i].mid();
-  }
-}
-
-/**
- * Calculates minimum bound-to-point squared distance.
- */
-template<int t_pow>
-double DHrectBound<t_pow>::MinDistanceSq(const double *mpoint) const {
-  double sum = 0;
-  const DRange *mbound = bounds_;
-
-  index_t d = dim_;
-
-  do {
-    double v = *mpoint;
-    double v1 = mbound->lo - v;
-    double v2 = v - mbound->hi;
-
-    v = (v1 + fabs(v1)) + (v2 + fabs(v2));
-
-    mbound++;
-    mpoint++;
-
-    sum += math::Pow<t_pow, 1>(v); // v is non-negative
-  } while (--d);
-
-  return math::Pow<2, t_pow>(sum) / 4;
 }
 
 /**
@@ -188,34 +175,46 @@ double DHrectBound<t_pow>::MinDistanceSq(const double *mpoint) const {
  * an offset between their respective coordinate systems.
  */
 template<int t_pow>
-double DHrectBound<t_pow>::MinDistanceSq(const DHrectBound& other, const Vector& offset) const {
+double DHrectBound<t_pow>::MinDistanceSq(const DHrectBound& other, const vec& offset) const {
   double sum = 0;
-  const DRange *a = this->bounds_;
-  const DRange *b = other.bounds_;
-  index_t mdim = dim_;
 
   DEBUG_SAME_SIZE(dim_, other.dim_);
   //Add Debug for offset vector
 
-  for (index_t d = 0; d < mdim; d++) {
-    double v1 = b[d].lo - offset[d] - a[d].hi;
-    double v2 = a[d].lo + offset[d] - b[d].lo;
+  for(index_t d = 0; d < dim_; d++) {
+    double v1 = other.bounds_[d].lo - offset[d] - bounds_[d].hi;
+    double v2 = bounds_[d].lo + offset[d] - other.bounds_[d].lo;
 
     double v = (v1 + fabs(v1)) + (v2 + fabs(v2));
 
-    sum += math::Pow<t_pow, 1>(v);
+    sum += pow(v, (double) t_pow);
   } 
 
-  return math::Pow<2, t_pow>(sum) / 4;
+  return pow(sum, 2.0 / (double) t_pow) / 4.0;
 }
 
 /**
  * Calculates minimum bound-to-point squared distance.
  */
 template<int t_pow>
-double DHrectBound<t_pow>::MinDistanceSq(const Vector& point) const {
-  DEBUG_SAME_SIZE(point.length(), dim_);
-  return MinDistanceSq(point.ptr());
+double DHrectBound<t_pow>::MinDistanceSq(const vec& point) const {
+  DEBUG_SAME_SIZE(point.n_elem, dim_);
+
+  double sum = 0;
+  double lower, higher;
+  for(index_t d = 0; d < dim_; d++) {
+    lower = bounds_[d].lo - point[d]; // negative if point[d] > bounds_[d]
+    higher = point[d] - bounds_[d].hi; // negative if point[d] < bounds_[d]
+
+    // since only one of 'lower' or 'higher' is negative, if we add each's
+    // absolute value to itself and then sum those two, our result is the
+    // nonnegative half of the equation times two; then we raise to power t_pow
+    sum += pow((lower + fabs(lower)) + (higher + fabs(higher)), (double) t_pow);
+  }
+  // now take the t_pow'th root (but make sure our result is squared); then
+  // divide by four to cancel out the constant of 2 (which has been squared now)
+  // that was introduced earlier
+  return pow(sum, 2.0 / (double) t_pow) / 4.0;
 }
 
 /**
@@ -226,46 +225,48 @@ double DHrectBound<t_pow>::MinDistanceSq(const Vector& point) const {
 template<int t_pow>
 double DHrectBound<t_pow>::MinDistanceSq(const DHrectBound& other) const {
   double sum = 0;
-  const DRange *a = this->bounds_;
-  const DRange *b = other.bounds_;
   index_t mdim = dim_;
 
   DEBUG_SAME_SIZE(dim_, other.dim_);
 
   for (index_t d = 0; d < mdim; d++) {
-    double v1 = b[d].lo - a[d].hi;
-    double v2 = a[d].lo - b[d].hi;
+    double v1 = other.bounds_[d].lo - bounds_[d].hi;
+    double v2 = bounds_[d].lo - other.bounds_[d].hi;
     // We invoke the following:
     //   x + fabs(x) = max(x * 2, 0)
     //   (x * 2)^2 / 4 = x^2
     double v = (v1 + fabs(v1)) + (v2 + fabs(v2));
 
-    sum += math::Pow<t_pow, 1>(v); // v is non-negative
+    sum += pow(v, (double) t_pow);
   }
 
-  return math::Pow<2, t_pow>(sum) / 4;
+  return pow(sum, 2.0 / (double) t_pow) / 4.0;
 }
 
 /**
  * Calculates maximum bound-to-point squared distance.
  */
 template<int t_pow>
-double DHrectBound<t_pow>::MaxDistanceSq(const Vector& point) const {
+double DHrectBound<t_pow>::MaxDistanceSq(const vec& point) const {
   double sum = 0;
 
-  DEBUG_SAME_SIZE(point.length(), dim_);
+  DEBUG_SAME_SIZE(point.n_elem, dim_);
 
+  double v;
   for (index_t d = 0; d < dim_; d++) {
-    double v = std::max(point[d] - bounds_[d].lo, bounds_[d].hi - point[d]);
-    sum += math::Pow<t_pow, 1>(v); // v is non-negative
+    double v = fabs(std::max(
+      point[d] - bounds_[d].lo,
+      bounds_[d].hi - point[d]));
+    sum += pow(v, (double) t_pow);
   }
 
-  return math::Pow<2, t_pow>(sum);
+  return pow(sum, 2.0 / (double) t_pow);
 }
 
 /**
  * Calculates maximum bound-to-point squared distance.
  */
+/*
 template<int t_pow>
 double DHrectBound<t_pow>::MaxDistanceSq(const double *point) const {
   double sum = 0;
@@ -277,6 +278,7 @@ double DHrectBound<t_pow>::MaxDistanceSq(const double *point) const {
 
   return math::Pow<2, t_pow>(sum);
 }
+*/
 
 /**
  * Computes maximum distance.
@@ -284,172 +286,165 @@ double DHrectBound<t_pow>::MaxDistanceSq(const double *point) const {
 template<int t_pow>
 double DHrectBound<t_pow>::MaxDistanceSq(const DHrectBound& other) const {
   double sum = 0;
-  const DRange *a = this->bounds_;
-  const DRange *b = other.bounds_;
 
   DEBUG_SAME_SIZE(dim_, other.dim_);
 
-  for (index_t d = 0; d < dim_; d++) {
-    double v = std::max(b[d].hi - a[d].lo, a[d].hi - b[d].lo);
-    sum += math::PowAbs<t_pow, 1>(v); // v is non-negative
+  double v;
+  for(index_t d = 0; d < dim_; d++) {
+    v = fabs(std::max(
+      other.bounds_[d].hi - bounds_[d].lo,
+      bounds_[d].hi - other.bounds_[d].lo));
+    sum += pow(v, (double) t_pow); // v is non-negative
   }
 
-  return math::Pow<2, t_pow>(sum);
+  return pow(sum, 2.0 / (double) t_pow);
 }
 
 /**
  * Computes maximum distance with offset
  */
 template<int t_pow>
-double DHrectBound<t_pow>::MaxDistanceSq(const DHrectBound& other, const Vector& offset) const {
+double DHrectBound<t_pow>::MaxDistanceSq(const DHrectBound& other, const vec& offset) const {
   double sum = 0;
-  const DRange *a = this->bounds_;
-  const DRange *b = other.bounds_;
 
   DEBUG_SAME_SIZE(dim_, other.dim_);
 
   for (index_t d = 0; d < dim_; d++) {
-    double v = std::max(b[d].hi + offset[d] - a[d].lo, 
-        a[d].hi - offset[d] - b[d].lo);
-    sum += math::PowAbs<t_pow, 1>(v); // v is non-negative
+    double v = fabs(std::max(
+      other.bounds_[d].hi + offset[d] - bounds_[d].lo, 
+      bounds_[d].hi - offset[d] - other.bounds_[d].lo));
+    sum += pow(v, (double) t_pow); // v is non-negative
   }
 
-  return math::Pow<2, t_pow>(sum);
+  return pow(sum, 2.0 / (double) t_pow);
 }
 
 /**
  * Computes minimum distance between boxes in periodic coordinate system
  */
 template<int t_pow>
-double DHrectBound<t_pow>::PeriodicMinDistanceSq(const DHrectBound& other, const Vector& box_size) const {
+double DHrectBound<t_pow>::PeriodicMinDistanceSq(const DHrectBound& other, const vec& box_size) const {
   double sum = 0;
-  const DRange *a = this->bounds_;
-  const DRange *b = other.bounds_;
 
   DEBUG_SAME_SIZE(dim_, other.dim_);
 
   for (index_t d = 0; d < dim_; d++){      
     double v = 0, d1, d2, d3;
-    d1 = (a[d].hi > a[d].lo | b[d].hi > b[d].lo)*
-      min(b[d].lo - a[d].hi, a[d].lo-b[d].hi);
-    d2 = (a[d].hi > a[d].lo & b[d].hi > b[d].lo)*
-      min(b[d].lo - a[d].hi, a[d].lo-b[d].hi + box_size[d]);
-    d3 = (a[d].hi > a[d].lo & b[d].hi > b[d].lo)*
-      min(b[d].lo - a[d].hi + box_size[d], a[d].lo-b[d].hi);
-    v = (d1 + fabs(d1)) + (d2+  fabs(d2)) + (d3 + fabs(d3));
-    sum += math::Pow<t_pow, 1>(v);
-  }   
-  return math::Pow<2, t_pow>(sum) / 4;
+    d1 = (bounds_[d].hi > bounds_[d].lo | other.bounds_[d].hi > other.bounds_[d].lo) *
+      min(other.bounds_[d].lo - bounds_[d].hi, bounds_[d].lo - other.bounds_[d].hi);
+    d2 = (bounds_[d].hi > bounds_[d].lo & other.bounds_[d].hi > other.bounds_[d].lo) *
+      min(other.bounds_[d].lo - bounds_[d].hi, bounds_[d].lo - other.bounds_[d].hi + box_size[d]);
+    d3 = (bounds_[d].hi > bounds_[d].lo & other.bounds_[d].hi > other.bounds_[d].lo) *
+      min(other.bounds_[d].lo - bounds_[d].hi + box_size[d], bounds_[d].lo - other.bounds_[d].hi);
+    v = (d1 + fabs(d1)) + (d2 + fabs(d2)) + (d3 + fabs(d3));
+    sum += pow(v, (double) t_pow);
+  }
+  return pow(sum, 2.0 / (double) t_pow) / 4.0;
 }
 
 template<int t_pow>
-double DHrectBound<t_pow>::PeriodicMinDistanceSq(const Vector& point, const Vector& box_size) const {
-  double sum = 0;  
-  const DRange *b = this->bounds_;
+double DHrectBound<t_pow>::PeriodicMinDistanceSq(const vec& point, const vec& box_size) const {
+  double sum = 0;
 
   for (index_t d = 0; d < dim_; d++){
     double a = point[d];
     double v = 0, bh;
-    bh = b[d].hi-b[d].lo;
-    bh = bh - floor(bh / box_size[d])*box_size[d];
-    a = a - b[d].lo;
-    a = a - floor(a / box_size[d])*box_size[d];
-    if (bh > a){
+    bh = bounds_[d].hi - bounds_[d].lo;
+    bh = bh - floor(bh / box_size[d]) * box_size[d];
+    a = a - bounds_[d].lo;
+    a = a - floor(a / box_size[d]) * box_size[d];
+    if (bh > a)
       v = min(a - bh, box_size[d]-a);
-    }
-    sum += math::Pow<t_pow, 1>(v);
+    
+    sum += pow(v, (double) t_pow);
   }
 
-  return math::Pow<2, t_pow>(sum);
+  return pow(sum, 2.0 / (double) t_pow);
 }
 
 /**
  * Computes maximum distance between boxes in periodic coordinate system
  */
 template<int t_pow>
-double DHrectBound<t_pow>::PeriodicMaxDistanceSq(const DHrectBound& other, const Vector& box_size) const {
+double DHrectBound<t_pow>::PeriodicMaxDistanceSq(const DHrectBound& other, const vec& box_size) const {
   double sum = 0;
-  const DRange *a = this->bounds_;
-  const DRange *b = other.bounds_;
 
   DEBUG_SAME_SIZE(dim_, other.dim_);
 
   for (index_t d = 0; d < dim_; d++){
     double v = box_size[d] / 2.0;
     double dh, dl;
-    dh = a[d].hi - b[d].lo;
-    dh = dh - floor(dh / box_size[d])*box_size[d];
-    dl = b[d].hi - a[d].lo;
-    dl = dl - floor(dl / box_size[d])*box_size[d];
-    v = max(min(dh,v), min(dl, v));
+    dh = bounds_[d].hi - other.bounds_[d].lo;
+    dh = dh - floor(dh / box_size[d]) * box_size[d];
+    dl = other.bounds_[d].hi - bounds_[d].lo;
+    dl = dl - floor(dl / box_size[d]) * box_size[d];
+    v = fabs(max(min(dh, v), min(dl, v)));
 
-    sum += math::PowAbs<t_pow, 1>(v);
-  }   
-  return math::Pow<2, t_pow>(sum);
+    sum += pow(v, (double) t_pow);
+  }
+  return pow(sum, 2.0 / (double) t_pow);  
 }
 
 template<int t_pow>
-double DHrectBound<t_pow>::PeriodicMaxDistanceSq(const Vector& point, const Vector& box_size) const {
+double DHrectBound<t_pow>::PeriodicMaxDistanceSq(const vec& point, const vec& box_size) const {
   double sum = 0;
-  const DRange *a = this->bounds_;  
-  for (index_t d = 0; d < dim_; d++){
+
+  for (index_t d = 0; d < dim_; d++) {
     double b = point[d];
     double v = box_size[d] / 2.0;
     double ah, al;
-    ah = a[d].hi - b;
-    ah = ah - floor(ah / box_size[d])*box_size[d];
-    if (ah < v){
+    ah = bounds_[d].hi - b;
+    ah = ah - floor(ah / box_size[d]) * box_size[d];
+    if (ah < v) {
       v = ah;
     } else {
-      al = a[d].lo - b;
-      al = al - floor(al / box_size[d])*box_size[d];
-      if (al > v){
-        v = 2*v-al;
+      al = bounds_[d].lo - b;
+      al = al - floor(al / box_size[d]) * box_size[d];
+      if (al > v) {
+        v = (2 * v) - al;
       }
     }
-    sum += math::PowAbs<t_pow, 1>(v);
-  }   
-  return math::Pow<2, t_pow>(sum);
+    sum += pow(fabs(v), (double) t_pow);
+  }
+  return pow(sum, 2.0 / (double) t_pow);
 }
 
 
 template<int t_pow>
 double DHrectBound<t_pow>::MaxDelta(const DHrectBound& other, double box_width, int dim) const {
-  const DRange *a = this->bounds_; 
-  const DRange *b = other.bounds_;
-  double result = 0.5*box_width;
-  double temp = b[dim].hi - a[dim].lo;
-  temp = temp - floor(temp / box_width)*box_width;
-  if (temp > box_width / 2){
-    temp = b[dim].lo - a[dim].hi;
-    temp = temp - floor(temp / box_width)*box_width;
-    if (temp > box_width / 2){
-      result = b[dim].hi - a[dim].lo;
-      result = result - floor(temp / box_width + 1)*box_width;
-    } 
+  double result = 0.5 * box_width;
+  double temp = other.bounds_[dim].hi - bounds_[dim].lo;
+  temp = temp - floor(temp / box_width) * box_width;
+  if (temp > box_width / 2) {
+    temp = other.bounds_[dim].lo - bounds_[dim].hi;
+    temp = temp - floor(temp / box_width) * box_width;
+    if (temp > box_width / 2) {
+      result = other.bounds_[dim].hi - bounds_[dim].lo;
+      result = result - floor(temp / box_width + 1) * box_width;
+    }
   } else {
     result = temp;
   }
+
   return result;
 }
 
 template<int t_pow>
 double DHrectBound<t_pow>::MinDelta(const DHrectBound& other, double box_width, int dim) const {
-  const DRange *a = this->bounds_;   
-  const DRange *b  = other.bounds_;
   double result = -0.5 * box_width;
-  double temp = b[dim].hi - a[dim].lo;
-  temp = temp - floor(temp/  box_width)*box_width;
-  if (temp > box_width / 2){
-    temp = b[dim].hi - a[dim].hi;
-    temp = temp - floor(temp / box_width)*box_width;
-    if (temp > box_width / 2){
+  double temp = other.bounds_[dim].hi - bounds_[dim].lo;
+  temp = temp - floor(temp / box_width) * box_width;
+  if (temp > box_width / 2) {
+    temp = other.bounds_[dim].hi - bounds_[dim].hi;
+    temp -= floor(temp / box_width) * box_width;
+    if (temp > box_width / 2)
       result = temp - box_width;
-    } 
+
   } else {
-    temp = b[dim].hi - a[dim].hi;
-    result = temp - floor(temp / box_width)*box_width;
+    temp = other.bounds_[dim].hi - bounds_[dim].hi;
+    result = temp - floor(temp / box_width) * box_width;
   }
+
   return result;
 }
 
@@ -460,56 +455,59 @@ template<int t_pow>
 DRange DHrectBound<t_pow>::RangeDistanceSq(const DHrectBound& other) const {
   double sum_lo = 0;
   double sum_hi = 0;
-  const DRange *a = this->bounds_;
-  const DRange *b = other.bounds_;
-  index_t mdim = dim_;
 
   DEBUG_SAME_SIZE(dim_, other.dim_);
 
-  for (index_t d = 0; d < mdim; d++) {
-    double v1 = b[d].lo - a[d].hi;
-    double v2 = a[d].lo - b[d].hi;
-    // We invoke the following:
-    //   x + fabs(x) = max(x * 2, 0)
-    //   (x * 2)^2 / 4 = x^2
-    double v_lo = (v1 + fabs(v1)) + (v2 + fabs(v2));
-    double v_hi = -std::min(v1, v2);
-
-    sum_lo += math::Pow<t_pow, 1>(v_lo); // v_lo is non-negative
-    sum_hi += math::Pow<t_pow, 1>(v_hi); // v_hi is non-negative
+  double v1, v2, v_lo, v_hi;
+  for (index_t d = 0; d < dim_; d++) {
+    v1 = other.bounds_[d].lo - bounds_[d].hi;
+    v2 = bounds_[d].lo - other.bounds_[d].hi;
+    // one of v1 or v2 is negative
+    if(v1 >= v2) {
+      v_hi = -v2; // make it nonnegative
+      v_lo = (v1 > 0) ? v1 : 0; // force to be 0 if negative
+    } else {
+      v_hi = -v1; // make it nonnegative
+      v_lo = (v2 > 0) ? v2 : 0; // force to be 0 if negative
+    }
+    
+    sum_lo += pow(v_lo, (double) t_pow);
+    sum_hi += pow(v_hi, (double) t_pow);
   }
 
-  return DRange(math::Pow<2, t_pow>(sum_lo) / 4,
-      math::Pow<2, t_pow>(sum_hi));
+  return DRange(pow(sum_lo, 2.0 / (double) t_pow),
+                pow(sum_hi, 2.0 / (double) t_pow));
 }
 
 /**
  * Calculates minimum and maximum bound-to-point squared distance.
  */
 template<int t_pow>
-DRange DHrectBound<t_pow>::RangeDistanceSq(const Vector& point) const {
+DRange DHrectBound<t_pow>::RangeDistanceSq(const vec& point) const {
   double sum_lo = 0;
   double sum_hi = 0;
-  const double *mpoint = point.ptr();
-  const DRange *mbound = bounds_;
 
-  DEBUG_SAME_SIZE(point.length(), dim_);
+  DEBUG_SAME_SIZE(point.n_elem, dim_);
 
-  index_t d = dim_;
-  do {
-    double v = *mpoint;
-    double v1 = mbound->lo - v;
-    double v2 = v - mbound->hi;
+  double v1, v2, v_lo, v_hi;
+  for(index_t d = 0; d < dim_; d++) {
+    v1 = bounds_[d].lo - point[d];
+    v2 = point[d] - bounds_[d].hi;
+    // one of v1 or v2 is negative
+    if(v1 >= 0) {
+      v_hi = -v2;
+      v_lo = v1;
+    } else {
+      v_hi = -v1;
+      v_lo = v2;
+    }
 
-    sum_lo += math::Pow<t_pow, 1>((v1 + fabs(v1)) + (v2 + fabs(v2)));
-    sum_hi += math::Pow<t_pow, 1>(-std::min(v1, v2));
+    sum_lo += pow(v_lo, (double) t_pow);
+    sum_hi += pow(v_hi, (double) t_pow);
+  }
 
-    mpoint++;
-    mbound++;
-  } while (--d);
-
-  return DRange(math::Pow<2, t_pow>(sum_lo) / 4,
-      math::Pow<2, t_pow>(sum_hi));
+  return DRange(pow(sum_lo, 2.0 / (double) t_pow),
+                pow(sum_hi, 2.0 / (double) t_pow));
 }
 
 /**
@@ -526,25 +524,20 @@ DRange DHrectBound<t_pow>::RangeDistanceSq(const Vector& point) const {
 template<int t_pow>
 double DHrectBound<t_pow>::MinToMidSq(const DHrectBound& other) const {
   double sum = 0;
-  const DRange *a = this->bounds_;
-  const DRange *b = other.bounds_;
 
   DEBUG_SAME_SIZE(dim_, other.dim_);
 
   for (index_t d = 0; d < dim_; d++) {
-    double v = b->mid();
-    double v1 = a->lo - v;
-    double v2 = v - a->hi;
+    double v = other.bounds_[d].mid();
+    double v1 = bounds_[d].lo - v;
+    double v2 = v - bounds_[d].hi;
 
     v = (v1 + fabs(v1)) + (v2 + fabs(v2));
 
-    a++;
-    b++;
-
-    sum += math::Pow<t_pow, 1>(v); // v is non-negative
+    sum += pow(v, (double) t_pow); // v is non-negative
   }
 
-  return math::Pow<2, t_pow>(sum) / 4;
+  return pow(sum, 2.0 / (double) t_pow) / 4.0;
 }
 
 /**
@@ -553,21 +546,18 @@ double DHrectBound<t_pow>::MinToMidSq(const DHrectBound& other) const {
 template<int t_pow>
 double DHrectBound<t_pow>::MinimaxDistanceSq(const DHrectBound& other) const {
   double sum = 0;
-  const DRange *a = this->bounds_;
-  const DRange *b = other.bounds_;
-  index_t mdim = dim_;
 
   DEBUG_SAME_SIZE(dim_, other.dim_);
 
-  for (index_t d = 0; d < mdim; d++) {
-    double v1 = b[d].hi - a[d].hi;
-    double v2 = a[d].lo - b[d].lo;
+  for(index_t d = 0; d < dim_; d++) {
+    double v1 = other.bounds_[d].hi - bounds_[d].hi;
+    double v2 = bounds_[d].lo - other.bounds_[d].lo;
     double v = std::max(v1, v2);
     v = (v + fabs(v)); /* truncate negatives to zero */
-    sum += math::Pow<t_pow, 1>(v); // v is non-negative
+    sum += pow(v, (double) t_pow); // v is non-negative
   }
 
-  return math::Pow<2, t_pow>(sum) / 4;
+  return pow(sum, 2.0 / (double) t_pow) / 4.0;
 }
 
 /**
@@ -582,18 +572,22 @@ double DHrectBound<t_pow>::MidDistanceSq(const DHrectBound& other) const {
   DEBUG_SAME_SIZE(dim_, other.dim_);
 
   for (index_t d = 0; d < dim_; d++) {
-    sum += math::PowAbs<t_pow, 1>(a[d].hi + a[d].lo - b[d].hi - b[d].lo);
+    // take the midpoint of each dimension (left multiplied by two for
+    // calculation speed) and subtract from each other, then raise to t_pow
+    sum += pow(fabs(bounds_[d].hi + bounds_[d].lo - other.bounds_[d].hi - other.bounds_[d].lo), (double) t_pow);
   }
 
-  return math::Pow<2, t_pow>(sum) / 4;
+  // take t_pow/2'th root and divide by constant of 4 (leftover from previous
+  // step)
+  return pow(sum, 2.0 / (double) t_pow) / 4.0;
 }
 
 /**
  * Expands this region to include a new point.
  */
 template<int t_pow>
-DHrectBound<t_pow>& DHrectBound<t_pow>::operator|=(const Vector& vector) {
-  DEBUG_SAME_SIZE(vector.length(), dim_);
+DHrectBound<t_pow>& DHrectBound<t_pow>::operator|=(const vec& vector) {
+  DEBUG_SAME_SIZE(vector.n_elem, dim_);
 
   for (index_t i = 0; i < dim_; i++) {
     bounds_[i] |= vector[i];
@@ -622,8 +616,8 @@ DHrectBound<t_pow>& DHrectBound<t_pow>::operator|=(const DHrectBound& other) {
  * minimize added volume in periodic coordinates.
  */
 template<int t_pow>
-DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const Vector& other, const Vector& size) {
-  DEBUG_SAME_SIZE(other.length(), dim_);
+DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const vec& other, const vec& size) {
+  DEBUG_SAME_SIZE(other.n_elem, dim_);
   // Catch case of uninitialized bounds
   if (bounds_[0].hi < 0){
     for (index_t i = 0; i < dim_; i++){
@@ -635,15 +629,15 @@ DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const Vector& other, const Vector& s
     double ah, al;
     ah = bounds_[i].hi - other[i];
     al = bounds_[i].lo - other[i];
-    ah = ah - floor(ah / size[i])*size[i];
-    al = al - floor(al / size[i])*size[i];
-    if (ah < al){
-      if (size[i] - ah < al){
+    ah = ah - floor(ah / size[i]) * size[i];
+    al = al - floor(al / size[i]) * size[i];
+    if (ah < al) {
+      if (size[i] - ah < al) {
         bounds_[i].hi = other[i];
       } else {
         bounds_[i].lo = other[i];
       }
-    }     
+    }
   }
   return *this;
 }
@@ -652,7 +646,7 @@ DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const Vector& other, const Vector& s
  * Expand this bounding box in periodic coordinates, minimizing added volume.
  */
 template<int t_pow>
-DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const DHrectBound& other, const Vector& size){
+DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const DHrectBound& other, const vec& size){
   if (bounds_[0].hi < 0){
     for (index_t i = 0; i < dim_; i++){
       bounds_[i] |= other.bounds_[i];
@@ -668,9 +662,9 @@ DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const DHrectBound& other, const Vect
     ah = ah - al;    
     bh = bh - al;
     bl = bl - al;              
-    ah = ah - floor(ah / size[i])*size[i];
-    bh = bh - floor(bh / size[i])*size[i];
-    bl = bl - floor(bl / size[i])*size[i];
+    ah = ah - floor(ah / size[i]) * size[i];
+    bh = bh - floor(bh / size[i]) * size[i];
+    bl = bl - floor(bl / size[i]) * size[i];
 
     if (((bh > ah) & (bh < bl | ah > bl )) ||
         (bh >= bl & bl > ah & bh < ah -bl + size[i])){
