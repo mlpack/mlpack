@@ -173,7 +173,9 @@ class AllkNN {
   double MinPointNodeDistSq_ (const Vector& query_point, TreeType* reference_node) {
     // node->bound() gives us the DHrectBound class for the node
     // It has a function MinDistanceSq which takes another DHrectBound
-    return reference_node->bound().MinDistanceSq(query_point);
+    arma::vec tmp;
+    arma_compat::vectorToVec(query_point, tmp);
+    return reference_node->bound().MinDistanceSq(tmp);
   } 
   
   
@@ -408,8 +410,10 @@ class AllkNN {
       *min_dist_so_far=neighbor_distances_[ind+knns_-1];
     } else {
       // We'll order the computation by distance 
-      double left_distance = reference_node->left()->bound().MinDistanceSq(point);
-      double right_distance = reference_node->right()->bound().MinDistanceSq(point);
+      arma::vec tmp;
+      arma_compat::vectorToVec(point, tmp);
+      double left_distance = reference_node->left()->bound().MinDistanceSq(tmp);
+      double right_distance = reference_node->right()->bound().MinDistanceSq(tmp);
       
       if (left_distance < right_distance) {
         ComputeSingleNeighborsRecursion_(point_id, point, reference_node->left(), 
