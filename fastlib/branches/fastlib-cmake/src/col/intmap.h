@@ -53,13 +53,26 @@ class DenseIntMap {
   index_t size_;
   Value default_value_;
 
-  OT_DEF(DenseIntMap) {
+  /*OT_DEF(DenseIntMap) {
     OT_MY_OBJECT(size_);
     OT_MY_OBJECT(default_value_);
     OT_MALLOC_ARRAY(ptr_, size_);
-  }
+  }*/
 
  public:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    int i;
+    for(i = 0; i < size_; i++)
+    {
+      ar & ptr_[i];
+    }
+    ar & size_;
+    ar & default_value_;
+  }
+
   /** Creates a blank mapping. */
   void Init() {
     ptr_ = NULL;

@@ -78,7 +78,7 @@ class DatasetFeature {
   /** If nominal, the names of each numbered value. */
   ArrayList<String> value_names_;
   
-  OBJECT_TRAVERSAL(DatasetFeature) {
+  /*OBJECT_TRAVERSAL(DatasetFeature) {
     OT_OBJ(name_);
     //OT_OBJ(reinterpret_cast<int &>(type_));
     OT_ENUM_EXPERT(type_, int,
@@ -86,7 +86,7 @@ class DatasetFeature {
       OT_ENUM_VAL(INTEGER)
       OT_ENUM_VAL(NOMINAL));
     OT_OBJ(value_names_);
-  }
+  }*/
 
  /**
   * Initialization common to all features.
@@ -99,6 +99,16 @@ class DatasetFeature {
  }
 
  public:
+
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    ar & name_;
+    ar & type_;
+    ar & value_names_;
+  }
+
   /**
    * Initialize to be a continuous feature.
    *

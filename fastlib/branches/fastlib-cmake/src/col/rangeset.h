@@ -68,11 +68,19 @@ class RangeSet {
  private:
   ArrayList<Range> ranges_;
   
-  OT_DEF(RangeSet) {
+  /*OT_DEF(RangeSet) {
     OT_MY_OBJECT(ranges_);
-  }
+  }*/
 
  public:
+
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    ar & ranges_;
+  }
+
   /**
    * Creates an empty set of ranges.
    */

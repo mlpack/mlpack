@@ -79,7 +79,16 @@ class GenVector {
   index_t length_;
   /** Whether this should be freed, i.e. it is not an alias. */
   bool should_free_;
-  
+ 
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    ar & ptr_;
+    ar & length_;
+    ar & should_free_;
+  }
+ 
   OBJECT_TRAVERSAL_ONLY(GenVector) {
     OT_OBJ(length_);
     OT_ALLOC(ptr_, length_);
@@ -464,6 +473,16 @@ class GenMatrix {
   index_t n_cols_;
   /** Whether I am a strong copy (not an alias). */
   bool should_free_;
+
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    ar & ptr_;
+    ar & n_rows_;
+    ar & n_cols_;
+    ar & should_free_;
+  }
 
   OBJECT_TRAVERSAL_ONLY(GenMatrix) {
     OT_OBJ(n_rows_);

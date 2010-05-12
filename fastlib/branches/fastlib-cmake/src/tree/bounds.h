@@ -62,12 +62,26 @@ class DHrectBound {
   DRange *bounds_;
   index_t dim_;
 
-  OBJECT_TRAVERSAL(DHrectBound) {
+  /*OBJECT_TRAVERSAL(DHrectBound) {
     OT_OBJ(dim_);
     OT_ALLOC(bounds_, dim_);
-  };
+  };*/
 
  public:
+  
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    int i;
+
+    for(i = 0; i < dim_; i++)
+    {
+      ar & bounds_[i];
+    }
+    ar & dim_;
+  }
+
   /**
    * Initializes to specified dimensionality with each dimension the empty
    * set.
