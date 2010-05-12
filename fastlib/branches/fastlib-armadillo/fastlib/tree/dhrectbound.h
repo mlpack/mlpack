@@ -43,10 +43,7 @@
 #ifndef TREE_DHRECTBOUND_H
 #define TREE_DHRECTBOUND_H
 
-#include "../la/matrix.h"
-#include "../la/la.h"
-
-#include "../math/math_lib.h"
+#include <armadillo>
 
 /**
  * Hyper-rectangle bound for an L-metric.
@@ -62,17 +59,27 @@ class DHrectBound {
     DRange *bounds_;
     index_t dim_;
 
-    OBJECT_TRAVERSAL(DHrectBound) {
-      OT_OBJ(dim_);
-      OT_ALLOC(bounds_, dim_);
-    };
+//    OBJECT_TRAVERSAL(DHrectBound) {
+//      OT_OBJ(dim_);
+    //  OT_ALLOC(bounds_, dim_);
+//    };
 
   public:
+    /**
+     * Empty constructor.
+     */
+    DHrectBound();
+
     /**
      * Initializes to specified dimensionality with each dimension the empty
      * set.
      */
-    void Init(index_t dimension);
+    DHrectBound(index_t dimension);
+
+    /**
+     * Destructor: clean up memory.
+     */
+    ~DHrectBound();
 
     /**
      * Makes this (uninitialized) box the average of the two arguments, 
@@ -89,10 +96,14 @@ class DHrectBound {
     void Reset();
 
     /**
+     * Sets the dimensionality of the bound.
+     */
+    void SetSize(index_t dim);
+
+    /**
      * Determines if a point is within this bound.
      */
-    bool Contains(const Vector& point) const;
-    bool Contains(const Vector& point, const Vector& box) const; 
+    bool Contains(const arma::vec& point) const;
 
     /** Gets the dimensionality */
     index_t dim() const { return dim_; }
@@ -100,7 +111,7 @@ class DHrectBound {
     /**
      * Gets the range for a particular dimension.
      */
-    const DRange& get(index_t i) const;
+    const DRange operator[](index_t i) const;
 
     /**
      * Calculates the maximum distance within the rectangle
@@ -108,26 +119,18 @@ class DHrectBound {
     double CalculateMaxDistanceSq() const;
 
     /** Calculates the midpoint of the range */
-    void CalculateMidpoint(Vector *centroid) const;
-    /** Calculates the midpoint of the range, assuming centroid is
-      * already initialized to the right size */
-    void CalculateMidpointOverwrite(Vector *centroid) const;
-
-    /**
-     * Calculates minimum bound-to-point squared distance.
-     */
-    double MinDistanceSq(const double *mpoint) const;
+    void CalculateMidpoint(arma::vec& centroid) const;
 
     /**
      * Calculates minimum bound-to-bound squared distance, with
      * an offset between their respective coordinate systems.
      */
-    double MinDistanceSq(const DHrectBound& other, const Vector& offset) const;
+    double MinDistanceSq(const DHrectBound& other, const arma::vec& offset) const;
 
     /**
      * Calculates minimum bound-to-point squared distance.
      */
-    double MinDistanceSq(const Vector& point) const;
+    double MinDistanceSq(const arma::vec& point) const;
 
     /**
      * Calculates minimum bound-to-bound squared distance.
@@ -139,12 +142,12 @@ class DHrectBound {
     /**
      * Calculates maximum bound-to-point squared distance.
      */
-    double MaxDistanceSq(const Vector& point) const;
+    double MaxDistanceSq(const arma::vec& point) const;
 
     /**
      * Calculates maximum bound-to-point squared distance.
      */
-    double MaxDistanceSq(const double *point) const;
+    //double MaxDistanceSq(const double *point) const;
 
     /**
      * Computes maximum distance.
@@ -154,19 +157,19 @@ class DHrectBound {
     /**
      * Computes maximum distance with offset
      */
-    double MaxDistanceSq(const DHrectBound& other, const Vector& offset) const;
+    double MaxDistanceSq(const DHrectBound& other, const arma::vec& offset) const;
 
     /**
      * Computes minimum distance between boxes in periodic coordinate system
      */
-    double PeriodicMinDistanceSq(const DHrectBound& other, const Vector& box_size) const;
-    double PeriodicMinDistanceSq(const Vector& point, const Vector& box_size) const;
+    double PeriodicMinDistanceSq(const DHrectBound& other, const arma::vec& box_size) const;
+    double PeriodicMinDistanceSq(const arma::vec& point, const arma::vec& box_size) const;
 
     /**
      * Computes maximum distance between boxes in periodic coordinate system
      */
-    double PeriodicMaxDistanceSq(const DHrectBound& other, const Vector& box_size) const;
-    double PeriodicMaxDistanceSq(const Vector& point, const Vector& box_size) const;
+    double PeriodicMaxDistanceSq(const DHrectBound& other, const arma::vec& box_size) const;
+    double PeriodicMaxDistanceSq(const arma::vec& point, const arma::vec& box_size) const;
 
     double MaxDelta(const DHrectBound& other, double box_width, int dim) const;
     double MinDelta(const DHrectBound& other, double box_width, int dim) const;
@@ -179,7 +182,7 @@ class DHrectBound {
     /**
      * Calculates minimum and maximum bound-to-point squared distance.
      */
-    DRange RangeDistanceSq(const Vector& point) const;
+    DRange RangeDistanceSq(const arma::vec& point) const;
 
     /**
      * Calculates closest-to-their-midpoint bounding box distance,
@@ -207,7 +210,7 @@ class DHrectBound {
     /**
      * Expands this region to include a new point.
      */
-    DHrectBound& operator|=(const Vector& vector);
+    DHrectBound& operator|=(const arma::vec& vector);
 
     /**
      * Expands this region to encompass another bound.
@@ -218,12 +221,12 @@ class DHrectBound {
      * Expand this bounding box to encompass another point. Done to 
      * minimize added volume in periodic coordinates.
      */
-    DHrectBound& Add(const Vector&  other, const Vector& size);
+    DHrectBound& Add(const arma::vec& other, const arma::vec& size);
 
     /**
      * Expand this bounding box in periodic coordinates, minimizing added volume.
      */
-    DHrectBound& Add(const DHrectBound& other, const Vector& size);
+    DHrectBound& Add(const DHrectBound& other, const arma::vec& size);
 };
 
 #include "dhrectbound_impl.h"

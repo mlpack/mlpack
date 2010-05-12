@@ -31,6 +31,9 @@
  */
 /* Implementation for the regular pointer-style kd-tree builder. */
 
+#ifndef TREE_KDTREE_IMPL_H
+#define TREE_KDTREE_IMPL_H
+
 #include "../base/arma_compat.h"
 
 namespace tree_kdtree_private {
@@ -42,7 +45,10 @@ namespace tree_kdtree_private {
     for (i = 0; i < bound_dimensions.length(); i++)
       (*bound_vector)[i] = point[(int) bound_dimensions[i]];
   }
-  
+
+  void MakeBoundVector(const arma::vec& point,
+                       const Vector& bound_dimensions,
+                       arma::vec& bound_vector);
 
   template<typename TBound, typename T>
   void SelectFindBoundFromMatrix(const arma::Mat<T>& matrix,
@@ -52,14 +58,11 @@ namespace tree_kdtree_private {
                                  TBound *bounds) {
     index_t end = first + count;
     for(index_t i = first; i < end; i++) {
-      GenVector<T> col;
-      arma_compat::armaColVector(matrix, i, col);
       if (split_dimensions.length() == matrix.n_rows){
-	*bounds |= col;
+	*bounds |= matrix.col(i);
       } else {
-	GenVector<T> sub_col;
-	sub_col.Init(split_dimensions.length());
-	MakeBoundVector(col, split_dimensions, &sub_col);	
+        arma::vec sub_col(split_dimensions.length());
+	MakeBoundVector(matrix.col(i), split_dimensions, sub_col);
 	*bounds |= sub_col;
       }          
     }
@@ -120,28 +123,24 @@ namespace tree_kdtree_private {
      */
     for (;;) {
       while (matrix(dim, left) < splitvalue && likely(left <= right)) {
-        GenVector<T> left_vector;
-        arma_compat::armaColVector(matrix, left, left_vector);
-	if (split_dimensions.length() == matrix.n_rows){
+	arma::vec left_vector = matrix.col(left);
+        if (split_dimensions.length() == matrix.n_rows){
 	  left_bound |= left_vector;
 	} else {
-	  GenVector<T> sub_left_vector;
-	  sub_left_vector.Init(split_dimensions.length());
-	  MakeBoundVector(left_vector, split_dimensions, &sub_left_vector);
+	  arma::vec sub_left_vector(split_dimensions.length());
+	  MakeBoundVector(left_vector, split_dimensions, sub_left_vector);
 	  left_bound |= sub_left_vector;
 	}
         left++;
       }
 
       while (matrix(dim, right) >= splitvalue && likely(left <= right)) {
-        GenVector<T> right_vector;
-        arma_compat::armaColVector(matrix, right, right_vector);
+        arma::vec right_vector = matrix.col(right);
 	if (split_dimensions.length() == matrix.n_rows){
 	  right_bound |= right_vector;
 	} else {
-	  GenVector<T> sub_right_vector;
-	  sub_right_vector.Init(split_dimensions.length());
-	  MakeBoundVector(right_vector, split_dimensions, &sub_right_vector);
+	  arma::vec sub_right_vector(split_dimensions.length());
+	  MakeBoundVector(right_vector, split_dimensions, sub_right_vector);
 	  right_bound |= sub_right_vector;
 	}        
         right--;
@@ -152,29 +151,25 @@ namespace tree_kdtree_private {
         break;
       }
 
-      GenVector<T> left_vector;
-      GenVector<T> right_vector;
+      // swap left and right vector
+      matrix.swap_cols(left, right);
 
-      arma_compat::armaColVector(matrix, left, left_vector);
-      arma_compat::armaColVector(matrix, right, right_vector);
-
-      left_vector.SwapValues(&right_vector);
+      arma::vec left_vector = matrix.col(left);
+      arma::vec right_vector = matrix.col(right);
 
       if (split_dimensions.length() == matrix.n_rows){
 	  left_bound |= left_vector;
       } else {
-	GenVector<T> sub_left_vector;
-	sub_left_vector.Init(split_dimensions.length());
-	MakeBoundVector(left_vector, split_dimensions, &sub_left_vector);
+	arma::vec sub_left_vector(split_dimensions.length());
+	MakeBoundVector(left_vector, split_dimensions, sub_left_vector);
 	left_bound |= sub_left_vector;
       }  
 
       if (split_dimensions.length() == matrix.n_rows){
 	  right_bound |= right_vector;
       } else {
-	GenVector<T> sub_right_vector;
-	sub_right_vector.Init(split_dimensions.length());
-	MakeBoundVector(right_vector, split_dimensions, &sub_right_vector);
+	arma::vec sub_right_vector(split_dimensions.length());
+	MakeBoundVector(right_vector, split_dimensions, sub_right_vector);
 	right_bound |= sub_right_vector;
       }  
      
@@ -234,7 +229,7 @@ namespace tree_kdtree_private {
       double max_width = -1;
 
       for (index_t d = 0; d < split_dimensions.length(); d++) {
-        double w = node->bound().get(d).width();
+        double w = node->bound()[d].width();
 	
         if (w > max_width) {
           max_width = w;
@@ -242,17 +237,17 @@ namespace tree_kdtree_private {
         }
       }
 
-      double split_val = node->bound().get(split_dim).mid();
+      double split_val = node->bound()[split_dim].mid();
 
       if (max_width == 0) {
         // Okay, we can't do any splitting, because all these points are the
         // same.  We have to give up.
       } else {
         left = new TKdTree();
-        left->bound().Init(split_dimensions.length());
+        left->bound().SetSize(split_dimensions.length());
 
         right = new TKdTree();
-        right->bound().Init(split_dimensions.length());
+        right->bound().SetSize(split_dimensions.length());
 
         index_t split_col = SelectMatrixPartition(matrix, split_dimensions, 
 	    (int) split_dimensions[split_dim], split_val,
@@ -264,8 +259,8 @@ namespace tree_kdtree_private {
             node->begin(), split_col,
             node->begin() + node->count(), (int) split_dimensions[split_dim],
 		    split_val,
-            node->bound().get(split_dim).lo,
-            node->bound().get(split_dim).hi);
+            node->bound()[split_dim].lo,
+            node->bound()[split_dim].hi);
 
         left->Init(node->begin(), split_col - node->begin());
         right->Init(split_col, node->begin() + node->count() - split_col);
@@ -283,3 +278,5 @@ namespace tree_kdtree_private {
     node->set_children(matrix, left, right);
   }
 };
+
+#endif
