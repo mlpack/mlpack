@@ -53,6 +53,14 @@
 #include "cc.h"
 #include "ccmem.h"
 #include "otrav.h"
+#include <fstream>
+#include <string>
+#include <iostream>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/string.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/serialization.hpp>
 //#include "cc.h"
 //#include "ccmem.h"
 //#include "otrav.h"

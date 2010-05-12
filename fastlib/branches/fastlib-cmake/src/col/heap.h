@@ -69,11 +69,18 @@ class MinHeap {
 
   ArrayList<Entry> entries_;
 
-  OBJECT_TRAVERSAL(MinHeap) {
+  /*OBJECT_TRAVERSAL(MinHeap) {
     OT_OBJ(entries_);
-  }
+  }*/
 
  public:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    ar & entries_;
+  }
+
   /**
    * Initializes an empty priority queue.
    */

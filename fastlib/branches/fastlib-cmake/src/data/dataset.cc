@@ -666,6 +666,7 @@ void Dataset::SplitTrainTest(int folds, int fold_number,
 
 success_t data::Load(const char *fname, Matrix *matrix) {
   Dataset dataset;
+  printf("In Load:%s\n", fname);
   success_t result = dataset.InitFromFile(fname);
   matrix->Own(&dataset.matrix());
   return result;

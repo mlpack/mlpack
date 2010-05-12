@@ -194,11 +194,19 @@ class MinMaxVal {
   /** The underlying value. */
   Value val;
 
-  OBJECT_TRAVERSAL(MinMaxVal) {
+  /*OBJECT_TRAVERSAL(MinMaxVal) {
     OT_OBJ(val);
-  }
+  }*/
 
  public:
+
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    ar & val;
+  }
+
   /**
    * Converts implicitly to the value.
    */

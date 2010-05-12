@@ -55,12 +55,22 @@ class GaussianKernel {
   double neg_inv_bandwidth_2sq_;
   double bandwidth_sq_;
 
-  OBJECT_TRAVERSAL(GaussianKernel) {
+ /* OBJECT_TRAVERSAL(GaussianKernel) {
     OT_OBJ(neg_inv_bandwidth_2sq_);
     OT_OBJ(bandwidth_sq_);
   }
+ */
 
  public:
+
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    ar & neg_inv_bandwidth_2sq_;
+    ar & bandwidth_sq_;
+  }
+
   static const bool HAS_CUTOFF = false;
 
  public:

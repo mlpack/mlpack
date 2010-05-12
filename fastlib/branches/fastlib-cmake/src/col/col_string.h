@@ -68,7 +68,16 @@ class String {
     OT_OBJ(c_str);
   }
 
+
  public:
+ 
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    ar & array_;
+  }
+
   /**
    * Implicit conversion constructor.
    */

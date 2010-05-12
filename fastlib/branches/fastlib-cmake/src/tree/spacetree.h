@@ -72,16 +72,28 @@ class BinarySpaceTree {
   index_t count_;
   Statistic stat_;
 
-  OT_DEF(BinarySpaceTree) {
+  /*OT_DEF(BinarySpaceTree) {
     OT_MY_OBJECT(bound_);
     OT_PTR_NULLABLE(left_);
     OT_PTR_NULLABLE(right_);
     OT_MY_OBJECT(begin_);
     OT_MY_OBJECT(count_);
     OT_MY_OBJECT(stat_);
-  }
+  }*/
 
  public:
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    ar & bound_;
+    ar & left_;
+    ar & right_;
+    ar & begin_;
+    ar & count_;
+    ar & stat_;
+  }
+
   /*
   BinarySpaceTree() {
     DEBUG_ONLY(begin_ = BIG_BAD_NUMBER);
