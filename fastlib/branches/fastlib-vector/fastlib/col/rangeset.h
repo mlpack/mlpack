@@ -38,7 +38,8 @@
 #ifndef COL_RANGESET_H
 #define COL_RANGESET_H
 
-#include "arraylist.h"
+//#include "arraylist.h"
+#include <vector>
 
 /**
  * A set containing a union of  [start,end) ranges that are automatically
@@ -66,7 +67,7 @@ class RangeSet {
   };
   
  private:
-  ArrayList<Range> ranges_;
+  std::vector<Range> ranges_;
   
   OT_DEF(RangeSet) {
     OT_MY_OBJECT(ranges_);
@@ -77,14 +78,14 @@ class RangeSet {
    * Creates an empty set of ranges.
    */
   void Init() {
-    ranges_.Init();
+//    ranges_.Init();
   }
 
   /**
    * Reinitializes to an empty set of ranges.
    */
   void Reset() {
-    ranges_.Clear();
+    ranges_.clear();
   }
 
   /**
@@ -94,7 +95,7 @@ class RangeSet {
    */
   void Union(const Boundary& begin, const Boundary& end);
 
-  const ArrayList<Range>& ranges() const {
+  const std::vector<Range>& ranges() const {
     return ranges_;
   }
 
@@ -123,16 +124,18 @@ void RangeSet<TBoundary>::Union(
   }
   
   // Not really efficient, but easy to follow.
-  ArrayList<Range> new_list;
+  std::vector<Range> new_list;
   index_t i;
 
-  new_list.Init();
+  new_list.reserve( ranges_.size() );
+//  new_list.Init();
 
   i = 0;
 
   // add everything that strictly precedes the new one to add
   while (i < ranges_.size() && !(begin <= ranges_[i].end)) {
-    new_list.PushBackCopy(ranges_[i]);
+//    new_list.PushBackCopy(ranges_[i]);
+	  new_list.push_back(ranges_[i]);
     i++;
   }
 
@@ -150,17 +153,20 @@ void RangeSet<TBoundary>::Union(
     i++;
   }
 
-  Range *new_range = new_list.PushBackRaw();
+//  Range *new_range = new_list.PushBackRaw();
+
+  Range *new_range = &new_list.back();
   new(&new_range->begin)Boundary(*selected_begin);
   new(&new_range->end)Boundary(*selected_end);
 
   // add everything that comes after
   for (; i < ranges_.size(); i++) {
-    new_list.PushBackCopy(ranges_[i]);
+//    new_list.PushBackCopy(ranges_[i]);
+	  new_list.push_back(ranges_[i]);
   }
 
   // replace the list
-  ranges_.Swap(&new_list);
+  ranges_.assign(new_list.begin(),new_list.end());
 }
 
 #endif
