@@ -1,0 +1,147 @@
+You are developing code.  What to do, step by step:
+
+Step 0:
+
+You should have read the FASTlib tutorial and successfully compiled
+and run the example.
+
+Step 1:
+
+Your code needs a home.  You will work on it in your user directory,
+i.e.:
+
+  u/plato/allnn
+
+Step 2:
+
+You need a build.py file, which tells fl-build what to do to compile
+your work.  It is the equivalent of a Makefile, but a bit easier to
+understand.
+
+There are two important kinds of entry in build.py files: binrules and
+librules.  The distinction between these is that binrules create
+stand-alone executables (somewhere in their code is the main function)
+while librules are for code used in linking (no main).  It is usually
+a good idea for the bulk of your project to be compiled with a
+librule, linked to by a simiple binrule in the same build.py:
+
+  librule(
+    name = "allnn",
+    sources = ["allnn.cc"],
+    headers = ["allnn.h"],
+    deplibs = ["fastlib:fastlib"],
+    tests = ["allnn_test.cc"]
+  )
+
+  binrule(
+    name = "allnn_main",
+    sources = "allnn_main.cc",
+    headers = "allnn_main.h",
+    deplibs = [":allnn"]
+  )
+
+Note that "tests" in the librule allows you to compile your unit tests
+with "fl-build allnn_test".
+
+Step 3:
+
+Now we need to start writing the code.  We will start with
+allnn_main.cc by incluidng allnn.h at the top and writing a main
+function:
+
+  #include "allnn.h"
+
+  int main(int argc, char *argv[]) {
+    fx_init(argc, argv);
+
+    ...
+
+    fx_done();
+    return 0;
+  }
+
+FASTlib main functions should always begin and end by initializing and
+finalizing fx, or FASTexec, which manages command line input among
+other things.
+
+In our particular project, the first logical thing to do is to load
+the data.  We need to get the input file names out of the command line
+arguments and then to use a library function that reads matrices.
+
+  const char *q_filename = fx_param_str_req(NULL, "queries");
+  const char *r_filename = fx_param_str_req(NULL, "references");
+
+  Matrix q;
+  Matrix r;
+
+  data::Load(q_filename, &q);
+  data::Load(r_filename, &r);
+
+We organize all of our project's tasks into a class called AllNN.
+After declaring an object of this class, we initialize it with the two
+data sets and a submodule, which serves to pass it its own parameters
+from the command line.
+
+  struct datanode *allnn_mod = fx_submodule(NULL, "allnn", "allnn_mod");
+
+  AllNN allnn;
+  allnn.Init(q, r, allnn_mod);
+
+We must declare a local variable to receive the results of
+computation.
+
+  ArrayList<index_t> results;
+  allnn.ComputeNeighbors(&results);
+
+We emit result by printing to a file.
+
+  const char *o_filename = fx_param_str(NULL, "out", "out.csv");
+  FILE* o_file = fopen(o_filename, "w");
+  ot::Print(results, o_file);
+
+Step 4:
+
+Moving to allnn.h, the first thing to do include the rest of FASTlib
+within appropriate inclusion guards:
+
+  #ifndef ALLNN_H
+  #define ALLNN_H
+
+  #include "fastlib/fastlib.h"
+
+  ...
+
+  #endif
+
+Make sure you include "fastlib/fastlib.h" as opposed to "fastlib.h" so
+the complier can properly find the file.
+
+
+
+Step n:
+
+Write your unit tests.
+
+-----
+
+./myprog ... --allnn/leaf_size=30 ...
+
+
+/param
+  /q = "test.dat"
+    /metric = "weird"
+  /r = "train.dat"
+  /other_param = 5
+  /allnn
+    /leaf_size = 30
+    ...
+
+/timers
+/results
+
+fx_submodule(NULL, "allnn", "allnn_mod")
+
+/allnn_mod
+  /param <- /param/allnn
+  /timers
+  /results

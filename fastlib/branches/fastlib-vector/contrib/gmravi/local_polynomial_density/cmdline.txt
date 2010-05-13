@@ -1,0 +1,17 @@
+--naive_kde_lp --nklpm/data="test_set.txt" --nklpm/query="test_set.txt" --bandwidth=0.01
+
+--naive_kde_lp --nklpm/data="reduced_astroset.txt" --nklpm/query="reduced_astroset.txt" --bandwidth=0.01
+
+--naive_kde_lp --nklpm/data="points_mog_1.txt" --nklpm/query="points_mog_1.txt"  --nklpm/true_density="density_1.txt" --nklpm/local_likelihood="true" --nklpm/naive_kde="true" --nklpm/bandwidth="bandwidth.txt"
+
+--naive_kde_lp --nklpm/data="test_density.txt" --nklpm/query="test_density.txt" --nklpm/bandwidth_file="bandwidth.txt"  
+
+
+  ////////////////////FOR CROSSVALIDATION //////////////////////
+  
+ --data="points_mog1_train1.txt" --bandwidth="bandwidth_cv.txt"
+
+--naive_kde_lp --nklpm/data=points_mog_10.txt --nklpm/query=points_mog_10.txt --nklpm/true_density=density_10.txt --nklpm/local_likelihood=true --nklpm/naive_kde=true --nklpm/bandwidth=bandwidth_density.txt
+
+
+--naive_kde_lp --nklpm/data=dummy_points.txt --nklpm/query=dummy_points.txt --nklpm/true_density=dummy_density.txt --nklpm/local_likelihood=true --nklpm/naive_kde=true --nklpm/bandwidth=bandwidth_density.txt

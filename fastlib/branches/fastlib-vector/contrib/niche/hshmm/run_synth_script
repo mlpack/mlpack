@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# generate and save data
+fx-run synth100_T100 ./hmm_testing --load_data=true --class1_seq=../../../../synth_pos.csv --class0_seq=../../../../synth_neg.csv --n_symbols=2 --lambda=0,1e-4,1e-3,1e-2,1e-1,1,1e1,1e2,1e3,1e9,0.5,0.2 --n_sequences_per_class=50 --T=50 --max_iter_bw=1000
+
+#./hmm_testing --load_data=true --class1_seq="synth_pos.csv" --class0_seq="synth_neg.csv" --n_symbols=2 --save_hmms=false --hmms=synth100_hmms.dat --lambda=1e9 --trans1=class_1_transition.csv --emis1=class_1_emission.csv --trans0=class_0_transition.csv --emis0=class_0_emission.csv --n_sequences_per_class=50 --T=70
+
+
+
+# generate data
+#./hmm_testing --save_hmms=true --hmms=synth1000_T10_hmms.dat --lambda=1e9 --trans1=class_1_transition.csv --emis1=class_1_emission.csv --trans0=class_0_transition.csv --emis0=class_0_emission.csv --n_sequences_per_class=500 --T=10
+
+# testing over many parameter settings
+#fx-run synth1000_T100 ./hmm_testing --load_hmms=true --hmms=../../../../synth1000_T10_hmms.dat --lambda=0,1e-4,1e-3,1e-2,1e-1,1,1e1,1e2,1e3,1e9 --T=100
+# --svm/c=1e-4,1e-3,1e-2,1e-1,1,1e1,1e2,1e3,1e4
+
+
+# search for c
+#fx-run ctest ./hmm_testing --load_hmms=true --hmms=../../../../synth200_hmms.dat --lambda=1e-2,1,1e9
+
+
+
+
+
+
+#fx-run synth400 ./hmm_testing --load_hmms=true --hmms=../../../../synth200_hmms.dat --lambda=1e-3,1e-2,1e-1,1,1e1,1e2,1e3 --c=1e-4,1e-3
+
+
+#fx-run test ./hmm_testing --load_data=false --lambda=1,10 --max_iter_bw=10,20

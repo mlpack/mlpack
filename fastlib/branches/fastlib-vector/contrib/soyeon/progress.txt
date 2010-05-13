@@ -1,0 +1,161 @@
+Fastlib meetings
+
+10/21 Tues. (1:30p) Nick - general idea
+
+10/23 Thur. (1:30p) Nick - Install fastlib/cygwin
+
+10/24 Fri.  (10:30a) Nick - Install fastlib/cygwin
+			 Intro to how to use cygwin
+				>svn add soyeon
+				>cd /cygdrive/c/fastlib2/fastlib2/contrib/soyeon
+				>vim file.cc (#include "fastlib/fastlib.h"
+				>mkdir test
+				>svn add test
+				>svn add file.cc
+				>vim build.py (binrule/librule) 
+					librule(name="lin_test",
+					        headers=["linear_algebra_class.h"],
+					        sources=["linear_algebra_class.cc"],
+					        deplibs=["fastlib:fastlib"])
+					binrule(name="main", 
+					        sources=["main.cc"], 
+					        deplibs=[":lin_test"])
+				>fl-build --mode =fast... or =debug file.cc
+				>./file
+				>svn list
+				>svn commit -m "msg"
+				>svn log
+				>svn update
+					        
+10/27 Mon. (1:00p) Ryan - general idea
+			1. Manual update
+			2. Optimization tool: Trust region w/ w/o constraints 
+					      Quadratic programming 
+			3. One-dim Integration approx. by sum
+			4, Random samplinig idea for keeping selected r.n
+			
+ 	       (3:00p) Nick - Toy problem f=x'Ax+b'x / gradient / Hessian
+ 				1. >vim lin_algebra_class.h (public: initializer/deconstructor/var&fn
+ 				...
+ 				>svn add in_algebra_class.cc main.cc
+ 				>svn commit -m "Added a more advanced result"
+ 				
+ 				2. Linear algebra Doxygen-> Namespacelist -> la
+ 				http://www.cc.gatech.edu/~pram/doc/html/namespaces.html
+ 				
+ 				3. Debug msg Doxygen->filemember->Debug
+ 				DEBUG_ASSERT_MSG
+ 				DEBUG_SAME_SIZE
+ 				
+ 				4. Operator &(ampersand) vs. *(asterisk)
+ 				5. .Copy vs. alias?
+ 				
+10/28 Tues. (2:00p) Nick - Compile Toy problem
+				1. main function 
+					fx_module *fx_root=fx_init(argc, argv, NULL) //parsing
+					fx_param_str_req vs. fx_param_str
+					fx_result
+					
+				2. >fl_build --mode=debug main 
+				>./main --qdata=qterm.csv --ldata=
+				>svn add *.csv //for test, up to 1000 points?
+				3. >fx_done(fx_root)
+				
+				4. Debugging
+					4-1) Always check TYPO
+					4-2) Be careful with continued lines
+					4-3) reference(&) vs. pointer(*): ref1-p267
+					- References cannot be reassigned -> Must use pointer!!
+					- References cannot be null -> Must use pointer!!
+					- Reference is always an alias to some other object
+					4-4) fastlib load data as MATRIX ONLY //need to be fixed?
+				5. Passing function arguments by the value vs. pointer or references
+				-ref1-p250~
+10/30 Thurs. (2:00p) Nick - Start coding for the project: Object fn.
+				1. ArrayList<Matrix>
+					- Each element in vector(array) is Matrix
+					- Used to store attribute matrix for each decision maker
+					- size: # of decision maker
+				2. Make dot product more efficient
+					exp_betas_times_x1_+=exp(la::Dot(betas.length(), 
+								beta.ptr(), 
+								first_stage_y_[n].GetColumnPtr(j)));
+								
+11/06 Thurs. >fl-build --mode=debug objective2
+			 >fl-build --model=debug test
+			 >./test --data1=data1.csv --info1=info1.csv --data2=data2.csv --info2=info2.csv --data3=data3.csv --info3=info3.csv
+			 
+			 [.] The objective is -2.87419
+[.] Gradient calculation starts
+Gradient vector: 0.07925 -0.111573 0.621885 0.012997 -0.00950998
+[.] Gradient calculation ends
+[.] Exact hessian calculation starts
+Hessian matrix:
+-0.0514969  -0.0552393  -0.0528984  0.00150735  -0.00108295
+-0.0552393  -0.0853248  -0.07779  0.00237815  -0.00172084
+-0.0528984  -0.07779  -0.0999041  0.00434628  -0.00320945
+0.00150735  0.00237815  0.00434628  1.09549  0.00121945
+-0.00108295  -0.00172084  -0.00320945  0.00121945  0.631995
+
+./test --data1=data1.csv --data2=data2.csv --data3=data3.csv --info1=info1.csv 
+>fl-build --model=debug objective2_test
+./objective2_test --data1=data1.csv --data2=data2.csv --data3=data3.csv --info1=info1.csv 
+							
+	
+
+
+11/13 Thurs. >fl-build --mode=debug sampling
+			 >fl-build --mode=debug test
+			 >./test --data1=data1.csv --data2=data2.csv --data3=data3.csv --info1=info1.csv --info_y=info_y.csv --info_ind_unknown_x=info_unknown_x.csv --initial_percent_sample=50
+				
+				
+/test --data1=data1.csv --data2=data2.csv --data3=data3.csv --info1=info1.csv 
+./main --data1=data1.csv --data2=data2.csv --data3=data3.csv --info1=info1.csv --info_y=info_y.csv --info_ind_unknown_x=info_unknown_x.csv --initial_percent_sample=50					
+./main --data1=sim_data1.csv --data2=sim_data2.csv --data3=sim_data3.csv --info1=sim_info1.csv --info_y=sim_info_y.csv --info_ind_unknown_x=sim_info_unknown_x.csv --initial_percent_sample=10					
+				
+./main --data1=sim2_data1.csv --data2=sim2_data2.csv --data3=sim2_data3.csv --info1=sim2_info1.csv --info_y=sim2_info_y.csv --info_ind_unknown_x=sim2_info_unknown_x.csv --initial_percent_sample=10 --starting_points=init.csv					
+				
+<<<<<<< .mine
+ ./main --data1=sim3_data1.csv --data2=sim3_data2.csv --data3=sim3_data3.csv --info1=sim3_info1.csv --info_y=sim3_info_y.csv --info_ind_unknown_x=sim3_info_unknown_x.csv --initial_percent_sample=10 					
+						=======
+ 
+ ./main --data1=sim3_data1.csv --data2=sim3_data2.csv --data3=sim3_data3.csv --info1=sim3_info1.csv --info_y=sim3_info_y.csv --info_ind_unknown_x=sim3_info_unknown_x.csv --initial_percent_sample=100	
+ 
+ <Plan>
+ 1. opt++, trust resion method with constraints / install/documentation
+ 
+ 2. write to files/print out format
+<<<<<<< .mine
+ 
+ 3. speed up? 
+ 
+ 4. Unix fastlib for simulation: e-mail to Ryan/alex/Nick what I need to get an access to Lab machines
+ 
+ 
+ ./main --data1=sim2_data1.csv --data2=sim2_data2.csv --data3=sim2_data3.csv --info1=sim2_info1.csv --info_y=sim2_info_y.csv --info_ind_unknown_x=sim2_info_unknown_x.csv --initial_percent_sample=10 
+ 					=======
+ 3. speed up?
+ 4. Unix fastlib for simulation>>>>>>> .r3759
+
+
+./main --data1=sim3_data1.csv --data2=sim3_data2.csv --data3=sim3_data3.csv --info1=sim3_info1.csv --info_y=sim3_info_y.csv --info_ind_unknown_x=sim3_info_unknown_x.csv --initial_percent_sample=100	
+
+
+
+fl-build --mode=debug --compiler=gcc main
+>>>>>>> .r3761
+
+
+./main --data1=sim3_data1.csv --data2=sim3_data2.csv --data3=sim3_data3.csv --info1=sim3_info1.csv --info_y=sim3_info_y.csv --info_ind_unknown_x=sim2_info_unknown_x.csv --initial_percent_sample=10
+
+
+
+./eval --data1=sim6_data1_test.csv --data2=sim6_data2_test.csv --data3=sim6_data3_test.csv --info1=sim6_info1_test.csv --info_y=sim6_info_y_test.csv --info_ind_unknown_x=sim2_info_unknown_x.csv --initial_percent_sample=100
+
+ ./main --data1=sim6_data1.csv --data2=sim6_data2.csv --data3=sim6_data3.csv --info1=sim6_info1.csv --info_y=sim6_info_y.csv --info_ind_unknown_x=sim2_info_unknown_x.csv --initial_percent_sample=100
+ 
+ ./main --data1=sim6_data1_m1.txt --data2=sim6_data2_m1.txt --data3=sim6_data3_m1.txt --info1=sim6_info1_m1.txt --info_y=sim6_info_y_m1.txt --info_ind_unknown_x=sim2_info_unknown_x.txt --initial_percent_sample=10
+ 
+ ./main --data1=sim3_data1_sam1.csv --data2=sim3_data2_sam1.csv --data3=sim3_data2_sam1.csv --info1=sim3_info1_sam1.csv --info_y=sim3_info_y_sam1.csv --info_ind_unknown_x=sim2_info_unknown_x.txt --initial_percent_sample=10
+ 
+ sim3_info_y_sam1

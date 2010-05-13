@@ -1,0 +1,21 @@
+#!/bin/csh
+./mmf2 --seqfile=data/2_6_100_100.seq --profile=model/2_6_100_100_mmf2.hmm --numstate=2 --tolerance=1e-5
+./mmf2 --seqfile=data/2_6_200_100.seq --profile=model/2_6_200_100_mmf2.hmm --numstate=2 --tolerance=1e-5
+./mmf2 --seqfile=data/2_6_300_100.seq --profile=model/2_6_300_100_mmf2.hmm --numstate=2 --tolerance=1e-5
+./mmf2 --seqfile=data/2_6_400_100.seq --profile=model/2_6_400_100_mmf2.hmm --numstate=2 --tolerance=1e-5
+./mmf2 --seqfile=data/2_6_500_100.seq --profile=model/2_6_500_100_mmf2.hmm --numstate=2 --tolerance=1e-5
+./mmf2 --seqfile=data/2_6_600_100.seq --profile=model/2_6_600_100_mmf2.hmm --numstate=2 --tolerance=1e-5
+./mmf2 --seqfile=data/2_6_700_100.seq --profile=model/2_6_700_100_mmf2.hmm --numstate=2 --tolerance=1e-5
+./mmf2 --seqfile=data/2_6_800_100.seq --profile=model/2_6_800_100_mmf2.hmm --numstate=2 --tolerance=1e-5
+./mmf2 --seqfile=data/2_6_900_100.seq --profile=model/2_6_900_100_mmf2.hmm --numstate=2 --tolerance=1e-5
+./mmf2 --seqfile=data/2_6_1000_100.seq --profile=model/2_6_1000_100_mmf2.hmm --numstate=2 --tolerance=1e-5
+./mmf2 --seqfile=data/2_6_1100_100.seq --profile=model/2_6_1100_100_mmf2.hmm --numstate=2 --tolerance=1e-5
+./mmf2 --seqfile=data/2_6_1200_100.seq --profile=model/2_6_1200_100_mmf2.hmm --numstate=2 --tolerance=1e-5
+./mmf2 --seqfile=data/2_6_1300_100.seq --profile=model/2_6_1300_100_mmf2.hmm --numstate=2 --tolerance=1e-5
+./mmf2 --seqfile=data/2_6_1400_100.seq --profile=model/2_6_1400_100_mmf2.hmm --numstate=2 --tolerance=1e-5
+./mmf2 --seqfile=data/2_6_1500_100.seq --profile=model/2_6_1500_100_mmf2.hmm --numstate=2 --tolerance=1e-5
+./mmf2 --seqfile=data/2_6_1600_100.seq --profile=model/2_6_1600_100_mmf2.hmm --numstate=2 --tolerance=1e-5
+./mmf2 --seqfile=data/2_6_1700_100.seq --profile=model/2_6_1700_100_mmf2.hmm --numstate=2 --tolerance=1e-5
+./mmf2 --seqfile=data/2_6_1800_100.seq --profile=model/2_6_1800_100_mmf2.hmm --numstate=2 --tolerance=1e-5
+./mmf2 --seqfile=data/2_6_1900_100.seq --profile=model/2_6_1900_100_mmf2.hmm --numstate=2 --tolerance=1e-5
+./mmf2 --seqfile=data/2_6_2000_100.seq --profile=model/2_6_2000_100_mmf2.hmm --numstate=2 --tolerance=1e-5
