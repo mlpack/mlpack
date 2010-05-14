@@ -163,7 +163,7 @@ class DualTreeBoruvka {
   index_t leaf_size_;
   
   // lists
-  ArrayList<index_t> old_from_new_permutation_;
+  arma::Col<index_t> old_from_new_permutation_;
   ArrayList<index_t> neighbors_in_component_;
   ArrayList<index_t> neighbors_out_component_;
   ArrayList<double> neighbors_distances_;
@@ -622,13 +622,13 @@ class DualTreeBoruvka {
       arma::mat tmp;
       arma_compat::matrixToArma(data_points_, tmp);
       tree_ = tree::MakeKdTreeMidpoint<DTBTree>
-          (tmp, leaf_size_, &old_from_new_permutation_, NULL);
+          (tmp, leaf_size_, old_from_new_permutation_);
       
       fx_timer_stop(module_, "tree_building");
     }
     else {
       tree_ = NULL; 
-      old_from_new_permutation_.Init(0);
+      old_from_new_permutation_.set_size(0);
     }
     
     number_of_points_ = data_points_.n_cols();
