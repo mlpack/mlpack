@@ -11,11 +11,11 @@
 
 /***
  * Specialized MakeBoundVector function written for arma::vec instead of
- * GenVector; or, well, at least partially written for arma::vec.
+ * GenVector.
  */
 void tree_kdtree_private::MakeBoundVector(const arma::vec& point,
-                     const Vector& bound_dimensions,
+                     const arma::uvec& bound_dimensions,
                      arma::vec& bound_vector) {
-  for(int i = 0; i < bound_dimensions.length(); i++)
+  for(int i = 0; i < bound_dimensions.n_elem; i++)
     bound_vector[i] = point[(int) bound_dimensions[i]];
 }
