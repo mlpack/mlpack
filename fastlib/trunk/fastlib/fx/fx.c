@@ -1713,8 +1713,6 @@ static void fx__std_help(const char *prog, const char *help,
 {
   success_t success;
 
-  printf("%s --help%c%s\n\n", prog, *help ? '=' : ' ', help);
-
   if (doc) {
     success = fx_help(doc, help);
   } else {
