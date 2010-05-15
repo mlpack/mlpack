@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 2.8)
 set(DIRS
 #   compression
 #   fast_multipole_method  ## awaiting resolution of #10 (libint dependency)
+   gp_regression
 #   kde  ## does not compile
    linear_algebra
    linear_regression  
