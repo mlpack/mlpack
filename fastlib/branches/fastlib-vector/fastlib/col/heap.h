@@ -38,7 +38,8 @@
 #ifndef COLLECTIONS_HEAP_H
 #define COLLECTIONS_HEAP_H
 
-#include "arraylist.h"
+#include <vector>
+#include <algorithm>
 
 /**
  * Priority queue implemented as a heap.
@@ -50,7 +51,6 @@
  */
 template <typename TKey, typename TValue = Empty>
 class MinHeap {
-  // TODO: A copiable heap probably isn't a bad idea
 
  public:
   typedef TKey Key;
@@ -61,24 +61,45 @@ class MinHeap {
     TKey key;
     TValue value;
 
-    OBJECT_TRAVERSAL_SHALLOW(Entry) {
-      OT_OBJ(key);
-      OT_OBJ(value);
-    }
+	 /** 
+	  * Actually <. Cheap hack.
+	  * 
+	  * FIXME: Replace with comp function used by std::heap methods.
+	  */
+	 inline bool operator> (const Entry& other) const {
+		 return key < other.key;
+	 }
+	 /** 
+	  * Actually >. Cheap hack.
+	  * 
+	  * FIXME: Replace with comp function used by std::heap methods.
+	  */
+	 inline bool operator< (const Entry& other) const {
+		 return key > other.key;
+	 }
+	 /**
+	  * Standard assignment operator.
+	  */
+	 inline Entry& operator= (const Entry& other) {
+		 key = other.key;
+		 value = other.value;
+		 return *this;
+	 }
   };
 
-  ArrayList<Entry> entries_;
-
-  OBJECT_TRAVERSAL(MinHeap) {
-    OT_OBJ(entries_);
-  }
+  std::vector<Entry> entries_;
 
  public:
+
+  MinHeap(int size=0) {
+	  entries_.reserve(size);
+  }
+
   /**
-   * Initializes an empty priority queue.
+   * Initializes an empty priority queue. Deprecated, use constructor instead.
    */
-  void Init() {
-    entries_.Init();
+  void Init(int size=0) {
+	  entries_.reserve(size);
   }
 
   /**
@@ -97,12 +118,10 @@ class MinHeap {
   void Put(Key key, Value value) {
     Entry entry;
 
-    entries_.PushBack();
-
     entry.key = key;
     entry.value = value;
-
-    WalkUp_(entry, entries_.size() - 1);
+	 entries_.push_back( entry );
+	 std::push_heap( entries_.begin(), entries_.end() );
   }
 
   /**
@@ -125,12 +144,9 @@ class MinHeap {
    * returning it.
    */
   void PopOnly() {
-    Entry entry;
-    entries_.PopBackInit(&entry);
-
-    if (likely(entries_.size() != 0)) {
-      WalkDown_(entry, 0);
-    }
+	  std::pop_heap( entries_.begin(), entries_.end() );
+	  entries_.pop_back();
+	  return;
   }
 
   /**
@@ -161,71 +177,6 @@ class MinHeap {
     return entries_.size();
   }
 
- private:
-  static index_t ChildIndex_(index_t i) {
-    return (i << 1) + 1;
-  }
-
-  static index_t ParentIndex_(index_t i) {
-    return (i - 1) >> 1;
-  }
-
-  index_t WalkDown_(const Entry& entry, index_t i) {
-    Key key = entry.key;
-    Entry *entries = entries_.begin();
-    index_t last = entries_.size() - 1;
-
-    for (;;) {
-      index_t c = ChildIndex_(i);
-
-      if (unlikely(c > last)) {
-        break;
-      }
-
-      // TODO: This "if" can be avoided if we're more intelligent...
-      if (likely(c != last)) {
-        c += entries[c + 1].key < entries[c].key ? 1 : 0;
-      }
-
-      if (key <= entries[c].key) {
-        break;
-      }
-
-      entries[i] = entries[c];
-      i = c;
-    }
-
-    entries[i] = entry;
-
-    return i;
-  }
-
-  index_t WalkUp_(const Entry& entry, index_t i) {
-    Key key = entry.key;
-    Entry *entries = entries_.begin();
-
-    for (;;) {
-      index_t p;
-
-      if (unlikely(i == 0)) {
-        break; // highly unlikely, we found the best!
-      }
-
-      p = ParentIndex_(i);
-
-      if (key >= entries[p].key) {
-        break;
-      }
-
-      entries[i] = entries[p];
-
-      i = p;
-    }
-
-    entries[i] = entry;
-
-    return i;
-  }
 };
 
 #endif
