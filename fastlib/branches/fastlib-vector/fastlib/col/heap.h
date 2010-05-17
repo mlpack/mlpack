@@ -62,14 +62,6 @@ class MinHeap {
     TValue value;
 
 	 /** 
-	  * Actually <. Cheap hack.
-	  * 
-	  * FIXME: Replace with comp function used by std::heap methods.
-	  */
-	 inline bool operator> (const Entry& other) const {
-		 return key < other.key;
-	 }
-	 /** 
 	  * Actually >. Cheap hack.
 	  * 
 	  * FIXME: Replace with comp function used by std::heap methods.
@@ -88,18 +80,17 @@ class MinHeap {
   };
 
   std::vector<Entry> entries_;
-
+ 
  public:
 
-  MinHeap(int size=0) {
+  MinHeap(const unsigned int size=0) {
 	  entries_.reserve(size);
   }
 
   /**
    * Initializes an empty priority queue. Deprecated, use constructor instead.
    */
-  void Init(int size=0) {
-	  entries_.reserve(size);
+  void Init() {
   }
 
   /**
@@ -115,13 +106,14 @@ class MinHeap {
    * @param key the priority
    * @param value the value associated with the priority
    */
-  void Put(Key key, Value value) {
+  void Put(const Key key, const Value& value) {
     Entry entry;
 
     entry.key = key;
     entry.value = value;
+
 	 entries_.push_back( entry );
-	 std::push_heap( entries_.begin(), entries_.end() );
+	std::push_heap( entries_.begin(), entries_.end());
   }
 
   /**
@@ -129,24 +121,13 @@ class MinHeap {
    *
    * @return the value associated with the highest priority
    */
-  Value Pop() {
+  inline Value Pop() {
     Value t = entries_[0].value;
 
-    PopOnly();
-
-    return t;
-  }
-
-  /**
-   * Removes the lowest element from the heap.
-   *
-   * Simply pops the top value on the queue, without
-   * returning it.
-   */
-  void PopOnly() {
 	  std::pop_heap( entries_.begin(), entries_.end() );
 	  entries_.pop_back();
-	  return;
+
+    return t;
   }
 
   /**
@@ -166,7 +147,7 @@ class MinHeap {
   /**
    * Replaces the top item on the heap.
    */
-  void set_top(Value v) {
+  void set_top(const Value& v) {
     entries_[0].value = v;
   }
 
