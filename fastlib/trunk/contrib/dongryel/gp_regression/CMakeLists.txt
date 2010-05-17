@@ -8,4 +8,6 @@ add_executable(bilinear_form_test
 # link dependencies of test executable
 target_link_libraries(bilinear_form_test
                       fastlib
+                      mlpack
+                      ${TRILINOS_LIBS}
                      )
