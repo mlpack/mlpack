@@ -96,19 +96,19 @@ const char *fx_val_name[] = {
 
 const fx_entry_doc fx__fx_entries[] = {
   {"load", FX_PARAM, FX_STR_LIST, NULL,
-   "  Load files containing additional input parameters.\n"},
+   "   Load files containing additional input parameters.\n"},
   {"output", FX_PARAM, FX_STR, NULL,
-   "  Output results to this file.\n"},
+   "   Output results to this file.\n"},
   {"timing", FX_PARAM, FX_BOOL, NULL,
-   "  Whether to attempt speed up for a timing run.\n"},
+   "   Whether to attempt speed up for a timing run.\n"},
   {"rusage", FX_PARAM, FX_BOOL, NULL,
-   "  Whether to emit rusage data in \"info\".\n"},
+   "   Whether to emit rusage data in \"info\".\n"},
   {"silent", FX_PARAM, FX_BOOL, NULL,
-   "  Whether to skip the printing of results to screen.\n"},
+   "   Whether to skip the printing of results to screen.\n"},
   {"no_output_types", FX_PARAM, FX_BOOL, NULL,
-   "  Whether to skip the printing of entry types (e.g. \"/param:P\").\n"},
+   "   Whether to skip the printing of entry types (e.g. \"/param:P\").\n"},
   {"no_docs_nagging", FX_PARAM, FX_BOOL, NULL,
-   "  Whether to suppress messages about missing documentation.\n"},
+   "   Whether to suppress messages about missing documentation.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -119,17 +119,17 @@ const fx_module_doc fx__fx_doc = {
 
 const fx_entry_doc fx__debug_entries[] = {
   {"verbosity_level", FX_PARAM, FX_DOUBLE, NULL,
-   "  Controls the amount of debug info to print.\n"},
+   "   Controls the amount of debug info to print.\n"},
   {"print_got_heres", FX_PARAM, FX_BOOL, NULL,
-   "  Whether to print \"got here\" notices.\n"},
+   "   Whether to print \"got here\" notices.\n"},
   {"print_warnings", FX_PARAM, FX_BOOL, NULL,
-   "  Whether to print warning messages.\n"},
+   "   Whether to print warning messages.\n"},
   {"abort_on_nonfatal", FX_PARAM, FX_BOOL, NULL,
-   "  Whether to treat nonfatal errors as fatal.\n"},
+   "   Whether to treat nonfatal errors as fatal.\n"},
   {"pause_on_nonfatal", FX_PARAM, FX_BOOL, NULL,
-   "  Whether to wait for user feedback on nonfatal errors.\n"},
+   "   Whether to wait for user feedback on nonfatal errors.\n"},
   {"print_notify_locs", FX_PARAM, FX_BOOL, NULL,
-   "  Whether to print \"file:function:line:\" before notifications.\n"},
+   "   Whether to print \"file:function:line:\" before notifications.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -140,41 +140,41 @@ const fx_module_doc fx__debug_doc = {
 
 const fx_entry_doc fx__rusage_entries[] = {
   {"utime/sec", FX_RESULT, FX_INT, NULL,
-   "  Seconds of computation in user-time.\n"},
+   "   Seconds of computation in user-time.\n"},
   {"utime/usec", FX_RESULT, FX_INT, NULL,
-   "  Additional microseconds spent in user-time.\n"},
+   "   Additional microseconds spent in user-time.\n"},
   {"stime/sec", FX_RESULT, FX_INT, NULL,
-   "  Seconds of computation in system-time.\n"},
+   "   Seconds of computation in system-time.\n"},
   {"stime/usec", FX_RESULT, FX_INT, NULL,
-   "  Additional microseconds spent in system-time.\n"},
+   "   Additional microseconds spent in system-time.\n"},
   {"minflt", FX_RESULT, FX_INT, NULL,
-   "  (See getrusage documentation.)\n"},
+   "   (See getrusage documentation.)\n"},
   {"majflt", FX_RESULT, FX_INT, NULL,
-   "  (See getrusage documentation.)\n"},
+   "   (See getrusage documentation.)\n"},
   {"maxrss", FX_RESULT, FX_INT, NULL,
-   "  (See getrusage documentation.)\n"},
+   "   (See getrusage documentation.)\n"},
   {"ixrss", FX_RESULT, FX_INT, NULL,
-   "  (See getrusage documentation.)\n"},
+   "   (See getrusage documentation.)\n"},
   {"idrss", FX_RESULT, FX_INT, NULL,
-   "  (See getrusage documentation.)\n"},
+   "   (See getrusage documentation.)\n"},
   {"isrss", FX_RESULT, FX_INT, NULL,
-   "  (See getrusage documentation.)\n"},
+   "   (See getrusage documentation.)\n"},
   {"nswap", FX_RESULT, FX_INT, NULL,
-   "  (See getrusage documentation.)\n"},
+   "   (See getrusage documentation.)\n"},
   {"inblock", FX_RESULT, FX_INT, NULL,
-   "  (See getrusage documentation.)\n"},
+   "   (See getrusage documentation.)\n"},
   {"oublock", FX_RESULT, FX_INT, NULL,
-   "  (See getrusage documentation.)\n"},
+   "   (See getrusage documentation.)\n"},
   {"msgsnd", FX_RESULT, FX_INT, NULL,
-   "  (See getrusage documentation.)\n"},
+   "   (See getrusage documentation.)\n"},
   {"msgrcv", FX_RESULT, FX_INT, NULL,
-   "  (See getrusage documentation.)\n"},
+   "   (See getrusage documentation.)\n"},
   {"nsignals", FX_RESULT, FX_INT, NULL,
-   "  (See getrusage documentation.)\n"},
+   "   (See getrusage documentation.)\n"},
   {"nvcsw", FX_RESULT, FX_INT, NULL,
-   "  (See getrusage documentation.)\n"},
+   "   (See getrusage documentation.)\n"},
   {"nivcsw", FX_RESULT, FX_INT, NULL,
-   "  (See getrusage documentation.)\n"},
+   "   (See getrusage documentation.)\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -185,23 +185,23 @@ const fx_module_doc fx__rusage_doc = {
 
 const fx_submodule_doc fx__info_submods[] = {
   {"rusage/self", &fx__rusage_doc,
-   "  Resources consumed by the experiment's main thread.\n"},
+   "   Resources consumed by the experiment's main thread.\n"},
   {"rusage/children", &fx__rusage_doc,
-   "  Resources consumed by all child threads.\n"},
+   "   Resources consumed by all child threads.\n"},
   FX_SUBMODULE_DOC_DONE
 };
 
 const fx_entry_doc fx__info_entries[] = {
   {"sys/node/name", FX_RESULT, FX_STR, NULL,
-   "  The host computer of the experiment.\n"},
+   "   The host computer of the experiment.\n"},
   {"sys/arch/name", FX_RESULT, FX_STR, NULL,
-   "  The host computer's architecture, i.e. 64-bit x86.\n"},
+   "   The host computer's architecture, i.e. 64-bit x86.\n"},
   {"sys/kernel/name", FX_RESULT, FX_STR, NULL,
-   "  The name of operating system.\n"},
+   "   The name of operating system.\n"},
   {"sys/kernel/release", FX_RESULT, FX_STR, NULL,
-   "  The version of the operating system.\n"},
+   "   The version of the operating system.\n"},
   {"sys/kernel/build", FX_RESULT, FX_STR, NULL,
-   "  Further OS version details.\n"},
+   "   Further OS version details.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -212,19 +212,19 @@ const fx_module_doc fx__info_doc = {
 
 const fx_submodule_doc fx__std_submods[] = {
   {"fx", &fx__fx_doc,
-   "  Options for the FASTexec experiment-running system.\n"},
+   "   Options for the FASTexec experiment-running system.\n"},
   {"debug", &fx__debug_doc,
-   "  Options for FASTlib's debugging feautres.\n"},
+   "   Options for FASTlib's debugging feautres.\n"},
   {"info", &fx__info_doc,
-   "  Extraneous system details pertaining to an experiment.\n"},
+   "   Extraneous system details pertaining to an experiment.\n"},
   FX_SUBMODULE_DOC_DONE
 };
 
 const fx_entry_doc fx__std_entries[] = {
   {"help", FX_PARAM, FX_STR, NULL,
-   "  Prints this information.  Permits --help=path/to/submod.\n"},
+   "   Prints this information.  Permits --help=path/to/submod.\n"},
   {"total_time", FX_TIMER, FX_CUSTOM, NULL,
-   "  The measured running time of the program.\n"},
+   "   The measured running time of the program.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -1661,26 +1661,32 @@ success_t fx_help(const fx_module_doc *doc, const char *key)
   if (doc->entries) {
     const fx_entry_doc *entry_doc;
 
+    /* we'll loop through each type of entry */
+    /* first, parameters to the program */
     if (*key == '\0') {
-      printf("Entries:\n");
+      printf("Parameters:\n");
     }
 
     for (entry_doc = doc->entries; entry_doc->key; ++entry_doc) {
       if (entry_doc->text) {
         if (fx__match_prefix(entry_doc->key, key)) {
           retval = SUCCESS_PASS;
-          if (entry_doc->val_type < 0) {
-            printf("\"%s\", %s:\n", entry_doc->key,
-                   fx_mod_name[entry_doc->mod_type]);
-          } else {
-            printf("\"%s\", %s (%s):\n", entry_doc->key,
-                   fx_mod_name[entry_doc->mod_type],
-                   fx_val_name[entry_doc->val_type]);
+          if(entry_doc->mod_type == FX_PARAM || entry_doc->mod_type == FX_REQUIRED) {
+            if (entry_doc->val_type < 0) {
+              printf("--%s, %s:\n", entry_doc->key,
+                     fx_mod_name[entry_doc->mod_type]);
+            } else {
+              printf("--%s=(%s), %s:\n", entry_doc->key,
+                     fx_val_name[entry_doc->val_type],
+                     fx_mod_name[entry_doc->mod_type]);
+            }
           }
           printf("%s\n", entry_doc->text);
         }
       }
     }
+
+    
   }
 
   if (doc->submodules) {
@@ -1774,12 +1780,12 @@ static void fx__fill_docs(fx_module *mod, const fx_module_doc *doc)
   }
 }
 
-static void fx__parse_cmd_line(fx_module *root, int argc, char *argv[])
+static void fx__parse_cmd_line(fx_module *root, int argc, char *argv[], const fx_module_doc* doc)
 {
   int i;
 
   for (i = 0; i < argc; ++i) {
-    if (argv[i][0] != '-' || argv[i][1] != '-') {
+    if (argv[i][0] != '-' && argv[i][1] != '-') {
       NONFATAL("Ignoring argument missing \"--\": \"%s\".", argv[i]);
     } else {
       char *arg = strdup(argv[i] + 2);
@@ -1922,6 +1928,18 @@ fx_module *fx_init(int argc, char *argv[], const fx_module_doc *doc)
 {
   fx_module *root = malloc(sizeof(fx_module));
 
+  /* Check a couple cases to see if the user is asking for help.  This is an
+   * ugly, stupid hack, and I hate that I have to do THIS to make it work.  This
+   * system will be gone soon, and then we can all rejoice in sensible code. */
+  if((argc == 2 &&
+      (strcmp(argv[0], "-h") == 0 ||
+       strcmp(argv[0], "-help") == 0)) ||
+      (argc == 1)) {
+    argc = 2;
+    free(argv[1]);
+    argv[1] = strcpy((char *) malloc(sizeof(char) * 7), "--help");
+  }
+
   /* First fx_init sets true root but can call to create more trees */
   if (!fx_root) {
     fx_root = root;
@@ -1935,7 +1953,7 @@ fx_module *fx_init(int argc, char *argv[], const fx_module_doc *doc)
 
   /* Set argc = 0 to omit command line parsing */
   if (argc > 0) {
-    fx__parse_cmd_line(root, argc - 1, argv + 1);
+    fx__parse_cmd_line(root, argc - 1, argv + 1, doc);
 
     if (fx_param_exists(root, "help")) {
       fx__std_help(argv[0], fx_param_str_req(root, "help"), doc);
@@ -1957,6 +1975,9 @@ fx_module *fx_init(int argc, char *argv[], const fx_module_doc *doc)
     if (fx_param_bool(root, "fx/timing", 0)) {
       fx__attempt_speedup(root);
     }
+  } else {
+    NONFATAL("No arguments supplied!");
+    fx__std_help(argv[0], fx_param_str_req(root, "help"), doc);
   }
 
   fx_timer_start(root, "total_time");
