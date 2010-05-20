@@ -1780,7 +1780,7 @@ static void fx__fill_docs(fx_module *mod, const fx_module_doc *doc)
   }
 }
 
-static void fx__parse_cmd_line(fx_module *root, int argc, char *argv[], const fx_module_doc* doc)
+static void fx__parse_cmd_line(fx_module *root, int argc, char *argv[])
 {
   int i;
 
@@ -1953,7 +1953,7 @@ fx_module *fx_init(int argc, char *argv[], const fx_module_doc *doc)
 
   /* Set argc = 0 to omit command line parsing */
   if (argc > 0) {
-    fx__parse_cmd_line(root, argc - 1, argv + 1, doc);
+    fx__parse_cmd_line(root, argc - 1, argv + 1);
 
     if (fx_param_exists(root, "help")) {
       fx__std_help(argv[0], fx_param_str_req(root, "help"), doc);
