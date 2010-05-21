@@ -1062,7 +1062,7 @@ fx_module *fx_copy_module(fx_module *mod, const char *src_key,
  *
  * @see fx_module_doc, fx_init
  */
-success_t fx_help(const fx_module_doc *doc, const char *key);
+success_t fx_help(const fx_module_doc *doc, const char *key, const char *origkey);
 
 /**
  * Creates and prepares an fx_module for use given the command line
