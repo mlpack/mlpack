@@ -1647,9 +1647,10 @@ static const char *fx__match_prefix(const char *key, const char *prefix)
   return key;
 }
 
-success_t fx_help(const fx_module_doc *doc, const char *key)
+success_t fx_help(const fx_module_doc *doc, const char *key, const char *origkey)
 {
   success_t retval = SUCCESS_WARN;
+//  printf("key is '%s'\n", origkey);
 
   for (; *key == '/'; ++key);
 
@@ -1673,12 +1674,23 @@ success_t fx_help(const fx_module_doc *doc, const char *key)
           retval = SUCCESS_PASS;
           if(entry_doc->mod_type == FX_PARAM || entry_doc->mod_type == FX_REQUIRED) {
             if (entry_doc->val_type < 0) {
-              printf("--%s, %s:\n", entry_doc->key,
-                     fx_mod_name[entry_doc->mod_type]);
+              if(*origkey != '\0') {
+                printf("--%s/%s, %s:\n", origkey, entry_doc->key,
+                       fx_mod_name[entry_doc->mod_type]);
+              } else {
+                printf("--%s, %s:\n", entry_doc->key,
+                       fx_mod_name[entry_doc->mod_type]);
+              }
             } else {
-              printf("--%s=(%s), %s:\n", entry_doc->key,
+              if(*origkey != '\0') {
+                printf("--%s/%s, %s:\n", origkey, entry_doc->key,
                      fx_val_name[entry_doc->val_type],
                      fx_mod_name[entry_doc->mod_type]);
+              } else {
+                printf("--%s=(%s), %s:\n", entry_doc->key,
+                     fx_val_name[entry_doc->val_type],
+                     fx_mod_name[entry_doc->mod_type]);
+              }
             }
           }
           printf("%s\n", entry_doc->text);
@@ -1700,7 +1712,7 @@ success_t fx_help(const fx_module_doc *doc, const char *key)
       const char *match = fx__match_prefix(key, submod_doc->key);
 
       if (match) {
-        retval |= fx_help(submod_doc->doc, match);
+        retval |= fx_help(submod_doc->doc, match, origkey);
       } else if (submod_doc->text) {
         if (fx__match_prefix(submod_doc->key, key)) {
           retval = SUCCESS_PASS;
@@ -1720,12 +1732,12 @@ static void fx__std_help(const char *prog, const char *help,
   success_t success;
 
   if (doc) {
-    success = fx_help(doc, help);
+    success = fx_help(doc, help, help);
   } else {
     NONFATAL("Program \"%s\" is not documented.\n", prog);
     success = SUCCESS_WARN;
   }
-  success |= fx_help(&fx__std_doc, help);
+  success |= fx_help(&fx__std_doc, help, help);
 
   if (!PASSED(success)) {
     NONFATAL("No documentation available for \"%s\".\n", help);
