@@ -11,8 +11,10 @@
 #include <fastlib/fastlib.h>
 
 const fx_entry_doc allnn_entries[] = {
-  {"file", FX_PARAM, FX_STR, NULL,
+  {"input_file", FX_PARAM, FX_STR, NULL,
    "CSV or ARFF dataset to read from.\n"},
+  {"output_file", FX_PARAM, FX_STR, NULL,
+   "Output file that results will be written into.\n"},
   {"leaf_size", FX_PARAM, FX_INT, NULL,
    "Maximum number of points to store at a leaf.\n"},
   {"tree_building", FX_TIMER, FX_CUSTOM, NULL,
@@ -26,7 +28,11 @@ const fx_entry_doc allnn_entries[] = {
 
 const fx_module_doc allnn_doc = {
   allnn_entries, NULL,
-  "Performs dual-tree all-nearest-neighbors computation.\n"
+  "This is the MLPACK implementation of dual-tree all-nearest-neighbors.  It\n"
+  "accepts an input dataset as a parameter, and will then calculate the nearest\n"
+  "neighbor to each point in the input dataset, and then write that to an output\n"
+  "file.  The output CSV dataset is of the format\n"
+  "  <nearest_neighbor_index>, <distance>.\n"
 };
 
 const fx_entry_doc allnn_naive_entries[] = {

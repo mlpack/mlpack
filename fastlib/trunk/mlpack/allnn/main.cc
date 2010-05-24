@@ -19,19 +19,30 @@
 #include <string>
 #include "allnn.h"
 
+using namespace std;
+
 int main (int argc, char *argv[]) {
-  fx_module *fx_root=fx_init(argc, argv, &allnn_doc);
+  fx_module *fx_root = fx_init(argc, argv, &allnn_doc);
   AllNN allnn;
   Matrix data_for_tree;
-  std::string filename=fx_param_str_req(fx_root, "file");
-  NOTIFY("Loading file...");
-  data::Load(filename.c_str(), &data_for_tree);
-  NOTIFY("File loaded...");
+
+  string input_file = fx_param_str_req(fx_root, "input_file");
+  string output_file = fx_param_str_req(fx_root, "output_file");
+
+  NOTIFY("Loading file %s...", input_file.c_str());
+  data::Load(input_file.c_str(), &data_for_tree);
   allnn.Init(data_for_tree, fx_root);
-  //GenVector<index_t> resulting_neighbors_tree;
-  //GenVector<double> resulting_distances_tree;
-  NOTIFY("Computing Neighbors...");
-  allnn.ComputeNeighbors(NULL, NULL);
-  NOTIFY("Neighbors Computed...");
+  
+  GenVector<index_t> resulting_neighbors_tree;
+  GenVector<double> resulting_distances_tree;
+
+  NOTIFY("Computing neighbors...");
+
+  allnn.ComputeNeighbors(&resulting_neighbors_tree, &resulting_distances_tree);
+
+  NOTIFY("Saving results to %s...", output_file.c_str());
+
+  data::Save(output_file.c_str(), resulting_neighbors_tree, resulting_distances_tree); 
+
   fx_done(fx_root);
 }
