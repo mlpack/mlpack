@@ -47,23 +47,26 @@
 
 const fx_entry_doc fastica_main_entries[] = {
   {"data", FX_REQUIRED, FX_STR, NULL,
-   "  A file containing data.\n"},
+   "A CSV or ARFF file containing data.\n"},
   {"ic_filename", FX_PARAM, FX_STR, NULL,
-   "  Filename to which independent components are written.\n"},
+   "Filename to which output independent components are written.\n"},
   {"unmixing_filename", FX_PARAM, FX_STR, NULL,
-   "  Filename to which unmixing matrix is written.\n"},
+   "Filename to which output unmixing matrix is written.\n"},
   FX_ENTRY_DOC_DONE
 };
 
 const fx_submodule_doc fastica_main_submodules[] = {
   {"fastica", &fastica_doc,
-   " Responsible for performing fastica.\n"},
+   "Parameters for fastica configuration.\n"},
   FX_SUBMODULE_DOC_DONE
 };
 
 const fx_module_doc fastica_main_doc = {
   fastica_main_entries, fastica_main_submodules,
-  "This program performs fastica.\n"
+  "This is the MLPACK implementation of FastICA, which implements the fast\n"
+  "fixed-point algorithm for independent component analysis.  More information\n"
+  "on the algorithm can be found at the following website:\n"
+  "  http://www.cs.helsinki.fi/u/ahyvarin/papers/fastica.shtml\n"
 };
 
 
