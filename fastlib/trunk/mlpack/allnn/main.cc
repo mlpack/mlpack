@@ -27,7 +27,7 @@ int main (int argc, char *argv[]) {
   Matrix data_for_tree;
 
   string input_file = fx_param_str_req(fx_root, "input_file");
-  string output_file = fx_param_str_req(fx_root, "output_file");
+  string output_file = fx_param_str(fx_root, "output_file", "output.csv");
 
   NOTIFY("Loading file %s...", input_file.c_str());
   data::Load(input_file.c_str(), &data_for_tree);

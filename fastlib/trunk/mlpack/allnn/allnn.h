@@ -11,12 +11,12 @@
 #include <fastlib/fastlib.h>
 
 const fx_entry_doc allnn_entries[] = {
-  {"input_file", FX_PARAM, FX_STR, NULL,
+  {"input_file", FX_REQUIRED, FX_STR, NULL,
    "CSV or ARFF dataset to read from.\n"},
   {"output_file", FX_PARAM, FX_STR, NULL,
-   "Output file that results will be written into.\n"},
+   "Output file that results will be written into (default output.csv).\n"},
   {"leaf_size", FX_PARAM, FX_INT, NULL,
-   "Maximum number of points to store at a leaf.\n"},
+   "Maximum number of points to store at a leaf (default 20).\n"},
   {"tree_building", FX_TIMER, FX_CUSTOM, NULL,
    "Time spent building the kd-tree.\n"},
   {"dual_tree_computation", FX_TIMER, FX_CUSTOM, NULL,
