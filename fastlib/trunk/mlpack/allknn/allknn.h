@@ -444,7 +444,8 @@ class AllkNN {
     // track the number of prunes
     number_of_prunes_ = 0;
     
-    mode_=fx_param_str(module_, "mode", "dual"); 
+    // force dual-tree mode
+    mode_ = "dual"; // fx_param_str(module_, "mode", "dual"); 
     // Get the leaf size from the module
     leaf_size_ = fx_param_int(module_, "leaf_size", 20);
     // Make sure the leaf size is valid
@@ -458,7 +459,7 @@ class AllkNN {
     DEBUG_SAME_SIZE(queries_.n_rows(), references_.n_rows());
     
 		// K-nearest neighbors initialization
-		knns_ = fx_param_int(module_, "knns", 5);
+		knns_ = fx_param_int_req(module_, "k");
   
     // Initialize the list of nearest neighbor candidates
     neighbor_indices_.Init(queries_.n_cols() * knns_);
@@ -495,7 +496,8 @@ class AllkNN {
     // set the module
     module_ = module_in;
   
-    mode_=fx_param_str(module_, "mode", "dual"); 
+    // force dual-tree mode
+    mode_= "dual"; // fx_param_str(module_, "mode", "dual"); 
    
     // track the number of prunes
     number_of_prunes_ = 0;
@@ -509,7 +511,7 @@ class AllkNN {
     references_.Copy(references_in);
     queries_.Alias(references_);    
 		// K-nearest neighbors initialization
-		knns_ = fx_param_int(module_, "knns", 5);
+		knns_ = fx_param_int_req(module_, "k");
   
     // Initialize the list of nearest neighbor candidates
     neighbor_indices_.Init(references_.n_cols() * knns_);
