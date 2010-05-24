@@ -34,6 +34,11 @@ private:
   
   int num_exclusion_prunes_;
   
+  // invalid_indices_[i] is the list of bad indices in the range list
+  // if the ind_to_split_ is i
+  ArrayList<ArrayList<index_t> > invalid_indices_;
+  
+  
   ////////////// functions ///////////////////
   
   bool PointsViolateSymmetry_(index_t ind1, index_t ind2);
@@ -48,6 +53,8 @@ private:
 
   int DepthFirstRecursion_(NodeTuple& nodes);
   
+  void FindInvalidIndices_();
+  
 public:
   
   void Init(const Matrix& data, const Matrix& lower_bds, 
@@ -61,13 +68,16 @@ public:
     
     ArrayList<double> upper_dists;
     upper_dists.Init();
+    ArrayList<double> lower_dists;
+    lower_dists.Init();
     for (index_t i = 0; i < tuple_size_; i++) {
       for (index_t j = i+1; j < tuple_size_; j++) {
         upper_dists.PushBackCopy(upper_bds.get(i,j));
+        lower_dists.PushBackCopy(lower_bds.get(i,j));
       }
-    }
+    } // fill in lists
     
-    matcher_.Init(upper_bds, upper_dists, tuple_size_);
+    matcher_.Init(upper_bds, upper_dists, lower_bds, lower_dists, tuple_size_);
     
     leaf_size_ = fx_param_int(mod_, "leaf_size", 1);
     
@@ -86,6 +96,9 @@ public:
     //tree_->Print();
     
     num_exclusion_prunes_ = 0;
+    
+    FindInvalidIndices_();
+    
     
   } // Init()
   

@@ -21,6 +21,12 @@ int PermFreeMatcher::CheckNodes(NodeTuple& nodes) {
       return EXCLUDE;
     }
     
+    double upper_dist = nodes.upper_bound(i);
+    
+    if (upper_dist < lower_bounds_sq_[i]) {
+      return EXCLUDE;
+    }
+    
   } // for i
   
   return INCONCLUSIVE;
@@ -46,7 +52,8 @@ bool PermFreeMatcher::TestPointPair(double dist_sq, index_t tuple_index_1,
     index_t template_index_2 = GetPermutationIndex_(i, tuple_index_2);
     
     
-    if (dist_sq <= upper_bounds_sq_mat_.ref(template_index_1, template_index_2)) {
+    if (dist_sq <= upper_bounds_sq_mat_.ref(template_index_1, template_index_2)
+        && dist_sq >= lower_bounds_sq_mat_.ref(template_index_1, template_index_2)) {
       any_matches = true;
     } // this placement works
     else {

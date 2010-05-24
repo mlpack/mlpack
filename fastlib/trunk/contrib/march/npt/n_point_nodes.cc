@@ -9,59 +9,8 @@
 
 #include "n_point_nodes.h"
 
-// fills inds with the indices in the range list that need to be recomputed
-void NodeTuple::FindInvalidIndices_(ArrayList<index_t>* inds) {
-  
-  //printf("ind_to_split: %d\n", ind_to_split_);
-  
-  // inserted this easy fix, not sure if the rest is right yet
-  if (tuple_size_ == 2) {
-    inds->PushBackCopy(0);
-  }
-  else {
-    
-    index_t bad_ind = ind_to_split_ - 1;
-    index_t bad_ind2 = 0;
-    
-    for (index_t i = 0; i < ind_to_split_; i++) {
-      
-      inds->PushBackCopy(bad_ind);
-      bad_ind += tuple_size_ - 1 - (i+1);
-      bad_ind2 += tuple_size_ - i - 1;
-      
-    } // horizontal
-    
-    for (index_t i = ind_to_split_+1; i < tuple_size_; i++) {
-      
-      inds->PushBackCopy(bad_ind2);
-      bad_ind2++;
-      
-    }
-    
-    
-    /*
-    index_t bad_ind = ind_to_split_ - 1;
-    inds->PushBackCopy(bad_ind);
-    
-    for (index_t i = 1; i < ind_to_split_; i++) {
-      
-      bad_ind += tuple_size_ - 1 - i;
-      inds->PushBackCopy(bad_ind);
-      
-    } // i < k
-    
-    bad_ind += tuple_size_ - ind_to_split_;
-    for (index_t i = ind_to_split_ + 1; i < tuple_size_; i++) {
 
-      bad_ind++;
-      inds->PushBackCopy(bad_ind);
-    } // i > k
-     
-     */
-    
-  } // n > 2
-  
-} // FindInvalidIndices_()
+
 
 void NodeTuple::UpdateIndices_(index_t split_ind, 
                                ArrayList<index_t>& invalid_indices) {
@@ -202,16 +151,14 @@ bool CheckSymmetry_(ArrayList<NPointNode*>& node_list) {
 } // CheckSymmetry_
 
 
-void NodeTuple::PerformSplit(NodeTuple*& left_node, NodeTuple*& right_node) {
+void NodeTuple::PerformSplit(NodeTuple*& left_node, NodeTuple*& right_node,
+                             ArrayList<ArrayList<index_t> >& invalid_index_list) {
   
   NPointNode* split_node = node_list_[ind_to_split_];
   DEBUG_ASSERT(!(split_node->is_leaf()));
   
   // contains all indices in the list of ranges that need to be computed
-  ArrayList<index_t> invalid_indices;
-  invalid_indices.Init();
-  FindInvalidIndices_(&invalid_indices);
-  DEBUG_ASSERT(invalid_indices.size() == tuple_size_ - 1);
+  ArrayList<index_t>& invalid_indices = invalid_index_list[ind_to_split_];
   
   // form the children here, give it the three arrays and the list of 
   // invalid indices
