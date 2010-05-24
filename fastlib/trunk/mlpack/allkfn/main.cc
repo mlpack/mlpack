@@ -26,19 +26,19 @@ const fx_entry_doc allkfn_entries[] = {
    "Input dataset (CSV or ARFF) to read from\n"},
   {"query_file", FX_PARAM, FX_STR, NULL,
    "Dataset (CSV or ARFF) containing query points; if omitted, all of the\n"
-   "   input dataset points will be queried.\n"},
+   "   input dataset points will be queried\n"},
   {"output_file", FX_PARAM, FX_STR, NULL,
    "File to output results into (default output.csv)\n"},
   {"k", FX_REQUIRED, FX_INT, NULL,
    "Number of furthest neighbors to compute\n"},
   {"leaf_size", FX_PARAM, FX_INT, NULL,
-   "Maximum number of points to store in a leaf (default 20).\n"},
+   "Maximum number of points to store in a leaf (default 20)\n"},
   FX_ENTRY_DOC_DONE
 };
 
 const fx_module_doc allkfn_doc = {
   allkfn_entries, NULL,
-  "This is the MLPACK implementation of dual-tree all-furthest-neighbors.  It\n"
+  "This is the MLPACK implementation of dual-tree all-k-furthest-neighbors.  It\n"
   "accepts an input dataset as a parameter, and optionally a set of query\n"
   "points; then, it calculates the k furthest neighbors from each of the query\n"
   "points.  If the query point dataset is not specified, the k furthest\n"
@@ -62,9 +62,9 @@ int main(int argc, char *argv[]) {
   ArrayList<index_t> neighbors;
   ArrayList<double> distances;
   if (data::Load(reference_file.c_str(), &reference_data)==SUCCESS_FAIL) {
-    FATAL("Reference file %s not found!", reference_file.c_str());
+    FATAL("Input file %s not found!", reference_file.c_str());
   }
-  NOTIFY("Loaded reference data from file %s.", reference_file.c_str());
+  NOTIFY("Loaded input data from file %s.", reference_file.c_str());
  
   AllkFN allkfn; 
   if (fx_param_exists(module, "query_file")) {
