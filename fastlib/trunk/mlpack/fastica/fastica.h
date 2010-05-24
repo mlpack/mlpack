@@ -33,6 +33,8 @@ const fx_entry_doc fastica_entries[] = {
    "Independent component recovery approach: 'deflation' or 'symmetric'.\n"},
   {"nonlinearity", FX_PARAM, FX_STR, NULL,
    "Nonlinear function to use: 'logcosh', 'gauss', 'kurtosis', or 'skew'.\n"},
+  {"num_of_IC", FX_PARAM, FX_INT, NULL,
+   "  Number of independent components to find: integer between 1 and dimensionality of data.\n"},
   {"fine_tune", FX_PARAM, FX_BOOL, NULL,
    "Enable fine tuning.\n"},
   {"a1", FX_PARAM, FX_DOUBLE, NULL,
@@ -643,7 +645,13 @@ class FastICA {
     //const index_t first_eig_ = fx_param_int(module_, "first_eig", 1);
     // for now, the last eig must be d, and num_of IC must be d, until I have time to incorporate PCA into this code
     //const index_t last_eig_ = fx_param_int(module_, "last_eig", d);
-    num_of_IC_ = d; //fx_param_int(module_, "num_of_IC", d);
+    num_of_IC_ = fx_param_int(module_, "num_of_IC", d);
+    if(num_of_IC_ < 1 || num_of_IC_ > d) {
+      printf("ERROR: num_of_IC = %d must be >= 1 and <= dimensionality of data",
+	     num_of_IC_);
+      return SUCCESS_FAIL;
+    }
+
     fine_tune_ = fx_param_bool(module_, "fine_tune", false);
     a1_ = fx_param_double(module_, "a1", 1);
     a2_ = fx_param_double(module_, "a2", 1);
@@ -1366,7 +1374,7 @@ class FastICA {
       FixedPointICA(X_whitened, whitening_matrix, W);
 
     if(ret_val == SUCCESS_PASS) {
-      la::MulInit(*W, X(), Y);
+      la::MulTransAInit(*W, X(), Y);
     }
     else {
       Y -> Init(0,0);
