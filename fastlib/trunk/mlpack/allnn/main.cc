@@ -20,7 +20,7 @@
 #include "allnn.h"
 
 int main (int argc, char *argv[]) {
-  fx_module *fx_root=fx_init(argc, argv, NULL);
+  fx_module *fx_root=fx_init(argc, argv, &allnn_doc);
   AllNN allnn;
   Matrix data_for_tree;
   std::string filename=fx_param_str_req(fx_root, "file");

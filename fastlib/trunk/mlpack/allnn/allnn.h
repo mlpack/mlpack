@@ -11,14 +11,16 @@
 #include <fastlib/fastlib.h>
 
 const fx_entry_doc allnn_entries[] = {
+  {"file", FX_PARAM, FX_STR, NULL,
+   "CSV or ARFF dataset to read from.\n"},
   {"leaf_size", FX_PARAM, FX_INT, NULL,
-   "  The maximum number of points to store at a leaf.\n"},
+   "Maximum number of points to store at a leaf.\n"},
   {"tree_building", FX_TIMER, FX_CUSTOM, NULL,
-   "  Time spent building the kd-tree.\n"},
+   "Time spent building the kd-tree.\n"},
   {"dual_tree_computation", FX_TIMER, FX_CUSTOM, NULL,
-   "  Time spent computing the nearest neighbors.\n"},
+   "Time spent computing the nearest neighbors.\n"},
   {"number_of_prunes", FX_RESULT, FX_INT, NULL,
-   "  Total node-pairs found to be too far to matter.\n"},
+   "Total node-pairs found to be too far to matter.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -29,7 +31,7 @@ const fx_module_doc allnn_doc = {
 
 const fx_entry_doc allnn_naive_entries[] = {
   {"naive_time", FX_TIMER, FX_CUSTOM, NULL,
-   "  Time spend performing the naive computation.\n"},
+   "Time spent performing the naive computation.\n"},
   FX_ENTRY_DOC_DONE
 };
 
