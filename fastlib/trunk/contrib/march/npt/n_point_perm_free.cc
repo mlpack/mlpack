@@ -9,6 +9,47 @@
 
 #include "n_point_perm_free.h"
 
+// fills inds with the indices in the range list that need to be recomputed
+void NPointPermFree::FindInvalidIndices_() {
+  
+  invalid_indices_.Init(tuple_size_);
+  
+  for (index_t split_ind = 0; split_ind < tuple_size_; split_ind++) {
+    
+    invalid_indices_[split_ind].Init();
+    
+    // inserted this easy fix, not sure if the rest is right yet
+    if (tuple_size_ == 2) {
+      invalid_indices_[split_ind].PushBackCopy(0);
+    }
+    else {
+      
+      index_t bad_ind = split_ind - 1;
+      index_t bad_ind2 = 0;
+      
+      for (index_t i = 0; i < split_ind; i++) {
+        
+        invalid_indices_[split_ind].PushBackCopy(bad_ind);
+        bad_ind += tuple_size_ - 1 - (i+1);
+        bad_ind2 += tuple_size_ - i - 1;
+        
+      } // horizontal
+      
+      for (index_t i = split_ind+1; i < tuple_size_; i++) {
+        
+        invalid_indices_[split_ind].PushBackCopy(bad_ind2);
+        bad_ind2++;
+        
+      }
+      
+    } // n > 2
+    
+  } // for split_ind
+  
+} // FindInvalidIndices_()
+
+
+
 // returns true if the indices violate the symmetry requirement
 bool NPointPermFree::PointsViolateSymmetry_(index_t ind1, index_t ind2) {
   DEBUG_ASSERT(ind1 >= 0);
@@ -197,7 +238,8 @@ int NPointPermFree::DepthFirstRecursion_(NodeTuple& nodes) {
     NodeTuple right_node;
     NodeTuple* right_node_ptr = &right_node;
     
-    nodes.PerformSplit(left_node_ptr, right_node_ptr);
+    // just pass in the invalid indicies here
+    nodes.PerformSplit(left_node_ptr, right_node_ptr, invalid_indices_);
     
     // check if the list of bandwidths is still sorted here
     

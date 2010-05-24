@@ -81,8 +81,20 @@ private:
   index_t ind_to_split_;
   bool all_leaves_;
   
+  
   ////////////////// functions ///////////////////////
   
+
+  /**
+   *
+   */
+  void FindInvalidIndices_();
+  
+
+  
+  /**
+   *
+   */
   void SplitHelper_(ArrayList<NPointNode*>& node_list, 
                     index_t split_ind,
                     ArrayList<DRange>& ranges_in,
@@ -92,10 +104,15 @@ private:
                     ArrayList<index_t>& in_to_hi,
                     ArrayList<index_t>& in_to_lo);
   
-  void FindInvalidIndices_(ArrayList<index_t>* inds);
   
+
+  /**
+   *
+   */
   void UpdateIndices_(index_t split_ind, ArrayList<index_t>& invalid_indices);
 
+  
+  
 public:
   
   NPointNode* node_list(index_t i) {
@@ -168,8 +185,7 @@ public:
       
     } // for i
     
-    // sort the distances
-    // TODO: add index tracking
+    // sort the indices
     std::sort(sorted_upper_.begin(), sorted_upper_.end());
     std::sort(sorted_lower_.begin(), sorted_lower_.end());
     
@@ -181,7 +197,7 @@ public:
       input_to_lower_[sorted_lower_[i].second] = i;
       
     } // fill in input to sorted arrays
-    
+  
   } // Init()
   
   void Create();
@@ -189,7 +205,8 @@ public:
   /**
    * Splits the node in position ind_to_split and updates the lists
    */
-  void PerformSplit(NodeTuple*& left_node, NodeTuple*& right_node);
+  void PerformSplit(NodeTuple*& left_node, NodeTuple*& right_node, 
+                    ArrayList<ArrayList<index_t> >& invalid_index_list);
   
   void Print() {
     
