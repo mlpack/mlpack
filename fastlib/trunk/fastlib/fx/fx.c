@@ -1993,11 +1993,10 @@ fx_module *fx_init(int argc, char *argv[], const fx_module_doc *doc)
    * ugly, stupid hack, and I hate that I have to do THIS to make it work.  This
    * system will be gone soon, and then we can all rejoice in sensible code. */
   if((argc == 2 &&
-      (strcmp(argv[0], "-h") == 0 ||
-       strcmp(argv[0], "-help") == 0)) ||
+      (strcmp(argv[1], "-h") == 0 ||
+       strcmp(argv[1], "-help") == 0)) ||
       (argc == 1)) {
     argc = 2;
-    free(argv[1]);
     argv[1] = strcpy((char *) malloc(sizeof(char) * 7), "--help");
   }
 
