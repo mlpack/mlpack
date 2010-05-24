@@ -736,10 +736,22 @@ namespace data {
    * data::Save("mymatrix.csv", matrix_to_save);
    * @endcode
    *
-   * @param fname the file name to load
+   * @param fname the file name to save to
    * @param matrix a pointer to an uninitialized matrix to load
    */
   success_t Save(const char *fname, const Matrix& matrix);
+
+  /**
+   * Saves an index vector and a data vector to a file.
+   *
+   * This saves in CSV format.
+   *
+   * @param fname the file name to save to
+   * @param index_vector the vector of indices
+   * @param data_vector the vector of data to save to the file
+   */
+  success_t Save(const char *fname, const GenVector<index_t> &index_vector,
+    const GenVector<double> &data_vector);
 };
 
 #endif
