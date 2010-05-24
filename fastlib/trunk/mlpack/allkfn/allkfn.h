@@ -373,7 +373,7 @@ class AllkFN {
     DEBUG_SAME_SIZE(queries_.n_rows(), references_.n_rows());
     
 		// K-nearest neighbors initialization
-		kfns_ = fx_param_int(module_, "kfns", 1);
+		kfns_ = fx_param_int_req(module_, "k");
   
     // Initialize the list of nearest neighbor candidates
     neighbor_indices_.Init(queries_.n_cols() * kfns_);
@@ -418,7 +418,7 @@ class AllkFN {
     references_.Copy(references_in);
     queries_.Alias(references_);    
 		// K-nearest neighbors initialization
-		kfns_ = fx_param_int(module_, "kfns", 1);
+		kfns_ = fx_param_int_req(module_, "k");
   
     // Initialize the list of nearest neighbor candidates
     neighbor_indices_.Init(references_.n_cols() * kfns_);
