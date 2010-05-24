@@ -40,6 +40,9 @@
  *
  */
 
+#include <iostream>
+#include <fstream>
+
 #include "../base/base.h"
 
 #include "dataset.h"
@@ -677,3 +680,27 @@ success_t data::Save(const char *fname, const Matrix& matrix) {
   return dataset.WriteCsv(fname);
 }
 
+success_t data::Save(const char *fname, const GenVector<index_t> &index_vector, const GenVector<double> &data_vector) {
+  // we need to reimplement dataset.WriteCsv with our own modifications
+  // this whole thing needs to be re-done at some point to make more sense in
+  // terms of the API sensibility, but this is a last-minute thing before
+  // release
+ 
+  // in fact, I'm not even doing this anywhere near similarly to the other way
+
+  // ensure our vectors are the same size
+  DEBUG_ASSERT(index_vector.length() == data_vector.length());
+
+  // open our output file
+  std::ofstream out;
+  out.open(fname);
+  if(!out.is_open())
+    return SUCCESS_FAIL;
+
+  for(index_t i = 0; i < index_vector.length(); i++)
+    out << index_vector[i] << ", " << data_vector[i] << std::endl;
+
+  out.close();
+
+  return SUCCESS_PASS;
+}
