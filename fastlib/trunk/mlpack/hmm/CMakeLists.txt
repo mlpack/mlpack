@@ -14,6 +14,7 @@ set(SOURCES
    mixtureDST.cc
    support.h
    support.cc
+   hmm_documentation.h
 )
 
 # add directory name to sources
@@ -25,34 +26,34 @@ endforeach()
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # executables
-add_executable(generate
+add_executable(hmm_generate
    generate.cc
 )
-target_link_libraries(generate
+target_link_libraries(hmm_generate
    mlpack
    fastlib
 )
 
-add_executable(loglik
+add_executable(hmm_loglik
    loglik.cc
 )
-target_link_libraries(loglik
+target_link_libraries(hmm_loglik
    mlpack
    fastlib
 )
 
-add_executable(viterbi
+add_executable(hmm_viterbi
    viterbi.cc
 )
-target_link_libraries(viterbi
+target_link_libraries(hmm_viterbi
    mlpack
    fastlib
 )
 
-add_executable(train
+add_executable(hmm_train
    train.cc
 )
-target_link_libraries(train
+target_link_libraries(hmm_train
    mlpack
    fastlib
 )
