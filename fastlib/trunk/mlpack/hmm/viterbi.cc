@@ -10,40 +10,48 @@
  * See the usage() function for complete option list
  */
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
 #include "support.h"
 #include "discreteHMM.h"
 #include "gaussianHMM.h"
 #include "mixgaussHMM.h"
 #include "mixtureDST.h"
+#include "hmm_documentation.h"
 
 using namespace hmm_support;
 
 success_t viterbi_discrete();
 success_t viterbi_gaussian();
 success_t viterbi_mixture();
-void usage();
 
 const fx_entry_doc hmm_viterbi_main_entries[] = {
+  {"input_model", FX_REQUIRED, FX_STR, NULL,
+   "Input file containing a trained HMM profile\n"},
+  {"input_sequence_file", FX_REQUIRED, FX_STR, NULL,
+   "Input file of data sequences to evaluate\n"},
+  {"output_state_file", FX_PARAM, FX_STR, NULL,
+   "Output file for the most probable state sequences for each input sequence\n"
+   "     (default output_state.<type>.seq)\n"},
   {"type", FX_REQUIRED, FX_STR, NULL,
-   "  HMM type : discrete | gaussian | mixture.\n"},
-  {"profile", FX_REQUIRED, FX_STR, NULL,
-   "  A file containing HMM profile.\n"},
-  {"seqfile", FX_PARAM, FX_STR, NULL,
-   "  Output file for the data sequences.\n"},
-  {"statefile", FX_PARAM, FX_STR, NULL,
-   "  Output file for the most probable state sequences.\n"},
+   "HMM type: discrete | gaussian | mixture\n"},
   FX_ENTRY_DOC_DONE
 };
 
 const fx_submodule_doc hmm_viterbi_main_submodules[] = {
+  {"formats", &hmm_format_doc,
+   "Documentation for file formats used by this program and other MLPACK HMM tools\n"},
   FX_SUBMODULE_DOC_DONE
 };
 
 const fx_module_doc hmm_viterbi_main_doc = {
   hmm_viterbi_main_entries, hmm_viterbi_main_submodules,
-  "This is a program computing the most probable state sequences \n"
-  "of data sequences from HMM models.\n"
+  "The hmm_viterbi utility is used to find the most likely state sequences\n"
+  "corresponding to given input sequences.  For a given input HMM profile and a\n"
+  "given input file of sequences, this utility will find the most probable\n"
+  "hidden state sequence and output that to a file.\n"
+  "\n"
+  "For more information on the file formats used by this and other MLPACK HMM\n"
+  "utilities, see the 'formats' submodule documentation (--help=formats).\n"
 };
 
 int main(int argc, char* argv[]) {
@@ -58,37 +66,22 @@ int main(int argc, char* argv[]) {
     else if (strcmp(type, "mixture")==0)
       s = viterbi_mixture();
     else {
-      printf("Unrecognized type: must be: discrete | gaussian | mixture !!!\n");
+      FATAL("Unrecognized HMM type; must be 'discrete', 'gaussian', or 'mixture'.\n");
       s = SUCCESS_FAIL;
     }
   }
   else {
-    printf("Unrecognized type: must be: discrete | gaussian | mixture  !!!\n");
+    FATAL("Unrecognized HMM type; must be 'discrete', 'gaussian', or 'mixture'.\n");
     s = SUCCESS_FAIL;
   }
-  if (!PASSED(s)) usage();
+  
   fx_done(NULL);
 }
 
-void usage() {
-  printf("\n"
-	 "Usage:\n"
-	 "  viterbi --type=={discrete|gaussian|mixture} OPTIONS\n"
-	 "[OPTIONS]\n"
-	 "  --profile=file   : file contains HMM profile\n"
-	 "  --seqfile=file   : file contains input sequences\n"
-	 "  --statefile=file : output file for state sequences\n"
-	 );
-}
-
 success_t viterbi_mixture() {
-  if (!fx_param_exists(NULL, "profile")) {
-    printf("--profile must be defined.\n");
-    return SUCCESS_FAIL;
-  }
-  const char* profile = fx_param_str_req(NULL, "profile");
-  const char* seqin = fx_param_str(NULL, "seqfile", "seq.mix.out");
-  const char* stateout = fx_param_str(NULL, "statefile", "state.viterbi.mix.out");
+  const char* profile = fx_param_str_req(NULL, "input_model");
+  const char* seqin = fx_param_str_req(NULL, "input_sequence_file");
+  const char* stateout = fx_param_str(NULL, "output_state_file", "output_state.mix.seq");
 
   MixtureofGaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -115,13 +108,9 @@ success_t viterbi_mixture() {
 }
 
 success_t viterbi_gaussian() {
-  if (!fx_param_exists(NULL, "profile")) {
-    printf("--profile must be defined.\n");
-    return SUCCESS_FAIL;
-  }
-  const char* profile = fx_param_str_req(NULL, "profile");
-  const char* seqin = fx_param_str(NULL, "seqfile", "seq.gauss.out");
-  const char* stateout = fx_param_str(NULL, "statefile", "state.viterbi.gauss.out");
+  const char* profile = fx_param_str_req(NULL, "input_model");
+  const char* seqin = fx_param_str_req(NULL, "input_sequence_file");
+  const char* stateout = fx_param_str(NULL, "output_state_file", "output_state.gauss.seq");
   GaussianHMM hmm;
   hmm.InitFromFile(profile);
 
@@ -146,13 +135,9 @@ success_t viterbi_gaussian() {
 }
 
 success_t viterbi_discrete() {
-  if (!fx_param_exists(NULL, "profile")) {
-    printf("--profile must be defined.\n");
-    return SUCCESS_FAIL;
-  }
-  const char* profile = fx_param_str_req(NULL, "profile");
-  const char* seqin = fx_param_str(NULL, "seqfile", "seq.out");
-  const char* stateout = fx_param_str(NULL, "statefile", "state.viterbi.out");
+  const char* profile = fx_param_str_req(NULL, "input_model");
+  const char* seqin = fx_param_str_req(NULL, "input_sequence_file");
+  const char* stateout = fx_param_str(NULL, "output_state_file", "output_state.dis.seq");
 
   DiscreteHMM hmm;
 
