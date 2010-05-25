@@ -22,7 +22,6 @@ using namespace hmm_support;
 success_t generate_discrete();
 success_t generate_gaussian();
 success_t generate_mixture();
-void usage();
 
 const fx_entry_doc hmm_generate_main_entries[] = {
   {"input_model", FX_REQUIRED, FX_STR, NULL,

@@ -23,7 +23,6 @@ using namespace hmm_support;
 
 success_t train_baumwelch();
 success_t train_viterbi();
-void usage();
 
 const fx_entry_doc hmm_train_main_entries[] = {
   {"input_file", FX_REQUIRED, FX_STR, NULL,
