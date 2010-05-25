@@ -93,12 +93,8 @@ foreach(incl_file ${INCLUDE_FILES})
 endforeach()
 
 # set installation rules for include files
-#install(FILES ${CMAKE_BINARY_DIR}/include/mlpack/
-#   DESTINATION include/mlpack)
-
-# set installation rules for mlpack programs
-#install(PROGRAMS ${CMAKE_BINARY_DIR}/bin/
-#   DESTINATION bin)
+install(FILES ${INCLUDE_FILES}
+   DESTINATION include/mlpack)
 
 install(TARGETS mlpack
    RUNTIME DESTINATION bin
