@@ -56,15 +56,16 @@ foreach(incl_file ${INCLUDE_FILES})
 endforeach()
 
 # set installation rules for include files
-#install(FILES ${CMAKE_BINARY_DIR}/include/mlpack_contrib/
-#   DESTINATION include/mlpack_contrib)
+install(FILES ${INCLUDE_FILES}
+   DESTINATION include/mlpack_contrib)
 
 # set installation rules for mlpack_contrib programs
 #install(PROGRAMS ${CMAKE_BINARY_DIR}/bin/
 #   DESTINATION bin)
 
-install(TARGETS mlpack_contrib
-   RUNTIME DESTINATION bin
-   LIBRARY DESTINATION lib
-   ARCHIVE DESTINATION lib
-)
+# since it is not built by default, don't try to install it
+#install(TARGETS mlpack_contrib
+#   RUNTIME DESTINATION bin
+#   LIBRARY DESTINATION lib
+#   ARCHIVE DESTINATION lib
+#)

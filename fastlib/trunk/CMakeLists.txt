@@ -62,3 +62,9 @@ add_subdirectory(fastlib) # fastlib
 add_subdirectory(mlpack) # mlpack
 add_subdirectory(contrib) # mlpack_contrib
 #add_subdirectory(physpack) # physpack  ## do not build by default
+
+## install all binaries
+install(DIRECTORY ${CMAKE_BINARY_DIR}/bin/ 
+    DESTINATION bin/
+    FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+    FILES_MATCHING PATTERN * PATTERN *_test EXCLUDE)
