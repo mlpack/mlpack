@@ -3,18 +3,15 @@
  *
  * This file contains the program to compute log-likelihood of sequences
  * according to a Hidden Markov  Model.
- *
- * Usage:
- *   loglik --type=TYPE --profile=PROFILE [OPTIONS]
- * See the usage() function for complete option list
  */
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
 #include "support.h"
 #include "discreteHMM.h"
 #include "gaussianHMM.h"
 #include "mixgaussHMM.h"
 #include "mixtureDST.h"
+#include "hmm_documentation.h"
 
 using namespace hmm_support;
 
@@ -24,25 +21,33 @@ success_t loglik_mixture();
 void usage();
 
 const fx_entry_doc hmm_loglik_main_entries[] = {
+  {"input_model", FX_REQUIRED, FX_STR, NULL,
+   "Input file containing the trained HMM profile.\n"},
+  {"input_sequence_file", FX_REQUIRED, FX_STR, NULL,
+   "Input file of data sequences whose log-likelihood is to be evaluated.\n"},
+  {"output_file", FX_PARAM, FX_STR, NULL,
+   "Output file for the computed log-likelihood of each input sequence.\n"
+   "     (default output.<type>.lik)\n"},
   {"type", FX_REQUIRED, FX_STR, NULL,
-   "  HMM type : discrete | gaussian | mixture.\n"},
-  {"profile", FX_REQUIRED, FX_STR, NULL,
-   "  A file containing HMM profile.\n"},
-  {"seqfile", FX_PARAM, FX_STR, NULL,
-   "  Output file for the data sequences.\n"},
-  {"logfile", FX_PARAM, FX_STR, NULL,
-   "  Output file for the computed log-likelihood of the sequences.\n"},
+   "HMM type: discrete | gaussian | mixture\n"},
   FX_ENTRY_DOC_DONE
 };
 
 const fx_submodule_doc hmm_loglik_main_submodules[] = {
+  {"formats", &hmm_format_doc,
+   "Documentation for file formats used by this program and other MLPACK HMM tools\n"},
   FX_SUBMODULE_DOC_DONE
 };
 
 const fx_module_doc hmm_loglik_main_doc = {
   hmm_loglik_main_entries, hmm_loglik_main_submodules,
-  "This is a program computing log-likelihood of data sequences \n"
-  "from HMM models.\n"
+  "The hmm_loglik utility calculates the log-likelihood of a set of given\n"
+  "observation sequences given a trained HMM profile.  It stores the output of each\n" 
+  "calculation in the given output file, where line N in that file corresponds\n"
+  "to the Nth input sequence.\n"
+  "\n"
+  "For more information on the file formats used by the MLPACK HMM utilities, see\n"
+  "the documentation in the 'formats' submodule (--help=formats).\n"
 };
 
 int main(int argc, char* argv[]) {
@@ -57,37 +62,22 @@ int main(int argc, char* argv[]) {
     else if (strcmp(type, "mixture")==0) 
       s = loglik_mixture();
     else {
-      printf("Unrecognized type: must be: discrete | gaussian | mixture !!!\n");
+      FATAL("Unrecognized HMM type; must be 'discrete', 'gaussian', or 'mixture'.\n");
       s = SUCCESS_FAIL;
     }
   }
   else {
-    printf("Unrecognized type: must be: discrete | gaussian | mixture  !!!\n");
+    FATAL("Unrecognized HMM type; must be 'discrete', 'gaussian', or 'mixture'.\n");
     s = SUCCESS_FAIL;
   }
-  if (!PASSED(s)) usage();
+  
   fx_done(NULL);
 }
 
-void usage() {
-  printf("\n"
-	 "Usage:\n"
-	 "  loglik --type=={discrete|gaussian|mixture} OPTIONS\n"
-	 "[OPTIONS]\n"
-	 "  --profile==file   : file contains HMM profile\n"
-	 "  --seqfile==file   : file contains input sequences\n"
-	 "  --logfile==file   : output file for log-likelihood of the sequences\n"
-	 );
-}
-
 success_t loglik_mixture() {
-  if (!fx_param_exists(NULL, "profile")) {
-    printf("--profile must be defined.\n");
-    return SUCCESS_FAIL;
-  }
-  const char* profile = fx_param_str_req(NULL, "profile");
-  const char* seqin = fx_param_str(NULL, "seqfile", "seq.mix.out");
-  const char* logout = fx_param_str(NULL, "logfile", "log.mix.out");
+  const char* profile = fx_param_str_req(NULL, "input_model");
+  const char* seqin = fx_param_str_req(NULL, "input_sequence_file");
+  const char* logout = fx_param_str(NULL, "output_file", "output.mix.lik");
 
   MixtureofGaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -111,13 +101,9 @@ success_t loglik_mixture() {
 }
 
 success_t loglik_gaussian() {
-  if (!fx_param_exists(NULL, "profile")) {
-    printf("--profile must be defined.\n");
-    return SUCCESS_FAIL;
-  }
-  const char* profile = fx_param_str_req(NULL, "profile");
-  const char* seqin = fx_param_str(NULL, "seqfile", "seq.gauss.out");
-  const char* logout = fx_param_str(NULL, "logfile", "log.gauss.out");
+  const char* profile = fx_param_str_req(NULL, "input_model");
+  const char* seqin = fx_param_str_req(NULL, "input_sequence_file");
+  const char* logout = fx_param_str(NULL, "output_file", "output.gauss.lik");
 
   GaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -141,13 +127,9 @@ success_t loglik_gaussian() {
 }
 
 success_t loglik_discrete() {
-  if (!fx_param_exists(NULL, "profile")) {
-    printf("--profile must be defined.\n");
-    return SUCCESS_FAIL;
-  }
-  const char* profile = fx_param_str_req(NULL, "profile");
-  const char* seqin = fx_param_str(NULL, "seqfile", "seq.out");
-  const char* logout = fx_param_str(NULL, "logfile", "log.out");
+  const char* profile = fx_param_str_req(NULL, "input_model");
+  const char* seqin = fx_param_str_req(NULL, "input_sequence_file");
+  const char* logout = fx_param_str(NULL, "output_file", "output.dis.lik");
 
   DiscreteHMM hmm;
   hmm.InitFromFile(profile);
