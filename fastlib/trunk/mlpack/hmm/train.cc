@@ -28,9 +28,9 @@ void usage();
 const fx_entry_doc hmm_train_main_entries[] = {
   {"input_file", FX_REQUIRED, FX_STR, NULL,
    "Input file containing data sequences to train on.\n"},
-  {"guess_file", FX_PARAM, FX_STR, NULL,
+  {"guess_model", FX_PARAM, FX_STR, NULL,
    "File containing guess of HMM model profile (.hmm)\n"},
-  {"output_file", FX_PARAM, FX_STR, NULL,
+  {"output_model", FX_PARAM, FX_STR, NULL,
    "Output file containing trained HMM profile (default output.<type>.hmm)\n"},
   {"type", FX_REQUIRED, FX_STR, NULL,
    "HMM type: discrete | gaussian | mixture\n"},
@@ -127,12 +127,12 @@ success_t train_baumwelch_mixture() {
   ArrayList<Matrix> seqs;
 
   const char* seqin = fx_param_str_req(NULL, "input_file");
-  const char* proout = fx_param_str(NULL, "output_file", "output.mix.hmm");
+  const char* proout = fx_param_str(NULL, "output_model", "output.mix.hmm");
 
   load_matrix_list(seqin, &seqs);
 
-  if (fx_param_exists(NULL, "guess_file")) { // guessed parameters in a file
-    const char* guess = fx_param_str_req(NULL, "guess_file");
+  if (fx_param_exists(NULL, "guess_model")) { // guessed parameters in a file
+    const char* guess = fx_param_str_req(NULL, "guess_model");
     NOTIFY("Loading guess parameters from file %s...", guess);
     hmm.InitFromFile(guess);
   }
@@ -158,12 +158,12 @@ success_t train_baumwelch_gaussian() {
   ArrayList<Matrix> seqs;
 
   const char* seqin = fx_param_str_req(NULL, "input_file");
-  const char* proout = fx_param_str(NULL, "output_file", "output.gauss.hmm");
+  const char* proout = fx_param_str(NULL, "output_model", "output.gauss.hmm");
 
   load_matrix_list(seqin, &seqs);
 
-  if (fx_param_exists(NULL, "guess_file")) { // guessed parameters in a file
-    const char* guess = fx_param_str_req(NULL, "guess_file");
+  if (fx_param_exists(NULL, "guess_model")) { // guessed parameters in a file
+    const char* guess = fx_param_str_req(NULL, "guess_model");
     NOTIFY("Loading guess parameters from file %s...", guess);
     hmm.InitFromFile(guess);
   }
@@ -186,15 +186,15 @@ success_t train_baumwelch_gaussian() {
 
 success_t train_baumwelch_discrete() {
   const char* seqin = fx_param_str_req(NULL, "input_file");
-  const char* proout = fx_param_str(NULL, "output_file", "output.dis.hmm");
+  const char* proout = fx_param_str(NULL, "output_model", "output.dis.hmm");
 
   ArrayList<Vector> seqs;
   load_vector_list(seqin, &seqs);
 
   DiscreteHMM hmm;
 
-  if (fx_param_exists(NULL, "guess_file")) { // guessed parameters in a file
-    const char* guess = fx_param_str_req(NULL, "guess_file");
+  if (fx_param_exists(NULL, "guess_model")) { // guessed parameters in a file
+    const char* guess = fx_param_str_req(NULL, "guess_model");
     NOTIFY("Loading HMM parameters from file %s...", guess);
     hmm.InitFromFile(guess);
   }
@@ -220,12 +220,12 @@ success_t train_viterbi_mixture() {
   ArrayList<Matrix> seqs;
 
   const char* seqin = fx_param_str_req(NULL, "input_file");
-  const char* proout = fx_param_str(NULL, "output_file", "output.mix.hmm");
+  const char* proout = fx_param_str(NULL, "output_model", "output.mix.hmm");
 
   load_matrix_list(seqin, &seqs);
 
-  if (fx_param_exists(NULL, "guess_file")) { // guessed parameters in a file
-    const char* guess = fx_param_str_req(NULL, "guess_file");
+  if (fx_param_exists(NULL, "guess_model")) { // guessed parameters in a file
+    const char* guess = fx_param_str_req(NULL, "guess_model");
     NOTIFY("Loading parameters from guess file %s...", guess);
     hmm.InitFromFile(guess);
   }
@@ -251,12 +251,12 @@ success_t train_viterbi_gaussian() {
   ArrayList<Matrix> seqs;
 
   const char* seqin = fx_param_str_req(NULL, "input_file");
-  const char* proout = fx_param_str(NULL, "output_file", "output.gauss.hmm");
+  const char* proout = fx_param_str(NULL, "output_model", "output.gauss.hmm");
 
   load_matrix_list(seqin, &seqs);
 
-  if (fx_param_exists(NULL, "guess_file")) { // guessed parameters in a file
-    const char* guess = fx_param_str_req(NULL, "guess_file");
+  if (fx_param_exists(NULL, "guess_model")) { // guessed parameters in a file
+    const char* guess = fx_param_str_req(NULL, "guess_model");
     NOTIFY("Loading parameters from file %s...", guess);
     hmm.InitFromFile(guess);
   }
@@ -282,13 +282,13 @@ success_t train_viterbi_discrete() {
   ArrayList<Vector> seqs;
 
   const char* seqin = fx_param_str_req(NULL, "input_file");
-  const char* proout = fx_param_str(NULL, "output_file", "output.dis.hmm");
+  const char* proout = fx_param_str(NULL, "output_model", "output.dis.hmm");
 
   load_vector_list(seqin, &seqs);
 
-  if (fx_param_exists(NULL, "guess_file")) { // guessed parameters in a file
+  if (fx_param_exists(NULL, "guess_model")) { // guessed parameters in a file
     ArrayList<Matrix> matlst;
-    const char* guess = fx_param_str_req(NULL, "guess_file");
+    const char* guess = fx_param_str_req(NULL, "guess_model");
     NOTIFY("Loading guess parameters from file %s...", guess);
     hmm.InitFromFile(guess);
   }
