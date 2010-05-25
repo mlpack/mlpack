@@ -61,6 +61,7 @@ void InfomaxICA::evaluateICA(){
     if (i+b_<data_.n_cols()){
       Matrix subm;
       data_.MakeColumnSlice(i,b_,&subm);
+      printf("1\n");
       la::MulExpert(1,false,w_,false,subm,0.0,&icv);
       la::Scale(double(-1.0),&icv);
       expM(icv);  
@@ -68,9 +69,11 @@ void InfomaxICA::evaluateICA(){
       invertVals(icv);
       la::Scale(-2.0,&icv);
       addOne(icv);
+      printf("2\n");
       la::MulExpert(1,false,icv,true,subm,0.0,&icv2);
       la::AddOverwrite(icv2,BI,&icv4);
       la::Scale(lambda_,&icv4);
+      printf("3\n");
       la::MulExpert(1,false,icv4,false,w_,0.0,&icv2);
       la::AddTo(w_.n_elements(),icv2.ptr(),w_.ptr());
     }
@@ -150,7 +153,9 @@ Matrix InfomaxICA::sqrtm(const Matrix &m){
       Matrix tm1 = Matrix(u.n_rows(),S.n_cols());
       S.SetZero();
       S.SetDiagonal(s);
+      printf("4\n");
       la::MulExpert(1,false,u,false,S,0.0,&tm1);
+      printf("5\n");
       la::MulExpert(1,false,tm1,true,u,0.0,&output);
     }
     else

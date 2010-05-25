@@ -11,30 +11,26 @@
 #include "fastlib/data/dataset.h"
 
 const fx_entry_doc infomax_ica_main_entries[] = {
-  {"data", FX_REQUIRED, FX_STR, NULL,
-   "  The name of the file containing mixture data.\n"},
+  {"input_data", FX_REQUIRED, FX_STR, NULL,
+   "The name of the file containing the mixture dataset (CSV or ARFF).\n"},
   {"lambda", FX_PARAM, FX_DOUBLE, NULL,
-   "  The learning rate.\n"},
+   "The learning rate (default 0.001)\n"},
   {"B", FX_PARAM, FX_INT, NULL,
-   "  Infomax data window size.\n"},
+   "Infomax data window size (default 5)\n"},
   {"epsilon", FX_PARAM, FX_DOUBLE, NULL,
-   "  Infomax algorithm stop threshold.\n"},
+   "Infomax algorithm stop threshold (default 0.001)\n"},
   FX_ENTRY_DOC_DONE
 };
 
-const fx_submodule_doc infomax_ica_main_submodules[] = {
-  FX_SUBMODULE_DOC_DONE
-};
-
 const fx_module_doc infomax_ica_main_doc = {
-  infomax_ica_main_entries, infomax_ica_main_submodules,
+  infomax_ica_main_entries, NULL,
   "This performs ICA decomposition on a given dataset using the Infomax method.\n"
 };
 
 int main(int argc, char *argv[]) {
   fx_module *root = fx_init(argc, argv, &infomax_ica_main_doc);
 
-  const char *data_file_name = fx_param_str_req(root, "data");
+  const char *data_file_name = fx_param_str_req(root, "input_data");
   double lambda = fx_param_double(root,"lambda",0.001);
   int B = fx_param_int(root,"B",5);
   double epsilon = fx_param_double(root,"epsilon",0.001);
