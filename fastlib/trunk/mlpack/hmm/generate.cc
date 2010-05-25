@@ -9,12 +9,13 @@
  * See the usage() function for complete option list
  */
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
 #include "support.h"
 #include "discreteHMM.h"
 #include "gaussianHMM.h"
 #include "mixgaussHMM.h"
 #include "mixtureDST.h"
+#include "hmm_documentation.h"
 
 using namespace hmm_support;
 
@@ -24,30 +25,47 @@ success_t generate_mixture();
 void usage();
 
 const fx_entry_doc hmm_generate_main_entries[] = {
+  {"input_model", FX_REQUIRED, FX_STR, NULL,
+   "A .hmm file containing an HMM profile.\n"},
+  {"output_observation_file", FX_PARAM, FX_STR, NULL,
+   "Output file for the generated observed variable sequences.\n"
+   "     (default observed.<type>.seq)\n"},
+  {"output_state_file", FX_PARAM, FX_STR, NULL,
+   "Output file for the generated hidden state sequences.\n"
+   "     (default state.<type>.seq)\n"},
   {"type", FX_REQUIRED, FX_STR, NULL,
-   "  HMM type : discrete | gaussian | mixture.\n"},
-  {"profile", FX_REQUIRED, FX_STR, NULL,
-   "  A file containing HMM profile.\n"},
+   "HMM type: discrete | gaussian | mixture\n"},
   {"length", FX_PARAM, FX_INT, NULL,
-   "  Sequence length, default = 10.\n"},
+   "Sequence length (default 10)\n"},
   {"lenmax", FX_PARAM, FX_INT, NULL,
-   "  Maximum sequence length, default = length\n"},
+   "Maximum sequence length (default <length>)\n"},
   {"numseq", FX_PARAM, FX_INT, NULL,
-   "  Number of sequance, default = 10.\n"},
-  {"seqfile", FX_PARAM, FX_STR, NULL,
-   "  Output file for the generated sequences.\n"},
-  {"statefile", FX_PARAM, FX_STR, NULL,
-   "  Output file for the generated state sequences.\n"},
+   "Number of sequences to generate (default 10).\n"},
   FX_ENTRY_DOC_DONE
 };
 
 const fx_submodule_doc hmm_generate_main_submodules[] = {
+  {"formats", &hmm_format_doc,
+  "Documentation for file formats used by this program and other MLPACK HMM tools\n"},
   FX_SUBMODULE_DOC_DONE
 };
 
 const fx_module_doc hmm_generate_main_doc = {
   hmm_generate_main_entries, hmm_generate_main_submodules,
-  "This is a program generating sequences from HMM models.\n"
+  "The hmm_generate utility is used to generate a random sequence from an input\n"
+  "HMM profile, which is given as a parameter.  Then, random sequences are\n"
+  "generated and stored in two files; one file (specified by\n"
+  "--output_observation_file) stores the observed variable sequences, and the\n"
+  "other (specified by --output_state_file) stores the hidden state sequences.\n"
+  "\n"
+  "The maximum sequence length parameter (lenmax) can be used to generate a\n"
+  "series of sequences of varying length.  For instance, if numseq is 3, length\n"
+  "is 10, and lenmax is 12, the first sequence will be 10 states long; the second\n"
+  "will be 11 states long; the last will be 12 states long.  However, lenmax must\n"
+  "always be greater than length.\n"
+  "\n"
+  "For more information on the formats used by this utility, see the help in\n"
+  "the formats submodule (--help=formats).\n"
 };
 
 int main(int argc, char* argv[]) {
@@ -62,45 +80,28 @@ int main(int argc, char* argv[]) {
     else if (strcmp(type, "mixture")==0)
       s = generate_mixture();
     else {
-      printf("Unrecognized type: must be: discrete | gaussian | mixture !!!\n");
+      FATAL("Unrecognized type; must be 'discrete', 'gaussian', or 'mixture'.\n");
       return SUCCESS_PASS;
     }
   }
   else {
-    printf("Unrecognized type: must be: discrete | gaussian | mixture  !!!\n");
+    FATAL("Unrecognized type; must be 'discrete', 'gaussian', or 'mixture'.\n");
     s = SUCCESS_FAIL;
   }
-  if (!PASSED(s)) usage();
 
   fx_done(NULL);
 }
 
-void usage() {
-  printf("\nUsage:\n");
-  printf("  generate --type=={discrete|gaussian|mixture} OPTIONS\n");
-  printf("[OPTIONS]\n");
-  printf("  --profile=file   : file contains HMM profile\n");
-  printf("  --length=NUM     : sequence length\n");
-  printf("  --lenmax=NUM     : maximum sequence length, default = length\n");
-  printf("  --numseq=NUM     : number of sequence\n");
-  printf("  --seqfile=file   : output file for generated sequences\n");
-  printf("  --statefile=file : output file for generated state sequences\n");
-}
-
 success_t generate_mixture() {
-  if (!fx_param_exists(NULL, "profile")) {
-    printf("--profile must be defined.\n");
-    return SUCCESS_FAIL;
-  }
-  const char* profile = fx_param_str_req(NULL, "profile");
+  const char* profile = fx_param_str_req(NULL, "input_model");
   const int seqlen = fx_param_int(NULL, "length", 10);
   const int seqlmax = fx_param_int(NULL, "lenmax", seqlen);
   const int numseq = fx_param_int(NULL, "numseq", 10);
-  const char* seqout = fx_param_str(NULL, "seqfile", "seq.mix.out");
-  const char* stateout = fx_param_str(NULL, "statefile", "state.mix.out");
+  const char* seqout = fx_param_str(NULL, "output_observation_file", "observed.mix.seq");
+  const char* stateout = fx_param_str(NULL, "output_state_file", "state.mix.seq");
 
-  DEBUG_ASSERT_MSG(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
-  DEBUG_ASSERT_MSG(numseq > 0, "NUMSEQ must be positive");
+  DEBUG_ASSERT_MSG(seqlen <= seqlmax, "lenmax must bigger than length");
+  DEBUG_ASSERT_MSG(numseq > 0, "numseq must be positive");
 
   double step = (double) (seqlmax-seqlen) / numseq;
 
@@ -137,19 +138,15 @@ success_t generate_mixture() {
 }
 
 success_t generate_gaussian() {
-  if (!fx_param_exists(NULL, "profile")) {
-    printf("--profile must be defined.\n");
-    return SUCCESS_FAIL;
-  }
-  const char* profile = fx_param_str_req(NULL, "profile");
+  const char* profile = fx_param_str_req(NULL, "input_model");
   const int seqlen = fx_param_int(NULL, "length", 10);
   const int seqlmax = fx_param_int(NULL, "lenmax", seqlen);
   const int numseq = fx_param_int(NULL, "numseq", 10);
-  const char* seqout = fx_param_str(NULL, "seqfile", "seq.gauss.out");
-  const char* stateout = fx_param_str(NULL, "statefile", "state.gauss.out");
+  const char* seqout = fx_param_str(NULL, "output_observation_file", "observed.gauss.seq");
+  const char* stateout = fx_param_str(NULL, "output_state_file", "state.gauss.seq");
 
-  DEBUG_ASSERT_MSG(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
-  DEBUG_ASSERT_MSG(numseq > 0, "NUMSEQ must be positive");
+  DEBUG_ASSERT_MSG(seqlen <= seqlmax, "lenmax must bigger than length");
+  DEBUG_ASSERT_MSG(numseq > 0, "numseq must be positive");
 
   double step = (double) (seqlmax-seqlen) / numseq;
 
@@ -184,19 +181,15 @@ success_t generate_gaussian() {
 }
 
 success_t generate_discrete() {
-  if (!fx_param_exists(NULL, "profile")) {
-    printf("--profile must be defined.\n");
-    return SUCCESS_FAIL;
-  }
-  const char* profile = fx_param_str_req(NULL, "profile");
+  const char* profile = fx_param_str_req(NULL, "input_model");
   const int seqlen = fx_param_int(NULL, "length", 10);
   const int seqlmax = fx_param_int(NULL, "lenmax", seqlen);
   const int numseq = fx_param_int(NULL, "numseq", 10);
-  const char* seqout = fx_param_str(NULL, "seqfile", "seq.out");
-  const char* stateout = fx_param_str(NULL, "statefile", "state.out");
+  const char* seqout = fx_param_str(NULL, "output_observation_file", "observed.dis.out");
+  const char* stateout = fx_param_str(NULL, "output_state_file", "state.dis.out");
 
-  DEBUG_ASSERT_MSG(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
-  DEBUG_ASSERT_MSG(numseq > 0, "NUMSEQ must be positive");
+  DEBUG_ASSERT_MSG(seqlen <= seqlmax, "lenmax must bigger than length");
+  DEBUG_ASSERT_MSG(numseq > 0, "numseq must be positive");
 
   double step = (double) (seqlmax-seqlen) / numseq;
 
