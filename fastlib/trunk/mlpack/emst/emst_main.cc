@@ -11,22 +11,57 @@
 #include "dtb.h"
 
 
+const fx_entry_doc emst_entries[] = {
+  {"input_filename", FX_REQUIRED, FX_STR, NULL,
+   "Input dataset (CSV or ARFF)\n"},
+  {"output_filename", FX_PARAM, FX_STR, NULL,
+   "Filename to output spanning tree into (default output.csv)\n"},
+  {"do_naive", FX_PARAM, FX_BOOL, NULL,
+   "Whether or not to also perform a naive computation and compare the results\n"
+   "   (default N)\n"},
+  {"naive_output_filename", FX_PARAM, FX_STR, NULL,
+   "Filename to output spanning tree generated with naive algorithm into (use\n"
+   "   with --do_naive=Y (default naive_output.csv)\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_submodule_doc emst_subdoc[] = {
+  {"dtb", &dtb_doc,
+  "Parameters for the dual-tree Boruvka algorithm\n"},
+  FX_SUBMODULE_DOC_DONE
+};
+
+const fx_module_doc emst_doc = {
+  emst_entries, emst_subdoc,
+  "This is the MLPACK implementation of the dual-tree Boruvka algorithm for\n"
+  "finding a Euclidian Minimum Spanning Tree.  The input dataset is specified\n"
+  "and the output, which is the minimum spanning tree represented as an edge list,\n"
+  "will be placed into the specified output file.\n"
+  "\n"
+  "The dtb/leaf_size parameter gives the fastest performance with a value of 1;\n"
+  "however, it may be changed to conserve memory.\n"
+  "\n"
+  "The output is given in the format\n"
+  "  <edge lesser index> <edge greater index> <distance>\n"
+  "for each edge in the minimum spanning tree.\n"
+};
+
 int main(int argc, char* argv[]) {
  
-  fx_init(argc, argv, NULL);
+  fx_init(argc, argv, &emst_doc);
  
   // For when I implement a thor version
-  bool using_thor = fx_param_bool(NULL, "using_thor", 0);
+  //bool using_thor = fx_param_bool(NULL, "using_thor", 0);
   
   
-  if unlikely(using_thor) {
-    printf("thor is not yet supported\n");
-  }
-  else {
+  //if unlikely(using_thor) {
+  //  printf("thor is not yet supported\n");
+  //}
+  //else {
       
     ///////////////// READ IN DATA ////////////////////////////////// 
     
-    const char* data_file_name = fx_param_str_req(NULL, "data");
+    const char* data_file_name = fx_param_str_req(NULL, "input_filename");
     
     Matrix data_points;
     
@@ -130,24 +165,21 @@ int main(int argc, char* argv[]) {
       fx_timer_stop(naive_module, "comparison");
       
       const char* naive_output_filename = 
-        fx_param_str(naive_module, "output_filename", "naive_output.txt");
+        fx_param_str(naive_module, "naive_output_filename", "naive_output.csv");
       
-      FILE* naive_output = fopen(naive_output_filename, "w");
-      
-      ot::Print(naive_results, naive_output);
-      
+      data::Save(naive_output_filename, naive_results);
     }
     
     //////////////// Output the Results ////////////////
     
     const char* output_filename = 
-        fx_param_str(NULL, "output_filename", "output.txt");
+        fx_param_str(NULL, "output_filename", "output.csv");
     
     //FILE* output_file = fopen(output_filename, "w");
     
     data::Save(output_filename, results);
     
-  }// end else (if using_thor)
+  //}// end else (if using_thor)
   
   fx_done(NULL);
   
