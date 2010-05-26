@@ -1,6 +1,6 @@
 librule(
     name = "2dfactor",                 # the executable name
-    sources = ["2dPCA.cc"],
+    sources = ["2dPCA.cc", "2dFactor.cc"],
     headers = ["2dfactor.h"],
     deplibs = ["fastlib:fastlib_int"]       # depends on faslib core library
     )
@@ -10,6 +10,19 @@ binrule(
     sources = ["2dfactor_test.cc"],
     headers = [],
     deplibs = [":2dfactor"]       # depends on hmm library in this folder
+    )
+
+librule(
+    name = "point_list",                 # the library name
+    sources = ["point_list.cc"],
+    headers = ["point_list.h"],
+    deplibs = ["fastlib:fastlib_int"]       # depends on faslib core library
+    )
+
+binrule(
+    name = "point_list_test",
+    sources = ["point_list_test.cc"],
+    deplibs = ["fastlib:fastlib_int", ":point_list"] 
     )
 
 # to build:

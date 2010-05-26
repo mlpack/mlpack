@@ -92,3 +92,8 @@ bool CrossValidationGenerator::generateNextPoint(Vector& X_out,double& y_out) {
   }
   return false;
 }
+
+SubsetFeaturesGenerator::SubsetFeaturesGenerator
+(DataGenerator& dg, const ArrayList<index_t>& subset_index) : 
+  m_dData(dg), m_liSubsetIndex(subset_index) {
+}

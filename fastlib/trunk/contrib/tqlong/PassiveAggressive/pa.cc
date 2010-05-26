@@ -45,6 +45,14 @@ double PA_Update(fx_module* module, const Vector& w_t,
   return PA_Update(module, w_t, X_t, y_t, w_out);
 }
 
+double PA_Update_Overwrite(fx_module* module, Vector& w_t,
+			   const Vector& x_t, double y_t) {
+  double loss_t = hinge_loss(w_t, x_t, y_t);
+  double tau = loss_t / LengthEuclideanSquare(x_t);
+  la::AddExpert(tau*y_t, x_t, &w_t);
+  return loss_t;
+}
+
 double PA_I_Update(fx_module* module, const Vector& w_t,
                    const Vector& x_t, double y_t, Vector& w_out) {
   double C = fx_param_double(module, "C", -1);
@@ -65,6 +73,17 @@ double PA_I_Update(fx_module* module, const Vector& w_t,
   return PA_I_Update(module, w_t, X_t, y_t, w_out);
 }
 
+double PA_I_Update_Overwrite(fx_module* module, Vector& w_t,
+			     const Vector& x_t, double y_t) {
+  double C = fx_param_double(module, "C", -1);
+  DEBUG_ASSERT(C >= 0);
+  double loss_t = hinge_loss(w_t, x_t, y_t);
+  double tau = loss_t / LengthEuclideanSquare(x_t);
+  if (tau > C) tau = C;
+  la::AddExpert(tau*y_t, x_t, &w_t);
+  return loss_t;
+}
+
 double PA_II_Update(fx_module* module, const Vector& w_t,
                     const Vector& x_t, double y_t, Vector& w_out) {
   double C = fx_param_double(module, "C", -1);
@@ -82,6 +101,16 @@ double PA_II_Update(fx_module* module, const Vector& w_t,
   Vector X_t; 
   X_t.Alias(x_t, n);
   return PA_II_Update(module, w_t, X_t, y_t, w_out);
+}
+
+double PA_II_Update_Overwrite(fx_module* module, Vector& w_t,
+			      const Vector& x_t, double y_t) {
+  double C = fx_param_double(module, "C", -1);
+  DEBUG_ASSERT(C >= 0);
+  double loss_t = hinge_loss(w_t, x_t, y_t);
+  double tau = loss_t / (LengthEuclideanSquare(x_t) + 0.5/C);
+  la::AddExpert(tau*y_t, x_t, &w_t);
+  return loss_t;
 }
 
 double Kernelized_PA_Update(fx_module* module, KernelizedWeight& w_t,

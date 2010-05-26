@@ -140,4 +140,32 @@ public:
   }
 };
 
+/** Genetors using a subset of features. The underlying data generator must be
+ *  able to restart (i.e. restart() return true).
+ */
+struct SubsetFeaturesGenerator : DataGenerator {
+  DataGenerator& m_dData;
+  const ArrayList<index_t>& m_liSubsetIndex;
+  public:
+  SubsetFeaturesGenerator(DataGenerator&, const ArrayList<index_t>&);
+  // virtual methods
+  int n_features() { return m_liSubsetIndex.size(); }
+  bool generateNextPoint(Vector& X_out, double& y_out) {
+    Vector X_tmp;
+    double y_tmp;
+    if (!m_dData.getNextPoint(X_tmp, y_tmp)) {
+      X_out.Init(0);
+      return false;
+    }
+    else {
+      X_out.Init(m_liSubsetIndex.size());
+      for (index_t i = 0; i < m_liSubsetIndex.size(); i++)
+	X_out[i] = X_tmp[m_liSubsetIndex[i]];
+      y_out = y_tmp;
+      return true;
+    }
+  }
+  
+};
+
 #endif /* DATA_GENERATOR_H */

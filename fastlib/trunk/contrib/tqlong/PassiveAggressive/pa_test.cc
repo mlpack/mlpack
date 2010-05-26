@@ -17,8 +17,10 @@ const fx_entry_doc patest_entries[] = {
    "Data file consists of data points and theirs labels.\n"},
   {"method", FX_REQUIRED, FX_STR, NULL,
    "Update scheme (PA, PA_I, PA_II).\n"},
-  {"CV", FX_PARAM, FX_INT, NULL,
-   "If equal to 1, do cross validation, default is 0.\n"},
+  {"job", FX_PARAM, FX_STR, NULL,
+   "Type of job: TRAIN, CV, RFE (default is TRAIN).\n"},
+  {"bias", FX_PARAM, FX_INT, NULL,
+   "First feature is bias term ? (default is 0).\n"},
   {"N", FX_PARAM, FX_INT, NULL,
    "Number of samples for cross validation.\n"},
   {"laps", FX_PARAM, FX_INT, NULL,
@@ -83,8 +85,8 @@ void Run_PA(fx_module* module, DataGenerator& data, Vector& w_out) {
   avg_loss /= data.n_points();
   avg_error /= data.n_points();
 
-  printf("n_points = %d\n", data.n_points());
-  printf("n_features = %d\n", data.n_features());
+  //printf("n_points = %d\n", data.n_points());
+  //printf("n_features = %d\n", data.n_features());
 
   fx_result_double(module, "avg_error", avg_error);
   fx_result_double(module, "avg_loss", avg_loss);
@@ -121,7 +123,7 @@ void Run_Kernelized_PA(fx_module* module, DataGenerator& data, KernelizedWeight&
 void CrossValidation(fx_module* module, DataGenerator& dg) {
   ArrayList<index_t> vIdx;
   // LOOCV
-  index_t n_samples = fx_param_int(module, "N", 99);
+  index_t n_samples = fx_param_int(module, "N", 98);
   CrossValidationGenerator::createLOOCVindex(vIdx, n_samples);
 
   CrossValidationGenerator cvdg(dg, vIdx);
@@ -185,7 +187,7 @@ void KernelizedCrossValidation(fx_module* module, KernelFunction& kernel,
 			       DataGenerator& dg) {
   ArrayList<index_t> vIdx;
   // LOOCV
-  index_t n_samples = fx_param_int(module, "N", 99);
+  index_t n_samples = fx_param_int(module, "N", 98);
   CrossValidationGenerator::createLOOCVindex(vIdx, n_samples);
 
   CrossValidationGenerator cvdg(dg, vIdx);
@@ -239,6 +241,113 @@ void KernelizedCrossValidation(fx_module* module, KernelFunction& kernel,
   fx_result_double(module, "avg_error", cv_error); 
 }
 
+KernelFunction* chooseKernel(fx_module* module) {
+  if (fx_param_exists(module, "kernel")) {
+    const char* kernelName = fx_param_str(module, "kernel", "linear");
+    if (strcmp(kernelName, "linear")==0) return new LinearKernel();
+    else if (strcmp(kernelName, "poly")==0) {
+      index_t order = fx_param_int(module, "order", 2);
+      bool homogeneous = fx_param_int(module, "homogeneous", 0) == 1;
+      return new PolynomialKernel(order, homogeneous);
+    }
+    else if (strcmp(kernelName, "gauss")==0) {
+      double sigma = fx_param_double(module, "sigma", 1.0);
+      return new Gaussian2Kernel(sigma);
+    }
+    else
+      return NULL;
+  }
+  return NULL;
+}
+
+/**
+ *  Remove the minium weight^2 feature from feature set
+ *  If bias is true, the first feature correspond to the bias term
+ */
+index_t RemoveMin(const Vector& weight,
+                  ArrayList<index_t>& FSet, bool bias) {
+  DEBUG_ASSERT(weight.length() == FSet.size());
+  index_t min_i = (bias ? 1 : 0);
+  for (index_t i = min_i+1; i < weight.length(); i++)
+    if (weight[i]*weight[i] < weight[min_i] * weight[min_i]) min_i = i;
+  index_t feature = FSet[min_i];
+  FSet.Remove(min_i);
+  return feature;
+}
+
+void QSort_Swap(Vector& x, ArrayList<index_t>& idx,
+                index_t i, index_t j) {
+  double x_tmp = x[i]; x[i] = x[j]; x[j] = x_tmp;
+  index_t i_tmp = idx[i]; idx[i] = idx[j]; idx[j] = i_tmp;
+}
+
+index_t QSort_Partition(Vector& x, ArrayList<index_t>& idx,
+                        index_t left, index_t right, index_t pivotIndex) {
+  double pivotValue = x[pivotIndex];
+  QSort_Swap(x, idx, pivotIndex, right);
+  index_t storeIndex = left;
+  for (index_t i = left; i < right; i++)
+    if (x[i] > pivotValue) {
+      QSort_Swap(x, idx, storeIndex, i);
+      storeIndex++;
+    }
+  QSort_Swap(x, idx, storeIndex, right);
+  return storeIndex;
+}
+
+void QSort(Vector& x, ArrayList<index_t>& idx, index_t left, index_t right){
+  if (right > left) {
+    index_t pivotIndex = (left+right)/2;
+    index_t pivotNewIndex = QSort_Partition(x, idx, left,
+                                            right, pivotIndex);
+    QSort(x, idx, left, pivotNewIndex-1);
+    QSort(x, idx, pivotNewIndex+1,right);
+  }
+}
+
+void RemoveMin(Vector& weight, ArrayList<index_t>& FSet,
+               bool bias, index_t n_remove,
+               ArrayList<index_t>& remove_features) {
+  DEBUG_ASSERT(weight.length() == FSet.size());
+  index_t min_i = (bias ? 1 : 0);
+  QSort(weight, FSet, min_i, weight.length()-1);
+
+  remove_features.Init();
+  index_t j = weight.length()-1;
+  for (; j >= min_i && j >= weight.length()-n_remove;j--)
+    remove_features.PushBackCopy(FSet[j]);
+  FSet.Remove(j+1, weight.length()-1-j);
+}
+
+void RFE(fx_module* module, DataGenerator& dg,
+         ArrayList<index_t>& feature_order) {
+  ArrayList<index_t> FSet;
+  index_t n_features = dg.n_features();
+  FSet.Init(n_features);
+  for (index_t i = 0; i < n_features; i++) FSet[i] = i;
+
+  feature_order.Init();
+  bool bias = fx_param_int(module, "bias", 0);
+  while (FSet.size() > (bias ? 1:0)) {
+    DEBUG_ASSERT(dg.restart());
+    //ot::Print(FSet);
+    SubsetFeaturesGenerator sfdg(dg, FSet);
+    Vector weight;
+    Run_PA(module, sfdg, weight);
+
+    //index_t feature = RemoveMin(weight, FSet, bias);
+    //feature_order.PushBackCopy(feature);
+    //printf("select %d\n", feature);
+    ArrayList<index_t> remove_features;
+    RemoveMin(weight, FSet, bias, 100, remove_features);
+    for (index_t i = 0; i < remove_features.size(); i++)
+      feature_order.PushBackCopy(remove_features[i]);
+    printf("downto %d features\n", FSet.size());
+    ot::Print(remove_features);
+  }
+  if (bias) feature_order.PushBackCopy(0);
+}
+
 int main(int argc, char** argv) {
   fx_module *root = fx_init(argc, argv, &patest_doc);  
   
@@ -253,28 +362,24 @@ int main(int argc, char** argv) {
     fx_param_double(root, "C", 0.001);
 
   // Check if using kernelized version and prepare the kernel
-  KernelFunction *kernel = NULL;
-  if (fx_param_exists(root, "kernel")) {
-    const char* kernelName = fx_param_str(root, "kernel", "linear");
-    if (strcmp(kernelName, "linear")==0) kernel = new LinearKernel();
-    else if (strcmp(kernelName, "poly")==0) {
-      index_t order = fx_param_int(root, "order", 2);
-      bool homogeneous = fx_param_int(root, "homogeneous", 0) == 1;
-      kernel = new PolynomialKernel(order, homogeneous);
-    }
-    else if (strcmp(kernelName, "gauss")==0) {
-      double sigma = fx_param_double(root, "sigma", 1.0);
-      kernel = new Gaussian2Kernel(sigma);
-    }
-    else {
-      PRINT_RESULT( fprintf(f, "data = %s kernel = %s wrong kernel name\n",
-                            filename, kernelName); );
-      DEBUG_ASSERT(0);
-    }
-  }
+  KernelFunction *kernel = chooseKernel(root);
 
+  const char* job_type = fx_param_str(root, "job", "TRAIN");
+
+  // Check if doing Recursive Feature Extraction
+  if (strcmp(job_type, "RFE") == 0) {
+    ArrayList<index_t> feature_order;
+    RFE(root, dg, feature_order);
+    FILE* f = fopen("feature_order.txt", "w");
+    for (index_t i = feature_order.size()-1; i >= 0; i--)
+      fprintf(f, "%d\n", feature_order[i]);
+    fclose(f);
+    fx_done(root);
+    return 0;
+  }
+  
   // Check if doing cross validation
-  if (fx_param_int(root, "CV", 0) == 1) {
+  if (strcmp(job_type, "CV") == 0) {
     if (!kernel)
       CrossValidation(root, dg);
     else
