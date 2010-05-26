@@ -176,20 +176,20 @@ void TestRangeSet() {
   set.Union(1, 4);
   set.Union(10, 16);
   set.Union(4, 10);
-  DEBUG_SAME_SIZE(set.size(), 1);
-  DEBUG_SAME_SIZE(set.ranges()[0].begin, 1);
-  DEBUG_SAME_SIZE(set.ranges()[0].end, 16);
+  TEST_ASSERT(set.size()==1);
+  TEST_ASSERT(set.ranges()[0].begin == 1);
+  TEST_ASSERT(set.ranges()[0].end == 16);
   
   set.Reset();
-  DEBUG_SAME_SIZE(set.size(), 0);
+  TEST_ASSERT(set.size() == 0);
   set.Union(3, 7);
   set.Union(50, 100);
   set.Union(4, 8);
-  DEBUG_SAME_SIZE(set.size(), 2);
-  DEBUG_SAME_SIZE(set.ranges()[0].begin, 3);
-  DEBUG_SAME_SIZE(set.ranges()[0].end, 8);
-  DEBUG_SAME_SIZE(set.ranges()[1].begin, 50);
-  DEBUG_SAME_SIZE(set.ranges()[1].end, 100);
+  TEST_ASSERT(set.size() == 2);
+  TEST_ASSERT(set.ranges()[0].begin == 3);
+  TEST_ASSERT(set.ranges()[0].end == 8);
+  TEST_ASSERT(set.ranges()[1].begin == 50);
+  TEST_ASSERT(set.ranges()[1].end == 100);
   
   set.Reset();
   set.Union(1, 5);
@@ -202,29 +202,29 @@ void TestRangeSet() {
   set.Union(18, 19);
   set.Union(42, 48);
   set.Union(5, 6);
-  DEBUG_SAME_SIZE(set.size(), 1);
-  DEBUG_SAME_SIZE(set.ranges()[0].begin, 1);
-  DEBUG_SAME_SIZE(set.ranges()[0].end, 79);
+  TEST_ASSERT(set.size() == 1);
+  TEST_ASSERT(set.ranges()[0].begin == 1);
+  TEST_ASSERT(set.ranges()[0].end == 79);
   set.Union(-55, -52);
   set.Union(500, 600);
   set.Union(800, 900);
   set.Union(550, 801);
   set.Union(-400, -200);
   set.Union(6, 81);
-  DEBUG_SAME_SIZE(set.ranges().size(), 4);
-  DEBUG_SAME_SIZE(set[0].begin, -400);
-  DEBUG_SAME_SIZE(set[0].end, -200);
-  DEBUG_SAME_SIZE(set[1].begin, -55);
-  DEBUG_SAME_SIZE(set[1].end, -52);
-  DEBUG_SAME_SIZE(set[2].begin, 1);
-  DEBUG_SAME_SIZE(set[2].end, 81);
-  DEBUG_SAME_SIZE(set[3].begin, 500);
-  DEBUG_SAME_SIZE(set[3].end, 900);
+  TEST_ASSERT(set.ranges().size() == 4);
+  TEST_ASSERT(set[0].begin == -400);
+  TEST_ASSERT(set[0].end == -200);
+  TEST_ASSERT(set[1].begin == -55);
+  TEST_ASSERT(set[1].end == -52);
+  TEST_ASSERT(set[2].begin == 1);
+  TEST_ASSERT(set[2].end == 81);
+  TEST_ASSERT(set[3].begin == 500);
+  TEST_ASSERT(set[3].end == 900);
   set.Reset();
   set.Union(3, 5);
   set.Union(3, 5);
   set.Union(3, 5);
-  DEBUG_SAME_SIZE(set.size(), 1);
+  TEST_ASSERT(set.size() == 1);
 }
 
 void TestQueue() {
