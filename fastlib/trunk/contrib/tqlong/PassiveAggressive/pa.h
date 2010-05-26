@@ -81,6 +81,15 @@ double PA_II_Update(fx_module* module, const Vector& w_t,
 double PA_II_Update(fx_module* module, const Vector& w_t,
                     double* x_t, double y_t, Vector& w_out);
 
+double PA_Update_Overwrite(fx_module* module, Vector& w_t,
+			   const Vector& x_t, double y_t);
+
+double PA_I_Update_Overwrite(fx_module* module, Vector& w_t,
+			     const Vector& x_t, double y_t);
+
+double PA_II_Update_Overwrite(fx_module* module, Vector& w_t,
+			      const Vector& x_t, double y_t);
+
 double Kernelized_PA_Update(fx_module* module, KernelizedWeight& w_t,
                             const Vector& x_t, double y_t);
 

@@ -23,4 +23,26 @@ namespace la {
 
 }; // namespace
 
+namespace __2D_Factor {
+  class Image {
+    Matrix m_mX;
+    
+    ArrayList<double> m_adScale;
+    ArrayList<index_t> m_aiRow;
+    ArrayList<index_t> m_aiCol;
+
+    void PopulateNN(double row, double col);
+  public:
+    double Interpolate(double dRow, double dCol);
+    Image(const Matrix& X, int window);
+  };
+
+  // rectangle in R^2, not necessarily axis parellel
+  class BoundingBox {
+    double m_dRot; // clockwise rotation 
+    double m_dTopRow, m_dTopCol; // top point position
+    double m_dLeftArm, m_dRightArm; // lengths of left arm and right arm
+  }
+};
+
 #endif
