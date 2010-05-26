@@ -32,14 +32,16 @@
 /**
  * @file rangeset.h
  *
- * Sets of contiguous ranges.
+ * Sets of contiguous ranges with no overlap.
  */
 
 #ifndef COL_RANGESET_H
 #define COL_RANGESET_H
 
-//#include "arraylist.h"
+#include "../base/base.h"
 #include <vector>
+#include <algorithm>
+#include <iostream>
 
 /**
  * A set containing a union of  [start,end) ranges that are automatically
@@ -59,33 +61,30 @@ class RangeSet {
   struct Range {
     Boundary begin;
     Boundary end;
-    
-    OT_DEF_BASIC(Range) {
-      OT_MY_OBJECT(begin);
-      OT_MY_OBJECT(end);
-    }
   };
   
  private:
   std::vector<Range> ranges_;
   
-  OT_DEF(RangeSet) {
-    OT_MY_OBJECT(ranges_);
-  }
-
  public:
   /**
-   * Creates an empty set of ranges.
+   * Constructor that allows you to reserve enough space for your elements.
+   */
+  RangeSet(const unsigned int size=0) {
+    ranges_.reserve(size);
+  }
+
+  /**
+   * Deprecated, use constructor.
    */
   void Init() {
-//    ranges_.Init();
   }
 
   /**
    * Reinitializes to an empty set of ranges.
    */
   void Reset() {
-    ranges_.clear();
+    ranges_.resize(0);
   }
 
   /**
@@ -113,56 +112,69 @@ class RangeSet {
     return ranges_.size();
   }
 
+  /**
+   * Print the RangeSet to stdout.
+   *
+   * Will not work with any object lacking operator<<.
+   */
+  void PrintDebug() {
+    std::cout << "Range set: " << std::endl;
+    for( typename std::vector<Range>::iterator it = ranges_.begin();
+	it < ranges_.end();
+	++it ) {
+      std::cout << it->begin << " " << it->end << "\t";
+    }
+    std::cout << std::endl;
+  }
+
 };
 
 template<typename TBoundary>
 void RangeSet<TBoundary>::Union(
     const Boundary& begin, const Boundary& end) {
-  if (unlikely(!(begin < end))) {
-    // Merging with empty range?
+
+  // Incorrect range
+  if( begin > end )
+    return;
+
+  // If its empty, there's no reason to do more than this
+  if( ranges_.empty() ) {
+    Range new_range;
+    new_range.begin = begin;
+    new_range.end = end;
+    ranges_.push_back(new_range);
     return;
   }
-  
-  // Not really efficient, but easy to follow.
+
   std::vector<Range> new_list;
-  index_t i;
-
-  new_list.reserve( ranges_.size() );
-//  new_list.Init();
-
-  i = 0;
+  typename std::vector<Range>::iterator i;
 
   // add everything that strictly precedes the new one to add
-  while (i < ranges_.size() && !(begin <= ranges_[i].end)) {
-//    new_list.PushBackCopy(ranges_[i]);
-	  new_list.push_back(ranges_[i]);
-    i++;
+  for( i = ranges_.begin();
+      i < ranges_.end() && !(begin <= i->end); ++i) {
+    new_list.push_back(*i);
   }
 
   // merge everything that overlaps
   const Boundary *selected_end = &end;
   const Boundary *selected_begin = &begin;
 
-  while (i < ranges_.size() && end >= ranges_[i].begin) {
-    if (ranges_[i].begin < *selected_begin) {
-      selected_begin = &ranges_[i].begin;
-    }
-    if (ranges_[i].end > *selected_end) {
-      selected_end = &ranges_[i].end;
-    }
-    i++;
+  for( ; i < ranges_.end() && end >= i->begin; ++i ) {
+    if( i->begin < *selected_begin )
+      selected_begin = &i->begin;
+    if( i->end > *selected_end )
+      selected_end = &i->end;
   }
 
-//  Range *new_range = new_list.PushBackRaw();
-
-  Range *new_range = &new_list.back();
-  new(&new_range->begin)Boundary(*selected_begin);
-  new(&new_range->end)Boundary(*selected_end);
+  // Make a new Range and add it.
+  Range new_range; 
+  new_range.begin = *selected_begin;
+  new_range.end = *selected_end;
+  new_list.push_back(new_range);
 
   // add everything that comes after
-  for (; i < ranges_.size(); i++) {
-//    new_list.PushBackCopy(ranges_[i]);
-	  new_list.push_back(ranges_[i]);
+  for (; i < ranges_.end(); ++i) {
+    new_list.push_back(*i);
   }
 
   // replace the list
