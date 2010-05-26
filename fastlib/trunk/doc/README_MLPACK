@@ -1,0 +1,96 @@
+    MLPACK v0.4
+http://www.fast-lab.org/
+http://trac.research.cc.gatech.edu/fastlab/
+
+1.  Introduction
+
+  MLPACK is a collection of machine learning methods written in C++, intended to
+be scalable and fast.  These methods are built on a library called FASTLIB,
+which provides suitable functionality for MLPACK to be built upon.  FASTLIB is
+wrapped around several other dependencies, such as LAPACK, BLAS, Trilinos, and
+pthreads.
+
+  MLPACK and FASTLIB are distributed as source, and are meant to be configured
+with CMake and then compiled and installed.
+
+  At this point, since the software is still in development and about to undergo
+a huge API change, it is not recommended to develop C++ applications using
+MLPACK and FASTLIB but instead to use the already-written executables that are
+copmiled with the libraries.  However, Doxygen can be used to create code
+documentation for MLPACK and FASTLIB, but again, the API is in the process of a
+huge refactoring and should not be considered stable in any way whatsoever.
+
+2.  Configuring and Installing MLPACK
+
+  MLPACK and FASTLIB are compiled using CMake.  Theoretically, CMake will
+generate project files for Windows using Visual Studio files, but this has not
+been tested thoroughly.  We recommend using a Linux or UNIX environment, where
+CMake will use gcc and create Makefiles.  This is the setup in which MLPACK has
+been tested most thoroughly.
+
+  To build MLPACK, simply unpack the source tarball, change into that directory
+and make a build/ subdirectory; configure the project, and build.  Below is an
+example:
+
+  $ tar -xvzpf mlpack-0.4.tar.gz
+  $ cd mlpack
+  $ mkdir build
+  $ cd build
+  $ cmake ../
+  $ make
+  # make install
+
+Keep in mind that make install must be run as root, if you are installing with
+CMAKE_PREFIX=/usr (which is the default).  You can use ccmake, an ncurses GUI,
+in place of cmake, to configure each of the configurable MLPACK variables, or
+you can pass options with -D.  Here are a list of common options:
+
+  -D CMAKE_INSTALL_PREFIX=/path/to/install/fastlib/in/
+  -D WITH_SPARSE=OFF
+  -D WITH_OPTIMIZATION=OFF
+
+More information on how to use CMake with FASTLIB and MLPACK can be found on the
+Trac wiki:
+
+  http://trac.research.cc.gatech.edu/fastlab/wiki/UsingCMake
+
+3.  List of MLPACK executables
+
+Below is a list of executables that come with MLPACK (and the full name of the
+method the executable implements).  For documentation on each, run the
+executable with the --help option.
+
+  - allkfn (all k furthest neighbors)
+  - allknn (all k nearest neighbors)
+  - allnn (all nearest neighbors)
+  - allnn_thor (all nearest neighbors using the THOR parallelization system)
+  - dataset_preprocess (tool to remove a feature from datasets for regression)
+  - dualtree_kde (dual-tree kernel density estimation)
+  - emst (dual-tree Boruvka algorithm for Euclidian Minimum Spanning Trees)
+  - fastica (FastICA)
+  - fft_kde (FFT-based kernel density estimation)
+  - fgt_kde (FGT-based kernel density estimation)
+  - hmm_generate (generate a random sequence given an HMM)
+  - hmm_loglik (calculate the log-likelihood of HMM sequences)
+  - hmm_train (train an HMM)
+  - hmm_viterbi (find the most likely HMM states for a given sequence)
+  - infomax_ica (ICA decomposition with the Infomax method)
+  - kalman (Kalman filtering)
+  - kde_cv (KDE crossvalidator)
+  - nbc (parametric Naive Bayes Classifier)
+  - nnsvm (non-negativity constrained support vector machine)
+  - original_ifgt (kernel density estimation using the original Fast Gauss
+    Transform)
+  - quicsvd (calculate singular value decomposition using QuicSVD method)
+  - ridge_regression (ridge regression)
+  - svm (support vector machine)
+
+4.  Future plans
+
+As mentioned earlier, MLPACK and FASTLIB are in a state of transition; the API
+is being entirely redesigned; programs are being more properly documented for
+ease of use; focus is being given to testing on various operating systems and
+architectures.  Many large changes are in store for MLPACK and FASTLIB.  Stay
+tuned, and follow progress at the FASTLIB/MLPACK Trac site:
+
+  http://trac.research.cc.gatech.edu/fastlab/
