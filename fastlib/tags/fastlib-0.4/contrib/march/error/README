@@ -1,0 +1,21 @@
+Compile with:
+
+fl-build error_tester_main --mode=fast
+
+Run with:
+
+./error_tester_main
+
+options:
+
+--kernel={abs, rel, exp, gauss, hybrid, naive}
+
+--bandwidth=double The single, global bandwidth for the Gaussians in the kernel sum
+
+--data=filename  The dataset containing the matrix of Gaussian centers
+
+--max_error=double  $\epsilon_{\text max}$ in the new error functions.  This is also epsilon in the relative and absolute error.
+
+--steepness=double  Alpha in the new error functions
+
+--min_error=double  $\epsilon_{\text min}$ in the new error functions.  

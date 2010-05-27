@@ -1,0 +1,11 @@
+% Example of a discrete HMM profile
+% transmission (2 states)
+0.9 0.05
+0.1 0.95
+% emission (2 states x 6 symbols)
+0.166 0.1
+0.166 0.1
+0.166 0.1
+0.166 0.1
+0.166 0.1
+0.17 0.5
