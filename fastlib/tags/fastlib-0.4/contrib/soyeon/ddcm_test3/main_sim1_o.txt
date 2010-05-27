@@ -1,0 +1,3964 @@
+DDCM(main) model training
+2293.9 2387.57 2631.74 2559.68 
+condition number WITH intercept
+min_eigen_cx=2293.9
+max_eigen_cx=2631.74
+ratio eigen=1.14728
+Number of parameters is 6
+NUM_OF_BETAS=4
+Starting points:
+0 0 0 0 2 2 
+Number of people in dataset is 700
+Number of people in dataset is 5000
+Shuffling
+shuffled_array :183 119 681 190 21 610 580 541 201 628 372 430 206 488 377 86 688 566 394 644 191 490 397 537 326 330 298 223 239 270 459 235 38 55 273 667 301 302 601 0 289 452 257 315 68 232 474 46 59 631 363 178 143 112 530 253 578 531 560 196 605 11 660 607 276 110 312 27 517 511 124 663 698 649 134 317 150 651 40 552 87 499 16 370 648 18 167 316 654 84 92 550 79 36 419 682 258 115 438 568 295 228 456 329 539 621 561 306 145 622 482 113 389 450 588 251 629 534 158 323 300 22 63 103 93 146 269 345 325 133 487 553 165 586 66 185 494 280 1 71 308 341 594 509 495 88 674 542 608 321 240 73 204 14 564 155 218 268 549 670 639 673 304 579 477 144 135 573 129 182 234 634 231 311 653 616 49 320 259 255 41 567 123 417 267 37 262 19 374 212 399 362 104 515 91 683 523 437 159 574 476 77 665 81 625 89 90 164 140 286 518 265 493 408 160 571 74 137 109 117 630 357 254 225 328 290 181 95 406 401 309 163 382 281 94 547 100 305 690 449 662 168 529 645 446 533 120 52 172 510 355 466 505 9 64 83 376 210 614 595 582 352 142 20 67 333 187 244 4 447 238 694 80 10 439 275 440 260 471 668 481 332 313 489 384 403 671 141 359 572 30 361 497 200 96 635 558 395 354 699 390 480 256 220 652 197 351 457 687 161 23 378 592 297 613 684 348 427 626 501 546 646 116 277 105 455 229 548 565 583 659 365 368 388 597 327 407 208 602 2 340 98 392 226 532 102 484 519 504 358 472 500 485 5 56 524 460 152 396 375 498 324 464 619 381 486 527 575 492 303 43 367 130 429 627 166 171 507 422 366 599 331 503 636 252 632 398 686 60 338 241 350 293 31 410 591 604 428 606 623 33 157 54 454 53 658 514 75 292 249 174 3 28 424 349 50 192 465 420 638 600 34 522 536 15 39 176 569 655 72 633 475 246 400 279 491 435 540 153 274 516 44 672 271 99 47 506 443 678 676 184 282 462 383 521 48 393 29 364 224 70 371 85 535 35 696 337 679 411 173 695 194 664 122 214 101 131 7 675 342 213 620 512 473 609 294 585 318 412 650 693 556 458 322 618 353 685 528 598 555 106 248 126 284 691 425 242 467 405 203 666 431 557 45 132 222 656 307 217 496 264 343 444 125 175 177 344 409 82 478 469 593 199 441 263 58 468 584 24 414 677 147 193 637 526 247 13 334 207 581 62 576 538 339 25 596 513 386 8 236 448 250 385 346 266 227 545 404 689 416 221 211 589 180 451 148 543 296 570 205 78 470 121 391 669 154 219 169 107 461 373 111 657 577 283 319 151 587 347 156 198 6 216 640 291 423 288 559 12 453 661 118 369 624 114 272 61 179 32 617 65 551 195 299 57 209 189 479 520 415 356 243 426 432 692 433 643 230 387 641 463 647 434 508 502 42 590 233 285 149 170 697 162 188 202 402 138 615 314 237 261 611 612 563 483 69 139 379 436 76 544 680 215 287 108 335 418 310 380 442 360 562 421 97 278 245 525 642 17 51 603 445 336 186 26 554 413 136 128 127 
+Initial sampling percent is 20
+num par=6
+iteration_count=1
+Initial sampling...
+Extend subset 1
+Add 140 sample(s)
+Number of data used=140
+The objective is 1.30613
+current_sample_size=140
+Gradient vector: -0 -0.0606725 -0.338478 0.310419 7.46228e-18 5.36476e-18 
+=140
+num_of_people=5000
+iteration_count==1
+hessian0(1,1)=-1
+current_radius=0.1
+candidate_new_parameter=0 0.0130969 0.0730646 -0.0670077 2 2 
+The candidate Next objective is 1.26141
+serror_factor=2.8
+sampling_error=7.94968e-05
+sampling_deviation=0.0089161
+current_delta_m=-0.0513259
+delta_m=-0.0513259
+Hessian update
+eigen values of updated hessian
+-1 -0.800119 -1.00003 -1 -1 -1 
+
+rho= 0.871302
+Accepting the step
+diff=0.0447203
+Update the hessian matrix by BFGS method...
+Expanding trust region radius...
+Expanded radius=0.2
+iteration_count=2
+Keep the current sample size? Add 100 samples
+Extend subset 2
+Add 100 sample(s)
+Number of data used=240
+The objective is 1.30663
+current_sample_size=240
+Gradient vector: -6.19874e-18 -0.0314643 -0.344966 0.367816 5.59473e-05 -0.000111238 
+=240
+num_of_people=5000
+current_radius=0.2
+candidate_new_parameter=2.45372e-18 0.0255518 0.209616 -0.212605 1.99998 2.00004 
+The candidate Next objective is 1.21326
+serror_factor=4.8
+sampling_error=0.000194266
+sampling_deviation=0.0139379
+current_delta_m=-0.117087
+delta_m=-0.117087
+Hessian update
+eigen values of updated hessian
+-1 -0.872394 -0.998275 -1 -1 -1 
+
+rho= 0.797423
+Accepting the step
+diff=0.0933676
+Update the hessian matrix by BFGS method...
+Expanding trust region radius...
+Expanded radius=0.4
+iteration_count=3
+Keep the current sample size? Add 100 samples
+Extend subset 3
+Add 100 sample(s)
+Number of data used=340
+The objective is 1.21463
+current_sample_size=340
+Gradient vector: -6.0116e-18 -0.0496914 -0.323605 0.278923 0.000819832 -0.000896897 
+=340
+num_of_people=5000
+current_radius=0.4
+candidate_new_parameter=8.04456e-18 0.0717653 0.510572 -0.472006 1.99922 2.00088 
+The candidate Next objective is 1.07051
+serror_factor=6.8
+sampling_error=0.000318931
+sampling_deviation=0.0178586
+current_delta_m=-0.242113
+delta_m=-0.242113
+Hessian update
+eigen values of updated hessian
+-1 -0.526872 -0.994475 -0.999934 -1.00001 -1 
+
+rho= 0.595254
+Accepting the step
+diff=0.144119
+Update the hessian matrix by BFGS method...
+iteration_count=4
+Keep the current sample size? Add 100 samples
+Extend subset 4
+Add 100 sample(s)
+Number of data used=440
+The objective is 1.07308
+current_sample_size=440
+Gradient vector: -6.61635e-18 -0.0364179 -0.225416 0.176813 0.000947591 -0.00133666 
+=440
+num_of_people=5000
+current_radius=0.4
+candidate_new_parameter=1.72086e-17 0.122206 0.822784 -0.716901 1.9979 2.00273 
+The candidate Next objective is 0.977586
+serror_factor=8.8
+sampling_error=0.000109017
+sampling_deviation=0.0104411
+current_delta_m=-0.157793
+delta_m=-0.157793
+Hessian update
+eigen values of updated hessian
+-1 -0.233532 -0.991777 -0.999805 -1.00001 -1 
+
+rho= 0.605198
+Accepting the step
+diff=0.0954957
+Update the hessian matrix by BFGS method...
+iteration_count=5
+Keep the current sample size? Add 100 samples
+Extend subset 5
+Add 100 sample(s)
+Number of data used=540
+The objective is 0.99092
+current_sample_size=540
+Gradient vector: -6.27204e-18 -0.0413496 -0.15699 0.108805 0.000400821 -0.00114953 
+=540
+num_of_people=5000
+current_radius=0.4
+candidate_new_parameter=3.00455e-17 0.206836 1.1441 -0.939591 1.99708 2.00508 
+The candidate Next objective is 0.926042
+serror_factor=10.8
+sampling_error=4.27759e-05
+sampling_deviation=0.00654033
+current_delta_m=-0.0975662
+delta_m=-0.0975662
+Hessian update
+eigen values of updated hessian
+-1 -0.107823 -0.956731 -0.998652 -1.00001 -0.999998 
+
+rho= 0.664959
+Accepting the step
+diff=0.0648775
+Update the hessian matrix by BFGS method...
+iteration_count=6
+Keep the current sample size? Add 100 samples
+Extend subset 6
+Add 100 sample(s)
+Number of data used=640
+The objective is 0.928414
+current_sample_size=640
+Gradient vector: -6.16762e-18 -0.0170774 -0.118039 0.059377 -0.000418581 -0.000575317 
+=640
+num_of_people=5000
+current_radius=0.4
+candidate_new_parameter=4.85624e-17 0.258107 1.49848 -1.11786 1.99834 2.00681 
+The candidate Next objective is 0.883917
+serror_factor=12.8
+sampling_error=1.76854e-05
+sampling_deviation=0.0042054
+current_delta_m=-0.0638497
+delta_m=-0.0638497
+Hessian update
+eigen values of updated hessian
+-1 -0.0506588 -0.814877 -0.958096 -0.999978 -0.999998 
+
+rho= 0.696903
+Accepting the step
+diff=0.044497
+Update the hessian matrix by BFGS method...
+iteration_count=7
+Keep the current sample size? Add 100 samples
+Number of data used=700
+The objective is 0.880122
+current_sample_size=700
+Gradient vector: -7.28371e-18 -0.0170241 -0.0807303 0.0413822 -0.0031957 0.00180645 
+=700
+num_of_people=5000
+current_radius=0.4
+candidate_new_parameter=8.0102e-17 0.331824 1.84806 -1.29705 2.01218 1.99899 
+The candidate Next objective is 0.849261
+serror_factor=14
+sampling_error=9.23259e-06
+sampling_deviation=0.00303852
+current_delta_m=-0.0413533
+Expand sample size
+percent_added_sample=2.86782
+Extended sample size=20.0748
+delta_m=-0.0413533
+Hessian update
+eigen values of updated hessian
+-1 -0.0243387 -0.795446 -0.915792 -0.986445 -0.999998 
+
+rho= 0.746261
+Accepting the step
+diff=0.0308603
+Update the hessian matrix by BFGS method...
+iteration_count=8
+Number of data used=700
+The objective is 0.849261
+current_sample_size=700
+Gradient vector: -5.74483e-18 -0.00824679 -0.0566438 0.0274976 -0.00598472 0.00452362 
+=700
+num_of_people=5000
+current_radius=0.4
+candidate_new_parameter=1.16038e-16 0.383411 2.20239 -1.46906 2.04961 1.97069 
+The candidate Next objective is 0.827761
+serror_factor=14
+sampling_error=5.46395e-06
+sampling_deviation=0.00233751
+current_delta_m=-0.0282503
+Expand sample size
+percent_added_sample=15.8399
+Extended sample size=110.88
+delta_m=-0.0282503
+Hessian update
+eigen values of updated hessian
+-1 -0.0117965 -0.67218 -0.849311 -0.917161 -0.999962 
+
+rho= 0.761073
+Accepting the step
+diff=0.0215005
+Update the hessian matrix by BFGS method...
+Expanding trust region radius...
+Expanded radius=0.8
+iteration_count=9
+Number of data used=700
+The objective is 0.827761
+current_sample_size=700
+Gradient vector: -5.81184e-18 -0.0056811 -0.0388721 0.0190198 -0.00855111 0.00740858 
+=700
+num_of_people=5000
+current_radius=0.8
+candidate_new_parameter=2.19154e-16 0.484208 2.89207 -1.80651 2.20133 1.83924 
+The candidate Next objective is 0.800981
+serror_factor=14
+sampling_error=1.1047e-05
+sampling_deviation=0.00332371
+current_delta_m=-0.0445471
+Expand sample size
+percent_added_sample=4.45535
+Extended sample size=31.1874
+delta_m=-0.0445471
+Hessian update
+eigen values of updated hessian
+-1 -0.004797 -0.350058 -0.731319 -0.912081 -0.999081 
+
+rho= 0.60116
+Accepting the step
+diff=0.02678
+Update the hessian matrix by BFGS method...
+iteration_count=10
+Number of data used=700
+The objective is 0.800981
+current_sample_size=700
+Gradient vector: -5.38467e-18 -0.00261953 -0.0176006 0.0106057 -0.01138 0.012463 
+=700
+num_of_people=5000
+(Dogleg)Discriminant= 54.2519
+current_radius=0.8
+candidate_new_parameter=3.49256e-16 0.577922 3.52981 -2.14344 2.43631 1.60308 
+The candidate Next objective is 0.784167
+serror_factor=14
+sampling_error=5.17237e-06
+sampling_deviation=0.00227428
+current_delta_m=-0.026093
+Expand sample size
+percent_added_sample=22.025
+Extended sample size=154.175
+delta_m=-0.026093
+Hessian update
+eigen values of updated hessian
+-1 -0.00182893 -0.105326 -0.900741 -0.982931 -0.709401 
+
+rho= 0.644397
+Accepting the step
+diff=0.0168143
+Update the hessian matrix by BFGS method...
+iteration_count=11
+Number of data used=700
+The objective is 0.784167
+current_sample_size=700
+Gradient vector: -3.11131e-18 -0.00132183 -0.00769799 0.00802799 -0.0102257 0.0146984 
+=700
+num_of_people=5000
+(Dogleg)Discriminant= 186.05
+current_radius=0.8
+candidate_new_parameter=4.80624e-16 0.655877 4.03739 -2.4821 2.75566 1.20356 
+The candidate Next objective is 0.770985
+serror_factor=14
+sampling_error=5.57036e-06
+sampling_deviation=0.00236016
+current_delta_m=-0.0202136
+Expand sample size
+percent_added_sample=63.4653
+Extended sample size=444.257
+delta_m=-0.0202136
+Hessian update
+eigen values of updated hessian
+-1 -0.617265 -0.814063 -0.945907 -0.00105472 -0.0188432 
+
+rho= 0.652099
+Accepting the step
+diff=0.0131813
+Update the hessian matrix by BFGS method...
+iteration_count=12
+Number of data used=700
+The objective is 0.770985
+current_sample_size=700
+Gradient vector: -9.34342e-18 -0.000892912 -0.00594395 0.00655984 -0.00447351 0.00863332 
+=700
+num_of_people=5000
+(Dogleg)Discriminant= 315.205
+current_radius=0.8
+candidate_new_parameter=9.65431e-16 0.715114 4.42956 -2.87089 3.03776 0.701609 
+The candidate Next objective is 0.765988
+serror_factor=14
+sampling_error=1.02498e-05
+sampling_deviation=0.00320153
+current_delta_m=-0.0148651
+Expand sample size
+percent_added_sample=201.522
+Extended sample size=1410.65
+delta_m=-0.0148651
+Hessian update
+eigen values of updated hessian
+-1 -0.945191 -0.749036 -0.0868347 -0.0115006 -0.000131538 
+
+rho= 0.336161
+Accepting the step
+diff=0.00499706
+Update the hessian matrix by BFGS method...
+iteration_count=13
+Number of data used=700
+The objective is 0.765988
+current_sample_size=700
+Gradient vector: -7.4672e-18 -0.00106454 -0.00972165 -0.000794838 0.00160192 -0.00877647 
+=700
+num_of_people=5000
+current_radius=0.8
+candidate_new_parameter=1.41589e-15 0.779332 5.01601 -2.82294 2.94113 1.23105 
+The candidate Next objective is 0.767544
+serror_factor=14
+sampling_error=2.46362e-05
+sampling_deviation=0.00496349
+current_delta_m=-0.0144247
+Expand sample size
+percent_added_sample=381.735
+Extended sample size=2672.14
+delta_m=-0.0144247
+Hessian update
+eigen values of updated hessian
+-1 -0.93149 -0.726763 -0.0860557 -3.67545e-06 -0.000308288 
+
+rho= -0.107823
+Shrinking trust region radius...
+updated(shrinked) radius=0.2
+iteration_count=14
+Number of data used=700
+The objective is 0.765988
+current_sample_size=700
+Gradient vector: -7.4672e-18 -0.00106454 -0.00972165 -0.000794838 0.00160192 -0.00877647 
+=700
+num_of_people=5000
+current_radius=0.2
+candidate_new_parameter=1.07805e-15 0.731169 4.57617 -2.8589 3.01361 0.833968 
+The candidate Next objective is 0.764118
+serror_factor=14
+sampling_error=1.60478e-06
+sampling_deviation=0.0012668
+current_delta_m=-0.00289077
+Expand sample size
+percent_added_sample=513.509
+Extended sample size=3594.57
+delta_m=-0.00289077
+Hessian update
+eigen values of updated hessian
+-1 -0.931455 -0.726743 -0.0860402 -0.000369276 -0.000126941 
+
+rho= 0.647109
+Accepting the step
+diff=0.00187065
+Update the hessian matrix by BFGS method...
+iteration_count=15
+Number of data used=700
+The objective is 0.764118
+current_sample_size=700
+Gradient vector: -4.27187e-18 -0.00134305 -0.00529076 0.00352417 2.56328e-05 -0.00252268 
+=700
+num_of_people=5000
+(Dogleg)Discriminant= 72.2602
+current_radius=0.2
+candidate_new_parameter=1.23588e-15 0.762774 4.74819 -2.94961 3.0369 0.859245 
+The candidate Next objective is 0.762947
+serror_factor=14
+sampling_error=3.25072e-07
+sampling_deviation=0.000570151
+current_delta_m=-0.00168636
+Expand sample size
+percent_added_sample=373.334
+Extended sample size=2613.34
+delta_m=-0.00168636
+Hessian update
+eigen values of updated hessian
+-1 -0.796416 -0.150025 -0.00867287 -0.000129952 -0.000158664 
+
+rho= 0.693924
+Accepting the step
+diff=0.00117021
+Update the hessian matrix by BFGS method...
+iteration_count=16
+Number of data used=700
+The objective is 0.762947
+current_sample_size=700
+Gradient vector: -6.58775e-18 -0.000810858 -0.00408264 0.00285425 -0.000565272 -0.000328072 
+=700
+num_of_people=5000
+current_radius=0.2
+candidate_new_parameter=1.49478e-15 0.794641 4.90864 -3.06178 3.05912 0.872138 
+The candidate Next objective is 0.762084
+serror_factor=14
+sampling_error=3.12063e-07
+sampling_deviation=0.000558626
+current_delta_m=-0.00102537
+Expand sample size
+percent_added_sample=662.728
+Extended sample size=4639.1
+delta_m=-0.00102537
+Hessian update
+eigen values of updated hessian
+-1 -0.542795 -0.129902 -0.00527148 -7.32608e-05 -0.000156001 
+
+rho= 0.842379
+Accepting the step
+diff=0.000863747
+Update the hessian matrix by BFGS method...
+Expanding trust region radius...
+Expanded radius=0.4
+iteration_count=17
+Number of data used=700
+The objective is 0.762084
+current_sample_size=700
+Gradient vector: -5.97184e-18 -0.00020091 -0.00396399 0.000610106 -0.00107812 0.00164369 
+=700
+num_of_people=5000
+current_radius=0.4
+candidate_new_parameter=2.02905e-15 0.812615 5.26328 -3.11636 3.15557 0.725084 
+The candidate Next objective is 0.76176
+serror_factor=14
+sampling_error=3.2574e-06
+sampling_deviation=0.00180483
+current_delta_m=-0.00210776
+Expand sample size
+percent_added_sample=1098.79
+Extended sample size=7691.5
+delta_m=-0.00210776
+Hessian update
+eigen values of updated hessian
+-1 -0.444008 -0.0610424 -0.000444043 -1.78188e-06 -0.000147432 
+
+rho= 0.153559
+Shrinking trust region radius...
+updated(shrinked) radius=0.1
+iteration_count=18
+Number of data used=700
+The objective is 0.762084
+current_sample_size=700
+Gradient vector: -5.97184e-18 -0.00020091 -0.00396399 0.000610106 -0.00107812 0.00164369 
+=700
+num_of_people=5000
+current_radius=0.1
+candidate_new_parameter=1.62835e-15 0.799134 4.9973 -3.07542 3.08323 0.835374 
+The candidate Next objective is 0.76173
+serror_factor=14
+sampling_error=2.06171e-07
+sampling_deviation=0.000454061
+current_delta_m=-0.000467061
+Expand sample size
+percent_added_sample=1261.03
+Extended sample size=8827.23
+delta_m=-0.000467061
+Hessian update
+eigen values of updated hessian
+-1 -0.444008 -0.0610418 -0.000343242 -4.72136e-05 -0.000121416 
+
+rho= 0.757188
+Accepting the step
+diff=0.000353653
+Update the hessian matrix by BFGS method...
+Expanding trust region radius...
+Expanded radius=0.2
+iteration_count=19
+Number of data used=700
+The objective is 0.76173
+current_sample_size=700
+Gradient vector: -6.60278e-18 -0.000833623 -0.00231997 0.00308657 -0.000582634 -0.000130151 
+=700
+num_of_people=5000
+current_radius=0.2
+candidate_new_parameter=1.95889e-15 0.840867 5.11344 -3.22994 3.1124 0.84189 
+The candidate Next objective is 0.761289
+serror_factor=14
+sampling_error=7.69522e-07
+sampling_deviation=0.000877224
+current_delta_m=-0.000806958
+Expand sample size
+percent_added_sample=1421.91
+Extended sample size=9953.34
+delta_m=-0.000806958
+Hessian update
+eigen values of updated hessian
+-1 -0.33743 -0.0409739 -1.21164e-05 -9.29115e-05 -0.000171884 
+
+rho= 0.546377
+Accepting the step
+diff=0.000440903
+Update the hessian matrix by BFGS method...
+iteration_count=20
+Number of data used=700
+The objective is 0.761289
+current_sample_size=700
+Gradient vector: -9.02193e-18 0.000803738 -0.00475789 -0.00286976 -0.00105576 0.00193028 
+=700
+num_of_people=5000
+current_radius=0.2
+candidate_new_parameter=2.25813e-15 0.814208 5.27125 -3.13476 3.14741 0.777866 
+The candidate Next objective is 0.76138
+serror_factor=14
+sampling_error=2.96079e-06
+sampling_deviation=0.00172069
+current_delta_m=-0.00122484
+Expand sample size
+percent_added_sample=1866.77
+Extended sample size=13067.4
+delta_m=-0.00122484
+Hessian update
+eigen values of updated hessian
+-1 -0.0487987 -0.0360792 -1.51036e-07 -5.74754e-05 -0.000128598 
+
+rho= -0.0740088
+Shrinking trust region radius...
+updated(shrinked) radius=0.05
+iteration_count=21
+Number of data used=700
+The objective is 0.761289
+current_sample_size=700
+Gradient vector: -9.02193e-18 0.000803738 -0.00475789 -0.00286976 -0.00105576 0.00193028 
+=700
+num_of_people=5000
+current_radius=0.05
+candidate_new_parameter=2.0337e-15 0.834202 5.15289 -3.20615 3.12115 0.825884 
+The candidate Next objective is 0.761069
+serror_factor=14
+sampling_error=1.88698e-07
+sampling_deviation=0.000434394
+current_delta_m=-0.000302673
+Expand sample size
+percent_added_sample=1909.27
+Extended sample size=13364.9
+delta_m=-0.000302673
+Hessian update
+eigen values of updated hessian
+-1 -0.0487986 -0.0360792 -1.2073e-05 -8.05896e-05 -0.000128143 
+
+rho= 0.72614
+Accepting the step
+diff=0.000219783
+Update the hessian matrix by BFGS method...
+iteration_count=22
+Number of data used=700
+The objective is 0.761069
+current_sample_size=700
+Gradient vector: -5.31806e-18 -3.68887e-05 -0.00304365 1.16553e-05 -0.000759696 0.000754777 
+=700
+num_of_people=5000
+current_radius=0.05
+candidate_new_parameter=2.11611e-15 0.834774 5.20006 -3.20633 3.13292 0.814188 
+The candidate Next objective is 0.760938
+serror_factor=14
+sampling_error=6.86091e-08
+sampling_deviation=0.000261933
+current_delta_m=-0.000161468
+Expand sample size
+percent_added_sample=2171.08
+Extended sample size=15197.5
+delta_m=-0.000161468
+Hessian update
+eigen values of updated hessian
+-1 -0.0400401 -0.0314618 -0.000127895 -3.25439e-05 -1.11758e-05 
+
+rho= 0.812931
+Accepting the step
+diff=0.000131263
+Update the hessian matrix by BFGS method...
+Expanding trust region radius...
+Expanded radius=0.1
+iteration_count=23
+Number of data used=700
+The objective is 0.760938
+current_sample_size=700
+Gradient vector: -7.55318e-18 -0.000471942 -0.00197094 0.00161896 -0.000586652 7.85921e-05 
+=700
+num_of_people=5000
+current_radius=0.1
+candidate_new_parameter=2.4e-15 0.852512 5.27413 -3.26718 3.15497 0.811234 
+The candidate Next objective is 0.760703
+serror_factor=14
+sampling_error=6.26679e-08
+sampling_deviation=0.000250336
+current_delta_m=-0.000266363
+Expand sample size
+percent_added_sample=1215.76
+Extended sample size=8510.33
+delta_m=-0.000266363
+Hessian update
+eigen values of updated hessian
+-1 -0.040017 -0.0165388 -0.000126564 -2.54814e-05 -9.98695e-06 
+
+rho= 0.883081
+Accepting the step
+diff=0.00023522
+Update the hessian matrix by BFGS method...
+Expanding trust region radius...
+Expanded radius=0.2
+iteration_count=24
+Number of data used=700
+The objective is 0.760703
+current_sample_size=700
+Gradient vector: -5.93467e-18 -4.78529e-05 -0.00229088 0.000299196 -0.000665767 0.000491818 
+=700
+num_of_people=5000
+current_radius=0.2
+candidate_new_parameter=2.88356e-15 0.856411 5.46079 -3.29155 3.20922 0.771161 
+The candidate Next objective is 0.760524
+serror_factor=14
+sampling_error=7.18252e-07
+sampling_deviation=0.000847498
+current_delta_m=-0.000492318
+Expand sample size
+percent_added_sample=2310.02
+Extended sample size=16170.1
+delta_m=-0.000492318
+Hessian update
+eigen values of updated hessian
+-1 -0.0169069 -0.0142266 -7.68823e-07 -4.35719e-05 -0.00012614 
+
+rho= 0.364073
+Accepting the step
+diff=0.00017924
+Update the hessian matrix by BFGS method...
+iteration_count=25
+Number of data used=700
+The objective is 0.760524
+current_sample_size=700
+Gradient vector: -5.31231e-18 -0.00158818 0.0010265 0.00500253 -0.000121003 -0.00171715 
+=700
+num_of_people=5000
+current_radius=0.2
+candidate_new_parameter=3.07267e-15 0.912948 5.42425 -3.46964 3.21353 0.832289 
+The candidate Next objective is 0.760859
+serror_factor=14
+sampling_error=3.44214e-06
+sampling_deviation=0.0018553
+current_delta_m=-0.0011261
+Expand sample size
+percent_added_sample=2206.57
+Extended sample size=15446
+delta_m=-0.0011261
+Hessian update
+eigen values of updated hessian
+-1 -0.0152385 -0.00495975 -3.16648e-07 -3.00089e-05 -0.000125685 
+
+rho= -0.298067
+Shrinking trust region radius...
+updated(shrinked) radius=0.05
+iteration_count=26
+Number of data used=700
+The objective is 0.760524
+current_sample_size=700
+Gradient vector: -5.31231e-18 -0.00158818 0.0010265 0.00500253 -0.000121003 -0.00171715 
+=700
+num_of_people=5000
+current_radius=0.05
+candidate_new_parameter=2.93083e-15 0.870545 5.45166 -3.33607 3.2103 0.786443 
+The candidate Next objective is 0.760334
+serror_factor=14
+sampling_error=2.12363e-07
+sampling_deviation=0.000460828
+current_delta_m=-0.000281065
+Expand sample size
+percent_added_sample=2195.41
+Extended sample size=15367.9
+delta_m=-0.000281065
+Hessian update
+eigen values of updated hessian
+-1 -0.0152384 -0.00495972 -8.57929e-07 -5.84227e-05 -0.000125613 
+
+rho= 0.673018
+Accepting the step
+diff=0.000189162
+Update the hessian matrix by BFGS method...
+iteration_count=27
+Number of data used=700
+The objective is 0.760334
+current_sample_size=700
+Gradient vector: -5.97419e-18 -0.000612877 -0.000586718 0.00195927 -0.000411098 -0.000432908 
+=700
+num_of_people=5000
+current_radius=0.05
+candidate_new_parameter=3.06557e-15 0.884368 5.46489 -3.38026 3.21957 0.796207 
+The candidate Next objective is 0.760275
+serror_factor=14
+sampling_error=1.18131e-07
+sampling_deviation=0.000343702
+current_delta_m=-0.000110924
+Expand sample size
+percent_added_sample=4237.93
+Extended sample size=29665.5
+delta_m=-0.000110924
+Hessian update
+eigen values of updated hessian
+-1 -0.0136881 -0.0047204 -0.000125609 -9.73805e-06 -5.72276e-07 
+
+rho= 0.53834
+Accepting the step
+diff=5.97151e-05
+Update the hessian matrix by BFGS method...
+iteration_count=28
+Number of data used=700
+The objective is 0.760275
+current_sample_size=700
+Gradient vector: -4.78162e-18 0.000118151 -0.00170874 -0.000292837 -0.000620009 0.000507303 
+=700
+num_of_people=5000
+current_radius=0.05
+candidate_new_parameter=3.19052e-15 0.88128 5.50954 -3.37261 3.23577 0.78295 
+The candidate Next objective is 0.760222
+serror_factor=14
+sampling_error=1.03198e-07
+sampling_deviation=0.000321244
+current_delta_m=-9.57409e-05
+Expand sample size
+percent_added_sample=4597.49
+Extended sample size=32182.4
+delta_m=-9.57409e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.00766367 -0.000841355 -0.000124713 -8.38177e-06 -5.37358e-07 
+
+rho= 0.547092
+Accepting the step
+diff=5.2379e-05
+Update the hessian matrix by BFGS method...
+iteration_count=29
+Number of data used=700
+The objective is 0.760222
+current_sample_size=700
+Gradient vector: -7.17674e-18 -0.000492047 -0.000507107 0.00164134 -0.000396556 -0.000429973 
+=700
+num_of_people=5000
+current_radius=0.05
+candidate_new_parameter=3.38136e-15 0.894365 5.52303 -3.41626 3.24631 0.794384 
+The candidate Next objective is 0.760178
+serror_factor=14
+sampling_error=1.17204e-07
+sampling_deviation=0.000342351
+current_delta_m=-9.40218e-05
+Expand sample size
+percent_added_sample=4997.66
+Extended sample size=34983.6
+delta_m=-9.40218e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.00708369 -0.000723001 -0.000119697 -7.16768e-06 -3.7204e-07 
+
+rho= 0.4695
+Accepting the step
+diff=4.41433e-05
+Update the hessian matrix by BFGS method...
+iteration_count=30
+Number of data used=700
+The objective is 0.760178
+current_sample_size=700
+Gradient vector: -2.78075e-18 0.000182516 -0.00158997 -0.00056145 -0.000619241 0.000575712 
+=700
+num_of_people=5000
+current_radius=0.05
+candidate_new_parameter=3.45473e-15 0.889549 5.56498 -3.40144 3.26265 0.779195 
+The candidate Next objective is 0.760141
+serror_factor=14
+sampling_error=1.38717e-07
+sampling_deviation=0.000372447
+current_delta_m=-9.47657e-05
+Expand sample size
+percent_added_sample=5402.27
+Extended sample size=37815.9
+delta_m=-9.47657e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.00602705 -0.000458906 -0.000109269 -6.12112e-06 -2.40016e-07 
+
+rho= 0.391962
+Accepting the step
+diff=3.71446e-05
+Update the hessian matrix by BFGS method...
+iteration_count=31
+Number of data used=700
+The objective is 0.760141
+current_sample_size=700
+Gradient vector: -8.09829e-18 -0.000501427 -0.000240442 0.00170531 -0.000354515 -0.000554979 
+=700
+num_of_people=5000
+current_radius=0.05
+candidate_new_parameter=3.66664e-15 0.902671 5.57127 -3.44607 3.27193 0.793717 
+The candidate Next objective is 0.760109
+serror_factor=14
+sampling_error=1.51857e-07
+sampling_deviation=0.000389689
+current_delta_m=-9.55443e-05
+Expand sample size
+percent_added_sample=5610.06
+Extended sample size=39270.4
+delta_m=-9.55443e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.00389107 -0.000457507 -0.000101108 -5.22289e-06 -1.57149e-07 
+
+rho= 0.332458
+Accepting the step
+diff=3.17645e-05
+Update the hessian matrix by BFGS method...
+iteration_count=32
+Number of data used=700
+The objective is 0.760109
+current_sample_size=700
+Gradient vector: -2.33952e-18 0.000234785 -0.00149365 -0.000777008 -0.000617298 0.000631219 
+=700
+num_of_people=5000
+current_radius=0.05
+candidate_new_parameter=3.72771e-15 0.896542 5.61026 -3.42579 3.28804 0.777241 
+The candidate Next objective is 0.760082
+serror_factor=14
+sampling_error=1.65869e-07
+sampling_deviation=0.00040727
+current_delta_m=-9.57822e-05
+Expand sample size
+percent_added_sample=5852.86
+Extended sample size=40970
+delta_m=-9.57822e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.00319664 -0.000381323 -8.84388e-05 -4.49419e-06 -1.05584e-07 
+
+rho= 0.285541
+Accepting the step
+diff=2.73497e-05
+Update the hessian matrix by BFGS method...
+iteration_count=33
+Number of data used=700
+The objective is 0.760082
+current_sample_size=700
+Gradient vector: -3.60537e-18 -0.000494785 -5.2368e-05 0.00170852 -0.000325304 -0.000632834 
+=700
+num_of_people=5000
+current_radius=0.05
+candidate_new_parameter=3.82177e-15 0.909451 5.61162 -3.47036 3.29653 0.793751 
+The candidate Next objective is 0.760058
+serror_factor=14
+sampling_error=1.73114e-07
+sampling_deviation=0.00041607
+current_delta_m=-9.58276e-05
+Expand sample size
+percent_added_sample=5978.59
+Extended sample size=41850.2
+delta_m=-9.58276e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.001956 -0.000370724 -8.16264e-05 -3.8807e-06 -7.25839e-08 
+
+rho= 0.247802
+Accepting the step
+diff=2.37463e-05
+Update the hessian matrix by BFGS method...
+Shrinking trust region radius...
+updated(shrinked) radius=0.0125
+iteration_count=34
+Number of data used=700
+The objective is 0.760058
+current_sample_size=700
+Gradient vector: -1.08825e-17 0.000267458 -0.00139613 -0.000917203 -0.000610909 0.00066031 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=3.89277e-15 0.907706 5.62073 -3.46438 3.30051 0.789444 
+The candidate Next objective is 0.760039
+serror_factor=14
+sampling_error=1.14969e-08
+sampling_deviation=0.000107224
+current_delta_m=-2.39506e-05
+Expand sample size
+percent_added_sample=6167.62
+Extended sample size=43173.3
+delta_m=-2.39506e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.00170295 -0.000340028 -7.05185e-05 -2.43261e-07 -9.64165e-06 
+
+rho= 0.803499
+Accepting the step
+diff=1.92443e-05
+Update the hessian matrix by BFGS method...
+Expanding trust region radius...
+Expanded radius=0.025
+iteration_count=35
+Number of data used=700
+The objective is 0.760039
+current_sample_size=700
+Gradient vector: -7.12658e-18 7.95098e-05 -0.00102254 -0.000264568 -0.000532603 0.000321246 
+=700
+num_of_people=5000
+current_radius=0.025
+candidate_new_parameter=4.03781e-15 0.906088 5.64154 -3.45899 3.31135 0.782905 
+The candidate Next objective is 0.76002
+serror_factor=14
+sampling_error=2.80807e-08
+sampling_deviation=0.000167573
+current_delta_m=-3.0711e-05
+Expand sample size
+percent_added_sample=7539.03
+Extended sample size=52773.2
+delta_m=-3.0711e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.00168984 -0.000339366 -7.04311e-05 -3.3086e-06 -1.80986e-07 
+
+rho= 0.62627
+Accepting the step
+diff=1.92334e-05
+Update the hessian matrix by BFGS method...
+iteration_count=36
+Number of data used=700
+The objective is 0.76002
+current_sample_size=700
+Gradient vector: -6.57551e-18 -0.000207842 -0.000426644 0.000728969 -0.000411697 -0.000198047 
+=700
+num_of_people=5000
+current_radius=0.025
+candidate_new_parameter=4.20513e-15 0.911376 5.6524 -3.47754 3.32183 0.787945 
+The candidate Next objective is 0.760001
+serror_factor=14
+sampling_error=1.48638e-08
+sampling_deviation=0.000121917
+current_delta_m=-2.45639e-05
+Expand sample size
+percent_added_sample=6848.58
+Extended sample size=47940.1
+delta_m=-2.45639e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.00131 -0.000296211 -6.83689e-05 -2.84323e-06 -2.14493e-07 
+
+rho= 0.745631
+Accepting the step
+diff=1.83156e-05
+Update the hessian matrix by BFGS method...
+iteration_count=37
+Number of data used=700
+The objective is 0.760001
+current_sample_size=700
+Gradient vector: -5.49232e-18 8.07149e-06 -0.000770219 -2.72572e-05 -0.000488676 0.00016854 
+=700
+num_of_people=5000
+current_radius=0.025
+candidate_new_parameter=4.35308e-15 0.911159 5.67315 -3.47681 3.33499 0.783404 
+The candidate Next objective is 0.759985
+serror_factor=14
+sampling_error=1.58398e-08
+sampling_deviation=0.000125856
+current_delta_m=-2.32018e-05
+Expand sample size
+percent_added_sample=7494.2
+Extended sample size=52459.4
+delta_m=-2.32018e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.00123631 -0.000291563 -6.35918e-05 -2.5203e-06 -1.91613e-07 
+
+rho= 0.723401
+Accepting the step
+diff=1.67842e-05
+Update the hessian matrix by BFGS method...
+iteration_count=38
+Number of data used=700
+The objective is 0.759985
+current_sample_size=700
+Gradient vector: -8.4789e-18 -0.000193845 -0.0003224 0.000683974 -0.000397282 -0.000218048 
+=700
+num_of_people=5000
+current_radius=0.025
+candidate_new_parameter=4.58792e-15 0.916528 5.68208 -3.49575 3.346 0.789444 
+The candidate Next objective is 0.75997
+serror_factor=14
+sampling_error=1.82164e-08
+sampling_deviation=0.000134968
+current_delta_m=-2.25664e-05
+Expand sample size
+percent_added_sample=8273.32
+Extended sample size=57913.3
+delta_m=-2.25664e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.00103782 -0.000224527 -6.18844e-05 -2.24517e-06 -1.55999e-07 
+
+rho= 0.663174
+Accepting the step
+diff=1.49654e-05
+Update the hessian matrix by BFGS method...
+iteration_count=39
+Number of data used=700
+The objective is 0.75997
+current_sample_size=700
+Gradient vector: -7.73349e-18 4.28594e-05 -0.000716038 -0.000154458 -0.000484529 0.000196708 
+=700
+num_of_people=5000
+current_radius=0.025
+candidate_new_parameter=4.8025e-15 0.915339 5.70194 -3.49146 3.35944 0.783986 
+The candidate Next objective is 0.759957
+serror_factor=14
+sampling_error=2.33123e-08
+sampling_deviation=0.000152684
+current_delta_m=-2.25265e-05
+Expand sample size
+percent_added_sample=9389.13
+Extended sample size=65723.9
+delta_m=-2.25265e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.000969852 -0.000219072 -5.61791e-05 -2.00737e-06 -1.16305e-07 
+
+rho= 0.58135
+Accepting the step
+diff=1.30958e-05
+Update the hessian matrix by BFGS method...
+iteration_count=40
+Number of data used=700
+The objective is 0.759957
+current_sample_size=700
+Gradient vector: -3.65203e-18 -0.000207206 -0.000181741 0.000735399 -0.000373416 -0.000282782 
+=700
+num_of_people=5000
+current_radius=0.025
+candidate_new_parameter=4.90234e-15 0.921003 5.70691 -3.51157 3.36965 0.791717 
+The candidate Next objective is 0.759945
+serror_factor=14
+sampling_error=2.75191e-08
+sampling_deviation=0.000165889
+current_delta_m=-2.28614e-05
+Expand sample size
+percent_added_sample=10058.8
+Extended sample size=70411.7
+delta_m=-2.28614e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.000871481 -0.000163441 -5.41507e-05 -1.79713e-06 -8.25609e-08 
+
+rho= 0.502175
+Accepting the step
+diff=1.14804e-05
+Update the hessian matrix by BFGS method...
+iteration_count=41
+Number of data used=700
+The objective is 0.759945
+current_sample_size=700
+Gradient vector: -6.04002e-18 8.13929e-05 -0.000689607 -0.000295603 -0.000484314 0.000238996 
+=700
+num_of_people=5000
+current_radius=0.025
+candidate_new_parameter=5.06505e-15 0.918811 5.72549 -3.50361 3.3827 0.785279 
+The candidate Next objective is 0.759935
+serror_factor=14
+sampling_error=3.20729e-08
+sampling_deviation=0.000179089
+current_delta_m=-2.32012e-05
+Expand sample size
+percent_added_sample=10706.5
+Extended sample size=74945.8
+delta_m=-2.32012e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.000818225 -0.000158251 -4.90284e-05 -1.61475e-06 -5.90731e-08 
+
+rho= 0.441018
+Accepting the step
+diff=1.02321e-05
+Update the hessian matrix by BFGS method...
+iteration_count=42
+Number of data used=700
+The objective is 0.759935
+current_sample_size=700
+Gradient vector: -7.85987e-18 -0.000214682 -7.3346e-05 0.000766525 -0.00035463 -0.000329683 
+=700
+num_of_people=5000
+current_radius=0.025
+candidate_new_parameter=5.2753e-15 0.924553 5.72745 -3.52411 3.39218 0.794097 
+The candidate Next objective is 0.759926
+serror_factor=14
+sampling_error=3.43189e-08
+sampling_deviation=0.000185254
+current_delta_m=-2.33654e-05
+Expand sample size
+percent_added_sample=11000
+Extended sample size=76999.7
+delta_m=-2.33654e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.000774146 -0.000123316 -4.75402e-05 -1.46021e-06 -4.34884e-08 
+
+rho= 0.395789
+Accepting the step
+diff=9.24777e-06
+Update the hessian matrix by BFGS method...
+iteration_count=43
+Number of data used=700
+The objective is 0.759926
+current_sample_size=700
+Gradient vector: -7.05724e-18 0.000104238 -0.000652367 -0.00038087 -0.000479899 0.000258023 
+=700
+num_of_people=5000
+current_radius=0.025
+candidate_new_parameter=5.46355e-15 0.921773 5.74485 -3.51395 3.40498 0.787215 
+The candidate Next objective is 0.759917
+serror_factor=14
+sampling_error=3.71468e-08
+sampling_deviation=0.000192735
+current_delta_m=-2.34308e-05
+Expand sample size
+percent_added_sample=11416
+Extended sample size=79911.8
+delta_m=-2.34308e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.000734627 -0.00011837 -4.39903e-05 -1.32952e-06 -3.27911e-08 
+
+rho= 0.359506
+Accepting the step
+diff=8.42353e-06
+Update the hessian matrix by BFGS method...
+iteration_count=44
+Number of data used=700
+The objective is 0.759917
+current_sample_size=700
+Gradient vector: -5.26495e-18 -0.000214368 3.6359e-06 0.000769345 -0.000341315 -0.000355599 
+=700
+num_of_people=5000
+current_radius=0.025
+candidate_new_parameter=5.60379e-15 0.927483 5.74476 -3.53445 3.41408 0.796687 
+The candidate Next objective is 0.759909
+serror_factor=14
+sampling_error=3.83702e-08
+sampling_deviation=0.000195883
+current_delta_m=-2.3463e-05
+Expand sample size
+percent_added_sample=11588
+Extended sample size=81116.2
+delta_m=-2.3463e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.00070848 -9.66563e-05 -4.31626e-05 -1.21759e-06 -2.51478e-08 
+
+rho= 0.329568
+Accepting the step
+diff=7.73266e-06
+Update the hessian matrix by BFGS method...
+iteration_count=45
+Number of data used=700
+The objective is 0.759909
+current_sample_size=700
+Gradient vector: -5.29948e-18 0.00011993 -0.000614949 -0.000439897 -0.000473974 0.000267144 
+=700
+num_of_people=5000
+current_radius=0.025
+candidate_new_parameter=5.74486e-15 0.924291 5.76113 -3.52274 3.42669 0.789576 
+The candidate Next objective is 0.759902
+serror_factor=14
+sampling_error=4.04802e-08
+sampling_deviation=0.000201197
+current_delta_m=-2.34798e-05
+Expand sample size
+percent_added_sample=11896.5
+Extended sample size=83275.4
+delta_m=-2.34798e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.000673892 -9.22281e-05 -4.07949e-05 -1.12228e-06 -1.96316e-08 
+
+rho= 0.304049
+Accepting the step
+diff=7.13902e-06
+Update the hessian matrix by BFGS method...
+iteration_count=46
+Number of data used=700
+The objective is 0.759902
+current_sample_size=700
+Gradient vector: -6.58009e-18 -0.000212242 6.45776e-05 0.000764882 -0.000330512 -0.000372807 
+=700
+num_of_people=5000
+current_radius=0.025
+candidate_new_parameter=5.91997e-15 0.929939 5.75941 -3.54309 3.43549 0.799498 
+The candidate Next objective is 0.759896
+serror_factor=14
+sampling_error=4.11976e-08
+sampling_deviation=0.000202972
+current_delta_m=-2.34853e-05
+Expand sample size
+percent_added_sample=11999.5
+Extended sample size=83996.5
+delta_m=-2.34853e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.000652363 -7.81504e-05 -4.04531e-05 -1.04002e-06 -1.55579e-08 
+
+rho= 0.28264
+Accepting the step
+diff=6.63788e-06
+Update the hessian matrix by BFGS method...
+iteration_count=47
+Number of data used=700
+The objective is 0.759896
+current_sample_size=700
+Gradient vector: -6.89332e-18 0.000131873 -0.000581017 -0.000484781 -0.000467604 0.000271748 
+=700
+num_of_people=5000
+current_radius=0.025
+candidate_new_parameter=6.10342e-15 0.92643 5.77487 -3.53019 3.44793 0.792266 
+The candidate Next objective is 0.759889
+serror_factor=14
+sampling_error=4.28453e-08
+sampling_deviation=0.000206991
+current_delta_m=-2.34853e-05
+Expand sample size
+percent_added_sample=12239.1
+Extended sample size=85673.8
+delta_m=-2.34853e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.000617663 -7.45031e-05 -3.89247e-05 -9.69799e-07 -1.25323e-08 
+
+rho= 0.264007
+Accepting the step
+diff=6.20029e-06
+Update the hessian matrix by BFGS method...
+iteration_count=48
+Number of data used=700
+The objective is 0.759889
+current_sample_size=700
+Gradient vector: -7.91339e-18 -0.000209546 0.000114164 0.000757615 -0.000321399 -0.000384521 
+=700
+num_of_people=5000
+current_radius=0.025
+candidate_new_parameter=6.31406e-15 0.932008 5.77183 -3.55036 3.45649 0.802501 
+The candidate Next objective is 0.759884
+serror_factor=14
+sampling_error=4.32393e-08
+sampling_deviation=0.000207941
+current_delta_m=-2.34798e-05
+Expand sample size
+percent_added_sample=12298.6
+Extended sample size=86090.1
+delta_m=-2.34798e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.00059527 -3.8872e-05 -6.52751e-05 -9.08646e-07 -1.02302e-08 
+
+rho= 0.24832
+Accepting the step
+diff=5.83052e-06
+Update the hessian matrix by BFGS method...
+Shrinking trust region radius...
+updated(shrinked) radius=0.00625
+iteration_count=49
+Number of data used=700
+The objective is 0.759884
+current_sample_size=700
+Gradient vector: -6.14852e-18 0.000141305 -0.000551029 -0.000520023 -0.000461107 0.000273629 
+=700
+num_of_people=5000
+current_radius=0.00625
+candidate_new_parameter=6.35499e-15 0.931067 5.7755 -3.5469 3.45956 0.80068 
+The candidate Next objective is 0.759879
+serror_factor=14
+sampling_error=2.79274e-09
+sampling_deviation=5.28464e-05
+current_delta_m=-5.86807e-06
+Expand sample size
+percent_added_sample=12508
+Extended sample size=87556.3
+delta_m=-5.86807e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000557598 -6.23655e-05 -3.7955e-05 -3.66239e-08 -2.34463e-06 
+
+rho= 0.808389
+Accepting the step
+diff=4.74369e-06
+Update the hessian matrix by BFGS method...
+Expanding trust region radius...
+Expanded radius=0.0125
+iteration_count=50
+Number of data used=700
+The objective is 0.759879
+current_sample_size=700
+Gradient vector: -5.57357e-18 5.43171e-05 -0.00037418 -0.000202633 -0.00042385 0.000106318 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=6.46877e-15 0.929958 5.78314 -3.54276 3.46821 0.798509 
+The candidate Next objective is 0.759874
+serror_factor=14
+sampling_error=6.59356e-09
+sampling_deviation=8.12008e-05
+current_delta_m=-7.65456e-06
+Expand sample size
+percent_added_sample=14751.4
+Extended sample size=103260
+delta_m=-7.65456e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000557289 -6.22551e-05 -3.7955e-05 -8.65318e-07 -2.82751e-08 
+
+rho= 0.654308
+Accepting the step
+diff=5.00843e-06
+Update the hessian matrix by BFGS method...
+iteration_count=51
+Number of data used=700
+The objective is 0.759874
+current_sample_size=700
+Gradient vector: -6.63924e-18 -7.75327e-05 -9.86156e-05 0.000277985 -0.000366277 -0.00014799 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=6.63506e-15 0.9319 5.78561 -3.54972 3.47738 0.802216 
+The candidate Next objective is 0.759869
+serror_factor=14
+sampling_error=2.88564e-09
+sampling_deviation=5.37182e-05
+current_delta_m=-6.23844e-06
+Expand sample size
+percent_added_sample=11955.2
+Extended sample size=83686.2
+delta_m=-6.23844e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000546947 -5.59655e-05 -3.78411e-05 -7.9293e-07 -3.53609e-08 
+
+rho= 0.80781
+Accepting the step
+diff=5.03947e-06
+Update the hessian matrix by BFGS method...
+Expanding trust region radius...
+Expanded radius=0.025
+iteration_count=52
+Number of data used=700
+The objective is 0.759869
+current_sample_size=700
+Gradient vector: -4.25616e-18 1.32132e-05 -0.000258333 -5.28633e-05 -0.000399259 1.7748e-05 
+=700
+num_of_people=5000
+current_radius=0.025
+candidate_new_parameter=6.8572e-15 0.93121 5.79909 -3.54696 3.49822 0.80129 
+The candidate Next objective is 0.759861
+serror_factor=14
+sampling_error=1.03039e-08
+sampling_deviation=0.000101508
+current_delta_m=-1.19749e-05
+Expand sample size
+percent_added_sample=11767.5
+Extended sample size=82372.3
+delta_m=-1.19749e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.000534391 -5.52649e-05 -3.76089e-05 -8.94637e-07 -1.87114e-08 
+
+rho= 0.656816
+Accepting the step
+diff=7.86529e-06
+Update the hessian matrix by BFGS method...
+iteration_count=53
+Number of data used=700
+The objective is 0.759861
+current_sample_size=700
+Gradient vector: -2.77248e-18 -0.000145445 9.04235e-05 0.000526937 -0.000326802 -0.000291452 
+=700
+num_of_people=5000
+current_radius=0.025
+candidate_new_parameter=6.95535e-15 0.936359 5.79589 -3.56562 3.50979 0.811607 
+The candidate Next objective is 0.759859
+serror_factor=14
+sampling_error=3.75553e-08
+sampling_deviation=0.000193792
+current_delta_m=-1.76556e-05
+Expand sample size
+percent_added_sample=15266.7
+Extended sample size=106867
+delta_m=-1.76556e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.000524198 -4.71468e-05 -3.65204e-05 -8.45129e-07 -1.00409e-09 
+
+rho= 0.132377
+Shrinking trust region radius...
+updated(shrinked) radius=0.00625
+iteration_count=54
+Number of data used=700
+The objective is 0.759861
+current_sample_size=700
+Gradient vector: -2.77248e-18 -0.000145445 9.04235e-05 0.000526937 -0.000326802 -0.000291452 
+=700
+num_of_people=5000
+current_radius=0.00625
+candidate_new_parameter=6.88174e-15 0.932498 5.79829 -3.55163 3.50111 0.803869 
+The candidate Next objective is 0.759858
+serror_factor=14
+sampling_error=2.34414e-09
+sampling_deviation=4.84163e-05
+current_delta_m=-4.41385e-06
+Expand sample size
+percent_added_sample=15256.8
+Extended sample size=106798
+delta_m=-4.41385e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000524198 -4.71463e-05 -3.65201e-05 -2.32048e-08 -1.27317e-06 
+
+rho= 0.782971
+Accepting the step
+diff=3.45592e-06
+Update the hessian matrix by BFGS method...
+Expanding trust region radius...
+Expanded radius=0.0125
+iteration_count=55
+Number of data used=700
+The objective is 0.759858
+current_sample_size=700
+Gradient vector: -3.17826e-18 -6.38723e-05 -6.49357e-05 0.000229269 -0.000358318 -0.00014051 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=6.96864e-15 0.934244 5.80006 -3.55789 3.51091 0.807711 
+The candidate Next objective is 0.759853
+serror_factor=14
+sampling_error=2.5659e-09
+sampling_deviation=5.06547e-05
+current_delta_m=-5.71459e-06
+Expand sample size
+percent_added_sample=12309.7
+Extended sample size=86168.1
+delta_m=-5.71459e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000520841 -4.67683e-05 -3.63937e-05 -6.81683e-07 -2.0653e-08 
+
+rho= 0.813314
+Accepting the step
+diff=4.64776e-06
+Update the hessian matrix by BFGS method...
+Expanding trust region radius...
+Expanded radius=0.025
+iteration_count=56
+Number of data used=700
+The objective is 0.759853
+current_sample_size=700
+Gradient vector: -5.47448e-18 2.15553e-05 -0.000217736 -8.27881e-05 -0.000389066 1.56624e-05 
+=700
+num_of_people=5000
+current_radius=0.025
+candidate_new_parameter=7.26993e-15 0.933058 5.81205 -3.55334 3.53232 0.806849 
+The candidate Next objective is 0.759846
+serror_factor=14
+sampling_error=1.18735e-08
+sampling_deviation=0.000108966
+current_delta_m=-1.13565e-05
+Expand sample size
+percent_added_sample=13333
+Extended sample size=93330.8
+delta_m=-1.13565e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.000503808 -4.34997e-05 -3.38855e-05 -8.39569e-07 -8.29891e-09 
+
+rho= 0.582441
+Accepting the step
+diff=6.6145e-06
+Update the hessian matrix by BFGS method...
+iteration_count=57
+Number of data used=700
+The objective is 0.759846
+current_sample_size=700
+Gradient vector: -6.18357e-18 -0.000151781 0.000153526 0.000551653 -0.000312406 -0.000315826 
+=700
+num_of_people=5000
+current_radius=0.025
+candidate_new_parameter=7.47871e-15 0.938182 5.80686 -3.57196 3.54287 0.817512 
+The candidate Next objective is 0.759845
+serror_factor=14
+sampling_error=4.14042e-08
+sampling_deviation=0.00020348
+current_delta_m=-1.85115e-05
+Expand sample size
+percent_added_sample=15288.9
+Extended sample size=107022
+delta_m=-1.85115e-05
+Hessian update
+eigen values of updated hessian
+-1 -0.000484319 -4.34985e-05 -3.38183e-05 -7.25981e-07 -2.63676e-10 
+
+rho= 0.0895361
+Shrinking trust region radius...
+updated(shrinked) radius=0.00625
+iteration_count=58
+Number of data used=700
+The objective is 0.759846
+current_sample_size=700
+Gradient vector: -6.18357e-18 -0.000151781 0.000153526 0.000551653 -0.000312406 -0.000315826 
+=700
+num_of_people=5000
+current_radius=0.00625
+candidate_new_parameter=7.32213e-15 0.934339 5.81075 -3.55799 3.53496 0.809515 
+The candidate Next objective is 0.759843
+serror_factor=14
+sampling_error=2.58401e-09
+sampling_deviation=5.08331e-05
+current_delta_m=-4.62785e-06
+Expand sample size
+percent_added_sample=15277.9
+Extended sample size=106945
+delta_m=-4.62785e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000484319 -4.34976e-05 -3.38169e-05 -1.04771e-08 -1.352e-06 
+
+rho= 0.772291
+Accepting the step
+diff=3.57405e-06
+Update the hessian matrix by BFGS method...
+Expanding trust region radius...
+Expanded radius=0.0125
+iteration_count=59
+Number of data used=700
+The objective is 0.759843
+current_sample_size=700
+Gradient vector: -4.51606e-18 -6.63913e-05 -1.12124e-05 0.000239647 -0.00034511 -0.000159031 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=7.44639e-15 0.936166 5.81106 -3.56459 3.54446 0.813891 
+The candidate Next objective is 0.759839
+serror_factor=14
+sampling_error=3.73124e-09
+sampling_deviation=6.10839e-05
+current_delta_m=-5.6784e-06
+Expand sample size
+percent_added_sample=14960.1
+Extended sample size=104721
+delta_m=-5.6784e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000482121 -4.30137e-05 -3.34004e-05 -6.06121e-07 -8.2789e-09 
+
+rho= 0.728903
+Accepting the step
+diff=4.139e-06
+Update the hessian matrix by BFGS method...
+iteration_count=60
+Number of data used=700
+The objective is 0.759839
+current_sample_size=700
+Gradient vector: -6.67264e-18 3.64554e-05 -0.000202754 -0.000136827 -0.000382816 2.93864e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=7.62903e-15 0.935168 5.81661 -3.56084 3.55494 0.813086 
+The candidate Next objective is 0.759835
+serror_factor=14
+sampling_error=4.26165e-09
+sampling_deviation=6.52813e-05
+current_delta_m=-5.70875e-06
+Expand sample size
+percent_added_sample=15909.4
+Extended sample size=111366
+delta_m=-5.70875e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000466638 -4.0449e-05 -2.59033e-05 -5.90325e-07 -7.76324e-09 
+
+rho= 0.701235
+Accepting the step
+diff=4.00317e-06
+Update the hessian matrix by BFGS method...
+iteration_count=61
+Number of data used=700
+The objective is 0.759835
+current_sample_size=700
+Gradient vector: -5.17783e-18 -6.93076e-05 1.75476e-05 0.000250544 -0.000337849 -0.000168841 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=7.77009e-15 0.937056 5.81613 -3.56767 3.56414 0.817686 
+The candidate Next objective is 0.759831
+serror_factor=14
+sampling_error=4.49819e-09
+sampling_deviation=6.70685e-05
+current_delta_m=-5.73552e-06
+Expand sample size
+percent_added_sample=16270.9
+Extended sample size=113897
+delta_m=-5.73552e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000448595 -3.98896e-05 -2.48002e-05 -5.74534e-07 -7.31372e-09 
+
+rho= 0.677313
+Accepting the step
+diff=3.88475e-06
+Update the hessian matrix by BFGS method...
+iteration_count=62
+Number of data used=700
+The objective is 0.759831
+current_sample_size=700
+Gradient vector: -2.3516e-18 4.3847e-05 -0.000196478 -0.000163069 -0.000378963 3.55244e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=7.83393e-15 0.935866 5.82147 -3.56324 3.57443 0.816722 
+The candidate Next objective is 0.759827
+serror_factor=14
+sampling_error=4.92324e-09
+sampling_deviation=7.01658e-05
+current_delta_m=-5.75537e-06
+Expand sample size
+percent_added_sample=16967.9
+Extended sample size=118775
+delta_m=-5.75537e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000435653 -3.90392e-05 -1.97711e-05 -5.61791e-07 -6.90052e-09 
+
+rho= 0.657181
+Accepting the step
+diff=3.78232e-06
+Update the hessian matrix by BFGS method...
+iteration_count=63
+Number of data used=700
+The objective is 0.759827
+current_sample_size=700
+Gradient vector: -4.97188e-18 -7.0894e-05 3.97437e-05 0.000256192 -0.000331528 -0.000175525 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=7.9686e-15 0.937786 5.82039 -3.57018 3.58341 0.821476 
+The candidate Next objective is 0.759823
+serror_factor=14
+sampling_error=5.05432e-09
+sampling_deviation=7.10937e-05
+current_delta_m=-5.76847e-06
+Expand sample size
+percent_added_sample=17154.4
+Extended sample size=120080
+delta_m=-5.76847e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000418223 -3.83765e-05 -1.88197e-05 -5.48804e-07 -6.54452e-09 
+
+rho= 0.640103
+Accepting the step
+diff=3.69242e-06
+Update the hessian matrix by BFGS method...
+iteration_count=64
+Number of data used=700
+The objective is 0.759823
+current_sample_size=700
+Gradient vector: -3.19969e-18 4.92568e-05 -0.000189533 -0.000182117 -0.000374851 3.92413e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=8.05515e-15 0.936454 5.82552 -3.56526 3.59355 0.820415 
+The candidate Next objective is 0.75982
+serror_factor=14
+sampling_error=5.39454e-09
+sampling_deviation=7.34475e-05
+current_delta_m=-5.77672e-06
+Expand sample size
+percent_added_sample=17700.2
+Extended sample size=123901
+delta_m=-5.77672e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000409537 -3.78427e-05 -1.56711e-05 -5.38223e-07 -6.21144e-09 
+
+rho= 0.625364
+Accepting the step
+diff=3.61255e-06
+Update the hessian matrix by BFGS method...
+iteration_count=65
+Number of data used=700
+The objective is 0.75982
+current_sample_size=700
+Gradient vector: -6.6252e-18 -7.16368e-05 5.73265e-05 0.00025877 -0.000325959 -0.000179758 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=8.23419e-15 0.93839 5.82397 -3.57225 3.60236 0.825273 
+The candidate Next objective is 0.759816
+serror_factor=14
+sampling_error=5.46283e-09
+sampling_deviation=7.3911e-05
+current_delta_m=-5.78177e-06
+Expand sample size
+percent_added_sample=17796.8
+Extended sample size=124578
+delta_m=-5.78177e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000394065 -3.70309e-05 -1.49017e-05 -5.27288e-07 -5.91575e-09 
+
+rho= 0.612328
+Accepting the step
+diff=3.54034e-06
+Update the hessian matrix by BFGS method...
+iteration_count=66
+Number of data used=700
+The objective is 0.759816
+current_sample_size=700
+Gradient vector: -4.92261e-18 5.34612e-05 -0.000182913 -0.000196838 -0.000370654 4.15724e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=8.36715e-15 0.936946 5.82891 -3.56693 3.61237 0.82415 
+The candidate Next objective is 0.759813
+serror_factor=14
+sampling_error=5.75396e-09
+sampling_deviation=7.58548e-05
+current_delta_m=-5.78489e-06
+Expand sample size
+percent_added_sample=18257.6
+Extended sample size=127803
+delta_m=-5.78489e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.0003875 -3.65444e-05 -1.28409e-05 -5.18268e-07 -5.63328e-09 
+
+rho= 0.600613
+Accepting the step
+diff=3.47448e-06
+Update the hessian matrix by BFGS method...
+iteration_count=67
+Number of data used=700
+The objective is 0.759813
+current_sample_size=700
+Gradient vector: -4.77421e-18 -7.20517e-05 7.18178e-05 0.000260121 -0.000320889 -0.000182562 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=8.49606e-15 0.938891 5.82697 -3.57396 3.62103 0.829079 
+The candidate Next objective is 0.759809
+serror_factor=14
+sampling_error=5.78757e-09
+sampling_deviation=7.60761e-05
+current_delta_m=-5.78674e-06
+Expand sample size
+percent_added_sample=18305.3
+Extended sample size=128137
+delta_m=-5.78674e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000373831 -3.55511e-05 -1.22133e-05 -5.08868e-07 -5.37735e-09 
+
+rho= 0.589927
+Accepting the step
+diff=3.41376e-06
+Update the hessian matrix by BFGS method...
+iteration_count=68
+Number of data used=700
+The objective is 0.759809
+current_sample_size=700
+Gradient vector: -6.28929e-18 5.69204e-05 -0.000177062 -0.000208855 -0.000366488 4.31823e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=8.66585e-15 0.937355 5.83175 -3.56832 3.63093 0.827913 
+The candidate Next objective is 0.759806
+serror_factor=14
+sampling_error=6.0477e-09
+sampling_deviation=7.7767e-05
+current_delta_m=-5.78781e-06
+Expand sample size
+percent_added_sample=18710.9
+Extended sample size=130976
+delta_m=-5.78781e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000368464 -3.50245e-05 -1.07885e-05 -5.01003e-07 -5.1312e-09 
+
+rho= 0.580091
+Accepting the step
+diff=3.35746e-06
+Update the hessian matrix by BFGS method...
+iteration_count=69
+Number of data used=700
+The objective is 0.759806
+current_sample_size=700
+Gradient vector: -6.95861e-18 -7.23587e-05 8.40277e-05 0.000261019 -0.000316185 -0.000184457 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=8.8537e-15 0.939308 5.82948 -3.57536 3.63946 0.832893 
+The candidate Next objective is 0.759802
+serror_factor=14
+sampling_error=6.05963e-09
+sampling_deviation=7.78436e-05
+current_delta_m=-5.78828e-06
+Expand sample size
+percent_added_sample=18727.9
+Extended sample size=131095
+delta_m=-5.78828e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000356649 -3.38537e-05 -1.02639e-05 -4.92769e-07 -4.90565e-09 
+
+rho= 0.570962
+Accepting the step
+diff=3.30488e-06
+Update the hessian matrix by BFGS method...
+iteration_count=70
+Number of data used=700
+The objective is 0.759802
+current_sample_size=700
+Gradient vector: -4.54796e-18 5.98568e-05 -0.000172058 -0.000218958 -0.000362398 4.43697e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=8.97646e-15 0.937692 5.83412 -3.56945 3.64924 0.831695 
+The candidate Next objective is 0.759799
+serror_factor=14
+sampling_error=6.29772e-09
+sampling_deviation=7.93582e-05
+current_delta_m=-5.78836e-06
+Expand sample size
+percent_added_sample=19094
+Extended sample size=133658
+delta_m=-5.78836e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000352161 -3.32556e-05 -9.22914e-06 -4.85775e-07 -4.68848e-09 
+
+rho= 0.562429
+Accepting the step
+diff=3.25554e-06
+Update the hessian matrix by BFGS method...
+iteration_count=71
+Number of data used=700
+The objective is 0.759799
+current_sample_size=700
+Gradient vector: -5.62822e-18 -7.26436e-05 9.44384e-05 0.000261778 -0.000311771 -0.00018571 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=9.1284e-15 0.939653 5.83158 -3.57652 3.65766 0.836708 
+The candidate Next objective is 0.759796
+serror_factor=14
+sampling_error=6.29489e-09
+sampling_deviation=7.93403e-05
+current_delta_m=-5.78812e-06
+Expand sample size
+percent_added_sample=19090.4
+Extended sample size=133633
+delta_m=-5.78812e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000342276 -3.19458e-05 -8.78013e-06 -4.78442e-07 -4.48793e-09 
+
+rho= 0.554415
+Accepting the step
+diff=3.20902e-06
+Update the hessian matrix by BFGS method...
+iteration_count=72
+Number of data used=700
+The objective is 0.759796
+current_sample_size=700
+Gradient vector: -9.5333e-18 6.23977e-05 -0.000167863 -0.000227608 -0.000358402 4.52883e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=9.38577e-15 0.937968 5.83611 -3.57038 3.66734 0.835486 
+The candidate Next objective is 0.759793
+serror_factor=14
+sampling_error=6.51635e-09
+sampling_deviation=8.07239e-05
+current_delta_m=-5.78767e-06
+Expand sample size
+percent_added_sample=19426.6
+Extended sample size=135986
+delta_m=-5.78767e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000338557 -3.12753e-05 -7.99658e-06 -4.72117e-07 -4.29494e-09 
+
+rho= 0.546837
+Accepting the step
+diff=3.16492e-06
+Update the hessian matrix by BFGS method...
+iteration_count=73
+Number of data used=700
+The objective is 0.759793
+current_sample_size=700
+Gradient vector: -3.37106e-18 -7.29442e-05 0.000103387 0.00026254 -0.0003076 -0.000186491 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=9.47679e-15 0.939938 5.83332 -3.57746 3.67564 0.840521 
+The candidate Next objective is 0.75979
+serror_factor=14
+sampling_error=6.50308e-09
+sampling_deviation=8.06417e-05
+current_delta_m=-5.78705e-06
+Expand sample size
+percent_added_sample=19408.8
+Extended sample size=135862
+delta_m=-5.78705e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000330567 -2.98885e-05 -7.60483e-06 -4.65489e-07 -4.11559e-09 
+
+rho= 0.539654
+Accepting the step
+diff=3.123e-06
+Update the hessian matrix by BFGS method...
+iteration_count=74
+Number of data used=700
+The objective is 0.75979
+current_sample_size=700
+Gradient vector: -5.12004e-18 6.46277e-05 -0.000164405 -0.000235116 -0.000354506 4.60289e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=9.61505e-15 0.938193 5.83776 -3.57111 3.68521 0.839278 
+The candidate Next objective is 0.759787
+serror_factor=14
+sampling_error=6.7116e-09
+sampling_deviation=8.19243e-05
+current_delta_m=-5.78631e-06
+Expand sample size
+percent_added_sample=19721.6
+Extended sample size=138051
+delta_m=-5.78631e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.00032756 -2.9164e-05 -6.99057e-06 -4.59686e-07 -3.94318e-09 
+
+rho= 0.532797
+Accepting the step
+diff=3.08293e-06
+Update the hessian matrix by BFGS method...
+iteration_count=75
+Number of data used=700
+The objective is 0.759787
+current_sample_size=700
+Gradient vector: -6.28617e-18 -7.32772e-05 0.000111131 0.000263376 -0.000303633 -0.000186914 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=9.78482e-15 0.940172 5.83475 -3.57823 3.69341 0.844326 
+The candidate Next objective is 0.759784
+serror_factor=14
+sampling_error=6.69075e-09
+sampling_deviation=8.1797e-05
+current_delta_m=-5.78547e-06
+Expand sample size
+percent_added_sample=19693.7
+Extended sample size=137856
+delta_m=-5.78547e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000321306 -2.77687e-05 -6.64405e-06 -4.53618e-07 -3.78212e-09 
+
+rho= 0.526249
+Accepting the step
+diff=3.04459e-06
+Update the hessian matrix by BFGS method...
+iteration_count=76
+Number of data used=700
+The objective is 0.759784
+current_sample_size=700
+Gradient vector: -5.76093e-18 6.66079e-05 -0.000161604 -0.000241706 -0.000350714 4.66488e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=9.94043e-15 0.938373 5.83912 -3.5717 3.70289 0.843066 
+The candidate Next objective is 0.759781
+serror_factor=14
+sampling_error=6.88895e-09
+sampling_deviation=8.29997e-05
+current_delta_m=-5.78457e-06
+Expand sample size
+percent_added_sample=19987.9
+Extended sample size=139915
+delta_m=-5.78457e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000318944 -2.70188e-05 -6.14875e-06 -4.4823e-07 -3.62745e-09 
+
+rho= 0.519951
+Accepting the step
+diff=3.00769e-06
+Update the hessian matrix by BFGS method...
+iteration_count=77
+Number of data used=700
+The objective is 0.759781
+current_sample_size=700
+Gradient vector: -6.33254e-18 -7.36491e-05 0.000117871 0.000264318 -0.000299846 -0.000187059 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.01115e-14 0.940362 5.83593 -3.57884 3.71099 0.84812 
+The candidate Next objective is 0.759778
+serror_factor=14
+sampling_error=6.86251e-09
+sampling_deviation=8.28402e-05
+current_delta_m=-5.78362e-06
+Expand sample size
+percent_added_sample=19952.6
+Extended sample size=139668
+delta_m=-5.78362e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000314185 -2.56755e-05 -5.83953e-06 -4.42614e-07 -3.48231e-09 
+
+rho= 0.513899
+Accepting the step
+diff=2.9722e-06
+Update the hessian matrix by BFGS method...
+iteration_count=78
+Number of data used=700
+The objective is 0.759778
+current_sample_size=700
+Gradient vector: -4.86496e-18 6.83837e-05 -0.000159378 -0.000247547 -0.000347022 4.71854e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.0243e-14 0.938515 5.84024 -3.57215 3.72037 0.846845 
+The candidate Next objective is 0.759775
+serror_factor=14
+sampling_error=7.05231e-09
+sampling_deviation=8.3978e-05
+current_delta_m=-5.78264e-06
+Expand sample size
+percent_added_sample=20231.4
+Extended sample size=141620
+delta_m=-5.78264e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000312386 -2.49299e-05 -5.43116e-06 -4.37563e-07 -3.34307e-09 
+
+rho= 0.508043
+Accepting the step
+diff=2.93783e-06
+Update the hessian matrix by BFGS method...
+iteration_count=79
+Number of data used=700
+The objective is 0.759775
+current_sample_size=700
+Gradient vector: -6.1031e-18 -7.40603e-05 0.000123767 0.000265373 -0.000296215 -0.000186989 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.04079e-14 0.940516 5.8369 -3.57932 3.72837 0.851898 
+The candidate Next objective is 0.759772
+serror_factor=14
+sampling_error=7.02163e-09
+sampling_deviation=8.37951e-05
+current_delta_m=-5.78165e-06
+Expand sample size
+percent_added_sample=20190.6
+Extended sample size=141334
+delta_m=-5.78165e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000308851 -2.36819e-05 -5.15397e-06 -4.32317e-07 -3.21191e-09 
+
+rho= 0.502388
+Accepting the step
+diff=2.90463e-06
+Update the hessian matrix by BFGS method...
+iteration_count=80
+Number of data used=700
+The objective is 0.759772
+current_sample_size=700
+Gradient vector: -4.47522e-18 6.99899e-05 -0.000157652 -0.000252768 -0.00034343 4.7663e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.05289e-14 0.938624 5.84116 -3.57249 3.73765 0.85061 
+The candidate Next objective is 0.759769
+serror_factor=14
+sampling_error=7.20446e-09
+sampling_deviation=8.48791e-05
+current_delta_m=-5.78065e-06
+Expand sample size
+percent_added_sample=20456.7
+Extended sample size=143197
+delta_m=-5.78065e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000307519 -2.29652e-05 -4.81149e-06 -4.27545e-07 -3.08618e-09 
+
+rho= 0.496891
+Accepting the step
+diff=2.87235e-06
+Update the hessian matrix by BFGS method...
+iteration_count=81
+Number of data used=700
+The objective is 0.759769
+current_sample_size=700
+Gradient vector: -8.81638e-18 -7.45084e-05 0.000128952 0.00026654 -0.000292725 -0.000186747 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.07672e-14 0.940639 5.83767 -3.5797 3.74557 0.855658 
+The candidate Next objective is 0.759766
+serror_factor=14
+sampling_error=7.1705e-09
+sampling_deviation=8.46788e-05
+current_delta_m=-5.77964e-06
+Expand sample size
+percent_added_sample=20411.7
+Extended sample size=142882
+delta_m=-5.77964e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000304948 -2.18372e-05 -4.56267e-06 -4.22609e-07 -2.96736e-09 
+
+rho= 0.49156
+Accepting the step
+diff=2.84104e-06
+Update the hessian matrix by BFGS method...
+iteration_count=82
+Number of data used=700
+The objective is 0.759766
+current_sample_size=700
+Gradient vector: -6.59044e-18 7.14537e-05 -0.000156357 -0.000257471 -0.000339932 4.80978e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.09454e-14 0.938707 5.8419 -3.57273 3.75476 0.854358 
+The candidate Next objective is 0.759763
+serror_factor=14
+sampling_error=7.34746e-09
+sampling_deviation=8.57173e-05
+current_delta_m=-5.77864e-06
+Expand sample size
+percent_added_sample=20666.9
+Extended sample size=144668
+delta_m=-5.77864e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000303991 -2.11664e-05 -4.27182e-06 -4.18073e-07 -2.85354e-09 
+
+rho= 0.486359
+Accepting the step
+diff=2.81049e-06
+Update the hessian matrix by BFGS method...
+iteration_count=83
+Number of data used=700
+The objective is 0.759763
+current_sample_size=700
+Gradient vector: -7.46146e-18 -7.49894e-05 0.000133533 0.000267808 -0.000289362 -0.000186369 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.11472e-14 0.940735 5.83829 -3.57998 3.76258 0.859398 
+The candidate Next objective is 0.75976
+serror_factor=14
+sampling_error=7.31089e-09
+sampling_deviation=8.55037e-05
+current_delta_m=-5.77766e-06
+Expand sample size
+percent_added_sample=20618.6
+Extended sample size=144331
+delta_m=-5.77766e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000302156 -2.01668e-05 -4.04868e-06 -4.13399e-07 -2.74566e-09 
+
+rho= 0.481299
+Accepting the step
+diff=2.78078e-06
+Update the hessian matrix by BFGS method...
+iteration_count=84
+Number of data used=700
+The objective is 0.75976
+current_sample_size=700
+Gradient vector: -3.86766e-18 7.27967e-05 -0.000155433 -0.000261737 -0.000336526 4.85004e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.12518e-14 0.938765 5.84249 -3.5729 3.77169 0.858086 
+The candidate Next objective is 0.759758
+serror_factor=14
+sampling_error=7.48281e-09
+sampling_deviation=8.65032e-05
+current_delta_m=-5.77668e-06
+Expand sample size
+percent_added_sample=20864.4
+Extended sample size=146051
+delta_m=-5.77668e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000301487 -1.95511e-05 -3.79945e-06 -4.09066e-07 -2.64237e-09 
+
+rho= 0.476349
+Accepting the step
+diff=2.75171e-06
+Update the hessian matrix by BFGS method...
+iteration_count=85
+Number of data used=700
+The objective is 0.759758
+current_sample_size=700
+Gradient vector: -6.91854e-18 -7.54984e-05 0.000137598 0.000269164 -0.000286113 -0.000185882 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.1439e-14 0.940808 5.83877 -3.58018 3.77943 0.863115 
+The candidate Next objective is 0.759755
+serror_factor=14
+sampling_error=7.4441e-09
+sampling_deviation=8.62792e-05
+current_delta_m=-5.77572e-06
+Expand sample size
+percent_added_sample=20813.6
+Extended sample size=145695
+delta_m=-5.77572e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000300201 -1.8677e-05 -3.59979e-06 -4.04619e-07 -2.54424e-09 
+
+rho= 0.47152
+Accepting the step
+diff=2.72337e-06
+Update the hessian matrix by BFGS method...
+iteration_count=86
+Number of data used=700
+The objective is 0.759755
+current_sample_size=700
+Gradient vector: -3.90377e-18 7.40362e-05 -0.000154823 -0.000265629 -0.000333207 4.88778e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.15446e-14 0.938805 5.84296 -3.57299 3.78844 0.861792 
+The candidate Next objective is 0.759752
+serror_factor=14
+sampling_error=7.61162e-09
+sampling_deviation=8.72446e-05
+current_delta_m=-5.77477e-06
+Expand sample size
+percent_added_sample=21051
+Extended sample size=147357
+delta_m=-5.77477e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000299748 -1.81196e-05 -3.38487e-06 -4.00465e-07 -2.4503e-09 
+
+rho= 0.466787
+Accepting the step
+diff=2.69559e-06
+Update the hessian matrix by BFGS method...
+iteration_count=87
+Number of data used=700
+The objective is 0.759752
+current_sample_size=700
+Gradient vector: -4.77351e-18 -7.60306e-05 0.000141224 0.000270595 -0.00028297 -0.000185308 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.16738e-14 0.940862 5.83914 -3.58031 3.7961 0.866807 
+The candidate Next objective is 0.75975
+serror_factor=14
+sampling_error=7.57112e-09
+sampling_deviation=8.70122e-05
+current_delta_m=-5.77385e-06
+Expand sample size
+percent_added_sample=20998.1
+Extended sample size=146986
+delta_m=-5.77385e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000298863 -1.73614e-05 -3.20673e-06 -3.96216e-07 -2.36087e-09 
+
+rho= 0.462159
+Accepting the step
+diff=2.66843e-06
+Update the hessian matrix by BFGS method...
+iteration_count=88
+Number of data used=700
+The objective is 0.75975
+current_sample_size=700
+Gradient vector: -8.53285e-18 7.51864e-05 -0.000154481 -0.0002692 -0.00032997 4.92347e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.19047e-14 0.938827 5.84332 -3.57303 3.80503 0.865474 
+The candidate Next objective is 0.759747
+serror_factor=14
+sampling_error=7.73476e-09
+sampling_deviation=8.79475e-05
+current_delta_m=-5.77294e-06
+Expand sample size
+percent_added_sample=21228.2
+Extended sample size=148597
+delta_m=-5.77294e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000298567 -1.68613e-05 -3.0206e-06 -3.92221e-07 -2.27529e-09 
+
+rho= 0.457616
+Accepting the step
+diff=2.64179e-06
+Update the hessian matrix by BFGS method...
+iteration_count=89
+Number of data used=700
+The objective is 0.759747
+current_sample_size=700
+Gradient vector: -7.70214e-18 -7.65813e-05 0.000144471 0.000272087 -0.000279924 -0.000184663 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.21132e-14 0.9409 5.83941 -3.58039 3.81261 0.870473 
+The candidate Next objective is 0.759744
+serror_factor=14
+sampling_error=7.6927e-09
+sampling_deviation=8.7708e-05
+current_delta_m=-5.77206e-06
+Expand sample size
+percent_added_sample=21173.4
+Extended sample size=148214
+delta_m=-5.77206e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000297972 -1.62061e-05 -2.86213e-06 -3.88149e-07 -2.19365e-09 
+
+rho= 0.453165
+Accepting the step
+diff=2.6157e-06
+Update the hessian matrix by BFGS method...
+iteration_count=90
+Number of data used=700
+The objective is 0.759744
+current_sample_size=700
+Gradient vector: -8.11072e-18 7.62587e-05 -0.000154363 -0.000272494 -0.000326813 4.95741e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.23328e-14 0.938836 5.84359 -3.57302 3.82146 0.869131 
+The candidate Next objective is 0.759742
+serror_factor=14
+sampling_error=7.85285e-09
+sampling_deviation=8.86163e-05
+current_delta_m=-5.77119e-06
+Expand sample size
+percent_added_sample=21396.9
+Extended sample size=149779
+delta_m=-5.77119e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000297787 -1.57596e-05 -2.70042e-06 -3.84298e-07 -2.11553e-09 
+
+rho= 0.448793
+Accepting the step
+diff=2.59007e-06
+Update the hessian matrix by BFGS method...
+iteration_count=91
+Number of data used=700
+The objective is 0.759742
+current_sample_size=700
+Gradient vector: -7.51615e-18 -7.71459e-05 0.000147393 0.000273624 -0.000276968 -0.000183961 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.25364e-14 0.940925 5.8396 -3.58043 3.82896 0.874112 
+The candidate Next objective is 0.759739
+serror_factor=14
+sampling_error=7.80942e-09
+sampling_deviation=8.83709e-05
+current_delta_m=-5.77035e-06
+Expand sample size
+percent_added_sample=21340.5
+Extended sample size=149384
+delta_m=-5.77035e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000297396 -1.51939e-05 -2.55983e-06 -3.80386e-07 -2.04089e-09 
+
+rho= 0.444502
+Accepting the step
+diff=2.56493e-06
+Update the hessian matrix by BFGS method...
+iteration_count=92
+Number of data used=700
+The objective is 0.759739
+current_sample_size=700
+Gradient vector: -5.83029e-18 7.72628e-05 -0.000154435 -0.000275547 -0.000323732 4.98979e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.26943e-14 0.938832 5.84378 -3.57296 3.83772 0.872761 
+The candidate Next objective is 0.759737
+serror_factor=14
+sampling_error=7.96643e-09
+sampling_deviation=8.92548e-05
+current_delta_m=-5.76952e-06
+Expand sample size
+percent_added_sample=21558.1
+Extended sample size=150907
+delta_m=-5.76952e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000297287 -1.47961e-05 -2.419e-06 -3.76667e-07 -1.96946e-09 
+
+rho= 0.440286
+Accepting the step
+diff=2.54024e-06
+Update the hessian matrix by BFGS method...
+iteration_count=93
+Number of data used=700
+The objective is 0.759737
+current_sample_size=700
+Gradient vector: -7.97784e-18 -7.77205e-05 0.000150033 0.000275196 -0.000274095 -0.000183214 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.29103e-14 0.940937 5.83971 -3.58042 3.84515 0.877724 
+The candidate Next objective is 0.759734
+serror_factor=14
+sampling_error=7.92175e-09
+sampling_deviation=8.90042e-05
+current_delta_m=-5.76872e-06
+Expand sample size
+percent_added_sample=21500.3
+Extended sample size=150502
+delta_m=-5.76872e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000297039 -1.4307e-05 -2.29451e-06 -3.72899e-07 -1.90111e-09 
+
+rho= 0.43614
+Accepting the step
+diff=2.51597e-06
+Update the hessian matrix by BFGS method...
+iteration_count=94
+Number of data used=700
+The objective is 0.759734
+current_sample_size=700
+Gradient vector: -8.64399e-18 7.82067e-05 -0.000154664 -0.000278388 -0.000320723 5.02075e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.31445e-14 0.938819 5.8439 -3.57288 3.85384 0.876363 
+The candidate Next objective is 0.759732
+serror_factor=14
+sampling_error=8.07587e-09
+sampling_deviation=8.98659e-05
+current_delta_m=-5.76793e-06
+Expand sample size
+percent_added_sample=21712.4
+Extended sample size=151987
+delta_m=-5.76793e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.00029698 -1.39526e-05 -2.17162e-06 -3.69303e-07 -1.8357e-09 
+
+rho= 0.432066
+Accepting the step
+diff=2.49213e-06
+Update the hessian matrix by BFGS method...
+iteration_count=95
+Number of data used=700
+The objective is 0.759732
+current_sample_size=700
+Gradient vector: -8.27332e-18 -7.83016e-05 0.00015243 0.000276792 -0.000271302 -0.000182429 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.33687e-14 0.94094 5.83977 -3.58037 3.86119 0.881306 
+The candidate Next objective is 0.759729
+serror_factor=14
+sampling_error=8.03005e-09
+sampling_deviation=8.96106e-05
+current_delta_m=-5.76717e-06
+Expand sample size
+percent_added_sample=21653.3
+Extended sample size=151573
+delta_m=-5.76717e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296829 -1.35284e-05 -2.06156e-06 -3.65668e-07 -1.77303e-09 
+
+rho= 0.428055
+Accepting the step
+diff=2.46867e-06
+Update the hessian matrix by BFGS method...
+iteration_count=96
+Number of data used=700
+The objective is 0.759729
+current_sample_size=700
+Gradient vector: -4.68406e-18 7.90972e-05 -0.000155023 -0.000281042 -0.000317782 5.05037e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.34956e-14 0.938797 5.84397 -3.57276 3.8698 0.879938 
+The candidate Next objective is 0.759727
+serror_factor=14
+sampling_error=8.18151e-09
+sampling_deviation=9.04517e-05
+current_delta_m=-5.76642e-06
+Expand sample size
+percent_added_sample=21860.3
+Extended sample size=153022
+delta_m=-5.76642e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296801 -1.32123e-05 -1.95411e-06 -3.62186e-07 -1.71304e-09 
+
+rho= 0.424114
+Accepting the step
+diff=2.44562e-06
+Update the hessian matrix by BFGS method...
+iteration_count=97
+Number of data used=700
+The objective is 0.759727
+current_sample_size=700
+Gradient vector: -5.37991e-18 -7.88859e-05 0.000154615 0.000278401 -0.000268582 -0.000181616 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.36414e-14 0.940935 5.83978 -3.5803 3.87708 0.884859 
+The candidate Next objective is 0.759724
+serror_factor=14
+sampling_error=8.13463e-09
+sampling_deviation=9.01922e-05
+current_delta_m=-5.7657e-06
+Expand sample size
+percent_added_sample=21800
+Extended sample size=152600
+delta_m=-5.7657e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296715 -1.28429e-05 -1.85686e-06 -3.58675e-07 -1.65549e-09 
+
+rho= 0.420227
+Accepting the step
+diff=2.4229e-06
+Update the hessian matrix by BFGS method...
+iteration_count=98
+Number of data used=700
+The objective is 0.759724
+current_sample_size=700
+Gradient vector: -6.11413e-18 7.99399e-05 -0.00015549 -0.000283531 -0.000314908 5.0787e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.38071e-14 0.938768 5.844 -3.57262 3.88561 0.883483 
+The candidate Next objective is 0.759722
+serror_factor=14
+sampling_error=8.28361e-09
+sampling_deviation=9.10144e-05
+current_delta_m=-5.76499e-06
+Expand sample size
+percent_added_sample=22002.4
+Extended sample size=154017
+delta_m=-5.76499e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296705 -1.25603e-05 -1.76274e-06 -3.553e-07 -1.60039e-09 
+
+rho= 0.41641
+Accepting the step
+diff=2.4006e-06
+Update the hessian matrix by BFGS method...
+iteration_count=99
+Number of data used=700
+The objective is 0.759722
+current_sample_size=700
+Gradient vector: -8.15122e-18 -7.94709e-05 0.000156616 0.000280014 -0.000265931 -0.00018078 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.4028e-14 0.940922 5.83975 -3.58021 3.89282 0.888383 
+The candidate Next objective is 0.75972
+serror_factor=14
+sampling_error=8.23574e-09
+sampling_deviation=9.0751e-05
+current_delta_m=-5.7643e-06
+Expand sample size
+percent_added_sample=21941.1
+Extended sample size=153587
+delta_m=-5.7643e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296661 -1.22371e-05 -1.67683e-06 -3.51903e-07 -1.54748e-09 
+
+rho= 0.41264
+Accepting the step
+diff=2.37858e-06
+Update the hessian matrix by BFGS method...
+iteration_count=100
+Number of data used=700
+The objective is 0.75972
+current_sample_size=700
+Gradient vector: -9.9438e-18 8.07396e-05 -0.000156045 -0.000285872 -0.000312096 5.1058e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.42976e-14 0.938733 5.84398 -3.57246 3.90128 0.886999 
+The candidate Next objective is 0.759717
+serror_factor=14
+sampling_error=8.3824e-09
+sampling_deviation=9.15554e-05
+current_delta_m=-5.76362e-06
+Expand sample size
+percent_added_sample=22139.1
+Extended sample size=154974
+delta_m=-5.76362e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296659 -1.19837e-05 -1.59421e-06 -3.4863e-07 -1.49681e-09 
+
+rho= 0.408941
+Accepting the step
+diff=2.35698e-06
+Update the hessian matrix by BFGS method...
+iteration_count=101
+Number of data used=700
+The objective is 0.759717
+current_sample_size=700
+Gradient vector: -4.60832e-18 -8.00543e-05 0.000158456 0.000281626 -0.000263346 -0.000179926 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.44226e-14 0.940904 5.83969 -3.5801 3.90842 0.891877 
+The candidate Next objective is 0.759715
+serror_factor=14
+sampling_error=8.33358e-09
+sampling_deviation=9.12884e-05
+current_delta_m=-5.76297e-06
+Expand sample size
+percent_added_sample=22076.7
+Extended sample size=154537
+delta_m=-5.76297e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.00029664 -1.16994e-05 -1.51828e-06 -3.45341e-07 -1.4481e-09 
+
+rho= 0.405281
+Accepting the step
+diff=2.33562e-06
+Update the hessian matrix by BFGS method...
+iteration_count=102
+Number of data used=700
+The objective is 0.759715
+current_sample_size=700
+Gradient vector: -8.6468e-18 8.15007e-05 -0.000156671 -0.000288082 -0.000309345 5.13169e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.4657e-14 0.938694 5.84394 -3.57228 3.91681 0.890486 
+The candidate Next objective is 0.759713
+serror_factor=14
+sampling_error=8.47805e-09
+sampling_deviation=9.20763e-05
+current_delta_m=-5.76232e-06
+Expand sample size
+percent_added_sample=22270.6
+Extended sample size=155894
+delta_m=-5.76232e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.00029664 -1.14715e-05 -1.44561e-06 -3.42164e-07 -1.40143e-09 
+
+rho= 0.401693
+Accepting the step
+diff=2.31468e-06
+Update the hessian matrix by BFGS method...
+iteration_count=103
+Number of data used=700
+The objective is 0.759713
+current_sample_size=700
+Gradient vector: -3.24404e-18 -8.06342e-05 0.000160155 0.00028323 -0.000260824 -0.000179059 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.4745e-14 0.940881 5.83959 -3.57996 3.92388 0.895342 
+The candidate Next objective is 0.75971
+serror_factor=14
+sampling_error=8.42834e-09
+sampling_deviation=9.1806e-05
+current_delta_m=-5.76171e-06
+Expand sample size
+percent_added_sample=22207.3
+Extended sample size=155451
+delta_m=-5.76171e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296634 -1.12201e-05 -1.37842e-06 -3.38977e-07 -1.35653e-09 
+
+rho= 0.398137
+Accepting the step
+diff=2.29395e-06
+Update the hessian matrix by BFGS method...
+iteration_count=104
+Number of data used=700
+The objective is 0.75971
+current_sample_size=700
+Gradient vector: -7.44131e-18 8.22267e-05 -0.000157353 -0.000290173 -0.000306652 5.15641e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.49468e-14 0.938651 5.84386 -3.57209 3.9322 0.893943 
+The candidate Next objective is 0.759708
+serror_factor=14
+sampling_error=8.57074e-09
+sampling_deviation=9.25783e-05
+current_delta_m=-5.76109e-06
+Expand sample size
+percent_added_sample=22397.4
+Extended sample size=156782
+delta_m=-5.76109e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296631 -1.10144e-05 -1.31435e-06 -3.35891e-07 -1.3135e-09 
+
+rho= 0.394656
+Accepting the step
+diff=2.27365e-06
+Update the hessian matrix by BFGS method...
+iteration_count=105
+Number of data used=700
+The objective is 0.759708
+current_sample_size=700
+Gradient vector: -5.92268e-18 -8.12089e-05 0.000161729 0.00028482 -0.000258361 -0.000178182 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.51075e-14 0.940853 5.83947 -3.57982 3.93921 0.898776 
+The candidate Next objective is 0.759706
+serror_factor=14
+sampling_error=8.52018e-09
+sampling_deviation=9.23048e-05
+current_delta_m=-5.7605e-06
+Expand sample size
+percent_added_sample=22333.2
+Extended sample size=156333
+delta_m=-5.7605e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296631 -1.0791e-05 -1.25483e-06 -3.32799e-07 -1.27206e-09 
+
+rho= 0.391199
+Accepting the step
+diff=2.2535e-06
+Update the hessian matrix by BFGS method...
+iteration_count=106
+Number of data used=700
+The objective is 0.759706
+current_sample_size=700
+Gradient vector: -6.61244e-18 8.29206e-05 -0.000158079 -0.000292158 -0.000304015 5.17998e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.52868e-14 0.938604 5.84376 -3.57189 3.94745 0.897371 
+The candidate Next objective is 0.759703
+serror_factor=14
+sampling_error=8.66062e-09
+sampling_deviation=9.30624e-05
+current_delta_m=-5.75991e-06
+Expand sample size
+percent_added_sample=22519.7
+Extended sample size=157638
+delta_m=-5.75991e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296623 -1.06047e-05 -1.19821e-06 -3.29801e-07 -1.23234e-09 
+
+rho= 0.387819
+Accepting the step
+diff=2.2338e-06
+Update the hessian matrix by BFGS method...
+iteration_count=107
+Number of data used=700
+The objective is 0.759703
+current_sample_size=700
+Gradient vector: -6.45529e-18 -8.17771e-05 0.000163195 0.000286392 -0.000255955 -0.000177298 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.5462e-14 0.940822 5.83933 -3.57966 3.9544 0.902181 
+The candidate Next objective is 0.759701
+serror_factor=14
+sampling_error=8.60925e-09
+sampling_deviation=9.2786e-05
+current_delta_m=-5.75935e-06
+Expand sample size
+percent_added_sample=22454.7
+Extended sample size=157183
+delta_m=-5.75935e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296623 -1.04051e-05 -1.14539e-06 -3.26799e-07 -1.19405e-09 
+
+rho= 0.384457
+Accepting the step
+diff=2.21422e-06
+Update the hessian matrix by BFGS method...
+iteration_count=108
+Number of data used=700
+The objective is 0.759701
+current_sample_size=700
+Gradient vector: -7.68005e-18 8.35853e-05 -0.00015884 -0.000294045 -0.000301431 5.20243e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.56703e-14 0.938555 5.84364 -3.57169 3.96258 0.90077 
+The candidate Next objective is 0.759699
+serror_factor=14
+sampling_error=8.74781e-09
+sampling_deviation=9.35297e-05
+current_delta_m=-5.75879e-06
+Expand sample size
+percent_added_sample=22637.7
+Extended sample size=158464
+delta_m=-5.75879e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296609 -1.02357e-05 -1.09522e-06 -3.23884e-07 -1.15733e-09 
+
+rho= 0.381174
+Accepting the step
+diff=2.1951e-06
+Update the hessian matrix by BFGS method...
+iteration_count=109
+Number of data used=700
+The objective is 0.759699
+current_sample_size=700
+Gradient vector: -3.14199e-18 -8.23378e-05 0.000164563 0.000287944 -0.000253602 -0.000176411 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.57556e-14 0.940789 5.83918 -3.5795 3.96946 0.905556 
+The candidate Next objective is 0.759697
+serror_factor=14
+sampling_error=8.69567e-09
+sampling_deviation=9.32506e-05
+current_delta_m=-5.75826e-06
+Expand sample size
+percent_added_sample=22571.9
+Extended sample size=158004
+delta_m=-5.75826e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296605 -1.00566e-05 -1.04826e-06 -3.20968e-07 -1.12191e-09 
+
+rho= 0.377902
+Accepting the step
+diff=2.17606e-06
+Update the hessian matrix by BFGS method...
+iteration_count=110
+Number of data used=700
+The objective is 0.759697
+current_sample_size=700
+Gradient vector: -4.95363e-18 8.42231e-05 -0.000159626 -0.000295844 -0.0002989 5.22379e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.589e-14 0.938503 5.84351 -3.57147 3.97757 0.904139 
+The candidate Next objective is 0.759695
+serror_factor=14
+sampling_error=8.83243e-09
+sampling_deviation=9.3981e-05
+current_delta_m=-5.75772e-06
+Expand sample size
+percent_added_sample=22751.7
+Extended sample size=159262
+delta_m=-5.75772e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296584 -9.90207e-06 -1.0037e-06 -3.18132e-07 -1.08793e-09 
+
+rho= 0.374712
+Accepting the step
+diff=2.15749e-06
+Update the hessian matrix by BFGS method...
+iteration_count=111
+Number of data used=700
+The objective is 0.759695
+current_sample_size=700
+Gradient vector: -8.56281e-18 -8.28901e-05 0.000165846 0.000289472 -0.000251301 -0.000175522 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.61224e-14 0.940753 5.83901 -3.57933 3.98439 0.908902 
+The candidate Next objective is 0.759693
+serror_factor=14
+sampling_error=8.77956e-09
+sampling_deviation=9.36993e-05
+current_delta_m=-5.75721e-06
+Expand sample size
+percent_added_sample=22685.2
+Extended sample size=158796
+delta_m=-5.75721e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296575 -9.74049e-06 -9.61864e-07 -3.15298e-07 -1.05513e-09 
+
+rho= 0.371528
+Accepting the step
+diff=2.13896e-06
+Update the hessian matrix by BFGS method...
+iteration_count=112
+Number of data used=700
+The objective is 0.759693
+current_sample_size=700
+Gradient vector: -5.38819e-18 8.48362e-05 -0.00016043 -0.000297563 -0.000296418 5.24409e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.62687e-14 0.93845 5.84336 -3.57125 3.99244 0.907479 
+The candidate Next objective is 0.75969
+serror_factor=14
+sampling_error=8.91459e-09
+sampling_deviation=9.44171e-05
+current_delta_m=-5.75669e-06
+Expand sample size
+percent_added_sample=22861.8
+Extended sample size=160033
+delta_m=-5.75669e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296547 -9.5991e-06 -3.12537e-07 -1.02365e-09 -9.22188e-07 
+
+rho= 0.368427
+Accepting the step
+diff=2.12092e-06
+Update the hessian matrix by BFGS method...
+iteration_count=113
+Number of data used=700
+The objective is 0.75969
+current_sample_size=700
+Gradient vector: -6.17294e-18 -8.34333e-05 0.000167053 0.000290975 -0.00024905 -0.000174633 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.64362e-14 0.940715 5.83883 -3.57915 3.9992 0.912219 
+The candidate Next objective is 0.759688
+serror_factor=14
+sampling_error=8.86103e-09
+sampling_deviation=9.4133e-05
+current_delta_m=-5.75621e-06
+Expand sample size
+percent_added_sample=22794.6
+Extended sample size=159562
+delta_m=-5.75621e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296532 -9.4527e-06 -8.84827e-07 -3.09781e-07 -9.93238e-10 
+
+rho= 0.365326
+Accepting the step
+diff=2.10289e-06
+Update the hessian matrix by BFGS method...
+iteration_count=114
+Number of data used=700
+The objective is 0.759688
+current_sample_size=700
+Gradient vector: -6.43743e-18 8.54262e-05 -0.000161246 -0.000299207 -0.000293984 5.26336e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.6611e-14 0.938396 5.84321 -3.57103 4.00718 0.910791 
+The candidate Next objective is 0.759686
+serror_factor=14
+sampling_error=8.9944e-09
+sampling_deviation=9.48388e-05
+current_delta_m=-5.75571e-06
+Expand sample size
+percent_added_sample=22968.3
+Extended sample size=160778
+delta_m=-5.75571e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296496 -9.32291e-06 -8.49406e-07 -3.07092e-07 -9.64038e-10 
+
+rho= 0.362311
+Accepting the step
+diff=2.08536e-06
+Update the hessian matrix by BFGS method...
+iteration_count=115
+Number of data used=700
+The objective is 0.759686
+current_sample_size=700
+Gradient vector: -7.98e-18 -8.39669e-05 0.000168191 0.00029245 -0.000246846 -0.000173745 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.68276e-14 0.940676 5.83864 -3.57897 4.01388 0.915508 
+The candidate Next objective is 0.759684
+serror_factor=14
+sampling_error=8.94018e-09
+sampling_deviation=9.45525e-05
+current_delta_m=-5.75525e-06
+Expand sample size
+percent_added_sample=22900.5
+Extended sample size=160303
+delta_m=-5.75525e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296474 -9.18971e-06 -8.1597e-07 -3.04409e-07 -9.35816e-10 
+
+rho= 0.35929
+Accepting the step
+diff=2.0678e-06
+Update the hessian matrix by BFGS method...
+iteration_count=116
+Number of data used=700
+The objective is 0.759684
+current_sample_size=700
+Gradient vector: -6.46239e-18 8.5995e-05 -0.000162068 -0.000300784 -0.000291597 5.28163e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.70031e-14 0.938341 5.84304 -3.5708 4.0218 0.914074 
+The candidate Next objective is 0.759682
+serror_factor=14
+sampling_error=9.07194e-09
+sampling_deviation=9.52467e-05
+current_delta_m=-5.75477e-06
+Expand sample size
+percent_added_sample=23071.3
+Extended sample size=161499
+delta_m=-5.75477e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296432 -9.0702e-06 -7.84266e-07 -3.01789e-07 -9.08703e-10 
+
+rho= 0.356359
+Accepting the step
+diff=2.05076e-06
+Update the hessian matrix by BFGS method...
+iteration_count=117
+Number of data used=700
+The objective is 0.759682
+current_sample_size=700
+Gradient vector: -7.70273e-18 -8.44906e-05 0.000169269 0.000293896 -0.000244687 -0.000172861 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.72123e-14 0.940635 5.83844 -3.57878 4.02844 0.918767 
+The candidate Next objective is 0.75968
+serror_factor=14
+sampling_error=9.0171e-09
+sampling_deviation=9.49584e-05
+current_delta_m=-5.75433e-06
+Expand sample size
+percent_added_sample=23002.9
+Extended sample size=161020
+delta_m=-5.75433e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296403 -8.94853e-06 -7.54272e-07 -2.99177e-07 -8.82484e-10 
+
+rho= 0.353414
+Accepting the step
+diff=2.03366e-06
+Update the hessian matrix by BFGS method...
+iteration_count=118
+Number of data used=700
+The objective is 0.75968
+current_sample_size=700
+Gradient vector: -6.69477e-18 8.65438e-05 -0.000162894 -0.000302298 -0.000289255 5.29894e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.73941e-14 0.938285 5.84287 -3.57057 4.03629 0.917328 
+The candidate Next objective is 0.759678
+serror_factor=14
+sampling_error=9.14731e-09
+sampling_deviation=9.56416e-05
+current_delta_m=-5.75387e-06
+Expand sample size
+percent_added_sample=23171
+Extended sample size=162197
+delta_m=-5.75387e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296355 -8.83818e-06 -7.25824e-07 -2.96622e-07 -8.57283e-10 
+
+rho= 0.350563
+Accepting the step
+diff=2.01709e-06
+Update the hessian matrix by BFGS method...
+iteration_count=119
+Number of data used=700
+The objective is 0.759678
+current_sample_size=700
+Gradient vector: -4.67115e-18 -8.50041e-05 0.000170291 0.000295313 -0.000242573 -0.00017198 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.75209e-14 0.940593 5.83824 -3.57859 4.04288 0.921999 
+The candidate Next objective is 0.759676
+serror_factor=14
+sampling_error=9.09188e-09
+sampling_deviation=9.53514e-05
+current_delta_m=-5.75345e-06
+Expand sample size
+percent_added_sample=23102.1
+Extended sample size=161714
+delta_m=-5.75345e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.00029632 -8.72662e-06 -6.98856e-07 -2.94076e-07 -8.32898e-10 
+
+rho= 0.347692
+Accepting the step
+diff=2.00043e-06
+Update the hessian matrix by BFGS method...
+iteration_count=120
+Number of data used=700
+The objective is 0.759676
+current_sample_size=700
+Gradient vector: -2.47139e-18 8.70742e-05 -0.000163718 -0.000303753 -0.000286957 5.31532e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.7588e-14 0.938228 5.84269 -3.57034 4.05068 0.920555 
+The candidate Next objective is 0.759674
+serror_factor=14
+sampling_error=9.22059e-09
+sampling_deviation=9.60239e-05
+current_delta_m=-5.75301e-06
+Expand sample size
+percent_added_sample=23267.5
+Extended sample size=162872
+delta_m=-5.75301e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296267 -8.62445e-06 -6.73265e-07 -2.91583e-07 -8.0945e-10 
+
+rho= 0.344918
+Accepting the step
+diff=1.98432e-06
+Update the hessian matrix by BFGS method...
+iteration_count=121
+Number of data used=700
+The objective is 0.759674
+current_sample_size=700
+Gradient vector: -7.89581e-18 -8.55072e-05 0.000171265 0.0002967 -0.0002405 -0.000171105 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.78025e-14 0.940551 5.83804 -3.5784 4.05721 0.925203 
+The candidate Next objective is 0.759672
+serror_factor=14
+sampling_error=9.16461e-09
+sampling_deviation=9.5732e-05
+current_delta_m=-5.7526e-06
+Expand sample size
+percent_added_sample=23198.1
+Extended sample size=162387
+delta_m=-5.7526e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296226 -8.5218e-06 -6.48961e-07 -2.89101e-07 -7.86749e-10 
+
+rho= 0.342119
+Accepting the step
+diff=1.96807e-06
+Update the hessian matrix by BFGS method...
+iteration_count=122
+Number of data used=700
+The objective is 0.759672
+current_sample_size=700
+Gradient vector: -3.59063e-18 8.75871e-05 -0.000164539 -0.000305154 -0.000284701 5.33081e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.79e-14 0.938172 5.84251 -3.57011 4.06494 0.923755 
+The candidate Next objective is 0.75967
+serror_factor=14
+sampling_error=9.29185e-09
+sampling_deviation=9.63943e-05
+current_delta_m=-5.75218e-06
+Expand sample size
+percent_added_sample=23361
+Extended sample size=163527
+delta_m=-5.75218e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296169 -8.42697e-06 -6.25885e-07 -2.86667e-07 -7.6491e-10 
+
+rho= 0.339419
+Accepting the step
+diff=1.9524e-06
+Update the hessian matrix by BFGS method...
+iteration_count=123
+Number of data used=700
+The objective is 0.75967
+current_sample_size=700
+Gradient vector: -6.22844e-18 -8.59998e-05 0.000172193 0.000298056 -0.000238469 -0.000170236 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.80692e-14 0.940508 5.83783 -3.57821 4.07142 0.928379 
+The candidate Next objective is 0.759668
+serror_factor=14
+sampling_error=9.23536e-09
+sampling_deviation=9.61008e-05
+current_delta_m=-5.75179e-06
+Expand sample size
+percent_added_sample=23291.2
+Extended sample size=163038
+delta_m=-5.75179e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296123 -8.33222e-06 -6.03932e-07 -2.84244e-07 -7.43756e-10 
+
+rho= 0.336688
+Accepting the step
+diff=1.93656e-06
+Update the hessian matrix by BFGS method...
+iteration_count=124
+Number of data used=700
+The objective is 0.759668
+current_sample_size=700
+Gradient vector: -2.08164e-18 8.80836e-05 -0.000165353 -0.000306505 -0.000282486 5.34543e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.81258e-14 0.938115 5.84232 -3.56988 4.07909 0.926927 
+The candidate Next objective is 0.759666
+serror_factor=14
+sampling_error=9.36119e-09
+sampling_deviation=9.67532e-05
+current_delta_m=-5.75139e-06
+Expand sample size
+percent_added_sample=23451.6
+Extended sample size=164161
+delta_m=-5.75139e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296062 -8.24399e-06 -5.83076e-07 -2.81865e-07 -7.23396e-10 
+
+rho= 0.334061
+Accepting the step
+diff=1.92131e-06
+Update the hessian matrix by BFGS method...
+iteration_count=125
+Number of data used=700
+The objective is 0.759666
+current_sample_size=700
+Gradient vector: -8.90359e-18 -8.6482e-05 0.00017308 0.000299383 -0.000236476 -0.000169373 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.83677e-14 0.940464 5.83762 -3.57801 4.08552 0.931529 
+The candidate Next objective is 0.759664
+serror_factor=14
+sampling_error=9.30421e-09
+sampling_deviation=9.64583e-05
+current_delta_m=-5.75101e-06
+Expand sample size
+percent_added_sample=23381.4
+Extended sample size=163670
+delta_m=-5.75101e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000296012 -8.15625e-06 -5.63202e-07 -2.79498e-07 -7.03664e-10 
+
+rho= 0.331396
+Accepting the step
+diff=1.90586e-06
+Update the hessian matrix by BFGS method...
+iteration_count=126
+Number of data used=700
+The objective is 0.759664
+current_sample_size=700
+Gradient vector: -4.80137e-18 8.85647e-05 -0.000166159 -0.000307809 -0.000280311 5.35923e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.84982e-14 0.938058 5.84213 -3.56965 4.09314 0.930073 
+The candidate Next objective is 0.759663
+serror_factor=14
+sampling_error=9.42865e-09
+sampling_deviation=9.71013e-05
+current_delta_m=-5.75062e-06
+Expand sample size
+percent_added_sample=23539.5
+Extended sample size=164776
+delta_m=-5.75062e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000295948 -8.07397e-06 -5.44309e-07 -2.77172e-07 -6.84665e-10 
+
+rho= 0.328838
+Accepting the step
+diff=1.89102e-06
+Update the hessian matrix by BFGS method...
+iteration_count=127
+Number of data used=700
+The objective is 0.759663
+current_sample_size=700
+Gradient vector: -8.78205e-18 -8.69536e-05 0.000173931 0.000300679 -0.000234522 -0.000168517 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.87368e-14 0.940421 5.83741 -3.57782 4.09951 0.934652 
+The candidate Next objective is 0.759661
+serror_factor=14
+sampling_error=9.37122e-09
+sampling_deviation=9.68051e-05
+current_delta_m=-5.75026e-06
+Expand sample size
+percent_added_sample=23468.8
+Extended sample size=164282
+delta_m=-5.75026e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000295894 -7.99251e-06 -5.26279e-07 -2.74857e-07 -6.66242e-10 
+
+rho= 0.326237
+Accepting the step
+diff=1.87595e-06
+Update the hessian matrix by BFGS method...
+iteration_count=128
+Number of data used=700
+The objective is 0.759661
+current_sample_size=700
+Gradient vector: -7.84642e-18 8.90313e-05 -0.000166955 -0.000309069 -0.000278175 5.37223e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.895e-14 0.938001 5.84195 -3.56942 4.10707 0.933192 
+The candidate Next objective is 0.759659
+serror_factor=14
+sampling_error=9.49432e-09
+sampling_deviation=9.74388e-05
+current_delta_m=-5.74989e-06
+Expand sample size
+percent_added_sample=23624.7
+Extended sample size=165373
+delta_m=-5.74989e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000295828 -7.91561e-06 -5.09127e-07 -2.72579e-07 -6.48496e-10 
+
+rho= 0.323746
+Accepting the step
+diff=1.8615e-06
+Update the hessian matrix by BFGS method...
+iteration_count=129
+Number of data used=700
+The objective is 0.759659
+current_sample_size=700
+Gradient vector: -6.38062e-18 -8.74149e-05 0.000174747 0.000301944 -0.000232605 -0.000167668 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.91234e-14 0.940377 5.8372 -3.57763 4.11339 0.937748 
+The candidate Next objective is 0.759657
+serror_factor=14
+sampling_error=9.43647e-09
+sampling_deviation=9.71415e-05
+current_delta_m=-5.74954e-06
+Expand sample size
+percent_added_sample=23553.7
+Extended sample size=164876
+delta_m=-5.74954e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000295772 -7.83976e-06 -4.92738e-07 -2.70313e-07 -6.3128e-10 
+
+rho= 0.321206
+Accepting the step
+diff=1.84679e-06
+Update the hessian matrix by BFGS method...
+iteration_count=130
+Number of data used=700
+The objective is 0.759657
+current_sample_size=700
+Gradient vector: -5.2567e-18 8.94841e-05 -0.00016774 -0.000310287 -0.000276076 5.38448e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.92663e-14 0.937945 5.84176 -3.5692 4.12089 0.936285 
+The candidate Next objective is 0.759655
+serror_factor=14
+sampling_error=9.55826e-09
+sampling_deviation=9.77664e-05
+current_delta_m=-5.74918e-06
+Expand sample size
+percent_added_sample=23707.4
+Extended sample size=165952
+delta_m=-5.74918e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000295705 -7.76775e-06 -4.77136e-07 -2.6808e-07 -6.1469e-10 
+
+rho= 0.318781
+Accepting the step
+diff=1.83273e-06
+Update the hessian matrix by BFGS method...
+iteration_count=131
+Number of data used=700
+The objective is 0.759655
+current_sample_size=700
+Gradient vector: -6.57552e-18 -8.78659e-05 0.000175532 0.000303181 -0.000230723 -0.000166828 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.9445e-14 0.940333 5.83698 -3.57744 4.12716 0.940819 
+The candidate Next objective is 0.759653
+serror_factor=14
+sampling_error=9.50002e-09
+sampling_deviation=9.7468e-05
+current_delta_m=-5.74885e-06
+Expand sample size
+percent_added_sample=23636.1
+Extended sample size=165453
+delta_m=-5.74885e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000295646 -7.69696e-06 -4.62208e-07 -2.65859e-07 -5.98588e-10 
+
+rho= 0.3163
+Accepting the step
+diff=1.81836e-06
+Update the hessian matrix by BFGS method...
+iteration_count=132
+Number of data used=700
+The objective is 0.759653
+current_sample_size=700
+Gradient vector: -5.53385e-18 8.99239e-05 -0.000168514 -0.000311466 -0.000274013 5.396e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.95954e-14 0.937889 5.84156 -3.56897 4.13461 0.939353 
+The candidate Next objective is 0.759652
+serror_factor=14
+sampling_error=9.62053e-09
+sampling_deviation=9.80843e-05
+current_delta_m=-5.7485e-06
+Expand sample size
+percent_added_sample=23787.6
+Extended sample size=166513
+delta_m=-5.7485e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000295578 -7.62939e-06 -4.47989e-07 -2.63665e-07 -5.83064e-10 
+
+rho= 0.313938
+Accepting the step
+diff=1.80467e-06
+Update the hessian matrix by BFGS method...
+iteration_count=133
+Number of data used=700
+The objective is 0.759652
+current_sample_size=700
+Gradient vector: -6.33059e-18 -8.83068e-05 0.000176288 0.000304387 -0.000228875 -0.000165996 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.97675e-14 0.940289 5.83677 -3.57724 4.14083 0.943865 
+The candidate Next objective is 0.75965
+serror_factor=14
+sampling_error=9.56192e-09
+sampling_deviation=9.77851e-05
+current_delta_m=-5.74818e-06
+Expand sample size
+percent_added_sample=23716.1
+Extended sample size=166013
+delta_m=-5.74818e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000295519 -7.56316e-06 -4.34369e-07 -2.61484e-07 -5.67989e-10 
+
+rho= 0.311515
+Accepting the step
+diff=1.79064e-06
+Update the hessian matrix by BFGS method...
+iteration_count=134
+Number of data used=700
+The objective is 0.75965
+current_sample_size=700
+Gradient vector: -8.48646e-18 9.03512e-05 -0.000169275 -0.000312608 -0.000271986 5.40683e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=1.99982e-14 0.937833 5.84137 -3.56875 4.14823 0.942395 
+The candidate Next objective is 0.759648
+serror_factor=14
+sampling_error=9.68118e-09
+sampling_deviation=9.8393e-05
+current_delta_m=-5.74784e-06
+Expand sample size
+percent_added_sample=23865.5
+Extended sample size=167059
+delta_m=-5.74784e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000295451 -7.49966e-06 -4.21389e-07 -2.59326e-07 -5.5345e-10 
+
+rho= 0.309213
+Accepting the step
+diff=1.77731e-06
+Update the hessian matrix by BFGS method...
+iteration_count=135
+Number of data used=700
+The objective is 0.759648
+current_sample_size=700
+Gradient vector: -5.43138e-18 -8.87378e-05 0.000177017 0.000305566 -0.000227061 -0.000165172 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=2.01458e-14 0.940246 5.83656 -3.57705 4.1544 0.946885 
+The candidate Next objective is 0.759646
+serror_factor=14
+sampling_error=9.62224e-09
+sampling_deviation=9.8093e-05
+current_delta_m=-5.74753e-06
+Expand sample size
+percent_added_sample=23793.8
+Extended sample size=166556
+delta_m=-5.74753e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000295391 -7.43756e-06 -4.08943e-07 -2.57178e-07 -5.39326e-10 
+
+rho= 0.306845
+Accepting the step
+diff=1.7636e-06
+Update the hessian matrix by BFGS method...
+iteration_count=136
+Number of data used=700
+The objective is 0.759646
+current_sample_size=700
+Gradient vector: -2.93218e-18 9.07667e-05 -0.000170022 -0.000313716 -0.000269993 5.417e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=2.02256e-14 0.937778 5.84118 -3.56852 4.16174 0.945413 
+The candidate Next objective is 0.759644
+serror_factor=14
+sampling_error=9.74028e-09
+sampling_deviation=9.86929e-05
+current_delta_m=-5.74721e-06
+Expand sample size
+percent_added_sample=23941.2
+Extended sample size=167589
+delta_m=-5.74721e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000295323 -7.37776e-06 -3.97076e-07 -2.5505e-07 -5.25699e-10 
+
+rho= 0.304602
+Accepting the step
+diff=1.75061e-06
+Update the hessian matrix by BFGS method...
+iteration_count=137
+Number of data used=700
+The objective is 0.759644
+current_sample_size=700
+Gradient vector: -6.90945e-18 -8.91589e-05 0.000177722 0.000306715 -0.000225279 -0.000164356 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=2.04134e-14 0.940202 5.83635 -3.57686 4.16786 0.949881 
+The candidate Next objective is 0.759643
+serror_factor=14
+sampling_error=9.68104e-09
+sampling_deviation=9.83923e-05
+current_delta_m=-5.74691e-06
+Expand sample size
+percent_added_sample=23869.2
+Extended sample size=167085
+delta_m=-5.74691e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000295263 -7.31943e-06 -3.85688e-07 -2.52931e-07 -5.12454e-10 
+
+rho= 0.302288
+Accepting the step
+diff=1.73722e-06
+Update the hessian matrix by BFGS method...
+iteration_count=138
+Number of data used=700
+The objective is 0.759643
+current_sample_size=700
+Gradient vector: -6.30019e-18 9.11709e-05 -0.000170756 -0.00031479 -0.000268034 5.42653e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=2.05847e-14 0.937723 5.841 -3.5683 4.17515 0.948406 
+The candidate Next objective is 0.759641
+serror_factor=14
+sampling_error=9.79788e-09
+sampling_deviation=9.89842e-05
+current_delta_m=-5.7466e-06
+Expand sample size
+percent_added_sample=24014.8
+Extended sample size=168103
+delta_m=-5.7466e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000295197 -7.26303e-06 -3.74827e-07 -2.50825e-07 -4.9967e-10 
+
+rho= 0.300102
+Accepting the step
+diff=1.72456e-06
+Update the hessian matrix by BFGS method...
+iteration_count=139
+Number of data used=700
+The objective is 0.759641
+current_sample_size=700
+Gradient vector: -7.94916e-18 -8.95705e-05 0.000178403 0.000307838 -0.000223529 -0.00016355 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=2.08009e-14 0.940159 5.83614 -3.57667 4.18123 0.952853 
+The candidate Next objective is 0.759639
+serror_factor=14
+sampling_error=9.73836e-09
+sampling_deviation=9.86831e-05
+current_delta_m=-5.74631e-06
+Expand sample size
+percent_added_sample=23942.6
+Extended sample size=167598
+delta_m=-5.74631e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000295137 -7.20812e-06 -3.64396e-07 -2.48726e-07 -4.8724e-10 
+
+rho= 0.297839
+Accepting the step
+diff=1.71148e-06
+Update the hessian matrix by BFGS method...
+iteration_count=140
+Number of data used=700
+The objective is 0.759639
+current_sample_size=700
+Gradient vector: -7.78149e-18 9.15643e-05 -0.000171476 -0.000315833 -0.000266107 5.43547e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=2.10125e-14 0.937669 5.84081 -3.56809 4.18847 0.951375 
+The candidate Next objective is 0.759638
+serror_factor=14
+sampling_error=9.85402e-09
+sampling_deviation=9.92674e-05
+current_delta_m=-5.74601e-06
+Expand sample size
+percent_added_sample=24086.2
+Extended sample size=168604
+delta_m=-5.74601e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000295072 -7.15485e-06 -3.54449e-07 -2.46634e-07 -4.75237e-10 
+
+rho= 0.295708
+Accepting the step
+diff=1.69914e-06
+Update the hessian matrix by BFGS method...
+iteration_count=141
+Number of data used=700
+The objective is 0.759638
+current_sample_size=700
+Gradient vector: -7.19618e-18 -8.99728e-05 0.000179063 0.000308933 -0.000221809 -0.000162752 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=2.12082e-14 0.940116 5.83594 -3.57649 4.1945 0.955801 
+The candidate Next objective is 0.759636
+serror_factor=14
+sampling_error=9.79425e-09
+sampling_deviation=9.89659e-05
+current_delta_m=-5.74574e-06
+Expand sample size
+percent_added_sample=24013.9
+Extended sample size=168098
+delta_m=-5.74574e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000295014 -7.10307e-06 -3.4489e-07 -2.44546e-07 -4.63562e-10 
+
+rho= 0.293495
+Accepting the step
+diff=1.68635e-06
+Update the hessian matrix by BFGS method...
+iteration_count=142
+Number of data used=700
+The objective is 0.759636
+current_sample_size=700
+Gradient vector: -6.89167e-18 9.19474e-05 -0.000172183 -0.000316846 -0.000264213 5.44382e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=2.13956e-14 0.937615 5.84062 -3.56787 4.20168 0.95432 
+The candidate Next objective is 0.759634
+serror_factor=14
+sampling_error=9.90877e-09
+sampling_deviation=9.95428e-05
+current_delta_m=-5.74544e-06
+Expand sample size
+percent_added_sample=24155.7
+Extended sample size=169090
+delta_m=-5.74544e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000294951 -7.05268e-06 -3.35778e-07 -2.42457e-07 -4.52284e-10 
+
+rho= 0.291418
+Accepting the step
+diff=1.67432e-06
+Update the hessian matrix by BFGS method...
+iteration_count=143
+Number of data used=700
+The objective is 0.759634
+current_sample_size=700
+Gradient vector: -4.98677e-18 -9.03659e-05 0.000179703 0.000310002 -0.000220118 -0.000161963 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=2.15312e-14 0.940073 5.83573 -3.5763 4.20767 0.958725 
+The candidate Next objective is 0.759633
+serror_factor=14
+sampling_error=9.84877e-09
+sampling_deviation=9.9241e-05
+current_delta_m=-5.74518e-06
+Expand sample size
+percent_added_sample=24083.3
+Extended sample size=168583
+delta_m=-5.74518e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000294894 -7.00376e-06 -3.2702e-07 -2.40367e-07 -4.4131e-10 
+
+rho= 0.289253
+Accepting the step
+diff=1.66181e-06
+Update the hessian matrix by BFGS method...
+iteration_count=144
+Number of data used=700
+The objective is 0.759633
+current_sample_size=700
+Gradient vector: -4.96682e-18 9.23207e-05 -0.000172875 -0.000317831 -0.000262349 5.45164e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=2.16663e-14 0.937562 5.84043 -3.56766 4.2148 0.957242 
+The candidate Next objective is 0.759631
+serror_factor=14
+sampling_error=9.96217e-09
+sampling_deviation=9.98106e-05
+current_delta_m=-5.74489e-06
+Expand sample size
+percent_added_sample=24223.3
+Extended sample size=169563
+delta_m=-5.74489e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000294833 -6.95603e-06 -3.1868e-07 -2.38265e-07 -4.30705e-10 
+
+rho= 0.287228
+Accepting the step
+diff=1.65009e-06
+Update the hessian matrix by BFGS method...
+iteration_count=145
+Number of data used=700
+The objective is 0.759631
+current_sample_size=700
+Gradient vector: -6.52191e-18 -9.075e-05 0.000180324 0.000311046 -0.000218457 -0.000161184 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=2.18437e-14 0.94003 5.83553 -3.57612 4.22075 0.961626 
+The candidate Next objective is 0.759629
+serror_factor=14
+sampling_error=9.90196e-09
+sampling_deviation=9.95086e-05
+current_delta_m=-5.74464e-06
+Expand sample size
+percent_added_sample=24150.8
+Extended sample size=169056
+delta_m=-5.74464e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000294778 -6.90976e-06 -3.10666e-07 -2.36156e-07 -4.20382e-10 
+
+rho= 0.28511
+Accepting the step
+diff=1.63785e-06
+Update the hessian matrix by BFGS method...
+iteration_count=146
+Number of data used=700
+The objective is 0.759629
+current_sample_size=700
+Gradient vector: -4.27999e-18 9.26845e-05 -0.000173553 -0.000318788 -0.000260515 5.45893e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=2.19601e-14 0.937509 5.84025 -3.56745 4.22783 0.960142 
+The candidate Next objective is 0.759628
+serror_factor=14
+sampling_error=1.00143e-08
+sampling_deviation=0.000100071
+current_delta_m=-5.74437e-06
+Expand sample size
+percent_added_sample=24289.1
+Extended sample size=170023
+delta_m=-5.74437e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.00029472 -6.86448e-06 -3.03047e-07 -2.34021e-07 -4.10402e-10 
+
+rho= 0.283134
+Accepting the step
+diff=1.62643e-06
+Update the hessian matrix by BFGS method...
+iteration_count=147
+Number of data used=700
+The objective is 0.759628
+current_sample_size=700
+Gradient vector: -6.00563e-18 -9.11255e-05 0.000180926 0.000312065 -0.000216823 -0.000160413 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=2.21235e-14 0.939988 5.83533 -3.57593 4.23373 0.964505 
+The candidate Next objective is 0.759626
+serror_factor=14
+sampling_error=9.95386e-09
+sampling_deviation=9.9769e-05
+current_delta_m=-5.74412e-06
+Expand sample size
+percent_added_sample=24216.5
+Extended sample size=169515
+delta_m=-5.74412e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000294667 -6.82064e-06 -2.95734e-07 -2.3187e-07 -4.00684e-10 
+
+rho= 0.281061
+Accepting the step
+diff=1.61445e-06
+Update the hessian matrix by BFGS method...
+iteration_count=148
+Number of data used=700
+The objective is 0.759626
+current_sample_size=700
+Gradient vector: -4.93829e-18 9.30393e-05 -0.000174217 -0.00031972 -0.000258711 5.46572e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=2.22578e-14 0.937457 5.84007 -3.56724 4.24077 0.963018 
+The candidate Next objective is 0.759624
+serror_factor=14
+sampling_error=1.00651e-08
+sampling_deviation=0.000100325
+current_delta_m=-5.74385e-06
+Expand sample size
+percent_added_sample=24353.1
+Extended sample size=170471
+delta_m=-5.74385e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000294612 -6.77764e-06 -2.888e-07 -2.29676e-07 -3.91285e-10 
+
+rho= 0.279135
+Accepting the step
+diff=1.60331e-06
+Update the hessian matrix by BFGS method...
+iteration_count=149
+Number of data used=700
+The objective is 0.759624
+current_sample_size=700
+Gradient vector: -5.39568e-18 -9.14925e-05 0.000181512 0.000313059 -0.000215216 -0.000159651 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=2.24046e-14 0.939946 5.83513 -3.57575 4.24662 0.967361 
+The candidate Next objective is 0.759623
+serror_factor=14
+sampling_error=1.00045e-08
+sampling_deviation=0.000100023
+current_delta_m=-5.74362e-06
+Expand sample size
+percent_added_sample=24280.4
+Extended sample size=169963
+delta_m=-5.74362e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.000294562 -6.73604e-06 -2.82161e-07 -2.27452e-07 -3.8213e-10 
+
+rho= 0.277106
+Accepting the step
+diff=1.59159e-06
+Update the hessian matrix by BFGS method...
+iteration_count=150
+Number of data used=700
+The objective is 0.759623
+current_sample_size=700
+Gradient vector: -3.48641e-18 9.33853e-05 -0.000174868 -0.000320627 -0.000256935 5.47205e-05 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=2.24994e-14 0.937405 5.83989 -3.56703 4.25361 0.965873 
+The candidate Next objective is 0.759621
+serror_factor=14
+sampling_error=1.01147e-08
+sampling_deviation=0.000100572
+current_delta_m=-5.74336e-06
+Expand sample size
+percent_added_sample=24415.3
+Extended sample size=170907
+delta_m=-5.74336e-06
+Hessian update
+eigen values of updated hessian
+-1 -0.00029451 -6.69516e-06 -2.75894e-07 -2.25163e-07 -3.73272e-10 
+
+rho= 0.275226
+Accepting the step
+diff=1.58072e-06
+Update the hessian matrix by BFGS method...
+iteration_count=151
+Number of data used=700
+The objective is 0.759621
+current_sample_size=700
+Gradient vector: -5.89689e-18 -9.18513e-05 0.000182082 0.00031403 -0.000213636 -0.000158898 
+=700
+num_of_people=5000
+current_radius=0.0125
+candidate_new_parameter=2.26599e-14 0.939904 5.83493 -3.57557 4.25943 0.970196 
+The candidate Next objective is 0.75962
+serror_factor=14
+sampling_error=1.0054e-08
+sampling_deviation=0.00010027
+current_delta_m=-5.74313e-06
+Expand sample size
+percent_added_sample=24342.7
+Extended sample size=170399
