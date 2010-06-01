@@ -35,6 +35,7 @@
 #include "intmap.h"
 #include "rangeset.h"
 #include "queue.h"
+#include <assert.h>
 
 #include "../base/test.h"
 
@@ -236,19 +237,19 @@ void TestQueue() {
   q.Add(1);
   q.Add(5);
   *q.Add() = 9;
-  DEBUG_ASSERT(!q.is_empty());
-  DEBUG_SAME_SIZE(q.top(), 3); q.Pop();
-  DEBUG_SAME_SIZE(q.top(), 1); q.Pop();
-  DEBUG_SAME_SIZE(q.top(), 4); q.PopOnly();
-  DEBUG_SAME_SIZE(q.Pop(), 1);
-  DEBUG_SAME_SIZE(q.Pop(), 5);
-  DEBUG_ASSERT(!q.is_empty());
-  DEBUG_SAME_SIZE(q.top(), 9); q.Pop();
-  DEBUG_ASSERT(q.is_empty());
+  TEST_ASSERT (!q.is_empty());
+  TEST_ASSERT(q.top() == 3); q.Pop();
+  TEST_ASSERT(q.top() == 1); q.Pop();
+  TEST_ASSERT(q.top() == 4); q.PopOnly();
+  TEST_ASSERT(q.Pop() == 1);
+  TEST_ASSERT(q.Pop() == 5);
+  TEST_ASSERT(!q.is_empty());
+  TEST_ASSERT(q.top() == 9); q.Pop();
+  TEST_ASSERT(q.is_empty());
   *q.Add() = 551;
-  DEBUG_ASSERT(!q.is_empty());
-  DEBUG_SAME_SIZE(q.top(), 551); q.PopOnly();
-  DEBUG_ASSERT(q.is_empty());
+  TEST_ASSERT(!q.is_empty());
+  TEST_ASSERT(q.top() == 551); q.PopOnly();
+  TEST_ASSERT(!q.is_empty());
 }
 
 TEST_SUITE_END(col, TestArrayListInt, TestMinHeap,
