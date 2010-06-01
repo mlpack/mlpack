@@ -552,8 +552,9 @@ void RpcSockImpl::ExecuteReadyMessages_(Peer *peer) {
   // no mutex required on read_queue, pending, or is_pending, because the
   // network thread is the only one that deals with these
 
-  while (!peer->connection.read_queue().is_empty()) {
-    Message *message = peer->connection.read_queue().Pop();
+  while (!peer->connection.read_queue().empty()) {
+    Message *message = peer->connection.read_queue().front();
+		peer->connection.read_queue().pop_front();
     int id = message->transaction_id();
     Transaction *transaction;
 
@@ -585,14 +586,14 @@ void RpcSockImpl::ExecuteReadyMessages_(Peer *peer) {
       transaction->HandleMessage(message);
       handled++;
     } else {
-      peer->pending.Add(message);
+      peer->pending.push_back(message);
     }
   }
 
   peer->is_pending = false;
 
-  while (!peer->pending.is_empty()) {
-    Message *message = peer->pending.top();
+  while (!peer->pending.empty()) {
+    Message *message = peer->pending.front();
     int id = message->transaction_id();
     // When the channel ID is valid, it means the remote host initiated
     // the transaction.
@@ -616,7 +617,7 @@ void RpcSockImpl::ExecuteReadyMessages_(Peer *peer) {
 
     handled++;
     transaction->HandleMessage(message);
-    peer->pending.Pop();
+    peer->pending.pop_front();
   }
 
   if (handled != 0) {
@@ -687,7 +688,6 @@ RpcSockImpl::Peer::Peer() {
   outgoing_freelist.Init();
   outgoing_free = -1;
   is_pending = false;
-  pending.Init();
 }
 
 RpcSockImpl::Peer::~Peer() {
@@ -810,12 +810,10 @@ void SockConnection::Init(int peer_num, const char *ip_address, int port) {
   read_total_ = 0;
   read_message_ = NULL;
   read_buffer_pos_ = 0;
-  read_queue_.Init();
 
   write_total_ = 0;
   write_message_ = NULL;
   write_buffer_pos_ = 0;
-  write_queue_.Init();
 
   read_fd_ = -1;
   write_fd_ = -1;
@@ -909,7 +907,7 @@ void SockConnection::RawSend(Message *message) {
     // We're already writing something, put it on the priority queue.
     // No need to wake up the polling loop, because it's already quite aware
     // that we want to check if this socket is readable.
-    write_queue_.Add(message);
+    write_queue_.push_back(message);
   }
 }
 
@@ -919,12 +917,13 @@ void SockConnection::TryWrite() {
       if (write_buffer_pos_ == write_message_->buffer_size()) {
         // Looks like we successfully wrote the whole message.
         delete write_message_;
-        if (write_queue_.is_empty()) {
+        if (write_queue_.empty()) {
           write_message_ = NULL;
           RpcSockImpl::instance->DeactivateWriteFd(write_fd_);
           return;
         } else {
-          write_message_ = write_queue_.Pop();
+          write_message_ = write_queue_.front();
+					write_queue_.pop_front();
           write_buffer_pos_ = 0;
           DEBUG_ASSERT(write_message_->buffer_size() != 0);
         }
@@ -992,7 +991,7 @@ bool SockConnection::TryRead() {
     if (read_buffer_pos_ == read_message_->buffer_size()) {
       // We've read a whole message.  Put it on the queue to be serviced.
       ++read_total_;
-      read_queue_.Add(read_message_);
+      read_queue_.push_back(read_message_);
 
       read_message_ = NULL;
       read_buffer_pos_ = 0;
