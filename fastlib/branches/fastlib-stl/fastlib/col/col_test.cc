@@ -34,7 +34,6 @@
 #include "fastalloc.h"
 #include "intmap.h"
 #include "rangeset.h"
-#include "queue.h"
 #include <assert.h>
 
 #include "../base/test.h"
@@ -228,30 +227,6 @@ void TestRangeSet() {
   TEST_ASSERT(set.size() == 1);
 }
 
-void TestQueue() {
-  Queue<int> q;
-  q.Init();
-  *q.Add() = 3;
-  q.Add(1);
-  q.Add(4);
-  q.Add(1);
-  q.Add(5);
-  *q.Add() = 9;
-  TEST_ASSERT (!q.is_empty());
-  TEST_ASSERT(q.top() == 3); q.Pop();
-  TEST_ASSERT(q.top() == 1); q.Pop();
-  TEST_ASSERT(q.top() == 4); q.PopOnly();
-  TEST_ASSERT(q.Pop() == 1);
-  TEST_ASSERT(q.Pop() == 5);
-  TEST_ASSERT(!q.is_empty());
-  TEST_ASSERT(q.top() == 9); q.Pop();
-  TEST_ASSERT(q.is_empty());
-  *q.Add() = 551;
-  TEST_ASSERT(!q.is_empty());
-  TEST_ASSERT(q.top() == 551); q.PopOnly();
-  TEST_ASSERT(q.is_empty());
-}
-
 TEST_SUITE_END(col, TestArrayListInt, TestMinHeap,
-    TestFastAlloc, TestIntMap, TestRangeSet, TestQueue)
+    TestFastAlloc, TestIntMap, TestRangeSet)
 

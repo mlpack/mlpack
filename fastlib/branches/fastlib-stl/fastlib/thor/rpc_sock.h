@@ -10,8 +10,9 @@
 #include "rpc_base.h"
 
 #include "../col/arraylist.h"
-#include "../col/queue.h"
 #include "../math/math_lib.h"
+
+#include <deque>
 
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -64,13 +65,13 @@ class SockConnection {
   Message *read_message_;
   size_t read_buffer_pos_;
   // TODO: Implement a dequeue instead of using a heap
-  Queue<Message*> read_queue_;
+	std::deque<Message*> read_queue_;
 
   int64 write_total_;
   Message *write_message_;
   size_t write_buffer_pos_;
   // TODO: Implement a dequeue instead of using a heap
-  Queue<Message*> write_queue_;
+	std::deque<Message*> write_queue_;
 
  public:
   SockConnection() {}
@@ -120,11 +121,11 @@ class SockConnection {
     return write_total_;
   }
   /** Messages which have been read but not been processed. */
-  Queue<Message*>& read_queue() {
+	std::deque<Message*>& read_queue() {
     return read_queue_;
   }
   /** Messages which have been read but not been processed. */
-  const Queue<Message*>& read_queue() const {
+  const std::deque<Message*>& read_queue() const {
     return read_queue_;
   }
   /** The socket address of the peer. */
@@ -205,7 +206,7 @@ class RpcSockImpl {
      * Any pending incoming messages.  The pending queue is stalled if
      * the channel they're intended for hasn't been found.
      */
-    Queue<Message*> pending;
+		std::deque<Message*> pending;
 
    public:
     Peer();

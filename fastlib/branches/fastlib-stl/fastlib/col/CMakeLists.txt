@@ -10,7 +10,6 @@ set(SOURCES
    fastalloc.h
    heap.h
    intmap.h
-   queue.h
    rangeset.h
 )
 
