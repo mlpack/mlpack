@@ -43,24 +43,17 @@
 /**
  * A FIFO queue.
  *
- * Based on a singly linked list with a tail pointer.
- *
- * TODO: A double-ended array-based queue would be faster.
+ * A wrapper for std::deque.
  */
 template<typename T>
 class Queue {
-  FORBID_ACCIDENTAL_COPIES(Queue); // No copy constructor defined (yet)
 
  private:
 	std::deque<T> queue;
 
  public:
-  Queue() { }
-  ~Queue() {
-  }
-
   /**
-   * Creates an empty queue.
+   * Does nothing. Deprecated.
    */
   void Init() {
   }
