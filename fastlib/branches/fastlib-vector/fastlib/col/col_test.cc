@@ -249,7 +249,7 @@ void TestQueue() {
   *q.Add() = 551;
   TEST_ASSERT(!q.is_empty());
   TEST_ASSERT(q.top() == 551); q.PopOnly();
-  TEST_ASSERT(!q.is_empty());
+  TEST_ASSERT(q.is_empty());
 }
 
 TEST_SUITE_END(col, TestArrayListInt, TestMinHeap,
