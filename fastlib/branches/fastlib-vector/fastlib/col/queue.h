@@ -38,6 +38,8 @@
 #ifndef COL_QUEUE_H
 #define COL_QUEUE_H
 
+#include <deque>
+
 /**
  * A FIFO queue.
  *
@@ -50,30 +52,17 @@ class Queue {
   FORBID_ACCIDENTAL_COPIES(Queue); // No copy constructor defined (yet)
 
  private:
-  struct Node {
-    T data;
-    Node *next;
-
-    Node() : next(NULL) { }
-    Node(const T& value) : data(value), next(NULL) {}
-  };
-
- private:
-  Node *head_;
-  Node **tailp_;
+	std::deque<T> queue;
 
  public:
-  Queue() { DEBUG_POISON_PTR(tailp_); }
+  Queue() { }
   ~Queue() {
-    Clear();
   }
 
   /**
    * Creates an empty queue.
    */
   void Init() {
-    head_ = NULL;
-    tailp_ = &head_;
   }
 
   /**
@@ -81,82 +70,65 @@ class Queue {
    *
    * @return a pointer to the default-constructed but uninitialized value
    */
-  T *Add() {
+/*  T *Add() {
     Node *node = new Node();
     *tailp_ = node;
     tailp_ = &node->next;
     return &node->data;
   }
-
+*/
   /**
    * Adds the specified element to the tail end.
    *
    * @return a pointer to the tail end, which contains the given parameter
    */
-  T *Add(const T& value) {
-    Node *node = new Node(value);
-    node->next = NULL;
-    *tailp_ = node;
-    tailp_ = &node->next;
-    return &node->data;
+  T *Add(const T& value=NULL) {
+		queue.push_back(value);
+		return &queue.back();
   }
 
   /**
    * Pops from the head of the queue, not returning anything.
    */
   void PopOnly() {
-    Node *tmp = head_;
-    head_ = head_->next;
-    delete tmp;
-    if (unlikely(head_ == NULL)) {
-      tailp_ = &head_;
-    }
+		queue.pop_front();
   }
 
   /**
    * Pops from the head of the queue, returning a copy of the item.
    */
   T Pop() {
-    T val(head_->data);
-    PopOnly();
-    return val;
+		T c = queue.front();
+		queue.pop_front();
+		return c;
   }
 
   /**
    * Determines if the queue is empty.
    */
   bool is_empty() const {
-    return head_ == NULL;
+    return queue.empty();
   }
 
   /**
    * Gets the element at the head of the queue.
    */
   const T& top() const {
-    return head_->data;
+    return queue.front();
   }
 
   /**
    * Gets the element at the head of the queue.
    */
   T& top() {
-    return head_->data;
+    return queue.front();
   }
 
   /**
    * Clears all elements from the queue. 
    */
   void Clear() {
-    Node *cur;
-    Node *next;
-
-    for (cur = head_; cur; cur = next) {
-      next = cur->next;
-      delete cur;
-    }
-
-    head_ = NULL;
-    tailp_ = &head_;
+		queue.erase();
   }
 };
 
