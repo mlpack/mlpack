@@ -37,15 +37,6 @@
 #include "../base/arma_compat.h"
 
 namespace tree_kdtree_private {
-  template<typename T>
-  void MakeBoundVector(const GenVector<T>& point, 
-                       const Vector& bound_dimensions,
-                       GenVector<T>* bound_vector) {
-    int i;    
-    for (i = 0; i < bound_dimensions.length(); i++)
-      (*bound_vector)[i] = point[(int) bound_dimensions[i]];
-  }
-
   void MakeBoundVector(const arma::vec& point,
                        const arma::uvec& bound_dimensions,
                        arma::vec& bound_vector);
@@ -73,12 +64,10 @@ namespace tree_kdtree_private {
                            index_t first,
                            index_t count,
                            TBound *bounds) {
-    Vector split_dimensions;
-    split_dimensions.Init(matrix.n_rows);
-    int i;
-    for (i = 0; i < matrix.n_rows; i++){
+    arma::uvec split_dimensions(matrix.n_rows);
+    for(int i = 0; i < matrix.n_rows; i++)
       split_dimensions[i] = i;
-    }
+    
     SelectFindBoundFromMatrix(matrix, split_dimensions, first, count, bounds);
   }
 
