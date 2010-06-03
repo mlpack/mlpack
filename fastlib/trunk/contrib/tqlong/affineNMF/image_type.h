@@ -20,10 +20,17 @@ struct Transformation {
     m.CopyValues(t.m);
   }
 
-  void Print() {
+  void Print() const {
     printf("%8f %8f %8f\n"
 	   "%8f %8f %8f\n"
 	   "%8f %8f %8f\n", m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], 1.0);
+  }
+
+  void Print(FILE* f) const {
+    fprintf(f, "%8f %8f %8f\n"
+	    "%8f %8f %8f\n"
+	    "%8f %8f %8f\n"
+	    "--------------\n", m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], 1.0);
   }
 };
 
@@ -66,9 +73,13 @@ struct ImageType {
   ImageType(const char* filename);
 
   void Save(const char* filename) const;
+  void Save(FILE* f) const;
 
-  void Add(const ImageType& image) {
+  void Add(const ImageType& image, double w = 1.0) {
+    index_t old_n = n_points();
     pList.AppendCopy(image.pList);
+    if (w != 1.0) 
+      for (index_t i = old_n; i < n_points(); i++) pList[i].f *= w;
   }
 
   double Difference(const ImageType& image, 
