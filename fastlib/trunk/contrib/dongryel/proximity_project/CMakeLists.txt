@@ -52,11 +52,11 @@ target_link_libraries(gen_hypercube_tree_test
    mlpack_contrib
 )
 
-add_executable(proximity_project
+add_executable(proximity_project_test
    EXCLUDE_FROM_ALL
-   main.cc
+   proximity_project_test.cc
 )
-target_link_libraries(proximity_project
+target_link_libraries(proximity_project_test
    fastlib
    mlpack
    mlpack_contrib
