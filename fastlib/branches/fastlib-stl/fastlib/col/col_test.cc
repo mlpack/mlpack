@@ -29,7 +29,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
-#include "arraylist.h"
 #include "heap.h"
 #include "fastalloc.h"
 #include "intmap.h"
@@ -39,51 +38,6 @@
 #include "../base/test.h"
 
 TEST_SUITE_BEGIN(col)
-
-// right now, just a plug to make sure some instantiation of ArrayList
-// compiles.
-// TODO(garryb): this should really be a runnable unit test
-void TestArrayListInt() {
-  ArrayList<int> a1;
-  ArrayList<int> a2;
-  
-  a1.Init();
-  a2.Init(21);
-  
-  a1.Resize(30);
-  a1.Resize(12);
-  a1.Resize(22);
-  a2.Resize(22);
-  a1[21] = 99;
-  a1[20] = 88;
-  TEST_ASSERT(a1[21] == 99);
-  a1.PopBack();
-  TEST_ASSERT(a1.size() == 21);
-  TEST_ASSERT(a1[20] == 88);
-  TEST_ASSERT(*a1.PopBackPtr() == 88);
-  a1.AddBack()[0] = 3;
-  TEST_ASSERT(a1[20] == 3);
-  a1.Trim();
-  TEST_ASSERT(a1.size() == 21);
-  TEST_ASSERT(a1.capacity() == a1.size());
-  
-  for (index_t i = 0; i < a1.size(); i++) {
-    a1[i] = i;
-    a1[i]++;
-  }
-  
-  for (index_t i = 0; i < a1.size(); i++) {
-    TEST_ASSERT(a1[i] == i + 1);
-  }
-  
-  ArrayList<int> a3;
-  a3.Copy(a1);
-  
-  TEST_ASSERT(a1.size() == a3.size());
-  for (index_t i = 0; i < a1.size(); i++) {
-    TEST_ASSERT(a3[i] == i + 1);
-  }
-}
 
 // right now, just a plug to make sure some instantiation of ArrayList
 // compiles.
