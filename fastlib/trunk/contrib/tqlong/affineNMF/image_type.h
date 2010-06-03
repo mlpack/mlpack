@@ -69,8 +69,10 @@ struct ImageType {
   ImageType(const ImageType& image) {
     pList.InitCopy(image.pList);
   }
-
+  
   ImageType(const char* filename);
+  
+  ImageType(index_t n_points); // Random initialization;
 
   void Save(const char* filename) const;
   void Save(FILE* f) const;
@@ -93,3 +95,8 @@ struct ImageType {
   index_t n_points() const { return pList.size(); }
 };
 
+void Save(FILE* f, const char* name, const ArrayList<ImageType>& X);
+void Save(FILE* f, const char* name, const ArrayList<Transformation>& T);
+void Save(FILE* f, const char* name, const ArrayList<Vector>& W);
+void LoadImageList(ArrayList<ImageType>& B, const char** fn, size_t n_bases);
+void RandomImageList(ArrayList<ImageType>& B, size_t n_bases, index_t n_points);

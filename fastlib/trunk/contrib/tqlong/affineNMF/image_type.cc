@@ -10,6 +10,12 @@ ImageType::ImageType(const char* filename) {
     pList[i].setValue(tmp.get(0, i), tmp.get(1, i), tmp.get(2, i));
 }
 
+ImageType::ImageType(index_t n_points) {
+  pList.Init(n_points);
+  for (index_t i = 0; i < n_points; i++)
+    pList[i].setValue(math::Random(0.0,1.0), math::Random(0.0,1.0), math::Random(0.1,1.0));
+}
+
 double ImageType::Difference(const ImageType& image, 
 			     double (*kernel)(const PointType&, 
 					      const PointType&) ) const {
@@ -77,3 +83,41 @@ PointType PointType::Transform(const Transformation& t, double s) const {
   return newPoint;
 }
   
+void LoadImageList(ArrayList<ImageType>& B, const char** fn, size_t n_bases) {
+  for (size_t i = 0; i < n_bases; i++) {
+    ImageType I(fn[i]);
+    B.PushBackCopy(I);
+  }
+}
+
+void RandomImageList(ArrayList<ImageType>& B, size_t n_bases, index_t n_points) {
+  B.Init();
+  for (size_t i = 0; i < n_bases; i++) {
+    ImageType I(n_points);
+    B.PushBackCopy(I);
+  }
+}
+
+void Save(FILE* f, const char* name, const ArrayList<ImageType>& X) {
+  fprintf(f, "---- ImageList %s size = %d ----\n", name, X.size());
+  for (index_t i = 0; i < X.size(); i++)
+    X[i].Save(f);
+  fprintf(f, "---- ImageList %s END ----\n", name);  
+}
+
+void Save(FILE* f, const char* name, const ArrayList<Transformation>& T) {
+  fprintf(f, "---- TransformList %s size = %d ----\n", name, T.size());
+  for (index_t i = 0; i < T.size(); i++)
+    T[i].Print(f);
+  fprintf(f, "---- TransformList %s END ----\n", name);  
+}
+
+void Save(FILE* f, const char* name, const ArrayList<Vector>& W) {
+  fprintf(f, "---- WeightsList %s size = %d ----\n", name, W.size());
+  for (index_t i = 0; i < W.size(); i++) {
+    for (index_t j = 0; j < W[i].length(); j++)
+      fprintf(f, "%g ", W[i][j]);
+    fprintf(f, "\n");
+  }
+  fprintf(f, "---- WeightsList %s END ----\n", name);  
+}

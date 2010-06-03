@@ -35,5 +35,20 @@ void register_all(const ArrayList<ImageType>& X, ArrayList<Transformation>& T,
 
     // register basis 
     register_basis(X, T, W, B);
+    //Save(stdout, "B", B); fflush(stdin); getchar();
+  }
+}
+
+void CalculateRecovery(const ArrayList<Transformation>& T, 
+		       const ArrayList<Vector>& W, 
+		       const ArrayList<ImageType>& B, 
+		       ArrayList<ImageType>& XRecover) {
+  DEBUG_ASSERT(T.size() == W.size());
+  XRecover.Init();
+  for (index_t i = 0; i < T.size(); i++) {
+    ImageType S, Xi;
+    for (index_t j = 0; j < B.size(); j++) S.Add(B[j], W[i][j]);
+    S.Transform(Xi, T[i]);
+    XRecover.PushBackCopy(Xi);
   }
 }

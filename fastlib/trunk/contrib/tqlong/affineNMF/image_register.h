@@ -24,3 +24,8 @@ void register_basis(const ArrayList<ImageType>& X,
 
 void register_all(const ArrayList<ImageType>& X, ArrayList<Transformation>& T, 
 		  ArrayList<Vector>& W, ArrayList<ImageType>& B);
+
+void CalculateRecovery(const ArrayList<Transformation>& T, 
+		       const ArrayList<Vector>& W, 
+		       const ArrayList<ImageType>& B, 
+		       ArrayList<ImageType>& XRecover);
