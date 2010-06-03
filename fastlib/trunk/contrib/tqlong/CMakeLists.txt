@@ -12,6 +12,7 @@ set(DIRS
    PassiveAggressive
 #   quicsvd  ## does not link; looking for nonexistent la:: functions
    svm
+   affineNMF
 )
 
 foreach(dir ${DIRS})
