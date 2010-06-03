@@ -2,6 +2,14 @@
 #include <fastlib/fastlib.h>
 #include "image_type.h"
 
+ImageType::ImageType(const char* filename) {
+  Matrix tmp;
+  data::Load(filename, &tmp);
+  pList.Init(tmp.n_cols());
+  for (index_t i = 0; i < tmp.n_cols(); i++)
+    pList[i].setValue(tmp.get(0, i), tmp.get(1, i), tmp.get(2, i));
+}
+
 double ImageType::Difference(const ImageType& image, 
 			     double (*kernel)(const PointType&, 
 					      const PointType&) ) const {
@@ -13,22 +21,54 @@ double ImageType::Difference(const ImageType& image,
 }
 
 double exp_kernel(const PointType& p1, const PointType& p2) {
-  double sigma2 = 1;
-  double s = (p1.r-p2.r)*(p1.r-p2.r) + (p1.c-p2.c)*(p1.c-p2.c);
-  return exp(-0.5/sigma2*s) * (p1.f-p2.f)*(p1.f-p2.f);
+  double sigma2 = 0.5;
+  double lambda = 0.1;
+  double ds = (p1.r-p2.r)*(p1.r-p2.r) + (p1.c-p2.c)*(p1.c-p2.c);
+  double df = (p1.f-p2.f)*(p1.f-p2.f);
+  //printf("ds = %f df = %f\n", ds, df);
+  return -exp(-(sigma2*ds + lambda*df));
 }
 
-void ImageType::Scale(ImageType& image_out, double s) {
-  image_out.pList.Renew();
-  image_out.pList.InitCopy(pList);
+double d_exp_kernel(const PointType& p1, const PointType& p2,
+		    double& dr2, double& dc2, double& df2) {
+  double sigma2 = 0.5;
+  double lambda = 0.1;
+  double ds = (p1.r-p2.r)*(p1.r-p2.r) + (p1.c-p2.c)*(p1.c-p2.c);
+  double df = (p1.f-p2.f)*(p1.f-p2.f);
+  //printf("ds = %f df = %f\n", ds, df);
+  double retval =  -exp(-(sigma2*ds + lambda*df));
+  dr2 = retval * (-2)*sigma2*(p2.r-p1.r);
+  dc2 = retval * (-2)*sigma2*(p2.c-p1.c);
+  df2 = retval * (-2)*lambda*(p2.f-p1.f);  
+  return retval;
+}
+
+void ImageType::Scale(ImageType& image_out, double s) const {
+  image_out.pList.Resize(pList.size());
   for (index_t i = 0; i < pList.size(); i++)
-    image_out.pList[i].f *= s;
+    image_out.pList[i].setValue(pList[i].r, pList[i].c, pList[i].f * s);
 }
 
 void ImageType::Transform(ImageType& image_out, 
-			  const Transformation& t, double s) {
-  image_out.pList.Renew();
-  image_out.pList.Init(pList.size());
+			  const Transformation& t, double s) const {
+  image_out.pList.Resize(pList.size());
   for (index_t i = 0; i < pList.size(); i++)
     image_out.pList[i] = pList[i].Transform(t, s);
 }
+
+void ImageType::Save(const char* filename) const {
+  FILE* f = fopen(filename, "w");
+  for (index_t i = 0; i < pList.size(); i++) 
+    fprintf(f, "%g %g %g\n", pList[i].r, pList[i].c, pList[i].f);
+  fclose(f);
+}
+
+PointType PointType::Transform(const Transformation& t, double s) const {
+  PointType newPoint;
+  double d = t.m[6]*r + t.m[7]*c + 1;
+  newPoint.r = (t.m[0]*r + t.m[1]*c + t.m[2])/d;
+  newPoint.c = (t.m[3]*r + t.m[4]*c + t.m[5])/d;
+  newPoint.f = f * s;
+  return newPoint;
+}
+  
