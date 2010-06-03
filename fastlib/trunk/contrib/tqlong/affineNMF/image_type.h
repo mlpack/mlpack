@@ -11,8 +11,19 @@ struct Transformation {
     m[3] = 0; m[4] = 1; m[5] = 0;
     m[6] = 0; m[7] = 0;
   }
+
   Transformation(const Transformation& t) {
     m.Copy(t.m);
+  }
+
+  void operator=(const Transformation& t) {
+    m.CopyValues(t.m);
+  }
+
+  void Print() {
+    printf("%8f %8f %8f\n"
+	   "%8f %8f %8f\n"
+	   "%8f %8f %8f\n", m[0], m[1], m[2], m[3], m[4], m[5], m[6], m[7], 1.0);
   }
 };
 
@@ -21,17 +32,24 @@ struct PointType {
   double c;    // col
   double f;    // feature value or intensity 
 
-  PointType Transform(const Transformation& t, double s = 1.0) const {
-    PointType newPoint;
-    double d = t.m[6]*r + t.m[7]*c + 1;
-    newPoint.r = (t.m[0]*r + t.m[1]*c + t.m[2])/d;
-    newPoint.c = (t.m[3]*r + t.m[4]*c + t.m[5])/d;
-    newPoint.f = f * s;
-    return newPoint;
+  PointType(double r_ = 0, double c_ = 0, double f_ = 0) { 
+    r = r_; c = c_; f = f_;
   }
+
+  void setValue(double r_, double c_, double f_) { 
+    r = r_; c = c_; f = (f_>=0) ? f_ : 0; // f cannot be negative
+  }
+
+  void AddNumeric(const PointType& p, double lambda = 1.0) {
+    setValue(r+p.r*lambda, c+p.c*lambda, f+p.f*lambda);
+  }
+
+  PointType Transform(const Transformation& t, double s = 1.0) const;
 };
 
 double exp_kernel(const PointType&, const PointType&);
+double d_exp_kernel(const PointType& p1, const PointType& p2,
+		    double& dr2, double& dc2, double& df2);
 
 struct ImageType {
   ArrayList<PointType> pList;
@@ -45,6 +63,10 @@ struct ImageType {
     pList.InitCopy(image.pList);
   }
 
+  ImageType(const char* filename);
+
+  void Save(const char* filename) const;
+
   void Add(const ImageType& image) {
     pList.AppendCopy(image.pList);
   }
@@ -53,9 +75,10 @@ struct ImageType {
 		    double (*kernel)(const PointType&, 
 				     const PointType&) = exp_kernel) const;
   
-  void Scale(ImageType& image_out, double s = 1.0);
+  void Scale(ImageType& image_out, double s = 1.0) const;
   
-  void Transform(ImageType& image_out, const Transformation& t, double s = 1.0);
+  void Transform(ImageType& image_out, const Transformation& t, double s = 1.0) const;
   
+  index_t n_points() const { return pList.size(); }
 };
 
