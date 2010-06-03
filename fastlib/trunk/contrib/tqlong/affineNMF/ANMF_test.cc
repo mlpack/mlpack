@@ -9,6 +9,14 @@ const fx_entry_doc anmf_entries[] = {
    "  input file 2.\n"},
   {"i3", FX_PARAM, FX_STR, NULL,
    "  input file 3.\n"},
+  {"BInit", FX_PARAM, FX_STR_LIST, NULL,
+   "  input bases.\n"},
+  {"sigma", FX_PARAM, FX_DOUBLE, NULL,
+   "  sigma (0.5).\n"},
+  {"gamma", FX_PARAM, FX_DOUBLE, NULL,
+   "  gamma (0.1).\n"},
+  {"maxIter", FX_PARAM, FX_INT, NULL,
+   "  maxIter (100).\n"},
   /*
   {"fileE", FX_REQUIRED, FX_STR, NULL,
    "  A file containing HMM emission.\n"},
@@ -54,14 +62,39 @@ void nmf_run(const Matrix& V, index_t rank,
 }
 */
 
+void Save(FILE* f, const char* name, const ArrayList<ImageType>& X);
+void Save(FILE* f, const char* name, const ArrayList<Transformation>& T);
+void Save(FILE* f, const char* name, const ArrayList<Vector>& W);
+
+void LoadImageList(ArrayList<ImageType>& B, const char** fn, size_t n_bases) {
+  for (size_t i = 0; i < n_bases; i++) {
+    ImageType I(fn[i]);
+    B.PushBackCopy(I);
+  }
+}
+
+void CalculateRecovery(const ArrayList<Transformation>& T, 
+		       const ArrayList<Vector>& W, 
+		       const ArrayList<ImageType>& B, 
+		       ArrayList<ImageType>& XRecover) {
+  DEBUG_ASSERT(T.size() == W.size());
+  XRecover.Init();
+  for (index_t i = 0; i < T.size(); i++) {
+    ImageType S, Xi;
+    for (index_t j = 0; j < B.size(); j++) S.Add(B[j], W[i][j]);
+    S.Transform(Xi, T[i]);
+    XRecover.PushBackCopy(Xi);
+  }
+}
+
 int main(int argc, char* argv[]) {
   fx_module* root = fx_init(argc, argv, &anmf_doc);
 
   const char* f1 = fx_param_str(root, "i1", "i1");
-  const char* f2 = fx_param_str(root, "i2", "i2");
-  const char* f3 = fx_param_str(root, "i3", "i3");
+  size_t n_bases = 0; const char * def_bases [] = {"i4", "i5"};
+  const char** f2 = fx_param_str_array(root, "BInit", &n_bases, 2, def_bases); 
 
-  ImageType i1(f1), i2(f2), i3(f3), i4, i5;
+  ImageType i1(f1), i4, i5;
   Transformation t;
   Vector w; w.Init(2); w.SetAll(1.0);
 
@@ -69,7 +102,7 @@ int main(int argc, char* argv[]) {
   X.Init(); X.PushBackCopy(i1);
 
   ArrayList<ImageType> B;
-  B.Init(); B.PushBackCopy(i2); B.PushBackCopy(i3);
+  LoadImageList(B, f2, n_bases); // B.PushBackCopy(i2); B.PushBackCopy(i3);
 
   ArrayList<Transformation> T;
   T.Init(); T.PushBackCopy(t);
@@ -77,10 +110,19 @@ int main(int argc, char* argv[]) {
   ArrayList<Vector> W;
   W.PushBackCopy(w);
   
-  register_basis(X, T, W, B);
+  register_all(X, T, W, B);
 
-  B[0].Save("i6");
-  B[1].Save("i7");
+  ArrayList<ImageType> XRecover;
+  CalculateRecovery(T, W, B, XRecover);
+
+  FILE* f = fopen("out", "w");
+
+  Save(f, "B", B);
+  Save(f, "T", T);
+  Save(f, "W", W);
+  Save(f, "XRecover", XRecover);
+
+  fclose(f);
   
   /*
   ImageType i1(f1), i2(f2), i3(f3), i4, i5;
@@ -157,4 +199,28 @@ int main(int argc, char* argv[]) {
 
   fx_done(root);
   return 0;
+}
+
+void Save(FILE* f, const char* name, const ArrayList<ImageType>& X) {
+  fprintf(f, "---- ImageList %s size = %d ----\n", name, X.size());
+  for (index_t i = 0; i < X.size(); i++)
+    X[i].Save(f);
+  fprintf(f, "---- ImageList %s END ----\n", name);  
+}
+
+void Save(FILE* f, const char* name, const ArrayList<Transformation>& T) {
+  fprintf(f, "---- TransformList %s size = %d ----\n", name, T.size());
+  for (index_t i = 0; i < T.size(); i++)
+    T[i].Print(f);
+  fprintf(f, "---- TransformList %s END ----\n", name);  
+}
+
+void Save(FILE* f, const char* name, const ArrayList<Vector>& W) {
+  fprintf(f, "---- WeightsList %s size = %d ----\n", name, W.size());
+  for (index_t i = 0; i < W.size(); i++) {
+    for (index_t j = 0; j < W[i].length(); j++)
+      fprintf(f, "%g ", W[i][j]);
+    fprintf(f, "\n");
+  }
+  fprintf(f, "---- WeightsList %s END ----\n", name);  
 }

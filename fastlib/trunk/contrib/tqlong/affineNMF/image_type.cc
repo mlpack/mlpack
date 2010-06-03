@@ -21,25 +21,25 @@ double ImageType::Difference(const ImageType& image,
 }
 
 double exp_kernel(const PointType& p1, const PointType& p2) {
-  double sigma2 = 0.5;
-  double lambda = 0.1;
+  double sigma2 = fx_param_double(NULL, "sigma", 0.5);
+  double gamma = fx_param_double(NULL, "gamma", 0.1);
   double ds = (p1.r-p2.r)*(p1.r-p2.r) + (p1.c-p2.c)*(p1.c-p2.c);
   double df = (p1.f-p2.f)*(p1.f-p2.f);
   //printf("ds = %f df = %f\n", ds, df);
-  return -exp(-(sigma2*ds + lambda*df));
+  return -exp(-(sigma2*ds + gamma*df));
 }
 
 double d_exp_kernel(const PointType& p1, const PointType& p2,
 		    double& dr2, double& dc2, double& df2) {
-  double sigma2 = 0.5;
-  double lambda = 0.1;
+  double sigma2 = fx_param_double(NULL, "sigma", 0.5);
+  double gamma = fx_param_double(NULL, "gamma", 0.1);
   double ds = (p1.r-p2.r)*(p1.r-p2.r) + (p1.c-p2.c)*(p1.c-p2.c);
   double df = (p1.f-p2.f)*(p1.f-p2.f);
   //printf("ds = %f df = %f\n", ds, df);
-  double retval =  -exp(-(sigma2*ds + lambda*df));
+  double retval =  -exp(-(sigma2*ds + gamma*df));
   dr2 = retval * (-2)*sigma2*(p2.r-p1.r);
   dc2 = retval * (-2)*sigma2*(p2.c-p1.c);
-  df2 = retval * (-2)*lambda*(p2.f-p1.f);  
+  df2 = retval * (-2)*gamma*(p2.f-p1.f);  
   return retval;
 }
 
@@ -58,9 +58,14 @@ void ImageType::Transform(ImageType& image_out,
 
 void ImageType::Save(const char* filename) const {
   FILE* f = fopen(filename, "w");
+  Save(f);
+  fclose(f);
+}
+
+void ImageType::Save(FILE* f) const {
   for (index_t i = 0; i < pList.size(); i++) 
     fprintf(f, "%g %g %g\n", pList[i].r, pList[i].c, pList[i].f);
-  fclose(f);
+  fprintf(f, "--------------\n");
 }
 
 PointType PointType::Transform(const Transformation& t, double s) const {

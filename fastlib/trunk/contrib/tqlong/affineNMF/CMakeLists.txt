@@ -15,6 +15,7 @@ set(SOURCES
    register_transform.cc
    register_weights.cc
    register_basis.cc
+   register_all.cc
 )
 
 # add directory name to sources

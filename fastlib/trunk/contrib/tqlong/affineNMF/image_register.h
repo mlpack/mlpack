@@ -21,3 +21,6 @@ void register_basis(const ArrayList<ImageType>& X,
 void register_basis(const ArrayList<ImageType>& X, 
 		    const ArrayList<Transformation>& T, const ArrayList<Vector>& W,
 		    ArrayList<ImageType>& BOut);
+
+void register_all(const ArrayList<ImageType>& X, ArrayList<Transformation>& T, 
+		  ArrayList<Vector>& W, ArrayList<ImageType>& B);
