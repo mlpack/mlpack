@@ -1,14 +1,11 @@
-// Copyright 2007 Georgia Institute of Technology. All rights reserved.
-// ABSOLUTELY NOT FOR DISTRIBUTION
 /**
- * @file tree/kdtree.h
  *
- * Tools for kd-trees.
+ * @author Dongryeol Lee
  *
- * Eventually we hope to support KD trees with non-L2 (Euclidean)
- * metrics, like Manhattan distance.
+ * @file tree/gen_metric_tree.h
  *
- * @experimental
+ * Tools for metric-trees.
+ *
  */
 
 #ifndef TREE_GEN_METRIC_TREE_H
@@ -17,13 +14,12 @@
 #include "general_spacetree.h"
 
 #include "fastlib/base/common.h"
-#include "fastlib/col/arraylist.h"
 #include "fastlib/fx/fx.h"
 
 #include "gen_metric_tree_impl.h"
 
 /**
- * Regular pointer-style trees (as opposed to THOR trees).
+ * Regular pointer-style trees.
  */
 namespace proximity {
 
@@ -45,14 +41,14 @@ namespace proximity {
  */
 template<typename TMetricTree>
 TMetricTree *MakeGenMetricTree(Matrix& matrix, index_t leaf_size,
-                               ArrayList<index_t> *old_from_new = NULL,
-                               ArrayList<index_t> *new_from_old = NULL) {
+                               std::vector<int> *old_from_new = NULL,
+                               std::vector<int> *new_from_old = NULL) {
 
   TMetricTree *node = new TMetricTree();
   index_t *old_from_new_ptr;
 
   if (old_from_new) {
-    old_from_new->Init(matrix.n_cols());
+    old_from_new->resize(matrix.n_cols());
 
     for (index_t i = 0; i < matrix.n_cols(); i++) {
       (*old_from_new)[i] = i;
@@ -66,11 +62,11 @@ TMetricTree *MakeGenMetricTree(Matrix& matrix, index_t leaf_size,
 
   node->Init(0, matrix.n_cols());
   node->bound().center().Init(matrix.n_rows());
-  tree_gen_metric_tree_private::SplitGenMetricTree<TMetricTree>
-  (matrix, node, leaf_size, old_from_new_ptr);
+  tree_gen_metric_tree_private::SplitGenMetricTree<TMetricTree>(
+    matrix, node, leaf_size, old_from_new_ptr);
 
   if (new_from_old) {
-    new_from_old->Init(matrix.n_cols());
+    new_from_old->resize(matrix.n_cols());
     for (index_t i = 0; i < matrix.n_cols(); i++) {
       (*new_from_old)[(*old_from_new)[i]] = i;
     }
