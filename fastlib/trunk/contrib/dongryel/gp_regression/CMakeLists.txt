@@ -11,3 +11,15 @@ target_link_libraries(bilinear_form_test
                       mlpack
                       ${TRILINOS_LIBS}
                      )
+
+# test executable: lbfgs_opt_test
+add_executable(lbfgs_opt_test
+               EXCLUDE_FROM_ALL
+               lbfgs_opt_test.cc
+              )
+# link dependencies of test executable
+target_link_libraries(lbfgs_opt_test
+                      fastlib
+                      mlpack
+                      ${TRILINOS_LIBS}
+                     )
