@@ -7,11 +7,11 @@
  */
 
 // for BOOST testing
-#define BOOST_TEST_MAIN
 
 #include "fastlib/math/math_lib.h"
 #include "boost/test/unit_test.hpp"
 #include "contrib/dongryel/gp_regression/lbfgs_dev.h"
+#include <stdexcept>
 
 namespace optimization {
 namespace lbfgs_test {
@@ -52,7 +52,7 @@ class ExtendedRosenbrockFunction {
     }
 
     void InitStartingIterate(Vector *iterate) {
-      num_dimensions_ = 4 * math::Random(2, 200);
+      num_dimensions_ = 4 * math::RandInt(2, 200);
       iterate->Init(num_dimensions_);
       for (int i = 0; i < num_dimensions_; i++) {
         if (i % 2 == 0) {
@@ -162,12 +162,10 @@ class LbfgsTest {
 };
 };
 
-BOOST_AUTO_TEST_SUITE(TestSuiteLbfgs)
-BOOST_AUTO_TEST_CASE(TestCaseLbfgs) {
+int main(int argc, char *argv[]) {
   printf("Starting L-BFGS tests.\n");
   optimization::lbfgs_test::LbfgsTest test;
   test.TestExtendedRosenbrockFunction();
   test.TestWoodFunction();
   printf("All tests passed!");
 }
-BOOST_AUTO_TEST_SUITE_END()
