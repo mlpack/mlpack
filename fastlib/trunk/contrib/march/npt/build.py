@@ -12,6 +12,20 @@ librule(
     deplibs = ["fastlib:fastlib", ":n_point_impl"]
 )
 
+librule(
+    name = "n_point_multi",
+    sources = ["n_point_multi.cc", "results_tensor.cc", "multi_matcher.cc", "n_point_nodes.cc"],
+    headers = ["n_point_multi.h", "results_tensor.h", "multi_matcher.h", "n_point_nodes.h"],
+    deplibs = ["fastlib:fastlib", ":n_point_impl"]
+)
+
+binrule(
+    name = "n_point_multi_main",
+    sources = ["n_point_multi_main.cc"],
+    headers = [],
+    deplibs = ["fastlib:fastlib", ":n_point_multi"]
+)
+
 binrule(
     name = "n_point_testing",
     sources = ["n_point_testing.cc"],

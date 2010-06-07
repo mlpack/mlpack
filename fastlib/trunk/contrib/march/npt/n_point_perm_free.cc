@@ -152,7 +152,7 @@ int NPointPermFree::BaseCaseHelper_(ArrayList<ArrayList<index_t> >& point_sets,
       
       DEBUG_ONLY(points_in_tuple[k] = -1);
       
-      points_in_tuple[k] = -1;
+      //points_in_tuple[k] = -1;
       
     } // did the point work
     
