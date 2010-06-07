@@ -9,19 +9,53 @@
 
 #include "multi_matcher.h"
 
-// fills in the ranges of indices in the bandwidth
-void MultiMatcher::FindBandwidths_(double min_dist_sq, double max_dist_sq, 
-                                   double* max_subsume, double* min_exclude) {
 
+bool MultiMatcher::TestPointPair(double dist_sq, index_t tuple_index_1, 
+                                 index_t tuple_index_2, 
+                                 ArrayList<bool>& permutation_ok,
+                                 ArrayList<GenMatrix<index_t> >& permutation_ranges) {
+  
+  bool this_point_works = false;
+  
+  DEBUG_ASSERT(tuple_index_1 < tuple_index_2);
+  
+  for (index_t perm_ind = 0; perm_ind < num_permutations_; perm_ind++) {
+    
+    // this permutation is already bad
+    if (! permutation_ok[perm_ind]) {
+      continue;
+    }
+    
+    if (dist_sq >= distances_[num_bins_ - 1]) {
+        
+      // this permutation is bad
+      permutation_ok[perm_ind] = false;
+      continue;
+      
+    }
+    
+    // figure out what the largest index that works is here
+    //permutation_ranges[perm_ind].set(tuple_index_1, tuple_index_2, dist_sq);
+    // TODO: do I need to set the other side of the diagonal?
+    
+    // TODO: double check this
+    double* ind_ptr = std::upper_bound(distances_.begin(), distances_.end(), 
+                                       dist_sq);
+    int ind = (int)(ind_ptr - distances_.begin());
+    permutation_ranges[perm_ind].set(tuple_index_1, tuple_index_2, ind);
+    
+    this_point_works = true;
+    
+  } // loop over permutations
+  
+  return this_point_works;
   
   
-} // FindBandwidths_()
+} // TestPointPair
 
 
-// this needs to return the correct range of inconclusive bandwidths for the
-// pair of nodes (i.e. everything inside is subsumed, everything outside is 
-// excluded)
-// PROBLEM: the range for one permutation and that for another need not overlap
+
+/*
 void MultiMatcher::TestNodes_(const DHrectBound<2>& box1, 
                               const DHrectBound<2>& box2,
                               index_t tuple_index_1, index_t tuple_index_2,
@@ -40,5 +74,5 @@ void MultiMatcher::TestNodes_(const DHrectBound<2>& box1,
   range_out.Init(max_subsume, min_exclude);
     
 } // TestNodes_
-
+*/
 

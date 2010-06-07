@@ -22,41 +22,43 @@ class ResultsTensor {
 private:
   
   int tensor_rank_;
+  int tuple_size_;
   
-  int num_bandwidths_;
+  int lengths_;
   
-  ArrayList<double> bandwidths_;
-  
-  // TODO: how is this organized?
   ArrayList<int> results_;
+  int num_results_;
+  
+  ArrayList<bool> filled_results_;
   
   //////////// functions //////////////////////
   
   index_t FindIndex_(const ArrayList<index_t>& indices);
   
+  bool IncrementIndex_(ArrayList<index_t>& new_ind, 
+                       const ArrayList<index_t>& orig_ind, 
+                       index_t k);
+  
 public:
   
-  void Init(int n, double min_band, double max_band, int num_bands) {
-    
-    DEBUG_ASSERT(max_band > min_band);
-    DEBUG_ASSERT(num_bands > 0);
-    
+  void Init(int n, int length) {
+        
     tuple_size_ = n;
+    tensor_rank_ = n_point_impl::NChooseR(n, 2);
     
-    num_bandwidths_ = num_bands;
+    lengths_ = length;
     
-    bandwidths_.Init(num_bandwidths_);
+    num_results_ = 1;
+    for (index_t i = 0; i < tensor_rank_; i++) {
+      num_results_ *= lengths_;
+    }
     
-    double bandwidth_step = (max_band - min_band) / (double)num_bandwidths_;
-    
-    for (index_t i = 0; i < num_bandwidths_; i++) {
-      
-      bandwidths_[i] = min_band + (double)i * bandwidth_step;
-      
-    } // fill in bandwidths
-    
-    results_.Init(n_point_impl::NChooseR(num_bandwidths_ + tuple_size_ + 1, 
-                                         tuple_size_));
+    // The strictly upper triangular version
+    //results_.InitRepeat(initial_result, 
+    //                    n_point_impl::NChooseR(lengths_ + tuple_size_ + 1, 
+    //                                           tuple_size_));
+    results_.InitRepeat(0, num_results_);
+    filled_results_.InitRepeat(false, num_results_);
     
   } // Init()
   
@@ -75,39 +77,106 @@ public:
     results_[ind] = val;
     
   } // set()
+  
+  void SetAll(int val) {
+  
+    results_.Clear();
+    results_.InitRepeat(val, num_results_);
+    
+  }
 
-  void AddTo(const ArrayList<index_t>& indices, int val) {
-    
-    index_t ind = FindIndex_(indices);
-    
-    results_[ind] += val;
-    
-  } // AddTo()
+  /*
+  ArrayList<int>& results() const {
+    return results_;
+  }
+
+  ArrayList<bool>& filled_results() const {
+    return filled_results_;
+  }
+   */
+  
+  int tensor_rank() {
+    return tensor_rank_;
+  }
+  
+  int lengths() {
+    return lengths_;
+  }
+  
+  void ClearFilledResults() {
+    for (index_t i = 0; i < num_results_; i++) {
+      filled_results_[i] = false;
+    }
+  }
+  
+  void IncrementRange(const GenMatrix<index_t>& lower_inds);
   
   
+/*  
   void SetRange(const ArrayList<index_t>& lower_ind, 
                 const ArrayList<index_t>& upper_ind, int val);
 
   void AddToRange(const ArrayList<index_t>& lower_ind, 
                   const ArrayList<index_t>& upper_ind, int val);
-  
-  
-  void Print() {
+*/  
     
-//    ArrayList<index_t> indices;
-//    indices.InitRepeat(0, tuple_size_);
+  /*
+  void Copy(ResultsTensor& other) {
+    
+    results_.InitCopy(other.results());
+    filled_results_.InitCopy(other.filled_results());
+    
+    tensor_rank_ = other.tensor_rank();
+    lengths_ = other.lengths();
+    
+  } // Copy()
+  */
   
-    // TODO: Make this format better
-    for (index_t i = 0; i < results_.size(); i++) {
-
-      printf("%d\n", results_[i]);
+  void Output(ArrayList<double>& distances_, FILE* fp) {
+    
+    ArrayList<index_t> indices;
+    indices.InitRepeat(0, tensor_rank_);
+    
+    ArrayList<index_t> indices_copy;
+    indices_copy.InitCopy(indices);
+    
+    bool done = false;
+    
+    while(!done) {
       
-    } // initialize
+      Matrix this_matcher;
+      this_matcher.Init(tuple_size_, tuple_size_);
+      
+      index_t row_ind = 0;
+      index_t col_ind = 1;
+      
+      for (index_t i = 0; i < indices.size(); i++) {
+        
+        this_matcher.set(row_ind, col_ind, distances_[indices_copy[i]]);
+        
+        row_ind++;
+        if (row_ind >= lengths_) {
+          row_ind = 0;
+          col_ind = row_ind + 1;
+        }
+        
+      } // fill in the matcher's matrix
+      
+      index_t ind = FindIndex_(indices_copy);
+      
+      int this_result = results_[ind];
+      
+      // now do the printing
+      
+      this_matcher.PrintDebug("Matcher", fp);
+      fprintf(fp, "==Result: %d==\n\n", this_result);
+      
+      
+      done = IncrementIndex_(indices_copy, indices, 0);
+      
+    } // while
     
-    
-    
-  } // Print()
-  
+  } // Output()
   
   
 }; // NPointResults

@@ -7,17 +7,15 @@
  *
  */
 
-#include "n_point_results.h"
+#include "results_tensor.h"
 
-// TODO: test me!
+// This is the strictly upper triangular version
+/*
 index_t ResultsTensor::FindIndex_(const ArrayList<index_t>& indices) {
   
-  ArrayList<index_t> sort_ind;
-  sort_ind.InitCopy(indices);
-  
-  // TODO: double check that this is correct
-  std::sort(sort_ind.begin(), sort_ind.end());
-  
+
+  // This should be unnecessary
+
   // assuming the smallest index is first
   index_t return_ind = 0;
   for (index_t i = 1; i <= tensor_rank_; i++) {
@@ -40,14 +38,94 @@ index_t ResultsTensor::FindIndex_(const ArrayList<index_t>& indices) {
   
 } // FindIndex_
 
+*/
 
-// There is a range for each of the n! permutations
-void ResultsTensor::FillRanges(ArrayList<DRange>& ranges) {
+// Full tensor version
+index_t ResultsTensor::FindIndex_(const ArrayList<index_t>& indices) {
   
+  index_t result = indices[0];
+  index_t power = tensor_rank_;
   
+  for (index_t i = 1; i < indices.size(); i++) { 
+    
+    result += indices[i] * power;
+    power = power * tensor_rank_;
+    
+  } // for i
   
-} // FillRanges
+  return result;
+  
+} // FindIndex_()
 
+// TODO: test me!
+bool ResultsTensor::IncrementIndex_(ArrayList<index_t>& new_ind, 
+                                    const ArrayList<index_t>& orig_ind, 
+                                    index_t k) {
+  
+  if (k >= tensor_rank_) {
+    return true;
+  }
+  
+  new_ind[k]++;
+  if (new_ind[k] >= lengths_) {
+    new_ind[k] = orig_ind[k];
+    return IncrementIndex_(new_ind, orig_ind, k+1);
+  }
+  else {
+    return false;
+  }
+  
+} // IncrementIndex
+
+
+void ResultsTensor::IncrementRange(const GenMatrix<index_t>& lower_inds) {
+  
+  // map row major into the index array
+  // TODO: would column major be more efficient?
+  
+  
+  
+  ArrayList<index_t> this_result;
+  this_result.Init(lengths_);
+  
+  index_t row_ind = 0;
+  index_t col_ind = 1;
+  
+  for (index_t i = 0; i < this_result.size(); i++) {
+    
+    this_result[i] = lower_inds.get(row_ind, col_ind);
+    DEBUG_ASSERT(this_result[i] < lengths_ && this_result[i] >= 0);
+    col_ind++;
+    
+    if (col_ind >= lengths_) {
+      row_ind++;
+      col_ind = row_ind+1;
+    } // are we at the end of the row?
+    
+  } // for i
+  
+  ArrayList<index_t> this_result_orig;
+  this_result_orig.InitCopy(this_result);
+  
+  bool done = false;
+  
+  while (!done) {
+    
+    // fill in the entry
+    
+    index_t this_ind = FindIndex_(this_result);
+    
+    if (!filled_results_[this_ind]) {
+      filled_results_[this_ind] = true;
+      results_[this_ind]++;
+    }
+    
+    // increment the array
+    done = IncrementIndex_(this_result, this_result_orig, 0);
+    
+  } // while
+  
+} // IncrementRange()
 
 
 
