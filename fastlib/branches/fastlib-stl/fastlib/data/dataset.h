@@ -43,10 +43,13 @@
 #ifndef DATA_DATASET_H
 #define DATA_DATASET_H
 
-#include "../col/col_string.h"
+#include <string>
+#include <vector>
+
 #include "../la/matrix.h"
 #include "../math/discrete.h"
 #include "../file/textfile.h"
+#include "../col/tokenizer.h"
 
 class TextLineReader;
 class TextWriter;
@@ -72,30 +75,19 @@ class DatasetFeature {
   
  private:
   /** Name of the feature. */
-  String name_;
+  std::string name_;
   /** Type of data this feature represents. */
   Type type_;
   /** If nominal, the names of each numbered value. */
-  ArrayList<String> value_names_;
+  std::vector<std::string> value_names_;
   
-  OBJECT_TRAVERSAL(DatasetFeature) {
-    OT_OBJ(name_);
-    //OT_OBJ(reinterpret_cast<int &>(type_));
-    OT_ENUM_EXPERT(type_, int,
-      OT_ENUM_VAL(CONTINUOUS)
-      OT_ENUM_VAL(INTEGER)
-      OT_ENUM_VAL(NOMINAL));
-    OT_OBJ(value_names_);
-  }
-
  /**
   * Initialization common to all features.
   *
   * @param name_in the name of the feature
   */ 
- void InitGeneral(const char *name_in) {
-    name_.Copy(name_in);
-    value_names_.Init();
+ void InitGeneral(const std::string&  name_in) {
+    name_ = name_in;
  }
 
  public:
@@ -104,7 +96,7 @@ class DatasetFeature {
    *
    * @param name_in the name of the feature
    */
-  void InitContinuous(const char *name_in) {
+  void InitContinuous(const std::string& name_in) {
     InitGeneral(name_in);
     type_ = CONTINUOUS;
   }
@@ -114,7 +106,7 @@ class DatasetFeature {
    *
    * @param name_in the name of the feature
    */
-  void InitInteger(const char *name_in) {
+  void InitInteger(const std::string& name_in) {
     InitGeneral(name_in);
     type_ = INTEGER;
   }
@@ -128,7 +120,7 @@ class DatasetFeature {
    *
    * @param name_in the name of the feature
    */
-  void InitNominal(const char *name_in) {
+  void InitNominal(const std::string& name_in) {
     InitGeneral(name_in);
     type_ = NOMINAL;
   }
@@ -143,7 +135,7 @@ class DatasetFeature {
    * @param value the value to format
    * @param result this will be initialized to the formatted text
    */
-  void Format(double value, String *result) const;
+  void Format(double value, std::string& result) const;
   
   /**
    * Parses a string into the particular value.
@@ -157,14 +149,14 @@ class DatasetFeature {
    * @param str the string to parse
    * @param d where to store the result
    */
-  success_t Parse(const char *str, double *d) const;
+  success_t Parse(const std::string& str, double *d) const;
   
   /**
    * Gets what the feature is named.
    *
    * @return the name of the feature; for point, "Age" or "X Position"
    */
-  const String& name() const {
+  const std::string& name() const {
     return name_;
   }
   
@@ -184,7 +176,7 @@ class DatasetFeature {
    *
    * @param value the number of the value
    */
-  const String& value_name(int value) const {
+  const std::string& value_name(int value) const {
     DEBUG_ASSERT(type_ == NOMINAL);
     return value_names_[value];
   }
@@ -208,7 +200,7 @@ class DatasetFeature {
    *
    * @return a mutable array of value names
    */
-  ArrayList<String>& value_names() {
+  std::vector<std::string>& value_names() {
     return value_names_;
   }
 };
@@ -218,8 +210,8 @@ class DatasetFeature {
  */
 class DatasetInfo {
  private:
-  String name_;
-  ArrayList<DatasetFeature> features_;
+  std::string name_;
+  std::vector<DatasetFeature> features_;
 
   OBJECT_TRAVERSAL(DatasetInfo) {
     OT_OBJ(name_);
@@ -228,7 +220,7 @@ class DatasetInfo {
 
  public:
   /** Gets a mutable list of all features. */
-  ArrayList<DatasetFeature>& features() {
+  std::vector<DatasetFeature>& features() {
     return features_;
   }
 
@@ -244,13 +236,12 @@ class DatasetInfo {
   
   /** Gets the title of the data set. */
   const char *name() const {
-    return name_;
+    return name_.c_str();
   }
   
   /** Sets the title of the data set. */
-  void set_name(const char *name_in) {
-    name_.Destruct();
-    name_.Copy(name_in);
+  void set_name(const std::string& name_in) {
+    name_ = name_in;
   }
 
   /**
@@ -357,7 +348,7 @@ class DatasetInfo {
       bool *is_done) const;
 
  private:
-  char *SkipSpace_(char *s);
+  index_t SkipSpace_(std::string& s);
 
   char *SkipNonspace_(char *s);
 
@@ -381,11 +372,6 @@ class Dataset {
  private:
   Matrix matrix_;
   DatasetInfo info_;
-  
-  OBJECT_TRAVERSAL(Dataset) {
-    OT_OBJ(matrix_);
-    OT_OBJ(info_);
-  }
   
  public:
   /**
@@ -461,10 +447,10 @@ class Dataset {
    * @param labels_startpos start positions of each label class in
    *        labels_index. e.g. [0,7,12]
    */
-  void GetLabels(ArrayList<double> &labels_list,
-                 ArrayList<index_t> &labels_index,
-                 ArrayList<index_t> &labels_ct,
-                 ArrayList<index_t> &labels_startpos) const;
+  void GetLabels(std::vector<double> &labels_list,
+                 std::vector<index_t> &labels_index,
+                 std::vector<index_t> &labels_ct,
+                 std::vector<index_t> &labels_startpos) const;
  
   /**
    * Gets the numeric value of a particular feature and point.
@@ -535,7 +521,7 @@ class Dataset {
    * @param point the point index
    * @param result string that will be initialized to the formatted text
    */
-  void Format(index_t feature, index_t point, String *result) const {
+  void Format(index_t feature, index_t point, std::string& result) const {
     info_.feature(feature).Format(get(feature, point), result);
   }
   
@@ -650,7 +636,7 @@ class Dataset {
    * @param test the test set
    */
   void SplitTrainTest(int folds, int fold_number,
-      const ArrayList<index_t>& permutation,
+      const std::vector<index_t>& permutation,
       Dataset *train, Dataset *test) const;
 };
 
@@ -695,10 +681,10 @@ namespace data {
       return SUCCESS_FAIL;
     } 
     index_t dimension=0;
-    String line=reader->Peek();
-    ArrayList<String> result;
-    result.Init();
-    line.Split(",", &result);
+    std::string line=reader->Peek();
+    std::vector<std::string> result;
+//    line.Split(",", &result);
+    tokenizeString( line, ",", result );
     dimension=result.size();
     while (reader->Gobble()) {
     }
@@ -708,10 +694,10 @@ namespace data {
     reader = new TextLineReader();
     reader->Open(fname);
     while (true) {
-      String line=reader->Peek();
-      ArrayList<String> result;
-      result.Init();
-      line.Split(",", &result);
+      std::string line=reader->Peek();
+      std::vector<std::string> result;
+//      line.Split(",", &result);
+      tokenizeString( line, ",", result );
       for(index_t i=0; i<result.size(); i++) {
         Precision num;
         sscanf(result[i].c_str(), "%lf", &num);
