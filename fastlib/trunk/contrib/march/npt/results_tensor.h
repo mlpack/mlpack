@@ -24,7 +24,7 @@ private:
   int tensor_rank_;
   int tuple_size_;
   
-  int lengths_;
+  int num_bins_;
   
   ArrayList<int> results_;
   int num_results_;
@@ -46,11 +46,11 @@ public:
     tuple_size_ = n;
     tensor_rank_ = n_point_impl::NChooseR(n, 2);
     
-    lengths_ = length;
+    num_bins_ = length;
     
     num_results_ = 1;
     for (index_t i = 0; i < tensor_rank_; i++) {
-      num_results_ *= lengths_;
+      num_results_ *= num_bins_;
     }
     
     // The strictly upper triangular version
@@ -100,7 +100,7 @@ public:
   }
   
   int lengths() {
-    return lengths_;
+    return num_bins_;
   }
   
   void ClearFilledResults() {
@@ -152,11 +152,11 @@ public:
       
       for (index_t i = 0; i < indices.size(); i++) {
         
-        this_matcher.set(row_ind, col_ind, distances_[indices_copy[i]]);
+        this_matcher.set(row_ind, col_ind, sqrt(distances_[indices_copy[i]]));
         
-        row_ind++;
-        if (row_ind >= lengths_) {
-          row_ind = 0;
+        col_ind++;
+        if (col_ind >= tuple_size_) {
+          row_ind++;
           col_ind = row_ind + 1;
         }
         

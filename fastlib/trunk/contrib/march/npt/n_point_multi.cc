@@ -201,7 +201,7 @@ void NPointMulti::BaseCaseHelper_(ArrayList<ArrayList<index_t> >& point_sets,
             continue;
           }
           
-          results_.IncrementRange(permutation_ranges[perm_index]);
+          results_.IncrementRange(permutation_ranges_copy[perm_index]);
           
           
         } // iterate over permutations
@@ -283,21 +283,23 @@ void NPointMulti::DepthFirstRecursion_(NodeTuple& nodes,
   for (index_t i = 0; i < valid_ranges.size(); i++) {
 
     // IMPORTANT: first is lo, second is hi
-    
-    // TODO: how to account for upper and lower bounds in the matcher?
     valid_ranges[i].second = min(valid_ranges[i].second, nodes.upper_bound(i));
     valid_ranges[i].first = max(valid_ranges[i].first, nodes.lower_bound(i));
     
+    /*
     if (valid_ranges[i].first >= valid_ranges[i].second) {
+      printf("Pruning on empty range.\n");
       can_prune = true;
       break;
     } // check if the range is empty
     
     // TODO: make sure that it's not too small or large for any matcher
     if (valid_ranges[i].first > matcher_.max_dist()) {
+      printf("Pruning on too much separation for any matcher.\n");
       can_prune = true;
       break;
     } // too large
+     */
     
     // add lower bounds here later 
     
@@ -305,10 +307,12 @@ void NPointMulti::DepthFirstRecursion_(NodeTuple& nodes,
   
   // check prune - i.e. check if it's still possible to contribute to anything
   if (can_prune) {
+    printf("Pruned all\n");
     num_total_prunes_++;
     return;
   } // check prune
   else if (nodes.all_leaves()) {
+    printf("Base Case\n");
     BaseCase_(nodes, valid_ranges);
   } // base case
   else {

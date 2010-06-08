@@ -44,12 +44,12 @@ index_t ResultsTensor::FindIndex_(const ArrayList<index_t>& indices) {
 index_t ResultsTensor::FindIndex_(const ArrayList<index_t>& indices) {
   
   index_t result = indices[0];
-  index_t power = tensor_rank_;
+  index_t power = num_bins_;
   
   for (index_t i = 1; i < indices.size(); i++) { 
     
     result += indices[i] * power;
-    power = power * tensor_rank_;
+    power = power * num_bins_;
     
   } // for i
   
@@ -67,7 +67,7 @@ bool ResultsTensor::IncrementIndex_(ArrayList<index_t>& new_ind,
   }
   
   new_ind[k]++;
-  if (new_ind[k] >= lengths_) {
+  if (new_ind[k] >= num_bins_) {
     new_ind[k] = orig_ind[k];
     return IncrementIndex_(new_ind, orig_ind, k+1);
   }
@@ -86,7 +86,7 @@ void ResultsTensor::IncrementRange(const GenMatrix<index_t>& lower_inds) {
   
   
   ArrayList<index_t> this_result;
-  this_result.Init(lengths_);
+  this_result.Init(tensor_rank_);
   
   index_t row_ind = 0;
   index_t col_ind = 1;
@@ -94,10 +94,10 @@ void ResultsTensor::IncrementRange(const GenMatrix<index_t>& lower_inds) {
   for (index_t i = 0; i < this_result.size(); i++) {
     
     this_result[i] = lower_inds.get(row_ind, col_ind);
-    DEBUG_ASSERT(this_result[i] < lengths_ && this_result[i] >= 0);
+    DEBUG_ASSERT(this_result[i] < num_bins_ && this_result[i] >= 0);
     col_ind++;
     
-    if (col_ind >= lengths_) {
+    if (col_ind >= tuple_size_) {
       row_ind++;
       col_ind = row_ind+1;
     } // are we at the end of the row?
