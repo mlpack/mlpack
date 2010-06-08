@@ -26,7 +26,7 @@ bool MultiMatcher::TestPointPair(double dist_sq, index_t tuple_index_1,
       continue;
     }
     
-    if (dist_sq >= distances_[num_bins_ - 1]) {
+    if (dist_sq > distances_[num_bins_ - 1]) {
         
       // this permutation is bad
       permutation_ok[perm_ind] = false;
@@ -42,7 +42,13 @@ bool MultiMatcher::TestPointPair(double dist_sq, index_t tuple_index_1,
     double* ind_ptr = std::upper_bound(distances_.begin(), distances_.end(), 
                                        dist_sq);
     int ind = (int)(ind_ptr - distances_.begin());
-    permutation_ranges[perm_ind].set(tuple_index_1, tuple_index_2, ind);
+    DEBUG_ASSERT(ind < num_bins_ && ind >= 0);
+    // these need to be whereever they go in the permutation
+    index_t perm_index_1 = GetPermutationIndex_(perm_ind, tuple_index_1);
+    index_t perm_index_2 = GetPermutationIndex_(perm_ind, tuple_index_2);
+    
+    permutation_ranges[perm_ind].set(perm_index_1, perm_index_2, ind);
+    permutation_ranges[perm_ind].set(perm_index_2, perm_index_1, ind);
     
     this_point_works = true;
     

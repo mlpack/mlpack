@@ -167,7 +167,8 @@ void NPointMulti::BaseCaseHelper_(ArrayList<ArrayList<index_t> >& point_sets,
         
         double point_dist_sq = la::DistanceSqEuclidean(point_i, point_j);
         
-        //printf("Testing point pair (%d, %d)\n", j, k);
+        //printf("Testing point pair (%d, %d)\n", point_index_j, 
+        //       point_index_i);
         // This needs to fill in the permutation_ok_copy for each matcher
         this_point_works = matcher_.TestPointPair(point_dist_sq, j, k, 
                                                   permutation_ok_copy, 
@@ -193,6 +194,8 @@ void NPointMulti::BaseCaseHelper_(ArrayList<ArrayList<index_t> >& point_sets,
         
         results_.ClearFilledResults();
         
+        //ot::Print(permutation_ok_copy);
+        
         for (index_t perm_index = 0; perm_index < matcher_.num_permutations(); 
              perm_index++) {
           
@@ -200,6 +203,10 @@ void NPointMulti::BaseCaseHelper_(ArrayList<ArrayList<index_t> >& point_sets,
           if (! permutation_ok_copy[perm_index]) {
             continue;
           }
+          
+          //printf("perm_index: %d\n", perm_index);
+          //permutation_ranges_copy[perm_index].PrintDebug("PermutationRangesCopy");
+          //ot::Print(permutation_ranges_copy[perm_index]);
           
           results_.IncrementRange(permutation_ranges_copy[perm_index]);
           
@@ -292,14 +299,15 @@ void NPointMulti::DepthFirstRecursion_(NodeTuple& nodes,
       can_prune = true;
       break;
     } // check if the range is empty
-    
+    */
     // TODO: make sure that it's not too small or large for any matcher
+    
     if (valid_ranges[i].first > matcher_.max_dist()) {
-      printf("Pruning on too much separation for any matcher.\n");
+      //printf("Pruning on too much separation for any matcher.\n");
       can_prune = true;
       break;
     } // too large
-     */
+     
     
     // add lower bounds here later 
     
@@ -307,12 +315,12 @@ void NPointMulti::DepthFirstRecursion_(NodeTuple& nodes,
   
   // check prune - i.e. check if it's still possible to contribute to anything
   if (can_prune) {
-    printf("Pruned all\n");
+    //printf("Pruned all\n");
     num_total_prunes_++;
     return;
   } // check prune
   else if (nodes.all_leaves()) {
-    printf("Base Case\n");
+    //printf("Base Case\n");
     BaseCase_(nodes, valid_ranges);
   } // base case
   else {

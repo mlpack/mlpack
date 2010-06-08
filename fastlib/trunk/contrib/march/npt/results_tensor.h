@@ -144,6 +144,8 @@ public:
     
     while(!done) {
       
+      //ot::Print(indices_copy);
+      
       Matrix this_matcher;
       this_matcher.Init(tuple_size_, tuple_size_);
       

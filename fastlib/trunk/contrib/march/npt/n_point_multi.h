@@ -39,6 +39,8 @@ private:
   
   int num_total_prunes_;
   
+  int num_points_;
+  
   ArrayList<ArrayList<index_t> > invalid_indices_;
   
   
@@ -84,6 +86,8 @@ public:
     
     leaf_size_ = fx_param_int(mod_, "leaf_size", 1);
     
+    num_points_ = data_points_.n_cols();
+    
     
     // initialize results tensor
     results_.Init(tuple_size_, num_bands);
@@ -115,6 +119,8 @@ public:
     num_total_prunes_ = 0;
     
     FindInvalidIndices_();
+    
+    fx_result_int(mod_, "num_points", num_points_);
     
   } // Init() 
   
