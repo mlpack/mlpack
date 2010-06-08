@@ -45,11 +45,14 @@
 #define FILE_TEXTFILE_H
 
 #include "../base/base.h"
-#include "../col/col_string.h"
 
+#include <string>
 #include <cstdio>
 #include <ctype.h>
 #include <stdarg.h>
+
+#include <vector>
+#include <algorithm>
 
 /**
  * Helper for reading text files.
@@ -62,7 +65,7 @@ class TextLineReader {
   
  private:
   FILE *f_;
-  String line_;
+	std::string line_;
   int line_num_;
   bool has_line_;
   
@@ -115,14 +118,14 @@ class TextLineReader {
   /**
    * Gets the current line.
    */
-  String& Peek() {
+  std::string& Peek() {
     return line_;
   }
   
   /**
    * Gets the current line.
    */
-  const String& Peek() const {
+  const std::string& Peek() const {
     return line_;
   }
   
@@ -184,9 +187,9 @@ class TextTokenizer {
  
  private:
   FILE *f_;
-  String next_;
+  std::string next_;
   TokenType next_type_;
-  String cur_;
+  std::string cur_;
   TokenType cur_type_;
   const char *comment_start_;
   const char *ident_extra_;
@@ -209,7 +212,7 @@ class TextTokenizer {
       int features = 0);
 
   
-  const String& Peek() const {
+  const std::string& Peek() const {
     return next_;
   }
   
@@ -217,7 +220,7 @@ class TextTokenizer {
     return next_type_;
   }
   
-  const String& Current() const {
+  const std::string& Current() const {
     return cur_;
   }
   
@@ -240,6 +243,7 @@ class TextTokenizer {
     }
   }
   
+	/*
   bool MatchNoCase(const char *str) {
     if (next_.EqualsNoCase(str)) {
       Gobble();
@@ -248,6 +252,7 @@ class TextTokenizer {
       return false;
     }
   }
+	*/
   
   bool MatchInteger() {
     return MatchType(INTEGER);
@@ -305,15 +310,15 @@ class TextTokenizer {
     return ::feof(f_);
   }
   
-  char Skip_(ArrayList<char> *token);
+  char Skip_(std::vector<char>& token);
   
-  char NextChar_(ArrayList<char> *token);
+  char NextChar_(std::vector<char>& token);
 
   char NextChar_();
   
-  void UndoNextChar_(ArrayList<char> *token);
+  void UndoNextChar_(std::vector<char>& token);
   
-  void Error_(const char *msg, const ArrayList<char>& token);
+  void Error_(const char *msg, const std::vector<char>& token);
   
   bool isident_begin_(int c) const {
     return isalpha(c) || unlikely(c == '_');
@@ -323,11 +328,11 @@ class TextTokenizer {
     return isalnum(c) || unlikely(c == '_') || (c != 0 && strchr(ident_extra_, c));
   }
 
-  void ScanNumber_(char c, ArrayList<char> *token);
+  void ScanNumber_(char c, std::vector<char>& token);
 
-  void ScanString_(char ending, ArrayList<char> *token);
+  void ScanString_(char ending, std::vector<char>& token);
   
-  void Scan_(ArrayList<char> *token);
+  void Scan_(std::vector<char>& token);
 };
 
 /**
