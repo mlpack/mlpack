@@ -234,8 +234,7 @@ void NPointMulti::BaseCaseHelper_(ArrayList<ArrayList<index_t> >& point_sets,
 
 // Collect the indices of the valid matchers, check against each one?
 // How to re-use info?  
-void NPointMulti::BaseCase_(NodeTuple& nodes, 
-                            ArrayList<std::pair<double, double> >& valid_ranges) {
+void NPointMulti::BaseCase_(NodeTuple& nodes) {
   
   // Create the lists of points
   ArrayList<ArrayList<index_t> > point_sets;
@@ -278,8 +277,7 @@ void NPointMulti::BaseCase_(NodeTuple& nodes,
 
 // valid_ranges are the ranges of indices in the distances_ array in the matcher
 // it has length (n choose 2), the lower ends should be strictly non-decreasing
-void NPointMulti::DepthFirstRecursion_(NodeTuple& nodes, 
-                                       ArrayList<std::pair<double, double> >& valid_ranges) {
+void NPointMulti::DepthFirstRecursion_(NodeTuple& nodes) {
   
   bool can_prune = false;
   
@@ -287,19 +285,20 @@ void NPointMulti::DepthFirstRecursion_(NodeTuple& nodes,
   // valid_ranges holds the range of distances that WON'T prune
   // i.e. the only matchers that can't be pruned are ones that have a non-empty
   // overlap with valid_ranges[i] for all i
+  /*
   for (index_t i = 0; i < valid_ranges.size(); i++) {
 
     // IMPORTANT: first is lo, second is hi
     valid_ranges[i].second = min(valid_ranges[i].second, nodes.upper_bound(i));
     valid_ranges[i].first = max(valid_ranges[i].first, nodes.lower_bound(i));
     
-    /*
+    // can comment this out too
     if (valid_ranges[i].first >= valid_ranges[i].second) {
       printf("Pruning on empty range.\n");
       can_prune = true;
       break;
     } // check if the range is empty
-    */
+    
     // TODO: make sure that it's not too small or large for any matcher
     
     if (valid_ranges[i].first > matcher_.max_dist()) {
@@ -312,6 +311,11 @@ void NPointMulti::DepthFirstRecursion_(NodeTuple& nodes,
     // add lower bounds here later 
     
   } // update ranges
+*/
+  
+  if (nodes.lower_bound(n_choose_2_ - 1) > matcher_.max_dist()) {
+    can_prune = true;
+  } 
   
   // check prune - i.e. check if it's still possible to contribute to anything
   if (can_prune) {
@@ -321,7 +325,7 @@ void NPointMulti::DepthFirstRecursion_(NodeTuple& nodes,
   } // check prune
   else if (nodes.all_leaves()) {
     //printf("Base Case\n");
-    BaseCase_(nodes, valid_ranges);
+    BaseCase_(nodes);
   } // base case
   else {
     
@@ -341,20 +345,20 @@ void NPointMulti::DepthFirstRecursion_(NodeTuple& nodes,
       
       //printf("Left node\n");
       //left_node.Print();
-      ArrayList<std::pair<double, double> > left_ranges;
-      left_ranges.InitCopy(valid_ranges);
+      //ArrayList<std::pair<double, double> > left_ranges;
+      //left_ranges.InitCopy(valid_ranges);
       DEBUG_ASSERT(left_node.node_list(0));
-      DepthFirstRecursion_(left_node, left_ranges);
+      DepthFirstRecursion_(left_node);
     
     }
     if (right_node_ptr) {
       
-      ArrayList<std::pair<double, double> > right_ranges;
-      right_ranges.InitCopy(valid_ranges);
+      //ArrayList<std::pair<double, double> > right_ranges;
+      //right_ranges.InitCopy(valid_ranges);
       //printf("Right node\n");
       //right_node.Print();
       DEBUG_ASSERT(right_node.node_list(0));
-      DepthFirstRecursion_(right_node, right_ranges);
+      DepthFirstRecursion_(right_node);
       
     }
     
