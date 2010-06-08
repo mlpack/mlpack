@@ -35,6 +35,7 @@ private:
   NPointNode* tree_;
   
   int tuple_size_; 
+  int n_choose_2_;
   
   int num_total_prunes_;
   
@@ -79,6 +80,7 @@ public:
     data_points_.Copy(data);
     
     tuple_size_ = n;
+    n_choose_2_ = n_point_impl::NChooseR(tuple_size_, 2);
     
     leaf_size_ = fx_param_int(mod_, "leaf_size", 1);
     
@@ -91,8 +93,11 @@ public:
     ArrayList<double> dists_sq;
     dists_sq.Init(num_bands);
     
+    
     double this_dist = band_min;
-    double dist_step = (band_max - band_min) / (double)num_bands;
+    double dist_step = (band_max - band_min) / (double)(num_bands-1);
+    
+    //printf("dist_step = %g\n", dist_step);
     
     // TODO: double check this
     for (index_t i = 0; i < num_bands; i++) {
@@ -131,7 +136,7 @@ public:
     nodes.Init(node_list);
     
     ArrayList<std::pair<double, double> > valid_ranges;
-    valid_ranges.Init(n_point_impl::NChooseR(tuple_size_, 2));
+    valid_ranges.Init(n_choose_2_);
     
     for (index_t i = 0; i < valid_ranges.size(); i++) {
       valid_ranges[i].first = 0.0;
@@ -142,6 +147,8 @@ public:
     
     
     fx_timer_stop(mod_, "n_point_time");
+    
+    fx_result_int(mod_, "num_total_prunes", num_total_prunes_);
 
     const char* filename = fx_param_str(mod_, "output_file", "output.txt");
     
