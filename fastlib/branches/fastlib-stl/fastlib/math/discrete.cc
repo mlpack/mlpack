@@ -79,6 +79,12 @@ void math::MakeIdentityPermutation(index_t size, index_t *array) {
   }
 }
 
+void math::MakeIdentityPermutation(index_t size, std::vector<index_t>& result) {
+  result.reserve(size);
+
+  for (index_t i = 0; i < size; i++) 
+    result.push_back(i);
+}
 void math::MakeRandomPermutation(index_t size, index_t *array) {
   // Regular permutation algorithm.
   // This is cache inefficient for large sizes; large caches might

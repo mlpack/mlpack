@@ -71,7 +71,7 @@ namespace math {
    * @param size the number of elements in the permutation
    * @param array a place to store the permutation
    */
-  void MakeIdentityPermutation(index_t size, std::vector<index_t>::iterator array);
+  void MakeIdentityPermutation(index_t size, index_t *array);
   
   /**
    * Creates an identity permutation where the element i equals i.
@@ -81,11 +81,8 @@ namespace math {
    * @param size the size to initialize the result to
    * @param result will be initialized to the identity permutation
    */
-  inline void MakeIdentityPermutation(
-      index_t size, std::vector<index_t>& result) {
-    result.reserve(size);
-    MakeIdentityPermutation(size, result.begin());
-  }
+  void MakeIdentityPermutation(
+      index_t size, std::vector<index_t>& result);
   
   /**
    * Creates a random permutation and stores it in an existing C array
@@ -96,7 +93,7 @@ namespace math {
    * @param size the number of elements
    * @param array the array to store a permutation in
    */
-  void MakeRandomPermutation(index_t size, std::vector<index_t>& array);
+  void MakeRandomPermutation(index_t size, index_t* array);
   
   /**
    * Creates a random permutation over integers 0 throush size - 1.
@@ -106,23 +103,23 @@ namespace math {
    */
   inline void MakeRandomPermutation(
       index_t size, std::vector<index_t>& result) {
-    result.reserve(size);
-    MakeRandomPermutation(size, result);
+    result.resize(size,0);
+    MakeRandomPermutation(size, &result.front());
   }
 
   /**
    * Inverts or transposes an existing permutation.
    */
   void MakeInversePermutation(index_t size,
-      const std::vector<index_t>& original, std::vector<index_t>& reverse);
+      const index_t* original, index_t* reverse);
 
   /**
    * Inverts or transposes an existing permutation.
    */
   inline void MakeInversePermutation(
       const std::vector<index_t>& original, std::vector<index_t>& reverse) {
-    reverse.reserve(original.size());
-    MakeInversePermutation(original.size(), original, reverse);
+    reverse.resize(original.size(),0);
+    MakeInversePermutation(original.size(), &original.front(), &reverse.front());
   }
   
   template<typename TAnyIntegerType>
