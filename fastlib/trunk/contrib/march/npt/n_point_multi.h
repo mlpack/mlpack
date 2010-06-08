@@ -60,11 +60,9 @@ private:
                        ArrayList<GenMatrix<index_t> >& permutation_ranges);
     
   
-  void BaseCase_(NodeTuple& nodes, 
-                 ArrayList<std::pair<double, double> >& valid_ranges);
+  void BaseCase_(NodeTuple& nodes);
   
-  void DepthFirstRecursion_(NodeTuple& nodes, 
-                            ArrayList<std::pair<double, double> >& valid_ranges);
+  void DepthFirstRecursion_(NodeTuple& node);
   
   
   bool PointsViolateSymmetry_(index_t ind1, index_t ind2);
@@ -141,6 +139,7 @@ public:
     
     nodes.Init(node_list);
     
+    /*
     ArrayList<std::pair<double, double> > valid_ranges;
     valid_ranges.Init(n_choose_2_);
     
@@ -148,8 +147,9 @@ public:
       valid_ranges[i].first = 0.0;
       valid_ranges[i].second = DBL_MAX;
     }
+     */
     
-    DepthFirstRecursion_(nodes, valid_ranges);
+    DepthFirstRecursion_(nodes);
     
     
     fx_timer_stop(mod_, "n_point_time");
