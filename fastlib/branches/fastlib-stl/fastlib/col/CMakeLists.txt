@@ -8,6 +8,7 @@ set(SOURCES
    heap.h
    intmap.h
    rangeset.h
+   tokenizer.h
 )
 
 # add directory name to sources
