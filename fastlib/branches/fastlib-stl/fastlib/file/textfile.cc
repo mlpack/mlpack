@@ -110,7 +110,6 @@ success_t TextLineReader::Open(const char *fname) {
   f_ = fopen(fname, "r");
   line_num_ = 0;
   has_line_ = false;
-  line_.Init();
   
   if (unlikely(f_ == NULL)) {
     return SUCCESS_FAIL;
@@ -123,15 +122,12 @@ success_t TextLineReader::Open(const char *fname) {
 bool TextLineReader::Gobble() {
   char *ptr = ReadLine_();
   
-  line_.Destruct();
-  
   if (likely(ptr != NULL)) {
-    line_.Steal(ptr);
+    line_.assign(ptr);
     has_line_ = true;
     line_num_++;
     return true;
   } else {
-    line_.Init();
     has_line_ = false;
     return false;
   }
@@ -171,8 +167,8 @@ char *TextLineReader::ReadLine_() {
 success_t TextTokenizer::Open(const char *fname,
     const char *comment_chars_in, const char *ident_extra_in,
     int features_in) {
-  next_.Copy("");
-  cur_.Copy("");
+  next_.assign("");
+  cur_.assign("");
   next_type_ = END;
   cur_type_ = END;
   comment_start_ = comment_chars_in;
@@ -206,15 +202,15 @@ char TextTokenizer::NextChar_() {
   return c;
 }
 
-char TextTokenizer::NextChar_(ArrayList<char> *token) {
+char TextTokenizer::NextChar_(std::vector<char>& token) {
   char c = NextChar_();
 
-  token->PushBackCopy(c);
+  token.push_back(c);
   
   return c;
 }
 
-char TextTokenizer::Skip_(ArrayList<char> *token) {
+char TextTokenizer::Skip_(std::vector<char>& token) {
   int c;
   
   while (1) {
@@ -238,42 +234,41 @@ char TextTokenizer::Skip_(ArrayList<char> *token) {
     }
   }
   
-  token->PushBackCopy(char(c));
+  token.push_back(char(c));
   
   return char(c);
 }
 
-void TextTokenizer::UndoNextChar_(ArrayList<char> *token) {
+void TextTokenizer::UndoNextChar_(std::vector<char>& token) {
   char c;
-  token->PopBackInit(&c);
+  c = token.back();
+  token.pop_back();
   if (c != 0) { /* don't put EOF back on the stream */
     Unget_(c);
   }
 }
 
-void Sanitize(const String& src, String* dest) {
-  dest->Init();
-  
+void Sanitize(const std::string& src, std::string& dest) {
   for (index_t i = 0; i < src.length(); i++) {
     char c = src[i];
     
     if (isgraph(c) || c == ' ' || c == '\t') {
-      *dest += c;
+      dest += c;
     } else if (isspace(c)) {
-      *dest += "<whitespace>";
+      dest += "<whitespace>";
     } else {
-      *dest += "<nonprint>";
+      dest += "<nonprint>";
     }
   }
 }
 
 void TextTokenizer::Error(const char *format, ...) {
   va_list vl;
-  String cur_sanitized;
-  String next_sanitized;
+  std::string cur_sanitized;
+  std::string next_sanitized;
   
-  Sanitize(cur_, &cur_sanitized);
-  Sanitize(next_, &next_sanitized);
+  Sanitize(cur_, cur_sanitized);
+  Sanitize(next_, next_sanitized);
   
   // TODO: Use a warning propagation system
   fprintf(stderr, ".| %d: %s <-HERE-> %s\nX|  `-> ", line_,
@@ -286,16 +281,16 @@ void TextTokenizer::Error(const char *format, ...) {
   fprintf(stderr, "\n");
 }
 
-void TextTokenizer::Error_(const char *msg, const ArrayList<char>& token) {
+void TextTokenizer::Error_(const char *msg, const std::vector<char>& token) {
   next_type_ = INVALID;
   
   printf("size is %"LI", token[0] = %d\n", token.size(), token[0]);
-  next_.Copy(token.begin(), token.size());
+  next_.assign(token.begin(), token.end());
   Error("%s", msg);
-  next_.Destruct();
+  next_.clear();
 }
 
-void TextTokenizer::ScanNumber_(char c, ArrayList<char> *token) {
+void TextTokenizer::ScanNumber_(char c, std::vector<char>& token) {
   bool dot = false;
   bool floating = false;
   
@@ -303,7 +298,7 @@ void TextTokenizer::ScanNumber_(char c, ArrayList<char> *token) {
     if (unlikely(c == '.')) {
       /* handle a period */
       if (unlikely(dot)) {
-        Error_("Multiple decimal points in a float", *token);
+        Error_("Multiple decimal points in a float", token);
         return;
       }
       dot = true;
@@ -335,7 +330,7 @@ void TextTokenizer::ScanNumber_(char c, ArrayList<char> *token) {
   } else if (isspace(c) || ispunct(c)) {
     UndoNextChar_(token);
   } else {
-    Error_("Invalid character while parsing number", *token);
+    Error_("Invalid character while parsing number", token);
   }
   
   if (floating) {
@@ -345,14 +340,14 @@ void TextTokenizer::ScanNumber_(char c, ArrayList<char> *token) {
   }
 }
 
-void TextTokenizer::ScanString_(char ending, ArrayList<char> *token) {
+void TextTokenizer::ScanString_(char ending, std::vector<char>& token) {
   int c;
   
   while (1) {
     c = NextChar_(token);
     
     if (c == 0) {
-      Error_("Unterminated String", *token);
+      Error_("Unterminated String", token);
       UndoNextChar_(token);
       return;
     }
@@ -364,11 +359,13 @@ void TextTokenizer::ScanString_(char ending, ArrayList<char> *token) {
   }
 }
 
-void TextTokenizer::Scan_(ArrayList<char> *token) {
+void TextTokenizer::Scan_(std::vector<char>& token) {
   char c = Skip_(token);
   
   if (c == 0) {
-    token->Clear();
+    // Makes token's capacity = 0
+    std::vector<char> empty;
+    token.swap(empty);
     next_type_ = END;
     return;
   } else if (c == '.' || isdigit(c)) {
@@ -391,20 +388,20 @@ void TextTokenizer::Scan_(ArrayList<char> *token) {
       next_type_ = PUNCT;
     }
   } else {
-    Error_("Unknown Character", *token);
+    Error_("Unknown Character", token);
   }
 }
 
 void TextTokenizer::Gobble() {
-  cur_.Destruct();
-  cur_.StealDestruct(&next_);
+
+  cur_.assign(next_);
+  next_.clear();
   cur_type_ = next_type_;
   
-  ArrayList<char> token;
-  token.Init();
-  Scan_(&token);
-  token.PushBackCopy('\0');
-  next_.Steal(&token);
+  std::vector<char> token;
+  Scan_(token);
+  token.push_back('\0');
+  std::copy( token.begin(), token.end(), next_.begin() );
   DEBUG_ASSERT(next_.length() == index_t(strlen(next_.c_str())));
 }
 
