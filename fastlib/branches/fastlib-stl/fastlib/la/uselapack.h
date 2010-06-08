@@ -40,7 +40,7 @@
 
 #include "matrix.h"
 //#include "matrix.h"
-#include "../col/arraylist.h"
+#include <vector>
 
 #define DEBUG_VECSIZE(a, b) \
     DEBUG_SAME_SIZE((a).length(), (b).length())
@@ -870,7 +870,7 @@ namespace la {
    * @return SUCCESS_PASS if successful, SUCCESS_FAIL otherwise
    */
   success_t PLUInit(const Matrix &A,
-      ArrayList<f77_integer> *pivots, Matrix *L, Matrix *U);
+      std::vector<f77_integer>& pivots, Matrix *L, Matrix *U);
 
   /**
    * Destructively computes an inverse from a PLU decomposition.

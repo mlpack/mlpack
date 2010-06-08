@@ -75,16 +75,16 @@ namespace la {
 };
 
 success_t la::PLUInit(const Matrix &A,
-    ArrayList<f77_integer> *pivots, Matrix *L, Matrix *U) {
+    std::vector<f77_integer>& pivots, Matrix *L, Matrix *U) {
   index_t m = A.n_rows();
   index_t n = A.n_cols();
   success_t success;
 
   if (m > n) {
-    pivots->Init(n);
+    pivots.reserve(n);
     L->Copy(A);
     U->Init(n, n);
-    success = PLUExpert(pivots->begin(), L);
+    success = PLUExpert(&pivots.front(), L); // undefined?
 
     if (!PASSED(success)) {
       return success;
@@ -100,10 +100,10 @@ success_t la::PLUInit(const Matrix &A,
       lcol[j] = 1.0;
     }
   } else {
-    pivots->Init(m);
+    pivots.reserve(m);
     L->Init(m, m);
     U->Copy(A);
-    success = PLUExpert(pivots->begin(), U);
+    success = PLUExpert(&pivots.front(), U); // undefined
 
     if (!PASSED(success)) {
       return success;
