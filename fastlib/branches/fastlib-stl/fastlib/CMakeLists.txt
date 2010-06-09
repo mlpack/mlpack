@@ -27,7 +27,7 @@ set(DIRS
    math
    mmanager  ## not yet
    par
-   thor  # requires pthread linking
+   #thor  # requires pthread linking
    tree
 #   sparse
 )  #!!

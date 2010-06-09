@@ -45,6 +45,8 @@
 
 #include "../col/heap.h"
 
+#include <vector>
+
 #include "thread.h"
 //#include "thread.h"
 
@@ -230,9 +232,9 @@ class ThreadedGrainRunner {
    * all grains of work.
    */
   void RunThreads(int num_threads) {
-    ArrayList<Thread*> threads;
+    std::vector<Thread*> threads;
     
-    threads.Init(num_threads);
+    threads.reserve(num_threads);
     
     for (int i = 0; i < num_threads; i++) {
       threads[i] = SpawnThread();
