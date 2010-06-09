@@ -113,7 +113,6 @@ RpcSockImpl *RpcSockImpl::instance = NULL;
 void RpcSockImpl::Init() {
   channels_.Init();
   channels_.default_value() = NULL;
-  unknown_connections_.Init();
   live_pings_ = 0;
   peer_from_fd_.Init();
   peer_from_fd_.default_value() = -1;
@@ -175,7 +174,7 @@ void RpcSockImpl::Done() {
     WakeUpPollingLoop();
     polling_thread_.WaitStop();
     close(listen_fd_);
-    peers_.Resize(0); // automatically calls their destructors
+    peers_.clear(); // automatically calls their destructors
   }
 }
 
@@ -259,12 +258,13 @@ int RpcSockImpl::AssignTransaction(int peer_num, Transaction *transaction) {
     peer->outgoing_free = peer->outgoing_freelist[id];
   } else {
     id = peer->outgoing_transactions.size();
-    peer->outgoing_transactions.Resize(id + 1);
-    peer->outgoing_freelist.Resize(id + 1);
+//    peer->outgoing_transactions.resize(id + 1);
+//    peer->outgoing_freelist.Resize(id + 1);
   }
   //fprintf(stderr, "%d to %d: registering %d\n", rpc::rank(), peer_num, id);
   DEBUG_ONLY(peer->outgoing_freelist[id] = -1);
-  peer->outgoing_transactions[id] = transaction;
+//  peer->outgoing_transactions[id] = transaction;
+  peer->outgoing_transactions.push_back(transaction);
   peer->mutex.Unlock();
   return id;
 }
@@ -276,7 +276,7 @@ int RpcSockImpl::AssignTransaction(int peer_num, Transaction *transaction) {
 
 void RpcSockImpl::CreatePeers_() {
 
-  peers_.Init(n_peers_);
+  peers_.reserve(n_peers_);
 
   if (n_peers_ == 1) {
     Peer *peer = &peers_[0];
@@ -300,8 +300,6 @@ void RpcSockImpl::CalcChildren_() {
                  unsigned((~rank_) & (rank_-1)));
   int i;
 
-  children_.Init();
-
   // okay, all peers between my rank and my rank + m - 1 are my direct or
   // indirect children.  the ones that have a power of two difference from
   // me are my direct children.
@@ -311,7 +309,7 @@ void RpcSockImpl::CalcChildren_() {
 
   while (i > 1) {
     i /= 2;
-    children_.PushBack() = rank_ + i;
+    children_.push_back(rank_ + i);
   }
 
   parent_ = rank_ - ((~rank_) & (rank_-1)) - 1;
@@ -370,13 +368,11 @@ void RpcSockImpl::StartPollingThread_() {
 }
 
 void RpcSockImpl::PollingLoop_() {
-  ArrayList<WorkItem> work_items;
+  std::vector<WorkItem> work_items;
   fd_set read_fds;
   fd_set write_fds;
   fd_set error_fds;
   int initialization_seconds = 0;
-
-  work_items.Init();
 
   while (status_ != STOP) {
     index_t j = 0;
@@ -439,7 +435,7 @@ void RpcSockImpl::PollingLoop_() {
             unknown_connections_[j++] = unknown_connections_[i];
           }
         }
-        unknown_connections_.Resize(j);
+        unknown_connections_.reserve(j);
       }
 
       bool errors_ok = (status_ == STOP) || (status_ == STOP_SYNC);
@@ -503,7 +499,7 @@ void RpcSockImpl::PollingLoop_() {
         // Accept incoming connections
         int new_fd;
         while ((new_fd = accept(listen_fd_, NULL, NULL)) >= 0) {
-          unknown_connections_.PushBack() = new_fd;
+          unknown_connections_.push_back(new_fd);
           RegisterReadFd(-1, new_fd);
         }
       }
@@ -684,8 +680,6 @@ void RpcSockImpl::DeactivateWriteFd(int fd) {
 RpcSockImpl::Peer::Peer() {
   incoming_transactions.Init();
   incoming_transactions.default_value() = NULL;
-  outgoing_transactions.Init();
-  outgoing_freelist.Init();
   outgoing_free = -1;
   is_pending = false;
 }
@@ -698,7 +692,6 @@ RpcSockImpl::Peer::~Peer() {
 void Transaction::Init(int channel_in) {
   // Set up our internal data.
   channel_ = channel_in;
-  peers_.Init();
 }
 
 Message *Transaction::CreateMessage(int peer, size_t size) {
@@ -717,11 +710,12 @@ Message *Transaction::CreateMessage(int peer, size_t size) {
   if (i == peers_.size()) {
     // We haven't sent or received from this peer, so we need to send the
     // channel number to it so that the channel can create a new transaction.
-    peers_.PushBack();
+    PeerInfo peer_info;
     transaction_id = RpcSockImpl::instance->AssignTransaction(peer, this);
-    peers_[i].peer = peer;
-    peers_[i].channel = channel();
-    peers_[i].transaction_id = transaction_id;
+    peer_info.peer = peer;
+    peer_info.channel = channel();
+    peer_info.transaction_id = transaction_id;
+    peers_.push_back(peer_info);
   }
 
   // Create a message we can send!
@@ -737,10 +731,11 @@ void Transaction::TransactionHandleNewSender_(Message *message) {
   // We'll reply to this with channel -1, meaning that it was the other end
   // who initiated the transaction ID, i.e., the transaction ID lives in
   // their namespace.
-  PeerInfo &peer_info = peers_.PushBack();
+  PeerInfo peer_info;
   peer_info.peer = message->peer();
   peer_info.channel = -1;
   peer_info.transaction_id = message->transaction_id();
+  peers_.push_back(peer_info);
 }
 
 void Transaction::Send(Message *message) {
@@ -753,7 +748,7 @@ void Transaction::Done() {
     RpcSockImpl::instance->UnregisterTransaction(
         peers_[i].peer, peers_[i].channel, peers_[i].transaction_id);
   }
-  peers_.Clear();
+  peers_.clear();
 }
 
 void Transaction::Done(int peer) {
@@ -763,7 +758,7 @@ void Transaction::Done(int peer) {
       RpcSockImpl::instance->UnregisterTransaction(
           peers_[i].peer, peers_[i].channel, peers_[i].transaction_id);
       peers_[i] = peers_[peers_.size()-1];
-      peers_.PopBack();
+      peers_.pop_back();
       break;
     }
   }

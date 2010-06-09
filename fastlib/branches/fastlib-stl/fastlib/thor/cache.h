@@ -8,6 +8,7 @@
 #define THOR_CACHE_H
 
 #include "blockdev.h"
+#include <vector>
 
 /**
  * Handles events associated with a cache pulling blocks in and out of memory.
@@ -19,9 +20,9 @@ class BlockHandler {
   virtual ~BlockHandler() {}
 
   /** Save state. */
-  virtual void Serialize(ArrayList<char>* data) const = 0;
+  virtual void Serialize(std::vector<char>* data) const = 0;
   /** Initialize from state. */
-  virtual void Deserialize(const ArrayList<char>& data) = 0;
+  virtual void Deserialize(const std::vector<char>& data) = 0;
   /** Initialize a chunk in frozen state. */
   virtual void BlockInitFrozen(BlockDevice::blockid_t blockid,
       BlockDevice::offset_t begin,

@@ -11,12 +11,12 @@
 #define THOR_RPC_H
 
 #include "../base/base.h"
+#include <vector>
 
 #include "blockdev.h"
 #include "rpc_base.h"
 #include "rpc_sock.h"
 
-#include "../col/arraylist.h"
 
 //--------------------------------------------------------------------------
 
@@ -209,7 +209,7 @@ class ReduceChannel : public Channel {
     FORBID_ACCIDENTAL_COPIES(ReduceTransaction);
 
    private:
-    ArrayList<Message*> received_;
+    std::vector<Message*> received_;
     int n_received_;
     TData *data_;
     const TReductor *reductor_;
@@ -243,7 +243,7 @@ class ReduceChannel : public Channel {
     void Init(int channel_num, const TReductor *reductor_in, TData *data_inout) {
       Transaction::Init(channel_num);
       reductor_ = reductor_in;
-      received_.Init(rpc::n_children());
+      received_.reserve(rpc::n_children());
       for (index_t i = 0; i < received_.size(); i++) {
         received_[i] = NULL;
       }

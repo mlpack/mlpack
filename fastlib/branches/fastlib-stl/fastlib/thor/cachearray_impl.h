@@ -2,18 +2,18 @@
 
 template<typename T>
 void CacheArrayBlockHandler<T>::Init(const T& default_obj) {
-  default_elem_.Init(ot::FrozenSize(default_obj));
+  default_elem_.reserve(ot::FrozenSize(default_obj));
   ot::Freeze(default_elem_.begin(), default_obj);
 }
 
 template<typename T>
-void CacheArrayBlockHandler<T>::Serialize(ArrayList<char>* data) const {
-  data->InitCopy(default_elem_);
+void CacheArrayBlockHandler<T>::Serialize(std::vector<char>* data) const {
+  data->assign(default_elem_.begin(), default_elem_.end());
 }
 
 template<typename T>
-void CacheArrayBlockHandler<T>::Deserialize(const ArrayList<char>& data) {
-  default_elem_.InitCopy(data);
+void CacheArrayBlockHandler<T>::Deserialize(const std::vector<char>& data) {
+  default_elem_.assign(data.begin(), data.end());
 }
 
 template<typename T>
@@ -22,7 +22,7 @@ void CacheArrayBlockHandler<T>::BlockInitFrozen(BlockDevice::blockid_t blockid,
   DEBUG_ASSERT((begin % default_elem_.size()) == 0);
   index_t elems = bytes / default_elem_.size();
   for (index_t i = 0; i < elems; i++) {
-    mem::CopyBytes(block, default_elem_.begin(), default_elem_.size());
+    mem::CopyBytes(block, &default_elem_.front(), default_elem_.size() ); 
     block += default_elem_.size();
   }
 }
@@ -54,8 +54,8 @@ void CacheArrayBlockHandler<T>::BlockThaw(BlockDevice::blockid_t blockid,
 
 template<typename T>
 void CacheArrayBlockHandler<T>::GetDefaultElement(T *default_element_out) {
-  ArrayList<char> tmp;
-  tmp.InitCopy(default_elem_);
+  std::vector<char> tmp;
+  tmp.assign(default_elem_.begin(), default_elem_.end());
   const T* source = ot::SemiThaw<T>(tmp.begin());
   ot::InitCopy(default_element_out, *source);
 }

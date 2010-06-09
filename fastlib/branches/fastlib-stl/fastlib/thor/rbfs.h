@@ -24,7 +24,7 @@ class DualTreeRecursiveBreadth {
   };
 
   struct Queue {
-    ArrayList<QueueItem> q;
+    std::vector<QueueItem> q;
     typename GNP::QSummaryResult summary_result;
     typename GNP::QPostponed postponed;
 

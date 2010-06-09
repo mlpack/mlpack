@@ -8,6 +8,7 @@
 #define THOR_RPC_BASE_H
 
 #include "../base/base.h"
+#include <vector>
 
 /**
  * A Message is the fundamental unit of message-passing in our RPC system.
@@ -134,7 +135,7 @@ class Transaction {
     int channel;
     int transaction_id;
   };
-  ArrayList<PeerInfo> peers_;
+  std::vector<PeerInfo> peers_;
 
  public:
   /** Create a message of a specified size, which you will later Send(). */

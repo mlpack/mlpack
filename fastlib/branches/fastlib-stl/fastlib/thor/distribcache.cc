@@ -95,7 +95,6 @@ void DistributedCache::InitCommon_(int channel_num_in) {
   n_fifo_locks_ = 0;
   world_n_fifo_locks_ = 0;
 
-  blocks_.Init();
   handler_ = NULL;
 
   overflow_free_ = -1;
@@ -121,7 +120,7 @@ void DistributedCache::InitCache_(size_t total_ram) {
   } else {
     DEBUG_ASSERT(n_sets_ * ASSOC * n_block_bytes_ <= total_ram);
   }
-  slots_.Init(n_sets_ << LOG_ASSOC);
+  slots_.reserve(n_sets_ << LOG_ASSOC);
 }
 
 char *DistributedCache::AllocBlock_() {
@@ -161,7 +160,7 @@ void DistributedCache::HandleSyncInfo_(const SyncInfo& info) {
 }
 
 void DistributedCache::HandleStatusInformation_(
-    const ArrayList<BlockStatus>& statuses) {
+    const std::vector<BlockStatus>& statuses) {
   // This method is only called after a sync.
   // However, it is possible that some other machines might have started
   // writing stuff, so we'll have to take this information with a grain of
@@ -170,7 +169,7 @@ void DistributedCache::HandleStatusInformation_(
 
   if (n_blocks_ != statuses.size()) {
     n_blocks_ = statuses.size();
-    blocks_.Resize(n_blocks_);
+    blocks_.reserve(n_blocks_);
   }
 
   for (index_t i = 0; i < n_blocks_; i++) {
@@ -203,10 +202,10 @@ void DistributedCache::HandleStatusInformation_(
 }
 
 void DistributedCache::ComputeStatusInformation_(
-    ArrayList<BlockStatus> *statuses) const {
+    std::vector<BlockStatus> *statuses) const {
   mutex_.Lock();
   DEBUG_ASSERT(n_blocks_ == blocks_.size());
-  statuses->Init(n_blocks_);
+  statuses->reserve(n_blocks_);
   for (index_t i = 0; i < statuses->size(); i++) {
     BlockStatus *status = &(*statuses)[i];
     const BlockMetadata *block = &blocks_[i];
@@ -223,10 +222,10 @@ void DistributedCache::ComputeStatusInformation_(
 
 void DistributedCache::BestEffortWriteback(double portion) {
   mutex_.Lock();
-  Slot *slot = slots_.begin();
+  std::vector<Slot>::iterator slot = slots_.begin();
   index_t i = slots_.size();
   int start_col = math::RoundInt(ASSOC * (1 - portion));
-  BlockMetadata *blocks = blocks_.begin();
+  std::vector<BlockMetadata>::iterator blocks = blocks_.begin();
 
   // Might want to software-pipeline this loop, because of the really nasty
   // indirect load going on.
@@ -251,9 +250,9 @@ void DistributedCache::BestEffortWriteback(double portion) {
 void DistributedCache::StartSync() {
   // We'll assume everything we have locally is no longer valid.
   mutex_.Lock();
-  Slot *slot = slots_.begin();
+  std::vector<Slot>::iterator slot = slots_.begin();
   index_t i = slots_.size();
-  BlockMetadata *blocks = blocks_.begin();
+  std::vector<BlockMetadata>::iterator blocks = blocks_.begin();
   size_t unflushed_bytes = 0;
 
   DEBUG_ASSERT_MSG(!syncing_, "Called StartSync twice before WaitSync!");
@@ -410,7 +409,7 @@ void DistributedCache::RemoteWrite(blockid_t blockid,
   if (unlikely(blockid >= n_blocks_)) {
     n_blocks_ = blockid + 1;
     // the default constructor for BlockMetadata should mark the block as new
-    blocks_.Resize(n_blocks_);
+    blocks_.reserve(n_blocks_);
   }
   BlockMetadata *block = &blocks_[blockid];
   if (!block->is_owner()) {
@@ -450,7 +449,7 @@ BlockDevice::blockid_t DistributedCache::RemoteAllocBlocks(
   }
 
   n_blocks_ = blockid + n_blocks_to_alloc;
-  blocks_.GrowTo(n_blocks_);
+  blocks_.resize(n_blocks_, *(new BlockMetadata));
   // these blocks are marked as NOT_DIRTY_NEW
   
   MarkOwner_(owner, blockid, n_blocks_);
@@ -506,7 +505,7 @@ void DistributedCache::HandleRemoteOwner_(blockid_t block, blockid_t end,
     int new_owner) {
   mutex_.Lock();
   n_blocks_ = std::max(n_blocks_, end);
-  blocks_.Resize(n_blocks_);
+  blocks_.reserve(n_blocks_);
   MarkOwner_(new_owner, block, end);
   mutex_.Unlock();
 }
@@ -980,7 +979,8 @@ void DistributedCache::SyncInfo::MergeWith(const SyncInfo& other) {
     }
   }
   if (old_size < other.statuses.size()) {
-    statuses.Resize(other.statuses.size());
+    // WARNING: This is broken!
+    statuses.reserve(other.statuses.size());
     mem::BitCopy(&statuses[old_size], &other.statuses[old_size],
         statuses.size() - old_size);
   }

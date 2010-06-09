@@ -193,7 +193,7 @@ void DualTreeRecursiveBreadth<GNP>::DivideReferences_(
   Queue child_queue;
   child_queue.Init(param_);
 
-  ArrayList<typename GNP::QSummaryResult> summaries;
+  std::vector<typename GNP::QSummaryResult> summaries;
 
   summaries.Init(parent_queue->q.size());
   summaries[0].Init(param_);

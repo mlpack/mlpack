@@ -19,7 +19,7 @@ class CacheArrayBlockHandler : public BlockHandler {
   FORBID_ACCIDENTAL_COPIES(CacheArrayBlockHandler);
 
  private:
-  ArrayList<char> default_elem_;
+  std::vector<char> default_elem_;
 
  public:
   CacheArrayBlockHandler() {}
@@ -33,9 +33,9 @@ class CacheArrayBlockHandler : public BlockHandler {
    */
   void Init(const T& default_obj);
   
-  void Serialize(ArrayList<char>* data) const;
+  void Serialize(std::vector<char>* data) const;
   
-  void Deserialize(const ArrayList<char>& data);
+  void Deserialize(const std::vector<char>& data);
 
   void BlockInitFrozen(BlockDevice::blockid_t blockid,
       BlockDevice::offset_t begin, BlockDevice::offset_t bytes, char *block);
@@ -106,7 +106,7 @@ class CacheArray {
   unsigned int n_block_elems_mask_;
 
   /** The metadatas array. */
-  ArrayList<Metadata> metadatas_;
+  std::vector<Metadata> metadatas_;
 
   /** The circular fixed-size FIFO queue of blocks that are locked in memory. */
   BlockDevice::blockid_t *fifo_;

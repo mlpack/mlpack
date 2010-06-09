@@ -52,7 +52,7 @@ void CentroidScheduler<Node>::DistributeInitialWork_(
     }
 
     ProcessScheduler *queue = &rankes_[begin_rank];
-    ArrayList<InternalNode*> node_stack;
+    std::vector<InternalNode*> node_stack;
     node_stack.Init();
     node_stack.PushBack() = node;
 
@@ -82,7 +82,7 @@ void CentroidScheduler<Node>::DistributeInitialWork_(
 }
 
 template<typename Node>
-void CentroidScheduler<Node>::GetWork(int rank_num, ArrayList<Grain> *work) {
+void CentroidScheduler<Node>::GetWork(int rank_num, std::vector<Grain> *work) {
   InternalNode *found_node;
   ProcessScheduler *queue = &rankes_[rank_num];
 
@@ -133,9 +133,7 @@ void CentroidScheduler<Node>::GetWork(int rank_num, ArrayList<Grain> *work) {
     n_preferred_++;
   }
 
-  if (found_node == NULL) {
-    work->Init();
-  } else {
+  if (found_node != NULL) {
     // Show user-friendly status messages every 5% increment
     index_t count = found_node->count();
     n_assigned_points_ += count;
@@ -144,17 +142,17 @@ void CentroidScheduler<Node>::GetWork(int rank_num, ArrayList<Grain> *work) {
         n_assigned_points_ * 100 / root_->count());
 
     // Mark all children as complete (non-recursive version)
-    ArrayList<InternalNode*> stack;
-    stack.Init();
-    stack.PushBack() = found_node;
+    std::vector<InternalNode*> stack;
+    stack.push_back(found_node);
     while (stack.size() != 0) {
       InternalNode *c;
-      stack.PopBackInit(&c);
+      c = stack.back();
+      stack.pop_back();
       c->info() = ALL;
       for (index_t k = 0; k < Node::CARDINALITY; k++) {
         InternalNode *c_child = c->child(k);
         if (c_child) {
-          stack.PushBack() = c_child;
+          stack.push_back(c_child);
         }
       }
     }
@@ -171,12 +169,12 @@ void CentroidScheduler<Node>::GetWork(int rank_num, ArrayList<Grain> *work) {
       }
     }
 
-    work->Init(1);
-    Grain *grain = &(*work)[0];
-    grain->node_index = found_node->index();
-    grain->node_end_index = found_node->end_index();
-    grain->point_begin_index = found_node->node().begin();
-    grain->point_end_index = found_node->node().end();
+    Grain grain;
+    grain.node_index = found_node->index();
+    grain.node_end_index = found_node->end_index();
+    grain.point_begin_index = found_node->node().begin();
+    grain.point_end_index = found_node->node().end();
+    work->push_back(grain);
 
     Vector midpoint;
     found_node->node().bound().CalculateMidpoint(&midpoint);

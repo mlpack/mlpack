@@ -9,7 +9,6 @@
 
 #include "rpc_base.h"
 
-#include "../col/arraylist.h"
 #include "../math/math_lib.h"
 
 #include <deque>
@@ -34,7 +33,7 @@
  * be protected by a mutex.
  */
 class SockConnection {
-  FORBID_ACCIDENTAL_COPIES(SockConnection);
+  //FORBID_ACCIDENTAL_COPIES(SockConnection); // ok to remove? =/
 
  public:
   enum { MAGIC = 314159265 };
@@ -188,11 +187,11 @@ class RpcSockImpl {
      * a non-negative channel number and incoming messages have a negative
      * channel number.
      */
-    ArrayList<Transaction*> outgoing_transactions;
+    std::vector<Transaction*> outgoing_transactions;
     /**
      * Free list of outgoing transactions ready for reuse.
      */
-    ArrayList<int> outgoing_freelist;
+    std::vector<int> outgoing_freelist;
     /**
      * An available outgoing transaction, or -1 if none.
      */
@@ -261,12 +260,12 @@ class RpcSockImpl {
   int port_;
 
   int parent_;
-  ArrayList<int> children_;
+  std::vector<int> children_;
 
   int listen_fd_;
-  ArrayList<Peer> peers_;
+  std::vector<Peer> peers_;
 
-  ArrayList<int> unknown_connections_;
+  std::vector<int> unknown_connections_;
 
   DenseIntMap<Channel*> channels_;
 
@@ -331,7 +330,7 @@ class RpcSockImpl {
 
   int rank() const { return rank_; }
   int n_peers() const { return n_peers_; }
-  const ArrayList<int>& children() const { return children_; }
+  const std::vector<int>& children() const { return children_; }
   bool is_root() const { return parent_ == rank_; }
   int parent() const { return parent_; }
 

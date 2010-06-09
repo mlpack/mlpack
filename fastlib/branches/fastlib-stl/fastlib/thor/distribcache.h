@@ -7,8 +7,9 @@
 #ifndef THOR_DISTRIBCACHE_H
 #define THOR_DISTRIBCACHE_H
 
-#include "../col/arraylist.h"
 #include "../col/rangeset.h"
+
+#include <vector>
 
 #include "rpc.h"
 #include "cache.h"
@@ -140,7 +141,7 @@ class DistributedCache : public BlockDevice {
      * Information the block handler (or "schema") needs to initialize itself
      * with.
      */
-    ArrayList<char> block_handler_data;
+    std::vector<char> block_handler_data;
 
     OT_DEF(ConfigResponse) {
       OT_MY_OBJECT(n_block_bytes);
@@ -171,7 +172,7 @@ class DistributedCache : public BlockDevice {
     IoStats net_stats;
     int64 n_locks;
     int64 n_fifo_locks;
-    ArrayList<BlockStatus> statuses;
+    std::vector<BlockStatus> statuses;
     
     OT_DEF(SyncInfo) {
       OT_MY_OBJECT(disk_stats);
@@ -458,7 +459,7 @@ class DistributedCache : public BlockDevice {
 
  private:
   /** A block-to-metadata mapping, keeping track of each block's status. */
-  ArrayList<BlockMetadata> blocks_;
+  std::vector<BlockMetadata> blocks_;
   /** A schema that regards how to freeze, thaw, and initialize blocks. */
   BlockHandler *handler_;
 
@@ -466,7 +467,7 @@ class DistributedCache : public BlockDevice {
   Mutex mutex_;
   
   /** The associtive cache. */
-  ArrayList<Slot> slots_;
+  std::vector<Slot> slots_;
   /** The number of cache sets, same as slots_.size() / ASSOC. */
   unsigned n_sets_;
 
@@ -693,7 +694,7 @@ class DistributedCache : public BlockDevice {
    * After a sync point, handles the change in ownership info.
    * This is one of the most important parts of our coherency mechanisms.
    */
-  void HandleStatusInformation_(const ArrayList<BlockStatus>& statuses);
+  void HandleStatusInformation_(const std::vector<BlockStatus>& statuses);
   /**
    * After a sync point, handles synchronization information.
    */
@@ -701,7 +702,7 @@ class DistributedCache : public BlockDevice {
   /**
    * Marks me as owner of blocks I own and marks other blocks as null.
    */
-  void ComputeStatusInformation_(ArrayList<BlockStatus>* statuses) const;
+  void ComputeStatusInformation_(std::vector<BlockStatus>* statuses) const;
   /**
    * Tries to grab a block from cache, if it fails, this pulls it from the
    * proper source by calling HandleMiss_.

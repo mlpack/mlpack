@@ -185,7 +185,7 @@ class Thread {
  * Mutual exclusion lock to protect shared data.
  */
 class Mutex {
-  FORBID_ACCIDENTAL_COPIES(Mutex);
+//  FORBID_ACCIDENTAL_COPIES(Mutex); // safe to remove?
   friend class WaitCondition;
  
  public:
