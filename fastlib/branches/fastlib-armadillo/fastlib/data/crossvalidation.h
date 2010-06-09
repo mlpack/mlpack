@@ -644,15 +644,14 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
       VERBOSE_MSG(1, "cross: Validation fold %d", i_fold);
 
       for (index_t i = 0; i < validation.n_points(); i++) {
-	Vector validation_vector;
-        validation_vector.Init(validation.n_features() - 1);
+	arma::vec validation_vector(validation.n_features() - 1);
 
-        memcpy(validation_vector.ptr(), validation.matrix().colptr(i),
-          sizeof(double) * (validation.n_features() - 1));
+        memcpy(validation_vector.memptr(), validation.matrix().colptr(i),
+          sizeof(double) * (validation_vector.n_elem));
 	
 	// testing (classification)
 	int label_predict = int(classifier.Predict(learner_typeid_, validation_vector));
-	double label_expect_dbl = validation.matrix()(i, validation.n_features() - 1);
+	double label_expect_dbl = validation.matrix()(i, validation_vector.n_elem);
 	int label_expect = int(label_expect_dbl);
 
 	DEBUG_ASSERT(double(label_expect) == label_expect_dbl);
@@ -722,15 +721,14 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
       fx_timer_start(foldmodule, "validation");
       VERBOSE_MSG(1, "cross: Validation fold %d", i_fold);
       for (index_t i = 0; i < validation.n_points(); i++) {
-	Vector validation_vector;
-        validation_vector.Init(validation.n_features() - 1);
+	arma::vec validation_vector(validation.n_features() - 1);
 
-        memcpy(validation_vector.ptr(), validation.matrix().colptr(i),
-          sizeof(double) * (validation.n_features() - 1));
+        memcpy(validation_vector.memptr(), validation.matrix().colptr(i),
+          sizeof(double) * (validation_vector.n_elem));
 	
         // testing
 	double value_predict = learner.Predict(learner_typeid_, validation_vector);
-	double value_true = validation.matrix()(i, validation.n_features() - 1);
+	double value_true = validation.matrix()(i, validation_vector.n_elem);
 	double value_err = value_predict - value_true;
 	
 	// Calculate squared error: sublevel
