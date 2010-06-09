@@ -46,13 +46,13 @@ set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 #add_dependencies(col base) # depends on base library
 
 # test executable
-add_executable(allnn_thor
-   allnn.cc
-)
+#add_executable(allnn_thor
+#   allnn.cc
+#)
 # link col_test against col and base libraries
-target_link_libraries(allnn_thor
-   fastlib
-)
+#target_link_libraries(allnn_thor
+#   fastlib
+#)
 
 #add_executable(allnnbfs_thor
 #   allnnbfs.cc

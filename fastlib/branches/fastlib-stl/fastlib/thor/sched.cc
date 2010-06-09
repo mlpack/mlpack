@@ -29,10 +29,10 @@ void RemoteScheduler::Init(int channel, int destination) {
 }
 
 void RemoteScheduler::GetWork(
-    int rank, ArrayList<Grain> *work_items) {
+    int rank, std::vector<Grain>& work_items) {
   WorkRequest request;
   request.operation = WorkRequest::GIVE_ME_WORK;
   request.rank = rank;
   Rpc<WorkResponse> response(channel_, destination_, request);
-  work_items->InitCopy(response->work_items);
+  work_items.assign(response->work_items.begin(), response->work_items.end());
 }

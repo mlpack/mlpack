@@ -13,9 +13,10 @@
 #include "thortree.h"
 
 #include "../col/heap.h"
-#include "../col/arraylist.h"
 #include "../la/uselapack.h"
 #include "../tree/bounds.h"
+
+#include <vector>
 
 //------------------------------------------------------------------------
 
@@ -45,7 +46,7 @@ class SchedulerInterface {
    * @param rank the rank of the machine requesting work
    * @param work where the work will be stored
    */
-  virtual void GetWork(int rank, ArrayList<Grain> *work) = 0;
+  virtual void GetWork(int rank, std::vector<Grain> *work) = 0;
 
   /**
    * Report any relevant statistics to fastexec.
@@ -75,7 +76,7 @@ class LockedScheduler : public SchedulerInterface {
   LockedScheduler(SchedulerInterface *inner) : inner_(inner) {}
   virtual ~LockedScheduler() { delete inner_; }
 
-  virtual void GetWork(int rank, ArrayList<Grain> *work) {
+  virtual void GetWork(int rank, std::vector<Grain> *work) {
     mutex_.Lock();
     inner_->GetWork(rank, work);
     mutex_.Unlock();
@@ -126,7 +127,7 @@ class CentroidScheduler
 
  private:
   CacheArray<Node> *tree_;
-  ArrayList<ProcessScheduler> rankes_;
+  std::vector<ProcessScheduler> rankes_;
   InternalNode *root_;
   int n_threads_;
   double granularity_;
@@ -157,7 +158,7 @@ class CentroidScheduler
     return n_grains_;
   }
 
-  virtual void GetWork(int rank_num, ArrayList<Grain> *work);
+  virtual void GetWork(int rank_num, std::vector<Grain> *work);
 
   /**
    * Gets the number of grains that were not assigned to the original machine.
@@ -199,7 +200,7 @@ struct WorkRequest {
 }; 
 
 struct WorkResponse {
-  ArrayList<SchedulerInterface::Grain> work_items;
+  std::vector<SchedulerInterface::Grain> work_items;
 
   OT_DEF_BASIC(WorkResponse) {
     OT_MY_OBJECT(work_items);
@@ -232,7 +233,7 @@ class RemoteScheduler
   
   void Init(int channel, int destination);
 
-  void GetWork(int rank, ArrayList<Grain> *work_items);
+  void GetWork(int rank, std::vector<Grain>& work_items);
 };
 
 //------------------------------------------------------------------------

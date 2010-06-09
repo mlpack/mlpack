@@ -106,7 +106,7 @@ class ThorTreeDecomposition {
    * The tree decomposition.
    */
   DecompNode *root_;
-  ArrayList<TreeGrain> grain_by_owner_;
+  std::vector<TreeGrain> grain_by_owner_;
 
   OT_DEF(ThorTreeDecomposition) {
     OT_PTR(root_);
@@ -122,7 +122,7 @@ class ThorTreeDecomposition {
     DEBUG_ASSERT(root_->info().begin_rank == 0);
     DEBUG_ASSERT(root_->info().end_rank == rpc::n_peers());
     DEBUG_ASSERT(root_in != NULL);
-    grain_by_owner_.Init(rpc::n_peers());
+    grain_by_owner_.reserve(rpc::n_peers());
     for (int i = 0; i < grain_by_owner_.size(); i++) {
       grain_by_owner_[i].InitInvalid();
     }

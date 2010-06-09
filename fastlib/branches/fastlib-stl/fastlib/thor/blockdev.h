@@ -9,9 +9,10 @@
 
 #include "../base/base.h"
 #include "../col/intmap.h"
-#include "../col/col_string.h"
 #include "../fx/fx.h"
 #include "../par/thread.h"
+
+#include <string>
 
 /**
  * An abstracted block device.
@@ -248,7 +249,7 @@ class RandomAccessFile {
   /** The BlockDevice mode of the file. */
   mode_t mode_;
   /** The filename open. */
-  String fname_;
+  std::string fname_;
   /** Mutex to protect the lseek-read sequence. */
   Mutex mutex_;
 

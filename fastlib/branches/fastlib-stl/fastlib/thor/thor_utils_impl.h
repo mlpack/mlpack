@@ -21,11 +21,10 @@ void thor::ThreadedDualTreeSolver<GNP, Solver>::Doit(
   stats_.Init();
 
   if (n_threads > 1) {
-    ArrayList<Thread> threads;
-    threads.Init(n_threads);
+    std::vector<Thread> threads;
+    threads.resize(n_threads, new WorkerTask(this));
 
     for (index_t i = 0; i < n_threads; i++) {
-      threads[i].Init(new WorkerTask(this));
       // Set these threads to low priority to make sure the network thread
       // gets full priority.
       threads[i].Start(Thread::LOW_PRIORITY);
@@ -42,7 +41,7 @@ void thor::ThreadedDualTreeSolver<GNP, Solver>::Doit(
 template<typename GNP, typename Solver>
 void thor::ThreadedDualTreeSolver<GNP, Solver>::ThreadBody_() {
   while (1) {
-    ArrayList<SchedulerInterface::Grain> work;
+    std::vector<SchedulerInterface::Grain> work;
 
     mutex_.Lock();
     work_queue_->GetWork(rank_, &work);
