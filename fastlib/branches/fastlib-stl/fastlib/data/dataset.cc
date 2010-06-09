@@ -122,11 +122,12 @@ void DatasetInfo::InitContinuous(index_t n_features,
   name_ = name_in;
 
   for (index_t i = 0; i < n_features; i++) {
-    std::string feature_name;
     std::ostringstream o;
-    if(!(o << i ))
+    if(!(o << i))
       abort();
-    features_[i].InitContinuous(feature_name);
+    DatasetFeature f;
+    f.InitContinuous(o.str());
+    features_.push_back(f);
   }
 }
 
