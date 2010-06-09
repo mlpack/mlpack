@@ -38,6 +38,10 @@
 #ifndef DATA_CROSSVALIDATION
 #define DATA_CROSSVALIDATION
 
+#include <vector>
+#include <string>
+#include <sstream>
+
 #include "dataset.h"
 //#include "dataset.h"
 
@@ -212,14 +216,17 @@ template<class TClassifier>
 void SimpleCrossValidator<TClassifier>::SaveTrainTest_(
     int i_fold,
     const Dataset& train, const Dataset& test) const {
-  String train_name;
-  String test_name;
+  std::string train_name;
+  std::string test_name;
+  std::ostringstream o;
   
-  train_name.InitSprintf("train_%d.csv", i_fold);
-  test_name.InitSprintf("test_%d.csv", i_fold);
+  if( !(o << i_fold) )
+    abort(); //?
+  train_name = "train_" + o.str() + ".csv";
+  test_name = "test_" + o.str() + ".csv";
   
-  train.WriteCsv(train_name);
-  test.WriteCsv(test_name);
+  train.WriteCsv(train_name.c_str());
+  test.WriteCsv(test_name.c_str());
 }
 
 
@@ -257,12 +264,12 @@ void SimpleCrossValidator<TClassifier>::Init(
 
 template<class TClassifier>
 void SimpleCrossValidator<TClassifier>::Run(bool randomized) {
-  ArrayList<index_t> permutation;
+  std::vector<index_t> permutation;
   
   if (randomized) {
-    math::MakeRandomPermutation(data_->n_points(), &permutation);
+    math::MakeRandomPermutation(data_->n_points(), &permutation.front());
   } else {
-    math::MakeIdentityPermutation(data_->n_points(), &permutation);
+    math::MakeIdentityPermutation(data_->n_points(), &permutation.front());
   }
   
   n_correct_ = 0;
@@ -474,8 +481,8 @@ class GeneralCrossValidator {
   /** For classification ONLY*/
   /** Stratified spliting of cross validation set to ensure that approximately 
    * the same portion of data (training/validation) are used for each class */
-  void StratifiedSplitCVSet_(int i_fold, index_t num_classes, ArrayList<index_t>& cv_labels_ct, 
-			     ArrayList<index_t>& cv_labels_startpos, const ArrayList<index_t>& permutation, Dataset *train, Dataset *validation){
+  void StratifiedSplitCVSet_(int i_fold, index_t num_classes, std::vector<index_t>& cv_labels_ct, 
+			     std::vector<index_t>& cv_labels_startpos, const std::vector<index_t>& permutation, Dataset *train, Dataset *validation){
     // Begin stratified splitting for the i-th fold stratified CV
     index_t n_cv_features = data_->n_features();
     
@@ -525,15 +532,19 @@ class GeneralCrossValidator {
 template<class TLearner>
 void GeneralCrossValidator<TLearner>::SaveTrainValidationSet_(
     int i_fold, const Dataset& train, const Dataset& validation) const {
-  String train_name;
-  String validation_name;
+  std::string train_name;
+  std::string validation_name;
+  std::ostringstream o;
   
   // save training and validation sets for this fold
-  train_name.InitSprintf("cv_train_%d.csv", i_fold);
-  validation_name.InitSprintf("cv_validation_%d.csv", i_fold);
   
-  train.WriteCsv(train_name);
-  validation.WriteCsv(validation_name);
+  if( !(o << i_fold) )
+    abort(); //?
+  train_name = "cv_train_" + o.str() + ".csv";
+  validation_name = "cv_validation_" + o.str() + ".csv";
+
+  train.WriteCsv(train_name.c_str());
+  validation.WriteCsv(validation_name.c_str());
 }
 
 template<class TLearner>
@@ -579,30 +590,26 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
   if (learner_typeid_ == 0) {
     // get label information
     /* list of labels, need to be integers. e.g. [0,1,2] for a 3-class dataset */
-    ArrayList<double> cv_labels_list;
+    std::vector<double> cv_labels_list;
     /* array of label indices, after grouping. e.g. [c1[0,5,6,7,10,13,17],c2[1,2,4,8,9],c3[...]]*/
-    ArrayList<index_t> cv_labels_index;
+    std::vector<index_t> cv_labels_index;
     /* counted number of label for each class. e.g. [7,5,8]*/
-    ArrayList<index_t> cv_labels_ct;
+    std::vector<index_t> cv_labels_ct;
     /* start positions of each classes in the cv label list. e.g. [0,7,12] */
-    ArrayList<index_t> cv_labels_startpos;
+    std::vector<index_t> cv_labels_startpos;
     // Get label list and label indices from the cross validation data set
     index_t num_classes = data_->n_labels();
 
-    cv_labels_list.Init();
-    cv_labels_index.Init();
-    cv_labels_ct.Init();
-    cv_labels_startpos.Init();
     data_->GetLabels(cv_labels_list, cv_labels_index, cv_labels_ct, cv_labels_startpos);
 
     // randomize the original data set within each class if necessary
-    ArrayList<index_t> permutation;
+    std::vector<index_t> permutation;
 
     if (randomized) {
-      permutation.Init(num_data_points_);
+      permutation.reserve(num_data_points_);
       for (index_t i_classes=0; i_classes<num_classes; i_classes++) {
-	ArrayList<index_t> sub_permutation; // within class permut indices
-	math::MakeRandomPermutation(cv_labels_ct[i_classes], &sub_permutation);
+	std::vector<index_t> sub_permutation; // within class permut indices
+	math::MakeRandomPermutation(cv_labels_ct[i_classes], &sub_permutation.front());
 	// use sub-permutation indicies to form the whole permutation
 	if (i_classes==0){
 	  for (index_t j=0; j<cv_labels_ct[i_classes]; j++)
@@ -612,11 +619,15 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
 	  for (index_t j=0; j<cv_labels_ct[i_classes]; j++)
 	    permutation[cv_labels_startpos[i_classes]+j] = cv_labels_index[ cv_labels_ct[i_classes-1]+sub_permutation[j] ];
 	}
-	sub_permutation.Clear();
+  // Do we actually need to free the memory used here?
+  {
+    std::vector<index_t> empty;
+  	sub_permutation.swap(empty);
+  }
       }
     } // e.g. [10,13,5,17,0,6,7,,4,9,8,1,2,,...]
     else {
-      permutation.InitCopy(cv_labels_index, cv_labels_index.size()); // e.g. [0,5,6,7,10,13,17,,1,2,4,8,9,,...]
+      permutation.assign(cv_labels_index.begin(), cv_labels_index.end()); // e.g. [0,5,6,7,10,13,17,,1,2,4,8,9,,...]
     }
     // begin CV
     for (int i_fold = 0; i_fold < n_folds_; i_fold++) {
@@ -689,11 +700,11 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
     double accu_msq_err_all_folds = 0.0;
 
     // randomize the original data set if necessary
-    ArrayList<index_t> permutation;  
+    std::vector<index_t> permutation;  
     if (randomized) {
-      math::MakeRandomPermutation(num_data_points_, &permutation);
+      math::MakeRandomPermutation(num_data_points_, &permutation.front());
     } else {
-      math::MakeIdentityPermutation(num_data_points_, &permutation);
+      math::MakeIdentityPermutation(num_data_points_, &permutation.front());
     }
     // begin CV
     for (int i_fold = 0; i_fold < n_folds_; i_fold++) {

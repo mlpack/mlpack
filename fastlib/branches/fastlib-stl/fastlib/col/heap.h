@@ -40,6 +40,7 @@
 
 #include <vector>
 #include <algorithm>
+#include "../base/base.h"
 
 /**
  * Priority queue implemented as a heap.

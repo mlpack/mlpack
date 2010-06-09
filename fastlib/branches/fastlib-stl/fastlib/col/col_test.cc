@@ -181,6 +181,6 @@ void TestRangeSet() {
   TEST_ASSERT(set.size() == 1);
 }
 
-TEST_SUITE_END(col, TestArrayListInt, TestMinHeap,
+TEST_SUITE_END(col, TestMinHeap,
     TestFastAlloc, TestIntMap, TestRangeSet)
 

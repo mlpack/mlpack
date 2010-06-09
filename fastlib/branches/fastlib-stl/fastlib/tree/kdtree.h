@@ -50,7 +50,8 @@
 //#include "spacetree.h"
 //#include "bounds.h"
 
-#include "../col/arraylist.h"
+#include <vector>
+
 #include "../fx/fx.h"
 
 #include "kdtree_impl.h"
@@ -82,13 +83,13 @@ namespace tree {
   TKdTree *MakeKdTreeMidpointSelective(GenMatrix<T>& matrix, 
 				       const Vector& split_dimensions,
       index_t leaf_size,
-      ArrayList<index_t> *old_from_new = NULL,
-      ArrayList<index_t> *new_from_old = NULL) {
+      std::vector<index_t> *old_from_new = NULL,
+      std::vector<index_t> *new_from_old = NULL) {
     TKdTree *node = new TKdTree();
     index_t *old_from_new_ptr;
    
     if (old_from_new) {
-      old_from_new->Init(matrix.n_cols());
+      old_from_new->reserve(matrix.n_cols());
       
       for (index_t i = 0; i < matrix.n_cols(); i++) {
         (*old_from_new)[i] = i;
@@ -108,7 +109,7 @@ namespace tree {
 	node, leaf_size, old_from_new_ptr);
     
     if (new_from_old) {
-      new_from_old->Init(matrix.n_cols());
+      new_from_old->reserve(matrix.n_cols());
       for (index_t i = 0; i < matrix.n_cols(); i++) {
         (*new_from_old)[(*old_from_new)[i]] = i;
       }
@@ -157,8 +158,8 @@ namespace tree {
   
   template<typename TKdTree, typename T>
     TKdTree *MakeKdTreeMidpoint(GenMatrix<T>& matrix, index_t leaf_size,
-				ArrayList<index_t> *old_from_new = NULL,
-				ArrayList<index_t> *new_from_old = NULL) {  
+				std::vector<index_t> *old_from_new = NULL,
+				std::vector<index_t> *new_from_old = NULL) {  
     Vector split_dimensions;
     split_dimensions.Init(matrix.n_rows());
     int i;
@@ -207,7 +208,7 @@ namespace tree {
    * @code
    * MyKdTree *q_tree;
    * Matrix q_matrix;
-   * ArrayList<index_t> q_permutation;
+   * std::vector<index_t> q_permutation;
    * LoadKdTree(fx_submodule(NULL, "q", "q"), &q_matrix, &q_tree,
    *    &q_permutation);
    * @endcode
@@ -230,7 +231,7 @@ namespace tree {
   template<typename TKdTree, typename T>
   success_t LoadKdTree(datanode *module,
       GenMatrix<T> *matrix, TKdTree **tree_pp,
-      ArrayList<index_t> *old_from_new) {
+      std::vector<index_t> *old_from_new) {
     const char *type = fx_param_str(module, "type", "text");
     const char *fname = fx_param_str(module, "", NULL);
     success_t success = SUCCESS_PASS;

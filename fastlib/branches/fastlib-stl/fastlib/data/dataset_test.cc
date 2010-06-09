@@ -48,9 +48,9 @@ void TestSplitTrainTest() {
     orig.matrix().set(0, i, i);
   }
   
-  ArrayList<int> found;
+  std::vector<int> found;
   
-  found.Init(12);
+  found.reserve(12);
   
   for (int i = 0; i < 12; i++) {
     found[i] = 0;
@@ -59,9 +59,9 @@ void TestSplitTrainTest() {
   Dataset train;
   Dataset test;
   
-  ArrayList<index_t> permutation;
+  std::vector<index_t> permutation;
   
-  math::MakeIdentityPermutation(12, &permutation);
+  math::MakeIdentityPermutation(12, &permutation.front());
   
   orig.SplitTrainTest(5, 1, permutation,
       &train, &test);
@@ -135,8 +135,7 @@ void TestStoreLoad() {
   DEBUG_ASSERT_MSG(strcmp(d1.info().name(), d2.info().name()) == 0,
       "%s != %s", d1.info().name(), d2.info().name());
   for (index_t i = 0; i < d1.info().n_features(); i++) {
-    DEBUG_ASSERT(
-      strcmp(d1.info().feature(i).name(), d2.info().feature(i).name()) == 0);
+    DEBUG_ASSERT( d1.info().feature(i).name() == d2.info().feature(i).name() );
     DEBUG_ASSERT(d1.info().feature(i).type() == d2.info().feature(i).type());
   }
 }
@@ -173,7 +172,7 @@ int main(int argc, char *argv[]) {
     return 1;
   }
   
-  ArrayList<index_t> permutation;
+  std::vector<index_t> permutation;
   math::MakeRandomPermutation(dataset.n_points(), &permutation);
   
   for (int k = 5; k < 10; k++) {
