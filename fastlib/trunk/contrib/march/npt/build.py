@@ -20,6 +20,20 @@ librule(
 )
 
 binrule(
+    name = "n_point_naive_multi_main",
+    sources = ["n_point_naive_multi_main.cc"],
+    headers = [],
+    deplibs = ["fastlib:fastlib", ":n_point_alg"],
+)
+
+binrule( 
+    name = "make_matchers",
+    sources = ["make_matchers.cc", "results_tensor.cc", "n_point_impl.cc"],
+    headers = ["results_tensor.h", "n_point_impl.h"],
+    deplibs = ["fastlib:fastlib"]
+)
+
+binrule(
     name = "n_point_multi_main",
     sources = ["n_point_multi_main.cc"],
     headers = [],

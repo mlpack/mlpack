@@ -57,7 +57,6 @@ index_t ResultsTensor::FindIndex_(const ArrayList<index_t>& indices) {
   
 } // FindIndex_()
 
-// TODO: test me!
 bool ResultsTensor::IncrementIndex_(ArrayList<index_t>& new_ind, 
                                     const ArrayList<index_t>& orig_ind, 
                                     index_t k) {
