@@ -133,7 +133,8 @@ void NPointMulti::BaseCaseHelper_(ArrayList<ArrayList<index_t> >& point_sets,
   // IMPORTANT: can't exit here for bad symmetry, it can get better as 
   // i increases
   for (index_t i = 0; i < k_rows.size(); i++) {
-    
+    //for (index_t i = 0; i < 0; i++) {
+
     index_t point_index_i = k_rows[i];
     
     bool this_point_works = true;
@@ -142,12 +143,15 @@ void NPointMulti::BaseCaseHelper_(ArrayList<ArrayList<index_t> >& point_sets,
     data_points_.MakeColumnVector(point_index_i, &point_i);
     
     // TODO: is this too inefficient?
-    permutation_ok_copy.Clear();
+    //permutation_ok_copy.Clear();
+    permutation_ok_copy.Resize(0);
     permutation_ok_copy.AppendCopy(permutation_ok);
 
-    permutation_ranges_copy.Clear();
+    //permutation_ranges_copy.Clear();
+    permutation_ranges_copy.Resize(0);
     permutation_ranges_copy.AppendCopy(permutation_ranges);
-
+    //permutation_ranges_copy.Renew();
+    //permutation_ranges_copy.InitCopy(permutation_ranges);
     
     // TODO: figure out a way to handle the bad symmetry more elegantly
     // I should be able to avoid a bit more work
@@ -228,6 +232,15 @@ void NPointMulti::BaseCaseHelper_(ArrayList<ArrayList<index_t> >& point_sets,
   } // for i
   
   
+  /*
+  for (index_t i =0; i < permutation_ranges_copy.size(); i++) {
+
+    permutation_ranges_copy[i].Destruct();
+
+  }
+  */
+  //permutation_ranges_copy.Resize(0);
+
 } // BaseCaseHelper_()
 
 
@@ -349,7 +362,9 @@ void NPointMulti::DepthFirstRecursion_(NodeTuple& nodes) {
       //left_ranges.InitCopy(valid_ranges);
       DEBUG_ASSERT(left_node.node_list(0));
       DepthFirstRecursion_(left_node);
-    
+      //left_node_ptr = NULL;
+     
+ 
     }
     if (right_node_ptr) {
       
@@ -359,7 +374,9 @@ void NPointMulti::DepthFirstRecursion_(NodeTuple& nodes) {
       //right_node.Print();
       DEBUG_ASSERT(right_node.node_list(0));
       DepthFirstRecursion_(right_node);
+      //right_node_ptr = NULL;
       
+
     }
     
   } // recurse
