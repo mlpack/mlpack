@@ -471,7 +471,7 @@ class GenMatrix {
     OT_ALLOC(ptr_, n_elements());
   }
   OT_REFILL_TRANSIENTS(GenMatrix) {
-    should_free_ = false;
+    should_free_ = true;
   }
 
  public:
