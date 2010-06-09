@@ -59,9 +59,10 @@ void TestSplitTrainTest() {
   Dataset train;
   Dataset test;
   
+  // TODO: replace use of std::vector with arma::vec (fixed-size container)
   std::vector<index_t> permutation;
-  
-  math::MakeIdentityPermutation(12, &permutation.front());
+  for(int i = 0; i < 12; i++)
+    permutation.push_back(i);
   
   orig.SplitTrainTest(5, 1, permutation,
       &train, &test);
