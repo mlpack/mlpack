@@ -86,9 +86,9 @@ class DatasetFeature {
   *
   * @param name_in the name of the feature
   */ 
- void InitGeneral(const std::string&  name_in) {
+  void InitGeneral(const std::string& name_in) {
     name_ = name_in;
- }
+  }
 
  public:
   /**
