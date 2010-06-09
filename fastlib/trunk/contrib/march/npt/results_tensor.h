@@ -153,16 +153,24 @@ public:
       index_t col_ind = 1;
       
       for (index_t i = 0; i < indices.size(); i++) {
+
+        double entry = sqrt(distances_[indices_copy[i]]);
+        this_matcher.set(row_ind, col_ind, entry);
+        this_matcher.set(col_ind, row_ind, entry);
         
-        this_matcher.set(row_ind, col_ind, sqrt(distances_[indices_copy[i]]));
         
         col_ind++;
         if (col_ind >= tuple_size_) {
+          
+          this_matcher.set(row_ind, row_ind, 0.0);
           row_ind++;
           col_ind = row_ind + 1;
+          
         }
         
       } // fill in the matcher's matrix
+      
+      this_matcher.set(tuple_size_ - 1, tuple_size_ - 1, 0.0);
       
       index_t ind = FindIndex_(indices_copy);
       
