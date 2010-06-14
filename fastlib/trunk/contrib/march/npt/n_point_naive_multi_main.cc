@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
   
   double min_band = fx_param_double_req(NULL, "min_band");
   double max_band = fx_param_double_req(NULL, "max_band");
-  double num_bands = fx_param_int_req(NULL, "num_bands");
+  int num_bands = fx_param_int_req(NULL, "num_bands");
   
   ArrayList<double> dists;
   dists.Init(num_bands);
