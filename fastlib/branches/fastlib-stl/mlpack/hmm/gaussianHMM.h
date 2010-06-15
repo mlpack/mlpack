@@ -26,13 +26,13 @@ class GaussianHMM {
   Matrix transmission_;
 
   /** List of mean vectors */
-  ArrayList<Vector> list_mean_vec_;
+  std::vector<Vector> list_mean_vec_;
 
   /** List of covariance matrices */
-  ArrayList<Matrix> list_covariance_mat_;
+  std::vector<Matrix> list_covariance_mat_;
   
   /** List of inverse of the covariances */
-  ArrayList<Matrix> list_inverse_cov_mat_;
+  std::vector<Matrix> list_inverse_cov_mat_;
 
   /** Vector of constant in the gaussian density fomular */
   Vector gauss_const_vec_;
@@ -49,22 +49,22 @@ class GaussianHMM {
  public:
   /** Getters */
   const Matrix& transmission() const { return transmission_; }
-  const ArrayList<Vector>& list_mean_vec() const { return list_mean_vec_; }
-  const ArrayList<Matrix>& list_covariance_mat() const { return list_covariance_mat_; }
+  const std::vector<Vector>& list_mean_vec() const { return list_mean_vec_; }
+  const std::vector<Matrix>& list_covariance_mat() const { return list_covariance_mat_; }
 
   /** Setter used when already initialized */
-  void setModel(const Matrix& transmission,  const ArrayList<Vector>& list_mean_vec,
-		const ArrayList<Matrix>& list_covariance_mat);
+  void setModel(const Matrix& transmission,  const std::vector<Vector>& list_mean_vec,
+		const std::vector<Matrix>& list_covariance_mat);
 
   /** Initializes from computed transmission and Gaussian parameters */
-  void Init(const Matrix& transmission,  const ArrayList<Vector>& list_mean_vec,
-	    const ArrayList<Matrix>& list_covariance_mat);
+  void Init(const Matrix& transmission,  const std::vector<Vector>& list_mean_vec,
+	    const std::vector<Matrix>& list_covariance_mat);
   
   /** Initializes by loading from a file */
   void InitFromFile(const char* profile);
 
   /** Initializes using K-means algorithm using data as a guide */
-  void InitFromData(const ArrayList<Matrix>& list_data_seq, int numstate);
+  void InitFromData(const std::vector<Matrix>& list_data_seq, int numstate);
 
   /** Initializes using data and state sequence as a guide */  
   void InitFromData(const Matrix& data_seq, const Vector& state_seq);
@@ -103,8 +103,8 @@ class GaussianHMM {
   double ComputeLogLikelihood(const Matrix& data_seq) const;
 
   /** Compute the log-likelihood of a list of sequences */
-  void ComputeLogLikelihood(const ArrayList<Matrix>& list_data_seq, 
-			    ArrayList<double>* list_likelihood) const;
+  void ComputeLogLikelihood(const std::vector<Matrix>& list_data_seq, 
+			    std::vector<double>* list_likelihood) const;
   
   /** Compute the most probable sequence (Viterbi) */
   void ComputeViterbiStateSequence(const Matrix& data_seq, Vector* state_seq) const;
@@ -113,24 +113,24 @@ class GaussianHMM {
    * Train the model with a list of sequences, must be already initialized 
    * using Baum-Welch EM algorithm
    */
-  void TrainBaumWelch(const ArrayList<Matrix>& list_data_seq, 
+  void TrainBaumWelch(const std::vector<Matrix>& list_data_seq, 
 		      int max_iteration, double tolerance);
 
   /** 
    * Train the model with a list of sequences, must be already initialized 
    * using Viterbi algorithm to determine the state sequence of each sequence
    */
-  void TrainViterbi(const ArrayList<Matrix>& list_data_seq, 
+  void TrainViterbi(const std::vector<Matrix>& list_data_seq, 
 		    int max_iteration, double tolerance);
 
 
   ////////// Static helper functions ///////////////////////////////////////
 
   static success_t LoadProfile(const char* profile, Matrix* trans, 
-			       ArrayList<Vector>* means, ArrayList<Matrix>* covs);
+			       std::vector<Vector>* means, std::vector<Matrix>* covs);
   static success_t SaveProfile(const char* profile, const Matrix& trans, 
-			       const ArrayList<Vector>& means, 
-			       const ArrayList<Matrix>& covs);
+			       const std::vector<Vector>& means, 
+			       const std::vector<Matrix>& covs);
   /**
    * Generating a sequence and states using transition and emission probabilities.
    * L: sequence length
@@ -140,15 +140,15 @@ class GaussianHMM {
    * seq: generated sequence, uninitialized matrix, will have size N x L
    * states: generated states, uninitialized vector, will have length L
    */
-  static void GenerateInit(int L, const Matrix& trans, const ArrayList<Vector>& means, 
-			   const ArrayList<Matrix>& covs, Matrix* seq, Vector* states);
+  static void GenerateInit(int L, const Matrix& trans, const std::vector<Vector>& means, 
+			   const std::vector<Matrix>& covs, Matrix* seq, Vector* states);
 
   /** Estimate transition and emission distribution from sequence and states */
   static void EstimateInit(const Matrix& seq, const Vector& states, Matrix* trans, 
-			   ArrayList<Vector>* means, ArrayList<Matrix>* covs);
+			   std::vector<Vector>* means, std::vector<Matrix>* covs);
   static void EstimateInit(int numStates, const Matrix& seq, const Vector& states, 
-			   Matrix* trans, ArrayList<Vector>* means, 
-			   ArrayList<Matrix>* covs);
+			   Matrix* trans, std::vector<Vector>* means, 
+			   std::vector<Matrix>* covs);
 
   /** 
    * Calculate posteriori probabilities of states at each steps
@@ -170,8 +170,8 @@ class GaussianHMM {
 		       Matrix* fs, Matrix* bs, Vector* scales);
   static double Decode(int L, const Matrix& trans, const Matrix& emis_prob, 
 		       Matrix* pstates, Matrix* fs, Matrix* bs, Vector* scales);
-  static void CalculateEmissionProb(const Matrix& seq, const ArrayList<Vector>& means, 
-				    const ArrayList<Matrix>& inv_covs, const Vector& det,
+  static void CalculateEmissionProb(const Matrix& seq, const std::vector<Vector>& means, 
+				    const std::vector<Matrix>& inv_covs, const Vector& det,
 				    Matrix* emis_prob);
 
   /** 
@@ -189,15 +189,15 @@ class GaussianHMM {
    * Baum-Welch and Viterbi estimation of transition and emission 
    * distribution (Gaussian)
    */
-  static void InitGaussParameter(int M, const ArrayList<Matrix>& seqs, 
-				 Matrix* guessTR, ArrayList<Vector>* guessME, ArrayList<Matrix>* guessCO);
+  static void InitGaussParameter(int M, const std::vector<Matrix>& seqs, 
+				 Matrix* guessTR, std::vector<Vector>* guessME, std::vector<Matrix>* guessCO);
 
-  static void Train(const ArrayList<Matrix>& seqs, Matrix* guessTR, 
-		    ArrayList<Vector>* guessME, ArrayList<Matrix>* guessCO, 
+  static void Train(const std::vector<Matrix>& seqs, Matrix* guessTR, 
+		    std::vector<Vector>* guessME, std::vector<Matrix>* guessCO, 
 		    int max_iter, double tol);
 
-  static void TrainViterbi(const ArrayList<Matrix>& seqs, Matrix* guessTR, 
-			   ArrayList<Vector>* guessME, ArrayList<Matrix>* guessCO, 
+  static void TrainViterbi(const std::vector<Matrix>& seqs, Matrix* guessTR, 
+			   std::vector<Vector>* guessME, std::vector<Matrix>* guessCO, 
 			   int max_iter, double tol);
 };
 #endif

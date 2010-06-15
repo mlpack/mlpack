@@ -96,19 +96,19 @@ namespace hmm_support {
     return det_cov * exp(-0.5*MyMulExpert(d, inv_cov, d));
   }
 
-  bool kmeans(const ArrayList<Matrix>& data, int num_clusters, 
-	      ArrayList<int> *labels_, ArrayList<Vector> *centroids_, 
+  bool kmeans(const std::vector<Matrix>& data, int num_clusters, 
+	      std::vector<int> *labels_, std::vector<Vector> *centroids_, 
 	      int max_iter, double error_thresh)
   {
-    ArrayList<int> counts; //number of points in each cluster
-    ArrayList<Vector> tmp_centroids;
+    std::vector<int> counts; //number of points in each cluster
+    std::vector<Vector> tmp_centroids;
     int num_points, num_dims;
     int i, j, num_iter=0;
     double error, old_error;
 
     //Assign pointers to references to avoid repeated dereferencing.
-    ArrayList<int> &labels = *labels_;
-    ArrayList<Vector> &centroids = *centroids_;
+    std::vector<int> &labels = *labels_;
+    std::vector<Vector> &centroids = *centroids_;
 
     num_points = 0;
     for (int i = 0; i < data.size(); i++)
@@ -118,11 +118,11 @@ namespace hmm_support {
 
     num_dims = data[0].n_rows();
 
-    centroids.Init(num_clusters);
-    tmp_centroids.Init(num_clusters);
+    centroids.reserve(num_clusters);
+    tmp_centroids.reserve(num_clusters);
 
-    counts.Init(num_clusters);
-    labels.Init(num_points);
+    counts.reserve(num_clusters);
+    labels.reserve(num_points);
 
     //Initialize the clusters to k points
     for (j=0; j < num_clusters; j++) {
@@ -183,18 +183,18 @@ namespace hmm_support {
   }
 
   bool kmeans(Matrix const &data, int num_clusters, 
-	      ArrayList<int> *labels_, ArrayList<Vector> *centroids_, 
+	      std::vector<int> *labels_, std::vector<Vector> *centroids_, 
 	      int max_iter, double error_thresh)
   {
-    ArrayList<int> counts; //number of points in each cluster
-    ArrayList<Vector> tmp_centroids;
+    std::vector<int> counts; //number of points in each cluster
+    std::vector<Vector> tmp_centroids;
     int num_points, num_dims;
     int i, j, num_iter=0;
     double error, old_error;
     
     //Assign pointers to references to avoid repeated dereferencing.
-    ArrayList<int> &labels = *labels_;
-    ArrayList<Vector> &centroids = *centroids_;
+    std::vector<int> &labels = *labels_;
+    std::vector<Vector> &centroids = *centroids_;
     
     if (data.n_cols() < num_clusters) 
       return false;
@@ -202,11 +202,11 @@ namespace hmm_support {
     num_points = data.n_cols();
     num_dims = data.n_rows();
     
-    centroids.Init(num_clusters);
-    tmp_centroids.Init(num_clusters);
+    centroids.reserve(num_clusters);
+    tmp_centroids.reserve(num_clusters);
     
-    counts.Init(num_clusters);
-    labels.Init(num_points);
+    counts.reserve(num_clusters);
+    labels.reserve(num_points);
     
     //Initialize the clusters to k points
     for (i=0, j=0; j < num_clusters; i+=num_points/num_clusters, j++) {
@@ -263,32 +263,31 @@ namespace hmm_support {
 
   }
   
-  void mat2arrlst(Matrix& a, ArrayList<Vector> * seqs) {
+  void mat2arrlst(Matrix& a, std::vector<Vector> * seqs) {
     int n = a.n_cols();
-    ArrayList<Vector> & s_ = *seqs;
-    s_.Init();
+    std::vector<Vector> & s_ = *seqs;
     for (int i = 0; i < n; i++) {
       Vector seq;
       a.MakeColumnVector(i, &seq);
-      s_.PushBackCopy(seq);
+      s_.push_back(seq);
     }
   }
 
-  void mat2arrlstmat(int N, Matrix& a, ArrayList<Matrix> * seqs) {
+  void mat2arrlstmat(int N, Matrix& a, std::vector<Matrix> * seqs) {
     int n = a.n_cols();
-    ArrayList<Matrix>& s_ = *seqs;
-    s_.Init();
+    std::vector<Matrix>& s_ = *seqs;
     for (int i = 0; i < n; i+=N) {
       Matrix b;
       a.MakeColumnSlice(i, N, &b);
-      s_.PushBackCopy(b);
+      s_.push_back(b);
     }
   }
 
   bool skip_blank(TextLineReader& reader) {
     for (;;){
       if (!reader.MoreLines()) return false;
-      char* pos = reader.Peek().begin();
+//      char* pos = reader.Peek().begin();
+      std::string::iterator pos = reader.Peek().begin();
       while (*pos == ' ' || *pos == ',' || *pos == '\t')
 	pos++;
       if (*pos == '\0' || *pos == '%') reader.Gobble();
@@ -307,25 +306,29 @@ namespace hmm_support {
      int n_cols = 0;
      bool is_done;
      {// How many columns ?
-       ArrayList<String> num_str;
-       num_str.Init();
-       reader.Peek().Split(", \t", &num_str);
+       std::vector<std::string> num_str;
+       tokenizeString(reader.Peek(), ", \t", num_str);
        n_cols = num_str.size();
      }
-     ArrayList<double> num_double;
-     num_double.Init();
+     std::vector<double> num_double;
 
      for(;;) { // read each rows
        n_rows++;
        // deprecated: double* point = num_double.AddBack(n_cols);
-       ArrayList<String> num_str;
-       num_str.Init();
-       reader.Peek().Split(", \t", &num_str);
+       std::vector<std::string> num_str;
+       tokenizeString(reader.Peek(), ", \t", num_str);
+//       reader.Peek().Split(", \t", &num_str);
 
        DEBUG_ASSERT(num_str.size() == n_cols);
 
-       for (int i = 0; i < n_cols; i++)
-	 num_double.PushBackCopy(strtod(num_str[i], NULL));
+       std::istringstream is;
+       for (int i = 0; i < n_cols; i++) {
+         double d;
+         is.str(num_str[i]);
+         if( !(is >> d ) )
+           abort();
+         num_double.push_back(d);
+       }
 
        is_done = false;
 
@@ -336,7 +339,7 @@ namespace hmm_support {
 	   is_done = true;
 	   break;
 	 }
-	 char* pos = reader.Peek().begin();
+   std::string::iterator pos = reader.Peek().begin();
 	 while (*pos == ' ' || *pos == '\t')
 	   pos++;
 	 if (*pos == '\0') reader.Gobble();
@@ -348,8 +351,12 @@ namespace hmm_support {
        }
 
        if (is_done) {
-	 num_double.Trim();
-	 matrix->Own(num_double.ReleasePtr(), n_cols, n_rows);
+         {
+           std::vector<double> empty;
+           num_double.swap(empty);
+         }
+         //FIXME
+//	 matrix->Own(num_double.ReleasePtr(), n_cols, n_rows);
 	 return SUCCESS_PASS;
        }
      }
@@ -362,20 +369,23 @@ namespace hmm_support {
       return SUCCESS_FAIL;
     }
     else {
-      ArrayList<double> num_double;
-      num_double.Init();
+      std::vector<double> num_double;
 
       for(;;) { // read each rows
 	bool is_done = false;
 
-	ArrayList<String> num_str;
-	num_str.Init();
-	reader.Peek().Split(", \t", &num_str);
+	std::vector<std::string> num_str;
+  tokenizeString(reader.Peek(), ", \t", num_str);
 
 	// deprecated: double* point = num_double.AddBack(num_str.size());
 
-	for (int i = 0; i < num_str.size(); i++)
-	  num_double.PushBackCopy(strtod(num_str[i], NULL));
+  std::istringstream is;
+	for (int i = 0; i < num_str.size(); i++) {
+    double d;
+    is.str(num_str[i]);
+    if( !(is >> d) )
+      abort();
+  }
 
 	reader.Gobble();
 
@@ -384,7 +394,7 @@ namespace hmm_support {
 	    is_done = true;
 	    break;
 	  }
-	  char* pos = reader.Peek().begin();
+    std::string::iterator pos = reader.Peek().begin();
 	  while (*pos == ' ' || *pos == '\t')
 	    pos++;
 	  if (*pos == '\0') reader.Gobble();
@@ -396,37 +406,36 @@ namespace hmm_support {
 	}
 
 	if (is_done) {
-	  num_double.Trim();
+	  //num_double.Trim();
 	  int length = num_double.size();
-	  vec->Own(num_double.ReleasePtr(), length);
+    // FIXME
+//	  vec->Own(num_double.ReleasePtr(), length);
 	  return SUCCESS_PASS;
 	}
       }
     }
   }
 
-  success_t load_matrix_list(const char* filename, ArrayList<Matrix> *matlst) {
+  success_t load_matrix_list(const char* filename, std::vector<Matrix> *matlst) {
     TextLineReader reader;
-    matlst->Init();
     if (!PASSED(reader.Open(filename))) return SUCCESS_FAIL;
     do {
       Matrix tmp;
       if (read_matrix(reader, &tmp) == SUCCESS_PASS) {
-	matlst->PushBackCopy(tmp);
+	matlst->push_back(tmp);
       }
       else break;
     } while (1);
     return SUCCESS_PASS;
   }
 
-  success_t load_vector_list(const char* filename, ArrayList<Vector> *veclst) {
+  success_t load_vector_list(const char* filename, std::vector<Vector> *veclst) {
     TextLineReader reader;
-    veclst->Init();
     if (!PASSED(reader.Open(filename))) return SUCCESS_FAIL;
     do {
       Vector vec;
       if (read_vector(reader, &vec) == SUCCESS_PASS) {
-	veclst->PushBackCopy(vec);
+	veclst->push_back(vec);
       }
       else break;
     } while (1);

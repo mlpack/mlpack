@@ -18,25 +18,25 @@ class MixtureGauss {
   ////////////// Member variables //////////////////////////////////////
  private:
   /** List of means of clusters */
-  ArrayList<Vector> means;
+  std::vector<Vector> means;
 
   /** List of covariance matrices of clusters */
-  ArrayList<Matrix> covs;
+  std::vector<Matrix> covs;
 
   /** Prior probabilities of the clusters */
   Vector prior;
 
   /** Inverse of covariance matrices */
-  ArrayList<Matrix> inv_covs;
+  std::vector<Matrix> inv_covs;
 
   /** Vector of constant in normal density formula */
   Vector det_covs;
 
   /** Accumulating means */
-  ArrayList<Vector> ACC_means;
+  std::vector<Vector> ACC_means;
 
   /** Accumulating covariance */
-  ArrayList<Matrix> ACC_covs;
+  std::vector<Matrix> ACC_covs;
 
   /** Accumulating prior probability */
   Vector ACC_prior;
@@ -64,13 +64,13 @@ class MixtureGauss {
    * start with the prior vector, follows by the mean and covariance
    * of each cluster.
    */
-  void InitFromProfile(const ArrayList<Matrix>& matlst, int start, int N);
+  void InitFromProfile(const std::vector<Matrix>& matlst, int start, int N);
 
   /** Init with K clusters and dimension N */
   void Init(int K, int N);
 
   /** Init with K clusters and the data with label */
-  void Init(int K, const Matrix& data, const ArrayList<int>& labels);
+  void Init(int K, const Matrix& data, const std::vector<int>& labels);
 
   /** Print the mixture to stdout for debugging */
   void print_mixture(const char* s) const;

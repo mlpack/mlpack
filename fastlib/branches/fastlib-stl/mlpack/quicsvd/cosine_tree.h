@@ -20,13 +20,13 @@ class CosineNode {
   Matrix A_;
 
   /** Indices of columns of matrix A in this node */
-  ArrayList<int> origIndices_;
+  std::vector<int> origIndices_;
 
   /** L2 norms of the columns in this node */
-  ArrayList<double> norms_;
+  std::vector<double> norms_;
 
   /** Cummulative sum of L2 norm squares to use in column sampling */
-  ArrayList<double> cum_norms_;
+  std::vector<double> cum_norms_;
 
   /** Mean vector to be added to the basis when this node is chosen */
   Vector mean_;
@@ -48,7 +48,7 @@ class CosineNode {
   CosineNode(const Matrix& A);
 
   /** Constructor of the childen */
-  CosineNode(CosineNode& parent, const ArrayList<int>& indices,
+  CosineNode(CosineNode& parent, const std::vector<int>& indices,
 	     bool isLeft);
 
   /** Get a column in this node, we have to use origIndices to
@@ -122,10 +122,10 @@ class CosineNode {
   void ChooseCenter(Vector* center);
 
   /** Calculate cosine values of all column with respect to the center */
-  void CalCosines(const Vector& center, ArrayList<double>* cosines);
+  void CalCosines(const Vector& center, std::vector<double>* cosines);
 
   /** Create an array list of indices 0..n_cols()-1 */
-  void CreateIndices(ArrayList<int>* indices);
+  void CreateIndices(std::vector<int>* indices);
 
   /** Friend unit test class */
   friend class CosineNodeTest;

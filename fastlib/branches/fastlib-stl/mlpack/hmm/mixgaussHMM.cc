@@ -12,13 +12,12 @@
 using namespace hmm_support;
 
 void MixtureofGaussianHMM::setModel(const Matrix& transmission,
-				    const ArrayList<MixtureGauss>& list_mixture_gauss) {
+				    const std::vector<MixtureGauss>& list_mixture_gauss) {
   DEBUG_ASSERT(transmission.n_rows() == transmission.n_cols());
   DEBUG_ASSERT(transmission.n_rows() == list_mixture_gauss.size());
   transmission_.Destruct();
-  list_mixture_gauss_.Renew();
   transmission_.Copy(transmission);
-  list_mixture_gauss_.InitCopy(list_mixture_gauss);
+  list_mixture_gauss_.assign(list_mixture_gauss.begin(),list_mixture_gauss.end());
 }
 
 void MixtureofGaussianHMM::InitFromFile(const char* profile) {
@@ -28,7 +27,6 @@ void MixtureofGaussianHMM::InitFromFile(const char* profile) {
 
 void MixtureofGaussianHMM::LoadProfile(const char* profile) {
   transmission_.Destruct();
-  list_mixture_gauss_.Renew();
   InitFromFile(profile);
 }
 
@@ -43,7 +41,6 @@ void MixtureofGaussianHMM::GenerateSequence(int L, Matrix* data_seq, Vector* sta
 void MixtureofGaussianHMM::EstimateModel(int numcluster, const Matrix& data_seq, 
 					 const Vector& state_seq) {
   transmission_.Destruct();
-  list_mixture_gauss_.Renew();
   MixtureofGaussianHMM::EstimateInit(numcluster, data_seq, state_seq, &transmission_, 
 				     &list_mixture_gauss_);
 }
@@ -51,7 +48,6 @@ void MixtureofGaussianHMM::EstimateModel(int numcluster, const Matrix& data_seq,
 void MixtureofGaussianHMM::EstimateModel(int numstate, int numcluster, 
 					 const Matrix& data_seq, const Vector& state_seq) {
   transmission_.Destruct();
-  list_mixture_gauss_.Renew();
   MixtureofGaussianHMM::EstimateInit(numstate, numcluster, data_seq, state_seq, 
 				     &transmission_, &list_mixture_gauss_);
 }
@@ -99,7 +95,7 @@ double MixtureofGaussianHMM::ComputeLogLikelihood(const Matrix& data_seq) const 
   return loglik;
 }
 
-void MixtureofGaussianHMM::ComputeLogLikelihood(const ArrayList<Matrix>& list_data_seq, ArrayList<double>* list_likelihood) const {
+void MixtureofGaussianHMM::ComputeLogLikelihood(const std::vector<Matrix>& list_data_seq, std::vector<double>* list_likelihood) const {
   int L = 0;
   for (int i = 0; i < list_data_seq.size(); i++)
     if (list_data_seq[i].n_cols() > L) L = list_data_seq[i].n_cols();
@@ -107,7 +103,6 @@ void MixtureofGaussianHMM::ComputeLogLikelihood(const ArrayList<Matrix>& list_da
   Matrix fs(M, L), emis_prob(M, L);
   Vector sc;
   sc.Init(L);
-  list_likelihood->Init();
   for (int i = 0; i < list_data_seq.size(); i++) {
     int L = list_data_seq[i].n_cols();
     MixtureofGaussianHMM::CalculateEmissionProb(list_data_seq[i], list_mixture_gauss_, &emis_prob);
@@ -115,7 +110,7 @@ void MixtureofGaussianHMM::ComputeLogLikelihood(const ArrayList<Matrix>& list_da
     double loglik = 0;
     for (int t = 0; t < L; t++)
       loglik += log(sc[t]);
-    list_likelihood->PushBackCopy(loglik);
+    list_likelihood->push_back(loglik);
   }
 }
 
@@ -127,23 +122,22 @@ void MixtureofGaussianHMM::ComputeViterbiStateSequence(const Matrix& data_seq, V
   MixtureofGaussianHMM::ViterbiInit(transmission_, emis_prob, state_seq);
 }
 
-void MixtureofGaussianHMM::TrainBaumWelch(const ArrayList<Matrix>& list_data_seq, int max_iteration, double tolerance) {
+void MixtureofGaussianHMM::TrainBaumWelch(const std::vector<Matrix>& list_data_seq, int max_iteration, double tolerance) {
   MixtureofGaussianHMM::Train(list_data_seq, &transmission_, &list_mixture_gauss_, max_iteration, tolerance);
 }
 
-void MixtureofGaussianHMM::TrainViterbi(const ArrayList<Matrix>& list_data_seq, int max_iteration, double tolerance) {
+void MixtureofGaussianHMM::TrainViterbi(const std::vector<Matrix>& list_data_seq, int max_iteration, double tolerance) {
   MixtureofGaussianHMM::TrainViterbi(list_data_seq, &transmission_, &list_mixture_gauss_, max_iteration, tolerance);
 }
 
-success_t MixtureofGaussianHMM::LoadProfile(const char* profile, Matrix* trans, ArrayList<MixtureGauss>* mixs) {
-  ArrayList<Matrix> matlst;
+success_t MixtureofGaussianHMM::LoadProfile(const char* profile, Matrix* trans, std::vector<MixtureGauss>* mixs) {
+  std::vector<Matrix> matlst;
   if (!PASSED(load_matrix_list(profile, &matlst))) {
     NONFATAL("Couldn't open '%s' for reading.", profile);
     return SUCCESS_FAIL;
   }
   DEBUG_ASSERT(matlst.size() >= 4); // at least 1 trans, 1 prior, 1 mean, 1 cov
   trans->Copy(matlst[0]);
-  mixs->Init();
   int M = trans->n_rows(); // num of states
   int N = matlst[2].n_rows(); // dimension
   int p = 1;
@@ -153,13 +147,13 @@ success_t MixtureofGaussianHMM::LoadProfile(const char* profile, Matrix* trans, 
     DEBUG_ASSERT(matlst.size() > p+2*K);
     MixtureGauss mix;
     mix.InitFromProfile(matlst, p, N);
-    mixs->PushBackCopy(mix);
+    mixs->push_back(mix);
     p += 2*K+1;
   }
   return SUCCESS_PASS;
 }
 
-success_t MixtureofGaussianHMM::SaveProfile(const char* profile, const Matrix& trans, const ArrayList<MixtureGauss>& mixs) {
+success_t MixtureofGaussianHMM::SaveProfile(const char* profile, const Matrix& trans, const std::vector<MixtureGauss>& mixs) {
   TextWriter w_pro;
   if (!PASSED(w_pro.Open(profile))) {
     NONFATAL("Couldn't open '%s' for writing.", profile);
@@ -182,7 +176,7 @@ success_t MixtureofGaussianHMM::SaveProfile(const char* profile, const Matrix& t
   return SUCCESS_PASS;
 }
 
-void MixtureofGaussianHMM::GenerateInit(int L, const Matrix& trans, const ArrayList<MixtureGauss>& mixs, Matrix* seq, Vector* states){
+void MixtureofGaussianHMM::GenerateInit(int L, const Matrix& trans, const std::vector<MixtureGauss>& mixs, Matrix* seq, Vector* states){
   DEBUG_ASSERT_MSG((trans.n_rows()==trans.n_cols() && trans.n_rows()==mixs.size()), "hmm_generateM_init: matrices sizes do not match");
   Matrix trsum;
   Matrix& seq_ = *seq;
@@ -222,7 +216,7 @@ void MixtureofGaussianHMM::GenerateInit(int L, const Matrix& trans, const ArrayL
   }
 }
 
-void MixtureofGaussianHMM::EstimateInit(int numStates, int numClusters, const Matrix& seq, const Vector& states, Matrix* trans, ArrayList<MixtureGauss>* mixs) {
+void MixtureofGaussianHMM::EstimateInit(int numStates, int numClusters, const Matrix& seq, const Vector& states, Matrix* trans, std::vector<MixtureGauss>* mixs) {
   DEBUG_ASSERT_MSG((seq.n_cols()==states.length()), "hmm_estimateM_init: sequence and states length must be the same");
   
   int N = seq.n_rows(); // emission vector length
@@ -231,11 +225,10 @@ void MixtureofGaussianHMM::EstimateInit(int numStates, int numClusters, const Ma
   int K = numClusters;
   
   Matrix &trans_ = *trans;
-  ArrayList<MixtureGauss>& mix_ = *mixs;
+  std::vector<MixtureGauss>& mix_ = *mixs;
   Vector stateSum;
 
   trans_.Init(M, M);
-  mix_.Init();
   stateSum.Init(M);
 
   trans_.SetZero();
@@ -253,8 +246,7 @@ void MixtureofGaussianHMM::EstimateInit(int numStates, int numClusters, const Ma
       trans_.ref(i, j) /= stateSum[i];
   }
 
-  ArrayList<Matrix> data;
-  data.Init();
+  std::vector<Matrix> data;
   Vector n_data;
   n_data.Init(M); n_data.SetZero();
   for (int i = 0; i < L; i++) {
@@ -265,7 +257,7 @@ void MixtureofGaussianHMM::EstimateInit(int numStates, int numClusters, const Ma
     Matrix m;
     //printf("n[%d]=%8.0f\n", i, n_data[i]);
     m.Init(N, (int)n_data[i]);
-    data.PushBackCopy(m);
+    data.push_back(m);
   }
   n_data.SetZero();
   for (int i = 0; i < L; i++) {
@@ -275,18 +267,18 @@ void MixtureofGaussianHMM::EstimateInit(int numStates, int numClusters, const Ma
     //printf("%d %d %8.0f\n", i, state, n_data[state]);
   }
   for (int i = 0; i < M; i++) {
-    ArrayList<int> labels;
-    ArrayList<Vector> means;
+    std::vector<int> labels;
+    std::vector<Vector> means;
     kmeans(data[i], K, &labels, &means, 500, 1e-3);
 
     //printf("STATE #%d %d\n", i, K);
     MixtureGauss m;
     m.Init(K, data[i], labels);
-    mix_.PushBackCopy(m);
+    mix_.push_back(m);
   }
 }
 
-void MixtureofGaussianHMM::EstimateInit(int NumClusters, const Matrix& seq, const Vector& states, Matrix* trans, ArrayList<MixtureGauss>* mixs) {
+void MixtureofGaussianHMM::EstimateInit(int NumClusters, const Matrix& seq, const Vector& states, Matrix* trans, std::vector<MixtureGauss>* mixs) {
   DEBUG_ASSERT_MSG((seq.n_cols()==states.length()), "hmm_estimateG_init: sequence and states length must be the same");
   int M = 0;
   for (int i = 0; i < seq.n_cols(); i++)
@@ -323,7 +315,7 @@ double MixtureofGaussianHMM::ViterbiInit(int L, const Matrix& trans, const Matri
   return GaussianHMM::ViterbiInit(L, trans, emis_prob, states);
 }
 
-void MixtureofGaussianHMM::CalculateEmissionProb(const Matrix& seq, const ArrayList<MixtureGauss>& mixs, Matrix* emis_prob) {
+void MixtureofGaussianHMM::CalculateEmissionProb(const Matrix& seq, const std::vector<MixtureGauss>& mixs, Matrix* emis_prob) {
   int M = mixs.size();
   int L = seq.n_cols();
   for (int t = 0; t < L; t++) {
@@ -334,9 +326,9 @@ void MixtureofGaussianHMM::CalculateEmissionProb(const Matrix& seq, const ArrayL
   }
 }
 
-void MixtureofGaussianHMM::Train(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<MixtureGauss>* guessMG, int max_iter, double tol) {
+void MixtureofGaussianHMM::Train(const std::vector<Matrix>& seqs, Matrix* guessTR, std::vector<MixtureGauss>* guessMG, int max_iter, double tol) {
   Matrix &gTR = *guessTR;
-  ArrayList<MixtureGauss>& gMG = *guessMG;
+  std::vector<MixtureGauss>& gMG = *guessMG;
   int L = -1;
   int M = gTR.n_rows();
   DEBUG_ASSERT_MSG((M==gTR.n_cols() && M==gMG.size()),"hmm_trainM: sizes do not match");
@@ -348,7 +340,7 @@ void MixtureofGaussianHMM::Train(const ArrayList<Matrix>& seqs, Matrix* guessTR,
   TR.Init(M, M);
 
   Matrix ps, fs, bs, emis_prob; // to hold hmm_decodeG results
-  ArrayList<Matrix> emis_prob_cluster;
+  std::vector<Matrix> emis_prob_cluster;
   Vector s; // scaling factors
   Vector sumState; // the denominator for each state
 
@@ -358,12 +350,11 @@ void MixtureofGaussianHMM::Train(const ArrayList<Matrix>& seqs, Matrix* guessTR,
   s.Init(L);
   emis_prob.Init(M, L);
   sumState.Init(M);
-  emis_prob_cluster.Init();
   for (int i = 0; i < M; i++) {
     Matrix m;
     int K = gMG[i].n_clusters();
     m.Init(K, L);
-    emis_prob_cluster.PushBackCopy(m);
+    emis_prob_cluster.push_back(m);
   }
 
   double loglik = 0, oldlog;
@@ -443,9 +434,9 @@ void MixtureofGaussianHMM::Train(const ArrayList<Matrix>& seqs, Matrix* guessTR,
   }
 }
 
-void MixtureofGaussianHMM::TrainViterbi(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<MixtureGauss>* guessMG, int max_iter, double tol) {
+void MixtureofGaussianHMM::TrainViterbi(const std::vector<Matrix>& seqs, Matrix* guessTR, std::vector<MixtureGauss>* guessMG, int max_iter, double tol) {
   Matrix &gTR = *guessTR;
-  ArrayList<MixtureGauss>& gMG = *guessMG;
+  std::vector<MixtureGauss>& gMG = *guessMG;
   int L = -1;
   int M = gTR.n_rows();
   DEBUG_ASSERT_MSG((M==gTR.n_cols() && M==gMG.size()),"hmm_trainM: sizes do not match");
@@ -457,15 +448,14 @@ void MixtureofGaussianHMM::TrainViterbi(const ArrayList<Matrix>& seqs, Matrix* g
   TR.Init(M, M);
 
   Matrix emis_prob; // to hold hmm_decodeG results
-  ArrayList<Matrix> emis_prob_cluster;
+  std::vector<Matrix> emis_prob_cluster;
 
   emis_prob.Init(M, L);
-  emis_prob_cluster.Init();
   for (int i = 0; i < M; i++) {
     Matrix m;
     int K = gMG[i].n_clusters();
     m.Init(K, L);
-    emis_prob_cluster.PushBackCopy(m);
+    emis_prob_cluster.push_back(m);
   }
 
   double loglik = 0, oldlog;

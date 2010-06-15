@@ -38,31 +38,31 @@ namespace hmm_support {
   void print_vector(TextWriter& writer, const Vector& a, const char* msg, const char* format = "%f,");
 
   /** Compute the centroids and label the samples by K-means algorithm */
-  bool kmeans(const ArrayList<Matrix>& data, int num_clusters, 
-	      ArrayList<int> *labels_, ArrayList<Vector> *centroids_, 
+  bool kmeans(const std::vector<Matrix>& data, int num_clusters, 
+	      std::vector<int> *labels_, std::vector<Vector> *centroids_, 
 	      int max_iter = 1000, double error_thresh = 1e-3);
 
   bool kmeans(Matrix const &data, int num_clusters, 
-	      ArrayList<int> *labels_, ArrayList<Vector> *centroids_, 
+	      std::vector<int> *labels_, std::vector<Vector> *centroids_, 
 	      int max_iter=1000, double error_thresh=1e-04);
 
   /** Convert a matrix in to an array list of vectors of its column */
-  void mat2arrlst(Matrix& a, ArrayList<Vector> * seqs);
+  void mat2arrlst(Matrix& a, std::vector<Vector> * seqs);
   
   /** Convert a matrix in to an array list of matrices of slice of its columns */
-  void mat2arrlstmat(int N, Matrix& a, ArrayList<Matrix> * seqs);
+  void mat2arrlstmat(int N, Matrix& a, std::vector<Matrix> * seqs);
 
   /**
    * Load an array list of matrices from file where the matrices
    * are seperated by a line start with %
    */
-  success_t load_matrix_list(const char* filename, ArrayList<Matrix> *matlst);
+  success_t load_matrix_list(const char* filename, std::vector<Matrix> *matlst);
 
   /** 
    * Load an array list of vectors from file where the vectors
    * are seperated by a line start with %
    */
-  success_t load_vector_list(const char* filename, ArrayList<Vector> *veclst);
+  success_t load_vector_list(const char* filename, std::vector<Vector> *veclst);
 };
 
 #endif
