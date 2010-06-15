@@ -16,8 +16,8 @@ bool isZero(double d) {
 // Init a root cosine node from a matrix
 CosineNode::CosineNode(const Matrix& A) {
   this->A_.Alias(A);
-  origIndices_.Init(A_.n_cols());
-  norms_.Init(n_cols());
+  origIndices_.reserve(A_.n_cols());
+  norms_.reserve(n_cols());
   for (int i_col = 0; i_col < origIndices_.size(); i_col++) {
     origIndices_[i_col] = i_col;
     norms_[i_col] = columnNormL2(A_, i_col);
@@ -32,10 +32,10 @@ CosineNode::CosineNode(const Matrix& A) {
 
 // Init a child cosine node from its parent and a set of the parent's columns
 CosineNode::CosineNode(CosineNode& parent, 
-		       const ArrayList<int>& indices, bool isLeft) {
+		       const std::vector<int>& indices, bool isLeft) {
   A_.Alias(parent.A_);
-  origIndices_.Init(indices.size());
-  norms_.Init(n_cols());
+  origIndices_.reserve(indices.size());
+  norms_.reserve(n_cols());
   for (int i_col = 0; i_col < origIndices_.size(); i_col++) {
     origIndices_[i_col] = parent.origIndices_[indices[i_col]];
     norms_[i_col] = parent.norms_[indices[i_col]];
@@ -53,7 +53,7 @@ CosineNode::CosineNode(CosineNode& parent,
 
 void CosineNode::CalStats() {
   // Calculate cummlulative sum square of L2 norms
-  cum_norms_.Init(origIndices_.size());
+  cum_norms_.reserve(origIndices_.size());
   for (int i_col = 0; i_col < origIndices_.size(); i_col++)
     cum_norms_[i_col] = ((i_col > 0) ? cum_norms_[i_col-1]:0)
       + math::Sqr(norms_[i_col]);
@@ -77,8 +77,8 @@ void CosineNode::ChooseCenter(Vector* center) {
 }
 
 void CosineNode::CalCosines(const Vector& center, 
-			    ArrayList<double>* cosines) {
-  cosines->Init(n_cols());
+			    std::vector<double>* cosines) {
+  cosines->reserve(n_cols());
   double centerL2 = la::LengthEuclidean(center);
   for (index_t i_col = 0; i_col < n_cols(); i_col++) 
     // if col is a zero vector then push it to the left node
@@ -93,14 +93,14 @@ void CosineNode::CalCosines(const Vector& center,
     }
 }
 
-void CosineNode::CreateIndices(ArrayList<int>* indices) {
-  indices->Init(n_cols());
+void CosineNode::CreateIndices(std::vector<int>* indices) {
+  indices->reserve(n_cols());
   for (index_t i_col = 0; i_col < n_cols(); i_col++)
     (*indices)[i_col] = i_col;
 }
 
 // Quicksort partitioning procedure
-index_t qpartition(ArrayList<double>& key, ArrayList<int>& data,
+index_t qpartition(std::vector<double>& key, std::vector<int>& data,
 		index_t left, index_t right) {
   index_t j = left;
   double x = key[left];
@@ -117,7 +117,7 @@ index_t qpartition(ArrayList<double>& key, ArrayList<int>& data,
 
 
 // Quicksort on the cosine values
-void qsort(ArrayList<double>& key, ArrayList<int>& data,
+void qsort(std::vector<double>& key, std::vector<int>& data,
 	   index_t left, index_t right) {
   if (left >= right) return;
   index_t middle = qpartition(key, data, left, right);
@@ -125,13 +125,13 @@ void qsort(ArrayList<double>& key, ArrayList<int>& data,
   qsort(key, data, middle+1, right);
 }
 
-void Sort(ArrayList<double>& key, ArrayList<int>& data) {
+void Sort(std::vector<double>& key, std::vector<int>& data) {
   qsort(key, data, 0, key.size()-1);
 }
 
 // Calculate the split point where the cosines values are closer
 // to the minimum cosine value than the maximum cosine value
-index_t calSplitPoint(const ArrayList<double>& key) {
+index_t calSplitPoint(const std::vector<double>& key) {
   double leftKey = key[0];
   double rightKey = key[key.size()-1];
   index_t i = 0;
@@ -141,16 +141,16 @@ index_t calSplitPoint(const ArrayList<double>& key) {
 }
 
 // Init a subcopy of an array list
-void InitSubCopy(const ArrayList<int>& src, index_t pos, index_t size,
-		 ArrayList<int>* dst) {
-  dst->Init(size);
+void InitSubCopy(const std::vector<int>& src, index_t pos, index_t size,
+		 std::vector<int>* dst) {
+  dst->reserve(size);
   for (index_t i = 0; i < size; i++)
     (*dst)[i] = src[pos+i];
 }
 
 // Split the indices at the split point
-void splitIndices(ArrayList<int>& indices, int leftSize,
-		  ArrayList<int>* leftIdx, ArrayList<int>* rightIdx) {
+void splitIndices(std::vector<int>& indices, int leftSize,
+		  std::vector<int>* leftIdx, std::vector<int>* rightIdx) {
   InitSubCopy(indices, 0, leftSize, leftIdx);
   InitSubCopy(indices, leftSize, indices.size()-leftSize, rightIdx);
 }
@@ -163,8 +163,8 @@ void splitIndices(ArrayList<int>& indices, int leftSize,
 void CosineNode::Split() {
   if (n_cols() < 2) return;
   Vector center;
-  ArrayList<double> cosines;
-  ArrayList<int> indices, leftIdx, rightIdx;
+  std::vector<double> cosines;
+  std::vector<int> indices, leftIdx, rightIdx;
 
   ChooseCenter(&center);
   //ot::Print(center, "center", stdout);

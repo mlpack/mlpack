@@ -50,7 +50,7 @@ class DiscreteHMM {
   void InitFromFile(const char* profile);
 
   /** Initializes randomly using data as a guide */
-  void InitFromData(const ArrayList<Vector>& list_data_seq, int numstate);
+  void InitFromData(const std::vector<Vector>& list_data_seq, int numstate);
 
   /** Load from file, used when already initialized */
   void LoadProfile(const char* profile);
@@ -82,7 +82,7 @@ class DiscreteHMM {
   double ComputeLogLikelihood(const Vector& data_seq) const;
 
   /** Compute the log-likelihood of a list of sequences */
-  void ComputeLogLikelihood(const ArrayList<Vector>& list_data_seq, ArrayList<double>* list_likelihood) const;
+  void ComputeLogLikelihood(const std::vector<Vector>& list_data_seq, std::vector<double>* list_likelihood) const;
 
   /** Compute the most probable sequence (Viterbi) */
   void ComputeViterbiStateSequence(const Vector& data_seq, Vector* state_seq) const;
@@ -91,13 +91,13 @@ class DiscreteHMM {
    * Train the model with a list of sequences, must be already initialized 
    * using Baum-Welch EM algorithm
    */
-  void TrainBaumWelch(const ArrayList<Vector>& list_data_seq, int max_iteration, double tolerance);
+  void TrainBaumWelch(const std::vector<Vector>& list_data_seq, int max_iteration, double tolerance);
 
   /** 
    * Train the model with a list of sequences, must be already initialized 
    * using Viterbi algorithm to determine the state sequence of each sequence
    */
-  void TrainViterbi(const ArrayList<Vector>& list_data_seq, int max_iteration, double tolerance);
+  void TrainViterbi(const std::vector<Vector>& list_data_seq, int max_iteration, double tolerance);
 
 
   ///////// Static helper functions ///////////////////////////////////////
@@ -143,10 +143,10 @@ class DiscreteHMM {
   static double ViterbiInit(int L, const Vector& seq, const Matrix& trans, const Matrix& emis, Vector* states);
 
   /** Baum-Welch estimation of transition and emission probabilities */
-  static void Train(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter, double tol);
+  static void Train(const std::vector<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter, double tol);
 
   /** Viterbi estimation of transition and emission probabilities */
-  static void TrainViterbi(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter, double tol);
+  static void TrainViterbi(const std::vector<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter, double tol);
 
 };
 #endif

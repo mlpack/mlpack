@@ -11,9 +11,7 @@
 QuicSVD::QuicSVD(const Matrix& A, double targetRelErr) : root_(A) {
   A_.Alias(A);
 
-  basis_.Init(); // init empty basis
-  UTA_.Init();   // and empty projection, too
-  projMagSq_.InitRepeat(0, n_cols()); // projected magnitude squares are zero's
+  projMagSq_.resize(n_cols(), 0); // projected magnitude squares are zero's
   sumProjMagSq_ = 0;
   targetRelErr_ = targetRelErr;
   dataNorm2_ = root_.getSumL2(); // keep the Frobenius norm of A
@@ -22,7 +20,7 @@ QuicSVD::QuicSVD(const Matrix& A, double targetRelErr) : root_(A) {
 
 // Modified Gram-Schmidt method, calculate the orthogonalized
 // new basis vector
-bool MGS(const ArrayList<Vector>& basis, const Vector& newVec, 
+bool MGS(const std::vector<Vector>& basis, const Vector& newVec, 
 	 Vector* newBasisVec) {
   //ot::Print(basis, "basis", stdout);
   //ot::Print(newVec, "newVec", stdout);
@@ -49,9 +47,9 @@ void QuicSVD::addBasisFrom(const CosineNode& node) {
   // check if new vector are independent and orthogonalize it
   if (MGS(basis_, node.getMean(), &nodeBasis)) {
     Vector av;
-    basis_.PushBackCopy(nodeBasis);  // add to the basis
+    basis_.push_back(nodeBasis);  // add to the basis
     la::MulInit(nodeBasis, A_, &av); // calculate projection of A
-    UTA_.PushBackCopy(av);           // on the new basis vector and save
+    UTA_.push_back(av);           // on the new basis vector and save
     for (index_t i_col = 0; i_col < n_cols(); i_col++) {
       double magSq = math::Sqr(av[i_col]);  // magnitude square of the i-th
       projMagSq_[i_col] += magSq;           // column of A in the new subspace
@@ -120,7 +118,7 @@ void QuicSVD::ComputeSVD(Vector* s, Matrix* U, Matrix* VT) {
 // squares of singular values of UTA.
 // SVD on UTA2 is more efficient as it is a square matrix 
 // with smaller dimension
-void createUTA2(const ArrayList<Vector>& UTA, Matrix* UTA2) {
+void createUTA2(const std::vector<Vector>& UTA, Matrix* UTA2) {
   UTA2->Init(UTA.size(), UTA.size());
   for (int i = 0; i < UTA.size(); i++)
     for (int j = 0; j < UTA.size(); j++)
@@ -129,7 +127,7 @@ void createUTA2(const ArrayList<Vector>& UTA, Matrix* UTA2) {
 
 // Matrix multiplication of a list of vector and a matrix
 // C = AB
-void MulInit(const ArrayList<Vector>& A, const Matrix& B,
+void MulInit(const std::vector<Vector>& A, const Matrix& B,
 	     Matrix* C) {
   index_t m = A[0].length();
   index_t n = A.size();
@@ -144,7 +142,7 @@ void MulInit(const ArrayList<Vector>& A, const Matrix& B,
 }
 
 // Matrix multiplication C = B' A'
-void MulTransCInit(const ArrayList<Vector>& A, const Matrix& B,
+void MulTransCInit(const std::vector<Vector>& A, const Matrix& B,
 		   Matrix* C) {
   index_t m = A[0].length();
   index_t n = A.size();

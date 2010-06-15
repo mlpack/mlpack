@@ -8,23 +8,23 @@ int SeriesExpansionAux::get_max_total_num_coeffs() const {
   return list_total_num_coeffs_[max_order_];
 }
 
-const ArrayList < short int > *SeriesExpansionAux::get_lower_mapping_index() 
+const std::vector < short int > &SeriesExpansionAux::get_lower_mapping_index() 
   const {
-  return lower_mapping_index_.begin();
+  return lower_mapping_index_.front();
 }
 
 int SeriesExpansionAux::get_max_order() const {
   return max_order_;
 }
 
-const ArrayList < short int > &SeriesExpansionAux::get_multiindex(int pos) 
+const std::vector < short int > &SeriesExpansionAux::get_multiindex(int pos) 
   const {
   return multiindex_mapping_[pos];
 }
 
-const ArrayList < short int > *SeriesExpansionAux::get_multiindex_mapping() 
+const std::vector < short int > &SeriesExpansionAux::get_multiindex_mapping() 
   const {
-  return multiindex_mapping_.begin();
+  return multiindex_mapping_.front();
 }
 
 const Vector& SeriesExpansionAux::get_neg_inv_multiindex_factorials() const {
@@ -44,14 +44,14 @@ int SeriesExpansionAux::get_total_num_coeffs(int order) const {
   return list_total_num_coeffs_[order];
 }
 
-const ArrayList < short int > *SeriesExpansionAux::get_upper_mapping_index() 
+const std::vector < short int > &SeriesExpansionAux::get_upper_mapping_index() 
   const {
 
-  return upper_mapping_index_.begin();
+  return upper_mapping_index_.front();
 }
 
 int SeriesExpansionAux::ComputeMultiindexPosition
-(const ArrayList<short int> &multiindex) const {
+(const std::vector<short int> &multiindex) const {
 
   int dim = multiindex.size();
   int mapping_sum = 0;
@@ -92,8 +92,8 @@ double SeriesExpansionAux::DirectLocalAccumulationCost(int order) const {
 void SeriesExpansionAux::Init(int max_order, int dim) {
 
   int p, k, t, tail, i, j;
-  ArrayList<int> heads;
-  ArrayList<int> cinds;
+  std::vector<int> heads;
+  std::vector<int> cinds;
 
   // initialize max order and dimension
   dim_ = dim;
@@ -101,7 +101,7 @@ void SeriesExpansionAux::Init(int max_order, int dim) {
   
   // compute the list of total number of coefficients for p-th order expansion
   int limit = 2 * max_order + 1;
-  list_total_num_coeffs_.Init(limit);
+  list_total_num_coeffs_.reserve(limit);
   for(p = 0; p < limit; p++) {
     list_total_num_coeffs_[p] = (int) math::BinomialCoefficient(p + dim, dim);
   }
@@ -114,8 +114,8 @@ void SeriesExpansionAux::Init(int max_order, int dim) {
   // and multiindex_combination precomputed factors
   inv_multiindex_factorials_.Init(list_total_num_coeffs_[limit - 1]);  
   neg_inv_multiindex_factorials_.Init(list_total_num_coeffs_[limit - 1]);
-  multiindex_mapping_.Init(list_total_num_coeffs_[limit - 1]);
-  (multiindex_mapping_[0]).Init(dim_);
+  multiindex_mapping_.reserve(list_total_num_coeffs_[limit - 1]);
+  (multiindex_mapping_[0]).reserve(dim_);
   for(j = 0; j < dim; j++) {
     (multiindex_mapping_[0])[j] = 0;
   }
@@ -123,8 +123,8 @@ void SeriesExpansionAux::Init(int max_order, int dim) {
   n_choose_k_.SetZero();
 
   // initialization of temporary variables for computation...
-  heads.Init(dim + 1);
-  cinds.Init(list_total_num_coeffs_[limit - 1]);
+  heads.reserve(dim + 1);
+  cinds.reserve(list_total_num_coeffs_[limit - 1]);
 
   for(i = 0; i < dim; i++) {
     heads[i] = 0;
@@ -147,7 +147,7 @@ void SeriesExpansionAux::Init(int max_order, int dim) {
 	neg_inv_multiindex_factorials_[t] =
 	  -neg_inv_multiindex_factorials_[j] / cinds[t];
 	
-	(multiindex_mapping_[t]).InitCopy(multiindex_mapping_[j]);
+	(multiindex_mapping_[t]).assign(multiindex_mapping_[j].begin(), multiindex_mapping_[j].end());
 	(multiindex_mapping_[t])[i] = (multiindex_mapping_[t])[i] + 1;
       }
     }

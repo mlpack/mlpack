@@ -26,7 +26,7 @@ class MixtureofGaussianHMM {
   Matrix transmission_;
 
   /** List of Mixture of Gaussian objects corresponding to each state */
-  ArrayList<MixtureGauss> list_mixture_gauss_;
+  std::vector<MixtureGauss> list_mixture_gauss_;
 
   OT_DEF(MixtureofGaussianHMM) {
     OT_MY_OBJECT(transmission_);
@@ -35,14 +35,14 @@ class MixtureofGaussianHMM {
  public:
   /** Getters */
   const Matrix& transmission() const { return transmission_; }
-  const ArrayList<MixtureGauss>& list_mixture_gauss() const { return list_mixture_gauss_; }
+  const std::vector<MixtureGauss>& list_mixture_gauss() const { return list_mixture_gauss_; }
 
   /** Setter used when already initialized */
   void setModel(const Matrix& transmission,
-		const ArrayList<MixtureGauss>& list_mixture_gauss);
+		const std::vector<MixtureGauss>& list_mixture_gauss);
 
   /** Initializes from computed transmission and Mixture of Gaussian parameters */
-  void Init(const Matrix& transmission, const ArrayList<MixtureGauss>& list_mixture_gauss);
+  void Init(const Matrix& transmission, const std::vector<MixtureGauss>& list_mixture_gauss);
 
   /** Initializes by loading from a file */
   void InitFromFile(const char* profile);
@@ -50,7 +50,6 @@ class MixtureofGaussianHMM {
   /** Initializes empty object */
   void Init() {
     transmission_.Init(0, 0);
-    list_mixture_gauss_.Init();
   }
 
   /** Load from file, used when already initialized */
@@ -87,7 +86,7 @@ class MixtureofGaussianHMM {
   double ComputeLogLikelihood(const Matrix& data_seq) const;
 
   /** Compute the log-likelihood of a list of sequences */
-  void ComputeLogLikelihood(const ArrayList<Matrix>& list_data_seq, ArrayList<double>* list_likelihood) const;
+  void ComputeLogLikelihood(const std::vector<Matrix>& list_data_seq, std::vector<double>* list_likelihood) const;
 
   /** Compute the most probable sequence (Viterbi) */
   void ComputeViterbiStateSequence(const Matrix& data_seq, Vector* state_seq) const;
@@ -96,18 +95,18 @@ class MixtureofGaussianHMM {
    * Train the model with a list of sequences, must be already initialized 
    * using Baum-Welch EM algorithm
    */
-  void TrainBaumWelch(const ArrayList<Matrix>& list_data_seq, int max_iteration, double tolerance);
+  void TrainBaumWelch(const std::vector<Matrix>& list_data_seq, int max_iteration, double tolerance);
 
   /** 
    * Train the model with a list of sequences, must be already initialized 
    * using Viterbi algorithm to determine the state sequence of each sequence
    */
-  void TrainViterbi(const ArrayList<Matrix>& list_data_seq, int max_iteration, double tolerance);
+  void TrainViterbi(const std::vector<Matrix>& list_data_seq, int max_iteration, double tolerance);
 
 
   ////////// Static helper functions ///////////////////////////////////////
-  static success_t LoadProfile(const char* profile, Matrix* trans, ArrayList<MixtureGauss>* mixs);
-  static success_t SaveProfile(const char* profile, const Matrix& trans, const ArrayList<MixtureGauss>& mixs);
+  static success_t LoadProfile(const char* profile, Matrix* trans, std::vector<MixtureGauss>* mixs);
+  static success_t SaveProfile(const char* profile, const Matrix& trans, const std::vector<MixtureGauss>& mixs);
 
   /**
    * Generating a sequence and states using transition and emission probabilities.
@@ -118,13 +117,13 @@ class MixtureofGaussianHMM {
    * seq: generated sequence, uninitialized matrix, will have size N x L
    * states: generated states, uninitialized vector, will have length L
    */
-  static void GenerateInit(int L, const Matrix& trans, const ArrayList<MixtureGauss>& mixs, Matrix* seq, Vector* states);
+  static void GenerateInit(int L, const Matrix& trans, const std::vector<MixtureGauss>& mixs, Matrix* seq, Vector* states);
 
   /** Estimate transition and emission distribution from sequence and states */
   static void EstimateInit(int NumClusters, const Matrix& seq, const Vector& states, 
-			   Matrix* trans, ArrayList<MixtureGauss>* mixs);
+			   Matrix* trans, std::vector<MixtureGauss>* mixs);
   static void EstimateInit(int numStates, int NumClusters, const Matrix& seq, 
-			   const Vector& states, Matrix* trans, ArrayList<MixtureGauss>* mixs);
+			   const Vector& states, Matrix* trans, std::vector<MixtureGauss>* mixs);
 
   /** 
    * Calculate posteriori probabilities of states at each steps
@@ -147,7 +146,7 @@ class MixtureofGaussianHMM {
   static double Decode(int L, const Matrix& trans, const Matrix& emis_prob, 
 		       Matrix* pstates, Matrix* fs, Matrix* bs, Vector* scales);
 
-  static void CalculateEmissionProb(const Matrix& seq, const ArrayList<MixtureGauss>& mixs, Matrix* emis_prob);
+  static void CalculateEmissionProb(const Matrix& seq, const std::vector<MixtureGauss>& mixs, Matrix* emis_prob);
 
   /** 
    * Calculate the most probable states for a sequence
@@ -164,9 +163,9 @@ class MixtureofGaussianHMM {
    * Baum-Welch and Viterbi estimation of transition and emission 
    * distribution (Gaussian)
    */
-  static void Train(const ArrayList<Matrix>& seqs, Matrix* guessTR, 
-		    ArrayList<MixtureGauss>* guessMG, int max_iter, double tol);
-  static void TrainViterbi(const ArrayList<Matrix>& seqs, Matrix* guessTR, 
-			   ArrayList<MixtureGauss>* guessMG, int max_iter, double tol);
+  static void Train(const std::vector<Matrix>& seqs, Matrix* guessTR, 
+		    std::vector<MixtureGauss>* guessMG, int max_iter, double tol);
+  static void TrainViterbi(const std::vector<Matrix>& seqs, Matrix* guessTR, 
+			   std::vector<MixtureGauss>* guessMG, int max_iter, double tol);
 };
 #endif

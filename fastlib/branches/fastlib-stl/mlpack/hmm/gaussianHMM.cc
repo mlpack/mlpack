@@ -10,7 +10,7 @@
 
 using namespace hmm_support;
 
-void GaussianHMM::setModel(const Matrix& transmission,  const ArrayList<Vector>& list_mean_vec,const ArrayList<Matrix>& list_covariance_mat) {
+void GaussianHMM::setModel(const Matrix& transmission,  const std::vector<Vector>& list_mean_vec,const std::vector<Matrix>& list_covariance_mat) {
   DEBUG_ASSERT(transmission.n_rows() == transmission.n_cols());
   DEBUG_ASSERT(transmission.n_rows() == list_mean_vec.size());
   DEBUG_ASSERT(transmission.n_rows() == list_covariance_mat.size());
@@ -20,18 +20,16 @@ void GaussianHMM::setModel(const Matrix& transmission,  const ArrayList<Vector>&
     DEBUG_ASSERT(list_mean_vec[0].length() == list_mean_vec[i].length());
   }
   transmission_.Destruct();
-  list_mean_vec_.Renew();
-  list_covariance_mat_.Renew();
   transmission_.Copy(transmission);
-  list_mean_vec_.InitCopy(list_mean_vec);
-  list_covariance_mat_.InitCopy(list_covariance_mat);
+  list_mean_vec_.assign(list_mean_vec.begin(), list_mean_vec.end());
+  list_covariance_mat_.assign(list_covariance_mat.begin(), list_covariance_mat.end());
   CalculateInverse();
 }
 
-void GaussianHMM::Init(const Matrix& transmission,  const ArrayList<Vector>& list_mean_vec,const ArrayList<Matrix>& list_covariance_mat) {
+void GaussianHMM::Init(const Matrix& transmission,  const std::vector<Vector>& list_mean_vec,const std::vector<Matrix>& list_covariance_mat) {
   transmission_.Copy(transmission);
-  list_mean_vec_.InitCopy(list_mean_vec);
-  list_covariance_mat_.InitCopy(list_covariance_mat);
+  list_mean_vec_.assign(list_mean_vec.begin(), list_mean_vec.end());
+  list_covariance_mat_.assign(list_covariance_mat.begin(),list_covariance_mat.end());
   DEBUG_ASSERT(transmission.n_rows() == transmission.n_cols());
   DEBUG_ASSERT(transmission.n_rows() == list_mean_vec.size());
   DEBUG_ASSERT(transmission.n_rows() == list_covariance_mat.size());
@@ -46,14 +44,14 @@ void GaussianHMM::Init(const Matrix& transmission,  const ArrayList<Vector>& lis
 void GaussianHMM::InitFromFile(const char* profile) {
   if (!PASSED(GaussianHMM::LoadProfile(profile, &transmission_, &list_mean_vec_, &list_covariance_mat_)))
     FATAL("Couldn't open '%s' for reading.", profile);
-  list_inverse_cov_mat_.InitCopy(list_covariance_mat_);
+  list_inverse_cov_mat_.assign(list_covariance_mat_.begin(),list_covariance_mat_.end());
   gauss_const_vec_.Init(list_covariance_mat_.size());
   CalculateInverse();
 }
 
-void GaussianHMM::InitFromData(const ArrayList<Matrix>& list_data_seq, int numstate) {
+void GaussianHMM::InitFromData(const std::vector<Matrix>& list_data_seq, int numstate) {
   GaussianHMM::InitGaussParameter(numstate, list_data_seq, &transmission_, &list_mean_vec_, &list_covariance_mat_);
-  list_inverse_cov_mat_.InitCopy(list_covariance_mat_);
+  list_inverse_cov_mat_.assign(list_covariance_mat_.begin(), list_covariance_mat_.end());
   gauss_const_vec_.Init(list_covariance_mat_.size());
   CalculateInverse();
 }
@@ -65,11 +63,13 @@ void GaussianHMM::InitFromData(const Matrix& data_seq, const Vector& state_seq) 
 }
 
 void GaussianHMM::LoadProfile(const char* profile) {
+  /*
   transmission_.Destruct();
   list_mean_vec_.Renew();
   list_covariance_mat_.Renew();
   list_inverse_cov_mat_.Renew();
   gauss_const_vec_.Destruct();
+  */
   InitFromFile(profile);
 }
 
@@ -92,8 +92,6 @@ void GaussianHMM::GenerateSequence(int L, Matrix* data_seq, Vector* state_seq) c
 
 void GaussianHMM::EstimateModel(const Matrix& data_seq, const Vector& state_seq) {
   transmission_.Destruct();
-  list_mean_vec_.Renew();
-  list_covariance_mat_.Renew();
   GaussianHMM::EstimateInit(data_seq, state_seq, &transmission_, 
 			    &list_mean_vec_, &list_covariance_mat_);
   CalculateInverse();
@@ -101,8 +99,6 @@ void GaussianHMM::EstimateModel(const Matrix& data_seq, const Vector& state_seq)
 
 void GaussianHMM::EstimateModel(int numstate, const Matrix& data_seq, const Vector& state_seq) {
   transmission_.Destruct();
-  list_mean_vec_.Renew();
-  list_covariance_mat_.Renew();
   GaussianHMM::EstimateInit(numstate, data_seq, state_seq, &transmission_, 
 			    &list_mean_vec_, &list_covariance_mat_);
   CalculateInverse();
@@ -148,7 +144,7 @@ double GaussianHMM::ComputeLogLikelihood(const Matrix& data_seq) const {
   return loglik;
 }
 
-void GaussianHMM::ComputeLogLikelihood(const ArrayList<Matrix>& list_data_seq, ArrayList<double>* list_likelihood) const {
+void GaussianHMM::ComputeLogLikelihood(const std::vector<Matrix>& list_data_seq, std::vector<double>* list_likelihood) const {
   int L = 0;
   for (int i = 0; i < list_data_seq.size(); i++)
     if (list_data_seq[i].n_cols() > L) L = list_data_seq[i].n_cols();
@@ -156,7 +152,6 @@ void GaussianHMM::ComputeLogLikelihood(const ArrayList<Matrix>& list_data_seq, A
   Matrix fs(M, L), emis_prob(M, L);
   Vector sc;
   sc.Init(L);
-  list_likelihood->Init();
   for (int i = 0; i < list_data_seq.size(); i++) {
     int L = list_data_seq[i].n_cols();
     GaussianHMM::CalculateEmissionProb(list_data_seq[i], list_mean_vec_, list_inverse_cov_mat_, gauss_const_vec_, &emis_prob);
@@ -164,7 +159,7 @@ void GaussianHMM::ComputeLogLikelihood(const ArrayList<Matrix>& list_data_seq, A
     double loglik = 0;
     for (int t = 0; t < L; t++)
       loglik += log(sc[t]);
-    list_likelihood->PushBackCopy(loglik);
+    list_likelihood->push_back(loglik);
   }
 }
 
@@ -176,25 +171,23 @@ void GaussianHMM::ComputeViterbiStateSequence(const Matrix& data_seq, Vector* st
   GaussianHMM::ViterbiInit(transmission_, emis_prob, state_seq);
 }
 
-void GaussianHMM::TrainBaumWelch(const ArrayList<Matrix>& list_data_seq, int max_iteration, double tolerance) {
+void GaussianHMM::TrainBaumWelch(const std::vector<Matrix>& list_data_seq, int max_iteration, double tolerance) {
   GaussianHMM::Train(list_data_seq, &transmission_, &list_mean_vec_, &list_covariance_mat_, max_iteration, tolerance);
   CalculateInverse();
 }
 
-void GaussianHMM::TrainViterbi(const ArrayList<Matrix>& list_data_seq, int max_iteration, double tolerance) {
+void GaussianHMM::TrainViterbi(const std::vector<Matrix>& list_data_seq, int max_iteration, double tolerance) {
   GaussianHMM::TrainViterbi(list_data_seq, &transmission_, &list_mean_vec_, &list_covariance_mat_, max_iteration, tolerance);
   CalculateInverse();
 }
 
-success_t GaussianHMM::LoadProfile(const char* profile, Matrix* trans, ArrayList<Vector>* means, ArrayList<Matrix>* covs) {
-  ArrayList<Matrix> matlst;
+success_t GaussianHMM::LoadProfile(const char* profile, Matrix* trans, std::vector<Vector>* means, std::vector<Matrix>* covs) {
+  std::vector<Matrix> matlst;
   if (!PASSED(load_matrix_list(profile, &matlst)))
     return SUCCESS_FAIL;
 
   DEBUG_ASSERT(matlst.size() > 0);
   trans->Copy(matlst[0]);
-  means->Init();
-  covs->Init();
   int M = trans->n_rows(); // num of states
   DEBUG_ASSERT(matlst.size() == 2*M+1);
   int N = matlst[1].n_rows(); // dimension
@@ -203,13 +196,13 @@ success_t GaussianHMM::LoadProfile(const char* profile, Matrix* trans, ArrayList
     DEBUG_ASSERT(matlst[i+1].n_rows()==N && matlst[i+1].n_cols()==N);
     Vector m;
     matlst[i].MakeColumnVector(0, &m);
-    means->PushBackCopy(m);
-    covs->PushBackCopy(matlst[i+1]);
+    means->push_back(m);
+    covs->push_back(matlst[i+1]);
   }
   return SUCCESS_PASS;
 }
 
-success_t GaussianHMM::SaveProfile(const char* profile, const Matrix& trans, const ArrayList<Vector>& means, const ArrayList<Matrix>& covs) {
+success_t GaussianHMM::SaveProfile(const char* profile, const Matrix& trans, const std::vector<Vector>& means, const std::vector<Matrix>& covs) {
   TextWriter w_pro;
   if (!PASSED(w_pro.Open(profile))) {
     NONFATAL("Couldn't open '%s' for writing.", profile);
@@ -231,7 +224,7 @@ success_t GaussianHMM::SaveProfile(const char* profile, const Matrix& trans, con
   return SUCCESS_PASS;
 }
 
-void GaussianHMM::GenerateInit(int L, const Matrix& trans, const ArrayList<Vector>& means, const ArrayList<Matrix>& covs, Matrix* seq, Vector* states){
+void GaussianHMM::GenerateInit(int L, const Matrix& trans, const std::vector<Vector>& means, const std::vector<Matrix>& covs, Matrix* seq, Vector* states){
   DEBUG_ASSERT_MSG((trans.n_rows()==trans.n_cols() && trans.n_rows()==means.size() && trans.n_rows()==covs.size()), "hmm_generateG_init: matrices sizes do not match");
   Matrix trsum;
   Matrix& seq_ = *seq;
@@ -271,7 +264,7 @@ void GaussianHMM::GenerateInit(int L, const Matrix& trans, const ArrayList<Vecto
   }
 }
 
-void GaussianHMM::EstimateInit(const Matrix& seq, const Vector& states, Matrix* trans, ArrayList<Vector>* means, ArrayList<Matrix>* covs) {
+void GaussianHMM::EstimateInit(const Matrix& seq, const Vector& states, Matrix* trans, std::vector<Vector>* means, std::vector<Matrix>* covs) {
   DEBUG_ASSERT_MSG((seq.n_cols()==states.length()), "hmm_estimateG_init: sequence and states length must be the same");
   int M = 0;
   for (int i = 0; i < seq.n_cols(); i++)
@@ -280,7 +273,7 @@ void GaussianHMM::EstimateInit(const Matrix& seq, const Vector& states, Matrix* 
   GaussianHMM::EstimateInit(M, seq, states, trans, means, covs);
 }
 
-void GaussianHMM::EstimateInit(int numStates, const Matrix& seq, const Vector& states, Matrix* trans, ArrayList<Vector>* means, ArrayList<Matrix>* covs) {
+void GaussianHMM::EstimateInit(int numStates, const Matrix& seq, const Vector& states, Matrix* trans, std::vector<Vector>* means, std::vector<Matrix>* covs) {
   DEBUG_ASSERT_MSG((seq.n_cols()==states.length()), "hmm_estimateD_init: sequence and states length must be the same");
   
   int N = seq.n_rows(); // emission vector length
@@ -288,24 +281,22 @@ void GaussianHMM::EstimateInit(int numStates, const Matrix& seq, const Vector& s
   int L = seq.n_cols(); // sequence length
   
   Matrix &trans_ = *trans;
-  ArrayList<Vector>& mean_ = *means;
-  ArrayList<Matrix>& cov_ = *covs;
+  std::vector<Vector>& mean_ = *means;
+  std::vector<Matrix>& cov_ = *covs;
   Vector stateSum;
 
   trans_.Init(M, M);
-  mean_.Init();
-  cov_.Init();
   stateSum.Init(M);
 
   trans_.SetZero();
   for (int i = 0; i < M; i++) {
     Vector m;
     m.Init(N); m.SetZero();
-    mean_.PushBackCopy(m);
+    mean_.push_back(m);
 
     Matrix c;
     c.Init(N, N); c.SetZero();
-    cov_.PushBackCopy(c);
+    cov_.push_back(c);
   }
 
   stateSum.SetZero();
@@ -487,7 +478,7 @@ double GaussianHMM::ViterbiInit(int L, const Matrix& trans, const Matrix& emis_p
   return bestVal;
 }
 
-void GaussianHMM::CalculateEmissionProb(const Matrix& seq, const ArrayList<Vector>& means, const ArrayList<Matrix>& inv_covs, const Vector& det, Matrix* emis_prob) {
+void GaussianHMM::CalculateEmissionProb(const Matrix& seq, const std::vector<Vector>& means, const std::vector<Matrix>& inv_covs, const Vector& det, Matrix* emis_prob) {
   int L = seq.n_cols();
   int M = means.size();
   for (int t = 0; t < L; t++) {
@@ -498,12 +489,12 @@ void GaussianHMM::CalculateEmissionProb(const Matrix& seq, const ArrayList<Vecto
   }
 }
 
-void GaussianHMM::InitGaussParameter(int M, const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Vector>* guessME, ArrayList<Matrix>* guessCO) {
+void GaussianHMM::InitGaussParameter(int M, const std::vector<Matrix>& seqs, Matrix* guessTR, std::vector<Vector>* guessME, std::vector<Matrix>* guessCO) {
   int N = seqs[0].n_rows();
   Matrix& gTR = *guessTR;
-  ArrayList<Vector>& gME = *guessME;
-  ArrayList<Matrix>& gCO = *guessCO;
-  ArrayList<int> labels;
+  std::vector<Vector>& gME = *guessME;
+  std::vector<Matrix>& gCO = *guessCO;
+  std::vector<int> labels;
   Vector sumState;
 
   kmeans(seqs, M, &labels, &gME, 1000, 1e-5);
@@ -513,11 +504,10 @@ void GaussianHMM::InitGaussParameter(int M, const ArrayList<Matrix>& seqs, Matri
 
   gTR.Init(M, M); gTR.SetZero();
   sumState.Init(M); sumState.SetZero();
-  gCO.Init();
   for (int i = 0; i < M; i++) {
     Matrix m;
     m.Init(N, N); m.SetZero();
-    gCO.PushBackCopy(m);
+    gCO.push_back(m);
   }
   //printf("---2---\n");
 
@@ -559,10 +549,10 @@ void GaussianHMM::InitGaussParameter(int M, const ArrayList<Matrix>& seqs, Matri
   //printf("---4---\n");
 }
 
-void GaussianHMM::TrainViterbi(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Vector>* guessME, ArrayList<Matrix>* guessCO, int max_iter, double tol) {
+void GaussianHMM::TrainViterbi(const std::vector<Matrix>& seqs, Matrix* guessTR, std::vector<Vector>* guessME, std::vector<Matrix>* guessCO, int max_iter, double tol) {
   Matrix &gTR = *guessTR;
-  ArrayList<Vector>& gME = *guessME;
-  ArrayList<Matrix>& gCO = *guessCO;
+  std::vector<Vector>& gME = *guessME;
+  std::vector<Matrix>& gCO = *guessCO;
   int L = -1;
   int M = gTR.n_rows();
   int N = gME[0].length();
@@ -572,14 +562,14 @@ void GaussianHMM::TrainViterbi(const ArrayList<Matrix>& seqs, Matrix* guessTR, A
     if (seqs[i].n_cols() > L) L = seqs[i].n_cols();
 
   Matrix TR; // accumulating transition
-  ArrayList<Vector> ME; // accumulating mean
-  ArrayList<Matrix> CO; // accumulating covariance
-  ArrayList<Matrix> INV_CO; // inverse matrix of the covariance
+  std::vector<Vector> ME; // accumulating mean
+  std::vector<Matrix> CO; // accumulating covariance
+  std::vector<Matrix> INV_CO; // inverse matrix of the covariance
   Vector DET; // the determinant * constant of the Normal PDF formula
   TR.Init(M, M);
-  ME.InitCopy(gME);
-  CO.InitCopy(gCO);
-  INV_CO.InitCopy(CO);
+  ME.assign(gME.begin(),gME.end());
+  CO.assign(gCO.begin(),gCO.end());
+  INV_CO.assign(CO.begin(),CO.end());
   DET.Init(M);
 
   Matrix emis_prob;
@@ -662,10 +652,10 @@ void GaussianHMM::TrainViterbi(const ArrayList<Matrix>& seqs, Matrix* guessTR, A
 }
 
 
-void GaussianHMM::Train(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayList<Vector>* guessME, ArrayList<Matrix>* guessCO, int max_iter, double tol) {
+void GaussianHMM::Train(const std::vector<Matrix>& seqs, Matrix* guessTR, std::vector<Vector>* guessME, std::vector<Matrix>* guessCO, int max_iter, double tol) {
   Matrix &gTR = *guessTR;
-  ArrayList<Vector>& gME = *guessME;
-  ArrayList<Matrix>& gCO = *guessCO;
+  std::vector<Vector>& gME = *guessME;
+  std::vector<Matrix>& gCO = *guessCO;
   int L = -1;
   int M = gTR.n_rows();
   int N = gME[0].length();
@@ -675,14 +665,14 @@ void GaussianHMM::Train(const ArrayList<Matrix>& seqs, Matrix* guessTR, ArrayLis
     if (seqs[i].n_cols() > L) L = seqs[i].n_cols();
 
   Matrix TR; // guess transition and emission matrix
-  ArrayList<Vector> ME; // accumulating mean
-  ArrayList<Matrix> CO; // accumulating covariance
-  ArrayList<Matrix> INV_CO; // inverse matrix of the covariance
+  std::vector<Vector> ME; // accumulating mean
+  std::vector<Matrix> CO; // accumulating covariance
+  std::vector<Matrix> INV_CO; // inverse matrix of the covariance
   Vector DET; // the determinant * constant of the Normal PDF formula
   TR.Init(M, M);
-  ME.InitCopy(gME);
-  CO.InitCopy(gCO);
-  INV_CO.InitCopy(CO);
+  ME.assign(gME.begin(),gME.end());
+  CO.assign(gCO.begin(),gCO.end());
+  INV_CO.assign(CO.begin(),CO.end());
   DET.Init(M);
 
   Matrix ps, fs, bs, emis_prob; // to hold hmm_decodeG results

@@ -41,13 +41,13 @@ class QuicSVD {
 
 
   /** Orthonomal basis of the subspace */
-  ArrayList<Vector> basis_;
+  std::vector<Vector> basis_;
 
   /** Projection coordinates of columns of A_ onto the subspace */
-  ArrayList<Vector> UTA_;
+  std::vector<Vector> UTA_;
   
   /** Projection magnitude of columns of A_ in the subspace */
-  ArrayList<double> projMagSq_;
+  std::vector<double> projMagSq_;
 
   /** Frobenius norm of A_ being projected to the subspace */
   double sumProjMagSq_;

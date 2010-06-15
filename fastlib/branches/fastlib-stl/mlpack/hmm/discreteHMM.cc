@@ -7,6 +7,7 @@
 #include "fastlib/fastlib.h"
 #include "support.h"
 #include "discreteHMM.h"
+#include <algorithm>
 
 using namespace hmm_support;
 
@@ -27,7 +28,7 @@ void DiscreteHMM::Init(const Matrix& transmission, const Matrix& emission) {
 }
 
 void DiscreteHMM::InitFromFile(const char* profile) {
-  ArrayList<Matrix> list_mat;
+  std::vector<Matrix> list_mat;
   load_matrix_list(profile, &list_mat);
   if (list_mat.size() < 2)
     FATAL("Number of matrices in the file should be at least 2.");
@@ -39,19 +40,20 @@ void DiscreteHMM::InitFromFile(const char* profile) {
   DEBUG_ASSERT(transmission_.n_rows() == emission_.n_rows());
 }
 
-void DiscreteHMM::InitFromData(const ArrayList<Vector>& list_data_seq, int numstate) {
+void DiscreteHMM::InitFromData(const std::vector<Vector>& list_data_seq, int numstate) {
   int numsymbol = 0;
-  int maxseq = 0;
-  for (int i = 0; i < list_data_seq.size(); i++) 
-    if (list_data_seq[i].length() > list_data_seq[maxseq].length()) maxseq = i;
-  for (int i = 0; i < list_data_seq[maxseq].length(); i++)
-    if (list_data_seq[maxseq][i] > numsymbol) numsymbol = (int) list_data_seq[maxseq][i];
+  std::vector<Vector>::const_iterator maxseq = list_data_seq.begin();
+  for( std::vector<Vector>::const_iterator i = list_data_seq.begin();
+      i < list_data_seq.end(); ++i )
+    maxseq = (maxseq->length() < i->length())?i:maxseq;
+  for (int i = 0; i < maxseq->length(); i++)
+    if ((*maxseq)[i] > numsymbol) numsymbol = (int) (*maxseq)[i];
   numsymbol++;
   Vector states;
-  int L = list_data_seq[maxseq].length();
+  int L = maxseq->length();
   states.Init(L);
   for (int i = 0; i < L; i++) states[i] = rand() % numstate;
-  DiscreteHMM::EstimateInit(numsymbol, numstate, list_data_seq[maxseq], states, &transmission_, &emission_);  
+  DiscreteHMM::EstimateInit(numsymbol, numstate, *maxseq, states, &transmission_, &emission_);  
 }
 
 void DiscreteHMM::LoadProfile(const char* profile) {
@@ -116,7 +118,7 @@ double DiscreteHMM::ComputeLogLikelihood(const Vector& data_seq) const {
   return loglik;
 }
 
-void DiscreteHMM::ComputeLogLikelihood(const ArrayList<Vector>& list_data_seq, ArrayList<double>* list_likelihood) const {
+void DiscreteHMM::ComputeLogLikelihood(const std::vector<Vector>& list_data_seq, std::vector<double>* list_likelihood) const {
   int L = 0;
   for (int i = 0; i < list_data_seq.size(); i++)
     if (list_data_seq[i].length() > L) L = list_data_seq[i].length();
@@ -124,14 +126,13 @@ void DiscreteHMM::ComputeLogLikelihood(const ArrayList<Vector>& list_data_seq, A
   Matrix fs(M, L);
   Vector sc;
   sc.Init(L);
-  list_likelihood->Init();
   for (int i = 0; i < list_data_seq.size(); i++) {
     DiscreteHMM::ForwardProcedure(list_data_seq[i], transmission_, emission_, &sc, &fs);
     int L = list_data_seq[i].length();
     double loglik = 0;
     for (int t = 0; t < L; t++)
       loglik += log(sc[t]);
-    list_likelihood->PushBackCopy(loglik);
+    list_likelihood->push_back(loglik);
   }
 }
 
@@ -139,11 +140,11 @@ void DiscreteHMM::ComputeViterbiStateSequence(const Vector& data_seq, Vector* st
   DiscreteHMM::ViterbiInit(data_seq, transmission_, emission_, state_seq);
 }
 
-void DiscreteHMM::TrainBaumWelch(const ArrayList<Vector>& list_data_seq, int max_iteration, double tolerance) {
+void DiscreteHMM::TrainBaumWelch(const std::vector<Vector>& list_data_seq, int max_iteration, double tolerance) {
   DiscreteHMM::Train(list_data_seq, &transmission_, &emission_, max_iteration, tolerance);
 }
 
-void DiscreteHMM::TrainViterbi(const ArrayList<Vector>& list_data_seq, int max_iteration, double tolerance) {
+void DiscreteHMM::TrainViterbi(const std::vector<Vector>& list_data_seq, int max_iteration, double tolerance) {
   DiscreteHMM::TrainViterbi(list_data_seq, &transmission_, &emission_, max_iteration, tolerance);
 }
 
@@ -388,7 +389,7 @@ double DiscreteHMM::ViterbiInit(int L, const Vector& seq, const Matrix& trans, c
   return bestVal;
 }
 
-void DiscreteHMM::Train(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter, double tol) {
+void DiscreteHMM::Train(const std::vector<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter, double tol) {
   int L = -1;
   int M = guessTR->n_rows();
   int N = guessEM->n_cols();
@@ -461,7 +462,7 @@ void DiscreteHMM::Train(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* 
   }
 }
 
-void DiscreteHMM::TrainViterbi(const ArrayList<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter, double tol) {
+void DiscreteHMM::TrainViterbi(const std::vector<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter, double tol) {
   int L = -1;
   int M = guessTR->n_rows();
   int N = guessEM->n_cols();
