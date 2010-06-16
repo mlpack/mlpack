@@ -1,9 +1,11 @@
 
 #include "tokenizer.h"
 
-void tokenizeString( const std::string& str, const std::string& delimeters,
-    std::vector<std::string>& result, index_t pos,
-    const std::string& stopon, index_t stopat ) {
+using namespace std;
+
+void tokenizeString( const string& str, const string& delimiters,
+    vector<string>& result, index_t pos,
+    const string& stopon, index_t stopat, bool save_last ) {
   result.reserve(stopat);
 
   size_t last = pos;
@@ -12,28 +14,28 @@ void tokenizeString( const std::string& str, const std::string& delimeters,
   // Minimum is INT_MAX (sufficient?)
   if( !stopat )
     --stopat;
-  for( ; pos < str.length() && stopat; ++pos ) {
 
-    for( std::string::const_iterator stopit = stopon.begin();
+  // loop through each character
+  for( ; pos < str.length() && stopat; ++pos ) {
+    // check that our current character is not a stopping character
+    for( string::const_iterator stopit = stopon.begin();
         stopit < stopon.end(); ++stopit ) {
       if( str[pos] == *stopit ) {
         if( stopat && last < pos )
-          result.push_back(
-              str.substr( last, pos - last )
-              );
+          result.push_back( str.substr( last, pos - last ) );
+        if( save_last )
+          result.push_back( str.substr( pos, str.size() - pos) );
         return;
       }
     }
-    
-    for( size_t dpos = 0; dpos < delimeters.length(); ++dpos ) {
-      if( str[pos] == delimeters[dpos] ) {
+    // check that our current character is not a delimiter
+    for( size_t dpos = 0; dpos < delimiters.length(); ++dpos ) {
+      if( str[pos] == delimiters[dpos] ) {
         if( last == pos )
           ++last;
         else {
-          result.push_back( 
-              str.substr( last, pos - last )
-              );
-          last = pos+1;
+          result.push_back( str.substr( last, pos - last ) );
+          last = pos + 1;
           --stopat;
         }
         break;
@@ -43,9 +45,7 @@ void tokenizeString( const std::string& str, const std::string& delimeters,
   }
 
   // Grab the last token
-  if( stopat && last < str.length() )
-    result.push_back(
-        str.substr( last, pos - last )
-        );
+  if( stopat || last < str.length() )
+    result.push_back( str.substr( last, pos - last ) );
 }
 
