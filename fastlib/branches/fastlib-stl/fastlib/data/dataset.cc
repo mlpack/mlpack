@@ -136,7 +136,7 @@ void DatasetInfo::Init(const char *name_in) {
 }
 
 index_t DatasetInfo::SkipSpace_(std::string& s) {
-  int i;
+  int i = 0;
   while (isspace(s[i])) {
     ++i;
   }
@@ -177,7 +177,7 @@ success_t DatasetInfo::InitFromArff(TextLineReader *reader,
     std::string *peeked = &reader->Peek();
     std::vector<std::string> portions;
 
-    tokenizeString(*peeked, "\t", portions, 0, "%", 3 ); 
+    tokenizeString(*peeked, ", \t", portions, 0, "%{", 3, true ); 
 
     if (portions.size() == 0) {
       /* empty line */
@@ -187,7 +187,7 @@ success_t DatasetInfo::InitFromArff(TextLineReader *reader,
       break;
     } else {
 //      if (portions[0].EqualsNoCase("@relation")) {
-      if( !strcasecmp( portions[0].c_str(), "@relation" ) ) {
+      if(strcasecmp(portions[0].c_str(), "@relation") == 0) {
         if (portions.size() < 2) {
           reader->Error("ARFF: @relation requires name");
           result = SUCCESS_FAIL;
@@ -195,7 +195,7 @@ success_t DatasetInfo::InitFromArff(TextLineReader *reader,
           set_name(portions[1]);
         }
 //      } else if (portions[0].EqualsNoCase("@attribute")) {
-      } else if( !strcasecmp( portions[0].c_str(), "@attribute" ) ) {
+      } else if(strcasecmp(portions[0].c_str(), "@attribute") == 0) {
         if (portions.size() < 3) {
           reader->Error("ARFF: @attribute requires name and type.");
           result = SUCCESS_FAIL;
@@ -211,12 +211,12 @@ success_t DatasetInfo::InitFromArff(TextLineReader *reader,
             //portions[2].Trim(" \t", &type);
 //            if (type.EqualsNoCase("numeric")
 //                || type.EqualsNoCase("real")) {
-            if( !strcasecmp( type.c_str(), "numeric" )
-                || !strcasecmp( type.c_str(), "real" ) ) {
+            if(strcasecmp(type.c_str(), "numeric") == 0
+                || strcasecmp(type.c_str(), "real") == 0) {
               feature.InitContinuous(portions[1]);
               features_.push_back(feature);
 //            } else if (type.EqualsNoCase("integer")) {
-          } else if( !strcasecmp( type.c_str(), "integer" ) ) {
+          } else if(strcasecmp( type.c_str(), "integer") == 0) {
               feature.InitContinuous(portions[1]);
               features_.push_back(feature);
             } else {
@@ -227,7 +227,7 @@ success_t DatasetInfo::InitFromArff(TextLineReader *reader,
           }
         }
 //      } else if (portions[0].EqualsNoCase("@data")) {
-      } else if( strcasecmp( portions[0].c_str(), "@data" ) ) {
+      } else if(strcasecmp(portions[0].c_str(), "@data") == 0) {
         /* Done! */
         reader->Gobble();
         break;
@@ -296,13 +296,13 @@ success_t DatasetInfo::InitFromFile(TextLineReader *reader,
   SkipBlanks_(reader);
 
   // WARNING: Safe?
-  char *first_line = (char *)SkipSpace_(reader->Peek());
+  char first_char = reader->Peek()[SkipSpace_(reader->Peek())];
 
-  if (!first_line) {
+  if (first_char == '\0') {
     Init();
     reader->Error("Could not parse the first line.");
     return SUCCESS_FAIL;
-  } else if (*first_line == '@') {
+  } else if (first_char == '@') {
     /* Okay, it's ARFF. */
     return InitFromArff(reader, filename);
   } else {
