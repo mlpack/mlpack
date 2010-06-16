@@ -424,12 +424,12 @@ success_t DatasetInfo::ReadMatrix(TextLineReader *reader, Matrix *matrix) const 
   index_t n_points = 0;
   success_t retval = SUCCESS_PASS;
   bool is_done;
+  double *tmp_point = new double[n_features];
 
-  
   do {
-    linearized.push_back(n_features);
-    double *point = &linearized.back();
-    retval = ReadPoint(reader, point, &is_done);
+    retval = ReadPoint(reader, tmp_point, &is_done);
+    for(int i = 0; i < n_features; i++)
+      linearized.push_back(tmp_point[i]);
     n_points++;
   } while (!is_done && !FAILED(retval));
 
