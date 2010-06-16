@@ -52,15 +52,17 @@
  * Runs in O( str.length() * ( delimeters.length() + stopon.length() ) ).
  *
  * @param str string to tokenize
- * @param delimeters delimeters used to separate tokens
+ * @param delimiters delimeters used to separate tokens
  * @param result vector used to store tokens
  * @param pos position in str to start from
  * @param stopon a character at which to stop processing
  * @param stopat specifies the maximum number of tokens to find
+ * @param save_last whether or not to save the last token, if stopping on a
+ *         stopon character
  */
-void tokenizeString( const std::string& str, const std::string& delimeters,
-    std::vector<std::string>& result, index_t pos=0,
-    const std::string& stopon="", index_t stopat=0 );
+void tokenizeString( const std::string& str, const std::string& delimiters,
+    std::vector<std::string>& result, index_t pos = 0,
+    const std::string& stopon = "", index_t stopat = 0, bool save_last = false );
 
 
 #endif
