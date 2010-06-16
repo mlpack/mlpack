@@ -49,12 +49,8 @@ void TestSplitTrainTest() {
   }
   
   std::vector<int> found;
-  
-  found.reserve(12);
-  
-  for (int i = 0; i < 12; i++) {
-    found[i] = 0;
-  }
+  for (int i = 0; i < 12; i++)
+    found.push_back(0);
   
   Dataset train;
   Dataset test;

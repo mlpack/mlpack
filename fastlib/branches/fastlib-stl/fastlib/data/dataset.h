@@ -213,11 +213,6 @@ class DatasetInfo {
   std::string name_;
   std::vector<DatasetFeature> features_;
 
-  OBJECT_TRAVERSAL(DatasetInfo) {
-    OT_OBJ(name_);
-    OT_OBJ(features_);
-  }
-
  public:
   /** Gets a mutable list of all features. */
   std::vector<DatasetFeature>& features() {
@@ -266,6 +261,15 @@ class DatasetInfo {
    * @param name_in the dataset title
    */
   void Init(const char *name_in = "dataset");
+
+  /***
+   * Copy constructor, written manually to avoid use of OBJECT_TRAVERSAL functions.
+   * TODO: Make this Init() crap go away.
+   */
+  void InitCopy(const DatasetInfo &info) {
+    name_ = info.name();
+    features_ = info.features_;
+  }
 
   /**
    * Writes the header for an ARFF file.
