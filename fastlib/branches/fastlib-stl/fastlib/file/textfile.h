@@ -46,13 +46,9 @@
 
 #include "../base/base.h"
 
-#include <string>
 #include <cstdio>
 #include <ctype.h>
 #include <stdarg.h>
-
-#include <vector>
-#include <algorithm>
 
 /**
  * Helper for reading text files.
@@ -100,15 +96,15 @@ class TextLineReader {
     (void)fclose(f_);
     f_ = NULL;
   }
- 
- /**
+
+  /**
    * Return the name of the file we are working with.
    * This will return NULL if no file has been opened yet.
    */
   const char *filename() const {
-    return fname_.c_str();
+    return fname_;
   }
- 
+  
   /**
    * Are there more lines left?
    */
@@ -251,7 +247,6 @@ class TextTokenizer {
     }
   }
   
-	/*
   bool MatchNoCase(const char *str) {
     if (next_.EqualsNoCase(str)) {
       Gobble();
@@ -260,7 +255,6 @@ class TextTokenizer {
       return false;
     }
   }
-	*/
   
   bool MatchInteger() {
     return MatchType(INTEGER);
