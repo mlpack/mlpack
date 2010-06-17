@@ -7,6 +7,10 @@ set(SOURCES
    crossvalidation.h
    dataset.h
    dataset.cc
+   dataset_info.h
+   dataset_info.cc
+   dataset_feature.h
+   dataset_feature.cc
 )
 
 # add directory name to sources

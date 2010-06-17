@@ -47,290 +47,26 @@
 #include <sstream>
 #include <iostream>
 
-
-void DatasetFeature::Format(double value, std::string& result) const {
-  if (unlikely(isnan(value))) {
-    result = "?";
-    return;
-  }
-  std::ostringstream o;
-  switch (type_) {
-    case CONTINUOUS:
-      if (floor(value) != value) {
-        // non-integer
-        o.setf( std::ios::scientific );
-      } else {
-        // value is actually an integer
-        o.precision(17);
-      }
-      break;
-    case INTEGER:
-    case NOMINAL:
-      break;
-    #ifdef DEBUG
-    default: abort();
-    #endif
-  }
-  if( !(o << value ) )
-    abort();
-  result = o.str();
-}
-
-success_t DatasetFeature::Parse(const std::string& str, double *d) const {
-  if (unlikely(str[0] == '?') && unlikely(str[1] == '\0')) {
-    *d = DBL_NAN;
-    return SUCCESS_PASS;
-  }
-  switch (type_) {
-    case CONTINUOUS: {
-//        *d = strtod(str, &end);
-      std::istringstream is(str);
-      if( !(is >> *d) )
-        return SUCCESS_FAIL;
-      return SUCCESS_PASS;
-    }
-    case INTEGER: {
-      int i;
-      std::istringstream is(str);
-      if( !(is >> i) )
-        return SUCCESS_FAIL;
-      *d = i;
-      return SUCCESS_PASS;
-    }
-    case NOMINAL: {
-      index_t i;
-      for (i = 0; i < value_names_.size(); i++) {
-        if (value_names_[i] == str) {
-          *d = i;
-          return SUCCESS_PASS;
-        }
-      }
-      *d = DBL_NAN;
-      return SUCCESS_FAIL;
-    }
-    default: abort();
-  }
-}
-
-// DatasetInfo ------------------------------------------------------
-
-
-void DatasetInfo::InitContinuous(index_t n_features,
-    const char *name_in) {
-  features_.reserve(n_features);
-
-  name_ = name_in;
-
-  for (index_t i = 0; i < n_features; i++) {
-    std::ostringstream o;
-    if(!(o << i))
-      abort();
-    DatasetFeature f;
-    f.InitContinuous(o.str());
-    features_.push_back(f);
-  }
-}
-
-void DatasetInfo::Init(const char *name_in) {
-  name_ = name_in;
-}
-
-index_t DatasetInfo::SkipSpace_(std::string& s) {
-  int i = 0;
-  while (isspace(s[i])) {
-    ++i;
-  }
-
-  if (unlikely(s[i] == '%') || unlikely(s[i] == '\0')) {
-    return s.length();
-  }
-
-  return i;
-}
-
-char *DatasetInfo::SkipNonspace_(char *s) {
-  while (likely(*s != '\0')
-      && likely(*s != '%')
-      && likely(*s != ' ')
-      && likely(*s != '\t')) {
-    s++;
-  }
-
-  return s;
-}
-
-void DatasetInfo::SkipBlanks_(TextLineReader *reader) {
-  while (reader->MoreLines() && reader->Peek()[SkipSpace_(reader->Peek())] == '\0') {
-    reader->Gobble();
-  }
-}
-
-success_t DatasetInfo::InitFromArff(TextLineReader *reader,
-    const char *filename) {
-  success_t result = SUCCESS_PASS;
-
-  Init(filename);
-
-  while (1) {
-    SkipBlanks_(reader);
-
-    std::string *peeked = &reader->Peek();
-    std::vector<std::string> portions;
-
-    tokenizeString(*peeked, ", \t", portions, 0, "%{", 3, true ); 
-
-    if (portions.size() == 0) {
-      /* empty line */
-    } else if (portions[0][0] != '@') {
-      reader->Error("ARFF: Unexpected @command.  Did you forget @data?");
-      result = SUCCESS_FAIL;
-      break;
-    } else {
-//      if (portions[0].EqualsNoCase("@relation")) {
-      if(strcasecmp(portions[0].c_str(), "@relation") == 0) {
-        if (portions.size() < 2) {
-          reader->Error("ARFF: @relation requires name");
-          result = SUCCESS_FAIL;
-        } else {
-          set_name(portions[1]);
-        }
-//      } else if (portions[0].EqualsNoCase("@attribute")) {
-      } else if(strcasecmp(portions[0].c_str(), "@attribute") == 0) {
-        if (portions.size() < 3) {
-          reader->Error("ARFF: @attribute requires name and type.");
-          result = SUCCESS_FAIL;
-        } else {
-          DatasetFeature feature;
-          if (portions[2][0] == '{') { //}
-            feature.InitNominal(portions[1]);
-            // TODO: Doesn't support values with spaces {
-            tokenizeString(portions[2], ", \t", feature.value_names(), 1, "}%", 0);
-            features_.push_back(feature);
-          } else {
-            std::string type(portions[2]);
-            //portions[2].Trim(" \t", &type);
-//            if (type.EqualsNoCase("numeric")
-//                || type.EqualsNoCase("real")) {
-            if(strcasecmp(type.c_str(), "numeric") == 0
-                || strcasecmp(type.c_str(), "real") == 0) {
-              feature.InitContinuous(portions[1]);
-              features_.push_back(feature);
-//            } else if (type.EqualsNoCase("integer")) {
-          } else if(strcasecmp( type.c_str(), "integer") == 0) {
-              feature.InitContinuous(portions[1]);
-              features_.push_back(feature);
-            } else {
-              reader->Error(
-                  "ARFF: Only support 'numeric', 'real', and {nominal}.");
-              result = SUCCESS_FAIL;
-            }
-          }
-        }
-//      } else if (portions[0].EqualsNoCase("@data")) {
-      } else if(strcasecmp(portions[0].c_str(), "@data") == 0) {
-        /* Done! */
-        reader->Gobble();
-        break;
-      } else {
-        reader->Error("ARFF: Expected @relation, @attribute, or @data.");
-        result = SUCCESS_FAIL;
-        break;
-      }
-    }
-
-    reader->Gobble();
-  }
-
-  return result;
-}
-
-success_t DatasetInfo::InitFromCsv(TextLineReader *reader,
-    const char *filename) {
-  std::vector<std::string> headers;
-  bool nonnumeric = false;
-
-  Init(filename);
-
-  tokenizeString(reader->Peek(), ", \t", headers);
-
-  if (headers.size() == 0) {
-    reader->Error("Trying to parse empty file as CSV.");
-    return SUCCESS_FAIL;
-  }
-
-  // Try to auto-detect if there is a header row
-  for (index_t i = 0; i < headers.size(); i++) {
-    char *end;
-
-    (void) strtod(headers[i].c_str(), &end);
-
-    if (end == headers[i].c_str()) {
-      nonnumeric = true;
-      break;
-    }
-  }
-
-  if (nonnumeric) {
-    for (index_t i = 0; i < headers.size(); i++) {
-      DatasetFeature feature;
-      feature.InitContinuous(headers[i]);
-      features_.push_back(feature);
-    }
-    reader->Gobble();
-  } else {
-    for (index_t i = 0; i < headers.size(); i++) {
-      DatasetFeature feature;
-      std::ostringstream o;
-      if(!(o << i))
-        abort();
-      feature.InitContinuous(o.str());
-      features_.push_back(feature);
-    }
-  }
-
-  return SUCCESS_PASS;
-}
-
-success_t DatasetInfo::InitFromFile(TextLineReader *reader,
-    const char *filename) {
-  SkipBlanks_(reader);
-
-  // WARNING: Safe?
-  char first_char = reader->Peek()[SkipSpace_(reader->Peek())];
-
-  if (first_char == '\0') {
-    Init();
-    reader->Error("Could not parse the first line.");
-    return SUCCESS_FAIL;
-  } else if (first_char == '@') {
-    /* Okay, it's ARFF. */
-    return InitFromArff(reader, filename);
-  } else {
-    /* It's CSV.  We'll try to see if there are headers. */
-    return InitFromCsv(reader, filename);
-  }
-}
-
 index_t Dataset::n_labels() const {
   index_t i = 0;
-  index_t label_row_idx = matrix_.n_rows() - 1; // the last row is for labels
+  index_t label_row_idx = matrix_.n_rows - 1; // the last row is for labels
   index_t n_labels = 0;
 
   double current_label;
   
   std::vector<double> labels_list;
-  labels_list.push_back(matrix_.get(label_row_idx,0));
+  labels_list.push_back(matrix_[label_row_idx,0]);
   n_labels++;
 
-  for (i = 1; i < matrix_.n_cols(); i++) {
-    current_label = matrix_.get(label_row_idx,i);
+  for(i = 1; i < matrix_.n_cols; i++) {
+    current_label = matrix_(label_row_idx, i);
     index_t j = 0;
     for (j = 0; j < n_labels; j++) {
       if (current_label == labels_list[j]) {
         break;
       }
     }
-    if (j == n_labels) { // new label
+    if(j == n_labels) { // new label
       labels_list.push_back(current_label);
       n_labels++;
     }
@@ -344,17 +80,16 @@ void Dataset::GetLabels(std::vector<double> &labels_list,
                         std::vector<index_t> &labels_ct,
                         std::vector<index_t> &labels_startpos) const {
   index_t i = 0;
-  index_t label_row_idx = matrix_.n_rows() - 1; // the last row is for labels
-  index_t n_points = matrix_.n_cols();
+  index_t label_row_idx = matrix_.n_rows - 1; // the last row is for labels
+  index_t n_points = matrix_.n_cols;
   index_t n_labels = 0;
 
   double current_label;
 
   // these Arraylists need initialization before-hand
-  /* This faithfully replicates the effect of ArrayList.Renew().
-     Is this necessary? If all we care about is initialization,
-     it shouldn't be.
-  */
+  // This faithfully replicates the effect of ArrayList.Renew().
+  //   Is this necessary? If all we care about is initialization,
+  //  it shouldn't be.
   {
     std::vector<double> y;
     std::vector<index_t> x[3];
@@ -368,19 +103,19 @@ void Dataset::GetLabels(std::vector<double> &labels_list,
 
   std::vector<index_t> labels_temp;
   labels_temp.reserve(n_points);
-  labels_temp[0] = 0;
+  labels_temp.push_back(0);
 
-  labels_list.push_back(matrix_.get(label_row_idx,0));
+  labels_list.push_back(matrix_(label_row_idx,0));
   labels_ct.push_back(1);
   n_labels++;
 
   for (i = 1; i < n_points; i++) {
-    current_label = matrix_.get(label_row_idx, i);
+    current_label = matrix_(label_row_idx, i);
     index_t j = 0;
     for (j = 0; j < n_labels; j++) {
       if (current_label == labels_list[j]) {
         labels_ct[j]++;
-  break;
+	break;
       }
     }
     labels_temp[i] = j;
@@ -392,9 +127,8 @@ void Dataset::GetLabels(std::vector<double> &labels_list,
   }
   
   labels_startpos.push_back(0);
-  for(i = 1; i < n_labels; i++){
-    labels_startpos.push_back( labels_startpos[i-1] + labels_ct[i-1] );
-  }
+  for(i = 1; i < n_labels; i++)
+    labels_startpos.push_back(labels_startpos[i - 1] + labels_ct[i - 1]);
 
   for(i = 0; i < n_points; i++) {
     labels_index[labels_startpos[labels_temp[i]]] = i;
@@ -403,233 +137,34 @@ void Dataset::GetLabels(std::vector<double> &labels_list,
 
   labels_startpos[0] = 0;
   for(i = 1; i < n_labels; i++)
-    labels_startpos[i] = labels_startpos[i-1] + labels_ct[i-1];
+    labels_startpos[i] = labels_startpos[i - 1] + labels_ct[i - 1];
 
   labels_temp.clear();
 }
 
-bool DatasetInfo::is_all_continuous() const {
-  for (index_t i = 0; i < features_.size(); i++) {
-    if (features_[i].type() != DatasetFeature::CONTINUOUS) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-success_t DatasetInfo::ReadMatrix(TextLineReader *reader, Matrix *matrix) const {
-  std::vector<double> linearized;
-  index_t n_features = this->n_features();
-  index_t n_points = 0;
-  success_t retval = SUCCESS_PASS;
-  bool is_done;
-
-  // read through our file to find out how long it is
-  index_t cur_line = reader->line_num();
-  while(reader->Gobble()) { }
-  matrix->Init(n_features, reader->line_num() - cur_line + 1);
-
-  char *fname = strncpy(new char[strlen(reader->filename()) + 1],
-    reader->filename(),
-    strlen(reader->filename()) + 1);
-
-  reader->Close();
-  reader->Open(fname);
-  delete[] fname;
-
-  // make sure we are in the same place in our file, just in case it was passed
-  // to us and we had already been some of the way through it (this is why we
-  // saved the line number
-  while(reader->line_num() < cur_line) {
-    reader->Gobble();
-  }
-
-  while((n_points < matrix->n_cols()) && !is_done && !FAILED(retval)) {
-    retval = ReadPoint(reader, matrix->GetColumnPtr(n_points), &is_done);
-    n_points++;
-  }
-
-  if (!FAILED(retval)) {
-    n_points--; // last increment was the failure, so subtract that
-    DEBUG_ASSERT(n_points == matrix->n_rows());
-  }
-
-  return retval;
-}
-
-success_t DatasetInfo::ReadPoint(TextLineReader *reader, double *point,
-    bool *is_done) const {
-  index_t n_features = this->n_features();
-  std::string str;
-  std::string::iterator pos;
-
-  *is_done = false;
-
-  for (;;) {
-    if (!reader->MoreLines()) {
-      *is_done = true;
-      return SUCCESS_PASS;
-    }
-
-    str = reader->Peek();
-    pos = str.begin();
-
-    while (*pos == ' ' || *pos == '\t' || *pos == ',') {
-      pos++;
-    }
-
-    if (unlikely(*pos == '\0' || *pos == '%')) {
-      reader->Gobble();
-    } else {
-      break;
-    }
-  }
-
-  for (index_t i = 0; i < n_features; i++) {
-    std::string::iterator next;
-
-    while (*pos == ' ' || *pos == '\t' || *pos == ',') {
-      pos++;
-    }
-
-    if (unlikely(*pos == '\0')) {
-      for (std::string::iterator s = reader->Peek().begin(); s < pos; s++) { // UNDEFINED
-        if (!*s) {
-          *s = ',';
-        }
-      }
-      reader->Error("I am expecting %"LI"d entries per row, "
-          "but this line has only %"LI"d.",
-          n_features, i);
-      return SUCCESS_FAIL;
-    }
-
-    next = pos;
-    while (*next != '\0' && *next != ' ' && *next != '\t' && *next != ','
-        && *next != '%') {
-      next++;
-    }
-
-    if (*next != '\0') {
-      char c = *next;
-      *next = '\0';
-      if (c != '%') {
-        next++;
-      }
-    }
-
-    size_t len = str.end() - pos;
-    size_t cpos = pos - str.begin();
-    if (!PASSED(features_[i].Parse(str.substr(cpos,len), &point[i]))) {
-      std::string::iterator end = reader->Peek().end();
-      std::string tmp;
-      tmp.assign(pos,str.end());
-      for (std::string::iterator s = reader->Peek().begin();
-         s < next && s < end; s++) {
-        if (*s == '\0') {
-          *s = ',';
-        }
-      }
-      reader->Error("Invalid parse: [%s]", tmp.c_str());
-      return SUCCESS_FAIL;
-    }
-
-    pos = next;
-  }
-
-  while (*pos == ' ' || *pos == '\t' || *pos == ',') {
-    pos++;
-  }
-
-  if (*pos != '\0') {
-    for (std::string::iterator s = reader->Peek().begin(); s < pos; s++) {
-      if (*s == '\0') {
-        *s = ',';
-      }
-    }
-    reader->Error("Extra junk on line.");
-    return SUCCESS_FAIL;
-  }
-
-  reader->Gobble();
-
-  return SUCCESS_PASS;
-}
-
-
-void DatasetInfo::WriteArffHeader(TextWriter *writer) const {
-  writer->Printf("@relation %s\n", name_.c_str());
-
-  for (index_t i = 0; i < features_.size(); i++) {
-    const DatasetFeature *feature = &features_[i];
-    writer->Printf("@attribute %s ", feature->name().c_str());
-    if (feature->type() == DatasetFeature::NOMINAL) {
-      writer->Printf("{");
-      for (index_t v = 0; v < feature->n_values(); v++) {
-        if (v != 0) {
-          writer->Write(",");
-        }
-        writer->Write(feature->value_name(v).c_str());
-      }
-      writer->Printf("}");
-    } else {
-      writer->Write("real");
-    }
-    writer->Write("\n");
-  }
-  writer->Printf("@data\n");
-}
-
-void DatasetInfo::WriteCsvHeader(const char *sep, TextWriter *writer) const {
-  for (index_t i = 0; i < features_.size(); i++) {
-    if (i != 0) {
-      writer->Write(sep);
-    }
-    writer->Write(features_[i].name().c_str());
-  }
-  writer->Write("\n");
-}
-
-void DatasetInfo::WriteMatrix(const Matrix& matrix, const char *sep,
-    TextWriter *writer) const {
-  for (index_t i = 0; i < matrix.n_cols(); i++) {
-    for (index_t f = 0; f < features_.size(); f++) {
-      if (f != 0) {
-        writer->Write(sep);
-      }
-      std::string str;
-      features_[f].Format(matrix.get(f, i), str);
-      writer->Write(str.c_str());
-    }
-    writer->Write("\n");
-  }
-}
-
-// Dataset ------------------------------------------------------------------
 
 success_t Dataset::InitFromFile(const char *fname) {
   TextLineReader reader;
 
   if (PASSED(reader.Open(fname))) {
-    return InitFromFile(&reader, fname);
+    return InitFromFile(reader, fname);
   } else {
-    matrix_.Init(0, 0);
+    matrix_ = 0.0; // 0x0 matrix
     info_.Init();
     NONFATAL("Could not open file '%s' for reading.", fname);
     return SUCCESS_FAIL;
   }
 }
 
-success_t Dataset::InitFromFile(TextLineReader *reader,
+success_t Dataset::InitFromFile(TextLineReader& reader,
     const char *filename) {
   success_t result;
 
   result = info_.InitFromFile(reader, filename);
   if (PASSED(result)) {
-    result = info_.ReadMatrix(reader, &matrix_);
+    result = info_.ReadMatrix(reader, matrix_);
   } else {
-    matrix_.Init(0, 0);
+    matrix_ = 0.0; // 0x0 matrix
   }
 
   return result;
@@ -644,9 +179,9 @@ success_t Dataset::WriteCsv(const char *fname, bool header) const {
     return SUCCESS_FAIL;
   } else {
     if (header) {
-      info_.WriteCsvHeader(",\t", &writer);
+      info_.WriteCsvHeader(",\t", writer);
     }
-    info_.WriteMatrix(matrix_, ",\t", &writer);
+    info_.WriteMatrix(matrix_, ",\t", writer);
     return writer.Close();
   }
 }
@@ -658,26 +193,30 @@ success_t Dataset::WriteArff(const char *fname) const {
     NONFATAL("Couldn't open '%s' for writing.", fname);
     return SUCCESS_FAIL;
   } else {
-    info_.WriteArffHeader(&writer);
-    info_.WriteMatrix(matrix_, ",", &writer);
+    info_.WriteArffHeader(writer);
+    info_.WriteMatrix(matrix_, ",", writer);
     return writer.Close();
   }
 }
 
 void Dataset::SplitTrainTest(int folds, int fold_number,
     const std::vector<index_t>& permutation,
-    Dataset *train, Dataset *test) const {
+    Dataset& train, Dataset& test) const {
+  // determine number of points in test and training sets
   index_t n_test = (n_points() + folds - fold_number - 1) / folds;
   index_t n_train = n_points() - n_test;
 
-  train->InitBlank();
-  train->info().InitCopy(info());
+  // initialize blank training data set
+  train.InitBlank();
+  train.info().InitCopy(info());
 
-  test->InitBlank();
-  test->info().InitCopy(info());
+  // initialize blank testing data set
+  test.InitBlank();
+  test.info().InitCopy(info());
 
-  train->matrix().Init(n_features(), n_train);
-  test->matrix().Init(n_features(), n_test);
+  // set sizes of training and test datasets
+  train.matrix().set_size(n_features(), n_train);
+  test.matrix().set_size(n_features(), n_test);
 
   index_t i_train = 0;
   index_t i_test = 0;
@@ -687,32 +226,59 @@ void Dataset::SplitTrainTest(int folds, int fold_number,
     double *dest;
 
     if (unlikely((i_orig - fold_number) % folds == 0)) {
-      dest = test->matrix().GetColumnPtr(i_test);
+      // put this column into the test set
+      dest = test.matrix().colptr(i_test);
       i_test++;
     } else {
-      dest = train->matrix().GetColumnPtr(i_train);
+      // put this column into the training set
+      dest = train.matrix().colptr(i_train);
       i_train++;
     }
 
-    mem::Copy(dest,
-        this->matrix().GetColumnPtr(permutation[i_orig]),
-        n_features());
+    // copy the column over in memory
+    memcpy(dest,
+        this->matrix().colptr(permutation[i_orig]),
+        sizeof(double) * n_features());
   }
 
-  DEBUG_ASSERT(i_train == train->n_points());
-  DEBUG_ASSERT(i_test == test->n_points());
+  DEBUG_ASSERT(i_train == train.n_points());
+  DEBUG_ASSERT(i_test == test.n_points());
 }
 
-success_t data::Load(const char *fname, Matrix *matrix) {
-  Dataset dataset;
-  success_t result = dataset.InitFromFile(fname);
-  matrix->Own(&dataset.matrix());
+success_t data::Load(const char *fname, arma::mat& matrix) {
+  TextLineReader reader;
+  DatasetInfo info; // we will ignore this, but it reads our matrix
+  success_t result;
+
+  // clear our matrix
+  matrix.reset();
+
+  if (PASSED(reader.Open(fname))) {
+    // read our file, since it has successfully opened
+    result = info.InitFromFile(reader, fname);
+    if (PASSED(result)) {
+      result = info.ReadMatrix(reader, matrix);
+    }
+  } else {
+    NONFATAL("Could not open file '%s' for reading.", fname);
+    return SUCCESS_FAIL;
+  }
+
   return result;
 }
 
-success_t data::Save(const char *fname, const Matrix& matrix) {
-  Dataset dataset;
-  dataset.AliasMatrix(matrix);
-  return dataset.WriteCsv(fname);
-}
+success_t data::Save(const char *fname, const arma::mat& matrix) {
+  TextWriter writer;
 
+  // temporary info object that will help write our CSV
+  DatasetInfo info;
+  info.InitContinuous(matrix.n_rows);
+
+  if (!PASSED(writer.Open(fname))) {
+    NONFATAL("Couldn't open '%s' for writing.", fname);
+    return SUCCESS_FAIL;
+  }
+
+  info.WriteMatrix(matrix, ",\t", writer);
+  return writer.Close();
+}

@@ -43,6 +43,7 @@
 #ifndef DATA_DATASET_H
 #define DATA_DATASET_H
 
+#include <armadillo>
 #include <string>
 #include <vector>
 
@@ -51,315 +52,11 @@
 #include "../file/textfile.h"
 #include "../col/tokenizer.h"
 
+#include "dataset_feature.h"
+#include "dataset_info.h"
+
 class TextLineReader;
 class TextWriter;
-
-/**
- * Metadata about a particular dataset feature (attribute).
- *
- * Supports nominal, continuous, and integer values.
- */
-class DatasetFeature {
- public:
-  /**
-   * Feature types supported.
-   */
-  enum Type {
-      /** Real-valued data. */
-      CONTINUOUS,
-      /** Integer valued data. */
-      INTEGER,
-      /** Discrete data, each of which has a "name". */
-      NOMINAL
-  };
-  
- private:
-  /** Name of the feature. */
-  std::string name_;
-  /** Type of data this feature represents. */
-  Type type_;
-  /** If nominal, the names of each numbered value. */
-  std::vector<std::string> value_names_;
-  
- /**
-  * Initialization common to all features.
-  *
-  * @param name_in the name of the feature
-  */ 
-  void InitGeneral(const std::string& name_in) {
-    name_ = name_in;
-  }
-
- public:
-  /**
-   * Initialize to be a continuous feature.
-   *
-   * @param name_in the name of the feature
-   */
-  void InitContinuous(const std::string& name_in) {
-    InitGeneral(name_in);
-    type_ = CONTINUOUS;
-  }
-
-  /**
-   * Initializes to an integer type.
-   *
-   * @param name_in the name of the feature
-   */
-  void InitInteger(const std::string& name_in) {
-    InitGeneral(name_in);
-    type_ = INTEGER;
-  }
-
-  /**
-   * Initializes to a nominal type.
-   *
-   * The value_names list starts empty, so you need to add the name of
-   * each feature to this.  (The dataset reading functions will do this
-   * for you).
-   *
-   * @param name_in the name of the feature
-   */
-  void InitNominal(const std::string& name_in) {
-    InitGeneral(name_in);
-    type_ = NOMINAL;
-  }
-  
-  /**
-   * Creates a text version of the value based on the type.
-   *
-   * Continuous parameters are printed in floating point, and integers
-   * are shown as integers.  For nominal, the value_name(int(value)) is
-   * shown.  NaN (missing data) is always shown as '?'.
-   *
-   * @param value the value to format
-   * @param result this will be initialized to the formatted text
-   */
-  void Format(double value, std::string& result) const;
-  
-  /**
-   * Parses a string into the particular value.
-   *
-   * Integers and continuous are parsed using the normal functions.
-   * For nominal, the entry 
-   *
-   * If an invalid parse occurs, such as a mal-formatted number or
-   * a nominal value not in the list, SUCCESS_FAIL will be returned.
-   *
-   * @param str the string to parse
-   * @param d where to store the result
-   */
-  success_t Parse(const std::string& str, double *d) const;
-  
-  /**
-   * Gets what the feature is named.
-   *
-   * @return the name of the feature; for point, "Age" or "X Position"
-   */
-  const std::string& name() const {
-    return name_;
-  }
-  
-  /**
-   * Identifies the type of feature.
-   *
-   * @return whether this is DatasetFeature::CONTINUOUS, INTEGER, or NOMINAL
-   */
-  Type type() const {
-    return type_;
-  }
-  
-  /**
-   * Returns the name of a particular nominal value, given its index.
-   *
-   * The first nominal value is 0, the second is 1, etc.
-   *
-   * @param value the number of the value
-   */
-  const std::string& value_name(int value) const {
-    DEBUG_ASSERT(type_ == NOMINAL);
-    return value_names_[value];
-  }
-  
-  /**
-   * The number of nominal values.
-   *
-   * The values 0 to n_values() - 1 are valid.
-   * This will return zero for CONTINUOUS and INTEGER types.
-   *
-   * @return the number of nominal values
-   */
-  index_t n_values() const {
-    return value_names_.size();
-  }
-  
-  /**
-   * Gets the array of value names.
-   *
-   * Useful for creating a nominal feature yourself.
-   *
-   * @return a mutable array of value names
-   */
-  std::vector<std::string>& value_names() {
-    return value_names_;
-  }
-};
-
-/**
- * Information describing a dataset and its features.
- */
-class DatasetInfo {
- private:
-  std::string name_;
-  std::vector<DatasetFeature> features_;
-
- public:
-  /** Gets a mutable list of all features. */
-  std::vector<DatasetFeature>& features() {
-    return features_;
-  }
-
-  /** Gets information about a particular feature. */
-  const DatasetFeature& feature(index_t attrib_num) const {
-    return features_[attrib_num];
-  }
-
-  /** Gets the number of features. */
-  index_t n_features() const {
-    return features_.size();
-  }
-  
-  /** Gets the title of the data set. */
-  const char *name() const {
-    return name_.c_str();
-  }
-  
-  /** Sets the title of the data set. */
-  void set_name(const std::string& name_in) {
-    name_ = name_in;
-  }
-
-  /**
-   * Checks if all parameters are continuous.
-   */
-  bool is_all_continuous() const;
-
-  /**
-   * Initialize an all-continuous dataset;
-   *
-   * @param n_features the number of continuous features
-   * @param name_in the dataset title
-   */
-  void InitContinuous(index_t n_features,
-      const char *name_in = "dataset");
-
-  /**
-   * Initialize a custom dataset.
-   *
-   * This assumes you will eventually use the features() to add features.
-   *
-   * @param name_in the dataset title
-   */
-  void Init(const char *name_in = "dataset");
-
-  /***
-   * Copy constructor, written manually to avoid use of OBJECT_TRAVERSAL functions.
-   * TODO: Make this Init() crap go away.
-   */
-  void InitCopy(const DatasetInfo &info) {
-    name_ = info.name();
-    features_ = info.features_;
-  }
-
-  /**
-   * Writes the header for an ARFF file.
-   */
-  void WriteArffHeader(TextWriter *writer) const;
-  
-  /**
-   * Writes header for CSV file.
-   *
-   * @param sep the value separator (use ",\t" for CSV)
-   * @param writer the text writer to write the header line to
-   */
-  void WriteCsvHeader(const char *sep, TextWriter *writer) const;
-
-  /**
-   * Writes the contents of a matrix to a file.
-   *
-   * @param matrix the matrix
-   * @param sep the separator (use ",\t" for CSV)
-   * @param writer the writer to write to
-   */
-  void WriteMatrix(const Matrix& matrix, const char *sep,
-      TextWriter *writer) const;
-
-  /**
-   * Initialize explicitly from an ARFF file.
-   *
-   * ARFF LIMITATIONS: Values cannot have spaces or commas, even with quotes;
-   * 'string' data type not supported (nominal is supported).
-   *
-   * You might just use InitFromFile, which will guess the type for you.
-   *
-   * This will read only the header information and leave the reader at the
-   * first line of data.
-   */
-  success_t InitFromArff(TextLineReader *reader,
-      const char *filename = "dataset");
-  
-  /**
-   * Initialize from a CSV-like file with numbers only, inferring
-   * automatically that if the first row has non-numeric characters, it is
-   * a header.
-   *
-   * InitFromFile will automatically detect this.
-   */
-  success_t InitFromCsv(TextLineReader *reader,
-      const char *filename = "dataset");
-
-  /**
-   * Initializes the header from a file, either CSV or ARFF.
-   *
-   * All header lines will be gobbled, so the reader's position will be
-   * left at the first line of actual data.
-   * You can then read the data with matrix.
-   */
-  success_t InitFromFile(TextLineReader *reader,
-      const char *filename = "dataset");
-  /**
-   * Populates a matrix from a file, given the internal data model.
-   *
-   * ARFF LIMITATIONS: Values cannot have spaces or commas, even with quotes;
-   * 'string' data type not supported (nominal is supported).
-   *
-   * @param reader the reader to get lines from
-   * @param matrix the matrix to store text into
-   */
-  success_t ReadMatrix(TextLineReader *reader, Matrix *matrix) const;
-
-  /**
-   * Reads a single vector.
-   *
-   * @param reader the line reader being used
-   * @param point an array of length n_features()
-   * @param is_done set to true if we have finished reading the file
-   *        successfully -- the value of is_done is undefined if the
-   *        function returns failure!
-   * @return whether reading the line was successful
-   */
-  success_t ReadPoint(TextLineReader *reader, double *point,
-      bool *is_done) const;
-
- private:
-  index_t SkipSpace_(std::string& s);
-
-  char *SkipNonspace_(char *s);
-
-  void SkipBlanks_(TextLineReader *reader);
-
-};
-
 
 /**
  * Most generic dataset type.
@@ -374,7 +71,7 @@ class DatasetInfo {
  */
 class Dataset {
  private:
-  Matrix matrix_;
+  arma::mat matrix_;
   DatasetInfo info_;
   
  public:
@@ -407,9 +104,9 @@ class Dataset {
    * @return the number of features, or variables, in the dataset
    */
   index_t n_features() const {
-    return matrix_.n_rows();
+    return matrix_.n_rows;
   }
-  
+
   /**
    * Gets the number of points/instances in the dataset.
    *
@@ -418,7 +115,7 @@ class Dataset {
    * @return the number of points in the dataset
    */
   index_t n_points() const {
-    return matrix_.n_cols();
+    return matrix_.n_cols;
   }
 
   /**
@@ -449,13 +146,13 @@ class Dataset {
    * @param labels_ct numbers of point in each label class. e.g.
    *        [7,5,8]
    * @param labels_startpos start positions of each label class in
-   *        labels_index. e.g. [0,7,12]
+   *        labels_index. e.g. [0,7,12]                                                                                                                            
    */
   void GetLabels(std::vector<double> &labels_list,
-                 std::vector<index_t> &labels_index,
-                 std::vector<index_t> &labels_ct,
-                 std::vector<index_t> &labels_startpos) const;
- 
+      std::vector<index_t> &labels_index,
+      std::vector<index_t> &labels_ct,
+      std::vector<index_t> &labels_startpos) const;
+
   /**
    * Gets the numeric value of a particular feature and point.
    *
@@ -463,9 +160,9 @@ class Dataset {
    * @param point the point index
    */
   double get(index_t feature, index_t point) const {
-    return matrix_.get(feature, point);
+    return matrix_(feature, point);
   }
-  
+
   /**
    * Gets the integer value of a particular feature and point.
    */
@@ -475,7 +172,7 @@ class Dataset {
     DEBUG_ASSERT(d == double(i));
     return i;
   }
-  
+
   /**
    * Modifies a value in the dataset.
    *
@@ -484,40 +181,40 @@ class Dataset {
    * @param d the numeric value to set it to
    */
   void set(index_t feature, index_t point, double d) {
-    matrix_.set(feature, point, d);
+    matrix_(feature, point) = d;
   }
-  
+
   /**
    * Gets the "raw" form of a particular point.
    *
    * @return a C-like array of the values of a particular point
    */
-  const double *point(index_t point) const {
-    return matrix_.GetColumnPtr(point);
+  const arma::rowvec point(index_t point) const {
+    return matrix_.row(point);
   }
   /**
    * Gets the "raw" form of a particular point.
    *
    * @return a C-like array of the values of a particular point
    */
-  double *point(index_t point) {
-    return matrix_.GetColumnPtr(point);
+  arma::rowvec point(index_t point) {
+    return matrix_.row(point);
   }
-  
+
   /**
    * Returns the matrix that stores all the data.
    */
-  const Matrix& matrix() const {
+  const arma::mat& matrix() const {
     return matrix_;
   }
   /**
    * Returns the matrix that stores all the data
    * (can be used for modification).
    */
-  Matrix& matrix() {
+  arma::mat& matrix() {
     return matrix_;
   }
-  
+
   /**
    * Formats as text a particular location of the data set.
    *
@@ -526,9 +223,9 @@ class Dataset {
    * @param result string that will be initialized to the formatted text
    */
   void Format(index_t feature, index_t point, std::string& result) const {
-    info_.feature(feature).Format(get(feature, point), result);
+    info_.feature(feature).Format(matrix_(feature, point), result);
   }
-  
+
   /**
    * Initializer that omits the matrix and info - you must initialize
    * these yourself.
@@ -536,9 +233,8 @@ class Dataset {
    * (Although this currently does nothing, this is to future-proof your code
    * against possible changes.)
    */
-  void InitBlank() {
-  }
-  
+  void InitBlank() { }
+
   /**
    * Reads in an ARFF or CSV/WSV file.
    *
@@ -548,7 +244,7 @@ class Dataset {
    * @param fname the name of an ARFF, CSV, or whitespace-separated
    */
   success_t InitFromFile(const char *fname);
-  
+
   /**
    * Reads in an ARFF or CSV/WSV file.
    *
@@ -559,9 +255,9 @@ class Dataset {
    * @param filename a title given to this data set, doesn't necessarily
    *        need to be anything significant
    */
-  success_t InitFromFile(TextLineReader *reader,
+  success_t InitFromFile(TextLineReader& reader,
       const char *filename = "dataset");
-  
+
   /**
    * Writes to a CSV file.
    *
@@ -584,12 +280,12 @@ class Dataset {
    *
    * @param matrix_in data where rows are features, columns are points
    */
-  void CopyMatrix(const Matrix& matrix_in) {
+  void CopyMatrix(const arma::mat& matrix_in) {
     InitBlank();
-    matrix_.Copy(matrix_in);
-    info_.InitContinuous(matrix_.n_rows());
+    matrix_ = matrix_in;
+    info_.InitContinuous(matrix_.n_rows);
   }
-  
+
   /**
    * Initializes by becoming the owner of an existing matrix, assuming
    * all features are continuous.
@@ -600,12 +296,12 @@ class Dataset {
    *
    * @param matrix_in data where rows are features, columns are points
    */
-  void OwnMatrix(Matrix* matrix_in) {
-    InitBlank();
-    matrix_.Own(matrix_in);
-    info_.InitContinuous(matrix_.n_rows());
-  }
-  
+//    void OwnMatrix(Matrix* matrix_in) {
+//      InitBlank();
+//      matrix_.Own(matrix_in);
+//      info_.InitContinuous(matrix_.n_rows());
+//    }
+
   /**
    * Initializes as an alias or mirror of an existing matrix, assuming
    * all features are continuous.
@@ -616,15 +312,17 @@ class Dataset {
    *
    * @param matrix_in data where rows are features, columns are points
    */
-  void AliasMatrix(const Matrix& matrix_in) {
-    InitBlank();
-    matrix_.Alias(matrix_in);
-    info_.InitContinuous(matrix_.n_rows());
-  }
-  
+//    void AliasMatrix(const arma::mat& matrix_in) {
+//      InitBlank();
+      // use the memory pointer of the other matrix directly; do not free it when
+      // we are done
+//      matrix_(matrix_in.memptr(), matrix_in.n_rows, matrix_in.n_cols, false);
+//      info_.InitContinuous(matrix_.n_rows);
+//    }
+
   //--- Cross-validation features ---
 
-  /**
+  /*
    * Creates a training and test dataset for k-fold cross validation.
    *
    * The test set will be approximately n_points() / folds, and the
@@ -635,13 +333,13 @@ class Dataset {
    * @param folds the number of folds being used
    * @param fold_number the fold number, 0 to folds - 1
    * @param permutation the permutation to use, the same size as n_points()
-   *        (use math::MakeIdentiyPermutation or math::MakeRandomPermutation)
+   *        (use math::MakeIdentityPermutation or math::MakeRandomPermutation)
    * @param train the training set
    * @param test the test set
    */
   void SplitTrainTest(int folds, int fold_number,
       const std::vector<index_t>& permutation,
-      Dataset *train, Dataset *test) const;
+      Dataset& train, Dataset& test) const;
 };
 
 /**
@@ -662,12 +360,13 @@ namespace data {
    * @param fname the file name to load
    * @param matrix a pointer to an uninitialized matrix to load
    */
-  success_t Load(const char *fname, Matrix *matrix);
-   /**
+  success_t Load(const char *fname, arma::mat& matrix);
+
+  /**
    * Loads a matrix from a file.
-   * The Matrix is Statically Initialized from a memory mapped file
+   * The matrix is statically initialized from a memory mapped file.
    *
-   * This supports only CSV Datasets
+   * This supports only CSV datasets.
    *
    * @code
    * Matrix A;
@@ -678,42 +377,49 @@ namespace data {
    * @param matrix a pointer to an uninitialized matrix to load
    */
   template<typename Precision>
-  success_t LargeLoad(const char *fname, GenMatrix<Precision> *matrix) {
+  success_t LargeLoad(const char *fname, arma::Mat<Precision>& matrix) {
+    // open our file
     TextLineReader *reader = new TextLineReader();
-    if (reader->Open(fname)==SUCCESS_FAIL) {
+    if (reader->Open(fname) == SUCCESS_FAIL) {
       reader->Error("Couldn't open %s", fname);
       return SUCCESS_FAIL;
-    } 
-    index_t dimension=0;
-    std::string line=reader->Peek();
-    std::vector<std::string> result;
-//    line.Split(",", &result);
-    tokenizeString( line, ",", result );
-    dimension=result.size();
-    while (reader->Gobble()) {
     }
-    matrix->StaticInit(dimension, reader->line_num());
-    matrix->SetAll(0.0);
+
+    // find dimensionality
+    index_t dimension = 0;
+    std::string line = reader->Peek();
+    std::vector<std::string> result;
+    tokenizeString(line, ",", result);
+
+    dimension = result.size();
+
+    // count lines in file
+    while(reader->Gobble()) { }
+
+    // resize matrix to correct size and set all to 0
+    matrix.zeros(dimension, reader->line_num());
+
     delete reader;
+
+    // second pass through file: fill matrix
     reader = new TextLineReader();
     reader->Open(fname);
-    while (true) {
-      std::string line=reader->Peek();
+
+    do {
+      // parse this line
+      std::string line = reader->Peek();
       std::vector<std::string> result;
-//      line.Split(",", &result);
-      tokenizeString( line, ",", result );
-      for(index_t i=0; i<result.size(); i++) {
+
+      tokenizeString(line, ",", result);
+      for(index_t i = 0; i < result.size(); i++) {
         Precision num;
         sscanf(result[i].c_str(), "%lf", &num);
-        matrix->set(i, reader->line_num()-1, (Precision)num);
+        matrix(i, reader->line_num() - 1) = (Precision) num;
       }
-      if (reader->Gobble()==false) {
-        break;
-      }
-    }
+    } while(reader->Gobble()); // break when we can't read more
+    
     return SUCCESS_PASS;  
   }
-
 
   /**
    * Saves a matrix to a file.
@@ -729,7 +435,7 @@ namespace data {
    * @param fname the file name to load
    * @param matrix a pointer to an uninitialized matrix to load
    */
-  success_t Save(const char *fname, const Matrix& matrix);
+  success_t Save(const char *fname, const arma::mat& matrix);
 };
 
 #endif
