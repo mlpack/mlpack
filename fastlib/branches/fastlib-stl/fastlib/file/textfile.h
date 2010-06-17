@@ -65,9 +65,10 @@ class TextLineReader {
   
  private:
   FILE *f_;
-	std::string line_;
+  std::string line_;
   int line_num_;
   bool has_line_;
+  std::string fname_;
   
  public:
   /** Creates an unitialized object. */
@@ -79,9 +80,8 @@ class TextLineReader {
    * Automatically closes the file.
    */
   ~TextLineReader() {
-    if (f_) {
+    if (f_)
       ::fclose(f_);
-    }
   }
   
   /**
@@ -100,7 +100,15 @@ class TextLineReader {
     (void)fclose(f_);
     f_ = NULL;
   }
-  
+ 
+ /**
+   * Return the name of the file we are working with.
+   * This will return NULL if no file has been opened yet.
+   */
+  const char *filename() const {
+    return fname_.c_str();
+  }
+ 
   /**
    * Are there more lines left?
    */
