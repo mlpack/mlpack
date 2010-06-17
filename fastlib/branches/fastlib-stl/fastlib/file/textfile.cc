@@ -110,6 +110,7 @@ success_t TextLineReader::Open(const char *fname) {
   f_ = fopen(fname, "r");
   line_num_ = 0;
   has_line_ = false;
+  fname_ = fname;
   
   if (unlikely(f_ == NULL)) {
     return SUCCESS_FAIL;

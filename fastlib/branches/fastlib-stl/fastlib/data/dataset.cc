@@ -424,28 +424,36 @@ success_t DatasetInfo::ReadMatrix(TextLineReader *reader, Matrix *matrix) const 
   index_t n_points = 0;
   success_t retval = SUCCESS_PASS;
   bool is_done;
-  double *tmp_point = new double[n_features];
 
-  do {
-    retval = ReadPoint(reader, tmp_point, &is_done);
-    for(int i = 0; i < n_features; i++)
-      linearized.push_back(tmp_point[i]);
-    n_points++;
-  } while (!is_done && !FAILED(retval));
+  // read through our file to find out how long it is
+  index_t cur_line = reader->line_num();
+  while(reader->Gobble()) { }
+  matrix->Init(n_features, reader->line_num() - cur_line + 1);
 
-  if (!FAILED(retval)) {
-    DEBUG_ASSERT(linearized.size() == n_features * n_points);
-    DEBUG_ASSERT(linearized.size() >= n_features);
-    DEBUG_ASSERT(linearized.size() % n_features == 0);
-    n_points--;
-    linearized.reserve(n_features * n_points);
+  char *fname = strncpy(new char[strlen(reader->filename()) + 1],
+    reader->filename(),
+    strlen(reader->filename()) + 1);
+
+  reader->Close();
+  reader->Open(fname);
+  delete[] fname;
+
+  // make sure we are in the same place in our file, just in case it was passed
+  // to us and we had already been some of the way through it (this is why we
+  // saved the line number
+  while(reader->line_num() < cur_line) {
+    reader->Gobble();
   }
 
-  // We can replicate this functionality, but it will not be fast.
-//  linearized.Trim();
+  while((n_points < matrix->n_cols()) && !is_done && !FAILED(retval)) {
+    retval = ReadPoint(reader, matrix->GetColumnPtr(n_points), &is_done);
+    n_points++;
+  }
 
-  // WHY WOULD YOU DO THIS D:<
-//  matrix->Own(linearized.ReleasePtr(), n_features, n_points);
+  if (!FAILED(retval)) {
+    n_points--; // last increment was the failure, so subtract that
+    DEBUG_ASSERT(n_points == matrix->n_rows());
+  }
 
   return retval;
 }
