@@ -29,11 +29,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
+#include <armadillo>
+
 #include "dataset.h"
-//#include "dataset.h"
 
 #include "../math/discrete.h"
 #include "../base/test.h"
+
+using arma::mat;
 
 TEST_SUITE_BEGIN(dataset)
 
@@ -41,11 +44,11 @@ void TestSplitTrainTest() {
   Dataset orig;
   
   orig.InitBlank();
-  orig.matrix().Init(1, 12);
+  orig.matrix().set_size(1, 12);
   orig.info().InitContinuous(1);
   
   for (int i = 0; i < 12; i++) {
-    orig.matrix().set(0, i, i);
+    orig.matrix()(0, i) = i;
   }
   
   std::vector<int> found;
@@ -61,7 +64,7 @@ void TestSplitTrainTest() {
     permutation.push_back(i);
   
   orig.SplitTrainTest(5, 1, permutation,
-      &train, &test);
+      train, test);
   
   DEBUG_ASSERT(test.n_points() == 3);
   DEBUG_ASSERT(train.n_points() == 9);
@@ -80,17 +83,17 @@ void TestSplitTrainTest() {
   DEBUG_ASSERT_MSG(train.get(0, 8) == 10, "%f", (train.get(0, 8)));
 }
 
-void AssertSameMatrix(const Matrix& a, const Matrix& b) {
-  index_t r = a.n_rows();
-  index_t c = a.n_cols();
+void AssertSameMatrix(const mat& a, const mat& b) {
+  index_t r = a.n_rows;
+  index_t c = a.n_cols;
   
-  TEST_ASSERT(a.n_rows() == b.n_rows());
-  TEST_ASSERT(a.n_cols() == b.n_cols());
+  TEST_ASSERT(a.n_rows == b.n_rows);
+  TEST_ASSERT(a.n_cols == b.n_cols);
   
   for (index_t ri = 0; ri < r; ri++) {
     for (index_t ci = 0; ci < c; ci++) {
-      DEBUG_ASSERT_MSG(a.get(ri, ci) == b.get(ri, ci), "(%d, %d): %f != %f",
-          ri, ci, a.get(ri, ci), b.get(ri, ci));
+      DEBUG_ASSERT_MSG(a(ri, ci) == b(ri, ci), "(%d, %d): %f != %f",
+          ri, ci, a(ri, ci), b(ri, ci));
     }
   }
 }
@@ -129,8 +132,8 @@ void TestStoreLoad() {
   AssertSameMatrix(d1.matrix(), d2.matrix());
   AssertSameMatrix(d1.matrix(), d3.matrix());
   
-  DEBUG_ASSERT_MSG(strcmp(d1.info().name(), d2.info().name()) == 0,
-      "%s != %s", d1.info().name(), d2.info().name());
+  DEBUG_ASSERT_MSG(strcmp(d1.info().name().c_str(), d2.info().name().c_str()) == 0,
+      "%s != %s", d1.info().name().c_str(), d2.info().name().c_str());
   for (index_t i = 0; i < d1.info().n_features(); i++) {
     DEBUG_ASSERT( d1.info().feature(i).name() == d2.info().feature(i).name() );
     DEBUG_ASSERT(d1.info().feature(i).type() == d2.info().feature(i).type());
