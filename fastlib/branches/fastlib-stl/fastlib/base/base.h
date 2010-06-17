@@ -44,18 +44,13 @@
 #ifndef BASE_H
 #define BASE_H
 
-//#include "common.h"
-//#include "debug.h"
 #include "common.h"
 #include "debug.h"
 
 #ifdef __cplusplus
-#include "cc.h"
-#include "ccmem.h"
-#include "otrav.h"
-//#include "cc.h"
-//#include "ccmem.h"
-//#include "otrav.h"
+  #include "cc.h"
+  #include "ccmem.h"
+  #include "otrav.h"
 #endif
 
 #endif /* BASE_H */
