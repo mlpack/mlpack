@@ -1,7 +1,10 @@
 #ifndef U_NNSVM_NNSMO_H
 #define U_NNSVM_NNSMO_H
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
+
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
 
 /* TODO: I don't actually want these to be public */
 /* but sometimes we should provide freedoms for our advanced users */
@@ -47,7 +50,7 @@ class NNSMO {
     c_ = c_in;
 
     dataset_ = dataset_in;
-    matrix_.Alias(dataset_->matrix());
+    arma_compat::armaToMatrix(dataset_->matrix(), matrix_);
     
     n_data_ = matrix_.n_cols();
     budget_ = min(budget_in, n_data_);

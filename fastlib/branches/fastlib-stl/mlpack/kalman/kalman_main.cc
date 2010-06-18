@@ -1,7 +1,11 @@
 #include <iostream>
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
 #include "kalman_helper.h"
 #include "kalman.h"
+
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
+
 using namespace std;
 
 /**
@@ -45,7 +49,10 @@ int main(int argc, char* argv[]) {
   // User-specified: duration of experiment 
   // Note that the experiment will run from t=0 to t_tot
   const char* t_in = fx_param_str(NULL, "t_in", "t_in");
-  Matrix t_tot_mat; data::Load(t_in, &t_tot_mat);
+  Matrix t_tot_mat;
+  arma::mat tmp;
+  data::Load(t_in, tmp);
+  arma_compat::armaToMatrix(tmp, t_tot_mat);
   int t_tot = (int)t_tot_mat.get(0, 0);
   
   // User-specified: system parameters. Stored in *.csv files 
@@ -60,12 +67,18 @@ int main(int argc, char* argv[]) {
   const char* s_in = fx_param_str(NULL, "s_in", "s_in");  
   
   ssm lds;
-  data::Load(a_in, &lds.a_mat); 
-  data::Load(b_in, &lds.b_mat); 
-  data::Load(c_in, &lds.c_mat); 
-  data::Load(q_in, &lds.q_mat); 
-  data::Load(r_in, &lds.r_mat); 
-  data::Load(s_in, &lds.s_mat);  
+  data::Load(a_in, tmp);
+  arma_compat::armaToMatrix(tmp, lds.a_mat);
+  data::Load(b_in, tmp); 
+  arma_compat::armaToMatrix(tmp, lds.b_mat);
+  data::Load(c_in, tmp); 
+  arma_compat::armaToMatrix(tmp, lds.c_mat);
+  data::Load(q_in, tmp); 
+  arma_compat::armaToMatrix(tmp, lds.q_mat);
+  data::Load(r_in, tmp); 
+  arma_compat::armaToMatrix(tmp, lds.r_mat);
+  data::Load(s_in, tmp);  
+  arma_compat::armaToMatrix(tmp, lds.s_mat);
 	     
   // User-specified: kf parameters. Stored in *.csv files 
   // Includes x_{0|-1}, p_pred_{0|-1}, y_{0|-1}, inno_cov_{0|-1}
@@ -76,10 +89,18 @@ int main(int argc, char* argv[]) {
   const char* inno_cov_0_in = fx_param_str(NULL, "inno_cov_0_in", 
 					   "inno_cov_0_in");
   
-  Matrix x_pred_0; data::Load(x_pred_0_in, &x_pred_0);
-  Matrix y_pred_0; data::Load(y_pred_0_in, &y_pred_0); 
-  Matrix p_pred_0; data::Load(p_pred_0_in, &p_pred_0);
-  Matrix inno_cov_0; data::Load(inno_cov_0_in, &inno_cov_0);
+  Matrix x_pred_0; 
+  data::Load(x_pred_0_in, tmp);
+  arma_compat::armaToMatrix(tmp, x_pred_0);
+  Matrix y_pred_0;
+  data::Load(y_pred_0_in, tmp); 
+  arma_compat::armaToMatrix(tmp, y_pred_0);
+  Matrix p_pred_0;
+  data::Load(p_pred_0_in, tmp);
+  arma_compat::armaToMatrix(tmp, p_pred_0);
+  Matrix inno_cov_0;
+  data::Load(inno_cov_0_in, tmp);
+  arma_compat::armaToMatrix(tmp, inno_cov_0);
 
   // Set up parameters to be used by signal generator. 
   // Assumed to be an lds with the same params. as the KF
@@ -225,19 +246,31 @@ int main(int argc, char* argv[]) {
   la::TransposeInit(x_hat, &x_hat_trans);
   la::TransposeInit(y_pred, &y_pred_trans);
   la::TransposeInit(k_gain[t_tot], &k_gain_end_trans);
-  
-  data::Save("w_out", w_trans);
-  data::Save("v_out", v_trans);
-  data::Save("u_out", u_trans);
-  data::Save("x_out", x_trans);
-  data::Save("y_out", y_trans);
-  data::Save("x_pred_out", x_pred_trans);
-  data::Save("p_pred_end_out", p_pred[t_tot]);
-  data::Save("x_hat_out", x_hat_trans);
-  data::Save("p_hat_end_out", p_hat[t_tot]);
-  data::Save("y_pred_out", y_pred_trans);
-  data::Save("inno_cov_end_out", inno_cov[t_tot]);
-  data::Save("k_gain_end_out", k_gain_end_trans);             
+ 
+  arma_compat::matrixToArma(w_trans, tmp); 
+  data::Save("w_out", tmp);
+  arma_compat::matrixToArma(v_trans, tmp); 
+  data::Save("v_out", tmp);
+  arma_compat::matrixToArma(u_trans, tmp); 
+  data::Save("u_out", tmp);
+  arma_compat::matrixToArma(x_trans, tmp); 
+  data::Save("x_out", tmp);
+  arma_compat::matrixToArma(y_trans, tmp); 
+  data::Save("y_out", tmp);
+  arma_compat::matrixToArma(x_pred_trans, tmp); 
+  data::Save("x_pred_out", tmp);
+  arma_compat::matrixToArma(p_pred[t_tot], tmp); 
+  data::Save("p_pred_end_out", tmp);
+  arma_compat::matrixToArma(x_hat_trans, tmp); 
+  data::Save("x_hat_out", tmp);
+  arma_compat::matrixToArma(p_hat[t_tot], tmp); 
+  data::Save("p_hat_end_out", tmp);
+  arma_compat::matrixToArma(y_pred_trans, tmp); 
+  data::Save("y_pred_out", tmp);
+  arma_compat::matrixToArma(inno_cov[t_tot], tmp); 
+  data::Save("inno_cov_end_out", tmp);
+  arma_compat::matrixToArma(k_gain_end_trans, tmp); 
+  data::Save("k_gain_end_out", tmp);             
   
   fx_done(fx_root);
 }; /* main */

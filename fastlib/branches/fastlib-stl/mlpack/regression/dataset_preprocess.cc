@@ -1,4 +1,7 @@
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
+
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
 
 void FindIndexWithPrefix(Dataset &dataset, char *prefix,
 			 ArrayList<int> &remove_indices, 
@@ -80,7 +83,7 @@ int main(int argc, char *argv[]) {
   FILE *predictor_file = fopen("predictor_indices.csv", "w+");
   FILE *prune_file = fopen("prune_indices.csv", "w+");
 
-  for(index_t i = 0; i < initial_dataset.matrix().n_rows(); i++) {
+  for(index_t i = 0; i < initial_dataset.matrix().n_rows; i++) {
     bool to_be_removed = false;
     for(index_t j = 0; j < remove_indices.size(); j++) {
       if(remove_indices[j] == i) {
@@ -99,8 +102,9 @@ int main(int argc, char *argv[]) {
   fclose(prune_file);
 
   fx_timer_start(fx_root, "qr_time");
-  Matrix q, r;
-  la::QRInit(initial_dataset.matrix(), &q, &r);
+  Matrix q, r, tmp;
+  arma_compat::armaToMatrix(initial_dataset.matrix(), tmp);
+  la::QRInit(tmp, &q, &r);
   fx_timer_stop(fx_root, "qr_time");
   printf("%d %d %d %d\n", q.n_rows(), q.n_cols(), r.n_rows(), r.n_cols());
 

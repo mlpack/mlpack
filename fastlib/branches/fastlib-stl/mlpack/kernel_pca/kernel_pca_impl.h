@@ -15,11 +15,14 @@
  * 
  * =====================================================================================
  */
-
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
 
 void KernelPCA::Init(std::string data_file, index_t knns, 
     index_t leaf_size) {
-  data::Load(data_file.c_str(), &data_);
+  arma::mat tmp;
+  data::Load(data_file.c_str(), tmp);
+  arma_compat::armaToMatrix(tmp, data_);
   dimension_ = data_.n_rows();
   knns_ = knns;
   allknn_.Init(data_, data_, leaf_size, knns);
