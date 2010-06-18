@@ -50,6 +50,9 @@
 #include <ctype.h>
 #include <stdarg.h>
 
+#include <string>
+#include <vector>
+
 /**
  * Helper for reading text files.
  *
@@ -101,7 +104,7 @@ class TextLineReader {
    * Return the name of the file we are working with.
    * This will return NULL if no file has been opened yet.
    */
-  const char *filename() const {
+  const std::string& filename() const {
     return fname_;
   }
   
@@ -246,7 +249,8 @@ class TextTokenizer {
       return false;
     }
   }
-  
+ 
+/* 
   bool MatchNoCase(const char *str) {
     if (next_.EqualsNoCase(str)) {
       Gobble();
@@ -255,7 +259,8 @@ class TextTokenizer {
       return false;
     }
   }
-  
+*/  
+
   bool MatchInteger() {
     return MatchType(INTEGER);
   }

@@ -171,7 +171,7 @@ success_t Dataset::InitFromFile(TextLineReader& reader,
 }
 
 
-success_t Dataset::WriteCsv(std::string &fname, bool header) const {
+success_t Dataset::WriteCsv(std::string fname, bool header) const {
   TextWriter writer;
 
   if (!PASSED(writer.Open(fname.c_str()))) {
@@ -186,7 +186,7 @@ success_t Dataset::WriteCsv(std::string &fname, bool header) const {
   }
 }
 
-success_t Dataset::WriteArff(std::string &fname) const {
+success_t Dataset::WriteArff(std::string fname) const {
   TextWriter writer;
 
   if (!PASSED(writer.Open(fname.c_str()))) {
