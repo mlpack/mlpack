@@ -1,5 +1,0 @@
-#!/bin/bash
-
-../../tqlong/mmf/./generate --type=discrete --profile=class_neg.dis --length=100 --numseq=100 --seqfile=seq_neg.out --statefile=state_neg.out
-
-../../tqlong/mmf/./generate --type=discrete --profile=class_pos.dis --length=100 --numseq=100 --seqfile=seq_pos.out --statefile=state_pos.out

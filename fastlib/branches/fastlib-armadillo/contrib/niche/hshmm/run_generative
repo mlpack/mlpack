@@ -1,1 +1,0 @@
-./hmm_generative_classifier --n_symbols=4 --n_states=9 --class1_seq=exons_small.dat --class0_seq=introns_small.dat --n_sequences_per_class=500 --max_iter_bw=1000 --class1_hmm_filename=gen_dna_hmm1 --class0_hmm_filename=gen_dna_hmm0 | tee gen_dna_fold1_output.txt
