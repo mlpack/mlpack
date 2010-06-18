@@ -113,9 +113,9 @@ class AllkFN {
   // The number of points in a leaf
   index_t leaf_size_;
   // The distance to the candidate nearest neighbor for each query
-  Vector neighbor_distances_;
+  arma::vec neighbor_distances_;
   // The indices of the candidate nearest neighbor for each query
-  ArrayList<index_t> neighbor_indices_;
+  arma::Col<index_t> neighbor_indices_;
   // number of nearest neighbrs
   index_t kfns_; 
    // The module containing the parameters for this computation. 
@@ -191,10 +191,10 @@ class AllkFN {
       Vector query_point;
       queries_.MakeColumnVector(query_index, &query_point);
       
-      index_t ind = query_index*kfns_;
+      index_t ind = query_index * kfns_;
       for(index_t i=0; i<kfns_; i++) {
-        neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
-                                    neighbor_indices_[ind+i]);
+        neighbors[i] = std::make_pair(neighbor_distances_[ind + i],
+                                      neighbor_indices_[ind + i]);
       }
       // We'll do the same for the references
       for (index_t reference_index = reference_node->begin(); 
@@ -211,7 +211,7 @@ class AllkFN {
 	        la::DistanceSqEuclidean(query_point, reference_point);
 	        // If the reference point is closer than the current candidate, 
 	        // we'll update the candidate
-	        if (distance > neighbor_distances_[ind+kfns_-1]) {
+	        if (distance > neighbor_distances_[ind + kfns_ - 1]) {
 	          neighbors.push_back(std::make_pair(distance, reference_index));
           }
 	      }
@@ -379,11 +379,10 @@ class AllkFN {
 		kfns_ = fx_param_int(module_, "kfns", 1);
   
     // Initialize the list of nearest neighbor candidates
-    neighbor_indices_.Init(queries_.n_cols() * kfns_);
+    neighbor_indices_.set_size(queries_.n_cols() * kfns_);
     
 		// Initialize the vector of upper bounds for each point.  
-    neighbor_distances_.Init(queries_.n_cols() * kfns_);
-    neighbor_distances_.SetAll(0);
+    neighbor_distances_.zeros(queries_.n_cols() * kfns_);
 
     // We'll time tree building
     fx_timer_start(module_, "tree_building");
@@ -427,11 +426,10 @@ class AllkFN {
 		kfns_ = fx_param_int(module_, "kfns", 1);
   
     // Initialize the list of nearest neighbor candidates
-    neighbor_indices_.Init(references_.n_cols() * kfns_);
+    neighbor_indices_.set_size(references_.n_cols() * kfns_);
     
 		// Initialize the vector of upper bounds for each point.  
-    neighbor_distances_.Init(references_.n_cols() * kfns_);
-    neighbor_distances_.SetAll(0.0);
+    neighbor_distances_.zeros(references_.n_cols() * kfns_);
 
     // We'll time tree building
     fx_timer_start(module_, "tree_building");
@@ -471,11 +469,10 @@ class AllkFN {
     
   
     // Initialize the list of nearest neighbor candidates
-    neighbor_indices_.Init(queries_.n_cols() * kfns_);
+    neighbor_indices_.set_size(queries_.n_cols() * kfns_);
     
     // Initialize the vector of upper bounds for each point.  
-    neighbor_distances_.Init(queries_.n_cols() * kfns_);
-    neighbor_distances_.SetAll(0);
+    neighbor_distances_.zeros(queries_.n_cols() * kfns_);
 
 
     // This call makes each tree from a matrix, leaf size, and two arrays 
@@ -507,11 +504,10 @@ class AllkFN {
     queries_.Alias(references_); 
   
     // Initialize the list of nearest neighbor candidates
-    neighbor_indices_.Init(references_.n_cols() * kfns_);
+    neighbor_indices_.set_size(references_.n_cols() * kfns_);
     
     // Initialize the vector of upper bounds for each point.  
-    neighbor_distances_.Init(references_.n_cols() * kfns_);
-    neighbor_distances_.SetAll(0.0);
+    neighbor_distances_.zeros(references_.n_cols() * kfns_);
 
 
     // This call makes each tree from a matrix, leaf size, and two arrays 
@@ -527,8 +523,6 @@ class AllkFN {
   void Destruct() {
     queries_.Destruct();
     references_.Destruct();
-    neighbor_distances_.Destruct();
-    neighbor_indices_.Renew();
     if (query_tree_ != NULL) {
       delete query_tree_;
       query_tree_=NULL;
@@ -552,9 +546,8 @@ class AllkFN {
     
     DEBUG_SAME_SIZE(queries_.n_rows(), references_.n_rows());
     
-    neighbor_indices_.Init(queries_.n_cols()*kfns_);
-    neighbor_distances_.Init(queries_.n_cols()*kfns_);
-    neighbor_distances_.SetAll(0.0);
+    neighbor_indices_.set_size(queries_.n_cols()*kfns_);
+    neighbor_distances_.zeros(queries_.n_cols()*kfns_);
     
     // The only difference is that we set leaf_size_ to be large enough 
     // that each tree has only one node
@@ -576,9 +569,8 @@ class AllkFN {
     queries_.Alias(references_);
     kfns_=kfns;
     
-    neighbor_indices_.Init(references_.n_cols()*kfns_);
-    neighbor_distances_.Init(references_.n_cols()*kfns_);
-    neighbor_distances_.SetAll(0.0);
+    neighbor_indices_.set_size(references_.n_cols()*kfns_);
+    neighbor_distances_.zeros(references_.n_cols()*kfns_);
     
     // The only difference is that we set leaf_size_ to be large enough 
     // that each tree has only one node
@@ -594,8 +586,8 @@ class AllkFN {
   /**
    * Computes the nearest neighbors and stores them in *results
    */
-  void ComputeNeighbors(ArrayList<index_t>* resulting_neighbors,
-                        ArrayList<double>* distances) {
+  void ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
+                        arma::vec& distances) {
     
     // Start on the root of each tree
     if (query_tree_!=NULL) {
@@ -607,25 +599,25 @@ class AllkFN {
     }
     
     // We need to initialize the results list before filling it
-    resulting_neighbors->Init(neighbor_indices_.size());
-    distances->Init(neighbor_distances_.length());
+    resulting_neighbors.set_size(neighbor_indices_.n_elem);
+    distances.set_size(neighbor_distances_.n_elem);
     // We need to map the indices back from how they have 
     // been permuted
     if (query_tree_ != NULL) {
-      for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-        (*resulting_neighbors)[
+      for (index_t i = 0; i < neighbor_indices_.n_elem; i++) {
+        resulting_neighbors[
           old_from_new_queries_[(i / kfns_)] * kfns_ + i % kfns_] = 
           old_from_new_references_[neighbor_indices_[i]];
-        (*distances)[
+        distances[
           old_from_new_queries_[(i / kfns_)] * kfns_ + i % kfns_] = 
           neighbor_distances_[i];
       }
     } else {
-      for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-        (*resulting_neighbors)[
+      for (index_t i = 0; i < neighbor_indices_.n_elem; i++) {
+        resulting_neighbors[
           old_from_new_references_[(i / kfns_)] * kfns_ + i % kfns_] = 
           old_from_new_references_[neighbor_indices_[i]];
-        (*distances)[
+        distances[
           old_from_new_references_[(i / kfns_)] * kfns_+ i % kfns_] = 
           neighbor_distances_[i];
       }
@@ -636,8 +628,8 @@ class AllkFN {
   /**
    * Does the entire computation naively
    */
-  void ComputeNaive(ArrayList<index_t>* resulting_neighbors,
-                    ArrayList<double>*  distances) {
+  void ComputeNaive(arma::Col<index_t>& resulting_neighbors,
+                    arma::vec&  distances) {
     if (query_tree_!=NULL) {
       ComputeBaseCase_(query_tree_, reference_tree_);
     } else {
@@ -645,18 +637,17 @@ class AllkFN {
     }
 
     // The same code as above
-    resulting_neighbors->Init(neighbor_indices_.size());
-    distances->Init(neighbor_distances_.length());
+    resulting_neighbors.set_size(neighbor_indices_.n_elem);
+    distances.set_size(neighbor_distances_.n_elem);
     // We need to map the indices back from how they have 
     // been permuted
-    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-      (*resulting_neighbors)[
+    for (index_t i = 0; i < neighbor_indices_.n_elem; i++) {
+      resulting_neighbors[
         old_from_new_references_[(i / kfns_)] * kfns_ + i % kfns_] = 
         old_from_new_references_[neighbor_indices_[i]];
-      (*distances)[
+      distances[
         old_from_new_references_[(i / kfns_)] * kfns_ + i % kfns_] = 
         neighbor_distances_[i];
-
     }
   }
    
