@@ -39,7 +39,10 @@
 #ifndef U_SVM_OPT_SMO_H
 #define U_SVM_OPT_SMO_H
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
+
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
 
 // maximum # of interations for SMO training
 const index_t MAX_NUM_ITER_SMO = 10000000;
@@ -453,7 +456,7 @@ template<typename TKernel>
 void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   index_t i,j;
   // Load data
-  datamatrix_.Alias(dataset_in->matrix());
+  arma_compat::armaToMatrix(dataset_in->matrix(), datamatrix_);
   n_data_ = datamatrix_.n_cols();
   n_features_ = datamatrix_.n_rows() - 1; // excluding the last row for labels
   //datamatrix_samples_only_.Alias(datamatrix_.ptr(), n_features_, n_data_);

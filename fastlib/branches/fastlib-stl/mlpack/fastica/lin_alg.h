@@ -9,7 +9,10 @@
 #ifndef LIN_ALG_H
 #define LIN_ALG_H
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
+
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
 
 #define max_rand_i 100000
 
@@ -35,7 +38,9 @@ namespace linalg__private {
   void SaveCorrectly(const char *filename, Matrix a) {
     Matrix a_transpose;
     la::TransposeInit(a, &a_transpose);
-    data::Save(filename, a_transpose);
+    arma::mat tmp_a;
+    arma_compat::matrixToArma(a_transpose, tmp_a);
+    data::Save(filename, tmp_a);
   }
 
   /**

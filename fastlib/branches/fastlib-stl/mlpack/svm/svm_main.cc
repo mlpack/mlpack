@@ -21,7 +21,10 @@
  */
 
 #include "svm.h"
-#include "fastlib/math/statistics.h"
+#include <fastlib/math/statistics.h>
+
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
 
 const fx_entry_doc svm_main_entries_doc[] = {
   {"learner_name", FX_REQUIRED, FX_STR, NULL,
@@ -76,7 +79,9 @@ void DoSvmNormalize(Dataset* dataset) {
   for (index_t i = 0; i < dataset->n_points(); i++) {
     Vector s;
     Vector d;
-    dataset->matrix().MakeColumnSubvector(i, 0, dataset->n_features()-1, &s);
+    for(int j = 0; j < dataset->n_features() - 1; j++)
+      s[j] = dataset->matrix()(j, i);
+
     m.MakeColumnVector(i, &d);
     d.CopyValues(s);
     la::AddTo(s, &sums);
@@ -115,7 +120,9 @@ void DoSvmNormalize(Dataset* dataset) {
   for (index_t i = 0; i < dataset->n_points(); i++) {
     Vector s;
     Vector d;
-    dataset->matrix().MakeColumnSubvector(i, 0, dataset->n_features()-1, &d);
+    for(int j = 0; j < dataset->n_features() - 1; j++)
+      d[j] = dataset->matrix()(j, i);
+
     final.MakeColumnVector(i, &s);
     d.CopyValues(s);
   }
@@ -166,8 +173,11 @@ void GenerateArtificialDataset(Dataset* dataset){
     m.set(2, i+2, 2); // labels
   }
 
-  data::Save("artificialdata.csv", m); // TODO, for training, for testing
-  dataset->OwnMatrix(&m);
+  arma::mat tmp;
+  arma_compat::matrixToArma(m, tmp);
+  data::Save("artificialdata.csv", tmp); // TODO, for training, for testing
+  // this is a bad way to do this
+  dataset->CopyMatrix(tmp);
 }
 
 /**

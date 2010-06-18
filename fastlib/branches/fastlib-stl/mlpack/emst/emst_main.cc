@@ -10,6 +10,8 @@
 
 #include "dtb.h"
 
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
 
 int main(int argc, char* argv[]) {
  
@@ -29,8 +31,9 @@ int main(int argc, char* argv[]) {
     const char* data_file_name = fx_param_str_req(NULL, "data");
     
     Matrix data_points;
-    
-    data::Load(data_file_name, &data_points);
+    arma::mat tmp_data;
+    data::Load(data_file_name, tmp_data);
+    arma_compat::armaToMatrix(tmp_data, data_points);
     
     /////////////// Initialize DTB //////////////////////
     DualTreeBoruvka dtb;
@@ -144,8 +147,10 @@ int main(int argc, char* argv[]) {
         fx_param_str(NULL, "output_filename", "output.txt");
     
     //FILE* output_file = fopen(output_filename, "w");
-    
-    data::Save(output_filename, results);
+   
+    arma::mat tmp_results;
+    arma_compat::matrixToArma(results, tmp_results); 
+    data::Save(output_filename, tmp_results);
     
   }// end else (if using_thor)
   

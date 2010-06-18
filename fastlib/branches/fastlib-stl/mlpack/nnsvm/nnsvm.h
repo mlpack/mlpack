@@ -323,7 +323,10 @@ void NNSVM<TKernel>::BatchClassify(Dataset* testset, String testlablefilename) {
   num_features_ = testset->n_features()-1;
   for (index_t i = 0; i < testset->n_points(); i++) {
     Vector testvec;
-    testset->matrix().MakeColumnSubvector(i, 0, num_features_, &testvec);
+    testvec.Init(num_features_);
+    for(int j = 0; j < num_features_; j++)
+      testvec[j] = testset->matrix()(j, i);
+
     int testlabel = Classify(testvec);
     fprintf(fp, "%d\n", testlabel);
   }

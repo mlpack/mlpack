@@ -9,6 +9,9 @@
  */
 #include "fastica.h"
 
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
+
 /**
  * Here are usage instructions for this implementation of FastICA. Default values are given 
  * to the right in parentheses.
@@ -73,7 +76,9 @@ int main(int argc, char *argv[]) {
 
   Matrix X;
   const char* data = fx_param_str_req(NULL, "data");
-  data::Load(data, &X);
+  arma::mat tmpX;
+  data::Load(data, tmpX);
+  arma_compat::armaToMatrix(tmpX, X);
 
   const char* ic_filename = fx_param_str(NULL, "ic_filename", "ic.dat");
   const char* unmixing_filename =
@@ -88,7 +93,9 @@ int main(int argc, char *argv[]) {
     Matrix W, Y;
     if(fastica.DoFastICA(&W, &Y) == SUCCESS_PASS) {
       SaveCorrectly(unmixing_filename, W);
-      data::Save(ic_filename, Y);
+      arma::mat tmpY;
+      arma_compat::matrixToArma(Y, tmpY);
+      data::Save(ic_filename, tmpY);
       success_status = SUCCESS_PASS;
       VERBOSE_ONLY( W.PrintDebug("W") );
     }

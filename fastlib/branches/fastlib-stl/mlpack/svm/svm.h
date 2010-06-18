@@ -311,25 +311,19 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
       Dataset dataset_bi;
       dataset_bi.InitBlank();
       dataset_bi.info().Init();
-      dataset_bi.matrix().Init(num_features_+1, train_labels_ct_[i]+train_labels_ct_[j]);
+      dataset_bi.matrix().set_size(num_features_+1, train_labels_ct_[i]+train_labels_ct_[j]);
       ArrayList<index_t> dataset_bi_index;
       dataset_bi_index.Init(train_labels_ct_[i]+train_labels_ct_[j]);
       for (index_t m = 0; m < train_labels_ct_[i]; m++) {
-	Vector source, dest;
-	dataset_bi.matrix().MakeColumnVector(m, &dest);
-	dataset.matrix().MakeColumnVector(train_labels_index_[train_labels_startpos_[i]+m], &source);
-	dest.CopyValues(source);
+	dataset_bi.matrix().col(m) = dataset.matrix().col(train_labels_index_[train_labels_startpos_[i] + m]);
 	/* last row for labels 1 */
-	dataset_bi.matrix().set(num_features_, m, 1);
+	dataset_bi.matrix()(num_features_, m) = 1;
 	dataset_bi_index[m] = train_labels_index_[train_labels_startpos_[i]+m];
       }
       for (index_t n = 0; n < train_labels_ct_[j]; n++) {
-	Vector source, dest;
-	dataset_bi.matrix().MakeColumnVector(n+train_labels_ct_[i], &dest);
-	dataset.matrix().MakeColumnVector(train_labels_index_[train_labels_startpos_[j]+n], &source);
-	dest.CopyValues(source);
+	dataset_bi.matrix().col(n + train_labels_ct_[i]) = dataset.matrix().col(train_labels_index_[train_labels_startpos_[j] + n]);
 	/* last row for labels -1 */
-	dataset_bi.matrix().set(num_features_, n+train_labels_ct_[i], -1);
+	dataset_bi.matrix()(num_features_, n+train_labels_ct_[i]) = -1;
 	dataset_bi_index[n+train_labels_ct_[i]] = train_labels_index_[train_labels_startpos_[j]+n];
       }
 
@@ -386,11 +380,9 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
   }
   sv_.Init(num_features_, total_num_sv_);
   for (i = 0; i < total_num_sv_; i++) {
-    Vector source, dest;
-    sv_.MakeColumnVector(i, &dest);
     /* last row of dataset is for labels */
-    dataset.matrix().MakeColumnSubvector(sv_index_[i], 0, num_features_, &source); 
-    dest.CopyValues(source);
+    for(int j = 0; j < num_features_; j++)
+      sv_.set(j, i, dataset.matrix()(j, sv_index_[i]));
   }
   /* Get the matrix sv_coef_ which stores the coefficients of all sets of SVs */
   /* i.e. models_[x].coef_ -> sv_coef_ */
@@ -472,11 +464,9 @@ void SVM<TKernel>::SVM_R_Train_(int learner_typeid, const Dataset& dataset, data
   /* Get support vecotors and coefficients */
   sv_.Init(num_features_, total_num_sv_);
   for (i = 0; i < total_num_sv_; i++) {
-    Vector source, dest;
-    sv_.MakeColumnVector(i, &dest);
     /* last row of dataset is for labels */
-    dataset.matrix().MakeColumnSubvector(sv_index_[i], 0, num_features_, &source); 
-    dest.CopyValues(source);
+    for(int j = 0; j < num_features_; j++)
+      sv_.set(j, i, dataset.matrix()(j, sv_index_[i]));
   }
   sv_coef_.Init(1, total_num_sv_);
   for (i = 0; i < total_num_sv_; i++) {
@@ -640,9 +630,12 @@ void SVM<TKernel>::BatchPredict(int learner_typeid, Dataset& testset, String pre
   num_features_ = testset.n_features()-1;
   for (index_t i = 0; i < testset.n_points(); i++) {
     Vector testvec;
-    testset.matrix().MakeColumnSubvector(i, 0, num_features_, &testvec);
+    testvec.Init(num_features_);
+    for(int j = 0; j < num_features_; j++)
+      testvec[j] = testset.matrix()(j, i);
+
     double predictedvalue = Predict(learner_typeid, testvec);
-    if (predictedvalue != testset.matrix().get(num_features_, i))
+    if (predictedvalue != testset.matrix()(num_features_, i))
       err_ct++;
     /* save predicted values to file*/
     fprintf(fp, "%f\n", predictedvalue);

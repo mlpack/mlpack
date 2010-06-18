@@ -8,13 +8,18 @@
 #include "infomax_ica.h"
 #include "fastlib/base/test.h"
 
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
+
 class TestInfomaxICA {
 
  public:
   void Init(){
     // load some test data that has been verified using the matlab
     // implementation of infomax
-    data::Load("../../fastlib/fake.arff",&testdata_);
+    arma::mat tmpdata;
+    data::Load("../../fastlib/fake.arff", tmpdata);
+    arma_compat::armaToMatrix(tmpdata, testdata_);
     lambda_=0.001;
     b_=5;
     epsilon_=0.001;
