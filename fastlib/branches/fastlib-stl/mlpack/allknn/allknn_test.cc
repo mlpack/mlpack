@@ -6,13 +6,18 @@
 #include "allknn.h"
 #include "fastlib/base/test.h"
 
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
+
 class TestAllkNN {
  public:
   void Init() {
     allknn_ = new AllkNN();
     naive_  = new AllkNN();
     data_for_tree_ = new Matrix();
-    data::Load("test_data_3_1000.csv", data_for_tree_);
+    arma::mat tmp_data;
+    data::Load("test_data_3_1000.csv", tmp_data);
+    arma_compat::armaToMatrix(tmp_data, *data_for_tree_);
  }
 
   void Destruct() {

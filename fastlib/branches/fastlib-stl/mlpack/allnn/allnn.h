@@ -146,9 +146,9 @@ class AllNN {
   index_t leaf_size_;
 
   /** Permutation mapping indices of queries_ to original order. */
-  GenVector<index_t> old_from_new_queries_;
+  arma::Col<index_t> old_from_new_queries_;
   /** Permutation mapping indices of references_ to original order. */
-  GenVector<index_t> old_from_new_references_;
+  arma::Col<index_t> old_from_new_references_;
 
   /**
    * Candidate nearest neighbor distances, modified during
@@ -260,8 +260,10 @@ class AllNN {
       // These are easy to search for, though for some reason, Garry
       // was more partial to "where's WALDO".  More memorable, maybe?
 
+      arma::vec tmp;
+      arma_compat::vectorToVec(query_point, tmp);
       double distance_to_hrect = 
-	  reference_node->bound().MinDistanceSq(query_point);
+	  reference_node->bound().MinDistanceSq(tmp);
 
       /* Try to prune one last time */
       if (distance_to_hrect < neighbor_distances_[query_index]) {
@@ -484,10 +486,13 @@ class AllNN {
     // initialize the reverse of said.
 
     /* Build the trees */
-    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(
-	  queries_, leaf_size_, &old_from_new_queries_, NULL);
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(
-        references_, leaf_size_, &old_from_new_references_, NULL);
+    arma::mat tmp;
+    arma_compat::matrixToArma(queries_, tmp);
+    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
+	  leaf_size_, old_from_new_queries_);
+    arma_compat::matrixToArma(references_, tmp);
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
+        leaf_size_, old_from_new_references_);
 
     // While we don't make use of this here, it is possible to start
     // timers after stopping them.  They continue where they left off.
@@ -532,10 +537,12 @@ class AllNN {
     // initialize the reverse of said.
 
     /* Build the trees */
-    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(
-	      queries_, leaf_size_, &old_from_new_queries_, NULL);
+    arma::mat tmp;
+    arma_compat::matrixToArma(queries_, tmp);
+    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
+	      leaf_size_, old_from_new_queries_);
     reference_tree_ = query_tree_; 
-    old_from_new_references_.Alias(old_from_new_queries_);
+    old_from_new_references_ = old_from_new_queries_;
 
     // While we don't make use of this here, it is possible to start
     // timers after stopping them.  They continue where they left off.
@@ -561,8 +568,6 @@ class AllNN {
     }
     queries_.Destruct();
     references_.Destruct();
-    old_from_new_queries_.Destruct();
-    old_from_new_references_.Destruct();
     neighbor_distances_.Destruct();
     neighbor_indices_.Destruct();
   }
@@ -595,10 +600,13 @@ class AllNN {
     leaf_size_ = max(queries_.n_cols(), references_.n_cols());
 
     /* Build the (single node) trees */
-    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(
-	      queries_, leaf_size_, &old_from_new_queries_, NULL);
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(
-        references_, leaf_size_, &old_from_new_references_, NULL);
+    arma::mat tmp;
+    arma_compat::matrixToArma(queries_, tmp);
+    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
+        leaf_size_, old_from_new_queries_);
+    arma_compat::matrixToArma(references_, tmp);
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
+        leaf_size_, old_from_new_references_);
 
     /* Ready the list of nearest neighbor candidates to be filled. */
     neighbor_indices_.Init(queries_.n_cols());
@@ -638,10 +646,12 @@ class AllNN {
     leaf_size_ = max(queries_.n_cols(), references_.n_cols());
 
     /* Build the (single node) trees */
-    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(
-	      queries_, leaf_size_, &old_from_new_queries_, NULL);
+    arma::mat tmp;
+    arma_compat::matrixToArma(queries_, tmp);
+    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
+	      leaf_size_, old_from_new_queries_);
     reference_tree_ =  query_tree_;
-    old_from_new_references_.Alias(old_from_new_queries_);
+    old_from_new_references_ = old_from_new_queries_;
     /* Ready the list of nearest neighbor candidates to be filled. */
     neighbor_indices_.Init(queries_.n_cols());
 

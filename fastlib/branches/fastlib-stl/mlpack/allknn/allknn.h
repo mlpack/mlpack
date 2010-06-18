@@ -15,6 +15,9 @@
 #include <fastlib/fastlib.h>
 #include <vector>
 #include <string>
+
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
 /**
  * Forward declaration for the tester class
  */
@@ -105,8 +108,8 @@ class AllkNN {
   // The total number of prunes.
   index_t number_of_prunes_;
   // A permutation of the indices for tree building.
-  ArrayList<index_t> old_from_new_queries_;
-  ArrayList<index_t> old_from_new_references_;
+  arma::Col<index_t> old_from_new_queries_;
+  arma::Col<index_t> old_from_new_references_;
   // The number of points in a leaf
   index_t leaf_size_;
   // The distance to the candidate nearest neighbor for each query
@@ -170,7 +173,9 @@ class AllkNN {
   double MinPointNodeDistSq_ (const Vector& query_point, TreeType* reference_node) {
     // node->bound() gives us the DHrectBound class for the node
     // It has a function MinDistanceSq which takes another DHrectBound
-    return reference_node->bound().MinDistanceSq(query_point);
+    arma::vec tmp;
+    arma_compat::vectorToVec(query_point, tmp);
+    return reference_node->bound().MinDistanceSq(tmp);
   } 
   
   
@@ -405,8 +410,10 @@ class AllkNN {
       *min_dist_so_far=neighbor_distances_[ind+knns_-1];
     } else {
       // We'll order the computation by distance 
-      double left_distance = reference_node->left()->bound().MinDistanceSq(point);
-      double right_distance = reference_node->right()->bound().MinDistanceSq(point);
+      arma::vec tmp;
+      arma_compat::vectorToVec(point, tmp);
+      double left_distance = reference_node->left()->bound().MinDistanceSq(tmp);
+      double right_distance = reference_node->right()->bound().MinDistanceSq(tmp);
       
       if (left_distance < right_distance) {
         ComputeSingleNeighborsRecursion_(point_id, point, reference_node->left(), 
@@ -473,14 +480,17 @@ class AllkNN {
     // This call makes each tree from a matrix, leaf size, and two arrays 
 		// that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
+    arma::mat tmp;
+    arma_compat::matrixToArma(queries_, tmp);
     if (mode_=="dual") {
-      query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(queries_, leaf_size_, 
-			  	&old_from_new_queries_, NULL);
+      query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, leaf_size_, 
+			  	old_from_new_queries_);
     } else {
       query_tree_=NULL;
     }
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_, 
-				leaf_size_, &old_from_new_references_, NULL);
+    arma_compat::matrixToArma(references_, tmp);
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, 
+				leaf_size_, old_from_new_references_);
     
     // Stop the timer we started above
     fx_timer_stop(module_, "tree_building");
@@ -524,9 +534,11 @@ class AllkNN {
     // This call makes each tree from a matrix, leaf size, and two arrays 
 		// that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
+    arma::mat tmp;
+    arma_compat::matrixToArma(references_, tmp);
     query_tree_ = NULL;
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_, 
-				leaf_size_, &old_from_new_references_, NULL);
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, 
+				leaf_size_, old_from_new_references_);
     
     // Stop the timer we started above
     fx_timer_stop(module_, "tree_building");
@@ -567,14 +579,17 @@ class AllkNN {
     // This call makes each tree from a matrix, leaf size, and two arrays 
     // that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
+    arma::mat tmp;
     if (mode_=="dual") {
-      query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(queries_, leaf_size_, 
-          &old_from_new_queries_, NULL);
+      arma_compat::matrixToArma(queries_, tmp);
+      query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, leaf_size_, 
+          old_from_new_queries_);
     } else {
       query_tree_=NULL;
     }
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_, 
-        leaf_size_, &old_from_new_references_, NULL);
+    arma_compat::matrixToArma(references_, tmp);
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, 
+        leaf_size_, old_from_new_references_);
 
   } // Init
 
@@ -609,11 +624,11 @@ class AllkNN {
     // This call makes each tree from a matrix, leaf size, and two arrays 
     // that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
+    arma::mat tmp;
+    arma_compat::matrixToArma(references_, tmp);
     query_tree_ = NULL;
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_, 
-        leaf_size_, &old_from_new_references_, NULL);
-   // This is an annoying feature of fastlib
-    old_from_new_queries_.Init();
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, 
+        leaf_size_, old_from_new_references_);
   }
   /**
    * Initializes the AllNN structure for naive computation.  
@@ -628,8 +643,6 @@ class AllkNN {
     }
     queries_.Destruct();
     references_.Destruct();
-    old_from_new_queries_.Renew();
-    old_from_new_references_.Renew();
     neighbor_distances_.Destruct();
     neighbor_indices_.Renew();
   }
@@ -650,10 +663,13 @@ class AllkNN {
     // that each tree has only one node
     leaf_size_ = max(queries_.n_cols(), references_.n_cols());
     
-    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(queries_, 
-        leaf_size_, &old_from_new_queries_, NULL);
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(
-        references_, leaf_size_, &old_from_new_references_, NULL);
+    arma::mat tmp;
+    arma_compat::matrixToArma(queries_, tmp);
+    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, 
+        leaf_size_, old_from_new_queries_);
+    arma_compat::matrixToArma(references_, tmp);
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
+        leaf_size_, old_from_new_references_);
         
   } // InitNaive
   
@@ -671,11 +687,11 @@ class AllkNN {
     // that each tree has only one node
     leaf_size_ = references_.n_cols();
     
+    arma::mat tmp;
+    arma_compat::matrixToArma(references_, tmp);
     query_tree_ = NULL;
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(
-        references_, leaf_size_, &old_from_new_references_, NULL);
-    // This is an annoying feature of fastlib
-    old_from_new_queries_.Init();
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
+        leaf_size_, old_from_new_references_);
   } // InitNaive
   
   /**
@@ -725,19 +741,19 @@ class AllkNN {
     if (query_tree_ != NULL) {
       for (index_t i = 0; i < neighbor_indices_.size(); i++) {
         (*resulting_neighbors)[
-          old_from_new_queries_[i/knns_]*knns_+ i%knns_] = 
+          old_from_new_queries_[i / knns_] * knns_ + i % knns_] = 
           old_from_new_references_[neighbor_indices_[i]];
         (*distances)[
-          old_from_new_queries_[i/knns_]*knns_+ i%knns_] = 
+          old_from_new_queries_[i / knns_] * knns_ + i % knns_] = 
           neighbor_distances_[i];
       }
     } else {
       for (index_t i = 0; i < neighbor_indices_.size(); i++) {
         (*resulting_neighbors)[
-          old_from_new_references_[i/knns_]*knns_+ i%knns_] = 
+          old_from_new_references_[i / knns_] * knns_ + i % knns_] = 
           old_from_new_references_[neighbor_indices_[i]];
         (*distances)[
-          old_from_new_references_[i/knns_]*knns_+ i%knns_] = 
+          old_from_new_references_[i / knns_] * knns_ + i % knns_] = 
           neighbor_distances_[i];
       }
     }
@@ -762,10 +778,10 @@ class AllkNN {
     // been permuted
     for (index_t i = 0; i < neighbor_indices_.size(); i++) {
       (*resulting_neighbors)[
-        old_from_new_references_[i/knns_]*knns_+ i%knns_] = 
+        old_from_new_references_[i / knns_] * knns_ + i % knns_] = 
         old_from_new_references_[neighbor_indices_[i]];
       (*distances)[
-        old_from_new_references_[i/knns_]*knns_+ i%knns_] = 
+        old_from_new_references_[i / knns_] * knns_+ i % knns_] = 
         neighbor_distances_[i];
 
     }
