@@ -1,5 +1,8 @@
 /* Template implementations for kdtree.h. */
 
+#include <armadillo>
+#include "../base/arma_compat.h"
+
 namespace thor {
 
 /**
@@ -34,11 +37,13 @@ index_t thor::Partition(
     for (;;) {
       if (unlikely(left_i > right_i)) return left_i;
       CacheRead<typename PointCache::Element> left_v(points, left_i);
+      arma::vec tmp;
+      arma_compat::vectorToVec(left_v->vec(), tmp);
       if (!splitcond.is_left(left_v->vec())) {
-        *right_bound |= left_v->vec();
+        *right_bound |= tmp;
         break;
       }
-      *left_bound |= left_v->vec();
+      *left_bound |= tmp;
       left_i++;
       processed_cur++; //
     }
@@ -46,11 +51,13 @@ index_t thor::Partition(
     for (;;) {
       if (unlikely(left_i > right_i)) return left_i;
       CacheRead<typename PointCache::Element> right_v(points, right_i);
+      arma::vec tmp;
+      arma_compat::vectorToVec(right_v->vec(), tmp);
       if (splitcond.is_left(right_v->vec())) {
-        *left_bound |= right_v->vec();
+        *left_bound |= tmp;
         break;
       }
-      *right_bound |= right_v->vec();
+      *right_bound |= tmp;
       right_i--;
       processed_cur++; //
     }
@@ -101,8 +108,7 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Doit(
 
   fx_timer_start(module, "tree_build");
   DecompNode* decomp_root;
-  Bound bound;
-  bound.Init(dimension);
+  Bound bound(dimension);
   FindBoundingBox_(begin_index, end_index, &bound);
   Build_(begin_index, end_index, 0, rpc::n_peers(), bound, NULL, &decomp_root);
   decomposition->Init(decomp_root);
@@ -114,7 +120,9 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::FindBoundingBox_(
     index_t begin_index, index_t end_index, Bound* bound) {
   CacheReadIter<Point> point(&points_, begin_index);
   for (index_t i = end_index - begin_index; i--; point.Next()) {
-    *bound |= point->vec();
+    arma::vec tmp;
+    arma_compat::vectorToVec(point->vec(), tmp);
+    *bound |= tmp;
   }
 }
 
@@ -138,7 +146,7 @@ index_t KdTreeHybridBuilder<TPoint, TNode, TParam>::Build_(
 
     // Short loop to find widest dimension
     for (index_t d = 0; d < node->bound().dim(); d++) {
-      double w = node->bound().get(d).width();
+      double w = node->bound()[d].width();
 
       if (unlikely(w > max_width)) {
         max_width = w;
@@ -196,12 +204,9 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Split_(
   index_t end_col = node->end();
   int split_rank = (begin_rank + end_rank) / 2;
   double split_val;
-  DRange current_range = node->bound().get(split_dim);
-  typename Node::Bound final_left_bound;
-  typename Node::Bound final_right_bound;
-
-  final_left_bound.Init(node->bound().dim());
-  final_right_bound.Init(node->bound().dim());
+  DRange current_range = node->bound()[split_dim];
+  typename Node::Bound final_left_bound(node->bound().dim());
+  typename Node::Bound final_right_bound(node->bound().dim());
 
   if ((node->begin() & points_.n_block_elems_mask()) == 0
       && (!parent || parent->begin() != node->begin())) {
@@ -215,14 +220,11 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Split_(
 
   if (1) {
     index_t goal_col;
-    typename Node::Bound left_bound;
-    typename Node::Bound right_bound;
+    typename Node::Bound left_bound(node->bound().dim());
+    typename Node::Bound right_bound(node->bound().dim());
     bool single_machine = (end_rank <= begin_rank + 1);
 
-    left_bound.Init(node->bound().dim());
-    right_bound.Init(node->bound().dim());
-
-    if (single_machine) {
+    if(single_machine) {
       // All points will go on the same machine, so do median split.
       goal_col = (begin_col + end_col) / 2;
     } else {
@@ -281,14 +283,14 @@ void KdTreeHybridBuilder<TPoint, TNode, TParam>::Split_(
         break;
       } else if (split_col < goal_col) {
         final_left_bound |= left_bound;
-        current_range = right_bound.get(split_dim);
+        current_range = right_bound[split_dim];
         if (current_range.width() == 0) {
           break; // identical elements
         }
         begin_col = split_col;
       } else if (split_col > goal_col) {
         final_right_bound |= right_bound;
-        current_range = left_bound.get(split_dim);
+        current_range = left_bound[split_dim];
         if (current_range.width() == 0) {
           break; // identical elements
         }
@@ -325,7 +327,7 @@ void thor::CreateKdTreeMaster(const Param& param,
   example_node.stat().Init(param);
   Point example_point;
   CacheArray<Point>::GetDefaultElement(points_cache, &example_point);
-  example_node.bound().Init(example_point.vec().length());
+  example_node.bound().SetSize(example_point.vec().length());
 
   CacheArray<Node>::CreateCacheMaster(nodes_channel,
       CacheArray<Node>::ConvertBlockSize(example_node, block_size_kb),
