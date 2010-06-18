@@ -171,11 +171,11 @@ success_t Dataset::InitFromFile(TextLineReader& reader,
 }
 
 
-success_t Dataset::WriteCsv(const char *fname, bool header) const {
+success_t Dataset::WriteCsv(std::string &fname, bool header) const {
   TextWriter writer;
 
-  if (!PASSED(writer.Open(fname))) {
-    NONFATAL("Couldn't open '%s' for writing.", fname);
+  if (!PASSED(writer.Open(fname.c_str()))) {
+    NONFATAL("Couldn't open '%s' for writing.", fname.c_str());
     return SUCCESS_FAIL;
   } else {
     if (header) {
@@ -186,11 +186,11 @@ success_t Dataset::WriteCsv(const char *fname, bool header) const {
   }
 }
 
-success_t Dataset::WriteArff(const char *fname) const {
+success_t Dataset::WriteArff(std::string &fname) const {
   TextWriter writer;
 
-  if (!PASSED(writer.Open(fname))) {
-    NONFATAL("Couldn't open '%s' for writing.", fname);
+  if (!PASSED(writer.Open(fname.c_str()))) {
+    NONFATAL("Couldn't open '%s' for writing.", fname.c_str());
     return SUCCESS_FAIL;
   } else {
     info_.WriteArffHeader(writer);
