@@ -1,6 +1,0 @@
-I am running a bunch of experiments with different settings. One thing that i found out was that i shouldn't be runing expts with low $\sigma$ values. the only low $sigma$ settings that seem to work are ones with high $sigma_h$.
-Also I saw that $\lambda$ influences penalized ise but doesn't influence the ise of the train set
-
-
-
-1) Expts with low $\sigma$ value
