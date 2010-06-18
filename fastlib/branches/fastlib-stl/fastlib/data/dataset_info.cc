@@ -126,7 +126,7 @@ success_t DatasetInfo::InitFromArff(TextLineReader& reader, const string& filena
         } else {
           set_name(portions[1]);
         }
-      } else if (strcasecmp(portions[0].c_str(), "@relation") == 0) {
+      } else if (strcasecmp(portions[0].c_str(), "@attribute") == 0) {
         if (portions.size() < 3) {
           reader.Error("ARFF: @attribute requires name and type.");
           result = SUCCESS_FAIL;
@@ -136,6 +136,7 @@ success_t DatasetInfo::InitFromArff(TextLineReader& reader, const string& filena
             feature.InitNominal(portions[1]);
             // TODO: Doesn't support values with spaces {
             tokenizeString(portions[2], ", \t", feature.value_names(), 1, "}%", 0);
+            features_.push_back(feature);
           } else {
             string type(portions[2]);
             //portions[2].Trim(" \t", &type);
@@ -273,6 +274,10 @@ success_t DatasetInfo::ReadMatrix(TextLineReader& reader, arma::mat &matrix) con
 
 success_t DatasetInfo::ReadPoint(TextLineReader& reader, arma::mat::col_iterator col,
     bool &is_done) const {
+  // std::string is not null-terminated.
+  // so half the crap in this method should fail miserably, but it seems to
+  // somehow still work.  since we'll be replacing it soon, I'm going to ignore
+  // it
   index_t n_features = this->n_features();
   string str;
   string::iterator pos;
@@ -285,8 +290,8 @@ success_t DatasetInfo::ReadPoint(TextLineReader& reader, arma::mat::col_iterator
       return SUCCESS_PASS;
     }
 
-//    str = reader->Peek();
-    pos = reader.Peek().begin();
+    str = reader.Peek();
+    pos = str.begin();
 
     while (*pos == ' ' || *pos == '\t' || *pos == ',') {
       pos++;
@@ -332,12 +337,12 @@ success_t DatasetInfo::ReadPoint(TextLineReader& reader, arma::mat::col_iterator
       }
     }
    
-    size_t len = reader.Peek().end() - pos;
-    size_t cpos = pos - reader.Peek().begin();
-    if (!PASSED(features_[i].Parse(reader.Peek().substr(cpos, len), col[i]))) {
+    size_t len = str.end() - pos;
+    size_t cpos = pos - str.begin();
+    if (!PASSED(features_[i].Parse(str.substr(cpos, len), col[i]))) {
       string::iterator end = reader.Peek().end();
       string tmp;
-      tmp.assign(pos, reader.Peek().end());
+      tmp.assign(pos, str.end());
       for (string::iterator s = reader.Peek().begin(); s < next && s < end; s++) {
         if (*s == '\0') {
           *s = ',';
@@ -349,20 +354,6 @@ success_t DatasetInfo::ReadPoint(TextLineReader& reader, arma::mat::col_iterator
 
     // increment the value we are looking at
     pos = next;
-  }
-
-  while (*pos == ' ' || *pos == '\t' || *pos == ',') {
-    pos++;
-  }
-
-  if (*pos != '\0') {
-    for (string::iterator s = reader.Peek().begin(); s < pos; s++) {
-      if (*s == '\0') {
-        *s = ',';
-      }
-    }
-    reader.Error("Extra junk on line.");
-    return SUCCESS_FAIL;
   }
 
   reader.Gobble();
