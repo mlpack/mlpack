@@ -34,6 +34,8 @@
 #include "la/matrix.h"
 #include "data/dataset.h"
 
+#include <string>
+
 TEST_SUITE_BEGIN(otrav)
 
 void TestDatasetPrint() {

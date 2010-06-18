@@ -265,14 +265,14 @@ class Dataset {
    * @param header whether to include a first line which is the titles of the
    *               data
    */
-  success_t WriteCsv(std::string &fname, bool header = false) const;
+  success_t WriteCsv(std::string fname, bool header = false) const;
 
   /**
    * Writes to an ARFF file.
    *
    * @param fname name of the file
    */
-  success_t WriteArff(std::string &fname) const;
+  success_t WriteArff(std::string fname) const;
 
   /**
    * Initializes from a matrix copying all contents, assuming all features
