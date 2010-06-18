@@ -651,8 +651,6 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
         memcpy(validation_vector.memptr(), validation.matrix().colptr(i),
           sizeof(double) * (validation_vector.n_elem));
 	
-	validation.matrix().MakeColumnVector(i, &validation_vector_with_label);
-	validation_vector_with_label.MakeSubvector(0, validation.n_features()-1, &validation_vector);
 	// testing (classification)
 	int label_predict = int(classifier.Predict(learner_typeid_, validation_vector));
 	double label_expect_dbl = validation.matrix()(i, validation_vector.n_elem);
