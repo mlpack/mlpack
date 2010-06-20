@@ -9,7 +9,6 @@
 // for BOOST testing
 
 #include "fastlib/math/math_lib.h"
-#include "boost/test/unit_test.hpp"
 #include "contrib/dongryel/gp_regression/lbfgs_dev.h"
 #include <stdexcept>
 
