@@ -202,10 +202,11 @@ void Lbfgs<FunctionType>::SearchDirection_(
   rho.Init(num_basis_);
   alpha.Init(num_basis_);
 
-  Vector y_basis, s_basis;
+
   int limit = std::max(iteration_num - num_basis_, 0);
   for (int i = iteration_num - 1; i >= limit; i--) {
     int translated_position = i % num_basis_;
+    Vector y_basis, s_basis;
     s_lbfgs_.MakeColumnVector(translated_position, &s_basis);
     y_lbfgs_.MakeColumnVector(translated_position, &y_basis);
     rho[ iteration_num - i - 1 ] = 1.0 / la::Dot(y_basis, s_basis);
@@ -215,6 +216,7 @@ void Lbfgs<FunctionType>::SearchDirection_(
   la::ScaleOverwrite(scaling_factor, q, search_direction);
   for (int i = limit; i <= iteration_num - 1; i++) {
     int translated_position = i % num_basis_;
+    Vector y_basis, s_basis;
     s_lbfgs_.MakeColumnVector(translated_position, &s_basis);
     y_lbfgs_.MakeColumnVector(translated_position, &y_basis);
     double beta = rho[ iteration_num - i - 1 ] *
