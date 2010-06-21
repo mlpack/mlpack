@@ -11,7 +11,7 @@ void tokenizeString( const string& str, const string& delimiters,
   size_t last = pos;
 
   // Allow for numeric_limits<index_t>::max() tokens
-  // Minimum is INT_MAX (sufficient?)
+  // Minimum is INT_MAX. Possibly insufficient 
   if( !stopat )
     --stopat;
 
@@ -45,7 +45,7 @@ void tokenizeString( const string& str, const string& delimiters,
   }
 
   // Grab the last token
-  if( stopat || last < str.length() )
+  if( stopat && last < str.length() )
     result.push_back( str.substr( last, pos - last ) );
 }
 
