@@ -490,9 +490,23 @@ class AllNN {
     arma_compat::matrixToArma(queries_, tmp);
     query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
 	  leaf_size_, old_from_new_queries_);
+    /* For compatibility, we have to convert the modified tmp matrix back to the
+     * original Matrix format; not using arma_compat:: functions because this
+     * matrix is aliased in three places and calling Init() on it may be a bad
+     * idea */
+    for(int r = 0; r < tmp.n_rows; r++) {
+      for(int c = 0; c < tmp.n_cols; c++) {
+        queries_.set(r, c, tmp(r, c));
+      }
+    }
     arma_compat::matrixToArma(references_, tmp);
     reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
         leaf_size_, old_from_new_references_);
+    for(int r = 0; r < tmp.n_rows; r++) {
+      for(int c = 0; c < tmp.n_cols; c++) {
+        references_.set(r, c, tmp(r, c));
+      }
+    }
 
     // While we don't make use of this here, it is possible to start
     // timers after stopping them.  They continue where they left off.
@@ -541,6 +555,16 @@ class AllNN {
     arma_compat::matrixToArma(queries_, tmp);
     query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
 	      leaf_size_, old_from_new_queries_);
+    /* For compatibility, we have to convert the modified tmp matrix back to the
+     * original Matrix format; not using arma_compat:: functions because this
+     * matrix is aliased in three places and calling Init() on it may be a bad
+     * idea */
+    for(int r = 0; r < tmp.n_rows; r++) {
+      for(int c = 0; c < tmp.n_cols; c++) {
+        queries_.set(r, c, tmp(r, c));
+      }
+    }
+
     reference_tree_ = query_tree_; 
     old_from_new_references_ = old_from_new_queries_;
 
