@@ -217,8 +217,7 @@ void SimpleCrossValidator<TClassifier>::SaveTrainTest_(
   std::string test_name;
   std::ostringstream o;
   
-  if( !(o << i_fold) )
-    abort(); // bizarre error, should we really check?
+  o << i_fold;
   train_name = "train_" + o.str() + ".csv";
   test_name = "test_" + o.str() + ".csv";
   
@@ -531,8 +530,7 @@ void GeneralCrossValidator<TLearner>::SaveTrainValidationSet_(
   
   // save training and validation sets for this fold
   
-  if( !(o << i_fold) )
-    abort(); //?
+  o << i_fold;
   train_name = "cv_train_" + o.str() + ".csv";
   validation_name = "cv_validation_" + o.str() + ".csv";
 
