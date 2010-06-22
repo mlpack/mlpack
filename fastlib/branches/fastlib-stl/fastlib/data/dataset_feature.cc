@@ -72,8 +72,7 @@ void DatasetFeature::Format(double value, string& result) const {
     default: abort();
     #endif
   }
-  if(!(o << value))
-    abort();
+  o << value;
   result = o.str();
 }
 
@@ -86,7 +85,7 @@ success_t DatasetFeature::Parse(const std::string& str, double& d) const {
     case CONTINUOUS:
       {
         istringstream is(str);
-        if(!(is >> d))
+        if((is >> d).fail())
           return SUCCESS_FAIL;
         return SUCCESS_PASS;
       }
@@ -94,7 +93,7 @@ success_t DatasetFeature::Parse(const std::string& str, double& d) const {
       {
         int i;
         istringstream is(str);
-        if(!(is >> i))
+        if((is >> i).fail())
           return SUCCESS_FAIL;
         d = i;
         return SUCCESS_PASS;

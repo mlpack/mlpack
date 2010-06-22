@@ -57,8 +57,7 @@ void DatasetInfo::InitContinuous(index_t n_features, const std::string& name_in)
 
   for (index_t i = 0; i < n_features; i++) {
     ostringstream o;
-    if(!(o << i))
-      abort();
+    o << i;
     DatasetFeature f;
     f.InitContinuous(o.str());
     features_.push_back(f);
@@ -207,8 +206,7 @@ success_t DatasetInfo::InitFromCsv(TextLineReader& reader, const std::string& fi
     for (index_t i = 0; i < headers.size(); i++) {
       DatasetFeature feature;
       ostringstream o;
-      if(!(o << i))
-        abort();
+      o << i;
       feature.InitContinuous(o.str());
       features_.push_back(feature);
     }
