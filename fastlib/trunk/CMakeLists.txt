@@ -16,6 +16,9 @@ option(WITH_SPARSE "Include sparse matrix code - requires Trilinos." ON)
 option(SCALE_NORMAL "Compile with supported indices up to native int type" OFF)
 option(SCALE_LARGE "Support indices up to the maximum the machine's architecture can support" OFF)
 option(SCALE_MASSIVE "Use 64-bit indexes regardless of architecture" OFF)
+# should be changed to default off for a release
+option(DEBUG "Compile with debugging information" ON) # default to on for developers
+
 
 if(WITH_SPARSE)
    set(TRILINOS_REQUIRED_LIBS epetra anasazi aztecoo ifpack teuchos)
@@ -24,6 +27,11 @@ if(WITH_SPARSE)
    include_directories(${TRILINOS_INCLUDE_DIR})
    include_directories(${MPI_INCLUDE_DIR})
 endif(WITH_SPARSE)
+
+if(DEBUG)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0")
+endif(DEBUG)
 
 # ensure we are only using one of the SCALE_x options
 if(SCALE_MASSIVE)
