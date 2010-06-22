@@ -48,6 +48,7 @@
 #include "../math/math_lib.h"
 
 #include <math.h>
+#include <armadillo>
 
 namespace la {
   /**
@@ -68,6 +69,14 @@ namespace la {
   inline double DistanceSqEuclidean(const Vector& x, const Vector& y) {
     DEBUG_SAME_SIZE(x.length(), y.length());
     return DistanceSqEuclidean(x.length(), x.ptr(), y.ptr());
+  }
+  inline double DistanceSqEuclidean(const arma::vec& x, const arma::vec& y) {
+    assert(x.n_elem == y.n_elem);
+
+    double result = 0;
+    for(int i = 0; i < x.n_elem; i++)
+      result += (x[0] - y[0]) * (x[0] - y[0]);
+    return result;
   }
   /**
    * Finds an L_p metric distance except doesn't perform the root
