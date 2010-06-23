@@ -102,8 +102,6 @@ void DistributedCache::InitCommon_(int channel_num_in) {
   overflow_next_.default_value() = BIG_BAD_NUMBER;
   overflow_device_ = NULL;
 
-  write_ranges_.Init();
-
   my_rank_ = rpc::rank();
 }
 
