@@ -24,8 +24,12 @@ class TestAllkNN {
 
   void TestDualTreeVsNaive1() {
     Init();
-    allknn_->Init(&data_for_tree_, &data_for_tree_, 20, 5);
-    naive_->InitNaive(&data_for_tree_, &data_for_tree_, 5);
+    arma::mat dual_query(data_for_tree_);
+    arma::mat dual_references(data_for_tree_);
+    arma::mat naive_query(data_for_tree_);
+    arma::mat naive_references(data_for_tree_);
+    allknn_->Init(&dual_query, &dual_references, 20, 5);
+    naive_->InitNaive(&naive_query, &naive_references, 5);
  
     arma::Col<index_t> resulting_neighbors_tree;
     arma::vec distances_tree;
@@ -44,8 +48,10 @@ class TestAllkNN {
   }
    void TestDualTreeVsNaive2() {
     Init();
-    allknn_->Init(&data_for_tree_, 20, 5);
-    naive_->InitNaive(&data_for_tree_, 5);
+    arma::mat dual_query(data_for_tree_);
+    arma::mat naive_query(data_for_tree_);
+    allknn_->Init(&dual_query, 20, 5);
+    naive_->InitNaive(&naive_query, 5);
 
     arma::Col<index_t> resulting_neighbors_tree;
     arma::vec distances_tree;
@@ -64,8 +70,10 @@ class TestAllkNN {
   }
     void TestSingleTreeVsNaive() {
     Init();
-    allknn_->Init(&data_for_tree_, 20, 5, "single");
-    naive_->InitNaive(&data_for_tree_, 5);
+    arma::mat single_query(data_for_tree_);
+    arma::mat naive_query(data_for_tree_);
+    allknn_->Init(&single_query, 20, 5, "single");
+    naive_->InitNaive(&naive_query, 5);
 
     arma::Col<index_t> resulting_neighbors_tree;
     arma::vec distances_tree;
