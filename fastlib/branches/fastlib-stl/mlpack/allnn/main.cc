@@ -25,19 +25,17 @@
 int main (int argc, char *argv[]) {
   fx_module *fx_root=fx_init(argc, argv, NULL);
   AllNN allnn;
-  Matrix data_for_tree;
-  arma::mat tmp_data;
+  arma::mat data_for_tree;
   
   std::string filename=fx_param_str_req(fx_root, "file");
   NOTIFY("Loading file...");
-  data::Load(filename.c_str(), tmp_data);
-  arma_compat::armaToMatrix(tmp_data, data_for_tree);
+  data::Load(filename.c_str(), data_for_tree);
   NOTIFY("File loaded...");
-  allnn.Init(data_for_tree, fx_root);
-  //GenVector<index_t> resulting_neighbors_tree;
-  //GenVector<double> resulting_distances_tree;
+  allnn.Init(&data_for_tree, fx_root);
+ 
+  arma::vec output;
   NOTIFY("Computing Neighbors...");
-  allnn.ComputeNeighbors(NULL, NULL);
+  allnn.ComputeNeighbors(output);
   NOTIFY("Neighbors Computed...");
   fx_done(fx_root);
 }

@@ -154,12 +154,12 @@ class AllNN {
    * Candidate nearest neighbor distances, modified during
    * compuatation.  Later, true nearest neighbor distances.
    */
-  Vector neighbor_distances_;
+  arma::vec neighbor_distances_;
   /**
    * Candidate nearest neighbor indicies, modified during
    * compuatation.  Later, true nearest neighbor indices.
    */
-  GenVector<index_t> neighbor_indices_;
+  arma::Col<index_t> neighbor_indices_;
 
   /** Number of node-pairs pruned by the dual-tree algorithm. */
   index_t number_of_prunes_;
@@ -204,7 +204,6 @@ class AllNN {
     if (reference_tree_ != query_tree_) {
       delete reference_tree_;
     }
-
   }
 
   ////////// Helper Functions ////////////////////////////////////////
@@ -469,11 +468,11 @@ class AllNN {
     fx_timer_stop(module_, "tree_building");
 
     /* Ready the list of nearest neighbor candidates to be filled. */
-    neighbor_indices_.Init(queries_->n_cols);
+    neighbor_indices_.set_size(queries_->n_cols);
 
     /* Ready the vector of upper bound nn distances for use. */
-    neighbor_distances_.Init(queries_->n_cols);
-    neighbor_distances_.SetAll(DBL_MAX);
+    neighbor_distances_.set_size(queries_->n_cols);
+    neighbor_distances_.fill(DBL_MAX);
 
     number_of_prunes_ = 0;
 
@@ -490,8 +489,6 @@ class AllNN {
     if (reference_tree_ != query_tree_) {
       delete reference_tree_;
     }
-    neighbor_distances_.Destruct();
-    neighbor_indices_.Destruct();
   }
 
   
@@ -528,11 +525,11 @@ class AllNN {
         leaf_size_, old_from_new_references_);
 
     /* Ready the list of nearest neighbor candidates to be filled. */
-    neighbor_indices_.Init(queries_->n_cols);
+    neighbor_indices_.set_size(queries_->n_cols);
 
     /* Ready the vector of upper bound nn distances for use. */
-    neighbor_distances_.Init(queries_->n_cols);
-    neighbor_distances_.SetAll(DBL_MAX);
+    neighbor_distances_.set_size(queries_->n_cols);
+    neighbor_distances_.fill(DBL_MAX);
 
     number_of_prunes_ = 0;
 
@@ -606,11 +603,11 @@ class AllNN {
 
     DEBUG_ASSERT(initialized_ == true);
 
-    results.set_size(neighbor_indices_.length());
-    distances.set_size(neighbor_distances_.length());
+    results.set_size(neighbor_indices_.n_elem);
+    distances.set_size(neighbor_distances_.n_elem);
 
     /* Map the indices back from how they have been permuted. */
-    for (index_t i = 0; i < neighbor_indices_.length(); i++) {
+    for (index_t i = 0; i < neighbor_indices_.n_elem; i++) {
       results[old_from_new_queries_[i]] =
           old_from_new_references_[neighbor_indices_[i]];
       distances[old_from_new_references_[i]] = neighbor_distances_[i];
