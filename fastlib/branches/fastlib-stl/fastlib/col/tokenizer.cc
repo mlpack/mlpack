@@ -10,10 +10,9 @@ void tokenizeString( const string& str, const string& delimiters,
 
   size_t last = pos;
 
-  // Allow for numeric_limits<index_t>::max() tokens
-  // Minimum is INT_MAX. Possibly insufficient 
+  // When "unlimited" tokens desired, allow for numeric_limits<index_t>::max()
   if( !stopat )
-    --stopat;
+    stopat = numeric_limits<index_t>::max();
 
   // loop through each character
   for( ; pos < str.length() && stopat; ++pos ) {
