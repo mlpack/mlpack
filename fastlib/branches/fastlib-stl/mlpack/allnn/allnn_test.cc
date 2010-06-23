@@ -31,7 +31,7 @@
 class TestAllNN {
  public:
   TestAllNN(fx_module *module) {
-    module_=module;
+    module_ = module;
   }
   void Init() {
     allnn_ = new AllNN();
