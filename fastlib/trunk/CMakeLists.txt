@@ -29,8 +29,9 @@ if(WITH_SPARSE)
 endif(WITH_SPARSE)
 
 if(DEBUG)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0 -DDEBUG")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0 -DDEBUG")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0")
+  add_definitions(-DDEBUG)
 endif(DEBUG)
 
 # ensure we are only using one of the SCALE_x options
