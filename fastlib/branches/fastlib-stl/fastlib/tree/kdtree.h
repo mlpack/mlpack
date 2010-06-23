@@ -48,8 +48,6 @@
 #include "spacetree.h"
 #include "bounds.h"
 
-#include <vector>
-
 #include "../fx/fx.h"
 
 #include "kdtree_impl.h"
