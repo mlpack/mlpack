@@ -291,7 +291,6 @@ void TestIntMap() {
 void TestRangeSet() {
   RangeSet<int> set;
   
-  set.Init();
   set.Union(1, 4);
   set.Union(10, 16);
   set.Union(4, 10);

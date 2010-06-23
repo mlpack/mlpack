@@ -39,9 +39,10 @@
 #define COL_RANGESET_H
 
 #include "../base/base.h"
-#include <vector>
+
 #include <algorithm>
 #include <iostream>
+#include <vector>
 
 /**
  * A set containing a union of  [start,end) ranges that are automatically
@@ -72,12 +73,6 @@ class RangeSet {
    */
   RangeSet(const unsigned int size=0) {
     ranges_.reserve(size);
-  }
-
-  /**
-   * Deprecated, use constructor.
-   */
-  void Init() {
   }
 
   /**
