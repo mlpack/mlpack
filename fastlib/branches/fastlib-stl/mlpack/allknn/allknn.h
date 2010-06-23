@@ -74,7 +74,7 @@ class AllkNN {
      * a leaf node.  For allnn, needs no additional information 
      * at the time of tree building.  
      */
-    void Init(const Matrix& matrix, index_t start, index_t count) {
+    void Init(const arma::mat& matrix, index_t start, index_t count) {
       // The bound starts at infinity
       max_distance_so_far_ = DBL_MAX;
     } 
@@ -83,7 +83,7 @@ class AllkNN {
      * Initialization function used in tree-building when initializing a non-leaf node.  For other algorithms,
      * node statistics can be built using information from the children.  
      */
-    void Init(const Matrix& matrix, index_t start, index_t count, 
+    void Init(const arma::mat& matrix, index_t start, index_t count, 
         const QueryStat& left, const QueryStat& right) {
       // For allnn, non-leaves can be initialized in the same way as leaves
       Init(matrix, start, count);
@@ -94,14 +94,14 @@ class AllkNN {
   // TreeType are BinarySpaceTrees where the data are bounded by 
   // Euclidean bounding boxes, the data are stored in a Matrix, 
   // and each node has a QueryStat for its bound.
-  typedef BinarySpaceTree<DHrectBound<2>, Matrix, QueryStat> TreeType;
+  typedef BinarySpaceTree<DHrectBound<2>, arma::mat, QueryStat> TreeType;
    
   
   /////////////////////////////// Members //////////////////////////////////////////////////
  private:
   // These will store our data sets.
-  Matrix queries_;
-  Matrix references_;
+  arma::mat* queries_;
+  arma::mat* references_;
   // Pointers to the roots of the two trees.
   TreeType* query_tree_;
   TreeType* reference_tree_;
@@ -113,9 +113,9 @@ class AllkNN {
   // The number of points in a leaf
   index_t leaf_size_;
   // The distance to the candidate nearest neighbor for each query
-  Vector neighbor_distances_;
+  arma::vec neighbor_distances_;
   // The indices of the candidate nearest neighbor for each query
-  ArrayList<index_t> neighbor_indices_;
+  arma::Col<index_t> neighbor_indices_;
   // number of nearest neighbrs
   index_t knns_; 
   // if this flag is true then only the k-neighbor and distance are computed
@@ -139,6 +139,9 @@ class AllkNN {
   * responsible for ensuring that the object is ready to be destroyed safely.  
   */
   AllkNN() {
+    queries_ = NULL;
+    references_ = NULL;
+
     query_tree_ = NULL;
     reference_tree_ = NULL;
   } 
@@ -170,12 +173,10 @@ class AllkNN {
   /**
    * Computes the minimum squared distances between a point and a node's bounding box
    */
-  double MinPointNodeDistSq_ (const Vector& query_point, TreeType* reference_node) {
+  double MinPointNodeDistSq_ (const arma::vec& query_point, TreeType* reference_node) {
     // node->bound() gives us the DHrectBound class for the node
     // It has a function MinDistanceSq which takes another DHrectBound
-    arma::vec tmp;
-    arma_compat::vectorToVec(query_point, tmp);
-    return reference_node->bound().MinDistanceSq(tmp);
+    return reference_node->bound().MinDistanceSq(query_point);
   } 
   
   
@@ -203,18 +204,17 @@ class AllkNN {
          query_index < query_node->end(); query_index++) {
        
       // Get the query point from the matrix
-      Vector query_point;
-      queries_.MakeColumnVector(query_index, &query_point);
+      arma::vec query_point = queries_->col(query_index);
       
       index_t ind = query_index*knns_;
-      for(index_t i=0; i<knns_; i++) {
-        neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
-                                    neighbor_indices_[ind+i]);
+      for(index_t i = 0; i < knns_; i++) {
+        neighbors[i] = std::make_pair(neighbor_distances_[ind+i],
+                                      neighbor_indices_[ind+i]);
       }
 
       double query_to_node_distance =
 	MinPointNodeDistSq_(query_point, reference_node);
-      if (query_to_node_distance < neighbor_distances_[ind+knns_-1]) {
+      if (query_to_node_distance < neighbor_distances_[ind + knns_ - 1]) {
 	// We'll do the same for the references
 	for (index_t reference_index = reference_node->begin(); 
 	     reference_index < reference_node->end(); reference_index++) {
@@ -223,8 +223,7 @@ class AllkNN {
 	  // in the monochromatic case
 	  if (likely(reference_node != query_node ||
 		     reference_index != query_index)) {
-	    Vector reference_point;
-	    references_.MakeColumnVector(reference_index, &reference_point);
+	    arma::vec reference_point = references_->col(reference_index);
 	    // We'll use lapack to find the distance between the two vectors
 	    double distance =
 	      la::DistanceSqEuclidean(query_point, reference_point);
@@ -367,8 +366,8 @@ class AllkNN {
   
   
   void ComputeSingleNeighborsRecursion_(index_t point_id, 
-      Vector &point, TreeType* reference_node, 
-      double *min_dist_so_far) {
+      arma::vec& point, TreeType* reference_node, 
+      double* min_dist_so_far) {
      
     // A DEBUG statement with a predefined message
     DEBUG_ASSERT_MSG(reference_node != NULL, "reference node is null");
@@ -388,32 +387,29 @@ class AllkNN {
            reference_index < reference_node->end(); reference_index++) {
 	      // Confirm that points do not identify themselves as neighbors
 	      // in the monochromatic case
-        if (likely(!(references_.ptr()==queries_.ptr() &&
+        if (likely(!(references_->memptr()==queries_->memptr() &&
 		      reference_index == point_id))) {
-	        Vector reference_point;
-	        references_.MakeColumnVector(reference_index, &reference_point);
-	        // We'll use lapack to find the distance between the two vectors
-	        double distance =
-	        la::DistanceSqEuclidean(point, reference_point);
-	        // If the reference point is closer than the current candidate, 
-	        // we'll update the candidate
-	        if (distance < neighbor_distances_[ind+knns_-1]) {
-	          neighbors.push_back(std::make_pair(distance, reference_index));
-	        }
-	      }
+          arma::vec reference_point = references_->col(reference_index);
+
+	  // We'll use lapack to find the distance between the two vectors
+	  double distance = la::DistanceSqEuclidean(point, reference_point);
+	  // If the reference point is closer than the current candidate, 
+	  // we'll update the candidate
+	  if (distance < neighbor_distances_[ind+knns_-1]) {
+	    neighbors.push_back(std::make_pair(distance, reference_index));
+	  }
+        }
       } // for reference_index
       std::sort(neighbors.begin(), neighbors.end());
       for(index_t i=0; i<knns_; i++) {
         neighbor_distances_[ind+i] = neighbors[i].first;
         neighbor_indices_[ind+i]  = neighbors[i].second;
       }
-      *min_dist_so_far=neighbor_distances_[ind+knns_-1];
+      *min_dist_so_far = neighbor_distances_[ind+knns_-1];
     } else {
       // We'll order the computation by distance 
-      arma::vec tmp;
-      arma_compat::vectorToVec(point, tmp);
-      double left_distance = reference_node->left()->bound().MinDistanceSq(tmp);
-      double right_distance = reference_node->right()->bound().MinDistanceSq(tmp);
+      double left_distance = reference_node->left()->bound().MinDistanceSq(point);
+      double right_distance = reference_node->right()->bound().MinDistanceSq(point);
       
       if (left_distance < right_distance) {
         ComputeSingleNeighborsRecursion_(point_id, point, reference_node->left(), 
@@ -443,7 +439,7 @@ class AllkNN {
   * local copies of the data.
   */
 
-   void Init(const Matrix& queries_in, const Matrix& references_in, struct datanode* module_in) {
+   void Init(arma::mat* queries_in, arma::mat* references_in, struct datanode* module_in) {
     
     // set the module
     module_ = module_in;
@@ -458,21 +454,21 @@ class AllkNN {
     DEBUG_ASSERT(leaf_size_ > 0);
     
     // Copy the matrices to the class members since they will be rearranged.  
-    queries_.Copy(queries_in);
-    references_.Copy(references_in);
+    queries_ = queries_in;
+    references_ = references_in;
     
     // The data sets need to have the same number of points
-    DEBUG_SAME_SIZE(queries_.n_rows(), references_.n_rows());
+    DEBUG_SAME_SIZE(queries_->n_rows, references_->n_rows);
     
-		// K-nearest neighbors initialization
-		knns_ = fx_param_int(module_, "knns", 5);
+    // K-nearest neighbors initialization
+    knns_ = fx_param_int(module_, "knns", 5);
   
     // Initialize the list of nearest neighbor candidates
-    neighbor_indices_.Init(queries_.n_cols() * knns_);
+    neighbor_indices_.set_size(queries_->n_cols * knns_);
     
 		// Initialize the vector of upper bounds for each point.  
-    neighbor_distances_.Init(queries_.n_cols() * knns_);
-    neighbor_distances_.SetAll(DBL_MAX);
+    neighbor_distances_.set_size(queries_->n_cols * knns_);
+    neighbor_distances_.fill(DBL_MAX);
 
     // We'll time tree building
     fx_timer_start(module_, "tree_building");
@@ -480,16 +476,13 @@ class AllkNN {
     // This call makes each tree from a matrix, leaf size, and two arrays 
 		// that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
-    arma::mat tmp;
-    arma_compat::matrixToArma(queries_, tmp);
     if (mode_=="dual") {
-      query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, leaf_size_, 
+      query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(*queries_, leaf_size_, 
 			  	old_from_new_queries_);
     } else {
       query_tree_=NULL;
     }
-    arma_compat::matrixToArma(references_, tmp);
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, 
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(*references_, 
 				leaf_size_, old_from_new_references_);
     
     // Stop the timer we started above
@@ -500,8 +493,7 @@ class AllkNN {
   /** Use this if you want to run allknn it on a single dataset 
    * the query tree and reference tree are the same
    */
-  void Init(const Matrix& references_in, struct datanode* module_in) {
-     
+  void Init(arma::mat* references_in, struct datanode* module_in) {
     // set the module
     module_ = module_in;
   
@@ -516,17 +508,18 @@ class AllkNN {
     DEBUG_ASSERT(leaf_size_ > 0);
     
     // Copy the matrices to the class members since they will be rearranged.  
-    references_.Copy(references_in);
-    queries_.Alias(references_);    
-		// K-nearest neighbors initialization
-		knns_ = fx_param_int(module_, "knns", 5);
+    references_ = references_in;
+    queries_ = references_in;  
+
+    // K-nearest neighbors initialization
+    knns_ = fx_param_int(module_, "knns", 5);
   
     // Initialize the list of nearest neighbor candidates
-    neighbor_indices_.Init(references_.n_cols() * knns_);
+    neighbor_indices_.set_size(references_->n_cols * knns_);
     
-		// Initialize the vector of upper bounds for each point.  
-    neighbor_distances_.Init(references_.n_cols() * knns_);
-    neighbor_distances_.SetAll(DBL_MAX);
+    // Initialize the vector of upper bounds for each point.  
+    neighbor_distances_.set_size(references_->n_cols * knns_);
+    neighbor_distances_.fill(DBL_MAX);
 
     // We'll time tree building
     fx_timer_start(module_, "tree_building");
@@ -534,17 +527,15 @@ class AllkNN {
     // This call makes each tree from a matrix, leaf size, and two arrays 
 		// that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
-    arma::mat tmp;
-    arma_compat::matrixToArma(references_, tmp);
     query_tree_ = NULL;
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, 
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(*references_, 
 				leaf_size_, old_from_new_references_);
     
     // Stop the timer we started above
     fx_timer_stop(module_, "tree_building");
 
   }
-  void Init(const Matrix& queries_in, const Matrix& references_in, 
+  void Init(arma::mat* queries_in, arma::mat* references_in, 
       index_t leaf_size, index_t knns, const char *mode="dual") {
     // set module_ toa default value of NULL to avoid future badness
     module_ = NULL;
@@ -561,39 +552,34 @@ class AllkNN {
     knns_ = knns;
     DEBUG_ASSERT(knns_ > 0);
     // Copy the matrices to the class members since they will be rearranged.  
-    queries_.Copy(queries_in);
-    references_.Copy(references_in);
+    queries_ = queries_in;
+    references_ = references_in;
     
     // The data sets need to have the same number of points
-    DEBUG_SAME_SIZE(queries_.n_rows(), references_.n_rows());
+    DEBUG_SAME_SIZE(queries_->n_rows, references_->n_rows);
     
-  
     // Initialize the list of nearest neighbor candidates
-    neighbor_indices_.Init(queries_.n_cols() * knns_);
+    neighbor_indices_.set_size(queries_->n_cols * knns_);
     
     // Initialize the vector of upper bounds for each point.  
-    neighbor_distances_.Init(queries_.n_cols() * knns_);
-    neighbor_distances_.SetAll(DBL_MAX);
-
+    neighbor_distances_.set_size(queries_->n_cols * knns_);
+    neighbor_distances_.fill(DBL_MAX);
 
     // This call makes each tree from a matrix, leaf size, and two arrays 
     // that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
-    arma::mat tmp;
     if (mode_=="dual") {
-      arma_compat::matrixToArma(queries_, tmp);
-      query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, leaf_size_, 
+      query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(*queries_, leaf_size_, 
           old_from_new_queries_);
     } else {
       query_tree_=NULL;
     }
-    arma_compat::matrixToArma(references_, tmp);
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, 
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(*references_, 
         leaf_size_, old_from_new_references_);
 
   } // Init
 
-  void Init(const Matrix& references_in, index_t leaf_size, 
+  void Init(arma::mat* references_in, index_t leaf_size, 
             index_t knns, const char *mode="dual") {
     // set module_ toa default value of NULL to avoid future badness
     module_ = NULL;
@@ -610,24 +596,22 @@ class AllkNN {
     knns_ = knns;
     DEBUG_ASSERT(knns_ > 0);
     // Copy the matrices to the class members since they will be rearranged.  
-    references_.Copy(references_in);
-    queries_.Alias(references_); 
+    references_ = references_in;
+    queries_ = references_in; 
   
     // Initialize the list of nearest neighbor candidates
-    neighbor_indices_.Init(references_.n_cols() * knns_);
+    neighbor_indices_.set_size(references_->n_cols * knns_);
     
     // Initialize the vector of upper bounds for each point.  
-    neighbor_distances_.Init(references_.n_cols() * knns_);
-    neighbor_distances_.SetAll(DBL_MAX);
+    neighbor_distances_.set_size(references_->n_cols * knns_);
+    neighbor_distances_.fill(DBL_MAX);
 
 
     // This call makes each tree from a matrix, leaf size, and two arrays 
     // that record the permutation of the data points
     // Instead of NULL, it is possible to specify an array new_from_old_
-    arma::mat tmp;
-    arma_compat::matrixToArma(references_, tmp);
     query_tree_ = NULL;
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, 
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(*references_, 
         leaf_size_, old_from_new_references_);
   }
   /**
@@ -641,64 +625,54 @@ class AllkNN {
     if (reference_tree_ != NULL) {
       delete reference_tree_;
     }
-    queries_.Destruct();
-    references_.Destruct();
-    neighbor_distances_.Destruct();
-    neighbor_indices_.Renew();
   }
-  void InitNaive(const Matrix& queries_in, 
-      const Matrix& references_in, index_t knns){
+  void InitNaive(arma::mat* queries_in,
+      arma::mat* references_in, index_t knns){
     
-    queries_.Copy(queries_in);
-    references_.Copy(references_in);
-    knns_=knns;
+    queries_ = queries_in;
+    references_ = references_in;
+    knns_ = knns;
     
-    DEBUG_SAME_SIZE(queries_.n_rows(), references_.n_rows());
+    DEBUG_SAME_SIZE(queries_->n_rows, references_->n_rows);
     
-    neighbor_indices_.Init(queries_.n_cols()*knns_);
-    neighbor_distances_.Init(queries_.n_cols()*knns_);
-    neighbor_distances_.SetAll(DBL_MAX);
+    neighbor_indices_.set_size(queries_->n_cols * knns_);
+    neighbor_distances_.set_size(queries_->n_cols * knns_);
+    neighbor_distances_.fill(DBL_MAX);
     
     // The only difference is that we set leaf_size_ to be large enough 
     // that each tree has only one node
-    leaf_size_ = max(queries_.n_cols(), references_.n_cols());
+    leaf_size_ = max(queries_->n_cols, references_->n_cols);
     
-    arma::mat tmp;
-    arma_compat::matrixToArma(queries_, tmp);
-    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp, 
+    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(*queries_, 
         leaf_size_, old_from_new_queries_);
-    arma_compat::matrixToArma(references_, tmp);
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(*references_,
         leaf_size_, old_from_new_references_);
         
   } // InitNaive
   
-   void InitNaive(const Matrix& references_in, index_t knns){
+   void InitNaive(arma::mat* references_in, index_t knns){
+    references_ = references_in;
+    queries_ = references_in;
+    knns_ = knns;
     
-    references_.Copy(references_in);
-    queries_.Alias(references_);
-    knns_=knns;
-    
-    neighbor_indices_.Init(references_.n_cols()*knns_);
-    neighbor_distances_.Init(references_.n_cols()*knns_);
-    neighbor_distances_.SetAll(DBL_MAX);
+    neighbor_indices_.set_size(references_->n_cols * knns_);
+    neighbor_distances_.set_size(references_->n_cols * knns_);
+    neighbor_distances_.fill(DBL_MAX);
     
     // The only difference is that we set leaf_size_ to be large enough 
     // that each tree has only one node
-    leaf_size_ = references_.n_cols();
+    leaf_size_ = references_->n_cols;
     
-    arma::mat tmp;
-    arma_compat::matrixToArma(references_, tmp);
     query_tree_ = NULL;
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(tmp,
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(*references_,
         leaf_size_, old_from_new_references_);
   } // InitNaive
   
   /**
    * Computes the nearest neighbors and stores them in *results
    */
-  void ComputeNeighbors(ArrayList<index_t>* resulting_neighbors,
-                        ArrayList<double>* distances) {
+  void ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
+                        arma::vec& distances) {
     fx_timer_start(module_, "computing_neighbors");
     if (mode_=="dual") {
       // Start on the root of each tree
@@ -710,49 +684,47 @@ class AllkNN {
             MinNodeDistSq_(reference_tree_, reference_tree_));
       }
     } else {
-      index_t chunk = queries_.n_cols()/10;
+      index_t chunk = queries_->n_cols / 10;
       printf("Progress:00%%");
       fflush(stdout);
-      for(index_t i=0; i<10; i++) {
-        for(index_t j=0; j<chunk; j++) {
-          Vector point;
-          point.Alias(queries_.GetColumnPtr(i*chunk+j), queries_.n_rows());
-          double min_dist_so_far=DBL_MAX;
-          ComputeSingleNeighborsRecursion_(i*chunk+j, point, reference_tree_, &min_dist_so_far);
+      for(index_t i = 0; i < 10; i++) {
+        for(index_t j = 0; j < chunk; j++) {
+          arma::vec point = queries_->col(i * chunk + j);
+          double min_dist_so_far = DBL_MAX;
+          ComputeSingleNeighborsRecursion_(i * chunk + j, point, reference_tree_, &min_dist_so_far);
         }
-        printf("\b\b\b%02"LI"d%%", (i+1)*10);  
+        printf("\b\b\b%02"LI"d%%", (i+1)*10);
         fflush(stdout);
       }
-      for(index_t i=0; i<queries_.n_cols() % 10; i++) {
-        index_t ind = (queries_.n_cols()/10)*10+i;
-        Vector point;
-        point.Alias(queries_.GetColumnPtr(ind), queries_.n_rows());
-        double min_dist_so_far=DBL_MAX;
+      for(index_t i = 0; i < queries_->n_cols % 10; i++) {
+        index_t ind = (queries_->n_cols / 10) * 10 + i;
+        arma::vec point = queries_->col(ind);
+        double min_dist_so_far = DBL_MAX;
         ComputeSingleNeighborsRecursion_(i, point, reference_tree_, &min_dist_so_far);
       }
       printf("\n");
     }
     fx_timer_stop(module_, "computing_neighbors");
     // We need to initialize the results list before filling it
-    resulting_neighbors->Init(neighbor_indices_.size());
-    distances->Init(neighbor_distances_.length());
+    resulting_neighbors.set_size(neighbor_indices_.n_elem);
+    distances.set_size(neighbor_distances_.n_elem);
     // We need to map the indices back from how they have 
     // been permuted
     if (query_tree_ != NULL) {
-      for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-        (*resulting_neighbors)[
+      for (index_t i = 0; i < neighbor_indices_.n_elem; i++) {
+        resulting_neighbors[
           old_from_new_queries_[i / knns_] * knns_ + i % knns_] = 
           old_from_new_references_[neighbor_indices_[i]];
-        (*distances)[
+        distances[
           old_from_new_queries_[i / knns_] * knns_ + i % knns_] = 
           neighbor_distances_[i];
       }
     } else {
-      for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-        (*resulting_neighbors)[
+      for (index_t i = 0; i < neighbor_indices_.n_elem; i++) {
+        resulting_neighbors[
           old_from_new_references_[i / knns_] * knns_ + i % knns_] = 
           old_from_new_references_[neighbor_indices_[i]];
-        (*distances)[
+        distances[
           old_from_new_references_[i / knns_] * knns_ + i % knns_] = 
           neighbor_distances_[i];
       }
@@ -763,8 +735,8 @@ class AllkNN {
   /**
    * Does the entire computation naively
    */
-  void ComputeNaive(ArrayList<index_t>* resulting_neighbors,
-                    ArrayList<double>*  distances) {
+  void ComputeNaive(arma::Col<index_t>& resulting_neighbors,
+                    arma::vec& distances) {
     if (query_tree_!=NULL) {
       ComputeBaseCase_(query_tree_, reference_tree_);
     } else {
@@ -772,15 +744,15 @@ class AllkNN {
     }
 
     // The same code as above
-    resulting_neighbors->Init(neighbor_indices_.size());
-    distances->Init(neighbor_distances_.length());
+    resulting_neighbors.set_size(neighbor_indices_.n_elem);
+    distances.set_size(neighbor_distances_.n_elem);
     // We need to map the indices back from how they have 
     // been permuted
-    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-      (*resulting_neighbors)[
+    for (index_t i = 0; i < neighbor_indices_.n_elem; i++) {
+      resulting_neighbors[
         old_from_new_references_[i / knns_] * knns_ + i % knns_] = 
         old_from_new_references_[neighbor_indices_[i]];
-      (*distances)[
+      distances[
         old_from_new_references_[i / knns_] * knns_+ i % knns_] = 
         neighbor_distances_[i];
 
