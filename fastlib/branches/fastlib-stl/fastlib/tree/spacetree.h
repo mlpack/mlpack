@@ -183,27 +183,6 @@ class BinarySpaceTree {
     }
   }
 
-  /**
-   * Function specialization for arma transition.
-   * Used only when constructing the tree.
-   * This assumes TDataset is Dataset.
-   * TODO: remove this function
-   */
-  void set_children(const arma::mat& data,
-                    BinarySpaceTree *left_in, BinarySpaceTree *right_in) {
-    left_ = left_in;
-    right_ = right_in;
-      
-    // make a fake matrix
-    Matrix tmp;
-    arma_compat::armaToMatrix(data, tmp);
-    if(!is_leaf())
-      stat_.Init(tmp, begin_, count_, left_->stat_, right_->stat_);
-    else
-      stat_.Init(tmp, begin_, count_);
-
-  }
-
   const Bound& bound() const {
     return bound_;
   }
