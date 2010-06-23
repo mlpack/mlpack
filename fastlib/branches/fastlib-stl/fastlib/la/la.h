@@ -75,7 +75,7 @@ namespace la {
 
     double result = 0;
     for(int i = 0; i < x.n_elem; i++)
-      result += (x[0] - y[0]) * (x[0] - y[0]);
+      result += (x[i] - y[i]) * (x[i] - y[i]);
     return result;
   }
   /**
