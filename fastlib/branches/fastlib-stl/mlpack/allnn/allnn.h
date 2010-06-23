@@ -54,11 +54,11 @@ const fx_module_doc allnn_naive_doc = {
  * @code
  *   AllNN allnn;
  *   struct datanode* allnn_module;
- *   ArrayList<index_t> results;
+ *   arma::Col<index_t> results;
  *
  *   allnn_module = fx_submodule(NULL, "allnn", "allnn");
  *   allnn.Init(query_set, reference_set, allnn_module);
- *   allnn.ComputeNeighbors(&results);
+ *   allnn.ComputeNeighbors(results);
  * @endcode
  */
 class AllNN {
@@ -100,7 +100,7 @@ class AllNN {
      * All-nearest-neighbors fills statistics during computation, but
      * we must set it to an appropriate starting value here.
      */
-    void Init(const Matrix& matrix, index_t start, index_t count) {
+    void Init(const arma::mat& matrix, index_t start, index_t count) {
       // The bound starts at infinity
       max_distance_so_far_ = DBL_MAX;
    }
@@ -111,7 +111,7 @@ class AllNN {
      *
      * For all-nearest-neighbors, we reuse initialization for leaves.
      */
-    void Init(const Matrix& matrix, index_t start, index_t count,
+    void Init(const arma::mat& matrix, index_t start, index_t count,
 	      const QueryStat& left, const QueryStat& right) {
       Init(matrix, start, count);
     }
@@ -121,10 +121,10 @@ class AllNN {
   // The tree directory defines several tools for the creation of
   // custom tree types, especially for kd-trees.  The DHrectBound<2>
   // gives us the normal kind of kd-tree bounding boxes, using the
-  // 2-norm, and Matrix specifies the storage type of our data.
+  // 2-norm, and arma::mat specifies the storage type of our data.
 
   /** kd-tree (binary with hrect bounds) with stats for queries. */
-  typedef BinarySpaceTree<DHrectBound<2>, Matrix, QueryStat> TreeType;
+  typedef BinarySpaceTree<DHrectBound<2>, arma::mat, QueryStat> TreeType;
 
   ////////// Members Variables ///////////////////////////////////////
 
@@ -597,7 +597,7 @@ class AllNN {
   }
 
   /**
-   * Initialize and fill an ArrayList of results.
+   * Initialize and fill an arma::vec of results.
    */
   void EmitResults(arma::vec& distances, arma::Col<index_t> results) {
 
