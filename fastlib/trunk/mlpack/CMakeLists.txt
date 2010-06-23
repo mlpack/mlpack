@@ -45,7 +45,7 @@ set( DIRS
     infomax_ica
 #    isonmf  ## nothing here yet
     kalman
-    kde
+#    kde  ## depends on unstable code in contrib/dongryel (!)
 #    kernel_pca  # requires sparse 
     #mog # requires optimization
 #    mlpackdemo  ## matlab routines
