@@ -26,3 +26,13 @@ target_link_libraries(fastica
    mlpack
    fastlib
 )
+
+# test executable
+add_executable(lin_alg_test
+  lin_alg.h
+  lin_alg_test.cc
+)
+target_link_libraries(lin_alg_test
+  mlpack
+  fastlib
+)
