@@ -685,32 +685,20 @@ namespace linalg__private {
   }
 
   /**
-   * Sets a matrix to a centered matrix, where centering is done by subtracting
-   * the sum over the columns (a column vector) from each column of the matrix
+   * Creates a centered matrix, where centering is done by subtracting
+   * the sum over the columns (a column vector) from each column of the matrix.
+   * 
+   * @param X Input matrix
+   * @param X_centered Matrix to write centered output into
    */
-  void Center(Matrix X, Matrix* X_centered) {
-    Vector col_vector_sum;
-    col_vector_sum.Init(X.n_rows());
-    col_vector_sum.SetZero();
-  
-    index_t n = X.n_cols();
+  void Center(const arma::mat& X, arma::mat& X_centered) {
+    // sum matrix along dimension 1 (that is, sum elements in each column)
+    arma::Row<double> col_vector_sum = arma::sum(X, 0);
+    col_vector_sum /= X.n_rows; // scale
  
-    for(index_t i = 0; i < n; i++) {
-      Vector cur_col_vector;
-      X.MakeColumnVector(i, &cur_col_vector);
-      la::AddTo(cur_col_vector, &col_vector_sum);
-    }
-
-    la::Scale(1/(double) n, &col_vector_sum);
-
-    X_centered -> Copy(X);
-
-    for(index_t i = 0; i < n; i++) {
-      Vector cur_col_vector;
-      X_centered -> MakeColumnVector(i, &cur_col_vector);
-      la::SubFrom(col_vector_sum, &cur_col_vector);
-    }
-
+    X_centered.set_size(X.n_rows, X.n_cols);
+    for(index_t i = 0; i < X.n_rows; i++)
+      X_centered.col(i) = X.col(i) - col_vector_sum(i);
   }
 
   /**
