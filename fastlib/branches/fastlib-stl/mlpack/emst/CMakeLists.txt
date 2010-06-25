@@ -28,3 +28,12 @@ target_link_libraries(emst
    mlpack
    fastlib
 )
+
+# test executable
+add_executable(union_find_test
+  union_find_test.cc
+)
+target_link_libraries(union_find_test
+  mlpack
+  fastlib
+)
