@@ -12,7 +12,8 @@
 #ifndef UNION_FIND_H
 #define UNION_FIND_H
 
-#include <fastlib/col/arraylist.h>
+#include <fastlib/fastlib.h>
+#include <armadillo>
 
 /**
  * @class UnionFind
@@ -25,8 +26,8 @@ class UnionFind {
   
 private:
   
-  ArrayList<index_t> parent_;
-  ArrayList<int> rank_;
+  arma::Col<index_t> parent_;
+  arma::ivec rank_;
   index_t number_of_elements_;
   
 public:
@@ -45,8 +46,8 @@ public:
   void Init(index_t size) {
     
     number_of_elements_ = size;
-    parent_.Init(number_of_elements_);
-    rank_.Init(number_of_elements_);
+    parent_.set_size(number_of_elements_);
+    rank_.set_size(number_of_elements_);
     for (index_t i = 0; i < number_of_elements_; i++) {
       parent_[i] = i;
       rank_[i] = 0;

@@ -30,10 +30,8 @@ int main(int argc, char* argv[]) {
     
     const char* data_file_name = fx_param_str_req(NULL, "data");
     
-    Matrix data_points;
-    arma::mat tmp_data;
-    data::Load(data_file_name, tmp_data);
-    arma_compat::armaToMatrix(tmp_data, data_points);
+    arma::mat data_points;
+    data::Load(data_file_name, data_points);
     
     /////////////// Initialize DTB //////////////////////
     DualTreeBoruvka dtb;
@@ -42,9 +40,9 @@ int main(int argc, char* argv[]) {
     dtb.Init(data_points, dtb_module);
     
     ////////////// Run DTB /////////////////////
-    Matrix results;
+    arma::mat results;
     
-    dtb.ComputeMST(&results);
+    dtb.ComputeMST(results);
     
     //////////////// Check against naive //////////////////////////
     if (fx_param_bool(NULL, "do_naive", 0)) {
@@ -55,8 +53,8 @@ int main(int argc, char* argv[]) {
       
       naive.Init(data_points, naive_module);
       
-      Matrix naive_results;
-      naive.ComputeMST(&naive_results);
+      arma::mat naive_results;
+      naive.ComputeMST(naive_results);
       
       /* Compare the naive output to the DTB output */
       
@@ -148,9 +146,7 @@ int main(int argc, char* argv[]) {
     
     //FILE* output_file = fopen(output_filename, "w");
    
-    arma::mat tmp_results;
-    arma_compat::matrixToArma(results, tmp_results); 
-    data::Save(output_filename, tmp_results);
+    data::Save(output_filename, results);
     
   }// end else (if using_thor)
   

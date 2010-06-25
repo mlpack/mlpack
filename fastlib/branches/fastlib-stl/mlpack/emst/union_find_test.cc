@@ -7,7 +7,8 @@
  */
 
 #include "union_find.h"
-#include "fastlib/base/test.h"
+#include <fastlib/base/test.h>
+#include <fastlib/fastlib.h>
 
 class TestUnionFind {
   
