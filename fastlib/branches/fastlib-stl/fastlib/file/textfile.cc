@@ -41,9 +41,9 @@
  */
 
 #include "textfile.h"
-//#include "textfile.h"
 
 #include <ctype.h>
+#include <iostream>
 
 /*
 char *TextTokenizer::ReadLine() {
@@ -108,10 +108,9 @@ void TextLineReader::Error(const char *format, ...) {
 
 success_t TextLineReader::Open(const char *fname) {
   f_ = fopen(fname, "r");
-  fname_ = strncpy(new char[strlen(fname) + 1], fname, strlen(fname) + 1);
+  fname_ = fname;
   line_num_ = 0;
   has_line_ = false;
-  fname_ = fname;
   
   if (unlikely(f_ == NULL)) {
     return SUCCESS_FAIL;
@@ -125,7 +124,7 @@ bool TextLineReader::Gobble() {
   char *ptr = ReadLine_();
   
   if (likely(ptr != NULL)) {
-    line_.assign(ptr);
+    line_ = ptr;
     has_line_ = true;
     line_num_++;
     return true;
@@ -169,8 +168,8 @@ char *TextLineReader::ReadLine_() {
 success_t TextTokenizer::Open(const char *fname,
     const char *comment_chars_in, const char *ident_extra_in,
     int features_in) {
-  next_.assign("");
-  cur_.assign("");
+  next_ = "";
+  cur_ = "";
   next_type_ = END;
   cur_type_ = END;
   comment_start_ = comment_chars_in;
@@ -287,7 +286,6 @@ void TextTokenizer::Error_(const char *msg, const std::vector<char>& token) {
   next_type_ = INVALID;
   
   printf("size is %"LI", token[0] = %d\n", token.size(), token[0]);
-  next_.assign(token.begin(), token.end());
   Error("%s", msg);
   next_.clear();
 }
@@ -366,8 +364,7 @@ void TextTokenizer::Scan_(std::vector<char>& token) {
   
   if (c == 0) {
     // Makes token's capacity = 0
-    std::vector<char> empty;
-    token.swap(empty);
+    token.clear();
     next_type_ = END;
     return;
   } else if (c == '.' || isdigit(c)) {
@@ -403,8 +400,10 @@ void TextTokenizer::Gobble() {
   std::vector<char> token;
   Scan_(token);
   token.push_back('\0');
-  std::copy( token.begin(), token.end(), next_.begin() );
-  DEBUG_ASSERT(next_.length() == index_t(strlen(next_.c_str())));
+
+  next_ = &token.front();
+
+  DEBUG_ASSERT(next_.length() == strlen(next_.c_str()));
 }
 
 success_t TextWriter::Printf(const char *format, ...) {

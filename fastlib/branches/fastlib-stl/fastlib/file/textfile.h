@@ -241,7 +241,7 @@ class TextTokenizer {
     return next_type_ != END;
   }
   
-  bool Match(const char *exact) {
+  bool Match(const std::string exact) {
     if (next_ == exact) {
       Gobble();
       return true;
@@ -250,17 +250,6 @@ class TextTokenizer {
     }
   }
  
-/* 
-  bool MatchNoCase(const char *str) {
-    if (next_.EqualsNoCase(str)) {
-      Gobble();
-      return true;
-    } else {
-      return false;
-    }
-  }
-*/  
-
   bool MatchInteger() {
     return MatchType(INTEGER);
   }
