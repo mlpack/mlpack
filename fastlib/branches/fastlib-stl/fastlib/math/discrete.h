@@ -63,7 +63,7 @@ namespace math {
   /**
    * Creates an identity permutation where the element i equals i.
    *
-   * Low-level pointer version -- preferably use the @c ArrayList
+   * Low-level pointer version -- preferably use the @c std::vector 
    * version instead.
    *
    * For instance, result[0] == 0, result[1] == 1, result[2] == 2, etc.
