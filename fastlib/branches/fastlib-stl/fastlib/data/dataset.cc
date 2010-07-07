@@ -86,18 +86,10 @@ void Dataset::GetLabels(std::vector<double> &labels_list,
 
   double current_label;
 
-  // these Arraylists need initialization before-hand
-  // This faithfully replicates the effect of ArrayList.Renew().
-  //   Is this necessary? If all we care about is initialization,
-  //  it shouldn't be.
-  {
-    std::vector<double> y;
-    std::vector<index_t> x[3];
-    labels_list.swap(y);
-    labels_index.swap(x[0]);
-    labels_ct.swap(x[1]);
-    labels_startpos.swap(x[2]);
-  }
+  labels_list.clear();
+  labels_index.clear();
+  labels_ct.clear();
+  labels_startpos.clear();
 
   labels_index.reserve(n_points);
 
