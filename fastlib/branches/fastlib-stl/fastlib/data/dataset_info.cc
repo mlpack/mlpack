@@ -264,7 +264,6 @@ success_t DatasetInfo::ReadMatrix(TextLineReader& reader, arma::mat &matrix) con
 
   if (!FAILED(retval)) {
     n_points--; // last increment was the failure, so subtract that
-    DEBUG_ASSERT(n_points == matrix.n_rows);
   }
 
   return retval;
@@ -295,7 +294,7 @@ success_t DatasetInfo::ReadPoint(TextLineReader& reader, arma::mat::col_iterator
       pos++;
     }
 
-    if (unlikely(*pos == '\0' || *pos == '%')) {
+    if (unlikely(*pos == '%')) {
       reader.Gobble();
     } else {
       break;
@@ -309,30 +308,10 @@ success_t DatasetInfo::ReadPoint(TextLineReader& reader, arma::mat::col_iterator
       pos++;
     }
    
-    if (unlikely(*pos == '\0')) {
-      for (string::iterator s = reader.Peek().begin(); s < pos; s++) { // UNDEFINED
-        if (!*s) {
-          *s = ',';
-        }
-      }
-      reader.Error("I am expecting %"LI"d entries per row, "
-          "but this line has only %"LI"d.",
-          n_features, i);
-      return SUCCESS_FAIL;
-    }
-   
     next = pos;
-    while (*next != '\0' && *next != ' ' && *next != '\t' && *next != ','
+    while (*next != ' ' && *next != '\t' && *next != ','
         && *next != '%') {
       next++;
-    }
-   
-    if (*next != '\0') {
-      char c = *next;
-      *next = '\0';
-      if (c != '%') {
-        next++;
-      }
     }
    
     size_t len = str.end() - pos;
@@ -341,11 +320,6 @@ success_t DatasetInfo::ReadPoint(TextLineReader& reader, arma::mat::col_iterator
       string::iterator end = reader.Peek().end();
       string tmp;
       tmp.assign(pos, str.end());
-      for (string::iterator s = reader.Peek().begin(); s < next && s < end; s++) {
-        if (*s == '\0') {
-          *s = ',';
-        }
-      }
       reader.Error("Invalid parse: [%s]", tmp.c_str());
       return SUCCESS_FAIL;
     }
