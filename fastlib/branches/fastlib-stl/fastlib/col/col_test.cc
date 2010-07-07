@@ -45,6 +45,7 @@
 TEST_SUITE_BEGIN(col)
 
 void TestTokenizer() {
+  // This test could probably be trimmed down without losing value
   int i;
   std::string test[] = {"a","a,b","a,b;c",",;,;,,,;;a",
     "a,,,,;;;;,;,;,;,", ";,a,,b,,c;;d,;"};
@@ -204,8 +205,6 @@ void TestTokenizer() {
   // by tests that don't specify values above.
 }
 
-// right now, just a plug to make sure some instantiation of ArrayList
-// compiles.
 // TODO(garryb): this should really be a runnable unit test
 void TestMinHeap() {
   MinHeap<double, int> h;
