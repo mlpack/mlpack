@@ -55,7 +55,7 @@ index_t Dataset::n_labels() const {
   double current_label;
   
   std::vector<double> labels_list;
-  labels_list.push_back(matrix_[label_row_idx,0]);
+  labels_list.push_back(matrix_(label_row_idx,0));
   n_labels++;
 
   for(i = 1; i < matrix_.n_cols; i++) {
