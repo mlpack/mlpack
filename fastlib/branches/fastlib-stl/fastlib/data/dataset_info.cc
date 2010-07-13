@@ -239,7 +239,7 @@ success_t DatasetInfo::ReadMatrix(TextLineReader& reader, arma::mat &matrix) con
   index_t n_features = this->n_features();
   index_t n_points = 0;
   success_t retval = SUCCESS_PASS;
-  bool is_done;
+  bool is_done = false;
 
   // read through our file to find out how long it is
   index_t cur_line = reader.line_num();
@@ -304,13 +304,13 @@ success_t DatasetInfo::ReadPoint(TextLineReader& reader, arma::mat::col_iterator
   for (index_t i = 0; i < n_features; i++) {
     string::iterator next;
    
-    while (*pos == ' ' || *pos == '\t' || *pos == ',') {
+    while (pos < str.end() && (*pos == ' ' || *pos == '\t' || *pos == ',')) {
       pos++;
     }
    
     next = pos;
-    while (*next != ' ' && *next != '\t' && *next != ','
-        && *next != '%') {
+    while (next < str.end() && (*next != ' ' && *next != '\t' && *next != ','
+        && *next != '%')) {
       next++;
     }
    
