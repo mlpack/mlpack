@@ -6,6 +6,8 @@ add_executable(optim_tqlong_test
    FunctionTemplate
    NelderMead
    GradientDescent
+   BFGS
+   LBFGS
 )
 # link dependencies of executable
 target_link_libraries(optim_tqlong_test

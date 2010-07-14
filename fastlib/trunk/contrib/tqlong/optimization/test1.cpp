@@ -4,6 +4,8 @@
 #include "FunctionTemplate.h"
 #include "NelderMead.h"
 #include "GradientDescent.h"
+#include "BFGS.h"
+#include "LBFGS.h"
 
 using namespace std;
 using namespace optim;
@@ -80,12 +82,66 @@ void testGradientDescent(fx_module* module) {
   cout << "GradientDescent test succeeded." << endl;
 }
 
+void testBFGS(fx_module* module) {
+  cout << "BFGS test ..." << endl;
+
+  double param[] = {100, 0.00001, 0.001, 1e-4, 0.9, 0.4};
+  TestFunction f;
+  BFGS<optim::TestFunction> algo(f, param);
+
+  // Seeding
+  Vector x0;
+  f.Init(&x0);
+  x0[0] = 1;
+  x0[1] = 1;
+
+  // Optimization
+  Vector sol;
+  f.Init(&sol);
+  algo.setX0(x0);
+  double v = algo.optimize(sol);
+
+  cout << "Best value = " << v << endl;
+  ot::Print(sol, "Solution", stdout);
+  //algo.printHistory();
+
+  cout << "BFGS test succeeded." << endl;
+}
+
+void testLBFGS(fx_module* module) {
+  cout << "LBFGS test ..." << endl;
+
+  double param[7] = {100, 0.00001, 0.001, 1e-4, 0.9, 0.4, 20};
+  TestFunction f;
+  LBFGS<optim::TestFunction> algo(f, param);
+
+  // Seeding
+  Vector x0;
+  f.Init(&x0);
+  x0[0] = 1;
+  x0[1] = 1;
+
+  // Optimization
+  Vector sol;
+  f.Init(&sol);
+  algo.setX0(x0);
+  double v = algo.optimize(sol);
+
+  cout << "Best value = " << v << endl;
+  ot::Print(sol, "Solution", stdout);
+  //algo.printHistory();
+
+  cout << "LBFGS test succeeded." << endl;
+}
+
 int main(int argc, char** argv) {
   fx_module* root = fx_init(argc, argv, &optimization_doc);
   cout << "Optimization tests" << endl;
 
   //testNelderMead(root);
-  testGradientDescent(root);
+  //testGradientDescent(root);
+  //testBFGS(root);
+  testLBFGS(root);
 
   fx_done(root);
   return 0;
