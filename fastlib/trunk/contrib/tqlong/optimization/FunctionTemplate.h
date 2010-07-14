@@ -36,6 +36,17 @@ public:
   LengthEuclidianSquare(int dim_ = 2) : dim(dim_) {}
 };
 
+class TestFunction {
+public:
+  typedef Vector variable_type;                   // required
+  int dimension() { return 2; }                   // required
+  void Init(Vector* x) { x->Init(2); }            // required
+  double CalculateValue(const Vector& x);
+  void CalculateGradient(const Vector& x, Vector& gradient);
+  //void CalculateHessian(const Vector& x, Matrix& hessian);
+public:
+};
+
 END_OPTIM_NAMESPACE;
 
 #endif // FUNCTIONTEMPLATE_H
