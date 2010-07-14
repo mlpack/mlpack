@@ -3,6 +3,7 @@
 
 #include "FunctionTemplate.h"
 #include "NelderMead.h"
+#include "GradientDescent.h"
 
 using namespace std;
 using namespace optim;
@@ -27,20 +28,22 @@ void testNelderMead(fx_module* module) {
   cout << "Nelder-Mead test ..." << endl;
 
   int n_seed = fx_param_int(module, "seed", 10);
+  LengthEuclidianSquare f(2);
+  NelderMead<optim::LengthEuclidianSquare> algo(f);
+
+  // Seeding
   ArrayList<Vector> vX;
   vX.Init();
   for (int i = 0; i < n_seed; i++) {
-    Vector x; x.Init(2);
+    Vector x;
+    f.Init(&x);
     x[0] = 10+10*(double)rand()/RAND_MAX;
     x[1] = 20+10*(double)rand()/RAND_MAX;
     vX.PushBackCopy(x);
   }
-  LengthEuclidianSquare f;
-
-  NelderMead<Vector, optim::LengthEuclidianSquare> algo(f);
-
   algo.addSeed(vX);
 
+  // Optimization
   Vector sol;
   sol.Init(2);
   double v = algo.optimize(sol);
@@ -51,11 +54,38 @@ void testNelderMead(fx_module* module) {
   cout << "Nelder-Mead test succeeded." << endl;
 }
 
+void testGradientDescent(fx_module* module) {
+  cout << "GradientDescent test ..." << endl;
+
+  double param[] = {100, 0.00001, 0.001, 1e-4, 0.9, 0.4};
+  LengthEuclidianSquare f(2);
+  GradientDescent<optim::LengthEuclidianSquare> algo(f, param);
+
+  // Seeding
+  Vector x0;
+  f.Init(&x0);
+  x0[0] = 10+10*(double)rand()/RAND_MAX;
+  x0[1] = 20+10*(double)rand()/RAND_MAX;
+
+  // Optimization
+  Vector sol;
+  f.Init(&sol);
+  algo.setX0(x0);
+  double v = algo.optimize(sol);
+
+  cout << "Best value = " << v << endl;
+  ot::Print(sol, "Solution", stdout);
+  //algo.printHistory();
+
+  cout << "GradientDescent test succeeded." << endl;
+}
+
 int main(int argc, char** argv) {
   fx_module* root = fx_init(argc, argv, &optimization_doc);
   cout << "Optimization tests" << endl;
 
-  testNelderMead(root);
+  //testNelderMead(root);
+  testGradientDescent(root);
 
   fx_done(root);
   return 0;

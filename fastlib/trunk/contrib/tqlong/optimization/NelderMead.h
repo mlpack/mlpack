@@ -24,20 +24,26 @@ struct OptimizationParameter {
 BEGIN_OPTIM_NAMESPACE;
 
 /**********************************************************************
-  Implement 0-order Nelder-Mead optimization method
-  Variable: implement la::AddExpert(alpha, const Variable& X, Variable* Y) and Copy() for this type
-  Function: implement CalculateValue(const Variable&)
+  Implement 0-order Nelder-Mead simplex optimization method
+  Function: implement CalculateValue(const variable_type&)
+  Function::variable_type:
+    implement la::AddExpert(double, const variable_type&, variable_type*)
+              Copy(const variable_type&), CopyValues(const variable_type&)
+              for this type
   Parameter:
-    alpha : Reflection  (1.0)
-    gamma : Expansion   (2.0)
-    rho   : Contraction (0.5)
-    sigma : Reduction   (0.5)
+    General params
+      maxIter, rTol, aTol
+    Specific for Nelder-Mead
+      alpha : Reflection  (1.0)
+      gamma : Expansion   (2.0)
+      rho   : Contraction (0.5)
+      sigma : Reduction   (0.5)
 **********************************************************************/
-template<typename Variable, typename Function> class NelderMead
+template<typename Function> class NelderMead
 {
 public:
   typedef Function function_type;
-  typedef Variable variable_type;
+  typedef typename Function::variable_type variable_type;
 public:
   NelderMead(function_type& f_, OptimizationParameter param_ = OptimizationParameter(100, 0.01, 0.01));
   void setParam(double alpha_, double gamma_, double rho_, double sigma_) {
@@ -64,33 +70,33 @@ protected:
   void updateCenter(const variable_type& x1, const variable_type& x2);
 };
 
-template<typename V, typename F>
-NelderMead<V, F>::NelderMead(function_type& f_, OptimizationParameter param_)
+template<typename F>
+NelderMead<F>::NelderMead(function_type& f_, OptimizationParameter param_)
   : f(f_), param(param_)
 {
   memory.Init();
   val.Init();
+  f.Init(&center);
   alpha = 1.5;
   gamma = 2.0;
   rho = 0.5;
   sigma = 0.5;
 }
 
-template<typename V, typename F>
-void NelderMead<V, F>::add(const variable_type &x)
+template<typename F>
+void NelderMead<F>::add(const variable_type &x)
 {
   double v = f.CalculateValue(x);
   add(x, v);
 }
 
-template<typename V, typename F>
-void NelderMead<V, F>::addSeed(const ArrayList<variable_type>& vX) {
-  for (int i = 0; i < vX.size(); i++)
-    add(vX[i]);
+template<typename F>
+void NelderMead<F>::addSeed(const ArrayList<variable_type>& vX) {
+  for (int i = 0; i < vX.size(); i++) add(vX[i]);
 }
 
-template<typename V, typename F>
-void NelderMead<V, F>::add(const variable_type &x, double v)
+template<typename F>
+void NelderMead<F>::add(const variable_type &x, double v)
 {
   double pos = findPos(v);
   if (pos < memory.size()) {
@@ -104,19 +110,19 @@ void NelderMead<V, F>::add(const variable_type &x, double v)
   updateCenter(x);
 }
 
-template<typename V, typename F>
-int NelderMead<V, F>::findPos(double v)
+template<typename F>
+int NelderMead<F>::findPos(double v)
 {
   int i = 0;
   while (i < val.size() && val[i] < v) i++;
   return i;
 }
 
-template<typename V, typename F>
-void NelderMead<V, F>::updateCenter(const variable_type &x)
+template<typename F>
+void NelderMead<F>::updateCenter(const variable_type &x)
 {
   if (memory.size() <= 1)
-    center.Copy(x);
+    center.CopyValues(x);
   else {
     variable_type tmp;
     tmp.Copy(center);
@@ -126,8 +132,8 @@ void NelderMead<V, F>::updateCenter(const variable_type &x)
   }
 }
 
-template<typename V, typename F>
-void NelderMead<V, F>::updateCenter(const variable_type &x1, const variable_type &x2)
+template<typename F>
+void NelderMead<F>::updateCenter(const variable_type &x1, const variable_type &x2)
 {
   int n = memory.size();
   DEBUG_ASSERT(n > 0);
@@ -135,8 +141,8 @@ void NelderMead<V, F>::updateCenter(const variable_type &x1, const variable_type
   la::AddExpert(1.0/n, x2, &center);
 }
 
-template<typename V, typename F>
-double NelderMead<V, F>::optimize(variable_type &sol)
+template<typename F>
+double NelderMead<F>::optimize(variable_type &sol)
 {
   int n = memory.size();
   DEBUG_ASSERT(n >= 3);
@@ -195,8 +201,8 @@ double NelderMead<V, F>::optimize(variable_type &sol)
   return best_val;
 }
 
-template<typename V, typename F>
-void NelderMead<V, F>::replace(int pos, const variable_type &x, double v)
+template<typename F>
+void NelderMead<F>::replace(int pos, const variable_type &x, double v)
 {
   int n = memory.size();
   DEBUG_ASSERT(pos < n);
@@ -218,8 +224,8 @@ void NelderMead<V, F>::replace(int pos, const variable_type &x, double v)
   val[pos] = v;
 }
 
-template<typename V, typename F>
-void NelderMead<V, F>::updateAll()
+template<typename F>
+void NelderMead<F>::updateAll()
 {
   int n = memory.size();
   DEBUG_ASSERT(n > 0);
