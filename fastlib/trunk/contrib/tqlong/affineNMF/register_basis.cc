@@ -23,7 +23,7 @@ void register_basis(const ArrayList<ImageType>& X,
   ArrayList<ImageType> dB;
   dB.InitCopy(BOut);
 
-  index_t maxIter = 10;
+  index_t maxIter = 1;
   double lambda = 0.1;
   for (index_t iter = 0; iter < maxIter; iter++) {
     SetImageZero(dB);

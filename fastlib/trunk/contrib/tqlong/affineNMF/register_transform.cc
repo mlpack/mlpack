@@ -21,7 +21,7 @@ void ComputeContribution(const ImageType& I1, const ImageType& I2,
 void register_transform(const ImageType& I1, const ImageType& I2,
 			const Transformation& tInit, Transformation& tOut) {
   tOut = tInit;
-  index_t maxIter = 10;
+  index_t maxIter = 1;
   double lambda = 0.1;
   for (index_t iter = 0; iter < maxIter; iter++) {
     ImageType tmp;
