@@ -28,3 +28,12 @@ target_link_libraries(optim_tqlong_test
    mlpack
    mlpack_contrib
 )
+
+SET( OPTIM_SRCS
+
+)
+
+ADD_EXECUTABLE( test1
+  test1.cpp
+  ${OPTIM_SRCS}
+)

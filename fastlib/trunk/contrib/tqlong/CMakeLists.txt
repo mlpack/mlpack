@@ -8,11 +8,12 @@ set(DIRS
 #   hmm  ## already exists elsewhere, appears to be a copy?
    kfs
 #   mmf  ## a copy already exists in contrib/niche??
-   optim
+   #optim
    PassiveAggressive
 #   quicsvd  ## does not link; looking for nonexistent la:: functions
    svm
    affineNMF
+   optimization
 )
 
 foreach(dir ${DIRS})

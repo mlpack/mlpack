@@ -27,6 +27,7 @@ BEGIN_OPTIM_NAMESPACE;
     General params
       maxIter, rTol, aTol
     Specific for LBFGS
+      mem
     Specific Wolfe line search
       c1, c2, beta
 **********************************************************************/
@@ -79,94 +80,95 @@ void LBFGS<F>::setParam(OptimizationParameters param) {
 
 template<typename F>
 double LBFGS<F>::optimize(variable_type &sol) {
-  BFGS<F>::history.Clear();
-  BFGS<F>::iter = 0;
-  BFGS<F>::n_evals = 0;
-  BFGS<F>::n_grads = 0;
-
   variable_type x; // the current search variable
   variable_type grad, d; // the current search direction
-  variable_type new_s, new_y;
+  variable_type new_s, new_y;  // s = x_n - x_n-1,  y = g_n - g_n-1
 
-  BFGS<F>::f.Init(&x);      // initialize search variable
-  BFGS<F>::f.Init(&d);      // and direction
-  BFGS<F>::f.Init(&grad);      // and direction
-  BFGS<F>::f.Init(&new_s);
-  BFGS<F>::f.Init(&new_y);
+  this->f.Init(&x);      // initialize search variable
+  this->f.Init(&d);      // and direction
+  this->f.Init(&grad);   // and gradient place holder
+  this->f.Init(&new_s);  // and s & y (for BFGS)
+  this->f.Init(&new_y);
 
-  x.CopyValues(BFGS<F>::x0);
+  x.CopyValues(this->x0);     // Start optimize at x0
   double val = CalculateValue(x);
   CalculateGradient(x, grad); // Calculate gradient
-  double r0 = la::LengthEuclidean(grad);
+  double r0 = la::LengthEuclidean(grad);  // the beginning residual
 
-  sol.CopyValues(BFGS<F>::x0);
-  BFGS<F>::best_val = val;
-  BFGS<F>::residual = r0;
-  BFGS<F>::recordProgress();
+  sol.CopyValues(this->x0);
+
+  this->history.Clear();
+  this->iter = 0;
+  this->n_evals = 0;
+  this->n_grads = 0;
+  this->best_val = val;
+  this->residual = r0;
+  this->recordProgress();
 
   bool need_fixed = false;   // Clear all memory
-  BFGS<F>::s.Clear();
-  BFGS<F>::y.Clear();
+  this->s.Clear();
+  this->y.Clear();
   memIndex.Clear();
   gamma.Clear();
-  for (BFGS<F>::iter = 1; BFGS<F>::iter < BFGS<F>::maxIter; BFGS<F>::iter++) {
+  for (this->iter = 1; this->iter < this->maxIter; this->iter++) {
     // Calculate search direction: negative gradient
     la::ScaleOverwrite(-1.0, grad, &d);
     if (!need_fixed) LBFGSDirection(d);     // la::Dot(s,y) > 0, use BFGSDirection
-    // Calculate step size by Wolfe's conditions
+    // Calculate step size by Wolfe's conditions,
+    // x_p, val_xp and grad_p are new search point, its function value and gradient
     double lambda = WolfeStep(x, val, grad, d);
-    if (lambda == 0.0) return BFGS<F>::best_val;     // line search failed
+    if (lambda == 0.0) return this->best_val;     // line search failed
     // Calculate new variable
     la::AddExpert(lambda, d, &x);
     // Update best value
-    val = BFGS<F>::val_xp;
-    if (val < BFGS<F>::best_val) {
-      BFGS<F>::best_val = val;
+    val = this->val_xp;
+    if (val < this->best_val) {
+      this->best_val = val;
       sol.CopyValues(x);
     }
     // Update BFGS memory
-    la::ScaleOverwrite(lambda, d, &new_s);     //  s = x_n - x_n-1
+    la::ScaleOverwrite(lambda, d, &new_s);     //  s = x_n - x_n-1 = lambda * d
 
     la::ScaleOverwrite(-1.0, grad, &new_y);
-    grad.CopyValues(BFGS<F>::grad_p);
+    grad.CopyValues(this->grad_p);
     la::AddExpert(1.0, grad, &new_y);          //  y = g_n - g_n-1
-    need_fixed = la::Dot(new_s, new_y) < 0;    //  if false then use BFGSDirection
+    need_fixed = la::Dot(new_s, new_y) < 0;    //  if false then use LBFGSDirection
 
     MemoryUpdate(new_s, new_y);
 
     // Check termination condition
-    BFGS<F>::residual = la::LengthEuclidean(grad);
-    BFGS<F>::recordProgress();
-    if (BFGS<F>::residual < BFGS<F>::rTol*r0+BFGS<F>::aTol) break;
+    this->residual = la::LengthEuclidean(grad);
+    this->recordProgress();
+    if (this->residual < this->rTol*r0+this->aTol) break;
   }
-  return BFGS<F>::best_val;
+  return this->best_val;
 }
 
 template<typename F>
 void LBFGS<F>::MemoryUpdate(const variable_type& new_s, const variable_type& new_y) {
-  if (BFGS<F>::s.size() < mem) {
-    memIndex.PushBackCopy(BFGS<F>::iter);
+  if (this->s.size() < mem) {
+    memIndex.PushBackCopy(this->iter);
     gamma.PushBackCopy(la::Dot(new_s, new_y));
-    BFGS<F>::s.PushBackCopy(new_s);
-    BFGS<F>::y.PushBackCopy(new_y);
+    this->s.PushBackCopy(new_s);
+    this->y.PushBackCopy(new_y);
   }
   else {  // memory is full, replace the oldest memory slot
     index_t min_i = 0;
     for (int i = 0; i < memIndex.size(); i++)
       if (memIndex[i] < memIndex[min_i]) min_i = i;
-    memIndex[min_i] = BFGS<F>::iter;
+    memIndex[min_i] = this->iter;
     gamma[min_i] = la::Dot(new_s, new_y);
-    BFGS<F>::s[min_i].CopyValues(new_s);
-    BFGS<F>::y[min_i].CopyValues(new_y);
+    this->s[min_i].CopyValues(new_s);
+    this->y[min_i].CopyValues(new_y);
   }
 }
 
 template<typename F>
 void LBFGS<F>::LBFGSDirection(variable_type& d) {
   DEBUG_ASSERT(memIndex.size() == gamma.size() &&
-               memIndex.size() == BFGS<F>::s.size() &&
-               memIndex.size() == BFGS<F>::y.size());
-  if (BFGS<F>::s.size() == 0) return;
+               memIndex.size() == this->s.size() &&
+               memIndex.size() == this->y.size());
+  if (this->s.size() == 0) return;
   // Find the latest memory slot
   int max_i = 0;
   for (int i = 0; i < memIndex.size(); i++)
@@ -176,16 +178,16 @@ void LBFGS<F>::LBFGSDirection(variable_type& d) {
   // backward loop
   int i = max_i;
   do {
-    alpha[i] = gamma[i]*la::Dot(BFGS<F>::s[i],d);
-    la::AddExpert(-alpha[i], BFGS<F>::y[i], &d);
-    i--; if (i < 0) i = memIndex.size()-1;
+    alpha[i] = gamma[i]*la::Dot(this->s[i],d);
+    la::AddExpert(-alpha[i], this->y[i], &d);
+    if (--i < 0) i = memIndex.size()-1;
   } while (i != max_i);
   // forward loop, start with i == max_i
   double beta;
   do {
-    i++; if (i >= memIndex.size()) i = 0;
-    beta = gamma[i]*la::Dot(BFGS<F>::y[i],d);
-    la::AddExpert(alpha[i]-beta, BFGS<F>::s[i], &d);
+    if (++i >= memIndex.size()) i = 0;
+    beta = gamma[i]*la::Dot(this->y[i],d);
+    la::AddExpert(alpha[i]-beta, this->s[i], &d);
   } while (i != max_i);
 }
 

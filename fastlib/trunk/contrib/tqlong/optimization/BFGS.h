@@ -168,18 +168,13 @@ void BFGS<F>::setX0(const variable_type& x0_) {
 
 template<typename F>
 double BFGS<F>::optimize(variable_type &sol) {
-  history.Clear();
-  iter = 0;
-  n_evals = 0;
-  n_grads = 0;
-
   variable_type x; // the current search variable
   variable_type grad, d; // the current search direction
   variable_type new_s, new_y;
 
   f.Init(&x);      // initialize search variable
   f.Init(&d);      // and direction
-  f.Init(&grad);      // and direction
+  f.Init(&grad);      // and gradient place holder
   f.Init(&new_s);
   f.Init(&new_y);
 
@@ -189,11 +184,18 @@ double BFGS<F>::optimize(variable_type &sol) {
   double r0 = la::LengthEuclidean(grad);
 
   sol.CopyValues(x0);
+
+  history.Clear();
+  iter = 0;
+  n_evals = 0;
+  n_grads = 0;
   best_val = val;
   residual = r0;
   recordProgress();
 
-  bool need_fixed = false;
+  bool need_fixed = false;  // clear all memory
+  s.Clear();
+  y.Clear();
 
   for (iter = 1; iter < maxIter; iter++) {
     // Calculate search direction: negative gradient

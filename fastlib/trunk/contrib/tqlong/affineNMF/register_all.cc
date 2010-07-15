@@ -15,6 +15,8 @@ void CalculateTransformBasis(const ArrayList<ImageType>& B, const Transformation
 
 void register_all(const ArrayList<ImageType>& X, ArrayList<Transformation>& T, 
 		  ArrayList<Vector>& W, ArrayList<ImageType>& B) {
+  double sigma = fx_param_double(NULL, "sigma", 0.5);
+
   DEBUG_ASSERT(T.size() == X.size() && W.size() == X.size());
   int maxIter = fx_param_int(NULL, "maxIter", 100);
   ArrayList<ImageType> BT;
@@ -36,7 +38,10 @@ void register_all(const ArrayList<ImageType>& X, ArrayList<Transformation>& T,
     // register basis 
     register_basis(X, T, W, B);
     //Save(stdout, "B", B); fflush(stdin); getchar();
+
+    fx_set_param_double(NULL, "sigma", sigma*0.6);		   
   }
+
 }
 
 void CalculateRecovery(const ArrayList<Transformation>& T, 

@@ -16,6 +16,7 @@ ImageType::ImageType(index_t n_points) {
     pList[i].setValue(math::Random(0.0,1.0), math::Random(0.0,1.0), math::Random(0.1,1.0));
 }
 
+
 double ImageType::Difference(const ImageType& image, 
 			     double (*kernel)(const PointType&, 
 					      const PointType&) ) const {
@@ -25,6 +26,31 @@ double ImageType::Difference(const ImageType& image,
       s += kernel(pList[i], image.pList[j]);
   return s;
 }
+
+/*
+double exp_kernel(const PointType& p1, const PointType& p2) {
+  double sigma2 = fx_param_double(NULL, "sigma", 0.5);
+  double gamma = fx_param_double(NULL, "gamma", 0.1);
+  double ds = (p1.r-p2.r)*(p1.r-p2.r) + (p1.c-p2.c)*(p1.c-p2.c);
+  double df = (p1.f-p2.f)*(p1.f-p2.f);
+  //printf("ds = %f df = %f\n", ds, df);
+  return -1.0/(1.0+sigma2*ds+gamma*df);
+}
+
+double d_exp_kernel(const PointType& p1, const PointType& p2,
+		    double& dr2, double& dc2, double& df2) {
+  double sigma2 = fx_param_double(NULL, "sigma", 0.5);
+  double gamma = fx_param_double(NULL, "gamma", 0.1);
+  double ds = (p1.r-p2.r)*(p1.r-p2.r) + (p1.c-p2.c)*(p1.c-p2.c);
+  double df = (p1.f-p2.f)*(p1.f-p2.f);
+  //printf("ds = %f df = %f\n", ds, df);
+  double retval =  -1.0/(1.0+sigma2*ds+gamma*df);
+  dr2 = retval * retval * 2.0*sigma2*(p2.r-p1.r);
+  dc2 = retval * retval * 2.0*sigma2*(p2.c-p1.c);
+  df2 = retval * retval * 2.0*gamma*(p2.f-p1.f);  
+  return retval;
+}
+*/
 
 double exp_kernel(const PointType& p1, const PointType& p2) {
   double sigma2 = fx_param_double(NULL, "sigma", 0.5);
@@ -48,6 +74,7 @@ double d_exp_kernel(const PointType& p1, const PointType& p2,
   df2 = retval * (-2)*gamma*(p2.f-p1.f);  
   return retval;
 }
+
 
 void ImageType::Scale(ImageType& image_out, double s) const {
   image_out.pList.Resize(pList.size());

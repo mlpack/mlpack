@@ -15,8 +15,8 @@ BEGIN_OPTIM_NAMESPACE;
 /*************************************************************
   * A function template, implement CalculateXXXXX methods
   * Function value         : CalculateValue
-  * 1-order smooth function: CalculateValue, CalculateGradient
-  * 2-order smooth function: CalculateValue, CalculateGradient, CalculateHessian
+  * 1-order smooth function: CalculateGradient
+  * 2-order smooth function: CalculateHessian
   * Required:
       int dimension()
       void Init(variable_type*)

@@ -14,7 +14,7 @@ void register_weights(const ImageType& X, const ArrayList<ImageType>& I,
 		      const Vector& wInit, Vector& wOut) {
   DEBUG_ASSERT(wInit.length() == I.size());
   wOut.Copy(wInit);
-  index_t maxIter = 10;
+  index_t maxIter = 1;
   double lambda = 0.1;
   index_t n_basis = I.size();
   for (index_t iter = 0; iter < maxIter; iter++) {

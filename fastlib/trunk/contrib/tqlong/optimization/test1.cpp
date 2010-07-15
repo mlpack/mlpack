@@ -60,8 +60,8 @@ void testGradientDescent(fx_module* module) {
   cout << "GradientDescent test ..." << endl;
 
   double param[] = {100, 0.00001, 0.001, 1e-4, 0.9, 0.4};
-  LengthEuclidianSquare f(2);
-  GradientDescent<optim::LengthEuclidianSquare> algo(f, param);
+  TestFunction f;
+  GradientDescent<TestFunction> algo(f, param);
 
   // Seeding
   Vector x0;
@@ -111,7 +111,7 @@ void testBFGS(fx_module* module) {
 void testLBFGS(fx_module* module) {
   cout << "LBFGS test ..." << endl;
 
-  double param[7] = {100, 0.00001, 0.001, 1e-4, 0.9, 0.4, 20};
+  double param[7] = {100, 0.00001, 0.001, 1e-4, 0.9, 0.4, 5};
   TestFunction f;
   LBFGS<optim::TestFunction> algo(f, param);
 
