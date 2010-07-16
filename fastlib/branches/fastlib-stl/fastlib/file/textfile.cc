@@ -127,9 +127,11 @@ bool TextLineReader::Gobble() {
     line_ = ptr;
     has_line_ = true;
     line_num_++;
+	 mem::Free(ptr);
     return true;
   } else {
     has_line_ = false;
+	 mem::Free(ptr);
     return false;
   }
 }
