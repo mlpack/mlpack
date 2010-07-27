@@ -79,26 +79,26 @@ class SMO {
   Kernel kernel_;
   index_t n_data_; /* number of data samples */
   index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
-  Matrix datamatrix_; /* alias for the data matrix, including labels in the last row */
+  arma::mat datamatrix_; /* alias for the data matrix, including labels in the last row */
   //Matrix datamatrix_samples_only_; /* alias for the data matrix excluding labels */
 
-  Vector alpha_; /* the alphas, to be optimized */
-  Vector alpha_status_; /*  ID_LOWER_BOUND (-1), ID_UPPER_BOUND (1), ID_FREE (0) */
+  arma::vec alpha_; /* the alphas, to be optimized */
+  arma::vec alpha_status_; /*  ID_LOWER_BOUND (-1), ID_UPPER_BOUND (1), ID_FREE (0) */
   index_t n_sv_; /* number of support vectors */
   
   index_t n_alpha_; /* number of variables to be optimized */
   index_t n_active_; /* number of samples in the active set */
-  ArrayList<index_t> active_set_; /* list that stores the old indices of active alphas followed by inactive alphas. == old_from_new*/
+  std::vector<index_t> active_set_; /* list that stores the old indices of active alphas followed by inactive alphas. == old_from_new*/
   bool reconstructed_; /* indicator: where unshrinking has been carried out  */
   index_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
   double cached_kernel_value_; /* cache */
 
-  ArrayList<int> y_; /* list that stores "labels" */
+  std::vector<int> y_; /* list that stores "labels" */
 
   double bias_;
 
-  Vector grad_; /* gradient value */
-  Vector grad_bar_; /* gradient value when treat un-upperbounded variables as 0: grad_bar_i==C\sum_{j:a_j=C} y_i y_j K_ij */
+  arma::vec grad_; /* gradient value */
+  arma::vec grad_bar_; /* gradient value when treat un-upperbounded variables as 0: grad_bar_i==C\sum_{j:a_j=C} y_i y_j K_ij */
 
   // parameters
   int budget_;
@@ -119,7 +119,7 @@ class SMO {
   /**
    * Initialization for parameters
    */
-  void InitPara(int learner_typeid, ArrayList<double> &param_) {
+  void InitPara(int learner_typeid, std::vector<double> &param_) {
     // init parameters
     wss_ = (int) param_[3];
     hinge_sqhinge_ = (int) param_[2];
@@ -155,7 +155,7 @@ class SMO {
     return bias_;
   }
 
-  void GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
+  void GetSV(std::vector<index_t> &dataset_index, std::vector<double> &coef, std::vector<bool> &sv_indicator);
 
  private:
   void LearnersInit_(int learner_typeid);
@@ -224,16 +224,13 @@ class SMO {
     //  return cached_kernel_value_;
     //}
 
-    double *v_i, *v_j;
     //v_i = datamatrix_samples_only_.GetColumnPtr(i);
     //v_j = datamatrix_samples_only_.GetColumnPtr(j);
-    v_i = datamatrix_.GetColumnPtr(i);
-    v_j = datamatrix_.GetColumnPtr(j);
 
     // Do Caching. Store the recently caculated kernel values.
     //i_cache_ = i;
     //j_cache_ = j;
-    cached_kernel_value_ = kernel_.Eval(v_i, v_j, n_features_);
+    cached_kernel_value_ = kernel_.Eval(datamatrix_.col(i), datamatrix_.col(j), n_features_);
     
     if (hinge_sqhinge_ == 2) { // L2-SVM
       if (i == j) {
@@ -264,7 +261,7 @@ void SMO<TKernel>::ReconstructGradient_() {
   else if (learner_typeid_ == 1) { // SVM_R
     for (i=n_active_; i<n_alpha_; i++) {
       j = i >= n_data_ ? (i-n_data_) : i;
-      grad_[j] = grad_bar_[j] + datamatrix_.get(datamatrix_.n_rows()-1, active_set_[j]) - epsilon_; // TODO
+      grad_[j] = grad_bar_[j] + datamatrix_(datamatrix_.n_rows-1, active_set_[j]) - epsilon_; // TODO
     }
   }
 
@@ -412,32 +409,32 @@ void SMO<TKernel>::LearnersInit_(int learner_typeid) {
   if (learner_typeid_ == 0) { // SVM_C
     n_alpha_ = n_data_;
 
-    alpha_.Init(n_alpha_);
-    alpha_.SetZero();
+    alpha_.set_size(n_alpha_);
+    alpha_.zeros();
 
     // initialize gradient
-    grad_.Init(n_alpha_);
-    grad_.SetAll(1.0);
+    grad_.set_size(n_alpha_);
+    grad_.fill(1.0);
 
-    y_.Init(n_alpha_);
+    y_.resize(n_alpha_,0);
     for (i = 0; i < n_alpha_; i++) {
-      y_[i] = datamatrix_.get(datamatrix_.n_rows()-1, i) > 0 ? 1 : -1;
+      y_[i] = datamatrix_(datamatrix_.n_rows-1, i) > 0 ? 1 : -1;
     }
   }
   else if (learner_typeid_ == 1) { // SVM_R
     n_alpha_ = 2 * n_data_;
 
-    alpha_.Init(2 * n_alpha_); // TODO
-    alpha_.SetZero();
+    alpha_.set_size(2 * n_alpha_); // TODO
+    alpha_.zeros();
 
     // initialize gradient
-    grad_.Init(n_alpha_);
-    y_.Init(n_alpha_);
+    grad_.set_size(n_alpha_);
+    y_.resize(n_alpha_,0);
     for (i = 0; i < n_data_; i++) {
       y_[i] = 1; // -> alpha_i
       y_[i + n_data_] = -1; // -> alpha_i^*
-      grad_[i] = epsilon_ - datamatrix_.get(datamatrix_.n_rows()-1, i);
-      grad_[i + n_data_] = epsilon_ + datamatrix_.get(datamatrix_.n_rows()-1, i);
+      grad_[i] = epsilon_ - datamatrix_(datamatrix_.n_rows-1, i);
+      grad_[i + n_data_] = epsilon_ + datamatrix_(datamatrix_.n_rows-1, i);
     }
   }
   else if (learner_typeid_ == 2) { // SVM_DE
@@ -456,15 +453,16 @@ template<typename TKernel>
 void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   index_t i,j;
   // Load data
-  arma_compat::armaToMatrix(dataset_in->matrix(), datamatrix_);
-  n_data_ = datamatrix_.n_cols();
-  n_features_ = datamatrix_.n_rows() - 1; // excluding the last row for labels
+  datamatrix_ = dataset_in->matrix();
+  n_data_ = datamatrix_.n_cols;
+  n_features_ = datamatrix_.n_rows - 1; // excluding the last row for labels
   //datamatrix_samples_only_.Alias(datamatrix_.ptr(), n_features_, n_data_);
 
   // Learners initialization
   LearnersInit_(learner_typeid);
 
   // General learner-independent initializations
+  budget_ = 0; //  Safe?
   budget_ = min(budget_, n_data_);
   bias_ = 0.0;
   n_sv_ = 0;
@@ -473,12 +471,12 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   cached_kernel_value_ = INFINITY;
 
   n_active_ = n_alpha_;
-  active_set_.Init(n_alpha_);
+  active_set_.resize(n_alpha_,0);
   for (i=0; i<n_alpha_; i++) {
     active_set_[i] = i;
   }
   
-  alpha_status_.Init(n_alpha_);
+  alpha_status_.set_size(n_alpha_);
   for (i=0; i<n_alpha_; i++)
     UpdateAlphaStatus_(i);
 
@@ -495,8 +493,8 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   */
 
   // initialize gradient_bar
-  grad_bar_.Init(n_alpha_);
-  grad_bar_.SetZero();
+  grad_bar_.set_size(n_alpha_);
+  grad_bar_.zeros();
 
   do_shrinking_ = fx_param_int(NULL, "shrink", 0);
   ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING);
@@ -955,9 +953,9 @@ void SMO<TKernel>::CalcBias_() {
 *
 */
 template<typename TKernel>
-void SMO<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
-  ArrayList<index_t> new_from_old; // it's used to retrieve the permuted new index from old index
-  new_from_old.Init(n_alpha_);
+void SMO<TKernel>::GetSV(std::vector<index_t> &dataset_index, std::vector<double> &coef, std::vector<bool> &sv_indicator) {
+  std::vector<index_t> new_from_old; // it's used to retrieve the permuted new index from old index
+  new_from_old.resize(n_alpha_, 0);
   for (index_t i = 0; i < n_alpha_; i++) {
     new_from_old[active_set_[i]] = i;
   }
@@ -966,12 +964,12 @@ void SMO<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &c
       index_t i = new_from_old[ii]; // retrive the index of permuted vector
       if (alpha_[i] >= SMO_ALPHA_ZERO) { // support vectors found
 	//printf("%f\n", alpha_[i] * y_[i]);
-	coef.PushBack() = alpha_[i] * y_[i];
+	coef.push_back(alpha_[i] * y_[i]);
 	sv_indicator[dataset_index[ii]] = true;
 	n_sv_++;
       }
       else {
-	coef.PushBack() = 0;
+	coef.push_back(0);
       }
     }
     printf("Number of SVs: %d\n", n_sv_);
@@ -982,12 +980,12 @@ void SMO<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &c
       index_t iplusn = new_from_old[ii+n_data_];
       double alpha_diff = -alpha_[i] + alpha_[iplusn]; // alpha_i^* - alpha_i
       if (fabs(alpha_diff) >= SMO_ALPHA_ZERO) { // support vectors found
-	coef.PushBack() = alpha_diff; 
+	coef.push_back(alpha_diff); 
 	sv_indicator[dataset_index[ii]] = true;
 	n_sv_++;
       }
       else {
-	coef.PushBack() = 0;
+	coef.push_back(0);
       }
     }
   }

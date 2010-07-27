@@ -26,6 +26,9 @@
 #include <armadillo>
 #include <fastlib/base/arma_compat.h>
 
+using std::string;
+using std::vector;
+
 const fx_entry_doc svm_main_entries_doc[] = {
   {"learner_name", FX_REQUIRED, FX_STR, NULL,
    "  The name of the support vecotr learner, values: \"svm_c\" for classification, \"svm_r\" for regression, \"svm_de\" for one class SVM\n"},
@@ -187,10 +190,10 @@ void GenerateArtificialDataset(Dataset* dataset){
 * @param: the dataset
 * @param: name of the data file to be loaded
 */
-int LoadData(Dataset* dataset, String datafilename){
-  if (fx_param_exists(NULL, datafilename)) {
+int LoadData(Dataset* dataset, string datafilename){
+  if (fx_param_exists(NULL, datafilename.c_str())) {
     // when a data file is specified, use it.
-    if ( !PASSED(dataset->InitFromFile( fx_param_str_req(NULL, datafilename) )) ) {
+    if ( !PASSED(dataset->InitFromFile( fx_param_str_req(NULL, datafilename.c_str()) )) ) {
     fprintf(stderr, "Couldn't open the data file.\n");
     return 0;
     }
@@ -221,9 +224,9 @@ int main(int argc, char *argv[]) {
   fx_module *root = fx_init(argc, argv, &svm_main_doc);
   srand(time(NULL));
 
-  String mode = fx_param_str_req(NULL, "mode");
-  String kernel = fx_param_str_req(NULL, "kernel");
-  String learner_name = fx_param_str_req(root,"learner_name");
+  string mode = fx_param_str_req(NULL, "mode");
+  string kernel = fx_param_str_req(NULL, "kernel");
+  string learner_name = fx_param_str_req(root,"learner_name");
   int learner_typeid;
   
   if (learner_name == "svm_c") { // Support Vector Classfication
