@@ -71,7 +71,7 @@ class SVMRBFKernel {
   }
   /* Kernel value evaluation */
   double Eval(const arma::vec& a, const arma::vec& b, index_t n_features) const {
-	 double distance_squared = norm(a-b,2);
+    double distance_squared = norm(a-b,2);
     return exp(kpara_[1] * distance_squared);
   }
   /* Save kernel parameters to file */
@@ -152,8 +152,7 @@ class SVM {
     double accuracy_;
     // number of iterations
     index_t n_iter_;
-  };
-  PARAMETERS param_;
+  } param_;
   
   /* number of data samples */
   index_t n_data_; 
@@ -295,7 +294,7 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
   // Reserve space for everything in one go.
   {
     SVM_MODELS n;
-	 models_.resize( num_classes_*(num_classes_-1)/2, n);
+    models_.resize( num_classes_*(num_classes_-1)/2, n);
   }
 
   for (i = 0; i < num_classes_; i++) {
@@ -323,15 +322,8 @@ void SVM<TKernel>::SVM_C_Train_(int learner_typeid, const Dataset& dataset, data
 
       if (opt_method_== "smo") {
 	/* Initialize SMO parameters */
-	std::vector<double> param_feed_db;
-	param_feed_db.push_back(param_.Cp_);
-	param_feed_db.push_back(param_.Cn_);
-	param_feed_db.push_back(param_.hinge_sqhinge_);
-	param_feed_db.push_back(param_.wss_);
-	param_feed_db.push_back(param_.n_iter_);
-	param_feed_db.push_back(param_.accuracy_);
 	SMO<Kernel> smo;
-	smo.InitPara(learner_typeid, param_feed_db);
+	smo.InitPara(learner_typeid, param_.Cp_, param_.Cn_, param_.hinge_sqhinge_, param_.wss_, param_.n_iter_, param_.accuracy_);
 
 	/* Initialize kernel */
 	smo.kernel().Init(fx_submodule(module, "kernel"));
@@ -421,15 +413,8 @@ void SVM<TKernel>::SVM_R_Train_(int learner_typeid, const Dataset& dataset, data
 
   if (opt_method_== "smo") {
     /* Initialize SMO parameters */
-    std::vector<double> param_feed_db;
-    param_feed_db.push_back(param_.C_);
-    param_feed_db.push_back(param_.epsilon_);
-    param_feed_db.push_back(param_.hinge_sqhinge_);
-    param_feed_db.push_back(param_.wss_);
-    param_feed_db.push_back(param_.n_iter_);
-    param_feed_db.push_back(param_.accuracy_);
     SMO<Kernel> smo;
-    smo.InitPara(learner_typeid, param_feed_db);
+    smo.InitPara(learner_typeid, param_.Cp_, param_.epsilon_, param_.hinge_sqhinge_, param_.wss_, param_.n_iter_, param_.accuracy_);
     
     /* Initialize kernel */
     smo.kernel().Init(fx_submodule(module, "kernel"));
