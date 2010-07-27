@@ -424,6 +424,7 @@ void SVM<TKernel>::SVM_R_Train_(int learner_typeid, const Dataset& dataset, data
     std::vector<double> param_feed_db;
     param_feed_db.push_back(param_.C_);
     param_feed_db.push_back(param_.epsilon_);
+    param_feed_db.push_back(param_.hinge_sqhinge_);
     param_feed_db.push_back(param_.wss_);
     param_feed_db.push_back(param_.n_iter_);
     param_feed_db.push_back(param_.accuracy_);
