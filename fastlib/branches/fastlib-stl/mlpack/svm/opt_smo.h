@@ -119,29 +119,28 @@ class SMO {
   /**
    * Initialization for parameters
    */
-  void InitPara(int learner_typeid, std::vector<double> &param_) {
+  void InitPara(int learner_typeid, double Cp, double CnEpsilon, int hinge_sqhinge, int wss, index_t n_iter, double accuracy ) {
     // init parameters
-    wss_ = (int) param_[3];
-    hinge_sqhinge_ = (int) param_[2];
-    n_iter_ = (index_t) param_[4];
-    n_iter_ = n_iter_ < MAX_NUM_ITER_SMO ? n_iter_: MAX_NUM_ITER_SMO;
-    accuracy_ = param_[5];
+    wss_ = wss;
+    hinge_sqhinge_ = hinge_sqhinge;
+    n_iter_ = n_iter < MAX_NUM_ITER_SMO ? n_iter: MAX_NUM_ITER_SMO;
+    accuracy_ = accuracy;
     if (learner_typeid == 0) { // SVM_C
       if (hinge_sqhinge_==2) { // L2-SVM
 	Cp_ = INFINITY;
 	Cn_ = INFINITY;
-	C_ = param_[1];
+	C_ = CnEpsilon;
 	inv_two_C_ = 1/(2*C_);
       }
       else { // L1-SVM
-	Cp_ = param_[0];
-	Cn_ = param_[1];
+	Cp_ = Cp;
+	Cn_ = CnEpsilon;
       }
     }
     else if (learner_typeid == 1) { // SVM_R
-      Cp_ = param_[0];
+      Cp_ = Cp;
       Cn_ = Cp_;
-      epsilon_ = param_[1];
+      epsilon_ = CnEpsilon;
     }
   }
 
