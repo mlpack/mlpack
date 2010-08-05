@@ -59,12 +59,16 @@ void Multigrid<MatrixType, VectorType>::Coarsen_(
     }
 
     // Add to the coarse set if the following condition is satisfied.
-    if (sum_affinities < threshold * sum_all_affinities) {
+    if (sum_coarse_affinities < threshold * sum_all_affinities) {
       coarse_point_indices.push_back(
         std::pair<int, int>(fine_point_index, fine_point_label));
     }
   } // end of looping over all fine nodes.
 
+  // Sort the coarse point indices.
+  std::sort(coarse_point_indices.begin(), coarse_point_indices.end());
+
+  // Build the interpolation matrix.
 }
 
 template<typename MatrixType, typename VectorType>

@@ -23,7 +23,7 @@ class MultigridLevel {
     /** @brief The coarser left hand side created by the
      *         coarsening procedure.
      */
-    SparseMatrix left_hand_side_;
+    Matrix left_hand_side_;
 
     /** @brief The coarser right hand sides created by the
      *         coarsening procedure.
@@ -36,6 +36,10 @@ class MultigridLevel {
 
   public:
 
+    double get(int row, int col) const {
+      return left_hand_side_.get(row, col);
+    }
+
     const std::vector<int> &point_indices() const {
       return point_indices_;
     }
@@ -44,11 +48,11 @@ class MultigridLevel {
       return point_indices_;
     }
 
-    const SparseMatrix &left_hand_side() const {
+    const Matrix &left_hand_side() const {
       return left_hand_side_;
     }
 
-    SparseMatrix &left_hand_side() {
+    Matrix &left_hand_side() {
       return left_hand_side_;
     }
 

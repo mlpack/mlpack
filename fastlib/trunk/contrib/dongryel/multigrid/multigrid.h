@@ -47,7 +47,7 @@ class Multigrid {
       VectorType &right_hand_side_in,
       int max_num_iterations_in);
 
-    void Compute(VectorType *output);
+    void Compute(Vector *output);
 };
 };
 };
