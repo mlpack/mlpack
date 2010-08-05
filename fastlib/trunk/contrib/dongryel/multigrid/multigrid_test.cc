@@ -11,10 +11,34 @@
 namespace multigrid_test {
 
 class MultigridTest {
+  private:
+    void RandomSystem_(
+      Matrix *left_hand_side_out,
+      Vector *right_hand_side_out) {
+
+      int num_dimensions = math::RandInt(10, 70);
+      left_hand_side_out->Init(num_dimensions, num_dimensions);
+      right_hand_side_out->Init(num_dimensions);
+    }
+
   public:
 
-    void Start() {
+    void Trial() {
       fl::ml::Multigrid<Matrix, Vector> multigrid;
+
+      // Generate a random linear system.
+      Matrix left_hand_side;
+      Vector right_hand_side;
+      RandomSystem_(&left_hand_side, &right_hand_side);
+    }
+
+    void Start() {
+
+      for (int i = 0; i < 40; i++) {
+
+        // Do a trial.
+        Trial();
+      }
     }
 };
 };
