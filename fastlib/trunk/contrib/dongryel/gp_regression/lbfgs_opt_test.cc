@@ -162,6 +162,7 @@ class LbfgsTest {
 };
 
 int main(int argc, char *argv[]) {
+  Vector v;
   printf("Starting L-BFGS tests.\n");
   optimization::lbfgs_test::LbfgsTest test;
   test.TestExtendedRosenbrockFunction();
