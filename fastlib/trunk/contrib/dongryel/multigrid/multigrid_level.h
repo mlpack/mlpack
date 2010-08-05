@@ -16,8 +16,8 @@ class MultigridLevel {
   private:
 
     /** @brief The indices of the points chosen by the coarsening
-    *         procedure.
-    */
+     *         procedure.
+     */
     std::vector<int> point_indices_;
 
     /** @brief The coarser left hand side created by the
