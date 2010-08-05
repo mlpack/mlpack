@@ -10,6 +10,7 @@ set(DIRS
    linear_regression  
 #   lprcde  ## does not compile (missing NWRCdeProblem<>::MultiTreeQuerySummary::PostAccumulate)
 #   matrix_factorized_fmm  ## does not compile right
+   multigrid
    multitree_template  ## requires memory manager (mmapmm)
 #   nested_summation_template
 #   pca
