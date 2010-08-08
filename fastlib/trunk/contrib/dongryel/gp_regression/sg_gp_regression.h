@@ -20,9 +20,13 @@ class SparseGreedyGprModel {
 
     const Vector *targets_;
 
+    double frobenius_norm_targets_;
+
     std::vector<int> subset_;
 
     std::vector<int> subset_for_error_;
+
+    std::vector< std::vector<double> > kernel_matrix_subset_;
 
     std::vector< std::vector<double> > squared_kernel_matrix_;
 
@@ -35,18 +39,25 @@ class SparseGreedyGprModel {
     std::vector<double> subset_coefficients_;
 
   private:
-    void SetupMatrix_(
-      const std::vector< std::vector<double> > &matrix_in,
-      Matrix *matrix_out) const;
+    template<typename CovarianceType>
+    void ComputeKernelValues_(
+      const CovarianceType &covariance_in,
+      int candidate_index,
+      std::vector<double> *kernel_values_out) const;
+
+    void GrowMatrix_(std::vector< std::vector<double> > &matrix);
 
   public:
     SparseGreedyGprModel();
 
     void Init(const Matrix *dataset_in, const Vector *targets_in);
 
-    void AddOptimalPoint(const std::vector<int> &candidate_indices);
-
-    void AddOptimalPointForError(const std::vector<int> &candidate_indices);
+    template<typename CovarianceType>
+    void AddOptimalPoint(
+      const CovarianceType &covariance_in,
+      double noise_level_in,
+      const std::vector<int> &candidate_indices,
+      bool for_coeffs);
 };
 
 class SparseGreedyGpr {
@@ -70,9 +81,11 @@ class SparseGreedyGpr {
 
     void Init(const Matrix &dataset_in, const Vector &targets_in);
 
+    template<typename CovarianceType>
     void Compute(
       double noise_level_in,
       double precision_in,
+      const CovarianceType &covariance_in,
       SparseGreedyGprModel *model_out);
 };
 };

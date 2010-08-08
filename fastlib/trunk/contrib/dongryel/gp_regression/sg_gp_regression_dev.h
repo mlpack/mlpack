@@ -14,48 +14,82 @@
 namespace ml {
 namespace gp_regression {
 
-void SparseGreedyGprModel::SetupMatrix_(
-  const std::vector< std::vector<double> > &matrix_in,
-  Matrix *matrix_out) const {
+void SparseGreedyGprModel::GrowMatrix_(
+  std::vector< std::vector<double> > &matrix) {
 
-  matrix_out->Init(matrix_in.size(), matrix_in.size());
-  for (int j = 0; j < matrix_in.size(); j++) {
-    for (int i = 0; i < matrix_in.size(); i++) {
-      matrix_out->set(i, j, matrix_in[i][j]);
+  // Grow the pre-existing columns by one.
+  for (int i = 0; i < matrix.size(); i++) {
+    matrix[i].resize(matrix[i].size() + 1);
+  }
+
+  // Increment the number of columns, and allocate the number of rows
+  // for the last column.
+  matrix.resize(matrix.size() + 1);
+  matrix[ matrix.size() - 1 ].resize(matrix.size());
+}
+
+template<typename CovarianceType>
+void SparseGreedyGprModel::ComputeKernelValues_(
+  const CovarianceType &covariance_in,
+  int candidate_index,
+  std::vector<double> *kernel_values_out) const {
+
+  Vector candidate_point;
+  dataset_->MakeColumnVector(candidate_index, &candidate_point);
+
+  for (int i = 0; i < dataset_->n_cols(); i++) {
+    Vector point;
+    dataset_->MakeColumnVector(i, &point);
+    (*kernel_values_out)[i] = covariance_in.Covariance(
+                                candidate_point, point, candidate_index == i);
+  }
+}
+
+template<typename CovarianceType>
+void SparseGreedyGprModel::AddOptimalPoint(
+  const CovarianceType &covariance_in,
+  double noise_level_in,
+  const std::vector<int> &candidate_indices,
+  bool for_coeffs) {
+
+  // Grow the kernel matrices accordingly by one.
+  if (for_coeffs) {
+    GrowMatrix_(squared_kernel_matrix_);
+  }
+  else {
+    GrowMatrix_(kernel_matrix_);
+  }
+
+  // The kernel values.
+  std::vector<double> kernel_values(dataset_->n_cols());
+
+  // The optimal point information.
+  int optimal_point_index = -1;
+  double optimum_value = std::numeric_limit<double>::max();
+
+  // Loop over candidates and decide to add the optimal.
+  for (int i = 0; i < candidate_indices.size(); i++) {
+
+    // Candidate index for which the kernel values have to be computed.
+    int candidate_index = candidate_indices[i];
+    ComputeKernelValues_(covariance_in, candidate_index, &kernel_values);
+
+    // Fill in the matrix accordingly andn solve the optimization
+    // problem.
+    if (for_coeffs) {
+    }
+    else {
+
     }
   }
 }
 
-void SparseGreedyGprModel::AddOptimalPoint(
-  const std::vector<int> &candidate_indices) {
+void SparseGreedyGprModel::Init(
+  const Matrix *dataset_in, const Vector *targets_in) {
 
-  // The kernel values against the previously existing points.
-  std::vector<double> kernel_values(inverse_.size());
-
-  // Loop over candidates and decide to add the optimal.
-  for (int i = 0; i < candidate_indices.size(); i++) {
-
-    // Candidate index.
-    int candidate_index = candidate_indices[i];
-
-
-  }
-}
-
-void SparseGreedyGprModel::AddOptimalPointForError(
-  const std::vector<int> &candidate_indices) {
-
-  // The kernel values against the previously existing points.
-  std::vector<double> kernel_values(inverse_for_error_.size());
-
-  // Loop over candidates and decide to add the optimal.
-  for (int i = 0; i < candidate_indices.size(); i++) {
-
-    // Candidate index.
-    int candidate_index = candidate_indices[i];
-
-
-  }
+  dataset_ = dataset_in;
+  targets_ = targets_in;
+  frobenius_norm_targets_ = la::Dot(*targets_in, *targets_in);
 }
 
 SparseGreedyGprModel::SparseGreedyGprModel() {
@@ -107,7 +141,9 @@ void SparseGreedyGpr::Init(
   targets_ = &targets_in;
 }
 
+template<typename CovarianceType>
 void SparseGreedyGpr::Compute(
+  const CovarianceType &covariance_in,
   double noise_level_in,
   double precision_in,
   SparseGreedyGprModel *model_out) {
@@ -138,8 +174,10 @@ void SparseGreedyGpr::Compute(
       &candidate_indices_for_error);
 
     // Choose a random optimal point for both sets.
-    model_out->AddOptimalPoint(candidate_indices);
-    model_out->AddOptimalPointForError(candidate_indices_for_error);
+    model_out->AddOptimalPoint(
+      covariance_in, noise_level_in, candidate_indices, false);
+    model_out->AddOptimalPoint(
+      covariance_in, noise_level_in, candidate_indices_for_error, true);
 
   }
   while (Done_());
