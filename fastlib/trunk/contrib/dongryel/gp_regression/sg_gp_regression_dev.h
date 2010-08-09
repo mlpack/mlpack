@@ -40,7 +40,7 @@ void SparseGreedyGprModel::ComputeKernelValues_(
   for (int i = 0; i < dataset_->n_cols(); i++) {
     Vector point;
     dataset_->MakeColumnVector(i, &point);
-    (*kernel_values_out)[i] = covariance_in.Covariance(
+    (*kernel_values_out)[i] = covariance_in.Dot(
                                 candidate_point, point, candidate_index == i);
   }
 }
