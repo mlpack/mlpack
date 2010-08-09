@@ -10,6 +10,7 @@
 #define ML_GP_REGRESSION_SG_GP_REGRESSION_H
 
 #include "fastlib/fastlib.h"
+#include "dictionary_dev.h"
 
 namespace ml {
 namespace gp_regression {
@@ -22,21 +23,11 @@ class SparseGreedyGprModel {
 
     double frobenius_norm_targets_;
 
-    std::vector<int> subset_;
+    std::vector< std::vector<double> > kernel_matrix_columns_;
 
-    std::vector<int> subset_for_error_;
+    ml::Dictionary dictionary_;
 
-    std::vector< std::vector<double> > kernel_matrix_subset_;
-
-    std::vector< std::vector<double> > squared_kernel_matrix_;
-
-    std::vector< std::vector<double> > kernel_matrix_;
-
-    std::vector< std::vector<double> > inverse_;
-
-    std::vector< std::vector<double> > inverse_for_error_;
-
-    std::vector<double> subset_coefficients_;
+    ml::Dictionary dictionary_for_error_;
 
   private:
     template<typename CovarianceType>
@@ -46,10 +37,6 @@ class SparseGreedyGprModel {
       std::vector<double> *kernel_values_out) const;
 
     void GrowMatrix_(std::vector< std::vector<double> > &matrix);
-
-    void FillSquaredKernelMatrix_();
-
-    void FillKernelMatrix_();
 
   public:
     SparseGreedyGprModel();
