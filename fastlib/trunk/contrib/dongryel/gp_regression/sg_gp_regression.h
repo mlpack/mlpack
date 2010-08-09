@@ -47,6 +47,10 @@ class SparseGreedyGprModel {
 
     void GrowMatrix_(std::vector< std::vector<double> > &matrix);
 
+    void FillSquaredKernelMatrix_();
+
+    void FillKernelMatrix_();
+
   public:
     SparseGreedyGprModel();
 

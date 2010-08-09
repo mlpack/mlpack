@@ -77,9 +77,10 @@ void SparseGreedyGprModel::AddOptimalPoint(
     // Fill in the matrix accordingly andn solve the optimization
     // problem.
     if (for_coeffs) {
+      FillSquaredKernelMatrix_(squared_kernel_matrix_);
     }
     else {
-
+      FillKernelMatrix_(kernel_matrix_);
     }
   }
 }
