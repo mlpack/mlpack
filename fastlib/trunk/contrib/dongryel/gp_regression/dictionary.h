@@ -37,21 +37,45 @@ class Dictionary {
 
     void UpdateDictionary_(
       int new_point_index,
-      const Vector &temp_kernel_vector,
-      double self_kernel_value,
+      const Vector &new_column_vector,
+      double self_value,
       double projection_error,
-      const Vector &inverse_times_kernel_vector);
+      const Vector &inverse_times_column_vector);
 
   public:
+
+    Dictionary(const Dictionary &dictionary_in) {
+      table_ = dictionary_in.table();
+      random_permutation_ = dictionary_in.random_permutation();
+      in_dictionary_ = dictionary_in.in_dictionary();
+      point_indices_in_dictionary_ =
+        dictionary_in.point_indices_in_dictionary();
+      training_index_to_dictionary_position_ =
+        dictionary_in.training_index_to_dictionary_position();
+      current_kernel_matrix_ = new Matrix();
+      current_kernel_matrix_->Copy(* dictionary_in.current_kernel_matrix());
+      current_kernel_matrix_inverse_ = new Matrix();
+      current_kernel_matrix_inverse_->Copy(
+        * dictionary_in.current_kernel_matrix_inverse());
+    }
 
     bool in_dictionary(int training_point_index) const {
       return in_dictionary_[training_point_index];
     }
 
     ~Dictionary() {
-      delete current_kernel_matrix_;
-      delete current_kernel_matrix_inverse_;
-      delete current_kernel_matrix_inverse_row_sum_;
+      if (current_kernel_matrix_ != NULL) {
+        delete current_kernel_matrix_;
+      }
+      if (current_kernel_matrix_inverse_ != NULL) {
+        delete current_kernel_matrix_inverse_;
+      }
+    }
+
+    Dictionary() {
+      table_ = NULL;
+      current_kernel_matrix_ = NULL;
+      current_kernel_matrix_inverse_ = NULL;
     }
 
     int position_to_training_index_map(int position) const {
@@ -68,23 +92,42 @@ class Dictionary {
 
     void Init(const Matrix *table_in);
 
-    template<typename KernelType>
-    void AddBasis(int iteration_number,
-                  const KernelType &kernel);
+    void AddBasis(
+      int iteration_number,
+      const Vector &new_column_vector,
+      double self_value);
 
-    const std::vector<int> *basis_set() {
-      return &point_indices_in_dictionary_;
+    const Matrix *table() const {
+      return table_;
     }
 
-    const Matrix &table() const {
-      return *table_;
+    const std::vector<int> &random_permutation() const {
+      return random_permutation_;
     }
 
-    int size() const;
+    const std::deque<bool> &in_dictionary() const {
+      return in_dictionary_;
+    }
 
-    Matrix *current_kernel_matrix();
+    const std::vector<int> &point_indices_in_dictionary() const {
+      return point_indices_in_dictionary_;
+    }
 
-    Matrix *current_kernel_matrix_inverse();
+    const std::vector<int> &training_index_to_dictionary_position() const {
+      return training_index_to_dictionary_position_;
+    }
+
+    const Matrix *current_kernel_matrix() const {
+      return current_kernel_matrix_;
+    }
+
+    const Matrix *current_kernel_matrix_inverse() const {
+      return current_kernel_matrix_inverse_;
+    }
+
+    int size() const {
+      return point_indices_in_dictionary_.size();
+    }
 };
 };
 

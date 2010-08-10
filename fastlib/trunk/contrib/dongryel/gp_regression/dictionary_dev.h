@@ -17,10 +17,10 @@
 namespace ml {
 void Dictionary::UpdateDictionary_(
   int new_point_index,
-  const Vector &temp_kernel_vector,
-  double self_kernel_value,
+  const Vector &new_column_vector,
+  double self_value,
   double projection_error,
-  const Vector &inverse_times_kernel_vector) {
+  const Vector &inverse_times_column_vector) {
 
   // Add the point to the dictionary.
   point_indices_in_dictionary_.push_back(new_point_index);
@@ -41,17 +41,16 @@ void Dictionary::UpdateDictionary_(
   }
   for (int j = 0; j < current_kernel_matrix_->n_cols(); j++) {
     new_kernel_matrix->set(
-      j, current_kernel_matrix_->n_cols(), temp_kernel_vector[j]);
+      j, current_kernel_matrix_->n_cols(), new_column_vector[j]);
     new_kernel_matrix->set(
-      current_kernel_matrix_->n_rows(), j, temp_kernel_vector[j]);
+      current_kernel_matrix_->n_rows(), j, new_column_vector[j]);
   }
 
-  // Store the self-kernel value.
+  // Store the self value.
   new_kernel_matrix->set(
     current_kernel_matrix_->n_rows(),
     current_kernel_matrix_->n_cols(),
-    self_kernel_value);
-
+    self_value);
   delete current_kernel_matrix_;
   current_kernel_matrix_ = new_kernel_matrix;
 
@@ -59,7 +58,7 @@ void Dictionary::UpdateDictionary_(
   Matrix *new_kernel_matrix_inverse =
     ml::DenseKernelMatrixInverse::Update(
       *current_kernel_matrix_inverse_,
-      inverse_times_kernel_vector,
+      inverse_times_column_vector,
       projection_error);
   delete current_kernel_matrix_inverse_;
   current_kernel_matrix_inverse_ = new_kernel_matrix_inverse;
@@ -77,10 +76,10 @@ int Dictionary::size() const {
   return point_indices_in_dictionary_.size();
 }
 
-template<typename KernelType>
 void Dictionary::AddBasis(
   const int &iteration_number,
-  const std::vector< std::vector<double> > &kernel_values) {
+  const Vector &new_column_vector,
+  double self_value) {
 
   // The threshold for determining whether to add a given new
   // point to the dictionary or not.
@@ -90,43 +89,49 @@ void Dictionary::AddBasis(
   int new_point_index = random_permutation_[iteration_number];
 
   // The vector for storing kernel values.
-  Vector temp_kernel_vector;
-  temp_kernel_vector.Init(point_indices_in_dictionary_.size());
-
-  // Get the new candidate point.
-  Vector new_point;
-  table_->MakeColumnVector(new_point_index, &new_point);
-
-  // Fill in the kernel value between the new candidate point and
-  // the previously existing basis points from previously computed
-  // kernel values.
-  for (int i = 0; i < (int) point_indices_in_dictionary_.size(); i++) {
-    Vector basis_point;
-    table_->MakeColumnVector(point_indices_in_dictionary_[i], &basis_point);
-    temp_kernel_vector[i] =
-      kernel_values[new_point_index][ point_indices_in_dictionary_[i] ];
-  }
+  Vector new_column_vector;
+  new_column_vector.Init(point_indices_in_dictionary_.size());
 
   // Compute the matrix-vector product.
-  Vector inverse_times_kernel_vector;
+  Vector inverse_times_column_vector;
   la::MulInit(
     *current_kernel_matrix_inverse_,
-    temp_kernel_vector,
-    &inverse_times_kernel_vector);
+    new_column_vector,
+    &inverse_times_column_vector);
 
   // Compute the projection error.
   double projection_error =
-    kernel.NormSq(new_point) -
-    la::Dot(temp_kernel_vector, inverse_times_kernel_vector);
+    self_value -
+    la::Dot(new_column_vector, inverse_times_kernel_vector);
 
   // If the projection error is above the threshold, add it to the
   // dictionary.
   if (projection_error > adding_threshold) {
     UpdateDictionary_(
       new_point_index,
-      temp_kernel_vector,
+      new_column_vector,
+      self_value,
       projection_error,
-      inverse_times_kernel_vector);
+      inverse_times_column_vector);
+  }
+}
+
+void Dictionary::Init(const Matrix *table_in) {
+
+  table_ = table_in;
+
+  // Allocate the boolean flag for the presence of each training
+  // point in the dictionary.
+  in_dictionary_.resize(table_in->n_cols());
+  training_index_to_dictionary_position_.resize(table_in->n_cols());
+
+  // Generate a random permutation and initialize the inital
+  // dictionary which consists of the first random point.
+  random_permutation_.resize(table_in->n_cols());
+  for (int i = 0; i < table_in->n_cols(); i++) {
+    random_permutation_[i] = i;
+    in_dictionary_[i] = false;
+    training_index_to_dictionary_position_[i] = -1;
   }
 }
 };
