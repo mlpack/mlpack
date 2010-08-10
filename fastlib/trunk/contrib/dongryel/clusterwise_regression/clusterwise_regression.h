@@ -18,11 +18,9 @@ class ClusterwiseRegressionResult {
      */
     int num_clusters_;
 
-    /** @brief The membership probabilities for each data point. The
-     *         dimensionality is the number of data points by the
-     *         number of clusters.
+    /** @brief The mixing probabilities for each cluster.
      */
-    Matrix membership_probabilities_;
+    Vector membership_probabilities_;
 
     /** @brief The trained linear model for each cluster. The
      *         dimensionality is $D + 1$ by the number of clusters.
@@ -33,7 +31,17 @@ class ClusterwiseRegressionResult {
      */
     std::vector<double> bandwidths_;
 
+  private:
+    double Diameter_(const Matrix &dataset) const;
+
   public:
+
+    double Predict(const Vector &datapoint, int cluster_number) const;
+
+    double Predict(const Vector &datapoint) const;
+
+    double Predict(
+      const Vector &datapoint, double target, double *squared_error) const;
 
     ClusterwiseRegressionResult();
 };
@@ -41,6 +49,11 @@ class ClusterwiseRegressionResult {
 class ClusterwiseRegression {
   private:
     const Matrix *dataset_;
+
+  private:
+    void EStep_(ClusterwiseRegressionResult &result_out);
+
+    void MStep_(ClusterwiseRegressionResult &result_out);
 
   public:
 
