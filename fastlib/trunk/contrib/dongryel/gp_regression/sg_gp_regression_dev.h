@@ -150,7 +150,7 @@ void SparseGreedyGpr::Compute(
   SparseGreedyGprModel *model_out) {
 
   // The maximum number of points to choose in each iteration.
-  const int max_num_points = 59;
+  const int max_num_points = 60;
 
   // Initialize the model.
   model_out->Init(dataset_, targets_);
