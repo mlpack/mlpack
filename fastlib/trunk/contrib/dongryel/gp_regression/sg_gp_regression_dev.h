@@ -14,18 +14,31 @@
 namespace ml {
 namespace gp_regression {
 
-void SparseGreedyGprModel::GrowMatrix_(
-  std::vector< std::vector<double> > &matrix) {
+void SparseGreedyGprModel::FillSquaredKernelMatrix_(
+  int candidate_index,
+  const Vector &kernel_values,
+  Vector *new_column_vector_out,
+  double *new_self_value_out) const {
 
-  // Grow the pre-existing columns by one.
-  for (int i = 0; i < matrix.size(); i++) {
-    matrix[i].resize(matrix[i].size() + 1);
+
+}
+
+void SparseGreedyGprModel::FillKernelMatrix_(
+  int candidate_index,
+  const Vector &kernel_values,
+  Vector *new_column_vector_out,
+  double *new_self_value_out) const {
+
+  new_column_vector_out->Init(dictionary_for_error_->size());
+  const std::vector<int> &point_indices_in_dictionary =
+    dictionary_for_error_.point_indices_in_dictionary();
+
+  // Simply the necessary kernel values.
+  for (int i = 0; i < new_column_vector_out->length(); i++) {
+    (*new_column_vector_out)[i] =
+      kernel_values[ point_indices_in_dictionary[i] ];
   }
-
-  // Increment the number of columns, and allocate the number of rows
-  // for the last column.
-  matrix.resize(matrix.size() + 1);
-  matrix[ matrix.size() - 1 ].resize(matrix.size());
+  *new_self_value_out = kernel_values[candidate_index];
 }
 
 template<typename CovarianceType>
@@ -48,17 +61,8 @@ void SparseGreedyGprModel::ComputeKernelValues_(
 template<typename CovarianceType>
 void SparseGreedyGprModel::AddOptimalPoint(
   const CovarianceType &covariance_in,
-  double noise_level_in,
   const std::vector<int> &candidate_indices,
   bool for_coeffs) {
-
-  // Grow the kernel matrices accordingly by one.
-  if (for_coeffs) {
-    GrowMatrix_(squared_kernel_matrix_);
-  }
-  else {
-    GrowMatrix_(kernel_matrix_);
-  }
 
   // The kernel values.
   std::vector<double> kernel_values(dataset_->n_cols());
@@ -74,13 +78,19 @@ void SparseGreedyGprModel::AddOptimalPoint(
     int candidate_index = candidate_indices[i];
     ComputeKernelValues_(covariance_in, candidate_index, &kernel_values);
 
+    // The new column vector to be appended and the new self value.
+    Vector new_column_vector;
+    double new_self_value;
+
     // Fill in the matrix accordingly andn solve the optimization
     // problem.
     if (for_coeffs) {
-      FillSquaredKernelMatrix_(squared_kernel_matrix_);
+      FillSquaredKernelMatrix_(
+        candidate_index, kernel_values, &new_column_vector, &new_self_value);
     }
     else {
-      FillKernelMatrix_(kernel_matrix_);
+      FillKernelMatrix_(
+        candidate_index, kernel_values, &new_column_vector, &new_self_value);
     }
   }
 }
@@ -145,7 +155,6 @@ void SparseGreedyGpr::Init(
 template<typename CovarianceType>
 void SparseGreedyGpr::Compute(
   const CovarianceType &covariance_in,
-  double noise_level_in,
   double precision_in,
   SparseGreedyGprModel *model_out) {
 
@@ -157,8 +166,12 @@ void SparseGreedyGpr::Compute(
 
   // Initialize the initial index sets to choose from (inactive
   // sets).
-  std::vector<int> inactive_indices;
-  std::vector<int> inactive_indices_for_error;
+  std::vector<int> inactive_indices(dataset_->n_cols());
+  std::vector<int> inactive_indices_for_error(dataset-- > n_cols());
+  for (int i = 0; i < dataset_->n_cols(); i++) {
+    inactive_indices[i] = i;
+    inactive_indices_for_error[i] = i;
+  }
 
   do {
 
@@ -176,9 +189,9 @@ void SparseGreedyGpr::Compute(
 
     // Choose a random optimal point for both sets.
     model_out->AddOptimalPoint(
-      covariance_in, noise_level_in, candidate_indices, false);
+      covariance_in, candidate_indices, false);
     model_out->AddOptimalPoint(
-      covariance_in, noise_level_in, candidate_indices_for_error, true);
+      covariance_in, candidate_indices_for_error, true);
 
   }
   while (Done_());
