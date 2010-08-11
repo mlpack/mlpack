@@ -17,15 +17,7 @@ namespace gp_regression {
 void SparseGreedyGprModel::FillSquaredKernelMatrix_(
   int candidate_index,
   const Vector &kernel_values,
-  Vector *new_column_vector_out,
-  double *new_self_value_out) const {
-
-
-}
-
-void SparseGreedyGprModel::FillKernelMatrix_(
-  int candidate_index,
-  const Vector &kernel_values,
+  double noise_level_in,
   Vector *new_column_vector_out,
   double *new_self_value_out) const {
 
@@ -33,12 +25,46 @@ void SparseGreedyGprModel::FillKernelMatrix_(
   const std::vector<int> &point_indices_in_dictionary =
     dictionary_for_error_.point_indices_in_dictionary();
 
-  // Simply the necessary kernel values.
+  for (int i = 0; i < point_indices_in_dictionary.size(); i++) {
+    int basis_index = point_indices_in_dictionary[i];
+    const std::vector<double> &cached_kernel_values =
+      kernel_matrix_columns_[basis_index];
+
+    // Take the dot product.
+    double dot_product = 0;
+    for (int j = 0; j < kernel_values.length(); j++) {
+      if (j == candidate_index) {
+        dot_product += cached_kernel_values[j] *
+                       (kernel_values[j] + noise_level_in);
+      }
+      else {
+        dot_product += cached_kernel_values[j] * kernel_values[j];
+      }
+    }
+    (*new_column_vector_out)[i] = dot_product;
+  }
+  *new_self_value_out = la::Dot(kernel_values, kernel_values) +
+                        noise_level_in * kernel_values[candidate_index];
+}
+
+void SparseGreedyGprModel::FillKernelMatrix_(
+  int candidate_index,
+  const Vector &kernel_values,
+  double noise_level_in,
+  Vector *new_column_vector_out,
+  double *new_self_value_out) const {
+
+  new_column_vector_out->Init(dictionary_for_error_->size());
+  const std::vector<int> &point_indices_in_dictionary =
+    dictionary_for_error_.point_indices_in_dictionary();
+
+  // Simply the necessary kernel values. For the self value, add the
+  // noise.
   for (int i = 0; i < new_column_vector_out->length(); i++) {
     (*new_column_vector_out)[i] =
       kernel_values[ point_indices_in_dictionary[i] ];
   }
-  *new_self_value_out = kernel_values[candidate_index];
+  *new_self_value_out = kernel_values[candidate_index] + noise_level_in;
 }
 
 template<typename CovarianceType>
@@ -74,6 +100,10 @@ void SparseGreedyGprModel::AddOptimalPoint(
   // Loop over candidates and decide to add the optimal.
   for (int i = 0; i < candidate_indices.size(); i++) {
 
+    // Make a copy of the dictionaries.
+    Dictionary dictionary_copy = dictionary_;
+    Dictionary dictionary_for_error_copy = dictionary_for_error_;
+
     // Candidate index for which the kernel values have to be computed.
     int candidate_index = candidate_indices[i];
     ComputeKernelValues_(covariance_in, candidate_index, &kernel_values);
@@ -82,15 +112,17 @@ void SparseGreedyGprModel::AddOptimalPoint(
     Vector new_column_vector;
     double new_self_value;
 
-    // Fill in the matrix accordingly andn solve the optimization
-    // problem.
+    // Compute the additional quantities to be appended to grow the
+    // matrix and update the dictionary.
     if (for_coeffs) {
       FillSquaredKernelMatrix_(
         candidate_index, kernel_values, &new_column_vector, &new_self_value);
+
     }
     else {
       FillKernelMatrix_(
         candidate_index, kernel_values, &new_column_vector, &new_self_value);
+
     }
   }
 }
@@ -155,6 +187,7 @@ void SparseGreedyGpr::Init(
 template<typename CovarianceType>
 void SparseGreedyGpr::Compute(
   const CovarianceType &covariance_in,
+  double noise_level_in,
   double precision_in,
   SparseGreedyGprModel *model_out) {
 
@@ -183,16 +216,13 @@ void SparseGreedyGpr::Compute(
     ChooseRandomSubset_(
       inactive_indices, max_num_points, &candidate_indices);
     ChooseRandomSubset_(
-      inactive_indices_for_error,
-      max_num_points,
-      &candidate_indices_for_error);
+      inactive_indices_for_error, max_num_points, &candidate_indices_for_error);
 
     // Choose a random optimal point for both sets.
     model_out->AddOptimalPoint(
-      covariance_in, candidate_indices, false);
+      covariance_in, noise_level_in, candidate_indices, false);
     model_out->AddOptimalPoint(
-      covariance_in, candidate_indices_for_error, true);
-
+      covariance_in, noise_level_in, candidate_indices_for_error, true);
   }
   while (Done_());
 }

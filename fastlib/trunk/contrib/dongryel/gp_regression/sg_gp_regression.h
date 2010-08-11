@@ -39,12 +39,14 @@ class SparseGreedyGprModel {
     void FillSquaredKernelMatrix_(
       int candidate_index,
       const Vector &kernel_values,
+      double noise_level_in,
       Vector *new_column_vector_out,
       double *new_self_value_out) const;
 
     void FillKernelMatrix_(
       int candidate_index,
       const Vector &kernel_values,
+      double noise_level_in,
       Vector *new_column_vector_out,
       double *new_self_value_out) const;
 
@@ -56,6 +58,7 @@ class SparseGreedyGprModel {
     template<typename CovarianceType>
     void AddOptimalPoint(
       const CovarianceType &covariance_in,
+      double noise_level_in,
       const std::vector<int> &candidate_indices,
       bool for_coeffs);
 };
@@ -83,8 +86,9 @@ class SparseGreedyGpr {
 
     template<typename CovarianceType>
     void Compute(
-      double precision_in,
       const CovarianceType &covariance_in,
+      double noise_level_in,
+      double precision_in,
       SparseGreedyGprModel *model_out);
 };
 };
