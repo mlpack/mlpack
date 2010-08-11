@@ -102,19 +102,30 @@ void ClusterwiseRegression::EStep_(ClusterwiseRegressionResult &result_out) {
 
   // Compute the MLE of the posterior probability for each point for
   // each cluster.
+  Vector probabilities_per_point;
+  probabilities_per_point.Init( kernels_.size() );
   for (int k = 0; k < dataset_->n_cols(); k++) {
 
     // Get the point.
     Vector point;
     dataset_->MakeColumnVector(k, &point);
+    doiuble normalization = 0;
 
     // Compute the probability for each cluster.
     for (int j = 0; j < kernels_.size(); j++) {
       double squared_error;
       double prediction = Predict(point, targets_, j, &squared_error);
-      double probability = kernels_[j].EvalUnnormOnSq();
-    }
-  }
+      probabilities_per_point[j] = kernels_[j].EvalUnnormOnSq(squared_error) /
+	kernels_[j].CalcNormConstant( point.length() );
+      normalization += probabilities_per_point[j];
+    } // end of looping through each cluster.
+
+    for(int j = 0; j < kernels_.size(); j++) {
+      membership_probabilities_.set(
+        k, j, probabilities_per_point[j] / normalization);
+    } // end of looping through each cluster.
+ 
+  } // end of looping through each point.
 }
 
 void ClusterwiseRegression::MStep_(ClusterwiseRegressionResult &result_out) {
