@@ -77,20 +77,13 @@ int Dictionary::size() const {
 }
 
 void Dictionary::AddBasis(
-  const int &iteration_number,
+  int new_point_index,
   const Vector &new_column_vector,
   double self_value) {
 
   // The threshold for determining whether to add a given new
   // point to the dictionary or not.
   const double adding_threshold = 1e-3;
-
-  // The new point to consider for adding.
-  int new_point_index = random_permutation_[iteration_number];
-
-  // The vector for storing kernel values.
-  Vector new_column_vector;
-  new_column_vector.Init(point_indices_in_dictionary_.size());
 
   // Compute the matrix-vector product.
   Vector inverse_times_column_vector;
