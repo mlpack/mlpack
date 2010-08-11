@@ -20,16 +20,24 @@ class ClusterwiseRegressionResult {
 
     /** @brief The mixing probabilities for each cluster.
      */
-    Vector membership_probabilities_;
+    Vector mixture_weights_;
+
+    /** @brief The membership probabilities for each point for each
+     *         cluster. These are MLE of the posterior probability
+     *         that each observation comes from each cluster. The
+     *         dimensionality is the number of points by the number of
+     *         clusters.
+     */
+    Matrix membership_probabilities_;
 
     /** @brief The trained linear model for each cluster. The
      *         dimensionality is $D + 1$ by the number of clusters.
      */
     Matrix coefficients_;
 
-    /** @brief The bandwidths per each cluster.
+    /** @brief The Gaussian kernels per each cluster.
      */
-    std::vector<double> bandwidths_;
+    std::vector< GaussianKernel > kernels_;
 
   private:
     double Diameter_(const Matrix &dataset) const;
@@ -37,6 +45,10 @@ class ClusterwiseRegressionResult {
   public:
 
     double Predict(const Vector &datapoint, int cluster_number) const;
+
+    double Predict(
+      const Vector &datapoint, double target,
+      int cluster_number, double *squared_error) const;
 
     double Predict(const Vector &datapoint) const;
 
