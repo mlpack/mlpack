@@ -15,8 +15,11 @@ namespace ml {
 double ClusterwiseRegressionResult::Predict(
   const Vector &datapoint, int cluster_number) const {
 
-  double prediction = 0;
-
+  Vector coeff_alias;
+  coeff_alias.MakeAlias( 
+    coefficients_.GetColumnPtr(cluster_number), datapoint.length());
+  double prediction = la::Dot(datapoint, coeff_alias) + 
+    coefficients_.get(datapoint.length(), cluster_number);
   return prediction;
 }
 
