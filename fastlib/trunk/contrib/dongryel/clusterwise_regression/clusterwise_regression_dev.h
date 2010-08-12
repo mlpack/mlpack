@@ -16,16 +16,20 @@ namespace ml {
 void ClusterwiseRegressionResult::get_parameters(
   Vector *parameters_out) const {
 
+  // Copy the linear regression coefficients for all clusters.
   int indexing_position = 0;
   for(int j = 0; j < coefficients_.n_cols(); j++) {
-    for(int i = 0; i < coefficients_.n_rows(); i++) {
+    for(int i = 0; i < coefficients_.n_rows(); i++, indexing_position++) {
       (*parameters_out)[indexing_position] = coefficients_.get(i, j);
-      indexing_position++;
     }
   }
+
+  // Copy the mixture weights.
   for(int k = 0; k < mixture_weights_.length(); k++, indexing_position++) {
     (*parameters_out)[indexing_position] = mixture_weights_[k];
   }
+
+  // Copy the squared bandwidth values.
   for(int k = 0; k < kernels_.size(); k++, indexing_position++) {
     (*parameters_out)[indexing_position] = kernels_[k].bandwidth_sq();
   }
@@ -33,7 +37,6 @@ void ClusterwiseRegressionResult::get_parameters(
 
 const GaussianKernel &ClusterwiseRegressionResult::kernel(
   int cluster_number) const {
-
   return kernels_[cluster_number];
 }
 
@@ -93,8 +96,10 @@ ClusterwiseRegressionResult::ClusterwiseRegressionResult() {
 }
 
 double ClusterwiseRegressionResult::Diameter_(const Matrix &dataset_in) const {
-  std::vector< DRange > ranges;
-  ranges.resize(dataset_in.n_rows());
+  std::vector< DRange > ranges(dataset_in.n_rows());
+  for(int i = 0; i < ranges.size(); i++) {
+    ranges[i].InitEmptySet();
+  }
   for(int j = 0; j < dataset_in.n_cols(); j++) {
     for(int i = 0; i < dataset_in.n_rows(); i++) {
       ranges[i] |= dataset_in.get(i, j);
@@ -140,9 +145,9 @@ void ClusterwiseRegression::Solve_(int cluster_number, Vector *solution_out) {
 
   // The right hand side weighted by the probabilities.
   Vector right_hand_side;
-  right_hand_side.Init(targets_.length());
-  for(int i = 0; i < targets_.length(); i++) {
-    weighted_targets_[i] = targets_[i] * sqrt(
+  right_hand_side.Init(targets_->length());
+  for(int i = 0; i < targets_->length(); i++) {
+    weighted_targets_[i] = (*targets_)[i] * sqrt(
                              membership_probabilities_.get(i, cluster_number));
   }
 
@@ -206,7 +211,8 @@ void ClusterwiseRegression::UpdateMixture_(
     dataset_->MakeColumnVector(i, &point);
     double squared_error;
     double prediction = result_out.Predict(
-                          point, targets_[i], cluster_number, &squared_error);
+                          point, (*targets_)[i],
+                          cluster_number, &squared_error);
     weighted_sum_probabilities += membership_probabilities_.get(
                                     i, cluster_number) * squared_error;
     sum_probabilities += membership_probabilities_.get(i, cluster_number);
@@ -231,10 +237,11 @@ void ClusterwiseRegression::EStep_(ClusterwiseRegressionResult &result_out) {
     // Compute the probability for each cluster.
     for(int j = 0; j < kernels_.size(); j++) {
       double squared_error;
-      double prediction = Predict(point, targets_[k], j, &squared_error);
-      probabilities_per_point[j] = mixture_weights_[j] *
-                                   kernels_[j].EvalUnnormOnSq(squared_error) /
-                                   kernels_[j].CalcNormConstant(point.length());
+      double prediction = Predict(point, (*targets_)[k], j, &squared_error);
+      probabilities_per_point[j] =
+        mixture_weights_[j] *
+        kernels_[j].EvalUnnormOnSq(squared_error) /
+        kernels_[j].CalcNormConstant(point.length());
       normalization += probabilities_per_point[j];
     } // end of looping through each cluster.
 
@@ -273,10 +280,13 @@ void ClusterwiseRegression::MStep_(ClusterwiseRegressionResult &result_out) {
 
 ClusterwiseRegression::ClusterwiseRegression() {
   dataset_ = NULL;
+  targets_ = NULL;
 }
 
-void ClusterwiseRegression::Init(const Matrix &dataset_in) {
+void ClusterwiseRegression::Init(
+  const Matrix &dataset_in, const Vector &targets_in) {
   dataset_ = &dataset_in;
+  targets_ = &targets_in;
 }
 
 bool ClusterwiseRegression::Converged_(
