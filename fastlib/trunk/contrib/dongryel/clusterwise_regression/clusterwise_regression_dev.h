@@ -12,6 +12,15 @@
 #include "fastlib/fastlib.h"
 
 namespace ml {
+
+const Matrix &ClusterwiseRegressionResult::coefficients() const {
+  return coefficients_;
+}
+
+  Matrix &ClusterwiseRegressionResult::coefficients() {
+    return coefficients_;
+  }
+
 double ClusterwiseRegressionResult::Predict(
   const Vector &datapoint, int cluster_number) const {
 
@@ -98,6 +107,65 @@ void ClusterwiseRegressionResult::Init(
 };
 
 namespace ml {
+
+void ClusterwiseRegression::Solve_(int cluster_number, Vector *solution_out) {
+  
+  // The right hand side weighted by the probabilities.
+  Vector right_hand_side;
+  right_hand_side.Init(targets_.length());
+  for(int i = 0; i < targets_.length(); i++) {
+    weighted_targets_[i] = targets_[i] * sqrt(
+      membership_probabilities_.get(i, cluster_number));
+  }
+
+  // The left hand side weighted by the probabilities.
+  Matrix weighted_left_hand_side;
+  weighted_left_hand_side.Init(dataset_->n_cols(), dataset_->n_rows() + 1);
+  for(int i = 0; i < dataset_->n_cols(); i++) {
+    Vector point;
+    dataset_->MakeColumnVector(i, &point);
+    for(int j = 0; j < dataset_->n_rows(); j++) {
+      weighted_left_hand_side.set(
+        i, j, point[j] * 
+	sqrt(membership_probabilities_.get(i, cluster_number)));
+    }
+    weighted_left_hand_side.set(
+      i, dataset_->n_rows(),
+      sqrt(membership_probabilities_.get(i, cluster_number)));
+  }
+
+  // Take the QR and transform the right hand side.
+  Matrix q_factor, r_factor;
+  la::QRInit(weighted_left_hand_side, &q_factor, &r_factor);
+  Vector q_trans_right_hand_side;
+  la::MulTransAInit(q_factor, right_hand_side, &q_trans_right_hand_side);
+  
+  // SVD the R factor and solve it.
+  Matrix singular_values, left_singular_vectors, 
+    right_singular_vectors_transposed;
+  la::SVDInit(
+    r_factor, &singular_values, &left_singular_vectors,
+    &right_singular_vectors_transposed);
+
+  solution_out->SetZero();
+  for(int j = 0; j < singular_values.length(); j++) {    
+    if(singular_values[j] > 1e-6) {
+      Vector left_singular_vector;
+      left_singular_vectors.MakeColumnVector(j, &left_singular_vector);
+      double scaling_factor = la::Dot(
+        left_singular_vector, q_trans_right_hand_side) / singular_values[j];
+      for(int k = 0; k < right_singular_vectors_transposed.length(); k++) {
+	(*solution_out)[k] += scaling_factor * 
+	  right_singular_vectors_transposed.get(j, k);
+      }
+    }
+  }
+}
+
+void ClusterwiseRegression::UpdateMixture_(int cluster_number) {
+  
+}
+
 void ClusterwiseRegression::EStep_(ClusterwiseRegressionResult &result_out) {
 
   // Compute the MLE of the posterior probability for each point for
@@ -114,8 +182,9 @@ void ClusterwiseRegression::EStep_(ClusterwiseRegressionResult &result_out) {
     // Compute the probability for each cluster.
     for (int j = 0; j < kernels_.size(); j++) {
       double squared_error;
-      double prediction = Predict(point, targets_, j, &squared_error);
-      probabilities_per_point[j] = kernels_[j].EvalUnnormOnSq(squared_error) /
+      double prediction = Predict(point, targets_[k], j, &squared_error);
+      probabilities_per_point[j] = mixture_weights_[j] * 
+	kernels_[j].EvalUnnormOnSq(squared_error) /
 	kernels_[j].CalcNormConstant( point.length() );
       normalization += probabilities_per_point[j];
     } // end of looping through each cluster.
@@ -130,6 +199,27 @@ void ClusterwiseRegression::EStep_(ClusterwiseRegressionResult &result_out) {
 
 void ClusterwiseRegression::MStep_(ClusterwiseRegressionResult &result_out) {
 
+  // Update the mixture weights.
+  for(int i = 0; i < kernels_.size(); i++) {
+    double sum = 0;
+    for(int j = 0; j < dataset_->n_cols(); j++) {
+      sum += membereship_probabilities_.get(j, i);
+    }
+    mixture_weights_[i] = sum / ((double) dataset_->n_cols());    
+  }
+  
+  // Update the linear model for each cluster.
+  Matrix &coefficients = result_out.coefficients();
+  for(int j = 0; j < kernels_.size(); j++) {
+    Vector coefficients_per_cluster;
+    coefficients.MakeColumnVector(j, &coefficients_per_cluster);
+    Solve_(j, &coefficients_per_cluster);
+  }
+
+  // Update the variances of each mixture.
+  for(int j = 0; j < kernels_.size(); j++) {
+    UpdateMixture_(j);
+  }
 }
 
 ClusterwiseRegression::ClusterwiseRegression() {

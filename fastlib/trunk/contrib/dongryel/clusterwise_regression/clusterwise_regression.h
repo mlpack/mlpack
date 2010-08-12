@@ -41,8 +41,12 @@ class ClusterwiseRegressionResult {
 
   private:
     double Diameter_(const Matrix &dataset) const;
-
+  
   public:
+
+    const Matrix &coefficients() const;
+
+    Matrix &coefficients();
 
     double Predict(const Vector &datapoint, int cluster_number) const;
 
@@ -62,16 +66,22 @@ class ClusterwiseRegression {
   private:
     const Matrix *dataset_;
 
+    const Vector *targets_;
+
   private:
     void EStep_(ClusterwiseRegressionResult &result_out);
 
     void MStep_(ClusterwiseRegressionResult &result_out);
 
+    void Solve_(int cluster_number, Vector *solution_out);
+  
+    void UpdateMixture_(int cluster_number);
+
   public:
 
     ClusterwiseRegression();
 
-    void Init(const Matrix &dataset_in);
+    void Init(const Matrix &dataset_in, const Vector &targets_in);
 
     void Compute(
       int num_clusters_in,
