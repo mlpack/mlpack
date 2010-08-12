@@ -44,6 +44,10 @@ class ClusterwiseRegressionResult {
 
   public:
 
+    const GaussianKernel &kernel(int cluster_number) const;
+
+    GaussianKernel &kernel(int cluster_number);
+
     const Matrix &coefficients() const;
 
     Matrix &coefficients();
@@ -75,7 +79,8 @@ class ClusterwiseRegression {
 
     void Solve_(int cluster_number, Vector *solution_out);
 
-    void UpdateMixture_(int cluster_number);
+    void UpdateMixture_(
+      int cluster_number, ClusterwiseRegressionResult &result_out);
 
   public:
 
