@@ -13,6 +13,24 @@
 
 namespace ml {
 
+void ClusterwiseRegressionResult::get_parameters(
+  Vector *parameters_out) const {
+
+  int indexing_position = 0;
+  for(int j = 0; j < coefficients_.n_cols(); j++) {
+    for(int i = 0; i < coefficients_.n_rows(); i++) {
+      (*parameters_out)[indexing_position] = coefficients_.get(i, j);
+      indexing_position++;
+    }
+  }
+  for(int k = 0; k < mixture_weights_.length(); k++, indexing_position++) {
+    (*parameters_out)[indexing_position] = mixture_weights_[k];
+  }
+  for(int k = 0; k < kernels_.size(); k++, indexing_position++) {
+    (*parameters_out)[indexing_position] = kernels_[k].bandwidth_sq();
+  }
+}
+
 const GaussianKernel &ClusterwiseRegressionResult::kernel(
   int cluster_number) const {
 
@@ -261,6 +279,17 @@ void ClusterwiseRegression::Init(const Matrix &dataset_in) {
   dataset_ = &dataset_in;
 }
 
+bool ClusterwiseRegression::Converged_(
+  const Vector &parameters_before_update,
+  const Vector &parameters_after_update) const {
+
+  double norm_before_update = sqrt(la::Dot(parameters_before_update));
+  double norm_after_update = sqrt(la::Dot(parameters_after_update));
+
+  return fabs(norm_after_update - norm_before_update) <=
+         0.01 * norm_before_update;
+}
+
 void ClusterwiseRegression::Compute(
   int num_clusters_in,
   ClusterwiseRegressionResult *result_out) {
@@ -269,7 +298,16 @@ void ClusterwiseRegression::Compute(
 
   // Run the EM algorithm to estimate the (probabilistic) membership
   // and the parameters.
+  int iteration_number = 0;
+  Vector parameters_before_update;
+  Vector parameters_after_update;
+  parameters_before_update.Init(num_clusters_in *(dataset_->n_rows() + 3));
+  parameters_after_update.Init(num_clusters_in *(dataset_->n_rows() + 3));
+
   do {
+
+    // Get the parameters before the E and the M steps.
+    result_out->get_parameters(&parameters_before_update);
 
     // The E-step.
     EStep_(*result_out);
@@ -277,8 +315,15 @@ void ClusterwiseRegression::Compute(
     // The M-step.
     MStep_(*result_out);
 
+    // Get the parameters after the E and the M steps.
+    result_out->get_parameters(&parameters_after_update);
+
+    // Increment the iteration number.
+    iteration_number++;
   }
-  while(Converged_() == false);
+  while(Converged_(
+          parameters_before_update, parameters_after_update) == false &&
+        iteration_number < num_iterations);
 }
 };
 
