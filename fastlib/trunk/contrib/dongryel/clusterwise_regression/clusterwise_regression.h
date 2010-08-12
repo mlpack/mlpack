@@ -41,7 +41,7 @@ class ClusterwiseRegressionResult {
 
   private:
     double Diameter_(const Matrix &dataset) const;
-  
+
   public:
 
     const Matrix &coefficients() const;
@@ -74,7 +74,7 @@ class ClusterwiseRegression {
     void MStep_(ClusterwiseRegressionResult &result_out);
 
     void Solve_(int cluster_number, Vector *solution_out);
-  
+
     void UpdateMixture_(int cluster_number);
 
   public:
