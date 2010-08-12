@@ -18,9 +18,6 @@ class ClusterwiseRegressionResult {
      */
     int num_clusters_;
 
-    /** @brief The mixing probabilities for each cluster.
-     */
-    Vector mixture_weights_;
 
     /** @brief The membership probabilities for each point for each
      *         cluster. These are MLE of the posterior probability
@@ -35,6 +32,10 @@ class ClusterwiseRegressionResult {
      */
     Matrix coefficients_;
 
+    /** @brief The mixing probabilities for each cluster.
+      */
+    Vector mixture_weights_;
+
     /** @brief The Gaussian kernels per each cluster.
      */
     std::vector< GaussianKernel > kernels_;
@@ -43,6 +44,8 @@ class ClusterwiseRegressionResult {
     double Diameter_(const Matrix &dataset) const;
 
   public:
+
+    void get_parameters(Vector *parameters_out) const;
 
     const GaussianKernel &kernel(int cluster_number) const;
 
@@ -73,6 +76,11 @@ class ClusterwiseRegression {
     const Vector *targets_;
 
   private:
+
+    bool Converged_(
+      const Vector &parameters_before_update,
+      const Vector &parameters_after_update) const;
+
     void EStep_(ClusterwiseRegressionResult &result_out);
 
     void MStep_(ClusterwiseRegressionResult &result_out);
