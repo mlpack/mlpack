@@ -13,6 +13,16 @@
 
 namespace ml {
 
+const GaussianKernel &ClusterwiseRegressionResult::kernel(
+  int cluster_number) const {
+
+  return kernels_[cluster_number];
+}
+
+GaussianKernel &ClusterwiseRegressionResult::kernel(int cluster_number) {
+  return kernels_[cluster_number];
+}
+
 const Matrix &ClusterwiseRegressionResult::coefficients() const {
   return coefficients_;
 }
@@ -152,8 +162,9 @@ void ClusterwiseRegression::Solve_(int cluster_number, Vector *solution_out) {
     if(singular_values[j] > 1e-6) {
       Vector left_singular_vector;
       left_singular_vectors.MakeColumnVector(j, &left_singular_vector);
-      double scaling_factor = la::Dot(
-                                left_singular_vector, q_trans_right_hand_side) / singular_values[j];
+      double scaling_factor =
+        la::Dot(
+          left_singular_vector, q_trans_right_hand_side) / singular_values[j];
       for(int k = 0; k < right_singular_vectors_transposed.length(); k++) {
         (*solution_out)[k] += scaling_factor *
                               right_singular_vectors_transposed.get(j, k);
@@ -162,8 +173,28 @@ void ClusterwiseRegression::Solve_(int cluster_number, Vector *solution_out) {
   }
 }
 
-void ClusterwiseRegression::UpdateMixture_(int cluster_number) {
+void ClusterwiseRegression::UpdateMixture_(
+  int cluster_number, ClusterwiseRegressionResult &result_out) {
 
+  double sum_probabilities = 0;
+  double weighted_sum_probabilities = 0;
+
+  // Loop through each data point.
+  for(int i = 0; i < dataset_->n_cols(); i++) {
+
+    // Do a prediction for the current point on the current cluster
+    // model.
+    Vector point;
+    dataset_->MakeColumnVector(i, &point);
+    double squared_error;
+    double prediction = result_out.Predict(
+                          point, targets_[i], cluster_number, &squared_error);
+    weighted_sum_probabilities += membership_probabilities_.get(
+                                    i, cluster_number) * squared_error;
+    sum_probabilities += membership_probabilities_.get(i, cluster_number);
+  }
+  result_out.kernel(cluster_number).Init(
+    sqrt(weighted_sum_probabilities / sum_probabilities));
 }
 
 void ClusterwiseRegression::EStep_(ClusterwiseRegressionResult &result_out) {
@@ -218,7 +249,7 @@ void ClusterwiseRegression::MStep_(ClusterwiseRegressionResult &result_out) {
 
   // Update the variances of each mixture.
   for(int j = 0; j < kernels_.size(); j++) {
-    UpdateMixture_(j);
+    UpdateMixture_(j, result_out);
   }
 }
 
