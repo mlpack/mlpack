@@ -18,7 +18,6 @@ class ClusterwiseRegressionResult {
      */
     int num_clusters_;
 
-
     /** @brief The membership probabilities for each point for each
      *         cluster. These are MLE of the posterior probability
      *         that each observation comes from each cluster. The
