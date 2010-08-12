@@ -5,11 +5,12 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef ML_CLUSTERWISE_REGRESSION_CLUSTERWISE_REGRESSION_H
-#define ML_CLUSTERWISE_REGRESSION_CLUSTERWISE_REGRESSION_H
+#ifndef MLPACK_CLUSTERWISE_REGRESSION_CLUSTERWISE_REGRESSION_H
+#define MLPACK_CLUSTERWISE_REGRESSION_CLUSTERWISE_REGRESSION_H
 
 #include "fastlib/fastlib.h"
 
+namespace fl {
 namespace ml {
 class ClusterwiseRegressionResult {
   private:
@@ -17,14 +18,6 @@ class ClusterwiseRegressionResult {
     /** @brief The number of clusters.
      */
     int num_clusters_;
-
-    /** @brief The membership probabilities for each point for each
-     *         cluster. These are MLE of the posterior probability
-     *         that each observation comes from each cluster. The
-     *         dimensionality is the number of points by the number of
-     *         clusters.
-     */
-    Matrix membership_probabilities_;
 
     /** @brief The trained linear model for each cluster. The
      *         dimensionality is $D + 1$ by the number of clusters.
@@ -44,7 +37,13 @@ class ClusterwiseRegressionResult {
 
   public:
 
+    int num_clusters() const;
+
     void get_parameters(Vector *parameters_out) const;
+
+    double mixture_weight(int cluster_number) const;
+
+    void set_mixture_weight(int cluster_number, double new_weight);
 
     const GaussianKernel &kernel(int cluster_number) const;
 
@@ -66,6 +65,8 @@ class ClusterwiseRegressionResult {
       const Vector &datapoint, double target, double *squared_error) const;
 
     ClusterwiseRegressionResult();
+
+    void Init(const Matrix *dataset_in, int num_clusters_in);
 };
 
 class ClusterwiseRegression {
@@ -74,19 +75,34 @@ class ClusterwiseRegression {
 
     const Vector *targets_;
 
+    /** @brief The membership probabilities for each point for each
+     *         cluster. These are MLE of the posterior probability
+     *         that each observation comes from each cluster. The
+     *         dimensionality is the number of points by the number of
+     *         clusters.
+     */
+    Matrix membership_probabilities_;
+
   private:
 
     bool Converged_(
       const Vector &parameters_before_update,
       const Vector &parameters_after_update) const;
 
-    void EStep_(ClusterwiseRegressionResult &result_out);
+    void EStep_(
+      const ClusterwiseRegressionResult &result_out,
+      Matrix &membership_probabilities);
 
-    void MStep_(ClusterwiseRegressionResult &result_out);
+    void MStep_(
+      const Matrix &membership_probabilities,
+      ClusterwiseRegressionResult &result_out);
 
-    void Solve_(int cluster_number, Vector *solution_out);
+    void Solve_(
+      const Matrix &membership_probabilities,
+      int cluster_number, Vector *solution_out);
 
     void UpdateMixture_(
+      const Matrix &membership_probabilities,
       int cluster_number, ClusterwiseRegressionResult &result_out);
 
   public:
@@ -97,7 +113,11 @@ class ClusterwiseRegression {
 
     void Compute(
       int num_clusters_in,
+      int num_iterations_in,
       ClusterwiseRegressionResult *result_out);
+
+    static int Main(const std::vector<std::string> &args);
+};
 };
 };
 

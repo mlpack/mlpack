@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 # we just want to recurse into the child directories here
 set(DIRS
-#   compression
+   clusterwise_regression
 #   fast_multipole_method  ## awaiting resolution of #10 (libint dependency)
    gp_regression
 #   kde  ## does not compile
