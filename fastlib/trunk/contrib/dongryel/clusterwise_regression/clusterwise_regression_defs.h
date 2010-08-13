@@ -26,7 +26,10 @@ int fl::ml::ClusterwiseRegression::RunAlgorithm(
   Matrix target_set;
   Vector target_set_alias;
   data::Load(vm["targets_in"].as<std::string>().c_str(), &target_set);
-  target_set.MakeColumnVector(0, &target_set_alias);
+  target_set_alias.Init(target_set.n_cols());
+  for (int i = 0; i < target_set.n_cols(); i++) {
+    target_set_alias[i] = target_set.get(0, i);
+  }
 
   // The algorithm object and its result.
   fl::ml::ClusterwiseRegression algorithm;

@@ -75,14 +75,6 @@ class ClusterwiseRegression {
 
     const Vector *targets_;
 
-    /** @brief The membership probabilities for each point for each
-     *         cluster. These are MLE of the posterior probability
-     *         that each observation comes from each cluster. The
-     *         dimensionality is the number of points by the number of
-     *         clusters.
-     */
-    Matrix membership_probabilities_;
-
   private:
 
     bool Converged_(
