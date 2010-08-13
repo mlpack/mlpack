@@ -37,7 +37,9 @@ int fl::ml::ClusterwiseRegression::RunAlgorithm(
   algorithm.Init(reference_set, target_set_alias);
 
   // Compute and export.
-  algorithm.Compute(vm["k_clusters"].as<int>(), 1000, &result);
+  int num_iterations = (vm.count("num_iterations") > 0) ?
+                       vm["num_iterations"].as<int>() : 1000;
+  algorithm.Compute(vm["k_clusters"].as<int>(), num_iterations, &result);
 
   return 0;
 }
