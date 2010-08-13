@@ -15,6 +15,30 @@
 #include "fastlib/fastlib.h"
 #include "clusterwise_regression.h"
 
+int fl::ml::ClusterwiseRegression::RunAlgorithm(
+  boost::program_options::variables_map &vm) {
+
+  // Read the reference set.
+  Matrix reference_set;
+  data::Load(vm["references_in"].as<std::string>().c_str(), &reference_set);
+
+  // Read the target set.
+  Matrix target_set;
+  Vector target_set_alias;
+  data::Load(vm["targets_in"].as<std::string>().c_str(), &target_set);
+  target_set.MakeColumnVector(0, &target_set_alias);
+
+  // The algorithm object and its result.
+  fl::ml::ClusterwiseRegression algorithm;
+  fl::ml::ClusterwiseRegressionResult result;
+  algorithm.Init(reference_set, target_set_alias);
+
+  // Compute and export.
+  algorithm.Compute(vm["k_clusters"].as<int>(), 1000, &result);
+
+  return 0;
+}
+
 int fl::ml::ClusterwiseRegression::Main(
   const std::vector<std::string> &args) {
 
@@ -22,10 +46,22 @@ int fl::ml::ClusterwiseRegression::Main(
   desc.add_options()(
     "help", "Print this information."
   )(
+    "k_clusters",
+    boost::program_options::value<int>(),
+    "REQUIRED the number of clusters in the mixture of experts model")
+  (
+    "num_iterations",
+    boost::program_options::value<int>(),
+    "OPTIONAL the maximum number of iterations to train the mixture "
+    "of experts")
+  (
     "references_in",
-    boost::program_options::value<std::vector<std::string> >(),
-    "REQUIRED file containing reference data, if you want to run kda, you can "
-    "provide more than one references files. Each reference file will contain files from the same class"
+    boost::program_options::value<std::string>(),
+    "REQUIRED file containing reference data"
+  )(
+    "targets_in",
+    boost::program_options::value<std::string>(),
+    "REQUIRED file containing the targets"
   )(
     "loglevel",
     boost::program_options::value<std::string>()->default_value("debug"),
@@ -62,14 +98,21 @@ int fl::ml::ClusterwiseRegression::Main(
     return true;
   }
 
-  // Validate the  Only immediate dying is allowed here, the
-  // parsing is done later.
+  // Validate the arguments.
+  if (vm.count("k_clusters") == 0) {
+    std::cerr << "Missing required --k_clusters";
+    throw new std::exception();
+  }
   if (vm.count("references_in") == 0) {
     std::cerr << "Missing required --references_in";
-    exit(-1);
+    throw new std::exception();
+  }
+  if (vm.count("targets_in") == 0) {
+    std::cerr << "Missing required --targets_in";
+    throw new std::exception();
   }
 
-  return 0;
+  return RunAlgorithm(vm);
 }
 
 #endif
