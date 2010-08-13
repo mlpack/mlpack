@@ -21,7 +21,6 @@ double ClusterwiseRegressionResult::mixture_weight(int cluster_number) const {
 
 void ClusterwiseRegressionResult::set_mixture_weight(
   int cluster_number, double new_weight) {
-  printf("Setting a new mixture weight: %g\n", new_weight);
   mixture_weights_[cluster_number] = new_weight;
 }
 
@@ -157,7 +156,7 @@ void ClusterwiseRegressionResult::Init(
   // Initialize the bandwidths.
   double diameter = Diameter_(*dataset_in);
   for (int i = 0; i < num_clusters_in; i++) {
-    kernels_[i].Init(math::Random(0.1 * diameter, 0.5 * diameter));
+    kernels_[i].Init(math::Random(0.3 * diameter, 0.75 * diameter));
   }
 }
 };
@@ -200,9 +199,7 @@ void ClusterwiseRegression::Solve_(
   Vector q_trans_right_hand_side;
   la::MulTransAInit(
     q_factor, weighted_right_hand_side, &q_trans_right_hand_side_mat);
-  q_trans_right_hand_side.Alias(
-    q_trans_right_hand_side_mat.GetColumnPtr(0),
-    q_trans_right_hand_side_mat.n_rows());
+  q_trans_right_hand_side_mat.MakeColumnVector(0, &q_trans_right_hand_side);
 
   // SVD the R factor and solve it.
   Vector singular_values;
@@ -306,8 +303,6 @@ void ClusterwiseRegression::MStep_(
     Vector coefficients_per_cluster;
     coefficients.MakeColumnVector(j, &coefficients_per_cluster);
     Solve_(membership_probabilities, j, &coefficients_per_cluster);
-    printf("Solved for cluster %d\n", j);
-    coefficients_per_cluster.PrintDebug();
   }
 
   // Update the variances of each mixture.
@@ -338,9 +333,6 @@ bool ClusterwiseRegression::Converged_(
                                la::Dot(
                                  parameters_after_update, parameters_after_update));
 
-  printf("Checking convergence: %g %g\n",
-         fabs(norm_after_update - norm_before_update),
-         norm_before_update);
   return fabs(norm_after_update - norm_before_update) <= 1e-6;
 }
 
