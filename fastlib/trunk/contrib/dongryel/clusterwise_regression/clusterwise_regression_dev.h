@@ -21,6 +21,7 @@ double ClusterwiseRegressionResult::mixture_weight(int cluster_number) const {
 
 void ClusterwiseRegressionResult::set_mixture_weight(
   int cluster_number, double new_weight) {
+  printf("Setting a new mixture weight: %g\n", new_weight);
   mixture_weights_[cluster_number] = new_weight;
 }
 
@@ -137,12 +138,21 @@ void ClusterwiseRegressionResult::Init(
   kernels_.resize(num_clusters_);
 
   // Initialize the parameters.
-  int random_cluster_number = math::RandInt(num_clusters_in);
-  mixture_weights_.SetZero();
-  mixture_weights_[random_cluster_number] = 1.0;
+  double mixture_sum = 0;
+  for (int i = 0; i < mixture_weights_.length(); i++) {
+    mixture_weights_[i] = math::Random(0.1, 0.5);
+    mixture_sum += mixture_weights_[i];
+  }
+  for (int i = 0; i < mixture_weights_.length(); i++) {
+    mixture_weights_[i] /= mixture_sum;
+  }
 
   // Initialize the coefficients.
-  coefficients_.SetZero();
+  for (int j = 0; j < coefficients_.n_cols(); j++) {
+    for (int i = 0; i < coefficients_.n_rows(); i++) {
+      coefficients_.set(i, j, math::Random(-0.5, 0.5));
+    }
+  }
 
   // Initialize the bandwidths.
   double diameter = Diameter_(*dataset_in);
@@ -296,6 +306,8 @@ void ClusterwiseRegression::MStep_(
     Vector coefficients_per_cluster;
     coefficients.MakeColumnVector(j, &coefficients_per_cluster);
     Solve_(membership_probabilities, j, &coefficients_per_cluster);
+    printf("Solved for cluster %d\n", j);
+    coefficients_per_cluster.PrintDebug();
   }
 
   // Update the variances of each mixture.
@@ -319,13 +331,17 @@ bool ClusterwiseRegression::Converged_(
   const Vector &parameters_before_update,
   const Vector &parameters_after_update) const {
 
-  double norm_before_update = sqrt(la::Dot(
-                                     parameters_before_update, parameters_before_update));
-  double norm_after_update = sqrt(la::Dot(
-                                    parameters_after_update, parameters_after_update));
+  double norm_before_update = sqrt(
+                                la::Dot(
+                                  parameters_before_update, parameters_before_update));
+  double norm_after_update = sqrt(
+                               la::Dot(
+                                 parameters_after_update, parameters_after_update));
 
-  return fabs(norm_after_update - norm_before_update) <=
-         0.01 * norm_before_update;
+  printf("Checking convergence: %g %g\n",
+         fabs(norm_after_update - norm_before_update),
+         norm_before_update);
+  return fabs(norm_after_update - norm_before_update) <= 1e-6;
 }
 
 void ClusterwiseRegression::Compute(
