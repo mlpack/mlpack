@@ -116,6 +116,8 @@ class ClusterwiseRegression {
       int num_iterations_in,
       ClusterwiseRegressionResult *result_out);
 
+    static int RunAlgorithm(boost::program_options::variables_map &vm);
+
     static int Main(const std::vector<std::string> &args);
 };
 };
