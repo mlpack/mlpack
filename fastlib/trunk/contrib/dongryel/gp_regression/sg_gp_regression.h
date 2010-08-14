@@ -29,7 +29,18 @@ class SparseGreedyGprModel {
 
     ml::Dictionary dictionary_for_error_;
 
+    Vector coefficients_;
+
   private:
+
+    void SolveSystem_(
+      const ml::Dictionary &dictionary_in,
+      const Vector &right_hand_side_in,
+      Vector *solution_out) const;
+
+    void ExtractTargetSubset_(
+      const ml::Dictioanay &dictionary_in,
+      Vector *target_subset_out) const;
 
     double QuadraticObjective_(const ml::Dictionary &dictionary_in) const;
 
@@ -54,16 +65,21 @@ class SparseGreedyGprModel {
       double *new_self_value_out) const;
 
   public:
+
+    double frobenius_norm_targets() const;
+
     SparseGreedyGprModel();
 
     void Init(const Matrix *dataset_in, const Vector *targets_in);
 
     template<typename CovarianceType>
-    void AddOptimalPoint(
+    double AddOptimalPoint(
       const CovarianceType &covariance_in,
       double noise_level_in,
       const std::vector<int> &candidate_indices,
       bool for_coeffs);
+
+    void FinalizeModel();
 };
 
 class SparseGreedyGpr {
@@ -76,6 +92,13 @@ class SparseGreedyGpr {
     const Vector *targets_;
 
   private:
+
+    bool Done_(
+      double frobenius_norm_targets_in,
+      double noise_level_in,
+      double precision_in,
+      double optimum_value,
+      double optmum_value_for_error) const;
 
     void InitInactiveSet_(std::vector<int> *inactive_set_out) const;
 
