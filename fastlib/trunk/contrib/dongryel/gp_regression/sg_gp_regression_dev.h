@@ -14,28 +14,50 @@
 namespace ml {
 namespace gp_regression {
 
-double SparseGreedyGprModel::QuadraticObjective_(
-  const ml::Dictionary &dictionary_in) const {
+void SparseGreedyGprModel::FinalizeModel() {
+  SolveSystem_(dictionary_, &coefficients_);
+}
+
+double SparseGreedyGprModel::frobenius_norm_targets() const {
+  return frobenius_norm_targets_;
+}
+
+void SparseGreedyGprModel::SolveSystem_(
+  const ml::Dictionary &dictionary_in,
+  const Vector &right_hand_side_in,
+  Vector *solution_out) const {
+
+  const Matrix &current_kernel_matrix_inverse =
+    *(dictionary_in.current_kernel_matrix_inverse());
+  la::MulInit(current_kernel_matrix_inverse, right_hand_side,
+              solution_out);
+}
+
+void SparseGreedyGprModel::ExtractTargetSubset_(
+  const ml::Dictioanay &dictionary_in,
+  Vector *target_subset_out) const {
 
   // Get the indices of the points in the dictionary.
   const std::vector<int> &point_indices_in_dictionary =
     dictionary_in.point_indices_in_dictionary();
 
-  // Get the inverse matrix.
-  const Matrix &current_kernel_matrix_inverse =
-    *(dictionary_in.current_kernel_matrix_inverse());
+  target_subset_out->Init(point_indices_in_dictionary.size());
+  for (int i = 0; i < target_subset_out->length(); i++) {
+    (*target_subset_out)[i] = (*targets_)[ point_indices_in_dictionary[i] ];
+  }
+}
+
+double SparseGreedyGprModel::QuadraticObjective_(
+  const ml::Dictionary &dictionary_in) const {
 
   // The target vector that is composed of the dictionary basis
   // points.
   Vector target_subset;
-  target_subset.Init(point_indices_in_dictionary.size());
-  for (int i = 0; i < target_subset.length(); i++) {
-    target_subset[i] = (*targets_)[ point_indices_in_dictionary[i] ];
-  }
+  ExtractTargetSubset_(dictionary_in, &target_subset);
 
   // Compute the objective, -0.5 y^T K^{1} y.
   Vector product;
-  la::MulInit(current_kernel_matrix_inverse, target_subset, &product);
+  SolveSystem_(dictionary_in, target_subset, &product);
 
   return - 0.5 * la::Dot(product, target_subset);
 }
@@ -112,7 +134,7 @@ void SparseGreedyGprModel::ComputeKernelValues_(
 }
 
 template<typename CovarianceType>
-void SparseGreedyGprModel::AddOptimalPoint(
+double SparseGreedyGprModel::AddOptimalPoint(
   const CovarianceType &covariance_in,
   const std::vector<int> &candidate_indices,
   bool for_coeffs) {
@@ -182,12 +204,12 @@ void SparseGreedyGprModel::AddOptimalPoint(
 
     // Grow the kernel cache in this case.
     kernel_matrix_columns_[final_candidate_index].resize(dataset_->n_cols());
-    FillSquaredKernelMatrix_(
-      candidate_index, kernel_matrix_columns_[final_candidate_index],
-      &final_column_vector, &final_self_value);
     ComputeKernelValues_(
       covariance_in, final_candidate_index,
       &(kernel_matrix_columns_[candidate_index]));
+    FillSquaredKernelMatrix_(
+      candidate_index, kernel_matrix_columns_[final_candidate_index],
+      &final_column_vector, &final_self_value);
     dictionary_.AddBasis(
       final_candidate_index, final_column_vector, final_self_value);
   }
@@ -198,6 +220,7 @@ void SparseGreedyGprModel::AddOptimalPoint(
     dictionary_for_error_.AddBasis(
       final_candidate_index, final_column_vector, final_self_value);
   }
+  return optimum_value;
 }
 
 void SparseGreedyGprModel::Init(
@@ -239,6 +262,24 @@ void SparseGreedyGpr::ChooseRandomSubset_(
     }
     subset_out->resize(subset_size);
   }
+}
+
+bool SparseGreedyGpr::Done_(
+  double frobenius_norm_targets_in,
+  double noise_level_in,
+  double precision_in,
+  double optimum_value,
+  double optimum_value_for_error) const {
+
+  double left_hand_side = optimum_value +
+                          noise_level_in * optimum_value_for_error + 0.5 * frobenius_norm_targets_in;
+  double right_hand_side =
+    0.5 * precision * (
+      fabs(optimuum_value) +
+      fabs(
+        noise_level_in * optimum_value_for_error +
+        0.5 * frobenius_norm_targets_in));
+  return left_hand_side <= right_hand_side;
 }
 
 void SparseGreedyGpr::InitInactiveSet_(
@@ -290,16 +331,21 @@ void SparseGreedyGpr::Compute(
       &candidate_indices_for_error);
 
     // Choose a random optimal point for both sets.
-    model_out->AddOptimalPoint(
-      covariance_in, noise_level_in, candidate_indices, false);
-    model_out->AddOptimalPoint(
-      covariance_in, noise_level_in, candidate_indices_for_error, true);
+    double optimum_value = model_out->AddOptimalPoint(
+                             covariance_in, noise_level_in, candidate_indices, true);
+    double optimum_value_for_error = model_out->AddOptimalPoint(
+                                       covariance_in, noise_level_in, candidate_indices_for_error, false);
 
     // Update the list of inactive indices.
     dictionary_.inactive_indices(&inactive_indices);
     dictionary_for_error_.inactive_indices(&inactive_indices_for_error_);
   }
-  while (Done_());
+  while (Done_(
+           model_out->frobenius_norm_targets(), noise_level_in, precision_in,
+           optimum_value, optimum_value_for_error));
+
+  // Using the final model, compute the coefficients.
+  model_out->FinalizeModel();
 }
 };
 };
