@@ -6,18 +6,38 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef ML_GP_REGRESSION_SG_GP_REGRESSION_DEV_H
-#define ML_GP_REGRESSION_SG_GP_REGRESSION_DEV_H
+#ifndef MLPACK_GP_REGRESSION_SG_GP_REGRESSION_DEV_H
+#define MLPACK_GP_REGRESSION_SG_GP_REGRESSION_DEV_H
 
 #include "sg_gp_regression.h"
 
 namespace ml {
 namespace gp_regression {
 
-void SparseGreedyGprModel::QuadraticObjective_(
+double SparseGreedyGprModel::QuadraticObjective_(
   const ml::Dictionary &dictionary_in) const {
 
+  // Get the indices of the points in the dictionary.
+  const std::vector<int> &point_indices_in_dictionary =
+    dictionary_in.point_indices_in_dictionary();
 
+  // Get the inverse matrix.
+  const Matrix &current_kernel_matrix_inverse =
+    *(dictionary_in.current_kernel_matrix_inverse());
+
+  // The target vector that is composed of the dictionary basis
+  // points.
+  Vector target_subset;
+  target_subset.Init(point_indices_in_dictionary.size());
+  for (int i = 0; i < target_subset.length(); i++) {
+    target_subset[i] = (*targets_)[ point_indices_in_dictionary[i] ];
+  }
+
+  // Compute the objective, -0.5 y^T K^{1} y.
+  Vector product;
+  la::MulInit(current_kernel_matrix_inverse, target_subset, &product);
+
+  return - 0.5 * la::Dot(product, target_subset);
 }
 
 void SparseGreedyGprModel::FillSquaredKernelMatrix_(
@@ -124,6 +144,9 @@ void SparseGreedyGprModel::AddOptimalPoint(
     Vector new_column_vector;
     double new_self_value;
 
+    // The objective value in the current iteration.
+    double objective_value = -1.0;
+
     // Compute the additional quantities to be appended to grow the
     // matrix and update the dictionary.
     if (for_coeffs) {
@@ -133,7 +156,7 @@ void SparseGreedyGprModel::AddOptimalPoint(
         candidate_index, new_column_vector, new_self_value);
 
       // Compute the objective function value for the coefficients.
-      QuadraticObjective_(dictionary_);
+      objective_value = QuadraticObjective_(dictionary_);
     }
     else {
       FillKernelMatrix_(
@@ -142,8 +165,38 @@ void SparseGreedyGprModel::AddOptimalPoint(
         candidate_index, new_column_vector, new_self_value);
 
       // Compute the objective function value for the error bar.
-      QuadraticObjective_(dictionary_for_error_);
+      objective_value = QuadraticObjective_(dictionary_for_error_);
     }
+
+    if (objective_value < optimum_value) {
+      optimal_point_index = i;
+      optimum_value = objective_value;
+    }
+  }
+
+  // Grow the dictionary using the optimum point.
+  int final_candidate_index = candidate_indices[optimal_point_index];
+  Vector final_column_vector;
+  double final_self_value;
+  if (for_coeffs) {
+
+    // Grow the kernel cache in this case.
+    kernel_matrix_columns_[final_candidate_index].resize(dataset_->n_cols());
+    FillSquaredKernelMatrix_(
+      candidate_index, kernel_matrix_columns_[final_candidate_index],
+      &final_column_vector, &final_self_value);
+    ComputeKernelValues_(
+      covariance_in, final_candidate_index,
+      &(kernel_matrix_columns_[candidate_index]));
+    dictionary_.AddBasis(
+      final_candidate_index, final_column_vector, final_self_value);
+  }
+  else {
+    ComputeKernelValues_(covariance_in, final_candidate_index, &kernel_values);
+    FillKernelMatrix_(
+      candidate_index, kernel_values, &final_column_vector, &final_self_value);
+    dictionary_for_error_.AddBasis(
+      final_candidate_index, final_column_vector, final_self_value);
   }
 }
 
