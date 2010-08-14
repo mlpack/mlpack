@@ -14,6 +14,12 @@
 namespace ml {
 namespace gp_regression {
 
+void SparseGreedyGprModel::QuadraticObjective_(
+  const ml::Dictionary &dictionary_in) const {
+
+
+}
+
 void SparseGreedyGprModel::FillSquaredKernelMatrix_(
   int candidate_index,
   const Vector &kernel_values,
@@ -76,6 +82,7 @@ void SparseGreedyGprModel::ComputeKernelValues_(
   Vector candidate_point;
   dataset_->MakeColumnVector(candidate_index, &candidate_point);
 
+  // Fill out the kernel values sequentially.
   for (int i = 0; i < dataset_->n_cols(); i++) {
     Vector point;
     dataset_->MakeColumnVector(i, &point);
@@ -95,14 +102,19 @@ void SparseGreedyGprModel::AddOptimalPoint(
 
   // The optimal point information.
   int optimal_point_index = -1;
-  double optimum_value = std::numeric_limit<double>::max();
+  double optimum_value = std::numeric_limits<double>::max();
 
   // Loop over candidates and decide to add the optimal.
   for (int i = 0; i < candidate_indices.size(); i++) {
 
     // Make a copy of the dictionaries.
-    Dictionary dictionary_copy = dictionary_;
-    Dictionary dictionary_for_error_copy = dictionary_for_error_;
+    Dictionary dictionary_copy;
+    if (for_coeffs) {
+      dictionary_copy = dictionary_;
+    }
+    else {
+      dictionary_copy = dictionary_for_error_;
+    }
 
     // Candidate index for which the kernel values have to be computed.
     int candidate_index = candidate_indices[i];
@@ -117,12 +129,20 @@ void SparseGreedyGprModel::AddOptimalPoint(
     if (for_coeffs) {
       FillSquaredKernelMatrix_(
         candidate_index, kernel_values, &new_column_vector, &new_self_value);
+      dictionary_.AddBasis(
+        candidate_index, new_column_vector, new_self_value);
 
+      // Compute the objective function value for the coefficients.
+      QuadraticObjective_(dictionary_);
     }
     else {
       FillKernelMatrix_(
         candidate_index, kernel_values, &new_column_vector, &new_self_value);
+      dictionary_for_error_.AddBasis(
+        candidate_index, new_column_vector, new_self_value);
 
+      // Compute the objective function value for the error bar.
+      QuadraticObjective_(dictionary_for_error_);
     }
   }
 }
@@ -191,9 +211,6 @@ void SparseGreedyGpr::Compute(
   double precision_in,
   SparseGreedyGprModel *model_out) {
 
-  // The maximum number of points to choose in each iteration.
-  const int max_num_points = 60;
-
   // Initialize the model.
   model_out->Init(dataset_, targets_);
 
@@ -214,15 +231,20 @@ void SparseGreedyGpr::Compute(
 
     // Choose a random subset from the inactive point set.
     ChooseRandomSubset_(
-      inactive_indices, max_num_points, &candidate_indices);
+      inactive_indices, random_subset_size_, &candidate_indices);
     ChooseRandomSubset_(
-      inactive_indices_for_error, max_num_points, &candidate_indices_for_error);
+      inactive_indices_for_error, random_subset_size_,
+      &candidate_indices_for_error);
 
     // Choose a random optimal point for both sets.
     model_out->AddOptimalPoint(
       covariance_in, noise_level_in, candidate_indices, false);
     model_out->AddOptimalPoint(
       covariance_in, noise_level_in, candidate_indices_for_error, true);
+
+    // Update the list of inactive indices.
+    dictionary_.inactive_indices(&inactive_indices);
+    dictionary_for_error_.inactive_indices(&inactive_indices_for_error_);
   }
   while (Done_());
 }

@@ -30,6 +30,9 @@ class SparseGreedyGprModel {
     ml::Dictionary dictionary_for_error_;
 
   private:
+
+    void QuadraticObjective_(const ml::Dictionary &dictionary_in) const;
+
     template<typename CovarianceType>
     void ComputeKernelValues_(
       const CovarianceType &covariance_in,
@@ -65,6 +68,9 @@ class SparseGreedyGprModel {
 
 class SparseGreedyGpr {
   private:
+
+    const int random_subset_size_ = 60;
+
     const Matrix *dataset_;
 
     const Vector *targets_;
