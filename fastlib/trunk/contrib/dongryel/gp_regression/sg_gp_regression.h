@@ -6,8 +6,8 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef ML_GP_REGRESSION_SG_GP_REGRESSION_H
-#define ML_GP_REGRESSION_SG_GP_REGRESSION_H
+#ifndef MLPACK_GP_REGRESSION_SG_GP_REGRESSION_H
+#define MLPACK_GP_REGRESSION_SG_GP_REGRESSION_H
 
 #include "fastlib/fastlib.h"
 #include "dictionary_dev.h"
@@ -31,7 +31,7 @@ class SparseGreedyGprModel {
 
   private:
 
-    void QuadraticObjective_(const ml::Dictionary &dictionary_in) const;
+    double QuadraticObjective_(const ml::Dictionary &dictionary_in) const;
 
     template<typename CovarianceType>
     void ComputeKernelValues_(
