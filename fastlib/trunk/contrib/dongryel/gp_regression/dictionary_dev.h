@@ -5,8 +5,8 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef ML_GP_REGRESSION_DICTIONARY_DEV_H
-#define ML_GP_REGRESSION_DICTIONARY_DEV_H
+#ifndef MLPACK_GP_REGRESSION_DICTIONARY_DEV_H
+#define MLPACK_GP_REGRESSION_DICTIONARY_DEV_H
 
 #include <deque>
 #include <vector>
@@ -15,6 +15,19 @@
 #include "dictionary.h"
 
 namespace ml {
+
+void Dictionary::inactive_indices(
+  std::vector<int> *inactive_indices_out) const {
+
+  // Scan the in_dictionary list and build the inactive index set.
+  inactive_indices_out->resize(0);
+  for (int i = 0; i < in_dictionary_.size(); i++) {
+    if (in_dictionary_[i] == false) {
+      inactive_indices_out->push_back(i);
+    }
+  }
+}
+
 void Dictionary::UpdateDictionary_(
   int new_point_index,
   const Vector &new_column_vector,

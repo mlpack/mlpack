@@ -5,8 +5,8 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef ML_GP_REGRESSION_DICTIONARY_H
-#define ML_GP_REGRESSION_DICTIONARY_H
+#ifndef MLPACK_GP_REGRESSION_DICTIONARY_H
+#define MLPACK_GP_REGRESSION_DICTIONARY_H
 
 #include <deque>
 #include <vector>
@@ -43,6 +43,8 @@ class Dictionary {
       const Vector &inverse_times_column_vector);
 
   public:
+
+    void inactive_indices(std::vector<int> *inactive_indices_out) const;
 
     Dictionary(const Dictionary &dictionary_in) {
       table_ = dictionary_in.table();
@@ -93,7 +95,7 @@ class Dictionary {
     void Init(const Matrix *table_in);
 
     void AddBasis(
-      int iteration_number,
+      int new_point_index,
       const Vector &new_column_vector,
       double self_value);
 
