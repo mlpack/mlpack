@@ -25,6 +25,7 @@ public:
 
   /** Generate all possible assignments for a domain that agree with restrict assignment */
   TableF(const Domain& dom, const Assignment& res = Assignment());
+  TableF(const TableF& f, const Assignment &res = Assignment());
 
   /** remove assignments that do not agree with variable in a assignment */
   void restricted(const Assignment& a);
@@ -92,6 +93,13 @@ TableF<_V>::TableF(const Domain& dom, const Assignment& res) : dom_(dom)
 }
 
 template <typename _V>
+TableF<_V>::TableF(const TableF &f, const Assignment &res)
+  : Map<Assignment, _V, AssignmentCompare>(f), dom_(f.dom_)
+{
+  restricted(res);
+}
+
+template <typename _V>
 void TableF<_V>::restricted(const Assignment& a)
 {
   for (typename TableF::iterator it = this->begin(); it != this->end();)
@@ -140,7 +148,7 @@ typename TableF<_V>::factor_value_type TableF<_V>::get(const Assignment& a) cons
     if (it == a.end()) return 0.0;
     else temp[v] = (*it).second;
   }
-  return this->operator [](temp);
+  return this->Map<Assignment, _V, AssignmentCompare>::get(temp);
 }
 
 END_GRAPHICAL_MODEL_NAMESPACE;

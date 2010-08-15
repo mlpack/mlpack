@@ -21,7 +21,7 @@ public:
   typedef typename FactorGraph<_F>::vertex_type            vertex_type;
   typedef typename FactorGraph<_F>::vertex_vector_type     vertex_vector_type;
   typedef Map<Value, factor_value_type, ValueCompare>      belief_type;
-  typedef Map<const Variable*, belief_type>                belief_map_type;
+  typedef Map<vertex_type, belief_type>                    belief_map_type;
 public:
   /** Constructor, preparing to make inference on a factor graph */
   NaiveInference(const graph_type& graph);
@@ -30,7 +30,8 @@ public:
   void run();
 
   /** Return the result as a belief map (from variables to their beliefs) */
-  belief_map_type beliefs() const { return beliefs_; }
+  const belief_map_type& beliefs() const { return beliefs_; }
+  const graph_type& graph() const { return graph_; }
 
   /** Return belief of certain variable */
   belief_type belief(const Variable* var) const;
@@ -81,8 +82,8 @@ template <typename _F> void NaiveInference<_F>::run()
 template <typename _F> void NaiveInference<_F>::DFSorder()
 {
   const vertex_vector_type& vertices = graph_.vertices();
-  for (unsigned int i = 0; i < vertices.size(); i++)
-    visited_[vertices[i]] = false;
+  BOOST_FOREACH (const vertex_type& u, vertices)
+    visited_[u] = false;
   factorClusters_.clear();
   int cluster = 0;
   BOOST_FOREACH (const vertex_type& u, vertices)
@@ -108,12 +109,23 @@ template <typename _F> void NaiveInference<_F>::visitFactors(const vertex_vector
 {
   if (index == factors.size())  // if we have the product of factors
   {
+    // Update the belief of variables
     BOOST_FOREACH(const Assignment::value_type& p, currentAsgn)
     {
       const Variable* var = p.first;
       const Value& val = p.second;
-      beliefs_[var][val] += currentVal;  // add it to the belief of each variable in the assignment
+      const vertex_type& u = graph_.dataVertexMap().get((void*) var);
+      beliefs_[u][val] += currentVal;  // add it to the belief of each variable in the assignment
     }
+    // Update the mean value of factors
+    BOOST_FOREACH(const vertex_type& u, factors)
+    {
+      const factor_value_type& f_val = graph_.factor(u).get(currentAsgn);  // u.factor
+      // currentVal is the product of all factors
+      beliefs_[u][0] += f_val*currentVal;
+      beliefs_[u][1] += currentVal;
+    }
+
     return;
   }
 
@@ -140,7 +152,12 @@ template <typename _F> void NaiveInference<_F>::initBeliefs()
     {
       const Variable* var = (const Variable*) u->variable();
       for (int val = 0; val < var->cardinality(); val++)
-        beliefs_[var][val] = factor_value_type(0.0);
+        beliefs_[u][val] = factor_value_type(0.0);
+    }
+    else  // u is a factor
+    {
+      beliefs_[u][0] = factor_value_type(0.0);   // the sum of  u.factor * (product of all factors)
+      beliefs_[u][1] = factor_value_type(0.0);   // the sum of products of all factors
     }
   }
 }
@@ -150,19 +167,31 @@ template <typename _F> void NaiveInference<_F>::normalizeBeliefs()
 {
   for (typename belief_map_type::iterator it = beliefs_.begin(); it != beliefs_.end(); it++)
   {
-    factor_value_type sum = factor_value_type(0.0);
+    const vertex_type& u = it->first;
     belief_type& blf = (*it).second;
-    for (typename belief_type::iterator bIt = blf.begin(); bIt != blf.end(); bIt++)
-      sum += (*bIt).second;
-    if (sum < factor_value_type(1e-15))  // sum is ZERO
+    if (u->isVariable())
     {
+      factor_value_type sum = factor_value_type(0.0);
       for (typename belief_type::iterator bIt = blf.begin(); bIt != blf.end(); bIt++)
-        (*bIt).second = factor_value_type(1.0) / factor_value_type(blf.size());
+        sum += (*bIt).second;
+      if (sum < factor_value_type(1e-15))  // sum is ZERO
+      {
+        for (typename belief_type::iterator bIt = blf.begin(); bIt != blf.end(); bIt++)
+          (*bIt).second = factor_value_type(1.0) / factor_value_type(blf.size());
+      }
+      else
+      {
+        for (typename belief_type::iterator bIt = blf.begin(); bIt != blf.end(); bIt++)
+          (*bIt).second /= sum;
+      }
     }
-    else
+    else // u is a factor, divide blf[0] / blf[1] = sum ( product * factor ) / sum (product)
     {
-      for (typename belief_type::iterator bIt = blf.begin(); bIt != blf.end(); bIt++)
-        (*bIt).second /= sum;
+      if (blf[1] < factor_value_type(1e-15))
+        blf[0] = factor_value_type(0.0);
+      else
+        blf[0] /= blf[1];
+      blf[1] = factor_value_type(1.0);
     }
   }
 }

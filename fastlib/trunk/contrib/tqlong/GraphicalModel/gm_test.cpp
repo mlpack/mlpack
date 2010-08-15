@@ -13,14 +13,26 @@ int main(int argc, char** argv)
 }
 
 template <typename Inference, typename Variable>
-    void printBelief(typename Inference::belief_type blf, Variable* var)
+void printBelief(const typename Inference::vertex_type& u,
+                 const typename Inference::belief_type& blf)
 {
-  BOOST_FOREACH(const typename Inference::belief_type::value_type& p, blf)
-//  for (typename Inference::belief_type::iterator it = blf.begin(); it != blf.end(); it++)
+  if (u->isVariable())
   {
-    cout << (var->valueMap()->getForward(FINITE_VALUE(p.first))) << " = (" << p.second << ") ";
+    const Variable* var = (const Variable*) u->variable();
+    cout << var->name() << " belief: ";
+    BOOST_FOREACH(const typename Inference::belief_type::value_type& p, blf)
+  //  for (typename Inference::belief_type::iterator it = blf.begin(); it != blf.end(); it++)
+    {
+      cout << (var->valueMap()->getForward(FINITE_VALUE(p.first))) << " = (" << p.second << ") ";
+    }
+    cout << endl;
   }
-  cout << endl;
+  else // the average of this factor is blf[0]
+  {
+    const typename Inference::factor_type* f = (const typename Inference::factor_type*) u->factor();
+    cout << "Factor average = " << blf.get(0) << endl;
+    f->print();
+  }
   // cout << "equal = " << (b.size() < 2 ? 0 : b[0] == b[1]) << endl;
   // cout << "greater = " << (b.size() < 2 ? 0 : b[0] > b[1]) << endl;
   // cout << "less = " << (b.size() < 2 ? 0 : b[0] < b[1]) << endl;
@@ -40,6 +52,39 @@ void testNaiveInference()
   typedef Inference::belief_map_type belief_map_type;
 //  void printBelief<Inference>(belief_type blf);
 
+  struct GraphBuilder
+  {
+    GraphBuilder(gm::Variable* rain, gm::Variable* sprinklet, gm::Variable* wet,
+                 const gm::Assignment& evidence, Graph& fg)
+    {
+      double w1[2][2] = {{0, -0.5},{-2,0.5}};
+      Factor f1(gm::Domain() << rain << wet);
+      for (int i = 0; i < 2; i++)
+        for (int j = 0; j < 2; j++)
+        {
+        Assignment a;
+        a[rain] = i;
+        a[wet] = j;
+        f1[a] = Logarithm(w1[i][j],1);
+      }
+
+      double w2[2][2] = {{0, -0.5},{-1,0}};
+      Factor f2(gm::Domain() << sprinklet << wet);
+      for (int i = 0; i < 2; i++)
+        for (int j = 0; j < 2; j++)
+        {
+        Assignment a;
+        a[sprinklet] = i;
+        a[wet] = j;
+        f2[a] = Logarithm(w2[i][j],1);
+      }
+      Factor f1_res(f1, evidence);
+      Factor f2_res(f2, evidence);
+      fg.add(f1_res);
+      fg.add(f2_res);
+    }
+  };
+
   gm::Universe u;
 
   value_map_type vMap;
@@ -51,49 +96,24 @@ void testNaiveInference()
 
   u.print("universe");
 
-  double w1[2][2] = {{0, -0.5},{-2,0}};
-  Factor f1(gm::Domain() << rain << wet);
-  for (int i = 0; i < 2; i++)
-    for (int j = 0; j < 2; j++)
-    {
-    Assignment a;
-    a[rain] = i;
-    a[wet] = j;
-    f1[a] = Logarithm(w1[i][j],1);
-  }
-
-  double w2[2][2] = {{0, -0.5},{-1,0}};
-  Factor f2(gm::Domain() << sprinklet << wet);
-  for (int i = 0; i < 2; i++)
-    for (int j = 0; j < 2; j++)
-    {
-    Assignment a;
-    a[sprinklet] = i;
-    a[wet] = j;
-    f2[a] = Logarithm(w2[i][j],1);
-  }
-
   Assignment e;
-  e[rain] = 1;
-  e[sprinklet] = 1;
-  f1.restricted(e);
-  f2.restricted(e);
+  e[rain] = 0;
+//  e[sprinklet] = 1;
+  e[wet] = 1;
   e.print("Evidence");
 
   Graph fg;
-  fg.add(f1);
-  fg.add(f2);
+  GraphBuilder(rain, sprinklet, wet, e, fg);
   fg.print("Factor graph");
 
   Inference bp(fg);
-
   bp.run();
 
+  cout << "---------------------- Inference result ----------------------" << endl;
   belief_map_type beliefs = bp.beliefs();
-  BOOST_FOREACH (const belief_map_type::value_type& blf, beliefs)
+  BOOST_FOREACH (const belief_map_type::value_type& p, beliefs)
   {
-    cout << blf.first->name() << " belief: ";
-    printBelief<Inference, Variable>(blf.second, (Variable*) (blf.first));
+    printBelief<Inference, Variable>(p.first, p.second);
   }
 }
 

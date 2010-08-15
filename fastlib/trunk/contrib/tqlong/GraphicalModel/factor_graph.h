@@ -46,6 +46,7 @@ public:
   typedef Map<vertex_type, Vector<vertex_type> >                   neighbor_map_type;
   typedef _F                                                       factor_type;
   typedef typename _F::factor_value_type                           factor_value_type;
+  typedef Map<void*, vertex_type>                                  data_vertex_map_type;
 public:
   /** Add a factor to the graph, the graph is augmented with new nodes and edges */
   void add(const factor_type& f);
@@ -71,17 +72,21 @@ public:
   /** Destructor, delete nodes and edges allocated by add() */
   ~FactorGraph();
 
+  /** Return the data-to-vertex map */
+  const data_vertex_map_type& dataVertexMap() const { return vertexMap_; }
+
   void print(const std::string& name = "") const;
 protected:
   vertex_vector_type vertices_;
   neighbor_map_type neighborMap_;
-  Map<void*, vertex_type> vertexMap_;
+  data_vertex_map_type vertexMap_;
 };
 
 // add new factor to the graph, allocate new nodes and edges (neighborMap_)
 // if necessary
 template <typename _F> void FactorGraph<_F>::add(const factor_type& f)
 {
+  if (f.empty()) return;
   factor_type* f_ = new factor_type(f);   // remember to delete (1)
   vertex_type vf_ = new Vertex(f_, true); // remember to delete (2)
   Vector<vertex_type> neighbor_;
@@ -131,10 +136,10 @@ template <typename _F> FactorGraph<_F>::~FactorGraph()
 {
   for (unsigned int i = 0; i < vertices_.size(); i++)
   {
-    cout << "DELETE Vertex " << (vertices_[i]->type() == 0 ?
-                                 std::string("Variable ")+vertices_[i]->variable()->name() :
-                                 std::string("Factor"))
-         << endl;
+//    cout << "DELETE Vertex " << (vertices_[i]->type() == 0 ?
+//                                 std::string("Variable ")+vertices_[i]->variable()->name() :
+//                                 std::string("Factor"))
+//         << endl;
     if (vertices_[i]->type() == 1) delete (factor_type*) vertices_[i]->factor();   //  (1)
     delete vertices_[i];                                                           //  (2)
   }

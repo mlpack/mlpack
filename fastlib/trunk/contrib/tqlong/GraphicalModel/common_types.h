@@ -49,8 +49,15 @@ public:
   typedef typename std::map<_Key, _Tp, _Compare, _Alloc>::key_type     key_type;
   typedef typename std::map<_Key, _Tp, _Compare, _Alloc>::value_type   value_type;
   typedef typename std::map<_Key, _Tp, _Compare, _Alloc>::mapped_type  mapped_type;
+  typedef typename std::map<_Key, _Tp, _Compare, _Alloc>::const_iterator  const_iterator;
 
   bool contains(const key_type& x) const { return this->find(x) != this->end(); }
+  const mapped_type& get(const key_type& x) const
+  {
+    const_iterator it = this->find(x);
+    DEBUG_ASSERT(it != this->end());
+    return it->second;
+  }
 };
 
 /** The dual map for two types with comparison capability */
