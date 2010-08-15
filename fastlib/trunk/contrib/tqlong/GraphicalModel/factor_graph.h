@@ -1,13 +1,6 @@
 #ifndef FACTOR_GRAPH_H
 #define FACTOR_GRAPH_H
-#include <cassert>
 
-#include <set>
-#include <string>
-#include <vector>
-#include <map>
-
-#include <sstream>
 #include <iostream>
 
 #include "gm.h"
@@ -95,10 +88,10 @@ template <typename _F> void FactorGraph<_F>::add(const factor_type& f)
 
   vertexMap_[(void*) f_] = vf_;
   const Domain& dom = f_->domain();
-  for (unsigned int i = 0; i < dom.size(); i++)
+  BOOST_FOREACH(const Variable* var, dom)
   {
     vertex_type v;
-    void* key = (void*) dom[i];
+    void* key = (void*) var;
     if (vertexMap_.contains(key))
       v = vertexMap_[key];
     else
@@ -116,18 +109,16 @@ template <typename _F> void FactorGraph<_F>::add(const factor_type& f)
 
 template <typename _F> void FactorGraph<_F>::print() const
 {
-  for (unsigned int i = 0; i < vertices_.size(); i++)
+  BOOST_FOREACH(const vertex_type& u, vertices_)
   {
-    const vertex_type& u = vertices_[i];
     const vertex_vector_type& nb = neighbors(u);
 
     cout << "Vertex: " << (u->isVariable() ? "Variable " : "Factor ");
     if (u->isVariable()) { u->variable()->print(); cout << endl; }
     else { cout << endl; factor(u).print(); }
     cout << "  Neighbors:";
-    for (unsigned int j = 0; j < nb.size(); j++)
+    BOOST_FOREACH(const vertex_type& v, nb)
     {
-      const vertex_type& v = nb[j];
       cout << " " << (v->type() == 0 ? v->variable()->name() + " (Variable)" : "(Factor)");
     }
     cout << endl;

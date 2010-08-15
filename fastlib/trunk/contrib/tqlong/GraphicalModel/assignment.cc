@@ -6,29 +6,34 @@ BEGIN_GRAPHICAL_MODEL_NAMESPACE;
 // check if the values are in variables' value set
 bool Assignment::checkFiniteValueIntegrity() const
 {
-  for (Assignment::const_iterator it = this->begin(); it != this->end(); it++)
+  BOOST_FOREACH (const value_type& pair, *this)
   {
-    if (it->first->type() != VARIABLE_FINITE) return false;
-    const Variable* var = (const Variable*) it->first;
-    const Value& val = it->second;
+    if (pair.first->type() != VARIABLE_FINITE) return false;
+    const Variable* var = (const Variable*) pair.first;
+    const Value& val = pair.second;
     if ((int) val < var->cardinality()) return false;
   }
   return true;
+//  for (Assignment::const_iterator it = this->begin(); it != this->end(); it++)
+//  {
+//    if (it->first->type() != VARIABLE_FINITE) return false;
+//    const Variable* var = (const Variable*) it->first;
+//    const Value& val = it->second;
+//    if ((int) val < var->cardinality()) return false;
+//  }
+//  return true;
 }
 
 void Assignment::print(const std::string& name) const
 {
   cout << name; if (!name.empty()) cout << " = ";
-  const Assignment& a = *this;
-  if (a.begin() == a.end())
+  int i = 0;
+  cout << "(";
+  BOOST_FOREACH (const value_type& p, (*this))
   {
-    cout << "()" << endl;
-    return;
+    if (i++ > 0) cout << ", ";
+    cout << p.first->name() << " = " << FINITE_VALUE(p.second);
   }
-  gm::Assignment::const_iterator jt = a.begin();
-  cout << "(" << jt->first->name() << " = " << FINITE_VALUE(jt->second);
-  for (jt++; jt != a.end(); jt++)
-    cout << ", " << jt->first->name() << " = " << FINITE_VALUE(jt->second);
   cout << ")" << endl;
 }
 
@@ -37,10 +42,10 @@ void Assignment::print(const std::string& name) const
 bool Assignment::agree(const Assignment& a) const
 {
   ValueCompare less;
-  for (Assignment::const_iterator it = this->begin(); it != this->end(); it++)
+  BOOST_FOREACH (const value_type& p, (*this))
   {
-    const Variable* var = it->first;
-    const Value& val = it->second;
+    const Variable* var = p.first;
+    const Value& val = p.second;
 
     Assignment::const_iterator aIt = a.find(var);
     if (aIt == a.end()) continue; // a does not have assignment for var

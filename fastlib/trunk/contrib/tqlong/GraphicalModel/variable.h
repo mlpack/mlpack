@@ -77,9 +77,10 @@ public:
   void print() const
   {
     cout << "name = " << name_ << " (discrete):";
-    const typename int_value_map_type::forward_map_type& map = valueMap_->forwardMap();
-    for (typename int_value_map_type::forward_map_type::const_iterator it = map.begin(); it != map.end(); it++)
-      cout << " " << (it->first) << " <--> " << (it->second);
+    typedef typename int_value_map_type::forward_map_type map_t;
+    const map_t& map = valueMap_->forwardMap();
+    BOOST_FOREACH (const typename map_t::value_type& p, map)
+      cout << " " << (p.first) << " <--> " << (p.second);
   }
 protected:
   int cardinality_;

@@ -15,6 +15,7 @@
 
 // the following order of include statements is important
 #include <fastlib/fastlib.h>
+#include <boost/foreach.hpp>
 #include "common_types.h"
 #include "value.h"
 #include "variable.h"

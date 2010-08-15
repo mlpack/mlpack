@@ -15,10 +15,10 @@ int main(int argc, char** argv)
 template <typename Inference, typename Variable>
     void printBelief(typename Inference::belief_type blf, Variable* var)
 {
-  for (typename Inference::belief_type::iterator it = blf.begin(); it != blf.end(); it++)
+  BOOST_FOREACH(const typename Inference::belief_type::value_type& p, blf)
+//  for (typename Inference::belief_type::iterator it = blf.begin(); it != blf.end(); it++)
   {
-    const gm::Value& val = (*it).first;
-    cout << (var->valueMap()->getForward(FINITE_VALUE(val))) << " = (" << (*it).second << ") ";
+    cout << (var->valueMap()->getForward(FINITE_VALUE(p.first))) << " = (" << p.second << ") ";
   }
   cout << endl;
   // cout << "equal = " << (b.size() < 2 ? 0 : b[0] == b[1]) << endl;
@@ -78,6 +78,7 @@ void testNaiveInference()
   e[sprinklet] = 1;
   f1.restricted(e);
   f2.restricted(e);
+  e.print("Evidence");
 
   Graph fg;
   fg.add(f1);
@@ -89,10 +90,10 @@ void testNaiveInference()
   bp.run();
 
   belief_map_type beliefs = bp.beliefs();
-  for (belief_map_type::iterator it = beliefs.begin(); it != beliefs.end(); it++)
+  BOOST_FOREACH (const belief_map_type::value_type& blf, beliefs)
   {
-    cout << (*it).first->name() << " belief: ";
-    printBelief<Inference, Variable>((*it).second, (Variable*) (it->first));
+    cout << blf.first->name() << " belief: ";
+    printBelief<Inference, Variable>(blf.second, (Variable*) (blf.first));
   }
 }
 

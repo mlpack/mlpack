@@ -8,6 +8,7 @@ set(SOURCES
   assignment
   factor_template
   factor_graph
+  naive_inference
   inference
   logarithm
   gm
