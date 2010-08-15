@@ -1,6 +1,7 @@
 #ifndef FACTOR_TEMPLATE_H
 #define FACTOR_TEMPLATE_H
 
+#include <algorithm>
 #include "gm.h"
 
 BEGIN_GRAPHICAL_MODEL_NAMESPACE;
@@ -34,7 +35,7 @@ public:
   factor_value_type& operator[](const Assignment& a);
 
   /** For get(a), the assignment could be a superset of the domain */
-  factor_value_type get(const Assignment& a);
+  factor_value_type get(const Assignment& a) const;
 
   /** Return the domain of this factor */
   const Domain& domain();
@@ -85,26 +86,22 @@ template <typename _V>
 TableF<_V>::TableF(const Domain& dom, const Assignment& res) : dom_(dom)
 {
   Assignment temp;
-  for (unsigned int i = 0; i < dom.size(); i++)
-    DEBUG_ASSERT(dom[i]->type() == VARIABLE_FINITE);
+  BOOST_FOREACH(const Variable* v, dom)
+    DEBUG_ASSERT(v->type() == VARIABLE_FINITE);
   genAssignments(dom, 0, res, temp);
 }
 
-// remove assignments that do not agree with variable in a assignment
 template <typename _V>
 void TableF<_V>::restricted(const Assignment& a)
 {
-  Vector<typename TableF::iterator> its;
-  for (typename TableF::iterator it = this->begin(); it != this->end(); it++)
+  for (typename TableF::iterator it = this->begin(); it != this->end();)
   {
     const Assignment& b = it->first;
-    if (!b.agree(a)) {
-      //        b.print("erase");
-      its << it;
-    }
+    if (!b.agree(a))
+      this->erase(it++);
+    else
+      it++;
   }
-  for (typename Vector<typename TableF::iterator>::iterator it = its.begin(); it != its.end(); it++)
-    this->erase(*it);
 }
 
 template <typename _V>
@@ -124,24 +121,24 @@ template <typename _V>
 void TableF<_V>::print(const std::string& name) const
 {
   cout << name; if (!name.empty()) cout << " = " << endl;
-  for (typename TableF::const_iterator it = this->begin(); it != this->end(); it++)
+  BOOST_FOREACH(const typename TableF::value_type& p, *this)
   {
-    const gm::Assignment& a = it->first;
-    const factor_value_type&  val = it->second;
+    const gm::Assignment& a = p.first;
+    const factor_value_type&  val = p.second;
     cout << val << " <-- "; a.print();
   }
 }
 
 template <typename _V>
-typename TableF<_V>::factor_value_type TableF<_V>::get(const Assignment& a)
+typename TableF<_V>::factor_value_type TableF<_V>::get(const Assignment& a) const
 {
   // check if dom is a subset of variables in a
   Assignment temp;
-  for (unsigned int i = 0; i < dom_.size(); i++)
+  BOOST_FOREACH(const Variable* v, dom_)
   {
-    Assignment::const_iterator it = a.find(dom_[i]);
+    Assignment::const_iterator it = a.find(v);
     if (it == a.end()) return 0.0;
-    else temp[dom_[i]] = (*it).second;
+    else temp[v] = (*it).second;
   }
   return this->operator [](temp);
 }

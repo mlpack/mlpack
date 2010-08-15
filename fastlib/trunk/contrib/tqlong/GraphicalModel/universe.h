@@ -73,9 +73,8 @@ public:
   void print(const std::string& name = "") const
   {
     cout << name; if (!name.empty()) cout << " = " << endl;
-    for (gm::Universe::const_iterator i = this->begin(); i != this->end(); i++)
+    BOOST_FOREACH(const Variable* var, *this)
     {
-      const gm::Variable* var = (*i);
       var->print();
       cout << endl;
 //      std::cout << "name = " << var->name();
