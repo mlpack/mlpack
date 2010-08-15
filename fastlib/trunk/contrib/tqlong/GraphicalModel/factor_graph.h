@@ -71,7 +71,7 @@ public:
   /** Destructor, delete nodes and edges allocated by add() */
   ~FactorGraph();
 
-  void print() const;
+  void print(const std::string& name = "") const;
 protected:
   vertex_vector_type vertices_;
   neighbor_map_type neighborMap_;
@@ -107,8 +107,9 @@ template <typename _F> void FactorGraph<_F>::add(const factor_type& f)
   vertices_ << vf_;
 }
 
-template <typename _F> void FactorGraph<_F>::print() const
+template <typename _F> void FactorGraph<_F>::print(const std::string& name) const
 {
+  cout << name; if (!name.empty()) cout << " = " << endl;
   BOOST_FOREACH(const vertex_type& u, vertices_)
   {
     const vertex_vector_type& nb = neighbors(u);
