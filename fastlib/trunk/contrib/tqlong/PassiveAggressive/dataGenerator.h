@@ -55,7 +55,9 @@ public:
   DatasetGenerator(const char* filename, index_t n_laps = 1) {
     m_dpData = new Dataset;
     if ( m_dpData->InitFromFile(filename) != SUCCESS_PASS )
+    {
       DEBUG_ASSERT(0);
+    }
     m_iLaps = n_laps;
     m_iCurrentPoint = 0;
     m_bFromFile = true;
