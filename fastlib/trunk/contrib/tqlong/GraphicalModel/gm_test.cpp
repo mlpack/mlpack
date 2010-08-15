@@ -83,7 +83,7 @@ void testNaiveInference()
   Graph fg;
   fg.add(f1);
   fg.add(f2);
-  fg.print();
+  fg.print("Factor graph");
 
   Inference bp(fg);
 
