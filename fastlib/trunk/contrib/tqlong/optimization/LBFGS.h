@@ -132,7 +132,7 @@ double LBFGS<F>::optimize(variable_type &sol) {
     la::ScaleOverwrite(-1.0, grad, &new_y);
     grad.CopyValues(this->grad_p);
     la::AddExpert(1.0, grad, &new_y);          //  y = g_n - g_n-1
-    need_fixed = la::Dot(new_s, new_y) < 0;    //  if false then use LBFGSDirection
+    need_fixed = la::Dot(new_s, new_y) < 0;    //  if <s,y> >= 0 then use LBFGSDirection
 
     MemoryUpdate(new_s, new_y);
 
