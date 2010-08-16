@@ -42,7 +42,9 @@ class SparseGreedyGprModel {
       const ml::Dictioanay &dictionary_in,
       Vector *target_subset_out) const;
 
-    double QuadraticObjective_(const ml::Dictionary &dictionary_in) const;
+    double QuadraticObjective_(
+      const ml::Dictionary &dictionary_in,
+      bool for_coeffs) const;
 
     template<typename CovarianceType>
     void ComputeKernelValues_(
@@ -81,9 +83,15 @@ class SparseGreedyGprModel {
 
     void FinalizeModel();
 
-    void PredictMean(const Vector &point) const;
+    template<typename CovarianceType>
+    void PredictMean(
+      const CovarianceType &covariance,
+      const Vector &point) const;
 
-    void PredictVariance(const Vector &point) const;
+    template<typename CovarianceType>
+    void PredictVariance(
+      const CovarianceType &covariance,
+      const Vector &point) const;
 };
 
 class SparseGreedyGpr {

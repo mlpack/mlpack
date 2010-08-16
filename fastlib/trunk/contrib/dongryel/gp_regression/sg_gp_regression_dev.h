@@ -14,14 +14,20 @@
 namespace ml {
 namespace gp_regression {
 
-void SparseGreedyGprModel::PredictMean(const Vector &point) const {
+template<typename CovarianceType>
+void SparseGreedyGprModel::PredictMean(
+  const CovarianceType &covariance,
+  const Vector &point) const {
 
   // Get the indices of the points in the dictionary.
   const std::vector<int> &point_indices_in_dictionary =
-    dictionary_.point_indices_in_dictionary();
+    dictionary_for_error_.point_indices_in_dictionary();
 }
 
-void SparseGreedyGprModel::PredictVariance(const Vector &point) const {
+template<typename CovarianceType>
+void SparseGreedyGprModel::PredictVariance(
+  const CovarianceType &covariance,
+  const Vector &point) const {
 
   // Get the indices of the points in the dictionary.
   const std::vector<int> &point_indices_in_dictionary =
@@ -62,16 +68,20 @@ void SparseGreedyGprModel::ExtractTargetSubset_(
 }
 
 double SparseGreedyGprModel::QuadraticObjective_(
-  const ml::Dictionary &dictionary_in) const {
-
-  // The target vector that is composed of the dictionary basis
-  // points.
-  Vector target_subset;
-  ExtractTargetSubset_(dictionary_in, &target_subset);
+  const ml::Dictionary &dictionary_in,
+  bool for_coeffs) const {
 
   // Compute the objective, -0.5 y^T K^{1} y.
   Vector product;
-  SolveSystem_(dictionary_in, target_subset, &product);
+  if(for_coeffs) {
+    Vector weighted_target_subset;
+    SolveSystem_(dictionary_in, weighted_target_subset, &product);
+  }
+  else {
+    Vector target_subset;
+    ExtractTargetSubset_(dictionary_in, &target_subset);
+    SolveSystem_(dictionary_in, target_subset, &product);
+  }
 
   return - 0.5 * la::Dot(product, target_subset);
 }
@@ -195,7 +205,7 @@ double SparseGreedyGprModel::AddOptimalPoint(
       candidate_index, new_column_vector, new_self_value);
 
     // Compute the objective function value for the coefficients.
-    double objective_value = QuadraticObjective_(dictionary_copy);
+    double objective_value = QuadraticObjective_(dictionary_copy, for_coeffs);
 
     if(objective_value < optimum_value) {
       optimal_point_index = i;
