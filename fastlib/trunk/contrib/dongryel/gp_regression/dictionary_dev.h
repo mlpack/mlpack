@@ -24,6 +24,7 @@ Dictionary::Dictionary() {
   table_ = NULL;
   current_kernel_matrix_ = NULL;
   current_kernel_matrix_inverse_ = NULL;
+  adding_threshold_ = 0;
 }
 
 Dictionary::~Dictionary() {
@@ -48,6 +49,7 @@ Dictionary::Dictionary(const Dictionary &dictionary_in) {
   current_kernel_matrix_inverse_ = new Matrix();
   current_kernel_matrix_inverse_->Copy(
     * dictionary_in.current_kernel_matrix_inverse());
+  adding_threshold_ = dictionary_in.adding_threshold();
 }
 
 void Dictionary::inactive_indices(
@@ -119,6 +121,14 @@ Matrix *Dictionary::current_kernel_matrix_inverse() {
   return current_kernel_matrix_inverse_;
 }
 
+double Dictionary::adding_threshold() const {
+  return adding_threshold_;
+}
+
+void Dictionary::set_adding_threshold(double adding_threshold_in) {
+  adding_threshold_ = adding_threshold_in;
+}
+
 int Dictionary::size() const {
   return point_indices_in_dictionary_.size();
 }
@@ -127,10 +137,6 @@ void Dictionary::AddBasis(
   int new_point_index,
   const Vector &new_column_vector,
   double self_value) {
-
-  // The threshold for determining whether to add a given new
-  // point to the dictionary or not.
-  const double adding_threshold = 1e-3;
 
   // Compute the matrix-vector product.
   Vector inverse_times_column_vector;
@@ -146,7 +152,7 @@ void Dictionary::AddBasis(
 
   // If the projection error is above the threshold, add it to the
   // dictionary.
-  if(projection_error > adding_threshold) {
+  if(projection_error > adding_threshold_) {
     UpdateDictionary_(
       new_point_index,
       new_column_vector,

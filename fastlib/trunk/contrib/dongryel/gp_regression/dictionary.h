@@ -31,6 +31,8 @@ class Dictionary {
 
     Matrix *current_kernel_matrix_inverse_;
 
+    double adding_threhsold_;
+
   private:
 
     void RandomPermutation_(std::vector<int> &permutation);
@@ -43,6 +45,10 @@ class Dictionary {
       const Vector &inverse_times_column_vector);
 
   public:
+
+    double adding_threshold() const;
+
+    void set_adding_threshold(double adding_threshold_in);
 
     void inactive_indices(std::vector<int> *inactive_indices_out) const;
 
