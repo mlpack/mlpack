@@ -54,14 +54,14 @@ class SparseGreedyGprModel {
       int candidate_index,
       const Vector &kernel_values,
       double noise_level_in,
-      Vector *new_column_vector_out,
+      std::vector<double> *new_column_vector_out,
       double *new_self_value_out) const;
 
     void FillKernelMatrix_(
       int candidate_index,
       const Vector &kernel_values,
       double noise_level_in,
-      Vector *new_column_vector_out,
+      std::vector<double> *new_column_vector_out,
       double *new_self_value_out) const;
 
   public:
@@ -80,6 +80,10 @@ class SparseGreedyGprModel {
       bool for_coeffs);
 
     void FinalizeModel();
+
+    void PredictMean(const Vector &point) const;
+
+    void PredictVariance(const Vector &point) const;
 };
 
 class SparseGreedyGpr {
@@ -99,8 +103,6 @@ class SparseGreedyGpr {
       double precision_in,
       double optimum_value,
       double optmum_value_for_error) const;
-
-    void InitInactiveSet_(std::vector<int> *inactive_set_out) const;
 
     void ChooseRandomSubset_(
       const std::vector<int> &inactive_set,
