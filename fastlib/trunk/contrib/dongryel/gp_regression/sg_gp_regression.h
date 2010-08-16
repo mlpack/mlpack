@@ -38,13 +38,26 @@ class SparseGreedyGprModel {
       const Vector &right_hand_side_in,
       Vector *solution_out) const;
 
+    void ExtractWeightedTargetSubset_(
+      const ml::Dictioanay &dictionary_in,
+      const std::vector<double> &additional_kernel_values_in,
+      Vector *target_subset_out) const;
+
     void ExtractTargetSubset_(
       const ml::Dictioanay &dictionary_in,
       Vector *target_subset_out) const;
 
     double QuadraticObjective_(
       const ml::Dictionary &dictionary_in,
+      const std::vector<double> &kernel_values_in,
       bool for_coeffs) const;
+
+    template<typename CovarianceType>
+    void ComputeKernelValues_(
+      const CovarianceType &covariance_in,
+      const std::vector<int> &point_indices_in_dictionary,
+      const Vector &point,
+      Vector *kernel_values_out) const;
 
     template<typename CovarianceType>
     void ComputeKernelValues_(
@@ -84,12 +97,12 @@ class SparseGreedyGprModel {
     void FinalizeModel();
 
     template<typename CovarianceType>
-    void PredictMean(
+    double PredictMean(
       const CovarianceType &covariance,
       const Vector &point) const;
 
     template<typename CovarianceType>
-    void PredictVariance(
+    double PredictVariance(
       const CovarianceType &covariance,
       const Vector &point) const;
 };

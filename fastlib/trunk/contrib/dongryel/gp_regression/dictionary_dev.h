@@ -28,10 +28,10 @@ Dictionary::Dictionary() {
 }
 
 Dictionary::~Dictionary() {
-  if(current_kernel_matrix_ != NULL) {
+  if (current_kernel_matrix_ != NULL) {
     delete current_kernel_matrix_;
   }
-  if(current_kernel_matrix_inverse_ != NULL) {
+  if (current_kernel_matrix_inverse_ != NULL) {
     delete current_kernel_matrix_inverse_;
   }
 }
@@ -57,8 +57,8 @@ void Dictionary::inactive_indices(
 
   // Scan the in_dictionary list and build the inactive index set.
   inactive_indices_out->resize(0);
-  for(int i = 0; i < in_dictionary_.size(); i++) {
-    if(in_dictionary_[i] == false) {
+  for (int i = 0; i < in_dictionary_.size(); i++) {
+    if (in_dictionary_[i] == false) {
       inactive_indices_out->push_back(i);
     }
   }
@@ -83,12 +83,12 @@ void Dictionary::UpdateDictionary_(
     current_kernel_matrix_->n_rows() + 1,
     current_kernel_matrix_->n_cols() + 1);
 
-  for(int j = 0; j < current_kernel_matrix_->n_cols(); j++) {
-    for(int i = 0; i < current_kernel_matrix_->n_rows(); i++) {
+  for (int j = 0; j < current_kernel_matrix_->n_cols(); j++) {
+    for (int i = 0; i < current_kernel_matrix_->n_rows(); i++) {
       new_kernel_matrix->set(i, j, current_kernel_matrix_->get(i, j));
     }
   }
-  for(int j = 0; j < current_kernel_matrix_->n_cols(); j++) {
+  for (int j = 0; j < current_kernel_matrix_->n_cols(); j++) {
     new_kernel_matrix->set(
       j, current_kernel_matrix_->n_cols(), new_column_vector[j]);
     new_kernel_matrix->set(
@@ -138,11 +138,11 @@ void Dictionary::AddBasis(
   const std::vector<double> &new_column_vector_in,
   double self_value) {
 
-  if(new_column_vector_in.size() > 0) {
+  if (new_column_vector_in.size() > 0) {
 
     Vector new_column_vector;
     new_column_vector.Init(new_column_vector_in.size());
-    for(int i = 0; i < new_column_vector.length(); i++) {
+    for (int i = 0; i < new_column_vector.length(); i++) {
       new_column_vector[i] = new_column_vector_in[i];
     }
 
@@ -160,7 +160,7 @@ void Dictionary::AddBasis(
 
     // If the projection error is above the threshold, add it to the
     // dictionary.
-    if(projection_error > adding_threshold_) {
+    if (projection_error > adding_threshold_) {
       UpdateDictionary_(
         new_point_index,
         new_column_vector,
@@ -191,7 +191,7 @@ void Dictionary::Init(const Matrix *table_in) {
   // Generate a random permutation and initialize the inital
   // dictionary which consists of the first random point.
   random_permutation_.resize(table_in->n_cols());
-  for(int i = 0; i < table_in->n_cols(); i++) {
+  for (int i = 0; i < table_in->n_cols(); i++) {
     random_permutation_[i] = i;
     in_dictionary_[i] = false;
     training_index_to_dictionary_position_[i] = -1;
