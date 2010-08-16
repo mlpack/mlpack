@@ -69,7 +69,7 @@ class BlockCoordDescentResult: boost::noncopyable {
 
     void Init(bool initialize_result,
               const fl::data::MonolithicPoint<double> &right_hand) {
-      if(initialize_result) {
+      if (initialize_result) {
         gradient_.Init(right_hand.length());
         solution_.Init(right_hand.length());
       }
@@ -156,7 +156,7 @@ class BlockCoordDescentDelta: boost::noncopyable {
     }
 
     template < typename Matrix, typename KernelType,
-             typename double >
+    typename double >
     void Update(const Matrix &table, const KernelType &kernel,
                 int new_index, double self_kernel_value,
                 const fl::data::MonolithicPoint<double> &gradient) {
@@ -166,7 +166,7 @@ class BlockCoordDescentDelta: boost::noncopyable {
       beta.Init(active_set_.size());
       beta.SetZero();
 
-      for(int i = 0; i < active_set_.size(); i++) {
+      for (int i = 0; i < active_set_.size(); i++) {
 
         // Compute the kernel value with the current active point.
         int active_point_id = active_set_[i];
@@ -182,7 +182,7 @@ class BlockCoordDescentDelta: boost::noncopyable {
 
         // Compute the beta by multiplying the old inverse by
         // the the column we are adding into the kernel matrix.
-        for(int j = 0; j < active_set_.size(); j++) {
+        for (int j = 0; j < active_set_.size(); j++) {
           beta[j] += kernel_matrix_.get(i, active_set_.size()) *
                      inverse_.get(j, i);
         }
@@ -193,23 +193,23 @@ class BlockCoordDescentDelta: boost::noncopyable {
                          self_kernel_value);
 
       // Compute eta.
-      for(int i = 0; i < active_set_.size(); i++) {
+      for (int i = 0; i < active_set_.size(); i++) {
         eta += kernel_matrix_.get(active_set_.size(), i) * beta[i];
       }
       eta = 1.0 / (self_kernel_value - eta);
 
       // Update the inverse.
-      for(int j = 0; j < active_set_.size() + 1; j++) {
-        for(int i = 0; i < active_set_.size() + 1; i++) {
+      for (int j = 0; j < active_set_.size() + 1; j++) {
+        for (int i = 0; i < active_set_.size() + 1; i++) {
           double increment = eta;
 
-          if(i < active_set_.size()) {
+          if (i < active_set_.size()) {
             increment *= beta[i];
           }
           else {
             increment *= (-1);
           }
-          if(j < active_set_.size()) {
+          if (j < active_set_.size()) {
             increment *= beta[j];
           }
           else {
@@ -223,12 +223,12 @@ class BlockCoordDescentDelta: boost::noncopyable {
       // Update the delta solution by computing the dot product
       // between beta and the current gradient.
       double factor = 0;
-      for(int i = 0; i < active_set_.size(); i++) {
+      for (int i = 0; i < active_set_.size(); i++) {
         factor += beta[i] * gradient[active_set_[i]];
       }
       factor -= gradient[new_index];
       factor *= eta;
-      for(int i = 0; i < active_set_.size(); i++) {
+      for (int i = 0; i < active_set_.size(); i++) {
         delta_solution_[active_set_[i]] -= factor * beta[i];
       }
       delta_solution_[new_index] += factor;
@@ -252,7 +252,7 @@ class BlockCoordDescentDelta: boost::noncopyable {
       temp_gradient_info_.SetZero();
       inactive_set_.resize(num_points_);
       active_set_.resize(0);
-      for(int i = 0; i < num_points_; i++) {
+      for (int i = 0; i < num_points_; i++) {
         inactive_set_[i] = i;
       }
       inverse_.SetZero();
@@ -292,9 +292,9 @@ class SolveSubProblem {
       const std::vector<int> &active_set = delta.active_set();
       fl::dense::Matrix<double, false> &kernel_matrix = delta.kernel_matrix();
 
-      for(int j = 0; j < active_set.size(); j++) {
+      for (int j = 0; j < active_set.size(); j++) {
         int column_index = active_set[j];
-        for(int i = 0; i < active_set.size(); i++) {
+        for (int i = 0; i < active_set.size(); i++) {
           int row_index = active_set[i];
           kernel_matrix.set(
             i, j, fl::ml::KernelValue::Compute(
@@ -310,10 +310,10 @@ class SolveSubProblem {
       fl::data::MonolithicPoint<double> residual;
       residual.Alias(delta.temp_gradient_info().ptr(), kernel_matrix.n_rows());
 
-      for(int i = 0; i < active_set.size(); i++) {
+      for (int i = 0; i < active_set.size(); i++) {
         int row_index = active_set[i];
         residual[i] = right_hand_side[row_index];
-        for(int j = 0; j < active_set.size(); j++) {
+        for (int j = 0; j < active_set.size(); j++) {
           int col_index = active_set[j];
           residual[i] -= kernel_matrix.get(i, j) * current_solution[col_index];
         }
@@ -326,7 +326,7 @@ class SolveSubProblem {
       fl::data::MonolithicPoint<double> &delta_solution =
         delta.delta_solution();
       delta_solution.SetZero();
-      for(int i = 0; i < kernel_matrix.n_rows(); i++) {
+      for (int i = 0; i < kernel_matrix.n_rows(); i++) {
         int row_index = active_set[i];
         delta_solution[row_index] = -tmp_vector_[i];
       }
@@ -365,8 +365,8 @@ class SelectActiveSetTrait<fl::ml::GpRegressionComputation::GREEDY_BC> {
           max_random_set_size,
           (int)inactive_set.size());
 
-      for(int i = ((int) inactive_set.size()) - 1;
-          i >= ((int) inactive_set.size()) - (*random_set_size); i--) {
+      for (int i = ((int) inactive_set.size()) - 1;
+           i >= ((int) inactive_set.size()) - (*random_set_size); i--) {
 
         int random_index = fl::math::Random(0, i + 1);
         std::swap(inactive_set[random_index], inactive_set[i]);
@@ -426,22 +426,22 @@ class SelectActiveSetTrait<fl::ml::GpRegressionComputation::GREEDY_BC> {
         double minimum_value =
           std::numeric_limits<double>::max();
         double cached_self_kernel_value = -1;
-        for(int i = inactive_set.size() - random_set_size;
-            i < inactive_set.size(); i++) {
+        for (int i = inactive_set.size() - random_set_size;
+             i < inactive_set.size(); i++) {
           double kernel_value =
             fl::ml::KernelValue::Compute(
               table, kernel, inactive_set[i], inactive_set[i], true);
           double current_value =
             - fl::math::Sqr(temp_gradient_info[inactive_set[i]]) /
             (2.0 * kernel_value);
-          if(current_value <= minimum_value) {
+          if (current_value <= minimum_value) {
             minimum_value = current_value;
             selected_index = i;
             cached_self_kernel_value = kernel_value;
           }
         }
 
-        if(delta.current_active_set_size() == 0) {
+        if (delta.current_active_set_size() == 0) {
           inverse.set(0, 0, 1.0 / cached_self_kernel_value);
           kernel_matrix.set(0, 0, cached_self_kernel_value);
           delta_solution[inactive_set[selected_index]] =
@@ -466,15 +466,15 @@ class SelectActiveSetTrait<fl::ml::GpRegressionComputation::GREEDY_BC> {
         ChooseSubset(
           result, inactive_set, max_random_set_size, &random_set_size);
 
-        for(int i = inactive_set.size() - random_set_size;
-            i < inactive_set.size(); i++) {
+        for (int i = inactive_set.size() - random_set_size;
+             i < inactive_set.size(); i++) {
 
           // The index of the randomly chosen point.
           int random_point_index = inactive_set[i];
           double dot_product = 0;
 
           // Loop over each point in the current active set.
-          for(int j = 0; j < active_set.size(); j++) {
+          for (int j = 0; j < active_set.size(); j++) {
             int active_point_index = active_set[j];
             double kernel_value =
               fl::ml::KernelValue::Compute(
@@ -487,8 +487,8 @@ class SelectActiveSetTrait<fl::ml::GpRegressionComputation::GREEDY_BC> {
         }
 
       }
-      while(delta.current_active_set_size() < active_set_size &&
-            inactive_set.size() > 0);
+      while (delta.current_active_set_size() < active_set_size &&
+             inactive_set.size() > 0);
     }
 };
 
@@ -521,12 +521,12 @@ class SelectActiveSetTrait<fl::ml::GpRegressionComputation::CYCLIC_BC> {
       std::vector<int> &inactive_set = delta.inactive_set();
       active_set.resize(0);
       inactive_set.resize(0);
-      for(int i = 0; i < std::min(active_set_size, table.n_entries()); i++) {
+      for (int i = 0; i < std::min(active_set_size, table.n_entries()); i++) {
         int active_index = (i + starting_index_) % table.n_entries();
         active_set.push_back(active_index);
       }
-      for(int i = std::min(active_set_size, table.n_entries());
-          i < table.n_entries(); i++) {
+      for (int i = std::min(active_set_size, table.n_entries());
+           i < table.n_entries(); i++) {
         int inactive_index = (i + starting_index_) % table.n_entries();
         inactive_set.push_back(inactive_index);
       }
@@ -591,7 +591,7 @@ class SelectActiveSetTrait<fl::ml::GpRegressionComputation::GRADIENT_BC> {
 
       // Sort the current gradient component by absolute magnitude and
       // select the indices with the greatest ones.
-      for(int i = 0; i < sorted_indices_.size(); i++) {
+      for (int i = 0; i < sorted_indices_.size(); i++) {
         sorted_indices_[i] = i;
       }
 
@@ -603,11 +603,11 @@ class SelectActiveSetTrait<fl::ml::GpRegressionComputation::GRADIENT_BC> {
       std::vector<int> &inactive_set = delta.inactive_set();
       active_set.resize(0);
       inactive_set.resize(0);
-      for(int i = 0; i < std::min(active_set_size, table.n_entries()); i++) {
+      for (int i = 0; i < std::min(active_set_size, table.n_entries()); i++) {
         active_set.push_back(sorted_indices_[i]);
       }
-      for(int i = std::min(active_set_size, table.n_entries());
-          i < table.n_entries(); i++) {
+      for (int i = std::min(active_set_size, table.n_entries());
+           i < table.n_entries(); i++) {
         inactive_set.push_back(sorted_indices_[i]);
       }
 
@@ -639,11 +639,11 @@ class BlockCoordDescent: private boost::noncopyable {
       fl::data::MonolithicPoint<double> &solution = result.solution();
       fl::data::MonolithicPoint<double> &gradient = result.gradient();
 
-      for(int i = 0; i < active_set.size(); i++) {
+      for (int i = 0; i < active_set.size(); i++) {
         solution[active_set[i]] -= delta_solution[active_set[i]];
 
         double dot_product = 0;
-        for(int j = 0; j < active_set.size(); j++) {
+        for (int j = 0; j < active_set.size(); j++) {
           dot_product += kernel_matrix.get(i, j) *
                          delta_solution[active_set[j]];
         }
@@ -674,7 +674,7 @@ class BlockCoordDescent: private boost::noncopyable {
         active_set_size, table.n_entries());
 
       // The main loop.
-      while(!result->IsConverged()) {
+      while (!result->IsConverged()) {
 
         active_set_selection_trait.Select(
           active_set_size, max_random_set_size, table, kernel, right_hand,

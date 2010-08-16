@@ -60,7 +60,7 @@ double Lbfgs<FunctionType>::ChooseScalingFactor_(
   const Vector &gradient) {
 
   double scaling_factor = 1.0;
-  if(iteration_num > 0) {
+  if (iteration_num > 0) {
     int previous_pos = (iteration_num - 1) % num_basis_;
     Vector s_basis;
     Vector y_basis;
@@ -113,7 +113,7 @@ bool Lbfgs<FunctionType>::LineSearch_(
     la::Dot(gradient, search_direction);
 
   // If it is not a descent direction, just report failure.
-  if(initial_search_direction_dot_gradient > 0.0) {
+  if (initial_search_direction_dot_gradient > 0.0) {
     return false;
   }
 
@@ -131,7 +131,7 @@ bool Lbfgs<FunctionType>::LineSearch_(
   const double inc = 2.1;
   const double dec = 0.5;
   double width = 0;
-  for(; ;) {
+  for (; ;) {
 
     // Perform a step and evaluate the gradient and the function
     // values at that point.
@@ -141,7 +141,7 @@ bool Lbfgs<FunctionType>::LineSearch_(
     function_->Gradient(new_iterate_tmp_, &gradient);
     num_iterations++;
 
-    if(function_value > initial_function_value + step_size *
+    if (function_value > initial_function_value + step_size *
         linear_approx_function_value_decrease) {
       width = dec;
     }
@@ -151,12 +151,12 @@ bool Lbfgs<FunctionType>::LineSearch_(
       double search_direction_dot_gradient =
         la::Dot(gradient, search_direction);
 
-      if(search_direction_dot_gradient < param_.wolfe() *
+      if (search_direction_dot_gradient < param_.wolfe() *
           initial_search_direction_dot_gradient) {
         width = inc;
       }
       else {
-        if(search_direction_dot_gradient > -param_.wolfe() *
+        if (search_direction_dot_gradient > -param_.wolfe() *
             initial_search_direction_dot_gradient) {
           width = dec;
         }
@@ -168,13 +168,13 @@ bool Lbfgs<FunctionType>::LineSearch_(
 
     // Terminate when the step size gets too small or too big or it
     // exceeds the max number of iterations.
-    if(step_size < param_.min_step()) {
+    if (step_size < param_.min_step()) {
       return false;
     }
-    if(step_size > param_.max_step()) {
+    if (step_size > param_.max_step()) {
       return false;
     }
-    if(num_iterations >= param_.max_line_search()) {
+    if (num_iterations >= param_.max_line_search()) {
       return false;
     }
 
@@ -204,7 +204,7 @@ void Lbfgs<FunctionType>::SearchDirection_(
 
 
   int limit = std::max(iteration_num - num_basis_, 0);
-  for(int i = iteration_num - 1; i >= limit; i--) {
+  for (int i = iteration_num - 1; i >= limit; i--) {
     int translated_position = i % num_basis_;
     Vector y_basis, s_basis;
     s_lbfgs_.MakeColumnVector(translated_position, &s_basis);
@@ -214,7 +214,7 @@ void Lbfgs<FunctionType>::SearchDirection_(
                                      la::Dot(s_basis, q);
   }
   la::ScaleOverwrite(scaling_factor, q, search_direction);
-  for(int i = limit; i <= iteration_num - 1; i++) {
+  for (int i = limit; i <= iteration_num - 1; i++) {
     int translated_position = i % num_basis_;
     Vector y_basis, s_basis;
     s_lbfgs_.MakeColumnVector(translated_position, &s_basis);
@@ -254,7 +254,7 @@ double Lbfgs<FunctionType>::Evaluate_(
   // value encountered during the optimization.
   double function_value = function_->Evaluate(iterate);
 
-  if(function_value < min_point_iterate_.second) {
+  if (function_value < min_point_iterate_.second) {
     min_point_iterate_.first.CopyValues(iterate);
     min_point_iterate_.second = function_value;
   }
@@ -311,11 +311,11 @@ bool Lbfgs<FunctionType>::Optimize(int num_iterations,
 
   // The main optimization loop.
   int it_num;
-  for(it_num = 0; optimize_until_convergence ||
-      it_num < num_iterations; it_num++) {
+  for (it_num = 0; optimize_until_convergence ||
+       it_num < num_iterations; it_num++) {
 
     // Break when the norm of the gradient becomes too small.
-    if(GradientNormTooSmall_(gradient)) {
+    if (GradientNormTooSmall_(gradient)) {
       break;
     }
 
@@ -336,7 +336,7 @@ bool Lbfgs<FunctionType>::Optimize(int num_iterations,
       LineSearch_(function_value, *iterate, gradient, search_direction,
                   step_size);
 
-    if(search_is_success == false) {
+    if (search_is_success == false) {
       break;
     }
 
