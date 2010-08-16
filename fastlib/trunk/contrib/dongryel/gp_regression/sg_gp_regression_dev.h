@@ -46,7 +46,11 @@ double SparseGreedyGprModel::PredictVariance(
   Vector kernel_values;
   ComputeKernelValues_(
     covariance, point_indices_in_dictionary, point, &kernel_values);
-
+  Vector left_hand_side;
+  SolveSystem_(dictionary_for_error_, kernel_values, &left_hand_side);
+  double dot_product = la::Dot(left_hand_side, dot_product);
+  double self_correlation = covariance.NormSq(point);
+  return self_correlation - dot_product;
 }
 
 void SparseGreedyGprModel::FinalizeModel() {
