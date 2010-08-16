@@ -6,8 +6,8 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef ML_GP_REGRESSION_DENSE_MATRIX_INVERSE_H
-#define ML_GP_REGRESSION_DENSE_MATRIX_INVERSE_H
+#ifndef MLPACK_GP_REGRESSION_DENSE_MATRIX_INVERSE_H
+#define MLPACK_GP_REGRESSION_DENSE_MATRIX_INVERSE_H
 
 #include "fastlib/fastlib.h"
 
