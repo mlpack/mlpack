@@ -45,7 +45,7 @@ class DotProductTrait<false> {
 };
 
 template < typename TableType, typename KernelType, bool do_centering,
-bool dotproduct_selfcase_special = false >
+         bool dotproduct_selfcase_special = false >
 class KernelLinearOperator: public LinearOperator {
 
   private:
@@ -74,23 +74,23 @@ class KernelLinearOperator: public LinearOperator {
       comm_ = &comm_in;
       map_ = &map_in;
 
-      if (do_centering) {
+      if(do_centering) {
         average_row_.Init(table_in.n_entries());
       }
       average_ = 0;
 
-      if (do_centering) {
+      if(do_centering) {
 
         // Precompute the average. This is a naive way of computing it.
-        for (int i = 0; i < table_in.n_entries(); i++) {
+        for(int i = 0; i < table_in.n_entries(); i++) {
           double average_for_i_th_point = 0;
-          for (int j = 0; j < table_in.n_entries(); j++) {
+          for(int j = 0; j < table_in.n_entries(); j++) {
             average_for_i_th_point += kernel_value(i, j);
           }
           average_for_i_th_point /= ((double) table_in.n_entries());
           average_row_[i] = average_for_i_th_point;
         }
-        for (int i = 0; i < table_in.n_entries(); i++) {
+        for(int i = 0; i < table_in.n_entries(); i++) {
           average_ += average_row_[i];
         }
         average_ /= ((double) table_in.n_entries());
@@ -125,11 +125,11 @@ class KernelLinearOperator: public LinearOperator {
 
       prods.PutScalar(0);
 
-      for (int j = 0; j < table_->n_entries(); j++) {
-        for (int i = 0; i < table_->n_entries(); i++) {
+      for(int j = 0; j < table_->n_entries(); j++) {
+        for(int i = 0; i < table_->n_entries(); i++) {
           double pair_kernel_value = (do_centering) ?
                                      centered_kernel_value(i, j) : kernel_value(i, j);
-          for (int k = 0; k < vecs.NumVectors(); k++) {
+          for(int k = 0; k < vecs.NumVectors(); k++) {
             prods.Pointers()[k][i] += pair_kernel_value * vecs.Pointers()[k][j];
           }
         }
@@ -152,7 +152,7 @@ class KernelLinearOperator: public LinearOperator {
 
 template<typename TableType, typename KernelType, bool do_centering>
 class OperatorTraits < double, Epetra_MultiVector,
-      KernelLinearOperator<TableType, KernelType, do_centering> > {
+    KernelLinearOperator<TableType, KernelType, do_centering> > {
   public:
 
     static void Apply(const Epetra_Operator& Op,

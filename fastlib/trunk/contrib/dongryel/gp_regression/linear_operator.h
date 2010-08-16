@@ -110,8 +110,8 @@ class LinearOperator: public virtual Epetra_Operator {
 
     void PrintDebug(const char *name = "", FILE *stream = stderr) const {
       fprintf(stream, "----- MATRIX ------: %s\n", name);
-      for (int r = 0; r < this->n_rows(); r++) {
-        for (int c = 0; c < this->n_cols(); c++) {
+      for(int r = 0; r < this->n_rows(); r++) {
+        for(int c = 0; c < this->n_cols(); c++) {
           fprintf(stream, "%+3.3f ", this->get(r, c));
         }
         fprintf(stream, "\n");

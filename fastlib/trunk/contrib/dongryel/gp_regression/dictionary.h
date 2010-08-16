@@ -46,51 +46,19 @@ class Dictionary {
 
     void inactive_indices(std::vector<int> *inactive_indices_out) const;
 
-    Dictionary(const Dictionary &dictionary_in) {
-      table_ = dictionary_in.table();
-      random_permutation_ = dictionary_in.random_permutation();
-      in_dictionary_ = dictionary_in.in_dictionary();
-      point_indices_in_dictionary_ =
-        dictionary_in.point_indices_in_dictionary();
-      training_index_to_dictionary_position_ =
-        dictionary_in.training_index_to_dictionary_position();
-      current_kernel_matrix_ = new Matrix();
-      current_kernel_matrix_->Copy(* dictionary_in.current_kernel_matrix());
-      current_kernel_matrix_inverse_ = new Matrix();
-      current_kernel_matrix_inverse_->Copy(
-        * dictionary_in.current_kernel_matrix_inverse());
-    }
+    Dictionary(const Dictionary &dictionary_in);
 
-    bool in_dictionary(int training_point_index) const {
-      return in_dictionary_[training_point_index];
-    }
+    bool in_dictionary(int training_point_index) const;
 
-    ~Dictionary() {
-      if (current_kernel_matrix_ != NULL) {
-        delete current_kernel_matrix_;
-      }
-      if (current_kernel_matrix_inverse_ != NULL) {
-        delete current_kernel_matrix_inverse_;
-      }
-    }
+    ~Dictionary();
 
-    Dictionary() {
-      table_ = NULL;
-      current_kernel_matrix_ = NULL;
-      current_kernel_matrix_inverse_ = NULL;
-    }
+    Dictionary();
 
-    int position_to_training_index_map(int position) const {
-      return random_permutation_[ position ];
-    }
+    int position_to_training_index_map(int position) const;
 
-    int training_index_to_dictionary_position(int training_index) const {
-      return training_index_to_dictionary_position_[training_index];
-    }
+    int training_index_to_dictionary_position(int training_index) const;
 
-    int point_indices_in_dictionary(int nth_dictionary_point_index) const {
-      return point_indices_in_dictionary_[nth_dictionary_point_index];
-    }
+    int point_indices_in_dictionary(int nth_dictionary_point_index) const;
 
     void Init(const Matrix *table_in);
 
@@ -99,37 +67,21 @@ class Dictionary {
       const Vector &new_column_vector,
       double self_value);
 
-    const Matrix *table() const {
-      return table_;
-    }
+    const Matrix *table() const;
 
-    const std::vector<int> &random_permutation() const {
-      return random_permutation_;
-    }
+    const std::vector<int> &random_permutation() const;
 
-    const std::deque<bool> &in_dictionary() const {
-      return in_dictionary_;
-    }
+    const std::deque<bool> &in_dictionary() const;
 
-    const std::vector<int> &point_indices_in_dictionary() const {
-      return point_indices_in_dictionary_;
-    }
+    const std::vector<int> &point_indices_in_dictionary() const;
 
-    const std::vector<int> &training_index_to_dictionary_position() const {
-      return training_index_to_dictionary_position_;
-    }
+    const std::vector<int> &training_index_to_dictionary_position() const;
 
-    const Matrix *current_kernel_matrix() const {
-      return current_kernel_matrix_;
-    }
+    const Matrix *current_kernel_matrix() const;
 
-    const Matrix *current_kernel_matrix_inverse() const {
-      return current_kernel_matrix_inverse_;
-    }
+    const Matrix *current_kernel_matrix_inverse() const;
 
-    int size() const {
-      return point_indices_in_dictionary_.size();
-    }
+    int size() const;
 };
 };
 

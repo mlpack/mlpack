@@ -24,8 +24,8 @@ class DenseMatrixInverse {
       new_matrix_inverse->Init(previous_inverse.n_rows() + 1,
                                previous_inverse.n_cols() + 1);
 
-      for (int j = 0; j < previous_inverse.n_cols(); j++) {
-        for (int i = 0; i < previous_inverse.n_rows(); i++) {
+      for(int j = 0; j < previous_inverse.n_cols(); j++) {
+        for(int i = 0; i < previous_inverse.n_rows(); i++) {
           new_matrix_inverse->set(
             i, j, previous_inverse.get(i, j) +
             inverse_times_new_column[i] *
@@ -33,7 +33,7 @@ class DenseMatrixInverse {
         }
       }
 
-      for (int j = 0; j < previous_inverse.n_cols(); j++) {
+      for(int j = 0; j < previous_inverse.n_cols(); j++) {
         new_matrix_inverse->set(
           j,
           previous_inverse.n_cols(), - inverse_times_new_column[j] /
