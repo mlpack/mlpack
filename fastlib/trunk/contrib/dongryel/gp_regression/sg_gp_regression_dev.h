@@ -69,9 +69,9 @@ void SparseGreedyGprModel::FillSquaredKernelMatrix_(
   Vector *new_column_vector_out,
   double *new_self_value_out) const {
 
-  new_column_vector_out->Init(dictionary_for_error_->size());
+  new_column_vector_out->Init(dictionary_->size());
   const std::vector<int> &point_indices_in_dictionary =
-    dictionary_for_error_.point_indices_in_dictionary();
+    dictionary_.point_indices_in_dictionary();
 
   for(int i = 0; i < point_indices_in_dictionary.size(); i++) {
     int basis_index = point_indices_in_dictionary[i];
@@ -167,29 +167,21 @@ double SparseGreedyGprModel::AddOptimalPoint(
     Vector new_column_vector;
     double new_self_value;
 
-    // The objective value in the current iteration.
-    double objective_value = -1.0;
-
     // Compute the additional quantities to be appended to grow the
     // matrix and update the dictionary.
     if(for_coeffs) {
       FillSquaredKernelMatrix_(
         candidate_index, kernel_values, &new_column_vector, &new_self_value);
-      dictionary_.AddBasis(
-        candidate_index, new_column_vector, new_self_value);
-
-      // Compute the objective function value for the coefficients.
-      objective_value = QuadraticObjective_(dictionary_);
     }
     else {
       FillKernelMatrix_(
         candidate_index, kernel_values, &new_column_vector, &new_self_value);
-      dictionary_for_error_.AddBasis(
-        candidate_index, new_column_vector, new_self_value);
-
-      // Compute the objective function value for the error bar.
-      objective_value = QuadraticObjective_(dictionary_for_error_);
     }
+    dictionary_copy.AddBasis(
+      candidate_index, new_column_vector, new_self_value);
+
+    // Compute the objective function value for the coefficients.
+    double objective_value = QuadraticObjective_(dictionary_copy);
 
     if(objective_value < optimum_value) {
       optimal_point_index = i;
@@ -273,7 +265,8 @@ bool SparseGreedyGpr::Done_(
   double optimum_value_for_error) const {
 
   double left_hand_side = optimum_value +
-                          noise_level_in * optimum_value_for_error + 0.5 * frobenius_norm_targets_in;
+                          noise_level_in * optimum_value_for_error +
+                          0.5 * frobenius_norm_targets_in;
   double right_hand_side =
     0.5 * precision * (
       fabs(optimuum_value) +
