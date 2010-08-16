@@ -70,7 +70,7 @@ class Dictionary {
 
     void AddBasis(
       int new_point_index,
-      const Vector &new_column_vector,
+      const std::vector<double> &new_column_vector_in,
       double self_value);
 
     const Matrix *table() const;

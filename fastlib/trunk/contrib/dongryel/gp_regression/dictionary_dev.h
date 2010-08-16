@@ -135,30 +135,47 @@ int Dictionary::size() const {
 
 void Dictionary::AddBasis(
   int new_point_index,
-  const Vector &new_column_vector,
+  const std::vector<double> &new_column_vector_in,
   double self_value) {
 
-  // Compute the matrix-vector product.
-  Vector inverse_times_column_vector;
-  la::MulInit(
-    *current_kernel_matrix_inverse_,
-    new_column_vector,
-    &inverse_times_column_vector);
+  if(new_column_vector_in.size() > 0) {
 
-  // Compute the projection error.
-  double projection_error =
-    self_value -
-    la::Dot(new_column_vector, inverse_times_kernel_vector);
+    Vector new_column_vector;
+    new_column_vector.Init(new_column_vector_in.size());
+    for(int i = 0; i < new_column_vector.length(); i++) {
+      new_column_vector[i] = new_column_vector_in[i];
+    }
 
-  // If the projection error is above the threshold, add it to the
-  // dictionary.
-  if(projection_error > adding_threshold_) {
-    UpdateDictionary_(
-      new_point_index,
+    // Compute the matrix-vector product.
+    Vector inverse_times_column_vector;
+    la::MulInit(
+      *current_kernel_matrix_inverse_,
       new_column_vector,
-      self_value,
-      projection_error,
-      inverse_times_column_vector);
+      &inverse_times_column_vector);
+
+    // Compute the projection error.
+    double projection_error =
+      self_value -
+      la::Dot(new_column_vector, inverse_times_kernel_vector);
+
+    // If the projection error is above the threshold, add it to the
+    // dictionary.
+    if(projection_error > adding_threshold_) {
+      UpdateDictionary_(
+        new_point_index,
+        new_column_vector,
+        self_value,
+        projection_error,
+        inverse_times_column_vector);
+    }
+  }
+  else {
+    current_kernel_matrix_ = new Matrix();
+    current_kernel_matrix_->Init(1, 1);
+    current_kernel_matrix_->set(0, 0, self_value);
+    current_kernel_matrix_inverse_ = new Matrix();
+    current_kernel_matrix_inverse_->Init(1, 1);
+    current_kernel_matrix_inverse_->set(0, 0, self_value);
   }
 }
 

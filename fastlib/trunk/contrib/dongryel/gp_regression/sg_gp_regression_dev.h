@@ -14,6 +14,20 @@
 namespace ml {
 namespace gp_regression {
 
+void SparseGreedyGprModel::PredictMean(const Vector &point) const {
+
+  // Get the indices of the points in the dictionary.
+  const std::vector<int> &point_indices_in_dictionary =
+    dictionary_.point_indices_in_dictionary();
+}
+
+void SparseGreedyGprModel::PredictVariance(const Vector &point) const {
+
+  // Get the indices of the points in the dictionary.
+  const std::vector<int> &point_indices_in_dictionary =
+    dictionary_for_error_.point_indices_in_dictionary();
+}
+
 void SparseGreedyGprModel::FinalizeModel() {
   SolveSystem_(dictionary_, &coefficients_);
 }
@@ -66,10 +80,10 @@ void SparseGreedyGprModel::FillSquaredKernelMatrix_(
   int candidate_index,
   const Vector &kernel_values,
   double noise_level_in,
-  Vector *new_column_vector_out,
+  std::vector<double> *new_column_vector_out,
   double *new_self_value_out) const {
 
-  new_column_vector_out->Init(dictionary_->size());
+  new_column_vector_out->resize(dictionary_->size());
   const std::vector<int> &point_indices_in_dictionary =
     dictionary_.point_indices_in_dictionary();
 
@@ -99,16 +113,16 @@ void SparseGreedyGprModel::FillKernelMatrix_(
   int candidate_index,
   const Vector &kernel_values,
   double noise_level_in,
-  Vector *new_column_vector_out,
+  std::vector<double> *new_column_vector_out,
   double *new_self_value_out) const {
 
-  new_column_vector_out->Init(dictionary_for_error_->size());
+  new_column_vector_out->resize(dictionary_for_error_->size());
   const std::vector<int> &point_indices_in_dictionary =
     dictionary_for_error_.point_indices_in_dictionary();
 
   // Simply the necessary kernel values. For the self value, add the
   // noise.
-  for(int i = 0; i < new_column_vector_out->length(); i++) {
+  for(int i = 0; i < point_indices_in_dictionary.size(); i++) {
     (*new_column_vector_out)[i] =
       kernel_values[ point_indices_in_dictionary[i] ];
   }
@@ -164,7 +178,7 @@ double SparseGreedyGprModel::AddOptimalPoint(
     ComputeKernelValues_(covariance_in, candidate_index, &kernel_values);
 
     // The new column vector to be appended and the new self value.
-    Vector new_column_vector;
+    std::vector<double> new_column_vector;
     double new_self_value;
 
     // Compute the additional quantities to be appended to grow the
@@ -191,7 +205,7 @@ double SparseGreedyGprModel::AddOptimalPoint(
 
   // Grow the dictionary using the optimum point.
   int final_candidate_index = candidate_indices[optimal_point_index];
-  Vector final_column_vector;
+  std::vector<double> final_column_vector;
   double final_self_value;
   if(for_coeffs) {
 
@@ -269,20 +283,11 @@ bool SparseGreedyGpr::Done_(
                           0.5 * frobenius_norm_targets_in;
   double right_hand_side =
     0.5 * precision * (
-      fabs(optimuum_value) +
+      fabs(optimum_value) +
       fabs(
         noise_level_in * optimum_value_for_error +
         0.5 * frobenius_norm_targets_in));
   return left_hand_side <= right_hand_side;
-}
-
-void SparseGreedyGpr::InitInactiveSet_(
-  std::vector<int> *inactive_indices_out) const {
-
-  inactive_indices_out->resize(dataset_->n_cols());
-  for(int i = 0; i < inactive_indices_out->size(); i++) {
-    (*inactive_indices_out)[i] = i;
-  }
 }
 
 void SparseGreedyGpr::Init(
