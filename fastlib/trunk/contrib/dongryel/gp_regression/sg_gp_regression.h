@@ -13,7 +13,6 @@
 #include "dictionary_dev.h"
 
 namespace ml {
-namespace gp_regression {
 class SparseGreedyGprModel {
   private:
 
@@ -39,12 +38,12 @@ class SparseGreedyGprModel {
       Vector *solution_out) const;
 
     void ExtractWeightedTargetSubset_(
-      const ml::Dictioanay &dictionary_in,
-      const std::vector<double> &additional_kernel_values_in,
+      const ml::Dictionary &dictionary_in,
+      const std::vector<double> *additional_kernel_values_in,
       Vector *target_subset_out) const;
 
     void ExtractTargetSubset_(
-      const ml::Dictioanay &dictionary_in,
+      const ml::Dictionary &dictionary_in,
       Vector *target_subset_out) const;
 
     double QuadraticObjective_(
@@ -67,19 +66,27 @@ class SparseGreedyGprModel {
 
     void FillSquaredKernelMatrix_(
       int candidate_index,
-      const Vector &kernel_values,
+      const std::vector<double> &kernel_values,
       double noise_level_in,
       std::vector<double> *new_column_vector_out,
       double *new_self_value_out) const;
 
     void FillKernelMatrix_(
       int candidate_index,
-      const Vector &kernel_values,
+      const std::vector<double> &kernel_values,
       double noise_level_in,
       std::vector<double> *new_column_vector_out,
       double *new_self_value_out) const;
 
   public:
+
+    ml::Dictionary &dictionary() {
+      return dictionary_;
+    }
+
+    ml::Dictionary &dictionary_for_error() {
+      return dictionary_for_error_;
+    }
 
     double frobenius_norm_targets() const;
 
@@ -110,7 +117,7 @@ class SparseGreedyGprModel {
 class SparseGreedyGpr {
   private:
 
-    const int random_subset_size_ = 60;
+    static const int random_subset_size_ = 60;
 
     const Matrix *dataset_;
 
@@ -146,7 +153,6 @@ class SparseGreedyGpr {
       SparseGreedyGprModel *model_out);
 
     static int Main(const std::vector<std::string> &args);
-};
 };
 };
 

@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
   // Convert C input to C++; skip executable name for Boost
   std::vector<std::string> args(argv + 1, argv + argc);
   try {
-    return fl::ml::GpRegression::Main(args);
+    return ml::SparseGreedyGpr::Main(args);
   }
   catch (const std::exception &exception) {
     return EXIT_FAILURE;
