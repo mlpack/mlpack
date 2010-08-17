@@ -24,9 +24,9 @@ bool Assignment::checkFiniteValueIntegrity() const
 //  return true;
 }
 
-void Assignment::print(const std::string& name) const
+std::string Assignment::toString() const
 {
-  cout << name; if (!name.empty()) cout << " = ";
+  std::ostringstream cout;
   int i = 0;
   cout << "(";
   BOOST_FOREACH (const value_type& p, (*this))
@@ -34,7 +34,8 @@ void Assignment::print(const std::string& name) const
     if (i++ > 0) cout << ", ";
     cout << p.first->name() << " = " << FINITE_VALUE(p.second);
   }
-  cout << ")" << endl;
+  cout << ")";
+  return cout.str();
 }
 
 // check if variable assignments agree with another assignment

@@ -7,15 +7,15 @@
 using namespace std;
 BEGIN_GRAPHICAL_MODEL_NAMESPACE;
 
-/**
-  * The universe is a collection of random variables
+/** The universe is a collection of random variables
   */
 class Universe : public Set<Variable*>
 {
   std::multimap<std::string, Variable*> nameMap;
 public:
-  typedef std::multimap<std::string, Variable*>::iterator name_iterator;
-  typedef std::pair<name_iterator, name_iterator> find_name_result_type;
+  typedef Set<Variable*>                                    _Base;
+  typedef std::multimap<std::string, Variable*>::iterator   name_iterator;
+  typedef std::pair<name_iterator, name_iterator>           find_name_result_type;
 
   Variable* addVariable(Variable* v)
   {
@@ -70,17 +70,20 @@ public:
     return nameMap.equal_range(name);
   }
 
-  void print(const std::string& name = "") const
+  std::string toString(const std::string& name = "") const
   {
+    std::ostringstream cout;
     cout << name; if (!name.empty()) cout << " = " << endl;
+    unsigned int i = 0;
     BOOST_FOREACH(const Variable* var, *this)
     {
-      var->print();
-      cout << endl;
+      cout << var->toString();
+      if (++i < this->size()) cout << endl;
 //      std::cout << "name = " << var->name();
 //      if (var->type() == 0) cout << " cardinality = " << ((gm::FiniteVariable*) var)->cardinality() << endl;
 //      else cout << endl;
     }
+    return cout.str();
   }
 };
 

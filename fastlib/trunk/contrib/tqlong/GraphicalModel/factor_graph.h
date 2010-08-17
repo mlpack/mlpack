@@ -9,8 +9,7 @@ using namespace std;
 
 BEGIN_GRAPHICAL_MODEL_NAMESPACE;
 
-/**
-  * A vertex could be variable or a factor
+/** A vertex could be variable or a factor
   * The data_ pointer could point to a Variable or a Factor
   */
 class Vertex
@@ -32,8 +31,7 @@ public:
   void* factor() const { DEBUG_ASSERT(type_ == 1); return data_; }
 };
 
-/**
-  * Implemetation of a factor graph, which consists of a set of factors
+/** Implemetation of a factor graph, which consists of a set of factors
   * and variables that are connected as a graph
   * Parameters: <typename _F> must be a Factor type (see factor_template.h)
   */
@@ -48,6 +46,7 @@ public:
   typedef typename _F::factor_value_type                           factor_value_type;
   typedef Map<void*, vertex_type>                                  data_vertex_map_type;
 public:
+  FactorGraph(const std::string& name) : name_(name) {}
   /** Add a factor to the graph, the graph is augmented with new nodes and edges */
   void add(const factor_type& f);
 
@@ -75,8 +74,12 @@ public:
   /** Return the data-to-vertex map */
   const data_vertex_map_type& dataVertexMap() const { return vertexMap_; }
 
-  void print(const std::string& name = "") const;
+  void print1() const;
+  void print1(const vertex_type& u) const;
+  std::string toString() const;
+  std::string toString(const vertex_type& u) const;
 protected:
+  std::string name_;
   vertex_vector_type vertices_;
   neighbor_map_type neighborMap_;
   data_vertex_map_type vertexMap_;
@@ -112,23 +115,34 @@ template <typename _F> void FactorGraph<_F>::add(const factor_type& f)
   vertices_ << vf_;
 }
 
-template <typename _F> void FactorGraph<_F>::print(const std::string& name) const
+template <typename _F> std::string FactorGraph<_F>::toString() const
 {
-  cout << name; if (!name.empty()) cout << " = " << endl;
+  std::ostringstream cout;
+  cout << "Factor graph " << name_ << " = " << endl;
+  unsigned int i = 0;
   BOOST_FOREACH(const vertex_type& u, vertices_)
   {
     const vertex_vector_type& nb = neighbors(u);
 
-    cout << "Vertex: " << (u->isVariable() ? "Variable " : "Factor ");
-    if (u->isVariable()) { u->variable()->print(); cout << endl; }
-    else { cout << endl; factor(u).print(); }
+    cout << "Vertex: ";
+    if (u->isVariable()) { cout << u->variable()->toString(true) << endl; }
+    else { cout << factor(u).toString(true) << endl; }
     cout << "  Neighbors:";
     BOOST_FOREACH(const vertex_type& v, nb)
     {
       cout << " " << (v->type() == 0 ? v->variable()->name() + " (Variable)" : "(Factor)");
     }
-    cout << endl;
+    if (++i < vertices_.size()) cout << endl;
   }
+  return cout.str();
+}
+
+template <typename _F> std::string FactorGraph<_F>::toString(const vertex_type& u) const
+{
+  std::ostringstream cout;
+  if (u->isVariable()) cout << u->variable()->toString();
+  else cout << factor(u).toString();
+  return cout.str();
 }
 
 // Destructor, delete nodes and edgeds allocate by add()

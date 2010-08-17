@@ -6,29 +6,10 @@
 
 BEGIN_GRAPHICAL_MODEL_NAMESPACE;
 
-/**
-  * Value class, could be int or double
+/** Value class, could be int or double
   */
-
 typedef double Value;
 
-//class Value
-//{
-//protected:
-//  double dblVal;
-//public:
-//  Value() { *this = 0; }
-//  Value(int val) { *this = val; }
-//  Value(double val) { *this = val; }
-//
-//  operator int() const { return (int) dblVal; }
-//  operator double() const { return dblVal; }
-//
-//  int operator = (int val) { dblVal = val; return val; }
-//  double operator = (double val) { dblVal = val; return val; }
-//
-//  friend class ValueCompare;
-//};
 #define FINITE_VALUE(x) ((int) (x))
 #define CONTINUOUS_VALUE(x) ((double)(x))
 class ValueCompare
