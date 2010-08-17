@@ -2,5 +2,6 @@
 #define INFERENCE_H
 
 #include "naive_inference.h"
+#include "sum_product_inference.h"
 
 #endif // INFERENCE_H

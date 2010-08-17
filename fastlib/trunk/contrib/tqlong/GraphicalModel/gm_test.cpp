@@ -23,15 +23,14 @@ void printBelief(const typename Inference::vertex_type& u,
     BOOST_FOREACH(const typename Inference::belief_type::value_type& p, blf)
   //  for (typename Inference::belief_type::iterator it = blf.begin(); it != blf.end(); it++)
     {
-      cout << (var->valueMap()->getForward(FINITE_VALUE(p.first))) << " = (" << p.second << ") ";
+      cout << (var->valueMap()->getForward(FINITE_VALUE(p.first))) << " = " << p.second << " ";
     }
     cout << endl;
   }
   else // the average of this factor is blf[0]
   {
     const typename Inference::factor_type* f = (const typename Inference::factor_type*) u->factor();
-    cout << "Factor average = " << blf.get(0) << endl;
-    f->print();
+    cout << f->toString() << " average = " << blf.get(0) << endl;
   }
   // cout << "equal = " << (b.size() < 2 ? 0 : b[0] == b[1]) << endl;
   // cout << "greater = " << (b.size() < 2 ? 0 : b[0] > b[1]) << endl;
@@ -40,6 +39,7 @@ void printBelief(const typename Inference::vertex_type& u,
 
 void testNaiveInference()
 {
+  typedef gm::ConvergenceMeasure Cvm;
   typedef gm::FiniteVar<std::string> Variable;
   typedef Variable::int_value_map_type value_map_type;
 
@@ -47,7 +47,7 @@ void testNaiveInference()
   typedef gm::Logarithm Logarithm;
   typedef gm::TableF<Logarithm> Factor;
   typedef gm::FactorGraph<Factor> Graph;
-  typedef gm::NaiveInference<Factor> Inference;
+  typedef gm::MessagePriorityInference<Factor> Inference;
   typedef Inference::belief_type belief_type;
   typedef Inference::belief_map_type belief_map_type;
 //  void printBelief<Inference>(belief_type blf);
@@ -58,7 +58,7 @@ void testNaiveInference()
                  const gm::Assignment& evidence, Graph& fg)
     {
       double w1[2][2] = {{0, -0.5},{-2,0.5}};
-      Factor f1(gm::Domain() << rain << wet);
+      Factor f1("rw", gm::Domain() << rain << wet);
       for (int i = 0; i < 2; i++)
         for (int j = 0; j < 2; j++)
         {
@@ -69,7 +69,7 @@ void testNaiveInference()
       }
 
       double w2[2][2] = {{0, -0.5},{-1,0}};
-      Factor f2(gm::Domain() << sprinklet << wet);
+      Factor f2("sw", gm::Domain() << sprinklet << wet);
       for (int i = 0; i < 2; i++)
         for (int j = 0; j < 2; j++)
         {
@@ -94,19 +94,21 @@ void testNaiveInference()
   gm::Variable* sprinklet = u.newVariable("sprinklet", Variable("temp", vMap));
   gm::Variable* wet = u.newVariable("wet", Variable("temp", vMap));
 
-  u.print("universe");
+  cout << u.toString("Universe RSW") << endl;
 
   Assignment e;
-  e[rain] = 0;
+//  e[rain] = 0;
 //  e[sprinklet] = 1;
-  e[wet] = 1;
-  e.print("Evidence");
+  e[wet] = 0;
+  cout << "Evidence = " << e.toString() << endl;
 
-  Graph fg;
+  Graph fg("RSW");
   GraphBuilder(rain, sprinklet, wet, e, fg);
-  fg.print("Factor graph");
+  cout << fg.toString() << endl;
 
-  Inference bp(fg);
+  Inference::_Base::_Base bp(fg);               // NaiveInference
+//  Inference::_Base bp(fg);                      // SumProductInference cvm = Cvm(Cvm::Iter)
+//  Inference bp(fg, Cvm(Cvm::Iter|Cvm::Change)); // MessagePriorityInference
   bp.run();
 
   cout << "---------------------- Inference result ----------------------" << endl;

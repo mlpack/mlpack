@@ -5,10 +5,10 @@
 
 BEGIN_GRAPHICAL_MODEL_NAMESPACE;
 
-/**
-  * Naive inference implementation, use for testing correctness of other inference algorithm
+/** Naive inference implementation, use for testing correctness of other inference algorithms.
   * It calculates the belief of each variable node in the graph by summing up all possible
-  * products of factors in the graph
+  * products of factors in the graph.
+  * It may be slow but it is the exact inference algorithm.
   */
 template <typename _F>
 class NaiveInference
@@ -34,7 +34,7 @@ public:
   const graph_type& graph() const { return graph_; }
 
   /** Return belief of certain variable */
-  belief_type belief(const Variable* var) const;
+  const belief_type& belief(const vertex_type& v) const;
 protected:
   const graph_type& graph_;
 
@@ -64,6 +64,7 @@ template <typename _F> NaiveInference<_F>::NaiveInference(const graph_type& grap
 
 template <typename _F> void NaiveInference<_F>::run()
 {
+  cout << "----------------------- Naive Inference ---------------------------------" << endl;
   // preparing the order of calculation
   DFSorder();
   initBeliefs();
@@ -197,11 +198,9 @@ template <typename _F> void NaiveInference<_F>::normalizeBeliefs()
 }
 
 template <typename _F>
-    typename NaiveInference<_F>::belief_type NaiveInference<_F>::belief(const Variable* var) const
+    const typename NaiveInference<_F>::belief_type& NaiveInference<_F>::belief(const vertex_type& v) const
 {
-  typename belief_map_type::const_iterator it = beliefs_.find(var);
-  DEBUG_ASSERT(it != beliefs_.end());
-  return (*it).second;
+  return beliefs_.get(v);
 }
 
 END_GRAPHICAL_MODEL_NAMESPACE;

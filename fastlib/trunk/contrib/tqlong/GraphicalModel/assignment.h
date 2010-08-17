@@ -6,16 +6,18 @@
 using namespace std;
 BEGIN_GRAPHICAL_MODEL_NAMESPACE;
 
-/**
-  * An assignment is a map from variables to their values
+/** An assignment is a map from variables to their values
   */
 class Assignment : public Map<const Variable*, Value>
 {
 public:
+  typedef Map<const Variable*, Value> _Base;
+
   // check if the values are in variables' value set
   bool checkFiniteValueIntegrity() const;
 
-  void print(const std::string& name = "") const;
+  void print1(const std::string& name = "") const;
+  std::string toString() const;
 
   // check if variable assignments agree with another assignment
   // that is all common variables have same values in (*this) and a

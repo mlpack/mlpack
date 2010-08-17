@@ -8,7 +8,9 @@ set(SOURCES
   assignment
   factor_template
   factor_graph
+  convergence_measure
   naive_inference
+  sum_product_inference
   inference
   logarithm
   gm
@@ -34,5 +36,3 @@ target_link_libraries(gm_test_all
    mlpack_contrib
    fastlib
 )
-
- 
