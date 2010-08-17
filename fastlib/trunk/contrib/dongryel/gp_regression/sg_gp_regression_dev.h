@@ -9,7 +9,7 @@
 #ifndef MLPACK_GP_REGRESSION_SG_GP_REGRESSION_DEV_H
 #define MLPACK_GP_REGRESSION_SG_GP_REGRESSION_DEV_H
 
-#include "sg_gp_regression.h"
+#include "sg_gp_regression_defs.h"
 
 namespace ml {
 namespace gp_regression {
