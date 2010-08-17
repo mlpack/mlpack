@@ -57,7 +57,7 @@ void Dictionary::inactive_indices(
 
   // Scan the in_dictionary list and build the inactive index set.
   inactive_indices_out->resize(0);
-  for (int i = 0; i < in_dictionary_.size(); i++) {
+  for (unsigned int i = 0; i < in_dictionary_.size(); i++) {
     if (in_dictionary_[i] == false) {
       inactive_indices_out->push_back(i);
     }
@@ -105,12 +105,20 @@ void Dictionary::UpdateDictionary_(
 
   // Update the kernel matrix inverse.
   Matrix *new_kernel_matrix_inverse =
-    ml::DenseKernelMatrixInverse::Update(
+    ml::DenseMatrixInverse::Update(
       *current_kernel_matrix_inverse_,
       inverse_times_column_vector,
       projection_error);
   delete current_kernel_matrix_inverse_;
   current_kernel_matrix_inverse_ = new_kernel_matrix_inverse;
+}
+
+const Matrix *Dictionary::current_kernel_matrix() const {
+  return current_kernel_matrix_;
+}
+
+const Matrix *Dictionary::current_kernel_matrix_inverse() const {
+  return current_kernel_matrix_inverse_;
 }
 
 Matrix *Dictionary::current_kernel_matrix() {
@@ -156,7 +164,7 @@ void Dictionary::AddBasis(
     // Compute the projection error.
     double projection_error =
       self_value -
-      la::Dot(new_column_vector, inverse_times_kernel_vector);
+      la::Dot(new_column_vector, inverse_times_column_vector);
 
     // If the projection error is above the threshold, add it to the
     // dictionary.
@@ -228,18 +236,6 @@ const std::vector<int> &Dictionary::point_indices_in_dictionary() const {
 
 const std::vector<int> &Dictionary::training_index_to_dictionary_position() const {
   return training_index_to_dictionary_position_;
-}
-
-const Matrix *Dictionary::current_kernel_matrix() const {
-  return current_kernel_matrix_;
-}
-
-const Matrix *Dictionary::current_kernel_matrix_inverse() const {
-  return current_kernel_matrix_inverse_;
-}
-
-int Dictionary::size() const {
-  return point_indices_in_dictionary_.size();
 }
 };
 

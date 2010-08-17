@@ -15,7 +15,7 @@
 #include "fastlib/fastlib.h"
 #include "sg_gp_regression.h"
 
-int fl::ml::SparseGreedyGpr::RunAlgorithm_(
+int ml::SparseGreedyGpr::RunAlgorithm_(
   boost::program_options::variables_map &vm) {
 
   // Read the reference set.
@@ -32,19 +32,12 @@ int fl::ml::SparseGreedyGpr::RunAlgorithm_(
   }
 
   // The algorithm object and its result.
-  fl::ml::ClusterwiseRegression algorithm;
-  fl::ml::ClusterwiseRegressionResult result;
-  algorithm.Init(reference_set, target_set_alias);
-
-  // Compute and export.
-  int num_iterations = (vm.count("num_iterations") > 0) ?
-                       vm["num_iterations"].as<int>() : 1000;
-  algorithm.Compute(vm["k_clusters"].as<int>(), num_iterations, &result);
+  ml::SparseGreedyGpr algorithm;
 
   return 0;
 }
 
-int fl::ml::SparseGreedyGpr::Main(
+int ml::SparseGreedyGpr::Main(
   const std::vector<std::string> &args) {
 
   boost::program_options::options_description desc("Available options");

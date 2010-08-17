@@ -31,7 +31,7 @@ class Dictionary {
 
     Matrix *current_kernel_matrix_inverse_;
 
-    double adding_threhsold_;
+    double adding_threshold_;
 
   private:
 
@@ -85,7 +85,11 @@ class Dictionary {
 
     const Matrix *current_kernel_matrix() const;
 
+    Matrix *current_kernel_matrix();
+
     const Matrix *current_kernel_matrix_inverse() const;
+
+    Matrix *current_kernel_matrix_inverse();
 
     int size() const;
 };
