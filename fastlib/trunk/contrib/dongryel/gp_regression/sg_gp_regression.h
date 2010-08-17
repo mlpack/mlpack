@@ -130,6 +130,8 @@ class SparseGreedyGpr {
       int subset_size,
       std::vector<int> *subset_out) const;
 
+    static int RunAlgorithm_(boost::program_options::variables_map &vm);
+
   public:
 
     SparseGreedyGpr();
@@ -142,6 +144,8 @@ class SparseGreedyGpr {
       double noise_level_in,
       double precision_in,
       SparseGreedyGprModel *model_out);
+
+    static int Main(const std::vector<std::string> &args);
 };
 };
 };
