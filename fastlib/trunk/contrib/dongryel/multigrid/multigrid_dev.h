@@ -4,8 +4,8 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef CONTRIB_DONGRYEL_MULTIGRID_MULTIGRID_DEV_H
-#define CONTRIB_DONGRYEL_MULTIGRID_MULTIGRID_DEV_H
+#ifndef MLPACK_MULTIGRID_MULTIGRID_DEV_H
+#define MLPACK_MULTIGRID_MULTIGRID_DEV_H
 
 #include <algorithm>
 #include "multigrid.h"
@@ -29,7 +29,10 @@ void Multigrid<MatrixType, VectorType>::Coarsen_(
   }
   std::random_shuffle(shuffle_indices.begin(), shuffle_indices.end());
 
-  // The generated coarse points.
+  // The generated coarse points. The first component of the pair is
+  // the index of the coarse point (i.e. the physical position in the
+  // matrix). The second component is the real label of the coarse
+  // point.
   std::vector< std::pair<int, int> > coarse_point_indices;
 
   for (int i = 0; i < fine_point_indices.size(); i++) {
@@ -45,7 +48,7 @@ void Multigrid<MatrixType, VectorType>::Coarsen_(
     double sum_coarse_affinities = 0;
     for (int j = 0; j < coarse_point_indices.size(); j++) {
 
-      // The index of the coarse node point.
+      // The physical index of the coarse node point.
       int coarse_point_index = coarse_point_indices[j].first;
       sum_coarse_affinities +=
         level_in.get(fine_point_index, coarse_point_index);
@@ -65,10 +68,13 @@ void Multigrid<MatrixType, VectorType>::Coarsen_(
     }
   } // end of looping over all fine nodes.
 
-  // Sort the coarse point indices.
+  // Sort the coarse point indices, which will sort by the physical index
+  // of each point.
   std::sort(coarse_point_indices.begin(), coarse_point_indices.end());
+  coarsened_level_out->set_point_indices(coarse_point_indices);
 
   // Build the interpolation matrix.
+  coarsened_level_out->Build(level_in, coarse_point_indices);
 }
 
 template<typename MatrixType, typename VectorType>
