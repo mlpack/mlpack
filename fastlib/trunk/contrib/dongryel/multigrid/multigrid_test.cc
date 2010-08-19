@@ -19,6 +19,21 @@ class MultigridTest {
       int num_dimensions = math::RandInt(10, 70);
       left_hand_side_out->Init(num_dimensions, num_dimensions);
       right_hand_side_out->Init(num_dimensions);
+      
+      for(int j = 0; j < left_hand_side_out->n_cols(); j++) {
+	for(int i = 0; i < left_hand_side_out->n_rows(); i++) {
+	  if(i == j) {
+	    left_hand_side_out->set(i, j, 4.0);
+	  }
+	  else if(i == j + 1 || i + 1 == j) {
+	    left_hand_side_out->set(i, j, -1.0);
+	  }
+	  else {
+	    left_hand_side_out->set(i, j, 0.0);
+	  }
+	}
+	(*right_hand_side_out)[j] = math::Random(1.5, 4.0);
+      }
     }
 
   public:
@@ -30,6 +45,8 @@ class MultigridTest {
       Matrix left_hand_side;
       Vector right_hand_side;
       RandomSystem_(&left_hand_side, &right_hand_side);
+      
+      multigrid.Init(left_hand_side, right_hand_side, 1000);
     }
 
     void Start() {
