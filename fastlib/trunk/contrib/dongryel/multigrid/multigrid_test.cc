@@ -16,7 +16,7 @@ class MultigridTest {
       Matrix *left_hand_side_out,
       Vector *right_hand_side_out) {
 
-      int num_dimensions = math::RandInt(100, 200);
+      int num_dimensions = 20;
       left_hand_side_out->Init(num_dimensions, num_dimensions);
       right_hand_side_out->Init(num_dimensions);
 
@@ -47,10 +47,7 @@ class MultigridTest {
       RandomSystem_(&left_hand_side, &right_hand_side);
 
       // Initialize the multigrid.
-      multigrid.Init(left_hand_side, right_hand_side, 1000);
-
-      left_hand_side.PrintDebug();
-      right_hand_side.PrintDebug();
+      multigrid.Init(left_hand_side, right_hand_side, 4, 1000);
     }
 
     void Start() {

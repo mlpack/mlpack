@@ -17,7 +17,7 @@ template<typename MatrixType, typename VectorType>
 class Multigrid {
   private:
 
-    static const int level_threshold_ = 100;
+    int level_threshold_;
 
     /** @brief The left hand side, A matrix in Ax = b.
     */
@@ -51,6 +51,7 @@ class Multigrid {
     void Init(
       MatrixType &left_hand_side_in,
       VectorType &right_hand_side_in,
+      int level_threshold_in,
       int max_num_iterations_in);
 
     void Compute(Vector *output);
