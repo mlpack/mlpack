@@ -17,6 +17,8 @@ template<typename MatrixType, typename VectorType>
 class Multigrid {
   private:
 
+    static const int level_threshold_ = 100;
+
     /** @brief The left hand side, A matrix in Ax = b.
     */
     MatrixType *left_hand_side_;

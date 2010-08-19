@@ -32,9 +32,27 @@ class MultigridLevel {
 
     /** @brief The interpolation weights.
      */
-    Matrix interpolation_weights_;
+    Matrix *interpolation_weights_;
 
   public:
+
+    MultigridLevel() {
+      interpolation_weights_ = NULL;
+    }
+
+    MultigridLevel(const Matrix &left_hand_side_in,
+                   const Vector &right_hand_side_in) {
+      left_hand_side_.Copy(left_hand_side_in);
+      right_hand_side_.Copy(right_hand_side_in);
+      point_indices_.resize(right_hand_side_.length());
+      for (unsigned int i = 0; i < point_indices_.size(); i++) {
+        point_indices_[i] = i;
+      }
+    }
+
+    int num_points() const {
+      return point_indices_.size();
+    }
 
     void Build(
       const MultigridLevel &previous_level_in,
@@ -51,7 +69,8 @@ class MultigridLevel {
       // Next, build the interpolation matrix.
       const std::vector<int> &previous_level_point_indices =
         previous_level_in.point_indices();
-      interpolation_weights_.Init(
+      interpolation_weights_ = new Matrix();
+      interpolation_weights_->Init(
         previous_level_point_indices.size(), point_indices_.size());
 
       for (unsigned int i = 0; i < previous_level_point_indices.size(); i++) {
@@ -63,7 +82,7 @@ class MultigridLevel {
         for (unsigned int j = 0; j < point_indices_.size(); j++) {
           int coarse_point_physical_index =
             coarse_physical_index_and_label_pairs[j].first;
-          interpolation_weights_.set(
+          interpolation_weights_->set(
             i, coarse_point_physical_index,
             previous_level_in.get(i, coarse_point_physical_index) /
             affinity_row_sum);
@@ -77,11 +96,12 @@ class MultigridLevel {
       for (unsigned int l = 0; l < point_indices_.size(); l++) {
         for (unsigned int k = 0; k < point_indices_.size(); k++) {
           double new_accumulant = 0;
-          for (unsigned int j = 0; j < interpolation_weights_.n_cols(); j++) {
-            for (unsigned int i = 0; i < interpolation_weights_.n_rows(); i++) {
-              new_accumulant += interpolation_weights_.get(i, k) *
+          for (unsigned int j = 0; j < interpolation_weights_->n_cols(); j++) {
+            for (unsigned int i = 0; i < interpolation_weights_->n_rows();
+                 i++) {
+              new_accumulant += interpolation_weights_->get(i, k) *
                                 previous_level_left_hand_side.get(i, j) *
-                                interpolation_weights_.get(j, l);
+                                interpolation_weights_->get(j, l);
             }
           }
           new_accumulant = 0.5 * new_accumulant;
@@ -134,11 +154,11 @@ class MultigridLevel {
     }
 
     const Matrix &interpolation_weights() const {
-      return interpolation_weights_;
+      return *interpolation_weights_;
     }
 
     Matrix &interpolation_weights() {
-      return interpolation_weights_;
+      return *interpolation_weights_;
     }
 };
 };
