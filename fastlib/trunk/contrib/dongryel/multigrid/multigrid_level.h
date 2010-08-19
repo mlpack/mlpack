@@ -62,7 +62,7 @@ class MultigridLevel {
       // First, set the coarse point indices to be the indices on the
       // current level.
       point_indices_.resize(coarse_physical_index_and_label_pairs.size());
-      for (int i = 0; i < point_indices_.size(); i++) {
+      for (unsigned int i = 0; i < point_indices_.size(); i++) {
         point_indices_[i] = coarse_physical_index_and_label_pairs[i].second;
       }
 
@@ -91,21 +91,20 @@ class MultigridLevel {
 
       // Using the interpolation matrix, build the coarsened left hand side.
       const Matrix &previous_level_left_hand_side =
-        previous_level.left_hand_side();
+        previous_level_in.left_hand_side();
       left_hand_side_.Init(point_indices_.size(), point_indices_.size());
       for (unsigned int l = 0; l < point_indices_.size(); l++) {
         for (unsigned int k = 0; k < point_indices_.size(); k++) {
           double new_accumulant = 0;
-          for (unsigned int j = 0; j < interpolation_weights_->n_cols(); j++) {
-            for (unsigned int i = 0; i < interpolation_weights_->n_rows();
-                 i++) {
+          for (int j = 0; j < interpolation_weights_->n_cols(); j++) {
+            for (int i = 0; i < interpolation_weights_->n_rows(); i++) {
               new_accumulant += interpolation_weights_->get(i, k) *
                                 previous_level_left_hand_side.get(i, j) *
                                 interpolation_weights_->get(j, l);
             }
           }
           new_accumulant = 0.5 * new_accumulant;
-          left_hand_side_.set(k, l, new_acumulant);
+          left_hand_side_.set(k, l, new_accumulant);
         }
       }
 
@@ -113,12 +112,11 @@ class MultigridLevel {
       // hand side.
       right_hand_side_.Init(point_indices_.size());
       const Vector &previous_level_right_hand_side =
-        previous_level.right_hand_side();
+        previous_level_in.right_hand_side();
       for (unsigned int i = 0; i < point_indices_.size(); i++) {
         double dot_product = 0;
-        for (unsigned int j = 0;
-             j < previous_level_right_hand_side.size(); j++) {
-          dot_product += interpolation_matrix_.get(j, i) *
+        for (int j = 0; j < previous_level_right_hand_side.length(); j++) {
+          dot_product += interpolation_weights_->get(j, i) *
                          previous_level_right_hand_side[j];
         }
         right_hand_side_[i] = dot_product;
@@ -127,6 +125,14 @@ class MultigridLevel {
 
     double get(int row, int col) const {
       return left_hand_side_.get(row, col);
+    }
+
+    void set_point_indices(
+      const std::vector< std::pair< int, int> > &point_indices_in) {
+      point_indices_.resize(point_indices_in.size());
+      for (unsigned int i = 0; i < point_indices_.size(); i++) {
+        point_indices_[i] = point_indices_in[i].second;
+      }
     }
 
     const std::vector<int> &point_indices() const {
