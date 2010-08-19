@@ -34,7 +34,7 @@ class Multigrid {
     /** @brief The list of coarsened problems. Higher indices
      *         imply coarser problems.
      */
-    std::vector<MultigridLevel> levels_;
+    std::vector<MultigridLevel *> levels_;
 
   private:
 
@@ -43,6 +43,10 @@ class Multigrid {
       MultigridLevel *coarsened_level_out);
 
   public:
+
+    Multigrid();
+
+    ~Multigrid();
 
     void Init(
       MatrixType &left_hand_side_in,
