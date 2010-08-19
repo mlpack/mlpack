@@ -89,7 +89,23 @@ void Multigrid<MatrixType, VectorType>::Init(
   max_num_iterations_ = max_num_iterations_in;
 
   // Generate the coarse problems.
+  MultigridLevel root_level(left_hand_side_in, right_hand_side_in);
+  MultigridLevel *previous_level = &root_level;
 
+  // Destroy all previously coarsened problems, if existing.
+  levels_.resize(0);
+
+  // Start coarsening.
+  while (previous_level->num_points() > level_threshold_) {
+    levels_.resize(levels_.size() + 1);
+
+    // The next level to be generated.
+    MultigridLevel &next_level = levels_[ levels_.size() - 1 ];
+    Coarsen_(previous_level, &next_level);
+
+    // Change the previous level pointer.
+    previous_level = &next_level;
+  }
 }
 
 template<typename MatrixType, typename VectorType>
