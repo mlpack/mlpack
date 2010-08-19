@@ -77,13 +77,14 @@ class MultigridLevel {
         double affinity_row_sum = 0;
         for (unsigned int j = 0; j < point_indices_.size(); j++) {
           affinity_row_sum += previous_level_in.get(
-                                i, coarse_physical_index_and_label_pairs[j].first);
+                                i,
+                                coarse_physical_index_and_label_pairs[j].first);
         }
         for (unsigned int j = 0; j < point_indices_.size(); j++) {
           int coarse_point_physical_index =
             coarse_physical_index_and_label_pairs[j].first;
           interpolation_weights_->set(
-            i, coarse_point_physical_index,
+            i, j,
             previous_level_in.get(i, coarse_point_physical_index) /
             affinity_row_sum);
         }

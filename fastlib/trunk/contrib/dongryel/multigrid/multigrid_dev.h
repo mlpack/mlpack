@@ -64,16 +64,18 @@ void Multigrid<MatrixType, VectorType>::Coarsen_(
       // The physical index of the coarse node point.
       int coarse_point_index = coarse_point_indices[j].first;
       sum_coarse_affinities +=
-        level_in.get(fine_point_index, coarse_point_index);
+        fabs(level_in.get(fine_point_index, coarse_point_index));
     }
 
     // Compute the sum of the affinities between the current fine node
     // and all of the points.
     double sum_all_affinities = 0;
     for (unsigned int j = 0; j < fine_point_indices.size(); j++) {
-      sum_all_affinities += level_in.get(fine_point_index, j);
+      sum_all_affinities += fabs(level_in.get(fine_point_index, j));
     }
 
+    printf("Sum coarse: %g, sum all: %g\n", sum_coarse_affinities,
+           sum_all_affinities);
     // Add to the coarse set if the following condition is satisfied.
     if (sum_coarse_affinities < threshold * sum_all_affinities) {
       coarse_point_indices.push_back(
@@ -86,6 +88,15 @@ void Multigrid<MatrixType, VectorType>::Coarsen_(
   std::sort(coarse_point_indices.begin(), coarse_point_indices.end());
   coarsened_level_out->set_point_indices(coarse_point_indices);
 
+  printf("Fine point indices:\n");
+  for (unsigned int i = 0; i < fine_point_indices.size(); i++) {
+    printf("%d ", fine_point_indices[i]);
+  }
+  printf("\nCoarse point indices:\n");
+  for (unsigned int i = 0; i < coarse_point_indices.size(); i++) {
+    printf("%d ", coarse_point_indices[i].second);
+  }
+
   // Build the interpolation matrix.
   coarsened_level_out->Build(level_in, coarse_point_indices);
 }
@@ -94,11 +105,13 @@ template<typename MatrixType, typename VectorType>
 void Multigrid<MatrixType, VectorType>::Init(
   MatrixType &left_hand_side_in,
   VectorType &right_hand_side_in,
+  int level_threshold_in,
   int max_num_iterations_in) {
 
   // Set the incoming variables.
   left_hand_side_ = &left_hand_side_in;
   right_hand_side_ = &right_hand_side_in;
+  level_threshold_ = level_threshold_in;
   max_num_iterations_ = max_num_iterations_in;
 
   // Generate the coarse problems.
@@ -106,7 +119,9 @@ void Multigrid<MatrixType, VectorType>::Init(
   MultigridLevel *previous_level = &root_level;
 
   // Start coarsening.
+  printf("Starting with %d\n", previous_level->num_points());
   while (previous_level->num_points() > level_threshold_) {
+    printf("Creating a new level!\n");
     levels_.push_back(new MultigridLevel());
 
     // The next level to be generated.
@@ -115,6 +130,8 @@ void Multigrid<MatrixType, VectorType>::Init(
 
     // Change the previous level pointer.
     previous_level = &next_level;
+    printf("Created a new level with %d points\n", next_level.num_points());
+    next_level.left_hand_side().PrintDebug();
   }
 
   printf("Created %d levels\n", levels_.size());
