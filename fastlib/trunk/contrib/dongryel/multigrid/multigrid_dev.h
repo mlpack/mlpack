@@ -24,7 +24,7 @@ void Multigrid<MatrixType, VectorType>::Coarsen_(
   // previous level.
   const std::vector<int> &fine_point_indices = level_in.point_indices();
   std::vector<int> shuffle_indices(fine_point_indices.size());
-  for (int i = 0; i < shuffle_indices.size(); i++) {
+  for (unsigned int i = 0; i < shuffle_indices.size(); i++) {
     shuffle_indices[i] = i;
   }
   std::random_shuffle(shuffle_indices.begin(), shuffle_indices.end());
@@ -35,7 +35,7 @@ void Multigrid<MatrixType, VectorType>::Coarsen_(
   // point.
   std::vector< std::pair<int, int> > coarse_point_indices;
 
-  for (int i = 0; i < fine_point_indices.size(); i++) {
+  for (unsigned int i = 0; i < fine_point_indices.size(); i++) {
 
     // The index of the fine node point.
     int fine_point_index = shuffle_indices[i];
@@ -46,7 +46,7 @@ void Multigrid<MatrixType, VectorType>::Coarsen_(
     // Compute the sum of the affinities between the current fine node
     // point and the existing set of coarse points.
     double sum_coarse_affinities = 0;
-    for (int j = 0; j < coarse_point_indices.size(); j++) {
+    for (unsigned int j = 0; j < coarse_point_indices.size(); j++) {
 
       // The physical index of the coarse node point.
       int coarse_point_index = coarse_point_indices[j].first;
@@ -57,7 +57,7 @@ void Multigrid<MatrixType, VectorType>::Coarsen_(
     // Compute the sum of the affinities between the current fine node
     // and all of the points.
     double sum_all_affinities = 0;
-    for (int j = 0; j < fine_point_indices.size(); j++) {
+    for (unsigned int j = 0; j < fine_point_indices.size(); j++) {
       sum_all_affinities += level_in.get(fine_point_index, j);
     }
 
@@ -101,7 +101,7 @@ void Multigrid<MatrixType, VectorType>::Init(
 
     // The next level to be generated.
     MultigridLevel &next_level = levels_[ levels_.size() - 1 ];
-    Coarsen_(previous_level, &next_level);
+    Coarsen_(*previous_level, &next_level);
 
     // Change the previous level pointer.
     previous_level = &next_level;
