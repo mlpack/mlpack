@@ -5,8 +5,28 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#include <stdexcept>
 #include "multigrid_dev.h"
+
+#include "ml_include.h"
+
+#if defined(HAVE_ML_EPETRA)
+#include "Epetra_ConfigDefs.h"
+
+#include "Epetra_CrsMatrix.h"
+#include "Epetra_Map.h"
+#include "Epetra_MultiVector.h"
+#include "Epetra_Time.h"
+
+#ifdef ML_MPI
+#include "Epetra_MpiComm.h"
+#include "mpi.h"
+#else
+#include "Epetra_SerialComm.h"
+#endif
+
+#include "ml_epetra_operator.h"
+#include "ml_epetra_utils.h"
+#include <stdexcept>
 
 namespace multigrid_test {
 
