@@ -131,11 +131,11 @@ class KernelPCA {
    * A simple way to save the results to a file
    */
   static void SaveToTextFile(std::string file, 
-                             Matrix &eigen_vectors,
-                             Vector &eigen_values);
+                             arma::mat &eigen_vectors,
+                             arma::vec &eigen_values);
   static void SaveToBinaryFile(std::string file, 
-                             Matrix &eigen_vectors,
-                             Vector &eigen_values);
+                             arma::mat &eigen_vectors,
+                             arma::vec &eigen_values);
   /**
    * After computing the neighboroods and loading
    * the affinity matrix call this function
@@ -145,8 +145,8 @@ class KernelPCA {
   template<typename DISTANCEKERNEL>    
   void ComputeGeneralKernelPCA(DISTANCEKERNEL kernel,
                                index_t num_of_eigenvalues,
-                               Matrix *eigen_vectors,
-                               Vector *eigen_values);
+                               arma::mat *eigen_vectors,
+                               arma::vec *eigen_values);
   /**
    * Not implemented yet
    */
@@ -156,8 +156,8 @@ class KernelPCA {
    * ComputeNeighborhoods and then Load Affinity Matrix
    */
   void ComputeLLE(index_t num_of_eigenvalues,
-                  Matrix *eigen_vectors,
-                  Vector *eigen_values);
+                  arma::mat *eigen_vectors,
+                  arma::vec *eigen_values);
   /**
    * Not implemented yet
    */
@@ -175,13 +175,13 @@ class KernelPCA {
   template<typename DISTANCEKERNEL>
   void ComputeSpectralRegression(DISTANCEKERNEL kernel,
                                  std::map<index_t, index_t> &data_label,
-                                 Matrix *embedded_coordinates, 
-                                 Vector *eigenvalues);
+                                 arma::mat *embedded_coordinates, 
+                                 arma::vec *eigenvalues);
     
  private:
   AllkNN allknn_;
   index_t knns_;
-  Matrix data_;
+  arma::mat data_;
   SparseMatrix kernel_matrix_;  
   SparseMatrix affinity_matrix_;
   index_t dimension_;

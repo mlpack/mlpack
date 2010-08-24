@@ -33,8 +33,8 @@ class KernelPCATest {
   }
   void TestGeneralKernelPCA() {
    NOTIFY("Testing KernelPCA...\n");
-   Matrix eigen_vectors;
-   Vector eigen_values;
+   arma::mat eigen_vectors;
+   arma::vec eigen_values;
    Init();
    engine_->ComputeNeighborhoods();
    double bandwidth;
@@ -52,8 +52,8 @@ class KernelPCATest {
   }
   void TestLLE() {
     NOTIFY("Testing ComputeLLE\n");
-    Matrix eigen_vectors;
-    Vector eigen_values;
+    arma::mat eigen_vectors;
+    arma::vec eigen_values;
     Init();
     engine_->ComputeNeighborhoods();
     engine_->LoadAffinityMatrix();
@@ -78,8 +78,8 @@ class KernelPCATest {
       data_label[math::RandInt(0, engine_->data_.n_cols())] = 
         math::RandInt(0 ,2);
     }
-    Matrix embedded_coordinates;
-    Vector eigenvalues; 
+    arma::mat embedded_coordinates;
+    arma::vec eigenvalues; 
     engine_->ComputeSpectralRegression(kernel_,
                                        data_label,
                                        &embedded_coordinates, 
