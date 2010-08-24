@@ -14,7 +14,7 @@ set(DIRS
    svm
    affineNMF
    optimization
-   GraphicalModel
+#   GraphicalModel
 )
 
 foreach(dir ${DIRS})
