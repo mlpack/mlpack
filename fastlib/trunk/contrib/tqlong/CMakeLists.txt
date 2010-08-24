@@ -12,7 +12,7 @@ set(DIRS
    PassiveAggressive
 #   quicsvd  ## does not link; looking for nonexistent la:: functions
    svm
-   affineNMF
+#   affineNMF
    optimization
 #   GraphicalModel
 )
