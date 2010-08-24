@@ -17,6 +17,7 @@ protected:
   int type_;
 public:
   Variable(const std::string& name = "", int type = 0) : name_(name), type_(0) {}
+  virtual ~Variable() {}
   int type() const { return type_; }
   const std::string& name() const { return name_; }
   virtual int cardinality() const = 0;

@@ -3,6 +3,8 @@ function [W,H] = nmf_run(V, r, Winit, Hinit)
 if nargin == 2,
     Winit = rand(m, r);
     Hinit = rand(r, n);
+elseif nargin == 3,
+    Hinit = rand(r, n);
 end
 tol = 1e-6;
 timelimit = 10;

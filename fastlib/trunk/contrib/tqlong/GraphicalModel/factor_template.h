@@ -81,7 +81,7 @@ void TableF<_V>::genAssignments(const Domain& dom, unsigned int index, const Ass
   Assignment::const_iterator it = res.find(var);
   if (it != res.end())
   {
-    int val = (*it).second;
+    Value val = (*it).second;
     DEBUG_ASSERT(val >= 0 && val < var->cardinality());
     temp[var] = val;
     genAssignments(dom, index+1, res, temp);
