@@ -47,7 +47,7 @@ void testNaiveInference()
   typedef gm::Logarithm Logarithm;
   typedef gm::TableF<Logarithm> Factor;
   typedef gm::FactorGraph<Factor> Graph;
-  typedef gm::MessagePriorityInference<Factor> Inference;
+  typedef gm::MessagePendingInference<Factor> Inference;
   typedef Inference::belief_type belief_type;
   typedef Inference::belief_map_type belief_map_type;
 //  void printBelief<Inference>(belief_type blf);

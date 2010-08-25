@@ -12,10 +12,10 @@ BEGIN_GRAPHICAL_MODEL_NAMESPACE;
   * + Messages are used to calculate beliefs of variable-vertex and average of factor-vertex.
   */
 template <typename _F>
-    class MessagePriorityInference : public SumProductInference<_F>
+    class MessagePendingInference : public MessagePriorityInference<_F>
 {
 public:
-  typedef SumProductInference<_F>                            _Base;
+  typedef MessagePriorityInference<_F>                       _Base;
   typedef typename _Base::factor_type                        factor_type;         // map from Assignment --> factor_value_type
   typedef typename _Base::factor_value_type                  factor_value_type;   // a numeric type
   typedef typename _Base::graph_type                         graph_type;          // FactorGraph<factor_type>
@@ -28,35 +28,24 @@ public:
                                                                                   // usage: message[u][v] where u,v are vertex_type
 public:
   /** Preparing inference on a graph */
-  MessagePriorityInference(const graph_type& graph, ConvergenceMeasure cvm = ConvergenceMeasure())
+  MessagePendingInference(const graph_type& graph, ConvergenceMeasure cvm = ConvergenceMeasure())
     : _Base(graph, cvm) {}
 
   /** The inference algorithm */
   void run();
 protected:
-  typedef std::pair<vertex_type, vertex_type>                                vertex_pair_type;
-  typedef std::pair< vertex_pair_type, factor_value_type>                    msg_double_type;
-  typedef Vector<msg_double_type>                                            msg_double_vector_type;
-  struct MsgCompare
-  {
-    bool operator() (const msg_double_type& lhs, const msg_double_type& rhs) const
-    {
-      return lhs.second < rhs.second;
-    }
-  };
-  typedef PriorityQueue<msg_double_type, msg_double_vector_type, MsgCompare> msg_double_queue_type;
 
-  /** Priority queue of messages */
-  msg_double_queue_type message_queue_;
-  /** Total change of messages in an iteration */
-  factor_value_type change_sum;
-
-  /** Init the message queue by updating all messages once */
-  void initMessageQueue();
-
-  /** The L1 difference between two messages */
-  factor_value_type difference(const message_type& oldMsg, const message_type& newMsg);
 };
+
+template <typename _F> void MessagePendingInference<_F>::run()
+{
+  cout << "----------------------- Message Pending Sum-Product Inference -----------------" << endl;
+  this->initBeliefs();
+  this->initMessages();
+  cout << "---------------------- iter = " << (this->curCvm_.iter_=0) << " Initializiing ----------------" << endl;
+  this->calculateBeliefs();
+  this->normalizeBeliefs();
+}
 
 END_GRAPHICAL_MODEL_NAMESPACE;
 
