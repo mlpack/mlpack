@@ -94,7 +94,7 @@ void testNaiveInference()
   gm::Variable* sprinklet = u.newVariable("sprinklet", Variable("temp", vMap));
   gm::Variable* wet = u.newVariable("wet", Variable("temp", vMap));
 
-  cout << u.toString("Universe RSW") << endl;
+//  cout << u.toString("Universe RSW") << endl;
 
   Assignment e;
 //  e[rain] = 0;
@@ -104,11 +104,14 @@ void testNaiveInference()
 
   Graph fg("RSW");
   GraphBuilder(rain, sprinklet, wet, e, fg);
-  cout << fg.toString() << endl;
+//  cout << fg.toString() << endl;
 
 //   Inference::_Base::_Base bp(fg);               // NaiveInference
 //  Inference::_Base bp(fg);                      // SumProductInference cvm = Cvm(Cvm::Iter)
-  Inference bp(fg, Cvm(Cvm::Iter|Cvm::Change)); // MessagePriorityInference
+//  Inference bp(fg, Cvm(Cvm::Iter|Cvm::Change)); // MessagePriorityInference
+  gm::NaiveInference<Factor> bp(fg);
+//  gm::MessagePendingInference<Factor> bp(fg, Cvm(Cvm::Iter|Cvm::Change));
+//  gm::MessagePriorityInference<Factor> bp(fg, Cvm(Cvm::Iter|Cvm::Change));
   bp.run();
 
   cout << "---------------------- Inference result ----------------------" << endl;
