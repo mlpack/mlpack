@@ -11,6 +11,7 @@ set(SOURCES
   convergence_measure
   naive_inference
   sum_product_inference
+  message_pending_inference
   inference
   logarithm
   gm
