@@ -46,14 +46,14 @@ target_link_libraries(mlpack_contrib
 )
 
 # move header files to the right directory
-#file(GLOB_RECURSE INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
-#add_custom_command(TARGET mlpack_contrib POST_BUILD
-#   COMMENT "Moving header files to include/mlpack_contrib/"
-#   COMMAND ${CMAKE_COMMAND} ARGS -E make_directory ${CMAKE_BINARY_DIR}/include/mlpack_contrib/)
-#foreach(incl_file ${INCLUDE_FILES})
-#   add_custom_command(TARGET mlpack_contrib POST_BUILD
-#      COMMAND ${CMAKE_COMMAND} ARGS -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${incl_file} ${CMAKE_BINARY_DIR}/include/mlpack_contrib/${incl_file})
-#endforeach()
+file(GLOB_RECURSE INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
+add_custom_command(TARGET mlpack_contrib POST_BUILD
+   COMMENT "Moving header files to include/mlpack_contrib/"
+   COMMAND ${CMAKE_COMMAND} ARGS -E make_directory ${CMAKE_BINARY_DIR}/include/mlpack_contrib/)
+foreach(incl_file ${INCLUDE_FILES})
+   add_custom_command(TARGET mlpack_contrib POST_BUILD
+      COMMAND ${CMAKE_COMMAND} ARGS -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${incl_file} ${CMAKE_BINARY_DIR}/include/mlpack_contrib/${incl_file})
+endforeach()
 
 # set installation rules for include files
 install(FILES ${INCLUDE_FILES}
