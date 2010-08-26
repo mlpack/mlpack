@@ -31,7 +31,7 @@ struct Particle {
       }
     // make alpha orthogonal to y
     for (index_t ii = 0; ii < SVs.get_n(); ii++) {
-      index_t i = SVs[ii];
+      //index_t i = SVs[ii];
       //TODO alpha[i]
     }
 

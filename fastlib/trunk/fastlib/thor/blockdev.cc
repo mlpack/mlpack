@@ -6,7 +6,9 @@
 
 #include "blockdev.h"
 
+#ifndef _XOPEN_SOURCE
 #define _XOPEN_SOURCE 600
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
