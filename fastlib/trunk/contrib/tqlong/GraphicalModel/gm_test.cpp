@@ -3,11 +3,30 @@
 #include "gm.h"
 using namespace std;
 
+const fx_entry_doc gm_test_entries[] = {
+  {"method", FX_PARAM, FX_STR, NULL,
+   "  Inference method: naive (*), sum_product, msg_priority, msg_pending.\n"},
+  {"iter", FX_PARAM, FX_INT, NULL,
+   "  Maximum number of iterations: default 10.\n"},
+  {"ctol", FX_PARAM, FX_DOUBLE, NULL,
+   "  Change tolerance: default 1e-5.\n"},
+  FX_ENTRY_DOC_DONE
+};
+
+const fx_submodule_doc gm_test_submodules[] = {
+  FX_SUBMODULE_DOC_DONE
+};
+
+const fx_module_doc gm_test_doc = {
+  gm_test_entries, gm_test_submodules,
+  "This is a program generating sequences from HMM models.\n"
+};
+
 void testInference(fx_module*);
 
 int main(int argc, char** argv)
 {
-  fx_module* root = fx_init(argc, argv, NULL);
+  fx_module* root = fx_init(argc, argv, &gm_test_doc);
   testInference(root);
   fx_done(root);
 }
@@ -21,7 +40,6 @@ void printBelief(const typename Inference::vertex_type& u,
     const Variable* var = (const Variable*) u->variable();
     cout << var->name() << " belief: ";
     BOOST_FOREACH(const typename Inference::belief_type::value_type& p, blf)
-  //  for (typename Inference::belief_type::iterator it = blf.begin(); it != blf.end(); it++)
     {
       cout << (var->valueMap()->getForward(FINITE_VALUE(p.first))) << " = " << p.second << " ";
     }
@@ -32,9 +50,6 @@ void printBelief(const typename Inference::vertex_type& u,
     const typename Inference::factor_type* f = (const typename Inference::factor_type*) u->factor();
     cout << f->toString() << " average = " << blf.get(0) << endl;
   }
-  // cout << "equal = " << (b.size() < 2 ? 0 : b[0] == b[1]) << endl;
-  // cout << "greater = " << (b.size() < 2 ? 0 : b[0] > b[1]) << endl;
-  // cout << "less = " << (b.size() < 2 ? 0 : b[0] < b[1]) << endl;
 }
 
 void testInference(fx_module* module)
@@ -50,7 +65,6 @@ void testInference(fx_module* module)
   typedef gm::NaiveInference<Factor> Inference;
   typedef Inference::belief_type belief_type;
   typedef Inference::belief_map_type belief_map_type;
-//  void printBelief<Inference>(belief_type blf);
 
   struct GraphBuilder
   {
@@ -106,10 +120,9 @@ void testInference(fx_module* module)
   GraphBuilder(rain, sprinklet, wet, e, fg);
 //  cout << fg.toString() << endl;
 
-//   Inference::_Base::_Base bp(fg);               // NaiveInference
-//  Inference::_Base bp(fg);                      // SumProductInference cvm = Cvm(Cvm::Iter)
-//  Inference bp(fg, Cvm(Cvm::Iter|Cvm::Change)); // MessagePriorityInference
   const char* method = fx_param_str(module, "method", "naive");
+  int maxIter = fx_param_int(module, "iter", 10);
+  double cTol = fx_param_double(module, "ctol", 1e-5);
 
   belief_map_type beliefs;
   if (strcmp(method, "naive") == 0) 
@@ -120,19 +133,19 @@ void testInference(fx_module* module)
   }
   else if (strcmp(method, "sum_product") == 0) 
   {
-    gm::SumProductInference<Factor> bp(fg);
+    gm::SumProductInference<Factor> bp(fg, Cvm(Cvm::Iter, maxIter));
     bp.run();
     beliefs = bp.beliefs();
   }
   else if (strcmp(method, "msg_priority") == 0) 
   {
-    gm::MessagePriorityInference<Factor> bp(fg, Cvm(Cvm::Iter | Cvm::Change));
+    gm::MessagePriorityInference<Factor> bp(fg, Cvm(Cvm::Iter | Cvm::Change, maxIter, cTol));
     bp.run();
     beliefs = bp.beliefs();
   }
   else if (strcmp(method, "msg_pending") == 0) 
   {
-    gm::MessagePendingInference<Factor> bp(fg, Cvm(Cvm::Iter | Cvm::Change));
+    gm::MessagePendingInference<Factor> bp(fg, Cvm(Cvm::Iter | Cvm::Change, maxIter, cTol));
     bp.run();
     beliefs = bp.beliefs();
   }
