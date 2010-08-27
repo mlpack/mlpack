@@ -8,6 +8,10 @@ BEGIN_GRAPHICAL_MODEL_NAMESPACE;
 
 /** A domain is a list of variables, e.g. x0, x1, ... xn,
   * which could be the arguments of a function or factor
+  * Usage: 
+  *   Domain dom; 
+  *   dom << var1 << var2;
+  *   TableF<double> factor(Domain() << var1 << var2), factor2(dom);
   */
 typedef Vector<const Variable*> Domain;
 
@@ -132,14 +136,6 @@ void TableF<_V>::restricted(const Assignment& a)
       it++;
   }
   assignments_.remove_if(RemoveCondition(a));
-  // for (typename List<Assignment>::iterator it = assignments_.begin(); it != assignments_.end();)
-  // {
-  //   const Assignment& b = (*it);
-  //   if (!b.agree(a))
-  //     assignments_.erase(it++);
-  //   else
-  //     it++;
-  // }
 }
 
 template <typename _V>
