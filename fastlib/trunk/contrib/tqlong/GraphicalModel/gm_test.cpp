@@ -3,13 +3,13 @@
 #include "gm.h"
 using namespace std;
 
-void testNaiveInference();
+void testInference(fx_module*);
 
 int main(int argc, char** argv)
 {
-//  fx_module* root = fx_init(argc, argv, NULL);
-  testNaiveInference();
-//  fx_done(root);
+  fx_module* root = fx_init(argc, argv, NULL);
+  testInference(root);
+  fx_done(root);
 }
 
 template <typename Inference, typename Variable>
@@ -37,7 +37,7 @@ void printBelief(const typename Inference::vertex_type& u,
   // cout << "less = " << (b.size() < 2 ? 0 : b[0] < b[1]) << endl;
 }
 
-void testNaiveInference()
+void testInference(fx_module* module)
 {
   typedef gm::ConvergenceMeasure Cvm;
   typedef gm::FiniteVar<std::string> Variable;
@@ -47,7 +47,7 @@ void testNaiveInference()
   typedef gm::Logarithm Logarithm;
   typedef gm::TableF<Logarithm> Factor;
   typedef gm::FactorGraph<Factor> Graph;
-  typedef gm::MessagePendingInference<Factor> Inference;
+  typedef gm::NaiveInference<Factor> Inference;
   typedef Inference::belief_type belief_type;
   typedef Inference::belief_map_type belief_map_type;
 //  void printBelief<Inference>(belief_type blf);
@@ -109,13 +109,35 @@ void testNaiveInference()
 //   Inference::_Base::_Base bp(fg);               // NaiveInference
 //  Inference::_Base bp(fg);                      // SumProductInference cvm = Cvm(Cvm::Iter)
 //  Inference bp(fg, Cvm(Cvm::Iter|Cvm::Change)); // MessagePriorityInference
-  gm::NaiveInference<Factor> bp(fg);
-//  gm::MessagePendingInference<Factor> bp(fg, Cvm(Cvm::Iter|Cvm::Change));
-//  gm::MessagePriorityInference<Factor> bp(fg, Cvm(Cvm::Iter|Cvm::Change));
-  bp.run();
+  const char* method = fx_param_str(module, "method", "naive");
+
+  belief_map_type beliefs;
+  if (strcmp(method, "naive") == 0) 
+  {
+    gm::NaiveInference<Factor> bp(fg);
+    bp.run();
+    beliefs = bp.beliefs();
+  }
+  else if (strcmp(method, "sum_product") == 0) 
+  {
+    gm::SumProductInference<Factor> bp(fg);
+    bp.run();
+    beliefs = bp.beliefs();
+  }
+  else if (strcmp(method, "msg_priority") == 0) 
+  {
+    gm::MessagePriorityInference<Factor> bp(fg, Cvm(Cvm::Iter | Cvm::Change));
+    bp.run();
+    beliefs = bp.beliefs();
+  }
+  else if (strcmp(method, "msg_pending") == 0) 
+  {
+    gm::MessagePendingInference<Factor> bp(fg, Cvm(Cvm::Iter | Cvm::Change));
+    bp.run();
+    beliefs = bp.beliefs();
+  }
 
   cout << "---------------------- Inference result ----------------------" << endl;
-  belief_map_type beliefs = bp.beliefs();
   BOOST_FOREACH (const belief_map_type::value_type& p, beliefs)
   {
     printBelief<Inference, Variable>(p.first, p.second);
