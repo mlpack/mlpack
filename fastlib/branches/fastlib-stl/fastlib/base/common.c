@@ -63,7 +63,7 @@ void fl_pause(void)
   if (isatty(0)) {
     char c;
 
-    fprintf(stderr, ANSI_HBLACK"Press Return to continue..."ANSI_CLEAR);
+    fprintf(stderr, "Press Return to continue...");
     fflush(stderr);
 
     while ((c = getchar()) != EOF && c != '\n');
