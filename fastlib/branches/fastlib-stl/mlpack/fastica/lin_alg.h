@@ -13,6 +13,7 @@
 
 #include <armadillo>
 #include <fastlib/base/arma_compat.h>
+#include <cmath>
 
 #define max_rand_i 100000
 
@@ -697,7 +698,7 @@ namespace linalg__private {
     col_vector_sum /= X.n_rows; // scale
  
     X_centered.set_size(X.n_rows, X.n_cols);
-    for(index_t i = 0; i < X.n_rows; i++)
+    for(index_t i = 0; i < X.n_cols; i++)
       X_centered.col(i) = X.col(i) - col_vector_sum(i);
   }
 
@@ -733,38 +734,32 @@ namespace linalg__private {
   }
 
   /**
-   * Whitens a matrix using the eigen decomposition of the covariance
+   * Whitens a matrix using the eigendecomposition of the covariance
    * matrix. Whitening means the covariance matrix of the result is
    * the identity matrix
    */
-  void WhitenUsingEig(Matrix X, Matrix* X_whitened, Matrix* whitening_matrix) {
-    Matrix cov_X, D, D_inv, E;
-    Vector D_vector;
+  void WhitenUsingEig(const arma::mat& X, arma::mat& X_whitened, arma::mat& whitening_matrix) {
+    arma::mat diag, eigenvectors;
+    arma::vec eigenvalues;
 
-    Scale(1 / (double) (X.n_cols() - 1),
-	  MulTransBInit(&X, &X, &cov_X));
-    
-
-    la::EigenvectorsInit(cov_X, &D_vector, &E);
-
-    //E.set(0, 1, -E.get(0, 1));
-    //E.set(1, 1, -E.get(1, 1));
-
-    
-
-    index_t d = D_vector.length();
-    D.Init(d, d);
-    D.SetZero();
-    D_inv.Init(d, d);
-    D_inv.SetZero();
-    for(index_t i = 0; i < d; i++) {
-      double sqrt_val = sqrt(D_vector[i]);
-      D.set(i, i, sqrt_val);
-      D_inv.set(i, i, 1 / sqrt_val);
+    // get eigenvectors of covariance of input matrix
+    // trans(X) is a hack because cov() seems to be wrong
+    eig_sym(eigenvalues, eigenvectors, cov(trans(X))); 
+    // generate diagonal matrix using 1 / sqrt(eigenvalues) for each value
+    diag.zeros(eigenvalues.n_elem, eigenvalues.n_elem);
+    for(index_t i = 0; i < eigenvalues.n_elem; i++) {
+      // prune zero-valued eigenvalues; the diagonal matrix entry will simply be
+      // set to zero (this is for the case of a rank-deficient covariance
+      // matrix)
+      if(std::abs(eigenvalues[i]) > 1e-15)
+        diag(i, i) = 1 / sqrt(eigenvalues[i]);
     }
+    
+    // our whitening matrix is diag(1 / sqrt(eigenvectors)) * eigenvalues
+    whitening_matrix = diag * trans(eigenvectors);
 
-    la::MulTransBInit(D_inv, E, whitening_matrix);
-    la::MulInit(*whitening_matrix, X, X_whitened);
+    // now apply the whitening matrix
+    X_whitened = whitening_matrix * X;
   }
 
   /**
