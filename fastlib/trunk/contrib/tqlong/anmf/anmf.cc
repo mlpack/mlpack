@@ -84,6 +84,18 @@ ProjectOneToOne::ProjectOneToOne(const Vector& a, Vector* pb) : a_(a), b_(*pb)
   DEBUG_ASSERT(n2 == a_.length());
   b_.Init(n2);
   initLabel();
+  for (int n_match = 0; n_match < n_; n_match++)
+  {
+    // pick a free vertex
+    int u = 0;
+    for (; u < n_ && match_[u] == -1; u++);
+    int v = findAugmentingPath(u);
+    augmentPath(u, v);
+  }
+  // left vertex i is mapped to right vertex match_[i]-n
+  b_.SetZero();
+  for (int i = 0; i < n_; i++)
+    b_[i*n_+match_[i]-n_] = 1;
 }
 
 void ProjectOneToOne::initLabel()
@@ -101,9 +113,19 @@ void ProjectOneToOne::initLabel()
       if (a_[j*n_+i] > label_[i+n_]) label_[i+n_] = a_[j*n_+i];
   }
   // at first, there is no match
-  match_.Init(n_*2);
-  for (int i = 0; i < n_*2; i++)
-    match_[i] = -1;
+  match_.InitRepeat(-1, n_*2);
+  prev_.InitRepeat(-1, n_*2);
+}
+
+int ProjectOneToOne::findAugmentingPath(int u)
+{
+  for (int i = 0; i < n_*2; i++) prev_[i] = -1;
+  prev[u] = u;
+  
+}
+
+void ProjectOneToOne::augmentPath(int u, int v)
+{
 }
 
 END_ANMF_NAMESPACE;

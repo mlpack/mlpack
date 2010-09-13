@@ -28,18 +28,26 @@ BEGIN_ANMF_NAMESPACE;
  */
 void ipfpGraphMatching(fx_module* module, const Matrix& M, Vector& solution);
 
-/** Project a vector to a one-to-one discrete constraint */
+/** Project a vectorized matrix to the one-to-one discrete constraint 
+ *  Basically, it is equivalent to the max-weight matching problem
+ *  which can be solved by the Hungarian method
+ *  Input:  a - weight[i,j] = a[i*n+j]
+ *  Output: b - matching[i, j] = b[i*n+j] \in {0, 1}
+ */
 class ProjectOneToOne
 {
   const Vector& a_;
   Vector& b_;
   Vector label_;
-  Vector match_;
+  ArrayList<int> match_, prev_;
   int n_;
  public:
   ProjectOneToOne(const Vector& a, Vector* b);
  private:
   void initLabel();
+  int findAugmentingPath(int u);
+  void augmentPath(int u, int v);
+  inline static bool equal(double a, double b) { return a-b < 1e-16 && b-a < 1e-16; }
 };
 
 END_ANMF_NAMESPACE;
