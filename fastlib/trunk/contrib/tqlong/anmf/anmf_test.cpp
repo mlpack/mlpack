@@ -12,6 +12,8 @@ const fx_entry_doc anmf_test_entries[] = {
     "  Change tolerance: default 1e-12.\n"},
   {"M", FX_PARAM, FX_STR, NULL,
    "The matching measure matrix M_{ia;jb}, default: m.txt"},
+   {"size", FX_PARAM, FX_INT, NULL,
+    "  size of the graph: default 5.\n"},
   FX_ENTRY_DOC_DONE
 };
 
@@ -25,10 +27,13 @@ const fx_module_doc anmf_test_doc = {
 };
 
 void testGraphMatching(fx_module*);
+void randomData(fx_module* module);
 
 int main(int argc, char** argv)
 {
   fx_module* root = fx_init(argc, argv, &anmf_test_doc);
+  if (fx_param_exists(root, "size"))
+    randomData(root);
   testGraphMatching(root);
   fx_done(root);
 }
@@ -44,4 +49,22 @@ void testGraphMatching(fx_module* module)
   Vector sol;
   anmf::ipfpGraphMatching(module, M, sol);
   ot::Print(sol, "solution");
+}
+
+void randomData(fx_module* module)
+{
+  const char* filename = fx_param_str(module, "M", "m.txt");
+  int n = fx_param_int(module, "size", 5);
+  int n2 = n*n;
+  Matrix M;
+  M.Init(n2, n2);
+  for (int i = 0; i < n2; i++)
+  {
+    for (int j = i; j < n2; j++)
+    {
+      M.ref(i,j) = (math::Random() * 10);
+      M.ref(j,i) = M.get(i,j);
+    }
+  }
+  data::Save(filename, M);
 }
