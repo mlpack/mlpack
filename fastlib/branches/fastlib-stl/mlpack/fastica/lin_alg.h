@@ -13,6 +13,7 @@
 
 #include <armadillo>
 #include <fastlib/base/arma_compat.h>
+#include <fastlib/base/arma_extend.h>
 #include <cmath>
 
 #define max_rand_i 100000
@@ -684,6 +685,19 @@ namespace linalg__private {
       A_sub_col_i.CopyValues(A_col_index_i);
     }
   }
+  
+  /***
+   * Auxiliary function to raise vector elements to a specific power.  The sign is
+   * ignored in the power operation and then re-added.  Useful for eigenvalues.
+   */
+  void VectorPower(arma::vec& vec, float power) {
+    for(int i = 0; i < vec.n_elem; i++) {
+        if(std::abs(vec(i)) > 1e-12)
+          vec(i) = (vec(i) > 0) ? std::pow(vec(i), power) : -std::pow(-vec(i), power);
+        else
+          vec(i) = 0;
+    }
+  }
 
   /**
    * Creates a centered matrix, where centering is done by subtracting
@@ -743,18 +757,12 @@ namespace linalg__private {
     arma::vec eigenvalues;
 
     // get eigenvectors of covariance of input matrix
-    // trans(X) is a hack because cov() seems to be wrong
-    eig_sym(eigenvalues, eigenvectors, cov(trans(X))); 
+    eig_sym(eigenvalues, eigenvectors, ccov(X)); 
     // generate diagonal matrix using 1 / sqrt(eigenvalues) for each value
+    VectorPower(eigenvalues, -0.5);
     diag.zeros(eigenvalues.n_elem, eigenvalues.n_elem);
-    for(index_t i = 0; i < eigenvalues.n_elem; i++) {
-      // prune zero-valued eigenvalues; the diagonal matrix entry will simply be
-      // set to zero (this is for the case of a rank-deficient covariance
-      // matrix)
-      if(std::abs(eigenvalues[i]) > 1e-15)
-        diag(i, i) = 1 / sqrt(eigenvalues[i]);
-    }
-    
+    diag.diag() = eigenvalues;
+
     // our whitening matrix is diag(1 / sqrt(eigenvectors)) * eigenvalues
     whitening_matrix = diag * trans(eigenvectors);
 
@@ -841,31 +849,26 @@ namespace linalg__private {
   }
 
   /**
-   * Orthogonalize W and return the result in W, using Eigen Decomposition
-   * @pre W and W_old store the same matrix in disjoint memory
+   * Orthogonalize X and return the result in W, using eigendecomposition.
+   * We will be using the formula \f$ W = X (X^T X)^{-0.5} \f$.
    */
-  void Orthogonalize(const Matrix W_old, Matrix *W) {
-    Matrix W_squared, W_squared_inv_sqrt;
-    
-    la::MulTransAInit(W_old, W_old, &W_squared);
-    
-    Matrix D, E, E_times_D;
-    Vector D_vector;
-    
-    la::EigenvectorsInit(W_squared, &D_vector, &E);
-    D.InitDiagonal(D_vector);
-    
-    index_t d = D.n_rows();
-    for(index_t i = 0; i < d; i++) {
-      D.set(i, i, 1 / sqrt(D.get(i, i)));
-    }
-    
-    la::MulInit(E, D, &E_times_D);
-    la::MulTransBInit(E_times_D, E, &W_squared_inv_sqrt);
-    
-    // note that up until this point, W == W_old
-    la::MulOverwrite(W_old, W_squared_inv_sqrt, W);
+  void Orthogonalize(const arma::mat& X, arma::mat& W) {
+    // For a matrix A, A^N = V * D^N * V', where VDV' is the
+    // eigendecomposition of the matrix A.
+    arma::mat eigenvalues, eigenvectors;
+    arma::vec egval;
+    eig_sym(egval, eigenvectors, ccov(X));
+    VectorPower(egval, -0.5);
+
+    eigenvalues.zeros(egval.n_elem, egval.n_elem);
+    eigenvalues.diag() = egval;
+
+    arma::mat at = (eigenvectors * eigenvalues * trans(eigenvectors));
+ 
+    W = at * X;
   }
+
+
 }; /* namespace linalg__private */
 
 #endif /* LIN_ALG_H */

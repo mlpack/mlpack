@@ -15,8 +15,10 @@
 #ifndef FASTICA_H
 #define FASTICA_H
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
 #include "lin_alg.h"
+
+#include <armadillo>
 
 #define LOGCOSH 0
 #define GAUSS 10
@@ -76,7 +78,7 @@ class FastICA {
   struct datanode* module_;
 
   /** data */
-  Matrix X_;
+  arma::mat X_;
 
   /** Optimization approach to use (deflation vs symmetric) */
   int approach_;
@@ -122,8 +124,8 @@ class FastICA {
   /**
    * Symmetric Newton-Raphson using log cosh contrast function
    */
-  void SymmetricLogCoshUpdate_(index_t n, Matrix X, Matrix* B) {
-    Matrix hyp_tan, col_vector, sum, temp1, temp2;
+  void SymmetricLogCoshUpdate_(const index_t n, const arma::mat X, arma::mat& B) {
+    arma::mat hyp_tan, col_vector, sum, temp1, temp2;
     
     MapOverwrite(&TanhArg,
 		 a1(),
@@ -528,14 +530,6 @@ class FastICA {
     return nonlinearity_;
   }
 
-  //  index_t first_eig() {
-  //    return first_eig_;
-  //  }
-
-  //  index_t last_eig() {
-  //    return last_eig_;
-  //  }
-
   index_t num_of_IC() {
     return num_of_IC_;
   }
@@ -576,7 +570,7 @@ class FastICA {
     return percent_cut_;
   }
 
-  Matrix X() {
+  arma::mat X() {
     return X_;
   }
 
@@ -590,13 +584,13 @@ class FastICA {
   /**
    * Initializes the FastICA object by obtaining everything the algorithm needs
    */
-  int Init(Matrix X_in, struct datanode* module_in) {
+  int Init(arma::mat& X_in, struct datanode* module_in) {
 
     module_ = module_in;
 
-    X_.Copy(X_in); // for some reason Alias makes this crash, so copy for now
-    d = X_.n_rows();
-    n = X_.n_cols();
+    X_ = X_in; // for some reason Alias makes this crash, so copy for now
+    d = X_.n_rows;
+    n = X_.n_cols;
 
     long seed = fx_param_int(module_, "seed", clock() + time(0));
     srand48(seed);
@@ -684,14 +678,11 @@ class FastICA {
 
   /**
    * Select indices < max according to probability equal to parameter
-   * percentage, and return indices in a Vector
-   * @pre selected_indices is an uninitialized Vector, percentage in [0 1]
+   * percentage, and return indices in an arma::vec
    */
-  index_t GetSamples(int max, double percentage, Vector* selected_indices) {   
-    
+  index_t GetSamples(int max, double percentage, arma::vec& selected_indices) {   
     index_t num_selected = 0;
-    Vector rand_nums;
-    rand_nums.Init(max);
+    arma::vec rand_nums(max);
     for(index_t i = 0; i < max; i++) {
       double rand_num = drand48();
       rand_nums[i] = rand_num;
@@ -700,12 +691,12 @@ class FastICA {
       }
     }
 
-    selected_indices -> Init(num_selected);
+    selected_indices.set_size(num_selected);
     
     int j = 0;
     for(index_t i = 0; i < max; i++) {
       if(rand_nums[i] <= percentage) {
-	(*selected_indices)[j] = i;
+	selected_indices[j] = i;
 	j++;
       }
     }
@@ -1351,16 +1342,15 @@ class FastICA {
 
 
   /**
-   * Runs FastICA Algorithm on matrix X and Inits W to unmixing matrix and Y to
+   * Runs FastICA Algorithm on matrix X and sets W to unmixing matrix and Y to
    * independent components matrix, such that \f$ X = W * Y \f$
    */
-  int DoFastICA(Matrix* W, Matrix* Y) {
+  int DoFastICA(arma::mat& W, arma::mat& Y) {
+    arma::mat X_centered, X_whitened, whitening_matrix;
 
-    Matrix X_centered, X_whitened, whitening_matrix;
+    Center(X, X_centered);
 
-    Center(X(), &X_centered);
-
-    WhitenUsingEig(X_centered, &X_whitened, &whitening_matrix);
+    WhitenUsingEig(X_centered, X_whitened, whitening_matrix);
   
     int ret_val =
       FixedPointICA(X_whitened, whitening_matrix, W);
@@ -1369,7 +1359,7 @@ class FastICA {
       la::MulInit(*W, X(), Y);
     }
     else {
-      Y -> Init(0,0);
+      Y.set_size(0);
     }
 
     return ret_val;
