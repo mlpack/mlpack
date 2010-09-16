@@ -1,0 +1,115 @@
+// Copyright (C) 2010 NICTA and the authors listed below
+// http://nicta.com.au
+// 
+// Authors:
+// - Conrad Sanderson (conradsand at ieee dot org)
+// - Dimitrios Bouzas (dimitris dot mpouzas at gmail dot com)
+// 
+// This file is part of the Armadillo C++ library.
+// It is provided without any warranty of fitness
+// for any purpose. You can redistribute this file
+// and/or modify it under the terms of the GNU
+// Lesser General Public License (LGPL) as published
+// by the Free Software Foundation, either version 3
+// of the License or (at your option) any later version.
+// (see http://www.opensource.org/licenses for more info)
+
+
+
+//! \addtogroup op_cov
+//! @{
+
+
+
+template<typename eT>
+inline
+void
+op_ccov::direct_ccov(Mat<eT>& out, const Mat<eT>& A, const u32 norm_type)
+  {
+  arma_extra_debug_sigprint();
+  
+  if(A.is_vec())
+    {
+    if(A.n_rows == 1)
+      {
+      out = var(trans(A), norm_type);      
+      }
+    else
+      {
+      out = var(A, norm_type);
+      }
+    }
+  else
+    {
+    const u32 N = A.n_cols;
+    const eT norm_val = (norm_type == 0) ? ( (N > 1) ? eT(N-1) : eT(1) ) : eT(N);
+
+    const Col<eT> acc = sum(A, 1);
+
+    out = A * trans(A);
+    out -= (acc * trans(acc)) / eT(N);
+    out /= norm_val;
+    }
+  }
+
+
+
+template<typename T>
+inline
+void
+op_ccov::direct_ccov(Mat< std::complex<T> >& out, const Mat< std::complex<T> >& A, const u32 norm_type)
+  {
+  arma_extra_debug_sigprint();
+  
+  typedef typename std::complex<T> eT;
+  
+  if(A.is_vec())
+    {
+    if(A.n_rows == 1)
+      {
+      const Mat<T> tmp_mat = var(trans(A), norm_type);
+      out.set_size(1,1);
+      out[0] = tmp_mat[0];
+      }
+    else
+      {
+      const Mat<T> tmp_mat = var(A, norm_type);
+      out.set_size(1,1);
+      out[0] = tmp_mat[0];
+      }
+    }
+  else
+    {
+    const u32 N = A.n_cols;
+    const eT norm_val = (norm_type == 0) ? ( (N > 1) ? eT(N-1) : eT(1) ) : eT(N);
+
+    const Col<eT> acc = sum(A, 1);
+
+    out = A * trans(conj(A));
+    out -= (acc * trans(conj(acc))) / eT(N);
+    out /= norm_val;
+    }
+  }
+
+
+
+template<typename T1>
+inline
+void
+op_ccov::apply(Mat<typename T1::elem_type>& out, const Op<T1,op_ccov>& in)
+  {
+  arma_extra_debug_sigprint();
+  
+  typedef typename T1::elem_type eT;
+  
+  const unwrap_check<T1> tmp(in.m, out);
+  const Mat<eT>& A     = tmp.M;
+  
+  const u32 norm_type = in.aux_u32_a;
+  
+  op_ccov::direct_ccov(out, A, norm_type);
+  }
+
+
+
+//! @}
