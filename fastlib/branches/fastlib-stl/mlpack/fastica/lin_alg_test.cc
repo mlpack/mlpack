@@ -9,6 +9,7 @@
  */
 #include <fastlib/fastlib.h>
 #include <armadillo>
+#include <fastlib/base/arma_extend.h>
 
 #include "lin_alg.h"
 
@@ -84,7 +85,7 @@ bool test_WhitenUsingEig() {
   Center(tmp, tmp_centered);
   WhitenUsingEig(tmp_centered, whitened, whitening_matrix);
  
-  mat newcov = cov(trans(whitened));
+  mat newcov = ccov(whitened);
   for(int row = 0; row < 5; row++) {
     for(int col = 0; col < 5; col++) {
       if(row == col) {
@@ -94,6 +95,31 @@ bool test_WhitenUsingEig() {
           return false;
       } else {
         if(std::abs(newcov(row, col)) > 1e-12)
+          return false;
+      }
+    }
+  }
+
+  return true;
+}
+
+bool test_Orthogonalize() {
+  // Generate a random matrix; then, orthogonalize it and test if it's
+  // orthogonal.
+  mat tmp, orth;
+  data::Load("fake.arff", tmp);
+  Orthogonalize(tmp, orth);
+
+  // test orthogonality
+  mat test = ccov(orth);
+  double ival = test(0, 0);
+  for(int row = 0; row < test.n_rows; row++) {
+    for(int col = 0; col < test.n_cols; col++) {
+      if(row == col) {
+        if(std::abs(test(row, col) - ival) > 1e-12 && test(row, col) != 0)
+          return false;
+      } else {
+        if(std::abs(test(row, col)) > 1e-12)
           return false;
       }
     }
@@ -113,6 +139,14 @@ int main() {
   
   printf("test_WhitenUsingEig(): ");
   if(test_WhitenUsingEig()) {
+    printf("pass\n");
+  } else {
+    printf("fail\n");
+    return 1;
+  }
+  
+  printf("test_Orthogonalize(): ");
+  if(test_Orthogonalize()) {
     printf("pass\n");
   } else {
     printf("fail\n");
