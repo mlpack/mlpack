@@ -1,6 +1,8 @@
 #include <fastlib/fastlib.h>
 #include "anmf.h"
 
+#include <iostream>
+
 using namespace std;
 
 const fx_entry_doc anmf_test_entries[] = {
@@ -26,15 +28,17 @@ const fx_module_doc anmf_test_doc = {
   "This is a program testing affine NMF functionalities.\n"
 };
 
+void testMaxWeightMatching(fx_module*);
 void testGraphMatching(fx_module*);
 void randomData(fx_module* module);
 
 int main(int argc, char** argv)
 {
   fx_module* root = fx_init(argc, argv, &anmf_test_doc);
-  if (fx_param_exists(root, "size"))
-    randomData(root);
-  testGraphMatching(root);
+  testMaxWeightMatching(root);
+//  if (fx_param_exists(root, "size"))
+//    randomData(root);
+//  testGraphMatching(root);
   fx_done(root);
 }
 
@@ -67,4 +71,22 @@ void randomData(fx_module* module)
     }
   }
   data::Save(filename, M);
+}
+
+void testMaxWeightMatching(fx_module* module)
+{
+  const char* inputFile = fx_param_str(module, "M", "m.txt");
+  Matrix M;
+  if (data::Load(inputFile, &M) != SUCCESS_PASS)
+    return;
+
+  anmf::MaxWeightMatching<Matrix> a(M);
+
+  cout << "Left-->Right" << endl;
+  for (int i = 0; i < M.n_rows(); i++)
+    cout << i << " --> " << a.matchLeft(i) << endl;
+
+  cout << "Right-->Left" << endl;
+  for (int i = 0; i < M.n_cols(); i++)
+    cout << i << " --> " << a.matchRight(i) << endl;
 }
