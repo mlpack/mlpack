@@ -1,5 +1,6 @@
 set(SOURCES
   anmf
+  max_weight_matching
 )
 
 # add directory name to sources

@@ -6,6 +6,8 @@
  *    + etc.
  */
 
+#include <fastlib/fastlib.h>
+
 #ifndef TQLONG_ANMF_H
 #define TQLONG_ANMF_H
 
@@ -15,6 +17,8 @@
 #ifndef END_ANMF_NAMESPACE
 #define END_ANMF_NAMESPACE }
 #endif
+
+#include "max_weight_matching.h"
 
 BEGIN_ANMF_NAMESPACE;
 
