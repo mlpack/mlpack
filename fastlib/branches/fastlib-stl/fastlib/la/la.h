@@ -47,6 +47,8 @@
 
 #include "../math/math_lib.h"
 
+#include <assert.h>
+
 #include <math.h>
 #include <armadillo>
 
