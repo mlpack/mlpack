@@ -74,11 +74,9 @@ const fx_module_doc fastica_main_doc = {
 int main(int argc, char *argv[]) {
   fx_module* root = fx_init(argc, argv, &fastica_main_doc);
 
-  Matrix X;
+  arma::mat X;
   const char* data = fx_param_str_req(NULL, "data");
-  arma::mat tmpX;
-  data::Load(data, tmpX);
-  arma_compat::armaToMatrix(tmpX, X);
+  data::Load(data, X);
 
   const char* ic_filename = fx_param_str(NULL, "ic_filename", "ic.dat");
   const char* unmixing_filename =
@@ -90,14 +88,12 @@ int main(int argc, char *argv[]) {
 
   int success_status = SUCCESS_FAIL;
   if(fastica.Init(X, fastica_module) == SUCCESS_PASS) {
-    Matrix W, Y;
-    if(fastica.DoFastICA(&W, &Y) == SUCCESS_PASS) {
-      SaveCorrectly(unmixing_filename, W);
-      arma::mat tmpY;
-      arma_compat::matrixToArma(Y, tmpY);
-      data::Save(ic_filename, tmpY);
+    arma::mat W, Y;
+    if(fastica.DoFastICA(W, Y) == SUCCESS_PASS) {
+      data::Save(unmixing_filename, trans(W));
+      data::Save(ic_filename, Y);
       success_status = SUCCESS_PASS;
-      VERBOSE_ONLY( W.PrintDebug("W") );
+      VERBOSE_ONLY( std::cout << W );
     }
   }
   
