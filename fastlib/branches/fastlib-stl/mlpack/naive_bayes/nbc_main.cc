@@ -62,15 +62,12 @@ int main(int argc, char* argv[]) {
   ////// READING PARAMETERS AND LOADING DATA //////
 
   const char *training_data_filename = fx_param_str_req(root, "train");
-  Matrix training_data;
-  arma::mat tmp;
-  data::Load(training_data_filename, tmp);
-  arma_compat::armaToMatrix(tmp, training_data);
+  arma::mat training_data;
+  data::Load(training_data_filename, training_data);
 
   const char *testing_data_filename = fx_param_str_req(root, "test");
-  Matrix testing_data;
-  data::Load(testing_data_filename, tmp);
-  arma_compat::armaToMatrix(tmp, testing_data);
+  arma::mat testing_data;
+  data::Load(testing_data_filename, testing_data);
 
   ////// SIMPLE NAIVE BAYES CLASSIFICATION ASSUMING THE DATA TO BE UNIFORMLY DISTRIBUTED //////
 
@@ -89,7 +86,7 @@ int main(int argc, char* argv[]) {
 
   ////// Timing the testing of the Naive Bayes Classifier //////
   ////// The variable that contains the result of the classification
-  Vector results;
+  arma::vec results;
 
   fx_timer_start(nbc_module, "testing");
 
