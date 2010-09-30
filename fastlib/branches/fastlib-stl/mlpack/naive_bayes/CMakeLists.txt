@@ -6,7 +6,6 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
    simple_nbc.h
    phi.h
-   math_functions.h
 )
 
 # add directory name to sources
