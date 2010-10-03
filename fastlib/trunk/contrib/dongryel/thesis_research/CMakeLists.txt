@@ -22,7 +22,7 @@ option(DEBUG "Compile with debugging information" ON) # default to on for develo
 
 # include boost.
 set(Boost_USE_STATIC_LIBS   ON)
-find_package(Boost COMPONENTS program_options mpi serialization system unit_test_framework REQUIRED)
+find_package(Boost COMPONENTS program_options mpi serialization system thread unit_test_framework REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
 # include trilinos.

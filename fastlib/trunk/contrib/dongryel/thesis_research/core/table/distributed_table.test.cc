@@ -3,6 +3,7 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
+#include "boost/thread.hpp"
 #include "core/table/distributed_table.h"
 
 int main(int argc, char *argv[]) {
@@ -13,6 +14,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Please specify a process number greater than 1.\n";
     exit(0);
   }
+  srand(time(NULL) + world.rank());
   printf("%d processes are present...\n", world.size());
 
   // Each process generates its own random data, dumps it to the file,

@@ -78,6 +78,17 @@ class DensePoint: public DenseConstPoint {
       DenseConstPoint::ptr_->set_size(length_in);
     }
 
+    void Init(const std::vector<double> &vector_in) {
+      if(ptr_ != NULL) {
+        delete ptr_;
+      }
+      DenseConstPoint::ptr_ = new arma::vec();
+      DenseConstPoint::ptr_->set_size(vector_in.size());
+      for(int i = 0; i < vector_in.size(); i++) {
+        (*ptr_)[i] = vector_in[i];
+      }
+    }
+
     void Copy(DensePoint &point_in) {
       if(ptr_ != NULL) {
         delete ptr_;
