@@ -1,9 +1,15 @@
+/** @file table.h
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
 #ifndef CORE_TABLE_TABLE_H
 #define CORE_TABLE_TABLE_H
 
 #include <armadillo>
 #include "boost/utility.hpp"
 #include "core/csv_parser/dataset_reader.h"
+#include "core/metric_kernels/abstract_metric.h"
 #include "core/tree/gen_metric_tree.h"
 #include "core/tree/statistic.h"
 #include "core/table/dense_matrix.h"
@@ -217,8 +223,8 @@ class Table: public boost::noncopyable {
       fclose(foutput);
     }
 
-    template<typename MetricType>
-    void IndexData(const MetricType &metric_in, int leaf_size) {
+    void IndexData(
+      const core::metric_kernels::AbstractMetric &metric_in, int leaf_size) {
       tree_ = core::tree::MakeGenMetricTree<TreeType>(
                 metric_in, data_, leaf_size, &old_from_new_, &new_from_old_);
     }

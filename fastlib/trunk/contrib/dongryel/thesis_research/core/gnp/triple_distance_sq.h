@@ -46,8 +46,8 @@ class TripleDistanceSq {
 
       points_[point_pos_in].Alias(new_point_in);
 
-      for (int existing_point_pos = point_pos_in - 1;
-           existing_point_pos >= 0; existing_point_pos--) {
+      for(int existing_point_pos = point_pos_in - 1;
+          existing_point_pos >= 0; existing_point_pos--) {
 
         // Change for the first existing point.
         metric_in.DistanceSq(new_point_in, points_[existing_point_pos]);

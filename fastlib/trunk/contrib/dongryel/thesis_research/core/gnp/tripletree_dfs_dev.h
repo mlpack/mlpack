@@ -60,13 +60,13 @@ void core::gnp::TripletreeDfs<ProblemType>::Compute(
 template<typename ProblemType>
 void core::gnp::TripletreeDfs<ProblemType>::ResetStatisticRecursion_(
   typename ProblemType::TableType::TreeType *node) {
-  if (table_->get_node_stat(node) != NULL) {
+  if(table_->get_node_stat(node) != NULL) {
     delete table_->get_node_stat(node);
   }
   table_->get_node_stat(node) = new typename ProblemType::StatisticType();
   dynamic_cast<typename ProblemType::StatisticType *>(
     table_->get_node_stat(node))->SetZero();
-  if (table_->node_is_leaf(node) == false) {
+  if(table_->node_is_leaf(node) == false) {
     ResetStatisticRecursion_(table_->get_node_left_child(node));
     ResetStatisticRecursion_(table_->get_node_right_child(node));
   }
@@ -81,7 +81,7 @@ void core::gnp::TripletreeDfs<ProblemType>::PreProcess_(
         table_->get_node_stat(qnode)));
   qnode_stat.SetZero();
 
-  if (! table_->node_is_leaf(qnode)) {
+  if(! table_->node_is_leaf(qnode)) {
     PreProcess_(table_->get_node_left_child(qnode));
     PreProcess_(table_->get_node_right_child(qnode));
   }
@@ -94,7 +94,7 @@ core::gnp::TripletreeDfs<ProblemType>::GetNextNodeIterator_(
   int node_index,
   const typename TableType::TreeIterator &it_in) {
 
-  if (range_sq_in.node(node_index) != range_sq_in.node(node_index + 1)) {
+  if(range_sq_in.node(node_index) != range_sq_in.node(node_index + 1)) {
     return table_->get_node_iterator(range_sq_in.node(node_index + 1));
   }
   else {
@@ -129,7 +129,7 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
     // Construct the second iterator and start looping.
     typename TableType::TreeIterator second_node_it =
       GetNextNodeIterator_(range_sq_in, 0, first_node_it);
-    while (second_node_it.HasNext()) {
+    while(second_node_it.HasNext()) {
 
       // Get the point in the second node.
       core::table::DenseConstPoint second_point;
@@ -140,7 +140,7 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
       // Loop through the third node.
       typename TableType::TreeIterator third_node_it =
         GetNextNodeIterator_(range_sq_in, 1, second_node_it);
-      while (third_node_it.HasNext()) {
+      while(third_node_it.HasNext()) {
 
         // Get thet point in the third node.
         core::table::DenseConstPoint third_point;
@@ -164,10 +164,10 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
       } // end of looping over the third node.
     } // end of looping over the second node.
   } // end of looping over the first node.
-  while (first_node_it.HasNext());
+  while(first_node_it.HasNext());
 
-  for (int node_index = 0; node_index < 3; node_index++) {
-    if (node_index == 0 ||
+  for(int node_index = 0; node_index < 3; node_index++) {
+    if(node_index == 0 ||
         range_sq_in.node(node_index) != range_sq_in.node(node_index - 1)) {
 
       // Clear the summary statistics of the current query node so that we
@@ -189,7 +189,7 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
       node_stat->postponed_.pruned_ += range_sq_in.num_tuples(node_index);
 
       // Apply the postponed contribution to the each node.
-      while (node_iterator.HasNext()) {
+      while(node_iterator.HasNext()) {
 
         // Get the query point and its real index.
         core::table::DenseConstPoint q_col;
@@ -249,12 +249,12 @@ void core::gnp::TripletreeDfs<ProblemType>::PostProcess_(
     dynamic_cast<typename ProblemType::StatisticType *>(
       table_->get_node_stat(qnode));
 
-  if (table_->node_is_leaf(qnode)) {
+  if(table_->node_is_leaf(qnode)) {
 
     typename ProblemType::TableType::TreeIterator qnode_iterator =
       table_->get_node_iterator(qnode);
 
-    while (qnode_iterator.HasNext()) {
+    while(qnode_iterator.HasNext()) {
       core::table::DenseConstPoint q_col;
       int q_index;
       qnode_iterator.Next(&q_col, &q_index);

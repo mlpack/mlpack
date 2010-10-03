@@ -29,10 +29,10 @@ class TripleRangeDistanceSq {
   private:
 
     void ComputeNumTuples_(const core::table::Table &table_in) {
-      if (nodes_[0] == nodes_[1]) {
+      if(nodes_[0] == nodes_[1]) {
 
         // node_0 = node_1 = node_2
-        if (nodes_[1] == nodes_[2]) {
+        if(nodes_[1] == nodes_[2]) {
           num_tuples_[0] =
             num_tuples_[1] =
               num_tuples_[2] =
@@ -52,7 +52,7 @@ class TripleRangeDistanceSq {
       else {
 
         // node_0 \not = node_1, node_1 = node_2
-        if (nodes_[1] == nodes_[2]) {
+        if(nodes_[1] == nodes_[2]) {
           num_tuples_[1] = num_tuples_[2] =
                              (table_in.get_node_count(nodes_[1]) - 1) *
                              table_in.get_node_count(nodes_[0]);
@@ -159,13 +159,13 @@ class TripleRangeDistanceSq {
       const core::metric_kernels::AbstractMetric &metric_in,
       const core::table::Table &table,
       const std::vector< TreeType * > &nodes_in) {
-      for (int j = 0; j < nodes_.size(); j++) {
+      for(int j = 0; j < nodes_.size(); j++) {
         nodes_[j] = nodes_in[j];
       }
-      for (int j = 0; j < nodes_.size(); j++) {
+      for(int j = 0; j < nodes_.size(); j++) {
         const TreeType::BoundType &outer_bound =
           table.get_node_bound(nodes_[j]);
-        for (int i = j + 1; i < nodes_.size(); i++) {
+        for(int i = j + 1; i < nodes_.size(); i++) {
           const TreeType::BoundType &inner_bound =
             table.get_node_bound(nodes_[i]);
           core::math::Range range_distance_sq =
