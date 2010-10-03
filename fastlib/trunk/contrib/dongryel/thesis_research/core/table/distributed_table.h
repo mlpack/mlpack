@@ -8,6 +8,7 @@
 
 #include <armadillo>
 #include "boost/mpi.hpp"
+#include "boost/thread.hpp"
 #include "boost/serialization/string.hpp"
 #include "core/table/table.h"
 
@@ -68,6 +69,8 @@ class DistributedTable: public boost::noncopyable {
     TreeType *global_tree_;
 
     boost::mpi::communicator *comm_;
+
+    boost::shared_ptr<boost::thread> point_server_thread_;
 
   public:
 
@@ -152,6 +155,14 @@ class DistributedTable: public boost::noncopyable {
       comm_ = communicator_in;
       owned_table_ = new core::table::Table();
       owned_table_->Init(file_name);
+
+      // Start the server for giving out points.
+      point_server_thread_ = boost::shared_ptr<boost::thread>(
+                               new boost::thread(
+                                 boost::bind(
+                                   &core::table::DistributedTable::remote_get,
+                                   this)));
+      point_server_thread_->detach();
     }
 
     void Save(const std::string &file_name) const {
@@ -172,20 +183,22 @@ class DistributedTable: public boost::noncopyable {
 
         // Try to receive the message.
         core::table::PointRequestMessage point_request_message;
-        boost::mpi::request receive_request = comm_->irecv(
-                                                boost::mpi::any_source,
-                                                core::table::DistributedTableMessage::REQUEST_POINT,
-                                                point_request_message);
+        boost::mpi::request receive_request =
+          comm_->irecv(
+            boost::mpi::any_source,
+            core::table::DistributedTableMessage::REQUEST_POINT,
+            point_request_message);
         receive_request.wait();
 
         // Copy the point out.
         owned_table_->get(point_request_message.point_id(), &point_vector);
 
         // Send back the point to the requester.
-        boost::mpi::request send_request = comm_->isend(
-                                             point_request_message.source_rank(),
-                                             core::table::DistributedTableMessage::RECEIVE_POINT,
-                                             point_vector);
+        boost::mpi::request send_request =
+          comm_->isend(
+            point_request_message.source_rank(),
+            core::table::DistributedTableMessage::RECEIVE_POINT,
+            point_vector);
       }
     }
 
