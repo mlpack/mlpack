@@ -6,17 +6,13 @@ set(DIRS
 #   fast_multipole_method  ## awaiting resolution of #10 (libint dependency)
    gp_regression
 #   kde  ## does not compile
-   linear_algebra
    linear_regression  
 #   lprcde  ## does not compile (missing NWRCdeProblem<>::MultiTreeQuerySummary::PostAccumulate)
 #   matrix_factorized_fmm  ## does not compile right
    multigrid
    multitree_template  ## requires memory manager (mmapmm)
-#   nested_summation_template
-#   pca
    proximity_project  ## requires memorymanager (mmapmm)
    regression
-#   thor_kde  ## does not compile: linker error (investigate)
 )
 
 foreach(dir ${DIRS})
