@@ -42,5 +42,13 @@ int main(int argc, char *argv[]) {
     "Processor %d read in %d points...\n",
     world.rank(), distributed_table.local_n_entries());
 
+  // Start the server for giving out points.
+  boost::shared_ptr<boost::thread> point_server_thread(
+    new boost::thread(
+      boost::bind(
+        &core::table::DistributedTable::remote_get,
+        &distributed_table)));
+  point_server_thread->detach();
+
   return 0;
 }
