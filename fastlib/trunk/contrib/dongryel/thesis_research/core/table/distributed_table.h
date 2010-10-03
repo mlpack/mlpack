@@ -181,8 +181,9 @@ class DistributedTable: public boost::noncopyable {
 
     void server() const {
 
-      std::vector<double> point_vector(this->n_attributes(), 0);
       while(true) {
+
+        std::vector<double> point_vector(this->n_attributes(), 0);
 
         // Probe the message queue.
         do {
