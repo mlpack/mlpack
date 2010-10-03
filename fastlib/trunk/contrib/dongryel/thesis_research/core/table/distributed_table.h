@@ -8,6 +8,7 @@
 
 #include <armadillo>
 #include "boost/mpi.hpp"
+#include "boost/mpi/collectives.hpp"
 #include "boost/thread.hpp"
 #include "boost/serialization/string.hpp"
 #include "core/table/table.h"
@@ -64,13 +65,13 @@ class DistributedTable: public boost::noncopyable {
 
     core::table::Table *owned_table_;
 
-    int global_n_entries_;
+    std::vector<int> local_n_entries_;
 
     TreeType *global_tree_;
 
     boost::mpi::communicator *comm_;
 
-    boost::shared_ptr<boost::thread> point_server_thread_;
+    boost::shared_ptr<boost::thread> table_thread_;
 
   public:
 
@@ -85,7 +86,6 @@ class DistributedTable: public boost::noncopyable {
     DistributedTable() {
       rank_ = -1;
       owned_table_ = NULL;
-      global_n_entries_ = 0;
       global_tree_ = NULL;
     }
 
@@ -99,7 +99,6 @@ class DistributedTable: public boost::noncopyable {
         delete global_tree_;
         global_tree_ = NULL;
       }
-      global_n_entries_ = 0;
     }
 
     const TreeType::BoundType &get_node_bound(TreeType *node) const {
@@ -138,12 +137,12 @@ class DistributedTable: public boost::noncopyable {
       return owned_table_->n_attributes();
     }
 
-    int local_n_entries() const {
-      return owned_table_->n_entries();
+    int local_n_entries(int rank_in) const {
+      return local_n_entries_[rank_in];
     }
 
-    int global_n_entries() const {
-      return global_n_entries_;
+    int local_n_entries() const {
+      return owned_table_->n_entries();
     }
 
     void Init(
@@ -156,13 +155,19 @@ class DistributedTable: public boost::noncopyable {
       owned_table_ = new core::table::Table();
       owned_table_->Init(file_name);
 
+      // Allocate the vector for storing the number of entries for all
+      // the tables in the world, and do an all-gather operation to
+      // find out all the sizes.
+      boost::mpi::all_gather(
+        *comm_, owned_table_->n_entries(), local_n_entries_);
+
       // Start the server for giving out points.
-      point_server_thread_ = boost::shared_ptr<boost::thread>(
-                               new boost::thread(
-                                 boost::bind(
-                                   &core::table::DistributedTable::remote_get,
-                                   this)));
-      point_server_thread_->detach();
+      table_thread_ = boost::shared_ptr<boost::thread>(
+                        new boost::thread(
+                          boost::bind(
+                            &core::table::DistributedTable::server,
+                            this)));
+      table_thread_->detach();
     }
 
     void Save(const std::string &file_name) const {
@@ -174,12 +179,22 @@ class DistributedTable: public boost::noncopyable {
 
     }
 
-    void remote_get() const {
-
-      printf("Remote point server for Processor %d started...\n", rank_);
+    void server() const {
 
       std::vector<double> point_vector(this->n_attributes(), 0);
       while(true) {
+
+        // Probe the message queue.
+        do {
+          if(comm_->iprobe(
+                boost::mpi::any_source,
+                core::table::DistributedTableMessage::REQUEST_POINT)) {
+            break;
+          }
+          else {
+          }
+        }
+        while(true);
 
         // Try to receive the message.
         core::table::PointRequestMessage point_request_message;
@@ -199,6 +214,7 @@ class DistributedTable: public boost::noncopyable {
             point_request_message.source_rank(),
             core::table::DistributedTableMessage::RECEIVE_POINT,
             point_vector);
+        send_request.wait();
       }
     }
 
