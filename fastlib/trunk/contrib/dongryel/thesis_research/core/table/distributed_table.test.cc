@@ -13,6 +13,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Please specify a process number greater than 1.\n";
     exit(0);
   }
+  printf("%d processes are present...\n", world.size());
 
   // Each process generates its own random data, dumps it to the file,
   // and read its own file back into its own distributed table.
@@ -36,7 +37,8 @@ int main(int argc, char *argv[]) {
   core::table::DistributedTable distributed_table;
   distributed_table.Init(world.rank(), file_name, &world);
   printf(
-    "Processor %d read in %d points...\n", distributed_table.local_n_entries());
+    "Processor %d read in %d points...\n",
+    world.rank(), distributed_table.local_n_entries());
 
   return 0;
 }
