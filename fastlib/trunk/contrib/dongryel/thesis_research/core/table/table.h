@@ -229,6 +229,10 @@ class Table: public boost::noncopyable {
                 metric_in, data_, leaf_size, &old_from_new_, &new_from_old_);
     }
 
+    void get(int point_id, std::vector<double> *point_out) const {
+      direct_get_(point_id, point_out);
+    }
+
     void get(int point_id, core::table::DenseConstPoint *point_out) const {
       direct_get_(point_id, point_out);
     }
@@ -242,6 +246,15 @@ class Table: public boost::noncopyable {
     }
 
   private:
+
+    void direct_get_(int point_id, std::vector<double> *entry) const {
+      if(this->IsIndexed() == false) {
+        data_.MakeColumnVector(point_id, entry);
+      }
+      else {
+        data_.MakeColumnVector(new_from_old_[point_id], entry);
+      }
+    }
 
     void direct_get_(
       int point_id, core::table::DenseConstPoint *entry) const {

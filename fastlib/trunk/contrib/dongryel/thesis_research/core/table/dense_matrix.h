@@ -15,6 +15,14 @@ namespace table {
 class DenseMatrix: public virtual arma::mat {
   public:
 
+    void MakeColumnVector(int column_id, std::vector<double> *point_out) const {
+      point_out->resize(this->n_rows);
+      const double *ptr = this->memptr() + column_id * this->n_rows;
+      for(int i = 0; i < this->n_rows; ptr++, i++) {
+        (*point_out)[i] = (*ptr);
+      }
+    }
+
     void MakeColumnVector(
       int i, core::table::DenseConstPoint *point_out) const {
       point_out->Alias(
