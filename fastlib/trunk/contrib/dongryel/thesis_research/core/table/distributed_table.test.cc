@@ -2,8 +2,17 @@
  *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
-
 #include "core/table/distributed_table.h"
+
+bool CheckDistributedTableIntegrity(
+  const core::table::DistributedTable &table_in,
+  const boost::mpi::communicator &world) {
+  for(int i = 0; i < world.size(); i++) {
+    printf("Processor %d thinks Processor %d owns %d points.\n",
+           world.rank(), i, table_in.local_n_entries(i));
+  }
+  return true;
+}
 
 int main(int argc, char *argv[]) {
   boost::mpi::environment env(argc, argv);
@@ -44,8 +53,26 @@ int main(int argc, char *argv[]) {
     "Processor %d read in %d points...\n",
     world.rank(), distributed_table.local_n_entries());
 
+  // Check the integrity.
+  CheckDistributedTableIntegrity(distributed_table, world);
+
   while(true) {
+
+    // Randomly generate a target.
+    int target_rank = core::math::RandInt(world.size());
+    core::table::DensePoint point;
+    int target_rank_table_n_entries = distributed_table.local_n_entries(
+                                        target_rank);
+    int target_point_id = core::math::RandInt(target_rank_table_n_entries);
+
+    printf("Processor %d requested point %d from Processor %d.\n",
+           world.rank(), target_point_id, target_rank);
+    distributed_table.get(target_rank, target_point_id, &point);
+
+    printf("Processor %d received point %d from Processor %d.\n",
+           world.rank(), target_point_id, target_rank);
   }
+  printf("All done!\n");
 
   return 0;
 }
