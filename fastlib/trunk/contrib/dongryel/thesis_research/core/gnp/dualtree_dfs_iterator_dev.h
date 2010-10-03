@@ -125,7 +125,7 @@ void DualtreeDfs<ProblemType>::iterator::operator++() {
   IteratorArgType args = trace_.back();
   trace_.pop_back();
 
-  while (trace_.empty() == false && args.rnode() != NULL) {
+  while(trace_.empty() == false && args.rnode() != NULL) {
 
     // Get the arguments.
     TreeType *qnode = args.qnode();
@@ -140,22 +140,22 @@ void DualtreeDfs<ProblemType>::iterator::operator++() {
     bool prunable = engine_->CanSummarize_(qnode, rnode, delta,
                                            query_results_);
 
-    if (prunable) {
+    if(prunable) {
       engine_->Summarize_(qnode, delta, query_results_);
     }
     else {
 
       // If the query node is leaf node,
-      if (query_table_->node_is_leaf(qnode)) {
+      if(query_table_->node_is_leaf(qnode)) {
 
         // If the reference node is leaf node,
-        if (reference_table_->node_is_leaf(rnode)) {
+        if(reference_table_->node_is_leaf(rnode)) {
           engine_->DualtreeBase_(metric_, qnode, rnode, query_results_);
         }
         else {
           TreeType *rnode_first;
           core::math::Range squared_distance_range_first,
-          squared_distance_range_second;
+               squared_distance_range_second;
           TreeType *rnode_second;
           engine_->Heuristic_(metric_, qnode, query_table_,
                               reference_table_->get_node_left_child(rnode),
@@ -186,7 +186,7 @@ void DualtreeDfs<ProblemType>::iterator::operator++() {
         TreeType *qnode_right = query_table_->get_node_right_child(qnode);
 
         // If the reference node is leaf node,
-        if (reference_table_->node_is_leaf(rnode)) {
+        if(reference_table_->node_is_leaf(rnode)) {
 
           // Push both combinations on the back of the trace.
           trace_.push_back(IteratorArgType(

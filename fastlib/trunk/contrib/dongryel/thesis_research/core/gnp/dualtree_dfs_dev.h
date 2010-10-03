@@ -39,7 +39,7 @@ void core::gnp::DualtreeDfs<ProblemType>::Init(ProblemType &problem_in) {
   reference_table_ = problem_->reference_table();
   ResetStatistic();
 
-  if (query_table_ != reference_table_) {
+  if(query_table_ != reference_table_) {
     ResetStatisticRecursion_(reference_table_->get_tree(), reference_table_);
   }
 }
@@ -74,13 +74,13 @@ template<typename ProblemType>
 void core::gnp::DualtreeDfs<ProblemType>::ResetStatisticRecursion_(
   typename ProblemType::TableType::TreeType *node,
   typename ProblemType::TableType * table) {
-  if (table->get_node_stat(node) != NULL) {
+  if(table->get_node_stat(node) != NULL) {
     delete table->get_node_stat(node);
   }
   table->get_node_stat(node) = new typename ProblemType::StatisticType();
   dynamic_cast<typename ProblemType::StatisticType *>(
     table->get_node_stat(node))->SetZero();
-  if (table->node_is_leaf(node) == false) {
+  if(table->node_is_leaf(node) == false) {
     ResetStatisticRecursion_(table->get_node_left_child(node), table);
     ResetStatisticRecursion_(table->get_node_right_child(node), table);
   }
@@ -96,7 +96,7 @@ void core::gnp::DualtreeDfs<ProblemType>::PreProcessReferenceTree_(
   typename ProblemType::TableType::TreeIterator rnode_it =
     reference_table_->get_node_iterator(rnode);
 
-  if (reference_table_->node_is_leaf(rnode)) {
+  if(reference_table_->node_is_leaf(rnode)) {
     rnode_stat.Init(rnode_it);
   }
   else {
@@ -132,7 +132,7 @@ void core::gnp::DualtreeDfs<ProblemType>::PreProcess_(
         query_table_->get_node_stat(qnode)));
   qnode_stat.SetZero();
 
-  if (!query_table_->node_is_leaf(qnode)) {
+  if(!query_table_->node_is_leaf(qnode)) {
     PreProcess_(query_table_->get_node_left_child(qnode));
     PreProcess_(query_table_->get_node_right_child(qnode));
   }
@@ -162,7 +162,7 @@ void core::gnp::DualtreeDfs<ProblemType>::DualtreeBase_(
     reference_table_->get_node_iterator(rnode);
 
   // Compute unnormalized sum for each query point.
-  while (qnode_iterator.HasNext()) {
+  while(qnode_iterator.HasNext()) {
 
     // Get the query point and its real index.
     core::table::DenseConstPoint q_col;
@@ -178,7 +178,7 @@ void core::gnp::DualtreeDfs<ProblemType>::DualtreeBase_(
 
     // Reset the reference node iterator.
     rnode_iterator.Reset();
-    while (rnode_iterator.HasNext()) {
+    while(rnode_iterator.HasNext()) {
 
       // Get the reference point and accumulate contribution.
       core::table::DenseConstPoint r_col;
@@ -286,7 +286,7 @@ void core::gnp::DualtreeDfs<ProblemType>::Heuristic_(
       metric,
       candidate_table->get_node_bound(second_candidate));
 
-  if (tmp_first_squared_distance_range.lo <=
+  if(tmp_first_squared_distance_range.lo <=
       tmp_second_squared_distance_range.lo) {
     *first_partner = first_candidate;
     first_squared_distance_range = tmp_first_squared_distance_range;
@@ -316,16 +316,16 @@ bool core::gnp::DualtreeDfs<ProblemType>::DualtreeCanonical_(
                              squared_distance_range);
 
   // If it is prunable, then summarize and return.
-  if (CanSummarize_(qnode, rnode, delta, query_results)) {
+  if(CanSummarize_(qnode, rnode, delta, query_results)) {
     Summarize_(qnode, delta, query_results);
     return true;
   }
-  else if (failure_probability > 1e-6) {
+  else if(failure_probability > 1e-6) {
 
     // Try Monte Carlo.
-    if (CanProbabilisticSummarize_(metric, qnode, rnode,
-                                   failure_probability,
-                                   delta, query_results)) {
+    if(CanProbabilisticSummarize_(metric, qnode, rnode,
+                                  failure_probability,
+                                  delta, query_results)) {
       ProbabilisticSummarize_(problem_->global(), qnode,
                               failure_probability,
                               delta, query_results);
@@ -334,16 +334,16 @@ bool core::gnp::DualtreeDfs<ProblemType>::DualtreeCanonical_(
   }
 
   // If it is not prunable and the query node is a leaf,
-  if (query_table_->node_is_leaf(qnode)) {
+  if(query_table_->node_is_leaf(qnode)) {
 
     bool exact_compute = true;
-    if (reference_table_->node_is_leaf(rnode)) {
+    if(reference_table_->node_is_leaf(rnode)) {
       DualtreeBase_(metric, qnode, rnode, query_results);
     } // qnode is leaf, rnode is leaf.
     else {
       typename ProblemType::TableType::TreeType *rnode_first;
       core::math::Range squared_distance_range_first,
-      squared_distance_range_second;
+           squared_distance_range_second;
       typename ProblemType::TableType::TreeType *rnode_second;
       Heuristic_(metric, qnode, query_table_,
                  reference_table_->get_node_left_child(rnode),
@@ -399,7 +399,7 @@ bool core::gnp::DualtreeDfs<ProblemType>::DualtreeCanonical_(
   qnode_right_stat->postponed_.ApplyPostponed(qnode_stat->postponed_);
   qnode_stat->postponed_.SetZero();
 
-  if (reference_table_->node_is_leaf(rnode)) {
+  if(reference_table_->node_is_leaf(rnode)) {
     typename ProblemType::TableType::TreeType *qnode_first;
     core::math::Range
     squared_distance_range_first, squared_distance_range_second;
@@ -514,12 +514,12 @@ void core::gnp::DualtreeDfs<ProblemType>::PostProcess_(
     dynamic_cast<typename ProblemType::StatisticType *>(
       query_table_->get_node_stat(qnode));
 
-  if (query_table_->node_is_leaf(qnode)) {
+  if(query_table_->node_is_leaf(qnode)) {
 
     typename ProblemType::TableType::TreeIterator qnode_iterator =
       query_table_->get_node_iterator(qnode);
 
-    while (qnode_iterator.HasNext()) {
+    while(qnode_iterator.HasNext()) {
       core::table::DenseConstPoint q_col;
       int q_index;
       qnode_iterator.Next(&q_col, &q_index);
