@@ -12,6 +12,11 @@
 
 namespace core {
 namespace table {
+class DistributedTableMessage {
+  public:
+    enum DistributedTableRequest { REQUEST_POINT, RECEIVE_POINT };
+};
+
 class DistributedTable: public boost::noncopyable {
 
     typedef core::tree::GeneralBinarySpaceTree < core::tree::BallBound <
@@ -121,6 +126,36 @@ class DistributedTable: public boost::noncopyable {
     void IndexData(
       const core::metric_kernels::AbstractMetric &metric_in, int leaf_size) {
 
+    }
+
+    void get(
+      int requested_rank, int point_id,
+      core::table::DensePoint *entry) const {
+
+      // If owned by the process, just return the point. Otherwise, we
+      // need to send an MPI request to the process holding the
+      // required resource.
+      if(rank_ == requested_rank) {
+        owned_table_->get(point_id, entry);
+      }
+      else {
+
+        // We receive the point in the form of std::vector.
+        std::vector<double> received_point_vector;
+
+        // Inform the other processor that this processor needs data!
+        boost::mpi::request point_request = comm_->isend(
+                                              requested_rank,
+                                              core::table::DistributedTableMessage::REQUEST_POINT,
+                                              rank_);
+        boost::mpi::request point_receive_request =
+          comm_->irecv(
+            requested_rank,
+            core::table::DistributedTableMessage::RECEIVE_POINT,
+            received_point_vector);
+        entry->Init(received_point_vector);
+        point_request.wait();
+      }
     }
 
     void PrintTree() const {
