@@ -3,7 +3,6 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#include "boost/thread.hpp"
 #include "core/table/distributed_table.h"
 
 int main(int argc, char *argv[]) {
@@ -15,7 +14,10 @@ int main(int argc, char *argv[]) {
     exit(0);
   }
   srand(time(NULL) + world.rank());
-  printf("%d processes are present...\n", world.size());
+
+  if(world.rank() == 0) {
+    printf("%d processes are present...\n", world.size());
+  }
 
   // Each process generates its own random data, dumps it to the file,
   // and read its own file back into its own distributed table.
@@ -42,13 +44,8 @@ int main(int argc, char *argv[]) {
     "Processor %d read in %d points...\n",
     world.rank(), distributed_table.local_n_entries());
 
-  // Start the server for giving out points.
-  boost::shared_ptr<boost::thread> point_server_thread(
-    new boost::thread(
-      boost::bind(
-        &core::table::DistributedTable::remote_get,
-        &distributed_table)));
-  point_server_thread->detach();
+  while(true) {
+  }
 
   return 0;
 }
