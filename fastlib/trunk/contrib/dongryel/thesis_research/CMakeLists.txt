@@ -17,9 +17,6 @@ find_package(LAPACK REQUIRED)  # LAPACK finds BLAS as a dependency
 # find pthreads
 find_package(Pthreads REQUIRED)
 
-# should be changed to default off for a release
-option(DEBUG "Compile with debugging information" ON) # default to on for developers
-
 # include boost.
 set(Boost_USE_STATIC_LIBS   ON)
 find_package(Boost COMPONENTS program_options mpi serialization system thread unit_test_framework REQUIRED)
@@ -44,13 +41,6 @@ endif()
 
 include_directories(${TRILINOS_INCLUDE_DIR})
 include_directories(${MPI_INCLUDE_DIR})
-
-# If debug, then add debug flags.
-if(DEBUG)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0")
-  add_definitions(-DDEBUG)
-endif(DEBUG)
 
 # distclean option because cmake doesn't support it
 include(CMake/TargetDistclean.cmake OPTIONAL)
