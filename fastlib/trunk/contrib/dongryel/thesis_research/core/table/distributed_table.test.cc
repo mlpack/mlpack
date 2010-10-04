@@ -8,7 +8,7 @@ bool CheckDistributedTableIntegrity(
   const core::table::DistributedTable &table_in,
   const boost::mpi::communicator &world) {
   for(int i = 0; i < world.size(); i++) {
-    printf("Processor %d thinks Processor %d owns %d points.\n",
+    printf("Process %d thinks Process %d owns %d points.\n",
            world.rank(), i, table_in.local_n_entries(i));
   }
   return true;
@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
       point[i] = core::math::Random(0.1, 1.0);
     }
   }
-  printf("Processor %d generated %d points...\n", world.rank(), num_points);
+  printf("Process %d generated %d points...\n", world.rank(), num_points);
   std::stringstream file_name_sstr;
   file_name_sstr << "random_dataset_" << world.rank() << ".csv";
   std::string file_name = file_name_sstr.str();
@@ -50,13 +50,14 @@ int main(int argc, char *argv[]) {
   core::table::DistributedTable distributed_table;
   distributed_table.Init(world.rank(), file_name, &world);
   printf(
-    "Processor %d read in %d points...\n",
+    "Process %d read in %d points...\n",
     world.rank(), distributed_table.local_n_entries());
 
   // Check the integrity.
   CheckDistributedTableIntegrity(distributed_table, world);
 
-  while(true) {
+  // Each process exchanges 10 points.
+  for(int i = 0; i < 10; i++) {
 
     // Randomly generate a target.
     int target_rank = core::math::RandInt(world.size());
@@ -65,14 +66,16 @@ int main(int argc, char *argv[]) {
                                         target_rank);
     int target_point_id = core::math::RandInt(target_rank_table_n_entries);
 
-    printf("Processor %d requested point %d from Processor %d.\n",
+    printf("Process %d requested point %d from Process %d.\n",
            world.rank(), target_point_id, target_rank);
     distributed_table.get(target_rank, target_point_id, &point);
 
-    printf("Processor %d received point %d from Processor %d.\n",
+    printf("Process %d received point %d from Process %d.\n",
            world.rank(), target_point_id, target_rank);
+    point.reference().print();
   }
-  printf("All done!\n");
+  printf("Process %d is all done!\n", world.rank());
 
+  world.barrier();
   return 0;
 }
