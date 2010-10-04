@@ -61,13 +61,13 @@ class PointRequestMessage {
 
 class DistributedTableMessage {
   public:
-    enum DistributedTableRequest { REQUEST_POINT, RECEIVE_POINT };
+    enum DistributedTableRequest { REQUEST_POINT, RECEIVE_POINT, TERMINATE_SERVER };
 };
 
 class Mailbox {
   public:
 
-    static const int incoming_request_mailbox_size = 10;
+    static const unsigned int incoming_request_mailbox_size = 10;
 
     boost::mutex mutex_;
 
@@ -90,10 +90,6 @@ class Mailbox {
     std::vector<double> outgoing_point_;
 
   public:
-
-    bool is_active() const {
-      return false;
-    }
 
     Mailbox() {
       incoming_request_mailbox_ =
@@ -157,11 +153,16 @@ class DistributedTable: public boost::noncopyable {
     }
 
     ~DistributedTable() {
+
+      // Put a barrier so that the distributed tables get destructed
+      // when all of the requests are fulfilled for all of the
+      // distributed processes.
       comm_->barrier();
 
-      // Set the flag so that the server thread can access it and kill
-      // itself.
-      destruct_flag_ = true;
+      // Terminate the server.
+      comm_->isend(
+        rank_, core::table::DistributedTableMessage::TERMINATE_SERVER, 0);
+      comm_->barrier();
 
       if(owned_table_ != NULL) {
         delete owned_table_;
@@ -241,7 +242,11 @@ class DistributedTable: public boost::noncopyable {
                             &core::table::DistributedTable::server,
                             this)));
 
+      // Put a barrier to ensure that every process has started up the
+      // server.
       comm_->barrier();
+
+      // Detach the server thread for each distributed process.
       table_thread_->detach();
     }
 
@@ -285,7 +290,7 @@ class DistributedTable: public boost::noncopyable {
           // appropriate point to the requestor. Right now, the buffer
           // size is 1 point, so I cannot send more than one point
           // without increasing the buffer size.
-          for(int i = 0;
+          for(unsigned int i = 0;
               i < core::table::Mailbox::incoming_request_mailbox_size; i++) {
 
             std::pair< boost::mpi::request, core::table::PointRequestMessage >
@@ -314,7 +319,6 @@ class DistributedTable: public boost::noncopyable {
               // This mail slot is free.
               to_be_flushed.Reset();
               mailbox_.free_slots_.push_back(i);
-
               break;
             }
           }
@@ -339,7 +343,14 @@ class DistributedTable: public boost::noncopyable {
 
         // If the main thread has given a termination signal, and we
         // are done with everything, then the server thread exits.
-        if(destruct_flag_ && mailbox_.is_active() == false) {
+        if(comm_->iprobe(
+              boost::mpi::any_source,
+              core::table::DistributedTableMessage::TERMINATE_SERVER)) {
+          int dummy_val;
+          comm_->irecv(
+            boost::mpi::any_source,
+            core::table::DistributedTableMessage::TERMINATE_SERVER,
+            dummy_val);
           break;
         }
 
