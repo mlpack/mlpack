@@ -33,6 +33,8 @@ class PointRequestMessage {
     }
 
     PointRequestMessage() {
+      source_rank_ = -1;
+      point_id_ = -1;
     }
 
     PointRequestMessage(int source_rank_in, int point_id_in) {
@@ -54,6 +56,53 @@ class DistributedTableMessage {
     enum DistributedTableRequest { REQUEST_POINT, RECEIVE_POINT };
 };
 
+class Mailbox {
+  public:
+
+    static const int incoming_request_mailbox_size = 10;
+
+    boost::mutex mutex_;
+
+    boost::condition_variable point_ready_cond_;
+
+    std::pair <
+    boost::mpi::request,
+          core::table::PointRequestMessage > *incoming_request_mailbox_;
+
+    std::vector<int> free_slots_;
+
+    boost::mpi::request outgoing_request_;
+
+    boost::mpi::request incoming_receive_request_;
+
+    int incoming_receive_source_;
+
+    std::vector<double> incoming_point_;
+
+    std::vector<double> outgoing_point_;
+
+  public:
+    Mailbox() {
+      incoming_request_mailbox_ =
+        new std::pair <
+      boost::mpi::request, core::table::PointRequestMessage > [
+        incoming_request_mailbox_size];
+      free_slots_.resize(incoming_request_mailbox_size);
+      for(int i = 0; i < free_slots_.size(); i++) {
+        free_slots_[i] = i;
+      }
+    }
+
+    ~Mailbox() {
+      delete[] incoming_request_mailbox_;
+      incoming_request_mailbox_ = NULL;
+    }
+
+    bool incoming_request_mailbox_is_full() const {
+      return free_slots_.size() == 0;
+    }
+};
+
 class DistributedTable: public boost::noncopyable {
 
     typedef core::tree::GeneralBinarySpaceTree < core::tree::BallBound <
@@ -72,6 +121,8 @@ class DistributedTable: public boost::noncopyable {
     boost::mpi::communicator *comm_;
 
     boost::shared_ptr<boost::thread> table_thread_;
+
+    core::table::Mailbox mailbox_;
 
   public:
 
@@ -168,6 +219,8 @@ class DistributedTable: public boost::noncopyable {
                             &core::table::DistributedTable::server,
                             this)));
       table_thread_->detach();
+
+      comm_->barrier();
     }
 
     void Save(const std::string &file_name) const {
@@ -179,49 +232,89 @@ class DistributedTable: public boost::noncopyable {
 
     }
 
-    void server() const {
+    void server() {
 
       while(true) {
 
-        std::vector<double> point_vector(this->n_attributes(), 0);
-
-        // Probe the message queue.
-        do {
-          if(comm_->iprobe(
+        // Probe the message queue for the point request, and do an
+        // asynchronous receive first and buffer the receive.
+        while(mailbox_.incoming_request_mailbox_is_full() == false &&
+              comm_->iprobe(
                 boost::mpi::any_source,
                 core::table::DistributedTableMessage::REQUEST_POINT)) {
-            break;
-          }
-          else {
+
+          int free_slot = mailbox_.free_slots_[
+                            mailbox_.free_slots_.size() - 1];
+          mailbox_.incoming_request_mailbox_[ free_slot ].first =
+            comm_->irecv(
+              boost::mpi::any_source,
+              core::table::DistributedTableMessage::REQUEST_POINT,
+              mailbox_.incoming_request_mailbox_[free_slot].second);
+
+          // Decrement the mail box free slot.
+          mailbox_.free_slots_.resize(mailbox_.free_slots_.size() - 1);
+        }
+
+        // See if the current outgoing request is done.
+        if(mailbox_.outgoing_request_.test()) {
+
+          // Try to see if any of the send requests know where to send
+          // stuffs to, and start the asynchronous transfer of the
+          // appropriate point to the requestor. Right now, the buffer
+          // size is 1 point, so I cannot send more than one point
+          // without increasing the buffer size.
+          for(int i = 0;
+              i < core::table::Mailbox::incoming_request_mailbox_size; i++) {
+            if(mailbox_.incoming_request_mailbox_[i].first.test()) {
+
+              // Get the reference to the incoming request to be
+              // fulfilled.
+              const core::table::PointRequestMessage &to_be_flushed =
+                mailbox_.incoming_request_mailbox_[i].second;
+
+              // Copy the point out.
+              owned_table_->get(
+                to_be_flushed.point_id(),
+                &mailbox_.outgoing_point_);
+
+              // Send back the point to the requester.
+              mailbox_.outgoing_request_ =
+                comm_->isend(
+                  to_be_flushed.source_rank(),
+                  core::table::DistributedTableMessage::RECEIVE_POINT,
+                  mailbox_.outgoing_point_);
+
+              // This mail slot is free.
+              mailbox_.free_slots_.push_back(i);
+
+              break;
+            }
           }
         }
-        while(true);
 
-        // Try to receive the message.
-        core::table::PointRequestMessage point_request_message;
-        boost::mpi::request receive_request =
-          comm_->irecv(
-            boost::mpi::any_source,
-            core::table::DistributedTableMessage::REQUEST_POINT,
-            point_request_message);
-        receive_request.wait();
+        // Check if any of the requested point from this processor is
+        // ready to be received.
+        if(comm_->iprobe(
+              boost::mpi::any_source,
+              core::table::DistributedTableMessage::RECEIVE_POINT)) {
+          mailbox_.incoming_receive_request_ =
+            comm_->irecv(mailbox_.incoming_receive_source_,
+                         core::table::DistributedTableMessage::RECEIVE_POINT,
+                         mailbox_.incoming_point_);
+        }
 
-        // Copy the point out.
-        owned_table_->get(point_request_message.point_id(), &point_vector);
+        // Check whether the incoming receive is done, if so, wake up
+        // the sleeping thread.
+        if(mailbox_.incoming_receive_request_.test()) {
+          mailbox_.point_ready_cond_.notify_one();
+        }
 
-        // Send back the point to the requester.
-        boost::mpi::request send_request =
-          comm_->isend(
-            point_request_message.source_rank(),
-            core::table::DistributedTableMessage::RECEIVE_POINT,
-            point_vector);
-        send_request.wait();
-      }
+      } // end of the loop for handling buffered messages.
     }
 
     void get(
       int requested_rank, int point_id,
-      core::table::DensePoint *entry) const {
+      core::table::DensePoint *entry) {
 
       // If owned by the process, just return the point. Otherwise, we
       // need to send an MPI request to the process holding the
@@ -234,27 +327,19 @@ class DistributedTable: public boost::noncopyable {
         // The point request message.
         core::table::PointRequestMessage point_request_message(rank_, point_id);
 
-        // We receive the point in the form of std::vector.
-        std::vector<double> received_point_vector;
-
         // Inform the source processor that this processor needs data!
-        boost::mpi::request point_request =
-          comm_->isend(
-            requested_rank,
-            core::table::DistributedTableMessage::REQUEST_POINT,
-            point_request_message);
-        point_request.wait();
+        mailbox_.incoming_receive_source_ = requested_rank;
+        comm_->isend(
+          requested_rank,
+          core::table::DistributedTableMessage::REQUEST_POINT,
+          point_request_message);
 
-        // Wait for the source processor's answer.
-        boost::mpi::request point_receive_request =
-          comm_->irecv(
-            requested_rank,
-            core::table::DistributedTableMessage::RECEIVE_POINT,
-            received_point_vector);
-        point_receive_request.wait();
+        // Do a conditional wait until the point is ready.
+        boost::unique_lock<boost::mutex> lock(mailbox_.mutex_);
+        mailbox_.point_ready_cond_.wait(lock);
 
-        // Copy the data.
-        entry->Init(received_point_vector);
+        // If we are here, then the point is ready. Copy the point.
+        entry->Init(mailbox_.incoming_point_);
       }
     }
 
