@@ -90,6 +90,11 @@ class Mailbox {
     std::vector<double> outgoing_point_;
 
   public:
+
+    bool is_active() const {
+      return false;
+    }
+
     Mailbox() {
       incoming_request_mailbox_ =
         new std::pair <
@@ -118,6 +123,8 @@ class DistributedTable: public boost::noncopyable {
 
   private:
 
+    bool destruct_flag_;
+
     int rank_;
 
     core::table::Table *owned_table_;
@@ -143,12 +150,19 @@ class DistributedTable: public boost::noncopyable {
     }
 
     DistributedTable() {
+      destruct_flag_ = false;
       rank_ = -1;
       owned_table_ = NULL;
       global_tree_ = NULL;
     }
 
     ~DistributedTable() {
+      comm_->barrier();
+
+      // Set the flag so that the server thread can access it and kill
+      // itself.
+      destruct_flag_ = true;
+
       if(owned_table_ != NULL) {
         delete owned_table_;
         rank_ = -1;
@@ -321,6 +335,12 @@ class DistributedTable: public boost::noncopyable {
         // the sleeping thread.
         if(mailbox_.incoming_receive_request_.test()) {
           mailbox_.point_ready_cond_.notify_one();
+        }
+
+        // If the main thread has given a termination signal, and we
+        // are done with everything, then the server thread exits.
+        if(destruct_flag_ && mailbox_.is_active() == false) {
+          break;
         }
 
       } // end of the loop for handling buffered messages.
