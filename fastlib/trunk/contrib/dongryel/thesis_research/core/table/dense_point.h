@@ -84,7 +84,7 @@ class DensePoint: public DenseConstPoint {
       }
       DenseConstPoint::ptr_ = new arma::vec();
       DenseConstPoint::ptr_->set_size(vector_in.size());
-      for(int i = 0; i < vector_in.size(); i++) {
+      for(unsigned int i = 0; i < vector_in.size(); i++) {
         (*ptr_)[i] = vector_in[i];
       }
     }

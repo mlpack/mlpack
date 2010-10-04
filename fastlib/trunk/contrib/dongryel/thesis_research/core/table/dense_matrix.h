@@ -18,7 +18,7 @@ class DenseMatrix: public virtual arma::mat {
     void MakeColumnVector(int column_id, std::vector<double> *point_out) const {
       point_out->resize(this->n_rows);
       const double *ptr = this->memptr() + column_id * this->n_rows;
-      for(int i = 0; i < this->n_rows; ptr++, i++) {
+      for(unsigned int i = 0; i < this->n_rows; ptr++, i++) {
         (*point_out)[i] = (*ptr);
       }
     }

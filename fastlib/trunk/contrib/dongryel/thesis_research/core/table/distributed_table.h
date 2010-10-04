@@ -33,13 +33,21 @@ class PointRequestMessage {
     }
 
     PointRequestMessage() {
-      source_rank_ = -1;
-      point_id_ = -1;
+      Reset();
     }
 
     PointRequestMessage(int source_rank_in, int point_id_in) {
       source_rank_ = source_rank_in;
       point_id_ = point_id_in;
+    }
+
+    bool is_valid() const {
+      return source_rank_ >= 0 && point_id_ >= 0;
+    }
+
+    void Reset() {
+      source_rank_ = -1;
+      point_id_ = -1;
     }
 
     int source_rank() const {
@@ -88,7 +96,7 @@ class Mailbox {
       boost::mpi::request, core::table::PointRequestMessage > [
         incoming_request_mailbox_size];
       free_slots_.resize(incoming_request_mailbox_size);
-      for(int i = 0; i < free_slots_.size(); i++) {
+      for(unsigned int i = 0; i < free_slots_.size(); i++) {
         free_slots_[i] = i;
       }
     }
@@ -218,9 +226,9 @@ class DistributedTable: public boost::noncopyable {
                           boost::bind(
                             &core::table::DistributedTable::server,
                             this)));
-      table_thread_->detach();
 
       comm_->barrier();
+      table_thread_->detach();
     }
 
     void Save(const std::string &file_name) const {
@@ -265,11 +273,16 @@ class DistributedTable: public boost::noncopyable {
           // without increasing the buffer size.
           for(int i = 0;
               i < core::table::Mailbox::incoming_request_mailbox_size; i++) {
-            if(mailbox_.incoming_request_mailbox_[i].first.test()) {
+
+            std::pair< boost::mpi::request, core::table::PointRequestMessage >
+            &incoming_request = mailbox_.incoming_request_mailbox_[i];
+
+            if(incoming_request.second.is_valid() &&
+                incoming_request.first.test()) {
 
               // Get the reference to the incoming request to be
               // fulfilled.
-              const core::table::PointRequestMessage &to_be_flushed =
+              core::table::PointRequestMessage &to_be_flushed =
                 mailbox_.incoming_request_mailbox_[i].second;
 
               // Copy the point out.
@@ -285,6 +298,7 @@ class DistributedTable: public boost::noncopyable {
                   mailbox_.outgoing_point_);
 
               // This mail slot is free.
+              to_be_flushed.Reset();
               mailbox_.free_slots_.push_back(i);
 
               break;
