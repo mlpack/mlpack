@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
   // and read its own file back into its own distributed table.
   core::table::Table random_dataset;
   const int num_dimensions = 5;
-  int num_points = core::math::RandInt(10000, 20000);
+  int num_points = core::math::RandInt(100, 200);
   random_dataset.Init(5, num_points);
   for(int j = 0; j < num_points; j++) {
     core::table::DensePoint point;
