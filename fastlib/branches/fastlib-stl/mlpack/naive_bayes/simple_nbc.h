@@ -212,9 +212,13 @@ class SimpleNaiveBayesClassifier {
 			     );	  
 	}
       }			
-      // Calling a function 'max_element_index' from the file 'math_functions.h
-      // to obtain the index of the maximum element in an array
-      evaluated_result[n] = arma::max(tmp_vals);      
+
+      // Find the index of the maximum value in tmp_vals.
+      evaluated_result[n] = 0;      
+      for (index_t k = 0; k < number_of_classes_; k++) {
+	if(tmp_vals[evaluated_result[n]] < tmp_vals[k])
+	  evaluated_result[n] = k;
+      }
     }
     // The result is being put in a vector
     *results = evaluated_result;
