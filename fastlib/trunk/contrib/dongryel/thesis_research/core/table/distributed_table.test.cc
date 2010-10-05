@@ -56,8 +56,8 @@ int main(int argc, char *argv[]) {
   // Check the integrity.
   CheckDistributedTableIntegrity(distributed_table, world);
 
-  // Each process exchanges 10 points.
-  for(int i = 0; i < 10; i++) {
+  // Each process exchanges 1000 points.
+  for(int i = 0; i < 12; i++) {
 
     // Randomly generate a target.
     int target_rank = core::math::RandInt(world.size());
@@ -70,8 +70,8 @@ int main(int argc, char *argv[]) {
            world.rank(), target_point_id, target_rank);
     distributed_table.get(target_rank, target_point_id, &point);
 
-    printf("Process %d received point %d from Process %d.\n",
-           world.rank(), target_point_id, target_rank);
+    printf("Process %d received point %d of length %d from Process %d.\n",
+           world.rank(), target_point_id, point.reference().n_elem, target_rank);
     point.reference().print();
   }
   printf("Process %d is all done!\n", world.rank());
