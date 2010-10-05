@@ -44,7 +44,7 @@ class PointRequestMessage {
     }
 
     bool is_valid() const {
-      return is_valid_ || (source_rank_ >= 0 && point_id_ >= 0);
+      return is_valid_;
     }
 
     void Reset() {
@@ -139,8 +139,6 @@ class DistributedTable: public boost::noncopyable {
 
     bool destruct_flag_;
 
-    int rank_;
-
     core::table::Table *owned_table_;
 
     std::vector<int> local_n_entries_;
@@ -156,7 +154,7 @@ class DistributedTable: public boost::noncopyable {
   public:
 
     int rank() const {
-      return rank_;
+      return comm_->rank();
     }
 
     bool IsIndexed() const {
@@ -165,7 +163,6 @@ class DistributedTable: public boost::noncopyable {
 
     DistributedTable() {
       destruct_flag_ = false;
-      rank_ = -1;
       comm_ = NULL;
       owned_table_ = NULL;
       global_tree_ = NULL;
@@ -180,14 +177,14 @@ class DistributedTable: public boost::noncopyable {
 
       // Terminate the server.
       comm_->isend(
-        rank_, core::table::DistributedTableMessage::TERMINATE_SERVER, 0);
+        comm_->rank(),
+        core::table::DistributedTableMessage::TERMINATE_SERVER, 0);
       boost::unique_lock<boost::mutex> lock(mailbox_.termination_mutex_);
       mailbox_.termination_cond_.wait(lock);
       comm_->barrier();
 
       if(owned_table_ != NULL) {
         delete owned_table_;
-        rank_ = -1;
         owned_table_ = NULL;
       }
       if(global_tree_ != NULL) {
@@ -241,11 +238,9 @@ class DistributedTable: public boost::noncopyable {
     }
 
     void Init(
-      int rank_in,
       const std::string &file_name,
       boost::mpi::communicator *communicator_in) {
 
-      rank_ = rank_in;
       comm_ = communicator_in;
       owned_table_ = new core::table::Table();
       owned_table_->Init(file_name);
@@ -279,6 +274,9 @@ class DistributedTable: public boost::noncopyable {
     void IndexData(
       const core::metric_kernels::AbstractMetric &metric_in, int leaf_size) {
 
+      // We need to build the top tree first.
+      if(comm_->rank() == 0) {
+      }
     }
 
     void server() {
@@ -365,13 +363,14 @@ class DistributedTable: public boost::noncopyable {
       // If owned by the process, just return the point. Otherwise, we
       // need to send an MPI request to the process holding the
       // required resource.
-      if(rank_ == requested_rank) {
+      if(comm_->rank() == requested_rank) {
         owned_table_->get(point_id, entry);
       }
       else {
 
         // The point request message.
-        core::table::PointRequestMessage point_request_message(rank_, point_id);
+        core::table::PointRequestMessage point_request_message(
+          comm_->rank(), point_id);
 
         // Inform the source processor that this processor needs data!
         mailbox_.incoming_receive_source_ = requested_rank;

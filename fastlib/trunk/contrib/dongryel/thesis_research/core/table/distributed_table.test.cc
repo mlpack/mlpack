@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
   random_dataset.Save(file_name);
 
   core::table::DistributedTable distributed_table;
-  distributed_table.Init(world.rank(), file_name, &world);
+  distributed_table.Init(file_name, &world);
   printf(
     "Process %d read in %d points...\n",
     world.rank(), distributed_table.local_n_entries());
