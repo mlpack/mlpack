@@ -330,8 +330,6 @@ class DistributedTable: public boost::noncopyable {
         // ready to be received.
         if(mailbox_.incoming_receive_request_.second == true &&
             mailbox_.incoming_receive_request_.first.test()) {
-
-          mailbox_.incoming_receive_request_.second = false;
           mailbox_.point_ready_cond_.notify_one();
         }
         if(mailbox_.incoming_receive_request_.second == false &&
@@ -385,6 +383,9 @@ class DistributedTable: public boost::noncopyable {
 
         // If we are here, then the point is ready. Copy the point.
         entry->Init(mailbox_.incoming_point_);
+
+        // Signal that we are done copying out the point.
+        mailbox_.incoming_receive_request_.second = false;
       }
     }
 
