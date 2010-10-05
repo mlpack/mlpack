@@ -115,8 +115,15 @@ class Mailbox {
                       core::table::DistributedTableMessage::RECEIVE_POINT));
       bool fourth = (
                       third && incoming_request_.second.is_valid() == false &&
-                      outgoing_request_.test() &&
                       incoming_receive_request_.second == false);
+      if(fourth) {
+        try {
+          bool outgoing_request_done = outgoing_request_.test();
+          fourth = fourth && outgoing_request_done;
+        }
+        catch(boost::mpi::exception &e) {
+        }
+      }
       return fourth;
     }
 

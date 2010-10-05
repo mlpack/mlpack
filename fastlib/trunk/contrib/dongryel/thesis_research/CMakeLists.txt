@@ -39,6 +39,10 @@ if(MPI_FOUND)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${MPI_LINK_FLAGS}")
 endif()
 
+# Add debug flags.
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -lefence")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -lefence")
+
 include_directories(${TRILINOS_INCLUDE_DIR})
 include_directories(${MPI_INCLUDE_DIR})
 
@@ -47,7 +51,6 @@ include(CMake/TargetDistclean.cmake OPTIONAL)
 
 #include_directories( ${FASTLIB_INCLUDE_DIRS} )
 include_directories(${CMAKE_BINARY_DIR}/include/)
-#TODO link_directories()
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)
