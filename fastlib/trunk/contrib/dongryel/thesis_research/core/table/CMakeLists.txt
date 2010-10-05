@@ -6,6 +6,9 @@ set(SOURCES
   dense_matrix.h
   dense_point.h
   distributed_table.h
+  distributed_table_message.h
+  mailbox.h
+  point_request_message.h
   table.h
   transform.h
 )
