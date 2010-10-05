@@ -30,6 +30,9 @@
 #include <armadillo>
 #include <fastlib/base/arma_compat.h>
 
+#include <iostream>
+#include <fstream>
+
 const fx_entry_doc parm_nbc_main_entries[] = {
   {"train", FX_REQUIRED, FX_STR, NULL,
    " A file containing the training set\n"},
@@ -96,14 +99,13 @@ int main(int argc, char* argv[]) {
   fx_timer_stop(nbc_module, "testing");
 
   ////// OUTPUT RESULTS //////
+  std::string output_filename = fx_param_str(root, "output", "output.csv");
 
-  const char *output_filename = fx_param_str(root, "output", "output.csv");
-
-  FILE *output_file = fopen(output_filename, "w");
-
-  ot::Print(results, output_file);
-
-  fclose(output_file);
+  std::ofstream output_file (output_filename.c_str());
+  if(output_file.is_open()) {
+    output_file << results;
+  }
+  output_file.close();
 
   fx_done(root);
 

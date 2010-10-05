@@ -66,9 +66,9 @@ long double phi(arma::vec& x , arma::vec& mean , arma::mat& cov) {
  * @endcode
  */
 
-long double phi(double x, double mean, double var) {
+long double phi(const double x, const double mean, const double var) {
 
-  long double f;
+  long double f = 0.0;
 	
   f = exp(-1.0*((x-mean)*(x-mean)/(2*var)))/sqrt(2*math::PI*var);
   return f;
