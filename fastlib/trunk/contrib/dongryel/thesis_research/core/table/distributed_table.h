@@ -308,36 +308,60 @@ class DistributedTable: public boost::noncopyable {
         // See if the current outgoing request is done. If the current
         // incoming request is finished transferring, then send out
         // the new point.
-        if(mailbox_.outgoing_request_.test() &&
-            mailbox_.incoming_request_.second.is_valid() &&
-            mailbox_.incoming_request_.first.test()) {
+        bool outgoing_request_done = false;
+        try {
+          outgoing_request_done = mailbox_.outgoing_request_.test();
+        }
+        catch(boost::mpi::exception &e) {
+          outgoing_request_done = false;
+        }
+        if(outgoing_request_done &&
+            mailbox_.incoming_request_.second.is_valid()) {
 
-          // Get the reference to the incoming request to be
-          // fulfilled.
-          core::table::PointRequestMessage &to_be_flushed =
-            mailbox_.incoming_request_.second;
+          bool incoming_request_done = false;
+          try {
+            incoming_request_done = mailbox_.incoming_request_.first.test();
+          }
+          catch(boost::mpi::exception &e) {
+            incoming_request_done = false;
+          }
 
-          // Copy the point out.
-          owned_table_->get(
-            to_be_flushed.point_id(),
-            &mailbox_.outgoing_point_);
+          if(incoming_request_done) {
+            // Get the reference to the incoming request to be
+            // fulfilled.
+            core::table::PointRequestMessage &to_be_flushed =
+              mailbox_.incoming_request_.second;
 
-          // Send back the point to the requester.
-          mailbox_.outgoing_request_ =
-            comm_->isend(
-              to_be_flushed.source_rank(),
-              core::table::DistributedTableMessage::RECEIVE_POINT,
-              mailbox_.outgoing_point_);
+            // Copy the point out.
+            owned_table_->get(
+              to_be_flushed.point_id(),
+              &mailbox_.outgoing_point_);
 
-          // This mail slot is free.
-          to_be_flushed.Reset();
+            // Send back the point to the requester.
+            mailbox_.outgoing_request_ =
+              comm_->isend(
+                to_be_flushed.source_rank(),
+                core::table::DistributedTableMessage::RECEIVE_POINT,
+                mailbox_.outgoing_point_);
+
+            // This mail slot is free.
+            to_be_flushed.Reset();
+          }
         }
 
         // Check if any of the requested point from this processor is
         // ready to be received.
-        if(mailbox_.incoming_receive_request_.second == true &&
-            mailbox_.incoming_receive_request_.first.test()) {
-          mailbox_.point_ready_cond_.notify_one();
+        if(mailbox_.incoming_receive_request_.second) {
+          bool incoming_receive_request_done = false;
+          try {
+            incoming_receive_request_done =
+              mailbox_.incoming_receive_request_.first.test();
+          }
+          catch(boost::mpi::exception &e) {
+          }
+          if(incoming_receive_request_done) {
+            mailbox_.point_ready_cond_.notify_one();
+          }
         }
         if(mailbox_.incoming_receive_request_.second == false &&
             comm_->iprobe(
