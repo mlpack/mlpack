@@ -105,15 +105,17 @@ class Mailbox {
       bool first = (communicator_->iprobe(
                       boost::mpi::any_source,
                       core::table::DistributedTableMessage::TERMINATE_SERVER));
-      bool second = first && (!communicator_->iprobe(
-                                boost::mpi::any_source,
-                                core::table::DistributedTableMessage::REQUEST_POINT));
-      bool third = second && (!communicator_->iprobe(
-                                boost::mpi::any_source,
-                                core::table::DistributedTableMessage::RECEIVE_POINT));
+      bool second = first &&
+                    (!communicator_->iprobe(
+                       boost::mpi::any_source,
+                       core::table::DistributedTableMessage::REQUEST_POINT));
+      bool third = second &&
+                   (!communicator_->iprobe(
+                      boost::mpi::any_source,
+                      core::table::DistributedTableMessage::RECEIVE_POINT));
       bool fourth = (
                       third && incoming_request_.second.is_valid() == false &&
-                      (! outgoing_request_.test()) &&
+                      outgoing_request_.test() &&
                       incoming_receive_request_.second == false);
       return fourth;
     }
@@ -179,11 +181,9 @@ class DistributedTable: public boost::noncopyable {
       // Terminate the server.
       comm_->isend(
         rank_, core::table::DistributedTableMessage::TERMINATE_SERVER, 0);
-      printf("Sent termination:%d\n", rank_);
       boost::unique_lock<boost::mutex> lock(mailbox_.termination_mutex_);
       mailbox_.termination_cond_.wait(lock);
       comm_->barrier();
-      printf("Will destory myself %d\n", rank_);
 
       if(owned_table_ != NULL) {
         delete owned_table_;
@@ -355,7 +355,6 @@ class DistributedTable: public boost::noncopyable {
 
       } // end of the loop for handling buffered messages.
 
-      printf("Process %d's server is quitting.\n", rank_);
       mailbox_.termination_cond_.notify_one();
     }
 
