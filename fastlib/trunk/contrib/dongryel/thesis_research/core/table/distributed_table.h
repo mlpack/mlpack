@@ -33,13 +33,11 @@ class DistributedTable: public boost::noncopyable {
 
     boost::mpi::communicator *comm_;
 
-    boost::shared_ptr<boost::thread> incoming_receive_request_thread_;
+    core::table::PointInbox point_inbox_;
 
-    boost::shared_ptr<boost::thread> incoming_request_thread_;
+    core::table::PointRequestMessageInbox point_request_message_inbox_;
 
-    boost::shared_ptr<boost::thread> outgoing_request_thread_;
-
-    core::table::Mailbox mailbox_;
+    core::table::PointRequestMessageOutbox point_request_message_outbox_;
 
   public:
 
@@ -141,19 +139,20 @@ class DistributedTable: public boost::noncopyable {
       boost::mpi::all_gather(
         *comm_, owned_table_->n_entries(), local_n_entries_);
 
-      // Start the server for giving out points.
-      table_thread_ = boost::shared_ptr<boost::thread>(
-                        new boost::thread(
-                          boost::bind(
-                            &core::table::DistributedTable::server,
-                            this)));
+      // Initialize the mail boxes.
+
+
+
+
 
       // Put a barrier to ensure that every process has started up the
-      // server.
+      // mailboxes.
       comm_->barrier();
 
-      // Detach the server thread for each distributed process.
-      table_thread_->detach();
+      // Detach the server threads for each distributed process.
+      point_inbox_.Detach();
+      point_request_message_inbox_.Detach();
+      point_request_message_outbox_.Detach();
     }
 
     void Save(const std::string &file_name) const {
