@@ -33,7 +33,11 @@ class DistributedTable: public boost::noncopyable {
 
     boost::mpi::communicator *comm_;
 
-    boost::shared_ptr<boost::thread> table_thread_;
+    boost::shared_ptr<boost::thread> incoming_receive_request_thread_;
+
+    boost::shared_ptr<boost::thread> incoming_request_thread_;
+
+    boost::shared_ptr<boost::thread> outgoing_request_thread_;
 
     core::table::Mailbox mailbox_;
 
