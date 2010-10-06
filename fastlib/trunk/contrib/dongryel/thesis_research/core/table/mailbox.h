@@ -1,4 +1,4 @@
-/** @file point_request_message.h
+/** @file mailbox.h
  *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
@@ -13,19 +13,108 @@ namespace table {
 
 class Table;
 
+class PointInbox {
+  private:
+
+    boost::mpi::communicator *comm_;
+
+    std::vector<double> incoming_point_;
+
+    bool point_message_is_valid_;
+
+    boost::mpi::request point_message_handle_;
+
+    boost::shared_ptr<boost::thread> point_inbox_thread_;
+
+  public:
+
+    void Detach() {
+      point_inbox_thread_->detach();
+    }
+
+    PointInbox() {
+      comm_ = NULL;
+      point_message_is_valid_ = false;
+    }
+
+    void Init() {
+
+      // Start the point inbox thread.
+      point_inbox_thread_ = boost::shared_ptr<boost::thread>(
+                              new boost::thread(
+                                boost::bind(
+                                  &core::table::PointInbox::server,
+                                  this)));
+    }
+
+    bool has_outstanding_point_messages() {
+      return comm_->iprobe(
+               boost::mpi::any_source,
+               core::table::DistributedTableMessage::RECEIVE_POINT);
+    }
+
+    bool termination_signal_arrived() {
+      return
+        comm_->iprobe(
+          boost::mpi::any_source,
+          core::table::DistributedTableMessage::TERMINATE_POINT_INBOX);
+    }
+
+    bool time_to_quit() {
+      return point_message_is_valid_ == false &&
+             has_outstanding_point_messages() == false &&
+             termination_signal_arrived();
+    }
+
+    void server() {
+      while(this->time_to_quit()) {
+
+        // Probe the message queue for the point request, and do an
+        // asynchronous receive, if we can.
+        if(point_message_is_valid_ == false &&
+            this->has_outstanding_point_messages()) {
+
+          // Set the valid flag on and start receiving the message.
+          point_request_message_is_valid_ = true;
+          point_request_message_handle_ =
+            comm_->irecv(
+              boost::mpi::any_source,
+              core::table::DistributedTableMessage::REQUEST_POINT,
+              point_request_message_);
+        }
+
+        // Check whether the request is done.
+        if(this->point_request_message_received()) {
+
+          // Wake up the thread waiting on the request. This thread
+          // turns off the validity flag after grabbing whch process
+          // wants a point.
+          point_request_message_received_cond_.notify_one();
+        }
+      }
+    }
+};
+
 class PointRequestMessageInbox {
   private:
+
     boost::condition_variable point_request_message_received_cond_;
 
     boost::mpi::communicator *comm_;
 
-    bool point_request_message_is_valid_;
-
     core::table::PointRequestMessage point_request_message_;
+
+    bool point_request_message_is_valid_;
 
     boost::mpi::request point_request_message_handle_;
 
+    boost::shared_ptr<boost::thread> point_request_message_inbox_thread_;
+
   public:
+
+    void Detach() {
+      point_request_message_inbox_thread_->detach();
+    }
 
     void export_point_request_message(
       int *source_rank_out, int *point_id_out) const {
@@ -40,6 +129,13 @@ class PointRequestMessageInbox {
 
     void Init(boost::mpi::communicator *comm_in) {
       comm_ = comm_in;
+
+      // Start the point request message inbox thread.
+      point_request_message_inbox_thread_ =
+        boost::shared_ptr<boost::thread>(
+          new boost::thread(
+            boost::bind(
+              &core::table::PointRequestMessageInbox::server, this)));
     }
 
     PointRequestMessageInbox() {
@@ -48,9 +144,10 @@ class PointRequestMessageInbox {
     }
 
     bool termination_signal_arrived() {
-      return comm_->iprobe(
-               boost::mpi::any_source,
-               core::table::DistributedTableMessage::TERMINATE_SERVER);
+      return
+        comm_->iprobe(
+          boost::mpi::any_source,
+          core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_INBOX);
     }
 
     bool time_to_quit() {
@@ -74,7 +171,7 @@ class PointRequestMessageInbox {
     }
 
     void server() {
-      while(true) {
+      while(this->time_to_quit()) {
 
         // Probe the message queue for the point request, and do an
         // asynchronous receive, if we can.
@@ -99,11 +196,13 @@ class PointRequestMessageInbox {
           point_request_message_received_cond_.notify_one();
         }
 
-        // Check whether it is time to quit.
-        if(this->time_to_quit()) {
-          break;
-        }
       } // end of the infinite server loop.
+
+      // Kill the outbox handling the point request messages.
+      comm_->isend(
+        comm_->rank(),
+        core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_INBOX,
+        0);
     }
 };
 
@@ -112,26 +211,73 @@ class PointRequestMessageOutbox {
 
     core::table::PointRequestMessageInbox *inbox_;
 
+    boost::mpi::communicator *comm_;
+
     core::table::Table *table_;
 
     boost::mutex mutex_;
 
     boost::condition_variable *point_request_message_received_cond_;
 
+    std::vector<double> outgoing_point_;
+
+    bool point_request_message_is_valid_;
+
+    boost::mpi::request point_request_message_handle_;
+
+    boost::shared_ptr<boost::thread> point_request_message_outbox_thread_;
+
   public:
+
+    void Detach() {
+      point_request_message_outbox_thread_->detach();
+    }
+
+    PointRequestMessageOutbox() {
+      inbox_ = NULL;
+      comm_ = NULL;
+      table_ = NULL;
+      point_request_message_is_valid_ = false;
+    }
+
     void Init(
+      boost::mpi::communicator *comm_in,
       core::table::Table *table_in,
       core::table::PointRequestMessageInbox *inbox_in,
       boost::condition_variable *point_request_message_received_cond_in) {
+
+      comm_ = comm_in;
       table_ = table_in;
       inbox_ = inbox_in;
       point_request_message_received_cond_ =
         point_request_message_received_cond_in;
+
+      // Start the point request message oubox thread.
+      point_request_message_outbox_thread_ = boost::shared_ptr<boost::thread>(
+          new boost::thread(
+            boost::bind(
+              &core::table::PointRequestMessageOutbox::server, this)));
+    }
+
+    bool termination_signal_arrived() {
+      return comm_->iprobe(
+               boost::mpi::any_source,
+               core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_OUTBOX);
+    }
+
+    bool time_to_quit() {
+
+      // It is time to quit when there are no valid messages to
+      // handle, and the terminate signal is here.
+      return point_request_message_is_valid_ == false &&
+             termination_signal_arrived();
     }
 
     void server() {
-      while(true) {
+      while(this->time_to_quit()) {
 
+        // Lock the mutex so that it can wait on the condition
+        // variable.
         boost::unique_lock<boost::mutex> lock(mutex_);
 
         // If no message is available from the inbox, then go to
@@ -140,81 +286,35 @@ class PointRequestMessageOutbox {
           point_request_message_received_cond_->wait();
         }
 
-        // Grab what we want from the inbox, and invalidate the
-        // message in the inbox.
-        int source_rank;
-        int point_id;
-        inbox_->export_point_request_message(&source_rank, &point_id);
-        inbox_->invalidate_point_request_message();
+        // If the server is free to send out points, then
+        if(point_request_message_is_valid_ == false) {
+          int source_rank;
+          int point_id;
+          inbox_->export_point_request_message(&source_rank, &point_id);
 
-        // Send the point to the requestor.
-      }
-    }
-};
+          // Invalid the message in the inbox.
+          inbox_->invalidate_point_request_message();
 
-class Mailbox {
-  public:
+          // Grab the point from the table.
+          table_->get(point_id, &outgoing_point_);
 
-    boost::mutex termination_mutex_;
-
-    boost::condition_variable termination_cond_;
-
-    boost::mutex mutex_;
-
-    boost::condition_variable point_ready_cond_;
-
-    boost::mpi::communicator *communicator_;
-
-    std::pair <
-    boost::mpi::request,
-          core::table::PointRequestMessage > incoming_request_;
-
-    boost::mpi::request outgoing_request_;
-
-    std::pair< boost::mpi::request, bool> incoming_receive_request_;
-
-    int incoming_receive_source_;
-
-    std::vector<double> incoming_point_;
-
-    std::vector<double> outgoing_point_;
-
-  public:
-
-    bool is_done() {
-
-      bool first = (communicator_->iprobe(
-                      boost::mpi::any_source,
-                      core::table::DistributedTableMessage::TERMINATE_SERVER));
-      bool second = first &&
-                    (!communicator_->iprobe(
-                       boost::mpi::any_source,
-                       core::table::DistributedTableMessage::REQUEST_POINT));
-      bool third = second &&
-                   (!communicator_->iprobe(
-                      boost::mpi::any_source,
-                      core::table::DistributedTableMessage::RECEIVE_POINT));
-      bool fourth = (
-                      third && incoming_request_.second.is_valid() == false &&
-                      incoming_receive_request_.second == false);
-      if(fourth) {
-        try {
-          bool outgoing_request_done = outgoing_request_.test();
-          fourth = fourth && outgoing_request_done;
+          // Send back the point to the requester. Lock the outgoing
+          // point so that it is not overwritten while doing the
+          // transfer.
+          point_request_message_is_valid_ = true;
+          point_request_message_handle_ =
+            comm_->isend(
+              source_rank,
+              core::table::DistributedTableMessage::RECEIVE_POINT,
+              outgoing_point_);
         }
-        catch(boost::mpi::exception &e) {
+
+        // Otherwise, check whether the transfer is done and unlock.
+        else if(point_request_message_handle_.test()) {
+          point_request_message_is_valid_ = false;
         }
-      }
-      return fourth;
-    }
 
-    void set_communicator(boost::mpi::communicator *comm_in) {
-      communicator_ = comm_in;
-    }
-
-    Mailbox() {
-      communicator_ = NULL;
-      incoming_receive_request_.second = false;
+      } // end of the infinite server loop.
     }
 };
 };
