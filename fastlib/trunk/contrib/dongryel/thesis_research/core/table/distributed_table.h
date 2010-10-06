@@ -25,8 +25,6 @@ class DistributedTable: public boost::noncopyable {
 
   private:
 
-    bool destruct_flag_;
-
     core::table::Table *owned_table_;
 
     std::vector<int> local_n_entries_;
@@ -50,7 +48,6 @@ class DistributedTable: public boost::noncopyable {
     }
 
     DistributedTable() {
-      destruct_flag_ = false;
       comm_ = NULL;
       owned_table_ = NULL;
       global_tree_ = NULL;
