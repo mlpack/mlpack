@@ -11,7 +11,6 @@ namespace table {
 
 class PointRequestMessage {
   private:
-    bool is_valid_;
 
     int source_rank_;
 
@@ -36,18 +35,9 @@ class PointRequestMessage {
       point_id_ = point_id_in;
     }
 
-    bool is_valid() const {
-      return is_valid_;
-    }
-
     void Reset() {
-      is_valid_ = false;
       source_rank_ = -1;
       point_id_ = -1;
-    }
-
-    void set_valid() {
-      is_valid_ = true;
     }
 
     int source_rank() const {
