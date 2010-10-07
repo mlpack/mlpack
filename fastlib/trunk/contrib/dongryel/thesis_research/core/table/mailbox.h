@@ -16,13 +16,15 @@ class Table;
 class PointInbox {
   private:
 
+    boost::condition_variable point_received_cond_;
+
     boost::mpi::communicator *comm_;
 
-    std::vector<double> incoming_point_;
+    std::vector<double> point_;
 
-    bool point_message_is_valid_;
+    bool point_handle_is_valid_;
 
-    boost::mpi::request point_message_handle_;
+    boost::mpi::request point_handle_;
 
     boost::shared_ptr<boost::thread> point_inbox_thread_;
 
@@ -34,10 +36,13 @@ class PointInbox {
 
     PointInbox() {
       comm_ = NULL;
-      point_message_is_valid_ = false;
+      point_handle_is_valid_ = false;
     }
 
-    void Init() {
+    void Init(boost::mpi::communicator *comm_in) {
+
+      // Set the communicator.
+      comm_ = comm_in;
 
       // Start the point inbox thread.
       point_inbox_thread_ = boost::shared_ptr<boost::thread>(
@@ -61,9 +66,13 @@ class PointInbox {
     }
 
     bool time_to_quit() {
-      return point_message_is_valid_ == false &&
+      return point_handle_is_valid_ == false &&
              has_outstanding_point_messages() == false &&
              termination_signal_arrived();
+    }
+
+    bool point_received() {
+      return point_handle_is_valid_ && point_handle_.test();
     }
 
     void server() {
@@ -71,25 +80,25 @@ class PointInbox {
 
         // Probe the message queue for the point request, and do an
         // asynchronous receive, if we can.
-        if(point_message_is_valid_ == false &&
+        if(point_handle_is_valid_ == false &&
             this->has_outstanding_point_messages()) {
 
-          // Set the valid flag on and start receiving the message.
-          point_request_message_is_valid_ = true;
-          point_request_message_handle_ =
+          // Set the valid flag on and start receiving the point.
+          point_handle_is_valid_ = true;
+          point_handle_ =
             comm_->irecv(
               boost::mpi::any_source,
               core::table::DistributedTableMessage::REQUEST_POINT,
-              point_request_message_);
+              point_);
         }
 
         // Check whether the request is done.
-        if(this->point_request_message_received()) {
+        if(this->point_received()) {
 
-          // Wake up the thread waiting on the request. This thread
-          // turns off the validity flag after grabbing whch process
-          // wants a point.
-          point_request_message_received_cond_.notify_one();
+          // Wake up the thread waiting on the request. The woken up
+          // thread turns off the validity flag after grabbing whch
+          // process wants a point.
+          point_received_cond_.notify_one();
         }
       }
     }
@@ -140,6 +149,10 @@ class PointRequestMessageInbox {
 
     PointRequestMessageInbox() {
       comm_ = NULL;
+      point_request_message_is_valid_ = false;
+    }
+
+    void invalidate_point_request_message() {
       point_request_message_is_valid_ = false;
     }
 
@@ -283,7 +296,7 @@ class PointRequestMessageOutbox {
         // If no message is available from the inbox, then go to
         // sleep.
         if(inbox_->point_request_message_received() == false) {
-          point_request_message_received_cond_->wait();
+          point_request_message_received_cond_->wait(lock);
         }
 
         // If the server is free to send out points, then
