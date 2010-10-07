@@ -28,6 +28,7 @@
 #include "simple_nbc.h"
 
 #include <armadillo>
+#include <fastlib/data/dataset.h> 
 #include <fastlib/base/arma_compat.h>
 
 #include <iostream>
@@ -101,11 +102,7 @@ int main(int argc, char* argv[]) {
   ////// OUTPUT RESULTS //////
   std::string output_filename = fx_param_str(root, "output", "output.csv");
 
-  std::ofstream output_file (output_filename.c_str());
-  if(output_file.is_open()) {
-    output_file << results;
-  }
-  output_file.close();
+  data::Save(output_filename.c_str(), results);
 
   fx_done(root);
 
