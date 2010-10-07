@@ -28,7 +28,19 @@ class PointInbox {
 
     boost::shared_ptr<boost::thread> point_inbox_thread_;
 
+    boost::mutex termination_mutex_;
+
+    boost::condition_variable termination_cond_;
+
   public:
+
+    boost::mutex &termination_mutex() {
+      return termination_mutex_;
+    }
+
+    boost::condition_variable &termination_cond() {
+      return termination_cond_;
+    }
 
     void Detach() {
       point_inbox_thread_->detach();
@@ -214,7 +226,7 @@ class PointRequestMessageInbox {
       // Kill the outbox handling the point request messages.
       comm_->isend(
         comm_->rank(),
-        core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_INBOX,
+        core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_OUTBOX,
         0);
     }
 };
