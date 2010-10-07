@@ -62,18 +62,31 @@ class DistributedTable: public boost::noncopyable {
       // distributed processes.
       comm_->barrier();
 
-      // Terminate the server.
+      // Terminate the point inbox.
       comm_->isend(
         comm_->rank(),
-        core::table::DistributedTableMessage::TERMINATE_SERVER, 0);
-      boost::unique_lock<boost::mutex> lock(mailbox_.termination_mutex_);
-      mailbox_.termination_cond_.wait(lock);
+        core::table::DistributedTableMessage::TERMINATE_POINT_INBOX, 0);
+
+      // Terminate the point request message inbox.
+      comm_->isend(
+        comm_->rank(),
+        core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_INBOX, 0);
+
+      // Wait until the point inbox is terminated.
+      boost::unique_lock<boost::mutex> lock(point_inbox_.termination_mutex());
+      point_inbox_.termination_cond().wait(lock);
+
+      // Put a barrier so that all processes are ready to destroy each
+      // of their own tables and trees.
       comm_->barrier();
 
+      // Delete the table.
       if(owned_table_ != NULL) {
         delete owned_table_;
         owned_table_ = NULL;
       }
+
+      // Delete the tree.
       if(global_tree_ != NULL) {
         delete global_tree_;
         global_tree_ = NULL;
