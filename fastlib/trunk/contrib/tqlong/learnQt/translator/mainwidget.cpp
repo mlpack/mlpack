@@ -84,7 +84,7 @@ void MainWidget::btOKClicked()
 void MainWidget::pageUrl(QUrl url)
 {
   BrowserTranslate* browser = (BrowserTranslate*) tabs_->currentWidget();
-  if (browser)
+  if (browser && browser == sender())
   {
     QTextStream(stdout) << "url changed: current = " << browser->page()->mainFrame()->baseUrl().toString() << endl;
     addressEdit->setText(url.toString());
@@ -206,6 +206,16 @@ void MainWidget::keyPressEvent(QKeyEvent* event)
   if (event->key() == Qt::Key_T && event->modifiers() == Qt::ControlModifier)
   {
     this->btNewTabClicked();
+  }
+  if (event->key() == Qt::Key_PageUp && event->modifiers() == Qt::ControlModifier)
+  {
+    tabs_->setCurrentIndex((tabs_->currentIndex()+1)%tabs_->count());
+  }
+  if (event->key() == Qt::Key_PageDown && event->modifiers() == Qt::ControlModifier)
+  {
+    int index = (tabs_->currentIndex()-1);
+    if (index < 0) index = tabs_->count()-1;
+    tabs_->setCurrentIndex(index);
   }
 }
 
