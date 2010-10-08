@@ -239,6 +239,8 @@ class PointRequestMessageInbox {
               boost::mpi::any_source,
               core::table::DistributedTableMessage::REQUEST_POINT,
               point_request_message_);
+          printf("Process %d is receiving a request message.\n",
+                 comm_->rank());
         }
 
         // Check whether the request is done.
@@ -335,18 +337,22 @@ class PointRequestMessageOutbox {
     void server() {
       while(this->time_to_quit() == false) {
 
-        // Lock the mutex so that it can wait on the condition
-        // variable.
-        boost::unique_lock<boost::mutex> lock(mutex_);
-
-        // If no message is available from the inbox, then go to
-        // sleep.
-        if(inbox_->point_request_message_received() == false) {
-          inbox_->wait(lock);
-        }
-
         // If the server is free to send out points, then
         if(point_request_message_is_valid_ == false) {
+
+          printf("Point is ready to be sent out from Process %d.\n",
+                 comm_->rank());
+
+          // If no message is available from the inbox, then go to
+          // sleep.
+          if(inbox_->point_request_message_received() == false) {
+
+            // Lock the mutex so that it can wait on the condition
+            // variable.
+            boost::unique_lock<boost::mutex> lock(mutex_);
+            inbox_->wait(lock);
+          }
+
           int source_rank;
           int point_id;
           inbox_->export_point_request_message(&source_rank, &point_id);
