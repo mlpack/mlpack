@@ -3,9 +3,11 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWidget w;
-    w.show();
+  for (int i =0; i < argc; i ++)
+    QTextStream(stdout) << i << " = " << argv[i] << endl;
+  QApplication a(argc, argv);
+  MainWidget w;
+  w.show();
 
-    return a.exec();
+  return a.exec();
 }
