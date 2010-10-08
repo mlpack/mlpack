@@ -16,6 +16,8 @@ class Table;
 class PointInbox {
   private:
 
+    boost::mutex point_received_mutex_;
+
     boost::condition_variable point_received_cond_;
 
     boost::mpi::communicator *comm_;
@@ -33,6 +35,22 @@ class PointInbox {
     boost::condition_variable termination_cond_;
 
   public:
+
+    void invalidate_point() {
+      point_handle_is_valid_ = false;
+    }
+
+    const std::vector<double> &point() const {
+      return point_;
+    }
+
+    void wait(boost::unique_lock<boost::mutex> &lock_in) {
+      point_received_cond_.wait(lock_in);
+    }
+
+    boost::mutex &point_received_mutex() {
+      return point_received_mutex_;
+    }
 
     boost::mutex &termination_mutex() {
       return termination_mutex_;
@@ -132,6 +150,10 @@ class PointRequestMessageInbox {
     boost::shared_ptr<boost::thread> point_request_message_inbox_thread_;
 
   public:
+
+    void wait(boost::unique_lock<boost::mutex> &lock_in) {
+      point_request_message_received_cond_.wait(lock_in);
+    }
 
     void Detach() {
       point_request_message_inbox_thread_->detach();
@@ -242,8 +264,6 @@ class PointRequestMessageOutbox {
 
     boost::mutex mutex_;
 
-    boost::condition_variable *point_request_message_received_cond_;
-
     std::vector<double> outgoing_point_;
 
     bool point_request_message_is_valid_;
@@ -268,14 +288,11 @@ class PointRequestMessageOutbox {
     void Init(
       boost::mpi::communicator *comm_in,
       core::table::Table *table_in,
-      core::table::PointRequestMessageInbox *inbox_in,
-      boost::condition_variable *point_request_message_received_cond_in) {
+      core::table::PointRequestMessageInbox *inbox_in) {
 
       comm_ = comm_in;
       table_ = table_in;
       inbox_ = inbox_in;
-      point_request_message_received_cond_ =
-        point_request_message_received_cond_in;
 
       // Start the point request message oubox thread.
       point_request_message_outbox_thread_ = boost::shared_ptr<boost::thread>(
@@ -308,7 +325,7 @@ class PointRequestMessageOutbox {
         // If no message is available from the inbox, then go to
         // sleep.
         if(inbox_->point_request_message_received() == false) {
-          point_request_message_received_cond_->wait(lock);
+          inbox_->wait(lock);
         }
 
         // If the server is free to send out points, then
