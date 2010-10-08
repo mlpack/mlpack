@@ -154,18 +154,20 @@ class DistributedTable: public boost::noncopyable {
 
       // Initialize the mail boxes.
       point_inbox_.Init(comm_);
-      point_request_message_inbox_.Init(comm_);
+      point_request_message_inbox_.Init(
+        comm_,
+        point_request_message_outbox_.point_request_message_copied_out_cond());
       point_request_message_outbox_.Init(
         comm_, owned_table_, &point_request_message_inbox_);
-
-      // Put a barrier to ensure that every process has started up the
-      // mailboxes.
-      comm_->barrier();
 
       // Detach the server threads for each distributed process.
       point_inbox_.Detach();
       point_request_message_inbox_.Detach();
       point_request_message_outbox_.Detach();
+
+      // Put a barrier to ensure that every process has started up the
+      // mailboxes.
+      comm_->barrier();
     }
 
     void Save(const std::string &file_name) const {

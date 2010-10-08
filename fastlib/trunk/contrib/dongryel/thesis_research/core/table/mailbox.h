@@ -106,7 +106,7 @@ class PointInbox {
     }
 
     void server() {
-      while(this->time_to_quit()) {
+      while(this->time_to_quit() == false) {
 
         // Probe the message queue for the point request, and do an
         // asynchronous receive, if we can.
@@ -131,6 +131,7 @@ class PointInbox {
           point_received_cond_.notify_one();
         }
       }
+      printf("Point inbox for Process %d is quitting.\n", comm_->rank());
     }
 };
 
@@ -149,6 +150,10 @@ class PointRequestMessageInbox {
 
     boost::shared_ptr<boost::thread> point_request_message_inbox_thread_;
 
+    boost::mutex mutex_;
+
+    boost::condition_variable *point_request_message_copied_out_cond_;
+
   public:
 
     void wait(boost::unique_lock<boost::mutex> &lock_in) {
@@ -166,12 +171,13 @@ class PointRequestMessageInbox {
       *point_id_out = point_request_message_.point_id();
     }
 
-    void invalidte_point_request_message() {
-      point_request_message_is_valid_ = false;
-    }
+    void Init(
+      boost::mpi::communicator *comm_in,
+      boost::condition_variable *point_request_message_copied_out_cond_in) {
 
-    void Init(boost::mpi::communicator *comm_in) {
       comm_ = comm_in;
+      point_request_message_copied_out_cond_ =
+        point_request_message_copied_out_cond_in;
 
       // Start the point request message inbox thread.
       point_request_message_inbox_thread_ =
@@ -183,6 +189,7 @@ class PointRequestMessageInbox {
 
     PointRequestMessageInbox() {
       comm_ = NULL;
+      point_request_message_copied_out_cond_ = NULL;
       point_request_message_is_valid_ = false;
     }
 
@@ -218,7 +225,7 @@ class PointRequestMessageInbox {
     }
 
     void server() {
-      while(this->time_to_quit()) {
+      while(this->time_to_quit() == false) {
 
         // Probe the message queue for the point request, and do an
         // asynchronous receive, if we can.
@@ -241,6 +248,8 @@ class PointRequestMessageInbox {
           // turns off the validity flag after grabbing whch process
           // wants a point.
           point_request_message_received_cond_.notify_one();
+          boost::unique_lock<boost::mutex> lock(mutex_);
+          point_request_message_copied_out_cond_->wait(lock);
         }
 
       } // end of the infinite server loop.
@@ -250,6 +259,8 @@ class PointRequestMessageInbox {
         comm_->rank(),
         core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_OUTBOX,
         0);
+      printf("Point request message inbox for Process %d is quitting.\n",
+             comm_->rank());
     }
 };
 
@@ -272,7 +283,13 @@ class PointRequestMessageOutbox {
 
     boost::shared_ptr<boost::thread> point_request_message_outbox_thread_;
 
+    boost::condition_variable point_request_message_copied_out_cond_;
+
   public:
+
+    boost::condition_variable *point_request_message_copied_out_cond() {
+      return &point_request_message_copied_out_cond_;
+    }
 
     void Detach() {
       point_request_message_outbox_thread_->detach();
@@ -316,7 +333,7 @@ class PointRequestMessageOutbox {
     }
 
     void server() {
-      while(this->time_to_quit()) {
+      while(this->time_to_quit() == false) {
 
         // Lock the mutex so that it can wait on the condition
         // variable.
@@ -336,6 +353,7 @@ class PointRequestMessageOutbox {
 
           // Invalid the message in the inbox.
           inbox_->invalidate_point_request_message();
+          point_request_message_copied_out_cond_.notify_one();
 
           // Grab the point from the table.
           table_->get(point_id, &outgoing_point_);
@@ -357,6 +375,9 @@ class PointRequestMessageOutbox {
         }
 
       } // end of the infinite server loop.
+
+      printf("Poing request outbox for Process %d is quitting.\n",
+             comm_->rank());
     }
 };
 };
