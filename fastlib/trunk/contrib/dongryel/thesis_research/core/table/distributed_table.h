@@ -141,10 +141,10 @@ class DistributedTable: public boost::noncopyable {
       const std::string &file_name,
       boost::mpi::communicator *communicator_in) {
 
+      // Set the communicator and read the table.
       comm_ = communicator_in;
       owned_table_ = new core::table::Table();
       owned_table_->Init(file_name);
-      mailbox_.set_communicator(communicator_in);
 
       // Allocate the vector for storing the number of entries for all
       // the tables in the world, and do an all-gather operation to
@@ -153,10 +153,10 @@ class DistributedTable: public boost::noncopyable {
         *comm_, owned_table_->n_entries(), local_n_entries_);
 
       // Initialize the mail boxes.
-
-
-
-
+      point_inbox_.Init(comm_);
+      point_request_message_inbox_.Init(comm_);
+      point_request_message_outbox_.Init(
+        comm_, owned_table_, &point_request_message_inbox_);
 
       // Put a barrier to ensure that every process has started up the
       // mailboxes.
@@ -180,105 +180,6 @@ class DistributedTable: public boost::noncopyable {
       }
     }
 
-    void server() {
-
-      while(true) {
-
-        // Probe the message queue for the point request, and do an
-        // asynchronous receive first and buffer the receive.
-        if(mailbox_.incoming_request_.second.is_valid() == false &&
-            comm_->iprobe(
-              boost::mpi::any_source,
-              core::table::DistributedTableMessage::REQUEST_POINT)) {
-
-          mailbox_.incoming_request_.second.set_valid();
-          mailbox_.incoming_request_.first =
-            comm_->irecv(
-              boost::mpi::any_source,
-              core::table::DistributedTableMessage::REQUEST_POINT,
-              mailbox_.incoming_request_.second);
-        }
-
-        // See if the current outgoing request is done. If the current
-        // incoming request is finished transferring, then send out
-        // the new point.
-        bool outgoing_request_done = false;
-        try {
-          outgoing_request_done = mailbox_.outgoing_request_.test();
-        }
-        catch(boost::mpi::exception &e) {
-          outgoing_request_done = false;
-        }
-        if(outgoing_request_done &&
-            mailbox_.incoming_request_.second.is_valid()) {
-
-          bool incoming_request_done = false;
-          try {
-            incoming_request_done = mailbox_.incoming_request_.first.test();
-          }
-          catch(boost::mpi::exception &e) {
-            incoming_request_done = false;
-          }
-
-          if(incoming_request_done) {
-            // Get the reference to the incoming request to be
-            // fulfilled.
-            core::table::PointRequestMessage &to_be_flushed =
-              mailbox_.incoming_request_.second;
-
-            // Copy the point out.
-            owned_table_->get(
-              to_be_flushed.point_id(),
-              &mailbox_.outgoing_point_);
-
-            // Send back the point to the requester.
-            mailbox_.outgoing_request_ =
-              comm_->isend(
-                to_be_flushed.source_rank(),
-                core::table::DistributedTableMessage::RECEIVE_POINT,
-                mailbox_.outgoing_point_);
-
-            // This mail slot is free.
-            to_be_flushed.Reset();
-          }
-        }
-
-        // Check if any of the requested point from this processor is
-        // ready to be received.
-        if(mailbox_.incoming_receive_request_.second) {
-          bool incoming_receive_request_done = false;
-          try {
-            incoming_receive_request_done =
-              mailbox_.incoming_receive_request_.first.test();
-          }
-          catch(boost::mpi::exception &e) {
-          }
-          if(incoming_receive_request_done) {
-            mailbox_.point_ready_cond_.notify_one();
-          }
-        }
-        if(mailbox_.incoming_receive_request_.second == false &&
-            comm_->iprobe(
-              boost::mpi::any_source,
-              core::table::DistributedTableMessage::RECEIVE_POINT)) {
-          mailbox_.incoming_receive_request_.first =
-            comm_->irecv(mailbox_.incoming_receive_source_,
-                         core::table::DistributedTableMessage::RECEIVE_POINT,
-                         mailbox_.incoming_point_);
-          mailbox_.incoming_receive_request_.second = true;
-        }
-
-        // If the main thread has given a termination signal, and we
-        // are done with everything, then the server thread exits.
-        if(mailbox_.is_done()) {
-          break;
-        }
-
-      } // end of the loop for handling buffered messages.
-
-      mailbox_.termination_cond_.notify_one();
-    }
-
     void get(
       int requested_rank, int point_id,
       core::table::DensePoint *entry) {
@@ -296,21 +197,21 @@ class DistributedTable: public boost::noncopyable {
           comm_->rank(), point_id);
 
         // Inform the source processor that this processor needs data!
-        mailbox_.incoming_receive_source_ = requested_rank;
         comm_->isend(
           requested_rank,
           core::table::DistributedTableMessage::REQUEST_POINT,
           point_request_message);
 
         // Do a conditional wait until the point is ready.
-        boost::unique_lock<boost::mutex> lock(mailbox_.mutex_);
-        mailbox_.point_ready_cond_.wait(lock);
+        boost::unique_lock<boost::mutex> lock(
+          point_inbox_.point_received_mutex());
+        point_inbox_.wait(lock);
 
         // If we are here, then the point is ready. Copy the point.
-        entry->Init(mailbox_.incoming_point_);
+        entry->Init(point_inbox_.point());
 
         // Signal that we are done copying out the point.
-        mailbox_.incoming_receive_request_.second = false;
+        point_inbox_.invalidate_point();
       }
     }
 
