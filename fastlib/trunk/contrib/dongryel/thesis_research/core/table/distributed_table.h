@@ -35,7 +35,7 @@ class DistributedTable: public boost::noncopyable {
 
     //core::table::PointInbox point_inbox_;
 
-    core::table::PointRequestMessageInbox point_request_message_inbox_;
+    core::table::PointRequestMessageBox point_request_message_box_;
 
     //core::table::PointRequestMessageOutbox point_request_message_outbox_;
 
@@ -67,18 +67,12 @@ class DistributedTable: public boost::noncopyable {
       //comm_->rank(),
       //core::table::DistributedTableMessage::TERMINATE_POINT_INBOX, 0);
 
-      // Terminate the point request message inbox.
+      // Terminate the point request message box.
       comm_->isend(
         comm_->rank(),
-        core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_INBOX, 0);
-      boost::unique_lock<boost::mutex> lock(point_request_message_inbox_.mutex());
-      point_request_message_inbox_.point_request_message_inbox_quitting().wait(lock);
-
-      // Wait until the point inbox is terminated.
-      //{
-      //boost::unique_lock<boost::mutex> lock(point_inbox_.termination_mutex());
-      //point_inbox_.termination_cond().wait(lock);
-      //}
+        core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_BOX, 0);
+      boost::unique_lock<boost::mutex> lock(point_request_message_box_.mutex());
+      point_request_message_box_.point_request_message_box_quitting().wait(lock);
 
       // Put a barrier so that all processes are ready to destroy each
       // of their own tables and trees.
@@ -158,13 +152,13 @@ class DistributedTable: public boost::noncopyable {
 
       // Initialize the mail boxes.
       //point_inbox_.Init(comm_);
-      point_request_message_inbox_.Init(comm_);
+      point_request_message_box_.Init(comm_, owned_table_);
       //point_request_message_outbox_.Init(
       //comm_, owned_table_, &point_request_message_inbox_);
 
       // Detach the server threads for each distributed process.
       //point_inbox_.Detach();
-      point_request_message_inbox_.Detach();
+      point_request_message_box_.Detach();
       //point_request_message_outbox_.Detach();
 
       // Put a barrier to ensure that every process has started up the
