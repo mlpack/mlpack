@@ -13,7 +13,6 @@ namespace table {
 
 class Table;
 
-/*
 class PointInbox {
   private:
 
@@ -101,11 +100,8 @@ class PointInbox {
     }
 
     bool time_to_quit() {
-      printf("Condition: %d %d %d\n", (! point_handle_is_valid_),
-	     ( ! has_outstanding_point_messages() ),
-	     termination_signal_arrived());
       return point_handle_is_valid_ == false &&
-	(! has_outstanding_point_messages() ) &&
+             (! has_outstanding_point_messages()) &&
              termination_signal_arrived();
     }
 
@@ -141,12 +137,12 @@ class PointInbox {
           do_test_ = false;
           point_received_cond_.notify_one();
         }
-      }
+      } // end of the server loop.
+
       printf("Point inbox for Process %d is quitting.\n", comm_->rank());
       termination_cond_.notify_one();
     }
 };
-*/
 
 class PointRequestMessageBox {
   private:

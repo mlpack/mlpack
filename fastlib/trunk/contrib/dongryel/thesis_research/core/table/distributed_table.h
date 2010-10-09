@@ -33,11 +33,9 @@ class DistributedTable: public boost::noncopyable {
 
     boost::mpi::communicator *comm_;
 
-    //core::table::PointInbox point_inbox_;
+    core::table::PointInbox point_inbox_;
 
     core::table::PointRequestMessageBox point_request_message_box_;
-
-    //core::table::PointRequestMessageOutbox point_request_message_outbox_;
 
   public:
 
@@ -62,17 +60,26 @@ class DistributedTable: public boost::noncopyable {
       // distributed processes.
       comm_->barrier();
 
-      // Terminate the point inbox.
-      //comm_->isend(
-      //comm_->rank(),
-      //core::table::DistributedTableMessage::TERMINATE_POINT_INBOX, 0);
-
       // Terminate the point request message box.
-      comm_->isend(
-        comm_->rank(),
-        core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_BOX, 0);
-      boost::unique_lock<boost::mutex> lock(point_request_message_box_.mutex());
-      point_request_message_box_.point_request_message_box_quitting().wait(lock);
+      {
+        comm_->isend(
+          comm_->rank(),
+          core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_BOX, 0);
+        boost::unique_lock<boost::mutex> point_request_message_box_lock(
+          point_request_message_box_.mutex());
+        point_request_message_box_.point_request_message_box_quitting().wait(
+          point_request_message_box_lock);
+      }
+
+      // Wait until the point inbox is destroyed.
+      {
+        comm_->isend(
+          comm_->rank(),
+          core::table::DistributedTableMessage::TERMINATE_POINT_INBOX, 0);
+        boost::unique_lock<boost::mutex> point_inbox_lock(
+          point_inbox_.termination_mutex());
+        point_inbox_.termination_cond().wait(point_inbox_lock);
+      }
 
       // Put a barrier so that all processes are ready to destroy each
       // of their own tables and trees.
@@ -91,31 +98,31 @@ class DistributedTable: public boost::noncopyable {
       }
     }
 
-    const TreeType::BoundType &get_node_bound(TreeType *node) const {
+    const TreeType::BoundType &get_node_bound(TreeType * node) const {
       return node->bound();
     }
 
-    TreeType::BoundType &get_node_bound(TreeType *node) {
+    TreeType::BoundType &get_node_bound(TreeType * node) {
       return node->bound();
     }
 
-    TreeType *get_node_left_child(TreeType *node) {
+    TreeType *get_node_left_child(TreeType * node) {
       return node->left();
     }
 
-    TreeType *get_node_right_child(TreeType *node) {
+    TreeType *get_node_right_child(TreeType * node) {
       return node->right();
     }
 
-    bool node_is_leaf(TreeType *node) const {
+    bool node_is_leaf(TreeType * node) const {
       return node->is_leaf();
     }
 
-    core::tree::AbstractStatistic *&get_node_stat(TreeType *node) {
+    core::tree::AbstractStatistic *&get_node_stat(TreeType * node) {
       return node->stat();
     }
 
-    int get_node_count(TreeType *node) const {
+    int get_node_count(TreeType * node) const {
       return node->count();
     }
 
@@ -136,8 +143,8 @@ class DistributedTable: public boost::noncopyable {
     }
 
     void Init(
-      const std::string &file_name,
-      boost::mpi::communicator *communicator_in) {
+      const std::string & file_name,
+      boost::mpi::communicator * communicator_in) {
 
       // Set the communicator and read the table.
       comm_ = communicator_in;
@@ -151,27 +158,24 @@ class DistributedTable: public boost::noncopyable {
         *comm_, owned_table_->n_entries(), local_n_entries_);
 
       // Initialize the mail boxes.
-      //point_inbox_.Init(comm_);
+      point_inbox_.Init(comm_);
       point_request_message_box_.Init(comm_, owned_table_);
-      //point_request_message_outbox_.Init(
-      //comm_, owned_table_, &point_request_message_inbox_);
 
       // Detach the server threads for each distributed process.
-      //point_inbox_.Detach();
+      point_inbox_.Detach();
       point_request_message_box_.Detach();
-      //point_request_message_outbox_.Detach();
 
       // Put a barrier to ensure that every process has started up the
       // mailboxes.
       comm_->barrier();
     }
 
-    void Save(const std::string &file_name) const {
+    void Save(const std::string & file_name) const {
 
     }
 
     void IndexData(
-      const core::metric_kernels::AbstractMetric &metric_in, int leaf_size) {
+      const core::metric_kernels::AbstractMetric & metric_in, int leaf_size) {
 
       // We need to build the top tree first.
       if(comm_->rank() == 0) {
@@ -180,7 +184,7 @@ class DistributedTable: public boost::noncopyable {
 
     void get(
       int requested_rank, int point_id,
-      core::table::DensePoint *entry) {
+      core::table::DensePoint * entry) {
 
       // If owned by the process, just return the point. Otherwise, we
       // need to send an MPI request to the process holding the
@@ -201,15 +205,15 @@ class DistributedTable: public boost::noncopyable {
           point_request_message);
 
         // Do a conditional wait until the point is ready.
-        //boost::unique_lock<boost::mutex> lock(
-        //point_inbox_.point_received_mutex());
-        //point_inbox_.wait(lock);
+        boost::unique_lock<boost::mutex> lock(
+          point_inbox_.point_received_mutex());
+        point_inbox_.wait(lock);
 
         // If we are here, then the point is ready. Copy the point.
-        //entry->Init(point_inbox_.point());
+        entry->Init(point_inbox_.point());
 
         // Signal that we are done copying out the point.
-        //point_inbox_.invalidate_point();
+        point_inbox_.invalidate_point();
       }
     }
 
