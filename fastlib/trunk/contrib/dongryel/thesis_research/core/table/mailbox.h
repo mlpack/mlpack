@@ -227,6 +227,7 @@ class PointRequestMessageBox {
       // It is time to quit when there are no valid messages to
       // handle, and the terminate signal is here.
       return point_request_message_is_valid_ == false &&
+             point_request_message_sent_is_valid_ == false &&
              (! has_outstanding_point_request_messages()) &&
              termination_signal_arrived();
     }
