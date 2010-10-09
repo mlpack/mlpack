@@ -33,11 +33,11 @@ class DistributedTable: public boost::noncopyable {
 
     boost::mpi::communicator *comm_;
 
-    core::table::PointInbox point_inbox_;
+    //core::table::PointInbox point_inbox_;
 
     core::table::PointRequestMessageInbox point_request_message_inbox_;
 
-    core::table::PointRequestMessageOutbox point_request_message_outbox_;
+    //core::table::PointRequestMessageOutbox point_request_message_outbox_;
 
   public:
 
@@ -63,20 +63,22 @@ class DistributedTable: public boost::noncopyable {
       comm_->barrier();
 
       // Terminate the point inbox.
-      comm_->isend(
-        comm_->rank(),
-        core::table::DistributedTableMessage::TERMINATE_POINT_INBOX, 0);
+      //comm_->isend(
+      //comm_->rank(),
+      //core::table::DistributedTableMessage::TERMINATE_POINT_INBOX, 0);
 
       // Terminate the point request message inbox.
       comm_->isend(
         comm_->rank(),
         core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_INBOX, 0);
+      boost::unique_lock<boost::mutex> lock(point_request_message_inbox_.mutex());
+      point_request_message_inbox_.point_request_message_inbox_quitting().wait(lock);
 
       // Wait until the point inbox is terminated.
-      {
-        boost::unique_lock<boost::mutex> lock(point_inbox_.termination_mutex());
-        point_inbox_.termination_cond().wait(lock);
-      }
+      //{
+      //boost::unique_lock<boost::mutex> lock(point_inbox_.termination_mutex());
+      //point_inbox_.termination_cond().wait(lock);
+      //}
 
       // Put a barrier so that all processes are ready to destroy each
       // of their own tables and trees.
@@ -155,15 +157,15 @@ class DistributedTable: public boost::noncopyable {
         *comm_, owned_table_->n_entries(), local_n_entries_);
 
       // Initialize the mail boxes.
-      point_inbox_.Init(comm_);
+      //point_inbox_.Init(comm_);
       point_request_message_inbox_.Init(comm_);
-      point_request_message_outbox_.Init(
-        comm_, owned_table_, &point_request_message_inbox_);
+      //point_request_message_outbox_.Init(
+      //comm_, owned_table_, &point_request_message_inbox_);
 
       // Detach the server threads for each distributed process.
-      point_inbox_.Detach();
+      //point_inbox_.Detach();
       point_request_message_inbox_.Detach();
-      point_request_message_outbox_.Detach();
+      //point_request_message_outbox_.Detach();
 
       // Put a barrier to ensure that every process has started up the
       // mailboxes.
@@ -205,15 +207,15 @@ class DistributedTable: public boost::noncopyable {
           point_request_message);
 
         // Do a conditional wait until the point is ready.
-        boost::unique_lock<boost::mutex> lock(
-          point_inbox_.point_received_mutex());
-        point_inbox_.wait(lock);
+        //boost::unique_lock<boost::mutex> lock(
+        //point_inbox_.point_received_mutex());
+        //point_inbox_.wait(lock);
 
         // If we are here, then the point is ready. Copy the point.
-        entry->Init(point_inbox_.point());
+        //entry->Init(point_inbox_.point());
 
         // Signal that we are done copying out the point.
-        point_inbox_.invalidate_point();
+        //point_inbox_.invalidate_point();
       }
     }
 

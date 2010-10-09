@@ -13,6 +13,7 @@ namespace table {
 
 class Table;
 
+/*
 class PointInbox {
   private:
 
@@ -86,7 +87,7 @@ class PointInbox {
                                   this)));
     }
 
-    bool has_outstanding_point_messages() {
+    boost::optional<boost::mpi::status> has_outstanding_point_messages() {
       return comm_->iprobe(
                boost::mpi::any_source,
                core::table::DistributedTableMessage::RECEIVE_POINT);
@@ -100,8 +101,11 @@ class PointInbox {
     }
 
     bool time_to_quit() {
+      printf("Condition: %d %d %d\n", (! point_handle_is_valid_),
+	     ( ! has_outstanding_point_messages() ),
+	     termination_signal_arrived());
       return point_handle_is_valid_ == false &&
-             has_outstanding_point_messages() == false &&
+	(! has_outstanding_point_messages() ) &&
              termination_signal_arrived();
     }
 
@@ -142,19 +146,18 @@ class PointInbox {
       termination_cond_.notify_one();
     }
 };
+*/
 
 class PointRequestMessageInbox {
   private:
 
-    boost::condition_variable point_request_message_received_cond_;
+    boost::condition_variable point_request_message_inbox_quitting_;
 
     boost::mpi::communicator *comm_;
 
     core::table::PointRequestMessage point_request_message_;
 
     bool point_request_message_is_valid_;
-
-    bool do_test_;
 
     boost::mpi::request point_request_message_handle_;
 
@@ -164,8 +167,12 @@ class PointRequestMessageInbox {
 
   public:
 
-    void wait(boost::unique_lock<boost::mutex> &lock_in) {
-      point_request_message_received_cond_.wait(lock_in);
+    boost::mutex &mutex() {
+      return mutex_;
+    }
+
+    boost::condition_variable &point_request_message_inbox_quitting() {
+      return point_request_message_inbox_quitting_;
     }
 
     void Detach() {
@@ -193,13 +200,11 @@ class PointRequestMessageInbox {
 
     PointRequestMessageInbox() {
       comm_ = NULL;
-      do_test_ = true;
       point_request_message_is_valid_ = false;
     }
 
     void invalidate_point_request_message() {
       point_request_message_is_valid_ = false;
-      do_test_ = true;
     }
 
     bool termination_signal_arrived() {
@@ -214,7 +219,7 @@ class PointRequestMessageInbox {
       // It is time to quit when there are no valid messages to
       // handle, and the terminate signal is here.
       return point_request_message_is_valid_ == false &&
-             has_outstanding_point_request_messages() == false &&
+             (! has_outstanding_point_request_messages()) &&
              termination_signal_arrived();
     }
 
@@ -223,7 +228,7 @@ class PointRequestMessageInbox {
              point_request_message_handle_.test();
     }
 
-    bool has_outstanding_point_request_messages() {
+    boost::optional<boost::mpi::status> has_outstanding_point_request_messages() {
       return comm_->iprobe(
                boost::mpi::any_source,
                core::table::DistributedTableMessage::REQUEST_POINT);
@@ -248,29 +253,21 @@ class PointRequestMessageInbox {
                  comm_->rank());
         }
 
-        // Check whether the request is done.
-        if(do_test_ && this->point_request_message_received()) {
-
-          // Wake up the thread waiting on the request. This thread
-          // turns off the validity flag after grabbing whch process
-          // wants a point.
-          printf("Waking up the point request outbox.\n");
-          do_test_ = false;
-          point_request_message_received_cond_.notify_one();
+        // Check whether the request is done. If so, send a MPI
+        // message to self for the outbox.
+        if(this->point_request_message_received()) {
+          point_request_message_is_valid_ = false;
         }
 
       } // end of the infinite server loop.
 
-      // Kill the outbox handling the point request messages.
-      comm_->isend(
-        comm_->rank(),
-        core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_OUTBOX,
-        0);
       printf("Point request message inbox for Process %d is quitting.\n",
              comm_->rank());
+      point_request_message_inbox_quitting_.notify_one();
     }
 };
 
+/*
 class PointRequestMessageOutbox {
   private:
 
@@ -385,6 +382,7 @@ class PointRequestMessageOutbox {
              comm_->rank());
     }
 };
+*/
 };
 };
 
