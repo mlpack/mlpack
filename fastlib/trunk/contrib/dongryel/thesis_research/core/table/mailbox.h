@@ -114,11 +114,12 @@ class PointInbox {
             this->has_outstanding_point_messages()) {
 
           // Set the valid flag on and start receiving the point.
+          printf("Starting to receive a point.\n");
           point_handle_is_valid_ = true;
           point_handle_ =
             comm_->irecv(
               boost::mpi::any_source,
-              core::table::DistributedTableMessage::REQUEST_POINT,
+              core::table::DistributedTableMessage::RECEIVE_POINT,
               point_);
         }
 
@@ -128,6 +129,7 @@ class PointInbox {
           // Wake up the thread waiting on the request. The woken up
           // thread turns off the validity flag after grabbing whch
           // process wants a point.
+          printf("Waking the main thread up!\n");
           point_received_cond_.notify_one();
         }
       }
@@ -249,9 +251,13 @@ class PointRequestMessageInbox {
           // Wake up the thread waiting on the request. This thread
           // turns off the validity flag after grabbing whch process
           // wants a point.
+          printf("Waking up the point request outbox.\n");
           point_request_message_received_cond_.notify_one();
+
+          printf("Now the inbox is going to sleep.\n");
           boost::unique_lock<boost::mutex> lock(mutex_);
           point_request_message_copied_out_cond_->wait(lock);
+          printf("The inbox is woken up.\n");
         }
 
       } // end of the infinite server loop.
@@ -350,7 +356,9 @@ class PointRequestMessageOutbox {
             // Lock the mutex so that it can wait on the condition
             // variable.
             boost::unique_lock<boost::mutex> lock(mutex_);
+            printf("The outbox is going to sleep.\n");
             inbox_->wait(lock);
+            printf("The outbox is woken up.\n");
           }
 
           int source_rank;
@@ -359,6 +367,7 @@ class PointRequestMessageOutbox {
 
           // Invalid the message in the inbox.
           inbox_->invalidate_point_request_message();
+          printf("Waking up the inbox.\n");
           point_request_message_copied_out_cond_.notify_one();
 
           // Grab the point from the table.
