@@ -70,9 +70,9 @@ int main(int argc, char *argv[]) {
            world.rank(), target_point_id, target_rank);
     distributed_table.get(target_rank, target_point_id, &point);
 
-    //printf("Process %d received point %d of length %d from Process %d.\n",
-    //     world.rank(), target_point_id, point.reference().n_elem, target_rank);
-    //point.reference().print();
+    printf("Process %d received point %d of length %d from Process %d.\n",
+           world.rank(), target_point_id, point.reference().n_elem, target_rank);
+    point.reference().print();
   }
   printf("Process %d is all done!\n", world.rank());
 
