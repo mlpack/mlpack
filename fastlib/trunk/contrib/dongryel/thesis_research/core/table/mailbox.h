@@ -26,6 +26,8 @@ class PointInbox {
 
     bool point_handle_is_valid_;
 
+    bool do_test_;
+
     boost::mpi::request point_handle_;
 
     boost::shared_ptr<boost::thread> point_inbox_thread_;
@@ -38,6 +40,7 @@ class PointInbox {
 
     void invalidate_point() {
       point_handle_is_valid_ = false;
+      do_test_ = true;
     }
 
     const std::vector<double> &point() const {
@@ -67,6 +70,7 @@ class PointInbox {
     PointInbox() {
       comm_ = NULL;
       point_handle_is_valid_ = false;
+      do_test_ = true;
     }
 
     void Init(boost::mpi::communicator *comm_in) {
@@ -124,16 +128,18 @@ class PointInbox {
         }
 
         // Check whether the request is done.
-        if(this->point_received()) {
+        if(do_test_ && this->point_received()) {
 
           // Wake up the thread waiting on the request. The woken up
           // thread turns off the validity flag after grabbing whch
           // process wants a point.
           printf("Waking the main thread up!\n");
+          do_test_ = false;
           point_received_cond_.notify_one();
         }
       }
       printf("Point inbox for Process %d is quitting.\n", comm_->rank());
+      termination_cond_.notify_one();
     }
 };
 
@@ -148,13 +154,13 @@ class PointRequestMessageInbox {
 
     bool point_request_message_is_valid_;
 
+    bool do_test_;
+
     boost::mpi::request point_request_message_handle_;
 
     boost::shared_ptr<boost::thread> point_request_message_inbox_thread_;
 
     boost::mutex mutex_;
-
-    boost::condition_variable *point_request_message_copied_out_cond_;
 
   public:
 
@@ -173,13 +179,9 @@ class PointRequestMessageInbox {
       *point_id_out = point_request_message_.point_id();
     }
 
-    void Init(
-      boost::mpi::communicator *comm_in,
-      boost::condition_variable *point_request_message_copied_out_cond_in) {
+    void Init(boost::mpi::communicator *comm_in) {
 
       comm_ = comm_in;
-      point_request_message_copied_out_cond_ =
-        point_request_message_copied_out_cond_in;
 
       // Start the point request message inbox thread.
       point_request_message_inbox_thread_ =
@@ -191,12 +193,13 @@ class PointRequestMessageInbox {
 
     PointRequestMessageInbox() {
       comm_ = NULL;
-      point_request_message_copied_out_cond_ = NULL;
+      do_test_ = true;
       point_request_message_is_valid_ = false;
     }
 
     void invalidate_point_request_message() {
       point_request_message_is_valid_ = false;
+      do_test_ = true;
     }
 
     bool termination_signal_arrived() {
@@ -246,18 +249,14 @@ class PointRequestMessageInbox {
         }
 
         // Check whether the request is done.
-        if(this->point_request_message_received()) {
+        if(do_test_ && this->point_request_message_received()) {
 
           // Wake up the thread waiting on the request. This thread
           // turns off the validity flag after grabbing whch process
           // wants a point.
           printf("Waking up the point request outbox.\n");
+          do_test_ = false;
           point_request_message_received_cond_.notify_one();
-
-          printf("Now the inbox is going to sleep.\n");
-          boost::unique_lock<boost::mutex> lock(mutex_);
-          point_request_message_copied_out_cond_->wait(lock);
-          printf("The inbox is woken up.\n");
         }
 
       } // end of the infinite server loop.
@@ -291,13 +290,7 @@ class PointRequestMessageOutbox {
 
     boost::shared_ptr<boost::thread> point_request_message_outbox_thread_;
 
-    boost::condition_variable point_request_message_copied_out_cond_;
-
   public:
-
-    boost::condition_variable *point_request_message_copied_out_cond() {
-      return &point_request_message_copied_out_cond_;
-    }
 
     void Detach() {
       point_request_message_outbox_thread_->detach();
@@ -367,8 +360,6 @@ class PointRequestMessageOutbox {
 
           // Invalid the message in the inbox.
           inbox_->invalidate_point_request_message();
-          printf("Waking up the inbox.\n");
-          point_request_message_copied_out_cond_.notify_one();
 
           // Grab the point from the table.
           table_->get(point_id, &outgoing_point_);
@@ -390,7 +381,6 @@ class PointRequestMessageOutbox {
         }
 
       } // end of the infinite server loop.
-
       printf("Poing request outbox for Process %d is quitting.\n",
              comm_->rank());
     }

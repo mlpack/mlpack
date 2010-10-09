@@ -73,8 +73,10 @@ class DistributedTable: public boost::noncopyable {
         core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_INBOX, 0);
 
       // Wait until the point inbox is terminated.
-      boost::unique_lock<boost::mutex> lock(point_inbox_.termination_mutex());
-      point_inbox_.termination_cond().wait(lock);
+      {
+        boost::unique_lock<boost::mutex> lock(point_inbox_.termination_mutex());
+        point_inbox_.termination_cond().wait(lock);
+      }
 
       // Put a barrier so that all processes are ready to destroy each
       // of their own tables and trees.
@@ -154,9 +156,7 @@ class DistributedTable: public boost::noncopyable {
 
       // Initialize the mail boxes.
       point_inbox_.Init(comm_);
-      point_request_message_inbox_.Init(
-        comm_,
-        point_request_message_outbox_.point_request_message_copied_out_cond());
+      point_request_message_inbox_.Init(comm_);
       point_request_message_outbox_.Init(
         comm_, owned_table_, &point_request_message_inbox_);
 
