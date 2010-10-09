@@ -148,10 +148,12 @@ class PointInbox {
 };
 */
 
-class PointRequestMessageInbox {
+class PointRequestMessageBox {
   private:
 
-    boost::condition_variable point_request_message_inbox_quitting_;
+    core::table::Table *owned_table_;
+
+    boost::condition_variable point_request_message_box_quitting_;
 
     boost::mpi::communicator *comm_;
 
@@ -161,7 +163,13 @@ class PointRequestMessageInbox {
 
     boost::mpi::request point_request_message_handle_;
 
-    boost::shared_ptr<boost::thread> point_request_message_inbox_thread_;
+    bool point_request_message_sent_is_valid_;
+
+    boost::mpi::request point_request_message_sent_handle_;
+
+    std::vector<double> outgoing_point_;
+
+    boost::shared_ptr<boost::thread> point_request_message_box_thread_;
 
     boost::mutex mutex_;
 
@@ -171,12 +179,12 @@ class PointRequestMessageInbox {
       return mutex_;
     }
 
-    boost::condition_variable &point_request_message_inbox_quitting() {
-      return point_request_message_inbox_quitting_;
+    boost::condition_variable &point_request_message_box_quitting() {
+      return point_request_message_box_quitting_;
     }
 
     void Detach() {
-      point_request_message_inbox_thread_->detach();
+      point_request_message_box_thread_->detach();
     }
 
     void export_point_request_message(
@@ -186,32 +194,32 @@ class PointRequestMessageInbox {
       *point_id_out = point_request_message_.point_id();
     }
 
-    void Init(boost::mpi::communicator *comm_in) {
+    void Init(
+      boost::mpi::communicator *comm_in,
+      core::table::Table *owned_table_in) {
 
       comm_ = comm_in;
+      owned_table_ = owned_table_in;
 
       // Start the point request message inbox thread.
-      point_request_message_inbox_thread_ =
+      point_request_message_box_thread_ =
         boost::shared_ptr<boost::thread>(
           new boost::thread(
             boost::bind(
-              &core::table::PointRequestMessageInbox::server, this)));
+              &core::table::PointRequestMessageBox::server, this)));
     }
 
-    PointRequestMessageInbox() {
+    PointRequestMessageBox() {
       comm_ = NULL;
       point_request_message_is_valid_ = false;
-    }
-
-    void invalidate_point_request_message() {
-      point_request_message_is_valid_ = false;
+      point_request_message_sent_is_valid_ = false;
     }
 
     bool termination_signal_arrived() {
       return
         comm_->iprobe(
           boost::mpi::any_source,
-          core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_INBOX);
+          core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_BOX);
     }
 
     bool time_to_quit() {
@@ -226,6 +234,11 @@ class PointRequestMessageInbox {
     bool point_request_message_received() {
       return point_request_message_is_valid_ &&
              point_request_message_handle_.test();
+    }
+
+    bool point_request_message_sent() {
+      return point_request_message_sent_is_valid_ &&
+             point_request_message_sent_handle_.test();
     }
 
     boost::optional<boost::mpi::status> has_outstanding_point_request_messages() {
@@ -253,136 +266,38 @@ class PointRequestMessageInbox {
                  comm_->rank());
         }
 
-        // Check whether the request is done. If so, send a MPI
-        // message to self for the outbox.
-        if(this->point_request_message_received()) {
+        // Check whether the incoming receive is done. If so, send out
+        // the requested point asynchronously given that the outgoing
+        // buffer is available.
+        if(point_request_message_sent_is_valid_ == false &&
+            this->point_request_message_received()) {
+          int source_rank = point_request_message_.source_rank();
+          int point_id = point_request_message_.point_id();
+
+          owned_table_->get(point_id, &outgoing_point_);
+
+          point_request_message_sent_is_valid_ = true;
+          point_request_message_sent_handle_ = comm_->isend(
+                                                 source_rank,
+                                                 core::table::DistributedTableMessage::RECEIVE_POINT,
+                                                 outgoing_point_);
+
           point_request_message_is_valid_ = false;
+        }
+        if(this->point_request_message_sent()) {
+
+          // Turn off the boolean flag so that the buffer can be
+          // reused.
+          point_request_message_sent_is_valid_ = false;
         }
 
       } // end of the infinite server loop.
 
       printf("Point request message inbox for Process %d is quitting.\n",
              comm_->rank());
-      point_request_message_inbox_quitting_.notify_one();
+      point_request_message_box_quitting_.notify_one();
     }
 };
-
-/*
-class PointRequestMessageOutbox {
-  private:
-
-    core::table::PointRequestMessageInbox *inbox_;
-
-    boost::mpi::communicator *comm_;
-
-    core::table::Table *table_;
-
-    boost::mutex mutex_;
-
-    std::vector<double> outgoing_point_;
-
-    bool point_request_message_is_valid_;
-
-    boost::mpi::request point_request_message_handle_;
-
-    boost::shared_ptr<boost::thread> point_request_message_outbox_thread_;
-
-  public:
-
-    void Detach() {
-      point_request_message_outbox_thread_->detach();
-    }
-
-    PointRequestMessageOutbox() {
-      inbox_ = NULL;
-      comm_ = NULL;
-      table_ = NULL;
-      point_request_message_is_valid_ = false;
-    }
-
-    void Init(
-      boost::mpi::communicator *comm_in,
-      core::table::Table *table_in,
-      core::table::PointRequestMessageInbox *inbox_in) {
-
-      comm_ = comm_in;
-      table_ = table_in;
-      inbox_ = inbox_in;
-
-      // Start the point request message oubox thread.
-      point_request_message_outbox_thread_ = boost::shared_ptr<boost::thread>(
-          new boost::thread(
-            boost::bind(
-              &core::table::PointRequestMessageOutbox::server, this)));
-    }
-
-    bool termination_signal_arrived() {
-      return comm_->iprobe(
-               boost::mpi::any_source,
-               core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_OUTBOX);
-    }
-
-    bool time_to_quit() {
-
-      // It is time to quit when there are no valid messages to
-      // handle, and the terminate signal is here.
-      return point_request_message_is_valid_ == false &&
-             termination_signal_arrived();
-    }
-
-    void server() {
-      while(this->time_to_quit() == false) {
-
-        // If the server is free to send out points, then
-        if(point_request_message_is_valid_ == false) {
-
-          printf("Point is ready to be sent out from Process %d.\n",
-                 comm_->rank());
-
-          // If no message is available from the inbox, then go to
-          // sleep.
-          if(inbox_->point_request_message_received() == false) {
-
-            // Lock the mutex so that it can wait on the condition
-            // variable.
-            boost::unique_lock<boost::mutex> lock(mutex_);
-            printf("The outbox is going to sleep.\n");
-            inbox_->wait(lock);
-            printf("The outbox is woken up.\n");
-          }
-
-          int source_rank;
-          int point_id;
-          inbox_->export_point_request_message(&source_rank, &point_id);
-
-          // Invalid the message in the inbox.
-          inbox_->invalidate_point_request_message();
-
-          // Grab the point from the table.
-          table_->get(point_id, &outgoing_point_);
-
-          // Send back the point to the requester. Lock the outgoing
-          // point so that it is not overwritten while doing the
-          // transfer.
-          point_request_message_is_valid_ = true;
-          point_request_message_handle_ =
-            comm_->isend(
-              source_rank,
-              core::table::DistributedTableMessage::RECEIVE_POINT,
-              outgoing_point_);
-        }
-
-        // Otherwise, check whether the transfer is done and unlock.
-        else if(point_request_message_handle_.test()) {
-          point_request_message_is_valid_ = false;
-        }
-
-      } // end of the infinite server loop.
-      printf("Poing request outbox for Process %d is quitting.\n",
-             comm_->rank());
-    }
-};
-*/
 };
 };
 
