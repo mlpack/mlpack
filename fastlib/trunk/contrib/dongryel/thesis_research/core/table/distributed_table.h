@@ -175,10 +175,51 @@ class DistributedTable: public boost::noncopyable {
     }
 
     void IndexData(
-      const core::metric_kernels::AbstractMetric & metric_in, int leaf_size) {
+      const core::metric_kernels::AbstractMetric & metric_in,
+      double sample_probability_in) {
 
-      // We need to build the top tree first.
+      // For each process, select a subset of indices to send to the
+      // master node.
+      std::vector<int> sampled_indices;
+      for(int i = 0; i < this->n_entries(); i++) {
+        if(core::math::Random() <= sample_probability_in) {
+          sampled_indices.push_back(i);
+        }
+      }
+
+      // For the master node,
       if(comm_->rank() == 0) {
+
+        // Find out the list of points sampled so that we can build a
+        // sampled table to build the tree from.
+        std::vector< std::vector<int> > list_of_sampled_indices;
+        int total_num_sampled_points = 0;
+        boost::mpi::gather(
+          *comm_, sampled_indices, list_of_sampled_indices, 0);
+
+        // Gather all the necessary data to build the tree.
+        for(unsigned int i = 0; i < list_of_sampled_indices.size(); i++) {
+          total_num_sample_points += list_of_sampled_indices[i].size();
+        }
+        core::table::Table sampled_table;
+        sampled_table.Init(this->n_attributes(), total_num_sample_points);
+        for(int i = 0; i < list_of_sampled_indices.size(); i++) {
+          const std::vector<int> &sampled_indices_per_process =
+            list_of_sampled_indices[i];
+          for(int j = 0; j < sampled_indices_per_process.size(); j++) {
+
+          }
+        }
+
+
+        // Broadcast the top tree to all the other processes.
+
+      }
+
+      // For the other nodes,
+      else {
+        boost::mpi::reduce(
+          *comm_, random_indices.size(), boost::mpi::sum<int>(), 0);
       }
     }
 
