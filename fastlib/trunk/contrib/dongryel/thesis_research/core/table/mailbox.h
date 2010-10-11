@@ -12,6 +12,10 @@
 namespace core {
 namespace table {
 
+/** @brief The global variable for each MPI call.
+ */
+boost::mutex mpi_mutex;
+
 class Table;
 
 class PointInbox {
@@ -92,6 +96,7 @@ class PointInbox {
     bool has_outstanding_point_messages() {
       int flag;
       MPI_Status status;
+      boost::unique_lock<boost::mutex> lock_in(core::table::mpi_mutex);
       MPI_Iprobe(
         MPI_ANY_SOURCE,
         core::table::DistributedTableMessage::RECEIVE_POINT,
@@ -102,6 +107,7 @@ class PointInbox {
     bool termination_signal_arrived() {
       int flag;
       MPI_Status status;
+      boost::unique_lock<boost::mutex> lock_in(core::table::mpi_mutex);
       MPI_Iprobe(
         MPI_ANY_SOURCE,
         core::table::DistributedTableMessage::TERMINATE_POINT_INBOX,
@@ -228,6 +234,7 @@ class PointRequestMessageBox {
     bool termination_signal_arrived() {
       int flag;
       MPI_Status status;
+      boost::unique_lock<boost::mutex> lock_in(core::table::mpi_mutex);
       MPI_Iprobe(
         MPI_ANY_SOURCE,
         core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_BOX,
@@ -258,6 +265,7 @@ class PointRequestMessageBox {
     bool has_outstanding_point_request_messages() {
       int flag;
       MPI_Status status;
+      boost::unique_lock<boost::mutex> lock_in(core::table::mpi_mutex);
       MPI_Iprobe(
         MPI_ANY_SOURCE,
         core::table::DistributedTableMessage::REQUEST_POINT,
