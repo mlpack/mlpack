@@ -164,10 +164,6 @@ class DistributedTable: public boost::noncopyable {
       // Detach the server threads for each distributed process.
       point_inbox_.Detach();
       point_request_message_box_.Detach();
-
-      // Put a barrier to ensure that every process has started up the
-      // mailboxes.
-      comm_->barrier();
     }
 
     void Save(const std::string & file_name) const {
