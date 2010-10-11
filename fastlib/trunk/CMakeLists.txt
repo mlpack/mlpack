@@ -28,6 +28,12 @@ if(WITH_SPARSE)
    include_directories(${MPI_INCLUDE_DIR})
 endif(WITH_SPARSE)
 
+if(WITH_OPTIMIZERS)
+  find_package(Optpp REQUIRED)
+
+  include_directories(${OPTPP_INCLUDE_DIR})
+endif(WITH_OPTIMIZERS)
+
 if(DEBUG)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0")
