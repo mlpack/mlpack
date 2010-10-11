@@ -49,7 +49,7 @@ set( DIRS
 #    kernel_pca  # requires sparse 
     #mog # requires optimization
 #    mlpackdemo  ## matlab routines
-    #mvu # requires optimization
+    mvu # requires optimization
     naive_bayes
     nnsvm
     quicsvd
