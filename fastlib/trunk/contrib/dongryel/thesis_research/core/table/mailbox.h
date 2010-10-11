@@ -12,14 +12,12 @@
 namespace core {
 namespace table {
 
-/** @brief The global variable for each MPI call.
- */
-boost::mutex mpi_mutex;
-
 class Table;
 
 class PointInbox {
   private:
+
+    boost::mutex *mpi_mutex_;
 
     boost::mutex point_received_mutex_;
 
@@ -73,12 +71,16 @@ class PointInbox {
     }
 
     PointInbox() {
+      mpi_mutex_ = NULL;
       comm_ = NULL;
       point_handle_is_valid_ = false;
       do_test_ = true;
     }
 
-    void Init(boost::mpi::communicator *comm_in) {
+    void Init(boost::mpi::communicator *comm_in, boost::mutex *mpi_mutex_in) {
+
+      // Set the MPI mutex.
+      mpi_mutex_ = mpi_mutex_in;
 
       // Set the communicator.
       comm_ = comm_in;
@@ -96,7 +98,7 @@ class PointInbox {
     bool has_outstanding_point_messages() {
       int flag;
       MPI_Status status;
-      boost::unique_lock<boost::mutex> lock_in(core::table::mpi_mutex);
+      boost::unique_lock<boost::mutex> lock_in(* mpi_mutex_);
       MPI_Iprobe(
         MPI_ANY_SOURCE,
         core::table::DistributedTableMessage::RECEIVE_POINT,
@@ -107,7 +109,7 @@ class PointInbox {
     bool termination_signal_arrived() {
       int flag;
       MPI_Status status;
-      boost::unique_lock<boost::mutex> lock_in(core::table::mpi_mutex);
+      boost::unique_lock<boost::mutex> lock_in(* mpi_mutex_);
       MPI_Iprobe(
         MPI_ANY_SOURCE,
         core::table::DistributedTableMessage::TERMINATE_POINT_INBOX,
@@ -137,6 +139,8 @@ class PointInbox {
           // Set the valid flag on and start receiving the point.
           printf("Starting to receive a point.\n");
           point_handle_is_valid_ = true;
+
+          boost::unique_lock<boost::mutex> lock_in(* mpi_mutex_);
           point_handle_ =
             comm_->irecv(
               boost::mpi::any_source,
@@ -164,6 +168,8 @@ class PointInbox {
 
 class PointRequestMessageBox {
   private:
+
+    boost::mutex *mpi_mutex_;
 
     core::table::Table *owned_table_;
 
@@ -210,8 +216,10 @@ class PointRequestMessageBox {
 
     void Init(
       boost::mpi::communicator *comm_in,
+      boost::mutex *mpi_mutex_in,
       core::table::Table *owned_table_in) {
 
+      mpi_mutex_ = mpi_mutex_in;
       comm_ = comm_in;
       owned_table_ = owned_table_in;
 
@@ -226,6 +234,7 @@ class PointRequestMessageBox {
     }
 
     PointRequestMessageBox() {
+      mpi_mutex_ = NULL;
       comm_ = NULL;
       point_request_message_is_valid_ = false;
       point_request_message_sent_is_valid_ = false;
@@ -234,7 +243,7 @@ class PointRequestMessageBox {
     bool termination_signal_arrived() {
       int flag;
       MPI_Status status;
-      boost::unique_lock<boost::mutex> lock_in(core::table::mpi_mutex);
+      boost::unique_lock<boost::mutex> lock_in(* mpi_mutex_);
       MPI_Iprobe(
         MPI_ANY_SOURCE,
         core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_BOX,
@@ -265,7 +274,7 @@ class PointRequestMessageBox {
     bool has_outstanding_point_request_messages() {
       int flag;
       MPI_Status status;
-      boost::unique_lock<boost::mutex> lock_in(core::table::mpi_mutex);
+      boost::unique_lock<boost::mutex> lock_in(*mpi_mutex_);
       MPI_Iprobe(
         MPI_ANY_SOURCE,
         core::table::DistributedTableMessage::REQUEST_POINT,
@@ -284,6 +293,8 @@ class PointRequestMessageBox {
 
           // Set the valid flag on and start receiving the message.
           point_request_message_is_valid_ = true;
+
+          boost::unique_lock<boost::mutex> lock_in(* mpi_mutex_);
           point_request_message_handle_ =
             comm_->irecv(
               boost::mpi::any_source,
@@ -304,10 +315,13 @@ class PointRequestMessageBox {
           owned_table_->get(point_id, &outgoing_point_);
 
           point_request_message_sent_is_valid_ = true;
-          point_request_message_sent_handle_ = comm_->isend(
-                                                 source_rank,
-                                                 core::table::DistributedTableMessage::RECEIVE_POINT,
-                                                 outgoing_point_);
+
+          boost::unique_lock<boost::mutex> lock_in(* mpi_mutex_);
+          point_request_message_sent_handle_ =
+            comm_->isend(
+              source_rank,
+              core::table::DistributedTableMessage::RECEIVE_POINT,
+              outgoing_point_);
 
           point_request_message_is_valid_ = false;
         }

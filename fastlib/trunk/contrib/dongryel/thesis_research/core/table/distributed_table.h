@@ -25,6 +25,10 @@ class DistributedTable: public boost::noncopyable {
 
   private:
 
+    /** @brief The mutex for each MPI call.
+     */
+    boost::mutex mpi_mutex_;
+
     core::table::Table *owned_table_;
 
     std::vector<int> local_n_entries_;
@@ -62,9 +66,12 @@ class DistributedTable: public boost::noncopyable {
 
       // Terminate the point request message box.
       {
-        comm_->isend(
-          comm_->rank(),
-          core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_BOX, 0);
+        {
+          boost::unique_lock<boost::mutex> lock_in(mpi_mutex_);
+          comm_->isend(
+            comm_->rank(),
+            core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_BOX, 0);
+        }
         boost::unique_lock<boost::mutex> point_request_message_box_lock(
           point_request_message_box_.mutex());
         point_request_message_box_.point_request_message_box_quitting().wait(
@@ -73,9 +80,12 @@ class DistributedTable: public boost::noncopyable {
 
       // Wait until the point inbox is destroyed.
       {
-        comm_->isend(
-          comm_->rank(),
-          core::table::DistributedTableMessage::TERMINATE_POINT_INBOX, 0);
+        {
+          boost::unique_lock<boost::mutex> lock_in(mpi_mutex_);
+          comm_->isend(
+            comm_->rank(),
+            core::table::DistributedTableMessage::TERMINATE_POINT_INBOX, 0);
+        }
         boost::unique_lock<boost::mutex> point_inbox_lock(
           point_inbox_.termination_mutex());
         point_inbox_.termination_cond().wait(point_inbox_lock);
@@ -158,8 +168,8 @@ class DistributedTable: public boost::noncopyable {
         *comm_, owned_table_->n_entries(), local_n_entries_);
 
       // Initialize the mail boxes.
-      point_inbox_.Init(comm_);
-      point_request_message_box_.Init(comm_, owned_table_);
+      point_inbox_.Init(comm_, &mpi_mutex_);
+      point_request_message_box_.Init(comm_, &mpi_mutex_, owned_table_);
 
       // Detach the server threads for each distributed process.
       point_inbox_.Detach();
@@ -235,10 +245,13 @@ class DistributedTable: public boost::noncopyable {
           comm_->rank(), point_id);
 
         // Inform the source processor that this processor needs data!
-        comm_->isend(
-          requested_rank,
-          core::table::DistributedTableMessage::REQUEST_POINT,
-          point_request_message);
+        {
+          boost::unique_lock<boost::mutex> lock_in(mpi_mutex_);
+          comm_->isend(
+            requested_rank,
+            core::table::DistributedTableMessage::REQUEST_POINT,
+            point_request_message);
+        }
 
         // Do a conditional wait until the point is ready.
         boost::unique_lock<boost::mutex> lock(
