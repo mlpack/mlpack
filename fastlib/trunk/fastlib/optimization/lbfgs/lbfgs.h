@@ -50,7 +50,7 @@
 #ifndef LBFGS_H_
 #define LBFGS_H_
 
-#include "fastlib.h"
+#include <fastlib/fastlib.h>
 #include <string>
 
 /**
