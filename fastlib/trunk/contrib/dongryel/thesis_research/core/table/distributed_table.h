@@ -203,10 +203,10 @@ class DistributedTable: public boost::noncopyable {
         }
         core::table::Table sampled_table;
         sampled_table.Init(this->n_attributes(), total_num_sample_points);
-        for(int i = 0; i < list_of_sampled_indices.size(); i++) {
+        for(unsigned int i = 0; i < list_of_sampled_indices.size(); i++) {
           const std::vector<int> &sampled_indices_per_process =
             list_of_sampled_indices[i];
-          for(int j = 0; j < sampled_indices_per_process.size(); j++) {
+          for(unsigned int j = 0; j < sampled_indices_per_process.size(); j++) {
 
           }
         }
