@@ -181,7 +181,7 @@ class DistributedTable: public boost::noncopyable {
       // For each process, select a subset of indices to send to the
       // master node.
       std::vector<int> sampled_indices;
-      for(int i = 0; i < this->n_entries(); i++) {
+      for(int i = 0; i < owned_table_->n_entries(); i++) {
         if(core::math::Random() <= sample_probability_in) {
           sampled_indices.push_back(i);
         }
@@ -193,7 +193,7 @@ class DistributedTable: public boost::noncopyable {
         // Find out the list of points sampled so that we can build a
         // sampled table to build the tree from.
         std::vector< std::vector<int> > list_of_sampled_indices;
-        int total_num_sampled_points = 0;
+        int total_num_sample_points = 0;
         boost::mpi::gather(
           *comm_, sampled_indices, list_of_sampled_indices, 0);
 
@@ -216,10 +216,9 @@ class DistributedTable: public boost::noncopyable {
 
       }
 
-      // For the other nodes,
+      // For the other nodes, send the list of indices sampled.
       else {
-        boost::mpi::reduce(
-          *comm_, random_indices.size(), boost::mpi::sum<int>(), 0);
+        boost::mpi::gather(*comm_, sampled_indices, 0);
       }
     }
 
