@@ -6,6 +6,7 @@
 #ifndef CORE_TABLE_MAILBOX_H
 #define CORE_TABLE_MAILBOX_H
 
+#include "boost/mpi/communicator.hpp"
 #include "core/table/distributed_table_message.h"
 
 namespace core {
@@ -84,19 +85,28 @@ class PointInbox {
                                 boost::bind(
                                   &core::table::PointInbox::server,
                                   this)));
+
+      comm_->barrier();
     }
 
-    boost::optional<boost::mpi::status> has_outstanding_point_messages() {
-      return comm_->iprobe(
-               boost::mpi::any_source,
-               core::table::DistributedTableMessage::RECEIVE_POINT);
+    bool has_outstanding_point_messages() {
+      int flag;
+      MPI_Status status;
+      MPI_Iprobe(
+        MPI_ANY_SOURCE,
+        core::table::DistributedTableMessage::RECEIVE_POINT,
+        comm_->operator MPI_Comm(), &flag, &status);
+      return flag;
     }
 
     bool termination_signal_arrived() {
-      return
-        comm_->iprobe(
-          boost::mpi::any_source,
-          core::table::DistributedTableMessage::TERMINATE_POINT_INBOX);
+      int flag;
+      MPI_Status status;
+      MPI_Iprobe(
+        MPI_ANY_SOURCE,
+        core::table::DistributedTableMessage::TERMINATE_POINT_INBOX,
+        comm_->operator MPI_Comm(), &flag, &status);
+      return flag;
     }
 
     bool time_to_quit() {
@@ -110,7 +120,8 @@ class PointInbox {
     }
 
     void server() {
-      while(this->time_to_quit() == false) {
+
+      do {
 
         // Probe the message queue for the point request, and do an
         // asynchronous receive, if we can.
@@ -137,7 +148,8 @@ class PointInbox {
           do_test_ = false;
           point_received_cond_.notify_one();
         }
-      } // end of the server loop.
+      }
+      while(this->time_to_quit() == false);     // end of the server loop.
 
       printf("Point inbox for Process %d is quitting.\n", comm_->rank());
       termination_cond_.notify_one();
@@ -203,6 +215,8 @@ class PointRequestMessageBox {
           new boost::thread(
             boost::bind(
               &core::table::PointRequestMessageBox::server, this)));
+
+      comm_->barrier();
     }
 
     PointRequestMessageBox() {
@@ -212,10 +226,13 @@ class PointRequestMessageBox {
     }
 
     bool termination_signal_arrived() {
-      return
-        comm_->iprobe(
-          boost::mpi::any_source,
-          core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_BOX);
+      int flag;
+      MPI_Status status;
+      MPI_Iprobe(
+        MPI_ANY_SOURCE,
+        core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_BOX,
+        comm_->operator MPI_Comm(), &flag, &status);
+      return flag;
     }
 
     bool time_to_quit() {
@@ -238,14 +255,19 @@ class PointRequestMessageBox {
              point_request_message_sent_handle_.test();
     }
 
-    boost::optional<boost::mpi::status> has_outstanding_point_request_messages() {
-      return comm_->iprobe(
-               boost::mpi::any_source,
-               core::table::DistributedTableMessage::REQUEST_POINT);
+    bool has_outstanding_point_request_messages() {
+      int flag;
+      MPI_Status status;
+      MPI_Iprobe(
+        MPI_ANY_SOURCE,
+        core::table::DistributedTableMessage::REQUEST_POINT,
+        comm_->operator MPI_Comm(), &flag, &status);
+      return flag;
     }
 
     void server() {
-      while(this->time_to_quit() == false) {
+
+      do {
 
         // Probe the message queue for the point request, and do an
         // asynchronous receive, if we can.
@@ -288,7 +310,9 @@ class PointRequestMessageBox {
           point_request_message_sent_is_valid_ = false;
         }
 
-      } // end of the infinite server loop.
+      }
+      while(this->time_to_quit() == false) ;
+      // end of the infinite server loop.
 
       printf("Point request message inbox for Process %d is quitting.\n",
              comm_->rank());
