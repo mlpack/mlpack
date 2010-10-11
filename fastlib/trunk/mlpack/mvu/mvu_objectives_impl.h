@@ -15,6 +15,7 @@
  * 
  * =====================================================================================
  */
+#include <errno.h>
 
 void MaxVariance::Init(datanode *module, Matrix &data) {
   module_=module;
