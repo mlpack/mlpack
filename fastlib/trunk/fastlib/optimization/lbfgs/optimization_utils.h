@@ -50,7 +50,7 @@
 #ifndef OPTIMIZATION_UTILS_H_
 #define OPTIMIZATION_UTILS_H_
 
-#include "fastlib.h"
+#include <fastlib/fastlib.h>
 
 class OptUtils {
  public:
