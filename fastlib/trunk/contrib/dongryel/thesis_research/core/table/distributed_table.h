@@ -35,6 +35,8 @@ class DistributedTable: public boost::noncopyable {
 
     TreeType *global_tree_;
 
+    TreeType **global_tree_in_array_form_;
+
     boost::mpi::communicator *comm_;
 
     core::table::PointInbox point_inbox_;
@@ -42,6 +44,21 @@ class DistributedTable: public boost::noncopyable {
     core::table::PointRequestMessageBox point_request_message_box_;
 
   public:
+
+    void BroadcastTree_(TreeType *node) {
+      if(! node->is_leaf()) {
+        BroadcastTree_(node ->left());
+      }
+
+      // Broadcast the node.
+      mpi_mutex_.lock();
+      boost::mpi::broadcast(* comm_, node, 0);
+      mpi_mutex_.unlock();
+
+      if(! node->is_leaf()) {
+        BroadcastTree_(node->right());
+      }
+    }
 
     int rank() const {
       return comm_->rank();
@@ -55,6 +72,7 @@ class DistributedTable: public boost::noncopyable {
       comm_ = NULL;
       owned_table_ = NULL;
       global_tree_ = NULL;
+      global_tree_in_array_form_ = NULL;
     }
 
     ~DistributedTable() {
@@ -195,6 +213,14 @@ class DistributedTable: public boost::noncopyable {
         }
       }
 
+      // The number of maximum leaf nodes for the top tree is equal to
+      // the number of machines.
+      int max_num_leaf_nodes = comm_->size();
+
+      // The maximum number of nodes in the tree given the specified
+      // number of maximum leaf nodes.
+      int num_nodes;
+
       // For the master node,
       if(comm_->rank() == 0) {
 
@@ -232,12 +258,14 @@ class DistributedTable: public boost::noncopyable {
         std::vector<int> global_old_from_new, global_new_from_old;
         global_tree_ = core::tree::MakeGenMetricTree<TreeType>(
                          metric_in, sampled_table_data, 2,
+                         max_num_leaf_nodes,
                          &global_old_from_new, &global_new_from_old,
-                         comm_->size());
+                         &num_nodes);
         printf("Process 0 finished building the top tree.\n");
 
-        // Broadcast the top tree to all the other processes.
-
+        // Broadcast the top tree to all the other processes by doing
+        // an in-order traversal.
+        BroadcastTree_(global_tree_);
       }
 
       // For the other nodes,
@@ -248,6 +276,10 @@ class DistributedTable: public boost::noncopyable {
 
         // Receive back the global tree from the master tree and make
         // a copy.
+        global_tree_in_array_form_ = new TreeType *[ num_nodes ];
+        for(int i = 0; i < num_nodes; i++) {
+          global_tree_in_array_form_[i] = NULL;
+        }
       }
     }
 
