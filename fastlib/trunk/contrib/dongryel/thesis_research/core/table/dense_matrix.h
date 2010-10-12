@@ -15,6 +15,17 @@ namespace table {
 class DenseMatrix: public virtual arma::mat {
   public:
 
+    double *GetColumnPtr(int column_id) {
+      return this->memptr() + column_id * this->n_rows;
+    }
+
+    void CopyColumnVector(int column_id, double *point_out) const {
+      const double *ptr = this->memptr() + column_id * this->n_rows;
+      for(unsigned int i = 0; i < this->n_rows; ptr++, i++) {
+        point_out[i] = (*ptr);
+      }
+    }
+
     void MakeColumnVector(int column_id, std::vector<double> *point_out) const {
       point_out->resize(this->n_rows);
       const double *ptr = this->memptr() + column_id * this->n_rows;
