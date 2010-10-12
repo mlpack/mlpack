@@ -7,6 +7,7 @@
 #ifndef CORE_TREE_BOUNDS_H
 #define CORE_TREE_BOUNDS_H
 
+#include "boost/serialization/string.hpp"
 #include "core/math/math_lib.h"
 #include "core/math/range.h"
 #include "core/metric_kernels/abstract_metric.h"
@@ -27,7 +28,16 @@ class BallBound {
     double radius_;
     TPoint center_;
 
+    friend class boost::serialization::access;
+
   public:
+
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version) {
+      ar & radius_;
+      ar & center_;
+    }
+
     double radius() const {
       return radius_;
     }

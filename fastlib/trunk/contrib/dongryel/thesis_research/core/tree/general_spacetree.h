@@ -9,6 +9,7 @@
 #define CORE_TREE_GENERAL_SPACETREE_H
 
 #include <armadillo>
+#include "boost/serialization/string.hpp"
 #include "statistic.h"
 
 /**
@@ -27,12 +28,38 @@ class GeneralBinarySpaceTree {
   public:
     typedef TBound BoundType;
 
+    /** @brief The bound for the node.
+     */
     BoundType bound_;
+
+    /** @brief The pointer to the left node.
+     */
     GeneralBinarySpaceTree *left_;
+
+    /** @brief The pointer to the right node.
+     */
     GeneralBinarySpaceTree *right_;
+
+    /** @brief The beginning index.
+     */
     int begin_;
+
+    /** @brief The number of points contained within the node.
+     */
     int count_;
+
+    /** @brief The statistics for the points owned within the node.
+     */
     core::tree::AbstractStatistic *stat_;
+
+    friend class boost::serialization::access;
+
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version) {
+      ar & bound_;
+      ar & begin_;
+      ar & count_;
+    }
 
     ~GeneralBinarySpaceTree() {
       if(left_ != NULL) {
