@@ -212,13 +212,18 @@ template<typename TMetricTree>
 void SplitGenMetricTree(
   const core::metric_kernels::AbstractMetric &metric_in,
   core::table::DenseMatrix& matrix, TMetricTree *node,
-  int leaf_size, std::vector<int> *old_from_new) {
+  int leaf_size,
+  int max_num_leaf_nodes,
+  int *current_num_leaf_nodes,
+  std::vector<int> *old_from_new) {
 
   TMetricTree *left = NULL;
   TMetricTree *right = NULL;
 
-  // If the node is just too small, then do not split.
-  if(node->count() < leaf_size) {
+  // If the node is just too small or we have reached the maximum
+  // number of leaf nodes allowed, then do not split.
+  if(node->count() < leaf_size ||
+      (*current_num_leaf_nodes) >= max_num_leaf_nodes) {
     MakeLeafMetricTreeNode(
       metric_in, matrix, node->begin(), node->count(), &(node->bound()));
   }
@@ -230,8 +235,13 @@ void SplitGenMetricTree(
                      leaf_size, old_from_new);
 
     if(can_cut) {
-      SplitGenMetricTree(metric_in, matrix, left, leaf_size, old_from_new);
-      SplitGenMetricTree(metric_in, matrix, right, leaf_size, old_from_new);
+      (*current_num_leaf_nodes)++;
+      SplitGenMetricTree(
+        metric_in, matrix, left, leaf_size, max_num_leaf_nodes,
+        current_num_leaf_nodes, old_from_new);
+      SplitGenMetricTree(
+        metric_in, matrix, right, leaf_size, max_num_leaf_nodes,
+        current_num_leaf_nodes, old_from_new);
       CombineBounds(metric_in, matrix, node, left, right);
     }
     else {

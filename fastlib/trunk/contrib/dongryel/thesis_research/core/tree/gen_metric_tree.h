@@ -23,7 +23,6 @@ namespace tree {
  *
  * This requires you to pass in two unitialized ArrayLists which will contain
  * index mappings so you can account for the re-ordering of the matrix.
- * (By unitialized I mean don't call Init on it)
  *
  * @param metric_in the metric to be used.
  * @param matrix data where each column is a point, WHICH WILL BE RE-ORDERED
@@ -32,13 +31,16 @@ namespace tree {
  *        new indices to original
  * @param new_from_old pointer to an unitialized vector; it will map
  *        original indexes to new indices
+ * @param max_num_leaf_nodes the number of maximum leaf nodes this tree should
+ *        have.
  */
 template<typename TMetricTree>
 TMetricTree *MakeGenMetricTree(
   const core::metric_kernels::AbstractMetric &metric_in,
   core::table::DenseMatrix& matrix, int leaf_size,
   std::vector<int> *old_from_new = NULL,
-  std::vector<int> *new_from_old = NULL) {
+  std::vector<int> *new_from_old = NULL,
+  int max_num_leaf_nodes = std::numeric_limits<int>::max()) {
 
   TMetricTree *node = new TMetricTree();
   std::vector<int> *old_from_new_ptr;
@@ -57,8 +59,10 @@ TMetricTree *MakeGenMetricTree(
 
   node->Init(0, matrix.n_cols);
   node->bound().center().Init(matrix.n_rows);
+  int current_num_leaf_nodes = 1;
   core::tree_private::SplitGenMetricTree<TMetricTree>(
-    metric_in, matrix, node, leaf_size, old_from_new_ptr);
+    metric_in, matrix, node, leaf_size, max_num_leaf_nodes,
+    &current_num_leaf_nodes, old_from_new_ptr);
 
   if(new_from_old) {
     new_from_old->resize(matrix.n_cols);

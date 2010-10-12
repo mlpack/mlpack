@@ -203,28 +203,86 @@ class DistributedTable: public boost::noncopyable {
         boost::mpi::gather(
           *comm_, sampled_indices, list_of_sampled_indices, 0);
 
-        // Gather all the necessary data to build the tree.
+        // Gather all the necessary data from all of the proceses.
         for(unsigned int i = 0; i < list_of_sampled_indices.size(); i++) {
           total_num_sample_points += list_of_sampled_indices[i].size();
         }
+
         core::table::Table sampled_table;
         sampled_table.Init(this->n_attributes(), total_num_sample_points);
+        core::table::DenseMatrix &sampled_table_data = sampled_table.data();
+
+        int column_index = 0;
         for(unsigned int i = 0; i < list_of_sampled_indices.size(); i++) {
           const std::vector<int> &sampled_indices_per_process =
             list_of_sampled_indices[i];
-          for(unsigned int j = 0; j < sampled_indices_per_process.size(); j++) {
-
+          for(unsigned int j = 0; j < sampled_indices_per_process.size();
+              j++, column_index++) {
+            this->get(
+              i, sampled_indices_per_process[j],
+              sampled_table_data.GetColumnPtr(column_index));
           }
         }
 
+        // Build the tree.
+        std::vector<int> global_old_from_new, global_new_from_old;
+        global_tree_ = core::tree::MakeGenMetricTree<TreeType>(
+                         metric_in, sampled_table_data, 2,
+                         &global_old_from_new, &global_new_from_old,
+                         comm_->size());
 
         // Broadcast the top tree to all the other processes.
 
       }
 
-      // For the other nodes, send the list of indices sampled.
+      // For the other nodes,
       else {
+
+        // Send the list of sampled indices to the master.
         boost::mpi::gather(*comm_, sampled_indices, 0);
+
+        // Receive back the global tree from the master tree and make
+        // a copy.
+      }
+    }
+
+    void get(
+      int requested_rank, int point_id,
+      double *entry_out) {
+
+      // If owned by the process, just return the point. Otherwise, we
+      // need to send an MPI request to the process holding the
+      // required resource.
+      if(comm_->rank() == requested_rank) {
+        owned_table_->get(point_id, entry_out);
+      }
+      else {
+
+        // The point request message.
+        core::table::PointRequestMessage point_request_message(
+          comm_->rank(), point_id);
+
+        // Inform the source processor that this processor needs data!
+        {
+          boost::unique_lock<boost::mutex> lock_in(mpi_mutex_);
+          comm_->isend(
+            requested_rank,
+            core::table::DistributedTableMessage::REQUEST_POINT,
+            point_request_message);
+        }
+
+        // Do a conditional wait until the point is ready.
+        boost::unique_lock<boost::mutex> lock(
+          point_inbox_.point_received_mutex());
+        point_inbox_.wait(lock);
+
+        // If we are here, then the point is ready. Copy the point.
+        for(int i = 0; i < this->n_attributes(); i++) {
+          entry_out[i] = point_inbox_.point()[i];
+        }
+
+        // Signal that we are done copying out the point.
+        point_inbox_.invalidate_point();
       }
     }
 
