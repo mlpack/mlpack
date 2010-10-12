@@ -215,7 +215,8 @@ void SplitGenMetricTree(
   int leaf_size,
   int max_num_leaf_nodes,
   int *current_num_leaf_nodes,
-  std::vector<int> *old_from_new) {
+  std::vector<int> *old_from_new,
+  int *num_nodes) {
 
   TMetricTree *left = NULL;
   TMetricTree *right = NULL;
@@ -236,12 +237,13 @@ void SplitGenMetricTree(
 
     if(can_cut) {
       (*current_num_leaf_nodes)++;
+      (*num_nodes) = (*num_nodes) + 2;
       SplitGenMetricTree(
         metric_in, matrix, left, leaf_size, max_num_leaf_nodes,
-        current_num_leaf_nodes, old_from_new);
+        current_num_leaf_nodes, old_from_new, num_nodes);
       SplitGenMetricTree(
         metric_in, matrix, right, leaf_size, max_num_leaf_nodes,
-        current_num_leaf_nodes, old_from_new);
+        current_num_leaf_nodes, old_from_new, num_nodes);
       CombineBounds(metric_in, matrix, node, left, right);
     }
     else {

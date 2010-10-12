@@ -225,8 +225,10 @@ class Table: public boost::noncopyable {
 
     void IndexData(
       const core::metric_kernels::AbstractMetric &metric_in, int leaf_size) {
+      int num_nodes;
       tree_ = core::tree::MakeGenMetricTree<TreeType>(
-                metric_in, data_, leaf_size, &old_from_new_, &new_from_old_);
+                metric_in, data_, leaf_size, std::numeric_limits<int>::max(),
+                &old_from_new_, &new_from_old_, &num_nodes);
     }
 
     void get(int point_id, double *point_out) const {

@@ -27,20 +27,22 @@ namespace tree {
  * @param metric_in the metric to be used.
  * @param matrix data where each column is a point, WHICH WILL BE RE-ORDERED
  * @param leaf_size the maximum points in a leaf
+ * @param max_num_leaf_nodes the number of maximum leaf nodes this tree should
+ *        have.
  * @param old_from_new pointer to an unitialized vector; it will map
  *        new indices to original
  * @param new_from_old pointer to an unitialized vector; it will map
  *        original indexes to new indices
- * @param max_num_leaf_nodes the number of maximum leaf nodes this tree should
- *        have.
+ * @param num_nodes the number of nodes constructed in total.
  */
 template<typename TMetricTree>
 TMetricTree *MakeGenMetricTree(
   const core::metric_kernels::AbstractMetric &metric_in,
   core::table::DenseMatrix& matrix, int leaf_size,
+  int max_num_leaf_nodes = std::numeric_limits<int>::max(),
   std::vector<int> *old_from_new = NULL,
   std::vector<int> *new_from_old = NULL,
-  int max_num_leaf_nodes = std::numeric_limits<int>::max()) {
+  int *num_nodes = NULL) {
 
   TMetricTree *node = new TMetricTree();
   std::vector<int> *old_from_new_ptr;
@@ -57,13 +59,17 @@ TMetricTree *MakeGenMetricTree(
     old_from_new_ptr = NULL;
   }
 
+  int num_nodes_in = 1;
   node->Init(0, matrix.n_cols);
   node->bound().center().Init(matrix.n_rows);
   int current_num_leaf_nodes = 1;
   core::tree_private::SplitGenMetricTree<TMetricTree>(
     metric_in, matrix, node, leaf_size, max_num_leaf_nodes,
-    &current_num_leaf_nodes, old_from_new_ptr);
+    &current_num_leaf_nodes, old_from_new_ptr, &num_nodes_in);
 
+  if(num_nodes) {
+    *num_nodes = num_nodes_in;
+  }
   if(new_from_old) {
     new_from_old->resize(matrix.n_cols);
     for(unsigned int i = 0; i < matrix.n_cols; i++) {

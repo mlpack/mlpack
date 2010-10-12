@@ -24,7 +24,7 @@ class DenseConstPoint: public core::table::AbstractPoint {
   public:
 
     template<class Archive>
-    void save(Archive &ar, const unsigned int version) {
+    void save(Archive &ar, const unsigned int version) const {
 
       // First the length of the point.
       ar & ptr_->n_rows;
@@ -43,10 +43,11 @@ class DenseConstPoint: public core::table::AbstractPoint {
       // Allocate the point.
       ptr_ = new arma::vec();
       ptr_->set_size(length);
-      for(unsigned int i = 0; i < length; i++) {
+      for(int i = 0; i < length; i++) {
         ar & ((*ptr_)[i]);
       }
     }
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
 
     virtual ~DenseConstPoint() {
       delete ptr_;
@@ -85,7 +86,23 @@ class DenseConstPoint: public core::table::AbstractPoint {
 };
 
 class DensePoint: public DenseConstPoint {
+
+  private:
+
+    friend class boost::serialization::access;
+
   public:
+
+    template<class Archive>
+    void save(Archive &ar, const unsigned int version) const {
+      DenseConstPoint::save(ar, version);
+    }
+
+    template<class Archive>
+    void load(Archive &ar, const unsigned int version) {
+      DenseConstPoint::load(ar, version);
+    }
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
 
     virtual ~DensePoint() {
     }
