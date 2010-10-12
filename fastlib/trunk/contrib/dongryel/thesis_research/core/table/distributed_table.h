@@ -186,6 +186,8 @@ class DistributedTable: public boost::noncopyable {
 
       // For each process, select a subset of indices to send to the
       // master node.
+      printf("Process %d is generating samples to send to Process 0.\n",
+             comm_->rank());
       std::vector<int> sampled_indices;
       for(int i = 0; i < owned_table_->n_entries(); i++) {
         if(core::math::Random() <= sample_probability_in) {
@@ -223,6 +225,8 @@ class DistributedTable: public boost::noncopyable {
               sampled_table_data.GetColumnPtr(column_index));
           }
         }
+        printf("Process 0 collected %d samples across all processes.\n",
+               sampled_table.n_entries());
 
         // Build the tree.
         std::vector<int> global_old_from_new, global_new_from_old;
@@ -230,6 +234,7 @@ class DistributedTable: public boost::noncopyable {
                          metric_in, sampled_table_data, 2,
                          &global_old_from_new, &global_new_from_old,
                          comm_->size());
+        printf("Process 0 finished building the top tree.\n");
 
         // Broadcast the top tree to all the other processes.
 

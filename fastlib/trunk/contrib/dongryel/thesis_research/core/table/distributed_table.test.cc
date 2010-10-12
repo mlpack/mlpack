@@ -2,6 +2,7 @@
  *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
+#include "core/metric_kernels/lmetric.h"
 #include "core/table/distributed_table.h"
 
 bool CheckDistributedTableIntegrity(
@@ -76,6 +77,11 @@ int main(int argc, char *argv[]) {
   }
   printf("Process %d is all done!\n", world.rank());
 
+  // Let us build the tree.
+  core::metric_kernels::LMetric<2> l2_metric;
+  distributed_table.IndexData(l2_metric, 0.3);
+
+  // Put the last barrier.
   world.barrier();
   return 0;
 }

@@ -9,6 +9,7 @@
 #define CORE_TABLE_DENSE_POINT_H
 
 #include <armadillo>
+#include "boost/serialization/string.hpp"
 #include "core/table/abstract_point.h"
 
 namespace core {
@@ -18,7 +19,34 @@ class DenseConstPoint: public core::table::AbstractPoint {
 
     arma::vec *ptr_;
 
+    friend class boost::serialization::access;
+
   public:
+
+    template<class Archive>
+    void save(Archive &ar, const unsigned int version) {
+
+      // First the length of the point.
+      ar & ptr_->n_rows;
+      for(unsigned int i = 0; i < ptr_->n_rows; i++) {
+        ar & ((*ptr_)[i]);
+      }
+    }
+
+    template<class Archive>
+    void load(Archive &ar, const unsigned int version) {
+
+      // Load the length of the point.
+      int length;
+      ar & length;
+
+      // Allocate the point.
+      ptr_ = new arma::vec();
+      ptr_->set_size(length);
+      for(unsigned int i = 0; i < length; i++) {
+        ar & ((*ptr_)[i]);
+      }
+    }
 
     virtual ~DenseConstPoint() {
       delete ptr_;
