@@ -154,7 +154,6 @@ class PointInbox {
           // Wake up the thread waiting on the request. The woken up
           // thread turns off the validity flag after grabbing whch
           // process wants a point.
-          printf("Waking the main thread up!\n");
           do_test_ = false;
           point_received_cond_.notify_one();
         }
