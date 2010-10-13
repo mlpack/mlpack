@@ -35,10 +35,6 @@ class PointInbox {
 
     boost::shared_ptr<boost::thread> point_inbox_thread_;
 
-    boost::mutex termination_mutex_;
-
-    boost::condition_variable termination_cond_;
-
   public:
 
     void invalidate_point() {
@@ -58,16 +54,8 @@ class PointInbox {
       return point_received_mutex_;
     }
 
-    boost::mutex &termination_mutex() {
-      return termination_mutex_;
-    }
-
-    boost::condition_variable &termination_cond() {
-      return termination_cond_;
-    }
-
-    void Detach() {
-      point_inbox_thread_->detach();
+    void Join() {
+      point_inbox_thread_->join();
     }
 
     PointInbox() {
@@ -91,8 +79,6 @@ class PointInbox {
                                 boost::bind(
                                   &core::table::PointInbox::server,
                                   this)));
-
-      comm_->barrier();
     }
 
     bool has_outstanding_point_messages() {
@@ -160,8 +146,16 @@ class PointInbox {
       }
       while(this->time_to_quit() == false);     // end of the server loop.
 
+      {
+        int dummy;
+        MPI_Status status;
+        boost::unique_lock<boost::mutex> lock_in(* mpi_mutex_);
+        MPI_Recv(
+          &dummy, 1, MPI_INT, MPI_ANY_SOURCE,
+          core::table::DistributedTableMessage::TERMINATE_POINT_INBOX,
+          comm_->operator MPI_Comm(), &status);
+      }
       printf("Point inbox for Process %d is quitting.\n", comm_->rank());
-      termination_cond_.notify_one();
     }
 };
 
@@ -171,8 +165,6 @@ class PointRequestMessageBox {
     boost::mutex *mpi_mutex_;
 
     core::table::Table *owned_table_;
-
-    boost::condition_variable point_request_message_box_quitting_;
 
     boost::mpi::communicator *comm_;
 
@@ -190,20 +182,10 @@ class PointRequestMessageBox {
 
     boost::shared_ptr<boost::thread> point_request_message_box_thread_;
 
-    boost::mutex mutex_;
-
   public:
 
-    boost::mutex &mutex() {
-      return mutex_;
-    }
-
-    boost::condition_variable &point_request_message_box_quitting() {
-      return point_request_message_box_quitting_;
-    }
-
-    void Detach() {
-      point_request_message_box_thread_->detach();
+    void Join() {
+      point_request_message_box_thread_->join();
     }
 
     void export_point_request_message(
@@ -228,8 +210,6 @@ class PointRequestMessageBox {
           new boost::thread(
             boost::bind(
               &core::table::PointRequestMessageBox::server, this)));
-
-      comm_->barrier();
     }
 
     PointRequestMessageBox() {
@@ -335,9 +315,17 @@ class PointRequestMessageBox {
       while(this->time_to_quit() == false) ;
       // end of the infinite server loop.
 
+      {
+        int dummy;
+        MPI_Status status;
+        boost::unique_lock<boost::mutex> lock_in(* mpi_mutex_);
+        MPI_Recv(
+          &dummy, 1, MPI_INT, MPI_ANY_SOURCE,
+          core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_BOX,
+          comm_->operator MPI_Comm(), &status);
+      }
       printf("Point request message inbox for Process %d is quitting.\n",
              comm_->rank());
-      point_request_message_box_quitting_.notify_one();
     }
 };
 };

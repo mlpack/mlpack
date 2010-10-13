@@ -90,10 +90,7 @@ class DistributedTable: public boost::noncopyable {
             comm_->rank(),
             core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_BOX, 0);
         }
-        boost::unique_lock<boost::mutex> point_request_message_box_lock(
-          point_request_message_box_.mutex());
-        point_request_message_box_.point_request_message_box_quitting().wait(
-          point_request_message_box_lock);
+        point_request_message_box_.Join();
       }
 
       // Wait until the point inbox is destroyed.
@@ -104,9 +101,7 @@ class DistributedTable: public boost::noncopyable {
             comm_->rank(),
             core::table::DistributedTableMessage::TERMINATE_POINT_INBOX, 0);
         }
-        boost::unique_lock<boost::mutex> point_inbox_lock(
-          point_inbox_.termination_mutex());
-        point_inbox_.termination_cond().wait(point_inbox_lock);
+        point_inbox_.Join();
       }
 
       // Put a barrier so that all processes are ready to destroy each
@@ -192,10 +187,6 @@ class DistributedTable: public boost::noncopyable {
       // Initialize the mail boxes.
       point_inbox_.Init(comm_, &mpi_mutex_);
       point_request_message_box_.Init(comm_, &mpi_mutex_, owned_table_);
-
-      // Detach the server threads for each distributed process.
-      point_inbox_.Detach();
-      point_request_message_box_.Detach();
     }
 
     void Save(const std::string & file_name) const {
@@ -232,8 +223,10 @@ class DistributedTable: public boost::noncopyable {
         // sampled table to build the tree from.
         std::vector< std::vector<int> > list_of_sampled_indices;
         int total_num_sample_points = 0;
+        mpi_mutex_.lock();
         boost::mpi::gather(
           *comm_, sampled_indices, list_of_sampled_indices, 0);
+        mpi_mutex_.unlock();
 
         // Gather all the necessary data from all of the proceses.
         for(unsigned int i = 0; i < list_of_sampled_indices.size(); i++) {
@@ -258,6 +251,8 @@ class DistributedTable: public boost::noncopyable {
         printf("Process 0 collected %d samples across all processes.\n",
                sampled_table.n_entries());
 
+        comm_->barrier();
+
         // Build the tree.
         std::vector<int> global_old_from_new, global_new_from_old;
         global_tree_ = core::tree::MakeGenMetricTree<TreeType>(
@@ -276,13 +271,19 @@ class DistributedTable: public boost::noncopyable {
       else {
 
         // Send the list of sampled indices to the master.
+        mpi_mutex_.lock();
         boost::mpi::gather(*comm_, sampled_indices, 0);
+        mpi_mutex_.unlock();
+
+        comm_->barrier();
 
         // Receive back the global tree from the master tree and make
         // a copy.
         global_tree_in_array_form_ = new TreeType[ num_nodes ];
         for(int i = 0; i < num_nodes; i++) {
+          mpi_mutex_.lock();
           boost::mpi::broadcast(*comm_, global_tree_in_array_form_[i], 0);
+          mpi_mutex_.unlock();
         }
       }
     }
