@@ -35,7 +35,7 @@ class DistributedTable: public boost::noncopyable {
 
     TreeType *global_tree_;
 
-    TreeType **global_tree_in_array_form_;
+    TreeType *global_tree_in_array_form_;
 
     boost::mpi::communicator *comm_;
 
@@ -123,6 +123,10 @@ class DistributedTable: public boost::noncopyable {
       if(global_tree_ != NULL) {
         delete global_tree_;
         global_tree_ = NULL;
+      }
+      if(global_tree_in_array_form_ != NULL) {
+        delete[] global_tree_in_array_form_;
+        global_tree_in_array_form_ = NULL;
       }
     }
 
@@ -276,9 +280,9 @@ class DistributedTable: public boost::noncopyable {
 
         // Receive back the global tree from the master tree and make
         // a copy.
-        global_tree_in_array_form_ = new TreeType *[ num_nodes ];
+        global_tree_in_array_form_ = new TreeType[ num_nodes ];
         for(int i = 0; i < num_nodes; i++) {
-          global_tree_in_array_form_[i] = NULL;
+          boost::mpi::broadcast(*comm_, global_tree_in_array_form_[i], 0);
         }
       }
     }
