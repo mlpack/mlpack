@@ -15,19 +15,47 @@ bool CheckDistributedTableIntegrity(
   return true;
 }
 
-int main(int argc, char *argv[]) {
-  boost::mpi::environment env(argc, argv);
-  boost::mpi::communicator world;
+void TestDistributedTree(boost::mpi::communicator &world) {
 
-  if(world.size() <= 1) {
-    std::cout << "Please specify a process number greater than 1.\n";
-    exit(0);
-  }
-  srand(time(NULL) + world.rank());
+  printf("------------------------------------\n");
+  printf("Process %d in TestDistributedTree...\n", world.rank());
+  printf("------------------------------------\n");
 
-  if(world.rank() == 0) {
-    printf("%d processes are present...\n", world.size());
+  // Each process generates its own random data, dumps it to the file,
+  // and read its own file back into its own distributed table.
+  core::table::Table random_dataset;
+  const int num_dimensions = 5;
+  int num_points = core::math::RandInt(10, 20);
+  random_dataset.Init(5, num_points);
+  for(int j = 0; j < num_points; j++) {
+    core::table::DensePoint point;
+    random_dataset.get(j, &point);
+    for(int i = 0; i < num_dimensions; i++) {
+      point[i] = core::math::Random(0.1, 1.0);
+    }
   }
+  printf("Process %d generated %d points...\n", world.rank(), num_points);
+  std::stringstream file_name_sstr;
+  file_name_sstr << "random_dataset_" << world.rank() << ".csv";
+  std::string file_name = file_name_sstr.str();
+  random_dataset.Save(file_name);
+
+  core::table::DistributedTable distributed_table;
+  distributed_table.Init(file_name, &world);
+  printf(
+    "Process %d read in %d points...\n",
+    world.rank(), distributed_table.local_n_entries());
+
+  printf("Building the distributed tree...\n");
+  core::metric_kernels::LMetric<2> l2_metric;
+  distributed_table.IndexData(l2_metric, 0.3);
+}
+
+void TestDistributedTable(boost::mpi::communicator &world) {
+
+  printf("------------------------------------\n");
+  printf("Process %d in TestDistributedTable..\n", world.rank());
+  printf("------------------------------------\n");
 
   // Each process generates its own random data, dumps it to the file,
   // and read its own file back into its own distributed table.
@@ -76,12 +104,30 @@ int main(int argc, char *argv[]) {
     point.reference().print();
   }
   printf("Process %d is all done!\n", world.rank());
+}
 
-  // Let us build the tree.
-  core::metric_kernels::LMetric<2> l2_metric;
-  distributed_table.IndexData(l2_metric, 0.3);
+int main(int argc, char *argv[]) {
+  boost::mpi::environment env(argc, argv);
+  boost::mpi::communicator world;
 
-  // Put the last barrier.
+  if(world.size() <= 1) {
+    std::cout << "Please specify a process number greater than 1.\n";
+    exit(0);
+  }
+  srand(time(NULL) + world.rank());
+
+  if(world.rank() == 0) {
+    printf("%d processes are present...\n", world.size());
+  }
+
+  // Test the distributed table point exchanges.
+  TestDistributedTable(world);
+
+  world.barrier();
+
+  // Test the distributed tree building.
+  TestDistributedTree(world);
+
   world.barrier();
   return 0;
 }

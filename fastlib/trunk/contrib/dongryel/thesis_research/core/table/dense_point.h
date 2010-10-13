@@ -39,12 +39,14 @@ class DenseConstPoint: public core::table::AbstractPoint {
       // Load the length of the point.
       int length;
       ar & length;
+      printf("Loaded %d length.\n", length);
 
       // Allocate the point.
       ptr_ = new arma::vec();
       ptr_->set_size(length);
       for(int i = 0; i < length; i++) {
         ar & ((*ptr_)[i]);
+        printf("Coordinate: %g\n", (*ptr_)[i]);
       }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
