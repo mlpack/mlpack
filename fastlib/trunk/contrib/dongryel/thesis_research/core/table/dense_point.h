@@ -28,8 +28,11 @@ class DenseConstPoint: public core::table::AbstractPoint {
 
       // First the length of the point.
       ar & ptr_->n_rows;
+      printf("Saving!\n");
       for(unsigned int i = 0; i < ptr_->n_rows; i++) {
-        ar & ((*ptr_)[i]);
+        double element = (*ptr_)[i];
+        ar & element;
+        printf("Saving: %g\n", ((*ptr_)[i]));
       }
     }
 
@@ -97,12 +100,12 @@ class DensePoint: public DenseConstPoint {
 
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
-      DenseConstPoint::save(ar, version);
+      ar & boost::serialization::base_object<DenseConstPoint>(*this);
     }
 
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
-      DenseConstPoint::load(ar, version);
+      ar & boost::serialization::base_object<DenseConstPoint>(*this);
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
