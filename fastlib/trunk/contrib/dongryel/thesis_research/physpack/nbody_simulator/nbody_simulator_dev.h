@@ -78,41 +78,41 @@ bool physpack::nbody_simulator::NbodySimulator::ConstructBoostVariableMap_(
   try {
     boost::program_options::store(clp.options(desc).run(), *vm);
   }
-  catch (const boost::program_options::invalid_option_value &e) {
+  catch(const boost::program_options::invalid_option_value &e) {
     std::cerr << "Invalid Argument: " << e.what() << "\n";
     exit(0);
   }
-  catch (const boost::program_options::invalid_command_line_syntax &e) {
+  catch(const boost::program_options::invalid_command_line_syntax &e) {
     std::cerr << "Invalid command line syntax: " << e.what() << "\n";
     exit(0);
   }
-  catch (const boost::program_options::unknown_option &e) {
+  catch(const boost::program_options::unknown_option &e) {
     std::cerr << "Unknown option: " << e.what() << "\n";
     exit(0);
   }
 
   boost::program_options::notify(*vm);
-  if (vm->count("help")) {
+  if(vm->count("help")) {
     std::cout << desc << "\n";
     return true;
   }
 
   // Validate the arguments. Only immediate dying is allowed here, the
   // parsing is done later.
-  if (vm->count("references_in") == 0) {
+  if(vm->count("references_in") == 0) {
     std::cerr << "Missing required --references_in.\n";
     exit(0);
   }
-  if ((*vm)["probability"].as<double>() <= 0 ||
+  if((*vm)["probability"].as<double>() <= 0 ||
       (*vm)["probability"].as<double>() > 1) {
     std::cerr << "The --probability requires a real number $0 < p <= 1$.\n";
     exit(0);
   }
-  if ((*vm)["relative_error"].as<double>() < 0) {
+  if((*vm)["relative_error"].as<double>() < 0) {
     std::cerr << "The --relative_error requires a real number $r >= 0$.\n";
     exit(0);
   }
-  if ((*vm)["leaf_size"].as<int>() <= 0) {
+  if((*vm)["leaf_size"].as<int>() <= 0) {
     std::cerr << "The --leaf_size needs to be a positive integer.\n";
     exit(0);
   }

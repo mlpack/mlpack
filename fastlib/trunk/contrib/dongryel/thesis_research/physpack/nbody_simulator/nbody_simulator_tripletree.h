@@ -99,7 +99,7 @@ class NbodySimulatorDelta {
     }
 
     void SetZero() {
-      for (int i = 0; i < negative_potential_.size(); i++) {
+      for(unsigned int i = 0; i < negative_potential_.size(); i++) {
         negative_potential_[i].Init(0, 0);
         positive_potential_[i].Init(0, 0);
         pruned_[i] = 0;
@@ -127,7 +127,7 @@ class NbodySimulatorResult {
 
     void PrintDebug(const std::string &file_name) {
       FILE *file_output = fopen(file_name.c_str(), "w+");
-      for (unsigned int i = 0; i < potential_e_.size(); i++) {
+      for(unsigned int i = 0; i < potential_e_.size(); i++) {
         fprintf(file_output, "%g %g\n", potential_e_[i], pruned_[i]);
       }
       fclose(file_output);
@@ -144,7 +144,7 @@ class NbodySimulatorResult {
     }
 
     void SetZero() {
-      for (int i = 0; i < static_cast<int>(negative_potential_.size()); i++) {
+      for(int i = 0; i < static_cast<int>(negative_potential_.size()); i++) {
         negative_potential_[i].Init(0.0, 0.0);
         positive_potential_[i].Init(0.0, 0.0);
         potential_e_[i] = 0.0;
@@ -184,21 +184,21 @@ class NbodySimulatorGlobal {
 
       double potential_value = potential_.EvalUnnormOnSq(range_in);
 
-      if (potential_value < 0.0) {
-        for (int i = 0; i < postponeds->size(); i++) {
+      if(potential_value < 0.0) {
+        for(unsigned int i = 0; i < postponeds->size(); i++) {
           (*postponeds)[i].negative_potential_.Init(
             potential_value, potential_value);
           (*postponeds)[i].positive_potential_.Init(0.0, 0.0);
         }
       }
       else {
-        for (int i = 0; i < postponeds->size(); i++) {
+        for(unsigned int i = 0; i < postponeds->size(); i++) {
           (*postponeds)[i].negative_potential_.Init(0.0, 0.0);
           (*postponeds)[i].positive_potential_.Init(
             potential_value, potential_value);
         }
       }
-      for (int i = 0; i < postponeds->size(); i++) {
+      for(unsigned int i = 0; i < postponeds->size(); i++) {
         (*postponeds)[i].pruned_ = (*postponeds)[i].used_error_ = 0.0;
       }
     }
@@ -253,7 +253,7 @@ class NbodySimulatorSummary {
     }
 
     template < typename GlobalType, typename DeltaType, typename TreeType,
-    typename ResultType >
+             typename ResultType >
     bool CanSummarize(
       const GlobalType &global, const DeltaType &delta,
       TreeType *qnode, TreeType *rnode, ResultType *query_results) const {
@@ -327,7 +327,7 @@ class NbodySimulatorSummary {
 };
 
 class NbodySimulatorStatistic: public core::tree::AbstractStatistic,
-      public boost::noncopyable {
+  public boost::noncopyable {
 
   public:
 
