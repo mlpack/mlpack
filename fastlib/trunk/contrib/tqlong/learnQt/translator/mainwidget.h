@@ -5,6 +5,7 @@
 #include "browser_translate.h"
 
 class FindTextDialog;
+class SizeSlider;
 
 class MainWidget : public QWidget
 {
@@ -22,6 +23,9 @@ public slots:
   void findAllTextReceived(QString);
   void pageLoadProgress(int progress);
   void loadBookmarks();
+  void changeSize(int size);
+signals:
+  void changeFontSize(int);
 public:
   MainWidget(QWidget *parent = 0);
   ~MainWidget();
@@ -32,6 +36,7 @@ private:
   QCheckBox *autoTranslateCheck_;
   QToolBar *bookmarks_;
   QTabWidget *tabs_;
+  SizeSlider *sizeSlider_;
   QSet<BrowserTranslate*> browsers_;
   FindTextDialog* findDialog_;
 //  BrowserTranslate* browser;
@@ -77,15 +82,32 @@ private:
   QPushButton *btFind_, *btCancel_;
 };
 
-class BookmarkButton : public QPushButton
+class BookmarkButton : public QObject
 {
+  Q_OBJECT
+  QString text_;
   QUrl url_;
+signals:
+  void clicked();
 public:
-  explicit BookmarkButton(const QString& text = QString(), const QUrl& url = QUrl(), QWidget* parent = 0)
-    : QPushButton(text.left(30), parent), url_(url)
+  explicit BookmarkButton(const QString& text = QString(), const QUrl& url = QUrl(), QObject* parent = 0)
+    : QObject(parent), text_(text), url_(url)
   {
   }
   const QUrl& getUrl() const { return url_; }
+};
+
+class SizeSlider : public QSlider
+{
+  Q_OBJECT
+public slots:
+  void needChanged(int value)
+  {
+    if (value == this->value()) return;
+    this->setValue(value);
+  }
+public:
+  SizeSlider(QWidget* parent = 0) : QSlider(parent) {}
 };
 
 #endif // MAINWIDGET_H

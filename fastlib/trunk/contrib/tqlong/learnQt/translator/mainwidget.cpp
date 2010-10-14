@@ -16,6 +16,8 @@ MainWidget::MainWidget(QWidget *parent)
   loadBookmarks();
   tabs_ = new QTabWidget;
   tabs_->setTabsClosable(true);
+  sizeSlider_ = new SizeSlider;
+  sizeSlider_->setRange(0, 50);
   BrowserTranslate* first = addPage();
   first->load(QUrl::fromUserInput("http://www.google.com"));
   findDialog_ = new FindTextDialog();
@@ -31,6 +33,8 @@ MainWidget::MainWidget(QWidget *parent)
   connect(autoTranslateCheck_, SIGNAL(toggled(bool)), this, SLOT(autoCheckBoxChanged(bool)));
   connect(findDialog_, SIGNAL(findText(QString)), this, SLOT(findTextReceived(QString)));
   connect(findDialog_, SIGNAL(findAllText(QString)), this, SLOT(findAllTextReceived(QString)));
+  connect(sizeSlider_, SIGNAL(valueChanged(int)), this, SLOT(changeSize(int)));
+  connect(this, SIGNAL(changeFontSize(int)), sizeSlider_, SLOT(needChanged(int)));
 
   QHBoxLayout *toolbar = new QHBoxLayout;
   toolbar->addWidget(btNewTab);
@@ -42,7 +46,10 @@ MainWidget::MainWidget(QWidget *parent)
   mainLayout->addLayout(toolbar);
   mainLayout->addWidget(bookmarks_);
   mainLayout->addWidget(tabs_);
-  setLayout(mainLayout);
+  QHBoxLayout *mainLayout2 = new QHBoxLayout;
+  mainLayout2->addWidget(sizeSlider_);
+  mainLayout2->addLayout(mainLayout);
+  setLayout(mainLayout2);
   this->setMinimumWidth(1024);
 }
 
@@ -107,6 +114,7 @@ void MainWidget::tabChanged(int)
 {
   BrowserTranslate* browser = (BrowserTranslate*)tabs_->currentWidget();
   addressEdit->setText(browser ? browser->page()->mainFrame()->baseUrl().toString() : "");
+  emit changeFontSize(browser->page()->settings()->fontSize(QWebSettings::MinimumFontSize));
 }
 
 void MainWidget::pageLoadProgress(int progress)
@@ -166,6 +174,7 @@ void MainWidget::keyPressEvent(QKeyEvent* event)
     addressEdit->setFocus();
     addressEdit->setSelection(0, addressEdit->text().length()-1);
   }
+  int index = tabs_->currentIndex();
   BrowserTranslate* browser = (BrowserTranslate*) tabs_->currentWidget();
   if (event->key() == Qt::Key_F5 && event->modifiers() == Qt::NoModifier)
   {
@@ -196,8 +205,6 @@ void MainWidget::keyPressEvent(QKeyEvent* event)
   }
   if (event->key() == Qt::Key_W && event->modifiers() == Qt::ControlModifier)
   {
-    int index = tabs_->currentIndex();
-    BrowserTranslate* browser = (BrowserTranslate*) tabs_->widget(index);
     tabs_->removeTab(index);
     if (!browser) return;
     browsers_.remove(browser);
@@ -206,6 +213,23 @@ void MainWidget::keyPressEvent(QKeyEvent* event)
   if (event->key() == Qt::Key_T && event->modifiers() == Qt::ControlModifier)
   {
     this->btNewTabClicked();
+  }
+  if ((event->key() == Qt::Key_Plus||event->key() == Qt::Key_Equal) && event->modifiers() == Qt::ControlModifier)
+  {
+    if (browser)
+    {
+      int size = browser->page()->settings()->fontSize(QWebSettings::MinimumFontSize);
+      changeSize(size+1);
+    }
+  }
+  if ((event->key() == Qt::Key_Minus||event->key()==Qt::Key_Underscore) && event->modifiers() == Qt::ControlModifier)
+  {
+    if (browser)
+    {
+      int size = browser->page()->settings()->fontSize(QWebSettings::MinimumFontSize);
+      size = size > 0 ? size : 1;
+      changeSize(size-1);
+    }
   }
   if (event->key() == Qt::Key_PageUp && event->modifiers() == Qt::ControlModifier)
   {
@@ -218,6 +242,16 @@ void MainWidget::keyPressEvent(QKeyEvent* event)
     tabs_->setCurrentIndex(index);
   }
 }
+
+void MainWidget::changeSize(int size)
+{
+  BrowserTranslate* browser = (BrowserTranslate*) tabs_->currentWidget();
+  if (size < 0 || size > 50 || !browser) return;
+  browser->page()->settings()->setFontSize(QWebSettings::MinimumFontSize, size);
+  QTextStream(stdout) << "minimum font size = " << size << endl;
+  emit changeFontSize(size);
+}
+
 
 void MainWidget::btBookmarkClicked()
 {
@@ -245,8 +279,9 @@ void MainWidget::loadBookmarks()
 
 void MainWidget::addBookmark(const QString& title, const QUrl& url)
 {
-  BookmarkButton* button = new BookmarkButton(title, url);
-  bookmarks_->addWidget(button);
+  BookmarkButton* button = new BookmarkButton(title, url, this);
+  bookmarks_->addAction(title.left(20), button, SIGNAL(clicked()));
+  //bookmarks_->addWidget(button);
   connect(button, SIGNAL(clicked()), this, SLOT(btBookmarkClicked()));
   bookmarks_->show();
 }
