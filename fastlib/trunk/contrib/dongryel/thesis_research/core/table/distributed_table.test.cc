@@ -5,6 +5,7 @@
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/distributed_table.h"
 #include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 bool CheckDistributedTableIntegrity(
   const core::table::DistributedTable &table_in,
@@ -121,16 +122,6 @@ int main(int argc, char *argv[]) {
     printf("%d processes are present...\n", world.size());
   }
 
-  core::table::DensePoint test_point;
-  test_point.Init(5);
-  for(int i = 0; i < test_point.length(); i++) {
-    test_point[i] = i;
-  }
-  std::ofstream ofs("point_serialized.out");
-  boost::archive::text_oarchive oa(ofs);
-  oa << test_point;
-
-  exit(0);
   // Test the distributed table point exchanges.
   TestDistributedTable(world);
 
