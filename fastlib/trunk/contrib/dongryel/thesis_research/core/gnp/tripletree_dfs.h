@@ -29,6 +29,8 @@ class TripletreeDfs {
 
   private:
 
+    bool NodeIsAgreeable_(TreeType *node, TreeType *next_node) const;
+
     typename TableType::TreeIterator GetNextNodeIterator_(
       const core::gnp::TripleRangeDistanceSq &range_sq_in,
       int node_index,

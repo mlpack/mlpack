@@ -228,6 +228,90 @@ void core::gnp::TripletreeDfs<ProblemType>::Summarize_(
 }
 
 template<typename ProblemType>
+bool core::gnp::TripletreeDfs<ProblemType>::NodeIsAgreeable_(
+  TreeType *node, TreeType *next_node) const {
+
+  // Agreeable if the nodes are equal or the next node's beginning
+  // index is more than the ending index of the given node.
+  return node == next_node || node->end() <= next_node->begin();
+}
+
+template<typename ProblemType>
+void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
+  const core::metric_kernels::AbstractMetric &metric,
+  const core::gnp::TripleRangeDistanceSq &triple_range_distance_sq,
+  double relative_error,
+  double failure_probability,
+  typename ProblemType::ResultType *query_results,
+  int level,
+  bool all_leaves,
+  bool *deterministic_approximation) {
+
+  if(level == 3) {
+
+    if(all_leaves) {
+      TripletreeBase_(metric, triple_range_distance_sq, query_results);
+    }
+    else {
+    }
+  }
+  else {
+
+    TreeType *current_node = triple_range_distance_sq.node(level);
+
+    // If the current node is a leaf node, then just check whether it
+    // is in conflict with the previously chosen node.
+    if(current_node->is_leaf()) {
+
+      if(level == 0 ||
+          NodeIsAgreable_(
+            triple_range_distance_sq.node(level - 1),
+            current_node)) {
+
+        RecursionHelper_(
+          metric, triple_range_distance_sq, relative_error, failure_probability,
+          query_results, level + 1, all_leaves, deterministic_approximation);
+      }
+    }
+
+    // Otherwise we need to split.
+    else {
+
+      bool replaced_node_on_current_level = false;
+
+      // Try the left child if it is valid.
+      if(level == 0 ||
+          NodeIsAgreeable_(
+            triple_range_distance_sq.node(level - 1), current_node->left())) {
+
+        replaced_node_on_current_level = true;
+        ReplaceOneNode(metric, *table_, current_node->left(), level);
+        RecursionHelper_(
+          metric, triple_range_distance_sq, relative_error, failure_probability,
+          query_results, level + 1, all_leaves, deterministic_approximation);
+      }
+
+      // Try the right child if it is valid.
+      if(level == 0 ||
+          NodeIsAgreeable_(
+            triple_range_distance_sq.node(level - 1), current_node->right())) {
+
+        replaced_node_on_current_level = true;
+        ReplaceOneNode(metric, *table_, current_node->right(), level);
+        RecursionHelper_(
+          metric, triple_range_distance_sq, relative_error, failure_probability,
+          query_results, level + 1, all_leaves, deterministic_approximation);
+      }
+
+      // Put back the node.
+      if(replaced_node_on_current_level) {
+        ReplaceOneNode(metric, *table_, current_node, level);
+      }
+    }
+  }
+}
+
+template<typename ProblemType>
 bool core::gnp::TripletreeDfs<ProblemType>::TripletreeCanonical_(
   const core::metric_kernels::AbstractMetric &metric,
   const core::gnp::TripleRangeDistanceSq &triple_range_distance_sq,
@@ -235,8 +319,24 @@ bool core::gnp::TripletreeDfs<ProblemType>::TripletreeCanonical_(
   double failure_probability,
   typename ProblemType::ResultType *query_results) {
 
-  TripletreeBase_(metric, triple_range_distance_sq, query_results);
-  return true;
+  // First try to prune.
+  if() {
+  }
+  else if() {
+  }
+
+  // Call the canonical way of choosing the recursion calls.
+  bool deterministic_approximation = true;
+  RecursionHelper_(
+    metric, triple_range_distance_sq, relative_error,
+    failure_probability, query_results, 0, &deterministic_approximation);
+
+  if() {
+
+  }
+
+
+  return deterministic_approximation;
 }
 
 template<typename ProblemType>
