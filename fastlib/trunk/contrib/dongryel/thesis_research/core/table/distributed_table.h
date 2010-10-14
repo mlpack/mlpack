@@ -216,13 +216,14 @@ class DistributedTable: public boost::noncopyable {
       // number of maximum leaf nodes.
       int num_nodes;
 
+      std::vector< std::vector<int> > list_of_sampled_indices;
+      int total_num_sample_points = 0;
+
       // For the master node,
       if(comm_->rank() == 0) {
 
         // Find out the list of points sampled so that we can build a
         // sampled table to build the tree from.
-        std::vector< std::vector<int> > list_of_sampled_indices;
-        int total_num_sample_points = 0;
         mpi_mutex_.lock();
         boost::mpi::gather(
           *comm_, sampled_indices, list_of_sampled_indices, 0);
@@ -232,8 +233,17 @@ class DistributedTable: public boost::noncopyable {
         for(unsigned int i = 0; i < list_of_sampled_indices.size(); i++) {
           total_num_sample_points += list_of_sampled_indices[i].size();
         }
+      }
+      else {
 
-        core::table::Table sampled_table;
+        // Send the list of sampled indices to the master.
+        mpi_mutex_.lock();
+        boost::mpi::gather(*comm_, sampled_indices, 0);
+        mpi_mutex_.unlock();
+      }
+
+      core::table::Table sampled_table;
+      if(comm_->rank() == 0) {
         sampled_table.Init(this->n_attributes(), total_num_sample_points);
         core::table::DenseMatrix &sampled_table_data = sampled_table.data();
 
@@ -250,8 +260,11 @@ class DistributedTable: public boost::noncopyable {
         }
         printf("Process 0 collected %d samples across all processes.\n",
                sampled_table.n_entries());
+      }
 
-        comm_->barrier();
+      if(comm_->rank() == 0) {
+
+        core::table::DenseMatrix &sampled_table_data = sampled_table.data();
 
         // Build the tree.
         std::vector<int> global_old_from_new, global_new_from_old;
@@ -262,6 +275,9 @@ class DistributedTable: public boost::noncopyable {
                          &num_nodes);
         printf("Process 0 finished building the top tree.\n");
 
+        // Broadcast the number of nodes to all processes.
+        boost::mpi::broadcast(*comm_, num_nodes, 0);
+
         // Broadcast the top tree to all the other processes by doing
         // an in-order traversal.
         BroadcastTree_(global_tree_);
@@ -270,12 +286,8 @@ class DistributedTable: public boost::noncopyable {
       // For the other nodes,
       else {
 
-        // Send the list of sampled indices to the master.
-        mpi_mutex_.lock();
-        boost::mpi::gather(*comm_, sampled_indices, 0);
-        mpi_mutex_.unlock();
-
-        comm_->barrier();
+        // Get the number of nodes from the master node.
+        boost::mpi::broadcast(*comm_, num_nodes, 0);
 
         // Receive back the global tree from the master tree and make
         // a copy.
@@ -286,6 +298,8 @@ class DistributedTable: public boost::noncopyable {
           mpi_mutex_.unlock();
         }
       }
+
+      comm_->barrier();
     }
 
     void get(
