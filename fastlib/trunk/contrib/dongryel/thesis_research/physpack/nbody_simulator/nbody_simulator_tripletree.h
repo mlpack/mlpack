@@ -106,6 +106,15 @@ class NbodySimulatorDelta {
         used_error_[i] = 0;
       }
     }
+
+    template<typename GlobalType>
+    void DeterministicCompute(
+      const core::metric_kernels::AbstractMetric &metric,
+      const GlobalType &global,
+      const core::gnp::TripleRangeDistanceSq &triple_range_distance_sq) {
+
+
+    }
 };
 
 class NbodySimulatorResult {

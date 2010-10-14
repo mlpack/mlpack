@@ -239,7 +239,7 @@ bool core::gnp::TripletreeDfs<ProblemType>::NodeIsAgreeable_(
 template<typename ProblemType>
 void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
   const core::metric_kernels::AbstractMetric &metric,
-  const core::gnp::TripleRangeDistanceSq &triple_range_distance_sq,
+  core::gnp::TripleRangeDistanceSq &triple_range_distance_sq,
   double relative_error,
   double failure_probability,
   typename ProblemType::ResultType *query_results,
@@ -247,14 +247,27 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
   bool all_leaves,
   bool *deterministic_approximation) {
 
+  // If we have chosen all three nodes,
   if(level == 3) {
 
     if(all_leaves) {
+
+      // Call the base case when all three nodes are leaves.
       TripletreeBase_(metric, triple_range_distance_sq, query_results);
     }
     else {
+
+      // Otherwise call the canonical case.
+      bool exact_computation = TripletreeCanonical_(
+                                 metric, triple_range_distance_sq,
+                                 relative_error, failure_probability,
+                                 query_results);
+      *deterministic_approximation = (*deterministic_approximation) &&
+                                     exact_computation;
     }
   }
+
+  // Otherwise, keep choosing the nodes.
   else {
 
     TreeType *current_node = triple_range_distance_sq.node(level);
@@ -288,7 +301,7 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
         ReplaceOneNode(metric, *table_, current_node->left(), level);
         RecursionHelper_(
           metric, triple_range_distance_sq, relative_error, failure_probability,
-          query_results, level + 1, all_leaves, deterministic_approximation);
+          query_results, level + 1, false, deterministic_approximation);
       }
 
       // Try the right child if it is valid.
@@ -300,10 +313,11 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
         ReplaceOneNode(metric, *table_, current_node->right(), level);
         RecursionHelper_(
           metric, triple_range_distance_sq, relative_error, failure_probability,
-          query_results, level + 1, all_leaves, deterministic_approximation);
+          query_results, level + 1, false, deterministic_approximation);
       }
 
-      // Put back the node.
+      // Put back the node if it has been replaced before popping up
+      // the recursion.
       if(replaced_node_on_current_level) {
         ReplaceOneNode(metric, *table_, current_node, level);
       }
@@ -314,27 +328,28 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
 template<typename ProblemType>
 bool core::gnp::TripletreeDfs<ProblemType>::TripletreeCanonical_(
   const core::metric_kernels::AbstractMetric &metric,
-  const core::gnp::TripleRangeDistanceSq &triple_range_distance_sq,
+  core::gnp::TripleRangeDistanceSq &triple_range_distance_sq,
   double relative_error,
   double failure_probability,
   typename ProblemType::ResultType *query_results) {
 
+  // Compute the delta.
+  typename ProblemType::DeltaType delta;
+  delta.DeterministicCompute(
+    metric, problem_->global(), triple_range_distance_sq);
+
   // First try to prune.
-  if() {
-  }
-  else if() {
+  if(CanSummarize_(
+        triple_range_distance_sq_in, delta, query_results)) {
+
+    return true;
   }
 
-  // Call the canonical way of choosing the recursion calls.
+  // Call the recursion helper.
   bool deterministic_approximation = true;
   RecursionHelper_(
     metric, triple_range_distance_sq, relative_error,
     failure_probability, query_results, 0, &deterministic_approximation);
-
-  if() {
-
-  }
-
 
   return deterministic_approximation;
 }
