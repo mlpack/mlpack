@@ -51,9 +51,11 @@ class DistributedTable: public boost::noncopyable {
       }
 
       // Broadcast the node.
-      mpi_mutex_.lock();
-      boost::mpi::broadcast(* comm_, node, 0);
-      mpi_mutex_.unlock();
+      if(node != NULL) {
+        mpi_mutex_.lock();
+        boost::mpi::broadcast(* comm_, node, 0);
+        mpi_mutex_.unlock();
+      }
 
       if(! node->is_leaf()) {
         BroadcastTree_(node->right());
