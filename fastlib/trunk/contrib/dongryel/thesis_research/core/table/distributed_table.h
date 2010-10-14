@@ -53,7 +53,7 @@ class DistributedTable: public boost::noncopyable {
       // Broadcast the node.
       if(node != NULL) {
         mpi_mutex_.lock();
-        boost::mpi::broadcast(* comm_, node, 0);
+        boost::mpi::broadcast(* comm_, *node, 0);
         mpi_mutex_.unlock();
       }
 
