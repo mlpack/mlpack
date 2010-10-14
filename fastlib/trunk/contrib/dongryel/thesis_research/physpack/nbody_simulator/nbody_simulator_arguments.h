@@ -36,11 +36,11 @@ class NbodySimulatorArguments {
     }
 
     ~NbodySimulatorArguments() {
-      if (table_ != NULL) {
+      if(table_ != NULL) {
         delete table_;
         table_ = NULL;
       }
-      if (metric_ != NULL) {
+      if(metric_ != NULL) {
         delete metric_;
         metric_ = NULL;
       }

@@ -159,13 +159,13 @@ class TripleRangeDistanceSq {
       const core::metric_kernels::AbstractMetric &metric_in,
       const core::table::Table &table,
       const std::vector< TreeType * > &nodes_in) {
-      for(int j = 0; j < nodes_.size(); j++) {
+      for(unsigned int j = 0; j < nodes_.size(); j++) {
         nodes_[j] = nodes_in[j];
       }
-      for(int j = 0; j < nodes_.size(); j++) {
+      for(unsigned int j = 0; j < nodes_.size(); j++) {
         const TreeType::BoundType &outer_bound =
           table.get_node_bound(nodes_[j]);
-        for(int i = j + 1; i < nodes_.size(); i++) {
+        for(unsigned int i = j + 1; i < nodes_.size(); i++) {
           const TreeType::BoundType &inner_bound =
             table.get_node_bound(nodes_[i]);
           core::math::Range range_distance_sq =
