@@ -31,9 +31,11 @@ class DistributedTable: public boost::noncopyable {
 
     core::table::Table *owned_table_;
 
-    std::vector<int> local_n_entries_;
+    int *local_n_entries_;
 
     TreeType *global_tree_;
+
+    std::vector< TreeType * > global_tree_leaf_nodes_;
 
     boost::mpi::communicator *comm_;
 
@@ -64,8 +66,7 @@ class DistributedTable: public boost::noncopyable {
       printf("Process %d is in AssignPointsToLeafNode_.\n", comm_->rank());
 
       // Gather the leaf nodes.
-      std::vector< TreeType * > leaf_nodes;
-      GatherLeafNodes_(global_tree_, leaf_nodes);
+      GatherLeafNodes_(global_tree_, global_tree_leaf_nodes_);
 
       // The leaf node assignment for each point.
       std::vector<int> leaf_assignments(owned_table_->n_entries(), 0);
@@ -75,15 +76,35 @@ class DistributedTable: public boost::noncopyable {
         owned_table_->get(i, &point);
 
         double min_squared_distance = std::numeric_limits<double>::max();
-        for(unsigned int j = 0; j < leaf_nodes.size(); j++) {
-          const TreeType::BoundType &bound = leaf_nodes[j]->bound();
-          double squared_distance = bound.MinDistanceSq(metric_in, point);
+        for(unsigned int j = 0; j < global_tree_leaf_nodes_.size(); j++) {
+          const TreeType::BoundType &bound =
+            global_tree_leaf_nodes_[j]->bound();
+          double squared_distance = metric_in.DistanceSq(point, bound.center());
           if(squared_distance < min_squared_distance) {
             min_squared_distance = squared_distance;
             leaf_assignments[i] = j;
           }
         }
       }
+      int *count_distribution = new int[ comm_->size()];
+      memset(count_distribution, 0, sizeof(int) * comm_->size());
+      for(unsigned int i = 0; i < leaf_assignments.size(); i++) {
+        count_distribution[ leaf_assignments[i] ]++;
+      }
+
+      // Do an all-reduce.
+      mpi_mutex_.lock();
+      boost::mpi::all_reduce(
+        *comm_, count_distribution, comm_->size(),
+        local_n_entries_, std::plus<int>());
+      delete count_distribution;
+      mpi_mutex_.unlock();
+
+      printf("Process %d:\n", comm_->rank());
+      for(int i = 0; i < comm_->size(); i++) {
+        printf("%d ", local_n_entries_[i]);
+      }
+      printf("\n");
     }
 
     void DistributeTree_(
@@ -95,6 +116,8 @@ class DistributedTable: public boost::noncopyable {
       comm_->barrier();
 
       if(comm_->rank() == 0) {
+
+        printf("Process 0 is building the tree and distributing the tree.\n");
 
         int num_nodes;
         core::table::DenseMatrix &sampled_table_data = sampled_table.data();
@@ -118,6 +141,8 @@ class DistributedTable: public boost::noncopyable {
 
       // For the other nodes,
       else {
+
+        printf("Process %d is receiving the tree.\n", comm_->rank());
 
         // Receive back the global tree from the master tree and make
         // a copy.
@@ -171,6 +196,13 @@ class DistributedTable: public boost::noncopyable {
       // Put a barrier so that all processes are ready to destroy each
       // of their own tables and trees.
       comm_->barrier();
+
+      // Delete the list of number of entries for each table in the
+      // distributed table.
+      if(local_n_entries_ != NULL) {
+        delete local_n_entries_;
+        local_n_entries_ = NULL;
+      }
 
       // Delete the table.
       if(owned_table_ != NULL) {
@@ -241,6 +273,7 @@ class DistributedTable: public boost::noncopyable {
       // Allocate the vector for storing the number of entries for all
       // the tables in the world, and do an all-gather operation to
       // find out all the sizes.
+      local_n_entries_ = new int[ comm_->size()];
       boost::mpi::all_gather(
         *comm_, owned_table_->n_entries(), local_n_entries_);
 
@@ -327,6 +360,13 @@ class DistributedTable: public boost::noncopyable {
       // Now we need to let each process figure out which leaf node it
       // wants to have.
       AssignPointsToLeafNode_(metric_in);
+
+      // Put a barrier.
+      comm_->barrier();
+
+      // Each process reallocates the table.
+      core::table::Table *new_table = new core::table::Table();
+      new_table->Init(this->n_attributes(), local_n_entries_[ comm_->rank()]);
 
       // Put a barrier.
       comm_->barrier();
