@@ -61,6 +61,8 @@ class DistributedTable: public boost::noncopyable {
       // Wait until every process gets here.
       comm_->barrier();
 
+      printf("Process %d is in AssignPointsToLeafNode_.\n", comm_->rank());
+
       // Gather the leaf nodes.
       std::vector< TreeType * > leaf_nodes;
       GatherLeafNodes_(global_tree_, leaf_nodes);
@@ -143,11 +145,6 @@ class DistributedTable: public boost::noncopyable {
     }
 
     ~DistributedTable() {
-
-      // Put a barrier so that the distributed tables get destructed
-      // when all of the requests are fulfilled for all of the
-      // distributed processes.
-      comm_->barrier();
 
       // Terminate the point request message box.
       {
