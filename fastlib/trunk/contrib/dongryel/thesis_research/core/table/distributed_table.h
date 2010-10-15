@@ -45,23 +45,6 @@ class DistributedTable: public boost::noncopyable {
 
   public:
 
-    void BroadcastTree_(TreeType *node) {
-      if(! node->is_leaf()) {
-        BroadcastTree_(node ->left());
-      }
-
-      // Broadcast the node.
-      if(node != NULL) {
-        mpi_mutex_.lock();
-        boost::mpi::broadcast(* comm_, *node, 0);
-        mpi_mutex_.unlock();
-      }
-
-      if(! node->is_leaf()) {
-        BroadcastTree_(node->right());
-      }
-    }
-
     int rank() const {
       return comm_->rank();
     }
@@ -244,6 +227,9 @@ class DistributedTable: public boost::noncopyable {
         mpi_mutex_.unlock();
       }
 
+      // Wait until every process gets here.
+      comm_->barrier();
+
       core::table::Table sampled_table;
       if(comm_->rank() == 0) {
         sampled_table.Init(this->n_attributes(), total_num_sample_points);
@@ -264,6 +250,9 @@ class DistributedTable: public boost::noncopyable {
                sampled_table.n_entries());
       }
 
+      // Wait until every process gets here.
+      comm_->barrier();
+
       if(comm_->rank() == 0) {
 
         core::table::DenseMatrix &sampled_table_data = sampled_table.data();
@@ -278,27 +267,31 @@ class DistributedTable: public boost::noncopyable {
         printf("Process 0 finished building the top tree.\n");
 
         // Broadcast the number of nodes to all processes.
+        mpi_mutex_.lock();
         boost::mpi::broadcast(*comm_, num_nodes, 0);
+        mpi_mutex_.unlock();
 
         // Broadcast the top tree to all the other processes by doing
         // an in-order traversal.
-        BroadcastTree_(global_tree_);
+        mpi_mutex_.lock();
+        boost::mpi::broadcast(* comm_, *global_tree_, 0);
+        mpi_mutex_.unlock();
       }
 
       // For the other nodes,
       else {
 
         // Get the number of nodes from the master node.
+        mpi_mutex_.lock();
         boost::mpi::broadcast(*comm_, num_nodes, 0);
+        mpi_mutex_.unlock();
 
         // Receive back the global tree from the master tree and make
         // a copy.
-        global_tree_in_array_form_ = new TreeType[ num_nodes ];
-        for(int i = 0; i < num_nodes; i++) {
-          mpi_mutex_.lock();
-          boost::mpi::broadcast(*comm_, global_tree_in_array_form_[i], 0);
-          mpi_mutex_.unlock();
-        }
+        mpi_mutex_.lock();
+        global_tree_ = new TreeType();
+        boost::mpi::broadcast(*comm_, *global_tree_, 0);
+        mpi_mutex_.unlock();
       }
 
       comm_->barrier();

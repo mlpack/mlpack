@@ -59,6 +59,12 @@ class GeneralBinarySpaceTree {
       ar & bound_;
       ar & begin_;
       ar & count_;
+      if(left_) {
+        ar & (*left_);
+      }
+      if(right_) {
+        ar & (*right_);
+      }
     }
 
     ~GeneralBinarySpaceTree() {
@@ -85,6 +91,16 @@ class GeneralBinarySpaceTree {
     }
 
   public:
+
+    void Swap(GeneralBinarySpaceTree &swap_with) {
+
+      bound_.Swap(swap_with.bound());
+      std::swap(left_, swap_with.left());
+      std::swap(right_, swap_with.right());
+      std::swap(begin_, swap_with.begin());
+      std::swap(count_, swap_with.count());
+      std::swap(stat_, swap_with.stat());
+    }
 
     void Init(int begin_in, int count_in) {
       begin_ = begin_in;
@@ -185,7 +201,7 @@ class GeneralBinarySpaceTree {
       return left_;
     }
 
-    GeneralBinarySpaceTree *left() {
+    GeneralBinarySpaceTree *&left() {
       return left_;
     }
 
@@ -196,7 +212,7 @@ class GeneralBinarySpaceTree {
       return right_;
     }
 
-    GeneralBinarySpaceTree *right() {
+    GeneralBinarySpaceTree *&right() {
       return right_;
     }
 
@@ -204,6 +220,10 @@ class GeneralBinarySpaceTree {
      * Gets the index of the begin point of this subset.
      */
     int begin() const {
+      return begin_;
+    }
+
+    int &begin() {
       return begin_;
     }
 
@@ -218,6 +238,10 @@ class GeneralBinarySpaceTree {
      * Gets the number of points in this subset.
      */
     int count() const {
+      return count_;
+    }
+
+    int &count() {
       return count_;
     }
 
