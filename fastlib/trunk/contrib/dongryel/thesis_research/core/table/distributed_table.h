@@ -264,7 +264,8 @@ class DistributedTable: public boost::noncopyable {
                          max_num_leaf_nodes,
                          &global_old_from_new, &global_new_from_old,
                          &num_nodes);
-        printf("Process 0 finished building the top tree.\n");
+        printf("Process 0 finished building the top tree with %d nodes.\n",
+               num_nodes);
 
         // Broadcast the number of nodes to all processes.
         mpi_mutex_.lock();

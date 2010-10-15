@@ -51,6 +51,12 @@ void TestDistributedTree(boost::mpi::communicator &world) {
   printf("Building the distributed tree...\n");
   core::metric_kernels::LMetric<2> l2_metric;
   distributed_table.IndexData(l2_metric, 0.3);
+
+  // Print out the tree.
+  if(world.rank() == world.size() / 2) {
+    printf("Processor %d prints out the tree.\n", world.rank());
+    distributed_table.get_tree()->Print();
+  }
 }
 
 void TestDistributedTable(boost::mpi::communicator &world) {

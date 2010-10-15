@@ -59,12 +59,8 @@ class GeneralBinarySpaceTree {
       ar & bound_;
       ar & begin_;
       ar & count_;
-      if(left_) {
-        ar & (*left_);
-      }
-      if(right_) {
-        ar & (*right_);
-      }
+      ar & left_;
+      ar & right_;
     }
 
     ~GeneralBinarySpaceTree() {
