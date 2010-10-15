@@ -57,6 +57,9 @@ void TestDistributedTree(boost::mpi::communicator &world) {
     printf("Processor %d prints out the tree.\n", world.rank());
     distributed_table.get_tree()->Print();
   }
+
+  // Put a barrier.
+  world.barrier();
 }
 
 void TestDistributedTable(boost::mpi::communicator &world) {
@@ -112,6 +115,9 @@ void TestDistributedTable(boost::mpi::communicator &world) {
     point.reference().print();
   }
   printf("Process %d is all done!\n", world.rank());
+
+  // Put a barrier.
+  world.barrier();
 }
 
 int main(int argc, char *argv[]) {
@@ -131,11 +137,7 @@ int main(int argc, char *argv[]) {
   // Test the distributed table point exchanges.
   TestDistributedTable(world);
 
-  world.barrier();
-
   // Test the distributed tree building.
   TestDistributedTree(world);
-
-  world.barrier();
   return 0;
 }
