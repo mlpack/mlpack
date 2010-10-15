@@ -35,13 +35,96 @@ class DistributedTable: public boost::noncopyable {
 
     TreeType *global_tree_;
 
-    TreeType *global_tree_in_array_form_;
-
     boost::mpi::communicator *comm_;
 
     core::table::PointInbox point_inbox_;
 
     core::table::PointRequestMessageBox point_request_message_box_;
+
+  private:
+
+    void GatherLeafNodes_(
+      TreeType *node, std::vector<TreeType *> &leaf_nodes) {
+
+      if(node->is_leaf()) {
+        leaf_nodes.push_back(node);
+      }
+      else {
+        GatherLeafNodes_(node->left(), leaf_nodes);
+        GatherLeafNodes_(node->right(), leaf_nodes);
+      }
+    }
+
+    void AssignPointsToLeafNode_(
+      const core::metric_kernels::AbstractMetric &metric_in) {
+
+      // Wait until every process gets here.
+      comm_->barrier();
+
+      // Gather the leaf nodes.
+      std::vector< TreeType * > leaf_nodes;
+      GatherLeafNodes_(global_tree_, leaf_nodes);
+
+      // The leaf node assignment for each point.
+      std::vector<int> leaf_assignments(owned_table_->n_entries(), 0);
+
+      for(int i = 0; i < owned_table_->n_entries(); i++) {
+        core::table::DensePoint point;
+        owned_table_->get(i, &point);
+
+        double min_squared_distance = std::numeric_limits<double>::max();
+        for(unsigned int j = 0; j < leaf_nodes.size(); j++) {
+          const TreeType::BoundType &bound = leaf_nodes[j]->bound();
+          double squared_distance = bound.MinDistanceSq(metric_in, point);
+          if(squared_distance < min_squared_distance) {
+            min_squared_distance = squared_distance;
+            leaf_assignments[i] = j;
+          }
+        }
+      }
+    }
+
+    void DistributeTree_(
+      const core::metric_kernels::AbstractMetric & metric_in,
+      int max_num_leaf_nodes,
+      core::table::Table &sampled_table) {
+
+      // Wait until every process gets here.
+      comm_->barrier();
+
+      if(comm_->rank() == 0) {
+
+        int num_nodes;
+        core::table::DenseMatrix &sampled_table_data = sampled_table.data();
+
+        // Build the tree.
+        std::vector<int> global_old_from_new, global_new_from_old;
+        global_tree_ = core::tree::MakeGenMetricTree<TreeType>(
+                         metric_in, sampled_table_data, 2,
+                         max_num_leaf_nodes,
+                         &global_old_from_new, &global_new_from_old,
+                         &num_nodes);
+        printf("Process 0 finished building the top tree with %d nodes.\n",
+               num_nodes);
+
+        // Broadcast the top tree to all the other processes by doing
+        // an in-order traversal.
+        mpi_mutex_.lock();
+        boost::mpi::broadcast(* comm_, *global_tree_, 0);
+        mpi_mutex_.unlock();
+      }
+
+      // For the other nodes,
+      else {
+
+        // Receive back the global tree from the master tree and make
+        // a copy.
+        mpi_mutex_.lock();
+        global_tree_ = new TreeType();
+        boost::mpi::broadcast(*comm_, *global_tree_, 0);
+        mpi_mutex_.unlock();
+      }
+    }
 
   public:
 
@@ -57,7 +140,6 @@ class DistributedTable: public boost::noncopyable {
       comm_ = NULL;
       owned_table_ = NULL;
       global_tree_ = NULL;
-      global_tree_in_array_form_ = NULL;
     }
 
     ~DistributedTable() {
@@ -103,10 +185,6 @@ class DistributedTable: public boost::noncopyable {
       if(global_tree_ != NULL) {
         delete global_tree_;
         global_tree_ = NULL;
-      }
-      if(global_tree_in_array_form_ != NULL) {
-        delete[] global_tree_in_array_form_;
-        global_tree_in_array_form_ = NULL;
       }
     }
 
@@ -197,10 +275,6 @@ class DistributedTable: public boost::noncopyable {
       // the number of machines.
       int max_num_leaf_nodes = comm_->size();
 
-      // The maximum number of nodes in the tree given the specified
-      // number of maximum leaf nodes.
-      int num_nodes;
-
       std::vector< std::vector<int> > list_of_sampled_indices;
       int total_num_sample_points = 0;
 
@@ -250,51 +324,14 @@ class DistributedTable: public boost::noncopyable {
                sampled_table.n_entries());
       }
 
-      // Wait until every process gets here.
-      comm_->barrier();
+      // Get the tree.
+      DistributeTree_(metric_in, max_num_leaf_nodes, sampled_table);
 
-      if(comm_->rank() == 0) {
+      // Now we need to let each process figure out which leaf node it
+      // wants to have.
+      AssignPointsToLeafNode_(metric_in);
 
-        core::table::DenseMatrix &sampled_table_data = sampled_table.data();
-
-        // Build the tree.
-        std::vector<int> global_old_from_new, global_new_from_old;
-        global_tree_ = core::tree::MakeGenMetricTree<TreeType>(
-                         metric_in, sampled_table_data, 2,
-                         max_num_leaf_nodes,
-                         &global_old_from_new, &global_new_from_old,
-                         &num_nodes);
-        printf("Process 0 finished building the top tree with %d nodes.\n",
-               num_nodes);
-
-        // Broadcast the number of nodes to all processes.
-        mpi_mutex_.lock();
-        boost::mpi::broadcast(*comm_, num_nodes, 0);
-        mpi_mutex_.unlock();
-
-        // Broadcast the top tree to all the other processes by doing
-        // an in-order traversal.
-        mpi_mutex_.lock();
-        boost::mpi::broadcast(* comm_, *global_tree_, 0);
-        mpi_mutex_.unlock();
-      }
-
-      // For the other nodes,
-      else {
-
-        // Get the number of nodes from the master node.
-        mpi_mutex_.lock();
-        boost::mpi::broadcast(*comm_, num_nodes, 0);
-        mpi_mutex_.unlock();
-
-        // Receive back the global tree from the master tree and make
-        // a copy.
-        mpi_mutex_.lock();
-        global_tree_ = new TreeType();
-        boost::mpi::broadcast(*comm_, *global_tree_, 0);
-        mpi_mutex_.unlock();
-      }
-
+      // Put a barrier.
       comm_->barrier();
     }
 
