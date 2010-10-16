@@ -23,7 +23,8 @@ class MemoryMappedFile {
     MemoryMappedFile(): m_file_(
         boost::interprocess::open_or_create, "tmp_file", 500000000) {
       mutex_ = (boost::interprocess::interprocess_mutex *)
-               Allocate(sizeof(boost::interprocess::interprocess_mutex));
+               m_file_.allocate(
+                 sizeof(boost::interprocess::interprocess_mutex));
     }
 
     void Init(const std::string &file_name) {

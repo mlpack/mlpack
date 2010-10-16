@@ -18,6 +18,7 @@ bool CheckDistributedTableIntegrity(
   return true;
 }
 
+/*
 void TestDistributedTree(boost::mpi::communicator &world) {
 
   printf("------------------------------------\n");
@@ -120,14 +121,42 @@ void TestDistributedTable(boost::mpi::communicator &world) {
   // Put a barrier.
   world.barrier();
 }
+*/
 
-void PointInboxProcess(boost::mpi::communicator &world) {
-  printf("Process %d: PointInbox.\n", world.rank());
+void PointRequestMessageBoxProcess(
+  boost::mpi::communicator &world,
+  boost::mpi::communicator &table_group) {
+  printf("Process %d: PointRequestMessageBox.\n", world.rank());
+
+  // Each process generates its own random data, dumps it to the file,
+  // and read its own file back into its own distributed table.
+  core::table::Table random_dataset;
+  const int num_dimensions = 5;
+  int num_points = core::math::RandInt(10, 20);
+  random_dataset.Init(5, num_points);
+  for(int j = 0; j < num_points; j++) {
+    core::table::DensePoint point;
+    random_dataset.get(j, &point);
+    for(int i = 0; i < num_dimensions; i++) {
+      point[i] = core::math::Random(0.1, 1.0);
+    }
+  }
+  printf("Process %d generated %d points...\n", world.rank(), num_points);
+  std::stringstream file_name_sstr;
+  file_name_sstr << "random_dataset_" << world.rank() << ".csv";
+  std::string file_name = file_name_sstr.str();
+  random_dataset.Save(file_name);
+
+  core::table::DistributedTable distributed_table;
+  distributed_table.Init(file_name, &world, &table_group);
+  printf(
+    "Process %d read in %d points...\n",
+    world.rank(), distributed_table.local_n_entries());
 
 }
 
-void PointRequestMessageBoxProcess(boost::mpi::communicator &world) {
-  printf("Process %d: PointRequestMessageBox.\n", world.rank());
+void PointInboxProcess(boost::mpi::communicator &world) {
+  printf("Process %d: PointInbox.\n", world.rank());
 
 }
 
@@ -142,7 +171,7 @@ int main(int argc, char *argv[]) {
   boost::mpi::environment env(argc, argv);
   boost::mpi::communicator world;
 
-  if(world.size() <= 1 || world.size() % 3 != 0) {
+  if(world.size() <= 3 || world.size() % 3 != 0) {
     std::cout << "Please specify a process number greater than 1 and "
               "a multiple of 3.\n";
     return 0;
@@ -157,18 +186,20 @@ int main(int argc, char *argv[]) {
   // communicator, make it a table process. Otherwise, make it a
   // computation process. This assignment depends heavily on the
   // round-robin assignment of mpirun.
+  boost::mpi::communicator table_group = world.split(
+      (world.rank() < world.size() / 3) ? 1 : 0);
   if(world.rank() < world.size() / 3) {
-    PointInboxProcess(world);
+    PointRequestMessageBoxProcess(world, table_group);
   }
   else if(world.rank() < world.size() / 3 * 2) {
-    PointRequestMessageBoxProcess(world);
+    PointInboxProcess(world);
   }
   else {
     ComputationProcess(world);
   }
 
   // Test the distributed table point exchanges.
-  TestDistributedTable(world);
+  //TestDistributedTable(world);
 
   // Test the distributed tree building.
   //TestDistributedTree(world);
