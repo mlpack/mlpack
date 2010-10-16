@@ -9,7 +9,7 @@
 #define CORE_TABLE_DENSE_POINT_H
 
 #include <armadillo>
-#include "boost/serialization/string.hpp"
+#include <boost/serialization/serialization.hpp>
 #include "core/table/abstract_point.h"
 
 namespace core {
