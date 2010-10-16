@@ -32,14 +32,6 @@ class BallBound {
 
   public:
 
-    void Swap(BallBound<TPoint> &swap_bound) {
-      std::swap(radius_, swap_bound.radius());
-      TPoint &swap_bound_center = swap_bound.center();
-      for(unsigned int i = 0; i < swap_bound_center.length(); i++) {
-        std::swap(center_[i], swap_bound_center[i]);
-      }
-    }
-
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
       ar & radius_;

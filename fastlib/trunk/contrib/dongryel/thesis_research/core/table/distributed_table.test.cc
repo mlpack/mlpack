@@ -6,6 +6,17 @@
 #include "core/table/distributed_table.h"
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
+#include <new>
+
+core::table::MemoryMappedFile core::table::DistributedTable::global_m_file_;
+
+void *operator new(size_t size) {
+  return core::table::DistributedTable::global_m_file_.Allocate(size);
+}
+
+void operator delete(void *p) {
+  core::table::DistributedTable::global_m_file_.Deallocate(p);
+}
 
 bool CheckDistributedTableIntegrity(
   const core::table::DistributedTable &table_in,
@@ -120,13 +131,31 @@ void TestDistributedTable(boost::mpi::communicator &world) {
   world.barrier();
 }
 
+void PointInboxProcess(boost::mpi::communicator &world) {
+  printf("Process %d: PointInbox.\n", world.rank());
+
+}
+
+void PointRequestMessageBoxProcess(boost::mpi::communicator &world) {
+  printf("Process %d: PointRequestMessageBox.\n", world.rank());
+
+}
+
+void ComputationProcess(boost::mpi::communicator &world) {
+  printf("Process %d: Computation.\n", world.rank());
+
+}
+
 int main(int argc, char *argv[]) {
+
+  // Initialize boost MPI.
   boost::mpi::environment env(argc, argv);
   boost::mpi::communicator world;
 
-  if(world.size() <= 1) {
-    std::cout << "Please specify a process number greater than 1.\n";
-    exit(0);
+  if(world.size() <= 1 || world.size() % 3 != 0) {
+    std::cout << "Please specify a process number greater than 1 and "
+              "a multiple of 3.\n";
+    return 0;
   }
   srand(time(NULL) + world.rank());
 
@@ -134,10 +163,24 @@ int main(int argc, char *argv[]) {
     printf("%d processes are present...\n", world.size());
   }
 
+  // If the process ID is less than half of the size of the
+  // communicator, make it a table process. Otherwise, make it a
+  // computation process. This assignment depends heavily on the
+  // round-robin assignment of mpirun.
+  if(world.rank() < world.size() / 3) {
+    PointInboxProcess(world);
+  }
+  else if(world.rank() < world.size() / 3 * 2) {
+    PointRequestMessageBoxProcess(world);
+  }
+  else {
+    ComputationProcess(world);
+  }
+
   // Test the distributed table point exchanges.
-  TestDistributedTable(world);
+  //TestDistributedTable(world);
 
   // Test the distributed tree building.
-  TestDistributedTree(world);
+  //TestDistributedTree(world);
   return 0;
 }

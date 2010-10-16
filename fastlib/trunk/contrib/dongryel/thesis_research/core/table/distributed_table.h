@@ -15,6 +15,7 @@
 #include "core/table/distributed_table_message.h"
 #include "core/table/point_request_message.h"
 #include "core/table/mailbox.h"
+#include "core/table/memory_mapped_file.h"
 
 namespace core {
 namespace table {
@@ -453,6 +454,9 @@ class DistributedTable: public boost::noncopyable {
     void PrintTree() const {
       global_tree_->Print();
     }
+
+  public:
+    static core::table::MemoryMappedFile global_m_file_;
 };
 };
 };

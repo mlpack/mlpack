@@ -8,6 +8,7 @@ set(SOURCES
   distributed_table.h
   distributed_table_message.h
   mailbox.h
+  memory_mapped_file.h
   point_request_message.h
   table.h
   transform.h
