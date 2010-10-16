@@ -7,6 +7,7 @@
 #define CORE_TABLE_DISTRIBUTED_TABLE_H
 
 #include <armadillo>
+#include <new>
 #include "boost/mpi.hpp"
 #include "boost/mpi/collectives.hpp"
 #include "boost/thread.hpp"
@@ -21,10 +22,13 @@ namespace core {
 namespace table {
 class DistributedTable: public boost::noncopyable {
 
+  public:
     typedef core::tree::GeneralBinarySpaceTree < core::tree::BallBound <
     core::table::DensePoint > > TreeType;
 
   private:
+
+    core::table::MemoryMappedFile global_m_file_;
 
     /** @brief The mutex for each MPI call.
      */
@@ -129,7 +133,7 @@ class DistributedTable: public boost::noncopyable {
                          metric_in, sampled_table_data, 2,
                          max_num_leaf_nodes,
                          &global_old_from_new, &global_new_from_old,
-                         &num_nodes);
+                         &num_nodes, &global_m_file_);
         printf("Process 0 finished building the top tree with %d nodes.\n",
                num_nodes);
 
@@ -454,9 +458,6 @@ class DistributedTable: public boost::noncopyable {
     void PrintTree() const {
       global_tree_->Print();
     }
-
-  public:
-    static core::table::MemoryMappedFile global_m_file_;
 };
 };
 };
