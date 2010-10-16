@@ -6,6 +6,8 @@
 #ifndef CORE_TABLE_POINT_REQUEST_MESSAGE_H
 #define CORE_TABLE_POINT_REQUEST_MESSAGE_H
 
+#include <boost/serialization/serialization.hpp>
+
 namespace core {
 namespace table {
 
