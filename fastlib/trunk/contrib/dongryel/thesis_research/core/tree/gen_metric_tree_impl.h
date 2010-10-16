@@ -9,6 +9,7 @@
 #include <deque>
 #include "core/metric_kernels/abstract_metric.h"
 #include "core/table/dense_matrix.h"
+#include "core/table/memory_mapped_file.h"
 
 namespace core {
 namespace tree_private {
@@ -132,7 +133,8 @@ bool AttemptSplitting(
   const core::metric_kernels::AbstractMetric &metric_in,
   core::table::DenseMatrix& matrix, TMetricTree *node, TMetricTree **left,
   TMetricTree **right, int leaf_size,
-  std::vector<int> *old_from_new) {
+  std::vector<int> *old_from_new,
+  core::table::MemoryMappedFile *m_file_in) {
 
   // Pick a random row.
   int random_row = core::math::RandInt(
@@ -167,8 +169,10 @@ bool AttemptSplitting(
     return false;
   }
   else {
-    *left = new TMetricTree();
-    *right = new TMetricTree();
+    *left = (m_file_in) ? (TMetricTree *)
+            m_file_in->Allocate(sizeof(TMetricTree)) : new TMetricTree();
+    *right = (m_file_in) ? (TMetricTree *)
+             m_file_in->Allocate(sizeof(TMetricTree)) : new TMetricTree();
 
     ((*left)->bound().center()).Copy(furthest_from_random_row_vec);
     ((*right)->bound().center()).Copy(furthest_from_furthest_random_row_vec);
@@ -216,7 +220,8 @@ void SplitGenMetricTree(
   int max_num_leaf_nodes,
   int *current_num_leaf_nodes,
   std::vector<int> *old_from_new,
-  int *num_nodes) {
+  int *num_nodes,
+  core::table::MemoryMappedFile *m_file_in) {
 
   TMetricTree *left = NULL;
   TMetricTree *right = NULL;
@@ -233,17 +238,17 @@ void SplitGenMetricTree(
   else {
     bool can_cut = AttemptSplitting(
                      metric_in, matrix, node, &left, &right,
-                     leaf_size, old_from_new);
+                     leaf_size, old_from_new, m_file_in);
 
     if(can_cut) {
       (*current_num_leaf_nodes)++;
       (*num_nodes) = (*num_nodes) + 2;
       SplitGenMetricTree(
         metric_in, matrix, left, leaf_size, max_num_leaf_nodes,
-        current_num_leaf_nodes, old_from_new, num_nodes);
+        current_num_leaf_nodes, old_from_new, num_nodes, m_file_in);
       SplitGenMetricTree(
         metric_in, matrix, right, leaf_size, max_num_leaf_nodes,
-        current_num_leaf_nodes, old_from_new, num_nodes);
+        current_num_leaf_nodes, old_from_new, num_nodes, m_file_in);
       CombineBounds(metric_in, matrix, node, left, right);
     }
     else {

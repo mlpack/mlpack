@@ -8,16 +8,6 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <new>
 
-core::table::MemoryMappedFile core::table::DistributedTable::global_m_file_;
-
-void *operator new(size_t size) {
-  return core::table::DistributedTable::global_m_file_.Allocate(size);
-}
-
-void operator delete(void *p) {
-  core::table::DistributedTable::global_m_file_.Deallocate(p);
-}
-
 bool CheckDistributedTableIntegrity(
   const core::table::DistributedTable &table_in,
   const boost::mpi::communicator &world) {
@@ -178,7 +168,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Test the distributed table point exchanges.
-  //TestDistributedTable(world);
+  TestDistributedTable(world);
 
   // Test the distributed tree building.
   //TestDistributedTree(world);

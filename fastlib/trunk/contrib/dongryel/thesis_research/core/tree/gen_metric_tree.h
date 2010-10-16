@@ -11,6 +11,7 @@
 #include "general_spacetree.h"
 #include "gen_metric_tree_impl.h"
 #include "core/table/dense_matrix.h"
+#include "core/table/memory_mapped_file.h"
 
 /**
  * Regular pointer-style trees.
@@ -42,9 +43,12 @@ TMetricTree *MakeGenMetricTree(
   int max_num_leaf_nodes = std::numeric_limits<int>::max(),
   std::vector<int> *old_from_new = NULL,
   std::vector<int> *new_from_old = NULL,
-  int *num_nodes = NULL) {
+  int *num_nodes = NULL,
+  core::table::MemoryMappedFile *m_file_in = NULL) {
 
-  TMetricTree *node = new TMetricTree();
+  TMetricTree *node = (m_file_in) ?
+                      (TMetricTree *) m_file_in->Allocate(sizeof(TMetricTree)) :
+                      new TMetricTree();
   std::vector<int> *old_from_new_ptr;
 
   if(old_from_new) {
@@ -65,7 +69,7 @@ TMetricTree *MakeGenMetricTree(
   int current_num_leaf_nodes = 1;
   core::tree_private::SplitGenMetricTree<TMetricTree>(
     metric_in, matrix, node, leaf_size, max_num_leaf_nodes,
-    &current_num_leaf_nodes, old_from_new_ptr, &num_nodes_in);
+    &current_num_leaf_nodes, old_from_new_ptr, &num_nodes_in, m_file_in);
 
   if(num_nodes) {
     *num_nodes = num_nodes_in;
