@@ -88,16 +88,6 @@ class GeneralBinarySpaceTree {
 
   public:
 
-    void Swap(GeneralBinarySpaceTree &swap_with) {
-
-      bound_.Swap(swap_with.bound());
-      std::swap(left_, swap_with.left());
-      std::swap(right_, swap_with.right());
-      std::swap(begin_, swap_with.begin());
-      std::swap(count_, swap_with.count());
-      std::swap(stat_, swap_with.stat());
-    }
-
     void Init(int begin_in, int count_in) {
       begin_ = begin_in;
       count_ = count_in;
