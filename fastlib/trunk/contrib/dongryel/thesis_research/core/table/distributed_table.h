@@ -42,7 +42,9 @@ class DistributedTable: public boost::noncopyable {
 
     std::vector< TreeType * > global_tree_leaf_nodes_;
 
-    boost::mpi::communicator *comm_;
+    boost::mpi::communicator *global_comm_;
+
+    boost::mpi::communicator *table_group_comm_;
 
     core::table::PointInbox point_inbox_;
 
@@ -66,9 +68,9 @@ class DistributedTable: public boost::noncopyable {
       const core::metric_kernels::AbstractMetric &metric_in) {
 
       // Wait until every process gets here.
-      comm_->barrier();
+      global_comm_->barrier();
 
-      printf("Process %d is in AssignPointsToLeafNode_.\n", comm_->rank());
+      printf("Process %d is in AssignPointsToLeafNode_.\n", global_comm_->rank());
 
       // Gather the leaf nodes.
       GatherLeafNodes_(global_tree_, global_tree_leaf_nodes_);
@@ -91,8 +93,8 @@ class DistributedTable: public boost::noncopyable {
           }
         }
       }
-      int *count_distribution = new int[ comm_->size()];
-      memset(count_distribution, 0, sizeof(int) * comm_->size());
+      int *count_distribution = new int[ global_comm_->size()];
+      memset(count_distribution, 0, sizeof(int) * global_comm_->size());
       for(unsigned int i = 0; i < leaf_assignments.size(); i++) {
         count_distribution[ leaf_assignments[i] ]++;
       }
@@ -100,13 +102,13 @@ class DistributedTable: public boost::noncopyable {
       // Do an all-reduce.
       mpi_mutex_.lock();
       boost::mpi::all_reduce(
-        *comm_, count_distribution, comm_->size(),
+        *global_comm_, count_distribution, global_comm_->size(),
         local_n_entries_, std::plus<int>());
       delete count_distribution;
       mpi_mutex_.unlock();
 
-      printf("Process %d:\n", comm_->rank());
-      for(int i = 0; i < comm_->size(); i++) {
+      printf("Process %d:\n", global_comm_->rank());
+      for(int i = 0; i < global_comm_->size(); i++) {
         printf("%d ", local_n_entries_[i]);
       }
       printf("\n");
@@ -118,9 +120,9 @@ class DistributedTable: public boost::noncopyable {
       core::table::Table &sampled_table) {
 
       // Wait until every process gets here.
-      comm_->barrier();
+      global_comm_->barrier();
 
-      if(comm_->rank() == 0) {
+      if(global_comm_->rank() == 0) {
 
         printf("Process 0 is building the tree and distributing the tree.\n");
 
@@ -140,20 +142,20 @@ class DistributedTable: public boost::noncopyable {
         // Broadcast the top tree to all the other processes by doing
         // an in-order traversal.
         mpi_mutex_.lock();
-        boost::mpi::broadcast(* comm_, *global_tree_, 0);
+        boost::mpi::broadcast(* global_comm_, *global_tree_, 0);
         mpi_mutex_.unlock();
       }
 
       // For the other nodes,
       else {
 
-        printf("Process %d is receiving the tree.\n", comm_->rank());
+        printf("Process %d is receiving the tree.\n", global_comm_->rank());
 
         // Receive back the global tree from the master tree and make
         // a copy.
         mpi_mutex_.lock();
         global_tree_ = new TreeType();
-        boost::mpi::broadcast(*comm_, *global_tree_, 0);
+        boost::mpi::broadcast(*global_comm_, *global_tree_, 0);
         mpi_mutex_.unlock();
       }
     }
@@ -161,7 +163,7 @@ class DistributedTable: public boost::noncopyable {
   public:
 
     int rank() const {
-      return comm_->rank();
+      return global_comm_->rank();
     }
 
     bool IsIndexed() const {
@@ -169,19 +171,20 @@ class DistributedTable: public boost::noncopyable {
     }
 
     DistributedTable() {
-      comm_ = NULL;
+      global_comm_ = NULL;
       owned_table_ = NULL;
       global_tree_ = NULL;
     }
 
     ~DistributedTable() {
 
+      /*
       // Terminate the point request message box.
       {
         {
           boost::unique_lock<boost::mutex> lock_in(mpi_mutex_);
-          comm_->isend(
-            comm_->rank(),
+          global_comm_->isend(
+            global_comm_->rank(),
             core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_BOX, 0);
         }
         point_request_message_box_.Join();
@@ -191,16 +194,17 @@ class DistributedTable: public boost::noncopyable {
       {
         {
           boost::unique_lock<boost::mutex> lock_in(mpi_mutex_);
-          comm_->isend(
-            comm_->rank(),
+          global_comm_->isend(
+            global_comm_->rank(),
             core::table::DistributedTableMessage::TERMINATE_POINT_INBOX, 0);
         }
         point_inbox_.Join();
       }
+      */
 
-      // Put a barrier so that all processes are ready to destroy each
-      // of their own tables and trees.
-      comm_->barrier();
+      // Put a barrier so that all processes owning a part of a
+      // distributed table are ready to destroy.
+      table_group_comm_->barrier();
 
       // Delete the list of number of entries for each table in the
       // distributed table.
@@ -268,23 +272,25 @@ class DistributedTable: public boost::noncopyable {
 
     void Init(
       const std::string & file_name,
-      boost::mpi::communicator * communicator_in) {
+      boost::mpi::communicator * global_communicator_in,
+      boost::mpi::communicator *table_group_communicator_in) {
 
-      // Set the communicator and read the table.
-      comm_ = communicator_in;
+      // Set the communicators and read the table.
+      global_comm_ = global_communicator_in;
+      table_group_comm_ = table_group_communicator_in;
       owned_table_ = new core::table::Table();
       owned_table_->Init(file_name);
 
       // Allocate the vector for storing the number of entries for all
       // the tables in the world, and do an all-gather operation to
       // find out all the sizes.
-      local_n_entries_ = new int[ comm_->size()];
+      local_n_entries_ = new int[ table_group_comm_->size()];
       boost::mpi::all_gather(
-        *comm_, owned_table_->n_entries(), local_n_entries_);
+        *table_group_comm_, owned_table_->n_entries(), local_n_entries_);
 
       // Initialize the mail boxes.
-      point_inbox_.Init(comm_, &mpi_mutex_);
-      point_request_message_box_.Init(comm_, &mpi_mutex_, owned_table_);
+      // point_inbox_.Init(global_comm_, &mpi_mutex_);
+      // point_request_message_box_.Init(global_comm_, &mpi_mutex_, owned_table_);
     }
 
     void Save(const std::string & file_name) const {
@@ -298,7 +304,7 @@ class DistributedTable: public boost::noncopyable {
       // For each process, select a subset of indices to send to the
       // master node.
       printf("Process %d is generating samples to send to Process 0.\n",
-             comm_->rank());
+             global_comm_->rank());
       std::vector<int> sampled_indices;
       for(int i = 0; i < owned_table_->n_entries(); i++) {
         if(core::math::Random() <= sample_probability_in) {
@@ -308,19 +314,19 @@ class DistributedTable: public boost::noncopyable {
 
       // The number of maximum leaf nodes for the top tree is equal to
       // the number of machines.
-      int max_num_leaf_nodes = comm_->size();
+      int max_num_leaf_nodes = global_comm_->size();
 
       std::vector< std::vector<int> > list_of_sampled_indices;
       int total_num_sample_points = 0;
 
       // For the master node,
-      if(comm_->rank() == 0) {
+      if(global_comm_->rank() == 0) {
 
         // Find out the list of points sampled so that we can build a
         // sampled table to build the tree from.
         mpi_mutex_.lock();
         boost::mpi::gather(
-          *comm_, sampled_indices, list_of_sampled_indices, 0);
+          *global_comm_, sampled_indices, list_of_sampled_indices, 0);
         mpi_mutex_.unlock();
 
         // Gather all the necessary data from all of the proceses.
@@ -332,15 +338,15 @@ class DistributedTable: public boost::noncopyable {
 
         // Send the list of sampled indices to the master.
         mpi_mutex_.lock();
-        boost::mpi::gather(*comm_, sampled_indices, 0);
+        boost::mpi::gather(*global_comm_, sampled_indices, 0);
         mpi_mutex_.unlock();
       }
 
       // Wait until every process gets here.
-      comm_->barrier();
+      global_comm_->barrier();
 
       core::table::Table sampled_table;
-      if(comm_->rank() == 0) {
+      if(global_comm_->rank() == 0) {
         sampled_table.Init(this->n_attributes(), total_num_sample_points);
         core::table::DenseMatrix &sampled_table_data = sampled_table.data();
 
@@ -367,14 +373,14 @@ class DistributedTable: public boost::noncopyable {
       AssignPointsToLeafNode_(metric_in);
 
       // Put a barrier.
-      comm_->barrier();
+      global_comm_->barrier();
 
       // Each process reallocates the table.
       core::table::Table *new_table = new core::table::Table();
-      new_table->Init(this->n_attributes(), local_n_entries_[ comm_->rank()]);
+      new_table->Init(this->n_attributes(), local_n_entries_[ global_comm_->rank()]);
 
       // Put a barrier.
-      comm_->barrier();
+      global_comm_->barrier();
     }
 
     void get(
@@ -384,19 +390,19 @@ class DistributedTable: public boost::noncopyable {
       // If owned by the process, just return the point. Otherwise, we
       // need to send an MPI request to the process holding the
       // required resource.
-      if(comm_->rank() == requested_rank) {
+      if(global_comm_->rank() == requested_rank) {
         owned_table_->get(point_id, entry_out);
       }
       else {
 
         // The point request message.
         core::table::PointRequestMessage point_request_message(
-          comm_->rank(), point_id);
+          global_comm_->rank(), point_id);
 
         // Inform the source processor that this processor needs data!
         {
           boost::unique_lock<boost::mutex> lock_in(mpi_mutex_);
-          comm_->isend(
+          global_comm_->isend(
             requested_rank,
             core::table::DistributedTableMessage::REQUEST_POINT,
             point_request_message);
@@ -424,19 +430,19 @@ class DistributedTable: public boost::noncopyable {
       // If owned by the process, just return the point. Otherwise, we
       // need to send an MPI request to the process holding the
       // required resource.
-      if(comm_->rank() == requested_rank) {
+      if(global_comm_->rank() == requested_rank) {
         owned_table_->get(point_id, entry);
       }
       else {
 
         // The point request message.
         core::table::PointRequestMessage point_request_message(
-          comm_->rank(), point_id);
+          global_comm_->rank(), point_id);
 
         // Inform the source processor that this processor needs data!
         {
           boost::unique_lock<boost::mutex> lock_in(mpi_mutex_);
-          comm_->isend(
+          global_comm_->isend(
             requested_rank,
             core::table::DistributedTableMessage::REQUEST_POINT,
             point_request_message);
