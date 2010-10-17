@@ -23,6 +23,8 @@ class Table: public boost::noncopyable {
     typedef core::tree::GeneralBinarySpaceTree < core::tree::BallBound <
     core::table::DensePoint > > TreeType;
 
+    static core::table::MemoryMappedFile *global_m_file_;
+
   public:
 
     class TreeIterator {
@@ -145,7 +147,12 @@ class Table: public boost::noncopyable {
     }
 
     ~Table() {
-      delete tree_;
+      if(global_m_file_) {
+        RecursiveDeallocate_(tree_);
+      }
+      else {
+        delete tree_;
+      }
       tree_ = NULL;
     }
 
@@ -254,6 +261,14 @@ class Table: public boost::noncopyable {
     }
 
   private:
+
+    void RecursiveDeallocate_(TreeType *node) {
+      if(node->is_leaf() == false) {
+        RecursiveDeallocate_(node->left());
+        RecursiveDeallocate_(node->right());
+      }
+      global_m_file_->Deallocate(node);
+    }
 
     void direct_get_(int point_id, double *entry) const {
       if(this->IsIndexed() == false) {

@@ -10,8 +10,8 @@
 
 #include <armadillo>
 #include <boost/serialization/serialization.hpp>
-#include "core/table/abstract_point.h"
-#include "core/table/memory_mapped_file.h"
+#include "abstract_point.h"
+#include "memory_mapped_file.h"
 
 namespace core {
 namespace table {
@@ -29,7 +29,6 @@ class DenseConstPoint: public core::table::AbstractPoint {
     }
 
     virtual ~DenseConstPoint() {
-
       // A const point is always defined as an alias to a part of an
       // already-existing memory block, so you do not free it.
       Reset();
@@ -104,6 +103,7 @@ class DensePoint: public DenseConstPoint {
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
     void Reset() {
+      DenseConstPoint::Reset();
       is_alias_ = false;
     }
 
@@ -113,9 +113,13 @@ class DensePoint: public DenseConstPoint {
 
     virtual ~DensePoint() {
       if(DenseConstPoint::ptr_ != NULL && is_alias_ == false) {
-        delete DenseConstPoint::ptr_;
+        if(global_m_file_) {
+          global_m_file_->Deallocate(ptr_);
+        }
+        else {
+          delete DenseConstPoint::ptr_;
+        }
       }
-      DenseConstPoint::Reset();
       Reset();
     }
 
@@ -129,6 +133,7 @@ class DensePoint: public DenseConstPoint {
         (double *) global_m_file_->Allocate(sizeof(double) * length_in) :
         new double[length_in];
       DenseConstPoint::n_rows_ = length_in;
+      is_alias_ = false;
     }
 
     void Init(const std::vector<double> &vector_in) {
@@ -140,17 +145,20 @@ class DensePoint: public DenseConstPoint {
       for(unsigned int i = 0; i < vector_in.size(); i++) {
         ptr_[i] = vector_in[i];
       }
+      is_alias_ = false;
     }
 
     void Copy(const DenseConstPoint &point_in) {
       DenseConstPoint::ptr_ =
         (global_m_file_) ?
-        (double *) global_m_file_->Allocate(sizeof(double) * point_in.length()) :
+        (double *) global_m_file_->Allocate(
+          sizeof(double) * point_in.length()) :
         new double[point_in.length()];
       memcpy(
         DenseConstPoint::ptr_, point_in.ptr(),
         sizeof(double) * point_in.length());
       DenseConstPoint::n_rows_ = point_in.length();
+      is_alias_ = false;
     }
 
     void SetZero() {
@@ -164,7 +172,11 @@ class DensePoint: public DenseConstPoint {
     }
 
     void operator=(const core::table::DenseConstPoint &point_in) {
+      if(ptr_ == NULL) {
+        this->Init(point_in.length());
+      }
       memcpy(ptr_, point_in.ptr(), sizeof(double) * point_in.length());
+      is_alias_ = false;
     }
 
     void operator+=(const core::table::DenseConstPoint &point_in) {
