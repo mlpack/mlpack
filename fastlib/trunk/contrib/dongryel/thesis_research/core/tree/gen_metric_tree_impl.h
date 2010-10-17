@@ -25,8 +25,10 @@ void MakeLeafMetricTreeNode(
   bounds->center().SetZero();
 
   int end = begin + count;
+  core::table::DenseConstPoint col_point;
   for(int i = begin; i < end; i++) {
-    bounds->center() += matrix.col(i);
+    matrix.MakeColumnVector(i, &col_point);
+    bounds->center() += col_point;
   }
   bounds->center() /= ((double) count);
 
@@ -51,7 +53,7 @@ int MatrixPartition(
   for(int left = first; left < end; left++) {
 
     // Make alias of the current point.
-    core::table::DensePoint point;
+    core::table::DenseConstPoint point;
     matrix.MakeColumnVector(left, &point);
 
     // Compute the distances from the two pivots.
@@ -115,7 +117,7 @@ int FurthestColumnIndex(
   *furthest_distance = -1.0;
 
   for(int i = begin; i < end; i++) {
-    core::table::DensePoint point;
+    core::table::DenseConstPoint point;
     matrix.MakeColumnVector(i, &point);
     double distance_between_center_and_point = metric_in.Distance(pivot, point);
 
@@ -195,12 +197,13 @@ void CombineBounds(
   TMetricTree *node, TMetricTree *left, TMetricTree *right) {
 
   // Compute the weighted sum of the two pivots
-  node->bound().center().reference() =
-    left->count() * left->bound().center().reference();
-  node->bound().center().reference() = node->bound().center().reference() +
-                                       right->count() *
-                                       right->bound().center().reference();
-  node->bound().center().reference() /= ((double) node->count());
+  node->bound().center() = left->bound().center();
+  node->bound().center() *= left->count();
+  core::table::DensePoint right_contrib;
+  right_contrib.Copy(right->bound().center());
+  right_contrib *= right->count();
+  node->bound().center() += right_contrib;
+  node->bound().center() /= ((double) node->count());
 
   double left_max_dist, right_max_dist;
   FurthestColumnIndex(

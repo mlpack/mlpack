@@ -211,12 +211,12 @@ class Table: public boost::noncopyable {
 
     void Save(const std::string &file_name) const {
       FILE *foutput = fopen(file_name.c_str(), "w+");
-      for(unsigned int j = 0; j < data_.n_cols; j++) {
+      for(int j = 0; j < data_.n_cols(); j++) {
         core::table::DenseConstPoint point;
         this->direct_get_(j, &point);
-        for(unsigned int i = 0; i < data_.n_rows; i++) {
+        for(int i = 0; i < data_.n_rows(); i++) {
           fprintf(foutput, "%g", point[i]);
-          if(i < data_.n_rows - 1) {
+          if(i < data_.n_rows() - 1) {
             fprintf(foutput, ",");
           }
         }

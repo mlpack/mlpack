@@ -52,9 +52,9 @@ TMetricTree *MakeGenMetricTree(
   std::vector<int> *old_from_new_ptr;
 
   if(old_from_new) {
-    old_from_new->resize(matrix.n_cols);
+    old_from_new->resize(matrix.n_cols());
 
-    for(unsigned int i = 0; i < matrix.n_cols; i++) {
+    for(int i = 0; i < matrix.n_cols(); i++) {
       (*old_from_new)[i] = i;
     }
     old_from_new_ptr = old_from_new;
@@ -64,8 +64,8 @@ TMetricTree *MakeGenMetricTree(
   }
 
   int num_nodes_in = 1;
-  node->Init(0, matrix.n_cols);
-  node->bound().center().Init(matrix.n_rows);
+  node->Init(0, matrix.n_cols());
+  node->bound().center().Init(matrix.n_rows());
   int current_num_leaf_nodes = 1;
   core::tree_private::SplitGenMetricTree<TMetricTree>(
     metric_in, matrix, node, leaf_size, max_num_leaf_nodes,
@@ -75,8 +75,8 @@ TMetricTree *MakeGenMetricTree(
     *num_nodes = num_nodes_in;
   }
   if(new_from_old) {
-    new_from_old->resize(matrix.n_cols);
-    for(unsigned int i = 0; i < matrix.n_cols; i++) {
+    new_from_old->resize(matrix.n_cols());
+    for(int i = 0; i < matrix.n_cols(); i++) {
       (*new_from_old)[(*old_from_new)[i]] = i;
     }
   }

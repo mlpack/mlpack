@@ -9,7 +9,8 @@
 #define CORE_TREE_GENERAL_SPACETREE_H
 
 #include <armadillo>
-#include "boost/serialization/string.hpp"
+#include <boost/serialization/string.hpp>
+#include "core/table/dense_matrix.h"
 #include "statistic.h"
 
 /**
@@ -153,7 +154,7 @@ class GeneralBinarySpaceTree {
      * Used only when constructing the tree.
      */
     void set_children(
-      const arma::mat& data, GeneralBinarySpaceTree *left_in,
+      const core::table::DenseMatrix& data, GeneralBinarySpaceTree *left_in,
       GeneralBinarySpaceTree *right_in) {
 
       left_ = left_in;

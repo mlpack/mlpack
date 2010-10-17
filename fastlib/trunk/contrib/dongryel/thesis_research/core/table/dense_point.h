@@ -17,72 +17,48 @@ namespace table {
 class DenseConstPoint: public core::table::AbstractPoint {
   protected:
 
-    arma::vec *ptr_;
+    double *ptr_;
 
-    friend class boost::serialization::access;
+    int n_rows_;
 
   public:
 
-    template<class Archive>
-    void save(Archive &ar, const unsigned int version) const {
-
-      // First the length of the point.
-      ar & ptr_->n_rows;
-      for(unsigned int i = 0; i < ptr_->n_rows; i++) {
-        double element = (*ptr_)[i];
-        ar & element;
-      }
+    const double *ptr() const {
+      return ptr_;
     }
-
-    template<class Archive>
-    void load(Archive &ar, const unsigned int version) {
-
-      // Load the length of the point.
-      int length;
-      ar & length;
-
-      // Allocate the point.
-      ptr_ = new arma::vec();
-      ptr_->set_size(length);
-      for(int i = 0; i < length; i++) {
-        ar & ((*ptr_)[i]);
-      }
-    }
-    BOOST_SERIALIZATION_SPLIT_MEMBER()
 
     virtual ~DenseConstPoint() {
-      delete ptr_;
-      ptr_ = NULL;
+
+      // A const point is always defined as an alias to a part of an
+      // already-existing memory block, so you do not free it.
+      Reset();
     }
 
-    const arma::vec &reference() const {
-      return *ptr_;
+    void Reset() {
+      ptr_ = NULL;
+      n_rows_ = 0;
     }
 
     DenseConstPoint() {
-      ptr_ = NULL;
+      Reset();
     }
 
     int length() const {
-      return ptr_->n_elem;
+      return n_rows_;
     }
 
     double operator[](int i) const {
-      return (*ptr_)[i];
+      return ptr_[i];
     }
 
-    void Alias(const double *ptr_in, int length_in) {
-      if(ptr_ != NULL) {
-        delete ptr_;
-      }
-      ptr_ = new arma::vec(ptr_in, length_in);
+    void Alias(double *ptr_in, int length_in) {
+      ptr_ = ptr_in;
+      n_rows_ = length_in;
     }
 
     void Alias(const DenseConstPoint &point_in) {
-      if(ptr_ != NULL) {
-        delete ptr_;
-      }
-      ptr_ = new arma::vec(point_in.reference().memptr(), point_in.length());
+      ptr_ = const_cast<double *>(point_in.ptr());
+      n_rows_ = point_in.length();
     }
 };
 
@@ -92,74 +68,106 @@ class DensePoint: public DenseConstPoint {
 
     friend class boost::serialization::access;
 
+    bool is_alias_;
+
   public:
 
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
-      ar & boost::serialization::base_object<DenseConstPoint>(*this);
+
+      // First the length of the point.
+      ar & n_rows_;
+      for(int i = 0; i < n_rows_; i++) {
+        double element = ptr_[i];
+        ar & element;
+      }
     }
 
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
-      ar & boost::serialization::base_object<DenseConstPoint>(*this);
+      // Load the length of the point.
+      int length;
+      ar & length;
+
+      // Allocate the point.
+      ptr_ = new double[length];
+      for(int i = 0; i < length; i++) {
+        ar & (ptr_[i]);
+      }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
-    virtual ~DensePoint() {
+    void Reset() {
+      is_alias_ = false;
     }
 
-    arma::vec &reference() {
-      return *ptr_;
+    DensePoint() {
+      Reset();
+    }
+
+    virtual ~DensePoint() {
+      if(DenseConstPoint::ptr_ != NULL && is_alias_ == false) {
+        delete DenseConstPoint::ptr_;
+      }
+      DenseConstPoint::Reset();
+      Reset();
     }
 
     double &operator[](int i) {
-      return (* DenseConstPoint::ptr_)[i];
+      return DenseConstPoint::ptr_[i];
     }
 
     void Init(int length_in) {
-      if(ptr_ != NULL) {
-        delete ptr_;
-      }
-      DenseConstPoint::ptr_ = new arma::vec();
-      DenseConstPoint::ptr_->set_size(length_in);
+      DenseConstPoint::ptr_ = new double[length_in];
+      DenseConstPoint::n_rows_ = length_in;
     }
 
     void Init(const std::vector<double> &vector_in) {
-      if(ptr_ != NULL) {
-        delete ptr_;
-      }
-      DenseConstPoint::ptr_ = new arma::vec();
-      DenseConstPoint::ptr_->set_size(vector_in.size());
+      DenseConstPoint::ptr_ = new double[vector_in.size()];
+      DenseConstPoint::n_rows_ = vector_in.size();
       for(unsigned int i = 0; i < vector_in.size(); i++) {
-        (*ptr_)[i] = vector_in[i];
+        ptr_[i] = vector_in[i];
       }
     }
 
-    void Copy(DensePoint &point_in) {
-      if(ptr_ != NULL) {
-        delete ptr_;
-      }
-      DenseConstPoint::ptr_ = new arma::vec(
-        point_in.reference().memptr(), point_in.length(), true);
+    void Copy(const DenseConstPoint &point_in) {
+      DenseConstPoint::ptr_ = new double[point_in.length()];
+      memcpy(
+        DenseConstPoint::ptr_, point_in.ptr(),
+        sizeof(double) * point_in.length());
+      DenseConstPoint::n_rows_ = point_in.length();
     }
 
     void SetZero() {
-      ptr_->fill(0.0);
+      memset(ptr_, 0, sizeof(double) * n_rows_);
     }
 
     void Alias(double *ptr_in, int length_in) {
-      if(ptr_ != NULL) {
-        delete ptr_;
-      }
-      ptr_ = new arma::vec(ptr_in, length_in, false);
+      DenseConstPoint::ptr_ = ptr_in;
+      DenseConstPoint::n_rows_ = length_in;
+      is_alias_ = true;
     }
 
-    void operator+=(const arma::vec &point_in) {
-      (*ptr_) += point_in;
+    void operator=(const core::table::DenseConstPoint &point_in) {
+      memcpy(ptr_, point_in.ptr(), sizeof(double) * point_in.length());
+    }
+
+    void operator+=(const core::table::DenseConstPoint &point_in) {
+      for(int i = 0; i < point_in.length(); i++) {
+        ptr_[i] += point_in[i];
+      }
     }
 
     void operator/=(double scale_factor) {
-      (*ptr_) /= scale_factor;
+      for(int i = 0; i < DenseConstPoint::n_rows_; i++) {
+        ptr_[i] /= scale_factor;
+      }
+    }
+
+    void operator*=(double scale_factor) {
+      for(int i = 0; i < DenseConstPoint::n_rows_; i++) {
+        ptr_[i] *= scale_factor;
+      }
     }
 };
 };
