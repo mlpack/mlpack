@@ -117,7 +117,7 @@ class DensePoint: public DenseConstPoint {
           global_m_file_->Deallocate(ptr_);
         }
         else {
-          delete DenseConstPoint::ptr_;
+          delete[] DenseConstPoint::ptr_;
         }
       }
       Reset();
