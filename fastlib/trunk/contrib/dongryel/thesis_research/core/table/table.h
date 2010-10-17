@@ -190,21 +190,23 @@ class Table: public boost::noncopyable {
     }
 
     int n_attributes() const {
-      return data_.n_rows;
+      return data_.n_rows();
     }
 
     int n_entries() const {
-      return data_.n_cols;
+      return data_.n_cols();
     }
 
-    void Init(int num_dimensions_in, int num_points_in) {
-      data_.set_size(num_dimensions_in, num_points_in);
-      data_.fill(0);
+    void Init(
+      int num_dimensions_in, int num_points_in,
+      core::table::MemoryMappedFile *m_file_in = NULL) {
+      data_.Init(num_dimensions_in, num_points_in, m_file_in);
     }
 
-    void Init(const std::string &file_name) {
+    void Init(const std::string &file_name,
+              core::table::MemoryMappedFile *m_file_in = NULL) {
       core::DatasetReader::ParseDataset(
-        file_name, &data_);
+        file_name, &data_, m_file_in);
     }
 
     void Save(const std::string &file_name) const {
