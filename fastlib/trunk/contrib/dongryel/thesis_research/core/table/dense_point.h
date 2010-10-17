@@ -73,6 +73,18 @@ class DensePoint: public DenseConstPoint {
 
     bool is_alias_;
 
+  private:
+    void DestructPtr_() {
+      if(DenseConstPoint::ptr_ != NULL && is_alias_ == false) {
+        if(global_m_file_) {
+          global_m_file_->Deallocate(ptr_);
+        }
+        else {
+          delete[] DenseConstPoint::ptr_;
+        }
+      }
+    }
+
   public:
 
     template<class Archive>
@@ -112,14 +124,7 @@ class DensePoint: public DenseConstPoint {
     }
 
     virtual ~DensePoint() {
-      if(DenseConstPoint::ptr_ != NULL && is_alias_ == false) {
-        if(global_m_file_) {
-          global_m_file_->Deallocate(ptr_);
-        }
-        else {
-          delete[] DenseConstPoint::ptr_;
-        }
-      }
+      DestructPtr_();
       Reset();
     }
 
@@ -149,9 +154,7 @@ class DensePoint: public DenseConstPoint {
     }
 
     void Copy(const DenseConstPoint &point_in) {
-      if(ptr_ && is_alias_ == false) {
-        delete ptr_;
-      }
+      DestructPtr_();
       DenseConstPoint::ptr_ =
         (global_m_file_) ?
         (double *) global_m_file_->Allocate(
