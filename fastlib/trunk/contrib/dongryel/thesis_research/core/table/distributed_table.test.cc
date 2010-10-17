@@ -8,8 +8,6 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <new>
 
-core::table::MemoryMappedFile *core::table::DensePoint::global_m_file_ = NULL;
-
 bool CheckDistributedTableIntegrity(
   const core::table::DistributedTable &table_in,
   const boost::mpi::communicator &world) {

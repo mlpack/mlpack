@@ -7,6 +7,7 @@ set(SOURCES
   dense_point.h
   distributed_table.h
   distributed_table_message.h
+  global.cc
   mailbox.h
   memory_mapped_file.h
   point_request_message.h
