@@ -64,7 +64,7 @@ class DenseMatrix {
         global_m_file_->Deallocate(ptr_);
       }
       else {
-        delete ptr_;
+        delete[] ptr_;
       }
       Reset();
     }
