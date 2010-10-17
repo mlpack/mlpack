@@ -149,6 +149,9 @@ class DensePoint: public DenseConstPoint {
     }
 
     void Copy(const DenseConstPoint &point_in) {
+      if(ptr_ && is_alias_ == false) {
+        delete ptr_;
+      }
       DenseConstPoint::ptr_ =
         (global_m_file_) ?
         (double *) global_m_file_->Allocate(
@@ -169,14 +172,6 @@ class DensePoint: public DenseConstPoint {
       DenseConstPoint::ptr_ = ptr_in;
       DenseConstPoint::n_rows_ = length_in;
       is_alias_ = true;
-    }
-
-    void operator=(const core::table::DenseConstPoint &point_in) {
-      if(ptr_ == NULL) {
-        this->Init(point_in.length());
-      }
-      memcpy(ptr_, point_in.ptr(), sizeof(double) * point_in.length());
-      is_alias_ = false;
     }
 
     void operator+=(const core::table::DenseConstPoint &point_in) {
