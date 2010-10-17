@@ -162,6 +162,10 @@ class DistributedTable: public boost::noncopyable {
 
   public:
 
+    core::table::MemoryMappedFile &global_m_file() {
+      return global_m_file_;
+    }
+
     int rank() const {
       return global_comm_->rank();
     }

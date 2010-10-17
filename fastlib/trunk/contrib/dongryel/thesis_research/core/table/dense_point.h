@@ -11,6 +11,7 @@
 #include <armadillo>
 #include <boost/serialization/serialization.hpp>
 #include "core/table/abstract_point.h"
+#include "core/table/memory_mapped_file.h"
 
 namespace core {
 namespace table {
@@ -64,6 +65,9 @@ class DenseConstPoint: public core::table::AbstractPoint {
 
 class DensePoint: public DenseConstPoint {
 
+  public:
+    static core::table::MemoryMappedFile *global_m_file_;
+
   private:
 
     friend class boost::serialization::access;
@@ -90,7 +94,9 @@ class DensePoint: public DenseConstPoint {
       ar & length;
 
       // Allocate the point.
-      ptr_ = new double[length];
+      ptr_ = (global_m_file_) ?
+             (double *) global_m_file_->Allocate(sizeof(double) * length) :
+             new double[length];
       for(int i = 0; i < length; i++) {
         ar & (ptr_[i]);
       }
@@ -118,12 +124,18 @@ class DensePoint: public DenseConstPoint {
     }
 
     void Init(int length_in) {
-      DenseConstPoint::ptr_ = new double[length_in];
+      DenseConstPoint::ptr_ =
+        (global_m_file_) ?
+        (double *) global_m_file_->Allocate(sizeof(double) * length_in) :
+        new double[length_in];
       DenseConstPoint::n_rows_ = length_in;
     }
 
     void Init(const std::vector<double> &vector_in) {
-      DenseConstPoint::ptr_ = new double[vector_in.size()];
+      DenseConstPoint::ptr_ =
+        (global_m_file_) ?
+        (double *) global_m_file_->Allocate(sizeof(double) * vector_in.size()) :
+        new double[vector_in.size()];
       DenseConstPoint::n_rows_ = vector_in.size();
       for(unsigned int i = 0; i < vector_in.size(); i++) {
         ptr_[i] = vector_in[i];
@@ -131,7 +143,10 @@ class DensePoint: public DenseConstPoint {
     }
 
     void Copy(const DenseConstPoint &point_in) {
-      DenseConstPoint::ptr_ = new double[point_in.length()];
+      DenseConstPoint::ptr_ =
+        (global_m_file_) ?
+        (double *) global_m_file_->Allocate(sizeof(double) * point_in.length()) :
+        new double[point_in.length()];
       memcpy(
         DenseConstPoint::ptr_, point_in.ptr(),
         sizeof(double) * point_in.length());

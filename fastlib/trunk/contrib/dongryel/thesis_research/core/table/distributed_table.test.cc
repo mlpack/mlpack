@@ -8,6 +8,8 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <new>
 
+core::table::MemoryMappedFile *core::table::DensePoint::global_m_file_ = NULL;
+
 bool CheckDistributedTableIntegrity(
   const core::table::DistributedTable &table_in,
   const boost::mpi::communicator &world) {
@@ -148,6 +150,7 @@ void PointRequestMessageBoxProcess(
   random_dataset.Save(file_name);
 
   core::table::DistributedTable distributed_table;
+  core::table::DensePoint::global_m_file_ = &distributed_table.global_m_file();
   distributed_table.Init(file_name, &world, &table_group);
   printf(
     "Process %d read in %d points...\n",
