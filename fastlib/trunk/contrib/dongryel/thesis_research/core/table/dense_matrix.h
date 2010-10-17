@@ -6,12 +6,16 @@
 #ifndef CORE_TABLE_DENSE_MATRIX_H
 #define CORE_TABLE_DENSE_MATRIX_H
 
-#include "core/table/dense_point.h"
-#include "core/table/memory_mapped_file.h"
+#include "dense_point.h"
+#include "memory_mapped_file.h"
 
 namespace core {
 namespace table {
 class DenseMatrix {
+
+  public:
+
+    static core::table::MemoryMappedFile *global_m_file_;
 
   private:
     double *ptr_;
@@ -34,7 +38,7 @@ class DenseMatrix {
       double *first_ptr = ptr_ + first_col * n_rows_;
       double *second_ptr = ptr_ + second_col * n_rows_;
       for(int i = 0; i < n_rows_; first_ptr++, second_ptr++, i++) {
-        std::swap(first_ptr[i], second_ptr[i]);
+        std::swap(*first_ptr, *second_ptr);
       }
     }
 
@@ -56,7 +60,12 @@ class DenseMatrix {
     }
 
     ~DenseMatrix() {
-      delete ptr_;
+      if(global_m_file_) {
+        global_m_file_->Deallocate(ptr_);
+      }
+      else {
+        delete ptr_;
+      }
       Reset();
     }
 
@@ -65,7 +74,8 @@ class DenseMatrix {
       core::table::MemoryMappedFile *m_file_in = NULL) {
 
       ptr_ = (m_file_in) ?
-             (double *)m_file_in->Allocate(n_rows_in * n_cols_in * sizeof(double)) :
+             (double *)m_file_in->Allocate(
+               n_rows_in * n_cols_in * sizeof(double)) :
              new double[n_rows_in * n_cols_in];
       n_rows_ = n_rows_in;
       n_cols_ = n_cols_in;

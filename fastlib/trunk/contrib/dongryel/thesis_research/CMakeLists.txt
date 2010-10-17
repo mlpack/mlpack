@@ -51,6 +51,7 @@ include(CMake/TargetDistclean.cmake OPTIONAL)
 
 #include_directories( ${FASTLIB_INCLUDE_DIRS} )
 include_directories(${CMAKE_BINARY_DIR}/include/)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/)
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/)

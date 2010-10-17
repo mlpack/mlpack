@@ -5,6 +5,9 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
+#ifndef CORE_TREE_GEN_METRIC_TREE_IMPL_H
+#define CORE_TREE_GEN_METRIC_TREE_IMPL_H
+
 #include <armadillo>
 #include <deque>
 #include "core/metric_kernels/abstract_metric.h"
@@ -105,9 +108,10 @@ int MatrixPartition(
   return left_count;
 }
 
+template<typename PointType>
 int FurthestColumnIndex(
   const core::metric_kernels::AbstractMetric &metric_in,
-  const core::table::AbstractPoint &pivot,
+  const PointType &pivot,
   const core::table::DenseMatrix &matrix,
   int begin, int count,
   double *furthest_distance) {
@@ -265,3 +269,5 @@ void SplitGenMetricTree(
 }
 };
 };
+
+#endif
