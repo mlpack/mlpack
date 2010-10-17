@@ -147,11 +147,13 @@ class Table: public boost::noncopyable {
     }
 
     ~Table() {
-      if(global_m_file_) {
-        RecursiveDeallocate_(tree_);
-      }
-      else {
-        delete tree_;
+      if(tree_) {
+        if(global_m_file_) {
+          RecursiveDeallocate_(tree_);
+        }
+        else {
+          delete tree_;
+        }
       }
       tree_ = NULL;
     }
