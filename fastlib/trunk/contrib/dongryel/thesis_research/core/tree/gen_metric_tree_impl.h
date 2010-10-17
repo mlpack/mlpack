@@ -201,7 +201,7 @@ void CombineBounds(
   TMetricTree *node, TMetricTree *left, TMetricTree *right) {
 
   // Compute the weighted sum of the two pivots
-  node->bound().center() = left->bound().center();
+  node->bound().center().Copy(left->bound().center());
   node->bound().center() *= left->count();
   core::table::DensePoint right_contrib;
   right_contrib.Copy(right->bound().center());
