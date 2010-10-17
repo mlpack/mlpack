@@ -279,7 +279,7 @@ class DistributedTable: public boost::noncopyable {
       global_comm_ = global_communicator_in;
       table_group_comm_ = table_group_communicator_in;
       owned_table_ = new core::table::Table();
-      owned_table_->Init(file_name, global_m_file_);
+      owned_table_->Init(file_name, &global_m_file_);
 
       // Allocate the vector for storing the number of entries for all
       // the tables in the world, and do an all-gather operation to

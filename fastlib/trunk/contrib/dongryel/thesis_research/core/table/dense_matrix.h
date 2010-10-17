@@ -22,6 +22,14 @@ class DenseMatrix {
 
   public:
 
+    int n_rows() const {
+      return n_rows_;
+    }
+
+    int n_cols() const {
+      return n_cols_;
+    }
+
     void swap_cols(int first_col, int second_col) {
       double *first_ptr = ptr_ + first_col * n_rows_;
       double *second_ptr = ptr_ + second_col * n_rows_;
