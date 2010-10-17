@@ -3,17 +3,20 @@
  *  @author Dongryeol Lee
  */
 
-#ifndef CORE_DATASET_READER_H
-#define CORE_DATASET_READER_H
+#ifndef CORE_CSV_PARSER_DATASET_READER_H
+#define CORE_CSV_PARSER_DATASET_READER_H
 
 #include <string>
 #include "core/csv_parser/csv_parser.h"
+#include "core/table/dense_matrix.h"
+#include "core/table/memory_mapped_file.h"
 
 namespace core {
 class DatasetReader {
   public:
     static void ParseDataset(
-      const std::string &filename_in, arma::mat *dataset_out) {
+      const std::string &filename_in, core::table::DenseMatrix *dataset_out,
+      core::table::MemoryMappedFile *m_file_in = NULL) {
 
       const char *filename = filename_in.c_str();
       const char field_terminator = ',';
@@ -49,7 +52,7 @@ class DatasetReader {
 
       // Given the row count, allocate the matrix, while resetting the
       // file pointer.
-      dataset_out->set_size(num_dimensions, num_points);
+      dataset_out->Init(num_dimensions, num_points, m_file_in);
       file_parser.init(filename);
 
       // Grab each point and store.
@@ -59,7 +62,7 @@ class DatasetReader {
         csv_row row = file_parser.get_row();
         num_dimensions = row.size();
         for(unsigned i = 0; i < row.size(); i++) {
-          dataset_out->at(i, num_points) = atof(row[i].c_str());
+          dataset_out->set(i, num_points, atof(row[i].c_str()));
         }
         num_points++;
       }
