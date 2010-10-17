@@ -153,6 +153,14 @@ class DensePoint: public DenseConstPoint {
       is_alias_ = false;
     }
 
+    void CopyValues(const DenseConstPoint &point_in) {
+      memcpy(
+        DenseConstPoint::ptr_, point_in.ptr(),
+        sizeof(double) * point_in.length());
+      DenseConstPoint::n_rows_ = point_in.length();
+      is_alias_ = false;
+    }
+
     void Copy(const DenseConstPoint &point_in) {
       DestructPtr_();
       DenseConstPoint::ptr_ =
@@ -160,11 +168,7 @@ class DensePoint: public DenseConstPoint {
         (double *) global_m_file_->Allocate(
           sizeof(double) * point_in.length()) :
         new double[point_in.length()];
-      memcpy(
-        DenseConstPoint::ptr_, point_in.ptr(),
-        sizeof(double) * point_in.length());
-      DenseConstPoint::n_rows_ = point_in.length();
-      is_alias_ = false;
+      CopyValues(point_in);
     }
 
     void SetZero() {
@@ -175,6 +179,13 @@ class DensePoint: public DenseConstPoint {
       DenseConstPoint::ptr_ = ptr_in;
       DenseConstPoint::n_rows_ = length_in;
       is_alias_ = true;
+    }
+
+    void Add(
+      double scale_factor, const core::table::DenseConstPoint &point_in) {
+      for(int i = 0; i < point_in.length(); i++) {
+        ptr_[i] += scale_factor * point_in[i];
+      }
     }
 
     void operator+=(const core::table::DenseConstPoint &point_in) {
