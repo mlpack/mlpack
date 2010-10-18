@@ -30,12 +30,12 @@ class AxilrodTeller {
 
       double numerator_second_part =
         -3.0 * core::math::Sqr(max_diff) *
-        (max_distance_sq.at(0, 2) + max_distance_sq.at(1, 2))
+        (max_distance_sq.at(0, 2) + max_distance_sq.at(1, 2));
 
-        double denominator = 8.0 * pow(
-                               min_distance_sq.at(0, 1) *
-                               min_distance_sq.at(0, 2) *
-                               min_distance_sq.at(1, 2), 2.5);
+      double denominator = 8.0 * pow(
+                             min_distance_sq.at(0, 1) *
+                             min_distance_sq.at(0, 2) *
+                             min_distance_sq.at(1, 2), 2.5);
 
       return (numerator_first_part + numerator_second_part) / denominator;
     }
@@ -55,7 +55,7 @@ class AxilrodTeller {
             fabs(min_distance_sq.at(1, 2) - max_distance_sq.at(0, 2)),
             fabs(min_distance_sq.at(0, 2) - max_distance_sq.at(1, 2)));
         numerator_second_part =
-          -3.0 * core::math::Sqr(diff) *
+          -3.0 * core::math::Sqr(difference) *
           (min_distance_sq.at(0, 2) + min_distance_sq.at(1, 2));
       }
 
