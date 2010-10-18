@@ -22,9 +22,7 @@ class MemoryMappedFile {
 
     MemoryMappedFile(): m_file_(
         boost::interprocess::open_or_create, "tmp_file", 500000000) {
-      mutex_ = (boost::interprocess::interprocess_mutex *)
-               m_file_.allocate(
-                 sizeof(boost::interprocess::interprocess_mutex));
+      mutex_ = m_file_.find_or_construct<boost::interprocess::interprocess_mutex>("mtx")();
     }
 
     void Init(const std::string &file_name) {
@@ -40,7 +38,7 @@ class MemoryMappedFile {
 
     void Deallocate(void *p) {
       boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex> lock(*mutex_);
-      return m_file_.deallocate(p);
+      m_file_.deallocate(p);
     }
 };
 };

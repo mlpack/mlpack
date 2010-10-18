@@ -23,8 +23,6 @@ class Table: public boost::noncopyable {
     typedef core::tree::GeneralBinarySpaceTree < core::tree::BallBound <
     core::table::DensePoint > > TreeType;
 
-    static core::table::MemoryMappedFile *global_m_file_;
-
   public:
 
     class TreeIterator {
@@ -148,7 +146,7 @@ class Table: public boost::noncopyable {
 
     ~Table() {
       if(tree_) {
-        if(global_m_file_) {
+        if(core::table::global_m_file_) {
           RecursiveDeallocate_(tree_);
         }
         else {
@@ -207,15 +205,12 @@ class Table: public boost::noncopyable {
     }
 
     void Init(
-      int num_dimensions_in, int num_points_in,
-      core::table::MemoryMappedFile *m_file_in = NULL) {
-      data_.Init(num_dimensions_in, num_points_in, m_file_in);
+      int num_dimensions_in, int num_points_in) {
+      data_.Init(num_dimensions_in, num_points_in);
     }
 
-    void Init(const std::string &file_name,
-              core::table::MemoryMappedFile *m_file_in = NULL) {
-      core::DatasetReader::ParseDataset(
-        file_name, &data_, m_file_in);
+    void Init(const std::string &file_name) {
+      core::DatasetReader::ParseDataset(file_name, &data_);
     }
 
     void Save(const std::string &file_name) const {
@@ -269,7 +264,7 @@ class Table: public boost::noncopyable {
         RecursiveDeallocate_(node->left());
         RecursiveDeallocate_(node->right());
       }
-      global_m_file_->Deallocate(node);
+      core::table::global_m_file_->Deallocate(node);
     }
 
     void direct_get_(int point_id, double *entry) const {

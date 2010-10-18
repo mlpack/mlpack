@@ -15,8 +15,7 @@ namespace core {
 class DatasetReader {
   public:
     static void ParseDataset(
-      const std::string &filename_in, core::table::DenseMatrix *dataset_out,
-      core::table::MemoryMappedFile *m_file_in = NULL) {
+      const std::string &filename_in, core::table::DenseMatrix *dataset_out) {
 
       const char *filename = filename_in.c_str();
       const char field_terminator = ',';
@@ -52,7 +51,7 @@ class DatasetReader {
 
       // Given the row count, allocate the matrix, while resetting the
       // file pointer.
-      dataset_out->Init(num_dimensions, num_points, m_file_in);
+      dataset_out->Init(num_dimensions, num_points);
       file_parser.init(filename);
 
       // Grab each point and store.

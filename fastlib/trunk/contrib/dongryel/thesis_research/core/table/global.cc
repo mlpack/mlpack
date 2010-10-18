@@ -8,8 +8,8 @@
 #include "dense_point.h"
 #include "table.h"
 
-core::table::MemoryMappedFile *core::table::DenseMatrix::global_m_file_ = NULL;
-
-core::table::MemoryMappedFile *core::table::DensePoint::global_m_file_ = NULL;
-
-core::table::MemoryMappedFile *core::table::Table::global_m_file_ = NULL;
+namespace core {
+namespace table {
+core::table::MemoryMappedFile *global_m_file_ = NULL;
+};
+};

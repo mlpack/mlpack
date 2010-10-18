@@ -13,10 +13,6 @@ namespace core {
 namespace table {
 class DenseMatrix {
 
-  public:
-
-    static core::table::MemoryMappedFile *global_m_file_;
-
   private:
     double *ptr_;
 
@@ -60,8 +56,8 @@ class DenseMatrix {
     }
 
     ~DenseMatrix() {
-      if(global_m_file_) {
-        global_m_file_->Deallocate(ptr_);
+      if(core::table::global_m_file_) {
+        core::table::global_m_file_->Deallocate(ptr_);
       }
       else {
         delete[] ptr_;
@@ -70,11 +66,10 @@ class DenseMatrix {
     }
 
     void Init(
-      int n_rows_in, int n_cols_in,
-      core::table::MemoryMappedFile *m_file_in = NULL) {
+      int n_rows_in, int n_cols_in) {
 
-      ptr_ = (m_file_in) ?
-             (double *)m_file_in->Allocate(
+      ptr_ = (core::table::global_m_file_) ?
+             (double *)core::table::global_m_file_->Allocate(
                n_rows_in * n_cols_in * sizeof(double)) :
              new double[n_rows_in * n_cols_in];
       n_rows_ = n_rows_in;
