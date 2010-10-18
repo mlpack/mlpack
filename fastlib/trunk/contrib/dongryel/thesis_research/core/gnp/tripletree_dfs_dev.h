@@ -219,24 +219,23 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanSummarize_(
   std::vector< typename ProblemType::SummaryType > new_summaries;
   new_summaries.resize(3);
 
-  for(int i = 0; i < 3; i++) {
-    typename ProblemType::StatisticType *node_stat =
-      dynamic_cast<typename ProblemType::StatisticType *>(
-        table_->get_node_stat(triple_range_distance_sq_in.node(i)));
-    typename ProblemType::SummaryType new_summary(node_stat->summary_);
-    new_summaries[i].ApplyPostponed(node_stat->postponed_);
-    new_summaries[i].ApplyDelta(delta, i);
+  bool flag = true;
+  for(int i = 0; flag && i < 3; i++) {
+    typename core::gnp::TripletreeDfs<ProblemType>::TreeType *node =
+      triple_range_distance_sq_in.node(i);
+    if(i == 0 || node != triple_range_distance_sq_in.node(i - 1)) {
+      typename ProblemType::StatisticType *node_stat =
+        dynamic_cast<typename ProblemType::StatisticType *>(
+          table_->get_node_stat(node));
+      new_summaries[i] = node_stat->summary_;
+      new_summaries[i].ApplyPostponed(node_stat->postponed_);
+      new_summaries[i].ApplyDelta(delta, i);
+      flag = new_summaries[i].CanSummarize(
+               problem_->global(), delta, triple_range_distance_sq_in, i,
+               query_results);
+    }
   }
-
-  return new_summaries[0].CanSummarize(
-           problem_->global(), delta, triple_range_distance_sq_in, 0,
-           query_results) &&
-         new_summaries[1].CanSummarize(
-           problem_->global(), delta, triple_range_distance_sq_in, 1,
-           query_results) &&
-         new_summaries[2].CanSummarize(
-           problem_->global(), delta, triple_range_distance_sq_in, 2,
-           query_results);
+  return flag;
 }
 
 template<typename ProblemType>
@@ -245,6 +244,16 @@ void core::gnp::TripletreeDfs<ProblemType>::Summarize_(
   const typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
 
+  for(int i = 0; i < 3; i++) {
+    typename core::gnp::TripletreeDfs<ProblemType>::TreeType *node =
+      triple_range_distance_sq.node(i);
+    if(i == 0 || node != triple_range_distance_sq.node(i - 1)) {
+      typename ProblemType::StatisticType *node_stat =
+        dynamic_cast<typename ProblemType::StatisticType *>(
+          table_->get_node_stat(node));
+      node_stat->postponed_.ApplyDelta(delta, i);
+    }
+  }
 }
 
 template<typename ProblemType>
