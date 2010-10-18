@@ -290,16 +290,40 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
     // Otherwise we need to split.
     else {
 
+      // Get the current query node statistic.
+      typename ProblemType::StatisticType *current_node_stat =
+        dynamic_cast<typename ProblemType::StatisticType *>(
+          table_->get_node_stat(current_node));
+
+      // Left and right nodes of the query node and their statistic.
+      typename ProblemType::TableType::TreeType *current_node_left =
+        table_->get_node_left_child(current_node);
+      typename ProblemType::TableType::TreeType *current_node_right =
+        table_->get_node_right_child(current_node);
+      typename ProblemType::StatisticType *current_node_left_stat =
+        dynamic_cast<typename ProblemType::StatisticType *>(
+          table_->get_node_stat(current_node_left));
+      typename ProblemType::StatisticType *current_node_right_stat =
+        dynamic_cast<typename ProblemType::StatisticType *>(
+          table_->get_node_stat(current_node_right));
+
+      // Push down postponed and clear.
+      current_node_left_stat->postponed_.ApplyPostponed(
+        current_node_stat->postponed_);
+      current_node_right_stat->postponed_.ApplyPostponed(
+        current_node_stat->postponed_);
+      current_node_stat->postponed_.SetZero();
+
       bool replaced_node_on_current_level = false;
 
       // Try the left child if it is valid.
       if(level == 0 ||
           NodeIsAgreeable_(
-            triple_range_distance_sq.node(level - 1), current_node->left())) {
+            triple_range_distance_sq.node(level - 1), current_node_left)) {
 
         replaced_node_on_current_level = true;
         triple_range_distance_sq.ReplaceOneNode(
-          metric, *table_, current_node->left(), level);
+          metric, *table_, current_node_left, level);
         RecursionHelper_(
           metric, triple_range_distance_sq, relative_error, failure_probability,
           query_results, level + 1, false, deterministic_approximation);
@@ -308,11 +332,11 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
       // Try the right child if it is valid.
       if(level == 0 ||
           NodeIsAgreeable_(
-            triple_range_distance_sq.node(level - 1), current_node->right())) {
+            triple_range_distance_sq.node(level - 1), current_node_right)) {
 
         replaced_node_on_current_level = true;
         triple_range_distance_sq.ReplaceOneNode(
-          metric, *table_, current_node->right(), level);
+          metric, *table_, current_node_right, level);
         RecursionHelper_(
           metric, triple_range_distance_sq, relative_error, failure_probability,
           query_results, level + 1, false, deterministic_approximation);
