@@ -126,6 +126,9 @@ void TestDistributedTable(boost::mpi::communicator &world) {
 void PointRequestMessageBoxProcess(
   boost::mpi::communicator &world,
   boost::mpi::communicator &table_group) {
+
+  core::table::DistributedTable distributed_table;
+
   printf("Process %d: PointRequestMessageBox.\n", world.rank());
 
   // Each process generates its own random data, dumps it to the file,
@@ -147,8 +150,6 @@ void PointRequestMessageBoxProcess(
   std::string file_name = file_name_sstr.str();
   random_dataset.Save(file_name);
 
-  core::table::DistributedTable distributed_table;
-  core::table::DensePoint::global_m_file_ = &distributed_table.global_m_file();
   distributed_table.Init(file_name, &world, &table_group);
   printf(
     "Process %d read in %d points...\n",
@@ -172,11 +173,16 @@ int main(int argc, char *argv[]) {
   boost::mpi::environment env(argc, argv);
   boost::mpi::communicator world;
 
-  if(world.size() <= 3 || world.size() % 3 != 0) {
+  if(world.size() <= 1 || world.size() % 3 != 0) {
     std::cout << "Please specify a process number greater than 1 and "
               "a multiple of 3.\n";
     return 0;
   }
+
+  // Initialize the memory allocator.
+  core::table::global_m_file_ = new core::table::MemoryMappedFile();
+
+  // Seed the random number.
   srand(time(NULL) + world.rank());
 
   if(world.rank() == 0) {
@@ -204,5 +210,9 @@ int main(int argc, char *argv[]) {
 
   // Test the distributed tree building.
   //TestDistributedTree(world);
+
+  // Delete the memory allocator.
+  delete core::table::global_m_file_;
+
   return 0;
 }

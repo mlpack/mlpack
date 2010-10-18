@@ -28,8 +28,6 @@ class DistributedTable: public boost::noncopyable {
 
   private:
 
-    core::table::MemoryMappedFile global_m_file_;
-
     /** @brief The mutex for each MPI call.
      */
     boost::mutex mpi_mutex_;
@@ -135,7 +133,7 @@ class DistributedTable: public boost::noncopyable {
                          metric_in, sampled_table_data, 2,
                          max_num_leaf_nodes,
                          &global_old_from_new, &global_new_from_old,
-                         &num_nodes, &global_m_file_);
+                         &num_nodes, core::table::global_m_file_);
         printf("Process 0 finished building the top tree with %d nodes.\n",
                num_nodes);
 
@@ -161,10 +159,6 @@ class DistributedTable: public boost::noncopyable {
     }
 
   public:
-
-    core::table::MemoryMappedFile &global_m_file() {
-      return global_m_file_;
-    }
 
     int rank() const {
       return global_comm_->rank();
@@ -283,7 +277,7 @@ class DistributedTable: public boost::noncopyable {
       global_comm_ = global_communicator_in;
       table_group_comm_ = table_group_communicator_in;
       owned_table_ = new core::table::Table();
-      owned_table_->Init(file_name, &global_m_file_);
+      owned_table_->Init(file_name);
 
       // Allocate the vector for storing the number of entries for all
       // the tables in the world, and do an all-gather operation to

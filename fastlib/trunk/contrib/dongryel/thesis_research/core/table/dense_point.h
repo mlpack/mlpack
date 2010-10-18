@@ -15,6 +15,9 @@
 
 namespace core {
 namespace table {
+
+extern core::table::MemoryMappedFile *global_m_file_;
+
 class DenseConstPoint: public core::table::AbstractPoint {
   protected:
 
@@ -64,9 +67,6 @@ class DenseConstPoint: public core::table::AbstractPoint {
 
 class DensePoint: public DenseConstPoint {
 
-  public:
-    static core::table::MemoryMappedFile *global_m_file_;
-
   private:
 
     friend class boost::serialization::access;
@@ -76,8 +76,8 @@ class DensePoint: public DenseConstPoint {
   private:
     void DestructPtr_() {
       if(DenseConstPoint::ptr_ != NULL && is_alias_ == false) {
-        if(global_m_file_) {
-          global_m_file_->Deallocate(ptr_);
+        if(core::table::global_m_file_) {
+          core::table::global_m_file_->Deallocate(ptr_);
         }
         else {
           delete[] DenseConstPoint::ptr_;
@@ -105,8 +105,9 @@ class DensePoint: public DenseConstPoint {
       ar & length;
 
       // Allocate the point.
-      ptr_ = (global_m_file_) ?
-             (double *) global_m_file_->Allocate(sizeof(double) * length) :
+      ptr_ = (core::table::global_m_file_) ?
+             (double *)
+             core::table::global_m_file_->Allocate(sizeof(double) * length) :
              new double[length];
       for(int i = 0; i < length; i++) {
         ar & (ptr_[i]);
@@ -134,8 +135,9 @@ class DensePoint: public DenseConstPoint {
 
     void Init(int length_in) {
       DenseConstPoint::ptr_ =
-        (global_m_file_) ?
-        (double *) global_m_file_->Allocate(sizeof(double) * length_in) :
+        (core::table::global_m_file_) ?
+        (double *)
+        core::table::global_m_file_->Allocate(sizeof(double) * length_in) :
         new double[length_in];
       DenseConstPoint::n_rows_ = length_in;
       is_alias_ = false;
@@ -143,8 +145,10 @@ class DensePoint: public DenseConstPoint {
 
     void Init(const std::vector<double> &vector_in) {
       DenseConstPoint::ptr_ =
-        (global_m_file_) ?
-        (double *) global_m_file_->Allocate(sizeof(double) * vector_in.size()) :
+        (core::table::global_m_file_) ?
+        (double *)
+        core::table::global_m_file_->Allocate(
+          sizeof(double) * vector_in.size()) :
         new double[vector_in.size()];
       DenseConstPoint::n_rows_ = vector_in.size();
       for(unsigned int i = 0; i < vector_in.size(); i++) {
@@ -164,8 +168,8 @@ class DensePoint: public DenseConstPoint {
     void Copy(const DenseConstPoint &point_in) {
       DestructPtr_();
       DenseConstPoint::ptr_ =
-        (global_m_file_) ?
-        (double *) global_m_file_->Allocate(
+        (core::table::global_m_file_) ?
+        (double *) core::table::global_m_file_->Allocate(
           sizeof(double) * point_in.length()) :
         new double[point_in.length()];
       CopyValues(point_in);
