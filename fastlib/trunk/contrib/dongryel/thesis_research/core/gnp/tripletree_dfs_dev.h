@@ -224,8 +224,8 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanSummarize_(
       dynamic_cast<typename ProblemType::StatisticType *>(
         table_->get_node_stat(triple_range_distance_sq_in.node(i)));
     typename ProblemType::SummaryType new_summary(node_stat->summary_);
-    new_summaries[i].ApplyPostponed(qnode_stat->postponed_);
-    new_summaries[i].ApplyDelta(delta);
+    new_summaries[i].ApplyPostponed(node_stat->postponed_);
+    new_summaries[i].ApplyDelta(delta, i);
   }
 
   return new_summaries[0].CanSummarize(

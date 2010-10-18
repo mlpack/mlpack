@@ -207,6 +207,8 @@ class NbodySimulatorGlobal {
 
     physpack::nbody_simulator::AxilrodTeller potential_;
 
+    double total_num_tuples_;
+
   public:
 
     const physpack::nbody_simulator::AxilrodTeller &potential() const {
@@ -254,6 +256,10 @@ class NbodySimulatorGlobal {
       return probability_;
     }
 
+    double total_num_tuples() const {
+      return total_num_tuples_;
+    }
+
     void Init(
       core::table::Table *table_in,
       double relative_error_in, double probability_in) {
@@ -261,6 +267,8 @@ class NbodySimulatorGlobal {
       relative_error_ = relative_error_in;
       probability_ = probability_in;
       table_ = table_in;
+      total_num_tuples_ = boost::math::binomial_coefficient<double>(
+                            table_in->n_entries() - 1, 2);
     }
 };
 
@@ -293,7 +301,14 @@ class NbodySimulatorSummary {
       const core::gnp::TripleRangeDistanceSq &triple_range_distance_sq_in,
       int node_index, ResultType *query_results) const {
 
-      return false;
+      double left_hand_side = delta.used_error_[node_index];
+      double right_hand_side =
+        delta.pruned_[node_index] *
+        (global.relative_error() * std::max(
+           - negative_potential_.hi, positive_potential_.lo) - used_error_) /
+        static_cast<double>(global.total_num_tuples() - pruned_);
+
+      return left_hand_side <= right_hand_side;
     }
 
     void SetZero() {
