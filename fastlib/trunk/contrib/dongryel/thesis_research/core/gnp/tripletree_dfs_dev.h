@@ -229,7 +229,8 @@ void core::gnp::TripletreeDfs<ProblemType>::Summarize_(
 
 template<typename ProblemType>
 bool core::gnp::TripletreeDfs<ProblemType>::NodeIsAgreeable_(
-  TreeType *node, TreeType *next_node) const {
+  typename core::gnp::TripletreeDfs<ProblemType>::TreeType *node,
+  typename core::gnp::TripletreeDfs<ProblemType>::TreeType *next_node) const {
 
   // Agreeable if the nodes are equal or the next node's beginning
   // index is more than the ending index of the given node.
@@ -275,9 +276,8 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
     // If the current node is a leaf node, then just check whether it
     // is in conflict with the previously chosen node.
     if(current_node->is_leaf()) {
-
       if(level == 0 ||
-          NodeIsAgreable_(
+          NodeIsAgreeable_(
             triple_range_distance_sq.node(level - 1),
             current_node)) {
 
@@ -298,7 +298,8 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
             triple_range_distance_sq.node(level - 1), current_node->left())) {
 
         replaced_node_on_current_level = true;
-        ReplaceOneNode(metric, *table_, current_node->left(), level);
+        triple_range_distance_sq.ReplaceOneNode(
+          metric, *table_, current_node->left(), level);
         RecursionHelper_(
           metric, triple_range_distance_sq, relative_error, failure_probability,
           query_results, level + 1, false, deterministic_approximation);
@@ -310,7 +311,8 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
             triple_range_distance_sq.node(level - 1), current_node->right())) {
 
         replaced_node_on_current_level = true;
-        ReplaceOneNode(metric, *table_, current_node->right(), level);
+        triple_range_distance_sq.ReplaceOneNode(
+          metric, *table_, current_node->right(), level);
         RecursionHelper_(
           metric, triple_range_distance_sq, relative_error, failure_probability,
           query_results, level + 1, false, deterministic_approximation);
@@ -319,7 +321,8 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
       // Put back the node if it has been replaced before popping up
       // the recursion.
       if(replaced_node_on_current_level) {
-        ReplaceOneNode(metric, *table_, current_node, level);
+        triple_range_distance_sq.ReplaceOneNode(
+          metric, *table_, current_node, level);
       }
     }
   }
@@ -340,7 +343,7 @@ bool core::gnp::TripletreeDfs<ProblemType>::TripletreeCanonical_(
 
   // First try to prune.
   if(CanSummarize_(
-        triple_range_distance_sq_in, delta, query_results)) {
+        triple_range_distance_sq, delta, query_results)) {
 
     return true;
   }
@@ -349,7 +352,7 @@ bool core::gnp::TripletreeDfs<ProblemType>::TripletreeCanonical_(
   bool deterministic_approximation = true;
   RecursionHelper_(
     metric, triple_range_distance_sq, relative_error,
-    failure_probability, query_results, 0, &deterministic_approximation);
+    failure_probability, query_results, 0, true, &deterministic_approximation);
 
   return deterministic_approximation;
 }

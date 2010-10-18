@@ -38,6 +38,16 @@ class TripletreeDfs {
 
     void ResetStatisticRecursion_(TreeType *node);
 
+    void RecursionHelper_(
+      const core::metric_kernels::AbstractMetric &metric,
+      core::gnp::TripleRangeDistanceSq &triple_range_distance_sq,
+      double relative_error,
+      double failure_probability,
+      typename ProblemType::ResultType *query_results,
+      int level,
+      bool all_leaves,
+      bool *deterministic_approximation);
+
     void PreProcess_(TreeType *node);
 
     void TripletreeBase_(
@@ -57,7 +67,7 @@ class TripletreeDfs {
 
     bool TripletreeCanonical_(
       const core::metric_kernels::AbstractMetric &metric,
-      const core::gnp::TripleRangeDistanceSq &triple_range_distance_sq,
+      core::gnp::TripleRangeDistanceSq &triple_range_distance_sq,
       double relative_error,
       double probability,
       typename ProblemType::ResultType *query_results);
