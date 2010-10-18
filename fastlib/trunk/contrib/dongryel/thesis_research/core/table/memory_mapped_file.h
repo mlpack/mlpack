@@ -8,6 +8,8 @@
 
 #include <boost/interprocess/sync/scoped_lock.hpp>
 #include <boost/interprocess/managed_mapped_file.hpp>
+#include <iostream>
+#include <sstream>
 
 namespace core {
 namespace table {
@@ -20,15 +22,26 @@ class MemoryMappedFile {
 
   public:
 
-    MemoryMappedFile(): m_file_(
-        boost::interprocess::open_or_create, "tmp_file", 500000000) {
-      mutex_ = m_file_.find_or_construct<boost::interprocess::interprocess_mutex>("mtx")();
-    }
+    void Init(
+      const std::string &file_name,
+      int world_rank, int group_rank, long int num_bytes) {
 
-    void Init(const std::string &file_name) {
+      std::stringstream new_file_name;
+      new_file_name << file_name << group_rank;
+      std::stringstream new_mutex_name;
+      new_mutex_name << "mtx" << group_rank;
       boost::interprocess::managed_mapped_file new_m_file(
-        boost::interprocess::create_only, file_name.c_str(), 500000000);
+        boost::interprocess::open_or_create,
+        new_file_name.str().c_str(), num_bytes);
       m_file_.swap(new_m_file);
+      mutex_ = m_file_.find_or_construct <
+               boost::interprocess::interprocess_mutex > (
+                 new_mutex_name.str().c_str())();
+      std::cout << "World rank " << world_rank <<
+                " opened the memory mapped file: " << new_file_name.str() << "\n";
+      std::cout << "World rank " << world_rank <<
+                " opened the mutex on the memory mapped file: "
+                << new_mutex_name.str() << "\n";
     }
 
     void *Allocate(size_t size) {
