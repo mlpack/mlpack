@@ -181,6 +181,9 @@ int main(int argc, char *argv[]) {
 
   // Initialize the memory allocator.
   core::table::global_m_file_ = new core::table::MemoryMappedFile();
+  core::table::global_m_file_->Init(
+    std::string("tmp_file"), world.rank(),
+    world.rank() % (world.size() / 3), 5000000);
 
   // Seed the random number.
   srand(time(NULL) + world.rank());
