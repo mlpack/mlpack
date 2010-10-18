@@ -216,7 +216,27 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanSummarize_(
   const typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
 
-  return false;
+  std::vector< typename ProblemType::SummaryType > new_summaries;
+  new_summaries.resize(3);
+
+  for(int i = 0; i < 3; i++) {
+    typename ProblemType::StatisticType *node_stat =
+      dynamic_cast<typename ProblemType::StatisticType *>(
+        table_->get_node_stat(triple_range_distance_sq_in.node(i)));
+    typename ProblemType::SummaryType new_summary(node_stat->summary_);
+    new_summaries[i].ApplyPostponed(qnode_stat->postponed_);
+    new_summaries[i].ApplyDelta(delta);
+  }
+
+  return new_summaries[0].CanSummarize(
+           problem_->global(), delta, triple_range_distance_sq_in, 0,
+           query_results) &&
+         new_summaries[1].CanSummarize(
+           problem_->global(), delta, triple_range_distance_sq_in, 1,
+           query_results) &&
+         new_summaries[2].CanSummarize(
+           problem_->global(), delta, triple_range_distance_sq_in, 2,
+           query_results);
 }
 
 template<typename ProblemType>

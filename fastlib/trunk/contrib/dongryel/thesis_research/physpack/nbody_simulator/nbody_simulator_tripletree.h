@@ -287,11 +287,11 @@ class NbodySimulatorSummary {
       used_error_ = summary_in.used_error_;
     }
 
-    template < typename GlobalType, typename DeltaType, typename TreeType,
-             typename ResultType >
+    template < typename GlobalType, typename DeltaType, typename ResultType >
     bool CanSummarize(
       const GlobalType &global, const DeltaType &delta,
-      TreeType *qnode, TreeType *rnode, ResultType *query_results) const {
+      const core::gnp::TripleRangeDistanceSq &triple_range_distance_sq_in,
+      int node_index, ResultType *query_results) const {
 
       return false;
     }
