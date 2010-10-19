@@ -251,7 +251,7 @@ void core::gnp::TripletreeDfs<ProblemType>::Summarize_(
       typename ProblemType::StatisticType *node_stat =
         dynamic_cast<typename ProblemType::StatisticType *>(
           table_->get_node_stat(node));
-      node_stat->postponed_.ApplyDelta(delta, i);
+      node_stat->postponed_.ApplyDelta(delta, i, query_results);
     }
   }
 }
@@ -397,7 +397,8 @@ bool core::gnp::TripletreeDfs<ProblemType>::TripletreeCanonical_(
   // First try to prune.
   if(CanSummarize_(
         triple_range_distance_sq, delta, query_results)) {
-
+    Summarize_(
+      triple_range_distance_sq, delta, query_results);
     return true;
   }
 
