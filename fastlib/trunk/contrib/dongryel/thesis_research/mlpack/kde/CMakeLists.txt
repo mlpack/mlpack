@@ -17,7 +17,6 @@ add_executable(kde-test
                kde.test.cc
               )
 # link dependencies of kde-test
-# link dependencies of kde
 target_link_libraries(kde-test
                       core
                       ${Boost_LIBRARIES}
