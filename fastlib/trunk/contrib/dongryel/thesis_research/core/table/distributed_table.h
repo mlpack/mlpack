@@ -12,6 +12,7 @@
 #include "boost/mpi/collectives.hpp"
 #include "boost/thread.hpp"
 #include "boost/serialization/string.hpp"
+#include <boost/random/variate_generator.hpp>
 #include "core/table/table.h"
 #include "core/table/distributed_table_message.h"
 #include "core/table/point_request_message.h"
