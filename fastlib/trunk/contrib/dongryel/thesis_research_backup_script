@@ -1,0 +1,2 @@
+#!/bin/bash
+find ./thesis_research -not \( -name .svn -a -prune \) -not \( -name bin -a -prune \) | xargs -IFILES tar czvf thesis_research.tar.gz FILES
