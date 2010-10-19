@@ -102,7 +102,7 @@ class TestNbodySimulator {
       for(int i = 0; i < 20; i++) {
         // Randomly choose the number of points.
         nbody_simulator::test_nbody_simulator::num_points_ =
-          core::math::RandInt(500, 1001);
+          core::math::RandInt(100, 201);
         StressTest();
       }
       return 0;
@@ -130,6 +130,11 @@ class TestNbodySimulator {
       std::stringstream leaf_size_sstr;
       leaf_size_sstr << "--leaf_size=" << leaf_size;
       args.push_back(leaf_size_sstr.str());
+
+      // Push in the relative error.
+      std::stringstream relative_error_sstr;
+      relative_error_sstr << "--relative_error=" << 0.1;
+      args.push_back(relative_error_sstr.str());
 
       // Generate the random dataset and save it.
       core::table::Table random_table;

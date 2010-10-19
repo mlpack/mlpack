@@ -9,15 +9,15 @@
 
 #include <math.h>
 #include <stdlib.h>
+#include <boost/math/special_functions/binomial.hpp>
 
-/**
- * Math routines.
- *
- * The hope is that this should contain most of the useful math routines
- * you can think of.  Currently, this is very sparse.
- */
 namespace core {
 namespace math {
+
+template<typename T>
+T BinomialCoefficient(unsigned n, unsigned k) {
+  return (n < k) ? 0 : boost::math::binomial_coefficient<double>(n, k);
+}
 
 /** Squares a number. */
 template<typename T>

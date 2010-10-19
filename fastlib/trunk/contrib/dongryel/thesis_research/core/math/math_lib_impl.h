@@ -1,3 +1,8 @@
+/** @file math_lib_impl.h
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
 namespace core {
 namespace math__private {
 template < int t_numerator, int t_denominator = 1 >

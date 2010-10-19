@@ -7,7 +7,7 @@
 #define CORE_GNP_TRIPLE_RANGE_DISTANCE_SQ_H
 
 #include <armadillo>
-#include "boost/math/special_functions/binomial.hpp"
+#include "core/math/math_lib.h"
 #include "core/metric_kernels/abstract_metric.h"
 #include "core/table/table.h"
 
@@ -36,7 +36,7 @@ class TripleRangeDistanceSq {
           num_tuples_[0] =
             num_tuples_[1] =
               num_tuples_[2] =
-                boost::math::binomial_coefficient<double>(
+                core::math::BinomialCoefficient<double>(
                   table_in.get_node_count(nodes_[0]) - 1, 2);
         }
 
@@ -45,7 +45,7 @@ class TripleRangeDistanceSq {
           num_tuples_[0] = num_tuples_[1] =
                              (table_in.get_node_count(nodes_[0]) - 1) *
                              table_in.get_node_count(nodes_[2]);
-          num_tuples_[2] = boost::math::binomial_coefficient<double>(
+          num_tuples_[2] = core::math::BinomialCoefficient<double>(
                              table_in.get_node_count(nodes_[0]), 2);
         }
       }
@@ -56,7 +56,7 @@ class TripleRangeDistanceSq {
           num_tuples_[1] = num_tuples_[2] =
                              (table_in.get_node_count(nodes_[1]) - 1) *
                              table_in.get_node_count(nodes_[0]);
-          num_tuples_[0] = boost::math::binomial_coefficient<double>(
+          num_tuples_[0] = core::math::BinomialCoefficient<double>(
                              table_in.get_node_count(nodes_[1]), 2);
         }
 
