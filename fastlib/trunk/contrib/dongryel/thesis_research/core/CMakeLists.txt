@@ -9,6 +9,7 @@ add_subdirectory(math)
 add_subdirectory(metric_kernels)
 add_subdirectory(table)
 add_subdirectory(tree)
+add_subdirectory(util)
 
 add_library(core ${CORE_SRCS})
 target_link_libraries(core
