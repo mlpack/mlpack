@@ -29,6 +29,14 @@ class Allnn {
     }
 
    public:
+    friend class boost::serialization::access; // Should be removed later
+
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+       ar & dim;
+    }
+
     /**
      * Initialize parameters from a data node (Req THOR).
      */
@@ -71,6 +79,15 @@ class Allnn {
     }
 
    public:
+    friend class boost::serialization::access; // Should be removed later
+
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+       ar & distance_sq;
+       ar & neighbor_i;
+    }
+
     void Init(const Param& param) {
       distance_sq = DBL_MAX;
       neighbor_i = -1;
@@ -95,6 +112,14 @@ class Allnn {
     }
 
    public:
+    friend class boost::serialization::access; // Should be removed later
+
+    template<class Archive>
+    void serialize(Archive & ar, const unsigned int version)
+    {
+       ar & distance_sq_hi;
+    }
+
     void Init(const Param& param) {
       distance_sq_hi = DBL_MAX;
     }
