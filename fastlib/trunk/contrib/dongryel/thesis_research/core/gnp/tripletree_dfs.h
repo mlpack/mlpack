@@ -19,6 +19,7 @@ class TripletreeDfs {
 
     typedef typename ProblemType::TableType TableType;
     typedef typename TableType::TreeType TreeType;
+    typedef typename ProblemType::GlobalType GlobalType;
     typedef typename ProblemType::ResultType ResultType;
 
   private:
@@ -46,6 +47,7 @@ class TripletreeDfs {
       typename ProblemType::ResultType *query_results,
       int level,
       bool all_leaves,
+      int num_recursed,
       bool *deterministic_approximation);
 
     void PreProcess_(TreeType *node);
@@ -54,6 +56,20 @@ class TripletreeDfs {
       const core::metric_kernels::AbstractMetric &metric,
       const core::gnp::TripleRangeDistanceSq &range_in,
       ResultType *result);
+
+    bool CanProbabilisticSummarize_(
+      const core::metric_kernels::AbstractMetric &metric,
+      const core::gnp::TripleRangeDistanceSq &range_in,
+      double failure_probability,
+      typename ProblemType::DeltaType &delta,
+      typename ProblemType::ResultType *query_results);
+
+    void ProbabilisticSummarize_(
+      GlobalType &global,
+      const core::gnp::TripleRangeDistanceSq &range_in,
+      double failure_probability,
+      const typename ProblemType::DeltaType &delta,
+      typename ProblemType::ResultType *query_results);
 
     bool CanSummarize_(
       const core::gnp::TripleRangeDistanceSq &range_in,

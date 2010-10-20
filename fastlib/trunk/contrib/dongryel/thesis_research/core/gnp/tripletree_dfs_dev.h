@@ -211,6 +211,26 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
 }
 
 template<typename ProblemType>
+bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
+  const core::metric_kernels::AbstractMetric &metric,
+  const core::gnp::TripleRangeDistanceSq &range_in,
+  double failure_probability,
+  typename ProblemType::DeltaType &delta,
+  typename ProblemType::ResultType *query_results) {
+
+}
+
+template<typename ProblemType>
+void core::gnp::TripletreeDfs<ProblemType>::ProbabilisticSummarize_(
+  GlobalType &global,
+  const core::gnp::TripleRangeDistanceSq &range_in,
+  double failure_probability,
+  const typename ProblemType::DeltaType &delta,
+  typename ProblemType::ResultType *query_results) {
+
+}
+
+template<typename ProblemType>
 bool core::gnp::TripletreeDfs<ProblemType>::CanSummarize_(
   const core::gnp::TripleRangeDistanceSq &triple_range_distance_sq_in,
   const typename ProblemType::DeltaType &delta,
@@ -275,6 +295,7 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
   typename ProblemType::ResultType *query_results,
   int level,
   bool all_leaves,
+  int num_recursed,
   bool *deterministic_approximation) {
 
   // If we have chosen all three nodes,
@@ -288,10 +309,10 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
     else {
 
       // Otherwise call the canonical case.
-      bool exact_computation = TripletreeCanonical_(
-                                 metric, triple_range_distance_sq,
-                                 relative_error, failure_probability,
-                                 query_results);
+      bool exact_computation =
+        TripletreeCanonical_(
+          metric, triple_range_distance_sq, relative_error,
+          failure_probability / (1 << num_recursed), query_results);
       *deterministic_approximation = (*deterministic_approximation) &&
                                      exact_computation;
     }
@@ -312,7 +333,8 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
 
         RecursionHelper_(
           metric, triple_range_distance_sq, relative_error, failure_probability,
-          query_results, level + 1, all_leaves, deterministic_approximation);
+          query_results, level + 1, all_leaves, num_recursed,
+          deterministic_approximation);
       }
     }
 
@@ -355,7 +377,8 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
           metric, *table_, current_node_left, level);
         RecursionHelper_(
           metric, triple_range_distance_sq, relative_error, failure_probability,
-          query_results, level + 1, false, deterministic_approximation);
+          query_results, level + 1, false, num_recursed + 1,
+          deterministic_approximation);
       }
 
       // Try the right child if it is valid.
@@ -368,7 +391,8 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
           metric, *table_, current_node_right, level);
         RecursionHelper_(
           metric, triple_range_distance_sq, relative_error, failure_probability,
-          query_results, level + 1, false, deterministic_approximation);
+          query_results, level + 1, false, num_recursed + 1,
+          deterministic_approximation);
       }
 
       // Put back the node if it has been replaced before popping up
@@ -402,11 +426,22 @@ bool core::gnp::TripletreeDfs<ProblemType>::TripletreeCanonical_(
     return true;
   }
 
+  // Then try probabilistic approximation.
+  else if(CanProbabilisticSummarize_(
+            metric, triple_range_distance_sq, failure_probability,
+            delta, query_results)) {
+    ProbabilisticSummarize_(
+      problem_->global(), triple_range_distance_sq, failure_probability,
+      delta, query_results);
+    return false;
+  }
+
   // Call the recursion helper.
   bool deterministic_approximation = true;
   RecursionHelper_(
     metric, triple_range_distance_sq, relative_error,
-    failure_probability, query_results, 0, true, &deterministic_approximation);
+    failure_probability, query_results,
+    0, true, 0, &deterministic_approximation);
 
   return deterministic_approximation;
 }
