@@ -143,18 +143,30 @@ class GaussianStarKernel {
   double critical_point_sq_;
   double critical_point_value_;
   
-  OBJECT_TRAVERSAL(GaussianStarKernel) {
+  /*OBJECT_TRAVERSAL(GaussianStarKernel) {
     OT_OBJ(neg_inv_bandwidth_2sq_);
     OT_OBJ(factor_);
     OT_OBJ(bandwidth_sq_);
     OT_OBJ(critical_point_sq_);
     OT_OBJ(critical_point_value_);
-  }
+  }*/
   
  public:
   static const bool HAS_CUTOFF = false;
  
  public:
+
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    ar & neg_inv_bandwidth_2sq_;
+    ar & factor_;
+    ar & bandwidth_sq_;
+    ar & critical_point_sq_;
+    ar & critical_point_value_;
+  }
+
   double bandwidth_sq() const {
     return bandwidth_sq_;
   }
@@ -236,15 +248,24 @@ class EpanKernel {
   double inv_bandwidth_sq_;
   double bandwidth_sq_;
 
-  OBJECT_TRAVERSAL(EpanKernel) {
+  /*OBJECT_TRAVERSAL(EpanKernel) {
     OT_OBJ(inv_bandwidth_sq_);
     OT_OBJ(bandwidth_sq_);
-  }
+  }*/
   
  public:
   static const bool HAS_CUTOFF = true;
   
  public:
+
+  friend class boost::serialization::access;
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    ar & inv_bandwidth_sq_;
+    ar & bandwidth_sq_;
+  }
+
   void Init(double bandwidth_in, index_t dims) {
     Init(bandwidth_in);
   }

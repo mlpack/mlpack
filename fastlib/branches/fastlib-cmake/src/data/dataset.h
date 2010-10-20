@@ -47,6 +47,11 @@
 #include "../la/matrix.h"
 #include "../math/discrete.h"
 #include "../file/textfile.h"
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/string.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/serialization.hpp>
 
 class TextLineReader;
 class TextWriter;
@@ -87,6 +92,7 @@ class DatasetFeature {
       OT_ENUM_VAL(NOMINAL));
     OT_OBJ(value_names_);
   }
+  
 
  /**
   * Initialization common to all features.
@@ -104,9 +110,11 @@ class DatasetFeature {
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version)
   {
-    ar & name_;
+     // String will be replaced by std::string
+    //ar & name_;
     ar & type_;
-    ar & value_names_;
+    // ArrayList will be replaced by std::vector
+    //ar & value_names_;
   }
 
   /**
@@ -237,6 +245,18 @@ class DatasetInfo {
   }
 
  public:
+ 
+ friend class boost::serialization::access; // Should be removed later
+
+ template<class Archive>
+ void serialize(Archive & ar, QueryStat & query)
+ {
+   // String will be replaced by std::string
+   //ar & name_;
+   // ArrayList will be replaced by std::vector
+   //ar & features_;
+ }
+
   /** Gets a mutable list of all features. */
   ArrayList<DatasetFeature>& features() {
     return features_;

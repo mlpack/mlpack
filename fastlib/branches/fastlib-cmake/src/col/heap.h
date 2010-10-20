@@ -78,7 +78,8 @@ class MinHeap {
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version)
   {
-    ar & entries_;
+    //ArrayList to be replaced by std::vector
+    //ar & entries_;
   }
 
   /**
