@@ -53,6 +53,12 @@
 #include <cmath>
 #include <climits>
 #include "fastlib/fastlib.h"
+#include <boost/program_options.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/string.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/serialization.hpp>
 
 class TestInfomaxICA; // forward reference
 

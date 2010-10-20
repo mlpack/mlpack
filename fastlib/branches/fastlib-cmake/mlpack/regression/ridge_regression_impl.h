@@ -50,6 +50,12 @@
 //    "Fix it otherwise the program will behave unexpectedly");                
 #else
 
+#include <boost/program_options.hpp>
+
+using namespace std;
+namespace boost_po = boost::program_options;
+boost_po::variables_map vm;
+
 void RidgeRegression::BuildCovariance_
 (const Matrix &input_data, const GenVector<index_t> *predictor_indices,
  const double *predictions_in) {
@@ -486,9 +492,12 @@ void RidgeRegression::FeatureSelectedRegression
   
   NOTIFY("Starting VIF-based feature selection.");
   
-  double lambda = fx_param_double(module_, "lambda", 0.0);
-  double variance_inflation_factor_threshold = 
-    fx_param_double(module_, "vif_threshold", 8.0);
+  //double lambda = fx_param_double(module_, "lambda", 0.0);
+  //double variance_inflation_factor_threshold = 
+  //  fx_param_double(module_, "vif_threshold", 8.0);
+  double lambda = vm["lambda"].as<double>();
+  double variance_inflation_factor_threshold = vm["vif_threshold"].as<double>();
+
   bool done_flag = false;
   GenVector<index_t> *current_predictor_indices = new GenVector<index_t>();
   GenVector<index_t> *current_prune_predictor_indices = new 

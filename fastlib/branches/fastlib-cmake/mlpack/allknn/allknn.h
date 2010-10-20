@@ -51,13 +51,8 @@
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/utility.hpp>
 #include <boost/serialization/serialization.hpp>
-#include <boost/program_options.hpp>
 
 using namespace std;
-namespace boost_po = boost::program_options;
-
-boost_po::variables_map vm;
-
 /**
  * Forward declaration for the tester class
  */
@@ -81,20 +76,20 @@ class AllkNN {
     
     // Defines many useful things for a class, including a pretty 
     // printer and copy constructor
-    friend class boost::serialization::access; // Should be removed later
+    //friend class boost::serialization::access; // Should be removed later
 
-    template<class Archive>
+    /*template<class Archive>
     void serialize(Archive & ar, QueryStat & query)
     {
        ar & query.max_distance_so_far_;
-    }
+    }*/
 
-/*    OT_DEF_BASIC(QueryStat) {
+    OT_DEF_BASIC(QueryStat) {
       // Include this line for all non-pointer members
       // There are other versions for arrays and pointers, see base/otrav.h
       OT_MY_OBJECT(max_distance_so_far_); 
     } // OT_DEF_BASIC
-*/    
+    
    private:
     
     /**

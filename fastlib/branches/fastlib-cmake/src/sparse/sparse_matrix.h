@@ -19,8 +19,6 @@
 #include <vector>
 #include <sstream>
 #include <algorithm>
-#include "../fastlib.h"
-#include "../la/matrix.h"
 // you need this because trillinos redifines it. It's ok
 // if you don't have it, but you will get an annoying warning
 #ifdef F77_FUNC
@@ -41,6 +39,9 @@
 #include <AnasaziBlockKrylovSchurSolMgr.hpp>
 #include <AztecOO.h>
 #include <Ifpack_CrsIct.h>
+
+#include "../fastlib.h"
+#include "../la/matrix.h"
 
 class Sparsem;
 /** class SparseMatrix created by Nick

@@ -89,26 +89,53 @@ considered for pruning for the input dataset.\n"},
     "This is the driver for the ridge regression.\n"
   };
 
+  boost_po::options_description desc("Allowed options");
+  desc.add_options()
+      ("inversion_method", boost_po::value<std::string>(), "  The method chosen for inverting the design matrix:normalsvd\(SVD on normal equation:default), svd(SVD), quicksvd(QUIC-SVD))\n")
+      ("lambda_min", boost_po::value<double>(), " The minimum lambda value used for CV (set to zero by default).\n")
+      ("lambda_max", boost_po::value<double>(), "  The maximum lambda value used for CV (set to zero by default).\n")
+      ("mode", boost_po::value<std::string>(), " The computation mode: regress, cvregress (cross-validated regression), fsregresss (feature selection then regress).\n")
+      ("num_lambdas", boost_po::value<int>(), " The number of lambdas to try for CV (set to 1 by default)")
+      ("predictions", boost_po::value<std::string>(), " A file containing the observed predictions.\n")
+      ("predictor_indices", boost_po::value<std::string>(), " The file containing the indices of the dimension that act as the predictors for the input dataset.\n")
+      ("predictors", boost_po::value<std::string>(), " A file containing the predictors.\n")
+      ("prune_predictor_indices", boost_po::value<std::string>(), " The file containing the indices of the dimensions that must be considered for pruning for the input dataset\n");
+
+  boost_po::store(boost_po::parse_command_line(argc, argv, desc), vm);
+  boost_po::notify(vm);
+
   fx_module *module = fx_init(argc, argv, &ridge_main_doc);
-  double lambda_min = fx_param_double(module, "lambda_min", 0.0);
-  double lambda_max = fx_param_double(module, "lambda_max", 0.0);
-  int num_lambdas_to_cv = fx_param_int(module, "num_lambdas", 1);
-  const char *mode = fx_param_str(module, "mode", "regress");  
+  //double lambda_min = fx_param_double(module, "lambda_min", 0.0);
+  //double lambda_max = fx_param_double(module, "lambda_max", 0.0);
+  //int num_lambdas_to_cv = fx_param_int(module, "num_lambdas", 1);
+  //const char *mode = fx_param_str(module, "mode", "regress");  
+  
+  double lambda_min = vm["lambda_min"].as<double>();
+  double lambda_max = vm["lambda_max"].as<double>();
+  int num_lambdas_to_cv = vm["num_lambdas"].as<int>();
+  std::string mode = vm["mode"].as<std::string>();
+
   if(lambda_min == lambda_max) {
     num_lambdas_to_cv = 1;
-    if(!strcmp(mode, "crossvalidate")) {
+    if(!strcmp(mode.c_str(), "crossvalidate")) {
       fx_set_param_str(module, "mode", "regress");
-      mode = fx_param_str(module, "mode", "regress");
+      //mode = fx_param_str(module, "mode", "regress");
+      mode = vm["mode"].as<std::string>();
     }
   }
   else {
-    fx_set_param_str(module, "mode", "cvregress");
-    mode = fx_param_str(module, "mode", "cvregress");
+    //fx_set_param_str(module, "mode", "cvregress");
+   //vm["mode"].as<std::string>() = "mode"; //check on this 
+   //mode = fx_param_str(module, "mode", "cvregress");
+   mode = vm["mode"].as<std::string>();
   }
 
   // Read the dataset and its labels.
-  std::string predictors_file = fx_param_str_req(module, "predictors"); 
-  std::string predictions_file = fx_param_str_req(module, "predictions");
+  //std::string predictors_file = fx_param_str_req(module, "predictors"); 
+  //std::string predictions_file = fx_param_str_req(module, "predictions");
+
+  std::string predictors_file = vm["predictors"].as<std::string>();
+  std::string predictions_file = vm["predictions"].as<std::string>();
 
   Matrix predictors;
   if (data::Load(predictors_file.c_str(), &predictors) == SUCCESS_FAIL) {
@@ -123,27 +150,29 @@ considered for pruning for the input dataset.\n"},
   RidgeRegression engine;
   NOTIFY("Computing Regression...");
 
-  if(!strcmp(mode, "regress")) {
+  if(!strcmp(mode.c_str(), "regress")) {
 
     engine.Init(module, predictors, predictions);
     engine.SVDRegress(lambda_min);
   }
-  else if(!strcmp(mode, "cvregress")) {
+  else if(!strcmp(mode.c_str(), "cvregress")) {
     NOTIFY("Crossvalidating for the optimal lambda in [ %g %g ] by trying \
 %d values...", lambda_min, lambda_max, num_lambdas_to_cv);
     engine.Init(module, predictors, predictions);
     engine.CrossValidatedRegression(lambda_min, lambda_max, num_lambdas_to_cv);
   }
-  else if(!strcmp(mode, "fsregress")) {
+  else if(!strcmp(mode.c_str(), "fsregress")) {
 
     NOTIFY("Feature selection based regression.\n");
 
     Matrix predictor_indices_intermediate;
     Matrix prune_predictor_indices_intermediate;
-    std::string predictor_indices_file = fx_param_str_req(module, 
-							  "predictor_indices");
-    std::string prune_predictor_indices_file = 
-      fx_param_str_req(module, "prune_predictor_indices");
+    //std::string predictor_indices_file = fx_param_str_req(module, 
+    //							  "predictor_indices");
+    std::string predictor_indices_file = vm["predictor_indices"].as<std::string>();
+    //std::string prune_predictor_indices_file = 
+    //  fx_param_str_req(module, "prune_predictor_indices");
+    std::string prune_predictor_indices_file = vm["prune_predictor_indices"].as<std::string>();
     if(data::Load(predictor_indices_file.c_str(),
 		  &predictor_indices_intermediate) == SUCCESS_FAIL) {
       FATAL("Unable to open file %s", predictor_indices_file.c_str());
@@ -187,7 +216,8 @@ considered for pruning for the input dataset.\n"},
   fx_result_double(module, "square error", square_error);
   Matrix factors;
   engine.factors(&factors);
-  std::string factors_file = fx_param_str(module, "factors", "factors.csv");
+  //std::string factors_file = fx_param_str(module, "factors", "factors.csv");
+  std::string factors_file = vm["factors"].as<std::string>();
   NOTIFY("Saving factors...");
   data::Save(factors_file.c_str(), factors);
 

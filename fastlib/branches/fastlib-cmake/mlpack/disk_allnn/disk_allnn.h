@@ -40,6 +40,10 @@
 #define DISK_ALLNN_H
 
 #include <fastlib/fastlib.h>
+#include <boost/program_options.hpp>
+
+namespace boost_po = boost::program_options;
+boost_po::variables_map vm;
 
 const fx_entry_doc allnn_entries[] = {
   {"leaf_size", FX_PARAM, FX_INT, NULL,
@@ -687,16 +691,21 @@ class DiskAllNN {
     queries_.Alias(queries_in);
     references_.Alias(references_in);
 
-    leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+    //leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+    leaf_size_ = vm["leaf_size"].as<int>();
+    advice_limit_upper_ = vm["advice_limit_upper"].as<int>();
+    advice_limit_lower_ = vm["advice_limit_lower"].as<int>();
+    std::string splits = vm["splits"].as<std::string>();
+
     DEBUG_ASSERT(leaf_size_ > 0);
 
-    advice_limit_upper_ = fx_param_int(module_, "advice_limit_upper", 67108864);
+    //advice_limit_upper_ = fx_param_int(module_, "advice_limit_upper", 67108864);
     DEBUG_ASSERT(advice_limit_upper_ > 0);
 
-    advice_limit_lower_ = fx_param_int(module_, "advice_limit", 409600);
+    //advice_limit_lower_ = fx_param_int(module_, "advice_limit", 409600);
     DEBUG_ASSERT(advice_limit_lower_ > 0);
     
-    std::string splits = fx_param_str(module_, "splits", "midpoint"); 
+    //std::string splits = fx_param_str(module_, "splits", "midpoint"); 
     
     // Timers are another handy tool provided by FASTexec.  These are
     // emitted automatically once you call fx_done.
@@ -750,16 +759,21 @@ class DiskAllNN {
      * They are too big to copy*/
     references_.Alias(references_in);
     queries_.Alias(references_in);
-    leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+    //leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+    leaf_size_ = vm["leaf_size"].as<int>();
+    advice_limit_upper_ = vm["advice_limit_upper"].as<int>();
+    advice_limit_lower_ = vm["advice_limit_lower"].as<int>();
+    std::string splits = vm["splits"].as<std::string>();
+
     DEBUG_ASSERT(leaf_size_ > 0);
 
-    advice_limit_upper_ = fx_param_int(module_, "advice_limit_upper", 67108864);
+    //advice_limit_upper_ = fx_param_int(module_, "advice_limit_upper", 67108864);
     DEBUG_ASSERT(advice_limit_upper_ > 0);
 
-    advice_limit_lower_ = fx_param_int(module_, "advice_limit_lower", 409600);
+    //advice_limit_lower_ = fx_param_int(module_, "advice_limit_lower", 409600);
     DEBUG_ASSERT(advice_limit_lower_ > 0);
 
-    std::string splits = fx_param_str(module_, "splits", "midpoint"); 
+    //std::string splits = fx_param_str(module_, "splits", "midpoint"); 
 
     // Timers are another handy tool provided by FASTexec.  These are
     // emitted automatically once you call fx_done.

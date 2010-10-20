@@ -46,9 +46,16 @@
 #include "smo.h"
 
 #include "fastlib/fastlib.h"
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/string.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/serialization.hpp>
+#include <boost/program_options.hpp>
 
-#include <typeinfo>
-
+using namespace std;
+namespace boost_po = boost::program_options;
+boost_po::variables_map vm;
 
 #define ID_LINEAR 0
 #define ID_GAUSSIAN 1
@@ -89,7 +96,8 @@ class SVMRBFKernel {
   ArrayList<double> kpara_; // kernel parameters
   void Init(datanode *node) { //TODO: NULL->node
     kpara_.Init(2);
-    kpara_[0] = fx_param_double_req(NULL, "sigma"); //sigma
+    kpara_[0] = vm["sigma"].as<double>();
+    //kpara_[0] = fx_param_double_req(NULL, "sigma"); //sigma
     kpara_[1] = -1.0 / (2 * math::Sqr(kpara_[0])); //gamma
   }
   /* Kernel name */
@@ -260,16 +268,36 @@ void SVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *mo
   // budget parameter, contorls # of support vectors; default: # of data samples (use all)
   //param_.b_ = fx_param_int(NULL, "b", dataset.n_points());
   // working set selection scheme. default: 1st order expansion
-  param_.wss_ = fx_param_int(NULL, "wss", 1);
-
+  //param_.wss_ = fx_param_int(NULL, "wss", 1);
+  param_.wss_ = vm["wss"].as<int>();
   // the tradeoff parameter "C", default: 10.0
-  param_.C_ = fx_param_double(NULL, "c", 10.0);
-  param_.Cp_ = fx_param_double(NULL, "c_p", param_.C_);
-  param_.Cn_ = fx_param_double(NULL, "c_n", param_.C_);
+  //param_.C_ = fx_param_double(NULL, "c", 10.0);
+  //param_.Cp_ = fx_param_double(NULL, "c_p", param_.C_);
+  //param_.Cn_ = fx_param_double(NULL, "c_n", param_.C_);
+  param_.C_ = vm["c"].as<double>();
+  param_.Cp_ = vm["c_p"].as<double>();
+  param_.Cn_ = vm["c_n"].as<double>();
+
+  if ( 0 == vm.count("c")) {
+    param_.C_ = 10.0;  
+  }
+  
+  if ( 0 == vm.count("c_p")) {
+    param_.Cp_ = param_.C_;
+  }
+
+  if ( 0 == vm.count("c_n")) {
+    param_.Cn_ = param_.C_;
+  }
 
   if (learner_typeid == 1) { // for SVM_R only
     // the "epsilon", default: 0.1
-    param_.epsilon_ = fx_param_double(NULL, "epsilon", 0.1);
+    //param_.epsilon_ = fx_param_double(NULL, "epsilon", 0.1);
+    param_.epsilon_ = vm["epsilon"].as<double>();
+
+    if( 0 == vm.count("epsilon")) {
+      param_.epsilon_ = 0.1;
+    }
   }
   else if (learner_typeid == 2) { // SVM_DE
   }

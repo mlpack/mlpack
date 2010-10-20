@@ -51,6 +51,12 @@
 #include <string>
 #include "fastlib/fastlib.h"
 #include "allknn.h"
+#include <boost/program_options.hpp>
+
+using namespace std;
+namespace boost_po = boost::program_options;
+
+boost_po::variables_map vm;
 
 
 int main(int argc, char *argv[]) {

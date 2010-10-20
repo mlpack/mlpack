@@ -33,7 +33,18 @@
 #include "fastlib/fastlib.h"
 #include "kalman_helper.h"
 #include "kalman.h"
+#include <string>
+#include <boost/program_options.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/serialization/string.hpp>
+#include <boost/serialization/utility.hpp>
+#include <boost/serialization/serialization.hpp>
+
 using namespace std;
+namespace boost_po = boost::program_options;
+
+boost_po::variables_map vm;
 
 /**
  * @file kalman_main.cc
@@ -73,44 +84,70 @@ int main(int argc, char* argv[]) {
  
   ///////////LOADING DATA AND SETTING PARAMETERS//////////////////////////
 
-  // User-specified: duration of experiment 
-  // Note that the experiment will run from t=0 to t_tot
-  const char* t_in = fx_param_str(NULL, "t_in", "t_in");
-  Matrix t_tot_mat; data::Load(t_in, &t_tot_mat);
-  int t_tot = (int)t_tot_mat.get(0, 0);
-  
   // User-specified: system parameters. Stored in *.csv files 
   // a_mat, b_mat, c_mat, d_mat, q_mat, r_mat, s_mat
   // are the typical time-invariant system params
   // Proceed to Load init matrices within a struct called lds
-  const char* a_in = fx_param_str(NULL, "a_in", "a_in");
-  const char* b_in = fx_param_str(NULL, "b_in", "b_in");
-  const char* c_in = fx_param_str(NULL, "c_in", "c_in");
-  const char* q_in = fx_param_str(NULL, "q_in", "q_in");
-  const char* r_in = fx_param_str(NULL, "r_in", "r_in");
-  const char* s_in = fx_param_str(NULL, "s_in", "s_in");  
+  //const char* a_in = fx_param_str(NULL, "a_in", "a_in");
+  //const char* b_in = fx_param_str(NULL, "b_in", "b_in");
+  //const char* c_in = fx_param_str(NULL, "c_in", "c_in");
+  //const char* q_in = fx_param_str(NULL, "q_in", "q_in");
+  //const char* r_in = fx_param_str(NULL, "r_in", "r_in");
+  //const char* s_in = fx_param_str(NULL, "s_in", "s_in");  
   
+  boost_po::options_description desc("Allowed options");
+  desc.add_options()
+      ("a_in", boost_po::value<std::string>(), "a_in")
+      ("b_in", boost_po::value<std::string>(), "b_in")
+      ("c_in", boost_po::value<std::string>(), "c_in")
+      ("q_in", boost_po::value<std::string>(), "q_in")
+      ("r_in", boost_po::value<std::string>(), "r_in")
+      ("s_in", boost_po::value<std::string>(), "s_in")
+      ("t_in", boost_po::value<std::string>(), "t_in");
+
+  boost_po::store(boost_po::parse_command_line(argc, argv, desc), vm);
+  boost_po::notify(vm);
+
+  std:string a_in = vm["a_in"].as<std::string>();
+  std::string b_in = vm["b_in"].as<std::string>();
+  std::string c_in = vm["c_in"].as<std::string>();
+  std::string q_in = vm["q_in"].as<std::string>();
+  std::string r_in = vm["r_in"].as<std::string>();
+  std::string s_in = vm["s_in"].as<std::string>();
+  std::string t_in = vm["t_in"].as<std::string>();
+
+  // User-specified: duration of experiment 
+  // Note that the experiment will run from t=0 to t_tot
+  //const char* t_in = fx_param_str(NULL, "t_in", "t_in");
+  Matrix t_tot_mat; data::Load(t_in.c_str(), &t_tot_mat);
+  int t_tot = (int)t_tot_mat.get(0, 0);
+
   ssm lds;
-  data::Load(a_in, &lds.a_mat); 
-  data::Load(b_in, &lds.b_mat); 
-  data::Load(c_in, &lds.c_mat); 
-  data::Load(q_in, &lds.q_mat); 
-  data::Load(r_in, &lds.r_mat); 
-  data::Load(s_in, &lds.s_mat);  
+  data::Load(a_in.c_str(), &lds.a_mat); 
+  data::Load(b_in.c_str(), &lds.b_mat); 
+  data::Load(c_in.c_str(), &lds.c_mat); 
+  data::Load(q_in.c_str(), &lds.q_mat); 
+  data::Load(r_in.c_str(), &lds.r_mat); 
+  data::Load(s_in.c_str(), &lds.s_mat);  
 	     
   // User-specified: kf parameters. Stored in *.csv files 
   // Includes x_{0|-1}, p_pred_{0|-1}, y_{0|-1}, inno_cov_{0|-1}
   // {t|t-1} means var. at time t given info. up to t-1
-  const char* x_pred_0_in = fx_param_str(NULL, "x_pred_0_in", "x_pred_0_in");
-  const char* p_pred_0_in = fx_param_str(NULL, "p_pred_0_in", "p_pred_0_in");
-  const char* y_pred_0_in = fx_param_str(NULL, "y_pred_0_in", "y_pred_0_in");
-  const char* inno_cov_0_in = fx_param_str(NULL, "inno_cov_0_in", 
-					   "inno_cov_0_in");
+  //const char* x_pred_0_in = fx_param_str(NULL, "x_pred_0_in", "x_pred_0_in");
+  //const char* p_pred_0_in = fx_param_str(NULL, "p_pred_0_in", "p_pred_0_in");
+  //const char* y_pred_0_in = fx_param_str(NULL, "y_pred_0_in", "y_pred_0_in");
+  //const char* inno_cov_0_in = fx_param_str(NULL, "inno_cov_0_in", 
+  //					   "inno_cov_0_in");
   
-  Matrix x_pred_0; data::Load(x_pred_0_in, &x_pred_0);
-  Matrix y_pred_0; data::Load(y_pred_0_in, &y_pred_0); 
-  Matrix p_pred_0; data::Load(p_pred_0_in, &p_pred_0);
-  Matrix inno_cov_0; data::Load(inno_cov_0_in, &inno_cov_0);
+  std::string x_pred_0_in = vm["x_pred_0_in"].as<std::string>();
+  std::string p_pred_0_in = vm["p_pred_0_in"].as<std::string>();
+  std::string y_pred_0_in = vm["y_pred_0_in"].as<std::string>();
+  std::string inno_cov_0_in = vm["inno_cov_0_in"].as<std::string>();
+
+  Matrix x_pred_0; data::Load(x_pred_0_in.c_str(), &x_pred_0);
+  Matrix y_pred_0; data::Load(y_pred_0_in.c_str(), &y_pred_0); 
+  Matrix p_pred_0; data::Load(p_pred_0_in.c_str(), &p_pred_0);
+  Matrix inno_cov_0; data::Load(inno_cov_0_in.c_str(), &inno_cov_0);
 
   // Set up parameters to be used by signal generator. 
   // Assumed to be an lds with the same params. as the KF

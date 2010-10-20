@@ -1,18 +1,18 @@
-/* MLPACK 0.2
+/* MLPACK 0.1
  *
- * Copyright (c) 2008, 2009 Alexander Gray,
- *                          Garry Boyer,
- *                          Ryan Riegel,
- *                          Nikolaos Vasiloglou,
- *                          Dongryeol Lee,
- *                          Chip Mappus, 
- *                          Nishant Mehta,
- *                          Hua Ouyang,
- *                          Parikshit Ram,
- *                          Long Tran,
- *                          Wee Chin Wong
+ * Copyright (c) 2008 Alexander Gray,
+ *                    Garry Boyer,
+ *                    Ryan Riegel,
+ *                    Nikolaos Vasiloglou,
+ *                    Dongryeol Lee,
+ *                    Chip Mappus, 
+ *                    Nishant Mehta,
+ *                    Hua Ouyang,
+ *                    Parikshit Ram,
+ *                    Long Tran,
+ *                    Wee Chin Wong
  *
- * Copyright (c) 2008, 2009 Georgia Institute of Technology
+ * Copyright (c) 2008 Georgia Institute of Technology
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -29,6 +29,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
+// Copyright 2007 Georgia Institute of Technology. All rights reserved.
 /**
  * otrav_impl.h (this file not included by Doxygen)
  *
@@ -1147,8 +1148,7 @@ namespace ot__private {
     template<typename T>
     void Write_(T *val, index_t elems = 1) {
       if (!t_size_only) {
-	size_t elems_written = fwrite(val, sizeof(T), elems, stream_);
-	DEBUG_ASSERT(elems_written == (size_t)elems);
+	fwrite(val, sizeof(T), elems, stream_);
       }
       size += sizeof(T) * elems;
     }
@@ -1280,8 +1280,7 @@ namespace ot__private {
 
     template<typename T>
     void Read_(T *ptr, index_t elems = 1) {
-      size_t elems_read = fread(ptr, sizeof(T), elems, stream_);
-      DEBUG_ASSERT(elems_read == (size_t)elems);
+      fread(ptr, sizeof(T), elems, stream_);
       size_ += sizeof(T) * elems;
     }
 

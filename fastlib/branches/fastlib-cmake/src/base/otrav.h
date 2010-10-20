@@ -1,18 +1,18 @@
-/* MLPACK 0.2
+/* MLPACK 0.1
  *
- * Copyright (c) 2008, 2009 Alexander Gray,
- *                          Garry Boyer,
- *                          Ryan Riegel,
- *                          Nikolaos Vasiloglou,
- *                          Dongryeol Lee,
- *                          Chip Mappus, 
- *                          Nishant Mehta,
- *                          Hua Ouyang,
- *                          Parikshit Ram,
- *                          Long Tran,
- *                          Wee Chin Wong
+ * Copyright (c) 2008 Alexander Gray,
+ *                    Garry Boyer,
+ *                    Ryan Riegel,
+ *                    Nikolaos Vasiloglou,
+ *                    Dongryeol Lee,
+ *                    Chip Mappus, 
+ *                    Nishant Mehta,
+ *                    Hua Ouyang,
+ *                    Parikshit Ram,
+ *                    Long Tran,
+ *                    Wee Chin Wong
  *
- * Copyright (c) 2008, 2009 Georgia Institute of Technology
+ * Copyright (c) 2008 Georgia Institute of Technology
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -29,6 +29,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
+// Copyright 2007 Georgia Institute of Technology. All rights reserved.
 /**
  * @file otrav.h
  *
@@ -41,10 +42,10 @@
 #ifndef BASE_OTRAV_H
 #define BASE_OTRAV_H
 
-#include "common.h"
-#include "debug.h"
-#include "cc.h"
-#include "ccmem.h"
+#include "fastlib/base/common.h"
+#include "fastlib/base/debug.h"
+#include "fastlib/base/cc.h"
+#include "fastlib/base/ccmem.h"
 
 #include <typeinfo>
 
@@ -1486,7 +1487,7 @@
 
 
 #define NEED_OTRAV_IMPL
-#include "otrav_impl.h"
+#include "fastlib/base/otrav_impl.h"
 #undef NEED_OTRAV_IMPL
 
 

@@ -15,6 +15,13 @@ int main(int argc, char* argv[]) {
  
   fx_init(argc, argv, NULL);
  
+  boost_po::options_description desc("Allowed options");
+  desc.add_options()
+    ("using_thor", boost_po::value<bool>()->default_value(0), "using_thor")
+    ("data", boost_po::value<std::string>(), "data")
+    ("do_naive", boost_po::value<bool>(), "do_naive"); 
+
+ 
   // For when I implement a thor version
   bool using_thor = fx_param_bool(NULL, "using_thor", 0);
   

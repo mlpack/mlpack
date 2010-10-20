@@ -115,6 +115,19 @@ int main(int argc, char *argv[]) {
   // your program.  This reads the command line, among other things.
   fx_init(argc, argv, NULL);
 
+  boost_po::options_description desc("Allowed options");
+  desc.add_options()
+    ("help", "Display options")
+    ("data", boost_po::value<std::string>(), "  The dataset file name")
+    ("lower", boost_po::value<std::string>(), "  The lower limit file name")
+    ("upper", boost_po::value<std::string>(), " The upper limit file name" )
+    ("do_naive", boost_po::value<index_t>(), " Do a naive version")
+    ("load_tree_file", boost_po::value<std::string>() , " The file from which tree is to be loaded")
+    ("save_tree_file", boost_po::value<int>(), " The file into which tree is to be saved" );
+
+  boost_po::store(boost_po::parse_command_line(argc, argv, desc), vm);
+  boost_po::notify(vm);
+
   // Initialize Nick's memory manager...
   std::string pool_name("/scratch/temp_mem");
   mmapmm::MemoryManager<false>::allocator_ =
@@ -126,8 +139,8 @@ int main(int argc, char *argv[]) {
   ////////// READING PARAMETERS AND LOADING DATA /////////////////////
 
   // The reference data file is a required parameter.
-  const char* dataset_file_name = fx_param_str(NULL, "data", "data.csv");
-
+  //const char* dataset_file_name = fx_param_str(NULL, "data", "data.csv");
+  std:string dataset_file_name = vm["data"].as<std::string>();
   // column-oriented dataset matrix.
   GenMatrix<double> dataset;
 
@@ -139,20 +152,25 @@ int main(int argc, char *argv[]) {
   
   // The file containing the lower and the upper limits of each search
   // window.
-  const char *lower_limit_file_name = fx_param_str(NULL, "lower", "lower.csv");
-  const char *upper_limit_file_name = fx_param_str(NULL, "upper", "upper.csv");
+  //const char *lower_limit_file_name = fx_param_str(NULL, "lower", "lower.csv");
+  //const char *upper_limit_file_name = fx_param_str(NULL, "upper", "upper.csv");
+  
+  std::string lower_limit_file_name = vm["lower"].as<std::string>();
+  std::string upper_limit_file_name = vm["upper"].as<std::string>();
 
   data::Load(lower_limit_file_name, &low_coord_limits);
   data::Load(upper_limit_file_name, &high_coord_limits);
 
   // flag for determining whether we need to do naive algorithm.
-  bool do_naive = fx_param_exists(NULL, "do_naive");
+  //bool do_naive = fx_param_exists(NULL, "do_naive");
 
   // File name containing the saved tree (if the user desires to do so)
   const char *load_tree_file_name;
 
-  if(fx_param_exists(NULL, "load_tree_file")) {
-    load_tree_file_name = fx_param_str(NULL, "load_tree_file", NULL);
+//  if(fx_param_exists(NULL, "load_tree_file")) {
+  if( 0 != vm.count("load_tree_file")) {
+    //load_tree_file_name = fx_param_str(NULL, "load_tree_file", NULL);
+    load_tree_file_name = vm["load_tree_file"].as<std::string>();
   }
   else {
     load_tree_file_name = NULL;
@@ -160,15 +178,17 @@ int main(int argc, char *argv[]) {
 
   // Declare fast tree-based orthogonal range search algorithm object.
   OrthoRangeSearch<double> fast_search;
-  fast_search.Init(dataset, fx_param_exists(NULL, "do_naive"),
-		   load_tree_file_name);
+  //fast_search.Init(dataset, fx_param_exists(NULL, "do_naive"),
+  //		   load_tree_file_name);
+  fast_search.Init(dataset, vm.count("do_naive")? true:false, load_tree_file_name);
   GenMatrix<bool> fast_search_results;
   fast_search.Compute(low_coord_limits, high_coord_limits, 
 		      &fast_search_results);
 
   if(fx_param_exists(NULL, "save_tree_file")) {
-    const char *save_tree_file_name = fx_param_str(NULL, "save_tree_file",
-						   NULL);
+    //const char *save_tree_file_name = fx_param_str(NULL, "save_tree_file",
+    //						   NULL);
+    std::string save_tree_file_name = vm["save_tree_file"].as<std::string>();
     fast_search.SaveTree(save_tree_file_name);
   }
 

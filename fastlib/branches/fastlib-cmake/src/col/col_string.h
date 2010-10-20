@@ -1,18 +1,18 @@
-/* MLPACK 0.2
+/* MLPACK 0.1
  *
- * Copyright (c) 2008, 2009 Alexander Gray,
- *                          Garry Boyer,
- *                          Ryan Riegel,
- *                          Nikolaos Vasiloglou,
- *                          Dongryeol Lee,
- *                          Chip Mappus, 
- *                          Nishant Mehta,
- *                          Hua Ouyang,
- *                          Parikshit Ram,
- *                          Long Tran,
- *                          Wee Chin Wong
+ * Copyright (c) 2008 Alexander Gray,
+ *                    Garry Boyer,
+ *                    Ryan Riegel,
+ *                    Nikolaos Vasiloglou,
+ *                    Dongryeol Lee,
+ *                    Chip Mappus, 
+ *                    Nishant Mehta,
+ *                    Hua Ouyang,
+ *                    Parikshit Ram,
+ *                    Long Tran,
+ *                    Wee Chin Wong
  *
- * Copyright (c) 2008, 2009 Georgia Institute of Technology
+ * Copyright (c) 2008 Georgia Institute of Technology
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -29,6 +29,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
+// Copyright 2007 Georgia Institute of Technology. All rights reserved.
+// ABSOLUTELY NOT FOR DISTRIBUTION
 /**
  * @file string.h
  *
@@ -38,8 +40,9 @@
 #ifndef COLLECTIONS_STRING_H
 #define COLLECTIONS_STRING_H
 
-#include "../base/base.h"
-#include "arraylist.h"
+#include "fastlib/base/base.h"
+#include "fastlib/col/arraylist.h"
+//#include "arraylist.h"
 
 #include <cstring>
 
@@ -68,16 +71,7 @@ class String {
     OT_OBJ(c_str);
   }
 
-
  public:
- 
-  friend class boost::serialization::access;
-  template<class Archive>
-  void serialize(Archive & ar, const unsigned int version)
-  {
-    ar & array_;
-  }
-
   /**
    * Implicit conversion constructor.
    */

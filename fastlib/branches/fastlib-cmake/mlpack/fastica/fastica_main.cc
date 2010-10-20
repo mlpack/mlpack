@@ -103,23 +103,49 @@ int main(int argc, char *argv[]) {
   fx_module* root = fx_init(argc, argv, &fastica_main_doc);
 
   Matrix X;
-  const char* data = fx_param_str_req(NULL, "data");
-  data::Load(data, &X);
+  
+  std::string data;
+  std::string ic_filename;
+  std::string unmixing_filename;
 
-  const char* ic_filename = fx_param_str(NULL, "ic_filename", "ic.dat");
-  const char* unmixing_filename =
-    fx_param_str(NULL, "unmixing_filename", "unmixing.dat");
+  boost_po::options_description desc("Allowed options");
+  desc.add_options()
+      ("data", boost_po::value<std::string>(&data), "  The dataset file name")
+      ("ic_filename", boost_po::value<std::string>(&ic_filename)->default_value("ic.dat"), "  The dataset file name")
+      ("unmixing_filename", boost_po::value<std::string>(&unmixing_filename)->default_value("unmixing.dat"), "  Unmixing file name")
+      ("seed", boost_po::value<int>()->default_value(clock() + time(0)), "  Seed for the random number generator")
+      ("approach", boost_po::value<std::string>()->default_value("deflation"), "  Independent component recovery approach: 'deflation' or 'symmetric'.\n")
+      ("nonlinearity", boost_po::value<std::string>()->default_value("logcosh"), "  Nonlinear function to use: 'logcosh', 'gauss', 'kurtosis', or 'skew'.\n")
+      ("fine_tune", boost_po::value<bool>()->default_value(false), "  Enable fine tuning.\n")
+      ("a1", boost_po::value<double>()->default_value(1), "  Numeric constant for logcosh nonlinearity.\n")
+      ("a2", boost_po::value<double>()->default_value(1), "  Numeric constant for gauss nonlinearity.\n")
+      ("mu", boost_po::value<double>()->default_value(1), "  Numeric constant for fine-tuning Newton-Raphson method.\n")
+      ("stabilization", boost_po::value<bool>()->default_value(false), "  Use stabilization.\n")
+      ("epsilon", boost_po::value<double>()->default_value(0.0001), "  Threshold for convergence.\n")
+      ("max_num_iterations", boost_po::value<int>()->default_value(1000), "  Maximum number of iterations of fixed-point iterations.\n")
+      ("max_fine_tune", boost_po::value<int>()->default_value(5), "  Maximum number of iterations of fixed-point iterations.\n")
+      ("percent_cut", boost_po::value<double>()->default_value(1), "  Maximum number of fine-tuning iterations.\n");
+
+  boost_po::store(boost_po::parse_command_line(argc, argv, desc), vm);
+  boost_po::notify(vm);
+
+  //const char* data = fx_param_str_req(NULL, "data");
+  data::Load(data.c_str(), &X);
+
+  //const char* ic_filename = fx_param_str(NULL, "ic_filename", "ic.dat");
+  //const char* unmixing_filename =
+  //  fx_param_str(NULL, "unmixing_filename", "unmixing.dat");
   struct datanode* fastica_module =
     fx_submodule(root, "fastica");
 
   FastICA fastica;
-
+  
   int success_status = SUCCESS_FAIL;
   if(fastica.Init(X, fastica_module) == SUCCESS_PASS) {
     Matrix W, Y;
     if(fastica.DoFastICA(&W, &Y) == SUCCESS_PASS) {
-      SaveCorrectly(unmixing_filename, W);
-      data::Save(ic_filename, Y);
+      SaveCorrectly(unmixing_filename.c_str(), W);
+      data::Save(ic_filename.c_str(), Y);
       success_status = SUCCESS_PASS;
       VERBOSE_ONLY( W.PrintDebug("W") );
     }
