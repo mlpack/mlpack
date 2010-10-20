@@ -249,7 +249,7 @@ class DatasetInfo {
  friend class boost::serialization::access; // Should be removed later
 
  template<class Archive>
- void serialize(Archive & ar, QueryStat & query)
+ void serialize(Archive & ar, const unsigned int version)
  {
    // String will be replaced by std::string
    //ar & name_;
