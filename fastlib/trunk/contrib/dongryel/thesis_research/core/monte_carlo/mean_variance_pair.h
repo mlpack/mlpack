@@ -3,10 +3,11 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef FL_LITE_MLPACK_KDE_MEAN_VARIANCE_PAIR_H
-#define FL_LITE_MLPACK_KDE_MEAN_VARIANCE_PAIR_H
+#ifndef CORE_MONTE_CARLO_MEAN_VARIANCE_PAIR_H
+#define CORE_MONTE_CARLO_MEAN_VARIANCE_PAIR_H
 
-namespace ml {
+namespace core {
+namespace monte_carlo {
 class MeanVariancePair {
 
   private:
@@ -88,6 +89,7 @@ class MeanVariancePair {
                           delta * (sample - sample_mean_)) /
                          ((double) num_samples_);
     }
+};
 };
 };
 

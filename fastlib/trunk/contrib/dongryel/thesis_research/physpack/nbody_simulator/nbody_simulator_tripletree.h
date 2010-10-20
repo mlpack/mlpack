@@ -12,7 +12,8 @@
 
 #include "core/gnp/triple_range_distance_sq.h"
 #include "axilrod_teller.h"
-#include "boost/utility.hpp"
+#include <boost/utility.hpp>
+#include "core/monte_carlo/mean_variance_pair.h"
 
 namespace physpack {
 namespace nbody_simulator {
@@ -90,6 +91,8 @@ class NbodySimulatorDelta {
 
     std::vector<double> used_error_;
 
+    std::vector< core::monte_carlo::MeanVariancePair > *mean_variance_pair_;
+
     NbodySimulatorDelta() {
       negative_potential_.resize(3);
       positive_potential_.resize(3);
@@ -105,6 +108,7 @@ class NbodySimulatorDelta {
         pruned_[i] = 0;
         used_error_[i] = 0;
       }
+      mean_variance_pair_ = NULL;
     }
 
     template<typename GlobalType>
@@ -209,7 +213,25 @@ class NbodySimulatorGlobal {
 
     double total_num_tuples_;
 
+    boost::math::normal normal_dist_;
+
+    std::vector< core::monte_carlo::MeanVariancePair > mean_variance_pair_;
+
   public:
+
+    std::vector< core::monte_carlo::MeanVariancePair > *mean_variance_pair() {
+      return &mean_variance_pair_;
+    }
+
+    double compute_quantile(double tail_mass) const {
+      double mass = 1 - 0.5 * tail_mass;
+      if(mass > 0.999) {
+        return 3;
+      }
+      else {
+        return boost::math::quantile(normal_dist_, mass);
+      }
+    }
 
     const physpack::nbody_simulator::AxilrodTeller &potential() const {
       return potential_;
@@ -267,8 +289,12 @@ class NbodySimulatorGlobal {
       relative_error_ = relative_error_in;
       probability_ = probability_in;
       table_ = table_in;
-      total_num_tuples_ = boost::math::binomial_coefficient<double>(
+      total_num_tuples_ = core::math::BinomialCoefficient<double>(
                             table_in->n_entries() - 1, 2);
+
+      // Initialize the temporary vector for storing the Monte Carlo
+      // results.
+      mean_variance_pair_.resize(table_->n_entries());
     }
 };
 

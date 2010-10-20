@@ -8,7 +8,7 @@
 
 #include <armadillo>
 #include "boost/math/distributions/normal.hpp"
-#include "../monte_carlo/mean_variance_pair.h"
+#include "core/monte_carlo/mean_variance_pair.h"
 #include "core/metric_kernels/kernel.h"
 #include "core/tree/statistic.h"
 #include "core/table/table.h"
@@ -105,7 +105,7 @@ class KdeGlobal {
 
     boost::math::normal normal_dist_;
 
-    std::vector< ml::MeanVariancePair > mean_variance_pair_;
+    std::vector< core::monte_carlo::MeanVariancePair > mean_variance_pair_;
 
   public:
 
@@ -114,7 +114,7 @@ class KdeGlobal {
       kernel_ = NULL;
     }
 
-    std::vector< ml::MeanVariancePair > *mean_variance_pair() {
+    std::vector< core::monte_carlo::MeanVariancePair > *mean_variance_pair() {
       return &mean_variance_pair_;
     }
 
@@ -315,7 +315,7 @@ class KdeDelta {
 
     double used_error_;
 
-    std::vector< ml::MeanVariancePair > *mean_variance_pair_;
+    std::vector< core::monte_carlo::MeanVariancePair > *mean_variance_pair_;
 
     KdeDelta() {
       SetZero();
