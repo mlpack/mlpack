@@ -12,6 +12,7 @@
 
 #include "core/gnp/triple_range_distance_sq.h"
 #include "axilrod_teller.h"
+#include <boost/math/distributions/normal.hpp>
 #include <boost/utility.hpp>
 #include "core/monte_carlo/mean_variance_pair.h"
 
@@ -117,10 +118,16 @@ class NbodySimulatorDelta {
       const GlobalType &global,
       const core::gnp::TripleRangeDistanceSq &triple_range_distance_sq) {
 
+      // Set the mean variance pair pointer.
+      mean_variance_pair_ =
+        const_cast< GlobalType & >(global).mean_variance_pair();
+
       // Compute the potential range.
       core::math::Range potential_range = global.potential().RangeUnnormOnSq(
                                             triple_range_distance_sq);
-      for(unsigned int i = 0; i < pruned_.size(); i++) {
+      for(unsigned int i = 0;
+          i < pruned_.size();
+          i++) {
         pruned_[i] = triple_range_distance_sq.num_tuples(i);
         used_error_[i] = pruned_[i] * 0.5 * potential_range.width();
         if(potential_range.lo < 0) {
