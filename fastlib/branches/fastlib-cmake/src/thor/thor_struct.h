@@ -54,7 +54,7 @@ class ThorNode {
   index_t subnodes_in_page_;
 #endif /* LIT_DISK_TREES */
 
-  OT_DEF_BASIC(ThorNode) {
+  /*OT_DEF_BASIC(ThorNode) {
     OT_MY_OBJECT(begin_);
     OT_MY_OBJECT(count_);
     OT_MY_OBJECT(bound_);
@@ -63,11 +63,36 @@ class ThorNode {
 #ifdef LIT_DISK_TREES
     OT_MY_OBJECT(end_);
     OT_MY_OBJECT(parent_);
-    OT_MY_OBJECT(subnodes_in_page_);
-#endif /* LIT_DISK_TREES */
-  }
+    OT_MY_OBJECT(subnodes_in_page_);*/
+//#endif /* LIT_DISK_TREES */
+  //}
 
  public:
+   
+/*   friend class boost::serialization::access; // Should be removed later
+
+   template<class Archive>
+   void serialize(Archive & ar, const unsigned int version)
+   {
+     int i;
+
+     ar & begin_;
+     ar & count_;
+     ar & bound_;
+     ar & stat_;
+     
+     for( i=0; i < t_cardinality; i++)
+     {
+       ar & children_[t_cardinality];
+     }
+
+#ifdef LIT_DISK_TREES
+     ar & end_;
+     ar & parent_;
+     ar & subnodes_in_page_;*/
+//#endif /* LIT_DISK_TREES */
+//   }
+
   void set_range(index_t begin_in, index_t count_in) {
     begin_ = begin_in;
     count_ = count_in;
@@ -217,6 +242,25 @@ class ThorSkeletonNode {
       }
     }
   }
+
+  /*friend class boost::serialization::access; // Should be removed later
+
+  template<class Archive>
+  void serialize(Archive & ar, const unsigned int version)
+  {
+    int i;
+    ar & index_;
+    ar & end_index_;
+    ar & info_;
+    ar & node_;
+    ar & parent_;
+
+    for( i=0; i < Node::CARDINALITY; i++)
+    {
+      ar & children_[i];
+    }    
+  }*/
+
 
  public:
   /**

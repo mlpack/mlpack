@@ -79,7 +79,7 @@ class AllkNN {
     //friend class boost::serialization::access; // Should be removed later
 
     /*template<class Archive>
-    void serialize(Archive & ar, QueryStat & query)
+    void serialize(Archive & ar, const unsigned int version)
     {
        ar & query.max_distance_so_far_;
     }*/

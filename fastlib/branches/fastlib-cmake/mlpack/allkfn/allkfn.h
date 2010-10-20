@@ -81,13 +81,13 @@ class AllkFN {
     
     // Defines many useful things for a class, including a pretty 
     // printer and copy constructor
-
+    public:
     friend class boost::serialization::access; // Should be removed later
 
     template<class Archive>
-    void serialize(Archive & ar, QueryStat & query)
+    void serialize(Archive & ar, const unsigned int version)
     {
-       ar & query.min_distance_so_far_;
+       ar & min_distance_so_far_;
     }
 
     /*OT_DEF_BASIC(QueryStat) {
