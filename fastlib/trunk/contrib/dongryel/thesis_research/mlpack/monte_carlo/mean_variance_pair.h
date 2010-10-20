@@ -1,3 +1,8 @@
+/** @file mean_variance_pair.h
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
 #ifndef FL_LITE_MLPACK_KDE_MEAN_VARIANCE_PAIR_H
 #define FL_LITE_MLPACK_KDE_MEAN_VARIANCE_PAIR_H
 

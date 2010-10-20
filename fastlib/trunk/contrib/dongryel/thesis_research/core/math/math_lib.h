@@ -138,8 +138,21 @@ void RandomCombination(
   int begin, int end, int num_elements, std::vector<T> *combination) {
   combination->resize(num_elements);
 
-  for(int i = end - num_elements - 1; i < end; i++) {
+  int num_elements_selected = 0;
+  for(int i = end - num_elements; i < end; i++) {
     int t = core::math::RandInt(0, i + 1);
+    bool already_in_list = false;
+    for(int j = 0; already_in_list == false && j < num_elements_selected; j++) {
+      already_in_list = ((*combination)[j] == t);
+    }
+
+    if(already_in_list == false) {
+      (*combination)[num_elements_selected] = t;
+    }
+    else {
+      (*combination)[num_elements_selected] = i;
+    }
+    num_elements_selected++;
   }
 }
 };
