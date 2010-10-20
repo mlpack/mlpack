@@ -36,6 +36,12 @@
 
 #include "allknn.h"
 #include "fastlib/base/test.h"
+#include <boost/program_options.hpp>
+
+using namespace std;
+namespace boost_po = boost::program_options;
+
+boost_po::variables_map vm;
 
 class TestAllkNN {
  public:

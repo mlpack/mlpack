@@ -54,12 +54,28 @@ int main (int argc, char *argv[]) {
   fx_module *fx_root=fx_init(argc, argv, NULL);
   mmapmm::MemoryManager<false>::allocator_= new mmapmm::MemoryManager<false>();
   mmapmm::MemoryManager<false>::allocator_->set_capacity(4294967296);
-  std::string memfile=fx_param_str(fx_root, "memfile", "/scratch/gtg739c/temp_mem");
+  //std::string memfile=fx_param_str(fx_root, "memfile", "/scratch/gtg739c/temp_mem");
+  std::string memfile;
+  std:string filename;
+
+  boost_po::options_description desc("Allowed options");
+  desc.add_options()
+      ("help", "Help options")
+      ("memfile", boost_po::value<std:string>(&memfile)->default_value("/scratch/gtg739c/temp_mem"), "  Memory file name\n")
+      ("file", boost_po::value<std:string>(&filename), "  Dataset file")
+      ("leaf_size", boost_po::value<int>()->default_value(20), "  The number of points in leaf nodes")
+      ("advice_limit_upper", boost_po::value<int>()->default_value(67108864), "  Advice upper limit")
+      ("advice_limit_lower", boost_po::value<int>()->default_value(409600), "  Advice lower limit")
+      ("splits", boost_po::value<std::string>()->default_value("midpoint"), "  Splits");
+
+ boost_po::store(boost_po::parse_command_line(argc, argv, desc), vm);
+ boost_po::notify(vm);
+
   mmapmm::MemoryManager<false>::allocator_->set_pool_name(memfile.c_str());
   mmapmm::MemoryManager<false>::allocator_->Init(fx_root);
   DiskAllNN disk_allnn;
   Matrix data_for_tree;
-  std::string filename=fx_param_str_req(fx_root, "file");
+  //std::string filename=fx_param_str_req(fx_root, "file");
   NOTIFY("Loading file...");
   data::LargeLoad(filename.c_str(), &data_for_tree);
   NOTIFY("File loaded...");

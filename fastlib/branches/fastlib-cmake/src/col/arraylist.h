@@ -1,18 +1,18 @@
-/* MLPACK 0.2
+/* MLPACK 0.1
  *
- * Copyright (c) 2008, 2009 Alexander Gray,
- *                          Garry Boyer,
- *                          Ryan Riegel,
- *                          Nikolaos Vasiloglou,
- *                          Dongryeol Lee,
- *                          Chip Mappus, 
- *                          Nishant Mehta,
- *                          Hua Ouyang,
- *                          Parikshit Ram,
- *                          Long Tran,
- *                          Wee Chin Wong
+ * Copyright (c) 2008 Alexander Gray,
+ *                    Garry Boyer,
+ *                    Ryan Riegel,
+ *                    Nikolaos Vasiloglou,
+ *                    Dongryeol Lee,
+ *                    Chip Mappus, 
+ *                    Nishant Mehta,
+ *                    Hua Ouyang,
+ *                    Parikshit Ram,
+ *                    Long Tran,
+ *                    Wee Chin Wong
  *
- * Copyright (c) 2008, 2009 Georgia Institute of Technology
+ * Copyright (c) 2008 Georgia Institute of Technology
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -29,6 +29,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
+// Copyright 2007 Georgia Institute of Technology. All rights reserved.
 /**
  * @file arraylist.h
  *
@@ -38,7 +39,7 @@
 #ifndef COL_ARRAYLIST_H
 #define COL_ARRAYLIST_H
 
-#include "../base/base.h"
+#include "fastlib/base/base.h"
 
 #define ARRAYLIST__DEBUG_INIT_OK(who, size, cap) \
     DEBUG_INIT_OK(who); \
@@ -117,6 +118,7 @@ class ArrayList {
     return cap_ == -1;
   }
   OT_ALIAS_METHODS(ArrayList);
+
 
  private:
   /* Allocates more space; unlikely, so not inlined. */
@@ -1026,13 +1028,6 @@ class ArrayList {
   index_t size() const {
     return size_;
   }
-  /** The number of active elements in the ArrayList. 
-   * This function is defined so that it provides the same 
-   * interface for lapack/blas operations*/
-  index_t length() const {
-    return this->size();
-  }
-
   /** The allocated number of elements, or -1 if alias. */
   index_t capacity() const {
     return cap_;
@@ -1210,3 +1205,4 @@ void ArrayList<TElem>::ExtractAppend(index_t pos, index_t size,
 #undef ARRAYLIST__DEBUG_INIT_OK
 
 #endif /* COL_ARRAYLIST_H */
+

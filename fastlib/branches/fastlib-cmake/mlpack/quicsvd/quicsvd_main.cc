@@ -44,6 +44,11 @@
 
 #include <fastlib/fastlib.h>
 #include "quicsvd.h"
+#include <boost/program_options.hpp>
+
+using namespace std;
+namespace boost_po = boost::program_options;
+boost_po::variables_map vm;
 
 const fx_entry_doc quicsvd_main_entries[] = {
   {"A_in", FX_REQUIRED, FX_STR, NULL,
@@ -98,7 +103,21 @@ int main(int argc, char* argv[]) {
   Vector s;
 
   // parse input file to get matrix A
-  const char* A_in = fx_param_str(NULL, "A_in", NULL);
+  //const char* A_in = fx_param_str(NULL, "A_in", NULL);
+  boost_po::options_description desc("Allowed options");
+  desc.add_options()
+      ("A_in", boost_po::value<char *>(), "  File consists of matrix A to be decomposed A = U S VT. \n")
+      ("relErr", boost_po::value<double>(), "  Target relative error |A| - |A'|/|A|, default = 0.1\n")
+      ("U_out", boost_po::value<char *>(), " File to hold matrix U.\n")
+      ("s_out", boost_po::value<char *>(), " File to hold the singular values vector s. \n")
+      ("VT_out", boost_po::value<char *>(), " File to hold matrix VT (V transposed). \n")
+      ("SVT_out", boost_po::value<char *>(), "File to hold matrix S * VT (the dimension reduced data). \n")
+      ("lasvd", boost_po::value<char *>(), " Use this parameter to compare running time to that of la::SVDInit()");
+
+  boost_po::store(boost_po::parse_command_line(argc, argv, desc), vm);
+  boost_po::notify(vm);
+
+  const char* A_in = vm["A_in"].as<char *>();
 
   printf("Loading data ... ");
   fflush(stdout);
@@ -119,27 +138,37 @@ int main(int argc, char* argv[]) {
   fx_result_double(NULL, "actualErr", actualErr);
   fx_result_int(NULL, "dimension", s.length());
 
-  if (fx_param_exists(NULL, "U_out"))
+//  if (fx_param_exists(NULL, "U_out"))
+  if ( 0 != vm.count("U_out"))
     data::Save(fx_param_str(NULL, "U_out", NULL), U);
   //else // use OT to write to standard output
   //  ot::Print(U, "U", stdout);
 
-  if (fx_param_exists(NULL, "s_out")) {
+//  if (fx_param_exists(NULL, "s_out")) {
+  if ( 0 != vm.count("s_out"))
+  {
     Matrix S;
     S.AliasColVector(s);
-    data::Save(fx_param_str(NULL, "s_out", NULL), S);
+    //data::Save(fx_param_str(NULL, "s_out", NULL), S);
+    data::Save(vm["s_out"].as<char *>(), S);
   }
   //else 
   //  ot::Print(s, "s", stdout);
 
-  if (fx_param_exists(NULL, "VT_out"))
-    data::Save(fx_param_str(NULL, "VT_out", NULL), VT);
+//  if (fx_param_exists(NULL, "VT_out"))
+  if ( 0 != vm.count("VT_out"))
+  {
+   // data::Save(fx_param_str(NULL, "VT_out", NULL), VT);
+    data::Save(vm["VT_out"].as<char *>(), VT);
+  }
   //else 
   //  ot::Print(VT, "VT", stdout);
 
-  if (fx_param_exists(NULL, "SVT_out")) {
+//  if (fx_param_exists(NULL, "SVT_out")) {
+  if ( 0 != vm.count("SVT_out")) {
     la::ScaleRows(s, &VT);
-    data::Save(fx_param_str(NULL, "SVT_out", NULL), VT);
+    //data::Save(fx_param_str(NULL, "SVT_out", NULL), VT);
+    data::Save(vm["SVT_out"].as<char *>(), VT);
   }
 
   /*
@@ -163,7 +192,8 @@ int main(int argc, char* argv[]) {
   printf("relative error: %f\n", norm(B)/norm(A));
   */
 
-  if (fx_param_exists(NULL, "lasvd")) {
+  //if (fx_param_exists(NULL, "lasvd")) {
+  if ( 0 != vm.count("lasvd")) {
     s.Destruct();
     U.Destruct();
     VT.Destruct();

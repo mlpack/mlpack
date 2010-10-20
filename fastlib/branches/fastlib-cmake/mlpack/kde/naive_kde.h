@@ -1,18 +1,18 @@
-/* MLPACK 0.2
+/* MLPACK 0.1
  *
- * Copyright (c) 2008, 2009 Alexander Gray,
- *                          Garry Boyer,
- *                          Ryan Riegel,
- *                          Nikolaos Vasiloglou,
- *                          Dongryeol Lee,
- *                          Chip Mappus, 
- *                          Nishant Mehta,
- *                          Hua Ouyang,
- *                          Parikshit Ram,
- *                          Long Tran,
- *                          Wee Chin Wong
+ * Copyright (c) 2008 Alexander Gray,
+ *                    Garry Boyer,
+ *                    Ryan Riegel,
+ *                    Nikolaos Vasiloglou,
+ *                    Dongryeol Lee,
+ *                    Chip Mappus, 
+ *                    Nishant Mehta,
+ *                    Hua Ouyang,
+ *                    Parikshit Ram,
+ *                    Long Tran,
+ *                    Wee Chin Wong
  *
- * Copyright (c) 2008, 2009 Georgia Institute of Technology
+ * Copyright (c) 2008 Georgia Institute of Technology
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -135,10 +135,10 @@ class NaiveKde {
 
       // Compute unnormalized sum first.
       for(index_t r = 0; r < rset_.n_cols(); r++) {
-        const double *r_col = rset_.GetColumnPtr(r);
-        double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
-
-        densities_[q] += rset_weights_[r] * kernels_[r].EvalUnnormOnSq(dsqd);
+	const double *r_col = rset_.GetColumnPtr(r);
+	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
+	
+	densities_[q] += rset_weights_[r] * kernels_[r].EvalUnnormOnSq(dsqd);
       }
 
       // Then normalize it.
@@ -164,10 +164,10 @@ class NaiveKde {
       
       // Compute unnormalized sum.
       for(index_t r = 0; r < rset_.n_cols(); r++) {
-        const double *r_col = rset_.GetColumnPtr(r);
-        double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
+	const double *r_col = rset_.GetColumnPtr(r);
+	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
 	
-        densities_[q] += rset_weights_[r] * kernels_[r].EvalUnnormOnSq(dsqd);
+	densities_[q] += rset_weights_[r] * kernels_[r].EvalUnnormOnSq(dsqd);
       }
       // Then, normalize it.
       densities_[q] /= norm_const_;
@@ -228,7 +228,7 @@ class NaiveKde {
       all_knn.ComputeNeighbors(&resulting_neighbors, &squared_distances);
       
       for(index_t i = 0; i < squared_distances.size(); i += knns) {
-        kernels_[i / knns].Init(sqrt(squared_distances[i + knns - 1]));
+	kernels_[i / knns].Init(sqrt(squared_distances[i + knns - 1]));
       }
       fx_timer_stop(fx_root, "bandwidth_initialization");
 
@@ -236,12 +236,12 @@ class NaiveKde {
       // that have been chosen.
       double min_norm_const = DBL_MAX;
       for(index_t i = 0; i < rset_weights_.length(); i++) {
-        double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows());
-        min_norm_const = std::min(min_norm_const, norm_const);
+	double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows());
+	min_norm_const = std::min(min_norm_const, norm_const);
       }
       for(index_t i = 0; i < rset_weights_.length(); i++) {
-        double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows());
-        rset_weights_[i] *= (min_norm_const / norm_const);
+	double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows());
+	rset_weights_[i] *= (min_norm_const / norm_const);
       }
       
       // Compute normalization constant.
@@ -249,7 +249,7 @@ class NaiveKde {
     }
     else {
       for(index_t i = 0; i < kernels_.size(); i++) {
-        kernels_[i].Init(fx_param_double_req(module_, "bandwidth"));
+	kernels_[i].Init(fx_param_double_req(module_, "bandwidth"));
       }
       norm_const_ = kernels_[0].CalcNormConstant(qset_.n_rows()) * weight_sum;
     }
@@ -301,20 +301,21 @@ class NaiveKde {
     int within_limit = 0;
 
     for(index_t q = 0; q < densities_.length(); q++) {
-      double rel_err = 
-        (fabs(density_estimates[q] - densities_[q]) < DBL_EPSILON) ?
-        0 : fabs(density_estimates[q] - densities_[q]) / densities_[q];
+      double rel_err = (fabs(density_estimates[q] - densities_[q]) <
+			DBL_EPSILON) ?
+	0:fabs(density_estimates[q] - densities_[q]) / 
+	densities_[q];      
 
       if(isnan(density_estimates[q]) || isinf(density_estimates[q]) || 
-         isnan(densities_[q]) || isinf(densities_[q])) {
-        printf("Warning: Got infs or nans!\n");
+	 isnan(densities_[q]) || isinf(densities_[q])) {
+	printf("Warning: Got infs or nans!\n");
       }
 
       if(rel_err > max_rel_err) {
-        max_rel_err = rel_err;
+	max_rel_err = rel_err;
       }
       if(rel_err <= fx_param_double(module_, "relative_error", 0.01)) {
-        within_limit++;
+	within_limit++;
       }
 
       fprintf(stream, "%g\n", rel_err);

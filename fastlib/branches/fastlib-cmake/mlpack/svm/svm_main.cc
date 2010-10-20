@@ -127,6 +127,7 @@ void DoSvmNormalize(Dataset* dataset) {
   Vector d;
   Matrix u; // eigenvectors
   Matrix ui; // the inverse of eigenvectors
+  bool save;
 
   PASSED(la::EigenvectorsInit(cov, &d, &u));
   la::TransposeInit(u, &ui);
@@ -151,7 +152,9 @@ void DoSvmNormalize(Dataset* dataset) {
     d.CopyValues(s);
   }
 
-  if (fx_param_bool(NULL, "save", 0)) {
+  save = vm["save"].as<bool>();
+//  if (fx_param_bool(NULL, "save", 0)) {
+  if (save) {
     fx_default_param(NULL, "kfold/save", "1");
     dataset->WriteCsv("m_normalized.csv");
   }
@@ -164,14 +167,50 @@ void DoSvmNormalize(Dataset* dataset) {
 */
 void GenerateArtificialDataset(Dataset* dataset){
   Matrix m;
-  index_t n = fx_param_int(NULL, "n", 30);
+/*  index_t n = fx_param_int(NULL, "n", 30);
   double offset = fx_param_double(NULL, "offset", 0.0);
   double range = fx_param_double(NULL, "range", 1.0);
   double slope = fx_param_double(NULL, "slope", 1.0);
   double margin = fx_param_double(NULL, "margin", 1.0);
   double var = fx_param_double(NULL, "var", 1.0);
   double intercept = fx_param_double(NULL, "intercept", 0.0);
-    
+*/    
+  index_t n = vm["n"].as<index_t>();
+  double offset = vm["offset"].as<double>();
+  double range = vm["range"].as<double>();
+  double slope = vm["slope"].as<double>();
+  double margin = vm["margin"].as<double>();
+  double var = vm["var"].as<double>();
+  double intercept = vm["intercept"].as<double>();
+  
+  if ( 0 == vm["n"].as<index_t>()) {
+    n = 30;
+  }
+  
+  if ( 0 == vm["offset"].as<double>()) {
+    offset = 0.0; 
+  }
+
+  if ( 0 == vm["range"].as<double>()) {
+    range = 1.0;
+  }
+
+  if ( 0 == vm["slope"].as<double>()) {
+    slope = 1.0;
+  }
+
+  if ( 0 == vm["margin"].as<double>()) {
+    margin = 1.0;
+  }
+
+  if ( 0 == vm["var"].as<double>()) {
+    var = 1.0;
+  }
+
+  if ( 0 == vm["intercept"].as<double>()) {
+    intercept = 0.0;
+  }
+
   // 2 dimensional dataset, size n, 3 classes
   m.Init(3, n);
   for (index_t i = 0; i < n; i += 3) {
@@ -209,7 +248,8 @@ void GenerateArtificialDataset(Dataset* dataset){
 * @param: name of the data file to be loaded
 */
 int LoadData(Dataset* dataset, String datafilename){
-  if (fx_param_exists(NULL, datafilename)) {
+  
+   if (fx_param_exists(NULL, datafilename)) {
     // when a data file is specified, use it.
     if ( !PASSED(dataset->InitFromFile( fx_param_str_req(NULL, datafilename) )) ) {
     fprintf(stderr, "Couldn't open the data file.\n");
@@ -242,18 +282,66 @@ int main(int argc, char *argv[]) {
   fx_module *root = fx_init(argc, argv, &svm_main_doc);
   srand(time(NULL));
 
-  String mode = fx_param_str_req(NULL, "mode");
-  String kernel = fx_param_str_req(NULL, "kernel");
-  String learner_name = fx_param_str_req(root,"learner_name");
+  boost_po::options_description desc("Allowed options");
+  desc.add_options()
+    ("mode", boost_po::value<std::string>(), "  The mode of svm_main, values: \"cv\", \"train\", \"train_test\", \"test\".\n")
+    ("kernel", boost_po::value<std::string>(), "  Kernel name, values:\"linear\", \"gaussian\".\n" )
+    ("learner_name", boost_po::value<std::string>(),"  The name of the support vecotr learner, values: \"svm_c\" for classification, \"svm_r\" for regression, \"svm_de\" for one class SVM\n")
+    ("k_cv", boost_po::value<int>(), "  The number of folds for cross validation, only required under \"cv\" mode.\n" )
+    ("cv_data", boost_po::value<std::string>(), "  The file name for cross validation data, only required under \"cv\" mode.\n")
+    ("train_data", boost_po::value<std::string>(), "  The file name for training data, only required under \"train\" or \"train_test\" mode.\n")
+    ("train_data", boost_po::value<std::string>(), "  The file name for testing data, only required under \"test\" or \"train_test\" mode.\n")
+    ("sigma", boost_po::value<double>(), "  (for Gaussian kernel) sigma in the gaussian kernel k(x1,x2)=exp(-(x1-x2)^2/(2sigma^2)), only required when using \"guassian\" kernel\n")
+    ("c", boost_po::value<double>(), "  (for SVM_C) the weight (0~1) that controls compromise between large margins and small margin violations. Default value: 10.0.\n")
+    ("c_p", boost_po::value<double>(), "  (for SVM_C) the weight (0~1) for the positive class (y==1). Default value: c.\n")
+    ("c_n", boost_po::value<double>(), "  (for SVM_C) the weight (0~1) for the negative class (y==-1). Default value: c.\n")
+    ("epsilon", boost_po::value<double>(), "  (for SVM_R) the epsilon in SVM regression of epsilon-insensitive loss. Default value: 0.1.\n")
+    ("wss", boost_po::value<int>(), "  Working set selection scheme. 1 for 1st order expansion; 2 for 2nd order expansion. Default value: 1.\n")
+    ("normalize", boost_po::value<bool>(), "  Whether need to do data normalization before training/testing, values: \"0\" for no normalize, \"1\" for normalize.\n")
+    ("n", boost_po::value<index_t>()->default_value(30))
+    ("offset", boost_po::value<double>()->default_value(0.0))
+    ("range", boost_po::value<double>()->default_value(1.0))
+    ("slope", boost_po::value<double>()->default_value(1.0))
+    ("margin", boost_po::value<double>()->default_value(1.0))
+    ("var", boost_po::value<double>()->default_value(1.0))
+    ("intercept", boost_po::value<double>()->default_value(0.0));
+
+  boost_po::store(boost_po::parse_command_line(argc, argv, desc), vm);
+  boost_po::notify(vm);
+
+  //String mode = fx_param_str_req(NULL, "mode");
+  //String kernel = fx_param_str_req(NULL, "kernel");
+  //String learner_name = fx_param_str_req(root,"learner_name");
+
+  std::string mode = vm["mode"].as<std::string>();
+  std::string kernel = vm["kernel"].as<std::string>();
+  std::string learner_name = vm["learner_name"].as<std::string>();
+
+  if ( 0 == vm.count("mode"))
+  {
+     exit(1);
+  }
+
+  if ( 0 == vm.count("kernel"))
+  {
+     exit(1);
+  }
+
+  if ( 0 == vm.count("learner_name"))
+  {
+     exit(1);
+  }
+
   int learner_typeid;
-  
-  if (learner_name == "svm_c") { // Support Vector Classfication
+  int k_cv = vm["k_cv"].as<int>();
+ 
+  if ( 0 != strcmp(learner_name.c_str(), "svm_c")) { // Support Vector Classfication
     learner_typeid = 0;
   }
-  else if (learner_name == "svm_r") { // Support Vector Regression
+  else if ( 0 != strcmp(learner_name.c_str(), "svm_r")) { // Support Vector Regression
     learner_typeid = 1;
   }
-  else if (learner_name == "svm_de") { // One Class Support Vector Machine
+  else if ( 0 != strcmp(learner_name.c_str(), "svm_de")) { // One Class Support Vector Machine
     learner_typeid = 2;
   }
   else {
@@ -264,7 +352,7 @@ int main(int argc, char *argv[]) {
   // TODO: more kernels to be supported
 
   /* Cross Validation Mode, need cross validation data */
-  if(mode == "cv") { 
+  if( 0 != strcmp(mode.c_str(), "cv")) { 
     fprintf(stderr, "SVM Cross Validation... \n");
     
     /* Load cross validation data */
@@ -272,25 +360,25 @@ int main(int argc, char *argv[]) {
     if (LoadData(&cvset, "cv_data") == 0)
     return 1;
     
-    if (kernel == "linear") {
+    if ( 0 != strcmp(kernel.c_str(), "linear")) {
       GeneralCrossValidator< SVM<SVMLinearKernel> > cross_validator; 
       /* Initialize n_folds_, confusion_matrix_; k_cv: number of cross-validation folds, need k_cv>1 */
-      cross_validator.Init(learner_typeid, fx_param_int_req(NULL,"k_cv"), &cvset, fx_root, "svm");
+      cross_validator.Init(learner_typeid, k_cv, &cvset, fx_root, "svm");
       /* k_cv folds cross validation; (true): do training set permutation */
       cross_validator.Run(true);
       //cross_validator.confusion_matrix().PrintDebug("confusion matrix");
     }
-    else if (kernel == "gaussian") {
+    else if ( 0 != strcmp(kernel.c_str(), "gaussian")) {
       GeneralCrossValidator< SVM<SVMRBFKernel> > cross_validator; 
       /* Initialize n_folds_, confusion_matrix_; k_cv: number of cross-validation folds */
-      cross_validator.Init(learner_typeid, fx_param_int_req(NULL,"k_cv"), &cvset, fx_root, "svm");
+      cross_validator.Init(learner_typeid, k_cv, &cvset, fx_root, "svm");
       /* k_cv folds cross validation; (true): do training set permutation */
       cross_validator.Run(true);
       //cross_validator.confusion_matrix().PrintDebug("confusion matrix");
     }
   }
   /* Training Mode, need training data | Training + Testing(online) Mode, need training data + testing data */
-  else if (mode=="train" || mode=="train_test"){
+  else if ( (0 != strcmp(mode.c_str(), "train")) || (0 != strcmp(mode.c_str(), "train_test") )){
     fprintf(stderr, "SVM Training... \n");
 
     /* Load training data */
@@ -301,11 +389,11 @@ int main(int argc, char *argv[]) {
     /* Begin SVM Training | Training and Testing */
     datanode *svm_module = fx_submodule(fx_root, "svm");
 
-    if (kernel == "linear") {
+    if ( 0 != strcmp(kernel.c_str(), "linear")) {
       SVM<SVMLinearKernel> svm;
       svm.InitTrain(learner_typeid, trainset, svm_module);
       /* training and testing, thus no need to load model from file */
-      if (mode=="train_test"){
+      if ( 0 != strcmp(mode.c_str(), "train_test")){
 	fprintf(stderr, "SVM Predicting... \n");
 	/* Load testing data */
 	Dataset testset;
@@ -314,11 +402,11 @@ int main(int argc, char *argv[]) {
 	svm.BatchPredict(learner_typeid, testset, "predicted_values");
       }
     }
-    else if (kernel == "gaussian") {
+    else if ( 0 != strcmp(kernel.c_str(), "gaussian")) {
       SVM<SVMRBFKernel> svm;
       svm.InitTrain(learner_typeid, trainset, svm_module);
       /* training and testing, thus no need to load model from file */
-      if (mode=="train_test"){
+      if ( 0 != strcmp(mode.c_str(), "train_test")){
 	fprintf(stderr, "SVM Predicting... \n");
 	/* Load testing data */
 	Dataset testset;
@@ -329,7 +417,7 @@ int main(int argc, char *argv[]) {
     }
   }
   /* Testing(offline) Mode, need loading model file and testing data */
-  else if (mode=="test") {
+  else if ( 0 != strcmp(mode.c_str(), "test")) {
     fprintf(stderr, "SVM Predicting... \n");
 
     /* Load testing data */
@@ -340,12 +428,12 @@ int main(int argc, char *argv[]) {
     /* Begin Prediction */
     datanode *svm_module = fx_submodule(fx_root, "svm");
 
-    if (kernel == "linear") {
+    if ( 0 != strcmp(kernel.c_str(), "linear")) {
       SVM<SVMLinearKernel> svm;
       svm.Init(learner_typeid, testset, svm_module); 
       svm.LoadModelBatchPredict(learner_typeid, testset, "svm_model", "predicted_values"); // TODO:param_req
     }
-    else if (kernel == "gaussian") {
+    else if ( 0 != strcmp(kernel.c_str(), "gaussian")) {
       SVM<SVMRBFKernel> svm;
       svm.Init(learner_typeid, testset, svm_module); 
       svm.LoadModelBatchPredict(learner_typeid, testset, "svm_model", "predicted_values"); // TODO:param_req

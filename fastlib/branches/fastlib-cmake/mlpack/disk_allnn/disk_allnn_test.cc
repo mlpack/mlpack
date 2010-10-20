@@ -135,7 +135,8 @@ class TestDiskAllNN {
 
 int main(int argc, char *argv[]) {
  fx_module *fx_root=fx_init(argc, argv, NULL); 
- fx_set_param_int(fx_root, "leaf_size", 20);
+ //fx_set_param_int(fx_root, "leaf_size", 20);
+ 
  TestDiskAllNN test(fx_root);
  test.TestAll();
 }

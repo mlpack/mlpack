@@ -48,6 +48,11 @@
 
 #include "fastlib/fastlib.h"
 #include "lin_alg.h"
+#include <boost/program_options.hpp>
+
+namespace boost_po = boost::program_options;
+boost_po::variables_map vm;
+
 
 #define LOGCOSH 0
 #define GAUSS 10
@@ -629,17 +634,19 @@ class FastICA {
     d = X_.n_rows();
     n = X_.n_cols();
 
-    long seed = fx_param_int(module_, "seed", clock() + time(0));
+    //long seed = fx_param_int(module_, "seed", clock() + time(0));
+    long seed = vm["seed"].as<int>();
     srand48(seed);
 
     
-    const char* string_approach =
-      fx_param_str(module_, "approach", "deflation");
-    if(strcasecmp(string_approach, "deflation") == 0) {
+    //const char* string_approach =
+    //  fx_param_str(module_, "approach", "deflation");
+    std::string string_approach = vm["approach"].as<std::string>();
+    if(strcasecmp(string_approach.c_str(), "deflation") == 0) {
       VERBOSE_ONLY( printf("using Deflation approach ") );
       approach_ = DEFLATION;
     }
-    else if(strcasecmp(string_approach, "symmetric") == 0) {
+    else if(strcasecmp(string_approach.c_str(), "symmetric") == 0) {
       VERBOSE_ONLY( printf("using Symmetric approach ") );
       approach_ = SYMMETRIC;
     }
@@ -648,21 +655,22 @@ class FastICA {
       return SUCCESS_FAIL;
     }
     
-    const char* string_nonlinearity =
-      fx_param_str(module_, "nonlinearity", "logcosh");
-    if(strcasecmp(string_nonlinearity, "logcosh") == 0) {
+    //const char* string_nonlinearity =
+    //  fx_param_str(module_, "nonlinearity", "logcosh");
+    std::string string_nonlinearity = vm["nonlinearity"].as<std::string>();
+    if(strcasecmp(string_nonlinearity.c_str(), "logcosh") == 0) {
       VERBOSE_ONLY( printf("with log cosh nonlinearity\n") );
       nonlinearity_ = LOGCOSH;
     }
-    else if(strcasecmp(string_nonlinearity, "gauss") == 0) {
+    else if(strcasecmp(string_nonlinearity.c_str(), "gauss") == 0) {
       VERBOSE_ONLY( printf("with Gaussian nonlinearity\n") );
       nonlinearity_ = GAUSS;
     }
-    else if(strcasecmp(string_nonlinearity, "kurtosis") == 0) {
+    else if(strcasecmp(string_nonlinearity.c_str(), "kurtosis") == 0) {
       VERBOSE_ONLY( printf("with kurtosis nonlinearity\n") );
       nonlinearity_ = KURTOSIS;
     }
-    else if(strcasecmp(string_nonlinearity, "skew") == 0) {
+    else if(strcasecmp(string_nonlinearity.c_str(), "skew") == 0) {
       VERBOSE_ONLY( printf("with skew nonlinearity\n") );
       nonlinearity_ = SKEW;
     }
@@ -675,15 +683,25 @@ class FastICA {
     // for now, the last eig must be d, and num_of IC must be d, until I have time to incorporate PCA into this code
     //const index_t last_eig_ = fx_param_int(module_, "last_eig", d);
     num_of_IC_ = d; //fx_param_int(module_, "num_of_IC", d);
-    fine_tune_ = fx_param_bool(module_, "fine_tune", false);
-    a1_ = fx_param_double(module_, "a1", 1);
-    a2_ = fx_param_double(module_, "a2", 1);
-    mu_ = fx_param_double(module_, "mu", 1);
-    stabilization_ = fx_param_bool(module_, "stabilization", false);
-    epsilon_ = fx_param_double(module_, "epsilon", 0.0001);
+    //fine_tune_ = fx_param_bool(module_, "fine_tune", false);
+    //a1_ = fx_param_double(module_, "a1", 1);
+    //a2_ = fx_param_double(module_, "a2", 1);
+    //mu_ = fx_param_double(module_, "mu", 1);
+    //stabilization_ = fx_param_bool(module_, "stabilization", false);
+    //epsilon_ = fx_param_double(module_, "epsilon", 0.0001);
   
-    int int_max_num_iterations =
-      fx_param_int(module_, "max_num_iterations", 1000);
+    fine_tune_ = vm["num_of_IC"].as<bool>();
+    a1_ = vm["a1"].as<double>();
+    a2_ = vm["a2"].as<double>();
+    mu_ = vm["mu"].as<double>();
+    stabilization_ = vm["stabilization"].as<double>();
+    epsilon_ = vm["epsilon"].as<double>();
+    int int_max_num_iterations = vm["max_num_iterations"].as<int>();
+    int int_max_fine_tune = vm["max_fine_tune"].as<int>();
+    percent_cut_ = vm["percent_cut"].as<double>();
+
+    //int int_max_num_iterations =
+    //  fx_param_int(module_, "max_num_iterations", 1000);
     if(int_max_num_iterations < 0) {
       printf("ERROR: max_num_iterations = %d must be >= 0\n",
 	     int_max_num_iterations);
@@ -691,7 +709,7 @@ class FastICA {
     }
     max_num_iterations_ = (index_t) int_max_num_iterations;
 
-    int int_max_fine_tune = fx_param_int(module_, "max_fine_tune", 5);
+    //int int_max_fine_tune = fx_param_int(module_, "max_fine_tune", 5);
     if(int_max_fine_tune < 0) {
       printf("ERROR: max_fine_tune = %d must be >= 0\n",
 	     int_max_fine_tune);
@@ -699,7 +717,7 @@ class FastICA {
     }
     max_fine_tune_ = (index_t) int_max_fine_tune;
 
-    percent_cut_ = fx_param_double(module_, "percent_cut", 1);
+    //percent_cut_ = fx_param_double(module_, "percent_cut", 1);
     if((percent_cut() < 0) || (percent_cut() > 1)) {
       printf("ERROR: percent_cut = %f must be an element in [0,1]\n",
 	     percent_cut());

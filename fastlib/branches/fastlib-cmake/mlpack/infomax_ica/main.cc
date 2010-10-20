@@ -41,6 +41,11 @@
 #include "fastlib/fastlib.h"
 #include "fastlib/data/dataset.h"
 
+using namespace std;
+namespace boost_po = boost::program_options;
+
+boost_po::variables_map vm;
+
 const fx_entry_doc infomax_ica_main_entries[] = {
   {"data", FX_REQUIRED, FX_STR, NULL,
    "  The name of the file containing mixture data.\n"},
@@ -65,10 +70,25 @@ const fx_module_doc infomax_ica_main_doc = {
 int main(int argc, char *argv[]) {
   fx_module *root = fx_init(argc, argv, &infomax_ica_main_doc);
 
-  const char *data_file_name = fx_param_str_req(root, "data");
-  double lambda = fx_param_double(root,"lambda",0.001);
-  int B = fx_param_int(root,"B",5);
-  double epsilon = fx_param_double(root,"epsilon",0.001);
+  //const char *data_file_name = fx_param_str_req(root, "data");
+ 
+  boost_po::options_description desc("Allowed options");
+  desc.add_options()
+      ("data", boost_po::value<char *>(), "  The name of the file containing mixture data\n")
+      ("lambda", boost_po::value<double>(), "  The learning rate.\n")
+      ("B", boost_po::value<int>(), " Infomax data window size\n")
+      ("epsilon", boost_po::value<double>(), " Infomax algorithm stop threshold\n");
+
+  boost_po::store(boost_po::parse_command_line(argc, argv, desc), vm);
+  boost_po::notify(vm);
+
+  const char *data_file_name = vm["data"].as<char *>();
+  double lambda = vm["lambda"].as<double>();
+  //double lambda = fx_param_double(root,"lambda",0.001);
+  //int B = fx_param_int(root,"B",5);
+  int B = vm["B"].as<int>();
+  //double epsilon = fx_param_double(root,"epsilon",0.001);
+  double epsilon = vm["epsilon"].as<double>();
   Matrix dataset;
   data::Load(data_file_name,&dataset);
   InfomaxICA *ica = new InfomaxICA(lambda, B, epsilon);

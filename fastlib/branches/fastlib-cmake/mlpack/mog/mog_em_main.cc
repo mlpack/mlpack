@@ -92,6 +92,13 @@ int main(int argc, char* argv[]) {
 
   MoGEM mog;
 
+  boost_po::options_description desc("Allowed options");
+  desc.add_options()
+      ("data", boost_po::value<char *>()->default_value(20), "  A file containing the data on which the model has to be fit\n")
+      ("output", boost_po::value<char *>(), "  The file into which the output is to be written into.\n")
+      ("K", boost_po::value<int>(), "The number of Gaussians in the mixture model. (defaults to 1)\n")
+      ("D", boost_po::value<int>(), "The number of dimensions of the data on which the mixture model is to be fit. \n");
+
   struct datanode* mog_em_module = 
     fx_submodule(root, "mog_em");
   fx_param_int(mog_em_module, "K", 1);

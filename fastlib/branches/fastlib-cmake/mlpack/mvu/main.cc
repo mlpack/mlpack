@@ -110,18 +110,41 @@ const fx_module_doc main_doc = {
 
 int main(int argc, char *argv[]){
   fx_module *fx_root=fx_init(argc, argv, &main_doc);
-  std::string optimized_function=fx_param_str(fx_root, "/optimized_function", "mvfu");
+
+  boost_po::options_description desc("Allowed options");
+  desc.add_options()
+      ("new_dimension", boost_po::value<int>(), "  the numbe of dimensions for the unfolded\n")
+      ("nearest_neighbor_file", boost_po::value<std::string>(), " file with the nearest neighbor pairs and the squared distances defaults to nearest.txt\n")
+      ("furthest_neighbor_file", boost_po::value<std::string>(), " file with the nearest neighbor pairs and the squared distances")
+      ("knns", boost_po::value<int>(), " number of nearest neighbors to build the graph if you choose the option with the nearest file you don't need to specify it")
+      ("leaf_size", boost_po::value<int>(), " leaf size for the tree. if you choose the option with the nearest file you don't need to specify it\n")
+      ("optimized_function", boost_po::value<std::string>(), " choose the method MVU or MFU")
+      ("new_dimension", boost_po::value<int>(), " The dimension of the nonlinear projection (MVU or MFNU)")
+      ("data_file", boost_po::value<int>(), " the csv file with the data.\n")
+      ("result_file", boost_po::value<std::string>(), " the results of the method are exported to a csv file.\n")
+      ("pca_pre", boost_po::value<bool>(), " sometimes it is good to do pca preprocessing and then MVU/MFNU")
+      ("pca_dim", boost_po::value<int>(), " the projection dimension with PCA if chosen.\n")
+      ("pca_init", boost_po::value<bool>(), " if this flag is true then the optimization of MVU/MFNU is initialized.\n");
+
+  boost_po::store(boost_po::parse_command_line(argc, argv, desc), vm);
+  boost_po::notify(vm);
+
+  //std::string optimized_function=fx_param_str(fx_root, "/optimized_function", "mvfu");
+  std::string optimized_function= vm["/optimized_function"].as<std::string>();
   fx_module *optfun_node;
   fx_module *l_bfgs_node;
   l_bfgs_node=fx_submodule(fx_root, "/lbfgs");
   optfun_node=fx_submodule(fx_root, "/optfun");
   // this is sort of a hack and it has to be eliminated in the final version
-  index_t new_dimension=fx_param_int(l_bfgs_node, "/new_dimension", 2);
+  //index_t new_dimension=fx_param_int(l_bfgs_node, "/new_dimension", 2);
+  index_t new_dimension = vm["/new_dimension"].as<int>();
+
   fx_set_param_int(optfun_node, "new_dimension", new_dimension); 
   
   if (!fx_param_exists(fx_root, "/optfun/nearest_neighbor_file")) {
     Matrix data_mat;
-    std::string data_file=fx_param_str_req(fx_root, "/data_file");
+    //std::string data_file=fx_param_str_req(fx_root, "/data_file");
+    std::string data_file = vm["/data_file"].as<std::string>();
     if (data::Load(data_file.c_str(), &data_mat)==SUCCESS_FAIL) {
       FATAL("Didn't manage to load %s", data_file.c_str());
     }
@@ -129,9 +152,13 @@ int main(int argc, char *argv[]){
     OptUtils::RemoveMean(&data_mat);
   
  
-    bool pca_preprocess=fx_param_bool(fx_root, "/pca_pre", false);
-    index_t pca_dimension=fx_param_int(fx_root, "/pca_dim", 5);
-    bool pca_init=fx_param_bool(fx_root, "/pca_init", false);
+    //bool pca_preprocess=fx_param_bool(fx_root, "/pca_pre", false);
+    //index_t pca_dimension=fx_param_int(fx_root, "/pca_dim", 5);
+    bool pca_preprocess = vm["/pca_pre"].as<bool>();
+    index_t pca_dimension = vm["/pca_dim"].as<index_t>();
+    bool pca_init = vm["/pca_init"].as<bool>();
+
+    //bool pca_init=fx_param_bool(fx_root, "/pca_init", false);
     Matrix *initial_data=NULL;
     if (pca_preprocess==true) {
       NOTIFY("Preprocessing with pca");
@@ -143,13 +170,15 @@ int main(int argc, char *argv[]){
     if (pca_init==true) {
       NOTIFY("Preprocessing with pca");
       initial_data = new Matrix();
-      index_t new_dimension=fx_param_int(l_bfgs_node, "new_dimension", 2);
+      //index_t new_dimension=fx_param_int(l_bfgs_node, "new_dimension", 2);
+      index_t new_dimension = vm["new_dimension"].as<index_t>();
       OptUtils::SVDTransform(data_mat, initial_data, new_dimension);
     }
   
     //we need to insert the number of points
     fx_set_param_int(l_bfgs_node, "num_of_points", data_mat.n_cols());
-    std::string result_file=fx_param_str(fx_root, "/result_file", "result.csv");
+    //std::string result_file=fx_param_str(fx_root, "/result_file", "result.csv");
+    std::string result_file = vm["/result_file"].as<std::string>();
     bool done=false;
     
     if (optimized_function == "mvu") {
@@ -194,7 +223,9 @@ int main(int argc, char *argv[]){
   } else {
     // This is for nadeem
     
-    std::string result_file=fx_param_str(NULL, "/result_file", "result.csv");
+    //std::string result_file=fx_param_str(NULL, "/result_file", "result.csv");
+    std::string result_file = vm["/result_file"].as<std::string>();
+
     bool done=false;
     
     if (optimized_function == "mvu") {

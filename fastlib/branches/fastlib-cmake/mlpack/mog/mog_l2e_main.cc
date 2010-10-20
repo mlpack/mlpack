@@ -90,6 +90,13 @@ int main(int argc, char* argv[]) {
   
   const char *data_filename = fx_param_str_req(root, "data");
 
+  boost_po::options_description desc("Allowed options");
+  desc.add_options()
+      ("data", boost_po::value<char *>(), "  A file containing the data on which the model has to be fit\n")
+      ("output", boost_po::value<char *>(), "  The file into which the output is to be written into.\n")
+      ("K", boost_po::value<int>(), "The number of Gaussians in the mixture model. (defaults to 1)")
+      ("D", boost_po::value<int>(), "The number of dimensions of the data on which the mixture model is to be fit \n");
+
   Matrix data_points;
   data::Load(data_filename, &data_points);
 
