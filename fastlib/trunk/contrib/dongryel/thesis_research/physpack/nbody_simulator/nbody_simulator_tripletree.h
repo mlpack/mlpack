@@ -195,6 +195,56 @@ class NbodySimulatorResult {
       }
     }
 
+    template<typename GlobalType, typename TreeType, typename DeltaType>
+    void ApplyProbabilisticDelta(
+      const GlobalType &global,
+      core::gnp::TripleRangeDistanceSq &triple_range_distance_sq_in,
+      const std::vector<double> &failure_probabilities,
+      const DeltaType &delta_in) {
+
+      for(int node_index = 0; node_index < 3; node_index++) {
+
+        typename GlobalType::TableType::TreeType *node =
+          triple_range_distance_sq_in.node(node_index);
+        if(node_index == 0 || node !=
+            triple_range_distance_sq_in.node(node_index - 1)) {
+
+          // Get the iterator for the node.
+          typename GlobalType::TableType::TreeIterator node_it =
+            global.query_table()->get_node_iterator(node);
+          core::table::DenseConstPoint qpoint;
+          int qpoint_index;
+
+          // Look up the number of standard deviations.
+          double num_standard_deviations =
+            global.compute_quantile(failure_probabilities[node_index]);
+
+          do {
+            // Get each point and apply contribution.
+            node_it.Next(&qpoint, &qpoint_index);
+            core::math::Range contribution;
+            (*delta_in.mean_variance_pair_)[qpoint_index].scaled_interval(
+              delta_in.pruned_, num_standard_deviations, &contribution);
+            if(contribution.lo < 0) {
+              negative_potential_[qpoint_index].lo += contribution.lo;
+            }
+            else {
+              positive_potential_[qpoint_index].lo += contribution.lo;
+            }
+            if(contribution.hi < 0) {
+              negative_potential_[qpoint_index].hi += contribution.hi;
+            }
+            else {
+              positive_potential_[qpoint_index].hi += contribution.hi;
+            }
+            pruned_[qpoint_index] += delta_in.pruned_[node_index];
+            used_error_[qpoint_index] += delta_in.used_error_[node_index];
+          }
+          while(node_it.HasNext());
+        }
+      }
+    }
+
     void ApplyPostponed(
       int q_index,
       const NbodySimulatorPostponed &postponed_in) {
