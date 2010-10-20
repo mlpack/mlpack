@@ -73,10 +73,10 @@ class InversePowDistGradientKernelAux {
    */
   TSeriesExpansionAux sea_;
 
-  OT_DEF_BASIC(InversePowDistGradientKernelAux) {
+  /*OT_DEF_BASIC(InversePowDistGradientKernelAux) {
     OT_MY_OBJECT(kernel_);
     OT_MY_OBJECT(sea_);
-  }
+  }*/
 
   friend class boost::serialization::access; // Should be removed later
 
