@@ -30,7 +30,8 @@ inline T Sqr(T v) {
  *
  * Avoids branching costs (yes, we've discovered measurable improvements).
  */
-inline double ClampNonNegative(double d) {
+template<typename T>
+inline double ClampNonNegative(T d) {
   return (d + fabs(d)) / 2;
 }
 
@@ -39,7 +40,8 @@ inline double ClampNonNegative(double d) {
  *
  * Avoids branching costs (yes, we've discovered measurable improvements).
  */
-inline double ClampNonPositive(double d) {
+template<typename T>
+inline double ClampNonPositive(T d) {
   return (d - fabs(d)) / 2;
 }
 
@@ -51,7 +53,8 @@ inline double ClampNonPositive(double d) {
  * @param range_max the last of the range
  * @return max(range_min, min(range_max, d))
  */
-inline double ClampRange(double value, double range_min, double range_max) {
+template<typename T>
+inline double ClampRange(T value, T range_min, T range_max) {
   if(value <= range_min) {
     return range_min;
   }
@@ -66,6 +69,7 @@ inline double ClampRange(double value, double range_min, double range_max) {
 /**
  * Generates a uniform random number between 0 and 1.
  */
+template<typename T>
 inline double Random() {
   return rand() * (1.0 / RAND_MAX);
 }
@@ -73,20 +77,24 @@ inline double Random() {
 /**
  * Generates a uniform random number in the specified range.
  */
-inline double Random(double lo, double hi) {
-  return Random() * (hi - lo) + lo;
+template<typename T>
+inline double Random(T lo, T hi) {
+  return Random<T>() * (hi - lo) + lo;
 }
 
 /**
  * Generates a uniform random integer.
  */
-inline int RandInt(int hi_exclusive) {
+template<typename T>
+inline int RandInt(T hi_exclusive) {
   return rand() % hi_exclusive;
 }
+
 /**
  * Generates a uniform random integer.
  */
-inline int RandInt(int lo, int hi_exclusive) {
+template<typename T>
+inline int RandInt(T lo, T hi_exclusive) {
   return (rand() % (hi_exclusive - lo)) + lo;
 }
 };
@@ -123,6 +131,16 @@ inline double PowAbs(double d) {
   // avoid the absolute value sign
   return core::math__private::ZPowAbsImpl < t_numerator, t_denominator,
          (t_numerator % t_denominator == 0) && ((t_numerator / t_denominator) % 2 == 0) >::Calculate(fabs(d));
+}
+
+template<typename T>
+void RandomCombination(
+  int begin, int end, int num_elements, std::vector<T> *combination) {
+  combination->resize(num_elements);
+
+  for(int i = end - num_elements - 1; i < end; i++) {
+    int t = core::math::RandInt(0, i + 1);
+  }
 }
 };
 };
