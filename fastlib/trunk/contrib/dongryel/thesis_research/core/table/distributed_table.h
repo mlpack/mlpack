@@ -306,7 +306,7 @@ class DistributedTable: public boost::noncopyable {
              global_comm_->rank());
       std::vector<int> sampled_indices;
       for(int i = 0; i < owned_table_->n_entries(); i++) {
-        if(core::math::Random() <= sample_probability_in) {
+        if(core::math::Random<double>() <= sample_probability_in) {
           sampled_indices.push_back(i);
         }
       }
