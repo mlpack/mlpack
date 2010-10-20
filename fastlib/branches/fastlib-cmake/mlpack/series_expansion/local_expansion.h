@@ -80,8 +80,9 @@ class LocalExpansion {
   const typename TKernelAux::TSeriesExpansionAux *sea_;
 
   OT_DEF(LocalExpansion) {
-    OT_MY_OBJECT(center_);
-    OT_MY_OBJECT(coeffs_);
+    //Vector to be replaced with std::vector
+    //OT_MY_OBJECT(center_);
+    //OT_MY_OBJECT(coeffs_);
     OT_MY_OBJECT(order_);
   }
 
@@ -91,8 +92,9 @@ class LocalExpansion {
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version)
   {
-    ar & center_;
-    ar & coeffs_;
+    //Vector to be replaced with std::vector
+    //ar & center_;
+    //ar & coeffs_;
     ar & order_;
   }
 

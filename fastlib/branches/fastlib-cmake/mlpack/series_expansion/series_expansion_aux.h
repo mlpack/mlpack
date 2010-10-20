@@ -99,16 +99,23 @@ class SeriesExpansionAux {
     {
        ar & dim_;
        ar & max_order_;
-       ar & factorials_;
-       ar & list_total_num_coeffs_;
-       ar & inv_multiindex_factorials_;
-       ar & neg_inv_multiindex_factorials_;
-       ar & multiindex_combination_;
-       ar & multiindex_mapping_;
-       ar & lower_mapping_index_;
-       ar & upper_mapping_index_;
-       ar & n_choose_k_;
+       //Vector to be replaced with std::vector
+       //ar & factorials_;
+       //Vector to be replaced with std::vector
+       //ar & list_total_num_coeffs_;
+       //ar & inv_multiindex_factorials_;
+       //ar & neg_inv_multiindex_factorials_;
+       
+       //Matrix to be replaced with armadillo sparse matrices
+       //ar & multiindex_combination_;
+
+       //Vector to be replaced with std::vector
+       //ar & multiindex_mapping_;
+       //ar & lower_mapping_index_;
+       //ar & upper_mapping_index_;
+       //ar & n_choose_k_;
     }
+
 
 
  public:

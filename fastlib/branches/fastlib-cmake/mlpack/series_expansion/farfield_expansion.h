@@ -103,8 +103,9 @@ class FarFieldExpansion {
   template<class Archive>
   void serialize(Archive & ar, const unsigned int version)
   {
-     ar & center_;
-     ar & coeffs_;
+     //Vector to be replaced with std::vector
+     //ar & center_;
+     //ar & coeffs_;
      ar & order_;
   }
 

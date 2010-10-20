@@ -80,8 +80,9 @@ class MultLocalExpansion {
   const typename TKernelAux::TSeriesExpansionAux *sea_;
 
   OT_DEF(MultLocalExpansion) {
-    OT_MY_OBJECT(center_);
-    OT_MY_OBJECT(coeffs_);
+    //Vector to be replaced with std::vector
+    //OT_MY_OBJECT(center_);
+    //OT_MY_OBJECT(coeffs_);
     OT_MY_OBJECT(order_);
   }
 

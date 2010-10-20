@@ -74,10 +74,10 @@ class GaussianKernelMultAux {
   /** pointer to the series expansion auxiliary object */
   TSeriesExpansionAux sea_;
 
-  OT_DEF_BASIC(GaussianKernelMultAux) {
+  /*OT_DEF_BASIC(GaussianKernelMultAux) {
     OT_MY_OBJECT(kernel_);
     OT_MY_OBJECT(sea_);
-  }
+  }*/
 
   friend class boost::serialization::access; // Should be removed later
 
