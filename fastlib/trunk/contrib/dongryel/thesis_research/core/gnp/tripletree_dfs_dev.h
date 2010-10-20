@@ -48,11 +48,13 @@ void core::gnp::TripletreeDfs<ProblemType>::Compute(
   triple_range_distance_sq.Init(metric, *table_, root_nodes);
 
   PreProcess_(table_->get_tree());
+  std::vector<double> top_failure_probabilities(
+    3, 1.0 - problem_->global().probability());
   TripletreeCanonical_(
     metric,
     triple_range_distance_sq,
     problem_->global().relative_error(),
-    1.0 - problem_->global().probability(),
+    top_failure_probabilities,
     query_results);
   PostProcess_(metric, table_->get_tree(), query_results);
 }
@@ -214,17 +216,18 @@ template<typename ProblemType>
 bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
   const core::metric_kernels::AbstractMetric &metric,
   const core::gnp::TripleRangeDistanceSq &range_in,
-  double failure_probability,
+  const std::vector<double> &failure_probabilities,
   typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
 
+  return false;
 }
 
 template<typename ProblemType>
 void core::gnp::TripletreeDfs<ProblemType>::ProbabilisticSummarize_(
   GlobalType &global,
   const core::gnp::TripleRangeDistanceSq &range_in,
-  double failure_probability,
+  const std::vector<double> &failure_probabilities,
   const typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
 
@@ -256,6 +259,25 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanSummarize_(
     }
   }
   return flag;
+}
+
+template<typename ProblemType>
+void core::gnp::TripletreeDfs<ProblemType>::AllocateProbabilities_(
+  const std::vector<double> &failure_probabilities,
+  const std::deque<bool> &node_is_split,
+  std::vector<double> *new_failure_probabilities) const {
+
+  new_failure_probabilities->resize(3);
+  for(unsigned int i = 0; i < node_is_split.size(); i++) {
+    int count = 0;
+    for(unsigned int j = 0; j < node_is_split.size(); j++) {
+      if(i != j && node_is_split[j]) {
+        count++;
+      }
+    }
+    (*new_failure_probabilities)[i] = failure_probabilities[i] /
+                                      static_cast<double>(1 << count);
+  }
 }
 
 template<typename ProblemType>
@@ -291,11 +313,11 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
   const core::metric_kernels::AbstractMetric &metric,
   core::gnp::TripleRangeDistanceSq &triple_range_distance_sq,
   double relative_error,
-  double failure_probability,
+  const std::vector<double> &failure_probabilities,
   typename ProblemType::ResultType *query_results,
   int level,
   bool all_leaves,
-  int num_recursed,
+  std::deque<bool> &node_is_split,
   bool *deterministic_approximation) {
 
   // If we have chosen all three nodes,
@@ -309,10 +331,14 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
     else {
 
       // Otherwise call the canonical case.
+      std::vector<double> new_failure_probabilities;
+      AllocateProbabilities_(
+        failure_probabilities, node_is_split, &new_failure_probabilities);
+
       bool exact_computation =
         TripletreeCanonical_(
           metric, triple_range_distance_sq, relative_error,
-          failure_probability / (1 << num_recursed), query_results);
+          new_failure_probabilities, query_results);
       *deterministic_approximation = (*deterministic_approximation) &&
                                      exact_computation;
     }
@@ -332,14 +358,18 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
             current_node)) {
 
         RecursionHelper_(
-          metric, triple_range_distance_sq, relative_error, failure_probability,
-          query_results, level + 1, all_leaves, num_recursed,
+          metric, triple_range_distance_sq, relative_error,
+          failure_probabilities, query_results,
+          level + 1, all_leaves, node_is_split,
           deterministic_approximation);
       }
     }
 
     // Otherwise we need to split.
     else {
+
+      // Node is split on the current level.
+      node_is_split[level] = true;
 
       // Get the current query node statistic.
       typename ProblemType::StatisticType *current_node_stat =
@@ -376,8 +406,8 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
         triple_range_distance_sq.ReplaceOneNode(
           metric, *table_, current_node_left, level);
         RecursionHelper_(
-          metric, triple_range_distance_sq, relative_error, failure_probability,
-          query_results, level + 1, false, num_recursed + 1,
+          metric, triple_range_distance_sq, relative_error,
+          failure_probabilities, query_results, level + 1, false, node_is_split,
           deterministic_approximation);
       }
 
@@ -390,8 +420,8 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
         triple_range_distance_sq.ReplaceOneNode(
           metric, *table_, current_node_right, level);
         RecursionHelper_(
-          metric, triple_range_distance_sq, relative_error, failure_probability,
-          query_results, level + 1, false, num_recursed + 1,
+          metric, triple_range_distance_sq, relative_error,
+          failure_probabilities, query_results, level + 1, false, node_is_split,
           deterministic_approximation);
       }
 
@@ -410,7 +440,7 @@ bool core::gnp::TripletreeDfs<ProblemType>::TripletreeCanonical_(
   const core::metric_kernels::AbstractMetric &metric,
   core::gnp::TripleRangeDistanceSq &triple_range_distance_sq,
   double relative_error,
-  double failure_probability,
+  const std::vector<double> &failure_probabilities,
   typename ProblemType::ResultType *query_results) {
 
   // Compute the delta.
@@ -428,20 +458,21 @@ bool core::gnp::TripletreeDfs<ProblemType>::TripletreeCanonical_(
 
   // Then try probabilistic approximation.
   else if(CanProbabilisticSummarize_(
-            metric, triple_range_distance_sq, failure_probability,
+            metric, triple_range_distance_sq, failure_probabilities,
             delta, query_results)) {
     ProbabilisticSummarize_(
-      problem_->global(), triple_range_distance_sq, failure_probability,
+      problem_->global(), triple_range_distance_sq, failure_probabilities,
       delta, query_results);
     return false;
   }
 
   // Call the recursion helper.
   bool deterministic_approximation = true;
+  std::deque<bool> node_is_split(3, false);
   RecursionHelper_(
     metric, triple_range_distance_sq, relative_error,
-    failure_probability, query_results,
-    0, true, 0, &deterministic_approximation);
+    failure_probabilities, query_results,
+    0, true, node_is_split, &deterministic_approximation);
 
   return deterministic_approximation;
 }

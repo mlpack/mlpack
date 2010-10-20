@@ -30,6 +30,11 @@ class TripletreeDfs {
 
   private:
 
+    void AllocateProbabilities_(
+      const std::vector<double> &failure_probabilites,
+      const std::deque<bool> &node_is_split,
+      std::vector<double> *new_failure_probabilities) const;
+
     bool NodeIsAgreeable_(TreeType *node, TreeType *next_node) const;
 
     typename TableType::TreeIterator GetNextNodeIterator_(
@@ -43,11 +48,11 @@ class TripletreeDfs {
       const core::metric_kernels::AbstractMetric &metric,
       core::gnp::TripleRangeDistanceSq &triple_range_distance_sq,
       double relative_error,
-      double failure_probability,
+      const std::vector<double> &failure_probabilities,
       typename ProblemType::ResultType *query_results,
       int level,
       bool all_leaves,
-      int num_recursed,
+      std::deque<bool> &node_is_split,
       bool *deterministic_approximation);
 
     void PreProcess_(TreeType *node);
@@ -60,14 +65,14 @@ class TripletreeDfs {
     bool CanProbabilisticSummarize_(
       const core::metric_kernels::AbstractMetric &metric,
       const core::gnp::TripleRangeDistanceSq &range_in,
-      double failure_probability,
+      const std::vector<double> &failure_probabilities,
       typename ProblemType::DeltaType &delta,
       typename ProblemType::ResultType *query_results);
 
     void ProbabilisticSummarize_(
       GlobalType &global,
       const core::gnp::TripleRangeDistanceSq &range_in,
-      double failure_probability,
+      const std::vector<double> &failure_probabilities,
       const typename ProblemType::DeltaType &delta,
       typename ProblemType::ResultType *query_results);
 
@@ -85,7 +90,7 @@ class TripletreeDfs {
       const core::metric_kernels::AbstractMetric &metric,
       core::gnp::TripleRangeDistanceSq &triple_range_distance_sq,
       double relative_error,
-      double probability,
+      const std::vector<double> &failure_probabilities,
       typename ProblemType::ResultType *query_results);
 
     void PostProcess_(
