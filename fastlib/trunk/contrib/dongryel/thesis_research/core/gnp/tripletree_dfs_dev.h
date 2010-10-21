@@ -431,8 +431,17 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
         triple_range_distance_sq.ReplaceOneNode(
           metric, *table_, current_node, level);
       }
-    }
-  }
+
+      // Need to refine the summary statistics by looking at the
+      // children.
+      current_node_stat->summary_.StartReaccumulate();
+      current_node_stat->summary_.Accumulate(
+        current_node_left_stat->summary_, current_node_left_stat->postponed_);
+      current_node_stat->summary_.Accumulate(
+        current_node_right_stat->summary_, current_node_right_stat->postponed_);
+
+    } // end of the non-leaf case.
+  } // end of choosing a node in each level.
 }
 
 template<typename ProblemType>

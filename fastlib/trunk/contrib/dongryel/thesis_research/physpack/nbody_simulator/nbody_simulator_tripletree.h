@@ -151,6 +151,50 @@ class NbodySimulatorDelta {
 };
 
 class NbodySimulatorResult {
+  private:
+
+    template<typename TableType, typename TreeType>
+    void MonteCarloPostProcess_(TableType *table, TreeType *node) {
+      if(node->is_leaf()) {
+        typename TableType::TreeIterator node_iterator =
+          table->get_node_iterator(node);
+
+        // Reset the summary statistics.
+        node->stat().summary_.StartReaccumulate();
+
+        while(node_iterator.HasNext()) {
+          core::table::DenseConstPoint q_col;
+          int q_index;
+          node_iterator.Next(&q_col, &q_index);
+          this->ApplyPostponed(q_index, node->stat()->postponed_);
+
+          // Refine min and max summary statistics.
+          node->stat()->summary_.Accumulate(*this, q_index);
+        }
+        node->stat()->postponed_.SetZero();
+      }
+      else {
+
+        // Push postponeds to the children.
+        node->left()->stat()->postponed_.ApplyPostponed(
+          node->stat()->postponed_);
+        node->right()->stat()->postponed_.ApplyPostponed(
+          node->stat()->postponed_);
+        node->stat()->postponed_.SetZero();
+
+        // Recurse.
+        MonteCarloPostProcess_(table, node->left());
+        MonteCarloPostProcess_(table, node->right());
+
+        // Refine the summary statistics.
+        node->stat()->summary_.StartReaccumulate();
+        node->stat()->summary_.Accumulate(
+          node->left()->stat()->summary_, node->left()->stat()->postponed_);
+        node->stat()->summary_.Accumulate(
+          node->right()->stat()->summary_, node->right()->stat()->postponed_);
+      }
+    }
+
   public:
     std::vector< core::math::Range > negative_potential_;
     std::vector< core::math::Range > positive_potential_;
@@ -224,7 +268,8 @@ class NbodySimulatorResult {
             node_it.Next(&qpoint, &qpoint_index);
             core::math::Range contribution;
             (*delta_in.mean_variance_pair_)[qpoint_index].scaled_interval(
-              delta_in.pruned_, num_standard_deviations, &contribution);
+              delta_in.pruned_[node_index], num_standard_deviations,
+              &contribution);
             if(contribution.lo < 0) {
               negative_potential_[qpoint_index].lo += contribution.lo;
             }
@@ -241,8 +286,12 @@ class NbodySimulatorResult {
             used_error_[qpoint_index] += delta_in.used_error_[node_index];
           }
           while(node_it.HasNext());
+
+          // Do a full refine by traversing the subtree rooted at the
+          // current node.
+          MonteCarloPostProcess_(global.table(), node);
         }
-      }
+      } // end of looping over each node.
     }
 
     void ApplyPostponed(
