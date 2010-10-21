@@ -220,7 +220,26 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
   typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
 
-  return false;
+  std::vector< typename ProblemType::SummaryType > new_summaries;
+  new_summaries.resize(3);
+
+  bool flag = true;
+  for(int i = 0; flag && i < 3; i++) {
+    typename core::gnp::TripletreeDfs<ProblemType>::TreeType *node =
+      triple_range_distance_sq_in.node(i);
+    if(i == 0 || node != triple_range_distance_sq_in.node(i - 1)) {
+      typename ProblemType::StatisticType *node_stat =
+        dynamic_cast<typename ProblemType::StatisticType *>(
+          table_->get_node_stat(node));
+      new_summaries[i] = node_stat->summary_;
+      new_summaries[i].ApplyPostponed(node_stat->postponed_);
+
+      flag = new_summaries[i].ProbabilisticCanSummarize(
+               problem_->global(), delta, triple_range_distance_sq_in, i,
+               query_results);
+    }
+  }
+  return flag;
 }
 
 template<typename ProblemType>
@@ -478,9 +497,13 @@ bool core::gnp::TripletreeDfs<ProblemType>::TripletreeCanonical_(
   }
 
   // Then try probabilistic approximation.
-  else if(CanProbabilisticSummarize_(
-            metric, triple_range_distance_sq, failure_probabilities,
-            delta, query_results)) {
+  else if(
+    failure_probabilities[0] > 0 &&
+    failure_probabilities[1] > 0 &&
+    failure_probabilities[2] > 0 &&
+    CanProbabilisticSummarize_(
+      metric, triple_range_distance_sq, failure_probabilities,
+      delta, query_results)) {
     ProbabilisticSummarize_(
       metric, problem_->global(), triple_range_distance_sq,
       failure_probabilities, delta, query_results);
