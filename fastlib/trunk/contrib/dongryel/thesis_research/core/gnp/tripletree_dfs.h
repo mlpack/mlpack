@@ -96,7 +96,8 @@ class TripletreeDfs {
 
     void PostProcess_(
       const core::metric_kernels::AbstractMetric &metric,
-      TreeType *node, ResultType *query_results);
+      TreeType *node, ResultType *query_results,
+      bool do_query_results_postprocess);
 
   public:
 

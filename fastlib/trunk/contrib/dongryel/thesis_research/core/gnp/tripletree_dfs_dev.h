@@ -528,7 +528,7 @@ void core::gnp::TripletreeDfs<ProblemType>::PostProcess_(
       }
 
       // Refine min and max summary statistics.
-      qnode_stat->summary_.Accumulate(query_results, q_index);
+      qnode_stat->summary_.Accumulate(*query_results, q_index);
     }
     qnode_stat->postponed_.SetZero();
   }
@@ -549,8 +549,10 @@ void core::gnp::TripletreeDfs<ProblemType>::PostProcess_(
     qnode_stat->postponed_.SetZero();
 
     // Recurse to the left and to the right.
-    PostProcess_(metric, qnode_left,  query_results);
-    PostProcess_(metric, qnode_right, query_results);
+    PostProcess_(
+      metric, qnode_left,  query_results, do_query_results_postprocess);
+    PostProcess_(
+      metric, qnode_right, query_results, do_query_results_postprocess);
 
     // Refine the summary statistics.
     qnode_stat->summary_.StartReaccumulate();

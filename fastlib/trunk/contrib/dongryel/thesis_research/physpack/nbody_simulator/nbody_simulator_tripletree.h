@@ -211,7 +211,7 @@ class NbodySimulatorResult {
 
           // Get the iterator for the node.
           core::table::Table::TreeIterator node_it =
-            global.query_table()->get_node_iterator(node);
+            global.table()->get_node_iterator(node);
           core::table::DenseConstPoint qpoint;
           int qpoint_index;
 
