@@ -56,7 +56,7 @@ void core::gnp::TripletreeDfs<ProblemType>::Compute(
     problem_->global().relative_error(),
     top_failure_probabilities,
     query_results);
-  PostProcess_(metric, table_->get_tree(), query_results);
+  PostProcess_(metric, table_->get_tree(), query_results, true);
 }
 
 template<typename ProblemType>
@@ -225,12 +225,24 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
 
 template<typename ProblemType>
 void core::gnp::TripletreeDfs<ProblemType>::ProbabilisticSummarize_(
+  const core::metric_kernels::AbstractMetric &metric,
   GlobalType &global,
   const core::gnp::TripleRangeDistanceSq &range_in,
   const std::vector<double> &failure_probabilities,
   const typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
 
+  query_results->ApplyProbabilisticDelta(
+    global, range_in, failure_probabilities, delta);
+
+  // Do a full refine by traversing each node.
+  for(int i = 0; i < 3; i++) {
+    typename core::gnp::TripletreeDfs<ProblemType>::TreeType *node =
+      range_in.node(i);
+    if(i == 0 || range_in.node(i - 1) != node) {
+      PostProcess_(metric, node, query_results, false);
+    }
+  }
 }
 
 template<typename ProblemType>
@@ -470,8 +482,8 @@ bool core::gnp::TripletreeDfs<ProblemType>::TripletreeCanonical_(
             metric, triple_range_distance_sq, failure_probabilities,
             delta, query_results)) {
     ProbabilisticSummarize_(
-      problem_->global(), triple_range_distance_sq, failure_probabilities,
-      delta, query_results);
+      metric, problem_->global(), triple_range_distance_sq,
+      failure_probabilities, delta, query_results);
     return false;
   }
 
@@ -490,7 +502,8 @@ template<typename ProblemType>
 void core::gnp::TripletreeDfs<ProblemType>::PostProcess_(
   const core::metric_kernels::AbstractMetric &metric,
   typename ProblemType::TableType::TreeType *qnode,
-  typename ProblemType::ResultType *query_results) {
+  typename ProblemType::ResultType *query_results,
+  bool do_query_results_postprocess) {
 
   typename ProblemType::StatisticType *qnode_stat =
     dynamic_cast<typename ProblemType::StatisticType *>(
@@ -501,12 +514,21 @@ void core::gnp::TripletreeDfs<ProblemType>::PostProcess_(
     typename ProblemType::TableType::TreeIterator qnode_iterator =
       table_->get_node_iterator(qnode);
 
+    // Reset the summary statistics.
+    qnode_stat->summary_.StartReaccumulate();
+
     while(qnode_iterator.HasNext()) {
       core::table::DenseConstPoint q_col;
       int q_index;
       qnode_iterator.Next(&q_col, &q_index);
       query_results->ApplyPostponed(q_index, qnode_stat->postponed_);
-      query_results->PostProcess(metric, q_index, problem_->global());
+
+      if(do_query_results_postprocess) {
+        query_results->PostProcess(metric, q_index, problem_->global());
+      }
+
+      // Refine min and max summary statistics.
+      qnode_stat->summary_.Accumulate(query_results, q_index);
     }
     qnode_stat->postponed_.SetZero();
   }
@@ -526,8 +548,16 @@ void core::gnp::TripletreeDfs<ProblemType>::PostProcess_(
     qnode_right_stat->postponed_.ApplyPostponed(qnode_stat->postponed_);
     qnode_stat->postponed_.SetZero();
 
+    // Recurse to the left and to the right.
     PostProcess_(metric, qnode_left,  query_results);
     PostProcess_(metric, qnode_right, query_results);
+
+    // Refine the summary statistics.
+    qnode_stat->summary_.StartReaccumulate();
+    qnode_stat->summary_.Accumulate(
+      qnode_left_stat->summary_, qnode_left_stat->postponed_);
+    qnode_stat->summary_.Accumulate(
+      qnode_right_stat->summary_, qnode_right_stat->postponed_);
   }
 }
 

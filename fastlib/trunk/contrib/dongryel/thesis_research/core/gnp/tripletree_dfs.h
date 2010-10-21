@@ -70,6 +70,7 @@ class TripletreeDfs {
       typename ProblemType::ResultType *query_results);
 
     void ProbabilisticSummarize_(
+      const core::metric_kernels::AbstractMetric &metric,
       GlobalType &global,
       const core::gnp::TripleRangeDistanceSq &range_in,
       const std::vector<double> &failure_probabilities,
