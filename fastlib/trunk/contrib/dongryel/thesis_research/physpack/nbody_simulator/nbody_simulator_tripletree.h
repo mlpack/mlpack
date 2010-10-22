@@ -379,111 +379,23 @@ class NbodySimulatorSummary {
       used_error_ = summary_in.used_error_;
     }
 
-    template < typename GlobalType, typename DeltaType,
-             typename TreeType, typename ResultType >
+    template < typename GlobalType, typename DeltaType, typename ResultType >
     bool CanProbabilisticSummarize(
       const core::metric_kernels::AbstractMetric &metric,
-      GlobalType &global, DeltaType &delta, TreeType *qnode, TreeType *rnode,
-      double failure_probability, ResultType *query_results) const {
+      GlobalType &global, DeltaType &delta,
+      const core::gnp::TripleRangeDistanceSq &range_sq_in,
+      const std::vector<double> &failure_probabilities,
+      int node_index,
+      ResultType *query_results) const {
 
-      const int speedup_factor = 10;
-      int num_samples = global.reference_table()->get_node_count(rnode) /
-                        speedup_factor;
-
-      if(num_samples > global.reference_table()->get_node_count(rnode)) {
+      if(std::min(std::min(
+                    range_sq_in.num_tuples(0),
+                    range_sq_in.num_tuples(1)),
+                  range_sq_in.num_tuples(2)) > 10000.0) {
         return false;
       }
 
-      // Get the iterator for the query node.
-      typename GlobalType::TableType::TreeIterator qnode_it =
-        global.query_table()->get_node_iterator(qnode);
-      core::table::DenseConstPoint qpoint;
-      int qpoint_index;
-
-      // Get the iterator for the reference node.
-      typename GlobalType::TableType::TreeIterator rnode_it =
-        global.reference_table()->get_node_iterator(rnode);
-      core::table::DenseConstPoint rpoint;
-      int rpoint_index;
-
-      // Interval for the pivot query point.
-      double num_standard_deviations = global.compute_quantile(
-                                         failure_probability);
-      delta.mean_variance_pair_ = ((GlobalType &) global).mean_variance_pair();
-
-      // The flag saying whether the pruning is a success.
-      bool prunable = true;
-
-      // The min kernel value determined by the bounding box.
-      double min_kernel_value = delta.densities_l_ /
-                                ((double) global.reference_table()->
-                                 get_node_count(rnode));
-
-      int prev_qpoint_index = -1;
-      double bandwidth = sqrt(global.kernel().bandwidth_sq());
-      double movement_threshold = 0.05 * bandwidth;
-      int movement_count = 0;
-      do {
-
-        // Get each query point.
-        qnode_it.Next(&qpoint, &qpoint_index);
-        bool skip = false;
-        if(prev_qpoint_index >= 0) {
-          core::table::DenseConstPoint prev_qpoint;
-          global.query_table()->get(prev_qpoint_index, &prev_qpoint);
-          double dist = sqrt(metric.DistanceSq(qpoint, prev_qpoint));
-          if(dist <= movement_threshold && movement_count < 5) {
-            (*delta.mean_variance_pair_)[qpoint_index].Copy(
-              (*delta.mean_variance_pair_)[prev_qpoint_index]);
-            skip = true;
-            movement_count++;
-          }
-          else {
-            movement_count = 0;
-          }
-        }
-
-        // Clear the sample mean variance pair for the current query.
-        if(skip == false) {
-          (*delta.mean_variance_pair_)[qpoint_index].SetZero();
-
-          for(int i = 0; i < num_samples; i++) {
-
-            // Pick a random reference point and compute the kernel
-            // difference.
-            rnode_it.RandomPick(&rpoint, &rpoint_index);
-            double squared_dist = metric.DistanceSq(qpoint, rpoint);
-            double kernel_value =
-              global.kernel().EvalUnnormOnSq(squared_dist);
-            double new_sample = kernel_value - min_kernel_value;
-
-            // Accumulate the sample.
-            (*delta.mean_variance_pair_)[qpoint_index].push_back(new_sample);
-          }
-        }
-
-        // Add the correction.
-        core::math::Range correction;
-        (*delta.mean_variance_pair_)[qpoint_index].scaled_interval(
-          delta.pruned_, num_standard_deviations, &correction);
-        correction.lo = std::max(correction.lo, 0.0);
-        correction += delta.densities_l_;
-
-        // Take the middle estimate, though technically it is not correct.
-        double modified_densities_l =
-          query_results->densities_l_[qpoint_index] + correction.lo;
-        double left_hand_side = correction.width() * 0.5;
-        double right_hand_side =
-          global.reference_table()->get_node_count(rnode) *
-          global.relative_error() * modified_densities_l /
-          static_cast<double>(global.reference_table()->n_entries());
-
-        prunable = (left_hand_side <= right_hand_side);
-
-        prev_qpoint_index = qpoint_index;
-      }
-      while(qnode_it.HasNext() && prunable);
-      return prunable;
+      return false;
     }
 
     template < typename GlobalType, typename DeltaType, typename ResultType >
