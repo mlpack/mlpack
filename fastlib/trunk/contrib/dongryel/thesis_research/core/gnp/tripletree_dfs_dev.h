@@ -226,17 +226,17 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
   bool flag = true;
   for(int i = 0; flag && i < 3; i++) {
     typename core::gnp::TripletreeDfs<ProblemType>::TreeType *node =
-      triple_range_distance_sq_in.node(i);
-    if(i == 0 || node != triple_range_distance_sq_in.node(i - 1)) {
+      range_in.node(i);
+    if(i == 0 || node != range_in.node(i - 1)) {
       typename ProblemType::StatisticType *node_stat =
         dynamic_cast<typename ProblemType::StatisticType *>(
           table_->get_node_stat(node));
       new_summaries[i] = node_stat->summary_;
       new_summaries[i].ApplyPostponed(node_stat->postponed_);
 
-      flag = new_summaries[i].ProbabilisticCanSummarize(
-               problem_->global(), delta, triple_range_distance_sq_in, i,
-               query_results);
+      flag = new_summaries[i].CanProbabilisticSummarize(
+               metric, problem_->global(), delta, range_in,
+               failure_probabilities, i, query_results);
     }
   }
   return flag;
