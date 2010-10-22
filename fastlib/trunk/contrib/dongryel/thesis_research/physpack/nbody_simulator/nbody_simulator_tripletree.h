@@ -280,6 +280,9 @@ class NbodySimulatorResult {
 
 class NbodySimulatorGlobal {
 
+  public:
+    typedef core::table::Table::TreeType TreeType;
+
   private:
 
     double relative_error_;
@@ -415,6 +418,9 @@ class NbodySimulatorSummary {
                   range_sq_in.num_tuples(2)) > 10000.0) {
         return false;
       }
+
+      // Get an iterator for the current node.
+      typename GlobalType::TableType::TreeIterator node_it;
 
       return false;
     }
