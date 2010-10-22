@@ -220,6 +220,10 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
   typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
 
+  // Prepare for Monte Carlo accumulation.
+  delta.ResetMeanVariancePairs(
+    problem_->global(), range_in.nodes());
+
   std::vector< typename ProblemType::SummaryType > new_summaries;
   new_summaries.resize(3);
 

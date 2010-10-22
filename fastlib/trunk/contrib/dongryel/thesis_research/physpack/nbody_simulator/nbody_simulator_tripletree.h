@@ -94,6 +94,27 @@ class NbodySimulatorDelta {
 
     std::vector< core::monte_carlo::MeanVariancePair > *mean_variance_pair_;
 
+    template<typename GlobalType, typename TreeType>
+    void ResetMeanVariancePairs(
+      GlobalType &global,
+      const std::vector<TreeType *> &nodes) {
+
+      for(int i = 0; i < 3; i++) {
+        TreeType *node = nodes[i];
+        if(i == 0 || node != nodes[i - 1]) {
+
+          // Get the iterator for the node.
+          core::table::Table::TreeIterator node_it =
+            global.table()->get_node_iterator(node);
+          int qpoint_index;
+          for(int j = 0; j < node_it.count(); j++) {
+            node_it.get_id(j, &qpoint_index);
+            (*mean_variance_pair_)[qpoint_index].SetZero();
+          }
+        }
+      }
+    }
+
     NbodySimulatorDelta() {
       negative_potential_.resize(3);
       positive_potential_.resize(3);
