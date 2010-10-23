@@ -379,6 +379,42 @@ class NbodySimulatorGlobal {
 
 class NbodySimulatorSummary {
 
+  private:
+
+    void RandomCombination_(
+      const core::gnp::TripleRangeDistanceSq &range_sq_in,
+      int node_index_fix,
+      std::vector<int> *random_combination_out) const {
+
+      // Detect the number of consecutive nodes that are equal.
+      int iterating_node_index = node_index_fix;
+      do {
+        int reference_node_index = iterating_node_index;
+        int count = 0;
+        do {
+          iterating_node_index = (iterating_node_index + 1) % 3;
+          count++;
+        }
+        while(
+          range_sq_in.node(iterating_node_index) ==
+          range_sq_in.node(reference_node_index) &&
+          iterating_node_index != node_index_fix);
+        std::vector<int> subcombination_out;
+
+        if(random_combination_out->size() == 1) {
+          count--;
+        }
+        core::math::RandomCombination(
+          range_sq_in.node(reference_node_index)->begin(),
+          range_sq_in.node(reference_node_index)->end(), count,
+          &subcombination_out);
+        random_combination_out->insert(
+          random_combination_out->end(), subcombination_out.begin(),
+          subcombination_out.end());
+      }
+      while(iterating_node_index != node_index_fix);
+    }
+
   public:
 
     core::math::Range negative_potential_;
@@ -409,6 +445,8 @@ class NbodySimulatorSummary {
       int node_index,
       ResultType *query_results) const {
 
+      const int num_samples = 25;
+
       if(std::min(std::min(
                     range_sq_in.num_tuples(0),
                     range_sq_in.num_tuples(1)),
@@ -417,7 +455,36 @@ class NbodySimulatorSummary {
       }
 
       // Get an iterator for the current node.
-      typename core::table::Table::TreeIterator node_it;
+      typename core::table::Table::TreeType *node =
+        range_sq_in.node(node_index);
+      typename core::table::Table::TreeIterator node_it =
+        global.table()->get_node_iterator(node);
+
+      std::vector<int> random_combination(1, 0);
+      core::table::DenseConstPoint query_point;
+      int query_point_index;
+
+      // Triple range distance square object to keep track.
+      core::gnp::TripleDistanceSq triple_distance_sq;
+      do {
+
+        // The current query point.
+        node_it.Next(&query_point, &query_point_index);
+        triple_distance_sq.ReplaceOnePoint(
+          metric, query_point, 0);
+
+        // The first in the list is the query point index.
+        random_combination[0] = query_point_index;
+
+        // Generate a random combination that contains the current
+        // query point.
+        for(int i = 0; i < num_samples; i++) {
+          random_combination.resize(1);
+          RandomCombination_(range_sq_in, node_index, &random_combination);
+        }
+
+      }
+      while(node_it.HasNext());
 
       return false;
     }

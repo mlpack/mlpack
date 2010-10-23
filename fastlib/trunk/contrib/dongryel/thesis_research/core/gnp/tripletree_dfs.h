@@ -30,11 +30,6 @@ class TripletreeDfs {
 
   private:
 
-    void RandomCombination_(
-      const core::gnp::TripleRangeDistanceSq &range_sq_in,
-      int node_index_fix,
-      std::vector<int> *random_combination_out);
-
     void AllocateProbabilities_(
       const std::vector<double> &failure_probabilites,
       const std::deque<bool> &node_is_split,
