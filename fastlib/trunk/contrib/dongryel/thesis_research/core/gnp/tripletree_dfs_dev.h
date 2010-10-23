@@ -36,36 +36,6 @@ void core::gnp::TripletreeDfs<ProblemType>::Init(ProblemType &problem_in) {
 }
 
 template<typename ProblemType>
-void core::gnp::TripletreeDfs<ProblemType>::RandomCombination_(
-  const core::gnp::TripleRangeDistanceSq &range_sq_in,
-  int node_index_fix,
-  std::vector<int> *random_combination_out) {
-
-  // Detect the number of consecutive nodes that are equal.
-  int iterating_node_index = node_index_fix;
-  do {
-    int reference_node_index = iterating_node_index;
-    int count = 0;
-    do {
-      iterating_node_index = (iterating_node_index + 1) % 3;
-      count++;
-    }
-    while(
-      iterating_node_index == reference_node_index &&
-      iterating_node_index != node_index_fix);
-    std::vector<int> subcombination_out;
-    core::math::RandomCombination(
-      range_sq_in.node(reference_node_index)->begin(),
-      range_sq_in.node(reference_node_index)->end(), count,
-      &subcombination_out);
-    random_combination_out->insert(
-      random_combination_out->end(), subcombination_out.begin(),
-      subcombination_out.end());
-  }
-  while(iterating_node_index != node_index_fix);
-}
-
-template<typename ProblemType>
 void core::gnp::TripletreeDfs<ProblemType>::Compute(
   const core::metric_kernels::AbstractMetric &metric,
   typename ProblemType::ResultType *query_results) {
