@@ -10,6 +10,7 @@
 #include "tripletree_dfs.h"
 #include "core/table/table.h"
 #include "core/gnp/triple_distance_sq.h"
+#include "core/math/math_lib.h"
 
 template<typename ProblemType>
 ProblemType *core::gnp::TripletreeDfs<ProblemType>::problem() {
@@ -55,7 +56,7 @@ void core::gnp::TripletreeDfs<ProblemType>::RandomCombination_(
     std::vector<int> subcombination_out;
     core::math::RandomCombination(
       range_sq_in.node(reference_node_index)->begin(),
-      range_sq_in.node(reference_node_index)->end(),
+      range_sq_in.node(reference_node_index)->end(), count,
       &subcombination_out);
     random_combination_out->insert(
       random_combination_out->end(), subcombination_out.begin(),

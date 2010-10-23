@@ -280,9 +280,6 @@ class NbodySimulatorResult {
 
 class NbodySimulatorGlobal {
 
-  public:
-    typedef core::table::Table::TreeType TreeType;
-
   private:
 
     double relative_error_;
@@ -420,7 +417,7 @@ class NbodySimulatorSummary {
       }
 
       // Get an iterator for the current node.
-      typename GlobalType::TableType::TreeIterator node_it;
+      typename core::table::Table::TreeIterator node_it;
 
       return false;
     }
