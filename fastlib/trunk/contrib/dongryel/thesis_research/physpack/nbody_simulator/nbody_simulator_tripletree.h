@@ -462,7 +462,7 @@ class NbodySimulatorSummary {
       const core::gnp::TripleRangeDistanceSq &range_sq_in,
       const std::vector<double> &failure_probabilities,
       int node_index,
-      ResultType *query_results) const {
+      ResultType *query_results) {
 
       const int num_samples = 25;
 
@@ -473,8 +473,15 @@ class NbodySimulatorSummary {
         return false;
       }
 
+      // Look up the number of standard deviations.
+      double num_standard_deviations =
+        global.compute_quantile(failure_probabilities[node_index]);
+
+      // The prunable flag.
+      bool prunable = true;
+
       // Get an iterator for the current node.
-      typename core::table::Table::TreeType *node =
+      typename core::table::Table::TreeType * node =
         range_sq_in.node(node_index);
       typename core::table::Table::TreeIterator node_it =
         global.table()->get_node_iterator(node);
@@ -505,14 +512,39 @@ class NbodySimulatorSummary {
           ReplacePoints_(
             *(global.table()), metric, random_combination, &triple_distance_sq);
 
+          // Evaluate the potential and add it to the result of each
+          // point involved.
+          double potential = global.potential().EvalUnnormOnSq(
+                               triple_distance_sq);
+
+          mean_variance_pair.push_back(potential);
         }
 
         // Check whether the current query point can be pruned.
+        core::math::Range delta_contribution;
+        mean_variance_pair.scaled_interval(
+          range_sq_in.num_tuples(node_index), num_standard_deviations,
+          &delta_contribution);
+        if(delta_contribution.hi < 0.0) {
+          negative_potential_.hi += delta_contribution.hi;
+        }
+        if(delta_contribution.lo > 0.0) {
+          positive_potential_.lo += delta_contribution.lo;
+        }
 
+        double left_hand_side =
+          0.5 * (delta_contribution.hi - delta_contribution.lo);
+        double right_hand_side =
+          delta.pruned_[node_index] *
+          (global.relative_error() * std::max(
+             - negative_potential_.hi, positive_potential_.lo) - used_error_) /
+          static_cast<double>(global.total_num_tuples() - pruned_);
+
+        prunable = (left_hand_side <= right_hand_side);
       }
-      while(node_it.HasNext());
+      while(node_it.HasNext() && prunable);
 
-      return false;
+      return prunable;
     }
 
     template < typename GlobalType, typename DeltaType, typename ResultType >
