@@ -94,6 +94,10 @@ class NbodySimulatorDelta {
 
     std::vector< core::monte_carlo::MeanVariancePair > *mean_variance_pair_;
 
+    std::vector< core::monte_carlo::MeanVariancePair > *mean_variance_pair() {
+      return mean_variance_pair_;
+    }
+
     template<typename GlobalType, typename TreeType>
     void ResetMeanVariancePairs(
       GlobalType &global,
@@ -381,6 +385,20 @@ class NbodySimulatorSummary {
 
   private:
 
+    void ReplacePoints_(
+      const core::table::Table &table,
+      const core::metric_kernels::AbstractMetric &metric_in,
+      const std::vector<int> &random_combination,
+      core::gnp::TripleDistanceSq *distance_sq_out) const {
+
+      core::table::DenseConstPoint point;
+      for(int i = 1; i < 3; i++) {
+        table.get(random_combination[i], &point);
+        distance_sq_out->ReplaceOnePoint(
+          metric_in, point, random_combination[i], i);
+      }
+    }
+
     void RandomCombination_(
       const core::gnp::TripleRangeDistanceSq &range_sq_in,
       int node_index_fix,
@@ -403,6 +421,7 @@ class NbodySimulatorSummary {
 
         if(random_combination_out->size() == 1) {
           count--;
+          subcombination_out.push_back((*random_combination_out)[0]);
         }
         core::math::RandomCombination(
           range_sq_in.node(reference_node_index)->begin(),
@@ -471,17 +490,24 @@ class NbodySimulatorSummary {
         // The current query point.
         node_it.Next(&query_point, &query_point_index);
         triple_distance_sq.ReplaceOnePoint(
-          metric, query_point, 0);
+          metric, query_point, query_point_index, 0);
 
         // The first in the list is the query point index.
         random_combination[0] = query_point_index;
 
         // Generate a random combination that contains the current
         // query point.
-        for(int i = 0; i < num_samples; i++) {
+        core::monte_carlo::MeanVariancePair &mean_variance_pair =
+          (* delta.mean_variance_pair())[query_point_index];
+        while(mean_variance_pair.num_samples() < num_samples) {
           random_combination.resize(1);
           RandomCombination_(range_sq_in, node_index, &random_combination);
+          ReplacePoints_(
+            *(global.table()), metric, random_combination, &triple_distance_sq);
+
         }
+
+        // Check whether the current query point can be pruned.
 
       }
       while(node_it.HasNext());

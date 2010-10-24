@@ -19,6 +19,8 @@ class TripleDistanceSq {
 
     std::vector< core::table::DenseConstPoint > points_;
 
+    std::vector<int> point_indices_;
+
   public:
 
     void set_distance_sq(
@@ -33,6 +35,7 @@ class TripleDistanceSq {
       distance_sq_.set_size(3, 3);
       distance_sq_.fill(0.0);
       points_.resize(3);
+      point_indices_.resize(3);
     }
 
     double distance_sq(int first_pos, int second_pos) const {
@@ -42,8 +45,15 @@ class TripleDistanceSq {
     void ReplaceOnePoint(
       const core::metric_kernels::AbstractMetric &metric_in,
       const core::table::DenseConstPoint &new_point_in,
+      int new_point_index_in,
       int point_pos_in) {
 
+      // Don't have to do anything if the point is already there.
+      if(new_point_index_in == point_indices_[point_pos_in]) {
+        return;
+      }
+
+      point_indices_[point_pos_in] = new_point_index_in;
       points_[point_pos_in].Alias(new_point_in);
 
       for(int existing_point_pos = point_pos_in - 1;

@@ -127,7 +127,7 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
     core::table::DenseConstPoint first_point;
     int first_point_index;
     first_node_it.Next(&first_point, &first_point_index);
-    distance_sq_set.ReplaceOnePoint(metric, first_point, 0);
+    distance_sq_set.ReplaceOnePoint(metric, first_point, first_point_index, 0);
 
     // Construct the second iterator and start looping.
     typename TableType::TreeIterator second_node_it =
@@ -138,7 +138,8 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
       core::table::DenseConstPoint second_point;
       int second_point_index;
       second_node_it.Next(&second_point, &second_point_index);
-      distance_sq_set.ReplaceOnePoint(metric, second_point, 1);
+      distance_sq_set.ReplaceOnePoint(
+        metric, second_point, second_point_index, 1);
 
       // Loop through the third node.
       typename TableType::TreeIterator third_node_it =
@@ -149,7 +150,8 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
         core::table::DenseConstPoint third_point;
         int third_point_index;
         third_node_it.Next(&third_point, &third_point_index);
-        distance_sq_set.ReplaceOnePoint(metric, third_point, 2);
+        distance_sq_set.ReplaceOnePoint(
+          metric, third_point, third_point_index, 2);
 
         // Add the contribution due to the triple that has been chosen
         // to each of the query point.
