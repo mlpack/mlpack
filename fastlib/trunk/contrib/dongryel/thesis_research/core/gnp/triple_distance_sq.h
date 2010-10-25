@@ -48,13 +48,14 @@ class TripleDistanceSq {
       int new_point_index_in,
       int point_pos_in) {
 
+      points_[point_pos_in].Alias(new_point_in);
+
       // Don't have to do anything if the point is already there.
       if(new_point_index_in == point_indices_[point_pos_in]) {
         return;
       }
 
       point_indices_[point_pos_in] = new_point_index_in;
-      points_[point_pos_in].Alias(new_point_in);
 
       for(int existing_point_pos = point_pos_in - 1;
           existing_point_pos >= 0; existing_point_pos--) {
