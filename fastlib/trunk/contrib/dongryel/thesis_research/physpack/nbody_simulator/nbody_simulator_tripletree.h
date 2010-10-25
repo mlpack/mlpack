@@ -501,6 +501,7 @@ class NbodySimulatorSummary {
 
         // The first in the list is the query point index.
         random_combination[0] = query_point_index;
+        printf("Query: %d\n", query_point_index);
 
         // Generate a random combination that contains the current
         // query point.
@@ -509,6 +510,9 @@ class NbodySimulatorSummary {
         while(mean_variance_pair.num_samples() < num_samples) {
           random_combination.resize(1);
           RandomCombination_(range_sq_in, node_index, &random_combination);
+
+          printf("Random combination: %d %d %d\n", random_combination[0],
+                 random_combination[1], random_combination[2]);
           ReplacePoints_(
             *(global.table()), metric, random_combination, &triple_distance_sq);
 
@@ -519,6 +523,7 @@ class NbodySimulatorSummary {
 
           mean_variance_pair.push_back(potential);
         }
+        exit(0);
 
         // Check whether the current query point can be pruned.
         core::math::Range delta_contribution;

@@ -223,6 +223,8 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
   typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
 
+  printf("Trying Monte Carlo!\n");
+
   // Prepare for Monte Carlo accumulation.
   delta.ResetMeanVariancePairs(
     problem_->global(), range_in.nodes());
@@ -244,6 +246,10 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
       flag = new_summaries[i].CanProbabilisticSummarize(
                metric, problem_->global(), delta, range_in,
                failure_probabilities, i, query_results);
+      printf("Can probabilistic summarize for %d: %d\n", i, flag);
+      if(flag) {
+        exit(0);
+      }
     }
   }
   return flag;
