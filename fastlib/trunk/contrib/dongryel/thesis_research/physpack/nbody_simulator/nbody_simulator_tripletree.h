@@ -402,17 +402,16 @@ class NbodySimulatorSummary {
     void TranslateCombination_(
       core::table::Table &table,
       const core::gnp::TripleRangeDistanceSq &range_sq_in,
-      int node_index_fix,
       std::vector<int> *random_combination_out) const {
 
-      for(int i = 0; i < 3; i++) {
-        int node_index = (node_index_fix + i) % 3;
+      for(int node_index = 0; node_index < 3; node_index++) {
         int real_point_id;
         core::table::Table::TreeIterator node_it =
           table.get_node_iterator(range_sq_in.node(node_index));
         node_it.get_id(
-          (*random_combination_out)[i] - node_it.begin(), &real_point_id);
-        (*random_combination_out)[i] = real_point_id;
+          (*random_combination_out)[node_index] - node_it.begin(),
+          &real_point_id);
+        (*random_combination_out)[node_index] = real_point_id;
       }
     }
 
@@ -573,7 +572,7 @@ class NbodySimulatorSummary {
 
           // Translate the DFS indices to the real point indices.
           TranslateCombination_(
-            *(global.table()), range_sq_in, node_index, &random_combination);
+            *(global.table()), range_sq_in, &random_combination);
           ReplacePoints_(
             *(global.table()), metric, random_combination, &triple_distance_sq);
 
