@@ -247,9 +247,6 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
                metric, problem_->global(), delta, range_in,
                failure_probabilities, i, query_results);
       printf("Can probabilistic summarize for %d: %d\n", i, flag);
-      if(flag) {
-        exit(0);
-      }
     }
   }
   return flag;
