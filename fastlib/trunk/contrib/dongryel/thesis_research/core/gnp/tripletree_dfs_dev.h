@@ -419,6 +419,7 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
             triple_range_distance_sq.node(level - 1),
             current_node)) {
 
+        recurse_to_left[level] = true;
         RecursionHelper_(
           metric, triple_range_distance_sq, relative_error,
           failure_probabilities, query_results,
@@ -468,6 +469,9 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
         replaced_node_on_current_level = true;
         triple_range_distance_sq.ReplaceOneNode(
           metric, *table_, current_node_left, level);
+
+        // Recursing to the left.
+        recurse_to_left[level] = true;
         RecursionHelper_(
           metric, triple_range_distance_sq, relative_error,
           failure_probabilities, query_results, level + 1, false, node_is_split,
@@ -483,6 +487,9 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
         replaced_node_on_current_level = true;
         triple_range_distance_sq.ReplaceOneNode(
           metric, *table_, current_node_right, level);
+
+        // Recursing to the right.
+        recurse_to_left[level] = false;
         RecursionHelper_(
           metric, triple_range_distance_sq, relative_error,
           failure_probabilities, query_results, level + 1, false, node_is_split,
