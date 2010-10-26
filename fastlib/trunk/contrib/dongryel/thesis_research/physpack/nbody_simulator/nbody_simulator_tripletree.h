@@ -399,35 +399,46 @@ class NbodySimulatorSummary {
       }
     }
 
-    void RandomCombination_(
+    void TranslateCombination_(
+      core::table::Table &table,
       const core::gnp::TripleRangeDistanceSq &range_sq_in,
       int node_index_fix,
       std::vector<int> *random_combination_out) const {
 
-      printf("Node index: %d, %d\n", node_index_fix,
-             (*random_combination_out)[0]);
-      printf("%d %d %d %d %d %d\n",
-             range_sq_in.node(0)->begin(), range_sq_in.node(0)->end(),
-             range_sq_in.node(1)->begin(), range_sq_in.node(1)->end(),
-             range_sq_in.node(2)->begin(), range_sq_in.node(2)->end());
+      for(int i = 0; i < 3; i++) {
+        int node_index = (node_index_fix + i) % 3;
+        int real_point_id;
+        core::table::Table::TreeIterator node_it =
+          table.get_node_iterator(range_sq_in.node(node_index));
+        node_it.get_id(
+          (*random_combination_out)[i] - node_it.begin(), &real_point_id);
+        (*random_combination_out)[i] = real_point_id;
+      }
+    }
+
+    void RandomCombination_(
+      const core::gnp::TripleRangeDistanceSq &range_sq_in,
+      int node_index_fix,
+      std::vector<int> *random_combination_out) const {
 
       // Detect the number of consecutive nodes that are equal.
       int iterating_node_index = node_index_fix;
       do {
         int reference_node_index = iterating_node_index;
         int count = 0;
-        do {
-          iterating_node_index = (iterating_node_index + 1) % 3;
-          count++;
-        }
         while(
           range_sq_in.node(iterating_node_index) ==
-          range_sq_in.node(reference_node_index) &&
-          iterating_node_index != node_index_fix);
+          range_sq_in.node(reference_node_index)) {
+          iterating_node_index = (iterating_node_index + 1) % 3;
+
+          if(iterating_node_index == node_index_fix) {
+            break;
+          }
+          count++;
+        }
         std::vector<int> subcombination_out;
 
         if(random_combination_out->size() == 1) {
-          count--;
           subcombination_out.push_back((*random_combination_out)[0]);
           random_combination_out->resize(0);
         }
@@ -500,27 +511,28 @@ class NbodySimulatorSummary {
 
       // Triple range distance square object to keep track.
       core::gnp::TripleDistanceSq triple_distance_sq;
-      do {
+      for(int qpoint_dfs_index = node->begin(); node_it.HasNext() && prunable;
+          qpoint_dfs_index++) {
 
         // The current query point.
         node_it.Next(&query_point, &query_point_index);
         triple_distance_sq.ReplaceOnePoint(
           metric, query_point, query_point_index, 0);
 
-        // The first in the list is the query point index.
-        random_combination[0] = query_point_index;
-        printf("Query: %d\n", query_point_index);
-
         // Generate a random combination that contains the current
         // query point.
         core::monte_carlo::MeanVariancePair &mean_variance_pair =
           (* delta.mean_variance_pair())[query_point_index];
         while(mean_variance_pair.num_samples() < num_samples) {
+
+          // The first in the list is the query point DFS index.
+          random_combination[0] = qpoint_dfs_index;
           random_combination.resize(1);
           RandomCombination_(range_sq_in, node_index, &random_combination);
 
-          printf("Random combination: %d %d %d\n", random_combination[0],
-                 random_combination[1], random_combination[2]);
+          // Translate the DFS indices to the real point indices.
+          TranslateCombination_(
+            *(global.table()), range_sq_in, node_index, &random_combination);
           ReplacePoints_(
             *(global.table()), metric, random_combination, &triple_distance_sq);
 
