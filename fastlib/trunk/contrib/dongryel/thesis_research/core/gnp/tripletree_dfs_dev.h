@@ -303,6 +303,8 @@ template<typename ProblemType>
 void core::gnp::TripletreeDfs<ProblemType>::AllocateProbabilities_(
   const std::vector<double> &failure_probabilities,
   const std::deque<bool> &node_is_split,
+  const std::deque<bool> &recurse_to_left,
+  const std::vector<int> &deterministic_computation_count,
   std::vector<double> *new_failure_probabilities) const {
 
   new_failure_probabilities->resize(3);
@@ -313,8 +315,12 @@ void core::gnp::TripletreeDfs<ProblemType>::AllocateProbabilities_(
         count++;
       }
     }
+    int minus_count = (recurse_to_left[i]) ?
+                      deterministic_computation_count[ 2 * i ] :
+                      deterministic_computation_count[ 2 * i + 1];
     (*new_failure_probabilities)[i] = failure_probabilities[i] /
-                                      static_cast<double>(1 << count);
+                                      static_cast<double>(
+                                        (1 << count) - minus_count);
   }
 }
 
@@ -356,11 +362,14 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
   int level,
   bool all_leaves,
   std::deque<bool> &node_is_split,
+  std::deque<bool> &recurse_to_left,
+  std::vector<int> &deterministic_computation_count,
   bool *deterministic_approximation) {
 
   // If we have chosen all three nodes,
   if(level == 3) {
 
+    bool exact_computation = true;
     if(all_leaves) {
 
       // Call the base case when all three nodes are leaves.
@@ -371,14 +380,29 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
       // Otherwise call the canonical case.
       std::vector<double> new_failure_probabilities;
       AllocateProbabilities_(
-        failure_probabilities, node_is_split, &new_failure_probabilities);
+        failure_probabilities, node_is_split,
+        recurse_to_left, deterministic_computation_count,
+        &new_failure_probabilities);
 
-      bool exact_computation =
+      exact_computation =
         TripletreeCanonical_(
           metric, triple_range_distance_sq, relative_error,
           new_failure_probabilities, query_results);
       *deterministic_approximation = (*deterministic_approximation) &&
                                      exact_computation;
+    }
+
+    // Update the deterministic computation count so that the
+    // probabilities can be redistributed.
+    if(exact_computation) {
+      for(int i = 0; i < 3; i++) {
+        if(recurse_to_left[i]) {
+          deterministic_computation_count[2 * i]++;
+        }
+        else {
+          deterministic_computation_count[2 * i + 1]++;
+        }
+      }
     }
   }
 
@@ -399,6 +423,7 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
           metric, triple_range_distance_sq, relative_error,
           failure_probabilities, query_results,
           level + 1, all_leaves, node_is_split,
+          recurse_to_left, deterministic_computation_count,
           deterministic_approximation);
       }
     }
@@ -446,6 +471,7 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
         RecursionHelper_(
           metric, triple_range_distance_sq, relative_error,
           failure_probabilities, query_results, level + 1, false, node_is_split,
+          recurse_to_left, deterministic_computation_count,
           deterministic_approximation);
       }
 
@@ -460,6 +486,7 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
         RecursionHelper_(
           metric, triple_range_distance_sq, relative_error,
           failure_probabilities, query_results, level + 1, false, node_is_split,
+          recurse_to_left, deterministic_computation_count,
           deterministic_approximation);
       }
 
@@ -520,10 +547,13 @@ bool core::gnp::TripletreeDfs<ProblemType>::TripletreeCanonical_(
   // Call the recursion helper.
   bool deterministic_approximation = true;
   std::deque<bool> node_is_split(3, false);
+  std::deque<bool> recurse_to_left(3, true);
+  std::vector<int> deterministic_computation_count(6, 0);
   RecursionHelper_(
     metric, triple_range_distance_sq, relative_error,
     failure_probabilities, query_results,
-    0, true, node_is_split, &deterministic_approximation);
+    0, true, node_is_split, recurse_to_left,
+    deterministic_computation_count, &deterministic_approximation);
 
   return deterministic_approximation;
 }

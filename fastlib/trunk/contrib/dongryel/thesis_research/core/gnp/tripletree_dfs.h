@@ -33,6 +33,8 @@ class TripletreeDfs {
     void AllocateProbabilities_(
       const std::vector<double> &failure_probabilites,
       const std::deque<bool> &node_is_split,
+      const std::deque<bool> &recurse_to_left,
+      const std::vector<int> &deterministic_computation_count,
       std::vector<double> *new_failure_probabilities) const;
 
     bool NodeIsAgreeable_(TreeType *node, TreeType *next_node) const;
@@ -53,6 +55,8 @@ class TripletreeDfs {
       int level,
       bool all_leaves,
       std::deque<bool> &node_is_split,
+      std::deque<bool> &recurse_to_left,
+      std::vector<int> &deterministic_computation_count,
       bool *deterministic_approximation);
 
     void PreProcess_(TreeType *node);
