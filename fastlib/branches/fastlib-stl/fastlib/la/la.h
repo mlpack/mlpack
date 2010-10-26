@@ -73,12 +73,8 @@ namespace la {
     return DistanceSqEuclidean(x.length(), x.ptr(), y.ptr());
   }
   inline double DistanceSqEuclidean(const arma::vec& x, const arma::vec& y) {
-    assert(x.n_elem == y.n_elem);
-
-    double result = 0;
-    for(int i = 0; i < x.n_elem; i++)
-      result += (x[i] - y[i]) * (x[i] - y[i]);
-    return result;
+//    return dot(x, y); // too slow!
+      return DistanceSqEuclidean(x.n_elem, x.memptr(), y.memptr());
   }
   /**
    * Finds an L_p metric distance except doesn't perform the root
