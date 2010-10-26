@@ -138,8 +138,8 @@ template<typename T>
 void RandomCombination(
   int begin, int end, int num_elements, std::vector<T> *combination) {
 
-  for(int i = end - num_elements; i < end; i++) {
-    int t = core::math::RandInt(0, i + 1);
+  for(int i = end - begin - num_elements; i < end - begin; i++) {
+    int t = core::math::RandInt(0, i + 1) + begin;
     bool already_in_list = false;
     for(unsigned int j = 0; already_in_list == false &&
         j < combination->size(); j++) {
@@ -150,7 +150,7 @@ void RandomCombination(
       combination->push_back(t);
     }
     else {
-      combination->push_back(i);
+      combination->push_back(i + begin);
     }
   }
 }
