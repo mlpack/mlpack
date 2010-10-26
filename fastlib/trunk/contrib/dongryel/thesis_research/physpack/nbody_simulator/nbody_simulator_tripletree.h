@@ -404,6 +404,13 @@ class NbodySimulatorSummary {
       int node_index_fix,
       std::vector<int> *random_combination_out) const {
 
+      printf("Node index: %d, %d\n", node_index_fix,
+             (*random_combination_out)[0]);
+      printf("%d %d %d %d %d %d\n",
+             range_sq_in.node(0)->begin(), range_sq_in.node(0)->end(),
+             range_sq_in.node(1)->begin(), range_sq_in.node(1)->end(),
+             range_sq_in.node(2)->begin(), range_sq_in.node(2)->end());
+
       // Detect the number of consecutive nodes that are equal.
       int iterating_node_index = node_index_fix;
       do {
@@ -422,6 +429,7 @@ class NbodySimulatorSummary {
         if(random_combination_out->size() == 1) {
           count--;
           subcombination_out.push_back((*random_combination_out)[0]);
+          random_combination_out->resize(0);
         }
         core::math::RandomCombination(
           range_sq_in.node(reference_node_index)->begin(),
@@ -523,7 +531,6 @@ class NbodySimulatorSummary {
 
           mean_variance_pair.push_back(potential);
         }
-        exit(0);
 
         // Check whether the current query point can be pruned.
         core::math::Range delta_contribution;

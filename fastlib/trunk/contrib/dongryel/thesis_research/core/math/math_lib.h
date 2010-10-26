@@ -8,6 +8,7 @@
 #define CORE_MATH_MATH_LIB_H
 
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <boost/math/special_functions/binomial.hpp>
 
