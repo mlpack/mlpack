@@ -421,36 +421,77 @@ class NbodySimulatorSummary {
       int node_index_fix,
       std::vector<int> *random_combination_out) const {
 
-      // Detect the number of consecutive nodes that are equal.
-      int iterating_node_index = node_index_fix;
-      do {
-        int reference_node_index = iterating_node_index;
-        int count = 0;
-        while(
-          range_sq_in.node(iterating_node_index) ==
-          range_sq_in.node(reference_node_index)) {
-          iterating_node_index = (iterating_node_index + 1) % 3;
+      if(range_sq_in.node(0) == range_sq_in.node(1)) {
 
-          if(iterating_node_index == node_index_fix) {
-            break;
+        // All three nodes are equal.
+        if(range_sq_in.node(1) == range_sq_in.node(2)) {
+          core::math::RandomCombination(
+            range_sq_in.node(0)->begin(),
+            range_sq_in.node(0)->end(), 2,
+            random_combination_out);
+        }
+
+        // node 0 equals node 1, node 1 does not equal node 2.
+        else {
+          if(node_index_fix <= 1) {
+            core::math::RandomCombination(
+              range_sq_in.node(0)->begin(),
+              range_sq_in.node(0)->end(), 1,
+              random_combination_out);
+            core::math::RandomCombination(
+              range_sq_in.node(2)->begin(),
+              range_sq_in.node(2)->end(), 1,
+              random_combination_out);
           }
-          count++;
+          else {
+            core::math::RandomCombination(
+              range_sq_in.node(0)->begin(),
+              range_sq_in.node(0)->end(), 2,
+              random_combination_out);
+          }
         }
-        std::vector<int> subcombination_out;
-
-        if(random_combination_out->size() == 1) {
-          subcombination_out.push_back((*random_combination_out)[0]);
-          random_combination_out->resize(0);
-        }
-        core::math::RandomCombination(
-          range_sq_in.node(reference_node_index)->begin(),
-          range_sq_in.node(reference_node_index)->end(), count,
-          &subcombination_out);
-        random_combination_out->insert(
-          random_combination_out->end(), subcombination_out.begin(),
-          subcombination_out.end());
       }
-      while(iterating_node_index != node_index_fix);
+      else {
+
+        // node 0 does not equal node 1, node 1 equals node 2.
+        if(range_sq_in.node(1) == range_sq_in.node(2)) {
+
+          if(node_index_fix == 0) {
+            core::math::RandomCombination(
+              range_sq_in.node(1)->begin(),
+              range_sq_in.node(1)->end(), 2,
+              random_combination_out);
+          }
+          else {
+            core::math::RandomCombination(
+              range_sq_in.node(0)->begin(),
+              range_sq_in.node(0)->end(), 1,
+              random_combination_out);
+            core::math::RandomCombination(
+              range_sq_in.node(2)->begin(),
+              range_sq_in.node(2)->end(), 1,
+              random_combination_out);
+          }
+        }
+
+        // All three nodes are different.
+        else {
+          for(int i = 0; i < 3; i++) {
+            if(i != node_index_fix) {
+              core::math::RandomCombination(
+                range_sq_in.node(i)->begin(),
+                range_sq_in.node(i)->end(), 1,
+                random_combination_out);
+            }
+          }
+        }
+      }
+
+      // Put the random combination in the right order.
+      int fixed_element = (*random_combination_out)[0];
+      random_combination_out->erase(random_combination_out->begin());
+      random_combination_out->insert(
+        random_combination_out->begin() + node_index_fix, fixed_element);
     }
 
   public:
