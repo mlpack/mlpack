@@ -19,6 +19,7 @@
 #endif
 
 #include "max_weight_matching.h"
+#include "auction_max_weight_matching.h"
 
 BEGIN_ANMF_NAMESPACE;
 
