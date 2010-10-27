@@ -6,7 +6,7 @@
 #ifndef PHYSPACK_NBODY_SIMULATOR_NBODY_SIMULATOR_DEV_H
 #define PHYSPACK_NBODY_SIMULATOR_NBODY_SIMULATOR_DEV_H
 
-#include "core/metric_kernels/lmetric.h"
+#include "modified_lmetric.h"
 #include "core/gnp/tripletree_dfs_dev.h"
 #include "nbody_simulator.h"
 
@@ -124,7 +124,7 @@ void physpack::nbody_simulator::NbodySimulator::ParseArguments(
   physpack::nbody_simulator::NbodySimulatorArguments *arguments_out) {
 
   // A L2 metric to index the table to use.
-  arguments_out->metric_ = new core::metric_kernels::LMetric<2>();
+  arguments_out->metric_ = new physpack::nbody_simulator::ModifiedLMetric<2>();
 
   // Construct the Boost variable map.
   boost::program_options::variables_map vm;
