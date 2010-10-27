@@ -526,7 +526,7 @@ class NbodySimulatorSummary {
       int qpoint_dfs_index,
       int query_point_index) {
 
-      const int num_samples = 25;
+      const int num_samples = 100;
 
       // Look up the number of standard deviations.
       double num_standard_deviations =

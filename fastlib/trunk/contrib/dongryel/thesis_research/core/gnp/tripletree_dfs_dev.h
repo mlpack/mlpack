@@ -234,6 +234,7 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
   delta.ResetMeanVariancePairs(
     problem_->global(), range_in.nodes());
 
+  // The summary statistics.
   typename ProblemType::SummaryType new_summary;
 
   bool flag = true;
