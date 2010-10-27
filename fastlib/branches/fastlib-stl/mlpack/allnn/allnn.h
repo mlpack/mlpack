@@ -246,7 +246,7 @@ class AllNN {
     for (index_t query_index = query_node->begin();
         query_index < query_node->end(); query_index++) {
 
-      arma::vec query_point = queries_->col(query_index);
+      arma::vec query_point = queries_->unsafe_col(query_index);
       double distance_to_hrect = 
 	  reference_node->bound().MinDistanceSq(query_point);
 
@@ -255,7 +255,7 @@ class AllNN {
 	for (index_t reference_index = reference_node->begin();
 	     reference_index < reference_node->end(); reference_index++) {
 
-          arma::vec reference_point = references_->col(reference_index);
+          arma::vec reference_point = references_->unsafe_col(reference_index);
 	  if (reference_node != query_node || reference_index != query_index) {
 	    // BLAS can perform many vectors ops more quickly than C/C++.
             double distance = la::DistanceSqEuclidean(query_point,

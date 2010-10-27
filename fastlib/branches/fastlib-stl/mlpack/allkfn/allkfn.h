@@ -191,7 +191,7 @@ class AllkFN {
          query_index < query_node->end(); query_index++) {
        
       // Get the query point from the matrix
-      arma::vec query_point = queries_->col(query_index);
+      arma::vec query_point = queries_->unsafe_col(query_index);
       
       index_t ind = query_index * kfns_;
       for(index_t i = 0; i < kfns_; i++) {
@@ -206,7 +206,7 @@ class AllkFN {
 	      // in the monochromatic case
         if (likely(reference_node != query_node ||
 		        reference_index != query_index)) {
-	        arma::vec reference_point = references_->col(reference_index);
+	        arma::vec reference_point = references_->unsafe_col(reference_index);
 	        // We'll use lapack to find the distance between the two vectors
 	        double distance = la::DistanceSqEuclidean(query_point, reference_point);
 	        // If the reference point is closer than the current candidate, 
