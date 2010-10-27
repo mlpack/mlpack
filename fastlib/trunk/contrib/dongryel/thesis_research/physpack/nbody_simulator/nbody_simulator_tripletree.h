@@ -521,94 +521,75 @@ class NbodySimulatorSummary {
       const core::gnp::TripleRangeDistanceSq &range_sq_in,
       const std::vector<double> &failure_probabilities,
       int node_index,
-      ResultType *query_results) {
+      ResultType *query_results,
+      const core::table::DenseConstPoint &query_point,
+      int qpoint_dfs_index,
+      int query_point_index) {
 
       const int num_samples = 25;
-
-      if(std::min(std::min(
-                    range_sq_in.num_tuples(0),
-                    range_sq_in.num_tuples(1)),
-                  range_sq_in.num_tuples(2)) > 10000.0) {
-        return false;
-      }
 
       // Look up the number of standard deviations.
       double num_standard_deviations =
         global.compute_quantile(failure_probabilities[node_index]);
 
-      // The prunable flag.
-      bool prunable = true;
-
       // Get an iterator for the current node.
       typename core::table::Table::TreeType * node =
         range_sq_in.node(node_index);
-      typename core::table::Table::TreeIterator node_it =
-        global.table()->get_node_iterator(node);
 
+      // The random combination to be used.
       std::vector<int> random_combination(1, 0);
-      core::table::DenseConstPoint query_point;
-      int query_point_index;
 
       // Triple range distance square object to keep track.
       core::gnp::TripleDistanceSq triple_distance_sq;
-      for(int qpoint_dfs_index = node->begin(); node_it.HasNext() && prunable;
-          qpoint_dfs_index++) {
+      triple_distance_sq.ReplaceOnePoint(
+        metric, query_point, query_point_index, 0);
 
-        // The current query point.
-        node_it.Next(&query_point, &query_point_index);
-        triple_distance_sq.ReplaceOnePoint(
-          metric, query_point, query_point_index, 0);
+      // Generate a random combination that contains the current
+      // query point.
+      core::monte_carlo::MeanVariancePair &mean_variance_pair =
+        (* delta.mean_variance_pair())[query_point_index];
+      while(mean_variance_pair.num_samples() < num_samples) {
 
-        // Generate a random combination that contains the current
-        // query point.
-        core::monte_carlo::MeanVariancePair &mean_variance_pair =
-          (* delta.mean_variance_pair())[query_point_index];
-        while(mean_variance_pair.num_samples() < num_samples) {
+        // The first in the list is the query point DFS index.
+        random_combination[0] = qpoint_dfs_index;
+        random_combination.resize(1);
+        RandomCombination_(range_sq_in, node_index, &random_combination);
 
-          // The first in the list is the query point DFS index.
-          random_combination[0] = qpoint_dfs_index;
-          random_combination.resize(1);
-          RandomCombination_(range_sq_in, node_index, &random_combination);
+        // Translate the DFS indices to the real point indices.
+        TranslateCombination_(
+          *(global.table()), range_sq_in, &random_combination);
+        ReplacePoints_(
+          *(global.table()), metric, random_combination, &triple_distance_sq);
 
-          // Translate the DFS indices to the real point indices.
-          TranslateCombination_(
-            *(global.table()), range_sq_in, &random_combination);
-          ReplacePoints_(
-            *(global.table()), metric, random_combination, &triple_distance_sq);
+        // Evaluate the potential and add it to the result of each
+        // point involved.
+        double potential = global.potential().EvalUnnormOnSq(
+                             triple_distance_sq);
 
-          // Evaluate the potential and add it to the result of each
-          // point involved.
-          double potential = global.potential().EvalUnnormOnSq(
-                               triple_distance_sq);
-
-          mean_variance_pair.push_back(potential);
-        }
-
-        // Check whether the current query point can be pruned.
-        core::math::Range delta_contribution;
-        mean_variance_pair.scaled_interval(
-          range_sq_in.num_tuples(node_index), num_standard_deviations,
-          &delta_contribution);
-        if(delta_contribution.hi < 0.0) {
-          negative_potential_.hi += delta_contribution.hi;
-        }
-        if(delta_contribution.lo > 0.0) {
-          positive_potential_.lo += delta_contribution.lo;
-        }
-
-        double left_hand_side =
-          0.5 * (delta_contribution.hi - delta_contribution.lo);
-        double right_hand_side =
-          delta.pruned_[node_index] *
-          (global.relative_error() * std::max(
-             - negative_potential_.hi, positive_potential_.lo) - used_error_) /
-          static_cast<double>(global.total_num_tuples() - pruned_);
-
-        prunable = (left_hand_side <= right_hand_side);
+        mean_variance_pair.push_back(potential);
       }
-      while(node_it.HasNext() && prunable);
 
-      return prunable;
+      // Check whether the current query point can be pruned.
+      core::math::Range delta_contribution;
+      mean_variance_pair.scaled_interval(
+        range_sq_in.num_tuples(node_index), num_standard_deviations,
+        &delta_contribution);
+      if(delta_contribution.hi < 0.0) {
+        negative_potential_.hi += delta_contribution.hi;
+      }
+      if(delta_contribution.lo > 0.0) {
+        positive_potential_.lo += delta_contribution.lo;
+      }
+
+      double left_hand_side =
+        0.5 * (delta_contribution.hi - delta_contribution.lo);
+      double right_hand_side =
+        delta.pruned_[node_index] *
+        (global.relative_error() * std::max(
+           - negative_potential_.hi, positive_potential_.lo) - used_error_) /
+        static_cast<double>(global.total_num_tuples() - pruned_);
+
+      return (left_hand_side <= right_hand_side);
     }
 
     template < typename GlobalType, typename DeltaType, typename ResultType >
