@@ -532,10 +532,6 @@ class NbodySimulatorSummary {
       double num_standard_deviations =
         global.compute_quantile(failure_probabilities[node_index]);
 
-      // Get an iterator for the current node.
-      typename core::table::Table::TreeType * node =
-        range_sq_in.node(node_index);
-
       // The random combination to be used.
       std::vector<int> random_combination(1, 0);
 
