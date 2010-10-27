@@ -26,6 +26,10 @@ class AbstractMetric {
       const core::table::AbstractPoint& a,
       const core::table::AbstractPoint& b) const = 0;
 
+    virtual double DistanceIneq(
+      const core::table::AbstractPoint& a,
+      const core::table::AbstractPoint& b) const = 0;
+
     /**
      * Computes the distance metric between two points, raised to a
      * particular power.

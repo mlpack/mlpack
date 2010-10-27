@@ -16,17 +16,26 @@ namespace core {
 namespace metric_kernels {
 
 template<int t_pow>
-class LMetric;
-
-template<int t_pow>
 class LMetricDistanceSqTrait {
   public:
     static double Compute(
-      const LMetric<t_pow> &metric_in,
+      const core::metric_kernels::AbstractMetric &metric_in,
       const core::table::AbstractPoint &a,
       const core::table::AbstractPoint &b) {
 
       return core::math::Pow<2, t_pow>(metric_in.DistanceIneq(a, b));
+    }
+};
+
+template<>
+class LMetricDistanceSqTrait<2> {
+  public:
+    static double Compute(
+      const core::metric_kernels::AbstractMetric &metric_in,
+      const core::table::AbstractPoint &a,
+      const core::table::AbstractPoint &b) {
+
+      return metric_in.DistanceIneq(a, b);
     }
 };
 
@@ -73,18 +82,6 @@ class LMetric: public core::metric_kernels::AbstractMetric {
 
       return core::metric_kernels::LMetricDistanceSqTrait<t_pow>::Compute(
                *this, a, b);
-    }
-};
-
-template<>
-class LMetricDistanceSqTrait<2> {
-  public:
-    static double Compute(
-      const LMetric<2> &metric_in,
-      const core::table::AbstractPoint &a,
-      const core::table::AbstractPoint &b) {
-
-      return metric_in.DistanceIneq(a, b);
     }
 };
 };

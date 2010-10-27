@@ -114,6 +114,16 @@ class AxilrodTeller {
     core::math::Range RangeUnnormOnSq(
       const core::gnp::TripleRangeDistanceSq &range_in) const {
 
+      if((range_in.min_distance_sq().at(0, 1)) == 0 ||
+          (range_in.min_distance_sq().at(0, 2)) == 0 ||
+          (range_in.min_distance_sq().at(1, 2)) == 0 ||
+          (range_in.max_distance_sq().at(0, 1)) == 0 ||
+          (range_in.max_distance_sq().at(0, 2)) == 0 ||
+          (range_in.max_distance_sq().at(1, 2)) == 0) {
+        printf("zero distance encountered!\n");
+        exit(0);
+      }
+
       // Compute the negative contribution bound.
       core::math::Range negative_range(
         this->minimum_negative_contribution(range_in),
@@ -128,6 +138,16 @@ class AxilrodTeller {
       core::math::Range overall_range = negative_range +
                                         positive_range;
 
+      if(isnan(overall_range.lo) ||
+          isnan(overall_range.hi)) {
+        printf("potentials are nan!\n");
+        exit(0);
+      }
+      if(isinf(overall_range.lo) ||
+          isinf(overall_range.hi)) {
+        printf("potentials are inf!\n");
+        exit(0);
+      }
       return overall_range;
     }
 
