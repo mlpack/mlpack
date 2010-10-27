@@ -204,7 +204,7 @@ class AllkNN {
          query_index < query_node->end(); query_index++) {
        
       // Get the query point from the matrix
-      arma::vec query_point = queries_->col(query_index);
+      arma::vec query_point = queries_->unsafe_col(query_index);
       
       index_t ind = query_index*knns_;
       for(index_t i = 0; i < knns_; i++) {
@@ -223,7 +223,7 @@ class AllkNN {
 	  // in the monochromatic case
 	  if (likely(reference_node != query_node ||
 		     reference_index != query_index)) {
-	    arma::vec reference_point = references_->col(reference_index);
+	    arma::vec reference_point = references_->unsafe_col(reference_index);
 	    // We'll use lapack to find the distance between the two vectors
 	    double distance =
 	      la::DistanceSqEuclidean(query_point, reference_point);
@@ -389,7 +389,7 @@ class AllkNN {
 	      // in the monochromatic case
         if (likely(!(references_->memptr()==queries_->memptr() &&
 		      reference_index == point_id))) {
-          arma::vec reference_point = references_->col(reference_index);
+          arma::vec reference_point = references_->unsafe_col(reference_index);
 
 	  // We'll use lapack to find the distance between the two vectors
 	  double distance = la::DistanceSqEuclidean(point, reference_point);
@@ -689,7 +689,7 @@ class AllkNN {
       fflush(stdout);
       for(index_t i = 0; i < 10; i++) {
         for(index_t j = 0; j < chunk; j++) {
-          arma::vec point = queries_->col(i * chunk + j);
+          arma::vec point = queries_->unsafe_col(i * chunk + j);
           double min_dist_so_far = DBL_MAX;
           ComputeSingleNeighborsRecursion_(i * chunk + j, point, reference_tree_, &min_dist_so_far);
         }
@@ -698,7 +698,7 @@ class AllkNN {
       }
       for(index_t i = 0; i < queries_->n_cols % 10; i++) {
         index_t ind = (queries_->n_cols / 10) * 10 + i;
-        arma::vec point = queries_->col(ind);
+        arma::vec point = queries_->unsafe_col(ind);
         double min_dist_so_far = DBL_MAX;
         ComputeSingleNeighborsRecursion_(i, point, reference_tree_, &min_dist_so_far);
       }
