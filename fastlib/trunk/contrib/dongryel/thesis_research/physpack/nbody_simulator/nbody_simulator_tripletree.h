@@ -545,12 +545,15 @@ class NbodySimulatorSummary {
       std::pair < core::monte_carlo::MeanVariancePair,
           core::monte_carlo::MeanVariancePair > &mean_variance_pair =
             (* delta.mean_variance_pair())[query_point_index];
+
       while(mean_variance_pair.first.num_samples() +
             mean_variance_pair.second.num_samples() < num_samples) {
 
         // The first in the list is the query point DFS index.
         random_combination[0] = qpoint_dfs_index;
         random_combination.resize(1);
+
+        // Generate the random combination.
         RandomCombination_(range_sq_in, node_index, &random_combination);
 
         // Translate the DFS indices to the real point indices.
@@ -607,8 +610,8 @@ class NbodySimulatorSummary {
       double left_hand_side = delta.used_error_[node_index];
       double right_hand_side =
         delta.pruned_[node_index] *
-        (global.relative_error() * std::max(
-           - negative_potential_.hi, positive_potential_.lo) - used_error_) /
+        (global.relative_error() * (
+           - negative_potential_.hi + positive_potential_.lo) - used_error_) /
         static_cast<double>(global.total_num_tuples() - pruned_);
 
       return left_hand_side <= right_hand_side;
