@@ -43,6 +43,8 @@
 
 #include <math.h>
 
+#include "../math/math_lib.h"
+
 using arma::vec;
 
 /**
@@ -201,16 +203,22 @@ double DHrectBound<t_pow>::MinDistanceSq(const vec& point) const {
   DEBUG_SAME_SIZE(point.n_elem, dim_);
 
   double sum = 0;
+  const DRange* mbound = bounds_;
+
   double lower, higher;
   for(index_t d = 0; d < dim_; d++) {
-    lower = bounds_[d].lo - point[d]; // negative if point[d] > bounds_[d]
-    higher = point[d] - bounds_[d].hi; // negative if point[d] < bounds_[d]
+    lower = mbound->lo - point[d]; // negative if point[d] > bounds_[d]
+    higher = point[d] - mbound->hi; // negative if point[d] < bounds_[d]
 
     // since only one of 'lower' or 'higher' is negative, if we add each's
     // absolute value to itself and then sum those two, our result is the
     // nonnegative half of the equation times two; then we raise to power t_pow
     sum += pow((lower + fabs(lower)) + (higher + fabs(higher)), (double) t_pow);
+
+    // move bound pointer
+    mbound++;
   }
+
   // now take the t_pow'th root (but make sure our result is squared); then
   // divide by four to cancel out the constant of 2 (which has been squared now)
   // that was introduced earlier
