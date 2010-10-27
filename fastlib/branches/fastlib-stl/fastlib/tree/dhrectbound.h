@@ -52,6 +52,7 @@
  */
 template<int t_pow = 2>
 class DHrectBound {
+
   public:
     static const int PREFERRED_POWER = t_pow;
 
