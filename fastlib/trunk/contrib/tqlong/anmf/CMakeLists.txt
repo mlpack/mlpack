@@ -1,6 +1,7 @@
 set(SOURCES
   anmf
   max_weight_matching
+  auction_max_weight_matching
 )
 
 # add directory name to sources
@@ -13,13 +14,14 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_executable(anmf_test
    EXCLUDE_FROM_ALL
-   anmf_test.cpp
+   anmf_test1.cpp
 )
 add_dependencies(anmf_test
    mlpack_contrib
 )
 # link dependencies of executable
 target_link_libraries(anmf_test
-   mlpack_contrib
-   fastlib
+  mlpack_contrib
+  fastlib
+  boost_program_options
 )
