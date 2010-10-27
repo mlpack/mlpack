@@ -592,8 +592,8 @@ class NbodySimulatorSummary {
           positive_delta_contribution.width());
       double right_hand_side =
         delta.pruned_[node_index] *
-        (global.relative_error() * std::max(
-           - negative_potential_.hi, positive_potential_.lo) - used_error_) /
+        (global.relative_error() * (
+           - negative_potential_.hi + positive_potential_.lo) - used_error_) /
         static_cast<double>(global.total_num_tuples() - pruned_);
 
       return (left_hand_side <= right_hand_side);
