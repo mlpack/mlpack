@@ -387,13 +387,15 @@ class NbodySimulatorSummary {
       const core::table::Table &table,
       const core::metric_kernels::AbstractMetric &metric_in,
       const std::vector<int> &random_combination,
+      int node_index_fix,
       core::gnp::TripleDistanceSq *distance_sq_out) const {
 
       core::table::DenseConstPoint point;
       for(int i = 1; i < 3; i++) {
-        table.get(random_combination[i], &point);
+        int index = (node_index_fix + i) % 3;
+        table.get(random_combination[index], &point);
         distance_sq_out->ReplaceOnePoint(
-          metric_in, point, random_combination[i], i);
+          metric_in, point, random_combination[index], i);
       }
     }
 
@@ -559,7 +561,8 @@ class NbodySimulatorSummary {
         TranslateCombination_(
           *(global.table()), range_sq_in, &random_combination);
         ReplacePoints_(
-          *(global.table()), metric, random_combination, &triple_distance_sq);
+          *(global.table()), metric, random_combination,
+          node_index, &triple_distance_sq);
 
         // Evaluate the potential and add it to the result of each
         // point involved.
