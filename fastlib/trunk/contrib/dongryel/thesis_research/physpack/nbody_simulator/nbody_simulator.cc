@@ -1,3 +1,8 @@
+/** @file nbody_simulator.cc
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
 #include <iostream>
 #include <string>
 #include <armadillo>
