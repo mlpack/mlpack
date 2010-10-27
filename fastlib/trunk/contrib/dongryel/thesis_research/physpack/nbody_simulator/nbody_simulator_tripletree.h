@@ -92,9 +92,9 @@ class NbodySimulatorDelta {
 
     std::vector<double> used_error_;
 
-    std::vector< core::monte_carlo::MeanVariancePair > *mean_variance_pair_;
+    std::vector< std::pair< core::monte_carlo::MeanVariancePair,  core::monte_carlo::MeanVariancePair> > *mean_variance_pair_;
 
-    std::vector< core::monte_carlo::MeanVariancePair > *mean_variance_pair() {
+    std::vector< std::pair< core::monte_carlo::MeanVariancePair, core::monte_carlo::MeanVariancePair > > *mean_variance_pair() {
       return mean_variance_pair_;
     }
 
@@ -113,7 +113,8 @@ class NbodySimulatorDelta {
           int qpoint_index;
           for(int j = 0; j < node_it.count(); j++) {
             node_it.get_id(j, &qpoint_index);
-            (*mean_variance_pair_)[qpoint_index].SetZero();
+            (*mean_variance_pair_)[qpoint_index].first.SetZero();
+            (*mean_variance_pair_)[qpoint_index].second.SetZero();
           }
         }
       }
@@ -247,22 +248,17 @@ class NbodySimulatorResult {
           do {
             // Get each point and apply contribution.
             node_it.Next(&qpoint, &qpoint_index);
-            core::math::Range contribution;
-            (*delta_in.mean_variance_pair_)[qpoint_index].scaled_interval(
+            core::math::Range negative_contribution;
+            core::math::Range positive_contribution;
+            (*delta_in.mean_variance_pair_)[qpoint_index].first.scaled_interval(
               delta_in.pruned_[node_index], num_standard_deviations,
-              &contribution);
-            if(contribution.lo < 0) {
-              negative_potential_[qpoint_index].lo += contribution.lo;
-            }
-            else {
-              positive_potential_[qpoint_index].lo += contribution.lo;
-            }
-            if(contribution.hi < 0) {
-              negative_potential_[qpoint_index].hi += contribution.hi;
-            }
-            else {
-              positive_potential_[qpoint_index].hi += contribution.hi;
-            }
+              &negative_contribution);
+            (*delta_in.mean_variance_pair_)[qpoint_index].second.scaled_interval(
+              delta_in.pruned_[node_index], num_standard_deviations,
+              &positive_contribution);
+
+            negative_potential_[qpoint_index] += negative_contribution;
+            positive_potential_[qpoint_index] += positive_contribution;
             pruned_[qpoint_index] += delta_in.pruned_[node_index];
             used_error_[qpoint_index] += delta_in.used_error_[node_index];
           }
@@ -298,11 +294,13 @@ class NbodySimulatorGlobal {
 
     boost::math::normal normal_dist_;
 
-    std::vector< core::monte_carlo::MeanVariancePair > mean_variance_pair_;
+    std::vector < std::pair < core::monte_carlo::MeanVariancePair,
+        core::monte_carlo::MeanVariancePair > > mean_variance_pair_;
 
   public:
 
-    std::vector< core::monte_carlo::MeanVariancePair > *mean_variance_pair() {
+    std::vector < std::pair < core::monte_carlo::MeanVariancePair,
+    core::monte_carlo::MeanVariancePair > > *mean_variance_pair() {
       return &mean_variance_pair_;
     }
 
@@ -322,7 +320,7 @@ class NbodySimulatorGlobal {
 
     void ApplyContribution(
       const core::gnp::TripleDistanceSq &range_in,
-      std::vector< NbodySimulatorPostponed > *postponeds) const {
+    std::vector< NbodySimulatorPostponed > *postponeds) const {
 
       double potential_value = potential_.EvalUnnormOnSq(range_in);
 
@@ -367,7 +365,7 @@ class NbodySimulatorGlobal {
 
     void Init(
       core::table::Table *table_in,
-      double relative_error_in, double probability_in) {
+    double relative_error_in, double probability_in) {
 
       relative_error_ = relative_error_in;
       probability_ = probability_in;
@@ -546,9 +544,11 @@ class NbodySimulatorSummary {
 
       // Generate a random combination that contains the current
       // query point.
-      core::monte_carlo::MeanVariancePair &mean_variance_pair =
-        (* delta.mean_variance_pair())[query_point_index];
-      while(mean_variance_pair.num_samples() < num_samples) {
+      std::pair < core::monte_carlo::MeanVariancePair,
+          core::monte_carlo::MeanVariancePair > &mean_variance_pair =
+            (* delta.mean_variance_pair())[query_point_index];
+      while(mean_variance_pair.first.num_samples() +
+            mean_variance_pair.second.num_samples() < num_samples) {
 
         // The first in the list is the query point DFS index.
         random_combination[0] = qpoint_dfs_index;
@@ -566,23 +566,30 @@ class NbodySimulatorSummary {
         double potential = global.potential().EvalUnnormOnSq(
                              triple_distance_sq);
 
-        mean_variance_pair.push_back(potential);
+        if(potential < 0) {
+          mean_variance_pair.first.push_back(potential);
+        }
+        else if(potential > 0) {
+          mean_variance_pair.second.push_back(potential);
+        }
       }
 
       // Check whether the current query point can be pruned.
-      core::math::Range delta_contribution;
-      mean_variance_pair.scaled_interval(
+      core::math::Range negative_delta_contribution;
+      core::math::Range positive_delta_contribution;
+      mean_variance_pair.first.scaled_interval(
         range_sq_in.num_tuples(node_index), num_standard_deviations,
-        &delta_contribution);
-      if(delta_contribution.hi < 0.0) {
-        negative_potential_.hi += delta_contribution.hi;
-      }
-      if(delta_contribution.lo > 0.0) {
-        positive_potential_.lo += delta_contribution.lo;
-      }
+        &negative_delta_contribution);
+      mean_variance_pair.second.scaled_interval(
+        range_sq_in.num_tuples(node_index), num_standard_deviations,
+        &positive_delta_contribution);
+      negative_potential_ += negative_delta_contribution;
+      positive_potential_ += positive_delta_contribution;
 
       double left_hand_side =
-        0.5 * (delta_contribution.hi - delta_contribution.lo);
+        0.5 * std::max(
+          negative_delta_contribution.width(),
+          positive_delta_contribution.width());
       double right_hand_side =
         delta.pruned_[node_index] *
         (global.relative_error() * std::max(
