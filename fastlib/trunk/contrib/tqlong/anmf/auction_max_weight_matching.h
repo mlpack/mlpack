@@ -81,7 +81,7 @@ template <typename W>
 {
   while (!doneMatching_)
   {
-    std::cout << (checkEpsilonComplementary() ? "e-CS satisfied" : "e-CS not satisfied") << std::endl;
+//    std::cout << (checkEpsilonComplementary() ? "e-CS satisfied" : "e-CS not satisfied") << std::endl;
     clearBids();
     doneMatching_ = true;
     // for all unassigned person (rows)
@@ -96,10 +96,10 @@ template <typename W>
     // for all items, assign them to best bidder
     for (int j = 0; j < n_cols_; j++) if (winner_[j] != -1)
     {
-      std::cout << "price[" << j << "] = " << price_[j] << " --> ";
+//      std::cout << "price[" << j << "] = " << price_[j] << " --> ";
       price_[j] = bid_[j];
-      std::cout << price_[j] << std::endl;
-      std::cout << "new match " << winner_[j] << " --> " << j << std::endl;
+//      std::cout << price_[j] << std::endl;
+//      std::cout << "new match " << winner_[j] << " --> " << j << std::endl;
       weight_.setPrice(j, price_[j]);
       setMatch(winner_[j], j);
     }
@@ -165,8 +165,8 @@ template <typename W>
     double surplus = weight_.get(bidder, item) - price_[item];
     for (int j = 0; j < n_cols_; j++) if (surplus < weight_.get(bidder, j) - price_[j] - epsilon_ - 1e-10)
     {
-      std::cout << "check bidder " << bidder << " item " << item << " "
-          << surplus << " " << weight_.get(bidder, j) - price_[j] - epsilon_ << std::endl;
+//      std::cout << "check bidder " << bidder << " item " << item << " "
+//          << surplus << " " << weight_.get(bidder, j) - price_[j] - epsilon_ << std::endl;
       return false;
     }
   }
