@@ -607,6 +607,12 @@ class NbodySimulatorSummary {
       const core::gnp::TripleRangeDistanceSq &triple_range_distance_sq_in,
       int node_index, ResultType *query_results) const {
 
+      if(triple_range_distance_sq_in.min_distance_sq().at(0, 1) == 0 ||
+          triple_range_distance_sq_in.min_distance_sq().at(0, 2) == 0 ||
+          triple_range_distance_sq_in.min_distance_sq().at(1, 2) == 0) {
+        return false;
+      }
+
       double left_hand_side = delta.used_error_[node_index];
       double right_hand_side =
         delta.pruned_[node_index] *
