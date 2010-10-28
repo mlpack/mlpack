@@ -114,12 +114,6 @@ class AxilrodTeller {
     core::math::Range RangeUnnormOnSq(
       const core::gnp::TripleRangeDistanceSq &range_in) const {
 
-      if(range_in.min_distance_sq().at(0, 1) == 0 ||
-          range_in.min_distance_sq().at(0, 2) == 0 ||
-          range_in.min_distance_sq().at(1, 2) == 0) {
-        return core::math::Range(0.0, std::numeric_limits<double>::max());
-      }
-
       // Compute the negative contribution bound.
       core::math::Range negative_range(
         this->minimum_negative_contribution(range_in),
