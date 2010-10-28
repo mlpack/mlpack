@@ -46,13 +46,6 @@ class NbodySimulatorPostponed {
       SetZero();
     }
 
-    void Init(double num_tuples) {
-      negative_potential_.Init(0, 0);
-      positive_potential_.Init(0, 0);
-      pruned_ = num_tuples;
-      used_error_ = 0;
-    }
-
     template<typename NbodyDelta, typename ResultType>
     void ApplyDelta(
       const NbodyDelta &delta_in, int node_index, ResultType *query_results) {
@@ -269,6 +262,14 @@ class NbodySimulatorResult {
     void ApplyPostponed(
       int q_index,
       const NbodySimulatorPostponed &postponed_in) {
+
+      if(isinf(postponed_in.negative_potential_.lo) ||
+          isinf(postponed_in.negative_potential_.hi) ||
+          isinf(postponed_in.positive_potential_.lo) ||
+          isinf(postponed_in.positive_potential_.hi)) {
+        printf("Postponed is inf!\n");
+        exit(0);
+      }
 
       negative_potential_[q_index] += postponed_in.negative_potential_;
       positive_potential_[q_index] += postponed_in.positive_potential_;
