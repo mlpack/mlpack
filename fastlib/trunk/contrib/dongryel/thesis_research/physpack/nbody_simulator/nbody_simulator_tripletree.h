@@ -151,9 +151,8 @@ class NbodySimulatorDelta {
       // Compute the potential range.
       core::math::Range potential_range = global.potential().RangeUnnormOnSq(
                                             triple_range_distance_sq);
-      for(unsigned int i = 0;
-          i < pruned_.size();
-          i++) {
+      for(
+        unsigned int i = 0; i < pruned_.size(); i++) {
         pruned_[i] = triple_range_distance_sq.num_tuples(i);
         used_error_[i] = pruned_[i] * 0.5 * potential_range.width();
         if(potential_range.lo < 0) {
@@ -594,8 +593,8 @@ class NbodySimulatorSummary {
           positive_delta_contribution.width());
       double right_hand_side =
         delta.pruned_[node_index] *
-        (global.relative_error() * (
-           - negative_potential_.hi + positive_potential_.lo) - used_error_) /
+        (global.relative_error() * std::max(
+           - negative_potential_.hi , positive_potential_.lo) - used_error_) /
         static_cast<double>(global.total_num_tuples() - pruned_);
 
       return (left_hand_side <= right_hand_side);
@@ -607,17 +606,31 @@ class NbodySimulatorSummary {
       const core::gnp::TripleRangeDistanceSq &triple_range_distance_sq_in,
       int node_index, ResultType *query_results) const {
 
-      if(triple_range_distance_sq_in.min_distance_sq().at(0, 1) == 0 ||
-          triple_range_distance_sq_in.min_distance_sq().at(0, 2) == 0 ||
-          triple_range_distance_sq_in.min_distance_sq().at(1, 2) == 0) {
+      double left_hand_side = delta.used_error_[node_index];
+
+      if(
+        left_hand_side < 0 ||
+        isinf(left_hand_side) ||
+        isnan(left_hand_side) ||
+        isinf(delta.negative_potential_[node_index].lo) ||
+        isinf(delta.negative_potential_[node_index].hi) ||
+        isinf(delta.positive_potential_[node_index].lo) ||
+        isinf(delta.positive_potential_[node_index].hi) ||
+        isnan(delta.negative_potential_[node_index].lo) ||
+        isnan(delta.negative_potential_[node_index].hi) ||
+        isnan(delta.positive_potential_[node_index].lo) ||
+        isnan(delta.positive_potential_[node_index].hi) ||
+        delta.negative_potential_[node_index].lo > 0 ||
+        delta.negative_potential_[node_index].hi > 0 ||
+        delta.positive_potential_[node_index].lo < 0 ||
+        delta.positive_potential_[node_index].hi < 0) {
         return false;
       }
 
-      double left_hand_side = delta.used_error_[node_index];
       double right_hand_side =
         delta.pruned_[node_index] *
-        (global.relative_error() * (
-           - negative_potential_.hi + positive_potential_.lo) - used_error_) /
+        (global.relative_error() * std::max(
+           - negative_potential_.hi, positive_potential_.lo) - used_error_) /
         static_cast<double>(global.total_num_tuples() - pruned_);
 
       return left_hand_side <= right_hand_side;
