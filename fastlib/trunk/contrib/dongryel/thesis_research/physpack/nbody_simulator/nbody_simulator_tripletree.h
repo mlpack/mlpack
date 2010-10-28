@@ -262,15 +262,6 @@ class NbodySimulatorResult {
     void ApplyPostponed(
       int q_index,
       const NbodySimulatorPostponed &postponed_in) {
-
-      if(isinf(postponed_in.negative_potential_.lo) ||
-          isinf(postponed_in.negative_potential_.hi) ||
-          isinf(postponed_in.positive_potential_.lo) ||
-          isinf(postponed_in.positive_potential_.hi)) {
-        printf("Postponed is inf!\n");
-        exit(0);
-      }
-
       negative_potential_[q_index] += postponed_in.negative_potential_;
       positive_potential_[q_index] += postponed_in.positive_potential_;
       pruned_[q_index] = pruned_[q_index] + postponed_in.pruned_;
@@ -629,10 +620,10 @@ class NbodySimulatorSummary {
       }
 
       double right_hand_side =
-        delta.pruned_[node_index] *
-        (global.relative_error() * std::max(
-           - negative_potential_.hi, positive_potential_.lo) - used_error_) /
-        static_cast<double>(global.total_num_tuples() - pruned_);
+        (global.relative_error() * std::min(
+           - negative_potential_.hi, positive_potential_.lo) - used_error_) *
+        (delta.pruned_[node_index] /
+         static_cast<double>(global.total_num_tuples() - pruned_));
 
       return left_hand_side <= right_hand_side;
     }
