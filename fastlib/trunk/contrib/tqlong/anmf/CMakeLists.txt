@@ -2,6 +2,8 @@ set(SOURCES
   anmf
   max_weight_matching
   auction_max_weight_matching
+  naive_distance_matrix
+  kdtree_distance_matrix
 )
 
 # add directory name to sources

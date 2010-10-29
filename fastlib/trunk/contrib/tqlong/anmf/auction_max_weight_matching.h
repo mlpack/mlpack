@@ -44,11 +44,26 @@ protected:
   std::vector<double>      price_, bid_;
   std::vector<int>         winner_;
 
+  /** The forward auction algorithm (i.e. use only price of items as dual) */
   void forwardAuction();
+
+  /** Place a bid */
   void placeBid(int bidder, int item, double price);
+
+  /** Clear bids for next iteration */
   void clearBids();
+
+  /** naively get the best and second best items in term of surplus = benefit - price
+    * use this function if typename W does not implement it
+    */
   void getBestAndSecondBest(int bidder, int& best_item, double& best_surplus, double& second_surplus);
+
+  /** add a match (person, item) to the assigment */
   void setMatch(int new_bidder, int item);
+
+  /** check the epsilon-Complementary condition
+    * for every match (person, item) the surplus is at least max of surpluses minus epsilon
+    */
   bool checkEpsilonComplementary() const;
 private:
 };
@@ -89,7 +104,9 @@ template <typename W>
     {
       int j;
       double v, w;
+
       weight_.getBestAndSecondBest(i, j, v, w); // get the best and second best (benefit - price)
+//      getBestAndSecondBest(i, j, v, w);      // use this instead if typename W does not implement this function
       placeBid(i, j, price_[j]+v-w+epsilon_);
       doneMatching_ = false;
     }
