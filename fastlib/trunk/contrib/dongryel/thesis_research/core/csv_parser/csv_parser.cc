@@ -164,7 +164,7 @@ void csv_parser::_get_fields_without_enclosure(csv_row_ptr row, const char * lin
     while(char_pos < *line_length) {
       char curr_char = line[char_pos];
 
-      if(curr_char == field_term_char) {
+      if(curr_char == field_term_char || curr_char == 0x20) {
         field_end = char_pos;
 
         const char * field_starts_at = line + field_start;
@@ -340,7 +340,7 @@ void csv_parser::_get_fields_with_optional_enclosure(csv_row_ptr row, const char
     while(char_pos < *line_length) {
       char curr_char = line[char_pos];
 
-      if(curr_char == field_term_char) {
+      if(curr_char == field_term_char || curr_char == 0x20) {
         field_end = char_pos;
 
         const char * field_starts_at = line + field_start;

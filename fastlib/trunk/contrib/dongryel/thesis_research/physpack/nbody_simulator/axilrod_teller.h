@@ -12,7 +12,15 @@
 namespace physpack {
 namespace nbody_simulator {
 class AxilrodTeller {
+  private:
+
+    double normalizing_constant_;
+
   public:
+
+    void Init(double normalizing_constant_in) {
+      normalizing_constant_ = normalizing_constant_in;
+    }
 
     double minimum_negative_contribution(
       const core::gnp::TripleRangeDistanceSq &range_in) const {
@@ -37,7 +45,8 @@ class AxilrodTeller {
                              min_distance_sq.at(0, 2) *
                              min_distance_sq.at(1, 2), 2.5);
 
-      return (numerator_first_part + numerator_second_part) / denominator;
+      return (numerator_first_part + numerator_second_part) / denominator /
+             normalizing_constant_;
     }
 
     double maximum_negative_contribution(
@@ -64,7 +73,8 @@ class AxilrodTeller {
                              max_distance_sq.at(0, 2) *
                              max_distance_sq.at(1, 2), 2.5);
 
-      return (numerator_first_part + numerator_second_part) / denominator;
+      return (numerator_first_part + numerator_second_part) / denominator /
+             normalizing_constant_;
     }
 
     double minimum_positive_contribution(
@@ -86,7 +96,8 @@ class AxilrodTeller {
                              max_distance_sq.at(0, 2) *
                              max_distance_sq.at(1, 2), 2.5);
 
-      return (numerator_first_part + numerator_second_part) / denominator;
+      return (numerator_first_part + numerator_second_part) / denominator /
+             normalizing_constant_;
     }
 
     double maximum_positive_contribution(
@@ -108,7 +119,8 @@ class AxilrodTeller {
                              min_distance_sq.at(0, 2) *
                              min_distance_sq.at(1, 2), 2.5);
 
-      return (numerator_first_part + numerator_second_part) / denominator;
+      return (numerator_first_part + numerator_second_part) / denominator /
+             normalizing_constant_;
     }
 
     core::math::Range RangeUnnormOnSq(
@@ -159,7 +171,7 @@ class AxilrodTeller {
                              squared_distances.distance_sq(0, 1) *
                              squared_distances.distance_sq(0, 2) *
                              squared_distances.distance_sq(1, 2), 1.5);
-      return numerator / denominator;
+      return numerator / denominator / normalizing_constant_;
     }
 };
 };

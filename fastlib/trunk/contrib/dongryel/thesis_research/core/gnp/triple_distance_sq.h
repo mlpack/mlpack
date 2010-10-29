@@ -23,6 +23,17 @@ class TripleDistanceSq {
 
   public:
 
+    void PrintPoints() const {
+      printf("TripleDistanceSq object has the following points:\n");
+      for(unsigned int i = 0; i < points_.size(); i++) {
+        points_[i].Print();
+      }
+    }
+
+    int point_index(int index_in) const {
+      return point_indices_[index_in];
+    }
+
     void set_distance_sq(
       int first_point_pos, int second_point_pos,
       double squared_distance) {
