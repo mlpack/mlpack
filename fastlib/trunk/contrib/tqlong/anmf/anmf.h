@@ -20,6 +20,8 @@
 
 #include "max_weight_matching.h"
 #include "auction_max_weight_matching.h"
+#include "naive_distance_matrix.h"
+#include "kdtree_distance_matrix.h"
 
 BEGIN_ANMF_NAMESPACE;
 

@@ -1,10 +1,13 @@
 #include <fastlib/fastlib.h>
 #include <iostream>
 #include <boost/program_options.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include "anmf.h"
 
 //namespace po = boost::program_options;
 using namespace std;
+using namespace boost::posix_time;
+//using namespace boost::program_options;
 
 boost::program_options::options_description desc("Allowed options");
 boost::program_options::variables_map vm;
@@ -27,49 +30,6 @@ void process_options(int argc, char** argv)
     exit(1);
   }
 }
-
-class DistanceMatrix
-{
-  const Matrix &reference_, &query_;
-  std::vector<double> price_;
-public:
-  DistanceMatrix(const Matrix &reference, const Matrix &query)
-    : reference_(reference), query_(query), price_(query.n_cols(), 0)
-  {
-    DEBUG_ASSERT(reference.n_rows() == query.n_rows());
-  }
-  int n_rows() const { return reference_.n_cols(); }
-  int n_cols() const { return query_.n_cols(); }
-  double get(int i, int j) const
-  {
-    Vector r_i, q_j;
-    reference_.MakeColumnVector(i, &r_i);
-    query_.MakeColumnVector(j, &q_j);
-    return -sqrt(la::DistanceSqEuclidean(r_i, q_j));
-  }
-  void setPrice(int j, double price)
-  {
-    price_[j] = price;
-  }
-  void getBestAndSecondBest(int bidder, int &best_item, double &best_surplus, double &second_surplus)
-  {
-    best_surplus = second_surplus = -std::numeric_limits<double>::infinity();
-    for (int item = 0; item < query_.n_cols(); item++)
-    {
-      double surplus = get(bidder, item) - price_[item];
-      if (surplus > best_surplus)
-      {
-        best_item = item;
-        second_surplus = best_surplus;
-        best_surplus = surplus;
-      }
-      else if (surplus > second_surplus)
-      {
-        second_surplus = surplus;
-      }
-    }
-  }
-};
 
 void generateRandom(const char* refFile, const char* queryFile)
 {
@@ -100,30 +60,45 @@ int main(int argc, char** argv)
     generateRandom(vm["reference"].as<string>().c_str(), vm["query"].as<string>().c_str());
   }
 
-  if (vm.count("reference") && vm.count("query"))
+  ptime time_start(second_clock::local_time());
+
+  if (vm.count("query"))
   {
-    Matrix ref, query;
-    data::Load(vm["reference"].as<string>().c_str(), &ref);
+    Matrix query;
     data::Load(vm["query"].as<string>().c_str(), &query);
 
-    DistanceMatrix M(ref, query);
-    anmf::AuctionMaxWeightMatching<DistanceMatrix> matcher(M, true);
-    for (int refIndex = 0; refIndex < ref.n_cols(); refIndex++)
-      cout << "reference point " << refIndex << " --> query point " << matcher.leftMatch(refIndex) << endl;
-
-    return 0;
+    anmf::KDNode qRoot(query, std::vector<double>(query.n_cols(), 0.0));
+//    cout << qRoot.toString() << "\n";
   }
+
+//  if (vm.count("reference") && vm.count("query"))
+//  {
+//    typedef anmf::KDTreeDistanceMatrix DistanceMatrix;
+
+//    Matrix ref, query;
+//    data::Load(vm["reference"].as<string>().c_str(), &ref);
+//    data::Load(vm["query"].as<string>().c_str(), &query);
+
+//    DistanceMatrix M(ref, query);
+//    anmf::AuctionMaxWeightMatching<DistanceMatrix> matcher(M, true);
+//    for (int refIndex = 0; refIndex < ref.n_cols(); refIndex++)
+//      cout << "reference point " << refIndex << " --> query point " << matcher.leftMatch(refIndex) << endl;
+//  }
 
 //  if (vm.count("matrix"))
 //  {
 //    Matrix M;
 //    data::Load(vm["matrix"].as<string>().c_str(), &M);
 
-//    anmf::AuctionMaxWeightMatching<Matrix> matcher(M, true);
+//    anmf::AuctionMaxWeightMatching<Matrix> matcher(M, true, true);
 //    for (int bidder = 0; bidder < M.n_rows(); bidder++)
 //      cout << "bidder " << bidder << " --> " << matcher.leftMatch(bidder) << endl;
 //    return 0;
 //  }
+
+  ptime time_end(second_clock::local_time());
+  time_duration duration(time_end - time_start);
+  cout << "Duration: " << duration << endl;
 
   return 0;
 }
