@@ -316,7 +316,6 @@ class NbodySimulatorGlobal {
     std::vector< NbodySimulatorPostponed > *postponeds) const {
 
       double potential_value = potential_.EvalUnnormOnSq(range_in);
-
       for(unsigned int i = 0; i < postponeds->size(); i++) {
         (*postponeds)[i].potential_.Init(
           potential_value, potential_value);
@@ -357,6 +356,9 @@ class NbodySimulatorGlobal {
       // Initialize the temporary vector for storing the Monte Carlo
       // results.
       mean_variance_pair_.resize(table_->n_entries());
+
+      // Initialize the potential.
+      potential_.Init(total_num_tuples_);
     }
 };
 

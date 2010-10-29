@@ -27,6 +27,14 @@ class DenseConstPoint: public core::table::AbstractPoint {
 
   public:
 
+    void Print() const {
+      printf("Vector of length: %d\n", n_rows_);
+      for(int i = 0; i < n_rows_; i++) {
+        printf("%g ", ptr_[i]);
+      }
+      printf("\n");
+    }
+
     const double *ptr() const {
       return ptr_;
     }
