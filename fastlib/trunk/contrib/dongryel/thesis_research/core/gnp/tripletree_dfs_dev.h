@@ -235,7 +235,7 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
       std::max(std::max(
                  range_in.num_tuples(0),
                  range_in.num_tuples(1)),
-               range_in.num_tuples(2)) > 100.0) {
+               range_in.num_tuples(2)) < 100.0) {
     return false;
   }
 
@@ -262,16 +262,16 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
       core::table::DenseConstPoint query_point;
       int query_point_index;
 
+      // The new summary.
+      new_summary = node_stat->summary_;
+      new_summary.ApplyPostponed(node_stat->postponed_);
+      new_summary.ApplyDelta(delta, i);
+
       for(int qpoint_dfs_index = node->begin(); node_it.HasNext() && flag;
           qpoint_dfs_index++) {
 
         // The current query point.
         node_it.Next(&query_point, &query_point_index);
-
-        // Form a new summary based on the current query point.
-        new_summary.StartReaccumulate();
-        new_summary.Accumulate(*query_results, query_point_index);
-        new_summary.ApplyPostponed(node_stat->postponed_);
 
         flag = new_summary.CanProbabilisticSummarize(
                  metric, problem_->global(), delta,
