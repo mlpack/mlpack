@@ -22,7 +22,9 @@ class NbodySimulatorPostponed {
 
   public:
 
-    core::math::Range potential_;
+    core::math::Range negative_potential_;
+
+    core::math::Range positive_potential_;
 
     double pruned_;
 
@@ -34,7 +36,8 @@ class NbodySimulatorPostponed {
     }
 
     NbodySimulatorPostponed(double num_tuples) {
-      potential_.Init(0, 0);
+      negative_potential_.Init(0, 0);
+      positive_potential_.Init(0, 0);
       pruned_ = num_tuples;
       used_error_ = 0;
     }
@@ -46,22 +49,26 @@ class NbodySimulatorPostponed {
     template<typename NbodyDelta, typename ResultType>
     void ApplyDelta(
       const NbodyDelta &delta_in, int node_index, ResultType *query_results) {
-      potential_ = potential_ +
-                   delta_in.negative_potential_[node_index];
-      potential_ = potential_ +
-                   delta_in.positive_potential_[node_index];
+      negative_potential_ = negative_potential_ +
+                            delta_in.negative_potential_[node_index];
+      positive_potential_ = positive_potential_ +
+                            delta_in.positive_potential_[node_index];
       pruned_ = pruned_ + delta_in.pruned_[node_index];
       used_error_ = used_error_ + delta_in.used_error_[node_index];
     }
 
     void ApplyPostponed(const NbodySimulatorPostponed &other_postponed) {
-      potential_ = potential_ + other_postponed.potential_;
+      negative_potential_ =
+        negative_potential_ + other_postponed.negative_potential_;
+      positive_potential_ =
+        positive_potential_ + other_postponed.positive_potential_;
       pruned_ = pruned_ + other_postponed.pruned_;
       used_error_ = used_error_ + other_postponed.used_error_;
     }
 
     void SetZero() {
-      potential_.Init(0, 0);
+      negative_potential_.Init(0, 0);
+      positive_potential_.Init(0, 0);
       pruned_ = 0;
       used_error_ = 0;
     }
@@ -254,18 +261,8 @@ class NbodySimulatorResult {
     void ApplyPostponed(
       int q_index,
       const NbodySimulatorPostponed &postponed_in) {
-      if(postponed_in.potential_.lo < 0) {
-        negative_potential_[q_index].lo += postponed_in.potential_.lo;
-      }
-      else {
-        positive_potential_[q_index].lo += postponed_in.potential_.lo;
-      }
-      if(postponed_in.potential_.hi < 0) {
-        negative_potential_[q_index].hi += postponed_in.potential_.hi;
-      }
-      else {
-        positive_potential_[q_index].hi += postponed_in.potential_.hi;
-      }
+      negative_potential_[q_index] += postponed_in.negative_potential_;
+      positive_potential_[q_index] += postponed_in.positive_potential_;
       pruned_[q_index] = pruned_[q_index] + postponed_in.pruned_;
       used_error_[q_index] = used_error_[q_index] + postponed_in.used_error_;
     }
@@ -324,8 +321,14 @@ class NbodySimulatorGlobal {
       double potential_value = potential_.EvalUnnormOnSq(range_in);
 
       for(unsigned int i = 0; i < postponeds->size(); i++) {
-        (*postponeds)[i].potential_.Init(
-          potential_value, potential_value);
+        if(potential_value < 0) {
+          (*postponeds)[i].negative_potential_.Init(
+            potential_value, potential_value);
+        }
+        else {
+          (*postponeds)[i].positive_potential_.Init(
+            potential_value, potential_value);
+        }
         (*postponeds)[i].pruned_ = (*postponeds)[i].used_error_ = 0.0;
       }
     }
@@ -521,7 +524,7 @@ class NbodySimulatorSummary {
       int qpoint_dfs_index,
       int query_point_index) {
 
-      const int num_samples = 100;
+      const int num_samples = 200;
 
       // Look up the number of standard deviations.
       double num_standard_deviations =
@@ -656,10 +659,12 @@ class NbodySimulatorSummary {
 
     template<typename GlobalType>
     void PostAccumulate(const GlobalType &global) {
-      negative_potential_.hi = negative_potential_.hi -
-                               global.summary_compute_quantile() * negative_potential_.width();
-      positive_potential_.lo = positive_potential_.lo +
-                               global.summary_compute_quantile() * positive_potential_.width();
+      negative_potential_.hi =
+        negative_potential_.hi -
+        global.summary_compute_quantile() * negative_potential_.width();
+      positive_potential_.lo =
+        positive_potential_.lo +
+        global.summary_compute_quantile() * positive_potential_.width();
     }
 
     template<typename ResultType>
@@ -681,25 +686,10 @@ class NbodySimulatorSummary {
       const NbodySimulatorSummary &summary_in,
       const NbodySimulatorPostponed &postponed_in) {
 
-      core::math::Range postponed_in_negative_potential(0.0, 0.0);
-      core::math::Range postponed_in_positive_potential(0.0, 0.0);
-
-      if(postponed_in.potential_.lo < 0) {
-        postponed_in_negative_potential.lo = postponed_in.potential_.lo;
-      }
-      else {
-        postponed_in_positive_potential.lo = postponed_in.potential_.lo;
-      }
-      if(postponed_in.potential_.hi < 0) {
-        postponed_in_negative_potential.hi = postponed_in.potential_.hi;
-      }
-      else {
-        postponed_in_positive_potential.hi = postponed_in.potential_.hi;
-      }
       negative_potential_ |=
-        (summary_in.negative_potential_ + postponed_in_negative_potential);
+        (summary_in.negative_potential_ + postponed_in.negative_potential_);
       positive_potential_ =
-        (summary_in.positive_potential_ + postponed_in_positive_potential);
+        (summary_in.positive_potential_ + postponed_in.positive_potential_);
       pruned_ = std::min(
                   pruned_, summary_in.pruned_ + postponed_in.pruned_);
       used_error_ = std::max(
@@ -713,18 +703,8 @@ class NbodySimulatorSummary {
     }
 
     void ApplyPostponed(const NbodySimulatorPostponed &postponed_in) {
-      if(postponed_in.potential_.lo < 0) {
-        negative_potential_.lo += postponed_in.potential_.lo;
-      }
-      else {
-        positive_potential_.lo += postponed_in.potential_.lo;
-      }
-      if(postponed_in.potential_.hi < 0) {
-        negative_potential_.hi += postponed_in.potential_.hi;
-      }
-      else {
-        positive_potential_.hi += postponed_in.potential_.hi;
-      }
+      negative_potential_ += postponed_in.negative_potential_;
+      positive_potential_ += postponed_in.positive_potential_;
       pruned_ = pruned_ + postponed_in.pruned_;
       used_error_ = used_error_ + postponed_in.used_error_;
     }
