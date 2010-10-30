@@ -322,6 +322,7 @@ class NbodySimulatorGlobal {
     std::vector< NbodySimulatorPostponed > *postponeds) const {
 
       double potential_value = potential_.EvalUnnormOnSq(range_in);
+
       for(unsigned int i = 0; i < postponeds->size(); i++) {
         (*postponeds)[i].potential_.Init(
           potential_value, potential_value);

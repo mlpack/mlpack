@@ -37,7 +37,6 @@ class TripleDistanceSq {
     void set_distance_sq(
       int first_point_pos, int second_point_pos,
       double squared_distance) {
-
       distance_sq_.at(first_point_pos, second_point_pos) = squared_distance;
       distance_sq_.at(second_point_pos, first_point_pos) = squared_distance;
     }
@@ -61,21 +60,19 @@ class TripleDistanceSq {
 
       points_[point_pos_in].Alias(new_point_in);
 
-      // Don't have to do anything if the point is already there.
-      if(new_point_index_in == point_indices_[point_pos_in]) {
-        return;
-      }
-
+      // Replace the index with the new point.
       point_indices_[point_pos_in] = new_point_index_in;
 
-      for(int existing_point_pos = point_pos_in - 1;
-          existing_point_pos >= 0; existing_point_pos--) {
-
-        // Change for the first existing point.
-        metric_in.DistanceSq(new_point_in, points_[existing_point_pos]);
+      // Recompute the distances versus the set of existing points.
+      if(point_pos_in > 0) {
         set_distance_sq(
-          point_pos_in, existing_point_pos,
-          metric_in.DistanceSq(new_point_in, points_[existing_point_pos]));
+          point_pos_in, 0,
+          metric_in.DistanceSq(new_point_in, points_[0]));
+      }
+      if(point_pos_in > 1) {
+        set_distance_sq(
+          point_pos_in, 1,
+          metric_in.DistanceSq(new_point_in, points_[1]));
       }
     }
 };
