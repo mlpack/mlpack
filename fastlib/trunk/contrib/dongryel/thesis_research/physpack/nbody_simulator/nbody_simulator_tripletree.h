@@ -290,7 +290,13 @@ class NbodySimulatorGlobal {
     std::vector < std::pair < core::monte_carlo::MeanVariancePair,
         core::monte_carlo::MeanVariancePair > > mean_variance_pair_;
 
+    double summary_compute_quantile_;
+
   public:
+
+    double summary_compute_quantile() const {
+      return summary_compute_quantile_;
+    }
 
     std::vector < std::pair < core::monte_carlo::MeanVariancePair,
     core::monte_carlo::MeanVariancePair > > *mean_variance_pair() {
@@ -359,6 +365,11 @@ class NbodySimulatorGlobal {
 
       // Initialize the potential.
       potential_.Init(total_num_tuples_);
+
+      // Summary compute quantile is set to 0.1, which means the lower
+      // bound/upper bounds are set to 10 % away from the true
+      // minimum/true maximum.
+      summary_compute_quantile_ = 0.1;
     }
 };
 
@@ -640,6 +651,14 @@ class NbodySimulatorSummary {
         - std::numeric_limits<double>::max());
       pruned_ = std::numeric_limits<double>::max();
       used_error_ = 0;
+    }
+
+    template<typename GlobalType>
+    void PostAccumulate(const GlobalType &global) {
+      negative_potential_.hi = negative_potential_.hi -
+                               global.summary_compute_quantile() * negative_potential_.width();
+      positive_potential_.lo = positive_potential_.lo +
+                               global.summary_compute_quantile() * positive_potential_.width();
     }
 
     template<typename ResultType>
