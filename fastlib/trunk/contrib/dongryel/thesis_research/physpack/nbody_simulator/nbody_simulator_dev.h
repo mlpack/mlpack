@@ -64,7 +64,7 @@ bool physpack::nbody_simulator::NbodySimulator::ConstructBoostVariableMap_(
     "Probability guarantee for the approximation of KDE."
   )(
     "relative_error",
-    boost::program_options::value<double>()->default_value(0.01),
+    boost::program_options::value<double>()->default_value(0.1),
     "Relative error for the approximation of KDE."
   )(
     "leaf_size",

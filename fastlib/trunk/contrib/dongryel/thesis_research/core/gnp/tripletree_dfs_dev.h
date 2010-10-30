@@ -209,6 +209,9 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
 
       } // end of looping over each query point.
 
+      // Postaccumulate operation.
+      node_stat->summary_.PostAccumulate(problem_->global());
+
       // Clear postponed information.
       node_stat->postponed_.SetZero();
     }
