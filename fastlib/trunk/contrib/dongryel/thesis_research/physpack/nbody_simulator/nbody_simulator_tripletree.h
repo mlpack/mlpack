@@ -181,8 +181,9 @@ class NbodySimulatorResult {
     void PostProcess(
       const core::metric_kernels::AbstractMetric &metric,
       int q_index, const GlobalType &global) {
-      potential_e_[q_index] = negative_potential_[q_index].mid() +
-                              positive_potential_[q_index].mid();
+      potential_e_[q_index] = (
+                                negative_potential_[q_index].mid() +
+                                positive_potential_[q_index].mid());
     }
 
     void PrintDebug(const std::string &file_name) {
@@ -328,8 +329,10 @@ class NbodySimulatorGlobal {
         if(potential_value < 0) {
           (*postponeds)[i].negative_potential_.Init(
             potential_value, potential_value);
+          (*postponeds)[i].positive_potential_.Init(0, 0);
         }
         else {
+          (*postponeds)[i].negative_potential_.Init(0, 0);
           (*postponeds)[i].positive_potential_.Init(
             potential_value, potential_value);
         }
@@ -373,11 +376,6 @@ class NbodySimulatorGlobal {
 
       // Initialize the potential.
       potential_.Init(total_num_tuples_);
-
-      // Summary compute quantile is set to 0.2, which means the lower
-      // bound/upper bounds are set to 20 % away from the true
-      // minimum/true maximum.
-      summary_compute_quantile_ = 0.2;
     }
 };
 
@@ -668,12 +666,6 @@ class NbodySimulatorSummary {
 
     template<typename GlobalType>
     void PostAccumulate(const GlobalType &global) {
-      negative_potential_.hi =
-        negative_potential_.hi -
-        global.summary_compute_quantile() * negative_potential_.width();
-      positive_potential_.lo =
-        positive_potential_.lo +
-        global.summary_compute_quantile() * positive_potential_.width();
     }
 
     template<typename ResultType>

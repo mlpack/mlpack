@@ -37,7 +37,7 @@ class TestNbodySimulator {
         if(relative_error < per_relative_error) {
           std::cout << query_results[j] << " against " <<
                     naive_query_results[j] << ": " <<
-                    per_relative_error << "\n";
+                    per_relative_error << " for " << j << "-th.\n";
         }
       }
       std::cout <<
@@ -88,10 +88,6 @@ class TestNbodySimulator {
             // to each of i_th, j_th, and k_th point.
             double potential_induced = potential.EvalUnnormOnSq(
                                          triple_distance_sq);
-            if(isinf(potential_induced)) {
-              printf("Problem!\n");
-              exit(0);
-            }
             ultra_naive_query_results[i] += potential_induced;
             ultra_naive_query_results[j] += potential_induced;
             ultra_naive_query_results[k] += potential_induced;
@@ -106,7 +102,7 @@ class TestNbodySimulator {
       for(int i = 0; i < 20; i++) {
         // Randomly choose the number of points.
         nbody_simulator::test_nbody_simulator::num_points_ =
-          core::math::RandInt(100, 201);
+          core::math::RandInt(6, 8);
         StressTest();
       }
       return 0;
