@@ -88,6 +88,10 @@ class TestNbodySimulator {
             // to each of i_th, j_th, and k_th point.
             double potential_induced = potential.EvalUnnormOnSq(
                                          triple_distance_sq);
+            if(isinf(potential_induced)) {
+              printf("Problem!\n");
+              exit(0);
+            }
             ultra_naive_query_results[i] += potential_induced;
             ultra_naive_query_results[j] += potential_induced;
             ultra_naive_query_results[k] += potential_induced;

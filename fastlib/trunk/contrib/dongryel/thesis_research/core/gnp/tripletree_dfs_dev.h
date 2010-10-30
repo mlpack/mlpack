@@ -153,6 +153,8 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
         distance_sq_set.ReplaceOnePoint(
           metric, third_point, third_point_index, 2);
 
+
+
         // Add the contribution due to the triple that has been chosen
         // to each of the query point.
         problem_->global().ApplyContribution(
