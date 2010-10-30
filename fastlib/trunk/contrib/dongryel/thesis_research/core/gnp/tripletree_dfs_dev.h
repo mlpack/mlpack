@@ -265,7 +265,6 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
       // The new summary.
       new_summary = node_stat->summary_;
       new_summary.ApplyPostponed(node_stat->postponed_);
-      new_summary.ApplyDelta(delta, i);
 
       for(int qpoint_dfs_index = node->begin(); node_it.HasNext() && flag;
           qpoint_dfs_index++) {

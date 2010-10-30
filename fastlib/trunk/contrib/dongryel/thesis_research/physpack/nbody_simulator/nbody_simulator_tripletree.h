@@ -148,6 +148,7 @@ class NbodySimulatorDelta {
         unsigned int i = 0; i < pruned_.size(); i++) {
         pruned_[i] = triple_range_distance_sq.num_tuples(i);
         used_error_[i] = pruned_[i] * 0.5 * potential_range.width();
+
         if(potential_range.lo < 0) {
           negative_potential_[i].lo = pruned_[i] * potential_range.lo;
           positive_potential_[i].lo = 0.0;
@@ -251,7 +252,10 @@ class NbodySimulatorResult {
             negative_potential_[qpoint_index] += negative_contribution;
             positive_potential_[qpoint_index] += positive_contribution;
             pruned_[qpoint_index] += delta_in.pruned_[node_index];
-            used_error_[qpoint_index] += delta_in.used_error_[node_index];
+            used_error_[qpoint_index] +=
+              0.5 * std::max(
+                negative_contribution.width(),
+                positive_contribution.width());
           }
           while(node_it.HasNext());
         }
@@ -611,6 +615,7 @@ class NbodySimulatorSummary {
         left_hand_side < 0 ||
         isinf(left_hand_side) ||
         isnan(left_hand_side) ||
+        isinf(used_error_) ||
         isinf(delta.negative_potential_[node_index].lo) ||
         isinf(delta.negative_potential_[node_index].hi) ||
         isinf(delta.positive_potential_[node_index].lo) ||
