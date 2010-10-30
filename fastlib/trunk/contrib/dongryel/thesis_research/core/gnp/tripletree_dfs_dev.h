@@ -229,7 +229,11 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
   if(std::min(std::min(
                 range_in.num_tuples(0),
                 range_in.num_tuples(1)),
-              range_in.num_tuples(2)) > 10000.0) {
+              range_in.num_tuples(2)) > 10000.0 ||
+      std::max(std::max(
+                 range_in.num_tuples(0),
+                 range_in.num_tuples(1)),
+               range_in.num_tuples(2)) > 100.0) {
     return false;
   }
 
