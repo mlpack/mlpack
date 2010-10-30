@@ -374,10 +374,10 @@ class NbodySimulatorGlobal {
       // Initialize the potential.
       potential_.Init(total_num_tuples_);
 
-      // Summary compute quantile is set to 0.1, which means the lower
-      // bound/upper bounds are set to 10 % away from the true
+      // Summary compute quantile is set to 0.2, which means the lower
+      // bound/upper bounds are set to 20 % away from the true
       // minimum/true maximum.
-      summary_compute_quantile_ = 0.1;
+      summary_compute_quantile_ = 0.2;
     }
 };
 
@@ -528,7 +528,7 @@ class NbodySimulatorSummary {
       int qpoint_dfs_index,
       int query_point_index) {
 
-      const int num_samples = 100;
+      const int num_samples = 30;
 
       // Look up the number of standard deviations.
       double num_standard_deviations =

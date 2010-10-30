@@ -68,7 +68,7 @@ bool physpack::nbody_simulator::NbodySimulator::ConstructBoostVariableMap_(
     "Relative error for the approximation of KDE."
   )(
     "leaf_size",
-    boost::program_options::value<int>()->default_value(20),
+    boost::program_options::value<int>()->default_value(50),
     "Maximum number of points at a leaf of the tree."
   );
 
