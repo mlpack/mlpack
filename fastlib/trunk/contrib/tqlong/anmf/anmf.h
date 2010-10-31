@@ -7,6 +7,7 @@
  */
 
 #include <fastlib/fastlib.h>
+#include <string>
 
 #ifndef TQLONG_ANMF_H
 #define TQLONG_ANMF_H
@@ -18,11 +19,6 @@
 #define END_ANMF_NAMESPACE }
 #endif
 
-#include "max_weight_matching.h"
-#include "auction_max_weight_matching.h"
-#include "naive_distance_matrix.h"
-#include "kdtree_distance_matrix.h"
-
 BEGIN_ANMF_NAMESPACE;
 
 /** Integer Projected Fixed Point graph matching
@@ -31,10 +27,17 @@ BEGIN_ANMF_NAMESPACE;
  *          M is a similarity measure matrix, M_{ia; jb} is the score if edge (i,j) is
  *            mapped to edge (a,b)
  *          A is the one-to-one constraint on x
- *  Output: sol[i*n+a] == 1 iff feature i is mapped to feature a 
+ *  Output: sol[i*n+a] == 1 iff feature i is mapped to feature a
  */
 void ipfpGraphMatching(fx_module* module, const Matrix& M, Vector& solution);
 
+std::string toString(const Vector& v);
+
 END_ANMF_NAMESPACE;
+
+#include "max_weight_matching.h"
+#include "auction_max_weight_matching.h"
+#include "naive_distance_matrix.h"
+#include "kdtree_distance_matrix.h"
 
 #endif

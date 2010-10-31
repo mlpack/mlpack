@@ -2,6 +2,7 @@
 #include <limits>
 #include <queue>
 #include <iostream>
+#include <sstream>
 
 #include "anmf.h"
 
@@ -26,6 +27,16 @@ double euclideanDistance(const Vector& x, const Vector& y)
   for (int i = 0; i < x.length(); i++)
       s += math::Sqr(x[i]-y[i]);
   return sqrt(s);
+}
+
+std::string toString (const Vector& v)
+{
+  std::stringstream s;
+  s << "(" << v[0];
+  for (int i = 1; i < v.length(); i++)
+    s << "," << v[i];
+  s << ")";
+  return s.str();
 }
 
 /** Project a vectorized matrix to the one-to-one discrete constraint 
