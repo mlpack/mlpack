@@ -198,7 +198,7 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
       typename ProblemType::StatisticType *node_stat =
         dynamic_cast< typename ProblemType::StatisticType *>(
           problem_->table()->get_node_stat(node));
-      node_stat->summary_.StartReaccumulate();
+      node_stat->summary_.StartReaccumulate(problem_->global());
 
       // Get the query node iterator and the reference node iterator.
       typename ProblemType::TableType::TreeIterator node_iterator =
@@ -221,7 +221,8 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
         query_results->ApplyPostponed(q_index, node_stat->postponed_);
 
         // Refine min and max summary statistics.
-        node_stat->summary_.Accumulate(*query_results, q_index);
+        node_stat->summary_.Accumulate(
+          problem_->global(), *query_results, q_index);
 
       } // end of looping over each query point.
 
@@ -640,7 +641,7 @@ void core::gnp::TripletreeDfs<ProblemType>::PostProcess_(
       table_->get_node_iterator(qnode);
 
     // Reset the summary statistics.
-    qnode_stat->summary_.StartReaccumulate();
+    qnode_stat->summary_.StartReaccumulate(problem_->global());
 
     while(qnode_iterator.HasNext()) {
       core::table::DenseConstPoint q_col;
@@ -653,8 +654,14 @@ void core::gnp::TripletreeDfs<ProblemType>::PostProcess_(
       }
 
       // Refine min and max summary statistics.
-      qnode_stat->summary_.Accumulate(*query_results, q_index);
+      qnode_stat->summary_.Accumulate(
+        problem_->global(), *query_results, q_index);
     }
+
+    // Do post accumulate operation.
+    qnode_stat->summary_.PostAccumulate(problem_->global());
+
+    // Clear the postponed for the leaf node.
     qnode_stat->postponed_.SetZero();
   }
   else {
