@@ -40,6 +40,12 @@ int main(int argc, char *argv[]) {
   std::cout << compute_timer.GetTotalElapsedTime() << " seconds spent on "
             "the potential computation.\n";
 
+  // Print out the prune statistics.
+  std::cout << "Deterministic prunes: " <<
+            nbody_simulator_result.num_deterministic_prunes_ << "\n";
+  std::cout << "Monte Carlo prunes: " <<
+            nbody_simulator_result.num_monte_carlo_prunes_ << "\n";
+
   // Output the Nbody result to the file.
   std::cerr << "Writing the potentials to the file: " <<
             nbody_simulator_arguments.potentials_out_ << "\n";

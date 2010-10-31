@@ -28,6 +28,10 @@ class TripletreeDfs {
 
     TableType *table_;
 
+    int num_deterministic_prunes_;
+
+    int num_monte_carlo_prunes_;
+
   private:
 
     void AllocateProbabilities_(
@@ -108,6 +112,10 @@ class TripletreeDfs {
       bool do_query_results_postprocess);
 
   public:
+
+    int num_deterministic_prunes() const;
+
+    int num_monte_carlo_prunes() const;
 
     ProblemType *problem();
 

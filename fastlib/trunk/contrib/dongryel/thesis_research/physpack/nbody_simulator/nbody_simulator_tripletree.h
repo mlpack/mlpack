@@ -177,6 +177,8 @@ class NbodySimulatorResult {
     std::vector<double> potential_e_;
     std::vector<double> pruned_;
     std::vector<double> used_error_;
+    int num_deterministic_prunes_;
+    int num_monte_carlo_prunes_;
 
     template<typename GlobalType>
     void PostProcess(
