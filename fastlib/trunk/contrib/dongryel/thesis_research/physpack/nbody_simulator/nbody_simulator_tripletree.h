@@ -94,9 +94,10 @@ class NbodySimulatorDelta {
     template<typename GlobalType, typename TreeType>
     void ResetMeanVariancePairs(
       GlobalType &global,
-      const std::vector<TreeType *> &nodes) {
+      const std::vector<TreeType *> &nodes,
+      int node_start_index) {
 
-      for(int i = 0; i < 3; i++) {
+      for(int i = node_start_index; i < 3; i++) {
         TreeType *node = nodes[i];
         if(i == 0 || node != nodes[i - 1]) {
 
@@ -219,9 +220,11 @@ class NbodySimulatorResult {
       GlobalType &global,
       const core::gnp::TripleRangeDistanceSq &triple_range_distance_sq_in,
       const std::vector<double> &failure_probabilities,
+      int probabilistic_node_start_index,
       const NbodySimulatorDelta &delta_in) {
 
-      for(int node_index = 0; node_index < 3; node_index++) {
+      for(int node_index = probabilistic_node_start_index;
+          node_index < 3; node_index++) {
 
         core::table::Table::TreeType *node =
           triple_range_distance_sq_in.node(node_index);
