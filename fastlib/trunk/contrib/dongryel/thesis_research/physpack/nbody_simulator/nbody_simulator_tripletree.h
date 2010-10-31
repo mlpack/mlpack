@@ -589,6 +589,10 @@ class NbodySimulatorSummary {
       mean_variance_pair.second.scaled_interval(
         range_sq_in.num_tuples(node_index), num_standard_deviations,
         &positive_delta_contribution);
+      negative_delta_contribution.hi = std::min(
+                                         negative_delta_contribution.hi, 0.0);
+      positive_delta_contribution.lo = std::max(
+                                         positive_delta_contribution.lo, 0.0);
       negative_potential_ += negative_delta_contribution;
       positive_potential_ += positive_delta_contribution;
 
