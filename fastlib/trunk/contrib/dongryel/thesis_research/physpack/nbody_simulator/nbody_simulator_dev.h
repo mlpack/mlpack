@@ -31,6 +31,12 @@ void physpack::nbody_simulator::NbodySimulator::Compute(
 
   // Compute the result.
   tripletree_dfs.Compute(* arguments_in.metric_, result_out);
+
+  // Copy the number of prunes.
+  result_out->num_deterministic_prunes_ =
+    tripletree_dfs.num_deterministic_prunes();
+  result_out->num_monte_carlo_prunes_ =
+    tripletree_dfs.num_monte_carlo_prunes();
 }
 
 void physpack::nbody_simulator::NbodySimulator::Init(

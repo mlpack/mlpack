@@ -13,6 +13,16 @@
 #include "core/math/math_lib.h"
 
 template<typename ProblemType>
+int core::gnp::TripletreeDfs<ProblemType>::num_deterministic_prunes() const {
+  return num_deterministic_prunes_;
+}
+
+template<typename ProblemType>
+int core::gnp::TripletreeDfs<ProblemType>::num_monte_carlo_prunes() const {
+  return num_monte_carlo_prunes_;
+}
+
+template<typename ProblemType>
 ProblemType *core::gnp::TripletreeDfs<ProblemType>::problem() {
   return problem_;
 }
@@ -33,6 +43,10 @@ void core::gnp::TripletreeDfs<ProblemType>::Init(ProblemType &problem_in) {
   problem_ = &problem_in;
   table_ = problem_->table();
   ResetStatistic();
+
+  // Reset prune statistics.
+  num_deterministic_prunes_ = 0;
+  num_monte_carlo_prunes_ = 0;
 }
 
 template<typename ProblemType>
@@ -576,6 +590,7 @@ bool core::gnp::TripletreeDfs<ProblemType>::TripletreeCanonical_(
         triple_range_distance_sq, delta, query_results, &failure_index)) {
     Summarize_(
       triple_range_distance_sq, 3, delta, query_results);
+    num_deterministic_prunes_++;
     return true;
   }
 
@@ -590,6 +605,7 @@ bool core::gnp::TripletreeDfs<ProblemType>::TripletreeCanonical_(
     ProbabilisticSummarize_(
       metric, problem_->global(), triple_range_distance_sq,
       failure_probabilities, failure_index, delta, query_results);
+    num_monte_carlo_prunes_++;
     return false;
   }
 
