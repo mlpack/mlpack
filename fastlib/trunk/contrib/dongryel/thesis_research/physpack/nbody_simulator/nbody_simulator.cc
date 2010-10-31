@@ -21,6 +21,11 @@ int main(int argc, char *argv[]) {
   physpack::nbody_simulator::NbodySimulator::ParseArguments(
     argc, argv, &nbody_simulator_arguments);
 
+  if(nbody_simulator_arguments.table_->n_attributes() != 3) {
+    std::cerr << "The dimensionality of the points is not three!\n";
+    return -1;
+  }
+
   // Instantiate a Nbody object.
   core::util::Timer tree_build_timer;
   tree_build_timer.Start();
