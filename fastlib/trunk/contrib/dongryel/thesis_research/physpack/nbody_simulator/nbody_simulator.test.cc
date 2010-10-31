@@ -102,7 +102,7 @@ class TestNbodySimulator {
       for(int i = 0; i < 20; i++) {
         // Randomly choose the number of points.
         nbody_simulator::test_nbody_simulator::num_points_ =
-          core::math::RandInt(6, 8);
+          core::math::RandInt(100, 200);
         StressTest();
       }
       return 0;
