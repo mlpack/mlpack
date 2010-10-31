@@ -575,13 +575,21 @@ class NbodySimulatorSummary {
 
         if(potential < 0) {
           mean_variance_pair.first.push_back(potential);
-          (* delta.mean_variance_pair())[random_combination[(node_index + 1) % 3]].first.push_back(potential);
-          (* delta.mean_variance_pair())[random_combination[(node_index + 2) % 3]].first.push_back(potential);
+          (* delta.mean_variance_pair())[
+            random_combination[(node_index + 1) % 3]].first.push_back(
+              potential);
+          (* delta.mean_variance_pair())[
+            random_combination[(node_index + 2) % 3]].first.push_back(
+              potential);
         }
         else if(potential > 0) {
           mean_variance_pair.second.push_back(potential);
-          (* delta.mean_variance_pair())[random_combination[(node_index + 1) % 3]].second.push_back(potential);
-          (* delta.mean_variance_pair())[random_combination[(node_index + 2) % 3]].second.push_back(potential);
+          (* delta.mean_variance_pair())[
+            random_combination[(node_index + 1) % 3]].second.push_back(
+              potential);
+          (* delta.mean_variance_pair())[
+            random_combination[(node_index + 2) % 3]].second.push_back(
+              potential);
         }
       }
 
