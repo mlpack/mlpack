@@ -551,8 +551,14 @@ class NbodySimulatorSummary {
           core::monte_carlo::MeanVariancePair > &mean_variance_pair =
             (* delta.mean_variance_pair())[query_point_index];
 
-      while(mean_variance_pair.first.num_samples() +
-            mean_variance_pair.second.num_samples() < num_samples) {
+      // The comparison for pruning.
+      double left_hand_side = 0;
+      double right_hand_side = 0;
+      int num_new_samples = 0;
+      do {
+
+        // Increment the number of new samples.
+        num_new_samples++;
 
         // The first in the list is the query point DFS index.
         random_combination[0] = qpoint_dfs_index;
@@ -591,33 +597,37 @@ class NbodySimulatorSummary {
             random_combination[(node_index + 2) % 3]].second.push_back(
               potential);
         }
+
+        // Check whether the current query point can be pruned.
+        core::math::Range negative_delta_contribution;
+        core::math::Range positive_delta_contribution;
+        mean_variance_pair.first.scaled_interval(
+          range_sq_in.num_tuples(node_index), num_standard_deviations,
+          &negative_delta_contribution);
+        mean_variance_pair.second.scaled_interval(
+          range_sq_in.num_tuples(node_index), num_standard_deviations,
+          &positive_delta_contribution);
+        negative_delta_contribution.hi =
+          std::min(
+            negative_delta_contribution.hi, 0.0);
+        positive_delta_contribution.lo =
+          std::max(
+            positive_delta_contribution.lo, 0.0);
+
+        left_hand_side =
+          0.5 * std::max(
+            negative_delta_contribution.width(),
+            positive_delta_contribution.width());
+        right_hand_side =
+          (global.relative_error() * (
+             - negative_potential_.hi - negative_delta_contribution.hi +
+             positive_potential_.lo + positive_delta_contribution.lo) -
+           used_error_) * (
+            delta.pruned_[node_index] /
+            static_cast<double>(global.total_num_tuples() - pruned_));
       }
-
-      // Check whether the current query point can be pruned.
-      core::math::Range negative_delta_contribution;
-      core::math::Range positive_delta_contribution;
-      mean_variance_pair.first.scaled_interval(
-        range_sq_in.num_tuples(node_index), num_standard_deviations,
-        &negative_delta_contribution);
-      mean_variance_pair.second.scaled_interval(
-        range_sq_in.num_tuples(node_index), num_standard_deviations,
-        &positive_delta_contribution);
-      negative_delta_contribution.hi = std::min(
-                                         negative_delta_contribution.hi, 0.0);
-      positive_delta_contribution.lo = std::max(
-                                         positive_delta_contribution.lo, 0.0);
-      negative_potential_ += negative_delta_contribution;
-      positive_potential_ += positive_delta_contribution;
-
-      double left_hand_side =
-        0.5 * std::max(
-          negative_delta_contribution.width(),
-          positive_delta_contribution.width());
-      double right_hand_side =
-        (global.relative_error() * (
-           - negative_potential_.hi + positive_potential_.lo) - used_error_) *
-        (delta.pruned_[node_index] /
-         static_cast<double>(global.total_num_tuples() - pruned_));
+      while(left_hand_side > right_hand_side &&
+            num_new_samples < num_samples);
 
       return (left_hand_side <= right_hand_side);
     }
