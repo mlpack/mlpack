@@ -28,7 +28,7 @@ public:
   {
     price_[j] = price;
   }
-  void getBestAndSecondBest(int bidder, int &best_item, double &best_surplus, double &second_surplus)
+  int getBestAndSecondBest(int bidder, int &best_item, double &best_surplus, double &second_surplus)
   {
     best_surplus = second_surplus = -std::numeric_limits<double>::infinity();
     for (int item = 0; item < query_.n_cols(); item++)
@@ -45,6 +45,7 @@ public:
         second_surplus = surplus;
       }
     }
+    return 0;
   }
 };
 

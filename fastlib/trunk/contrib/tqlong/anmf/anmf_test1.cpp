@@ -19,7 +19,9 @@ void process_options(int argc, char** argv)
       ("reference", boost::program_options::value<string>()->default_value("reference.txt") ,"file consists of reference points")
       ("query", boost::program_options::value<string>()->default_value("query.txt") ,"file consists of query points")
       ("matrix", boost::program_options::value<string>()->default_value("matrix.txt") ,"file consists of weight matrix")
-      ("random", boost::program_options::value<int>()->default_value(0) ,"generate random reference and query points");
+      ("random", boost::program_options::value<int>()->default_value(0) ,"generate random reference and query points")
+      ("dim", boost::program_options::value<int>()->default_value(2) ,"generate random reference and query points")
+      ("maxRange", boost::program_options::value<double>()->default_value(100) ,"max range of random points");
 
   boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
   boost::program_options::notify(vm);
@@ -34,7 +36,7 @@ void process_options(int argc, char** argv)
 void generateRandom(const char* refFile, const char* queryFile)
 {
   int n_points = vm["random"].as<int>();
-  int dim = 2;
+  int dim = vm["dim"].as<int>();
   Matrix ref, query;
   ref.Init(dim, n_points);
   query.Init(dim, n_points);
@@ -43,8 +45,8 @@ void generateRandom(const char* refFile, const char* queryFile)
   {
     for (int j = 0; j < n_points; j++)
     {
-      ref.ref(i, j) = math::Random(0, 10);
-      query.ref(i, j) = math::Random(0, 10);
+      ref.ref(i, j) = math::Random(0, vm["maxRange"].as<double>());
+      query.ref(i, j) = math::Random(0, vm["maxRange"].as<double>());
     }
   }
   data::Save(refFile, ref);
@@ -62,28 +64,40 @@ int main(int argc, char** argv)
 
   ptime time_start(second_clock::local_time());
 
-  if (vm.count("query"))
-  {
-    Matrix query;
-    data::Load(vm["query"].as<string>().c_str(), &query);
-
-    anmf::KDNode qRoot(query, std::vector<double>(query.n_cols(), 0.0));
-//    cout << qRoot.toString() << "\n";
-  }
-
-//  if (vm.count("reference") && vm.count("query"))
+//  if (vm.count("query"))
 //  {
-//    typedef anmf::KDTreeDistanceMatrix DistanceMatrix;
-
-//    Matrix ref, query;
-//    data::Load(vm["reference"].as<string>().c_str(), &ref);
+//    Matrix query;
 //    data::Load(vm["query"].as<string>().c_str(), &query);
 
-//    DistanceMatrix M(ref, query);
-//    anmf::AuctionMaxWeightMatching<DistanceMatrix> matcher(M, true);
+//    anmf::KDNode qRoot(query, std::vector<double>(query.n_cols(), 0.0));
+
+//    int i;
+//    double min = std::numeric_limits<double>::infinity();
+//    Vector x;
+//    x.Init(2);
+//    x[0] = 1.3; x[1] = 1.3;
+//    qRoot.randomBound(x, i, min);
+//    qRoot.nearestNeighbor(x, i, min);
+
+////    cout << qRoot.toString() << "\n";
+
+//    cout << "min = " << min << " i = " << i << "\n";
+//  }
+
+  if (vm.count("reference") && vm.count("query"))
+  {
+    typedef anmf::KDTreeDistanceMatrix DistanceMatrix;
+//    typedef anmf::NaiveDistanceMatrix DistanceMatrix;
+
+    Matrix ref, query;
+    data::Load(vm["reference"].as<string>().c_str(), &ref);
+    data::Load(vm["query"].as<string>().c_str(), &query);
+
+    DistanceMatrix M(ref, query);
+    anmf::AuctionMaxWeightMatching<DistanceMatrix> matcher(M, true);
 //    for (int refIndex = 0; refIndex < ref.n_cols(); refIndex++)
 //      cout << "reference point " << refIndex << " --> query point " << matcher.leftMatch(refIndex) << endl;
-//  }
+  }
 
 //  if (vm.count("matrix"))
 //  {

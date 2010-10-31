@@ -94,8 +94,10 @@ template <typename W>
 template <typename W>
     void AuctionMaxWeightMatching<W>::forwardAuction()
 {
+  long int pruned = 0, total = 0, iter = 0;
   while (!doneMatching_)
   {
+    iter++;
 //    std::cout << (checkEpsilonComplementary() ? "e-CS satisfied" : "e-CS not satisfied") << std::endl;
     clearBids();
     doneMatching_ = true;
@@ -105,7 +107,8 @@ template <typename W>
       int j;
       double v, w;
 
-      weight_.getBestAndSecondBest(i, j, v, w); // get the best and second best (benefit - price)
+      pruned += weight_.getBestAndSecondBest(i, j, v, w); // get the best and second best (benefit - price)
+      total += weight_.n_cols();
 //      getBestAndSecondBest(i, j, v, w);      // use this instead if typename W does not implement this function
       placeBid(i, j, price_[j]+v-w+epsilon_);
       doneMatching_ = false;
@@ -120,7 +123,9 @@ template <typename W>
       weight_.setPrice(j, price_[j]);
       setMatch(winner_[j], j);
     }
+    if (iter % (weight_.n_rows()/10) == 0) std::cout << iter << " calculations = " << pruned << "/" << total << "\n";
   }
+  if (iter % (weight_.n_rows()/10) == 0) std::cout << iter << " calculations = " << pruned << "/" << total << "\n";
 }
 
 template <typename W>
