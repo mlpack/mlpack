@@ -70,6 +70,7 @@ class TripletreeDfs {
       const core::metric_kernels::AbstractMetric &metric,
       const core::gnp::TripleRangeDistanceSq &range_in,
       const std::vector<double> &failure_probabilities,
+      int node_start_index,
       typename ProblemType::DeltaType &delta,
       typename ProblemType::ResultType *query_results);
 
@@ -78,16 +79,19 @@ class TripletreeDfs {
       GlobalType &global,
       const core::gnp::TripleRangeDistanceSq &range_in,
       const std::vector<double> &failure_probabilities,
+      int probabilistic_node_start_index,
       const typename ProblemType::DeltaType &delta,
       typename ProblemType::ResultType *query_results);
 
     bool CanSummarize_(
       const core::gnp::TripleRangeDistanceSq &range_in,
       const typename ProblemType::DeltaType &delta,
-      typename ProblemType::ResultType *query_results);
+      typename ProblemType::ResultType *query_results,
+      int *failure_index);
 
     void Summarize_(
       const core::gnp::TripleRangeDistanceSq &range_in,
+      int probabilistic_start_node_index,
       const typename ProblemType::DeltaType &delta,
       typename ProblemType::ResultType *query_results);
 
