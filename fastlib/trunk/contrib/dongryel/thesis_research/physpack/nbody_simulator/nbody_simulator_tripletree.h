@@ -248,12 +248,14 @@ class NbodySimulatorResult {
             node_it.Next(&qpoint, &qpoint_index);
             core::math::Range negative_contribution;
             core::math::Range positive_contribution;
-            (*delta_in.mean_variance_pair_)[qpoint_index].first.scaled_interval(
-              delta_in.pruned_[node_index], num_standard_deviations,
-              &negative_contribution);
-            (*delta_in.mean_variance_pair_)[qpoint_index].second.scaled_interval(
-              delta_in.pruned_[node_index], num_standard_deviations,
-              &positive_contribution);
+            (*delta_in.mean_variance_pair_)[
+              qpoint_index].first.scaled_interval(
+                delta_in.pruned_[node_index], num_standard_deviations,
+                &negative_contribution);
+            (*delta_in.mean_variance_pair_)[
+              qpoint_index].second.scaled_interval(
+                delta_in.pruned_[node_index], num_standard_deviations,
+                &positive_contribution);
 
             negative_potential_[qpoint_index] += negative_contribution;
             positive_potential_[qpoint_index] += positive_contribution;
@@ -300,6 +302,18 @@ class NbodySimulatorGlobal {
     double summary_compute_quantile_;
 
   public:
+
+    std::vector< double > sort_negative_potential_lo_;
+
+    std::vector< double > sort_negative_potential_hi_;
+
+    std::vector< double > sort_positive_potential_lo_;
+
+    std::vector< double > sort_positive_potential_hi_;
+
+    std::vector< double > sort_used_error_;
+
+    std::vector< double > sort_pruned_;
 
     double summary_compute_quantile() const {
       return summary_compute_quantile_;
@@ -387,6 +401,17 @@ class NbodySimulatorGlobal {
 class NbodySimulatorSummary {
 
   private:
+
+    void StartReaccumulateCommon_() {
+      negative_potential_.Init(
+        std::numeric_limits<double>::max(),
+        - std::numeric_limits<double>::max());
+      positive_potential_.Init(
+        std::numeric_limits<double>::max(),
+        - std::numeric_limits<double>::max());
+      pruned_ = std::numeric_limits<double>::max();
+      used_error_ = 0;
+    }
 
     void ReplacePoints_(
       const core::table::Table &table,
@@ -680,23 +705,28 @@ class NbodySimulatorSummary {
       SetZero();
     }
 
+    template<typename GlobalType>
+    void StartReaccumulate(GlobalType &global) {
+      StartReaccumulateCommon_();
+      global.sort_negative_potential_lo_.resize(0);
+      global.sort_negative_potential_hi_.resize(0);
+      global.sort_positive_potential_lo_.resize(0);
+      global.sort_positive_potential_hi_.resize(0);
+      global.sort_used_error_.resize(0);
+      global.sort_pruned_.resize(0);
+    }
+
     void StartReaccumulate() {
-      negative_potential_.Init(
-        std::numeric_limits<double>::max(),
-        - std::numeric_limits<double>::max());
-      positive_potential_.Init(
-        std::numeric_limits<double>::max(),
-        - std::numeric_limits<double>::max());
-      pruned_ = std::numeric_limits<double>::max();
-      used_error_ = 0;
+      StartReaccumulateCommon_();
     }
 
     template<typename GlobalType>
     void PostAccumulate(const GlobalType &global) {
     }
 
-    template<typename ResultType>
-    void Accumulate(const ResultType &results, int q_index) {
+    template<typename GlobalType, typename ResultType>
+    void Accumulate(
+      GlobalType &global, const ResultType &results, int q_index) {
       negative_potential_ |= results.negative_potential_[q_index];
       positive_potential_ |= results.positive_potential_[q_index];
       pruned_ = std::min(pruned_, results.pruned_[q_index]);
