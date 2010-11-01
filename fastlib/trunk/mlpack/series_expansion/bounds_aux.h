@@ -37,7 +37,7 @@ class bounds_aux {
       //math::PowAbs<t_pow, 1>(v); // v is non-negative
     }
     // Changed to use std::pow
-    furthest_dsqd = std::pow(2/t_pow,furthest_dsqd);
+    furthest_dsqd = std::pow(2.0/t_pow,furthest_dsqd);
     //math::Pow<2, t_pow>(furthest_dsqd);
   }
 
@@ -71,7 +71,7 @@ class bounds_aux {
       //math::PowAbs<t_pow, 1>(v); // v is non-negative
     }
     // Changed to use std::pow
-    furthest_dsqd = std::pow(2/t_pow,furthest_dsqd);
+    furthest_dsqd = std::pow(2.0/t_pow,furthest_dsqd);
     //math::Pow<2, t_pow>(furthest_dsqd);
   }
 
@@ -98,7 +98,7 @@ class bounds_aux {
     furthest_point_in_bound1.CopyValues(bound1.center());
     la::AddExpert(bound1.radius(), unit_vector, &furthest_point_in_bound1);
     // Changed to use std::pow
-    furthest_dsqd = std::pow(2/t_pow,//math::Pow<2, t_pow>
+    furthest_dsqd = std::pow(2.0/t_pow,//math::Pow<2, t_pow>
       la::RawLMetric<t_pow>(bound2_centroid.length(), 
       furthest_point_in_bound1.ptr(), bound2_centroid.ptr()));
   }
