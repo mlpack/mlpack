@@ -7,6 +7,12 @@ set(SOURCES
    ansi_colors.h
    arma_compat.h
    arma_compat.cc
+   arma_extend.h
+   arma_extend/fn_ccov.hpp
+   arma_extend/glue_ccov_meat.hpp
+   arma_extend/glue_ccov_proto.hpp
+   arma_extend/op_ccov_meat.hpp
+   arma_extend/op_ccov_proto.hpp
    base.h
    cc.h
    cc.cc
