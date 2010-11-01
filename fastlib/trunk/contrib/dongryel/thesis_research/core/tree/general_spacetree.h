@@ -10,7 +10,9 @@
 
 #include <armadillo>
 #include <boost/serialization/string.hpp>
+#include <deque>
 #include "core/table/dense_matrix.h"
+#include "core/table/memory_mapped_file.h"
 #include "statistic.h"
 
 /**
@@ -24,10 +26,12 @@
  */
 namespace core {
 namespace tree {
-template < class TBound >
+template < class TreeSpecType >
 class GeneralBinarySpaceTree {
   public:
-    typedef TBound BoundType;
+    typedef typename TreeSpecType::BoundType BoundType;
+
+    typedef core::tree::GeneralBinarySpaceTree<TreeSpecType> TreeType;
 
     /** @brief The bound for the node.
      */
@@ -246,6 +250,186 @@ class GeneralBinarySpaceTree {
         left_->Print();
         right_->Print();
       }
+    }
+
+    static void SplitTree(
+      const core::metric_kernels::AbstractMetric &metric_in,
+      core::table::DenseMatrix& matrix,
+      TreeType *node,
+      int leaf_size,
+      int max_num_leaf_nodes,
+      int *current_num_leaf_nodes,
+      std::vector<int> *old_from_new,
+      int *num_nodes,
+      core::table::MemoryMappedFile *m_file_in) {
+
+      TreeType *left = NULL;
+      TreeType *right = NULL;
+
+      // If the node is just too small or we have reached the maximum
+      // number of leaf nodes allowed, then do not split.
+      if(node->count() < leaf_size ||
+          (*current_num_leaf_nodes) >= max_num_leaf_nodes) {
+        TreeSpecType::MakeLeafNode(
+          metric_in, matrix, node->begin(), node->count(), &(node->bound()));
+      }
+
+      // Otherwise, attempt to split.
+      else {
+        bool can_cut = TreeSpecType::AttemptSplitting(
+                         metric_in, matrix, node, &left, &right,
+                         leaf_size, old_from_new, m_file_in);
+
+        if(can_cut) {
+          (*current_num_leaf_nodes)++;
+          (*num_nodes) = (*num_nodes) + 2;
+          SplitTree(
+            metric_in, matrix, left, leaf_size, max_num_leaf_nodes,
+            current_num_leaf_nodes, old_from_new, num_nodes, m_file_in);
+          SplitTree(
+            metric_in, matrix, right, leaf_size, max_num_leaf_nodes,
+            current_num_leaf_nodes, old_from_new, num_nodes, m_file_in);
+          TreeSpecType::CombineBounds(metric_in, matrix, node, left, right);
+        }
+        else {
+          TreeSpecType::MakeLeafNode(
+            metric_in, matrix, node->begin(), node->count(), &(node->bound()));
+        }
+      }
+
+      // Set children information appropriately.
+      node->set_children(matrix, left, right);
+    }
+
+    /**
+     * Creates a tree from data.
+     *
+     * This requires you to pass in two unitialized ArrayLists which
+     * will contain index mappings so you can account for the
+     * re-ordering of the matrix.
+     *
+     * @param metric_in the metric to be used.
+     * @param matrix data where each column is a point, WHICH WILL BE RE-ORDERED
+     * @param leaf_size the maximum points in a leaf
+     * @param max_num_leaf_nodes the number of maximum leaf nodes this tree
+     *        should have.
+     * @param old_from_new pointer to an unitialized vector; it will map
+     *        new indices to original
+     * @param new_from_old pointer to an unitialized vector; it will map
+     *        original indexes to new indices
+     * @param num_nodes the number of nodes constructed in total.
+     */
+    static TreeType *MakeTree(
+      const core::metric_kernels::AbstractMetric &metric_in,
+      core::table::DenseMatrix& matrix, int leaf_size,
+      int max_num_leaf_nodes = std::numeric_limits<int>::max(),
+      std::vector<int> *old_from_new = NULL,
+      std::vector<int> *new_from_old = NULL,
+      int *num_nodes = NULL,
+      core::table::MemoryMappedFile *m_file_in = NULL) {
+
+      TreeType *node = (m_file_in) ?
+                       (TreeType *) m_file_in->Allocate(sizeof(TreeType)) :
+                       new TreeType();
+      std::vector<int> *old_from_new_ptr;
+
+      if(old_from_new) {
+        old_from_new->resize(matrix.n_cols());
+
+        for(int i = 0; i < matrix.n_cols(); i++) {
+          (*old_from_new)[i] = i;
+        }
+        old_from_new_ptr = old_from_new;
+      }
+      else {
+        old_from_new_ptr = NULL;
+      }
+
+      int num_nodes_in = 1;
+      node->Init(0, matrix.n_cols());
+      node->bound().center().Init(matrix.n_rows());
+      int current_num_leaf_nodes = 1;
+      SplitTree(
+        metric_in, matrix, node, leaf_size, max_num_leaf_nodes,
+        &current_num_leaf_nodes, old_from_new_ptr, &num_nodes_in, m_file_in);
+
+      if(num_nodes) {
+        *num_nodes = num_nodes_in;
+      }
+      if(new_from_old) {
+        new_from_old->resize(matrix.n_cols());
+        for(int i = 0; i < matrix.n_cols(); i++) {
+          (*new_from_old)[(*old_from_new)[i]] = i;
+        }
+      }
+      return node;
+    }
+
+    static int MatrixPartition(
+      const core::metric_kernels::AbstractMetric &metric_in,
+      core::table::DenseMatrix& matrix, int first, int count,
+      BoundType &left_bound, BoundType &right_bound,
+      std::vector<int> *old_from_new) {
+
+      int end = first + count;
+      int left_count = 0;
+
+      std::deque<bool> left_membership;
+      left_membership.resize(count);
+
+      for(int left = first; left < end; left++) {
+
+        // Make alias of the current point.
+        core::table::DenseConstPoint point;
+        matrix.MakeColumnVector(left, &point);
+
+        // Compute the distances from the two pivots.
+        double distance_from_left_pivot =
+          metric_in.Distance(point, left_bound.center());
+        double distance_from_right_pivot =
+          metric_in.Distance(point, right_bound.center());
+
+        // We swap if the point is further away from the left pivot.
+        if(distance_from_left_pivot > distance_from_right_pivot) {
+          left_membership[left - first] = false;
+        }
+        else {
+          left_membership[left - first] = true;
+          left_count++;
+        }
+      }
+
+      int left = first;
+      int right = first + count - 1;
+
+      // At any point: everything < left is correct
+      //               everything > right is correct
+      for(;;) {
+        while(left_membership[left - first] && left <= right) {
+          left++;
+        }
+
+        while(!left_membership[right - first] && left <= right) {
+          right--;
+        }
+
+        if(left > right) {
+
+          // left == right + 1
+          break;
+        }
+
+        // Swap the left vector with the right vector.
+        matrix.swap_cols(left, right);
+        std::swap(left_membership[left - first], left_membership[right - first]);
+
+        if(old_from_new) {
+          std::swap((*old_from_new)[left], (*old_from_new)[right]);
+        }
+        right--;
+      }
+
+      return left_count;
     }
 };
 };

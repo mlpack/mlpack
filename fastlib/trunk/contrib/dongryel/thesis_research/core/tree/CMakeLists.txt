@@ -4,7 +4,6 @@ set(SOURCES
   bounds.h
   general_spacetree.h
   gen_metric_tree.h
-  gen_metric_tree_impl.h
   statistic.h
 )
 
