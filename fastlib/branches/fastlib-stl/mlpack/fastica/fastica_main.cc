@@ -27,6 +27,7 @@
  *   @param seed = (long) seed to the random number generator (clock() + time(0))
  *   @param approach = {deflation, symmetric} (deflation)
  *   @param nonlinearity = {logcosh, gauss, kurtosis, skew} (logcosh)
+ *   @param num_of_IC = integer constant for number of independent components to find (dimensionality of data)
  *   @param fine_tune = {true, false} (false)
  *   @param a1 = numeric constant for logcosh nonlinearity (1)
  *   @param a2 = numeric constant for gauss nonlinearity (1)

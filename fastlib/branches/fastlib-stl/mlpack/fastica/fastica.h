@@ -35,6 +35,8 @@ const fx_entry_doc fastica_entries[] = {
    "  Independent component recovery approach: 'deflation' or 'symmetric'.\n"},
   {"nonlinearity", FX_PARAM, FX_STR, NULL,
    "  Nonlinear function to use: 'logcosh', 'gauss', 'kurtosis', or 'skew'.\n"},
+  {"num_of_IC", FX_PARAM, FX_INT, NULL,
+   "  Number of independent components to find: integer between 1 and dimensionality of data.\n"},
   {"fine_tune", FX_PARAM, FX_BOOL, NULL,
    "  Enable fine tuning.\n"},
   {"a1", FX_PARAM, FX_DOUBLE, NULL,
@@ -290,7 +292,11 @@ class FastICA {
   void DeflationLogCoshUpdate_(index_t n, const arma::mat& X, arma::vec& w) {
     arma::vec hyp_tan, temp1;
     
-    hyp_tan = w * X;
+    hyp_tan = trans(X) * w;
+    std::cout << "------- w --------\n" << w << "\n";
+    std::cout << "------- X --------\n" << X << "\n";
+    std::cout << "------- hyp_tan --------\n" << hyp_tan << "\n";
+
     for(int i = 0; i < hyp_tan.n_elem; i++)
       hyp_tan[i] = tanh(a1_ * hyp_tan[i]);
 
@@ -306,7 +312,7 @@ class FastICA {
   void DeflationLogCoshFineTuningUpdate_(index_t n, const arma::mat& X, arma::vec& w) {
     arma::vec hyp_tan, X_hyp_tan;
     
-    hyp_tan = w * X;
+    hyp_tan = trans(X) * w;
     for(int i = 0; i < hyp_tan.n_elem; i++)
       hyp_tan[i] = tanh(a1_ * hyp_tan[i]);
   
@@ -324,7 +330,7 @@ class FastICA {
   void DeflationGaussUpdate_(index_t n, const arma::mat& X, arma::vec& w) {
     arma::vec u, u_sq, u_sq_a, ex, temp1;
 
-    u = w * X;
+    u = trans(X) * w;
     u_sq = pow(u, 2);
     u_sq_a = -a2_ * u_sq;
     // u is gauss
@@ -344,7 +350,7 @@ class FastICA {
   void DeflationGaussFineTuningUpdate_(index_t n, const arma::mat& X, arma::vec& w) {
     arma::vec u, u_sq, u_sq_a, ex, x_gauss;
 
-    u = w * X;
+    u = trans(X) * w;
     u_sq = pow(u, 2);
     u_sq_a = -a2_ * u_sq;
     ex = exp(u_sq_a / 2.0);
@@ -369,7 +375,7 @@ class FastICA {
     arma::vec temp1, temp2;
 
     w *= -3;
-    w += (X * pow(w * X, 3)) / (double) n;
+    w += (X * pow(trans(X) * w, 3)) / (double) n;
   }
   
   
@@ -379,7 +385,7 @@ class FastICA {
   void DeflationKurtosisFineTuningUpdate_(index_t n, const arma::mat& X, arma::vec& w) {
     arma::vec EXG_pow_3, Beta_w, temp1;
 	    
-    EXG_pow_3 = (X * pow(w * X, 3)) / (double) n;
+    EXG_pow_3 = (X * pow(trans(X) * w, 3)) / (double) n;
     double beta = dot(w, EXG_pow_3);
 
     w += (mu_ / (beta - 3)) * ((beta * w) - EXG_pow_3);
@@ -392,7 +398,7 @@ class FastICA {
   void DeflationSkewUpdate_(index_t n, const arma::mat& X, arma::vec& w) {
     arma::vec temp1;
 
-    w = X * pow(w * X, 2);
+    w = X * pow(trans(X) * w, 2);
     w /= (double) n;
   }
 
@@ -403,7 +409,7 @@ class FastICA {
   void DeflationSkewFineTuningUpdate_(index_t n, const arma::mat& X, arma::vec& w) {
     arma::vec EXG_skew;
     
-    EXG_skew = X * pow(w * X, 2);
+    EXG_skew = X * pow(trans(X) * w, 2);
     EXG_skew /= (double) n;
 
     double beta = dot(w, EXG_skew);
@@ -432,7 +438,7 @@ class FastICA {
 
     module_ = module_in;
 
-    X = X_in; // for some reason Alias makes this crash, so copy for now
+    X = X_in; 
     d = X.n_rows;
     n = X.n_cols;
 
@@ -481,7 +487,13 @@ class FastICA {
     //const index_t first_eig_ = fx_param_int(module_, "first_eig", 1);
     // for now, the last eig must be d, and num_of IC must be d, until I have time to incorporate PCA into this code
     //const index_t last_eig_ = fx_param_int(module_, "last_eig", d);
-    num_of_IC_ = d; //fx_param_int(module_, "num_of_IC", d);
+    num_of_IC_ = fx_param_int(module_, "num_of_IC", d);
+    if(num_of_IC_ < 1 || num_of_IC_ > d) {
+      printf("ERROR: num_of_IC = %d must be >= 1 and <= dimensionality of data",
+            num_of_IC_);
+      return SUCCESS_FAIL;
+    }
+
     fine_tune_ = fx_param_bool(module_, "fine_tune", false);
     a1_ = fx_param_double(module_, "a1", 1);
     a2_ = fx_param_double(module_, "a2", 1);
@@ -856,7 +868,7 @@ class FastICA {
 	    num_failures = 0;
 
 	    B.col(round) = w;
-            W.col(round) = w * whitening_matrix;
+            W.col(round) = trans(whitening_matrix) * w;
 
 	    break; // this line is intended to take us to the next IC
 	  }
@@ -1124,15 +1136,22 @@ class FastICA {
   int DoFastICA(arma::mat& W, arma::mat& Y) {
     arma::mat X_centered, X_whitened, whitening_matrix;
 
+    std::cout << "---------- X -----------\n" << X << "\n";
+
     Center(X, X_centered);
 
+    std::cout << "---------- X_centered ---------\n" << X_centered << "\n";
+
     WhitenUsingEig(X_centered, X_whitened, whitening_matrix);
+
+    std::cout << "---------- X_whitened ----------\n" << X_whitened << "\n";
+    std::cout << "---------- whitening_matrix ---------\n" << whitening_matrix << "\n";
   
     int ret_val =
       FixedPointICA(X_whitened, whitening_matrix, W);
 
     if(ret_val == SUCCESS_PASS) {
-      Y = W * X;
+      Y = trans(W) * X;
     }
     else {
       Y.set_size(0);
