@@ -13,9 +13,10 @@
 
 namespace core {
 namespace gnp {
+template<typename TableType>
 class TripleRangeDistanceSq {
   public:
-    typedef core::table::Table::TreeType TreeType;
+    typedef typename TableType::TreeType TreeType;
 
   private:
     arma::mat min_distance_sq_;
@@ -28,7 +29,7 @@ class TripleRangeDistanceSq {
 
   private:
 
-    void ComputeNumTuples_(const core::table::Table &table_in) {
+    void ComputeNumTuples_(const TableType &table_in) {
       if(nodes_[0] == nodes_[1]) {
 
         // node_0 = node_1 = node_2
@@ -125,12 +126,12 @@ class TripleRangeDistanceSq {
 
     void ReplaceOneNodeBackward(
       const core::metric_kernels::AbstractMetric &metric_in,
-      const core::table::Table &table_in,
+      const TableType &table_in,
       TreeType *new_node_in,
       int node_index_in) {
 
       nodes_[node_index_in] = new_node_in;
-      const TreeType::BoundType &new_node_bound =
+      const typename TreeType::BoundType &new_node_bound =
         table_in.get_node_bound(new_node_in);
 
       for(int existing_node_index = node_index_in + 1;
@@ -153,12 +154,12 @@ class TripleRangeDistanceSq {
 
     void ReplaceOneNodeForward(
       const core::metric_kernels::AbstractMetric &metric_in,
-      const core::table::Table &table_in,
+      const TableType &table_in,
       TreeType *new_node_in,
       int node_index_in) {
 
       nodes_[node_index_in] = new_node_in;
-      const TreeType::BoundType &new_node_bound =
+      const typename TreeType::BoundType &new_node_bound =
         table_in.get_node_bound(new_node_in);
 
       for(int existing_node_index = 0; existing_node_index < node_index_in;
@@ -181,16 +182,16 @@ class TripleRangeDistanceSq {
 
     void Init(
       const core::metric_kernels::AbstractMetric &metric_in,
-      const core::table::Table &table,
+      const TableType &table,
       const std::vector< TreeType * > &nodes_in) {
       for(unsigned int j = 0; j < nodes_.size(); j++) {
         nodes_[j] = nodes_in[j];
       }
       for(unsigned int j = 0; j < nodes_.size(); j++) {
-        const TreeType::BoundType &outer_bound =
+        const typename TreeType::BoundType &outer_bound =
           table.get_node_bound(nodes_[j]);
         for(unsigned int i = j + 1; i < nodes_.size(); i++) {
-          const TreeType::BoundType &inner_bound =
+          const typename TreeType::BoundType &inner_bound =
             table.get_node_bound(nodes_[i]);
           core::math::Range range_distance_sq =
             outer_bound.RangeDistanceSq(metric_in, inner_bound);

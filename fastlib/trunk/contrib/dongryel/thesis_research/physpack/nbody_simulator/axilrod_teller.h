@@ -22,8 +22,9 @@ class AxilrodTeller {
       normalizing_constant_ = normalizing_constant_in;
     }
 
+    template<typename TableType>
     double minimum_negative_contribution(
-      const core::gnp::TripleRangeDistanceSq &range_in) const {
+      const core::gnp::TripleRangeDistanceSq<TableType> &range_in) const {
 
       const arma::mat &min_distance_sq = range_in.min_distance_sq();
       const arma::mat &max_distance_sq = range_in.max_distance_sq();
@@ -39,8 +40,9 @@ class AxilrodTeller {
       return numerator / denominator / normalizing_constant_;
     }
 
+    template<typename TableType>
     double maximum_negative_contribution(
-      const core::gnp::TripleRangeDistanceSq &range_in) const {
+      const core::gnp::TripleRangeDistanceSq<TableType> &range_in) const {
 
       const arma::mat &min_distance_sq = range_in.min_distance_sq();
       const arma::mat &max_distance_sq = range_in.max_distance_sq();
@@ -56,8 +58,9 @@ class AxilrodTeller {
       return numerator / denominator / normalizing_constant_;
     }
 
+    template<typename TableType>
     double minimum_positive_contribution(
-      const core::gnp::TripleRangeDistanceSq &range_in) const {
+      const core::gnp::TripleRangeDistanceSq<TableType> &range_in) const {
 
       const arma::mat &min_distance_sq = range_in.min_distance_sq();
       const arma::mat &max_distance_sq = range_in.max_distance_sq();
@@ -82,8 +85,9 @@ class AxilrodTeller {
              denominator / normalizing_constant_;
     }
 
+    template<typename TableType>
     double maximum_positive_contribution(
-      const core::gnp::TripleRangeDistanceSq &range_in) const {
+      const core::gnp::TripleRangeDistanceSq<TableType> &range_in) const {
 
       const arma::mat &min_distance_sq = range_in.min_distance_sq();
       const arma::mat &max_distance_sq = range_in.max_distance_sq();
@@ -108,8 +112,9 @@ class AxilrodTeller {
              denominator / normalizing_constant_;
     }
 
+    template<typename TableType>
     void RangeUnnormOnSq(
-      const core::gnp::TripleRangeDistanceSq &range_in,
+      const core::gnp::TripleRangeDistanceSq<TableType> &range_in,
       core::math::Range *negative_range,
       core::math::Range *positive_range) const {
 

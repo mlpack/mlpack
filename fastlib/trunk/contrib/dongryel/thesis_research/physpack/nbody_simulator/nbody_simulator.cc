@@ -16,9 +16,13 @@
 
 int main(int argc, char *argv[]) {
 
+  // Tree type: hard-coded for a metric tree.
+  typedef core::table::Table <
+  core::tree::GenMetricTree<core::table::DensePoint> > TableType;
+
   // Parse arguments for Nbody.
-  physpack::nbody_simulator::NbodySimulatorArguments nbody_simulator_arguments;
-  physpack::nbody_simulator::NbodySimulator::ParseArguments(
+  physpack::nbody_simulator::NbodySimulatorArguments<TableType> nbody_simulator_arguments;
+  physpack::nbody_simulator::NbodySimulator<TableType>::ParseArguments(
     argc, argv, &nbody_simulator_arguments);
 
   if(nbody_simulator_arguments.table_->n_attributes() != 3) {
@@ -29,7 +33,7 @@ int main(int argc, char *argv[]) {
   // Instantiate a Nbody object.
   core::util::Timer tree_build_timer;
   tree_build_timer.Start();
-  physpack::nbody_simulator::NbodySimulator nbody_simulator_instance;
+  physpack::nbody_simulator::NbodySimulator<TableType> nbody_simulator_instance;
   nbody_simulator_instance.Init(nbody_simulator_arguments);
   tree_build_timer.End();
   std::cout << tree_build_timer.GetTotalElapsedTime() << " seconds spent on "

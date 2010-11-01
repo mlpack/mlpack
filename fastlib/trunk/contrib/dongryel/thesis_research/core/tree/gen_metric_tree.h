@@ -7,7 +7,7 @@
 #define CORE_TREE_GEN_METRIC_TREE_H
 
 #include <vector>
-#include "bounds.h"
+#include "ball_bound.h"
 #include "general_spacetree.h"
 #include "core/table/dense_matrix.h"
 #include "core/table/memory_mapped_file.h"

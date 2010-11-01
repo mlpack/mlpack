@@ -10,23 +10,25 @@
 #include "core/gnp/tripletree_dfs_dev.h"
 #include "nbody_simulator.h"
 
-physpack::nbody_simulator::NbodySimulator::TableType *
-physpack::nbody_simulator::NbodySimulator::table() {
+template<typename TableType>
+TableType *physpack::nbody_simulator::NbodySimulator<TableType>::table() {
   return table_;
 }
 
-physpack::nbody_simulator::NbodySimulator::GlobalType
-&physpack::nbody_simulator::NbodySimulator::global() {
+template<typename TableType>
+typename physpack::nbody_simulator::NbodySimulator<TableType>::GlobalType
+&physpack::nbody_simulator::NbodySimulator<TableType>::global() {
   return global_;
 }
 
-void physpack::nbody_simulator::NbodySimulator::Compute(
-  const physpack::nbody_simulator::NbodySimulatorArguments &arguments_in,
+template<typename TableType>
+void physpack::nbody_simulator::NbodySimulator<TableType>::Compute(
+  const physpack::nbody_simulator::NbodySimulatorArguments<TableType> &arguments_in,
   physpack::nbody_simulator::NbodySimulatorResult *result_out) {
 
   // Instantiate a dual-tree algorithm of the KDE.
-  core::gnp::TripletreeDfs<physpack::nbody_simulator::NbodySimulator>
-  tripletree_dfs;
+  core::gnp::TripletreeDfs < physpack::nbody_simulator::NbodySimulator <
+  TableType > > tripletree_dfs;
   tripletree_dfs.Init(*this);
 
   // Compute the result.
@@ -39,8 +41,9 @@ void physpack::nbody_simulator::NbodySimulator::Compute(
     tripletree_dfs.num_monte_carlo_prunes();
 }
 
-void physpack::nbody_simulator::NbodySimulator::Init(
-  physpack::nbody_simulator::NbodySimulatorArguments &arguments_in) {
+template<typename TableType>
+void physpack::nbody_simulator::NbodySimulator<TableType>::Init(
+  physpack::nbody_simulator::NbodySimulatorArguments<TableType> &arguments_in) {
 
   table_ = arguments_in.table_;
 
@@ -50,7 +53,8 @@ void physpack::nbody_simulator::NbodySimulator::Init(
     arguments_in.summary_compute_quantile_);
 }
 
-bool physpack::nbody_simulator::NbodySimulator::ConstructBoostVariableMap_(
+template<typename TableType>
+bool physpack::nbody_simulator::NbodySimulator<TableType>::ConstructBoostVariableMap_(
   const std::vector<std::string> &args,
   boost::program_options::variables_map *vm) {
 
@@ -131,9 +135,10 @@ bool physpack::nbody_simulator::NbodySimulator::ConstructBoostVariableMap_(
   return false;
 }
 
-void physpack::nbody_simulator::NbodySimulator::ParseArguments(
+template<typename TableType>
+void physpack::nbody_simulator::NbodySimulator<TableType>::ParseArguments(
   const std::vector<std::string> &args,
-  physpack::nbody_simulator::NbodySimulatorArguments *arguments_out) {
+  physpack::nbody_simulator::NbodySimulatorArguments<TableType> *arguments_out) {
 
   // A L2 metric to index the table to use.
   arguments_out->metric_ = new core::metric_kernels::LMetric<2>();
@@ -154,7 +159,7 @@ void physpack::nbody_simulator::NbodySimulator::ParseArguments(
   // Parse the reference set and index the tree.
   std::cout << "Reading in the reference set: " <<
             vm["references_in"].as<std::string>() << "\n";
-  arguments_out->table_ = new core::table::Table();
+  arguments_out->table_ = new TableType();
   arguments_out->table_->Init(vm["references_in"].as<std::string>());
   std::cout << "Finished reading in the reference set.\n";
   std::cout << "Building the reference tree.\n";
@@ -177,10 +182,11 @@ void physpack::nbody_simulator::NbodySimulator::ParseArguments(
             arguments_out->summary_compute_quantile_ << "\n";
 }
 
-void physpack::nbody_simulator::NbodySimulator::ParseArguments(
+template<typename TableType>
+void physpack::nbody_simulator::NbodySimulator<TableType>::ParseArguments(
   int argc,
   char *argv[],
-  physpack::nbody_simulator::NbodySimulatorArguments *arguments_out) {
+  physpack::nbody_simulator::NbodySimulatorArguments<TableType> *arguments_out) {
 
   // Convert C input to C++; skip executable name for Boost.
   std::vector<std::string> args(argv + 1, argv + argc);

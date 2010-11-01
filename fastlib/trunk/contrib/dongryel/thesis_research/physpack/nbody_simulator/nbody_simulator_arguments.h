@@ -11,6 +11,7 @@
 
 namespace physpack {
 namespace nbody_simulator {
+template<typename TableType>
 class NbodySimulatorArguments {
   public:
 
@@ -18,7 +19,7 @@ class NbodySimulatorArguments {
 
     int leaf_size_;
 
-    core::table::Table *table_;
+    TableType *table_;
 
     double relative_error_;
 
