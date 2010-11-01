@@ -143,35 +143,21 @@ class NbodySimulatorDelta {
         const_cast< GlobalType & >(global).mean_variance_pair();
 
       // Compute the potential range.
-      core::math::Range potential_range = global.potential().RangeUnnormOnSq(
-                                            triple_range_distance_sq);
+      core::math::Range negative_potential_range;
+      core::math::Range positive_potential_range;
+      global.potential().RangeUnnormOnSq(
+        triple_range_distance_sq, &negative_potential_range,
+        &positive_potential_range);
+
       for(
         unsigned int i = 0; i < pruned_.size(); i++) {
         pruned_[i] = triple_range_distance_sq.num_tuples(i);
-        if(potential_range.hi <= 0 || potential_range.lo >= 0) {
-          used_error_[i] = pruned_[i] * 0.5 * potential_range.width();
-        }
-        else {
-          used_error_[i] = pruned_[i] * 0.5 * std::max(
-                             fabs(potential_range.hi), fabs(potential_range.lo));
-        }
-
-        if(potential_range.lo < 0) {
-          negative_potential_[i].lo = pruned_[i] * potential_range.lo;
-          positive_potential_[i].lo = 0.0;
-        }
-        else {
-          negative_potential_[i].lo = 0.0;
-          positive_potential_[i].lo = pruned_[i] * potential_range.lo;
-        }
-        if(potential_range.hi > 0) {
-          negative_potential_[i].hi = 0.0;
-          positive_potential_[i].hi = pruned_[i] * potential_range.hi;
-        }
-        else {
-          negative_potential_[i].hi = pruned_[i] * potential_range.hi;
-          positive_potential_[i].hi = 0.0;
-        }
+        used_error_[i] = pruned_[i] * 0.5 *
+                         std::max(
+                           negative_potential_range.width(),
+                           positive_potential_range.width());
+        negative_potential_[i] = pruned_[i] * negative_potential_range;
+        positive_potential_[i] = pruned_[i] * positive_potential_range;
       }
     }
 };
