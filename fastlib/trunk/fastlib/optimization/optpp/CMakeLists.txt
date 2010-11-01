@@ -18,6 +18,7 @@ set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # test executable
 add_executable(optimizer_test
+  EXCLUDE_FROM_ALL 
   optimizer_tests.cc
 )
 target_link_libraries(optimizer_test
