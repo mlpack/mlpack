@@ -102,7 +102,7 @@ class NbodySimulatorDelta {
         if(i == 0 || node != nodes[i - 1]) {
 
           // Get the iterator for the node.
-          core::table::Table::TreeIterator node_it =
+          typename GlobalType::TableType::TreeIterator node_it =
             global.table()->get_node_iterator(node);
           int qpoint_index;
           for(int j = 0; j < node_it.count(); j++) {
@@ -136,7 +136,8 @@ class NbodySimulatorDelta {
     void DeterministicCompute(
       const core::metric_kernels::AbstractMetric &metric,
       const GlobalType &global,
-      const core::gnp::TripleRangeDistanceSq &triple_range_distance_sq) {
+      const core::gnp::TripleRangeDistanceSq <
+      typename GlobalType::TableType > &triple_range_distance_sq) {
 
       // Set the mean variance pair pointer.
       mean_variance_pair_ =
@@ -211,7 +212,8 @@ class NbodySimulatorResult {
     template<typename GlobalType>
     void ApplyProbabilisticDelta(
       GlobalType &global,
-      const core::gnp::TripleRangeDistanceSq &triple_range_distance_sq_in,
+      const core::gnp::TripleRangeDistanceSq <
+      typename GlobalType::TableType > &triple_range_distance_sq_in,
       const std::vector<double> &failure_probabilities,
       int probabilistic_node_start_index,
       const NbodySimulatorDelta &delta_in) {
@@ -219,13 +221,13 @@ class NbodySimulatorResult {
       for(int node_index = probabilistic_node_start_index;
           node_index < 3; node_index++) {
 
-        core::table::Table::TreeType *node =
+        typename GlobalType::TableType::TreeType *node =
           triple_range_distance_sq_in.node(node_index);
         if(node_index == 0 || node !=
             triple_range_distance_sq_in.node(node_index - 1)) {
 
           // Get the iterator for the node.
-          core::table::Table::TreeIterator node_it =
+          typename GlobalType::TableType::TreeIterator node_it =
             global.table()->get_node_iterator(node);
           core::table::DenseConstPoint qpoint;
           int qpoint_index;
@@ -271,7 +273,11 @@ class NbodySimulatorResult {
     }
 };
 
+template<typename IncomingTableType>
 class NbodySimulatorGlobal {
+
+  public:
+    typedef IncomingTableType TableType;
 
   private:
 
@@ -279,7 +285,7 @@ class NbodySimulatorGlobal {
 
     double probability_;
 
-    core::table::Table *table_;
+    TableType *table_;
 
     physpack::nbody_simulator::AxilrodTeller potential_;
 
@@ -346,11 +352,11 @@ class NbodySimulatorGlobal {
       }
     }
 
-    core::table::Table *table() {
+    TableType *table() {
       return table_;
     }
 
-    const core::table::Table *table() const {
+    const TableType *table() const {
       return table_;
     }
 
@@ -367,7 +373,7 @@ class NbodySimulatorGlobal {
     }
 
     void Init(
-      core::table::Table *table_in,
+      TableType *table_in,
       double relative_error_in,
       double probability_in,
     double summary_compute_quantile_in) {
@@ -404,8 +410,9 @@ class NbodySimulatorSummary {
       used_error_ = 0;
     }
 
+    template<typename TableType>
     void ReplacePoints_(
-      const core::table::Table &table,
+      const TableType &table,
       const core::metric_kernels::AbstractMetric &metric_in,
       const std::vector<int> &random_combination,
       int node_index_fix,
@@ -420,14 +427,15 @@ class NbodySimulatorSummary {
       }
     }
 
+    template<typename TableType>
     void TranslateCombination_(
-      core::table::Table &table,
-      const core::gnp::TripleRangeDistanceSq &range_sq_in,
+      TableType &table,
+      const core::gnp::TripleRangeDistanceSq<TableType> &range_sq_in,
       std::vector<int> *random_combination_out) const {
 
       for(int node_index = 0; node_index < 3; node_index++) {
         int real_point_id;
-        core::table::Table::TreeIterator node_it =
+        typename TableType::TreeIterator node_it =
           table.get_node_iterator(range_sq_in.node(node_index));
         node_it.get_id(
           (*random_combination_out)[node_index] - node_it.begin(),
@@ -436,8 +444,9 @@ class NbodySimulatorSummary {
       }
     }
 
+    template<typename TableType>
     void RandomCombination_(
-      const core::gnp::TripleRangeDistanceSq &range_sq_in,
+      const core::gnp::TripleRangeDistanceSq<TableType> &range_sq_in,
       int node_index_fix,
       std::vector<int> *random_combination_out) const {
 
@@ -539,7 +548,8 @@ class NbodySimulatorSummary {
     bool CanProbabilisticSummarize(
       const core::metric_kernels::AbstractMetric &metric,
       GlobalType &global, DeltaType &delta,
-      const core::gnp::TripleRangeDistanceSq &range_sq_in,
+      const core::gnp::TripleRangeDistanceSq <
+      typename GlobalType::TableType > &range_sq_in,
       const std::vector<double> &failure_probabilities,
       int node_index,
       ResultType *query_results,
@@ -651,7 +661,8 @@ class NbodySimulatorSummary {
     template < typename GlobalType, typename DeltaType, typename ResultType >
     bool CanSummarize(
       const GlobalType &global, const DeltaType &delta,
-      const core::gnp::TripleRangeDistanceSq &triple_range_distance_sq_in,
+      const core::gnp::TripleRangeDistanceSq <
+      typename GlobalType::TableType > &triple_range_distance_sq_in,
       int node_index, ResultType *query_results) const {
 
       double left_hand_side = delta.used_error_[node_index];

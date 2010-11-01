@@ -59,7 +59,7 @@ void core::gnp::TripletreeDfs<ProblemType>::Compute(
 
   // Call the algorithm computation.
   std::vector< TreeType *> root_nodes(3, table_->get_tree());
-  core::gnp::TripleRangeDistanceSq triple_range_distance_sq;
+  core::gnp::TripleRangeDistanceSq<TableType> triple_range_distance_sq;
   triple_range_distance_sq.Init(metric, *table_, root_nodes);
 
   PreProcess_(table_->get_tree());
@@ -107,7 +107,7 @@ void core::gnp::TripletreeDfs<ProblemType>::PreProcess_(
 template<typename ProblemType>
 typename core::gnp::TripletreeDfs<ProblemType>::TableType::TreeIterator
 core::gnp::TripletreeDfs<ProblemType>::GetNextNodeIterator_(
-  const core::gnp::TripleRangeDistanceSq &range_sq_in,
+  const core::gnp::TripleRangeDistanceSq<TableType> &range_sq_in,
   int node_index,
   const typename TableType::TreeIterator &it_in) {
 
@@ -122,7 +122,7 @@ core::gnp::TripletreeDfs<ProblemType>::GetNextNodeIterator_(
 template<typename ProblemType>
 void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
   const core::metric_kernels::AbstractMetric &metric,
-  const core::gnp::TripleRangeDistanceSq &range_sq_in,
+  const core::gnp::TripleRangeDistanceSq<TableType> &range_sq_in,
   typename ProblemType::ResultType *query_results) {
 
   // Temporary postponed objects to be used within the triple loop.
@@ -238,7 +238,7 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
 template<typename ProblemType>
 bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
   const core::metric_kernels::AbstractMetric &metric,
-  const core::gnp::TripleRangeDistanceSq &range_in,
+  const core::gnp::TripleRangeDistanceSq<TableType> &range_in,
   const std::vector<double> &failure_probabilities,
   int node_start_index,
   typename ProblemType::DeltaType &delta,
@@ -261,7 +261,7 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
           table_->get_node_stat(node));
 
       // Loop over each point on this node.
-      typename core::table::Table::TreeIterator node_it =
+      typename TableType::TreeIterator node_it =
         table_->get_node_iterator(node);
 
       core::table::DenseConstPoint query_point;
@@ -291,7 +291,7 @@ template<typename ProblemType>
 void core::gnp::TripletreeDfs<ProblemType>::ProbabilisticSummarize_(
   const core::metric_kernels::AbstractMetric &metric,
   GlobalType &global,
-  const core::gnp::TripleRangeDistanceSq &range_in,
+  const core::gnp::TripleRangeDistanceSq<TableType> &range_in,
   const std::vector<double> &failure_probabilities,
   int probabilistic_node_start_index,
   const typename ProblemType::DeltaType &delta,
@@ -316,7 +316,7 @@ void core::gnp::TripletreeDfs<ProblemType>::ProbabilisticSummarize_(
 
 template<typename ProblemType>
 bool core::gnp::TripletreeDfs<ProblemType>::CanSummarize_(
-  const core::gnp::TripleRangeDistanceSq &triple_range_distance_sq_in,
+  const core::gnp::TripleRangeDistanceSq<TableType> &triple_range_distance_sq_in,
   const typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results,
   int *failure_index) {
@@ -374,7 +374,7 @@ void core::gnp::TripletreeDfs<ProblemType>::AllocateProbabilities_(
 
 template<typename ProblemType>
 void core::gnp::TripletreeDfs<ProblemType>::Summarize_(
-  const core::gnp::TripleRangeDistanceSq &triple_range_distance_sq,
+  const core::gnp::TripleRangeDistanceSq<TableType> &triple_range_distance_sq,
   int probabilistic_node_start_index,
   const typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
@@ -404,7 +404,7 @@ bool core::gnp::TripletreeDfs<ProblemType>::NodeIsAgreeable_(
 template<typename ProblemType>
 void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
   const core::metric_kernels::AbstractMetric &metric,
-  core::gnp::TripleRangeDistanceSq &triple_range_distance_sq,
+  core::gnp::TripleRangeDistanceSq<TableType> &triple_range_distance_sq,
   double relative_error,
   const std::vector<double> &failure_probabilities,
   typename ProblemType::ResultType *query_results,
@@ -568,7 +568,7 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
 template<typename ProblemType>
 bool core::gnp::TripletreeDfs<ProblemType>::TripletreeCanonical_(
   const core::metric_kernels::AbstractMetric &metric,
-  core::gnp::TripleRangeDistanceSq &triple_range_distance_sq,
+  core::gnp::TripleRangeDistanceSq<TableType> &triple_range_distance_sq,
   double relative_error,
   const std::vector<double> &failure_probabilities,
   typename ProblemType::ResultType *query_results) {

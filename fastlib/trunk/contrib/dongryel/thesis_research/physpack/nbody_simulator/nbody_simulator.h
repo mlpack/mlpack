@@ -15,11 +15,15 @@
 
 namespace physpack {
 namespace nbody_simulator {
+template<typename IncomingTableType>
 class NbodySimulator {
   public:
+
+    typedef IncomingTableType TableType;
+
     typedef physpack::nbody_simulator::NbodySimulatorPostponed PostponedType;
 
-    typedef physpack::nbody_simulator::NbodySimulatorGlobal GlobalType;
+    typedef physpack::nbody_simulator::NbodySimulatorGlobal<TableType> GlobalType;
 
     typedef physpack::nbody_simulator::NbodySimulatorResult ResultType;
 
@@ -29,14 +33,12 @@ class NbodySimulator {
 
     typedef physpack::nbody_simulator::NbodySimulatorStatistic StatisticType;
 
-    typedef core::table::Table TableType;
-
   public:
 
     /**
      * @brief returns a pointer to the table
      */
-    core::table::Table *table();
+    TableType *table();
 
     /**
      * @brief returns a GlobalType structure that has the
@@ -47,24 +49,25 @@ class NbodySimulator {
     /**
      * @brief Initialize a nbody simulator engine with the arguments.
      */
-    void Init(physpack::nbody_simulator::NbodySimulatorArguments &arguments_in);
+    void Init(
+      physpack::nbody_simulator::NbodySimulatorArguments<TableType> &arguments_in);
 
     void Compute(
-      const physpack::nbody_simulator::NbodySimulatorArguments &arguments_in,
+      const physpack::nbody_simulator::NbodySimulatorArguments<TableType> &arguments_in,
       ResultType *result_out);
 
     static void ParseArguments(
       const std::vector<std::string> &args,
-      physpack::nbody_simulator::NbodySimulatorArguments *arguments_out);
+      physpack::nbody_simulator::NbodySimulatorArguments<TableType> *arguments_out);
 
     static void ParseArguments(
       int argc,
       char *argv[],
-      physpack::nbody_simulator::NbodySimulatorArguments *arguments_out);
+      physpack::nbody_simulator::NbodySimulatorArguments<TableType> *arguments_out);
 
   private:
 
-    core::table::Table *table_;
+    TableType *table_;
     GlobalType global_;
 
   private:

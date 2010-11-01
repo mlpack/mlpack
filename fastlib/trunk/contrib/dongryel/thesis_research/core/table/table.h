@@ -17,11 +17,13 @@
 
 namespace core {
 namespace table {
-template<TreeSpecType>
+template<typename TreeSpecType>
 class Table: public boost::noncopyable {
 
   public:
     typedef core::tree::GeneralBinarySpaceTree < TreeSpecType > TreeType;
+
+    typedef core::table::Table<TreeSpecType> TableType;
 
   public:
 
@@ -33,7 +35,7 @@ class Table: public boost::noncopyable {
 
         int current_index_;
 
-        const core::table::Table *table_;
+        const TableType *table_;
 
       public:
 
@@ -51,21 +53,21 @@ class Table: public boost::noncopyable {
           table_ = it_in.table();
         }
 
-        TreeIterator(const core::table::Table &table, const TreeType *node) {
+        TreeIterator(const TableType &table, const TreeType *node) {
           table_ = &table;
           begin_ = node->begin();
           end_ = node->end();
           current_index_ = begin_ - 1;
         }
 
-        TreeIterator(const core::table::Table &table, int begin, int count) {
+        TreeIterator(const TableType &table, int begin, int count) {
           table_ = &table;
           begin_ = begin;
           end_ = begin + count;
           current_index_ = begin_ - 1;
         }
 
-        const core::table::Table *table() const {
+        const TableType *table() const {
           return table_;
         }
 
@@ -164,11 +166,11 @@ class Table: public boost::noncopyable {
       return TreeIterator(*this, begin, count);
     }
 
-    const TreeType::BoundType &get_node_bound(TreeType *node) const {
+    const typename TreeType::BoundType &get_node_bound(TreeType *node) const {
       return node->bound();
     }
 
-    TreeType::BoundType &get_node_bound(TreeType *node) {
+    typename TreeType::BoundType &get_node_bound(TreeType *node) {
       return node->bound();
     }
 
