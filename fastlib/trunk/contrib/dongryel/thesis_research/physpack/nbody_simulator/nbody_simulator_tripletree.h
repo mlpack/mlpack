@@ -148,14 +148,13 @@ class NbodySimulatorDelta {
       global.potential().RangeUnnormOnSq(
         triple_range_distance_sq, &negative_potential_range,
         &positive_potential_range);
+      core::math::Range range_sum = negative_potential_range +
+                                    positive_potential_range;
 
       for(
         unsigned int i = 0; i < pruned_.size(); i++) {
         pruned_[i] = triple_range_distance_sq.num_tuples(i);
-        used_error_[i] = pruned_[i] * 0.5 *
-                         std::max(
-                           negative_potential_range.width(),
-                           positive_potential_range.width());
+        used_error_[i] = pruned_[i] * 0.5 * range_sum.width();
         negative_potential_[i] = pruned_[i] * negative_potential_range;
         positive_potential_[i] = pruned_[i] * positive_potential_range;
       }
