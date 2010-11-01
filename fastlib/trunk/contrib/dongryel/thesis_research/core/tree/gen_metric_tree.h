@@ -9,79 +9,150 @@
 #include <vector>
 #include "bounds.h"
 #include "general_spacetree.h"
-#include "gen_metric_tree_impl.h"
 #include "core/table/dense_matrix.h"
 #include "core/table/memory_mapped_file.h"
 
-/**
- * Regular pointer-style trees.
- */
 namespace core {
 namespace tree {
+template<typename PointType>
+class GenMetricTree {
+  public:
 
-/**
- * Creates a ball tree from data.
- *
- * This requires you to pass in two unitialized ArrayLists which will contain
- * index mappings so you can account for the re-ordering of the matrix.
- *
- * @param metric_in the metric to be used.
- * @param matrix data where each column is a point, WHICH WILL BE RE-ORDERED
- * @param leaf_size the maximum points in a leaf
- * @param max_num_leaf_nodes the number of maximum leaf nodes this tree should
- *        have.
- * @param old_from_new pointer to an unitialized vector; it will map
- *        new indices to original
- * @param new_from_old pointer to an unitialized vector; it will map
- *        original indexes to new indices
- * @param num_nodes the number of nodes constructed in total.
- */
-template<typename TMetricTree>
-TMetricTree *MakeGenMetricTree(
-  const core::metric_kernels::AbstractMetric &metric_in,
-  core::table::DenseMatrix& matrix, int leaf_size,
-  int max_num_leaf_nodes = std::numeric_limits<int>::max(),
-  std::vector<int> *old_from_new = NULL,
-  std::vector<int> *new_from_old = NULL,
-  int *num_nodes = NULL,
-  core::table::MemoryMappedFile *m_file_in = NULL) {
+    typedef core::tree::BallBound<PointType> BoundType;
 
-  TMetricTree *node = (m_file_in) ?
-                      (TMetricTree *) m_file_in->Allocate(sizeof(TMetricTree)) :
-                      new TMetricTree();
-  std::vector<int> *old_from_new_ptr;
+  private:
+    static int FurthestColumnIndex_(
+      const core::metric_kernels::AbstractMetric &metric_in,
+      const PointType &pivot,
+      const core::table::DenseMatrix &matrix,
+      int begin, int count,
+      double *furthest_distance) {
 
-  if(old_from_new) {
-    old_from_new->resize(matrix.n_cols());
+      int furthest_index = -1;
+      int end = begin + count;
+      *furthest_distance = -1.0;
 
-    for(int i = 0; i < matrix.n_cols(); i++) {
-      (*old_from_new)[i] = i;
+      for(int i = begin; i < end; i++) {
+        core::table::DenseConstPoint point;
+        matrix.MakeColumnVector(i, &point);
+        double distance_between_center_and_point =
+          metric_in.Distance(pivot, point);
+
+        if((*furthest_distance) < distance_between_center_and_point) {
+          *furthest_distance = distance_between_center_and_point;
+          furthest_index = i;
+        }
+      }
+
+      return furthest_index;
     }
-    old_from_new_ptr = old_from_new;
-  }
-  else {
-    old_from_new_ptr = NULL;
-  }
 
-  int num_nodes_in = 1;
-  node->Init(0, matrix.n_cols());
-  node->bound().center().Init(matrix.n_rows());
-  int current_num_leaf_nodes = 1;
-  core::tree_private::SplitGenMetricTree<TMetricTree>(
-    metric_in, matrix, node, leaf_size, max_num_leaf_nodes,
-    &current_num_leaf_nodes, old_from_new_ptr, &num_nodes_in, m_file_in);
+  public:
+    template<typename TBound>
+    static void MakeLeafNode(
+      const core::metric_kernels::AbstractMetric &metric_in,
+      const core::table::DenseMatrix& matrix,
+      int begin, int count, TBound *bounds) {
 
-  if(num_nodes) {
-    *num_nodes = num_nodes_in;
-  }
-  if(new_from_old) {
-    new_from_old->resize(matrix.n_cols());
-    for(int i = 0; i < matrix.n_cols(); i++) {
-      (*new_from_old)[(*old_from_new)[i]] = i;
+      bounds->center().SetZero();
+
+      int end = begin + count;
+      core::table::DenseConstPoint col_point;
+      for(int i = begin; i < end; i++) {
+        matrix.MakeColumnVector(i, &col_point);
+        bounds->center() += col_point;
+      }
+      bounds->center() /= ((double) count);
+
+      double furthest_distance;
+      FurthestColumnIndex_(
+        metric_in, bounds->center(), matrix, begin, count, &furthest_distance);
+      bounds->set_radius(furthest_distance);
     }
-  }
-  return node;
-}
+
+    template<typename TreeType>
+    static void CombineBounds(
+      const core::metric_kernels::AbstractMetric &metric_in,
+      core::table::DenseMatrix &matrix,
+      TreeType *node, TreeType *left, TreeType *right) {
+
+      // Compute the weighted sum of the two pivots
+      node->bound().center().CopyValues(left->bound().center());
+      node->bound().center() *= left->count();
+      node->bound().center().Add(right->count(), right->bound().center());
+      node->bound().center() /= ((double) node->count());
+
+      double left_max_dist, right_max_dist;
+      FurthestColumnIndex_(
+        metric_in, node->bound().center(), matrix, left->begin(),
+        left->count(), &left_max_dist);
+      FurthestColumnIndex_(
+        metric_in, node->bound().center(), matrix, right->begin(),
+        right->count(), &right_max_dist);
+      node->bound().set_radius(std::max(left_max_dist, right_max_dist));
+    }
+
+    template<typename TreeType>
+    static bool AttemptSplitting(
+      const core::metric_kernels::AbstractMetric &metric_in,
+      core::table::DenseMatrix& matrix, TreeType *node, TreeType **left,
+      TreeType **right, int leaf_size,
+      std::vector<int> *old_from_new,
+      core::table::MemoryMappedFile *m_file_in) {
+
+      // Pick a random row.
+      int random_row = core::math::RandInt(
+                         node->begin(), node->begin() + node->count());
+      core::table::DensePoint random_row_vec;
+      matrix.MakeColumnVector(random_row, & random_row_vec);
+
+      // Now figure out the furthest point from the random row picked
+      // above.
+      double furthest_distance;
+      int furthest_from_random_row =
+        FurthestColumnIndex_(
+          metric_in, random_row_vec, matrix, node->begin(), node->count(),
+          &furthest_distance);
+      core::table::DensePoint furthest_from_random_row_vec;
+      matrix.MakeColumnVector(
+        furthest_from_random_row, &furthest_from_random_row_vec);
+
+      // Then figure out the furthest point from the furthest point.
+      double furthest_from_furthest_distance;
+      int furthest_from_furthest_random_row =
+        FurthestColumnIndex_(
+          metric_in, furthest_from_random_row_vec, matrix, node->begin(),
+          node->count(), &furthest_from_furthest_distance);
+      core::table::DensePoint furthest_from_furthest_random_row_vec;
+      matrix.MakeColumnVector(
+        furthest_from_furthest_random_row,
+        &furthest_from_furthest_random_row_vec);
+
+      if(furthest_from_furthest_distance <
+          std::numeric_limits<double>::epsilon()) {
+        return false;
+      }
+      else {
+        *left = (m_file_in) ? (TreeType *)
+                m_file_in->Allocate(sizeof(TreeType)) : new TreeType();
+        *right = (m_file_in) ? (TreeType *)
+                 m_file_in->Allocate(sizeof(TreeType)) : new TreeType();
+
+        ((*left)->bound().center()).Copy(furthest_from_random_row_vec);
+        ((*right)->bound().center()).Copy(
+          furthest_from_furthest_random_row_vec);
+
+        int left_count = TreeType::MatrixPartition(
+                           metric_in, matrix, node->begin(), node->count(),
+                           (*left)->bound(), (*right)->bound(), old_from_new);
+
+        (*left)->Init(node->begin(), left_count);
+        (*right)->Init(node->begin() + left_count, node->count() - left_count);
+      }
+
+      return true;
+    }
+};
 };
 };
 

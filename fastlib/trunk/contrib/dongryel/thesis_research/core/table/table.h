@@ -20,7 +20,7 @@ namespace table {
 class Table: public boost::noncopyable {
 
   public:
-    typedef core::tree::GeneralBinarySpaceTree < core::tree::BallBound <
+    typedef core::tree::GeneralBinarySpaceTree < core::tree::GenMetricTree <
     core::table::DensePoint > > TreeType;
 
   public:
@@ -232,7 +232,7 @@ class Table: public boost::noncopyable {
     void IndexData(
       const core::metric_kernels::AbstractMetric &metric_in, int leaf_size) {
       int num_nodes;
-      tree_ = core::tree::MakeGenMetricTree<TreeType>(
+      tree_ = TreeType::MakeTree(
                 metric_in, data_, leaf_size, std::numeric_limits<int>::max(),
                 &old_from_new_, &new_from_old_, &num_nodes);
     }
