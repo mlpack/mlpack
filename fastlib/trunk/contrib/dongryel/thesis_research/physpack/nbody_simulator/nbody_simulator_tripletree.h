@@ -383,7 +383,9 @@ class NbodySimulatorGlobal {
 
     void Init(
       core::table::Table *table_in,
-    double relative_error_in, double probability_in) {
+      double relative_error_in,
+      double probability_in,
+    double summary_compute_quantile_in) {
 
       relative_error_ = relative_error_in;
       probability_ = probability_in;
@@ -397,6 +399,8 @@ class NbodySimulatorGlobal {
 
       // Initialize the potential.
       potential_.Init(total_num_tuples_);
+
+      summary_compute_quantile_ = summary_compute_quantile_in;
     }
 };
 
