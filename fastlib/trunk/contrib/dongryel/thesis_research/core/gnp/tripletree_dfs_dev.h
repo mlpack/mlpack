@@ -244,12 +244,6 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
   typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
 
-  for(int i = node_start_index; i < 3; i++) {
-    if(range_in.num_tuples(i) > 10000.0 || range_in.num_tuples(i) < 100.0) {
-      return false;
-    }
-  }
-
   // Prepare for Monte Carlo accumulation.
   delta.ResetMeanVariancePairs(
     problem_->global(), range_in.nodes(), node_start_index);
