@@ -45,7 +45,9 @@ void physpack::nbody_simulator::NbodySimulator::Init(
   table_ = arguments_in.table_;
 
   // Declare the global constants.
-  global_.Init(table_, arguments_in.relative_error_, arguments_in.probability_);
+  global_.Init(
+    table_, arguments_in.relative_error_, arguments_in.probability_,
+    arguments_in.summary_compute_quantile_);
 }
 
 bool physpack::nbody_simulator::NbodySimulator::ConstructBoostVariableMap_(

@@ -39,20 +39,20 @@ class Timer {
       timeval result;
       timersub(&end_, &start_, &result);
       std::stringstream str;
-      str << (result.tv_sec + result.tv_usec / 1000000.0);
+      str << (result.tv_sec + static_cast<double>(result.tv_usec) / 1000000.0);
       return str.str();
     }
 
     double GetTotalElapsedTime() {
       timeval result;
       timersub(&end_, &start_, &result);
-      return (result.tv_sec + result.tv_usec / 1000000.0);
+      return (result.tv_sec + static_cast<double>(result.tv_usec) / 1000000.0);
     }
 
     double GetElapsedTime(int checkpoint_id) {
       timeval result;
       timersub(&checkpoints_[checkpoint_id], &start_, &result);
-      return (result.tv_sec + result.tv_usec / 1000000.0);
+      return (result.tv_sec + static_cast<double>(result.tv_usec) / 1000000.0);
     }
 
   private:
