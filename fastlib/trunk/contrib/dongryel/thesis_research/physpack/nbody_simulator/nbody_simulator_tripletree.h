@@ -303,13 +303,9 @@ class NbodySimulatorGlobal {
 
   public:
 
-    std::vector< double > sort_negative_potential_lo_;
-
     std::vector< double > sort_negative_potential_hi_;
 
     std::vector< double > sort_positive_potential_lo_;
-
-    std::vector< double > sort_positive_potential_hi_;
 
     std::vector< double > sort_used_error_;
 
@@ -708,10 +704,8 @@ class NbodySimulatorSummary {
     template<typename GlobalType>
     void StartReaccumulate(GlobalType &global) {
       StartReaccumulateCommon_();
-      global.sort_negative_potential_lo_.resize(0);
       global.sort_negative_potential_hi_.resize(0);
       global.sort_positive_potential_lo_.resize(0);
-      global.sort_positive_potential_hi_.resize(0);
       global.sort_used_error_.resize(0);
       global.sort_pruned_.resize(0);
     }
@@ -721,16 +715,53 @@ class NbodySimulatorSummary {
     }
 
     template<typename GlobalType>
-    void PostAccumulate(const GlobalType &global) {
+    void PostAccumulate(GlobalType &global) {
+
+      // Sort the lists.
+      std::sort(
+        global.sort_negative_potential_hi_.begin(),
+        global.sort_negative_potential_hi_.end(),
+        std::greater<double>());
+      std::sort(
+        global.sort_positive_potential_lo_.begin(),
+        global.sort_positive_potential_lo_.end());
+      std::sort(
+        global.sort_used_error_.begin(),
+        global.sort_used_error_.end(),
+        std::greater<double>());
+      std::sort(
+        global.sort_pruned_.begin(),
+        global.sort_pruned_.end());
+
+      // Take the appropriate quantile.
+      int index =
+        (int) floor(
+          global.sort_negative_potential_hi_.size() *
+          global.summary_compute_quantile());
+      negative_potential_.hi = global.sort_negative_potential_hi_[index];
+      positive_potential_.lo = global.sort_positive_potential_lo_[index];
+      used_error_ = global.sort_used_error_[index];
+      pruned_ = global.sort_pruned_[index];
     }
 
     template<typename GlobalType, typename ResultType>
     void Accumulate(
       GlobalType &global, const ResultType &results, int q_index) {
-      negative_potential_ |= results.negative_potential_[q_index];
-      positive_potential_ |= results.positive_potential_[q_index];
-      pruned_ = std::min(pruned_, results.pruned_[q_index]);
-      used_error_ = std::max(used_error_, results.used_error_[q_index]);
+
+      // Push the results into the temporary vectors so that they can
+      // be sorted in the PostAccumulate function.
+      negative_potential_.lo = std::min(
+                                 negative_potential_.lo,
+                                 results.negative_potential_[q_index].lo);
+      global.sort_negative_potential_hi_.push_back(
+        results.negative_potential_[q_index].hi);
+      global.sort_positive_potential_lo_.push_back(
+        results.positive_potential_[q_index].lo);
+      positive_potential_.hi = std::max(
+                                 positive_potential_.hi,
+                                 results.positive_potential_[q_index].hi);
+      global.sort_pruned_.push_back(results.pruned_[q_index]);
+      global.sort_used_error_.push_back(results.used_error_[q_index]);
     }
 
     void Accumulate(const NbodySimulatorSummary &summary_in) {
