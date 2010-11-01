@@ -65,6 +65,10 @@ bool physpack::nbody_simulator::NbodySimulator::ConstructBoostVariableMap_(
       "potentials_out.csv"),
     "OPTIONAL file to store computed potentials."
   )(
+    "summary_compute_quantile",
+    boost::program_options::value<double>()->default_value(0.0),
+    "OPTIONAL The quantile for computing summary results during computation."
+  )(
     "probability",
     boost::program_options::value<double>()->default_value(1.0),
     "Probability guarantee for the approximation of KDE."
@@ -163,6 +167,12 @@ void physpack::nbody_simulator::NbodySimulator::ParseArguments(
   // Parse the probability.
   arguments_out->probability_ = vm["probability"].as<double>();
   std::cout << "Probability of " << arguments_out->probability_ << "\n";
+
+  // Parse the summary compute quantile.
+  arguments_out->summary_compute_quantile_ =
+    vm["summary_compute_quantile"].as<double>();
+  std::cout << "Summary compute quantile of " <<
+            arguments_out->summary_compute_quantile_ << "\n";
 }
 
 void physpack::nbody_simulator::NbodySimulator::ParseArguments(

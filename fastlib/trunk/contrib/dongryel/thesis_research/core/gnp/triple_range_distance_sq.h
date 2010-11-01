@@ -123,7 +123,7 @@ class TripleRangeDistanceSq {
       nodes_ = ranges_in.nodes();
     }
 
-    void ReplaceOneNode(
+    void ReplaceOneNodeBackward(
       const core::metric_kernels::AbstractMetric &metric_in,
       const core::table::Table &table_in,
       TreeType *new_node_in,
@@ -132,27 +132,51 @@ class TripleRangeDistanceSq {
       nodes_[node_index_in] = new_node_in;
       const TreeType::BoundType &new_node_bound =
         table_in.get_node_bound(new_node_in);
-      int existing_node_index = (node_index_in + 1) % 3;
 
-      // Change for the first existing node.
-      core::math::Range existing_range_distance_sq =
-        new_node_bound.RangeDistanceSq(
-          metric_in,
-          table_in.get_node_bound(nodes_[existing_node_index]));
-      set_range_distance_sq(
-        node_index_in, existing_node_index, existing_range_distance_sq);
+      for(int existing_node_index = node_index_in + 1;
+          existing_node_index < 3; existing_node_index++) {
 
-      // Change for the next existing node.
-      existing_node_index = (existing_node_index + 1) % 3;
-      existing_range_distance_sq =
-        new_node_bound.RangeDistanceSq(
-          metric_in,
-          table_in.get_node_bound(nodes_[existing_node_index]));
-      set_range_distance_sq(
-        node_index_in, existing_node_index, existing_range_distance_sq);
+        // Change for the first existing node.
+        core::math::Range existing_range_distance_sq =
+          new_node_bound.RangeDistanceSq(
+            metric_in,
+            table_in.get_node_bound(nodes_[existing_node_index]));
+        set_range_distance_sq(
+          node_index_in, existing_node_index, existing_range_distance_sq);
+      }
 
       // Recompute the number of tuples for each node.
-      ComputeNumTuples_(table_in);
+      if(node_index_in == 0) {
+        ComputeNumTuples_(table_in);
+      }
+    }
+
+    void ReplaceOneNodeForward(
+      const core::metric_kernels::AbstractMetric &metric_in,
+      const core::table::Table &table_in,
+      TreeType *new_node_in,
+      int node_index_in) {
+
+      nodes_[node_index_in] = new_node_in;
+      const TreeType::BoundType &new_node_bound =
+        table_in.get_node_bound(new_node_in);
+
+      for(int existing_node_index = 0; existing_node_index < node_index_in;
+          existing_node_index++) {
+
+        // Change for the first existing node.
+        core::math::Range existing_range_distance_sq =
+          new_node_bound.RangeDistanceSq(
+            metric_in,
+            table_in.get_node_bound(nodes_[existing_node_index]));
+        set_range_distance_sq(
+          node_index_in, existing_node_index, existing_range_distance_sq);
+      }
+
+      // Recompute the number of tuples for each node.
+      if(node_index_in == 2) {
+        ComputeNumTuples_(table_in);
+      }
     }
 
     void Init(
