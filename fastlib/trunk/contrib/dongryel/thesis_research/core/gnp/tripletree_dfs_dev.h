@@ -522,7 +522,7 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
             triple_range_distance_sq.node(level - 1), current_node_left)) {
 
         replaced_node_on_current_level = true;
-        triple_range_distance_sq.ReplaceOneNode(
+        triple_range_distance_sq.ReplaceOneNodeForward(
           metric, *table_, current_node_left, level);
 
         // Recursing to the left.
@@ -540,7 +540,7 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
             triple_range_distance_sq.node(level - 1), current_node_right)) {
 
         replaced_node_on_current_level = true;
-        triple_range_distance_sq.ReplaceOneNode(
+        triple_range_distance_sq.ReplaceOneNodeForward(
           metric, *table_, current_node_right, level);
 
         // Recursing to the right.
@@ -555,7 +555,7 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
       // Put back the node if it has been replaced before popping up
       // the recursion.
       if(replaced_node_on_current_level) {
-        triple_range_distance_sq.ReplaceOneNode(
+        triple_range_distance_sq.ReplaceOneNodeBackward(
           metric, *table_, current_node, level);
       }
 

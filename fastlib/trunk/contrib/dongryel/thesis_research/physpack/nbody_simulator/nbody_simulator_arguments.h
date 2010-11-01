@@ -26,6 +26,8 @@ class NbodySimulatorArguments {
 
     core::metric_kernels::AbstractMetric *metric_;
 
+    double summary_compute_quantile_;
+
   public:
     NbodySimulatorArguments() {
       leaf_size_ = 0;
@@ -33,6 +35,7 @@ class NbodySimulatorArguments {
       relative_error_ = 0.0;
       probability_ = 0.0;
       metric_ = NULL;
+      summary_compute_quantile_ = 0.0;
     }
 
     ~NbodySimulatorArguments() {
