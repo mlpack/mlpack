@@ -17,11 +17,11 @@
 
 namespace core {
 namespace table {
+template<TreeSpecType>
 class Table: public boost::noncopyable {
 
   public:
-    typedef core::tree::GeneralBinarySpaceTree < core::tree::GenMetricTree <
-    core::table::DensePoint > > TreeType;
+    typedef core::tree::GeneralBinarySpaceTree < TreeSpecType > TreeType;
 
   public:
 
