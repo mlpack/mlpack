@@ -47,7 +47,8 @@
 
 #include "../math/math_lib.h"
 
-#include <math.h>
+// Proper C++ header instead of math.h
+#include <cmath>
 
 namespace la {
   /**
@@ -84,7 +85,8 @@ namespace la {
     double s = 0;
     do {
       double d = *va++ - *vb++;
-      s += math::PowAbs<t_pow, 1>(d);
+      // using std::pow and std::abs instead of math::PowAbs
+      s += std::pow(std::abs(t_pow),d);//math::PowAbs<t_pow, 1>(d);
     } while (--length);
     return s;
   }
@@ -100,7 +102,9 @@ namespace la {
   template<int t_pow>
   inline double LMetric(
       index_t length, const double *va, const double *vb) {
-    return math::Pow<1, t_pow>(RawLMetric<t_pow>(length, va, vb));
+    // using std::pow instead of math::Pow
+    return 1.0/std::pow(t_pow,RawLMetric<t_pow>(length, va, vb));
+    //return math::Pow<1, t_pow>(RawLMetric<t_pow>(length, va, vb));
   }
   /** Finds the trace of the matrix.
    *  Trace(A) is the sum of the diagonal elements
