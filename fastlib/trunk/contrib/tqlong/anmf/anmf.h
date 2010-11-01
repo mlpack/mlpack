@@ -35,9 +35,9 @@ std::string toString(const Vector& v);
 
 END_ANMF_NAMESPACE;
 
-#include "max_weight_matching.h"
-#include "auction_max_weight_matching.h"
+//#include "max_weight_matching.h"
 #include "naive_distance_matrix.h"
-#include "kdtree_distance_matrix.h"
+#include "allnn_kdtree_distance_matrix.h"
+#include "allnn_auction_max_weight_matching.h"
 
 #endif
