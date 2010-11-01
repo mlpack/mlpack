@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
 
 set(SOURCES
-  bounds.h
+  ball_bound.h
   general_spacetree.h
   gen_metric_tree.h
+  hrect_bound.h
   statistic.h
 )
 

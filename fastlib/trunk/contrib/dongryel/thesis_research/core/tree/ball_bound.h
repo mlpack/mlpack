@@ -1,11 +1,12 @@
-/**
- * @file tree/bounds.h
+/** @file tree/ball_bound.h
  *
- * Bounds that are useful for binary space partitioning trees.
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ *
+ *  Bounds that are useful for binary space partitioning trees.
  */
 
-#ifndef CORE_TREE_BOUNDS_H
-#define CORE_TREE_BOUNDS_H
+#ifndef CORE_TREE_BALL_BOUND_H
+#define CORE_TREE_BALL_BOUND_H
 
 #include "boost/serialization/string.hpp"
 #include "core/math/math_lib.h"
