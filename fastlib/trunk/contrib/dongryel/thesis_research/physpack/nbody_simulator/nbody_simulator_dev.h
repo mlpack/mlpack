@@ -66,7 +66,7 @@ bool physpack::nbody_simulator::NbodySimulator::ConstructBoostVariableMap_(
     "OPTIONAL file to store computed potentials."
   )(
     "summary_compute_quantile",
-    boost::program_options::value<double>()->default_value(0.0),
+    boost::program_options::value<double>()->default_value(0.2),
     "OPTIONAL The quantile for computing summary results during computation."
   )(
     "probability",
