@@ -132,7 +132,7 @@ class GenKdTree {
           (*left)->bound().Init(matrix.n_rows());
           (*right)->bound().Init(matrix.n_rows());
           (*left)->bound().get(0).lo = split_dim;
-          (*left)->bound().get(1).lo = split_val;
+          (*left)->bound().get(0).hi = split_val;
 
           int left_count = TreeType::MatrixPartition(
                              metric_in, matrix, node->begin(), node->count(),
