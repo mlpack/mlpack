@@ -11,6 +11,7 @@
 #include "boost/test/unit_test.hpp"
 #include "core/gnp/dualtree_dfs_dev.h"
 #include "kde_dev.h"
+#include "core/tree/gen_metric_tree.h"
 #include <time.h>
 
 namespace ml {
@@ -23,6 +24,9 @@ int num_points_;
 class TestKde {
 
   private:
+
+    typedef core::table::Table <
+    core::tree::GenMetricTree<core::table::DensePoint> > TableType;
 
     bool CheckAccuracy_(
       const std::vector<double> &query_results,
@@ -50,7 +54,7 @@ class TestKde {
     void GenerateRandomDataset_(
       int num_dimensions,
       int num_points,
-      core::table::Table *random_dataset) {
+      TableType *random_dataset) {
 
       random_dataset->Init(num_dimensions, num_points);
 
@@ -65,7 +69,7 @@ class TestKde {
 
     void UltraNaive_(
       const core::metric_kernels::AbstractMetric &metric_in,
-      core::table::Table &query_table, core::table::Table &reference_table,
+      TableType &query_table, TableType &reference_table,
       const core::metric_kernels::AbstractKernel &kernel,
       std::vector<double> &ultra_naive_query_results) {
 
@@ -162,20 +166,20 @@ class TestKde {
       args.push_back(bandwidth_sstr.str());
 
       // Generate the random dataset and save it.
-      core::table::Table random_table;
+      TableType random_table;
       GenerateRandomDataset_(
         ml::kde::test_kde::num_dimensions_,
         ml::kde::test_kde::num_points_, &random_table);
       random_table.Save(references_in);
 
       // Parse the KDE arguments.
-      ml::KdeArguments kde_arguments;
-      ml::Kde::ParseArguments(args, &kde_arguments);
+      ml::KdeArguments<TableType> kde_arguments;
+      ml::Kde<TableType>::ParseArguments(args, &kde_arguments);
 
       std::cout << "Bandwidth value " << bandwidth << "\n";
 
       // Call the KDE driver.
-      ml::Kde kde_instance;
+      ml::Kde<TableType> kde_instance;
       kde_instance.Init(kde_arguments);
 
       // Compute the result.

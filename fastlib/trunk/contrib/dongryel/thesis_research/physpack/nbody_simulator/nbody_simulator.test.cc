@@ -22,6 +22,9 @@ class TestNbodySimulator {
 
   private:
 
+    typedef core::table::Table <
+    core::tree::GenMetricTree<core::table::DensePoint> > TableType;
+
     bool CheckAccuracy_(
       const std::vector<double> &query_results,
       const std::vector<double> &naive_query_results,
@@ -48,7 +51,7 @@ class TestNbodySimulator {
     void GenerateRandomDataset_(
       int num_dimensions,
       int num_points,
-      core::table::Table *random_dataset) {
+      TableType *random_dataset) {
 
       random_dataset->Init(num_dimensions, num_points);
 
@@ -63,7 +66,7 @@ class TestNbodySimulator {
 
     void UltraNaive_(
       const core::metric_kernels::AbstractMetric &metric_in,
-      core::table::Table &table,
+      TableType &table,
       const physpack::nbody_simulator::AxilrodTeller &potential,
       std::vector<double> &ultra_naive_query_results) {
 
@@ -137,19 +140,20 @@ class TestNbodySimulator {
       args.push_back(relative_error_sstr.str());
 
       // Generate the random dataset and save it.
-      core::table::Table random_table;
+      TableType random_table;
       GenerateRandomDataset_(
         3, nbody_simulator::test_nbody_simulator::num_points_, &random_table);
       random_table.Save(references_in);
 
       // Parse the nbody simulator arguments.
-      physpack::nbody_simulator::NbodySimulatorArguments
+      physpack::nbody_simulator::NbodySimulatorArguments<TableType>
       nbody_simulator_arguments;
-      physpack::nbody_simulator::NbodySimulator::ParseArguments(
+      physpack::nbody_simulator::NbodySimulator<TableType>::ParseArguments(
         args, &nbody_simulator_arguments);
 
       // Call the nbody simulator driver.
-      physpack::nbody_simulator::NbodySimulator nbody_simulator_instance;
+      physpack::nbody_simulator::NbodySimulator<TableType>
+      nbody_simulator_instance;
       nbody_simulator_instance.Init(nbody_simulator_arguments);
 
       // Compute the result.
