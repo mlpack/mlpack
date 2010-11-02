@@ -23,12 +23,12 @@ class HrectBound {
 
     int dim_;
 
+  public:
+
     HrectBound() {
       dim_ = -1;
       bounds_ = NULL;
     }
-
-  public:
 
     ~HrectBound() {
       if(core::table::global_m_file_) {
@@ -87,12 +87,8 @@ class HrectBound {
       return bounds_[i];
     }
 
-    /** Calculates the midpoint of the range */
-    void CalculateMidpoint(core::table::AbstractPoint *centroid) const {
-      centroid->Init(dim_);
-      for(int i = 0; i < dim_; i++) {
-        (*centroid)[i] = bounds_[i].mid();
-      }
+    core::math::Range &get(int i) {
+      return bounds_[i];
     }
 
     /**
@@ -104,8 +100,6 @@ class HrectBound {
 
       double sum = 0;
       const core::math::Range *mbound = bounds_;
-
-      int d = dim_;
 
       for(int i = 0; i < point.length(); i++) {
         double v = point[i];
@@ -185,7 +179,7 @@ class HrectBound {
     /**
      * Calculates minimum and maximum bound-to-bound squared distance.
      */
-    GenRange<double> RangeDistanceSq(
+    core::math::Range RangeDistanceSq(
       const core::metric_kernels::AbstractMetric &metric,
       const HrectBound &other) const {
       double sum_lo = 0;
