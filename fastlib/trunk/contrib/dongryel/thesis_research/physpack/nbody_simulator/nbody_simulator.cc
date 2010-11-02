@@ -11,14 +11,14 @@
 #include "core/math/math_lib.h"
 #include "core/util/timer.h"
 #include "nbody_simulator_dev.h"
+#include "core/tree/gen_kdtree.h"
 #include <vector>
 #include <cstdlib>
 
 int main(int argc, char *argv[]) {
 
   // Tree type: hard-coded for a metric tree.
-  typedef core::table::Table <
-  core::tree::GenMetricTree<core::table::DensePoint> > TableType;
+  typedef core::table::Table < core::tree::GenKdTree > TableType;
 
   // Parse arguments for Nbody.
   physpack::nbody_simulator::NbodySimulatorArguments<TableType> nbody_simulator_arguments;

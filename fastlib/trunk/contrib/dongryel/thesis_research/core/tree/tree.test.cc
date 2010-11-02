@@ -15,15 +15,17 @@
 
 namespace core {
 namespace tree {
+
+template<typename TableType>
 class TestTree {
 
   private:
 
     bool TestTreeIterator_(
-      core::table::Table::TreeType *node,
-      core::table::Table &table) {
+      typename TableType::TreeType *node,
+      TableType &table) {
 
-      core::table::Table::TreeIterator node_it =
+      typename TableType::TreeIterator node_it =
         table.get_node_iterator(node);
       do {
         core::table::DenseConstPoint point;
@@ -52,7 +54,7 @@ class TestTree {
     void GenerateRandomDataset_(
       int num_dimensions,
       int num_points,
-      core::table::Table *random_dataset) {
+      TableType *random_dataset) {
 
       random_dataset->Init(num_dimensions, num_points);
 
@@ -91,15 +93,15 @@ class TestTree {
       args.push_back(std::string("--references_in=") + references_in);
 
       // Generate the random dataset and save it.
-      core::table::Table random_table;
+      TableType random_table;
       GenerateRandomDataset_(
         num_dimensions, num_points, &random_table);
       random_table.Save(references_in);
 
       // Reload the table twice and build the tree on one of them.
-      core::table::Table reordered_table;
+      TableType reordered_table;
       reordered_table.Init(references_in);
-      core::table::Table original_table;
+      TableType original_table;
       original_table.Init(references_in);
       core::metric_kernels::LMetric<2> l2_metric;
       reordered_table.IndexData(l2_metric, 20);
@@ -127,8 +129,12 @@ BOOST_AUTO_TEST_SUITE(TestSuiteKde)
 BOOST_AUTO_TEST_CASE(TestCaseKde) {
   srand(time(NULL));
 
+  // Tree type: hard-coded for a metric tree.
+  typedef core::table::Table <
+  core::tree::GenMetricTree<core::table::DensePoint> > TableType;
+
   // Call the tests.
-  core::tree::TestTree tree_test;
+  core::tree::TestTree<TableType> tree_test;
   tree_test.StressTestMain();
 
   std::cout << "All tests passed!\n";

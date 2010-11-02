@@ -125,7 +125,7 @@ class GenMetricTree {
         }
         else {
           (*left_membership)[left - first] = true;
-          left_count++;
+          (*left_count)++;
         }
       }
     }

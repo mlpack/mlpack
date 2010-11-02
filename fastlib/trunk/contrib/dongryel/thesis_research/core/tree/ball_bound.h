@@ -39,6 +39,11 @@ class BallBound {
       ar & center_;
     }
 
+    void Init(int dimension) {
+      radius_ = 0.0;
+      center_.Init(dimension);
+    }
+
     double radius() const {
       return radius_;
     }
@@ -64,17 +69,6 @@ class BallBound {
      */
     bool Contains(const core::table::AbstractPoint& point) const {
       return MidDistance(point) <= radius_;
-    }
-
-    /**
-     * Gets the center.
-     *
-     * Don't really use this directly.  This is only here for consistency
-     * with DHrectBound, so it can plug in more directly if a "centroid"
-     * is needed.
-     */
-    void CalculateMidpoint(core::table::AbstractPoint *centroid) const {
-      center_(*centroid);
     }
 
     /**

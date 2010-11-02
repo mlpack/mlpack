@@ -347,7 +347,7 @@ class GeneralBinarySpaceTree {
 
       int num_nodes_in = 1;
       node->Init(0, matrix.n_cols());
-      node->bound().center().Init(matrix.n_rows());
+      node->bound().Init(matrix.n_rows());
       TreeSpecType::FindBoundFromMatrix(
         matrix, 0, matrix.n_cols(), &node->bound());
 
