@@ -252,6 +252,9 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
   typename ProblemType::SummaryType new_summary;
 
   bool flag = true;
+  core::table::DenseConstPoint previous_query_point;
+  int previous_query_point_index = -1;
+
   for(int i = node_start_index; flag && i < 3; i++) {
     typename core::gnp::TripletreeDfs<ProblemType>::TreeType *node =
       range_in.node(i);
@@ -264,8 +267,9 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
       typename TableType::TreeIterator node_it =
         table_->get_node_iterator(node);
 
+      // The query point index and the point.
+      int query_point_index = -1;
       core::table::DenseConstPoint query_point;
-      int query_point_index;
 
       // The new summary.
       new_summary = node_stat->summary_;
@@ -277,10 +281,23 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
         // The current query point.
         node_it.Next(&query_point, &query_point_index);
 
-        flag = new_summary.CanProbabilisticSummarize(
-                 metric, problem_->global(), delta,
-                 range_in, failure_probabilities, i, query_results,
-                 query_point, qpoint_dfs_index, query_point_index);
+        if(previous_query_point_index >= 0) {
+          flag = new_summary.CanProbabilisticSummarize(
+                   metric, problem_->global(), delta,
+                   range_in, failure_probabilities, i, query_results,
+                   query_point, qpoint_dfs_index, query_point_index,
+                   &previous_query_point, &previous_query_point_index);
+        }
+        else {
+          flag = new_summary.CanProbabilisticSummarize(
+                   metric, problem_->global(), delta,
+                   range_in, failure_probabilities, i, query_results,
+                   query_point, qpoint_dfs_index, query_point_index,
+                   (const core::table::DenseConstPoint *) NULL,
+                   (int *) NULL);
+        }
+        previous_query_point.Alias(query_point);
+        previous_query_point_index = query_point_index;
       }
     }
   }
