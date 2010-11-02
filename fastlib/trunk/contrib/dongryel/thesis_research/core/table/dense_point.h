@@ -35,6 +35,11 @@ class DenseConstPoint: public core::table::AbstractPoint {
       printf("\n");
     }
 
+    void Init(int length) {
+
+      // Does not do anything - DenseConstPoint is only an alias.
+    }
+
     const double *ptr() const {
       return ptr_;
     }

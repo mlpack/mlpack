@@ -20,6 +20,8 @@ class AbstractPoint {
     virtual double operator[](int i) const = 0;
 
     virtual void Print() const = 0;
+
+    virtual void Init(int length) = 0;
 };
 };
 };
