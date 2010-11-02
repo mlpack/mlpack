@@ -82,12 +82,13 @@ class KdePostponed {
     }
 };
 
+template<typename IncomingTableType>
 class KdeGlobal {
 
   public:
-    typedef core::metric_kernels::AbstractKernel KernelType;
+    typedef IncomingTableType TableType;
 
-    typedef core::table::Table TableType;
+    typedef core::metric_kernels::AbstractKernel KernelType;
 
   private:
 
@@ -99,9 +100,9 @@ class KdeGlobal {
 
     double mult_const_;
 
-    core::table::Table *query_table_;
+    TableType *query_table_;
 
-    core::table::Table *reference_table_;
+    TableType *reference_table_;
 
     boost::math::normal normal_dist_;
 
@@ -128,19 +129,19 @@ class KdeGlobal {
       }
     }
 
-    core::table::Table *query_table() {
+    TableType *query_table() {
       return query_table_;
     }
 
-    const core::table::Table *query_table() const {
+    const TableType *query_table() const {
       return query_table_;
     }
 
-    core::table::Table *reference_table() {
+    TableType *reference_table() {
       return reference_table_;
     }
 
-    const core::table::Table *reference_table() const {
+    const TableType *reference_table() const {
       return reference_table_;
     }
 
@@ -161,8 +162,8 @@ class KdeGlobal {
     }
 
     void Init(
-      core::table::Table *reference_table_in,
-      core::table::Table *query_table_in,
+      TableType *reference_table_in,
+      TableType *query_table_in,
       double bandwidth_in, const bool is_monochromatic,
       double relative_error_in, double probability_in,
       const std::string &kernel_type_in) {

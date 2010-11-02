@@ -5,35 +5,41 @@
 #include "core/metric_kernels/lmetric.h"
 #include "kde.h"
 
-ml::Kde::TableType *ml::Kde::query_table() {
+template<typename TableType>
+TableType *ml::Kde<TableType>::query_table() {
   return query_table_;
 }
 
-ml::Kde::TableType *ml::Kde::reference_table() {
+template<typename TableType>
+TableType *ml::Kde<TableType>::reference_table() {
   return reference_table_;
 }
 
-ml::Kde::GlobalType &ml::Kde::global() {
+template<typename TableType>
+typename ml::Kde<TableType>::GlobalType &ml::Kde<TableType>::global() {
   return global_;
 }
 
-bool ml::Kde::is_monochromatic() const {
+template<typename TableType>
+bool ml::Kde<TableType>::is_monochromatic() const {
   return is_monochromatic_;
 }
 
-void ml::Kde::Compute(
-  const ml::KdeArguments &arguments_in,
+template<typename TableType>
+void ml::Kde<TableType>::Compute(
+  const ml::KdeArguments<TableType> &arguments_in,
   ml::KdeResult< std::vector<double> > *result_out) {
 
   // Instantiate a dual-tree algorithm of the KDE.
-  core::gnp::DualtreeDfs<ml::Kde> dualtree_dfs;
+  core::gnp::DualtreeDfs<ml::Kde<TableType> > dualtree_dfs;
   dualtree_dfs.Init(*this);
 
   // Compute the result.
   dualtree_dfs.Compute(* arguments_in.metric_, result_out);
 }
 
-void ml::Kde::Init(ml::KdeArguments &arguments_in) {
+template<typename TableType>
+void ml::Kde<TableType>::Init(ml::KdeArguments<TableType> &arguments_in) {
 
   reference_table_ = arguments_in.reference_table_;
   if(arguments_in.query_table_ == NULL) {
@@ -52,11 +58,13 @@ void ml::Kde::Init(ml::KdeArguments &arguments_in) {
     arguments_in.kernel_);
 }
 
-void ml::Kde::set_bandwidth(double bandwidth_in) {
+template<typename TableType>
+void ml::Kde<TableType>::set_bandwidth(double bandwidth_in) {
   global_.set_bandwidth(bandwidth_in);
 }
 
-bool ml::Kde::ConstructBoostVariableMap_(
+template<typename TableType>
+bool ml::Kde<TableType>::ConstructBoostVariableMap_(
   const std::vector<std::string> &args,
   boost::program_options::variables_map *vm) {
 
@@ -162,9 +170,10 @@ bool ml::Kde::ConstructBoostVariableMap_(
   return false;
 }
 
-void ml::Kde::ParseArguments(
+template<typename TableType>
+void ml::Kde<TableType>::ParseArguments(
   const std::vector<std::string> &args,
-  ml::KdeArguments *arguments_out) {
+  ml::KdeArguments<TableType> *arguments_out) {
 
   // A L2 metric to index the table to use.
   arguments_out->metric_ = new core::metric_kernels::LMetric<2>();
@@ -185,7 +194,7 @@ void ml::Kde::ParseArguments(
   // Parse the reference set and index the tree.
   std::cout << "Reading in the reference set: " <<
             vm["references_in"].as<std::string>() << "\n";
-  arguments_out->reference_table_ = new core::table::Table();
+  arguments_out->reference_table_ = new TableType();
   arguments_out->reference_table_->Init(vm["references_in"].as<std::string>());
   std::cout << "Finished reading in the reference set.\n";
   std::cout << "Building the reference tree.\n";
@@ -198,7 +207,7 @@ void ml::Kde::ParseArguments(
     std::cout << "Reading in the query set: " <<
               vm["queries_in"].as<std::string>() << "\n";
     arguments_out->query_table_ =
-      arguments_out->query_table_ = new core::table::Table();
+      arguments_out->query_table_ = new TableType();
     arguments_out->query_table_->Init(vm["queries_in"].as<std::string>());
     std::cout << "Finished reading in the query set.\n";
     std::cout << "Building the query tree.\n";
@@ -224,10 +233,11 @@ void ml::Kde::ParseArguments(
   std::cout << "Using the kernel: " << arguments_out->kernel_ << "\n";
 }
 
-void ml::Kde::ParseArguments(
+template<typename TableType>
+void ml::Kde<TableType>::ParseArguments(
   int argc,
   char *argv[],
-  ml::KdeArguments *arguments_out) {
+  ml::KdeArguments<TableType> *arguments_out) {
 
   // Convert C input to C++; skip executable name for Boost.
   std::vector<std::string> args(argv + 1, argv + argc);

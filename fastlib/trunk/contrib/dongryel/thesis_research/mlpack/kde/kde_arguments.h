@@ -1,3 +1,8 @@
+/** @file kde_arguments.h
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
 #ifndef MLPACK_KDE_KDE_ARGUMENTS_H
 #define MLPACK_KDE_KDE_ARGUMENTS_H
 
@@ -5,6 +10,7 @@
 #include "core/metric_kernels/abstract_metric.h"
 
 namespace ml {
+template<typename TableType>
 class KdeArguments {
   public:
 
@@ -12,9 +18,9 @@ class KdeArguments {
 
     int leaf_size_;
 
-    core::table::Table *reference_table_;
+    TableType *reference_table_;
 
-    core::table::Table *query_table_;
+    TableType *query_table_;
 
     double bandwidth_;
 
