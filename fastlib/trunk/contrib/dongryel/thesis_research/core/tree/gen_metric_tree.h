@@ -9,6 +9,7 @@
 #include <vector>
 #include "ball_bound.h"
 #include "general_spacetree.h"
+#include "core/metric_kernels/abstract_metric.h"
 #include "core/table/dense_matrix.h"
 #include "core/table/memory_mapped_file.h"
 
@@ -48,11 +49,18 @@ class GenMetricTree {
     }
 
   public:
-    template<typename TBound>
+
+    static void FindBoundFromMatrix(
+      const core::table::DenseMatrix &matrix,
+      int first, int count, BoundType *bounds) {
+
+
+    }
+
     static void MakeLeafNode(
       const core::metric_kernels::AbstractMetric &metric_in,
       const core::table::DenseMatrix& matrix,
-      int begin, int count, TBound *bounds) {
+      int begin, int count, BoundType *bounds) {
 
       bounds->center().SetZero();
 
@@ -90,6 +98,36 @@ class GenMetricTree {
         metric_in, node->bound().center(), matrix, right->begin(),
         right->count(), &right_max_dist);
       node->bound().set_radius(std::max(left_max_dist, right_max_dist));
+    }
+
+    static void ComputeMemberships(
+      const core::metric_kernels::AbstractMetric &metric_in,
+      const core::table::DenseMatrix &matrix,
+      int first, int end,
+      BoundType &left_bound, BoundType &right_bound,
+      int *left_count, std::deque<bool> *left_membership) {
+
+      for(int left = first; left < end; left++) {
+
+        // Make alias of the current point.
+        core::table::DenseConstPoint point;
+        matrix.MakeColumnVector(left, &point);
+
+        // Compute the distances from the two pivots.
+        double distance_from_left_pivot =
+          metric_in.Distance(point, left_bound.center());
+        double distance_from_right_pivot =
+          metric_in.Distance(point, right_bound.center());
+
+        // We swap if the point is further away from the left pivot.
+        if(distance_from_left_pivot > distance_from_right_pivot) {
+          (*left_membership)[left - first] = false;
+        }
+        else {
+          (*left_membership)[left - first] = true;
+          left_count++;
+        }
+      }
     }
 
     template<typename TreeType>

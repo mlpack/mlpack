@@ -348,6 +348,9 @@ class GeneralBinarySpaceTree {
       int num_nodes_in = 1;
       node->Init(0, matrix.n_cols());
       node->bound().center().Init(matrix.n_rows());
+      TreeSpecType::FindBoundFromMatrix(
+        matrix, 0, matrix.n_cols(), &node->bound());
+
       int current_num_leaf_nodes = 1;
       SplitTree(
         metric_in, matrix, node, leaf_size, max_num_leaf_nodes,
@@ -377,27 +380,10 @@ class GeneralBinarySpaceTree {
       std::deque<bool> left_membership;
       left_membership.resize(count);
 
-      for(int left = first; left < end; left++) {
-
-        // Make alias of the current point.
-        core::table::DenseConstPoint point;
-        matrix.MakeColumnVector(left, &point);
-
-        // Compute the distances from the two pivots.
-        double distance_from_left_pivot =
-          metric_in.Distance(point, left_bound.center());
-        double distance_from_right_pivot =
-          metric_in.Distance(point, right_bound.center());
-
-        // We swap if the point is further away from the left pivot.
-        if(distance_from_left_pivot > distance_from_right_pivot) {
-          left_membership[left - first] = false;
-        }
-        else {
-          left_membership[left - first] = true;
-          left_count++;
-        }
-      }
+      // Compute the required memberships.
+      TreeSpecType::ComputeMemberships(
+        metric_in, matrix, first, end, left_bound, right_bound,
+        &left_count, &left_membership);
 
       int left = first;
       int right = first + count - 1;
