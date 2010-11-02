@@ -407,7 +407,8 @@ class GeneralBinarySpaceTree {
 
         // Swap the left vector with the right vector.
         matrix.swap_cols(left, right);
-        std::swap(left_membership[left - first], left_membership[right - first]);
+        std::swap(
+          left_membership[left - first], left_membership[right - first]);
 
         if(old_from_new) {
           std::swap((*old_from_new)[left], (*old_from_new)[right]);
