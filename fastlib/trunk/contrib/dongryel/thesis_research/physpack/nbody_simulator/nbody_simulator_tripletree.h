@@ -555,7 +555,32 @@ class NbodySimulatorSummary {
       ResultType *query_results,
       const core::table::DenseConstPoint &query_point,
       int qpoint_dfs_index,
-      int query_point_index) {
+      int query_point_index,
+      const core::table::DenseConstPoint *previous_query_point,
+      int *previous_query_point_index) {
+
+      // Sampled result for the current query point.
+      std::pair < core::monte_carlo::MeanVariancePair,
+          core::monte_carlo::MeanVariancePair > &mean_variance_pair =
+            (* delta.mean_variance_pair())[query_point_index];
+
+      // Decide whether to incorporate the previous query point's result.
+      if(previous_query_point_index != NULL) {
+
+        // Distance between the current and the previous queries.
+        double squared_distance = metric.DistanceSq(
+                                    query_point, *previous_query_point);
+
+        std::pair < core::monte_carlo::MeanVariancePair,
+            core::monte_carlo::MeanVariancePair > &previous_mean_variance_pair =
+              (* delta.mean_variance_pair())[*previous_query_point_index];
+
+        // If close, then steal.
+        if(squared_distance <= std::numeric_limits<double>::epsilon()) {
+          mean_variance_pair.first.Copy(previous_mean_variance_pair.first);
+          mean_variance_pair.second.Copy(previous_mean_variance_pair.second);
+        }
+      }
 
       const int num_samples = 30;
 
@@ -571,11 +596,7 @@ class NbodySimulatorSummary {
       triple_distance_sq.ReplaceOnePoint(
         metric, query_point, query_point_index, 0);
 
-      // Generate a random combination that contains the current
-      // query point.
-      std::pair < core::monte_carlo::MeanVariancePair,
-          core::monte_carlo::MeanVariancePair > &mean_variance_pair =
-            (* delta.mean_variance_pair())[query_point_index];
+
 
       // The comparison for pruning.
       double left_hand_side = 0;
