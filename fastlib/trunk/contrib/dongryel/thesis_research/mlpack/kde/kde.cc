@@ -9,15 +9,20 @@
 #include <string>
 #include <armadillo>
 #include "kde_dev.h"
+#include "core/tree/gen_metric_tree.h"
 
 int main(int argc, char *argv[]) {
 
+  // Tree type: hard-coded for a metric tree.
+  typedef core::table::Table <
+  core::tree::GenMetricTree<core::table::DensePoint> > TableType;
+
   // Parse arguments for Kde.
-  ml::KdeArguments kde_arguments;
-  ml::Kde::ParseArguments(argc, argv, &kde_arguments);
+  ml::KdeArguments<TableType> kde_arguments;
+  ml::Kde<TableType>::ParseArguments(argc, argv, &kde_arguments);
 
   // Instantiate a KDE object.
-  ml::Kde kde_instance;
+  ml::Kde<TableType> kde_instance;
   kde_instance.Init(kde_arguments);
 
   // Compute the result.

@@ -14,11 +14,14 @@
 #include "kde_arguments.h"
 
 namespace ml {
+template<typename IncomingTableType>
 class Kde {
   public:
+    typedef IncomingTableType TableType;
+
     typedef ml::KdePostponed PostponedType;
 
-    typedef ml::KdeGlobal GlobalType;
+    typedef ml::KdeGlobal<TableType> GlobalType;
 
     typedef ml::KdeResult< std::vector<double> > ResultType;
 
@@ -27,8 +30,6 @@ class Kde {
     typedef ml::KdeSummary SummaryType;
 
     typedef ml::KdeStatistic StatisticType;
-
-    typedef core::table::Table TableType;
 
   public:
 
@@ -40,12 +41,12 @@ class Kde {
     /**
      * @brief returns a pointer to the query table
      */
-    core::table::Table *query_table();
+    TableType *query_table();
 
     /**
      * @brief returns a pointer to the reference table
      */
-    core::table::Table *reference_table();
+    TableType *reference_table();
 
     /**
      * @brief returns a GlobalType structure that has the normalization statistics
@@ -61,25 +62,25 @@ class Kde {
     /**
      * @brief Initialize a Kde engine with the arguments.
      */
-    void Init(ml::KdeArguments &arguments_in);
+    void Init(ml::KdeArguments<TableType> &arguments_in);
 
     void Compute(
-      const ml::KdeArguments &arguments_in,
+      const ml::KdeArguments<TableType> &arguments_in,
       ResultType *result_out);
 
     static void ParseArguments(
       const std::vector<std::string> &args,
-      ml::KdeArguments *arguments_out);
+      ml::KdeArguments<TableType> *arguments_out);
 
     static void ParseArguments(
       int argc,
       char *argv[],
-      ml::KdeArguments *arguments_out);
+      ml::KdeArguments<TableType> *arguments_out);
 
   private:
 
-    core::table::Table *query_table_;
-    core::table::Table *reference_table_;
+    TableType *query_table_;
+    TableType *reference_table_;
     GlobalType global_;
     bool is_monochromatic_;
 
