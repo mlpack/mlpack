@@ -198,6 +198,17 @@ class Table: public boost::noncopyable {
       return tree_;
     }
 
+    void get_leaf_nodes(
+      TreeType *node, std::vector< TreeType *> *leaf_nodes) {
+      if(node->is_leaf()) {
+        leaf_nodes->push_back(node);
+      }
+      else {
+        get_leaf_nodes(node->left(), leaf_nodes);
+        get_leaf_nodes(node->right(), leaf_nodes);
+      }
+    }
+
     int n_attributes() const {
       return data_.n_rows();
     }
