@@ -62,6 +62,19 @@ void core::gnp::TripletreeDfs<ProblemType>::Compute(
   core::gnp::TripleRangeDistanceSq<TableType> triple_range_distance_sq;
   triple_range_distance_sq.Init(metric, *table_, root_nodes);
 
+  // Monochromatic computation.
+  std::vector< typename TableType::TreeType *> leaf_nodes;
+  table_->get_leaf_nodes(table_->get_tree(), &leaf_nodes);
+  for(unsigned int i = 0; i < leaf_nodes.size(); i++) {
+    std::vector< TreeType *> leaf_node_tuples(3, leaf_nodes[i]);
+    core::gnp::TripleRangeDistanceSq<TableType> range_sq_in;
+    range_sq_in.Init(metric, *table_, leaf_node_tuples);
+    TripletreeBase_(
+      metric, range_sq_in, query_results);
+  }
+  PostProcess_(metric, table_->get_tree(), query_results, false);
+
+
   PreProcess_(table_->get_tree());
   std::vector<double> top_failure_probabilities(
     3, 1.0 - problem_->global().probability());
@@ -166,8 +179,6 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
         third_node_it.Next(&third_point, &third_point_index);
         distance_sq_set.ReplaceOnePoint(
           metric, third_point, third_point_index, 2);
-
-
 
         // Add the contribution due to the triple that has been chosen
         // to each of the query point.
@@ -314,9 +325,11 @@ void core::gnp::TripletreeDfs<ProblemType>::ProbabilisticSummarize_(
   const typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
 
+  // Apply the deterministic prunes.
   Summarize_(
     range_in, probabilistic_node_start_index, delta, query_results);
 
+  // Apply the probabilistic prunes.
   query_results->ApplyProbabilisticDelta(
     global, range_in, failure_probabilities,
     probabilistic_node_start_index, delta);
@@ -333,7 +346,8 @@ void core::gnp::TripletreeDfs<ProblemType>::ProbabilisticSummarize_(
 
 template<typename ProblemType>
 bool core::gnp::TripletreeDfs<ProblemType>::CanSummarize_(
-  const core::gnp::TripleRangeDistanceSq<TableType> &triple_range_distance_sq_in,
+  const core::gnp::TripleRangeDistanceSq<TableType>
+  &triple_range_distance_sq_in,
   const typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results,
   int *failure_index) {
@@ -438,8 +452,15 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
     bool exact_computation = true;
     if(all_leaves) {
 
-      // Call the base case when all three nodes are leaves.
-      TripletreeBase_(metric, triple_range_distance_sq, query_results);
+      if(!(
+            triple_range_distance_sq.node(0) ==
+            triple_range_distance_sq.node(1) &&
+            triple_range_distance_sq.node(1) ==
+            triple_range_distance_sq.node(2))) {
+
+        // Call the base case when all three nodes are leaves.
+        TripletreeBase_(metric, triple_range_distance_sq, query_results);
+      }
     }
     else {
 
