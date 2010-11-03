@@ -147,9 +147,7 @@ class TripleRangeDistanceSq {
       }
 
       // Recompute the number of tuples for each node.
-      if(node_index_in == 0) {
-        ComputeNumTuples_(table_in);
-      }
+      ComputeNumTuples_(table_in);
     }
 
     void ReplaceOneNodeForward(
@@ -175,9 +173,7 @@ class TripleRangeDistanceSq {
       }
 
       // Recompute the number of tuples for each node.
-      if(node_index_in == 2) {
-        ComputeNumTuples_(table_in);
-      }
+      ComputeNumTuples_(table_in);
     }
 
     void Init(
