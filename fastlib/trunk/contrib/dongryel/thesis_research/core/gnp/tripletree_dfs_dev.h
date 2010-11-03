@@ -54,6 +54,9 @@ void core::gnp::TripletreeDfs<ProblemType>::Compute(
   const core::metric_kernels::AbstractMetric &metric,
   typename ProblemType::ResultType *query_results) {
 
+  // Preprocess the tree.
+  PreProcess_(table_->get_tree());
+
   // Allocate space for storing the final results.
   query_results->Init(table_->n_entries());
 
@@ -74,8 +77,6 @@ void core::gnp::TripletreeDfs<ProblemType>::Compute(
   }
   PostProcess_(metric, table_->get_tree(), query_results, false);
 
-
-  PreProcess_(table_->get_tree());
   std::vector<double> top_failure_probabilities(
     3, 1.0 - problem_->global().probability());
   TripletreeCanonical_(
