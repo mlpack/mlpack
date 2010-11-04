@@ -596,9 +596,11 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
       // children.
       current_node_stat->summary_.StartReaccumulate();
       current_node_stat->summary_.Accumulate(
-        current_node_left_stat->summary_, current_node_left_stat->postponed_);
+        problem_->global(), current_node_left_stat->summary_,
+        current_node_left_stat->postponed_);
       current_node_stat->summary_.Accumulate(
-        current_node_right_stat->summary_, current_node_right_stat->postponed_);
+        problem_->global(), current_node_right_stat->summary_,
+        current_node_right_stat->postponed_);
 
     } // end of the non-leaf case.
   } // end of choosing a node in each level.
@@ -722,9 +724,11 @@ void core::gnp::TripletreeDfs<ProblemType>::PostProcess_(
     // Refine the summary statistics.
     qnode_stat->summary_.StartReaccumulate();
     qnode_stat->summary_.Accumulate(
-      qnode_left_stat->summary_, qnode_left_stat->postponed_);
+      problem_->global(), qnode_left_stat->summary_,
+      qnode_left_stat->postponed_);
     qnode_stat->summary_.Accumulate(
-      qnode_right_stat->summary_, qnode_right_stat->postponed_);
+      problem_->global(), qnode_right_stat->summary_,
+      qnode_right_stat->postponed_);
   }
 }
 
