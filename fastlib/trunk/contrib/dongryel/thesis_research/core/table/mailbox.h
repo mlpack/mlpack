@@ -12,8 +12,6 @@
 namespace core {
 namespace table {
 
-class Table;
-
 class PointInbox {
   private:
 
@@ -52,10 +50,6 @@ class PointInbox {
 
     boost::mutex &point_received_mutex() {
       return point_received_mutex_;
-    }
-
-    void Join() {
-      point_inbox_thread_->join();
     }
 
     PointInbox() {
@@ -159,12 +153,13 @@ class PointInbox {
     }
 };
 
+template<typename TableType>
 class PointRequestMessageBox {
   private:
 
     boost::mutex *mpi_mutex_;
 
-    core::table::Table *owned_table_;
+    TableType *owned_table_;
 
     boost::mpi::communicator *comm_;
 
@@ -198,7 +193,7 @@ class PointRequestMessageBox {
     void Init(
       boost::mpi::communicator *comm_in,
       boost::mutex *mpi_mutex_in,
-      core::table::Table *owned_table_in) {
+      TableType *owned_table_in) {
 
       mpi_mutex_ = mpi_mutex_in;
       comm_ = comm_in;

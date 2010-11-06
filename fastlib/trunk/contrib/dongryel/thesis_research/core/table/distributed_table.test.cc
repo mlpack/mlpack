@@ -4,9 +4,12 @@
  */
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/distributed_table.h"
+#include "core/tree/gen_kdtree.h"
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 #include <new>
+
+typedef core::tree::GeneralBinarySpaceTree < core::tree::GenKdTree > TreeType;
 
 bool CheckDistributedTableIntegrity(
   const core::table::DistributedTable &table_in,
@@ -123,17 +126,18 @@ void TestDistributedTable(boost::mpi::communicator &world) {
 }
 */
 
-void PointRequestMessageBoxProcess(
+void TableOutboxProcess(
   boost::mpi::communicator &world,
-  boost::mpi::communicator &table_group) {
+  boost::mpi::communicator &table_outbox_group,
+  boost::mpi::communicator &table_inbox_group) {
 
   core::table::DistributedTable distributed_table;
 
-  printf("Process %d: PointRequestMessageBox.\n", world.rank());
+  printf("Process %d: TableOutbox.\n", world.rank());
 
   // Each process generates its own random data, dumps it to the file,
   // and read its own file back into its own distributed table.
-  core::table::Table random_dataset;
+  core::table::Table<TreeType> random_dataset;
   const int num_dimensions = 5;
   int num_points = core::math::RandInt(10, 20);
   random_dataset.Init(5, num_points);
@@ -150,14 +154,15 @@ void PointRequestMessageBoxProcess(
   std::string file_name = file_name_sstr.str();
   random_dataset.Save(file_name);
 
-  distributed_table.Init(file_name, &world, &table_group);
+  distributed_table.Init(
+    file_name, &world, &table_outbox_group, &table_inbox_group);
   printf(
     "Process %d read in %d points...\n",
     world.rank(), distributed_table.local_n_entries());
 
 }
 
-void PointInboxProcess(boost::mpi::communicator &world) {
+void TableInboxProcess(boost::mpi::communicator &world) {
   printf("Process %d: PointInbox.\n", world.rank());
 
 }
@@ -196,13 +201,16 @@ int main(int argc, char *argv[]) {
   // communicator, make it a table process. Otherwise, make it a
   // computation process. This assignment depends heavily on the
   // round-robin assignment of mpirun.
-  boost::mpi::communicator table_group = world.split(
-      (world.rank() < world.size() / 3) ? 1 : 0);
+  boost::mpi::communicator table_outbox_group = world.split(
+        (world.rank() < world.size() / 3) ? 1 : 0);
+  boost::mpi::communicator table_inbox_group = world.split(
+        (world.rank() >= world.size() / 3 &&
+         world.rank() < world.size() / 3 * 2) ? 1 : 0);
   if(world.rank() < world.size() / 3) {
-    PointRequestMessageBoxProcess(world, table_group);
+    TableOutboxProcess(world, table_outbox_group, table_inbox_group);
   }
   else if(world.rank() < world.size() / 3 * 2) {
-    PointInboxProcess(world);
+    TableInboxProcess(world);
   }
   else {
     ComputationProcess(world);
