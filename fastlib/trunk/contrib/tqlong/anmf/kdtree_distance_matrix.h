@@ -210,10 +210,8 @@ public:
   void randomBound(const Vector& x, int& minIndex, double& minSoFar)
   {
     minIndex = dfsIndex_ + math::RandInt(0, n_points_);
-//    minIndex = dfsIndex_ + math::RandInt(0, n_points_);
-    int oldIndex = oldFromNewIndex(minIndex);
     Vector p_i;
-    points_.MakeColumnVector(oldIndex, &p_i);
+    getPoint(minIndex, p_i);
     double d = sqrt(la::DistanceSqEuclidean(p_i, x));
     double p = pointStats(minIndex).price();
     minSoFar = d+p;
@@ -221,20 +219,16 @@ public:
 
   void randomBound(const Vector& x, int& minIndex, double& minSoFar, int& sndIndex, double& sndMinSoFar)
   {
-    minIndex = dfsIndex_ + math::RandInt(0, n_points_);
-//    minIndex = dfsIndex_ + math::RandInt(0, n_points_);
-    int oldIndex = oldFromNewIndex(minIndex);
+    if (minIndex == -1) minIndex = dfsIndex_ + math::RandInt(0, n_points_);
     Vector p_i;
-    points_.MakeColumnVector(oldIndex, &p_i);
+    getPoint(minIndex, p_i);
     double d = sqrt(la::DistanceSqEuclidean(p_i, x));
     double p = pointStats(minIndex).price();
     minSoFar = d+p;
 
     sndIndex = dfsIndex_ + math::RandInt(0, n_points_);
-//    minIndex = dfsIndex_ + math::RandInt(0, n_points_);
-    oldIndex = oldFromNewIndex(sndIndex);
     Vector p_j;
-    points_.MakeColumnVector(oldIndex, &p_j);
+    getPoint(sndIndex, p_j);
     d = sqrt(la::DistanceSqEuclidean(p_j, x));
     p = pointStats(sndIndex).price();
     sndMinSoFar = d+p;
@@ -286,7 +280,7 @@ public:
   }
 
   /** return the number of pruned calculations */
-  long int nearestNeighbor(const Vector& x, int& minIndex, double& minSoFar, int& sndIndex, double& sndMinSoFar)
+  double nearestNeighbor(const Vector& x, int& minIndex, double& minSoFar, int& sndIndex, double& sndMinSoFar)
   {
     // check bound
     double d = nodeStatistics_.distance(x);
@@ -328,13 +322,14 @@ public:
     }
     else
     {
-      long int left_pruned = children_[0]->nearestNeighbor(x, minIndex, minSoFar, sndIndex, sndMinSoFar);
-      long int right_pruned = children_[1]->nearestNeighbor(x, minIndex, minSoFar, sndIndex, sndMinSoFar);
+      double left_pruned = children_[0]->nearestNeighbor(x, minIndex, minSoFar, sndIndex, sndMinSoFar);
+      double right_pruned = children_[1]->nearestNeighbor(x, minIndex, minSoFar, sndIndex, sndMinSoFar);
       return left_pruned + right_pruned;
     }
   }
 
   /** Basic getters and setters */
+  void getPoint(int index, Vector& p) { points_.MakeColumnVector(oldFromNewIndex(index), &p); }
   int n_points() const { return n_points_; }
   int dfsIndex() const { return dfsIndex_; }
 //  NodeStatistics& stats() { return nodeStatistics_; }
@@ -599,6 +594,8 @@ public:
   }
   int n_rows() const { return reference_.n_cols(); }
   int n_cols() const { return query_.n_cols(); }
+  void row(int i, Vector& v) { reference_.MakeColumnVector(i, &v); }
+  void col(int j, Vector& v) { queryRoot_->getPoint(j, v); }
   double get(int i, int j) const
   {
     Vector r_i, q_j;
@@ -611,15 +608,15 @@ public:
 //    price_[j] = price;
     queryRoot_->setPointStatistics(j, price);
   }
-  long int getBestAndSecondBest(int bidder, int &best_item, double &best_surplus, double &second_surplus)
+  double getBestAndSecondBest(int bidder, int &best_item, double &best_surplus, double &second_surplus)
   {
     Vector r_i;
     reference_.MakeColumnVector(bidder, &r_i);
 
-    int minIndex, sndIndex;
+    int minIndex = best_item, sndIndex;
     double min, sndMin;
     queryRoot_->randomBound(r_i, minIndex, min, sndIndex, sndMin);
-    int pruned = queryRoot_->nearestNeighbor(r_i, minIndex, min, sndIndex, sndMin);
+    double pruned = queryRoot_->nearestNeighbor(r_i, minIndex, min, sndIndex, sndMin);
     best_item = minIndex;
     best_surplus = -min;
     second_surplus = -sndMin;

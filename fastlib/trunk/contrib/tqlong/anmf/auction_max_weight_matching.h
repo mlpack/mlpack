@@ -42,10 +42,10 @@ protected:
   bool                     doneMatching_;
 
   std::vector<double>      price_, bid_;
-  std::vector<int>         winner_;
+  std::vector<int>         winner_, hint_;
 
   /** The forward auction algorithm (i.e. use only price of items as dual) */
-  void forwardAuction();
+  void forwardAuction(double& iter, double& pruned, double& total);
 
   /** Place a bid */
   void placeBid(int bidder, int item, double price);
@@ -78,7 +78,7 @@ template <typename W>
         doneMatching_(false),
         price_(n_cols_, 0),
         bid_(n_cols_, -std::numeric_limits<double>::infinity()),
-        winner_(n_cols_, -1)
+        winner_(n_cols_, -1), hint_(n_rows_, -1)
 {
   epsilon_ = 1.0 / n_rows_;
   if (match)
@@ -88,13 +88,32 @@ template <typename W>
 template <typename W>
     void AuctionMaxWeightMatching<W>::doMatch()
 {
-  forwardAuction();
+  double n_iter = 0, pruned = 0, total = 0;
+  for (epsilon_ = 100.0; epsilon_ > 1.0/n_rows_; epsilon_ *= 0.5)
+  {
+    std::cout << "------- epsilon = " << epsilon_ << " ----------\n";
+    hint_ = leftMatch_;
+    std::fill(leftMatch_.begin(), leftMatch_.end(), -1);
+    std::fill(rightMatch_.begin(), rightMatch_.end(), -1);
+    doneMatching_ = false;
+    forwardAuction(n_iter, pruned, total);
+    std::cout << "------- epsilon = " << epsilon_ << " ----------\n";
+    std::cout << n_iter << " calculations = " << pruned << "/" << total << "\n";
+//    bool doneMatching_ = true;
+//    for (int i = 0; i < n_rows_; i++) if (leftMatchSave[i] != leftMatch_[i])
+//    {
+//      doneMatching_ = false;
+//      break;
+//    }
+//    if (doneMatching_) break;
+  }
 }
 
 template <typename W>
-    void AuctionMaxWeightMatching<W>::forwardAuction()
+    void AuctionMaxWeightMatching<W>::forwardAuction(double& n_iter, double& pruned, double& total)
 {
-  long int pruned = 0, total = 0, iter = 0;
+  long int iter = 0;
+//  int step = weight_.n_rows() >= 10 ? weight_.n_rows()/10 : 1;
   while (!doneMatching_)
   {
     iter++;
@@ -104,7 +123,7 @@ template <typename W>
     // for all unassigned person (rows)
     for (int i = 0; i < n_rows_; i++) if (!matched(leftMatch_[i]))
     {
-      int j;
+      int j = hint_[i];
       double v, w;
 
       pruned += weight_.getBestAndSecondBest(i, j, v, w); // get the best and second best (benefit - price)
@@ -113,6 +132,7 @@ template <typename W>
       placeBid(i, j, price_[j]+v-w+epsilon_);
       doneMatching_ = false;
     }
+    if (doneMatching_) break;
     // for all items, assign them to best bidder
     for (int j = 0; j < n_cols_; j++) if (winner_[j] != -1)
     {
@@ -123,9 +143,10 @@ template <typename W>
       weight_.setPrice(j, price_[j]);
       setMatch(winner_[j], j);
     }
-    if (iter % (weight_.n_rows()/10) == 0) std::cout << iter << " calculations = " << pruned << "/" << total << "\n";
+    if (iter % 1000 == 0) std::cout << iter << " calculations = " << pruned << "/" << total << "\n";
   }
-  if (iter % (weight_.n_rows()/10) == 0) std::cout << iter << " calculations = " << pruned << "/" << total << "\n";
+//  std::cout << iter << " calculations = " << pruned << "/" << total << "\n";
+  n_iter += iter;
 }
 
 template <typename W>
@@ -135,7 +156,10 @@ template <typename W>
   leftMatch_[new_bidder] = item;
   rightMatch_[item] = new_bidder;
   if (matched(old_bidder))
+  {
+    hint_[old_bidder] = leftMatch_[old_bidder];
     unmatch(leftMatch_[old_bidder]);
+  }
 }
 
 template <typename W>
