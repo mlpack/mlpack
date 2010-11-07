@@ -12,26 +12,69 @@ BEGIN_ANMF_NAMESPACE;
 class PointStatistics
 {
   friend class NodeStatistics;
+
+  // main statistics
   double price_;
   int matchTo_;
+
+  // temporaries
+  int first_match_, second_match_;
+  double first_min_, second_min_;
 public:
   PointStatistics(double price = 0.0, int matchTo = -1) : price_(price), matchTo_(matchTo) {}
 //  PointStatistics& operator= (double price) { price_ = price; return *this; }
   double price() const { return price_; }
   int matchTo() const { return matchTo_; }
+  void getResult(int& first_match, double& first_min, int& second_match, double& second_min) const
+  {
+    first_match = first_match_;
+    first_min = first_min_;
+    second_match = second_match_;
+    second_min = second_min_;
+  }
+  void setResult(int first_match, double first_min, int second_match, double second_min)
+  {
+    first_match_ = first_match;
+    first_min_ = first_min;
+    second_match_ = second_match;
+    second_min_ = second_min;
+  }
+
+  double processNewMatch(int match, double val)
+  {
+    if (val < first_min_)
+    {
+      second_min_ = first_min_;
+      second_match_ = first_match_;
+      first_min_ = val;
+      first_match_ = match;
+    }
+    else if (val < second_min_)
+    {
+      second_min_ = val;
+      second_match_ = match;
+    }
+    return second_min_;
+  }
 };
 
 class NodeStatistics
 {
+  // main statistics
   double minPrice_, maxPrice_;
-  bool allMatched_;
+  int n_matches_;
   Vector minBox_, maxBox_;
+
+  // temporaries
+  double min_upper_bound_;
 public:
   double minPrice() const { return minPrice_; }
   double maxPrice() const { return maxPrice_; }
   const Vector& minBox() const { return minBox_; }
   const Vector& maxBox() const { return maxBox_; }
-  bool allMatched() const { return allMatched_; }
+  int n_matches() const { return n_matches_; }
+  double minUpperBound() const { return min_upper_bound_; }
+  void setMinUpperBound(double min_upper_bound) { min_upper_bound_ = min_upper_bound; }
 
   double distance(const Vector& x) const
   {
@@ -44,6 +87,17 @@ public:
     return sqrt(s);
   }
 
+  double distance(const NodeStatistics& stats) const
+  {
+    double s = 0;
+    for (int i = 0; i < minBox_.length(); i++)
+    {
+      if (maxBox_[i] < stats.minBox_[i]) s += math::Sqr(maxBox_[i]-stats.minBox_[i]);
+      else if (stats.maxBox_[i] < minBox_[i]) s += math::Sqr(stats.maxBox_[i]-minBox_[i]);
+    }
+    return s;
+  }
+
   /** Create bounding box for prices and coordinates of leaf node */
   void InitAtLeaf(const Matrix& points, const std::vector<PointStatistics>& pointStatistics,
                   const std::vector<int>& indexMap, int dfsIndex, int n_points)
@@ -54,14 +108,14 @@ public:
     maxBox_.Init(points.n_rows());
     minBox_.SetAll(std::numeric_limits<double>::infinity());
     maxBox_.SetAll(-std::numeric_limits<double>::infinity());
-    allMatched_ = true;
+    n_matches_ = n_points;
     for (int i = 0; i < n_points; i++)
     {
       int index = dfsIndex+i;
       int oldIndex = indexMap[index];
 
       double price = pointStatistics[oldIndex].price_;
-      if (pointStatistics[oldIndex].matchTo_ == -1) allMatched_ = false;
+      if (pointStatistics[oldIndex].matchTo_ == -1) n_matches_--;
       if (price < minPrice_) minPrice_ = price;
       if (price > maxPrice_) maxPrice_ = price;
 
@@ -80,7 +134,7 @@ public:
     maxBox_.Init(leftStats.maxBox_.length());
     minPrice_ = leftStats.minPrice_ < rightStats.minPrice_ ? leftStats.minPrice_ : rightStats.minPrice_;
     maxPrice_ = leftStats.maxPrice_ > rightStats.maxPrice_ ? leftStats.maxPrice_ : rightStats.maxPrice_;
-    allMatched_ = leftStats.allMatched_ && rightStats.allMatched_;
+    n_matches_ = leftStats.n_matches_ + rightStats.n_matches_;
     for (int dim = 0; dim < minBox_.length(); dim++)
     {
       minBox_[dim] = leftStats.minBox_[dim] < rightStats.minBox_[dim] ? leftStats.minBox_[dim] : rightStats.minBox_[dim];
@@ -99,14 +153,14 @@ public:
       maxBox_.SetAll(-std::numeric_limits<double>::infinity());
     }
 
-    allMatched_ = true;
+    n_matches_ = n_points;
     for (int i = 0; i < n_points; i++)
     {
       int index = dfsIndex+i;
       int oldIndex = indexMap[index];
 
       double price = pointStatistics[oldIndex].price_;
-      if (pointStatistics[oldIndex].matchTo_ == -1) allMatched_ = false;
+      if (pointStatistics[oldIndex].matchTo_ == -1) n_matches_--;
       if (price < minPrice_) minPrice_ = price;
       if (price > maxPrice_) maxPrice_ = price;
 
@@ -126,7 +180,7 @@ public:
   {
     minPrice_ = leftStats.minPrice_ < rightStats.minPrice_ ? leftStats.minPrice_ : rightStats.minPrice_;
     maxPrice_ = leftStats.maxPrice_ > rightStats.maxPrice_ ? leftStats.maxPrice_ : rightStats.maxPrice_;
-    allMatched_ = leftStats.allMatched_ && rightStats.allMatched_;
+    n_matches_ = leftStats.n_matches_ + rightStats.n_matches_;
     if (resetBoundingBox)
       for (int dim = 0; dim < minBox_.length(); dim++)
       {
@@ -344,7 +398,80 @@ public:
     }
   }
 
+  /** clear temporaries before dual-tree search */
+  void clearTemporaries()
+  {
+    if (isLeaf())
+    {
+      nodeStatistics_.setMinUpperBound(std::numeric_limits<double>::infinity());
+      for (int i = dfsIndex_; i < dfsIndex_+n_points_; i++)
+        pointStats(i).setResult(-1, std::numeric_limits<double>::infinity(), -1,std::numeric_limits<double>::infinity());
+    }
+    else
+    {
+      child(0)->clearTemporaries();
+      child(1)->clearTemporaries();
+    }
+  }
+
+  /** Find nearest neighbors of R's points in Q */
+  static long int DualTreeNearestNeighbor(KDNode* R, KDNode* Q)
+  {
+    double min_upper_bound_ = R->nodeStatistics_.minUpperBound();
+    if (R->allMatched())
+      return 0;
+    if (R->nodeStatistics_.distance(Q->nodeStatistics_) >= min_upper_bound_)
+      return (long int) (R->n_points()-R->stats().n_matches())* (long int)Q->n_points();
+
+    if (R->isLeaf() and Q->isLeaf())
+      return DualTreeNearestNeighborBase(R, Q);
+    else if (R->isLeaf() and !Q->isLeaf())
+    {
+      long int pruned = DualTreeNearestNeighbor(R, Q->child(0));
+      pruned += DualTreeNearestNeighbor(R, Q->child(1));
+      return pruned;
+    }
+    else if (!R->isLeaf() and Q->isLeaf())
+    {
+      long int pruned = DualTreeNearestNeighbor(R->child(0), Q);
+      pruned += DualTreeNearestNeighbor(R->child(1), Q);
+      return pruned;
+    }
+    else
+    {
+      long int pruned = DualTreeNearestNeighbor(R->child(0), Q->child(0));
+      pruned += DualTreeNearestNeighbor(R->child(1), Q->child(0));
+      pruned += DualTreeNearestNeighbor(R->child(0), Q->child(1));
+      pruned += DualTreeNearestNeighbor(R->child(1), Q->child(1));
+      return pruned;
+    }
+  }
+
+  static long int DualTreeNearestNeighborBase(KDNode* R, KDNode* Q)
+  {
+    DEBUG_ASSERT(R->isLeaf() && Q->isLeaf());
+
+    double min_upper_bound = -std::numeric_limits<double>::infinity();
+    for (int i = R->dfsIndex_; i < R->dfsIndex_+R->n_points_; i++) if (R->pointStats(i).matchTo() == -1)
+    {
+      Vector r_i;
+      R->getPoint(i, r_i);
+      for (int j = Q->dfsIndex_; j < Q->dfsIndex_+Q->n_points_; j++)
+      {
+        Vector q_j;
+        Q->getPoint(j, q_j);
+        double bound = R->pointStats(i).processNewMatch(j, sqrt(la::DistanceSqEuclidean(r_i, q_j))+Q->pointStats(j).price());
+        if (min_upper_bound < bound) min_upper_bound = bound;
+      }
+    }
+
+    R->setMinUpperBound(min_upper_bound);
+
+    return 0;
+  }
+
   /** Basic getters and setters */
+  void getPoint(int index, Vector& p) { points_.MakeColumnVector(oldFromNewIndex(index), &p); }
   int n_points() const { return n_points_; }
   int dfsIndex() const { return dfsIndex_; }
 //  NodeStatistics& stats() { return nodeStatistics_; }
@@ -357,7 +484,7 @@ public:
   int oldFromNewIndex(int index) const { return oldFromNewIndex_->at(index); }
   KDNode* leaf(int index) const { return nodeFromOldIndex_->at(oldFromNewIndex(index)); }
   bool isLeaf() const { return children_.empty(); }
-  bool allMatched() const { return nodeStatistics_.allMatched(); }
+  bool allMatched() const { return nodeStatistics_.n_matches() == n_points_; }
 protected:
 
   /** Constructor for a child node */
@@ -594,6 +721,21 @@ protected:
     n_right = 0;
     return std::numeric_limits<double>::quiet_NaN();
   }
+
+  void setMinUpperBound(double min_upper_bound)
+  {
+    if (isLeaf())
+      nodeStatistics_.setMinUpperBound(min_upper_bound);
+    else
+    {
+      double left = child(0)->nodeStatistics_.minUpperBound();
+      double right = child(1)->nodeStatistics_.minUpperBound();
+      nodeStatistics_.setMinUpperBound(left > right ? left : right);
+    }
+    if (parent_)
+      parent_->setMinUpperBound(min_upper_bound);
+  }
+
 };
 
 class KDTreeDistanceMatrix
@@ -611,6 +753,8 @@ public:
   }
   int n_rows() const { return reference_.n_cols(); }
   int n_cols() const { return query_.n_cols(); }
+  void row(int i, Vector& v) { referenceRoot_->getPoint(i, v); }
+  void col(int j, Vector& v) { queryRoot_->getPoint(j, v); }
   double get(int i, int j) const
   {
     Vector r_i, q_j;
@@ -650,10 +794,19 @@ public:
 
   long int getAllBestAndSecondBest(std::vector<int>& best_item, std::vector<double>& best_surplus, std::vector<double>& second_surplus)
   {
-    int pruned = 0;
-    for (int bidder = 0; bidder < n_rows(); bidder++) if (referenceRoot_->pointStats(bidder).matchTo() == -1)
+//    int pruned = 0;
+//    for (int bidder = 0; bidder < n_rows(); bidder++) if (referenceRoot_->pointStats(bidder).matchTo() == -1)
+//    {
+//      pruned += getBestAndSecondBest(bidder, best_item[bidder], best_surplus[bidder], second_surplus[bidder]);
+//    }
+    referenceRoot_->clearTemporaries();
+    long int pruned = KDNode::DualTreeNearestNeighbor(referenceRoot_, queryRoot_);
+    for (int i = 0; i < n_rows(); i++) if (referenceRoot_->pointStats(i).matchTo() == -1)
     {
-      pruned += getBestAndSecondBest(bidder, best_item[bidder], best_surplus[bidder], second_surplus[bidder]);
+      int tmp;
+      referenceRoot_->pointStats(i).getResult(best_item[i], best_surplus[i], tmp, second_surplus[i]);
+      best_surplus[i] = -best_surplus[i];
+      second_surplus[i] = -second_surplus[i];
     }
     return pruned;
   }

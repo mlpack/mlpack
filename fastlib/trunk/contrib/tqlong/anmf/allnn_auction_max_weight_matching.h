@@ -93,6 +93,7 @@ template <typename W>
     void AuctionMaxWeightMatching<W>::forwardAuction()
 {
   long int pruned = 0, total = 0, iter = 0;
+  int step = weight_.n_rows() >= 10 ? weight_.n_rows()/10 : 1;
   while (!doneMatching_)
   {
     iter++;
@@ -119,9 +120,9 @@ template <typename W>
       weight_.setPrice(j, PointStatistics(price_[j], winner_[j]));
       setMatch(winner_[j], j);
     }
-    if (iter % (weight_.n_rows()/10) == 0) std::cout << iter << " calculations = " << pruned << "/" << total << "\n";
+    if (iter % step == 0) std::cout << iter << " calculations = " << pruned << "/" << total << "\n";
   }
-  if (iter % (weight_.n_rows()/10) == 0) std::cout << iter << " calculations = " << pruned << "/" << total << "\n";
+  if (iter % step == 0) std::cout << iter << " calculations = " << pruned << "/" << total << "\n";
 }
 
 template <typename W>

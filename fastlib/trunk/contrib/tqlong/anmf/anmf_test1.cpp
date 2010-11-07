@@ -3,6 +3,8 @@
 #include <boost/program_options.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "anmf.h"
+#include "allnn_kdtree_distance_matrix.h"
+#include "allnn_auction_max_weight_matching.h"
 
 //namespace po = boost::program_options;
 using namespace std;
@@ -95,6 +97,14 @@ int main(int argc, char** argv)
 
     DistanceMatrix M(ref, query);
     anmf::AuctionMaxWeightMatching<DistanceMatrix> matcher(M, true);
+    for (int i = 0; i < M.n_rows(); i++)
+    {
+      Vector r_i, q_j;
+      int j = matcher.leftMatch(i);
+      M.row(i, r_i);
+      M.col(j, q_j);
+      cout << "ref " << anmf::toString(r_i) << " query " << anmf::toString(q_j) << "\n";
+    }
 //    for (int refIndex = 0; refIndex < ref.n_cols(); refIndex++)
 //      cout << "reference point " << refIndex << " --> query point " << matcher.leftMatch(refIndex) << endl;
   }
