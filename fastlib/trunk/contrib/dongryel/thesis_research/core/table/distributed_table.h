@@ -65,7 +65,7 @@ class DistributedTable: public boost::noncopyable {
 
       // Put a barrier so that all processes owning a part of a
       // distributed table are ready to destroy.
-      global_comm_->barrier();
+      table_outbox_group_comm_->barrier();
 
       // Delete the list of number of entries for each table in the
       // distributed table.

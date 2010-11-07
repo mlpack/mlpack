@@ -222,8 +222,5 @@ int main(int argc, char *argv[]) {
   // Test the distributed tree building.
   //TestDistributedTree(world);
 
-  // Delete the memory allocator.
-  delete core::table::global_m_file_;
-
   return 0;
 }
