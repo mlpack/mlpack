@@ -163,7 +163,7 @@ void TableOutboxProcess(
 }
 
 void TableInboxProcess(boost::mpi::communicator &world) {
-  printf("Process %d: PointInbox.\n", world.rank());
+  printf("Process %d: TableInbox.\n", world.rank());
 
 }
 
