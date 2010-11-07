@@ -12,313 +12,89 @@
 namespace core {
 namespace table {
 
-class PointInbox {
+template<typename TableType>
+class TableInbox {
   private:
+    boost::mpi::communicator *global_comm_;
 
-    boost::mutex *mpi_mutex_;
+    boost::mpi::communicator *table_outbox_group_comm_;
 
-    boost::mutex point_received_mutex_;
+    boost::mpi::communicator *table_inbox_group_comm_;
 
-    boost::condition_variable point_received_cond_;
+    bool received_point_is_valid_;
 
-    boost::mpi::communicator *comm_;
+    double *received_point_;
 
-    std::vector<double> point_;
-
-    bool point_handle_is_valid_;
-
-    bool do_test_;
-
-    boost::mpi::request point_handle_;
-
-    boost::shared_ptr<boost::thread> point_inbox_thread_;
+    TableType *owned_table_;
 
   public:
 
-    void invalidate_point() {
-      point_handle_is_valid_ = false;
-      do_test_ = true;
+    void Init(
+      TableType *owned_table_in,
+      boost::mpi::communicator *global_comm_in,
+      boost::mpi::communicator *table_outbox_group_comm_in,
+      boost::mpi::communicator *table_inbox_group_comm_in) {
+
+      global_comm_ = global_comm_in;
+      table_outbox_group_comm_ = table_outbox_group_comm_in;
+      table_inbox_group_comm_ = table_inbox_group_comm_in;
+
+      received_pint_is_valid_ = false;
+      received_point_ = new double[owned_table_in->n_attributes()];
+      owned_table_ = owned_table_in;
     }
 
-    const std::vector<double> &point() const {
-      return point_;
-    }
-
-    void wait(boost::unique_lock<boost::mutex> &lock_in) {
-      point_received_cond_.wait(lock_in);
-    }
-
-    boost::mutex &point_received_mutex() {
-      return point_received_mutex_;
-    }
-
-    PointInbox() {
-      mpi_mutex_ = NULL;
-      comm_ = NULL;
-      point_handle_is_valid_ = false;
-      do_test_ = true;
-    }
-
-    void Init(boost::mpi::communicator *comm_in, boost::mutex *mpi_mutex_in) {
-
-      // Set the MPI mutex.
-      mpi_mutex_ = mpi_mutex_in;
-
-      // Set the communicator.
-      comm_ = comm_in;
-
-      // Start the point inbox thread.
-      point_inbox_thread_ = boost::shared_ptr<boost::thread>(
-                              new boost::thread(
-                                boost::bind(
-                                  &core::table::PointInbox::server,
-                                  this)));
-    }
-
-    bool has_outstanding_point_messages() {
-      int flag;
-      MPI_Status status;
-      boost::unique_lock<boost::mutex> lock_in(* mpi_mutex_);
-      MPI_Iprobe(
-        MPI_ANY_SOURCE,
-        core::table::DistributedTableMessage::RECEIVE_POINT,
-        comm_->operator MPI_Comm(), &flag, &status);
-      return flag;
-    }
-
-    bool termination_signal_arrived() {
-      int flag;
-      MPI_Status status;
-      boost::unique_lock<boost::mutex> lock_in(* mpi_mutex_);
-      MPI_Iprobe(
-        MPI_ANY_SOURCE,
-        core::table::DistributedTableMessage::TERMINATE_POINT_INBOX,
-        comm_->operator MPI_Comm(), &flag, &status);
-      return flag;
-    }
-
-    bool time_to_quit() {
-      return point_handle_is_valid_ == false &&
-             (! has_outstanding_point_messages()) &&
-             termination_signal_arrived();
-    }
-
-    bool point_received() {
-      return point_handle_is_valid_ && point_handle_.test();
-    }
-
-    void server() {
+    void Run() {
 
       do {
 
-        // Probe the message queue for the point request, and do an
-        // asynchronous receive, if we can.
-        if(point_handle_is_valid_ == false &&
-            this->has_outstanding_point_messages()) {
-
-          // Set the valid flag on and start receiving the point.
-          printf("Starting to receive a point.\n");
-          point_handle_is_valid_ = true;
-
-          boost::unique_lock<boost::mutex> lock_in(* mpi_mutex_);
-          point_handle_ =
-            comm_->irecv(
+        // Probe the message queue for the point request, and do a
+        // receive.
+        if(received_point_is_valid_ == false &&
+            table_outbox_group_comm_->iprobe(
               boost::mpi::any_source,
-              core::table::DistributedTableMessage::RECEIVE_POINT,
-              point_);
+              core::table::DistributedTableMessage::RECEIVE_POINT)) {
+
+          table_outbox_group_comm_->recv(
+            boost::mpi::any_source,
+            core::table::DistributedTableMessage::RECEIVE_POINT,
+            received_point_,
+            owned_table_->n_attributes());
         }
 
-        // Check whether the request is done.
-        if(do_test_ && this->point_received()) {
-
-          // Wake up the thread waiting on the request. The woken up
-          // thread turns off the validity flag after grabbing whch
-          // process wants a point.
-          do_test_ = false;
-          point_received_cond_.notify_one();
-        }
       }
       while(this->time_to_quit() == false);     // end of the server loop.
 
-      {
-        int dummy;
-        MPI_Status status;
-        boost::unique_lock<boost::mutex> lock_in(* mpi_mutex_);
-        MPI_Recv(
-          &dummy, 1, MPI_INT, MPI_ANY_SOURCE,
-          core::table::DistributedTableMessage::TERMINATE_POINT_INBOX,
-          comm_->operator MPI_Comm(), &status);
-      }
-      printf("Point inbox for Process %d is quitting.\n", comm_->rank());
+      printf("Table inbox for Process %d is quitting.\n", comm_->rank());
     }
 };
 
 template<typename TableType>
-class PointRequestMessageBox {
+class TableOutbox {
   private:
 
-    boost::mutex *mpi_mutex_;
+    boost::mpi::communicator *global_comm_;
+
+    boost::mpi::communicator *table_outbox_group_comm_;
+
+    boost::mpi::communicator *table_inbox_group_comm_;
 
     TableType *owned_table_;
 
-    boost::mpi::communicator *comm_;
-
-    core::table::PointRequestMessage point_request_message_;
-
-    bool point_request_message_is_valid_;
-
-    boost::mpi::request point_request_message_handle_;
-
-    bool point_request_message_sent_is_valid_;
-
-    boost::mpi::request point_request_message_sent_handle_;
-
-    std::vector<double> outgoing_point_;
-
-    boost::shared_ptr<boost::thread> point_request_message_box_thread_;
-
   public:
 
-    void Join() {
-      point_request_message_box_thread_->join();
-    }
-
-    void export_point_request_message(
-      int *source_rank_out, int *point_id_out) const {
-
-      *source_rank_out = point_request_message_.source_rank();
-      *point_id_out = point_request_message_.point_id();
-    }
-
-    void Init(
-      boost::mpi::communicator *comm_in,
-      boost::mutex *mpi_mutex_in,
-      TableType *owned_table_in) {
-
-      mpi_mutex_ = mpi_mutex_in;
-      comm_ = comm_in;
-      owned_table_ = owned_table_in;
-
-      // Start the point request message inbox thread.
-      point_request_message_box_thread_ =
-        boost::shared_ptr<boost::thread>(
-          new boost::thread(
-            boost::bind(
-              &core::table::PointRequestMessageBox::server, this)));
-    }
-
-    PointRequestMessageBox() {
-      mpi_mutex_ = NULL;
-      comm_ = NULL;
-      point_request_message_is_valid_ = false;
-      point_request_message_sent_is_valid_ = false;
-    }
-
-    bool termination_signal_arrived() {
-      int flag;
-      MPI_Status status;
-      boost::unique_lock<boost::mutex> lock_in(* mpi_mutex_);
-      MPI_Iprobe(
-        MPI_ANY_SOURCE,
-        core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_BOX,
-        comm_->operator MPI_Comm(), &flag, &status);
-      return flag;
-    }
-
-    bool time_to_quit() {
-
-      // It is time to quit when there are no valid messages to
-      // handle, and the terminate signal is here.
-      return point_request_message_is_valid_ == false &&
-             point_request_message_sent_is_valid_ == false &&
-             (! has_outstanding_point_request_messages()) &&
-             termination_signal_arrived();
-    }
-
-    bool point_request_message_received() {
-      return point_request_message_is_valid_ &&
-             point_request_message_handle_.test();
-    }
-
-    bool point_request_message_sent() {
-      return point_request_message_sent_is_valid_ &&
-             point_request_message_sent_handle_.test();
-    }
-
-    bool has_outstanding_point_request_messages() {
-      int flag;
-      MPI_Status status;
-      boost::unique_lock<boost::mutex> lock_in(*mpi_mutex_);
-      MPI_Iprobe(
-        MPI_ANY_SOURCE,
-        core::table::DistributedTableMessage::REQUEST_POINT,
-        comm_->operator MPI_Comm(), &flag, &status);
-      return flag;
-    }
-
-    void server() {
+    void Run() {
 
       do {
 
-        // Probe the message queue for the point request, and do an
-        // asynchronous receive, if we can.
-        if(point_request_message_is_valid_ == false &&
-            this->has_outstanding_point_request_messages()) {
+        // Probe the message queue for the point request, and receive
+        // the message to find out whom to send stuffs to.
 
-          // Set the valid flag on and start receiving the message.
-          point_request_message_is_valid_ = true;
-
-          boost::unique_lock<boost::mutex> lock_in(* mpi_mutex_);
-          point_request_message_handle_ =
-            comm_->irecv(
-              boost::mpi::any_source,
-              core::table::DistributedTableMessage::REQUEST_POINT,
-              point_request_message_);
-          printf("Process %d is receiving a request message.\n",
-                 comm_->rank());
-        }
-
-        // Check whether the incoming receive is done. If so, send out
-        // the requested point asynchronously given that the outgoing
-        // buffer is available.
-        if(point_request_message_sent_is_valid_ == false &&
-            this->point_request_message_received()) {
-          int source_rank = point_request_message_.source_rank();
-          int point_id = point_request_message_.point_id();
-
-          owned_table_->get(point_id, &outgoing_point_);
-
-          point_request_message_sent_is_valid_ = true;
-
-          boost::unique_lock<boost::mutex> lock_in(* mpi_mutex_);
-          point_request_message_sent_handle_ =
-            comm_->isend(
-              source_rank,
-              core::table::DistributedTableMessage::RECEIVE_POINT,
-              outgoing_point_);
-
-          point_request_message_is_valid_ = false;
-        }
-        if(this->point_request_message_sent()) {
-
-          // Turn off the boolean flag so that the buffer can be
-          // reused.
-          point_request_message_sent_is_valid_ = false;
-        }
 
       }
       while(this->time_to_quit() == false) ;
-      // end of the infinite server loop.
 
-      {
-        int dummy;
-        MPI_Status status;
-        boost::unique_lock<boost::mutex> lock_in(* mpi_mutex_);
-        MPI_Recv(
-          &dummy, 1, MPI_INT, MPI_ANY_SOURCE,
-          core::table::DistributedTableMessage::TERMINATE_POINT_REQUEST_MESSAGE_BOX,
-          comm_->operator MPI_Comm(), &status);
-      }
+      // end of the infinite server loop.
       printf("Point request message inbox for Process %d is quitting.\n",
              comm_->rank());
     }
