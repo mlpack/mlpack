@@ -25,12 +25,27 @@ class TableInbox {
 
     double *received_point_;
 
-    TableType *owned_table_;
+    int n_attributes_;
 
   public:
 
+    TableInbox() {
+      global_comm_ = NULL;
+      table_outbox_group_comm_ = NULL;
+      table_inbox_group_comm_ = NULL;
+      received_point_is_valid_ = false;
+      received_point_ = NULL;
+      n_attributes_ = -1;
+    }
+
+    ~TableInbox() {
+      if(received_point_ != NULL) {
+        delete[] received_point_;
+      }
+    }
+
     void Init(
-      TableType *owned_table_in,
+      int num_dimensions_in,
       boost::mpi::communicator *global_comm_in,
       boost::mpi::communicator *table_outbox_group_comm_in,
       boost::mpi::communicator *table_inbox_group_comm_in) {
@@ -39,9 +54,9 @@ class TableInbox {
       table_outbox_group_comm_ = table_outbox_group_comm_in;
       table_inbox_group_comm_ = table_inbox_group_comm_in;
 
-      received_pint_is_valid_ = false;
-      received_point_ = new double[owned_table_in->n_attributes()];
-      owned_table_ = owned_table_in;
+      received_point_is_valid_ = false;
+      received_point_ = new double[num_dimensions_in];
+      n_attributes_ = num_dimensions_in;
     }
 
     void Run() {
@@ -59,13 +74,14 @@ class TableInbox {
             boost::mpi::any_source,
             core::table::DistributedTableMessage::RECEIVE_POINT,
             received_point_,
-            owned_table_->n_attributes());
+            n_attributes_);
         }
 
       }
-      while(this->time_to_quit() == false);     // end of the server loop.
+      while(true);     // end of the server loop.
 
-      printf("Table inbox for Process %d is quitting.\n", comm_->rank());
+      printf("Table inbox for Process %d is quitting.\n",
+             table_inbox_group_comm_->rank());
     }
 };
 
@@ -83,6 +99,17 @@ class TableOutbox {
 
   public:
 
+    void Init(
+      TableType *owned_table_in,
+      boost::mpi::communicator *global_comm_in,
+      boost::mpi::communicator *table_outbox_group_comm_in,
+      boost::mpi::communicator *table_inbox_group_comm_in) {
+
+      global_comm_ = global_comm_in;
+      table_outbox_group_comm_ = table_outbox_group_comm_in;
+      table_inbox_group_comm_ = table_inbox_group_comm_in;
+    }
+
     void Run() {
 
       do {
@@ -92,11 +119,11 @@ class TableOutbox {
 
 
       }
-      while(this->time_to_quit() == false) ;
+      while(true) ;
 
       // end of the infinite server loop.
-      printf("Point request message inbox for Process %d is quitting.\n",
-             comm_->rank());
+      printf("Table outbox for Process %d is quitting.\n",
+             table_outbox_group_comm_->rank());
     }
 };
 };
