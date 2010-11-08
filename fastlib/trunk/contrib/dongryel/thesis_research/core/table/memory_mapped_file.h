@@ -38,10 +38,23 @@ class MemoryMappedFile {
                boost::interprocess::interprocess_mutex > (
                  new_mutex_name.str().c_str())();
       std::cout << "World rank " << world_rank <<
-                " opened the memory mapped file: " << new_file_name.str() << "\n";
+                " opened the memory mapped file: " <<
+                new_file_name.str() << "\n";
       std::cout << "World rank " << world_rank <<
                 " opened the mutex on the memory mapped file: "
                 << new_mutex_name.str() << "\n";
+    }
+
+    template<typename MyType>
+    std::pair<MyType *, std::size_t> UniqueFind() {
+      boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex> lock(*mutex_);
+      return m_file_.find<MyType>(boost::interprocess::unique_instance);
+    }
+
+    template<typename MyType>
+    MyType *UniqueConstruct() {
+      boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex> lock(*mutex_);
+      return m_file_.construct<MyType>(boost::interprocess::unique_instance)();
     }
 
     void *Allocate(size_t size) {
