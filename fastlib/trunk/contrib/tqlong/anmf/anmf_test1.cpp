@@ -3,8 +3,7 @@
 #include <boost/program_options.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "anmf.h"
-#include "allnn_kdtree_distance_matrix.h"
-#include "allnn_auction_max_weight_matching.h"
+#include "kdnode.h"
 
 //namespace po = boost::program_options;
 using namespace std;
@@ -13,7 +12,7 @@ using namespace boost::posix_time;
 
 boost::program_options::options_description desc("Allowed options");
 boost::program_options::variables_map vm;
-
+ 
 void process_options(int argc, char** argv)
 {
   desc.add_options()
@@ -31,7 +30,7 @@ void process_options(int argc, char** argv)
   if (vm.count("help"))
   {
     cout << desc << endl;
-    exit(1);
+    exit(1); 
   }
 }
 
@@ -65,60 +64,10 @@ int main(int argc, char** argv)
   }
 
   ptime time_start(second_clock::local_time());
-
-//  if (vm.count("query"))
-//  {
-//    Matrix query;
-//    data::Load(vm["query"].as<string>().c_str(), &query);
-
-//    anmf::KDNode qRoot(query, std::vector<double>(query.n_cols(), 0.0));
-
-//    int i;
-//    double min = std::numeric_limits<double>::infinity();
-//    Vector x;
-//    x.Init(2);
-//    x[0] = 1.3; x[1] = 1.3;
-//    qRoot.randomBound(x, i, min);
-//    qRoot.nearestNeighbor(x, i, min);
-
-////    cout << qRoot.toString() << "\n";
-
-//    cout << "min = " << min << " i = " << i << "\n";
-//  }
-
-  if (vm.count("reference") && vm.count("query"))
-  {
-    typedef anmf::KDTreeDistanceMatrix DistanceMatrix;
-//    typedef anmf::NaiveDistanceMatrix DistanceMatrix;
-
-    Matrix ref, query;
-    data::Load(vm["reference"].as<string>().c_str(), &ref);
-    data::Load(vm["query"].as<string>().c_str(), &query);
-
-    DistanceMatrix M(ref, query);
-    anmf::AuctionMaxWeightMatching<DistanceMatrix> matcher(M, true);
-    for (int i = 0; i < M.n_rows(); i++)
-    {
-      Vector r_i, q_j;
-      int j = matcher.leftMatch(i);
-      M.row(i, r_i);
-      M.col(j, q_j);
-      cout << "ref " << anmf::toString(r_i) << " query " << anmf::toString(q_j) << "\n";
-    }
-//    for (int refIndex = 0; refIndex < ref.n_cols(); refIndex++)
-//      cout << "reference point " << refIndex << " --> query point " << matcher.leftMatch(refIndex) << endl;
-  }
-
-//  if (vm.count("matrix"))
-//  {
-//    Matrix M;
-//    data::Load(vm["matrix"].as<string>().c_str(), &M);
-
-//    anmf::AuctionMaxWeightMatching<Matrix> matcher(M, true, true);
-//    for (int bidder = 0; bidder < M.n_rows(); bidder++)
-//      cout << "bidder " << bidder << " --> " << matcher.leftMatch(bidder) << endl;
-//    return 0;
-//  }
+ 
+  Matrix query;
+  data::Load(vm["query"].as<string>().c_str(), &query);
+  anmf::KDNode *qRoot = new anmf::KDNode(query);
 
   ptime time_end(second_clock::local_time());
   time_duration duration(time_end - time_start);
