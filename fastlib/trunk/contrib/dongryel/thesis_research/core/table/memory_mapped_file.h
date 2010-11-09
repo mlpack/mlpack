@@ -66,6 +66,12 @@ class MemoryMappedFile {
       boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex> lock(*mutex_);
       m_file_.deallocate(p);
     }
+
+    template<typename MyType>
+    void DestroyPtr(MyType *ptr) {
+      boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex> lock(*mutex_);
+      m_file_.destroy_ptr(ptr);
+    }
 };
 };
 };
