@@ -8,7 +8,6 @@
 #include "core/tree/gen_kdtree.h"
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
-#include <new>
 
 typedef core::tree::GeneralBinarySpaceTree < core::tree::GenKdTree > TreeType;
 typedef core::table::Table<TreeType> TableType;
@@ -56,7 +55,9 @@ core::table::DistributedTable *InitDistributedTable(
     std::string file_name = file_name_sstr.str();
     random_dataset.Save(file_name);
 
-    distributed_table = core::table::global_m_file_->UniqueConstruct <
+    std::stringstream distributed_table_name_sstr;
+    distributed_table_name_sstr << "distributed_table_" << world.rank() << "\n";
+    distributed_table = core::table::global_m_file_->Construct <
                         core::table::DistributedTable > ();
     distributed_table->Init(
       file_name, &world, &table_outbox_group, &table_inbox_group);
@@ -138,21 +139,23 @@ int main(int argc, char *argv[]) {
   // Wait until the distributed table is in synch.
   world.barrier();
 
-  std::pair< core::table::DistributedTable *, std::size_t >
-  distributed_table_pair =
-    core::table::global_m_file_->UniqueFind<core::table::DistributedTable>();
-  distributed_table = distributed_table_pair.first;
+  //std::pair< core::table::DistributedTable *, std::size_t >
+  //distributed_table_pair =
+  //  core::table::global_m_file_->UniqueFind<core::table::DistributedTable>();
+  //distributed_table = distributed_table_pair.first;
 
+  //printf("Hey: %d %d\n", world.rank(), distributed_table_pair.second);
   world.barrier();
 
   // The main computation loop.
   if(world.rank() < world.size() / 3) {
+    printf("Hey: Checking: %d\n", distributed_table->n_attributes());
     TableOutboxProcess(world, table_outbox_group, table_inbox_group);
   }
   else if(world.rank() < world.size() / 3 * 2) {
-    TableInboxProcess(
-      distributed_table->n_attributes(), world, table_outbox_group,
-      table_inbox_group);
+    //TableInboxProcess(
+    // distributed_table->n_attributes(), world, table_outbox_group,
+    // table_inbox_group);
   }
   else {
     ComputationProcess(world);

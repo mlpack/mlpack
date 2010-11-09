@@ -57,6 +57,13 @@ class MemoryMappedFile {
       return m_file_.construct<MyType>(boost::interprocess::unique_instance)();
     }
 
+    template<typename MyType>
+    MyType *Construct() {
+      boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex> lock(*mutex_);
+      return m_file_.construct<MyType>(
+               boost::interprocess::anonymous_instance)();
+    }
+
     void *Allocate(size_t size) {
       boost::interprocess::scoped_lock<boost::interprocess::interprocess_mutex> lock(*mutex_);
       return m_file_.allocate(size);

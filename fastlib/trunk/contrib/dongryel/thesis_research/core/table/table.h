@@ -17,6 +17,9 @@
 
 namespace core {
 namespace table {
+
+extern MemoryMappedFile *global_m_file_;
+
 template<typename TreeSpecType>
 class Table: public boost::noncopyable {
 
@@ -124,7 +127,7 @@ class Table: public boost::noncopyable {
     };
 
   private:
-    core::table::DenseMatrix data_;
+    core::table::DenseMatrix *data_;
 
     std::vector<int> old_from_new_;
 
@@ -135,7 +138,7 @@ class Table: public boost::noncopyable {
   public:
 
     core::table::DenseMatrix &data() {
-      return data_;
+      return *data_;
     }
 
     bool IsIndexed() const {
@@ -147,6 +150,15 @@ class Table: public boost::noncopyable {
     }
 
     ~Table() {
+      if(data_) {
+        if(core::table::global_m_file_) {
+          core::table::global_m_file_->DestroyPtr(data_);
+        }
+        else {
+          delete data_;
+        }
+        data_ = NULL;
+      }
       if(tree_) {
         if(core::table::global_m_file_) {
           RecursiveDeallocate_(tree_);
@@ -210,30 +222,39 @@ class Table: public boost::noncopyable {
     }
 
     int n_attributes() const {
-      return data_.n_rows();
+      return data_->n_rows();
     }
 
     int n_entries() const {
-      return data_.n_cols();
+      return data_->n_cols();
     }
 
     void Init(
       int num_dimensions_in, int num_points_in) {
-      data_.Init(num_dimensions_in, num_points_in);
+
+      data_ = (core::table::global_m_file_) ?
+              core::table::global_m_file_->Construct <
+              core::table::DenseMatrix > () :
+              new core::table::DenseMatrix();
+      data_->Init(num_dimensions_in, num_points_in);
     }
 
     void Init(const std::string &file_name) {
-      core::DatasetReader::ParseDataset(file_name, &data_);
+      data_ = (core::table::global_m_file_) ?
+              core::table::global_m_file_->Construct <
+              core::table::DenseMatrix > () :
+              new core::table::DenseMatrix();
+      core::DatasetReader::ParseDataset(file_name, data_);
     }
 
     void Save(const std::string &file_name) const {
       FILE *foutput = fopen(file_name.c_str(), "w+");
-      for(int j = 0; j < data_.n_cols(); j++) {
+      for(int j = 0; j < data_->n_cols(); j++) {
         core::table::DenseConstPoint point;
         this->direct_get_(j, &point);
-        for(int i = 0; i < data_.n_rows(); i++) {
+        for(int i = 0; i < data_->n_rows(); i++) {
           fprintf(foutput, "%g", point[i]);
-          if(i < data_.n_rows() - 1) {
+          if(i < data_->n_rows() - 1) {
             fprintf(foutput, ",");
           }
         }
@@ -246,7 +267,7 @@ class Table: public boost::noncopyable {
       const core::metric_kernels::AbstractMetric &metric_in, int leaf_size) {
       int num_nodes;
       tree_ = TreeType::MakeTree(
-                metric_in, data_, leaf_size, std::numeric_limits<int>::max(),
+                metric_in, *data_, leaf_size, std::numeric_limits<int>::max(),
                 &old_from_new_, &new_from_old_, &num_nodes);
     }
 
@@ -282,49 +303,49 @@ class Table: public boost::noncopyable {
 
     void direct_get_(int point_id, double *entry) const {
       if(this->IsIndexed() == false) {
-        data_.CopyColumnVector(point_id, entry);
+        data_->CopyColumnVector(point_id, entry);
       }
       else {
-        data_.CopyColumnVector(new_from_old_[point_id], entry);
+        data_->CopyColumnVector(new_from_old_[point_id], entry);
       }
     }
 
     void direct_get_(int point_id, std::vector<double> *entry) const {
       if(this->IsIndexed() == false) {
-        data_.MakeColumnVector(point_id, entry);
+        data_->MakeColumnVector(point_id, entry);
       }
       else {
-        data_.MakeColumnVector(new_from_old_[point_id], entry);
+        data_->MakeColumnVector(new_from_old_[point_id], entry);
       }
     }
 
     void direct_get_(
       int point_id, core::table::DenseConstPoint *entry) const {
       if(this->IsIndexed() == false) {
-        data_.MakeColumnVector(point_id, entry);
+        data_->MakeColumnVector(point_id, entry);
       }
       else {
-        data_.MakeColumnVector(new_from_old_[point_id], entry);
+        data_->MakeColumnVector(new_from_old_[point_id], entry);
       }
     }
 
     void direct_get_(int point_id, core::table::DensePoint *entry) {
       if(this->IsIndexed() == false) {
-        data_.MakeColumnVector(point_id, entry);
+        data_->MakeColumnVector(point_id, entry);
       }
       else {
-        data_.MakeColumnVector(new_from_old_[point_id], entry);
+        data_->MakeColumnVector(new_from_old_[point_id], entry);
       }
     }
 
     void iterator_get_(
       int reordered_position, core::table::DenseConstPoint *entry) const {
-      data_.MakeColumnVector(reordered_position, entry);
+      data_->MakeColumnVector(reordered_position, entry);
     }
 
     void iterator_get_(
       int reordered_position, core::table::DensePoint *entry) {
-      data_.MakeColumnVector(reordered_position, entry);
+      data_->MakeColumnVector(reordered_position, entry);
     }
 
     int iterator_get_id_(int reordered_position) const {
