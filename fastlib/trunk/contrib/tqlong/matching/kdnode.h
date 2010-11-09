@@ -36,6 +36,7 @@ protected:
   KDNode(KDNode* parent);
 public:
   KDNode(const Matrix& points);
+  virtual ~KDNode();
   void split(int minSize = 10);
 
   int n_points() const;
@@ -70,6 +71,7 @@ protected:
   KDNodeStats(KDNodeStats* parent);
 public:
   KDNodeStats(const Matrix& points);
+  virtual ~KDNodeStats();
 
   const point_stats_type& pointStats(int index) const { return pointStats_.at(oldIndex(index)); }
   const node_stats_type& nodeStats() const { return nodeStats_; }
@@ -100,6 +102,12 @@ template <typename P, typename N>
     KDNodeStats<P,N>::KDNodeStats(KDNodeStats *parent)
       : KDNode(parent), pointStats_(parent->pointStats_), changed_(true)
 {
+}
+
+template <typename P, typename N>
+    KDNodeStats<P,N>::~KDNodeStats()
+{
+  if (isRoot()) delete &pointStats_;
 }
 
 template <typename P, typename N>

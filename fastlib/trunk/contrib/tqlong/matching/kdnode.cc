@@ -22,6 +22,19 @@ KDNode::KDNode(KDNode *parent)
   parent->children_.push_back(this);
 }
 
+KDNode::~KDNode()
+{
+  if (isRoot())
+  {
+    delete &oldIndex_;
+    delete &pointToLeaf_;
+  }
+  BOOST_FOREACH(KDNode* child, children_)
+  {
+    delete child;
+  }
+}
+
 int KDNode::oldIndex(int index) const
 {
   if (index < 0 || index >= n_points_) return -1; // error
