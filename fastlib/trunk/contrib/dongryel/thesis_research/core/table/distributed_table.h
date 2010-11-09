@@ -21,6 +21,9 @@
 
 namespace core {
 namespace table {
+
+extern MemoryMappedFile *global_m_file_;
+
 class DistributedTable: public boost::noncopyable {
 
   public:
@@ -70,13 +73,23 @@ class DistributedTable: public boost::noncopyable {
       // Delete the list of number of entries for each table in the
       // distributed table.
       if(local_n_entries_ != NULL) {
-        delete local_n_entries_;
+        if(core::table::global_m_file_) {
+          core::table::global_m_file_->Deallocate(local_n_entries_);
+        }
+        else {
+          delete[] local_n_entries_;
+        }
         local_n_entries_ = NULL;
       }
 
       // Delete the table.
       if(owned_table_ != NULL) {
-        delete owned_table_;
+        if(core::table::global_m_file_) {
+          core::table::global_m_file_->DestroyPtr(owned_table_);
+        }
+        else {
+          delete owned_table_;
+        }
         owned_table_ = NULL;
       }
 
@@ -141,13 +154,18 @@ class DistributedTable: public boost::noncopyable {
       global_comm_ = global_communicator_in;
       table_outbox_group_comm_ = table_outbox_group_communicator_in;
       table_inbox_group_comm_ = table_inbox_group_communicator_in;
-      owned_table_ = new TableType();
+      owned_table_ = (core::table::global_m_file_) ?
+                     core::table::global_m_file_->UniqueConstruct<TableType>() :
+                     new TableType();
       owned_table_->Init(file_name);
 
       // Allocate the vector for storing the number of entries for all
       // the tables in the world, and do an all-gather operation to
       // find out all the sizes.
-      local_n_entries_ = new int[ table_outbox_group_comm_->size()];
+      local_n_entries_ = (core::table::global_m_file_) ?
+                         (int *) global_m_file_->Allocate(
+                           table_outbox_group_comm_->size() * sizeof(int)) :
+                         new int[ table_outbox_group_comm_->size()];
       boost::mpi::all_gather(
         *table_outbox_group_comm_, owned_table_->n_entries(), local_n_entries_);
     }
