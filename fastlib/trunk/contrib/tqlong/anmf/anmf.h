@@ -6,7 +6,6 @@
  *    + etc.
  */
 
-#include <fastlib/fastlib.h>
 #include <string>
 
 #ifndef TQLONG_ANMF_H
@@ -20,16 +19,6 @@
 #endif
 
 BEGIN_ANMF_NAMESPACE;
-
-/** Integer Projected Fixed Point graph matching
- *  Solving max_x x'Mx s.t Ax = 1, x \in {0,1}^{n^2}
- *  Input:  x is a vectorized matrix, x_ia = 1 iff feature i is mapped to feature a
- *          M is a similarity measure matrix, M_{ia; jb} is the score if edge (i,j) is
- *            mapped to edge (a,b)
- *          A is the one-to-one constraint on x
- *  Output: sol[i*n+a] == 1 iff feature i is mapped to feature a
- */
-void ipfpGraphMatching(fx_module* module, const Matrix& M, Vector& solution);
 
 std::string toString(const Vector& v);
 

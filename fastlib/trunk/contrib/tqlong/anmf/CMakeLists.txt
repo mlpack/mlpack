@@ -1,9 +1,10 @@
 set(SOURCES
   anmf
 #  max_weight_matching
-  auction_max_weight_matching
-  naive_distance_matrix
-  kdtree_distance_matrix
+#  auction_max_weight_matching
+#  naive_distance_matrix
+#  kdtree_distance_matrix
+  kdnode
 )
 
 # add directory name to sources
@@ -16,7 +17,7 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 add_executable(anmf_test
    EXCLUDE_FROM_ALL
-   anmf_test2.cpp
+   anmf_test1.cpp
 )
 add_dependencies(anmf_test
    mlpack_contrib
