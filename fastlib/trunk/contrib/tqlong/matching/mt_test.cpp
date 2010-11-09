@@ -6,6 +6,7 @@
 #include <boost/foreach.hpp>
 #include "matching.h"
 #include "kdnode.h"
+#include "single_tree.h"
 
 //namespace po = boost::program_options;
 using namespace std;
@@ -148,18 +149,28 @@ template <>
   return s.str();
 }
 
-MATCHING_NAMESPACE_END;
+template <>
+    double SingleTree<Vector, KDNodeStats<PointStats, NodeStats> >::distance(const point_type &q, node_type &ref, int index)
+{
+  Vector r;
+  ref.getPoint(index, r);
+  return sqrt(la::DistanceSqEuclidean(q, r))+ref.pointStats(index);
+}
 
-class A {
-public:
-  A() { print(); }
-  virtual void print() { printf("old\n");}
-  void a() { printf("test-->"); print(); }
-  void b() { a(); }
-};
-template <class T> class B : public A {
-public: virtual void print() { printf("new\n"); }
-};
+template <>
+    double SingleTree<Vector, KDNodeStats<PointStats, NodeStats> >::distance(const point_type &q, node_type &ref)
+{
+  const NodeStats& stats = ref.nodeStats();
+  double s = 0;
+  for (int dim = 0; dim < ref.n_dim(); dim++)
+  {
+    if (q[dim] < stats.minBox_[dim]) s += math::Sqr(q[dim] - stats.minBox_[dim]);
+    else if (q[dim] > stats.maxBox_[dim]) s += math::Sqr(q[dim] - stats.maxBox_[dim]);
+  }
+  return sqrt(s)+stats.minPrice_;
+}
+
+MATCHING_NAMESPACE_END;
 
 int main(int argc, char** argv)
 {
@@ -172,17 +183,36 @@ int main(int argc, char** argv)
 
   ptime time_start(second_clock::local_time());
  
-  Matrix query;
+  Matrix reference, query;
+  data::Load(vm["reference"].as<string>().c_str(), &reference);
   data::Load(vm["query"].as<string>().c_str(), &query);
+
   typedef match::KDNodeStats<match::PointStats, match::NodeStats> Node;
-  Node *qRoot = new Node(query);
-  qRoot->split();
-  for (int i = 0; i < qRoot->n_points(); i++)
-    qRoot->setPointStats(i, 0);
+  Node *rRoot = new Node(reference);
+  rRoot->split();
+  for (int i = 0; i < rRoot->n_points(); i++)
+    rRoot->setPointStats(i, 0);
   cout << "Done set stats\n";
-  qRoot->visit(true);
+  rRoot->visit(true);
   cout << "Done visit\n";
-  cout << qRoot->toString() << "\n";
+  cout << rRoot->toString() << "\n";
+
+  typedef match::SingleTree<Vector, Node> SingleTree;
+  SingleTree algo;
+
+  for (int i = 0; i < query.n_cols(); i++)
+  {
+    int minIndex = -1; double minDistance = std::numeric_limits<double>::infinity();
+    Vector q, r;
+    query.MakeColumnVector(i, &q);
+    double pruned = algo.nearestNeighbor(q, *rRoot, minIndex, minDistance);
+    rRoot->getPoint(minIndex, r);
+    cout << "q = " << match::toString(q) << " --> r = " << match::toString(r)
+         << " index = " << minIndex << " dist = " << minDistance
+         << " pruned = " << pruned << "\n";
+  }
+
+  delete rRoot;
 
   ptime time_end(second_clock::local_time());
   time_duration duration(time_end - time_start);
