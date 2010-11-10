@@ -14,10 +14,15 @@ typedef core::table::Table<TreeType> TableType;
 
 bool CheckDistributedTableIntegrity(
   const core::table::DistributedTable &table_in,
-  const boost::mpi::communicator &world) {
+  const boost::mpi::communicator &world,
+  const boost::mpi::communicator &table_outbox_group,
+  const boost::mpi::communicator &table_inbox_group) {
   for(int i = 0; i < world.size(); i++) {
-    printf("Process %d thinks Process %d owns %d points.\n",
-           world.rank(), i, table_in.local_n_entries(i));
+    printf(
+      "Process %d thinks Process %d owns %d points of dimensionality %d.\n",
+      world.rank(), i, table_in.local_n_entries(
+        table_outbox_group, i % (world.size() / 3)),
+      table_in.n_attributes());
   }
   return true;
 }
@@ -137,23 +142,25 @@ int main(int argc, char *argv[]) {
   // Wait until the memory allocator is in synch.
   world.barrier();
 
+  // Read the distributed table once per each compute node, and put a
+  // barrier.
   if(world.rank() < world.size() / 3) {
     distributed_table =
       InitDistributedTable(world, table_outbox_group, table_inbox_group);
   }
-
-  // Wait until the distributed table is in synch.
   world.barrier();
 
+  // Attach the distributed table for all the processes and put a
+  // barrier.
   std::pair< core::table::DistributedTable *, std::size_t >
   distributed_table_pair =
     core::table::global_m_file_->UniqueFind<core::table::DistributedTable>();
   distributed_table = distributed_table_pair.first;
-
   world.barrier();
 
-  printf("Hey from %d: Checking: %d\n", world.rank(),
-         distributed_table->n_attributes());
+  // Check the integrity of the distributed table.
+  CheckDistributedTableIntegrity(
+    *distributed_table, world, table_outbox_group, table_inbox_group);
 
   // The main computation loop.
   if(world.rank() < world.size() / 3) {
