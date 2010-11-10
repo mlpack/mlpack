@@ -12,6 +12,7 @@
 #include "boost/mpi/collectives.hpp"
 #include "boost/thread.hpp"
 #include "boost/serialization/string.hpp"
+#include <boost/interprocess/offset_ptr.hpp>
 #include <boost/random/variate_generator.hpp>
 #include "core/table/table.h"
 #include "core/table/distributed_table_message.h"
@@ -34,19 +35,19 @@ class DistributedTable: public boost::noncopyable {
 
   private:
 
-    TableType *owned_table_;
+    boost::interprocess::offset_ptr<TableType> owned_table_;
 
-    int *local_n_entries_;
+    boost::interprocess::offset_ptr<int> local_n_entries_;
 
-    TreeType *global_tree_;
+    boost::interprocess::offset_ptr<TreeType> global_tree_;
 
     std::vector< TreeType * > global_tree_leaf_nodes_;
 
-    boost::mpi::communicator *global_comm_;
+    boost::interprocess::offset_ptr<boost::mpi::communicator> global_comm_;
 
-    boost::mpi::communicator *table_outbox_group_comm_;
+    boost::interprocess::offset_ptr<boost::mpi::communicator> table_outbox_group_comm_;
 
-    boost::mpi::communicator *table_inbox_group_comm_;
+    boost::interprocess::offset_ptr<boost::mpi::communicator> table_inbox_group_comm_;
 
   public:
 
@@ -59,9 +60,12 @@ class DistributedTable: public boost::noncopyable {
     }
 
     DistributedTable() {
-      global_comm_ = NULL;
       owned_table_ = NULL;
+      local_n_entries_ = NULL;
       global_tree_ = NULL;
+      global_comm_ = NULL;
+      table_outbox_group_comm_ = NULL;
+      table_inbox_group_comm_ = NULL;
     }
 
     ~DistributedTable() {
@@ -74,10 +78,10 @@ class DistributedTable: public boost::noncopyable {
       // distributed table.
       if(local_n_entries_ != NULL) {
         if(core::table::global_m_file_) {
-          core::table::global_m_file_->Deallocate(local_n_entries_);
+          core::table::global_m_file_->Deallocate(local_n_entries_.get());
         }
         else {
-          delete[] local_n_entries_;
+          delete[] local_n_entries_.get();
         }
         local_n_entries_ = NULL;
       }
@@ -85,18 +89,27 @@ class DistributedTable: public boost::noncopyable {
       // Delete the table.
       if(owned_table_ != NULL) {
         if(core::table::global_m_file_) {
-          core::table::global_m_file_->DestroyPtr(owned_table_);
+          core::table::global_m_file_->DestroyPtr(owned_table_.get());
         }
         else {
-          delete owned_table_;
+          delete owned_table_.get();
         }
         owned_table_ = NULL;
       }
 
       // Delete the tree.
       if(global_tree_ != NULL) {
-        delete global_tree_;
+        delete global_tree_.get();
         global_tree_ = NULL;
+      }
+
+      // Destroy the communicators.
+      if(core::table::global_m_file_) {
+        core::table::global_m_file_->m_file().deallocate(global_comm_.get());
+        core::table::global_m_file_->m_file().deallocate(
+          table_outbox_group_comm_.get());
+        core::table::global_m_file_->m_file().deallocate(
+          table_inbox_group_comm_.get());
       }
     }
 
@@ -129,7 +142,7 @@ class DistributedTable: public boost::noncopyable {
     }
 
     TreeType *get_tree() {
-      return global_tree_;
+      return global_tree_.get();
     }
 
     int n_attributes() const {
@@ -146,14 +159,37 @@ class DistributedTable: public boost::noncopyable {
 
     void Init(
       const std::string & file_name,
-      boost::mpi::communicator *global_communicator_in,
-      boost::mpi::communicator *table_outbox_group_communicator_in,
-      boost::mpi::communicator *table_inbox_group_communicator_in) {
+      boost::mpi::communicator &global_communicator_in,
+      boost::mpi::communicator &table_outbox_group_communicator_in,
+      boost::mpi::communicator &table_inbox_group_communicator_in) {
 
       // Set the communicators and read the table.
-      global_comm_ = global_communicator_in;
-      table_outbox_group_comm_ = table_outbox_group_communicator_in;
-      table_inbox_group_comm_ = table_inbox_group_communicator_in;
+      global_comm_ =
+        (core::table::global_m_file_) ?
+        core::table::global_m_file_->m_file().construct <
+        boost::mpi::communicator > (
+          boost::interprocess::anonymous_instance)(
+          global_communicator_in, boost::mpi::comm_attach) :
+        new boost::mpi::communicator(
+          global_communicator_in, boost::mpi::comm_attach);
+      table_outbox_group_comm_ =
+        (core::table::global_m_file_) ?
+        core::table::global_m_file_->m_file().construct <
+        boost::mpi::communicator > (
+          boost::interprocess::anonymous_instance)(
+          table_outbox_group_communicator_in, boost::mpi::comm_attach) :
+        new boost::mpi::communicator(
+          table_outbox_group_communicator_in, boost::mpi::comm_attach);
+      table_inbox_group_comm_ =
+        (core::table::global_m_file_) ?
+        core::table::global_m_file_->m_file().construct <
+        boost::mpi::communicator > (
+          boost::interprocess::anonymous_instance)(
+          table_inbox_group_communicator_in, boost::mpi::comm_attach) :
+        new boost::mpi::communicator(
+          table_inbox_group_communicator_in, boost::mpi::comm_attach);
+
+      // Initialize the table owned by the distributed table.
       owned_table_ = (core::table::global_m_file_) ?
                      core::table::global_m_file_->UniqueConstruct<TableType>() :
                      new TableType();
@@ -163,11 +199,12 @@ class DistributedTable: public boost::noncopyable {
       // the tables in the world, and do an all-gather operation to
       // find out all the sizes.
       local_n_entries_ = (core::table::global_m_file_) ?
-                         (int *) global_m_file_->Allocate(
-                           table_outbox_group_comm_->size() * sizeof(int)) :
+                         (int *) global_m_file_->ConstructArray<int>(
+                           table_outbox_group_comm_->size()) :
                          new int[ table_outbox_group_comm_->size()];
       boost::mpi::all_gather(
-        *table_outbox_group_comm_, owned_table_->n_entries(), local_n_entries_);
+        *table_outbox_group_comm_, owned_table_->n_entries(),
+        local_n_entries_.get());
     }
 
     void Save(const std::string & file_name) const {

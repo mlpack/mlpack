@@ -57,10 +57,10 @@ core::table::DistributedTable *InitDistributedTable(
 
     std::stringstream distributed_table_name_sstr;
     distributed_table_name_sstr << "distributed_table_" << world.rank() << "\n";
-    distributed_table = core::table::global_m_file_->Construct <
+    distributed_table = core::table::global_m_file_->UniqueConstruct <
                         core::table::DistributedTable > ();
     distributed_table->Init(
-      file_name, &world, &table_outbox_group, &table_inbox_group);
+      file_name, world, table_outbox_group, table_inbox_group);
     printf(
       "Process %d read in %d points...\n",
       world.rank(), distributed_table->local_n_entries());
@@ -139,23 +139,24 @@ int main(int argc, char *argv[]) {
   // Wait until the distributed table is in synch.
   world.barrier();
 
-  //std::pair< core::table::DistributedTable *, std::size_t >
-  //distributed_table_pair =
-  //  core::table::global_m_file_->UniqueFind<core::table::DistributedTable>();
-  //distributed_table = distributed_table_pair.first;
+  std::pair< core::table::DistributedTable *, std::size_t >
+  distributed_table_pair =
+    core::table::global_m_file_->UniqueFind<core::table::DistributedTable>();
+  distributed_table = distributed_table_pair.first;
 
-  //printf("Hey: %d %d\n", world.rank(), distributed_table_pair.second);
   world.barrier();
+
+  printf("Hey from %d: Checking: %d\n", world.rank(),
+         distributed_table->n_attributes());
 
   // The main computation loop.
   if(world.rank() < world.size() / 3) {
-    printf("Hey: Checking: %d\n", distributed_table->n_attributes());
     TableOutboxProcess(world, table_outbox_group, table_inbox_group);
   }
   else if(world.rank() < world.size() / 3 * 2) {
-    //TableInboxProcess(
-    // distributed_table->n_attributes(), world, table_outbox_group,
-    // table_inbox_group);
+    TableInboxProcess(
+      distributed_table->n_attributes(), world, table_outbox_group,
+      table_inbox_group);
   }
   else {
     ComputationProcess(world);
