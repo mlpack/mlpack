@@ -7,6 +7,7 @@
 #include "matching.h"
 #include "kdnode.h"
 #include "single_tree.h"
+#include "auction_matching.h"
 
 //namespace po = boost::program_options;
 using namespace std;
@@ -170,19 +171,103 @@ template <>
   return sqrt(s)+stats.minPrice_;
 }
 
-MATCHING_NAMESPACE_END;
-
-int main(int argc, char** argv)
+class Mat : public Matrix
 {
-  process_options(argc, argv);
-
-  if (vm["random"].as<int>() > 0)
+  std::vector<double> price_;
+public:
+  void Init(int rows, int cols)
   {
-    generateRandom(vm["reference"].as<string>().c_str(), vm["query"].as<string>().c_str());
+    Matrix::Init(rows, cols);
+    price_ = std::vector<double>(n_cols(), 0);
+  }
+  void setPrice(int col, double price) { price_[col] = price; }
+  double price(int col) const { return price_.at(col); }
+  double getP(int row, int col) const { return get(row, col)-price(col); }
+  double kBest(int row, std::vector<int> &cols)
+  {
+    int k = (int) cols.size();
+    std::vector<double> maxs(k, -std::numeric_limits<double>::infinity());
+    for (int col = 0; col < n_cols(); col++)
+    {
+      double val = getP(row, col);
+      for (int o = 0; o < k; o++) if (val > maxs[o])
+      {
+        for (int k_r = k-1; k_r > o; k_r--)
+        {
+          maxs[k_r] = maxs[k_r-1];
+          cols[k_r] = cols[k_r-1];
+        }
+        maxs[o] = val;
+        cols[o] = col;
+        break;
+      }
+    }
+    return 0;
+  }
+  void refresh() {}
+};
+
+class KDMat
+{
+protected:
+  typedef KDNodeStats<PointStats, NodeStats>    node_type;
+  typedef match::SingleTree<Vector, node_type>  SingleTree;
+  const Matrix    &ref_, &query_;
+  node_type*      rRoot;
+public:
+  KDMat(const Matrix& reference, const Matrix& query)
+    : ref_(reference), query_(query)
+  {
+//    cout << "start 0\n";
+    rRoot = new node_type(ref_);
+    rRoot->split();
+    for (int col = 0; col < n_cols(); col++)
+      rRoot->setPointStats(col, 0);
+    rRoot->visit(true);
+//    cout << "done 0\n";
+  }
+  ~KDMat()
+  {
+    delete rRoot;
   }
 
-  ptime time_start(second_clock::local_time());
- 
+  int n_rows() const { return query_.n_cols(); }
+  int n_cols() const { return rRoot->n_points(); }
+  double get(int row, int col) const
+  {
+    Vector q_vec;
+    queryVec(row, q_vec);
+    return -SingleTree::distance(q_vec, *rRoot, col);
+  }
+  void setPrice(int col, PointStats price) { rRoot->setPointStats(col, price); }
+  PointStats price(int col) const { return rRoot->pointStats(col); }
+  double kBest(int row, std::vector<int> &cols)
+  {
+//    cout << "start 1\n";
+    std::vector<double> mins((int) cols.size(), std::numeric_limits<double>::infinity());
+    Vector q_vec;
+    queryVec(row, q_vec);
+    return SingleTree::kNearestNeighbor(q_vec, *rRoot, cols, mins);
+//    cout << "done 1\n";
+  }
+  void refresh()
+  {
+    rRoot->visit(false);
+  }
+  void queryVec(int row, Vector& q) const
+  {
+    query_.MakeColumnVector(row, &q);
+  }
+  void refVec(int col, Vector& r) const
+  {
+    rRoot->getPoint(col, r);
+  }
+};
+
+MATCHING_NAMESPACE_END;
+
+void testKDNodeStats()
+{
   Matrix reference, query;
   data::Load(vm["reference"].as<string>().c_str(), &reference);
   data::Load(vm["query"].as<string>().c_str(), &query);
@@ -195,24 +280,86 @@ int main(int argc, char** argv)
   cout << "Done set stats\n";
   rRoot->visit(true);
   cout << "Done visit\n";
-  cout << rRoot->toString() << "\n";
+//  cout << rRoot->toString() << "\n";
 
   typedef match::SingleTree<Vector, Node> SingleTree;
-  SingleTree algo;
 
+  double total = 0;
   for (int i = 0; i < query.n_cols(); i++)
   {
-    int minIndex = -1; double minDistance = std::numeric_limits<double>::infinity();
-    Vector q, r;
+    Vector q;
     query.MakeColumnVector(i, &q);
-    double pruned = algo.nearestNeighbor(q, *rRoot, minIndex, minDistance);
-    rRoot->getPoint(minIndex, r);
-    cout << "q = " << match::toString(q) << " --> r = " << match::toString(r)
-         << " index = " << minIndex << " dist = " << minDistance
-         << " pruned = " << pruned << "\n";
+//    int minIndex = -1; double minDistance = std::numeric_limits<double>::infinity();
+//    pruned += algo.nearestNeighbor(q, *rRoot, minIndex, minDistance);
+//    Vector r;
+//    rRoot->getPoint(minIndex, r);
+//        cout << "q = " << match::toString(q) << " --> r = " << match::toString(r)
+//             << " index = " << minIndex << " dist = " << minDistance
+//             << " pruned = " << pruned << "\n";
+    std::vector<int> minIndexes(2, -1); std::vector<double> minDistances(2, std::numeric_limits<double>::infinity());
+    double pruned = SingleTree::kNearestNeighbor(q, *rRoot, minIndexes, minDistances);
+//    cout << "q = " << match::toString(q) << " --> " << " index = " << minIndexes[0] << " " << minIndexes[1]
+//        << " dist = " << minDistances[0] << " " << minDistances[1]
+//        << " pruned = " << pruned << "\n";
+    total += pruned;
   }
 
+  cout << "Done finding nearest neighbors pruned = " << total << "\n";
+
   delete rRoot;
+}
+
+void testMatching()
+{
+  int n = vm["random"].as<int>();
+  match::Mat W;
+  W.Init(n,n);
+  for (int i = 0; i < W.n_rows(); i++)
+    for (int j = 0; j < W.n_cols(); j++)
+      W.ref(i, j) = math::RandInt(0, 10);
+
+//  cout << match::toString(W) << "\n";
+
+  match::AuctionMatching<match::Mat> auction(W);
+  auction.doMatch();
+
+  for (int i = 0; i < auction.n_left(); i++)
+    cout << i << " --> " << auction.left(i) << " w = " << W.get(i, auction.left(i)) << "\n";
+}
+
+void testMatching1()
+{
+  Matrix reference, query;
+  data::Load(vm["reference"].as<string>().c_str(), &reference);
+  data::Load(vm["query"].as<string>().c_str(), &query);
+
+  typedef match::KDNodeStats<match::PointStats, match::NodeStats> Node;
+  typedef match::KDMat Mat;
+
+//  cout << match::toString(W) << "\n";
+
+  Mat W(reference, query);
+  match::AuctionMatching<Mat> auction(W);
+  auction.doMatch();
+
+//  for (int i = 0; i < auction.n_left(); i++)
+//    cout << i << " --> " << auction.left(i) << " w = " << W.get(i, auction.left(i)) << "\n";
+}
+
+int main(int argc, char** argv)
+{
+  process_options(argc, argv);
+
+  if (vm["random"].as<int>() > 0)
+  {
+    generateRandom(vm["reference"].as<string>().c_str(), vm["query"].as<string>().c_str());
+  }
+
+  ptime time_start(second_clock::local_time());
+
+//  testKDNodeStats();
+//  testMatching();
+  testMatching1();
 
   ptime time_end(second_clock::local_time());
   time_duration duration(time_end - time_start);

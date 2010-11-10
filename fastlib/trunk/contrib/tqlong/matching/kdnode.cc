@@ -41,6 +41,12 @@ int KDNode::oldIndex(int index) const
   return oldIndex_.at(index+dfsIndex_);
 }
 
+int KDNode::index(int index) const
+{
+  if (index < 0 || index >= n_points_) return -1; // error
+  return index+dfsIndex_;
+}
+
 void KDNode::getPoint(int index, Vector &point) const
 {
   points_.MakeColumnVector(oldIndex(index), &point);

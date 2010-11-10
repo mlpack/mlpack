@@ -16,6 +16,8 @@ MATCHING_NAMESPACE_BEGIN;
 
 std::string toString (const Vector& v);
 
+std::string toString (const Matrix& v);
+
 MATCHING_NAMESPACE_END;
 
 #endif // MATCHING_H
