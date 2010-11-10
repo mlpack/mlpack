@@ -4,8 +4,10 @@ set(SOURCES
 #  auction_max_weight_matching
 #  naive_distance_matrix
 #  kdtree_distance_matrix
-  matching.cc
-  kdnode.cc
+  matching
+  kdnode
+  single_tree
+  auction_matching
 )
 
 # add directory name to sources
