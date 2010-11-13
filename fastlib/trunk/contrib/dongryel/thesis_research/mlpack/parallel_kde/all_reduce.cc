@@ -51,41 +51,17 @@ int Allreduce(void *sbuf, void *rbuf, int count, MPI_Op op, MPI_Comm comm) {
   // MPI_Allreduce (sbuf, rbuf, count, MPI_DOUBLE, op, comm);
 
   // The rank of the process.
+  const int maxsize = 256 * 256;
+  double tmp_buffer[maxsize];
   int rank;
+  int i;
   int num_processes;
   MPI_Comm_size(comm, &num_processes);
   MPI_Comm_rank(comm, &rank);
 
-  // Initialize the starting value for the sub-reduction result for
-  // the data owned by the current process.
-  double *sbuf_double = (double *) sbuf;
-  double sub_reduction;
-  if(op == MPI_SUM) {
-    sub_reduction = 0;
-  }
-  else if(op == MPI_MAX) {
-    sub_reduction = -DBL_MAX;
-  }
-  else if(op == MPI_MIN) {
-    sub_reduction = DBL_MAX;
-  }
-  else {
-    return MPI_ERR_OP;
-  }
-
-  // Reduce over the data held by the current process.
-  if(count > 0) {
-    sub_reduction = sbuf_double[0];
-    int i;
-
-    // Pair up for efficiency.
-    for(i = 1; i < count - 1; i += 2) {
-      double pair_reduction = ApplyOp(op, sbuf_double[i], sbuf_double[i + 1]);
-      sub_reduction = ApplyOp(op, sub_reduction, pair_reduction);
-    }
-    if(count % 2 == 0) {
-      sub_reduction = ApplyOp(op, sub_reduction, sbuf_double[count - 1]);
-    }
+  // Initialize the result.
+  for(i = 0; i < count; i++) {
+    ((double *)rbuf)[i] = ((double *) sbuf)[i];
   }
 
   // Do the first half of the prefix scan operation so that the last
@@ -94,25 +70,26 @@ int Allreduce(void *sbuf, void *rbuf, int count, MPI_Op op, MPI_Comm comm) {
   // This step is necessary to take care of the case when the number
   // of proceses is not exactly a power of two.
   int rounded_down_num_processes = RoundDownToNearestPowerofTwo(num_processes);
-  int i;
   int stride = num_processes - rounded_down_num_processes;
   if(rank >= rounded_down_num_processes && rank < num_processes) {
 
     // Each extra process sends to its partner.
-    MPI_Send(&sub_reduction, 1, MPI_DOUBLE, rank - stride, rank, comm);
+    MPI_Send(rbuf, count, MPI_DOUBLE, rank - stride, rank, comm);
   }
   if(rank >= rounded_down_num_processes - stride &&
       rank < num_processes - stride) {
 
     // Receive from its partnering extra process.
-    double received;
     MPI_Request receive_request;
     MPI_Status status;
     MPI_Irecv(
-      &received, 1, MPI_DOUBLE, rank + stride, MPI_ANY_TAG,
+      tmp_buffer, count, MPI_DOUBLE, rank + stride, MPI_ANY_TAG,
       comm, &receive_request);
     MPI_Wait(&receive_request, &status);
-    sub_reduction = ApplyOp(op, sub_reduction, received);
+    for(i = 0; i < count; i++) {
+      ((double *) rbuf)[i] = ApplyOp(
+                               op, ((double *)rbuf)[i], tmp_buffer[i]);
+    }
   }
 
   // This is the perfectly balanced binary tree for the remaining
@@ -127,20 +104,22 @@ int Allreduce(void *sbuf, void *rbuf, int count, MPI_Op op, MPI_Comm comm) {
         // If the current process ID's bit mask does not match i, then send.
         if(i == rank) {
           MPI_Send(
-            &sub_reduction, 1, MPI_DOUBLE, rank + sub_stride / 2, rank, comm);
+            rbuf, count, MPI_DOUBLE, rank + sub_stride / 2, rank, comm);
           break;
         }
 
         // If it does, then receive from its partner.
         else if(rank == i + sub_stride / 2) {
-          double received;
           MPI_Request receive_request;
           MPI_Status status;
           MPI_Irecv(
-            &received, 1, MPI_DOUBLE, rank - sub_stride / 2, MPI_ANY_TAG,
+            tmp_buffer, count, MPI_DOUBLE, rank - sub_stride / 2, MPI_ANY_TAG,
             comm, &receive_request);
           MPI_Wait(&receive_request, &status);
-          sub_reduction = ApplyOp(op, sub_reduction, received);
+          for(i = 0; i < count; i++) {
+            ((double *) rbuf)[i] = ApplyOp(
+                                     op, ((double *)rbuf)[i], tmp_buffer[i]);
+          }
           break;
         }
       }
@@ -159,18 +138,20 @@ int Allreduce(void *sbuf, void *rbuf, int count, MPI_Op op, MPI_Comm comm) {
         // The i-th process sends to (i - sub_stride / 2) th process.
         if(rank == i) {
           MPI_Send(
-            &sub_reduction, 1, MPI_DOUBLE, rank - sub_stride / 2, rank, comm);
+            rbuf, count, MPI_DOUBLE, rank - sub_stride / 2, rank, comm);
           break;
         }
         else if(rank == i - sub_stride / 2) {
-          double received;
           MPI_Request receive_request;
           MPI_Status status;
           MPI_Irecv(
-            &received, 1, MPI_DOUBLE, rank + sub_stride / 2, MPI_ANY_TAG,
+            tmp_buffer, count, MPI_DOUBLE, rank + sub_stride / 2, MPI_ANY_TAG,
             comm, &receive_request);
           MPI_Wait(&receive_request, &status);
-          sub_reduction = received;
+          int j;
+          for(j = 0; j < count; j++) {
+            ((double *)rbuf)[j] = tmp_buffer[j];
+          }
           break;
         }
       }
@@ -183,24 +164,23 @@ int Allreduce(void *sbuf, void *rbuf, int count, MPI_Op op, MPI_Comm comm) {
         rank < num_processes - stride) {
 
       // Send to the partner.
-      MPI_Send(&sub_reduction, 1, MPI_DOUBLE, rank + stride, rank, comm);
+      MPI_Send(rbuf, count, MPI_DOUBLE, rank + stride, rank, comm);
     }
     if(rank >= rounded_down_num_processes && rank < num_processes) {
 
       // Receive from the partner.
-      double received;
       MPI_Request receive_request;
       MPI_Status status;
       MPI_Irecv(
-        &received, 1, MPI_DOUBLE, rank - stride, MPI_ANY_TAG,
+        tmp_buffer, count, MPI_DOUBLE, rank - stride, MPI_ANY_TAG,
         comm, &receive_request);
       MPI_Wait(&receive_request, &status);
-      sub_reduction = received;
+      int j;
+      for(j = 0; j < count; j++) {
+        ((double *) rbuf)[j] = tmp_buffer[j];
+      }
     }
   }
-
-  // Write the result out to the output.
-  ((double *)rbuf)[0] = sub_reduction;
 
   return MPI_SUCCESS;
 }
@@ -209,7 +189,7 @@ int main(int ac, char *av[]) {
   int i;
   int rank = -1;
   int size = -1;
-  int count = rand() % 10;
+  int count = 3;
   const int maxsize = 256 * 256;
   double start, stop;
   double sbuf[maxsize];
@@ -219,9 +199,6 @@ int main(int ac, char *av[]) {
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
   srand(time(NULL) + rank);
-  for(i = 0; i < count; i++) {
-    sbuf[i] = rand() % 10;
-  }
 
   // Find out the nearest power of two that is smaller and closest to
   // the size of the MPI communicator.
