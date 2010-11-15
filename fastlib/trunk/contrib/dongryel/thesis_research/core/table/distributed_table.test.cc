@@ -30,7 +30,8 @@ bool CheckDistributedTableIntegrity(
 core::table::DistributedTable *InitDistributedTable(
   boost::mpi::communicator &world,
   boost::mpi::communicator &table_outbox_group,
-  boost::mpi::communicator &table_inbox_group) {
+  boost::mpi::communicator &table_inbox_group,
+  boost::mpi::communicator &computation_group) {
 
   std::pair< core::table::DistributedTable *, std::size_t >
   distributed_table_pair =
@@ -65,7 +66,7 @@ core::table::DistributedTable *InitDistributedTable(
     distributed_table = core::table::global_m_file_->UniqueConstruct <
                         core::table::DistributedTable > ();
     distributed_table->Init(
-      file_name, world, table_outbox_group, table_inbox_group);
+      file_name, table_outbox_group);
     printf(
       "Process %d read in %d points...\n",
       world.rank(), distributed_table->local_n_entries());
@@ -76,19 +77,23 @@ core::table::DistributedTable *InitDistributedTable(
 void TableOutboxProcess(
   boost::mpi::communicator &world,
   boost::mpi::communicator &table_outbox_group,
-  boost::mpi::communicator &table_inbox_group) {
+  boost::mpi::communicator &table_inbox_group,
+  boost::mpi::communicator &computation_group) {
+
+  printf("Process %d: TableOutbox.\n", world.rank());
 }
 
 void TableInboxProcess(
   int n_attributes_in,
   boost::mpi::communicator &world,
   boost::mpi::communicator &table_outbox_group,
-  boost::mpi::communicator &table_inbox_group) {
+  boost::mpi::communicator &table_inbox_group,
+  boost::mpi::communicator &computation_group) {
   printf("Process %d: TableInbox.\n", world.rank());
 
   core::table::TableInbox<TableType> inbox;
   inbox.Init(n_attributes_in, &world, &table_outbox_group, &table_inbox_group);
-  //inbox.Run();
+  inbox.Run();
 }
 
 void ComputationProcess(boost::mpi::communicator &world) {
@@ -136,6 +141,8 @@ int main(int argc, char *argv[]) {
   boost::mpi::communicator table_inbox_group = world.split(
         (world.rank() >= world.size() / 3 &&
          world.rank() < world.size() / 3 * 2) ? 1 : 0);
+  boost::mpi::communicator computation_group = world.split(
+        (world.rank() >= world.size() / 3 * 2) ? 1 : 0);
 
   core::table::DistributedTable *distributed_table = NULL;
 
@@ -146,7 +153,8 @@ int main(int argc, char *argv[]) {
   // barrier.
   if(world.rank() < world.size() / 3) {
     distributed_table =
-      InitDistributedTable(world, table_outbox_group, table_inbox_group);
+      InitDistributedTable(
+        world, table_outbox_group, table_inbox_group, computation_group);
   }
   world.barrier();
 
@@ -164,15 +172,16 @@ int main(int argc, char *argv[]) {
 
   // The main computation loop.
   if(world.rank() < world.size() / 3) {
-    TableOutboxProcess(world, table_outbox_group, table_inbox_group);
+    TableOutboxProcess(
+      world, table_outbox_group, table_inbox_group, computation_group);
   }
   else if(world.rank() < world.size() / 3 * 2) {
     TableInboxProcess(
       distributed_table->n_attributes(), world, table_outbox_group,
-      table_inbox_group);
+      table_inbox_group, computation_group);
   }
   else {
-    ComputationProcess(world);
+    ComputationProcess(computation_group);
   }
 
   return 0;
