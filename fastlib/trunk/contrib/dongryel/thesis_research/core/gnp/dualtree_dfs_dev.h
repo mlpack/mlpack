@@ -193,7 +193,8 @@ void core::gnp::DualtreeDfs<ProblemType>::DualtreeBase_(
     query_results->ApplyPostponed(q_index, query_contribution);
 
     // Refine min and max summary statistics.
-    qnode_stat->summary_.Accumulate(*query_results, q_index);
+    qnode_stat->summary_.Accumulate(
+      problem_->global(), *query_results, q_index);
 
   } // end of looping over each query point.
 
@@ -497,9 +498,10 @@ bool core::gnp::DualtreeDfs<ProblemType>::DualtreeCanonical_(
   // Reset summary results of the current query node.
   qnode_stat->summary_.StartReaccumulate();
   qnode_stat->summary_.Accumulate(
-    qnode_left_stat->summary_, qnode_left_stat->postponed_);
+    problem_->global(), qnode_left_stat->summary_, qnode_left_stat->postponed_);
   qnode_stat->summary_.Accumulate(
-    qnode_right_stat->summary_, qnode_right_stat->postponed_);
+    problem_->global(), qnode_right_stat->summary_,
+    qnode_right_stat->postponed_);
 
   return exact_compute_nonleaf_qnode;
 }

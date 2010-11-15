@@ -98,6 +98,8 @@ class KdeGlobal {
 
     KernelType *kernel_;
 
+    int effective_num_reference_points_;
+
     double mult_const_;
 
     TableType *query_table_;
@@ -109,6 +111,10 @@ class KdeGlobal {
     std::vector< core::monte_carlo::MeanVariancePair > mean_variance_pair_;
 
   public:
+
+    int effective_num_reference_points() const {
+      return effective_num_reference_points_;
+    }
 
     ~KdeGlobal() {
       delete kernel_;
@@ -168,7 +174,7 @@ class KdeGlobal {
       double relative_error_in, double probability_in,
       const std::string &kernel_type_in) {
 
-      int effective_num_points =
+      effective_num_reference_points_ =
         (is_monochromatic) ?
         (reference_table_in->n_entries() - 1) :
         reference_table_in->n_entries();
@@ -184,7 +190,7 @@ class KdeGlobal {
       mult_const_ = 1.0 /
                     (kernel_->CalcNormConstant(
                        reference_table_in->n_attributes()) *
-                     ((double) effective_num_points));
+                     ((double) effective_num_reference_points_));
 
       relative_error_ = relative_error_in;
       probability_ = probability_in;
@@ -509,35 +515,37 @@ class KdeSummary {
       used_error_u_ = 0;
     }
 
-    template<typename ResultType>
-    void Accumulate(const ResultType &results, int q_index) {
-      densities_l_ = std::min(densities_l_, results.densities_l_[q_index]);
-      densities_u_ = std::max(densities_u_, results.densities_u_[q_index]);
-      pruned_l_ = std::min(pruned_l_, results.pruned_[q_index]);
-      used_error_u_ = std::max(used_error_u_, results.used_error_[q_index]);
-    }
-
-    void Accumulate(const KdeSummary &summary_in) {
-      densities_l_ = std::min(densities_l_, summary_in.densities_l_);
-      densities_u_ = std::max(densities_u_, summary_in.densities_u_);
-      pruned_l_ = std::min(pruned_l_, summary_in.pruned_l_);
-      used_error_u_ = std::max(used_error_u_, summary_in.used_error_u_);
-    }
-
+    template<typename GlobalType, typename ResultType>
     void Accumulate(
-      const KdeSummary &summary_in, const KdePostponed &postponed_in) {
+      const GlobalType &global, const ResultType &results, int q_index) {
+      if(results.pruned_[q_index] < global.effective_num_reference_points()) {
+        densities_l_ = std::min(densities_l_, results.densities_l_[q_index]);
+        densities_u_ = std::max(densities_u_, results.densities_u_[q_index]);
+        pruned_l_ = std::min(pruned_l_, results.pruned_[q_index]);
+        used_error_u_ = std::max(used_error_u_, results.used_error_[q_index]);
+      }
+    }
 
-      densities_l_ = std::min(
-                       densities_l_,
-                       summary_in.densities_l_ + postponed_in.densities_l_);
-      densities_u_ = std::max(
-                       densities_u_,
-                       summary_in.densities_u_ + postponed_in.densities_u_);
-      pruned_l_ = std::min(
-                    pruned_l_, summary_in.pruned_l_ + postponed_in.pruned_);
-      used_error_u_ = std::max(
-                        used_error_u_,
-                        summary_in.used_error_u_ + postponed_in.used_error_);
+    template<typename GlobalType>
+    void Accumulate(
+      const GlobalType &global, const KdeSummary &summary_in,
+      const KdePostponed &postponed_in) {
+
+      if(
+        summary_in.pruned_l_ + postponed_in.pruned_ <
+        global.effective_num_reference_points()) {
+        densities_l_ = std::min(
+                         densities_l_,
+                         summary_in.densities_l_ + postponed_in.densities_l_);
+        densities_u_ = std::max(
+                         densities_u_,
+                         summary_in.densities_u_ + postponed_in.densities_u_);
+        pruned_l_ = std::min(
+                      pruned_l_, summary_in.pruned_l_ + postponed_in.pruned_);
+        used_error_u_ = std::max(
+                          used_error_u_,
+                          summary_in.used_error_u_ + postponed_in.used_error_);
+      }
     }
 
     void ApplyDelta(const KdeDelta &delta_in) {
