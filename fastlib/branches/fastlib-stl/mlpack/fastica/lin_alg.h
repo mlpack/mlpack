@@ -66,13 +66,13 @@ namespace linalg__private {
    * @param X_centered Matrix to write centered output into
    */
   void Center(const arma::mat& X, arma::mat& X_centered) {
-    // sum matrix along dimension 1 (that is, sum elements in each column)
-    arma::Row<double> col_vector_sum = arma::sum(X, 0);
-    col_vector_sum /= X.n_rows; // scale
+    // sum matrix along dimension 0 (that is, sum elements in each row)
+    arma::vec row_vector_sum = arma::sum(X, 1);
+    row_vector_sum /= X.n_cols; // scale
  
     X_centered.set_size(X.n_rows, X.n_cols);
-    for(index_t i = 0; i < X.n_cols; i++)
-      X_centered.col(i) = X.col(i) - col_vector_sum(i);
+    for(index_t i = 0; i < X.n_rows; i++)
+      X_centered.row(i) = X.row(i) - row_vector_sum(i);
   }
 
   /**
@@ -109,6 +109,7 @@ namespace linalg__private {
 
     // get eigenvectors of covariance of input matrix
     eig_sym(eigenvalues, eigenvectors, ccov(X)); 
+
     // generate diagonal matrix using 1 / sqrt(eigenvalues) for each value
     VectorPower(eigenvalues, -0.5);
     diag.zeros(eigenvalues.n_elem, eigenvalues.n_elem);
