@@ -33,8 +33,41 @@ void physpack::nbody_simulator::NbodySimulator<TableType>::NaiveCompute(
   tripletree_dfs.Init(*this);
 
   // Compute the result.
+  core::util::Timer compute_timer;
+  compute_timer.Start();
   tripletree_dfs.NaiveCompute(
-    * arguments_in.metric_, approx_result_in, naive_result_out);
+    * arguments_in.metric_, naive_result_out);
+  compute_timer.End();
+  std::cout << compute_timer.GetTotalElapsedTime() << " seconds spent on "
+            "the naive potential computation.\n";
+
+  // Compute the deviation of the computed potentials. First, sort the
+  // absolute values of the naively computed potentials.
+  std::vector< std::pair<double, std::pair< double, double> > >
+  naive_potential_copy;
+  naive_potential_copy.resize(naive_result_out->potential_e_.size());
+  for(unsigned int i = 0; i < naive_result_out->potential_e_.size(); i++) {
+    naive_potential_copy[i].first = fabs(naive_result_out->potential_e_[i]);
+    naive_potential_copy[i].second.first = naive_result_out->potential_e_[i];
+    naive_potential_copy[i].second.second = approx_result_in.potential_e_[i];
+  }
+  std::sort(naive_potential_copy.begin(), naive_potential_copy.end());
+
+  // Check whether the upper quantile of the sorted absolute
+  // potentials satisfy the error bound.
+  int satisfied_count = 0;
+  int start_index = static_cast<int>(
+                      floor(
+                        naive_potential_copy.size() * arguments_in.summary_compute_quantile_));
+
+  for(unsigned int i = start_index; i < naive_potential_copy.size(); i++) {
+    if(fabs(
+          naive_potential_copy[i].second.first -
+          naive_potential_copy[i].second.second) <= arguments_in.relative_error_ *
+        fabs(naive_potential_copy[i].second.first)) {
+      satisfied_count++;
+    }
+  }
 }
 
 template<typename TableType>

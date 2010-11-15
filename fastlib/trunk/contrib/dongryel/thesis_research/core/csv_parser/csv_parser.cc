@@ -28,7 +28,7 @@ bool csv_parser::init(const char * input_file) {
 
   if(!filename_length) {
     fprintf(stderr, "Fatal error : invalid input file %s\n", input_file);
-
+    exit(-999);
     return false;
   }
 
