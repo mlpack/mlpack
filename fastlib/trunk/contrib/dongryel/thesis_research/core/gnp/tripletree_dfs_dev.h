@@ -50,6 +50,27 @@ void core::gnp::TripletreeDfs<ProblemType>::Init(ProblemType &problem_in) {
 }
 
 template<typename ProblemType>
+void core::gnp::TripletreeDfs<ProblemType>::NaiveCompute(
+  const core::metric_kernels::AbstractMetric &metric,
+  const typename ProblemType::ResultType &query_results,
+  typename ProblemType::ResultType *naive_query_results) {
+
+  // Preprocess the tree.
+  PreProcess_(table_->get_tree());
+
+  // Allocate space for storing the final results.
+  naive_query_results->Init(table_->n_entries());
+
+  // Call the algorithm computation.
+  std::vector< TreeType *> root_nodes(3, table_->get_tree());
+  core::gnp::TripleRangeDistanceSq<TableType> triple_range_distance_sq;
+  triple_range_distance_sq.Init(metric, *table_, root_nodes);
+  TripletreeBase_(
+    metric, triple_range_distance_sq, naive_query_results);
+  PostProcess_(metric, table_->get_tree(), naive_query_results, true);
+}
+
+template<typename ProblemType>
 void core::gnp::TripletreeDfs<ProblemType>::Compute(
   const core::metric_kernels::AbstractMetric &metric,
   typename ProblemType::ResultType *query_results) {

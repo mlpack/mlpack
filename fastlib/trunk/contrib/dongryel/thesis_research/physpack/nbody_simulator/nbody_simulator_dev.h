@@ -22,6 +22,22 @@ typename physpack::nbody_simulator::NbodySimulator<TableType>::GlobalType
 }
 
 template<typename TableType>
+void physpack::nbody_simulator::NbodySimulator<TableType>::NaiveCompute(
+  const physpack::nbody_simulator::NbodySimulatorArguments<TableType> &arguments_in,
+  const physpack::nbody_simulator::NbodySimulatorResult &approx_result_in,
+  physpack::nbody_simulator::NbodySimulatorResult *naive_result_out) {
+
+  // Instantiate a dual-tree algorithm of the KDE.
+  core::gnp::TripletreeDfs < physpack::nbody_simulator::NbodySimulator <
+  TableType > > tripletree_dfs;
+  tripletree_dfs.Init(*this);
+
+  // Compute the result.
+  tripletree_dfs.NaiveCompute(
+    * arguments_in.metric_, approx_result_in, naive_result_out);
+}
+
+template<typename TableType>
 void physpack::nbody_simulator::NbodySimulator<TableType>::Compute(
   const physpack::nbody_simulator::NbodySimulatorArguments<TableType> &arguments_in,
   physpack::nbody_simulator::NbodySimulatorResult *result_out) {

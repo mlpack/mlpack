@@ -17,7 +17,7 @@
 
 int main(int argc, char *argv[]) {
 
-  // Tree type: hard-coded for a metric tree.
+  // Tree type: hard-coded for a kd-tree.
   typedef core::table::Table < core::tree::GenKdTree > TableType;
 
   // Parse arguments for Nbody.
@@ -64,6 +64,10 @@ int main(int argc, char *argv[]) {
   if(nbody_simulator_arguments.verify_accuracy_) {
     physpack::nbody_simulator::NbodySimulatorResult
     nbody_simulator_naive_result;
+
+    nbody_simulator_instance.NaiveCompute(
+      nbody_simulator_arguments, nbody_simulator_result,
+      &nbody_simulator_naive_result);
   }
 
   return 0;

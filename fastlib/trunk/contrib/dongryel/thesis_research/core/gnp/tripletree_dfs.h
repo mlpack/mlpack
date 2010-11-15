@@ -125,6 +125,11 @@ class TripletreeDfs {
 
     void Init(ProblemType &problem_in);
 
+    void NaiveCompute(
+      const core::metric_kernels::AbstractMetric &metric,
+      const typename ProblemType::ResultType &query_results,
+      typename ProblemType::ResultType *naive_query_results);
+
     void Compute(
       const core::metric_kernels::AbstractMetric &metric,
       typename ProblemType::ResultType *query_results);
