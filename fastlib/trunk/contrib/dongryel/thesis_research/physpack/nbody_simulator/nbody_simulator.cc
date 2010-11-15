@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
     nbody_simulator_arguments, &nbody_simulator_result);
   compute_timer.End();
   std::cout << compute_timer.GetTotalElapsedTime() << " seconds spent on "
-            "the potential computation.\n";
+            "the approximate potential computation.\n";
 
   // Print out the prune statistics.
   std::cout << "Deterministic prunes: " <<
