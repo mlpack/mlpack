@@ -324,15 +324,16 @@ class FastICA {
    * Deflation Newton-Raphson using Gaussian contrast function
    */
   void DeflationGaussUpdate_(index_t n, const arma::mat& X, arma::vec& w) {
-    arma::vec u, u_sq, u_sq_a, ex, temp1;
+    arma::vec u, u_sq, u_sq_a, ex;
 
     u = trans(X) * w;
     u_sq = pow(u, 2);
     u_sq_a = -a2_ * u_sq;
     // u is gauss
     ex = exp(u_sq_a / 2.0);
+    u = (ex % u);
     ex += (ex % u_sq_a);
-    // ex id dGauss
+    // ex is dGauss
 
     w *= -accu(ex);
     w += (X * u);
