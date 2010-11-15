@@ -59,5 +59,12 @@ int main(int argc, char *argv[]) {
   std::cerr << "Writing the potentials to the file: " <<
             nbody_simulator_arguments.potentials_out_ << "\n";
   nbody_simulator_result.PrintDebug(nbody_simulator_arguments.potentials_out_);
+
+  // Verify the result, if needed.
+  if(nbody_simulator_arguments.verify_accuracy_) {
+    physpack::nbody_simulator::NbodySimulatorResult
+    nbody_simulator_naive_result;
+  }
+
   return 0;
 }

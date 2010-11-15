@@ -71,6 +71,9 @@ bool physpack::nbody_simulator::NbodySimulator<TableType>::ConstructBoostVariabl
       "potentials_out.csv"),
     "OPTIONAL file to store computed potentials."
   )(
+    "verify_accuracy", "Verify the accuracy of the computed potentials"
+    " against the naive results."
+  )(
     "summary_compute_quantile",
     boost::program_options::value<double>()->default_value(0.2),
     "OPTIONAL The quantile for computing summary results during computation."
@@ -180,6 +183,9 @@ void physpack::nbody_simulator::NbodySimulator<TableType>::ParseArguments(
     vm["summary_compute_quantile"].as<double>();
   std::cout << "Summary compute quantile of " <<
             arguments_out->summary_compute_quantile_ << "\n";
+
+  // Determine whether we need to verify against the naive.
+  arguments_out->verify_accuracy_ = (vm.count("verify_accuracy") > 0);
 }
 
 template<typename TableType>
