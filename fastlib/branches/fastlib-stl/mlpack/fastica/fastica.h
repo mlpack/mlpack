@@ -293,14 +293,10 @@ class FastICA {
     arma::vec hyp_tan, temp1;
     
     hyp_tan = trans(X) * w;
-    std::cout << "------- w --------\n" << w << "\n";
-    std::cout << "------- X --------\n" << X << "\n";
-    std::cout << "------- hyp_tan --------\n" << hyp_tan << "\n";
-
     for(int i = 0; i < hyp_tan.n_elem; i++)
       hyp_tan[i] = tanh(a1_ * hyp_tan[i]);
 
-    w *= a1_ * accu(pow(hyp_tan, 2));
+    w *= a1_ * (accu(pow(hyp_tan, 2)) - n);
     w += (X * hyp_tan);
     w /= (double) n;
   }
@@ -1136,16 +1132,35 @@ class FastICA {
   int DoFastICA(arma::mat& W, arma::mat& Y) {
     arma::mat X_centered, X_whitened, whitening_matrix;
 
-    std::cout << "---------- X -----------\n" << X << "\n";
-
     Center(X, X_centered);
-
-    std::cout << "---------- X_centered ---------\n" << X_centered << "\n";
 
     WhitenUsingEig(X_centered, X_whitened, whitening_matrix);
 
-    std::cout << "---------- X_whitened ----------\n" << X_whitened << "\n";
-    std::cout << "---------- whitening_matrix ---------\n" << whitening_matrix << "\n";
+    // X_whitened is equal to the original implementation, but the rows are
+    // permuted (apparently somewhat randomly) likely to due the ordering of
+    // eigenvalues.  Signs may be different too (whitening_matrix reflects these
+    // changes also).
+
+    // by-hand changes to emulate old version's matrix ordering
+    // row 4 = -row 1
+    // row 5 = -row 2
+    // row 3 = row 3
+    // row 2 = row 4
+    // row 1 = row 5
+    /*arma::mat tmp(X_whitened.n_rows, X_whitened.n_cols);
+    tmp.row(0) = X_whitened.row(4);
+    tmp.row(1) = X_whitened.row(3);
+    tmp.row(2) = X_whitened.row(2);
+    tmp.row(3) = -X_whitened.row(0);
+    tmp.row(4) = -X_whitened.row(1);
+    X_whitened = tmp;
+    arma::mat tmpw(whitening_matrix.n_rows, whitening_matrix.n_cols);
+    tmpw.row(0) = whitening_matrix.row(4);
+    tmpw.row(1) = whitening_matrix.row(3);
+    tmpw.row(2) = whitening_matrix.row(2);
+    tmpw.row(3) = -whitening_matrix.row(0);
+    tmpw.row(4) = -whitening_matrix.row(1);
+    whitening_matrix = tmpw;*/
   
     int ret_val =
       FixedPointICA(X_whitened, whitening_matrix, W);
