@@ -29,6 +29,8 @@ class NbodySimulatorArguments {
 
     double summary_compute_quantile_;
 
+    bool verify_accuracy_;
+
   public:
     NbodySimulatorArguments() {
       leaf_size_ = 0;
@@ -37,6 +39,7 @@ class NbodySimulatorArguments {
       probability_ = 0.0;
       metric_ = NULL;
       summary_compute_quantile_ = 0.0;
+      verify_accuracy_ = false;
     }
 
     ~NbodySimulatorArguments() {
