@@ -56,18 +56,26 @@ void physpack::nbody_simulator::NbodySimulator<TableType>::NaiveCompute(
   // Check whether the upper quantile of the sorted absolute
   // potentials satisfy the error bound.
   int satisfied_count = 0;
-  int start_index = static_cast<int>(
-                      floor(
-                        naive_potential_copy.size() * arguments_in.summary_compute_quantile_));
+  int start_index =
+    static_cast<int>(
+      floor(
+        naive_potential_copy.size() *
+        arguments_in.summary_compute_quantile_));
 
   for(unsigned int i = start_index; i < naive_potential_copy.size(); i++) {
     if(fabs(
           naive_potential_copy[i].second.first -
-          naive_potential_copy[i].second.second) <= arguments_in.relative_error_ *
+          naive_potential_copy[i].second.second) <=
+        arguments_in.relative_error_ *
         fabs(naive_potential_copy[i].second.first)) {
       satisfied_count++;
     }
   }
+  printf(
+    "%d out of %d queries in the quantile higher than %g satisifed "
+    "the relative error bound of %g.\n",
+    satisfied_count, (int)(naive_potential_copy.size() - start_index),
+    arguments_in.summary_compute_quantile_, arguments_in.relative_error_);
 }
 
 template<typename TableType>
