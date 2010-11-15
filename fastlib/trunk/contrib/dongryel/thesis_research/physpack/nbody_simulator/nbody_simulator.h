@@ -52,6 +52,11 @@ class NbodySimulator {
     void Init(
       physpack::nbody_simulator::NbodySimulatorArguments<TableType> &arguments_in);
 
+    void NaiveCompute(
+      const physpack::nbody_simulator::NbodySimulatorArguments<TableType> &arguments_in,
+      const physpack::nbody_simulator::NbodySimulatorResult &approx_result_in,
+      physpack::nbody_simulator::NbodySimulatorResult *naive_result_out);
+
     void Compute(
       const physpack::nbody_simulator::NbodySimulatorArguments<TableType> &arguments_in,
       ResultType *result_out);
