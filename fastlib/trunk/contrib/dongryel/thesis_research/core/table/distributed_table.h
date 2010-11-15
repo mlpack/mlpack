@@ -141,9 +141,7 @@ class DistributedTable: public boost::noncopyable {
 
     void Init(
       const std::string & file_name,
-      boost::mpi::communicator &global_communicator_in,
-      boost::mpi::communicator &table_outbox_group_communicator_in,
-      boost::mpi::communicator &table_inbox_group_communicator_in) {
+      boost::mpi::communicator &table_outbox_group_communicator_in) {
 
       // Initialize the table owned by the distributed table.
       owned_table_ = (core::table::global_m_file_) ?
@@ -175,7 +173,6 @@ class DistributedTable: public boost::noncopyable {
     }
 
     void get(
-      boost::mpi::communicator &global_comm_in,
       boost::mpi::communicator &table_outbox_group_comm_in,
       boost::mpi::communicator &table_inbox_group_comm_in,
       int requested_rank, int point_id,
@@ -184,7 +181,7 @@ class DistributedTable: public boost::noncopyable {
       // If owned by the process, just return the point. Otherwise, we
       // need to send an MPI request to the process holding the
       // required resource.
-      if(global_comm_in.rank() == requested_rank) {
+      if(table_outbox_group_comm_in.rank() == requested_rank) {
         owned_table_->get(point_id, entry);
       }
       else {
@@ -200,7 +197,11 @@ class DistributedTable: public boost::noncopyable {
           point_request_message);
 
         // Wait until the point has arrived.
-
+        int dummy;
+        table_inbox_group_comm_in.recv(
+          table_outbox_group_comm_in.rank(),
+          core::table::DistributedTableMessage::RETRIEVE_POINT_FROM_TABLE_INBOX,
+          dummy);
 
         // If we are here, then the point is ready. Copy the point.
 

@@ -40,7 +40,7 @@ class TableInbox {
 
     ~TableInbox() {
       if(received_point_ != NULL) {
-        delete[] received_point_;
+        core::table::global_m_file_->DestroyPtr(received_point_);
       }
     }
 
@@ -55,7 +55,8 @@ class TableInbox {
       table_inbox_group_comm_ = table_inbox_group_comm_in;
 
       received_point_is_valid_ = false;
-      received_point_ = new double[num_dimensions_in];
+      received_point_ = core::table::global_m_file_->ConstructArray<double>(
+                          num_dimensions_in);
       n_attributes_ = num_dimensions_in;
     }
 
@@ -78,8 +79,17 @@ class TableInbox {
         }
 
       }
-      while(true);     // end of the server loop.
+      while(
+        global_comm_->iprobe(
+          boost::mpi::any_source,
+          core::table::DistributedTableMessage::TERMINATE_TABLE_INBOX));
 
+      // Receive the message.
+      int dummy;
+      global_comm_->recv(
+        boost::mpi::any_source,
+        core::table::DistributedTableMessage::TERMINATE_TABLE_INBOX,
+        dummy);
       printf("Table inbox for Process %d is quitting.\n",
              table_inbox_group_comm_->rank());
     }
