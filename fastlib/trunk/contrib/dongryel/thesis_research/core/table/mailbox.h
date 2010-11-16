@@ -27,6 +27,14 @@ class TableInbox {
 
   public:
 
+    const double *get_point(int source_rank, int point_id) const {
+      return received_point_.get();
+    }
+
+    void UnlockPoint() {
+      received_point_is_locked_ = false;
+    }
+
     TableInbox() {
       received_point_is_locked_ = false;
       received_point_ = NULL;
@@ -72,6 +80,12 @@ class TableInbox {
           // The point remains valid until it is received from the
           // other end.
           received_point_is_locked_ = true;
+
+          // Notify the computation process.
+          computation_group_comm_in.send(
+            computation_group_comm_in.rank(),
+            core::table::DistributedTableMessage::
+            RECEIVE_POINT_FROM_TABLE_INBOX, 0);
         }
       }
       while(time_to_quit_ == false);

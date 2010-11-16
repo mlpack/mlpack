@@ -10,6 +10,7 @@
 #include "boost/utility.hpp"
 #include "core/csv_parser/dataset_reader.h"
 #include "core/metric_kernels/abstract_metric.h"
+#include "core/tree/general_spacetree.h"
 #include "core/tree/gen_metric_tree.h"
 #include "core/tree/statistic.h"
 #include "core/table/dense_matrix.h"
