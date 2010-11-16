@@ -273,6 +273,15 @@ class Table: public boost::noncopyable {
       tree_->Print();
     }
 
+    const double *GetColumnPtr(int point_id) const {
+      if(this->IsIndexed() == false) {
+        return data_.GetColumnPtr(point_id);
+      }
+      else {
+        return data_.GetColumnPtr(new_from_old_[point_id]);
+      }
+    }
+
   private:
 
     void RecursiveDeallocate_(TreeType *node) {
