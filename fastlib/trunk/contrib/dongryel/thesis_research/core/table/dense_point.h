@@ -67,8 +67,8 @@ class DenseConstPoint: public core::table::AbstractPoint {
       return ptr_[i];
     }
 
-    void Alias(double *ptr_in, int length_in) {
-      ptr_ = ptr_in;
+    void Alias(const double *ptr_in, int length_in) {
+      ptr_ = const_cast<double *>(ptr_in);
       n_rows_ = length_in;
     }
 

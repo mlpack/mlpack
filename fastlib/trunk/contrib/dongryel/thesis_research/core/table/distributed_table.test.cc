@@ -20,8 +20,7 @@ bool CheckDistributedTableIntegrity(
   for(int i = 0; i < world.size(); i++) {
     printf(
       "Process %d thinks Process %d owns %d points of dimensionality %d.\n",
-      world.rank(), i, table_in.local_n_entries(
-        table_outbox_group, i % (world.size() / 3)),
+      world.rank(), i, table_in.local_n_entries(i % (world.size() / 3)),
       table_in.n_attributes());
   }
   return true;
@@ -107,6 +106,25 @@ void ComputationProcess(
 
   printf("Process %d: Computation.\n", world.rank());
 
+  // Do a test where each computation process requests a random point
+  // from a randomly chosen process.
+  int num_points = core::math::RandInt(10, 30);
+  for(int n = 0; n < num_points; n++) {
+    core::table::DenseConstPoint point;
+    int random_request_rank = core::math::RandInt(0, table_outbox_group.size());
+    int random_request_point_id =
+      core::math::RandInt(
+        0, distributed_table->local_n_entries(random_request_rank));
+    distributed_table->get(
+      table_outbox_group, table_inbox_group,
+      random_request_rank, random_request_point_id, &point);
+
+    // Print the point.
+    point.Print();
+
+    // Tell the inbox that we are done using the point.
+    distributed_table->UnlockPointinTableInbox();
+  }
 }
 
 int main(int argc, char *argv[]) {
@@ -151,6 +169,10 @@ int main(int argc, char *argv[]) {
          world.rank() < world.size() / 3 * 2) ? 1 : 0);
   boost::mpi::communicator computation_group = world.split(
         (world.rank() >= world.size() / 3 * 2) ? 1 : 0);
+
+  printf("Check: %d %d %d %d\n", world.rank(), table_outbox_group.size(),
+         table_inbox_group.size(), computation_group.size());
+  return 0;
 
   core::table::DistributedTable *distributed_table = NULL;
 

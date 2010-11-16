@@ -49,7 +49,13 @@ class DistributedTable: public boost::noncopyable {
 
     std::vector< TreeType * > global_tree_leaf_nodes_;
 
+    int table_outbox_group_comm_size_;
+
   public:
+
+    void UnlockPointinTableInbox() {
+      table_inbox_->UnlockPoint();
+    }
 
     void RunInbox(
       boost::mpi::communicator &table_outbox_group_comm_in,
@@ -79,6 +85,7 @@ class DistributedTable: public boost::noncopyable {
       owned_table_ = NULL;
       local_n_entries_ = NULL;
       global_tree_ = NULL;
+      table_outbox_group_comm_size_ = -1;
     }
 
     ~DistributedTable() {
@@ -159,13 +166,11 @@ class DistributedTable: public boost::noncopyable {
       return owned_table_->n_attributes();
     }
 
-    int local_n_entries(
-      const boost::mpi::communicator &table_outbox_group_comm_in,
-      int rank_in) const {
-      if(rank_in >= table_outbox_group_comm_in.size()) {
+    int local_n_entries(int rank_in) const {
+      if(rank_in >= table_outbox_group_comm_size_) {
         printf(
           "Invalid rank specified: %d. %d is the limit.\n",
-          rank_in, table_outbox_group_comm_in.size());
+          rank_in, table_outbox_group_comm_size_);
         return -1;
       }
       return local_n_entries_[rank_in];
@@ -195,6 +200,7 @@ class DistributedTable: public boost::noncopyable {
       // Allocate the vector for storing the number of entries for all
       // the tables in the world, and do an all-gather operation to
       // find out all the sizes.
+      table_outbox_group_comm_size_ = table_outbox_group_communicator_in.size();
       local_n_entries_ = (core::table::global_m_file_) ?
                          (int *) global_m_file_->ConstructArray<int>(
                            table_outbox_group_communicator_in.size()) :
@@ -219,7 +225,7 @@ class DistributedTable: public boost::noncopyable {
       boost::mpi::communicator &table_outbox_group_comm_in,
       boost::mpi::communicator &table_inbox_group_comm_in,
       int requested_rank, int point_id,
-      core::table::DensePoint * entry) {
+      core::table::DenseConstPoint * entry) {
 
       // If owned by the process, just return the point. Otherwise, we
       // need to send an MPI request to the process holding the
@@ -227,6 +233,13 @@ class DistributedTable: public boost::noncopyable {
       if(table_outbox_group_comm_in.rank() == requested_rank) {
         owned_table_->get(point_id, entry);
       }
+
+      // If the inbox has already fetched the point (do a cache
+      // lookup) here, then no MPI call is necessary.
+      else if(false) {
+
+      }
+
       else {
 
         // The point request message.
@@ -246,11 +259,10 @@ class DistributedTable: public boost::noncopyable {
           core::table::DistributedTableMessage::RECEIVE_POINT_FROM_TABLE_INBOX,
           dummy);
 
-        // If we are here, then the point is ready. Copy the point.
-
-
-        // Signal that we are done copying out the point.
-
+        // If we are here, then the point is ready. Alias the point.
+        entry->Alias(
+          table_inbox_->get_point(requested_rank, point_id),
+          owned_table_->n_attributes());
       }
     }
 
