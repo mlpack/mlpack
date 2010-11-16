@@ -15,6 +15,7 @@
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/random/variate_generator.hpp>
 #include "core/table/table.h"
+#include "core/table/mailbox.h"
 #include "core/table/distributed_table_message.h"
 #include "core/table/point_request_message.h"
 #include "core/table/memory_mapped_file.h"
@@ -35,6 +36,11 @@ class DistributedTable: public boost::noncopyable {
 
   private:
 
+    boost::interprocess::offset_ptr<core::table::TableInbox> table_inbox_;
+
+    boost::interprocess::offset_ptr <
+    core::table::TableOutbox<TableType> > table_outbox_;
+
     boost::interprocess::offset_ptr<TableType> owned_table_;
 
     boost::interprocess::offset_ptr<int> local_n_entries_;
@@ -45,17 +51,47 @@ class DistributedTable: public boost::noncopyable {
 
   public:
 
+    void RunInbox(
+      boost::mpi::communicator &table_outbox_group_comm_in,
+      boost::mpi::communicator &table_inbox_group_comm_in,
+      boost::mpi::communicator &computation_group_comm_in) {
+      table_inbox_->Run(
+        table_outbox_group_comm_in, table_inbox_group_comm_in,
+        computation_group_comm_in);
+    }
+
+    void RunOutbox(
+      boost::mpi::communicator &table_outbox_group_comm_in,
+      boost::mpi::communicator &table_inbox_group_comm_in,
+      boost::mpi::communicator &computation_group_comm_in) {
+      table_outbox_->Run(
+        table_outbox_group_comm_in, table_inbox_group_comm_in,
+        computation_group_comm_in);
+    }
+
     bool IsIndexed() const {
       return global_tree_ != NULL;
     }
 
     DistributedTable() {
+      table_inbox_ = NULL;
+      table_outbox_ = NULL;
       owned_table_ = NULL;
       local_n_entries_ = NULL;
       global_tree_ = NULL;
     }
 
     ~DistributedTable() {
+
+      // Delete the mailboxes.
+      if(table_outbox_ != NULL) {
+        core::table::global_m_file_->DestroyPtr(table_outbox_.get());
+        table_outbox_ = NULL;
+      }
+      if(table_inbox_ != NULL) {
+        core::table::global_m_file_->DestroyPtr(table_inbox_.get());
+        table_inbox_ = NULL;
+      }
 
       // Delete the list of number of entries for each table in the
       // distributed table.
@@ -149,6 +185,13 @@ class DistributedTable: public boost::noncopyable {
                      new TableType();
       owned_table_->Init(file_name);
 
+      // Initialize the mailboxes.
+      table_outbox_ = core::table::global_m_file_->UniqueConstruct <
+                      core::table::TableOutbox<TableType> > ();
+      table_inbox_ = core::table::global_m_file_->UniqueConstruct <
+                     core::table::TableInbox > ();
+      table_inbox_->Init(owned_table_->n_attributes());
+
       // Allocate the vector for storing the number of entries for all
       // the tables in the world, and do an all-gather operation to
       // find out all the sizes.
@@ -193,14 +236,14 @@ class DistributedTable: public boost::noncopyable {
         // Inform the source processor that this processor needs data!
         table_outbox_group_comm_in.send(
           requested_rank,
-          core::table::DistributedTableMessage::REQUEST_POINT,
+          core::table::DistributedTableMessage::REQUEST_POINT_FROM_TABLE_OUTBOX,
           point_request_message);
 
         // Wait until the point has arrived.
         int dummy;
         table_inbox_group_comm_in.recv(
           table_outbox_group_comm_in.rank(),
-          core::table::DistributedTableMessage::RETRIEVE_POINT_FROM_TABLE_INBOX,
+          core::table::DistributedTableMessage::RECEIVE_POINT_FROM_TABLE_INBOX,
           dummy);
 
         // If we are here, then the point is ready. Copy the point.

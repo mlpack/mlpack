@@ -84,16 +84,15 @@ void TableOutboxProcess(
 }
 
 void TableInboxProcess(
-  int n_attributes_in,
+  core::table::DistributedTable *distributed_table,
   boost::mpi::communicator &world,
   boost::mpi::communicator &table_outbox_group,
   boost::mpi::communicator &table_inbox_group,
   boost::mpi::communicator &computation_group) {
   printf("Process %d: TableInbox.\n", world.rank());
 
-  core::table::TableInbox<TableType> inbox;
-  inbox.Init(n_attributes_in, &world, &table_outbox_group, &table_inbox_group);
-  inbox.Run();
+  distributed_table->RunInbox(
+    table_outbox_group, table_inbox_group, computation_group);
 }
 
 void ComputationProcess(boost::mpi::communicator &world) {
@@ -177,7 +176,7 @@ int main(int argc, char *argv[]) {
   }
   else if(world.rank() < world.size() / 3 * 2) {
     TableInboxProcess(
-      distributed_table->n_attributes(), world, table_outbox_group,
+      distributed_table, world, table_outbox_group,
       table_inbox_group, computation_group);
   }
   else {
