@@ -6,53 +6,40 @@
 #ifndef CORE_TABLE_MAILBOX_H
 #define CORE_TABLE_MAILBOX_H
 
-#include "boost/mpi/communicator.hpp"
+#include <boost/interprocess/offset_ptr.hpp>
+#include <boost/mpi/communicator.hpp>
 #include "core/table/distributed_table_message.h"
 
 namespace core {
 namespace table {
 
-template<typename TableType>
 class TableInbox {
   private:
-    boost::mpi::communicator *global_comm_;
-
-    boost::mpi::communicator *table_outbox_group_comm_;
-
-    boost::mpi::communicator *table_inbox_group_comm_;
 
     bool received_point_is_valid_;
 
-    double *received_point_;
+    boost::interprocess::offset_ptr<double> received_point_;
 
     int n_attributes_;
+
+    bool time_to_quit_;
 
   public:
 
     TableInbox() {
-      global_comm_ = NULL;
-      table_outbox_group_comm_ = NULL;
-      table_inbox_group_comm_ = NULL;
       received_point_is_valid_ = false;
       received_point_ = NULL;
       n_attributes_ = -1;
+      time_to_quit_ = false;
     }
 
     ~TableInbox() {
       if(received_point_ != NULL) {
-        core::table::global_m_file_->DestroyPtr(received_point_);
+        core::table::global_m_file_->DestroyPtr(received_point_.get());
       }
     }
 
-    void Init(
-      int num_dimensions_in,
-      boost::mpi::communicator *global_comm_in,
-      boost::mpi::communicator *table_outbox_group_comm_in,
-      boost::mpi::communicator *table_inbox_group_comm_in) {
-
-      global_comm_ = global_comm_in;
-      table_outbox_group_comm_ = table_outbox_group_comm_in;
-      table_inbox_group_comm_ = table_inbox_group_comm_in;
+    void Init(int num_dimensions_in) {
 
       received_point_is_valid_ = false;
       received_point_ = core::table::global_m_file_->ConstructArray<double>(
@@ -60,38 +47,36 @@ class TableInbox {
       n_attributes_ = num_dimensions_in;
     }
 
-    void Run() {
+    void Run(
+      boost::mpi::communicator &table_outbox_group_comm_in,
+      boost::mpi::communicator &table_inbox_group_comm_in,
+      boost::mpi::communicator &computation_group_comm_in) {
 
       do {
 
         // Probe the message queue for the point request, and do a
         // receive.
         if(received_point_is_valid_ == false &&
-            table_outbox_group_comm_->iprobe(
+            table_outbox_group_comm_in.iprobe(
               boost::mpi::any_source,
-              core::table::DistributedTableMessage::RECEIVE_POINT)) {
+              core::table::DistributedTableMessage::
+              RECEIVE_POINT_FROM_TABLE_OUTBOX)) {
 
-          table_outbox_group_comm_->recv(
+          table_outbox_group_comm_in.recv(
             boost::mpi::any_source,
-            core::table::DistributedTableMessage::RECEIVE_POINT,
-            received_point_,
-            n_attributes_);
+            core::table::DistributedTableMessage::
+            RECEIVE_POINT_FROM_TABLE_OUTBOX,
+            received_point_.get(), n_attributes_);
+
+          // The point remains valid until it is received from the
+          // other end.
+          received_point_is_valid_ = true;
         }
-
       }
-      while(
-        global_comm_->iprobe(
-          boost::mpi::any_source,
-          core::table::DistributedTableMessage::TERMINATE_TABLE_INBOX));
+      while(time_to_quit_ == false);
 
-      // Receive the message.
-      int dummy;
-      global_comm_->recv(
-        boost::mpi::any_source,
-        core::table::DistributedTableMessage::TERMINATE_TABLE_INBOX,
-        dummy);
       printf("Table inbox for Process %d is quitting.\n",
-             table_inbox_group_comm_->rank());
+             table_inbox_group_comm_in.rank());
     }
 };
 
@@ -99,28 +84,19 @@ template<typename TableType>
 class TableOutbox {
   private:
 
-    boost::mpi::communicator *global_comm_;
-
-    boost::mpi::communicator *table_outbox_group_comm_;
-
-    boost::mpi::communicator *table_inbox_group_comm_;
-
-    TableType *owned_table_;
+    boost::interprocess::offset_ptr<TableType> *owned_table_;
 
   public:
 
     void Init(
-      TableType *owned_table_in,
-      boost::mpi::communicator *global_comm_in,
-      boost::mpi::communicator *table_outbox_group_comm_in,
-      boost::mpi::communicator *table_inbox_group_comm_in) {
+      boost::interprocess::offset_ptr<TableType> &owned_table_in) {
 
-      global_comm_ = global_comm_in;
-      table_outbox_group_comm_ = table_outbox_group_comm_in;
-      table_inbox_group_comm_ = table_inbox_group_comm_in;
     }
 
-    void Run() {
+    void Run(
+      boost::mpi::communicator &table_outbox_group_comm_in,
+      boost::mpi::communicator &table_inbox_group_comm_in,
+      boost::mpi::communicator &computation_group_comm_in) {
 
       do {
 
@@ -133,7 +109,7 @@ class TableOutbox {
 
       // end of the infinite server loop.
       printf("Table outbox for Process %d is quitting.\n",
-             table_outbox_group_comm_->rank());
+             table_outbox_group_comm_in.rank());
     }
 };
 };
