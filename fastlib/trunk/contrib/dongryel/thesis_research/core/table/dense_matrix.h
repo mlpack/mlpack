@@ -77,6 +77,10 @@ class DenseMatrix {
       n_cols_ = n_cols_in;
     }
 
+    const double *GetColumnPtr(int column_id) const {
+      return ptr_.get() + column_id * n_rows_;
+    }
+
     double *GetColumnPtr(int column_id) {
       return ptr_.get() + column_id * n_rows_;
     }

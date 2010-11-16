@@ -75,12 +75,15 @@ core::table::DistributedTable *InitDistributedTable(
 }
 
 void TableOutboxProcess(
+  core::table::DistributedTable *distributed_table,
   boost::mpi::communicator &world,
   boost::mpi::communicator &table_outbox_group,
   boost::mpi::communicator &table_inbox_group,
   boost::mpi::communicator &computation_group) {
 
   printf("Process %d: TableOutbox.\n", world.rank());
+  distributed_table->RunOutbox(
+    table_outbox_group, table_inbox_group, computation_group);
 }
 
 void TableInboxProcess(
@@ -95,7 +98,13 @@ void TableInboxProcess(
     table_outbox_group, table_inbox_group, computation_group);
 }
 
-void ComputationProcess(boost::mpi::communicator &world) {
+void ComputationProcess(
+  core::table::DistributedTable *distributed_table,
+  boost::mpi::communicator &world,
+  boost::mpi::communicator &table_outbox_group,
+  boost::mpi::communicator &table_inbox_group,
+  boost::mpi::communicator &computation_group) {
+
   printf("Process %d: Computation.\n", world.rank());
 
 }
@@ -163,7 +172,6 @@ int main(int argc, char *argv[]) {
   distributed_table_pair =
     core::table::global_m_file_->UniqueFind<core::table::DistributedTable>();
   distributed_table = distributed_table_pair.first;
-  world.barrier();
 
   // Check the integrity of the distributed table.
   CheckDistributedTableIntegrity(
@@ -172,7 +180,8 @@ int main(int argc, char *argv[]) {
   // The main computation loop.
   if(world.rank() < world.size() / 3) {
     TableOutboxProcess(
-      world, table_outbox_group, table_inbox_group, computation_group);
+      distributed_table, world, table_outbox_group,
+      table_inbox_group, computation_group);
   }
   else if(world.rank() < world.size() / 3 * 2) {
     TableInboxProcess(
@@ -180,7 +189,9 @@ int main(int argc, char *argv[]) {
       table_inbox_group, computation_group);
   }
   else {
-    ComputationProcess(computation_group);
+    ComputationProcess(
+      distributed_table, world,
+      table_outbox_group, table_inbox_group, computation_group);
   }
 
   return 0;
