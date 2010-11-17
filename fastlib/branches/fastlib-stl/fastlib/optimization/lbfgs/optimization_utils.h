@@ -199,7 +199,7 @@ class OptUtils {
         double w_norm=la::LengthEuclidean(w_vector);
         double w_times_v = 2*la::Dot(v_vector, w_vector);
         double v_norm_minus_l2=la::LengthEuclidean(v_vector)-l2_norm;
-        double alpha = (-w_times_v+math::Pow<1,2>(w_times_v*w_times_v
+        double alpha = (-w_times_v+1.0/std::pow(2,w_times_v*w_times_v
             -4*w_norm*v_norm_minus_l2))/(2*w_norm);
         la::AddExpert(alpha, w_vector, &v_vector);
         bool all_positive=true;
