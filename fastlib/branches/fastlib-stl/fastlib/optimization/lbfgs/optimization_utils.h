@@ -170,8 +170,8 @@ class OptUtils {
     ones.SetAll(1.0);
     // This part of the sparsity constraint function formula can be
     // precomputed and it is the same for every iteration
-    double precomputed_sparse_factor=-sparse_factor*(math::Pow<1,2>(dimension)-1)+
-          math::Pow<1,2>(dimension);
+    double precomputed_sparse_factor=-sparse_factor*(1.0/std::pow(2,dimension)-1)+
+          1.0/std::pow(2,dimension);
 
     for (index_t i=0; i<data->n_cols(); i++) {
       double *point=data->GetColumnPtr(i);
