@@ -665,7 +665,7 @@ bool RelaxedNmfIsometricBoundTightener::IsOptimizationOver(Matrix &coordinates,
 bool RelaxedNmfIsometricBoundTightener::IsIntermediateStepOver(Matrix &coordinates, 
                                         Matrix &gradient, 
                                         double step) {
-  double norm_gradient=math::Pow<1,2>(la::Dot(gradient.n_elements(), 
+  double norm_gradient=1.0/std::pow(2,la::Dot(gradient.n_elements(), 
                                gradient.ptr(), 
                                gradient.ptr()));
   if (norm_gradient*step < grad_tolerance_) {
@@ -1055,7 +1055,7 @@ bool RelaxedNmfIsometricBoxTightener::IsOptimizationOver(Matrix &coordinates,
 bool RelaxedNmfIsometricBoxTightener::IsIntermediateStepOver(Matrix &coordinates, 
                                         Matrix &gradient, 
                                         double step) {
-  double norm_gradient=math::Pow<1,2>(la::Dot(gradient.n_elements(), 
+  double norm_gradient=1.0/std::pow(2,la::Dot(gradient.n_elements(), 
                                gradient.ptr(), 
                                gradient.ptr()));
   if (norm_gradient*step < grad_tolerance_) {

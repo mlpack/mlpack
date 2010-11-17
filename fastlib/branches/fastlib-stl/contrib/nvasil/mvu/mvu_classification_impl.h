@@ -81,7 +81,7 @@ void MaxFurthestNeighborsSemiSupervised::Init(fx_module *module, Matrix &labeled
   }
   sum_of_nearest_distances_=0;
   for(index_t i=0; i<nearest_distances_.size(); i++) {
-   sum_of_nearest_distances_+=math::Pow<1,2>(nearest_distances_[i]);
+   sum_of_nearest_distances_+=1.0/std::pow(2,nearest_distances_[i]);
   }
   NOTIFY("Sum of all nearest distances:%lg", sum_of_nearest_distances_);
   fx_result_double(module_, "sum_of_nearest_distances", sum_of_nearest_distances_);
@@ -323,7 +323,7 @@ bool MaxFurthestNeighborsSemiSupervised::IsOptimizationOver(
 
 bool MaxFurthestNeighborsSemiSupervised::IsIntermediateStepOver(
     Matrix &coordinates, Matrix &gradient, double step) {
-  double norm_gradient=math::Pow<1,2>(la::Dot(gradient.n_elements(), 
+  double norm_gradient=1.0/std::pow(2,la::Dot(gradient.n_elements(), 
                                gradient.ptr(), 
                                gradient.ptr()));
   double feasibility_error;
@@ -445,7 +445,7 @@ void MaxFurthestNeighborsSvmSemiSupervised::Init(fx_module *module,
   }
   sum_of_nearest_distances_=0;
   for(index_t i=0; i<nearest_distances_.size(); i++) {
-   sum_of_nearest_distances_+=math::Pow<1,2>(nearest_distances_[i]);
+   sum_of_nearest_distances_+=1.0/std::pow(2,nearest_distances_[i]);
   }
   NOTIFY("Sum of all nearest distances:%lg", sum_of_nearest_distances_);
   fx_result_double(module_, "sum_of_nearest_distances", sum_of_nearest_distances_);
@@ -718,7 +718,7 @@ double MaxFurthestNeighborsSvmSemiSupervised::ComputeLagrangian(Matrix &coordina
       if (sigma1_ * ineq  <= ineq_lagrange_mult_[i*num_of_labeled_+j]) {
         lagrangian+=(-ineq_lagrange_mult_[i*num_of_labeled_+j] + sigma1_/2*ineq)*ineq;
       } else {
-        lagrangian+=-math::Pow<2,1>(ineq_lagrange_mult_[i*num_of_labeled_+j])/(2*sigma1_);
+        lagrangian+=-std::pow(2,ineq_lagrange_mult_[i*num_of_labeled_+j])/(2*sigma1_);
       }
     }   
   }
@@ -788,7 +788,7 @@ bool MaxFurthestNeighborsSvmSemiSupervised::IsOptimizationOver(
 
 bool MaxFurthestNeighborsSvmSemiSupervised::IsIntermediateStepOver(
     Matrix &coordinates, Matrix &gradient, double step) {
-  double norm_gradient=math::Pow<1,2>(la::Dot(gradient.n_elements(), 
+  double norm_gradient=1.0/std::pow(2,la::Dot(gradient.n_elements(), 
                                gradient.ptr(), 
                                gradient.ptr()));
   double feasibility_error;
@@ -912,7 +912,7 @@ void MaxFurthestNeighborsSvmSemiSupervised1::Init(fx_module *module,
   }
   sum_of_nearest_distances_=0;
   for(index_t i=0; i<nearest_distances_.size(); i++) {
-   sum_of_nearest_distances_+=math::Pow<1,2>(nearest_distances_[i]);
+   sum_of_nearest_distances_+=1.0/std::pow(2,nearest_distances_[i]);
   }
   NOTIFY("Sum of all nearest distances:%lg", sum_of_nearest_distances_);
   fx_result_double(module_, "sum_of_nearest_distances", sum_of_nearest_distances_);
@@ -1185,7 +1185,7 @@ double MaxFurthestNeighborsSvmSemiSupervised1::ComputeLagrangian(Matrix &coordin
       if (sigma1_ * ineq  <= ineq_lagrange_mult_[i*num_of_labeled_+j]) {
         lagrangian+=(-ineq_lagrange_mult_[i*num_of_labeled_+j] + sigma1_/2*ineq)*ineq;
       } else {
-        lagrangian+=-math::Pow<2,1>(ineq_lagrange_mult_[i*num_of_labeled_+j])/(2*sigma1_);
+        lagrangian+=-std::pow(2,ineq_lagrange_mult_[i*num_of_labeled_+j])/(2*sigma1_);
       }
     }   
   }
@@ -1255,7 +1255,7 @@ bool MaxFurthestNeighborsSvmSemiSupervised1::IsOptimizationOver(
 
 bool MaxFurthestNeighborsSvmSemiSupervised1::IsIntermediateStepOver(
     Matrix &coordinates, Matrix &gradient, double step) {
-  double norm_gradient=math::Pow<1,2>(la::Dot(gradient.n_elements(), 
+  double norm_gradient=1.0/std::pow(2,la::Dot(gradient.n_elements(), 
                                gradient.ptr(), 
                                gradient.ptr()));
   double feasibility_error;
