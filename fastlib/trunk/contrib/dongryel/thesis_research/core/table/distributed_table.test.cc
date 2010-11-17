@@ -28,9 +28,7 @@ bool CheckDistributedTableIntegrity(
 
 core::table::DistributedTable *InitDistributedTable(
   boost::mpi::communicator &world,
-  boost::mpi::communicator &table_outbox_group,
-  boost::mpi::communicator &table_inbox_group,
-  boost::mpi::communicator &computation_group) {
+  boost::mpi::communicator &table_outbox_group) {
 
   std::pair< core::table::DistributedTable *, std::size_t >
   distributed_table_pair =
@@ -162,18 +160,58 @@ int main(int argc, char *argv[]) {
   // communicator, make it a table process. Otherwise, make it a
   // computation process. This assignment depends heavily on the
   // round-robin assignment of mpirun.
-  boost::mpi::communicator table_outbox_group = world.split(
-        (world.rank() < world.size() / 3) ? 1 : 0);
-  boost::mpi::communicator table_inbox_group = world.split(
-        (world.rank() >= world.size() / 3 &&
-         world.rank() < world.size() / 3 * 2) ? 1 : 0);
-  boost::mpi::communicator computation_group = world.split(
-        (world.rank() >= world.size() / 3 * 2) ? 1 : 0);
+  boost::mpi::group world_group = world.group();
+  std::vector<int> table_outbox_group_vector(world.size() / 3, 0);
+  std::vector<int> table_inbox_group_vector(world.size() / 3, 0);
+  std::vector<int> computation_group_vector(world.size() / 3, 0);
+  for(int i = 0; i < world.size() / 3; i++) {
+    table_outbox_group_vector[i] = i;
+    table_inbox_group_vector[i] = i + world.size() / 3;
+    computation_group_vector[i] = i + world.size() / 3 * 2;
+  }
 
-  printf("Check: %d %d %d %d\n", world.rank(), table_outbox_group.size(),
-         table_inbox_group.size(), computation_group.size());
-  return 0;
+  boost::mpi::group table_outbox_group =
+    world_group.include(
+      table_outbox_group_vector.begin(), table_outbox_group_vector.end());
+  boost::mpi::communicator table_outbox_group_comm(world, table_outbox_group);
+  boost::mpi::group table_inbox_group =
+    world_group.include(
+      table_inbox_group_vector.begin(), table_inbox_group_vector.end());
+  boost::mpi::communicator table_inbox_group_comm(world, table_inbox_group);
+  boost::mpi::group computation_group =
+    world_group.include(
+      computation_group_vector.begin(), computation_group_vector.end());
+  boost::mpi::communicator computation_group_comm(world, computation_group);
 
+  // Create the intercommunicator between the current process and each
+  // of the subgroups.
+  //  if(world.rank() >= world.size() / 3) {
+  table_outbox_group_vector.push_back(world.rank());
+  //}
+  //if( world.rank() < world.size() / 3 ||
+  //     world.rank() >= world.size() / 3 * 2 ) {
+  table_inbox_group_vector.push_back(world.rank());
+  //}
+  //if( world.rank() < world.size() / 3 * 2) {
+  computation_group_vector.push_back(world.rank());
+  // }
+  boost::mpi::group table_outbox_inter_group =
+    world_group.include(
+      table_outbox_group_vector.begin(), table_outbox_group_vector.end());
+  boost::mpi::communicator table_outbox_group_inter_comm(
+    world, table_outbox_inter_group);
+  boost::mpi::group table_inbox_inter_group =
+    world_group.include(
+      table_inbox_group_vector.begin(), table_inbox_group_vector.end());
+  boost::mpi::communicator table_inbox_group_inter_comm(
+    world, table_inbox_inter_group);
+  boost::mpi::group computation_inter_group =
+    world_group.include(
+      computation_group_vector.begin(), computation_group_vector.end());
+  boost::mpi::communicator computation_group_inter_comm(
+    world, computation_inter_group);
+
+  // Declare the distributed table.
   core::table::DistributedTable *distributed_table = NULL;
 
   // Wait until the memory allocator is in synch.
@@ -183,8 +221,7 @@ int main(int argc, char *argv[]) {
   // barrier.
   if(world.rank() < world.size() / 3) {
     distributed_table =
-      InitDistributedTable(
-        world, table_outbox_group, table_inbox_group, computation_group);
+      InitDistributedTable(world, table_outbox_group_comm);
   }
   world.barrier();
 
@@ -197,23 +234,25 @@ int main(int argc, char *argv[]) {
 
   // Check the integrity of the distributed table.
   CheckDistributedTableIntegrity(
-    *distributed_table, world, table_outbox_group, table_inbox_group);
+    *distributed_table, world,
+    table_outbox_group_inter_comm, table_inbox_group_inter_comm);
 
   // The main computation loop.
   if(world.rank() < world.size() / 3) {
     TableOutboxProcess(
-      distributed_table, world, table_outbox_group,
-      table_inbox_group, computation_group);
+      distributed_table, world, table_outbox_group_inter_comm,
+      table_inbox_group_inter_comm, computation_group_inter_comm);
   }
   else if(world.rank() < world.size() / 3 * 2) {
     TableInboxProcess(
-      distributed_table, world, table_outbox_group,
-      table_inbox_group, computation_group);
+      distributed_table, world, table_outbox_group_inter_comm,
+      table_inbox_group_inter_comm, computation_group_inter_comm);
   }
   else {
     ComputationProcess(
       distributed_table, world,
-      table_outbox_group, table_inbox_group, computation_group);
+      table_outbox_group_inter_comm, table_inbox_group_inter_comm,
+      computation_group_inter_comm);
   }
 
   return 0;
