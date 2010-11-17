@@ -272,23 +272,6 @@ double DHrectBound<t_pow>::MaxDistanceSq(const vec& point) const {
 }
 
 /**
- * Calculates maximum bound-to-point squared distance.
- */
-/*
-template<int t_pow>
-double DHrectBound<t_pow>::MaxDistanceSq(const double *point) const {
-  double sum = 0;
-
-  for (index_t d = 0; d < dim_; d++) {
-    double v = std::max(point[d] - bounds_[d].lo, bounds_[d].hi - point[d]);
-    sum += math::Pow<t_pow, 1>(v); // v is non-negative
-  }
-
-  return math::Pow<2, t_pow>(sum);
-}
-*/
-
-/**
  * Computes maximum distance.
  */
 template<int t_pow>

@@ -706,7 +706,7 @@ bool RelaxedRescaledNmfL1::IsIntermediateStepOver(Matrix &coordinates,
   double norm_gradient=la::Dot(gradient.n_elements(), 
                                gradient.ptr(), 
                                gradient.ptr());
-  if (math::Pow<1,2>(norm_gradient)*step < grad_tolerance_) {
+  if (step/std::pow(2, norm_gradient) < grad_tolerance_) {
     return true;
   }
   return false;
@@ -1269,7 +1269,7 @@ bool RelaxedNmfIsometric::IsOptimizationOver(Matrix &coordinates,
 bool RelaxedNmfIsometric::IsIntermediateStepOver(Matrix &coordinates, 
                                         Matrix &gradient, 
                                         double step) {
-  double norm_gradient=math::Pow<1,2>(la::Dot(gradient.n_elements(), 
+  double norm_gradient=1.0/std::pow(2,la::Dot(gradient.n_elements(), 
                                gradient.ptr(), 
                                gradient.ptr()));
   if (norm_gradient*step < grad_tolerance_) {

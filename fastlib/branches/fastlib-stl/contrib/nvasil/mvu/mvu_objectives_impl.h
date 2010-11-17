@@ -564,7 +564,7 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
         &nearest_distances_,
         &num_of_nearest_pairs_);
   }
-  sum_of_nearest_distances_=math::Pow<1,2>(la::Dot(nearest_distances_.size(), 
+  sum_of_nearest_distances_=1.0/std::pow(2,la::Dot(nearest_distances_.size(), 
       &nearest_distances_[0], &nearest_distances_[0]));
   fx_format_result(module_, "num_of_constraints", "%i", num_of_nearest_pairs_);
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
@@ -633,7 +633,7 @@ void MaxFurthestNeighbors::Init(fx_module *module) {
   }
   num_of_points_++;
   num_of_nearest_pairs_=nearest_neighbor_pairs_.size();
-  sum_of_nearest_distances_=math::Pow<1,2>(la::Dot(nearest_distances_.size(), 
+  sum_of_nearest_distances_=1.0/std::pow(2,la::Dot(nearest_distances_.size(), 
       &nearest_distances_[0], &nearest_distances_[0]));
 
   fclose(fp);
@@ -743,7 +743,7 @@ void MaxFurthestNeighbors::ComputeFeasibilityError(Matrix &coordinates, double *
                            -nearest_distances_[i];
     *error+=dist_diff*dist_diff;
   }
-  *error= 100 * math::Pow<1,2>(*error)/sum_of_nearest_distances_;
+  *error= 100.0 / std::pow(2,*error)/sum_of_nearest_distances_;
 }
 
 double MaxFurthestNeighbors::ComputeLagrangian(Matrix &coordinates) {
@@ -825,7 +825,7 @@ bool MaxFurthestNeighbors::IsOptimizationOver(Matrix &coordinates,
 
 bool MaxFurthestNeighbors::IsIntermediateStepOver(Matrix &coordinates, 
       Matrix &gradient, double step) {
-   double norm_gradient=math::Pow<1,2>(la::Dot(gradient.n_elements(), 
+   double norm_gradient=1/std::pow(2,la::Dot(gradient.n_elements(), 
                                gradient.ptr(), 
                                gradient.ptr()));
   double feasibility_error;
@@ -894,7 +894,7 @@ void MaxVarianceUtils::EstimateKnns(ArrayList<index_t> &neares_neighbors,
       double probability=0;
       for(index_t j=0; j<k; j++) {
         probability+=exp(-nearest_distances[i*maximum_knns+j]
-            /(2*math::Pow<1,2>(nearest_distances[i*maximum_knns+k])))/scale_factor;
+            *std::pow(2,nearest_distances[i*maximum_knns+k]-1))/scale_factor;
       }
       loocv_score+=log(probability);
       mean_band+=nearest_distances[i*maximum_knns+k];

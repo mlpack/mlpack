@@ -116,7 +116,7 @@ void ComputeSpectrum(Matrix &w_mat, Matrix &h_mat, Matrix *spectrum) {
   double total_sum=0;
   for(index_t i=0; i<w_mat.n_rows(); i++) {
     for(index_t j=0; j<w_mat.n_cols(); j++) {
-      spectrum->set(i, 0, spectrum->get(i, 0)+math::Pow<2,1>(w_mat.get(i, j)));
+      spectrum->set(i, 0, spectrum->get(i, 0)+std::pow(2,w_mat.get(i, j)));
     }
   }
   Matrix h_norms;
@@ -128,7 +128,7 @@ void ComputeSpectrum(Matrix &w_mat, Matrix &h_mat, Matrix *spectrum) {
     }
   }
   for(index_t i=0; i<h_norms.n_rows(); i++) {
-    spectrum->set(i, 0, spectrum->get(i, 0)/math::Pow<1,2>(h_norms.get(i,0)));
+    spectrum->set(i, 0, spectrum->get(i, 0)*std::pow(2,h_norms.get(i,0)));
   }
   std::sort(spectrum->ptr(), 
             spectrum->ptr()+spectrum->n_rows(), 
@@ -145,12 +145,12 @@ void ComputeNeighborhoodErrors(ArrayList<std::pair<index_t, index_t> > &neighbor
   for(index_t i=0; i<neighbor_pairs.size(); i++) {
     index_t n1=neighbor_pairs[i].first;
     index_t n2=neighbor_pairs[i].second;
-    *error += math::Pow<2,1>(la::DistanceSqEuclidean(new_points.n_rows(), 
+    *error += std::pow(2,la::DistanceSqEuclidean(new_points.n_rows(), 
                                      new_points.GetColumnPtr(n1),
                                      new_points.GetColumnPtr(n2))
                      -distances[i]);
       total_distances += distances[i]*distances[i];
   }
-  *error=100.0 * math::Pow<1,2>(*error/total_distances);
+  *error=100.0 / std::pow(2,*error/total_distances);
 }
   
