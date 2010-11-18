@@ -95,9 +95,6 @@ class TableInbox {
               boost::mpi::any_source,
               core::table::DistributedTableMessage::
               TERMINATE_TABLE_INBOX)) {
-
-          printf("Found a inbox terminate message %d\n",
-                 inbox_to_computation_comm_in.local_rank());
           int dummy;
           boost::mpi::request recv_request =
             inbox_to_computation_comm_in.irecv(
@@ -105,9 +102,6 @@ class TableInbox {
               core::table::DistributedTableMessage::
               TERMINATE_TABLE_INBOX, dummy);
           recv_request.wait();
-          printf("Received an inbox terminate message %d\n",
-                 inbox_to_computation_comm_in.local_rank());
-
           num_time_to_quit_signals_++;
         }
       }
@@ -178,8 +172,6 @@ class TableOutbox {
               boost::mpi::any_source,
               core::table::DistributedTableMessage::
               TERMINATE_TABLE_OUTBOX)) {
-          printf("Found an outbox terminate %d\n",
-                 outbox_to_computation_comm_in.local_rank());
           int dummy;
           boost::mpi::request recv_request =
             outbox_to_computation_comm_in.irecv(
@@ -187,9 +179,6 @@ class TableOutbox {
               core::table::DistributedTableMessage::
               TERMINATE_TABLE_OUTBOX, dummy);
           recv_request.wait();
-          printf("Received an outbox terminate %d\n",
-                 outbox_to_computation_comm_in.local_rank());
-
           num_time_to_quit_signals_++;
         }
       }
