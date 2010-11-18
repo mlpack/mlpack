@@ -54,7 +54,7 @@ core::table::DistributedTable *InitDistributedTable(
     }
     printf("Process %d generated %d points...\n", world.rank(), num_points);
     std::stringstream file_name_sstr;
-    file_name_sstr << "random_dataset_" << world.rank() << ".csv";
+    file_name_sstr << "random_dataset_" << table_outbox_group.rank() << ".csv";
     std::string file_name = file_name_sstr.str();
     random_dataset.Save(file_name);
 
@@ -96,6 +96,7 @@ void TableInboxProcess(
 void ComputationProcess(
   core::table::DistributedTable *distributed_table,
   boost::mpi::communicator &world,
+  boost::mpi::communicator &local_group_comm,
   boost::mpi::intercommunicator &computation_to_outbox_comm,
   boost::mpi::intercommunicator &computation_to_inbox_comm) {
 
@@ -123,6 +124,11 @@ void ComputationProcess(
     // Tell the inbox that we are done using the point.
     distributed_table->UnlockPointinTableInbox();
   }
+
+  // Barrier so that all computation groups are here, at which outbox
+  // and inboxes are terminated.
+  local_group_comm.barrier();
+  distributed_table->TerminateMailboxes();
 }
 
 int main(int argc, char *argv[]) {
@@ -229,8 +235,13 @@ int main(int argc, char *argv[]) {
   }
   else {
     ComputationProcess(
-      distributed_table, world, *first_inter_comm, *second_inter_comm);
+      distributed_table, world, local_group_comm,
+      *first_inter_comm, *second_inter_comm);
   }
+
+  // Free the intercommunicators.
+  delete first_inter_comm;
+  delete second_inter_comm;
 
   return 0;
 }
