@@ -91,7 +91,7 @@ namespace la {
     double s = 0;
     do {
       double d = *va++ - *vb++;
-      s += std::pow(t_pow,d);
+      s += math::PowAbs<t_pow, 1>(d);
     } while (--length);
     return s;
   }
@@ -107,7 +107,7 @@ namespace la {
   template<int t_pow>
   inline double LMetric(
       index_t length, const double *va, const double *vb) {
-    return 1.0/std::pow(t_pow, RawLMetric<t_pow>(length, va, vb));
+    return math::Pow<1, t_pow>(RawLMetric<t_pow>(length, va, vb));
   }
   /** Finds the trace of the matrix.
    *  Trace(A) is the sum of the diagonal elements

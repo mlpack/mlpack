@@ -76,7 +76,7 @@ double DBallBound<TMetric, TPoint>::MinDistance(const Point& point) const {
 
 template<typename TMetric, typename TPoint>
 double DBallBound<TMetric, TPoint>::MinDistanceSq(const Point& point) const {
-  return std::pow(2,MinDistance(point));
+  return math::Pow<2, 1>(MinDistance(point));
 }
 
 /**
@@ -90,7 +90,7 @@ double DBallBound<TMetric, TPoint>::MinDistance(const DBallBound& other) const {
 
 template<typename TMetric, typename TPoint>
 double DBallBound<TMetric, TPoint>::MinDistanceSq(const DBallBound& other) const {
-  return std::pow(2,MinDistance(other));
+  return math::Pow<2, 1>(MinDistance(other));
 }
 
 /**
@@ -103,7 +103,7 @@ double DBallBound<TMetric, TPoint>::MaxDistance(const Point& point) const {
 
 template<typename TMetric, typename TPoint>
 double DBallBound<TMetric, TPoint>::MaxDistanceSq(const Point& point) const {
-  return std::pow(2,MaxDistance(point));
+  return math::Pow<2, 1>(MaxDistance(point));
 }
 
 /**
@@ -116,7 +116,7 @@ double DBallBound<TMetric, TPoint>::MaxDistance(const DBallBound& other) const {
 
 template<typename TMetric, typename TPoint>
 double DBallBound<TMetric, TPoint>::MaxDistanceSq(const DBallBound& other) const {
-  return std::pow(2, MaxDistance(other));
+  return math::Pow<2, 1>(MaxDistance(other));
 }
 
 /**
@@ -138,8 +138,8 @@ DRange DBallBound<TMetric, TPoint>::RangeDistanceSq(const DBallBound& other) con
   double delta = MidDistance(other.center_);
   double sumradius = radius_ + other.radius_;
   return DRange(
-      std::pow(2,math::ClampNonNegative(delta - sumradius)),
-      std::pow(2,delta + sumradius));
+      math::Pow<2, 1>(math::ClampNonNegative(delta - sumradius)),
+      math::Pow<2, 1>(delta + sumradius));
 }
 
 /**
@@ -161,7 +161,7 @@ double DBallBound<TMetric, TPoint>::MinToMid(const DBallBound& other) const {
 
 template<typename TMetric, typename TPoint>
 double DBallBound<TMetric, TPoint>::MinToMidSq(const DBallBound& other) const {
-  return std::pow(2, MinToMid(other));
+  return math::Pow<2, 1>(MinToMid(other));
 }
 
 /**
@@ -175,7 +175,7 @@ double DBallBound<TMetric, TPoint>::MinimaxDistance(const DBallBound& other) con
 
 template<typename TMetric, typename TPoint>
 double DBallBound<TMetric, TPoint>::MinimaxDistanceSq(const DBallBound& other) const {
-  return std::pow(2, MinimaxDistance(other));
+  return math::Pow<2, 1>(MinimaxDistance(other));
 }
 
 /**
@@ -197,7 +197,7 @@ double DBallBound<TMetric, TPoint>::MidDistance(const DBallBound& other) const {
 
 template<typename TMetric, typename TPoint>
 double DBallBound<TMetric, TPoint>::MidDistanceSq(const DBallBound& other) const {
-  return std::pow(2, MidDistance(other));
+  return math::Pow<2, 1>(MidDistance(other));
 }
 
 template<typename TMetric, typename TPoint>

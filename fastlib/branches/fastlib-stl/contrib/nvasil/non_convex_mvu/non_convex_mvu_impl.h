@@ -134,7 +134,7 @@ void NonConvexMVU::ComputeLocalOptimumSGD() {
   index_t exterior_points=0;
   for(index_t kk=0; kk<3; kk++) {
   for(it1=0; it1<100; it1++) {  
-    step=1.0/std::pow(2,step0/(it1+1));
+    step=math::Pow<1,2>(step0/(it1+1));
     for(index_t it2=0; it2<max_iterations_; it2++) {
       for(index_t i=0; i<num_of_points_; i++) {
         for(index_t k=0; k<kfns_; k++) {
