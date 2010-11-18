@@ -58,21 +58,17 @@ class DistributedTable: public boost::noncopyable {
     }
 
     void RunInbox(
-      boost::mpi::communicator &table_outbox_group_comm_in,
-      boost::mpi::communicator &table_inbox_group_comm_in,
-      boost::mpi::communicator &computation_group_comm_in) {
+      boost::mpi::intercommunicator &inbox_to_outbox_comm_in,
+      boost::mpi::intercommunicator &inbox_to_computation_comm_in) {
       table_inbox_->Run(
-        table_outbox_group_comm_in, table_inbox_group_comm_in,
-        computation_group_comm_in);
+        inbox_to_outbox_comm_in, inbox_to_computation_comm_in);
     }
 
     void RunOutbox(
-      boost::mpi::communicator &table_outbox_group_comm_in,
-      boost::mpi::communicator &table_inbox_group_comm_in,
-      boost::mpi::communicator &computation_group_comm_in) {
+      boost::mpi::intercommunicator &outbox_to_inbox_comm_in,
+      boost::mpi::intercommunicator &outbox_to_computation_comm_in) {
       table_outbox_->Run(
-        table_outbox_group_comm_in, table_inbox_group_comm_in,
-        computation_group_comm_in);
+        outbox_to_inbox_comm_in, outbox_to_computation_comm_in);
     }
 
     bool IsIndexed() const {
@@ -222,15 +218,15 @@ class DistributedTable: public boost::noncopyable {
     }
 
     void get(
-      boost::mpi::communicator &table_outbox_group_comm_in,
-      boost::mpi::communicator &table_inbox_group_comm_in,
+      boost::mpi::intercommunicator &computation_to_outbox_comm_in,
+      boost::mpi::intercommunicator &computation_to_inbox_comm_in,
       int requested_rank, int point_id,
       core::table::DenseConstPoint * entry) {
 
       // If owned by the process, just return the point. Otherwise, we
       // need to send an MPI request to the process holding the
       // required resource.
-      if(table_outbox_group_comm_in.rank() == requested_rank) {
+      if(computation_to_outbox_comm_in.local_rank() == requested_rank) {
         owned_table_->get(point_id, entry);
       }
 
@@ -244,18 +240,18 @@ class DistributedTable: public boost::noncopyable {
 
         // The point request message.
         core::table::PointRequestMessage point_request_message(
-          table_outbox_group_comm_in.rank(), point_id);
+          computation_to_outbox_comm_in.rank(), point_id);
 
         // Inform the source processor that this processor needs data!
-        table_outbox_group_comm_in.send(
+        computation_to_outbox_comm_in.send(
           requested_rank,
           core::table::DistributedTableMessage::REQUEST_POINT_FROM_TABLE_OUTBOX,
           point_request_message);
 
         // Wait until the point has arrived.
         int dummy;
-        table_inbox_group_comm_in.recv(
-          table_outbox_group_comm_in.rank(),
+        computation_to_inbox_comm_in.recv(
+          computation_to_outbox_comm_in.rank(),
           core::table::DistributedTableMessage::RECEIVE_POINT_FROM_TABLE_INBOX,
           dummy);
 

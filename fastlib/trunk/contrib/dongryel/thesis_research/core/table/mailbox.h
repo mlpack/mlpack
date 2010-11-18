@@ -57,21 +57,20 @@ class TableInbox {
     }
 
     void Run(
-      boost::mpi::communicator &table_outbox_group_comm_in,
-      boost::mpi::communicator &table_inbox_group_comm_in,
-      boost::mpi::communicator &computation_group_comm_in) {
+      boost::mpi::intercommunicator &inbox_to_outbox_comm_in,
+      boost::mpi::intercommunicator &inbox_to_computation_comm_in) {
 
       do {
 
         // Probe the message queue for the point request, and do a
         // receive.
         if(received_point_is_locked_ == false &&
-            table_outbox_group_comm_in.iprobe(
+            inbox_to_outbox_comm_in.iprobe(
               boost::mpi::any_source,
               core::table::DistributedTableMessage::
               RECEIVE_POINT_FROM_TABLE_OUTBOX)) {
 
-          table_outbox_group_comm_in.recv(
+          inbox_to_outbox_comm_in.recv(
             boost::mpi::any_source,
             core::table::DistributedTableMessage::
             RECEIVE_POINT_FROM_TABLE_OUTBOX,
@@ -82,8 +81,8 @@ class TableInbox {
           received_point_is_locked_ = true;
 
           // Notify the computation process.
-          computation_group_comm_in.send(
-            computation_group_comm_in.rank(),
+          inbox_to_computation_comm_in.send(
+            inbox_to_computation_comm_in.rank(),
             core::table::DistributedTableMessage::
             RECEIVE_POINT_FROM_TABLE_INBOX, 0);
         }
@@ -91,7 +90,7 @@ class TableInbox {
       while(time_to_quit_ == false);
 
       printf("Table inbox for Process %d is quitting.\n",
-             table_inbox_group_comm_in.rank());
+             inbox_to_outbox_comm_in.local_rank());
     }
 };
 
@@ -111,34 +110,36 @@ class TableOutbox {
     }
 
     void Run(
-      boost::mpi::communicator &table_outbox_group_comm_in,
-      boost::mpi::communicator &table_inbox_group_comm_in,
-      boost::mpi::communicator &computation_group_comm_in) {
+      boost::mpi::intercommunicator &outbox_to_inbox_comm_in,
+      boost::mpi::intercommunicator &outbox_to_computation_comm_in) {
 
       do {
 
         // Probe the message queue for the point request, and receive
         // the message to find out whom to send stuffs to.
-        if(computation_group_comm_in.iprobe(
+        if(outbox_to_computation_comm_in.iprobe(
               boost::mpi::any_source,
               core::table::DistributedTableMessage::
               REQUEST_POINT_FROM_TABLE_OUTBOX)) {
 
           // Receive from the computation group.
-          computation_group_comm_in.recv(
+          outbox_to_computation_comm_in.recv(
             boost::mpi::any_source,
             core::table::DistributedTableMessage::
             RECEIVE_POINT_FROM_TABLE_OUTBOX,
             point_request_message_);
 
+          printf("Message received!\n");
           // Send it to its inbox.
-          table_inbox_group_comm_in.send(
+          outbox_to_inbox_comm_in.send(
             point_request_message_.source_rank(),
             core::table::DistributedTableMessage::
             RECEIVE_POINT_FROM_TABLE_OUTBOX,
             owned_table_->GetColumnPtr(
               point_request_message_.point_id()),
             owned_table_->n_attributes());
+
+          printf("Message sent!\n");
         }
 
       }
@@ -146,7 +147,7 @@ class TableOutbox {
 
       // end of the infinite server loop.
       printf("Table outbox for Process %d is quitting.\n",
-             table_outbox_group_comm_in.rank());
+             outbox_to_inbox_comm_in.local_rank());
     }
 };
 };
