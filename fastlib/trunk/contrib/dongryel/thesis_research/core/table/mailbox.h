@@ -7,6 +7,7 @@
 #define CORE_TABLE_MAILBOX_H
 
 #include <boost/interprocess/offset_ptr.hpp>
+#include <boost/interprocess/sync/scoped_lock.hpp>
 #include <boost/mpi/communicator.hpp>
 #include "core/table/distributed_table_message.h"
 #include "core/table/point_request_message.h"
@@ -23,13 +24,9 @@ class TableInbox {
 
     int n_attributes_;
 
-    bool time_to_quit_;
+    int num_time_to_quit_signals_;
 
   public:
-
-    void Terminate() {
-      time_to_quit_ = true;
-    }
 
     const double *get_point(int source_rank, int point_id) const {
       return received_point_.get();
@@ -43,7 +40,7 @@ class TableInbox {
       received_point_is_locked_ = false;
       received_point_ = NULL;
       n_attributes_ = -1;
-      time_to_quit_ = false;
+      num_time_to_quit_signals_ = 0;
     }
 
     ~TableInbox() {
@@ -92,8 +89,31 @@ class TableInbox {
             core::table::DistributedTableMessage::
             RECEIVE_POINT_FROM_TABLE_INBOX, 0);
         }
+
+        // Check if any quit signal is here.
+        if(inbox_to_computation_comm_in.iprobe(
+              boost::mpi::any_source,
+              core::table::DistributedTableMessage::
+              TERMINATE_TABLE_INBOX)) {
+
+          printf("Found a inbox terminate message %d\n",
+                 inbox_to_computation_comm_in.local_rank());
+          int dummy;
+          boost::mpi::request recv_request =
+            inbox_to_computation_comm_in.irecv(
+              boost::mpi::any_source,
+              core::table::DistributedTableMessage::
+              TERMINATE_TABLE_INBOX, dummy);
+          recv_request.wait();
+          printf("Received an inbox terminate message %d\n",
+                 inbox_to_computation_comm_in.local_rank());
+
+          num_time_to_quit_signals_++;
+        }
       }
-      while(time_to_quit_ == false);
+      while(
+        num_time_to_quit_signals_ <
+        inbox_to_computation_comm_in.remote_size());
 
       printf("Table inbox for Process %d is quitting.\n",
              inbox_to_outbox_comm_in.local_rank());
@@ -110,17 +130,15 @@ class TableOutbox {
 
     bool time_to_quit_;
 
-  public:
+    int num_time_to_quit_signals_;
 
-    void Terminate() {
-      time_to_quit_ = true;
-    }
+  public:
 
     void Init(
       boost::interprocess::offset_ptr<TableType> &owned_table_in) {
 
       owned_table_ = &owned_table_in;
-      time_to_quit_ = false;
+      num_time_to_quit_signals_ = 0;
     }
 
     void Run(
@@ -155,8 +173,33 @@ class TableOutbox {
             (*owned_table_)->n_attributes());
         }
 
+        // Check if any quit signal is here.
+        if(outbox_to_computation_comm_in.iprobe(
+              boost::mpi::any_source,
+              core::table::DistributedTableMessage::
+              TERMINATE_TABLE_OUTBOX)) {
+          printf("Found an outbox terminate %d\n",
+                 outbox_to_computation_comm_in.local_rank());
+          int dummy;
+          boost::mpi::request recv_request =
+            outbox_to_computation_comm_in.irecv(
+              boost::mpi::any_source,
+              core::table::DistributedTableMessage::
+              TERMINATE_TABLE_OUTBOX, dummy);
+          recv_request.wait();
+          printf("Received an outbox terminate %d\n",
+                 outbox_to_computation_comm_in.local_rank());
+
+          num_time_to_quit_signals_++;
+        }
       }
-      while(time_to_quit_ == false) ;
+      while(
+        num_time_to_quit_signals_ <
+        outbox_to_computation_comm_in.remote_size() ||
+        outbox_to_computation_comm_in.iprobe(
+          boost::mpi::any_source,
+          core::table::DistributedTableMessage::
+          REQUEST_POINT_FROM_TABLE_OUTBOX));
 
       // end of the infinite server loop.
       printf("Table outbox for Process %d is quitting.\n",

@@ -53,11 +53,6 @@ class DistributedTable: public boost::noncopyable {
 
   public:
 
-    void TerminateMailboxes() {
-      table_outbox_->Terminate();
-      table_inbox_->Terminate();
-    }
-
     void UnlockPointinTableInbox() {
       table_inbox_->UnlockPoint();
     }

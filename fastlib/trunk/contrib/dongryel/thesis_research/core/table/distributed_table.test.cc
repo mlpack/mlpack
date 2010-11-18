@@ -127,8 +127,16 @@ void ComputationProcess(
 
   // Barrier so that all computation groups are here, at which outbox
   // and inboxes are terminated.
-  local_group_comm.barrier();
-  distributed_table->TerminateMailboxes();
+  printf("Notifying all mailboxes that Computation group %d is done!\n",
+         local_group_comm.rank());
+  for(int i = 0; i < computation_to_outbox_comm.remote_size(); i++) {
+    computation_to_outbox_comm.isend(
+      i, core::table::DistributedTableMessage::TERMINATE_TABLE_OUTBOX,
+      0);
+    computation_to_inbox_comm.isend(
+      i, core::table::DistributedTableMessage::TERMINATE_TABLE_INBOX,
+      0);
+  }
 }
 
 int main(int argc, char *argv[]) {
@@ -240,6 +248,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Free the intercommunicators.
+  world.barrier();
   delete first_inter_comm;
   delete second_inter_comm;
 
