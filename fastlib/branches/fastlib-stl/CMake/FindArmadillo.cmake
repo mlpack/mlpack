@@ -32,6 +32,20 @@
 #  ARMADILLO_LIBRARIES  = Link these to use ARMADILLO
 #  ARMADILLO_LFLAGS     = Linker flags (optional)
 
+#=============================================================
+# _ARMADILLO_GET_VERSION
+# Internal function to parse the version number in version.hpp or
+# arma_version.hpp (other code should figure out which of these exists).
+# This is based on _GTK2_GET_VERSION.
+#   _OUT_major = Major version number
+#   _OUT_minor = Minor version number
+#   _OUT_micro = Micro version number
+#   _armaversion_hdr = Header file to parse
+#=============================================================
+function(_ARMA_GET_VERSION _OUT_major _OUT_minor _OUT_patch _armaversion_hdr)
+
+endfunction()
+
 ## -----------------------------------------------------------------------------
 ## Check for the header files
 
@@ -61,23 +75,101 @@ else (ARMADILLO_INCLUDES AND ARMADILLO_LIBRARIES)
   set (HAVE_ARMADILLO FALSE)
   if (NOT ARMADILLO_FIND_QUIETLY)
     if (NOT ARMADILLO_INCLUDES)
-      message (STATUS "Unable to find ARMADILLO header files!")
+      message (STATUS "Unable to find Armadillo header files!")
     endif (NOT ARMADILLO_INCLUDES)
     if (NOT ARMADILLO_LIBRARIES)
-      message (STATUS "Unable to find ARMADILLO library files!")
+      message (STATUS "Unable to find Armadillo library files!")
     endif (NOT ARMADILLO_LIBRARIES)
   endif (NOT ARMADILLO_FIND_QUIETLY)
 endif (ARMADILLO_INCLUDES AND ARMADILLO_LIBRARIES)
 
+
+
+## -----------------------------------------------------------------------------
+## Check for correct version of Armadillo
+
+# Newer versions use arma_version.hpp
+if (EXISTS "${ARMADILLO_INCLUDES}/arma_version.hpp")
+  set(ARMA_VERSION_FILE "${ARMADILLO_INCLUDES}/arma_version.hpp")
+else ()
+  if (EXISTS "${ARMADILLO_INCLUDES}/version.hpp")
+    set(ARMA_VERSION_FILE "${ARMADILLO_INCLUDES}/version.hpp")
+  else ()
+    # no version file exists... so we have no idea what version we are using
+    set(ARMA_MAJOR_VERSION 0)
+    set(ARMA_MINOR_VERSION 0)
+    set(ARMA_PATCH_VERSION 0)
+  endif ()
+endif ()
+
+if(ARMA_VERSION_FILE)
+    file(READ ${ARMA_VERSION_FILE} _contents)
+    if(_contents)
+        string(REGEX REPLACE ".*#define ARMA_VERSION_MAJOR \([0-9]+\).*" "\\1" ARMA_MAJOR_VERSION "${_contents}")
+        string(REGEX REPLACE ".*#define ARMA_VERSION_MINOR \([0-9]+\).*" "\\1" ARMA_MINOR_VERSION "${_contents}")
+        string(REGEX REPLACE ".*#define ARMA_VERSION_PATCH \([0-9]+\).*" "\\1" ARMA_PATCH_VERSION "${_contents}")
+
+        if(NOT ${ARMA_MAJOR_VERSION} MATCHES "[0-9]+")
+            message(FATAL_ERROR "Version parsing failed for ARMA_VERSION_MAJOR!")
+        endif()
+        if(NOT ${ARMA_MINOR_VERSION} MATCHES "[0-9]+")
+            message(FATAL_ERROR "Version parsing failed for ARMA_VERSION_MINOR!")
+        endif()
+        if(NOT ${ARMA_PATCH_VERSION} MATCHES "[0-9]+")
+            message(FATAL_ERROR "Version parsing failed for ARMA_VERSION_PATCH!")
+        endif()
+    else()
+        # This should not be possible, but just in case...
+        message(FATAL_ERROR "Include file ${ARMA_VERSION_FILE} does not exist")
+    endif()
+endif()
+
+# Assemble version number
+set(ARMA_FOUND_VERSION
+  ${ARMA_MAJOR_VERSION}.${ARMA_MINOR_VERSION}.${ARMA_PATCH_VERSION})
+
+if(Armadillo_FIND_VERSION)
+  if(ARMA_FOUND_VERSION VERSION_EQUAL "0.0.0")
+    message (FATAL_ERROR "Could not figure out which version of Armadillo is installed!")
+    return()
+  endif()
+
+  set(ARMADILLO_FAILED_VERSION_CHECK true)
+
+#  message(STATUS "Found version ${ARMA_FOUND_VERSION} and find version ${Armadillo_FIND_VERSION}")
+  if(Armadillo_FIND_VERSION_EXACT)
+    if(ARMA_FOUND_VERSION VERSION_EQUAL Armadillo_FIND_VERSION)
+      set(ARMADILLO_FAILED_VERSION_CHECK false)
+    endif()
+  else() # not exact version requirement
+    if(ARMA_FOUND_VERSION VERSION_EQUAL   Armadillo_FIND_VERSION OR
+       ARMA_FOUND_VERSION VERSION_GREATER Armadillo_FIND_VERSION)
+      set(ARMADILLO_FAILED_VERSION_CHECK false)
+    endif()
+  endif()
+
+  if(ARMADILLO_FAILED_VERSION_CHECK)
+    if(Armadillo_FIND_VERSION_EXACT)
+      message (FATAL_ERROR "Found Armadillo version ${ARMA_FOUND_VERSION}; version ${Armadillo_FIND_VERSION} exactly is required.")
+    else()
+      message (FATAL_ERROR "Found Armadillo version ${ARMA_FOUND_VERSION}; version ${Armadillo_FIND_VERSION} or newer is required.")
+    endif()
+    return()
+  endif()
+endif()
+
+## -----------------------------------------------------------------------------
+## Report status
+
 if (HAVE_ARMADILLO)
   if (NOT ARMADILLO_FIND_QUIETLY)
-    message (STATUS "Found components for ARMADILLO")
+    message (STATUS "Found components for Armadillo ${ARMA_FOUND_VERSION}")
     message (STATUS "ARMADILLO_INCLUDES  = ${ARMADILLO_INCLUDES}")
     message (STATUS "ARMADILLO_LIBRARIES = ${ARMADILLO_LIBRARIES}")
   endif (NOT ARMADILLO_FIND_QUIETLY)
 else (HAVE_ARMADILLO)
   if (ARMADILLO_FIND_REQUIRED)
-    message (FATAL_ERROR "Could not find ARMADILLO!")
+    message (FATAL_ERROR "Could not find Armadillo!")
   endif (ARMADILLO_FIND_REQUIRED)
 endif (HAVE_ARMADILLO)
 
