@@ -18,15 +18,15 @@ int main(int argc, char *argv[]) {
   core::tree::GenMetricTree<core::table::DensePoint> > TableType;
 
   // Parse arguments for Kde.
-  ml::KdeArguments<TableType> kde_arguments;
-  ml::Kde<TableType>::ParseArguments(argc, argv, &kde_arguments);
+  mlpack::kde::KdeArguments<TableType> kde_arguments;
+  mlpack::kde::Kde<TableType>::ParseArguments(argc, argv, &kde_arguments);
 
   // Instantiate a KDE object.
-  ml::Kde<TableType> kde_instance;
+  mlpack::kde::Kde<TableType> kde_instance;
   kde_instance.Init(kde_arguments);
 
   // Compute the result.
-  ml::KdeResult< std::vector<double> > kde_result;
+  mlpack::kde::KdeResult< std::vector<double> > kde_result;
   kde_instance.Compute(kde_arguments, &kde_result);
 
   // Output the KDE result to the file.

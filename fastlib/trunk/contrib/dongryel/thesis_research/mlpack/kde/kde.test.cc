@@ -14,7 +14,7 @@
 #include "core/tree/gen_metric_tree.h"
 #include <time.h>
 
-namespace ml {
+namespace mlpack {
 namespace kde {
 namespace test_kde {
 int num_dimensions_;
@@ -112,8 +112,8 @@ class TestKde {
       for(int i = 0; i < 20; i++) {
         for(int k = 0; k < 2; k++) {
           // Randomly choose the number of dimensions and the points.
-          ml::kde::test_kde::num_dimensions_ = core::math::RandInt(3, 20);
-          ml::kde::test_kde::num_points_ = core::math::RandInt(500, 1001);
+          mlpack::kde::test_kde::num_dimensions_ = core::math::RandInt(3, 20);
+          mlpack::kde::test_kde::num_points_ = core::math::RandInt(500, 1001);
           StressTest(k);
         }
       }
@@ -135,9 +135,9 @@ class TestKde {
       std::cout << "\n==================\n";
       std::cout << "Test trial begin\n";
       std::cout << "Number of dimensions: " <<
-                ml::kde::test_kde::num_dimensions_ << "\n";
+                mlpack::kde::test_kde::num_dimensions_ << "\n";
       std::cout << "Number of points: " <<
-                ml::kde::test_kde::num_points_ << "\n";
+                mlpack::kde::test_kde::num_points_ << "\n";
 
       switch(kernel_type) {
         case 0:
@@ -159,8 +159,8 @@ class TestKde {
       // Push in the randomly generated bandwidth.
       double bandwidth =
         core::math::Random(
-          0.1 * sqrt(2.0 * ml::kde::test_kde::num_dimensions_),
-          0.2 * sqrt(2.0 * ml::kde::test_kde::num_dimensions_));
+          0.1 * sqrt(2.0 * mlpack::kde::test_kde::num_dimensions_),
+          0.2 * sqrt(2.0 * mlpack::kde::test_kde::num_dimensions_));
       std::stringstream bandwidth_sstr;
       bandwidth_sstr << "--bandwidth=" << bandwidth;
       args.push_back(bandwidth_sstr.str());
@@ -168,22 +168,22 @@ class TestKde {
       // Generate the random dataset and save it.
       TableType random_table;
       GenerateRandomDataset_(
-        ml::kde::test_kde::num_dimensions_,
-        ml::kde::test_kde::num_points_, &random_table);
+        mlpack::kde::test_kde::num_dimensions_,
+        mlpack::kde::test_kde::num_points_, &random_table);
       random_table.Save(references_in);
 
       // Parse the KDE arguments.
-      ml::KdeArguments<TableType> kde_arguments;
-      ml::Kde<TableType>::ParseArguments(args, &kde_arguments);
+      mlpack::kde::KdeArguments<TableType> kde_arguments;
+      mlpack::kde::Kde<TableType>::ParseArguments(args, &kde_arguments);
 
       std::cout << "Bandwidth value " << bandwidth << "\n";
 
       // Call the KDE driver.
-      ml::Kde<TableType> kde_instance;
+      mlpack::kde::Kde<TableType> kde_instance;
       kde_instance.Init(kde_arguments);
 
       // Compute the result.
-      ml::KdeResult< std::vector<double> > kde_result;
+      mlpack::kde::KdeResult< std::vector<double> > kde_result;
       kde_instance.Compute(kde_arguments, &kde_result);
 
       // Call the ultra-naive.
@@ -212,7 +212,7 @@ BOOST_AUTO_TEST_CASE(TestCaseKde) {
   srand(time(NULL));
 
   // Call the tests.
-  ml::kde::TestKde kde_test;
+  mlpack::kde::TestKde kde_test;
   kde_test.StressTestMain();
 
   std::cout << "All tests passed!\n";

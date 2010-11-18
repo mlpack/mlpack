@@ -13,8 +13,8 @@
 #include "core/tree/statistic.h"
 #include "core/table/table.h"
 
-namespace ml {
-
+namespace mlpack {
+namespace kde {
 class KdePostponed {
 
   public:
@@ -569,9 +569,9 @@ class KdeStatistic: public core::tree::AbstractStatistic {
 
   public:
 
-    ml::KdePostponed postponed_;
+    mlpack::kde::KdePostponed postponed_;
 
-    ml::KdeSummary summary_;
+    mlpack::kde::KdeSummary summary_;
 
     KdeStatistic() {
     }
@@ -604,6 +604,7 @@ class KdeStatistic: public core::tree::AbstractStatistic {
       const KdeStatistic *right_stat) {
       SetZero();
     }
+};
 };
 };
 
