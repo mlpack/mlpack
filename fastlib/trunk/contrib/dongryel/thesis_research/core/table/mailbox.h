@@ -27,6 +27,10 @@ class TableInbox {
 
   public:
 
+    void Terminate() {
+      time_to_quit_ = true;
+    }
+
     const double *get_point(int source_rank, int point_id) const {
       return received_point_.get();
     }
@@ -70,11 +74,13 @@ class TableInbox {
               core::table::DistributedTableMessage::
               RECEIVE_POINT_FROM_TABLE_OUTBOX)) {
 
-          inbox_to_outbox_comm_in.recv(
-            boost::mpi::any_source,
-            core::table::DistributedTableMessage::
-            RECEIVE_POINT_FROM_TABLE_OUTBOX,
-            received_point_.get(), n_attributes_);
+          boost::mpi::request recv_request =
+            inbox_to_outbox_comm_in.irecv(
+              boost::mpi::any_source,
+              core::table::DistributedTableMessage::
+              RECEIVE_POINT_FROM_TABLE_OUTBOX,
+              received_point_.get(), n_attributes_);
+          recv_request.wait();
 
           // The point remains valid until it is received from the
           // other end.
@@ -98,15 +104,23 @@ template<typename TableType>
 class TableOutbox {
   private:
 
-    boost::interprocess::offset_ptr<TableType> owned_table_;
-
     core::table::PointRequestMessage point_request_message_;
 
+    boost::interprocess::offset_ptr<TableType> *owned_table_;
+
+    bool time_to_quit_;
+
   public:
+
+    void Terminate() {
+      time_to_quit_ = true;
+    }
 
     void Init(
       boost::interprocess::offset_ptr<TableType> &owned_table_in) {
 
+      owned_table_ = &owned_table_in;
+      time_to_quit_ = false;
     }
 
     void Run(
@@ -123,27 +137,26 @@ class TableOutbox {
               REQUEST_POINT_FROM_TABLE_OUTBOX)) {
 
           // Receive from the computation group.
-          outbox_to_computation_comm_in.recv(
-            boost::mpi::any_source,
-            core::table::DistributedTableMessage::
-            RECEIVE_POINT_FROM_TABLE_OUTBOX,
-            point_request_message_);
+          boost::mpi::request recv_request =
+            outbox_to_computation_comm_in.irecv(
+              boost::mpi::any_source,
+              core::table::DistributedTableMessage::
+              REQUEST_POINT_FROM_TABLE_OUTBOX,
+              point_request_message_);
+          recv_request.wait();
 
-          printf("Message received!\n");
           // Send it to its inbox.
           outbox_to_inbox_comm_in.send(
             point_request_message_.source_rank(),
             core::table::DistributedTableMessage::
             RECEIVE_POINT_FROM_TABLE_OUTBOX,
-            owned_table_->GetColumnPtr(
+            (*owned_table_)->GetColumnPtr(
               point_request_message_.point_id()),
-            owned_table_->n_attributes());
-
-          printf("Message sent!\n");
+            (*owned_table_)->n_attributes());
         }
 
       }
-      while(true) ;
+      while(time_to_quit_ == false) ;
 
       // end of the infinite server loop.
       printf("Table outbox for Process %d is quitting.\n",

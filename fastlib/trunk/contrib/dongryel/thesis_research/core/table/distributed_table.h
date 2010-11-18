@@ -53,6 +53,11 @@ class DistributedTable: public boost::noncopyable {
 
   public:
 
+    void TerminateMailboxes() {
+      table_outbox_->Terminate();
+      table_inbox_->Terminate();
+    }
+
     void UnlockPointinTableInbox() {
       table_inbox_->UnlockPoint();
     }
@@ -189,6 +194,7 @@ class DistributedTable: public boost::noncopyable {
       // Initialize the mailboxes.
       table_outbox_ = core::table::global_m_file_->UniqueConstruct <
                       core::table::TableOutbox<TableType> > ();
+      table_outbox_->Init(owned_table_);
       table_inbox_ = core::table::global_m_file_->UniqueConstruct <
                      core::table::TableInbox > ();
       table_inbox_->Init(owned_table_->n_attributes());
@@ -240,7 +246,7 @@ class DistributedTable: public boost::noncopyable {
 
         // The point request message.
         core::table::PointRequestMessage point_request_message(
-          computation_to_outbox_comm_in.rank(), point_id);
+          computation_to_outbox_comm_in.local_rank(), point_id);
 
         // Inform the source processor that this processor needs data!
         computation_to_outbox_comm_in.send(
@@ -250,10 +256,12 @@ class DistributedTable: public boost::noncopyable {
 
         // Wait until the point has arrived.
         int dummy;
-        computation_to_inbox_comm_in.recv(
-          computation_to_outbox_comm_in.rank(),
-          core::table::DistributedTableMessage::RECEIVE_POINT_FROM_TABLE_INBOX,
-          dummy);
+        boost::mpi::request recv_request =
+          computation_to_inbox_comm_in.irecv(
+            computation_to_outbox_comm_in.local_rank(),
+            core::table::DistributedTableMessage::
+            RECEIVE_POINT_FROM_TABLE_INBOX, dummy);
+        recv_request.wait();
 
         // If we are here, then the point is ready. Alias the point.
         entry->Alias(
