@@ -112,8 +112,10 @@ void ComputationProcess(
     int random_request_point_id =
       core::math::RandInt(
         0, distributed_table->local_n_entries(random_request_rank));
-    printf("Process %d is requesting point %d from Process %d\n",
-           world.rank(), random_request_point_id, random_request_rank);
+    printf("Computation Process %d is requesting point %d from Table Outbox "
+           "Process %d\n",
+           local_group_comm.rank(), random_request_point_id,
+           random_request_rank);
     distributed_table->get(
       computation_to_outbox_comm, computation_to_inbox_comm,
       random_request_rank, random_request_point_id, &point);
