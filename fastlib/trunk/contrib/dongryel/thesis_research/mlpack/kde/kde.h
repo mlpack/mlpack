@@ -13,23 +13,24 @@
 #include "kde_dualtree.h"
 #include "kde_arguments.h"
 
-namespace ml {
+namespace mlpack {
+namespace kde {
 template<typename IncomingTableType>
 class Kde {
   public:
     typedef IncomingTableType TableType;
 
-    typedef ml::KdePostponed PostponedType;
+    typedef mlpack::kde::KdePostponed PostponedType;
 
-    typedef ml::KdeGlobal<TableType> GlobalType;
+    typedef mlpack::kde::KdeGlobal<TableType> GlobalType;
 
-    typedef ml::KdeResult< std::vector<double> > ResultType;
+    typedef mlpack::kde::KdeResult< std::vector<double> > ResultType;
 
-    typedef ml::KdeDelta DeltaType;
+    typedef mlpack::kde::KdeDelta DeltaType;
 
-    typedef ml::KdeSummary SummaryType;
+    typedef mlpack::kde::KdeSummary SummaryType;
 
-    typedef ml::KdeStatistic StatisticType;
+    typedef mlpack::kde::KdeStatistic StatisticType;
 
   public:
 
@@ -62,20 +63,20 @@ class Kde {
     /**
      * @brief Initialize a Kde engine with the arguments.
      */
-    void Init(ml::KdeArguments<TableType> &arguments_in);
+    void Init(mlpack::kde::KdeArguments<TableType> &arguments_in);
 
     void Compute(
-      const ml::KdeArguments<TableType> &arguments_in,
+      const mlpack::kde::KdeArguments<TableType> &arguments_in,
       ResultType *result_out);
 
     static void ParseArguments(
       const std::vector<std::string> &args,
-      ml::KdeArguments<TableType> *arguments_out);
+      mlpack::kde::KdeArguments<TableType> *arguments_out);
 
     static void ParseArguments(
       int argc,
       char *argv[],
-      ml::KdeArguments<TableType> *arguments_out);
+      mlpack::kde::KdeArguments<TableType> *arguments_out);
 
   private:
 
@@ -89,6 +90,7 @@ class Kde {
     static bool ConstructBoostVariableMap_(
       const std::vector<std::string> &args,
       boost::program_options::variables_map *vm);
+};
 };
 };
 

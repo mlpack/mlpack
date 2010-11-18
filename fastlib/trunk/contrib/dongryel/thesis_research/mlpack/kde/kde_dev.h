@@ -1,3 +1,8 @@
+/** @file kde_dev.h
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
 #ifndef MLPACK_KDE_KDE_DEV_H
 #define MLPACK_KDE_KDE_DEV_H
 
@@ -6,32 +11,32 @@
 #include "kde.h"
 
 template<typename TableType>
-TableType *ml::Kde<TableType>::query_table() {
+TableType *mlpack::kde::Kde<TableType>::query_table() {
   return query_table_;
 }
 
 template<typename TableType>
-TableType *ml::Kde<TableType>::reference_table() {
+TableType *mlpack::kde::Kde<TableType>::reference_table() {
   return reference_table_;
 }
 
 template<typename TableType>
-typename ml::Kde<TableType>::GlobalType &ml::Kde<TableType>::global() {
+typename mlpack::kde::Kde<TableType>::GlobalType &mlpack::kde::Kde<TableType>::global() {
   return global_;
 }
 
 template<typename TableType>
-bool ml::Kde<TableType>::is_monochromatic() const {
+bool mlpack::kde::Kde<TableType>::is_monochromatic() const {
   return is_monochromatic_;
 }
 
 template<typename TableType>
-void ml::Kde<TableType>::Compute(
-  const ml::KdeArguments<TableType> &arguments_in,
-  ml::KdeResult< std::vector<double> > *result_out) {
+void mlpack::kde::Kde<TableType>::Compute(
+  const mlpack::kde::KdeArguments<TableType> &arguments_in,
+  mlpack::kde::KdeResult< std::vector<double> > *result_out) {
 
   // Instantiate a dual-tree algorithm of the KDE.
-  core::gnp::DualtreeDfs<ml::Kde<TableType> > dualtree_dfs;
+  core::gnp::DualtreeDfs<mlpack::kde::Kde<TableType> > dualtree_dfs;
   dualtree_dfs.Init(*this);
 
   // Compute the result.
@@ -39,7 +44,7 @@ void ml::Kde<TableType>::Compute(
 }
 
 template<typename TableType>
-void ml::Kde<TableType>::Init(ml::KdeArguments<TableType> &arguments_in) {
+void mlpack::kde::Kde<TableType>::Init(mlpack::kde::KdeArguments<TableType> &arguments_in) {
 
   reference_table_ = arguments_in.reference_table_;
   if(arguments_in.query_table_ == NULL) {
@@ -59,12 +64,12 @@ void ml::Kde<TableType>::Init(ml::KdeArguments<TableType> &arguments_in) {
 }
 
 template<typename TableType>
-void ml::Kde<TableType>::set_bandwidth(double bandwidth_in) {
+void mlpack::kde::Kde<TableType>::set_bandwidth(double bandwidth_in) {
   global_.set_bandwidth(bandwidth_in);
 }
 
 template<typename TableType>
-bool ml::Kde<TableType>::ConstructBoostVariableMap_(
+bool mlpack::kde::Kde<TableType>::ConstructBoostVariableMap_(
   const std::vector<std::string> &args,
   boost::program_options::variables_map *vm) {
 
@@ -171,9 +176,9 @@ bool ml::Kde<TableType>::ConstructBoostVariableMap_(
 }
 
 template<typename TableType>
-void ml::Kde<TableType>::ParseArguments(
+void mlpack::kde::Kde<TableType>::ParseArguments(
   const std::vector<std::string> &args,
-  ml::KdeArguments<TableType> *arguments_out) {
+  mlpack::kde::KdeArguments<TableType> *arguments_out) {
 
   // A L2 metric to index the table to use.
   arguments_out->metric_ = new core::metric_kernels::LMetric<2>();
@@ -234,10 +239,10 @@ void ml::Kde<TableType>::ParseArguments(
 }
 
 template<typename TableType>
-void ml::Kde<TableType>::ParseArguments(
+void mlpack::kde::Kde<TableType>::ParseArguments(
   int argc,
   char *argv[],
-  ml::KdeArguments<TableType> *arguments_out) {
+  mlpack::kde::KdeArguments<TableType> *arguments_out) {
 
   // Convert C input to C++; skip executable name for Boost.
   std::vector<std::string> args(argv + 1, argv + argc);

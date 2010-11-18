@@ -1,5 +1,18 @@
 cmake_minimum_required(VERSION 2.8)
 
+# the test for distributed_kde.test.cc
+add_executable(distributed_kde
+               EXCLUDE_FROM_ALL
+               distributed_kde.cc
+)
+
+# link dependencies of distributed_kde.cc
+target_link_libraries(distributed_kde
+                      core
+                      ${TRILINOS_LIBS}
+                      ${Boost_LIBRARIES}
+                     )
+
 # the test for MPI all_reduce
 add_executable(all_reduce
                EXCLUDE_FROM_ALL

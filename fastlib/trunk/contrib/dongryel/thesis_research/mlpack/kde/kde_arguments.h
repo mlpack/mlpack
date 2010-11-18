@@ -9,7 +9,8 @@
 #include "core/table/table.h"
 #include "core/metric_kernels/abstract_metric.h"
 
-namespace ml {
+namespace mlpack {
+namespace kde {
 template<typename TableType>
 class KdeArguments {
   public:
@@ -60,6 +61,7 @@ class KdeArguments {
         metric_ = NULL;
       }
     }
+};
 };
 };
 
