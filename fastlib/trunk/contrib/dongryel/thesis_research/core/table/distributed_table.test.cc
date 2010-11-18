@@ -74,33 +74,30 @@ core::table::DistributedTable *InitDistributedTable(
 void TableOutboxProcess(
   core::table::DistributedTable *distributed_table,
   boost::mpi::communicator &world,
-  boost::mpi::communicator &table_outbox_group,
-  boost::mpi::communicator &table_inbox_group,
-  boost::mpi::communicator &computation_group) {
+  boost::mpi::intercommunicator &outbox_to_inbox_comm,
+  boost::mpi::intercommunicator &outbox_to_computation_comm) {
 
   printf("Process %d: TableOutbox.\n", world.rank());
   distributed_table->RunOutbox(
-    table_outbox_group, table_inbox_group, computation_group);
+    outbox_to_inbox_comm, outbox_to_computation_comm);
 }
 
 void TableInboxProcess(
   core::table::DistributedTable *distributed_table,
   boost::mpi::communicator &world,
-  boost::mpi::communicator &table_outbox_group,
-  boost::mpi::communicator &table_inbox_group,
-  boost::mpi::communicator &computation_group) {
+  boost::mpi::intercommunicator &inbox_to_outbox_comm,
+  boost::mpi::intercommunicator &inbox_to_computation_comm) {
   printf("Process %d: TableInbox.\n", world.rank());
 
   distributed_table->RunInbox(
-    table_outbox_group, table_inbox_group, computation_group);
+    inbox_to_outbox_comm, inbox_to_computation_comm);
 }
 
 void ComputationProcess(
   core::table::DistributedTable *distributed_table,
   boost::mpi::communicator &world,
-  boost::mpi::communicator &table_outbox_group,
-  boost::mpi::communicator &table_inbox_group,
-  boost::mpi::communicator &computation_group) {
+  boost::mpi::intercommunicator &computation_to_outbox_comm,
+  boost::mpi::intercommunicator &computation_to_inbox_comm) {
 
   printf("Process %d: Computation.\n", world.rank());
 
@@ -109,12 +106,15 @@ void ComputationProcess(
   int num_points = core::math::RandInt(10, 30);
   for(int n = 0; n < num_points; n++) {
     core::table::DenseConstPoint point;
-    int random_request_rank = core::math::RandInt(0, table_outbox_group.size());
+    int random_request_rank = core::math::RandInt(
+                                0, computation_to_outbox_comm.remote_size());
     int random_request_point_id =
       core::math::RandInt(
         0, distributed_table->local_n_entries(random_request_rank));
+    printf("Process %d is requesting point %d from Process %d\n",
+           world.rank(), random_request_point_id, random_request_rank);
     distributed_table->get(
-      table_outbox_group, table_inbox_group,
+      computation_to_outbox_comm, computation_to_inbox_comm,
       random_request_rank, random_request_point_id, &point);
 
     // Print the point.
@@ -156,60 +156,39 @@ int main(int argc, char *argv[]) {
     printf("%d processes are present...\n", world.size());
   }
 
-  // If the process ID is less than half of the size of the
-  // communicator, make it a table process. Otherwise, make it a
-  // computation process. This assignment depends heavily on the
-  // round-robin assignment of mpirun.
-  boost::mpi::group world_group = world.group();
-  std::vector<int> table_outbox_group_vector(world.size() / 3, 0);
-  std::vector<int> table_inbox_group_vector(world.size() / 3, 0);
-  std::vector<int> computation_group_vector(world.size() / 3, 0);
-  for(int i = 0; i < world.size() / 3; i++) {
-    table_outbox_group_vector[i] = i;
-    table_inbox_group_vector[i] = i + world.size() / 3;
-    computation_group_vector[i] = i + world.size() / 3 * 2;
+  // Split the world communicator into three groups: the first group
+  // that sends stuffs to other processes, the second group that
+  // receives stuffs from other processes, and the third group that
+  // does the computation.
+  int membership_key = world.rank() % 3;
+  boost::mpi::communicator local_group_comm = world.split(membership_key);
+
+  // Build the intercommunicator between the table outbox group and
+  // the table inbox group and the computation group.
+  boost::mpi::intercommunicator *first_inter_comm = NULL;
+  boost::mpi::intercommunicator *second_inter_comm = NULL;
+  if(membership_key == 0) {
+    first_inter_comm = new boost::mpi::intercommunicator(
+      local_group_comm, 0, world, 1);
+    second_inter_comm = new boost::mpi::intercommunicator(
+      local_group_comm, 0, world, 2);
+  }
+  else if(membership_key == 1) {
+    first_inter_comm = new boost::mpi::intercommunicator(
+      local_group_comm, 0, world, 0);
+    second_inter_comm = new boost::mpi::intercommunicator(
+      local_group_comm, 0, world, 2);
+  }
+  else {
+    first_inter_comm = new boost::mpi::intercommunicator(
+      local_group_comm, 0, world, 0);
+    second_inter_comm = new boost::mpi::intercommunicator(
+      local_group_comm, 0, world, 1);
   }
 
-  boost::mpi::group table_outbox_group =
-    world_group.include(
-      table_outbox_group_vector.begin(), table_outbox_group_vector.end());
-  boost::mpi::communicator table_outbox_group_comm(world, table_outbox_group);
-  boost::mpi::group table_inbox_group =
-    world_group.include(
-      table_inbox_group_vector.begin(), table_inbox_group_vector.end());
-  boost::mpi::communicator table_inbox_group_comm(world, table_inbox_group);
-  boost::mpi::group computation_group =
-    world_group.include(
-      computation_group_vector.begin(), computation_group_vector.end());
-  boost::mpi::communicator computation_group_comm(world, computation_group);
-
-  // Create the intercommunicator between the current process and each
-  // of the subgroups.
-  //  if(world.rank() >= world.size() / 3) {
-  table_outbox_group_vector.push_back(world.rank());
-  //}
-  //if( world.rank() < world.size() / 3 ||
-  //     world.rank() >= world.size() / 3 * 2 ) {
-  table_inbox_group_vector.push_back(world.rank());
-  //}
-  //if( world.rank() < world.size() / 3 * 2) {
-  computation_group_vector.push_back(world.rank());
-  // }
-  boost::mpi::group table_outbox_inter_group =
-    world_group.include(
-      table_outbox_group_vector.begin(), table_outbox_group_vector.end());
-  boost::mpi::communicator table_outbox_group_inter_comm(
-    world, table_outbox_inter_group);
-  boost::mpi::group table_inbox_inter_group =
-    world_group.include(
-      table_inbox_group_vector.begin(), table_inbox_group_vector.end());
-  boost::mpi::communicator table_inbox_group_inter_comm(
-    world, table_inbox_inter_group);
-  boost::mpi::group computation_inter_group =
-    world_group.include(
-      computation_group_vector.begin(), computation_group_vector.end());
-  boost::mpi::communicator computation_group_inter_comm(
-    world, computation_inter_group);
+  printf("Rank: %d %d %d %d %d\n", world.rank(),
+         first_inter_comm->local_size(), first_inter_comm->remote_size(),
+         second_inter_comm->local_size(), second_inter_comm->remote_size());
 
   // Declare the distributed table.
   core::table::DistributedTable *distributed_table = NULL;
@@ -219,9 +198,9 @@ int main(int argc, char *argv[]) {
 
   // Read the distributed table once per each compute node, and put a
   // barrier.
-  if(world.rank() < world.size() / 3) {
+  if(membership_key == 0) {
     distributed_table =
-      InitDistributedTable(world, table_outbox_group_comm);
+      InitDistributedTable(world, local_group_comm);
   }
   world.barrier();
 
@@ -233,26 +212,24 @@ int main(int argc, char *argv[]) {
   distributed_table = distributed_table_pair.first;
 
   // Check the integrity of the distributed table.
-  CheckDistributedTableIntegrity(
-    *distributed_table, world,
-    table_outbox_group_inter_comm, table_inbox_group_inter_comm);
+  if(membership_key == 0) {
+    CheckDistributedTableIntegrity(
+      *distributed_table, world,
+      *first_inter_comm, *second_inter_comm);
+  }
 
   // The main computation loop.
-  if(world.rank() < world.size() / 3) {
+  if(membership_key == 0) {
     TableOutboxProcess(
-      distributed_table, world, table_outbox_group_inter_comm,
-      table_inbox_group_inter_comm, computation_group_inter_comm);
+      distributed_table, world, *first_inter_comm, *second_inter_comm);
   }
-  else if(world.rank() < world.size() / 3 * 2) {
+  else if(membership_key == 1) {
     TableInboxProcess(
-      distributed_table, world, table_outbox_group_inter_comm,
-      table_inbox_group_inter_comm, computation_group_inter_comm);
+      distributed_table, world, *first_inter_comm, *second_inter_comm);
   }
   else {
     ComputationProcess(
-      distributed_table, world,
-      table_outbox_group_inter_comm, table_inbox_group_inter_comm,
-      computation_group_inter_comm);
+      distributed_table, world, *first_inter_comm, *second_inter_comm);
   }
 
   return 0;
