@@ -87,7 +87,7 @@ void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
       //double w=coordinates.get(j, w_i);
       double t1=coordinates.get(j, t1_i);
       double dw=-1.0;
-      double dt1=0.5/std::pow(-2,t1);
+      double dt1=0.5*math::Pow<-1,2>(t1);
       gradient->set(j, w_i, dw);
       gradient->set(j, t1_i, dt1);
     }
@@ -100,7 +100,7 @@ void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
      // double h=coordinates.get(j, h_i);
       double t2=coordinates.get(j, t2_i);
       double dh=-1.0;
-      double dt2=0.5/std::pow(-2,t2);
+      double dt2=0.5*math::Pow<-1,2>(t2);
       gradient->set(j, h_i, dh);
       gradient->set(j, t2_i, dt2);
     }
@@ -134,7 +134,7 @@ void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
     }     
   } 
   // from the SDP cones
-  // determinant=(t1-w*w)*(t2-h*h)-std::pow(2,w*h-v);
+  // determinant=(t1-w*w)*(t2-h*h)-math::Pow<2,1>(w*h-v);
   // dw=-2*w*(t2-h*h)-2*h*(w*h-v);
   // dh=-2*h*(t1-w*w)-2*w*(w*h-v);
   // dt1=t2-h*h;
@@ -156,7 +156,7 @@ void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
       double t2_minus_hh=(t2-h*h);
       double wh_minus_v=(w*h-v);
       double determinant=t1_minus_ww*t2_minus_hh
-        -std::pow(2,wh_minus_v);
+        -math::Pow<2,1>(wh_minus_v);
       
       //NOTIFY("determinant:%lg", determinant);
       if (determinant<=0.0) {
@@ -196,7 +196,7 @@ void SmallSdpNmf::ComputeObjective(Matrix &coordinates, double *objective) {
     for(index_t j=0; j<new_dim_; j++) {
       double w=coordinates.get(j, w_i);
       double t1=coordinates.get(j, t1_i);
-      *objective+=1/std::pow(2,t1)-w;
+      *objective+=math::Pow<1,2>(t1)-w;
     }
   }
   for(index_t i=0; i<num_of_columns_; i++) {
@@ -205,7 +205,7 @@ void SmallSdpNmf::ComputeObjective(Matrix &coordinates, double *objective) {
     for(index_t j=0; j<new_dim_; j++) {
       double h=coordinates.get(j, h_i);
       double t2=coordinates.get(j, t2_i);
-      *objective+=1/std::pow(2,t2)-h;
+      *objective+=math::Pow<1,2>(t2)-h;
     }
   }
   //Vector temp;
@@ -250,7 +250,7 @@ double SmallSdpNmf::ComputeLagrangian(Matrix &coordinates) {
   }
   lagrangian-=log(temp_prod);   
   // from the SDP cones
-  // determinant=(t1-w*w)*(t2-h*h)-std::pow(2,w*h-v);
+  // determinant=(t1-w*w)*(t2-h*h)-math::Pow<2,1>(w*h-v);
   temp_prod=1.0;
  for(index_t i=0; i<values_.size(); i++) {
     index_t w_i=rows_[i];
@@ -275,7 +275,7 @@ double SmallSdpNmf::ComputeLagrangian(Matrix &coordinates) {
       }
       double wh_minus_v=(w*h-v);
       double determinant=t1_minus_ww*t2_minus_hh
-        -std::pow(2,wh_minus_v);
+        -math::Pow<2,1>(wh_minus_v);
       if (unlikely(determinant<=0)) {
         return DBL_MAX;
       }
