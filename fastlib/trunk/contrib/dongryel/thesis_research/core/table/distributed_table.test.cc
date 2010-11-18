@@ -158,10 +158,11 @@ int main(int argc, char *argv[]) {
   world.barrier();
 
   // Initialize the memory allocator.
+  int membership_key = world.rank() % 3;
   core::table::global_m_file_ = new core::table::MemoryMappedFile();
   core::table::global_m_file_->Init(
     std::string("tmp_file"), world.rank(),
-    world.rank() % (world.size() / 3), 5000000);
+    (int) floor(world.rank() / 3), 5000000);
 
   // Seed the random number.
   srand(time(NULL) + world.rank());
@@ -174,7 +175,6 @@ int main(int argc, char *argv[]) {
   // that sends stuffs to other processes, the second group that
   // receives stuffs from other processes, and the third group that
   // does the computation.
-  int membership_key = world.rank() % 3;
   boost::mpi::communicator local_group_comm = world.split(membership_key);
 
   // Build the intercommunicator between the table outbox group and
