@@ -10,7 +10,7 @@ namespace core {
 namespace table {
 class DistributedTableMessage {
   public:
-    enum DistributedTableRequest { REQUEST_POINT_FROM_TABLE_OUTBOX, RECEIVE_POINT_FROM_TABLE_OUTBOX, RECEIVE_POINT_FROM_TABLE_INBOX };
+    enum DistributedTableRequest { REQUEST_POINT_FROM_TABLE_OUTBOX, RECEIVE_POINT_FROM_TABLE_OUTBOX, RECEIVE_POINT_FROM_TABLE_INBOX, TERMINATE_TABLE_OUTBOX, TERMINATE_TABLE_INBOX };
 };
 };
 };
