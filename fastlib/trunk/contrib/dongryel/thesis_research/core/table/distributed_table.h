@@ -291,16 +291,26 @@ class DistributedTable: public boost::noncopyable {
       // After sending, free the temporary buffer.
       delete[] tmp_buffer;
 
-      // The master builds the top tree.
+      // The master builds the top tree, and sends the leaf nodes to
+      // the rest.
+      std::vector<TableType *> top_leaf_nodes;
       if(table_outbox_group_comm.rank() == 0) {
         sampled_table.IndexData(
           metric_in, leaf_size, table_outbox_group_comm.size());
+
+        // Broadcast the leaf nodes.
+        sampled_table_->get_leaf_nodes(
+          sampled_table.get_tree(), &top_leaf_nodes);
+        boost::mpi::broadcast(table_outbox_group_comm, top_leaf_nodes, 0);
+      }
+      else {
+
+        // Get the leaf nodes from the broadcast.
+        boost::mpi::broadcast(table_outbox_group_comm, top_leaf_nodes, 0);
       }
 
-      // Get the leaf nodes.
-      std::vector<TreeType *> top_leaf_nodes;
-      owned_table_->get_leaf_nodes(
-        sampled_table.get_tree(), &top_leaf_nodes);
+      // Assign each point to one of the leaf nodes, and do a
+      // prefix-sum style sending to re-distribute the data.
     }
 
     void get(
