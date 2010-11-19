@@ -24,6 +24,9 @@
  * @param TStatistic extra data in the node
  *
  */
+
+#include <boost/interprocess/offset_ptr.hpp>
+
 namespace core {
 namespace tree {
 template < class TreeSpecType >
@@ -33,17 +36,19 @@ class GeneralBinarySpaceTree {
 
     typedef core::tree::GeneralBinarySpaceTree<TreeSpecType> TreeType;
 
+    typedef typename TreeSpecType::StatisticType StatisticType;
+
     /** @brief The bound for the node.
      */
     BoundType bound_;
 
     /** @brief The pointer to the left node.
      */
-    GeneralBinarySpaceTree *left_;
+    boost::interprocess::offset_ptr<GeneralBinarySpaceTree> left_;
 
     /** @brief The pointer to the right node.
      */
-    GeneralBinarySpaceTree *right_;
+    boost::interprocess::offset_ptr<GeneralBinarySpaceTree> right_;
 
     /** @brief The beginning index.
      */
@@ -55,7 +60,7 @@ class GeneralBinarySpaceTree {
 
     /** @brief The statistics for the points owned within the node.
      */
-    core::tree::AbstractStatistic *stat_;
+    StatisticType stat_;
 
     friend class boost::serialization::access;
 
@@ -66,20 +71,17 @@ class GeneralBinarySpaceTree {
       ar & count_;
       ar & left_;
       ar & right_;
+      ar & stat_;
     }
 
     ~GeneralBinarySpaceTree() {
       if(left_ != NULL) {
-        delete left_;
+        delete left_.get();
         left_ = NULL;
       }
       if(right_ != NULL) {
-        delete right_;
+        delete right_.get();
         right_ = NULL;
-      }
-      if(stat_ != NULL) {
-        delete stat_;
-        stat_ = NULL;
       }
     }
 
@@ -88,7 +90,6 @@ class GeneralBinarySpaceTree {
       right_ = NULL;
       begin_ = -1;
       count_ = -1;
-      stat_ = NULL;
     }
 
   public:
@@ -173,11 +174,11 @@ class GeneralBinarySpaceTree {
       return bound_;
     }
 
-    const core::tree::AbstractStatistic *&stat() const {
+    const StatisticType &stat() const {
       return stat_;
     }
 
-    core::tree::AbstractStatistic *&stat() {
+    StatisticType &stat() {
       return stat_;
     }
 
@@ -189,22 +190,22 @@ class GeneralBinarySpaceTree {
      * Gets the left branch of the tree.
      */
     const GeneralBinarySpaceTree *left() const {
-      return left_;
+      return left_.get();
     }
 
-    GeneralBinarySpaceTree *&left() {
-      return left_;
+    GeneralBinarySpaceTree *left() {
+      return left_.get();
     }
 
     /**
      * Gets the right branch.
      */
     const GeneralBinarySpaceTree *right() const {
-      return right_;
+      return right_.get();
     }
 
-    GeneralBinarySpaceTree *&right() {
-      return right_;
+    GeneralBinarySpaceTree *right() {
+      return right_.get();
     }
 
     /**

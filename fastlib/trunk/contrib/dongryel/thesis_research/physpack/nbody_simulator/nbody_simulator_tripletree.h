@@ -829,8 +829,7 @@ class NbodySimulatorSummary {
     }
 };
 
-class NbodySimulatorStatistic: public core::tree::AbstractStatistic,
-  public boost::noncopyable {
+class NbodySimulatorStatistic: public boost::noncopyable {
 
   public:
 
@@ -859,8 +858,8 @@ class NbodySimulatorStatistic: public core::tree::AbstractStatistic,
     template<typename TreeIteratorType>
     void Init(
       TreeIteratorType &iterator,
-      const NbodySimulatorStatistic *left_stat,
-      const NbodySimulatorStatistic *right_stat) {
+      const NbodySimulatorStatistic &left_stat,
+      const NbodySimulatorStatistic &right_stat) {
       SetZero();
     }
 };

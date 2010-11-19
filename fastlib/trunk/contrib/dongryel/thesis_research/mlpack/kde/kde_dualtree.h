@@ -561,7 +561,7 @@ class KdeSummary {
     }
 };
 
-class KdeStatistic: public core::tree::AbstractStatistic {
+class KdeStatistic {
 
   private:
     KdeStatistic(const KdeStatistic &stat_in) {
@@ -600,8 +600,8 @@ class KdeStatistic: public core::tree::AbstractStatistic {
     template<typename TreeIteratorType>
     void Init(
       TreeIteratorType &iterator,
-      const KdeStatistic *left_stat,
-      const KdeStatistic *right_stat) {
+      const KdeStatistic &left_stat,
+      const KdeStatistic &right_stat) {
       SetZero();
     }
 };

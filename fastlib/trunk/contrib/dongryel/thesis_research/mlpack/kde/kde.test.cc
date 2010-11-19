@@ -26,7 +26,7 @@ class TestKde {
   private:
 
     typedef core::table::Table <
-    core::tree::GenMetricTree<core::table::DensePoint> > TableType;
+    core::tree::GenMetricTree<mlpack::kde::KdeStatistic> > TableType;
 
     bool CheckAccuracy_(
       const std::vector<double> &query_results,

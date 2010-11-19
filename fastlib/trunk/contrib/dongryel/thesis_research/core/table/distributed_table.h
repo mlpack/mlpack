@@ -55,6 +55,25 @@ class DistributedTable: public boost::noncopyable {
 
   private:
 
+    void SelectSubset_(
+      double sample_probability_in, std::vector<int> *sampled_indices_out) {
+
+      std::vector<int> indices(owned_table_->n_entries(), 0);
+      for(unsigned int i = 0; i < indices.size(); i++) {
+        indices[i] = i;
+      }
+      int num_elements = std::max(
+                           (int) floor(sample_probability_in * owned_table_->n_entries()), 1);
+      for(int i = 0; i < num_elements; i++) {
+        int random_index = core::math::RandInt(i, (int) indices.size());
+        std::swap(indices[i], indices[ random_index ]);
+      }
+
+      for(int i = 0; i < num_elements; i++) {
+        sampled_indices_out->push_back(indices[i]);
+      }
+    }
+
     void CopyPointsIntoTemporaryBuffer_(
       const std::vector<int> &sampled_indices, double **tmp_buffer) {
 
@@ -235,11 +254,8 @@ class DistributedTable: public boost::noncopyable {
       // send to the master. This is a MPI gather operation.
       TableType sampled_table;
       std::vector<int> sampled_indices;
-      for(int i = 0; i < owned_table_->n_entries(); i++) {
-        if(core::math::Random(0.0, 1.0) <= sample_probability_in) {
-          sampled_indices.push_back(i);
-        }
-      }
+      SelectSubset_(sample_probability_in, &sampled_indices);
+
       // Send the number of points chosen in this process to the
       // master so that the master can allocate the appropriate amount
       // of space to receive all the points.
@@ -275,9 +291,14 @@ class DistributedTable: public boost::noncopyable {
       // After sending, free the temporary buffer.
       delete[] tmp_buffer;
 
-      // Build the top tree.
-      sampled_table.IndexData(
-        metric_in, leaf_size, table_outbox_group_comm.size());
+      // The master builds the top tree.
+      if(table_outbox_group_comm.rank() == 0) {
+        sampled_table.IndexData(
+          metric_in, leaf_size, table_outbox_group_comm.size());
+      }
+
+      // Get the leaf nodes.
+      std::vector<TreeType *> top_leaf_nodes;
     }
 
     void get(

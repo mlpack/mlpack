@@ -74,12 +74,7 @@ template<typename ProblemType>
 void core::gnp::DualtreeDfs<ProblemType>::ResetStatisticRecursion_(
   typename ProblemType::TableType::TreeType *node,
   typename ProblemType::TableType * table) {
-  if(table->get_node_stat(node) != NULL) {
-    delete table->get_node_stat(node);
-  }
-  table->get_node_stat(node) = new typename ProblemType::StatisticType();
-  dynamic_cast<typename ProblemType::StatisticType *>(
-    table->get_node_stat(node))->SetZero();
+  table->get_node_stat(node).SetZero();
   if(table->node_is_leaf(node) == false) {
     ResetStatisticRecursion_(table->get_node_left_child(node), table);
     ResetStatisticRecursion_(table->get_node_right_child(node), table);
@@ -91,8 +86,7 @@ void core::gnp::DualtreeDfs<ProblemType>::PreProcessReferenceTree_(
   typename ProblemType::TableType::TreeType *rnode) {
 
   typename ProblemType::StatisticType &rnode_stat =
-    *(dynamic_cast<typename ProblemType::StatisticType *>(
-        reference_table_->get_node_stat(rnode)));
+    reference_table_->get_node_stat(rnode);
   typename ProblemType::TableType::TreeIterator rnode_it =
     reference_table_->get_node_iterator(rnode);
 
@@ -112,12 +106,10 @@ void core::gnp::DualtreeDfs<ProblemType>::PreProcessReferenceTree_(
     PreProcessReferenceTree_(rnode_right_child);
 
     // Build the node stat by combining those owned by the children.
-    typename ProblemType::StatisticType *rnode_left_child_stat =
-      dynamic_cast<typename ProblemType::StatisticType *>(
-        reference_table_->get_node_stat(rnode_left_child)) ;
-    typename ProblemType::StatisticType *rnode_right_child_stat =
-      dynamic_cast<typename ProblemType::StatisticType *>(
-        reference_table_->get_node_stat(rnode_right_child)) ;
+    typename ProblemType::StatisticType &rnode_left_child_stat =
+      reference_table_->get_node_stat(rnode_left_child) ;
+    typename ProblemType::StatisticType &rnode_right_child_stat =
+      reference_table_->get_node_stat(rnode_right_child) ;
     rnode_stat.Init(
       rnode_it, rnode_left_child_stat, rnode_right_child_stat);
   }
@@ -128,8 +120,7 @@ void core::gnp::DualtreeDfs<ProblemType>::PreProcess_(
   typename ProblemType::TableType::TreeType *qnode) {
 
   typename ProblemType::StatisticType &qnode_stat =
-    *(dynamic_cast<typename ProblemType::StatisticType *>(
-        query_table_->get_node_stat(qnode)));
+    query_table_->get_node_stat(qnode);
   qnode_stat.SetZero();
 
   if(!query_table_->node_is_leaf(qnode)) {
@@ -147,10 +138,9 @@ void core::gnp::DualtreeDfs<ProblemType>::DualtreeBase_(
 
   // Clear the summary statistics of the current query node so that we
   // can refine it to better bounds.
-  typename ProblemType::StatisticType *qnode_stat =
-    dynamic_cast< typename ProblemType::StatisticType *>(
-      query_table_->get_node_stat(qnode));
-  qnode_stat->summary_.StartReaccumulate();
+  typename ProblemType::StatisticType &qnode_stat =
+    query_table_->get_node_stat(qnode);
+  qnode_stat.summary_.StartReaccumulate();
 
   // Postponed object to hold each query contribution.
   typename ProblemType::PostponedType query_contribution;
@@ -174,7 +164,7 @@ void core::gnp::DualtreeDfs<ProblemType>::DualtreeBase_(
     query_contribution.Init(reference_table_->get_node_count(rnode));
 
     // Incorporate the postponed information.
-    query_results->ApplyPostponed(q_index, qnode_stat->postponed_);
+    query_results->ApplyPostponed(q_index, qnode_stat.postponed_);
 
     // Reset the reference node iterator.
     rnode_iterator.Reset();
@@ -193,13 +183,13 @@ void core::gnp::DualtreeDfs<ProblemType>::DualtreeBase_(
     query_results->ApplyPostponed(q_index, query_contribution);
 
     // Refine min and max summary statistics.
-    qnode_stat->summary_.Accumulate(
+    qnode_stat.summary_.Accumulate(
       problem_->global(), *query_results, q_index);
 
   } // end of looping over each query point.
 
   // Clear postponed information.
-  qnode_stat->postponed_.SetZero();
+  qnode_stat.postponed_.SetZero();
 }
 
 template<typename ProblemType>
@@ -211,11 +201,10 @@ bool core::gnp::DualtreeDfs<ProblemType>::CanProbabilisticSummarize_(
   typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
 
-  typename ProblemType::StatisticType *qnode_stat =
-    dynamic_cast<typename ProblemType::StatisticType *>(
-      query_table_->get_node_stat(qnode));
-  typename ProblemType::SummaryType new_summary(qnode_stat->summary_);
-  new_summary.ApplyPostponed(qnode_stat->postponed_);
+  typename ProblemType::StatisticType &qnode_stat =
+    query_table_->get_node_stat(qnode);
+  typename ProblemType::SummaryType new_summary(qnode_stat.summary_);
+  new_summary.ApplyPostponed(qnode_stat.postponed_);
   new_summary.ApplyDelta(delta);
 
   return new_summary.CanProbabilisticSummarize(
@@ -242,11 +231,10 @@ bool core::gnp::DualtreeDfs<ProblemType>::CanSummarize_(
   const typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
 
-  typename ProblemType::StatisticType *qnode_stat =
-    dynamic_cast<typename ProblemType::StatisticType *>(
-      query_table_->get_node_stat(qnode));
-  typename ProblemType::SummaryType new_summary(qnode_stat->summary_);
-  new_summary.ApplyPostponed(qnode_stat->postponed_);
+  typename ProblemType::StatisticType &qnode_stat =
+    query_table_->get_node_stat(qnode);
+  typename ProblemType::SummaryType new_summary(qnode_stat.summary_);
+  new_summary.ApplyPostponed(qnode_stat.postponed_);
   new_summary.ApplyDelta(delta);
 
   return new_summary.CanSummarize(problem_->global(), delta, qnode, rnode,
@@ -259,10 +247,9 @@ void core::gnp::DualtreeDfs<ProblemType>::Summarize_(
   const typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
 
-  typename ProblemType::StatisticType *qnode_stat =
-    dynamic_cast<typename ProblemType::StatisticType *>(
-      query_table_->get_node_stat(qnode));
-  qnode_stat->postponed_.ApplyDelta(delta, query_results);
+  typename ProblemType::StatisticType &qnode_stat =
+    query_table_->get_node_stat(qnode);
+  qnode_stat.postponed_.ApplyDelta(delta, query_results);
 }
 
 template<typename ProblemType>
@@ -379,26 +366,23 @@ bool core::gnp::DualtreeDfs<ProblemType>::DualtreeCanonical_(
   bool exact_compute_nonleaf_qnode = true;
 
   // Get the current query node statistic.
-  typename ProblemType::StatisticType *qnode_stat =
-    dynamic_cast<typename ProblemType::StatisticType *>(
-      query_table_->get_node_stat(qnode));
+  typename ProblemType::StatisticType &qnode_stat =
+    query_table_->get_node_stat(qnode);
 
   // Left and right nodes of the query node and their statistic.
   typename ProblemType::TableType::TreeType *qnode_left =
     query_table_->get_node_left_child(qnode);
   typename ProblemType::TableType::TreeType *qnode_right =
     query_table_->get_node_right_child(qnode);
-  typename ProblemType::StatisticType *qnode_left_stat =
-    dynamic_cast<typename ProblemType::StatisticType *>(
-      query_table_->get_node_stat(qnode_left));
-  typename ProblemType::StatisticType *qnode_right_stat =
-    dynamic_cast<typename ProblemType::StatisticType *>(
-      query_table_->get_node_stat(qnode_right));
+  typename ProblemType::StatisticType &qnode_left_stat =
+    query_table_->get_node_stat(qnode_left);
+  typename ProblemType::StatisticType &qnode_right_stat =
+    query_table_->get_node_stat(qnode_right);
 
   // Push down postponed and clear.
-  qnode_left_stat->postponed_.ApplyPostponed(qnode_stat->postponed_);
-  qnode_right_stat->postponed_.ApplyPostponed(qnode_stat->postponed_);
-  qnode_stat->postponed_.SetZero();
+  qnode_left_stat.postponed_.ApplyPostponed(qnode_stat.postponed_);
+  qnode_right_stat.postponed_.ApplyPostponed(qnode_stat.postponed_);
+  qnode_stat.postponed_.SetZero();
 
   if(reference_table_->node_is_leaf(rnode)) {
     typename ProblemType::TableType::TreeType *qnode_first;
@@ -496,12 +480,11 @@ bool core::gnp::DualtreeDfs<ProblemType>::DualtreeCanonical_(
   } // qnode is not leaf, rnode is not leaf.
 
   // Reset summary results of the current query node.
-  qnode_stat->summary_.StartReaccumulate();
-  qnode_stat->summary_.Accumulate(
-    problem_->global(), qnode_left_stat->summary_, qnode_left_stat->postponed_);
-  qnode_stat->summary_.Accumulate(
-    problem_->global(), qnode_right_stat->summary_,
-    qnode_right_stat->postponed_);
+  qnode_stat.summary_.StartReaccumulate();
+  qnode_stat.summary_.Accumulate(
+    problem_->global(), qnode_left_stat.summary_, qnode_left_stat.postponed_);
+  qnode_stat.summary_.Accumulate(
+    problem_->global(), qnode_right_stat.summary_, qnode_right_stat.postponed_);
 
   return exact_compute_nonleaf_qnode;
 }
@@ -512,9 +495,8 @@ void core::gnp::DualtreeDfs<ProblemType>::PostProcess_(
   typename ProblemType::TableType::TreeType *qnode,
   typename ProblemType::ResultType *query_results) {
 
-  typename ProblemType::StatisticType *qnode_stat =
-    dynamic_cast<typename ProblemType::StatisticType *>(
-      query_table_->get_node_stat(qnode));
+  typename ProblemType::StatisticType &qnode_stat =
+    query_table_->get_node_stat(qnode);
 
   if(query_table_->node_is_leaf(qnode)) {
 
@@ -525,27 +507,25 @@ void core::gnp::DualtreeDfs<ProblemType>::PostProcess_(
       core::table::DenseConstPoint q_col;
       int q_index;
       qnode_iterator.Next(&q_col, &q_index);
-      query_results->ApplyPostponed(q_index, qnode_stat->postponed_);
+      query_results->ApplyPostponed(q_index, qnode_stat.postponed_);
       query_results->PostProcess(metric, q_index, problem_->global(),
                                  problem_->is_monochromatic());
     }
-    qnode_stat->postponed_.SetZero();
+    qnode_stat.postponed_.SetZero();
   }
   else {
     typename ProblemType::TableType::TreeType *qnode_left =
       query_table_->get_node_left_child(qnode);
     typename ProblemType::TableType::TreeType *qnode_right =
       query_table_->get_node_right_child(qnode);
-    typename ProblemType::StatisticType *qnode_left_stat =
-      dynamic_cast<typename ProblemType::StatisticType *>(
-        query_table_->get_node_stat(qnode_left));
-    typename ProblemType::StatisticType *qnode_right_stat =
-      dynamic_cast<typename ProblemType::StatisticType *>(
-        query_table_->get_node_stat(qnode_right));
+    typename ProblemType::StatisticType &qnode_left_stat =
+      query_table_->get_node_stat(qnode_left);
+    typename ProblemType::StatisticType &qnode_right_stat =
+      query_table_->get_node_stat(qnode_right);
 
-    qnode_left_stat->postponed_.ApplyPostponed(qnode_stat->postponed_);
-    qnode_right_stat->postponed_.ApplyPostponed(qnode_stat->postponed_);
-    qnode_stat->postponed_.SetZero();
+    qnode_left_stat.postponed_.ApplyPostponed(qnode_stat.postponed_);
+    qnode_right_stat.postponed_.ApplyPostponed(qnode_stat.postponed_);
+    qnode_stat.postponed_.SetZero();
 
     PostProcess_(metric, qnode_left,  query_results);
     PostProcess_(metric, qnode_right, query_results);

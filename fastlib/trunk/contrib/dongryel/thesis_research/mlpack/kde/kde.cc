@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
 
   // Tree type: hard-coded for a metric tree.
   typedef core::table::Table <
-  core::tree::GenMetricTree<core::table::DensePoint> > TableType;
+  core::tree::GenMetricTree<mlpack::kde::KdeStatistic> > TableType;
 
   // Parse arguments for Kde.
   mlpack::kde::KdeArguments<TableType> kde_arguments;

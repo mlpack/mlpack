@@ -111,12 +111,7 @@ void core::gnp::TripletreeDfs<ProblemType>::Compute(
 template<typename ProblemType>
 void core::gnp::TripletreeDfs<ProblemType>::ResetStatisticRecursion_(
   typename ProblemType::TableType::TreeType *node) {
-  if(table_->get_node_stat(node) != NULL) {
-    delete table_->get_node_stat(node);
-  }
-  table_->get_node_stat(node) = new typename ProblemType::StatisticType();
-  dynamic_cast<typename ProblemType::StatisticType *>(
-    table_->get_node_stat(node))->SetZero();
+  table_->get_node_stat(node).SetZero();
   if(table_->node_is_leaf(node) == false) {
     ResetStatisticRecursion_(table_->get_node_left_child(node));
     ResetStatisticRecursion_(table_->get_node_right_child(node));
@@ -128,8 +123,7 @@ void core::gnp::TripletreeDfs<ProblemType>::PreProcess_(
   typename ProblemType::TableType::TreeType *qnode) {
 
   typename ProblemType::StatisticType &qnode_stat =
-    *(dynamic_cast<typename ProblemType::StatisticType *>(
-        table_->get_node_stat(qnode)));
+    table_->get_node_stat(qnode);
   qnode_stat.SetZero();
 
   if(! table_->node_is_leaf(qnode)) {
@@ -227,10 +221,9 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
       // can refine it to better bounds.
       typename ProblemType::TableType::TreeType *node =
         range_sq_in.node(node_index);
-      typename ProblemType::StatisticType *node_stat =
-        dynamic_cast< typename ProblemType::StatisticType *>(
-          problem_->table()->get_node_stat(node));
-      node_stat->summary_.StartReaccumulate(problem_->global());
+      typename ProblemType::StatisticType &node_stat =
+        problem_->table()->get_node_stat(node);
+      node_stat.summary_.StartReaccumulate(problem_->global());
 
       // Get the query node iterator and the reference node iterator.
       typename ProblemType::TableType::TreeIterator node_iterator =
@@ -239,7 +232,7 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
       // Add the pruned tuples at this base case to the postponed of
       // the current node (which will be all cleared when the function
       // is exited).
-      node_stat->postponed_.pruned_ += range_sq_in.num_tuples(node_index);
+      node_stat.postponed_.pruned_ += range_sq_in.num_tuples(node_index);
 
       // Apply the postponed contribution to the each node.
       while(node_iterator.HasNext()) {
@@ -250,19 +243,19 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
         node_iterator.Next(&q_col, &q_index);
 
         // Incorporate the postponed information.
-        query_results->ApplyPostponed(q_index, node_stat->postponed_);
+        query_results->ApplyPostponed(q_index, node_stat.postponed_);
 
         // Refine min and max summary statistics.
-        node_stat->summary_.Accumulate(
+        node_stat.summary_.Accumulate(
           problem_->global(), *query_results, q_index);
 
       } // end of looping over each query point.
 
       // Postaccumulate operation.
-      node_stat->summary_.PostAccumulate(problem_->global());
+      node_stat.summary_.PostAccumulate(problem_->global());
 
       // Clear postponed information.
-      node_stat->postponed_.SetZero();
+      node_stat.postponed_.SetZero();
     }
   } // end of looping over each node.
 }
@@ -291,9 +284,8 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
     typename core::gnp::TripletreeDfs<ProblemType>::TreeType *node =
       range_in.node(i);
     if(i == 0 || node != range_in.node(i - 1)) {
-      typename ProblemType::StatisticType *node_stat =
-        dynamic_cast<typename ProblemType::StatisticType *>(
-          table_->get_node_stat(node));
+      typename ProblemType::StatisticType &node_stat =
+        table_->get_node_stat(node);
 
       // Loop over each point on this node.
       typename TableType::TreeIterator node_it =
@@ -304,8 +296,8 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
       core::table::DenseConstPoint query_point;
 
       // The new summary.
-      new_summary = node_stat->summary_;
-      new_summary.ApplyPostponed(node_stat->postponed_);
+      new_summary = node_stat.summary_;
+      new_summary.ApplyPostponed(node_stat.postponed_);
 
       for(int qpoint_dfs_index = node->begin(); node_it.HasNext() && flag;
           qpoint_dfs_index++) {
@@ -381,11 +373,10 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanSummarize_(
     typename core::gnp::TripletreeDfs<ProblemType>::TreeType *node =
       triple_range_distance_sq_in.node(i);
     if(i == 0 || node != triple_range_distance_sq_in.node(i - 1)) {
-      typename ProblemType::StatisticType *node_stat =
-        dynamic_cast<typename ProblemType::StatisticType *>(
-          table_->get_node_stat(node));
-      new_summaries[i] = node_stat->summary_;
-      new_summaries[i].ApplyPostponed(node_stat->postponed_);
+      typename ProblemType::StatisticType &node_stat =
+        table_->get_node_stat(node);
+      new_summaries[i] = node_stat.summary_;
+      new_summaries[i].ApplyPostponed(node_stat.postponed_);
       new_summaries[i].ApplyDelta(delta, i);
       flag = new_summaries[i].CanSummarize(
                problem_->global(), delta, triple_range_distance_sq_in, i,
@@ -435,10 +426,9 @@ void core::gnp::TripletreeDfs<ProblemType>::Summarize_(
     typename core::gnp::TripletreeDfs<ProblemType>::TreeType *node =
       triple_range_distance_sq.node(i);
     if(i == 0 || node != triple_range_distance_sq.node(i - 1)) {
-      typename ProblemType::StatisticType *node_stat =
-        dynamic_cast<typename ProblemType::StatisticType *>(
-          table_->get_node_stat(node));
-      node_stat->postponed_.ApplyDelta(delta, i, query_results);
+      typename ProblemType::StatisticType &node_stat =
+        table_->get_node_stat(node);
+      node_stat.postponed_.ApplyDelta(delta, i, query_results);
     }
   }
 }
@@ -544,28 +534,25 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
       node_is_split[level] = true;
 
       // Get the current query node statistic.
-      typename ProblemType::StatisticType *current_node_stat =
-        dynamic_cast<typename ProblemType::StatisticType *>(
-          table_->get_node_stat(current_node));
+      typename ProblemType::StatisticType &current_node_stat =
+        table_->get_node_stat(current_node);
 
       // Left and right nodes of the query node and their statistic.
       typename ProblemType::TableType::TreeType *current_node_left =
         table_->get_node_left_child(current_node);
       typename ProblemType::TableType::TreeType *current_node_right =
         table_->get_node_right_child(current_node);
-      typename ProblemType::StatisticType *current_node_left_stat =
-        dynamic_cast<typename ProblemType::StatisticType *>(
-          table_->get_node_stat(current_node_left));
-      typename ProblemType::StatisticType *current_node_right_stat =
-        dynamic_cast<typename ProblemType::StatisticType *>(
-          table_->get_node_stat(current_node_right));
+      typename ProblemType::StatisticType &current_node_left_stat =
+        table_->get_node_stat(current_node_left);
+      typename ProblemType::StatisticType &current_node_right_stat =
+        table_->get_node_stat(current_node_right);
 
       // Push down postponed and clear.
-      current_node_left_stat->postponed_.ApplyPostponed(
-        current_node_stat->postponed_);
-      current_node_right_stat->postponed_.ApplyPostponed(
-        current_node_stat->postponed_);
-      current_node_stat->postponed_.SetZero();
+      current_node_left_stat.postponed_.ApplyPostponed(
+        current_node_stat.postponed_);
+      current_node_right_stat.postponed_.ApplyPostponed(
+        current_node_stat.postponed_);
+      current_node_stat.postponed_.SetZero();
 
       bool replaced_node_on_current_level = false;
 
@@ -614,13 +601,13 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
 
       // Need to refine the summary statistics by looking at the
       // children.
-      current_node_stat->summary_.StartReaccumulate();
-      current_node_stat->summary_.Accumulate(
-        problem_->global(), current_node_left_stat->summary_,
-        current_node_left_stat->postponed_);
-      current_node_stat->summary_.Accumulate(
-        problem_->global(), current_node_right_stat->summary_,
-        current_node_right_stat->postponed_);
+      current_node_stat.summary_.StartReaccumulate();
+      current_node_stat.summary_.Accumulate(
+        problem_->global(), current_node_left_stat.summary_,
+        current_node_left_stat.postponed_);
+      current_node_stat.summary_.Accumulate(
+        problem_->global(), current_node_right_stat.summary_,
+        current_node_right_stat.postponed_);
 
     } // end of the non-leaf case.
   } // end of choosing a node in each level.
@@ -686,9 +673,8 @@ void core::gnp::TripletreeDfs<ProblemType>::PostProcess_(
   typename ProblemType::ResultType *query_results,
   bool do_query_results_postprocess) {
 
-  typename ProblemType::StatisticType *qnode_stat =
-    dynamic_cast<typename ProblemType::StatisticType *>(
-      table_->get_node_stat(qnode));
+  typename ProblemType::StatisticType &qnode_stat =
+    table_->get_node_stat(qnode);
 
   if(table_->node_is_leaf(qnode)) {
 
@@ -696,44 +682,42 @@ void core::gnp::TripletreeDfs<ProblemType>::PostProcess_(
       table_->get_node_iterator(qnode);
 
     // Reset the summary statistics.
-    qnode_stat->summary_.StartReaccumulate(problem_->global());
+    qnode_stat.summary_.StartReaccumulate(problem_->global());
 
     while(qnode_iterator.HasNext()) {
       core::table::DenseConstPoint q_col;
       int q_index;
       qnode_iterator.Next(&q_col, &q_index);
-      query_results->ApplyPostponed(q_index, qnode_stat->postponed_);
+      query_results->ApplyPostponed(q_index, qnode_stat.postponed_);
 
       if(do_query_results_postprocess) {
         query_results->PostProcess(metric, q_index, problem_->global());
       }
 
       // Refine min and max summary statistics.
-      qnode_stat->summary_.Accumulate(
+      qnode_stat.summary_.Accumulate(
         problem_->global(), *query_results, q_index);
     }
 
     // Do post accumulate operation.
-    qnode_stat->summary_.PostAccumulate(problem_->global());
+    qnode_stat.summary_.PostAccumulate(problem_->global());
 
     // Clear the postponed for the leaf node.
-    qnode_stat->postponed_.SetZero();
+    qnode_stat.postponed_.SetZero();
   }
   else {
     typename ProblemType::TableType::TreeType *qnode_left =
       table_->get_node_left_child(qnode);
     typename ProblemType::TableType::TreeType *qnode_right =
       table_->get_node_right_child(qnode);
-    typename ProblemType::StatisticType *qnode_left_stat =
-      dynamic_cast<typename ProblemType::StatisticType *>(
-        table_->get_node_stat(qnode_left));
-    typename ProblemType::StatisticType *qnode_right_stat =
-      dynamic_cast<typename ProblemType::StatisticType *>(
-        table_->get_node_stat(qnode_right));
+    typename ProblemType::StatisticType &qnode_left_stat =
+      table_->get_node_stat(qnode_left);
+    typename ProblemType::StatisticType &qnode_right_stat =
+      table_->get_node_stat(qnode_right);
 
-    qnode_left_stat->postponed_.ApplyPostponed(qnode_stat->postponed_);
-    qnode_right_stat->postponed_.ApplyPostponed(qnode_stat->postponed_);
-    qnode_stat->postponed_.SetZero();
+    qnode_left_stat.postponed_.ApplyPostponed(qnode_stat.postponed_);
+    qnode_right_stat.postponed_.ApplyPostponed(qnode_stat.postponed_);
+    qnode_stat.postponed_.SetZero();
 
     // Recurse to the left and to the right.
     PostProcess_(
@@ -742,13 +726,13 @@ void core::gnp::TripletreeDfs<ProblemType>::PostProcess_(
       metric, qnode_right, query_results, do_query_results_postprocess);
 
     // Refine the summary statistics.
-    qnode_stat->summary_.StartReaccumulate();
-    qnode_stat->summary_.Accumulate(
-      problem_->global(), qnode_left_stat->summary_,
-      qnode_left_stat->postponed_);
-    qnode_stat->summary_.Accumulate(
-      problem_->global(), qnode_right_stat->summary_,
-      qnode_right_stat->postponed_);
+    qnode_stat.summary_.StartReaccumulate();
+    qnode_stat.summary_.Accumulate(
+      problem_->global(), qnode_left_stat.summary_,
+      qnode_left_stat.postponed_);
+    qnode_stat.summary_.Accumulate(
+      problem_->global(), qnode_right_stat.summary_,
+      qnode_right_stat.postponed_);
   }
 }
 
