@@ -6,6 +6,7 @@
 #ifndef CORE_TREE_HRECT_BOUND_H
 #define CORE_TREE_HRECT_BOUND_H
 
+#include "core/table/dense_point.h"
 #include "core/metric_kernels/lmetric.h"
 #include "core/math/range.h"
 
@@ -65,7 +66,7 @@ class HrectBound {
     /**
      * Determines if a point is within this bound.
      */
-    bool Contains(const core::table::AbstractPoint &point) const {
+    bool Contains(const core::table::DensePoint &point) const {
       for(int i = 0; i < point.length(); i++) {
         if(!bounds_[i].Contains(point[i])) {
           return false;
@@ -96,7 +97,7 @@ class HrectBound {
      */
     double MinDistanceSq(
       const core::metric_kernels::AbstractMetric &metric,
-      const core::table::AbstractPoint& point) const {
+      const core::table::DensePoint& point) const {
 
       double sum = 0;
       const core::math::Range *mbound = bounds_;
@@ -147,7 +148,7 @@ class HrectBound {
      */
     double MaxDistanceSq(
       const core::metric_kernels::AbstractMetric &metric,
-      const core::table::AbstractPoint& point) const {
+      const core::table::DensePoint& point) const {
       double sum = 0;
 
       for(int d = 0; d < dim_; d++) {
@@ -210,7 +211,7 @@ class HrectBound {
      */
     core::math::Range RangeDistanceSq(
       const core::metric_kernels::AbstractMetric &metric,
-      const core::table::AbstractPoint& point) const {
+      const core::table::DensePoint& point) const {
 
       double sum_lo = 0;
       double sum_hi = 0;
@@ -307,7 +308,7 @@ class HrectBound {
     /**
      * Expands this region to include a new point.
      */
-    HrectBound& operator |= (const core::table::AbstractPoint& vector) {
+    HrectBound& operator |= (const core::table::DensePoint& vector) {
       for(int i = 0; i < dim_; i++) {
         bounds_[i] |= vector[i];
       }
