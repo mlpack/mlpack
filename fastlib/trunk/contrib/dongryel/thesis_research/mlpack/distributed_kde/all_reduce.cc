@@ -186,7 +186,6 @@ int Allreduce(void *sbuf, void *rbuf, int count, MPI_Op op, MPI_Comm comm) {
 }
 
 int main(int ac, char *av[]) {
-  int i;
   int rank = -1;
   int size = -1;
   int count = 3;
