@@ -37,7 +37,7 @@ class GenKdTree {
 
       int end = first + count;
       for(int i = first; i < end; i++) {
-        core::table::DenseConstPoint col;
+        core::table::DensePoint col;
         matrix.MakeColumnVector(i, &col);
         *bounds |= col;
       }
@@ -77,7 +77,7 @@ class GenKdTree {
       for(int left = first; left < end; left++) {
 
         // Make alias of the current point.
-        core::table::DenseConstPoint point;
+        core::table::DensePoint point;
         matrix.MakeColumnVector(left, &point);
 
         // We swap if the point is further away from the left pivot.
