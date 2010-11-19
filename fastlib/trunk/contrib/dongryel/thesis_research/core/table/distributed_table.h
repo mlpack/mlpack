@@ -29,10 +29,12 @@ extern MemoryMappedFile *global_m_file_;
 class DistributedTable: public boost::noncopyable {
 
   public:
-    typedef core::tree::GeneralBinarySpaceTree < core::tree::GenMetricTree <
-    core::table::DensePoint > > TreeType;
 
-    typedef core::table::Table<TreeType> TableType;
+    typedef core::tree::GenMetricTree < core::table::DensePoint > TreeSpecType;
+
+    typedef core::tree::GeneralBinarySpaceTree <TreeSpecType> TreeType;
+
+    typedef core::table::Table<TreeSpecType> TableType;
 
   private:
 
@@ -50,6 +52,19 @@ class DistributedTable: public boost::noncopyable {
     std::vector< TreeType * > global_tree_leaf_nodes_;
 
     int table_outbox_group_comm_size_;
+
+  private:
+
+    void CopyPointsIntoTemporaryBuffer_(
+      const std::vector<int> &sampled_indices, double **tmp_buffer) {
+
+      *tmp_buffer = new double[ sampled_indices.size() * this->n_attributes()];
+
+      for(unsigned int i = 0; i < sampled_indices.size(); i++) {
+        owned_table_->get(
+          sampled_indices[i], (*tmp_buffer) + i * this->n_attributes());
+      }
+    }
 
   public:
 
@@ -214,14 +229,14 @@ class DistributedTable: public boost::noncopyable {
     void IndexData(
       const core::metric_kernels::AbstractMetric & metric_in,
       boost::mpi::communicator &table_outbox_group_comm,
-      double sample_probability_in) {
+      int leaf_size, double sample_probability_in) {
 
       // Each process generates a random subset of the data points to
       // send to the master. This is a MPI gather operation.
       TableType sampled_table;
       std::vector<int> sampled_indices;
       for(int i = 0; i < owned_table_->n_entries(); i++) {
-        if(core::math::Random() <= sample_probability_in) {
+        if(core::math::Random(0.0, 1.0) <= sample_probability_in) {
           sampled_indices.push_back(i);
         }
       }
@@ -229,18 +244,40 @@ class DistributedTable: public boost::noncopyable {
       // master so that the master can allocate the appropriate amount
       // of space to receive all the points.
       int total_num_samples = 0;
+      double *tmp_buffer = NULL;
       if(table_outbox_group_comm.rank() == 0) {
         boost::mpi::reduce(
-          table_outbox_group_comm, sampled_indices.size(),
-          boost::mpi::sum<int>(), 0);
+          table_outbox_group_comm, (int) sampled_indices.size(),
+          total_num_samples, std::plus<int>(), 0);
+        sampled_table.Init(owned_table_->n_attributes(), total_num_samples);
       }
       else {
         boost::mpi::reduce(
-          table_outbox_group_comm, sampled_indices(),
-          boost::mpi::sum<int>(), 0);
+          table_outbox_group_comm, sampled_indices.size(),
+          std::plus<int>(), 0);
       }
 
+      // Each process copies the subset of points into the temporary
+      // buffer.
+      CopyPointsIntoTemporaryBuffer_(sampled_indices, &tmp_buffer);
+      if(table_outbox_group_comm.rank() == 0) {
+        boost::mpi::gather(
+          table_outbox_group_comm, tmp_buffer,
+          this->n_attributes() * sampled_indices.size(),
+          sampled_table.data().ptr(), 0);
+      }
+      else {
+        boost::mpi::gather(
+          table_outbox_group_comm, tmp_buffer,
+          this->n_attributes() * sampled_indices.size(), 0);
+      }
 
+      // After sending, free the temporary buffer.
+      delete[] tmp_buffer;
+
+      // Build the top tree.
+      sampled_table.IndexData(
+        metric_in, leaf_size, table_outbox_group_comm.size());
     }
 
     void get(
