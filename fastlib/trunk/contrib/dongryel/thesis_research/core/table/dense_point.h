@@ -85,6 +85,7 @@ class DensePoint {
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
     void Reset() {
+      ptr_ = NULL;
       is_alias_ = false;
     }
 
@@ -159,11 +160,13 @@ class DensePoint {
     void Alias(const double *ptr_in, int length_in) {
       ptr_ = const_cast<double *>(ptr_in);
       n_rows_ = length_in;
+      is_alias_ = true;
     }
 
     void Alias(const DensePoint &point_in) {
       ptr_ = const_cast<double *>(point_in.ptr());
       n_rows_ = point_in.length();
+      is_alias_ = true;
     }
 
     void Add(
