@@ -23,7 +23,7 @@ class TestNbodySimulator {
   private:
 
     typedef core::table::Table <
-    core::tree::GenMetricTree<core::table::DensePoint> > TableType;
+    core::tree::GenMetricTree<physpack::nbody_simulator::NbodySimulatorStatistic> > TableType;
 
     bool CheckAccuracy_(
       const std::vector<double> &query_results,

@@ -6,6 +6,7 @@
 #ifndef PHYSPACK_NBODY_SIMULATOR_NBODY_SIMULATOR_DEV_H
 #define PHYSPACK_NBODY_SIMULATOR_NBODY_SIMULATOR_DEV_H
 
+#include "core/util/timer.h"
 #include "core/metric_kernels/lmetric.h"
 #include "core/gnp/tripletree_dfs_dev.h"
 #include "nbody_simulator.h"
