@@ -6,9 +6,11 @@
 #include "core/table/distributed_table.h"
 #include "core/table/mailbox.h"
 #include "core/tree/gen_kdtree.h"
+#include "mlpack/kde/kde_dualtree.h"
 #include <boost/archive/text_oarchive.hpp>
 #include <boost/archive/text_iarchive.hpp>
 
+typedef core::tree::GenKdTree< mlpack::kde::KdeStatistic > TreeSpecType;
 typedef core::tree::GeneralBinarySpaceTree < core::tree::GenKdTree > TreeType;
 typedef core::table::Table<TreeType> TableType;
 

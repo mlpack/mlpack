@@ -9,8 +9,10 @@
 #include "core/table/distributed_table.h"
 #include "core/table/mailbox.h"
 #include "core/tree/gen_kdtree.h"
+#include "mlpack/kde/kde_dualtree.h"
 
-typedef core::tree::GeneralBinarySpaceTree < core::tree::GenKdTree > TreeType;
+typedef core::tree::GenKdTree<mlpack::kde::KdeStatistic> TreeSpecType;
+typedef core::tree::GeneralBinarySpaceTree < TreeSpecType > TreeType;
 typedef core::table::Table<TreeType> TableType;
 
 core::table::DistributedTable *InitDistributedTable(
@@ -93,7 +95,7 @@ void ComputationProcess(
   // from a randomly chosen process.
   int num_points = core::math::RandInt(10, 30);
   for(int n = 0; n < num_points; n++) {
-    core::table::DenseConstPoint point;
+    core::table::DensePoint point;
     int random_request_rank = core::math::RandInt(
                                 0, computation_to_outbox_comm.remote_size());
     int random_request_point_id =
