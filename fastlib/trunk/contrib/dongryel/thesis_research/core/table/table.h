@@ -247,10 +247,11 @@ class Table: public boost::noncopyable {
     }
 
     void IndexData(
-      const core::metric_kernels::AbstractMetric &metric_in, int leaf_size) {
+      const core::metric_kernels::AbstractMetric &metric_in, int leaf_size,
+      int max_num_leaf_nodes = std::numeric_limits<int>::max()) {
       int num_nodes;
       tree_ = TreeType::MakeTree(
-                metric_in, data_, leaf_size, std::numeric_limits<int>::max(),
+                metric_in, data_, leaf_size, max_num_leaf_nodes,
                 &old_from_new_, &new_from_old_, &num_nodes);
     }
 

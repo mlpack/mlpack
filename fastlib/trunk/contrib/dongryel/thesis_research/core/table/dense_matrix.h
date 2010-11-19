@@ -23,6 +23,14 @@ class DenseMatrix {
 
   public:
 
+    const double *ptr() const {
+      return ptr_.get();
+    }
+
+    double *ptr() {
+      return ptr_.get();
+    }
+
     int n_rows() const {
       return n_rows_;
     }
