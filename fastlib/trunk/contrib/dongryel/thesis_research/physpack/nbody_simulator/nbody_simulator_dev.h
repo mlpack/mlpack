@@ -57,8 +57,8 @@ void physpack::nbody_simulator::NbodySimulator<TableType>::NaiveCompute(
   // potentials satisfy the error bound.
   int satisfied_count = 0;
   int overall_satisfied_count = 0;
-  int start_index =
-    static_cast<int>(
+  unsigned int start_index =
+    static_cast<unsigned int>(
       floor(
         naive_potential_copy.size() *
         arguments_in.summary_compute_quantile_));

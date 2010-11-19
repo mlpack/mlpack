@@ -20,10 +20,9 @@ namespace tree {
 /**
  * Ball bound that works in arbitrary metric spaces.
  */
-template<typename TPoint>
 class BallBound {
   public:
-    typedef TPoint Point;
+    typedef core::table::DensePoint TPoint;
 
   private:
     double radius_;
@@ -67,8 +66,10 @@ class BallBound {
     /**
      * Determines if a point is within this bound.
      */
-    bool Contains(const core::table::AbstractPoint& point) const {
-      return MidDistance(point) <= radius_;
+    bool Contains(
+      const core::metric_kernels::AbstractMetric &metric,
+      const core::table::DensePoint& point) const {
+      return MidDistance(metric, point) <= radius_;
     }
 
     /**
@@ -76,14 +77,14 @@ class BallBound {
      */
     double MinDistance(
       const core::metric_kernels::AbstractMetric &metric,
-      const core::table::AbstractPoint& point) const {
+      const core::table::DensePoint& point) const {
 
       return std::max(MidDistance(metric, point) - radius_, 0.0);
     }
 
     double MinDistanceSq(
       const core::metric_kernels::AbstractMetric &metric,
-      const core::table::AbstractPoint& point) const {
+      const core::table::DensePoint& point) const {
 
       return core::math::Pow<2, 1>(MinDistance(metric, point));
     }
@@ -110,13 +111,13 @@ class BallBound {
      */
     double MaxDistance(
       const core::metric_kernels::AbstractMetric &metric,
-      const core::table::AbstractPoint& point) const {
+      const core::table::DensePoint& point) const {
       return MidDistance(metric, point) + radius_;
     }
 
     double MaxDistanceSq(
       const core::metric_kernels::AbstractMetric &metric,
-      const core::table::AbstractPoint& point) const {
+      const core::table::DensePoint& point) const {
       return core::math::Pow<2, 1>(MaxDistance(metric, point));
     }
 
@@ -126,13 +127,13 @@ class BallBound {
     double MaxDistance(
       const core::metric_kernels::AbstractMetric &metric,
       const BallBound& other) const {
-      return MidDistance(other.center_) + radius_ + other.radius_;
+      return MidDistance(metric, other.center_) + radius_ + other.radius_;
     }
 
     double MaxDistanceSq(
       const core::metric_kernels::AbstractMetric &metric,
       const BallBound& other) const {
-      return core::math::Pow<2, 1>(MaxDistance(other));
+      return core::math::Pow<2, 1>(MaxDistance(metric, other));
     }
 
     /**
@@ -183,7 +184,7 @@ class BallBound {
     double MinToMidSq(
       const core::metric_kernels::AbstractMetric &metric,
       const BallBound& other) const {
-      return core::math::Pow<2, 1>(MinToMid(other));
+      return core::math::Pow<2, 1>(MinToMid(metric, other));
     }
 
     /**
@@ -220,7 +221,7 @@ class BallBound {
 
     double MidDistance(
       const core::metric_kernels::AbstractMetric &metric,
-      const core::table::AbstractPoint& point) const {
+      const core::table::DensePoint& point) const {
       return metric.Distance(center_, point);
     }
 };

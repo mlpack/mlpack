@@ -18,7 +18,7 @@
 int main(int argc, char *argv[]) {
 
   // Tree type: hard-coded for a kd-tree.
-  typedef core::table::Table < core::tree::GenKdTree > TableType;
+  typedef core::table::Table < core::tree::GenKdTree<physpack::nbody_simulator::NbodySimulatorStatistic> > TableType;
 
   // Parse arguments for Nbody.
   physpack::nbody_simulator::NbodySimulatorArguments<TableType> nbody_simulator_arguments;

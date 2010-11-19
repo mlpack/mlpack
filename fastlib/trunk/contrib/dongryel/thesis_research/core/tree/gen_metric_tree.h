@@ -15,16 +15,18 @@
 
 namespace core {
 namespace tree {
-template<typename PointType>
+template<typename IncomingStatisticType>
 class GenMetricTree {
   public:
 
-    typedef core::tree::BallBound<PointType> BoundType;
+    typedef core::tree::BallBound BoundType;
+
+    typedef IncomingStatisticType StatisticType;
 
   private:
     static int FurthestColumnIndex_(
       const core::metric_kernels::AbstractMetric &metric_in,
-      const PointType &pivot,
+      const core::table::DensePoint &pivot,
       const core::table::DenseMatrix &matrix,
       int begin, int count,
       double *furthest_distance) {

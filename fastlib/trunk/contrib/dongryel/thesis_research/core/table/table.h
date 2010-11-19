@@ -29,6 +29,8 @@ class Table: public boost::noncopyable {
 
     typedef core::table::Table<TreeSpecType> TableType;
 
+    typedef typename TreeSpecType::StatisticType StatisticType;
+
   public:
 
     class TreeIterator {
@@ -190,7 +192,7 @@ class Table: public boost::noncopyable {
       return node->is_leaf();
     }
 
-    core::tree::AbstractStatistic *&get_node_stat(TreeType *node) {
+    StatisticType &get_node_stat(TreeType *node) {
       return node->stat();
     }
 

@@ -23,10 +23,13 @@ class GenKdTreeMidpointSplitter {
     }
 };
 
+template< typename IncomingStatisticType >
 class GenKdTree {
   public:
 
     typedef core::tree::HrectBound BoundType;
+
+    typedef IncomingStatisticType StatisticType;
 
     static void FindBoundFromMatrix(
       const core::table::DenseMatrix &matrix,
