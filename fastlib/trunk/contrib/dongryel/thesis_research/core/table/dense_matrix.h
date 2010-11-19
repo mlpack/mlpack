@@ -109,7 +109,7 @@ class DenseMatrix {
     }
 
     void MakeColumnVector(
-      int i, core::table::DenseConstPoint *point_out) const {
+      int i, core::table::DensePoint *point_out) const {
       point_out->Alias(
         ptr_.get() + i * n_rows_, n_rows_);
     }

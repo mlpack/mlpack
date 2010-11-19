@@ -85,13 +85,13 @@ class Table: public boost::noncopyable {
           current_index_++;
         }
 
-        void Next(core::table::DenseConstPoint *entry, int *point_id) {
+        void Next(core::table::DensePoint *entry, int *point_id) {
           current_index_++;
           table_->iterator_get_(current_index_, entry);
           *point_id = table_->iterator_get_id_(current_index_);
         }
 
-        void get(int i, core::table::DenseConstPoint *entry) {
+        void get(int i, core::table::DensePoint *entry) {
           table_->iterator_get_(begin_ + i, entry);
         }
 
@@ -99,11 +99,11 @@ class Table: public boost::noncopyable {
           *point_id = table_->iterator_get_id_(begin_ + i);
         }
 
-        void RandomPick(core::table::DenseConstPoint *entry) {
+        void RandomPick(core::table::DensePoint *entry) {
           table_->iterator_get_(core::math::Random(begin_, end_), entry);
         }
 
-        void RandomPick(core::table::DenseConstPoint *entry, int *point_id) {
+        void RandomPick(core::table::DensePoint *entry, int *point_id) {
           *point_id = core::math::Random(begin_, end_);
           table_->iterator_get_(*point_id, entry);
         }
@@ -235,7 +235,7 @@ class Table: public boost::noncopyable {
     void Save(const std::string &file_name) const {
       FILE *foutput = fopen(file_name.c_str(), "w+");
       for(int j = 0; j < data_.n_cols(); j++) {
-        core::table::DenseConstPoint point;
+        core::table::DensePoint point;
         this->direct_get_(j, &point);
         for(int i = 0; i < data_.n_rows(); i++) {
           fprintf(foutput, "%g", point[i]);
@@ -265,7 +265,7 @@ class Table: public boost::noncopyable {
       direct_get_(point_id, point_out);
     }
 
-    void get(int point_id, core::table::DenseConstPoint *point_out) const {
+    void get(int point_id, core::table::DensePoint *point_out) const {
       direct_get_(point_id, point_out);
     }
 
@@ -315,7 +315,7 @@ class Table: public boost::noncopyable {
     }
 
     void direct_get_(
-      int point_id, core::table::DenseConstPoint *entry) const {
+      int point_id, core::table::DensePoint *entry) const {
       if(this->IsIndexed() == false) {
         data_.MakeColumnVector(point_id, entry);
       }
@@ -334,7 +334,7 @@ class Table: public boost::noncopyable {
     }
 
     void iterator_get_(
-      int reordered_position, core::table::DenseConstPoint *entry) const {
+      int reordered_position, core::table::DensePoint *entry) const {
       data_.MakeColumnVector(reordered_position, entry);
     }
 

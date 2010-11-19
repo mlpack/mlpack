@@ -259,7 +259,7 @@ class KdeResult {
       // Get the iterator for the query node.
       typename GlobalType::TableType::TreeIterator qnode_it =
         global.query_table()->get_node_iterator(qnode);
-      core::table::DenseConstPoint qpoint;
+      core::table::DensePoint qpoint;
       int qpoint_index;
 
       // Look up the number of standard deviations.
@@ -396,13 +396,13 @@ class KdeSummary {
       // Get the iterator for the query node.
       typename GlobalType::TableType::TreeIterator qnode_it =
         global.query_table()->get_node_iterator(qnode);
-      core::table::DenseConstPoint qpoint;
+      core::table::DensePoint qpoint;
       int qpoint_index;
 
       // Get the iterator for the reference node.
       typename GlobalType::TableType::TreeIterator rnode_it =
         global.reference_table()->get_node_iterator(rnode);
-      core::table::DenseConstPoint rpoint;
+      core::table::DensePoint rpoint;
       int rpoint_index;
 
       // Interval for the pivot query point.
@@ -428,7 +428,7 @@ class KdeSummary {
         qnode_it.Next(&qpoint, &qpoint_index);
         bool skip = false;
         if(prev_qpoint_index >= 0) {
-          core::table::DenseConstPoint prev_qpoint;
+          core::table::DensePoint prev_qpoint;
           global.query_table()->get(prev_qpoint_index, &prev_qpoint);
           double dist = sqrt(metric.DistanceSq(qpoint, prev_qpoint));
           if(dist <= movement_threshold && movement_count < 5) {
