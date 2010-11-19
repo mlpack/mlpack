@@ -213,7 +213,32 @@ class DistributedTable: public boost::noncopyable {
 
     void IndexData(
       const core::metric_kernels::AbstractMetric & metric_in,
+      boost::mpi::communicator &table_outbox_group_comm,
       double sample_probability_in) {
+
+      // Each process generates a random subset of the data points to
+      // send to the master. This is a MPI gather operation.
+      TableType sampled_table;
+      std::vector<int> sampled_indices;
+      for(int i = 0; i < owned_table_->n_entries(); i++) {
+        if(core::math::Random() <= sample_probability_in) {
+          sampled_indices.push_back(i);
+        }
+      }
+      // Send the number of points chosen in this process to the
+      // master so that the master can allocate the appropriate amount
+      // of space to receive all the points.
+      int total_num_samples = 0;
+      if(table_outbox_group_comm.rank() == 0) {
+        boost::mpi::reduce(
+          table_outbox_group_comm, sampled_indices.size(),
+          boost::mpi::sum<int>(), 0);
+      }
+      else {
+        boost::mpi::reduce(
+          table_outbox_group_comm, sampled_indices(),
+          boost::mpi::sum<int>(), 0);
+      }
 
 
     }
