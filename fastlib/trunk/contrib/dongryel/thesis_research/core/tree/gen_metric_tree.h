@@ -36,7 +36,7 @@ class GenMetricTree {
       *furthest_distance = -1.0;
 
       for(int i = begin; i < end; i++) {
-        core::table::DenseConstPoint point;
+        core::table::DensePoint point;
         matrix.MakeColumnVector(i, &point);
         double distance_between_center_and_point =
           metric_in.Distance(pivot, point);
@@ -67,7 +67,7 @@ class GenMetricTree {
       bounds->center().SetZero();
 
       int end = begin + count;
-      core::table::DenseConstPoint col_point;
+      core::table::DensePoint col_point;
       for(int i = begin; i < end; i++) {
         matrix.MakeColumnVector(i, &col_point);
         bounds->center() += col_point;
@@ -112,7 +112,7 @@ class GenMetricTree {
       for(int left = first; left < end; left++) {
 
         // Make alias of the current point.
-        core::table::DenseConstPoint point;
+        core::table::DensePoint point;
         matrix.MakeColumnVector(left, &point);
 
         // Compute the distances from the two pivots.

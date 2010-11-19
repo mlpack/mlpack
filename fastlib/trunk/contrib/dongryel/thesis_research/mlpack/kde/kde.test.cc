@@ -75,12 +75,12 @@ class TestKde {
 
       ultra_naive_query_results.resize(query_table.n_entries());
       for(int i = 0; i < query_table.n_entries(); i++) {
-        core::table::DenseConstPoint query_point;
+        core::table::DensePoint query_point;
         query_table.get(i, &query_point);
         ultra_naive_query_results[i] = 0;
 
         for(int j = 0; j < reference_table.n_entries(); j++) {
-          core::table::DenseConstPoint reference_point;
+          core::table::DensePoint reference_point;
           reference_table.get(j, &reference_point);
 
           // By default, monochromaticity is assumed in the test -

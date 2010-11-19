@@ -73,17 +73,17 @@ class TestNbodySimulator {
       // Loop over distinct 3-tuples.
       core::gnp::TripleDistanceSq triple_distance_sq;
       for(int i = 0; i < table.n_entries() - 2; i++) {
-        core::table::DenseConstPoint i_th_point;
+        core::table::DensePoint i_th_point;
         table.get(i, &i_th_point);
         triple_distance_sq.ReplaceOnePoint(metric_in, i_th_point, i, 0);
 
         for(int j = i + 1; j < table.n_entries() - 1; j++) {
-          core::table::DenseConstPoint j_th_point;
+          core::table::DensePoint j_th_point;
           table.get(j, &j_th_point);
           triple_distance_sq.ReplaceOnePoint(metric_in, j_th_point, j, 1);
 
           for(int k = j + 1; k < table.n_entries(); k++) {
-            core::table::DenseConstPoint k_th_point;
+            core::table::DensePoint k_th_point;
             table.get(k, &k_th_point);
             triple_distance_sq.ReplaceOnePoint(metric_in, k_th_point, k, 2);
 

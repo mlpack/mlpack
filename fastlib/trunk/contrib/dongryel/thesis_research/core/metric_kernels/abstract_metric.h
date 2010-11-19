@@ -8,7 +8,7 @@
 #ifndef CORE_METRIC_KERNELS_ABSTRACT_METRIC_H
 #define CORE_METRIC_KERNELS_ABSTRACT_METRIC_H
 
-#include "core/table/abstract_point.h"
+#include "core/table/dense_point.h"
 
 namespace core {
 namespace metric_kernels {
@@ -23,12 +23,12 @@ class AbstractMetric {
     * Computes the distance metric between two points.
     */
     virtual double Distance(
-      const core::table::AbstractPoint& a,
-      const core::table::AbstractPoint& b) const = 0;
+      const core::table::DensePoint& a,
+      const core::table::DensePoint& b) const = 0;
 
     virtual double DistanceIneq(
-      const core::table::AbstractPoint& a,
-      const core::table::AbstractPoint& b) const = 0;
+      const core::table::DensePoint& a,
+      const core::table::DensePoint& b) const = 0;
 
     /**
      * Computes the distance metric between two points, raised to a
@@ -38,8 +38,8 @@ class AbstractMetric {
      * L2 distance.
      */
     virtual double DistanceSq(
-      const core::table::AbstractPoint &a,
-      const core::table::AbstractPoint &b) const = 0;
+      const core::table::DensePoint &a,
+      const core::table::DensePoint &b) const = 0;
 };
 };
 };

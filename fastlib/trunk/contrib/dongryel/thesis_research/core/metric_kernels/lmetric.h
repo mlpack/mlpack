@@ -20,8 +20,8 @@ class LMetricDistanceSqTrait {
   public:
     static double Compute(
       const core::metric_kernels::AbstractMetric &metric_in,
-      const core::table::AbstractPoint &a,
-      const core::table::AbstractPoint &b) {
+      const core::table::DensePoint &a,
+      const core::table::DensePoint &b) {
 
       return core::math::Pow<2, t_pow>(metric_in.DistanceIneq(a, b));
     }
@@ -32,8 +32,8 @@ class LMetricDistanceSqTrait<2> {
   public:
     static double Compute(
       const core::metric_kernels::AbstractMetric &metric_in,
-      const core::table::AbstractPoint &a,
-      const core::table::AbstractPoint &b) {
+      const core::table::DensePoint &a,
+      const core::table::DensePoint &b) {
 
       return metric_in.DistanceIneq(a, b);
     }
@@ -53,14 +53,14 @@ class LMetric: public core::metric_kernels::AbstractMetric {
      * Computes the distance metric between two points.
      */
     double Distance(
-      const core::table::AbstractPoint& a,
-      const core::table::AbstractPoint& b) const {
+      const core::table::DensePoint& a,
+      const core::table::DensePoint& b) const {
       return core::math::Pow<1, t_pow>(DistanceIneq(a, b));
     }
 
     double DistanceIneq(
-      const core::table::AbstractPoint &a,
-      const core::table::AbstractPoint &b) const {
+      const core::table::DensePoint &a,
+      const core::table::DensePoint &b) const {
 
       double distance_ineq = 0;
       for(int i = 0; i < a.length(); i++) {
@@ -77,8 +77,8 @@ class LMetric: public core::metric_kernels::AbstractMetric {
      * L2 distance.
      */
     double DistanceSq(
-      const core::table::AbstractPoint &a,
-      const core::table::AbstractPoint &b) const {
+      const core::table::DensePoint &a,
+      const core::table::DensePoint &b) const {
 
       return core::metric_kernels::LMetricDistanceSqTrait<t_pow>::Compute(
                *this, a, b);

@@ -17,7 +17,7 @@ class TripleDistanceSq {
   private:
     arma::mat distance_sq_;
 
-    std::vector< core::table::DenseConstPoint > points_;
+    std::vector< core::table::DensePoint > points_;
 
     std::vector<int> point_indices_;
 
@@ -54,7 +54,7 @@ class TripleDistanceSq {
 
     void ReplaceOnePoint(
       const core::metric_kernels::AbstractMetric &metric_in,
-      const core::table::DenseConstPoint &new_point_in,
+      const core::table::DensePoint &new_point_in,
       int new_point_index_in,
       int point_pos_in) {
 

@@ -155,7 +155,7 @@ void core::gnp::DualtreeDfs<ProblemType>::DualtreeBase_(
   while(qnode_iterator.HasNext()) {
 
     // Get the query point and its real index.
-    core::table::DenseConstPoint q_col;
+    core::table::DensePoint q_col;
     int q_index;
     qnode_iterator.Next(&q_col, &q_index);
 
@@ -171,7 +171,7 @@ void core::gnp::DualtreeDfs<ProblemType>::DualtreeBase_(
     while(rnode_iterator.HasNext()) {
 
       // Get the reference point and accumulate contribution.
-      core::table::DenseConstPoint r_col;
+      core::table::DensePoint r_col;
       int r_col_id;
       rnode_iterator.Next(&r_col, &r_col_id);
       query_contribution.ApplyContribution(
@@ -504,7 +504,7 @@ void core::gnp::DualtreeDfs<ProblemType>::PostProcess_(
       query_table_->get_node_iterator(qnode);
 
     while(qnode_iterator.HasNext()) {
-      core::table::DenseConstPoint q_col;
+      core::table::DensePoint q_col;
       int q_index;
       qnode_iterator.Next(&q_col, &q_index);
       query_results->ApplyPostponed(q_index, qnode_stat.postponed_);

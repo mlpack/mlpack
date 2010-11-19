@@ -229,7 +229,7 @@ class NbodySimulatorResult {
           // Get the iterator for the node.
           typename GlobalType::TableType::TreeIterator node_it =
             global.table()->get_node_iterator(node);
-          core::table::DenseConstPoint qpoint;
+          core::table::DensePoint qpoint;
           int qpoint_index;
 
           // Look up the number of standard deviations.
@@ -418,7 +418,7 @@ class NbodySimulatorSummary {
       int node_index_fix,
       core::gnp::TripleDistanceSq *distance_sq_out) const {
 
-      core::table::DenseConstPoint point;
+      core::table::DensePoint point;
       for(int i = 1; i < 3; i++) {
         int index = (node_index_fix + i) % 3;
         table.get(random_combination[index], &point);
@@ -553,10 +553,10 @@ class NbodySimulatorSummary {
       const std::vector<double> &failure_probabilities,
       int node_index,
       ResultType *query_results,
-      const core::table::DenseConstPoint &query_point,
+      const core::table::DensePoint &query_point,
       int qpoint_dfs_index,
       int query_point_index,
-      const core::table::DenseConstPoint *previous_query_point,
+      const core::table::DensePoint *previous_query_point,
       int *previous_query_point_index) {
 
       // Sampled result for the current query point.
