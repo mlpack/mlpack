@@ -180,7 +180,7 @@ class DistributedTable: public boost::noncopyable {
       return node->is_leaf();
     }
 
-    core::tree::AbstractStatistic *&get_node_stat(TreeType * node) {
+    TreeSpecType::StatisticType &get_node_stat(TreeType * node) {
       return node->stat();
     }
 
@@ -299,13 +299,15 @@ class DistributedTable: public boost::noncopyable {
 
       // Get the leaf nodes.
       std::vector<TreeType *> top_leaf_nodes;
+      owned_table_->get_leaf_nodes(
+        sampled_table.get_tree(), &top_leaf_nodes);
     }
 
     void get(
       boost::mpi::intercommunicator &computation_to_outbox_comm_in,
       boost::mpi::intercommunicator &computation_to_inbox_comm_in,
       int requested_rank, int point_id,
-      core::table::DenseConstPoint * entry) {
+      core::table::DensePoint * entry) {
 
       // If owned by the process, just return the point. Otherwise, we
       // need to send an MPI request to the process holding the
