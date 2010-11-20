@@ -173,10 +173,10 @@ class GenMetricTree {
         return false;
       }
       else {
-        *left = (m_file_in) ? (TreeType *)
-                m_file_in->Allocate(sizeof(TreeType)) : new TreeType();
-        *right = (m_file_in) ? (TreeType *)
-                 m_file_in->Allocate(sizeof(TreeType)) : new TreeType();
+        *left = (m_file_in) ?
+                m_file_in->Construct<TreeType>() : new TreeType();
+        *right = (m_file_in) ?
+                 m_file_in->Construct<TreeType>() : new TreeType();
 
         ((*left)->bound().center()).Copy(furthest_from_random_row_vec);
         ((*right)->bound().center()).Copy(

@@ -375,7 +375,9 @@ class DistributedTable: public boost::noncopyable {
           top_leaf_nodes.size(), std::logical_or<bool>(), 0);
       }
 
-      delete[] points_assigned_to_node;
+      if(points_assigned_to_node != NULL) {
+        delete[] points_assigned_to_node;
+      }
     }
 
     void get(

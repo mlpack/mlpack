@@ -138,7 +138,7 @@ class DensePoint {
     }
 
     void Copy(const DensePoint &point_in) {
-      DestructPtr_();
+      //DestructPtr_();
       ptr_ =
         (core::table::global_m_file_) ?
         (double *) core::table::global_m_file_->Allocate(
