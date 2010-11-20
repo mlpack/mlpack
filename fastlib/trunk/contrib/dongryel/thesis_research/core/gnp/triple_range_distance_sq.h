@@ -79,6 +79,10 @@ class TripleRangeDistanceSq {
 
   public:
 
+    void set_num_tuples(int node_index, double num_tuples_in) {
+      num_tuples_[node_index] = num_tuples_in;
+    }
+
     double num_tuples(int node_index) const {
       return num_tuples_[node_index];
     }

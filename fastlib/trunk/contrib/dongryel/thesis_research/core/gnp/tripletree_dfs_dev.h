@@ -92,6 +92,13 @@ void core::gnp::TripletreeDfs<ProblemType>::Compute(
     std::vector< TreeType *> leaf_node_tuples(3, leaf_nodes[i]);
     core::gnp::TripleRangeDistanceSq<TableType> range_sq_in;
     range_sq_in.Init(metric, *table_, leaf_node_tuples);
+
+    // Since this is the monochromatic phase, re-correct the number of
+    // tuples.
+    range_sq_in.set_num_tuples(0, leaf_nodes[0]->stat().self_num_tuples_);
+    range_sq_in.set_num_tuples(1, leaf_nodes[0]->stat().self_num_tuples_);
+    range_sq_in.set_num_tuples(2, leaf_nodes[0]->stat().self_num_tuples_);
+
     TripletreeBase_(
       metric, range_sq_in, query_results);
   }
