@@ -564,8 +564,9 @@ class NbodySimulatorSummary {
           core::monte_carlo::MeanVariancePair > &mean_variance_pair =
             (* delta.mean_variance_pair())[query_point_index];
 
-      // Decide whether to incorporate the previous query point's result.
-      if(previous_query_point_index != NULL) {
+      // Decide whether to incorporate the previous query point's
+      // result. Currently, this is disabled.
+      if(false && previous_query_point_index != NULL) {
 
         // Distance between the current and the previous queries.
         double squared_distance = metric.DistanceSq(

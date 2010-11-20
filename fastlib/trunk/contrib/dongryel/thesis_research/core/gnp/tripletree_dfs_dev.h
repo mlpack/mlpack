@@ -269,6 +269,14 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
   typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
 
+  // If there are too many tuples to approximate, then don't try.
+  if(std::max(
+        range_in.num_tuples(0), std::max(
+          range_in.num_tuples(1), range_in.num_tuples(2))) >=
+      0.01 * problem_->global().total_num_tuples()) {
+    return false;
+  }
+
   // Prepare for Monte Carlo accumulation.
   delta.ResetMeanVariancePairs(
     problem_->global(), range_in.nodes(), node_start_index);
@@ -325,6 +333,7 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
       }
     }
   }
+
   return flag;
 }
 
