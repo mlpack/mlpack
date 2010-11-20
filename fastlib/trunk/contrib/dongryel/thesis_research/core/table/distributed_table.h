@@ -26,11 +26,10 @@ namespace table {
 
 extern MemoryMappedFile *global_m_file_;
 
+template<typename TreeSpecType>
 class DistributedTable: public boost::noncopyable {
 
   public:
-
-    typedef core::tree::GenMetricTree < core::table::DensePoint > TreeSpecType;
 
     typedef core::tree::GeneralBinarySpaceTree <TreeSpecType> TreeType;
 
@@ -54,6 +53,28 @@ class DistributedTable: public boost::noncopyable {
     int table_outbox_group_comm_size_;
 
   private:
+
+    void AssignLeafNodes_(
+      const core::metric_kernels::AbstractMetric &metric_in,
+      const std::vector<TreeType *> &top_leaf_nodes,
+      std::vector<int> *point_assignments) {
+
+      // Loop through each point and find the closest leaf node.
+      for(int i = 0; i < owned_table_->n_entries(); i++) {
+        core::table::DensePoint point;
+        owned_table_->get(i, &point);
+
+        // Loop through each leaf node.
+        for(unsigned int j = 0; j < top_leaf_nodes.size(); j++) {
+          const typename TreeType::BoundType &leaf_node_bound =
+            top_leaf_nodes[j]->bound();
+
+          // Compute the squared mid-distance.
+          double squared_mid_distance = leaf_node_bound.MidDistanceSq(
+                                          metric_in, point);
+        }
+      }
+    }
 
     void SelectSubset_(
       double sample_probability_in, std::vector<int> *sampled_indices_out) {
@@ -160,11 +181,11 @@ class DistributedTable: public boost::noncopyable {
       }
     }
 
-    const TreeType::BoundType &get_node_bound(TreeType * node) const {
+    const typename TreeType::BoundType &get_node_bound(TreeType * node) const {
       return node->bound();
     }
 
-    TreeType::BoundType &get_node_bound(TreeType * node) {
+    typename TreeType::BoundType &get_node_bound(TreeType * node) {
       return node->bound();
     }
 
@@ -180,7 +201,7 @@ class DistributedTable: public boost::noncopyable {
       return node->is_leaf();
     }
 
-    TreeSpecType::StatisticType &get_node_stat(TreeType * node) {
+    typename TreeSpecType::StatisticType &get_node_stat(TreeType * node) {
       return node->stat();
     }
 
@@ -299,7 +320,7 @@ class DistributedTable: public boost::noncopyable {
           metric_in, leaf_size, table_outbox_group_comm.size());
 
         // Broadcast the leaf nodes.
-        sampled_table_->get_leaf_nodes(
+        sampled_table.get_leaf_nodes(
           sampled_table.get_tree(), &top_leaf_nodes);
         boost::mpi::broadcast(table_outbox_group_comm, top_leaf_nodes, 0);
       }
@@ -309,8 +330,9 @@ class DistributedTable: public boost::noncopyable {
         boost::mpi::broadcast(table_outbox_group_comm, top_leaf_nodes, 0);
       }
 
-      // Assign each point to one of the leaf nodes, and do a
-      // prefix-sum style sending to re-distribute the data.
+      // Assign each point to one of the leaf nodes.
+      std::vector<int> point_assignments;
+      AssignLeafNodes_(metric_in, top_leaf_nodes, &point_assignments);
     }
 
     void get(

@@ -9,20 +9,22 @@
 #include "core/table/distributed_table.h"
 #include "core/table/mailbox.h"
 #include "core/tree/gen_kdtree.h"
+#include "core/tree/gen_metric_tree.h"
 #include "mlpack/kde/kde_dualtree.h"
 
-typedef core::tree::GenKdTree<mlpack::kde::KdeStatistic> TreeSpecType;
+typedef core::tree::GenMetricTree<mlpack::kde::KdeStatistic> TreeSpecType;
 typedef core::tree::GeneralBinarySpaceTree < TreeSpecType > TreeType;
 typedef core::table::Table<TreeType> TableType;
 
-core::table::DistributedTable *InitDistributedTable(
+core::table::DistributedTable<TreeSpecType> *InitDistributedTable(
   boost::mpi::communicator &world,
   boost::mpi::communicator &table_outbox_group) {
 
-  std::pair< core::table::DistributedTable *, std::size_t >
+  std::pair< core::table::DistributedTable<TreeSpecType> *, std::size_t >
   distributed_table_pair =
-    core::table::global_m_file_->UniqueFind<core::table::DistributedTable>();
-  core::table::DistributedTable *distributed_table =
+    core::table::global_m_file_->UniqueFind <
+    core::table::DistributedTable<TreeSpecType> > ();
+  core::table::DistributedTable<TreeSpecType> *distributed_table =
     distributed_table_pair.first;
 
   if(distributed_table == NULL) {
@@ -50,7 +52,7 @@ core::table::DistributedTable *InitDistributedTable(
     std::stringstream distributed_table_name_sstr;
     distributed_table_name_sstr << "distributed_table_" << world.rank() << "\n";
     distributed_table = core::table::global_m_file_->UniqueConstruct <
-                        core::table::DistributedTable > ();
+                        core::table::DistributedTable<TreeSpecType> > ();
     distributed_table->Init(
       file_name, table_outbox_group);
     printf(
@@ -61,7 +63,7 @@ core::table::DistributedTable *InitDistributedTable(
 }
 
 void TableOutboxProcess(
-  core::table::DistributedTable *distributed_table,
+  core::table::DistributedTable<TreeSpecType> *distributed_table,
   boost::mpi::communicator &world,
   boost::mpi::intercommunicator &outbox_to_inbox_comm,
   boost::mpi::intercommunicator &outbox_to_computation_comm) {
@@ -72,7 +74,7 @@ void TableOutboxProcess(
 }
 
 void TableInboxProcess(
-  core::table::DistributedTable *distributed_table,
+  core::table::DistributedTable<TreeSpecType> *distributed_table,
   boost::mpi::communicator &world,
   boost::mpi::intercommunicator &inbox_to_outbox_comm,
   boost::mpi::intercommunicator &inbox_to_computation_comm) {
@@ -83,7 +85,7 @@ void TableInboxProcess(
 }
 
 void ComputationProcess(
-  core::table::DistributedTable *distributed_table,
+  core::table::DistributedTable<TreeSpecType> *distributed_table,
   boost::mpi::communicator &world,
   boost::mpi::communicator &local_group_comm,
   boost::mpi::intercommunicator &computation_to_outbox_comm,
@@ -192,7 +194,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Declare the distributed table.
-  core::table::DistributedTable *distributed_table = NULL;
+  core::table::DistributedTable<TreeSpecType> *distributed_table = NULL;
 
   // Wait until the memory allocator is in synch.
   world.barrier();
@@ -207,9 +209,10 @@ int main(int argc, char *argv[]) {
 
   // Attach the distributed table for all the processes and put a
   // barrier.
-  std::pair< core::table::DistributedTable *, std::size_t >
+  std::pair< core::table::DistributedTable<TreeSpecType> *, std::size_t >
   distributed_table_pair =
-    core::table::global_m_file_->UniqueFind<core::table::DistributedTable>();
+    core::table::global_m_file_->UniqueFind <
+    core::table::DistributedTable<TreeSpecType> > ();
   distributed_table = distributed_table_pair.first;
 
   // The main computation loop.
