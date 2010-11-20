@@ -41,8 +41,7 @@ class TripleRangeDistanceSq {
             num_tuples_[1] =
               num_tuples_[2] =
                 core::math::BinomialCoefficient<double>(
-                  table_in.get_node_count(nodes_[0]) - 1, 2) -
-                nodes_[0]->stat().self_num_tuples_;
+                  table_in.get_node_count(nodes_[0]) - 1, 2);
         }
 
         // node_0 = node_1, node_1 \not = node_2
