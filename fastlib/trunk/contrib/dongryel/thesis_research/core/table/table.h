@@ -7,7 +7,8 @@
 #define CORE_TABLE_TABLE_H
 
 #include <armadillo>
-#include "boost/utility.hpp"
+#include <boost/interprocess/offset_ptr.hpp>
+#include <boost/utility.hpp>
 #include "core/csv_parser/dataset_reader.h"
 #include "core/metric_kernels/abstract_metric.h"
 #include "core/tree/general_spacetree.h"
@@ -136,7 +137,7 @@ class Table: public boost::noncopyable {
 
     std::vector<int> new_from_old_;
 
-    TreeType *tree_;
+    boost::interprocess::offset_ptr<TreeType> tree_;
 
   public:
 
@@ -155,10 +156,10 @@ class Table: public boost::noncopyable {
     ~Table() {
       if(tree_) {
         if(core::table::global_m_file_) {
-          RecursiveDeallocate_(tree_);
+          RecursiveDeallocate_(tree_.get());
         }
         else {
-          delete tree_;
+          delete tree_.get();
         }
       }
       tree_ = NULL;
@@ -201,7 +202,7 @@ class Table: public boost::noncopyable {
     }
 
     TreeType *get_tree() {
-      return tree_;
+      return tree_.get();
     }
 
     void get_leaf_nodes(

@@ -224,6 +224,12 @@ class BallBound {
       const core::table::DensePoint& point) const {
       return metric.Distance(center_, point);
     }
+
+    double MidDistanceSq(
+      const core::metric_kernels::AbstractMetric &metric,
+      const core::table::DensePoint& point) const {
+      return metric.DistanceSq(center_, point);
+    }
 };
 };
 };

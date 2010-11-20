@@ -28,10 +28,10 @@ class TestTree {
       typename TableType::TreeIterator node_it =
         table.get_node_iterator(node);
       do {
-        core::table::DenseConstPoint point;
+        core::table::DensePoint point;
         int point_id;
         node_it.Next(&point, &point_id);
-        core::table::DenseConstPoint compare_point;
+        core::table::DensePoint compare_point;
         table.get(point_id, &compare_point);
 
         for(int i = 0; i < point.length(); i++) {
@@ -106,8 +106,8 @@ class TestTree {
       core::metric_kernels::LMetric<2> l2_metric;
       reordered_table.IndexData(l2_metric, 20);
       for(int i = 0; i < reordered_table.n_entries(); i++) {
-        core::table::DenseConstPoint reordered_point;
-        core::table::DenseConstPoint original_point;
+        core::table::DensePoint reordered_point;
+        core::table::DensePoint original_point;
         reordered_table.get(i, &reordered_point);
         original_table.get(i, &original_point);
         for(int j = 0; j < reordered_table.n_attributes(); j++) {
@@ -131,7 +131,7 @@ BOOST_AUTO_TEST_CASE(TestCaseKde) {
 
   // Tree type: hard-coded for a metric tree.
   typedef core::table::Table <
-  core::tree::GenMetricTree<core::table::DensePoint> > TableType;
+  core::tree::GenMetricTree<core::tree::AbstractStatistic> > TableType;
 
   // Call the tests.
   core::tree::TestTree<TableType> tree_test;
