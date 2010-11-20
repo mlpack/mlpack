@@ -291,8 +291,7 @@ class GeneralBinarySpaceTree {
       int max_num_leaf_nodes,
       int *current_num_leaf_nodes,
       std::vector<int> *old_from_new,
-      int *num_nodes,
-      core::table::MemoryMappedFile *m_file_in) {
+      int *num_nodes) {
 
       TreeType *left = NULL;
       TreeType *right = NULL;
@@ -309,17 +308,17 @@ class GeneralBinarySpaceTree {
       else {
         bool can_cut = TreeSpecType::AttemptSplitting(
                          metric_in, matrix, node, &left, &right,
-                         leaf_size, old_from_new, m_file_in);
+                         leaf_size, old_from_new, core::table::global_m_file_);
 
         if(can_cut) {
           (*current_num_leaf_nodes)++;
           (*num_nodes) = (*num_nodes) + 2;
           SplitTree(
             metric_in, matrix, left, leaf_size, max_num_leaf_nodes,
-            current_num_leaf_nodes, old_from_new, num_nodes, m_file_in);
+            current_num_leaf_nodes, old_from_new, num_nodes);
           SplitTree(
             metric_in, matrix, right, leaf_size, max_num_leaf_nodes,
-            current_num_leaf_nodes, old_from_new, num_nodes, m_file_in);
+            current_num_leaf_nodes, old_from_new, num_nodes);
           TreeSpecType::CombineBounds(metric_in, matrix, node, left, right);
         }
         else {
@@ -356,11 +355,10 @@ class GeneralBinarySpaceTree {
       int max_num_leaf_nodes = std::numeric_limits<int>::max(),
       std::vector<int> *old_from_new = NULL,
       std::vector<int> *new_from_old = NULL,
-      int *num_nodes = NULL,
-      core::table::MemoryMappedFile *m_file_in = NULL) {
+      int *num_nodes = NULL) {
 
-      TreeType *node = (m_file_in) ?
-                       (TreeType *) m_file_in->Allocate(sizeof(TreeType)) :
+      TreeType *node = (core::table::global_m_file_) ?
+                       core::table::global_m_file_->Construct<TreeType>() :
                        new TreeType();
       std::vector<int> *old_from_new_ptr;
 
@@ -385,7 +383,7 @@ class GeneralBinarySpaceTree {
       int current_num_leaf_nodes = 1;
       SplitTree(
         metric_in, matrix, node, leaf_size, max_num_leaf_nodes,
-        &current_num_leaf_nodes, old_from_new_ptr, &num_nodes_in, m_file_in);
+        &current_num_leaf_nodes, old_from_new_ptr, &num_nodes_in);
 
       if(num_nodes) {
         *num_nodes = num_nodes_in;
