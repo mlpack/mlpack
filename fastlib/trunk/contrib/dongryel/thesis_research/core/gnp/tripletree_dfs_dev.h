@@ -276,6 +276,13 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
   typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
 
+  // Since we have turned on the monochromatic trick, fail if all
+  // three nodes are equal.
+  if(range_in.node(0) == range_in.node(1) &&
+      range_in.node(1) == range_in.node(2)) {
+    return false;
+  }
+
   // If there are too many tuples to approximate, then don't try.
   if(std::max(
         range_in.num_tuples(0), std::max(
@@ -380,6 +387,15 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanSummarize_(
   const typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results,
   int *failure_index) {
+
+  // Since we have turned on the monochromatic trick, fail if all
+  // three nodes are equal.
+  if(triple_range_distance_sq_in.node(0) ==
+      triple_range_distance_sq_in.node(1) &&
+      triple_range_distance_sq_in.node(1) ==
+      triple_range_distance_sq_in.node(2)) {
+    return false;
+  }
 
   std::vector< typename ProblemType::SummaryType > new_summaries;
   new_summaries.resize(3);
