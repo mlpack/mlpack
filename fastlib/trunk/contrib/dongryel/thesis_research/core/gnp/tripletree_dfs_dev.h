@@ -124,11 +124,18 @@ void core::gnp::TripletreeDfs<ProblemType>::PreProcess_(
 
   typename ProblemType::StatisticType &qnode_stat =
     table_->get_node_stat(qnode);
-  qnode_stat.SetZero();
+  typename ProblemType::TableType::TreeIterator qnode_it =
+    table_->get_node_iterator(qnode);
 
   if(! table_->node_is_leaf(qnode)) {
     PreProcess_(table_->get_node_left_child(qnode));
     PreProcess_(table_->get_node_right_child(qnode));
+    qnode_stat.Init(
+      qnode_it, table_->get_node_left_child(qnode)->stat(),
+      table_->get_node_right_child(qnode)->stat());
+  }
+  else {
+    qnode_stat.Init(qnode_it);
   }
 }
 

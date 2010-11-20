@@ -34,11 +34,15 @@ class TripleRangeDistanceSq {
 
         // node_0 = node_1 = node_2
         if(nodes_[1] == nodes_[2]) {
+
+          // In this case, we do a post-correction since some of these
+          // tuples are taken care of in monochromatic case.
           num_tuples_[0] =
             num_tuples_[1] =
               num_tuples_[2] =
                 core::math::BinomialCoefficient<double>(
-                  table_in.get_node_count(nodes_[0]) - 1, 2);
+                  table_in.get_node_count(nodes_[0]) - 1, 2) -
+                nodes_[0]->stat().self_num_tuples_;
         }
 
         // node_0 = node_1, node_1 \not = node_2

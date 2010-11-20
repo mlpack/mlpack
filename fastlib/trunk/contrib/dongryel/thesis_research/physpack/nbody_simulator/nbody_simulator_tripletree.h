@@ -838,9 +838,12 @@ class NbodySimulatorStatistic: public boost::noncopyable {
 
     physpack::nbody_simulator::NbodySimulatorSummary summary_;
 
+    double self_num_tuples_;
+
     void SetZero() {
       postponed_.SetZero();
       summary_.SetZero();
+      self_num_tuples_ = 0;
     }
 
     /**
@@ -849,6 +852,11 @@ class NbodySimulatorStatistic: public boost::noncopyable {
     template<typename TreeIteratorType>
     void Init(TreeIteratorType &iterator) {
       SetZero();
+
+      // The number of tuples formed among the particles inside the
+      // node alone for each point.
+      self_num_tuples_ = core::math::BinomialCoefficient<double>(
+                           iterator.count() - 1, 2);
     }
 
     /**
@@ -862,6 +870,10 @@ class NbodySimulatorStatistic: public boost::noncopyable {
       const NbodySimulatorStatistic &left_stat,
       const NbodySimulatorStatistic &right_stat) {
       SetZero();
+
+      // Add up the self-num tuples.
+      self_num_tuples_ = left_stat.self_num_tuples_ +
+                         right_stat.self_num_tuples_;
     }
 };
 };
