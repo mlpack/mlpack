@@ -26,6 +26,13 @@
  */
 
 #include <boost/interprocess/offset_ptr.hpp>
+#include "core/table/memory_mapped_file.h"
+
+namespace core {
+namespace table {
+extern core::table::MemoryMappedFile *global_m_file_;
+};
+};
 
 namespace core {
 namespace tree {
@@ -65,14 +72,37 @@ class GeneralBinarySpaceTree {
     friend class boost::serialization::access;
 
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int version) {
+    void save(Archive &ar, const unsigned int version) const {
       ar & bound_;
       ar & begin_;
       ar & count_;
-      ar & left_;
-      ar & right_;
       ar & stat_;
+      GeneralBinarySpaceTree *left_ptr = left_.get();
+      GeneralBinarySpaceTree *right_ptr = right_.get();
+      ar & left_ptr;
+      ar & right_ptr;
     }
+
+    template<class Archive>
+    void load(Archive &ar, const unsigned int version) {
+      ar & bound_;
+      ar & begin_;
+      ar & count_;
+      ar & stat_;
+      GeneralBinarySpaceTree *left_ptr_in =
+        (core::table::global_m_file_) ?
+        core::table::global_m_file_->Construct<GeneralBinarySpaceTree>() :
+        new GeneralBinarySpaceTree();
+      GeneralBinarySpaceTree *right_ptr_in =
+        (core::table::global_m_file_) ?
+        core::table::global_m_file_->Construct<GeneralBinarySpaceTree>() :
+        new GeneralBinarySpaceTree();
+      ar & left_ptr_in;
+      ar & right_ptr_in;
+      left_ = left_ptr_in;
+      right_ = right_ptr_in;
+    }
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
 
     ~GeneralBinarySpaceTree() {
       if(left_ != NULL) {
