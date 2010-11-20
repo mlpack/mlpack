@@ -15,6 +15,7 @@ namespace table {
 class DenseMatrix {
 
   private:
+
     boost::interprocess::offset_ptr<double> ptr_;
 
     int n_rows_;

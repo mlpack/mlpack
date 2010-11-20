@@ -7,7 +7,8 @@
 #define MLPACK_KDE_KDE_DUALTREE_H
 
 #include <armadillo>
-#include "boost/math/distributions/normal.hpp"
+#include <boost/math/distributions/normal.hpp>
+#include <boost/serialization/serialization.hpp>
 #include "core/monte_carlo/mean_variance_pair.h"
 #include "core/metric_kernels/kernel.h"
 #include "core/tree/statistic.h"
@@ -16,6 +17,10 @@
 namespace mlpack {
 namespace kde {
 class KdePostponed {
+
+  private:
+
+    friend class boost::serialization::access;
 
   public:
 
@@ -26,6 +31,14 @@ class KdePostponed {
     double pruned_;
 
     double used_error_;
+
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version) {
+      ar & densities_l_;
+      ar & densities_u_;
+      ar & pruned_;
+      ar & used_error_;
+    }
 
     KdePostponed() {
     }
@@ -354,6 +367,10 @@ class KdeDelta {
 
 class KdeSummary {
 
+  private:
+
+    friend class boost::serialization::access;
+
   public:
 
     double densities_l_;
@@ -363,6 +380,14 @@ class KdeSummary {
     double pruned_l_;
 
     double used_error_u_;
+
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version) {
+      ar & densities_l_;
+      ar & densities_u_;
+      ar & pruned_l_;
+      ar & used_error_u_;
+    }
 
     KdeSummary() {
       SetZero();
@@ -564,6 +589,9 @@ class KdeSummary {
 class KdeStatistic {
 
   private:
+
+    friend class boost::serialization::access;
+
     KdeStatistic(const KdeStatistic &stat_in) {
     }
 
@@ -572,6 +600,12 @@ class KdeStatistic {
     mlpack::kde::KdePostponed postponed_;
 
     mlpack::kde::KdeSummary summary_;
+
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version) {
+      ar & postponed_;
+      ar & summary_;
+    }
 
     KdeStatistic() {
     }

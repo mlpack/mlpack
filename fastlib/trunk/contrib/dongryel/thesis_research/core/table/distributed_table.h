@@ -57,7 +57,12 @@ class DistributedTable: public boost::noncopyable {
     void AssignLeafNodes_(
       const core::metric_kernels::AbstractMetric &metric_in,
       const std::vector<TreeType *> &top_leaf_nodes,
-      std::vector<int> *point_assignments) {
+      std::vector<int> *point_assignments,
+      bool *points_assigned_to_node) {
+
+      for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
+        points_assigned_to_node[i] = 0;
+      }
 
       // Loop through each point and find the closest leaf node.
       for(int i = 0; i < owned_table_->n_entries(); i++) {
@@ -65,6 +70,8 @@ class DistributedTable: public boost::noncopyable {
         owned_table_->get(i, &point);
 
         // Loop through each leaf node.
+        double min_squared_mid_distance = std::numeric_limits<double>::max();
+        int min_index = -1;
         for(unsigned int j = 0; j < top_leaf_nodes.size(); j++) {
           const typename TreeType::BoundType &leaf_node_bound =
             top_leaf_nodes[j]->bound();
@@ -72,7 +79,15 @@ class DistributedTable: public boost::noncopyable {
           // Compute the squared mid-distance.
           double squared_mid_distance = leaf_node_bound.MidDistanceSq(
                                           metric_in, point);
+          if(squared_mid_distance < min_squared_mid_distance) {
+            min_squared_mid_distance = squared_mid_distance;
+            min_index = j;
+          }
         }
+
+        // Output the assignments.
+        point_assignments->push_back(min_index);
+        points_assigned_to_node[min_index] = true;
       }
     }
 
@@ -314,7 +329,7 @@ class DistributedTable: public boost::noncopyable {
 
       // The master builds the top tree, and sends the leaf nodes to
       // the rest.
-      std::vector<TableType *> top_leaf_nodes;
+      std::vector<TreeType *> top_leaf_nodes;
       if(table_outbox_group_comm.rank() == 0) {
         sampled_table.IndexData(
           metric_in, leaf_size, table_outbox_group_comm.size());
@@ -332,7 +347,35 @@ class DistributedTable: public boost::noncopyable {
 
       // Assign each point to one of the leaf nodes.
       std::vector<int> point_assignments;
-      AssignLeafNodes_(metric_in, top_leaf_nodes, &point_assignments);
+      bool *local_points_assigned_to_node = new bool[top_leaf_nodes.size()];
+      bool *points_assigned_to_node = NULL;
+      AssignLeafNodes_(
+        metric_in, top_leaf_nodes, &point_assignments,
+        local_points_assigned_to_node);
+
+      // Do a reduction to find whether at least one point has been
+      // assigned to each partition.
+      if(table_outbox_group_comm.rank() == 0) {
+        points_assigned_to_node = new bool[top_leaf_nodes.size()];
+        boost::mpi::reduce(
+          table_outbox_group_comm, local_points_assigned_to_node,
+          top_leaf_nodes.size(), points_assigned_to_node,
+          std::logical_or<bool>(), 0);
+
+
+        printf("Checking:\n");
+        for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
+          printf(" %d ", points_assigned_to_node[i]);
+        }
+        printf("\n");
+      }
+      else {
+        boost::mpi::reduce(
+          table_outbox_group_comm, local_points_assigned_to_node,
+          top_leaf_nodes.size(), std::logical_or<bool>(), 0);
+      }
+
+      delete[] points_assigned_to_node;
     }
 
     void get(

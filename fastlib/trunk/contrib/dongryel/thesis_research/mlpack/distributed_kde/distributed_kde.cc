@@ -199,11 +199,15 @@ int main(int argc, char *argv[]) {
   // Wait until the memory allocator is in synch.
   world.barrier();
 
-  // Read the distributed table once per each compute node, and put a
-  // barrier.
+  // Read the distributed table once per each compute node, and build
+  // the tree, and barrier.
   if(membership_key == 0) {
     distributed_table =
       InitDistributedTable(world, local_group_comm);
+
+    core::metric_kernels::LMetric<2> l2_metric;
+    distributed_table->IndexData(
+      l2_metric, local_group_comm, 3, 0.5);
   }
   world.barrier();
 
