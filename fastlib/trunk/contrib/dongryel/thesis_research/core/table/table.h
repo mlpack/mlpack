@@ -133,9 +133,9 @@ class Table: public boost::noncopyable {
   private:
     core::table::DenseMatrix data_;
 
-    std::vector<int> old_from_new_;
+    boost::interprocess::offset_ptr<int> old_from_new_;
 
-    std::vector<int> new_from_old_;
+    boost::interprocess::offset_ptr<int> new_from_old_;
 
     boost::interprocess::offset_ptr<TreeType> tree_;
 
@@ -151,18 +151,38 @@ class Table: public boost::noncopyable {
 
     Table() {
       tree_ = NULL;
+      old_from_new_ = NULL;
+      new_from_old_ = NULL;
     }
 
     ~Table() {
-      if(tree_) {
+      if(tree_.get() != NULL) {
         if(core::table::global_m_file_) {
-          RecursiveDeallocate_(tree_.get());
+          core::table::global_m_file_->Deallocate(tree_.get());
         }
         else {
           delete tree_.get();
         }
+        tree_ = NULL;
       }
-      tree_ = NULL;
+      if(old_from_new_.get() != NULL) {
+        if(core::table::global_m_file_) {
+          core::table::global_m_file_->Deallocate(old_from_new_.get());
+        }
+        else {
+          delete[] old_from_new_.get();
+        }
+        old_from_new_ = NULL;
+      }
+      if(new_from_old_.get() != NULL) {
+        if(core::table::global_m_file_) {
+          core::table::global_m_file_->Deallocate(new_from_old_.get());
+        }
+        else {
+          delete[] new_from_old_.get();
+        }
+        new_from_old_ = NULL;
+      }
     }
 
     TreeIterator get_node_iterator(TreeType *node) {
@@ -253,9 +273,20 @@ class Table: public boost::noncopyable {
       const core::metric_kernels::AbstractMetric &metric_in, int leaf_size,
       int max_num_leaf_nodes = std::numeric_limits<int>::max()) {
       int num_nodes;
+
+      if(core::table::global_m_file_) {
+        old_from_new_ = core::table::global_m_file_->ConstructArray<int>(
+                          data_.n_cols());
+        new_from_old_ = core::table::global_m_file_->ConstructArray<int>(
+                          data_.n_cols());
+      }
+      else {
+        old_from_new_ = new int[data_.n_cols()];
+        new_from_old_ = new int[data_.n_cols()];
+      }
       tree_ = TreeType::MakeTree(
                 metric_in, data_, leaf_size, max_num_leaf_nodes,
-                &old_from_new_, &new_from_old_, &num_nodes);
+                old_from_new_.get(), new_from_old_.get(), &num_nodes);
     }
 
     void get(int point_id, double *point_out) const {
@@ -283,26 +314,18 @@ class Table: public boost::noncopyable {
         return data_.GetColumnPtr(point_id);
       }
       else {
-        return data_.GetColumnPtr(new_from_old_[point_id]);
+        return data_.GetColumnPtr(new_from_old_.get()[point_id]);
       }
     }
 
   private:
-
-    void RecursiveDeallocate_(TreeType *node) {
-      if(node->is_leaf() == false) {
-        RecursiveDeallocate_(node->left());
-        RecursiveDeallocate_(node->right());
-      }
-      core::table::global_m_file_->Deallocate(node);
-    }
 
     void direct_get_(int point_id, double *entry) const {
       if(this->IsIndexed() == false) {
         data_.CopyColumnVector(point_id, entry);
       }
       else {
-        data_.CopyColumnVector(new_from_old_[point_id], entry);
+        data_.CopyColumnVector(new_from_old_.get()[point_id], entry);
       }
     }
 
@@ -311,7 +334,7 @@ class Table: public boost::noncopyable {
         data_.MakeColumnVector(point_id, entry);
       }
       else {
-        data_.MakeColumnVector(new_from_old_[point_id], entry);
+        data_.MakeColumnVector(new_from_old_.get()[point_id], entry);
       }
     }
 
@@ -321,7 +344,7 @@ class Table: public boost::noncopyable {
         data_.MakeColumnVector(point_id, entry);
       }
       else {
-        data_.MakeColumnVector(new_from_old_[point_id], entry);
+        data_.MakeColumnVector(new_from_old_.get()[point_id], entry);
       }
     }
 
@@ -330,7 +353,7 @@ class Table: public boost::noncopyable {
         data_.MakeColumnVector(point_id, entry);
       }
       else {
-        data_.MakeColumnVector(new_from_old_[point_id], entry);
+        data_.MakeColumnVector(new_from_old_.get()[point_id], entry);
       }
     }
 
@@ -349,7 +372,7 @@ class Table: public boost::noncopyable {
         return reordered_position;
       }
       else {
-        return old_from_new_[reordered_position];
+        return old_from_new_.get()[reordered_position];
       }
     }
 };

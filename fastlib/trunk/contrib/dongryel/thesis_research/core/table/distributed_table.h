@@ -291,46 +291,61 @@ class DistributedTable: public boost::noncopyable {
       TableType sampled_table;
       std::vector<int> sampled_indices;
       SelectSubset_(sample_probability_in, &sampled_indices);
+      printf("Process %d sampled %d points.\n",
+             table_outbox_group_comm.rank(), sampled_indices.size());
 
       // Send the number of points chosen in this process to the
       // master so that the master can allocate the appropriate amount
       // of space to receive all the points.
       int total_num_samples = 0;
       double *tmp_buffer = NULL;
-      if(table_outbox_group_comm.rank() == 0) {
-        boost::mpi::reduce(
-          table_outbox_group_comm, (int) sampled_indices.size(),
-          total_num_samples, std::plus<int>(), 0);
-        sampled_table.Init(owned_table_->n_attributes(), total_num_samples);
-      }
-      else {
-        boost::mpi::reduce(
-          table_outbox_group_comm, sampled_indices.size(),
-          std::plus<int>(), 0);
+      int *counts = new int[ table_outbox_group_comm.size()];
+      int local_sampled_indices_size = static_cast<int>(
+                                         sampled_indices.size());
+      boost::mpi::gather(
+        table_outbox_group_comm, local_sampled_indices_size, counts, 0);
+      for(unsigned int i = 0; i < table_outbox_group_comm.size(); i++) {
+        total_num_samples += counts[i];
       }
 
       // Each process copies the subset of points into the temporary
       // buffer.
       CopyPointsIntoTemporaryBuffer_(sampled_indices, &tmp_buffer);
+
       if(table_outbox_group_comm.rank() == 0) {
-        boost::mpi::gather(
-          table_outbox_group_comm, tmp_buffer,
-          this->n_attributes() * sampled_indices.size(),
-          sampled_table.data().ptr(), 0);
+        sampled_table.Init(this->n_attributes(), total_num_samples);
+        memcpy(
+          sampled_table.data().ptr(), tmp_buffer,
+          sizeof(double) * this->n_attributes() * sampled_indices.size());
+
+        int offset = this->n_attributes() * sampled_indices.size();
+        for(int i = 1; i < table_outbox_group_comm.size(); i++) {
+          int num_elements_to_receive = this->n_attributes() * counts[i];
+          table_outbox_group_comm.recv(
+            i, boost::mpi::any_tag,
+            sampled_table.data().ptr() + offset, num_elements_to_receive);
+          offset += num_elements_to_receive;
+        }
       }
       else {
-        boost::mpi::gather(
-          table_outbox_group_comm, tmp_buffer,
-          this->n_attributes() * sampled_indices.size(), 0);
+        table_outbox_group_comm.send(
+          0, table_outbox_group_comm.rank(), tmp_buffer,
+          this->n_attributes() * sampled_indices.size());
       }
+
+      table_outbox_group_comm.barrier();
 
       // After sending, free the temporary buffer.
       delete[] tmp_buffer;
+      delete[] counts;
 
       // The master builds the top tree, and sends the leaf nodes to
       // the rest.
       std::vector<TreeType *> top_leaf_nodes;
       if(table_outbox_group_comm.rank() == 0) {
+
+        printf("Building the tree\n");
+        sampled_table.data().Print();
         sampled_table.IndexData(
           metric_in, leaf_size, table_outbox_group_comm.size());
 
@@ -343,6 +358,13 @@ class DistributedTable: public boost::noncopyable {
 
         // Get the leaf nodes from the broadcast.
         boost::mpi::broadcast(table_outbox_group_comm, top_leaf_nodes, 0);
+      }
+      printf("Checking the nodes: %d %d\n", table_outbox_group_comm.rank(),
+             top_leaf_nodes.size());
+
+      for(int i = 0; i < top_leaf_nodes.size(); i++) {
+        printf("%d %d %d\n", top_leaf_nodes[i]->begin(),
+               top_leaf_nodes[i]->end(), top_leaf_nodes[i]->count());
       }
 
       // Assign each point to one of the leaf nodes.

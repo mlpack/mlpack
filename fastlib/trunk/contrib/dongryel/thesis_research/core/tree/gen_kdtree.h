@@ -98,7 +98,7 @@ class GenKdTree {
       const core::metric_kernels::AbstractMetric &metric_in,
       core::table::DenseMatrix& matrix, TreeType *node, TreeType **left,
       TreeType **right, int leaf_size,
-      std::vector<int> *old_from_new,
+      int *old_from_new,
       core::table::MemoryMappedFile *m_file_in) {
 
       *left = NULL;

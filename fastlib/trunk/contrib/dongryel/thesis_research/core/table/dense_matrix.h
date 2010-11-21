@@ -24,6 +24,15 @@ class DenseMatrix {
 
   public:
 
+    void Print() const {
+      for(int i = 0; i < n_rows_; i++) {
+        for(int j = 0; j < n_cols_; j++) {
+          printf("%g, ", this->get(i, j));
+        }
+        printf("\n");
+      }
+    }
+
     const double *ptr() const {
       return ptr_.get();
     }
@@ -66,7 +75,7 @@ class DenseMatrix {
     }
 
     ~DenseMatrix() {
-      if(core::table::global_m_file_) {
+      if(ptr_.get() != NULL && core::table::global_m_file_) {
         core::table::global_m_file_->DestroyPtr(ptr_.get());
       }
       else {

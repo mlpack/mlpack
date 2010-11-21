@@ -73,44 +73,44 @@ class GeneralBinarySpaceTree {
 
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
+
+      // This does not save the children.
       ar & bound_;
       ar & begin_;
       ar & count_;
       ar & stat_;
-      GeneralBinarySpaceTree *left_ptr = left_.get();
-      GeneralBinarySpaceTree *right_ptr = right_.get();
-      ar & left_ptr;
-      ar & right_ptr;
     }
 
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
+
+      // This does not get the children.
       ar & bound_;
       ar & begin_;
       ar & count_;
       ar & stat_;
-      GeneralBinarySpaceTree *left_ptr_in =
-        (core::table::global_m_file_) ?
-        core::table::global_m_file_->Construct<GeneralBinarySpaceTree>() :
-        new GeneralBinarySpaceTree();
-      GeneralBinarySpaceTree *right_ptr_in =
-        (core::table::global_m_file_) ?
-        core::table::global_m_file_->Construct<GeneralBinarySpaceTree>() :
-        new GeneralBinarySpaceTree();
-      ar & left_ptr_in;
-      ar & right_ptr_in;
-      left_ = left_ptr_in;
-      right_ = right_ptr_in;
+      left_ = NULL;
+      right_ = NULL;
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
     ~GeneralBinarySpaceTree() {
-      if(left_ != NULL) {
-        delete left_.get();
+      if(left_.get() != NULL) {
+        if(core::table::global_m_file_) {
+          core::table::global_m_file_->Deallocate(left_.get());
+        }
+        else {
+          delete left_.get();
+        }
         left_ = NULL;
       }
-      if(right_ != NULL) {
-        delete right_.get();
+      if(right_.get() != NULL) {
+        if(core::table::global_m_file_) {
+          core::table::global_m_file_->Deallocate(right_.get());
+        }
+        else {
+          delete right_.get();
+        }
         right_ = NULL;
       }
     }
@@ -290,7 +290,7 @@ class GeneralBinarySpaceTree {
       int leaf_size,
       int max_num_leaf_nodes,
       int *current_num_leaf_nodes,
-      std::vector<int> *old_from_new,
+      int *old_from_new,
       int *num_nodes) {
 
       TreeType *left = NULL;
@@ -353,25 +353,18 @@ class GeneralBinarySpaceTree {
       const core::metric_kernels::AbstractMetric &metric_in,
       core::table::DenseMatrix& matrix, int leaf_size,
       int max_num_leaf_nodes = std::numeric_limits<int>::max(),
-      std::vector<int> *old_from_new = NULL,
-      std::vector<int> *new_from_old = NULL,
+      int *old_from_new = NULL,
+      int *new_from_old = NULL,
       int *num_nodes = NULL) {
 
       TreeType *node = (core::table::global_m_file_) ?
                        core::table::global_m_file_->Construct<TreeType>() :
                        new TreeType();
-      std::vector<int> *old_from_new_ptr;
 
       if(old_from_new) {
-        old_from_new->resize(matrix.n_cols());
-
         for(int i = 0; i < matrix.n_cols(); i++) {
-          (*old_from_new)[i] = i;
+          old_from_new[i] = i;
         }
-        old_from_new_ptr = old_from_new;
-      }
-      else {
-        old_from_new_ptr = NULL;
       }
 
       int num_nodes_in = 1;
@@ -383,15 +376,14 @@ class GeneralBinarySpaceTree {
       int current_num_leaf_nodes = 1;
       SplitTree(
         metric_in, matrix, node, leaf_size, max_num_leaf_nodes,
-        &current_num_leaf_nodes, old_from_new_ptr, &num_nodes_in);
+        &current_num_leaf_nodes, old_from_new, &num_nodes_in);
 
       if(num_nodes) {
         *num_nodes = num_nodes_in;
       }
       if(new_from_old) {
-        new_from_old->resize(matrix.n_cols());
         for(int i = 0; i < matrix.n_cols(); i++) {
-          (*new_from_old)[(*old_from_new)[i]] = i;
+          new_from_old[old_from_new[i]] = i;
         }
       }
       return node;
@@ -401,7 +393,7 @@ class GeneralBinarySpaceTree {
       const core::metric_kernels::AbstractMetric &metric_in,
       core::table::DenseMatrix& matrix, int first, int count,
       BoundType &left_bound, BoundType &right_bound,
-      std::vector<int> *old_from_new) {
+      int *old_from_new) {
 
       int end = first + count;
       int left_count = 0;
@@ -440,7 +432,7 @@ class GeneralBinarySpaceTree {
           left_membership[left - first], left_membership[right - first]);
 
         if(old_from_new) {
-          std::swap((*old_from_new)[left], (*old_from_new)[right]);
+          std::swap(old_from_new[left], old_from_new[right]);
         }
         right--;
       }
