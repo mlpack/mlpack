@@ -10,6 +10,7 @@
 #define CORE_TREE_STATISTIC_H
 
 #include <armadillo>
+#include <boost/serialization/string.hpp>
 
 /**
  * Empty statistic if you are not interested in storing statistics in your
@@ -19,9 +20,16 @@
 namespace core {
 namespace tree {
 class AbstractStatistic {
-  public:
+  private:
 
-    virtual ~AbstractStatistic() {
+    friend class boost::serialization::access;
+
+  public:
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version) {
+    }
+
+    ~AbstractStatistic() {
     }
 
     /**
