@@ -6,15 +6,16 @@
  */
 
 #include "core/metric_kernels/lmetric.h"
+#include "core/tree/abstract_statistic.h"
 #include "core/table/distributed_table.h"
 #include "core/table/mailbox.h"
 #include "core/tree/gen_kdtree.h"
 #include "core/tree/gen_metric_tree.h"
 #include "mlpack/kde/kde_dualtree.h"
 
-typedef core::tree::GenMetricTree<mlpack::kde::KdeStatistic> TreeSpecType;
+typedef core::tree::GenMetricTree<core::tree::AbstractStatistic> TreeSpecType;
 typedef core::tree::GeneralBinarySpaceTree < TreeSpecType > TreeType;
-typedef core::table::Table<TreeType> TableType;
+typedef core::table::Table<TreeSpecType> TableType;
 
 core::table::DistributedTable<TreeSpecType> *InitDistributedTable(
   boost::mpi::communicator &world,
@@ -32,7 +33,7 @@ core::table::DistributedTable<TreeSpecType> *InitDistributedTable(
 
     // Each process generates its own random data, dumps it to the file,
     // and read its own file back into its own distributed table.
-    core::table::Table<TreeType> random_dataset;
+    core::table::Table<TreeSpecType> random_dataset;
     const int num_dimensions = 5;
     int num_points = core::math::RandInt(10, 20);
     random_dataset.Init(5, num_points);
@@ -155,7 +156,7 @@ int main(int argc, char *argv[]) {
   core::table::global_m_file_ = new core::table::MemoryMappedFile();
   core::table::global_m_file_->Init(
     std::string("tmp_file"), world.rank(),
-    (int) floor(world.rank() / 3), 5000000);
+    (int) floor(world.rank() / 3), 50000000);
 
   // Seed the random number.
   srand(time(NULL) + world.rank());
