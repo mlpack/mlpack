@@ -168,7 +168,7 @@ class DistributedTable: public boost::noncopyable {
       // distributed table.
       if(local_n_entries_ != NULL) {
         if(core::table::global_m_file_) {
-          core::table::global_m_file_->Deallocate(local_n_entries_.get());
+          core::table::global_m_file_->DestroyPtr(local_n_entries_.get());
         }
         else {
           delete[] local_n_entries_.get();

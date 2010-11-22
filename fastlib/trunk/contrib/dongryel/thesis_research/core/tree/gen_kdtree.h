@@ -126,10 +126,10 @@ class GenKdTree {
           return false;
         }
         else {
-          *left = (m_file_in) ? (TreeType *)
-                  m_file_in->Allocate(sizeof(TreeType)) : new TreeType();
-          *right = (m_file_in) ? (TreeType *)
-                   m_file_in->Allocate(sizeof(TreeType)) : new TreeType();
+          *left = (m_file_in) ?
+                  m_file_in->Construct<TreeType>() : new TreeType();
+          *right = (m_file_in) ?
+                   m_file_in->Construct<TreeType>() : new TreeType();
 
           // Copy the split dimension and split value.
           (*left)->bound().Init(matrix.n_rows());
