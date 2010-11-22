@@ -158,7 +158,7 @@ class Table: public boost::noncopyable {
     ~Table() {
       if(tree_.get() != NULL) {
         if(core::table::global_m_file_) {
-          core::table::global_m_file_->Deallocate(tree_.get());
+          core::table::global_m_file_->DestroyPtr(tree_.get());
         }
         else {
           delete tree_.get();
@@ -167,7 +167,7 @@ class Table: public boost::noncopyable {
       }
       if(old_from_new_.get() != NULL) {
         if(core::table::global_m_file_) {
-          core::table::global_m_file_->Deallocate(old_from_new_.get());
+          core::table::global_m_file_->DestroyPtr(old_from_new_.get());
         }
         else {
           delete[] old_from_new_.get();
@@ -176,7 +176,7 @@ class Table: public boost::noncopyable {
       }
       if(new_from_old_.get() != NULL) {
         if(core::table::global_m_file_) {
-          core::table::global_m_file_->Deallocate(new_from_old_.get());
+          core::table::global_m_file_->DestroyPtr(new_from_old_.get());
         }
         else {
           delete[] new_from_old_.get();

@@ -33,7 +33,7 @@ class HrectBound {
 
     ~HrectBound() {
       if(core::table::global_m_file_) {
-        core::table::global_m_file_->Deallocate(bounds_);
+        core::table::global_m_file_->DestroyPtr(bounds_);
       }
       else {
         delete[] bounds_;
@@ -46,8 +46,8 @@ class HrectBound {
      */
     void Init(int dimension) {
       bounds_ = (core::table::global_m_file_) ?
-                (core::math::Range *) core::table::global_m_file_->Allocate(
-                  dimension * sizeof(core::math::Range)) :
+                core::table::global_m_file_->ConstructArray<core::math::Range>(
+                  dimension) :
                 new core::math::Range[dimension];
 
       dim_ = dimension;

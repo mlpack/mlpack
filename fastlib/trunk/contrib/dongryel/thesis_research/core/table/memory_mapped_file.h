@@ -67,14 +67,6 @@ class MemoryMappedFile {
                boost::interprocess::anonymous_instance)();
     }
 
-    void *Allocate(size_t size) {
-      return m_file_.allocate(size);
-    }
-
-    void Deallocate(void *p) {
-      m_file_.deallocate(p);
-    }
-
     template<typename MyType>
     void DestroyPtr(MyType *ptr) {
       m_file_.destroy_ptr(ptr);

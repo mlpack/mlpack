@@ -34,7 +34,7 @@ class DensePoint {
     void DestructPtr_() {
       if(ptr_ != NULL && is_alias_ == false) {
         if(core::table::global_m_file_) {
-          core::table::global_m_file_->Deallocate(ptr_.get());
+          core::table::global_m_file_->DestroyPtr(ptr_.get());
         }
         else {
           delete[] ptr_.get();
@@ -109,7 +109,7 @@ class DensePoint {
       ptr_ =
         (core::table::global_m_file_) ?
         (double *)
-        core::table::global_m_file_->Allocate(sizeof(double) * length_in) :
+        core::table::global_m_file_->ConstructArray<double>(length_in) :
         new double[length_in];
       n_rows_ = length_in;
       is_alias_ = false;
@@ -119,8 +119,8 @@ class DensePoint {
       ptr_ =
         (core::table::global_m_file_) ?
         (double *)
-        core::table::global_m_file_->Allocate(
-          sizeof(double) * vector_in.size()) :
+        core::table::global_m_file_->ConstructArray<double>(
+          vector_in.size()) :
         new double[vector_in.size()];
       n_rows_ = vector_in.size();
       for(unsigned int i = 0; i < vector_in.size(); i++) {
@@ -139,8 +139,8 @@ class DensePoint {
     void Copy(const DensePoint &point_in) {
       ptr_ =
         (core::table::global_m_file_) ?
-        (double *) core::table::global_m_file_->Allocate(
-          sizeof(double) * point_in.length()) :
+        (double *) core::table::global_m_file_->ConstructArray<double>(
+          point_in.length()) :
         new double[point_in.length()];
       CopyValues(point_in);
     }

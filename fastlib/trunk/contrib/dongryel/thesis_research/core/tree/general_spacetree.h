@@ -97,7 +97,7 @@ class GeneralBinarySpaceTree {
     ~GeneralBinarySpaceTree() {
       if(left_.get() != NULL) {
         if(core::table::global_m_file_) {
-          core::table::global_m_file_->Deallocate(left_.get());
+          core::table::global_m_file_->DestroyPtr(left_.get());
         }
         else {
           delete left_.get();
@@ -106,7 +106,7 @@ class GeneralBinarySpaceTree {
       }
       if(right_.get() != NULL) {
         if(core::table::global_m_file_) {
-          core::table::global_m_file_->Deallocate(right_.get());
+          core::table::global_m_file_->DestroyPtr(right_.get());
         }
         else {
           delete right_.get();
