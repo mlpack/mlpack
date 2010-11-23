@@ -52,11 +52,18 @@ class DistributedTable: public boost::noncopyable {
 
   private:
 
-    void AssignLeafNodes_(
+    int TakeLeafNodeOwnerShip_(
+      boost::mpi::communicator &table_outbox_group_comm,
+      const std::vector<int> &num_points_assigned_to_leaf_nodes) {
+
+      std::vector<int> leaf_node_id;
+      return 0;
+    }
+
+    void GetLeafNodeMembershipCounts_(
       const core::metric_kernels::AbstractMetric &metric_in,
       const std::vector<TreeType *> &top_leaf_nodes,
-      std::vector<int> *point_assignments,
-      bool *points_assigned_to_node) {
+      std::vector<int> &points_assigned_to_node) {
 
       for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
         points_assigned_to_node[i] = 0;
@@ -84,8 +91,7 @@ class DistributedTable: public boost::noncopyable {
         }
 
         // Output the assignments.
-        point_assignments->push_back(min_index);
-        points_assigned_to_node[min_index] = true;
+        points_assigned_to_node[min_index]++;
       }
     }
 
@@ -96,8 +102,9 @@ class DistributedTable: public boost::noncopyable {
       for(unsigned int i = 0; i < indices.size(); i++) {
         indices[i] = i;
       }
-      int num_elements = std::max(
-                           (int) floor(sample_probability_in * owned_table_->n_entries()), 1);
+      int num_elements =
+        std::max(
+          (int) floor(sample_probability_in * owned_table_->n_entries()), 1);
       for(int i = 0; i < num_elements; i++) {
         int random_index = core::math::RandInt(i, (int) indices.size());
         std::swap(indices[i], indices[ random_index ]);
@@ -302,7 +309,7 @@ class DistributedTable: public boost::noncopyable {
                                          sampled_indices.size());
       boost::mpi::gather(
         table_outbox_group_comm, local_sampled_indices_size, counts, 0);
-      for(unsigned int i = 0; i < table_outbox_group_comm.size(); i++) {
+      for(int i = 0; i < table_outbox_group_comm.size(); i++) {
         total_num_samples += counts[i];
       }
 
@@ -360,44 +367,21 @@ class DistributedTable: public boost::noncopyable {
       printf("Checking the nodes: %d %d\n", table_outbox_group_comm.rank(),
              top_leaf_nodes.size());
 
-      for(int i = 0; i < top_leaf_nodes.size(); i++) {
+      for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
         printf("%d %d %d\n", top_leaf_nodes[i]->begin(),
                top_leaf_nodes[i]->end(), top_leaf_nodes[i]->count());
       }
 
       // Assign each point to one of the leaf nodes.
-      std::vector<int> point_assignments;
-      bool *local_points_assigned_to_node = new bool[top_leaf_nodes.size()];
-      bool *points_assigned_to_node = NULL;
-      AssignLeafNodes_(
-        metric_in, top_leaf_nodes, &point_assignments,
-        local_points_assigned_to_node);
+      std::vector<int> num_points_assigned_to_leaf_nodes(
+        top_leaf_nodes.size(), 0);
+      GetLeafNodeMembershipCounts_(
+        metric_in, top_leaf_nodes, num_points_assigned_to_leaf_nodes);
 
-      // Do a reduction to find whether at least one point has been
-      // assigned to each partition.
-      if(table_outbox_group_comm.rank() == 0) {
-        points_assigned_to_node = new bool[top_leaf_nodes.size()];
-        boost::mpi::reduce(
-          table_outbox_group_comm, local_points_assigned_to_node,
-          top_leaf_nodes.size(), points_assigned_to_node,
-          std::logical_or<bool>(), 0);
-
-
-        printf("Checking:\n");
-        for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
-          printf(" %d ", points_assigned_to_node[i]);
-        }
-        printf("\n");
-      }
-      else {
-        boost::mpi::reduce(
-          table_outbox_group_comm, local_points_assigned_to_node,
-          top_leaf_nodes.size(), std::logical_or<bool>(), 0);
-      }
-
-      if(points_assigned_to_node != NULL) {
-        delete[] points_assigned_to_node;
-      }
+      // Each process takes a node in a greedy fashion to minimize the
+      // data movement.
+      int leaf_node_assignment_index = TakeLeafNodeOwnerShip_(
+                                         table_outbox_group_comm, num_points_assigned_to_leaf_nodes);
     }
 
     void get(
