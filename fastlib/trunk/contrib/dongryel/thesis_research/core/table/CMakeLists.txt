@@ -21,3 +21,14 @@ foreach(file ${SOURCES})
 endforeach()
 
 set(CORE_SRCS ${CORE_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+# test executable
+add_executable(distributed_auction-test
+               EXCLUDE_FROM_ALL
+               distributed_auction.test.cc
+              )
+# link dependencies of test executable
+target_link_libraries(distributed_auction-test
+                      core
+                      ${Boost_LIBRARIES}
+                     )
