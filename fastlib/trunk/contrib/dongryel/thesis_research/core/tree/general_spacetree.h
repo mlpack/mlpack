@@ -38,6 +38,10 @@ namespace core {
 namespace tree {
 template < class TreeSpecType >
 class GeneralBinarySpaceTree {
+  private:
+
+    friend class boost::serialization::access;
+
   public:
     typedef typename TreeSpecType::BoundType BoundType;
 
@@ -45,17 +49,11 @@ class GeneralBinarySpaceTree {
 
     typedef typename TreeSpecType::StatisticType StatisticType;
 
+  private:
+
     /** @brief The bound for the node.
      */
     BoundType bound_;
-
-    /** @brief The pointer to the left node.
-     */
-    boost::interprocess::offset_ptr<GeneralBinarySpaceTree> left_;
-
-    /** @brief The pointer to the right node.
-     */
-    boost::interprocess::offset_ptr<GeneralBinarySpaceTree> right_;
 
     /** @brief The beginning index.
      */
@@ -69,7 +67,15 @@ class GeneralBinarySpaceTree {
      */
     StatisticType stat_;
 
-    friend class boost::serialization::access;
+    /** @brief The pointer to the left node.
+     */
+    boost::interprocess::offset_ptr<GeneralBinarySpaceTree> left_;
+
+    /** @brief The pointer to the right node.
+     */
+    boost::interprocess::offset_ptr<GeneralBinarySpaceTree> right_;
+
+  public:
 
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
@@ -121,8 +127,6 @@ class GeneralBinarySpaceTree {
       begin_ = -1;
       count_ = -1;
     }
-
-  public:
 
     void Init(int begin_in, int count_in) {
       begin_ = begin_in;
