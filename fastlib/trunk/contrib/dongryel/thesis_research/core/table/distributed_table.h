@@ -20,6 +20,7 @@
 #include "core/table/point_request_message.h"
 #include "core/table/memory_mapped_file.h"
 #include "core/tree/gen_metric_tree.h"
+#include "core/table/distributed_auction.h"
 
 namespace core {
 namespace table {
@@ -54,16 +55,18 @@ class DistributedTable: public boost::noncopyable {
 
     int TakeLeafNodeOwnerShip_(
       boost::mpi::communicator &table_outbox_group_comm,
-      const std::vector<int> &num_points_assigned_to_leaf_nodes) {
+      const std::vector<double> &num_points_assigned_to_leaf_nodes) {
 
-      std::vector<int> leaf_node_id;
-      return 0;
+      core::table::DistributedAuction auction;
+      return auction.Assign(
+               table_outbox_group_comm, num_points_assigned_to_leaf_nodes,
+               std::numeric_limits<double>::epsilon());
     }
 
     void GetLeafNodeMembershipCounts_(
       const core::metric_kernels::AbstractMetric &metric_in,
       const std::vector<TreeType *> &top_leaf_nodes,
-      std::vector<int> &points_assigned_to_node) {
+      std::vector<double> &points_assigned_to_node) {
 
       for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
         points_assigned_to_node[i] = 0;
@@ -91,7 +94,7 @@ class DistributedTable: public boost::noncopyable {
         }
 
         // Output the assignments.
-        points_assigned_to_node[min_index]++;
+        points_assigned_to_node[min_index] += 1.0;
       }
     }
 
@@ -373,7 +376,7 @@ class DistributedTable: public boost::noncopyable {
       }
 
       // Assign each point to one of the leaf nodes.
-      std::vector<int> num_points_assigned_to_leaf_nodes(
+      std::vector<double> num_points_assigned_to_leaf_nodes(
         top_leaf_nodes.size(), 0);
       GetLeafNodeMembershipCounts_(
         metric_in, top_leaf_nodes, num_points_assigned_to_leaf_nodes);
@@ -381,7 +384,10 @@ class DistributedTable: public boost::noncopyable {
       // Each process takes a node in a greedy fashion to minimize the
       // data movement.
       int leaf_node_assignment_index = TakeLeafNodeOwnerShip_(
-                                         table_outbox_group_comm, num_points_assigned_to_leaf_nodes);
+                                         table_outbox_group_comm,
+                                         num_points_assigned_to_leaf_nodes);
+      printf("Process %d got %d\n", table_outbox_group_comm.rank(),
+             leaf_node_assignment_index);
     }
 
     void get(
