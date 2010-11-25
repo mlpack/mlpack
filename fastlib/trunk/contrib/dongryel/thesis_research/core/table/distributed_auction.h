@@ -7,14 +7,44 @@
 #define CORE_TABLE_DISTRIBUTED_AUCTION_H
 
 #include <boost/mpi.hpp>
+#include <boost/serialization/string.hpp>
 
 namespace core {
 namespace table {
 class DistributedAuction {
   private:
 
+    class IntDoublePair {
+      private:
+
+        friend class boost::serialization::access;
+
+      public:
+        int first;
+
+        double second;
+
+      public:
+
+        IntDoublePair() {
+        }
+
+        IntDoublePair(int first_in, double second_in) {
+          first = first_in;
+          second = second_in;
+        }
+
+        template<class Archive>
+        void serialize(Archive &ar, const unsigned int version) {
+
+          // This does not save the children.
+          ar & first;
+          ar & second;
+        }
+    };
+
     int ComputeBid_(
-      const std::vector<int> &prices, const std::vector<int> &weights,
+      const std::vector<double> &prices, const std::vector<double> &weights,
       double threshold_in, int *best_item_index_out) const {
 
       int best_item_index = -1;
@@ -43,7 +73,7 @@ class DistributedAuction {
           best_item_index = i;
         }
         else if(current_difference >= second_best_difference) {
-          second_best_difference = current_best_difference;
+          second_best_difference = current_difference;
           second_best_item_index = i;
         }
       }
@@ -56,29 +86,29 @@ class DistributedAuction {
   public:
 
     int Assign(
-      boost::mpi::communicator &comm, const std::vector<int> &weights,
+      boost::mpi::communicator &comm, const std::vector<double> &weights,
       double threshold_in) {
 
       // The price of each item.
-      std::vector<int> prices(comm.size(), 0);
+      std::vector<double> prices(comm.size(), 0);
 
       // The list of bids (to be used by the master process).
-      std::vector< std::pair<int, int> > list_of_bids;
+      std::vector< IntDoublePair > list_of_bids;
 
       // The temporary space to be used for resolving the best bids
       // for each item.
-      std::vector< std::pair<int, int> > best_bid_per_item;
+      std::vector< IntDoublePair > best_bid_per_item;
 
-      // The current assignment.
-      int current_assignment = -1;
+      // The list of assignments known to the master process.
+      std::vector<int> global_assignments(weights.size(), -1);
 
       // The main loop of the algorithm.
       do {
 
-        int bid = -1;
+        double bid = -1;
         int bid_item_index = -1;
 
-        if(current_assignment < 0) {
+        if(global_assignments[comm.rank()] < 0) {
 
           // Loop through and find out the appropriate bid.
           bid = ComputeBid_(prices, weights, threshold_in, &bid_item_index);
@@ -86,7 +116,8 @@ class DistributedAuction {
 
         // The master gathers all the bids.
         boost::mpi::gather(
-          comm, std::pair<int, int>(bid_item_index, bid), list_of_bids, 0);
+          comm, IntDoublePair(
+            bid_item_index, bid), list_of_bids, 0);
 
         // The master decides the assignment.
         if(comm.rank() == 0) {
@@ -105,17 +136,40 @@ class DistributedAuction {
             }
           }
 
+          // Now assign.
+          for(unsigned int i = 0; i < best_bid_per_item.size(); i++) {
+            if(best_bid_per_item[i].first >= 0) {
+
+              // Potentially re-assign.
+              global_assignments[i] = best_bid_per_item[i].first;
+
+              // Update the price.
+              prices[i] += best_bid_per_item[i].second;
+            }
+          }
         }
 
         // Synchronize.
         comm.barrier();
 
+        // Send back the updated global assignments to each process.
+        boost::mpi::broadcast(comm, global_assignments, 0);
+
         // Send back the updated prices to each process.
         boost::mpi::broadcast(comm, prices, 0);
+
+        // Check whether every item has been assigned.
+        bool all_assigned = true;
+        for(unsigned int i = 0; i < global_assignments.size(); i++) {
+          all_assigned = all_assigned && (global_assignments[i] >= 0);
+        }
+        if(all_assigned) {
+          break;
+        }
       }
       while(true);
 
-      return current_assignment;
+      return global_assignments[ comm.rank()];
     }
 };
 };
