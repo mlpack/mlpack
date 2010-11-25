@@ -100,8 +100,10 @@ class DistributedAuction {
       // for each item. It maps each item to the id of the process.
       std::vector< IntDoublePair > best_bid_per_item;
 
-      // The $i$-th position maps to the id of the item mapped.
-      std::vector<int> global_assignments(weights.size(), -1);
+      // The first maps the $i$-th process to the id of the item. The
+      // second maps the $i$-th item to the id of the process.
+      std::vector< std::pair< int, int > > global_assignments(
+        weights.size(), std::pair<int, int>(-1, -1));
 
       // The main loop of the algorithm.
       do {
@@ -109,7 +111,7 @@ class DistributedAuction {
         double bid = -1;
         int bid_item_index = -1;
 
-        if(global_assignments[comm.rank()] < 0) {
+        if(global_assignments[comm.rank()].first < 0) {
 
           // Loop through and find out the appropriate bid.
           bid = ComputeBid_(prices, weights, threshold_in, &bid_item_index);
@@ -141,8 +143,16 @@ class DistributedAuction {
           for(unsigned int i = 0; i < best_bid_per_item.size(); i++) {
             if(best_bid_per_item[i].first >= 0) {
 
+              // Check if this item has been assigned to another
+              // process already, if so un-assign.
+              if(global_assignments[i].second >= 0) {
+                global_assignments[ global_assignments[i].second ].first = -1;
+                global_assignments[i].second = -1;
+              }
+
               // Potentially re-assign.
-              global_assignments[ best_bid_per_item[i].first ] = i;
+              global_assignments[ best_bid_per_item[i].first ].first = i;
+              global_assignments[i].second = best_bid_per_item[i].first;
 
               // Update the price.
               prices[i] += best_bid_per_item[i].second;
@@ -162,7 +172,7 @@ class DistributedAuction {
         // Check whether every item has been assigned.
         bool all_assigned = true;
         for(unsigned int i = 0; i < global_assignments.size(); i++) {
-          all_assigned = all_assigned && (global_assignments[i] >= 0);
+          all_assigned = all_assigned && (global_assignments[i].first >= 0);
         }
         if(all_assigned) {
           break;
@@ -172,7 +182,7 @@ class DistributedAuction {
       }
       while(true);
 
-      return global_assignments[ comm.rank()];
+      return global_assignments[ comm.rank()].first;
     }
 };
 };
