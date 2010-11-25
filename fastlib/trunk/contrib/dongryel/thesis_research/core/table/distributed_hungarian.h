@@ -31,7 +31,22 @@ class DistributedHungarian {
         best_item_index = 1;
         second_best_item_index = 0;
       }
-
+      for(unsigned int i = 2; i < weights.size(); i++) {
+        // If larger than the current maximum, then the second maximum
+        // changes as well.
+        int current_difference = weights[i] - prices[i];
+        if(current_difference >= best_difference) {
+          second_best_difference = best_difference;
+          second_best_item_index = best_item_index;
+          best_difference = current_difference;
+          best_item_index = i;
+        }
+        else if(current_difference >= second_best_difference) {
+          second_best_difference = current_best_difference;
+          second_best_item_index = i;
+        }
+      }
+      int bid = best_difference;
 
       return bid;
     }
