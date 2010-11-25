@@ -27,6 +27,8 @@ class DistributedAuction {
       public:
 
         IntDoublePair() {
+          first = 0;
+          second = 0;
         }
 
         IntDoublePair(int first_in, double second_in) {
@@ -36,14 +38,12 @@ class DistributedAuction {
 
         template<class Archive>
         void serialize(Archive &ar, const unsigned int version) {
-
-          // This does not save the children.
           ar & first;
           ar & second;
         }
     };
 
-    int ComputeBid_(
+    double ComputeBid_(
       const std::vector<double> &prices, const std::vector<double> &weights,
       double threshold_in, int *best_item_index_out) const {
 
@@ -51,8 +51,8 @@ class DistributedAuction {
       int second_best_item_index = -1;
 
       // Compute the differences and initialize.
-      int best_difference = weights[0] - prices[0];
-      int second_best_difference = weights[1] - prices[1];
+      double best_difference = weights[0] - prices[0];
+      double second_best_difference = weights[1] - prices[1];
       if(best_difference > second_best_difference) {
         best_item_index = 0;
         second_best_item_index = 1;
@@ -63,9 +63,10 @@ class DistributedAuction {
         second_best_item_index = 0;
       }
       for(unsigned int i = 2; i < weights.size(); i++) {
+
         // If larger than the current maximum, then the second maximum
         // changes as well.
-        int current_difference = weights[i] - prices[i];
+        double current_difference = weights[i] - prices[i];
         if(current_difference >= best_difference) {
           second_best_difference = best_difference;
           second_best_item_index = best_item_index;
@@ -77,7 +78,7 @@ class DistributedAuction {
           second_best_item_index = i;
         }
       }
-      int bid = best_difference - second_best_difference + threshold_in;
+      double bid = best_difference - second_best_difference + threshold_in;
       *best_item_index_out = best_item_index;
 
       return bid;
@@ -96,10 +97,10 @@ class DistributedAuction {
       std::vector< IntDoublePair > list_of_bids;
 
       // The temporary space to be used for resolving the best bids
-      // for each item.
+      // for each item. It maps each item to the id of the process.
       std::vector< IntDoublePair > best_bid_per_item;
 
-      // The list of assignments known to the master process.
+      // The $i$-th position maps to the id of the item mapped.
       std::vector<int> global_assignments(weights.size(), -1);
 
       // The main loop of the algorithm.
@@ -141,7 +142,7 @@ class DistributedAuction {
             if(best_bid_per_item[i].first >= 0) {
 
               // Potentially re-assign.
-              global_assignments[i] = best_bid_per_item[i].first;
+              global_assignments[ best_bid_per_item[i].first ] = i;
 
               // Update the price.
               prices[i] += best_bid_per_item[i].second;
@@ -166,6 +167,8 @@ class DistributedAuction {
         if(all_assigned) {
           break;
         }
+
+        comm.barrier();
       }
       while(true);
 

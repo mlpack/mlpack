@@ -20,10 +20,13 @@ int main(int argc, char *argv[]) {
   std::vector<double> weights(world.size(), 0);
   for(unsigned int i = 0; i < weights.size(); i++) {
     weights[i] = core::math::Random(0.5, 5.0);
+    printf("Weight %d: %g\n", world.rank(), weights[i]);
   }
 
   // Get the assignments.
-  auction.Assign(world, weights, std::numeric_limits<double>::epsilon());
+  int item_index =
+    auction.Assign(world, weights, std::numeric_limits<double>::epsilon());
+  printf("Process %d got item %d\n", world.rank(), item_index);
 
   return 0;
 }
