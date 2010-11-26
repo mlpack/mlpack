@@ -27,8 +27,8 @@ class DistributedAuction {
       public:
 
         IntDoublePair() {
-          first = 0;
-          second = 0;
+          first = -1;
+          second = -1;
         }
 
         IntDoublePair(int first_in, double second_in) {
@@ -78,6 +78,12 @@ class DistributedAuction {
           second_best_item_index = i;
         }
       }
+      if(best_difference == second_best_difference) {
+        int max_index = std::max(best_item_index, second_best_item_index);
+        int min_index = std::min(best_item_index, second_best_item_index);
+        best_item_index = min_index;
+        second_best_item_index = max_index;
+      }
       double bid = best_difference - second_best_difference + threshold_in;
       *best_item_index_out = best_item_index;
 
@@ -111,6 +117,7 @@ class DistributedAuction {
         double bid = -1;
         int bid_item_index = -1;
 
+        // If the current process has not been able to grab an item,
         if(global_assignments[comm.rank()].first < 0) {
 
           // Loop through and find out the appropriate bid.
@@ -171,14 +178,15 @@ class DistributedAuction {
 
         // Check whether every item has been assigned.
         bool all_assigned = true;
-        for(unsigned int i = 0; i < global_assignments.size(); i++) {
+        for(unsigned int i = 0; all_assigned && i < global_assignments.size();
+            i++) {
           all_assigned = all_assigned && (global_assignments[i].first >= 0);
         }
+        comm.barrier();
+
         if(all_assigned) {
           break;
         }
-
-        comm.barrier();
       }
       while(true);
 
