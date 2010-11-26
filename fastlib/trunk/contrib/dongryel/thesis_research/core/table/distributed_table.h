@@ -359,13 +359,11 @@ class DistributedTable: public boost::noncopyable {
         // Broadcast the leaf nodes.
         sampled_table.get_leaf_nodes(
           sampled_table.get_tree(), &top_leaf_nodes);
-        boost::mpi::broadcast(table_outbox_group_comm, top_leaf_nodes, 0);
       }
-      else {
 
-        // Get the leaf nodes from the broadcast.
-        boost::mpi::broadcast(table_outbox_group_comm, top_leaf_nodes, 0);
-      }
+      // Broadcast the leaf nodes.
+      boost::mpi::broadcast(table_outbox_group_comm, top_leaf_nodes, 0);
+
       printf("Checking the nodes: %d %d\n", table_outbox_group_comm.rank(),
              top_leaf_nodes.size());
 
