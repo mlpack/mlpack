@@ -20,6 +20,7 @@
 #include "core/table/memory_mapped_file.h"
 #include "core/tree/gen_metric_tree.h"
 #include "core/table/distributed_auction.h"
+#include "core/tree/distributed_local_kmeans.h"
 
 namespace core {
 namespace table {
@@ -51,6 +52,14 @@ class DistributedTable: public boost::noncopyable {
     int table_outbox_group_comm_size_;
 
   private:
+
+    void ReadjustCentroids_(
+      boost::mpi::communicator &table_outbox_group_comm,
+      const std::vector<TreeType *> &top_leaf_nodes,
+      int leaf_node_assignment_index) {
+
+
+    }
 
     int TakeLeafNodeOwnerShip_(
       boost::mpi::communicator &table_outbox_group_comm,
@@ -385,6 +394,11 @@ class DistributedTable: public boost::noncopyable {
                                          num_points_assigned_to_leaf_nodes);
       printf("Process %d got %d\n", table_outbox_group_comm.rank(),
              leaf_node_assignment_index);
+
+      // Each process decides to test against the assigned leaf and
+      // its immediate DFS neighbors.
+      ReadjustCentroids_(
+        table_outbox_group_comm, top_leaf_nodes, leaf_node_assignment_index);
     }
 
     void get(
