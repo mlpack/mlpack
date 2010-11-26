@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 set(SOURCES
   ball_bound.h
+  distributed_local_kmeans.h
   general_spacetree.h
   gen_kdtree.h
   gen_metric_tree.h

@@ -5,6 +5,7 @@ set(SOURCES
   abstract_point.h
   dense_matrix.h
   dense_point.h
+  distributed_auction.h
   distributed_table.h
   distributed_table_message.h
   global.cc
