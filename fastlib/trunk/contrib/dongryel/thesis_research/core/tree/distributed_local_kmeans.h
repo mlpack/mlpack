@@ -14,8 +14,11 @@ namespace tree {
 class DistributedLocalKMeans {
   public:
 
+    template<typename TableType>
     void Compute(
       boost::mpi::communicator &comm,
+      const core::metric_kernels::AbstractMetric &metric_in,
+      TableType &local_table_in,
       const core::table::DensePoint &starting_centroid,
       int neighbor_radius, int num_outer_loop_iterations) {
 
@@ -73,8 +76,17 @@ class DistributedLocalKMeans {
         boost::mpi::wait_all(
           right_receive_requests.begin(), right_receive_requests.end());
 
+        // For each point in the table,
+        for(int p = 0; p < local_table_in.n_entries(); p++) {
+          core::table::DensePoint point;
+          local_table_in.get(p, &point);
 
-      }
+          // Compute the closest center.
+
+
+        }
+
+      } // end of outer iterations.
     }
 };
 };
