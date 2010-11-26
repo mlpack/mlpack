@@ -8,10 +8,9 @@
 
 #include <armadillo>
 #include <new>
-#include "boost/mpi.hpp"
-#include "boost/mpi/collectives.hpp"
-#include "boost/thread.hpp"
-#include "boost/serialization/string.hpp"
+#include <boost/mpi.hpp>
+#include <boost/mpi/collectives.hpp>
+#include <boost/serialization/string.hpp>
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/random/variate_generator.hpp>
 #include "core/table/table.h"
