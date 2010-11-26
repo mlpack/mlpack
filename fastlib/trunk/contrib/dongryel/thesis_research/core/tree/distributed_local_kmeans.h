@@ -82,6 +82,25 @@ class DistributedLocalKMeans {
           local_table_in.get(p, &point);
 
           // Compute the closest center.
+          double min_squared_distance = metric.DistanceSq(
+                                          point, local_centroid);
+          double min_index = comm.rank();
+          for(unsigned int lc = 0; lc < left_centroids.size(); lc++) {
+            double squared_distance = metric.DistanceSq(
+                                        point, left_centroids[lc]);
+            if(squared_distance < min_squared_distance) {
+              min_squared_distance = squared_distance;
+              min_index = comm.rank() - lc - 1;
+            }
+          }
+          for(unsigned int rc = 0; rc < right_centroids.size(); rc++) {
+            double squared_distance = metric.DistanceSq(
+                                        point, right_centroids[rc]);
+            if(squared_distance < min_squared_distance) {
+              min_squared_distance = squared_distance;
+              min_index = comm.rank() - rc + 1;
+            }
+          }
 
 
         }
