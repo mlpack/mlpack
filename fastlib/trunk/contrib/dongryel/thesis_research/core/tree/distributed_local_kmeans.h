@@ -20,7 +20,7 @@ class DistributedLocalKMeans {
 
         friend class boost::serialization::access;
 
-      public:
+      private:
 
         core::table::DensePoint centroid_;
 
@@ -28,8 +28,37 @@ class DistributedLocalKMeans {
 
       public:
 
+        const core::table::DensePoint &centroid() const {
+          return centroid_;
+        }
+
+        core::table::DensePoint &centroid() {
+          return centroid_;
+        }
+
+        int num_points() const {
+          return num_points_;
+        }
+
         CentroidInfo() {
           num_points_ = 0;
+        }
+
+        void Add(const CentroidInfo &centroid_in) {
+          double factor =
+            static_cast<double>(num_points_) /
+            static_cast<double>(num_points_ + centroid_in.num_points());
+          centroid_ *= factor;
+          centroid_.Add(1.0 - factor, centroid_in.centroid());
+          num_points_ = num_points_ + centroid_in.num_points();
+        }
+
+        void Add(const core::table::DensePoint &point_in) {
+          double factor = static_cast<double>(num_points_) /
+                          static_cast<double>(num_points_ + 1);
+          centroid_ *= factor;
+          centroid_.Add(1.0 - factor, point_in);
+          num_points_++;
         }
 
         void Reset() {
@@ -62,9 +91,80 @@ class DistributedLocalKMeans {
 
     std::vector< CentroidInfo > tmp_left_centroids_;
 
+    std::vector< CentroidInfo > tmp_recv_from_left_;
+
     std::vector< CentroidInfo > tmp_right_centroids_;
 
+    std::vector< CentroidInfo > tmp_recv_from_right_;
+
     std::vector<int> point_assignments_;
+
+  private:
+
+    template<typename TableType>
+    void SynchronizeCentroids_(
+      boost::mpi::communicator &comm, TableType &local_table_in,
+      int neighbor_radius) {
+
+      // Reset the contribution list.
+      local_centroid_.Reset();
+      for(unsigned int i = 0; i < tmp_left_centroids_.size(); i++) {
+        tmp_left_centroids_[i].Reset();
+      }
+      for(unsigned int i = 0; i < tmp_right_centroids_.size(); i++) {
+        tmp_right_centroids_[i].Reset();
+      }
+
+      for(unsigned int i = 0; i < point_assignments_.size(); i++) {
+        core::table::DensePoint point;
+
+        if(point_assignments_[i] == comm.rank()) {
+          local_centroid_.Add(point);
+        }
+        else if(point_assignments_[i] < comm.rank()) {
+          int destination_index = comm.rank() - point_assignments_[i] - 1;
+          tmp_left_centroids_[destination_index].Add(point);
+        }
+        else {
+          int destination_index = point_assignments_[i] - comm.rank() - 1;
+          tmp_right_centroids_[destination_index].Add(point);
+        }
+      }
+
+      // Wait until the local centroids are updated for all processes.
+      comm.barrier();
+
+      // After local contributions are updated, send to the left and
+      // to the right neighbors. Also receive from the neighbors.
+      for(unsigned int i = 1; i <= left_centroids_.size(); i++) {
+        left_send_requests_[i] =
+          comm.isend(comm.rank() - i, i, tmp_left_centroids_[i - 1].centroid());
+        left_receive_requests_[i] =
+          comm.irecv(comm.rank() - i, neighbor_radius + i,
+                     tmp_recv_from_left_[i - 1].centroid());
+      }
+      for(unsigned int i = 1; i <= right_centroids_.size(); i++) {
+
+        // Send and receive.
+        right_send_requests_[i] =
+          comm.isend(
+            comm.rank() + i, neighbor_radius + i,
+            tmp_right_centroids_[i - 1].centroid());
+        right_receive_requests_[i] =
+          comm.irecv(
+            comm.rank() + i, i, tmp_recv_from_right_[i - 1].centroid());
+      }
+
+      // Wait for all send/receive requests to be completed.
+      boost::mpi::wait_all(
+        left_send_requests_.begin(), left_send_requests_.end());
+      boost::mpi::wait_all(
+        left_receive_requests_.begin(), left_receive_requests_.end());
+      boost::mpi::wait_all(
+        right_send_requests_.begin(), right_send_requests_.end());
+      boost::mpi::wait_all(
+        right_receive_requests_.begin(), right_receive_requests_.end());
+    }
 
   public:
 
@@ -78,13 +178,14 @@ class DistributedLocalKMeans {
 
       // Every process collects the local centers from the process ID
       // within the specified neighbor_radius.
-      local_centroid_.centroid_.Copy(starting_centroid);
+      local_centroid_.centroid().Copy(starting_centroid);
 
       // The list of centroids left of the current process.
       left_centroids_.resize(std::min(comm.rank(), neighbor_radius));
       left_send_requests_.resize(left_centroids_.size());
       left_receive_requests_.resize(left_centroids_.size());
       tmp_left_centroids_.resize(std::min(comm.rank(), neighbor_radius));
+      tmp_recv_from_left_.resize(std::min(comm.rank(), neighbor_radius));
 
       // The list of centroids right of the current process.
       right_centroids_.resize(
@@ -93,6 +194,9 @@ class DistributedLocalKMeans {
       right_send_requests_.resize(right_centroids_.size());
       right_receive_requests_.resize(right_centroids_.size());
       tmp_right_centroids_.resize(
+        std::min(
+          comm.size() - comm.rank() - 1, neighbor_radius));
+      tmp_recv_from_right_.resize(
         std::min(
           comm.size() - comm.rank() - 1, neighbor_radius));
 
@@ -107,7 +211,7 @@ class DistributedLocalKMeans {
 
           // Send and receive.
           left_send_requests_[i] =
-            comm.isend(comm.rank() - i, i, local_centroid_.centroid_);
+            comm.isend(comm.rank() - i, i, local_centroid_.centroid());
           left_receive_requests_[i] =
             comm.irecv(
               comm.rank() - i, neighbor_radius + i, left_centroids_[i - 1]);
@@ -117,7 +221,7 @@ class DistributedLocalKMeans {
           // Send and receive.
           right_send_requests_[i] =
             comm.isend(
-              comm.rank() + i, neighbor_radius + i, local_centroid_.centroid_);
+              comm.rank() + i, neighbor_radius + i, local_centroid_.centroid());
           right_receive_requests_[i] =
             comm.irecv(comm.rank() + i, i, right_centroids_[i - 1]);
         }
@@ -142,7 +246,7 @@ class DistributedLocalKMeans {
 
           // Compute the closest center.
           double min_squared_distance = metric.DistanceSq(
-                                          point, local_centroid_.centroid_);
+                                          point, local_centroid_.centroid());
           double min_index = comm.rank();
           for(unsigned int lc = 0; lc < left_centroids_.size(); lc++) {
             double squared_distance = metric.DistanceSq(
@@ -157,7 +261,7 @@ class DistributedLocalKMeans {
                                         point, right_centroids_[rc]);
             if(squared_distance < min_squared_distance) {
               min_squared_distance = squared_distance;
-              min_index = comm.rank() - rc + 1;
+              min_index = comm.rank() + rc + 1;
             }
           }
 
@@ -168,6 +272,7 @@ class DistributedLocalKMeans {
 
         // Recompute the local centroid contribution and send to the
         // left and to the right.
+        SynchronizeCentroids_(comm, local_table_in, neighbor_radius);
 
         // Synchronize before continuing the outer iteration.
         comm.barrier();
