@@ -45,6 +45,10 @@ class DistributedTable: public boost::noncopyable {
 
     boost::interprocess::offset_ptr<TableType> owned_table_;
 
+    boost::interprocess::offset_ptr< std::pair<int, int> > old_from_new_;
+
+    boost::interprocess::offset_ptr< std::pair<int, int> > new_from_old_;
+
     boost::interprocess::offset_ptr<int> local_n_entries_;
 
     boost::interprocess::offset_ptr<TreeType> global_tree_;
@@ -55,10 +59,15 @@ class DistributedTable: public boost::noncopyable {
 
     void ReadjustCentroids_(
       boost::mpi::communicator &table_outbox_group_comm,
+      const core::metric_kernels::AbstractMetric &metric,
       const std::vector<TreeType *> &top_leaf_nodes,
       int leaf_node_assignment_index) {
 
-
+      core::tree::DistributedLocalKMeans local_kmeans;
+      local_kmeans.Compute(
+        table_outbox_group_comm, metric, *owned_table_,
+        top_leaf_nodes[leaf_node_assignment_index]->bound().center(),
+        2, 10);
     }
 
     int TakeLeafNodeOwnerShip_(
@@ -165,6 +174,8 @@ class DistributedTable: public boost::noncopyable {
       table_inbox_ = NULL;
       table_outbox_ = NULL;
       owned_table_ = NULL;
+      old_from_new_ = NULL;
+      new_from_old_ = NULL;
       local_n_entries_ = NULL;
       global_tree_ = NULL;
       table_outbox_group_comm_size_ = -1;
@@ -398,7 +409,8 @@ class DistributedTable: public boost::noncopyable {
       // Each process decides to test against the assigned leaf and
       // its immediate DFS neighbors.
       ReadjustCentroids_(
-        table_outbox_group_comm, top_leaf_nodes, leaf_node_assignment_index);
+        table_outbox_group_comm, metric_in, top_leaf_nodes,
+        leaf_node_assignment_index);
     }
 
     void get(
