@@ -95,34 +95,28 @@ class DistributedTable: public boost::noncopyable {
           table_outbox_group_comm.size() -
           table_outbox_group_comm.rank() - 1, neighbor_radius));
       for(unsigned int i = 1; i <= left_contributions.size(); i++) {
-
-        // Send and receive.
-        left_send_requests_[i - 1] =
-          comm.isend(comm.rank() - i, i, local_centroid_);
-        left_receive_requests_[i - 1] =
-          comm.irecv(
-            comm.rank() - i, neighbor_radius + i, left_centroids_[i - 1]);
+        left_contributions[i - 1].Init(
+          owned_table_->data(), point_assignments,
+          table_outbox_group_comm.rank() - i);
+        left_send_requests[i - 1] =
+          table_outbox_group_comm.isend(
+            table_outbox_group_comm.rank() - i, i, left_contributions[i - 1]);
       }
-      std::vector< core::table::OffsetDenseMatrix > right_contributions;
-      for(unsigned int i = 1; i <= right_centroids_.size(); i++) {
-
-        // Send and receive.
-        right_send_requests_[i - 1] =
-          comm.isend(
-            comm.rank() + i, neighbor_radius + i, local_centroid_);
-        right_receive_requests_[i - 1] =
-          comm.irecv(comm.rank() + i, i, right_centroids_[i - 1]);
+      for(unsigned int i = 1; i <= right_contributions.size(); i++) {
+        right_contributions[i - 1].Init(
+          owned_table_->data(), point_assignments,
+          table_outbox_group_comm.rank() + i);
+        right_send_requests[i - 1] =
+          table_outbox_group_comm.isend(
+            table_outbox_group_comm.rank() + i, neighbor_radius + i,
+            right_contributions[i - 1]);
       }
 
       // Wait for all send/receive requests to be completed.
       boost::mpi::wait_all(
-        left_send_requests_.begin(), left_send_requests_.end());
+        left_send_requests.begin(), left_send_requests.end());
       boost::mpi::wait_all(
-        left_receive_requests_.begin(), left_receive_requests_.end());
-      boost::mpi::wait_all(
-        right_send_requests_.begin(), right_send_requests_.end());
-      boost::mpi::wait_all(
-        right_receive_requests_.begin(), right_receive_requests_.end());
+        right_send_requests.begin(), right_send_requests.end());
     }
 
     int TakeLeafNodeOwnerShip_(
