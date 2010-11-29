@@ -25,7 +25,24 @@ class OffsetDenseMatrix {
 
     int n_entries_;
 
+  private:
+
+    int Count_() const {
+      int num_doubles = 0;
+      for(unsigned int i = 0; i < assignment_indices_->size(); i++) {
+        if((*assignment_indices_)[i] == filter_index_) {
+          num_doubles++;
+        }
+      }
+      num_doubles *= n_attributes_;
+      return num_doubles;
+    }
+
   public:
+
+    int n_attributes() const {
+      return n_attributes_;
+    }
 
     int n_entries() const {
       return n_entries_;
@@ -50,22 +67,32 @@ class OffsetDenseMatrix {
       int filter_index_in) {
       ptr_ = mat_in.ptr();
       n_attributes_ = mat_in.n_rows();
-      n_entries_ = mat_in.n_cols();
       assignment_indices_ = &assignment_indices_in;
       filter_index_ = filter_index_in;
+    }
+
+    void Extract(double *ptr_out) {
+      int num_doubles = Count_();
+      n_entries_ = num_doubles / n_attributes_;
+
+      // Loop through and find out the columns to serialize.
+      double *ptr_iter = ptr_;
+      for(unsigned int i = 0; i < assignment_indices_->size();
+          i++, ptr_iter += n_attributes_) {
+        if((*assignment_indices_)[i] == filter_index_) {
+          for(int j = 0; j < n_attributes_; j++) {
+            ptr_out[j] = ptr_iter[j];
+          }
+          ptr_out += n_attributes_;
+        }
+      }
     }
 
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
 
       // First, save the number of doubles to be serialized.
-      int num_doubles = 0;
-      for(unsigned int i = 0; i < assignment_indices_->size(); i++) {
-        if((*assignment_indices_)[i] == filter_index_) {
-          num_doubles++;
-        }
-      }
-      num_doubles *= n_attributes_;
+      int num_doubles = Count_();
       ar & num_doubles;
 
       // Loop through and find out the columns to serialize.

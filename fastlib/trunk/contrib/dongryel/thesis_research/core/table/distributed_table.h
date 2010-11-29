@@ -112,6 +112,35 @@ class DistributedTable: public boost::noncopyable {
             right_contributions[i - 1]);
       }
 
+      // Receive the points needed by this process from other
+      // processes. For the points owned by the process itself, just
+      // copy over.
+      core::table::OffsetDenseMatrix tmp_offset;
+      double *new_table_ptr = new_local_table->data().ptr();
+      for(unsigned int i = 1; i < left_contributions.size(); i++) {
+        tmp_offset.Init(new_table_ptr, new_local_table->n_attributes());
+        table_outbox_group_comm.recv(
+          table_outbox_group_comm.rank() - i, neighbor_radius + i, tmp_offset);
+
+        // Increment the table pointer based on the number of doubles
+        // received.
+        new_table_ptr += tmp_offset.n_entries() * tmp_offset.n_attributes();
+      }
+      tmp_offset.Init(
+        owned_table_->data(), point_assignments,
+        table_outbox_group_comm.rank());
+      tmp_offset.Extract(new_table_ptr);
+      new_table_ptr += tmp_offset.n_entries() * tmp_offset.n_attributes();
+      for(unsigned int i = 1; i < right_contributions.size(); i++) {
+        tmp_offset.Init(new_table_ptr, new_local_table->n_attributes());
+        table_outbox_group_comm.recv(
+          table_outbox_group_comm.rank() + i, i, tmp_offset);
+
+        // Increment the table pointer based on the number of doubles
+        // received.
+        new_table_ptr += tmp_offset.n_entries() * tmp_offset.n_attributes();
+      }
+
       // Wait for all send/receive requests to be completed.
       boost::mpi::wait_all(
         left_send_requests.begin(), left_send_requests.end());
@@ -367,8 +396,10 @@ class DistributedTable: public boost::noncopyable {
       TableType sampled_table;
       std::vector<int> sampled_indices;
       SelectSubset_(sample_probability_in, &sampled_indices);
-      printf("Process %d sampled %d points.\n",
-             table_outbox_group_comm.rank(), sampled_indices.size());
+      printf(
+        "Process %d sampled %d points.\n",
+        static_cast<int>(table_outbox_group_comm.rank()),
+        sampled_indices.size());
 
       // Send the number of points chosen in this process to the
       // master so that the master can allocate the appropriate amount
@@ -433,8 +464,10 @@ class DistributedTable: public boost::noncopyable {
       // Broadcast the leaf nodes.
       boost::mpi::broadcast(table_outbox_group_comm, top_leaf_nodes, 0);
 
-      printf("Checking the nodes: %d %d\n", table_outbox_group_comm.rank(),
-             top_leaf_nodes.size());
+      printf(
+        "Checking the nodes: %d %d\n",
+        static_cast<int>(table_outbox_group_comm.rank()),
+        top_leaf_nodes.size());
 
       for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
         printf("%d %d %d\n", top_leaf_nodes[i]->begin(),
