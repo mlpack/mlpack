@@ -79,9 +79,9 @@ class DistributedLocalKMeans {
 
   private:
 
-    std::vector< core::table::DensePoint > left_centroids_;
+    std::vector< CentroidInfo > left_centroids_;
 
-    std::vector< core::table::DensePoint > right_centroids_;
+    std::vector< CentroidInfo > right_centroids_;
 
     std::vector< boost::mpi::request > left_send_requests_;
 
@@ -143,10 +143,11 @@ class DistributedLocalKMeans {
       // to the right neighbors. Also receive from the neighbors.
       for(unsigned int i = 1; i <= left_centroids_.size(); i++) {
         left_send_requests_[i - 1] =
-          comm.isend(comm.rank() - i, i, tmp_left_centroids_[i - 1].centroid());
+          comm.isend(comm.rank() - i, i, tmp_left_centroids_[i - 1]);
         left_receive_requests_[i - 1] =
-          comm.irecv(comm.rank() - i, neighbor_radius + i,
-                     tmp_recv_from_left_[i - 1].centroid());
+          comm.irecv(
+            comm.rank() - i, neighbor_radius + i,
+            tmp_recv_from_left_[i - 1]);
       }
       for(unsigned int i = 1; i <= right_centroids_.size(); i++) {
 
@@ -154,10 +155,10 @@ class DistributedLocalKMeans {
         right_send_requests_[i - 1] =
           comm.isend(
             comm.rank() + i, neighbor_radius + i,
-            tmp_right_centroids_[i - 1].centroid());
+            tmp_right_centroids_[i - 1]);
         right_receive_requests_[i - 1] =
           comm.irecv(
-            comm.rank() + i, i, tmp_recv_from_right_[i - 1].centroid());
+            comm.rank() + i, i, tmp_recv_from_right_[i - 1]);
       }
 
       // Wait for all send/receive requests to be completed.
@@ -231,7 +232,7 @@ class DistributedLocalKMeans {
 
           // Send and receive.
           left_send_requests_[i - 1] =
-            comm.isend(comm.rank() - i, i, local_centroid_.centroid());
+            comm.isend(comm.rank() - i, i, local_centroid_);
           left_receive_requests_[i - 1] =
             comm.irecv(
               comm.rank() - i, neighbor_radius + i, left_centroids_[i - 1]);
@@ -241,7 +242,7 @@ class DistributedLocalKMeans {
           // Send and receive.
           right_send_requests_[i - 1] =
             comm.isend(
-              comm.rank() + i, neighbor_radius + i, local_centroid_.centroid());
+              comm.rank() + i, neighbor_radius + i, local_centroid_);
           right_receive_requests_[i - 1] =
             comm.irecv(comm.rank() + i, i, right_centroids_[i - 1]);
         }
@@ -269,16 +270,18 @@ class DistributedLocalKMeans {
                                           point, local_centroid_.centroid());
           double min_index = comm.rank();
           for(unsigned int lc = 0; lc < left_centroids_.size(); lc++) {
-            double squared_distance = metric.DistanceSq(
-                                        point, left_centroids_[lc]);
+            double squared_distance =
+              metric.DistanceSq(
+                point, left_centroids_[lc].centroid());
             if(squared_distance < min_squared_distance) {
               min_squared_distance = squared_distance;
               min_index = comm.rank() - lc - 1;
             }
           }
           for(unsigned int rc = 0; rc < right_centroids_.size(); rc++) {
-            double squared_distance = metric.DistanceSq(
-                                        point, right_centroids_[rc]);
+            double squared_distance =
+              metric.DistanceSq(
+                point, right_centroids_[rc].centroid());
             if(squared_distance < min_squared_distance) {
               min_squared_distance = squared_distance;
               min_index = comm.rank() + rc + 1;
@@ -298,6 +301,9 @@ class DistributedLocalKMeans {
         comm.barrier();
 
       } // end of outer iterations.
+
+      printf("Local ended up %d from %d\n", local_centroid_.num_points(),
+             local_table_in.n_entries());
     }
 };
 };
