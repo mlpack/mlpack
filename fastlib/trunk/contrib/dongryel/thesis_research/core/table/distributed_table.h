@@ -399,7 +399,7 @@ class DistributedTable: public boost::noncopyable {
       printf(
         "Process %d sampled %d points.\n",
         static_cast<int>(table_outbox_group_comm.rank()),
-        sampled_indices.size());
+        static_cast<int>(sampled_indices.size()));
 
       // Send the number of points chosen in this process to the
       // master so that the master can allocate the appropriate amount
@@ -467,7 +467,7 @@ class DistributedTable: public boost::noncopyable {
       printf(
         "Checking the nodes: %d %d\n",
         static_cast<int>(table_outbox_group_comm.rank()),
-        top_leaf_nodes.size());
+        static_cast<int>(top_leaf_nodes.size()));
 
       for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
         printf("%d %d %d\n", top_leaf_nodes[i]->begin(),
