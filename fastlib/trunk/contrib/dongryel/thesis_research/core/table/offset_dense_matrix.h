@@ -44,17 +44,15 @@ class OffsetDenseMatrix {
       n_attributes_ = n_attributes_in;
     }
 
-    void set_filter_index(int filter_index_in) {
-      filter_index_ = filter_index_in;
-    }
-
     void Init(
       core::table::DenseMatrix &mat_in,
-      std::vector<int> &assignment_indices_in) {
+      std::vector<int> &assignment_indices_in,
+      int filter_index_in) {
       ptr_ = mat_in.ptr();
-      n_attributes_ = mat_in.n_attributes();
-      n_entries_ = mat_in.n_entries();
+      n_attributes_ = mat_in.n_rows();
+      n_entries_ = mat_in.n_cols();
       assignment_indices_ = &assignment_indices_in;
+      filter_index_ = filter_index_in;
     }
 
     template<class Archive>
@@ -62,7 +60,7 @@ class OffsetDenseMatrix {
 
       // First, save the number of doubles to be serialized.
       int num_doubles = 0;
-      for(int i = 0; i < assignment_indices_->size(); i++) {
+      for(unsigned int i = 0; i < assignment_indices_->size(); i++) {
         if((*assignment_indices_)[i] == filter_index_) {
           num_doubles++;
         }
@@ -72,7 +70,7 @@ class OffsetDenseMatrix {
 
       // Loop through and find out the columns to serialize.
       double *ptr_iter = ptr_;
-      for(int i = 0; i < assignment_indices_->size();
+      for(unsigned int i = 0; i < assignment_indices_->size();
           i++, ptr_iter += n_attributes_) {
         if((*assignment_indices_)[i] == filter_index_) {
           for(int j = 0; j < n_attributes_; j++) {
