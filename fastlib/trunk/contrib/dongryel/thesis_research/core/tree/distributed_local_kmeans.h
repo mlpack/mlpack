@@ -101,14 +101,12 @@ class DistributedLocalKMeans {
 
     std::vector< CentroidInfo > tmp_recv_from_right_;
 
-    std::vector<int> point_assignments_;
-
   private:
 
     template<typename TableType>
     void SynchronizeCentroids_(
       boost::mpi::communicator &comm, TableType &local_table_in,
-      int neighbor_radius) {
+      int neighbor_radius, const std::vector<int> &point_assignments) {
 
       // Reset the contribution list.
       local_centroid_.Reset();
@@ -119,19 +117,19 @@ class DistributedLocalKMeans {
         tmp_right_centroids_[i].Reset();
       }
 
-      for(unsigned int i = 0; i < point_assignments_.size(); i++) {
+      for(unsigned int i = 0; i < point_assignments.size(); i++) {
         core::table::DensePoint point;
         local_table_in.get(i, &point);
 
-        if(point_assignments_[i] == comm.rank()) {
+        if(point_assignments[i] == comm.rank()) {
           local_centroid_.Add(point);
         }
-        else if(point_assignments_[i] < comm.rank()) {
-          int destination_index = comm.rank() - point_assignments_[i] - 1;
+        else if(point_assignments[i] < comm.rank()) {
+          int destination_index = comm.rank() - point_assignments[i] - 1;
           tmp_left_centroids_[destination_index].Add(point);
         }
         else {
-          int destination_index = point_assignments_[i] - comm.rank() - 1;
+          int destination_index = point_assignments[i] - comm.rank() - 1;
           tmp_right_centroids_[destination_index].Add(point);
         }
       }
@@ -187,8 +185,10 @@ class DistributedLocalKMeans {
       boost::mpi::communicator &comm,
       const core::metric_kernels::AbstractMetric &metric,
       TableType &local_table_in,
-      const core::table::DensePoint &starting_centroid,
-      int neighbor_radius, int num_outer_loop_iterations) {
+      int neighbor_radius, int num_outer_loop_iterations,
+      core::table::DensePoint &starting_centroid,
+      int *total_num_points_owned,
+      std::vector<int> *point_assignments_out) {
 
       // Every process collects the local centers from the process ID
       // within the specified neighbor_radius.
@@ -221,7 +221,7 @@ class DistributedLocalKMeans {
       }
 
       // List of assignments for each point in the table.
-      point_assignments_.resize(local_table_in.n_entries());
+      point_assignments_out->resize(local_table_in.n_entries());
 
       // The outer loop.
       for(
@@ -289,21 +289,32 @@ class DistributedLocalKMeans {
           }
 
           // Assign the point.
-          point_assignments_[p] = min_index;
+          (*point_assignments_out)[p] = min_index;
 
         } // end of iterating over each point.
 
         // Recompute the local centroid contribution and send to the
         // left and to the right.
-        SynchronizeCentroids_(comm, local_table_in, neighbor_radius);
+        SynchronizeCentroids_(
+          comm, local_table_in, neighbor_radius, *point_assignments_out);
 
         // Synchronize before continuing the outer iteration.
         comm.barrier();
 
       } // end of outer iterations.
 
-      printf("Local ended up %d from %d\n", local_centroid_.num_points(),
+      // Copy the final ending position and the total number of points
+      // owned by this centroid.
+      starting_centroid.CopyValues(local_centroid_.centroid());
+      *total_num_points_owned = local_centroid_.num_points();
+
+      printf("%d: Local ended up %d from %d\n", comm.rank(),
+             local_centroid_.num_points(),
              local_table_in.n_entries());
+      for(unsigned int i = 0; i < point_assignments_out->size(); i++) {
+        printf("%d ", (*point_assignments_out)[i]);
+      }
+      printf("\n");
     }
 };
 };

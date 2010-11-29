@@ -11,6 +11,7 @@ set(SOURCES
   global.cc
   mailbox.h
   memory_mapped_file.h
+  offset_dense_matrix.h
   point_request_message.h
   table.h
   transform.h

@@ -246,7 +246,9 @@ class Table: public boost::noncopyable {
 
     void Init(
       int num_dimensions_in, int num_points_in) {
-      data_.Init(num_dimensions_in, num_points_in);
+      if(num_dimensions_in > 0 && num_points_in > 0) {
+        data_.Init(num_dimensions_in, num_points_in);
+      }
     }
 
     void Init(const std::string &file_name) {

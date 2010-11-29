@@ -20,6 +20,7 @@
 #include "core/table/memory_mapped_file.h"
 #include "core/tree/gen_metric_tree.h"
 #include "core/table/distributed_auction.h"
+#include "core/table/offset_dense_matrix.h"
 #include "core/tree/distributed_local_kmeans.h"
 
 namespace core {
@@ -63,11 +64,65 @@ class DistributedTable: public boost::noncopyable {
       const std::vector<TreeType *> &top_leaf_nodes,
       int leaf_node_assignment_index) {
 
+      const int neighbor_radius = 2;
+      const int num_iterations = 10;
+
+      // Readjust the centroid.
+      std::vector<int> point_assignments;
+      int total_num_points_owned;
       core::tree::DistributedLocalKMeans local_kmeans;
       local_kmeans.Compute(
         table_outbox_group_comm, metric, *owned_table_,
+        neighbor_radius, num_iterations,
         top_leaf_nodes[leaf_node_assignment_index]->bound().center(),
-        2, 10);
+        &total_num_points_owned, &point_assignments);
+
+      // Move the data across processes to get a new local table.
+      TableType *new_local_table =
+        core::table::global_m_file_->Construct<TableType>();
+      new_local_table->Init(
+        owned_table_->n_attributes(), total_num_points_owned);
+
+      // Left contributions.
+      std::vector < core::table::OffsetDenseMatrix > left_contributions;
+      std::vector < core::table::OffsetDenseMatrix > right_contributions;
+      std::vector< boost::mpi::request > left_send_requests;
+      std::vector< boost::mpi::request > right_send_requests;
+      left_contributions.resize(
+        std::min(table_outbox_group_comm.rank(), neighbor_radius));
+      right_contributions.resize(
+        std::min(
+          table_outbox_group_comm.size() -
+          table_outbox_group_comm.rank() - 1, neighbor_radius));
+      for(unsigned int i = 1; i <= left_contributions.size(); i++) {
+
+        // Send and receive.
+        left_send_requests_[i - 1] =
+          comm.isend(comm.rank() - i, i, local_centroid_);
+        left_receive_requests_[i - 1] =
+          comm.irecv(
+            comm.rank() - i, neighbor_radius + i, left_centroids_[i - 1]);
+      }
+      std::vector< core::table::OffsetDenseMatrix > right_contributions;
+      for(unsigned int i = 1; i <= right_centroids_.size(); i++) {
+
+        // Send and receive.
+        right_send_requests_[i - 1] =
+          comm.isend(
+            comm.rank() + i, neighbor_radius + i, local_centroid_);
+        right_receive_requests_[i - 1] =
+          comm.irecv(comm.rank() + i, i, right_centroids_[i - 1]);
+      }
+
+      // Wait for all send/receive requests to be completed.
+      boost::mpi::wait_all(
+        left_send_requests_.begin(), left_send_requests_.end());
+      boost::mpi::wait_all(
+        left_receive_requests_.begin(), left_receive_requests_.end());
+      boost::mpi::wait_all(
+        right_send_requests_.begin(), right_send_requests_.end());
+      boost::mpi::wait_all(
+        right_receive_requests_.begin(), right_receive_requests_.end());
     }
 
     int TakeLeafNodeOwnerShip_(
