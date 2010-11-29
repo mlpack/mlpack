@@ -73,10 +73,12 @@ class DensePoint {
       ar & n_rows_;
 
       // Allocate the point.
-      ptr_ = (core::table::global_m_file_) ?
-             (double *)
-             core::table::global_m_file_->ConstructArray<double>(n_rows_) :
-             new double[n_rows_];
+      if(ptr_ == NULL) {
+        ptr_ = (core::table::global_m_file_) ?
+               (double *)
+               core::table::global_m_file_->ConstructArray<double>(n_rows_) :
+               new double[n_rows_];
+      }
       for(int i = 0; i < n_rows_; i++) {
         ar & (ptr_[i]);
       }

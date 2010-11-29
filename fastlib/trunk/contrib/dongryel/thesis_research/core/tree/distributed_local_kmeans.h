@@ -28,6 +28,10 @@ class DistributedLocalKMeans {
 
       public:
 
+        void Init(int length_in) {
+          centroid_.Init(length_in);
+        }
+
         const core::table::DensePoint &centroid() const {
           return centroid_;
         }
@@ -117,6 +121,7 @@ class DistributedLocalKMeans {
 
       for(unsigned int i = 0; i < point_assignments_.size(); i++) {
         core::table::DensePoint point;
+        local_table_in.get(i, &point);
 
         if(point_assignments_[i] == comm.rank()) {
           local_centroid_.Add(point);
@@ -137,20 +142,20 @@ class DistributedLocalKMeans {
       // After local contributions are updated, send to the left and
       // to the right neighbors. Also receive from the neighbors.
       for(unsigned int i = 1; i <= left_centroids_.size(); i++) {
-        left_send_requests_[i] =
+        left_send_requests_[i - 1] =
           comm.isend(comm.rank() - i, i, tmp_left_centroids_[i - 1].centroid());
-        left_receive_requests_[i] =
+        left_receive_requests_[i - 1] =
           comm.irecv(comm.rank() - i, neighbor_radius + i,
                      tmp_recv_from_left_[i - 1].centroid());
       }
       for(unsigned int i = 1; i <= right_centroids_.size(); i++) {
 
         // Send and receive.
-        right_send_requests_[i] =
+        right_send_requests_[i - 1] =
           comm.isend(
             comm.rank() + i, neighbor_radius + i,
             tmp_right_centroids_[i - 1].centroid());
-        right_receive_requests_[i] =
+        right_receive_requests_[i - 1] =
           comm.irecv(
             comm.rank() + i, i, tmp_recv_from_right_[i - 1].centroid());
       }
@@ -164,6 +169,14 @@ class DistributedLocalKMeans {
         right_send_requests_.begin(), right_send_requests_.end());
       boost::mpi::wait_all(
         right_receive_requests_.begin(), right_receive_requests_.end());
+
+      // Update the local centroid information.
+      for(unsigned int i = 0; i < tmp_recv_from_left_.size(); i++) {
+        local_centroid_.Add(tmp_recv_from_left_[i]);
+      }
+      for(unsigned int i = 0; i < tmp_recv_from_right_.size(); i++) {
+        local_centroid_.Add(tmp_recv_from_right_[i]);
+      }
     }
 
   public:
@@ -186,6 +199,9 @@ class DistributedLocalKMeans {
       left_receive_requests_.resize(left_centroids_.size());
       tmp_left_centroids_.resize(std::min(comm.rank(), neighbor_radius));
       tmp_recv_from_left_.resize(std::min(comm.rank(), neighbor_radius));
+      for(unsigned int i = 0; i < tmp_left_centroids_.size(); i++) {
+        tmp_left_centroids_[i].Init(starting_centroid.length());
+      }
 
       // The list of centroids right of the current process.
       right_centroids_.resize(
@@ -199,30 +215,34 @@ class DistributedLocalKMeans {
       tmp_recv_from_right_.resize(
         std::min(
           comm.size() - comm.rank() - 1, neighbor_radius));
+      for(unsigned int i = 0; i < tmp_right_centroids_.size(); i++) {
+        tmp_right_centroids_[i].Init(starting_centroid.length());
+      }
 
       // List of assignments for each point in the table.
       point_assignments_.resize(local_table_in.n_entries());
 
       // The outer loop.
-      for(int outer_loop = 0; outer_loop < num_outer_loop_iterations;
-          outer_loop++) {
+      for(
+        int outer_loop = 0; outer_loop < num_outer_loop_iterations;
+        outer_loop++) {
 
         for(unsigned int i = 1; i <= left_centroids_.size(); i++) {
 
           // Send and receive.
-          left_send_requests_[i] =
+          left_send_requests_[i - 1] =
             comm.isend(comm.rank() - i, i, local_centroid_.centroid());
-          left_receive_requests_[i] =
+          left_receive_requests_[i - 1] =
             comm.irecv(
               comm.rank() - i, neighbor_radius + i, left_centroids_[i - 1]);
         }
         for(unsigned int i = 1; i <= right_centroids_.size(); i++) {
 
           // Send and receive.
-          right_send_requests_[i] =
+          right_send_requests_[i - 1] =
             comm.isend(
               comm.rank() + i, neighbor_radius + i, local_centroid_.centroid());
-          right_receive_requests_[i] =
+          right_receive_requests_[i - 1] =
             comm.irecv(comm.rank() + i, i, right_centroids_[i - 1]);
         }
 
