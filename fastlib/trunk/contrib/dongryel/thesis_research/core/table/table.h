@@ -165,6 +165,10 @@ class Table: public boost::noncopyable {
 
   public:
 
+    IndexType *old_from_new() {
+      return old_from_new_.get();
+    }
+
     core::table::DenseMatrix &data() {
       return data_;
     }

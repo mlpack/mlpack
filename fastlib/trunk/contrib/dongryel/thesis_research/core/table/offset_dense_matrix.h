@@ -17,6 +17,8 @@ class OffsetDenseMatrix {
 
     double *ptr_;
 
+    std::pair<int, int> *index_ptr_;
+
     std::vector<int> *assignment_indices_;
 
     int filter_index_;
@@ -34,7 +36,9 @@ class OffsetDenseMatrix {
           num_doubles++;
         }
       }
-      num_doubles *= n_attributes_;
+
+      // Add two for sending the process ID and the point ID.
+      num_doubles *= (n_attributes_ + 2);
       return num_doubles;
     }
 
@@ -50,28 +54,33 @@ class OffsetDenseMatrix {
 
     OffsetDenseMatrix() {
       ptr_ = NULL;
+      index_ptr_ = NULL;
       assignment_indices_ = NULL;
       filter_index_ = -1;
       n_attributes_ = -1;
       n_entries_ = -1;
     }
 
-    void Init(double *ptr_in, int n_attributes_in) {
+    void Init(
+      double *ptr_in, std::pair<int, int> *index_ptr_in, int n_attributes_in) {
       ptr_ = ptr_in;
+      index_ptr_ = index_ptr_in;
       n_attributes_ = n_attributes_in;
     }
 
     void Init(
       core::table::DenseMatrix &mat_in,
+      std::pair<int, int> *index_ptr_in,
       std::vector<int> &assignment_indices_in,
       int filter_index_in) {
       ptr_ = mat_in.ptr();
+      index_ptr_ = index_ptr_in;
       n_attributes_ = mat_in.n_rows();
       assignment_indices_ = &assignment_indices_in;
       filter_index_ = filter_index_in;
     }
 
-    void Extract(double *ptr_out) {
+    void Extract(double *ptr_out, std::pair<int, int> *index_ptr_out) {
       int num_doubles = Count_();
       n_entries_ = num_doubles / n_attributes_;
 
@@ -83,6 +92,8 @@ class OffsetDenseMatrix {
           for(int j = 0; j < n_attributes_; j++) {
             ptr_out[j] = ptr_iter[j];
           }
+          *index_ptr_out = std::pair<int, int>(filter_index_, i);
+          index_ptr_out++;
           ptr_out += n_attributes_;
         }
       }
@@ -100,9 +111,15 @@ class OffsetDenseMatrix {
       for(unsigned int i = 0; i < assignment_indices_->size();
           i++, ptr_iter += n_attributes_) {
         if((*assignment_indices_)[i] == filter_index_) {
+
+          // Write out the point.
           for(int j = 0; j < n_attributes_; j++) {
             ar & ptr_iter[j];
           }
+
+          // Write out the process ID and the point ID.
+          ar & filter_index_;
+          ar & i;
         }
       }
     }
@@ -113,10 +130,15 @@ class OffsetDenseMatrix {
       // Load the number of points to be unfrozen.
       int num_doubles;
       ar & num_doubles;
-      for(int i = 0; i < num_doubles; i++) {
-        ar & ptr_[i];
-      }
       n_entries_ = num_doubles / n_attributes_;
+      double *ptr_iter = ptr_;
+      for(int i = 0; i < n_entries_; i++, ptr_iter += n_attributes_) {
+        for(int j = 0; j < n_attributes_; j++) {
+          ar & ptr_iter[j];
+        }
+        ar & index_ptr_[i].first;
+        ar & index_ptr_[i].second;
+      }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 };

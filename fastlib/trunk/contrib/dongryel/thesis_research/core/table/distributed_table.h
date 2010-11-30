@@ -94,7 +94,7 @@ class DistributedTable: public boost::noncopyable {
       right_send_requests.resize(right_contributions.size());
       for(unsigned int i = 1; i <= left_contributions.size(); i++) {
         left_contributions[i - 1].Init(
-          owned_table_->data(), point_assignments,
+          owned_table_->data(), owned_table_->old_from_new(), point_assignments,
           table_outbox_group_comm.rank() - i);
         left_send_requests[i - 1] =
           table_outbox_group_comm.isend(
@@ -102,7 +102,7 @@ class DistributedTable: public boost::noncopyable {
       }
       for(unsigned int i = 1; i <= right_contributions.size(); i++) {
         right_contributions[i - 1].Init(
-          owned_table_->data(), point_assignments,
+          owned_table_->data(), owned_table_->old_from_new(), point_assignments,
           table_outbox_group_comm.rank() + i);
         right_send_requests[i - 1] =
           table_outbox_group_comm.isend(
@@ -115,28 +115,37 @@ class DistributedTable: public boost::noncopyable {
       // copy over.
       core::table::OffsetDenseMatrix tmp_offset;
       double *new_table_ptr = new_local_table->data().ptr();
+      std::pair<int, int> *new_table_old_from_new_ptr =
+        new_local_table->old_from_new();
       for(unsigned int i = 1; i <= left_contributions.size(); i++) {
-        tmp_offset.Init(new_table_ptr, new_local_table->n_attributes());
+        tmp_offset.Init(
+          new_table_ptr, new_table_old_from_new_ptr,
+          new_local_table->n_attributes());
         table_outbox_group_comm.recv(
           table_outbox_group_comm.rank() - i, neighbor_radius + i, tmp_offset);
 
         // Increment the table pointer based on the number of doubles
         // received.
         new_table_ptr += tmp_offset.n_entries() * tmp_offset.n_attributes();
+        new_table_old_from_new_ptr += tmp_offset.n_entries();
       }
       tmp_offset.Init(
-        owned_table_->data(), point_assignments,
+        owned_table_->data(), new_table_old_from_new_ptr, point_assignments,
         table_outbox_group_comm.rank());
-      tmp_offset.Extract(new_table_ptr);
+      tmp_offset.Extract(new_table_ptr, new_table_old_from_new_ptr);
       new_table_ptr += tmp_offset.n_entries() * tmp_offset.n_attributes();
+      new_table_old_from_new_ptr += tmp_offset.n_entries();
       for(unsigned int i = 1; i <= right_contributions.size(); i++) {
-        tmp_offset.Init(new_table_ptr, new_local_table->n_attributes());
+        tmp_offset.Init(
+          new_table_ptr, new_table_old_from_new_ptr,
+          new_local_table->n_attributes());
         table_outbox_group_comm.recv(
           table_outbox_group_comm.rank() + i, i, tmp_offset);
 
         // Increment the table pointer based on the number of doubles
         // received.
         new_table_ptr += tmp_offset.n_entries() * tmp_offset.n_attributes();
+        new_table_old_from_new_ptr += tmp_offset.n_entries();
       }
 
       // Wait for all send/receive requests to be completed.
