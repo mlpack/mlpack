@@ -36,6 +36,62 @@ extern core::table::MemoryMappedFile *global_m_file_;
 
 namespace core {
 namespace tree {
+
+template<typename IndexType>
+class IndexInitializer {
+  public:
+    static void OldFromNew(
+      const core::table::DenseMatrix &matrix_in,
+      IndexType *old_from_new_out);
+
+    static void NewFromOld(
+      const core::table::DenseMatrix &matrix_in,
+      IndexType *old_from_new_in,
+      IndexType *new_from_old_out);
+};
+
+template<>
+class IndexInitializer< std::pair<int, int> > {
+  public:
+    static void OldFromNew(
+      const core::table::DenseMatrix &matrix_in,
+      std::pair<int, int> *old_from_new_out) {
+      for(int i = 0; i < matrix_in.n_cols(); i++) {
+        old_from_new_out[i] = std::pair<int, int>(0, i);
+      }
+    }
+
+    static void NewFromOld(
+      const core::table::DenseMatrix &matrix_in,
+      std::pair<int, int> *old_from_new_in,
+      std::pair<int, int> *new_from_old_out) {
+      for(int i = 0; i < matrix_in.n_cols(); i++) {
+        new_from_old_out[old_from_new_in[i].second] = std::pair<int, int>(0, i);
+      }
+    }
+};
+
+template<>
+class IndexInitializer< int > {
+  public:
+    static void OldFromNew(
+      const core::table::DenseMatrix &matrix_in,
+      int *old_from_new_out) {
+      for(int i = 0; i < matrix_in.n_cols(); i++) {
+        old_from_new_out[i] = i;
+      }
+    }
+
+    static void NewFromOld(
+      const core::table::DenseMatrix &matrix_in,
+      int *old_from_new_in,
+      int *new_from_old_out) {
+      for(int i = 0; i < matrix_in.n_cols(); i++) {
+        new_from_old_out[old_from_new_in[i]] = i;
+      }
+    }
+};
+
 template < class TreeSpecType >
 class GeneralBinarySpaceTree {
   private:
@@ -287,6 +343,7 @@ class GeneralBinarySpaceTree {
       }
     }
 
+    template<typename IndexType>
     static void SplitTree(
       const core::metric_kernels::AbstractMetric &metric_in,
       core::table::DenseMatrix& matrix,
@@ -294,7 +351,7 @@ class GeneralBinarySpaceTree {
       int leaf_size,
       int max_num_leaf_nodes,
       int *current_num_leaf_nodes,
-      int *old_from_new,
+      IndexType *old_from_new,
       int *num_nodes) {
 
       TreeType *left = NULL;
@@ -353,23 +410,21 @@ class GeneralBinarySpaceTree {
      *        original indexes to new indices
      * @param num_nodes the number of nodes constructed in total.
      */
+    template<typename IndexType>
     static TreeType *MakeTree(
       const core::metric_kernels::AbstractMetric &metric_in,
       core::table::DenseMatrix& matrix, int leaf_size,
       int max_num_leaf_nodes = std::numeric_limits<int>::max(),
-      int *old_from_new = NULL,
-      int *new_from_old = NULL,
+      IndexType *old_from_new = NULL,
+      IndexType *new_from_old = NULL,
       int *num_nodes = NULL) {
 
       TreeType *node = (core::table::global_m_file_) ?
                        core::table::global_m_file_->Construct<TreeType>() :
                        new TreeType();
 
-      if(old_from_new) {
-        for(int i = 0; i < matrix.n_cols(); i++) {
-          old_from_new[i] = i;
-        }
-      }
+      // Initialize the old_from_new mapping.
+      IndexInitializer<IndexType>::OldFromNew(matrix, old_from_new);
 
       int num_nodes_in = 1;
       node->Init(0, matrix.n_cols());
@@ -385,11 +440,10 @@ class GeneralBinarySpaceTree {
       if(num_nodes) {
         *num_nodes = num_nodes_in;
       }
-      if(new_from_old) {
-        for(int i = 0; i < matrix.n_cols(); i++) {
-          new_from_old[old_from_new[i]] = i;
-        }
-      }
+
+      // Finalize the new_from_old mapping from old_from_new mapping.
+      IndexInitializer<IndexType>::NewFromOld(
+        matrix, old_from_new, new_from_old);
       return node;
     }
 
