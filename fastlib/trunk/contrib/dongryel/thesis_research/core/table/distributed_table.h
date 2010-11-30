@@ -90,10 +90,12 @@ class DistributedTable: public boost::noncopyable {
       std::vector< boost::mpi::request > right_send_requests;
       left_contributions.resize(
         std::min(table_outbox_group_comm.rank(), neighbor_radius));
+      left_send_requests.resize(left_contributions.size());
       right_contributions.resize(
         std::min(
           table_outbox_group_comm.size() -
           table_outbox_group_comm.rank() - 1, neighbor_radius));
+      right_send_requests.resize(right_contributions.size());
       for(unsigned int i = 1; i <= left_contributions.size(); i++) {
         left_contributions[i - 1].Init(
           owned_table_->data(), point_assignments,
@@ -117,7 +119,7 @@ class DistributedTable: public boost::noncopyable {
       // copy over.
       core::table::OffsetDenseMatrix tmp_offset;
       double *new_table_ptr = new_local_table->data().ptr();
-      for(unsigned int i = 1; i < left_contributions.size(); i++) {
+      for(unsigned int i = 1; i <= left_contributions.size(); i++) {
         tmp_offset.Init(new_table_ptr, new_local_table->n_attributes());
         table_outbox_group_comm.recv(
           table_outbox_group_comm.rank() - i, neighbor_radius + i, tmp_offset);
@@ -131,7 +133,7 @@ class DistributedTable: public boost::noncopyable {
         table_outbox_group_comm.rank());
       tmp_offset.Extract(new_table_ptr);
       new_table_ptr += tmp_offset.n_entries() * tmp_offset.n_attributes();
-      for(unsigned int i = 1; i < right_contributions.size(); i++) {
+      for(unsigned int i = 1; i <= right_contributions.size(); i++) {
         tmp_offset.Init(new_table_ptr, new_local_table->n_attributes());
         table_outbox_group_comm.recv(
           table_outbox_group_comm.rank() + i, i, tmp_offset);
@@ -146,6 +148,11 @@ class DistributedTable: public boost::noncopyable {
         left_send_requests.begin(), left_send_requests.end());
       boost::mpi::wait_all(
         right_send_requests.begin(), right_send_requests.end());
+
+      // Destory the old table and take the new table to be the owned
+      // table.
+      core::table::global_m_file_->DestroyPtr(owned_table_.get());
+      owned_table_ = new_local_table;
     }
 
     int TakeLeafNodeOwnerShip_(

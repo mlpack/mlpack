@@ -307,14 +307,6 @@ class DistributedLocalKMeans {
       // owned by this centroid.
       starting_centroid.CopyValues(local_centroid_.centroid());
       *total_num_points_owned = local_centroid_.num_points();
-
-      printf("%d: Local ended up %d from %d\n", comm.rank(),
-             local_centroid_.num_points(),
-             local_table_in.n_entries());
-      for(unsigned int i = 0; i < point_assignments_out->size(); i++) {
-        printf("%d ", (*point_assignments_out)[i]);
-      }
-      printf("\n");
     }
 };
 };
