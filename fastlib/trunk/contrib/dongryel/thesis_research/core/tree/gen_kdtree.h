@@ -93,12 +93,12 @@ class GenKdTree {
       }
     }
 
-    template<typename TreeType>
+    template<typename TreeType, typename IndexType>
     static bool AttemptSplitting(
       const core::metric_kernels::AbstractMetric &metric_in,
       core::table::DenseMatrix& matrix, TreeType *node, TreeType **left,
       TreeType **right, int leaf_size,
-      int *old_from_new,
+      IndexType *old_from_new,
       core::table::MemoryMappedFile *m_file_in) {
 
       *left = NULL;
