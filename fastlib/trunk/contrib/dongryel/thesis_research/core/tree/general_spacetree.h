@@ -42,6 +42,7 @@ class IndexInitializer {
   public:
     static void OldFromNew(
       const core::table::DenseMatrix &matrix_in,
+      int rank_in,
       IndexType *old_from_new_out);
 
     static void NewFromOld(
@@ -54,10 +55,10 @@ template<>
 class IndexInitializer< std::pair<int, int> > {
   public:
     static void OldFromNew(
-      const core::table::DenseMatrix &matrix_in,
+      const core::table::DenseMatrix &matrix_in, int rank_in,
       std::pair<int, int> *old_from_new_out) {
       for(int i = 0; i < matrix_in.n_cols(); i++) {
-        old_from_new_out[i] = std::pair<int, int>(0, i);
+        old_from_new_out[i] = std::pair<int, int>(rank_in, i);
       }
     }
 
@@ -75,7 +76,7 @@ template<>
 class IndexInitializer< int > {
   public:
     static void OldFromNew(
-      const core::table::DenseMatrix &matrix_in,
+      const core::table::DenseMatrix &matrix_in, int rank_in,
       int *old_from_new_out) {
       for(int i = 0; i < matrix_in.n_cols(); i++) {
         old_from_new_out[i] = i;
@@ -414,17 +415,18 @@ class GeneralBinarySpaceTree {
     static TreeType *MakeTree(
       const core::metric_kernels::AbstractMetric &metric_in,
       core::table::DenseMatrix& matrix, int leaf_size,
+      IndexType *old_from_new,
+      IndexType *new_from_old,
       int max_num_leaf_nodes = std::numeric_limits<int>::max(),
-      IndexType *old_from_new = NULL,
-      IndexType *new_from_old = NULL,
-      int *num_nodes = NULL) {
+      int *num_nodes = NULL,
+      int rank_in = 0) {
 
       TreeType *node = (core::table::global_m_file_) ?
                        core::table::global_m_file_->Construct<TreeType>() :
                        new TreeType();
 
       // Initialize the old_from_new mapping.
-      IndexInitializer<IndexType>::OldFromNew(matrix, old_from_new);
+      IndexInitializer<IndexType>::OldFromNew(matrix, rank_in, old_from_new);
 
       int num_nodes_in = 1;
       node->Init(0, matrix.n_cols());
@@ -447,11 +449,12 @@ class GeneralBinarySpaceTree {
       return node;
     }
 
+    template<typename IndexType>
     static int MatrixPartition(
       const core::metric_kernels::AbstractMetric &metric_in,
       core::table::DenseMatrix& matrix, int first, int count,
       BoundType &left_bound, BoundType &right_bound,
-      int *old_from_new) {
+      IndexType *old_from_new) {
 
       int end = first + count;
       int left_count = 0;

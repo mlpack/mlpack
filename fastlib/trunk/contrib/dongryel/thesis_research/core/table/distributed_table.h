@@ -35,7 +35,7 @@ class DistributedTable: public boost::noncopyable {
 
     typedef core::tree::GeneralBinarySpaceTree <TreeSpecType> TreeType;
 
-    typedef core::table::Table<TreeSpecType> TableType;
+    typedef core::table::Table<TreeSpecType, std::pair<int, int> > TableType;
 
   private:
 
@@ -45,10 +45,6 @@ class DistributedTable: public boost::noncopyable {
     core::table::TableOutbox<TableType> > table_outbox_;
 
     boost::interprocess::offset_ptr<TableType> owned_table_;
-
-    boost::interprocess::offset_ptr< std::pair<int, int> > old_from_new_;
-
-    boost::interprocess::offset_ptr< std::pair<int, int> > new_from_old_;
 
     boost::interprocess::offset_ptr<int> local_n_entries_;
 
@@ -259,8 +255,6 @@ class DistributedTable: public boost::noncopyable {
       table_inbox_ = NULL;
       table_outbox_ = NULL;
       owned_table_ = NULL;
-      old_from_new_ = NULL;
-      new_from_old_ = NULL;
       local_n_entries_ = NULL;
       global_tree_ = NULL;
       table_outbox_group_comm_size_ = -1;
@@ -366,7 +360,7 @@ class DistributedTable: public boost::noncopyable {
       owned_table_ = (core::table::global_m_file_) ?
                      core::table::global_m_file_->Construct<TableType>() :
                      new TableType();
-      owned_table_->Init(file_name);
+      owned_table_->Init(file_name, table_outbox_group_communicator_in.rank());
 
       // Initialize the mailboxes.
       table_outbox_ = core::table::global_m_file_->Construct <
