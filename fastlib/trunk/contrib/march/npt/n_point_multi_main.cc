@@ -24,6 +24,8 @@ int main(int argc, char* argv[]) {
   max_band = fx_param_double_req(NULL, "max_band");
   int num_bands = fx_param_int_req(NULL, "num_bands");
   
+  double band_width;
+  
   int n = fx_param_int_req(NULL, "n");
 
   fx_module* mod = fx_submodule(NULL, "n_point_multi");
