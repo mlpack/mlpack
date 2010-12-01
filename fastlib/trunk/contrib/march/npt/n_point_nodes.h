@@ -56,7 +56,7 @@ typedef BinarySpaceTree<DHrectBound<2>, Matrix, NPointStat> NPointNode;
 
 
 /**
- *
+ * 
  */
 class NodeTuple {
   
