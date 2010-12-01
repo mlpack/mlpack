@@ -8,9 +8,11 @@
 
 // for BOOST testing
 
+#include "core/math/math_lib.h"
 #include "core/optimization/lbfgs_dev.h"
 #include <stdexcept>
 
+namespace core {
 namespace optimization {
 namespace lbfgs_test {
 
@@ -24,8 +26,8 @@ class ExtendedRosenbrockFunction {
     double Evaluate(const core::table::DensePoint &x) {
       double fval = 0;
       for(int i = 0; i < num_dimensions() - 1; i++) {
-        fval = fval + 100 * math::Sqr(x[i] * x[i] - x[i + 1]) +
-               math::Sqr(x[i] - 1);
+        fval = fval + 100 * core::math::Sqr(x[i] * x[i] - x[i + 1]) +
+               core::math::Sqr(x[i] - 1);
       }
       return fval;
     }
@@ -42,7 +44,7 @@ class ExtendedRosenbrockFunction {
       }
       (*gradient)[num_dimensions() - 1] =
         200 * (x[num_dimensions() - 1] -
-               math::Sqr(x[num_dimensions() - 2]));
+               core::math::Sqr(x[num_dimensions() - 2]));
     }
 
     int num_dimensions() const {
@@ -50,7 +52,7 @@ class ExtendedRosenbrockFunction {
     }
 
     void InitStartingIterate(core::table::DensePoint *iterate) {
-      num_dimensions_ = 4 * math::RandInt(2, 200);
+      num_dimensions_ = 4 * core::math::RandInt(2, 200);
       iterate->Init(num_dimensions_);
       for(int i = 0; i < num_dimensions_; i++) {
         if(i % 2 == 0) {
@@ -68,10 +70,11 @@ class WoodFunction {
 
   public:
     double Evaluate(const core::table::DensePoint &x) {
-      return 100 * math::Sqr(x[0] * x[0] - x[1]) +
-             math::Sqr(1 - x[0]) +
-             90 * math::Sqr(x[2] * x[2] - x[3]) + math::Sqr(1 - x[2]) +
-             10.1 * (math::Sqr(1 - x[1]) + math::Sqr(1 - x[3])) +
+      return 100 * core::math::Sqr(x[0] * x[0] - x[1]) +
+             core::math::Sqr(1 - x[0]) +
+             90 * core::math::Sqr(x[2] * x[2] - x[3]) +
+             core::math::Sqr(1 - x[2]) +
+             10.1 * (core::math::Sqr(1 - x[1]) + core::math::Sqr(1 - x[3])) +
              19.8 * (1 - x[1]) * (1 - x[3]);
     }
 
@@ -105,9 +108,10 @@ class LbfgsTest {
 
       printf("Testing extended Rosenbrock function: optimal value: 0");
       for(int i = 0; i < 10; i++) {
-        optimization::lbfgs_test::ExtendedRosenbrockFunction
+        core::optimization::lbfgs_test::ExtendedRosenbrockFunction
         extended_rosenbrock_function;
-        optimization::Lbfgs < optimization::lbfgs_test::ExtendedRosenbrockFunction >
+        core::optimization::Lbfgs <
+        core::optimization::lbfgs_test::ExtendedRosenbrockFunction >
         extended_rosenbrock_function_lbfgs;
         core::table::DensePoint extended_rosenbrock_function_optimized;
         extended_rosenbrock_function.InitStartingIterate(
@@ -141,9 +145,10 @@ class LbfgsTest {
 
     void TestWoodFunction() {
       printf("Testing wood function: optimal value: 0.\n");
-      optimization::lbfgs_test::WoodFunction wood_function;
+      core::optimization::lbfgs_test::WoodFunction wood_function;
       core::table::DensePoint wood_function_optimized;
-      optimization::Lbfgs< optimization::lbfgs_test::WoodFunction > wood_function_lbfgs;
+      core::optimization::Lbfgs <
+      core::optimization::lbfgs_test::WoodFunction > wood_function_lbfgs;
       wood_function.InitStartingIterate(&wood_function_optimized);
       wood_function_lbfgs.Init(wood_function, 2);
       wood_function_lbfgs.Optimize(-1, &wood_function_optimized);
@@ -159,11 +164,12 @@ class LbfgsTest {
 };
 };
 };
+};
 
 int main(int argc, char *argv[]) {
   core::table::DensePoint v;
   printf("Starting L-BFGS tests.\n");
-  optimization::lbfgs_test::LbfgsTest test;
+  core::optimization::lbfgs_test::LbfgsTest test;
   test.TestExtendedRosenbrockFunction();
   test.TestWoodFunction();
   printf("All tests passed!");

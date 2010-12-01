@@ -64,13 +64,13 @@ double Lbfgs<FunctionType>::ChooseScalingFactor_(
     int previous_pos = (iteration_num - 1) % num_basis_;
     core::table::DensePoint s_basis;
     core::table::DensePoint y_basis;
-    s_lbfgs_.MakeColumncore::table::DensePoint(previous_pos, &s_basis);
-    y_lbfgs_.MakeColumncore::table::DensePoint(previous_pos, &y_basis);
-    scaling_factor = la::Dot(s_basis, y_basis) /
-                     la::Dot(y_basis, y_basis);
+    s_lbfgs_.MakeColumnVector(previous_pos, &s_basis);
+    y_lbfgs_.MakeColumnVector(previous_pos, &y_basis);
+    scaling_factor = s_basis.Dot(y_basis) /
+                     y_basis.Dot(y_basis);
   }
   else {
-    scaling_factor = 1.0 / sqrt(la::Dot(gradient, gradient));
+    scaling_factor = 1.0 / sqrt(gradient.Dot(gradient));
   }
   return scaling_factor;
 }
@@ -80,7 +80,7 @@ bool Lbfgs<FunctionType>::GradientNormTooSmall_(
   const core::table::DensePoint &gradient) {
 
   const double threshold = 1e-5;
-  return la::LengthEuclidean(gradient) < threshold;
+  return gradient.LengthEuclidean() < threshold;
 }
 
 template<typename FunctionType>
@@ -109,8 +109,7 @@ bool Lbfgs<FunctionType>::LineSearch_(
 
   // The initial linear term approximation in the direction of the
   // search direction.
-  double initial_search_direction_dot_gradient =
-    la::Dot(gradient, search_direction);
+  double initial_search_direction_dot_gradient = gradient.Dot(search_direction);
 
   // If it is not a descent direction, just report failure.
   if(initial_search_direction_dot_gradient > 0.0) {
@@ -136,7 +135,7 @@ bool Lbfgs<FunctionType>::LineSearch_(
     // Perform a step and evaluate the gradient and the function
     // values at that point.
     new_iterate_tmp_.CopyValues(iterate);
-    la::AddExpert(step_size, search_direction, &new_iterate_tmp_);
+    new_iterate_tmp_.Add(step_size, search_direction);
     function_value = Evaluate_(new_iterate_tmp_);
     function_->Gradient(new_iterate_tmp_, &gradient);
     num_iterations++;
@@ -148,8 +147,7 @@ bool Lbfgs<FunctionType>::LineSearch_(
     else {
 
       // Check Wolfe's condition.
-      double search_direction_dot_gradient =
-        la::Dot(gradient, search_direction);
+      double search_direction_dot_gradient = gradient.Dot(search_direction);
 
       if(search_direction_dot_gradient < param_.wolfe() *
           initial_search_direction_dot_gradient) {
@@ -202,31 +200,29 @@ void Lbfgs<FunctionType>::SearchDirection_(
   rho.Init(num_basis_);
   alpha.Init(num_basis_);
 
-
   int limit = std::max(iteration_num - num_basis_, 0);
   for(int i = iteration_num - 1; i >= limit; i--) {
     int translated_position = i % num_basis_;
     core::table::DensePoint y_basis, s_basis;
-    s_lbfgs_.MakeColumncore::table::DensePoint(translated_position, &s_basis);
-    y_lbfgs_.MakeColumncore::table::DensePoint(translated_position, &y_basis);
-    rho[ iteration_num - i - 1 ] = 1.0 / la::Dot(y_basis, s_basis);
+    s_lbfgs_.MakeColumnVector(translated_position, &s_basis);
+    y_lbfgs_.MakeColumnVector(translated_position, &y_basis);
+    rho[ iteration_num - i - 1 ] = 1.0 / y_basis.Dot(s_basis);
     alpha[ iteration_num - i - 1 ] = rho [ iteration_num - i - 1] *
-                                     la::Dot(s_basis, q);
+                                     s_basis.Dot(q);
   }
-  la::ScaleOverwrite(scaling_factor, q, search_direction);
+  search_direction->ScaleOverwrite(scaling_factor, q);
   for(int i = limit; i <= iteration_num - 1; i++) {
     int translated_position = i % num_basis_;
     core::table::DensePoint y_basis, s_basis;
-    s_lbfgs_.MakeColumncore::table::DensePoint(translated_position, &s_basis);
-    y_lbfgs_.MakeColumncore::table::DensePoint(translated_position, &y_basis);
+    s_lbfgs_.MakeColumnVector(translated_position, &s_basis);
+    y_lbfgs_.MakeColumnVector(translated_position, &y_basis);
     double beta = rho[ iteration_num - i - 1 ] *
-                  la::Dot(y_basis, *search_direction);
-    la::AddExpert(alpha [ iteration_num - i - 1 ] - beta, s_basis,
-                  search_direction);
+                  y_basis.Dot(*search_direction);
+    search_direction->Add(alpha [ iteration_num - i - 1 ] - beta, s_basis);
   }
 
   // Negate the search direction so that it is a descent direction.
-  la::Scale(-1.0, search_direction);
+  (*search_direction) *= -1.0;
 }
 
 template<typename FunctionType>
@@ -240,10 +236,10 @@ void Lbfgs<FunctionType>::UpdateBasisSet_(
   int overwrite_pos = iteration_num % num_basis_;
   core::table::DensePoint s_basis;
   core::table::DensePoint y_basis;
-  s_lbfgs_.MakeColumncore::table::DensePoint(overwrite_pos, &s_basis);
-  y_lbfgs_.MakeColumncore::table::DensePoint(overwrite_pos, &y_basis);
-  la::SubOverwrite(old_iterate, iterate, &s_basis);
-  la::SubOverwrite(old_gradient, gradient, &y_basis);
+  s_lbfgs_.MakeColumnVector(overwrite_pos, &s_basis);
+  y_lbfgs_.MakeColumnVector(overwrite_pos, &y_basis);
+  s_basis.SubOverwrite(old_iterate, iterate);
+  y_basis.SubOverwrite(old_gradient, gradient);
 }
 
 template<typename FunctionType>
