@@ -503,6 +503,13 @@ class DistributedTable: public boost::noncopyable {
       ReadjustCentroids_(
         table_outbox_group_comm, metric_in, top_leaf_nodes,
         leaf_node_assignment_index);
+
+      // Index the local tree.
+      owned_table_->IndexData(metric_in, leaf_size);
+
+      // Now assemble the top tree.
+      table_outbox_group_comm.barrier();
+
     }
 
     void get(
