@@ -77,6 +77,7 @@ class DistributedTable: public boost::noncopyable {
       // Move the data across processes to get a new local table.
       TableType *new_local_table =
         core::table::global_m_file_->Construct<TableType>();
+      printf("Total points owned. %d\n", total_num_points_owned);
       new_local_table->Init(
         owned_table_->n_attributes(), total_num_points_owned);
 
@@ -158,7 +159,7 @@ class DistributedTable: public boost::noncopyable {
 
       // Destory the old table and take the new table to be the owned
       // table.
-      core::table::global_m_file_->DestroyPtr(owned_table_.get());
+      //core::table::global_m_file_->DestroyPtr(owned_table_.get());
       owned_table_ = new_local_table;
     }
 
@@ -166,14 +167,14 @@ class DistributedTable: public boost::noncopyable {
       boost::mpi::communicator &table_outbox_group_comm,
       const std::vector<double> &num_points_assigned_to_leaf_nodes) {
 
-      if(table_outbox_group_comm.size() > 0) {
+      if(table_outbox_group_comm.size() > 1) {
         core::table::DistributedAuction auction;
         return auction.Assign(
                  table_outbox_group_comm, num_points_assigned_to_leaf_nodes,
                  std::numeric_limits<double>::epsilon());
       }
       else {
-        return 0;
+        return table_outbox_group_comm.rank();
       }
     }
 

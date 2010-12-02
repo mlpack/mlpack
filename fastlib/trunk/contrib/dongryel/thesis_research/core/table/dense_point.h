@@ -75,7 +75,6 @@ class DensePoint {
       // Allocate the point.
       if(ptr_ == NULL) {
         ptr_ = (core::table::global_m_file_) ?
-               (double *)
                core::table::global_m_file_->ConstructArray<double>(n_rows_) :
                new double[n_rows_];
       }
@@ -110,7 +109,6 @@ class DensePoint {
     void Init(int length_in) {
       ptr_ =
         (core::table::global_m_file_) ?
-        (double *)
         core::table::global_m_file_->ConstructArray<double>(length_in) :
         new double[length_in];
       n_rows_ = length_in;
@@ -120,7 +118,6 @@ class DensePoint {
     void Init(const std::vector<double> &vector_in) {
       ptr_ =
         (core::table::global_m_file_) ?
-        (double *)
         core::table::global_m_file_->ConstructArray<double>(
           vector_in.size()) :
         new double[vector_in.size()];
@@ -141,7 +138,7 @@ class DensePoint {
     void Copy(const DensePoint &point_in) {
       ptr_ =
         (core::table::global_m_file_) ?
-        (double *) core::table::global_m_file_->ConstructArray<double>(
+        core::table::global_m_file_->ConstructArray<double>(
           point_in.length()) :
         new double[point_in.length()];
       CopyValues(point_in);
