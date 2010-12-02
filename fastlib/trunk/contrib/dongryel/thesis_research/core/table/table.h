@@ -279,6 +279,14 @@ class Table: public boost::noncopyable {
         data_.Init(num_dimensions_in, num_points_in);
       }
       rank_ = rank_in;
+
+      if(core::table::global_m_file_) {
+        old_from_new_ = core::table::global_m_file_->ConstructArray<IndexType>(
+                          data_.n_cols());
+      }
+      else {
+        old_from_new_ = new IndexType[data_.n_cols()];
+      }
     }
 
     void Init(const std::string &file_name, int rank_in = 0) {
@@ -308,13 +316,10 @@ class Table: public boost::noncopyable {
       int num_nodes;
 
       if(core::table::global_m_file_) {
-        old_from_new_ = core::table::global_m_file_->ConstructArray<IndexType>(
-                          data_.n_cols());
         new_from_old_ = core::table::global_m_file_->ConstructArray<IndexType>(
                           data_.n_cols());
       }
       else {
-        old_from_new_ = new IndexType[data_.n_cols()];
         new_from_old_ = new IndexType[data_.n_cols()];
       }
       tree_ = TreeType::MakeTree(
