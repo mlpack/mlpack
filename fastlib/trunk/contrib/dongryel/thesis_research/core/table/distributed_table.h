@@ -13,6 +13,7 @@
 #include <boost/serialization/string.hpp>
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/random/variate_generator.hpp>
+#include <boost/utility.hpp>
 #include "core/table/table.h"
 #include "core/table/mailbox.h"
 #include "core/table/distributed_table_message.h"
@@ -48,7 +49,7 @@ class DistributedTable: public boost::noncopyable {
 
     boost::interprocess::offset_ptr<int> local_n_entries_;
 
-    boost::interprocess::offset_ptr<TreeType> global_tree_;
+    boost::interprocess::offset_ptr<TableType> global_table_;
 
     int table_outbox_group_comm_size_;
 
@@ -256,16 +257,12 @@ class DistributedTable: public boost::noncopyable {
         outbox_to_inbox_comm_in, outbox_to_computation_comm_in);
     }
 
-    bool IsIndexed() const {
-      return global_tree_ != NULL;
-    }
-
     DistributedTable() {
       table_inbox_ = NULL;
       table_outbox_ = NULL;
       owned_table_ = NULL;
       local_n_entries_ = NULL;
-      global_tree_ = NULL;
+      global_table_ = NULL;
       table_outbox_group_comm_size_ = -1;
     }
 
@@ -305,9 +302,9 @@ class DistributedTable: public boost::noncopyable {
       }
 
       // Delete the tree.
-      if(global_tree_ != NULL) {
-        delete global_tree_.get();
-        global_tree_ = NULL;
+      if(global_table_ != NULL) {
+        delete global_table_.get();
+        global_table_ = NULL;
       }
     }
 
@@ -340,7 +337,7 @@ class DistributedTable: public boost::noncopyable {
     }
 
     TreeType *get_tree() {
-      return global_tree_.get();
+      return global_table_->get_tree();
     }
 
     int n_attributes() const {
@@ -406,10 +403,6 @@ class DistributedTable: public boost::noncopyable {
       TableType sampled_table;
       std::vector<int> sampled_indices;
       SelectSubset_(sample_probability_in, &sampled_indices);
-      printf(
-        "Process %d sampled %d points.\n",
-        static_cast<int>(table_outbox_group_comm.rank()),
-        static_cast<int>(sampled_indices.size()));
 
       // Send the number of points chosen in this process to the
       // master so that the master can allocate the appropriate amount
@@ -460,9 +453,6 @@ class DistributedTable: public boost::noncopyable {
       // the rest.
       std::vector<TreeType *> top_leaf_nodes;
       if(table_outbox_group_comm.rank() == 0) {
-
-        printf("Building the tree\n");
-        sampled_table.data().Print();
         sampled_table.IndexData(
           metric_in, leaf_size, table_outbox_group_comm.size());
 
@@ -473,16 +463,6 @@ class DistributedTable: public boost::noncopyable {
 
       // Broadcast the leaf nodes.
       boost::mpi::broadcast(table_outbox_group_comm, top_leaf_nodes, 0);
-
-      printf(
-        "Checking the nodes: %d %d\n",
-        static_cast<int>(table_outbox_group_comm.rank()),
-        static_cast<int>(top_leaf_nodes.size()));
-
-      for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
-        printf("%d %d %d\n", top_leaf_nodes[i]->begin(),
-               top_leaf_nodes[i]->end(), top_leaf_nodes[i]->count());
-      }
 
       // Assign each point to one of the leaf nodes.
       std::vector<double> num_points_assigned_to_leaf_nodes(
@@ -495,8 +475,6 @@ class DistributedTable: public boost::noncopyable {
       int leaf_node_assignment_index = TakeLeafNodeOwnerShip_(
                                          table_outbox_group_comm,
                                          num_points_assigned_to_leaf_nodes);
-      printf("Process %d got %d\n", table_outbox_group_comm.rank(),
-             leaf_node_assignment_index);
 
       // Each process decides to test against the assigned leaf and
       // its immediate DFS neighbors.
@@ -507,9 +485,24 @@ class DistributedTable: public boost::noncopyable {
       // Index the local tree.
       owned_table_->IndexData(metric_in, leaf_size);
 
-      // Now assemble the top tree.
+      // Now assemble the top tree. At this point, we can free the
+      // leaf nodes for the non-master.
       table_outbox_group_comm.barrier();
+      if(table_outbox_group_comm.rank() != 0) {
+        for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
+          delete top_leaf_nodes[i];
+        }
+      }
 
+      // Every process gathers the adjusted leaf centroids and build
+      // the top tree individually.
+      global_table_ = core::table::global_m_file_->Construct<TableType>();
+      global_table_->Init(
+        owned_table_->n_attributes(), table_outbox_group_comm.size());
+      boost::mpi::all_gather(
+        table_outbox_group_comm,
+        owned_table_->get_tree()->bound().center().ptr(),
+        owned_table_->n_attributes(), global_table_->data().ptr());
     }
 
     void get(
@@ -557,10 +550,6 @@ class DistributedTable: public boost::noncopyable {
           table_inbox_->get_point(requested_rank, point_id),
           owned_table_->n_attributes());
       }
-    }
-
-    void PrintTree() const {
-      global_tree_->Print();
     }
 };
 };
