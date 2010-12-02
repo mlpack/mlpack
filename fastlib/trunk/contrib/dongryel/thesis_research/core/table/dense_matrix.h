@@ -75,11 +75,13 @@ class DenseMatrix {
     }
 
     ~DenseMatrix() {
-      if(ptr_.get() != NULL && core::table::global_m_file_) {
-        core::table::global_m_file_->DestroyPtr(ptr_.get());
-      }
-      else {
-        delete[] ptr_.get();
+      if(ptr_.get() != NULL) {
+        if(core::table::global_m_file_) {
+          core::table::global_m_file_->DestroyPtr(ptr_.get());
+        }
+        else {
+          delete[] ptr_.get();
+        }
       }
       Reset();
     }

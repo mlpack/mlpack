@@ -360,7 +360,7 @@ class GeneralBinarySpaceTree {
 
       // If the node is just too small or we have reached the maximum
       // number of leaf nodes allowed, then do not split.
-      if(node->count() < leaf_size ||
+      if(node->count() <= leaf_size ||
           (*current_num_leaf_nodes) >= max_num_leaf_nodes) {
         TreeSpecType::MakeLeafNode(
           metric_in, matrix, node->begin(), node->count(), &(node->bound()));
