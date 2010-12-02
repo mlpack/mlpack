@@ -292,6 +292,14 @@ class Table: public boost::noncopyable {
     void Init(const std::string &file_name, int rank_in = 0) {
       core::DatasetReader::ParseDataset(file_name, &data_);
       rank_ = rank_in;
+
+      if(core::table::global_m_file_) {
+        old_from_new_ = core::table::global_m_file_->ConstructArray<IndexType>(
+                          data_.n_cols());
+      }
+      else {
+        old_from_new_ = new IndexType[data_.n_cols()];
+      }
     }
 
     void Save(const std::string &file_name) const {
