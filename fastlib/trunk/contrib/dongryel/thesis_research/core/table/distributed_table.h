@@ -154,6 +154,7 @@ class DistributedTable: public boost::noncopyable {
         left_send_requests.begin(), left_send_requests.end());
       boost::mpi::wait_all(
         right_send_requests.begin(), right_send_requests.end());
+      table_outbox_group_comm.barrier();
 
       // Destory the old table and take the new table to be the owned
       // table.
@@ -165,10 +166,15 @@ class DistributedTable: public boost::noncopyable {
       boost::mpi::communicator &table_outbox_group_comm,
       const std::vector<double> &num_points_assigned_to_leaf_nodes) {
 
-      core::table::DistributedAuction auction;
-      return auction.Assign(
-               table_outbox_group_comm, num_points_assigned_to_leaf_nodes,
-               std::numeric_limits<double>::epsilon());
+      if(table_outbox_group_comm.size() > 0) {
+        core::table::DistributedAuction auction;
+        return auction.Assign(
+                 table_outbox_group_comm, num_points_assigned_to_leaf_nodes,
+                 std::numeric_limits<double>::epsilon());
+      }
+      else {
+        return 0;
+      }
     }
 
     void GetLeafNodeMembershipCounts_(
@@ -487,7 +493,6 @@ class DistributedTable: public boost::noncopyable {
 
       // Now assemble the top tree. At this point, we can free the
       // leaf nodes for the non-master.
-      table_outbox_group_comm.barrier();
       if(table_outbox_group_comm.rank() != 0) {
         for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
           delete top_leaf_nodes[i];
