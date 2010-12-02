@@ -130,7 +130,7 @@ class OffsetDenseMatrix {
       // Load the number of points to be unfrozen.
       int num_doubles;
       ar & num_doubles;
-      n_entries_ = num_doubles / n_attributes_;
+      n_entries_ = num_doubles / (n_attributes_ + 2);
       double *ptr_iter = ptr_;
       for(int i = 0; i < n_entries_; i++, ptr_iter += n_attributes_) {
         for(int j = 0; j < n_attributes_; j++) {
