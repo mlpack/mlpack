@@ -159,7 +159,7 @@ class DistributedTable: public boost::noncopyable {
 
       // Destory the old table and take the new table to be the owned
       // table.
-      //core::table::global_m_file_->DestroyPtr(owned_table_.get());
+      core::table::global_m_file_->DestroyPtr(owned_table_.get());
       owned_table_ = new_local_table;
     }
 
@@ -174,7 +174,7 @@ class DistributedTable: public boost::noncopyable {
                  std::numeric_limits<double>::epsilon());
       }
       else {
-        return table_outbox_group_comm.rank();
+        return 0;
       }
     }
 

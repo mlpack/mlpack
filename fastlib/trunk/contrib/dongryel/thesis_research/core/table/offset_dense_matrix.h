@@ -82,7 +82,7 @@ class OffsetDenseMatrix {
 
     void Extract(double *ptr_out, std::pair<int, int> *index_ptr_out) {
       int num_doubles = Count_();
-      n_entries_ = num_doubles / n_attributes_;
+      n_entries_ = num_doubles / (n_attributes_ + 2);
 
       // Loop through and find out the columns to serialize.
       double *ptr_iter = ptr_;
