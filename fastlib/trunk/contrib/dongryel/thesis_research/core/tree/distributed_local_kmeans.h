@@ -268,7 +268,7 @@ class DistributedLocalKMeans {
           // Compute the closest center.
           double min_squared_distance = metric.DistanceSq(
                                           point, local_centroid_.centroid());
-          double min_index = comm.rank();
+          int min_index = comm.rank();
           for(unsigned int lc = 0; lc < left_centroids_.size(); lc++) {
             double squared_distance =
               metric.DistanceSq(
