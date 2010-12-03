@@ -13,6 +13,19 @@ target_link_libraries(distributed_kde
                       ${Boost_LIBRARIES}
                      )
 
+# the test for intercomm_example.cc
+add_executable(intercomm_example
+               EXCLUDE_FROM_ALL
+               intercomm_example.cc
+)
+
+# link dependencies of intercomm_example.cc
+target_link_libraries(intercomm_example
+                      core
+                      ${TRILINOS_LIBS}
+                      ${Boost_LIBRARIES}
+                     )
+
 # the test for MPI all_reduce
 add_executable(all_reduce
                EXCLUDE_FROM_ALL
