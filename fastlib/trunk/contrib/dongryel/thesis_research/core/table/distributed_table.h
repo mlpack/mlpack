@@ -77,7 +77,6 @@ class DistributedTable: public boost::noncopyable {
       // Move the data across processes to get a new local table.
       TableType *new_local_table =
         core::table::global_m_file_->Construct<TableType>();
-      printf("Total points owned. %d\n", total_num_points_owned);
       new_local_table->Init(
         owned_table_->n_attributes(), total_num_points_owned);
 
@@ -509,6 +508,11 @@ class DistributedTable: public boost::noncopyable {
         table_outbox_group_comm,
         owned_table_->get_tree()->bound().center().ptr(),
         owned_table_->n_attributes(), global_table_->data().ptr());
+
+      // Very important: need to re-update the counts.
+      boost::mpi::all_gather(
+        table_outbox_group_comm, owned_table_->n_entries(),
+        local_n_entries_.get());
     }
 
     void get(
