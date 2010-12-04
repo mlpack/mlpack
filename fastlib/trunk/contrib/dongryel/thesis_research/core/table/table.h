@@ -6,7 +6,6 @@
 #ifndef CORE_TABLE_TABLE_H
 #define CORE_TABLE_TABLE_H
 
-#include <armadillo>
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/utility.hpp>
 #include "core/csv_parser/dataset_reader.h"

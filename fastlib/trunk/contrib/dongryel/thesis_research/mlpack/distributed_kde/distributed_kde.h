@@ -7,9 +7,10 @@
 #define MLPACK_DISTRIBUTED_KDE_DISTRIBUTED_KDE_H
 
 #include <boost/program_options.hpp>
+#include <boost/mpi/communicator.hpp>
 #include "core/table/distributed_table.h"
 #include "mlpack/kde/kde_dualtree.h"
-#include "mlpack/kde/kde_arguments.h"
+#include "mlpack/distributed_kde/distributed_kde_arguments.h"
 
 namespace mlpack {
 namespace distributed_kde {
@@ -20,7 +21,7 @@ class DistributedKde {
 
     typedef core::table::DistributedTable<TreeSpecType> DistributedTableType;
 
-    typedef mlpack::kde::::KdePostponed PostponedType;
+    typedef mlpack::kde::KdePostponed PostponedType;
 
     typedef mlpack::kde::KdeGlobal<TableType> GlobalType;
 
@@ -50,7 +51,8 @@ class DistributedKde {
     core::table::DistributedTable<TreeSpecType> *reference_table();
 
     /**
-     * @brief returns a GlobalType structure that has the normalization statistics
+     * @brief returns a GlobalType structure that has the
+     *        normalization statistics
      */
     GlobalType &global();
 
@@ -63,26 +65,52 @@ class DistributedKde {
     /**
      * @brief Initialize a Kde engine with the arguments.
      */
-    void Init(mlpack::kde::KdeArguments<TableType> &arguments_in);
+    void Init(
+      boost::mpi::communicator &world_in,
+      mlpack::distributed_kde::DistributedKdeArguments <
+      DistributedTableType > &arguments_in);
 
     void Compute(
-      const mlpack::kde::KdeArguments<TableType> &arguments_in,
+      const mlpack::distributed_kde::DistributedKdeArguments <
+      DistributedTableType > &arguments_in,
       ResultType *result_out);
 
+    static void RandomGenerate(
+      boost::mpi::communicator &world, const std::string &file_name,
+      int num_dimensions, int num_points);
+
     static void ParseArguments(
+      boost::mpi::communicator &world,
       const std::vector<std::string> &args,
-      mlpack::kde::KdeArguments<TableType> *arguments_out);
+      mlpack::distributed_kde::DistributedKdeArguments <
+      DistributedTableType > *arguments_out);
 
     static void ParseArguments(
       int argc,
       char *argv[],
-      mlpack::kde::KdeArguments<TableType> *arguments_out);
+      mlpack::distributed_kde::DistributedKdeArguments <
+      DistributedTableType > *arguments_out);
 
   private:
 
+    boost::mpi::communicator &world_;
+
+    /** @brief The distributed query table.
+     */
     DistributedTableType *query_table_;
+
+    /** @brief The distributed reference table.
+     */
     DistributedTableType *reference_table_;
+
+    /** @brief The relevant global variables for the distributed KDE
+     *         computation.
+     */
     GlobalType global_;
+
+    /** @brief The flag that tells whether the computation is
+     *         monochromatic.
+     */
     bool is_monochromatic_;
 
   private:

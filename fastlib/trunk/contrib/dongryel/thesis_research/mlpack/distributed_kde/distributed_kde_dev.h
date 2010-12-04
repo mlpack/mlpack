@@ -8,46 +8,64 @@
 
 #include "core/gnp/dualtree_dfs_dev.h"
 #include "core/metric_kernels/lmetric.h"
+#include "core/table/memory_mapped_file.h"
 #include "mlpack/distributed_kde/distributed_kde.h"
 
+namespace core {
+namespace table {
+extern core::table::MemoryMappedFile *global_m_file_;
+};
+};
+
+namespace mlpack {
+namespace distributed_kde {
+
 template<typename TreeSpecType>
-TableType *mlpack::distributed_kde::DistributedKde<TableType>::query_table() {
+typename DistributedKde<TreeSpecType>::DistributedTableType *
+DistributedKde<TreeSpecType>::query_table() {
   return query_table_;
 }
 
 template<typename TreeSpecType>
-TableType *mlpack::distributed_kde::DistributedKde<TableType>::reference_table() {
+typename DistributedKde<TreeSpecType>::DistributedTableType *
+DistributedKde<TreeSpecType>::reference_table() {
   return reference_table_;
 }
 
 template<typename TreeSpecType>
-typename mlpack::distributed_kde::DistributedKde<TableType>::GlobalType &
-mlpack::distributed_kde::DistributedKde<TableType>::global() {
+typename DistributedKde<TreeSpecType>::GlobalType &
+DistributedKde<TreeSpecType>::global() {
   return global_;
 }
 
 template<typename TreeSpecType>
-bool mlpack::distributed_kde::DistributedKde<TableType>::is_monochromatic() const {
+bool DistributedKde<TreeSpecType>::is_monochromatic() const {
   return is_monochromatic_;
 }
 
 template<typename TreeSpecType>
-void mlpack::distributed_kde::DistributedKde<TableType>::Compute(
-  const mlpack::distributed_kde::DistributedKdeArguments<TableType> &arguments_in,
-  mlpack::distributed_kde::DistributedKdeResult< std::vector<double> > *result_out) {
+void DistributedKde<TreeSpecType>::Compute(
+  const mlpack::distributed_kde::DistributedKdeArguments <
+  DistributedTableType > &arguments_in,
+  mlpack::kde::KdeResult< std::vector<double> > *result_out) {
 
+  /*
   // Instantiate a dual-tree algorithm of the KDE.
-  core::gnp::DualtreeDfs<mlpack::distributed_kde::DistributedKde<TableType> > dualtree_dfs;
+  core::gnp::DualtreeDfs<mlpack::distributed_kde::DistributedKde<TreeSpecType> > dualtree_dfs;
   dualtree_dfs.Init(*this);
 
   // Compute the result.
   dualtree_dfs.Compute(* arguments_in.metric_, result_out);
+  */
 }
 
 template<typename TreeSpecType>
-void mlpack::distributed_kde::DistributedKde<TableType>::Init(
-  mlpack::distributed_kde::DistributedKdeArguments<TableType> &arguments_in) {
+void DistributedKde<TreeSpecType>::Init(
+  boost::mpi::communicator &world_in,
+  mlpack::distributed_kde::DistributedKdeArguments <
+  DistributedTableType > &arguments_in) {
 
+  world_ = world_in;
   reference_table_ = arguments_in.reference_table_;
   if(arguments_in.query_table_ == NULL) {
     is_monochromatic_ = true;
@@ -66,13 +84,13 @@ void mlpack::distributed_kde::DistributedKde<TableType>::Init(
 }
 
 template<typename TreeSpecType>
-void mlpack::distributed_kde::DistributedKde<TableType>::set_bandwidth(
+void DistributedKde<TreeSpecType>::set_bandwidth(
   double bandwidth_in) {
   global_.set_bandwidth(bandwidth_in);
 }
 
 template<typename TreeSpecType>
-bool mlpack::distributed_kde::DistributedKde<TableType>::ConstructBoostVariableMap_(
+bool DistributedKde<TreeSpecType>::ConstructBoostVariableMap_(
   const std::vector<std::string> &args,
   boost::program_options::variables_map *vm) {
 
@@ -88,6 +106,14 @@ bool mlpack::distributed_kde::DistributedKde<TableType>::ConstructBoostVariableM
     boost::program_options::value<std::string>(),
     "OPTIONAL file containing query positions.  If omitted, KDE computes "
     "the leave-one-out density at each reference point."
+  )(
+    "random_generate_n_attributes",
+    boost::program_options::value<int>(),
+    "Generate the datasets on the fly of the specified dimension."
+  )(
+    "random_generate_n_entries",
+    boost::program_options::value<int>(),
+    "Generate the datasets on the fly of the specified number of points."
   )(
     "densities_out",
     boost::program_options::value<std::string>()->default_value(
@@ -116,6 +142,10 @@ bool mlpack::distributed_kde::DistributedKde<TableType>::ConstructBoostVariableM
     "leaf_size",
     boost::program_options::value<int>()->default_value(20),
     "Maximum number of points at a leaf of the tree."
+  )(
+    "top_tree_sample_probability",
+    boost::program_options::value<double>()->default_value(0.2),
+    "The portion of points sampled on each MPI process for building the top tree."
   );
 
   boost::program_options::command_line_parser clp(args);
@@ -145,6 +175,28 @@ bool mlpack::distributed_kde::DistributedKde<TableType>::ConstructBoostVariableM
 
   // Validate the arguments. Only immediate dying is allowed here, the
   // parsing is done later.
+  if(vm->count("random_generate_n_attributes") > 0) {
+    if(vm->count("random_generate_n_entries") == 0) {
+      std::cerr << "Missing required --random_generate_n_entries.\n";
+      exit(0);
+    }
+    if((*vm)["random_generate_n_attributes"].as<int>() <= 0) {
+      std::cerr << "The --random_generate_n_attributes requires a positive "
+                "integer.\n";
+      exit(0);
+    }
+  }
+  if(vm->count("random_generate_n_entries") > 0) {
+    if(vm->count("random_generate_n_attributes") == 0) {
+      std::cerr << "Missing required --random_generate_n_attributes.\n";
+      exit(0);
+    }
+    if((*vm)["random_generate_n_entries"].as<int>() <= 0) {
+      std::cerr << "The --random_generate_n_entries requires a positive "
+                "integer.\n";
+      exit(0);
+    }
+  }
   if(vm->count("references_in") == 0) {
     std::cerr << "Missing required --references_in.\n";
     exit(0);
@@ -179,9 +231,31 @@ bool mlpack::distributed_kde::DistributedKde<TableType>::ConstructBoostVariableM
 }
 
 template<typename TreeSpecType>
-void mlpack::distributed_kde::DistributedKde<TableType>::ParseArguments(
+void DistributedKde<TreeSpecType>::RandomGenerate(
+  boost::mpi::communicator &world, const std::string &file_name,
+  int num_dimensions, int num_points) {
+
+  // Each process generates its own random data, dumps it to the file,
+  // and read its own file back into its own distributed table.
+  core::table::Table<TreeSpecType> random_dataset;
+  random_dataset.Init(num_dimensions, num_points);
+  for(int j = 0; j < num_points; j++) {
+    core::table::DensePoint point;
+    random_dataset.get(j, &point);
+    for(int i = 0; i < num_dimensions; i++) {
+      point[i] = core::math::Random(0.1, 1.0);
+    }
+  }
+  printf("Process %d generated %d points...\n", world.rank(), num_points);
+  random_dataset.Save(file_name);
+}
+
+template<typename TreeSpecType>
+void DistributedKde<TreeSpecType>::ParseArguments(
+  boost::mpi::communicator &world,
   const std::vector<std::string> &args,
-  mlpack::distributed_kde::DistributedKdeArguments<TableType> *arguments_out) {
+  mlpack::distributed_kde::DistributedKdeArguments <
+  DistributedTableType > *arguments_out) {
 
   // A L2 metric to index the table to use.
   arguments_out->metric_ = new core::metric_kernels::LMetric<2>();
@@ -200,27 +274,53 @@ void mlpack::distributed_kde::DistributedKde<TableType>::ParseArguments(
   std::cout << "Using the leaf size of " << arguments_out->leaf_size_ << "\n";
 
   // Parse the reference set and index the tree.
+  std::string reference_file_name = vm["references_in"].as<std::string>();
+  if(vm.count("random_generate_n_entries") > 0) {
+    std::stringstream reference_file_name_sstr;
+    reference_file_name_sstr << vm["references_in"].as<std::string>() <<
+                             world.rank();
+    reference_file_name = reference_file_name_sstr.str();
+    RandomGenerate(
+      world, reference_file_name, vm["random_generate_n_attributes"].as<int>(),
+      vm["random_generate_n_entries"].as<int>());
+  }
+
   std::cout << "Reading in the reference set: " <<
-            vm["references_in"].as<std::string>() << "\n";
-  arguments_out->reference_table_ = new TableType();
-  arguments_out->reference_table_->Init(vm["references_in"].as<std::string>());
+            reference_file_name << "\n";
+  arguments_out->reference_table_ =
+    core::table::global_m_file_->UniqueConstruct<DistributedTableType>();
+  arguments_out->reference_table_->Init(
+    reference_file_name, world);
   std::cout << "Finished reading in the reference set.\n";
   std::cout << "Building the reference tree.\n";
   arguments_out->reference_table_->IndexData(
-    *(arguments_out->metric_), arguments_out->leaf_size_);
+    *(arguments_out->metric_), world, arguments_out->leaf_size_,
+    arguments_out->top_tree_sample_probability_);
   std::cout << "Finished building the reference tree.\n";
 
   // Parse the query set and index the tree.
   if(vm.count("queries_in") > 0) {
+    std::string query_file_name = vm["queries_in"].as<std::string>();
+    if(vm.count("random_generate") > 0) {
+      std::stringstream query_file_name_sstr;
+      query_file_name_sstr << vm["queries_in"].as<std::string>() <<
+                           world.rank();
+      query_file_name = query_file_name_sstr.str();
+      RandomGenerate(
+        world, query_file_name, vm["random_generate_n_attributes"].as<int>(),
+        vm["random_generate_n_entries"].as<int>());
+    }
     std::cout << "Reading in the query set: " <<
-              vm["queries_in"].as<std::string>() << "\n";
+              query_file_name << "\n";
     arguments_out->query_table_ =
-      arguments_out->query_table_ = new TableType();
-    arguments_out->query_table_->Init(vm["queries_in"].as<std::string>());
+      arguments_out->query_table_ =
+        core::table::global_m_file_->UniqueConstruct<DistributedTableType>();
+    arguments_out->query_table_->Init(query_file_name, world);
     std::cout << "Finished reading in the query set.\n";
     std::cout << "Building the query tree.\n";
     arguments_out->query_table_->IndexData(
-      *(arguments_out->metric_), arguments_out->leaf_size_);
+      *(arguments_out->metric_), world, arguments_out->leaf_size_,
+      arguments_out->top_tree_sample_probability_);
     std::cout << "Finished building the query tree.\n";
   }
 
@@ -236,21 +336,31 @@ void mlpack::distributed_kde::DistributedKde<TableType>::ParseArguments(
   arguments_out->probability_ = vm["probability"].as<double>();
   std::cout << "Probability of " << arguments_out->probability_ << "\n";
 
+  // Parse the top tree sample probability.
+  arguments_out->top_tree_sample_probability_ =
+    vm["top_tree_sample_probability"].as<double>();
+  std::cout << "Sampling the number of points owned by each MPI process with "
+            "the probability of " << arguments_out->top_tree_sample_probability_
+            << "\n";
+
   // Parse the kernel type.
   arguments_out->kernel_ = vm["kernel"].as< std::string >();
   std::cout << "Using the kernel: " << arguments_out->kernel_ << "\n";
 }
 
 template<typename TreeSpecType>
-void mlpack::distributed_kde::DistributedKde<TableType>::ParseArguments(
+void DistributedKde<TreeSpecType>::ParseArguments(
   int argc,
   char *argv[],
-  mlpack::distributed_kde::DistributedKdeArguments<TableType> *arguments_out) {
+  mlpack::distributed_kde::DistributedKdeArguments <
+  DistributedTableType > *arguments_out) {
 
   // Convert C input to C++; skip executable name for Boost.
   std::vector<std::string> args(argv + 1, argv + argc);
 
   ParseArguments(args, arguments_out);
 }
+};
+};
 
 #endif
