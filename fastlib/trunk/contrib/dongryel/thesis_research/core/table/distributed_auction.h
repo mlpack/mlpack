@@ -48,43 +48,26 @@ class DistributedAuction {
       double threshold_in, int *best_item_index_out) const {
 
       int best_item_index = -1;
-      int second_best_item_index = -1;
 
       // Compute the differences and initialize.
-      double best_difference = weights[0] - prices[0];
-      double second_best_difference = weights[1] - prices[1];
-      if(best_difference > second_best_difference) {
-        best_item_index = 0;
-        second_best_item_index = 1;
-      }
-      else {
-        std::swap(best_difference, second_best_difference);
-        best_item_index = 1;
-        second_best_item_index = 0;
-      }
-      for(unsigned int i = 2; i < weights.size(); i++) {
+      double best_difference = -std::numeric_limits<double>::infinity();
+      double second_best_difference = -std::numeric_limits<double>::infinity();
+      for(unsigned int i = 0; i < weights.size(); i++) {
 
         // If larger than the current maximum, then the second maximum
         // changes as well.
         double current_difference = weights[i] - prices[i];
-        if(current_difference >= best_difference) {
-          second_best_difference = best_difference;
-          second_best_item_index = best_item_index;
-          best_difference = current_difference;
+        if(current_difference > best_difference) {
           best_item_index = i;
+          second_best_difference = best_difference;
+          best_difference = current_difference;
         }
-        else if(current_difference >= second_best_difference) {
+        else if(current_difference > second_best_difference) {
           second_best_difference = current_difference;
-          second_best_item_index = i;
         }
       }
-      if(best_difference == second_best_difference) {
-        int max_index = std::max(best_item_index, second_best_item_index);
-        int min_index = std::min(best_item_index, second_best_item_index);
-        best_item_index = min_index;
-        second_best_item_index = max_index;
-      }
-      double bid = best_difference - second_best_difference + threshold_in;
+      double bid = prices[best_item_index] +
+                   best_difference - second_best_difference + threshold_in;
       *best_item_index_out = best_item_index;
 
       return bid;
@@ -162,7 +145,7 @@ class DistributedAuction {
               global_assignments[i].second = best_bid_per_item[i].first;
 
               // Update the price.
-              prices[i] += best_bid_per_item[i].second;
+              prices[i] = best_bid_per_item[i].second;
             }
           }
         }
