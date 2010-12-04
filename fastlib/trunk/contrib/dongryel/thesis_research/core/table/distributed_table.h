@@ -170,7 +170,7 @@ class DistributedTable: public boost::noncopyable {
         core::table::DistributedAuction auction;
         return auction.Assign(
                  table_outbox_group_comm, num_points_assigned_to_leaf_nodes,
-                 std::numeric_limits<double>::epsilon());
+                 1.0 / static_cast<double>(table_outbox_group_comm.size()));
       }
       else {
         return 0;

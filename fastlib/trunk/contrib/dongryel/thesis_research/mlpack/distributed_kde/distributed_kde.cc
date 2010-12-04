@@ -103,7 +103,7 @@ int main(int argc, char *argv[]) {
   distributed_table->IndexData(l2_metric, world, 3, 0.5);
 
   // Enter the main computation loop.
-  Compute(distributed_table);
+  // Compute(distributed_table);
 
   // Free the intercommunicators.
   world.barrier();
