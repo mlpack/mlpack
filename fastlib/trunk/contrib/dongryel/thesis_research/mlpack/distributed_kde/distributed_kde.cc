@@ -12,6 +12,7 @@
 #include "core/tree/gen_kdtree.h"
 #include "core/tree/gen_metric_tree.h"
 #include "mlpack/kde/kde_dualtree.h"
+#include "mlpack/distributed_kde/distributed_kde_dev.h"
 
 typedef core::tree::GenMetricTree<core::tree::AbstractStatistic> TreeSpecType;
 typedef core::tree::GeneralBinarySpaceTree < TreeSpecType > TreeType;
@@ -22,11 +23,13 @@ void Compute(
 
   // Each process does the work owned by itself.
 
+
   // This is the exchange loop.
   do {
 
     // Each process grabs the necessary work. This is the exchange
     // phase.
+
 
     // Each process computes.
 
@@ -87,7 +90,7 @@ int main(int argc, char *argv[]) {
   // Initialize the memory allocator.
   core::table::global_m_file_ = new core::table::MemoryMappedFile();
   core::table::global_m_file_->Init(
-    std::string("tmp_file"), world.rank(), world.rank(), 50000000);
+    std::string("tmp_file"), world.rank(), world.rank(), 5000000);
 
   // Seed the random number.
   srand(time(NULL) + world.rank());
