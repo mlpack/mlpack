@@ -8,43 +8,45 @@
 
 #include "core/gnp/dualtree_dfs_dev.h"
 #include "core/metric_kernels/lmetric.h"
-#include "distributed_kde.h"
+#include "mlpack/distributed_kde/distributed_kde.h"
 
-template<typename TableType>
-TableType *mlpack::DistributedKde<TableType>::query_table() {
+template<typename TreeSpecType>
+TableType *mlpack::distributed_kde::DistributedKde<TableType>::query_table() {
   return query_table_;
 }
 
-template<typename TableType>
-TableType *mlpack::DistributedKde<TableType>::reference_table() {
+template<typename TreeSpecType>
+TableType *mlpack::distributed_kde::DistributedKde<TableType>::reference_table() {
   return reference_table_;
 }
 
-template<typename TableType>
-typename mlpack::DistributedKde<TableType>::GlobalType &mlpack::DistributedKde<TableType>::global() {
+template<typename TreeSpecType>
+typename mlpack::distributed_kde::DistributedKde<TableType>::GlobalType &
+mlpack::distributed_kde::DistributedKde<TableType>::global() {
   return global_;
 }
 
-template<typename TableType>
-bool mlpack::DistributedKde<TableType>::is_monochromatic() const {
+template<typename TreeSpecType>
+bool mlpack::distributed_kde::DistributedKde<TableType>::is_monochromatic() const {
   return is_monochromatic_;
 }
 
-template<typename TableType>
-void mlpack::DistributedKde<TableType>::Compute(
-  const mlpack::DistributedKdeArguments<TableType> &arguments_in,
-  mlpack::DistributedKdeResult< std::vector<double> > *result_out) {
+template<typename TreeSpecType>
+void mlpack::distributed_kde::DistributedKde<TableType>::Compute(
+  const mlpack::distributed_kde::DistributedKdeArguments<TableType> &arguments_in,
+  mlpack::distributed_kde::DistributedKdeResult< std::vector<double> > *result_out) {
 
   // Instantiate a dual-tree algorithm of the KDE.
-  core::gnp::DualtreeDfs<mlpack::DistributedKde<TableType> > dualtree_dfs;
+  core::gnp::DualtreeDfs<mlpack::distributed_kde::DistributedKde<TableType> > dualtree_dfs;
   dualtree_dfs.Init(*this);
 
   // Compute the result.
   dualtree_dfs.Compute(* arguments_in.metric_, result_out);
 }
 
-template<typename TableType>
-void mlpack::DistributedKde<TableType>::Init(mlpack::DistributedKdeArguments<TableType> &arguments_in) {
+template<typename TreeSpecType>
+void mlpack::distributed_kde::DistributedKde<TableType>::Init(
+  mlpack::distributed_kde::DistributedKdeArguments<TableType> &arguments_in) {
 
   reference_table_ = arguments_in.reference_table_;
   if(arguments_in.query_table_ == NULL) {
@@ -63,13 +65,14 @@ void mlpack::DistributedKde<TableType>::Init(mlpack::DistributedKdeArguments<Tab
     arguments_in.kernel_);
 }
 
-template<typename TableType>
-void mlpack::DistributedKde<TableType>::set_bandwidth(double bandwidth_in) {
+template<typename TreeSpecType>
+void mlpack::distributed_kde::DistributedKde<TableType>::set_bandwidth(
+  double bandwidth_in) {
   global_.set_bandwidth(bandwidth_in);
 }
 
-template<typename TableType>
-bool mlpack::DistributedKde<TableType>::ConstructBoostVariableMap_(
+template<typename TreeSpecType>
+bool mlpack::distributed_kde::DistributedKde<TableType>::ConstructBoostVariableMap_(
   const std::vector<std::string> &args,
   boost::program_options::variables_map *vm) {
 
@@ -175,10 +178,10 @@ bool mlpack::DistributedKde<TableType>::ConstructBoostVariableMap_(
   return false;
 }
 
-template<typename TableType>
-void mlpack::DistributedKde<TableType>::ParseArguments(
+template<typename TreeSpecType>
+void mlpack::distributed_kde::DistributedKde<TableType>::ParseArguments(
   const std::vector<std::string> &args,
-  mlpack::DistributedKdeArguments<TableType> *arguments_out) {
+  mlpack::distributed_kde::DistributedKdeArguments<TableType> *arguments_out) {
 
   // A L2 metric to index the table to use.
   arguments_out->metric_ = new core::metric_kernels::LMetric<2>();
@@ -238,11 +241,11 @@ void mlpack::DistributedKde<TableType>::ParseArguments(
   std::cout << "Using the kernel: " << arguments_out->kernel_ << "\n";
 }
 
-template<typename TableType>
-void mlpack::DistributedKde<TableType>::ParseArguments(
+template<typename TreeSpecType>
+void mlpack::distributed_kde::DistributedKde<TableType>::ParseArguments(
   int argc,
   char *argv[],
-  mlpack::DistributedKdeArguments<TableType> *arguments_out) {
+  mlpack::distributed_kde::DistributedKdeArguments<TableType> *arguments_out) {
 
   // Convert C input to C++; skip executable name for Boost.
   std::vector<std::string> args(argv + 1, argv + argc);

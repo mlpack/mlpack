@@ -6,31 +6,31 @@
 #ifndef MLPACK_DISTRIBUTED_KDE_DISTRIBUTED_KDE_H
 #define MLPACK_DISTRIBUTED_KDE_DISTRIBUTED_KDE_H
 
-#include <armadillo>
-#include "boost/program_options.hpp"
-
-#include "core/table/table.h"
-#include "kde_dualtree.h"
-#include "kde_arguments.h"
+#include <boost/program_options.hpp>
+#include "core/table/distributed_table.h"
+#include "mlpack/kde/kde_dualtree.h"
+#include "mlpack/kde/kde_arguments.h"
 
 namespace mlpack {
-namespace kde {
-template<typename IncomingTableType>
+namespace distributed_kde {
+template<typename TreeSpecType>
 class DistributedKde {
   public:
-    typedef IncomingTableType TableType;
+    typedef core::table::Table<TreeSpecType> TableType;
 
-    typedef ml::KdePostponed PostponedType;
+    typedef core::table::DistributedTable<TreeSpecType> DistributedTableType;
 
-    typedef ml::KdeGlobal<TableType> GlobalType;
+    typedef mlpack::kde::::KdePostponed PostponedType;
 
-    typedef ml::KdeResult< std::vector<double> > ResultType;
+    typedef mlpack::kde::KdeGlobal<TableType> GlobalType;
 
-    typedef ml::KdeDelta DeltaType;
+    typedef mlpack::kde::KdeResult< std::vector<double> > ResultType;
 
-    typedef ml::KdeSummary SummaryType;
+    typedef mlpack::kde::KdeDelta DeltaType;
 
-    typedef ml::KdeStatistic StatisticType;
+    typedef mlpack::kde::KdeSummary SummaryType;
+
+    typedef mlpack::kde::KdeStatistic StatisticType;
 
   public:
 
@@ -42,12 +42,12 @@ class DistributedKde {
     /**
      * @brief returns a pointer to the query table
      */
-    TableType *query_table();
+    core::table::DistributedTable<TreeSpecType> *query_table();
 
     /**
      * @brief returns a pointer to the reference table
      */
-    TableType *reference_table();
+    core::table::DistributedTable<TreeSpecType> *reference_table();
 
     /**
      * @brief returns a GlobalType structure that has the normalization statistics
@@ -63,25 +63,25 @@ class DistributedKde {
     /**
      * @brief Initialize a Kde engine with the arguments.
      */
-    void Init(ml::KdeArguments<TableType> &arguments_in);
+    void Init(mlpack::kde::KdeArguments<TableType> &arguments_in);
 
     void Compute(
-      const ml::KdeArguments<TableType> &arguments_in,
+      const mlpack::kde::KdeArguments<TableType> &arguments_in,
       ResultType *result_out);
 
     static void ParseArguments(
       const std::vector<std::string> &args,
-      ml::KdeArguments<TableType> *arguments_out);
+      mlpack::kde::KdeArguments<TableType> *arguments_out);
 
     static void ParseArguments(
       int argc,
       char *argv[],
-      ml::KdeArguments<TableType> *arguments_out);
+      mlpack::kde::KdeArguments<TableType> *arguments_out);
 
   private:
 
-    TableType *query_table_;
-    TableType *reference_table_;
+    DistributedTableType *query_table_;
+    DistributedTableType *reference_table_;
     GlobalType global_;
     bool is_monochromatic_;
 
