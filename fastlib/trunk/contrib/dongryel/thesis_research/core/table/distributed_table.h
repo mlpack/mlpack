@@ -6,8 +6,6 @@
 #ifndef CORE_TABLE_DISTRIBUTED_TABLE_H
 #define CORE_TABLE_DISTRIBUTED_TABLE_H
 
-#include <armadillo>
-#include <new>
 #include <boost/mpi.hpp>
 #include <boost/mpi/collectives.hpp>
 #include <boost/serialization/string.hpp>
