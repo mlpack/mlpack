@@ -32,7 +32,8 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::AllReduce_() {
   // be an outer loop over the main all-reduce. This solution also is
   // not topology-aware, so it will be changed later to fit the
   // appropriate network topology.
-  int num_rounds = log(world_->size());
+  int num_rounds = log2(world_->size());
+  printf("Number of rounds: %d\n", num_rounds);
   for(int r = 1; r <= num_rounds; r++) {
     int stride = 1 << r;
     int num_tables_in_action = stride >> 1;
@@ -40,6 +41,7 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::AllReduce_() {
     // Exchange with the appropriate process.
     int group_offset = world_->rank() % stride;
     int group_leader = world_->rank() - group_offset;
+    int group_end = group_leader + stride - 1;
     int exchange_process_id = group_leader + stride - group_offset - 1;
 
     // Send the process's own collected tables.
@@ -47,15 +49,34 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::AllReduce_() {
     std::vector<boost::mpi::request> receive_requests;
     send_requests.resize(num_tables_in_action);
     receive_requests.resize(num_tables_in_action);
+
+    printf("Round: %d, num_tables: %d, group leader: %d, group end: %d\n",
+           r, num_tables_in_action, group_leader, group_end);
+
     for(int i = 0; i < num_tables_in_action; i++) {
-      remote_tables[group_leader + i + num_tables_in_action] =
+      int send_id;
+      int receive_id;
+      if(world_->rank() - group_leader < group_end - world_->rank()) {
+        send_id = group_leader + i;
+        receive_id = group_leader + i + num_tables_in_action;
+      }
+      else {
+        send_id = group_leader + i + num_tables_in_action;
+        receive_id = group_leader + i;
+      }
+      remote_tables[receive_id] =
         core::table::global_m_file_->Construct<TableType>();
+      printf("Process %d is sending Table %d to Process %d\n",
+             world_->rank(), send_id, exchange_process_id);
+      printf("Process %d is receiving Table %d from Process %d\n",
+             world_->rank(), receive_id,
+             exchange_process_id);
       send_requests[i] = world_->isend(
-                           exchange_process_id, group_leader + i,
-                           *(remote_tables[group_leader + i]));
-      receive_requests[i] = world_->irecv(
-                              exchange_process_id, group_leader + i + num_tables_in_action,
-                              *(remote_tables[group_leader + i + num_tables_in_action]));
+                           exchange_process_id, send_id,
+                           *(remote_tables[send_id]));
+      receive_requests[i] =
+        world_->irecv(
+          exchange_process_id, receive_id, *(remote_tables[receive_id]));
     }
     boost::mpi::wait_all(send_requests.begin(), send_requests.end());
     boost::mpi::wait_all(receive_requests.begin(), receive_requests.end());

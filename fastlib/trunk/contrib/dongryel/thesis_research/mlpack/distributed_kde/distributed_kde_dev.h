@@ -47,6 +47,9 @@ void DistributedKde<DistributedTableType>::Compute(
   DistributedTableType > &arguments_in,
   mlpack::kde::KdeResult< std::vector<double> > *result_out) {
 
+  // Barrier so that every process is here.
+  world_->barrier();
+
   // Instantiate a dual-tree algorithm of the KDE.
   core::gnp::DistributedDualtreeDfs <
   mlpack::distributed_kde::DistributedKde<DistributedTableType> >
