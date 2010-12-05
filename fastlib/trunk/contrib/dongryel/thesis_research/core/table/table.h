@@ -16,48 +16,12 @@
 #include "core/tree/statistic.h"
 #include "core/table/dense_matrix.h"
 #include "core/table/dense_point.h"
+#include "core/table/index_util.h"
 
 namespace core {
 namespace table {
 
 extern MemoryMappedFile *global_m_file_;
-
-template<typename IndexType>
-class IndexUtil {
-  public:
-    static int Extract(IndexType *array, int position);
-
-    template<typename Archive>
-    static void Serialize(Archive &ar, IndexType *array, int position);
-};
-
-template<>
-class IndexUtil< int > {
-  public:
-    static int Extract(int *array, int position) {
-      return array[position];
-    }
-
-    template<typename Archive>
-    static void Serialize(Archive &ar, int *array, int position) {
-      ar & array[position];
-    }
-};
-
-template<>
-class IndexUtil< std::pair<int, int> > {
-  public:
-    static int Extract(std::pair<int, int> *array, int position) {
-      return array[position].second;
-    }
-
-    template<typename Archive>
-    static void Serialize(
-      Archive &ar, std::pair<int, int> *array, int position) {
-      ar & array[position].first;
-      ar & array[position].second;
-    }
-};
 
 template < typename TreeSpecType, typename IndexType = int >
 class Table: public boost::noncopyable {
@@ -267,6 +231,10 @@ class Table: public boost::noncopyable {
 
     IndexType *old_from_new() {
       return old_from_new_.get();
+    }
+
+    IndexType *new_from_old() {
+      return new_from_old_.get();
     }
 
     core::table::DenseMatrix &data() {
