@@ -14,9 +14,12 @@
 
 namespace mlpack {
 namespace distributed_kde {
-template<typename DistributedTableType>
+template<typename IncomingDistributedTableType>
 class DistributedKde {
   public:
+
+    typedef IncomingDistributedTableType DistributedTableType;
+
     typedef typename DistributedTableType::TableType TableType;
 
     typedef mlpack::kde::KdePostponed PostponedType;

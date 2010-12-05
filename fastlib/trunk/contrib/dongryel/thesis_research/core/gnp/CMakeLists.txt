@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 
 set(SOURCES
+  distributed_dualtree_dfs_dev.h
+  distributed_dualtree_dfs.h
   dualtree_dfs_dev.h
   dualtree_dfs.h
   dualtree_dfs_iterator_dev.h

@@ -6,7 +6,7 @@
 #ifndef MLPACK_DISTRIBUTED_KDE_DISTRIBUTED_KDE_DEV_H
 #define MLPACK_DISTRIBUTED_KDE_DISTRIBUTED_KDE_DEV_H
 
-#include "core/gnp/dualtree_dfs_dev.h"
+#include "core/gnp/distributed_dualtree_dfs_dev.h"
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/memory_mapped_file.h"
 #include "mlpack/distributed_kde/distributed_kde.h"
@@ -47,14 +47,14 @@ void DistributedKde<DistributedTableType>::Compute(
   DistributedTableType > &arguments_in,
   mlpack::kde::KdeResult< std::vector<double> > *result_out) {
 
-  /*
   // Instantiate a dual-tree algorithm of the KDE.
-  core::gnp::DualtreeDfs<mlpack::distributed_kde::DistributedKde<DistributedTableType> > dualtree_dfs;
-  dualtree_dfs.Init(*this);
+  core::gnp::DistributedDualtreeDfs <
+  mlpack::distributed_kde::DistributedKde<DistributedTableType> >
+  distributed_dualtree_dfs;
+  distributed_dualtree_dfs.Init(world_, *this);
 
   // Compute the result.
-  dualtree_dfs.Compute(* arguments_in.metric_, result_out);
-  */
+  distributed_dualtree_dfs.Compute(* arguments_in.metric_, result_out);
 }
 
 template<typename DistributedTableType>
