@@ -8,7 +8,6 @@
 #ifndef CORE_TABLE_DENSE_POINT_H
 #define CORE_TABLE_DENSE_POINT_H
 
-#include <armadillo>
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/serialization/serialization.hpp>
 #include "memory_mapped_file.h"
