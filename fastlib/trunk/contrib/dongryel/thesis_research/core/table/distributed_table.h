@@ -68,21 +68,21 @@ class DistributedTable: public boost::noncopyable {
           table_ = it_in.table();
         }
 
-        TreeIterator(const TableType &table, const TreeType *node) {
+        TreeIterator(const DistributedTableType &table, const TreeType *node) {
           table_ = &table;
           begin_ = node->begin();
           end_ = node->end();
           current_index_ = begin_ - 1;
         }
 
-        TreeIterator(const TableType &table, int begin, int count) {
+        TreeIterator(const DistributedTableType &table, int begin, int count) {
           table_ = &table;
           begin_ = begin;
           end_ = begin + count;
           current_index_ = begin_ - 1;
         }
 
-        const TableType *table() const {
+        const DistributedTableType *table() const {
           return table_;
         }
 
@@ -417,6 +417,10 @@ class DistributedTable: public boost::noncopyable {
         }
         global_table_ = NULL;
       }
+    }
+
+    TableType *local_table() {
+      return owned_table_.get();
     }
 
     TreeType *get_tree() {

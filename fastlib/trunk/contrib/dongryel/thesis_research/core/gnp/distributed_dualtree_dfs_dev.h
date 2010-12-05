@@ -6,8 +6,74 @@
 #ifndef CORE_GNP_DISTRIBUTED_DUALTREE_DFS_DEV_H
 #define CORE_GNP_DISTRIBUTED_DUALTREE_DFS_DEV_H
 
-#include "distributed_dualtree_dfs.h"
+#include "core/gnp/distributed_dualtree_dfs.h"
+#include "core/gnp/dualtree_dfs.h"
 #include "core/table/table.h"
+#include "core/table/memory_mapped_file.h"
+
+namespace core {
+namespace table {
+extern core::table::MemoryMappedFile *global_m_file_;
+};
+};
+
+template<typename ProblemType>
+void core::gnp::DistributedDualtreeDfs<ProblemType>::AllReduce_() {
+
+  // Set the local table.
+  std::vector< TableType * > remote_tables(world_->size(), NULL);
+  remote_tables[ world_->rank()] = reference_table_->local_table();
+
+  // Pair up processes, and exchange. Right now, the entire local
+  // reference tree is exchanged between pairs of processes, but this
+  // could be improved later. Also assume that the number of processes
+  // is a power of two for the moment. This will be changed later to allow
+  // transfer of data at a finer granularity, which means there will
+  // be an outer loop over the main all-reduce. This solution also is
+  // not topology-aware, so it will be changed later to fit the
+  // appropriate network topology.
+  int num_rounds = log(world_->size());
+  for(int r = 1; r <= num_rounds; r++) {
+    int stride = 1 << r;
+    int num_tables_in_action = stride >> 1;
+
+    // Exchange with the appropriate process.
+    int group_offset = world_->rank() % stride;
+    int group_leader = world_->rank() - group_offset;
+    int exchange_process_id = group_leader + stride - group_offset - 1;
+
+    // Send the process's own collected tables.
+    std::vector<boost::mpi::request> send_requests;
+    std::vector<boost::mpi::request> receive_requests;
+    send_requests.resize(num_tables_in_action);
+    receive_requests.resize(num_tables_in_action);
+    for(int i = 0; i < num_tables_in_action; i++) {
+      remote_tables[group_leader + i + num_tables_in_action] =
+        core::table::global_m_file_->Construct<TableType>();
+      send_requests[i] = world_->isend(
+                           exchange_process_id, group_leader + i,
+                           *(remote_tables[group_leader + i]));
+      receive_requests[i] = world_->irecv(
+                              exchange_process_id, group_leader + i + num_tables_in_action,
+                              *(remote_tables[group_leader + i + num_tables_in_action]));
+    }
+    boost::mpi::wait_all(send_requests.begin(), send_requests.end());
+    boost::mpi::wait_all(receive_requests.begin(), receive_requests.end());
+
+    // Each process calls the independent sets of serial dual-tree dfs
+    // algorithms. Further parallelism can be exploited here.
+
+
+  } // End of the all-reduce loop.
+
+  // Destroy all tables after all computations are done, except for
+  // the process's own table.
+  for(int i = 0; i < static_cast<int>(remote_tables.size()); i++) {
+    if(i != world_->rank()) {
+      core::table::global_m_file_->DestroyPtr(remote_tables[i]);
+    }
+  }
+}
 
 template<typename ProblemType>
 ProblemType *core::gnp::DistributedDualtreeDfs<ProblemType>::problem() {
@@ -54,11 +120,22 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::Compute(
   // Allocate space for storing the final results.
   query_results->Init(query_table_->n_entries());
 
+  // Preprocess the global query tree and the local query tree owned
+  // by each process.
   PreProcess_(query_table_->get_tree());
+  PreProcess_(query_table_->local_table()->get_tree());
+
+  // Preprocess the global reference tree, and the local reference
+  // tree owned by each process. This part needs to be fixed so that
+  // it does a true bottom-up refinement using an MPI-gather.
   PreProcessReferenceTree_(reference_table_->get_tree());
+  PreProcessReferenceTree_(reference_table_->local_table()->get_tree());
 
-  // Figure out each process's work.
-
+  // Figure out each process's work using the global tree. This is
+  // done using a naive approach where the global goal is to complete
+  // a 2D matrix workspace. This is currently doing an all-reduce type
+  // of exchange.
+  AllReduce_();
 
   // Postprocess.
   // PostProcess_(metric, query_table_->get_tree(), query_results);
@@ -76,25 +153,22 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::ResetStatisticRecursion_(
 }
 
 template<typename ProblemType>
+template<typename TemplateTreeType>
 void core::gnp::DistributedDualtreeDfs<ProblemType>::PreProcessReferenceTree_(
-  typename ProblemType::DistributedTableType::TreeType *rnode) {
+  TemplateTreeType *rnode) {
 
-  /*
-  typename ProblemType::StatisticType &rnode_stat =
-    reference_table_->get_node_stat(rnode);
-  typename ProblemType::TableType::TreeIterator rnode_it =
+  typename ProblemType::StatisticType &rnode_stat = rnode->stat();
+  typename ProblemType::DistributedTableType::TreeIterator rnode_it =
     reference_table_->get_node_iterator(rnode);
 
-  if(reference_table_->node_is_leaf(rnode)) {
+  if(rnode->is_leaf()) {
     rnode_stat.Init(rnode_it);
   }
   else {
 
     // Get the left and the right children.
-    typename ProblemType::DistributedTableType::TreeType *rnode_left_child =
-      reference_table_->get_node_left_child(rnode);
-    typename ProblemType::DistributedTableType::TreeType *rnode_right_child =
-      reference_table_->get_node_right_child(rnode);
+    TemplateTreeType *rnode_left_child = rnode->left();
+    TemplateTreeType *rnode_right_child = rnode->right();
 
     // Recurse to the left and the right.
     PreProcessReferenceTree_(rnode_left_child);
@@ -102,18 +176,18 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::PreProcessReferenceTree_(
 
     // Build the node stat by combining those owned by the children.
     typename ProblemType::StatisticType &rnode_left_child_stat =
-      reference_table_->get_node_stat(rnode_left_child) ;
+      rnode_left_child->stat();
     typename ProblemType::StatisticType &rnode_right_child_stat =
-      reference_table_->get_node_stat(rnode_right_child) ;
+      rnode_right_child->stat();
     rnode_stat.Init(
       rnode_it, rnode_left_child_stat, rnode_right_child_stat);
   }
-  */
 }
 
 template<typename ProblemType>
+template<typename TemplateTreeType>
 void core::gnp::DistributedDualtreeDfs<ProblemType>::PreProcess_(
-  typename ProblemType::DistributedTableType::TreeType *qnode) {
+  TemplateTreeType *qnode) {
 
   typename ProblemType::StatisticType &qnode_stat = qnode->stat();
   qnode_stat.SetZero();

@@ -9,12 +9,14 @@
 #include "dense_point.h"
 #include "memory_mapped_file.h"
 #include <boost/interprocess/offset_ptr.hpp>
+#include <boost/serialization/serialization.hpp>
 
 namespace core {
 namespace table {
 class DenseMatrix {
 
   private:
+    friend class boost::serialization::access;
 
     boost::interprocess::offset_ptr<double> ptr_;
 
@@ -23,6 +25,30 @@ class DenseMatrix {
     int n_cols_;
 
   public:
+
+    template<class Archive>
+    void save(Archive &ar, const unsigned int version) const {
+      ar & n_rows_;
+      ar & n_cols_;
+      int num_elements = n_rows_ * n_cols_;
+      for(int i = 0; i < num_elements; i++) {
+        ar & ptr_.get()[i];
+      }
+    }
+
+    template<class Archive>
+    void load(Archive &ar, const unsigned int version) {
+      ar & n_rows_;
+      ar & n_cols_;
+      int num_elements = n_rows_ * n_cols_;
+      ptr_ = (core::table::global_m_file_) ?
+             core::table::global_m_file_->ConstructArray<double>(num_elements) :
+             new double[num_elements];
+      for(int i = 0; i < num_elements; i++) {
+        ar & ptr_[i];
+      }
+    }
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
 
     void Print() const {
       for(int i = 0; i < n_rows_; i++) {

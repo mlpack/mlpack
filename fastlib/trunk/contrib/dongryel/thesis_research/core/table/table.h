@@ -168,7 +168,8 @@ class Table: public boost::noncopyable {
       int tree_depth = FindTreeDepth_(tree_.get());
       std::vector< TreeType *> tree_nodes((1 << tree_depth) - 1,  NULL);
       FillTreeNodes_(tree_.get(), 0, tree_nodes, &num_nodes);
-      ar & tree_nodes.size();
+      int max_size = tree_nodes.size();
+      ar & max_size;
       ar & num_nodes;
       for(unsigned int i = 0; i < tree_nodes.size(); i++) {
         if(tree_nodes[i]) {
@@ -437,7 +438,7 @@ class Table: public boost::noncopyable {
 
     void FillTreeNodes_(
       TreeType *node, int node_index, std::vector<TreeType *> &sorted_nodes,
-      int *num_nodes) {
+      int *num_nodes) const {
 
       if(node != NULL) {
         (*num_nodes)++;
@@ -446,13 +447,13 @@ class Table: public boost::noncopyable {
 
       if(node->is_leaf() == false) {
         FillTreeNodes_(
-          node->left(), 2 * node_index + 1, sorted_nodes);
+          node->left(), 2 * node_index + 1, sorted_nodes, num_nodes);
         FillTreeNodes_(
-          node->right(), 2 * node_index + 2, sorted_nodes);
+          node->right(), 2 * node_index + 2, sorted_nodes, num_nodes);
       }
     }
 
-    int FindTreeDepth_(TreeType *node) {
+    int FindTreeDepth_(TreeType *node) const {
       if(node == NULL) {
         return 0;
       }
