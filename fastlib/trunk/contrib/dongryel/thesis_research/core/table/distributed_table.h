@@ -312,14 +312,6 @@ class DistributedTable: public boost::noncopyable {
       }
     }
 
-    const typename TreeType::BoundType &get_node_bound(TreeType * node) const {
-      return node->bound();
-    }
-
-    typename TreeType::BoundType &get_node_bound(TreeType * node) {
-      return node->bound();
-    }
-
     TreeType *get_node_left_child(TreeType * node) {
       return node->left();
     }
@@ -334,10 +326,6 @@ class DistributedTable: public boost::noncopyable {
 
     typename TreeSpecType::StatisticType &get_node_stat(TreeType * node) {
       return node->stat();
-    }
-
-    int get_node_count(TreeType * node) const {
-      return node->count();
     }
 
     TreeType *get_tree() {
@@ -358,7 +346,7 @@ class DistributedTable: public boost::noncopyable {
       return local_n_entries_[rank_in];
     }
 
-    int local_n_entries() const {
+    int n_entries() const {
       return owned_table_->n_entries();
     }
 
@@ -458,7 +446,7 @@ class DistributedTable: public boost::noncopyable {
       std::vector<TreeType *> top_leaf_nodes;
       if(table_outbox_group_comm.rank() == 0) {
         sampled_table.IndexData(
-          metric_in, leaf_size, table_outbox_group_comm.size());
+          metric_in, 1, table_outbox_group_comm.size());
 
         // Broadcast the leaf nodes.
         sampled_table.get_leaf_nodes(
