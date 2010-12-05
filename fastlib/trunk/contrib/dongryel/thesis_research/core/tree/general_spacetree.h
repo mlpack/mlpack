@@ -8,7 +8,7 @@
 #ifndef CORE_TREE_GENERAL_SPACETREE_H
 #define CORE_TREE_GENERAL_SPACETREE_H
 
-#include <armadillo>
+#include <boost/serialization/split_free.hpp>
 #include <boost/serialization/string.hpp>
 #include <deque>
 #include "core/table/dense_matrix.h"

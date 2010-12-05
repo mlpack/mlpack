@@ -6,6 +6,7 @@
 #ifndef CORE_TABLE_TABLE_H
 #define CORE_TABLE_TABLE_H
 
+#include <boost/serialization/serialization.hpp>
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/utility.hpp>
 #include "core/csv_parser/dataset_reader.h"
@@ -22,24 +23,39 @@ namespace table {
 extern MemoryMappedFile *global_m_file_;
 
 template<typename IndexType>
-class IndexExtractor {
+class IndexUtil {
   public:
-    static int Extract(int *array, int position);
+    static int Extract(IndexType *array, int position);
+
+    template<typename Archive>
+    static void Serialize(Archive &ar, IndexType *array, int position);
 };
 
 template<>
-class IndexExtractor< int > {
+class IndexUtil< int > {
   public:
     static int Extract(int *array, int position) {
       return array[position];
     }
+
+    template<typename Archive>
+    static void Serialize(Archive &ar, int *array, int position) {
+      ar & array[position];
+    }
 };
 
 template<>
-class IndexExtractor< std::pair<int, int> > {
+class IndexUtil< std::pair<int, int> > {
   public:
     static int Extract(std::pair<int, int> *array, int position) {
       return array[position].second;
+    }
+
+    template<typename Archive>
+    static void Serialize(
+      Archive &ar, std::pair<int, int> *array, int position) {
+      ar & array[position].first;
+      ar & array[position].second;
     }
 };
 
@@ -52,6 +68,19 @@ class Table: public boost::noncopyable {
     typedef core::table::Table<TreeSpecType> TableType;
 
     typedef typename TreeSpecType::StatisticType StatisticType;
+
+  private:
+    friend class boost::serialization::access;
+
+    core::table::DenseMatrix data_;
+
+    int rank_;
+
+    boost::interprocess::offset_ptr<IndexType> old_from_new_;
+
+    boost::interprocess::offset_ptr<IndexType> new_from_old_;
+
+    boost::interprocess::offset_ptr<TreeType> tree_;
 
   public:
 
@@ -151,18 +180,81 @@ class Table: public boost::noncopyable {
         }
     };
 
-  private:
-    core::table::DenseMatrix data_;
-
-    int rank_;
-
-    boost::interprocess::offset_ptr<IndexType> old_from_new_;
-
-    boost::interprocess::offset_ptr<IndexType> new_from_old_;
-
-    boost::interprocess::offset_ptr<TreeType> tree_;
-
   public:
+
+    template<class Archive>
+    void save(Archive &ar, const unsigned int version) const {
+
+      // Save the matrix and the rank.
+      ar & data_;
+      ar & rank_;
+
+      // Save the old_from_new_mapping manually.
+      for(int i = 0; i < data_.n_cols(); i++) {
+        core::table::IndexUtil<IndexType>::Serialize(
+          ar, old_from_new_.get(), i);
+      }
+      for(int i = 0; i < data_.n_cols(); i++) {
+        core::table::IndexUtil<IndexType>::Serialize(
+          ar, new_from_old_.get(), i);
+      }
+
+      // Save the tree.
+      int num_nodes;
+      int tree_depth = FindTreeDepth_(tree_.get());
+      std::vector< TreeType *> tree_nodes((1 << tree_depth) - 1,  NULL);
+      FillTreeNodes_(tree_.get(), 0, tree_nodes, &num_nodes);
+      ar & tree_nodes.size();
+      ar & num_nodes;
+      for(unsigned int i = 0; i < tree_nodes.size(); i++) {
+        if(tree_nodes[i]) {
+          ar & i & (*(tree_nodes[i]));
+        }
+      }
+    }
+
+    template<class Archive>
+    void load(Archive &ar, const unsigned int version) {
+
+      // Load the matrix and the rank.
+      ar & data_;
+      ar & rank_;
+
+      // Load the mappings manually.
+      old_from_new_ = (core::table::global_m_file_) ?
+                      core::table::global_m_file_->ConstructArray <
+                      IndexType > (data_.n_cols()) :
+                      new IndexType[ data_.n_cols()];
+      new_from_old_ = (core::table::global_m_file_) ?
+                      core::table::global_m_file_->ConstructArray <
+                      IndexType > (data_.n_cols()) :
+                      new IndexType[ data_.n_cols()];
+      for(int i = 0; i < data_.n_cols(); i++) {
+        core::table::IndexUtil<IndexType>::Serialize(
+          ar, old_from_new_.get(), i);
+      }
+      for(int i = 0; i < data_.n_cols(); i++) {
+        core::table::IndexUtil<IndexType>::Serialize(
+          ar, new_from_old_.get(), i);
+      }
+
+      // Load up the max number of loads to receive.
+      int max_num_nodes;
+      int num_nodes;
+      ar & max_num_nodes;
+      ar & num_nodes;
+      std::vector< TreeType *> tree_nodes(max_num_nodes, NULL);
+      for(int i = 0; i < num_nodes; i++) {
+        int node_index;
+        ar & node_index;
+        tree_nodes[node_index] = (core::table::global_m_file_) ?
+                                 core::table::global_m_file_->Construct<TreeType>() :
+                                 new TreeType();
+        ar & (*tree_nodes[node_index]);
+      }
+      tree_ = tree_nodes[0];
+    }
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
 
     IndexType *old_from_new() {
       return old_from_new_.get();
@@ -360,11 +452,37 @@ class Table: public boost::noncopyable {
       }
       else {
         return data_.GetColumnPtr(
-                 IndexExtractor<IndexType>::Extract(new_from_old_.get(), point_id));
+                 IndexUtil<IndexType>::Extract(new_from_old_.get(), point_id));
       }
     }
 
   private:
+
+    void FillTreeNodes_(
+      TreeType *node, int node_index, std::vector<TreeType *> &sorted_nodes,
+      int *num_nodes) {
+
+      if(node != NULL) {
+        (*num_nodes)++;
+      }
+      sorted_nodes[node_index] = node;
+
+      if(node->is_leaf() == false) {
+        FillTreeNodes_(
+          node->left(), 2 * node_index + 1, sorted_nodes);
+        FillTreeNodes_(
+          node->right(), 2 * node_index + 2, sorted_nodes);
+      }
+    }
+
+    int FindTreeDepth_(TreeType *node) {
+      if(node == NULL) {
+        return 0;
+      }
+      int left_depth = FindTreeDepth_(node->left());
+      int right_depth = FindTreeDepth_(node->right());
+      return (left_depth > right_depth) ? (left_depth + 1) : (right_depth + 1);
+    }
 
     void direct_get_(int point_id, double *entry) const {
       if(this->IsIndexed() == false) {
@@ -372,7 +490,7 @@ class Table: public boost::noncopyable {
       }
       else {
         data_.CopyColumnVector(
-          IndexExtractor<IndexType>::Extract(
+          IndexUtil<IndexType>::Extract(
             new_from_old_.get(), point_id), entry);
       }
     }
@@ -383,7 +501,7 @@ class Table: public boost::noncopyable {
       }
       else {
         data_.MakeColumnVector(
-          IndexExtractor<IndexType>::Extract(
+          IndexUtil<IndexType>::Extract(
             new_from_old_.get(), point_id), entry);
       }
     }
@@ -395,7 +513,7 @@ class Table: public boost::noncopyable {
       }
       else {
         data_.MakeColumnVector(
-          IndexExtractor<IndexType>::Extract(
+          IndexUtil<IndexType>::Extract(
             new_from_old_.get(), point_id), entry);
       }
     }
@@ -406,7 +524,7 @@ class Table: public boost::noncopyable {
       }
       else {
         data_.MakeColumnVector(
-          IndexExtractor<IndexType>::Extract(
+          IndexUtil<IndexType>::Extract(
             new_from_old_.get(), point_id), entry);
       }
     }
@@ -426,7 +544,7 @@ class Table: public boost::noncopyable {
         return reordered_position;
       }
       else {
-        return IndexExtractor<IndexType>::Extract(
+        return IndexUtil<IndexType>::Extract(
                  old_from_new_.get(), reordered_position);
       }
     }
