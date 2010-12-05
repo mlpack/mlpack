@@ -8,7 +8,6 @@
 #ifndef CORE_METRIC_KERNELS_LMETRIC_H
 #define CORE_METRIC_KERNELS_LMETRIC_H
 
-#include <armadillo>
 #include "core/math/math_lib.h"
 #include "core/metric_kernels/abstract_metric.h"
 

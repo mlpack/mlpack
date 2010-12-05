@@ -9,7 +9,6 @@
 #ifndef CORE_TREE_STATISTIC_H
 #define CORE_TREE_STATISTIC_H
 
-#include <armadillo>
 #include <boost/serialization/string.hpp>
 
 /**

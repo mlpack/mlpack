@@ -8,6 +8,7 @@
 #ifndef CORE_TABLE_DENSE_POINT_H
 #define CORE_TABLE_DENSE_POINT_H
 
+#include <vector>
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/serialization/serialization.hpp>
 #include <boost/serialization/split_member.hpp>
