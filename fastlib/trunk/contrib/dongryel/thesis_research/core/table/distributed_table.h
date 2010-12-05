@@ -307,7 +307,12 @@ class DistributedTable: public boost::noncopyable {
 
       // Delete the tree.
       if(global_table_ != NULL) {
-        delete global_table_.get();
+        if(core::table::global_m_file_) {
+          core::table::global_m_file_->DestroyPtr(global_table_.get());
+        }
+        else {
+          delete global_table_.get();
+        }
         global_table_ = NULL;
       }
     }

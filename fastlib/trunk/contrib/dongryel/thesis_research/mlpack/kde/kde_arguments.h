@@ -47,11 +47,17 @@ class KdeArguments {
 
     ~KdeArguments() {
       if(reference_table_ == query_table_) {
-        delete reference_table_;
+        if(reference_table_ != NULL) {
+          delete reference_table_;
+        }
       }
       else {
-        delete reference_table_;
-        delete query_table_;
+        if(reference_table_ != NULL) {
+          delete reference_table_;
+        }
+        if(query_table_ != NULL) {
+          delete query_table_;
+        }
       }
       reference_table_ = NULL;
       query_table_ = NULL;

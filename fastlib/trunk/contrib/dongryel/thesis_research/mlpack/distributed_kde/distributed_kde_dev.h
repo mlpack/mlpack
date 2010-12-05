@@ -64,14 +64,14 @@ void DistributedKde<DistributedTableType>::Init(
   DistributedTableType > &arguments_in) {
 
   world_ = &world_in;
-  reference_table_ = arguments_in.reference_table_.get();
+  reference_table_ = arguments_in.reference_table_;
   if(arguments_in.query_table_ == NULL) {
     is_monochromatic_ = true;
     query_table_ = reference_table_;
   }
   else {
     is_monochromatic_ = false;
-    query_table_ = arguments_in.query_table_.get();
+    query_table_ = arguments_in.query_table_;
   }
 
   // Declare the global constants.
@@ -270,8 +270,8 @@ void DistributedKde<DistributedTableType>::ParseArguments(
     vm["top_tree_sample_probability"].as<double>();
   if(world.rank() == 0) {
     std::cout << "Sampling the number of points owned by each MPI process with "
-              "the probability of " << arguments_out->top_tree_sample_probability_
-              << "\n";
+              "the probability of " <<
+              arguments_out->top_tree_sample_probability_ << "\n";
   }
 
   // Parse the densities out file.
@@ -296,7 +296,7 @@ void DistributedKde<DistributedTableType>::ParseArguments(
   std::cout << "Reading in the reference set: " <<
             reference_file_name << "\n";
   arguments_out->reference_table_ =
-    core::table::global_m_file_->UniqueConstruct<DistributedTableType>();
+    core::table::global_m_file_->Construct<DistributedTableType>();
   arguments_out->reference_table_->Init(
     reference_file_name, world);
   std::cout << "Finished reading in the reference set.\n";
@@ -321,8 +321,7 @@ void DistributedKde<DistributedTableType>::ParseArguments(
     std::cout << "Reading in the query set: " <<
               query_file_name << "\n";
     arguments_out->query_table_ =
-      arguments_out->query_table_ =
-        core::table::global_m_file_->UniqueConstruct<DistributedTableType>();
+      core::table::global_m_file_->Construct<DistributedTableType>();
     arguments_out->query_table_->Init(query_file_name, world);
     std::cout << "Finished reading in the query set.\n";
     std::cout << "Building the query tree.\n";
