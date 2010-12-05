@@ -56,7 +56,7 @@ class DistributedKdeArguments {
     }
 
     ~DistributedKdeArguments() {
-      if(reference_table_ == query_table_) {
+      if(reference_table_.get() == query_table_.get()) {
         if(core::table::global_m_file_) {
           core::table::global_m_file_->DestroyPtr(reference_table_.get());
         }

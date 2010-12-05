@@ -21,7 +21,7 @@ class DistributedKde {
 
     typedef mlpack::kde::KdePostponed PostponedType;
 
-    typedef mlpack::kde::KdeGlobal<TableType> GlobalType;
+    typedef mlpack::kde::KdeGlobal<DistributedTableType> GlobalType;
 
     typedef mlpack::kde::KdeResult< std::vector<double> > ResultType;
 

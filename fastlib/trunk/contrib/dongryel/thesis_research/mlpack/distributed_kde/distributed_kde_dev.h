@@ -75,10 +75,10 @@ void DistributedKde<DistributedTableType>::Init(
   }
 
   // Declare the global constants.
-  // global_.Init(
-  //reference_table_, query_table_, arguments_in.bandwidth_, is_monochromatic_,
-  //arguments_in.relative_error_, arguments_in.probability_,
-  //arguments_in.kernel_);
+  global_.Init(
+    reference_table_, query_table_, arguments_in.bandwidth_, is_monochromatic_,
+    arguments_in.relative_error_, arguments_in.probability_,
+    arguments_in.kernel_);
 }
 
 template<typename DistributedTableType>
@@ -97,7 +97,8 @@ bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
     "help", "Print this information."
   )(
     "references_in",
-    boost::program_options::value<std::string>(),
+    boost::program_options::value<std::string>()->default_value(
+      "random_dataset.csv"),
     "REQUIRED file containing reference data."
   )(
     "queries_in",
@@ -106,11 +107,11 @@ bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
     "the leave-one-out density at each reference point."
   )(
     "random_generate_n_attributes",
-    boost::program_options::value<int>(),
+    boost::program_options::value<int>()->default_value(3),
     "Generate the datasets on the fly of the specified dimension."
   )(
     "random_generate_n_entries",
-    boost::program_options::value<int>(),
+    boost::program_options::value<int>()->default_value(20),
     "Generate the datasets on the fly of the specified number of points."
   )(
     "densities_out",
@@ -124,7 +125,7 @@ bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
     "  epan, gaussian"
   )(
     "bandwidth",
-    boost::program_options::value<double>(),
+    boost::program_options::value<double>()->default_value(0.2),
     "OPTIONAL kernel bandwidth, if you set --bandwidth_selection flag, "
     "then the --bandwidth will be ignored."
   )
@@ -264,6 +265,15 @@ void DistributedKde<DistributedTableType>::ParseArguments(
 
   // Given the constructed boost variable map, parse each argument.
 
+  // Parse the top tree sample probability.
+  arguments_out->top_tree_sample_probability_ =
+    vm["top_tree_sample_probability"].as<double>();
+  if(world.rank() == 0) {
+    std::cout << "Sampling the number of points owned by each MPI process with "
+              "the probability of " << arguments_out->top_tree_sample_probability_
+              << "\n";
+  }
+
   // Parse the densities out file.
   arguments_out->densities_out_ = vm["densities_out"].as<std::string>();
 
@@ -333,13 +343,6 @@ void DistributedKde<DistributedTableType>::ParseArguments(
   // Parse the probability.
   arguments_out->probability_ = vm["probability"].as<double>();
   std::cout << "Probability of " << arguments_out->probability_ << "\n";
-
-  // Parse the top tree sample probability.
-  arguments_out->top_tree_sample_probability_ =
-    vm["top_tree_sample_probability"].as<double>();
-  std::cout << "Sampling the number of points owned by each MPI process with "
-            "the probability of " << arguments_out->top_tree_sample_probability_
-            << "\n";
 
   // Parse the kernel type.
   arguments_out->kernel_ = vm["kernel"].as< std::string >();
