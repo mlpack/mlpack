@@ -14,12 +14,10 @@
 
 namespace mlpack {
 namespace distributed_kde {
-template<typename TreeSpecType>
+template<typename DistributedTableType>
 class DistributedKde {
   public:
-    typedef core::table::Table<TreeSpecType> TableType;
-
-    typedef core::table::DistributedTable<TreeSpecType> DistributedTableType;
+    typedef typename DistributedTableType::TableType TableType;
 
     typedef mlpack::kde::KdePostponed PostponedType;
 
@@ -35,6 +33,10 @@ class DistributedKde {
 
   public:
 
+    DistributedKde() {
+      world_ = NULL;
+    }
+
     /**
      * @brief sets the bandwidth
      */
@@ -43,12 +45,12 @@ class DistributedKde {
     /**
      * @brief returns a pointer to the query table
      */
-    core::table::DistributedTable<TreeSpecType> *query_table();
+    DistributedTableType *query_table();
 
     /**
      * @brief returns a pointer to the reference table
      */
-    core::table::DistributedTable<TreeSpecType> *reference_table();
+    DistributedTableType *reference_table();
 
     /**
      * @brief returns a GlobalType structure that has the
@@ -88,12 +90,13 @@ class DistributedKde {
     static void ParseArguments(
       int argc,
       char *argv[],
+      boost::mpi::communicator &world,
       mlpack::distributed_kde::DistributedKdeArguments <
       DistributedTableType > *arguments_out);
 
   private:
 
-    boost::mpi::communicator &world_;
+    boost::mpi::communicator *world_;
 
     /** @brief The distributed query table.
      */

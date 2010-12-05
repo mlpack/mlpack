@@ -26,9 +26,9 @@ class DistributedKdeArguments {
 
     int leaf_size_;
 
-    boost::interprocess::offset_ptr<DistributedTableType> *reference_table_;
+    boost::interprocess::offset_ptr<DistributedTableType> reference_table_;
 
-    boost::interprocess::offset_ptr<DistributedTableType> *query_table_;
+    boost::interprocess::offset_ptr<DistributedTableType> query_table_;
 
     double bandwidth_;
 
@@ -70,8 +70,8 @@ class DistributedKdeArguments {
           core::table::global_m_file_->DestroyPtr(query_table_.get());
         }
         else {
-          delete reference_table_;
-          delete query_table_;
+          delete reference_table_.get();
+          delete query_table_.get();
         }
       }
       reference_table_ = NULL;

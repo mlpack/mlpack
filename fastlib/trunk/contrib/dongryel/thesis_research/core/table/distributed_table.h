@@ -506,11 +506,16 @@ class DistributedTable: public boost::noncopyable {
         table_outbox_group_comm,
         owned_table_->get_tree()->bound().center().ptr(),
         owned_table_->n_attributes(), global_table_->data().ptr());
+      global_table_->IndexData(metric_in, 1);
 
       // Very important: need to re-update the counts.
       boost::mpi::all_gather(
         table_outbox_group_comm, owned_table_->n_entries(),
         local_n_entries_.get());
+
+      if(table_outbox_group_comm.rank() == 0) {
+        printf("Finished building the distributed tree.\n");
+      }
     }
 
     void get(
