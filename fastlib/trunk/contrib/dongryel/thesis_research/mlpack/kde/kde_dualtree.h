@@ -6,7 +6,6 @@
 #ifndef MLPACK_KDE_KDE_DUALTREE_H
 #define MLPACK_KDE_KDE_DUALTREE_H
 
-#include <armadillo>
 #include <boost/math/distributions/normal.hpp>
 #include <boost/serialization/serialization.hpp>
 #include "core/monte_carlo/mean_variance_pair.h"
