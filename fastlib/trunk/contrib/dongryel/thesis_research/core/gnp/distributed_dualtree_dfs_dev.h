@@ -69,7 +69,7 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::ResetStatisticRecursion_(
   typename ProblemType::DistributedTableType::TreeType *node,
   typename ProblemType::DistributedTableType * table) {
   node->stat().SetZero();
-  if(table->node_is_leaf(node) == false) {
+  if(node->is_leaf() == false) {
     ResetStatisticRecursion_(node->left(), table);
     ResetStatisticRecursion_(node->right(), table);
   }
@@ -118,7 +118,7 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::PreProcess_(
   typename ProblemType::StatisticType &qnode_stat = qnode->stat();
   qnode_stat.SetZero();
 
-  if(!query_table_->node_is_leaf(qnode)) {
+  if(! qnode->is_leaf()) {
     PreProcess_(qnode->left());
     PreProcess_(qnode->right());
   }
