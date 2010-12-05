@@ -247,10 +247,19 @@ class Table: public boost::noncopyable {
       for(int i = 0; i < num_nodes; i++) {
         int node_index;
         ar & node_index;
-        tree_nodes[node_index] = (core::table::global_m_file_) ?
-                                 core::table::global_m_file_->Construct<TreeType>() :
-                                 new TreeType();
+        tree_nodes[node_index] =
+          (core::table::global_m_file_) ?
+          core::table::global_m_file_->Construct<TreeType>() : new TreeType();
         ar & (*tree_nodes[node_index]);
+      }
+
+      // Do the pointer corrections, and have the tree point to the
+      // 0-th element.
+      for(unsigned int i = 0; i < tree_nodes.size(); i++) {
+        if(tree_nodes[i]) {
+          tree_nodes[i]->set_children(
+            data_, tree_nodes[2 * i + 1], tree_nodes[2 * i + 2]);
+        }
       }
       tree_ = tree_nodes[0];
     }
