@@ -26,9 +26,9 @@ class DistributedKdeArguments {
 
     int leaf_size_;
 
-    boost::interprocess::offset_ptr<DistributedTableType> reference_table_;
+    DistributedTableType *reference_table_;
 
-    boost::interprocess::offset_ptr<DistributedTableType> query_table_;
+    DistributedTableType *query_table_;
 
     double bandwidth_;
 
@@ -56,22 +56,26 @@ class DistributedKdeArguments {
     }
 
     ~DistributedKdeArguments() {
-      if(reference_table_.get() == query_table_.get()) {
+      if(reference_table_ == query_table_) {
         if(core::table::global_m_file_) {
-          core::table::global_m_file_->DestroyPtr(reference_table_.get());
+          core::table::global_m_file_->DestroyPtr(reference_table_);
         }
         else {
-          delete reference_table_.get();
+          delete reference_table_;
         }
       }
       else {
         if(core::table::global_m_file_) {
-          core::table::global_m_file_->DestroyPtr(reference_table_.get());
-          core::table::global_m_file_->DestroyPtr(query_table_.get());
+          core::table::global_m_file_->DestroyPtr(reference_table_);
+          if(query_table_ != NULL) {
+            core::table::global_m_file_->DestroyPtr(query_table_);
+          }
         }
         else {
-          delete reference_table_.get();
-          delete query_table_.get();
+          delete reference_table_;
+          if(query_table_ != NULL) {
+            delete query_table_;
+          }
         }
       }
       reference_table_ = NULL;

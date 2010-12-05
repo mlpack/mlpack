@@ -44,7 +44,8 @@ void mlpack::kde::Kde<TableType>::Compute(
 }
 
 template<typename TableType>
-void mlpack::kde::Kde<TableType>::Init(mlpack::kde::KdeArguments<TableType> &arguments_in) {
+void mlpack::kde::Kde<TableType>::Init(
+  mlpack::kde::KdeArguments<TableType> &arguments_in) {
 
   reference_table_ = arguments_in.reference_table_;
   if(arguments_in.query_table_ == NULL) {
