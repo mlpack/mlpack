@@ -10,6 +10,7 @@
 
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/serialization/serialization.hpp>
+#include <boost/serialization/split_member.hpp>
 #include "memory_mapped_file.h"
 
 namespace core {
