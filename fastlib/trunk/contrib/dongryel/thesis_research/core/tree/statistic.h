@@ -25,6 +25,10 @@ class AbstractStatistic {
     friend class boost::serialization::access;
 
   public:
+
+    void SetZero() {
+    }
+
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
     }

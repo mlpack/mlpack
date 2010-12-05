@@ -20,12 +20,13 @@ class DistributedDualtreeDfs {
     typedef typename ProblemType::TableType TableType;
     typedef typename ProblemType::DistributedTableType DistributedTableType;
     typedef typename TableType::TreeType TreeType;
+    typedef typename DistributedTableType::TreeType DistributedTreeType;
     typedef typename ProblemType::GlobalType GlobalType;
     typedef typename ProblemType::ResultType ResultType;
 
   private:
 
-    boost::mpi::communicator &world_;
+    boost::mpi::communicator *world_;
 
     ProblemType *problem_;
 
@@ -35,11 +36,12 @@ class DistributedDualtreeDfs {
 
   private:
 
-    void ResetStatisticRecursion_(TreeType *node, TableType * table);
+    void ResetStatisticRecursion_(
+      DistributedTreeType *node, DistributedTableType * table);
 
-    void PreProcessReferenceTree_(TreeType *rnode);
+    void PreProcessReferenceTree_(DistributedTreeType *rnode);
 
-    void PreProcess_(TreeType *qnode);
+    void PreProcess_(DistributedTreeType *qnode);
 
     void PostProcess_(
       const core::metric_kernels::AbstractMetric &metric,
@@ -55,7 +57,7 @@ class DistributedDualtreeDfs {
 
     void ResetStatistic();
 
-    void Init(boost::mpi::communicator &world, ProblemType &problem_in);
+    void Init(boost::mpi::communicator *world, ProblemType &problem_in);
 
     void Compute(
       const core::metric_kernels::AbstractMetric &metric,

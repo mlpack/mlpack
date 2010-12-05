@@ -32,7 +32,10 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::ResetStatistic() {
 }
 
 template<typename ProblemType>
-void core::gnp::DistributedDualtreeDfs<ProblemType>::Init(ProblemType &problem_in) {
+void core::gnp::DistributedDualtreeDfs<ProblemType>::Init(
+  boost::mpi::communicator *world_in,
+  ProblemType &problem_in) {
+  world_ = world_in;
   problem_ = &problem_in;
   query_table_ = problem_->query_table();
   reference_table_ = problem_->reference_table();
@@ -51,39 +54,32 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::Compute(
   // Allocate space for storing the final results.
   query_results->Init(query_table_->n_entries());
 
-  // Call the algorithm computation.
-  core::math::Range squared_distance_range =
-    (query_table_->get_node_bound(query_table_->get_tree())).RangeDistanceSq(
-      metric,
-      reference_table_->get_node_bound
-      (reference_table_->get_tree()));
-
   PreProcess_(query_table_->get_tree());
   PreProcessReferenceTree_(reference_table_->get_tree());
-  DualtreeCanonical_(metric,
-                     query_table_->get_tree(),
-                     reference_table_->get_tree(),
-                     1.0 - problem_->global().probability(),
-                     squared_distance_range,
-                     query_results);
-  PostProcess_(metric, query_table_->get_tree(), query_results);
+
+  // Figure out each process's work.
+
+
+  // Postprocess.
+  // PostProcess_(metric, query_table_->get_tree(), query_results);
 }
 
 template<typename ProblemType>
 void core::gnp::DistributedDualtreeDfs<ProblemType>::ResetStatisticRecursion_(
-  typename ProblemType::TableType::TreeType *node,
-  typename ProblemType::TableType * table) {
-  table->get_node_stat(node).SetZero();
+  typename ProblemType::DistributedTableType::TreeType *node,
+  typename ProblemType::DistributedTableType * table) {
+  node->stat().SetZero();
   if(table->node_is_leaf(node) == false) {
-    ResetStatisticRecursion_(table->get_node_left_child(node), table);
-    ResetStatisticRecursion_(table->get_node_right_child(node), table);
+    ResetStatisticRecursion_(node->left(), table);
+    ResetStatisticRecursion_(node->right(), table);
   }
 }
 
 template<typename ProblemType>
 void core::gnp::DistributedDualtreeDfs<ProblemType>::PreProcessReferenceTree_(
-  typename ProblemType::TableType::TreeType *rnode) {
+  typename ProblemType::DistributedTableType::TreeType *rnode) {
 
+  /*
   typename ProblemType::StatisticType &rnode_stat =
     reference_table_->get_node_stat(rnode);
   typename ProblemType::TableType::TreeIterator rnode_it =
@@ -95,9 +91,9 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::PreProcessReferenceTree_(
   else {
 
     // Get the left and the right children.
-    typename ProblemType::TableType::TreeType *rnode_left_child =
+    typename ProblemType::DistributedTableType::TreeType *rnode_left_child =
       reference_table_->get_node_left_child(rnode);
-    typename ProblemType::TableType::TreeType *rnode_right_child =
+    typename ProblemType::DistributedTableType::TreeType *rnode_right_child =
       reference_table_->get_node_right_child(rnode);
 
     // Recurse to the left and the right.
@@ -112,19 +108,19 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::PreProcessReferenceTree_(
     rnode_stat.Init(
       rnode_it, rnode_left_child_stat, rnode_right_child_stat);
   }
+  */
 }
 
 template<typename ProblemType>
 void core::gnp::DistributedDualtreeDfs<ProblemType>::PreProcess_(
-  typename ProblemType::TableType::TreeType *qnode) {
+  typename ProblemType::DistributedTableType::TreeType *qnode) {
 
-  typename ProblemType::StatisticType &qnode_stat =
-    query_table_->get_node_stat(qnode);
+  typename ProblemType::StatisticType &qnode_stat = qnode->stat();
   qnode_stat.SetZero();
 
   if(!query_table_->node_is_leaf(qnode)) {
-    PreProcess_(query_table_->get_node_left_child(qnode));
-    PreProcess_(query_table_->get_node_right_child(qnode));
+    PreProcess_(qnode->left());
+    PreProcess_(qnode->right());
   }
 }
 
