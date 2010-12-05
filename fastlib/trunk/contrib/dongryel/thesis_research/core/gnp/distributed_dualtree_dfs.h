@@ -36,12 +36,16 @@ class DistributedDualtreeDfs {
 
   private:
 
+    void AllReduce_();
+
     void ResetStatisticRecursion_(
       DistributedTreeType *node, DistributedTableType * table);
 
-    void PreProcessReferenceTree_(DistributedTreeType *rnode);
+    template<typename TemplateTreeType>
+    void PreProcessReferenceTree_(TemplateTreeType *rnode);
 
-    void PreProcess_(DistributedTreeType *qnode);
+    template<typename TemplateTreeType>
+    void PreProcess_(TemplateTreeType *qnode);
 
     void PostProcess_(
       const core::metric_kernels::AbstractMetric &metric,
