@@ -6,7 +6,6 @@
 #ifndef MLPACK_KDE_KDE_H
 #define MLPACK_KDE_KDE_H
 
-#include <armadillo>
 #include "boost/program_options.hpp"
 
 #include "core/table/table.h"
