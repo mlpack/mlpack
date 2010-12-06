@@ -81,7 +81,7 @@ void DistributedKde<DistributedTableType>::Init(
   global_.Init(
     reference_table_, query_table_, arguments_in.bandwidth_, is_monochromatic_,
     arguments_in.relative_error_, arguments_in.probability_,
-    arguments_in.kernel_);
+    arguments_in.kernel_, false);
 }
 
 template<typename DistributedTableType>
@@ -279,6 +279,12 @@ void DistributedKde<DistributedTableType>::ParseArguments(
 
   // Parse the densities out file.
   arguments_out->densities_out_ = vm["densities_out"].as<std::string>();
+  if(vm.count("random_generate_n_entries") > 0) {
+    std::stringstream densities_out_sstr;
+    densities_out_sstr << vm["densities_out"].as<std::string>() <<
+                       world.rank();
+    arguments_out->densities_out_ = densities_out_sstr.str();
+  }
 
   // Parse the leaf size.
   arguments_out->leaf_size_ = vm["leaf_size"].as<int>();

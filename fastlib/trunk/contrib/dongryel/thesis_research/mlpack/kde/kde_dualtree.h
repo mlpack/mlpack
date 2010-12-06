@@ -104,6 +104,8 @@ class KdeGlobal {
 
   private:
 
+    bool normalize_densities_;
+
     double relative_error_;
 
     double probability_;
@@ -123,6 +125,10 @@ class KdeGlobal {
     std::vector< core::monte_carlo::MeanVariancePair > mean_variance_pair_;
 
   public:
+
+    bool normalize_densities() const {
+      return normalize_densities_;
+    }
 
     int effective_num_reference_points() const {
       return effective_num_reference_points_;
@@ -188,7 +194,8 @@ class KdeGlobal {
       TableType *query_table_in,
       double bandwidth_in, const bool is_monochromatic,
       double relative_error_in, double probability_in,
-      const std::string &kernel_type_in) {
+      const std::string &kernel_type_in,
+      bool normalize_densities_in = true) {
 
       effective_num_reference_points_ =
         (is_monochromatic) ?
@@ -216,6 +223,9 @@ class KdeGlobal {
       // Initialize the temporary vector for storing the Monte Carlo
       // results.
       mean_variance_pair_.resize(query_table_->n_entries());
+
+      // Set the normalize flag.
+      normalize_densities_ = normalize_densities_in;
     }
 
     double get_mult_const() const {
@@ -253,9 +263,11 @@ class KdeResult {
 
       densities_[q_index] = 0.5 * (
                               densities_l_[q_index] + densities_u_[q_index]);
-      densities_l_[q_index] *= global.get_mult_const();
-      densities_[q_index] *= global.get_mult_const();
-      densities_u_[q_index] *= global.get_mult_const();
+      if(global.normalize_densities()) {
+        densities_l_[q_index] *= global.get_mult_const();
+        densities_[q_index] *= global.get_mult_const();
+        densities_u_[q_index] *= global.get_mult_const();
+      }
     }
 
     void PrintDebug(const std::string &file_name) {
@@ -358,7 +370,9 @@ class KdeDelta {
       const GlobalType &global, TreeType *qnode, TreeType *rnode,
       const core::math::Range &squared_distance_range) {
 
-      int rnode_count = global.reference_table()->get_node_count(rnode);
+      int rnode_count = (qnode == rnode) ?
+                        (global.reference_table()->get_node_count(rnode) - 1) :
+                        global.reference_table()->get_node_count(rnode);
       densities_l_ = rnode_count *
                      global.kernel().EvalUnnormOnSq(squared_distance_range.hi);
       densities_u_ = rnode_count *
