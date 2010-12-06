@@ -1,7 +1,8 @@
-/**
- * @file kernel.h
+/** @file kernel.h
  *
- * Common statistical kernels.
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ *
+ *  Common statistical kernels.
  */
 
 #ifndef CORE_METRIC_KERNELS_KERNEL_H
@@ -29,6 +30,11 @@ class GaussianKernel: public AbstractKernel {
     static const bool HAS_CUTOFF = false;
 
   public:
+
+    std::string name() const {
+      return std::string("gaussian");
+    }
+
     double bandwidth_sq() const {
       return bandwidth_sq_;
     }
@@ -99,6 +105,7 @@ class GaussianStarKernel {
     static const bool HAS_CUTOFF = false;
 
   public:
+
     double bandwidth_sq() const {
       return bandwidth_sq_;
     }
@@ -180,6 +187,11 @@ class EpanKernel: public AbstractKernel {
     static const bool HAS_CUTOFF = true;
 
   public:
+
+    std::string name() const {
+      return std::string("epan");
+    }
+
     void Init(double bandwidth_in, int dims) {
       Init(bandwidth_in);
     }

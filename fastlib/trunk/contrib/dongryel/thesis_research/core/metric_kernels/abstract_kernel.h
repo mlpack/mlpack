@@ -1,3 +1,8 @@
+/** @file abstract_kernel.h
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
 #ifndef CORE_METRIC_KERNELS_ABSTRACT_KERNEL_H
 #define CORE_METRIC_KERNELS_ABSTRACT_KERNEL_H
 
@@ -8,6 +13,8 @@ namespace metric_kernels {
 class AbstractKernel {
 
   public:
+
+    virtual std::string name() const = 0;
 
     virtual ~AbstractKernel() {
     }

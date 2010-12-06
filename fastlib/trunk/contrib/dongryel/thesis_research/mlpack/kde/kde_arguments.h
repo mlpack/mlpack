@@ -46,6 +46,7 @@ class KdeArguments {
       bandwidth_ = global_in.bandwidth();
       relative_error_ = global_in.relative_error();
       probability_ = global_in.probability();
+      kernel_ = global_in.kernel().name();
       tables_are_aliased_ = true;
     }
 
