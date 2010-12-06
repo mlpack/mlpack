@@ -18,7 +18,9 @@ extern core::table::MemoryMappedFile *global_m_file_;
 };
 
 template<typename DistributedProblemType>
-void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_() {
+void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
+  const core::metric_kernels::AbstractMetric &metric,
+  typename DistributedProblemType::ResultType *query_results) {
 
   // Start the computation with the self interaction.
   core::gnp::DualtreeDfs<ProblemType> self_engine;
@@ -27,6 +29,7 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_() {
   self_argument.Init(problem_->global());
   self_problem.Init(self_argument);
   self_engine.Init(self_problem);
+  self_engine.Compute(metric, query_results);
   world_->barrier();
 
   // Set the local table.
@@ -155,7 +158,7 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::Compute(
   // done using a naive approach where the global goal is to complete
   // a 2D matrix workspace. This is currently doing an all-reduce type
   // of exchange.
-  AllReduce_();
+  AllReduce_(metric, query_results);
 
   // Postprocess.
   // PostProcess_(metric, query_table_->get_tree(), query_results);
