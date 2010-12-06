@@ -93,11 +93,11 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
       ProblemType sub_problem;
       ArgumentType sub_argument;
       sub_argument.Init(
-        remote_tables[world_->rank()],
         remote_tables[received_tables_in_current_iter[i]],
+        query_table_->local_table(),
         problem_->global());
-      sub_problem.Init(self_argument);
-      sub_engine.Init(self_problem);
+      sub_problem.Init(sub_argument);
+      sub_engine.Init(sub_problem);
       sub_engine.Compute(metric, query_results, false);
     }
 
