@@ -49,9 +49,12 @@ class KdePostponed {
       SetZero();
     }
 
-    void Init(int rnode_count) {
+    template<typename GlobalType, typename TreeType>
+    void Init(const GlobalType &global_in, TreeType *qnode, TreeType *rnode) {
       densities_l_ = densities_u_ = 0;
-      pruned_ = static_cast<double>(rnode_count);
+      pruned_ = (qnode == rnode && global_in.is_monochromatic()) ?
+                static_cast<double>(rnode->count() - 1) :
+                static_cast<double>(rnode->count());
       used_error_ = 0;
     }
 
@@ -120,11 +123,17 @@ class KdeGlobal {
 
     TableType *reference_table_;
 
+    bool is_monochromatic_;
+
     boost::math::normal normal_dist_;
 
     std::vector< core::monte_carlo::MeanVariancePair > mean_variance_pair_;
 
   public:
+
+    bool is_monochromatic() const {
+      return is_monochromatic_;
+    }
 
     bool normalize_densities() const {
       return normalize_densities_;
@@ -226,6 +235,9 @@ class KdeGlobal {
 
       // Set the normalize flag.
       normalize_densities_ = normalize_densities_in;
+
+      // Set the monochromatic flag.
+      is_monochromatic_ = is_monochromatic;
     }
 
     double get_mult_const() const {

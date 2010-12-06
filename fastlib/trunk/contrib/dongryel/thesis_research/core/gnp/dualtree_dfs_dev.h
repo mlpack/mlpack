@@ -166,7 +166,7 @@ void core::gnp::DualtreeDfs<ProblemType>::DualtreeBase_(
 
     // Reset the temporary variable for accumulating each
     // reference point contribution.
-    query_contribution.Init(reference_table_->get_node_count(rnode));
+    query_contribution.Init(problem_->global(), qnode, rnode);
 
     // Incorporate the postponed information.
     query_results->ApplyPostponed(q_index, qnode_stat.postponed_);
@@ -179,8 +179,12 @@ void core::gnp::DualtreeDfs<ProblemType>::DualtreeBase_(
       core::table::DensePoint r_col;
       int r_col_id;
       rnode_iterator.Next(&r_col, &r_col_id);
-      query_contribution.ApplyContribution(
-        problem_->global(), metric, q_col, r_col);
+      if(
+        problem_->global().is_monochromatic() == false ||
+        r_col_id != q_index) {
+        query_contribution.ApplyContribution(
+          problem_->global(), metric, q_col, r_col);
+      }
 
     } // end of iterating over each reference point.
 
