@@ -7,7 +7,7 @@
 #define CORE_GNP_DISTRIBUTED_DUALTREE_DFS_DEV_H
 
 #include "core/gnp/distributed_dualtree_dfs.h"
-#include "core/gnp/dualtree_dfs.h"
+#include "core/gnp/dualtree_dfs_dev.h"
 #include "core/table/table.h"
 #include "core/table/memory_mapped_file.h"
 
@@ -17,8 +17,17 @@ extern core::table::MemoryMappedFile *global_m_file_;
 };
 };
 
-template<typename ProblemType>
-void core::gnp::DistributedDualtreeDfs<ProblemType>::AllReduce_() {
+template<typename DistributedProblemType>
+void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_() {
+
+  // Start the computation with the self interaction.
+  core::gnp::DualtreeDfs<ProblemType> self_engine;
+  ProblemType self_problem;
+  ArgumentType self_argument;
+  self_argument.Init(problem_->global());
+  self_problem.Init(self_argument);
+  self_engine.Init(self_problem);
+  world_->barrier();
 
   // Set the local table.
   std::vector< TableType * > remote_tables(world_->size(), NULL);
@@ -33,7 +42,6 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::AllReduce_() {
   // not topology-aware, so it will be changed later to fit the
   // appropriate network topology.
   int num_rounds = log2(world_->size());
-  printf("Number of rounds: %d\n", num_rounds);
   for(int r = 1; r <= num_rounds; r++) {
     int stride = 1 << r;
     int num_tables_in_action = stride >> 1;
@@ -50,9 +58,6 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::AllReduce_() {
     send_requests.resize(num_tables_in_action);
     receive_requests.resize(num_tables_in_action);
 
-    printf("Round: %d, num_tables: %d, group leader: %d, group end: %d\n",
-           r, num_tables_in_action, group_leader, group_end);
-
     for(int i = 0; i < num_tables_in_action; i++) {
       int send_id;
       int receive_id;
@@ -66,11 +71,6 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::AllReduce_() {
       }
       remote_tables[receive_id] =
         core::table::global_m_file_->Construct<TableType>();
-      printf("Process %d is sending Table %d to Process %d\n",
-             world_->rank(), send_id, exchange_process_id);
-      printf("Process %d is receiving Table %d from Process %d\n",
-             world_->rank(), receive_id,
-             exchange_process_id);
       send_requests[i] = world_->isend(
                            exchange_process_id, send_id,
                            *(remote_tables[send_id]));
@@ -84,7 +84,6 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::AllReduce_() {
     // Each process calls the independent sets of serial dual-tree dfs
     // algorithms. Further parallelism can be exploited here.
 
-
   } // End of the all-reduce loop.
 
   // Destroy all tables after all computations are done, except for
@@ -96,32 +95,32 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::AllReduce_() {
   }
 }
 
-template<typename ProblemType>
-ProblemType *core::gnp::DistributedDualtreeDfs<ProblemType>::problem() {
+template<typename DistributedProblemType>
+DistributedProblemType *core::gnp::DistributedDualtreeDfs<DistributedProblemType>::problem() {
   return problem_;
 }
 
-template<typename ProblemType>
-typename ProblemType::DistributedTableType *
-core::gnp::DistributedDualtreeDfs<ProblemType>::query_table() {
+template<typename DistributedProblemType>
+typename DistributedProblemType::DistributedTableType *
+core::gnp::DistributedDualtreeDfs<DistributedProblemType>::query_table() {
   return query_table_;
 }
 
-template<typename ProblemType>
-typename ProblemType::DistributedTableType *
-core::gnp::DistributedDualtreeDfs<ProblemType>::reference_table() {
+template<typename DistributedProblemType>
+typename DistributedProblemType::DistributedTableType *
+core::gnp::DistributedDualtreeDfs<DistributedProblemType>::reference_table() {
   return reference_table_;
 }
 
-template<typename ProblemType>
-void core::gnp::DistributedDualtreeDfs<ProblemType>::ResetStatistic() {
+template<typename DistributedProblemType>
+void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ResetStatistic() {
   ResetStatisticRecursion_(query_table_->get_tree(), query_table_);
 }
 
-template<typename ProblemType>
-void core::gnp::DistributedDualtreeDfs<ProblemType>::Init(
+template<typename DistributedProblemType>
+void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::Init(
   boost::mpi::communicator *world_in,
-  ProblemType &problem_in) {
+  DistributedProblemType &problem_in) {
   world_ = world_in;
   problem_ = &problem_in;
   query_table_ = problem_->query_table();
@@ -133,10 +132,10 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::Init(
   }
 }
 
-template<typename ProblemType>
-void core::gnp::DistributedDualtreeDfs<ProblemType>::Compute(
+template<typename DistributedProblemType>
+void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::Compute(
   const core::metric_kernels::AbstractMetric &metric,
-  typename ProblemType::ResultType *query_results) {
+  typename DistributedProblemType::ResultType *query_results) {
 
   // Allocate space for storing the final results.
   query_results->Init(query_table_->n_entries());
@@ -162,10 +161,10 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::Compute(
   // PostProcess_(metric, query_table_->get_tree(), query_results);
 }
 
-template<typename ProblemType>
-void core::gnp::DistributedDualtreeDfs<ProblemType>::ResetStatisticRecursion_(
-  typename ProblemType::DistributedTableType::TreeType *node,
-  typename ProblemType::DistributedTableType * table) {
+template<typename DistributedProblemType>
+void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ResetStatisticRecursion_(
+  typename DistributedProblemType::DistributedTableType::TreeType *node,
+  typename DistributedProblemType::DistributedTableType * table) {
   node->stat().SetZero();
   if(node->is_leaf() == false) {
     ResetStatisticRecursion_(node->left(), table);
@@ -173,13 +172,13 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::ResetStatisticRecursion_(
   }
 }
 
-template<typename ProblemType>
+template<typename DistributedProblemType>
 template<typename TemplateTreeType>
-void core::gnp::DistributedDualtreeDfs<ProblemType>::PreProcessReferenceTree_(
+void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::PreProcessReferenceTree_(
   TemplateTreeType *rnode) {
 
-  typename ProblemType::StatisticType &rnode_stat = rnode->stat();
-  typename ProblemType::DistributedTableType::TreeIterator rnode_it =
+  typename DistributedProblemType::StatisticType &rnode_stat = rnode->stat();
+  typename DistributedProblemType::DistributedTableType::TreeIterator rnode_it =
     reference_table_->get_node_iterator(rnode);
 
   if(rnode->is_leaf()) {
@@ -196,21 +195,21 @@ void core::gnp::DistributedDualtreeDfs<ProblemType>::PreProcessReferenceTree_(
     PreProcessReferenceTree_(rnode_right_child);
 
     // Build the node stat by combining those owned by the children.
-    typename ProblemType::StatisticType &rnode_left_child_stat =
+    typename DistributedProblemType::StatisticType &rnode_left_child_stat =
       rnode_left_child->stat();
-    typename ProblemType::StatisticType &rnode_right_child_stat =
+    typename DistributedProblemType::StatisticType &rnode_right_child_stat =
       rnode_right_child->stat();
     rnode_stat.Init(
       rnode_it, rnode_left_child_stat, rnode_right_child_stat);
   }
 }
 
-template<typename ProblemType>
+template<typename DistributedProblemType>
 template<typename TemplateTreeType>
-void core::gnp::DistributedDualtreeDfs<ProblemType>::PreProcess_(
+void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::PreProcess_(
   TemplateTreeType *qnode) {
 
-  typename ProblemType::StatisticType &qnode_stat = qnode->stat();
+  typename DistributedProblemType::StatisticType &qnode_stat = qnode->stat();
   qnode_stat.SetZero();
 
   if(! qnode->is_leaf()) {
