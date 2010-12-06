@@ -50,6 +50,8 @@ void DistributedKde<DistributedTableType>::Compute(
   // Barrier so that every process is here.
   world_->barrier();
 
+  boost::mpi::timer timer;
+
   // Instantiate a dual-tree algorithm of the KDE.
   core::gnp::DistributedDualtreeDfs <
   mlpack::distributed_kde::DistributedKde<DistributedTableType> >
@@ -58,6 +60,10 @@ void DistributedKde<DistributedTableType>::Compute(
 
   // Compute the result.
   distributed_dualtree_dfs.Compute(* arguments_in.metric_, result_out);
+
+  if(world_->rank() == 0) {
+    printf("Spent %g seconds in computation.\n", timer.elapsed());
+  }
 }
 
 template<typename DistributedTableType>
