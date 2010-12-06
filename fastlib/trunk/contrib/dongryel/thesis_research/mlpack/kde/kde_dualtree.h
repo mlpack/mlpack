@@ -171,6 +171,10 @@ class KdeGlobal {
       return probability_;
     }
 
+    double bandwidth() const {
+      return sqrt(kernel_->bandwidth_sq());
+    }
+
     void set_bandwidth(double bandwidth_in) {
       kernel_->Init(bandwidth_in);
     }

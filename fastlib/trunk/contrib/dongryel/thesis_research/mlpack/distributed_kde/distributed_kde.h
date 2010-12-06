@@ -9,7 +9,9 @@
 #include <boost/program_options.hpp>
 #include <boost/mpi/communicator.hpp>
 #include "core/table/distributed_table.h"
+#include "mlpack/kde/kde_dev.h"
 #include "mlpack/kde/kde_dualtree.h"
+#include "mlpack/kde/kde_arguments.h"
 #include "mlpack/distributed_kde/distributed_kde_arguments.h"
 
 namespace mlpack {
@@ -33,6 +35,10 @@ class DistributedKde {
     typedef mlpack::kde::KdeSummary SummaryType;
 
     typedef mlpack::kde::KdeStatistic StatisticType;
+
+    typedef mlpack::kde::KdeArguments<TableType> ArgumentType;
+
+    typedef mlpack::kde::Kde< TableType > ProblemType;
 
   public:
 

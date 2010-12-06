@@ -12,23 +12,25 @@
 
 namespace core {
 namespace gnp {
-template<typename ProblemType>
+template<typename DistributedProblemType>
 class DistributedDualtreeDfs {
 
   public:
 
-    typedef typename ProblemType::TableType TableType;
-    typedef typename ProblemType::DistributedTableType DistributedTableType;
+    typedef typename DistributedProblemType::TableType TableType;
+    typedef typename DistributedProblemType::ProblemType ProblemType;
+    typedef typename DistributedProblemType::DistributedTableType DistributedTableType;
     typedef typename TableType::TreeType TreeType;
     typedef typename DistributedTableType::TreeType DistributedTreeType;
-    typedef typename ProblemType::GlobalType GlobalType;
-    typedef typename ProblemType::ResultType ResultType;
+    typedef typename DistributedProblemType::GlobalType GlobalType;
+    typedef typename DistributedProblemType::ResultType ResultType;
+    typedef typename DistributedProblemType::ArgumentType ArgumentType;
 
   private:
 
     boost::mpi::communicator *world_;
 
-    ProblemType *problem_;
+    DistributedProblemType *problem_;
 
     DistributedTableType *query_table_;
 
@@ -53,7 +55,7 @@ class DistributedDualtreeDfs {
 
   public:
 
-    ProblemType *problem();
+    DistributedProblemType *problem();
 
     DistributedTableType *query_table();
 
@@ -61,11 +63,11 @@ class DistributedDualtreeDfs {
 
     void ResetStatistic();
 
-    void Init(boost::mpi::communicator *world, ProblemType &problem_in);
+    void Init(boost::mpi::communicator *world, DistributedProblemType &problem_in);
 
     void Compute(
       const core::metric_kernels::AbstractMetric &metric,
-      typename ProblemType::ResultType *query_results);
+      typename DistributedProblemType::ResultType *query_results);
 };
 };
 };

@@ -33,7 +33,22 @@ class KdeArguments {
 
     core::metric_kernels::AbstractMetric *metric_;
 
+    bool tables_are_aliased_;
+
   public:
+
+    template<typename GlobalType>
+    void Init(GlobalType &global_in) {
+      reference_table_ = global_in.reference_table()->local_table();
+      if(reference_table_ != query_table_) {
+        query_table_ = global_in.query_table()->local_table();
+      }
+      bandwidth_ = global_in.bandwidth();
+      relative_error_ = global_in.relative_error();
+      probability_ = global_in.probability();
+      tables_are_aliased_ = true;
+    }
+
     KdeArguments() {
       leaf_size_ = 0;
       reference_table_ = NULL;
@@ -43,20 +58,23 @@ class KdeArguments {
       probability_ = 0.0;
       kernel_ = "";
       metric_ = NULL;
+      tables_are_aliased_ = false;
     }
 
     ~KdeArguments() {
-      if(reference_table_ == query_table_) {
-        if(reference_table_ != NULL) {
-          delete reference_table_;
+      if(tables_are_aliased_ == false) {
+        if(reference_table_ == query_table_) {
+          if(reference_table_ != NULL) {
+            delete reference_table_;
+          }
         }
-      }
-      else {
-        if(reference_table_ != NULL) {
-          delete reference_table_;
-        }
-        if(query_table_ != NULL) {
-          delete query_table_;
+        else {
+          if(reference_table_ != NULL) {
+            delete reference_table_;
+          }
+          if(query_table_ != NULL) {
+            delete query_table_;
+          }
         }
       }
       reference_table_ = NULL;
