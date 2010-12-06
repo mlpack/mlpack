@@ -6,6 +6,7 @@
 #ifndef CORE_GNP_DISTRIBUTED_DUALTREE_DFS_DEV_H
 #define CORE_GNP_DISTRIBUTED_DUALTREE_DFS_DEV_H
 
+#include <boost/mpi.hpp>
 #include "core/gnp/distributed_dualtree_dfs.h"
 #include "core/gnp/dualtree_dfs_dev.h"
 #include "core/table/table.h"
@@ -57,34 +58,35 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
 
     // Send the process's own collected tables.
     std::vector<boost::mpi::request> send_requests;
-    std::vector<boost::mpi::request> receive_requests;
     std::vector<int> received_tables_in_current_iter;
     send_requests.resize(num_tables_in_action);
-    receive_requests.resize(num_tables_in_action);
-
     for(int i = 0; i < num_tables_in_action; i++) {
       int send_id;
-      int receive_id;
       if(world_->rank() - group_leader < group_end - world_->rank()) {
         send_id = group_leader + i;
-        receive_id = group_leader + i + num_tables_in_action;
       }
       else {
         send_id = group_leader + i + num_tables_in_action;
+      }
+      send_requests[i] = world_->isend(
+                           exchange_process_id, send_id,
+                           *(remote_tables[send_id]));
+    }
+    for(int i = 0; i < num_tables_in_action; i++) {
+      int receive_id;
+      if(world_->rank() - group_leader < group_end - world_->rank()) {
+        receive_id = group_leader + i + num_tables_in_action;
+      }
+      else {
         receive_id = group_leader + i;
       }
       received_tables_in_current_iter.push_back(receive_id);
       remote_tables[receive_id] =
         core::table::global_m_file_->Construct<TableType>();
-      send_requests[i] = world_->isend(
-                           exchange_process_id, send_id,
-                           *(remote_tables[send_id]));
-      receive_requests[i] =
-        world_->irecv(
-          exchange_process_id, receive_id, *(remote_tables[receive_id]));
+      world_->recv(
+        exchange_process_id, receive_id, *(remote_tables[receive_id]));
     }
     boost::mpi::wait_all(send_requests.begin(), send_requests.end());
-    boost::mpi::wait_all(receive_requests.begin(), receive_requests.end());
 
     // Each process calls the independent sets of serial dual-tree dfs
     // algorithms. Further parallelism can be exploited here.
@@ -100,6 +102,7 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
       sub_engine.Init(sub_problem);
       sub_engine.Compute(metric, query_results, false);
     }
+    world_->barrier();
 
   } // End of the all-reduce loop.
 
@@ -173,6 +176,7 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::Compute(
   // a 2D matrix workspace. This is currently doing an all-reduce type
   // of exchange.
   AllReduce_(metric, query_results);
+  world_->barrier();
 
   // Postprocess.
   // PostProcess_(metric, query_table_->get_tree(), query_results);
