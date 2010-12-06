@@ -185,7 +185,8 @@ class DualtreeDfs {
 
     void Compute(
       const core::metric_kernels::AbstractMetric &metric,
-      typename ProblemType::ResultType *query_results);
+      typename ProblemType::ResultType *query_results,
+      bool do_initializations = true);
 };
 };
 };

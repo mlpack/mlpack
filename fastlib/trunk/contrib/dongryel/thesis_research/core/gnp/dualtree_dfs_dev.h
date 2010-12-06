@@ -47,10 +47,13 @@ void core::gnp::DualtreeDfs<ProblemType>::Init(ProblemType &problem_in) {
 template<typename ProblemType>
 void core::gnp::DualtreeDfs<ProblemType>::Compute(
   const core::metric_kernels::AbstractMetric &metric,
-  typename ProblemType::ResultType *query_results) {
+  typename ProblemType::ResultType *query_results,
+  bool do_initializations) {
 
   // Allocate space for storing the final results.
-  query_results->Init(query_table_->n_entries());
+  if(do_initializations) {
+    query_results->Init(query_table_->n_entries());
+  }
 
   // Call the algorithm computation.
   core::math::Range squared_distance_range =
@@ -59,8 +62,10 @@ void core::gnp::DualtreeDfs<ProblemType>::Compute(
       reference_table_->get_node_bound
       (reference_table_->get_tree()));
 
-  PreProcess_(query_table_->get_tree());
-  PreProcessReferenceTree_(reference_table_->get_tree());
+  if(do_initializations) {
+    PreProcess_(query_table_->get_tree());
+    PreProcessReferenceTree_(reference_table_->get_tree());
+  }
   DualtreeCanonical_(metric,
                      query_table_->get_tree(),
                      reference_table_->get_tree(),
@@ -503,6 +508,9 @@ void core::gnp::DualtreeDfs<ProblemType>::PostProcess_(
     typename ProblemType::TableType::TreeIterator qnode_iterator =
       query_table_->get_node_iterator(qnode);
 
+    // Reset the summary statistics.
+    qnode_stat.summary_.StartReaccumulate();
+
     while(qnode_iterator.HasNext()) {
       core::table::DensePoint q_col;
       int q_index;
@@ -510,6 +518,10 @@ void core::gnp::DualtreeDfs<ProblemType>::PostProcess_(
       query_results->ApplyPostponed(q_index, qnode_stat.postponed_);
       query_results->PostProcess(metric, q_index, problem_->global(),
                                  problem_->is_monochromatic());
+
+      // Refine min and max summary statistics.
+      qnode_stat.summary_.Accumulate(
+        problem_->global(), *query_results, q_index);
     }
     qnode_stat.postponed_.SetZero();
   }
@@ -529,6 +541,15 @@ void core::gnp::DualtreeDfs<ProblemType>::PostProcess_(
 
     PostProcess_(metric, qnode_left,  query_results);
     PostProcess_(metric, qnode_right, query_results);
+
+    // Refine the summary statistics.
+    qnode_stat.summary_.StartReaccumulate();
+    qnode_stat.summary_.Accumulate(
+      problem_->global(), qnode_left_stat.summary_,
+      qnode_left_stat.postponed_);
+    qnode_stat.summary_.Accumulate(
+      problem_->global(), qnode_right_stat.summary_,
+      qnode_right_stat.postponed_);
   }
 }
 

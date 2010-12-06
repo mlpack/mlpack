@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
   // Output the KDE result to the file.
   std::cerr << "Writing the densities to the file: " <<
             distributed_kde_arguments.densities_out_ << "\n";
-  // kde_result.PrintDebug(distributed_kde_arguments.densities_out_);
+  kde_result.PrintDebug(distributed_kde_arguments.densities_out_);
 
   return 0;
 }
