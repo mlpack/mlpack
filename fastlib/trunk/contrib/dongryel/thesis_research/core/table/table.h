@@ -115,11 +115,11 @@ class Table: public boost::noncopyable {
         }
 
         void RandomPick(core::table::DensePoint *entry) {
-          table_->iterator_get_(core::math::Random(begin_, end_), entry);
+          table_->iterator_get_(core::math::RandInt(begin_, end_), entry);
         }
 
         void RandomPick(core::table::DensePoint *entry, int *point_id) {
-          *point_id = core::math::Random(begin_, end_);
+          *point_id = core::math::RandInt(begin_, end_);
           table_->iterator_get_(*point_id, entry);
         }
 
