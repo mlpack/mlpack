@@ -45,7 +45,7 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
   // be an outer loop over the main all-reduce. This solution also is
   // not topology-aware, so it will be changed later to fit the
   // appropriate network topology.
-  int num_rounds = log2(world_->size());
+  int num_rounds = static_cast<int>( log2(world_->size()) );
   for(int r = 1; r <= num_rounds; r++) {
     int stride = 1 << r;
     int num_tables_in_action = stride >> 1;

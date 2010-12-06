@@ -6,7 +6,6 @@
 #ifndef CORE_GNP_DUALTREE_DFS_DEV_H
 #define CORE_GNP_DUALTREE_DFS_DEV_H
 
-#include <armadillo>
 #include "dualtree_dfs.h"
 #include "dualtree_dfs_iterator_dev.h"
 #include "core/table/table.h"
