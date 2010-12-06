@@ -162,7 +162,7 @@ class DistributedTable: public boost::noncopyable {
       const std::vector<TreeType *> &top_leaf_nodes,
       int leaf_node_assignment_index) {
 
-      const int neighbor_radius = 2;
+      const int neighbor_radius = table_outbox_group_comm.size();
       const int num_iterations = 10;
 
       // Readjust the centroid.
