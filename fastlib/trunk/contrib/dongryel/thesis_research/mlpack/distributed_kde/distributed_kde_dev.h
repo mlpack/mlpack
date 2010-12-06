@@ -134,7 +134,7 @@ bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
     "  epan, gaussian"
   )(
     "bandwidth",
-    boost::program_options::value<double>()->default_value(0.2),
+    boost::program_options::value<double>()->default_value(0.05),
     "OPTIONAL kernel bandwidth, if you set --bandwidth_selection flag, "
     "then the --bandwidth will be ignored."
   )
