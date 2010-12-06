@@ -183,6 +183,10 @@ class TestDistributed_Kde {
       // Call the ultra-naive.
       std::vector<double> ultra_naive_distributed_kde_result;
 
+      // The master collects all the distributed tables and collects a
+      // mega-table for which can be used to compute the naive
+      // results.
+
       /*
       UltraNaive_(
         *(distributed_kde_arguments.metric_),
