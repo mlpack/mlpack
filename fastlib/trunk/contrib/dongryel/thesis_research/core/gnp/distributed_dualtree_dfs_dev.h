@@ -102,7 +102,6 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
       sub_engine.Init(sub_problem);
       sub_engine.Compute(metric, query_results, false);
     }
-    world_->barrier();
 
   } // End of the all-reduce loop.
 

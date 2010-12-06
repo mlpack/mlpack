@@ -7,6 +7,7 @@
 #define CORE_TABLE_DISTRIBUTED_TABLE_H
 
 #include <boost/mpi.hpp>
+#include <boost/mpi/timer.hpp>
 #include <boost/mpi/collectives.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/interprocess/offset_ptr.hpp>
@@ -449,6 +450,8 @@ class DistributedTable: public boost::noncopyable {
       const std::string & file_name,
       boost::mpi::communicator &table_outbox_group_communicator_in) {
 
+      boost::mpi::timer distributed_table_init_timer;
+
       // Initialize the table owned by the distributed table.
       owned_table_ = (core::table::global_m_file_) ?
                      core::table::global_m_file_->Construct<TableType>() :
@@ -474,6 +477,12 @@ class DistributedTable: public boost::noncopyable {
       boost::mpi::all_gather(
         table_outbox_group_communicator_in, owned_table_->n_entries(),
         local_n_entries_.get());
+
+      if( table_outbox_group_communicator_in.rank() == 0 ) {
+        printf(
+          "Took %g seconds to read in the distributed tables.\n", 
+          distributed_table_init_timer.elapsed() );
+      }
     }
 
     void Save(const std::string & file_name) const {
@@ -488,6 +497,8 @@ class DistributedTable: public boost::noncopyable {
       const core::metric_kernels::AbstractMetric & metric_in,
       boost::mpi::communicator &table_outbox_group_comm,
       int leaf_size, double sample_probability_in) {
+
+      boost::mpi::timer distributed_table_index_timer;
 
       // Each process generates a random subset of the data points to
       // send to the master. This is a MPI gather operation.
@@ -602,6 +613,9 @@ class DistributedTable: public boost::noncopyable {
 
       if(table_outbox_group_comm.rank() == 0) {
         printf("Finished building the distributed tree.\n");
+        printf(
+          "Took %g seconds to read in the distributed tree.\n", 
+          distributed_table_index_timer.elapsed() );
       }
     }
 
