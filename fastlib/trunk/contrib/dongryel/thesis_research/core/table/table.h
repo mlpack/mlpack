@@ -29,7 +29,7 @@ class Table: public boost::noncopyable {
   public:
     typedef core::tree::GeneralBinarySpaceTree < TreeSpecType > TreeType;
 
-    typedef core::table::Table<TreeSpecType> TableType;
+    typedef core::table::Table<TreeSpecType, IndexType> TableType;
 
     typedef typename TreeSpecType::StatisticType StatisticType;
 
@@ -74,7 +74,7 @@ class Table: public boost::noncopyable {
           table_ = it_in.table();
         }
 
-        TreeIterator(const TableType &table, const TreeType *node) {
+        TreeIterator(const TableType &table, TreeType *node) {
           table_ = &table;
           begin_ = node->begin();
           end_ = node->end();

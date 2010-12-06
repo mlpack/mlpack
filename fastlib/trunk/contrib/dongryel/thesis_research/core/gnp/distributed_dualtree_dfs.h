@@ -38,7 +38,9 @@ class DistributedDualtreeDfs {
 
   private:
 
-    void AllReduce_();
+    void AllReduce_(
+      const core::metric_kernels::AbstractMetric &metric,
+      typename DistributedProblemType::ResultType *query_results);
 
     void ResetStatisticRecursion_(
       DistributedTreeType *node, DistributedTableType * table);
@@ -63,7 +65,8 @@ class DistributedDualtreeDfs {
 
     void ResetStatistic();
 
-    void Init(boost::mpi::communicator *world, DistributedProblemType &problem_in);
+    void Init(
+      boost::mpi::communicator *world, DistributedProblemType &problem_in);
 
     void Compute(
       const core::metric_kernels::AbstractMetric &metric,
