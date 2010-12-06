@@ -221,6 +221,9 @@ void mlpack::kde::Kde<TableType>::ParseArguments(
       *(arguments_out->metric_), arguments_out->leaf_size_);
     std::cout << "Finished building the query tree.\n";
   }
+  else {
+    arguments_out->query_table_ = arguments_out->reference_table_;
+  }
 
   // Parse the bandwidth.
   arguments_out->bandwidth_ = vm["bandwidth"].as<double>();
