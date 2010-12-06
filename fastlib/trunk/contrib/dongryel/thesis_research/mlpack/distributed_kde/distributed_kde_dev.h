@@ -129,12 +129,12 @@ bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
     "OPTIONAL file to store computed densities."
   )(
     "kernel",
-    boost::program_options::value<std::string>()->default_value("epan"),
+    boost::program_options::value<std::string>()->default_value("gaussian"),
     "Kernel function used by KDE.  One of:\n"
     "  epan, gaussian"
   )(
     "bandwidth",
-    boost::program_options::value<double>()->default_value(0.05),
+    boost::program_options::value<double>()->default_value(0.2),
     "OPTIONAL kernel bandwidth, if you set --bandwidth_selection flag, "
     "then the --bandwidth will be ignored."
   )
@@ -314,12 +314,9 @@ void DistributedKde<DistributedTableType>::ParseArguments(
     core::table::global_m_file_->Construct<DistributedTableType>();
   arguments_out->reference_table_->Init(
     reference_file_name, world);
-  std::cout << "Finished reading in the reference set.\n";
-  std::cout << "Building the reference tree.\n";
   arguments_out->reference_table_->IndexData(
     *(arguments_out->metric_), world, arguments_out->leaf_size_,
     arguments_out->top_tree_sample_probability_);
-  std::cout << "Finished building the reference tree.\n";
 
   // Parse the query set and index the tree.
   if(vm.count("queries_in") > 0) {
