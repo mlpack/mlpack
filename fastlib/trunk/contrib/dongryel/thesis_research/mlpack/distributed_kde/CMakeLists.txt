@@ -13,6 +13,19 @@ target_link_libraries(distributed_kde
                       ${Boost_LIBRARIES}
                      )
 
+# the test for distributed_kde.test.cc
+add_executable(distributed_kde-test
+               EXCLUDE_FROM_ALL
+               distributed_kde.test.cc
+)
+
+# link dependencies of distributed_kde.test.cc
+target_link_libraries(distributed_kde-test
+                      core
+                      ${TRILINOS_LIBS}
+                      ${Boost_LIBRARIES}
+                     )
+
 # the test for intercomm_example.cc
 add_executable(intercomm_example
                EXCLUDE_FROM_ALL
