@@ -58,6 +58,7 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
     // Send the process's own collected tables.
     std::vector<boost::mpi::request> send_requests;
     std::vector<boost::mpi::request> receive_requests;
+    std::vector<int> received_tables_in_current_iter;
     send_requests.resize(num_tables_in_action);
     receive_requests.resize(num_tables_in_action);
 
@@ -72,6 +73,7 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
         send_id = group_leader + i + num_tables_in_action;
         receive_id = group_leader + i;
       }
+      received_tables_in_current_iter.push_back(receive_id);
       remote_tables[receive_id] =
         core::table::global_m_file_->Construct<TableType>();
       send_requests[i] = world_->isend(
@@ -86,6 +88,18 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
 
     // Each process calls the independent sets of serial dual-tree dfs
     // algorithms. Further parallelism can be exploited here.
+    for(unsigned i = 0; i < received_tables_in_current_iter.size(); i++) {
+      core::gnp::DualtreeDfs<ProblemType> sub_engine;
+      ProblemType sub_problem;
+      ArgumentType sub_argument;
+      sub_argument.Init(
+        remote_tables[world_->rank()],
+        remote_tables[received_tables_in_current_iter[i]],
+        problem_->global());
+      sub_problem.Init(self_argument);
+      sub_engine.Init(self_problem);
+      sub_engine.Compute(metric, query_results, false);
+    }
 
   } // End of the all-reduce loop.
 

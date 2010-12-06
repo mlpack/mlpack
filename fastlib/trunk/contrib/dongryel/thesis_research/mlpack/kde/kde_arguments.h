@@ -38,6 +38,19 @@ class KdeArguments {
   public:
 
     template<typename GlobalType>
+    void Init(
+      TableType *reference_table_in, TableType *query_table_in,
+      GlobalType &global_in) {
+      reference_table_ = reference_table_in;
+      query_table_ = query_table_in;
+      bandwidth_ = global_in.bandwidth();
+      relative_error_ = global_in.relative_error();
+      probability_ = global_in.probability();
+      kernel_ = global_in.kernel().name();
+      tables_are_aliased_ = true;
+    }
+
+    template<typename GlobalType>
     void Init(GlobalType &global_in) {
       reference_table_ = global_in.reference_table()->local_table();
       if(reference_table_ != query_table_) {
