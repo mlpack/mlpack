@@ -70,7 +70,9 @@ void core::gnp::DualtreeDfs<ProblemType>::Compute(
       reference_table_->get_node_bound
       (reference_table_->get_tree()));
 
-  PreProcess_(query_table_->get_tree());
+  if(do_initializations) {
+    PreProcess_(query_table_->get_tree());
+  }
   PreProcessReferenceTree_(reference_table_->get_tree());
 
   DualtreeCanonical_(metric,

@@ -40,8 +40,8 @@ if(MPI_FOUND)
 endif()
 
 # Add debug flags.
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall -lefence")
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -lefence")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -Wall")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 
 include_directories(${TRILINOS_INCLUDE_DIR})
 include_directories(${MPI_INCLUDE_DIR})
