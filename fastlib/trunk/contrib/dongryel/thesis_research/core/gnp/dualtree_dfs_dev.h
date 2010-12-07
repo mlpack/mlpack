@@ -11,6 +11,11 @@
 #include "core/table/table.h"
 
 template<typename ProblemType>
+int core::gnp::DualtreeDfs<ProblemType>::num_deterministic_prunes() const {
+  return num_deterministic_prunes_;
+}
+
+template<typename ProblemType>
 ProblemType *core::gnp::DualtreeDfs<ProblemType>::problem() {
   return problem_;
 }
@@ -33,6 +38,10 @@ void core::gnp::DualtreeDfs<ProblemType>::ResetStatistic() {
 
 template<typename ProblemType>
 void core::gnp::DualtreeDfs<ProblemType>::Init(ProblemType &problem_in) {
+
+  // Reset prune statistics.
+  num_deterministic_prunes_ = 0;
+
   problem_ = &problem_in;
   query_table_ = problem_->query_table();
   reference_table_ = problem_->reference_table();
@@ -245,8 +254,8 @@ bool core::gnp::DualtreeDfs<ProblemType>::CanSummarize_(
   new_summary.ApplyPostponed(qnode_stat.postponed_);
   new_summary.ApplyDelta(delta);
 
-  return new_summary.CanSummarize(problem_->global(), delta, qnode, rnode,
-                                  query_results);
+  return new_summary.CanSummarize(
+           problem_->global(), delta, qnode, rnode, query_results);
 }
 
 template<typename ProblemType>
@@ -314,6 +323,7 @@ bool core::gnp::DualtreeDfs<ProblemType>::DualtreeCanonical_(
   // If it is prunable, then summarize and return.
   if(CanSummarize_(qnode, rnode, delta, query_results)) {
     Summarize_(qnode, delta, query_results);
+    num_deterministic_prunes_++;
     return true;
   }
   else if(failure_probability > 1e-6) {
