@@ -97,6 +97,8 @@ class DualtreeDfs {
 
   private:
 
+    int num_deterministic_prunes_;
+
     ProblemType *problem_;
 
     TableType *query_table_;
@@ -168,6 +170,8 @@ class DualtreeDfs {
       TreeType *qnode, ResultType *query_results);
 
   public:
+
+    int num_deterministic_prunes() const;
 
     ProblemType *problem();
 
