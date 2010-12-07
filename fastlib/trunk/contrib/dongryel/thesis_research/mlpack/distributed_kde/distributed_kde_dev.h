@@ -134,7 +134,7 @@ bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
     "  epan, gaussian"
   )(
     "bandwidth",
-    boost::program_options::value<double>()->default_value(0.2),
+    boost::program_options::value<double>()->default_value(0.5),
     "OPTIONAL kernel bandwidth, if you set --bandwidth_selection flag, "
     "then the --bandwidth will be ignored."
   )
@@ -144,7 +144,7 @@ bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
     "Probability guarantee for the approximation of KDE."
   )(
     "relative_error",
-    boost::program_options::value<double>()->default_value(0.01),
+    boost::program_options::value<double>()->default_value(0.1),
     "Relative error for the approximation of KDE."
   )(
     "leaf_size",
@@ -345,19 +345,27 @@ void DistributedKde<DistributedTableType>::ParseArguments(
 
   // Parse the bandwidth.
   arguments_out->bandwidth_ = vm["bandwidth"].as<double>();
-  std::cout << "Bandwidth of " << arguments_out->bandwidth_ << "\n";
+  if(world.rank() == 0) {
+    std::cout << "Bandwidth of " << arguments_out->bandwidth_ << "\n";
+  }
 
   // Parse the relative error.
   arguments_out->relative_error_ = vm["relative_error"].as<double>();
-  std::cout << "Relative error of " << arguments_out->relative_error_ << "\n";
+  if(world.rank() == 0) {
+    std::cout << "Relative error of " << arguments_out->relative_error_ << "\n";
+  }
 
   // Parse the probability.
   arguments_out->probability_ = vm["probability"].as<double>();
-  std::cout << "Probability of " << arguments_out->probability_ << "\n";
+  if(world.rank() == 0) {
+    std::cout << "Probability of " << arguments_out->probability_ << "\n";
+  }
 
   // Parse the kernel type.
   arguments_out->kernel_ = vm["kernel"].as< std::string >();
-  std::cout << "Using the kernel: " << arguments_out->kernel_ << "\n";
+  if(world.rank() == 0) {
+    std::cout << "Using the kernel: " << arguments_out->kernel_ << "\n";
+  }
 }
 
 template<typename DistributedTableType>
