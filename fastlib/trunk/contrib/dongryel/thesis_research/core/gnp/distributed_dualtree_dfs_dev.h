@@ -29,6 +29,8 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
   ArgumentType self_argument;
   self_argument.Init(problem_->global());
   self_problem.Init(self_argument);
+  self_problem.global().set_effective_num_reference_points(
+    *world_, reference_table_, query_table_);
   self_engine.Init(self_problem);
   self_engine.Compute(metric, query_results);
   world_->barrier();
@@ -99,6 +101,8 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
         query_table_->local_table(),
         problem_->global());
       sub_problem.Init(sub_argument);
+      sub_problem.global().set_effective_num_reference_points(
+        *world_, reference_table_, query_table_);
       sub_engine.Init(sub_problem);
       sub_engine.Compute(metric, query_results, false);
     }

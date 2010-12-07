@@ -143,6 +143,20 @@ class KdeGlobal {
       return effective_num_reference_points_;
     }
 
+    template<typename DistributedTableType>
+    void set_effective_num_reference_points(
+      boost::mpi::communicator &comm,
+      DistributedTableType *reference_table_in,
+      DistributedTableType *query_table_in) {
+
+      double total_sum = 0;
+      for(int i = 0; i < comm.size(); i++) {
+        total_sum += reference_table_in->local_n_entries(i);
+      }
+      effective_num_reference_points_ = (reference_table_in == query_table_in) ?
+                                        (total_sum - 1.0) : total_sum;
+    }
+
     ~KdeGlobal() {
       delete kernel_;
       kernel_ = NULL;
@@ -549,7 +563,8 @@ class KdeSummary {
       double right_hand_side =
         global.reference_table()->get_node_count(rnode) *
         (global.relative_error() * densities_l_ - used_error_u_) /
-        static_cast<double>(global.reference_table()->n_entries() - pruned_l_);
+        static_cast<double>(
+          global.effective_num_reference_points() - pruned_l_);
 
       return left_hand_side <= right_hand_side;
     }
