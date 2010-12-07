@@ -115,7 +115,7 @@ class KdeGlobal {
 
     KernelType *kernel_;
 
-    int effective_num_reference_points_;
+    double effective_num_reference_points_;
 
     double mult_const_;
 
