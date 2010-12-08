@@ -311,7 +311,9 @@ void DistributedKde<DistributedTableType>::ParseArguments(
   std::cout << "Reading in the reference set: " <<
             reference_file_name << "\n";
   arguments_out->reference_table_ =
-    core::table::global_m_file_->Construct<DistributedTableType>();
+    (core::table::global_m_file_) ?
+    core::table::global_m_file_->Construct<DistributedTableType>() :
+    new DistributedTableType();
   arguments_out->reference_table_->Init(
     reference_file_name, world);
   arguments_out->reference_table_->IndexData(
@@ -333,7 +335,9 @@ void DistributedKde<DistributedTableType>::ParseArguments(
     std::cout << "Reading in the query set: " <<
               query_file_name << "\n";
     arguments_out->query_table_ =
-      core::table::global_m_file_->Construct<DistributedTableType>();
+      (core::table::global_m_file_) ?
+      core::table::global_m_file_->Construct<DistributedTableType>() :
+      new DistributedTableType();
     arguments_out->query_table_->Init(query_file_name, world);
     std::cout << "Finished reading in the query set.\n";
     std::cout << "Building the query tree.\n";

@@ -84,7 +84,9 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
       }
       received_tables_in_current_iter.push_back(receive_id);
       remote_tables[receive_id] =
-        core::table::global_m_file_->Construct<TableType>();
+        (core::table::global_m_file_) ?
+        core::table::global_m_file_->Construct<TableType>() :
+        new TableType();
       world_->recv(
         exchange_process_id, receive_id, *(remote_tables[receive_id]));
     }
@@ -113,7 +115,12 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
   // the process's own table.
   for(int i = 0; i < static_cast<int>(remote_tables.size()); i++) {
     if(i != world_->rank()) {
-      core::table::global_m_file_->DestroyPtr(remote_tables[i]);
+      if(core::table::global_m_file_) {
+        core::table::global_m_file_->DestroyPtr(remote_tables[i]);
+      }
+      else {
+        delete remote_tables[i];
+      }
     }
   }
 }

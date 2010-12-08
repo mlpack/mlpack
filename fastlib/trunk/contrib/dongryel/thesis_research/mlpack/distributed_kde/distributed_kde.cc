@@ -40,9 +40,9 @@ int main(int argc, char *argv[]) {
   world.barrier();
 
   // Initialize the memory allocator.
-  core::table::global_m_file_ = new core::table::MemoryMappedFile();
-  core::table::global_m_file_->Init(
-    std::string("tmp_file"), world.rank(), world.rank(), 100000000);
+  //core::table::global_m_file_ = new core::table::MemoryMappedFile();
+  //core::table::global_m_file_->Init(
+  //std::string("tmp_file"), world.rank(), world.rank(), 100000000);
 
   // Seed the random number.
   srand(time(NULL) + world.rank());
