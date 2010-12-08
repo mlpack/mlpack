@@ -8,7 +8,6 @@
 #include "core/metric_kernels/lmetric.h"
 #include "core/tree/statistic.h"
 #include "core/table/distributed_table.h"
-#include "core/table/mailbox.h"
 #include "core/tree/gen_kdtree.h"
 #include "core/tree/gen_metric_tree.h"
 #include "mlpack/kde/kde_dualtree.h"
