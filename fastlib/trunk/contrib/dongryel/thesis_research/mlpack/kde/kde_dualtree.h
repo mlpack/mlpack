@@ -139,7 +139,7 @@ class KdeGlobal {
       return normalize_densities_;
     }
 
-    int effective_num_reference_points() const {
+    double effective_num_reference_points() const {
       return effective_num_reference_points_;
     }
 
