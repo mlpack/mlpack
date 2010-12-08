@@ -14,9 +14,6 @@
 #include <boost/random/variate_generator.hpp>
 #include <boost/utility.hpp>
 #include "core/table/table.h"
-#include "core/table/mailbox.h"
-#include "core/table/distributed_table_message.h"
-#include "core/table/point_request_message.h"
 #include "core/table/memory_mapped_file.h"
 #include "core/tree/gen_metric_tree.h"
 #include "core/table/distributed_auction.h"
@@ -141,11 +138,6 @@ class DistributedTable: public boost::noncopyable {
 
   private:
 
-    boost::interprocess::offset_ptr<core::table::TableInbox> table_inbox_;
-
-    boost::interprocess::offset_ptr <
-    core::table::TableOutbox<TableType> > table_outbox_;
-
     boost::interprocess::offset_ptr<TableType> owned_table_;
 
     boost::interprocess::offset_ptr<int> local_n_entries_;
@@ -177,7 +169,8 @@ class DistributedTable: public boost::noncopyable {
 
       // Move the data across processes to get a new local table.
       TableType *new_local_table =
-        core::table::global_m_file_->Construct<TableType>();
+        (core::table::global_m_file_) ?
+        core::table::global_m_file_->Construct<TableType>() : new TableType();
       new_local_table->Init(
         owned_table_->n_attributes(), total_num_points_owned);
 
@@ -259,7 +252,12 @@ class DistributedTable: public boost::noncopyable {
 
       // Destory the old table and take the new table to be the owned
       // table.
-      core::table::global_m_file_->DestroyPtr(owned_table_.get());
+      if(core::table::global_m_file_) {
+        core::table::global_m_file_->DestroyPtr(owned_table_.get());
+      }
+      else {
+        delete owned_table_.get();
+      }
       owned_table_ = new_local_table;
     }
 
@@ -346,27 +344,7 @@ class DistributedTable: public boost::noncopyable {
 
   public:
 
-    void UnlockPointinTableInbox() {
-      table_inbox_->UnlockPoint();
-    }
-
-    void RunInbox(
-      boost::mpi::intercommunicator &inbox_to_outbox_comm_in,
-      boost::mpi::intercommunicator &inbox_to_computation_comm_in) {
-      table_inbox_->Run(
-        inbox_to_outbox_comm_in, inbox_to_computation_comm_in);
-    }
-
-    void RunOutbox(
-      boost::mpi::intercommunicator &outbox_to_inbox_comm_in,
-      boost::mpi::intercommunicator &outbox_to_computation_comm_in) {
-      table_outbox_->Run(
-        outbox_to_inbox_comm_in, outbox_to_computation_comm_in);
-    }
-
     DistributedTable() {
-      table_inbox_ = NULL;
-      table_outbox_ = NULL;
       owned_table_ = NULL;
       local_n_entries_ = NULL;
       global_table_ = NULL;
@@ -374,16 +352,6 @@ class DistributedTable: public boost::noncopyable {
     }
 
     ~DistributedTable() {
-
-      // Delete the mailboxes.
-      if(table_outbox_ != NULL) {
-        core::table::global_m_file_->DestroyPtr(table_outbox_.get());
-        table_outbox_ = NULL;
-      }
-      if(table_inbox_ != NULL) {
-        core::table::global_m_file_->DestroyPtr(table_inbox_.get());
-        table_inbox_ = NULL;
-      }
 
       // Delete the list of number of entries for each table in the
       // distributed table.
@@ -458,14 +426,6 @@ class DistributedTable: public boost::noncopyable {
                      new TableType();
       owned_table_->Init(file_name, table_outbox_group_communicator_in.rank());
 
-      // Initialize the mailboxes.
-      table_outbox_ = core::table::global_m_file_->Construct <
-                      core::table::TableOutbox<TableType> > ();
-      table_outbox_->Init(owned_table_);
-      table_inbox_ = core::table::global_m_file_->Construct <
-                     core::table::TableInbox > ();
-      table_inbox_->Init(owned_table_->n_attributes());
-
       // Allocate the vector for storing the number of entries for all
       // the tables in the world, and do an all-gather operation to
       // find out all the sizes.
@@ -478,10 +438,10 @@ class DistributedTable: public boost::noncopyable {
         table_outbox_group_communicator_in, owned_table_->n_entries(),
         local_n_entries_.get());
 
-      if( table_outbox_group_communicator_in.rank() == 0 ) {
+      if(table_outbox_group_communicator_in.rank() == 0) {
         printf(
-          "Took %g seconds to read in the distributed tables.\n", 
-          distributed_table_init_timer.elapsed() );
+          "Took %g seconds to read in the distributed tables.\n",
+          distributed_table_init_timer.elapsed());
       }
     }
 
@@ -597,7 +557,10 @@ class DistributedTable: public boost::noncopyable {
 
       // Every process gathers the adjusted leaf centroids and build
       // the top tree individually.
-      global_table_ = core::table::global_m_file_->Construct<TableType>();
+      global_table_ =
+        (core::table::global_m_file_) ?
+        core::table::global_m_file_->Construct<TableType>() :
+        new TableType();
       global_table_->Init(
         owned_table_->n_attributes(), table_outbox_group_comm.size());
       boost::mpi::all_gather(
@@ -614,8 +577,8 @@ class DistributedTable: public boost::noncopyable {
       if(table_outbox_group_comm.rank() == 0) {
         printf("Finished building the distributed tree.\n");
         printf(
-          "Took %g seconds to read in the distributed tree.\n", 
-          distributed_table_index_timer.elapsed() );
+          "Took %g seconds to read in the distributed tree.\n",
+          distributed_table_index_timer.elapsed());
       }
     }
 
@@ -625,53 +588,6 @@ class DistributedTable: public boost::noncopyable {
 
     TreeIterator get_node_iterator(int begin, int count) {
       return TreeIterator(*this, begin, count);
-    }
-
-    void get(
-      boost::mpi::intercommunicator &computation_to_outbox_comm_in,
-      boost::mpi::intercommunicator &computation_to_inbox_comm_in,
-      int requested_rank, int point_id,
-      core::table::DensePoint * entry) {
-
-      // If owned by the process, just return the point. Otherwise, we
-      // need to send an MPI request to the process holding the
-      // required resource.
-      if(computation_to_outbox_comm_in.local_rank() == requested_rank) {
-        owned_table_->get(point_id, entry);
-      }
-
-      // If the inbox has already fetched the point (do a cache
-      // lookup) here, then no MPI call is necessary.
-      else if(false) {
-
-      }
-
-      else {
-
-        // The point request message.
-        core::table::PointRequestMessage point_request_message(
-          computation_to_outbox_comm_in.local_rank(), point_id);
-
-        // Inform the source processor that this processor needs data!
-        computation_to_outbox_comm_in.send(
-          requested_rank,
-          core::table::DistributedTableMessage::REQUEST_POINT_FROM_TABLE_OUTBOX,
-          point_request_message);
-
-        // Wait until the point has arrived.
-        int dummy;
-        boost::mpi::request recv_request =
-          computation_to_inbox_comm_in.irecv(
-            computation_to_outbox_comm_in.local_rank(),
-            core::table::DistributedTableMessage::
-            RECEIVE_POINT_FROM_TABLE_INBOX, dummy);
-        recv_request.wait();
-
-        // If we are here, then the point is ready. Alias the point.
-        entry->Alias(
-          table_inbox_->get_point(requested_rank, point_id),
-          owned_table_->n_attributes());
-      }
     }
 
   private:
