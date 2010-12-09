@@ -159,8 +159,8 @@ class TestKde {
       // Push in the randomly generated bandwidth.
       double bandwidth =
         core::math::Random(
-          0.1 * sqrt(2.0 * mlpack::kde::test_kde::num_dimensions_),
-          0.2 * sqrt(2.0 * mlpack::kde::test_kde::num_dimensions_));
+          0.05 * sqrt(mlpack::kde::test_kde::num_dimensions_),
+          0.1 * sqrt(mlpack::kde::test_kde::num_dimensions_));
       std::stringstream bandwidth_sstr;
       bandwidth_sstr << "--bandwidth=" << bandwidth;
       args.push_back(bandwidth_sstr.str());

@@ -23,13 +23,15 @@ namespace table {
 
 extern MemoryMappedFile *global_m_file_;
 
-template < typename TreeSpecType, typename IndexType = int >
+template <
+typename TreeSpecType, typename OldFromNewIndexType = int >
 class Table: public boost::noncopyable {
 
   public:
     typedef core::tree::GeneralBinarySpaceTree < TreeSpecType > TreeType;
 
-    typedef core::table::Table<TreeSpecType, IndexType> TableType;
+    typedef core::table::Table <
+    TreeSpecType, OldFromNewIndexType > TableType;
 
     typedef typename TreeSpecType::StatisticType StatisticType;
 
@@ -40,9 +42,9 @@ class Table: public boost::noncopyable {
 
     int rank_;
 
-    boost::interprocess::offset_ptr<IndexType> old_from_new_;
+    boost::interprocess::offset_ptr<OldFromNewIndexType> old_from_new_;
 
-    boost::interprocess::offset_ptr<IndexType> new_from_old_;
+    boost::interprocess::offset_ptr<int> new_from_old_;
 
     boost::interprocess::offset_ptr<TreeType> tree_;
 
@@ -155,11 +157,11 @@ class Table: public boost::noncopyable {
 
       // Save the old_from_new_mapping manually.
       for(int i = 0; i < data_.n_cols(); i++) {
-        core::table::IndexUtil<IndexType>::Serialize(
+        core::table::IndexUtil<OldFromNewIndexType>::Serialize(
           ar, old_from_new_.get(), i);
       }
       for(int i = 0; i < data_.n_cols(); i++) {
-        core::table::IndexUtil<IndexType>::Serialize(
+        core::table::IndexUtil<int>::Serialize(
           ar, new_from_old_.get(), i);
       }
 
@@ -190,18 +192,18 @@ class Table: public boost::noncopyable {
       // Load the mappings manually.
       old_from_new_ = (core::table::global_m_file_) ?
                       core::table::global_m_file_->ConstructArray <
-                      IndexType > (data_.n_cols()) :
-                      new IndexType[ data_.n_cols()];
+                      OldFromNewIndexType > (data_.n_cols()) :
+                      new OldFromNewIndexType[ data_.n_cols()];
       new_from_old_ = (core::table::global_m_file_) ?
                       core::table::global_m_file_->ConstructArray <
-                      IndexType > (data_.n_cols()) :
-                      new IndexType[ data_.n_cols()];
+                      int > (data_.n_cols()) :
+                      new int[ data_.n_cols()];
       for(int i = 0; i < data_.n_cols(); i++) {
-        core::table::IndexUtil<IndexType>::Serialize(
+        core::table::IndexUtil<OldFromNewIndexType>::Serialize(
           ar, old_from_new_.get(), i);
       }
       for(int i = 0; i < data_.n_cols(); i++) {
-        core::table::IndexUtil<IndexType>::Serialize(
+        core::table::IndexUtil<int>::Serialize(
           ar, new_from_old_.get(), i);
       }
 
@@ -232,11 +234,11 @@ class Table: public boost::noncopyable {
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
-    IndexType *old_from_new() {
+    OldFromNewIndexType *old_from_new() {
       return old_from_new_.get();
     }
 
-    IndexType *new_from_old() {
+    int *new_from_old() {
       return new_from_old_.get();
     }
 
@@ -352,12 +354,15 @@ class Table: public boost::noncopyable {
       rank_ = rank_in;
 
       if(core::table::global_m_file_) {
-        old_from_new_ = core::table::global_m_file_->ConstructArray<IndexType>(
+        old_from_new_ = core::table::global_m_file_->ConstructArray <
+                        OldFromNewIndexType > (
                           data_.n_cols());
       }
       else {
-        old_from_new_ = new IndexType[data_.n_cols()];
+        old_from_new_ = new OldFromNewIndexType[data_.n_cols()];
       }
+      core::tree::IndexInitializer<OldFromNewIndexType>::OldFromNew(
+        data_, rank_in, old_from_new_.get());
     }
 
     void Init(const std::string &file_name, int rank_in = 0) {
@@ -365,12 +370,15 @@ class Table: public boost::noncopyable {
       rank_ = rank_in;
 
       if(core::table::global_m_file_) {
-        old_from_new_ = core::table::global_m_file_->ConstructArray<IndexType>(
+        old_from_new_ = core::table::global_m_file_->ConstructArray <
+                        OldFromNewIndexType > (
                           data_.n_cols());
       }
       else {
-        old_from_new_ = new IndexType[data_.n_cols()];
+        old_from_new_ = new OldFromNewIndexType[data_.n_cols()];
       }
+      core::tree::IndexInitializer<OldFromNewIndexType>::OldFromNew(
+        data_, rank_in, old_from_new_.get());
     }
 
     void Save(const std::string &file_name) const {
@@ -395,11 +403,12 @@ class Table: public boost::noncopyable {
       int num_nodes;
 
       if(core::table::global_m_file_) {
-        new_from_old_ = core::table::global_m_file_->ConstructArray<IndexType>(
+        new_from_old_ = core::table::global_m_file_->ConstructArray <
+                        int > (
                           data_.n_cols());
       }
       else {
-        new_from_old_ = new IndexType[data_.n_cols()];
+        new_from_old_ = new int[data_.n_cols()];
       }
       tree_ = TreeType::MakeTree(
                 metric_in, data_, leaf_size, old_from_new_.get(),
@@ -432,7 +441,8 @@ class Table: public boost::noncopyable {
       }
       else {
         return data_.GetColumnPtr(
-                 IndexUtil<IndexType>::Extract(new_from_old_.get(), point_id));
+                 IndexUtil<int>::Extract(
+                   new_from_old_.get(), point_id));
       }
     }
 
@@ -470,7 +480,7 @@ class Table: public boost::noncopyable {
       }
       else {
         data_.CopyColumnVector(
-          IndexUtil<IndexType>::Extract(
+          IndexUtil<int>::Extract(
             new_from_old_.get(), point_id), entry);
       }
     }
@@ -481,7 +491,7 @@ class Table: public boost::noncopyable {
       }
       else {
         data_.MakeColumnVector(
-          IndexUtil<IndexType>::Extract(
+          IndexUtil<int>::Extract(
             new_from_old_.get(), point_id), entry);
       }
     }
@@ -493,7 +503,7 @@ class Table: public boost::noncopyable {
       }
       else {
         data_.MakeColumnVector(
-          IndexUtil<IndexType>::Extract(
+          IndexUtil<int>::Extract(
             new_from_old_.get(), point_id), entry);
       }
     }
@@ -504,7 +514,7 @@ class Table: public boost::noncopyable {
       }
       else {
         data_.MakeColumnVector(
-          IndexUtil<IndexType>::Extract(
+          IndexUtil<int>::Extract(
             new_from_old_.get(), point_id), entry);
       }
     }
@@ -524,7 +534,7 @@ class Table: public boost::noncopyable {
         return reordered_position;
       }
       else {
-        return IndexUtil<IndexType>::Extract(
+        return IndexUtil<OldFromNewIndexType>::Extract(
                  old_from_new_.get(), reordered_position);
       }
     }

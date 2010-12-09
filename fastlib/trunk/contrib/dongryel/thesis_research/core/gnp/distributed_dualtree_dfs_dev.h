@@ -126,7 +126,8 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
 }
 
 template<typename DistributedProblemType>
-DistributedProblemType *core::gnp::DistributedDualtreeDfs<DistributedProblemType>::problem() {
+DistributedProblemType *core::gnp::DistributedDualtreeDfs <
+DistributedProblemType >::problem() {
   return problem_;
 }
 
@@ -143,7 +144,8 @@ core::gnp::DistributedDualtreeDfs<DistributedProblemType>::reference_table() {
 }
 
 template<typename DistributedProblemType>
-void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ResetStatistic() {
+void core::gnp::DistributedDualtreeDfs <
+DistributedProblemType >::ResetStatistic() {
   ResetStatisticRecursion_(query_table_->get_tree(), query_table_);
 }
 
@@ -205,7 +207,8 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ResetStatisticRe
 
 template<typename DistributedProblemType>
 template<typename TemplateTreeType>
-void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::PreProcessReferenceTree_(
+void core::gnp::DistributedDualtreeDfs <
+DistributedProblemType >::PreProcessReferenceTree_(
   TemplateTreeType *rnode) {
 
   typename DistributedProblemType::StatisticType &rnode_stat = rnode->stat();

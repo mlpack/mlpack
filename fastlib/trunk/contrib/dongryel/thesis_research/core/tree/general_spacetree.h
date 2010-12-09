@@ -40,6 +40,9 @@ namespace tree {
 template<typename IndexType>
 class IndexInitializer {
   public:
+    static void PostProcessOldFromNew(
+      const core::table::DenseMatrix &matrix_in, IndexType *old_from_new_out);
+
     static void OldFromNew(
       const core::table::DenseMatrix &matrix_in,
       int rank_in,
@@ -48,26 +51,35 @@ class IndexInitializer {
     static void NewFromOld(
       const core::table::DenseMatrix &matrix_in,
       IndexType *old_from_new_in,
-      IndexType *new_from_old_out);
+      int *new_from_old_out);
 };
 
 template<>
-class IndexInitializer< std::pair<int, int> > {
+class IndexInitializer< std::pair<int, std::pair<int, int> > > {
   public:
+    static void PostProcessOldFromNew(
+      const core::table::DenseMatrix &matrix_in,
+      std::pair<int, std::pair<int, int> > *old_from_new_out) {
+      for(int i = 0; i < matrix_in.n_cols(); i++) {
+        old_from_new_out[i].second.second = i;
+      }
+    }
+
     static void OldFromNew(
       const core::table::DenseMatrix &matrix_in, int rank_in,
-      std::pair<int, int> *old_from_new_out) {
+      std::pair<int, std::pair<int, int> > *old_from_new_out) {
       for(int i = 0; i < matrix_in.n_cols(); i++) {
-        old_from_new_out[i] = std::pair<int, int>(rank_in, i);
+        old_from_new_out[i] = std::pair<int, std::pair<int, int> >(
+                                rank_in, std::pair<int, int>(i, 0));
       }
     }
 
     static void NewFromOld(
       const core::table::DenseMatrix &matrix_in,
-      std::pair<int, int> *old_from_new_in,
-      std::pair<int, int> *new_from_old_out) {
+      std::pair<int, std::pair<int, int> > *old_from_new_in,
+      int *new_from_old_out) {
       for(int i = 0; i < matrix_in.n_cols(); i++) {
-        new_from_old_out[old_from_new_in[i].second] = std::pair<int, int>(0, i);
+        new_from_old_out[old_from_new_in[i].second.second] = i;
       }
     }
 };
@@ -75,6 +87,13 @@ class IndexInitializer< std::pair<int, int> > {
 template<>
 class IndexInitializer< int > {
   public:
+    static void PostProcessOldFromNew(
+      const core::table::DenseMatrix &matrix_in,
+      int *old_from_new_out) {
+
+      // Do nothing.
+    }
+
     static void OldFromNew(
       const core::table::DenseMatrix &matrix_in, int rank_in,
       int *old_from_new_out) {
@@ -416,17 +435,17 @@ class GeneralBinarySpaceTree {
       const core::metric_kernels::AbstractMetric &metric_in,
       core::table::DenseMatrix& matrix, int leaf_size,
       IndexType *old_from_new,
-      IndexType *new_from_old,
+      int *new_from_old,
       int max_num_leaf_nodes = std::numeric_limits<int>::max(),
       int *num_nodes = NULL,
       int rank_in = 0) {
 
+      // Postprocess old_from_new indices before building the tree.
+      IndexInitializer<IndexType>::PostProcessOldFromNew(matrix, old_from_new);
+
       TreeType *node = (core::table::global_m_file_) ?
                        core::table::global_m_file_->Construct<TreeType>() :
                        new TreeType();
-
-      // Initialize the old_from_new mapping.
-      IndexInitializer<IndexType>::OldFromNew(matrix, rank_in, old_from_new);
 
       int num_nodes_in = 1;
       node->Init(0, matrix.n_cols());

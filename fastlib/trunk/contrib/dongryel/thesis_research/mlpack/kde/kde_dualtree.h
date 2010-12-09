@@ -7,6 +7,7 @@
 #define MLPACK_KDE_KDE_DUALTREE_H
 
 #include <boost/math/distributions/normal.hpp>
+#include <boost/mpi.hpp>
 #include <boost/serialization/serialization.hpp>
 #include "core/monte_carlo/mean_variance_pair.h"
 #include "core/metric_kernels/kernel.h"
@@ -279,13 +280,6 @@ class KdeResult {
       const core::metric_kernels::AbstractMetric &metric,
       int q_index, const GlobalType &global,
       const bool is_monochromatic) {
-
-      if(is_monochromatic) {
-        densities_l_[q_index] = densities_l_[q_index] -
-                                global.kernel().MaxUnnormValue();
-        densities_u_[q_index] = densities_u_[q_index] -
-                                global.kernel().MaxUnnormValue();
-      }
 
       densities_[q_index] = 0.5 * (
                               densities_l_[q_index] + densities_u_[q_index]);
