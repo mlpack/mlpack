@@ -31,17 +31,19 @@ class IndexUtil< int > {
 };
 
 template<>
-class IndexUtil< std::pair<int, int> > {
+class IndexUtil< std::pair<int, std::pair<int, int> > > {
   public:
-    static int Extract(std::pair<int, int> *array, int position) {
-      return array[position].second;
+    static int Extract(
+      std::pair<int, std::pair<int, int> > *array, int position) {
+      return array[position].second.second;
     }
 
     template<typename Archive>
     static void Serialize(
-      Archive &ar, std::pair<int, int> *array, int position) {
+      Archive &ar, std::pair<int, std::pair<int, int> > *array, int position) {
       ar & array[position].first;
-      ar & array[position].second;
+      ar & array[position].second.first;
+      ar & array[position].second.second;
     }
 };
 };

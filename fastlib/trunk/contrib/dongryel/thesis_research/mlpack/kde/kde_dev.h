@@ -41,6 +41,7 @@ void mlpack::kde::Kde<TableType>::Compute(
 
   // Compute the result.
   dualtree_dfs.Compute(* arguments_in.metric_, result_out);
+  printf("Number of prunes: %d\n", dualtree_dfs.num_deterministic_prunes());
 }
 
 template<typename TableType>

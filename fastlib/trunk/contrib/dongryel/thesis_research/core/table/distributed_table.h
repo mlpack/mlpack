@@ -33,7 +33,8 @@ class DistributedTable: public boost::noncopyable {
 
     typedef core::tree::GeneralBinarySpaceTree <TreeSpecType> TreeType;
 
-    typedef core::table::Table<TreeSpecType, std::pair<int, int> > TableType;
+    typedef core::table::Table <
+    TreeSpecType, std::pair<int, std::pair< int, int> > > TableType;
 
     typedef DistributedTable<TreeSpecType> DistributedTableType;
 
@@ -189,6 +190,7 @@ class DistributedTable: public boost::noncopyable {
       right_send_requests.resize(right_contributions.size());
       for(unsigned int i = 1; i <= left_contributions.size(); i++) {
         left_contributions[i - 1].Init(
+          table_outbox_group_comm.rank(),
           owned_table_->data(), owned_table_->old_from_new(), point_assignments,
           table_outbox_group_comm.rank() - i);
         left_send_requests[i - 1] =
@@ -197,6 +199,7 @@ class DistributedTable: public boost::noncopyable {
       }
       for(unsigned int i = 1; i <= right_contributions.size(); i++) {
         right_contributions[i - 1].Init(
+          table_outbox_group_comm.rank(),
           owned_table_->data(), owned_table_->old_from_new(), point_assignments,
           table_outbox_group_comm.rank() + i);
         right_send_requests[i - 1] =
@@ -210,10 +213,11 @@ class DistributedTable: public boost::noncopyable {
       // copy over.
       core::table::OffsetDenseMatrix tmp_offset;
       double *new_table_ptr = new_local_table->data().ptr();
-      std::pair<int, int> *new_table_old_from_new_ptr =
+      std::pair<int, std::pair<int, int> > *new_table_old_from_new_ptr =
         new_local_table->old_from_new();
       for(unsigned int i = 1; i <= left_contributions.size(); i++) {
         tmp_offset.Init(
+          table_outbox_group_comm.rank(),
           new_table_ptr, new_table_old_from_new_ptr,
           new_local_table->n_attributes());
         table_outbox_group_comm.recv(
@@ -225,6 +229,7 @@ class DistributedTable: public boost::noncopyable {
         new_table_old_from_new_ptr += tmp_offset.n_entries();
       }
       tmp_offset.Init(
+        table_outbox_group_comm.rank(),
         owned_table_->data(), new_table_old_from_new_ptr, point_assignments,
         table_outbox_group_comm.rank());
       tmp_offset.Extract(new_table_ptr, new_table_old_from_new_ptr);
@@ -232,6 +237,7 @@ class DistributedTable: public boost::noncopyable {
       new_table_old_from_new_ptr += tmp_offset.n_entries();
       for(unsigned int i = 1; i <= right_contributions.size(); i++) {
         tmp_offset.Init(
+          table_outbox_group_comm.rank(),
           new_table_ptr, new_table_old_from_new_ptr,
           new_local_table->n_attributes());
         table_outbox_group_comm.recv(

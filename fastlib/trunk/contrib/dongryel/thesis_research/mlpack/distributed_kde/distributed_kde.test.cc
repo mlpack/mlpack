@@ -21,6 +21,35 @@ class TestDistributed_Kde {
 
     typedef DistributedTableType::TableType TableType;
 
+    void CombineTables_(
+      boost::mpi::communicator &world,
+      DistributedTableType *distributed_reference_table,
+      TableType &output_table) {
+
+      int total_num_points = 0;
+      double *start_ptr = output_table.data().ptr();
+
+      // The master process initializes the global table and the
+      // copies its own data onto it.
+      if(world.rank() == 0) {
+        for(int i = 0; i < world.size(); i++) {
+          total_num_points += distributed_reference_table->local_n_entries(i);
+        }
+        output_table.Init(
+          distributed_reference_table->n_attributes(), total_num_points);
+      }
+
+      int total_num_accumulated_points = 0;
+      for(int i = 1; i < world.size(); i++) {
+        if(world.rank() == 0) {
+
+        }
+        else {
+
+        }
+      }
+    }
+
     bool CheckAccuracy_(
       const std::vector<double> &query_results,
       const std::vector<double> &naive_query_results,
@@ -86,7 +115,7 @@ class TestDistributed_Kde {
   public:
 
     int StressTestMain(boost::mpi::communicator &world) {
-      for(int i = 0; i < 20; i++) {
+      for(int i = 0; i < 1; i++) {
         for(int k = 0; k < 2; k++) {
           StressTest(world, k);
         }
@@ -103,7 +132,7 @@ class TestDistributed_Kde {
         num_dimensions = core::math::RandInt(3, 10);
       }
       boost::mpi::broadcast(world, num_dimensions, 0);
-      int num_points = core::math::RandInt(10, 50);
+      int num_points = core::math::RandInt(100, 500);
       std::vector< std::string > args;
 
       // Push in the random generate command.
@@ -161,8 +190,8 @@ class TestDistributed_Kde {
       args.push_back(bandwidth_sstr.str());
 
       // Parse the distributed KDE arguments.
-      mlpack::distributed_kde::DistributedKdeArguments<DistributedTableType>
-      distributed_kde_arguments;
+      mlpack::distributed_kde::DistributedKdeArguments <
+      DistributedTableType > distributed_kde_arguments;
       mlpack::distributed_kde::DistributedKde <
       DistributedTableType >::ParseArguments(
         world, args, &distributed_kde_arguments);
@@ -186,6 +215,11 @@ class TestDistributed_Kde {
       // The master collects all the distributed tables and collects a
       // mega-table for which can be used to compute the naive
       // results.
+      DistributedTableType *distributed_reference_table =
+        distributed_kde_arguments.reference_table_;
+      TableType combined_reference_table;
+      CombineTables_(
+        world, distributed_reference_table, combined_reference_table);
 
       /*
       UltraNaive_(
@@ -221,11 +255,6 @@ int main(int argc, char *argv[]) {
   world.barrier();
 
   srand(time(NULL) + world.rank());
-
-  // Initialize the memory allocator.
-  core::table::global_m_file_ = new core::table::MemoryMappedFile();
-  core::table::global_m_file_->Init(
-    std::string("tmp_file"), world.rank(), world.rank(), 50000000);
 
   // Call the tests.
   mlpack::distributed_kde::TestDistributed_Kde distributed_kde_test;

@@ -17,11 +17,13 @@ class OffsetDenseMatrix {
 
     double *ptr_;
 
-    std::pair<int, int> *index_ptr_;
+    std::pair<int, std::pair<int, int> > *index_ptr_;
 
     std::vector<int> *assignment_indices_;
 
     int filter_index_;
+
+    int rank_;
 
     int n_attributes_;
 
@@ -57,20 +59,25 @@ class OffsetDenseMatrix {
       index_ptr_ = NULL;
       assignment_indices_ = NULL;
       filter_index_ = -1;
+      rank_ = -1;
       n_attributes_ = -1;
       n_entries_ = -1;
     }
 
     void Init(
-      double *ptr_in, std::pair<int, int> *index_ptr_in, int n_attributes_in) {
+      int rank_in, double *ptr_in,
+      std::pair<int, std::pair< int, int > > *index_ptr_in,
+      int n_attributes_in) {
       ptr_ = ptr_in;
       index_ptr_ = index_ptr_in;
       n_attributes_ = n_attributes_in;
+      rank_ = rank_in;
     }
 
     void Init(
+      int rank_in,
       core::table::DenseMatrix &mat_in,
-      std::pair<int, int> *index_ptr_in,
+      std::pair<int, std::pair< int, int > > *index_ptr_in,
       std::vector<int> &assignment_indices_in,
       int filter_index_in) {
       ptr_ = mat_in.ptr();
@@ -78,9 +85,11 @@ class OffsetDenseMatrix {
       n_attributes_ = mat_in.n_rows();
       assignment_indices_ = &assignment_indices_in;
       filter_index_ = filter_index_in;
+      rank_ = rank_in;
     }
 
-    void Extract(double *ptr_out, std::pair<int, int> *index_ptr_out) {
+    void Extract(
+      double *ptr_out, std::pair<int, std::pair<int, int> > *index_ptr_out) {
       int num_doubles = Count_();
       n_entries_ = num_doubles / (n_attributes_ + 2);
 
@@ -92,7 +101,10 @@ class OffsetDenseMatrix {
           for(int j = 0; j < n_attributes_; j++) {
             ptr_out[j] = ptr_iter[j];
           }
-          *index_ptr_out = std::pair<int, int>(filter_index_, i);
+          *index_ptr_out =
+            std::pair <
+            int, std::pair<int, int> > (
+              filter_index_, std::pair<int, int>(i, 0));
           index_ptr_out++;
           ptr_out += n_attributes_;
         }
@@ -118,7 +130,7 @@ class OffsetDenseMatrix {
           }
 
           // Write out the process ID and the point ID.
-          ar & filter_index_;
+          ar & rank_;
           ar & i;
         }
       }
@@ -137,7 +149,8 @@ class OffsetDenseMatrix {
           ar & ptr_iter[j];
         }
         ar & index_ptr_[i].first;
-        ar & index_ptr_[i].second;
+        ar & index_ptr_[i].second.first;
+        index_ptr_[i].second.second = 0;
       }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
