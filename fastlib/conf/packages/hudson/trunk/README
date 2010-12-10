@@ -1,0 +1,5 @@
+Don't forget to check the upstream packaging files for potential
+packaging fixes:
+
+https://github.com/hudson/hudson/tree/master/debian/debian
+
