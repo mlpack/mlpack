@@ -1,0 +1,12 @@
+In order to check in new packaging source, use the svn-inject command.  It
+can be used with the FASTLAB repository in the following manner, assuming
+you DO NOT want to store the upstream source in the repository.  If you
+do this, you need to provide a watch file and get-orig-source target in the
+rules file, so anyone who checks out the packaging can build the package.
+
+"-c 2" checks out the entire package source tree, not just trunk.  Omission
+will not check the source out by default.
+
+svn-inject -o -c 2 --no-branches /path/to/<package>_<version>.dsc http://svn.cc.gatech.edu/fastlab/fastlib/conf/internal_packages/
+
+
