@@ -58,8 +58,9 @@ void DistributedKde<DistributedTableType>::Compute(
   distributed_dualtree_dfs;
   distributed_dualtree_dfs.Init(world_, *this);
 
-  // Compute the result.
+  // Compute the result and do post-normalize.
   distributed_dualtree_dfs.Compute(* arguments_in.metric_, result_out);
+  result_out->Normalize(global_);
 
   if(world_->rank() == 0) {
     printf("Spent %g seconds in computation.\n", timer.elapsed());
