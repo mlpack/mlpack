@@ -262,6 +262,10 @@ class KdeGlobal {
 
 template<typename ContainerType>
 class KdeResult {
+  private:
+
+    friend class boost::serialization::access;
+
   public:
     ContainerType densities_l_;
     ContainerType densities_;
@@ -269,10 +273,28 @@ class KdeResult {
     ContainerType pruned_;
     ContainerType used_error_;
 
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version) {
+      ar & densities_l_;
+      ar & densities_;
+      ar & densities_u_;
+      ar & pruned_;
+      ar & used_error_;
+    }
+
     KdeResult() {
     }
 
     ~KdeResult() {
+    }
+
+    template<typename GlobalType>
+    void Normalize(const GlobalType &global) {
+      for(unsigned int q_index = 0; q_index < densities_l_.size(); q_index++) {
+        densities_l_[q_index] *= global.get_mult_const();
+        densities_[q_index] *= global.get_mult_const();
+        densities_u_[q_index] *= global.get_mult_const();
+      }
     }
 
     template<typename GlobalType>
