@@ -1,17 +1,15 @@
 This package was debianized by Kohsuke Kawaguchi <kk@kohsuke.org> on
 Thu, 24 Apr 2008 23:38:55 -0700.
 
-It was downloaded from <url://example.com>
+It was downloaded from <http://ftp.osuosl.org/pub/hudson/war/>
 
 Upstream Author(s): 
 
-    <put author's name and email here>
-    <likewise for another author>
+    Kohsuke Kawaguchi <kk@kohsuke.org>
 
 Copyright: 
 
-    <Copyright (C) YYYY Name OfAuthor>
-    <likewise for another author>
+    Copyright (C) 2010 Kohsuke Kawaguchi
 
 License:
 
@@ -36,5 +34,3 @@ The Debian packaging is (C) 2008, Kohsuke Kawaguchi <kk@kohsuke.org> and
 is licensed under the GPL, see above.
 
 
-# Please also look if there are files or directories which have a
-# different copyright/license attached and list them here.
