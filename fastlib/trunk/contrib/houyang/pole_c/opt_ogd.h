@@ -55,6 +55,7 @@ void *OgdThread(void *in_par) {
       break;
     case 1:
       pred = LinearPredict(l1.w_vec_pool[tid], ex);
+      cout << ex->label << " : " << pred << ", "<< l1.loss_func->getLoss((double)pred, (double)ex->label) << endl;
       // want to calculate total loss ?
       if (global.calc_loss) {
 	l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.loss_func->getLoss((double)pred, (double)ex->label);
@@ -120,8 +121,6 @@ void Ogd(learner &l) {
   }
 
   FinishThreads(n_threads);
-  FinishLearner(l1, n_threads);
-  FinishData();
 
   double t_l = 0.0;
   for (t = 0; t < n_threads; t++) {
@@ -130,6 +129,9 @@ void Ogd(learner &l) {
   }
   cout << "Total loss: " << t_l << endl;
   
+
+  FinishLearner(l1, n_threads);
+  FinishData();
 }
 
 
