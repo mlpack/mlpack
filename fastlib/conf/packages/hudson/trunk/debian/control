@@ -3,7 +3,7 @@ Section: devel
 Priority: extra
 Maintainer: Kohsuke Kawaguchi <kk@kohsuke.org>, Sterling Peet <sterling.peet@gatech.edu>
 Build-Depends: debhelper (>= 5)
-Standards-Version: 3.7.2
+Standards-Version: 3.9.1
 Homepage: https://hudson.dev.java.net/
 
 Package: hudson
