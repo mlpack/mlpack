@@ -144,6 +144,16 @@ class KdeGlobal {
       return effective_num_reference_points_;
     }
 
+    void set_effective_num_reference_points(
+      double effective_num_reference_points_in) {
+
+      effective_num_reference_points_ = effective_num_reference_points_in;
+      mult_const_ = 1.0 /
+                    (kernel_->CalcNormConstant(
+                       reference_table_->n_attributes()) *
+                     ((double) effective_num_reference_points_));
+    }
+
     template<typename DistributedTableType>
     void set_effective_num_reference_points(
       boost::mpi::communicator &comm,
@@ -154,8 +164,10 @@ class KdeGlobal {
       for(int i = 0; i < comm.size(); i++) {
         total_sum += reference_table_in->local_n_entries(i);
       }
-      effective_num_reference_points_ = (reference_table_in == query_table_in) ?
-                                        (total_sum - 1.0) : total_sum;
+      double effective_num_reference_points_in =
+        (reference_table_in == query_table_in) ?
+        (total_sum - 1.0) : total_sum;
+      set_effective_num_reference_points(effective_num_reference_points_in);
     }
 
     ~KdeGlobal() {

@@ -89,6 +89,8 @@ void DistributedKde<DistributedTableType>::Init(
     reference_table_, query_table_, arguments_in.bandwidth_, is_monochromatic_,
     arguments_in.relative_error_, arguments_in.probability_,
     arguments_in.kernel_, false);
+  global_.set_effective_num_reference_points(
+    world_in, reference_table_, query_table_);
 }
 
 template<typename DistributedTableType>

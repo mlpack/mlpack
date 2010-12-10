@@ -271,6 +271,12 @@ class DistributedTable: public boost::noncopyable {
       boost::mpi::communicator &table_outbox_group_comm,
       const std::vector<double> &num_points_assigned_to_leaf_nodes) {
 
+      if(
+        static_cast<unsigned int>(table_outbox_group_comm.size()) !=
+        static_cast<unsigned int>(num_points_assigned_to_leaf_nodes.size())) {
+        printf("There will be a problem!\n");
+      }
+
       if(table_outbox_group_comm.size() > 1) {
         core::table::DistributedAuction auction;
         return auction.Assign(
