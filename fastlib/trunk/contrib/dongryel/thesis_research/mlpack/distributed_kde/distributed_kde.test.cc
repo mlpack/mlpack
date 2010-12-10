@@ -45,9 +45,6 @@ class TestDistributed_Kde {
       boost::mpi::communicator &world,
       DistributedTableType *distributed_reference_table,
       TableType &output_table, int **total_distribution_in) {
-
-      printf("Process %d has %d points after.\n", world.rank(),
-             distributed_reference_table->n_entries());
       int total_num_points = 0;
       TableType *local_table = distributed_reference_table->local_table();
       int n_attributes = local_table->n_attributes();
@@ -112,7 +109,6 @@ class TestDistributed_Kde {
       std::pair<int, std::pair<int, int> > *old_from_new,
       int n_entries, int new_point_index,
       int *process_index, int *point_index) {
-
       for(int i = 0; i < n_entries; i++) {
         if(new_point_index == old_from_new[i].second.second) {
           *process_index = old_from_new[i].first;
@@ -120,16 +116,22 @@ class TestDistributed_Kde {
           return;
         }
       }
-      printf("Something is wrong!\n");
     }
 
     bool CheckAccuracy_(
+      boost::mpi::communicator &world,
       std::pair<int, std::pair<int, int> > *old_from_new,
       int n_entries,
       int *total_distribution,
       const std::vector<double> &query_results,
       const std::vector<double> &naive_query_results,
       double relative_error) {
+
+      std::vector<int> cumulative_distribution(world.size(), 0);
+      for(unsigned int i = 1; i < cumulative_distribution.size(); i++) {
+        cumulative_distribution[i] = cumulative_distribution[i - 1] +
+                                     total_distribution[i - 1];
+      }
 
       // Compute the collective L1 norm of the products.
       double achieved_error = 0;
@@ -138,7 +140,7 @@ class TestDistributed_Kde {
         int point_index;
         FindOriginalIndices_(
           old_from_new, n_entries, j, &process_index, &point_index);
-        int naive_index = total_distribution[process_index] + point_index;
+        int naive_index = cumulative_distribution[process_index] + point_index;
         double per_relative_error =
           fabs(naive_query_results[naive_index] - query_results[j]) /
           fabs(naive_query_results[naive_index]);
@@ -319,6 +321,7 @@ class TestDistributed_Kde {
       boost::mpi::broadcast(world, ultra_naive_distributed_kde_result, 0);
 
       if(CheckAccuracy_(
+            world,
             distributed_reference_table->local_table()->old_from_new(),
             distributed_reference_table->n_entries(),
             total_distribution,
