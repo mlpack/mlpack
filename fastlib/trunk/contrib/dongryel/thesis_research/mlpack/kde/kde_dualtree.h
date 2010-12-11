@@ -221,7 +221,7 @@ class KdeGlobal {
     void Init(
       TableType *reference_table_in,
       TableType *query_table_in,
-      int effective_num_reference_points_in,
+      double effective_num_reference_points_in,
       double bandwidth_in, const bool is_monochromatic,
       double relative_error_in, double probability_in,
       const std::string &kernel_type_in,
