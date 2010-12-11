@@ -16,15 +16,11 @@ void MixedLogitDCM<TableType>::Init(
   mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
   TableType > &arguments_in) {
 
-  reference_table_ = arguments_in.reference_table_;
-  if(arguments_in.query_table_ == arguments_in.reference_table_) {
-    is_monochromatic_ = true;
-    query_table_ = reference_table_;
-  }
-  else {
-    is_monochromatic_ = false;
-    query_table_ = arguments_in.query_table_;
-  }
+  // Initialize the table for storing/accessing the attribute vector
+  // for each person.
+  table_.Init(
+    arguments_in.attribute_table_,
+    arguments_in.num_discrete_choices_per_person_);
 }
 
 template<typename TableType>
@@ -42,7 +38,7 @@ void MixedLogitDCM<TableType>::Compute(
   // Here is the main entry of the algorithm.
   int num_data_samples =
     static_cast<int>(
-      reference_table_->n_entries() *
+      table_.num_people() *
       arguments_in.initial_dataset_sample_rate_);
   std::vector<int> num_integration_samples(
     num_data_samples, std::max(
@@ -63,32 +59,30 @@ bool MixedLogitDCM<TableType>::ConstructBoostVariableMap_(
   desc.add_options()(
     "help", "Print this information."
   )(
-    "references_in",
+    "attributes_in",
     boost::program_options::value<std::string>(),
-    "REQUIRED file containing reference data."
-  )(
-    "queries_in",
+    "REQUIRED file containing the vector of attributes."
+  )("num_discrete_choices_per_person_in",
     boost::program_options::value<std::string>(),
-    "OPTIONAL file containing query positions.  If omitted, KDE computes "
-    "the leave-one-out density at each reference point."
-  )(
-    "predictions_out",
-    boost::program_options::value<std::string>()->default_value(
-      "densities_out.csv"),
-    "OPTIONAL file to store the predicted discrete choices."
-  )("initial_dataset_sample_rate",
-    boost::program_options::value<double>()->default_value(0.1),
-    "OPTIONAL the rate at which to sample the entire dataset in the "
-    "beginning."
-   )("initial_integration_sample_rate",
-     boost::program_options::value<double>()->default_value(0.01),
-     "OPTIONAL The percentage of the maximum average integration sample "
-     "to start with."
-    )("model_out",
-      boost::program_options::value<std::string>()->default_value(
-        "model_out.csv"),
-      "file to output the computed discrete choice model."
-     );
+    "REQUIRED The number of alternatives per each person."
+   )(
+     "predictions_out",
+     boost::program_options::value<std::string>()->default_value(
+       "densities_out.csv"),
+     "OPTIONAL file to store the predicted discrete choices."
+   )("initial_dataset_sample_rate",
+     boost::program_options::value<double>()->default_value(0.1),
+     "OPTIONAL the rate at which to sample the entire dataset in the "
+     "beginning."
+    )("initial_integration_sample_rate",
+      boost::program_options::value<double>()->default_value(0.01),
+      "OPTIONAL The percentage of the maximum average integration sample "
+      "to start with."
+     )("model_out",
+       boost::program_options::value<std::string>()->default_value(
+         "model_out.csv"),
+       "file to output the computed discrete choice model."
+      );
 
   boost::program_options::command_line_parser clp(args);
   clp.style(boost::program_options::command_line_style::default_style
@@ -115,10 +109,14 @@ bool MixedLogitDCM<TableType>::ConstructBoostVariableMap_(
     return true;
   }
 
-  // Validate the arguments. Only immediate dying is allowed here, the
-  // parsing is done later.
-  if(vm->count("references_in") == 0) {
-    std::cerr << "Missing required --references_in.\n";
+  // Validate the arguments. Only immediate quitting is allowed here,
+  // the parsing is done later.
+  if(vm->count("attributes_in") == 0) {
+    std::cerr << "Missing required --attributes_in.\n";
+    exit(0);
+  }
+  if(vm->count("num_discrete_choices_per_person_in") == 0) {
+    std::cerr << "Missing required --num_discrete_choices_per_person_in.\n";
     exit(0);
   }
   return false;
@@ -131,29 +129,25 @@ void MixedLogitDCM<TableType>::ParseArguments(
 
   // Construct the Boost variable map.
   boost::program_options::variables_map vm;
-  ConstructBoostVariableMap_(args, &vm);
+  if(ConstructBoostVariableMap_(args, &vm)) {
+    exit(0);
+  }
 
   // Given the constructed boost variable map, parse each argument.
 
-  // Parse the reference set and index the tree.
-  std::cout << "Reading in the reference set: " <<
-            vm["references_in"].as<std::string>() << "\n";
-  arguments_out->reference_table_ = new TableType();
-  arguments_out->reference_table_->Init(vm["references_in"].as<std::string>());
-  std::cout << "Finished reading in the reference set.\n";
+  // Parse the set of attribute vectors.
+  std::cout << "Reading in the attribute set: " <<
+            vm["attributes_in"].as<std::string>() << "\n";
+  arguments_out->attribute_table_ = new TableType();
+  arguments_out->attribute_table_->Init(vm["attributes_in"].as<std::string>());
+  std::cout << "Finished reading in the attributes set.\n";
 
-  // Parse the query set and index the tree.
-  if(vm.count("queries_in") > 0) {
-    std::cout << "Reading in the query set: " <<
-              vm["queries_in"].as<std::string>() << "\n";
-    arguments_out->query_table_ =
-      arguments_out->query_table_ = new TableType();
-    arguments_out->query_table_->Init(vm["queries_in"].as<std::string>());
-    std::cout << "Finished reading in the query set.\n";
-  }
-  else {
-    arguments_out->query_table_ = arguments_out->reference_table_;
-  }
+  // Parse the number of discrete choices per each point.
+  std::cout << "Reading in the number of discrete choices per each person: " <<
+            vm["num_discrete_choices_per_person_in"].as<std::string>() << "\n";
+  arguments_out->num_discrete_choices_per_person_ = new TableType();
+  arguments_out->num_discrete_choices_per_person_->Init(
+    vm["num_discrete_choices_per_person_in"].as<std::string>());
 
   // Parse the initial dataset sample rate.
   arguments_out->initial_dataset_sample_rate_ =
@@ -163,8 +157,7 @@ void MixedLogitDCM<TableType>::ParseArguments(
   arguments_out->initial_integration_sample_rate_ =
     vm[ "initial_integration_sample_rate" ].as<double>();
 
-  // Parse where to output the discrete choice model predictions for
-  // the query set.
+  // Parse where to output the discrete choice model predictions.
   arguments_out->predictions_out_ = vm[ "predictions_out" ].as<std::string>();
 
   // Parse the output for the mixed logit discrete choice model.
