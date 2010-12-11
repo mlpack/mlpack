@@ -149,6 +149,30 @@ class DistributedTable: public boost::noncopyable {
 
   private:
 
+    void ReplenishNodes_(std::vector<TreeType *> &top_leaf_nodes) {
+
+      core::table::DensePoint tmp_point;
+      tmp_point.Init(top_leaf_nodes[0]->bound().center().length());
+      int num_additional = table_outbox_group_comm_size_ -
+                           top_leaf_nodes.size();
+      int num_samples = std::max(1, core::math::RandInt(top_leaf_nodes.size()));
+
+      // Randomly add new dummy nodes with randomly chosen centroids
+      // averaged.
+      for(int j = 0; j < num_additional; j++) {
+        tmp_point.SetZero();
+        for(int i = 0; i < num_samples; i++) {
+          tmp_point.SetZero();
+          tmp_point += top_leaf_nodes[
+                         core::math::RandInt(top_leaf_nodes.size())]->bound().center();
+        }
+        tmp_point /= static_cast<double>(num_samples);
+        top_leaf_nodes.push_back(new TreeType());
+        top_leaf_nodes[ top_leaf_nodes.size() - 1 ]->bound().center().Copy(
+          tmp_point);
+      }
+    }
+
     void ReadjustCentroids_(
       boost::mpi::communicator &table_outbox_group_comm,
       const core::metric_kernels::AbstractMetric &metric,
@@ -270,12 +294,6 @@ class DistributedTable: public boost::noncopyable {
     int TakeLeafNodeOwnerShip_(
       boost::mpi::communicator &table_outbox_group_comm,
       const std::vector<double> &num_points_assigned_to_leaf_nodes) {
-
-      if(
-        static_cast<unsigned int>(table_outbox_group_comm.size()) !=
-        static_cast<unsigned int>(num_points_assigned_to_leaf_nodes.size())) {
-        printf("There will be a problem!\n");
-      }
 
       if(table_outbox_group_comm.size() > 1) {
         core::table::DistributedAuction auction;
@@ -534,9 +552,12 @@ class DistributedTable: public boost::noncopyable {
         sampled_table.get_leaf_nodes(
           sampled_table.get_tree(), &top_leaf_nodes);
       }
-
-      // Broadcast the leaf nodes.
       boost::mpi::broadcast(table_outbox_group_comm, top_leaf_nodes, 0);
+      // Broadcast the leaf nodes.
+      if(top_leaf_nodes.size() < static_cast<unsigned int>(
+            table_outbox_group_comm.size())) {
+        ReplenishNodes_(top_leaf_nodes);
+      }
 
       // Assign each point to one of the leaf nodes.
       std::vector<double> num_points_assigned_to_leaf_nodes(

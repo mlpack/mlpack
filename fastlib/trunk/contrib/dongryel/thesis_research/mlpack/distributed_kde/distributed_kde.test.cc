@@ -215,7 +215,7 @@ class TestDistributed_Kde {
         num_dimensions = core::math::RandInt(3, 10);
       }
       boost::mpi::broadcast(world, num_dimensions, 0);
-      int num_points = core::math::RandInt(3, 5);
+      int num_points = core::math::RandInt(500, 1001);
       std::vector< std::string > args;
 
       // Push in the random generate command.
@@ -281,7 +281,9 @@ class TestDistributed_Kde {
       DistributedTableType >::ParseArguments(
         world, args, &distributed_kde_arguments);
 
-      std::cout << "Bandwidth value " << bandwidth << "\n";
+      if(world.rank() == 0) {
+        std::cout << "Bandwidth value " << bandwidth << "\n";
+      }
 
       // Call the distributed kde driver.
       mlpack::distributed_kde::DistributedKde <
