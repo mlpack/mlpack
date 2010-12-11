@@ -16,6 +16,15 @@ void MixedLogitDCM<TableType>::Init(
   mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
   TableType > &arguments_in) {
 
+  reference_table_ = arguments_in.reference_table_;
+  if(arguments_in.query_table_ == arguments_in.reference_table_) {
+    is_monochromatic_ = true;
+    query_table_ = reference_table_;
+  }
+  else {
+    is_monochromatic_ = false;
+    query_table_ = arguments_in.query_table_;
+  }
 }
 
 template<typename TableType>
@@ -24,6 +33,25 @@ void MixedLogitDCM<TableType>::Compute(
   TableType > &arguments_in,
   mlpack::mixed_logit_dcm::MixedLogitDCMResult *result_out) {
 
+  static const double C = 1.04;
+  static const double eta = 0.05;
+
+  // The maximum average integration sample size.
+  static const int R_MAX = 1000;
+
+  // Here is the main entry of the algorithm.
+  int num_data_samples =
+    static_cast<int>(
+      reference_table_->n_entries() *
+      arguments_in.initial_dataset_sample_rate_);
+  std::vector<int> num_integration_samples(
+    num_data_samples, std::max(
+      static_cast<int>(arguments_in.initial_integration_sample_rate_ * R_MAX),
+      36));
+  for(int iter = 0; ; iter++) {
+
+
+  }
 }
 
 template<typename TableType>
