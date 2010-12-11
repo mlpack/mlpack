@@ -1,0 +1,7 @@
+version=3
+
+#opts="filenamemangle=s/.*(\d+\.\d+).*/hudson-$1\.war/" \
+#http://hudson-ci.org/download/war/ /download/war/(.*)/hudson.war
+
+opts="downloadurlmangle=s/$/hudson.war/,filenamemangle=s/.*(\d+\.\d+).*/hudson-$1\.war/" \
+http://ftp.osuosl.org/pub/hudson/war/ (\d+\.\d+)/
