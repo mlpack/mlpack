@@ -60,9 +60,11 @@ void mlpack::kde::Kde<TableType>::Init(
 
   // Declare the global constants.
   global_.Init(
-    reference_table_, query_table_, arguments_in.bandwidth_, is_monochromatic_,
+    reference_table_, query_table_,
+    arguments_in.effective_num_reference_points_,
+    arguments_in.bandwidth_, is_monochromatic_,
     arguments_in.relative_error_, arguments_in.probability_,
-    arguments_in.kernel_);
+    arguments_in.kernel_, arguments_in.normalize_densities_);
 }
 
 template<typename TableType>
@@ -221,9 +223,13 @@ void mlpack::kde::Kde<TableType>::ParseArguments(
     arguments_out->query_table_->IndexData(
       *(arguments_out->metric_), arguments_out->leaf_size_);
     std::cout << "Finished building the query tree.\n";
+    arguments_out->effective_num_reference_points_ =
+      arguments_out->reference_table_->n_entries();
   }
   else {
     arguments_out->query_table_ = arguments_out->reference_table_;
+    arguments_out->effective_num_reference_points_ =
+      arguments_out->reference_table_->n_entries() - 1;
   }
 
   // Parse the bandwidth.

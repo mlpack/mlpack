@@ -86,7 +86,8 @@ void DistributedKde<DistributedTableType>::Init(
 
   // Declare the global constants.
   global_.Init(
-    reference_table_, query_table_, arguments_in.bandwidth_, is_monochromatic_,
+    reference_table_, query_table_, reference_table_->n_entries(),
+    arguments_in.bandwidth_, is_monochromatic_,
     arguments_in.relative_error_, arguments_in.probability_,
     arguments_in.kernel_, false);
   global_.set_effective_num_reference_points(
@@ -119,11 +120,11 @@ bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
     "the leave-one-out density at each reference point."
   )(
     "random_generate_n_attributes",
-    boost::program_options::value<int>()->default_value(3),
+    boost::program_options::value<int>(),
     "Generate the datasets on the fly of the specified dimension."
   )(
     "random_generate_n_entries",
-    boost::program_options::value<int>()->default_value(20),
+    boost::program_options::value<int>(),
     "Generate the datasets on the fly of the specified number of points."
   )(
     "densities_out",
