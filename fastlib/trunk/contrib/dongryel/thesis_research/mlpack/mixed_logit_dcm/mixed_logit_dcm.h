@@ -6,8 +6,10 @@
 #ifndef MLPACK_MIXED_LOGIT_MIXED_LOGIT_DCM_H
 #define MLPACK_MIXED_LOGIT_MIXED_LOGIT_DCM_H
 
+#include <vector>
 #include "boost/program_options.hpp"
 #include "core/table/table.h"
+#include "mlpack/mixed_logit_dcm/dcm_table.h"
 #include "mlpack/mixed_logit_dcm/mixed_logit_dcm_arguments.h"
 #include "mlpack/mixed_logit_dcm/mixed_logit_dcm_result.h"
 
@@ -15,20 +17,16 @@ namespace mlpack {
 namespace mixed_logit_dcm {
 template<typename IncomingTableType>
 class MixedLogitDCM {
+  private:
+
+    double Normalization_(const core::table::DensePoint &beta);
+
   public:
     typedef IncomingTableType TableType;
 
   public:
 
-    /**
-     * @brief returns a pointer to the query table
-     */
-    TableType *query_table();
-
-    /**
-     * @brief returns a pointer to the reference table
-     */
-    TableType *reference_table();
+    TableType *attribute_table();
 
     void Init(
       mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
@@ -52,9 +50,7 @@ class MixedLogitDCM {
 
   private:
 
-    TableType *query_table_;
-    TableType *reference_table_;
-    bool is_monochromatic_;
+    mlpack::mixed_logit_dcm::DCMTable<TableType> table_;
 
   private:
 

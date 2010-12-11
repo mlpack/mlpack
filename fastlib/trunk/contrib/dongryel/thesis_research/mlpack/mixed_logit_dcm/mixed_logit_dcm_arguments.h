@@ -13,9 +13,9 @@ namespace mixed_logit_dcm {
 template<typename TableType>
 class MixedLogitDCMArguments {
   public:
-    TableType *reference_table_;
+    TableType *attribute_table_;
 
-    TableType *query_table_;
+    TableType *num_discrete_choices_per_person_;
 
     double initial_dataset_sample_rate_;
 
@@ -28,21 +28,17 @@ class MixedLogitDCMArguments {
   public:
 
     MixedLogitDCMArguments() {
-      reference_table_ = NULL;
-      query_table_ = NULL;
+      attribute_table_ = NULL;
+      num_discrete_choices_per_person_ = NULL;
       initial_dataset_sample_rate_ = 0;
       initial_integration_sample_rate_ = 0;
     }
 
     ~MixedLogitDCMArguments() {
-      if(reference_table_ != query_table_) {
-        delete reference_table_;
-        delete query_table_;
-      }
-      else {
-        delete reference_table_;
-      }
-      reference_table_ = query_table_ = NULL;
+      delete attribute_table_;
+      attribute_table_ = NULL;
+      delete num_discrete_choices_per_person_;
+      num_discrete_choices_per_person_ = NULL;
     }
 };
 };
