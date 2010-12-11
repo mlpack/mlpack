@@ -7,6 +7,6 @@ rules file, so anyone who checks out the packaging can build the package.
 "-c 2" checks out the entire package source tree, not just trunk.  Omission
 will not check the source out by default.
 
-svn-inject -o -c 2 --no-branches /path/to/<package>_<version>.dsc http://svn.cc.gatech.edu/fastlab/fastlib/conf/internal_packages/
+svn-inject -o -c 2 --no-branches /path/to/<package>_<version>.dsc http://svn.cc.gatech.edu/fastlab/fastlib/conf/packages/
 
 
