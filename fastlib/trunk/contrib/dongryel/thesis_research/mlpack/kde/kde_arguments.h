@@ -23,6 +23,8 @@ class KdeArguments {
 
     TableType *query_table_;
 
+    double effective_num_reference_points_;
+
     double bandwidth_;
 
     double relative_error_;
@@ -35,6 +37,8 @@ class KdeArguments {
 
     bool tables_are_aliased_;
 
+    bool normalize_densities_;
+
   public:
 
     template<typename GlobalType>
@@ -43,11 +47,14 @@ class KdeArguments {
       GlobalType &global_in) {
       reference_table_ = reference_table_in;
       query_table_ = query_table_in;
+      effective_num_reference_points_ =
+        global_in.effective_num_reference_points();
       bandwidth_ = global_in.bandwidth();
       relative_error_ = global_in.relative_error();
       probability_ = global_in.probability();
       kernel_ = global_in.kernel().name();
       tables_are_aliased_ = true;
+      normalize_densities_ = global_in.normalize_densities();
     }
 
     template<typename GlobalType>
@@ -56,23 +63,28 @@ class KdeArguments {
       if(reference_table_ != query_table_) {
         query_table_ = global_in.query_table()->local_table();
       }
+      effective_num_reference_points_ =
+        global_in.effective_num_reference_points();
       bandwidth_ = global_in.bandwidth();
       relative_error_ = global_in.relative_error();
       probability_ = global_in.probability();
       kernel_ = global_in.kernel().name();
       tables_are_aliased_ = true;
+      normalize_densities_ = global_in.normalize_densities();
     }
 
     KdeArguments() {
       leaf_size_ = 0;
       reference_table_ = NULL;
       query_table_ = NULL;
+      effective_num_reference_points_ = 0.0;
       bandwidth_ = 0.0;
       relative_error_ = 0.0;
       probability_ = 0.0;
       kernel_ = "";
       metric_ = NULL;
       tables_are_aliased_ = false;
+      normalize_densities_ = true;
     }
 
     ~KdeArguments() {
