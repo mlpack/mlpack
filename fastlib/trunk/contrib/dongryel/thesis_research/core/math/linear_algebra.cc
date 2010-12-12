@@ -3,7 +3,7 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#include "armadillo_wrapper.h"
+#include "linear_algebra.h"
 
 namespace core {
 namespace math {
