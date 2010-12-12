@@ -6,6 +6,7 @@
 #ifndef MLPACK_MIXED_LOGIT_DCM_DCM_TABLE_H
 #define MLPACK_MIXED_LOGIT_DCM_DCM_TABLE_H
 
+#include <algorithm>
 #include <vector>
 #include "core/table/table.h"
 #include "core/math/linear_algebra.h"
@@ -18,6 +19,10 @@ class DCMTable {
   private:
 
     TableType *attribute_table_;
+
+    std::vector<int> shuffled_indices_for_person_;
+
+    int num_active_people_;
 
     std::vector< core::monte_carlo::MeanVariancePair >
     simulated_choice_probabilities_;
@@ -41,33 +46,50 @@ class DCMTable {
         num_discrete_choices_per_person_[person_index]);
 
       // First compute the normalizing sum.
-      int index = cumulative_num_discrete_choices_[person_index];
       double normalizing_sum = 0.0;
-      for(int num_discrete_choices = 0; num_discrete_choices <
+      for(int discrete_choice_index = 0; discrete_choice_index <
           num_discrete_choices_per_person_[person_index];
-          num_discrete_choices++, index++) {
+          discrete_choice_index++) {
 
         // Grab each attribute vector and take a dot product between
         // it and the parameter vector.
         core::table::DensePoint attribute_for_discrete_choice;
-        attribute_table_->get(index, &attribute_for_discrete_choice);
+        this->get_attribute_vector(
+          person_index, discrete_choice_index, &attribute_for_discrete_choice);
         double dot_product = core::math::Dot(
                                parameter_vector, attribute_for_discrete_choice);
         double unnormalized_probability = exp(dot_product);
         normalizing_sum += unnormalized_probability;
-        (*choice_probabilities)[num_discrete_choices] =
+        (*choice_probabilities)[discrete_choice_index] =
           unnormalized_probability;
       }
 
       // Then, normalize.
-      for(int num_discrete_choices = 0; num_discrete_choices <
+      for(int discrete_choice_index = 0; discrete_choice_index <
           num_discrete_choices_per_person_[person_index];
-          num_discrete_choices++) {
-        (*choice_probabilities)[num_discrete_choices] /= normalizing_sum;
+          discrete_choice_index++) {
+        (*choice_probabilities)[discrete_choice_index] /= normalizing_sum;
       }
     }
 
   public:
+
+    /** @brief Output the current simulated log likelihood score.
+     */
+    double simulated_log_likelihood() const {
+      double current_simulated_log_likelihood = 0;
+      for(int i = 0; i < num_active_people_; i++) {
+
+        // Get the index in the shuffled indices to find out the ID of
+        // the person in the sample pool.
+        int person_index = shuffled_indices_[i];
+
+        // Examine the simulated choice probabilities for the given
+        // person, and select the discrete choice with the highest
+        // probability.
+      }
+      return current_simulated_log_likelihood;
+    }
 
     int num_people() const {
       return static_cast<int>(cumulative_num_discrete_choices_.size());
@@ -87,6 +109,18 @@ class DCMTable {
       // probabilities per person per discrete choice. It is indexed
       // in the same way as the attribute table.
       simulated_choice_probabilities_.resize(attribute_table_->n_entries());
+
+      // Initialize a randomly shuffled vector of indices for sampling
+      // the outer term in the simulated log-likelihood.
+      shuffled_indices_.resize(
+        num_discrete_choices_per_person_in->n_entries());
+      for(unsigned int i = 0; i < shuffled_indices_.size(); i++) {
+        shuffled_indices_[i] = i;
+      }
+      std::random_shuffle(
+        shuffled_indices_for_person_.begin(),
+        shuffled_indices_for_person_.end());
+      num_active_people_ = 0;
 
       // Compute the cumulative distribution on the number of
       // discrete choices so that we can return the right column
@@ -151,7 +185,7 @@ class DCMTable {
     /** @brief Retrieve the discrete_choice_index-th attribute vector
      *         for the person person_index.
      */
-    void get(
+    void get_attribute_vector(
       int person_index, int discrete_choice_index,
       core::table::DensePoint *attribute_for_discrete_choice_out) {
 
