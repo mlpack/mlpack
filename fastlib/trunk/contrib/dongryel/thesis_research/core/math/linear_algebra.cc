@@ -1,4 +1,4 @@
-/** @file armadillo_wrapper.cc
+/** @file linear_algebra.cc
  *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */

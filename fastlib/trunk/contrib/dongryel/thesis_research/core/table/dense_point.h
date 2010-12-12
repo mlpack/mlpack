@@ -167,18 +167,6 @@ class DensePoint {
       is_alias_ = true;
     }
 
-    double LengthEuclidean() const {
-      return sqrt(Dot(*this));
-    }
-
-    double Dot(const core::table::DensePoint &point_in) const {
-      double dot_product = 0;
-      for(int i = 0; i < n_rows_; i++) {
-        dot_product += point_in[i] * ptr_[i];
-      }
-      return dot_product;
-    }
-
     void Add(
       double scale_factor, const core::table::DensePoint &point_in) {
       for(int i = 0; i < point_in.length(); i++) {

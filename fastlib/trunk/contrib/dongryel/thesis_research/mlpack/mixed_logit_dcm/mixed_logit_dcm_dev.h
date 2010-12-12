@@ -44,6 +44,11 @@ void MixedLogitDCM<TableType>::Compute(
     num_data_samples, std::max(
       static_cast<int>(arguments_in.initial_integration_sample_rate_ * R_MAX),
       36));
+
+  // Compute the initial simulated log-likelihood, the gradient, and
+  // the Hessian.
+
+
   for(int iter = 0; ; iter++) {
 
 
