@@ -9,6 +9,7 @@
 #define CORE_OPTIMIZATION_LBFGS_DEV_H
 
 #include "core/optimization/lbfgs.h"
+#include "core/math/linear_algebra.h"
 
 namespace core {
 namespace optimization {
@@ -66,11 +67,11 @@ double Lbfgs<FunctionType>::ChooseScalingFactor_(
     core::table::DensePoint y_basis;
     s_lbfgs_.MakeColumnVector(previous_pos, &s_basis);
     y_lbfgs_.MakeColumnVector(previous_pos, &y_basis);
-    scaling_factor = s_basis.Dot(y_basis) /
-                     y_basis.Dot(y_basis);
+    scaling_factor = core::math::Dot(s_basis, y_basis) /
+                     core::math::Dot(y_basis, y_basis);
   }
   else {
-    scaling_factor = 1.0 / sqrt(gradient.Dot(gradient));
+    scaling_factor = 1.0 / sqrt(core::math::Dot(gradient, gradient));
   }
   return scaling_factor;
 }
@@ -80,7 +81,7 @@ bool Lbfgs<FunctionType>::GradientNormTooSmall_(
   const core::table::DensePoint &gradient) {
 
   const double threshold = 1e-5;
-  return gradient.LengthEuclidean() < threshold;
+  return core::math::LengthEuclidean(gradient) < threshold;
 }
 
 template<typename FunctionType>
@@ -109,7 +110,8 @@ bool Lbfgs<FunctionType>::LineSearch_(
 
   // The initial linear term approximation in the direction of the
   // search direction.
-  double initial_search_direction_dot_gradient = gradient.Dot(search_direction);
+  double initial_search_direction_dot_gradient =
+    core::math::Dot(gradient, search_direction);
 
   // If it is not a descent direction, just report failure.
   if(initial_search_direction_dot_gradient > 0.0) {
@@ -147,7 +149,8 @@ bool Lbfgs<FunctionType>::LineSearch_(
     else {
 
       // Check Wolfe's condition.
-      double search_direction_dot_gradient = gradient.Dot(search_direction);
+      double search_direction_dot_gradient =
+        core::math::Dot(gradient, search_direction);
 
       if(search_direction_dot_gradient < param_.wolfe() *
           initial_search_direction_dot_gradient) {
@@ -206,9 +209,9 @@ void Lbfgs<FunctionType>::SearchDirection_(
     core::table::DensePoint y_basis, s_basis;
     s_lbfgs_.MakeColumnVector(translated_position, &s_basis);
     y_lbfgs_.MakeColumnVector(translated_position, &y_basis);
-    rho[ iteration_num - i - 1 ] = 1.0 / y_basis.Dot(s_basis);
+    rho[ iteration_num - i - 1 ] = 1.0 / core::math::Dot(y_basis, s_basis);
     alpha[ iteration_num - i - 1 ] = rho [ iteration_num - i - 1] *
-                                     s_basis.Dot(q);
+                                     core::math::Dot(s_basis, q);
   }
   search_direction->ScaleOverwrite(scaling_factor, q);
   for(int i = limit; i <= iteration_num - 1; i++) {
@@ -217,7 +220,7 @@ void Lbfgs<FunctionType>::SearchDirection_(
     s_lbfgs_.MakeColumnVector(translated_position, &s_basis);
     y_lbfgs_.MakeColumnVector(translated_position, &y_basis);
     double beta = rho[ iteration_num - i - 1 ] *
-                  y_basis.Dot(*search_direction);
+                  core::math::Dot(y_basis, *search_direction);
     search_direction->Add(alpha [ iteration_num - i - 1 ] - beta, s_basis);
   }
 

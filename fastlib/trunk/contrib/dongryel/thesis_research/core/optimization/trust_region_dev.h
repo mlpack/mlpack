@@ -31,7 +31,7 @@ void TrustRegion::ComputeSteihaugDirection_(
   // d_0 = -r_0
   arma::vec d = -1.0 * r;
 
-  // The epsilon tolerance.
+  // The epsilon tolerance (from Algorithm 7.1 on page 169)
   double r0_norm = arma::norm(r, 2);
   double epsilon = std::min(0.5, sqrt(r0_norm)) * r0_norm;
 

@@ -19,7 +19,9 @@ class TrustRegion {
 
   private:
 
-    void ComputeCauchyPoint_();
+    void ComputeCauchyPoint_(
+      double radius, const arma::vec &gradient,
+      const arma::mat &hessian, arma::vec *p);
 
     void ComputeDoglegDirection_(
       double radius,
