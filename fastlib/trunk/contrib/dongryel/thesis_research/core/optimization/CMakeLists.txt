@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   lbfgs_dev.h
   lbfgs.h
+  trust_region_dev.h
+  trust_region.h
 )
 
 set(DIR_SRCS)

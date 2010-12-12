@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 
 set(SOURCES
+  armadillo_wrapper.cc
+  armadillo_wrapper.h
   geometry.cc
   geometry.h
   math_lib.h
