@@ -9,6 +9,7 @@
 #include <vector>
 #include "core/table/table.h"
 #include "core/math/linear_algebra.h"
+#include "core/monte_carlo/mean_variance_pair.h"
 
 namespace mlpack {
 namespace mixed_logit_dcm {
@@ -18,9 +19,53 @@ class DCMTable {
 
     TableType *attribute_table_;
 
+    std::vector< core::monte_carlo::MeanVariancePair >
+    simulated_choice_probabilities_;
+
     std::vector<int> cumulative_num_discrete_choices_;
 
     std::vector<int> num_discrete_choices_per_person_;
+
+  private:
+
+    /** @brief Computes the choice probability vector for the person_index-th
+     *         person for each of his/her potential choices given the
+     *         parameter vector $\beta$. This is $P_{i,j}$ in a long vector
+     *         form.
+     */
+    void ComputeChoiceProbabilities_(
+      int person_index, const core::table::DensePoint &parameter_vector,
+      core::table::DensePoint *choice_probabilities) {
+
+      choice_probabilities->Init(
+        num_discrete_choices_per_person_[person_index]);
+
+      // First compute the normalizing sum.
+      int index = cumulative_num_discrete_choices_[person_index];
+      double normalizing_sum = 0.0;
+      for(int num_discrete_choices = 0; num_discrete_choices <
+          num_discrete_choices_per_person_[person_index];
+          num_discrete_choices++, index++) {
+
+        // Grab each attribute vector and take a dot product between
+        // it and the parameter vector.
+        core::table::DensePoint attribute_for_discrete_choice;
+        attribute_table_->get(index, &attribute_for_discrete_choice);
+        double dot_product = core::math::Dot(
+                               parameter_vector, attribute_for_discrete_choice);
+        double unnormalized_probability = exp(dot_product);
+        normalizing_sum += unnormalized_probability;
+        (*choice_probabilities)[num_discrete_choices] =
+          unnormalized_probability;
+      }
+
+      // Then, normalize.
+      for(int num_discrete_choices = 0; num_discrete_choices <
+          num_discrete_choices_per_person_[person_index];
+          num_discrete_choices++) {
+        (*choice_probabilities)[num_discrete_choices] /= normalizing_sum;
+      }
+    }
 
   public:
 
@@ -37,6 +82,11 @@ class DCMTable {
       attribute_table_ = attribute_table_in;
       num_discrete_choices_per_person_.resize(
         num_discrete_choices_per_person_in->n_entries());
+
+      // This vector maintains the running simulated choice
+      // probabilities per person per discrete choice. It is indexed
+      // in the same way as the attribute table.
+      simulated_choice_probabilities_.resize(attribute_table_->n_entries());
 
       // Compute the cumulative distribution on the number of
       // discrete choices so that we can return the right column
@@ -76,52 +126,25 @@ class DCMTable {
       }
     }
 
-    /** @brief Computes the simulated choice probability for the
-     *         person_index-th person, given that the person chooses
-     *         the discrete_choice_index-th item. This is SP_{i, j_i^*}^{R_i}.
+    /** @brief Adds an integration sample to the person_index-th
+     *         person so that the person's running simulated choice
+     *         probabilities can be updated.
      */
-    double simulated_choice_probability(
-      int person_index, int discrete_choice_index) {
+    void add_integration_sample(
+      int person_index, const core::table::DensePoint &parameter_vector) {
 
+      // Given the parameter vector, compute the choice probabilities.
+      core::table::DensePoint choice_probabilities;
+      ComputeChoiceProbabilities_(
+        person_index, parameter_vector, &choice_probabilities);
 
-    }
-
-    /** @brief Computes the choice probability vector for the person_index-th
-     *         person for each of his/her potential choices given the
-     *         parameter vector $\beta$. This is $P_{i,j}$ in a long vector
-     *         form.
-     */
-    void choice_probabilities(
-      int person_index, const core::table::DensePoint &parameter_vector,
-      core::table::DensePoint *choice_probabilities) {
-
-      choice_probabilities->Init(
-        num_discrete_choices_per_person_[person_index]);
-
-      // First compute the normalizing sum.
       int index = cumulative_num_discrete_choices_[person_index];
-      double normalizing_sum = 0.0;
       for(int num_discrete_choices = 0; num_discrete_choices <
           num_discrete_choices_per_person_[person_index];
           num_discrete_choices++, index++) {
 
-        // Grab each attribute vector and take a dot product between
-        // it and the parameter vector.
-        core::table::DensePoint attribute_for_discrete_choice;
-        attribute_table_->get(index, &attriute_for_discrete_choice);
-        double dot_product = core::math::Dot(
-                               parameter_vector, attribute_for_discrete_choice);
-        double unnormalized_probability = exp(dot_product);
-        normalizing_sum += unnormalized_probability;
-        (*choice_probabilities)[num_discrete_choices] =
-          unnormalized_probability;
-      }
-
-      // Then, normalize.
-      for(int num_discrete_choices = 0; num_discrete_choices <
-          num_discrete_choices_per_person_[person_index];
-          num_discrete_choices++) {
-        (*choice_probabilities)[num_discrete_choices] /= normalizing_sum;
+        simulated_choice_probabilities_[index].push_back(
+          choice_probabilities[num_discrete_choices]);
       }
     }
 
