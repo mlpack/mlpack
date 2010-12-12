@@ -10,6 +10,17 @@
 
 namespace core {
 namespace math {
+static void CopyValues(const arma::vec &vec_in, arma::vec *vec_out);
+
+static void SubFrom(
+  const arma::vec &vec_in, arma::vec *vec_out);
+
+static void AddTo(
+  const arma::vec &vec_in, arma::vec *vec_out);
+
+static void ScaleOverwrite(
+  double scale, const arma::vec &vec_in, arma::vec *vec_out);
+
 static void ScaleInit(
   double scale, const arma::vec &vec_in, arma::vec *vec_out);
 };
