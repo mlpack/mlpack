@@ -6,8 +6,6 @@
 #ifndef CORE_MATH_LINEAR_ALGEBRA_H
 #define CORE_MATH_LINEAR_ALGEBRA_H
 
-#include <armadillo>
-
 namespace core {
 namespace math {
 
@@ -20,19 +18,54 @@ static double Dot(const VectorType &a, const VectorType &b) {
   return dot_product;
 }
 
-static void CopyValues(const arma::vec &vec_in, arma::vec *vec_out);
+template<typename VectorType>
+static double LengthEuclidean(const VectorType &a) {
+  return sqrt(core::math::Dot(a, a));
+}
 
+template<typename VectorType>
+static void CopyValues(
+  const VectorType &vec_in, VectorType *vec_out) {
+
+  for(unsigned int i = 0; i < vec_in.n_elem; i++) {
+    (*vec_out)[i] = vec_in[i];
+  }
+}
+
+template<typename VectorType>
 static void SubFrom(
-  const arma::vec &vec_in, arma::vec *vec_out);
+  const VectorType &vec_in, VectorType *vec_out) {
 
+  for(unsigned int i = 0; i < vec_in.n_elem; i++) {
+    (*vec_out)[i] -= vec_in[i];
+  }
+}
+
+template<typename VectorType>
 static void AddTo(
-  const arma::vec &vec_in, arma::vec *vec_out);
+  const VectorType &vec_in, VectorType *vec_out) {
 
+  for(unsigned int i = 0; i < vec_in.n_elem; i++) {
+    (*vec_out)[i] += vec_in[i];
+  }
+}
+
+template<typename VectorType>
 static void ScaleOverwrite(
-  double scale, const arma::vec &vec_in, arma::vec *vec_out);
+  double scale, const VectorType &vec_in, VectorType *vec_out) {
 
+  for(unsigned int i = 0; i < vec_in.n_elem; i++) {
+    (*vec_out)[i] = vec_in[i] * scale;
+  }
+}
+
+template<typename VectorType>
 static void ScaleInit(
-  double scale, const arma::vec &vec_in, arma::vec *vec_out);
+  double scale, const VectorType &vec_in, VectorType *vec_out) {
+
+  vec_out->set_size(vec_in.n_elem);
+  ScaleOverwrite(scale, vec_in, vec_out);
+}
 };
 };
 

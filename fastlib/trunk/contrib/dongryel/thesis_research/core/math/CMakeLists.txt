@@ -5,7 +5,6 @@ set(SOURCES
   geometry.h
   math_lib.h
   math_lib_impl.h
-  linear_algebra.cc
   linear_algebra.h
   range.h
 )
