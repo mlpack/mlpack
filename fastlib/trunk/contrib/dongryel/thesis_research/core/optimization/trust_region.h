@@ -21,6 +21,13 @@ class TrustRegion {
 
     void ComputeCauchyPoint_();
 
+    void ComputeDoglegDirection_(
+      double radius,
+      core::table::DensePoint &gradient,
+      core::table::DenseMatrix &hessian,
+      core::table::DensePoint *p,
+      double *delta_m);
+
     void ComputeSteihaugDirection_(
       double radius,
       core::table::DensePoint &gradient,

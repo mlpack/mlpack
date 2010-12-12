@@ -12,6 +12,113 @@
 namespace core {
 namespace optimization {
 
+void TrustRegion::ComputeSteihaugDirection_(
+  double radius, const arma::vec &gradient, const arma::mat &hessian,
+  arma::vec *p, double *delta_m) {
+
+  // "Numerical optimization" p.171 CG-Steihaug
+
+  // The maximum number of Steihaug iterations.
+  const int max_num_steihaug_iterations = 150;
+
+  // z_0 = 0
+  arma::vec z(gradient.n_elem);
+  z.fill(0);
+
+  // r_0 = gradient
+  arma::vec r = gradient;
+
+  // d_0 = -r_0
+  arma::vec d = -1.0 * r;
+
+  // The epsilon tolerance.
+  double r0_norm = arma::norm(r, 2);
+  double epsilon = std::min(0.5, sqrt(r0_norm)) * r0_norm;
+
+  // If the norm of the initial residual is too small, then return the
+  // zero direction.
+  if(r0_norm < epsilon) {
+    p->set_size(gradient.n_elem);
+    p->fill(0);
+    *delta_m = 0;
+    return;
+  }
+
+  // The temporary variables for storing the computed vectors for next
+  // iterations.
+  arma::vec z_next(gradient.n_elem);
+  arma::vec d_next(gradient.n_elem);
+
+  for(int i = 0; i < max_num_steihaug_iterations; i++) {
+
+    // Compute d_j^T B_k d_j.
+    arma::mat quadratic_form = arma::trans(d) * hessian * d;
+
+    // If the current search direction is a direction of non-positive
+    // curvature along the currently approximated Hessian,
+    if(quadratic_form <= 0) {
+
+      // Solve ||z_j + \tau d_j|| = radius for \tau.
+      double a = arma::dot(d, d);
+      double b = 2 * arma::dot(z, d);
+      double c = arma::dot(z, z) - core::math::Sqr(radius);
+      double sqrt_discriminant = sqrt(b * b - 4 * a * c);
+      double tau = (- b + sqrt_discriminant) / (2 * a);
+
+      // p = z + \tau * d
+      (*p) = z + tau * d;
+      break;
+    }
+
+    // alpha_j
+    double alpha = arma::dot(r, r) / quadratic_form.at(0, 0);
+
+    // z_{j + 1} = z_j + \alpha_j d_j
+    core::math::ScaleOverwrite(alpha, d, &z_next);
+    core::math::AddTo(z, &z_next);
+
+    // If the z_{j + 1} violates the trust region bound,
+    if(arma::norm(z_next, 2) >= radius) {
+
+      // Solve ||z_j + \tau d_j|| = radius for \tau.
+      double a = arma::dot(d, d);
+      double b = 2 * arma::dot(z, d);
+      double c = arma::dot(z, z) - core::math::Sqr(radius);
+      double sqrt_discriminant = sqrt(b * b - 4 * a * c);
+      double tau = (- b + sqrt_discriminant) / (2 * a);
+
+      // p = z + \tau * d
+      (*p) = z + tau * d;
+      break;
+    }
+
+    // r_{j + 1} = r_j + \alpha_j B_k d_j
+    arma::vec r_next = r_j + \alpha * hessian * d;
+
+    if(arma::norm(r_next, 2) < epsilon) {
+      (*p) = z_next;
+      break;
+    }
+
+    // beta_{j + 1} = r_{j + 1}^T r_{j + 1} / r_j^T r_j
+    double beta_next = arma::dot(r_next, r_next) / arma::dot(r, r);
+
+    // d_{j + 1} = -r_{j + 1} + \beta_{j + 1} d_j
+    core::math::ScaleOverwrite(beta_next, d, &d_next);
+    core::math::SubFrom(r_next, &d_next);
+
+    // Set the variables for the next iteration.
+    core::math::CopyValues(r_next, &r);
+    core::math::CopyValues(d_next, &d);
+    core::math::CopyValues(z_next, &z);
+
+  } // end of the main loop.
+
+  // delta_m calculation -g'p-0.5*p'Hp
+  arma::mat quadratic_form2 = arma::trans(*p) * hessian * (*p);
+  (*delta_m) = - arma::dot(gradient, *p) - 0.5 * quadratic_form2;
+}
+
 void TrustRegion::ComputeCauchyPoint_(
   double radius, const arma::vec &gradient,
   const arma::mat &hessian, arma::vec *p) {
@@ -37,7 +144,7 @@ void TrustRegion::ComputeCauchyPoint_(
   core::math::ScaleInit(- tau * radius / gradient_norm , gradient, p);
 }
 
-void TrustRegion::ComputeDoglegDirection(
+void TrustRegion::ComputeDoglegDirection_(
   double radius, const arma::vec &gradient, const arma::mat &hessian,
   arma::vec *p, double *delta_m) {
 
@@ -77,18 +184,21 @@ void TrustRegion::ComputeDoglegDirection(
     if(radius >= p_b_norm) {
       (*p) = p_b;
     }
+
+    // If the full step is not a feasible point,
     else {
 
       // Compute g_k^T B_k g_k.
       arma::mat quadratic_form = arma::trans(gradient) * hessian * gradient;
 
-      // p_u= -(g'g/g'Hg)*g
+      // p_u= -(g'g/ g'B_k g)*g
       arma::vec p_u = - (
-                        arma::dot(gradient, gradient) / quadratic_form) * gradient;
+                        arma::dot(gradient, gradient) / quadratic_form) *
+                      gradient;
       double p_u_norm = arma::norm(p_u, 2);
 
       // If the norm of p_u is beyond the trust radius, then the
-      // solution lies on the boundary.
+      // solution lies on the boundary along p_u.
       if(p_u_norm >= radius) {
         core::math::ScaleInit(radius / p_u_norm, p_u, p);
       }
@@ -97,11 +207,28 @@ void TrustRegion::ComputeDoglegDirection(
       // the full step paths (a x^2 + b x + c = 0)
       else {
 
-        // p_b - p_u
+        // The equation we want to solve is (in terms of \tau)
+        //
+        // (\tau - 1)^2 || p_b - p_u ||^2 + 2 (\tau - 1) p_u^T (p_b - p_u)
+        // + || p_u ||^2 - radius^2 = 0
+        //
+        // Let \alpha = \tau - 1, and solve for \alpha then add back in
+        // 1 to get what you want in terms of \tau. It is probably true that
+        // ( -b + sqrt_discriminant ) / (2 * a) is the only root that
+        // falls between [0, 1] for \alpha.
+        //
         arma::vec diff = p_b - p_u;
-        double a = ;
+        double a = arma::dot(diff, diff);
+        double b = 2.0 * arma::dot(p_u, diff);
+        double c = arma::dot(p_u, p_u) - core::math::Sqr(radius);
+        double sqrt_discriminant = sqrt(b * b - 4 * a * c);
+        double alpha = (-b + sqrt_discriminant) / (2 * a);
+        double tau = alpha + 1;
 
-      }
+        // Compute the direction. (The second case of Equation 4.16).
+        (*p) = p_u + (tau - 1) * diff;
+
+      } // end of the gradient direction being inside the trust radius.
 
     } // end of the full step not being feasible case.
 
