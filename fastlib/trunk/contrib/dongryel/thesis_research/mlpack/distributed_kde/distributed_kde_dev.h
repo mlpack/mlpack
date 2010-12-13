@@ -21,6 +21,14 @@ namespace mlpack {
 namespace distributed_kde {
 
 template<typename DistributedTableType>
+DistributedKde<DistributedTableType>::~DistributedKde() {
+  if(core::table::global_m_file_ != NULL) {
+    delete core::table::global_m_file_;
+    core::table::global_m_file_ = NULL;
+  }
+}
+
+template<typename DistributedTableType>
 DistributedTableType *DistributedKde<DistributedTableType>::query_table() {
   return query_table_;
 }
@@ -102,6 +110,7 @@ void DistributedKde<DistributedTableType>::set_bandwidth(
 
 template<typename DistributedTableType>
 bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
+  boost::mpi::communicator &world,
   const std::vector<std::string> &args,
   boost::program_options::variables_map *vm) {
 
@@ -158,6 +167,13 @@ bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
     "top_tree_sample_probability",
     boost::program_options::value<double>()->default_value(0.2),
     "The portion of points sampled on each MPI process for building the top tree."
+  )(
+    "use_memory_mapped_file",
+    "Use memory mapped file for out-of-core computations."
+  )(
+    "memory_mapped_file_size",
+    boost::program_options::value<unsigned int>(),
+    "The size of the memory mapped file."
   );
 
   boost::program_options::command_line_parser clp(args);
@@ -239,6 +255,35 @@ bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
     std::cerr << "The --leaf_size needs to be a positive integer.\n";
     exit(0);
   }
+
+  // Check whether the memory mapped file is being requested.
+  if(vm->count("use_memory_mapped_file") > 0) {
+
+    if(vm->count("memory_mapped_file_size") == 0) {
+      std::cerr << "The --used_memory_mapped_file requires an additional "
+                "parameter --memory_mapped_file_size.\n";
+      exit(0);
+    }
+    unsigned int memory_mapped_file_size =
+      (*vm)["memory_mapped_file_size"].as<unsigned int>();
+    if(memory_mapped_file_size <= 0) {
+      std::cerr << "The --memory_mapped_file_size needs to be a positive "
+                "integer.\n";
+      exit(0);
+    }
+
+    // Delete the teporary files and put a barrier.
+    std::stringstream temporary_file_name;
+    temporary_file_name << "tmp_file" << world.rank();
+    remove(temporary_file_name.str().c_str());
+    world.barrier();
+
+    // Initialize the memory allocator.
+    core::table::global_m_file_ = new core::table::MemoryMappedFile();
+    core::table::global_m_file_->Init(
+      std::string("tmp_file"), world.rank(), world.rank(), 100000000);
+  }
+
   return false;
 }
 
@@ -274,7 +319,7 @@ void DistributedKde<DistributedTableType>::ParseArguments(
 
   // Construct the Boost variable map.
   boost::program_options::variables_map vm;
-  ConstructBoostVariableMap_(args, &vm);
+  ConstructBoostVariableMap_(world, args, &vm);
 
   // Given the constructed boost variable map, parse each argument.
 
