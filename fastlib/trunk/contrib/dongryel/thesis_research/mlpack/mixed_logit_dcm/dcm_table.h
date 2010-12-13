@@ -24,6 +24,9 @@ class DCMTable {
 
     int num_active_people_;
 
+    /** @brief The running simulated choice probabilities (sample mean
+     *         and sample variance information).
+     */
     std::vector< core::monte_carlo::MeanVariancePair >
     simulated_choice_probabilities_;
 
@@ -82,12 +85,22 @@ class DCMTable {
 
         // Get the index in the shuffled indices to find out the ID of
         // the person in the sample pool.
-        int person_index = shuffled_indices_[i];
+        int person_index = shuffled_indices_for_person_[i];
 
         // Examine the simulated choice probabilities for the given
         // person, and select the discrete choice with the highest
         // probability.
+        for(int j = 0;
+            j < num_discrete_choices_per_person_[person_index]; j++) {
+          const core::monte_carlo::MeanVariancePair
+          &simulated_choice_probability = this->simulated_choice_probability(
+                                            person_index, j);
+          current_simulated_log_likelihood +=
+            log(simulated_choice_probability.sample_mean());
+        }
       }
+      current_simulated_log_likelihood /=
+        static_cast<double>(num_active_people_);
       return current_simulated_log_likelihood;
     }
 
@@ -112,10 +125,10 @@ class DCMTable {
 
       // Initialize a randomly shuffled vector of indices for sampling
       // the outer term in the simulated log-likelihood.
-      shuffled_indices_.resize(
+      shuffled_indices_for_person_.resize(
         num_discrete_choices_per_person_in->n_entries());
-      for(unsigned int i = 0; i < shuffled_indices_.size(); i++) {
-        shuffled_indices_[i] = i;
+      for(unsigned int i = 0; i < shuffled_indices_for_person_.size(); i++) {
+        shuffled_indices_for_person_[i] = i;
       }
       std::random_shuffle(
         shuffled_indices_for_person_.begin(),
@@ -160,11 +173,18 @@ class DCMTable {
       }
     }
 
+    /** @brief Adds the specified number of terms to the outer sum,
+     *         where each term corresponds to a person.
+     */
+    void AddPeople(int num_people) {
+      num_active_people_ += num_people;
+    }
+
     /** @brief Adds an integration sample to the person_index-th
      *         person so that the person's running simulated choice
      *         probabilities can be updated.
      */
-    void add_integration_sample(
+    void AddIntegrationSample(
       int person_index, const core::table::DensePoint &parameter_vector) {
 
       // Given the parameter vector, compute the choice probabilities.
@@ -180,6 +200,14 @@ class DCMTable {
         simulated_choice_probabilities_[index].push_back(
           choice_probabilities[num_discrete_choices]);
       }
+    }
+
+    const core::monte_carlo::MeanVariancePair &simulated_choice_probability(
+      int person_index, int discrete_choice_index) const {
+
+      int index = cumulative_num_discrete_choices_[person_index] +
+                  discrete_choice_index;
+      return simulated_choice_probabilities_[index];
     }
 
     /** @brief Retrieve the discrete_choice_index-th attribute vector
