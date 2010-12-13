@@ -77,7 +77,25 @@ class DCMTable {
 
   public:
 
-    /** @brief Output the current simulated log likelihood score.
+    /** @brief Return the gradient of the current simulated log
+     *         likelihood score objective. This computes Equation 8.7
+     *         in the paper.
+     */
+    void SimulatedLoglikelihoodGradient(
+      core::table::DensePoint *gradient) const {
+
+      // For each active person,
+      for(int i = 0; i < num_active_people_; i++) {
+
+        // Get the index in the shuffled indices to find out the ID of
+        // the person in the sample pool.
+        int person_index = shuffled_indices_for_person_[i];
+
+
+      }
+    }
+
+    /** @brief Return the current simulated log likelihood score.
      */
     double simulated_log_likelihood() const {
       double current_simulated_log_likelihood = 0;
@@ -90,14 +108,19 @@ class DCMTable {
         // Examine the simulated choice probabilities for the given
         // person, and select the discrete choice with the highest
         // probability.
+        double highest_probability = 0;
         for(int j = 0;
             j < num_discrete_choices_per_person_[person_index]; j++) {
+
+          // Get the simulated choice probability for the current
+          // discrete choice.
           const core::monte_carlo::MeanVariancePair
           &simulated_choice_probability = this->simulated_choice_probability(
                                             person_index, j);
-          current_simulated_log_likelihood +=
-            log(simulated_choice_probability.sample_mean());
+          double probability = simulated_choice_probability.sample_mean();
+          highest_probability = std::max(highest_probability, probability);
         }
+        current_simulated_log_likelihood += log(highest_probability);
       }
       current_simulated_log_likelihood /=
         static_cast<double>(num_active_people_);
