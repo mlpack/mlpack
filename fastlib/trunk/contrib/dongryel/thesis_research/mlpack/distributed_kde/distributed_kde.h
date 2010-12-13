@@ -42,6 +42,8 @@ class DistributedKde {
 
   public:
 
+    ~DistributedKde();
+
     DistributedKde() {
       world_ = NULL;
     }
@@ -128,6 +130,7 @@ class DistributedKde {
   private:
 
     static bool ConstructBoostVariableMap_(
+      boost::mpi::communicator &world,
       const std::vector<std::string> &args,
       boost::program_options::variables_map *vm);
 };
