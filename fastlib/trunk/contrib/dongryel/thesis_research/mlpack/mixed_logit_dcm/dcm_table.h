@@ -11,6 +11,7 @@
 #include "core/table/table.h"
 #include "core/math/linear_algebra.h"
 #include "core/monte_carlo/mean_variance_pair.h"
+#include "core/monte_carlo/mean_variance_pair_matrix.h"
 
 namespace mlpack {
 namespace mixed_logit_dcm {
@@ -24,11 +25,25 @@ class DCMTable {
 
     int num_active_people_;
 
-    /** @brief The running simulated choice probabilities (sample mean
+    /** @brief The simulated choice probabilities (sample mean
      *         and sample variance information).
      */
     std::vector< core::monte_carlo::MeanVariancePair >
     simulated_choice_probabilities_;
+
+    /** @brief The gradient of the simulated log likelihood per person
+     *         per his/her discrete choice.
+     */
+    std::vector <
+    core::monte_carlo::MeanVariancePairVector >
+    simulated_loglikelihood_gradients_;
+
+    /** @brief The Hessian of the simulated log likelihood per person
+     *         per his/her discrete choice.
+     */
+    std::vector <
+    core::monte_carlo::MeanVariancePairMatrix >
+    simulated_loglikelihood_hessians_;
 
     std::vector<int> cumulative_num_discrete_choices_;
 
@@ -145,6 +160,14 @@ class DCMTable {
       // probabilities per person per discrete choice. It is indexed
       // in the same way as the attribute table.
       simulated_choice_probabilities_.resize(attribute_table_->n_entries());
+
+      // This vector maintains the gradients of the simulated
+      // loglikelihood per person per discrete choice.
+      simulated_loglikelihood_gradients_.resize(attribute_table_->n_entries());
+
+      // This vector maintains the Hessians of the simulated
+      // loglikelihood per person per discrete choice.
+      simulated_loglikelihood_hessians_.resize(attribute_table_->n_entries());
 
       // Initialize a randomly shuffled vector of indices for sampling
       // the outer term in the simulated log-likelihood.

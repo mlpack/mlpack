@@ -3,6 +3,7 @@ project(FASTLIB C CXX Fortran)
 
 set(SOURCES
   mean_variance_pair.h
+  mean_variance_pair_matrix.h
   multitree_monte_carlo_dev.h
   multitree_monte_carlo.h
   strata.h
