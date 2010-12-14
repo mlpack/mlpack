@@ -416,8 +416,7 @@ class KdeDelta {
       const core::math::Range &squared_distance_range) {
 
       int rnode_count = (qnode == rnode) ?
-                        (global.reference_table()->get_node_count(rnode) - 1) :
-                        global.reference_table()->get_node_count(rnode);
+                        (rnode->count() - 1) : rnode->count();
       densities_l_ = rnode_count *
                      global.kernel().EvalUnnormOnSq(squared_distance_range.hi);
       densities_u_ = rnode_count *
@@ -473,10 +472,9 @@ class KdeSummary {
       double failure_probability, ResultType *query_results) const {
 
       const int speedup_factor = 10;
-      int num_samples = global.reference_table()->get_node_count(rnode) /
-                        speedup_factor;
+      int num_samples = rnode->count() / speedup_factor;
 
-      if(num_samples > global.reference_table()->get_node_count(rnode)) {
+      if(num_samples > rnode->count()) {
         return false;
       }
 
@@ -502,8 +500,7 @@ class KdeSummary {
 
       // The min kernel value determined by the bounding box.
       double min_kernel_value = delta.densities_l_ /
-                                ((double) global.reference_table()->
-                                 get_node_count(rnode));
+                                static_cast<double>(rnode->count());
 
       int prev_qpoint_index = -1;
       double bandwidth = sqrt(global.kernel().bandwidth_sq());
@@ -560,7 +557,7 @@ class KdeSummary {
           query_results->densities_l_[qpoint_index] + correction.lo;
         double left_hand_side = correction.width() * 0.5;
         double right_hand_side =
-          global.reference_table()->get_node_count(rnode) *
+          rnode->count() *
           global.relative_error() * modified_densities_l /
           static_cast<double>(global.reference_table()->n_entries());
 
@@ -580,7 +577,7 @@ class KdeSummary {
 
       double left_hand_side = delta.used_error_;
       double right_hand_side =
-        global.reference_table()->get_node_count(rnode) *
+        rnode->count() *
         (global.relative_error() * densities_l_ - used_error_u_) /
         static_cast<double>(
           global.effective_num_reference_points() - pruned_l_);

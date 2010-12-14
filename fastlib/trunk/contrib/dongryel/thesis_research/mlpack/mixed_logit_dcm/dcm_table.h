@@ -112,7 +112,7 @@ class DCMTable {
 
     /** @brief Return the current simulated log likelihood score.
      */
-    double simulated_log_likelihood() const {
+    double SimulatedLogLikelihood() const {
       double current_simulated_log_likelihood = 0;
       for(int i = 0; i < num_active_people_; i++) {
 
