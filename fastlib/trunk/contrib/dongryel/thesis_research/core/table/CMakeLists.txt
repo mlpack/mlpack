@@ -11,6 +11,7 @@ set(SOURCES
   index_util.h
   memory_mapped_file.h
   offset_dense_matrix.h
+  sub_table.h
   table.h
   transform.h
 )
