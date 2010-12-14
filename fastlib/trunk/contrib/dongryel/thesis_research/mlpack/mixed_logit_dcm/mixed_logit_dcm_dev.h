@@ -18,10 +18,7 @@ void MixedLogitDCM<TableType>::Init(
 
   // Initialize the table for storing/accessing the attribute vector
   // for each person.
-  table_.Init(
-    arguments_in.attribute_table_,
-    arguments_in.num_discrete_choices_per_person_,
-    arguments_in.num_parameters_);
+  table_.Init(arguments_in);
 }
 
 template<typename TableType>
@@ -173,8 +170,7 @@ void MixedLogitDCM<TableType>::ParseArguments(
 
   // The number of parameters that generate each $\beta$ is fixed now
   // as the Gaussian example in Appendix.
-  arguments_out->num_parameters_ = 2 *
-                                   arguments_out->attribute_table_->n_attributes();
+  // arguments_out->distribution_ = ;
 }
 
 template<typename TableType>

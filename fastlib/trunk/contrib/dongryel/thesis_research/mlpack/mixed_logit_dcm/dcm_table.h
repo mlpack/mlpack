@@ -12,12 +12,18 @@
 #include "core/math/linear_algebra.h"
 #include "core/monte_carlo/mean_variance_pair.h"
 #include "core/monte_carlo/mean_variance_pair_matrix.h"
+#include "mlpack/mixed_logit_dcm/mixed_logit_dcm_distribution.h"
 
 namespace mlpack {
 namespace mixed_logit_dcm {
 template<typename TableType>
 class DCMTable {
   private:
+
+    /** @brief The distribution from which each $\beta$ is sampled
+     *         from.
+     */
+    mlpack::mixed_logit_dcm::MixedLogitDCMDistribution *distribution_;
 
     /** @brief The pointer to the attribute vector for each person per
      *         his/her discrete choice.
@@ -216,19 +222,17 @@ class DCMTable {
       return static_cast<int>(cumulative_num_discrete_choices_.size());
     }
 
-    void Init(
-      TableType *attribute_table_in,
-      TableType *num_discrete_choices_per_person_in,
-      int num_parameters_in) {
+    template<typename ArgumentType>
+    void Init(ArgumentType &argument_in) {
 
       // Set the number of parameters.
-      num_parameters_ = num_parameters_in;
+      num_parameters_ = argument_in.distribution_->num_parameters();
 
       // Set the incoming attributes table and the number of choices
       // per person in the list.
-      attribute_table_ = attribute_table_in;
+      attribute_table_ = argument_in.attribute_table_;
       num_discrete_choices_per_person_.resize(
-        num_discrete_choices_per_person_in->n_entries());
+        argument_in.num_discrete_choices_per_person_->n_entries());
 
       // This vector maintains the running simulated choice
       // probabilities per person per discrete choice. It is indexed
@@ -250,7 +254,7 @@ class DCMTable {
       // Initialize a randomly shuffled vector of indices for sampling
       // the outer term in the simulated log-likelihood.
       shuffled_indices_for_person_.resize(
-        num_discrete_choices_per_person_in->n_entries());
+        argument_in.num_discrete_choices_per_person_->n_entries());
       for(unsigned int i = 0; i < shuffled_indices_for_person_.size(); i++) {
         shuffled_indices_for_person_[i] = i;
       }
@@ -264,12 +268,12 @@ class DCMTable {
       // index in the attribute table for given (person, discrete
       // choice) pair.
       cumulative_num_discrete_choices_.resize(
-        num_discrete_choices_per_person_in->n_entries());
+        argument_in.num_discrete_choices_per_person_->n_entries());
       cumulative_num_discrete_choices_[0] = 0;
       for(unsigned int i = 1; i < cumulative_num_discrete_choices_.size();
           i++) {
         core::table::DensePoint point;
-        num_discrete_choices_per_person_in->get(i - 1, &point);
+        argument_in.num_discrete_choices_per_person_->get(i - 1, &point);
         int num_choices_for_current_person =
           static_cast<int>(point[0]);
         cumulative_num_discrete_choices_[i] =
@@ -283,14 +287,14 @@ class DCMTable {
       // distribution on the number of choices match up the total
       // number of attribute vectors. Otherwise, quit.
       core::table::DensePoint last_count_vector;
-      num_discrete_choices_per_person_in->get(
+      argument_in.num_discrete_choices_per_person_->get(
         cumulative_num_discrete_choices_.size() - 1, &last_count_vector);
       num_discrete_choices_per_person_[
         cumulative_num_discrete_choices_.size() - 1 ] = last_count_vector[0];
       int last_count = static_cast<int>(last_count_vector[0]);
       if(cumulative_num_discrete_choices_[
             cumulative_num_discrete_choices_.size() - 1] +
-          last_count != attribute_table_in->n_entries()) {
+          last_count != argument_in.attribute_table_->n_entries()) {
         std::cerr << "The total number of discrete choices do not equal "
                   "the number of total number of attribute vectors.\n";
         exit(0);
@@ -316,13 +320,19 @@ class DCMTable {
       ComputeChoiceProbabilities_(
         person_index, parameter_vector, &choice_probabilities);
 
+      // Loop through and update the simulated choice probabilities
+      // and the simulated log-likelihood gradients.
       int index = cumulative_num_discrete_choices_[person_index];
       for(int num_discrete_choices = 0; num_discrete_choices <
           num_discrete_choices_per_person_[person_index];
           num_discrete_choices++, index++) {
 
+        // Simulated choice probability update.
         simulated_choice_probabilities_[index].push_back(
           choice_probabilities[num_discrete_choices]);
+
+        // Simulated log-likelihood gradient update.
+        // simulated_loglikelihood_gradients_[index].push_back();
       }
     }
 
