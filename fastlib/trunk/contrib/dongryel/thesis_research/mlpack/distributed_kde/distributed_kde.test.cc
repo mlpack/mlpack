@@ -151,8 +151,8 @@ class TestDistributed_Kde {
                     per_relative_error << "\n";
         }
       }
-      std::cout <<
-                "Achieved a relative error of " << achieved_error << "\n";
+      std::cout << "Process " << world.rank() <<
+                " achieved a relative error of " << achieved_error << "\n";
       return achieved_error <= relative_error;
     }
 
@@ -240,7 +240,10 @@ class TestDistributed_Kde {
         std::cout << "\n==================\n";
         std::cout << "Test trial begin\n";
         std::cout << "Number of dimensions: " << num_dimensions << "\n";
+        fflush(stdout);
+        fflush(stderr);
       }
+      world.barrier();
       std::cout << "Number of points: " << num_points << "\n";
 
       switch(kernel_type) {
@@ -331,10 +334,12 @@ class TestDistributed_Kde {
             ultra_naive_distributed_kde_result,
             distributed_kde_arguments.relative_error_) == false) {
         std::cerr << "There is a problem!\n";
+        exit(-1);
       }
+      world.barrier();
 
       return 0;
-    };
+    }
 };
 };
 };
@@ -357,6 +362,11 @@ int main(int argc, char *argv[]) {
   mlpack::distributed_kde::TestDistributed_Kde distributed_kde_test;
   distributed_kde_test.StressTestMain(world);
 
-  std::cout << "All tests passed!\n";
+  if(world.rank() == 0) {
+    std::cout << "All tests passed!\n";
+  }
+  fflush(stdout);
+  fflush(stderr);
+  world.barrier();
   return 0;
 }
