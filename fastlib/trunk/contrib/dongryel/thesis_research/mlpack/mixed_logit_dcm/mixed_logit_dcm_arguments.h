@@ -7,6 +7,7 @@
 #define MLPACK_MIXED_LOGIT_DCM_MIXED_LOGIT_DCM_ARGUMENTS_H
 
 #include "core/table/table.h"
+#include "mlpack/mixed_logit_dcm/mixed_logit_dcm_distribution.h"
 
 namespace mlpack {
 namespace mixed_logit_dcm {
@@ -17,7 +18,7 @@ class MixedLogitDCMArguments {
 
     TableType *num_discrete_choices_per_person_;
 
-    int num_parameters_;
+    mlpack::mixed_logit_dcm::MixedLogitDCMDistribution *distribution_;
 
     double initial_dataset_sample_rate_;
 
@@ -32,7 +33,7 @@ class MixedLogitDCMArguments {
     MixedLogitDCMArguments() {
       attribute_table_ = NULL;
       num_discrete_choices_per_person_ = NULL;
-      num_parameters_ = 0;
+      distribution_ = NULL;
       initial_dataset_sample_rate_ = 0;
       initial_integration_sample_rate_ = 0;
     }
@@ -42,6 +43,8 @@ class MixedLogitDCMArguments {
       attribute_table_ = NULL;
       delete num_discrete_choices_per_person_;
       num_discrete_choices_per_person_ = NULL;
+      delete distribution_;
+      distribution_ = NULL;
     }
 };
 };
