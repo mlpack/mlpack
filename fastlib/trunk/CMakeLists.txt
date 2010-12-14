@@ -35,8 +35,9 @@ if(WITH_OPTIMIZERS)
 endif(WITH_OPTIMIZERS)
 
 if(DEBUG)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -pg -O0")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -pg -O0")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
   add_definitions(-DDEBUG)
 endif(DEBUG)
 
@@ -65,7 +66,7 @@ include(CMake/TargetDistclean.cmake OPTIONAL)
 add_definitions(-DDISABLE_DISK_MATRIX)
 
 #include_directories( ${FASTLIB_INCLUDE_DIRS} )
-include_directories(${CMAKE_BINARY_DIR}/include/)
+include_directories(${CMAKE_SOURCE_DIR})
 #TODO link_directories()
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib/)
