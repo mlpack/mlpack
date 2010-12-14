@@ -49,6 +49,13 @@ class MeanVariancePairVector {
              new core::monte_carlo::MeanVariancePair[n_elements_];
     }
 
+    void sample_means(core::table::DensePoint *point_out) const {
+      point_out->Init(n_elements_);
+      for(int i = 0; i < n_elements_; i++) {
+        (*point_out)[i] = ptr_[i].sample_mean();
+      }
+    }
+
     const core::monte_carlo::MeanVariancePair & operator[](int i) const {
       return ptr_[i];
     }

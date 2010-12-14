@@ -17,6 +17,8 @@ class MixedLogitDCMArguments {
 
     TableType *num_discrete_choices_per_person_;
 
+    int num_parameters_;
+
     double initial_dataset_sample_rate_;
 
     double initial_integration_sample_rate_;
@@ -30,6 +32,7 @@ class MixedLogitDCMArguments {
     MixedLogitDCMArguments() {
       attribute_table_ = NULL;
       num_discrete_choices_per_person_ = NULL;
+      num_parameters_ = 0;
       initial_dataset_sample_rate_ = 0;
       initial_integration_sample_rate_ = 0;
     }
