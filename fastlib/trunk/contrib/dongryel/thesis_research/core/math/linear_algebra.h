@@ -42,11 +42,27 @@ static void SubFrom(
 }
 
 template<typename VectorType>
+static void AddExpert(
+  double scale, const VectorType &vec_scaled, VectorType *vec_add_to) {
+
+  for(int i = 0; i < vec_scaled.length(); i++) {
+    (*vec_add_to)[i] += scale * vec_scaled[i];
+  }
+}
+
+template<typename VectorType>
 static void AddTo(
   const VectorType &vec_in, VectorType *vec_out) {
 
   for(unsigned int i = 0; i < vec_in.n_elem; i++) {
     (*vec_out)[i] += vec_in[i];
+  }
+}
+
+template<typename VectorType>
+static void Scale(double scale, VectorType *vec) {
+  for(unsigned int i = 0; i < vec->length(); i++) {
+    (*vec)[i] *= scale;
   }
 }
 

@@ -20,7 +20,8 @@ void MixedLogitDCM<TableType>::Init(
   // for each person.
   table_.Init(
     arguments_in.attribute_table_,
-    arguments_in.num_discrete_choices_per_person_);
+    arguments_in.num_discrete_choices_per_person_,
+    arguments_in.num_parameters_);
 }
 
 template<typename TableType>
@@ -47,7 +48,7 @@ void MixedLogitDCM<TableType>::Compute(
 
   // Compute the initial simulated log-likelihood, the gradient, and
   // the Hessian.
-  double current_simulated_log_likelihood = table_->SimulatedLogLikelihood();
+  double current_simulated_log_likelihood = table_.SimulatedLogLikelihood();
   core::table::DensePoint current_gradient;
   core::table::DenseMatrix current_hessian;
 
@@ -169,6 +170,11 @@ void MixedLogitDCM<TableType>::ParseArguments(
 
   // Parse the output for the mixed logit discrete choice model.
   arguments_out->model_out_ = vm[ "model_out" ].as<std::string>();
+
+  // The number of parameters that generate each $\beta$ is fixed now
+  // as the Gaussian example in Appendix.
+  arguments_out->num_parameters_ = 2 *
+                                   arguments_out->attribute_table_->n_attributes();
 }
 
 template<typename TableType>
