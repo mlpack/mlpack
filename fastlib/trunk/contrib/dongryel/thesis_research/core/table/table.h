@@ -17,6 +17,7 @@
 #include "core/table/dense_matrix.h"
 #include "core/table/dense_point.h"
 #include "core/table/index_util.h"
+#include "core/table/sub_table.h"
 
 namespace core {
 namespace table {
@@ -24,10 +25,12 @@ namespace table {
 extern MemoryMappedFile *global_m_file_;
 
 template <
-typename TreeSpecType, typename OldFromNewIndexType = int >
+typename TreeSpecType, typename IncomingOldFromNewIndexType = int >
 class Table: public boost::noncopyable {
 
   public:
+    typedef IncomingOldFromNewIndexType OldFromNewIndexType;
+
     typedef core::tree::GeneralBinarySpaceTree < TreeSpecType > TreeType;
 
     typedef core::table::Table <
@@ -150,96 +153,44 @@ class Table: public boost::noncopyable {
 
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
-
-      // Save the matrix and the rank.
-      ar & data_;
-      ar & rank_;
-
-      // Save the old_from_new_mapping manually.
-      for(int i = 0; i < data_.n_cols(); i++) {
-        core::table::IndexUtil<OldFromNewIndexType>::Serialize(
-          ar, old_from_new_.get(), i);
-      }
-      for(int i = 0; i < data_.n_cols(); i++) {
-        core::table::IndexUtil<int>::Serialize(
-          ar, new_from_old_.get(), i);
-      }
-
-      // Save the tree.
-      int num_nodes = 0;
-      int tree_depth = FindTreeDepth_(tree_.get());
-      std::vector< TreeType *> tree_nodes(1 << tree_depth,  NULL);
-
-      FillTreeNodes_(tree_.get(), 0, tree_nodes, &num_nodes);
-      int max_size = tree_nodes.size();
-      ar & max_size;
-      ar & num_nodes;
-      for(unsigned int i = 0; i < tree_nodes.size(); i++) {
-        if(tree_nodes[i]) {
-          ar & i;
-          ar & (*(tree_nodes[i]));
-        }
-      }
+      core::table::SubTable<TableType> sub_table;
+      TableType *this_table = const_cast<TableType *>(this);
+      sub_table.Init(
+        this_table, this_table->get_tree(), std::numeric_limits<int>::max());
+      ar & sub_table;
     }
 
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
-
-      // Load the matrix and the rank.
-      ar & data_;
-      ar & rank_;
-
-      // Load the mappings manually.
-      old_from_new_ = (core::table::global_m_file_) ?
-                      core::table::global_m_file_->ConstructArray <
-                      OldFromNewIndexType > (data_.n_cols()) :
-                      new OldFromNewIndexType[ data_.n_cols()];
-      new_from_old_ = (core::table::global_m_file_) ?
-                      core::table::global_m_file_->ConstructArray <
-                      int > (data_.n_cols()) :
-                      new int[ data_.n_cols()];
-      for(int i = 0; i < data_.n_cols(); i++) {
-        core::table::IndexUtil<OldFromNewIndexType>::Serialize(
-          ar, old_from_new_.get(), i);
-      }
-      for(int i = 0; i < data_.n_cols(); i++) {
-        core::table::IndexUtil<int>::Serialize(
-          ar, new_from_old_.get(), i);
-      }
-
-      // Load up the max number of loads to receive.
-      int max_num_nodes;
-      int num_nodes;
-      ar & max_num_nodes;
-      ar & num_nodes;
-      std::vector< TreeType *> tree_nodes(max_num_nodes, NULL);
-      for(int i = 0; i < num_nodes; i++) {
-        int node_index;
-        ar & node_index;
-        tree_nodes[node_index] =
-          (core::table::global_m_file_) ?
-          core::table::global_m_file_->Construct<TreeType>() : new TreeType();
-        ar & (*tree_nodes[node_index]);
-      }
-
-      // Do the pointer corrections, and have the tree point to the
-      // 0-th element.
-      for(unsigned int i = 0; i < tree_nodes.size(); i++) {
-        if(tree_nodes[i] && 2 * i + 2 < tree_nodes.size()) {
-          tree_nodes[i]->set_children(
-            data_, tree_nodes[2 * i + 1], tree_nodes[2 * i + 2]);
-        }
-      }
-      tree_ = tree_nodes[0];
+      core::table::SubTable<TableType> sub_table;
+      sub_table.Init(this, this->get_tree(), std::numeric_limits<int>::max());
+      ar & sub_table;
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
+
+    int rank() const {
+      return rank_;
+    }
+
+    void set_rank(int rank_in) {
+      rank_ = rank_in;
+    }
 
     OldFromNewIndexType *old_from_new() {
       return old_from_new_.get();
     }
 
+    boost::interprocess::offset_ptr <
+    OldFromNewIndexType > *old_from_new_offset_ptr() {
+      return &old_from_new_;
+    }
+
     int *new_from_old() {
       return new_from_old_.get();
+    }
+
+    boost::interprocess::offset_ptr<int> *new_from_old_offset_ptr() {
+      return &new_from_old_;
     }
 
     core::table::DenseMatrix &data() {
@@ -319,12 +270,12 @@ class Table: public boost::noncopyable {
       return node->stat();
     }
 
-    int get_node_count(TreeType *node) const {
-      return node->count();
-    }
-
     TreeType *get_tree() {
       return tree_.get();
+    }
+
+    boost::interprocess::offset_ptr<TreeType> *get_tree_offset_ptr() {
+      return &tree_;
     }
 
     void get_leaf_nodes(
@@ -366,7 +317,9 @@ class Table: public boost::noncopyable {
     }
 
     void Init(const std::string &file_name, int rank_in = 0) {
-      core::DatasetReader::ParseDataset(file_name, &data_);
+      if(core::DatasetReader::ParseDataset(file_name, &data_) == false) {
+        exit(0);
+      }
       rank_ = rank_in;
 
       if(core::table::global_m_file_) {
@@ -447,32 +400,6 @@ class Table: public boost::noncopyable {
     }
 
   private:
-
-    void FillTreeNodes_(
-      TreeType *node, int node_index, std::vector<TreeType *> &sorted_nodes,
-      int *num_nodes) const {
-
-      if(node != NULL) {
-        (*num_nodes)++;
-        sorted_nodes[node_index] = node;
-
-        if(node->is_leaf() == false) {
-          FillTreeNodes_(
-            node->left(), 2 * node_index + 1, sorted_nodes, num_nodes);
-          FillTreeNodes_(
-            node->right(), 2 * node_index + 2, sorted_nodes, num_nodes);
-        }
-      }
-    }
-
-    int FindTreeDepth_(TreeType *node) const {
-      if(node == NULL) {
-        return 0;
-      }
-      int left_depth = FindTreeDepth_(node->left());
-      int right_depth = FindTreeDepth_(node->right());
-      return (left_depth > right_depth) ? (left_depth + 1) : (right_depth + 1);
-    }
 
     void direct_get_(int point_id, double *entry) const {
       if(this->IsIndexed() == false) {

@@ -14,7 +14,7 @@
 namespace core {
 class DatasetReader {
   public:
-    static void ParseDataset(
+    static bool ParseDataset(
       const std::string &filename_in, core::table::DenseMatrix *dataset_out) {
 
       const char *filename = filename_in.c_str();
@@ -28,7 +28,9 @@ class DatasetReader {
       file_parser.set_skip_lines(0);
 
       // Specify the file to parse.
-      file_parser.init(filename);
+      if(file_parser.init(filename) == false) {
+        return false;
+      }
 
       // Here we tell the parser how to parse the file.
       file_parser.set_enclosed_char(enclosure_char, ENCLOSURE_OPTIONAL);
@@ -65,6 +67,9 @@ class DatasetReader {
         }
         num_points++;
       }
+
+      // Assume that the dataset has been read.
+      return true;
     }
 };
 };
