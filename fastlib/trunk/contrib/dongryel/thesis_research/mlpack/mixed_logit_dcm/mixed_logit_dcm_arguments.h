@@ -11,14 +11,22 @@
 
 namespace mlpack {
 namespace mixed_logit_dcm {
+
+template<typename TableType>
+class DCMTable;
+
 template<typename TableType>
 class MixedLogitDCMArguments {
+  public:
+    typedef mlpack::mixed_logit_dcm::DCMTable<TableType> DCMTableType;
+
   public:
     TableType *attribute_table_;
 
     TableType *num_discrete_choices_per_person_;
 
-    mlpack::mixed_logit_dcm::MixedLogitDCMDistribution *distribution_;
+    mlpack::mixed_logit_dcm::MixedLogitDCMDistribution <
+    DCMTableType > *distribution_;
 
     double initial_dataset_sample_rate_;
 

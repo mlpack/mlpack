@@ -59,6 +59,10 @@ class DenseMatrix {
       }
     }
 
+    void SetZero() {
+      memset(ptr_.get(), 0, sizeof(double) * n_rows_ * n_cols_);
+    }
+
     const double *ptr() const {
       return ptr_.get();
     }
