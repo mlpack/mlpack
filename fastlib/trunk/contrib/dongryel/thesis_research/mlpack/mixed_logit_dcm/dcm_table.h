@@ -18,12 +18,17 @@ namespace mlpack {
 namespace mixed_logit_dcm {
 template<typename TableType>
 class DCMTable {
+  public:
+
+    typedef DCMTable<TableType> DCMTableType;
+
   private:
 
     /** @brief The distribution from which each $\beta$ is sampled
      *         from.
      */
-    mlpack::mixed_logit_dcm::MixedLogitDCMDistribution *distribution_;
+    mlpack::mixed_logit_dcm::MixedLogitDCMDistribution <
+    DCMTableType > *distribution_;
 
     /** @brief The pointer to the attribute vector for each person per
      *         his/her discrete choice.
@@ -79,7 +84,7 @@ class DCMTable {
     /** @brief Computes the current discrete choice with the highest
      *         simulated probability for person_index-th person.
      */
-    int DiscreteChoiceIndex_(
+    void DiscreteChoiceIndex_(
       int person_index, int *discrete_choice_index_out,
       double *highest_simulated_choice_probability_out) const {
 
@@ -144,6 +149,13 @@ class DCMTable {
     }
 
   public:
+
+    /** @brief Returns the number of discrete choices available for
+     *         the given person.
+     */
+    int num_discrete_choices(int person_index) const {
+      return num_discrete_choices_per_person_[person_index];
+    }
 
     /** @brief Return the gradient of the current simulated log
      *         likelihood score objective. This computes Equation 8.7
@@ -320,6 +332,14 @@ class DCMTable {
       ComputeChoiceProbabilities_(
         person_index, parameter_vector, &choice_probabilities);
 
+      // Given the parameter vector, compute the products between the
+      // gradient of the $\beta$ with respect to $\theta$ and
+      // $\bar{X}_i res_{i,j_i^*}(\beta^v(\theta))$.
+      core::table::DenseMatrix beta_gradient_products;
+      distribution_->MixedLogitParameterGradientProducts(
+        attribute_table_, person_index, parameter_vector,
+        choice_probabilities, &beta_gradient_products);
+
       // Loop through and update the simulated choice probabilities
       // and the simulated log-likelihood gradients.
       int index = cumulative_num_discrete_choices_[person_index];
@@ -332,6 +352,8 @@ class DCMTable {
           choice_probabilities[num_discrete_choices]);
 
         // Simulated log-likelihood gradient update.
+
+
         // simulated_loglikelihood_gradients_[index].push_back();
       }
     }

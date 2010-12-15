@@ -42,6 +42,15 @@ static void SubFrom(
 }
 
 template<typename VectorType>
+static void SubInit(
+  const VectorType &sub, const VectorType &sub_from, VectorType *vec_out) {
+  vec_out->Init(sub.length());
+  for(int i = 0; i < sub.length(); i++) {
+    (*vec_out)[i] = sub_from[i] - sub[i];
+  }
+}
+
+template<typename VectorType>
 static void AddExpert(
   double scale, const VectorType &vec_scaled, VectorType *vec_add_to) {
 
