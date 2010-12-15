@@ -21,6 +21,11 @@ class MixedLogitDCMDistribution {
 
     virtual int num_parameters() const = 0;
 
+    /** @brief Computes $\frac{\partial}{\partial \theta}
+     *         \beta^{\nu}(\theta) \bar{X}_i res_{i,j_i^*} (
+     *         \beta^{\nu}(\theta))$ for a realization of $\beta$ for
+     *         a given person.
+     */
     void MixedLogitParameterGradientProducts(
       DCMTableType *dcm_table_in,
       int person_index,
