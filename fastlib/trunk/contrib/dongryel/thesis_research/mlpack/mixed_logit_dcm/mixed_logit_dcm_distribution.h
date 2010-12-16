@@ -21,6 +21,21 @@ class MixedLogitDCMDistribution {
 
     virtual int num_parameters() const = 0;
 
+    /** @brief Computes the required quantities in Equation 8.14 (see
+     *         dcm_table.h) for a realization of $\beta$ for a given
+     *         person.
+     */
+    void HessianProducts(
+      DCMTableType *dcm_table_in,
+      int person_index, int discrete_choice_index,
+      const core::table::DensePoint &parameter_vector,
+      const core::table::DensePoint &choice_probabilities,
+      core::table::DenseMatrix *hessian_first_part,
+      core::table::DensePoint *hessian_second_part) const {
+
+
+    }
+
     /** @brief Computes $\frac{\partial}{\partial \theta}
      *         \beta^{\nu}(\theta) \bar{X}_i res_{i,j_i^*} (
      *         \beta^{\nu}(\theta))$ for a realization of $\beta$ for
@@ -31,7 +46,7 @@ class MixedLogitDCMDistribution {
       int person_index, int discrete_choice_index,
       const core::table::DensePoint &parameter_vector,
       const core::table::DensePoint &choice_probabilities,
-      core::table::DensePoint *product_out) {
+      core::table::DensePoint *product_out) const {
 
       // Initialize the product.
       product_out->Init(this->num_parameters());

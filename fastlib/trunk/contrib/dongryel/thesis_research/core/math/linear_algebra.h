@@ -7,6 +7,13 @@
 #define CORE_MATH_LINEAR_ALGEBRA_H
 
 namespace core {
+namespace table {
+class DensePoint;
+class DenseMatrix;
+};
+};
+
+namespace core {
 namespace math {
 
 template<typename VectorType>
@@ -69,10 +76,36 @@ static void AddTo(
 }
 
 template<typename VectorType>
+class ScaleTrait {
+  public:
+    static void Compute(double scale, VectorType *vec);
+};
+
+template<>
+class ScaleTrait<core::table::DensePoint> {
+  public:
+    static void Compute(double scale, core::table::DensePoint *vec) {
+      for(int i = 0; i < vec->length(); i++) {
+        (*vec)[i] *= scale;
+      }
+    }
+};
+
+template<>
+class ScaleTrait<core::table::DenseMatrix> {
+  public:
+    static void Compute(double scale, core::table::DenseMatrix *vec) {
+      for(int j = 0; j < vec->n_cols(); j++) {
+        for(int i = 0; i < vec->n_rows(); i++) {
+          vec->set(i, j, vec->get(i, j) * scale);
+        }
+      }
+    }
+};
+
+template<typename VectorType>
 static void Scale(double scale, VectorType *vec) {
-  for(unsigned int i = 0; i < vec->length(); i++) {
-    (*vec)[i] *= scale;
-  }
+  ScaleTrait<VectorType>::Compute(scale, vec);
 }
 
 template<typename VectorType>

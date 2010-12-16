@@ -68,11 +68,21 @@ class DCMTable {
     core::monte_carlo::MeanVariancePairVector >
     simulated_loglikelihood_gradients_;
 
-    /** @brief The Hessian of the simulated log likelihood per person
+    /** @brief The Hessian of the simulated log likelihood per
+     *         person. Each is composed of a pair, the first of which
+     *         is, $\frac{\partial}{\partial \theta}
+     *         \beta^{\nu}(\theta) \frac{\partial^2}{\partial \beta^2}
+     *         P_{i,j_i^*}(\beta^{nu}(\theta))
+     *         (\frac{\partial}{\partial \theta}
+     *         \beta^{\nu}(\theta))^T$. The second is $\frac{\partial}
+     *         {\partial \theta} \beta^{\nu}(\theta) \frac{\partial}
+     *         {\beta} {P_{i,j_i^*} (\beta^{\nu}(\theta))$. This vector
+     *         keeps track of Equation 8.14.
      */
     std::vector <
-    core::monte_carlo::MeanVariancePairMatrix >
-    simulated_loglikelihood_hessians_;
+    std::pair < core::monte_carlo::MeanVariancePairMatrix,
+        core::monte_carlo::MeanVariancePairVector > >
+        simulated_loglikelihood_hessians_;
 
   private:
 
@@ -128,6 +138,51 @@ class DCMTable {
     int get_discrete_choice_index(int person_index) const {
       return static_cast<int>(
                discrete_choice_set_info_->data().get(0, person_index));
+    }
+
+    /** @brief Returns the Hessian of the current simulated log
+     *         likelihood score objective. This completes the
+     *         computation of Equation 8.14 in the paper.
+     */
+    void SimulatedLoglikelihoodHessian(
+      core::table::DenseMatrix *likelihood_hessian) const {
+
+      likelihood_hessian->Init(
+        distribution_->num_parameters(), distribution_->num_parameters());
+      likelihood_hessian->SetZero();
+
+      // For each active person,
+      for(int i = 0; i < num_active_people_; i++) {
+
+        // Get the index in the shuffled indices to find out the ID of
+        // the person in the sample pool.
+        int person_index = shuffled_indices_for_person_[i];
+
+        // Get the simulated choice probability for the given person.
+        int discrete_choice_index =
+          this->get_discrete_choice_index(person_index);
+        double simulated_choice_probability =
+          this->simulated_choice_probability(person_index);
+        double inverse_simulated_choice_probability =
+          1.0 / simulated_choice_probability;
+
+        // Get the components for the Hessian for the person.
+        const core::monte_carlo::MeanVariancePairMatrix &hessian_first_part =
+          simulated_loglikelihood_hessians_[person_index].first;
+        const core::monte_carlo::MeanVariancePairVector &hessian_second_part =
+          simulated_loglikelihood_hessians_[person_index].second;
+        core::table::DenseMatrix hessian_first;
+        core::table::DensePoint hessian_second;
+        hessian_first_part.sample_means(&hessian_first);
+        hessian_second_part.sample_means(&hessian_second);
+
+        // Construct the contribution on the fly.
+
+      }
+
+      // Divide by the number of people.
+      core::math::Scale(
+        1.0 / static_cast<double>(num_active_people_), likelihood_hessian);
     }
 
     /** @brief Return the gradient of the current simulated log
@@ -296,25 +351,37 @@ class DCMTable {
       // Given the parameter vector, compute the products between the
       // gradient of the $\beta$ with respect to $\theta$ and
       // $\bar{X}_i res_{i,j_i^*}(\beta^v(\theta))$.
-      core::table::DensePoint beta_gradient_products;
+      core::table::DensePoint beta_gradient_product;
 
       // j_i^* index.
       int discrete_choice_index = this->get_discrete_choice_index(person_index);
       distribution_->MixedLogitParameterGradientProducts(
-        attribute_table_, person_index,
-        discrete_choice_index, parameter_vector,
-        choice_probabilities, &beta_gradient_products);
+        this, person_index, discrete_choice_index, parameter_vector,
+        choice_probabilities, &beta_gradient_product);
 
       // Update the simulated choice probabilities
       // and the simulated log-likelihood gradients.
       simulated_choice_probabilities_[person_index].push_back(
         choice_probabilities[discrete_choice_index]);
 
-      // Simulated log-likelihood gradient update.
+      // Simulated log-likelihood gradient update by the simulated
+      // choice probabilty scaled gradient product.
+      core::math::Scale(
+        choice_probabilities[discrete_choice_index], &beta_gradient_product);
+      simulated_loglikelihood_gradients_[person_index].push_back(
+        beta_gradient_product);
 
-
-      // simulated_loglikelihood_gradients_[index].push_back();
-
+      // Update the Hessian of the simulated loglikelihood for the
+      // given person.
+      core::table::DenseMatrix hessian_first_part;
+      core::table::DensePoint hessian_second_part;
+      distribution_->HessianProducts(
+        this, person_index, discrete_choice_index, parameter_vector,
+        choice_probabilities, &hessian_first_part, &hessian_second_part);
+      simulated_loglikelihood_hessians_[person_index].first.push_back(
+        hessian_first_part);
+      simulated_loglikelihood_hessians_[person_index].second.push_back(
+        hessian_second_part);
     }
 
     const core::monte_carlo::MeanVariancePairVector &

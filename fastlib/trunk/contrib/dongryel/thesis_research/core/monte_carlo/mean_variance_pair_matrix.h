@@ -41,6 +41,12 @@ class MeanVariancePairVector {
       ptr_ = NULL;
     }
 
+    void push_back(const core::table::DensePoint &v) {
+      for(int i = 0; i < v.length(); i++) {
+        ptr_[i].push_back(v[i]);
+      }
+    }
+
     void Init(int n_elements_in) {
       n_elements_ = n_elements_in;
       ptr_ = (core::table::global_m_file_) ?
@@ -94,6 +100,23 @@ class MeanVariancePairMatrix {
       n_cols_ = 0;
       n_elements_ = 0;
       ptr_ = NULL;
+    }
+
+    void push_back(const core::table::DenseMatrix &v) {
+      for(int j = 0; j < v.n_cols(); j++) {
+        for(int i = 0; i < v.n_rows(); i++) {
+          this->get(i, j).push_back(v.get(i, j));
+        }
+      }
+    }
+
+    void sample_means(core::table::DenseMatrix *point_out) const {
+      point_out->Init(n_rows_, n_cols_);
+      for(int j = 0; j < n_cols_; j++) {
+        for(int i = 0; i < n_rows_; i++) {
+          point_out->set(i, j, this->get(i, j).sample_mean());
+        }
+      }
     }
 
     void Init(int n_rows_in, int n_cols_in) {
