@@ -48,6 +48,8 @@ void MixedLogitDCM<TableType>::Compute(
   double current_simulated_log_likelihood = table_.SimulatedLogLikelihood();
   core::table::DensePoint current_gradient;
   core::table::DenseMatrix current_hessian;
+  table_.SimulatedLoglikelihoodGradient(&current_gradient);
+  table_.SimulatedLoglikelihoodHessian(&current_hessian);
 
   for(int iter = 0; ; iter++) {
 
@@ -87,7 +89,14 @@ bool MixedLogitDCM<TableType>::ConstructBoostVariableMap_(
        boost::program_options::value<std::string>()->default_value(
          "model_out.csv"),
        "file to output the computed discrete choice model."
-      );
+      )("trust_region_search_method",
+        boost::program_options::value<std::string>()->default_value("cauchy"),
+        "OPTIONAL Trust region search method.  One of:\n"
+        "  cauchy, dogleg, steihaug"
+       )("trust_region_radius",
+         boost::program_options::value<double>()->default_value(1000.0),
+         "OPTIONAL The initial radius of the trust region."
+        );
 
   boost::program_options::command_line_parser clp(args);
   clp.style(boost::program_options::command_line_style::default_style
