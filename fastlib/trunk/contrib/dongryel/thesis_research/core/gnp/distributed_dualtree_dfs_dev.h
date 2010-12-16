@@ -33,92 +33,29 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
   self_engine.Compute(metric, query_results);
   world_->barrier();
 
-  // Set the local table.
-  std::vector< TableType * > remote_tables(world_->size(), NULL);
-  remote_tables[ world_->rank()] = reference_table_->local_table();
+  // For now, naively all-gather the reference tables from every
+  // process.
+  TableType *remote_tables = new TableType[world_->size()];
+  boost::mpi::all_gather(
+    *world_, *(reference_table_->local_table()), remote_tables);
 
-  // Pair up processes, and exchange. Right now, the entire local
-  // reference tree is exchanged between pairs of processes, but this
-  // could be improved later. Also assume that the number of processes
-  // is a power of two for the moment. This will be changed later to allow
-  // transfer of data at a finer granularity, which means there will
-  // be an outer loop over the main all-reduce. This solution also is
-  // not topology-aware, so it will be changed later to fit the
-  // appropriate network topology.
-  int num_rounds = static_cast<int>(log2(world_->size()));
-  for(int r = 1; r <= num_rounds; r++) {
-    int stride = 1 << r;
-    int num_tables_in_action = stride >> 1;
-
-    // Exchange with the appropriate process.
-    int group_offset = world_->rank() % stride;
-    int group_leader = world_->rank() - group_offset;
-    int group_end = group_leader + stride - 1;
-    int exchange_process_id = group_leader + stride - group_offset - 1;
-
-    // Send the process's own collected tables.
-    std::vector<boost::mpi::request> send_requests;
-    std::vector<int> received_tables_in_current_iter;
-    send_requests.resize(num_tables_in_action);
-    for(int i = 0; i < num_tables_in_action; i++) {
-      int send_id;
-      if(world_->rank() - group_leader < group_end - world_->rank()) {
-        send_id = group_leader + i;
-      }
-      else {
-        send_id = group_leader + i + num_tables_in_action;
-      }
-      send_requests[i] = world_->isend(
-                           exchange_process_id, send_id,
-                           *(remote_tables[send_id]));
-    }
-    for(int i = 0; i < num_tables_in_action; i++) {
-      int receive_id;
-      if(world_->rank() - group_leader < group_end - world_->rank()) {
-        receive_id = group_leader + i + num_tables_in_action;
-      }
-      else {
-        receive_id = group_leader + i;
-      }
-      received_tables_in_current_iter.push_back(receive_id);
-      remote_tables[receive_id] =
-        (core::table::global_m_file_) ?
-        core::table::global_m_file_->Construct<TableType>() :
-        new TableType();
-      world_->recv(
-        exchange_process_id, receive_id, *(remote_tables[receive_id]));
-    }
-    boost::mpi::wait_all(send_requests.begin(), send_requests.end());
-
-    // Each process calls the independent sets of serial dual-tree dfs
-    // algorithms. Further parallelism can be exploited here.
-    for(unsigned i = 0; i < received_tables_in_current_iter.size(); i++) {
+  // Each process calls the independent sets of serial dual-tree dfs
+  // algorithms. Further parallelism can be exploited here.
+  for(int i = 0; i < world_->size(); i++) {
+    if(i != world_->rank()) {
       core::gnp::DualtreeDfs<ProblemType> sub_engine;
       ProblemType sub_problem;
       ArgumentType sub_argument;
       sub_argument.Init(
-        remote_tables[received_tables_in_current_iter[i]],
-        query_table_->local_table(),
-        problem_->global());
+        &remote_tables[i], query_table_->local_table(), problem_->global());
       sub_problem.Init(sub_argument);
       sub_engine.Init(sub_problem);
       sub_engine.Compute(metric, query_results, false);
     }
-
-  } // End of the all-reduce loop.
-
-  // Destroy all tables after all computations are done, except for
-  // the process's own table.
-  for(int i = 0; i < static_cast<int>(remote_tables.size()); i++) {
-    if(i != world_->rank()) {
-      if(core::table::global_m_file_) {
-        core::table::global_m_file_->DestroyPtr(remote_tables[i]);
-      }
-      else {
-        delete remote_tables[i];
-      }
-    }
   }
+
+  // Destroy the received tables.
+  delete[] remote_tables;
 }
 
 template<typename DistributedProblemType>

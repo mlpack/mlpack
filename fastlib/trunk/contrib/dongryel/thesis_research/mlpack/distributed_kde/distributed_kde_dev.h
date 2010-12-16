@@ -23,6 +23,12 @@ namespace distributed_kde {
 template<typename DistributedTableType>
 DistributedKde<DistributedTableType>::~DistributedKde() {
   if(core::table::global_m_file_ != NULL) {
+    if(core::table::global_m_file_->AllMemoryDeallocated()) {
+      std::cerr << "All memory have been deallocated.\n";
+    }
+    else {
+      std::cerr << "There are memory leaks.\n";
+    }
     delete core::table::global_m_file_;
     core::table::global_m_file_ = NULL;
   }

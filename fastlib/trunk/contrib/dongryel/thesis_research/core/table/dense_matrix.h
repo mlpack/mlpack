@@ -24,7 +24,19 @@ class DenseMatrix {
 
     int n_cols_;
 
+    bool is_alias_;
+
   public:
+
+    void operator=(const DenseMatrix &dense_matrix_in) {
+
+      // Not a true copy constructor. Sets the matrix to be an alias.
+      ptr_ = const_cast<double *>(dense_matrix_in.ptr());
+      n_rows_ = dense_matrix_in.n_rows();
+      n_cols_ = dense_matrix_in.n_cols();
+
+      is_alias_ = true;
+    }
 
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
@@ -98,6 +110,7 @@ class DenseMatrix {
     void Reset() {
       ptr_ = NULL;
       n_rows_ = n_cols_ = 0;
+      is_alias_ = false;
     }
 
     DenseMatrix() {
@@ -105,12 +118,14 @@ class DenseMatrix {
     }
 
     ~DenseMatrix() {
-      if(ptr_.get() != NULL) {
-        if(core::table::global_m_file_) {
-          core::table::global_m_file_->DestroyPtr(ptr_.get());
-        }
-        else {
-          delete[] ptr_.get();
+      if(is_alias_ == false) {
+        if(ptr_.get() != NULL) {
+          if(core::table::global_m_file_) {
+            core::table::global_m_file_->DestroyPtr(ptr_.get());
+          }
+          else {
+            delete[] ptr_.get();
+          }
         }
       }
       Reset();
