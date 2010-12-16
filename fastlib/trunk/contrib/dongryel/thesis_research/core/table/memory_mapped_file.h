@@ -30,6 +30,12 @@ class MemoryMappedFile {
       return m_file_;
     }
 
+    bool AllMemoryDeallocated() const {
+      return const_cast <
+             boost::interprocess::managed_mapped_file & >(
+               m_file_).all_memory_deallocated();
+    }
+
     void Init(
       const std::string &file_name,
       int world_rank, int group_rank, long int num_bytes) {

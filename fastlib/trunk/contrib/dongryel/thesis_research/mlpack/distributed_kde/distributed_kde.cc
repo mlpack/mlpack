@@ -24,14 +24,6 @@ int main(int argc, char *argv[]) {
   boost::mpi::environment env(argc, argv);
   boost::mpi::communicator world;
 
-  // For the moment, assume that the number of processes is a power of
-  // two.
-  if((world.size() & (world.size() - 1)) != 0) {
-    printf(
-      "Currently only supports a number of process equal to a power of 2.\n");
-    return -1;
-  }
-
   // Seed the random number.
   srand(time(NULL) + world.rank());
 

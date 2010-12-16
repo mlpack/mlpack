@@ -26,7 +26,7 @@ extern MemoryMappedFile *global_m_file_;
 
 template <
 typename TreeSpecType, typename IncomingOldFromNewIndexType = int >
-class Table: public boost::noncopyable {
+class Table {
 
   public:
     typedef IncomingOldFromNewIndexType OldFromNewIndexType;
@@ -50,6 +50,8 @@ class Table: public boost::noncopyable {
     boost::interprocess::offset_ptr<int> new_from_old_;
 
     boost::interprocess::offset_ptr<TreeType> tree_;
+
+    bool is_alias_;
 
   public:
 
@@ -151,6 +153,15 @@ class Table: public boost::noncopyable {
 
   public:
 
+    void operator=(const TableType &table_in) {
+      data_ = const_cast<TableType &>(table_in).data();
+      rank_ = table_in.rank();
+      old_from_new_ = const_cast<TableType &>(table_in).old_from_new();
+      new_from_old_ = const_cast<TableType &>(table_in).new_from_old();
+      tree_ = const_cast<TableType &>(table_in).get_tree();
+      is_alias_ = true;
+    }
+
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
       core::table::SubTable<TableType> sub_table;
@@ -206,35 +217,38 @@ class Table: public boost::noncopyable {
       tree_ = NULL;
       old_from_new_ = NULL;
       new_from_old_ = NULL;
+      is_alias_ = false;
     }
 
     ~Table() {
-      if(tree_.get() != NULL) {
-        if(core::table::global_m_file_) {
-          core::table::global_m_file_->DestroyPtr(tree_.get());
+      if(is_alias_ == false) {
+        if(tree_.get() != NULL) {
+          if(core::table::global_m_file_) {
+            core::table::global_m_file_->DestroyPtr(tree_.get());
+          }
+          else {
+            delete tree_.get();
+          }
+          tree_ = NULL;
         }
-        else {
-          delete tree_.get();
+        if(old_from_new_.get() != NULL) {
+          if(core::table::global_m_file_) {
+            core::table::global_m_file_->DestroyPtr(old_from_new_.get());
+          }
+          else {
+            delete[] old_from_new_.get();
+          }
+          old_from_new_ = NULL;
         }
-        tree_ = NULL;
-      }
-      if(old_from_new_.get() != NULL) {
-        if(core::table::global_m_file_) {
-          core::table::global_m_file_->DestroyPtr(old_from_new_.get());
+        if(new_from_old_.get() != NULL) {
+          if(core::table::global_m_file_) {
+            core::table::global_m_file_->DestroyPtr(new_from_old_.get());
+          }
+          else {
+            delete[] new_from_old_.get();
+          }
+          new_from_old_ = NULL;
         }
-        else {
-          delete[] old_from_new_.get();
-        }
-        old_from_new_ = NULL;
-      }
-      if(new_from_old_.get() != NULL) {
-        if(core::table::global_m_file_) {
-          core::table::global_m_file_->DestroyPtr(new_from_old_.get());
-        }
-        else {
-          delete[] new_from_old_.get();
-        }
-        new_from_old_ = NULL;
       }
     }
 
