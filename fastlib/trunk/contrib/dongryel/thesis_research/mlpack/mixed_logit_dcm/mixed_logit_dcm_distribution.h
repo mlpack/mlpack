@@ -6,6 +6,9 @@
 #ifndef MLPACK_MIXED_LOGIT_DCM_DCM_DISTRIBUTION_H
 #define MLPACK_MIXED_LOGIT_DCM_DCM_DISTRIBUTION_H
 
+#include "core/table/dense_point.h"
+#include "core/table/dense_matrix.h"
+
 namespace mlpack {
 namespace mixed_logit_dcm {
 
@@ -15,11 +18,16 @@ namespace mixed_logit_dcm {
  */
 template<typename DCMTableType>
 class MixedLogitDCMDistribution {
+  private:
+    core::table::DensePoint parameters_;
+
   public:
     virtual double MixedLogitParameterGradient(
       int row_index, int col_index) const = 0;
 
     virtual int num_parameters() const = 0;
+
+    virtual void Init(const std::string &file_name) const = 0;
 
     /** @brief Computes the required quantities in Equation 8.14 (see
      *         dcm_table.h) for a realization of $\beta$ for a given
