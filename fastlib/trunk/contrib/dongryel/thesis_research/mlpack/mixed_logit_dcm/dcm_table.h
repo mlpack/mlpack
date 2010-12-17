@@ -127,6 +127,13 @@ class DCMTable {
 
   public:
 
+    /** @brief Returns the number of attributes for a given discrete
+     *         choice.
+     */
+    int num_attributes() const {
+      return attribute_table_->n_attributes();
+    }
+
     /** @brief Returns the number of discrete choices available for
      *         the given person.
      */
