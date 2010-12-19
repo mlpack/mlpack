@@ -12,9 +12,9 @@
 namespace mlpack {
 namespace mixed_logit_dcm {
 
-/** @brief The base abstract class for the distribution that
- *         generates each $\beta$ parameter in mixed logit
- *         models. This distribution is parametrized by $\theta$.
+/** @brief The base abstract class for the distribution that generates
+ *         each $\beta$ in mixed logit models. This distribution is
+ *         parametrized by $\theta$.
  */
 template<typename DCMTableType>
 class MixedLogitDCMDistribution {

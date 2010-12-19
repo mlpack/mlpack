@@ -9,7 +9,7 @@ project(FASTLIB C CXX Fortran)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
 # add the linking flag for armadillo
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -larmadillo -lrt")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -larmadillo -lrt -lgsl")
 
 # find LAPACK
 find_package(LAPACK REQUIRED)  # LAPACK finds BLAS as a dependency
