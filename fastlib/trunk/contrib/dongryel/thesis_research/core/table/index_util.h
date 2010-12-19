@@ -14,7 +14,7 @@ class IndexUtil {
     static int Extract(IndexType *array, int position);
 
     template<typename Archive>
-    static void Serialize(Archive &ar, IndexType *array, int position);
+    static void Serialize(Archive &ar, IndexType *array, int num_elements);
 };
 
 template<>
@@ -25,8 +25,10 @@ class IndexUtil< int > {
     }
 
     template<typename Archive>
-    static void Serialize(Archive &ar, int *array, int position) {
-      ar & array[position];
+    static void Serialize(Archive &ar, int *array, int num_elements) {
+      for(int i = 0; i < num_elements; i++) {
+        ar & array[i];
+      }
     }
 };
 
@@ -40,10 +42,13 @@ class IndexUtil< std::pair<int, std::pair<int, int> > > {
 
     template<typename Archive>
     static void Serialize(
-      Archive &ar, std::pair<int, std::pair<int, int> > *array, int position) {
-      ar & array[position].first;
-      ar & array[position].second.first;
-      ar & array[position].second.second;
+      Archive &ar, std::pair<int, std::pair<int, int> > *array,
+      int num_elements) {
+      for(int i = 0; i < num_elements; i++) {
+        ar & array[i].first;
+        ar & array[i].second.first;
+        ar & array[i].second.second;
+      }
     }
 };
 };

@@ -79,25 +79,26 @@ class SubTable: public boost::noncopyable {
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
 
-      // Save the matrix and the rank.
-      int rank = table_->rank();
-      ar & (*data_);
-      ar & rank;
+      // Save the flag whether the serialization of data were requested.
+      ar & serialize_points_;
 
-      // Save the old_from_new_mapping manually.
-      for(int i = 0; i < data_->n_cols(); i++) {
+      // Save the matrix and the mappings if requested.
+      if(serialize_points_) {
+        ar & (*data_);
         core::table::IndexUtil<OldFromNewIndexType>::Serialize(
-          ar, old_from_new_->get(), i);
-      }
-      for(int i = 0; i < data_->n_cols(); i++) {
+          ar, old_from_new_->get(), data_->n_cols());
         core::table::IndexUtil<int>::Serialize(
-          ar, new_from_old_->get(), i);
+          ar, new_from_old_->get(), data_->n_cols());
       }
+
+      // Save the rank.
+      int rank = table_->rank();
+      ar & rank;
 
       // Save the tree.
       int num_nodes = 0;
       int tree_depth = FindTreeDepth_(start_node_, 0);
-      std::vector< TreeType *> tree_nodes(1 << tree_depth,  NULL);
+      std::vector< TreeType *> tree_nodes(1 << tree_depth, (TreeType *) NULL);
 
       FillTreeNodes_(start_node_, 0, tree_nodes, &num_nodes, 0);
       int max_size = tree_nodes.size();
@@ -117,36 +118,37 @@ class SubTable: public boost::noncopyable {
       // Initialize so that everything gets loaded correctly.
       this->Init(table_, (TreeType *) NULL, std::numeric_limits<int>::max());
 
-      // Load the matrix and the rank.
-      int rank_in;
-      ar & (*data_);
+      // Load the point serialization flags.
+      ar & serialize_points_;
+
+      // Load the data and the mappings if available.
+      if(serialize_points_) {
+        ar & (*data_);
+        (*old_from_new_) = (core::table::global_m_file_) ?
+                           core::table::global_m_file_->ConstructArray <
+                           OldFromNewIndexType > (data_->n_cols()) :
+                           new OldFromNewIndexType[ data_->n_cols()];
+        (*new_from_old_) = (core::table::global_m_file_) ?
+                           core::table::global_m_file_->ConstructArray <
+                           int > (data_->n_cols()) :
+                           new int[ data_->n_cols()];
+        core::table::IndexUtil<OldFromNewIndexType>::Serialize(
+          ar, old_from_new_->get(), data_->n_cols());
+        core::table::IndexUtil<int>::Serialize(
+          ar, new_from_old_->get(), data_->n_cols());
+      }
+
+      // Set the rank.
+      inf rank_in;
       ar & rank_in;
       table_->set_rank(rank_in);
-
-      // Load the mappings manually.
-      (*old_from_new_) = (core::table::global_m_file_) ?
-                         core::table::global_m_file_->ConstructArray <
-                         OldFromNewIndexType > (data_->n_cols()) :
-                         new OldFromNewIndexType[ data_->n_cols()];
-      (*new_from_old_) = (core::table::global_m_file_) ?
-                         core::table::global_m_file_->ConstructArray <
-                         int > (data_->n_cols()) :
-                         new int[ data_->n_cols()];
-      for(int i = 0; i < data_->n_cols(); i++) {
-        core::table::IndexUtil<OldFromNewIndexType>::Serialize(
-          ar, old_from_new_->get(), i);
-      }
-      for(int i = 0; i < data_->n_cols(); i++) {
-        core::table::IndexUtil<int>::Serialize(
-          ar, new_from_old_->get(), i);
-      }
 
       // Load up the max number of loads to receive.
       int max_num_nodes;
       int num_nodes;
       ar & max_num_nodes;
       ar & num_nodes;
-      std::vector< TreeType *> tree_nodes(max_num_nodes, NULL);
+      std::vector< TreeType *> tree_nodes(max_num_nodes, (TreeType *) NULL);
       for(int i = 0; i < num_nodes; i++) {
         int node_index;
         ar & node_index;
