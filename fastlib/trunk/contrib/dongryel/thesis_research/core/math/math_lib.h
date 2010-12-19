@@ -11,9 +11,42 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <boost/math/special_functions/binomial.hpp>
+#include <gsl/gsl_rng.h>
 
 namespace core {
 namespace math {
+
+class RandomNumberInit {
+  private:
+    const gsl_rng_type *global_generator_type_;
+    gsl_rng *global_generator_;
+
+  public:
+    RandomNumberInit() {
+      gsl_rng_env_setup();
+      global_generator_type_ = gsl_rng_default;
+      global_generator_ = gsl_rng_alloc(global_generator_type_);
+      gsl_rng_set(global_generator_, time(NULL));
+      std::cerr << "Random number generator initialized.\n";
+    }
+
+    ~RandomNumberInit() {
+      gsl_rng_free(global_generator_);
+    }
+
+    template<typename T>
+    T Random() {
+      return gsl_rng_uniform(global_generator_);
+    }
+
+    /** @brief Returns a random integer from 0 to n - 1 inclusive.
+     */
+    int RandInt(int max_exclusive) {
+      return gsl_rng_uniform_int(global_generator_, max_exclusive);
+    }
+};
+
+extern core::math::RandomNumberInit global_random_number_state_;
 
 template<typename T>
 T BinomialCoefficient(unsigned n, unsigned k) {
@@ -72,7 +105,7 @@ inline double ClampRange(T value, T range_min, T range_max) {
  */
 template<typename T>
 inline double Random() {
-  return rand() * (1.0 / RAND_MAX);
+  return global_random_number_state_.Random<T>();
 }
 
 /**
@@ -80,23 +113,23 @@ inline double Random() {
  */
 template<typename T>
 inline double Random(T lo, T hi) {
-  return Random<T>() * (hi - lo) + lo;
+  return core::math::Random<T>() * (hi - lo) + lo;
 }
 
 /**
- * Generates a uniform random integer.
+ * Generates a uniform random integer in [0, n).
  */
 template<typename T>
 inline int RandInt(T hi_exclusive) {
-  return rand() % hi_exclusive;
+  return global_random_number_state_.RandInt(hi_exclusive);
 }
 
 /**
- * Generates a uniform random integer.
+ * Generates a uniform random integer in [lo, hi_exclusive).
  */
 template<typename T>
 inline int RandInt(T lo, T hi_exclusive) {
-  return (rand() % (hi_exclusive - lo)) + lo;
+  return core::math::RandInt(hi_exclusive - lo) + lo;
 }
 };
 };
