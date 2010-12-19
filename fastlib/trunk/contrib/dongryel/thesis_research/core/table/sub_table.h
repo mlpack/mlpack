@@ -139,7 +139,7 @@ class SubTable: public boost::noncopyable {
       }
 
       // Set the rank.
-      inf rank_in;
+      int rank_in;
       ar & rank_in;
       table_->set_rank(rank_in);
 
