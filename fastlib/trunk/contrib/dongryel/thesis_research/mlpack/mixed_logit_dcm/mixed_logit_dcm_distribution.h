@@ -46,7 +46,7 @@ class MixedLogitDCMDistribution {
       choice_prob_weighted_attribute_vector->SetZero();
       for(int i = 0; i < choice_probabilities.length(); i++) {
         core::table::DensePoint attribute_vector;
-        dcm_table_in->get_attribute_vector(person_index, i);
+        dcm_table_in->get_attribute_vector(person_index, i, &attribute_vector);
         core::math::AddExpert(
           choice_probabilities[i], attribute_vector,
           choice_prob_weighted_attribute_vector);
@@ -54,19 +54,50 @@ class MixedLogitDCMDistribution {
     }
 
     /** @brief Returns the (row, col)-th entry of
-     *         $\frac{\partial}{\partial \beta^2} P_{i j_i^*} (
+     *         $\frac{\partial^2}{\partial \beta^2} P_{i j_i^*} (
      *         \beta^{\nu}(\theta))$ (Equation 8.5)
      */
     double HessianChoiceProbability(
+      DCMTableType *dcm_table_in,
+      int person_index, int discrete_choice_index,
       int row_index, int col_index,
       const core::table::DensePoint &choice_probabilities,
-      int discrete_choice_index) const {
+      const core::table::DensePoint &choice_prob_weighted_attribute_vector) const {
 
       double choice_probability = choice_probabilities[discrete_choice_index];
       double unnormalized_entry = 0;
+      core::table::DensePoint discrete_choice_attribute_vector;
+      dcm_table_in->get_attribute_vector(
+        person_index, discrete_choice_index, &discrete_choice_attribute_vector);
+
+      // The (row, col)-th entry of $\bar{X}_i res_{i,j_i^*}(\beta) (
+      // \bar_{X}_i res_{i, j_i^*} (\beta) )'$
+      double first_part = (
+                            discrete_choice_attribute_vector[row_index] -
+                            choice_prob_weighted_attribute_vector[row_index]) *
+                          (
+                            discrete_choice_attribute_vector[col_index] -
+                            choice_prob_weighted_attribute_vector[col_index]);
+
+      // The (row, col)-th entry of $\bar{X}_i \bar{P}_i(\beta)
+      // ( \bar{X}_i \bar{P}_i (\beta) )$.
+      double second_part = choice_prob_weighted_attribute_vector[row_index] *
+                           choice_prob_weighted_attribute_vector[col_index];
+
+      // The (row, col)-th entry of $\bar{X}_i \tilde{P}_i(\beta)
+      // \bar{X}_i'$
+      double third_part = 0;
+      int num_discrete_choices = dcm_table_in->num_discrete_choices(
+                                   person_index);
+      for(int i = 0; i < num_discrete_choices; i++) {
+        core::table::DensePoint attribute_vector;
+        dcm_table_in->get_attribute_vector(person_index, i, &attribute_vector);
+        third_part += attribute_vector[row_index] * choice_probabilities[i] *
+                      attribute_vector[col_index];
+      }
 
       // Scale the entry by the choice probability.
-      return choice_probability * unnormalized_entry;
+      return choice_probability * (first_part + second_part - third_part);
     }
 
     /** @brief Computes the required quantities in Equation 8.14 (see
@@ -88,6 +119,10 @@ class MixedLogitDCMDistribution {
       hessian_first_part->SetZero();
       hessian_second_part->SetZero();
 
+      // Compute $\frac{\partial}{\partial \theta} \beta^{\nu}(\theta)
+      // \frac{\partial^2}{\partial \beta^2} P_{i j_i^*} (
+      // \beta^{\nu}(\theta)) ( \frac{\partial}{\partial \theta}
+      // \beta^{\nu}(\theta) )'$.
 
     }
 
@@ -101,6 +136,7 @@ class MixedLogitDCMDistribution {
       int person_index, int discrete_choice_index,
       const core::table::DensePoint &parameter_vector,
       const core::table::DensePoint &choice_probabilities,
+      const core::table::DensePoint &choice_prob_weighted_attribute_vector,
       core::table::DensePoint *product_out) const {
 
       // Initialize the product.
@@ -112,13 +148,7 @@ class MixedLogitDCMDistribution {
       dcm_table_in->get_attribute_vector(
         person_index, discrete_choice_index, &attribute_vector);
 
-      // Compute the choice probability weighted attribute
-      // vector. This is $\bar{X}_i \bar{P}_i(\beta)$.
-      core::table::DensePoint choice_prob_weighted_attribute_vector;
-      ChoiceProbabilityWeightedAttributeVector(
-        dcm_table_in, person_index, choice_probabilities,
-        &choice_prob_weighted_attribute_vector);
-
+      // Compute $\bar{X}_i res_{i,j_i^*}(\beta)$.
       core::table::DensePoint attribute_vec_sub_choice_prob_weighted_vec;
       core::math::SubInit(
         choice_prob_weighted_attribute_vector, attribute_vector,

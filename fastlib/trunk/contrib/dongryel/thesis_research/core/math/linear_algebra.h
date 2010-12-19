@@ -16,6 +16,23 @@ class DenseMatrix;
 namespace core {
 namespace math {
 
+template<typename MatrixType>
+static void MatrixTripleProduct(
+  const MatrixType &left, const MatrixType &mid, const MatrixType &right,
+  core::table::DenseMatrix *product) {
+
+  product->Init(left.n_rows(), right.n_cols());
+
+  for(int i = 0; i < left.n_rows(); i++) {
+    for(int j = 0; j < right.n_cols(); j++) {
+
+      // Compute the quadratic form $L_i^T M R_j$, where $L_i$ is the
+      // $i$-th row of $L$ and $R_j$ is the $j$-th column of $R$.
+
+    }
+  }
+}
+
 template<typename VectorType>
 static double Dot(const VectorType &a, const VectorType &b) {
   double dot_product = 0;
