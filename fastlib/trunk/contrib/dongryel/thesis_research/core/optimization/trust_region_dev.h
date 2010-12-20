@@ -7,7 +7,7 @@
 #define CORE_OPTIMIZATION_TRUST_REGION_DEV_H
 
 #include "core/optimization/trust_region.h"
-#include "core/math/armadillo_wrapper.h"
+#include "core/math/linear_algebra.h"
 
 namespace core {
 namespace optimization {
@@ -56,7 +56,7 @@ void TrustRegion::ComputeSteihaugDirection_(
 
     // If the current search direction is a direction of non-positive
     // curvature along the currently approximated Hessian,
-    if(quadratic_form <= 0) {
+    if(quadratic_form.at(0, 0) <= 0) {
 
       // Solve ||z_j + \tau d_j|| = radius for \tau.
       double a = arma::dot(d, d);
@@ -93,7 +93,7 @@ void TrustRegion::ComputeSteihaugDirection_(
     }
 
     // r_{j + 1} = r_j + \alpha_j B_k d_j
-    arma::vec r_next = r_j + \alpha * hessian * d;
+    arma::vec r_next = r + alpha * hessian * d;
 
     if(arma::norm(r_next, 2) < epsilon) {
       (*p) = z_next;
@@ -116,7 +116,7 @@ void TrustRegion::ComputeSteihaugDirection_(
 
   // delta_m calculation -g'p-0.5*p'Hp
   arma::mat quadratic_form2 = arma::trans(*p) * hessian * (*p);
-  (*delta_m) = - arma::dot(gradient, *p) - 0.5 * quadratic_form2;
+  (*delta_m) = - arma::dot(gradient, *p) - 0.5 * quadratic_form2.at(0, 0);
 }
 
 void TrustRegion::ComputeCauchyPoint_(
@@ -236,7 +236,10 @@ void TrustRegion::ComputeDoglegDirection_(
 
   // delta_m calculation -g'p-0.5*p'Hp
   arma::mat quadratic_form2 = arma::trans(*p) * hessian * (*p);
-  (*delta_m) = - arma::dot(gradient, *p) - 0.5 * quadratic_form2;
+  (*delta_m) = - arma::dot(gradient, *p) - 0.5 * quadratic_form2.at(0, 0);
+}
+
+void TrustRegion::Optimize() {
 }
 };
 };

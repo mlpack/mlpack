@@ -7,6 +7,7 @@
 #define MLPACK_MIXED_LOGIT_DCM_MIXED_LOGIT_DCM_DEV_H
 
 #include "mlpack/mixed_logit_dcm/mixed_logit_dcm.h"
+#include "core/optimization/trust_region_dev.h"
 
 namespace mlpack {
 namespace mixed_logit_dcm {
@@ -51,10 +52,15 @@ void MixedLogitDCM<TableType>::Compute(
   table_.SimulatedLoglikelihoodGradient(&current_gradient);
   table_.SimulatedLoglikelihoodHessian(&current_hessian);
 
-  for(int iter = 0; ; iter++) {
+  // Initialize the starting optimization parameter $\theta_0$.
+  core::table::DensePoint theta;
+  theta.Init(arguments_in.distribution_->num_parameters());
+  theta.SetZero();
 
-
-  }
+  // The trust region optimizer.
+  core::optimization::TrustRegion trust_region;
+  trust_region.set_max_radius(core::math::LengthEuclidean(current_gradient));
+  trust_region.Optimize();
 }
 
 template<typename TableType>
@@ -93,10 +99,7 @@ bool MixedLogitDCM<TableType>::ConstructBoostVariableMap_(
         boost::program_options::value<std::string>()->default_value("cauchy"),
         "OPTIONAL Trust region search method.  One of:\n"
         "  cauchy, dogleg, steihaug"
-       )("trust_region_radius",
-         boost::program_options::value<double>()->default_value(1000.0),
-         "OPTIONAL The initial radius of the trust region."
-        );
+       );
 
   boost::program_options::command_line_parser clp(args);
   clp.style(boost::program_options::command_line_style::default_style
