@@ -24,6 +24,7 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
     ("port", boost_po::value<size_t>(),"Port to listen on")
     ("par_read", "Read data parallelly with training")
     ("calc_loss,c", "Calculate total loss")
+    ("random", "Randomly permute the input examples")
     ("quiet,q", "Don't output diagnostics");
 
   global.final_prediction_sink = -1;
@@ -56,6 +57,13 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
   }
   else {
     global.calc_loss = false;
+  }
+
+  if (vm.count("random")) {
+    global.random_input = true;
+  }
+  else {
+    global.random_input = false;
   }
 
   // parse input training data
@@ -122,7 +130,9 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
   learner.w_vec_pool = (SVEC**)malloc(learner.num_threads * sizeof(SVEC*));
   learner.msg_pool = (SVEC**)malloc(learner.num_threads * sizeof(SVEC*));
   learner.total_loss_pool = (double*)malloc(learner.num_threads * sizeof(double));
+  learner.total_misp_pool = (size_t*)malloc(learner.num_threads * sizeof(size_t));
   // for SGD
+  learner.bias_pool = (double*)malloc(learner.num_threads * sizeof(double));
   learner.t_pool = (double*)malloc(learner.num_threads * sizeof(double));
   learner.scale_pool = (double*)malloc(learner.num_threads * sizeof(double));
 
