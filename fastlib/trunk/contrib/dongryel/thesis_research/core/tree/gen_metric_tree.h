@@ -9,6 +9,7 @@
 #include <vector>
 #include "ball_bound.h"
 #include "general_spacetree.h"
+#include "core/math/linear_algebra.h"
 #include "core/metric_kernels/abstract_metric.h"
 #include "core/table/dense_matrix.h"
 #include "core/table/memory_mapped_file.h"
@@ -70,9 +71,9 @@ class GenMetricTree {
       core::table::DensePoint col_point;
       for(int i = begin; i < end; i++) {
         matrix.MakeColumnVector(i, &col_point);
-        bounds->center() += col_point;
+        core::math::AddTo(col_point, &(bounds->center()));
       }
-      bounds->center() /= ((double) count);
+      core::math::Scale(1.0 / static_cast<double>(count), &(bounds->center()));
 
       double furthest_distance;
       FurthestColumnIndex_(
@@ -88,9 +89,11 @@ class GenMetricTree {
 
       // Compute the weighted sum of the two pivots
       node->bound().center().CopyValues(left->bound().center());
-      node->bound().center() *= left->count();
-      node->bound().center().Add(right->count(), right->bound().center());
-      node->bound().center() /= ((double) node->count());
+      core::math::Scale(left->count(), &(node->bound().center()));
+      core::math::AddExpert(
+        right->count(), right->bound().center(), & (node->bound().center()));
+      core::math::Scale(
+        1.0 / static_cast<double>(node->count()), & (node->bound().center()));
 
       double left_max_dist, right_max_dist;
       FurthestColumnIndex_(

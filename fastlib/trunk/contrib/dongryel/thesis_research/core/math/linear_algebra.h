@@ -135,9 +135,9 @@ template<typename VectorType>
 static void AddTo(
   const VectorType &vec_in, VectorType *vec_out) {
 
-  for(unsigned int i = 0; i < vec_in.n_elem; i++) {
-    (*vec_out)[i] += vec_in[i];
-  }
+  arma::vec vec_in_alias(vec_in.ptr(), vec_in.length());
+  arma::vec vec_out_alias(vec_out->ptr(), vec_in.length(), false);
+  vec_out_alias = vec_out_alias + vec_in_alias;
 }
 
 /** @brief Computes $c = c + \alpha * a b^T$.

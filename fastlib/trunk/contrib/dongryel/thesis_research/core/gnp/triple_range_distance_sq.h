@@ -41,16 +41,16 @@ class TripleRangeDistanceSq {
             num_tuples_[1] =
               num_tuples_[2] =
                 core::math::BinomialCoefficient<double>(
-                  table_in.get_node_count(nodes_[0]) - 1, 2);
+                  nodes_[0]->count() - 1, 2);
         }
 
         // node_0 = node_1, node_1 \not = node_2
         else {
           num_tuples_[0] = num_tuples_[1] =
-                             (table_in.get_node_count(nodes_[0]) - 1) *
-                             table_in.get_node_count(nodes_[2]);
+                             (nodes_[0]->count() - 1) *
+                             nodes_[2]->count();
           num_tuples_[2] = core::math::BinomialCoefficient<double>(
-                             table_in.get_node_count(nodes_[0]), 2);
+                             nodes_[0]->count(), 2);
         }
       }
       else {
@@ -58,20 +58,17 @@ class TripleRangeDistanceSq {
         // node_0 \not = node_1, node_1 = node_2
         if(nodes_[1] == nodes_[2]) {
           num_tuples_[1] = num_tuples_[2] =
-                             (table_in.get_node_count(nodes_[1]) - 1) *
-                             table_in.get_node_count(nodes_[0]);
+                             (nodes_[1]->count() - 1) *
+                             nodes_[0]->count();
           num_tuples_[0] = core::math::BinomialCoefficient<double>(
-                             table_in.get_node_count(nodes_[1]), 2);
+                             nodes_[1]->count(), 2);
         }
 
         // node_0 \not = node_1, node_1 \not = node_2
         else {
-          num_tuples_[0] = table_in.get_node_count(nodes_[1]) *
-                           table_in.get_node_count(nodes_[2]);
-          num_tuples_[1] = table_in.get_node_count(nodes_[0]) *
-                           table_in.get_node_count(nodes_[2]);
-          num_tuples_[2] = table_in.get_node_count(nodes_[0]) *
-                           table_in.get_node_count(nodes_[1]);
+          num_tuples_[0] = nodes_[1]->count() * nodes_[2]->count();
+          num_tuples_[1] = nodes_[0]->count() * nodes_[2]->count();
+          num_tuples_[2] = nodes_[0]->count() * nodes_[1]->count();
         }
       }
     }
@@ -138,8 +135,7 @@ class TripleRangeDistanceSq {
       int node_index_in) {
 
       nodes_[node_index_in] = new_node_in;
-      const typename TreeType::BoundType &new_node_bound =
-        table_in.get_node_bound(new_node_in);
+      const typename TreeType::BoundType &new_node_bound = new_node_in->bound();
 
       for(int existing_node_index = node_index_in + 1;
           existing_node_index < 3; existing_node_index++) {
@@ -147,8 +143,7 @@ class TripleRangeDistanceSq {
         // Change for the first existing node.
         core::math::Range existing_range_distance_sq =
           new_node_bound.RangeDistanceSq(
-            metric_in,
-            table_in.get_node_bound(nodes_[existing_node_index]));
+            metric_in, nodes_[existing_node_index]->bound());
         set_range_distance_sq(
           node_index_in, existing_node_index, existing_range_distance_sq);
       }
@@ -164,8 +159,7 @@ class TripleRangeDistanceSq {
       int node_index_in) {
 
       nodes_[node_index_in] = new_node_in;
-      const typename TreeType::BoundType &new_node_bound =
-        table_in.get_node_bound(new_node_in);
+      const typename TreeType::BoundType &new_node_bound = new_node_in->bound();
 
       for(int existing_node_index = 0; existing_node_index < node_index_in;
           existing_node_index++) {
@@ -173,8 +167,7 @@ class TripleRangeDistanceSq {
         // Change for the first existing node.
         core::math::Range existing_range_distance_sq =
           new_node_bound.RangeDistanceSq(
-            metric_in,
-            table_in.get_node_bound(nodes_[existing_node_index]));
+            metric_in, nodes_[existing_node_index]->bound());
         set_range_distance_sq(
           node_index_in, existing_node_index, existing_range_distance_sq);
       }
@@ -191,11 +184,9 @@ class TripleRangeDistanceSq {
         nodes_[j] = nodes_in[j];
       }
       for(unsigned int j = 0; j < nodes_.size(); j++) {
-        const typename TreeType::BoundType &outer_bound =
-          table.get_node_bound(nodes_[j]);
+        const typename TreeType::BoundType &outer_bound = nodes_[j]->bound();
         for(unsigned int i = j + 1; i < nodes_.size(); i++) {
-          const typename TreeType::BoundType &inner_bound =
-            table.get_node_bound(nodes_[i]);
+          const typename TreeType::BoundType &inner_bound = nodes_[i]->bound();
           core::math::Range range_distance_sq =
             outer_bound.RangeDistanceSq(metric_in, inner_bound);
           set_range_distance_sq(i, j, range_distance_sq);
