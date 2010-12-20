@@ -6,6 +6,7 @@
 
 struct learner {
   SVEC** w_vec_pool; // a pool that contains weight vectors for each thread
+  double* bias_pool; // a pool for bias term
   SVEC** msg_pool; // a pool of messages. each thread put its message in and read other's from
   double* t_pool; // time t for SGD
   double* scale_pool; // scales for SGD
@@ -17,12 +18,15 @@ struct learner {
   size_t num_epoches;
   string loss_name;
   double* total_loss_pool; // a pool of total loss for each thread;
+  size_t* total_misp_pool; // a pool of total number of mispredictions for each thread;
 };
 
-T_LBL LinearPredict(SVEC *wvec, EXAMPLE *ex) {
+T_LBL LinearPredict(SVEC *wvec, EXAMPLE *ex, double bias) {
   double sum = 0.0;
-  sum = SparseDot(wvec, ex);
-
+  sum = SparseDot(wvec, ex) + bias;
+  //print_svec(wvec);
+  //print_ex(ex);
+  //cout << sum<<endl;
   if (sum > 0.0)
     return (T_LBL)1;
   else
@@ -32,7 +36,7 @@ T_LBL LinearPredict(SVEC *wvec, EXAMPLE *ex) {
 void FinishLearner(learner &l, size_t ts) {
   if(l.w_vec_pool) {
     for (size_t t=0; t<ts; t++) {
-      print_svec(l.w_vec_pool[t]);
+      //print_svec(l.w_vec_pool[t]);
       //FreeSvec(l.w_vec_pool[t]);
     }
     free(l.w_vec_pool);

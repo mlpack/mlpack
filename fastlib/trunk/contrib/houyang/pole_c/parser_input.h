@@ -199,16 +199,27 @@ void SerialRead(string &data_fn, EXAMPLE **examples, size_t &num_examples) {
   size_t dnum=0, wpos, dpos=0, dneg=0, dunlab=0;
   FEATURE *feat_cache;
   T_LBL label_cache;
+  size_t i, j;
 
   // scan size of input data file
   CountFile(data_fn, max_num_examples, max_features_example, max_length_line);
-  max_num_examples += 2;
+  max_num_examples --;
   max_features_example += 2;
   max_length_line += 2;
-
+  cout << max_num_examples<<endl;;
   (*examples) = (EXAMPLE *)my_malloc( sizeof(EXAMPLE)*max_num_examples ); // feature vectors
   line = (char *)my_malloc( sizeof(char)*max_length_line );
 
+  // To mimic the online learning senario, we randomly permutate the training set, indexed by pm_idx
+  pm_idx = (size_t *)my_malloc( sizeof(size_t) * max_num_examples);
+  for (i=0; i<max_num_examples; i++) {
+    pm_idx[i] = i; 
+  }
+  for (i=0; i<max_num_examples; i++) {
+    j = rand() % max_num_examples;
+    swap(pm_idx[i], pm_idx[j]);
+  }
+  
   feat_cache = (FEATURE *)my_malloc( sizeof(FEATURE)*(max_features_example+10) );
 
   dnum=0;
@@ -235,15 +246,15 @@ void SerialRead(string &data_fn, EXAMPLE **examples, size_t &num_examples) {
       dunlab++;
     if((wpos>1) && ((feat_cache[wpos-2]).widx>num_examples)) 
       num_examples = (feat_cache[wpos-2]).widx;
-    
+
     // setup an example
-    CreateExample((*examples)+dnum, feat_cache, label_cache, comment, global.num_threads);
+    CreateExample((*examples)+pm_idx[dnum], feat_cache, label_cache, comment, global.num_threads);
 
     //print_ex((*examples)+dnum);
     
     dnum++;  
     if(!global.quiet) {
-      if((dnum % 100) == 0) {
+      if((dnum % 1000) == 0) {
 	cout << dnum << "..";
       }
     }

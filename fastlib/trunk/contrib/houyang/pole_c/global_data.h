@@ -13,6 +13,8 @@ struct global_data{
 
   bool calc_loss; // calculate total loss.
 
+  bool random_input; // randomly permute input examples.
+
   size_t num_features; // maximum number of features.
 
   size_t num_epoches; // number of training epoches.
@@ -37,6 +39,8 @@ learner l1;
 
 EXAMPLE *train_exps; // training examples.
 size_t num_train_exps; // total # of training examples
+
+size_t *pm_idx;
 
 size_t epoch_ct; // counter of epoches used.
 size_t parsed_ct; // How many examples been parsed.
