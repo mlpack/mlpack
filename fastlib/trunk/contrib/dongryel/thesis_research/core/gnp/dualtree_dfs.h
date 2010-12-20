@@ -105,6 +105,10 @@ class DualtreeDfs {
 
     TableType *reference_table_;
 
+    bool do_base_case_;
+
+    std::vector<TreeType *> unpruned_reference_nodes_;
+
   private:
 
     void ResetStatisticRecursion_(TreeType *node, TableType * table);
@@ -170,6 +174,10 @@ class DualtreeDfs {
       TreeType *qnode, ResultType *query_results);
 
   public:
+
+    void set_base_case_flag(bool flag_in);
+
+    DualtreeDfs();
 
     int num_deterministic_prunes() const;
 

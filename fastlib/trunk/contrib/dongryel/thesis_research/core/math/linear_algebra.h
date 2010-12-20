@@ -20,6 +20,26 @@ namespace math {
 
 template<typename MatrixType>
 static void MatrixTripleProduct(
+  const MatrixType &left, const MatrixType &mid,
+  core::table::DenseMatrix *product) {
+
+  product->Init(left.n_rows(), left.n_cols());
+
+  // Use armadillo matrices to compute the triple product. This makes
+  // a light copy, so there is very little performance lost.
+  arma::mat *left_copy = new arma::mat(
+    left.ptr(), left.n_rows(), left.n_cols());
+  arma::mat *mid_copy = new arma::mat(mid.ptr(), mid.n_rows(), mid.n_cols());
+  arma::mat product_alias(
+    product->ptr(), product->n_rows(), product->n_cols(), false);
+  product_alias = (*left_copy) * (*mid_copy) * arma::trans(*left_copy);
+
+  delete left_copy;
+  delete mid_copy;
+}
+
+template<typename MatrixType>
+static void MatrixTripleProduct(
   const MatrixType &left, const MatrixType &mid, const MatrixType &right,
   core::table::DenseMatrix *product) {
 
