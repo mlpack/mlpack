@@ -90,13 +90,45 @@ static void SubInit(
   }
 }
 
-template<typename VectorType>
-static void AddExpert(
-  double scale, const VectorType &vec_scaled, VectorType *vec_add_to) {
+template<typename T>
+class AddExpertTrait {
+  public:
+    static void Compute(double scale, const T &vec_scaled, T *vec_add_to);
+};
 
-  for(int i = 0; i < vec_scaled.length(); i++) {
-    (*vec_add_to)[i] += scale * vec_scaled[i];
-  }
+template<>
+class AddExpertTrait<core::table::DenseMatrix> {
+  public:
+    static void Compute(
+      double scale, const core::table::DenseMatrix &mat_scaled,
+      core::table::DenseMatrix *mat_add_to) {
+
+      arma::mat mat_scaled_alias(
+        mat_scaled.ptr(), mat_scaled.n_rows(), mat_scaled.n_cols());
+      arma::mat mat_add_to_alias(
+        mat_add_to->ptr(), mat_add_to->n_rows(), mat_add_to->n_cols(), false);
+      mat_add_to_alias = mat_add_to_alias + scale * mat_scaled_alias;
+    }
+};
+
+template<>
+class AddExpertTrait<core::table::DensePoint> {
+  public:
+    static void Compute(
+      double scale, const core::table::DensePoint &vec_scaled,
+      core::table::DensePoint *vec_add_to) {
+      arma::vec vec_scaled_alias(
+        vec_scaled.ptr(), vec_scaled.length());
+      arma::vec vec_add_to_alias(
+        vec_add_to->ptr(), vec_add_to->length(), false);
+      vec_add_to_alias = vec_add_to_alias + scale * vec_scaled_alias;
+    }
+};
+
+template<typename T>
+static void AddExpert(
+  double scale, const T &vec_scaled, T *vec_add_to) {
+  core::math::AddExpertTrait<T>::Compute(scale, vec_scaled, vec_add_to);
 }
 
 template<typename VectorType>
