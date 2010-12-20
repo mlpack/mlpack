@@ -74,8 +74,7 @@ void TrustRegion::ComputeSteihaugDirection_(
     double alpha = arma::dot(r, r) / quadratic_form.at(0, 0);
 
     // z_{j + 1} = z_j + \alpha_j d_j
-    core::math::ScaleOverwrite(alpha, d, &z_next);
-    core::math::AddTo(z, &z_next);
+    z_next = z + alpha * d;
 
     // If the z_{j + 1} violates the trust region bound,
     if(arma::norm(z_next, 2) >= radius) {
@@ -104,8 +103,7 @@ void TrustRegion::ComputeSteihaugDirection_(
     double beta_next = arma::dot(r_next, r_next) / arma::dot(r, r);
 
     // d_{j + 1} = -r_{j + 1} + \beta_{j + 1} d_j
-    core::math::ScaleOverwrite(beta_next, d, &d_next);
-    core::math::SubFrom(r_next, &d_next);
+    d_next = beta_next * d - r_next;
 
     // Set the variables for the next iteration.
     core::math::CopyValues(r_next, &r);
@@ -141,7 +139,7 @@ void TrustRegion::ComputeCauchyPoint_(
             1.0, core::math::Pow<3, 1>(gradient_norm) / (
               radius * quadratic_form.at(0, 0)));
   }
-  core::math::ScaleInit(- tau * radius / gradient_norm , gradient, p);
+  (*p) = (- tau * radius / gradient_norm)  *  gradient;
 }
 
 void TrustRegion::ComputeDoglegDirection_(
@@ -200,7 +198,7 @@ void TrustRegion::ComputeDoglegDirection_(
       // If the norm of p_u is beyond the trust radius, then the
       // solution lies on the boundary along p_u.
       if(p_u_norm >= radius) {
-        core::math::ScaleInit(radius / p_u_norm, p_u, p);
+        (*p) = (radius / p_u_norm) * p_u;
       }
 
       // Otherwise the quadratic equation composed of the gradient and

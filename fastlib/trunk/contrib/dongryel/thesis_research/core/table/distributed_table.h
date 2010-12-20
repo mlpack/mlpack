@@ -163,10 +163,12 @@ class DistributedTable: public boost::noncopyable {
         tmp_point.SetZero();
         for(int i = 0; i < num_samples; i++) {
           tmp_point.SetZero();
-          tmp_point += top_leaf_nodes[
-                         core::math::RandInt(top_leaf_nodes.size())]->bound().center();
+          core::math::AddTo(
+            top_leaf_nodes[
+              core::math::RandInt(top_leaf_nodes.size())]->bound().center(),
+            &tmp_point);
         }
-        tmp_point /= static_cast<double>(num_samples);
+        core::math::Scale(1.0 / static_cast<double>(num_samples), &tmp_point);
         top_leaf_nodes.push_back(new TreeType());
         top_leaf_nodes[ top_leaf_nodes.size() - 1 ]->bound().center().Copy(
           tmp_point);

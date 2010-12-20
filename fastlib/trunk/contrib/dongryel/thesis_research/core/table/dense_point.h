@@ -167,46 +167,6 @@ class DensePoint {
       is_alias_ = true;
     }
 
-    void Add(
-      double scale_factor, const core::table::DensePoint &point_in) {
-      for(int i = 0; i < point_in.length(); i++) {
-        ptr_.get()[i] += scale_factor * point_in[i];
-      }
-    }
-
-    void SubOverwrite(
-      const core::table::DensePoint &subtracted,
-      const core::table::DensePoint &subtract_from) {
-      for(int i = 0; i < n_rows_; i++) {
-        ptr_.get()[i] = subtract_from[i] - subtracted[i];
-      }
-    }
-
-    void ScaleOverwrite(
-      double scale_in, const core::table::DensePoint &point_in) {
-      for(int i = 0; i < n_rows_; i++) {
-        ptr_.get()[i] = scale_in * point_in[i];
-      }
-    }
-
-    void operator+=(const core::table::DensePoint &point_in) {
-      for(int i = 0; i < point_in.length(); i++) {
-        ptr_.get()[i] += point_in[i];
-      }
-    }
-
-    void operator/=(double scale_factor) {
-      for(int i = 0; i < n_rows_; i++) {
-        ptr_.get()[i] /= scale_factor;
-      }
-    }
-
-    void operator*=(double scale_factor) {
-      for(int i = 0; i < n_rows_; i++) {
-        ptr_.get()[i] *= scale_factor;
-      }
-    }
-
     void Print() const {
       printf("Vector of length: %d\n", n_rows_);
       for(int i = 0; i < n_rows_; i++) {

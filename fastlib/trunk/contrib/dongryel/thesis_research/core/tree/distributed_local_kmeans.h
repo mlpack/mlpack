@@ -8,6 +8,7 @@
 
 #include <boost/mpi.hpp>
 #include <boost/serialization/string.hpp>
+#include "core/math/linear_algebra.h"
 #include "core/table/dense_point.h"
 
 namespace core {
@@ -52,16 +53,17 @@ class DistributedLocalKMeans {
           double factor =
             static_cast<double>(num_points_) /
             static_cast<double>(num_points_ + centroid_in.num_points());
-          centroid_ *= factor;
-          centroid_.Add(1.0 - factor, centroid_in.centroid());
+          core::math::Scale(factor, &centroid_);
+          core::math::AddExpert(
+            1.0 - factor, centroid_in.centroid(), &centroid_);
           num_points_ = num_points_ + centroid_in.num_points();
         }
 
         void Add(const core::table::DensePoint &point_in) {
           double factor = static_cast<double>(num_points_) /
                           static_cast<double>(num_points_ + 1);
-          centroid_ *= factor;
-          centroid_.Add(1.0 - factor, point_in);
+          core::math::Scale(factor, &centroid_);
+          core::math::AddExpert(1.0 - factor, point_in, &centroid_);
           num_points_++;
         }
 
