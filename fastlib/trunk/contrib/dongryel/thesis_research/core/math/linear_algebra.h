@@ -140,6 +140,29 @@ static void AddTo(
   }
 }
 
+/** @brief Computes $c = c + \alpha * a b^T$.
+ */
+template<typename VectorType, typename MatrixType>
+static void MulExpert(
+  double alpha, const VectorType &a, const VectorType &b, MatrixType *c) {
+
+  arma::vec a_alias(a.ptr(), a.length());
+  arma::vec b_alias(b.ptr(), b.length());
+  arma::mat c_alias(c->ptr(), c->n_rows(), c->n_cols(), false);
+  c_alias = c_alias + alpha * a_alias * arma::trans(b_alias);
+}
+
+template<typename MatrixType, typename VectorType>
+static void MulInit(
+  const MatrixType &a, const VectorType &b, VectorType *c) {
+
+  arma::mat a_alias(a.ptr(), a.n_rows(), a.n_cols());
+  arma::vec b_alias(b.ptr(), b.length());
+  c->Init(a.n_rows());
+  arma::vec c_alias(c->ptr(), c.length(), false);
+  c_alias = a_alias * b_alias;
+}
+
 template<typename VectorType>
 class ScaleTrait {
   public:
@@ -188,17 +211,6 @@ static void ScaleInit(
 
   vec_out->set_size(vec_in.n_elem);
   ScaleOverwrite(scale, vec_in, vec_out);
-}
-
-template<typename MatrixType, typename VectorType>
-static void MulInit(
-  const MatrixType &a, const VectorType &b, VectorType *c) {
-
-  arma::mat a_alias(a.ptr(), a.n_rows(), a.n_cols());
-  arma::vec b_alias(b.ptr(), b.length());
-  c->Init(a.n_rows());
-  arma::vec c_alias(c->ptr(), c.length(), false);
-  c_alias = a_alias * b_alias;
 }
 };
 };
