@@ -187,7 +187,9 @@ class DCMTable {
         core::math::AddExpert(
           inverse_simulated_choice_probability,
           hessian_first, likelihood_hessian);
-
+        core::math::MulExpert(
+          - core::math::Sqr(inverse_simulated_choice_probability),
+          hessian_second, hessian_second, likelihood_hessian);
       }
 
       // Divide by the number of people.
