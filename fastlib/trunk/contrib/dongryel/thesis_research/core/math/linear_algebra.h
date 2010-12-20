@@ -53,8 +53,8 @@ static void MatrixTripleProduct(
 
 template<typename VectorType>
 static double Dot(const VectorType &a, const VectorType &b) {
-  arma::mat a_mat(a.ptr(), a.length());
-  arma::mat b_mat(b.ptr(), b.length());
+  arma::vec a_mat(a.ptr(), a.length());
+  arma::vec b_mat(b.ptr(), b.length());
   return arma::dot(a_mat, b_mat);
 }
 

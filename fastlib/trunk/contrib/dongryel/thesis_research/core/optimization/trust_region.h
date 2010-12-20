@@ -24,28 +24,22 @@ class TrustRegion {
       const arma::mat &hessian, arma::vec *p);
 
     void ComputeDoglegDirection_(
-      double radius,
-      core::table::DensePoint &gradient,
-      core::table::DenseMatrix &hessian,
-      core::table::DensePoint *p,
-      double *delta_m);
+      double radius, const arma::vec &gradient, const arma::mat &hessian,
+      arma::vec *p, double *delta_m);
 
     void ComputeSteihaugDirection_(
-      double radius,
-      core::table::DensePoint &gradient,
-      core::table::DenseMatrix &hessian,
-      core::table::DensePoint *p,
-      double *delta_m);
+      double radius, const arma::vec &gradient, const arma::mat &hessian,
+      arma::vec *p, double *delta_m);
 
     void TrustRadiusUpdate_(
       double rho, double p_norm, double *current_radius) {
 
       if(rho < 0.25) {
-        std::cout << "Shrinking trust region radius..." << endl;
+        std::cerr << "Shrinking trust region radius..." << endl;
         (*current_radius) = p_norm / 4.0;
       }
       else if((rho > 0.75) && (p_norm > (0.99 *(*current_radius)))) {
-        std::cout << "Expanding trust region radius..." << endl;
+        std::cerr << "Expanding trust region radius..." << endl;
         (*current_radius) = std::min(2.0 * (*current_radius), max_radius_);
       }
     }
@@ -67,9 +61,7 @@ class TrustRegion {
     void Init() {
     }
 
-    void Optimize() {
-
-    }
+    void Optimize();
 };
 };
 };
