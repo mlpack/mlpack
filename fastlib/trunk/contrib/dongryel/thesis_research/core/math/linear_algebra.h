@@ -27,15 +27,11 @@ static void MatrixTripleProduct(
 
   // Use armadillo matrices to compute the triple product. This makes
   // a light copy, so there is very little performance lost.
-  arma::mat *left_copy = new arma::mat(
-    left.ptr(), left.n_rows(), left.n_cols());
-  arma::mat *mid_copy = new arma::mat(mid.ptr(), mid.n_rows(), mid.n_cols());
+  arma::mat left_alias(left.ptr(), left.n_rows(), left.n_cols());
+  arma::mat mid_alias(mid.ptr(), mid.n_rows(), mid.n_cols());
   arma::mat product_alias(
     product->ptr(), product->n_rows(), product->n_cols(), false);
-  product_alias = (*left_copy) * (*mid_copy) * arma::trans(*left_copy);
-
-  delete left_copy;
-  delete mid_copy;
+  product_alias = left_alias * mid_alias * arma::trans(left_alias);
 }
 
 template<typename MatrixType>
@@ -47,18 +43,12 @@ static void MatrixTripleProduct(
 
   // Use armadillo matrices to compute the triple product. This makes
   // a light copy, so there is very little performance lost.
-  arma::mat *left_copy = new arma::mat(
-    left.ptr(), left.n_rows(), left.n_cols());
-  arma::mat *mid_copy = new arma::mat(mid.ptr(), mid.n_rows(), mid.n_cols());
-  arma::mat *right_copy = new arma::mat(
-    right.ptr(), right.n_rows(), right.n_cols());
+  arma::mat left_alias(left.ptr(), left.n_rows(), left.n_cols());
+  arma::mat mid_alias(mid.ptr(), mid.n_rows(), mid.n_cols());
+  arma::mat right_alias(right.ptr(), right.n_rows(), right.n_cols());
   arma::mat product_alias(
     product->ptr(), product->n_rows(), product->n_cols(), false);
-  product_alias = (*left_copy) * (*mid_copy) * (*right_copy);
-
-  delete left_copy;
-  delete mid_copy;
-  delete right_copy;
+  product_alias = left_alias * mid_alias * right_alias;
 }
 
 template<typename VectorType>
@@ -166,6 +156,17 @@ static void ScaleInit(
 
   vec_out->set_size(vec_in.n_elem);
   ScaleOverwrite(scale, vec_in, vec_out);
+}
+
+template<typename MatrixType, typename VectorType>
+static void MulInit(
+  const MatrixType &a, const VectorType &b, VectorType *c) {
+
+  arma::mat a_alias(a.ptr(), a.n_rows(), a.n_cols());
+  arma::vec b_alias(b.ptr(), b.length());
+  c->Init(a.n_rows());
+  arma::vec c_alias(c->ptr(), c.length(), false);
+  c_alias = a_alias * b_alias;
 }
 };
 };

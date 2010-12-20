@@ -184,6 +184,9 @@ class DCMTable {
         hessian_second_part.sample_means(&hessian_second);
 
         // Construct the contribution on the fly.
+        core::math::AddExpert(
+          inverse_simulated_choice_probability,
+          hessian_first, likelihood_hessian);
 
       }
 
