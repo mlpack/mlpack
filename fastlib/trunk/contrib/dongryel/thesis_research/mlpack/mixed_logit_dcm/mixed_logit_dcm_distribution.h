@@ -29,6 +29,22 @@ class MixedLogitDCMDistribution {
     virtual double AttributeGradientWithRespectToParameter(
       int row_index, int col_index) const = 0;
 
+    /** @brief Returns $\frac{\partial}{\partial \theta} \beta^{\nu}(\theta)$.
+     */
+    double AttributeGradientWithRespectToParameter(
+      int num_attributes,
+      core::table::DenseMatrix *gradient_out) const {
+
+      gradient_out->Init(this->num_parameters(), num_attributes);
+
+      for(int j = 0; j < num_attributes; j++) {
+        for(int i = 0; i < this->num_parameters(); i++) {
+          gradient_out->set(
+            i, j, this->AttributeGradientWithRespectToParameter(i, j));
+        }
+      }
+    }
+
     virtual int num_parameters() const = 0;
 
     virtual void Init(const std::string &file_name) const = 0;
@@ -57,7 +73,7 @@ class MixedLogitDCMDistribution {
      *         $\frac{\partial^2}{\partial \beta^2} P_{i j_i^*} (
      *         \beta^{\nu}(\theta))$ (Equation 8.5)
      */
-    double HessianChoiceProbability(
+    double HessianChoiceProbabilityWithRespectToAttribute(
       DCMTableType *dcm_table_in,
       int person_index, int discrete_choice_index,
       int row_index, int col_index,
@@ -107,7 +123,6 @@ class MixedLogitDCMDistribution {
     void HessianProducts(
       DCMTableType *dcm_table_in,
       int person_index, int discrete_choice_index,
-      const core::table::DensePoint &parameter_vector,
       const core::table::DensePoint &choice_probabilities,
       core::table::DenseMatrix *hessian_first_part,
       core::table::DensePoint *hessian_second_part) const {
@@ -123,7 +138,35 @@ class MixedLogitDCMDistribution {
       // \frac{\partial^2}{\partial \beta^2} P_{i j_i^*} (
       // \beta^{\nu}(\theta)) ( \frac{\partial}{\partial \theta}
       // \beta^{\nu}(\theta) )'$.
+      core::table::DenseMatrix first;
+      core::table::DenseMatrix second;
+      this->AttributeGradientWithRespectToParameter(
+        dcm_table_in->num_attributes(), &first);
+      core::math::MatrixTripleProduct(first, second, hessian_first_part);
+    }
 
+    /** @brief Computes $\frac{\partial}{\partial \beta}
+     *         P_{i,j}(\beta)$ (Equation 8.2).
+     */
+    void ChoiceProbabilityGradientWithRespectToAttribute(
+      DCMTableType *dcm_table_in,
+      int person_index, int discrete_choice_index,
+      const core::table::DensePoint &choice_probabilities,
+      const core::table::DensePoint &choice_prob_weighted_attribute_vector,
+      core::table::DensePoint *gradient_out) const {
+
+      // Get the discrete choice attribute vector.
+      core::table::DensePoint discrete_choice_attribute;
+      dcm_table_in->get_attribute_vector(
+        person_index, discrete_choice_index, &discrete_choice_attribute);
+      core::math::SubInit(
+        choice_prob_weighted_attribute_vector,
+        discrete_choice_attribute, gradient_out);
+
+      // Scale the gradient by the choice probability of the discrete
+      // choice.
+      core::math::Scale(
+        choice_probabilities[discrete_choice_index], gradient_out);
     }
 
     /** @brief Computes $\frac{\partial}{\partial \theta}
@@ -134,7 +177,6 @@ class MixedLogitDCMDistribution {
     void ProductAttributeGradientWithRespectToParameter(
       DCMTableType *dcm_table_in,
       int person_index, int discrete_choice_index,
-      const core::table::DensePoint &parameter_vector,
       const core::table::DensePoint &choice_probabilities,
       const core::table::DensePoint &choice_prob_weighted_attribute_vector,
       core::table::DensePoint *product_out) const {
