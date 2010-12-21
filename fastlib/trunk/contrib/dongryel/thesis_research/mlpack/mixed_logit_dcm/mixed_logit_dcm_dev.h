@@ -29,7 +29,6 @@ void MixedLogitDCM<TableType>::Compute(
   mlpack::mixed_logit_dcm::MixedLogitDCMResult *result_out) {
 
   static const double C = 1.04;
-  static const double eta = 0.05;
 
   // The maximum average integration sample size.
   static const int R_MAX = 1000;
@@ -58,9 +57,9 @@ void MixedLogitDCM<TableType>::Compute(
   theta.fill(0.0);
 
   // The trust region optimizer.
-  core::optimization::TrustRegion trust_region;
-  trust_region.set_max_radius(core::math::LengthEuclidean(current_gradient));
-  trust_region.Optimize(-1, &theta);
+  // core::optimization::TrustRegion trust_region;
+  // trust_region.set_max_radius(core::math::LengthEuclidean(current_gradient));
+  // trust_region.Optimize(-1, &theta);
 }
 
 template<typename TableType>

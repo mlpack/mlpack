@@ -12,11 +12,19 @@
 
 namespace core {
 namespace optimization {
+template<typename FunctionType>
 class TrustRegion {
   private:
     double max_radius_;
 
+    FunctionType *function_;
+
   private:
+
+    void Evaluate_(const arma::vec &iterate);
+
+    void ObtainStepDirection_(
+      arma::vec *step_direction, double *step_direction_norm);
 
     void ComputeCauchyPoint_(
       double radius, const arma::vec &gradient,
@@ -35,6 +43,8 @@ class TrustRegion {
 
   public:
 
+    TrustRegion();
+
     double get_max_radius() const {
       return max_radius_;
     }
@@ -43,12 +53,7 @@ class TrustRegion {
       max_radius_ = max_radius_in;
     }
 
-    TrustRegion() {
-      max_radius_ = 10.0;
-    }
-
-    void Init() {
-    }
+    void Init(FunctionType &function_in);
 
     void Optimize(int num_iterations, arma::vec *iterate);
 };
