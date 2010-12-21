@@ -9,7 +9,6 @@
 #define CORE_OPTIMIZATION_LBFGS_DEV_H
 
 #include "core/optimization/lbfgs.h"
-#include "core/math/linear_algebra.h"
 
 namespace core {
 namespace optimization {
@@ -58,52 +57,51 @@ Lbfgs<FunctionType>::LbfgsParam::LbfgsParam() {
 template<typename FunctionType>
 double Lbfgs<FunctionType>::ChooseScalingFactor_(
   int iteration_num,
-  const core::table::DensePoint &gradient) {
+  const arma::vec &gradient) {
 
   double scaling_factor = 1.0;
   if(iteration_num > 0) {
     int previous_pos = (iteration_num - 1) % num_basis_;
-    core::table::DensePoint s_basis;
-    core::table::DensePoint y_basis;
-    s_lbfgs_.MakeColumnVector(previous_pos, &s_basis);
-    y_lbfgs_.MakeColumnVector(previous_pos, &y_basis);
-    scaling_factor = core::math::Dot(s_basis, y_basis) /
-                     core::math::Dot(y_basis, y_basis);
+    scaling_factor =
+      arma::dot(
+        s_lbfgs_.col(previous_pos), y_lbfgs_.col(previous_pos)) /
+      arma::dot(
+        y_lbfgs_.col(previous_pos), y_lbfgs_.col(previous_pos));
   }
   else {
-    scaling_factor = 1.0 / sqrt(core::math::Dot(gradient, gradient));
+    scaling_factor = 1.0 / sqrt(arma::dot(gradient, gradient));
   }
   return scaling_factor;
 }
 
 template<typename FunctionType>
 bool Lbfgs<FunctionType>::GradientNormTooSmall_(
-  const core::table::DensePoint &gradient) {
+  const arma::vec &gradient) {
 
   const double threshold = 1e-5;
-  return core::math::LengthEuclidean(gradient) < threshold;
+  return arma::norm(gradient, 2) < threshold;
 }
 
 template<typename FunctionType>
 void Lbfgs<FunctionType>::Init(FunctionType &function_in, int num_basis) {
   function_ = &function_in;
-  new_iterate_tmp_.Init(function_->num_dimensions());
-  s_lbfgs_.Init(function_->num_dimensions(), num_basis);
-  y_lbfgs_.Init(function_->num_dimensions(), num_basis);
+  new_iterate_tmp_.set_size(function_->num_dimensions());
+  s_lbfgs_.set_size(function_->num_dimensions(), num_basis);
+  y_lbfgs_.set_size(function_->num_dimensions(), num_basis);
   num_basis_ = num_basis;
 
   // Allocate the pair holding the min iterate information.
-  min_point_iterate_.first.Init(function_->num_dimensions());
-  min_point_iterate_.first.SetZero();
+  min_point_iterate_.first.set_size(function_->num_dimensions());
+  min_point_iterate_.first.zeros();
   min_point_iterate_.second = std::numeric_limits<double>::max();
 }
 
 template<typename FunctionType>
 bool Lbfgs<FunctionType>::LineSearch_(
   double &function_value,
-  core::table::DensePoint &iterate,
-  core::table::DensePoint &gradient,
-  const core::table::DensePoint &search_direction,
+  arma::vec &iterate,
+  arma::vec &gradient,
+  const arma::vec &search_direction,
   double &step_size) {
 
   // Implements the line search with back-tracking.
@@ -111,7 +109,7 @@ bool Lbfgs<FunctionType>::LineSearch_(
   // The initial linear term approximation in the direction of the
   // search direction.
   double initial_search_direction_dot_gradient =
-    core::math::Dot(gradient, search_direction);
+    arma::dot(gradient, search_direction);
 
   // If it is not a descent direction, just report failure.
   if(initial_search_direction_dot_gradient > 0.0) {
@@ -136,8 +134,8 @@ bool Lbfgs<FunctionType>::LineSearch_(
 
     // Perform a step and evaluate the gradient and the function
     // values at that point.
-    new_iterate_tmp_.CopyValues(iterate);
-    new_iterate_tmp_.Add(step_size, search_direction);
+    new_iterate_tmp_ = iterate;
+    new_iterate_tmp_ += step_size * search_direction;
     function_value = Evaluate_(new_iterate_tmp_);
     function_->Gradient(new_iterate_tmp_, &gradient);
     num_iterations++;
@@ -150,7 +148,7 @@ bool Lbfgs<FunctionType>::LineSearch_(
 
       // Check Wolfe's condition.
       double search_direction_dot_gradient =
-        core::math::Dot(gradient, search_direction);
+        arma::dot(gradient, search_direction);
 
       if(search_direction_dot_gradient < param_.wolfe() *
           initial_search_direction_dot_gradient) {
@@ -184,84 +182,81 @@ bool Lbfgs<FunctionType>::LineSearch_(
   }
 
   // Move to the new iterate.
-  iterate.CopyValues(new_iterate_tmp_);
+  iterate = new_iterate_tmp_;
   return true;
 }
 
 template<typename FunctionType>
 void Lbfgs<FunctionType>::SearchDirection_(
-  const core::table::DensePoint &gradient,
+  const arma::vec &gradient,
   int iteration_num, double scaling_factor,
-  core::table::DensePoint *search_direction) {
+  arma::vec *search_direction) {
 
-  core::table::DensePoint q;
-  q.Copy(gradient);
+  arma::vec q = gradient;
 
   // Temporary variables.
-  core::table::DensePoint rho;
-  core::table::DensePoint alpha;
-  rho.Init(num_basis_);
-  alpha.Init(num_basis_);
+  arma::vec rho;
+  arma::vec alpha;
+  rho.set_size(num_basis_);
+  alpha.set_size(num_basis_);
 
   int limit = std::max(iteration_num - num_basis_, 0);
   for(int i = iteration_num - 1; i >= limit; i--) {
     int translated_position = i % num_basis_;
-    core::table::DensePoint y_basis, s_basis;
-    s_lbfgs_.MakeColumnVector(translated_position, &s_basis);
-    y_lbfgs_.MakeColumnVector(translated_position, &y_basis);
-    rho[ iteration_num - i - 1 ] = 1.0 / core::math::Dot(y_basis, s_basis);
-    alpha[ iteration_num - i - 1 ] = rho [ iteration_num - i - 1] *
-                                     core::math::Dot(s_basis, q);
+    rho[ iteration_num - i - 1 ] =
+      1.0 / arma::dot(
+        y_lbfgs_.col(translated_position),
+        s_lbfgs_.col(translated_position));
+    alpha[ iteration_num - i - 1 ] =
+      rho [ iteration_num - i - 1] *
+      arma::dot(s_lbfgs_.col(translated_position), q);
   }
-  search_direction->ScaleOverwrite(scaling_factor, q);
+  (*search_direction) = scaling_factor * q;
   for(int i = limit; i <= iteration_num - 1; i++) {
     int translated_position = i % num_basis_;
-    core::table::DensePoint y_basis, s_basis;
-    s_lbfgs_.MakeColumnVector(translated_position, &s_basis);
-    y_lbfgs_.MakeColumnVector(translated_position, &y_basis);
     double beta = rho[ iteration_num - i - 1 ] *
-                  core::math::Dot(y_basis, *search_direction);
-    search_direction->Add(alpha [ iteration_num - i - 1 ] - beta, s_basis);
+                  arma::dot(
+                    y_lbfgs_.col(translated_position), *search_direction);
+    (*search_direction) += (alpha [ iteration_num - i - 1 ] - beta) *
+                           s_lbfgs_.col(translated_position);
   }
 
   // Negate the search direction so that it is a descent direction.
-  (*search_direction) *= -1.0;
+  for(unsigned int i = 0; i < search_direction->n_elem; i++) {
+    (*search_direction)[i] = - (*search_direction)[i];
+  }
 }
 
 template<typename FunctionType>
 void Lbfgs<FunctionType>::UpdateBasisSet_(
   int iteration_num,
-  const core::table::DensePoint &iterate,
-  const core::table::DensePoint &old_iterate,
-  const core::table::DensePoint &gradient,
-  const core::table::DensePoint &old_gradient) {
+  const arma::vec &iterate,
+  const arma::vec &old_iterate,
+  const arma::vec &gradient,
+  const arma::vec &old_gradient) {
 
   int overwrite_pos = iteration_num % num_basis_;
-  core::table::DensePoint s_basis;
-  core::table::DensePoint y_basis;
-  s_lbfgs_.MakeColumnVector(overwrite_pos, &s_basis);
-  y_lbfgs_.MakeColumnVector(overwrite_pos, &y_basis);
-  s_basis.SubOverwrite(old_iterate, iterate);
-  y_basis.SubOverwrite(old_gradient, gradient);
+  s_lbfgs_.col(overwrite_pos) = iterate - old_iterate;
+  y_lbfgs_.col(overwrite_pos) = gradient - old_gradient;
 }
 
 template<typename FunctionType>
 double Lbfgs<FunctionType>::Evaluate_(
-  const core::table::DensePoint &iterate) {
+  const arma::vec &iterate) {
 
   // Evaluate the function and keep track of the minimum function
   // value encountered during the optimization.
   double function_value = function_->Evaluate(iterate);
 
   if(function_value < min_point_iterate_.second) {
-    min_point_iterate_.first.CopyValues(iterate);
+    min_point_iterate_.first = iterate;
     min_point_iterate_.second = function_value;
   }
   return function_value;
 }
 
 template<typename FunctionType>
-const std::pair< core::table::DensePoint, double > &
+const std::pair< arma::vec, double > &
 Lbfgs<FunctionType>::min_point_iterate() const {
   return min_point_iterate_;
 }
@@ -275,12 +270,12 @@ void Lbfgs<FunctionType>::set_max_num_line_searches(
 
 template<typename FunctionType>
 bool Lbfgs<FunctionType>::Optimize(
-  int num_iterations, core::table::DensePoint *iterate) {
+  int num_iterations, arma::vec *iterate) {
 
   // The old iterate to be saved.
-  core::table::DensePoint old_iterate;
-  old_iterate.Init(function_->num_dimensions());
-  old_iterate.SetZero();
+  arma::vec old_iterate;
+  old_iterate.set_size(function_->num_dimensions());
+  old_iterate.zeros();
 
   // Whether to optimize until convergence.
   bool optimize_until_convergence = (num_iterations <= 0);
@@ -289,17 +284,17 @@ bool Lbfgs<FunctionType>::Optimize(
   double function_value = Evaluate_(*iterate);
 
   // The gradient: the current and the old.
-  core::table::DensePoint gradient;
-  core::table::DensePoint old_gradient;
-  gradient.Init(function_->num_dimensions());
-  gradient.SetZero();
-  old_gradient.Init(function_->num_dimensions());
-  old_gradient.SetZero();
+  arma::vec gradient;
+  arma::vec old_gradient;
+  gradient.set_size(function_->num_dimensions());
+  gradient.zeros();
+  old_gradient.set_size(function_->num_dimensions());
+  old_gradient.zeros();
 
   // The search direction.
-  core::table::DensePoint search_direction;
-  search_direction.Init(function_->num_dimensions());
-  search_direction.SetZero();
+  arma::vec search_direction;
+  search_direction.set_size(function_->num_dimensions());
+  search_direction.zeros();
 
   // The initial gradient value.
   function_->Gradient(*iterate, &gradient);
@@ -327,8 +322,8 @@ bool Lbfgs<FunctionType>::Optimize(
     SearchDirection_(gradient, it_num, scaling_factor, &search_direction);
 
     // Save the old iterate and the gradient before stepping.
-    old_iterate.CopyValues(*iterate);
-    old_gradient.CopyValues(gradient);
+    old_iterate = *iterate;
+    old_gradient = gradient;
 
     // Do a line search and take a step.
     double step_size = 1.0;

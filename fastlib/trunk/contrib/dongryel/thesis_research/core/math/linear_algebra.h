@@ -82,12 +82,18 @@ static void SubFrom(
 }
 
 template<typename VectorType>
-static void SubInit(
+static void SubOverwrite(
   const VectorType &sub, const VectorType &sub_from, VectorType *vec_out) {
-  vec_out->Init(sub.length());
   for(int i = 0; i < sub.length(); i++) {
     (*vec_out)[i] = sub_from[i] - sub[i];
   }
+}
+
+template<typename VectorType>
+static void SubInit(
+  const VectorType &sub, const VectorType &sub_from, VectorType *vec_out) {
+  vec_out->Init(sub.length());
+  SubOverwrite(sub, sub_from, vec_out);
 }
 
 template<typename T>
@@ -199,9 +205,10 @@ static void Scale(double scale, VectorType *vec) {
 template<typename VectorType>
 static void ScaleOverwrite(
   double scale, const VectorType &vec_in, VectorType *vec_out) {
-
-  for(unsigned int i = 0; i < vec_in.n_elem; i++) {
-    (*vec_out)[i] = vec_in[i] * scale;
+  arma::vec vec_in_alias(vec_in.ptr(), vec_in.length());
+  arma::vec vec_out_alias(vec_out->ptr(), vec_in.length(), false);
+  for(unsigned int i = 0; i < vec_in_alias.n_elem; i++) {
+    vec_out_alias[i] = vec_in_alias[i] * scale;
   }
 }
 

@@ -59,11 +59,11 @@ void TrustRegion<FunctionType>::ComputeSteihaugDirection_(
   for(int i = 0; i < max_num_steihaug_iterations; i++) {
 
     // Compute d_j^T B_k d_j.
-    arma::mat quadratic_form = arma::trans(d) * hessian * d;
+    double quadratic_form = arma::as_scalar(arma::trans(d) * hessian * d);
 
     // If the current search direction is a direction of non-positive
     // curvature along the currently approximated Hessian,
-    if(quadratic_form.at(0, 0) <= 0) {
+    if(quadratic_form <= 0) {
 
       // Solve ||z_j + \tau d_j|| = radius for \tau.
       double a = arma::dot(d, d);
@@ -78,7 +78,7 @@ void TrustRegion<FunctionType>::ComputeSteihaugDirection_(
     }
 
     // alpha_j
-    double alpha = arma::dot(r, r) / quadratic_form.at(0, 0);
+    double alpha = arma::dot(r, r) / quadratic_form;
 
     // z_{j + 1} = z_j + \alpha_j d_j
     z_next = z + alpha * d;
@@ -120,8 +120,8 @@ void TrustRegion<FunctionType>::ComputeSteihaugDirection_(
   } // end of the main loop.
 
   // delta_m calculation -g'p-0.5*p'Hp
-  arma::mat quadratic_form2 = arma::trans(*p) * hessian * (*p);
-  (*delta_m) = - arma::dot(gradient, *p) - 0.5 * quadratic_form2.at(0, 0);
+  double quadratic_form2 = arma::as_scalar(arma::trans(*p) * hessian * (*p));
+  (*delta_m) = - arma::dot(gradient, *p) - 0.5 * quadratic_form2;
 }
 
 template<typename FunctionType>
@@ -132,7 +132,8 @@ void TrustRegion<FunctionType>::ComputeCauchyPoint_(
   // Nocedal, J. and Wright, S. Numerical Optimization. page 72.
 
   // Check g_k^T B_k g_k <= 0.
-  arma::mat quadratic_form = arma::trans(gradient) * hessian * gradient;
+  double quadratic_form =
+    arma::as_scalar(arma::trans(gradient) * hessian * gradient);
 
   // Scaling value.
   double tau = 1.0;
@@ -140,12 +141,12 @@ void TrustRegion<FunctionType>::ComputeCauchyPoint_(
   // The gradient norm.
   double gradient_norm = arma::norm(gradient, 2);
 
-  if(quadratic_form.at(0, 0) > 0) {
+  if(quadratic_form > 0) {
 
     // Equation 4.12 on Page 72.
     tau = std::min(
             1.0, core::math::Pow<3, 1>(gradient_norm) / (
-              radius * quadratic_form.at(0, 0)));
+              radius * quadratic_form));
   }
   (*p) = (- tau * radius / gradient_norm)  *  gradient;
 }
@@ -196,7 +197,8 @@ void TrustRegion<FunctionType>::ComputeDoglegDirection_(
     else {
 
       // Compute g_k^T B_k g_k.
-      arma::mat quadratic_form = arma::trans(gradient) * hessian * gradient;
+      double quadratic_form =
+        arma::as_scalar(arma::trans(gradient) * hessian * gradient);
 
       // p_u= -(g'g/ g'B_k g)*g
       arma::vec p_u = - (
@@ -242,8 +244,8 @@ void TrustRegion<FunctionType>::ComputeDoglegDirection_(
   } // end of the positive definite Hessian case.
 
   // delta_m calculation -g'p-0.5*p'Hp
-  arma::mat quadratic_form2 = arma::trans(*p) * hessian * (*p);
-  (*delta_m) = - arma::dot(gradient, *p) - 0.5 * quadratic_form2.at(0, 0);
+  double quadratic_form2 = arma::as_scalar(arma::trans(*p) * hessian * (*p));
+  (*delta_m) = - arma::dot(gradient, *p) - 0.5 * quadratic_form2;
 }
 
 template<typename FunctionType>
