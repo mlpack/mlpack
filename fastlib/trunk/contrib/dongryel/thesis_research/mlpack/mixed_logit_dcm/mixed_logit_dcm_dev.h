@@ -53,14 +53,14 @@ void MixedLogitDCM<TableType>::Compute(
   table_.SimulatedLoglikelihoodHessian(&current_hessian);
 
   // Initialize the starting optimization parameter $\theta_0$.
-  core::table::DensePoint theta;
-  theta.Init(arguments_in.distribution_->num_parameters());
-  theta.SetZero();
+  arma::vec theta;
+  theta.set_size(arguments_in.distribution_->num_parameters());
+  theta.fill(0.0);
 
   // The trust region optimizer.
   core::optimization::TrustRegion trust_region;
   trust_region.set_max_radius(core::math::LengthEuclidean(current_gradient));
-  trust_region.Optimize();
+  trust_region.Optimize(-1, &theta);
 }
 
 template<typename TableType>
