@@ -52,7 +52,7 @@ class ExtendedRosenbrockFunction {
     }
 
     void InitStartingIterate(arma::vec *iterate) {
-      num_dimensions_ = 2 * core::math::RandInt(2, 200);
+      num_dimensions_ = 2 * core::math::RandInt(2, 100);
       iterate->set_size(num_dimensions_);
       for(int i = 0; i < num_dimensions_; i++) {
         if(i % 2 == 0) {
@@ -168,7 +168,6 @@ class LbfgsTest {
 };
 
 int main(int argc, char *argv[]) {
-  arma::vec v;
   printf("Starting L-BFGS tests.\n");
   core::optimization::lbfgs_test::LbfgsTest test;
   test.TestExtendedRosenbrockFunction();
