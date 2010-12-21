@@ -8,8 +8,7 @@
 
 #include <iostream>
 #include <algorithm>
-#include "core/table/dense_point.h"
-#include "core/table/dense_matrix.h"
+#include <armadillo>
 
 namespace core {
 namespace optimization {
@@ -32,17 +31,7 @@ class TrustRegion {
       arma::vec *p, double *delta_m);
 
     void TrustRadiusUpdate_(
-      double rho, double p_norm, double *current_radius) {
-
-      if(rho < 0.25) {
-        std::cerr << "Shrinking trust region radius..." << endl;
-        (*current_radius) = p_norm / 4.0;
-      }
-      else if((rho > 0.75) && (p_norm > (0.99 *(*current_radius)))) {
-        std::cerr << "Expanding trust region radius..." << endl;
-        (*current_radius) = std::min(2.0 * (*current_radius), max_radius_);
-      }
-    }
+      double rho, double p_norm, double *current_radius);
 
   public:
 
@@ -61,7 +50,7 @@ class TrustRegion {
     void Init() {
     }
 
-    void Optimize();
+    void Optimize(int num_iterations, arma::vec *iterate);
 };
 };
 };

@@ -237,7 +237,33 @@ void TrustRegion::ComputeDoglegDirection_(
   (*delta_m) = - arma::dot(gradient, *p) - 0.5 * quadratic_form2.at(0, 0);
 }
 
-void TrustRegion::Optimize() {
+void TrustRegion::TrustRadiusUpdate_(
+  double rho, double p_norm, double *current_radius) {
+
+  if(rho < 0.25) {
+    std::cerr << "Shrinking trust region radius..." << endl;
+    (*current_radius) = p_norm / 4.0;
+  }
+  else if((rho > 0.75) && (p_norm > (0.99 *(*current_radius)))) {
+    std::cerr << "Expanding trust region radius..." << endl;
+    (*current_radius) = std::min(2.0 * (*current_radius), max_radius_);
+  }
+}
+
+void TrustRegion::Optimize(int num_iterations, arma::vec *iterate) {
+
+  // Whether to optimize until convergence.
+  bool optimize_until_convergence = (num_iterations <= 0);
+
+  double rho = 0;
+  double p_norm = 0;
+  double current_radius = 0.1;
+  int it_num;
+  for(
+    it_num = 0; optimize_until_convergence ||
+    it_num < num_iterations; it_num++) {
+    TrustRadiusUpdate_(rho, p_norm, &current_radius);
+  }
 }
 };
 };
