@@ -157,14 +157,6 @@ class DenseMatrix {
       }
     }
 
-    void MakeColumnVector(int column_id, std::vector<double> *point_out) const {
-      point_out->resize(n_rows_);
-      const double *ptr = ptr_.get() + column_id * n_rows_;
-      for(int i = 0; i < n_rows_; ptr++, i++) {
-        (*point_out)[i] = (*ptr);
-      }
-    }
-
     void MakeColumnVector(
       int i, core::table::DensePoint *point_out) const {
       point_out->Alias(

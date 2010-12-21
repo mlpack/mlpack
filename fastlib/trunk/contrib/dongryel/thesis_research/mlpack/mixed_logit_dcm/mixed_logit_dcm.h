@@ -26,6 +26,12 @@ class MixedLogitDCM {
 
   public:
 
+    double Evaluate(const arma::vec &iterate) const;
+
+    void Gradient(const arma::vec &iterate, arma::vec *gradient_out) const;
+
+    void Hessian(const arma::vec &iterate, arma::mat *hessian_out) const;
+
     TableType *attribute_table();
 
     void Init(

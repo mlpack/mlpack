@@ -12,7 +12,14 @@
 namespace core {
 namespace optimization {
 
-void TrustRegion::ComputeSteihaugDirection_(
+template<typename FunctionType>
+TrustRegion<FunctionType>::TrustRegion() {
+  max_radius_ = 10.0;
+  function_ = NULL;
+}
+
+template<typename FunctionType>
+void TrustRegion<FunctionType>::ComputeSteihaugDirection_(
   double radius, const arma::vec &gradient, const arma::mat &hessian,
   arma::vec *p, double *delta_m) {
 
@@ -117,7 +124,8 @@ void TrustRegion::ComputeSteihaugDirection_(
   (*delta_m) = - arma::dot(gradient, *p) - 0.5 * quadratic_form2.at(0, 0);
 }
 
-void TrustRegion::ComputeCauchyPoint_(
+template<typename FunctionType>
+void TrustRegion<FunctionType>::ComputeCauchyPoint_(
   double radius, const arma::vec &gradient,
   const arma::mat &hessian, arma::vec *p) {
 
@@ -142,7 +150,8 @@ void TrustRegion::ComputeCauchyPoint_(
   (*p) = (- tau * radius / gradient_norm)  *  gradient;
 }
 
-void TrustRegion::ComputeDoglegDirection_(
+template<typename FunctionType>
+void TrustRegion<FunctionType>::ComputeDoglegDirection_(
   double radius, const arma::vec &gradient, const arma::mat &hessian,
   arma::vec *p, double *delta_m) {
 
@@ -237,7 +246,8 @@ void TrustRegion::ComputeDoglegDirection_(
   (*delta_m) = - arma::dot(gradient, *p) - 0.5 * quadratic_form2.at(0, 0);
 }
 
-void TrustRegion::TrustRadiusUpdate_(
+template<typename FunctionType>
+void TrustRegion<FunctionType>::TrustRadiusUpdate_(
   double rho, double p_norm, double *current_radius) {
 
   if(rho < 0.25) {
@@ -250,7 +260,29 @@ void TrustRegion::TrustRadiusUpdate_(
   }
 }
 
-void TrustRegion::Optimize(int num_iterations, arma::vec *iterate) {
+template<typename FunctionType>
+void TrustRegion<FunctionType>::ObtainStepDirection_(
+  arma::vec *step_direction, double *step_direction_norm) {
+
+
+}
+
+template<typename FunctionType>
+void TrustRegion<FunctionType>::Init(FunctionType &function_in) {
+  function_ = &function_in;
+}
+
+template<typename FunctionType>
+void TrustRegion<FunctionType>::Optimize(
+  int num_iterations, arma::vec *iterate) {
+
+  // eta: The threshold for determining whether to take the step or
+  // not.
+  const double eta = 0.05;
+
+  // Initialize the starting iterate.
+  iterate->set_size(function_->num_dimensions());
+  iterate->fill(0.0);
 
   // Whether to optimize until convergence.
   bool optimize_until_convergence = (num_iterations <= 0);
@@ -259,10 +291,25 @@ void TrustRegion::Optimize(int num_iterations, arma::vec *iterate) {
   double p_norm = 0;
   double current_radius = 0.1;
   int it_num;
+
+  // Step direction.
+  arma::vec p;
+
+  // The main optimization loop.
   for(
     it_num = 0; optimize_until_convergence ||
     it_num < num_iterations; it_num++) {
+
+    // Obtain the step direction approximately.
+    ObtainStepDirection_(&p, &p_norm);
+
     TrustRadiusUpdate_(rho, p_norm, &current_radius);
+
+    // If the decrease in the objective is sufficient enough, then
+    // accept the step. Otherwise, don't move.
+    if(rho > eta) {
+
+    }
   }
 }
 };
