@@ -8,8 +8,7 @@
 #ifndef CORE_OPTIMIZATION_LBFGS_H
 #define CORE_OPTIMIZATION_LBFGS_H
 
-#include "core/table/dense_matrix.h"
-#include "core/table/dense_point.h"
+#include <armadillo>
 
 namespace core {
 namespace optimization {
@@ -67,49 +66,49 @@ class Lbfgs {
 
     FunctionType *function_;
 
-    core::table::DensePoint new_iterate_tmp_;
+    arma::vec new_iterate_tmp_;
 
-    core::table::DenseMatrix s_lbfgs_;
+    arma::mat s_lbfgs_;
 
-    core::table::DenseMatrix y_lbfgs_;
+    arma::mat y_lbfgs_;
 
     int num_basis_;
 
-    std::pair< core::table::DensePoint, double > min_point_iterate_;
+    std::pair< arma::vec, double > min_point_iterate_;
 
   private:
 
-    double Evaluate_(const core::table::DensePoint &iterate);
+    double Evaluate_(const arma::vec &iterate);
 
     double ChooseScalingFactor_(
       int iteration_num,
-      const core::table::DensePoint &gradient);
+      const arma::vec &gradient);
 
     bool GradientNormTooSmall_(
-      const core::table::DensePoint &gradient);
+      const arma::vec &gradient);
 
     bool LineSearch_(
       double &function_value,
-      core::table::DensePoint &iterate,
-      core::table::DensePoint &gradient,
-      const core::table::DensePoint &search_direction,
+      arma::vec &iterate,
+      arma::vec &gradient,
+      const arma::vec &search_direction,
       double &step_size);
 
     void SearchDirection_(
-      const core::table::DensePoint &gradient,
+      const arma::vec &gradient,
       int iteration_num, double scaling_factor,
-      core::table::DensePoint *search_direction);
+      arma::vec *search_direction);
 
     void UpdateBasisSet_(
       int iteration_num,
-      const core::table::DensePoint &iterate,
-      const core::table::DensePoint &old_iterate,
-      const core::table::DensePoint &gradient,
-      const core::table::DensePoint &old_gradient);
+      const arma::vec &iterate,
+      const arma::vec &old_iterate,
+      const arma::vec &gradient,
+      const arma::vec &old_gradient);
 
   public:
 
-    const std::pair< core::table::DensePoint, double > &min_point_iterate() const;
+    const std::pair< arma::vec, double > &min_point_iterate() const;
 
     void Init(FunctionType &function_in, int num_basis);
 
@@ -117,7 +116,7 @@ class Lbfgs {
 
     bool Optimize(
       int num_iterations,
-      core::table::DensePoint *iterate);
+      arma::vec *iterate);
 };
 };
 };
