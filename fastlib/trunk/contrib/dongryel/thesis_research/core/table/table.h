@@ -107,13 +107,15 @@ class Table {
           current_index_++;
         }
 
-        void Next(core::table::DensePoint *entry, int *point_id) {
+        template<typename PointType>
+        void Next(PointType *entry, int *point_id) {
           current_index_++;
           table_->iterator_get_(current_index_, entry);
           *point_id = table_->iterator_get_id_(current_index_);
         }
 
-        void get(int i, core::table::DensePoint *entry) {
+        template<typename PointType>
+        void get(int i, PointType *entry) {
           table_->iterator_get_(begin_ + i, entry);
         }
 
@@ -121,11 +123,13 @@ class Table {
           *point_id = table_->iterator_get_id_(begin_ + i);
         }
 
-        void RandomPick(core::table::DensePoint *entry) {
+        template<typename PointType>
+        void RandomPick(PointType *entry) {
           table_->iterator_get_(core::math::RandInt(begin_, end_), entry);
         }
 
-        void RandomPick(core::table::DensePoint *entry, int *point_id) {
+        template<typename PointType>
+        void RandomPick(PointType *entry, int *point_id) {
           *point_id = core::math::RandInt(begin_, end_);
           table_->iterator_get_(*point_id, entry);
         }
@@ -382,15 +386,13 @@ class Table {
                 new_from_old_.get(), max_num_leaf_nodes, &num_nodes, rank_);
     }
 
-    void get(int point_id, double *point_out) const {
+    template<typename PointType>
+    void get(int point_id, PointType *point_out) const {
       direct_get_(point_id, point_out);
     }
 
-    void get(int point_id, core::table::DensePoint *point_out) const {
-      direct_get_(point_id, point_out);
-    }
-
-    void get(int point_id, core::table::DensePoint *point_out) {
+    template<typename PointType>
+    void get(int point_id, PointType *point_out) {
       direct_get_(point_id, point_out);
     }
 
@@ -411,19 +413,9 @@ class Table {
 
   private:
 
-    void direct_get_(int point_id, double *entry) const {
-      if(this->IsIndexed() == false) {
-        data_.CopyColumnVector(point_id, entry);
-      }
-      else {
-        data_.CopyColumnVector(
-          IndexUtil<int>::Extract(
-            new_from_old_.get(), point_id), entry);
-      }
-    }
-
+    template<typename PointType>
     void direct_get_(
-      int point_id, core::table::DensePoint *entry) const {
+      int point_id, PointType *entry) const {
       if(this->IsIndexed() == false) {
         data_.MakeColumnVector(point_id, entry);
       }
@@ -434,7 +426,8 @@ class Table {
       }
     }
 
-    void direct_get_(int point_id, core::table::DensePoint *entry) {
+    template<typename PointType>
+    void direct_get_(int point_id, PointType *entry) {
       if(this->IsIndexed() == false) {
         data_.MakeColumnVector(point_id, entry);
       }
@@ -445,13 +438,15 @@ class Table {
       }
     }
 
+    template<typename PointType>
     void iterator_get_(
-      int reordered_position, core::table::DensePoint *entry) const {
+      int reordered_position, PointType *entry) const {
       data_.MakeColumnVector(reordered_position, entry);
     }
 
+    template<typename PointType>
     void iterator_get_(
-      int reordered_position, core::table::DensePoint *entry) {
+      int reordered_position, PointType *entry) {
       data_.MakeColumnVector(reordered_position, entry);
     }
 

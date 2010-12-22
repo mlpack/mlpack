@@ -46,8 +46,8 @@ void MixedLogitDCM<TableType>::Compute(
   // Compute the initial simulated log-likelihood, the gradient, and
   // the Hessian.
   double current_simulated_log_likelihood = table_.SimulatedLogLikelihood();
-  core::table::DensePoint current_gradient;
-  core::table::DenseMatrix current_hessian;
+  arma::vec current_gradient;
+  arma::mat current_hessian;
   table_.SimulatedLoglikelihoodGradient(&current_gradient);
   table_.SimulatedLoglikelihoodHessian(&current_hessian);
 

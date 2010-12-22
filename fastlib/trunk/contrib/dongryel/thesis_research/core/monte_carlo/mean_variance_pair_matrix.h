@@ -42,8 +42,8 @@ class MeanVariancePairVector {
       ptr_ = NULL;
     }
 
-    void push_back(const core::table::DensePoint &v) {
-      for(int i = 0; i < v.length(); i++) {
+    void push_back(const arma::vec &v) {
+      for(int i = 0; i < v.n_elem; i++) {
         ptr_[i].push_back(v[i]);
       }
     }
@@ -103,10 +103,10 @@ class MeanVariancePairMatrix {
       ptr_ = NULL;
     }
 
-    void push_back(const core::table::DenseMatrix &v) {
-      for(int j = 0; j < v.n_cols(); j++) {
-        for(int i = 0; i < v.n_rows(); i++) {
-          this->get(i, j).push_back(v.get(i, j));
+    void push_back(const arma::mat &v) {
+      for(int j = 0; j < v.n_cols; j++) {
+        for(int i = 0; i < v.n_rows; i++) {
+          this->get(i, j).push_back(v.at(i, j));
         }
       }
     }
