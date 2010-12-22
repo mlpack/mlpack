@@ -31,6 +31,11 @@ class DistributedLocalKMeans {
 
       public:
 
+        void Init(const core::table::DensePoint &point_in) {
+          centroid_.Copy(point_in);
+          core::table::DensePointToArmaVec(centroid_, &centroid_alias_);
+        }
+
         void Init(int length_in) {
           centroid_.Init(length_in);
           core::table::DensePointToArmaVec(centroid_, &centroid_alias_);
@@ -75,7 +80,7 @@ class DistributedLocalKMeans {
         }
 
         void Reset() {
-          centroid_alias_.zeros();
+          centroid_.SetZero();
           num_points_ = 0;
         }
 
@@ -201,7 +206,7 @@ class DistributedLocalKMeans {
 
       // Every process collects the local centers from the process ID
       // within the specified neighbor_radius.
-      local_centroid_.centroid().Copy(starting_centroid);
+      local_centroid_.Init(starting_centroid);
 
       // The list of centroids left of the current process.
       left_centroids_.resize(std::min(comm.rank(), neighbor_radius));
