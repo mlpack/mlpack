@@ -26,10 +26,12 @@ class TrustRegion {
 
   private:
 
-    void Evaluate_(const arma::vec &iterate);
+    double Evaluate_(const arma::vec &iterate) const;
 
     void ObtainStepDirection_(
-      arma::vec *step_direction, double *step_direction_norm);
+      double radius, const arma::vec &gradient,
+      const arma::mat &hessian, arma::vec *step_direction,
+      double *step_direction_norm);
 
     void ComputeCauchyPoint_(
       double radius, const arma::vec &gradient,
@@ -37,18 +39,18 @@ class TrustRegion {
 
     void ComputeDoglegDirection_(
       double radius, const arma::vec &gradient, const arma::mat &hessian,
-      arma::vec *p, double *delta_m);
+      arma::vec *p);
 
     void ComputeSteihaugDirection_(
       double radius, const arma::vec &gradient, const arma::mat &hessian,
-      arma::vec *p, double *delta_m);
+      arma::vec *p);
 
     void TrustRadiusUpdate_(
       double rho, double p_norm, double *current_radius);
 
     double ReductionRatio_(
       const arma::vec &iterate, const arma::vec &step,
-      const arma::vec &gradient, const arma::mat &hessian);
+      const arma::vec &gradient, const arma::mat &hessian) const;
 
   public:
 
