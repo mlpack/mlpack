@@ -14,10 +14,15 @@ namespace core {
 namespace optimization {
 template<typename FunctionType>
 class TrustRegion {
+  public:
+    enum TrustRegionSearchMethod {CAUCHY, DOGLEG, STEIHAUG};
+
   private:
     double max_radius_;
 
     FunctionType *function_;
+
+    TrustRegionSearchMethod search_method_;
 
   private:
 
@@ -53,7 +58,8 @@ class TrustRegion {
       max_radius_ = max_radius_in;
     }
 
-    void Init(FunctionType &function_in);
+    void Init(
+      FunctionType &function_in, TrustRegionSearchMethod search_method_in);
 
     void Optimize(int num_iterations, arma::vec *iterate);
 };

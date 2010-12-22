@@ -152,7 +152,9 @@ class DistributedTable: public boost::noncopyable {
     void ReplenishNodes_(std::vector<TreeType *> &top_leaf_nodes) {
 
       core::table::DensePoint tmp_point;
+      arma::vec tmp_point_alias;
       tmp_point.Init(top_leaf_nodes[0]->bound().center().length());
+      core::table::DensePointToArmaVec(tmp_point, &tmp_point_alias);
       int num_additional = table_outbox_group_comm_size_ -
                            top_leaf_nodes.size();
       int num_samples = std::max(1, core::math::RandInt(top_leaf_nodes.size()));
@@ -160,15 +162,17 @@ class DistributedTable: public boost::noncopyable {
       // Randomly add new dummy nodes with randomly chosen centroids
       // averaged.
       for(int j = 0; j < num_additional; j++) {
-        tmp_point.SetZero();
+        tmp_point_alias.zeros();
         for(int i = 0; i < num_samples; i++) {
-          tmp_point.SetZero();
-          core::math::AddTo(
+          arma::vec random_node_center;
+          core::table::DensePointToArmaVec(
             top_leaf_nodes[
               core::math::RandInt(top_leaf_nodes.size())]->bound().center(),
-            &tmp_point);
+            &random_node_center);
+          tmp_point_alias += random_node_center;
         }
-        core::math::Scale(1.0 / static_cast<double>(num_samples), &tmp_point);
+        tmp_point_alias = (1.0 / static_cast<double>(num_samples)) *
+                          tmp_point_alias;
         top_leaf_nodes.push_back(new TreeType());
         top_leaf_nodes[ top_leaf_nodes.size() - 1 ]->bound().center().Copy(
           tmp_point);

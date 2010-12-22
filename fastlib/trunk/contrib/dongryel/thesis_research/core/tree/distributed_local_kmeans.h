@@ -6,9 +6,9 @@
 #ifndef CORE_TREE_DISTRIBUTED_LOCAL_KMEANS_H
 #define CORE_TREE_DISTRIBUTED_LOCAL_KMEANS_H
 
+#include <armadillo>
 #include <boost/mpi.hpp>
 #include <boost/serialization/string.hpp>
-#include "core/math/linear_algebra.h"
 #include "core/table/dense_point.h"
 
 namespace core {
@@ -25,12 +25,15 @@ class DistributedLocalKMeans {
 
         core::table::DensePoint centroid_;
 
+        arma::vec centroid_alias_;
+
         int num_points_;
 
       public:
 
         void Init(int length_in) {
           centroid_.Init(length_in);
+          core::table::DensePointToArmaVec(centroid_, &centroid_alias_);
         }
 
         const core::table::DensePoint &centroid() const {
@@ -53,22 +56,26 @@ class DistributedLocalKMeans {
           double factor =
             static_cast<double>(num_points_) /
             static_cast<double>(num_points_ + centroid_in.num_points());
-          core::math::Scale(factor, &centroid_);
-          core::math::AddExpert(
-            1.0 - factor, centroid_in.centroid(), &centroid_);
+          arma::vec centroid_in_alias;
+          core::table::DensePointToArmaVec(
+            centroid_in.centroid(), &centroid_in_alias);
+          centroid_alias_ = factor * centroid_alias_ +
+                            (1.0 - factor) * centroid_in_alias;
           num_points_ = num_points_ + centroid_in.num_points();
         }
 
         void Add(const core::table::DensePoint &point_in) {
           double factor = static_cast<double>(num_points_) /
                           static_cast<double>(num_points_ + 1);
-          core::math::Scale(factor, &centroid_);
-          core::math::AddExpert(1.0 - factor, point_in, &centroid_);
+          arma::vec point_in_alias;
+          core::table::DensePointToArmaVec(point_in, &point_in_alias);
+          centroid_alias_ = factor * centroid_alias_;
+          centroid_alias_ += (1.0 - factor) * point_in_alias;
           num_points_++;
         }
 
         void Reset() {
-          centroid_.SetZero();
+          centroid_alias_.zeros();
           num_points_ = 0;
         }
 

@@ -6,7 +6,6 @@ set(SOURCES
   global.cc
   math_lib.h
   math_lib_impl.h
-  linear_algebra.h
   range.h
 )
 

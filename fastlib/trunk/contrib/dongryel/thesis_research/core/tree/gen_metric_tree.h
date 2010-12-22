@@ -9,7 +9,6 @@
 #include <vector>
 #include "ball_bound.h"
 #include "general_spacetree.h"
-#include "core/math/linear_algebra.h"
 #include "core/metric_kernels/abstract_metric.h"
 #include "core/table/dense_matrix.h"
 #include "core/table/memory_mapped_file.h"
@@ -69,11 +68,15 @@ class GenMetricTree {
 
       int end = begin + count;
       core::table::DensePoint col_point;
+      arma::vec bound_ref;
+      core::table::DensePointToArmaVec(bounds->center(), &bound_ref);
       for(int i = begin; i < end; i++) {
         matrix.MakeColumnVector(i, &col_point);
-        core::math::AddTo(col_point, &(bounds->center()));
+        arma::vec col_point_ref;
+        core::table::DensePointToArmaVec(col_point, &col_point_ref);
+        bound_ref += col_point_ref;
       }
-      core::math::Scale(1.0 / static_cast<double>(count), &(bounds->center()));
+      bound_ref = (1.0 / static_cast<double>(count)) * bound_ref;
 
       double furthest_distance;
       FurthestColumnIndex_(
@@ -88,12 +91,17 @@ class GenMetricTree {
       TreeType *node, TreeType *left, TreeType *right) {
 
       // Compute the weighted sum of the two pivots
-      node->bound().center().CopyValues(left->bound().center());
-      core::math::Scale(left->count(), &(node->bound().center()));
-      core::math::AddExpert(
-        right->count(), right->bound().center(), & (node->bound().center()));
-      core::math::Scale(
-        1.0 / static_cast<double>(node->count()), & (node->bound().center()));
+      arma::vec bound_ref;
+      core::table::DensePointToArmaVec(node->bound().center(), &bound_ref);
+      arma::vec left_bound_ref;
+      core::table::DensePointToArmaVec(left->bound().center(), &left_bound_ref);
+      arma::vec right_bound_ref;
+      core::table::DensePointToArmaVec(
+        right->bound().center(), &right_bound_ref);
+      bound_ref = left->count() * left_bound_ref +
+                  right->count() * right_bound_ref;
+      bound_ref =
+        (1.0 / static_cast<double>(node->count())) * bound_ref;
 
       double left_max_dist, right_max_dist;
       FurthestColumnIndex_(
