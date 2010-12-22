@@ -3,8 +3,8 @@
  * Build: cmake ..make
  * Build: g++ -lboost_program_options -pthread pole_pt.cc -o pole_pt
  * Build: g++ -I/scratch/app/boost/ -L/scratch/app/boost/lib -lboost_program_options -pthread pole_pt.cc -o pole_pt
- * Usage: ./pole_pt -d ../heart_scale -m ogd -c -e 30 -t 8
- *        ./pole_pt -d ../ijcnn1 -m ogd -c -e 10 -t 10
+ * Usage: ./pole_pt -d ../heart_scale -m ogd --random -calc_loss --bias --reg_factor 0.01 -e 30 -t 8
+ *        ./pole_pt -d ../ijcnn1 -m ogd --random --calc_loss --bias -c 1 -e 10 -t 10
  *
  */
 

@@ -11,46 +11,52 @@
 
 void OgdUpdate(SVEC *wvec, double &t, double &bias, double update, size_t tid) {
   SVEC *exp_sum;
-  t = t + 1.0;
   double eta; // learning rate
   if (l1.reg == 2) {
-    eta= 1.0 / (2* l1.reg_factor * t * num_train_exps);
+    eta= 1.0 / (l1.reg_factor * t);
   }
   else {
     eta = 1.0 / sqrt(t);
   }
   exp_sum = CreateEmptySvector(NULL);
   
-  for (size_t t=0; t<global.num_threads; t++) {
-    SparseAddOverwrite(exp_sum, l1.msg_pool[t]);
+  if (global.comm_method == 1) {
+    for (size_t t=0; t<global.num_threads; t++) {
+      SparseAddOverwrite(exp_sum, l1.msg_pool[t]);
+    }
+    SparseScaleOverwrite(exp_sum, eta/global.num_threads);
   }
-  SparseScaleOverwrite(exp_sum, eta/global.num_threads);
-  
-  /*
-  SparseAddOverwrite(exp_sum, l1.msg_pool[tid]);
-  SparseScaleOverwrite(exp_sum, eta);
-  */
+  else if (global.comm_method == 0) {
+    SparseAddOverwrite(exp_sum, l1.msg_pool[tid]);
+    SparseScaleOverwrite(exp_sum, eta);
+  }
 
   // update bias
-  bias += eta * update * 0.01;
+  if (global.use_bias) {
+    if (l1.reg == 2) {
+      bias -= eta * l1.reg_factor * bias;
+    }
+    bias += eta * update;
+  }
 
   SparseAddOverwrite(wvec, exp_sum);
   // dummy updating time
-  boost::this_thread::sleep(boost::posix_time::microseconds(1));
+  //boost::this_thread::sleep(boost::posix_time::microseconds(1));
+
+  t += 1.0;
 }
 
 void *OgdThread(void *in_par) {
   thread_param* par = (thread_param*) in_par;
   size_t tid = par->thread_id;
   EXAMPLE *ex;
-  T_VAL pred;
+  double pred;
   double update = 0.0;
 
   while (true) {
     switch (par->thread_state) {
     case 0: // waiting to read data
       if ( GetImmedExample(&ex, tid, l1) != 0 ) { // new example read
-	//cout << "state 0, tid: " << tid << ", feat0: " << ex->feats[0].wval <<endl;
 	par->thread_state = 1;
       }
       else { // all epoches finished
@@ -58,23 +64,28 @@ void *OgdThread(void *in_par) {
       }
       break;
     case 1:
-      pred = LinearPredict(l1.w_vec_pool[tid], ex, l1.bias_pool[tid]);
-      //cout << ex->label << " : " << pred << ", "<< l1.loss_func->getLoss((double)pred, (double)ex->label) << endl;
+      pred = LinearPredictBias(l1.w_vec_pool[tid], ex, l1.bias_pool[tid]);
+
       // want to calculate total loss ?
       if (global.calc_loss) {
-	if (pred != ex->label)
+	T_LBL pred_lbl = LinearPredictBiasLabel(l1.w_vec_pool[tid], ex, l1.bias_pool[tid]);
+	//cout << ex->label << " : " << pred_lbl << ", "<< l1.loss_func->getLoss(pred, (double)ex->label) << endl;
+	if (pred_lbl != ex->label) {
 	  l1.total_misp_pool[tid] = l1.total_misp_pool[tid] + 1;
-	l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.loss_func->getLoss((double)pred, (double)ex->label);
-	if (l1.reg == 2) {
-	  l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.reg_factor * SparseSqL2Norm(l1.w_vec_pool[tid]);
+	  l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.loss_func->getLoss(pred, (double)ex->label);
+	  if (l1.reg == 2) {
+	    l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.reg_factor * SparseSqL2Norm(l1.w_vec_pool[tid]) / 2;
+	  }
 	}
       }
+
       update = l1.loss_func->getUpdate(pred,(double)ex->label);
       // update message: [y_t x_t]^+_i
       SparseScale(l1.msg_pool[tid], update, ex);
+
       if (l1.reg == 2) {
-	// [-2\lambda w_i^t]
-	SparseAddExpertOverwrite(l1.msg_pool[tid], -2*l1.reg_factor, l1.w_vec_pool[tid]);
+	// [-2 \lambda \eta w_i^t]
+	SparseAddExpertOverwrite(l1.msg_pool[tid], -(1.0/l1.t_pool[tid]), l1.w_vec_pool[tid]);
       }
       //cout << "state 1, tid: " << tid << endl;
       // wait till all threads send their messages
@@ -109,6 +120,10 @@ void Ogd(learner &l) {
   pthread_barrier_init(&barrier_msg_all_sent, NULL, n_threads);
   pthread_barrier_init(&barrier_msg_all_used, NULL, n_threads);
 
+  // initial learning rate
+  double eta0 = sqrt(num_train_exps);
+  double t_init = 1.0 / (eta0 * l1.reg_factor);
+  
   for (t = 0; t < n_threads; t++) {
     // init thread parameters
     t_par[t] = (thread_param*)calloc(1, sizeof(thread_param));
@@ -119,7 +134,8 @@ void Ogd(learner &l) {
     l1.w_vec_pool[t] = CreateEmptySvector(NULL);
     l1.bias_pool[t] = 0.0;
     l1.msg_pool[t] = CreateEmptySvector(NULL);
-    l1.t_pool[t] = 0.001;
+    
+    l1.t_pool[t] = t_init;
     l1.scale_pool[t] = 1.0;
     l1.num_used_exp[t] = 0;
     l1.total_loss_pool[t] = 0.0;
@@ -140,9 +156,9 @@ void Ogd(learner &l) {
   for (t = 0; t < n_threads; t++) {
     t_m += l1.total_misp_pool[t];
     t_s += l1.num_used_exp[t];
-    cout << "t"<< t << ": " << l1.num_used_exp[t] << " samples processed. Misprediction: " << l1.total_misp_pool[t]<< ", percent: "<< (double)l1.total_misp_pool[t]/(double)l1.num_used_exp[t] << endl;
+    cout << "t"<< t << ": " << l1.num_used_exp[t] << " samples processed. Misprediction: " << l1.total_misp_pool[t]<< ", accuracy: "<< 1.0-(double)l1.total_misp_pool[t]/(double)l1.num_used_exp[t] << endl;
   }
-  cout << "Total mispredictions: " << t_m << ", percent: " << (double)t_m/(double)t_s << endl;
+  cout << "Total mispredictions: " << t_m << ", accuracy: " << 1.0-(double)t_m/(double)t_s<< endl;
   
 
   FinishLearner(l1, n_threads);

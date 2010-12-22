@@ -15,6 +15,8 @@ struct global_data{
 
   bool random_input; // randomly permute input examples.
 
+  bool use_bias; // use a bias term (mainly for linear learners)
+
   size_t num_features; // maximum number of features.
 
   size_t num_epoches; // number of training epoches.
@@ -26,6 +28,8 @@ struct global_data{
   size_t num_threads; // number of threads.
 
   pthread_t par_read_thread; // for parallel data parsing
+
+  int comm_method; // how agents communicate with each other
 
   //Prediction output
   int final_prediction_sink; // set to send global predictions to.

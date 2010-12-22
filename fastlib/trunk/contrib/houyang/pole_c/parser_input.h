@@ -80,7 +80,7 @@ void CountFile(string fn, size_t &num_examples, size_t &max_features_example, si
   size_t current_length, current_fe;
   
   if ((fp = fopen (fn.c_str(), "r")) == NULL) {
-    cerr << "Cannot open " << fn << ". Porgram stopped!"<< endl;
+    cerr << "Cannot open input example file: " << fn << ". Porgram stopped!"<< endl;
     exit (1);
   }
   current_length = 0;
@@ -184,9 +184,8 @@ int ReadFeatures(char *line, FEATURE *feat, T_LBL *label, size_t &num_feats, siz
       exit (1); 
     }
   }
-  (feat[wpos]).widx = 0;
   num_feats = wpos+1;
-
+  
   return(1);
 }
 
@@ -204,9 +203,8 @@ void SerialRead(string &data_fn, EXAMPLE **examples, size_t &num_examples) {
   // scan size of input data file
   CountFile(data_fn, max_num_examples, max_features_example, max_length_line);
   max_num_examples --;
-  max_features_example += 2;
+  max_features_example --;
   max_length_line += 2;
-  cout << max_num_examples<<endl;;
   (*examples) = (EXAMPLE *)my_malloc( sizeof(EXAMPLE)*max_num_examples ); // feature vectors
   line = (char *)my_malloc( sizeof(char)*max_length_line );
 
@@ -220,7 +218,7 @@ void SerialRead(string &data_fn, EXAMPLE **examples, size_t &num_examples) {
     swap(pm_idx[i], pm_idx[j]);
   }
   
-  feat_cache = (FEATURE *)my_malloc( sizeof(FEATURE)*(max_features_example+10) );
+  feat_cache = (FEATURE *)my_malloc( sizeof(FEATURE)*max_features_example );
 
   dnum=0;
   num_examples = 0;
@@ -232,6 +230,10 @@ void SerialRead(string &data_fn, EXAMPLE **examples, size_t &num_examples) {
   while((!feof(fp)) && fgets(line,(int)max_length_line,fp)) {
     if(line[0] == '#') {
       continue;  // comment line
+    }
+    for (i=0; i<max_features_example; i++) {
+      feat_cache[i].widx = -1;
+      feat_cache[i].wval = 0;
     }
     if(!ReadFeatures(line, feat_cache, &label_cache, wpos, max_features_example, &comment)) {
       cout << endl << "Cannot read line " << dnum << " !"<< endl << line << endl;
@@ -248,7 +250,7 @@ void SerialRead(string &data_fn, EXAMPLE **examples, size_t &num_examples) {
       num_examples = (feat_cache[wpos-2]).widx;
 
     // setup an example
-    CreateExample((*examples)+pm_idx[dnum], feat_cache, label_cache, comment, global.num_threads);
+    CreateExample((*examples)+pm_idx[dnum], feat_cache, label_cache, comment, max_features_example);
 
     //print_ex((*examples)+dnum);
     
@@ -293,6 +295,17 @@ void ReadData(boost_po::variables_map &vm) {
     //cout << train_exps[269].feats[0].wval << endl;
     //ring_size = num_train_exps;
     parsed_ct = num_train_exps;
+
+    if (vm.count("C")) {
+      l1.C = vm["C"].as<double>();
+      l1.reg_factor = 1.0 / (l1.C * num_train_exps);
+      cout << "C= " << l1.C << ", lambda= " << l1.reg_factor << endl << endl;
+    }
+    else if (vm.count("lambda")) {
+      l1.reg_factor = vm["lambda"].as<double>();
+      l1.C = 1.0 / (l1.reg_factor * num_train_exps);
+      cout << "lambda= " << l1.reg_factor << ", C= " << l1.C << endl << endl;
+    }
   }
 
   //delay_indicies = (size_t*) calloc(l1.num_threads, sizeof(size_t));

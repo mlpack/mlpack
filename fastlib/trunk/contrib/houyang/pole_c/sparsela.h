@@ -12,13 +12,22 @@
  * Sparse vector scaling: v <= scale * v
  */
 void SparseScaleOverwrite(SVEC *v, double scale) {
-  if (scale != 0.0) {
-    for (size_t i=0; i<v->num_nz_feats; i++) {
-      v->feats[i].wval = v->feats[i].wval * scale;
+  size_t i;
+  if (scale == 0.0) {
+    EmptyFeatures(v);
+  }
+  else if (scale == 1.0) {
+    return;
+  }
+  else if (scale == -1.0) {
+    for (i=0; i<v->num_nz_feats; i++) {
+      v->feats[i].wval = -(v->feats[i].wval);
     }
   }
   else {
-    EmptyFeatures(v);
+    for (i=0; i<v->num_nz_feats; i++) {
+      v->feats[i].wval = v->feats[i].wval * scale;
+    }
   }
 }
 
@@ -26,12 +35,26 @@ void SparseScaleOverwrite(SVEC *v, double scale) {
  * Sparse vector scaling: dest <= scale * x
  */
 void SparseScale(SVEC *dest, double scale, EXAMPLE *x) {
-  size_t nz_x = x->num_nz_feats;
   if (scale != 0.0) {
+    size_t i, nz_x = x->num_nz_feats;
     dest->feats = (FEATURE *)realloc(dest->feats, nz_x*sizeof(FEATURE));
-    for (size_t i=0; i<nz_x; i++) {
-      dest->feats[i].widx = x->feats[i].widx;
-      dest->feats[i].wval = x->feats[i].wval * scale;
+    if (scale == 1.0) {
+      for (i=0; i<nz_x; i++) {
+	dest->feats[i].widx = x->feats[i].widx;
+	dest->feats[i].wval = x->feats[i].wval;
+      }
+    }
+    else if (scale == -1.0) {
+      for (i=0; i<nz_x; i++) {
+	dest->feats[i].widx = x->feats[i].widx;
+	dest->feats[i].wval = -(x->feats[i].wval);
+      }
+    }
+    else {
+      for (i=0; i<nz_x; i++) {
+	dest->feats[i].widx = x->feats[i].widx;
+	dest->feats[i].wval = x->feats[i].wval * scale;
+      }
     }
     dest->num_nz_feats = nz_x;
   }
