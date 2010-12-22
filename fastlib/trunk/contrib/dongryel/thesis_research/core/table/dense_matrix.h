@@ -151,7 +151,7 @@ class DenseMatrix {
       return ptr_.get() + column_id * n_rows_;
     }
 
-    void CopyColumnVector(int column_id, double *point_out) const {
+    void MakeColumnVector(int column_id, double *point_out) const {
       const double *ptr = ptr_.get() + column_id * n_rows_;
       for(int i = 0; i < n_rows_; ptr++, i++) {
         point_out[i] = (*ptr);
