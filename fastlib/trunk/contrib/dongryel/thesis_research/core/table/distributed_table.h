@@ -633,22 +633,11 @@ class DistributedTable: public boost::noncopyable {
 
     void direct_get_(int point_id, double *entry) const {
       if(this->IsIndexed() == false) {
-        global_table_->data().CopyColumnVector(point_id, entry);
-      }
-      else {
-        global_table_->data().CopyColumnVector(
-          IndexUtil< IndexType>::Extract(
-            global_table_->new_from_old(), point_id), entry);
-      }
-    }
-
-    void direct_get_(int point_id, std::vector<double> *entry) const {
-      if(this->IsIndexed() == false) {
-        global_table_->data().MakeColumnVector(point_id, entry);
+        global_table_->data().MakeolumnVector(point_id, entry);
       }
       else {
         global_table_->data().MakeColumnVector(
-          IndexUtil<IndexType>::Extract(
+          IndexUtil< IndexType>::Extract(
             global_table_->new_from_old(), point_id), entry);
       }
     }
