@@ -26,6 +26,8 @@ class MixedLogitDCM {
 
   public:
 
+    int num_dimensions() const;
+
     double Evaluate(const arma::vec &iterate) const;
 
     void Gradient(const arma::vec &iterate, arma::vec *gradient_out) const;

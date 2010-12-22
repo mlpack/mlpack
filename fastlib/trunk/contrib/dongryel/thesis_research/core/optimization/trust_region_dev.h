@@ -19,16 +19,32 @@ TrustRegion<FunctionType>::TrustRegion() {
 }
 
 template<typename FunctionType>
+double TrustRegion<FunctionType>::Evaluate_(const arma::vec &vec) const {
+  return function_->Evaluate(vec);
+}
+
+template<typename FunctionType>
 double TrustRegion<FunctionType>::ReductionRatio_(
   const arma::vec &iterate, const arma::vec &step,
-  const arma::vec &gradient, const arma::mat &hessian) {
-  return 0;
+  const arma::vec &gradient, const arma::mat &hessian) const {
+
+  // The actual function value decrease.
+  arma::vec next_iterate = iterate + step;
+  double function_value_decrease =
+    this->Evaluate_(iterate) - this->Evaluate_(next_iterate);
+
+  // Predicted objective value decrease by the trust region model:
+  // -g'p-0.5*p'Hp
+  double decrease_predicted_by_model =
+    - arma::dot(gradient, step) -
+    0.5 * arma::as_scalar(arma::trans(step) * hessian * step);
+  return function_value_decrease / decrease_predicted_by_model;
 }
 
 template<typename FunctionType>
 void TrustRegion<FunctionType>::ComputeSteihaugDirection_(
   double radius, const arma::vec &gradient, const arma::mat &hessian,
-  arma::vec *p, double *delta_m) {
+  arma::vec *p) {
 
   // "Numerical optimization" p.171 CG-Steihaug
 
@@ -54,7 +70,6 @@ void TrustRegion<FunctionType>::ComputeSteihaugDirection_(
   if(r0_norm < epsilon) {
     p->set_size(gradient.n_elem);
     p->fill(0);
-    *delta_m = 0;
     return;
   }
 
@@ -125,10 +140,6 @@ void TrustRegion<FunctionType>::ComputeSteihaugDirection_(
     z = z_next;
 
   } // end of the main loop.
-
-  // delta_m calculation -g'p-0.5*p'Hp
-  double quadratic_form2 = arma::as_scalar(arma::trans(*p) * hessian * (*p));
-  (*delta_m) = - arma::dot(gradient, *p) - 0.5 * quadratic_form2;
 }
 
 template<typename FunctionType>
@@ -148,7 +159,7 @@ void TrustRegion<FunctionType>::ComputeCauchyPoint_(
   // The gradient norm.
   double gradient_norm = arma::norm(gradient, 2);
 
-  if(quadratic_form > 0) {
+  if(quadratic_form > std::numeric_limits<double>::epsilon()) {
 
     // Equation 4.12 on Page 72.
     tau = std::min(
@@ -161,11 +172,13 @@ void TrustRegion<FunctionType>::ComputeCauchyPoint_(
 template<typename FunctionType>
 void TrustRegion<FunctionType>::ComputeDoglegDirection_(
   double radius, const arma::vec &gradient, const arma::mat &hessian,
-  arma::vec *p, double *delta_m) {
+  arma::vec *p) {
 
   // Eigendecompose the Hessian to find the eigenvalues. Here is a
   // point where the Hessian might want to exploit special block
-  // structures to avoid dense matrices.
+  // structures to avoid dense matrices. Gershgorin circle theorem
+  // might help avoid the expensive eigendecomposition at this point
+  // as well.
   arma::vec eigenvalues;
   arma::mat eigenvectors;
   arma::eig_sym(eigenvalues, eigenvectors, hessian);
@@ -249,10 +262,6 @@ void TrustRegion<FunctionType>::ComputeDoglegDirection_(
     } // end of the full step not being feasible case.
 
   } // end of the positive definite Hessian case.
-
-  // delta_m calculation -g'p-0.5*p'Hp
-  double quadratic_form2 = arma::as_scalar(arma::trans(*p) * hessian * (*p));
-  (*delta_m) = - arma::dot(gradient, *p) - 0.5 * quadratic_form2;
 }
 
 template<typename FunctionType>
@@ -271,11 +280,25 @@ void TrustRegion<FunctionType>::TrustRadiusUpdate_(
 
 template<typename FunctionType>
 void TrustRegion<FunctionType>::ObtainStepDirection_(
+  double trust_region_radius,
+  const arma::vec &gradient, const arma::mat &hessian,
   arma::vec *step_direction, double *step_direction_norm) {
 
   switch(search_method_) {
-
+    case CAUCHY:
+      ComputeCauchyPoint_(
+        trust_region_radius, gradient, hessian, step_direction);
+      break;
+    case DOGLEG:
+      ComputeDoglegDirection_(
+        trust_region_radius, gradient, hessian, step_direction);
+      break;
+    case STEIHAUG:
+      ComputeSteihaugDirection_(
+        trust_region_radius, gradient, hessian, step_direction);
+      break;
   }
+  *step_direction_norm = arma::norm(*step_direction, 2);
 }
 
 template<typename FunctionType>
@@ -308,13 +331,23 @@ void TrustRegion<FunctionType>::Optimize(
   // Step direction.
   arma::vec p;
 
+  // The current gradient and the Hessian.
+  arma::vec gradient;
+  arma::mat hessian;
+  function_->Gradient(*iterate, &gradient);
+  function_->Hessian(*iterate, &hessian);
+
   // The main optimization loop.
   for(
     it_num = 0; optimize_until_convergence ||
     it_num < num_iterations; it_num++) {
 
-    // Obtain the step direction approximately.
-    ObtainStepDirection_(&p, &p_norm);
+    // Obtain the step direction by solving Equation 4.3
+    // approximately.
+    ObtainStepDirection_(current_radius, gradient, hessian, &p, &p_norm);
+
+    // Get the reduction ratio rho (Equation 4.4)
+    double rho = ReductionRatio_(*iterate, p, gradient, hessian);
 
     TrustRadiusUpdate_(rho, p_norm, &current_radius);
 

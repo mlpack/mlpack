@@ -128,6 +128,13 @@ class DCMTable {
 
   public:
 
+    /** @brief Returns the number of parameters that generate each
+     *         attribute.
+     */
+    int num_parameters() const {
+      return distribution_->num_parameters();
+    }
+
     /** @brief Returns the number of attributes for a given discrete
      *         choice.
      */

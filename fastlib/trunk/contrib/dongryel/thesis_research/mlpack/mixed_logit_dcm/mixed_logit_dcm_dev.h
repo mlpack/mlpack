@@ -13,6 +13,28 @@ namespace mlpack {
 namespace mixed_logit_dcm {
 
 template<typename TableType>
+int MixedLogitDCM<TableType>::num_dimensions() const {
+  return table_.num_parameters();
+}
+
+template<typename TableType>
+double MixedLogitDCM<TableType>::Evaluate(const arma::vec &iterate) const {
+
+}
+
+template<typename TableType>
+void MixedLogitDCM<TableType>::Gradient(
+  const arma::vec &iterate, arma::vec *gradient_out) const {
+
+}
+
+template<typename TableType>
+void MixedLogitDCM<TableType>::Hessian(
+  const arma::vec &iterate, arma::mat *hessian_out) const {
+
+}
+
+template<typename TableType>
 void MixedLogitDCM<TableType>::Init(
   mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
   TableType > &arguments_in) {
@@ -53,13 +75,12 @@ void MixedLogitDCM<TableType>::Compute(
 
   // Initialize the starting optimization parameter $\theta_0$.
   arma::vec theta;
-  theta.set_size(arguments_in.distribution_->num_parameters());
-  theta.fill(0.0);
 
   // The trust region optimizer.
-  // core::optimization::TrustRegion trust_region;
-  // trust_region.set_max_radius(core::math::LengthEuclidean(current_gradient));
-  // trust_region.Optimize(-1, &theta);
+  typedef MixedLogitDCM<TableType> FunctionType;
+  core::optimization::TrustRegion<FunctionType> trust_region;
+  trust_region.set_max_radius(arma::norm(current_gradient, 2));
+  trust_region.Optimize(-1, &theta);
 }
 
 template<typename TableType>
