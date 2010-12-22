@@ -7,7 +7,6 @@
 #define CORE_OPTIMIZATION_TRUST_REGION_DEV_H
 
 #include "core/optimization/trust_region.h"
-#include "core/math/linear_algebra.h"
 
 namespace core {
 namespace optimization {
@@ -20,8 +19,10 @@ TrustRegion<FunctionType>::TrustRegion() {
 }
 
 template<typename FunctionType>
-double TrustRegion<FunctionType>::ReductionRatio_(const arma::vec &iterate, const arma::vec &step,) {
-
+double TrustRegion<FunctionType>::ReductionRatio_(
+  const arma::vec &iterate, const arma::vec &step,
+  const arma::vec &gradient, const arma::mat &hessian) {
+  return 0;
 }
 
 template<typename FunctionType>
@@ -119,9 +120,9 @@ void TrustRegion<FunctionType>::ComputeSteihaugDirection_(
     d_next = beta_next * d - r_next;
 
     // Set the variables for the next iteration.
-    core::math::CopyValues(r_next, &r);
-    core::math::CopyValues(d_next, &d);
-    core::math::CopyValues(z_next, &z);
+    r = r_next;
+    d = d_next;
+    z = z_next;
 
   } // end of the main loop.
 

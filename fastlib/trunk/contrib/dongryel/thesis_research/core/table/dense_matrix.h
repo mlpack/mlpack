@@ -6,6 +6,7 @@
 #ifndef CORE_TABLE_DENSE_MATRIX_H
 #define CORE_TABLE_DENSE_MATRIX_H
 
+#include <armadillo>
 #include "dense_point.h"
 #include "memory_mapped_file.h"
 #include <boost/interprocess/offset_ptr.hpp>
@@ -166,6 +167,25 @@ class DenseMatrix {
     void MakeColumnVector(int i, core::table::DensePoint *point_out) {
       point_out->Alias(
         ptr_.get() + i * n_rows_, n_rows_);
+    }
+
+    void MakeColumnVector(
+      int i, arma::vec *vec_out) const {
+      const_cast<arma::u32 &>(vec_out->n_rows) = n_rows_;
+      const_cast<arma::u32 &>(vec_out->n_cols) = 1;
+      const_cast<arma::u32 &>(vec_out->n_elem) = n_rows_;
+      const_cast<bool &>(vec_out->use_aux_mem) = true;
+      const_cast<double *&>(vec_out->mem) =
+        const_cast<double *>(ptr_.get() + i * n_rows_);
+    }
+
+    void MakeColumnVector(int i, arma::vec *vec_out) {
+      const_cast<arma::u32 &>(vec_out->n_rows) = n_rows_;
+      const_cast<arma::u32 &>(vec_out->n_cols) = 1;
+      const_cast<arma::u32 &>(vec_out->n_elem) = n_rows_;
+      const_cast<bool &>(vec_out->use_aux_mem) = true;
+      const_cast<double *&>(vec_out->mem) =
+        const_cast<double *>(ptr_.get() + i * n_rows_);
     }
 };
 };

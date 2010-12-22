@@ -6,6 +6,7 @@
 #ifndef MLPACK_MIXED_LOGIT_DCM_DCM_DISTRIBUTION_H
 #define MLPACK_MIXED_LOGIT_DCM_DCM_DISTRIBUTION_H
 
+#include <armadillo>
 #include "core/table/dense_point.h"
 #include "core/table/dense_matrix.h"
 
@@ -19,7 +20,7 @@ namespace mixed_logit_dcm {
 template<typename DCMTableType>
 class MixedLogitDCMDistribution {
   private:
-    core::table::DensePoint parameters_;
+    arma::vec parameters_;
 
   public:
 
@@ -33,14 +34,14 @@ class MixedLogitDCMDistribution {
      */
     void AttributeGradientWithRespectToParameter(
       int num_attributes,
-      core::table::DenseMatrix *gradient_out) const {
+      arma::mat *gradient_out) const {
 
-      gradient_out->Init(this->num_parameters(), num_attributes);
+      gradient_out->set_size(this->num_parameters(), num_attributes);
 
       for(int j = 0; j < num_attributes; j++) {
         for(int i = 0; i < this->num_parameters(); i++) {
-          gradient_out->set(
-            i, j, this->AttributeGradientWithRespectToParameter(i, j));
+          gradient_out->at(
+            i, j) = this->AttributeGradientWithRespectToParameter(i, j);
         }
       }
     }
@@ -51,21 +52,20 @@ class MixedLogitDCMDistribution {
 
     void ChoiceProbabilityWeightedAttributeVector(
       DCMTableType *dcm_table_in, int person_index,
-      const core::table::DensePoint &choice_probabilities,
-      core::table::DensePoint *choice_prob_weighted_attribute_vector) const {
+      const arma::vec &choice_probabilities,
+      arma::vec *choice_prob_weighted_attribute_vector) const {
 
       // Get the number of discrete choices for the given person.
       int num_discrete_choices = dcm_table_in->num_discrete_choices(
                                    person_index);
-      choice_prob_weighted_attribute_vector->Init(
+      choice_prob_weighted_attribute_vector->set_size(
         dcm_table_in->num_attributes());
-      choice_prob_weighted_attribute_vector->SetZero();
-      for(int i = 0; i < choice_probabilities.length(); i++) {
-        core::table::DensePoint attribute_vector;
+      choice_prob_weighted_attribute_vector->zeros();
+      for(int i = 0; i < choice_probabilities.n_elem; i++) {
+        arma::vec attribute_vector;
         dcm_table_in->get_attribute_vector(person_index, i, &attribute_vector);
-        core::math::AddExpert(
-          choice_probabilities[i], attribute_vector,
-          choice_prob_weighted_attribute_vector);
+        (*choice_prob_weighted_attribute_vector) +=
+          choice_probabilities[i] * attribute_vector;
       }
     }
 
@@ -77,12 +77,12 @@ class MixedLogitDCMDistribution {
       DCMTableType *dcm_table_in,
       int person_index, int discrete_choice_index,
       int row_index, int col_index,
-      const core::table::DensePoint &choice_probabilities,
-      const core::table::DensePoint &choice_prob_weighted_attribute_vector) const {
+      const arma::vec &choice_probabilities,
+      const arma::vec &choice_prob_weighted_attribute_vector) const {
 
       double choice_probability = choice_probabilities[discrete_choice_index];
       double unnormalized_entry = 0;
-      core::table::DensePoint discrete_choice_attribute_vector;
+      arma::vec discrete_choice_attribute_vector;
       dcm_table_in->get_attribute_vector(
         person_index, discrete_choice_index, &discrete_choice_attribute_vector);
 
@@ -106,7 +106,7 @@ class MixedLogitDCMDistribution {
       int num_discrete_choices = dcm_table_in->num_discrete_choices(
                                    person_index);
       for(int i = 0; i < num_discrete_choices; i++) {
-        core::table::DensePoint attribute_vector;
+        arma::vec attribute_vector;
         dcm_table_in->get_attribute_vector(person_index, i, &attribute_vector);
         third_part += attribute_vector[row_index] * choice_probabilities[i] *
                       attribute_vector[col_index];
@@ -119,19 +119,19 @@ class MixedLogitDCMDistribution {
     void ChoiceProbabilityHessianWithRespectToAttribute(
       DCMTableType *dcm_table_in,
       int person_index, int discrete_choice_index,
-      const core::table::DensePoint &choice_probabilities,
-      const core::table::DensePoint &choice_prob_weighted_attribute_vector,
-      core::table::DenseMatrix *hessian_out) const {
+      const arma::vec &choice_probabilities,
+      const arma::vec &choice_prob_weighted_attribute_vector,
+      arma::mat *hessian_out) const {
 
-      hessian_out->Init(
+      hessian_out->set_size(
         dcm_table_in->num_attributes(), dcm_table_in->num_attributes());
       for(int j = 0; j < dcm_table_in->num_attributes(); j++) {
         for(int i = 0; i < dcm_table_in->num_attributes(); i++) {
-          hessian_out->set(
-            i, j,
-            this->ChoiceProbabilityHessianWithRespectToAttribute(
-              dcm_table_in, person_index, discrete_choice_index, i, j,
-              choice_probabilities, choice_prob_weighted_attribute_vector));
+          hessian_out->at(
+            i, j) =
+              this->ChoiceProbabilityHessianWithRespectToAttribute(
+                dcm_table_in, person_index, discrete_choice_index, i, j,
+                choice_probabilities, choice_prob_weighted_attribute_vector);
         }
       }
     }
@@ -143,33 +143,33 @@ class MixedLogitDCMDistribution {
     void HessianProducts(
       DCMTableType *dcm_table_in,
       int person_index, int discrete_choice_index,
-      const core::table::DensePoint &choice_probabilities,
-      const core::table::DensePoint &choice_prob_weighted_attribute_vector,
-      core::table::DenseMatrix *hessian_first_part,
-      core::table::DensePoint *hessian_second_part) const {
+      const arma::vec &choice_probabilities,
+      const arma::vec &choice_prob_weighted_attribute_vector,
+      arma::mat *hessian_first_part,
+      arma::vec *hessian_second_part) const {
 
       // Compute $\frac{\partial}{\partial \theta} \beta^{\nu}(\theta)
       // \frac{\partial^2}{\partial \beta^2} P_{i j_i^*} (
       // \beta^{\nu}(\theta)) ( \frac{\partial}{\partial \theta}
       // \beta^{\nu}(\theta) )'$.
-      core::table::DenseMatrix first;
-      core::table::DenseMatrix second;
+      arma::mat first;
+      arma::mat second;
       this->AttributeGradientWithRespectToParameter(
         dcm_table_in->num_attributes(), &first);
       this->ChoiceProbabilityHessianWithRespectToAttribute(
         dcm_table_in, person_index, discrete_choice_index,
         choice_probabilities, choice_prob_weighted_attribute_vector, second);
-      core::math::MatrixTripleProduct(first, second, hessian_first_part);
+      (*hessian_first_part) = first * second * arma::trans(first);
 
       // Compute $\frac{\partial}{\partial \theta}
       // \beta^{\nu}(\theta)\frac{\partial}{\partial \beta} P_{i j_i^*} (
       // \beta^{\nu}(\theta))$.
-      core::table::DensePoint third;
+      arma::vec third;
       this->ChoiceProbabilityGradientWithRespectToAttribute(
         dcm_table_in, person_index, discrete_choice_index,
         choice_probabilities, choice_prob_weighted_attribute_vector,
         third);
-      core::math::MulInit(first, third, hessian_second_part);
+      (*hessian_second_part) = first * third;
     }
 
     /** @brief Computes $\frac{\partial}{\partial \beta}
@@ -178,22 +178,21 @@ class MixedLogitDCMDistribution {
     void ChoiceProbabilityGradientWithRespectToAttribute(
       DCMTableType *dcm_table_in,
       int person_index, int discrete_choice_index,
-      const core::table::DensePoint &choice_probabilities,
-      const core::table::DensePoint &choice_prob_weighted_attribute_vector,
-      core::table::DensePoint *gradient_out) const {
+      const arma::vec &choice_probabilities,
+      const arma::vec &choice_prob_weighted_attribute_vector,
+      arma::vec *gradient_out) const {
 
       // Get the discrete choice attribute vector.
-      core::table::DensePoint discrete_choice_attribute;
+      arma::vec discrete_choice_attribute;
       dcm_table_in->get_attribute_vector(
         person_index, discrete_choice_index, &discrete_choice_attribute);
-      core::math::SubInit(
-        choice_prob_weighted_attribute_vector,
-        discrete_choice_attribute, gradient_out);
+      (*gradient_out) = discrete_choice_attribute -
+                        choice_prob_weighted_attribute_vector;
 
       // Scale the gradient by the choice probability of the discrete
       // choice.
-      core::math::Scale(
-        choice_probabilities[discrete_choice_index], gradient_out);
+      (*gradient_out) =
+        choice_probabilities[discrete_choice_index] * (*gradient_out);
     }
 
     /** @brief Computes $\frac{\partial}{\partial \theta}
@@ -204,31 +203,29 @@ class MixedLogitDCMDistribution {
     void ProductAttributeGradientWithRespectToParameter(
       DCMTableType *dcm_table_in,
       int person_index, int discrete_choice_index,
-      const core::table::DensePoint &choice_probabilities,
-      const core::table::DensePoint &choice_prob_weighted_attribute_vector,
-      core::table::DensePoint *product_out) const {
+      const arma::vec &choice_probabilities,
+      const arma::vec &choice_prob_weighted_attribute_vector,
+      arma::vec *product_out) const {
 
       // Initialize the product.
-      product_out->Init(this->num_parameters());
+      product_out->set_size(this->num_parameters());
 
       // Compute the gradient matrix times vector for the person's
       // discrete choice.
-      core::table::DensePoint attribute_vector;
+      arma::vec attribute_vector;
       dcm_table_in->get_attribute_vector(
         person_index, discrete_choice_index, &attribute_vector);
 
       // Compute $\bar{X}_i res_{i,j_i^*}(\beta)$.
-      core::table::DensePoint attribute_vec_sub_choice_prob_weighted_vec;
-      core::math::SubInit(
-        choice_prob_weighted_attribute_vector, attribute_vector,
-        &attribute_vec_sub_choice_prob_weighted_vec);
+      arma::vec attribute_vec_sub_choice_prob_weighted_vec =
+        attribute_vector - choice_prob_weighted_attribute_vector;
 
       // For each row index of the gradient,
       for(int k = 0; k < this->num_parameters(); k++) {
 
         // For each column index of the gradient,
         double dot_product = 0;
-        for(int j = 0; j < attribute_vector.length(); j++) {
+        for(int j = 0; j < attribute_vector.n_elem; j++) {
           dot_product += attribute_vec_sub_choice_prob_weighted_vec[j] *
                          this->AttributeGradientWithRespectToParameter(k, j);
         }

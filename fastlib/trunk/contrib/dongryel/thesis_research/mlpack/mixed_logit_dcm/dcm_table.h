@@ -96,7 +96,7 @@ class DCMTable {
       arma::vec *choice_probabilities) {
 
       int num_discrete_choices = this->num_discrete_choices(person_index);
-      choice_probabilities->Init(num_discrete_choices);
+      choice_probabilities->set_size(num_discrete_choices);
 
       // First compute the normalizing sum.
       double normalizing_sum = 0.0;
@@ -106,15 +106,12 @@ class DCMTable {
 
         // Grab each attribute vector and take a dot product between
         // it and the parameter vector.
-        core::table::DensePoint attribute_for_discrete_choice;
+        arma::vec attribute_for_discrete_choice;
         this->get_attribute_vector(
           person_index, discrete_choice_index, &attribute_for_discrete_choice);
-        arma::vec attribute_for_discrete_choice_alias;
-        core::table::DensePointToArmaVec(
-          attribute_for_discrete_choice, attribute_for_discrete_choice_alias);
         double dot_product =
           arma::dot(
-            parameter_vector, attribute_for_discrete_choice_alias);
+            parameter_vector, attribute_for_discrete_choice);
         double unnormalized_probability = exp(dot_product);
         normalizing_sum += unnormalized_probability;
         (*choice_probabilities)[discrete_choice_index] =
@@ -229,13 +226,13 @@ class DCMTable {
         // Get the gradient for the person.
         const core::monte_carlo::MeanVariancePairVector &gradient =
           this->simulated_loglikelihood_gradient(person_index);
-        core::table::DensePoint gradient_vector;
+        arma::vec gradient_vector;
         gradient.sample_means(&gradient_vector);
 
         // Add the inverse probability weighted gradient vector for
         // the current person to the total tally.
-        (*likelihood_gradient) +=
-          inverse_simulated_choice_probability * gradient_vector;
+        (*likelihood_gradient) = (*likelihood_gradient) +
+                                 inverse_simulated_choice_probability * gradient_vector;
       }
 
       // Divide by the number of people.
@@ -301,7 +298,7 @@ class DCMTable {
       cumulative_num_discrete_choices_[0] = 0;
       for(unsigned int i = 1; i < cumulative_num_discrete_choices_.size();
           i++) {
-        core::table::DensePoint point;
+        arma::vec point;
         argument_in.num_discrete_choices_per_person_->get(i - 1, &point);
         int num_choices_for_current_person = static_cast<int>(point[1]);
         cumulative_num_discrete_choices_[i] =
@@ -312,7 +309,7 @@ class DCMTable {
       // Do a quick check to make sure that the cumulative
       // distribution on the number of choices match up the total
       // number of attribute vectors. Otherwise, quit.
-      core::table::DensePoint last_count_vector;
+      arma::vec last_count_vector;
       argument_in.num_discrete_choices_per_person_->get(
         cumulative_num_discrete_choices_.size() - 1, &last_count_vector);
       int last_count = static_cast<int>(last_count_vector[0]);
@@ -357,17 +354,17 @@ class DCMTable {
      *         probabilities can be updated.
      */
     void AddIntegrationSample(
-      int person_index, const core::table::DensePoint &parameter_vector) {
+      int person_index, const arma::vec &parameter_vector) {
 
       // Given the parameter vector, compute the choice probabilities.
-      core::table::DensePoint choice_probabilities;
+      arma::vec choice_probabilities;
       ComputeChoiceProbabilities_(
         person_index, parameter_vector, &choice_probabilities);
 
       // Given the parameter vector, compute the products between the
       // gradient of the $\beta$ with respect to $\theta$ and
       // $\bar{X}_i res_{i,j_i^*}(\beta^v(\theta))$.
-      core::table::DensePoint beta_gradient_product;
+      arma::vec beta_gradient_product;
 
       // j_i^* index.
       int discrete_choice_index = this->get_discrete_choice_index(person_index);
@@ -389,8 +386,8 @@ class DCMTable {
 
       // Update the Hessian of the simulated loglikelihood for the
       // given person.
-      core::table::DenseMatrix hessian_first_part;
-      core::table::DensePoint hessian_second_part;
+      arma::mat hessian_first_part;
+      arma::vec hessian_second_part;
       distribution_->HessianProducts(
         this, person_index, discrete_choice_index, parameter_vector,
         choice_probabilities, &hessian_first_part, &hessian_second_part);
@@ -414,7 +411,7 @@ class DCMTable {
      */
     void get_attribute_vector(
       int person_index, int discrete_choice_index,
-      core::table::DensePoint *attribute_for_discrete_choice_out) {
+      arma::vec *attribute_for_discrete_choice_out) {
 
       int index = cumulative_num_discrete_choices_[person_index] +
                   discrete_choice_index;

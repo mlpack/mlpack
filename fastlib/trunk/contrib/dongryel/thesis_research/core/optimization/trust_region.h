@@ -46,6 +46,10 @@ class TrustRegion {
     void TrustRadiusUpdate_(
       double rho, double p_norm, double *current_radius);
 
+    double ReductionRatio_(
+      const arma::vec &iterate, const arma::vec &step,
+      const arma::vec &gradient, const arma::mat &hessian);
+
   public:
 
     TrustRegion();
