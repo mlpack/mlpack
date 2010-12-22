@@ -16,6 +16,12 @@ template<typename FunctionType>
 TrustRegion<FunctionType>::TrustRegion() {
   max_radius_ = 10.0;
   function_ = NULL;
+  search_method_ = CAUCHY;
+}
+
+template<typename FunctionType>
+double TrustRegion<FunctionType>::ReductionRatio_(const arma::vec &iterate, const arma::vec &step,) {
+
 }
 
 template<typename FunctionType>
@@ -266,12 +272,16 @@ template<typename FunctionType>
 void TrustRegion<FunctionType>::ObtainStepDirection_(
   arma::vec *step_direction, double *step_direction_norm) {
 
+  switch(search_method_) {
 
+  }
 }
 
 template<typename FunctionType>
-void TrustRegion<FunctionType>::Init(FunctionType &function_in) {
+void TrustRegion<FunctionType>::Init(
+  FunctionType &function_in, TrustRegionSearchMethod search_method_in) {
   function_ = &function_in;
+  search_method_ = search_method_in;
 }
 
 template<typename FunctionType>

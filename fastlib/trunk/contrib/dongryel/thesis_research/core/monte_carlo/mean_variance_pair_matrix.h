@@ -6,6 +6,7 @@
 #ifndef CORE_MONTE_CARLO_MEAN_VARIANCE_PAIR_MATRIX_H
 #define CORE_MONTE_CARLO_MEAN_VARIANCE_PAIR_MATRIX_H
 
+#include <armadillo>
 #include "core/monte_carlo/mean_variance_pair.h"
 
 namespace core {
@@ -55,8 +56,8 @@ class MeanVariancePairVector {
              new core::monte_carlo::MeanVariancePair[n_elements_];
     }
 
-    void sample_means(core::table::DensePoint *point_out) const {
-      point_out->Init(n_elements_);
+    void sample_means(arma::vec *point_out) const {
+      point_out->set_size(n_elements_);
       for(int i = 0; i < n_elements_; i++) {
         (*point_out)[i] = ptr_[i].sample_mean();
       }
@@ -110,11 +111,11 @@ class MeanVariancePairMatrix {
       }
     }
 
-    void sample_means(core::table::DenseMatrix *point_out) const {
-      point_out->Init(n_rows_, n_cols_);
+    void sample_means(arma::mat *point_out) const {
+      point_out->set_size(n_rows_, n_cols_);
       for(int j = 0; j < n_cols_; j++) {
         for(int i = 0; i < n_rows_; i++) {
-          point_out->set(i, j, this->get(i, j).sample_mean());
+          point_out->at(i, j) = this->get(i, j).sample_mean();
         }
       }
     }

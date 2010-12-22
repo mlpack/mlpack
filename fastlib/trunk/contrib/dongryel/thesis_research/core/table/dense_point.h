@@ -8,6 +8,7 @@
 #ifndef CORE_TABLE_DENSE_POINT_H
 #define CORE_TABLE_DENSE_POINT_H
 
+#include <armadillo>
 #include <vector>
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/serialization/serialization.hpp>
@@ -175,6 +176,16 @@ class DensePoint {
       printf("\n");
     }
 };
+
+template<typename DensePointType>
+static void DensePointToArmaVec(
+  const DensePointType &point_in, arma::vec *vec_out) {
+  const_cast<arma::u32 &>(vec_out->n_rows) = point_in.length();
+  const_cast<arma::u32 &>(vec_out->n_cols) = 1;
+  const_cast<arma::u32 &>(vec_out->n_elem) = point_in.length();
+  const_cast<bool &>(vec_out->use_aux_mem) = true;
+  const_cast<double *&>(vec_out->mem) = const_cast<double *>(point_in.ptr());
+}
 };
 };
 

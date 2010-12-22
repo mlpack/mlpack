@@ -6,10 +6,10 @@
 #ifndef MLPACK_MIXED_LOGIT_DCM_DCM_TABLE_H
 #define MLPACK_MIXED_LOGIT_DCM_DCM_TABLE_H
 
+#include <armadillo>
 #include <algorithm>
 #include <vector>
 #include "core/table/table.h"
-#include "core/math/linear_algebra.h"
 #include "core/monte_carlo/mean_variance_pair.h"
 #include "core/monte_carlo/mean_variance_pair_matrix.h"
 #include "mlpack/mixed_logit_dcm/mixed_logit_dcm_distribution.h"
@@ -92,8 +92,8 @@ class DCMTable {
      *         form.
      */
     void ComputeChoiceProbabilities_(
-      int person_index, const core::table::DensePoint &parameter_vector,
-      core::table::DensePoint *choice_probabilities) {
+      int person_index, const arma::vec &parameter_vector,
+      arma::vec *choice_probabilities) {
 
       int num_discrete_choices = this->num_discrete_choices(person_index);
       choice_probabilities->Init(num_discrete_choices);
@@ -109,8 +109,12 @@ class DCMTable {
         core::table::DensePoint attribute_for_discrete_choice;
         this->get_attribute_vector(
           person_index, discrete_choice_index, &attribute_for_discrete_choice);
-        double dot_product = core::math::Dot(
-                               parameter_vector, attribute_for_discrete_choice);
+        arma::vec attribute_for_discrete_choice_alias;
+        core::table::DensePointToArmaVec(
+          attribute_for_discrete_choice, attribute_for_discrete_choice_alias);
+        double dot_product =
+          arma::dot(
+            parameter_vector, attribute_for_discrete_choice_alias);
         double unnormalized_probability = exp(dot_product);
         normalizing_sum += unnormalized_probability;
         (*choice_probabilities)[discrete_choice_index] =
@@ -152,11 +156,11 @@ class DCMTable {
      *         computation of Equation 8.14 in the paper.
      */
     void SimulatedLoglikelihoodHessian(
-      core::table::DenseMatrix *likelihood_hessian) const {
+      arma::mat *likelihood_hessian) const {
 
-      likelihood_hessian->Init(
+      likelihood_hessian->set_size(
         distribution_->num_parameters(), distribution_->num_parameters());
-      likelihood_hessian->SetZero();
+      likelihood_hessian->zeros();
 
       // For each active person,
       for(int i = 0; i < num_active_people_; i++) {
@@ -178,23 +182,23 @@ class DCMTable {
           simulated_loglikelihood_hessians_[person_index].first;
         const core::monte_carlo::MeanVariancePairVector &hessian_second_part =
           simulated_loglikelihood_hessians_[person_index].second;
-        core::table::DenseMatrix hessian_first;
-        core::table::DensePoint hessian_second;
+        arma::mat hessian_first;
+        arma::vec hessian_second;
         hessian_first_part.sample_means(&hessian_first);
         hessian_second_part.sample_means(&hessian_second);
 
         // Construct the contribution on the fly.
-        core::math::AddExpert(
-          inverse_simulated_choice_probability,
-          hessian_first, likelihood_hessian);
-        core::math::MulExpert(
-          - core::math::Sqr(inverse_simulated_choice_probability),
-          hessian_second, hessian_second, likelihood_hessian);
+        (*likelihood_hessian) += inverse_simulated_choice_probability *
+                                 hessian_first;
+        (*likelihood_hessian) +=
+          (- core::math::Sqr(inverse_simulated_choice_probability)) *
+          hessian_second * arma::trans(hessian_second);
       }
 
       // Divide by the number of people.
-      core::math::Scale(
-        1.0 / static_cast<double>(num_active_people_), likelihood_hessian);
+      (*likelihood_hessian) =
+        (1.0 / static_cast<double>(num_active_people_)) *
+        (*likelihood_hessian);
     }
 
     /** @brief Return the gradient of the current simulated log
@@ -202,10 +206,10 @@ class DCMTable {
      *         in the paper.
      */
     void SimulatedLoglikelihoodGradient(
-      core::table::DensePoint *likelihood_gradient) const {
+      arma::vec *likelihood_gradient) const {
 
-      likelihood_gradient->Init(distribution_->num_parameters());
-      likelihood_gradient->SetZero();
+      likelihood_gradient->set_size(distribution_->num_parameters());
+      likelihood_gradient->zeros();
 
       // For each active person,
       for(int i = 0; i < num_active_people_; i++) {
@@ -230,14 +234,14 @@ class DCMTable {
 
         // Add the inverse probability weighted gradient vector for
         // the current person to the total tally.
-        core::math::AddExpert(
-          inverse_simulated_choice_probability,
-          gradient_vector, likelihood_gradient);
+        (*likelihood_gradient) +=
+          inverse_simulated_choice_probability * gradient_vector;
       }
 
       // Divide by the number of people.
-      core::math::Scale(
-        1.0 / static_cast<double>(num_active_people_), likelihood_gradient);
+      (*likelihood_gradient) =
+        (1.0 / static_cast<double>(num_active_people_)) *
+        (*likelihood_gradient);
     }
 
     /** @brief Return the current simulated log likelihood score.
@@ -378,8 +382,8 @@ class DCMTable {
 
       // Simulated log-likelihood gradient update by the simulated
       // choice probabilty scaled gradient product.
-      core::math::Scale(
-        choice_probabilities[discrete_choice_index], &beta_gradient_product);
+      beta_gradient_product = choice_probabilities[discrete_choice_index] *
+                              beta_gradient_product;
       simulated_loglikelihood_gradients_[person_index].push_back(
         beta_gradient_product);
 
