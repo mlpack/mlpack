@@ -16,14 +16,17 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
     ("opt_method,m", boost_po::value<string>()->default_value("d_sgd"), "Optimization method")
     ("epoches,e", boost_po::value<size_t>(&global.num_epoches)->default_value(1), "Number of training epoches. Default: 1 epoch")
     ("reg,r", boost_po::value<int>(&learner.reg)->default_value(2), "Which regularization term to use. Default: 2(squared l2 norm)")
-    ("reg_factor", boost_po::value<double>(&learner.reg_factor)->default_value(1.0), "Regularization factor ('lambda' in avg_loss + lambda * regularization). Default: 1.0")
+    ("lambda", boost_po::value<double>(&learner.reg_factor)->default_value(1.0), "Regularization factor ('lambda' in avg_loss + lambda * regularization). Default: 1.0")
+    ("C,c", boost_po::value<double>(&learner.C)->default_value(1.0), "Cost factor C ('C' in regularization + C*avg_loss). Default: 1.0")
     ("loss_function,l", boost_po::value<string>()->default_value("hinge"), 
                        "Loss function to be used. Default: squared. Available: squared, hinge, logistic and quantile.")
+    ("bias,b", "Add a bias term to examples")
+    ("comm", boost_po::value<int>(&global.comm_method)->default_value(1), "How agents communicate with each other. Default: 1(full connected)")
     ("num_port_sources", boost_po::value<size_t>(), "Number of sources for daemon socket input")
     ("predictions,p", boost_po::value<string>(), "File to output predictions")
     ("port", boost_po::value<size_t>(),"Port to listen on")
     ("par_read", "Read data parallelly with training")
-    ("calc_loss,c", "Calculate total loss")
+    ("calc_loss", "Calculate total loss")
     ("random", "Randomly permute the input examples")
     ("quiet,q", "Don't output diagnostics");
 
@@ -88,10 +91,6 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
     learner.reg = vm["reg"].as<int>();
   }
 
-  if (vm.count("reg_factor")) {
-    learner.reg_factor = vm["reg_factor"].as<double>();
-  }
-
   if (vm.count("opt_method")) {
     global.opt_method = vm["opt_method"].as<string>();
   }
@@ -106,6 +105,17 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
   }
   else {
     loss_func_str = "squaredloss";
+  }
+
+  if (vm.count("bias")) {
+    global.use_bias = true;
+  }
+  else {
+    global.use_bias = false;
+  }
+
+  if (vm.count("comm")) {
+    global.comm_method = vm["comm"].as<int>();
   }
 
   if (vm.count("predictions")) {
@@ -131,7 +141,7 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
   learner.msg_pool = (SVEC**)malloc(learner.num_threads * sizeof(SVEC*));
   learner.total_loss_pool = (double*)malloc(learner.num_threads * sizeof(double));
   learner.total_misp_pool = (size_t*)malloc(learner.num_threads * sizeof(size_t));
-  // for SGD
+  // for OGD
   learner.bias_pool = (double*)malloc(learner.num_threads * sizeof(double));
   learner.t_pool = (double*)malloc(learner.num_threads * sizeof(double));
   learner.scale_pool = (double*)malloc(learner.num_threads * sizeof(double));

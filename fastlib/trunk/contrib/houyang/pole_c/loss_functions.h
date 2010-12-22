@@ -51,8 +51,10 @@ class hingeloss : public loss_function {
   }
   
   double getUpdate(double prediction, double label) {
-    if(prediction == label) return 0;
-    return label;  
+    if ( (prediction * label) < 1.0)
+      return label;  
+    else
+      return 0.0;
   }
 
   string getName() const {

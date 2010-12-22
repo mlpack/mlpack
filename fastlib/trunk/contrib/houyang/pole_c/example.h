@@ -24,7 +24,7 @@ typedef struct svec {
   char *userdefined;
   size_t num_nz_feats; // Number of nonzero features.
   // for parallel computing
-  size_t threads_to_finish;
+  //size_t threads_to_finish;
 } SVEC;
 
 // An example with sparse vector and labels
@@ -36,7 +36,7 @@ typedef struct example {
   size_t num_nz_feats; // Number of nonzero features.
   // for parallel computing
   bool in_use;
-  size_t threads_to_finish;
+  //size_t threads_to_finish;
 } EXAMPLE;
 
 
@@ -148,16 +148,16 @@ EXAMPLE *CreateEmptyExample() {
   return ex;
 }
 
-void CreateExample(EXAMPLE *example, FEATURE *feats, T_LBL label, char *userdefined, size_t num_threads) {
-  long fnum,i;
+void CreateExample(EXAMPLE *example, FEATURE *feats, T_LBL label, char *userdefined, size_t max_features_example) {
+  size_t fnum,i;
   fnum = 0;
   // feature index starts from 1
-  while(feats[fnum].widx) {
-    fnum++;
+  for (i=0; i< max_features_example; i++) {
+    if(feats[fnum].widx > 0)
+      fnum++;
   }
   example->label = label;
   example->in_use = false;
-  example->threads_to_finish = num_threads;
   example->feats = (FEATURE *)my_malloc(sizeof(FEATURE)*(fnum));
   for(i=0;i<fnum;i++) { 
       example->feats[i] = feats[i];

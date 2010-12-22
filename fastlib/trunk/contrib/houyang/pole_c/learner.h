@@ -14,6 +14,7 @@ struct learner {
   loss_function *loss_func;
   int reg; // Which regularization term to use; 1:L1, 2:squared L2(default), -1: no regularization
   double reg_factor; // regularization weight ('lambda' in avg_loss + lambda * regularization)
+  double C; // cost factor C (regularization + C * sum_loss)
   size_t num_threads;
   size_t num_epoches;
   string loss_name;
@@ -21,9 +22,24 @@ struct learner {
   size_t* total_misp_pool; // a pool of total number of mispredictions for each thread;
 };
 
-T_LBL LinearPredict(SVEC *wvec, EXAMPLE *ex, double bias) {
-  double sum = 0.0;
-  sum = SparseDot(wvec, ex) + bias;
+double LinearPredict(SVEC *wvec, EXAMPLE *ex) {
+  return SparseDot(wvec, ex);
+}
+
+T_LBL LinearPredictLabel(SVEC *wvec, EXAMPLE *ex) {
+  double sum = SparseDot(wvec, ex);
+  if (sum > 0.0)
+    return (T_LBL)1;
+  else
+    return (T_LBL)-1;
+}
+
+double LinearPredictBias(SVEC *wvec, EXAMPLE *ex, double bias) {
+  return SparseDot(wvec, ex) + bias;
+}
+
+T_LBL LinearPredictBiasLabel(SVEC *wvec, EXAMPLE *ex, double bias) {
+  double sum = SparseDot(wvec, ex) + bias;
   //print_svec(wvec);
   //print_ex(ex);
   //cout << sum<<endl;
