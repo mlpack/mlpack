@@ -17,22 +17,10 @@ namespace mlpack {
 namespace mixed_logit_dcm {
 template<typename IncomingTableType>
 class MixedLogitDCM {
-  private:
-
-    double Normalization_(const core::table::DensePoint &beta);
-
   public:
     typedef IncomingTableType TableType;
 
   public:
-
-    int num_dimensions() const;
-
-    double Evaluate(const arma::vec &iterate) const;
-
-    void Gradient(const arma::vec &iterate, arma::vec *gradient_out) const;
-
-    void Hessian(const arma::vec &iterate, arma::mat *hessian_out) const;
 
     TableType *attribute_table();
 

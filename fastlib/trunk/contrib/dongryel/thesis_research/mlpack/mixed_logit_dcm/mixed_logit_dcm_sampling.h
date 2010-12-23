@@ -55,7 +55,7 @@ class MixedLogitDCMSampling {
      */
     int num_active_people_;
 
-    std::vector<int> num_integration_samples_;
+    arma::ivec num_integration_samples_;
 
   private:
 
@@ -96,6 +96,20 @@ class MixedLogitDCMSampling {
           discrete_choice_index < num_discrete_choices;
           discrete_choice_index++) {
         (*choice_probabilities)[discrete_choice_index] /= normalizing_sum;
+      }
+    }
+
+    void BuildSamples_() {
+      for(int i = 0; i < num_active_people_; i++) {
+
+        // Get the index of the active person.
+        int person_index = dcm_table_->shuffled_indices_for_person(i);
+
+        for(int j = simulated_choice_probabilities_[j].num_samples();
+            j < num_integration_samples_[person_index]; j++) {
+
+          // Draw a beta from the parameter theta.
+        }
       }
     }
 
@@ -271,11 +285,16 @@ class MixedLogitDCMSampling {
     void Init(
       DCMTableType *dcm_table_in,
       int num_active_people_in,
-      const std::vector<int> &num_integration_samples_in) {
+      int initial_num_integration_samples_in) {
 
       dcm_table_ = dcm_table_in;
       num_active_people_ = num_active_people_in;
-      num_integration_samples_ = num_integration_samples_in;
+      num_integration_samples_.zeros(dcm_table_->num_people());
+      for(int i = 0; i < num_active_people_; i++) {
+        int person_index = dcm_table_->shuffled_indices_for_person(i);
+        num_integration_samples_[person_index] =
+          initial_num_integration_samples_in;
+      }
 
       // This vector maintains the running simulated choice
       // probabilities per person.
@@ -295,13 +314,14 @@ class MixedLogitDCMSampling {
       simulated_loglikelihood_hessians_.resize(dcm_table_->num_people());
 
       // Build up the samples.
-
+      BuildSamples_();
     }
 
     void AddActivePeople(int num_additional_people) {
       num_active_people_ += num_additional_people;
 
       // Build up additional samples for the new people.
+      BuildSamples_();
     }
 
     const std::vector <
