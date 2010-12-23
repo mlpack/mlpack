@@ -36,6 +36,8 @@ class MixedLogitDCMArguments {
 
     std::string model_out_;
 
+    std::string trust_region_search_method_;
+
   public:
 
     MixedLogitDCMArguments() {

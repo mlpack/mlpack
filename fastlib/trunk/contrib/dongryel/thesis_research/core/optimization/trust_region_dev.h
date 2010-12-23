@@ -15,7 +15,13 @@ template<typename FunctionType>
 TrustRegion<FunctionType>::TrustRegion() {
   max_radius_ = 10.0;
   function_ = NULL;
-  search_method_ = CAUCHY;
+  search_method_ = core::optimization::TrustRegionSearchMethod::CAUCHY;
+}
+
+template<typename FunctionType>
+bool TrustRegion<FunctionType>::GradientNormTooSmall_(
+  const arma::vec &gradient) const {
+  return false;
 }
 
 template<typename FunctionType>
@@ -285,15 +291,15 @@ void TrustRegion<FunctionType>::ObtainStepDirection_(
   arma::vec *step_direction, double *step_direction_norm) {
 
   switch(search_method_) {
-    case CAUCHY:
+    case core::optimization::TrustRegionSearchMethod::CAUCHY:
       ComputeCauchyPoint_(
         trust_region_radius, gradient, hessian, step_direction);
       break;
-    case DOGLEG:
+    case core::optimization::TrustRegionSearchMethod::DOGLEG:
       ComputeDoglegDirection_(
         trust_region_radius, gradient, hessian, step_direction);
       break;
-    case STEIHAUG:
+    case core::optimization::TrustRegionSearchMethod::STEIHAUG:
       ComputeSteihaugDirection_(
         trust_region_radius, gradient, hessian, step_direction);
       break;
@@ -303,7 +309,8 @@ void TrustRegion<FunctionType>::ObtainStepDirection_(
 
 template<typename FunctionType>
 void TrustRegion<FunctionType>::Init(
-  FunctionType &function_in, TrustRegionSearchMethod search_method_in) {
+  FunctionType &function_in,
+  core::optimization::TrustRegionSearchMethod::SearchType search_method_in) {
   function_ = &function_in;
   search_method_ = search_method_in;
 }
@@ -342,6 +349,11 @@ void TrustRegion<FunctionType>::Optimize(
     it_num = 0; optimize_until_convergence ||
     it_num < num_iterations; it_num++) {
 
+    // Break when the norm of the gradient becomes too small.
+    if(GradientNormTooSmall_(gradient)) {
+      break;
+    }
+
     // Obtain the step direction by solving Equation 4.3
     // approximately.
     ObtainStepDirection_(current_radius, gradient, hessian, &p, &p_norm);
@@ -354,7 +366,7 @@ void TrustRegion<FunctionType>::Optimize(
     // If the decrease in the objective is sufficient enough, then
     // accept the step. Otherwise, don't move.
     if(rho > eta) {
-
+      (*iterate) += p;
     }
   }
 }
