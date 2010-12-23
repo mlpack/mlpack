@@ -17,6 +17,36 @@ class TrustRegionSearchMethod {
     enum SearchType {CAUCHY, DOGLEG, STEIHAUG};
 };
 
+class TrustRegionUtil {
+  public:
+
+    static void ObtainStepDirection(
+      core::optimization::TrustRegionSearchMethod::SearchType search_method_in,
+      double radius, const arma::vec &gradient,
+      const arma::mat &hessian, arma::vec *step_direction,
+      double *step_direction_norm);
+
+    static void ComputeCauchyPoint(
+      double radius, const arma::vec &gradient,
+      const arma::mat &hessian, arma::vec *p);
+
+    static void ComputeDoglegDirection(
+      double radius, const arma::vec &gradient, const arma::mat &hessian,
+      arma::vec *p);
+
+    static void ComputeSteihaugDirection(
+      double radius, const arma::vec &gradient, const arma::mat &hessian,
+      arma::vec *p);
+
+    static void TrustRadiusUpdate(
+      double rho, double p_norm, double max_radius, double *current_radius);
+
+    static double ReductionRatio(
+      const arma::vec &step,
+      double iterate_function_value, double next_iterate_function_value,
+      const arma::vec &gradient, const arma::mat &hessian);
+};
+
 template<typename FunctionType>
 class TrustRegion {
   private:
@@ -31,30 +61,6 @@ class TrustRegion {
     bool GradientNormTooSmall_(const arma::vec &gradient) const;
 
     double Evaluate_(const arma::vec &iterate) const;
-
-    void ObtainStepDirection_(
-      double radius, const arma::vec &gradient,
-      const arma::mat &hessian, arma::vec *step_direction,
-      double *step_direction_norm);
-
-    void ComputeCauchyPoint_(
-      double radius, const arma::vec &gradient,
-      const arma::mat &hessian, arma::vec *p);
-
-    void ComputeDoglegDirection_(
-      double radius, const arma::vec &gradient, const arma::mat &hessian,
-      arma::vec *p);
-
-    void ComputeSteihaugDirection_(
-      double radius, const arma::vec &gradient, const arma::mat &hessian,
-      arma::vec *p);
-
-    void TrustRadiusUpdate_(
-      double rho, double p_norm, double *current_radius);
-
-    double ReductionRatio_(
-      const arma::vec &iterate, const arma::vec &step,
-      const arma::vec &gradient, const arma::mat &hessian) const;
 
   public:
 

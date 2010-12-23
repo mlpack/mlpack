@@ -42,6 +42,12 @@ class MeanVariancePairVector {
       ptr_ = NULL;
     }
 
+    void CopyValues(const core::monte_carlo::MeanVariancePairVector &v) {
+      for(int i = 0; i < n_elements_; i++) {
+        ptr_[i].CopyValues(v[i]);
+      }
+    }
+
     void push_back(const arma::vec &v) {
       for(int i = 0; i < v.n_elem; i++) {
         ptr_[i].push_back(v[i]);
@@ -116,6 +122,14 @@ class MeanVariancePairMatrix {
       for(int j = 0; j < n_cols_; j++) {
         for(int i = 0; i < n_rows_; i++) {
           point_out->at(i, j) = this->get(i, j).sample_mean();
+        }
+      }
+    }
+
+    void CopyValues(const core::monte_carlo::MeanVariancePairMatrix &v) {
+      for(int j = 0; j < n_cols_; j++) {
+        for(int i = 0; i < n_rows_; i++) {
+          this->get(i, j).CopyValues(v.get(i, j));
         }
       }
     }
