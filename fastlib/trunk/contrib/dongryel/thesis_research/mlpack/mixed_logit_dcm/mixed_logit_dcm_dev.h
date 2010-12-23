@@ -13,6 +13,32 @@ namespace mlpack {
 namespace mixed_logit_dcm {
 
 template<typename TableType>
+double MixedLogitDCM<TableType>::SampleDataError_(
+  const SamplingType &first_sample,
+  const SamplingType &second_sample) const {
+
+  // Assumption: num_active_people in both samples are equal.
+  double correction_factor =
+    static_cast<double>(
+      table_.num_people() - first_sample.num_active_people()) /
+    static_cast<double>(table_.num_people() - 1);
+  double factor = correction_factor /
+                  static_cast<double>(
+                    first_sample.num_active_people() *
+                    (first_sample.num_active_people() - 1));
+
+  // Compute the average difference of simulated log probabilities.
+  double average_difference = 0;
+  for(int i = 0; i < first_sample.num_active_people(); i++) {
+    int person_index = table_.shuffled_indices_for_person(i);
+    average_difference +=
+      (log(first_sample.simulated_choice_probability(person_index)) -
+       log(second_sample.simulated_choice_probability(person_index)));
+  }
+  average_difference /= static_cast<double>(first_sample.num_active_people());
+}
+
+template<typename TableType>
 void MixedLogitDCM<TableType>::Init(
   mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
   TableType > &arguments_in) {
