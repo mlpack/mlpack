@@ -194,7 +194,7 @@ void print_svec(SVEC *v) {
 }
 
 void print_ex(EXAMPLE *x) {
-  cout << "x== ";
+  cout << x->label << ", x== ";
   for (size_t i=0; i<x->num_nz_feats; i++) {
     cout << x->feats[i].widx << ":" << x->feats[i].wval << ", ";
   }

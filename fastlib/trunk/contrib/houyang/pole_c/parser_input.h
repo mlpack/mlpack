@@ -256,7 +256,7 @@ void SerialRead(string &data_fn, EXAMPLE **examples, size_t &num_examples) {
     
     dnum++;  
     if(!global.quiet) {
-      if((dnum % 1000) == 0) {
+      if((dnum % 10000) == 0) {
 	cout << dnum << "..";
       }
     }
@@ -292,19 +292,18 @@ void ReadData(boost_po::variables_map &vm) {
   }
   else {
     SerialRead(global.train_data_fn, &train_exps, num_train_exps);
-    //cout << train_exps[269].feats[0].wval << endl;
     //ring_size = num_train_exps;
     parsed_ct = num_train_exps;
 
     if (vm.count("C")) {
       l1.C = vm["C"].as<double>();
       l1.reg_factor = 1.0 / (l1.C * num_train_exps);
-      cout << "C= " << l1.C << ", lambda= " << l1.reg_factor << endl << endl;
+      //cout << "C= " << l1.C << ", lambda= " << l1.reg_factor << endl << endl;
     }
     else if (vm.count("lambda")) {
       l1.reg_factor = vm["lambda"].as<double>();
       l1.C = 1.0 / (l1.reg_factor * num_train_exps);
-      cout << "lambda= " << l1.reg_factor << ", C= " << l1.C << endl << endl;
+      //cout << "lambda= " << l1.reg_factor << ", C= " << l1.C << endl << endl;
     }
   }
 
@@ -315,7 +314,7 @@ void ReadData(boost_po::variables_map &vm) {
   //  delay_ring[i] = NULL;
   //}
 
-  left_ct = (global.num_epoches * parsed_ct) % global.num_threads;
+  left_ct = global.num_threads - (global.num_epoches * parsed_ct) % global.num_threads;
 }
 
 void FinishData() {
@@ -326,8 +325,8 @@ void FinishData() {
 }
 
 int GetImmedExample(EXAMPLE** x_p, size_t tid, learner &l) {
+  pthread_mutex_lock(&examples_lock);
   if (epoch_ct < global.num_epoches) {
-    pthread_mutex_lock(&examples_lock);
     size_t ring_index = used_ct % parsed_ct;
     if (ring_index == (parsed_ct-1)) { // one epoch finished
       epoch_ct ++;
@@ -340,7 +339,6 @@ int GetImmedExample(EXAMPLE** x_p, size_t tid, learner &l) {
     return 1;
   }
   else {
-    pthread_mutex_lock(&examples_lock);
     left_ct --;
     if (left_ct >= 0) {
       (*x_p) = train_exps + tid % parsed_ct;
