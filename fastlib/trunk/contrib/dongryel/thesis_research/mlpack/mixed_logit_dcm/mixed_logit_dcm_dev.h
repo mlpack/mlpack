@@ -13,28 +13,6 @@ namespace mlpack {
 namespace mixed_logit_dcm {
 
 template<typename TableType>
-int MixedLogitDCM<TableType>::num_dimensions() const {
-  return table_.num_parameters();
-}
-
-template<typename TableType>
-double MixedLogitDCM<TableType>::Evaluate(const arma::vec &iterate) const {
-  //return table_.SimulatedLogLikelihood();
-}
-
-template<typename TableType>
-void MixedLogitDCM<TableType>::Gradient(
-  const arma::vec &iterate, arma::vec *gradient_out) const {
-  //table_.SimulatedLoglikelihoodGradient(gradient_out);
-}
-
-template<typename TableType>
-void MixedLogitDCM<TableType>::Hessian(
-  const arma::vec &iterate, arma::mat *hessian_out) const {
-  //table_.SimulatedLoglikelihoodHessian(hessian_out);
-}
-
-template<typename TableType>
 void MixedLogitDCM<TableType>::Init(
   mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
   TableType > &arguments_in) {
@@ -60,10 +38,10 @@ void MixedLogitDCM<TableType>::Compute(
     static_cast<int>(
       table_.num_people() *
       arguments_in.initial_dataset_sample_rate_);
-  std::vector<int> num_integration_samples(
-    num_data_samples, std::max(
+  int num_integration_samples =
+    std::max(
       static_cast<int>(arguments_in.initial_integration_sample_rate_ * R_MAX),
-      36));
+      36);
 
   // Compute the initial simulated log-likelihood, the gradient, and
   // the Hessian.
@@ -73,26 +51,20 @@ void MixedLogitDCM<TableType>::Compute(
   //table_.SimulatedLoglikelihoodGradient(&current_gradient);
   //table_.SimulatedLoglikelihoodHessian(&current_hessian);
 
-  // Initialize the starting optimization parameter $\theta_0$.
-  arma::vec theta;
+  // Initialize the starting optimization parameter $\theta_0$ and its
+  // associated sampling information.
+  typedef mlpack::mixed_logit_dcm::DCMTable<TableType> DCMTableType;
+  std::pair <
+  arma::vec ,
+       mlpack::mixed_logit_dcm::MixedLogitDCMSampling<DCMTableType> >
+       iterate_sampling_pair;
+  iterate_sampling_pair.first.set_size(
+    arguments_in.distribution_->num_parameters());
+  iterate_sampling_pair.first.zeros();
+  iterate_sampling_pair.second.Init(
+    &table_, num_data_samples, num_integration_samples);
 
-  // The trust region optimizer.
-  typedef MixedLogitDCM<TableType> FunctionType;
-  core::optimization::TrustRegion<FunctionType> trust_region;
-  if(arguments_in.trust_region_search_method_ == "cauchy") {
-    trust_region.Init(
-      *this, core::optimization::TrustRegionSearchMethod::CAUCHY);
-  }
-  else if(arguments_in.trust_region_search_method_ == "dogleg") {
-    trust_region.Init(
-      *this, core::optimization::TrustRegionSearchMethod::DOGLEG);
-  }
-  else {
-    trust_region.Init(
-      *this, core::optimization::TrustRegionSearchMethod::STEIHAUG);
-  }
-  trust_region.set_max_radius(arma::norm(current_gradient, 2));
-  trust_region.Optimize(-1, &theta);
+
 }
 
 template<typename TableType>
