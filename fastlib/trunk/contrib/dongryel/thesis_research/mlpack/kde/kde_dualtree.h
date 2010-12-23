@@ -516,7 +516,7 @@ class KdeSummary {
           global.query_table()->get(prev_qpoint_index, &prev_qpoint);
           double dist = sqrt(metric.DistanceSq(qpoint, prev_qpoint));
           if(dist <= movement_threshold && movement_count < 5) {
-            (*delta.mean_variance_pair_)[qpoint_index].Copy(
+            (*delta.mean_variance_pair_)[qpoint_index].CopyValues(
               (*delta.mean_variance_pair_)[prev_qpoint_index]);
             skip = true;
             movement_count++;
