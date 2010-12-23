@@ -578,8 +578,10 @@ class NbodySimulatorSummary {
 
         // If close, then steal.
         if(squared_distance <= std::numeric_limits<double>::epsilon()) {
-          mean_variance_pair.first.Copy(previous_mean_variance_pair.first);
-          mean_variance_pair.second.Copy(previous_mean_variance_pair.second);
+          mean_variance_pair.first.CopyValues(
+            previous_mean_variance_pair.first);
+          mean_variance_pair.second.CopyValues(
+            previous_mean_variance_pair.second);
         }
       }
 
