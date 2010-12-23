@@ -19,19 +19,19 @@ int MixedLogitDCM<TableType>::num_dimensions() const {
 
 template<typename TableType>
 double MixedLogitDCM<TableType>::Evaluate(const arma::vec &iterate) const {
-
+  return table_.SimulatedLogLikelihood();
 }
 
 template<typename TableType>
 void MixedLogitDCM<TableType>::Gradient(
   const arma::vec &iterate, arma::vec *gradient_out) const {
-
+  table_.SimulatedLoglikelihoodGradient(gradient_out);
 }
 
 template<typename TableType>
 void MixedLogitDCM<TableType>::Hessian(
   const arma::vec &iterate, arma::mat *hessian_out) const {
-
+  table_.SimulatedLoglikelihoodHessian(hessian_out);
 }
 
 template<typename TableType>
@@ -79,6 +79,18 @@ void MixedLogitDCM<TableType>::Compute(
   // The trust region optimizer.
   typedef MixedLogitDCM<TableType> FunctionType;
   core::optimization::TrustRegion<FunctionType> trust_region;
+  if(arguments_in.trust_region_search_method_ == "cauchy") {
+    trust_region.Init(
+      *this, core::optimization::TrustRegionSearchMethod::CAUCHY);
+  }
+  else if(arguments_in.trust_region_search_method_ == "dogleg") {
+    trust_region.Init(
+      *this, core::optimization::TrustRegionSearchMethod::DOGLEG);
+  }
+  else {
+    trust_region.Init(
+      *this, core::optimization::TrustRegionSearchMethod::STEIHAUG);
+  }
   trust_region.set_max_radius(arma::norm(current_gradient, 2));
   trust_region.Optimize(-1, &theta);
 }
@@ -199,6 +211,10 @@ void MixedLogitDCM<TableType>::ParseArguments(
 
   // Parse the output for the mixed logit discrete choice model.
   arguments_out->model_out_ = vm[ "model_out" ].as<std::string>();
+
+  // Parse how to perform the trust region search.
+  arguments_out->trust_region_search_method_ =
+    vm[ "trust_region_search_method" ].as<std::string>();
 
   // The number of parameters that generate each $\beta$ is fixed now
   // as the Gaussian example in Appendix.
