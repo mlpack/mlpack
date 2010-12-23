@@ -11,33 +11,14 @@
 namespace core {
 namespace optimization {
 
-template<typename FunctionType>
-TrustRegion<FunctionType>::TrustRegion() {
-  max_radius_ = 10.0;
-  function_ = NULL;
-  search_method_ = core::optimization::TrustRegionSearchMethod::CAUCHY;
-}
-
-template<typename FunctionType>
-bool TrustRegion<FunctionType>::GradientNormTooSmall_(
-  const arma::vec &gradient) const {
-  return false;
-}
-
-template<typename FunctionType>
-double TrustRegion<FunctionType>::Evaluate_(const arma::vec &vec) const {
-  return function_->Evaluate(vec);
-}
-
-template<typename FunctionType>
-double TrustRegion<FunctionType>::ReductionRatio_(
-  const arma::vec &iterate, const arma::vec &step,
-  const arma::vec &gradient, const arma::mat &hessian) const {
+double TrustRegionUtil::ReductionRatio(
+  const arma::vec &step,
+  double iterate_function_value, double next_iterate_function_value,
+  const arma::vec &gradient, const arma::mat &hessian) {
 
   // The actual function value decrease.
-  arma::vec next_iterate = iterate + step;
   double function_value_decrease =
-    this->Evaluate_(iterate) - this->Evaluate_(next_iterate);
+    iterate_function_value - next_iterate_function_value;
 
   // Predicted objective value decrease by the trust region model:
   // -g'p-0.5*p'Hp
@@ -47,8 +28,7 @@ double TrustRegion<FunctionType>::ReductionRatio_(
   return function_value_decrease / decrease_predicted_by_model;
 }
 
-template<typename FunctionType>
-void TrustRegion<FunctionType>::ComputeSteihaugDirection_(
+void TrustRegionUtil::ComputeSteihaugDirection(
   double radius, const arma::vec &gradient, const arma::mat &hessian,
   arma::vec *p) {
 
@@ -148,8 +128,7 @@ void TrustRegion<FunctionType>::ComputeSteihaugDirection_(
   } // end of the main loop.
 }
 
-template<typename FunctionType>
-void TrustRegion<FunctionType>::ComputeCauchyPoint_(
+void TrustRegionUtil::ComputeCauchyPoint(
   double radius, const arma::vec &gradient,
   const arma::mat &hessian, arma::vec *p) {
 
@@ -175,8 +154,7 @@ void TrustRegion<FunctionType>::ComputeCauchyPoint_(
   (*p) = (- tau * radius / gradient_norm)  *  gradient;
 }
 
-template<typename FunctionType>
-void TrustRegion<FunctionType>::ComputeDoglegDirection_(
+void TrustRegionUtil::ComputeDoglegDirection(
   double radius, const arma::vec &gradient, const arma::mat &hessian,
   arma::vec *p) {
 
@@ -202,7 +180,7 @@ void TrustRegion<FunctionType>::ComputeDoglegDirection_(
     std::cerr << "The Hessian matrix is not positive-definite, so we "
               "have to use the Cauchy Point method..." << endl;
 
-    ComputeCauchyPoint_(radius, gradient, hessian, p);
+    ComputeCauchyPoint(radius, gradient, hessian, p);
   } // end of the Cauchy Point case.
   else {
 
@@ -270,9 +248,8 @@ void TrustRegion<FunctionType>::ComputeDoglegDirection_(
   } // end of the positive definite Hessian case.
 }
 
-template<typename FunctionType>
-void TrustRegion<FunctionType>::TrustRadiusUpdate_(
-  double rho, double p_norm, double *current_radius) {
+void TrustRegionUtil::TrustRadiusUpdate(
+  double rho, double p_norm, double max_radius, double *current_radius) {
 
   if(rho < 0.25) {
     std::cerr << "Shrinking trust region radius..." << endl;
@@ -280,31 +257,49 @@ void TrustRegion<FunctionType>::TrustRadiusUpdate_(
   }
   else if((rho > 0.75) && (p_norm > (0.99 *(*current_radius)))) {
     std::cerr << "Expanding trust region radius..." << endl;
-    (*current_radius) = std::min(2.0 * (*current_radius), max_radius_);
+    (*current_radius) = std::min(2.0 * (*current_radius), max_radius);
   }
 }
 
-template<typename FunctionType>
-void TrustRegion<FunctionType>::ObtainStepDirection_(
+void TrustRegionUtil::ObtainStepDirection(
+  core::optimization::TrustRegionSearchMethod::SearchType search_method_in,
   double trust_region_radius,
   const arma::vec &gradient, const arma::mat &hessian,
   arma::vec *step_direction, double *step_direction_norm) {
 
-  switch(search_method_) {
+  switch(search_method_in) {
     case core::optimization::TrustRegionSearchMethod::CAUCHY:
-      ComputeCauchyPoint_(
+      ComputeCauchyPoint(
         trust_region_radius, gradient, hessian, step_direction);
       break;
     case core::optimization::TrustRegionSearchMethod::DOGLEG:
-      ComputeDoglegDirection_(
+      ComputeDoglegDirection(
         trust_region_radius, gradient, hessian, step_direction);
       break;
     case core::optimization::TrustRegionSearchMethod::STEIHAUG:
-      ComputeSteihaugDirection_(
+      ComputeSteihaugDirection(
         trust_region_radius, gradient, hessian, step_direction);
       break;
   }
   *step_direction_norm = arma::norm(*step_direction, 2);
+}
+
+template<typename FunctionType>
+TrustRegion<FunctionType>::TrustRegion() {
+  max_radius_ = 10.0;
+  function_ = NULL;
+  search_method_ = core::optimization::TrustRegionSearchMethod::CAUCHY;
+}
+
+template<typename FunctionType>
+bool TrustRegion<FunctionType>::GradientNormTooSmall_(
+  const arma::vec &gradient) const {
+  return false;
+}
+
+template<typename FunctionType>
+double TrustRegion<FunctionType>::Evaluate_(const arma::vec &vec) const {
+  return function_->Evaluate(vec);
 }
 
 template<typename FunctionType>
@@ -356,17 +351,25 @@ void TrustRegion<FunctionType>::Optimize(
 
     // Obtain the step direction by solving Equation 4.3
     // approximately.
-    ObtainStepDirection_(current_radius, gradient, hessian, &p, &p_norm);
+    core::optimization::TrustRegionUtil::ObtainStepDirection(
+      search_method_, current_radius, gradient, hessian, &p, &p_norm);
 
     // Get the reduction ratio rho (Equation 4.4)
-    double rho = ReductionRatio_(*iterate, p, gradient, hessian);
+    arma::vec next_iterate = (*iterate) + p;
+    double iterate_function_value = this->Evaluate_(*iterate);
+    double next_iterate_function_value = this->Evaluate_(next_iterate);
+    double rho =
+      core::optimization::TrustRegionUtil::ReductionRatio(
+        p, iterate_function_value, next_iterate_function_value,
+        gradient, hessian);
 
-    TrustRadiusUpdate_(rho, p_norm, &current_radius);
+    core::optimization::TrustRegionUtil::TrustRadiusUpdate(
+      rho, p_norm, max_radius_, &current_radius);
 
     // If the decrease in the objective is sufficient enough, then
     // accept the step. Otherwise, don't move.
     if(rho > eta) {
-      (*iterate) += p;
+      (*iterate) = next_iterate;
     }
   }
 }

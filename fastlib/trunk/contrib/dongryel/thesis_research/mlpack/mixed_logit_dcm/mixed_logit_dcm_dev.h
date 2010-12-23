@@ -19,19 +19,19 @@ int MixedLogitDCM<TableType>::num_dimensions() const {
 
 template<typename TableType>
 double MixedLogitDCM<TableType>::Evaluate(const arma::vec &iterate) const {
-  return table_.SimulatedLogLikelihood();
+  //return table_.SimulatedLogLikelihood();
 }
 
 template<typename TableType>
 void MixedLogitDCM<TableType>::Gradient(
   const arma::vec &iterate, arma::vec *gradient_out) const {
-  table_.SimulatedLoglikelihoodGradient(gradient_out);
+  //table_.SimulatedLoglikelihoodGradient(gradient_out);
 }
 
 template<typename TableType>
 void MixedLogitDCM<TableType>::Hessian(
   const arma::vec &iterate, arma::mat *hessian_out) const {
-  table_.SimulatedLoglikelihoodHessian(hessian_out);
+  //table_.SimulatedLoglikelihoodHessian(hessian_out);
 }
 
 template<typename TableType>
@@ -67,11 +67,11 @@ void MixedLogitDCM<TableType>::Compute(
 
   // Compute the initial simulated log-likelihood, the gradient, and
   // the Hessian.
-  double current_simulated_log_likelihood = table_.SimulatedLogLikelihood();
+  double current_simulated_log_likelihood = 0;//table_.SimulatedLogLikelihood();
   arma::vec current_gradient;
   arma::mat current_hessian;
-  table_.SimulatedLoglikelihoodGradient(&current_gradient);
-  table_.SimulatedLoglikelihoodHessian(&current_hessian);
+  //table_.SimulatedLoglikelihoodGradient(&current_gradient);
+  //table_.SimulatedLoglikelihoodHessian(&current_hessian);
 
   // Initialize the starting optimization parameter $\theta_0$.
   arma::vec theta;

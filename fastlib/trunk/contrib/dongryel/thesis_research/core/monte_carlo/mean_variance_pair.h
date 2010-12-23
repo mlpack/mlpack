@@ -24,10 +24,10 @@ class MeanVariancePair {
     }
 
     MeanVariancePair(const MeanVariancePair &pair_in) {
-      Copy(pair_in);
+      CopyValues(pair_in);
     }
 
-    void Copy(const MeanVariancePair &pair_in) {
+    void CopyValues(const MeanVariancePair &pair_in) {
       num_samples_ = pair_in.num_samples();
       sample_mean_ = pair_in.sample_mean();
       sample_variance_ = pair_in.sample_variance();

@@ -13,6 +13,7 @@
 #include "core/monte_carlo/mean_variance_pair.h"
 #include "core/monte_carlo/mean_variance_pair_matrix.h"
 #include "mlpack/mixed_logit_dcm/mixed_logit_dcm_distribution.h"
+#include "mlpack/mixed_logit_dcm/mixed_logit_dcm_sampling.h"
 
 namespace mlpack {
 namespace mixed_logit_dcm {
@@ -22,13 +23,15 @@ class DCMTable {
 
     typedef DCMTable<TableType> DCMTableType;
 
+    typedef  mlpack::mixed_logit_dcm::MixedLogitDCMDistribution <
+    DCMTableType > DistributionType;
+
   private:
 
     /** @brief The distribution from which each $\beta$ is sampled
      *         from.
      */
-    mlpack::mixed_logit_dcm::MixedLogitDCMDistribution <
-    DCMTableType > *distribution_;
+    DistributionType *distribution_;
 
     /** @brief The pointer to the attribute vector for each person per
      *         his/her discrete choice.
@@ -51,82 +54,15 @@ class DCMTable {
      */
     std::vector<int> shuffled_indices_for_person_;
 
-    /** @brief The number of active outer-terms in the simulated
-     *         log-likelihood score.
-     */
-    int num_active_people_;
+  public:
 
-    /** @brief The simulated choice probabilities (sample mean
-     *         and sample variance information).
-     */
-    std::vector< core::monte_carlo::MeanVariancePair >
-    simulated_choice_probabilities_;
-
-    /** @brief The gradient of the simulated log likelihood per person.
-     */
-    std::vector <
-    core::monte_carlo::MeanVariancePairVector >
-    simulated_loglikelihood_gradients_;
-
-    /** @brief The Hessian of the simulated log likelihood per
-     *         person. Each is composed of a pair, the first of which
-     *         is, $\frac{\partial}{\partial \theta}
-     *         \beta^{\nu}(\theta) \frac{\partial^2}{\partial \beta^2}
-     *         P_{i,j_i^*}(\beta^{nu}(\theta))
-     *         (\frac{\partial}{\partial \theta}
-     *         \beta^{\nu}(\theta))^T$. The second is $\frac{\partial}
-     *         {\partial \theta} \beta^{\nu}(\theta) \frac{\partial}
-     *         {\beta} {P_{i,j_i^*} (\beta^{\nu}(\theta))$. This vector
-     *         keeps track of Equation 8.14.
-     */
-    std::vector <
-    std::pair < core::monte_carlo::MeanVariancePairMatrix,
-        core::monte_carlo::MeanVariancePairVector > >
-        simulated_loglikelihood_hessians_;
-
-  private:
-
-    /** @brief Computes the choice probability vector for the person_index-th
-     *         person for each of his/her potential choices given the
-     *         parameter vector $\beta$. This is $P_{i,j}$ in a long vector
-     *         form.
-     */
-    void ComputeChoiceProbabilities_(
-      int person_index, const arma::vec &parameter_vector,
-      arma::vec *choice_probabilities) {
-
-      int num_discrete_choices = this->num_discrete_choices(person_index);
-      choice_probabilities->set_size(num_discrete_choices);
-
-      // First compute the normalizing sum.
-      double normalizing_sum = 0.0;
-      for(int discrete_choice_index = 0;
-          discrete_choice_index < num_discrete_choices;
-          discrete_choice_index++) {
-
-        // Grab each attribute vector and take a dot product between
-        // it and the parameter vector.
-        arma::vec attribute_for_discrete_choice;
-        this->get_attribute_vector(
-          person_index, discrete_choice_index, &attribute_for_discrete_choice);
-        double dot_product =
-          arma::dot(
-            parameter_vector, attribute_for_discrete_choice);
-        double unnormalized_probability = exp(dot_product);
-        normalizing_sum += unnormalized_probability;
-        (*choice_probabilities)[discrete_choice_index] =
-          unnormalized_probability;
-      }
-
-      // Then, normalize.
-      for(int discrete_choice_index = 0;
-          discrete_choice_index < num_discrete_choices;
-          discrete_choice_index++) {
-        (*choice_probabilities)[discrete_choice_index] /= normalizing_sum;
-      }
+    const DistributionType *distribution() const {
+      return distribution_;
     }
 
-  public:
+    int shuffled_indices_for_person(int pos) const {
+      return shuffled_indices_for_person_[pos];
+    }
 
     /** @brief Returns the number of parameters that generate each
      *         attribute.
@@ -155,123 +91,6 @@ class DCMTable {
                discrete_choice_set_info_->data().get(0, person_index));
     }
 
-    /** @brief Returns the Hessian of the current simulated log
-     *         likelihood score objective. This completes the
-     *         computation of Equation 8.14 in the paper.
-     */
-    void SimulatedLoglikelihoodHessian(
-      arma::mat *likelihood_hessian) const {
-
-      likelihood_hessian->set_size(
-        distribution_->num_parameters(), distribution_->num_parameters());
-      likelihood_hessian->zeros();
-
-      // For each active person,
-      for(int i = 0; i < num_active_people_; i++) {
-
-        // Get the index in the shuffled indices to find out the ID of
-        // the person in the sample pool.
-        int person_index = shuffled_indices_for_person_[i];
-
-        // Get the simulated choice probability for the given person.
-        int discrete_choice_index =
-          this->get_discrete_choice_index(person_index);
-        double simulated_choice_probability =
-          this->simulated_choice_probability(person_index);
-        double inverse_simulated_choice_probability =
-          1.0 / simulated_choice_probability;
-
-        // Get the components for the Hessian for the person.
-        const core::monte_carlo::MeanVariancePairMatrix &hessian_first_part =
-          simulated_loglikelihood_hessians_[person_index].first;
-        const core::monte_carlo::MeanVariancePairVector &hessian_second_part =
-          simulated_loglikelihood_hessians_[person_index].second;
-        arma::mat hessian_first;
-        arma::vec hessian_second;
-        hessian_first_part.sample_means(&hessian_first);
-        hessian_second_part.sample_means(&hessian_second);
-
-        // Construct the contribution on the fly.
-        (*likelihood_hessian) += inverse_simulated_choice_probability *
-                                 hessian_first;
-        (*likelihood_hessian) +=
-          (- core::math::Sqr(inverse_simulated_choice_probability)) *
-          hessian_second * arma::trans(hessian_second);
-      }
-
-      // Divide by the number of people.
-      (*likelihood_hessian) =
-        (1.0 / static_cast<double>(num_active_people_)) *
-        (*likelihood_hessian);
-    }
-
-    /** @brief Return the gradient of the current simulated log
-     *         likelihood score objective. This computes Equation 8.7
-     *         in the paper.
-     */
-    void SimulatedLoglikelihoodGradient(
-      arma::vec *likelihood_gradient) const {
-
-      likelihood_gradient->set_size(distribution_->num_parameters());
-      likelihood_gradient->zeros();
-
-      // For each active person,
-      for(int i = 0; i < num_active_people_; i++) {
-
-        // Get the index in the shuffled indices to find out the ID of
-        // the person in the sample pool.
-        int person_index = shuffled_indices_for_person_[i];
-
-        // Get the simulated choice probability for the given person.
-        int discrete_choice_index =
-          this->get_discrete_choice_index(person_index);
-        double simulated_choice_probability =
-          this->simulated_choice_probability(person_index);
-        double inverse_simulated_choice_probability =
-          1.0 / simulated_choice_probability;
-
-        // Get the gradient for the person.
-        const core::monte_carlo::MeanVariancePairVector &gradient =
-          this->simulated_loglikelihood_gradient(person_index);
-        arma::vec gradient_vector;
-        gradient.sample_means(&gradient_vector);
-
-        // Add the inverse probability weighted gradient vector for
-        // the current person to the total tally.
-        (*likelihood_gradient) = (*likelihood_gradient) +
-                                 inverse_simulated_choice_probability * gradient_vector;
-      }
-
-      // Divide by the number of people.
-      (*likelihood_gradient) =
-        (1.0 / static_cast<double>(num_active_people_)) *
-        (*likelihood_gradient);
-    }
-
-    /** @brief Return the current simulated log likelihood score.
-     */
-    double SimulatedLogLikelihood() const {
-      double current_simulated_log_likelihood = 0;
-      for(int i = 0; i < num_active_people_; i++) {
-
-        // Get the index in the shuffled indices to find out the ID of
-        // the person in the sample pool.
-        int person_index = shuffled_indices_for_person_[i];
-
-        // Get the highest simulated choice probability for the
-        // given person.
-        int discrete_choice_index =
-          this->get_discrete_choice_index(person_index);
-        double simulated_choice_probability =
-          this->simulated_choice_probability(person_index);
-        current_simulated_log_likelihood +=
-          log(simulated_choice_probability);
-      }
-      current_simulated_log_likelihood /=
-        static_cast<double>(num_active_people_);
-      return current_simulated_log_likelihood;
-    }
-
     int num_people() const {
       return static_cast<int>(cumulative_num_discrete_choices_.size());
     }
@@ -294,7 +113,6 @@ class DCMTable {
       std::random_shuffle(
         shuffled_indices_for_person_.begin(),
         shuffled_indices_for_person_.end());
-      num_active_people_ = 0;
 
       // Compute the cumulative distribution on the number of
       // discrete choices so that we can return the right column
@@ -327,90 +145,6 @@ class DCMTable {
                   "the number of total number of attribute vectors.\n";
         exit(0);
       }
-
-      // This vector maintains the running simulated choice
-      // probabilities per person.
-      simulated_choice_probabilities_.resize(
-        shuffled_indices_for_person_.size());
-
-      // This vector maintains the gradients of the simulated
-      // loglikelihood per person per discrete choice.
-      simulated_loglikelihood_gradients_.resize(
-        shuffled_indices_for_person_.size());
-      for(unsigned int i = 0; i < simulated_loglikelihood_gradients_.size();
-          i++) {
-        simulated_loglikelihood_gradients_[i].Init(
-          distribution_->num_parameters());
-      }
-
-      // This vector maintains the Hessians of the simulated
-      // loglikelihood per person per discrete choice.
-      simulated_loglikelihood_hessians_.resize(
-        shuffled_indices_for_person_.size());
-    }
-
-    /** @brief Adds the specified number of terms to the outer sum,
-     *         where each term corresponds to a person.
-     */
-    void AddPeople(int num_people) {
-      num_active_people_ += num_people;
-    }
-
-    /** @brief Adds an integration sample to the person_index-th
-     *         person so that the person's running simulated choice
-     *         probabilities can be updated.
-     */
-    void AddIntegrationSample(
-      int person_index, const arma::vec &parameter_vector) {
-
-      // Given the parameter vector, compute the choice probabilities.
-      arma::vec choice_probabilities;
-      ComputeChoiceProbabilities_(
-        person_index, parameter_vector, &choice_probabilities);
-
-      // Given the parameter vector, compute the products between the
-      // gradient of the $\beta$ with respect to $\theta$ and
-      // $\bar{X}_i res_{i,j_i^*}(\beta^v(\theta))$.
-      arma::vec beta_gradient_product;
-
-      // j_i^* index.
-      int discrete_choice_index = this->get_discrete_choice_index(person_index);
-      distribution_->MixedLogitParameterGradientProducts(
-        this, person_index, discrete_choice_index, parameter_vector,
-        choice_probabilities, &beta_gradient_product);
-
-      // Update the simulated choice probabilities
-      // and the simulated log-likelihood gradients.
-      simulated_choice_probabilities_[person_index].push_back(
-        choice_probabilities[discrete_choice_index]);
-
-      // Simulated log-likelihood gradient update by the simulated
-      // choice probabilty scaled gradient product.
-      beta_gradient_product = choice_probabilities[discrete_choice_index] *
-                              beta_gradient_product;
-      simulated_loglikelihood_gradients_[person_index].push_back(
-        beta_gradient_product);
-
-      // Update the Hessian of the simulated loglikelihood for the
-      // given person.
-      arma::mat hessian_first_part;
-      arma::vec hessian_second_part;
-      distribution_->HessianProducts(
-        this, person_index, discrete_choice_index, parameter_vector,
-        choice_probabilities, &hessian_first_part, &hessian_second_part);
-      simulated_loglikelihood_hessians_[person_index].first.push_back(
-        hessian_first_part);
-      simulated_loglikelihood_hessians_[person_index].second.push_back(
-        hessian_second_part);
-    }
-
-    const core::monte_carlo::MeanVariancePairVector &
-    simulated_loglikelihood_gradient(int person_index) const {
-      return simulated_loglikelihood_gradients_[person_index];
-    }
-
-    double simulated_choice_probability(int person_index) const {
-      return simulated_choice_probabilities_[person_index].sample_mean();
     }
 
     /** @brief Retrieve the discrete_choice_index-th attribute vector
