@@ -20,6 +20,18 @@ class MixedLogitDCM {
   public:
     typedef IncomingTableType TableType;
 
+    typedef mlpack::mixed_logit_dcm::DCMTable<TableType> DCMTableType;
+
+    typedef mlpack::mixed_logit_dcm::MixedLogitDCMSampling<DCMTableType> SamplingType;
+
+  private:
+
+    /** @brief Computes the sample data error (Section 3.1)
+     */
+    double SampleDataError_(
+      const SamplingType &first_sample,
+      const SamplingType &second_sample) const;
+
   public:
 
     TableType *attribute_table();
@@ -46,7 +58,7 @@ class MixedLogitDCM {
 
   private:
 
-    mlpack::mixed_logit_dcm::DCMTable<TableType> table_;
+    DCMTableType table_;
 
   private:
 
