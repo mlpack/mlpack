@@ -57,6 +57,7 @@ void *OgdThread(void *in_par) {
     switch (par->thread_state) {
     case 0: // waiting to read data
       if ( GetImmedExample(&ex, tid, l1) != 0 ) { // new example read
+	//print_ex(ex);
 	par->thread_state = 1;
       }
       else { // all epoches finished
@@ -87,7 +88,6 @@ void *OgdThread(void *in_par) {
 	// [-2 \lambda \eta w_i^t]
 	SparseAddExpertOverwrite(l1.msg_pool[tid], -(1.0/l1.t_pool[tid]), l1.w_vec_pool[tid]);
       }
-      //cout << "state 1, tid: " << tid << endl;
       // wait till all threads send their messages
       pthread_barrier_wait(&barrier_msg_all_sent);
       
@@ -96,7 +96,6 @@ void *OgdThread(void *in_par) {
     case 2:
       // update using messages
       OgdUpdate(l1.w_vec_pool[tid], l1.t_pool[tid], l1.bias_pool[tid], update, tid);
-      //cout << "state 2, tid: " << tid << endl;
       // wait till all threads used messages they received
       pthread_barrier_wait(&barrier_msg_all_used);
       // communication done
@@ -158,7 +157,7 @@ void Ogd(learner &l) {
     t_s += l1.num_used_exp[t];
     cout << "t"<< t << ": " << l1.num_used_exp[t] << " samples processed. Misprediction: " << l1.total_misp_pool[t]<< ", accuracy: "<< 1.0-(double)l1.total_misp_pool[t]/(double)l1.num_used_exp[t] << endl;
   }
-  cout << "Total mispredictions: " << t_m << ", accuracy: " << 1.0-(double)t_m/(double)t_s<< endl;
+  cout << "------ Total mispredictions: " << t_m << ", accuracy: " << 1.0-(double)t_m/(double)t_s<< endl;
   
 
   FinishLearner(l1, n_threads);
