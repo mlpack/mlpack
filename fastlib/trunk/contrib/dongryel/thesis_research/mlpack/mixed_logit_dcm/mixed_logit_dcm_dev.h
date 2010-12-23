@@ -54,14 +54,9 @@ void MixedLogitDCM<TableType>::Compute(
   // Initialize the starting optimization parameter $\theta_0$ and its
   // associated sampling information.
   typedef mlpack::mixed_logit_dcm::DCMTable<TableType> DCMTableType;
-  std::pair <
-  arma::vec ,
-       mlpack::mixed_logit_dcm::MixedLogitDCMSampling<DCMTableType> >
-       iterate_sampling_pair;
-  iterate_sampling_pair.first.set_size(
-    arguments_in.distribution_->num_parameters());
-  iterate_sampling_pair.first.zeros();
-  iterate_sampling_pair.second.Init(
+  mlpack::mixed_logit_dcm::MixedLogitDCMSampling<DCMTableType>
+  iterate_sampling;
+  iterate_sampling.Init(
     &table_, num_data_samples, num_integration_samples);
 
 

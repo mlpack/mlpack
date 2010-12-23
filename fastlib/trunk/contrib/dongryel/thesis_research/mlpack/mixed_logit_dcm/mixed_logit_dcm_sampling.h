@@ -55,7 +55,11 @@ class MixedLogitDCMSampling {
      */
     int num_active_people_;
 
+    /** @brief The number of integration samples for each person.
+     */
     arma::ivec num_integration_samples_;
+
+    arma::vec parameters_;
 
   private:
 
@@ -99,7 +103,61 @@ class MixedLogitDCMSampling {
       }
     }
 
+    /** @brief Adds an integration sample to the person_index-th
+     *         person so that the person's running simulated choice
+     *         probabilities can be updated.
+     */
+    void AddIntegrationSample_(
+      int person_index, const arma::vec &beta_vector) {
+
+      // Given the parameter vector, compute the choice probabilities.
+      arma::vec choice_probabilities;
+      ComputeChoiceProbabilities_(
+        person_index, beta_vector, &choice_probabilities);
+
+      // Given the beta vector, compute the products between the
+      // gradient of the $\beta$ with respect to $\theta$ and
+      // $\bar{X}_i res_{i,j_i^*}(\beta^v(\theta))$.
+      arma::vec beta_gradient_product;
+
+      // j_i^* index.
+      int discrete_choice_index =
+        dcm_table_->get_discrete_choice_index(person_index);
+      dcm_table_->distribution()->
+      ProductAttributeGradientWithRespectToParameter(
+        dcm_table_, person_index, discrete_choice_index, beta_vector,
+        choice_probabilities, &beta_gradient_product);
+
+      // Update the simulated choice probabilities
+      // and the simulated log-likelihood gradients.
+      simulated_choice_probabilities_[person_index].push_back(
+        choice_probabilities[discrete_choice_index]);
+
+      // Simulated log-likelihood gradient update by the simulated
+      // choice probabilty scaled gradient product.
+      beta_gradient_product = choice_probabilities[discrete_choice_index] *
+                              beta_gradient_product;
+      simulated_loglikelihood_gradients_[person_index].push_back(
+        beta_gradient_product);
+
+      // Update the Hessian of the simulated loglikelihood for the
+      // given person.
+      arma::mat hessian_first_part;
+      arma::vec hessian_second_part;
+      dcm_table_->distribution()->HessianProducts(
+        dcm_table_, person_index, discrete_choice_index, beta_vector,
+        choice_probabilities, &hessian_first_part, &hessian_second_part);
+      simulated_loglikelihood_hessians_[person_index].first.push_back(
+        hessian_first_part);
+      simulated_loglikelihood_hessians_[person_index].second.push_back(
+        hessian_second_part);
+    }
+
     void BuildSamples_() {
+
+      // The drawn beta for building the samples.
+      arma::vec random_beta;
+
       for(int i = 0; i < num_active_people_; i++) {
 
         // Get the index of the active person.
@@ -109,12 +167,17 @@ class MixedLogitDCMSampling {
             j < num_integration_samples_[person_index]; j++) {
 
           // Draw a beta from the parameter theta.
-        }
-      }
+          dcm_table_->distribution()->DrawBeta(parameters_, &random_beta);
+          this->AddIntegrationSample_(person_index, random_beta);
+        } // end of looping each new beta sample.
+      } // end of looping over each active person.
     }
 
   public:
 
+    /** @brief Returns the simulated choice probability for the given
+     *         person.
+     */
     double simulated_choice_probability(int person_index) const {
       return simulated_choice_probabilities_[person_index].sample_mean();
     }
@@ -233,55 +296,6 @@ class MixedLogitDCMSampling {
       return current_simulated_log_likelihood;
     }
 
-    /** @brief Adds an integration sample to the person_index-th
-     *         person so that the person's running simulated choice
-     *         probabilities can be updated.
-     */
-    void AddIntegrationSample(
-      int person_index, const arma::vec &beta_vector) {
-
-      // Given the parameter vector, compute the choice probabilities.
-      arma::vec choice_probabilities;
-      ComputeChoiceProbabilities_(
-        person_index, beta_vector, &choice_probabilities);
-
-      // Given the beta vector, compute the products between the
-      // gradient of the $\beta$ with respect to $\theta$ and
-      // $\bar{X}_i res_{i,j_i^*}(\beta^v(\theta))$.
-      arma::vec beta_gradient_product;
-
-      // j_i^* index.
-      int discrete_choice_index =
-        dcm_table_->get_discrete_choice_index(person_index);
-      dcm_table_->distribution()->MixedLogitParameterGradientProducts(
-        this, person_index, discrete_choice_index, beta_vector,
-        choice_probabilities, &beta_gradient_product);
-
-      // Update the simulated choice probabilities
-      // and the simulated log-likelihood gradients.
-      simulated_choice_probabilities_[person_index].push_back(
-        choice_probabilities[discrete_choice_index]);
-
-      // Simulated log-likelihood gradient update by the simulated
-      // choice probabilty scaled gradient product.
-      beta_gradient_product = choice_probabilities[discrete_choice_index] *
-                              beta_gradient_product;
-      simulated_loglikelihood_gradients_[person_index].push_back(
-        beta_gradient_product);
-
-      // Update the Hessian of the simulated loglikelihood for the
-      // given person.
-      arma::mat hessian_first_part;
-      arma::vec hessian_second_part;
-      dcm_table_->distribution()->HessianProducts(
-        this, person_index, discrete_choice_index, beta_vector,
-        choice_probabilities, &hessian_first_part, &hessian_second_part);
-      simulated_loglikelihood_hessians_[person_index].first.push_back(
-        hessian_first_part);
-      simulated_loglikelihood_hessians_[person_index].second.push_back(
-        hessian_second_part);
-    }
-
     void Init(
       DCMTableType *dcm_table_in,
       int num_active_people_in,
@@ -312,12 +326,43 @@ class MixedLogitDCMSampling {
       // This vector maintains the Hessians of the simulated
       // loglikelihood per person per discrete choice.
       simulated_loglikelihood_hessians_.resize(dcm_table_->num_people());
+      for(unsigned int i = 0; i < simulated_loglikelihood_hessians_.size();
+          i++) {
+        simulated_loglikelihood_hessians_[i].first.Init(
+          dcm_table_->num_parameters(), dcm_table_->num_parameters());
+        simulated_loglikelihood_hessians_[i].second.Init(
+          dcm_table_->num_parameters());
+      }
+
+      // Initialize the starting parameters.
+      parameters_.set_size(dcm_table_->num_parameters());
+      parameters_.zeros();
 
       // Build up the samples.
       BuildSamples_();
     }
 
-    void AddActivePeople(int num_additional_people) {
+    /** @brief Add samples to the existing set of people.
+     */
+    void AddSamples(const std::vector<int> &num_additional_samples) {
+      for(int i = 0; i < num_active_people_; i++) {
+        int person_index = dcm_table_->shuffled_indices_for_person(i);
+        num_integration_samples_[person_index] += num_additional_samples[i];
+      }
+
+      // Build up additional samples for the new people.
+      BuildSamples_();
+    }
+
+    void AddActivePeople(
+      int num_additional_people, int initial_num_integration_samples_in) {
+
+      for(int i = 0; i < num_additional_people; i++) {
+        int person_index =
+          dcm_table_->shuffled_indices_for_person(i + num_active_people_);
+        num_integration_samples_[person_index] =
+          initial_num_integration_samples_in;
+      }
       num_active_people_ += num_additional_people;
 
       // Build up additional samples for the new people.
