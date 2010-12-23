@@ -19,9 +19,6 @@ namespace mixed_logit_dcm {
  */
 template<typename DCMTableType>
 class MixedLogitDCMDistribution {
-  private:
-    arma::vec parameters_;
-
   public:
 
     /** @brief Returns the (row, col)-th entry of
@@ -45,6 +42,9 @@ class MixedLogitDCMDistribution {
         }
       }
     }
+
+    virtual void DrawBeta(
+      const arma::vec &parameters, arma::vec *beta_out) const = 0;
 
     virtual int num_parameters() const = 0;
 
@@ -158,7 +158,7 @@ class MixedLogitDCMDistribution {
         dcm_table_in->num_attributes(), &first);
       this->ChoiceProbabilityHessianWithRespectToAttribute(
         dcm_table_in, person_index, discrete_choice_index,
-        choice_probabilities, choice_prob_weighted_attribute_vector, second);
+        choice_probabilities, choice_prob_weighted_attribute_vector, &second);
       (*hessian_first_part) = first * second * arma::trans(first);
 
       // Compute $\frac{\partial}{\partial \theta}
@@ -167,8 +167,7 @@ class MixedLogitDCMDistribution {
       arma::vec third;
       this->ChoiceProbabilityGradientWithRespectToAttribute(
         dcm_table_in, person_index, discrete_choice_index,
-        choice_probabilities, choice_prob_weighted_attribute_vector,
-        third);
+        choice_probabilities, choice_prob_weighted_attribute_vector, &third);
       (*hessian_second_part) = first * third;
     }
 
