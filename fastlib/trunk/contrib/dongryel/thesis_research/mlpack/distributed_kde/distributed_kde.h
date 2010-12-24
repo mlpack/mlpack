@@ -42,8 +42,6 @@ class DistributedKde {
 
   public:
 
-    ~DistributedKde();
-
     DistributedKde() {
       world_ = NULL;
     }
