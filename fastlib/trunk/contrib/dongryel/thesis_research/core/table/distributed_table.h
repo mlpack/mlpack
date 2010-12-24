@@ -391,7 +391,7 @@ class DistributedTable: public boost::noncopyable {
 
       // Delete the list of number of entries for each table in the
       // distributed table.
-      if(local_n_entries_ != NULL) {
+      if(local_n_entries_.get() != NULL) {
         if(core::table::global_m_file_) {
           core::table::global_m_file_->DestroyPtr(local_n_entries_.get());
         }
@@ -402,7 +402,7 @@ class DistributedTable: public boost::noncopyable {
       }
 
       // Delete the table.
-      if(owned_table_ != NULL) {
+      if(owned_table_.get() != NULL) {
         if(core::table::global_m_file_) {
           core::table::global_m_file_->DestroyPtr(owned_table_.get());
         }
@@ -413,7 +413,7 @@ class DistributedTable: public boost::noncopyable {
       }
 
       // Delete the tree.
-      if(global_table_ != NULL) {
+      if(global_table_.get() != NULL) {
         if(core::table::global_m_file_) {
           core::table::global_m_file_->DestroyPtr(global_table_.get());
         }

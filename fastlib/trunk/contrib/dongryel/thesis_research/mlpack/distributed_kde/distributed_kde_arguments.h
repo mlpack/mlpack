@@ -85,6 +85,19 @@ class DistributedKdeArguments {
         delete metric_;
         metric_ = NULL;
       }
+
+      // Assumes that distributed KDE argument is the last argument
+      // that is being destroyed.
+      if(core::table::global_m_file_ != NULL) {
+        if(core::table::global_m_file_->AllMemoryDeallocated()) {
+          std::cerr << "All memory have been deallocated.\n";
+        }
+        else {
+          std::cerr << "There are memory leaks.\n";
+        }
+        delete core::table::global_m_file_;
+        core::table::global_m_file_ = NULL;
+      }
     }
 };
 };
