@@ -36,6 +36,17 @@ double MixedLogitDCM<TableType>::SampleDataError_(
        log(second_sample.simulated_choice_probability(person_index)));
   }
   average_difference /= static_cast<double>(first_sample.num_active_people());
+  double variance = 0;
+
+  // Given the average difference, compute the variance.
+  for(int i = 0; i < first_sample.num_active_people(); i++) {
+    int person_index = table_.shuffled_indices_for_person(i);
+    double difference =
+      log(first_sample.simulated_choice_probability(person_index)) -
+      log(second_sample.simulated_choice_probability(person_index));
+    variance += core::math::Sqr(difference - average_difference);
+  }
+  return factor * variance;
 }
 
 template<typename TableType>

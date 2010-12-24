@@ -167,7 +167,8 @@ void TrustRegionUtil::ComputeDoglegDirection(
   arma::mat eigenvectors;
   arma::eig_sym(eigenvalues, eigenvectors, hessian);
   bool hessian_is_positive_definite = true;
-  for(int i = 0; hessian_is_positive_definite && i < eigenvalues.n_elem; i++) {
+  for(unsigned int i = 0;
+      hessian_is_positive_definite && i < eigenvalues.n_elem; i++) {
     if(eigenvalues[i] < std::numeric_limits<double>::epsilon()) {
       hessian_is_positive_definite = false;
     }
