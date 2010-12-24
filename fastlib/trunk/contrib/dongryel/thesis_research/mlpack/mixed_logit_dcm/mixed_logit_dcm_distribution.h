@@ -81,7 +81,6 @@ class MixedLogitDCMDistribution {
       const arma::vec &choice_prob_weighted_attribute_vector) const {
 
       double choice_probability = choice_probabilities[discrete_choice_index];
-      double unnormalized_entry = 0;
       arma::vec discrete_choice_attribute_vector;
       dcm_table_in->get_attribute_vector(
         person_index, discrete_choice_index, &discrete_choice_attribute_vector);
@@ -224,7 +223,7 @@ class MixedLogitDCMDistribution {
 
         // For each column index of the gradient,
         double dot_product = 0;
-        for(int j = 0; j < attribute_vector.n_elem; j++) {
+        for(unsigned int j = 0; j < attribute_vector.n_elem; j++) {
           dot_product += attribute_vec_sub_choice_prob_weighted_vec[j] *
                          this->AttributeGradientWithRespectToParameter(k, j);
         }

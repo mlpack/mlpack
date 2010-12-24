@@ -49,7 +49,7 @@ class MeanVariancePairVector {
     }
 
     void push_back(const arma::vec &v) {
-      for(int i = 0; i < v.n_elem; i++) {
+      for(unsigned int i = 0; i < v.n_elem; i++) {
         ptr_[i].push_back(v[i]);
       }
     }
@@ -110,8 +110,8 @@ class MeanVariancePairMatrix {
     }
 
     void push_back(const arma::mat &v) {
-      for(int j = 0; j < v.n_cols; j++) {
-        for(int i = 0; i < v.n_rows; i++) {
+      for(unsigned int j = 0; j < v.n_cols; j++) {
+        for(unsigned int i = 0; i < v.n_rows; i++) {
           this->get(i, j).push_back(v.at(i, j));
         }
       }
