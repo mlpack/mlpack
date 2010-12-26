@@ -203,7 +203,8 @@ class DistributedTable: public boost::noncopyable {
         (core::table::global_m_file_) ?
         core::table::global_m_file_->Construct<TableType>() : new TableType();
       new_local_table->Init(
-        owned_table_->n_attributes(), total_num_points_owned);
+        owned_table_->n_attributes(), total_num_points_owned,
+        table_outbox_group_comm.rank());
 
       // Left contributions.
       std::vector < core::table::OffsetDenseMatrix > left_contributions;

@@ -11,6 +11,14 @@
 #include "core/table/table.h"
 
 template<typename ProblemType>
+const std::vector < std::pair < typename core::gnp::DualtreeDfs <
+ProblemType >::TreeType *, typename core::gnp::DualtreeDfs <
+ProblemType >::TreeType * > > &core::gnp::DualtreeDfs <
+ProblemType >::unpruned_reference_nodes() const {
+  return unpruned_reference_nodes_;
+}
+
+template<typename ProblemType>
 void core::gnp::DualtreeDfs<ProblemType>::set_base_case_flag(bool flag_in) {
   do_base_case_ = flag_in;
 }
@@ -364,7 +372,8 @@ bool core::gnp::DualtreeDfs<ProblemType>::DualtreeCanonical_(
         // Otherwise, push into the list of reference nodes that must
         // be dealt later. These list will be used in the distributed
         // dualtree computation.
-        unpruned_reference_nodes_.push_back(rnode);
+        unpruned_reference_nodes_.push_back(
+          std::pair<TreeType *, TreeType *>(qnode, rnode));
       }
 
     } // qnode is leaf, rnode is leaf.
