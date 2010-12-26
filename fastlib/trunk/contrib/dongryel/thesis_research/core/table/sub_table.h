@@ -18,12 +18,14 @@ namespace table {
 extern MemoryMappedFile *global_m_file_;
 
 template<typename TableType>
-class SubTable: public boost::noncopyable {
+class SubTable {
 
   public:
     typedef typename TableType::TreeType TreeType;
 
     typedef typename TableType::OldFromNewIndexType OldFromNewIndexType;
+
+    typedef SubTable<TableType> SubTableType;
 
   private:
     friend class boost::serialization::access;
@@ -66,7 +68,7 @@ class SubTable: public boost::noncopyable {
     }
 
     int FindTreeDepth_(TreeType *node, int level) const {
-      if(node == NULL || level >= max_num_levels_to_serialize_) {
+      if(node == NULL || level > max_num_levels_to_serialize_) {
         return 0;
       }
       int left_depth = FindTreeDepth_(node->left(), level + 1);
@@ -75,6 +77,19 @@ class SubTable: public boost::noncopyable {
     }
 
   public:
+
+    void operator=(const SubTable<TableType> &subtable_in) {
+      table_ = const_cast< SubTableType &>(subtable_in).table();
+      start_node_ = const_cast< SubTableType &>(subtable_in).start_node();
+      max_num_levels_to_serialize_ =
+        const_cast<SubTableType &>(subtable_in).max_num_levels_to_serialize();
+      serialize_points_ =
+        const_cast<SubTableType &>(subtable_in).serialize_points();
+      data_ = const_cast<SubTableType &>(subtable_in).data();
+      old_from_new_ = const_cast<SubTableType &>(subtable_in).old_from_new();
+      new_from_old_ = const_cast<SubTableType &>(subtable_in).new_from_old();
+      tree_ = const_cast<SubTableType &>(subtable_in).tree();
+    }
 
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
@@ -114,9 +129,6 @@ class SubTable: public boost::noncopyable {
 
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
-
-      // Initialize so that everything gets loaded correctly.
-      this->Init(table_, (TreeType *) NULL, std::numeric_limits<int>::max());
 
       // Load the point serialization flags.
       ar & serialize_points_;
@@ -167,6 +179,7 @@ class SubTable: public boost::noncopyable {
         }
       }
       (*tree_) = tree_nodes[0];
+      start_node_ = tree_nodes[0];
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
@@ -181,12 +194,49 @@ class SubTable: public boost::noncopyable {
       tree_ = NULL;
     }
 
+    TableType *table() const {
+      return table_;
+    }
+
+    TreeType *start_node() const {
+      return start_node_;
+    }
+
+    int max_num_levels_to_serialize() const {
+      return max_num_levels_to_serialize_;
+    }
+
     bool serialize_points() const {
       return serialize_points_;
     }
 
+    core::table::DenseMatrix *data() const {
+      return data_;
+    }
+
+    boost::interprocess::offset_ptr <
+    OldFromNewIndexType > *old_from_new() const {
+      return old_from_new_;
+    }
+
+    boost::interprocess::offset_ptr<int> *new_from_old() const {
+      return new_from_old_;
+    }
+
+    boost::interprocess::offset_ptr<TreeType> *tree() const {
+      return tree_;
+    }
+
     void set_serialize_points(bool flag_in) {
       serialize_points_ = flag_in;
+    }
+
+    void Init(int rank_in, int max_num_levels_to_serialize_in) {
+      table_ = (core::table::global_m_file_) ?
+               core::table::global_m_file_->Construct<TableType>() :
+               new TableType();
+      table_->set_rank(rank_in);
+      this->Init(table_, (TreeType *) NULL, max_num_levels_to_serialize_in);
     }
 
     void Init(

@@ -107,7 +107,7 @@ class DualtreeDfs {
 
     bool do_base_case_;
 
-    std::vector<TreeType *> unpruned_reference_nodes_;
+    std::vector< std::pair<TreeType *, TreeType *> > unpruned_reference_nodes_;
 
   private:
 
@@ -174,6 +174,9 @@ class DualtreeDfs {
       TreeType *qnode, ResultType *query_results);
 
   public:
+
+    const std::vector <
+    std::pair<TreeType *, TreeType *> > &unpruned_reference_nodes() const;
 
     void set_base_case_flag(bool flag_in);
 

@@ -121,11 +121,11 @@ bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
     "the leave-one-out density at each reference point."
   )(
     "random_generate_n_attributes",
-    boost::program_options::value<int>(),
+    boost::program_options::value<int>()->default_value(2),
     "Generate the datasets on the fly of the specified dimension."
   )(
     "random_generate_n_entries",
-    boost::program_options::value<int>(),
+    boost::program_options::value<int>()->default_value(100),
     "Generate the datasets on the fly of the specified number of points."
   )(
     "densities_out",
