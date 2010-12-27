@@ -1,7 +1,7 @@
 ## Regular expression matching source files
 SRC_PATTERN = ".*\.\(cc\|hh\|[ch]\(pp\|xx\|\+\+\)?\)"
 ## All source files built by this project
-SOURCES     = ${shell find include src -iregex ${SRC_PATTERN}}
+SOURCES     = ${shell find core mlpack physpack -iregex ${SRC_PATTERN}}
 
 ## Regular expression matching temporary files
 TMP_PATTERN = ".*\(\.orig\|\.bak\|~\|/\#[^/]*\#\|/\.\#[^/]*\)"
