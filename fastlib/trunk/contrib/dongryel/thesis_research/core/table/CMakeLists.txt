@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 2.8)
 project(FASTLIB C CXX Fortran)
 
 set(SOURCES
-  abstract_point.h
   dense_matrix.h
   dense_point.h
   distributed_auction.h
@@ -11,6 +10,7 @@ set(SOURCES
   index_util.h
   memory_mapped_file.h
   offset_dense_matrix.h
+  sub_dense_matrix.h
   sub_table.h
   table.h
   transform.h

@@ -1,4 +1,5 @@
 /** @file transform.h
+ *
  *  @brief Transforms the table such that it is standardized or scaled to
  *         a unit hypercube.
  *
@@ -8,12 +9,13 @@
 #ifndef CORE_TABLE_TRANSFORM_H
 #define CORE_TABLE_TRANSFORM_H
 
-#include "fastlib/core/table.h"
-
+namespace core {
+namespace table {
 class Standardize {
   public:
 
-    static void Transform(core::table::Table &table_in) {
+    template<typename TableType>
+    static void Transform(TableType &table_in) {
 
       // Means and standard deviations of each dimension.
       std::vector<double> means(table_in.n_attributes(), 0.0);
@@ -32,9 +34,10 @@ class Standardize {
         }
       }
       for(int d = 0; d < table_in.n_attributes(); d++) {
-        standard_deviations[d] = sqrt(
-                                   standard_deviations[d] /
-                                   static_cast<double>(table_in.n_entries() - 1));
+        standard_deviations[d] =
+          sqrt(
+            standard_deviations[d] /
+            static_cast<double>(table_in.n_entries() - 1));
       }
       for(int i = 0; i < table_in.n_entries(); i++) {
         arma::vec point;
@@ -43,6 +46,8 @@ class Standardize {
         }
       }
     }
+};
+};
 };
 
 #endif

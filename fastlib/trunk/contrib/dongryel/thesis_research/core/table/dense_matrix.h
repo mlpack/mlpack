@@ -29,13 +29,16 @@ class DenseMatrix {
 
   public:
 
+    bool is_alias() const {
+      return is_alias_;
+    }
+
     void operator=(const DenseMatrix &dense_matrix_in) {
 
       // Not a true copy constructor. Sets the matrix to be an alias.
       ptr_ = const_cast<double *>(dense_matrix_in.ptr());
       n_rows_ = dense_matrix_in.n_rows();
       n_cols_ = dense_matrix_in.n_cols();
-
       is_alias_ = true;
     }
 
@@ -54,9 +57,12 @@ class DenseMatrix {
       ar & n_rows_;
       ar & n_cols_;
       int num_elements = n_rows_ * n_cols_;
-      ptr_ = (core::table::global_m_file_) ?
-             core::table::global_m_file_->ConstructArray<double>(num_elements) :
-             new double[num_elements];
+      if(is_alias_ == false) {
+        ptr_ =
+          (core::table::global_m_file_) ?
+          core::table::global_m_file_->ConstructArray<double>(num_elements) :
+          new double[num_elements];
+      }
       for(int i = 0; i < num_elements; i++) {
         ar & ptr_[i];
       }
@@ -186,6 +192,13 @@ class DenseMatrix {
       const_cast<bool &>(vec_out->use_aux_mem) = true;
       const_cast<double *&>(vec_out->mem) =
         const_cast<double *>(ptr_.get() + i * n_rows_);
+    }
+
+    void Alias(const double *ptr_in, int n_rows_in, int n_cols_in) {
+      ptr_ = const_cast<double *>(ptr_in);
+      n_rows_ = n_rows_in;
+      n_cols_ = n_cols_in;
+      is_alias_ = true;
     }
 };
 };
