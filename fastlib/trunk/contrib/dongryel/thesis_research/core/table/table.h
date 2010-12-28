@@ -157,6 +157,10 @@ class Table {
 
   public:
 
+    bool is_alias() const {
+      return is_alias_;
+    }
+
     void operator=(const TableType &table_in) {
       data_ = const_cast<TableType &>(table_in).data();
       rank_ = table_in.rank();

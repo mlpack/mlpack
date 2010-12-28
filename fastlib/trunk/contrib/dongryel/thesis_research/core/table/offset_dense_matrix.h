@@ -15,18 +15,34 @@ class OffsetDenseMatrix {
   private:
     friend class boost::serialization::access;
 
+    /** @brief The raw pointer to the set of points.
+     */
     double *ptr_;
 
+    /** @brief The pointer to the old from new mappings.
+     */
     std::pair<int, std::pair<int, int> > *index_ptr_;
 
+    /** @brief The process ID to which each point is assigned.
+     */
     std::vector<int> *assignment_indices_;
 
+    /** @brief The serialization process selects the point IDs with
+     *         the assignment index equal to this value.
+     */
     int filter_index_;
 
+    /** @brief The process ID of the calling process.
+     */
     int rank_;
 
+    /** @brief The dimensionality of each point.
+     */
     int n_attributes_;
 
+    /** @brief The total number of points. This is equal to the length
+     *         of assignment_indices_.
+     */
     int n_entries_;
 
   private:
