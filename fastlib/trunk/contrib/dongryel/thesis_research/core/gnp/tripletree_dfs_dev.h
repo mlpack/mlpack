@@ -111,10 +111,10 @@ void core::gnp::TripletreeDfs<ProblemType>::Compute(
 template<typename ProblemType>
 void core::gnp::TripletreeDfs<ProblemType>::ResetStatisticRecursion_(
   typename ProblemType::TableType::TreeType *node) {
-  table_->get_node_stat(node).SetZero();
-  if(table_->node_is_leaf(node) == false) {
-    ResetStatisticRecursion_(table_->get_node_left_child(node));
-    ResetStatisticRecursion_(table_->get_node_right_child(node));
+  node->stat().SetZero();
+  if(node->is_leaf() == false) {
+    ResetStatisticRecursion_(node->left());
+    ResetStatisticRecursion_(node->right());
   }
 }
 
@@ -122,17 +122,15 @@ template<typename ProblemType>
 void core::gnp::TripletreeDfs<ProblemType>::PreProcess_(
   typename ProblemType::TableType::TreeType *qnode) {
 
-  typename ProblemType::StatisticType &qnode_stat =
-    table_->get_node_stat(qnode);
+  typename ProblemType::StatisticType &qnode_stat = qnode->stat();
   typename ProblemType::TableType::TreeIterator qnode_it =
     table_->get_node_iterator(qnode);
 
-  if(! table_->node_is_leaf(qnode)) {
-    PreProcess_(table_->get_node_left_child(qnode));
-    PreProcess_(table_->get_node_right_child(qnode));
+  if(! qnode->is_leaf()) {
+    PreProcess_(qnode->left());
+    PreProcess_(qnode->right());
     qnode_stat.Init(
-      qnode_it, table_->get_node_left_child(qnode)->stat(),
-      table_->get_node_right_child(qnode)->stat());
+      qnode_it, qnode->left()->stat(), qnode->right()->stat());
   }
   else {
     qnode_stat.Init(qnode_it);
@@ -228,8 +226,7 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
       // can refine it to better bounds.
       typename ProblemType::TableType::TreeType *node =
         range_sq_in.node(node_index);
-      typename ProblemType::StatisticType &node_stat =
-        problem_->table()->get_node_stat(node);
+      typename ProblemType::StatisticType &node_stat = node->stat();
       node_stat.summary_.StartReaccumulate(problem_->global());
 
       // Get the query node iterator and the reference node iterator.
@@ -306,8 +303,7 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
     typename core::gnp::TripletreeDfs<ProblemType>::TreeType *node =
       range_in.node(i);
     if(i == 0 || node != range_in.node(i - 1)) {
-      typename ProblemType::StatisticType &node_stat =
-        table_->get_node_stat(node);
+      typename ProblemType::StatisticType &node_stat = node->stat();
 
       // Loop over each point on this node.
       typename TableType::TreeIterator node_it =
@@ -405,8 +401,7 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanSummarize_(
     typename core::gnp::TripletreeDfs<ProblemType>::TreeType *node =
       triple_range_distance_sq_in.node(i);
     if(i == 0 || node != triple_range_distance_sq_in.node(i - 1)) {
-      typename ProblemType::StatisticType &node_stat =
-        table_->get_node_stat(node);
+      typename ProblemType::StatisticType &node_stat = node->stat();
       new_summaries[i] = node_stat.summary_;
       new_summaries[i].ApplyPostponed(node_stat.postponed_);
       new_summaries[i].ApplyDelta(delta, i);
@@ -458,8 +453,7 @@ void core::gnp::TripletreeDfs<ProblemType>::Summarize_(
     typename core::gnp::TripletreeDfs<ProblemType>::TreeType *node =
       triple_range_distance_sq.node(i);
     if(i == 0 || node != triple_range_distance_sq.node(i - 1)) {
-      typename ProblemType::StatisticType &node_stat =
-        table_->get_node_stat(node);
+      typename ProblemType::StatisticType &node_stat = node->stat();
       node_stat.postponed_.ApplyDelta(delta, i, query_results);
     }
   }
@@ -567,17 +561,17 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
 
       // Get the current query node statistic.
       typename ProblemType::StatisticType &current_node_stat =
-        table_->get_node_stat(current_node);
+        current_node->stat();
 
       // Left and right nodes of the query node and their statistic.
       typename ProblemType::TableType::TreeType *current_node_left =
-        table_->get_node_left_child(current_node);
+        current_node->left();
       typename ProblemType::TableType::TreeType *current_node_right =
-        table_->get_node_right_child(current_node);
+        current_node->right();
       typename ProblemType::StatisticType &current_node_left_stat =
-        table_->get_node_stat(current_node_left);
+        current_node_left->stat();
       typename ProblemType::StatisticType &current_node_right_stat =
-        table_->get_node_stat(current_node_right);
+        current_node_right->stat();
 
       // Push down postponed and clear.
       current_node_left_stat.postponed_.ApplyPostponed(
@@ -705,10 +699,9 @@ void core::gnp::TripletreeDfs<ProblemType>::PostProcess_(
   typename ProblemType::ResultType *query_results,
   bool do_query_results_postprocess) {
 
-  typename ProblemType::StatisticType &qnode_stat =
-    table_->get_node_stat(qnode);
+  typename ProblemType::StatisticType &qnode_stat = qnode->stat();
 
-  if(table_->node_is_leaf(qnode)) {
+  if(qnode->is_leaf()) {
 
     typename ProblemType::TableType::TreeIterator qnode_iterator =
       table_->get_node_iterator(qnode);
@@ -738,14 +731,10 @@ void core::gnp::TripletreeDfs<ProblemType>::PostProcess_(
     qnode_stat.postponed_.SetZero();
   }
   else {
-    typename ProblemType::TableType::TreeType *qnode_left =
-      table_->get_node_left_child(qnode);
-    typename ProblemType::TableType::TreeType *qnode_right =
-      table_->get_node_right_child(qnode);
-    typename ProblemType::StatisticType &qnode_left_stat =
-      table_->get_node_stat(qnode_left);
-    typename ProblemType::StatisticType &qnode_right_stat =
-      table_->get_node_stat(qnode_right);
+    typename ProblemType::TableType::TreeType *qnode_left = qnode->left();
+    typename ProblemType::TableType::TreeType *qnode_right = qnode->right();
+    typename ProblemType::StatisticType &qnode_left_stat = qnode_left->stat();
+    typename ProblemType::StatisticType &qnode_right_stat = qnode_right->stat();
 
     qnode_left_stat.postponed_.ApplyPostponed(qnode_stat.postponed_);
     qnode_right_stat.postponed_.ApplyPostponed(qnode_stat.postponed_);

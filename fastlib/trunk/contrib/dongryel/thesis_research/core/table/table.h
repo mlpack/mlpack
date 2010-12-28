@@ -1,5 +1,8 @@
 /** @file table.h
  *
+ *  An abstract organization of a multidimensional dataset with its
+ *  indexing structure.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -274,18 +277,6 @@ class Table {
 
     typename TreeType::BoundType &get_node_bound(TreeType *node) {
       return node->bound();
-    }
-
-    TreeType *get_node_left_child(TreeType *node) {
-      return node->left();
-    }
-
-    TreeType *get_node_right_child(TreeType *node) {
-      return node->right();
-    }
-
-    bool node_is_leaf(TreeType *node) const {
-      return node->is_leaf();
     }
 
     StatisticType &get_node_stat(TreeType *node) {

@@ -16,9 +16,9 @@
 #include "core/table/table.h"
 #include "core/table/memory_mapped_file.h"
 #include "core/tree/gen_metric_tree.h"
-#include "core/table/distributed_auction.h"
+#include "core/parallel/distributed_auction.h"
 #include "core/table/offset_dense_matrix.h"
-#include "core/tree/distributed_local_kmeans.h"
+#include "core/parallel/distributed_local_kmeans.h"
 #include "core/table/index_util.h"
 
 namespace core {
@@ -303,7 +303,7 @@ class DistributedTable: public boost::noncopyable {
       const std::vector<double> &num_points_assigned_to_leaf_nodes) {
 
       if(table_outbox_group_comm.size() > 1) {
-        core::table::DistributedAuction auction;
+        core::parallel::DistributedAuction auction;
         return auction.Assign(
                  table_outbox_group_comm, num_points_assigned_to_leaf_nodes,
                  1.0 / static_cast<double>(table_outbox_group_comm.size()));

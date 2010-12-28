@@ -1,9 +1,11 @@
 /** @file distributed_auction.test.cc
  *
+ *  A simple test for distributed auction algorithm.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#include "core/table/distributed_auction.h"
+#include "core/parallel/distributed_auction.h"
 #include "core/math/math_lib.h"
 
 int main(int argc, char *argv[]) {
@@ -11,7 +13,7 @@ int main(int argc, char *argv[]) {
   // Initialize boost MPI.
   boost::mpi::environment env(argc, argv);
   boost::mpi::communicator world;
-  core::table::DistributedAuction auction;
+  core::parallel::DistributedAuction auction;
 
   // Seed the random number generator.
   srand(time(NULL) + world.rank());

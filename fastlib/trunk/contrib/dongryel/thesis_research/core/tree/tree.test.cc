@@ -42,7 +42,7 @@ class TestTree {
       }
       while(node_it.HasNext());
 
-      if(table.node_is_leaf(node) == false) {
+      if(node->is_leaf() == false) {
         return TestTreeIterator_(
                  table.get_node_left_child(node), table) &&
                TestTreeIterator_(
