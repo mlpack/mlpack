@@ -271,18 +271,6 @@ class Table {
       return TreeIterator(*this, begin, count);
     }
 
-    const typename TreeType::BoundType &get_node_bound(TreeType *node) const {
-      return node->bound();
-    }
-
-    typename TreeType::BoundType &get_node_bound(TreeType *node) {
-      return node->bound();
-    }
-
-    StatisticType &get_node_stat(TreeType *node) {
-      return node->stat();
-    }
-
     TreeType *get_tree() {
       return tree_.get();
     }

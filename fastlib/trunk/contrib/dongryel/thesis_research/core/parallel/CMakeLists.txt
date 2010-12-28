@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   distributed_auction.h
   distributed_local_kmeans.h
-  tree_exchange.h
+  table_exchange.h
 )
 
 set(DIR_SRCS)

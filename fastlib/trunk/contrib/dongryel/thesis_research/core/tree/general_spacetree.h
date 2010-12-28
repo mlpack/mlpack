@@ -1,8 +1,8 @@
-/**
- * @file general_spacetree.h
+/** @file general_spacetree.h
  *
- * Generalized space partitioning tree.
+ *  Generalized space partitioning tree.
  *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
 #ifndef CORE_TREE_GENERAL_SPACETREE_H
@@ -14,17 +14,6 @@
 #include "core/table/dense_matrix.h"
 #include "core/table/memory_mapped_file.h"
 #include "statistic.h"
-
-/**
- * A binary space partitioning tree, such as KD or ball tree.
- *
- * This particular tree forbids you from having more children.
- *
- * @param TBound the bounding type of each child
- * @param TStatistic extra data in the node
- *
- */
-
 #include <boost/interprocess/offset_ptr.hpp>
 #include "core/table/memory_mapped_file.h"
 
