@@ -83,10 +83,8 @@ void core::gnp::DualtreeDfs<ProblemType>::Compute(
 
   // Call the algorithm computation.
   core::math::Range squared_distance_range =
-    (query_table_->get_node_bound(query_table_->get_tree())).RangeDistanceSq(
-      metric,
-      reference_table_->get_node_bound
-      (reference_table_->get_tree()));
+    (query_table_->get_tree()->bound()).RangeDistanceSq(
+      metric, reference_table_->get_tree()->bound());
 
   if(do_initializations) {
     PreProcess_(query_table_->get_tree());
@@ -106,10 +104,10 @@ template<typename ProblemType>
 void core::gnp::DualtreeDfs<ProblemType>::ResetStatisticRecursion_(
   typename ProblemType::TableType::TreeType *node,
   typename ProblemType::TableType * table) {
-  table->get_node_stat(node).SetZero();
-  if(table->node_is_leaf(node) == false) {
-    ResetStatisticRecursion_(table->get_node_left_child(node), table);
-    ResetStatisticRecursion_(table->get_node_right_child(node), table);
+  node->stat().SetZero();
+  if(node->is_leaf() == false) {
+    ResetStatisticRecursion_(node->left(), table);
+    ResetStatisticRecursion_(node->right(), table);
   }
 }
 
@@ -117,21 +115,19 @@ template<typename ProblemType>
 void core::gnp::DualtreeDfs<ProblemType>::PreProcessReferenceTree_(
   typename ProblemType::TableType::TreeType *rnode) {
 
-  typename ProblemType::StatisticType &rnode_stat =
-    reference_table_->get_node_stat(rnode);
+  typename ProblemType::StatisticType &rnode_stat = rnode->stat();
   typename ProblemType::TableType::TreeIterator rnode_it =
     reference_table_->get_node_iterator(rnode);
 
-  if(reference_table_->node_is_leaf(rnode)) {
+  if(rnode->is_leaf()) {
     rnode_stat.Init(rnode_it);
   }
   else {
 
     // Get the left and the right children.
-    typename ProblemType::TableType::TreeType *rnode_left_child =
-      reference_table_->get_node_left_child(rnode);
+    typename ProblemType::TableType::TreeType *rnode_left_child = rnode->left();
     typename ProblemType::TableType::TreeType *rnode_right_child =
-      reference_table_->get_node_right_child(rnode);
+      rnode->right();
 
     // Recurse to the left and the right.
     PreProcessReferenceTree_(rnode_left_child);
@@ -139,9 +135,9 @@ void core::gnp::DualtreeDfs<ProblemType>::PreProcessReferenceTree_(
 
     // Build the node stat by combining those owned by the children.
     typename ProblemType::StatisticType &rnode_left_child_stat =
-      reference_table_->get_node_stat(rnode_left_child) ;
+      rnode_left_child->stat();
     typename ProblemType::StatisticType &rnode_right_child_stat =
-      reference_table_->get_node_stat(rnode_right_child) ;
+      rnode_right_child->stat();
     rnode_stat.Init(
       rnode_it, rnode_left_child_stat, rnode_right_child_stat);
   }
@@ -151,13 +147,12 @@ template<typename ProblemType>
 void core::gnp::DualtreeDfs<ProblemType>::PreProcess_(
   typename ProblemType::TableType::TreeType *qnode) {
 
-  typename ProblemType::StatisticType &qnode_stat =
-    query_table_->get_node_stat(qnode);
+  typename ProblemType::StatisticType &qnode_stat = qnode->stat();
   qnode_stat.SetZero();
 
-  if(!query_table_->node_is_leaf(qnode)) {
-    PreProcess_(query_table_->get_node_left_child(qnode));
-    PreProcess_(query_table_->get_node_right_child(qnode));
+  if(! qnode->is_leaf()) {
+    PreProcess_(qnode->left());
+    PreProcess_(qnode->right());
   }
 }
 
@@ -170,8 +165,7 @@ void core::gnp::DualtreeDfs<ProblemType>::DualtreeBase_(
 
   // Clear the summary statistics of the current query node so that we
   // can refine it to better bounds.
-  typename ProblemType::StatisticType &qnode_stat =
-    query_table_->get_node_stat(qnode);
+  typename ProblemType::StatisticType &qnode_stat = qnode->stat();
   qnode_stat.summary_.StartReaccumulate();
 
   // Postponed object to hold each query contribution.
@@ -237,8 +231,7 @@ bool core::gnp::DualtreeDfs<ProblemType>::CanProbabilisticSummarize_(
   typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
 
-  typename ProblemType::StatisticType &qnode_stat =
-    query_table_->get_node_stat(qnode);
+  typename ProblemType::StatisticType &qnode_stat = qnode->stat();
   typename ProblemType::SummaryType new_summary(qnode_stat.summary_);
   new_summary.ApplyPostponed(qnode_stat.postponed_);
   new_summary.ApplyDelta(delta);
@@ -267,8 +260,7 @@ bool core::gnp::DualtreeDfs<ProblemType>::CanSummarize_(
   const typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
 
-  typename ProblemType::StatisticType &qnode_stat =
-    query_table_->get_node_stat(qnode);
+  typename ProblemType::StatisticType &qnode_stat = qnode->stat();
   typename ProblemType::SummaryType new_summary(qnode_stat.summary_);
   new_summary.ApplyPostponed(qnode_stat.postponed_);
   new_summary.ApplyDelta(delta);
@@ -283,8 +275,7 @@ void core::gnp::DualtreeDfs<ProblemType>::Summarize_(
   const typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
 
-  typename ProblemType::StatisticType &qnode_stat =
-    query_table_->get_node_stat(qnode);
+  typename ProblemType::StatisticType &qnode_stat = qnode->stat();
   qnode_stat.postponed_.ApplyDelta(delta, query_results);
 }
 
@@ -302,13 +293,11 @@ void core::gnp::DualtreeDfs<ProblemType>::Heuristic_(
   core::math::Range &second_squared_distance_range) {
 
   core::math::Range tmp_first_squared_distance_range =
-    node_table->get_node_bound(node).RangeDistanceSq(
-      metric,
-      candidate_table->get_node_bound(first_candidate));
+    (node->bound()).RangeDistanceSq(
+      metric, first_candidate->bound());
   core::math::Range tmp_second_squared_distance_range =
-    node_table->get_node_bound(node).RangeDistanceSq(
-      metric,
-      candidate_table->get_node_bound(second_candidate));
+    (node->bound()).RangeDistanceSq(
+      metric, second_candidate->bound());
 
   if(tmp_first_squared_distance_range.lo <=
       tmp_second_squared_distance_range.lo) {
@@ -357,10 +346,10 @@ bool core::gnp::DualtreeDfs<ProblemType>::DualtreeCanonical_(
   }
 
   // If it is not prunable and the query node is a leaf,
-  if(query_table_->node_is_leaf(qnode)) {
+  if(qnode->is_leaf()) {
 
     bool exact_compute = true;
-    if(reference_table_->node_is_leaf(rnode)) {
+    if(rnode->is_leaf()) {
 
       if(do_base_case_) {
 
@@ -383,11 +372,8 @@ bool core::gnp::DualtreeDfs<ProblemType>::DualtreeCanonical_(
            squared_distance_range_second;
       typename ProblemType::TableType::TreeType *rnode_second;
       Heuristic_(
-        metric, qnode, query_table_,
-        reference_table_->get_node_left_child(rnode),
-        reference_table_->get_node_right_child(rnode),
-        reference_table_,
-        &rnode_first, squared_distance_range_first,
+        metric, qnode, query_table_, rnode->left(), rnode->right(),
+        reference_table_, &rnode_first, squared_distance_range_first,
         &rnode_second, squared_distance_range_second);
 
       // Recurse.
@@ -410,25 +396,20 @@ bool core::gnp::DualtreeDfs<ProblemType>::DualtreeCanonical_(
   bool exact_compute_nonleaf_qnode = true;
 
   // Get the current query node statistic.
-  typename ProblemType::StatisticType &qnode_stat =
-    query_table_->get_node_stat(qnode);
+  typename ProblemType::StatisticType &qnode_stat = qnode->stat();
 
   // Left and right nodes of the query node and their statistic.
-  typename ProblemType::TableType::TreeType *qnode_left =
-    query_table_->get_node_left_child(qnode);
-  typename ProblemType::TableType::TreeType *qnode_right =
-    query_table_->get_node_right_child(qnode);
-  typename ProblemType::StatisticType &qnode_left_stat =
-    query_table_->get_node_stat(qnode_left);
-  typename ProblemType::StatisticType &qnode_right_stat =
-    query_table_->get_node_stat(qnode_right);
+  typename ProblemType::TableType::TreeType *qnode_left = qnode->left();
+  typename ProblemType::TableType::TreeType *qnode_right = qnode->right();
+  typename ProblemType::StatisticType &qnode_left_stat = qnode_left->stat();
+  typename ProblemType::StatisticType &qnode_right_stat = qnode_right->stat();
 
   // Push down postponed and clear.
   qnode_left_stat.postponed_.ApplyPostponed(qnode_stat.postponed_);
   qnode_right_stat.postponed_.ApplyPostponed(qnode_stat.postponed_);
   qnode_stat.postponed_.SetZero();
 
-  if(reference_table_->node_is_leaf(rnode)) {
+  if(rnode->is_leaf()) {
     typename ProblemType::TableType::TreeType *qnode_first;
     core::math::Range
     squared_distance_range_first, squared_distance_range_second;
@@ -457,8 +438,7 @@ bool core::gnp::DualtreeDfs<ProblemType>::DualtreeCanonical_(
     typename ProblemType::TableType::TreeType *rnode_second;
     Heuristic_(
       metric, qnode_left, query_table_,
-      reference_table_->get_node_left_child(rnode),
-      reference_table_->get_node_right_child(rnode),
+      rnode->left(), rnode->right(),
       reference_table_, &rnode_first, squared_distance_range_first,
       &rnode_second, squared_distance_range_second);
 
@@ -476,8 +456,7 @@ bool core::gnp::DualtreeDfs<ProblemType>::DualtreeCanonical_(
 
     Heuristic_(
       metric, qnode_right, query_table_,
-      reference_table_->get_node_left_child(rnode),
-      reference_table_->get_node_right_child(rnode),
+      rnode->left(), rnode->right(),
       reference_table_, &rnode_first, squared_distance_range_first,
       &rnode_second, squared_distance_range_second);
 
@@ -517,10 +496,9 @@ void core::gnp::DualtreeDfs<ProblemType>::PostProcess_(
   typename ProblemType::TableType::TreeType *qnode,
   typename ProblemType::ResultType *query_results) {
 
-  typename ProblemType::StatisticType &qnode_stat =
-    query_table_->get_node_stat(qnode);
+  typename ProblemType::StatisticType &qnode_stat = qnode->stat();
 
-  if(query_table_->node_is_leaf(qnode)) {
+  if(qnode->is_leaf()) {
 
     typename ProblemType::TableType::TreeIterator qnode_iterator =
       query_table_->get_node_iterator(qnode);
@@ -543,14 +521,10 @@ void core::gnp::DualtreeDfs<ProblemType>::PostProcess_(
     qnode_stat.postponed_.SetZero();
   }
   else {
-    typename ProblemType::TableType::TreeType *qnode_left =
-      query_table_->get_node_left_child(qnode);
-    typename ProblemType::TableType::TreeType *qnode_right =
-      query_table_->get_node_right_child(qnode);
-    typename ProblemType::StatisticType &qnode_left_stat =
-      query_table_->get_node_stat(qnode_left);
-    typename ProblemType::StatisticType &qnode_right_stat =
-      query_table_->get_node_stat(qnode_right);
+    typename ProblemType::TableType::TreeType *qnode_left = qnode->left();
+    typename ProblemType::TableType::TreeType *qnode_right = qnode->right();
+    typename ProblemType::StatisticType &qnode_left_stat = qnode_left->stat();
+    typename ProblemType::StatisticType &qnode_right_stat = qnode_right->stat();
 
     qnode_left_stat.postponed_.ApplyPostponed(qnode_stat.postponed_);
     qnode_right_stat.postponed_.ApplyPostponed(qnode_stat.postponed_);

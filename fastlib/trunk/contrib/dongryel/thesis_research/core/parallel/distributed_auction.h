@@ -3,14 +3,14 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef CORE_TABLE_DISTRIBUTED_AUCTION_H
-#define CORE_TABLE_DISTRIBUTED_AUCTION_H
+#ifndef CORE_PARALLEL_DISTRIBUTED_AUCTION_H
+#define CORE_PARALLEL_DISTRIBUTED_AUCTION_H
 
 #include <boost/mpi.hpp>
 #include <boost/serialization/string.hpp>
 
 namespace core {
-namespace table {
+namespace parallel {
 class DistributedAuction {
   private:
 
