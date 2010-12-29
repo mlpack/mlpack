@@ -36,12 +36,19 @@ void mlpack::kde::Kde<TableType>::Compute(
   mlpack::kde::KdeResult< std::vector<double> > *result_out) {
 
   // Instantiate a dual-tree algorithm of the KDE.
-  core::gnp::DualtreeDfs<mlpack::kde::Kde<TableType> > dualtree_dfs;
+  typedef mlpack::kde::Kde<TableType> ProblemType;
+  core::gnp::DualtreeDfs< ProblemType > dualtree_dfs;
   dualtree_dfs.Init(*this);
 
   // Compute the result.
-  dualtree_dfs.Compute(* arguments_in.metric_, result_out);
-  printf("Number of prunes: %d\n", dualtree_dfs.num_deterministic_prunes());
+  if(arguments_in.num_iterations_in_ <= 0) {
+    dualtree_dfs.Compute(* arguments_in.metric_, result_out);
+    printf("Number of prunes: %d\n", dualtree_dfs.num_deterministic_prunes());
+  }
+  else {
+    typename core::gnp::DualtreeDfs<ProblemType>::iterator kde_it =
+      dualtree_dfs.get_iterator(*arguments_in.metric_, result_out);
+  }
 }
 
 template<typename TableType>
@@ -104,8 +111,11 @@ bool mlpack::kde::Kde<TableType>::ConstructBoostVariableMap_(
     boost::program_options::value<double>(),
     "OPTIONAL kernel bandwidth, if you set --bandwidth_selection flag, "
     "then the --bandwidth will be ignored."
-  )
-  (
+  )(
+    "num_iterations_in",
+    boost::program_options::value<int>()->default_value(0),
+    "The number of iterations to run."
+  )(
     "probability",
     boost::program_options::value<double>()->default_value(1.0),
     "Probability guarantee for the approximation of KDE."
@@ -180,7 +190,7 @@ bool mlpack::kde::Kde<TableType>::ConstructBoostVariableMap_(
 }
 
 template<typename TableType>
-void mlpack::kde::Kde<TableType>::ParseArguments(
+bool mlpack::kde::Kde<TableType>::ParseArguments(
   const std::vector<std::string> &args,
   mlpack::kde::KdeArguments<TableType> *arguments_out) {
 
@@ -189,7 +199,9 @@ void mlpack::kde::Kde<TableType>::ParseArguments(
 
   // Construct the Boost variable map.
   boost::program_options::variables_map vm;
-  ConstructBoostVariableMap_(args, &vm);
+  if(ConstructBoostVariableMap_(args, &vm)) {
+    return true;
+  }
 
   // Given the constructed boost variable map, parse each argument.
 
@@ -247,10 +259,21 @@ void mlpack::kde::Kde<TableType>::ParseArguments(
   // Parse the kernel type.
   arguments_out->kernel_ = vm["kernel"].as< std::string >();
   std::cout << "Using the kernel: " << arguments_out->kernel_ << "\n";
+
+  // Parse the number of iterations.
+  arguments_out->num_iterations_in_ = vm["num_iterations_in"].as<int>();
+  if(arguments_out->num_iterations_in_ > 0) {
+    std::cout << "Running for " << arguments_out->num_iterations_in_ <<
+              " iterations on a progressive mode...\n";
+  }
+  else {
+    std::cout << "Running the algorithm on a non-progressive mode...\n";
+  }
+  return false;
 }
 
 template<typename TableType>
-void mlpack::kde::Kde<TableType>::ParseArguments(
+bool mlpack::kde::Kde<TableType>::ParseArguments(
   int argc,
   char *argv[],
   mlpack::kde::KdeArguments<TableType> *arguments_out) {
@@ -258,7 +281,7 @@ void mlpack::kde::Kde<TableType>::ParseArguments(
   // Convert C input to C++; skip executable name for Boost.
   std::vector<std::string> args(argv + 1, argv + argc);
 
-  ParseArguments(args, arguments_out);
+  return ParseArguments(args, arguments_out);
 }
 
 #endif

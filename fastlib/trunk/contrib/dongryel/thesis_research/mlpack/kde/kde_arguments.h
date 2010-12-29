@@ -39,6 +39,8 @@ class KdeArguments {
 
     bool normalize_densities_;
 
+    int num_iterations_in_;
+
   public:
 
     template<typename GlobalType>
@@ -85,6 +87,7 @@ class KdeArguments {
       metric_ = NULL;
       tables_are_aliased_ = false;
       normalize_densities_ = true;
+      num_iterations_in_ = 0;
     }
 
     ~KdeArguments() {

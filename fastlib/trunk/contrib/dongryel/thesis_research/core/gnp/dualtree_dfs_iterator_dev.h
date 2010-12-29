@@ -75,9 +75,7 @@ DualtreeDfs<ProblemType>::iterator::IteratorArgType::IteratorArgType(
   qnode_ = qnode_in;
   rnode_ = rnode_in;
   squared_distance_range_ =
-    (query_table_in->get_node_bound(qnode_in)).RangeDistanceSq(
-      metric_in,
-      reference_table_in->get_node_bound(rnode_in));
+    (qnode_in->bound()).RangeDistanceSq(metric_in, rnode_in->bound());
 }
 
 template<typename ProblemType>
@@ -157,24 +155,24 @@ void DualtreeDfs<ProblemType>::iterator::operator++() {
           core::math::Range squared_distance_range_first,
                squared_distance_range_second;
           TreeType *rnode_second;
-          engine_->Heuristic_(metric_, qnode, query_table_,
-                              reference_table_->get_node_left_child(rnode),
-                              reference_table_->get_node_right_child(rnode),
-                              reference_table_,
-                              &rnode_first, squared_distance_range_first,
-                              &rnode_second, squared_distance_range_second);
+          engine_->Heuristic_(
+            metric_, qnode, query_table_, rnode->left(), rnode->right(),
+            reference_table_, &rnode_first, squared_distance_range_first,
+            &rnode_second, squared_distance_range_second);
 
           // Push the first prioritized reference node on the back
           // of the trace and the later one on the front of the
           // trace.
-          trace_.push_back(IteratorArgType(
-                             metric_, query_table_, qnode,
-                             reference_table_, rnode_first,
-                             squared_distance_range_first));
-          trace_.push_front(IteratorArgType(
-                              metric_, query_table_, qnode,
-                              reference_table_, rnode_second,
-                              squared_distance_range_second));
+          trace_.push_back(
+            IteratorArgType(
+              metric_, query_table_, qnode,
+              reference_table_, rnode_first,
+              squared_distance_range_first));
+          trace_.push_front(
+            IteratorArgType(
+              metric_, query_table_, qnode,
+              reference_table_, rnode_second,
+              squared_distance_range_second));
         }
       }
 
@@ -182,11 +180,11 @@ void DualtreeDfs<ProblemType>::iterator::operator++() {
       else {
 
         // Here we split the query.
-        TreeType *qnode_left = query_table_->get_node_left_child(qnode);
-        TreeType *qnode_right = query_table_->get_node_right_child(qnode);
+        TreeType *qnode_left = qnode->left();
+        TreeType *qnode_right = qnode->right();
 
         // If the reference node is leaf node,
-        if(reference_table_->node_is_leaf(rnode)) {
+        if(rnode->is_leaf()) {
 
           // Push both combinations on the back of the trace.
           trace_.push_back(IteratorArgType(
@@ -201,26 +199,28 @@ void DualtreeDfs<ProblemType>::iterator::operator++() {
         else {
 
           // Split the reference.
-          TreeType *rnode_left = reference_table_->get_node_left_child(rnode);
-          TreeType *rnode_right =
-            reference_table_->get_node_right_child(rnode);
+          TreeType *rnode_left = rnode->left();
+          TreeType *rnode_right = rnode->right();
 
           // Prioritize on the left child of the query node.
           TreeType *rnode_first = NULL, *rnode_second = NULL;
           core::math::Range squared_distance_range_first;
           core::math::Range squared_distance_range_second;
-          engine_->Heuristic_(metric_, qnode_left, query_table_, rnode_left,
-                              rnode_right, reference_table_,
-                              &rnode_first, squared_distance_range_first,
-                              &rnode_second, squared_distance_range_second);
-          trace_.push_back(IteratorArgType(
-                             metric_, query_table_, qnode_left,
-                             reference_table_, rnode_first,
-                             squared_distance_range_first));
-          trace_.push_front(IteratorArgType(
-                              metric_, query_table_, qnode_left,
-                              reference_table_, rnode_second,
-                              squared_distance_range_second));
+          engine_->Heuristic_(
+            metric_, qnode_left, query_table_, rnode_left,
+            rnode_right, reference_table_,
+            &rnode_first, squared_distance_range_first,
+            &rnode_second, squared_distance_range_second);
+          trace_.push_back(
+            IteratorArgType(
+              metric_, query_table_, qnode_left,
+              reference_table_, rnode_first,
+              squared_distance_range_first));
+          trace_.push_front(
+            IteratorArgType(
+              metric_, query_table_, qnode_left,
+              reference_table_, rnode_second,
+              squared_distance_range_second));
 
           // Prioritize on the right child of the query node.
           engine_->Heuristic_(metric_, qnode_right, query_table_,
