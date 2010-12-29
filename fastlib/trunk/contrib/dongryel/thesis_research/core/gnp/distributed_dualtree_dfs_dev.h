@@ -10,7 +10,9 @@
 #include "core/gnp/distributed_dualtree_dfs.h"
 #include "core/gnp/dualtree_dfs_dev.h"
 #include "core/table/table.h"
+#include "core/table/sub_table_list.h"
 #include "core/table/memory_mapped_file.h"
+#include "core/parallel/table_exchange.h"
 
 namespace core {
 namespace table {
@@ -23,39 +25,65 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
   const core::metric_kernels::AbstractMetric &metric,
   typename DistributedProblemType::ResultType *query_results) {
 
+  // The typedef of a sub table in use.
+  typedef core::table::SubTable<TableType> SubTableType;
+
   // Start the computation with the self interaction.
   core::gnp::DualtreeDfs<ProblemType> self_engine;
   ProblemType self_problem;
   ArgumentType self_argument;
   self_argument.Init(problem_->global());
   self_problem.Init(self_argument);
+  printf("Self problem: %d %d\n", world_->rank(),
+         reference_table_->local_table()->n_entries());
   self_engine.Init(self_problem);
   self_engine.Compute(metric, query_results);
   world_->barrier();
 
-  // For now, naively all-gather the reference tables from every
-  // process.
-  TableType *remote_tables = new TableType[world_->size()];
-  boost::mpi::all_gather(
-    *world_, *(reference_table_->local_table()), remote_tables);
+  // For now, the number of levels of the reference tree grabbed from
+  // each process is fixed.
+  const int max_num_levels_to_serialize = 5;
 
-  // Each process calls the independent sets of serial dual-tree dfs
-  // algorithms. Further parallelism can be exploited here.
-  for(int i = 0; i < world_->size(); i++) {
-    if(i != world_->rank()) {
-      core::gnp::DualtreeDfs<ProblemType> sub_engine;
-      ProblemType sub_problem;
-      ArgumentType sub_argument;
-      sub_argument.Init(
-        &remote_tables[i], query_table_->local_table(), problem_->global());
-      sub_problem.Init(sub_argument);
-      sub_engine.Init(sub_problem);
-      sub_engine.Compute(metric, query_results, false);
+  core::parallel::TableExchange<DistributedTableType> table_exchange;
+  table_exchange.Init(*world_, *reference_table_);
+  {
+    std::vector< std::vector< std::pair<int, int> > > receive_requests;
+    receive_requests.resize(world_->size());
+    for(unsigned int i = 0; i < receive_requests.size(); i++) {
+      if(i != static_cast<unsigned int>(world_->rank())) {
+        receive_requests[i].push_back(
+          std::pair<int, int>(0, reference_table_->local_n_entries(i)));
+      }
+    }
+    std::vector< core::table::SubTableList<SubTableType> > received_subtables;
+    table_exchange.AllToAll(
+      *world_, max_num_levels_to_serialize,
+      *(reference_table_->local_table()), receive_requests,
+      &received_subtables);
+
+    // Each process calls the independent sets of serial dual-tree dfs
+    // algorithms. Further parallelism can be exploited here.
+    for(int i = 0; i < world_->size(); i++) {
+      if(i != world_->rank()) {
+        for(unsigned int j = 0; j < received_subtables[i].size(); j++) {
+          core::gnp::DualtreeDfs<ProblemType> sub_engine;
+          ProblemType sub_problem;
+          ArgumentType sub_argument;
+          sub_argument.Init(
+            received_subtables[i][j].table(),
+            query_table_->local_table(), problem_->global());
+          sub_problem.Init(sub_argument);
+          sub_engine.Init(sub_problem);
+          sub_engine.set_base_case_flag(false);
+          sub_engine.Compute(metric, query_results, false);
+          printf("Unpruned query reference pairs: %d %d %d\n",
+                 sub_engine.unpruned_query_reference_pairs().size(),
+                 sub_engine.unpruned_reference_nodes().size(),
+                 sub_engine.num_deterministic_prunes());
+        }
+      }
     }
   }
-
-  // Destroy the received tables.
-  delete[] remote_tables;
 }
 
 template<typename DistributedProblemType>

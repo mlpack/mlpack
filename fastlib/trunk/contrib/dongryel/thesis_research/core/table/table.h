@@ -54,7 +54,9 @@ class Table {
 
     boost::interprocess::offset_ptr<TreeType> tree_;
 
-    bool is_alias_;
+    bool tree_is_aliased_;
+
+    bool mappings_are_aliased_;
 
   public:
 
@@ -160,8 +162,15 @@ class Table {
 
   public:
 
-    bool is_alias() const {
-      return is_alias_;
+    bool mappings_are_aliased() const {
+      return mappings_are_aliased_;
+    }
+
+    void Alias(
+      OldFromNewIndexType *old_from_new_in, int *new_from_old_in) {
+      old_from_new_ = old_from_new_in;
+      new_from_old_ = new_from_old_in;
+      mappings_are_aliased_ = true;
     }
 
     void operator=(const TableType &table_in) {
@@ -170,7 +179,8 @@ class Table {
       old_from_new_ = const_cast<TableType &>(table_in).old_from_new();
       new_from_old_ = const_cast<TableType &>(table_in).new_from_old();
       tree_ = const_cast<TableType &>(table_in).get_tree();
-      is_alias_ = true;
+      mappings_are_aliased_ = true;
+      tree_is_aliased_ = true;
     }
 
     template<class Archive>
@@ -228,11 +238,12 @@ class Table {
       tree_ = NULL;
       old_from_new_ = NULL;
       new_from_old_ = NULL;
-      is_alias_ = false;
+      mappings_are_aliased_ = false;
+      tree_is_aliased_ = false;
     }
 
     ~Table() {
-      if(is_alias_ == false) {
+      if(tree_is_aliased_ == false) {
         if(tree_.get() != NULL) {
           if(core::table::global_m_file_) {
             core::table::global_m_file_->DestroyPtr(tree_.get());
@@ -242,6 +253,8 @@ class Table {
           }
           tree_ = NULL;
         }
+      }
+      if(mappings_are_aliased_ == false) {
         if(old_from_new_.get() != NULL) {
           if(core::table::global_m_file_) {
             core::table::global_m_file_->DestroyPtr(old_from_new_.get());
@@ -309,9 +322,13 @@ class Table {
         old_from_new_ = core::table::global_m_file_->ConstructArray <
                         OldFromNewIndexType > (
                           data_.n_cols());
+        new_from_old_ = core::table::global_m_file_->ConstructArray <
+                        int > (
+                          data_.n_cols());
       }
       else {
         old_from_new_ = new OldFromNewIndexType[data_.n_cols()];
+        new_from_old_ = new int[data_.n_cols()];
       }
       core::tree::IndexInitializer<OldFromNewIndexType>::OldFromNew(
         data_, rank_in, old_from_new_.get());
@@ -355,15 +372,6 @@ class Table {
       const core::metric_kernels::AbstractMetric &metric_in, int leaf_size,
       int max_num_leaf_nodes = std::numeric_limits<int>::max()) {
       int num_nodes;
-
-      if(core::table::global_m_file_) {
-        new_from_old_ = core::table::global_m_file_->ConstructArray <
-                        int > (
-                          data_.n_cols());
-      }
-      else {
-        new_from_old_ = new int[data_.n_cols()];
-      }
       tree_ = TreeType::MakeTree(
                 metric_in, data_, leaf_size, old_from_new_.get(),
                 new_from_old_.get(), max_num_leaf_nodes, &num_nodes, rank_);

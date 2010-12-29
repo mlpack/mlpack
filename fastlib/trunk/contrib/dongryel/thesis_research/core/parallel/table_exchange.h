@@ -20,24 +20,67 @@ extern core::table::MemoryMappedFile *global_m_file_;
 
 namespace core {
 namespace parallel {
+template<typename DistributedTableType>
 class TableExchange {
+  public:
+
+    typedef typename DistributedTableType::TableType TableType;
+
+    typedef typename TableType::OldFromNewIndexType OldFromNewIndexType;
+
   private:
     std::vector< core::table::DenseMatrix > point_cache_;
 
+    std::vector< typename TableType::OldFromNewIndexType *> old_from_new_cache_;
+
+    std::vector<int *> new_from_old_cache_;
+
   public:
 
-    template<typename DistributedTableType>
+    ~TableExchange() {
+      for(unsigned int i = 0; i < point_cache_.size(); i++) {
+        if(old_from_new_cache_[i] != NULL) {
+          if(core::table::global_m_file_) {
+            core::table::global_m_file_->DestroyPtr(old_from_new_cache_[i]);
+            core::table::global_m_file_->DestroyPtr(new_from_old_cache_[i]);
+          }
+          else {
+            delete[](old_from_new_cache_[i]);
+            delete[](new_from_old_cache_[i]);
+          }
+        }
+      }
+    }
+
     void Init(
       boost::mpi::communicator &world,
       const DistributedTableType &distributed_table) {
 
       // Preallocate the point cache.
       point_cache_.resize(world.size());
+      old_from_new_cache_.resize(world.size());
+      new_from_old_cache_.resize(world.size());
       for(int i = 0; i < world.size(); i++) {
         if(i != world.rank()) {
           point_cache_[i].Init(
             distributed_table.n_attributes(),
             distributed_table.local_n_entries(i));
+          old_from_new_cache_[i] =
+            (core::table::global_m_file_) ?
+            core::table::global_m_file_->ConstructArray <
+            typename TableType::OldFromNewIndexType > (
+              distributed_table.local_n_entries(i)) :
+            new OldFromNewIndexType[ distributed_table.local_n_entries(i)];
+          new_from_old_cache_[i] =
+            (core::table::global_m_file_) ?
+            core::table::global_m_file_->ConstructArray <
+            int > (
+              distributed_table.local_n_entries(i)) :
+            new int[ distributed_table.local_n_entries(i)];
+        }
+        else {
+          old_from_new_cache_[i] = NULL;
+          new_from_old_cache_[i] = NULL;
         }
       }
     }
@@ -75,7 +118,8 @@ class TableExchange {
       for(unsigned int j = 0; j < receive_requests.size(); j++) {
         for(unsigned int i = 0; i < receive_requests[j].size(); i++) {
           (*received_subtables)[j].push_back(
-            j, point_cache_[j], max_num_levels_to_serialize);
+            j, point_cache_[j], old_from_new_cache_[j], new_from_old_cache_[j],
+            max_num_levels_to_serialize);
         }
       }
       boost::mpi::all_to_all(world, send_subtables, *received_subtables);

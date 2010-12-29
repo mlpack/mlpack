@@ -14,7 +14,7 @@
 
 namespace core {
 namespace table {
-template<typename TreeType>
+template<typename SubTableType>
 class SubDenseMatrix {
   private:
     friend class boost::serialization::access;
@@ -23,9 +23,8 @@ class SubDenseMatrix {
      */
     core::table::DenseMatrix *matrix_;
 
-    const std::vector<TreeType *> *nodes_;
-
-    const std::vector<bool> *serialize_points_per_terminal_node_;
+    const std::vector< typename SubTableType::PointSerializeFlagType >
+    *serialize_points_per_terminal_node_;
 
   public:
 
@@ -35,16 +34,14 @@ class SubDenseMatrix {
 
     SubDenseMatrix() {
       matrix_ = NULL;
-      nodes_ = NULL;
       serialize_points_per_terminal_node_ = NULL;
     }
 
     void Init(
       core::table::DenseMatrix *matrix_in,
-      const std::vector<TreeType *> &nodes_in,
-      const std::vector<bool> &serialize_points_per_terminal_node_in) {
+      const std::vector< typename SubTableType::PointSerializeFlagType >
+      &serialize_points_per_terminal_node_in) {
       matrix_ = matrix_in;
-      nodes_ = &nodes_in;
       serialize_points_per_terminal_node_ =
         &serialize_points_per_terminal_node_in;
     }
@@ -58,14 +55,13 @@ class SubDenseMatrix {
       ar & n_rows;
       ar & n_cols;
 
-      for(unsigned int j = 0; j < nodes_->size(); j++) {
-        if((*nodes_)[j] != NULL && (*nodes_)[j]->is_leaf() &&
-            (*serialize_points_per_terminal_node_)[j]) {
-          for(int i = (*nodes_)[j]->begin(); i < (*nodes_)[j]->end(); i++) {
-            const double *column_ptr = matrix_->GetColumnPtr(i);
-            for(int k = 0; k < matrix_->n_rows(); k++) {
-              ar & column_ptr[k];
-            }
+      for(unsigned int j = 0;
+          j < serialize_points_per_terminal_node_->size(); j++) {
+        for(int i = (*serialize_points_per_terminal_node_)[j].begin_;
+            i < (*serialize_points_per_terminal_node_)[j].end_; i++) {
+          const double *column_ptr = matrix_->GetColumnPtr(i);
+          for(int k = 0; k < matrix_->n_rows(); k++) {
+            ar & column_ptr[k];
           }
         }
       }
@@ -84,15 +80,13 @@ class SubDenseMatrix {
         matrix_->Init(n_rows, n_cols);
       }
 
-      for(unsigned int j = 0; j < nodes_->size(); j++) {
-        if((*nodes_)[j] != NULL && (*nodes_)[j]->is_leaf() &&
-            (*serialize_points_per_terminal_node_)[j]) {
-          for(int i = (*nodes_)[j]->begin(); i < (*nodes_)[j]->end(); i++) {
-            double *column_ptr =
-              const_cast<double *>(matrix_->GetColumnPtr(i));
-            for(int k = 0; k < matrix_->n_rows(); k++) {
-              ar & column_ptr[k];
-            }
+      for(unsigned int j = 0;
+          j < serialize_points_per_terminal_node_->size(); j++) {
+        for(int i = (*serialize_points_per_terminal_node_)[j].begin_;
+            i < (*serialize_points_per_terminal_node_)[j].end_; i++) {
+          double *column_ptr = const_cast<double *>(matrix_->GetColumnPtr(i));
+          for(int k = 0; k < matrix_->n_rows(); k++) {
+            ar & column_ptr[k];
           }
         }
       }
