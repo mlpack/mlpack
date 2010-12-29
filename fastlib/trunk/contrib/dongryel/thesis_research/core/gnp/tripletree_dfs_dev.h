@@ -12,34 +12,36 @@
 #include "core/gnp/triple_distance_sq.h"
 #include "core/math/math_lib.h"
 
+namespace core {
+namespace gnp {
 template<typename ProblemType>
-int core::gnp::TripletreeDfs<ProblemType>::num_deterministic_prunes() const {
+int TripletreeDfs<ProblemType>::num_deterministic_prunes() const {
   return num_deterministic_prunes_;
 }
 
 template<typename ProblemType>
-int core::gnp::TripletreeDfs<ProblemType>::num_monte_carlo_prunes() const {
+int TripletreeDfs<ProblemType>::num_monte_carlo_prunes() const {
   return num_monte_carlo_prunes_;
 }
 
 template<typename ProblemType>
-ProblemType *core::gnp::TripletreeDfs<ProblemType>::problem() {
+ProblemType *TripletreeDfs<ProblemType>::problem() {
   return problem_;
 }
 
 template<typename ProblemType>
 typename ProblemType::TableType
-*core::gnp::TripletreeDfs<ProblemType>::table() {
+*TripletreeDfs<ProblemType>::table() {
   return table_;
 }
 
 template<typename ProblemType>
-void core::gnp::TripletreeDfs<ProblemType>::ResetStatistic() {
+void TripletreeDfs<ProblemType>::ResetStatistic() {
   ResetStatisticRecursion_(table_->get_tree());
 }
 
 template<typename ProblemType>
-void core::gnp::TripletreeDfs<ProblemType>::Init(ProblemType &problem_in) {
+void TripletreeDfs<ProblemType>::Init(ProblemType &problem_in) {
   problem_ = &problem_in;
   table_ = problem_->table();
   ResetStatistic();
@@ -50,7 +52,7 @@ void core::gnp::TripletreeDfs<ProblemType>::Init(ProblemType &problem_in) {
 }
 
 template<typename ProblemType>
-void core::gnp::TripletreeDfs<ProblemType>::NaiveCompute(
+void TripletreeDfs<ProblemType>::NaiveCompute(
   const core::metric_kernels::AbstractMetric &metric,
   typename ProblemType::ResultType *naive_query_results) {
 
@@ -62,7 +64,7 @@ void core::gnp::TripletreeDfs<ProblemType>::NaiveCompute(
 
   // Call the algorithm computation.
   std::vector< TreeType *> root_nodes(3, table_->get_tree());
-  core::gnp::TripleRangeDistanceSq<TableType> triple_range_distance_sq;
+  TripleRangeDistanceSq<TableType> triple_range_distance_sq;
   triple_range_distance_sq.Init(metric, *table_, root_nodes);
   TripletreeBase_(
     metric, triple_range_distance_sq, naive_query_results);
@@ -70,7 +72,7 @@ void core::gnp::TripletreeDfs<ProblemType>::NaiveCompute(
 }
 
 template<typename ProblemType>
-void core::gnp::TripletreeDfs<ProblemType>::Compute(
+void TripletreeDfs<ProblemType>::Compute(
   const core::metric_kernels::AbstractMetric &metric,
   typename ProblemType::ResultType *query_results) {
 
@@ -82,7 +84,7 @@ void core::gnp::TripletreeDfs<ProblemType>::Compute(
 
   // Call the algorithm computation.
   std::vector< TreeType *> root_nodes(3, table_->get_tree());
-  core::gnp::TripleRangeDistanceSq<TableType> triple_range_distance_sq;
+  TripleRangeDistanceSq<TableType> triple_range_distance_sq;
   triple_range_distance_sq.Init(metric, *table_, root_nodes);
 
   // Monochromatic computation.
@@ -90,7 +92,7 @@ void core::gnp::TripletreeDfs<ProblemType>::Compute(
   table_->get_leaf_nodes(table_->get_tree(), &leaf_nodes);
   for(unsigned int i = 0; i < leaf_nodes.size(); i++) {
     std::vector< TreeType *> leaf_node_tuples(3, leaf_nodes[i]);
-    core::gnp::TripleRangeDistanceSq<TableType> range_sq_in;
+    TripleRangeDistanceSq<TableType> range_sq_in;
     range_sq_in.Init(metric, *table_, leaf_node_tuples);
     TripletreeBase_(
       metric, range_sq_in, query_results);
@@ -109,7 +111,7 @@ void core::gnp::TripletreeDfs<ProblemType>::Compute(
 }
 
 template<typename ProblemType>
-void core::gnp::TripletreeDfs<ProblemType>::ResetStatisticRecursion_(
+void TripletreeDfs<ProblemType>::ResetStatisticRecursion_(
   typename ProblemType::TableType::TreeType *node) {
   node->stat().SetZero();
   if(node->is_leaf() == false) {
@@ -119,7 +121,7 @@ void core::gnp::TripletreeDfs<ProblemType>::ResetStatisticRecursion_(
 }
 
 template<typename ProblemType>
-void core::gnp::TripletreeDfs<ProblemType>::PreProcess_(
+void TripletreeDfs<ProblemType>::PreProcess_(
   typename ProblemType::TableType::TreeType *qnode) {
 
   typename ProblemType::StatisticType &qnode_stat = qnode->stat();
@@ -138,9 +140,9 @@ void core::gnp::TripletreeDfs<ProblemType>::PreProcess_(
 }
 
 template<typename ProblemType>
-typename core::gnp::TripletreeDfs<ProblemType>::TableType::TreeIterator
-core::gnp::TripletreeDfs<ProblemType>::GetNextNodeIterator_(
-  const core::gnp::TripleRangeDistanceSq<TableType> &range_sq_in,
+typename TripletreeDfs<ProblemType>::TableType::TreeIterator
+TripletreeDfs<ProblemType>::GetNextNodeIterator_(
+  const TripleRangeDistanceSq<TableType> &range_sq_in,
   int node_index,
   const typename TableType::TreeIterator &it_in) {
 
@@ -153,9 +155,9 @@ core::gnp::TripletreeDfs<ProblemType>::GetNextNodeIterator_(
 }
 
 template<typename ProblemType>
-void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
+void TripletreeDfs<ProblemType>::TripletreeBase_(
   const core::metric_kernels::AbstractMetric &metric,
-  const core::gnp::TripleRangeDistanceSq<TableType> &range_sq_in,
+  const TripleRangeDistanceSq<TableType> &range_sq_in,
   typename ProblemType::ResultType *query_results) {
 
   // Temporary postponed objects to be used within the triple loop.
@@ -164,7 +166,7 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
 
   // The triple object used for keeping track of the squared
   // distances.
-  core::gnp::TripleDistanceSq distance_sq_set;
+  TripleDistanceSq distance_sq_set;
 
   // Loop through the first node.
   typename TableType::TreeIterator first_node_it =
@@ -265,9 +267,9 @@ void core::gnp::TripletreeDfs<ProblemType>::TripletreeBase_(
 }
 
 template<typename ProblemType>
-bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
+bool TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
   const core::metric_kernels::AbstractMetric &metric,
-  const core::gnp::TripleRangeDistanceSq<TableType> &range_in,
+  const TripleRangeDistanceSq<TableType> &range_in,
   const std::vector<double> &failure_probabilities,
   int node_start_index,
   typename ProblemType::DeltaType &delta,
@@ -300,7 +302,7 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
   int previous_query_point_index = -1;
 
   for(int i = node_start_index; flag && i < 3; i++) {
-    typename core::gnp::TripletreeDfs<ProblemType>::TreeType *node =
+    typename TripletreeDfs<ProblemType>::TreeType *node =
       range_in.node(i);
     if(i == 0 || node != range_in.node(i - 1)) {
       typename ProblemType::StatisticType &node_stat = node->stat();
@@ -348,10 +350,10 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
 }
 
 template<typename ProblemType>
-void core::gnp::TripletreeDfs<ProblemType>::ProbabilisticSummarize_(
+void TripletreeDfs<ProblemType>::ProbabilisticSummarize_(
   const core::metric_kernels::AbstractMetric &metric,
   GlobalType &global,
-  const core::gnp::TripleRangeDistanceSq<TableType> &range_in,
+  const TripleRangeDistanceSq<TableType> &range_in,
   const std::vector<double> &failure_probabilities,
   int probabilistic_node_start_index,
   const typename ProblemType::DeltaType &delta,
@@ -368,7 +370,7 @@ void core::gnp::TripletreeDfs<ProblemType>::ProbabilisticSummarize_(
 
   // Do a full refine by traversing each node.
   for(int i = 0; i < 3; i++) {
-    typename core::gnp::TripletreeDfs<ProblemType>::TreeType *node =
+    typename TripletreeDfs<ProblemType>::TreeType *node =
       range_in.node(i);
     if(i == 0 || range_in.node(i - 1) != node) {
       PostProcess_(metric, node, query_results, false);
@@ -377,8 +379,8 @@ void core::gnp::TripletreeDfs<ProblemType>::ProbabilisticSummarize_(
 }
 
 template<typename ProblemType>
-bool core::gnp::TripletreeDfs<ProblemType>::CanSummarize_(
-  const core::gnp::TripleRangeDistanceSq<TableType>
+bool TripletreeDfs<ProblemType>::CanSummarize_(
+  const TripleRangeDistanceSq<TableType>
   &triple_range_distance_sq_in,
   const typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results,
@@ -398,7 +400,7 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanSummarize_(
 
   bool flag = true;
   for(int i = 0; flag && i < 3; i++) {
-    typename core::gnp::TripletreeDfs<ProblemType>::TreeType *node =
+    typename TripletreeDfs<ProblemType>::TreeType *node =
       triple_range_distance_sq_in.node(i);
     if(i == 0 || node != triple_range_distance_sq_in.node(i - 1)) {
       typename ProblemType::StatisticType &node_stat = node->stat();
@@ -418,7 +420,7 @@ bool core::gnp::TripletreeDfs<ProblemType>::CanSummarize_(
 }
 
 template<typename ProblemType>
-void core::gnp::TripletreeDfs<ProblemType>::AllocateProbabilities_(
+void TripletreeDfs<ProblemType>::AllocateProbabilities_(
   const std::vector<double> &failure_probabilities,
   const std::deque<bool> &node_is_split,
   const std::deque<bool> &recurse_to_left,
@@ -443,14 +445,14 @@ void core::gnp::TripletreeDfs<ProblemType>::AllocateProbabilities_(
 }
 
 template<typename ProblemType>
-void core::gnp::TripletreeDfs<ProblemType>::Summarize_(
-  const core::gnp::TripleRangeDistanceSq<TableType> &triple_range_distance_sq,
+void TripletreeDfs<ProblemType>::Summarize_(
+  const TripleRangeDistanceSq<TableType> &triple_range_distance_sq,
   int probabilistic_node_start_index,
   const typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
 
   for(int i = 0; i < probabilistic_node_start_index; i++) {
-    typename core::gnp::TripletreeDfs<ProblemType>::TreeType *node =
+    typename TripletreeDfs<ProblemType>::TreeType *node =
       triple_range_distance_sq.node(i);
     if(i == 0 || node != triple_range_distance_sq.node(i - 1)) {
       typename ProblemType::StatisticType &node_stat = node->stat();
@@ -460,9 +462,9 @@ void core::gnp::TripletreeDfs<ProblemType>::Summarize_(
 }
 
 template<typename ProblemType>
-bool core::gnp::TripletreeDfs<ProblemType>::NodeIsAgreeable_(
-  typename core::gnp::TripletreeDfs<ProblemType>::TreeType *node,
-  typename core::gnp::TripletreeDfs<ProblemType>::TreeType *next_node) const {
+bool TripletreeDfs<ProblemType>::NodeIsAgreeable_(
+  typename TripletreeDfs<ProblemType>::TreeType *node,
+  typename TripletreeDfs<ProblemType>::TreeType *next_node) const {
 
   // Agreeable if the nodes are equal or the next node's beginning
   // index is more than the ending index of the given node.
@@ -470,9 +472,9 @@ bool core::gnp::TripletreeDfs<ProblemType>::NodeIsAgreeable_(
 }
 
 template<typename ProblemType>
-void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
+void TripletreeDfs<ProblemType>::RecursionHelper_(
   const core::metric_kernels::AbstractMetric &metric,
-  core::gnp::TripleRangeDistanceSq<TableType> &triple_range_distance_sq,
+  TripleRangeDistanceSq<TableType> &triple_range_distance_sq,
   double relative_error,
   const std::vector<double> &failure_probabilities,
   typename ProblemType::ResultType *query_results,
@@ -640,9 +642,9 @@ void core::gnp::TripletreeDfs<ProblemType>::RecursionHelper_(
 }
 
 template<typename ProblemType>
-bool core::gnp::TripletreeDfs<ProblemType>::TripletreeCanonical_(
+bool TripletreeDfs<ProblemType>::TripletreeCanonical_(
   const core::metric_kernels::AbstractMetric &metric,
-  core::gnp::TripleRangeDistanceSq<TableType> &triple_range_distance_sq,
+  TripleRangeDistanceSq<TableType> &triple_range_distance_sq,
   double relative_error,
   const std::vector<double> &failure_probabilities,
   typename ProblemType::ResultType *query_results) {
@@ -693,7 +695,7 @@ bool core::gnp::TripletreeDfs<ProblemType>::TripletreeCanonical_(
 }
 
 template<typename ProblemType>
-void core::gnp::TripletreeDfs<ProblemType>::PostProcess_(
+void TripletreeDfs<ProblemType>::PostProcess_(
   const core::metric_kernels::AbstractMetric &metric,
   typename ProblemType::TableType::TreeType *qnode,
   typename ProblemType::ResultType *query_results,
@@ -756,5 +758,7 @@ void core::gnp::TripletreeDfs<ProblemType>::PostProcess_(
       qnode_right_stat.postponed_);
   }
 }
+};
+};
 
 #endif
