@@ -16,11 +16,10 @@ class IndexUtil {
     template<typename Archive>
     static void Serialize(Archive &ar, IndexType *array, int num_elements);
 
-    template<typename Archive, typename TreeType>
+    template<typename Archive, typename PointSerializeFlagArrayType>
     static void Serialize(
       Archive &ar, IndexType *array, int num_elements,
-      const std::vector<TreeType *> &nodes,
-      const std::vector<bool> &serialize_points_per_terminal_node);
+      const PointSerializeFlagArrayType &serialize_points_per_terminal_node);
 };
 
 template<>
@@ -40,20 +39,18 @@ class IndexUtil< int > {
       }
     }
 
-    template<typename Archive, typename TreeType>
+    template<typename Archive, typename PointSerializeFlagArrayType>
     static void Serialize(
       Archive &ar, int *array, int num_elements,
-      const std::vector<TreeType *> &nodes,
-      const std::vector<bool> &serialize_points_per_terminal_node) {
+      const PointSerializeFlagArrayType &serialize_points_per_terminal_node) {
       if(array == NULL) {
         return;
       }
-      for(unsigned int j = 0; j < nodes.size(); j++) {
-        if(nodes[j] != NULL && nodes[j]->is_leaf() &&
-            serialize_points_per_terminal_node[j]) {
-          for(int i = nodes[j]->begin(); i < nodes[j]->end(); i++) {
-            ar & array[i];
-          }
+      for(unsigned int j = 0;
+          j < serialize_points_per_terminal_node.size(); j++) {
+        for(int i = serialize_points_per_terminal_node[j].begin_;
+            i < serialize_points_per_terminal_node[j].end_; i++) {
+          ar & array[i];
         }
       }
     }
@@ -81,23 +78,21 @@ class IndexUtil< std::pair<int, std::pair<int, int> > > {
       }
     }
 
-    template<typename Archive, typename TreeType>
+    template<typename Archive, typename PointSerializeFlagArrayType>
     static void Serialize(
       Archive &ar, std::pair<int, std::pair<int, int> > *array,
       int num_elements,
-      const std::vector<TreeType *> &nodes,
-      const std::vector<bool> &serialize_points_per_terminal_node) {
+      const PointSerializeFlagArrayType &serialize_points_per_terminal_node) {
       if(array == NULL) {
         return;
       }
-      for(unsigned int j = 0; j < nodes.size(); j++) {
-        if(nodes[j] != NULL && nodes[j]->is_leaf() &&
-            serialize_points_per_terminal_node[j]) {
-          for(int i = nodes[j]->begin(); i < nodes[j]->end(); i++) {
-            ar & array[i].first;
-            ar & array[i].second.first;
-            ar & array[i].second.second;
-          }
+      for(unsigned int j = 0;
+          j < serialize_points_per_terminal_node.size(); j++) {
+        for(int i = serialize_points_per_terminal_node[j].begin_;
+            i < serialize_points_per_terminal_node[j].end_; i++) {
+          ar & array[i].first;
+          ar & array[i].second.first;
+          ar & array[i].second.second;
         }
       }
     }

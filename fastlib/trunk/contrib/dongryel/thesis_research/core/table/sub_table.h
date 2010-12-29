@@ -26,7 +26,37 @@ class SubTable {
 
     typedef typename TableType::OldFromNewIndexType OldFromNewIndexType;
 
-    typedef SubTable<TableType> SubTableType;
+    typedef core::table::SubTable<TableType> SubTableType;
+
+    class PointSerializeFlagType {
+      private:
+        friend class boost::serialization::access;
+
+      public:
+        int begin_;
+        int end_;
+        bool points_serialized_underneath_;
+
+        template<class Archive>
+        void serialize(Archive &ar, const unsigned int version) {
+          ar & begin_;
+          ar & end_;
+          ar & points_serialized_underneath_;
+        }
+
+        PointSerializeFlagType() {
+          begin_ = 0;
+          end_ = 0;
+          points_serialized_underneath_ = false;
+        }
+
+        PointSerializeFlagType(
+          int begin_in, int end_in, bool points_serialized_underneath_in) {
+          begin_ = begin_in;
+          end_ = end_in;
+          points_serialized_underneath_ = points_serialized_underneath_in;
+        }
+    };
 
   private:
     friend class boost::serialization::access;
@@ -47,12 +77,19 @@ class SubTable {
 
     bool is_alias_;
 
+    /** @brief The list each terminal node that is being
+     *         serialized/unserialized, the beginning index and its
+     *         boolean flag whether the points under it are all
+     *         serialized or not.
+     */
+    std::vector< PointSerializeFlagType > serialize_points_per_terminal_node_;
+
   private:
 
     void FillTreeNodes_(
       TreeType *node, int node_index, std::vector<TreeType *> &sorted_nodes,
       int *num_nodes,
-      std::vector<bool> *serialize_points_per_terminal_node,
+      std::vector<PointSerializeFlagType> *serialize_points_per_terminal_node_in,
       int level) const {
 
       if(node != NULL && level <= max_num_levels_to_serialize_) {
@@ -62,16 +99,18 @@ class SubTable {
         if(node->is_leaf() == false) {
           FillTreeNodes_(
             node->left(), 2 * node_index + 1, sorted_nodes, num_nodes,
-            serialize_points_per_terminal_node, level + 1);
+            serialize_points_per_terminal_node_in, level + 1);
           FillTreeNodes_(
             node->right(), 2 * node_index + 2, sorted_nodes, num_nodes,
-            serialize_points_per_terminal_node, level + 1);
+            serialize_points_per_terminal_node_in, level + 1);
         }
 
         // In case it is a leaf, grab the points belonging to it as
-        // well.
-        else if(level < max_num_levels_to_serialize_) {
-          (*serialize_points_per_terminal_node)[node_index] = true;
+        // well, if there is nothing left underneath.
+        else {
+          bool grab_points = (level < max_num_levels_to_serialize_);
+          serialize_points_per_terminal_node_in->push_back(
+            PointSerializeFlagType(node->begin(), node->end(), grab_points));
         }
       }
     }
@@ -87,6 +126,15 @@ class SubTable {
 
   public:
 
+    const std::vector <
+    PointSerializeFlagType > &serialize_points_per_terminal_node() const {
+      return serialize_points_per_terminal_node_;
+    }
+
+    bool is_alias() const {
+      return is_alias_;
+    }
+
     void operator=(const SubTable<TableType> &subtable_in) {
       table_ = const_cast< SubTableType &>(subtable_in).table();
       start_node_ = const_cast< SubTableType &>(subtable_in).start_node();
@@ -96,6 +144,9 @@ class SubTable {
       old_from_new_ = const_cast<SubTableType &>(subtable_in).old_from_new();
       new_from_old_ = const_cast<SubTableType &>(subtable_in).new_from_old();
       tree_ = const_cast<SubTableType &>(subtable_in).tree();
+      is_alias_ = subtable_in.is_alias();
+      serialize_points_per_terminal_node_ =
+        subtable_in.serialize_points_per_terminal_node();
     }
 
     template<class Archive>
@@ -110,10 +161,13 @@ class SubTable {
       int tree_depth = FindTreeDepth_(start_node_, 0);
       int max_size = 1 << tree_depth;
       std::vector< TreeType *> tree_nodes(max_size, (TreeType *) NULL);
-      std::vector<bool> serialize_points_per_terminal_node(max_size, false);
+      std::vector< PointSerializeFlagType >
+      &serialize_points_per_terminal_node_alias =
+        const_cast< std::vector<PointSerializeFlagType> & >(
+          serialize_points_per_terminal_node_);
       FillTreeNodes_(
         start_node_, 0, tree_nodes, &num_nodes,
-        &serialize_points_per_terminal_node, 0);
+        &serialize_points_per_terminal_node_alias, 0);
       ar & max_size;
       ar & num_nodes;
       for(unsigned int i = 0; i < tree_nodes.size(); i++) {
@@ -124,19 +178,19 @@ class SubTable {
       }
 
       // Save the boolean flags.
-      ar & serialize_points_per_terminal_node;
+      ar & serialize_points_per_terminal_node_;
 
       // Save the matrix and the mappings if requested.
       {
-        core::table::SubDenseMatrix<TreeType> sub_data;
-        sub_data.Init(data_, tree_nodes, serialize_points_per_terminal_node);
+        core::table::SubDenseMatrix<SubTableType> sub_data;
+        sub_data.Init(data_, serialize_points_per_terminal_node_);
         ar & sub_data;
         core::table::IndexUtil<OldFromNewIndexType>::Serialize(
           ar, old_from_new_->get(), data_->n_cols(),
-          tree_nodes, serialize_points_per_terminal_node);
+          serialize_points_per_terminal_node_);
         core::table::IndexUtil<int>::Serialize(
           ar, new_from_old_->get(), data_->n_cols(),
-          tree_nodes, serialize_points_per_terminal_node);
+          serialize_points_per_terminal_node_);
       }
     }
 
@@ -175,20 +229,30 @@ class SubTable {
       start_node_ = tree_nodes[0];
 
       // Load the boolean flags.
-      std::vector<bool> serialize_points_per_terminal_node;
-      ar & serialize_points_per_terminal_node;
+      ar & serialize_points_per_terminal_node_;
 
       // Load the data and the mappings if available.
       {
-        core::table::SubDenseMatrix<TreeType> sub_data;
-        sub_data.Init(data_, tree_nodes, serialize_points_per_terminal_node);
+        core::table::SubDenseMatrix<SubTableType> sub_data;
+        sub_data.Init(data_, serialize_points_per_terminal_node_);
         ar & sub_data;
+        if(table_->mappings_are_aliased() == false) {
+          (*old_from_new_) =
+            (core::table::global_m_file_) ?
+            core::table::global_m_file_->ConstructArray <
+            OldFromNewIndexType > (data_->n_cols()) :
+            new OldFromNewIndexType[ data_->n_cols()];
+          (*new_from_old_) =
+            (core::table::global_m_file_) ?
+            core::table::global_m_file_->ConstructArray <
+            int > (data_->n_cols()) : new int[ data_->n_cols()] ;
+        }
         core::table::IndexUtil<OldFromNewIndexType>::Serialize(
           ar, old_from_new_->get(), data_->n_cols(),
-          tree_nodes, serialize_points_per_terminal_node);
+          serialize_points_per_terminal_node_);
         core::table::IndexUtil<int>::Serialize(
           ar, new_from_old_->get(), data_->n_cols(),
-          tree_nodes, serialize_points_per_terminal_node);
+          serialize_points_per_terminal_node_);
       }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
@@ -244,16 +308,30 @@ class SubTable {
       return tree_;
     }
 
+    template<typename OldFromNewIndexType>
     void Init(
       int rank_in, core::table::DenseMatrix &data_alias_in,
+      OldFromNewIndexType *old_from_new_alias_in,
+      int *new_from_old_alias_in,
       int max_num_levels_to_serialize_in) {
       table_ = (core::table::global_m_file_) ?
                core::table::global_m_file_->Construct<TableType>() :
                new TableType();
+
+      // Since table_ pointer is explicitly allocated, is_alias_ flag
+      // is turned to false.
+      is_alias_ = false;
+
+      // Make the data grab the pointer.
       table_->data().Alias(
         data_alias_in.ptr(), data_alias_in.n_rows(), data_alias_in.n_cols());
-      is_alias_ = false;
       table_->set_rank(rank_in);
+
+      // Alias the incoming mappings.
+      table_->Alias(old_from_new_alias_in, new_from_old_alias_in);
+      printf("Aliasing %x %x\n", old_from_new_alias_in, new_from_old_alias_in);
+
+
       this->Init(table_, (TreeType *) NULL, max_num_levels_to_serialize_in);
     }
 
