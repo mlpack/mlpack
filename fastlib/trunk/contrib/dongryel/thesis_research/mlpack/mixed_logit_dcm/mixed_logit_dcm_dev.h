@@ -13,6 +13,13 @@ namespace mlpack {
 namespace mixed_logit_dcm {
 
 template<typename TableType>
+double MixedLogitDCM<TableType>::SimulationError_(
+  const SamplingType &first_sample,
+  const SamplingType &second_sample) const {
+
+}
+
+template<typename TableType>
 double MixedLogitDCM<TableType>::SampleDataError_(
   const SamplingType &first_sample,
   const SamplingType &second_sample) const {

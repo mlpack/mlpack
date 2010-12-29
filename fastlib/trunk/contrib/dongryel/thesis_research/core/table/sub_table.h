@@ -244,10 +244,14 @@ class SubTable {
       return tree_;
     }
 
-    void Init(int rank_in, int max_num_levels_to_serialize_in) {
+    void Init(
+      int rank_in, core::table::DenseMatrix &data_alias_in,
+      int max_num_levels_to_serialize_in) {
       table_ = (core::table::global_m_file_) ?
                core::table::global_m_file_->Construct<TableType>() :
                new TableType();
+      table_->data().Alias(
+        data_alias_in.ptr(), data_alias_in.n_rows(), data_alias_in.n_cols());
       is_alias_ = false;
       table_->set_rank(rank_in);
       this->Init(table_, (TreeType *) NULL, max_num_levels_to_serialize_in);
