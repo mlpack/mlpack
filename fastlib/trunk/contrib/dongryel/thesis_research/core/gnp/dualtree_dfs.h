@@ -6,6 +6,7 @@
 #ifndef CORE_GNP_DUALTREE_DFS_H
 #define CORE_GNP_DUALTREE_DFS_H
 
+#include <map>
 #include "core/metric_kernels/abstract_metric.h"
 #include "core/math/range.h"
 #include "dualtree_trace.h"
@@ -107,7 +108,10 @@ class DualtreeDfs {
 
     bool do_base_case_;
 
-    std::vector< std::pair<TreeType *, TreeType *> > unpruned_reference_nodes_;
+    std::vector< std::pair<TreeType *, std::pair<int, int> > >
+    unpruned_query_reference_pairs_;
+
+    std::map<int, int> unpruned_reference_nodes_;
 
   private:
 
@@ -176,7 +180,10 @@ class DualtreeDfs {
   public:
 
     const std::vector <
-    std::pair<TreeType *, TreeType *> > &unpruned_reference_nodes() const;
+    std::pair<TreeType *, std::pair<int, int > > > &
+    unpruned_query_reference_pairs() const;
+
+    const std::map< int, int > &unpruned_reference_nodes() const;
 
     void set_base_case_flag(bool flag_in);
 

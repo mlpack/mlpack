@@ -10,52 +10,59 @@
 #include "dualtree_dfs_iterator_dev.h"
 #include "core/table/table.h"
 
+namespace core {
+namespace gnp {
 template<typename ProblemType>
-const std::vector < std::pair < typename core::gnp::DualtreeDfs <
-ProblemType >::TreeType *, typename core::gnp::DualtreeDfs <
-ProblemType >::TreeType * > > &core::gnp::DualtreeDfs <
-ProblemType >::unpruned_reference_nodes() const {
+const std::vector < std::pair < typename DualtreeDfs <
+ProblemType >::TreeType *, std::pair<int, int > > > &DualtreeDfs <
+ProblemType >::unpruned_query_reference_pairs() const {
+  return unpruned_query_reference_pairs_;
+}
+
+template<typename ProblemType>
+const std::map <
+int, int > &DualtreeDfs<ProblemType>::unpruned_reference_nodes() const {
   return unpruned_reference_nodes_;
 }
 
 template<typename ProblemType>
-void core::gnp::DualtreeDfs<ProblemType>::set_base_case_flag(bool flag_in) {
+void DualtreeDfs<ProblemType>::set_base_case_flag(bool flag_in) {
   do_base_case_ = flag_in;
 }
 
 template<typename ProblemType>
-core::gnp::DualtreeDfs<ProblemType>::DualtreeDfs() {
+DualtreeDfs<ProblemType>::DualtreeDfs() {
   do_base_case_ = true;
 }
 
 template<typename ProblemType>
-int core::gnp::DualtreeDfs<ProblemType>::num_deterministic_prunes() const {
+int DualtreeDfs<ProblemType>::num_deterministic_prunes() const {
   return num_deterministic_prunes_;
 }
 
 template<typename ProblemType>
-ProblemType *core::gnp::DualtreeDfs<ProblemType>::problem() {
+ProblemType *DualtreeDfs<ProblemType>::problem() {
   return problem_;
 }
 
 template<typename ProblemType>
-typename ProblemType::TableType *core::gnp::DualtreeDfs<ProblemType>::query_table() {
+typename ProblemType::TableType *DualtreeDfs<ProblemType>::query_table() {
   return query_table_;
 }
 
 template<typename ProblemType>
 typename ProblemType::TableType *
-core::gnp::DualtreeDfs<ProblemType>::reference_table() {
+DualtreeDfs<ProblemType>::reference_table() {
   return reference_table_;
 }
 
 template<typename ProblemType>
-void core::gnp::DualtreeDfs<ProblemType>::ResetStatistic() {
+void DualtreeDfs<ProblemType>::ResetStatistic() {
   ResetStatisticRecursion_(query_table_->get_tree(), query_table_);
 }
 
 template<typename ProblemType>
-void core::gnp::DualtreeDfs<ProblemType>::Init(ProblemType &problem_in) {
+void DualtreeDfs<ProblemType>::Init(ProblemType &problem_in) {
 
   // Reset prune statistics.
   num_deterministic_prunes_ = 0;
@@ -71,7 +78,7 @@ void core::gnp::DualtreeDfs<ProblemType>::Init(ProblemType &problem_in) {
 }
 
 template<typename ProblemType>
-void core::gnp::DualtreeDfs<ProblemType>::Compute(
+void DualtreeDfs<ProblemType>::Compute(
   const core::metric_kernels::AbstractMetric &metric,
   typename ProblemType::ResultType *query_results,
   bool do_initializations) {
@@ -101,7 +108,7 @@ void core::gnp::DualtreeDfs<ProblemType>::Compute(
 }
 
 template<typename ProblemType>
-void core::gnp::DualtreeDfs<ProblemType>::ResetStatisticRecursion_(
+void DualtreeDfs<ProblemType>::ResetStatisticRecursion_(
   typename ProblemType::TableType::TreeType *node,
   typename ProblemType::TableType * table) {
   node->stat().SetZero();
@@ -112,7 +119,7 @@ void core::gnp::DualtreeDfs<ProblemType>::ResetStatisticRecursion_(
 }
 
 template<typename ProblemType>
-void core::gnp::DualtreeDfs<ProblemType>::PreProcessReferenceTree_(
+void DualtreeDfs<ProblemType>::PreProcessReferenceTree_(
   typename ProblemType::TableType::TreeType *rnode) {
 
   typename ProblemType::StatisticType &rnode_stat = rnode->stat();
@@ -144,7 +151,7 @@ void core::gnp::DualtreeDfs<ProblemType>::PreProcessReferenceTree_(
 }
 
 template<typename ProblemType>
-void core::gnp::DualtreeDfs<ProblemType>::PreProcess_(
+void DualtreeDfs<ProblemType>::PreProcess_(
   typename ProblemType::TableType::TreeType *qnode) {
 
   typename ProblemType::StatisticType &qnode_stat = qnode->stat();
@@ -157,7 +164,7 @@ void core::gnp::DualtreeDfs<ProblemType>::PreProcess_(
 }
 
 template<typename ProblemType>
-void core::gnp::DualtreeDfs<ProblemType>::DualtreeBase_(
+void DualtreeDfs<ProblemType>::DualtreeBase_(
   const core::metric_kernels::AbstractMetric &metric,
   typename ProblemType::TableType::TreeType *qnode,
   typename ProblemType::TableType::TreeType *rnode,
@@ -223,7 +230,7 @@ void core::gnp::DualtreeDfs<ProblemType>::DualtreeBase_(
 }
 
 template<typename ProblemType>
-bool core::gnp::DualtreeDfs<ProblemType>::CanProbabilisticSummarize_(
+bool DualtreeDfs<ProblemType>::CanProbabilisticSummarize_(
   const core::metric_kernels::AbstractMetric &metric,
   typename ProblemType::TableType::TreeType *qnode,
   typename ProblemType::TableType::TreeType *rnode,
@@ -242,7 +249,7 @@ bool core::gnp::DualtreeDfs<ProblemType>::CanProbabilisticSummarize_(
 }
 
 template<typename ProblemType>
-void core::gnp::DualtreeDfs<ProblemType>::ProbabilisticSummarize_(
+void DualtreeDfs<ProblemType>::ProbabilisticSummarize_(
   typename ProblemType::GlobalType &global,
   typename ProblemType::TableType::TreeType *qnode,
   double failure_probability,
@@ -254,7 +261,7 @@ void core::gnp::DualtreeDfs<ProblemType>::ProbabilisticSummarize_(
 }
 
 template<typename ProblemType>
-bool core::gnp::DualtreeDfs<ProblemType>::CanSummarize_(
+bool DualtreeDfs<ProblemType>::CanSummarize_(
   typename ProblemType::TableType::TreeType *qnode,
   typename ProblemType::TableType::TreeType *rnode,
   const typename ProblemType::DeltaType &delta,
@@ -270,7 +277,7 @@ bool core::gnp::DualtreeDfs<ProblemType>::CanSummarize_(
 }
 
 template<typename ProblemType>
-void core::gnp::DualtreeDfs<ProblemType>::Summarize_(
+void DualtreeDfs<ProblemType>::Summarize_(
   typename ProblemType::TableType::TreeType *qnode,
   const typename ProblemType::DeltaType &delta,
   typename ProblemType::ResultType *query_results) {
@@ -280,7 +287,7 @@ void core::gnp::DualtreeDfs<ProblemType>::Summarize_(
 }
 
 template<typename ProblemType>
-void core::gnp::DualtreeDfs<ProblemType>::Heuristic_(
+void DualtreeDfs<ProblemType>::Heuristic_(
   const core::metric_kernels::AbstractMetric &metric,
   typename ProblemType::TableType::TreeType *node,
   typename ProblemType::TableType *node_table,
@@ -315,7 +322,7 @@ void core::gnp::DualtreeDfs<ProblemType>::Heuristic_(
 }
 
 template<typename ProblemType>
-bool core::gnp::DualtreeDfs<ProblemType>::DualtreeCanonical_(
+bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
   const core::metric_kernels::AbstractMetric &metric,
   typename ProblemType::TableType::TreeType *qnode,
   typename ProblemType::TableType::TreeType *rnode,
@@ -361,8 +368,11 @@ bool core::gnp::DualtreeDfs<ProblemType>::DualtreeCanonical_(
         // Otherwise, push into the list of reference nodes that must
         // be dealt later. These list will be used in the distributed
         // dualtree computation.
-        unpruned_reference_nodes_.push_back(
-          std::pair<TreeType *, TreeType *>(qnode, rnode));
+        unpruned_query_reference_pairs_.push_back(
+          std::pair <
+          TreeType *, std::pair<int, int> > (
+            qnode, std::pair<int, int>(rnode->begin(), rnode->count())));
+        unpruned_reference_nodes_[rnode->begin()] = rnode->count();
       }
 
     } // qnode is leaf, rnode is leaf.
@@ -491,7 +501,7 @@ bool core::gnp::DualtreeDfs<ProblemType>::DualtreeCanonical_(
 }
 
 template<typename ProblemType>
-void core::gnp::DualtreeDfs<ProblemType>::PostProcess_(
+void DualtreeDfs<ProblemType>::PostProcess_(
   const core::metric_kernels::AbstractMetric &metric,
   typename ProblemType::TableType::TreeType *qnode,
   typename ProblemType::ResultType *query_results) {
@@ -543,5 +553,7 @@ void core::gnp::DualtreeDfs<ProblemType>::PostProcess_(
       qnode_right_stat.postponed_);
   }
 }
+};
+};
 
 #endif
