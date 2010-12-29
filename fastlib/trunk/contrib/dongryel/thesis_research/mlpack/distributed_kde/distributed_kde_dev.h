@@ -125,7 +125,7 @@ bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
     "Generate the datasets on the fly of the specified dimension."
   )(
     "random_generate_n_entries",
-    boost::program_options::value<int>()->default_value(100),
+    boost::program_options::value<int>()->default_value(10000),
     "Generate the datasets on the fly of the specified number of points."
   )(
     "densities_out",

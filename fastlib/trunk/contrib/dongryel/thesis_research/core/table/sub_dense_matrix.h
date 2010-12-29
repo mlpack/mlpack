@@ -59,7 +59,8 @@ class SubDenseMatrix {
       ar & n_cols;
 
       for(unsigned int j = 0; j < nodes_->size(); j++) {
-        if((*nodes_)[j] != NULL && (*nodes_)[j]->is_leaf()) {
+        if((*nodes_)[j] != NULL && (*nodes_)[j]->is_leaf() &&
+            (*serialize_points_per_terminal_node_)[j]) {
           for(int i = (*nodes_)[j]->begin(); i < (*nodes_)[j]->end(); i++) {
             const double *column_ptr = matrix_->GetColumnPtr(i);
             for(int k = 0; k < matrix_->n_rows(); k++) {
@@ -84,7 +85,8 @@ class SubDenseMatrix {
       }
 
       for(unsigned int j = 0; j < nodes_->size(); j++) {
-        if((*nodes_)[j] != NULL && (*nodes_)[j]->is_leaf()) {
+        if((*nodes_)[j] != NULL && (*nodes_)[j]->is_leaf() &&
+            (*serialize_points_per_terminal_node_)[j]) {
           for(int i = (*nodes_)[j]->begin(); i < (*nodes_)[j]->end(); i++) {
             double *column_ptr =
               const_cast<double *>(matrix_->GetColumnPtr(i));
