@@ -11,6 +11,7 @@ set(SOURCES
   offset_dense_matrix.h
   sub_dense_matrix.h
   sub_table.h
+  sub_table_list.h
   table.h
   transform.h
 )

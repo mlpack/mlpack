@@ -12,17 +12,16 @@
 
 namespace core {
 namespace parallel {
-template<typename SubTableType>
 class TableExchange {
   public:
 
-    template<typename TableType>
-    void AllToAll(
+    template<typename TableType, typename SubTableListType>
+    static void AllToAll(
       boost::mpi::communicator &world,
       int max_num_levels_to_serialize,
       TableType &local_table,
       const std::vector< std::vector< std::pair<int, int> > > &receive_requests,
-      std::vector< std::vector<SubTableType> > *received_subtables) {
+      std::vector< SubTableListType > *received_subtables) {
 
       // The gathered request lists to send to each process.
       std::vector< std::vector< std::pair<int, int> > > send_requests;
@@ -33,14 +32,13 @@ class TableExchange {
         world, receive_requests, send_requests);
 
       // Prepare the list of subtables, and do another all_to_all.
-      std::vector< std::vector<SubTableType> > send_subtables;
+      std::vector< SubTableListType > send_subtables;
       send_subtables.resize(send_requests.size());
       for(unsigned int j = 0; j < send_requests.size(); j++) {
-        send_subtables[j].resize(send_requests[j].size());
         for(unsigned int i = 0; i < send_requests[j].size(); i++) {
           int begin = send_requests[j][i].first;
           int count = send_requests[j][i].second;
-          send_subtables[j][i].Init(
+          send_subtables[j].push_back(
             &local_table,
             local_table.get_tree()->FindByBeginCount(begin, count),
             max_num_levels_to_serialize);
@@ -48,9 +46,8 @@ class TableExchange {
       }
       received_subtables->resize(world.size());
       for(unsigned int j = 0; j < receive_requests.size(); j++) {
-        (*received_subtables)[j]->resize(receive_requests[j].size());
         for(unsigned int i = 0; i < receive_requests[j].size(); i++) {
-          (*received_subtables)[j][i].Init(j, max_num_levels_to_serialize);
+          (*received_subtables)[j].push_back(j, max_num_levels_to_serialize);
         }
       }
       boost::mpi::all_to_all(world, send_subtables, *received_subtables);
