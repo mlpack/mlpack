@@ -26,9 +26,15 @@ class MixedLogitDCM {
 
   private:
 
-    /** @brief Computes the sample data error (Section 3.1)
+    /** @brief Computes the sample data error (Section 3.1).
      */
     double SampleDataError_(
+      const SamplingType &first_sample,
+      const SamplingType &second_sample) const;
+
+    /** @brief Computes the simulation error (Section 3.2).
+     */
+    double SimulationError_(
       const SamplingType &first_sample,
       const SamplingType &second_sample) const;
 

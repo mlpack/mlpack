@@ -35,9 +35,12 @@ class SubTableList {
       }
     }
 
-    void push_back(int rank_in, int max_num_levels_to_serialize_in) {
+    void push_back(
+      int rank_in, core::table::DenseMatrix &data_alias_in,
+      int max_num_levels_to_serialize_in) {
       list_.resize(list_.size() + 1);
-      list_[list_.size() - 1].Init(rank_in, max_num_levels_to_serialize_in);
+      list_[list_.size() - 1].Init(
+        rank_in, data_alias_in, max_num_levels_to_serialize_in);
     }
 
     template<typename TableType, typename TreeType>
