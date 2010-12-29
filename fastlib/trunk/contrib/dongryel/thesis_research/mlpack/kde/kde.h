@@ -1,5 +1,7 @@
 /** @file kde.h
  *
+ *  The header file for the kernel density estimation.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 

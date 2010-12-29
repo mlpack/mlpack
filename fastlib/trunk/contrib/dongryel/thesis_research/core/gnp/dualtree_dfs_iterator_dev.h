@@ -107,10 +107,11 @@ DualtreeDfs<ProblemType>::iterator::iterator(
   // Initialize an empty trace for the computation and the query
   // root/reference root pair into the trace.
   trace_.Init();
-  trace_.push_back(IteratorArgType(metric_in, query_table_,
-                                   query_table_->get_tree(),
-                                   reference_table_,
-                                   reference_table_->get_tree()));
+  trace_.push_back(IteratorArgType(
+                     metric_in, query_table_,
+                     query_table_->get_tree(),
+                     reference_table_,
+                     reference_table_->get_tree()));
 }
 
 template<typename ProblemType>
@@ -132,11 +133,12 @@ void DualtreeDfs<ProblemType>::iterator::operator++() {
       args.squared_distance_range();
 
     // Compute the delta change.
-    typename ProblemType::Delta_t delta;
-    delta.DeterministicCompute(metric_, engine_->problem_->global(),
-                               qnode, rnode, squared_distance_range);
-    bool prunable = engine_->CanSummarize_(qnode, rnode, delta,
-                                           query_results_);
+    typename ProblemType::DeltaType delta;
+    delta.DeterministicCompute(
+      metric_, engine_->problem_->global(),
+      qnode, rnode, squared_distance_range);
+    bool prunable = engine_->CanSummarize_(
+                      qnode, rnode, delta, query_results_);
 
     if(prunable) {
       engine_->Summarize_(qnode, delta, query_results_);
@@ -144,10 +146,10 @@ void DualtreeDfs<ProblemType>::iterator::operator++() {
     else {
 
       // If the query node is leaf node,
-      if(query_table_->node_is_leaf(qnode)) {
+      if(qnode->is_leaf()) {
 
         // If the reference node is leaf node,
-        if(reference_table_->node_is_leaf(rnode)) {
+        if(rnode->is_leaf()) {
           engine_->DualtreeBase_(metric_, qnode, rnode, query_results_);
         }
         else {
@@ -163,16 +165,14 @@ void DualtreeDfs<ProblemType>::iterator::operator++() {
           // Push the first prioritized reference node on the back
           // of the trace and the later one on the front of the
           // trace.
-          trace_.push_back(
-            IteratorArgType(
-              metric_, query_table_, qnode,
-              reference_table_, rnode_first,
-              squared_distance_range_first));
-          trace_.push_front(
-            IteratorArgType(
-              metric_, query_table_, qnode,
-              reference_table_, rnode_second,
-              squared_distance_range_second));
+          trace_.push_back(IteratorArgType(
+                             metric_, query_table_, qnode,
+                             reference_table_, rnode_first,
+                             squared_distance_range_first));
+          trace_.push_front(IteratorArgType(
+                              metric_, query_table_, qnode,
+                              reference_table_, rnode_second,
+                              squared_distance_range_second));
         }
       }
 
@@ -211,22 +211,21 @@ void DualtreeDfs<ProblemType>::iterator::operator++() {
             rnode_right, reference_table_,
             &rnode_first, squared_distance_range_first,
             &rnode_second, squared_distance_range_second);
-          trace_.push_back(
-            IteratorArgType(
-              metric_, query_table_, qnode_left,
-              reference_table_, rnode_first,
-              squared_distance_range_first));
-          trace_.push_front(
-            IteratorArgType(
-              metric_, query_table_, qnode_left,
-              reference_table_, rnode_second,
-              squared_distance_range_second));
+          trace_.push_back(IteratorArgType(
+                             metric_, query_table_, qnode_left,
+                             reference_table_, rnode_first,
+                             squared_distance_range_first));
+          trace_.push_front(IteratorArgType(
+                              metric_, query_table_, qnode_left,
+                              reference_table_, rnode_second,
+                              squared_distance_range_second));
 
           // Prioritize on the right child of the query node.
-          engine_->Heuristic_(metric_, qnode_right, query_table_,
-                              rnode_left, rnode_right, reference_table_,
-                              &rnode_first, squared_distance_range_first,
-                              &rnode_second, squared_distance_range_second);
+          engine_->Heuristic_(
+            metric_, qnode_right, query_table_,
+            rnode_left, rnode_right, reference_table_,
+            &rnode_first, squared_distance_range_first,
+            &rnode_second, squared_distance_range_second);
           trace_.push_back(IteratorArgType(
                              metric_, query_table_, qnode_right,
                              reference_table_, rnode_first,
