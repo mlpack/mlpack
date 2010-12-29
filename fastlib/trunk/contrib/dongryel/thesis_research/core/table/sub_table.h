@@ -45,6 +45,8 @@ class SubTable {
 
     boost::interprocess::offset_ptr<TreeType> *tree_;
 
+    bool is_alias_;
+
   private:
 
     void FillTreeNodes_(
@@ -181,16 +183,6 @@ class SubTable {
         core::table::SubDenseMatrix<TreeType> sub_data;
         sub_data.Init(data_, tree_nodes, serialize_points_per_terminal_node);
         ar & sub_data;
-        if(table_->is_alias() == false) {
-          (*old_from_new_) = (core::table::global_m_file_) ?
-                             core::table::global_m_file_->ConstructArray <
-                             OldFromNewIndexType > (data_->n_cols()) :
-                             new OldFromNewIndexType[ data_->n_cols()];
-          (*new_from_old_) = (core::table::global_m_file_) ?
-                             core::table::global_m_file_->ConstructArray <
-                             int > (data_->n_cols()) :
-                             new int[ data_->n_cols()];
-        }
         core::table::IndexUtil<OldFromNewIndexType>::Serialize(
           ar, old_from_new_->get(), data_->n_cols(),
           tree_nodes, serialize_points_per_terminal_node);
@@ -209,6 +201,18 @@ class SubTable {
       old_from_new_ = NULL;
       new_from_old_ = NULL;
       tree_ = NULL;
+      is_alias_ = true;
+    }
+
+    ~SubTable() {
+      if(is_alias_ == false) {
+        if(core::table::global_m_file_) {
+          core::table::global_m_file_->DestroyPtr(table_);
+        }
+        else {
+          delete table_;
+        }
+      }
     }
 
     TableType *table() const {
@@ -244,6 +248,7 @@ class SubTable {
       table_ = (core::table::global_m_file_) ?
                core::table::global_m_file_->Construct<TableType>() :
                new TableType();
+      is_alias_ = false;
       table_->set_rank(rank_in);
       this->Init(table_, (TreeType *) NULL, max_num_levels_to_serialize_in);
     }
