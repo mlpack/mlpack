@@ -19,7 +19,9 @@ int main(int argc, char *argv[]) {
 
   // Parse arguments for Kde.
   mlpack::kde::KdeArguments<TableType> kde_arguments;
-  mlpack::kde::Kde<TableType>::ParseArguments(argc, argv, &kde_arguments);
+  if(mlpack::kde::Kde<TableType>::ParseArguments(argc, argv, &kde_arguments)) {
+    return 0;
+  }
 
   // Instantiate a KDE object.
   mlpack::kde::Kde<TableType> kde_instance;

@@ -68,11 +68,11 @@ class Kde {
       const mlpack::kde::KdeArguments<TableType> &arguments_in,
       ResultType *result_out);
 
-    static void ParseArguments(
+    static bool ParseArguments(
       const std::vector<std::string> &args,
       mlpack::kde::KdeArguments<TableType> *arguments_out);
 
-    static void ParseArguments(
+    static bool ParseArguments(
       int argc,
       char *argv[],
       mlpack::kde::KdeArguments<TableType> *arguments_out);
