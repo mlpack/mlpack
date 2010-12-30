@@ -17,6 +17,14 @@ double MixedLogitDCM<TableType>::SimulationError_(
   const SamplingType &first_sample,
   const SamplingType &second_sample) const {
 
+  // Assumption: num_active_people in both samples are equal.
+  double simulation_error = 0;
+
+
+  // Lastly divide by squared of the number of active people.
+  simulation_error /=
+    core::math::Sqr(static_cast<double>(first_sample.num_active_people()));
+  return simulation_error;
 }
 
 template<typename TableType>
