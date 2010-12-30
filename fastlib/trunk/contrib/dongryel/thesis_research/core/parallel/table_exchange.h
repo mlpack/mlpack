@@ -86,7 +86,7 @@ class TableExchange {
     }
 
     template<typename TableType, typename SubTableListType>
-    void AllToAll(
+    bool AllToAll(
       boost::mpi::communicator &world,
       int max_num_levels_to_serialize,
       TableType &local_table,
@@ -95,6 +95,19 @@ class TableExchange {
 
       // The gathered request lists to send to each process.
       std::vector< std::vector< std::pair<int, int> > > send_requests;
+
+      // Do an all-reduce to check whether you are done.
+      bool all_done_flag = true;
+      bool local_done_flag = true;
+      for(unsigned int i = 0;
+          local_done_flag && i < receive_requests.size(); i++) {
+        local_done_flag = (receive_requests[i].size() == 0);
+      }
+      boost::mpi::all_reduce(
+        world, local_done_flag, all_done_flag, std::logical_and<bool>());
+      if(all_done_flag) {
+        return true;
+      }
 
       // Each process gathers the list of requests: (node
       // begin, node count) pairs.
@@ -123,6 +136,8 @@ class TableExchange {
         }
       }
       boost::mpi::all_to_all(world, send_subtables, *received_subtables);
+
+      return false;
     }
 };
 };
