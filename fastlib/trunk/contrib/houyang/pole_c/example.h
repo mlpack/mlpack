@@ -41,7 +41,7 @@ typedef struct example {
 
 
 // create an empty dense vector
-SVEC *CreateEmptyDvector(size_t fnum, char *userdefined) {
+SVEC *CreateEmptyDvector(size_t fnum) {
   SVEC *vec;
   vec = (SVEC *)my_malloc(sizeof(SVEC));
   vec->feats = (FEATURE *)my_malloc(sizeof(FEATURE)*(fnum));
@@ -50,15 +50,17 @@ SVEC *CreateEmptyDvector(size_t fnum, char *userdefined) {
     vec->feats[i].wval = 0.0;
   }
   vec->num_nz_feats = fnum;
+  vec->userdefined = NULL;
   return vec;
 }
 
 // create an empty sparse vector
-SVEC *CreateEmptySvector(char *userdefined) {
+SVEC *CreateEmptySvector() {
   SVEC *vec;
   vec = (SVEC *)my_malloc(sizeof(SVEC));
   vec->feats = NULL;
   vec->num_nz_feats = 0;
+  vec->userdefined = NULL;
   return vec;
 }
 
@@ -76,14 +78,16 @@ SVEC *CreateSvector(FEATURE *feats, char *userdefined) {
       vec->feats[i] = feats[i];
   }
   vec->num_nz_feats = fnum;
-
+  vec->userdefined = NULL;
   fnum=0;
   while(userdefined[fnum]) {
     fnum++;
   }
-  vec->userdefined = (char *)my_malloc(sizeof(char)*(fnum));
-  for(i=0; i<fnum; i++) { 
+  if (fnum > 0) {
+    vec->userdefined = (char *)my_malloc(sizeof(char)*(fnum));
+    for(i=0; i<fnum; i++) { 
       vec->userdefined[i]=userdefined[i];
+    }
   }
   return vec;
 }
@@ -129,14 +133,15 @@ void InsertOne(SVEC *v, FEATURE *f, size_t pos) {
   v->feats[pos].wval = f->wval;
 }
 
-void FreeSvec(SVEC *v) {
+void DestroySvec(SVEC *v) {
   if (v) {
     if (v->feats) {
-      //free(v->feats);
+      free(v->feats);
     }
     if (v->userdefined) {
       free(v->userdefined);
     }
+    free(v);
   }
 }
 
@@ -145,6 +150,7 @@ EXAMPLE *CreateEmptyExample() {
   ex = (EXAMPLE *)my_malloc(sizeof(EXAMPLE));
   ex->feats = NULL;
   ex->num_nz_feats = 0;
+  ex->userdefined = NULL;
   return ex;
 }
 
@@ -163,14 +169,16 @@ void CreateExample(EXAMPLE *example, FEATURE *feats, T_LBL label, char *userdefi
       example->feats[i] = feats[i];
   }
   example->num_nz_feats = fnum;
-
+  example->userdefined = NULL;
   fnum=0;
   while(userdefined[fnum]) {
     fnum++;
   }
-  example->userdefined = (char *)my_malloc(sizeof(char)*(fnum));
-  for(i=0; i<fnum; i++) { 
-    example->userdefined[i]=userdefined[i];
+  if (fnum > 0) {
+    example->userdefined = (char *)my_malloc(sizeof(char)*(fnum));
+    for(i=0; i<fnum; i++) { 
+      example->userdefined[i]=userdefined[i];
+    }
   }
 }
 

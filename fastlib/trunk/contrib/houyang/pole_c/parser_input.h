@@ -266,6 +266,7 @@ void SerialRead(string &data_fn, EXAMPLE **examples, size_t &num_examples) {
   fclose(fp);
   free(line);
   free(feat_cache);
+  free(pm_idx);
   if(!global.quiet) {
     cout << "done. " << dnum << " examples loaded." << endl;
   }
