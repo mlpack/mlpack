@@ -85,7 +85,7 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
             query_table_->local_table(), problem_->global());
           sub_problem.Init(sub_argument);
           sub_engine.Init(sub_problem);
-          sub_engine.set_base_case_flag(false);
+          sub_engine.set_base_case_flag(true);
           sub_engine.Compute(metric, query_results, false);
           printf("Unpruned query reference pairs: %d %d %d\n",
                  sub_engine.unpruned_query_reference_pairs().size(),

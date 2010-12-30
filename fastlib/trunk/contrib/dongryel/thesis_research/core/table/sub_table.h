@@ -269,7 +269,7 @@ class SubTable {
     }
 
     ~SubTable() {
-      if(is_alias_ == false) {
+      if(is_alias_ == false && table_ != NULL) {
         if(core::table::global_m_file_) {
           core::table::global_m_file_->DestroyPtr(table_);
         }
@@ -338,6 +338,7 @@ class SubTable {
       TableType *table_in, TreeType *start_node_in,
       int max_num_levels_to_serialize_in) {
       table_ = table_in;
+      is_alias_ = true;
       start_node_ = start_node_in;
       max_num_levels_to_serialize_ = max_num_levels_to_serialize_in;
       data_ = &table_in->data();
