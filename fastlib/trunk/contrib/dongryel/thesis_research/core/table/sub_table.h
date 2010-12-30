@@ -325,10 +325,6 @@ class SubTable {
                core::table::global_m_file_->Construct<TableType>() :
                new TableType();
 
-      // Since table_ pointer is explicitly allocated, is_alias_ flag
-      // is turned to false.
-      is_alias_ = false;
-
       // Make the data grab the pointer.
       table_->data().Alias(
         data_alias_in.ptr(), data_alias_in.n_rows(), data_alias_in.n_cols());
@@ -339,6 +335,11 @@ class SubTable {
 
       // Finalize the intialization.
       this->Init(table_, (TreeType *) NULL, max_num_levels_to_serialize_in);
+
+      // Since table_ pointer is explicitly allocated, is_alias_ flag
+      // is turned to false. It is important that it is here to
+      // overwrite is_alias_ flag after ALL initializations are done.
+      is_alias_ = false;
     }
 
     void Init(
