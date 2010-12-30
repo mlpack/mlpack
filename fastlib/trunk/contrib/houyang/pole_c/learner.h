@@ -53,20 +53,22 @@ void FinishLearner(learner &l, size_t ts) {
   if(l.w_vec_pool) {
     for (size_t t=0; t<ts; t++) {
       //print_svec(l.w_vec_pool[t]);
-      //FreeSvec(l.w_vec_pool[t]);
+      DestroySvec(l.w_vec_pool[t]);
     }
     free(l.w_vec_pool);
   }
   if(l.msg_pool) {
     for (size_t t=0; t<ts; t++) {
-      //FreeSvec(l.w_vec_pool[t]);
+      DestroySvec(l.msg_pool[t]);
     }
     free(l.msg_pool);
   }
   free(l.t_pool);
   free(l.scale_pool);
+  free(l.bias_pool);
   free(l.num_used_exp);
   free(l.total_loss_pool);
+  free(l.total_misp_pool);
 }
 
 void TickWait(size_t ticks) {

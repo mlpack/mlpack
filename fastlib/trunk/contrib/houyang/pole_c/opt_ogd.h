@@ -18,7 +18,7 @@ void OgdUpdate(SVEC *wvec, double &t, double &bias, double update, size_t tid) {
   else {
     eta = 1.0 / sqrt(t);
   }
-  exp_sum = CreateEmptySvector(NULL);
+  exp_sum = CreateEmptySvector();
   
   if (global.comm_method == 1) {
     for (size_t t=0; t<global.num_threads; t++) {
@@ -40,6 +40,7 @@ void OgdUpdate(SVEC *wvec, double &t, double &bias, double update, size_t tid) {
   }
 
   SparseAddOverwrite(wvec, exp_sum);
+  DestroySvec(exp_sum);
   // dummy updating time
   //boost::this_thread::sleep(boost::posix_time::microseconds(1));
 
@@ -130,9 +131,9 @@ void Ogd(learner &l) {
     t_par[t]->l = &l;
     t_par[t]->thread_state = 0;
     // init thread weights and messages
-    l1.w_vec_pool[t] = CreateEmptySvector(NULL);
+    l1.w_vec_pool[t] = CreateEmptySvector();
     l1.bias_pool[t] = 0.0;
-    l1.msg_pool[t] = CreateEmptySvector(NULL);
+    l1.msg_pool[t] = CreateEmptySvector();
     
     l1.t_pool[t] = t_init;
     l1.scale_pool[t] = 1.0;
