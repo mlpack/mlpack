@@ -22,7 +22,7 @@ extern core::table::MemoryMappedFile *global_m_file_;
 };
 
 template<typename DistributedProblemType>
-void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
+void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
   const core::metric_kernels::AbstractMetric &metric,
   typename DistributedProblemType::ResultType *query_results) {
 
@@ -43,29 +43,37 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
 
   // For now, the number of levels of the reference tree grabbed from
   // each process is fixed.
-  const int max_num_levels_to_serialize = 5;
+  const int max_num_levels_to_serialize = std::numeric_limits<int>::max();
 
   core::parallel::TableExchange<DistributedTableType> table_exchange;
   table_exchange.Init(*world_, *reference_table_);
-  {
-    std::vector< std::vector< std::pair<int, int> > > receive_requests;
-    receive_requests.resize(world_->size());
-    for(unsigned int i = 0; i < receive_requests.size(); i++) {
-      if(i != static_cast<unsigned int>(world_->rank())) {
-        receive_requests[i].push_back(
-          std::pair<int, int>(0, reference_table_->local_n_entries(i)));
-      }
+
+  std::vector< std::vector< std::pair<int, int> > > receive_requests;
+  receive_requests.resize(world_->size());
+  for(unsigned int i = 0; i < receive_requests.size(); i++) {
+    if(i != static_cast<unsigned int>(world_->rank())) {
+      receive_requests[i].push_back(
+        std::pair<int, int>(0, reference_table_->local_n_entries(i)));
     }
+  }
+
+  do  {
     std::vector< core::table::SubTableList<SubTableType> > received_subtables;
-    table_exchange.AllToAll(
-      *world_, max_num_levels_to_serialize,
-      *(reference_table_->local_table()), receive_requests,
-      &received_subtables);
+
+    // Try to exchange the subtables. If we are done, then we exit the
+    // loop.
+    if(
+      table_exchange.AllToAll(
+        *world_, max_num_levels_to_serialize,
+        *(reference_table_->local_table()), receive_requests,
+        &received_subtables)) {
+      break;
+    }
 
     // Each process calls the independent sets of serial dual-tree dfs
     // algorithms. Further parallelism can be exploited here.
-    std::vector< std::vector< std::pair<int, int> > > unpruned_reference_nodes;
-    unpruned_reference_nodes.resize(world_->size());
+    receive_requests.resize(0);
+    receive_requests.resize(world_->size());
     for(int i = 0; i < world_->size(); i++) {
       if(i != world_->rank()) {
         for(unsigned int j = 0; j < received_subtables[i].size(); j++) {
@@ -88,13 +96,14 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
           for(typename std::map<int, int>::const_iterator it =
                 sub_engine.unpruned_reference_nodes().begin();
               it != sub_engine.unpruned_reference_nodes().end(); it++) {
-            unpruned_reference_nodes[i].push_back(
+            receive_requests[i].push_back(
               std::pair<int, int>(it->first, it->second));
           }
         }
       }
     }
   }
+  while(true);
 }
 
 template<typename DistributedProblemType>
@@ -159,7 +168,7 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::Compute(
   // done using a naive approach where the global goal is to complete
   // a 2D matrix workspace. This is currently doing an all-reduce type
   // of exchange.
-  AllReduce_(metric, query_results);
+  ReduceScatter_(metric, query_results);
   world_->barrier();
 
   // Postprocess.

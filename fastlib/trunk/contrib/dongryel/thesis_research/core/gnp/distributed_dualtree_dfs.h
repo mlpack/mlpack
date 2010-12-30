@@ -38,7 +38,7 @@ class DistributedDualtreeDfs {
 
   private:
 
-    void AllReduce_(
+    void ReduceScatter_(
       const core::metric_kernels::AbstractMetric &metric,
       typename DistributedProblemType::ResultType *query_results);
 
