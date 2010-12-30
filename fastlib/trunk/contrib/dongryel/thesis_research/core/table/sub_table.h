@@ -152,8 +152,13 @@ class SubTable {
       new_from_old_ = const_cast<SubTableType &>(subtable_in).new_from_old();
       tree_ = const_cast<SubTableType &>(subtable_in).tree();
       is_alias_ = subtable_in.is_alias();
+      const_cast<SubTableType &>(subtable_in).is_alias_ = true;
       serialize_points_per_terminal_node_ =
         subtable_in.serialize_points_per_terminal_node();
+    }
+
+    SubTable(const SubTable<TableType> &subtable_in) {
+      this->operator=(subtable_in);
     }
 
     template<class Archive>

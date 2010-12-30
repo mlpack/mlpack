@@ -173,6 +173,10 @@ class Table {
       mappings_are_aliased_ = true;
     }
 
+    /** @brief Not a true operator= function. May need an additional
+     *      work if one wants to declare a STL container of Tables and
+     *      do complicated aliasing.
+     */
     void operator=(const TableType &table_in) {
       data_ = const_cast<TableType &>(table_in).data();
       rank_ = table_in.rank();
