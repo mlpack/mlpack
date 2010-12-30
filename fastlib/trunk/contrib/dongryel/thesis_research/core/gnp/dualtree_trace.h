@@ -8,7 +8,8 @@
 
 #include <deque>
 
-namespace ml {
+namespace core {
+namespace gnp {
 
 template<typename ArgType>
 class DualtreeTrace {
@@ -60,7 +61,7 @@ class DualtreeTrace {
     void Init() {
       trace_.resize(0);
     }
-
+};
 };
 };
 

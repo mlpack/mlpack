@@ -9,7 +9,7 @@
 #include <map>
 #include "core/metric_kernels/abstract_metric.h"
 #include "core/math/range.h"
-#include "dualtree_trace.h"
+#include "core/gnp/dualtree_trace.h"
 
 namespace core {
 namespace gnp {
@@ -78,7 +78,7 @@ class DualtreeDfs {
 
         ResultType *query_results_;
 
-        ml::DualtreeTrace<IteratorArgType> trace_;
+        core::gnp::DualtreeTrace<IteratorArgType> trace_;
 
       public:
 
