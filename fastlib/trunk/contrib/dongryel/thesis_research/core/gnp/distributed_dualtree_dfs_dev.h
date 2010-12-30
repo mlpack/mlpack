@@ -6,6 +6,7 @@
 #ifndef CORE_GNP_DISTRIBUTED_DUALTREE_DFS_DEV_H
 #define CORE_GNP_DISTRIBUTED_DUALTREE_DFS_DEV_H
 
+#include <boost/bind.hpp>
 #include <boost/mpi.hpp>
 #include "core/gnp/distributed_dualtree_dfs.h"
 #include "core/gnp/dualtree_dfs_dev.h"
@@ -63,6 +64,8 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
 
     // Each process calls the independent sets of serial dual-tree dfs
     // algorithms. Further parallelism can be exploited here.
+    std::vector< std::vector< std::pair<int, int> > > unpruned_reference_nodes;
+    unpruned_reference_nodes.resize(world_->size());
     for(int i = 0; i < world_->size(); i++) {
       if(i != world_->rank()) {
         for(unsigned int j = 0; j < received_subtables[i].size(); j++) {
@@ -80,6 +83,14 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::AllReduce_(
                  sub_engine.unpruned_query_reference_pairs().size(),
                  sub_engine.unpruned_reference_nodes().size(),
                  sub_engine.num_deterministic_prunes());
+
+          // Collect the list of unpruned reference nodes.
+          for(typename std::map<int, int>::const_iterator it =
+                sub_engine.unpruned_reference_nodes().begin();
+              it != sub_engine.unpruned_reference_nodes().end(); it++) {
+            unpruned_reference_nodes[i].push_back(
+              std::pair<int, int>(it->first, it->second));
+          }
         }
       }
     }

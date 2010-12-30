@@ -329,9 +329,8 @@ class SubTable {
 
       // Alias the incoming mappings.
       table_->Alias(old_from_new_alias_in, new_from_old_alias_in);
-      printf("Aliasing %x %x\n", old_from_new_alias_in, new_from_old_alias_in);
 
-
+      // Finalize the intialization.
       this->Init(table_, (TreeType *) NULL, max_num_levels_to_serialize_in);
     }
 
