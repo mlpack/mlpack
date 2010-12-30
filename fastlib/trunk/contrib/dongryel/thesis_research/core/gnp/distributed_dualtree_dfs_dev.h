@@ -35,15 +35,13 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
   ArgumentType self_argument;
   self_argument.Init(problem_->global());
   self_problem.Init(self_argument);
-  printf("Self problem: %d %d\n", world_->rank(),
-         reference_table_->local_table()->n_entries());
   self_engine.Init(self_problem);
   self_engine.Compute(metric, query_results);
   world_->barrier();
 
   // For now, the number of levels of the reference tree grabbed from
   // each process is fixed.
-  const int max_num_levels_to_serialize = std::numeric_limits<int>::max();
+  const int max_num_levels_to_serialize = 5;
 
   core::parallel::TableExchange<DistributedTableType> table_exchange;
   table_exchange.Init(*world_, *reference_table_);
@@ -88,10 +86,6 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
           sub_engine.set_base_case_flags(
             received_subtables[i][j].serialize_points_per_terminal_node());
           sub_engine.Compute(metric, query_results, false);
-          printf("Unpruned query reference pairs: %d %d %d\n",
-                 sub_engine.unpruned_query_reference_pairs().size(),
-                 sub_engine.unpruned_reference_nodes().size(),
-                 sub_engine.num_deterministic_prunes());
 
           // Collect the list of unpruned reference nodes.
           for(typename std::map<int, int>::const_iterator it =
