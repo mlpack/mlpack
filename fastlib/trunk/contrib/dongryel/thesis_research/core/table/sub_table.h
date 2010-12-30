@@ -1,5 +1,8 @@
 /** @file sub_table.h
  *
+ *  An abstraction to serialize a part of a dataset and its associated
+ *  subtree.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -34,26 +37,30 @@ class SubTable {
 
       public:
         int begin_;
-        int end_;
+        int count_;
         bool points_serialized_underneath_;
+
+        int end() const {
+          return begin_ + count_;
+        }
 
         template<class Archive>
         void serialize(Archive &ar, const unsigned int version) {
           ar & begin_;
-          ar & end_;
+          ar & count_;
           ar & points_serialized_underneath_;
         }
 
         PointSerializeFlagType() {
           begin_ = 0;
-          end_ = 0;
+          count_ = 0;
           points_serialized_underneath_ = false;
         }
 
         PointSerializeFlagType(
-          int begin_in, int end_in, bool points_serialized_underneath_in) {
+          int begin_in, int count_in, bool points_serialized_underneath_in) {
           begin_ = begin_in;
-          end_ = end_in;
+          count_ = count_in;
           points_serialized_underneath_ = points_serialized_underneath_in;
         }
     };
@@ -108,9 +115,9 @@ class SubTable {
         // In case it is a leaf, grab the points belonging to it as
         // well, if there is nothing left underneath.
         else {
-          bool grab_points = (level < max_num_levels_to_serialize_);
+          bool grab_points = (level <= max_num_levels_to_serialize_);
           serialize_points_per_terminal_node_in->push_back(
-            PointSerializeFlagType(node->begin(), node->end(), grab_points));
+            PointSerializeFlagType(node->begin(), node->count(), grab_points));
         }
       }
     }

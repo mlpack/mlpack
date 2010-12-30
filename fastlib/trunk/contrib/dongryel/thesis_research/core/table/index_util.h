@@ -49,7 +49,7 @@ class IndexUtil< int > {
       for(unsigned int j = 0;
           j < serialize_points_per_terminal_node.size(); j++) {
         for(int i = serialize_points_per_terminal_node[j].begin_;
-            i < serialize_points_per_terminal_node[j].end_; i++) {
+            i < serialize_points_per_terminal_node[j].end(); i++) {
           ar & array[i];
         }
       }
@@ -89,7 +89,7 @@ class IndexUtil< std::pair<int, std::pair<int, int> > > {
       for(unsigned int j = 0;
           j < serialize_points_per_terminal_node.size(); j++) {
         for(int i = serialize_points_per_terminal_node[j].begin_;
-            i < serialize_points_per_terminal_node[j].end_; i++) {
+            i < serialize_points_per_terminal_node[j].end(); i++) {
           ar & array[i].first;
           ar & array[i].second.first;
           ar & array[i].second.second;

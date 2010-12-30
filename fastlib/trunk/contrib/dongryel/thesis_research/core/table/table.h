@@ -344,9 +344,13 @@ class Table {
         old_from_new_ = core::table::global_m_file_->ConstructArray <
                         OldFromNewIndexType > (
                           data_.n_cols());
+        new_from_old_ = core::table::global_m_file_->ConstructArray <
+                        int > (
+                          data_.n_cols());
       }
       else {
         old_from_new_ = new OldFromNewIndexType[data_.n_cols()];
+        new_from_old_ = new int[data_.n_cols()];
       }
       core::tree::IndexInitializer<OldFromNewIndexType>::OldFromNew(
         data_, rank_in, old_from_new_.get());
