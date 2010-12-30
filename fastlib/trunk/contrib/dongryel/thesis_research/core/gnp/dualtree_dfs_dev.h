@@ -26,13 +26,22 @@ int, int > &DualtreeDfs<ProblemType>::unpruned_reference_nodes() const {
 }
 
 template<typename ProblemType>
-void DualtreeDfs<ProblemType>::set_base_case_flag(bool flag_in) {
-  do_base_case_ = flag_in;
+template<typename PointSerializeFlagType>
+void DualtreeDfs<ProblemType>::set_base_case_flags(
+  const std::vector<PointSerializeFlagType> &flags_in) {
+
+  for(unsigned int i = 0; i < flags_in.size(); i++) {
+    if(flags_in[i].points_serialized_underneath_) {
+      serialize_points_per_terminal_node_[flags_in[i].begin_] =
+        flags_in[i].count_;
+    }
+  }
+  do_selective_base_case_ = true;
 }
 
 template<typename ProblemType>
 DualtreeDfs<ProblemType>::DualtreeDfs() {
-  do_base_case_ = true;
+  do_selective_base_case_ = false;
 }
 
 template<typename ProblemType>
@@ -358,7 +367,9 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
     bool exact_compute = true;
     if(rnode->is_leaf()) {
 
-      if(do_base_case_) {
+      if(do_selective_base_case_ == false ||
+          serialize_points_per_terminal_node_.find(rnode->begin())
+          != serialize_points_per_terminal_node_.end()) {
 
         // If the base case must be done, then do so.
         DualtreeBase_(metric, qnode, rnode, query_results);

@@ -58,7 +58,7 @@ class SubDenseMatrix {
       for(unsigned int j = 0;
           j < serialize_points_per_terminal_node_->size(); j++) {
         for(int i = (*serialize_points_per_terminal_node_)[j].begin_;
-            i < (*serialize_points_per_terminal_node_)[j].end_; i++) {
+            i < (*serialize_points_per_terminal_node_)[j].end(); i++) {
           const double *column_ptr = matrix_->GetColumnPtr(i);
           for(int k = 0; k < matrix_->n_rows(); k++) {
             ar & column_ptr[k];
@@ -83,7 +83,7 @@ class SubDenseMatrix {
       for(unsigned int j = 0;
           j < serialize_points_per_terminal_node_->size(); j++) {
         for(int i = (*serialize_points_per_terminal_node_)[j].begin_;
-            i < (*serialize_points_per_terminal_node_)[j].end_; i++) {
+            i < (*serialize_points_per_terminal_node_)[j].end(); i++) {
           double *column_ptr = const_cast<double *>(matrix_->GetColumnPtr(i));
           for(int k = 0; k < matrix_->n_rows(); k++) {
             ar & column_ptr[k];

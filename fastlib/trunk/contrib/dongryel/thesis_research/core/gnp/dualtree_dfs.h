@@ -106,7 +106,9 @@ class DualtreeDfs {
 
     TableType *reference_table_;
 
-    bool do_base_case_;
+    bool do_selective_base_case_;
+
+    std::map<int, int> serialize_points_per_terminal_node_;
 
     std::vector< std::pair<TreeType *, std::pair<int, int> > >
     unpruned_query_reference_pairs_;
@@ -179,15 +181,17 @@ class DualtreeDfs {
 
   public:
 
+    DualtreeDfs();
+
     const std::vector <
     std::pair<TreeType *, std::pair<int, int > > > &
     unpruned_query_reference_pairs() const;
 
     const std::map< int, int > &unpruned_reference_nodes() const;
 
-    void set_base_case_flag(bool flag_in);
-
-    DualtreeDfs();
+    template<typename PointSerializeFlagType>
+    void set_base_case_flags(
+      const std::vector<PointSerializeFlagType> &flags_in);
 
     int num_deterministic_prunes() const;
 
