@@ -104,6 +104,8 @@ class DualtreeDfs {
 
     TableType *query_table_;
 
+    TreeType *query_start_node_;
+
     TableType *reference_table_;
 
     bool do_selective_base_case_;
@@ -188,6 +190,8 @@ class DualtreeDfs {
     unpruned_query_reference_pairs() const;
 
     const std::map< int, int > &unpruned_reference_nodes() const;
+
+    void set_query_start_node(TreeType *query_start_node_in);
 
     template<typename PointSerializeFlagType>
     void set_base_case_flags(

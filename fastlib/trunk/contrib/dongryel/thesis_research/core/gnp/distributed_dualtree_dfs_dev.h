@@ -26,8 +26,9 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
   const core::metric_kernels::AbstractMetric &metric,
   typename DistributedProblemType::ResultType *query_results) {
 
-  // The typedef of a sub table in use.
+  // The typedef of a sub table in use and its list.
   typedef core::table::SubTable<TableType> SubTableType;
+  typedef core::table::SubTableList<SubTableType> SubTableListType;
 
   // Start the computation with the self interaction.
   core::gnp::DualtreeDfs<ProblemType> self_engine;
@@ -44,7 +45,8 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
   const int max_num_levels_to_serialize = 5;
 
   // An abstract way of collaborative subtable exchanges.
-  core::parallel::TableExchange<DistributedTableType> table_exchange;
+  core::parallel::TableExchange <
+  DistributedTableType, SubTableListType > table_exchange;
   table_exchange.Init(*world_, *reference_table_);
 
   // A frontier of reference nodes to be explored for the current
@@ -76,15 +78,13 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
   }
 
   do  {
-    std::vector< core::table::SubTableList<SubTableType> > received_subtables;
 
     // Try to exchange the subtables. If we are done, then we exit the
     // loop.
     if(
       table_exchange.AllToAll(
         *world_, max_num_levels_to_serialize,
-        *(reference_table_->local_table()), receive_requests,
-        &received_subtables)) {
+        *(reference_table_->local_table()), receive_requests)) {
       break;
     }
 
@@ -94,17 +94,22 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
     receive_requests.resize(world_->size());
     for(int i = 0; i < world_->size(); i++) {
       if(i != world_->rank()) {
-        for(unsigned int j = 0; j < received_subtables[i].size(); j++) {
+        for(unsigned int j = 0; j < computation_frontier[i].size(); j++) {
           core::gnp::DualtreeDfs<ProblemType> sub_engine;
           ProblemType sub_problem;
           ArgumentType sub_argument;
+          SubTableType &frontier_reference_subtable =
+            table_exchange.FindSubTable(
+              i, computation_frontier[i][j].second.first,
+              computation_frontier[i][j].second.second);
           sub_argument.Init(
-            received_subtables[i][j].table(),
+            frontier_reference_subtable.table(),
             query_table_->local_table(), problem_->global());
           sub_problem.Init(sub_argument);
           sub_engine.Init(sub_problem);
           sub_engine.set_base_case_flags(
-            received_subtables[i][j].serialize_points_per_terminal_node());
+            frontier_reference_subtable.serialize_points_per_terminal_node());
+          sub_engine.set_query_start_node(computation_frontier[i][j].first);
           sub_engine.Compute(metric, query_results, false);
 
           // Collect the list of unpruned reference nodes.

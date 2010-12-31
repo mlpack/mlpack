@@ -12,6 +12,13 @@
 
 namespace core {
 namespace gnp {
+
+template<typename ProblemType>
+void DualtreeDfs<ProblemType>::set_query_start_node(
+  TreeType *query_start_node_in) {
+  query_start_node_ = query_start_node_in;
+}
+
 template<typename ProblemType>
 const std::vector < std::pair < typename DualtreeDfs <
 ProblemType >::TreeType *, std::pair<int, int > > > &DualtreeDfs <
@@ -42,6 +49,7 @@ void DualtreeDfs<ProblemType>::set_base_case_flags(
 template<typename ProblemType>
 DualtreeDfs<ProblemType>::DualtreeDfs() {
   do_selective_base_case_ = false;
+  query_start_node_ = NULL;
 }
 
 template<typename ProblemType>
@@ -78,6 +86,7 @@ void DualtreeDfs<ProblemType>::Init(ProblemType &problem_in) {
 
   problem_ = &problem_in;
   query_table_ = problem_->query_table();
+  query_start_node_ = query_table_->get_tree();
   reference_table_ = problem_->reference_table();
   ResetStatistic();
 
@@ -99,21 +108,19 @@ void DualtreeDfs<ProblemType>::Compute(
 
   // Call the algorithm computation.
   core::math::Range squared_distance_range =
-    (query_table_->get_tree()->bound()).RangeDistanceSq(
+    (query_start_node_->bound()).RangeDistanceSq(
       metric, reference_table_->get_tree()->bound());
 
   if(do_initializations) {
-    PreProcess_(query_table_->get_tree());
+    PreProcess_(query_start_node_);
   }
   PreProcessReferenceTree_(reference_table_->get_tree());
 
-  DualtreeCanonical_(metric,
-                     query_table_->get_tree(),
-                     reference_table_->get_tree(),
-                     1.0 - problem_->global().probability(),
-                     squared_distance_range,
-                     query_results);
-  PostProcess_(metric, query_table_->get_tree(), query_results);
+  DualtreeCanonical_(
+    metric, query_start_node_, reference_table_->get_tree(),
+    1.0 - problem_->global().probability(), squared_distance_range,
+    query_results);
+  PostProcess_(metric, query_start_node_, query_results);
 }
 
 template<typename ProblemType>
