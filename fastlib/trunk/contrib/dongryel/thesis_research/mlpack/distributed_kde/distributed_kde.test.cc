@@ -97,6 +97,7 @@ class TestDistributed_Kde {
         else {
           // Send the table to the master process.
           world.send(0, i, *local_table);
+          break;
         }
       }
       if(world.rank() == 0) {
@@ -215,7 +216,7 @@ class TestDistributed_Kde {
         num_dimensions = core::math::RandInt(3, 10);
       }
       boost::mpi::broadcast(world, num_dimensions, 0);
-      int num_points = core::math::RandInt(500, 1001);
+      int num_points = core::math::RandInt(50, 101);
       std::vector< std::string > args;
 
       // Push in the random generate command.
