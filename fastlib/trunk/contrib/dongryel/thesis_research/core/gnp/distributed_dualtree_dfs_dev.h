@@ -43,15 +43,35 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
   // each process is fixed.
   const int max_num_levels_to_serialize = 5;
 
+  // An abstract way of collaborative subtable exchanges.
   core::parallel::TableExchange<DistributedTableType> table_exchange;
   table_exchange.Init(*world_, *reference_table_);
 
+  // A frontier of reference nodes to be explored for the current
+  // process.
   std::vector< std::vector< std::pair<int, int> > > receive_requests;
   receive_requests.resize(world_->size());
   for(unsigned int i = 0; i < receive_requests.size(); i++) {
     if(i != static_cast<unsigned int>(world_->rank())) {
       receive_requests[i].push_back(
         std::pair<int, int>(0, reference_table_->local_n_entries(i)));
+    }
+  }
+
+  // An outstanding frontier of query-reference pairs to be computed.
+  std::vector <
+  std::vector <
+  std::pair<TreeType *, std::pair<int, int> > > > computation_frontier;
+  computation_frontier.resize(world_->size());
+  for(unsigned int i = 0; i < computation_frontier.size(); i++) {
+    if(i != static_cast<unsigned int>(world_->rank())) {
+      int reference_begin = 0;
+      int reference_count = reference_table_->local_n_entries(i);
+      computation_frontier[i].push_back(
+        std::pair <
+        TreeType *, std::pair<int, int> > (
+          query_table_->local_table()->get_tree(),
+          std::pair<int, int>(reference_begin, reference_count)));
     }
   }
 
