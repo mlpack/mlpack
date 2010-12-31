@@ -1,0 +1,81 @@
+/** @file distributed_tripletree_dfs.h
+ *
+ *  The prototype declaration for doing a generic distributed triple
+ *  tree computation.
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
+#ifndef CORE_GNP_DISTRIBUTED_TRIPLETREE_DFS_H
+#define CORE_GNP_DISTRIBUTED_TRIPLETREE_DFS_H
+
+#include <boost/mpi/communicator.hpp>
+#include "core/metric_kernels/abstract_metric.h"
+#include "core/math/range.h"
+
+namespace core {
+namespace gnp {
+template<typename DistributedProblemType>
+class DistributedTripletreeDfs {
+
+  public:
+
+    typedef typename DistributedProblemType::TableType TableType;
+    typedef typename DistributedProblemType::ProblemType ProblemType;
+    typedef typename DistributedProblemType::DistributedTableType DistributedTableType;
+    typedef typename TableType::TreeType TreeType;
+    typedef typename DistributedTableType::TreeType DistributedTreeType;
+    typedef typename DistributedProblemType::GlobalType GlobalType;
+    typedef typename DistributedProblemType::ResultType ResultType;
+    typedef typename DistributedProblemType::ArgumentType ArgumentType;
+
+  private:
+
+    boost::mpi::communicator *world_;
+
+    DistributedProblemType *problem_;
+
+    DistributedTableType *query_table_;
+
+    DistributedTableType *reference_table_;
+
+  private:
+
+    void ReduceScatter_(
+      const core::metric_kernels::AbstractMetric &metric,
+      typename DistributedProblemType::ResultType *query_results);
+
+    void ResetStatisticRecursion_(
+      DistributedTreeType *node, DistributedTableType * table);
+
+    template<typename TemplateTreeType>
+    void PreProcessReferenceTree_(TemplateTreeType *rnode);
+
+    template<typename TemplateTreeType>
+    void PreProcess_(TemplateTreeType *qnode);
+
+    void PostProcess_(
+      const core::metric_kernels::AbstractMetric &metric,
+      TreeType *qnode, ResultType *query_results);
+
+  public:
+
+    DistributedProblemType *problem();
+
+    DistributedTableType *query_table();
+
+    DistributedTableType *reference_table();
+
+    void ResetStatistic();
+
+    void Init(
+      boost::mpi::communicator *world, DistributedProblemType &problem_in);
+
+    void Compute(
+      const core::metric_kernels::AbstractMetric &metric,
+      typename DistributedProblemType::ResultType *query_results);
+};
+};
+};
+
+#endif

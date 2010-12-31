@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   distributed_auction.h
   distributed_local_kmeans.h
+  parallel_sample_sort.h
   table_exchange.h
 )
 
