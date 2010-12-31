@@ -239,8 +239,7 @@ bool Kde<TableType>::ParseArguments(
   if(vm.count("queries_in") > 0) {
     std::cout << "Reading in the query set: " <<
               vm["queries_in"].as<std::string>() << "\n";
-    arguments_out->query_table_ =
-      arguments_out->query_table_ = new TableType();
+    arguments_out->query_table_ = new TableType();
     arguments_out->query_table_->Init(vm["queries_in"].as<std::string>());
     std::cout << "Finished reading in the query set.\n";
     std::cout << "Building the query tree.\n";
