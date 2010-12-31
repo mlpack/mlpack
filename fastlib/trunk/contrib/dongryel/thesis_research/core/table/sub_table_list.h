@@ -11,8 +11,15 @@
 
 namespace core {
 namespace table {
-template<typename SubTableType>
+template<typename IncomingSubTableType>
 class SubTableList {
+  public:
+
+    /** @brief Convenient typedef of incoming subtable type so that it
+     *         can be exported.
+     */
+    typedef IncomingSubTableType SubTableType;
+
   private:
     friend class boost::serialization::access;
 
