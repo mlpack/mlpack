@@ -119,6 +119,9 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
             receive_requests[i].push_back(
               std::pair<int, int>(it->first, it->second));
           }
+
+          // Need to update the computation frontier here.
+
         }
       }
     }
