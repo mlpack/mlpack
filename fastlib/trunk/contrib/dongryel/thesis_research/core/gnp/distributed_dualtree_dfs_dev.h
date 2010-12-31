@@ -1,5 +1,8 @@
 /** @file distributed_dualtree_dfs_dev.h
  *
+ *  The generic algorithm template for distributed dual-tree
+ *  computation.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -90,8 +93,11 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
 
     // Each process calls the independent sets of serial dual-tree dfs
     // algorithms. Further parallelism can be exploited here.
-    receive_requests.resize(0);
-    receive_requests.resize(world_->size());
+    std::vector <
+    std::vector <
+    std::pair<TreeType *, std::pair<int, int> > > > new_computation_frontier;
+    new_computation_frontier.resize(world_->size());
+
     for(int i = 0; i < world_->size(); i++) {
       if(i != world_->rank()) {
         for(unsigned int j = 0; j < computation_frontier[i].size(); j++) {
@@ -119,12 +125,17 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
             receive_requests[i].push_back(
               std::pair<int, int>(it->first, it->second));
           }
-
-          // Need to update the computation frontier here.
-
-        }
+          new_computation_frontier[i].insert(
+            new_computation_frontier[i].end(),
+            sub_engine.unpruned_query_reference_pairs().begin(),
+            sub_engine.unpruned_query_reference_pairs().end());
+        } // Looping over each of the outstanding work from the $i$-th
+        // process.
       }
-    }
+    } // end of taking care of the computation frontier.
+
+    // Now copy over and make the new computation frontier.
+    computation_frontier = new_computation_frontier;
   }
   while(true);
 }

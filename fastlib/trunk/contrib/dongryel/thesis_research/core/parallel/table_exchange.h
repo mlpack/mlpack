@@ -111,7 +111,7 @@ class TableExchange {
       boost::mpi::communicator &world,
       int max_num_levels_to_serialize,
       TableType &local_table,
-      const std::vector <
+      std::vector <
       std::vector< std::pair<int, int> > > &receive_requests) {
 
       // The gathered request lists to send to each process.
@@ -160,6 +160,11 @@ class TableExchange {
         }
       }
       boost::mpi::all_to_all(world, send_subtables, received_subtables);
+
+      // Clear the receive requests so that it can be used in the next
+      // iteration.
+      receive_requests.resize(0);
+      receive_requests.resize(world.size());
 
       return false;
     }
