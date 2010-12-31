@@ -1,5 +1,7 @@
 /** @file tree/kdtree.h
  *
+ *  The generic kd-tree builder.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 

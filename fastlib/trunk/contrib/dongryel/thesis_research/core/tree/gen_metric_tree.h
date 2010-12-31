@@ -1,5 +1,7 @@
 /** @file gen_metric.h
  *
+ *  The generic metric tree builder.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
