@@ -22,12 +22,15 @@ class ParallelSampleSort {
     int num_samples_to_send_;
 
   private:
-    void Sample_(std::vector<T> *sample_out) {
+    void Sample_(
+      const std::vector<T> &array_in, int num_samples,
+      std::vector<T> *sample_out) {
+      int stride = static_cast<int>(array_in.size()) / num_samples_in;
       int pos = 0;
       sample_out->resize(0);
-      for(int i = 0; i < num_samples_to_send_;
-          i++, pos = (pos + stride_) % array_->size()) {
-        sample_out->push_back((*array_)[pos]);
+      for(int i = 0; i < num_samples_in;
+          i++, pos = (pos + stride) % array_in.size()) {
+        sample_out->push_back(array_in[pos]);
       }
     }
 
@@ -36,7 +39,6 @@ class ParallelSampleSort {
       array_ = &array_in;
       num_samples_to_send_ =
         static_cast<int>(ceil(sampling_rate_in * array_in.size()));
-      stride_ = static_cast<int>(array_->size()) / num_samples_to_send_;
     }
 
     void Sort(boost::mpi::communicator &world) {
@@ -46,13 +48,30 @@ class ParallelSampleSort {
 
       // Each process samples the dividers and sends to the master.
       std::vector<T> local_samples;
-      Sample_(&local_samples);
+      Sample_(*array_, num_samples_to_send_, &local_samples);
       std::vector< std::vector<T> > collected_samples;
       boost::mpi::gather(world, local_samples, collected_samples, 0);
 
-      // The master sorts the dividers and broadcasts $p$ partitions
+      // The master sorts the dividers and broadcasts $p - 1$ partitions
       // to each process.
+      std::vector<T> partitions;
+      if(world.rank() == 0) {
+        std::vector<T> flattened_samples;
+        for(unsigned int i = 0; i < collected_samples.size(); i++) {
+          flattened_samples.insert(
+            flattened_samples.end(), collected_samples[i].begin(),
+            collected_samples[i].end());
+        }
+        std::sort(flattened_samples.begin(), flattened_samples.end());
+        Sample_(flattened_samples, world.size() - 1, &partitions);
+      }
+      boost::mpi::broadcast(world, partitions, 0);
 
+      // Based on the $p$ partitions induced by the $p - 1$ numbers,
+      // determine which part of the partitions each of the locally
+      // owned points fall into, and do an all-to-all to make sure
+      // that $i$-th process owns all points that fall into the $i$-th
+      // partition.
     }
 };
 };
