@@ -197,7 +197,7 @@ int main(int ac, char *av[]) {
   MPI_Init(&ac, &av);
   MPI_Comm_rank(MPI_COMM_WORLD, &rank);
   MPI_Comm_size(MPI_COMM_WORLD, &size);
-  srand(time(NULL) + rank);
+  core::math::global_random_number_state_.set_seed(time(NULL) + rank);
 
   // Find out the nearest power of two that is smaller and closest to
   // the size of the MPI communicator.
