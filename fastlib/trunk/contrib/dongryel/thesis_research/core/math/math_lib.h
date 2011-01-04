@@ -22,6 +22,10 @@ class RandomNumberInit {
     gsl_rng *global_generator_;
 
   public:
+    void set_seed(unsigned int seed_in) {
+      gsl_rng_set(global_generator_, seed_in);
+    }
+
     RandomNumberInit() {
       gsl_rng_env_setup();
       global_generator_type_ = gsl_rng_default;
