@@ -12,6 +12,7 @@
 #include <time.h>
 #include <values.h>
 #include <stdlib.h>
+#include "core/math/math_lib.h"
 
 int RoundDownToNearestPowerofTwo(int num) {
   unsigned int v = static_cast<unsigned int>(num);
