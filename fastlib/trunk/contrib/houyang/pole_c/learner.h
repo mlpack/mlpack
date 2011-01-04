@@ -40,9 +40,10 @@ double LinearPredictBias(SVEC *wvec, EXAMPLE *ex, double bias) {
 
 T_LBL LinearPredictBiasLabel(SVEC *wvec, EXAMPLE *ex, double bias) {
   double sum = SparseDot(wvec, ex) + bias;
-  //print_svec(wvec);
-  //print_ex(ex);
-  //cout << sum<<endl;
+  /*print_svec(wvec);
+  print_ex(ex);
+  cout << sum<<endl;
+  */
   if (sum > 0.0)
     return (T_LBL)1;
   else

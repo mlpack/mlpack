@@ -184,7 +184,7 @@ int ReadFeatures(char *line, FEATURE *feat, T_LBL *label, size_t &num_feats, siz
       exit (1); 
     }
   }
-  num_feats = wpos+1;
+  num_feats = wpos;
   
   return(1);
 }
@@ -198,7 +198,7 @@ void SerialRead(string &data_fn, EXAMPLE **examples, size_t &num_examples) {
   size_t dnum=0, wpos, dpos=0, dneg=0, dunlab=0;
   FEATURE *feat_cache;
   T_LBL label_cache;
-  size_t i, j;
+  size_t i;
 
   // scan size of input data file
   CountFile(data_fn, max_num_examples, max_features_example, max_length_line);
@@ -207,16 +207,6 @@ void SerialRead(string &data_fn, EXAMPLE **examples, size_t &num_examples) {
   max_length_line += 2;
   (*examples) = (EXAMPLE *)my_malloc( sizeof(EXAMPLE)*max_num_examples ); // feature vectors
   line = (char *)my_malloc( sizeof(char)*max_length_line );
-
-  // To mimic the online learning senario, we randomly permutate the training set, indexed by pm_idx
-  pm_idx = (size_t *)my_malloc( sizeof(size_t) * max_num_examples);
-  for (i=0; i<max_num_examples; i++) {
-    pm_idx[i] = i; 
-  }
-  for (i=0; i<max_num_examples; i++) {
-    j = rand() % max_num_examples;
-    swap(pm_idx[i], pm_idx[j]);
-  }
   
   feat_cache = (FEATURE *)my_malloc( sizeof(FEATURE)*max_features_example );
 
@@ -232,7 +222,7 @@ void SerialRead(string &data_fn, EXAMPLE **examples, size_t &num_examples) {
       continue;  // comment line
     }
     for (i=0; i<max_features_example; i++) {
-      feat_cache[i].widx = -1;
+      feat_cache[i].widx = 0;
       feat_cache[i].wval = 0;
     }
     if(!ReadFeatures(line, feat_cache, &label_cache, wpos, max_features_example, &comment)) {
@@ -246,11 +236,9 @@ void SerialRead(string &data_fn, EXAMPLE **examples, size_t &num_examples) {
       dneg++;
     if (label_cache == 0)
       dunlab++;
-    if((wpos>1) && ((feat_cache[wpos-2]).widx>num_examples)) 
-      num_examples = (feat_cache[wpos-2]).widx;
 
     // setup an example
-    CreateExample((*examples)+pm_idx[dnum], feat_cache, label_cache, comment, max_features_example);
+    CreateExample((*examples)+dnum, feat_cache, label_cache, comment, max_features_example);
 
     //print_ex((*examples)+dnum);
     
@@ -261,18 +249,15 @@ void SerialRead(string &data_fn, EXAMPLE **examples, size_t &num_examples) {
       }
     }
   }
-  global.num_features = wpos;
 
   fclose(fp);
   free(line);
   free(feat_cache);
-  free(pm_idx);
   if(!global.quiet) {
-    cout << "done. " << dnum << " examples loaded." << endl;
+    cout << "done. " << dnum << " examples loaded: " << dpos << " positive and " << dneg <<" negative." << endl;
   }
   
   num_examples = dnum;
-  
 }
 
 void *ParReadThread(void *) {
@@ -286,6 +271,7 @@ void ParallelRead(size_t num_threads) {
 }
 
 void ReadData(boost_po::variables_map &vm) {
+  size_t i, j;
   if ( vm.count("par_read") ) {
     ParallelRead(global.num_threads);
     //ring_size = 1 << 11; // 2048
@@ -293,16 +279,44 @@ void ReadData(boost_po::variables_map &vm) {
   }
   else {
     SerialRead(global.train_data_fn, &train_exps, num_train_exps);
-    //ring_size = num_train_exps;
+    if (num_train_exps == 0) {
+      cout << "0 input samples!" << endl;
+      exit(1);
+    }
     parsed_ct = num_train_exps;
+
+    /* To mimic the online learning senario, in each epoch, 
+       we randomly permutate the training set, indexed by old_from_new */
+    old_from_new = (size_t *)my_malloc(sizeof(size_t) * parsed_ct);
+    for (i=0; i<parsed_ct; i++) {
+      old_from_new[i] = i; 
+    }
+    for (i=0; i<parsed_ct; i++) {
+      j = rand() % parsed_ct;
+      swap(old_from_new[i], old_from_new[j]);
+    }
+
+    if (global.num_iter_res >= parsed_ct) {
+      global.num_epoches = global.num_epoches + (size_t)(global.num_iter_res / parsed_ct);
+      global.num_iter_res = global.num_iter_res % parsed_ct;
+    }
+    cout << "n_epo= " <<global.num_epoches << ", n_iter_res= " << global.num_iter_res << endl;
 
     if (vm.count("C")) {
       l1.C = vm["C"].as<double>();
+      if (l1.C <= 0.0) {
+	cout << "Parameter C should be positive!" << endl;
+	exit(1);
+      }
       l1.reg_factor = 1.0 / (l1.C * num_train_exps);
       //cout << "C= " << l1.C << ", lambda= " << l1.reg_factor << endl << endl;
     }
     else if (vm.count("lambda")) {
       l1.reg_factor = vm["lambda"].as<double>();
+      if (l1.reg_factor <= 0.0) {
+	cout << "Parameter lambda should be positive!" << endl;
+	exit(1);
+      }
       l1.C = 1.0 / (l1.reg_factor * num_train_exps);
       //cout << "lambda= " << l1.reg_factor << ", C= " << l1.C << endl << endl;
     }
@@ -315,7 +329,7 @@ void ReadData(boost_po::variables_map &vm) {
   //  delay_ring[i] = NULL;
   //}
 
-  left_ct = global.num_threads - (global.num_epoches * parsed_ct) % global.num_threads;
+  left_ct = global.num_threads - (global.num_epoches * parsed_ct + global.num_iter_res) % global.num_threads;
 }
 
 void FinishData() {
@@ -326,23 +340,43 @@ void FinishData() {
 }
 
 int GetImmedExample(EXAMPLE** x_p, size_t tid, learner &l) {
+  size_t i, j;
   pthread_mutex_lock(&examples_lock);
   if (epoch_ct < global.num_epoches) {
     size_t ring_index = used_ct % parsed_ct;
     if (ring_index == (parsed_ct-1)) { // one epoch finished
       epoch_ct ++;
+      /* To mimic the online learning senario, in each epoch, 
+	 we randomly permutate the training set, indexed by old_from_new */
+      for (i=0; i<parsed_ct; i++) {
+	old_from_new[i] = i; 
+      }
+      for (i=0; i<parsed_ct; i++) {
+	j = rand() % parsed_ct;
+	swap(old_from_new[i], old_from_new[j]);
+      }
     }
-    train_exps[ring_index].in_use = true;
+    train_exps[old_from_new[ring_index]].in_use = true;
     used_ct ++;
     l.num_used_exp[tid] ++;
-    (*x_p) = train_exps + ring_index;
+    (*x_p) = train_exps + old_from_new[ring_index];
+    pthread_mutex_unlock(&examples_lock);
+    return 1;
+  }
+  else if (iter_res_ct < global.num_iter_res) {
+    size_t ring_index = used_ct % parsed_ct;
+    train_exps[old_from_new[ring_index]].in_use = true;
+    used_ct ++;
+    l.num_used_exp[tid] ++;
+    (*x_p) = train_exps + old_from_new[ring_index];
+    iter_res_ct ++;
     pthread_mutex_unlock(&examples_lock);
     return 1;
   }
   else {
     left_ct --;
     if (left_ct >= 0) {
-      (*x_p) = train_exps + tid % parsed_ct;
+      (*x_p) = train_exps + old_from_new[tid % parsed_ct];
       pthread_mutex_unlock(&examples_lock);
       return -1;
     }

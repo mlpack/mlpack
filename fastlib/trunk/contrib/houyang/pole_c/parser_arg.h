@@ -10,18 +10,19 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
   // Declare supported options.
   desc.add_options()
     ("help,h","Produce help message")
-    ("num_features,f", boost_po::value<size_t>(), "Number of features")
     ("threads,t", boost_po::value<size_t>(&global.num_threads)->default_value(1), "Number of threads. Default: 1 thread.")
     ("data_train,d", boost_po::value<string>()->default_value(""), "File name of training example set")
     ("opt_method,m", boost_po::value<string>()->default_value("d_sgd"), "Optimization method")
-    ("epoches,e", boost_po::value<size_t>(&global.num_epoches)->default_value(1), "Number of training epoches. Default: 1 epoch")
+    ("epoches,e", boost_po::value<size_t>(&global.num_epoches)->default_value(0), "Number of training epoches. Default: 0 epoch")
+    ("iterations,i", boost_po::value<size_t>(&global.num_iter_res)->default_value(0), "Number of training iterations besides epoches. Default: 0")
     ("reg,r", boost_po::value<int>(&learner.reg)->default_value(2), "Which regularization term to use. Default: 2(squared l2 norm)")
     ("lambda", boost_po::value<double>(&learner.reg_factor)->default_value(1.0), "Regularization factor ('lambda' in avg_loss + lambda * regularization). Default: 1.0")
     ("C,c", boost_po::value<double>(&learner.C)->default_value(1.0), "Cost factor C ('C' in regularization + C*avg_loss). Default: 1.0")
     ("loss_function,l", boost_po::value<string>()->default_value("hinge"), 
                        "Loss function to be used. Default: squared. Available: squared, hinge, logistic and quantile.")
-    ("bias,b", "Add a bias term to examples")
+    ("bias", "Add a bias term to examples")
     ("comm", boost_po::value<int>(&global.comm_method)->default_value(1), "How agents communicate with each other. Default: 1(full connected)")
+    ("mini_batch,b", boost_po::value<int>(&global.mb_size)->default_value(1), "Size of a mini-batch. Default: 1")
     ("num_port_sources", boost_po::value<size_t>(), "Number of sources for daemon socket input")
     ("predictions,p", boost_po::value<string>(), "File to output predictions")
     ("port", boost_po::value<size_t>(),"Port to listen on")
@@ -72,19 +73,18 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
   // parse input training data
   ParserInput(vm);
 
-  if (vm.count("num_features")) {
-    global.num_features = vm["num_features"].as<size_t>();
-  }
-  else {
-    global.num_features = (size_t)(1<<18);
-  }
-  if (global.num_features > (size_t)(1<<31)) {
-    cerr << "The system limits at 31 bits for features!\n" << endl;
-    exit(1);
-  }
-
   if (vm.count("epoches")) {
     global.num_epoches = vm["epoches"].as<size_t>();
+  }
+  if (global.num_epoches < 0 ) {
+    global.num_epoches = 0;
+  }
+
+  if (vm.count("iterations")) {
+    global.num_iter_res = vm["iterations"].as<size_t>();
+  }
+  if (global.num_iter_res < 0 ) {
+    global.num_iter_res = 0;
   }
 
   if (vm.count("reg")) {
@@ -117,6 +117,12 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
   if (vm.count("comm")) {
     global.comm_method = vm["comm"].as<int>();
   }
+
+  if (vm.count("mini_batch")) {
+    global.mb_size = vm["mini_batch"].as<int>();
+  }
+  if (global.mb_size <= 0)
+    global.mb_size = 1;
 
   if (vm.count("predictions")) {
     if (!global.quiet)

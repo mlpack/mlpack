@@ -17,9 +17,9 @@ struct global_data{
 
   bool use_bias; // use a bias term (mainly for linear learners)
 
-  size_t num_features; // maximum number of features.
-
   size_t num_epoches; // number of training epoches.
+
+  size_t num_iter_res; // number of training iterations besides epoches.
 
   string train_data_fn; // file name for the input data.
 
@@ -30,6 +30,8 @@ struct global_data{
   pthread_t par_read_thread; // for parallel data parsing
 
   int comm_method; // how agents communicate with each other
+
+  int mb_size; // size of a mini-batch
 
   //Prediction output
   int final_prediction_sink; // set to send global predictions to.
@@ -44,9 +46,10 @@ learner l1;
 EXAMPLE *train_exps; // training examples.
 size_t num_train_exps; // total # of training examples
 
-size_t *pm_idx;
+size_t *old_from_new;
 
 size_t epoch_ct; // counter of epoches used.
+size_t iter_res_ct; // counter of residual number of iterations.
 size_t parsed_ct; // How many examples been parsed.
 size_t used_ct; // How many examples used, Can be larger than parsed_index.
 int left_ct;
