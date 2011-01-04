@@ -78,7 +78,7 @@ class ParallelSampleSort {
       // partition.
       std::vector< std::vector<T> > local_buckets;
       std::vector< std::vector<T> > reshuffled_buckets;
-      partition_function_in.Partition(partitions, &local_buckets);
+      partition_function_in.Partition(*array_, partitions, &local_buckets);
 
       boost::mpi::all_to_all(world, local_buckets, reshuffled_buckets);
       // Flatten the reshuffled buckets.
