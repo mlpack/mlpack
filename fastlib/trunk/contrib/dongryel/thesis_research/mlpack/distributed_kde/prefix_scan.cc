@@ -12,7 +12,8 @@ int main(int argc, char *argv[]) {
   boost::mpi::environment env(argc, argv);
   boost::mpi::communicator world;
 
-  srand(time(NULL) + world.rank());
+  extern core::math::RandomNumberInit global_random_number_state_;
+  global_random_number_state_.set_seed(time(NULL) + world.rank());
   if(world.size() <= 1) {
     std::cout << "Please specify a process number greater than 1.\n";
     exit(0);

@@ -361,8 +361,7 @@ int main(int argc, char *argv[]) {
   temporary_file_name << "tmp_file" << world.rank();
   remove(temporary_file_name.str().c_str());
   world.barrier();
-
-  srand(time(NULL) + world.rank());
+  core::math::global_random_number_state_.set_seed(time(NULL) + world.rank());
 
   // Call the tests.
   mlpack::distributed_kde::TestDistributed_Kde distributed_kde_test;
