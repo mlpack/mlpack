@@ -22,6 +22,15 @@ class ParallelSampleSort {
     int num_samples_to_send_;
 
   private:
+
+    template<typename PartitionFunctionType>
+    void Partition_(
+      const PartitionFunctionType &partition_function_in,
+      const std::vector<T> &partitions,
+      std::vector< std::vector<T> > *buckets_out) {
+
+    }
+
     void Sample_(
       const std::vector<T> &array_in, int num_samples,
       std::vector<T> *sample_out) {
@@ -41,7 +50,10 @@ class ParallelSampleSort {
         static_cast<int>(ceil(sampling_rate_in * array_in.size()));
     }
 
-    void Sort(boost::mpi::communicator &world) {
+    template<typename PartitionFunctionType>
+    void Sort(
+      boost::mpi::communicator &world,
+      const PartitionFunctionType &partition_function_in) {
 
       // Locally sort the elements.
       std::sort(array_->begin(), array_->end());
@@ -72,6 +84,21 @@ class ParallelSampleSort {
       // owned points fall into, and do an all-to-all to make sure
       // that $i$-th process owns all points that fall into the $i$-th
       // partition.
+      std::vector< std::vector<T> > local_buckets;
+      std::vector< std::vector<T> > reshuffled_buckets;
+      Partition_(partition_function_in, partitions, &local_buckets);
+
+      boost::mpi::all_to_all(world, local_buckets, reshuffled_buckets);
+      // Flatten the reshuffled buckets.
+      array_->resize(0);
+      for(unsigned int i = 0; i < reshuffled_buckets.size(); i++) {
+        array_->insert(
+          array_->end(), reshuffled_buckets[i].begin(),
+          reshuffled_buckets[i].end());
+      }
+
+      // Sort the reshuffled array.
+      std::sort(array_->begin(), array_->end());
     }
 };
 };
