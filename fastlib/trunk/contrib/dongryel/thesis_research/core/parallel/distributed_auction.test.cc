@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
   core::parallel::DistributedAuction auction;
 
   // Seed the random number generator.
-  srand(time(NULL) + world.rank());
+  core::math::global_random_number_state_.set_seed(time(NULL) + world.rank());
 
   // Create a random vector of weights.
   std::vector<double> weights(world.size(), 0);

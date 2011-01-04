@@ -11,6 +11,7 @@
 #include "boost/test/unit_test.hpp"
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/table.h"
+#include "core/math/math_lib.h"
 #include <time.h>
 
 namespace core {
@@ -125,7 +126,6 @@ class TestTree {
 
 BOOST_AUTO_TEST_SUITE(TestSuiteKde)
 BOOST_AUTO_TEST_CASE(TestCaseKde) {
-  srand(time(NULL));
 
   // Tree type: hard-coded for a metric tree.
   typedef core::table::Table <

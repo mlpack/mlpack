@@ -1,6 +1,6 @@
-/** @file distributed_kde.test.cc
+/** @file distributed_kde.cc
  *
- *  The test driver for the distributed kde.
+ *  The driver for the distributed kde.
  *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
@@ -10,6 +10,7 @@
 #include "core/table/distributed_table.h"
 #include "core/tree/gen_kdtree.h"
 #include "core/tree/gen_metric_tree.h"
+#include "core/math/math_lib.h"
 #include "mlpack/kde/kde_dualtree.h"
 #include "mlpack/distributed_kde/distributed_kde_dev.h"
 
@@ -25,7 +26,7 @@ int main(int argc, char *argv[]) {
   boost::mpi::communicator world;
 
   // Seed the random number.
-  srand(time(NULL) + world.rank());
+  core::math::global_random_number_state_.set_seed(time(NULL) + world.rank());
 
   if(world.rank() == 0) {
     printf("%d processes are present...\n", world.size());

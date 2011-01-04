@@ -8,8 +8,9 @@
 // for BOOST testing
 #define BOOST_TEST_MAIN
 
-#include "boost/test/unit_test.hpp"
-#include "nbody_simulator_dev.h"
+#include <boost/test/unit_test.hpp>
+#include "core/math/math_lib.h"
+#include "physpack/nbody_simulator/nbody_simulator_dev.h"
 #include <time.h>
 
 namespace physpack {
@@ -185,7 +186,6 @@ class TestNbodySimulator {
 
 BOOST_AUTO_TEST_SUITE(TestSuiteNbodySimulator)
 BOOST_AUTO_TEST_CASE(TestCaseNbodySimulator) {
-  srand(time(NULL));
 
   // Call the tests.
   physpack::nbody_simulator::TestNbodySimulator nbody_simulator_test;

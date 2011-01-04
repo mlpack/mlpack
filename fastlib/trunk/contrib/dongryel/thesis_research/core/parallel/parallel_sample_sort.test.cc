@@ -40,12 +40,6 @@ class DoublePartitionFunction {
     }
 };
 
-namespace core {
-namespace math {
-extern core::math::RandomNumberInit global_random_number_state_;
-};
-};
-
 int main(int argc, char *argv[]) {
 
   // Initialize boost MPI.

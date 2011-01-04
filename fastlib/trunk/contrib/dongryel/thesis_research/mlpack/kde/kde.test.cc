@@ -12,6 +12,7 @@
 #include "core/gnp/dualtree_dfs_dev.h"
 #include "kde_dev.h"
 #include "core/tree/gen_metric_tree.h"
+#include "core/math/math_lib.h"
 #include <time.h>
 
 namespace mlpack {
@@ -209,7 +210,6 @@ class TestKde {
 
 BOOST_AUTO_TEST_SUITE(TestSuiteKde)
 BOOST_AUTO_TEST_CASE(TestCaseKde) {
-  srand(time(NULL));
 
   // Call the tests.
   mlpack::kde::TestKde kde_test;
