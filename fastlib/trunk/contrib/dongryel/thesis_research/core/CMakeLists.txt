@@ -16,9 +16,12 @@ add_subdirectory(util)
 
 add_library(core ${CORE_SRCS})
 target_link_libraries(core
+  armadillo
   lapack
   blas
+  gsl
   pthread
+  rt
   ${TRILINOS_LIBS}
 )
 
