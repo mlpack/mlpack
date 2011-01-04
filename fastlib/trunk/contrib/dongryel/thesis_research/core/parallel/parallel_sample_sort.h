@@ -23,16 +23,8 @@ class ParallelSampleSort {
 
   private:
 
-    template<typename PartitionFunctionType>
-    void Partition_(
-      const PartitionFunctionType &partition_function_in,
-      const std::vector<T> &partitions,
-      std::vector< std::vector<T> > *buckets_out) {
-
-    }
-
     void Sample_(
-      const std::vector<T> &array_in, int num_samples,
+      const std::vector<T> &array_in, int num_samples_in,
       std::vector<T> *sample_out) {
       int stride = static_cast<int>(array_in.size()) / num_samples_in;
       int pos = 0;
@@ -86,7 +78,7 @@ class ParallelSampleSort {
       // partition.
       std::vector< std::vector<T> > local_buckets;
       std::vector< std::vector<T> > reshuffled_buckets;
-      Partition_(partition_function_in, partitions, &local_buckets);
+      partition_function_in.Partition(partitions, &local_buckets);
 
       boost::mpi::all_to_all(world, local_buckets, reshuffled_buckets);
       // Flatten the reshuffled buckets.

@@ -24,3 +24,14 @@ target_link_libraries(distributed_auction-test
                       core
                       ${Boost_LIBRARIES}
                      )
+
+# test executable
+add_executable(parallel_sample_sort-test
+               EXCLUDE_FROM_ALL
+               parallel_sample_sort.test.cc
+              )
+# link dependencies of test executable
+target_link_libraries(parallel_sample_sort-test
+                      core
+                      ${Boost_LIBRARIES}
+                     )
