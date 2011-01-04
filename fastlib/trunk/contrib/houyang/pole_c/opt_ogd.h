@@ -34,12 +34,16 @@ void OgdUpdate(SVEC *wvec, double &t, double &bias, double update, size_t tid) {
   // update bias
   if (global.use_bias) {
     if (l1.reg == 2) {
-      bias -= eta * l1.reg_factor * bias;
+      bias = bias - eta * l1.reg_factor * bias;
     }
-    bias += eta * update;
+    bias = bias + eta * update;
   }
 
+  //print_svec(wvec);
+  //print_svec(exp_sum);
   SparseAddOverwrite(wvec, exp_sum);
+  //print_svec(wvec);
+  //cout << endl << endl; 
   DestroySvec(exp_sum);
   // dummy updating time
   //boost::this_thread::sleep(boost::posix_time::microseconds(1));
@@ -50,45 +54,57 @@ void OgdUpdate(SVEC *wvec, double &t, double &bias, double update, size_t tid) {
 void *OgdThread(void *in_par) {
   thread_param* par = (thread_param*) in_par;
   size_t tid = par->thread_id;
-  EXAMPLE *ex;
+  EXAMPLE **exs;
   double pred;
   double update = 0.0;
+  int b;
+
+  exs = (EXAMPLE **)my_malloc( sizeof(EXAMPLE *) * global.mb_size );
 
   while (true) {
     switch (par->thread_state) {
     case 0: // waiting to read data
-      if ( GetImmedExample(&ex, tid, l1) != 0 ) { // new example read
-	//print_ex(ex);
-	par->thread_state = 1;
-      }
-      else { // all epoches finished
-	return NULL;
-      }
-      break;
-    case 1:
-      pred = LinearPredictBias(l1.w_vec_pool[tid], ex, l1.bias_pool[tid]);
-
-      // want to calculate total loss ?
-      if (global.calc_loss) {
-	T_LBL pred_lbl = LinearPredictBiasLabel(l1.w_vec_pool[tid], ex, l1.bias_pool[tid]);
-	//cout << ex->label << " : " << pred_lbl << ", "<< l1.loss_func->getLoss(pred, (double)ex->label) << endl;
-	if (pred_lbl != ex->label) {
-	  l1.total_misp_pool[tid] = l1.total_misp_pool[tid] + 1;
-	  l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.loss_func->getLoss(pred, (double)ex->label);
-	  if (l1.reg == 2) {
-	    l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.reg_factor * SparseSqL2Norm(l1.w_vec_pool[tid]) / 2;
-	  }
+      for (b = 0; b<global.mb_size; b++) {
+	if ( GetImmedExample(exs+b, tid, l1) != 0 ) { // new example read
+	  //print_ex(exs[b]);
+	}
+	else { // all epoches finished
+	  return NULL;
 	}
       }
+      par->thread_state = 1;
+      break;
+    case 1:
+      EmptyFeatures(l1.msg_pool[tid]);
+      for (b = 0; b<global.mb_size; b++) {
+	pred = LinearPredictBias(l1.w_vec_pool[tid], exs[b], l1.bias_pool[tid]);
 
-      update = l1.loss_func->getUpdate(pred,(double)ex->label);
-      // update message: [y_t x_t]^+_i
-      SparseScale(l1.msg_pool[tid], update, ex);
+	// Calculate total loss and number of misclassifications
+	if (global.calc_loss) {
+	  T_LBL pred_lbl = LinearPredictBiasLabel(l1.w_vec_pool[tid], exs[b], l1.bias_pool[tid]);
+	  //cout << exs[b]->label << " : " << pred_lbl << ", "<< l1.loss_func->getLoss(pred, (double)exs[b]->label) << endl;
+	  if (pred_lbl != exs[b]->label) {
+	    l1.total_misp_pool[tid] = l1.total_misp_pool[tid] + 1;
+	    l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.loss_func->getLoss(pred, (double)exs[b]->label);
+	    if (l1.reg == 2) {
+	      l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.reg_factor * SparseSqL2Norm(l1.w_vec_pool[tid]) / 2;
+	    }
+	  }
+	}
+
+	update = l1.loss_func->getUpdate(pred,(double)exs[b]->label);
+	// update message: [y_t x_t]^+_i
+	//SparseScale(l1.msg_pool[tid], update, ex);
+	SparseAddExpertOverwrite(l1.msg_pool[tid], update, exs[b]);
+
+      }
+      SparseScaleOverwrite(l1.msg_pool[tid], 1.0/global.mb_size);
 
       if (l1.reg == 2) {
 	// [-2 \lambda \eta w_i^t]
-	SparseAddExpertOverwrite(l1.msg_pool[tid], -(1.0/l1.t_pool[tid]), l1.w_vec_pool[tid]);
+	SparseAddExpertOverwrite(l1.msg_pool[tid], -(l1.reg_factor/l1.t_pool[tid]), l1.w_vec_pool[tid]);
       }
+
       // wait till all threads send their messages
       pthread_barrier_wait(&barrier_msg_all_sent);
       
@@ -109,6 +125,7 @@ void *OgdThread(void *in_par) {
   }
 
 }
+
 
 void Ogd(learner &l) {
   size_t n_threads = l.num_threads;

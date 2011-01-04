@@ -118,6 +118,7 @@ void SparseAddExpertOverwrite(SVEC *w, double scale, SVEC *x) {
 
   if (nz_x == 0 || scale == 0.0) { // x: all zeros or scale ==0
     // w remains unchanged
+    return;
   }
   else if (nz_w == 0) { // w: all zeros
     nz_w = nz_x;
@@ -127,6 +128,73 @@ void SparseAddExpertOverwrite(SVEC *w, double scale, SVEC *x) {
       w->feats[ct_w].wval = scale * x->feats[ct_w].wval;
     }
     w->num_nz_feats = nz_w;
+    return;
+  }
+  else { // neither w nor x is of all zeros
+    while (ct_w<nz_w || ct_x<nz_x) {
+      if (ct_w == nz_w) { // w reaches end, while x still not
+	w->feats = (FEATURE *)realloc(w->feats, (nz_w+1)*sizeof(FEATURE));
+	w->feats[nz_w].widx = x->feats[ct_x].widx;
+	w->feats[nz_w].wval = scale * x->feats[ct_x].wval;
+	nz_w ++;
+	w->num_nz_feats = nz_w;
+	++ct_w;
+	++ct_x;
+      }
+      else if (ct_x == nz_x) { // x reaches end, while w still not
+	// the succeeding w remain unchanged
+	break;
+      }
+      else { // neither w nor x reaches end
+	if (w->feats[ct_w].widx == x->feats[ct_x].widx) {
+	  w->feats[ct_w].wval = w->feats[ct_w].wval + scale * x->feats[ct_x].wval;
+	  ++ct_w;
+	  ++ct_x;
+	}
+	else if (w->feats[ct_w].widx > x->feats[ct_x].widx) {
+	  f_tmp.widx = x->feats[ct_x].widx;
+	  f_tmp.wval = scale * x->feats[ct_x].wval;
+	  InsertOne(w, &f_tmp, ct_w);
+	  ++ct_w;
+	  ++ct_x;
+	}
+	else { // w->feats[ct_w].widx < x->feats[ct_x].widx
+	  // w->feats[ct_w] remains unchanged
+	  ++ct_w;
+	}
+      }
+    }
+    /*
+    // shrink w
+    for (ct_w=0; ct_w<nz_w; ct_w++) {
+      if (fabs(w->feats[ct_w].wval) < 1.0e-5) { // TODO: thresholding
+	RemoveOne(w, ct_w);
+	ct_w--;
+      }
+    }
+    */
+  }
+}
+
+void SparseAddExpertOverwrite(SVEC *w, double scale, EXAMPLE *x) {
+  size_t nz_w = w->num_nz_feats;
+  size_t nz_x = x->num_nz_feats;
+  size_t ct_w = 0, ct_x = 0;
+  FEATURE f_tmp;
+
+  if (nz_x == 0 || scale == 0.0) { // x: all zeros or scale ==0
+    // w remains unchanged
+    return;
+  }
+  else if (nz_w == 0) { // w: all zeros
+    nz_w = nz_x;
+    w->feats = (FEATURE *)my_malloc(sizeof(FEATURE)*(nz_w));
+    for (ct_w=0; ct_w<nz_w; ct_w++) {
+      w->feats[ct_w].widx = x->feats[ct_w].widx;
+      w->feats[ct_w].wval = scale * x->feats[ct_w].wval;
+    }
+    w->num_nz_feats = nz_w;
+    return;
   }
   else { // neither w nor x is of all zeros
     while (ct_w<nz_w || ct_x<nz_x) {
@@ -185,6 +253,7 @@ void SparseAddOverwrite(SVEC *w, SVEC *x) {
 
   if (nz_x == 0) { // x: all zeros
     // w remains unchanged
+    return;
   }
   else if (nz_w == 0) { // w: all zeros
     nz_w = nz_x;
@@ -194,6 +263,7 @@ void SparseAddOverwrite(SVEC *w, SVEC *x) {
       w->feats[ct_w].wval = x->feats[ct_w].wval;
     }
     w->num_nz_feats = nz_w;
+    return;
   }
   else { // neither w nor x is of all zeros
     while (ct_w<nz_w || ct_x<nz_x) {
